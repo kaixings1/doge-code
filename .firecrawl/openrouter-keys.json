@@ -1,0 +1,42 @@
+{
+  "markdown": "[Skip to content](https://openrouter.ai/sign-in?redirect_url=https%3A%2F%2Fopenrouter.ai%2Fworkspaces%2Fdefault%2Fkeys#skip)\n\n[![OpenRouter](https://openrouter.ai/brand/v2/nav-lockup-light.png)![OpenRouter](https://openrouter.ai/brand/v2/nav-lockup-dark.png)](https://openrouter.ai/)\n\nSearch`⌘`  `K`\n\n[Models](https://openrouter.ai/models) [Fusion](https://openrouter.ai/fusion) [Chat](https://openrouter.ai/chat) [Rankings](https://openrouter.ai/rankings) [Apps](https://openrouter.ai/apps) [Docs](https://openrouter.ai/docs/quickstart)\n\nSign Up\n\nSign Up",
+  "metadata": {
+    "next-size-adjust": "",
+    "ogSiteName": "OpenRouter",
+    "viewport": "width=device-width, initial-scale=1, minimum-scale=1",
+    "language": "en",
+    "description": "Sign in to your OpenRouter account.",
+    "ogImage": "https://openrouter.ai/dynamic-og?title=Sign+In&description=Sign+in+to+your+OpenRouter+account.",
+    "ogTitle": "Sign In | OpenRouter",
+    "openrouter:commit-sha": "b175490511e5afb027cac02480961860b6eba073",
+    "og:description": "Sign in to your OpenRouter account.",
+    "twitter:site": "@openrouter",
+    "ogDescription": "Sign in to your OpenRouter account.",
+    "og:site_name": "OpenRouter",
+    "og:image": "https://openrouter.ai/dynamic-og?title=Sign+In&description=Sign+in+to+your+OpenRouter+account.",
+    "og:title": "Sign In | OpenRouter",
+    "theme-color": [
+      "rgb(255, 255, 255)",
+      "rgb(9, 10, 11)"
+    ],
+    "twitter:title": "Sign In | OpenRouter",
+    "title": "Sign In | OpenRouter",
+    "twitter:description": "Sign in to your OpenRouter account.",
+    "og:url": "https://openrouter.ai",
+    "twitter:card": "summary_large_image",
+    "twitter:image": "https://openrouter.ai/dynamic-og?title=Sign+In&description=Sign+in+to+your+OpenRouter+account.",
+    "ogUrl": "https://openrouter.ai",
+    "favicon": "https://openrouter.ai/brand/v2/openrouter-glyph-light.svg",
+    "scrapeId": "019f662f-9d37-772a-8189-caf1144a7e08",
+    "sourceURL": "https://openrouter.ai/keys",
+    "url": "https://openrouter.ai/sign-in?redirect_url=https%3A%2F%2Fopenrouter.ai%2Fworkspaces%2Fdefault%2Fkeys",
+    "statusCode": 200,
+    "contentType": "text/html; charset=utf-8",
+    "timezone": "America/New_York",
+    "proxyUsed": "basic",
+    "cacheState": "miss",
+    "indexId": "0b8a133a-c520-48d8-a8f1-b769800bd9bd",
+    "creditsUsed": 1,
+    "concurrencyLimited": false
+  }
+}

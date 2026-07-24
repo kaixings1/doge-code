@@ -1,0 +1,27 @@
+2026-07-20T09:22:45.091Z [DEBUG] MDM settings load completed in 32ms
+2026-07-20T09:22:45.098Z [DEBUG] [readCustomApiStorage] activeName: OpenRouter
+2026-07-20T09:22:45.099Z [DEBUG] [readCustomApiStorage] ✅ using project preset: OpenRouter
+2026-07-20T09:22:45.128Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+2026-07-20T09:22:45.137Z [DEBUG] [sentry] SENTRY_DSN not set, skipping initialization
+2026-07-20T09:22:45.141Z [DEBUG] [init] configureGlobalMTLS starting
+2026-07-20T09:22:45.141Z [DEBUG] [init] configureGlobalMTLS complete
+2026-07-20T09:22:45.142Z [DEBUG] [init] configureGlobalAgents starting
+2026-07-20T09:22:45.143Z [DEBUG] CA certs: useSystemCA=false, extraCertsPath=D:\cert-final.pem, certStore=undefined
+2026-07-20T09:22:45.143Z [DEBUG] CA certs: Loaded 144 bundled root certificates as base
+2026-07-20T09:22:45.144Z [DEBUG] CA certs: Appended extra certificates from NODE_EXTRA_CA_CERTS (D:\cert-final.pem)
+2026-07-20T09:22:45.144Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-07-20T09:22:45.144Z [DEBUG] [init] configureGlobalAgents complete
+2026-07-20T09:22:45.199Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2026-07-20T09:22:45.200Z [DEBUG] Error log sink initialized
+2026-07-20T09:22:45.223Z [DEBUG] [Claude in Chrome] Found chrome profiles: Default
+2026-07-20T09:22:45.225Z [DEBUG] Applying permission update: Adding 1 directory with destination 'cliArg': ["d:\\RemoteScreen"]
+2026-07-20T09:22:45.226Z [DEBUG] Applying permission update: Adding 1 directory with destination 'cliArg': ["D:\\OpenSourceGit\\Chat2API"]
+2026-07-20T09:22:45.226Z [DEBUG] Applying permission update: Adding 1 directory with destination 'cliArg': ["D:\\doge-codeClaw0Token"]
+2026-07-20T09:22:45.226Z [DEBUG] [STARTUP] 正在加载 MCP 配置...
+2026-07-20T09:22:45.244Z [DEBUG] [ToolSearch:optimistic] mode=tst, ENABLE_TOOL_SEARCH=true, result=true
+2026-07-20T09:22:45.248Z [DEBUG] installed_plugins.json doesn't exist, returning empty V2 object
+2026-07-20T09:22:45.248Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2026-07-20T09:22:45.251Z [DEBUG] Git remote URL: https://github.com/kaixings1/doge-code.git
+2026-07-20T09:22:45.252Z [DEBUG] Parsed repository: github.com/kaixings1/doge-code from URL: https://github.com/kaixings1/doge-code.git
+2026-07-20T09:22:45.252Z [DEBUG] [Claude in Chrome] Found edge profiles: Default
+2026-07-20T09:22:45.255Z [DEBUG] [Claude in Chrome] Extension not found in any browser

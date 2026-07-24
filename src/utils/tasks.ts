@@ -130,12 +130,25 @@ async function writeHighWaterMark(
   await writeFile(path, String(value))
 }
 
+// Memoized guard to prevent recursion during tool isEnabled() checks.
+// See agentSwarmsEnabled.ts for the full recursion chain analysis.
+let _isTodoV2Cached: boolean | null = null
+
 export function isTodoV2Enabled(): boolean {
+  // Return cached result immediately - prevents recursive GrowthBook calls
+  // that occur when this function is called during tool initialization
+  if (_isTodoV2Cached !== null) {
+    return _isTodoV2Cached
+  }
+
   // Force-enable tasks in non-interactive mode (e.g. SDK users who want Task tools over TodoWrite)
   if (isEnvTruthy(process.env.CLAUDE_CODE_ENABLE_TASKS)) {
+    _isTodoV2Cached = true
     return true
   }
-  return !getIsNonInteractiveSession()
+  const result = !getIsNonInteractiveSession()
+  _isTodoV2Cached = result
+  return result
 }
 
 /**

@@ -1,0 +1,136 @@
+2026-07-20T15:52:55.842Z [DEBUG] MDM settings load completed in 26ms
+2026-07-20T15:52:55.848Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-20T15:52:55.848Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-20T15:52:55.867Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+2026-07-20T15:52:55.872Z [DEBUG] [sentry] SENTRY_DSN not set, skipping initialization
+2026-07-20T15:52:55.875Z [DEBUG] [init] configureGlobalMTLS starting
+2026-07-20T15:52:55.875Z [DEBUG] [init] configureGlobalMTLS complete
+2026-07-20T15:52:55.876Z [DEBUG] [init] configureGlobalAgents starting
+2026-07-20T15:52:55.877Z [DEBUG] CA certs: useSystemCA=false, extraCertsPath=D:\cert-final.pem, certStore=undefined
+2026-07-20T15:52:55.877Z [DEBUG] CA certs: Loaded 144 bundled root certificates as base
+2026-07-20T15:52:55.877Z [DEBUG] CA certs: Appended extra certificates from NODE_EXTRA_CA_CERTS (D:\cert-final.pem)
+2026-07-20T15:52:55.877Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-07-20T15:52:55.878Z [DEBUG] [init] configureGlobalAgents complete
+2026-07-20T15:52:55.932Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2026-07-20T15:52:55.935Z [DEBUG] Error log sink initialized
+2026-07-20T15:52:55.947Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-20T15:52:55.947Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-20T15:52:55.948Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-20T15:52:55.948Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-20T15:52:55.948Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-20T15:52:55.948Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-20T15:52:55.949Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-20T15:52:55.949Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-20T15:52:55.950Z [DEBUG] [STARTUP] 正在加载 MCP 配置...
+2026-07-20T15:52:55.954Z [DEBUG] [ToolSearch:optimistic] mode=tst, ENABLE_TOOL_SEARCH=true, result=true
+2026-07-20T15:52:55.963Z [DEBUG] Git remote URL: https://github.com/kaixings1/doge-code.git
+2026-07-20T15:52:55.964Z [DEBUG] Parsed repository: github.com/kaixings1/doge-code from URL: https://github.com/kaixings1/doge-code.git
+2026-07-20T15:52:55.964Z [DEBUG] [Claude in Chrome] Found edge profiles: Default
+2026-07-20T15:52:55.965Z [DEBUG] [Claude in Chrome] Extension not found in any browser
+2026-07-21T01:45:17.734Z [DEBUG] MDM settings load completed in 23ms
+2026-07-21T01:45:17.739Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-21T01:45:17.739Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-21T01:45:17.755Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+2026-07-21T01:45:17.759Z [DEBUG] [sentry] SENTRY_DSN not set, skipping initialization
+2026-07-21T01:45:17.761Z [DEBUG] [init] configureGlobalMTLS starting
+2026-07-21T01:45:17.762Z [DEBUG] [init] configureGlobalMTLS complete
+2026-07-21T01:45:17.762Z [DEBUG] [init] configureGlobalAgents starting
+2026-07-21T01:45:17.762Z [DEBUG] CA certs: useSystemCA=false, extraCertsPath=D:\cert-final.pem, certStore=undefined
+2026-07-21T01:45:17.763Z [DEBUG] CA certs: Loaded 144 bundled root certificates as base
+2026-07-21T01:45:17.763Z [DEBUG] CA certs: Appended extra certificates from NODE_EXTRA_CA_CERTS (D:\cert-final.pem)
+2026-07-21T01:45:17.763Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-07-21T01:45:17.763Z [DEBUG] [init] configureGlobalAgents complete
+2026-07-21T01:45:17.803Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2026-07-21T01:45:17.805Z [DEBUG] Error log sink initialized
+2026-07-21T01:45:17.817Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-21T01:45:17.817Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-21T01:45:17.818Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-21T01:45:17.818Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-21T01:45:17.818Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-21T01:45:17.819Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-21T01:45:17.819Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-21T01:45:17.819Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-21T01:45:17.820Z [DEBUG] [STARTUP] 正在加载 MCP 配置...
+2026-07-21T01:45:17.824Z [DEBUG] [ToolSearch:optimistic] mode=tst, ENABLE_TOOL_SEARCH=true, result=true
+2026-07-21T01:45:17.837Z [DEBUG] [Claude in Chrome] Found edge profiles: Default
+2026-07-21T01:45:17.838Z [DEBUG] Git remote URL: https://github.com/kaixings1/doge-code.git
+2026-07-21T01:45:17.838Z [DEBUG] Parsed repository: github.com/kaixings1/doge-code from URL: https://github.com/kaixings1/doge-code.git
+2026-07-21T01:45:17.839Z [DEBUG] [Claude in Chrome] Extension not found in any browser
+2026-07-21T14:41:36.197Z [DEBUG] MDM settings load completed in 27ms
+2026-07-21T14:41:36.203Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-21T14:41:36.204Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-21T14:41:36.220Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+2026-07-21T14:41:36.225Z [DEBUG] [sentry] SENTRY_DSN not set, skipping initialization
+2026-07-21T14:41:36.229Z [DEBUG] CA certs: useSystemCA=false, extraCertsPath=D:\cert-final.pem, certStore=undefined
+2026-07-21T14:41:36.229Z [DEBUG] CA certs: Loaded 144 bundled root certificates as base
+2026-07-21T14:41:36.230Z [DEBUG] CA certs: Appended extra certificates from NODE_EXTRA_CA_CERTS (D:\cert-final.pem)
+2026-07-21T14:41:36.230Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-07-21T14:41:36.230Z [DEBUG] [init] configureGlobalAgents complete
+2026-07-21T14:41:36.275Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2026-07-21T14:41:36.278Z [DEBUG] Error log sink initialized
+2026-07-21T14:41:36.291Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-21T14:41:36.292Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-21T14:41:36.292Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-21T14:41:36.293Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-21T14:41:36.293Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-21T14:41:36.294Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-21T14:41:36.294Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-21T14:41:36.294Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-21T14:41:36.295Z [DEBUG] [STARTUP] 正在加载 MCP 配置...
+2026-07-21T14:41:36.300Z [DEBUG] [ToolSearch:optimistic] mode=tst, ENABLE_TOOL_SEARCH=true, result=true
+2026-07-21T14:41:36.311Z [DEBUG] Git remote URL: https://github.com/kaixings1/doge-code.git
+2026-07-21T14:41:36.311Z [DEBUG] Parsed repository: github.com/kaixings1/doge-code from URL: https://github.com/kaixings1/doge-code.git
+2026-07-21T14:41:36.312Z [DEBUG] [Claude in Chrome] Found edge profiles: Default
+2026-07-21T14:41:36.313Z [DEBUG] [Claude in Chrome] Extension not found in any browser
+2026-07-21T14:42:10.228Z [DEBUG] MDM settings load completed in 22ms
+2026-07-21T14:42:10.234Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-21T14:42:10.234Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-21T14:42:10.250Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+2026-07-21T14:42:10.256Z [DEBUG] [sentry] SENTRY_DSN not set, skipping initialization
+2026-07-21T14:42:10.260Z [DEBUG] CA certs: useSystemCA=false, extraCertsPath=D:\cert-final.pem, certStore=undefined
+2026-07-21T14:42:10.261Z [DEBUG] CA certs: Loaded 144 bundled root certificates as base
+2026-07-21T14:42:10.261Z [DEBUG] CA certs: Appended extra certificates from NODE_EXTRA_CA_CERTS (D:\cert-final.pem)
+2026-07-21T14:42:10.261Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-07-21T14:42:10.261Z [DEBUG] [init] configureGlobalAgents complete
+2026-07-21T14:42:10.305Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2026-07-21T14:42:10.308Z [DEBUG] Error log sink initialized
+2026-07-21T14:42:10.320Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-21T14:42:10.320Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-21T14:42:10.321Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-21T14:42:10.321Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-21T14:42:10.321Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-21T14:42:10.321Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-21T14:42:10.322Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-21T14:42:10.322Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-21T14:42:10.323Z [DEBUG] [STARTUP] 正在加载 MCP 配置...
+2026-07-21T14:42:10.328Z [DEBUG] [ToolSearch:optimistic] mode=tst, ENABLE_TOOL_SEARCH=true, result=true
+2026-07-21T14:42:10.338Z [DEBUG] Git remote URL: https://github.com/kaixings1/doge-code.git
+2026-07-21T14:42:10.339Z [DEBUG] Parsed repository: github.com/kaixings1/doge-code from URL: https://github.com/kaixings1/doge-code.git
+2026-07-21T14:42:10.339Z [DEBUG] [Claude in Chrome] Found edge profiles: Default
+2026-07-21T14:42:10.340Z [DEBUG] [Claude in Chrome] Extension not found in any browser
+2026-07-21T16:37:20.649Z [DEBUG] MDM settings load completed in 29ms
+2026-07-21T16:37:20.658Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-21T16:37:20.658Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-21T16:37:20.695Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+2026-07-21T16:37:20.702Z [DEBUG] [sentry] SENTRY_DSN not set, skipping initialization
+2026-07-21T16:37:20.706Z [DEBUG] CA certs: useSystemCA=false, extraCertsPath=D:\cert-final.pem, certStore=undefined
+2026-07-21T16:37:20.706Z [DEBUG] CA certs: Loaded 144 bundled root certificates as base
+2026-07-21T16:37:20.707Z [DEBUG] CA certs: Appended extra certificates from NODE_EXTRA_CA_CERTS (D:\cert-final.pem)
+2026-07-21T16:37:20.707Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-07-21T16:37:20.707Z [DEBUG] [init] configureGlobalAgents complete
+2026-07-21T16:37:20.763Z [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2026-07-21T16:37:20.767Z [DEBUG] Error log sink initialized
+2026-07-21T16:37:20.779Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-21T16:37:20.779Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-21T16:37:20.780Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-21T16:37:20.780Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-21T16:37:20.780Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-21T16:37:20.780Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-21T16:37:20.781Z [DEBUG] [readCustomApiStorage] activeName: openrouter
+2026-07-21T16:37:20.781Z [DEBUG] [readCustomApiStorage] ✅ using project preset: openrouter
+2026-07-21T16:37:20.782Z [DEBUG] [STARTUP] 正在加载 MCP 配置...
+2026-07-21T16:37:20.786Z [DEBUG] [ToolSearch:optimistic] mode=tst, ENABLE_TOOL_SEARCH=true, result=true
+2026-07-21T16:37:20.796Z [DEBUG] Git remote URL: https://github.com/kaixings1/doge-code.git
+2026-07-21T16:37:20.796Z [DEBUG] Parsed repository: github.com/kaixings1/doge-code from URL: https://github.com/kaixings1/doge-code.git
+2026-07-21T16:37:20.797Z [DEBUG] [Claude in Chrome] Found edge profiles: Default
+2026-07-21T16:37:20.798Z [DEBUG] [Claude in Chrome] Extension not found in any browser

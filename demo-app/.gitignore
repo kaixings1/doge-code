@@ -1,0 +1,30 @@
+# Build output
+build/
+cmake-build-*/
+out/
+
+# IDE
+.vs/
+.idea/
+*.user
+*.suo
+*.sln.docstates
+
+# Logs
+logs/
+*.log
+
+# OS
+Thumbs.db
+.DS_Store
+
+# vcpkg
+vcpkg_installed/
+
+# Compiled
+*.exe
+*.dll
+*.pdb
+*.lib
+*.obj
+*.exp

@@ -1,4 +1,0 @@
-#!/bin/bash.exe
-export FIRSTTIME=true
-export FANCYPS1=rxvt
-/bin/_rxvt.exe -bg black -fg white -ls -fn 7x13 -title "Xterm" -sl 36000 "$@"

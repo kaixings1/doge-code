@@ -869,7 +869,7 @@ export function getMcpConfigByName(name) {
  * @returns 包含适当作用域的 Claude Code 服务器配置
  */
 export async function getClaudeCodeMcpConfigs(dynamicServers = {}, extraDedupTargets = Promise.resolve({})) {
-    require('fs').writeFileSync('d:/init_debug.log', `getClaudeCodeMcpConfigs ENTER at ${Date.now()}\n`, { flag: 'a' });
+    require('fs').writeFileSync('d:/init_debug.log', `getClaudeCodeMcpConfigs ENTER JSVSN3 at ${Date.now()}\n stack=${new Error().stack}\n`, { flag: 'a' });
     const { servers: enterpriseServers } = getMcpConfigsByScope('enterprise');
     // 如果企业 MCP 配置存在，则不使用其他配置；它对所有 MCP 服务器拥有独占控制权
     // （企业客户通常不希望其用户能够添加自己的 MCP 服务器）。
@@ -904,10 +904,13 @@ export async function getClaudeCodeMcpConfigs(dynamicServers = {}, extraDedupTar
     require('fs').writeFileSync('d:/init_debug.log', `BEFORE loadAllPluginsCacheOnly at ${Date.now()}\n`, { flag: 'a' });
     const pluginResult = await loadAllPluginsCacheOnly();
     require('fs').writeFileSync('d:/init_debug.log', `AFTER loadAllPluginsCacheOnly at ${Date.now()}\n`, { flag: 'a' });
+    require('fs').writeFileSync('d:/init_debug.log', `STUB_MARKER_JS_ABC123 at ${Date.now()}\n`, { flag: 'a' });
+    require('fs').writeFileSync('d:/init_debug.log', `AFTER-loadAll plugins=${pluginResult.enabled.length} errors=${pluginResult.errors.length} at ${Date.now()}\n`, { flag: 'a' });
     // 收集服务器加载期间特定于 MCP 的错误
     const mcpErrors = [];
     // 记录任何插件加载错误——生产中切勿静默失败
     if (pluginResult.errors.length > 0) {
+        require('fs').writeFileSync('d:/init_debug.log', `error-loop START len=${pluginResult.errors.length} at ${Date.now()}\n`, { flag: 'a' });
         for (const error of pluginResult.errors) {
             // 仅当确实与 MCP 相关时才记录为 MCP 错误
             // 否则仅记录为调试信息，因为插件可能没有 MCP 服务器
@@ -926,8 +929,15 @@ export async function getClaudeCodeMcpConfigs(dynamicServers = {}, extraDedupTar
             }
         }
     }
+    require('fs').writeFileSync('d:/init_debug.log', `error-loop END at ${Date.now()}\n`, { flag: 'a' });
     // 并行处理已启用插件的 MCP 服务器
-    const pluginServerResults = await Promise.all(pluginResult.enabled.map(plugin => getPluginMcpServers(plugin, mcpErrors)));
+    require('fs').writeFileSync('d:/init_debug.log', `BEFORE getPluginMcpServers map (${pluginResult.enabled.length} enabled) at ${Date.now()}\n`, { flag: 'a' });
+    const pluginServerResults = await Promise.all(pluginResult.enabled.map(async (plugin) => {
+        require('fs').writeFileSync('d:/init_debug.log', `  getPluginMcpServers ENTER ${plugin.name} at ${Date.now()}\n`, { flag: 'a' });
+        const r = await getPluginMcpServers(plugin, mcpErrors);
+        require('fs').writeFileSync('d:/init_debug.log', `  getPluginMcpServers EXIT ${plugin.name} at ${Date.now()}\n`, { flag: 'a' });
+        return r;
+    }));
     for (const servers of pluginServerResults) {
         if (servers) {
             Object.assign(pluginMcpServers, servers);
@@ -953,7 +963,10 @@ export async function getClaudeCodeMcpConfigs(dynamicServers = {}, extraDedupTar
     // 只有实际会连接的服务器才是有效的去重目标——禁用的手动服务器不得
     // 抑制插件服务器，否则两者都不会运行
     //（手动服务器在连接时按名称跳过；插件在此处被移除）。
+    require('fs').writeFileSync('d:/init_debug.log', `BEFORE await extraDedupTargets at ${Date.now()}\n`, { flag: 'a' });
     const extraTargets = await extraDedupTargets;
+    require('fs').writeFileSync('d:/init_debug.log', `AFTER await extraDedupTargets (${Object.keys(extraTargets).length} targets) at ${Date.now()}\n`, { flag: 'a' });
+    require('fs').writeFileSync('d:/init_debug.log', `BEFORE enabledManual loop (users=${Object.keys(userServers).length} proj=${Object.keys(approvedProjectServers).length} local=${Object.keys(localServers).length} dyn=${Object.keys(dynamicServers).length}) at ${Date.now()}\n`, { flag: 'a' });
     const enabledManualServers = {};
     for (const [name, config] of Object.entries({
         ...userServers,
@@ -982,7 +995,9 @@ export async function getClaudeCodeMcpConfigs(dynamicServers = {}, extraDedupTar
             enabledPluginServers[name] = config;
         }
     }
+    require('fs').writeFileSync('d:/init_debug.log', `BEFORE dedupPluginMcpServers at ${Date.now()}\n`, { flag: 'a' });
     const { servers: dedupedPluginServers, suppressed } = dedupPluginMcpServers(enabledPluginServers, enabledManualServers);
+    require('fs').writeFileSync('d:/init_debug.log', `AFTER dedupPluginMcpServers at ${Date.now()}\n`, { flag: 'a' });
     Object.assign(dedupedPluginServers, disabledPluginServers);
     // 在 /plugin UI 中展示抑制信息。在以上 logError 循环之后推送，
     // 这样这些信息不会进入错误日志——它们是信息性的，而非错误。
@@ -1002,13 +1017,18 @@ export async function getClaudeCodeMcpConfigs(dynamicServers = {}, extraDedupTar
     // 按优先级顺序合并：plugin < user < project < local
     const configs = Object.assign({}, dedupedPluginServers, userServers, approvedProjectServers, localServers);
     // 对合并后的配置应用策略过滤
+    require('fs').writeFileSync('d:/init_debug.log', `BEFORE policy filter loop at ${Date.now()}\n`, { flag: 'a' });
     const filtered = {};
     for (const [name, serverConfig] of Object.entries(configs)) {
-        if (!isMcpServerAllowedByPolicy(name, serverConfig)) {
+        require('fs').writeFileSync('d:/init_debug.log', `policy-check ENTER ${name} at ${Date.now()}\n`, { flag: 'a' });
+        const allowed = isMcpServerAllowedByPolicy(name, serverConfig);
+        require('fs').writeFileSync('d:/init_debug.log', `policy-check EXIT ${name} allowed=${allowed} at ${Date.now()}\n`, { flag: 'a' });
+        if (!allowed) {
             continue;
         }
         filtered[name] = serverConfig;
     }
+    require('fs').writeFileSync('d:/init_debug.log', `getClaudeCodeMcpConfigs RETURN servers=${Object.keys(filtered).length} at ${Date.now()}\n`, { flag: 'a' });
     return { servers: filtered, errors: mcpErrors };
 }
 /**
@@ -1024,8 +1044,11 @@ export async function getAllMcpConfigs() {
     // 在 getClaudeCodeMcpConfigs 之前启动 claude.ai 获取，使其与内部的
     // loadAllPluginsCacheOnly() 重叠执行。已记忆化——下面的 await 调用是缓存命中。
     const claudeaiPromise = fetchClaudeAIMcpConfigsIfEligible();
+    require('fs').writeFileSync('d:/init_debug.log', `getAllMcpConfigs BEFORE getClaudeCodeMcpConfigs at ${Date.now()}\n`, { flag: 'a' });
     const { servers: claudeCodeServers, errors } = await getClaudeCodeMcpConfigs({}, claudeaiPromise);
+    require('fs').writeFileSync('d:/init_debug.log', `getAllMcpConfigs AFTER getClaudeCodeMcpConfigs servers=${Object.keys(claudeCodeServers).length} at ${Date.now()}\n`, { flag: 'a' });
     const { allowed: claudeaiMcpServers } = filterMcpServersByPolicy(await claudeaiPromise);
+    require('fs').writeFileSync('d:/init_debug.log', `getAllMcpConfigs AFTER filterMcpServersByPolicy at ${Date.now()}\n`, { flag: 'a' });
     // 抑制与已启用手动服务器重复的 claude.ai 连接器。
     // 键永远不会冲突（`slack` vs `claude.ai Slack`），因此下面的合并
     // 不会捕获此情况——需要基于签名的 URL 去重。

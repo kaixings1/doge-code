@@ -1,0 +1,6 @@
+const fs=require('fs')  
+const buf=fs.readFileSync('doge.exe')  
+const s=buf.toString()  
+const idx=s.indexOf('trace.txt')  
+const context=s.substring(Math.max(0,idx-300),idx+300)  
+console.log(context)  

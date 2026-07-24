@@ -710,6 +710,15 @@ export async function getFeatureValue_DEPRECATED<T>(
   return getFeatureValueInternal(feature, defaultValue, true)
 }
 
+// Track whether we are inside a tool-initialization call stack.
+// Prevents getFeatureValue_CACHED_MAY_BE_STALE → getGlobalConfig() →
+// (indirectly) getAllBaseTools() → isAgentSwarmsEnabled() → recursion.
+let _inToolInitCallStack = false
+
+export function _setInToolInitCallStackForTesting(v: boolean): void {
+  _inToolInitCallStack = v
+}
+
 /**
  * Get a feature value from disk cache immediately. Pure read — disk is
  * populated by syncRemoteEvalToDisk on every successful payload (init +
@@ -722,42 +731,67 @@ export function getFeatureValue_CACHED_MAY_BE_STALE<T>(
   feature: string,
   defaultValue: T,
 ): T {
-  // Check env var overrides first (for eval harnesses)
-  const overrides = getEnvOverrides()
-  if (overrides && feature in overrides) {
-    return overrides[feature] as T
-  }
-  const configOverrides = getConfigOverrides()
-  if (configOverrides && feature in configOverrides) {
-    return configOverrides[feature] as T
-  }
-
-  if (!isGrowthBookEnabled()) {
+  // Guard against recursion during tool initialization.
+  // If we are already inside a getAllBaseTools() call stack (detected by
+  // _inToolInitCallStack or __gb_recursion_depth), return the default value
+  // immediately to break any potential infinite recursion loop.
+  if (_inToolInitCallStack) {
     return defaultValue
   }
 
-  // Log experiment exposure if data is available, otherwise defer until after init
-  if (experimentDataByFeature.has(feature)) {
-    logExposureForFeature(feature)
-  } else {
-    pendingExposures.add(feature)
+  const depth = (globalThis as any).__gb_recursion_depth || 0
+  if (depth > 8) {
+    return defaultValue
   }
-
-  // In-memory payload is authoritative once processRemoteEvalPayload has run.
-  // Disk is also fresh by then (syncRemoteEvalToDisk runs synchronously inside
-  // init), so this is correctness-equivalent to the disk read below — but it
-  // skips the config JSON parse and is what onGrowthBookRefresh subscribers
-  // depend on to read fresh values the instant they're notified.
-  if (remoteEvalFeatureValues.has(feature)) {
-    return remoteEvalFeatureValues.get(feature) as T
+  ;(globalThis as any).__gb_recursion_depth = depth + 1
+  const guardKey = '__gb_depth_' + feature
+  const alreadyVisiting = (globalThis as any)[guardKey]
+  if (alreadyVisiting) {
+    ;(globalThis as any).__gb_recursion_depth = depth
+    return defaultValue
   }
-
-  // Fall back to disk cache (survives across process restarts)
+  ;(globalThis as any)[guardKey] = true
   try {
-    const cached = getGlobalConfig().cachedGrowthBookFeatures?.[feature]
-    return cached !== undefined ? (cached as T) : defaultValue
-  } catch {
-    return defaultValue
+    // Check env var overrides first (for eval harnesses)
+    const overrides = getEnvOverrides()
+    if (overrides && feature in overrides) {
+      return overrides[feature] as T
+    }
+    const configOverrides = getConfigOverrides()
+    if (configOverrides && feature in configOverrides) {
+      return configOverrides[feature] as T
+    }
+
+    if (!isGrowthBookEnabled()) {
+      return defaultValue
+    }
+
+    // Log experiment exposure if data is available, otherwise defer until after init
+    if (experimentDataByFeature.has(feature)) {
+      logExposureForFeature(feature)
+    } else {
+      pendingExposures.add(feature)
+    }
+
+    // In-memory payload is authoritative once processRemoteEvalPayload has run.
+    // Disk is also fresh by then (syncRemoteEvalToDisk runs synchronously inside
+    // init), so this is correctness-equivalent to the disk read below -- but it
+    // skips the config JSON parse and is what onGrowthBookRefresh subscribers
+    // depend on to read fresh values the instant they're notified.
+    if (remoteEvalFeatureValues.has(feature)) {
+      return remoteEvalFeatureValues.get(feature) as T
+    }
+
+    // Fall back to disk cache (survives across process restarts)
+    try {
+      const cached = getGlobalConfig().cachedGrowthBookFeatures?.[feature]
+      return cached != null ? (cached as T) : defaultValue
+    } catch {
+      return defaultValue
+    }
+  } finally {
+    ;(globalThis as any)[guardKey] = false
+    ;(globalThis as any).__gb_recursion_depth = depth
   }
 }
 
@@ -1140,3 +1174,4 @@ export function getDynamicConfig_CACHED_MAY_BE_STALE<T>(
 ): T {
   return getFeatureValue_CACHED_MAY_BE_STALE(configName, defaultValue)
 }
+// FORCE_RECOMPILE_2026_07_23_2300  

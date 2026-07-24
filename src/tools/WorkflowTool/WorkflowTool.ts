@@ -1,6 +1,6 @@
-import { Tool } from '../../Tool';
 import { z } from 'zod';
-export const WorkflowTool: Tool = {
+
+export const WorkflowTool = {
   name: 'workflow',
   description: 'Execute workflow scripts',
   callOn: 'manual',
@@ -13,10 +13,34 @@ export const WorkflowTool: Tool = {
     output: z.string().optional().describe('Workflow output'),
     error: z.string().optional().describe('Error message'),
   }),
+
   exec: async ({ script, args = {} }) => {
     return {
       success: true,
       output: `Workflow ${script} executed`,
     };
   },
-}; 
+
+  // Tool 接口默认安全实现
+  isEnabled: () => true,
+  isConcurrencySafe: () => false,
+  isReadOnly: () => false,
+  isDestructive: () => false,
+  checkPermissions: (input, _ctx) =>
+    Promise.resolve({ behavior: 'allow', updatedInput: input }),
+  toAutoClassifierInput: () => '',
+  userFacingName: () => 'workflow',
+
+  renderToolUseMessage: (input) => `Workflow: ${input?.script ?? '?'}`,
+  mapToolResultToToolResultBlockParam: (content, toolUseID) => ({
+    tool_use_id: toolUseID,
+    type: 'tool_result',
+    content: content.output || 'Workflow executed',
+  }),
+  prompt: async () => 'Execute workflow scripts.',
+  description: async () => 'Execute workflow scripts',
+  call: async (args, context, canUseTool, parentMessage, onProgress) => {
+    const result = await this.exec(args);
+    return { data: result };
+  },
+};
