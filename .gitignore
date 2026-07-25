@@ -25,6 +25,11 @@ node_modules/
 *.log
 *.tmp
 *.bak
+.github/
+.github_free/
+.claude-integrations/
+.firecrawl/
+
 
 # Lock Files
 bun.lock
