@@ -26,6 +26,11 @@
     "format": "biome format --write src/",
     "knip": "knip"
   },
+  "compilerOptions": {
+    "compiler": {
+      "reactCompiler": false
+    }
+  },
   "bin": {
     "doge": "./src/bootstrap-entry.ts"
   },
