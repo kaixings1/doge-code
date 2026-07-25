@@ -1,9 +1,0 @@
-{
-  "id": "llm-task",
-  "name": "llm-task",
-  "envVars": [],
-  "authMethods": [],
-  "baseUrl": "",
-  "description": "Generic JSON-only LLM tool for structured tasks callable from workflows.",
-  "dogeEnvExample": {}
-}

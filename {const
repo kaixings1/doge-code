@@ -1,1 +1,0 @@
-const fs=require('fs');const p=require('path');function scan(d){fs.readdirSync(d).forEach(f= fp=p.join(d,f);if(fs.statSync(fp).isDirectory()){if(f!=='node_modules'

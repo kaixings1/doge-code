@@ -1,9 +1,0 @@
-{
-  "id": "slack",
-  "name": "slack",
-  "envVars": [],
-  "authMethods": [],
-  "baseUrl": "",
-  "description": "",
-  "dogeEnvExample": {}
-}

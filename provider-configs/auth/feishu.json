@@ -1,9 +1,0 @@
-{
-  "id": "feishu",
-  "name": "feishu",
-  "envVars": [],
-  "authMethods": [],
-  "baseUrl": "",
-  "description": "",
-  "dogeEnvExample": {}
-}

@@ -145,7 +145,7 @@ _script_b64.txt*
 .claude/skills/cpp-windows-dev.md
 .claude/skills/test.txt
 .claude/skills/_fp_option_content.json
-
+.github/
 # =========================
 # 废弃技能（自己试验过认为没用）
 # =========================

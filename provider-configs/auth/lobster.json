@@ -1,9 +1,0 @@
-{
-  "id": "lobster",
-  "name": "lobster",
-  "envVars": [],
-  "authMethods": [],
-  "baseUrl": "",
-  "description": "Typed workflow tool with resumable approvals.",
-  "dogeEnvExample": {}
-}

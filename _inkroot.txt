@@ -1,4 +1,0 @@
--1::import autoBind from 'auto-bind';
-import { closeSync, constants as fsConstants, openSync, readSync, writeSync } from 'fs';
-import { noop } from '../vendor/lodash.js';
-import { throttle } from '../ven

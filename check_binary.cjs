@@ -1,6 +1,0 @@
-const fs = require('fs')  
-const buf = fs.readFileSync('doge.exe')  
-const str = buf.toString()  
-console.log('has ENTER_getToolSearchMode:', str.includes('ENTER_getToolSearchMode'))  
-console.log('has ENTER_isToolSearchEnabledOptimistic:', str.includes('ENTER_isToolSearchEnabledOptimistic'))  
-console.log('has optimisticCache:', str.includes('optimisticCache'))  

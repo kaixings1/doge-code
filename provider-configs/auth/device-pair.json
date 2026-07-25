@@ -1,9 +1,0 @@
-{
-  "id": "device-pair",
-  "name": "device-pair",
-  "envVars": [],
-  "authMethods": [],
-  "baseUrl": "",
-  "description": "Generate setup codes and approve device pairing requests.",
-  "dogeEnvExample": {}
-}

@@ -1,9 +1,0 @@
-{
-  "id": "mattermost",
-  "name": "mattermost",
-  "envVars": [],
-  "authMethods": [],
-  "baseUrl": "",
-  "description": "",
-  "dogeEnvExample": {}
-}

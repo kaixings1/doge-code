@@ -1,9 +1,0 @@
-{
-  "id": "diagnostics-otel",
-  "name": "diagnostics-otel",
-  "envVars": [],
-  "authMethods": [],
-  "baseUrl": "",
-  "description": "",
-  "dogeEnvExample": {}
-}

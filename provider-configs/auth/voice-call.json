@@ -1,9 +1,0 @@
-{
-  "id": "voice-call",
-  "name": "voice-call",
-  "envVars": [],
-  "authMethods": [],
-  "baseUrl": "",
-  "description": "",
-  "dogeEnvExample": {}
-}

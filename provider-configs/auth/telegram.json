@@ -1,9 +1,0 @@
-{
-  "id": "telegram",
-  "name": "telegram",
-  "envVars": [],
-  "authMethods": [],
-  "baseUrl": "",
-  "description": "",
-  "dogeEnvExample": {}
-}

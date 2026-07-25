@@ -1,7 +1,0 @@
-{
-  "name": "frontend-design",
-  "version": "1.1.0",
-  "description": "Create distinctive, production-grade frontend interfaces that avoid generic AI aesthetics",
-  "icon": "https://raw.githubusercontent.com/anthropics/claude-code/main/plugins/frontend-design/.claude-plugin/icon.svg",
-  "homepage": "https://github.com/anthropics/claude-code/tree/main/plugins/frontend-design"
-}
