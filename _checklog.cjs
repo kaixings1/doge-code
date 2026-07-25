@@ -1,1 +1,0 @@
-const fs=require('fs'); const s=fs.readFileSync('d:/init_debug.log','utf8'); const lines=s.split(/\r?\n/); console.log('total lines:', lines.length); console.log('last 10 lines:'); lines.slice(-10).forEach((l,i)= '+l));  

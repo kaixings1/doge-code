@@ -1,9 +1,0 @@
-{
-  "id": "googlechat",
-  "name": "googlechat",
-  "envVars": [],
-  "authMethods": [],
-  "baseUrl": "",
-  "description": "",
-  "dogeEnvExample": {}
-}
