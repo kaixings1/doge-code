@@ -1,9 +1,0 @@
-省一次 getCwd() 系统调用。
-    const currentCwd = worktreeEnabled ? getCwd() : preSetupCwd;
-    logForDebugging('[STARTUP] 正在加载命令和代理...');
-    const commandsStart = Date.now();
-    // 汇合在 setup() 之前启动的 promise（如果 worktreeEnabled 门控了早期启动，则重新开始）。两者都根据工作目录进行记忆。
-    require('fs').writeFileSync('d:/trace.log', `BEFORE Promise.all commands at ${Date.now()}\n`, { flag: 'a' });
-    const [commands, agentDefinitionsResult] = await Promise.all([commandsPromise ?? getCommands(currentCwd), agentDefsPromise ?? getAgentDefinitionsWithOverrides(currentCwd)]);
-    require('fs').writeFileSync('d:/trace.log', `AFTER Promise.all commands at ${Date.now()}\n`, { flag: 'a' });
-    logForDebugging(`[STARTUP] 命令和代理加载完成，耗时 

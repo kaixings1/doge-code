@@ -1,9 +1,0 @@
-{
-  "id": "open-prose",
-  "name": "open-prose",
-  "envVars": [],
-  "authMethods": [],
-  "baseUrl": "",
-  "description": "OpenProse VM skill pack with a /prose slash command.",
-  "dogeEnvExample": {}
-}

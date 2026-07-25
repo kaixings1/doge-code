@@ -1,9 +1,0 @@
-{
-  "id": "whatsapp",
-  "name": "whatsapp",
-  "envVars": [],
-  "authMethods": [],
-  "baseUrl": "",
-  "description": "",
-  "dogeEnvExample": {}
-}

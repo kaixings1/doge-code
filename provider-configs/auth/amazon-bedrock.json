@@ -1,9 +1,0 @@
-{
-  "id": "amazon-bedrock",
-  "name": "amazon-bedrock",
-  "envVars": [],
-  "authMethods": [],
-  "baseUrl": "",
-  "description": "",
-  "dogeEnvExample": {}
-}
