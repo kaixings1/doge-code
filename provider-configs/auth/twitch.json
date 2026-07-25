@@ -1,9 +1,0 @@
-{
-  "id": "twitch",
-  "name": "twitch",
-  "envVars": [],
-  "authMethods": [],
-  "baseUrl": "",
-  "description": "",
-  "dogeEnvExample": {}
-}

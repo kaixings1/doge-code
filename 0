@@ -1,1 +1,0 @@
-while(p!==-1){console.log('pos='+p+': '+s.substring(p,p+80));p=s.indexOf('i37(',p+1);if(p
