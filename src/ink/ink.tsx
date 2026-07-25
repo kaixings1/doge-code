@@ -606,7 +606,7 @@ export default class Ink {
   }
   resume(): void {
     this.isPaused = false;
-    this.onRender();
+    setTimeout(() => this.onRender(), 0);
   }
 
   /**
