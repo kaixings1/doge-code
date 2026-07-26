@@ -8,7 +8,7 @@ export const call: LocalCommandCall = async (args, _context) => {
   const mockTools = [
     {
       name: 'file-system',
-      description: 'Read and write files, list directories, and inspect file metadata',
+      description: '读取和写入文件、列出目录、查看文件元数据',
       category: 'filesystem',
       tags: ['files', 'io'],
       author: 'modelcontextprotocol',
@@ -19,7 +19,7 @@ export const call: LocalCommandCall = async (args, _context) => {
     },
     {
       name: 'postgres',
-      description: 'Query and manage PostgreSQL databases',
+      description: '查询和管理 PostgreSQL 数据库',
       category: 'database',
       tags: ['sql', 'postgresql', 'database'],
       author: 'modelcontextprotocol',
@@ -30,7 +30,7 @@ export const call: LocalCommandCall = async (args, _context) => {
     },
     {
       name: 'brave-search',
-      description: 'Search the web using Brave Search API',
+      description: '使用 Brave 搜索 API 搜索网页',
       category: 'search',
       tags: ['web', 'search', 'api'],
       author: 'brave',
@@ -41,7 +41,7 @@ export const call: LocalCommandCall = async (args, _context) => {
     },
     {
       name: 'github',
-      description: 'Access GitHub repositories, issues, and pull requests',
+      description: '访问 GitHub 仓库、问题和拉取请求',
       category: 'development',
       tags: ['git', 'github', 'repositories'],
       author: 'modelcontextprotocol',
@@ -52,7 +52,7 @@ export const call: LocalCommandCall = async (args, _context) => {
     },
     {
       name: 'slack',
-      description: 'Send and receive messages in Slack workspaces',
+      description: '在 Slack 工作区中收发消息',
       category: 'communication',
       tags: ['slack', 'messaging', 'chat'],
       author: 'slack',
@@ -62,7 +62,7 @@ export const call: LocalCommandCall = async (args, _context) => {
     },
     {
       name: 'memory-bank',
-      description: 'Store and retrieve memories and context',
+      description: '存储和检索记忆与上下文',
       category: 'memory',
       tags: ['memory', 'context', 'storage'],
       author: 'modelcontextprotocol',
@@ -73,7 +73,7 @@ export const call: LocalCommandCall = async (args, _context) => {
     },
     {
       name: 'sequential-thinking',
-      description: 'Tool for dynamic and reflective problem-solving',
+      description: '动态和反思性问题解决工具',
       category: 'reasoning',
       tags: ['thinking', 'reasoning', 'planning'],
       author: 'modelcontextprotocol',
@@ -84,7 +84,7 @@ export const call: LocalCommandCall = async (args, _context) => {
     },
     {
       name: 'fetch',
-      description: 'Make HTTP requests to external APIs',
+      description: '向外部 API 发起 HTTP 请求',
       category: 'http',
       tags: ['http', 'api', 'fetch'],
       author: 'modelcontextprotocol',
@@ -95,7 +95,7 @@ export const call: LocalCommandCall = async (args, _context) => {
     },
     {
       name: 'playwright',
-      description: 'Browser automation and web scraping',
+      description: '浏览器自动化和网页抓取',
       category: 'automation',
       tags: ['browser', 'automation', 'scraping'],
       author: 'playwright',
@@ -106,7 +106,7 @@ export const call: LocalCommandCall = async (args, _context) => {
     },
     {
       name: 'terminal',
-      description: 'Execute terminal commands and scripts',
+      description: '执行终端命令和脚本',
       category: 'system',
       tags: ['terminal', 'shell', 'commands'],
       author: 'modelcontextprotocol',

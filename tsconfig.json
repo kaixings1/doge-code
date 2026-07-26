@@ -26,5 +26,8 @@
     "src/**/*",
     "vendor/**/*",
     "shims/**/*"
+  ],
+  "exclude": [
+    "src/**/*.mjs"
   ]
 }

@@ -318,9 +318,6 @@ export function getAllBaseTools(): Tools {
     _tools.push(VimVisualModeTool);
     _tools.push(TerminalPanelTool);
     _tools.push(ContextCollapseTool);
-    _tools.push(WorkflowTool);
-    _tools.push(SnipTool);
-    _tools.push(TaskCreateTool);
     _tools.push(PlanModeTool);
     _tools.push(BranchTool);
     _tools.push(CompareTool);

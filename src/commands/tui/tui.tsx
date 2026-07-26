@@ -527,6 +527,6 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
 export default {
   name: 'tui',
   type: 'local-jsx',
-  description: 'TUI 模式 - 闪烁免终端，支持主题/监控/会话/诊断',
+  description: '全屏终端界面（闪烁免模式），支持主题/监控/会话/诊断',
   call: call
 }
