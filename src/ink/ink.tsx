@@ -146,7 +146,7 @@ export default class Ink {
     y: number;
   } | null = null;
   constructor(private readonly options: Options) {
-    console.error('[INK-CTOR] Ink constructor start, isTTY=' + (options.stdout?.isTTY ?? 'unknown'));
+    //console.error('[INK-CTOR] Ink constructor start, isTTY=' + (options.stdout?.isTTY ?? 'unknown'));
     autoBind(this);
     if (this.options.patchConsole) {
       this.restoreConsole = this.patchConsole();
@@ -1109,7 +1109,7 @@ export default class Ink {
     this.cursorDeclaration = decl;
   };
   render(node: ReactNode): void {
-    console.error('[INK-1] render: start, node set');
+    //console.error('[INK-1] render: start, node set');
     this.currentNode = node;
     const tree = <App stdin={this.options.stdin} stdout={this.options.stdout} stderr={this.options.stderr} exitOnCtrlC={this.options.exitOnCtrlC} onExit={this.unmount} terminalColumns={this.terminalColumns} terminalRows={this.terminalRows} selection={this.selection} onSelectionChange={this.notifySelectionChange} onClickAt={this.dispatchClick} onHoverAt={this.dispatchHover} getHyperlinkAt={this.getHyperlinkAt} onOpenHyperlink={this.openHyperlink} onMultiClick={this.handleMultiClick} onSelectionDrag={this.handleSelectionDrag} onStdinResume={this.reassertTerminalModes} onCursorDeclaration={this.setCursorDeclaration} dispatchKeyboardEvent={this.dispatchKeyboardEvent}>
         <TerminalWriteProvider value={this.writeRaw}>
@@ -1119,10 +1119,10 @@ export default class Ink {
 
     // @ts-expect-error updateContainerSync 存在于 react-reconciler 但不在 @types/react-reconciler 中
     reconciler.updateContainerSync(tree, this.container, null, noop);
-    console.error('[INK-2] render: after updateContainerSync');
+    //console.error('[INK-2] render: after updateContainerSync');
     // @ts-expect-error flushSyncWork 存在于 react-reconciler 但不在 @types/react-reconciler 中
     reconciler.flushSyncWork();
-    console.error('[INK-3] render: after flushSyncWork (first frame committed)');
+    //console.error('[INK-3] render: after flushSyncWork (first frame committed)');
   }
   unmount(error?: Error | number | null): void {
     if (this.isUnmounted) {

@@ -105,6 +105,103 @@ export class RipgrepTimeoutError extends Error {
   }
 }
 
+/**
+ * Spawn ripgrep with timeout and SIGKILL escalation.
+ *
+ * Both embedded and non-embedded paths use spawn with SIGKILL escalation.
+ * Previously, non-embedded used execFile which lacked SIGKILL escalation
+ * on Windows (killSignal forced to SIGTERM), risking deadlock when rg
+ * was blocked in uninterruptible I/O.
+ */
+function spawnRipgrepWithTimeout(
+  rgPath: string,
+  fullArgs: string[],
+  abortSignal: AbortSignal,
+  timeout: number,
+  callback: (
+    error: ExecFileException | null,
+    stdout: string,
+    stderr: string,
+  ) => void,
+): ChildProcess {
+  const child = spawn(rgPath, fullArgs, {
+    signal: abortSignal,
+    windowsHide: true,
+  })
+
+  let stdout = ''
+  let stderr = ''
+  let stdoutTruncated = false
+  let stderrTruncated = false
+
+  child.stdout?.on('data', (data: Buffer) => {
+    if (!stdoutTruncated) {
+      stdout += data.toString()
+      if (stdout.length > MAX_BUFFER_SIZE) {
+        stdout = stdout.slice(0, MAX_BUFFER_SIZE)
+        stdoutTruncated = true
+      }
+    }
+  })
+
+  child.stderr?.on('data', (data: Buffer) => {
+    if (!stderrTruncated) {
+      stderr += data.toString()
+      if (stderr.length > MAX_BUFFER_SIZE) {
+        stderr = stderr.slice(0, MAX_BUFFER_SIZE)
+        stderrTruncated = true
+      }
+    }
+  })
+
+  // Set up timeout with SIGKILL escalation.
+  // SIGTERM alone may not kill ripgrep if it's blocked in uninterruptible I/O
+  // (e.g., deep filesystem traversal). If SIGTERM doesn't work within 5 seconds,
+  // escalate to SIGKILL which cannot be caught or ignored.
+  // On Windows, child.kill('SIGTERM') throws; use default signal.
+  let killTimeoutId: ReturnType<typeof setTimeout> | undefined
+  const timeoutId = setTimeout(() => {
+    if (process.platform === 'win32') {
+      child.kill()
+    } else {
+      child.kill('SIGTERM')
+      killTimeoutId = setTimeout(c => c.kill('SIGKILL'), 5_000, child)
+    }
+  }, timeout)
+
+  // On Windows, both 'close' and 'error' can fire for the same process
+  // (e.g. when AbortSignal kills the child). Guard against double-callback.
+  let settled = false
+  child.on('close', (code, signal) => {
+    if (settled) return
+    settled = true
+    clearTimeout(timeoutId)
+    clearTimeout(killTimeoutId)
+    if (code === 0 || code === 1) {
+      // 0 = matches found, 1 = no matches (both are success)
+      callback(null, stdout, stderr)
+    } else {
+      const error: ExecFileException = new Error(
+        `ripgrep exited with code ${code}`,
+      )
+      error.code = code ?? undefined
+      error.signal = signal ?? undefined
+      callback(error, stdout, stderr)
+    }
+  })
+
+  child.on('error', (err: NodeJS.ErrnoException) => {
+    if (settled) return
+    settled = true
+    clearTimeout(timeoutId)
+    clearTimeout(killTimeoutId)
+    const error: ExecFileException = err
+    callback(error, stdout, stderr)
+  })
+
+  return child
+}
+
 function ripGrepRaw(
   args: string[],
   target: string,
@@ -132,101 +229,15 @@ function ripGrepRaw(
     parseInt(process.env.CLAUDE_CODE_GLOB_TIMEOUT_SECONDS || '', 10) || 0
   const timeout = parsedSeconds > 0 ? parsedSeconds * 1000 : defaultTimeout
 
-  // For embedded ripgrep, use spawn with argv0 (execFile doesn't support argv0 properly)
-  if (argv0) {
-    const child = spawn(rgPath, fullArgs, {
-      argv0,
-      signal: abortSignal,
-      // Prevent visible console window on Windows (no-op on other platforms)
-      windowsHide: true,
-    })
-
-    let stdout = ''
-    let stderr = ''
-    let stdoutTruncated = false
-    let stderrTruncated = false
-
-    child.stdout?.on('data', (data: Buffer) => {
-      if (!stdoutTruncated) {
-        stdout += data.toString()
-        if (stdout.length > MAX_BUFFER_SIZE) {
-          stdout = stdout.slice(0, MAX_BUFFER_SIZE)
-          stdoutTruncated = true
-        }
-      }
-    })
-
-    child.stderr?.on('data', (data: Buffer) => {
-      if (!stderrTruncated) {
-        stderr += data.toString()
-        if (stderr.length > MAX_BUFFER_SIZE) {
-          stderr = stderr.slice(0, MAX_BUFFER_SIZE)
-          stderrTruncated = true
-        }
-      }
-    })
-
-    // Set up timeout with SIGKILL escalation.
-    // SIGTERM alone may not kill ripgrep if it's blocked in uninterruptible I/O
-    // (e.g., deep filesystem traversal). If SIGTERM doesn't work within 5 seconds,
-    // escalate to SIGKILL which cannot be caught or ignored.
-    // On Windows, child.kill('SIGTERM') throws; use default signal.
-    let killTimeoutId: ReturnType<typeof setTimeout> | undefined
-    const timeoutId = setTimeout(() => {
-      if (process.platform === 'win32') {
-        child.kill()
-      } else {
-        child.kill('SIGTERM')
-        killTimeoutId = setTimeout(c => c.kill('SIGKILL'), 5_000, child)
-      }
-    }, timeout)
-
-    // On Windows, both 'close' and 'error' can fire for the same process
-    // (e.g. when AbortSignal kills the child). Guard against double-callback.
-    let settled = false
-    child.on('close', (code, signal) => {
-      if (settled) return
-      settled = true
-      clearTimeout(timeoutId)
-      clearTimeout(killTimeoutId)
-      if (code === 0 || code === 1) {
-        // 0 = matches found, 1 = no matches (both are success)
-        callback(null, stdout, stderr)
-      } else {
-        const error: ExecFileException = new Error(
-          `ripgrep exited with code ${code}`,
-        )
-        error.code = code ?? undefined
-        error.signal = signal ?? undefined
-        callback(error, stdout, stderr)
-      }
-    })
-
-    child.on('error', (err: NodeJS.ErrnoException) => {
-      if (settled) return
-      settled = true
-      clearTimeout(timeoutId)
-      clearTimeout(killTimeoutId)
-      const error: ExecFileException = err
-      callback(error, stdout, stderr)
-    })
-
-    return child
-  }
-
-  // For non-embedded ripgrep, use execFile
-  // Use SIGKILL as killSignal because SIGTERM may not terminate ripgrep
-  // when it's blocked in uninterruptible filesystem I/O.
-  // On Windows, SIGKILL throws; use default (undefined) which sends SIGTERM.
-  return execFile(
+  // Both embedded and non-embedded use spawn with SIGKILL escalation.
+  // Previously, non-embedded used execFile which lacked SIGKILL escalation
+  // on Windows (killSignal forced to SIGTERM), risking deadlock when rg
+  // was blocked in uninterruptible I/O.
+  return spawnRipgrepWithTimeout(
     rgPath,
     fullArgs,
-    {
-      maxBuffer: MAX_BUFFER_SIZE,
-      signal: abortSignal,
-      timeout,
-      killSignal: process.platform === 'win32' ? undefined : 'SIGKILL',
-    },
+    abortSignal,
+    timeout,
     callback,
   )
 }
@@ -468,7 +479,7 @@ export async function ripGrep(
  * This is much more efficient than using native Node.js methods for counting files
  * in large directories since it uses ripgrep's highly optimized file traversal.
  *
- * @param path Directory path to count files in
+ * @param dirPath Directory path to count files in
  * @param abortSignal AbortSignal to cancel the operation
  * @param ignorePatterns Optional additional patterns to ignore (beyond .gitignore)
  * @returns Approximate file count rounded to the nearest power of 10

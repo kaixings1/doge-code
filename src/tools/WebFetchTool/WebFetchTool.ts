@@ -68,7 +68,7 @@ export const WebFetchTool = buildTool({
   searchHint: '从 URL 获取并提取内容',
   // 100K chars - tool result persistence threshold
   maxResultSizeChars: 100_000,
-  shouldDefer: true,
+  shouldDefer: false,
   async description(input) {
     const { url } = input as { url: string }
     try {
