@@ -159,7 +159,7 @@ function NotebookEditToolDiffInner(t0) {
       }
     case "delete":
       {
-        editTypeDescription = "Delete cell";
+        editTypeDescription = "删除单元格";
         break bb2;
       }
     default:
