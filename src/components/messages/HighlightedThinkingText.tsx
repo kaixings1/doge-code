@@ -35,7 +35,7 @@ export function HighlightedThinkingText(t0) {
     const t2 = isQueued ? "subtle" : "briefLabelYou";
     let t3;
     if ($[2] !== t2) {
-      t3 = <Text color={t2}>You</Text>;
+      t3 = <Text color={t2}>你</Text>;
       $[2] = t2;
       $[3] = t3;
     } else {

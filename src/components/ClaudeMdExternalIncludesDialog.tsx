@@ -59,7 +59,7 @@ export function ClaudeMdExternalIncludesDialog(t0) {
   const t5 = !isStandaloneDialog;
   let t6;
   if ($[5] === Symbol.for("react.memo_cache_sentinel")) {
-    t6 = <Text>此项目的 CLAUDE.md 导入当前工作目录之外的文件 当前工作目录. 永远不要为第三方仓库允许此操作.</Text>;
+    t6 = <Text>此项目的 CLAUDE.md 文件配置了外部导入，会引入当前工作目录之外的文件。绝不要为第三方仓库启用此选项。</Text>;
     $[5] = t6;
   } else {
     t6 = $[5];
@@ -74,7 +74,7 @@ export function ClaudeMdExternalIncludesDialog(t0) {
   }
   let t8;
   if ($[8] === Symbol.for("react.memo_cache_sentinel")) {
-    t8 = <Text dimColor={true}>Important: Only use Claude Code with files you trust. Accessing untrusted files may pose security risks{" "}<Link url="https://code.claude.com/docs/en/security" />{" "}</Text>;
+    t8 = <Text dimColor={true}>重要提示：仅将 Claude Code 用于你信任的文件。访问不受信任的文件可能存在安全风险{" "}<Link url="https://code.claude.com/docs/en/security" />{" "}</Text>;
     $[8] = t8;
   } else {
     t8 = $[8];

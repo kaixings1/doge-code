@@ -174,7 +174,7 @@ export function McpParsingWarnings() {
   }
   let t4;
   if ($[4] === Symbol.for("react.memo_cache_sentinel")) {
-    t4 = <Text bold={true}>MCP Config Diagnostics</Text>;
+    t4 = <Text bold={true}>MCP 配置诊断</Text>;
     $[4] = t4;
   } else {
     t4 = $[4];

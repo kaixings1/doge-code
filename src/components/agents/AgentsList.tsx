@@ -43,7 +43,7 @@ export function AgentsList(t0) {
   const getOverrideInfo = _temp;
   let t2;
   if ($[2] !== isCreateNewSelected) {
-    t2 = () => <Box><Text color={isCreateNewSelected ? "suggestion" : undefined}>{isCreateNewSelected ? `${figures.pointer} ` : "  "}</Text><Text color={isCreateNewSelected ? "suggestion" : undefined}>创建新智能体</Text></Box>;
+    t2 = () => <Box><Text color={isCreateNewSelected ? "suggestion" : undefined}>{isCreateNewSelected ? `${figures.pointer} ` : "  "}</Text><Text color={isCreateNewSelected ? "suggestion" : undefined}>创建新代理</Text></Box>;
     $[2] = isCreateNewSelected;
     $[3] = t2;
   } else {

@@ -79,7 +79,7 @@ export function AttachmentMessage({
         if (parsedMsg?.type === 'task_assignment') {
           return <Box key={idx} paddingLeft={2}>
                 <Text>{BLACK_CIRCLE} </Text>
-                <Text>Task assigned: </Text>
+                <Text>任务已分配: </Text>
                 <Text bold>#{parsedMsg.taskId}</Text>
                 <Text> - {parsedMsg.subject}</Text>
                 <Text dimColor> (from {parsedMsg.assignedBy || msg_0.from})</Text>
@@ -483,7 +483,7 @@ function TeammateTaskStatus(t0) {
   }
   let t5;
   if ($[10] !== statusText || $[11] !== t4) {
-    t5 = <Text dimColor={true}>Teammate{" "}{t4}{" "}{statusText}</Text>;
+    t5 = <Text dimColor={true}>队友{" "}{t4}{" "}{statusText}</Text>;
     $[10] = statusText;
     $[11] = t4;
     $[12] = t5;

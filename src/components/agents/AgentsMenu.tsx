@@ -175,7 +175,7 @@ export function AgentsMenu(t0) {
             }
           };
         });
-        setChanges(prev_0 => [...prev_0, `Deleted agent: ${chalk.bold(agent.agentType)}`]);
+        setChanges(prev_0 => [...prev_0, `已删除智能体: ${chalk.bold(agent.agentType)}`]);
         setModeState({
           mode: "list-agents",
           source: "all"
