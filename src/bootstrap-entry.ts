@@ -6,7 +6,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 //process.env.CLAUDE_CODE_SIMPLE=1
 // 🔴 清除 PATH 中的 MSYS2/Git bash 目录，防止 cmd.exe 子进程调用 MSYS2 的 grep/find 等程序触发 fork 卡死
-//process.env.PATH = process.env.PATH?.split(';').filter(p => !/msys2/i.test(p) && !/git\\bin/i.test(p) && !/git\\usr\\bin/i.test(p)).join(';')
+process.env.PATH = process.env.PATH?.split(';').filter(p => !/msys2/i.test(p) && !/git\\bin/i.test(p) && !/git\\usr\\bin/i.test(p) && !/^F:\\bin$/i.test(p)).join(';')
 // Shell 配置：默认使用 Windows 原生 cmd.exe 避免 MSYS2 多行参数转义问题
 // 如需切回 MSYS2 bash，注释掉下面两行并取消注释 bash 版本:
 //process.env.CLAUDE_CODE_SHELL="C:/Windows/System32/cmd.exe"
