@@ -1,48 +1,157 @@
-import { z } from 'zod';
+import { z } from 'zod/v4'
+import { buildTool, type ToolDef } from '../../Tool.js'
+import { lazySchema } from '../../utils/lazySchema.js'
+import { exec } from '../../utils/Shell.js'
 
-export const ScheduleTool = {
-  name: 'schedule',
-  description: 'Schedule tasks to run at specific times',
-  callOn: 'manual',
-  input: z.object({
+const inputSchema = lazySchema(() =>
+  z.object({
     action: z.enum(['create', 'list', 'cancel', 'run']).describe('计划任务操作'),
     cron: z.string().optional().describe('Cron 表达式'),
     command: z.string().optional().describe('要运行的命令'),
     task: z.string().optional().describe('任务名称'),
   }),
-  output: z.object({
+)
+
+const outputSchema = lazySchema(() =>
+  z.object({
     success: z.boolean().describe('操作是否成功'),
     tasks: z.array(z.string()).optional().describe('计划任务列表'),
     message: z.string().optional().describe('结果消息'),
   }),
+)
 
-  exec: async ({ action, cron, command, task }) => {
+export type Output = z.infer<ReturnType<typeof outputSchema>>
+
+interface ScheduledTask {
+  id: string
+  name: string
+  cron: string
+  command: string
+  createdAt: string
+}
+
+const scheduleStore = new Map<string, ScheduledTask>()
+
+function generateScheduleId(): string {
+  return `sched_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`
+}
+
+export const ScheduleTool = buildTool({
+  name: 'schedule',
+  description: async () => '管理计划任务（create/list/cancel/run）',
+  callOn: 'manual',
+  async prompt() {
+    return '使用 schedule 工具管理计划任务。'
+  },
+  get inputSchema() {
+    return inputSchema()
+  },
+  get outputSchema() {
+    return outputSchema()
+  },
+  userFacingName() {
+    return 'schedule'
+  },
+  isEnabled() {
+    return true
+  },
+  toAutoClassifierInput() {
+    return ''
+  },
+  async checkPermissions(input) {
+    return { behavior: 'allow', updatedInput: input }
+  },
+  renderToolUseMessage(input) {
+    const action = (input as any)?.action ?? '?'
+    const task = (input as any)?.task
+    return `Schedule: ${action}${task ? ` (${task})` : ''}`
+  },
+  mapToolResultToToolResultBlockParam(content, toolUseID) {
+    const msg = (content as any).message || 'Schedule operation completed'
     return {
-      success: true,
-      message: `Schedule ${action} completed`,
-    };
+      tool_use_id: toolUseID,
+      type: 'tool_result',
+      content: msg,
+    }
   },
-
-  // Tool 接口默认安全实现
-  isEnabled: () => true,
-  isConcurrencySafe: () => false,
-  isReadOnly: () => false,
-  isDestructive: () => false,
-  checkPermissions: (input, _ctx) =>
-    Promise.resolve({ behavior: 'allow', updatedInput: input }),
-  toAutoClassifierInput: () => '',
-  userFacingName: () => 'schedule',
-
-  renderToolUseMessage: (input) => `Schedule: ${input?.action ?? '?'}${input?.task ? ` (${input.task})` : ''}`,
-  mapToolResultToToolResultBlockParam: (content, toolUseID) => ({
-    tool_use_id: toolUseID,
-    type: 'tool_result',
-    content: content.message || 'Schedule operation completed',
-  }),
-  prompt: async () => 'Use schedule to manage scheduled tasks.',
-  description: async () => 'Schedule tasks to run at specific times',
-  call: async (args, context, canUseTool, parentMessage, onProgress) => {
-    const result = await this.exec(args);
-    return { data: result };
+  async call({ action, cron, command, task }) {
+    switch (action) {
+      case 'create': {
+        if (!cron || !command) {
+          return { data: { success: false, message: 'create 操作需要 cron 和 command 参数' } as Output }
+        }
+        const taskName = task || `task_${Date.now()}`
+        const id = generateScheduleId()
+        scheduleStore.set(id, {
+          id,
+          name: taskName,
+          cron,
+          command,
+          createdAt: new Date().toISOString(),
+        })
+        return {
+          data: {
+            success: true,
+            message: `已创建计划任务 "${taskName}" (${cron}): ${command}`,
+          } as Output,
+        }
+      }
+      case 'list': {
+        const tasks = Array.from(scheduleStore.values()).map(
+          t => `${t.name} | ${t.cron} | ${t.command}`,
+        )
+        return {
+          data: {
+            success: true,
+            tasks,
+            message: `共 ${tasks.length} 个计划任务`,
+          } as Output,
+        }
+      }
+      case 'cancel': {
+        if (!task) {
+          return { data: { success: false, message: 'cancel 操作需要 task 参数' } as Output }
+        }
+        let removed = false
+        for (const [id, entry] of scheduleStore) {
+          if (entry.name === task) {
+            scheduleStore.delete(id)
+            removed = true
+            break
+          }
+        }
+        return {
+          data: {
+            success: removed,
+            message: removed ? `计划任务 "${task}" 已取消` : `未找到计划任务 "${task}"`,
+          } as Output,
+        }
+      }
+      case 'run': {
+        if (!command && !task) {
+          return { data: { success: false, message: 'run 操作需要 task 或 command 参数' } as Output }
+        }
+        const targetCommand = command || (task ? scheduleStore.get(task)?.command : undefined)
+        if (!targetCommand) {
+          return { data: { success: false, message: '未找到要执行的命令' } as Output }
+        }
+        try {
+          const result = await exec(targetCommand, new AbortController().signal, 'bash', { timeout: 120000 })
+          return {
+            data: {
+              success: result.code === 0,
+              message: result.code === 0 ? '执行成功' : `执行失败: ${result.stderr}`,
+            } as Output,
+          }
+        } catch (err) {
+          return {
+            data: {
+              success: false,
+              message: `执行失败: ${err instanceof Error ? err.message : String(err)}`,
+            } as Output,
+          }
+        }
+      }
+    }
   },
-};
+} satisfies ToolDef<typeof inputSchema, Output>)

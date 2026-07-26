@@ -1071,11 +1071,7 @@ export async function getClaudeCodeMcpConfigs(
   servers: Record<string, ScopedMcpServerConfig>
   errors: PluginError[]
 }> {
-  const dbg = (msg: string) => require('fs').writeFileSync('d:/init_debug.log', `[MCP] ${msg} at ${Date.now()}\n`, { flag: 'a' });
-  try {
-    dbg('ENTER');
-    const { servers: enterpriseServers } = getMcpConfigsByScope('enterprise')
-    dbg(`enterprise scope loaded, servers=${Object.keys(enterpriseServers).length}`);
+  const { servers: enterpriseServers } = getMcpConfigsByScope('enterprise')
 
   // 如果企业 MCP 配置存在，则不使用其他配置；它对所有 MCP 服务器拥有独占控制权
   // （企业客户通常不希望其用户能够添加自己的 MCP 服务器）。
