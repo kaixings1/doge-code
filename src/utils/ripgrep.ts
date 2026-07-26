@@ -15,11 +15,17 @@ import { getPlatform } from './platform.js'
 import { countCharInString } from './stringUtils.js'
 
 const __filename = fileURLToPath(import.meta.url)
-// we use node:path.join instead of node:url.resolve because the former doesn't encode spaces
-const __dirname = path.join(
+// In Bun-compiled executables, import.meta.url resolves to Bun's virtual
+// filesystem (e.g. B:\~BUN\root\...), so we fall back to process.execPath's
+// directory which points to the real binary location on disk.
+const computedDirname = path.join(
   __filename,
   process.env.NODE_ENV === 'test' ? '../../../' : '../',
 )
+const __dirname =
+  process.platform === 'win32' && computedDirname.startsWith('B:\\~BUN\\')
+    ? path.dirname(process.execPath)
+    : computedDirname
 
 type RipgrepConfig = {
   mode: 'system' | 'builtin' | 'embedded'
@@ -33,8 +39,37 @@ const getRipgrepConfig = memoize((): RipgrepConfig => {
     process.env.USE_BUILTIN_RIPGREP,
   )
 
-  // Try system ripgrep if user wants it
-  if (userWantsSystemRipgrep) {
+  // On Windows, default to builtin ripgrep to avoid MSYS2 rg.exe fork issues.
+  // MSYS2's rg.exe in F:\bin or other PATH entries can cause process hangs on Windows.
+  // Users who explicitly want system ripgrep can set USE_BUILTIN_RIPGREP=0.
+  const preferBuiltinOnWindows =
+    process.platform === 'win32' && userWantsSystemRipgrep
+
+  if (preferBuiltinOnWindows) {
+    // Try system ripgrep on Windows, but verify it's not MSYS2 version
+    const { cmd: systemPath } = findExecutable('rg', [])
+    if (systemPath !== 'rg') {
+      // Check if the found rg is from MSYS2 (F:\bin, D:\vcpkg\downloads\tools\msys2, etc.)
+      const lowerPath = systemPath.toLowerCase()
+      const isMSYS2Ripgrep =
+        lowerPath.includes('msys2') ||
+        lowerPath.includes('\\usr\\bin\\') ||
+        lowerPath.includes('/usr/bin/') ||
+        lowerPath.includes('\\mingw') ||
+        lowerPath.includes('/mingw')
+
+      if (!isMSYS2Ripgrep) {
+        // SECURITY: Use command name 'rg' instead of systemPath to prevent PATH hijacking
+        // If we used systemPath, a malicious ./rg.exe in current directory could be executed
+        // Using just 'rg' lets the OS resolve it safely with NoDefaultCurrentDirectoryInExePath protection
+        return { mode: 'system', command: 'rg', args: [] }
+      }
+      // MSYS2 rg detected, fall through to builtin
+    }
+  }
+
+  // Try system ripgrep if user wants it (non-Windows or Windows with non-MSYS2 rg)
+  if (!preferBuiltinOnWindows && userWantsSystemRipgrep) {
     const { cmd: systemPath } = findExecutable('rg', [])
     if (systemPath !== 'rg') {
       // SECURITY: Use command name 'rg' instead of systemPath to prevent PATH hijacking
