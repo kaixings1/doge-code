@@ -1,5 +1,6 @@
 # Doge Code Configuration
 .doge/
+.student/
 .qwen/
 .remember/
 src-zh/
