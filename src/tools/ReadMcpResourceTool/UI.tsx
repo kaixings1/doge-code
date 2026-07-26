@@ -14,7 +14,7 @@ export function renderToolUseMessage(input: Partial<z.infer<ReturnType<typeof in
   return `Read resource "${input.uri}" from server "${input.server}"`;
 }
 export function userFacingName(): string {
-  return 'readMcpResource';
+  return '读取 MCP 资源';
 }
 export function renderToolResultMessage(output: Output, _progressMessagesForMessage: ProgressMessage<ToolProgressData>[], {
   verbose
