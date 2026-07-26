@@ -35,33 +35,31 @@ const inputSchema = lazySchema(() => {
   const TaskUpdateStatusSchema = TaskStatusSchema().or(z.literal('deleted'))
 
   return z.strictObject({
-    taskId: z.string().describe('The ID of the task to update'),
-    subject: z.string().optional().describe('New subject for the task'),
-    description: z.string().optional().describe('New description for the task'),
+    taskId: z.string().describe('要更新的任务 ID'),
+    subject: z.string().optional().describe('任务的新标题'),
+    description: z.string().optional().describe('任务的新描述'),
     activeForm: z
       .string()
       .optional()
       .describe(
-        'Present continuous form shown in spinner when in_progress (e.g., "Running tests")',
+        '进行中时在 spinner 中显示的现在进行时形式（如"运行测试"）',
       ),
     status: TaskUpdateStatusSchema.optional().describe(
-      'New status for the task',
+      '任务的新状态',
     ),
     addBlocks: z
       .array(z.string())
       .optional()
-      .describe('Task IDs that this task blocks'),
+      .describe('此任务阻塞的任务 ID'),
     addBlockedBy: z
       .array(z.string())
       .optional()
-      .describe('Task IDs that block this task'),
-    owner: z.string().optional().describe('New owner for the task'),
+      .describe('阻塞此任务的任务 ID'),
+    owner: z.string().optional().describe('任务的新负责人'),
     metadata: z
       .record(z.string(), z.unknown())
       .optional()
-      .describe(
-        'Metadata keys to merge into the task. Set a key to null to delete it.',
-      ),
+      .describe('要合并到任务中的元数据键。设为 null 以删除。'),
   })
 })
 type InputSchema = ReturnType<typeof inputSchema>

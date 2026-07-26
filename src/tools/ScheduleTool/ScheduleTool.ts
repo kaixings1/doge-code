@@ -5,15 +5,15 @@ export const ScheduleTool = {
   description: 'Schedule tasks to run at specific times',
   callOn: 'manual',
   input: z.object({
-    action: z.enum(['create', 'list', 'cancel', 'run']).describe('Schedule action'),
-    cron: z.string().optional().describe('Cron expression'),
-    command: z.string().optional().describe('Command to run'),
-    task: z.string().optional().describe('Task name'),
+    action: z.enum(['create', 'list', 'cancel', 'run']).describe('计划任务操作'),
+    cron: z.string().optional().describe('Cron 表达式'),
+    command: z.string().optional().describe('要运行的命令'),
+    task: z.string().optional().describe('任务名称'),
   }),
   output: z.object({
-    success: z.boolean().describe('Whether action succeeded'),
-    tasks: z.array(z.string()).optional().describe('Scheduled tasks'),
-    message: z.string().optional().describe('Result message'),
+    success: z.boolean().describe('操作是否成功'),
+    tasks: z.array(z.string()).optional().describe('计划任务列表'),
+    message: z.string().optional().describe('结果消息'),
   }),
 
   exec: async ({ action, cron, command, task }) => {

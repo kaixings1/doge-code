@@ -24,7 +24,7 @@ export function renderToolResultMessage(output: Output, _progressMessagesForMess
   if (!output || !output.contents || output.contents.length === 0) {
     return <Box justifyContent="space-between" overflowX="hidden" width="100%">
         <MessageResponse height={1}>
-          <Text dimColor>(No content)</Text>
+          <Text dimColor>（无内容）</Text>
         </MessageResponse>
       </Box>;
   }

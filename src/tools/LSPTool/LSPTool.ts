@@ -70,18 +70,18 @@ const inputSchema = lazySchema(() =>
         'incomingCalls',
         'outgoingCalls',
       ])
-      .describe('The LSP operation to perform'),
-    filePath: z.string().describe('The absolute or relative path to the file'),
+      .describe('要执行的 LSP 操作'),
+    filePath: z.string().describe('文件的绝对或相对路径'),
     line: z
       .number()
       .int()
       .positive()
-      .describe('The line number (1-based, as shown in editors)'),
+      .describe('行号（从 1 开始，与编辑器显示一致）'),
     character: z
       .number()
       .int()
       .positive()
-      .describe('The character offset (1-based, as shown in editors)'),
+      .describe('字符偏移量（从 1 开始，与编辑器显示一致）'),
   }),
 )
 type InputSchema = ReturnType<typeof inputSchema>
@@ -100,23 +100,23 @@ const outputSchema = lazySchema(() =>
         'incomingCalls',
         'outgoingCalls',
       ])
-      .describe('The LSP operation that was performed'),
-    result: z.string().describe('The formatted result of the LSP operation'),
+      .describe('已执行的 LSP 操作'),
+    result: z.string().describe('LSP 操作的格式化结果'),
     filePath: z
       .string()
-      .describe('The file path the operation was performed on'),
+      .describe('执行操作的文件路径'),
     resultCount: z
       .number()
       .int()
       .nonnegative()
       .optional()
-      .describe('Number of results (definitions, references, symbols)'),
+      .describe('结果数量（定义、引用、符号）'),
     fileCount: z
       .number()
       .int()
       .nonnegative()
       .optional()
-      .describe('Number of files containing results'),
+      .describe('包含结果的文件数量'),
   }),
 )
 type OutputSchema = ReturnType<typeof outputSchema>
@@ -158,7 +158,7 @@ export const LSPTool = buildTool({
     if (!parseResult.success) {
       return {
         result: false,
-        message: `Invalid input: ${parseResult.error.message}`,
+        message: `输入无效：${parseResult.error.message}`,
         errorCode: 3,
       }
     }

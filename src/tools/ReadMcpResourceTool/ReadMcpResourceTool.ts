@@ -21,8 +21,8 @@ import {
 
 export const inputSchema = lazySchema(() =>
   z.object({
-    server: z.string().describe('The MCP server name'),
-    uri: z.string().describe('The resource URI to read'),
+    server: z.string().describe('MCP 服务器名称'),
+    uri: z.string().describe('要读取的资源 URI'),
   }),
 )
 type InputSchema = ReturnType<typeof inputSchema>
@@ -31,13 +31,13 @@ export const outputSchema = lazySchema(() =>
   z.object({
     contents: z.array(
       z.object({
-        uri: z.string().describe('Resource URI'),
-        mimeType: z.string().optional().describe('MIME type of the content'),
-        text: z.string().optional().describe('Text content of the resource'),
+        uri: z.string().describe('资源 URI'),
+        mimeType: z.string().optional().describe('内容的 MIME 类型'),
+        text: z.string().optional().describe('资源的文本内容'),
         blobSavedTo: z
           .string()
           .optional()
-          .describe('Path where binary blob content was saved'),
+          .describe('二进制 blob 内容保存的路径'),
       }),
     ),
   }),

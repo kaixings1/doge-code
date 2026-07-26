@@ -89,7 +89,7 @@ function checkDangerousRemovalPaths(
     if (isDangerousRemovalPath(absolutePath)) {
       return {
         behavior: 'ask',
-        message: `Dangerous ${command} operation detected: '${absolutePath}'\n\nThis command would remove a critical system directory. This requires explicit approval and cannot be auto-allowed by permission rules.`,
+        message: `检测到危险的 ${command} 操作：'${absolutePath}'\n\n此命令将删除关键系统目录。这需要明确批准，无法通过权限规则自动允许。`,
         decisionReason: {
           type: 'other',
           reason: `Dangerous ${command} operation on critical path: ${absolutePath}`,

@@ -43,7 +43,7 @@ function getSafeInputSchema() {
   return z.strictObject({
     duration_seconds: z
       .number()
-      .describe('Sleep duration in seconds.'),
+      .describe('睡眠时长（秒）。'),
   })
 }
 

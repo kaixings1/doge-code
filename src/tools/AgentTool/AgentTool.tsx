@@ -80,24 +80,24 @@ function getAutoBackgroundMs(): number {
 
 // 基础输入 schema，不含多代理参数
 const baseInputSchema = lazySchema(() => z.object({
-  description: z.string().describe('A short (3-5 word) description of the task'),
-  prompt: z.string().describe('The task for the agent to perform'),
-  subagent_type: z.string().optional().describe('The type of specialized agent to use for this task'),
-  model: z.enum(['sonnet', 'opus', 'haiku']).optional().describe("Optional model override for this agent. Takes precedence over the agent definition's model frontmatter. If omitted, uses the agent definition's model, or inherits from the parent."),
-  run_in_background: z.boolean().optional().describe('Set to true to run this agent in the background. You will be notified when it completes.')
+  description: z.string().describe('任务的简短描述（3-5 个词）'),
+  prompt: z.string().describe('要执行的任务'),
+  subagent_type: z.string().optional().describe('要使用的专业代理类型'),
+  model: z.enum(['sonnet', 'opus', 'haiku']).optional().describe("可选的模型覆盖。优先级高于代理定义中的模型设置。如果省略，则使用代理定义的模型或继承父级模型。"),
+  run_in_background: z.boolean().optional().describe('设为 true 以在后台运行此代理。完成后您将收到通知。')
 }));
 
 // 完整 schema，组合了基础 + 多代理参数 + 隔离参数
 const fullInputSchema = lazySchema(() => {
   // 多代理参数
   const multiAgentInputSchema = z.object({
-    name: z.string().optional().describe('Name for the spawned agent. Makes it addressable via SendMessage({to: name}) while running.'),
-    team_name: z.string().optional().describe('Team name for spawning. Uses current team context if omitted.'),
-    mode: permissionModeSchema().optional().describe('Permission mode for spawned teammate (e.g., "plan" to require plan approval).')
+    name: z.string().optional().describe('spawned 代理的名称。运行期间可通过 SendMessage({to: name}) 寻址。'),
+    team_name: z.string().optional().describe('团队名称。如果省略，使用当前团队上下文。'),
+    mode: permissionModeSchema().optional().describe('代理的权限模式（例如 "plan" 要求计划审批）。')
   });
   return baseInputSchema().merge(multiAgentInputSchema).extend({
-    isolation: ("external" === 'ant' ? z.enum(['worktree', 'remote']) : z.enum(['worktree'])).optional().describe("external" === 'ant' ? 'Isolation mode. "worktree" creates a temporary git worktree so the agent works on an isolated copy of the repo. "remote" launches the agent in a remote CCR environment (always runs in background).' : 'Isolation mode. "worktree" creates a temporary git worktree so the agent works on an isolated copy of the repo.'),
-    cwd: z.string().optional().describe('Absolute path to run the agent in. Overrides the working directory for all filesystem and shell operations within this agent. Mutually exclusive with isolation: "worktree".')
+    isolation: ("external" === 'ant' ? z.enum(['worktree', 'remote']) : z.enum(['worktree'])).optional().describe('外部模式：隔离模式。"worktree" 创建临时 git 工作树使代理在仓库的隔离副本上工作。"remote" 在远程 CCR 环境中启动代理（始终在后台运行）。'),
+    cwd: z.string().optional().describe('运行代理的绝对路径。覆盖此代理内所有文件系统和 shell 操作的工作目录。与 isolation: "worktree" 互斥。')
   });
 });
 
@@ -145,11 +145,11 @@ export const outputSchema = lazySchema(() => {
   });
   const asyncOutputSchema = z.object({
     status: z.literal('async_launched'),
-    agentId: z.string().describe('The ID of the async agent'),
-    description: z.string().describe('The description of the task'),
-    prompt: z.string().describe('The prompt for the agent'),
-    outputFile: z.string().describe('Path to the output file for checking agent progress'),
-    canReadOutputFile: z.boolean().optional().describe('Whether the calling agent has Read/Bash tools to check progress')
+    agentId: z.string().describe('异步代理的 ID'),
+    description: z.string().describe('任务的描述'),
+    prompt: z.string().describe('代理的提示词'),
+    outputFile: z.string().describe('检查代理进度的输出文件路径'),
+    canReadOutputFile: z.boolean().optional().describe('调用代理是否具有 Read/Bash 工具来检查进度')
   });
   return z.union([syncOutputSchema, asyncOutputSchema]);
 });
@@ -228,7 +228,7 @@ export const AgentTool = buildTool({
   aliases: [LEGACY_AGENT_TOOL_NAME],
   maxResultSizeChars: 100_000,
   async description() {
-    return 'Launch a new agent';
+    return '启动新代理';
   },
   get inputSchema(): InputSchema {
     return inputSchema();

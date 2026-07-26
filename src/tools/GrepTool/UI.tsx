@@ -42,7 +42,7 @@ function SearchResultSummary(t0) {
   }
   let t3;
   if ($[5] !== t1 || $[6] !== t2) {
-    t3 = <Text>Found {t1}{t2}</Text>;
+    t3 = <Text>找到 {t1}{t2}</Text>;
     $[5] = t1;
     $[6] = t2;
     $[7] = t3;
@@ -52,7 +52,7 @@ function SearchResultSummary(t0) {
   const primaryText = t3;
   let t4;
   if ($[8] !== secondaryCount || $[9] !== secondaryLabel) {
-    t4 = secondaryCount !== undefined && secondaryLabel ? <Text>{" "}across <Text bold={true}>{secondaryCount} </Text>{secondaryCount === 0 || secondaryCount > 1 ? secondaryLabel : secondaryLabel.slice(0, -1)}</Text> : null;
+    t4 = secondaryCount !== undefined && secondaryLabel ? <Text>{" "}跨 <Text bold={true}>{secondaryCount} </Text>{secondaryCount === 0 || secondaryCount > 1 ? secondaryLabel : secondaryLabel.slice(0, -1)}</Text> : null;
     $[8] = secondaryCount;
     $[9] = secondaryLabel;
     $[10] = t4;

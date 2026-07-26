@@ -40,7 +40,7 @@ class EgressBlockedError extends Error {
       JSON.stringify({
         error_type: 'EGRESS_BLOCKED',
         domain,
-        message: `Access to ${domain} is blocked by the network egress proxy.`,
+        message: `访问 ${domain} 被网络出口代理阻止。`,
       }),
     )
     this.name = 'EgressBlockedError'

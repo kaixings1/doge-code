@@ -15,7 +15,7 @@ export const inputSchema = lazySchema(() => z.object({}).passthrough())
 type InputSchema = ReturnType<typeof inputSchema>
 
 export const outputSchema = lazySchema(() =>
-  z.string().describe('MCP tool execution result'),
+  z.string().describe('MCP 工具执行结果'),
 )
 type OutputSchema = ReturnType<typeof outputSchema>
 

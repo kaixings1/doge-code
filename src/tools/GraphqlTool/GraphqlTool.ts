@@ -5,13 +5,13 @@ export const GraphqlTool = {
   description: 'Execute GraphQL queries',
   callOn: 'manual',
   input: z.object({
-    endpoint: z.string().describe('GraphQL endpoint'),
-    query: z.string().describe('GraphQL query'),
-    variables: z.record(z.unknown()).optional().describe('Query variables'),
+    endpoint: z.string().describe('GraphQL 端点'),
+    query: z.string().describe('GraphQL 查询语句'),
+    variables: z.record(z.unknown()).optional().describe('查询变量'),
   }),
   output: z.object({
-    data: z.record(z.unknown()).describe('Query result'),
-    errors: z.array(z.any()).optional().describe('Errors'),
+    data: z.record(z.unknown()).describe('查询结果'),
+    errors: z.array(z.any()).optional().describe('错误列表'),
   }),
 
   exec: async ({ endpoint, query, variables }) => {

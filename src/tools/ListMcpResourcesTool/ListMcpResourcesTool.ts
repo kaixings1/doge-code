@@ -17,7 +17,7 @@ const inputSchema = lazySchema(() =>
     server: z
       .string()
       .optional()
-      .describe('Optional server name to filter resources by'),
+      .describe('用于筛选资源的可选服务器名称'),
   }),
 )
 type InputSchema = ReturnType<typeof inputSchema>
@@ -25,11 +25,11 @@ type InputSchema = ReturnType<typeof inputSchema>
 const outputSchema = lazySchema(() =>
   z.array(
     z.object({
-      uri: z.string().describe('Resource URI'),
-      name: z.string().describe('Resource name'),
-      mimeType: z.string().optional().describe('MIME type of the resource'),
-      description: z.string().optional().describe('Resource description'),
-      server: z.string().describe('Server that provides this resource'),
+      uri: z.string().describe('资源 URI'),
+      name: z.string().describe('资源名称'),
+      mimeType: z.string().optional().describe('资源的 MIME 类型'),
+      description: z.string().optional().describe('资源描述'),
+      server: z.string().describe('提供此资源的服务器'),
     }),
   ),
 )

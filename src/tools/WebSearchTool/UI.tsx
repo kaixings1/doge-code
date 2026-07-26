@@ -64,12 +64,12 @@ export function renderToolUseProgressMessage(progressMessages: ProgressMessage<W
   switch (data.type) {
     case 'query_update':
       return <MessageResponse>
-          <Text dimColor>Searching: {data.query}</Text>
+          <Text dimColor>正在搜索：{data.query}</Text>
         </MessageResponse>;
     case 'search_results_received':
       return <MessageResponse>
           <Text dimColor>
-            Found {data.resultCount} results for &quot;{data.query}&quot;
+            找到 {data.resultCount} 个结果（搜索词：{data.query}）
           </Text>
         </MessageResponse>;
     default:
@@ -84,8 +84,7 @@ export function renderToolResultMessage(output: Output): React.ReactNode {
   return <Box justifyContent="space-between" width="100%">
       <MessageResponse height={1}>
         <Text>
-          Did {searchCount} search
-          {searchCount !== 1 ? 'es' : ''} in {timeDisplay}
+          执行了 {searchCount} 次搜索，耗时 {timeDisplay}
         </Text>
       </MessageResponse>
     </Box>;

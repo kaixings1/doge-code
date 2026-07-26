@@ -19,7 +19,7 @@ import { renderDeleteResultMessage, renderDeleteToolUseMessage } from './UI.js'
 
 const inputSchema = lazySchema(() =>
   z.strictObject({
-    id: z.string().describe('Job ID returned by CronCreate.'),
+    id: z.string().describe('CronCreate 返回的任务 ID。'),
   }),
 )
 type InputSchema = ReturnType<typeof inputSchema>

@@ -36,8 +36,8 @@ import { renderToolUseMessage } from './UI.js'
 
 const inputSchema = lazySchema(() =>
   z.strictObject({
-    team_name: z.string().describe('Name for the new team to create.'),
-    description: z.string().optional().describe('Team description/purpose.'),
+    team_name: z.string().describe('新团队的名称。'),
+    description: z.string().optional().describe('团队描述/用途。'),
     agent_type: z
       .string()
       .optional()

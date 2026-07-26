@@ -32,7 +32,7 @@ export function renderToolResultMessage(output: Output, _progressMessagesForMess
     return <Box flexDirection="column" marginTop={1}>
         <Box flexDirection="row">
           <Text color={getModeColor('plan')}>{BLACK_CIRCLE}</Text>
-          <Text> Exited plan mode</Text>
+          <Text> 已退出计划模式</Text>
         </Box>
       </Box>;
   }
@@ -42,12 +42,12 @@ export function renderToolResultMessage(output: Output, _progressMessagesForMess
     return <Box flexDirection="column" marginTop={1}>
         <Box flexDirection="row">
           <Text color={getModeColor('plan')}>{BLACK_CIRCLE}</Text>
-          <Text> Plan submitted for team lead approval</Text>
+          <Text> 计划已提交，等待团队负责人审批</Text>
         </Box>
         <MessageResponse>
           <Box flexDirection="column">
-            {filePath && <Text dimColor>Plan file: {displayPath}</Text>}
-            <Text dimColor>Waiting for team lead to review and approve...</Text>
+            {filePath && <Text dimColor>计划文件：{displayPath}</Text>}
+            <Text dimColor>等待团队负责人审核并批准…</Text>
           </Box>
         </MessageResponse>
       </Box>;
@@ -55,11 +55,11 @@ export function renderToolResultMessage(output: Output, _progressMessagesForMess
   return <Box flexDirection="column" marginTop={1}>
       <Box flexDirection="row">
         <Text color={getModeColor('plan')}>{BLACK_CIRCLE}</Text>
-        <Text> User approved Claude&apos;s plan</Text>
+        <Text> 用户已批准 Claude 的计划</Text>
       </Box>
       <MessageResponse>
         <Box flexDirection="column">
-          {filePath && <Text dimColor>Plan saved to: {displayPath} · /plan to edit</Text>}
+          {filePath && <Text dimColor>计划已保存至：{displayPath} · 输入 /plan 可编辑</Text>}
           <Markdown>{plan}</Markdown>
         </Box>
       </MessageResponse>
@@ -74,7 +74,7 @@ export function renderToolUseRejectedMessage({
 }: {
   theme: ThemeName;
 }): React.ReactNode {
-  const planContent = plan ?? getPlan() ?? 'No plan found';
+  const planContent = plan ?? getPlan() ?? '未找到计划'
   return <Box flexDirection="column">
       <RejectedPlanMessage plan={planContent} />
     </Box>;

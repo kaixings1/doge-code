@@ -9,7 +9,7 @@ import { FILE_NOT_FOUND_CWD_NOTE, getDisplayPath } from '../../utils/file.js';
 import { truncate } from '../../utils/format.js';
 import { GrepTool } from '../GrepTool/GrepTool.js';
 export function userFacingName(): string {
-  return 'Search';
+  return '搜索';
 }
 export function renderToolUseMessage({
   pattern,

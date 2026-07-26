@@ -113,7 +113,7 @@ export const EnterWorktreeTool: Tool<InputSchema, Output> = buildTool({
       data: {
         worktreePath: worktreeSession.worktreePath,
         worktreeBranch: worktreeSession.worktreeBranch,
-        message: `Created worktree at ${worktreeSession.worktreePath}${branchInfo}. The session is now working in the worktree. Use ExitWorktree to leave mid-session, or exit the session to be prompted.`,
+        message: `已创建位于 ${worktreeSession.worktreePath}${branchInfo} 的工作树。会话正在工作树中运行。使用 ExitWorktree 中途离开，或退出会话以被提示。`,
       },
     }
   },

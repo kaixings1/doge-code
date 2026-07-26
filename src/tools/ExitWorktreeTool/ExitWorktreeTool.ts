@@ -195,7 +195,7 @@ export const ExitWorktreeTool: Tool<InputSchema, Output> = buildTool({
       if (summary === null) {
         return {
           result: false,
-          message: `Could not verify worktree state at ${session.worktreePath}. Refusing to remove without explicit confirmation. Re-invoke with discard_changes: true to proceed — or use action: "keep" to preserve the worktree.`,
+          message: `无法验证位于 ${session.worktreePath} 的工作树状态。拒绝在没有明确确认的情况下删除。请使用 discard_changes: true 重新调用以继续 — 或使用 action: "keep" 保留工作树。`,
           errorCode: 3,
         }
       }
@@ -214,7 +214,7 @@ export const ExitWorktreeTool: Tool<InputSchema, Output> = buildTool({
         }
         return {
           result: false,
-          message: `Worktree has ${parts.join(' and ')}. Removing will discard this work permanently. Confirm with the user, then re-invoke with discard_changes: true — or use action: "keep" to preserve the worktree.`,
+          message: `工作树包含 ${parts.join(' 和 ')}。删除将永久丢弃这些工作。请与用户确认，然后使用 discard_changes: true 重新调用 — 或使用 action: "keep" 保留工作树。`,
           errorCode: 2,
         }
       }
@@ -278,7 +278,7 @@ export const ExitWorktreeTool: Tool<InputSchema, Output> = buildTool({
           worktreePath,
           worktreeBranch,
           tmuxSessionName,
-          message: `Exited worktree. Your work is preserved at ${worktreePath}${worktreeBranch ? ` on branch ${worktreeBranch}` : ''}. Session is now back in ${originalCwd}.${tmuxNote}`,
+          message: `已退出工作树。您的工作已保存在 ${worktreePath}${worktreeBranch ? ` 的分支 ${worktreeBranch}` : ''}。会话已返回至 ${originalCwd}。${tmuxNote}`,
         },
       }
     }
@@ -315,7 +315,7 @@ export const ExitWorktreeTool: Tool<InputSchema, Output> = buildTool({
         worktreeBranch,
         discardedFiles: changedFiles,
         discardedCommits: commits,
-        message: `Exited and removed worktree at ${worktreePath}.${discardNote} Session is now back in ${originalCwd}.`,
+        message: `已退出并删除了位于 ${worktreePath} 的工作树。${discardNote} 会话已返回至 ${originalCwd}。`,
       },
     }
   },
