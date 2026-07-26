@@ -447,8 +447,8 @@ export class StreamingToolExecutor {
   }
 
   /**
-   * Wait for remaining tools and yield their results as they complete
-   * Also yields progress messages as they become available
+   * Wait for remaining tools and yield their results as they complete.
+   * Also yields progress messages as they become available.
    */
   async *getRemainingResults(): AsyncGenerator<MessageUpdate, void> {
     if (this.discarded) {
@@ -463,7 +463,9 @@ export class StreamingToolExecutor {
       }
 
       // If we still have executing tools but nothing completed, wait for any to complete
-      // OR for progress to become available
+      // OR for progress to become available.
+      // Use a timeout to prevent infinite blocking if a tool hangs forever
+      // without reporting progress and without completing.
       if (
         this.hasExecutingTools() &&
         !this.hasCompletedResults() &&
@@ -479,7 +481,20 @@ export class StreamingToolExecutor {
         })
 
         if (executingPromises.length > 0) {
-          await Promise.race([...executingPromises, progressPromise])
+          // Timeout after 30 seconds to prevent infinite blocking.
+          // Without this, if a tool hangs forever (e.g., stuck ripgrep process)
+          // and never reports progress, Promise.race blocks forever.
+          const raceTimeout = new Promise<void>((resolve) => {
+            setTimeout(() => {
+              this.progressAvailableResolve = undefined
+              resolve()
+            }, 30000)
+          })
+          await Promise.race([
+            ...executingPromises,
+            progressPromise,
+            raceTimeout,
+          ])
         }
       }
     }

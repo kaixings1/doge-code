@@ -18,7 +18,7 @@ import {
 import type { PermissionDecision } from '../../utils/permissions/PermissionResult.js'
 import { matchWildcardPattern } from '../../utils/permissions/shellRuleMatching.js'
 import { getGlobExclusionsForPluginCache } from '../../utils/plugins/orphanedPluginFilter.js'
-import { ripGrep } from '../../utils/ripgrep.js'
+import { ripGrep, RipgrepTimeoutError } from '../../utils/ripgrep.js'
 import { semanticBoolean } from '../../utils/semanticBoolean.js'
 import { semanticNumber } from '../../utils/semanticNumber.js'
 import { plural } from '../../utils/stringUtils.js'
@@ -322,250 +322,291 @@ export const GrepTool = buildTool({
     },
     { abortController, getAppState },
   ) {
-    const absolutePath = path ? expandPath(path) : getCwd()
-    const args = ['--hidden']
+    // ---------- 新增：全局超时与异常捕获 ----------
+    // 设置搜索超时（默认 60 秒，可根据需要调整）
+    const SEARCH_TIMEOUT_MS = 60_000
 
-    // 排除 VCS 目录，避免版本控制元数据产生的噪音
-    for (const dir of VCS_DIRECTORIES_TO_EXCLUDE) {
-      args.push('--glob', `!${dir}`)
-    }
+    try {
+      // 使用 Promise.race 包装 ripGrep，防止子进程永久阻塞
+      const searchPromise = (async () => {
+        const absolutePath = path ? expandPath(path) : getCwd()
+        const args = ['--hidden']
 
-    // 限制行长度，防止 base64 或压缩内容扰乱输出
-    args.push('--max-columns', '500')
-
-    // 仅在显式请求时应用多行标志
-    if (multiline) {
-      args.push('-U', '--multiline-dotall')
-    }
-
-    // 添加可选标志
-    if (case_insensitive) {
-      args.push('-i')
-    }
-
-    // 添加输出模式标志
-    if (output_mode === 'files_with_matches') {
-      args.push('-l')
-    } else if (output_mode === 'count') {
-      args.push('-c')
-    }
-
-    // 如果请求显示行号
-    if (show_line_numbers && output_mode === 'content') {
-      args.push('-n')
-    }
-
-    // 添加上下文标志（-C/context 优先于 context_before/context_after）
-    if (output_mode === 'content') {
-      if (context !== undefined) {
-        args.push('-C', context.toString())
-      } else if (context_c !== undefined) {
-        args.push('-C', context_c.toString())
-      } else {
-        if (context_before !== undefined) {
-          args.push('-B', context_before.toString())
+        // 排除 VCS 目录，避免版本控制元数据产生的噪音
+        for (const dir of VCS_DIRECTORIES_TO_EXCLUDE) {
+          args.push('--glob', `!${dir}`)
         }
-        if (context_after !== undefined) {
-          args.push('-A', context_after.toString())
+
+        // 限制行长度，防止 base64 或压缩内容扰乱输出
+        args.push('--max-columns', '500')
+
+        // 仅在显式请求时应用多行标志
+        if (multiline) {
+          args.push('-U', '--multiline-dotall')
         }
-      }
-    }
 
-    // 如果模式以短横线开头，使用 -e 标志将其指定为模式
-    // 以防止 ripgrep 将其解释为命令行选项
-    if (pattern.startsWith('-')) {
-      args.push('-e', pattern)
-    } else {
-      args.push(pattern)
-    }
-
-    // 如果指定了类型过滤器
-    if (type) {
-      args.push('--type', type)
-    }
-
-    if (glob) {
-      // 按逗号和空格分割，但保留带花括号的模式
-      const globPatterns: string[] = []
-      const rawPatterns = glob.split(/\s+/)
-
-      for (const rawPattern of rawPatterns) {
-        // 如果模式包含花括号，不再进一步分割
-        if (rawPattern.includes('{') && rawPattern.includes('}')) {
-          globPatterns.push(rawPattern)
-        } else {
-          // 对不含花括号的模式按逗号分割
-          globPatterns.push(...rawPattern.split(',').filter(Boolean))
+        // 添加可选标志
+        if (case_insensitive) {
+          args.push('-i')
         }
-      }
 
-      for (const globPattern of globPatterns.filter(Boolean)) {
-        args.push('--glob', globPattern)
-      }
-    }
-
-    // 添加忽略模式
-    const appState = getAppState()
-    const ignorePatterns = normalizePatternsToPath(
-      getFileReadIgnorePatterns(appState.toolPermissionContext),
-      getCwd(),
-    )
-    for (const ignorePattern of ignorePatterns) {
-      // 注意：ripgrep 仅相对于工作目录应用 gitignore 模式
-      // 因此对于非绝对路径，需要添加 '**' 前缀
-      // 参见：https://github.com/BurntSushi/ripgrep/discussions/2156#discussioncomment-2316335
-      //
-      // 同时需要用 `!` 取反以排除该模式
-      const rgIgnorePattern = ignorePattern.startsWith('/')
-        ? `!${ignorePattern}`
-        : `!**/${ignorePattern}`
-      args.push('--glob', rgIgnorePattern)
-    }
-
-    // 排除孤立的插件版本目录
-    for (const exclusion of await getGlobExclusionsForPluginCache(
-      absolutePath,
-    )) {
-      args.push('--glob', exclusion)
-    }
-
-    // WSL 下文件读取存在严重的性能损耗（WSL2 下慢 3-5 倍）
-    // 超时由 ripgrep 本身通过 execFile 超时选项处理
-    // 我们不使用 AbortController 来中断超时，以免干扰 agent 循环
-    // 如果 ripgrep 超时，会抛出 RipgrepTimeoutError 并向上传播
-    // 以便 Claude 知晓搜索未完成（而非误以为没有匹配结果）
-    const results = await ripGrep(args, absolutePath, abortController.signal)
-
-    if (output_mode === 'content') {
-      // 对于 content 模式，results 为实际内容行
-      // 将绝对路径转换为相对路径以节省 tokens
-
-      // 先应用 head_limit —— relativize 是按行处理的，
-      // 避免处理将被丢弃的行（宽泛的模式可能返回 10k+ 行，而 head_limit 只保留约 30-100 行）。
-      const { items: limitedResults, appliedLimit } = applyHeadLimit(
-        results,
-        head_limit,
-        offset,
-      )
-
-      const finalLines = limitedResults.map(line => {
-        // 行格式：/absolute/path:line_content 或 /absolute/path:num:content
-        const colonIndex = line.indexOf(':')
-        if (colonIndex > 0) {
-          const filePath = line.substring(0, colonIndex)
-          const rest = line.substring(colonIndex)
-          return toRelativePath(filePath) + rest
+        // 添加输出模式标志
+        if (output_mode === 'files_with_matches') {
+          args.push('-l')
+        } else if (output_mode === 'count') {
+          args.push('-c')
         }
-        return line
-      })
-      const output = {
-        mode: 'content' as const,
-        numFiles: 0, // 对 content 模式不适用
-        filenames: [],
-        content: finalLines.join('\n'),
-        numLines: finalLines.length,
-        ...(appliedLimit !== undefined && { appliedLimit }),
-        ...(offset > 0 && { appliedOffset: offset }),
-      }
-      return { data: output }
-    }
 
-    if (output_mode === 'count') {
-      // 对于 count 模式，直接透传 ripgrep 的原始输出（格式：filename:count）
-      // 先应用 head_limit，避免对将被丢弃的条目做路径转换。
-      const { items: limitedResults, appliedLimit } = applyHeadLimit(
-        results,
-        head_limit,
-        offset,
-      )
-
-      // 将绝对路径转换为相对路径以节省 tokens
-      const finalCountLines = limitedResults.map(line => {
-        // 行格式：/absolute/path:count
-        const colonIndex = line.lastIndexOf(':')
-        if (colonIndex > 0) {
-          const filePath = line.substring(0, colonIndex)
-          const count = line.substring(colonIndex)
-          return toRelativePath(filePath) + count
+        // 如果请求显示行号
+        if (show_line_numbers && output_mode === 'content') {
+          args.push('-n')
         }
-        return line
-      })
 
-      // 解析 count 输出以提取总匹配数和文件数
-      let totalMatches = 0
-      let fileCount = 0
-      for (const line of finalCountLines) {
-        const colonIndex = line.lastIndexOf(':')
-        if (colonIndex > 0) {
-          const countStr = line.substring(colonIndex + 1)
-          const count = parseInt(countStr, 10)
-          if (!isNaN(count)) {
-            totalMatches += count
-            fileCount += 1
+        // 添加上下文标志（-C/context 优先于 context_before/context_after）
+        if (output_mode === 'content') {
+          if (context !== undefined) {
+            args.push('-C', context.toString())
+          } else if (context_c !== undefined) {
+            args.push('-C', context_c.toString())
+          } else {
+            if (context_before !== undefined) {
+              args.push('-B', context_before.toString())
+            }
+            if (context_after !== undefined) {
+              args.push('-A', context_after.toString())
+            }
           }
         }
+
+        // 如果模式以短横线开头，使用 -e 标志将其指定为模式
+        // 以防止 ripgrep 将其解释为命令行选项
+        if (pattern.startsWith('-')) {
+          args.push('-e', pattern)
+        } else {
+          args.push(pattern)
+        }
+
+        // 如果指定了类型过滤器
+        if (type) {
+          args.push('--type', type)
+        }
+
+        if (glob) {
+          // 按逗号和空格分割，但保留带花括号的模式
+          const globPatterns: string[] = []
+          const rawPatterns = glob.split(/\s+/)
+
+          for (const rawPattern of rawPatterns) {
+            // 如果模式包含花括号，不再进一步分割
+            if (rawPattern.includes('{') && rawPattern.includes('}')) {
+              globPatterns.push(rawPattern)
+            } else {
+              // 对不含花括号的模式按逗号分割
+              globPatterns.push(...rawPattern.split(',').filter(Boolean))
+            }
+          }
+
+          for (const globPattern of globPatterns.filter(Boolean)) {
+            args.push('--glob', globPattern)
+          }
+        }
+
+        // 添加忽略模式
+        const appState = getAppState()
+        const ignorePatterns = normalizePatternsToPath(
+          getFileReadIgnorePatterns(appState.toolPermissionContext),
+          getCwd(),
+        )
+        for (const ignorePattern of ignorePatterns) {
+          // 注意：ripgrep 仅相对于工作目录应用 gitignore 模式
+          // 因此对于非绝对路径，需要添加 '**' 前缀
+          // 参见：https://github.com/BurntSushi/ripgrep/discussions/2156#discussioncomment-2316335
+          //
+          // 同时需要用 `!` 取反以排除该模式
+          const rgIgnorePattern = ignorePattern.startsWith('/')
+            ? `!${ignorePattern}`
+            : `!**/${ignorePattern}`
+          args.push('--glob', rgIgnorePattern)
+        }
+
+        // 排除孤立的插件版本目录
+        for (const exclusion of await getGlobExclusionsForPluginCache(
+          absolutePath,
+        )) {
+          args.push('--glob', exclusion)
+        }
+
+        // WSL 下文件读取存在严重的性能损耗（WSL2 下慢 3-5 倍）
+        // 超时由 ripgrep 本身通过 execFile 超时选项处理
+        // 我们不使用 AbortController 来中断超时，以免干扰 agent 循环
+        // 如果 ripgrep 超时，会抛出 RipgrepTimeoutError 并向上传播
+        // 以便 Claude 知晓搜索未完成（而非误以为没有匹配结果）
+        return await ripGrep(args, absolutePath, abortController.signal)
+      })()
+
+      // 竞争：搜索与超时
+      const results = await Promise.race([
+        searchPromise,
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('搜索超时（超过 ' + SEARCH_TIMEOUT_MS / 1000 + ' 秒）')), SEARCH_TIMEOUT_MS)
+        ),
+      ])
+
+      // ---------- 原有处理逻辑（仅优化 files_with_matches 排序顺序）----------
+      if (output_mode === 'content') {
+        // 对于 content 模式，results 为实际内容行
+        // 将绝对路径转换为相对路径以节省 tokens
+
+        // 先应用 head_limit —— relativize 是按行处理的，
+        // 避免处理将被丢弃的行（宽泛的模式可能返回 10k+ 行，而 head_limit 只保留约 30-100 行）。
+        const { items: limitedResults, appliedLimit } = applyHeadLimit(
+          results,
+          head_limit,
+          offset,
+        )
+
+        const finalLines = limitedResults.map(line => {
+          // 行格式：/absolute/path:line_content 或 /absolute/path:num:content
+          const colonIndex = line.indexOf(':')
+          if (colonIndex > 0) {
+            const filePath = line.substring(0, colonIndex)
+            const rest = line.substring(colonIndex)
+            return toRelativePath(filePath) + rest
+          }
+          return line
+        })
+        const output = {
+          mode: 'content' as const,
+          numFiles: 0, // 对 content 模式不适用
+          filenames: [],
+          content: finalLines.join('\n'),
+          numLines: finalLines.length,
+          ...(appliedLimit !== undefined && { appliedLimit }),
+          ...(offset > 0 && { appliedOffset: offset }),
+        }
+        return { data: output }
       }
 
+      if (output_mode === 'count') {
+        // 对于 count 模式，直接透传 ripgrep 的原始输出（格式：filename:count）
+        // 先应用 head_limit，避免对将被丢弃的条目做路径转换。
+        const { items: limitedResults, appliedLimit } = applyHeadLimit(
+          results,
+          head_limit,
+          offset,
+        )
+
+        // 将绝对路径转换为相对路径以节省 tokens
+        const finalCountLines = limitedResults.map(line => {
+          // 行格式：/absolute/path:count
+          const colonIndex = line.lastIndexOf(':')
+          if (colonIndex > 0) {
+            const filePath = line.substring(0, colonIndex)
+            const count = line.substring(colonIndex)
+            return toRelativePath(filePath) + count
+          }
+          return line
+        })
+
+        // 解析 count 输出以提取总匹配数和文件数
+        let totalMatches = 0
+        let fileCount = 0
+        for (const line of finalCountLines) {
+          const colonIndex = line.lastIndexOf(':')
+          if (colonIndex > 0) {
+            const countStr = line.substring(colonIndex + 1)
+            const count = parseInt(countStr, 10)
+            if (!isNaN(count)) {
+              totalMatches += count
+              fileCount += 1
+            }
+          }
+        }
+
+        const output = {
+          mode: 'count' as const,
+          numFiles: fileCount,
+          filenames: [],
+          content: finalCountLines.join('\n'),
+          numMatches: totalMatches,
+          ...(appliedLimit !== undefined && { appliedLimit }),
+          ...(offset > 0 && { appliedOffset: offset }),
+        }
+        return { data: output }
+      }
+
+      // 对于 files_with_matches 模式（默认）
+      // ---- 修改：先应用 head_limit 截断，再 stat & 排序 ----
+      const { items: limitedResults, appliedLimit } = applyHeadLimit(
+        results,
+        head_limit,
+        offset,
+      )
+
+      // 然后仅对截断后的文件进行 stat 和按修改时间排序
+      const stats = await Promise.allSettled(
+        limitedResults.map(_ => getFsImplementation().stat(_)),
+      )
+      const sortedMatches = limitedResults
+        .map((_, i) => {
+          const r = stats[i]!
+          return [
+            _,
+            r.status === 'fulfilled' ? (r.value.mtimeMs ?? 0) : 0,
+          ] as const
+        })
+        .sort((a, b) => {
+          if (process.env.NODE_ENV === 'test') {
+            // 测试环境下始终按文件名排序，确保结果确定性
+            return a[0].localeCompare(b[0])
+          }
+          const timeComparison = b[1] - a[1]
+          if (timeComparison === 0) {
+            // 修改时间相同时，以文件名作为次要排序依据
+            return a[0].localeCompare(b[0])
+          }
+          return timeComparison
+        })
+        .map(_ => _[0])
+
+      // 将绝对路径转换为相对路径以节省 tokens
+      const relativeMatches = sortedMatches.map(toRelativePath)
+
       const output = {
-        mode: 'count' as const,
-        numFiles: fileCount,
-        filenames: [],
-        content: finalCountLines.join('\n'),
-        numMatches: totalMatches,
+        mode: 'files_with_matches' as const,
+        filenames: relativeMatches,
+        numFiles: relativeMatches.length,
         ...(appliedLimit !== undefined && { appliedLimit }),
         ...(offset > 0 && { appliedOffset: offset }),
       }
+
       return { data: output }
-    }
 
-    // 对于 files_with_matches 模式（默认）
-    // 使用 allSettled，避免单个 ENOENT（文件在 ripgrep 扫描后、本次 stat 前被删除）导致整批操作失败。失败的 stat 排序时 mtime 视为 0。
-    const stats = await Promise.allSettled(
-      results.map(_ => getFsImplementation().stat(_)),
-    )
-    const sortedMatches = results
-      // 按修改时间排序
-      .map((_, i) => {
-        const r = stats[i]!
-        return [
-          _,
-          r.status === 'fulfilled' ? (r.value.mtimeMs ?? 0) : 0,
-        ] as const
-      })
-      .sort((a, b) => {
-        if (process.env.NODE_ENV === 'test') {
-          // 测试环境下始终按文件名排序，确保结果确定性
-          return a[0].localeCompare(b[0])
-        }
-        const timeComparison = b[1] - a[1]
-        if (timeComparison === 0) {
-          // 修改时间相同时，以文件名作为次要排序依据
-          return a[0].localeCompare(b[0])
-        }
-        return timeComparison
-      })
-      .map(_ => _[0])
+    } catch (error) {
+      // ---------- 捕获异常，但区分超时/取消与其他错误 ----------
+      // 超时和取消应向上传播，让 Claude 知道搜索未完成
+      // 其他错误（如权限问题）可以返回错误结果
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      const isTimeoutOrAbort =
+        error instanceof RipgrepTimeoutError ||
+        errorMessage.includes('搜索超时') ||
+        errorMessage.includes('ABORT_ERR') ||
+        (error instanceof Error && error.message.includes('timeout'))
 
-    // 对排序后的文件列表应用 head_limit（类似 "| head -N"）
-    const { items: finalMatches, appliedLimit } = applyHeadLimit(
-      sortedMatches,
-      head_limit,
-      offset,
-    )
+      if (isTimeoutOrAbort) {
+        // 向上抛出超时/取消错误，让上层感知搜索未完成
+        throw error
+      }
 
-    // 将绝对路径转换为相对路径以节省 tokens
-    const relativeMatches = finalMatches.map(toRelativePath)
-
-    const output = {
-      mode: 'files_with_matches' as const,
-      filenames: relativeMatches,
-      numFiles: relativeMatches.length,
-      ...(appliedLimit !== undefined && { appliedLimit }),
-      ...(offset > 0 && { appliedOffset: offset }),
-    }
-
-    return {
-      data: output,
+      // 非超时错误：返回错误结果
+      return {
+        data: {
+          mode: 'files_with_matches' as const,
+          filenames: [],
+          numFiles: 0,
+          content: `搜索失败：${errorMessage}`,
+        },
+      }
     }
   },
 } satisfies ToolDef<InputSchema, Output>)
