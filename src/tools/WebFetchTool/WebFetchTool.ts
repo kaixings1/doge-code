@@ -23,24 +23,24 @@ import {
 
 const inputSchema = lazySchema(() =>
   z.strictObject({
-    url: z.string().url().describe('The URL to fetch content from'),
-    prompt: z.string().describe('The prompt to run on the fetched content'),
+    url: z.string().url().describe('要获取内容的 URL'),
+    prompt: z.string().describe('用于处理获取内容的提示词'),
   }),
 )
 type InputSchema = ReturnType<typeof inputSchema>
 
 const outputSchema = lazySchema(() =>
   z.object({
-    bytes: z.number().describe('Size of the fetched content in bytes'),
-    code: z.number().describe('HTTP response code'),
-    codeText: z.string().describe('HTTP response code text'),
+    bytes: z.number().describe('获取内容的字节大小'),
+    code: z.number().describe('HTTP 响应码'),
+    codeText: z.string().describe('HTTP 响应码文本'),
     result: z
       .string()
-      .describe('Processed result from applying the prompt to the content'),
+      .describe('应用提示词到内容后的处理结果'),
     durationMs: z
       .number()
-      .describe('Time taken to fetch and process the content'),
-    url: z.string().describe('The URL that was fetched'),
+      .describe('获取和处理内容所花费的时间（毫秒）'),
+    url: z.string().describe('已获取的 URL'),
   }),
 )
 type OutputSchema = ReturnType<typeof outputSchema>
@@ -73,9 +73,9 @@ export const WebFetchTool = buildTool({
     const { url } = input as { url: string }
     try {
       const hostname = new URL(url).hostname
-      return `Claude wants to fetch content from ${hostname}`
+      return `Claude 想要获取 ${hostname} 的内容`
     } catch {
-      return `Claude wants to fetch content from this URL`
+      return `Claude 想要获取该 URL 的内容`
     }
   },
   userFacingName() {
@@ -131,7 +131,7 @@ export const WebFetchTool = buildTool({
     if (denyRule) {
       return {
         behavior: 'deny',
-        message: `${WebFetchTool.name} denied access to ${ruleContent}.`,
+        message: `${WebFetchTool.name} 拒绝了访问 ${ruleContent}。`,
         decisionReason: {
           type: 'rule',
           rule: denyRule,
@@ -147,7 +147,7 @@ export const WebFetchTool = buildTool({
     if (askRule) {
       return {
         behavior: 'ask',
-        message: `Claude requested permissions to use ${WebFetchTool.name}, but you haven't granted it yet.`,
+        message: `Claude 请求使用 ${WebFetchTool.name} 的权限，但您尚未授予。`,
         decisionReason: {
           type: 'rule',
           rule: askRule,
@@ -174,7 +174,7 @@ export const WebFetchTool = buildTool({
 
     return {
       behavior: 'ask',
-      message: `Claude requested permissions to use ${WebFetchTool.name}, but you haven't granted it yet.`,
+      message: `Claude 请求使用 ${WebFetchTool.name} 的权限，但您尚未授予。`,
       suggestions: buildSuggestions(ruleContent),
     }
   },
@@ -185,7 +185,7 @@ export const WebFetchTool = buildTool({
     // between SDK query() calls (when ToolSearch enablement varies due to
     // MCP tool count thresholds), invalidating the Anthropic API prompt
     // cache on each toggle — two consecutive cache misses per flicker event.
-    return `IMPORTANT: WebFetch WILL FAIL for authenticated or private URLs. Before using this tool, check if the URL points to an authenticated service (e.g. Google Docs, Confluence, Jira, GitHub). If so, look for a specialized MCP tool that provides authenticated access.
+    return `重要提示：WebFetch 无法访问需要身份验证的 URL（如 Google Docs、Confluence、Jira、GitHub 等）。如果目标 URL 需要登录，请寻找提供认证访问的专用 MCP 工具。
 ${DESCRIPTION}`
   },
   async validateInput(input) {

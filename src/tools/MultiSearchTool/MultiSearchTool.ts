@@ -29,11 +29,11 @@ function getMultiSearchPrompt(): string {
 
 const inputSchema = lazySchema(() =>
   z.strictObject({
-    query: z.string().min(1).describe('The search query'),
+    query: z.string().min(1).describe('搜索查询词'),
     engine: z
       .string()
       .optional()
-      .describe('Search engine: duckduckgo, baidu, bing. Omit for auto.'),
+      .describe('搜索引擎：duckduckgo、baidu、bing。省略则自动选择。'),
     limit: z
       .number()
       .int()
@@ -41,7 +41,7 @@ const inputSchema = lazySchema(() =>
       .max(20)
       .optional()
       .default(5)
-      .describe('Max results (1-20, default 5)'),
+      .describe('最大结果数（1-20，默认 5）'),
   }),
 )
 
@@ -109,7 +109,7 @@ export const MultiSearchTool = buildTool({
   isConcurrencySafe: () => true,
   isReadOnly: () => true,
   async description(input) {
-    return 'Search web for: ' + input.query
+    return '搜索网络：' + input.query
   },
   userFacingName: () => 'Multi-Search',
   getToolUseSummary(input) {
@@ -123,7 +123,7 @@ export const MultiSearchTool = buildTool({
   },
   async validateInput(input) {
     if (!input.query || input.query.trim().length === 0) {
-      return { result: false, message: 'Query is required', errorCode: 1 }
+      return { result: false, message: '需要提供搜索查询', errorCode: 1 }
     }
     return { result: true }
   },

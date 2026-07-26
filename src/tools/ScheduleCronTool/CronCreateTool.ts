@@ -29,9 +29,9 @@ const inputSchema = lazySchema(() =>
     cron: z
       .string()
       .describe(
-        'Standard 5-field cron expression in local time: "M H DoM Mon DoW" (e.g. "*/5 * * * *" = every 5 minutes, "30 14 28 2 *" = Feb 28 at 2:30pm local once).',
+        '本地时间的标准 5 段式 cron 表达式："M H DoM Mon DoW"（如 "*/5 * * * *" = 每 5 分钟，"30 14 28 2 *" = 每年 2 月 28 日下午 2:30 一次）。',
       ),
-    prompt: z.string().describe('The prompt to enqueue at each fire time.'),
+    prompt: z.string().describe('每次触发时入队的提示词。'),
     recurring: semanticBoolean(z.boolean().optional()).describe(
       `true (default) = fire on every cron match until deleted or auto-expired after ${DEFAULT_MAX_AGE_DAYS} days. false = fire once at the next match, then auto-delete. Use false for "remind me at X" one-shot requests with pinned minute/hour/dom/month.`,
     ),

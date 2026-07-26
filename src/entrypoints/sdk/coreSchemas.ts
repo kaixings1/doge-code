@@ -59,7 +59,7 @@ export const ApiKeySourceSchema = lazySchema(() =>
 )
 
 export const ConfigScopeSchema = lazySchema(() =>
-  z.enum(['local', 'user', 'project']).describe('Config scope for settings.'),
+  z.enum(['local', 'user', 'project']).describe('设置的配置范围。'),
 )
 
 export const SdkBetaSchema = lazySchema(() =>
@@ -71,7 +71,7 @@ export const ThinkingAdaptiveSchema = lazySchema(() =>
     .object({
       type: z.literal('adaptive'),
     })
-    .describe('Claude decides when and how much to think (Opus 4.6+).'),
+    .describe("Claude 自主决定是否思考以及思考深度（Opus 4.6+ 起支持）。"),
 )
 
 export const ThinkingEnabledSchema = lazySchema(() =>
@@ -80,7 +80,7 @@ export const ThinkingEnabledSchema = lazySchema(() =>
       type: z.literal('enabled'),
       budgetTokens: z.number().optional(),
     })
-    .describe('Fixed thinking token budget (older models)'),
+    .describe('固定思考 token 预算（旧版模型）'),
 )
 
 export const ThinkingDisabledSchema = lazySchema(() =>
@@ -88,7 +88,7 @@ export const ThinkingDisabledSchema = lazySchema(() =>
     .object({
       type: z.literal('disabled'),
     })
-    .describe('No extended thinking'),
+    .describe('不启用扩展思考'),
 )
 
 export const ThinkingConfigSchema = lazySchema(() =>
@@ -99,7 +99,7 @@ export const ThinkingConfigSchema = lazySchema(() =>
       ThinkingDisabledSchema(),
     ])
     .describe(
-      "Controls Claude's thinking/reasoning behavior. When set, takes precedence over the deprecated maxThinkingTokens.",
+      "控制 Claude 的思考/推理行为。设置后优先于已弃用的 maxThinkingTokens。",
     ),
 )
 
@@ -976,8 +976,8 @@ export const PromptRequestOptionSchema = lazySchema(() =>
   z.object({
     key: z
       .string()
-      .describe('Unique key for this option, returned in the response'),
-    label: z.string().describe('Display text for this option'),
+      .describe('此选项的唯一标识符，返回在响应中'),
+    label: z.string().describe('此选项的显示文本'),
     description: z
       .string()
       .optional()
@@ -1340,7 +1340,7 @@ export const SDKRateLimitInfoSchema = lazySchema(() =>
       isUsingOverage: z.boolean().optional(),
       surpassedThreshold: z.number().optional(),
     })
-    .describe('Rate limit information for claude.ai subscription users.'),
+    .describe('claude.ai 订阅用户的速率限制信息。'),
 )
 
 export const SDKAssistantMessageSchema = lazySchema(() =>

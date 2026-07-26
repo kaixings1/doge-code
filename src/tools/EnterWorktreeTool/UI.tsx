@@ -12,7 +12,7 @@ export function renderToolResultMessage(output: Output, _progressMessagesForMess
 }): React.ReactNode {
   return <Box flexDirection="column">
       <Text>
-        Switched to worktree on branch <Text bold>{output.worktreeBranch}</Text>
+        已切换到分支 <Text bold>{output.worktreeBranch}</Text> 的工作树
       </Text>
       <Text dimColor>{output.worktreePath}</Text>
     </Box>;

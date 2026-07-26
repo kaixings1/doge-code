@@ -736,16 +736,16 @@ export function renderGroupedAgentToolUse(toolUses: Array<{
         <ToolUseLoader shouldAnimate={shouldAnimate && anyUnresolved} isUnresolved={anyUnresolved} isError={anyError} />
         <Text>
           {allComplete ? allAsync ? <>
-                <Text bold>{toolUses.length}</Text> background agents launched{' '}
+                <Text bold>{toolUses.length}</Text> 个后台代理已启动{' '}
                 <Text dimColor>
                   <KeyboardShortcutHint shortcut="↓" action="manage" parens />
                 </Text>
               </> : <>
-                <Text bold>{toolUses.length}</Text>{' '}
-                {commonType ? `${commonType} agents` : 'agents'} finished
+                <Text bold>{toolUses.length}</Text> 个
+                {commonType ? `${commonType} 代理` : '代理'} 已完成
               </> : <>
-              Running <Text bold>{toolUses.length}</Text>{' '}
-              {commonType ? `${commonType} agents` : 'agents'}…
+              正在运行 <Text bold>{toolUses.length}</Text> 个
+              {commonType ? `${commonType} 代理` : '代理'}…
             </>}{' '}
         </Text>
         {!allAsync && <CtrlOToExpand />}

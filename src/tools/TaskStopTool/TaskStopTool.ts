@@ -12,24 +12,23 @@ const inputSchema = lazySchema(() =>
     task_id: z
       .string()
       .optional()
-      .describe('The ID of the background task to stop'),
-    // shell_id is accepted for backward compatibility with the deprecated KillShell tool
-    shell_id: z.string().optional().describe('Deprecated: use task_id instead'),
+      .describe('要停止的后台任务 ID'),
+    shell_id: z.string().optional().describe('已弃用：请使用 task_id'),
   }),
 )
 type InputSchema = ReturnType<typeof inputSchema>
 
 const outputSchema = lazySchema(() =>
   z.object({
-    message: z.string().describe('Status message about the operation'),
-    task_id: z.string().describe('The ID of the task that was stopped'),
-    task_type: z.string().describe('The type of the task that was stopped'),
+    message: z.string().describe('操作的状态消息'),
+    task_id: z.string().describe('已停止的任务 ID'),
+    task_type: z.string().describe('已停止的任务类型'),
     // Optional: tool outputs are persisted to transcripts and replayed on --resume
     // without re-validation, so sessions from before this field was added lack it.
     command: z
       .string()
       .optional()
-      .describe('The command or description of the stopped task'),
+      .describe('已停止任务的命令或描述'),
   }),
 )
 type OutputSchema = ReturnType<typeof outputSchema>
@@ -90,7 +89,7 @@ export const TaskStopTool = buildTool({
     return { result: true }
   },
   async description() {
-    return `Stop a running background task by ID`
+    return `按 ID 停止正在运行的后台任务`
   },
   async prompt() {
     return DESCRIPTION

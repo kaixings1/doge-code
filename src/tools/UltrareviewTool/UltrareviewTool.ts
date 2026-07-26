@@ -5,11 +5,11 @@ export const UltrareviewTool = {
   description: 'Run comprehensive cloud-based code review using parallel multi-agent analysis',
   callOn: 'always',
   input: z.object({
-    target: z.string().optional().describe('Target to review: branch name, PR URL, or commit SHA'),
+    target: z.string().optional().describe('审查目标：分支名、PR URL 或提交 SHA'),
   }),
   output: z.object({
-    findings: z.array(z.string()).describe('Code review findings'),
-    summary: z.string().describe('Review summary'),
+    findings: z.array(z.string()).describe('代码审查发现'),
+    summary: z.string().describe('审查摘要'),
   }),
   // 原 exec 逻辑可以直接移入 call 方法（Tool 接口使用的是 call）
   exec: async ({ target }) => {
