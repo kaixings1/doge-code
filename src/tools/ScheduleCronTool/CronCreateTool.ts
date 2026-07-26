@@ -108,7 +108,7 @@ export const CronCreateTool = buildTool({
       return {
         result: false,
         message:
-          'durable crons are not supported for teammates (teammates do not persist across sessions)',
+          '持久化定时任务不支持队友模式（队友不会在会话间持久保存）',
         errorCode: 4,
       }
     }

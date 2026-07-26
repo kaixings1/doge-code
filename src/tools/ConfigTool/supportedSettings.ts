@@ -167,13 +167,13 @@ export const SUPPORTED_SETTINGS: Record<string, SettingConfig> = {
           source: 'global' as const,
           type: 'boolean' as const,
           description:
-            'Push to your mobile device when idle after Claude finishes (requires Remote Control)',
+            'Claude 完成后空闲时推送到移动设备（需要远程控制）',
         },
         inputNeededNotifEnabled: {
           source: 'global' as const,
           type: 'boolean' as const,
           description:
-            'Push to your mobile device when a permission prompt or question is waiting (requires Remote Control)',
+            '当权限提示或问题等待时推送到移动设备（需要远程控制）',
         },
         agentPushNotifEnabled: {
           source: 'global' as const,

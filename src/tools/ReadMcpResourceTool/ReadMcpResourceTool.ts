@@ -79,7 +79,7 @@ export const ReadMcpResourceTool = buildTool({
 
     if (!client) {
       throw new Error(
-        `Server "${serverName}" not found. Available servers: ${mcpClients.map(c => c.name).join(', ')}`,
+        `未找到服务器 "${serverName}"。可用服务器：${mcpClients.map(c => c.name).join(', ')}`,
       )
     }
 

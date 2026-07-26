@@ -666,7 +666,7 @@ export function checkSedConstraints(
       return {
         behavior: 'ask',
         message:
-          'sed command requires approval (contains potentially dangerous operations)',
+          'sed 命令需要批准（包含潜在危险操作）',
         decisionReason: {
           type: 'other',
           reason:

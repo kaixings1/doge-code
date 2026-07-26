@@ -102,7 +102,7 @@ async function searchAll(
 
 export const MultiSearchTool = buildTool({
   name: MULTI_SEARCH_TOOL_NAME,
-  searchHint: 'Search multiple web search engines without API key',
+  searchHint: '搜索多个网络搜索引擎（无需 API Key）',
   maxResultSizeChars: 50_000,
   shouldDefer: true,
   isEnabled: () => true,

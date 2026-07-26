@@ -464,7 +464,7 @@ export const NotebookEditTool = buildTool({
         cell_type: cell_type ?? 'code',
         language: 'python',
         edit_mode: 'replace',
-        error: 'Unknown error occurred while editing notebook',
+        error: '编辑笔记本时发生未知错误',
         cell_id,
         notebook_path: fullPath,
         original_file: '',

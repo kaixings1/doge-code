@@ -375,11 +375,11 @@ export const TaskUpdateTool = buildTool({
       return {
         tool_use_id: toolUseID,
         type: 'tool_result',
-        content: error || `Task #${taskId} not found`,
+        content: error || `未找到任务 #${taskId}`,
       }
     }
 
-    let resultContent = `Updated task #${taskId} ${updatedFields.join(', ')}`
+    let resultContent = `已更新任务 #${taskId}：${updatedFields.join(', ')}`
 
     // Add reminder for teammates when they complete a task (supports in-process teammates)
     if (
