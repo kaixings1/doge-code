@@ -179,7 +179,7 @@ export const SUPPORTED_SETTINGS: Record<string, SettingConfig> = {
           source: 'global' as const,
           type: 'boolean' as const,
           description:
-            'Allow Claude to push to your mobile device when it deems it appropriate (requires Remote Control)',
+            'Claude 在适当时推送到移动设备（需要远程控制）',
         },
       }
     : {}),

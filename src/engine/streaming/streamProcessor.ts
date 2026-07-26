@@ -53,7 +53,7 @@ export class StreamProcessor {
   }
 
   private processDelta(event: { index: number; delta: { type: string; text?: string; partial_json?: string } }): ProcessedEvent {
-    if (!this.currentBlock) return { type: "error", error: "No current block" };
+    if (!this.currentBlock) return { type: "error", error: "没有当前代码块" };
     const delta = event.delta;
     if (delta.type === "text_delta") {
       const chunk = { type: "text", text: delta.text, index: event.index };
