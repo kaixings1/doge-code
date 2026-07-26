@@ -1623,7 +1623,7 @@ function PromptInput({
         onImagePaste(imageData.base64, imageData.mediaType);
       } else {
         const shortcutDisplay = getShortcutDisplay('chat:imagePaste', 'Chat', 'ctrl+v');
-        const message = env.isSSH() ? "No image found in clipboard. You're SSH'd; try scp?" : `No image found in clipboard. Use ${shortcutDisplay} to paste images.`;
+        const message = env.isSSH() ? "剪贴板中没有图片。您正在 SSH 中；请尝试 scp？" : `剪贴板中没有图片。使用 ${shortcutDisplay} 粘贴图片。`;
         addNotification({
           key: 'no-image-in-clipboard',
           text: message,
@@ -1875,9 +1875,9 @@ function PromptInput({
       const shortcut = MACOS_OPTION_SPECIAL_CHARS[char];
       const terminalName = getNativeCSIuTerminalDisplayName();
       const jsx = terminalName ? <Text dimColor>
-          To enable {shortcut}, set <Text bold>Option as Meta</Text> in{' '}
-          {terminalName} preferences (⌘,)
-        </Text> : <Text dimColor>To enable {shortcut}, run /terminal-setup</Text>;
+          要启用 {shortcut}，请在 {' '}
+          {terminalName} 偏好设置中设置 <Text bold>Option 作为 Meta</Text>（⌘,）
+        </Text> : <Text dimColor>要启用 {shortcut}，请运行 /terminal-setup</Text>;
       addNotification({
         key: 'option-meta-hint',
         jsx,
@@ -2244,7 +2244,7 @@ function PromptInput({
   return <Box flexDirection="column" marginTop={briefOwnsGap ? 0 : 1}>
       {!isFullscreenEnvEnabled() && <PromptInputQueuedCommands />}
       {hasSuppressedDialogs && <Box marginTop={1} marginLeft={2}>
-          <Text dimColor>Waiting for permission…</Text>
+          <Text dimColor>等待授权…</Text>
         </Box>}
       <PromptInputStashNotice hasStash={stashedPrompt !== undefined} />
       {swarmBanner ? <>

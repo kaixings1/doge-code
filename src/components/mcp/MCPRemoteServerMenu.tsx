@@ -104,7 +104,7 @@ export function MCPRemoteServerMenu({
       } else if (result.client.type === 'needs-auth') {
         onComplete?.('认证成功，但服务器仍需认证。你可能需要手动重启 Claude Code。');
       } else {
-        onComplete?.('Authentication successful, but server reconnection failed. You may need to manually restart Claude Code for the changes to take effect.');
+        onComplete?.('认证成功，但服务器重连失败。您可能需要手动重启 Claude Code 以应用更改。');
       }
     } catch (err) {
       logEvent('tengu_claudeai_mcp_auth_completed', {
@@ -278,14 +278,14 @@ export function MCPRemoteServerMenu({
         });
         const result_0 = await reconnectMcpServer(server.name);
         if (result_0.client.type === 'connected') {
-          const message = isEffectivelyAuthenticated ? `Authentication successful. Reconnected to ${server.name}.` : `Authentication successful. Connected to ${server.name}.`;
+          const message = isEffectivelyAuthenticated ? `认证成功。已重新连接到 ${server.name}。` : `认证成功。已连接到 ${server.name}。`;
           onComplete?.(message);
         } else if (result_0.client.type === 'needs-auth') {
           onComplete?.('认证成功，但服务器仍需认证。你可能需要手动重启 Claude Code。');
         } else {
           // result.client.type === 'failed'
           logMCPDebug(server.name, `Reconnection failed after authentication`);
-          onComplete?.('Authentication successful, but server reconnection failed. You may need to manually restart Claude Code for the changes to take effect.');
+          onComplete?.('认证成功，但服务器重连失败。您可能需要手动重启 Claude Code 以应用更改。');
         }
       }
     } catch (err_1) {
@@ -362,11 +362,10 @@ export function MCPRemoteServerMenu({
           </Box>}
         {isAuthenticating && authorizationUrl && manualCallbackSubmit && <Box flexDirection="column" marginTop={1}>
             <Text dimColor>
-              If the redirect page shows a connection error, paste the URL from
-              your browser&apos;s address bar:
+              如果重定向页面显示连接错误，请从浏览器地址栏粘贴 URL：
             </Text>
             <Box>
-              <Text dimColor>URL {'>'} </Text>
+              <Text dimColor>地址 {'>'} </Text>
               <TextInput value={callbackUrlInput} onChange={setCallbackUrlInput} onSubmit={(value: string) => {
             manualCallbackSubmit(value.trim());
             setCallbackUrlInput('');
@@ -557,7 +556,7 @@ export function MCPRemoteServerMenu({
             </Box>}
 
           <Box>
-            <Text bold>URL: </Text>
+            <Text bold>地址: </Text>
             <Text dimColor>{server.config.url}</Text>
           </Box>
 

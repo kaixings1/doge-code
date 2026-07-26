@@ -92,6 +92,14 @@ export class MessageLoop {
     const stream = await this.deps.apiClient.sendMessage(request);
     const processed = await this.deps.responseHandler.handle(stream as AsyncIterable<{ type: string; [k: string]: unknown }>);
 
+    // 将助手回复写入 conversation，使下游能获取完整消息列表
+    if (processed.content && processed.toolCalls.length === 0) {
+      this.deps.conversation.messages.push({
+        role: "assistant",
+        content: processed.content,
+      } as InternalMessage);
+    }
+
     if (processed.toolCalls.length > 0) {
       const results = await this.deps.toolScheduler.execute(processed.toolCalls);
       this.deps.conversation.addToolResults(results);

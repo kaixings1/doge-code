@@ -35,7 +35,7 @@ export function IdleReturnDialog(t0) {
     t2 = $[3];
   }
   const formattedTokens = t2;
-  const t3 = `您已离开 ${formattedIdle}，此对话已使用 ${formattedTokens} tokens。`;
+  const t3 = `您已离开 ${formattedIdle}，此对话已使用 ${formattedTokens} 令牌。`;
   let t4;
   if ($[4] !== onDone) {
     t4 = () => onDone("关闭");

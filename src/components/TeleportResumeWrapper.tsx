@@ -111,7 +111,7 @@ export function TeleportResumeWrapper(t0) {
     }
     let t9;
     if ($[13] !== selectedSession.title) {
-      t9 = <Box flexDirection="column" padding={1}>{t8}<Text dimColor={true}>Loading "{selectedSession.title}"…</Text></Box>;
+      t9 = <Box flexDirection="column" padding={1}>{t8}<Text dimColor={true}>正在加载 "{selectedSession.title}"…</Text></Box>;
       $[13] = selectedSession.title;
       $[14] = t9;
     } else {

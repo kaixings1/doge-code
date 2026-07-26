@@ -210,7 +210,7 @@ export function PowerShellPermissionRequest(props: PermissionRequestProps): Reac
       {showPermissionDebug ? <>
           <PermissionDecisionDebugInfo permissionResult={toolUseConfirm.permissionResult} toolName="PowerShell" />
           {toolUseContext.options.debug && <Box justifyContent="flex-end" marginTop={1}>
-              <Text dimColor>Ctrl-D to hide debug info</Text>
+              <Text dimColor>Ctrl+D 隐藏调试信息</Text>
             </Box>}
         </> : <>
           <Box flexDirection="column">

@@ -126,7 +126,7 @@ export function MCPAgentServerMenu({
         </Box>
 
         {agentServer.url && <Box>
-            <Text bold>URL: </Text>
+            <Text bold>地址: </Text>
             <Text dimColor>{agentServer.url}</Text>
           </Box>}
 

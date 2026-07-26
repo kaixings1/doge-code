@@ -66,7 +66,7 @@ export function AutoRunIssueNotification(t0) {
   }
   let t6;
   if ($[6] !== reason) {
-    t6 = <Box flexDirection="column" marginTop={1}>{t4}{t5}<Box><Text dimColor={true}>Reason: {reason}</Text></Box></Box>;
+    t6 = <Box flexDirection="column" marginTop={1}>{t4}{t5}<Box><Text dimColor={true}>原因：{reason}</Text></Box></Box>;
     $[6] = reason;
     $[7] = t6;
   } else {

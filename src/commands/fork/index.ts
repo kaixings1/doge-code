@@ -1,6 +1,16 @@
 import type { Command, LocalJSXCommandContext, LocalCommandResult } from '../../commands.js'
 import { isForkSubagentEnabled } from '../../tools/AgentTool/forkSubagent.js'
 
+const HELP = `用法: /fork <任务描述>
+
+在后台派生子代理执行指定任务，完成后通过通知告知结果。
+子代理继承当前对话上下文和系统提示词，直接使用工具完成任务。
+
+示例:
+  /fork 分析项目架构并生成文档
+  /fork 搜索所有 TODO 并汇总
+  /fork 重构 utils/ 目录下的函数`
+
 const fork = {
   type: 'local',
   name: 'fork',
@@ -8,56 +18,66 @@ const fork = {
   argumentHint: '<任务描述>',
   isEnabled: () => isForkSubagentEnabled(),
   supportsNonInteractive: false,
-  load: () => Promise.resolve({
-    call: async (args: string, context: LocalJSXCommandContext): Promise<LocalCommandResult> => {
-      const prompt = args.trim()
-      if (!prompt) {
-        return {
-          type: 'text',
-          value: '用法: /fork <任务描述>\n\n在后台派生子代理执行指定任务，完成后通过通知告知结果。'
+  load: () =>
+    import('../../tools/AgentTool/AgentTool.js').then(m => ({
+      call: async (
+        args: string,
+        context: LocalJSXCommandContext,
+      ): Promise<LocalCommandResult> => {
+        const prompt = args.trim()
+        if (!prompt) {
+          return { type: 'text', value: HELP }
         }
-      }
 
-      try {
-        const { AgentTool } = await import('../../tools/AgentTool/AgentTool.js')
-        const agentToolInstance = new (AgentTool as any)()
+        try {
+          const toolUseContext = context as any
+          const result = await (m.AgentTool as any).call(
+            {
+              prompt,
+              description: prompt.length > 50 ? prompt.slice(0, 50) + '…' : prompt,
+            },
+            toolUseContext,
+            async (_name: string, _input: any) => true,
+            undefined,
+          )
 
-        const result = await agentToolInstance.call(
-          {
-            prompt,
-            description: prompt.slice(0, 50),
-          },
-          context as any,
-          context.canUseTool,
-          undefined,
-        )
-
-        if (result && typeof result === 'object' && 'data' in result) {
-          const data = result.data as any
-          if (data.status === 'async_launched') {
+          if (result && typeof result === 'object' && 'data' in result) {
+            const data = result.data as any
+            if (data.status === 'async_launched') {
+              return {
+                type: 'text',
+                value:
+                  `分支子代理已启动（ID: ${data.agentId}）\n` +
+                  `描述: ${data.description}\n` +
+                  `完成后将收到 <task-notification> 通知。\n` +
+                  `输出文件: ${data.outputFile}`,
+              }
+            }
             return {
               type: 'text',
-              value: `分支子代理已启动（ID: ${data.agentId}）\n描述: ${data.description}\n完成后将收到通知。\n输出文件: ${data.outputFile}`,
+              value: data.message || `分支子代理已完成:\n${prompt}`,
+            }
+          }
+
+          return {
+            type: 'text',
+            value: `分支子代理已启动: ${prompt}`,
+          }
+        } catch (e) {
+          const msg = e instanceof Error ? e.message : String(e)
+          if (msg.includes('Fork 在 Fork 工作器内部')) {
+            return {
+              type: 'text',
+              value: '分支子代理中不能再分支。请直接使用工具完成任务。',
             }
           }
           return {
             type: 'text',
-            value: data.message || `分支子代理已完成: ${prompt}`,
+            value: `分支子代理启动失败: ${msg}`,
           }
         }
-
-        return {
-          type: 'text',
-          value: `分支子代理已启动: ${prompt}`,
-        }
-      } catch (e) {
-        return {
-          type: 'text',
-          value: `分支子代理启动失败: ${e instanceof Error ? e.message : String(e)}`,
-        }
-      }
-    }
-  })
+      },
+    })),
 } satisfies Command
 
 export default fork

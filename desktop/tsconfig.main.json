@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "Node16",
+    "moduleResolution": "node16",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "outDir": "./dist"
+  },
+  "include": ["src/main/**/*", "../../src/engine/**/*", "../../src/engine/streaming/**/*", "../../src/engine/subagent/**/*", "../../src/engine/errors/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

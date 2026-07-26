@@ -80,7 +80,7 @@ export function HookProgressMessage(t0) {
   }
   let t2;
   if ($[14] === Symbol.for("react.memo_cache_sentinel")) {
-    t2 = <Text dimColor={true}>Running </Text>;
+    t2 = <Text dimColor={true}>运行中 </Text>;
     $[14] = t2;
   } else {
     t2 = $[14];

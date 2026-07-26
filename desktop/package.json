@@ -1,0 +1,49 @@
+{
+  "name": "doge-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/main/index.ts",
+  "scripts": {
+    "dev": "npx tsx scripts/launch-electron.ts",
+    "build": "tsc --noEmit",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "electron-store": "^8.1.0",
+    "esbuild": "^0.28.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "18",
+    "@types/react-dom": "18",
+    "electron": "^43.2.0",
+    "electron-builder": "^26.15.3",
+    "typescript": "^5.6.0"
+  },
+  "build": {
+    "appId": "com.doge-code.cli",
+    "productName": "Doge Code",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "src/**/*",
+      "dist/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "../resources/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}

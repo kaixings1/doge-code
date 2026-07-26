@@ -1,7 +1,6 @@
 import { z } from 'zod/v4'
 import { buildTool, type ToolDef } from '../../Tool.js'
 import { lazySchema } from '../../utils/lazySchema.js'
-import { getMcpToolManager } from '../../services/mcp/manager.js'
 
 const inputSchema = lazySchema(() =>
   z.object({
@@ -60,19 +59,9 @@ export const McpToolSearchTool = buildTool({
       content: `Found ${count} MCP tools`,
     }
   },
-  async call({ query, server }) {
+  async call({ query, server }, context) {
     try {
-      const manager = getMcpToolManager()
-      if (!manager) {
-        return {
-          data: {
-            results: [],
-            count: 0,
-          } as Output,
-        }
-      }
-
-      const allTools = manager.getAllTools()
+      const allTools = context.getAppState().mcp.tools
       const queryLower = query.toLowerCase()
       let results: Array<{ name: string; server: string; description: string }> = []
 

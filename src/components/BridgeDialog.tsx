@@ -107,7 +107,7 @@ export function BridgeDialog(t0) {
   let t8;
   if ($[10] === Symbol.for("react.memo_cache_sentinel")) {
     t8 = {
-      context: "Confirmation"
+      context: "确认"
     };
     $[10] = t8;
   } else {
@@ -308,7 +308,7 @@ export function BridgeDialog(t0) {
   }
   let t19;
   if ($[73] === Symbol.for("react.memo_cache_sentinel")) {
-    t19 = <Text dimColor={true}>d to disconnect · space for QR code · Enter/Esc to close</Text>;
+    t19 = <Text dimColor={true}>d 断开连接 · 空格 显示二维码 · Enter/Esc 关闭</Text>;
     $[73] = t19;
   } else {
     t19 = $[73];

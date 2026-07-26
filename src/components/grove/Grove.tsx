@@ -397,7 +397,7 @@ export function PrivacySettingsDialog(t0) {
   if (domainExcluded) {
     let t4;
     if ($[5] === Symbol.for("react.memo_cache_sentinel")) {
-      t4 = <Text color="error">false (for emails with your domain)</Text>;
+      t4 = <Text color="error">false（使用您域名的邮件）</Text>;
       $[5] = t4;
     } else {
       t4 = $[5];

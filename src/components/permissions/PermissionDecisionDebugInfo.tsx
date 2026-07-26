@@ -216,7 +216,7 @@ function SuggestionDisplay(t0) {
   if (!suggestions || suggestions.length === 0) {
     let t1;
     if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-      t1 = <Text dimColor={true}>Suggestions </Text>;
+      t1 = <Text dimColor={true}>推荐规则 </Text>;
       $[0] = t1;
     } else {
       t1 = $[0];
@@ -257,7 +257,7 @@ function SuggestionDisplay(t0) {
       if (rules.length === 0 && directories.length === 0 && !mode) {
         let t3;
         if ($[10] === Symbol.for("react.memo_cache_sentinel")) {
-          t3 = <Text dimColor={true}>Suggestion </Text>;
+          t3 = <Text dimColor={true}>推荐规则 </Text>;
           $[10] = t3;
         } else {
           t3 = $[10];
@@ -272,7 +272,7 @@ function SuggestionDisplay(t0) {
         }
         let t5;
         if ($[13] === Symbol.for("react.memo_cache_sentinel")) {
-          t5 = <Text>None</Text>;
+          t5 = <Text>无</Text>;
           $[13] = t5;
         } else {
           t5 = $[13];
@@ -290,7 +290,7 @@ function SuggestionDisplay(t0) {
       }
       let t3;
       if ($[16] === Symbol.for("react.memo_cache_sentinel")) {
-        t3 = <Text dimColor={true}>Suggestions </Text>;
+        t3 = <Text dimColor={true}>推荐规则 </Text>;
         $[16] = t3;
       } else {
         t3 = $[16];
@@ -384,7 +384,7 @@ export function PermissionDecisionDebugInfo(t0) {
   const unreachableRules = t1;
   let t2;
   if ($[6] === Symbol.for("react.memo_cache_sentinel")) {
-    t2 = <Box justifyContent="flex-end" minWidth={10}><Text dimColor={true}>Behavior </Text></Box>;
+    t2 = <Box justifyContent="flex-end" minWidth={10}><Text dimColor={true}>行为 </Text></Box>;
     $[6] = t2;
   } else {
     t2 = $[6];
@@ -399,7 +399,7 @@ export function PermissionDecisionDebugInfo(t0) {
   }
   let t4;
   if ($[9] !== permissionResult.behavior || $[10] !== permissionResult.message) {
-    t4 = permissionResult.behavior !== "allow" && <Box flexDirection="row"><Box justifyContent="flex-end" minWidth={10}><Text dimColor={true}>Message </Text></Box><Text>{permissionResult.message}</Text></Box>;
+    t4 = permissionResult.behavior !== "allow" && <Box flexDirection="row"><Box justifyContent="flex-end" minWidth={10}><Text dimColor={true}>消息 </Text></Box><Text>{permissionResult.message}</Text></Box>;
     $[9] = permissionResult.behavior;
     $[10] = permissionResult.message;
     $[11] = t4;
@@ -408,14 +408,14 @@ export function PermissionDecisionDebugInfo(t0) {
   }
   let t5;
   if ($[12] === Symbol.for("react.memo_cache_sentinel")) {
-    t5 = <Box justifyContent="flex-end" minWidth={10}><Text dimColor={true}>Reason </Text></Box>;
+    t5 = <Box justifyContent="flex-end" minWidth={10}><Text dimColor={true}>原因 </Text></Box>;
     $[12] = t5;
   } else {
     t5 = $[12];
   }
   let t6;
   if ($[13] !== decisionReason) {
-    t6 = <Box flexDirection="row">{t5}{decisionReason === undefined ? <Text>undefined</Text> : <PermissionDecisionInfoItem decisionReason={decisionReason} />}</Box>;
+    t6 = <Box flexDirection="row">{t5}{decisionReason === undefined ? <Text>无</Text> : <PermissionDecisionInfoItem decisionReason={decisionReason} />}</Box>;
     $[13] = decisionReason;
     $[14] = t6;
   } else {

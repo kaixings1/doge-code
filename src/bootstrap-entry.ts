@@ -4,6 +4,7 @@ import './utils/consoleOverride.js'
 import { ensureBootstrapMacro } from './bootstrapMacro'
 import * as fs from 'fs'
 import * as path from 'path'
+import { spawn } from 'child_process'
 //process.env.CLAUDE_CODE_SIMPLE=1
 // 🔴 清除 PATH 中的 MSYS2/Git bash 目录，防止 cmd.exe 子进程调用 MSYS2 的 grep/find 等程序触发 fork 卡死
 process.env.PATH = process.env.PATH?.split(';').filter(p => !/msys2/i.test(p) && !/git\\bin/i.test(p) && !/git\\usr\\bin/i.test(p) && !/^F:\\bin$/i.test(p)).join(';')
@@ -53,4 +54,37 @@ if (activeConfig?.baseURL && !activeConfig.baseURL.startsWith('http://0.0.0.0'))
   process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER = 'openai';
 }
 
-await import('./entrypoints/cli.tsx')
+async function main(): Promise<void> {
+  // 桌面模式：DOGE_DESKTOP=1 时启动 Electron 桌面应用（cd desktop && bun run dev）
+  if (process.env.DOGE_DESKTOP === '1') {
+    const desktopDir = path.resolve(__dirname, '..', 'desktop')
+
+    if (!fs.existsSync(path.join(desktopDir, 'package.json'))) {
+      console.error('桌面模式需要 desktop/ 目录，请确保已初始化')
+      process.exit(1)
+    }
+
+    const child = spawn(
+      process.execPath,
+      ['run', 'dev'],
+      {
+        cwd: desktopDir,
+        stdio: 'inherit',
+        env: { ...process.env, DOGE_DESKTOP: '1' },
+      }
+    )
+
+    child.on('error', (err) => {
+      console.error('启动桌面模式失败:', err.message)
+      console.error('请先安装依赖: cd desktop && bun install')
+      process.exit(1)
+    })
+
+    await new Promise<void>((resolve) => child.on('exit', resolve))
+    return
+  }
+
+  await import('./entrypoints/cli.tsx')
+}
+
+void main()
