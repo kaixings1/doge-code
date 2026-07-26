@@ -87,7 +87,7 @@ export function HistorySearchDialog({
       query_length: query.length
     });
     void item_1.entry.resolve().then(onSelect);
-  }} onCancel={onCancel} emptyMessage={q_0 => items === null ? '加载中…' : q_0 ? '没有匹配的提示词' : '还没有历史记录'} selectAction="use" direction="up" previewPosition={previewOnRight ? 'right' : 'bottom'} renderItem={(item_2, isFocused) => <Text>
+  }} onCancel={onCancel} emptyMessage={q_0 => items === null ? '加载中…' : q_0 ? '没有匹配的提示词' : '还没有历史记录'} selectAction="使用" direction="up" previewPosition={previewOnRight ? 'right' : 'bottom'} renderItem={(item_2, isFocused) => <Text>
           <Text dimColor>{item_2.age}</Text>
           <Text color={isFocused ? 'suggestion' : undefined}>
             {' '}
@@ -104,7 +104,7 @@ export function HistorySearchDialog({
             {shown.map((row, i) => <Text key={i} dimColor>
                 {row}
               </Text>)}
-            {more > 0 && <Text dimColor>{`… +${more} more lines`}</Text>}
+            {more > 0 && <Text dimColor>{`… +${more} 行`}</Text>}
           </Box>;
   }} />;
 }

@@ -130,26 +130,26 @@ export function ResumeTask({
   if (loadErrorType) {
     return <Box flexDirection="column" padding={1}>
         <Text bold color="error">
-          Error loading Claude Code sessions
+          加载 Claude Code 会话失败
         </Text>
 
         {renderErrorSpecificGuidance(loadErrorType)}
 
         <Text dimColor>
-          Press <Text bold>Ctrl+R</Text> to retry · Press{' '}
-          <Text bold>{escKey}</Text> to cancel
+          按 <Text bold>Ctrl+R</Text> 重试 · 按{' '}
+          <Text bold>{escKey}</Text> 取消
         </Text>
       </Box>;
   }
   if (sessions.length === 0) {
     return <Box flexDirection="column" padding={1}>
         <Text bold>
-          No Claude Code sessions found
-          {currentRepo && <Text> for {currentRepo}</Text>}
+          未找到 Claude Code 会话
+          {currentRepo && <Text>（{currentRepo}）</Text>}
         </Text>
         <Box marginTop={1}>
           <Text dimColor>
-            Press <Text bold>{escKey}</Text> to cancel
+            按 <Text bold>{escKey}</Text> 取消
           </Text>
         </Box>
       </Box>;
@@ -185,7 +185,7 @@ export function ResumeTask({
   const showScrollPosition = sessions.length > maxVisibleOptions;
   return <Box flexDirection="column" padding={1} height={maxHeight}>
       <Text bold>
-        Select a session to resume
+        选择要恢复的会话
         {showScrollPosition && <Text dimColor>
             {' '}
             ({focusedIndex} of {sessions.length})
@@ -197,7 +197,7 @@ export function ResumeTask({
           <Text bold>
             {UPDATED_STRING.padEnd(maxTimeStringLength, ' ')}
             {SPACE_BETWEEN_TABLE_COLUMNS}
-            {'Session Title'}
+            {'会话标题'}
           </Text>
         </Box>
         <Select visibleOptionCount={maxVisibleOptions} options={options} onChange={value => {
@@ -252,19 +252,18 @@ function renderErrorSpecificGuidance(errorType: LoadErrorType): React.ReactNode 
         </Box>;
     case 'auth':
       return <Box marginY={1} flexDirection="column">
-          <Text dimColor>Teleport requires a Claude account</Text>
+          <Text dimColor>Teleport 需要 Claude 账户</Text>
           <Text dimColor>
-            Run <Text bold>/login</Text> and select &quot;Claude account with
-            subscription&quot;
+            运行 <Text bold>/login</Text> 并选择 &quot;Claude 账户（含订阅）&quot;
           </Text>
         </Box>;
     case 'api':
       return <Box marginY={1} flexDirection="column">
-          <Text dimColor>Sorry, Claude encountered an error</Text>
+          <Text dimColor>抱歉，Claude 遇到了错误</Text>
         </Box>;
     case 'other':
       return <Box marginY={1} flexDirection="row">
-          <Text dimColor>Sorry, Claude Code encountered an error</Text>
+          <Text dimColor>抱歉，Claude Code 遇到了错误</Text>
         </Box>;
   }
 }

@@ -50,7 +50,7 @@ export function BypassPermissionsModeDialog(t0) {
   const handleEscape = _temp2;
   let t3;
   if ($[3] === Symbol.for("react.memo_cache_sentinel")) {
-    t3 = <Box flexDirection="column" gap={1}><Text>在绕过权限模式下, Claude Code 不会在运行前征求您的批准 潜在危险命令.<Newline />此模式只能用于 沙盒容器/VM 具有受限网络访问权限 且易于恢复.</Text><Text>通过继续操作，您接受采取的所有行动的全部责任 在绕过权限模式下运行时.</Text><Link url="https://code.claude.com/docs/en/security" /></Box>;
+    t3 = <Box flexDirection="column" gap={1}><Text>在绕过权限模式下，Claude Code 不会在运行前征求您的批准，即可执行潜在危险命令。</Text><Newline /><Text>此模式仅适用于具有受限网络访问权限且易于恢复的沙盒容器或虚拟机。</Text><Newline /><Text>继续操作即表示您接受在绕过权限模式下运行时采取的所有行动的全部责任。</Text><Link url="https://code.claude.com/docs/en/security" /></Box>;
     $[3] = t3;
   } else {
     t3 = $[3];
@@ -58,10 +58,10 @@ export function BypassPermissionsModeDialog(t0) {
   let t4;
   if ($[4] === Symbol.for("react.memo_cache_sentinel")) {
     t4 = [{
-      label: "不，退出",
+      label: "否，退出",
       value: "decline"
     }, {
-      label: "是的，我接受",
+      label: "是，我接受",
       value: "accept"
     }];
     $[4] = t4;

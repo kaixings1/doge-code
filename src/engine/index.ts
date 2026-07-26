@@ -9,7 +9,7 @@ import { MessageLoop, type MessageLoopDeps, type QueryResult } from "./messageLo
 import { MessageNormalizer, type InternalMessage } from "./messageNormalizer.ts";
 import { RequestBuilder } from "./requestBuilder.ts";
 import { ResponseHandler } from "./responseHandler.ts";
-import { ToolScheduler, type PermissionManager, type ToolExecutor } from "./toolScheduler.ts";
+import { ToolScheduler, type PermissionManager, type ToolExecutor, type Tool } from "./toolScheduler.ts";
 import { TokenBudgetManager } from "./tokenBudgetManager.ts";
 import { AutoCompactor } from "./autoCompactor.ts";
 import { ErrorClassifier } from "./errors/classifier.ts";
@@ -97,8 +97,8 @@ export class QueryEngine {
     this.messageLoop = new MessageLoop(deps);
   }
 
-  private buildRegistry(): Map<string, { name: string; execute: (input: Record<string, unknown>) => Promise<{ content: unknown }> }> {
-    const map = new Map<string, { name: string; execute: (input: Record<string, unknown>) => Promise<{ content: unknown }> }>();
+  private buildRegistry(): Map<string, Tool> {
+    const map = new Map<string, Tool>();
     for (const name of [
       "BashTool",
       "FileReadTool",
@@ -108,7 +108,10 @@ export class QueryEngine {
     ]) {
       map.set(name, {
         name,
-        async execute(_input: Record<string, unknown>) {
+        description: `${name} — 骨架占位，待接入真实工具`,
+        parameters: { type: "object", properties: {} },
+        validate(_params: unknown) { return { valid: true }; },
+        async execute(_params: unknown) {
           return { content: `[${name}] 骨架占位，待接入真实工具` };
         },
       });

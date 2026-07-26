@@ -72,12 +72,12 @@ export function DesktopHandoff(t0) {
         setState("checking");
         const installStatus = await getDesktopInstallStatus();
         if (installStatus.status === "not-installed") {
-          setDownloadMessage("未安装 Claude Desktop。");
+          setDownloadMessage("尚未安装 Claude Desktop。");
           setState("prompt-download");
           return;
         }
         if (installStatus.status === "version-too-old") {
-          setDownloadMessage("Claude Desktop 需要更新（当前版本 v${installStatus.version}，需要 v1.1.2396+）。");
+          setDownloadMessage("Claude Desktop 需要更新（当前版本 v${installStatus.version}，需升级至 v1.1.2396+）。");
           setState("prompt-download");
           return;
         }
@@ -144,7 +144,7 @@ export function DesktopHandoff(t0) {
     }
     let t5;
     if ($[14] === Symbol.for("react.memo_cache_sentinel")) {
-      t5 = <Text>立即下载？(y/n)</Text>;
+      t5 = <Text>是否立即下载？（y/n）</Text>;
       $[14] = t5;
     } else {
       t5 = $[14];

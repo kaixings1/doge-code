@@ -254,7 +254,7 @@ function TeamDetailView(t0) {
   const t1 = `Team ${teamName}`;
   let t2;
   if ($[0] !== selectedIndex || $[1] !== teammates) {
-    t2 = teammates.length === 0 ? <Text dimColor={true}>No teammates</Text> : <Box flexDirection="column">{teammates.map((teammate, index) => <TeammateListItem key={teammate.agentId} teammate={teammate} isSelected={index === selectedIndex} />)}</Box>;
+    t2 = teammates.length === 0 ? <Text dimColor={true}>暂无队友</Text> : <Box flexDirection="column">{teammates.map((teammate, index) => <TeammateListItem key={teammate.agentId} teammate={teammate} isSelected={index === selectedIndex} />)}</Box>;
     $[0] = selectedIndex;
     $[1] = teammates;
     $[2] = t2;
@@ -492,7 +492,7 @@ function TeammateDetailView(t0) {
   const title = t8;
   let t9;
   if ($[23] !== teammateTasks) {
-    t9 = teammateTasks.length > 0 && <Box flexDirection="column"><Text bold={true}>Tasks</Text>{teammateTasks.map(_temp2)}</Box>;
+    t9 = teammateTasks.length > 0 && <Box flexDirection="column"><Text bold={true}>任务</Text>{teammateTasks.map(_temp2)}</Box>;
     $[23] = teammateTasks;
     $[24] = t9;
   } else {
@@ -500,7 +500,7 @@ function TeammateDetailView(t0) {
   }
   let t10;
   if ($[25] !== promptExpanded || $[26] !== teammate.prompt) {
-    t10 = teammate.prompt && <Box flexDirection="column"><Text bold={true}>Prompt</Text><Text>{promptExpanded ? teammate.prompt : truncateToWidth(teammate.prompt, 80)}{stringWidth(teammate.prompt) > 80 && !promptExpanded && <Text dimColor={true}> (p to expand)</Text>}</Text></Box>;
+    t10 = teammate.prompt && <Box flexDirection="column"><Text bold={true}>提示词</Text><Text>{promptExpanded ? teammate.prompt : truncateToWidth(teammate.prompt, 80)}{stringWidth(teammate.prompt) > 80 && !promptExpanded && <Text dimColor={true}>（按 p 展开）</Text>}</Text></Box>;
     $[25] = promptExpanded;
     $[26] = teammate.prompt;
     $[27] = t10;

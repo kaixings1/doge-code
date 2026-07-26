@@ -101,7 +101,7 @@ export function HelpV2(t0) {
     tabs.push(t5);
     let t6;
     if ($[21] !== close || $[22] !== columns || $[23] !== customCommands || $[24] !== maxHeight) {
-      t6 = <Tab key="custom" title="custom-commands"><Commands commands={customCommands} maxHeight={maxHeight} columns={columns} title="浏览自定义命令：" emptyMessage="未找到自定义命令" onCancel={close} /></Tab>;
+      t6 = <Tab key="custom" title="自定义命令"><Commands commands={customCommands} maxHeight={maxHeight} columns={columns} title="浏览自定义命令：" emptyMessage="未找到自定义命令" onCancel={close} /></Tab>;
       $[21] = close;
       $[22] = columns;
       $[23] = customCommands;
