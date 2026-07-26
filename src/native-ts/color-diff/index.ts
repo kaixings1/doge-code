@@ -937,19 +937,25 @@ export class ColorDiff {
 export class ColorFile {
   private code: string
   private filePath: string
+  private firstLine: string | null   // 新增：用于语言检测
 
   constructor(code: string, filePath: string) {
     this.code = code
     this.filePath = filePath
+    // 提取第一行，用于 shebang / 语言检测
+    const nl = this.code.indexOf('\n')
+    this.firstLine = nl >= 0 ? this.code.slice(0, nl) : this.code
   }
 
   render(themeName: string, width: number, dim: boolean): string[] | null {
     const mode = detectColorMode(themeName)
     const theme = buildTheme(themeName, mode)
-    // Rust 的 .lines() 会丢弃末尾 \n 带来的空白行
-    const lang = detectLanguage(this.filePath, firstLine)
+    // 语言检测（现在使用 this.firstLine，安全）
+    const lang = detectLanguage(this.filePath, this.firstLine)
     const hlState = { lang, stack: null }
 
+    // 新增：将文件内容按行分割（之前缺少这个，导致 lines is not defined）
+    const lines = this.code.split('\n')
     const maxDigits = String(lines.length).length
     const effectiveWidth = Math.max(1, width - maxDigits - 2)
 
