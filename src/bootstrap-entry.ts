@@ -9,7 +9,12 @@ import * as path from 'path'
 process.env.PATH = process.env.PATH?.split(';').filter(p => !/msys2/i.test(p) && !/git\\bin/i.test(p) && !/git\\usr\\bin/i.test(p) && !/^F:\\bin$/i.test(p)).join(';')
 // Shell 配置：保留 bash，通过 shim 拦截有问题的工具（grep/find/rg）
 // 将 .tools/ 加入 PATH 前端，确保安全 shim 优先于 MSYS2 工具
-const toolsDir = path.resolve(__dirname, '..', '.tools')
+// 编译为 exe 后，__dirname 可能指向虚拟路径，改用 process.execPath 的目录
+const exeDir = path.dirname(process.execPath)
+const computedToolsDir = path.resolve(__dirname, '..', '.tools')
+const toolsDir = fs.existsSync(path.join(exeDir, '.tools'))
+  ? path.join(exeDir, '.tools')
+  : computedToolsDir
 process.env.PATH = toolsDir + ';' + process.env.PATH
 ensureBootstrapMacro();
 
