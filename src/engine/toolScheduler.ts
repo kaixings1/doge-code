@@ -114,7 +114,7 @@ export class ToolScheduler {
 
   private merge(original: ToolCall[], results: ToolResult[]): ToolResult[] {
     const map = new Map(results.map((r) => [r.toolUseId, r]));
-    return original.map((c) => map.get(c.id) ?? { success: false, error: "Result not found", toolUseId: c.id });
+    return original.map((c) => map.get(c.id) ?? { success: false, error: "未找到结果", toolUseId: c.id });
   }
 
   onProgress?: (toolUseId: string, progress: unknown) => void;
