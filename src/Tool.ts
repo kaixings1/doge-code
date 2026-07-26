@@ -684,6 +684,7 @@ type DefaultableToolKeys =
   | 'checkPermissions'
   | 'toAutoClassifierInput'
   | 'userFacingName'
+  | 'mapToolResultToToolResultBlockParam'
 
 /**
  * `buildTool` 接受的工具定义。与 `Tool` 形状相同，但可默认化的方法是可选的 ——
@@ -737,6 +738,10 @@ const TOOL_DEFAULTS = {
   // 新增默认 prompt 和 description
   prompt: async (_options?: unknown) => '默认工具提示（由 buildTool 自动生成）',
   description: async (_input?: unknown, _options?: unknown) => '默认工具描述',
+  mapToolResultToToolResultBlockParam: (_content: unknown, _toolUseID: string) => ({
+    type: 'tool_result' as const,
+    content: '',
+  }),
 }
 
 // 默认值类型是 TOOL_DEFAULTS 的实际形状（可选参数，以便 0 参数和完整参数的调用点都能通过类型检查 —— 存根的参数数量各异，并且测试依赖于这一点），
