@@ -1,49 +1,119 @@
-import { z } from 'zod';
+import { z } from 'zod/v4'
+import { buildTool, type ToolDef } from '../../Tool.js'
+import { lazySchema } from '../../utils/lazySchema.js'
 
-export const HttpTool = {
-  name: 'http',
-  description: 'Make HTTP requests',
-  callOn: 'manual',
-  input: z.object({
-    method: z.enum(['GET', 'POST', 'PUT', 'DELETE', 'PATCH']).describe('HTTP 方法'),
-    url: z.string().describe('请求 URL'),
+const inputSchema = lazySchema(() =>
+  z.object({
+    method: z.enum(['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS']).describe('HTTP 方法'),
+    url: z.string().url().describe('请求 URL'),
     headers: z.record(z.string()).optional().describe('请求标头'),
-    body: z.string().optional().describe('请求体'),
+    body: z.string().optional().describe('请求体（JSON 字符串或表单数据）'),
+    timeout: z.number().optional().describe('超时时间（毫秒），默认 30000'),
   }),
-  output: z.object({
+)
+
+const outputSchema = lazySchema(() =>
+  z.object({
     status: z.number().describe('响应状态码'),
+    statusText: z.string().describe('状态文本'),
     headers: z.record(z.string()).describe('响应标头'),
     body: z.string().describe('响应体'),
+    durationMs: z.number().optional().describe('请求耗时（毫秒）'),
+    sizeBytes: z.number().optional().describe('响应体大小（字节）'),
   }),
+)
 
-  exec: async ({ method, url, headers, body }) => {
+export type Output = z.infer<ReturnType<typeof outputSchema>>
+
+export const HttpTool = buildTool({
+  name: 'http',
+  description: async () => '发送 HTTP 请求（GET/POST/PUT/DELETE/PATCH），返回完整响应',
+  callOn: 'manual',
+  async prompt() {
+    return '使用 http 工具发送 HTTP 请求。'
+  },
+  get inputSchema() {
+    return inputSchema()
+  },
+  get outputSchema() {
+    return outputSchema()
+  },
+  userFacingName() {
+    return 'http'
+  },
+  isEnabled() {
+    return true
+  },
+  toAutoClassifierInput() {
+    return ''
+  },
+  async checkPermissions(input) {
+    return { behavior: 'allow', updatedInput: input }
+  },
+  renderToolUseMessage(input) {
+    const method = (input as any)?.method ?? '?'
+    const url = (input as any)?.url ?? ''
+    return `HTTP ${method} ${url}`
+  },
+  mapToolResultToToolResultBlockParam(content, toolUseID) {
+    const status = (content as any).status
+    const duration = (content as any).durationMs
+    let msg = `HTTP ${status}`
+    if (duration) msg += ` (${duration}ms)`
     return {
-      status: 200,
-      headers: {},
-      body: '',
-    };
+      tool_use_id: toolUseID,
+      type: 'tool_result',
+      content: msg,
+    }
   },
+  async call({ method, url, headers, body, timeout = 30000 }) {
+    const startTime = Date.now()
+    try {
+      const controller = new AbortController()
+      const timer = setTimeout(() => controller.abort(), timeout)
 
-  // Tool 接口默认安全实现
-  isEnabled: () => true,
-  isConcurrencySafe: () => false,
-  isReadOnly: () => false,
-  isDestructive: () => false,
-  checkPermissions: (input, _ctx) =>
-    Promise.resolve({ behavior: 'allow', updatedInput: input }),
-  toAutoClassifierInput: () => '',
-  userFacingName: () => 'http',
+      const fetchOptions: RequestInit = {
+        method,
+        headers: headers as Record<string, string>,
+        signal: controller.signal,
+      }
 
-  renderToolUseMessage: (input) => `HTTP ${input?.method ?? '?'} ${input?.url ?? '?'}`,
-  mapToolResultToToolResultBlockParam: (content, toolUseID) => ({
-    tool_use_id: toolUseID,
-    type: 'tool_result',
-    content: `HTTP ${content.status}`,
-  }),
-  prompt: async () => 'Use http to make HTTP requests.',
-  description: async () => 'Make HTTP requests',
-  call: async (args, context, canUseTool, parentMessage, onProgress) => {
-    const result = await this.exec(args);
-    return { data: result };
+      if (body && !['GET', 'HEAD'].includes(method.toUpperCase())) {
+        fetchOptions.body = body
+      }
+
+      const response = await fetch(url, fetchOptions)
+      clearTimeout(timer)
+
+      const responseBody = await response.text()
+      const durationMs = Date.now() - startTime
+      const responseHeaders: Record<string, string> = {}
+      response.headers.forEach((value, key) => {
+        responseHeaders[key] = value
+      })
+
+      return {
+        data: {
+          status: response.status,
+          statusText: response.statusText,
+          headers: responseHeaders,
+          body: responseBody,
+          durationMs,
+          sizeBytes: new TextEncoder().encode(responseBody).length,
+        } as Output,
+      }
+    } catch (err) {
+      const durationMs = Date.now() - startTime
+      return {
+        data: {
+          status: 0,
+          statusText: 'Error',
+          headers: {},
+          body: err instanceof Error ? err.message : String(err),
+          durationMs,
+          sizeBytes: 0,
+        } as Output,
+      }
+    }
   },
-};
+} satisfies ToolDef<typeof inputSchema, Output>)

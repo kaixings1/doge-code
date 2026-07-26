@@ -51,9 +51,9 @@ export class ErrorRecovery {
         return { success: true, action: "continue", message: "Tool failed, continuing" };
       case ErrorType.STATE_ERROR:
         this.stateMachine.reset();
-        return { success: true, action: "restart", message: "State machine reset" };
+        return { success: true, action: "restart", message: "状态机已重置" };
       default:
-        return { success: false, action: "crash", message: `Unrecoverable error: ${type}` };
+        return { success: false, action: "crash", message: `不可恢复的错误：${type}` };
     }
   }
 

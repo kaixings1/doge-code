@@ -46,7 +46,7 @@ export class MessageLoop {
     while (this.deps.stateMachine.canContinue()) {
       this.currentIteration++;
       if (this.currentIteration > this.maxIterations) {
-        await this.deps.stateMachine.transition("crashed", { reason: "Max iterations exceeded" });
+        await this.deps.stateMachine.transition("crashed", { reason: "超过最大迭代次数" });
         break;
       }
       try {

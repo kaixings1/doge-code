@@ -3447,8 +3447,8 @@ export function normalizeAttachmentForAPI(
 \`\`\`json
 {
   "to": "team-lead",
-  "message": "Your message here",
-  "summary": "Brief 5-10 word preview"
+  "message": "在此输入你的消息",
+  "summary": "简要预览（5-10 个词）"
 }
 \`\`\`
 </system-reminder>`,

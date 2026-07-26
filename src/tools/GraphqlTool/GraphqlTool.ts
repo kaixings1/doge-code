@@ -1,45 +1,115 @@
-import { z } from 'zod';
+import { z } from 'zod/v4'
+import { buildTool, type ToolDef } from '../../Tool.js'
+import { lazySchema } from '../../utils/lazySchema.js'
 
-export const GraphqlTool = {
+const inputSchema = lazySchema(() =>
+  z.object({
+    endpoint: z.string().url().describe('GraphQL 端点 URL'),
+    query: z.string().describe('GraphQL 查询语句（query 或 mutation）'),
+    variables: z.record(z.unknown()).optional().describe('查询变量（JSON 对象）'),
+    operationName: z.string().optional().describe('操作名称（可选）'),
+    headers: z.record(z.string()).optional().describe('请求标头'),
+    timeout: z.number().optional().describe('超时时间（毫秒），默认 30000'),
+  }),
+)
+
+const outputSchema = lazySchema(() =>
+  z.object({
+    data: z.record(z.unknown()).optional().describe('查询结果数据'),
+    errors: z.array(z.record(z.unknown())).optional().describe('GraphQL 错误列表'),
+    status: z.number().describe('HTTP 状态码'),
+    durationMs: z.number().optional().describe('请求耗时（毫秒）'),
+  }),
+)
+
+export type Output = z.infer<ReturnType<typeof outputSchema>>
+
+export const GraphqlTool = buildTool({
   name: 'graphql',
-  description: 'Execute GraphQL queries',
+  description: async () => '执行 GraphQL 查询和变更，返回 data 和 errors',
   callOn: 'manual',
-  input: z.object({
-    endpoint: z.string().describe('GraphQL 端点'),
-    query: z.string().describe('GraphQL 查询语句'),
-    variables: z.record(z.unknown()).optional().describe('查询变量'),
-  }),
-  output: z.object({
-    data: z.record(z.unknown()).describe('查询结果'),
-    errors: z.array(z.any()).optional().describe('错误列表'),
-  }),
-
-  exec: async ({ endpoint, query, variables }) => {
+  async prompt() {
+    return '使用 graphql 工具执行 GraphQL 查询和变更。'
+  },
+  get inputSchema() {
+    return inputSchema()
+  },
+  get outputSchema() {
+    return outputSchema()
+  },
+  userFacingName() {
+    return 'graphql'
+  },
+  isEnabled() {
+    return true
+  },
+  toAutoClassifierInput() {
+    return ''
+  },
+  async checkPermissions(input) {
+    return { behavior: 'allow', updatedInput: input }
+  },
+  renderToolUseMessage(input) {
+    const query = (input as any)?.query
+    return `GraphQL: ${query ? query.substring(0, 50) : '?'}`
+  },
+  mapToolResultToToolResultBlockParam(content, toolUseID) {
+    const errors = (content as any).errors
+    const data = (content as any).data
+    const hasErrors = errors && errors.length > 0
+    const msg = hasErrors
+      ? `GraphQL 错误: ${errors.map((e: any) => e.message || String(e)).join('; ')}`
+      : data
+        ? `查询成功，返回 ${Object.keys(data).length} 个字段`
+        : '查询完成（空结果）'
     return {
-      data: {},
-    };
+      tool_use_id: toolUseID,
+      type: 'tool_result',
+      content: msg,
+    }
   },
+  async call({ endpoint, query, variables, operationName, headers, timeout = 30000 }) {
+    const startTime = Date.now()
+    try {
+      const controller = new AbortController()
+      const timer = setTimeout(() => controller.abort(), timeout)
 
-  // Tool 接口默认安全实现
-  isEnabled: () => true,
-  isConcurrencySafe: () => false,
-  isReadOnly: () => false,
-  isDestructive: () => false,
-  checkPermissions: (input, _ctx) =>
-    Promise.resolve({ behavior: 'allow', updatedInput: input }),
-  toAutoClassifierInput: () => '',
-  userFacingName: () => 'graphql',
+      const requestBody: Record<string, unknown> = { query }
+      if (variables) requestBody.variables = variables
+      if (operationName) requestBody.operationName = operationName
 
-  renderToolUseMessage: (input) => `GraphQL: ${input?.query?.substring(0, 50) ?? '?'}`,
-  mapToolResultToToolResultBlockParam: (content, toolUseID) => ({
-    tool_use_id: toolUseID,
-    type: 'tool_result',
-    content: content.data ? 'Query executed successfully' : 'No data returned',
-  }),
-  prompt: async () => 'Use graphql to execute GraphQL queries.',
-  description: async () => 'Execute GraphQL queries',
-  call: async (args, context, canUseTool, parentMessage, onProgress) => {
-    const result = await this.exec(args);
-    return { data: result };
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(headers as Record<string, string>),
+        },
+        body: JSON.stringify(requestBody),
+        signal: controller.signal,
+      })
+      clearTimeout(timer)
+
+      const responseBody = await response.json()
+      const durationMs = Date.now() - startTime
+
+      return {
+        data: {
+          data: responseBody.data,
+          errors: responseBody.errors,
+          status: response.status,
+          durationMs,
+        } as Output,
+      }
+    } catch (err) {
+      const durationMs = Date.now() - startTime
+      return {
+        data: {
+          data: undefined,
+          errors: [{ message: err instanceof Error ? err.message : String(err) }],
+          status: 0,
+          durationMs,
+        } as Output,
+      }
+    }
   },
-};
+} satisfies ToolDef<typeof inputSchema, Output>)

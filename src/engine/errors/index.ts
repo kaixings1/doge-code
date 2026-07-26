@@ -41,7 +41,7 @@ export class APIError extends DogeCodeError {
 
 export class RateLimitError extends DogeCodeError {
   constructor(public retryAfter?: number) {
-    super(ErrorType.RATE_LIMIT, "Rate limit exceeded", { retryAfter });
+    super(ErrorType.RATE_LIMIT, "超出速率限制", { retryAfter });
   }
 }
 
