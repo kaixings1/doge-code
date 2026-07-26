@@ -1,3 +1,6 @@
+// Console output gate - must be first to intercept all console calls
+import './utils/consoleOverride.js'
+
 import { ensureBootstrapMacro } from './bootstrapMacro'
 import * as fs from 'fs'
 import * as path from 'path'

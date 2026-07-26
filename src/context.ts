@@ -189,7 +189,7 @@ export const getUserContext = memoize(
 
     return {
       ...(claudeMd && { claudeMd }),
-      currentDate: `Today's date is ${getLocalISODate()}.`,
+      currentDate: `今天的日期是: ${getLocalISODate()}.`,
     }
   },
 )

@@ -3,8 +3,13 @@ import { getLocalMonthYear } from '../../constants/common.js'
 export const WEB_SEARCH_TOOL_NAME = 'WebSearch'
 
 export function getWebSearchPrompt(): string {
-  const currentMonthYear = getLocalMonthYear()
+const currentMonthYear = getLocalMonthYear()
+const currentISODate = getLocalISODate() // 需要导入
+ 
   return `
+	当前日期为 ${currentMonthYear}（ISO: ${currentISODate}）。
+当构造搜索 URL 或查询时，必须使用上述年份（${currentYear}）和月份（${currentMonth}），
+切勿使用其他年份。例如，搜索近一周应使用 start_time=${currentMonth}01 等。
 - 允许 Claude 搜索网页并使用结果来辅助回答
 - 提供当前事件和最新数据的最新信息
 - 返回格式化的搜索结果块，包含以 Markdown 超链接形式呈现的链接
