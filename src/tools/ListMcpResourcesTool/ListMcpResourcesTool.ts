@@ -72,7 +72,7 @@ export const ListMcpResourcesTool = buildTool({
 
     if (targetServer && clientsToProcess.length === 0) {
       throw new Error(
-        `Server "${targetServer}" not found. Available servers: ${mcpClients.map(c => c.name).join(', ')}`,
+        `未找到服务器 "${targetServer}"。可用服务器：${mcpClients.map(c => c.name).join(', ')}`,
       )
     }
 
