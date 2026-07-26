@@ -1,46 +1,96 @@
-import { z } from 'zod';
+import { z } from 'zod/v4'
+import { buildTool, type ToolDef } from '../../Tool.js'
+import { lazySchema } from '../../utils/lazySchema.js'
+import {
+  applyPermissionUpdate,
+  prepareContextForPlanMode,
+} from '../../utils/permissions/permissionSetup.js'
+import { handlePlanModeTransition } from '../../bootstrap/state.js'
 
-export const PlanModeTool = {
-  name: 'plan-mode',
-  description: '模式',
-  callOn: 'manual',
-  input: z.object({
+const inputSchema = lazySchema(() =>
+  z.object({
     action: z.enum(['enter', 'exit', 'status']).describe('要执行的操作'),
   }),
-  output: z.object({
+)
+
+const outputSchema = lazySchema(() =>
+  z.object({
     active: z.boolean().describe('计划模式是否激活'),
     action: z.string().describe('执行的操作'),
     message: z.string().optional().describe('状态消息'),
   }),
+)
 
-  exec: async ({ action }) => {
+export type Output = z.infer<ReturnType<typeof outputSchema>>
+
+export const PlanModeTool = buildTool({
+  name: 'plan-mode',
+  description: async () => '管理计划模式状态（enter/exit/status）',
+  callOn: 'manual',
+  async prompt() {
+    return '使用 plan-mode 工具管理计划模式状态。'
+  },
+  get inputSchema() {
+    return inputSchema()
+  },
+  get outputSchema() {
+    return outputSchema()
+  },
+  userFacingName() {
+    return 'plan-mode'
+  },
+  isEnabled() {
+    return true
+  },
+  toAutoClassifierInput() {
+    return ''
+  },
+  async checkPermissions(input) {
+    return { behavior: 'allow', updatedInput: input }
+  },
+  renderToolUseMessage(input) {
+    const action = (input as any)?.action ?? '?'
+    return `PlanMode: ${action}`
+  },
+  mapToolResultToToolResultBlockParam(content, toolUseID) {
+    const msg = (content as any).message || 'Plan mode operation completed'
     return {
-      active: action === 'enter',
-      action,
-      message: `Plan mode ${action} completed`,
-    };
+      tool_use_id: toolUseID,
+      type: 'tool_result',
+      content: msg,
+    }
   },
+  async call({ action }, context) {
+    if (action === 'status') {
+      const currentMode = context.getAppState().toolPermissionContext.mode
+      const active = currentMode === 'plan'
+      return {
+        data: {
+          active,
+          action,
+          message: `Plan mode is ${active ? 'active' : 'inactive'} (mode=${currentMode})`,
+        } as Output,
+      }
+    }
 
-  // Tool 接口默认安全实现
-  isEnabled: () => true,
-  isConcurrencySafe: () => false,
-  isReadOnly: () => false,
-  isDestructive: () => false,
-  checkPermissions: (input, _ctx) =>
-    Promise.resolve({ behavior: 'allow', updatedInput: input }),
-  toAutoClassifierInput: () => '',
-  userFacingName: () => 'plan-mode',
+    const currentMode = context.getAppState().toolPermissionContext.mode
+    const targetMode = action === 'enter' ? 'plan' : 'auto'
+    handlePlanModeTransition(currentMode, targetMode)
 
-  renderToolUseMessage: (input) => `PlanMode: ${input?.action ?? '?'}`,
-  mapToolResultToToolResultBlockParam: (content, toolUseID) => ({
-    tool_use_id: toolUseID,
-    type: 'tool_result',
-    content: content.message || 'Plan mode operation completed',
-  }),
-  prompt: async () => 'Use plan-mode to manage planning state.',
-  description: async () => '模式',
-  call: async (args, context, canUseTool, parentMessage, onProgress) => {
-    const result = await this.exec(args);
-    return { data: result };
+    context.setAppState(prev => ({
+      ...prev,
+      toolPermissionContext: applyPermissionUpdate(
+        prepareContextForPlanMode(prev.toolPermissionContext),
+        { type: 'setMode', mode: targetMode, destination: 'session' },
+      ),
+    }))
+
+    return {
+      data: {
+        active: targetMode === 'plan',
+        action,
+        message: `Plan mode ${action} completed`,
+      } as Output,
+    }
   },
-};
+} satisfies ToolDef<typeof inputSchema, Output>)

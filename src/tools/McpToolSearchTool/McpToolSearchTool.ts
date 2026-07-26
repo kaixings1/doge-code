@@ -1,14 +1,17 @@
-import { z } from 'zod';
+import { z } from 'zod/v4'
+import { buildTool, type ToolDef } from '../../Tool.js'
+import { lazySchema } from '../../utils/lazySchema.js'
+import { getMcpToolManager } from '../../services/mcp/manager.js'
 
-export const McpToolSearchTool = {
-  name: 'mcp-tool-search',
-  description: '工具s across configured servers',
-  callOn: 'manual',
-  input: z.object({
+const inputSchema = lazySchema(() =>
+  z.object({
     query: z.string().describe('搜索查询'),
     server: z.string().optional().describe('指定的 MCP 服务器'),
   }),
-  output: z.object({
+)
+
+const outputSchema = lazySchema(() =>
+  z.object({
     results: z.array(z.object({
       name: z.string(),
       server: z.string(),
@@ -16,34 +19,101 @@ export const McpToolSearchTool = {
     })).describe('搜索结果'),
     count: z.number().describe('结果数量'),
   }),
+)
 
-  exec: async ({ query, server }) => {
+export type Output = z.infer<ReturnType<typeof outputSchema>>
+
+export const McpToolSearchTool = buildTool({
+  name: 'mcp-tool-search',
+  description: async () => '搜索 MCP 服务器上的可用工具',
+  callOn: 'manual',
+  async prompt() {
+    return '使用 mcp-tool-search 工具搜索 MCP 服务器上的工具。'
+  },
+  get inputSchema() {
+    return inputSchema()
+  },
+  get outputSchema() {
+    return outputSchema()
+  },
+  userFacingName() {
+    return 'mcp-tool-search'
+  },
+  isEnabled() {
+    return true
+  },
+  toAutoClassifierInput() {
+    return ''
+  },
+  async checkPermissions(input) {
+    return { behavior: 'allow', updatedInput: input }
+  },
+  renderToolUseMessage(input) {
+    const query = (input as any)?.query ?? '?'
+    return `MCP Tool Search: ${query}`
+  },
+  mapToolResultToToolResultBlockParam(content, toolUseID) {
+    const count = (content as any).count ?? 0
     return {
-      results: [],
-      count: 0,
-    };
+      tool_use_id: toolUseID,
+      type: 'tool_result',
+      content: `Found ${count} MCP tools`,
+    }
   },
+  async call({ query, server }) {
+    try {
+      const manager = getMcpToolManager()
+      if (!manager) {
+        return {
+          data: {
+            results: [],
+            count: 0,
+          } as Output,
+        }
+      }
 
-  // Tool 接口默认安全实现
-  isEnabled: () => true,
-  isConcurrencySafe: () => false,
-  isReadOnly: () => false,
-  isDestructive: () => false,
-  checkPermissions: (input, _ctx) =>
-    Promise.resolve({ behavior: 'allow', updatedInput: input }),
-  toAutoClassifierInput: () => '',
-  userFacingName: () => 'mcp-tool-search',
+      const allTools = manager.getAllTools()
+      const queryLower = query.toLowerCase()
+      let results: Array<{ name: string; server: string; description: string }> = []
 
-  renderToolUseMessage: (input) => `MCP Tool Search: ${input?.query ?? '?'}`,
-  mapToolResultToToolResultBlockParam: (content, toolUseID) => ({
-    tool_use_id: toolUseID,
-    type: 'tool_result',
-    content: `Found ${content.count} MCP tools`,
-  }),
-  prompt: async () => 'Search for MCP tools across configured servers.',
-  description: async () => '工具s across configured servers',
-  call: async (args, context, canUseTool, parentMessage, onProgress) => {
-    const result = await this.exec(args);
-    return { data: result };
+      if (server) {
+        const serverTools = allTools.filter(
+          t => t.mcpInfo?.serverName === server && (
+            t.name.toLowerCase().includes(queryLower) ||
+            (t.description || '').toLowerCase().includes(queryLower)
+          ),
+        )
+        results = serverTools.map(t => ({
+          name: t.name,
+          server: t.mcpInfo?.serverName || server,
+          description: t.description || '',
+        }))
+      } else {
+        results = allTools
+          .filter(t =>
+            t.name.toLowerCase().includes(queryLower) ||
+            (t.description || '').toLowerCase().includes(queryLower),
+          )
+          .map(t => ({
+            name: t.name,
+            server: t.mcpInfo?.serverName || 'unknown',
+            description: t.description || '',
+          }))
+      }
+
+      return {
+        data: {
+          results,
+          count: results.length,
+        } as Output,
+      }
+    } catch {
+      return {
+        data: {
+          results: [],
+          count: 0,
+        } as Output,
+      }
+    }
   },
-};
+} satisfies ToolDef<typeof inputSchema, Output>)
