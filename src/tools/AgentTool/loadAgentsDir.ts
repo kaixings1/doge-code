@@ -573,7 +573,7 @@ export function parseAgentFromMarkdown(
       backgroundRaw !== false
     ) {
       logForDebugging(
-        `Agent file ${filePath} has invalid background value '${backgroundRaw}'. Must be 'true', 'false', or omitted.`,
+        `代理文件 ${filePath} 的 background 值 '${backgroundRaw}' 无效。应为 'true'、'false' 或省略。`,
       )
     }
 
@@ -589,7 +589,7 @@ export function parseAgentFromMarkdown(
         memory = memoryRaw as AgentMemoryScope
       } else {
         logForDebugging(
-          `Agent file ${filePath} has invalid memory value '${memoryRaw}'. Valid options: ${VALID_MEMORY_SCOPES.join(', ')}`,
+          `代理文件 ${filePath} 的 memory 值 '${memoryRaw}' 无效。有效选项：${VALID_MEMORY_SCOPES.join(', ')}`,
         )
       }
     }
@@ -605,7 +605,7 @@ export function parseAgentFromMarkdown(
         isolation = isolationRaw as IsolationMode
       } else {
         logForDebugging(
-          `Agent file ${filePath} has invalid isolation value '${isolationRaw}'. Valid options: ${VALID_ISOLATION_MODES.join(', ')}`,
+          `代理文件 ${filePath} 的 isolation 值 '${isolationRaw}' 无效。有效选项：${VALID_ISOLATION_MODES.join(', ')}`,
         )
       }
     }
@@ -617,7 +617,7 @@ export function parseAgentFromMarkdown(
 
     if (effortRaw !== undefined && parsedEffort === undefined) {
       logForDebugging(
-        `Agent file ${filePath} has invalid effort '${effortRaw}'. Valid options: ${EFFORT_LEVELS.join(', ')} or an integer`,
+        `代理文件 ${filePath} 的 effort 值 '${effortRaw}' 无效。有效选项：${EFFORT_LEVELS.join(', ')} 或整数`,
       )
     }
 
@@ -630,7 +630,7 @@ export function parseAgentFromMarkdown(
       (PERMISSION_MODES as readonly string[]).includes(permissionModeRaw)
 
     if (permissionModeRaw && !isValidPermissionMode) {
-      const errorMsg = `Agent file ${filePath} has invalid permissionMode '${permissionModeRaw}'. Valid options: ${PERMISSION_MODES.join(', ')}`
+      const errorMsg = `代理文件 ${filePath} 的 permissionMode 值 '${permissionModeRaw}' 无效。有效选项：${PERMISSION_MODES.join(', ')}`
       logForDebugging(errorMsg)
     }
 
@@ -639,7 +639,7 @@ export function parseAgentFromMarkdown(
     const maxTurns = parsePositiveIntFromFrontmatter(maxTurnsRaw)
     if (maxTurnsRaw !== undefined && maxTurns === undefined) {
       logForDebugging(
-        `Agent file ${filePath} has invalid maxTurns '${maxTurnsRaw}'. Must be a positive integer.`,
+        `代理文件 ${filePath} 的 maxTurns 值 '${maxTurnsRaw}' 无效。必须是正整数。`,
       )
     }
 

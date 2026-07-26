@@ -18,7 +18,7 @@ const questionOptionSchema = lazySchema(() => z.object({
 }));
 const questionSchema = lazySchema(() => z.object({
   question: z.string().describe('向用户提问的完整问题。应清晰、具体，并以问号结尾。示例："我们应该使用哪个日期格式化库？" 如果 multiSelect 为 true，请相应措辞，如"你想启用哪些功能？"'),
-  header: z.string().describe(`Very short label displayed as a chip/tag (max ${ASK_USER_QUESTION_TOOL_CHIP_WIDTH} chars). Examples: "Auth method", "Library", "Approach".`),
+  header: z.string().describe(`显示为芯片/标签的极短标签（最多 ${ASK_USER_QUESTION_TOOL_CHIP_WIDTH} 个字符）。示例："认证方式", "库", "方案"。`),
   options: z.array(questionOptionSchema()).min(2).max(4).describe(`The available choices for this question. Must have 2-4 options. Each option should be a distinct, mutually exclusive choice (unless multiSelect is enabled). There should be no 'Other' option, that will be provided automatically.`),
   multiSelect: z.boolean().default(false).describe('设为 true 以允许用户选择多个选项而非仅一个。用于选项不互斥的场景。')
 }));
@@ -50,7 +50,7 @@ const UNIQUENESS_REFINE = {
     }
     return true;
   },
-  message: 'Question texts must be unique, option labels must be unique within each question'
+  message: '问题文本必须唯一，每个问题内的选项标签也必须唯一'
 } as const;
 const commonFields = lazySchema(() => ({
   answers: z.record(z.string(), z.string()).optional().describe('权限组件收集的用户回答'),
@@ -250,7 +250,7 @@ export const AskUserQuestionTool: Tool<InputSchema, Output> = buildTool({
 function validateHtmlPreview(preview: string | undefined): string | null {
   if (preview === undefined) return null;
   if (/<\s*(html|body|!doctype)\b/i.test(preview)) {
-    return 'preview must be an HTML fragment, not a full document (no <html>, <body>, or <!DOCTYPE>)';
+    return '预览必须是 HTML 片段，而非完整文档（不允许 <html>、<body> 或 <!DOCTYPE>）';
   }
   // SDK consumers typically set this via innerHTML — disallow executable/style
   // tags so a preview can't run code or restyle the host page. Inline event
