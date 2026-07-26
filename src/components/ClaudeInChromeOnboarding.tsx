@@ -56,7 +56,7 @@ export function ClaudeInChromeOnboarding(t0) {
   }
   let t5;
   if ($[6] !== t4) {
-    t5 = <Text>Claude in Chrome 与 Chrome 扩展配合使用，可让你直接从 Claude Code 控制浏览器。你可以浏览网站、填写表单、截取屏幕截图、录制 GIF，并通过控制台日志和网络请求进行调试。{t4}</Text>;
+    t5 = <Text>Claude in Chrome 配合 Chrome 扩展使用，让你可以直接从 Claude Code 控制浏览器。你可以浏览网站、填写表单、截取屏幕截图、录制 GIF，并通过控制台日志和网络请求进行调试。{t4}</Text>;
     $[6] = t4;
     $[7] = t5;
   } else {
@@ -72,7 +72,7 @@ export function ClaudeInChromeOnboarding(t0) {
   }
   let t7;
   if ($[10] !== t6) {
-    t7 = <Text dimColor={true}>站点级权限继承自 Chrome 扩展。在 Chrome 扩展设置中管理权限，以控制 Claude 可以浏览、点击和输入的网站{t6}。</Text>;
+    t7 = <Text dimColor={true}>站点级权限继承自 Chrome 扩展。你可以在 Chrome 扩展设置中管理权限，以控制 Claude 可以浏览、点击和输入的网站{t6}。</Text>;
     $[10] = t6;
     $[11] = t7;
   } else {

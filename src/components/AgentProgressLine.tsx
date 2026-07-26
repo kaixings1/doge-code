@@ -85,7 +85,7 @@ export function AgentProgressLine(t0) {
   }
   let t7;
   if ($[14] !== isBackgrounded || $[15] !== tokens || $[16] !== toolUseCount) {
-    t7 = !isBackgrounded && <>{" \xB7 "}{toolUseCount} tool {toolUseCount === 1 ? "use" : "uses"}{tokens !== null && <> · {formatNumber(tokens)} tokens</>}</>;
+    t7 = !isBackgrounded && <>{" \xB7 "}{toolUseCount} 次工具调用{tokens !== null && <> · {formatNumber(tokens)} 令牌</>}</>;
     $[14] = isBackgrounded;
     $[15] = tokens;
     $[16] = toolUseCount;

@@ -216,7 +216,7 @@ export function LogoV2() {
     }
     let t18;
     if ($[22] !== announcement || $[23] !== config) {
-      t18 = announcement && <Box paddingLeft={2} flexDirection="column">{!process.env.IS_DEMO && config.oauthAccount?.organizationName && <Text dimColor={true}>Message from {config.oauthAccount.organizationName}:</Text>}<Text>{announcement}</Text></Box>;
+      t18 = announcement && <Box paddingLeft={2} flexDirection="column">{!process.env.IS_DEMO && config.oauthAccount?.organizationName && <Text dimColor={true}>来自 {config.oauthAccount.organizationName} 的消息：</Text>}<Text>{announcement}</Text></Box>;
       $[22] = announcement;
       $[23] = config;
       $[24] = t18;
@@ -228,8 +228,8 @@ export function LogoV2() {
     let t21;
     let t22;
     if ($[25] === Symbol.for("react.memo_cache_sentinel")) {
-      t19 = false && !process.env.DEMO_VERSION && <Box paddingLeft={2} flexDirection="column"><Text dimColor={true}>Use /issue to report model behavior issues</Text></Box>;
-      t20 = false && !process.env.DEMO_VERSION && <Box paddingLeft={2} flexDirection="column"><Text color="warning">[ANT-ONLY] Logs:</Text><Text dimColor={true}>API calls: {getDisplayPath(getDumpPromptsPath())}</Text><Text dimColor={true}>Debug logs: {getDisplayPath(getDebugLogPath())}</Text>{isDetailedProfilingEnabled() && <Text dimColor={true}>Startup Perf: {getDisplayPath(getStartupPerfLogPath())}</Text>}</Box>;
+      t19 = false && !process.env.DEMO_VERSION && <Box paddingLeft={2} flexDirection="column"><Text dimColor={true}>使用 /issue 报告模型行为问题</Text></Box>;
+      t20 = false && !process.env.DEMO_VERSION && <Box paddingLeft={2} flexDirection="column"><Text color="warning">[仅限 ANT] 日志：</Text><Text dimColor={true}>API 调用: {getDisplayPath(getDumpPromptsPath())}</Text><Text dimColor={true}>调试日志: {getDisplayPath(getDebugLogPath())}</Text>{isDetailedProfilingEnabled() && <Text dimColor={true}>启动性能: {getDisplayPath(getStartupPerfLogPath())}</Text>}</Box>;
       t21 = false && <GateOverridesWarning />;
       t22 = false && <ExperimentEnrollmentNotice />;
       $[25] = t19;
@@ -499,7 +499,7 @@ export function LogoV2() {
   }
   let t35;
   if ($[81] !== announcement || $[82] !== config) {
-    t35 = announcement && <Box paddingLeft={2} flexDirection="column">{!process.env.IS_DEMO && config.oauthAccount?.organizationName && <Text dimColor={true}>Message from {config.oauthAccount.organizationName}:</Text>}<Text>{announcement}</Text></Box>;
+    t35 = announcement && <Box paddingLeft={2} flexDirection="column">{!process.env.IS_DEMO && config.oauthAccount?.organizationName && <Text dimColor={true}>来自 {config.oauthAccount.organizationName} 的消息：</Text>}<Text>{announcement}</Text></Box>;
     $[81] = announcement;
     $[82] = config;
     $[83] = t35;

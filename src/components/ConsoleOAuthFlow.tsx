@@ -60,7 +60,7 @@ type OAuthStatus =
   | { state: 'success'; token?: string }
   | { state: 'error'; message: string; toRetry?: OAuthStatus };
 
-const PASTE_HERE_MSG = '如果提示，请在此处粘贴代码 > ';
+const PASTE_HERE_MSG = '如果浏览器未打开，请在此处粘贴验证码 > ';
 
 const PRESET_ENDPOINTS = ALL_PRESETS;
 
@@ -75,9 +75,9 @@ export function ConsoleOAuthFlow({
   const orgUUID = settings.forceLoginOrgUUID;
   const forcedMethodMessage =
     forceLoginMethod === 'claudeai'
-      ? '登录方式已预选择：订阅方案（Claude Pro/Max）'
+      ? '已预选登录方式：Claude 订阅方案（Pro/Max）'
       : forceLoginMethod === 'console'
-        ? '登录方式已预选择：API 使用量计费（Anthropic Console）'
+        ? '已预选登录方式：API 用量计费（Anthropic Console）'
         : null;
 
   const [oauthStatus, setOAuthStatus] = useState<OAuthStatus>(() => {
@@ -627,7 +627,7 @@ export function ConsoleOAuthFlow({
       {safeOauthStatus.state === 'waiting_for_login' && showPastePrompt && (
         <Box flexDirection="column" key="urlToCopy" gap={1} paddingBottom={1}>
           <Box paddingX={1}>
-            <Text dimColor>浏览器未打开？使用下方 URL 登录</Text>
+            <Text dimColor>浏览器未打开？请使用下方 URL 完成登录</Text>
             {urlCopied ? (
               <Text color="success">(已复制!)</Text>
             ) : (
@@ -645,7 +645,7 @@ export function ConsoleOAuthFlow({
         <Box key="tokenOutput" flexDirection="column" gap={1} paddingTop={1}>
           <Text color="success">✓ 长期身份验证令牌创建成功！</Text>
           <Box flexDirection="column" gap={1}>
-            <Text>你的 OAuth 令牌（有效期 1 年）：</Text>
+            <Text>你的 OAuth 令牌（有效期一年）：</Text>
             <Text color="warning">{safeOauthStatus.token}</Text>
             <Text dimColor>请安全存储此令牌。你将无法再次查看它。</Text>
             <Text dimColor>
@@ -1004,8 +1004,8 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
         <Box flexDirection="column" gap={1} marginTop={1}>
           <Text bold={true}>选择模型 API 格式</Text>
           <Text>
-            Claude Code 内部维护 Anthropic Messages 协议；如果选择 OpenAI，将使用中间层将内部 Messages 请求转换为 Chat
-            Completions 请求，再将返回流转换回 Messages 事件。
+            Claude Code 内部使用 Anthropic Messages 协议；选择 OpenAI 兼容格式时，将自动把内部 Messages 请求转换为 Chat
+            Completions 格式，并将返回的流转换为 Messages 事件。
           </Text>
           {savedOptions.length > 0 && <Text dimColor>已保存的端点（一键切换，无需重新输入 Key）：</Text>}
           <Box>
@@ -1110,7 +1110,7 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
           if (isEditingName) {
             return (
               <Box flexDirection="column" gap={1} marginTop={1}>
-                <Text bold>修改模型名称</Text>
+                <Text bold>重命名模型</Text>
                 <TextInput
                   value={editingModel}
                   onChange={setEditingModel}
@@ -1141,7 +1141,7 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
                 visibleOptionCount={20}
                 options={[
                   { label: <Text color="success">使用该模型</Text>, value: 'use' },
-                  { label: <Text>修改模型名称</Text>, value: 'rename' },
+                  { label: <Text>重命名模型</Text>, value: 'rename' },
                   { label: <Text color="error">删除该模型</Text>, value: 'delete' },
                   { label: <Text>取消</Text>, value: 'cancel' },
                 ]}
@@ -1178,7 +1178,7 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
         return (
           <Box flexDirection="column" gap={1} marginTop={1}>
             <Text bold>选择模型</Text>
-            <Text dimColor>已保存的模型，按 Enter 进入编辑/删除；或选择手动输入新模型。</Text>
+            <Text dimColor>已保存的模型，按 Enter 进行编辑或删除；也可选择手动输入新模型。</Text>
             <Select
               options={modelOptions}
               visibleOptionCount={20}
@@ -1210,7 +1210,7 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
             <Text bold>输入模型名称</Text>
             <Text dimColor>
               {customModel
-                ? '当前选择：' + customModel + '，可直接按 Enter 确认或修改后按 Enter：'
+                ? '当前选择：' + customModel + '，可直接按 Enter 确认，或修改后按 Enter 保存：'
                 : '输入模型名称后按 Enter 保存并使用：'}
             </Text>
             <Box flexDirection="row">
@@ -1322,7 +1322,7 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
             <Text bold>确认 API Key</Text>
             <Text dimColor>
               {editingApiKey
-                ? `当前 Key：${shortPreview}，可直接按 Enter 确认或修改后按 Enter：`
+                ? `当前 Key：${shortPreview}，可直接按 Enter 确认，或修改后按 Enter 保存：`
                 : '输入新的 API Key 后按 Enter：'}
             </Text>
             <TextInput

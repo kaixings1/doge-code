@@ -144,7 +144,7 @@ export function HooksConfigMenu(t0) {
   let t9;
   if ($[17] !== t8) {
     t9 = {
-      context: "Confirmation",
+      context: "确认",
       isActive: t8
     };
     $[17] = t8;

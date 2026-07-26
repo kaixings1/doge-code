@@ -21,7 +21,7 @@ export function PlanApprovalRequestDisplay(t0) {
   } = t0;
   let t1;
   if ($[0] !== request.from) {
-    t1 = <Box marginBottom={1}><Text color="planMode" bold={true}>Plan Approval Request from {request.from}</Text></Box>;
+    t1 = <Box marginBottom={1}><Text color="planMode" bold={true}>来自 {request.from} 的计划审批请求</Text></Box>;
     $[0] = request.from;
     $[1] = t1;
   } else {
@@ -80,7 +80,7 @@ export function PlanApprovalResponseDisplay(t0) {
     }
     let t2;
     if ($[2] === Symbol.for("react.memo_cache_sentinel")) {
-      t2 = <Box marginTop={1}><Text>You can now proceed with implementation. Your plan mode restrictions have been lifted.</Text></Box>;
+      t2 = <Box marginTop={1}><Text>您现在可以开始实施。计划模式限制已解除。</Text></Box>;
       $[2] = t2;
     } else {
       t2 = $[2];

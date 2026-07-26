@@ -1,10 +1,8 @@
 import { z } from 'zod/v4'
 import { buildTool, type ToolDef } from '../../Tool.js'
 import { lazySchema } from '../../utils/lazySchema.js'
-import {
-  applyPermissionUpdate,
-  prepareContextForPlanMode,
-} from '../../utils/permissions/permissionSetup.js'
+import { applyPermissionUpdate } from '../../utils/permissions/PermissionUpdate.js'
+import { prepareContextForPlanMode } from '../../utils/permissions/permissionSetup.js'
 import { handlePlanModeTransition } from '../../bootstrap/state.js'
 
 const inputSchema = lazySchema(() =>
