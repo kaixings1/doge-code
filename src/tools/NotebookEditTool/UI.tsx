@@ -82,7 +82,7 @@ export function renderToolResultMessage({
   return <MessageResponse>
       <Box flexDirection="column">
         <Text>
-          Updated cell <Text bold>{cell_id}</Text>:
+          已更新单元格 <Text bold>{cell_id}</Text>:
         </Text>
         <Box marginLeft={2}>
           <HighlightedCode code={new_source} filePath="notebook.py" />

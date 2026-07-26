@@ -342,7 +342,7 @@ export function formatDocumentSymbolResult(
   cwd?: string,
 ): string {
   if (!result || result.length === 0) {
-    return 'No symbols found in document. This may occur if the file is empty, not supported by the LSP server, or if the server has not fully indexed the file.'
+    return '文档中未找到符号。这可能是因为文件为空、LSP 服务器不支持该文件类型，或服务器尚未完全索引该文件。'
   }
 
   // Detect format: DocumentSymbol has 'range' directly, SymbolInformation has 'location.range'
@@ -356,7 +356,7 @@ export function formatDocumentSymbolResult(
   }
 
   // Handle DocumentSymbol[] format (hierarchical)
-  const lines: string[] = ['Document symbols:']
+  const lines: string[] = ['文档符号：']
 
   for (const symbol of result as DocumentSymbol[]) {
     lines.push(...formatDocumentSymbolNode(symbol))
@@ -373,7 +373,7 @@ export function formatWorkspaceSymbolResult(
   cwd?: string,
 ): string {
   if (!result || result.length === 0) {
-    return 'No symbols found in workspace. This may occur if the workspace is empty, or if the LSP server has not finished indexing the project.'
+    return '工作区中未找到符号。这可能是因为工作区为空，或 LSP 服务器尚未完成项目索引。'
   }
 
   // Log and filter out any symbols with undefined location.uri
@@ -392,11 +392,11 @@ export function formatWorkspaceSymbolResult(
   )
 
   if (validSymbols.length === 0) {
-    return 'No symbols found in workspace. This may occur if the workspace is empty, or if the LSP server has not finished indexing the project.'
+    return '工作区中未找到符号。这可能是因为工作区为空，或 LSP 服务器尚未完成项目索引。'
   }
 
   const lines: string[] = [
-    `Found ${validSymbols.length} ${plural(validSymbols.length, 'symbol')} in workspace:`,
+    `在工作区中找到 ${validSymbols.length} 个${plural(validSymbols.length, '符号')}：`,
   ]
 
   // Group by file
@@ -457,14 +457,14 @@ export function formatPrepareCallHierarchyResult(
   cwd?: string,
 ): string {
   if (!result || result.length === 0) {
-    return 'No call hierarchy item found at this position'
+    return '未找到调用层次项'
   }
 
   if (result.length === 1) {
-    return `Call hierarchy item: ${formatCallHierarchyItem(result[0]!, cwd)}`
+    return `调用层次项：${formatCallHierarchyItem(result[0]!, cwd)}`
   }
 
-  const lines = [`Found ${result.length} call hierarchy items:`]
+  const lines = [`找到 ${result.length} 个调用层次项：`]
   for (const item of result) {
     lines.push(`  ${formatCallHierarchyItem(item, cwd)}`)
   }
@@ -480,11 +480,11 @@ export function formatIncomingCallsResult(
   cwd?: string,
 ): string {
   if (!result || result.length === 0) {
-    return 'No incoming calls found (nothing calls this function)'
+    return '未找到上游调用（没有函数调用此函数）'
   }
 
   const lines = [
-    `Found ${result.length} incoming ${plural(result.length, 'call')}:`,
+    `找到 ${result.length} 个上游${plural(result.length, '调用')}：`,
   ]
 
   // Group by file
@@ -540,11 +540,11 @@ export function formatOutgoingCallsResult(
   cwd?: string,
 ): string {
   if (!result || result.length === 0) {
-    return 'No outgoing calls found (this function calls nothing)'
+    return '未找到下游调用（此函数不调用其他函数）'
   }
 
   const lines = [
-    `Found ${result.length} outgoing ${plural(result.length, 'call')}:`,
+    `找到 ${result.length} 个下游${plural(result.length, '调用')}：`,
   ]
 
   // Group by file

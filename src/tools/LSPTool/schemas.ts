@@ -12,17 +12,17 @@ export const lspToolInputSchema = lazySchema(() => {
    */
   const goToDefinitionSchema = z.strictObject({
     operation: z.literal('goToDefinition'),
-    filePath: z.string().describe('The absolute or relative path to the file'),
+    filePath: z.string().describe('文件的绝对或相对路径'),
     line: z
       .number()
       .int()
       .positive()
-      .describe('The line number (1-based, as shown in editors)'),
+      .describe('行号（从 1 开始，与编辑器显示一致）'),
     character: z
       .number()
       .int()
       .positive()
-      .describe('The character offset (1-based, as shown in editors)'),
+      .describe('字符偏移量（从 1 开始，与编辑器显示一致）'),
   })
 
   /**
@@ -31,17 +31,17 @@ export const lspToolInputSchema = lazySchema(() => {
    */
   const findReferencesSchema = z.strictObject({
     operation: z.literal('findReferences'),
-    filePath: z.string().describe('The absolute or relative path to the file'),
+    filePath: z.string().describe('文件的绝对或相对路径'),
     line: z
       .number()
       .int()
       .positive()
-      .describe('The line number (1-based, as shown in editors)'),
+      .describe('行号（从 1 开始，与编辑器显示一致）'),
     character: z
       .number()
       .int()
       .positive()
-      .describe('The character offset (1-based, as shown in editors)'),
+      .describe('字符偏移量（从 1 开始，与编辑器显示一致）'),
   })
 
   /**
@@ -50,17 +50,17 @@ export const lspToolInputSchema = lazySchema(() => {
    */
   const hoverSchema = z.strictObject({
     operation: z.literal('hover'),
-    filePath: z.string().describe('The absolute or relative path to the file'),
+    filePath: z.string().describe('文件的绝对或相对路径'),
     line: z
       .number()
       .int()
       .positive()
-      .describe('The line number (1-based, as shown in editors)'),
+      .describe('行号（从 1 开始，与编辑器显示一致）'),
     character: z
       .number()
       .int()
       .positive()
-      .describe('The character offset (1-based, as shown in editors)'),
+      .describe('字符偏移量（从 1 开始，与编辑器显示一致）'),
   })
 
   /**
@@ -69,17 +69,17 @@ export const lspToolInputSchema = lazySchema(() => {
    */
   const documentSymbolSchema = z.strictObject({
     operation: z.literal('documentSymbol'),
-    filePath: z.string().describe('The absolute or relative path to the file'),
+    filePath: z.string().describe('文件的绝对或相对路径'),
     line: z
       .number()
       .int()
       .positive()
-      .describe('The line number (1-based, as shown in editors)'),
+      .describe('行号（从 1 开始，与编辑器显示一致）'),
     character: z
       .number()
       .int()
       .positive()
-      .describe('The character offset (1-based, as shown in editors)'),
+      .describe('字符偏移量（从 1 开始，与编辑器显示一致）'),
   })
 
   /**
@@ -88,17 +88,17 @@ export const lspToolInputSchema = lazySchema(() => {
    */
   const workspaceSymbolSchema = z.strictObject({
     operation: z.literal('workspaceSymbol'),
-    filePath: z.string().describe('The absolute or relative path to the file'),
+    filePath: z.string().describe('文件的绝对或相对路径'),
     line: z
       .number()
       .int()
       .positive()
-      .describe('The line number (1-based, as shown in editors)'),
+      .describe('行号（从 1 开始，与编辑器显示一致）'),
     character: z
       .number()
       .int()
       .positive()
-      .describe('The character offset (1-based, as shown in editors)'),
+      .describe('字符偏移量（从 1 开始，与编辑器显示一致）'),
   })
 
   /**
@@ -107,17 +107,17 @@ export const lspToolInputSchema = lazySchema(() => {
    */
   const goToImplementationSchema = z.strictObject({
     operation: z.literal('goToImplementation'),
-    filePath: z.string().describe('The absolute or relative path to the file'),
+    filePath: z.string().describe('文件的绝对或相对路径'),
     line: z
       .number()
       .int()
       .positive()
-      .describe('The line number (1-based, as shown in editors)'),
+      .describe('行号（从 1 开始，与编辑器显示一致）'),
     character: z
       .number()
       .int()
       .positive()
-      .describe('The character offset (1-based, as shown in editors)'),
+      .describe('字符偏移量（从 1 开始，与编辑器显示一致）'),
   })
 
   /**
@@ -126,17 +126,17 @@ export const lspToolInputSchema = lazySchema(() => {
    */
   const prepareCallHierarchySchema = z.strictObject({
     operation: z.literal('prepareCallHierarchy'),
-    filePath: z.string().describe('The absolute or relative path to the file'),
+    filePath: z.string().describe('文件的绝对或相对路径'),
     line: z
       .number()
       .int()
       .positive()
-      .describe('The line number (1-based, as shown in editors)'),
+      .describe('行号（从 1 开始，与编辑器显示一致）'),
     character: z
       .number()
       .int()
       .positive()
-      .describe('The character offset (1-based, as shown in editors)'),
+      .describe('字符偏移量（从 1 开始，与编辑器显示一致）'),
   })
 
   /**
@@ -145,17 +145,17 @@ export const lspToolInputSchema = lazySchema(() => {
    */
   const incomingCallsSchema = z.strictObject({
     operation: z.literal('incomingCalls'),
-    filePath: z.string().describe('The absolute or relative path to the file'),
+    filePath: z.string().describe('文件的绝对或相对路径'),
     line: z
       .number()
       .int()
       .positive()
-      .describe('The line number (1-based, as shown in editors)'),
+      .describe('行号（从 1 开始，与编辑器显示一致）'),
     character: z
       .number()
       .int()
       .positive()
-      .describe('The character offset (1-based, as shown in editors)'),
+      .describe('字符偏移量（从 1 开始，与编辑器显示一致）'),
   })
 
   /**
@@ -164,17 +164,17 @@ export const lspToolInputSchema = lazySchema(() => {
    */
   const outgoingCallsSchema = z.strictObject({
     operation: z.literal('outgoingCalls'),
-    filePath: z.string().describe('The absolute or relative path to the file'),
+    filePath: z.string().describe('文件的绝对或相对路径'),
     line: z
       .number()
       .int()
       .positive()
-      .describe('The line number (1-based, as shown in editors)'),
+      .describe('行号（从 1 开始，与编辑器显示一致）'),
     character: z
       .number()
       .int()
       .positive()
-      .describe('The character offset (1-based, as shown in editors)'),
+      .describe('字符偏移量（从 1 开始，与编辑器显示一致）'),
   })
 
   return z.discriminatedUnion('operation', [

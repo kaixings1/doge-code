@@ -5,16 +5,16 @@ export const McpToolSearchTool = {
   description: '工具s across configured servers',
   callOn: 'manual',
   input: z.object({
-    query: z.string().describe('Search query'),
-    server: z.string().optional().describe('Specific MCP server'),
+    query: z.string().describe('搜索查询'),
+    server: z.string().optional().describe('指定的 MCP 服务器'),
   }),
   output: z.object({
     results: z.array(z.object({
       name: z.string(),
       server: z.string(),
       description: z.string(),
-    })).describe('Search results'),
-    count: z.number().describe('Number of results'),
+    })).describe('搜索结果'),
+    count: z.number().describe('结果数量'),
   }),
 
   exec: async ({ query, server }) => {

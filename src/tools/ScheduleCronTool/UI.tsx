@@ -17,7 +17,7 @@ export function renderCreateToolUseMessage(input: Partial<{
 export function renderCreateResultMessage(output: CreateOutput): React.ReactNode {
   return <MessageResponse>
       <Text>
-        Scheduled <Text bold>{output.id}</Text>{' '}
+        已创建定时任务 <Text bold>{output.id}</Text>{' '}
         <Text dimColor>({output.humanSchedule})</Text>
       </Text>
     </MessageResponse>;
@@ -33,7 +33,7 @@ export function renderDeleteToolUseMessage(input: Partial<{
 export function renderDeleteResultMessage(output: DeleteOutput): React.ReactNode {
   return <MessageResponse>
       <Text>
-        Cancelled <Text bold>{output.id}</Text>
+        已取消定时任务 <Text bold>{output.id}</Text>
       </Text>
     </MessageResponse>;
 }
@@ -46,7 +46,7 @@ export function renderListToolUseMessage(): React.ReactNode {
 export function renderListResultMessage(output: ListOutput): React.ReactNode {
   if (output.jobs.length === 0) {
     return <MessageResponse>
-        <Text dimColor>No scheduled jobs</Text>
+        <Text dimColor>没有定时任务</Text>
       </MessageResponse>;
   }
   return <MessageResponse>

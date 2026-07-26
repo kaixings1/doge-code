@@ -22,11 +22,11 @@ const inputSchema = lazySchema(() =>
       .string()
       .regex(/^[\w-]+$/)
       .optional()
-      .describe('Required for get, update, and run'),
+      .describe('get、update 和 run 操作必需'),
     body: z
       .record(z.string(), z.unknown())
       .optional()
-      .describe('JSON body for create and update'),
+      .describe('create 和 update 的 JSON 请求体'),
   }),
 )
 type InputSchema = ReturnType<typeof inputSchema>

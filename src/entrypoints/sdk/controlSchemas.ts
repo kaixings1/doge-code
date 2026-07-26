@@ -47,7 +47,7 @@ export const SDKHookCallbackMatcherSchema = lazySchema(() =>
       hookCallbackIds: z.array(z.string()),
       timeout: z.number().optional(),
     })
-    .describe('Configuration for matching and routing hook callbacks.'),
+    .describe('用于匹配和路由钩子回调的配置。'),
 )
 
 // ============================================================================
@@ -368,7 +368,7 @@ export const SDKHookCallbackRequestSchema = lazySchema(() =>
       input: HookInputSchema(),
       tool_use_id: z.string().optional(),
     })
-    .describe('Delivers a hook callback with its input data.'),
+    .describe('传递钩子回调及其输入数据。'),
 )
 
 export const SDKControlMcpMessageRequestSchema = lazySchema(() =>
@@ -378,7 +378,7 @@ export const SDKControlMcpMessageRequestSchema = lazySchema(() =>
       server_name: z.string(),
       message: JSONRPCMessagePlaceholder(),
     })
-    .describe('Sends a JSON-RPC message to a specific MCP server.'),
+    .describe('向指定的 MCP 服务器发送 JSON-RPC 消息。'),
 )
 
 export const SDKControlMcpSetServersRequestSchema = lazySchema(() =>
@@ -387,7 +387,7 @@ export const SDKControlMcpSetServersRequestSchema = lazySchema(() =>
       subtype: z.literal('mcp_set_servers'),
       servers: z.record(z.string(), McpServerConfigForProcessTransportSchema()),
     })
-    .describe('Replaces the set of dynamically managed MCP servers.'),
+    .describe('替换动态管理的 MCP 服务器集合。'),
 )
 
 export const SDKControlMcpSetServersResponseSchema = lazySchema(() =>
@@ -398,7 +398,7 @@ export const SDKControlMcpSetServersResponseSchema = lazySchema(() =>
       errors: z.record(z.string(), z.string()),
     })
     .describe(
-      'Result of replacing the set of dynamically managed MCP servers.',
+      '替换动态管理的 MCP 服务器集合的结果。',
     ),
 )
 
@@ -408,7 +408,7 @@ export const SDKControlReloadPluginsRequestSchema = lazySchema(() =>
       subtype: z.literal('reload_plugins'),
     })
     .describe(
-      'Reloads plugins from disk and returns the refreshed session components.',
+      '从磁盘重新加载插件并返回刷新后的会话组件。',
     ),
 )
 
@@ -428,7 +428,7 @@ export const SDKControlReloadPluginsResponseSchema = lazySchema(() =>
       error_count: z.number(),
     })
     .describe(
-      'Refreshed commands, agents, plugins, and MCP server status after reload.',
+      '重新加载后的命令、代理、插件和 MCP 服务器状态。',
     ),
 )
 
@@ -438,7 +438,7 @@ export const SDKControlMcpReconnectRequestSchema = lazySchema(() =>
       subtype: z.literal('mcp_reconnect'),
       serverName: z.string(),
     })
-    .describe('Reconnects a disconnected or failed MCP server.'),
+    .describe('重新连接已断开或失败的 MCP 服务器。'),
 )
 
 export const SDKControlMcpToggleRequestSchema = lazySchema(() =>
@@ -448,7 +448,7 @@ export const SDKControlMcpToggleRequestSchema = lazySchema(() =>
       serverName: z.string(),
       enabled: z.boolean(),
     })
-    .describe('Enables or disables an MCP server.'),
+    .describe('启用或禁用 MCP 服务器。'),
 )
 
 
@@ -458,7 +458,7 @@ export const SDKControlStopTaskRequestSchema = lazySchema(() =>
       subtype: z.literal('stop_task'),
       task_id: z.string(),
     })
-    .describe('Stops a running task.'),
+    .describe('停止正在运行的任务。'),
 )
 
 export const SDKControlApplyFlagSettingsRequestSchema = lazySchema(() =>
@@ -468,7 +468,7 @@ export const SDKControlApplyFlagSettingsRequestSchema = lazySchema(() =>
       settings: z.record(z.string(), z.unknown()),
     })
     .describe(
-      'Merges the provided settings into the flag settings layer, updating the active configuration.',
+      '将提供的设置合并到 flag 设置层，更新活动配置。',
     ),
 )
 
@@ -478,7 +478,7 @@ export const SDKControlGetSettingsRequestSchema = lazySchema(() =>
       subtype: z.literal('get_settings'),
     })
     .describe(
-      'Returns the effective merged settings and the raw per-source settings.',
+      '返回有效的合并设置和各源的原始设置。',
     ),
 )
 
@@ -531,7 +531,7 @@ export const SDKControlElicitationRequestSchema = lazySchema(() =>
       requested_schema: z.record(z.string(), z.unknown()).optional(),
     })
     .describe(
-      'Requests the SDK consumer to handle an MCP elicitation (user input request).',
+      '请求 SDK 消费者处理 MCP 追问（用户输入请求）。',
     ),
 )
 
@@ -541,7 +541,7 @@ export const SDKControlElicitationResponseSchema = lazySchema(() =>
       action: z.enum(['accept', 'decline', 'cancel']),
       content: z.record(z.string(), z.unknown()).optional(),
     })
-    .describe('Response from the SDK consumer for an elicitation request.'),
+    .describe('SDK 消费者对追问请求的响应。'),
 )
 
 
@@ -615,7 +615,7 @@ export const SDKControlCancelRequestSchema = lazySchema(() =>
       type: z.literal('control_cancel_request'),
       request_id: z.string(),
     })
-    .describe('Cancels a currently open control request.'),
+    .describe('取消当前打开的控制请求。'),
 )
 
 export const SDKKeepAliveMessageSchema = lazySchema(() =>
@@ -623,7 +623,7 @@ export const SDKKeepAliveMessageSchema = lazySchema(() =>
     .object({
       type: z.literal('keep_alive'),
     })
-    .describe('Keep-alive message to maintain WebSocket connection.'),
+    .describe('维持 WebSocket 连接的保活消息。'),
 )
 
 export const SDKUpdateEnvironmentVariablesMessageSchema = lazySchema(() =>
@@ -632,7 +632,7 @@ export const SDKUpdateEnvironmentVariablesMessageSchema = lazySchema(() =>
       type: z.literal('update_environment_variables'),
       variables: z.record(z.string(), z.string()),
     })
-    .describe('Updates environment variables at runtime.'),
+    .describe('在运行时更新环境变量。'),
 )
 
 // ============================================================================

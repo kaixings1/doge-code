@@ -790,7 +790,7 @@ export const SendMessageTool: Tool<InputSchema, SendMessageToolOutput> =
             return {
               data: {
                 success: false,
-                message: `Failed to send to ${input.to}: ${errorMessage(e)}`,
+                message: `发送至 ${input.to} 失败：${errorMessage(e)}`,
               },
             }
           }
