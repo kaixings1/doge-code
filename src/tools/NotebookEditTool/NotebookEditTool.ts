@@ -32,26 +32,26 @@ export const inputSchema = lazySchema(() =>
     notebook_path: z
       .string()
       .describe(
-        'The absolute path to the Jupyter notebook file to edit (must be absolute, not relative)',
+        '要编辑的 Jupyter 笔记本文件的绝对路径（必须为绝对路径，不能是相对路径）',
       ),
     cell_id: z
       .string()
       .optional()
       .describe(
-        'The ID of the cell to edit. When inserting a new cell, the new cell will be inserted after the cell with this ID, or at the beginning if not specified.',
+        '要编辑的单元格 ID。插入新单元格时，新单元格将插入在该 ID 的单元格之后；如果未指定，则插入到文件开头。',
       ),
-    new_source: z.string().describe('The new source for the cell'),
+    new_source: z.string().describe('单元格的新内容'),
     cell_type: z
       .enum(['code', 'markdown'])
       .optional()
       .describe(
-        'The type of the cell (code or markdown). If not specified, it defaults to the current cell type. If using edit_mode=insert, this is required.',
+        '单元格类型（code 或 markdown）。如果未指定，则沿用当前单元格类型。使用 edit_mode=insert 时此项必填。',
       ),
     edit_mode: z
       .enum(['replace', 'insert', 'delete'])
       .optional()
       .describe(
-        'The type of edit to make (replace, insert, delete). Defaults to replace.',
+        '要执行的编辑类型（replace、insert、delete）。默认为 replace。',
       ),
   }),
 )
@@ -59,28 +59,16 @@ type InputSchema = ReturnType<typeof inputSchema>
 
 export const outputSchema = lazySchema(() =>
   z.object({
-    new_source: z
-      .string()
-      .describe('The new source code that was written to the cell'),
-    cell_id: z
-      .string()
-      .optional()
-      .describe('The ID of the cell that was edited'),
-    cell_type: z.enum(['code', 'markdown']).describe('The type of the cell'),
-    language: z.string().describe('The programming language of the notebook'),
-    edit_mode: z.string().describe('The edit mode that was used'),
-    error: z
-      .string()
-      .optional()
-      .describe('Error message if the operation failed'),
+    new_source: z.string().describe('写入单元格的新源代码'),
+    cell_id: z.string().optional().describe('被编辑的单元格 ID'),
+    cell_type: z.enum(['code', 'markdown']).describe('单元格类型'),
+    language: z.string().describe('笔记本的编程语言'),
+    edit_mode: z.string().describe('所使用的编辑模式'),
+    error: z.string().optional().describe('操作失败时的错误消息'),
     // Fields for attribution tracking
-    notebook_path: z.string().describe('The path to the notebook file'),
-    original_file: z
-      .string()
-      .describe('The original notebook content before modification'),
-    updated_file: z
-      .string()
-      .describe('The updated notebook content after modification'),
+    notebook_path: z.string().describe('笔记本文件路径'),
+    original_file: z.string().describe('修改前的原始笔记本内容'),
+    updated_file: z.string().describe('修改后的更新笔记本内容'),
   }),
 )
 type OutputSchema = ReturnType<typeof outputSchema>
@@ -283,7 +271,7 @@ export const NotebookEditTool = buildTool({
         } else {
           return {
             result: false,
-            message: `Cell with ID "${cell_id}" not found in notebook.`,
+            message: `在笔记本中未找到 ID 为 "${cell_id}" 的单元格。`,
             errorCode: 8,
           }
         }

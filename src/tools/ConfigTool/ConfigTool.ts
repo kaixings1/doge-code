@@ -43,7 +43,7 @@ const inputSchema = lazySchema(() =>
     value: z
       .union([z.string(), z.boolean(), z.number()])
       .optional()
-      .describe('The new value. Omit to get current value.'),
+      .describe('新值。省略以获取当前值。'),
   }),
 )
 type InputSchema = ReturnType<typeof inputSchema>

@@ -12,7 +12,7 @@ const inputSchema = lazySchema(() => z.object({}).passthrough())
 type InputSchema = ReturnType<typeof inputSchema>
 
 const outputSchema = lazySchema(() =>
-  z.string().describe('Structured output tool result'),
+  z.string().describe('结构化输出工具结果'),
 )
 type OutputSchema = ReturnType<typeof outputSchema>
 export type Output = z.infer<OutputSchema>

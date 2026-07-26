@@ -5,12 +5,12 @@ export const PlanModeTool = {
   description: '模式',
   callOn: 'manual',
   input: z.object({
-    action: z.enum(['enter', 'exit', 'status']).describe('Action to perform'),
+    action: z.enum(['enter', 'exit', 'status']).describe('要执行的操作'),
   }),
   output: z.object({
-    active: z.boolean().describe('Whether plan mode is active'),
-    action: z.string().describe('Action taken'),
-    message: z.string().optional().describe('Status message'),
+    active: z.boolean().describe('计划模式是否激活'),
+    action: z.string().describe('执行的操作'),
+    message: z.string().optional().describe('状态消息'),
   }),
 
   exec: async ({ action }) => {

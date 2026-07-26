@@ -27,7 +27,7 @@ type InputSchema = ReturnType<typeof inputSchema>
 
 const outputSchema = lazySchema(() =>
   z.object({
-    message: z.string().describe('Confirmation that plan mode was entered'),
+    message: z.string().describe('已进入计划模式的确认'),
   }),
 )
 type OutputSchema = ReturnType<typeof outputSchema>

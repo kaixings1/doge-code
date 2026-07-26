@@ -58,7 +58,7 @@ export function renderToolUseProgressMessage(progressMessagesForMessage: Progres
   const lastProgress = progressMessagesForMessage.at(-1);
   if (!lastProgress?.data) {
     return <MessageResponse height={1}>
-        <Text dimColor>Running…</Text>
+        <Text dimColor>正在运行…</Text>
       </MessageResponse>;
   }
   const {
@@ -68,7 +68,7 @@ export function renderToolUseProgressMessage(progressMessagesForMessage: Progres
   } = lastProgress.data;
   if (progress === undefined) {
     return <MessageResponse height={1}>
-        <Text dimColor>Running…</Text>
+        <Text dimColor>正在运行…</Text>
       </MessageResponse>;
   }
   if (total !== undefined && total > 0) {
@@ -85,7 +85,7 @@ export function renderToolUseProgressMessage(progressMessagesForMessage: Progres
       </MessageResponse>;
   }
   return <MessageResponse height={1}>
-      <Text dimColor>{progressMessage ?? `Processing… ${progress}`}</Text>
+      <Text dimColor>{progressMessage ?? `正在处理… ${progress}`}</Text>
     </MessageResponse>;
 }
 export function renderToolResultMessage(output: string | MCPToolResult, _progressMessagesForMessage: ProgressMessage<ToolProgressData>[], {
@@ -101,7 +101,7 @@ export function renderToolResultMessage(output: string | MCPToolResult, _progres
     if (slackSend !== null) {
       return <MessageResponse height={1}>
           <Text>
-            Sent a message to{' '}
+            已发送消息至{' '}
             <Ansi>{createHyperlink(slackSend.url, slackSend.channel)}</Ansi>
           </Text>
         </MessageResponse>;
@@ -109,7 +109,7 @@ export function renderToolResultMessage(output: string | MCPToolResult, _progres
   }
   const estimatedTokens = getContentSizeEstimate(mcpOutput);
   const showWarning = estimatedTokens > MCP_OUTPUT_WARNING_THRESHOLD_TOKENS;
-  const warningMessage = showWarning ? `${figures.warning} Large MCP response (~${formatNumber(estimatedTokens)} tokens), this can fill up context quickly` : null;
+  const warningMessage = showWarning ? `${figures.warning} MCP 响应过大（约 ${formatNumber(estimatedTokens)} tokens），可能快速耗尽上下文` : null;
   let contentElement: React.ReactNode;
   if (Array.isArray(mcpOutput)) {
     const contentBlocks = mcpOutput.map((item, i) => {
@@ -132,7 +132,7 @@ export function renderToolResultMessage(output: string | MCPToolResult, _progres
   } else if (!mcpOutput) {
     contentElement = <Box justifyContent="space-between" overflowX="hidden" width="100%">
         <MessageResponse height={1}>
-          <Text dimColor>(No content)</Text>
+          <Text dimColor>（无内容）</Text>
         </MessageResponse>
       </Box>;
   } else {

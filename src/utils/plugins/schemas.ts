@@ -176,14 +176,14 @@ const McpbPath = lazySchema(() =>
       .refine(path => path.endsWith('.mcpb') || path.endsWith('.dxt'), {
         message: 'MCPB 文件路径必须以 .mcpb 或 .dxt 结尾',
       })
-      .describe('Path to MCPB file relative to plugin root'),
+      .describe('相对于插件根目录的 MCPB 文件路径'),
     z
       .string()
       .url()
       .refine(url => url.endsWith('.mcpb') || url.endsWith('.dxt'), {
         message: 'MCPB URL 必须以 .mcpb 或 .dxt 结尾',
       })
-      .describe('URL to MCPB file'),
+      .describe('MCPB 文件的 URL'),
   ]),
 )
 
@@ -253,15 +253,15 @@ export const PluginAuthorSchema = lazySchema(() =>
     name: z
       .string()
       .min(1, 'Author name cannot be empty')
-      .describe('Display name of the plugin author or organization'),
+      .describe('插件作者或组织的显示名称'),
     email: z
       .string()
       .optional()
-      .describe('Contact email for support or feedback'),
+      .describe('支持或反馈的联系邮箱'),
     url: z
       .string()
       .optional()
-      .describe('Website, GitHub profile, or organization URL'),
+      .describe('网站、GitHub 资料页或组织 URL'),
   }),
 )
 
@@ -292,24 +292,24 @@ const PluginManifestMetadataSchema = lazySchema(() =>
     description: z
       .string()
       .optional()
-      .describe('Brief, user-facing explanation of what the plugin provides'),
+      .describe('插件功能的简要说明'),
     author: PluginAuthorSchema()
       .optional()
-      .describe('Information about the plugin creator or maintainer'),
+      .describe('插件创建者或维护者的信息'),
     homepage: z
       .string()
       .url()
       .optional()
-      .describe('Plugin homepage or documentation URL'),
-    repository: z.string().optional().describe('Source code repository URL'),
+      .describe('插件主页或文档 URL'),
+    repository: z.string().optional().describe('源代码仓库 URL'),
     license: z
       .string()
       .optional()
-      .describe('SPDX license identifier (e.g., MIT, Apache-2.0)'),
+      .describe('SPDX 许可证标识符（如 MIT、Apache-2.0）'),
     keywords: z
       .array(z.string())
       .optional()
-      .describe('Tags for plugin discovery and categorization'),
+      .describe('插件发现和分类标签'),
     dependencies: z
       .array(DependencyRefSchema())
       .optional()
@@ -330,7 +330,7 @@ export const PluginHooksSchema = lazySchema(() =>
     description: z
       .string()
       .optional()
-      .describe('Brief, user-facing explanation of what these hooks provide'),
+      .describe('这些钩子功能的简要说明'),
     hooks: z
       .lazy(() => HooksSchema())
       .describe(
@@ -387,24 +387,24 @@ export const CommandMetadataSchema = lazySchema(() =>
     .object({
       source: RelativeCommandPath()
         .optional()
-        .describe('Path to command markdown file, relative to plugin root'),
+        .describe('命令 markdown 文件路径（相对于插件根目录）'),
       content: z
         .string()
         .optional()
-        .describe('Inline markdown content for the command'),
+        .describe('命令的内联 markdown 内容'),
       description: z
         .string()
         .optional()
-        .describe('Command description override'),
+        .describe('命令描述覆盖'),
       argumentHint: z
         .string()
         .optional()
-        .describe('Hint for command arguments (e.g., "[file]")'),
-      model: z.string().optional().describe('Default model for this command'),
+        .describe('命令参数提示（如 "[file]"）'),
+      model: z.string().optional().describe('此命令的默认模型'),
       allowedTools: z
         .array(z.string())
         .optional()
-        .describe('Tools allowed when command runs'),
+        .describe('命令运行时可使用的工具'),
     })
     .refine(
       data => (data.source && !data.content) || (!data.source && data.content),
@@ -470,7 +470,7 @@ const PluginManifestAgentsSchema = lazySchema(() =>
             'Path to additional agent file (in addition to those in the agents/ directory, if it exists), relative to the plugin root',
           ),
         )
-        .describe('List of paths to additional agent files'),
+        .describe('额外代理文件的路径列表'),
     ]),
   }),
 )
@@ -493,7 +493,7 @@ const PluginManifestSkillsSchema = lazySchema(() =>
             'Path to additional skill directory (in addition to those in the skills/ directory, if it exists), relative to the plugin root',
           ),
         )
-        .describe('List of paths to additional skill directories'),
+        .describe('额外技能目录的路径列表'),
     ]),
   }),
 )
@@ -547,21 +547,21 @@ const PluginManifestMcpServerSchema = lazySchema(() =>
         'MCP servers to include in the plugin (in addition to those in the .mcp.json file, if it exists)',
       ),
       McpbPath().describe(
-        'Path or URL to MCPB file containing MCP server configuration',
+        'MCPB 文件的路径或 URL containing MCP server configuration',
       ),
       z
         .record(z.string(), McpServerConfigSchema())
-        .describe('MCP server configurations keyed by server name'),
+        .describe('按服务器名称索引的 MCP 服务器配置'),
       z
         .array(
           z.union([
             RelativeJSONPath().describe(
               'Path to MCP servers configuration file',
             ),
-            McpbPath().describe('Path or URL to MCPB file'),
+            McpbPath().describe('MCPB 文件的路径或 URL'),
             z
               .record(z.string(), McpServerConfigSchema())
-              .describe('Inline MCP server configurations'),
+              .describe('内联 MCP 服务器配置'),
           ]),
         )
         .describe(
@@ -589,33 +589,33 @@ const PluginUserConfigOptionSchema = lazySchema(() =>
     .object({
       type: z
         .enum(['string', 'number', 'boolean', 'directory', 'file'])
-        .describe('Type of the configuration value'),
+        .describe('配置值的类型'),
       title: z
         .string()
-        .describe('Human-readable label shown in the config dialog'),
+        .describe('配置对话框中显示的人类可读标签'),
       description: z
         .string()
-        .describe('Help text shown beneath the field in the config dialog'),
+        .describe('配置对话框中字段下方的帮助文本'),
       required: z
         .boolean()
         .optional()
-        .describe('If true, validation fails when this field is empty'),
+        .describe('如果为 true，则字段为空时验证失败'),
       default: z
         .union([z.string(), z.number(), z.boolean(), z.array(z.string())])
         .optional()
-        .describe('Default value used when the user provides nothing'),
+        .describe('用户未提供时使用的默认值'),
       multiple: z
         .boolean()
         .optional()
-        .describe('For string type: allow an array of strings'),
+        .describe('字符串类型：允许字符串数组'),
       sensitive: z
         .boolean()
         .optional()
         .describe(
           'If true, masks dialog input and stores value in secure storage (keychain/credentials file) instead of settings.json',
         ),
-      min: z.number().optional().describe('Minimum value (number type only)'),
-      max: z.number().optional().describe('Maximum value (number type only)'),
+      min: z.number().optional().describe('最小值（仅数字类型）'),
+      max: z.number().optional().describe('最大值（仅数字类型）'),
     })
     .strict(),
 )
@@ -729,7 +729,7 @@ export const LspServerConfigSchema = lazySchema(() =>
     args: z
       .array(nonEmptyString())
       .optional()
-      .describe('Command-line arguments to pass to the server'),
+      .describe('传递给服务器的命令行参数'),
     extensionToLanguage: z
       .record(fileExtension(), nonEmptyString())
       .refine(record => Object.keys(record).length > 0, {
@@ -741,11 +741,11 @@ export const LspServerConfigSchema = lazySchema(() =>
     transport: z
       .enum(['stdio', 'socket'])
       .default('stdio')
-      .describe('Communication transport mechanism'),
+      .describe('通信传输机制'),
     env: z
       .record(z.string(), z.string())
       .optional()
-      .describe('Environment variables to set when starting the server'),
+      .describe('启动服务器时要设置的环境变量'),
     initializationOptions: z
       .unknown()
       .optional()
@@ -761,29 +761,29 @@ export const LspServerConfigSchema = lazySchema(() =>
     workspaceFolder: z
       .string()
       .optional()
-      .describe('Workspace folder path to use for the server'),
+      .describe('服务器使用的工作区文件夹路径'),
     startupTimeout: z
       .number()
       .int()
       .positive()
       .optional()
-      .describe('Maximum time to wait for server startup (milliseconds)'),
+      .describe('服务器启动的最大等待时间（毫秒）'),
     shutdownTimeout: z
       .number()
       .int()
       .positive()
       .optional()
-      .describe('Maximum time to wait for graceful shutdown (milliseconds)'),
+      .describe('优雅关闭的最大等待时间（毫秒）'),
     restartOnCrash: z
       .boolean()
       .optional()
-      .describe('Whether to restart the server if it crashes'),
+      .describe('服务器崩溃时是否重新启动'),
     maxRestarts: z
       .number()
       .int()
       .nonnegative()
       .optional()
-      .describe('Maximum number of restart attempts before giving up'),
+      .describe('放弃前的最大重试次数'),
   }),
 )
 
@@ -802,14 +802,14 @@ const PluginManifestLspServerSchema = lazySchema(() =>
       ),
       z
         .record(z.string(), LspServerConfigSchema())
-        .describe('LSP server configurations keyed by server name'),
+        .describe('按服务器名称索引的 LSP 服务器配置'),
       z
         .array(
           z.union([
-            RelativeJSONPath().describe('Path to LSP configuration file'),
+            RelativeJSONPath().describe('LSP 配置文件路径'),
             z
               .record(z.string(), LspServerConfigSchema())
-              .describe('Inline LSP server configurations'),
+              .describe('内联 LSP 服务器配置'),
           ]),
         )
         .describe(
@@ -907,15 +907,15 @@ export const MarketplaceSourceSchema = lazySchema(() =>
   z.discriminatedUnion('source', [
     z.object({
       source: z.literal('url'),
-      url: z.string().url().describe('Direct URL to marketplace.json file'),
+      url: z.string().url().describe('marketplace.json 文件的直接 URL'),
       headers: z
         .record(z.string(), z.string())
         .optional()
-        .describe('Custom HTTP headers (e.g., for authentication)'),
+        .describe('自定义 HTTP 标头（如用于认证）'),
     }),
     z.object({
       source: z.literal('github'),
-      repo: z.string().describe('GitHub repository in owner/repo format'),
+      repo: z.string().describe('GitHub 仓库（owner/repo 格式）'),
       ref: z
         .string()
         .optional()
@@ -947,7 +947,7 @@ export const MarketplaceSourceSchema = lazySchema(() =>
       // (TF401019). AWS CodeCommit also omits the suffix. If the user
       // explicitly wrote source:'git', they know it's a git repo; a typo'd
       // URL fails at `git clone` with a clearer error anyway. (gh-31256)
-      url: z.string().describe('Full git repository URL'),
+      url: z.string().describe('完整的 git 仓库 URL'),
       ref: z
         .string()
         .optional()
@@ -978,13 +978,13 @@ export const MarketplaceSourceSchema = lazySchema(() =>
     }),
     z.object({
       source: z.literal('file'),
-      path: z.string().describe('Local file path to marketplace.json'),
+      path: z.string().describe('marketplace.json 的本地文件路径'),
     }),
     z.object({
       source: z.literal('directory'),
       path: z
         .string()
-        .describe('Local directory containing .claude-plugin/marketplace.json'),
+        .describe('包含 .claude-plugin/marketplace.json 的本地目录'),
     }),
     z.object({
       source: z.literal('hostPattern'),
@@ -1031,7 +1031,7 @@ export const MarketplaceSourceSchema = lazySchema(() =>
           ),
         plugins: z
           .array(SettingsMarketplacePluginSchema())
-          .describe('Plugin entries declared inline in settings.json'),
+          .describe('在 settings.json 中内联声明的插件条目'),
         owner: PluginAuthorSchema().optional(),
       })
       .describe(
@@ -1075,7 +1075,7 @@ export const PluginSourceSchema = lazySchema(() =>
         version: z
           .string()
           .optional()
-          .describe('Specific version or version range (e.g., ^1.0.0, ~2.1.0)'),
+          .describe('特定版本或版本范围（如 ^1.0.0、~2.1.0）'),
         registry: z
           .string()
           .url()
@@ -1084,17 +1084,17 @@ export const PluginSourceSchema = lazySchema(() =>
             'Custom NPM registry URL (defaults to using system default, likely npmjs.org)',
           ),
       })
-      .describe('NPM package as plugin source'),
+      .describe('用作插件源的 NPM 包'),
     z
       .object({
         source: z.literal('pip'),
         package: z
           .string()
-          .describe('Python package name as it appears on PyPI'),
+          .describe('PyPI 上的 Python 包名称'),
         version: z
           .string()
           .optional()
-          .describe('Version specifier (e.g., ==1.0.0, >=2.0.0, <3.0.0)'),
+          .describe('版本说明符（如 ==1.0.0、>=2.0.0、<3.0.0）'),
         registry: z
           .string()
           .url()
@@ -1103,30 +1103,30 @@ export const PluginSourceSchema = lazySchema(() =>
             'Custom PyPI registry URL (defaults to using system default, likely pypi.org)',
           ),
       })
-      .describe('Python package as plugin source'),
+      .describe('用作插件源的 Python 包'),
     z.object({
       source: z.literal('url'),
       // See note on MarketplaceSourceSchema source:'git' re: .endsWith('.git')
       // — dropped to support Azure DevOps / CodeCommit URLs (gh-31256).
-      url: z.string().describe('Full git repository URL (https:// or git@)'),
+      url: z.string().describe('完整的 git 仓库 URL (https:// or git@)'),
       ref: z
         .string()
         .optional()
         .describe(
           'Git branch or tag to use (e.g., "main", "v1.0.0"). Defaults to repository default branch.',
         ),
-      sha: gitSha().optional().describe('Specific commit SHA to use'),
+      sha: gitSha().optional().describe('要使用的特定提交 SHA'),
     }),
     z.object({
       source: z.literal('github'),
-      repo: z.string().describe('GitHub repository in owner/repo format'),
+      repo: z.string().describe('GitHub 仓库（owner/repo 格式）'),
       ref: z
         .string()
         .optional()
         .describe(
           'Git branch or tag to use (e.g., "main", "v1.0.0"). Defaults to repository default branch.',
         ),
-      sha: gitSha().optional().describe('Specific commit SHA to use'),
+      sha: gitSha().optional().describe('要使用的特定提交 SHA'),
     }),
     z
       .object({
@@ -1149,7 +1149,7 @@ export const PluginSourceSchema = lazySchema(() =>
           .describe(
             'Git branch or tag to use (e.g., "main", "v1.0.0"). Defaults to repository default branch.',
           ),
-        sha: gitSha().optional().describe('Specific commit SHA to use'),
+        sha: gitSha().optional().describe('要使用的特定提交 SHA'),
       })
       .describe(
         'Plugin located in a subdirectory of a larger repository (monorepo). ' +
@@ -1189,9 +1189,9 @@ const SettingsMarketplacePluginSchema = lazySchema(() =>
           message:
             'Plugin name cannot contain spaces. Use kebab-case (e.g., "my-plugin")',
         })
-        .describe('Plugin name as it appears in the target repository'),
+        .describe('目标仓库中的插件名称'),
       source: PluginSourceSchema().describe(
-        'Where to fetch the plugin from. Must be a remote source — relative ' +
+        '插件获取来源. Must be a remote source — relative ' +
           'paths have no marketplace repository to resolve against.',
       ),
       description: z.string().optional(),
@@ -1262,8 +1262,8 @@ export const PluginMarketplaceEntrySchema = lazySchema(() =>
           message:
             'Plugin name cannot contain spaces. Use kebab-case (e.g., "my-plugin")',
         })
-        .describe('Unique identifier matching the plugin name'),
-      source: PluginSourceSchema().describe('Where to fetch the plugin from'),
+        .describe('与插件名称匹配的唯一标识符'),
+      source: PluginSourceSchema().describe('插件获取来源'),
       category: z
         .string()
         .optional()
@@ -1273,7 +1273,7 @@ export const PluginMarketplaceEntrySchema = lazySchema(() =>
       tags: z
         .array(z.string())
         .optional()
-        .describe('Tags for searchability and discovery'),
+        .describe('用于搜索和发现的标签'),
       strict: z
         .boolean()
         .optional()
@@ -1298,7 +1298,7 @@ export const PluginMarketplaceSchema = lazySchema(() =>
     ),
     plugins: z
       .array(PluginMarketplaceEntrySchema())
-      .describe('Collection of available plugins in this marketplace'),
+      .describe('此 marketplace 中可用的插件集合'),
     forceRemoveDeletedPlugins: z
       .boolean()
       .optional()
@@ -1310,12 +1310,12 @@ export const PluginMarketplaceSchema = lazySchema(() =>
         pluginRoot: z
           .string()
           .optional()
-          .describe('Base path for relative plugin sources'),
-        version: z.string().optional().describe('Marketplace version'),
-        description: z.string().optional().describe('Marketplace description'),
+          .describe('相对插件源的基础路径'),
+        version: z.string().optional().describe('插件市场版本'),
+        description: z.string().optional().describe('插件市场描述'),
       })
       .optional()
-      .describe('Optional marketplace metadata'),
+      .describe('可选的 marketplace 元数据'),
     allowCrossMarketplaceDependenciesOn: z
       .array(z.string())
       .optional()
@@ -1417,12 +1417,12 @@ export const SettingsPluginEntrySchema = lazySchema(() =>
       version: z
         .string()
         .optional()
-        .describe('Version constraint (e.g., "^2.0.0")'),
-      required: z.boolean().optional().describe('If true, cannot be disabled'),
+        .describe('版本约束（如 "^2.0.0"）'),
+      required: z.boolean().optional().describe('如果为 true，则无法禁用'),
       config: z
         .record(z.string(), z.unknown())
         .optional()
-        .describe('Plugin-specific configuration'),
+        .describe('插件特定配置'),
     }),
   ]),
 )
@@ -1445,19 +1445,19 @@ export const SettingsPluginEntrySchema = lazySchema(() =>
  */
 export const InstalledPluginSchema = lazySchema(() =>
   z.object({
-    version: z.string().describe('Currently installed version'),
-    installedAt: z.string().describe('ISO 8601 timestamp of installation'),
+    version: z.string().describe('当前已安装版本'),
+    installedAt: z.string().describe('安装时间的 ISO 8601 时间戳'),
     lastUpdated: z
       .string()
       .optional()
-      .describe('ISO 8601 timestamp of last update'),
+      .describe('最后更新时间的 ISO 8601 时间戳'),
     installPath: z
       .string()
-      .describe('Absolute path to the installed plugin directory'),
+      .describe('已安装插件目录的绝对路径'),
     gitCommitSha: z
       .string()
       .optional()
-      .describe('Git commit SHA for git-based plugins (for version tracking)'),
+      .describe('基于 git 的插件的 Git 提交 SHA（用于版本跟踪）'),
   }),
 )
 
@@ -1481,13 +1481,13 @@ export const InstalledPluginSchema = lazySchema(() =>
  */
 export const InstalledPluginsFileSchemaV1 = lazySchema(() =>
   z.object({
-    version: z.literal(1).describe('Schema version 1'),
+    version: z.literal(1).describe('Schema 版本 1'),
     plugins: z
       .record(
         PluginIdSchema(), // Validated plugin ID key (e.g., "formatter@tools")
         InstalledPluginSchema(),
       )
-      .describe('Map of plugin IDs to their installation metadata'),
+      .describe('插件 ID 到其安装元数据的映射'),
   }),
 )
 
@@ -1516,28 +1516,28 @@ export const PluginScopeSchema = lazySchema(() =>
  */
 export const PluginInstallationEntrySchema = lazySchema(() =>
   z.object({
-    scope: PluginScopeSchema().describe('Installation scope'),
+    scope: PluginScopeSchema().describe('安装作用域'),
     projectPath: z
       .string()
       .optional()
-      .describe('Project path (required for project/local scopes)'),
+      .describe('项目路径（project/local 作用域必需）'),
     installPath: z
       .string()
-      .describe('Absolute path to the versioned plugin directory'),
+      .describe('版本化插件目录的绝对路径'),
     // Preserved from V1:
-    version: z.string().optional().describe('Currently installed version'),
+    version: z.string().optional().describe('当前已安装版本'),
     installedAt: z
       .string()
       .optional()
-      .describe('ISO 8601 timestamp of installation'),
+      .describe('安装时间的 ISO 8601 时间戳'),
     lastUpdated: z
       .string()
       .optional()
-      .describe('ISO 8601 timestamp of last update'),
+      .describe('最后更新时间的 ISO 8601 时间戳'),
     gitCommitSha: z
       .string()
       .optional()
-      .describe('Git commit SHA for git-based plugins'),
+      .describe('基于 git 的插件的 Git 提交 SHA'),
   }),
 )
 
@@ -1561,10 +1561,10 @@ export const PluginInstallationEntrySchema = lazySchema(() =>
  */
 export const InstalledPluginsFileSchemaV2 = lazySchema(() =>
   z.object({
-    version: z.literal(2).describe('Schema version 2'),
+    version: z.literal(2).describe('Schema 版本 2'),
     plugins: z
       .record(PluginIdSchema(), z.array(PluginInstallationEntrySchema()))
-      .describe('Map of plugin IDs to arrays of installation entries'),
+      .describe('插件 ID 到安装条目数组的映射'),
   }),
 )
 
@@ -1596,10 +1596,10 @@ export const KnownMarketplaceSchema = lazySchema(() =>
     ),
     installLocation: z
       .string()
-      .describe('Local cache path where marketplace manifest is stored'),
+      .describe('存储 marketplace 清单的本地缓存路径'),
     lastUpdated: z
       .string()
-      .describe('ISO 8601 timestamp of last marketplace refresh'),
+      .describe('最后 marketplace 刷新的 ISO 8601 时间戳'),
     autoUpdate: z
       .boolean()
       .optional()

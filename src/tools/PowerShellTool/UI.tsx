@@ -98,7 +98,7 @@ export function renderToolResultMessage(content: Out, progressMessagesForMessage
   } = content;
   if (isImage) {
     return <MessageResponse height={1}>
-        <Text dimColor>[Image data detected and sent to Claude]</Text>
+        <Text dimColor>[检测到图片数据并已发送给 Claude]</Text>
       </MessageResponse>;
   }
   return <Box flexDirection="column">

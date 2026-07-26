@@ -6,10 +6,10 @@ import type { Input, Output } from './ConfigTool.js';
 export function renderToolUseMessage(input: Partial<Input>): React.ReactNode {
   if (!input.setting) return null;
   if (input.value === undefined) {
-    return <Text dimColor>Getting {input.setting}</Text>;
+    return <Text dimColor>正在获取 {input.setting}</Text>;
   }
   return <Text dimColor>
-      Setting {input.setting} to {jsonStringify(input.value)}
+      正在设置 {input.setting} 为 {jsonStringify(input.value)}
     </Text>;
 }
 export function renderToolResultMessage(content: Output): React.ReactNode {
@@ -27,7 +27,7 @@ export function renderToolResultMessage(content: Output): React.ReactNode {
   }
   return <MessageResponse>
       <Text>
-        Set <Text bold>{content.setting}</Text> to{' '}
+        已设置 <Text bold>{content.setting}</Text> 为{' '}
         <Text bold>{jsonStringify(content.newValue)}</Text>
       </Text>
     </MessageResponse>;

@@ -16,12 +16,12 @@ export const inputSchema = lazySchema(() =>
   z.object({
     tool_name: z
       .string()
-      .describe('The name of the tool requesting permission'),
-    input: z.record(z.string(), z.unknown()).describe('The input for the tool'),
+      .describe('请求权限的工具名称'),
+    input: z.record(z.string(), z.unknown()).describe('工具的输入参数'),
     tool_use_id: z
       .string()
       .optional()
-      .describe('The unique tool use request ID'),
+      .describe('工具调用的唯一请求 ID'),
   }),
 )
 

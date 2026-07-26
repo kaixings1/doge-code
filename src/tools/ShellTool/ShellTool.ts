@@ -5,14 +5,14 @@ export const ShellTool = {
   description: 'Execute shell commands with advanced features',
   callOn: 'manual',
   input: z.object({
-    command: z.string().describe('Shell command'),
-    cwd: z.string().optional().describe('Working directory'),
-    env: z.record(z.string()).optional().describe('Environment variables'),
+    command: z.string().describe('Shell 命令'),
+    cwd: z.string().optional().describe('工作目录'),
+    env: z.record(z.string()).optional().describe('环境变量'),
   }),
   output: z.object({
-    exitCode: z.number().describe('Exit code'),
-    stdout: z.string().describe('Standard output'),
-    stderr: z.string().optional().describe('Standard error'),
+    exitCode: z.number().describe('退出码'),
+    stdout: z.string().describe('标准输出'),
+    stderr: z.string().optional().describe('标准错误'),
   }),
 
   exec: async ({ command, cwd, env }) => {
