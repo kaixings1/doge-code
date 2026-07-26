@@ -16,7 +16,7 @@
   },
   "scripts": {
     "prebuild": "bun run scripts/embed-status-line.ts",
-    "build": "bun build ./src/entrypoints/cli.tsx --compile --outfile ./doge",
+    "build": "bun build ./src/entrypoints/cli.tsx --compile --outfile ./doge && bun run scripts/postbuild-tools.ts",
     "dev": "bun run ./src/bootstrap-entry.ts",
     "start": "bun run ./src/bootstrap-entry.ts",
     "version": "bun run ./src/bootstrap-entry.ts --version",
