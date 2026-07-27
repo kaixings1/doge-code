@@ -2,7 +2,7 @@
  * Electron 主进程入口 — 集成 QueryEngine
  */
 
-import { app, BrowserWindow, ipcMain, shell } from 'electron'
+import { app, BrowserWindow, ipcMain, shell, Tray, Menu, nativeImage } from 'electron'
 import * as path from 'path'
 import * as fs from 'fs'
 import { QueryEngine, type ToolDefinition } from '../../../src/engine/index.js'
@@ -10,6 +10,7 @@ import type { InternalMessage } from '../../../src/engine/messageNormalizer.js'
 import type { APIRequest } from '../../../src/engine/requestBuilder.js'
 
 let mainWindow: BrowserWindow | null = null
+let tray: Tray | null = null
 
 // ─── 路径 ───
 const projectRoot = path.resolve(__dirname, '..', '..', '..')
@@ -397,6 +398,28 @@ function createWindow(): void {
     })
   }
   mainWindow.webContents.openDevTools({ mode: 'detach' })
+}
+
+function createTray(): void {
+  try {
+    const iconPath = path.join(projectRoot, 'assets', 'icon.png')
+    let trayIcon: Electron.NativeImage | null = null
+    try { trayIcon = nativeImage.createFromPath(iconPath) } catch { /* ignore */ }
+    if (!trayIcon || trayIcon.isEmpty()) return
+
+    tray = new Tray(trayIcon)
+    tray.setToolTip('Doge Code')
+
+    const contextMenu = Menu.buildFromTemplate([
+      { label: '显示窗口', click: () => { mainWindow?.show(); mainWindow?.focus() } },
+      { label: '新会话', click: () => { mainWindow?.webContents.send('doge:new-session-action') } },
+      { type: 'separator' },
+      { label: '退出', click: () => { app.quit() } }
+    ])
+
+    tray.setContextMenu(contextMenu)
+    tray.on('click', () => { mainWindow?.show(); mainWindow?.focus() })
+  } catch { /* ignore */ }
 }
 
 // ─── IPC 处理程序 ───
@@ -1135,7 +1158,7 @@ ipcMain.handle('doge:open-terminal', async (_event, dirPath: string) => {
 })
 
 // ─── 应用生命周期 ───
-app.whenReady().then(createWindow)
+app.whenReady().then(() => { createWindow(); createTray() })
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
