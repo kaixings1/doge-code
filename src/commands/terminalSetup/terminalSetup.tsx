@@ -241,7 +241,7 @@ async function installBindingsForVSCodeTerminal(editor: 'VSCode' | 'Cursor' | 'W
     // Check if keybinding already exists
     const existingBinding = keybindings.find(binding => binding.key === 'shift+enter' && binding.command === 'workbench.action.terminal.sendSequence' && binding.when === 'terminalFocus');
     if (existingBinding) {
-      return `${color('warning', theme)(`Found existing ${editor} terminal Shift+Enter key binding. Remove it to continue.`)}${EOL}${chalk.dim(`See ${formatPathLink(keybindingsPath)}`)}${EOL}`;
+      return `${color('warning', theme)(`${editor} 终端已存在 Shift+Enter 键绑定。请移除后继续。`)}${EOL}${chalk.dim(`参见 ${formatPathLink(keybindingsPath)}`)}${EOL}`;
     }
 
     // Create the new keybinding
@@ -261,7 +261,7 @@ async function installBindingsForVSCodeTerminal(editor: 'VSCode' | 'Cursor' | 'W
     await writeFile(keybindingsPath, updatedContent, {
       encoding: 'utf-8'
     });
-    return `${color('success', theme)(`Installed ${editor} terminal Shift+Enter key binding`)}${EOL}${chalk.dim(`See ${formatPathLink(keybindingsPath)}`)}${EOL}`;
+    return `${color('success', theme)(`已安装 ${editor} 终端 Shift+Enter 键绑定`)}${EOL}${chalk.dim(`查看 ${formatPathLink(keybindingsPath)}`)}${EOL}`;
   } catch (error) {
     logError(error);
     throw new Error(`Failed to install ${editor} terminal Shift+Enter key binding`);
@@ -424,7 +424,7 @@ chars = "\\u001B\\r"`;
     if (configExists) {
       // Check if keybinding already exists (look for Shift+Return binding)
       if (configContent.includes('mods = "Shift"') && configContent.includes('key = "Return"')) {
-        return `${color('warning', theme)('Found existing Alacritty Shift+Enter key binding. Remove it to continue.')}${EOL}${chalk.dim(`See ${formatPathLink(configPath)}`)}${EOL}`;
+        return `${color('warning', theme)('Alacritty 已存在 Shift+Enter 键绑定。请移除后继续。')}${EOL}${chalk.dim(`参见 ${formatPathLink(configPath)}`)}${EOL}`;
       }
 
       // Create backup
@@ -483,7 +483,7 @@ async function installBindingsForZed(theme: ThemeName): Promise<string> {
     if (fileExists) {
       // Check if keybinding already exists
       if (keymapContent.includes('shift-enter')) {
-        return `${color('warning', theme)('Found existing Zed Shift+Enter key binding. Remove it to continue.')}${EOL}${chalk.dim(`See ${formatPathLink(keymapPath)}`)}${EOL}`;
+        return `${color('warning', theme)('Zed 已存在 Shift+Enter 键绑定。请移除后继续。')}${EOL}${chalk.dim(`参见 ${formatPathLink(keymapPath)}`)}${EOL}`;
       }
 
       // Create backup
@@ -492,7 +492,7 @@ async function installBindingsForZed(theme: ThemeName): Promise<string> {
       try {
         await copyFile(keymapPath, backupPath);
       } catch {
-        return `${color('warning', theme)('Error backing up existing Zed keymap. Bailing out.')}${EOL}${chalk.dim(`See ${formatPathLink(keymapPath)}`)}${EOL}${chalk.dim(`Backup path: ${formatPathLink(backupPath)}`)}${EOL}`;
+        return `${color('warning', theme)('Zed 键映射备份失败。正在退出。')}${EOL}${chalk.dim(`参见 ${formatPathLink(keymapPath)}`)}${EOL}${chalk.dim(`备份路径：${formatPathLink(backupPath)}`)}${EOL}`;
       }
     }
 

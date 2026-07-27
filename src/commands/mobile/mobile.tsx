@@ -209,7 +209,7 @@ function MobileQRCode(t0) {
   }
   let t24;
   if ($[33] === Symbol.for("react.memo_cache_sentinel")) {
-    t24 = <Text dimColor={true}>（tab 切换，esc 关闭）</Text>;
+    t24 = <Text dimColor={true}>（Tab 切换，Esc 关闭）</Text>;
     $[33] = t24;
   } else {
     t24 = $[33];

@@ -1555,7 +1555,7 @@ function App(): JSX.Element {
       const meta: PersistedTabMeta[] = tabs.map(t => ({ id: t.id, sessionId: t.sessionId, title: t.title }))
       localStorage.setItem('doge-tabs', JSON.stringify(meta))
     } catch { /* ignore */ }
-  }, [tabs.map(t => ({ id: t.id, sessionId: t.sessionId, title: t.title })).join('|')])
+  }, [tabs])
 
   const showToast = React.useCallback((text: string, type: 'info' | 'success' | 'error' = 'info') => {
     if (toastTimerRef.current) clearTimeout(toastTimerRef.current)
@@ -2047,6 +2047,7 @@ function App(): JSX.Element {
   const filteredDisplayMessages = msgSearchQuery
     ? displayMessages.map((m, i) => ({ ...m, _origIndex: i, _match: m.content.toLowerCase().includes(msgSearchQueryLower) }))
     : displayMessages.map((m, i) => ({ ...m, _origIndex: i, _match: true }))
+
   React.useEffect(() => {
     if (!msgSearchQuery) { setMsgSearchMatches([]); return }
     const matches: number[] = []
