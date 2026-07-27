@@ -13,7 +13,8 @@ import type { APIRequest } from '../../../src/engine/requestBuilder.js'
 import { getAllBaseTools, type Tool } from '../../../src/tools.js'
 import { zodToJsonSchema } from '../../../src/utils/zodToJsonSchema.js'
 import { getPermissionManager, DesktopPermissionManager } from './permissionManager.js'
-import { initBundledSkills, getBundledSkills } from '../../../src/skills/bundled/index.js'
+import { initBundledSkills } from '../../../src/skills/bundled/index.js'
+import { getBundledSkills } from '../../../src/skills/bundledSkills.js'
 
 let mainWindow: BrowserWindow | null = null
 let tray: Tray | null = null
@@ -1025,10 +1026,10 @@ ipcMain.handle('doge:execute-command', async (_event, commandName: string, args:
           (acc[cmd.category] ??= []).push(cmd)
           return acc
         }, {})
-        const lines: string[] = []
+        const lines: string[] = ['# 命令列表', '']
         for (const [cat, cmds] of Object.entries(grouped)) {
-          lines.push(`[${cat}]`)
-          for (const c of cmds) lines.push(`  ${c.name} — ${c.description}`)
+          lines.push(`## ${cat}`)
+          for (const c of cmds) lines.push(`- **${c.name}** — ${c.description}`)
           lines.push('')
         }
         return { success: true, output: lines.join('\n').trim() }
@@ -1201,14 +1202,56 @@ ipcMain.handle('doge:execute-command', async (_event, commandName: string, args:
       case '/mcp': {
         try {
           const mcpConfig = path.join(projectRoot, '.doge', 'mcp.json')
-          if (fs.existsSync(mcpConfig)) {
-            const config = JSON.parse(fs.readFileSync(mcpConfig, 'utf-8'))
-            const servers = Object.keys(config.servers || {})
-            return { success: true, output: `MCP 服务器:\n${servers.map(s => `  - ${s}`).join('\n') || '无'}` }
+          const action = args[0] || 'list'
+          const serverName = args[1] || ''
+
+          if (action === 'list') {
+            if (fs.existsSync(mcpConfig)) {
+              const config = JSON.parse(fs.readFileSync(mcpConfig, 'utf-8'))
+              const servers = config.servers || {}
+              if (Object.keys(servers).length === 0) {
+                return { success: true, output: '暂无 MCP 服务器配置。\n使用 /mcp add <name> <command> 添加本地服务器。' }
+              }
+              const lines = Object.entries(servers).map(([name, s]) => {
+                const cfg = s as { command?: string; args?: string[]; transport?: string }
+                return `  • ${name} — ${cfg.command || cfg.transport || 'unknown'} ${(cfg.args || []).join(' ')}`
+              })
+              return { success: true, output: `已配置 MCP 服务器 (${Object.keys(servers).length}):\n${lines.join('\n')}` }
+            }
+            return { success: true, output: 'MCP 配置未找到。使用 /mcp add <name> <command> 添加。' }
           }
-          return { success: true, output: 'MCP 配置未找到。在 .doge/mcp.json 中配置 MCP 服务器。' }
-        } catch {
-          return { success: true, output: 'MCP 配置不可用。' }
+
+          if (action === 'add') {
+            if (!serverName || !args[2]) {
+              return { success: false, error: '用法: /mcp add <name> <command> [args...]\n示例: /mcp add my-server npx -y @my/mcp-server' }
+            }
+            const command = args[2]
+            const cmdArgs = args.slice(3)
+            let config: { servers?: Record<string, unknown> } = {}
+            if (fs.existsSync(mcpConfig)) {
+              try { config = JSON.parse(fs.readFileSync(mcpConfig, 'utf-8')) } catch { /* ignore */ }
+            }
+            config.servers = config.servers || {}
+            config.servers[serverName] = { command, args: cmdArgs, transport: 'stdio' }
+            const dir = path.dirname(mcpConfig)
+            if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
+            fs.writeFileSync(mcpConfig, JSON.stringify(config, null, 2), 'utf-8')
+            return { success: true, output: `已添加 MCP 服务器: ${serverName}\n命令: ${command} ${cmdArgs.join(' ')}\n重启应用后生效。` }
+          }
+
+          if (action === 'remove') {
+            if (!serverName) return { success: false, error: '用法: /mcp remove <name>' }
+            if (!fs.existsSync(mcpConfig)) return { success: false, error: 'MCP 配置文件不存在' }
+            const config = JSON.parse(fs.readFileSync(mcpConfig, 'utf-8'))
+            if (!config.servers?.[serverName]) return { success: false, error: `服务器 "${serverName}" 不存在` }
+            delete config.servers[serverName]
+            fs.writeFileSync(mcpConfig, JSON.stringify(config, null, 2), 'utf-8')
+            return { success: true, output: `已移除 MCP 服务器: ${serverName}` }
+          }
+
+          return { success: false, error: `未知操作: ${action}\n可用操作: /mcp list | add <name> <command> [args] | remove <name>` }
+        } catch (e: unknown) {
+          return { success: true, output: `MCP 命令错误: ${e instanceof Error ? e.message : '未知错误'}` }
         }
       }
       case '/share': {
