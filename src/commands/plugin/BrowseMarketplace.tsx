@@ -588,7 +588,7 @@ export function BrowseMarketplace({
           </Text>
           <Box marginTop={1} paddingLeft={1}>
             <Text dimColor>
-              <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />
+              <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
             </Text>
           </Box>
         </Box>;
@@ -625,7 +625,7 @@ export function BrowseMarketplace({
           <Text dimColor italic>
             <Byline>
               <ConfigurableShortcutHint action="select:accept" context="Select" fallback="Enter" description="选择" />
-              <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />
+              <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
             </Byline>
           </Text>
         </Box>
@@ -707,7 +707,7 @@ export function BrowseMarketplace({
           <Text dimColor>
             <Byline>
               <ConfigurableShortcutHint action="select:accept" context="Select" fallback="Enter" description="选择" />
-              <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />
+              <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
             </Byline>
           </Text>
         </Box>
@@ -726,7 +726,7 @@ export function BrowseMarketplace({
         </Text>
         <Box marginLeft={3}>
           <Text dimColor italic>
-            <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />
+            <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
           </Text>
         </Box>
       </Box>;

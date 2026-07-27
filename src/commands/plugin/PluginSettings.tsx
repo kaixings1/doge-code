@@ -525,7 +525,7 @@ function ErrorsTabContent(t0) {
     }
     let t11;
     if ($[10] === Symbol.for("react.memo_cache_sentinel")) {
-      t11 = <Box flexDirection="column">{t10}<Box marginTop={1}><Text dimColor={true} italic={true}><ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" /></Text></Box></Box>;
+      t11 = <Box flexDirection="column">{t10}<Box marginTop={1}><Text dimColor={true} italic={true}><ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" /></Text></Box></Box>;
       $[10] = t11;
     } else {
       t11 = $[10];
@@ -571,7 +571,7 @@ function ErrorsTabContent(t0) {
   }
   let t16;
   if ($[18] === Symbol.for("react.memo_cache_sentinel")) {
-    t16 = <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />;
+    t16 = <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />;
     $[18] = t16;
   } else {
     t16 = $[18];
