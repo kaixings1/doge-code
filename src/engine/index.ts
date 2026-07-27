@@ -1,5 +1,5 @@
 /**
- * engine/index.ts — 核心引擎装配入口（文档 02 §13 完整实现代码）
+ * engine/index.ts — 核心引擎装配入口
  *
  * 聚合：状态机 + 消息循环 + 消息规范化 + 请求构建 + 响应处理 +
  * 工具调度 + Token 预算 + 自动压缩 + 错误处理/恢复 + 流式 + 子代理。
@@ -7,7 +7,7 @@
 import { QueryStateMachine } from "./stateMachine.ts";
 import { MessageLoop, type MessageLoopDeps, type QueryResult } from "./messageLoop.ts";
 import { MessageNormalizer, type InternalMessage } from "./messageNormalizer.ts";
-import { RequestBuilder } from "./requestBuilder.ts";
+import { RequestBuilder, type ToolDefinition } from "./requestBuilder.ts";
 import { ResponseHandler } from "./responseHandler.ts";
 import { ToolScheduler, type PermissionManager, type ToolExecutor, type Tool } from "./toolScheduler.ts";
 import { TokenBudgetManager } from "./tokenBudgetManager.ts";
@@ -26,6 +26,7 @@ export interface EngineOptions {
   model: string;
   maxOutputTokens?: number;
   systemPrompt?: string;
+  tools?: Map<string, Tool>;
 }
 
 export class QueryEngine {
@@ -74,9 +75,17 @@ export class QueryEngine {
         return String(r.content ?? "");
       },
     };
-    const toolScheduler = new ToolScheduler(this.buildRegistry(), permissionManager, executor);
+    const registry = opts.tools ?? this.buildRegistry();
+    const toolScheduler = new ToolScheduler(registry, permissionManager, executor);
 
     this.recovery = new ErrorRecovery(this.stateMachine, this.retryHandler, this.autoCompactor);
+
+    // 将内部工具注册表转换为请求构建器所需的 ToolDefinition 格式
+    const toolDefinitions: ToolDefinition[] = Array.from(registry.values()).map((t) => ({
+      name: t.name,
+      description: t.description,
+      input_schema: t.parameters,
+    }));
 
     const deps: MessageLoopDeps = {
       stateMachine: this.stateMachine,
@@ -93,6 +102,7 @@ export class QueryEngine {
       systemPrompt: opts.systemPrompt ?? "You are Doge Code, a helpful AI programming assistant.",
       model: opts.model,
       maxOutputTokens: opts.maxOutputTokens ?? 40000,
+      toolDefinitions,
     };
     this.messageLoop = new MessageLoop(deps);
   }
@@ -129,6 +139,11 @@ export class QueryEngine {
 
   getState(): string {
     return this.stateMachine.state;
+  }
+
+  getTools(): ToolDefinition[] {
+    const loop = (this as unknown as { messageLoop: { deps: { toolDefinitions: ToolDefinition[] } } }).messageLoop
+    return loop?.deps?.toolDefinitions ?? []
   }
 }
 

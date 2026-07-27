@@ -16,8 +16,9 @@ import { TASK_CREATE_TOOL_NAME } from './constants.js'
 import { DESCRIPTION, getPrompt } from './prompt.js'
 
 const inputSchema = lazySchema(() =>
-  z.strictObject({
-    subject: z.string().describe('任务的简要标题'),
+  z.object({
+    subject: z.string().optional(),
+    name: z.string().optional(),
     description: z.string().describe('需要完成什么'),
     activeForm: z
       .string()
@@ -27,7 +28,16 @@ const inputSchema = lazySchema(() =>
       .record(z.string(), z.unknown())
       .optional()
       .describe('附加到任务的任意元数据'),
-  }),
+  })
+    .strict()
+    .refine(data => data.subject || data.name, {
+      message: '缺少必需参数 `subject`',
+      path: ['subject'],
+    })
+    .transform(data => ({
+      ...data,
+      subject: data.subject ?? data.name,
+    })),
 )
 type InputSchema = ReturnType<typeof inputSchema>
 

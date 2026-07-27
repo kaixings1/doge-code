@@ -5,6 +5,16 @@ import * as esbuild from 'esbuild';
 
 const projectRoot = process.cwd();
 const distDir = path.join(projectRoot, 'dist');
+const BUILD_TIMEOUT = 60000;
+
+async function withTimeout<T>(fn: () => Promise<T>, label: string, ms = BUILD_TIMEOUT): Promise<T> {
+  return Promise.race([
+    fn(),
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`${label} 超时 (${ms / 1000}s)，请检查构建配置`)), ms)
+    ),
+  ]);
+}
 
 async function compileMain(): Promise<void> {
   console.log('Bundling main process with esbuild...');
@@ -31,7 +41,10 @@ async function compileRenderer(): Promise<void> {
     cwd: projectRoot,
     stdio: 'inherit',
   });
-  const code = await new Promise<number>((resolve) => c.on('close', (c) => resolve(c ?? 1)));
+  const code = await withTimeout(
+    () => new Promise<number>((resolve) => c.on('close', (c) => resolve(c ?? 1))),
+    'tsc 编译'
+  );
   if (code !== 0) throw new Error(`Renderer compile failed: ${code}`);
 }
 
@@ -42,7 +55,10 @@ async function bundle(): Promise<void> {
     cwd: projectRoot,
     stdio: 'inherit',
   });
-  const code = await new Promise<number>((resolve) => c.on('close', (c) => resolve(c ?? 1)));
+  const code = await withTimeout(
+    () => new Promise<number>((resolve) => c.on('close', (c) => resolve(c ?? 1))),
+    'esbuild bundle'
+  );
   if (code !== 0) throw new Error(`Bundle failed: ${code}`);
 }
 
@@ -81,9 +97,15 @@ async function main(): Promise<void> {
     process.exit(1);
   });
 
+  // 如果 Electron 进程未在合理时间内退出（即应用还在运行），
+  // 不主动杀掉它——只在收到 SIGINT/SIGTERM 时让 Electron 自然退出。
   child.on('exit', (exitCode) => {
     process.exit(exitCode ?? 0);
   });
+
+  // 父进程退出时通知 Electron
+  process.on('SIGINT', () => child.kill('SIGTERM'));
+  process.on('SIGTERM', () => child.kill('SIGTERM'));
 }
 
 main().catch((err) => {

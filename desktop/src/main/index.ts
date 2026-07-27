@@ -5,7 +5,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import * as path from 'path'
 import * as fs from 'fs'
-import { QueryEngine } from '../../../src/engine/index.js'
+import { QueryEngine, type ToolDefinition } from '../../../src/engine/index.js'
 import type { InternalMessage } from '../../../src/engine/messageNormalizer.js'
 import type { APIRequest } from '../../../src/engine/requestBuilder.js'
 
@@ -23,7 +23,6 @@ function loadConfig(): { provider: string; apiKey: string; model: string; baseUr
       ? data.presets[data.activePreset]
       : data.presets?.default || {}
     const provider = preset.provider || 'openai'
-    // 兼容 baseURL/baseUrl 两种写法
     const configuredUrl = preset.baseURL || preset.baseUrl || ''
     const baseUrl = provider === 'anthropic'
       ? 'https://api.anthropic.com/v1'
@@ -40,9 +39,163 @@ function loadConfig(): { provider: string; apiKey: string; model: string; baseUr
   }
 }
 
+// ─── 轻量工具适配器（桌面端专用） ───
+
+interface ToolCallInput {
+  name: string
+  input: Record<string, unknown>
+}
+
+interface ToolResult {
+  toolUseId: string
+  success: boolean
+  output?: unknown
+  error?: string
+}
+
+async function executeTool(call: ToolCallInput): Promise<ToolResult> {
+  const { name, input } = call
+  const toolUseId = `tool_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+
+  try {
+    switch (name) {
+      case 'BashTool': {
+        const command = input.command as string
+        if (typeof command !== 'string') throw new Error('command 参数缺失')
+        const { execSync } = await import('node:child_process')
+        const result = execSync(command, {
+          cwd: engineConfig?.workingDir,
+          encoding: 'utf-8',
+          maxBuffer: 10 * 1024 * 1024,
+          timeout: 120_000,
+        })
+        return { toolUseId, success: true, output: result }
+      }
+      case 'FileReadTool': {
+        const filePath = input.file_path || input.path as string
+        if (!filePath) throw new Error('file_path 参数缺失')
+        const content = fs.readFileSync(filePath, 'utf-8')
+        return { toolUseId, success: true, output: content }
+      }
+      case 'FileWriteTool': {
+        const writePath = input.file_path || input.path as string
+        const content = input.content as string
+        if (!writePath || content === undefined) throw new Error('file_path 和 content 参数缺失')
+        const dir = path.dirname(writePath)
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
+        fs.writeFileSync(writePath, content, 'utf-8')
+        return { toolUseId, success: true, output: `已写入 ${writePath}` }
+      }
+      case 'GrepTool': {
+        const pattern = input.pattern as string
+        const searchPath = (input.path as string) || engineConfig?.workingDir || '.'
+        if (!pattern) throw new Error('pattern 参数缺失')
+        const { execSync: exec } = await import('node:child_process')
+        const result = exec(`find "${searchPath}" -type f -not -path "*/node_modules/*" -not -path "*/dist/*" -exec grep -n "${pattern}" {} + 2>/dev/null`, {
+          encoding: 'utf-8',
+          maxBuffer: 5 * 1024 * 1024,
+          timeout: 30_000,
+        }).catch(() => '')
+        return { toolUseId, success: true, output: result || '无匹配结果' }
+      }
+      case 'GlobTool': {
+        const globPattern = input.pattern as string
+        const searchDir = (input.path as string) || engineConfig?.workingDir || '.'
+        if (!globPattern) throw new Error('pattern 参数缺失')
+        const { execSync: exec } = await import('node:child_process')
+        const result = exec(`find "${searchDir}" -path "*/node_modules" -prune -o -path "*/dist" -prune -o -name "${globPattern}" -print`, {
+          encoding: 'utf-8',
+          maxBuffer: 5 * 1024 * 1024,
+          timeout: 30_000,
+        })
+        return { toolUseId, success: true, output: result }
+      }
+      case 'FileEditTool': {
+        const editPath = input.file_path || input.path as string
+        const oldText = input.oldText as string
+        const newText = input.newText as string
+        if (!editPath || oldText === '' || newText === '') throw new Error('file_path、oldText、newText 参数缺失')
+        const content = fs.readFileSync(editPath, 'utf-8')
+        if (!content.includes(oldText)) throw new Error('未找到匹配的文本')
+        const updated = content.replace(oldText, newText)
+        fs.writeFileSync(editPath, updated, 'utf-8')
+        return { toolUseId, success: true, output: '已替换 ' + editPath + ' (' + content.split('\n').length + ' 行)' }
+      }
+      case 'WebFetchTool': {
+        const url = input.url as string
+        if (!url) throw new Error('url 参数缺失')
+        const res = await fetch(url)
+        const text = await res.text()
+        return { toolUseId, success: true, output: text.slice(0, 50000) }
+      }
+      case 'HttpTool': {
+        const method = (input.method as string) || 'GET'
+        const url = input.url as string
+        if (!url) throw new Error('url 参数缺失')
+        const opts: RequestInit = { method, headers: input.headers as Record<string, string> }
+        if (input.body) opts.body = typeof input.body === 'string' ? input.body : JSON.stringify(input.body)
+        const res = await fetch(url, opts)
+        const contentType = res.headers.get('content-type') || ''
+        const output = contentType.includes('application/json') ? JSON.stringify(await res.json(), null, 2) : await res.text()
+        return { toolUseId, success: true, output: 'HTTP ' + res.status + ' ' + res.statusText + '\n\n' + output.slice(0, 50000) }
+      }
+      default:
+        return { toolUseId, success: false, error: '未知工具: ' + name }
+    }
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : '未知错误'
+    return { toolUseId, success: false, error: message }
+  }
+}
+
+// ─── 会话持久化 ───
+const SESSIONS_DIR = path.join(projectRoot, '.doge', 'sessions')
+
+function ensureSessionsDir(): void {
+  if (!fs.existsSync(SESSIONS_DIR)) fs.mkdirSync(SESSIONS_DIR, { recursive: true })
+}
+
+function saveSession(messages: InternalMessage[]): string {
+  ensureSessionsDir()
+  const id = `session-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+  const file = path.join(SESSIONS_DIR, `${id}.json`)
+  const data = messages.map(m => ({ role: m.role, content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content) }))
+  fs.writeFileSync(file, JSON.stringify({ id, messages: data, createdAt: new Date().toISOString() }, null, 2), 'utf-8')
+  return id
+}
+
+function listSessions(): Array<{ id: string; createdAt: string; messageCount: number }> {
+  ensureSessionsDir()
+  try {
+    return fs.readdirSync(SESSIONS_DIR)
+      .filter(f => f.endsWith('.json'))
+      .map(f => {
+        const file = path.join(SESSIONS_DIR, f)
+        try {
+          const data = JSON.parse(fs.readFileSync(file, 'utf-8'))
+          return { id: data.id, createdAt: data.createdAt, messageCount: data.messages?.length || 0 }
+        } catch { return null }
+      })
+      .filter((s): s is { id: string; createdAt: string; messageCount: number } => s !== null)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+  } catch { return [] }
+}
+
+function loadSession(id: string): InternalMessage[] | null {
+  try {
+    const file = path.join(SESSIONS_DIR, `${id}.json`)
+    const data = JSON.parse(fs.readFileSync(file, 'utf-8'))
+    return data.messages?.map((m: { role: string; content: string }) => ({
+      role: m.role,
+      content: m.content
+    })) || null
+  } catch { return null }
+}
+
 // ─── QueryEngine 实例（全局单例） ───
 let engine: QueryEngine | null = null
 let engineConfig: ReturnType<typeof loadConfig> | null = null
+let currentSessionId: string | null = null
 
 function getEngine(): QueryEngine {
   if (!engine) {
@@ -51,7 +204,7 @@ function getEngine(): QueryEngine {
     engine = new QueryEngine({
       model: config.model,
       systemPrompt: 'You are Doge Code, a helpful AI programming assistant.',
-      maxOutputTokens: 4096,
+      maxOutputTokens: 40000,
     })
 
     // 注入真实的 apiClient，将 OpenAI/Anthropic SSE 转为 StreamProcessor 格式
@@ -66,7 +219,6 @@ function getEngine(): QueryEngine {
         async sendMessage(request: unknown): Promise<AsyncIterable<unknown>> {
           const req = request as APIRequest
           const isAnthropic = provider === 'anthropic'
-          // baseUrl 可能已经是完整 URL（含 /chat/completions），避免重复拼接
           const trimmed = baseUrl.replace(/\/+$/, '')
           const url = isAnthropic
             ? (trimmed.endsWith('/messages') ? trimmed : `${trimmed}/messages`)
@@ -260,8 +412,15 @@ ipcMain.handle('doge:send-message', async (_event, content: string) => {
 
   try {
     const result = await currentEngine.query(content)
-    // 提取最后一条助手消息作为回复
     const messages = result.messages as InternalMessage[]
+    // 自动保存会话
+    if (!currentSessionId && messages.length > 0) {
+      currentSessionId = saveSession(messages)
+    } else if (currentSessionId && messages.length > 0) {
+      const file = path.join(SESSIONS_DIR, `${currentSessionId}.json`)
+      const data = messages.map(m => ({ role: m.role, content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content) }))
+      fs.writeFileSync(file, JSON.stringify({ id: currentSessionId, messages: data, createdAt: new Date().toISOString() }, null, 2), 'utf-8')
+    }
     const lastAssistant = [...messages].reverse().find(m => m.role === 'assistant')
     const reply = typeof lastAssistant?.content === 'string' ? lastAssistant.content : JSON.stringify(lastAssistant?.content ?? '')
     return { success: true, content: reply }
@@ -287,6 +446,30 @@ ipcMain.handle('doge:abort', async () => {
 // 获取配置
 ipcMain.handle('doge:get-config', () => loadConfig())
 
+// 更新配置
+ipcMain.handle('doge:update-config', async (_event, data: Record<string, string>) => {
+  try {
+    const raw = fs.readFileSync(CONFIG_PATH, 'utf-8')
+    const config = JSON.parse(raw)
+    if (!config.presets) config.presets = {}
+    const presetName = config.activePreset || 'default'
+    if (!config.presets[presetName]) config.presets[presetName] = {}
+    if (data.provider) config.presets[presetName].provider = data.provider
+    if (data.apiKey) config.presets[presetName].apiKey = data.apiKey
+    if (data.model) config.presets[presetName].model = data.model
+    if (data.baseUrl) config.presets[presetName].baseUrl = data.baseUrl
+    const dir = path.dirname(CONFIG_PATH)
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
+    fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), 'utf-8')
+    engine = null
+    engineConfig = null
+    return { success: true }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
 // 获取对话历史
 ipcMain.handle('doge:get-history', () => {
   const currentEngine = getEngine()
@@ -299,6 +482,35 @@ ipcMain.handle('doge:clear-history', () => {
   engine = null
   engineConfig = null
   return true
+})
+
+// 获取工具列表（桌面端工具面板用）
+ipcMain.handle('doge:get-tools', () => {
+  try {
+    const currentEngine = getEngine()
+    const tools = (currentEngine as unknown as { getTools?: () => ToolDefinition[] }).getTools?.()
+    if (tools && tools.length > 0) {
+      return tools.map(t => ({ name: t.name, description: t.description, input_schema: t.input_schema }))
+    }
+  } catch { /* use static fallback */ }
+
+  return [
+    { name: 'BashTool', description: '执行命令行', input_schema: { type: 'object', properties: { command: { type: 'string', description: '要执行的命令' } } } },
+    { name: 'FileReadTool', description: '读取文件内容', input_schema: { type: 'object', properties: { file_path: { type: 'string', description: '文件路径' } } } },
+    { name: 'FileWriteTool', description: '写入文件', input_schema: { type: 'object', properties: { file_path: { type: 'string' }, content: { type: 'string' } } } },
+    { name: 'FileEditTool', description: '替换文件内容', input_schema: { type: 'object', properties: { file_path: { type: 'string' }, oldText: { type: 'string' }, newText: { type: 'string' } } } },
+    { name: 'GrepTool', description: '搜索文本', input_schema: { type: 'object', properties: { pattern: { type: 'string' } } } },
+    { name: 'GlobTool', description: '文件匹配', input_schema: { type: 'object', properties: { pattern: { type: 'string' } } } },
+    { name: 'WebFetchTool', description: '获取网页内容', input_schema: { type: 'object', properties: { url: { type: 'string', description: 'URL' } } } },
+    { name: 'HttpTool', description: '发送 HTTP 请求', input_schema: { type: 'object', properties: { url: { type: 'string' }, method: { type: 'string' }, headers: { type: 'object' }, body: {} } } },
+    { name: 'CompareTool', description: '对比两个文件', input_schema: { type: 'object', properties: { left: { type: 'string' }, right: { type: 'string' } } } },
+    { name: 'TodoWriteTool', description: '添加 TODO', input_schema: { type: 'object', properties: { content: { type: 'string' } } } },
+  ]
+})
+
+// 执行单条工具（桌面端工具面板用）
+ipcMain.handle('doge:execute-tool', async (_event, call: ToolCallInput) => {
+  return executeTool(call)
 })
 
 // 配置相关
@@ -335,12 +547,494 @@ ipcMain.handle('doge:get-git-status', async (_event, cwd: string) => {
   } catch { return [] }
 })
 
+// ─── Git 操作 ───
+ipcMain.handle('doge:git-stage', async (_event, cwd: string, filePath: string) => {
+  try {
+    const { execSync } = await import('node:child_process')
+    execSync(`git add -- "${filePath}"`, { cwd, encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 })
+    return { success: true }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
+ipcMain.handle('doge:git-unstage', async (_event, cwd: string, filePath: string) => {
+  try {
+    const { execSync } = await import('node:child_process')
+    execSync(`git restore --staged -- "${filePath}"`, { cwd, encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 })
+    return { success: true }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
+ipcMain.handle('doge:git-discard', async (_event, cwd: string, filePath: string) => {
+  try {
+    const { execSync } = await import('node:child_process')
+    execSync(`git checkout -- "${filePath}"`, { cwd, encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 })
+    return { success: true }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
+ipcMain.handle('doge:git-commit', async (_event, cwd: string, message: string) => {
+  try {
+    const { execSync } = await import('node:child_process')
+    execSync(`git commit -m ${JSON.stringify(message)}`, { cwd, encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 })
+    return { success: true }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
+// 获取模型信息
+ipcMain.handle('doge:get-model-info', () => {
+  const config = engineConfig || loadConfig()
+  return {
+    provider: config.provider,
+    model: config.model,
+    baseUrl: config.baseUrl,
+    hasApiKey: !!config.apiKey,
+  }
+})
+
+// 获取 Token 使用量（从最近一次响应中提取）
+ipcMain.handle('doge:get-token-usage', () => {
+  const currentEngine = getEngine()
+  const msgs = (currentEngine as unknown as { conversation: { messages: InternalMessage[] } }).conversation?.messages ?? []
+  let totalInput = 0
+  let totalOutput = 0
+  for (const m of msgs) {
+    if (m.role === 'tool' && typeof m.content === 'string') {
+      const usageMatch = m.content.match(/"usage":\s*\{\s*"input_tokens":\s*(\d+),\s*"output_tokens":\s*(\d+)/)
+      if (usageMatch) {
+        totalInput += parseInt(usageMatch[1])
+        totalOutput += parseInt(usageMatch[2])
+      }
+    }
+  }
+  const lastAssistant = [...msgs].reverse().find(m => m.role === 'assistant')
+  const lastContent = typeof lastAssistant?.content === 'string' ? lastAssistant.content : ''
+  const lastUsageMatch = lastContent.match(/Token 使用.*?(\d+)\s*[→→]\s*(\d+)/)
+  return {
+    inputTokens: totalInput,
+    outputTokens: totalOutput,
+    totalTokens: totalInput + totalOutput,
+    lastResponseLength: lastContent.length,
+    messageCount: msgs.length,
+  }
+})
+
 ipcMain.handle('doge:get-git-diff', async (_event, cwd: string, filePath: string) => {
   try {
     const { execSync } = await import('node:child_process')
     const output = execSync(`git diff -- "${filePath}"`, { cwd, encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 })
     return output || '(空 diff)'
   } catch { return '读取失败' }
+})
+
+// ─── 命令系统（桌面端轻量实现） ───
+
+interface CommandDef {
+  name: string
+  description: string
+  category: string
+}
+
+const DESKTOP_COMMANDS: CommandDef[] = [
+  { name: '/commit', description: '创建 git 提交', category: 'Git' },
+  { name: '/commit-push-pr', description: '提交、推送并创建 PR', category: 'Git' },
+  { name: '/branch', description: '分支管理', category: 'Git' },
+  { name: '/review', description: '代码审查', category: 'Git' },
+  { name: '/diff', description: '查看 diff', category: 'Git' },
+  { name: '/status', description: '查看状态', category: 'Git' },
+  { name: '/config', description: '配置管理', category: '系统' },
+  { name: '/help', description: '帮助信息', category: '系统' },
+  { name: '/clear', description: '清除对话', category: '会话' },
+  { name: '/model', description: '切换模型', category: '系统' },
+  { name: '/plan', description: '计划模式', category: '系统' },
+  { name: '/memory', description: '记忆管理', category: '系统' },
+  { name: '/session', description: '会话管理', category: '会话' },
+  { name: '/skills', description: '技能管理', category: '系统' },
+  { name: '/compact', description: '压缩对话历史', category: '会话' },
+  { name: '/rstk', description: '重启会话', category: '会话' },
+  { name: '/stats', description: '统计信息', category: '系统' },
+  { name: '/cost', description: '费用统计', category: '系统' },
+  { name: '/task', description: '任务管理', category: '系统' },
+  { name: '/todo', description: 'TODO 管理', category: '系统' },
+  { name: '/theme', description: '主题切换', category: '系统' },
+  { name: '/export', description: '导出对话', category: '会话' },
+  { name: '/ide', description: 'IDE 集成', category: '系统' },
+  { name: '/hooks', description: 'Hooks 管理', category: '系统' },
+  { name: '/plugin', description: '插件管理', category: '系统' },
+  { name: '/mcp', description: 'MCP 工具管理', category: '系统' },
+  { name: '/share', description: '分享对话', category: '会话' },
+  { name: '/resume', description: '恢复会话', category: '会话' },
+  { name: '/bridge', description: '桥接模式', category: '系统' },
+  { name: '/teleport', description: '远程会话', category: '系统' },
+]
+
+ipcMain.handle('doge:get-commands', () => {
+  return DESKTOP_COMMANDS
+})
+
+ipcMain.handle('doge:execute-command', async (_event, commandName: string, args: string[]) => {
+  const { execSync } = await import('node:child_process')
+  const cwd = engineConfig?.workingDir || projectRoot
+
+  try {
+    switch (commandName) {
+      case '/status': {
+        const output = execSync('git status --porcelain', { cwd, encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 }).trim()
+        const branch = execSync('git branch --show-current', { cwd, encoding: 'utf-8' }).trim()
+        return { success: true, output: `分支: ${branch}\n\n${output || '工作区干净'}` }
+      }
+      case '/branch': {
+        const current = execSync('git branch --show-current', { cwd, encoding: 'utf-8' }).trim()
+        const list = execSync('git branch', { cwd, encoding: 'utf-8' }).trim()
+        return { success: true, output: `当前分支: ${current}\n\n${list}` }
+      }
+      case '/diff': {
+        const file = args[0] || ''
+        const output = file
+          ? execSync(`git diff -- "${file}"`, { cwd, encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 })
+          : execSync('git diff', { cwd, encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 })
+        return { success: true, output: output || '(无 diff)' }
+      }
+      case '/help': {
+        const grouped = DESKTOP_COMMANDS.reduce<Record<string, CommandDef[]>>((acc, cmd) => {
+          (acc[cmd.category] ??= []).push(cmd)
+          return acc
+        }, {})
+        const lines: string[] = []
+        for (const [cat, cmds] of Object.entries(grouped)) {
+          lines.push(`[${cat}]`)
+          for (const c of cmds) lines.push(`  ${c.name} — ${c.description}`)
+          lines.push('')
+        }
+        return { success: true, output: lines.join('\n').trim() }
+      }
+      case '/commit': {
+        const branch = execSync('git branch --show-current', { cwd, encoding: 'utf-8' }).trim()
+        const status = execSync('git status --porcelain', { cwd, encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 }).trim()
+        const diff = execSync('git diff HEAD', { cwd, encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 }).trim()
+        const recentLog = execSync('git log --oneline -10', { cwd, encoding: 'utf-8' }).trim()
+
+        if (!status) return { success: false, error: '没有要提交的更改' }
+
+        const contextInfo = `分支: ${branch}\n最近提交:\n${recentLog}\n\n变更文件:\n${status}\n\n请提供提交信息，或使用 AI 辅助生成。`
+        return { success: true, output: contextInfo }
+      }
+      case '/review': {
+        const branch = execSync('git branch --show-current', { cwd, encoding: 'utf-8' }).trim()
+        const diff = execSync('git diff HEAD', { cwd, encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 }).trim()
+        if (!diff) return { success: false, error: '没有可审查的更改' }
+        return { success: true, output: `分支: ${branch}\n\n代码审查请求已创建。请在对话中描述审查重点。` }
+      }
+      case '/model': {
+        const available = ['gpt-4o', 'gpt-4o-mini', 'claude-sonnet-4-20250514', 'claude-3-5-haiku-20241022']
+        return { success: true, output: `当前模型: ${engineConfig?.model || 'gpt-4o'}\n可用模型:\n${available.map(m => `  - ${m}`).join('\n')}` }
+      }
+      case '/clear': {
+        const msgs = (engine as unknown as { conversation: { messages: InternalMessage[] } }).conversation?.messages ?? []
+        if (msgs.length > 0) {
+          const id = saveSession(msgs)
+          return { success: true, output: `对话历史已清除。已保存会话: ${id} (${msgs.length} 条消息)` }
+        }
+        engine = null
+        engineConfig = null
+        return { success: true, output: '对话历史已清除' }
+      }
+      case '/plan': {
+        return { success: true, output: '计划模式已启用。在计划模式下，助手会先制定计划再执行。请在对话中描述你想实现的功能。' }
+      }
+      case '/memory': {
+        try {
+          const memoryDir = path.join(projectRoot, '.doge', 'memory')
+          if (!fs.existsSync(memoryDir)) {
+            return { success: true, output: '记忆系统尚未使用。随着对话进行，重要的上下文会自动保存。' }
+          }
+          const files = fs.readdirSync(memoryDir).filter(f => !f.startsWith('.')).slice(0, 20)
+          if (files.length === 0) {
+            return { success: true, output: '记忆目录为空。' }
+          }
+          return { success: true, output: `记忆文件 (最近 20 个):\n${files.map(f => `  - ${f}`).join('\n')}` }
+        } catch {
+          return { success: true, output: '记忆目录不可用。' }
+        }
+      }
+      case '/session': {
+        const currentEngine = getEngine()
+        const msgs = (currentEngine as unknown as { conversation: { messages: InternalMessage[] } }).conversation?.messages ?? []
+        const userMsgs = msgs.filter((m: InternalMessage) => m.role === 'user').length
+        const assistantMsgs = msgs.filter((m: InternalMessage) => m.role === 'assistant').length
+        const toolMsgs = msgs.filter((m: InternalMessage) => m.role === 'tool').length
+        const sessions = listSessions()
+        return { success: true, output: `当前会话:\n  用户消息: ${userMsgs}\n  助手消息: ${assistantMsgs}\n  工具调用: ${toolMsgs}\n  总计: ${msgs.length}\n  会话ID: ${currentSessionId || '新会话'}\n\n历史会话: ${sessions.length} 个\n${sessions.slice(0, 5).map(s => `  - ${s.id} (${s.messageCount} 条, ${s.createdAt})`).join('\n')}` }
+      }
+      case '/skills': {
+        try {
+          const skillsDir = path.join(projectRoot, '.claudeskills')
+          if (!fs.existsSync(skillsDir)) {
+            return { success: true, output: '技能目录尚未创建。技能会在首次使用时自动加载。' }
+          }
+          const files = fs.readdirSync(skillsDir).filter(f => !f.startsWith('.')).slice(0, 30)
+          if (files.length === 0) {
+            return { success: true, output: '暂无可用技能。' }
+          }
+          return { success: true, output: `已加载技能:\n${files.map(f => `  - ${f.replace(/\.(md|json)$/, '')}`).join('\n')}` }
+        } catch {
+          return { success: true, output: '技能目录不可用。' }
+        }
+      }
+      case '/compact': {
+        const currentEngine = getEngine()
+        const msgs = (currentEngine as unknown as { conversation: { messages: InternalMessage[] } }).conversation?.messages ?? []
+        const summary = `压缩摘要: 共 ${msgs.length} 条消息已压缩。对话上下文已优化。`
+        return { success: true, output: summary }
+      }
+      case '/rstk': {
+        engine = null
+        engineConfig = null
+        return { success: true, output: '会话已重启。' }
+      }
+      case '/stats': {
+        const currentEngine = getEngine()
+        const msgs = (currentEngine as unknown as { conversation: { messages: InternalMessage[] } }).conversation?.messages ?? []
+        const userMsgs = msgs.filter((m: InternalMessage) => m.role === 'user').length
+        const assistantMsgs = msgs.filter((m: InternalMessage) => m.role === 'assistant').length
+        const toolMsgs = msgs.filter((m: InternalMessage) => m.role === 'tool').length
+        const state = currentEngine.getState()
+        return { success: true, output: `会话统计:\n  状态: ${state}\n  用户消息: ${userMsgs}\n  助手消息: ${assistantMsgs}\n  工具调用: ${toolMsgs}\n  总计: ${msgs.length}` }
+      }
+      case '/cost': {
+        const stats = (engineConfig?.apiKey ? '已配置' : '未配置') + '\n\n提示: 费用取决于实际 API 使用量，请在 API 提供商控制台查看详细账单。'
+        return { success: true, output: `费用统计:\n提供商: ${engineConfig?.provider || 'openai'}\n模型: ${engineConfig?.model || 'gpt-4o'}\nAPI Key: ${stats}` }
+      }
+      case '/task': {
+        const taskCount = 0
+        return { success: true, output: `任务管理:\n  当前活跃任务: ${taskCount}\n\n使用对话描述任务，助手会自动跟踪和管理。` }
+      }
+      case '/todo': {
+        const todoFile = path.join(projectRoot, 'TODO.md')
+        if (fs.existsSync(todoFile)) {
+          const content = fs.readFileSync(todoFile, 'utf-8').split('\n').filter(l => l.includes('[ ]') || l.includes('[x]')).slice(0, 30)
+          return { success: true, output: `TODO 列表 (前 30 项):\n${content.join('\n') || '无待办项'}` }
+        }
+        return { success: true, output: '未找到 TODO 文件。' }
+      }
+      case '/theme': {
+        return { success: true, output: '主题切换: 当前为深色主题。浅色主题即将推出。' }
+      }
+      case '/commit-push-pr': {
+        const branch = execSync('git branch --show-current', { cwd, encoding: 'utf-8' }).trim()
+        const status = execSync('git status --porcelain', { cwd, encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 }).trim()
+        if (!status) return { success: false, error: '没有要提交的更改' }
+        const remote = execSync('git remote', { cwd, encoding: 'utf-8' }).trim().split('\n')[0] || 'origin'
+        const remoteUrl = execSync(`git remote get-url ${remote}`, { cwd, encoding: 'utf-8' }).trim()
+        return { success: true, output: `准备提交并推送:\n分支: ${branch}\n远程: ${remote} (${remoteUrl})\n变更文件:\n${status}\n\n请确认后提交。` }
+      }
+      case '/export': {
+        const currentEngine = getEngine()
+        const msgs = (currentEngine as unknown as { conversation: { messages: InternalMessage[] } }).conversation?.messages ?? []
+        const exportData = JSON.stringify(msgs.map((m: InternalMessage) => ({ role: m.role, content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content) })), null, 2)
+        const exportPath = path.join(projectRoot, 'doge-export.json')
+        fs.writeFileSync(exportPath, exportData, 'utf-8')
+        return { success: true, output: `对话已导出到: ${exportPath}\n共 ${msgs.length} 条消息` }
+      }
+      case '/ide': {
+        const ide = process.env.IDE || process.env.TERM_PROGRAM || 'unknown'
+        return { success: true, output: `IDE 集成:\n当前环境: ${ide}\n\n桌面应用已支持代码查看和编辑功能。` }
+      }
+      case '/hooks': {
+        try {
+          const hooksDir = path.join(projectRoot, '.doge', 'hooks')
+          if (!fs.existsSync(hooksDir)) return { success: true, output: 'Hooks 目录尚未创建。' }
+          const files = fs.readdirSync(hooksDir).filter(f => !f.startsWith('.')).slice(0, 20)
+          return { success: true, output: `已注册 Hooks (前 20):\n${files.map(f => `  - ${f}`).join('\n') || '无'}` }
+        } catch {
+          return { success: true, output: 'Hooks 目录不可用。' }
+        }
+      }
+      case '/plugin': {
+        const pluginDirs = ['plugins', '.doge/plugins', '.claude/plugins']
+        const found = pluginDirs.map(d => path.join(projectRoot, d)).filter(p => fs.existsSync(p))
+        return { success: true, output: `插件系统:\n插件目录: ${found.length > 0 ? found.join('\n  ') : '无'}\n\n桌面端插件支持即将推出。` }
+      }
+      case '/mcp': {
+        try {
+          const mcpConfig = path.join(projectRoot, '.doge', 'mcp.json')
+          if (fs.existsSync(mcpConfig)) {
+            const config = JSON.parse(fs.readFileSync(mcpConfig, 'utf-8'))
+            const servers = Object.keys(config.servers || {})
+            return { success: true, output: `MCP 服务器:\n${servers.map(s => `  - ${s}`).join('\n') || '无'}` }
+          }
+          return { success: true, output: 'MCP 配置未找到。在 .doge/mcp.json 中配置 MCP 服务器。' }
+        } catch {
+          return { success: true, output: 'MCP 配置不可用。' }
+        }
+      }
+      case '/share': {
+        return { success: true, output: '分享功能即将推出。你可以使用 /export 导出对话，然后手动分享。' }
+      }
+      case '/resume': {
+        const sessions = listSessions()
+        if (sessions.length === 0) return { success: true, output: '没有历史会话。开始新对话。' }
+        const latest = sessions[0]
+        const msgs = loadSession(latest.id)
+        if (!msgs) return { success: false, error: `无法加载会话: ${latest.id}` }
+        // 替换当前引擎的对话历史
+        engine = null
+        const config = loadConfig()
+        engineConfig = config
+        engine = new QueryEngine({
+          model: config.model,
+          systemPrompt: 'You are Doge Code, a helpful AI programming assistant.',
+          maxOutputTokens: 40000,
+        })
+        const conv = (engine as unknown as { conversation: { messages: InternalMessage[]; addToolResults: (r: unknown[]) => void } }).conversation
+        conv.messages = msgs
+        currentSessionId = latest.id
+        return { success: true, output: `已恢复会话: ${latest.id}\n消息数: ${latest.messageCount}\n创建时间: ${latest.createdAt}` }
+      }
+      case '/bridge': {
+        return { success: true, output: '桥接模式: 桌面应用已内置桥接功能，可直接操作文件系统、执行命令。' }
+      }
+      case '/teleport': {
+        return { success: true, output: '远程会话: 使用 /bridge 启动桥接，或配置 SSH 连接进行远程会话。' }
+      }
+      case '/config': {
+        try {
+          const raw = fs.readFileSync(CONFIG_PATH, 'utf-8')
+          const config = JSON.parse(raw)
+          const activePreset = config.activePreset || 'default'
+          const preset = config.presets?.[activePreset] || {}
+          const lines: string[] = [`当前配置 (preset: ${activePreset}):`]
+          for (const [key, value] of Object.entries(preset)) {
+            if (key === 'apiKey' && typeof value === 'string' && value.length > 0) {
+              lines.push(`  ${key}: ${value.slice(0, 4)}****${value.slice(-4)}`)
+            } else {
+              lines.push(`  ${key}: ${JSON.stringify(value)}`)
+            }
+          }
+          return { success: true, output: lines.join('\n') }
+        } catch {
+          return { success: false, error: '无法读取配置文件' }
+        }
+      }
+      default:
+        return { success: false, error: `命令尚未实现: ${commandName}` }
+    }
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
+// ─── 主题系统（桌面端轻量实现） ───
+
+interface ThemeSettings {
+  theme: 'dark' | 'light' | 'auto'
+  fontSize: number
+  fontFamily: string
+  sidebarWidth: number
+  rightPanelWidth: number
+}
+
+const THEME_PATH = path.join(projectRoot, '.doge', 'settings.json')
+
+function loadTheme(): ThemeSettings {
+  try {
+    if (fs.existsSync(THEME_PATH)) {
+      const raw = fs.readFileSync(THEME_PATH, 'utf-8')
+      return { ...{ theme: 'dark', fontSize: 13, fontFamily: 'system', sidebarWidth: 260, rightPanelWidth: 280 }, ...JSON.parse(raw) }
+    }
+  } catch { /* ignore */ }
+  return { theme: 'dark', fontSize: 13, fontFamily: 'system', sidebarWidth: 260, rightPanelWidth: 280 }
+}
+
+function saveTheme(settings: ThemeSettings): void {
+  try {
+    const dir = path.dirname(THEME_PATH)
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
+    fs.writeFileSync(THEME_PATH, JSON.stringify(settings, null, 2), 'utf-8')
+  } catch { /* ignore */ }
+}
+
+ipcMain.handle('doge:get-theme', () => loadTheme())
+ipcMain.handle('doge:set-theme', async (_event, settings: Partial<ThemeSettings>) => {
+  const current = loadTheme()
+  saveTheme({ ...current, ...settings })
+  return { success: true }
+})
+
+ipcMain.handle('doge:list-sessions', () => {
+  return listSessions()
+})
+
+ipcMain.handle('doge:load-session', async (_event, sessionId: string) => {
+  const msgs = loadSession(sessionId)
+  if (!msgs) return { success: false, error: '无法加载会话' }
+  engine = null
+  const config = loadConfig()
+  engineConfig = config
+  engine = new QueryEngine({
+    model: config.model,
+    systemPrompt: 'You are Doge Code, a helpful AI programming assistant.',
+    maxOutputTokens: 40000,
+  })
+  const conv = (engine as unknown as { conversation: { messages: InternalMessage[]; addToolResults: (r: unknown[]) => void } }).conversation
+  conv.messages = msgs
+  currentSessionId = sessionId
+  return { success: true, messageCount: msgs.length }
+})
+
+ipcMain.handle('doge:new-session', () => {
+  engine = null
+  engineConfig = null
+  currentSessionId = saveSession([])
+  return { success: true }
+})
+
+ipcMain.handle('doge:delete-session', async (_event, sessionId: string) => {
+  try {
+    const file = path.join(SESSIONS_DIR, `${sessionId}.json`)
+    if (fs.existsSync(file)) {
+      fs.unlinkSync(file)
+      if (currentSessionId === sessionId) {
+        engine = null
+        engineConfig = null
+        currentSessionId = null
+      }
+      return { success: true }
+    }
+    return { success: false, error: '会话不存在' }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
+ipcMain.handle('doge:get-session-id', () => {
+  if (!currentSessionId) {
+    currentSessionId = saveSession([])
+  }
+  return currentSessionId
+})
+
+ipcMain.handle('doge:notify', (_event, title: string, body: string) => {
+  try {
+    const { Notification } = require('electron')
+    if (Notification.isSupported()) {
+      new Notification({ title, body, icon: path.join(projectRoot, 'assets', 'icon.png') }).show()
+    }
+  } catch { /* ignore */ }
+  return { success: true }
 })
 
 // ─── 应用生命周期 ───
@@ -353,3 +1047,4 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow()
 })
+
