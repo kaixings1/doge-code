@@ -13,6 +13,7 @@ import type { APIRequest } from '../../../src/engine/requestBuilder.js'
 import { getAllBaseTools, type Tool } from '../../../src/tools.js'
 import { zodToJsonSchema } from '../../../src/utils/zodToJsonSchema.js'
 import { getPermissionManager, DesktopPermissionManager } from './permissionManager.js'
+import { initBundledSkills, getBundledSkills } from '../../../src/skills/bundled/index.js'
 
 let mainWindow: BrowserWindow | null = null
 let tray: Tray | null = null
@@ -779,6 +780,30 @@ ipcMain.handle('doge:get-memory-usage', () => {
   }
 })
 
+ipcMain.handle('doge:save-draft', async (_event, data: { input: string; sessionId: string }) => {
+  try {
+    const draftDir = path.join(projectRoot, '.doge', 'drafts')
+    if (!fs.existsSync(draftDir)) fs.mkdirSync(draftDir, { recursive: true })
+    const file = path.join(draftDir, `${data.sessionId}.json`)
+    fs.writeFileSync(file, JSON.stringify({ input: data.input, savedAt: new Date().toISOString() }, null, 2), 'utf-8')
+    return { success: true }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : '未知错误' }
+  }
+})
+
+ipcMain.handle('doge:load-draft', async (_event, sessionId: string) => {
+  try {
+    const draftDir = path.join(projectRoot, '.doge', 'drafts')
+    const file = path.join(draftDir, `${sessionId}.json`)
+    if (!fs.existsSync(file)) return { success: true, input: '' }
+    const data = JSON.parse(fs.readFileSync(file, 'utf-8'))
+    return { success: true, input: data.input || '' }
+  } catch {
+    return { success: true, input: '' }
+  }
+})
+
 ipcMain.handle('doge:get-token-usage', () => {
   const currentEngine = getEngine()
   const msgs = (currentEngine as unknown as { conversation: { messages: InternalMessage[] } }).conversation?.messages ?? []
@@ -867,6 +892,16 @@ const DESKTOP_COMMANDS: CommandDef[] = [
   { name: '/teleport', description: '远程会话', category: '系统' },
   { name: '/session-search', description: '按内容搜索历史会话', category: '会话' },
   { name: '/session-tag', description: '分析会话并生成标签', category: '会话' },
+  // 常用内置技能
+  { name: '/debug', description: '调试会话并读取日志', category: '技能' },
+  { name: '/simplify', description: '简化代码提高质量', category: '技能' },
+  { name: '/tdd', description: '测试驱动开发', category: '技能' },
+  { name: '/codebase-design', description: '架构设计与评审', category: '技能' },
+  { name: '/domain-modeling', description: '领域建模', category: '技能' },
+  { name: '/diagnosing-bugs', description: '系统化诊断 Bug', category: '技能' },
+  { name: '/git-guardrails', description: 'Git 安全护栏', category: '技能' },
+  { name: '/code-review', description: '代码审查', category: '技能' },
+  { name: '/remember', description: '记忆管理', category: '技能' },
 ]
 
 ipcMain.handle('doge:get-commands', () => {
@@ -913,6 +948,43 @@ async function executeAIDrivenCommand(commandName: string, args: string[] = []):
   }
 }
 
+// 内置技能执行：从 bundledSkills 注册表查找并执行
+async function executeSkillCommand(skillName: string, args: string[] = []): Promise<{ success: boolean; output?: string; error?: string }> {
+  const skills = getBundledSkills()
+  const skill = skills.find(s => s.name === skillName.replace('/', ''))
+  if (!skill) return { success: false, error: `技能 ${skillName} 未注册` }
+  if (typeof skill.getPromptForCommand !== 'function') {
+    return { success: false, error: `技能 ${skillName} 无可执行模板` }
+  }
+
+  try {
+    const argsStr = args.join(' ')
+    const prompts = await skill.getPromptForCommand(argsStr, {
+      sessionId: currentSessionId || '',
+      workingDirectory: projectRoot,
+      args,
+      options: {},
+    } as never)
+
+    const promptText = Array.isArray(prompts)
+      ? prompts.filter((p: { type?: string }) => p.type === 'text').map((p: { text?: string }) => p.text || '').join('\n')
+      : ''
+
+    if (!promptText) return { success: false, error: '技能模板为空' }
+
+    const currentEngine = getEngine()
+    const result = await currentEngine.query(promptText)
+    const messages = result.messages as InternalMessage[]
+    const lastAssistant = [...messages].reverse().find(m => m.role === 'assistant')
+    const reply = typeof lastAssistant?.content === 'string' ? lastAssistant.content : JSON.stringify(lastAssistant?.content ?? '')
+
+    return { success: true, output: reply }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+}
+
 ipcMain.handle('doge:execute-command', async (_event, commandName: string, args: string[]) => {
   const { execSync } = await import('node:child_process')
   const cwd = engineConfig?.workingDir || projectRoot
@@ -921,6 +993,12 @@ ipcMain.handle('doge:execute-command', async (_event, commandName: string, args:
   const aiDrivenCommands = ['/commit', '/review', '/plan', '/diff', '/branch', '/memory', '/deploy', '/task', '/session-search', '/session-tag']
   if (aiDrivenCommands.includes(commandName)) {
     return executeAIDrivenCommand(commandName, args)
+  }
+
+  // 内置技能：从 bundledSkills 注册表获取 prompt 并通过 AI 引擎执行
+  const skillCommands = ['/debug', '/simplify', '/tdd', '/codebase-design', '/domain-modeling', '/diagnosing-bugs', '/git-guardrails', '/code-review', '/remember']
+  if (skillCommands.includes(commandName)) {
+    return executeSkillCommand(commandName, args)
   }
 
   try {
@@ -1015,17 +1093,35 @@ ipcMain.handle('doge:execute-command', async (_event, commandName: string, args:
       }
       case '/skills': {
         try {
+          // 内置技能（bundled skills）
+          const bundled = getBundledSkills()
+          const bundledNames = bundled.map(s => `  ✦ ${s.name} — ${s.description}`)
+
+          // 用户目录技能 (.claudeskills/)
           const skillsDir = path.join(projectRoot, '.claudeskills')
-          if (!fs.existsSync(skillsDir)) {
-            return { success: true, output: '技能目录尚未创建。技能会在首次使用时自动加载。' }
+          let userNames: string[] = []
+          if (fs.existsSync(skillsDir)) {
+            userNames = fs.readdirSync(skillsDir)
+              .filter(f => !f.startsWith('.'))
+              .slice(0, 30)
+              .map(f => `  • ${f.replace(/\.(md|json)$/, '')}`)
           }
-          const files = fs.readdirSync(skillsDir).filter(f => !f.startsWith('.')).slice(0, 30)
-          if (files.length === 0) {
-            return { success: true, output: '暂无可用技能。' }
+
+          const lines: string[] = []
+          if (bundledNames.length > 0) {
+            lines.push(`内置技能 (${bundledNames.length}):`)
+            lines.push(...bundledNames)
           }
-          return { success: true, output: `已加载技能:\n${files.map(f => `  - ${f.replace(/\.(md|json)$/, '')}`).join('\n')}` }
+          if (userNames.length > 0) {
+            lines.push(`\n用户技能 (${userNames.length}):`)
+            lines.push(...userNames)
+          }
+          if (lines.length === 0) {
+            return { success: true, output: '暂无可用技能。在 .claudeskills/ 中添加技能文件。' }
+          }
+          return { success: true, output: lines.join('\n') }
         } catch {
-          return { success: true, output: '技能目录不可用。' }
+          return { success: true, output: '技能列表不可用。' }
         }
       }
       case '/compact': {
@@ -1468,7 +1564,11 @@ ipcMain.handle('doge:reveal-in-explorer', async (_event, filePath: string) => {
 })
 
 // ─── 应用生命周期 ───
-app.whenReady().then(() => { createWindow(); createTray() })
+app.whenReady().then(() => {
+  // 初始化内置技能（注册到 bundledSkills 注册表）
+  try { initBundledSkills() } catch { /* ignore skill init errors */ }
+  createWindow(); createTray()
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
