@@ -30,6 +30,7 @@ import type { PermissionResult } from '../../utils/permissions/PermissionResult.
 import { maybeRecordPluginHint } from '../../utils/plugins/hintRecommendation.js';
 import { exec } from '../../utils/Shell.js';
 import type { ExecResult } from '../../utils/ShellCommand.js';
+import { ripGrep, RipgrepTimeoutError } from '../../utils/ripgrep.js';
 import { SandboxManager } from '../../utils/sandbox/sandbox-adapter.js';
 import { logForDebugging } from '../../utils/debug.js';
 import { semanticBoolean } from '../../utils/semanticBoolean.js';
@@ -50,6 +51,7 @@ import { shouldUseSandbox } from './shouldUseSandbox.js';
 import { BASH_TOOL_NAME } from './toolName.js';
 import { BackgroundHint, renderToolResultMessage, renderToolUseErrorMessage, renderToolUseMessage, renderToolUseProgressMessage, renderToolUseQueuedMessage } from './UI.js';
 import { buildImageToolResult, isImageOutput, resetCwdIfOutsideProject, resizeShellImageOutput, stdErrAppendShellResetMessage, stripEmptyLines } from './utils.js';
+import { isGrepSearchCommand, parseGrepToGrepToolArgs } from './grepRouter.js';
 const EOL = '\n';
 
 // 进度显示常量
@@ -1208,84 +1210,128 @@ export const BashTool = buildTool({
     let result: ExecResult;
     const isMainThread = !toolUseContext.agentId;
     const preventCwdChanges = !isMainThread;
-    try {
-      // 使用 runShellCommand 的新异步生成器版本
-      const commandGenerator = runShellCommand({
-        input,
-        abortController,
-        // 使用始终共享的任务通道，以便异步代理的后台 bash 任务也能被正确注册（并在代理退出时可被终止）。
-        setAppState: toolUseContext.setAppStateForTasks ?? setAppState,
-        setToolJSX,
-        preventCwdChanges,
-        isMainThread,
-        toolUseId: toolUseContext.toolUseId,
-        agentId: toolUseContext.agentId
-      });
-
-      // 消费生成器并捕获返回值
-      let generatorResult;
-      do {
-        generatorResult = await commandGenerator.next();
-        if (!generatorResult.done && onProgress) {
-          const progress = generatorResult.value;
-          onProgress({
-            toolUseID: `bash-progress-${progressCounter++}`,
-            data: {
-              type: 'bash_progress',
-              output: progress.output,
-              fullOutput: progress.fullOutput,
-              elapsedTimeSeconds: progress.elapsedTimeSeconds,
-              totalLines: progress.totalLines,
-              totalBytes: progress.totalBytes,
-              taskId: progress.taskId,
-              timeoutMs: progress.timeoutMs
-            }
-          });
-        }
-      } while (!generatorResult.done);
-
-      // 从生成器的返回值中获取最终结果
-      result = generatorResult.value;
-      trackGitOperations(input.command, result.code, result.stdout);
-      const isInterrupt = result.interrupted && abortController.signal.reason === 'interrupt';
-
-      // stderr 已合并到 stdout（合并的文件描述符）—— result.stdout 包含两者
-      stdoutAccumulator.append((result.stdout || '').trimEnd() + EOL);
-
-      // 使用语义规则解释命令结果
-      interpretationResult = interpretCommandResult(input.command, result.code, result.stdout || '', '');
-
-      // 检查 git index.lock 错误（stderr 现在在 stdout 中）
-      if (result.stdout && result.stdout.includes(".git/index.lock': File exists")) {
-        logEvent('tengu_git_index_lock_error', {});
-      }
-      if (interpretationResult.isError && !isInterrupt) {
-        // 仅在确实为错误时添加退出码
-        if (result.code !== 0) {
-          stdoutAccumulator.append(`退出码 ${result.code}`);
+    // 路由：检测简单 grep/rg 搜索命令，直接调用 ripgrep 引擎（绕过 MSYS2 shell 卡死问题）
+    // 仅处理不含管道、重定向、子 shell 的简单搜索命令
+    if (isGrepSearchCommand(input.command)) {
+      const grepInput = parseGrepToGrepToolArgs(input.command);
+      if (grepInput) {
+        const rgArgs: string[] = [];
+        if (grepInput['-i']) rgArgs.push('-i');
+        if (grepInput['-B'] != null) rgArgs.push(`-B${grepInput['-B']}`);
+        if (grepInput['-A'] != null) rgArgs.push(`-A${grepInput['-A']}`);
+        if (grepInput['-C'] != null) rgArgs.push(`-C${grepInput['-C']}`);
+        if (grepInput.multiline) rgArgs.push('--multiline-dotall');
+        if (grepInput.head_limit != null) rgArgs.push('--max-count', String(grepInput.head_limit));
+        if (grepInput.output_mode === 'content') rgArgs.push('-n');
+        if (grepInput.output_mode === 'files_with_matches') rgArgs.push('-l');
+        if (grepInput.output_mode === 'count') rgArgs.push('-c');
+        const target = grepInput.path || process.cwd();
+        try {
+          const lines = await ripGrep(rgArgs, target, abortController.signal);
+          const stdout = lines.join('\n');
+          return {
+            type: 'tool_result' as const,
+            content: [
+              {
+                type: 'text' as const,
+                text: stdout || '(no matches)',
+              },
+            ],
+            isError: false,
+          };
+        } catch (error) {
+          if (error instanceof RipgrepTimeoutError) {
+            return {
+              type: 'tool_result' as const,
+              content: [
+                {
+                  type: 'text' as const,
+                  text: `grep timed out. Partial results:\n${error.partialResults.join('\n')}`,
+                },
+              ],
+              isError: true,
+            };
+          }
+          throw error;
         }
       }
-      if (!preventCwdChanges) {
-        const appState = getAppState();
-        if (resetCwdIfOutsideProject(appState.toolPermissionContext)) {
-          stderrForShellReset = stdErrAppendShellResetMessage('');
-        }
-      }
-
-      // 如果有沙箱违规，为输出添加注释（stderr 在 stdout 中）
-      const outputWithSbFailures = SandboxManager.annotateStderrWithSandboxFailures(input.command, result.stdout || '');
-      if (result.preSpawnError) {
-        throw new Error(result.preSpawnError);
-      }
-      if (interpretationResult.isError && !isInterrupt) {
-        // stderr 已合并到 stdout（合并的文件描述符）；outputWithSbFailures 已包含完整输出。
-        // 传递 '' 作为 stdout 以避免在 getErrorParts() 和 processBashCommand 中重复。
-        throw new ShellError('', outputWithSbFailures, result.code, result.interrupted);
-      }
-      wasInterrupted = result.interrupted;
-    } finally {
-      if (setToolJSX) setToolJSX(null);
     }
+    // ===== 原有 shell 执行入口（备份保留） =====
+    // 使用 runShellCommand 的新异步生成器版本
+    //   const commandGenerator = runShellCommand({
+    //     input,
+    //     abortController,
+    //     // 使用始终共享的任务通道，以便异步代理的后台 bash 任务也能被正确注册（并在代理退出时可被终止）。
+    //     setAppState: toolUseContext.setAppStateForTasks ?? setAppState,
+    //     setToolJSX,
+    //     preventCwdChanges,
+    //     isMainThread,
+    //     toolUseId: toolUseContext.toolUseId,
+    //     agentId: toolUseContext.agentId
+    //   });
+    //
+    //   // 消费生成器并捕获返回值
+    //   let generatorResult;
+    //   do {
+    //     generatorResult = await commandGenerator.next();
+    //     if (!generatorResult.done && onProgress) {
+    //       const progress = generatorResult.value;
+    //       onProgress({
+    //         toolUseID: `bash-progress-${progressCounter++}`,
+    //         data: {
+    //           type: 'bash_progress',
+    //           output: progress.output,
+    //           fullOutput: progress.fullOutput,
+    //           elapsedTimeSeconds: progress.elapsedTimeSeconds,
+    //           totalLines: progress.totalLines,
+    //           totalBytes: progress.totalBytes,
+    //           taskId: progress.taskId,
+    //           timeoutMs: progress.timeoutMs
+    //         }
+    //       });
+    //     }
+    //   } while (!generatorResult.done);
+    //
+    //   // 从生成器的返回值中获取最终结果
+    //   result = generatorResult.value;
+    //   trackGitOperations(input.command, result.code, result.stdout);
+    //   const isInterrupt = result.interrupted && abortController.signal.reason === 'interrupt';
+    //
+    //   // stderr 已合并到 stdout（合并的文件描述符）—— result.stdout 包含两者
+    //   stdoutAccumulator.append((result.stdout || '').trimEnd() + EOL);
+    //
+    //   // 使用语义规则解释命令结果
+    //   interpretationResult = interpretCommandResult(input.command, result.code, result.stdout || '', '');
+    //
+    //   // 检查 git index.lock 错误（stderr 现在在 stdout 中）
+    //   if (result.stdout && result.stdout.includes(".git/index.lock': File exists")) {
+    //     logEvent('tengu_git_index_lock_error', {});
+    //   }
+    //   if (interpretationResult.isError && !isInterrupt) {
+    //     // 仅在确实为错误时添加退出码
+    //     if (result.code !== 0) {
+    //       stdoutAccumulator.append(`退出码 ${result.code}`);
+    //     }
+    //   }
+    //   if (!preventCwdChanges) {
+    //     const appState = getAppState();
+    //     if (resetCwdIfOutsideProject(appState.toolPermissionContext)) {
+    //       stderrForShellReset = stdErrAppendShellResetMessage('');
+    //     }
+    //   }
+    //
+    //   // 如果有沙箱违规，为输出添加注释（stderr 在 stdout 中）
+    //   const outputWithSbFailures = SandboxManager.annotateStderrWithSandboxFailures(input.command, result.stdout || '');
+    //   if (result.preSpawnError) {
+    //     throw new Error(result.preSpawnError);
+    //   }
+    //   if (interpretationResult.isError && !isInterrupt) {
+    //     // stderr 已合并到 stdout（合并的文件描述符）；outputWithSbFailures 已包含完整输出。
+    //     // 传递 '' 作为 stdout 以避免在 getErrorParts() 和 processBashCommand 中重复。
+    //     throw new ShellError('', outputWithSbFailures, result.code, result.interrupted);
+    //   }
+    // }
+    // ===== /原有 shell 执行入口（备份保留） =====
 
     // 从累加器获取最终字符串
     const stdout = stdoutAccumulator.toString();
