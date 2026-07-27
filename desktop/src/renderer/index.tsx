@@ -120,6 +120,7 @@ interface FileTreeNode {
   isDirectory: boolean
   children?: FileTreeNode[]
   expanded?: boolean
+  parentPath?: string
 }
 
 interface GitFile {
@@ -221,12 +222,132 @@ function FileTree({ cwd }: { cwd: string }) {
     try {
       const result = await window.dogeAPI.deleteFile(node.path)
       if (result.success) {
-        // 刷新文件树
-        setTree(prev => prev.filter(n => n.path !== node.path))
+        // 刷新文件树：从顶层移除，或从父节点的 children 中移除
+        if (node.parentPath) {
+          setTree(prev => {
+            const removeFromParent = (nodes: FileTreeNode[]): FileTreeNode[] =>
+              nodes.map(n => {
+                if (n.path === node.parentPath && n.children) {
+                  return { ...n, children: n.children.filter(c => c.path !== node.path) }
+                }
+                if (n.children) return { ...n, children: removeFromParent(n.children) }
+                return n
+              })
+            return removeFromParent(prev)
+          })
+        } else {
+          setTree(prev => prev.filter(n => n.path !== node.path))
+        }
       } else {
         alert(result.error || '删除失败')
       }
     } catch { alert('删除失败') }
+    setContextMenu(null)
+  }
+
+  const renameNode = async () => {
+    if (!contextMenu) return
+    const { node } = contextMenu
+    const newName = prompt('重命名为:', node.name)
+    if (!newName || newName === node.name) { setContextMenu(null); return }
+    try {
+      const result = await window.dogeAPI.renameFile(node.path, newName)
+      if (result.success && result.newPath) {
+        // 刷新文件树：递归更新匹配的节点 name 和 path
+        setTree(prev => {
+          const updateNode = (nodes: FileTreeNode[]): FileTreeNode[] =>
+            nodes.map(n => {
+              if (n.path === node.path) {
+                return { ...n, name: newName, path: result.newPath! }
+              }
+              if (n.children) return { ...n, children: updateNode(n.children) }
+              return n
+            })
+          return updateNode(prev)
+        })
+      } else {
+        alert(result.error || '重命名失败')
+      }
+    } catch { alert('重命名失败') }
+    setContextMenu(null)
+  }
+
+  const newFileInDir = async () => {
+    if (!contextMenu) return
+    const { node } = contextMenu
+    const fileName = prompt('新建文件名:')
+    if (!fileName) { setContextMenu(null); return }
+    try {
+      const result = await window.dogeAPI.newFile(node.path, fileName)
+      if (result.success && result.path) {
+        const newNode: FileTreeNode = {
+          name: fileName,
+          path: result.path,
+          isDirectory: false,
+          expanded: false,
+          parentPath: node.path,
+        }
+        setTree(prev => {
+          const addToParent = (nodes: FileTreeNode[]): FileTreeNode[] =>
+            nodes.map(n => {
+              if (n.path === node.path && n.children) {
+                return { ...n, children: [...n.children, newNode] }
+              }
+              if (n.children) return { ...n, children: addToParent(n.children) }
+              return n
+            })
+          return addToParent(prev)
+        })
+      } else {
+        alert(result.error || '新建文件失败')
+      }
+    } catch { alert('新建文件失败') }
+    setContextMenu(null)
+  }
+
+  const newFolderInDir = async () => {
+    if (!contextMenu) return
+    const { node } = contextMenu
+    const folderName = prompt('新建文件夹名:')
+    if (!folderName) { setContextMenu(null); return }
+    try {
+      const result = await window.dogeAPI.newFolder(node.path, folderName)
+      if (result.success && result.path) {
+        const newNode: FileTreeNode = {
+          name: folderName,
+          path: result.path,
+          isDirectory: true,
+          expanded: false,
+          parentPath: node.path,
+          children: [],
+        }
+        setTree(prev => {
+          const addToParent = (nodes: FileTreeNode[]): FileTreeNode[] =>
+            nodes.map(n => {
+              if (n.path === node.path && n.children) {
+                return { ...n, children: [...n.children, newNode] }
+              }
+              if (n.children) return { ...n, children: addToParent(n.children) }
+              return n
+            })
+          return addToParent(prev)
+        })
+      } else {
+        alert(result.error || '新建文件夹失败')
+      }
+    } catch { alert('新建文件夹失败') }
+    setContextMenu(null)
+  }
+
+  const openTerminalInDir = async () => {
+    if (!contextMenu) return
+    const { node } = contextMenu
+    try {
+      const result = await window.dogeAPI.openTerminal(node.path)
+      if (!result.success) {
+        alert(result.error || '打开终端失败')
+      }
+    } catch { alert('打开终端失败') }
     setContextMenu(null)
   }
 
@@ -277,6 +398,7 @@ function FileTree({ cwd }: { cwd: string }) {
           path: item.isDirectory ? `${node.path}/${item.name}` : `${node.path}/${item.name}`,
           isDirectory: item.isDirectory,
           expanded: false,
+          parentPath: node.path,
         }))
       setTree((prev) => prev.map((n) => n.path === node.path ? { ...n, children, expanded: true } : n))
     } catch { /* ignore */ } finally {
@@ -340,20 +462,37 @@ function FileTree({ cwd }: { cwd: string }) {
         >
           {contextMenu.node.isDirectory ? (
             <>
+              <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: '#F5F5F5' }} onClick={openTerminalInDir}>
+                📂 打开终端
+              </div>
+              <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: '#F5F5F5' }} onClick={newFileInDir}>
+                📄 新建文件
+              </div>
+              <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: '#F5F5F5' }} onClick={newFolderInDir}>
+                📁 新建文件夹
+              </div>
+              <div style={{ borderTop: '1px solid #333' }} />
               <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: '#888' }} onClick={copyPath}>
-                复制路径
+                📋 复制路径
+              </div>
+              <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: '#888' }} onClick={renameNode}>
+                ✏️ 重命名
               </div>
               <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: '#FF6B6B' }} onClick={deleteNode}>
-                删除文件夹
+                🗑️ 删除文件夹
               </div>
             </>
           ) : (
             <>
               <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: '#888' }} onClick={copyPath}>
-                复制路径
+                📋 复制路径
               </div>
+              <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: '#888' }} onClick={renameNode}>
+                ✏️ 重命名
+              </div>
+              <div style={{ borderTop: '1px solid #333' }} />
               <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: '#FF6B6B' }} onClick={deleteNode}>
-                删除文件
+                🗑️ 删除文件
               </div>
             </>
           )}
