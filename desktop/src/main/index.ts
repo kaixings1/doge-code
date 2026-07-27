@@ -1218,3 +1218,16 @@ ipcMain.handle('doge:read-file', async (_event, filePath: string) => {
     return { success: false, error: message }
   }
 })
+
+ipcMain.handle('doge:write-file', async (_event, filePath: string, content: string) => {
+  try {
+    if (!fs.existsSync(filePath)) return { success: false, error: '文件不存在' }
+    const stat = fs.statSync(filePath)
+    if (stat.isDirectory()) return { success: false, error: '无法写入文件夹' }
+    fs.writeFileSync(filePath, content, 'utf-8')
+    return { success: true }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})

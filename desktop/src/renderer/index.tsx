@@ -1054,8 +1054,13 @@ function App(): JSX.Element {
   const [previewFile, setPreviewFile] = React.useState<{ path: string; content: string; size?: number } | null>(null)
   const [previewLoading, setPreviewLoading] = React.useState(false)
   const [previewError, setPreviewError] = React.useState<string | null>(null)
+  const [isEditing, setIsEditing] = React.useState(false)
+  const [editContent, setEditContent] = React.useState('')
+  const [isSaving, setIsSaving] = React.useState(false)
 
   const handlePreviewFile = React.useCallback(async (filePath: string) => {
+    setIsEditing(false)
+    setEditContent('')
     setPreviewLoading(true)
     setPreviewError(null)
     try {
@@ -1072,6 +1077,37 @@ function App(): JSX.Element {
     } finally {
       setPreviewLoading(false)
     }
+  }, [])
+
+  const handleStartEdit = React.useCallback(() => {
+    if (previewFile) {
+      setEditContent(previewFile.content)
+      setIsEditing(true)
+    }
+  }, [previewFile])
+
+  const handleSaveEdit = React.useCallback(async () => {
+    if (!previewFile || isSaving) return
+    setIsSaving(true)
+    try {
+      const result = await window.dogeAPI.writeFile(previewFile.path, editContent)
+      if (result.success) {
+        setPreviewFile(prev => prev ? { ...prev, content: editContent } : null)
+        setIsEditing(false)
+        setEditContent('')
+      } else {
+        setPreviewError(result.error || '保存失败')
+      }
+    } catch {
+      setPreviewError('保存文件失败')
+    } finally {
+      setIsSaving(false)
+    }
+  }, [previewFile, editContent, isSaving])
+
+  const handleCancelEdit = React.useCallback(() => {
+    setIsEditing(false)
+    setEditContent('')
   }, [])
   const [showCommandPalette, setShowCommandPalette] = React.useState(false)
   const [modelInfo, setModelInfo] = React.useState<{ provider: string; model: string; baseUrl: string; hasApiKey: boolean } | null>(null)
@@ -1869,12 +1905,24 @@ function App(): JSX.Element {
         {/* 文件预览面板 */}
         {previewFile && (
           <div style={{ ...styles.panelHeader, borderTop: '1px solid #262626', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span>👁️ {previewFile.path.split('/').pop()}</span>
-            <span style={{ cursor: 'pointer', color: '#555', fontSize: '11px' }} onClick={() => setPreviewFile(null)}>✕ 关闭</span>
+            <span>{isEditing ? '✏️ 编辑中' : '👁️'} {previewFile.path.split('/').pop()}</span>
+            <div style={{ display: 'flex', gap: '6px' }}>
+              {isEditing ? (
+                <>
+                  <span style={{ cursor: 'pointer', color: '#4ECB71', fontSize: '11px' }} onClick={handleSaveEdit}>{isSaving ? '保存中...' : '💾 保存'}</span>
+                  <span style={{ cursor: 'pointer', color: '#555', fontSize: '11px' }} onClick={handleCancelEdit}>✕ 取消</span>
+                </>
+              ) : (
+                <>
+                  <span style={{ cursor: 'pointer', color: '#569CD6', fontSize: '11px' }} onClick={handleStartEdit}>✏️ 编辑</span>
+                  <span style={{ cursor: 'pointer', color: '#555', fontSize: '11px' }} onClick={() => setPreviewFile(null)}>✕ 关闭</span>
+                </>
+              )}
+            </div>
           </div>
         )}
         {(previewFile || previewLoading) && (
-          <div style={{ flex: 1, overflowY: 'auto', padding: '8px', borderBottom: '1px solid #262626', maxHeight: previewFile ? '40%' : '40px' }}>
+          <div style={{ flex: 1, overflowY: 'auto', padding: '8px', borderBottom: '1px solid #262626', maxHeight: previewFile ? '50%' : '40px' }}>
             {previewLoading && <div style={{ color: '#888', fontSize: '11px', textAlign: 'center' }}>加载中...</div>}
             {previewError && <div style={{ color: '#FF6B6B', fontSize: '11px' }}>{previewError}</div>}
             {previewFile && (
@@ -1882,13 +1930,32 @@ function App(): JSX.Element {
                 <div style={{ fontSize: '10px', color: '#666', marginBottom: '6px' }}>
                   {previewFile.path} {previewFile.size != null ? `(${(previewFile.size / 1024).toFixed(1)} KB)` : ''}
                 </div>
-                <pre style={{
-                  background: '#0A0A0A', border: '1px solid #262626', borderRadius: '4px', padding: '8px',
-                  fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all',
-                  color: '#D4D4D4', margin: 0, maxHeight: '300px', overflowY: 'auto'
-                }}>
-                  {previewFile.content || '(空文件)'}
-                </pre>
+                {isEditing ? (
+                  <textarea
+                    value={editContent}
+                    onChange={(e) => setEditContent(e.target.value)}
+                    style={{
+                      width: '100%', minHeight: '200px', background: '#0A0A0A', border: '1px solid #569CD6',
+                      borderRadius: '4px', padding: '8px', color: '#D4D4D4', fontSize: '11px',
+                      fontFamily: 'Consolas, Monaco, monospace', lineHeight: '1.5', resize: 'vertical',
+                      outline: 'none', whiteSpace: 'pre', overflowWrap: 'normal', overflowX: 'auto'
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
+                        e.preventDefault()
+                        handleSaveEdit()
+                      }
+                    }}
+                  />
+                ) : (
+                  <pre style={{
+                    background: '#0A0A0A', border: '1px solid #262626', borderRadius: '4px', padding: '8px',
+                    fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all',
+                    color: '#D4D4D4', margin: 0, maxHeight: '300px', overflowY: 'auto'
+                  }}>
+                    {previewFile.content || '(空文件)'}
+                  </pre>
+                )}
               </div>
             )}
           </div>
