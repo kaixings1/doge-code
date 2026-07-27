@@ -1183,25 +1183,29 @@ function App(): JSX.Element {
     }))
   }, [activeTabId])
 
-  // Tab 数据持久化（localStorage）
+  // Tab 数据持久化（localStorage）— 仅保存元数据，不保存 messages
+  interface PersistedTabMeta { id: string; sessionId: string; title: string }
   React.useEffect(() => {
     try {
       const saved = localStorage.getItem('doge-tabs')
       if (saved && tabs.length === 0) {
-        const parsed = JSON.parse(saved) as AppTab[]
+        const parsed = JSON.parse(saved) as PersistedTabMeta[]
         if (parsed.length > 0) {
-          setTabs(parsed)
-          setActiveTabId(parsed[0].id)
-          setMessages(parsed[0].messages)
+          const restored = parsed.map(t => ({ ...t, messages: [] }))
+          setTabs(restored)
           tabIdCounter.current = parsed.length
+          setActiveTabId(restored[0]?.id ?? null)
         }
       }
     } catch { /* ignore */ }
   }, [])
 
   React.useEffect(() => {
-    try { localStorage.setItem('doge-tabs', JSON.stringify(tabs)) } catch { /* ignore */ }
-  }, [tabs])
+    try {
+      const meta: PersistedTabMeta[] = tabs.map(t => ({ id: t.id, sessionId: t.sessionId, title: t.title }))
+      localStorage.setItem('doge-tabs', JSON.stringify(meta))
+    } catch { /* ignore */ }
+  }, [tabs.map(t => ({ id: t.id, sessionId: t.sessionId, title: t.title })).join('|')])
 
   const showToast = React.useCallback((text: string, type: 'info' | 'success' | 'error' = 'info') => {
     if (toastTimerRef.current) clearTimeout(toastTimerRef.current)
