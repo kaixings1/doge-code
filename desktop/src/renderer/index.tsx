@@ -1166,7 +1166,10 @@ function App(): JSX.Element {
   const [selectedGitFile, setSelectedGitFile] = React.useState<string | null>(null)
   const [commitMessage, setCommitMessage] = React.useState('')
   const [isCommitting, setIsCommitting] = React.useState(false)
-  const [previewFile, setPreviewFile] = React.useState<{ path: string; content: string; size?: number } | null>(null)
+  const [previewTabs, setPreviewTabs] = React.useState<Array<{ id: string; path: string; content: string; size?: number }>>([])
+  const [activePreviewTabId, setActivePreviewTabId] = React.useState<string | null>(null)
+  const previewTabCounter = React.useRef(0)
+  const activePreviewFile = previewTabs.find(t => t.id === activePreviewTabId) || null
   const [previewLoading, setPreviewLoading] = React.useState(false)
   const [previewError, setPreviewError] = React.useState<string | null>(null)
   const [isEditing, setIsEditing] = React.useState(false)
@@ -1174,40 +1177,46 @@ function App(): JSX.Element {
   const [isSaving, setIsSaving] = React.useState(false)
 
   const handlePreviewFile = React.useCallback(async (filePath: string) => {
-    setIsEditing(false)
-    setEditContent('')
+    // 如果已打开，直接切换
+    const existing = previewTabs.find(t => t.path === filePath)
+    if (existing) {
+      setActivePreviewTabId(existing.id)
+      return
+    }
+    // 否则打开新标签
     setPreviewLoading(true)
     setPreviewError(null)
     try {
       const result = await window.dogeAPI.readFile(filePath)
       if (result.success) {
-        setPreviewFile({ path: filePath, content: result.content || '', size: result.size })
+        previewTabCounter.current += 1
+        const newTab = { id: `preview-${previewTabCounter.current}-${Date.now()}`, path: filePath, content: result.content || '', size: result.size }
+        setPreviewTabs(prev => [...prev, newTab])
+        setActivePreviewTabId(newTab.id)
       } else {
         setPreviewError(result.error || '无法读取文件')
-        setPreviewFile(null)
       }
     } catch {
       setPreviewError('读取文件失败')
-      setPreviewFile(null)
     } finally {
       setPreviewLoading(false)
     }
-  }, [])
+  }, [previewTabs])
 
   const handleStartEdit = React.useCallback(() => {
-    if (previewFile) {
-      setEditContent(previewFile.content)
+    if (activePreviewFile) {
+      setEditContent(activePreviewFile.content)
       setIsEditing(true)
     }
-  }, [previewFile])
+  }, [activePreviewFile])
 
   const handleSaveEdit = React.useCallback(async () => {
-    if (!previewFile || isSaving) return
+    if (!activePreviewFile || isSaving) return
     setIsSaving(true)
     try {
-      const result = await window.dogeAPI.writeFile(previewFile.path, editContent)
+      const result = await window.dogeAPI.writeFile(activePreviewFile.path, editContent)
       if (result.success) {
-        setPreviewFile(prev => prev ? { ...prev, content: editContent } : null)
+        setPreviewTabs(prev => prev.map(t => t.id === activePreviewFile.id ? { ...t, content: editContent } : t))
         setIsEditing(false)
         setEditContent('')
       } else {
@@ -1218,7 +1227,7 @@ function App(): JSX.Element {
     } finally {
       setIsSaving(false)
     }
-  }, [previewFile, editContent, isSaving])
+  }, [activePreviewFile, editContent, isSaving])
 
   const handleCancelEdit = React.useCallback(() => {
     setIsEditing(false)
@@ -1329,31 +1338,31 @@ function App(): JSX.Element {
   }, [])
 
   const handleCopyContent = React.useCallback(async () => {
-    if (!previewFile) return
+    if (!activePreviewFile) return
     try {
-      await navigator.clipboard.writeText(previewFile.content)
+      await navigator.clipboard.writeText(activePreviewFile.content)
       showToast('文件内容已复制', 'success')
     } catch { showToast('复制失败', 'error') }
-  }, [previewFile, showToast])
+  }, [activePreviewFile, showToast])
 
   const handleRevealInExplorer = React.useCallback(async () => {
-    if (!previewFile) return
+    if (!activePreviewFile) return
     try {
-      const result = await window.dogeAPI.revealInExplorer(previewFile.path)
+      const result = await window.dogeAPI.revealInExplorer(activePreviewFile.path)
       if (result.success) showToast('已打开文件所在位置', 'success')
       else showToast(result.error || '打开失败', 'error')
     } catch { showToast('打开失败', 'error') }
-  }, [previewFile, showToast])
+  }, [activePreviewFile, showToast])
 
   const handleOpenTerminal = React.useCallback(async () => {
-    if (!previewFile) return
+    if (!activePreviewFile) return
     try {
-      const dirPath = previewFile.path.includes('/') ? previewFile.path.substring(0, previewFile.path.lastIndexOf('/')) : ''
+      const dirPath = activePreviewFile.path.includes('/') ? activePreviewFile.path.substring(0, activePreviewFile.path.lastIndexOf('/')) : ''
       const result = await window.dogeAPI.openTerminal(dirPath)
       if (result.success) showToast('终端已打开', 'success')
       else showToast(result.error || '打开终端失败', 'error')
     } catch { showToast('打开终端失败', 'error') }
-  }, [previewFile, showToast])
+  }, [activePreviewFile, showToast])
 
   // textarea 自动高度
   React.useEffect(() => {
@@ -2053,90 +2062,112 @@ function App(): JSX.Element {
         </div>
 
         {/* 文件预览面板 */}
-        {previewFile && (
-          <div style={{ borderTop: '1px solid #262626', borderBottom: '1px solid #262626', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', overflow: 'hidden' }}>
-              <span style={{ fontSize: '11px', color: '#888', whiteSpace: 'nowrap' }}>{isEditing ? '✏️ 编辑中' : '👁️'} {previewFile.path.split('/').pop()}</span>
-            </div>
-            <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
-              {isEditing ? (
-                <>
-                  <span style={{ cursor: 'pointer', color: '#4ECB71', fontSize: '11px' }} onClick={handleSaveEdit}>{isSaving ? '保存中...' : '💾 保存'}</span>
-                  <span style={{ cursor: 'pointer', color: '#555', fontSize: '11px' }} onClick={handleCancelEdit}>✕ 取消</span>
-                </>
-              ) : (
-                <>
-                  <span style={{ cursor: 'pointer', color: '#888', fontSize: '11px' }} onClick={handleOpenTerminal} title="在终端中打开">💻</span>
-                  <span style={{ cursor: 'pointer', color: '#569CD6', fontSize: '11px' }} onClick={handleStartEdit}>✏️ 编辑</span>
-                  <span style={{ cursor: 'pointer', color: '#888', fontSize: '11px' }} onClick={handleCopyContent}>📝 复制内容</span>
-                  <span style={{ cursor: 'pointer', color: '#888', fontSize: '11px' }} onClick={handleRevealInExplorer}>📂 所在位置</span>
-                  <span style={{ cursor: 'pointer', color: '#555', fontSize: '11px' }} onClick={() => { navigator.clipboard.writeText(previewFile.path); showToast('路径已复制', 'success') }}>📋</span>
-                  <span style={{ cursor: 'pointer', color: '#555', fontSize: '11px' }} onClick={() => setPreviewFile(null)}>✕</span>
-                </>
-              )}
-            </div>
-          </div>
-        )}
-        {(previewFile || previewLoading) && (
-          <div style={{ flex: 1, overflowY: 'auto', padding: '8px', borderBottom: '1px solid #262626', maxHeight: previewFile ? '50%' : '40px' }}>
-            {previewLoading && <div style={{ color: '#888', fontSize: '11px', textAlign: 'center' }}>加载中...</div>}
-            {previewError && <div style={{ color: '#FF6B6B', fontSize: '11px' }}>{previewError}</div>}
-            {previewFile && (
-              <div>
-                <div style={{ fontSize: '10px', color: '#666', marginBottom: '6px', display: 'flex', justifyContent: 'space-between' }}>
-                  <span>{previewFile.path}</span>
-                  <span>{previewFile.size != null ? `${(previewFile.size / 1024).toFixed(1)} KB` : ''} {previewFile.content ? `${previewFile.content.split('\n').length} 行` : ''}</span>
+        {previewTabs.length > 0 && (
+          <>
+            {/* 标签栏 */}
+            <div style={{ borderTop: '1px solid #262626', borderBottom: '1px solid #262626', display: 'flex', background: '#0A0A0A', overflowX: 'auto' }}>
+              {previewTabs.map(tab => (
+                <div
+                  key={tab.id}
+                  style={{
+                    padding: '4px 8px', fontSize: '10px', cursor: 'pointer', whiteSpace: 'nowrap',
+                    borderRight: '1px solid #1A1A1A', display: 'flex', alignItems: 'center', gap: '4px',
+                    background: tab.id === activePreviewTabId ? '#1A1A1A' : 'transparent',
+                    color: tab.id === activePreviewTabId ? '#F5F5F5' : '#888'
+                  }}
+                  onClick={() => { setActivePreviewTabId(tab.id); setIsEditing(false); setEditContent('') }}
+                >
+                  <span>{tab.path.split('/').pop()}</span>
+                  <span style={{ color: '#555', fontSize: '9px', cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); setPreviewTabs(prev => prev.filter(t => t.id !== tab.id)); if (activePreviewTabId === tab.id) setActivePreviewTabId(previewTabs.find(t => t.id !== tab.id)?.id || null) }}>✕</span>
                 </div>
-                {isEditing ? (
-                  <textarea
-                    value={editContent}
-                    onChange={(e) => setEditContent(e.target.value)}
-                    style={{
-                      width: '100%', minHeight: '200px', background: '#0A0A0A', border: '1px solid #569CD6',
-                      borderRadius: '4px', padding: '8px', color: '#D4D4D4', fontSize: '11px',
-                      fontFamily: 'Consolas, Monaco, monospace', lineHeight: '1.5', resize: 'vertical',
-                      outline: 'none', whiteSpace: 'pre', overflowWrap: 'normal', overflowX: 'auto'
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
-                        e.preventDefault()
-                        handleSaveEdit()
+              ))}
+            </div>
+            {/* 内容区域 */}
+            {activePreviewFile ? (
+              <div style={{ borderBottom: '1px solid #262626', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', overflow: 'hidden' }}>
+                  <span style={{ fontSize: '11px', color: '#888', whiteSpace: 'nowrap' }}>{isEditing ? '✏️ 编辑中' : '👁️'} {activePreviewFile.path.split('/').pop()}</span>
+                </div>
+                <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
+                  {isEditing ? (
+                    <>
+                      <span style={{ cursor: 'pointer', color: '#4ECB71', fontSize: '11px' }} onClick={handleSaveEdit}>{isSaving ? '保存中...' : '💾 保存'}</span>
+                      <span style={{ cursor: 'pointer', color: '#555', fontSize: '11px' }} onClick={handleCancelEdit}>✕ 取消</span>
+                    </>
+                  ) : (
+                    <>
+                      <span style={{ cursor: 'pointer', color: '#888', fontSize: '11px' }} onClick={handleOpenTerminal} title="在终端中打开">💻</span>
+                      <span style={{ cursor: 'pointer', color: '#569CD6', fontSize: '11px' }} onClick={handleStartEdit}>✏️ 编辑</span>
+                      <span style={{ cursor: 'pointer', color: '#888', fontSize: '11px' }} onClick={handleCopyContent}>📝 复制内容</span>
+                      <span style={{ cursor: 'pointer', color: '#888', fontSize: '11px' }} onClick={handleRevealInExplorer}>📂 所在位置</span>
+                      <span style={{ cursor: 'pointer', color: '#555', fontSize: '11px' }} onClick={() => { navigator.clipboard.writeText(activePreviewFile.path); showToast('路径已复制', 'success') }}>📋</span>
+                    </>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div style={{ borderBottom: '1px solid #262626', padding: '8px', color: '#555', fontSize: '10px', textAlign: 'center' }}>所有标签页已关闭</div>
+            )}
+            {activePreviewFile && (
+              <div style={{ flex: 1, overflowY: 'auto', padding: '8px', borderBottom: '1px solid #262626', maxHeight: '50%' }}>
+                {previewLoading && <div style={{ color: '#888', fontSize: '11px', textAlign: 'center' }}>加载中...</div>}
+                {previewError && <div style={{ color: '#FF6B6B', fontSize: '11px' }}>{previewError}</div>}
+                <div>
+                  <div style={{ fontSize: '10px', color: '#666', marginBottom: '6px', display: 'flex', justifyContent: 'space-between' }}>
+                    <span>{activePreviewFile.path}</span>
+                    <span>{activePreviewFile.size != null ? `${(activePreviewFile.size / 1024).toFixed(1)} KB` : ''} {activePreviewFile.content ? `${activePreviewFile.content.split('\n').length} 行` : ''}</span>
+                  </div>
+                  {isEditing ? (
+                    <textarea
+                      value={editContent}
+                      onChange={(e) => setEditContent(e.target.value)}
+                      style={{
+                        width: '100%', minHeight: '200px', background: '#0A0A0A', border: '1px solid #569CD6',
+                        borderRadius: '4px', padding: '8px', color: '#D4D4D4', fontSize: '11px',
+                        fontFamily: 'Consolas, Monaco, monospace', lineHeight: '1.5', resize: 'vertical',
+                        outline: 'none', whiteSpace: 'pre', overflowWrap: 'normal', overflowX: 'auto'
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
+                          e.preventDefault()
+                          handleSaveEdit()
+                        }
+                      }}
+                    />
+                  ) : (
+                    (() => {
+                      const ext = activePreviewFile.path.split('.').pop()?.toLowerCase() || ''
+                      const langMap: Record<string, string> = { ts: 'typescript', tsx: 'typescript', js: 'javascript', jsx: 'javascript', py: 'python', rb: 'ruby', sh: 'bash', yml: 'yaml', md: 'markdown', rs: 'rust', cpp: 'cpp', c: 'c', go: 'go', java: 'java', php: 'php', xml: 'html', json: 'json', css: 'css', scss: 'css', html: 'html', sql: 'sql', bash: 'bash', yaml: 'yaml', markdown: 'markdown', typescript: 'typescript', javascript: 'javascript', python: 'python', rust: 'rust', ruby: 'ruby' }
+                      const codeExts = ['ts','tsx','js','jsx','py','css','html','json','md','bash','sh','yaml','yml','sql','rust','go','java','c','cpp','php','ruby','rs','toml','ini','env','conf','xml','svg','tex','r','swift','kt','kts','scala','hs','lua','vim','dockerfile','makefile','gitignore']
+                      const detectedLang = langMap[ext] || (codeExts.includes(ext) ? ext : '')
+                      const highlighted = detectedLang ? highlightCode(activePreviewFile.content || '', detectedLang) : null
+                      if (highlighted !== null) {
+                        const codeLines = activePreviewFile.content.split('\n')
+                        const lineNums = codeLines.map((_, i) => i + 1).join('\n')
+                        return (
+                          <pre style={{ display: 'flex', background: '#0A0A0A', border: '1px solid #262626', borderRadius: '4px', fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', maxHeight: '300px', overflowY: 'auto', margin: 0 }}>
+                            <div style={{ color: '#444', textAlign: 'right', paddingRight: '8px', userSelect: 'none', minWidth: '36px', borderRight: '1px solid #1A1A1A', flexShrink: 0 }}>
+                              {lineNums.split('\n').map((n, i) => (<div key={i} style={{ height: '1.5em' }}>{n}</div>))}
+                            </div>
+                            <div style={{ flex: 1, overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all', padding: '0 8px', color: '#D4D4D4' }} dangerouslySetInnerHTML={{ __html: highlighted }} />
+                          </pre>
+                        )
                       }
-                    }}
-                  />
-                ) : (
-                  (() => {
-                    const ext = previewFile.path.split('.').pop()?.toLowerCase() || ''
-                    const langMap: Record<string, string> = { ts: 'typescript', tsx: 'typescript', js: 'javascript', jsx: 'javascript', py: 'python', rb: 'ruby', sh: 'bash', yml: 'yaml', md: 'markdown', rs: 'rust', cpp: 'cpp', c: 'c', go: 'go', java: 'java', php: 'php', xml: 'html', json: 'json', css: 'css', scss: 'css', html: 'html', sql: 'sql', bash: 'bash', yaml: 'yaml', markdown: 'markdown', typescript: 'typescript', javascript: 'javascript', python: 'python', rust: 'rust', ruby: 'ruby' }
-                    const codeExts = ['ts','tsx','js','jsx','py','css','html','json','md','bash','sh','yaml','yml','sql','rust','go','java','c','cpp','php','ruby','rs','toml','ini','env','conf','xml','svg','tex','r','swift','kt','kts','scala','hs','lua','vim','dockerfile','makefile','gitignore']
-                    const detectedLang = langMap[ext] || (codeExts.includes(ext) ? ext : '')
-                    const highlighted = detectedLang ? highlightCode(previewFile.content || '', detectedLang) : null
-                    if (highlighted !== null) {
-                      const codeLines = previewFile.content.split('\n')
-                      const lineNums = codeLines.map((_, i) => i + 1).join('\n')
                       return (
-                        <pre style={{ display: 'flex', background: '#0A0A0A', border: '1px solid #262626', borderRadius: '4px', fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', maxHeight: '300px', overflowY: 'auto', margin: 0 }}>
-                          <div style={{ color: '#444', textAlign: 'right', paddingRight: '8px', userSelect: 'none', minWidth: '36px', borderRight: '1px solid #1A1A1A', flexShrink: 0 }}>
-                            {lineNums.split('\n').map((n, i) => (<div key={i} style={{ height: '1.5em' }}>{n}</div>))}
-                          </div>
-                          <div style={{ flex: 1, overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all', padding: '0 8px', color: '#D4D4D4' }} dangerouslySetInnerHTML={{ __html: highlighted }} />
+                        <pre style={{
+                          background: '#0A0A0A', border: '1px solid #262626', borderRadius: '4px', padding: '8px',
+                          fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all',
+                          color: '#D4D4D4', margin: 0, maxHeight: '300px', overflowY: 'auto'
+                        }}>
+                          {activePreviewFile.content || '(空文件)'}
                         </pre>
                       )
-                    }
-                    return (
-                      <pre style={{
-                        background: '#0A0A0A', border: '1px solid #262626', borderRadius: '4px', padding: '8px',
-                        fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all',
-                        color: '#D4D4D4', margin: 0, maxHeight: '300px', overflowY: 'auto'
-                      }}>
-                        {previewFile.content || '(空文件)'}
-                      </pre>
-                    )
-                  })()
-                )}
+                    })()
+                  )}
+                </div>
               </div>
             )}
-          </div>
+          </>
         )}
 
         <div style={{ ...styles.panelHeader, borderTop: '1px solid #262626' }}>🔄 Git 变更</div>
