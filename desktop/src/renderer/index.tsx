@@ -709,9 +709,7 @@ function HighlightedDiff({ diffText }: { diffText: string }) {
     const nums: number[] = []
     let line = 0
     for (const l of lines) {
-      if (l.startsWith('+') && !l.startsWith('+++')) line++
-      else if (l.startsWith('-') && !l.startsWith('---')) {}
-      else line++
+      line++
       nums.push(line)
     }
     setLineNumbers(nums)
@@ -1908,9 +1906,11 @@ function App(): JSX.Element {
 
         {/* 文件预览面板 */}
         {previewFile && (
-          <div style={{ ...styles.panelHeader, borderTop: '1px solid #262626', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span>{isEditing ? '✏️ 编辑中' : '👁️'} {previewFile.path.split('/').pop()}</span>
-            <div style={{ display: 'flex', gap: '6px' }}>
+          <div style={{ borderTop: '1px solid #262626', borderBottom: '1px solid #262626', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', overflow: 'hidden' }}>
+              <span style={{ fontSize: '11px', color: '#888', whiteSpace: 'nowrap' }}>{isEditing ? '✏️ 编辑中' : '👁️'} {previewFile.path.split('/').pop()}</span>
+            </div>
+            <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
               {isEditing ? (
                 <>
                   <span style={{ cursor: 'pointer', color: '#4ECB71', fontSize: '11px' }} onClick={handleSaveEdit}>{isSaving ? '保存中...' : '💾 保存'}</span>
@@ -1919,7 +1919,8 @@ function App(): JSX.Element {
               ) : (
                 <>
                   <span style={{ cursor: 'pointer', color: '#569CD6', fontSize: '11px' }} onClick={handleStartEdit}>✏️ 编辑</span>
-                  <span style={{ cursor: 'pointer', color: '#555', fontSize: '11px' }} onClick={() => setPreviewFile(null)}>✕ 关闭</span>
+                  <span style={{ cursor: 'pointer', color: '#555', fontSize: '11px' }} onClick={() => { navigator.clipboard.writeText(previewFile.path); showToast('路径已复制', 'success') }}>📋</span>
+                  <span style={{ cursor: 'pointer', color: '#555', fontSize: '11px' }} onClick={() => setPreviewFile(null)}>✕</span>
                 </>
               )}
             </div>
@@ -1931,8 +1932,9 @@ function App(): JSX.Element {
             {previewError && <div style={{ color: '#FF6B6B', fontSize: '11px' }}>{previewError}</div>}
             {previewFile && (
               <div>
-                <div style={{ fontSize: '10px', color: '#666', marginBottom: '6px' }}>
-                  {previewFile.path} {previewFile.size != null ? `(${(previewFile.size / 1024).toFixed(1)} KB)` : ''}
+                <div style={{ fontSize: '10px', color: '#666', marginBottom: '6px', display: 'flex', justifyContent: 'space-between' }}>
+                  <span>{previewFile.path}</span>
+                  <span>{previewFile.size != null ? `${(previewFile.size / 1024).toFixed(1)} KB` : ''} {previewFile.content ? `${previewFile.content.split('\n').length} 行` : ''}</span>
                 </div>
                 {isEditing ? (
                   <textarea
@@ -1958,13 +1960,19 @@ function App(): JSX.Element {
                     const codeExts = ['ts','tsx','js','jsx','py','css','html','json','md','bash','sh','yaml','yml','sql','rust','go','java','c','cpp','php','ruby','rs','toml','ini','env','conf','xml','svg','tex','r','swift','kt','kts','scala','hs','lua','vim','dockerfile','makefile','gitignore']
                     const detectedLang = langMap[ext] || (codeExts.includes(ext) ? ext : '')
                     const highlighted = detectedLang ? highlightCode(previewFile.content || '', detectedLang) : null
-                    return highlighted !== null ? (
-                      <pre style={{
-                        background: '#0A0A0A', border: '1px solid #262626', borderRadius: '4px', padding: '8px',
-                        fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all',
-                        color: '#D4D4D4', margin: 0, maxHeight: '300px', overflowY: 'auto'
-                      }} dangerouslySetInnerHTML={{ __html: highlighted }} />
-                    ) : (
+                    if (highlighted !== null) {
+                      const codeLines = previewFile.content.split('\n')
+                      const lineNums = codeLines.map((_, i) => i + 1).join('\n')
+                      return (
+                        <pre style={{ display: 'flex', background: '#0A0A0A', border: '1px solid #262626', borderRadius: '4px', fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', maxHeight: '300px', overflowY: 'auto', margin: 0 }}>
+                          <div style={{ color: '#444', textAlign: 'right', paddingRight: '8px', userSelect: 'none', minWidth: '36px', borderRight: '1px solid #1A1A1A', flexShrink: 0 }}>
+                            {lineNums.split('\n').map((n, i) => (<div key={i} style={{ height: '1.5em' }}>{n}</div>))}
+                          </div>
+                          <div style={{ flex: 1, overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all', padding: '0 8px', color: '#D4D4D4' }} dangerouslySetInnerHTML={{ __html: highlighted }} />
+                        </pre>
+                      )
+                    }
+                    return (
                       <pre style={{
                         background: '#0A0A0A', border: '1px solid #262626', borderRadius: '4px', padding: '8px',
                         fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all',
