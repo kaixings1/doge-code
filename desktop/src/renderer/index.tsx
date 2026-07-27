@@ -1878,17 +1878,22 @@ function App(): JSX.Element {
         ].filter(c => c.text.startsWith(lastWord))
         candidates = candidates.map(c => ({ text: c.text, display: c.text }))
       } else {
-        // 文件路径补全
-        const parts = value.split(/[\s/]+/)
-        const partialFile = parts.pop() || ''
+        // 文件路径补全（支持子目录路径，如 src/re）
+        const parts = value.split(/\s+/)
+        const lastPart = parts.pop() || ''
+        const slashIdx = lastPart.lastIndexOf('/')
+        const partialFile = slashIdx >= 0 ? lastPart.slice(slashIdx + 1) : lastPart
+        const dirPath = slashIdx >= 0 ? lastPart.slice(0, slashIdx) : ''
+        const baseDir = dirPath ? `${config.workingDir}/${dirPath}` : (config.workingDir || '')
+
         if (partialFile && !partialFile.includes('*')) {
-          window.dogeAPI.listDir(config.workingDir || '').then((items: Array<{ name: string; isDirectory: boolean }>) => {
+          window.dogeAPI.listDir(baseDir).then((items: Array<{ name: string; isDirectory: boolean }>) => {
             const matches = items
               .filter((item: { name: string; isDirectory: boolean }) => item.name.toLowerCase().includes(partialFile.toLowerCase()))
               .slice(0, 10)
               .map((item: { name: string; isDirectory: boolean }) => ({
-                text: item.name,
-                display: item.isDirectory ? `${item.name}/` : item.name
+                text: dirPath ? `${dirPath}/${item.name}${item.isDirectory ? '/' : ''}` : `${item.name}${item.isDirectory ? '/' : ''}`,
+                display: dirPath ? `${dirPath}/${item.name}${item.isDirectory ? '/' : ''}` : `${item.name}${item.isDirectory ? '/' : ''}`
               }))
             setCompletions(matches)
             completionIndexRef.current = 0
@@ -2251,7 +2256,7 @@ function App(): JSX.Element {
             <textarea
               ref={inputRef}
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => { setInput(e.target.value); setCompletions([]); completionIndexRef.current = 0 }}
               onKeyDown={handleKeyDown}
               onDrop={(e) => {
                 const path = e.dataTransfer.getData('text/plain')
@@ -2274,6 +2279,18 @@ function App(): JSX.Element {
               rows={1}
             />
           </form>
+          {/* 自动补全提示 */}
+          {completions.length > 0 && (
+            <div style={{ position: 'absolute', bottom: '100%', left: 0, right: 0, background: '#1A1A1A', border: '1px solid #333', borderRadius: '4px', maxHeight: '160px', overflowY: 'auto', marginBottom: '4px', zIndex: 100 }}>
+              {completions.map((c, i) => (
+                <div key={i} style={{ padding: '4px 10px', cursor: 'pointer', background: i === completionIndex ? '#333' : 'transparent', color: '#F5F5F5', fontSize: '11px' }}
+                  onMouseDown={(e) => { e.preventDefault(); const words = input.split(/\s+/); words[words.length - 1] = c.text; setInput(words.join(' ') + ' '); setCompletions([]); completionIndexRef.current = 0 }}
+                >
+                  {c.display}
+                </div>
+              ))}
+            </div>
+          )}
           {!config.apiKey && (
             <div style={{ color: '#FF6B6B', fontSize: '11px', marginTop: '6px' }}>
               未配置 API Key。请在 .doge/api.json 中配置。
