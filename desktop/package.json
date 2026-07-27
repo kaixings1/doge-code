@@ -2,6 +2,8 @@
   "name": "doge-desktop",
   "version": "1.0.0",
   "private": true,
+  "description": "Doge Code Desktop - AI-powered coding assistant built with Electron",
+  "author": "kaixings <30445355@qq.com>",
   "type": "module",
   "main": "src/main/index.ts",
   "scripts": {
@@ -25,7 +27,7 @@
   },
   "build": {
     "appId": "com.doge-code.cli",
-    "productName": "Doge Code",
+    "productName": "DogeCode",
     "directories": {
       "output": "release"
     },
