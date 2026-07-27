@@ -262,6 +262,12 @@ function FileTree({ cwd, onPreviewFile }: { cwd: string; onPreviewFile?: (path: 
     setContextMenu({ x: e.clientX, y: e.clientY, node })
   }
 
+  const navigateTo = (dirPath: string) => {
+    setTree([])
+    setLoading(true)
+    loadTree(dirPath)
+  }
+
   // 内容搜索（防抖）
   React.useEffect(() => {
     if (searchMode !== 'content' || !filter || filter.length < 2) {
@@ -423,24 +429,27 @@ function FileTree({ cwd, onPreviewFile }: { cwd: string; onPreviewFile?: (path: 
 
   const [loadingPaths, setLoadingPaths] = React.useState<Set<string>>(new Set())
 
+  const loadTree = React.useCallback(async (dirPath: string) => {
+    try {
+      const items = await window.dogeAPI.listDir(dirPath)
+      const nodes: FileTreeNode[] = items
+        .filter((item: { name: string; isDirectory: boolean }) => !item.name.startsWith('.') && !item.name.startsWith('node_modules') && !item.name.startsWith('dist'))
+        .sort((a: { isDirectory: boolean }, b: { isDirectory: boolean }) => (a.isDirectory === b.isDirectory ? 0 : a.isDirectory ? -1 : 1))
+        .map((item: { name: string; isDirectory: boolean }) => ({
+          name: item.name,
+          path: item.isDirectory ? `${dirPath}/${item.name}` : `${dirPath}/${item.name}`,
+          isDirectory: item.isDirectory,
+          expanded: false,
+        }))
+      setTree(nodes)
+    } catch { /* ignore */ } finally { setLoading(false) }
+  }, [])
+
   React.useEffect(() => {
-    async function load() {
-      try {
-        const items = await window.dogeAPI.listDir(cwd)
-        const nodes: FileTreeNode[] = items
-          .filter((item: { name: string; isDirectory: boolean }) => !item.name.startsWith('.') && !item.name.startsWith('node_modules') && !item.name.startsWith('dist'))
-          .sort((a: { isDirectory: boolean }, b: { isDirectory: boolean }) => (a.isDirectory === b.isDirectory ? 0 : a.isDirectory ? -1 : 1))
-          .map((item: { name: string; isDirectory: boolean }) => ({
-            name: item.name,
-            path: item.isDirectory ? `${cwd}/${item.name}` : `${cwd}/${item.name}`,
-            isDirectory: item.isDirectory,
-            expanded: false,
-          }))
-        setTree(nodes)
-      } catch { /* ignore */ } finally { setLoading(false) }
-    }
-    load()
-  }, [cwd])
+    setTree([])
+    setLoading(true)
+    loadTree(cwd)
+  }, [cwd, loadTree])
 
   const toggleDir = async (node: FileTreeNode) => {
     if (!node.isDirectory) return
@@ -505,15 +514,33 @@ function FileTree({ cwd, onPreviewFile }: { cwd: string; onPreviewFile?: (path: 
   }
 
   if (loading) return <div style={{ padding: '8px', color: '#555', fontSize: '11px' }}>加载中...</div>
-  if (tree.length === 0) return <div style={{ padding: '8px', color: '#555', fontSize: '11px' }}>空目录</div>
+  if (tree.length === 0 && searchMode !== 'content') return <div style={{ padding: '8px', color: '#555', fontSize: '11px' }}>空目录</div>
 
   return (
     <>
+      {/* 面包屑导航 */}
+      <div style={{ padding: '4px 8px', borderBottom: '1px solid #1A1A1A', display: 'flex', gap: '2px', alignItems: 'center', fontSize: '10px', flexWrap: 'wrap' }}>
+        {(() => {
+          const parts = cwd.split('/').filter(Boolean)
+          const crumbs: Array<{ label: string; path: string }> = [{ label: '🏠', path: '' }]
+          let acc = ''
+          for (const p of parts) { acc += '/' + p; crumbs.push({ label: p, path: acc }) }
+          return crumbs.map((c, i) => (
+            <React.Fragment key={i}>
+              {i > 0 && <span style={{ color: '#444' }}>›</span>}
+              <span
+                style={{ color: i === crumbs.length - 1 ? '#F5F5F5' : '#888', cursor: i === crumbs.length - 1 ? 'default' : 'pointer', whiteSpace: 'nowrap' }}
+                onClick={() => { if (i < crumbs.length - 1) navigateTo(c.path) }}
+              >{c.label}</span>
+            </React.Fragment>
+          ))
+        })()}
+      </div>
       {/* 搜索框 + 模式切换 */}
       <div style={{ padding: '4px 8px', borderBottom: '1px solid #1A1A1A' }}>
         <div style={{ display: 'flex', gap: '2px', marginBottom: '3px' }}>
           <button
-            onClick={() => setSearchMode('name')}
+            onClick={() => { setSearchMode('name'); setFilter('') }}
             style={{
               flex: 1, padding: '2px', border: 'none', borderRadius: '2px', cursor: 'pointer', fontSize: '9px',
               background: searchMode === 'name' ? '#333' : 'transparent', color: searchMode === 'name' ? '#F5F5F5' : '#888'
@@ -1836,11 +1863,15 @@ function App(): JSX.Element {
         <div style={styles.statusBar}>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <span style={{ color: isProcessing ? '#4ECB71' : '#666' }}>{isProcessing ? '● 回复中' : '○ 就绪'}</span>
+            {modelInfo && (
+              <span style={{ color: '#555' }}>{modelInfo.provider}/{modelInfo.model}</span>
+            )}
             {tokenUsage && tokenUsage.totalTokens > 0 && (
               <span style={{ color: '#555' }}>Token: {tokenUsage.totalTokens.toLocaleString()}</span>
             )}
           </div>
           <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+            <span style={{ color: '#444', fontSize: '10px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '180px' }} title={workingDir}>{workingDir}</span>
             {displayMessages.length > 0 && (
               <button style={styles.clearButton} onClick={handleClear}>清除</button>
             )}
