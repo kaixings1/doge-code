@@ -1048,6 +1048,40 @@ function App(): JSX.Element {
     saveMessagesToTab(msgs)
   }, [saveMessagesToTab])
 
+  // 根据第一条用户消息自动更新 Tab 标题
+  React.useEffect(() => {
+    if (!activeTabId) return
+    setTabs(prev => prev.map(t => {
+      if (t.id !== activeTabId || t.title !== `对话 ${tabIdCounter.current}`) return t
+      const firstUserMsg = t.messages.find(m => m.role === 'user')
+      if (firstUserMsg) {
+        const title = firstUserMsg.content.slice(0, 30) + (firstUserMsg.content.length > 30 ? '...' : '')
+        return { ...t, title }
+      }
+      return t
+    }))
+  }, [tabs, activeTabId])
+
+  // Tab 数据持久化（localStorage）
+  React.useEffect(() => {
+    try {
+      const saved = localStorage.getItem('doge-tabs')
+      if (saved && tabs.length === 0) {
+        const parsed = JSON.parse(saved) as AppTab[]
+        if (parsed.length > 0) {
+          setTabs(parsed)
+          setActiveTabId(parsed[0].id)
+          setMessages(parsed[0].messages)
+          tabIdCounter.current = parsed.length
+        }
+      }
+    } catch { /* ignore */ }
+  }, [])
+
+  React.useEffect(() => {
+    try { localStorage.setItem('doge-tabs', JSON.stringify(tabs)) } catch { /* ignore */ }
+  }, [tabs])
+
   const showToast = React.useCallback((text: string, type: 'info' | 'success' | 'error' = 'info') => {
     if (toastTimerRef.current) clearTimeout(toastTimerRef.current)
     setToast({ text, type })
