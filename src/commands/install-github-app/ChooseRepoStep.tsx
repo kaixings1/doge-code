@@ -190,7 +190,7 @@ export function ChooseRepoStep(t0) {
   const t19 = currentRepo ? "\u2191/\u2193 to select \xB7 " : "";
   let t20;
   if ($[43] !== t19) {
-    t20 = <Box marginLeft={3}><Text dimColor={true}>{t19}Enter to continue</Text></Box>;
+    t20 = <Box marginLeft={3}><Text dimColor={true}>{t19}按 Enter 继续</Text></Box>;
     $[43] = t19;
     $[44] = t20;
   } else {

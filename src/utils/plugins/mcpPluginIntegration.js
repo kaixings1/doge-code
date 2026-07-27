@@ -87,9 +87,9 @@ async function loadMcpServersFromMcpb(plugin, mcpbPath, errors) {
  * including manifest entries, .mcp.json files, and .mcpb files
  */
 export async function loadPluginMcpServers(plugin, errors = []) {
-    require('fs').writeFileSync('d:/mcp_trace.log', `loadPluginMcpServers ENTER ${plugin.name} at ${Date.now()}\n`, { flag: 'a' });
     let servers = {};
     // Check for .mcp.json in plugin directory first (lowest priority)
+    require('fs').writeFileSync('d:/mcp_trace.log', `loadPluginMcpServers ENTER ${plugin.name} at ${Date.now()}\n`, { flag: 'a' });
     const defaultMcpServers = await loadMcpServersFromFile(plugin.path, '.mcp.json');
     if (defaultMcpServers) {
         servers = { ...servers, ...defaultMcpServers };
@@ -149,7 +149,6 @@ export async function loadPluginMcpServers(plugin, errors = []) {
             servers = { ...servers, ...mcpServersSpec };
         }
     }
-    require('fs').writeFileSync('d:/mcp_trace.log', `loadPluginMcpServers END ${plugin.name} at ${Date.now()}\n`, { flag: 'a' });
     return Object.keys(servers).length > 0 ? servers : undefined;
 }
 /**
@@ -467,3 +466,4 @@ export async function getPluginMcpServers(plugin, errors = []) {
     // Add plugin scope
     return addPluginScopeToServers(resolvedServers, plugin.name, plugin.source);
 }
+//# sourceMappingURL=mcpPluginIntegration.js.map

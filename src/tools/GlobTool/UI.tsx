@@ -26,9 +26,9 @@ export function renderToolUseMessage({
     return null;
   }
   if (!path) {
-    return `pattern: "${pattern}"`;
+    return `匹配模式: "${pattern}"`;
   }
-  return `pattern: "${pattern}", path: "${verbose ? path : getDisplayPath(path)}"`;
+  return `匹配模式: "${pattern}", 路径: "${verbose ? path : getDisplayPath(path)}"`;
 }
 export function renderToolUseErrorMessage(result: ToolResultBlockParam['content'], {
   verbose

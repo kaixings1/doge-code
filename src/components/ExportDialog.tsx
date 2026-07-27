@@ -100,7 +100,7 @@ export function ExportDialog({
   function renderInputGuide(exitState: ExitState): React.ReactNode {
     if (showFilenameInput) {
       return <Byline>
-          <KeyboardShortcutHint shortcut="Enter" action="save" />
+          <KeyboardShortcutHint shortcut="Enter" action="保存" />
           <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />
         </Byline>;
     }

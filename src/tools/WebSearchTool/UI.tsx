@@ -44,10 +44,10 @@ export function renderToolUseMessage({
   }
   if (verbose) {
     if (allowed_domains && allowed_domains.length > 0) {
-      message += `, only allowing domains: ${allowed_domains.join(', ')}`;
+      message += `, 仅允许域名: ${allowed_domains.join(', ')}`;
     }
     if (blocked_domains && blocked_domains.length > 0) {
-      message += `, blocking domains: ${blocked_domains.join(', ')}`;
+      message += `, 屏蔽域名: ${blocked_domains.join(', ')}`;
     }
   }
   return message;
@@ -68,8 +68,10 @@ export function renderToolUseProgressMessage(progressMessages: ProgressMessage<W
         </MessageResponse>;
     case 'search_results_received':
       return <MessageResponse>
-          <Text dimColor>
-            找到 {data.resultCount} 个结果（搜索词：{data.query}）
+          <Text dimColor={data.resultCount === 0}>
+            {data.resultCount === 0
+              ? <Text color="error">找到 {data.resultCount} 个结果（搜索词：{data.query}）</Text>
+              : <><Text color="success">找到</Text> <Text bold>{data.resultCount}</Text> <Text color="success">个结果</Text>（搜索词：{data.query}）</>}
           </Text>
         </MessageResponse>;
     default:

@@ -46,7 +46,7 @@ export function WorkerPendingPermission(t0) {
   let t4;
   let t5;
   if ($[3] === Symbol.for("react.memo_cache_sentinel")) {
-    t4 = <Box marginBottom={1}><Spinner /><Text color="warning" bold={true}>{" "}Waiting for team lead approval</Text></Box>;
+    t4 = <Box marginBottom={1}><Spinner /><Text color="warning" bold={true}>{" "}等待团队负责人审批</Text></Box>;
     t5 = agentName && agentColor && <Box marginBottom={1}><WorkerBadge name={agentName} color={agentColor} /></Box>;
     $[3] = t4;
     $[4] = t5;
@@ -56,7 +56,7 @@ export function WorkerPendingPermission(t0) {
   }
   let t6;
   if ($[5] === Symbol.for("react.memo_cache_sentinel")) {
-    t6 = <Text dimColor={true}>Tool: </Text>;
+    t6 = <Text dimColor={true}>工具：</Text>;
     $[5] = t6;
   } else {
     t6 = $[5];
@@ -71,7 +71,7 @@ export function WorkerPendingPermission(t0) {
   }
   let t8;
   if ($[8] === Symbol.for("react.memo_cache_sentinel")) {
-    t8 = <Text dimColor={true}>Action: </Text>;
+    t8 = <Text dimColor={true}>操作：</Text>;
     $[8] = t8;
   } else {
     t8 = $[8];
@@ -86,7 +86,7 @@ export function WorkerPendingPermission(t0) {
   }
   let t10;
   if ($[11] === Symbol.for("react.memo_cache_sentinel")) {
-    t10 = teamName && <Box marginTop={1}><Text dimColor={true}>Permission request sent to team {"\""}{teamName}{"\""} leader</Text></Box>;
+    t10 = teamName && <Box marginTop={1}><Text dimColor={true}>权限请求已发送给团队 "{teamName}" 的负责人</Text></Box>;
     $[11] = t10;
   } else {
     t10 = $[11];

@@ -354,8 +354,8 @@ export function MCPRemoteServerMenu({
               <Text dimColor>
                 如果浏览器未自动打开，请手动复制此 URL{' '}
               </Text>
-              {urlCopied ? <Text color="success">(Copied!)</Text> : <Text dimColor>
-                  <KeyboardShortcutHint shortcut="c" action="copy" parens />
+              {urlCopied ? <Text color="success">(已复制!)</Text> : <Text dimColor>
+                  <KeyboardShortcutHint shortcut="c" action="复制" parens />
                 </Text>}
             </Box>
             <Link url={authorizationUrl} />
@@ -391,8 +391,8 @@ export function MCPRemoteServerMenu({
               <Text dimColor>
                 如果浏览器未自动打开，请手动复制此 URL{' '}
               </Text>
-              {urlCopied ? <Text color="success">(Copied!)</Text> : <Text dimColor>
-                  <KeyboardShortcutHint shortcut="c" action="copy" parens />
+              {urlCopied ? <Text color="success">(已复制!)</Text> : <Text dimColor>
+                  <KeyboardShortcutHint shortcut="c" action="复制" parens />
                 </Text>}
             </Box>
             <Link url={claudeAIAuthUrl} />
@@ -634,8 +634,8 @@ export function MCPRemoteServerMenu({
       <Box marginTop={1}>
         <Text dimColor italic>
           {exitState.pending ? <>再次按 {exitState.keyName} 退出</> : <Byline>
-              <KeyboardShortcutHint shortcut="↑↓" action="navigate" />
-              <KeyboardShortcutHint shortcut="Enter" action="select" />
+              <KeyboardShortcutHint shortcut="↑↓" action="导航" />
+              <KeyboardShortcutHint shortcut="Enter" action="选择" />
               <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />
             </Byline>}
         </Text>

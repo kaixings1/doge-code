@@ -308,17 +308,17 @@ export function PreviewQuestionView({
             {isInPlanMode && <Box flexDirection="row" gap={1}>
                 {isFooterFocused && footerIndex === 1 ? <Text color="suggestion">{figures.pointer}</Text> : <Text> </Text>}
                 <Text color={isFooterFocused && footerIndex === 1 ? 'suggestion' : undefined}>
-                  Skip interview and plan immediately
+                  跳过访谈，立即规划
                 </Text>
               </Box>}
           </Box>
           <Box marginTop={1}>
             <Text color="inactive" dimColor>
-              Enter 选择 · {figures.arrowUp}/{figures.arrowDown} 导航
+              按 Enter 选择 · {figures.arrowUp}/{figures.arrowDown} 导航
               n 添加备注
               {questions.length > 1 && <> · Tab 切换问题</>}
               {isInNotesInput && editorName && <> · ctrl+g 在 {editorName} 中编辑</>}{' '}
-              · Esc 取消
+              · 按 Esc 取消
             </Text>
           </Box>
         </Box>

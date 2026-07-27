@@ -135,7 +135,7 @@ export function AddPermissionRules(t0) {
   } else {
     t5 = $[13];
   }
-  const t6 = ruleValues.length === 1 ? "Where should this rule be saved?" : "Where should these rules be saved?";
+  const t6 = ruleValues.length === 1 ? "此规则应保存在哪里？" : "这些规则应保存在哪里？";
   let t7;
   if ($[14] !== t6) {
     t7 = <Text>{t6}</Text>;

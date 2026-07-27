@@ -169,7 +169,7 @@ export function Onboarding({
             }
           }} onCancel={() => goToNextStep()} />
             <Text dimColor>
-              {exitState.pending ? <>再按一次 {exitState.keyName} 键退出</> : <>Enter 确认 · Esc 跳过</>}
+              {exitState.pending ? <>再按一次 {exitState.keyName} 键退出</> : <>按 Enter 确认 · 按 Esc 跳过</>}
             </Text>
           </Box>
         </Box>

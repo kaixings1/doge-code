@@ -88,7 +88,7 @@ export function WebFetchPermissionRequest(t0) {
       let t6;
       if ($[7] !== t5) {
         t6 = {
-          label: <Text>Yes, and don't ask again for {t5}</Text>,
+          label: <Text>同意，并且不再询问 {t5}</Text>,
           value: "yes-dont-ask-again-domain"
         };
         $[7] = t5;
@@ -101,7 +101,7 @@ export function WebFetchPermissionRequest(t0) {
     let t5;
     if ($[9] === Symbol.for("react.memo_cache_sentinel")) {
       t5 = {
-        label: <Text>No, and tell Claude what to do differently <Text bold={true}>(esc)</Text></Text>,
+        label: <Text>拒绝，并告诉 Claude 如何改进 <Text bold={true}>(esc)</Text></Text>,
         value: "no"
       };
       $[9] = t5;

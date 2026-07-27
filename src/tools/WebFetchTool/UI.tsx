@@ -22,7 +22,7 @@ export function renderToolUseMessage({
     return null;
   }
   if (verbose) {
-    return `url: "${url}"${verbose && prompt ? `, prompt: "${prompt}"` : ''}`;
+    return `链接: "${url}"${verbose && prompt ? `, 提示词: "${prompt}"` : ''}`;
   }
   return url;
 }

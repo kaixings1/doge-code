@@ -75,3 +75,4 @@ export class AutoCompactor {
         // 由外部持有 conversation 引用时替换真实消息
     }
 }
+//# sourceMappingURL=autoCompactor.js.map

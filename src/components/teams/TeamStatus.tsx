@@ -32,7 +32,7 @@ export function TeamStatus(t0) {
   }
   let t2;
   if ($[2] !== showHint || $[3] !== teamsSelected) {
-    t2 = showHint && teamsSelected ? <><Text dimColor={true}>· </Text><Text dimColor={true}>Enter 查看</Text></> : null;
+    t2 = showHint && teamsSelected ? <><Text dimColor={true}>· </Text><Text dimColor={true}>按 Enter 查看</Text></> : null;
     $[2] = showHint;
     $[3] = teamsSelected;
     $[4] = t2;

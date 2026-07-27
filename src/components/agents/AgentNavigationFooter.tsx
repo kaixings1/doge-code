@@ -10,7 +10,7 @@ export function AgentNavigationFooter(t0) {
   const {
     instructions: t1
   } = t0;
-  const instructions = t1 === undefined ? "按 ↑↓ 导航 · Enter 选择 · Esc 返回" : t1;
+  const instructions = t1 === undefined ? "按 ↑↓ 导航 · 按 Enter 选择 · 按 Esc 返回" : t1;
   const exitState = useExitOnCtrlCDWithKeybindings();
   const t2 = exitState.pending ? `再按一次 ${exitState.keyName} 退出` : instructions;
   let t3;

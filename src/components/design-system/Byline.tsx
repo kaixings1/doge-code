@@ -16,20 +16,20 @@ type Props = {
  * separators between valid elements.
  *
  * @example
- * // Basic usage: "Enter to confirm · Esc to cancel"
+ * // Basic usage: "Enter 确认 · Esc 取消"
  * <Text dimColor>
  *   <Byline>
- *     <KeyboardShortcutHint shortcut="Enter" action="confirm" />
- *     <KeyboardShortcutHint shortcut="Esc" action="cancel" />
+ *     <KeyboardShortcutHint shortcut="Enter" action="确认" />
+ *     <KeyboardShortcutHint shortcut="Esc" action="取消" />
  *   </Byline>
  * </Text>
  *
  * @example
- * // With conditional children: "Esc to cancel" (only one item shown)
+ * // With conditional children: "Esc 取消" (only one item shown)
  * <Text dimColor>
  *   <Byline>
- *     {showEnter && <KeyboardShortcutHint shortcut="Enter" action="confirm" />}
- *     <KeyboardShortcutHint shortcut="Esc" action="cancel" />
+ *     {showEnter && <KeyboardShortcutHint shortcut="Enter" action="确认" />}
+ *     <KeyboardShortcutHint shortcut="Esc" action="取消" />
  *   </Byline>
  * </Text>
  *

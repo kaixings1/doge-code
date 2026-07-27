@@ -32,3 +32,4 @@ export const predefinedAgents = {
         maxTokens: 8000,
     },
 };
+//# sourceMappingURL=config.js.map

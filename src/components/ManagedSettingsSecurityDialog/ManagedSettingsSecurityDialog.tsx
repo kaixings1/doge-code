@@ -113,7 +113,7 @@ export function ManagedSettingsSecurityDialog(t0) {
   }
   let t17;
   if ($[14] !== exitState.keyName || $[15] !== exitState.pending) {
-    t17 = <Text dimColor={true}>{exitState.pending ? <>再按一次 {exitState.keyName} 键退出</> : <>Enter 确认 · Esc 退出</>}</Text>;
+    t17 = <Text dimColor={true}>{exitState.pending ? <>再按一次 {exitState.keyName} 键退出</> : <>按 Enter 确认 · 按 Esc 退出</>}</Text>;
     $[14] = exitState.keyName;
     $[15] = exitState.pending;
     $[16] = t17;

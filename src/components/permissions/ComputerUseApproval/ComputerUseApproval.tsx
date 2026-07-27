@@ -261,7 +261,7 @@ function ComputerUseAppListPanel(t0) {
   let t8;
   if ($[9] === Symbol.for("react.memo_cache_sentinel")) {
     t8 = {
-      label: <Text>Deny, and tell Claude what to do differently <Text bold={true}>(esc)</Text></Text>,
+      label: <Text>拒绝，并告诉 Claude 如何改进 <Text bold={true}>(esc)</Text></Text>,
       value: "deny"
     };
     $[9] = t8;

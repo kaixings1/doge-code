@@ -168,7 +168,7 @@ export function QuickOpenDialog(t0) {
   let t10;
   if ($[15] !== handleInsert) {
     t10 = {
-      action: "mention",
+      action: "提及",
       handler: p_4 => handleInsert(p_4, true)
     };
     $[15] = handleInsert;
@@ -179,7 +179,7 @@ export function QuickOpenDialog(t0) {
   let t11;
   if ($[17] !== handleInsert) {
     t11 = {
-      action: "insert path",
+      action: "插入路径",
       handler: p_5 => handleInsert(p_5, false)
     };
     $[17] = handleInsert;

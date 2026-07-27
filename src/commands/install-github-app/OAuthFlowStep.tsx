@@ -261,7 +261,7 @@ export function OAuthFlowStep({
               浏览器未自动打开？使用下面的 URL 登录{' '}
             </Text>
             {urlCopied ? <Text color="success">（已复制！）</Text> : <Text dimColor>
-                <KeyboardShortcutHint shortcut="c" action="copy" parens />
+                <KeyboardShortcutHint shortcut="c" action="复制" parens />
               </Text>}
           </Box>
           <Link url={oauthStatus.url}>

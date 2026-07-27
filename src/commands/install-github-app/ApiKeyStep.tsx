@@ -145,7 +145,7 @@ export function ApiKeyStep(t0) {
   useKeybindings(t8, t9);
   let t10;
   if ($[26] === Symbol.for("react.memo_cache_sentinel")) {
-    t10 = <Box flexDirection="column" marginBottom={1}><Text bold={true}>Install GitHub App</Text><Text dimColor={true}>Choose API key</Text></Box>;
+    t10 = <Box flexDirection="column" marginBottom={1}><Text bold={true}>安装 GitHub App</Text><Text dimColor={true}>选择 API 密钥</Text></Box>;
     $[26] = t10;
   } else {
     t10 = $[26];
@@ -213,7 +213,7 @@ export function ApiKeyStep(t0) {
   }
   let t17;
   if ($[52] === Symbol.for("react.memo_cache_sentinel")) {
-    t17 = <Box marginLeft={3}><Text dimColor={true}>↑/↓ to select · Enter to continue</Text></Box>;
+    t17 = <Box marginLeft={3}><Text dimColor={true}>↑/↓ 选择 · 按 Enter 继续</Text></Box>;
     $[52] = t17;
   } else {
     t17 = $[52];

@@ -123,7 +123,7 @@ export function BackgroundTask(t0) {
         } else {
           t1 = $[24];
         }
-        const t2 = task.status === "completed" ? "done" : undefined;
+        const t2 = task.status === "completed" ? "已完成" : undefined;
         const t3 = task.status === "completed" && !task.notified ? ", 未读" : undefined;
         let t4;
         if ($[25] !== t2 || $[26] !== t3 || $[27] !== task.status) {
@@ -230,7 +230,7 @@ export function BackgroundTask(t0) {
         }
         let t3;
         if ($[57] !== task.agentCount || $[58] !== task.status) {
-          t3 = task.status === "running" ? `${task.agentCount} ${plural(task.agentCount, "agent")}` : task.status === "completed" ? "done" : undefined;
+          t3 = task.status === "running" ? `${task.agentCount} ${plural(task.agentCount, "代理")}` : task.status === "completed" ? "已完成" : undefined;
           $[57] = task.agentCount;
           $[58] = task.status;
           $[59] = t3;
@@ -270,7 +270,7 @@ export function BackgroundTask(t0) {
         } else {
           t1 = $[69];
         }
-        const t2 = task.status === "completed" ? "done" : undefined;
+        const t2 = task.status === "completed" ? "已完成" : undefined;
         const t3 = task.status === "completed" && !task.notified ? ", 未读" : undefined;
         let t4;
         if ($[70] !== t2 || $[71] !== t3 || $[72] !== task.status) {
@@ -316,7 +316,7 @@ export function BackgroundTask(t0) {
         } else {
           t2 = $[83];
         }
-        const t3 = task.status === "completed" ? "done" : undefined;
+        const t3 = task.status === "completed" ? "已完成" : undefined;
         const t4 = task.status === "completed" && !task.notified ? ", 未读" : undefined;
         let t5;
         if ($[84] !== t3 || $[85] !== t4 || $[86] !== task.status) {

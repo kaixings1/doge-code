@@ -42,7 +42,7 @@ export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
       {status === 'done' && <Text color="green">PR 已自动修复！</Text>}
       <Box marginTop={1}>
         <Text dimColor>
-          {status === 'idle' ? '输入 PR 编号后按 Enter | Esc 退出' : '按 Esc 退出'}
+          {status === 'idle' ? '输入 PR 编号后按 Enter | 按 Esc 退出' : '按 Esc 退出'}
         </Text>
       </Box>
     </Box>

@@ -41,7 +41,7 @@ function PermissionDescription() {
   const $ = _c(1);
   let t0;
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-    t0 = <Text dimColor={true}>Claude Code will be able to read files in this directory and make edits when auto-accept edits is on.</Text>;
+    t0 = <Text dimColor={true}>Claude Code 将能够读取此目录中的文件，并在开启自动接受编辑时进行修改。</Text>;
     $[0] = t0;
   } else {
     t0 = $[0];
@@ -90,7 +90,7 @@ function DirectoryInput(t0) {
   } = t0;
   let t1;
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
-    t1 = <Text>Enter the path to the directory:</Text>;
+    t1 = <Text>请输入目录路径：</Text>;
     $[0] = t1;
   } else {
     t1 = $[0];

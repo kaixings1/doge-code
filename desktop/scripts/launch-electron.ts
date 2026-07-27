@@ -1,7 +1,6 @@
 import { spawn } from 'node:child_process';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
-import * as esbuild from 'esbuild';
 
 const projectRoot = process.cwd();
 const distDir = path.join(projectRoot, 'dist');
@@ -17,21 +16,48 @@ async function withTimeout<T>(fn: () => Promise<T>, label: string, ms = BUILD_TI
 }
 
 async function compileMain(): Promise<void> {
-  console.log('Bundling main process with esbuild...');
+  // 使用 Bun 原生打包主进程（原生支持 TypeScript 和顶级 await）
+  const mainOutFile = path.join(distDir, 'main', 'index.mjs');
+  const mainOutDir = path.dirname(mainOutFile);
+  if (!fs.existsSync(mainOutDir)) fs.mkdirSync(mainOutDir, { recursive: true });
 
-  const outFile = path.join(distDir, 'main', 'index.cjs');
-  const outDir = path.dirname(outFile);
-  if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
-
-  await esbuild.build({
-    entryPoints: [path.join(projectRoot, 'src', 'main', 'index.ts')],
-    bundle: true,
-    platform: 'node',
-    format: 'cjs',
-    outfile: outFile,
-    tsconfig: path.join(projectRoot, 'tsconfig.main.json'),
-    external: ['electron', 'electron-store'],
+  console.log('Bundling main process with Bun...');
+  const c = spawn('cmd', ['/c', 'bun', 'build', '--outfile', mainOutFile, '--format', 'esm', '--target', 'node', '--external', 'electron', '--external', 'electron-store', '--external', 'bun:sqlite', '--external', 'bun:bundle', path.join('src', 'main', 'index.ts')], {
+    cwd: projectRoot,
+    stdio: 'inherit',
   });
+  const code = await withTimeout(
+    () => new Promise<number>((resolve) => c.on('close', (c) => resolve(c ?? 1))),
+    'bun build main process'
+  );
+  if (code !== 0) throw new Error(`Main process build failed: ${code}`);
+
+  // Post-process: 替换所有 bun: 协议导入为本地 polyfill
+  let codeText = fs.readFileSync(mainOutFile, 'utf-8')
+
+  // 替换静态 import { feature } from 'bun:bundle'
+  let updated = codeText.replace(
+    /import\s*\{[^}]*\bfeature\b[^}]*\}\s*from\s*['"]bun:bundle['"];?/g,
+    "import { feature } from './bun-bundle-polyfill.js';"
+  )
+
+  // 替换静态 import { ... } from 'bun:sqlite'
+  updated = updated.replace(
+    /import\s*\{[^}]*\}\s*from\s*['"]bun:sqlite['"];?/g,
+    "// bun:sqlite polyfilled"
+  )
+
+  // 替换动态 import("bun:sqlite") -> 返回空模块（SQLite 在 Electron 桌面端暂不需要）
+  updated = updated.replace(
+    /await\s+import\s*\(\s*['"]bun:sqlite['"]\s*\)/g,
+    'await Promise.resolve({})'
+  )
+
+  if (updated !== codeText) {
+    fs.writeFileSync(mainOutFile, updated, 'utf-8')
+    console.log('Replaced bun: protocol imports with polyfills')
+  }
+
   console.log('Main process bundled OK');
 }
 
@@ -63,9 +89,11 @@ async function bundle(): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  if (fs.existsSync(distDir)) {
-    fs.rmSync(distDir, { recursive: true });
-  }
+  // 只清理子目录，保留主进程输出（如果有缓存）
+  const mainDir = path.join(distDir, 'main')
+  const rendererDir = path.join(distDir, 'renderer')
+  if (fs.existsSync(mainDir)) fs.rmSync(mainDir, { recursive: true })
+  if (fs.existsSync(rendererDir)) fs.rmSync(rendererDir, { recursive: true })
 
   await compileMain();
   await compileRenderer();
@@ -86,7 +114,8 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const mainEntry = path.join(distDir, 'main', 'index.cjs');
+  // Electron 加载打包后的 ESM 主进程入口
+  const mainEntry = path.join(distDir, 'main', 'index.mjs');
   const child = spawn(electronBinary, [mainEntry], {
     stdio: 'inherit',
     env: { ...process.env, DOGE_DESKTOP: '1', NODE_TLS_REJECT_UNAUTHORIZED: '0' },

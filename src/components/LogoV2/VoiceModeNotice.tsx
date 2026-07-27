@@ -55,7 +55,7 @@ function VoiceModeNoticeInner() {
   }
   let t2;
   if ($[3] === Symbol.for("react.memo_cache_sentinel")) {
-    t2 = <Box paddingLeft={2}><AnimatedAsterisk /><Text dimColor={true}> Voice mode is now available · /voice to enable</Text></Box>;
+    t2 = <Box paddingLeft={2}><AnimatedAsterisk /><Text dimColor={true}> 语音模式现已可用 · /voice 启用</Text></Box>;
     $[3] = t2;
   } else {
     t2 = $[3];

@@ -11,7 +11,7 @@ export function renderToolUseMessage(input: Partial<z.infer<ReturnType<typeof in
   if (!input.uri || !input.server) {
     return null;
   }
-  return `Read resource "${input.uri}" from server "${input.server}"`;
+  return `读取资源 "${input.uri}"，来自服务器 "${input.server}"`;
 }
 export function userFacingName(): string {
   return '读取 MCP 资源';

@@ -519,7 +519,7 @@ function _temp13(file, i_3) {
   return <Text key={i_3} dimColor={true}>{"  "}└ {file.path}: {file.error}</Text>;
 }
 function _temp12(lock, i_2) {
-  return <Text key={i_2}>└ {lock.version}: PID {lock.pid}{" "}{lock.isProcessRunning ? <Text>(running)</Text> : <Text color="warning">(stale)</Text>}</Text>;
+  return <Text key={i_2}>└ {lock.version}: PID {lock.pid}{" "}{lock.isProcessRunning ? <Text>(运行中)</Text> : <Text color="warning">(过期)</Text>}</Text>;
 }
 function _temp11(validation, i_1) {
   return <Text key={i_1}>└ {validation.name}:{" "}<Text color={validation.status === "capped" ? "warning" : "error"}>{validation.message}</Text></Text>;
@@ -528,7 +528,7 @@ function _temp10(warning, i_0) {
   return <Box key={i_0} flexDirection="column"><Text color="warning">警告：{warning.issue}</Text><Text>修复：{warning.fix}</Text></Box>;
 }
 function _temp1(install, i) {
-  return <Text key={i}>└ {install.type} at {install.path}</Text>;
+  return <Text key={i}>└ {install.type} 位于 {install.path}</Text>;
 }
 function _temp0(a) {
   return {

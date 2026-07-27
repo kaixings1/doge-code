@@ -37,7 +37,7 @@ export function renderToolUseMessage({
   if (verbose) {
     return <>
         <FilePathLink filePath={notebook_path}>{displayPath}</FilePathLink>
-        {`@${cell_id}, content: ${new_source.slice(0, 30)}…, cell_type: ${cell_type}, edit_mode: ${edit_mode ?? 'replace'}`}
+        {`@${cell_id}, 内容: ${new_source.slice(0, 30)}…, 单元格类型: ${cell_type}, 编辑模式: ${edit_mode ?? '替换'}`}
       </>;
   }
   return <>

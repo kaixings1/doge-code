@@ -432,7 +432,7 @@ function BashPermissionRequestInner({
             {'"'}
           </Text>}
       </Text> : toolUseConfirm.classifierCheckInProgress ? <ClassifierCheckingSubtitle /> : classifierWasChecking ? <Text dimColor>需要手动批准</Text> : undefined : undefined;
-  return <PermissionDialog workerBadge={workerBadge} title={sandboxingEnabled_0 && !isSandboxed_0 ? 'Bash command (unsandboxed)' : 'Bash command'} subtitle={classifierSubtitle}>
+  return <PermissionDialog workerBadge={workerBadge} title={sandboxingEnabled_0 && !isSandboxed_0 ? 'Bash 命令 (无沙箱)' : 'Bash 命令'} subtitle={classifierSubtitle}>
       <Box flexDirection="column" paddingX={2} paddingY={1}>
         <Text dimColor={explainerState.visible}>
           {BashTool.renderToolUseMessage({

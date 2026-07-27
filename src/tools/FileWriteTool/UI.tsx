@@ -76,7 +76,9 @@ function FileWriteToolCreatedMessage(t0) {
   }
   let t4;
   if ($[7] !== t1 || $[8] !== t3) {
-    t4 = <Text>写入 {t1} 行到{" "}{t3}</Text>;
+    t4 = t1 === 0
+      ? <Text color="error">写入 {t1} 行到{" "}{t3}</Text>
+      : <><Text color="success">写入</Text> <Text bold={true}>{t1}</Text> <Text color="success">行到</Text> {" "}{t3}</>;
     $[7] = t1;
     $[8] = t3;
     $[9] = t4;
@@ -389,7 +391,9 @@ export function renderToolResultMessage({
         } else if (style === 'condensed' && !verbose) {
           const numLines = countLines(content);
           return <Text>
-            写入 <Text bold>{numLines}</Text> 行到{' '}
+            <Text color={numLines === 0 ? "error" : "success"}>写入</Text>{' '}
+            <Text bold>{numLines}</Text>{' '}
+            <Text color={numLines === 0 ? "error" : "success"}>行到</Text>{' '}
             <Text bold>{relative(getCwd(), filePath)}</Text>
           </Text>;
         }

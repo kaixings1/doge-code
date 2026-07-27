@@ -796,7 +796,7 @@ function ManageMarketplacesKeyHints(t0) {
   }
   let t3;
   if ($[6] !== hasPendingActions) {
-    t3 = !hasPendingActions && <KeyboardShortcutHint shortcut="u" action="update" />;
+    t3 = !hasPendingActions && <KeyboardShortcutHint shortcut="u" action="更新" />;
     $[6] = hasPendingActions;
     $[7] = t3;
   } else {
@@ -804,7 +804,7 @@ function ManageMarketplacesKeyHints(t0) {
   }
   let t4;
   if ($[8] !== hasPendingActions) {
-    t4 = !hasPendingActions && <KeyboardShortcutHint shortcut="r" action="remove" />;
+    t4 = !hasPendingActions && <KeyboardShortcutHint shortcut="r" action="移除" />;
     $[8] = hasPendingActions;
     $[9] = t4;
   } else {

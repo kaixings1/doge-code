@@ -28,7 +28,7 @@ export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
       </Box>
       <Box marginTop={1}>
         <Text color="blue">{sessionId || '_'} </Text>
-        <Text dimColor>(按 Enter 传送 | ? 查看帮助 | Esc 退出)</Text>
+        <Text dimColor>(按 Enter 传送 | ? 查看帮助 | 按 Esc 退出)</Text>
       </Box>
       {showHelp && (
         <Box marginTop={1} flexDirection="column">

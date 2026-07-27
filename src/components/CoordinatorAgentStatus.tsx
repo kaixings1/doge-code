@@ -179,7 +179,7 @@ function AgentLine(t0) {
   }
   const tokenText = t2;
   const queuedCount = task.pendingMessages.length;
-  const queuedText = queuedCount > 0 ? ` · ${queuedCount} queued` : "";
+  const queuedText = queuedCount > 0 ? ` · ${queuedCount} 排队` : "";
   const displayDescription = task.progress?.summary || task.description;
   const highlighted = isSelected || hover;
   const prefix = highlighted ? figures.pointer + " " : "  ";
@@ -187,7 +187,7 @@ function AgentLine(t0) {
   const dim = !highlighted && !isViewed;
   const sep = isRunning ? PLAY_ICON : PAUSE_ICON;
   const namePart = name ? `${name}: ` : "";
-  const hintPart = isSelected && !isViewed ? ` · x to ${isRunning ? "stop" : "clear"}` : "";
+  const hintPart = isSelected && !isViewed ? ` · 按 x ${isRunning ? "停止" : "清除"}` : "";
   const suffixPart = ` ${sep} ${elapsed}${tokenText}${queuedText}${hintPart}`;
   const availableForDesc = columns - stringWidth(prefix) - stringWidth(`${bullet} `) - stringWidth(namePart) - stringWidth(suffixPart);
   const t3 = Math.max(0, availableForDesc);

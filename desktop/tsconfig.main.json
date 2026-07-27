@@ -7,9 +7,21 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "allowImportingTsExtensions": true,
-    "outDir": "./dist"
+    "outDir": "./dist/main",
+    "sourceMap": false,
+    "declaration": false,
+    "noEmitOnError": false,
+    "noImplicitAny": false,
+    "strict": false,
+    "removeComments": false,
+    "preserveConstEnums": true,
+    "allowJs": true,
+    "checkJs": false
   },
-  "include": ["src/main/**/*", "../../src/engine/**/*", "../../src/engine/streaming/**/*", "../../src/engine/subagent/**/*", "../../src/engine/errors/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/main/**/*",
+    "src/utils/**/*",
+    "../../src/**/*"
+  ],
+  "exclude": ["node_modules", "dist", "../../node_modules"]
 }

@@ -82,7 +82,7 @@ function LSPResultSummary(t0) {
   const countLabel = resultCount === 1 ? labelConfig.singular : labelConfig.plural;
   let t2;
   if ($[2] !== countLabel || $[3] !== labelConfig.special || $[4] !== operation || $[5] !== resultCount) {
-    t2 = operation === "hover" && resultCount > 0 && labelConfig.special ? <Text>悬停信息 {labelConfig.special}</Text> : <Text>找到 <Text bold={true}>{resultCount} </Text>{countLabel}</Text>;
+    t2 = operation === "hover" && resultCount > 0 && labelConfig.special ? <Text>悬停信息 {labelConfig.special}</Text> : resultCount === 0 ? <Text color="error">找到 <Text bold={true}>{resultCount} </Text>{countLabel}</Text> : <><Text color="success">找到</Text> <Text bold={true}>{resultCount} </Text><Text color="success">{countLabel}</Text></>;
     $[2] = countLabel;
     $[3] = labelConfig.special;
     $[4] = operation;
@@ -177,23 +177,23 @@ export function renderToolUseMessage(input: Partial<Input>, {
     const symbol = getSymbolAtPosition(input.filePath, input.line - 1, input.character - 1);
     const displayPath = verbose ? input.filePath : getDisplayPath(input.filePath);
     if (symbol) {
-      parts.push(`operation: "${input.operation}"`);
-      parts.push(`symbol: "${symbol}"`);
-      parts.push(`in: "${displayPath}"`);
+      parts.push(`操作: "${input.operation}"`);
+      parts.push(`符号: "${symbol}"`);
+      parts.push(`位置: "${displayPath}"`);
     } else {
-      parts.push(`operation: "${input.operation}"`);
-      parts.push(`file: "${displayPath}"`);
-      parts.push(`position: ${input.line}:${input.character}`);
+      parts.push(`操作: "${input.operation}"`);
+      parts.push(`文件: "${displayPath}"`);
+      parts.push(`位置: ${input.line}:${input.character}`);
     }
     return parts.join(', ');
   }
 
   // For other operations (documentSymbol, workspaceSymbol),
   // show operation and file without position details
-  parts.push(`operation: "${input.operation}"`);
+  parts.push(`操作: "${input.operation}"`);
   if (input.filePath) {
     const displayPath = verbose ? input.filePath : getDisplayPath(input.filePath);
-    parts.push(`file: "${displayPath}"`);
+    parts.push(`文件: "${displayPath}"`);
   }
   return parts.join(', ');
 }

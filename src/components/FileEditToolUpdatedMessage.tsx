@@ -39,15 +39,15 @@ export function FileEditToolUpdatedMessage({
     <Text>
       {numAdditions > 0 ? (
         <>
-          Added <Text bold>{numAdditions}</Text>{' '}
-          {numAdditions > 1 ? 'lines' : 'line'}
+          <Text color="success">新增</Text> <Text bold>{numAdditions}</Text>{' '}
+          {numAdditions > 1 ? '行' : '行'}
         </>
       ) : null}
-      {numAdditions > 0 && numRemovals > 0 ? ', ' : null}
+      {numAdditions > 0 && numRemovals > 0 ? '，' : null}
       {numRemovals > 0 ? (
         <>
-          {numAdditions === 0 ? 'R' : 'r'}emoved <Text bold>{numRemovals}</Text>{' '}
-          {numRemovals > 1 ? 'lines' : 'line'}
+          <Text color="error">删除</Text> <Text bold>{numRemovals}</Text>{' '}
+          {numRemovals > 1 ? '行' : '行'}
         </>
       ) : null}
     </Text>

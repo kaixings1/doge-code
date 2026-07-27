@@ -1256,82 +1256,81 @@ export const BashTool = buildTool({
         }
       }
     }
-    // ===== 原有 shell 执行入口（备份保留） =====
+    // ===== 原有 shell 执行入口 =====
     // 使用 runShellCommand 的新异步生成器版本
-    //   const commandGenerator = runShellCommand({
-    //     input,
-    //     abortController,
-    //     // 使用始终共享的任务通道，以便异步代理的后台 bash 任务也能被正确注册（并在代理退出时可被终止）。
-    //     setAppState: toolUseContext.setAppStateForTasks ?? setAppState,
-    //     setToolJSX,
-    //     preventCwdChanges,
-    //     isMainThread,
-    //     toolUseId: toolUseContext.toolUseId,
-    //     agentId: toolUseContext.agentId
-    //   });
-    //
-    //   // 消费生成器并捕获返回值
-    //   let generatorResult;
-    //   do {
-    //     generatorResult = await commandGenerator.next();
-    //     if (!generatorResult.done && onProgress) {
-    //       const progress = generatorResult.value;
-    //       onProgress({
-    //         toolUseID: `bash-progress-${progressCounter++}`,
-    //         data: {
-    //           type: 'bash_progress',
-    //           output: progress.output,
-    //           fullOutput: progress.fullOutput,
-    //           elapsedTimeSeconds: progress.elapsedTimeSeconds,
-    //           totalLines: progress.totalLines,
-    //           totalBytes: progress.totalBytes,
-    //           taskId: progress.taskId,
-    //           timeoutMs: progress.timeoutMs
-    //         }
-    //       });
-    //     }
-    //   } while (!generatorResult.done);
-    //
-    //   // 从生成器的返回值中获取最终结果
-    //   result = generatorResult.value;
-    //   trackGitOperations(input.command, result.code, result.stdout);
-    //   const isInterrupt = result.interrupted && abortController.signal.reason === 'interrupt';
-    //
-    //   // stderr 已合并到 stdout（合并的文件描述符）—— result.stdout 包含两者
-    //   stdoutAccumulator.append((result.stdout || '').trimEnd() + EOL);
-    //
-    //   // 使用语义规则解释命令结果
-    //   interpretationResult = interpretCommandResult(input.command, result.code, result.stdout || '', '');
-    //
-    //   // 检查 git index.lock 错误（stderr 现在在 stdout 中）
-    //   if (result.stdout && result.stdout.includes(".git/index.lock': File exists")) {
-    //     logEvent('tengu_git_index_lock_error', {});
-    //   }
-    //   if (interpretationResult.isError && !isInterrupt) {
-    //     // 仅在确实为错误时添加退出码
-    //     if (result.code !== 0) {
-    //       stdoutAccumulator.append(`退出码 ${result.code}`);
-    //     }
-    //   }
-    //   if (!preventCwdChanges) {
-    //     const appState = getAppState();
-    //     if (resetCwdIfOutsideProject(appState.toolPermissionContext)) {
-    //       stderrForShellReset = stdErrAppendShellResetMessage('');
-    //     }
-    //   }
-    //
-    //   // 如果有沙箱违规，为输出添加注释（stderr 在 stdout 中）
-    //   const outputWithSbFailures = SandboxManager.annotateStderrWithSandboxFailures(input.command, result.stdout || '');
-    //   if (result.preSpawnError) {
-    //     throw new Error(result.preSpawnError);
-    //   }
-    //   if (interpretationResult.isError && !isInterrupt) {
-    //     // stderr 已合并到 stdout（合并的文件描述符）；outputWithSbFailures 已包含完整输出。
-    //     // 传递 '' 作为 stdout 以避免在 getErrorParts() 和 processBashCommand 中重复。
-    //     throw new ShellError('', outputWithSbFailures, result.code, result.interrupted);
-    //   }
-    // }
-    // ===== /原有 shell 执行入口（备份保留） =====
+      const commandGenerator = runShellCommand({
+        input,
+        abortController,
+        // 使用始终共享的任务通道，以便异步代理的后台 bash 任务也能被正确注册（并在代理退出时可被终止）。
+        setAppState: toolUseContext.setAppStateForTasks ?? setAppState,
+        setToolJSX,
+        preventCwdChanges,
+        isMainThread,
+        toolUseId: toolUseContext.toolUseId,
+        agentId: toolUseContext.agentId
+      });
+
+      // 消费生成器并捕获返回值
+      let generatorResult;
+      do {
+        generatorResult = await commandGenerator.next();
+        if (!generatorResult.done && onProgress) {
+          const progress = generatorResult.value;
+          onProgress({
+            toolUseID: `bash-progress-${progressCounter++}`,
+            data: {
+              type: 'bash_progress',
+              output: progress.output,
+              fullOutput: progress.fullOutput,
+              elapsedTimeSeconds: progress.elapsedTimeSeconds,
+              totalLines: progress.totalLines,
+              totalBytes: progress.totalBytes,
+              taskId: progress.taskId,
+              timeoutMs: progress.timeoutMs
+            }
+          });
+        }
+      } while (!generatorResult.done);
+
+      // 从生成器的返回值中获取最终结果
+      result = generatorResult.value;
+      trackGitOperations(input.command, result.code, result.stdout);
+      const isInterrupt = result.interrupted && abortController.signal.reason === 'interrupt';
+
+      // stderr 已合并到 stdout（合并的文件描述符）—— result.stdout 包含两者
+      stdoutAccumulator.append((result.stdout || '').trimEnd() + EOL);
+
+      // 使用语义规则解释命令结果
+      interpretationResult = interpretCommandResult(input.command, result.code, result.stdout || '', '');
+
+      // 检查 git index.lock 错误（stderr 现在在 stdout 中）
+      if (result.stdout && result.stdout.includes(".git/index.lock': File exists")) {
+        logEvent('tengu_git_index_lock_error', {});
+      }
+      if (interpretationResult.isError && !isInterrupt) {
+        // 仅在确实为错误时添加退出码
+        if (result.code !== 0) {
+          stdoutAccumulator.append(`退出码 ${result.code}`);
+        }
+      }
+      if (!preventCwdChanges) {
+        const appState = getAppState();
+        if (resetCwdIfOutsideProject(appState.toolPermissionContext)) {
+          stderrForShellReset = stdErrAppendShellResetMessage('');
+        }
+      }
+
+      // 如果有沙箱违规，为输出添加注释（stderr 在 stdout 中）
+      const outputWithSbFailures = SandboxManager.annotateStderrWithSandboxFailures(input.command, result.stdout || '');
+      if (result.preSpawnError) {
+        throw new Error(result.preSpawnError);
+      }
+      if (interpretationResult.isError && !isInterrupt) {
+        // stderr 已合并到 stdout（合并的文件描述符）；outputWithSbFailures 已包含完整输出。
+        // 传递 '' 作为 stdout 以避免在 getErrorParts() 和 processBashCommand 中重复。
+        throw new ShellError('', outputWithSbFailures, result.code, result.interrupted);
+      }
+    // ===== /原有 shell 执行入口 =====
 
     // 从累加器获取最终字符串
     const stdout = stdoutAccumulator.toString();

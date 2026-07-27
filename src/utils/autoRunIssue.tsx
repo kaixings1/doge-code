@@ -59,7 +59,7 @@ export function AutoRunIssueNotification(t0) {
   }
   let t5;
   if ($[5] === Symbol.for("react.memo_cache_sentinel")) {
-    t5 = <Box><Text dimColor={true}>随时按 <KeyboardShortcutHint shortcut="Esc" action="cancel" /></Text></Box>;
+    t5 = <Box><Text dimColor={true}>随时按 <KeyboardShortcutHint shortcut="Esc" action="取消" /></Text></Box>;
     $[5] = t5;
   } else {
     t5 = $[5];

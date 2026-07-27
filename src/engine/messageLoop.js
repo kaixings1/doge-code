@@ -51,12 +51,19 @@ export class MessageLoop {
         const request = await this.deps.requestBuilder.build({
             messages: this.deps.conversation.messages,
             system: this.deps.systemPrompt,
-            tools: [],
+            tools: this.deps.toolDefinitions,
             model: this.deps.model,
             maxTokens: this.deps.maxOutputTokens,
         });
         const stream = await this.deps.apiClient.sendMessage(request);
         const processed = await this.deps.responseHandler.handle(stream);
+        // 将助手回复写入 conversation，使下游能获取完整消息列表
+        if (processed.content && processed.toolCalls.length === 0) {
+            this.deps.conversation.messages.push({
+                role: "assistant",
+                content: processed.content,
+            });
+        }
         if (processed.toolCalls.length > 0) {
             const results = await this.deps.toolScheduler.execute(processed.toolCalls);
             this.deps.conversation.addToolResults(results);
@@ -76,3 +83,4 @@ export class MessageLoop {
         return false;
     }
 }
+//# sourceMappingURL=messageLoop.js.map

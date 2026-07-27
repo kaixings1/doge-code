@@ -17,7 +17,6 @@ const MCP_SERVERS_BETA_HEADER = 'mcp-servers-2025-12-04';
  * Results are memoized for the session lifetime (fetch once per CLI session).
  */
 export const fetchClaudeAIMcpConfigsIfEligible = memoize(async () => {
-    require('fs').writeFileSync('d:/mcp_trace.log', `claudeai FN ENTER at ${Date.now()}\n`, { flag: 'a' });
     try {
         if (isEnvDefinedFalsy(process.env.ENABLE_CLAUDEAI_MCP_SERVERS)) {
             logForDebugging('[claudeai-mcp] Disabled via env var');
@@ -27,9 +26,7 @@ export const fetchClaudeAIMcpConfigsIfEligible = memoize(async () => {
             return {};
         }
         const tokens = getClaudeAIOAuthTokens();
-        require('fs').writeFileSync('d:/mcp_trace.log', `claudeai after getClaudeAIOAuthTokens hasToken=${!!tokens?.accessToken} at ${Date.now()}\n`, { flag: 'a' });
         if (!tokens?.accessToken) {
-            require('fs').writeFileSync('d:/mcp_trace.log', `claudeai RETURN no-token at ${Date.now()}\n`, { flag: 'a' });
             logForDebugging('[claudeai-mcp] No access token');
             logEvent('tengu_claudeai_mcp_eligibility', {
                 state: 'no_oauth_token',
@@ -42,7 +39,6 @@ export const fetchClaudeAIMcpConfigsIfEligible = memoize(async () => {
         // isAnthropicAuthEnabled() to return false. Checking the scope directly allows users
         // with both API keys and OAuth tokens to access claude.ai MCPs in print mode.
         if (!tokens.scopes?.includes('user:mcp_servers')) {
-            require('fs').writeFileSync('d:/mcp_trace.log', `claudeai RETURN missing-scope at ${Date.now()}\n`, { flag: 'a' });
             logForDebugging(`[claudeai-mcp] Missing user:mcp_servers scope (scopes=${tokens.scopes?.join(',') || 'none'})`);
             logEvent('tengu_claudeai_mcp_eligibility', {
                 state: 'missing_scope',
@@ -51,7 +47,6 @@ export const fetchClaudeAIMcpConfigsIfEligible = memoize(async () => {
         }
         const baseUrl = getOauthConfig().BASE_API_URL;
         const url = `${baseUrl}/v1/mcp_servers?limit=1000`;
-        require('fs').writeFileSync('d:/mcp_trace.log', `claudeai before axios.get ${url} at ${Date.now()}\n`, { flag: 'a' });
         logForDebugging(`[claudeai-mcp] Fetching from ${url}`);
         const response = await axios.get(url, {
             headers: {
@@ -126,3 +121,4 @@ export function markClaudeAiMcpConnected(name) {
 export function hasClaudeAiMcpEverConnected(name) {
     return (getGlobalConfig().claudeAiMcpEverConnected ?? []).includes(name);
 }
+//# sourceMappingURL=claudeai.js.map

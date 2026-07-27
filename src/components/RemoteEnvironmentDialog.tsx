@@ -314,7 +314,7 @@ function MultipleEnvironmentsContent(t0) {
   }
   let t6;
   if ($[13] === Symbol.for("react.memo_cache_sentinel")) {
-    t6 = <Text dimColor={true}><Byline><KeyboardShortcutHint shortcut="Enter" action="select" /><ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" /></Byline></Text>;
+    t6 = <Text dimColor={true}><Byline><KeyboardShortcutHint shortcut="Enter" action="选择" /><ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" /></Byline></Text>;
     $[13] = t6;
   } else {
     t6 = $[13];

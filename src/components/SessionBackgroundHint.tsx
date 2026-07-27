@@ -90,7 +90,7 @@ export function SessionBackgroundHint(t0) {
   }
   let t5;
   if ($[8] !== shortcut) {
-    t5 = <Box paddingLeft={2}><Text dimColor={true}><KeyboardShortcutHint shortcut={shortcut} action="background" /></Text></Box>;
+    t5 = <Box paddingLeft={2}><Text dimColor={true}><KeyboardShortcutHint shortcut={shortcut} action="后台" /></Text></Box>;
     $[8] = shortcut;
     $[9] = t5;
   } else {

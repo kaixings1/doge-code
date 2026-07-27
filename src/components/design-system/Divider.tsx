@@ -34,8 +34,8 @@ type DividerProps = {
    * May contain ANSI codes (e.g., chalk-styled text).
    *
    * @example
-   * // ─────────── Title ───────────
-   * <Divider title="Title" />
+   * // ─────────── 标题 ───────────
+   * <Divider title="标题" />
    */
   title?: string;
 };
@@ -61,7 +61,7 @@ type DividerProps = {
  *
  * @example
  * // With centered title
- * <Divider title="3 new messages" />
+ * <Divider title="3 条新消息" />
  */
 export function Divider(t0) {
   const $ = _c(21);

@@ -50,12 +50,12 @@ export function renderToolUseMessage({
   if (pages) {
     return <>
         <FilePathLink filePath={file_path}>{displayPath}</FilePathLink>
-        {` · pages ${pages}`}
+        {` · 页 ${pages}`}
       </>;
   }
   if (verbose && (offset || limit)) {
     const startLine = offset ?? 1;
-    const lineRange = limit ? `lines ${startLine}-${startLine + limit - 1}` : `from line ${startLine}`;
+    const lineRange = limit ? `行 ${startLine}-${startLine + limit - 1}` : `从第 ${startLine} 行开始`;
     return <>
         <FilePathLink filePath={file_path}>{displayPath}</FilePathLink>
         {` · ${lineRange}`}
@@ -128,8 +128,9 @@ export function renderToolResultMessage(output: Output): React.ReactNode {
         } = output.file;
         return <MessageResponse height={1}>
           <Text>
-            读取 <Text bold>{numLines}</Text>{' '}
-            {numLines === 1 ? '行' : '行'}
+            <Text color="success">读取</Text>{' '}
+            <Text bold>{numLines}</Text>{' '}
+            <Text color="success">{numLines === 1 ? '行' : '行'}</Text>
           </Text>
         </MessageResponse>;
       }

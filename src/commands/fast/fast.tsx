@@ -172,7 +172,7 @@ export function FastModePicker(t0) {
   const title = t8;
   let t9;
   if ($[20] !== isUnavailable) {
-    t9 = exitState => exitState.pending ? <Text>再次按 {exitState.keyName} 退出</Text> : isUnavailable ? <Text>按 Esc 取消</Text> : <Text>Tab 切换 · Enter 确认 · Esc 取消</Text>;
+    t9 = exitState => exitState.pending ? <Text>再次按 {exitState.keyName} 退出</Text> : isUnavailable ? <Text>按 Esc 取消</Text> : <Text>Tab 切换 · 按 Enter 确认 · 按 Esc 取消</Text>;
     $[20] = isUnavailable;
     $[21] = t9;
   } else {
