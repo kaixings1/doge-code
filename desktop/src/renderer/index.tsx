@@ -427,6 +427,32 @@ function FileTree({ cwd, onPreviewFile }: { cwd: string; onPreviewFile?: (path: 
     setContextMenu(null)
   }
 
+  const copyContent = async () => {
+    if (!contextMenu) return
+    const { node } = contextMenu
+    try {
+      const result = await window.dogeAPI.readFile(node.path)
+      if (result.success && result.content) {
+        navigator.clipboard.writeText(result.content).catch(() => {})
+      } else {
+        alert(result.error || '��取文件失败')
+      }
+    } catch { alert('读取文件失败') }
+    setContextMenu(null)
+  }
+
+  const revealInExplorer = async () => {
+    if (!contextMenu) return
+    const { node } = contextMenu
+    try {
+      const result = await window.dogeAPI.revealInExplorer(node.path)
+      if (!result.success) {
+        alert(result.error || '操作失败')
+      }
+    } catch { alert('操作失败') }
+    setContextMenu(null)
+  }
+
   const [loadingPaths, setLoadingPaths] = React.useState<Set<string>>(new Set())
 
   const loadTree = React.useCallback(async (dirPath: string) => {
@@ -618,6 +644,13 @@ function FileTree({ cwd, onPreviewFile }: { cwd: string; onPreviewFile?: (path: 
             </>
           ) : (
             <>
+              <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: '#F5F5F5' }} onClick={copyContent}>
+                📝 复制内容
+              </div>
+              <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: '#F5F5F5' }} onClick={revealInExplorer}>
+                📂 在资源管理器中显示
+              </div>
+              <div style={{ borderTop: '1px solid #333' }} />
               <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: '#888' }} onClick={copyPath}>
                 📋 复制路径
               </div>
