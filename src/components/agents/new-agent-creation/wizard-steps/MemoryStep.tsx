@@ -93,7 +93,7 @@ export function MemoryStep() {
   const handleSelect = t2;
   let t3;
   if ($[8] === Symbol.for("react.memo_cache_sentinel")) {
-    t3 = <Byline><KeyboardShortcutHint shortcut={"\u2191\u2193"} action="导航" /><KeyboardShortcutHint shortcut="Enter" action="选择" /><ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" /></Byline>;
+    t3 = <Byline><KeyboardShortcutHint shortcut={"\u2191\u2193"} action="导航" /><KeyboardShortcutHint shortcut="Enter" action="选择" /><ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" /></Byline>;
     $[8] = t3;
   } else {
     t3 = $[8];

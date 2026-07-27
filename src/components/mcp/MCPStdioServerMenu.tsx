@@ -168,7 +168,7 @@ export function MCPStdioServerMenu({
           {exitState.pending ? <>再次按 {exitState.keyName} 退出</> : <Byline>
               <KeyboardShortcutHint shortcut="↑↓" action="导航" />
               <KeyboardShortcutHint shortcut="Enter" action="选择" />
-              <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />
+              <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
             </Byline>}
         </Text>
       </Box>

@@ -96,7 +96,7 @@ export function MCPAgentServerMenu({
         <Box marginLeft={3}>
           <Text dimColor>
             在浏览器中完成认证后返回此处。{' '}
-            <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />
+            <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
           </Text>
         </Box>
       </Box>;
@@ -117,7 +117,7 @@ export function MCPAgentServerMenu({
   return <Dialog title={`${capitalizedServerName} MCP 服务器`} subtitle="仅限代理" onCancel={onCancel} inputGuide={exitState => exitState.pending ? <Text>再次按 {exitState.keyName} 退出</Text> : <Byline>
             <KeyboardShortcutHint shortcut="↑↓" action="导航" />
             <KeyboardShortcutHint shortcut="Enter" action="确认" />
-            <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />
+            <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
           </Byline>}>
       <Box flexDirection="column" gap={0}>
         <Box>

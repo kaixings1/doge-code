@@ -333,7 +333,7 @@ export function LogSelector(t0) {
   const hasTags = uniqueTags.length > 0;
   let t21;
   if ($[21] !== hasTags || $[22] !== uniqueTags) {
-    t21 = hasTags ? ["All", ...uniqueTags] : [];
+    t21 = hasTags ? ["全部", ...uniqueTags] : [];
     $[21] = hasTags;
     $[22] = uniqueTags;
     $[23] = t21;
@@ -343,7 +343,7 @@ export function LogSelector(t0) {
   const tagTabs = t21;
   const effectiveTagIndex = tagTabs.length > 0 && selectedTagIndex < tagTabs.length ? selectedTagIndex : 0;
   const selectedTab = tagTabs[effectiveTagIndex];
-  const tagFilter = selectedTab === "All" ? undefined : selectedTab;
+  const tagFilter = selectedTab === "全部" ? undefined : selectedTab;
   const tagTabsLines = hasTags ? 1 : 0;
   let filtered = logs;
   if (isResumeWithRenameEnabled) {
@@ -1572,3 +1572,4 @@ function getUniqueTags(logs: LogOption[]): string[] {
   }
   return Array.from(tags).sort((a, b) => a.localeCompare(b));
 }
+

@@ -167,7 +167,7 @@ export function SessionPreview(t0) {
   }
   let t16;
   if ($[27] === Symbol.for("react.memo_cache_sentinel")) {
-    t16 = <Text dimColor={true}><Byline><KeyboardShortcutHint shortcut="Enter" action="继续" /><ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" /></Byline></Text>;
+    t16 = <Text dimColor={true}><Byline><KeyboardShortcutHint shortcut="Enter" action="下一步" /><ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" /></Byline></Text>;
     $[27] = t16;
   } else {
     t16 = $[27];

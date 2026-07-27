@@ -80,7 +80,7 @@ export function PromptStep() {
   const handleSubmit = t3;
   let t4;
   if ($[8] === Symbol.for("react.memo_cache_sentinel")) {
-    t4 = <Byline><KeyboardShortcutHint shortcut="Type" action="输入文本" /><KeyboardShortcutHint shortcut="Enter" action="继续" /><ConfigurableShortcutHint action="chat:externalEditor" context="Chat" fallback="Ctrl+g" description="在编辑器中打开" /><ConfigurableShortcutHint action="confirm:no" context="Settings" fallback="Esc" description="返回" /></Byline>;
+    t4 = <Byline><KeyboardShortcutHint shortcut="Type" action="输入" /><KeyboardShortcutHint shortcut="Enter" action="下一步" /><ConfigurableShortcutHint action="chat:externalEditor" context="Chat" fallback="Ctrl+g" description="在编辑器中打开" /><ConfigurableShortcutHint action="confirm:no" context="Settings" fallback="Esc" description="取消" /></Byline>;
     $[8] = t4;
   } else {
     t4 = $[8];
