@@ -2142,7 +2142,12 @@ function App(): JSX.Element {
               <span style={{ color: '#555' }}>{modelInfo.provider}/{modelInfo.model}</span>
             )}
             {tokenUsage && tokenUsage.totalTokens > 0 && (
-              <span style={{ color: '#555' }}>Token: {tokenUsage.totalTokens.toLocaleString()}</span>
+              <>
+                <span style={{ color: '#56B6C2' }}>In: {tokenUsage.inputTokens.toLocaleString()}</span>
+                <span style={{ color: '#E06C75' }}>Out: {tokenUsage.outputTokens.toLocaleString()}</span>
+                <span style={{ color: '#555' }}>Total: {tokenUsage.totalTokens.toLocaleString()}</span>
+                <span style={{ color: '#444', fontSize: '10px' }}>| {displayMessages.length} 条消息</span>
+              </>
             )}
           </div>
           <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
