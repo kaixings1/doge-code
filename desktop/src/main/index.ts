@@ -9,13 +9,17 @@ import * as fs from 'fs'
 import { QueryEngine, type ToolDefinition } from '../../../src/engine/index.js'
 import type { InternalMessage } from '../../../src/engine/messageNormalizer.js'
 import type { APIRequest } from '../../../src/engine/requestBuilder.js'
+import { getAllBaseTools, type Tool } from '../../../src/tools.js'
+import { zodToJsonSchema } from '../../../src/utils/zodToJsonSchema.js'
 
 let mainWindow: BrowserWindow | null = null
 let tray: Tray | null = null
 const store = new Store()
 
 // ─── 路径 ───
-const projectRoot = path.resolve(__dirname, '..', '..', '..')
+// 打包后 __dirname 可能指向源码目录，使用项目根目录计算
+const PROJECT_ROOT = path.resolve(__dirname, '..', '..', '..')
+const DIST_DIR = path.join(PROJECT_ROOT, 'dist')
 const CONFIG_PATH = path.join(projectRoot, '.doge', 'api.json')
 
 function loadConfig(): { provider: string; apiKey: string; model: string; baseUrl: string; workingDir: string } {
@@ -151,6 +155,61 @@ async function executeTool(call: ToolCallInput): Promise<ToolResult> {
   }
 }
 
+// ─── 工具适配 ───
+
+function buildToolContext(config: ReturnType<typeof loadConfig>) {
+  return {
+    options: {
+      commands: [],
+      debug: false,
+      mainLoopModel: config.model,
+      tools: [] as Tool[],
+      verbose: false,
+      thinkingConfig: { type: 'none' as const },
+      mcpClients: [],
+      mcpResources: {},
+      isNonInteractiveSession: true,
+      agentDefinitions: [],
+    },
+  }
+}
+
+function createAdaptedTools(config: ReturnType<typeof loadConfig>): Map<string, { name: string; description: string; parameters: Record<string, unknown>; execute: (params: unknown) => Promise<{ content: unknown }> }> {
+  const srcTools = getAllBaseTools()
+  const adaptedTools = new Map<string, { name: string; description: string; parameters: Record<string, unknown>; execute: (params: unknown) => Promise<{ content: unknown }> }>()
+
+  const ctx = buildToolContext(config)
+
+  for (const srcTool of srcTools) {
+    if (!srcTool || !srcTool.name) continue
+
+    ctx.options.tools = srcTools
+
+    adaptedTools.set(srcTool.name, {
+      name: srcTool.name,
+      description: srcTool.description,
+      parameters: zodToJsonSchema(srcTool.inputSchema),
+      execute: async (params: unknown) => {
+        try {
+          const args = params as Record<string, unknown>
+          const result = await srcTool.call(
+            args,
+            ctx,
+            async () => ({ allowed: true }),
+            { role: 'user', content: '' },
+            null,
+          )
+          return result
+        } catch (e) {
+          return { content: String(e instanceof Error ? e.message : '未知错误') }
+        }
+      },
+    })
+  }
+
+  return adaptedTools
+}
+
 // ─── 会话持久化 ───
 const SESSIONS_DIR = path.join(projectRoot, '.doge', 'sessions')
 
@@ -204,10 +263,14 @@ function getEngine(): QueryEngine {
   if (!engine) {
     const config = loadConfig()
     engineConfig = config
+
+    const adaptedTools = createAdaptedTools(config)
+
     engine = new QueryEngine({
       model: config.model,
       systemPrompt: 'You are Doge Code, a helpful AI programming assistant.',
       maxOutputTokens: 40000,
+      tools: adaptedTools,
     })
 
     // 注入真实的 apiClient，将 OpenAI/Anthropic SSE 转为 StreamProcessor 格式
@@ -388,7 +451,7 @@ function createWindow(): void {
     title: 'Doge Code',
     backgroundColor: '#000000',
     webPreferences: {
-      preload: path.join(__dirname, '../preload/index.cjs'),
+      preload: path.join(DIST_DIR, 'preload', 'index.cjs'),
       sandbox: false,
       contextIsolation: true,
       nodeIntegration: false,
@@ -412,7 +475,7 @@ function createWindow(): void {
   if (process.env.VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(`${process.env.VITE_DEV_SERVER_URL}?desktop=1`)
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'), {
+    mainWindow.loadFile(path.join(DIST_DIR, 'renderer', 'index.html'), {
       query: { desktop: '1' },
     })
   }
@@ -687,6 +750,17 @@ ipcMain.handle('doge:get-git-diff', async (_event, cwd: string, filePath: string
 })
 
 // ─── 命令系统（桌面端轻量实现） ───
+// 动态导入 prompt 类型命令模板，避免顶层循环依赖
+const dynamicCommandImports: Record<string, () => Promise<{ default?: { getPromptForCommand?: () => Promise<unknown[]>; type?: string } }>> = {
+  '/commit': () => import('../../../src/commands/commit.ts'),
+  '/review': () => import('../../../src/commands/review.ts'),
+  '/plan': () => import('../../../src/commands/plan-mode/index.ts').catch(() => ({ default: null })),
+  '/diff': () => import('../../../src/commands/diff/diff.ts').catch(() => ({ default: null })),
+  '/branch': () => import('../../../src/commands/branch/branch.ts').catch(() => ({ default: null })),
+  '/memory': () => import('../../../src/commands/memory/memory.tsx').catch(() => ({ default: null })),
+  '/deploy': () => import('../../../src/commands/deploy/deploy.ts').catch(() => ({ default: null })),
+  '/task': () => import('../../../src/commands/task/task.ts').catch(() => ({ default: null })),
+}
 
 interface CommandDef {
   name: string
@@ -731,9 +805,54 @@ ipcMain.handle('doge:get-commands', () => {
   return DESKTOP_COMMANDS
 })
 
+// 将 prompt 类型命令模板转发给 QueryEngine，让 AI 通过已注册的工具执行
+async function executeAIDrivenCommand(commandName: string): Promise<{ success: boolean; output?: string; error?: string }> {
+  const importFn = dynamicCommandImports[commandName]
+  if (!importFn) return { success: false, error: `命令 ${commandName} 暂不支持 AI 驱动执行` }
+
+  try {
+    const mod = await importFn()
+    const cmd = mod.default || mod
+    if (!cmd || cmd.type !== 'prompt' || typeof cmd.getPromptForCommand !== 'function') {
+      return { success: false, error: `命令 ${commandName} 无可用 prompt 模板` }
+    }
+
+    const prompts = await cmd.getPromptForCommand([], {
+      sessionId: currentSessionId || '',
+      workingDirectory: projectRoot,
+      args: [],
+      options: {},
+    })
+
+    const promptText = prompts
+      .filter((p: { type?: string }) => p.type === 'text')
+      .map((p: { text?: string }) => p.text || '')
+      .join('\n')
+
+    if (!promptText) return { success: false, error: '命令模板为空' }
+
+    const currentEngine = getEngine()
+    const result = await currentEngine.query(promptText)
+    const messages = result.messages as InternalMessage[]
+    const lastAssistant = [...messages].reverse().find(m => m.role === 'assistant')
+    const reply = typeof lastAssistant?.content === 'string' ? lastAssistant.content : JSON.stringify(lastAssistant?.content ?? '')
+
+    return { success: true, output: reply }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+}
+
 ipcMain.handle('doge:execute-command', async (_event, commandName: string, args: string[]) => {
   const { execSync } = await import('node:child_process')
   const cwd = engineConfig?.workingDir || projectRoot
+
+  // prompt 类型命令：通过 AI 引擎执行（利用已注册的工具）
+  const aiDrivenCommands = ['/commit', '/review', '/plan', '/diff', '/branch', '/memory', '/deploy', '/task']
+  if (aiDrivenCommands.includes(commandName)) {
+    return executeAIDrivenCommand(commandName)
+  }
 
   try {
     switch (commandName) {
@@ -940,10 +1059,12 @@ ipcMain.handle('doge:execute-command', async (_event, commandName: string, args:
         engine = null
         const config = loadConfig()
         engineConfig = config
+        const adaptedTools = createAdaptedTools(config)
         engine = new QueryEngine({
           model: config.model,
           systemPrompt: 'You are Doge Code, a helpful AI programming assistant.',
           maxOutputTokens: 40000,
+          tools: adaptedTools,
         })
         const conv = (engine as unknown as { conversation: { messages: InternalMessage[]; addToolResults: (r: unknown[]) => void } }).conversation
         conv.messages = msgs
@@ -1031,10 +1152,12 @@ ipcMain.handle('doge:load-session', async (_event, sessionId: string) => {
   engine = null
   const config = loadConfig()
   engineConfig = config
+  const adaptedTools = createAdaptedTools(config)
   engine = new QueryEngine({
     model: config.model,
     systemPrompt: 'You are Doge Code, a helpful AI programming assistant.',
     maxOutputTokens: 40000,
+    tools: adaptedTools,
   })
   const conv = (engine as unknown as { conversation: { messages: InternalMessage[]; addToolResults: (r: unknown[]) => void } }).conversation
   conv.messages = msgs

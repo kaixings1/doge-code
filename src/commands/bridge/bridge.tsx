@@ -390,7 +390,7 @@ function BridgeDisconnectDialog(t0) {
   }
   let t28;
   if ($[47] === Symbol.for("react.memo_cache_sentinel")) {
-    t28 = <Text dimColor={true}>Enter 选择 · Esc 继续</Text>;
+    t28 = <Text dimColor={true}>按 Enter 选择 · 按 Esc 继续</Text>;
     $[47] = t28;
   } else {
     t28 = $[47];

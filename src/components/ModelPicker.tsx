@@ -356,7 +356,7 @@ export function ModelPicker(t0) {
   }
   let t27;
   if ($[74] !== exitState || $[75] !== isStandaloneCommand) {
-    t27 = isStandaloneCommand && <Text dimColor={true} italic={true}>{exitState.pending ? <>再按一次 {exitState.keyName} 键退出</> : <Byline><KeyboardShortcutHint shortcut="Enter" action="confirm" /><ConfigurableShortcutHint action="select:cancel" context="Select" fallback="Esc" description="退出" /></Byline>}</Text>;
+    t27 = isStandaloneCommand && <Text dimColor={true} italic={true}>{exitState.pending ? <>再按一次 {exitState.keyName} 键退出</> : <Byline><KeyboardShortcutHint shortcut="Enter" action="确认" /><ConfigurableShortcutHint action="select:cancel" context="Select" fallback="Esc" description="退出" /></Byline>}</Text>;
     $[74] = exitState;
     $[75] = isStandaloneCommand;
     $[76] = t27;

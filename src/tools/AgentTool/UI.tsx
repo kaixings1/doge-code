@@ -349,7 +349,7 @@ export function renderToolResultMessage(data: Output, progressMessagesForMessage
             {!isTranscriptMode && <Text dimColor>
                 {' ('}
                 <Byline>
-                  <KeyboardShortcutHint shortcut="↓" action="manage" />
+                  <KeyboardShortcutHint shortcut="↓" action="管理" />
                   {prompt && <ConfigurableShortcutHint action="app:toggleTranscript" context="Global" fallback="Ctrl+o" description="展开" />}
                 </Byline>
                 {')'}
@@ -738,7 +738,7 @@ export function renderGroupedAgentToolUse(toolUses: Array<{
           {allComplete ? allAsync ? <>
                 <Text bold>{toolUses.length}</Text> 个后台代理已启动{' '}
                 <Text dimColor>
-                  <KeyboardShortcutHint shortcut="↓" action="manage" parens />
+                  <KeyboardShortcutHint shortcut="↓" action="管理" parens />
                 </Text>
               </> : <>
                 <Text bold>{toolUses.length}</Text> 个
@@ -761,13 +761,13 @@ export function userFacingName(input: Partial<{
   team_name: string;
 }> | undefined): string {
   if (input?.subagent_type && input.subagent_type !== GENERAL_PURPOSE_AGENT.agentType) {
-    // 将 "worker" 代理显示为 "Agent" 以保持 UI 简洁
+    // 将 "worker" 代理显示为 "代理" 以保持 UI 简洁
     if (input.subagent_type === 'worker') {
-      return 'Agent';
+      return '代理';
     }
     return input.subagent_type;
   }
-  return 'Agent';
+  return '代理';
 }
 export function userFacingNameBackgroundColor(input: Partial<{
   description: string;

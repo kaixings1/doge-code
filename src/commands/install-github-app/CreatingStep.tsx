@@ -36,7 +36,7 @@ export function CreatingStep(t0) {
   const progressSteps = t2;
   let t3;
   if ($[6] === Symbol.for("react.memo_cache_sentinel")) {
-    t3 = <Box flexDirection="column" marginBottom={1}><Text bold={true}>Install GitHub App</Text><Text dimColor={true}>Create GitHub Actions workflow</Text></Box>;
+    t3 = <Box flexDirection="column" marginBottom={1}><Text bold={true}>安装 GitHub App</Text><Text dimColor={true}>创建 GitHub Actions 工作流</Text></Box>;
     $[6] = t3;
   } else {
     t3 = $[6];

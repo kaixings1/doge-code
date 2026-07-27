@@ -151,7 +151,7 @@ export function DreamDetailDialog(t0) {
       t20 = $[46];
     }
     if ($[47] !== task.status) {
-      t6 = <Text>{t20}{" "}{task.status === "running" ? <Text color="background">running</Text> : task.status === "completed" ? <Text color="success">{task.status}</Text> : <Text color="error">{task.status}</Text>}</Text>;
+      t6 = <Text>{t20}{" "}{task.status === "running" ? <Text color="background">启动中</Text> : task.status === "completed" ? <Text color="success">已完成</Text> : <Text color="error">{task.status}</Text>}</Text>;
       $[47] = task.status;
       $[48] = t6;
     } else {

@@ -50,13 +50,28 @@ function parseMessageContent(content: string): ContentBlock[] {
   return blocks
 }
 
-function renderToolUseBlock(block: ToolUseBlock): string {
+function InlineToolUseBlock({ block, onExecute, executingIds }: { block: ToolUseBlock; onExecute: (block: ToolUseBlock) => void; executingIds: Set<string> }) {
+  const [expanded, setExpanded] = React.useState(false)
   const inputStr = typeof block.input === 'string' ? block.input : JSON.stringify(block.input, null, 2)
-  const truncated = inputStr.length > 200 ? inputStr.slice(0, 200) + '...' : inputStr
-  return `<div style="background:#0A0A0A;border:1px solid #262626;border-radius:4px;padding:8px 10px;margin:4px 0;font-family:monospace;font-size:11px">
-    <div style="color:#4ECB71;font-weight:600;margin-bottom:4px">🔧 ${block.name}</div>
-    <div style="color:#888;white-space:pre-wrap;word-break:break-all">${truncated.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
-  </div>`
+  const truncated = expanded ? inputStr : (inputStr.length > 200 ? inputStr.slice(0, 200) + '...' : inputStr)
+  const isExecuting = executingIds.has(block.id)
+
+  return (
+    <div style={{ background: '#0A0A0A', border: '1px solid #262626', borderRadius: '4px', padding: '8px 10px', margin: '4px 0', fontFamily: 'monospace', fontSize: '11px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+        <div style={{ color: '#4ECB71', fontWeight: 600 }}>🔧 {block.name}</div>
+        <div style={{ display: 'flex', gap: '4px' }}>
+          <button onClick={() => setExpanded(!expanded)} style={{ padding: '1px 6px', border: '1px solid #333', borderRadius: '3px', background: '#0F0F0F', color: '#888', cursor: 'pointer', fontSize: '10px' }}>
+            {expanded ? '收起' : '展开'}
+          </button>
+          <button onClick={() => onExecute(block)} disabled={isExecuting} style={{ padding: '1px 8px', border: 'none', borderRadius: '3px', background: isExecuting ? '#333' : '#4ECB71', color: isExecuting ? '#555' : '#000', cursor: isExecuting ? 'not-allowed' : 'pointer', fontSize: '10px', fontWeight: 600 }}>
+            {isExecuting ? '执行中...' : '执行'}
+          </button>
+        </div>
+      </div>
+      <div style={{ color: '#888', whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{truncated.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+    </div>
+  )
 }
 
 // // --- 轻量语法高亮 ---
@@ -934,6 +949,8 @@ function ToolPanel({ cwd }: { cwd: string }) {
   const [toolInput, setToolInput] = React.useState('')
   const [toolResult, setToolResult] = React.useState<{ success: boolean; output?: unknown; error?: string } | null>(null)
   const [executing, setExecuting] = React.useState(false)
+  const [pendingConfirm, setPendingConfirm] = React.useState<{ tool: string; input: Record<string, unknown> } | null>(null)
+  const [confirmResolve, setConfirmResolve] = React.useState<(v: boolean) => void>(() => {})
 
   React.useEffect(() => {
     async function load() {
@@ -947,6 +964,13 @@ function ToolPanel({ cwd }: { cwd: string }) {
 
   const selectedToolDef = tools.find(t => t.name === selectedTool)
 
+  const requestConfirm = (tool: string, input: Record<string, unknown>): Promise<boolean> => {
+    return new Promise<boolean>((resolve) => {
+      setPendingConfirm({ tool, input })
+      setConfirmResolve(() => resolve)
+    })
+  }
+
   const handleExecute = async () => {
     if (!selectedTool) return
     let input: Record<string, unknown> = {}
@@ -959,7 +983,7 @@ function ToolPanel({ cwd }: { cwd: string }) {
 
     const dangerous = ['BashTool', 'HttpTool', 'FileWriteTool', 'FileEditTool']
     if (dangerous.includes(selectedTool)) {
-      const confirmed = confirm(`⚠ 工具 "${selectedTool}" 可能修改系统状态。\n参数: ${JSON.stringify(input, null, 2)}\n\n确认执行？`)
+      const confirmed = await requestConfirm(selectedTool, input)
       if (!confirmed) return
     }
 
@@ -980,7 +1004,30 @@ function ToolPanel({ cwd }: { cwd: string }) {
   }
 
   return (
-    <div style={{ fontSize: '11px' }}>
+    <div style={{ fontSize: '11px', position: 'relative' }}>
+      {pendingConfirm && (
+        <div style={{
+          position: 'absolute', inset: 0, zIndex: 100, background: 'rgba(0,0,0,0.75)', display: 'flex',
+          alignItems: 'center', justifyContent: 'center', borderRadius: '4px'
+        }}>
+          <div style={{
+            background: '#1A1A1A', border: '1px solid #FF6B6B', borderRadius: '6px', padding: '16px',
+            maxWidth: '420px', width: '90%', boxShadow: '0 8px 32px rgba(255,107,107,0.15)'
+          }}>
+            <div style={{ fontSize: '13px', fontWeight: 600, color: '#FF6B6B', marginBottom: '8px' }}>⚠ 工具执行确认</div>
+            <div style={{ fontSize: '12px', color: '#F5F5F5', marginBottom: '6px' }}>
+              工具 <code style={{ background: '#0F0F0F', padding: '1px 6px', borderRadius: '3px', color: '#4ECB71' }}>{pendingConfirm.tool}</code> 可能修改系统状态。
+            </div>
+            <div style={{ fontSize: '11px', color: '#888', marginBottom: '12px', maxHeight: '120px', overflowY: 'auto', background: '#0F0F0F', padding: '6px 8px', borderRadius: '4px', fontFamily: 'monospace', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+              {JSON.stringify(pendingConfirm.input, null, 2)}
+            </div>
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+              <button onClick={() => { confirmResolve(false); setPendingConfirm(null) }} style={{ padding: '5px 14px', border: '1px solid #333', borderRadius: '4px', background: '#0F0F0F', color: '#888', cursor: 'pointer', fontSize: '12px' }}>取消</button>
+              <button onClick={() => { confirmResolve(true); setPendingConfirm(null) }} style={{ padding: '5px 14px', border: 'none', borderRadius: '4px', background: '#FF6B6B', color: '#000', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}>确认执行</button>
+            </div>
+          </div>
+        </div>
+      )}
       <div style={{ padding: '4px 12px', display: 'flex', gap: '4px', flexWrap: 'wrap', borderBottom: '1px solid #1A1A1A' }}>
         {tools.map(tool => (
           <button
@@ -1239,6 +1286,31 @@ function App(): JSX.Element {
   const [currentResultIndex, setCurrentResultIndex] = React.useState(-1)
   const [msgSearchQuery, setMsgSearchQuery] = React.useState('')
   const [msgSearchMatches, setMsgSearchMatches] = React.useState<number[]>([])
+
+  const [executingToolIds, setExecutingToolIds] = React.useState<Set<string>>(new Set())
+
+  const executeToolFromBlock = React.useCallback(async (block: ToolUseBlock) => {
+    if (executingToolIds.has(block.id)) return
+    setExecutingToolIds(prev => new Set(prev).add(block.id))
+    const input = typeof block.input === 'string' ? JSON.parse(block.input) : block.input
+    try {
+      const result = await window.dogeAPI.executeTool({ name: block.name, input })
+      const toolMsg: Message = {
+        id: `msg-${Date.now()}`,
+        role: 'tool',
+        content: JSON.stringify(result)
+      }
+      setMessages(prev => [...prev, toolMsg])
+    } catch (e) {
+      setMessages(prev => [...prev, { id: `msg-${Date.now()}`, role: 'error', content: e instanceof Error ? e.message : '工具执行失败' }])
+    } finally {
+      setExecutingToolIds(prev => {
+        const next = new Set(prev)
+        next.delete(block.id)
+        return next
+      })
+    }
+  }, [executingToolIds])
 
   const handlePreviewFile = React.useCallback(async (filePath: string) => {
     // 记录到最近文件
@@ -2232,11 +2304,11 @@ function App(): JSX.Element {
                     : blocks
                       ? blocks.map((block, i) => {
                           if (block.type === 'tool_use') {
-                            return <div key={i} dangerouslySetInnerHTML={{ __html: renderToolUseBlock(block) }} />
+                            return <InlineToolUseBlock key={i} block={block} onExecute={executeToolFromBlock} executingIds={executingToolIds} />
                           }
                           return <div key={i} dangerouslySetInnerHTML={{ __html: renderMarkdown(block.text) }} />
                         })
-                      : <div dangerouslySetInnerHTML={{ __html: m.content.replace(/\n/g, '<br/>') }} />
+                      : <div dangerouslySetInnerHTML={{ __html: renderMarkdown(m.content) }} />
                   }
                 </div>
               )})}

@@ -1099,7 +1099,7 @@ export function PermissionRuleList(t0) {
   }
   let t28;
   if ($[89] === Symbol.for("react.memo_cache_sentinel")) {
-    t28 = <Text>Claude Code can read files in the workspace, and make edits when auto-accept edits is on.</Text>;
+    t28 = <Text>Claude Code 可以读取工作空间中的文件，当开启自动接受编辑时还能进行修改。</Text>;
     $[89] = t28;
   } else {
     t28 = $[89];
@@ -1129,7 +1129,7 @@ export function PermissionRuleList(t0) {
   }
   let t31;
   if ($[101] !== defaultTab || $[102] !== exitState.keyName || $[103] !== exitState.pending || $[104] !== headerFocused || $[105] !== isSearchMode) {
-    t31 = <Box marginTop={1} paddingLeft={1}><Text dimColor={true}>{exitState.pending ? <>再次按 {exitState.keyName} 退出</> : headerFocused ? <>←/→ 切换标签 · ↓ 返回 · Esc 取消</> : isSearchMode ? <>输入以过滤 · Enter/↓ 选择 · ↑ 标签 · Esc 清除</> : hasDenials && defaultTab === "recent" ? <>Enter 批准 · r 重试 · ↑↓ 导航 · ←/→ 切换 · Esc 取消</> : <>↑↓ 导航 · Enter 选择 · 输入以搜索 · ←/→ 切换 · Esc 取消</>}</Text></Box>;
+    t31 = <Box marginTop={1} paddingLeft={1}><Text dimColor={true}>{exitState.pending ? <>再次按 {exitState.keyName} 退出</> : headerFocused ? <>←/→ 切换标签 · ↓ 返回 · 按 Esc 取消</> : isSearchMode ? <>输入以过滤 · 按 Enter/↓ 选择 · ↑ 标签 · 按 Esc 清除</> : hasDenials && defaultTab === "recent" ? <>按 Enter 批准 · r 重试 · ↑↓ 导航 · ←/→ 切换 · 按 Esc 取消</> : <>↑↓ 导航 · 按 Enter 选择 · 输入以搜索 · ←/→ 切换 · 按 Esc 取消</>}</Text></Box>;
     $[101] = defaultTab;
     $[102] = exitState.keyName;
     $[103] = exitState.pending;

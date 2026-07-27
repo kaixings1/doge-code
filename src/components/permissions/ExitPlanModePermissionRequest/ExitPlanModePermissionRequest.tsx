@@ -533,12 +533,12 @@ export function ExitPlanModePermissionRequest({
   useLayoutEffect(() => {
     if (!useStickyFooter) return;
     setStickyFooter(<Box flexDirection="column" borderStyle="round" borderColor="planMode" borderLeft={false} borderRight={false} borderBottom={false} paddingX={1}>
-        <Text dimColor>Would you like to proceed?</Text>
+        <Text dimColor>是否继续？</Text>
         <Box marginTop={1}>
           <Select options={options} onChange={v => void handleResponseRef.current(v)} onCancel={() => handleCancelRef.current?.()} onImagePaste={onImagePaste} pastedContents={pastedContents} onRemoveImage={onRemoveImage} />
         </Box>
         {editorName && <Box flexDirection="row" gap={1} marginTop={1}>
-            <Text dimColor>ctrl-g to edit in </Text>
+            <Text dimColor>按 ctrl-g 在</Text>
             <Text bold dimColor>
               {editorName}
             </Text>
@@ -644,8 +644,7 @@ export function ExitPlanModePermissionRequest({
                 </Box>}
             {!useStickyFooter && <>
                 <Text dimColor>
-                  Claude 已写好计划并准备执行。要继续吗？
-                </Text>
+                  Claude 已写好计划并准备执行。请选择是否继续：</Text>
                 <Box marginTop={1}>
                   <Select options={options} onChange={handleResponse} onCancel={() => handleCancelRef.current?.()} onImagePaste={onImagePaste} pastedContents={pastedContents} onRemoveImage={onRemoveImage} />
                 </Box>
@@ -655,7 +654,7 @@ export function ExitPlanModePermissionRequest({
       </PermissionDialog>
       {!useStickyFooter && editorName && <Box flexDirection="row" gap={1} paddingX={1} marginTop={1}>
           <Box>
-            <Text dimColor>ctrl-g to edit in </Text>
+            <Text dimColor>按 ctrl-g 在</Text>
             <Text bold dimColor>
               {editorName}
             </Text>

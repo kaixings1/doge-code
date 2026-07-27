@@ -136,7 +136,7 @@ function _temp3(item) {
   };
 }
 function _temp2() {
-  return <Text>Esc 返回</Text>;
+  return <Text>按 Esc 返回</Text>;
 }
 function _temp(h) {
   return h.source;

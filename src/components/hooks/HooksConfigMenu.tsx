@@ -556,7 +556,7 @@ export function HooksConfigMenu(t0) {
   }
 }
 function _temp6() {
-  return <Text>Esc 关闭</Text>;
+  return <Text>按 Esc 关闭</Text>;
 }
 function _temp5(sum, hooks) {
   return sum + hooks.length;

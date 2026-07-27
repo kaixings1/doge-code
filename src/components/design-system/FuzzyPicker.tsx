@@ -204,11 +204,11 @@ export function FuzzyPicker<T>({
         {!inputAbove && searchBox}
         <Text dimColor>
           <Byline>
-            <KeyboardShortcutHint shortcut="↑/↓" action={compact ? 'nav' : 'navigate'} />
+            <KeyboardShortcutHint shortcut="↑/↓" action={compact ? 'nav' : '导航'} />
             <KeyboardShortcutHint shortcut="Enter" action={compact ? firstWord(selectAction) : selectAction} />
             {onTab && <KeyboardShortcutHint shortcut="Tab" action={onTab.action} />}
             {onShiftTab && !compact && <KeyboardShortcutHint shortcut="Shift+Tab" action={onShiftTab.action} />}
-            <KeyboardShortcutHint shortcut="Esc" action="cancel" />
+            <KeyboardShortcutHint shortcut="Esc" action="取消" />
             {extraHints}
           </Byline>
         </Text>

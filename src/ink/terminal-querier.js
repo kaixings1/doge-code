@@ -89,23 +89,13 @@ const SENTINEL = csi('c');
 export class TerminalQuerier {
     stdout;
     /**
-     * Hard timeout (ms) guarding against terminals that answer neither the
-     * query NOR the DA1 sentinel (e.g. Windows conhost / Git Bash mintty,
-     * whose DA1 reply is not recognized by the stdin parser). Without this,
-     * send()/flush() promises stay pending forever and the TUI never renders
-     * ("hangs at startup"). On timeout every pending item resolves so the
-     * caller proceeds with capability detection treated as "unsupported".
-     */
-    timeoutMs;
-    /**
      * Interleaved queue of queries and sentinels in send order. Terminals
      * respond in order, so each flush() barrier only drains queries queued
      * before it — concurrent batches from independent callers stay isolated.
      */
     queue = [];
-    constructor(stdout, timeoutMs = 2000) {
+    constructor(stdout) {
         this.stdout = stdout;
-        this.timeoutMs = timeoutMs;
     }
     /**
      * Send a query and wait for its response.
@@ -119,22 +109,12 @@ export class TerminalQuerier {
      */
     send(query) {
         return new Promise(resolve => {
-            let timer;
-            const VOID = void 0;
-            const done = (r) => {
-                if (timer)
-                    clearTimeout(timer);
-                resolve(r);
-            };
             this.queue.push({
                 kind: 'query',
                 match: query.match,
-                resolve: r => done(r),
+                resolve: r => resolve(r),
             });
             this.stdout.write(query.request);
-            // Safety net: if neither the query response nor a DA1 sentinel
-            // ever arrives, force-resolve so the caller doesn't hang.
-            timer = setTimeout(() => done(VOID), this.timeoutMs);
         });
     }
     /**
@@ -148,17 +128,8 @@ export class TerminalQuerier {
      */
     flush() {
         return new Promise(resolve => {
-            let timer;
-            const done = () => {
-                if (timer)
-                    clearTimeout(timer);
-                resolve();
-            };
-            this.queue.push({ kind: 'sentinel', resolve: () => done() });
+            this.queue.push({ kind: 'sentinel', resolve });
             this.stdout.write(SENTINEL);
-            // Safety net: if DA1 sentinel never arrives, force-resolve so any
-            // caller awaiting flush() does not hang forever.
-            timer = setTimeout(() => done(), this.timeoutMs);
         });
     }
     /**
@@ -200,3 +171,4 @@ export class TerminalQuerier {
         }
     }
 }
+//# sourceMappingURL=terminal-querier.js.map

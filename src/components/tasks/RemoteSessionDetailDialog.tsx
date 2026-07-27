@@ -549,7 +549,7 @@ function ReviewSessionDetail(t0) {
     }
     let t4;
     if ($[5] === Symbol.for("react.memo_cache_sentinel")) {
-      t4 = <Text dimColor={true}>This 将存档远程会话并停止本地跟踪. The review will not complete and any 查找中s so far are discarded.</Text>;
+      t4 = <Text dimColor={true}>这将存档远程会话并停止本地跟踪。审查将无法完成，且目前所有的查找进度都将丢失。</Text>;
       $[5] = t4;
     } else {
       t4 = $[5];

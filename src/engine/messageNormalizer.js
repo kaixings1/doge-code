@@ -72,3 +72,4 @@ export class MessageNormalizer {
         return out;
     }
 }
+//# sourceMappingURL=messageNormalizer.js.map

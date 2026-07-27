@@ -77,7 +77,7 @@ export function SandboxPermissionRequest(t0) {
   let t5;
   if ($[4] !== host) {
     t5 = !managedDomainsOnly ? [{
-      label: <Text>Yes, and don't ask again for <Text bold={true}>{host}</Text></Text>,
+      label: <Text>同意，并且不再询问 <Text bold={true}>{host}</Text></Text>,
       value: "yes-dont-ask-again"
     }] : [];
     $[4] = host;
@@ -88,7 +88,7 @@ export function SandboxPermissionRequest(t0) {
   let t6;
   if ($[6] === Symbol.for("react.memo_cache_sentinel")) {
     t6 = {
-      label: <Text>No, and tell Claude what to do differently <Text bold={true}>(esc)</Text></Text>,
+      label: <Text>拒绝，并告诉 Claude 如何改进 <Text bold={true}>(esc)</Text></Text>,
       value: "no"
     };
     $[6] = t6;

@@ -911,7 +911,7 @@ function ElicitationFormDialog({
           }
         } else if (isTextField(schema_6)) {
           if (isActive) {
-            valueContent = <TextInput value={textInputValue} onChange={handleTextInputChange} onSubmit={handleTextInputSubmit} placeholder={`Type something\u{2026}`} columns={Math.min(columns - 20, 60)} cursorOffset={textInputCursorOffset} onChangeCursorOffset={setTextInputCursorOffset} focus showCursor />;
+            valueContent = <TextInput value={textInputValue} onChange={handleTextInputChange} onSubmit={handleTextInputSubmit} placeholder={`输入内容\u{2026}`} columns={Math.min(columns - 20, 60)} cursorOffset={textInputCursorOffset} onChangeCursorOffset={setTextInputCursorOffset} focus showCursor />;
           } else {
             const displayValue = hasValue && isDateTimeSchema(schema_6) ? formatDateDisplay(String(value_3), schema_6) : String(value_3);
             valueContent = hasValue ? <Text>{displayValue}</Text> : <Text dimColor italic>
@@ -956,11 +956,11 @@ function ElicitationFormDialog({
   }
   return <Dialog title={`MCP 服务器 "${serverName}" 请求您的输入`} subtitle={`\n${message}`} color="permission" onCancel={() => onResponse('cancel')} isCancelActive={(!currentField || !!focusedButton) && !expandedAccordion} inputGuide={exitState => exitState.pending ? <Text>再按一次 {exitState.keyName} 键退出</Text> : <Byline>
             <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
-            <KeyboardShortcutHint shortcut="↑↓" action="navigate" />
-            {currentField && <KeyboardShortcutHint shortcut="Backspace" action="unset" />}
-            {currentField && currentField.schema.type === 'boolean' && <KeyboardShortcutHint shortcut="Space" action="toggle" />}
-            {currentField && isEnumSchema(currentField.schema) && (expandedAccordion ? <KeyboardShortcutHint shortcut="Space" action="select" /> : <KeyboardShortcutHint shortcut="→" action="expand" />)}
-            {currentField && isMultiSelectEnumSchema(currentField.schema) && (expandedAccordion ? <KeyboardShortcutHint shortcut="Space" action="toggle" /> : <KeyboardShortcutHint shortcut="→" action="expand" />)}
+            <KeyboardShortcutHint shortcut="↑↓" action="导航" />
+            {currentField && <KeyboardShortcutHint shortcut="Backspace" action="取消输入" />}
+            {currentField && currentField.schema.type === 'boolean' && <KeyboardShortcutHint shortcut="Space" action="切换" />}
+            {currentField && isEnumSchema(currentField.schema) && (expandedAccordion ? <KeyboardShortcutHint shortcut="Space" action="选择" /> : <KeyboardShortcutHint shortcut="→" action="展开" />)}
+            {currentField && isMultiSelectEnumSchema(currentField.schema) && (expandedAccordion ? <KeyboardShortcutHint shortcut="Space" action="切换" /> : <KeyboardShortcutHint shortcut="→" action="展开" />)}
           </Byline>}>
       <Box flexDirection="column">
         {renderFormFields()}
@@ -1096,7 +1096,7 @@ function ElicitationURLDialog({
     const actionLabel = waitingState?.actionLabel ?? 'Continue without waiting';
     return <Dialog title={`MCP 服务器 "${serverName}" — 等待完成`} subtitle={`\n${message}`} color="permission" onCancel={() => onWaitingDismiss?.('cancel')} isCancelActive inputGuide={exitState => exitState.pending ? <Text>再按一次 {exitState.keyName} 键退出</Text> : <Byline>
               <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
-              <KeyboardShortcutHint shortcut="\u2190\u2192" action="switch" />
+              <KeyboardShortcutHint shortcut="\u2190\u2192" action="切换" />
             </Byline>}>
         <Box flexDirection="column">
           <Box marginBottom={1} flexDirection="column">
@@ -1139,7 +1139,7 @@ function ElicitationURLDialog({
   }
   return <Dialog title={`MCP 服务器 "${serverName}" 想要打开一个 URL`} subtitle={`\n${message}`} color="permission" onCancel={() => onResponse('cancel')} isCancelActive inputGuide={exitState_0 => exitState_0.pending ? <Text>再按一次 {exitState_0.keyName} 键退出</Text> : <Byline>
             <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
-            <KeyboardShortcutHint shortcut="\u2190\u2192" action="switch" />
+            <KeyboardShortcutHint shortcut="\u2190\u2192" action="切换" />
           </Byline>}>
       <Box flexDirection="column">
         <Box marginBottom={1} flexDirection="column">
