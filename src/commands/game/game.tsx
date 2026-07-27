@@ -80,14 +80,14 @@ export const call: LocalJSXCommandCall = async (onDone, _context, _args) => {
       {!gameState.gameOver && (
         <Box marginTop={1}>
           <Text>你的猜测: </Text>
-          <Text backgroundColor="blue" color="white" padding={1}>
-            {input || '_'}
-          </Text>
+          <Box backgroundColor="blue" padding={1}>
+            <Text color="white">{input || '_'}</Text>
+          </Box>
         </Box>
       )}
       {!gameState.gameOver && (
         <Box marginTop={1}>
-          <Text dimColor>按 Enter 提交 | 按 Esc 退出</Text>
+          <Text dimColor>按 Enter 提交 · 按 Esc 退出</Text>
         </Box>
       )}
       {gameState.gameOver && (

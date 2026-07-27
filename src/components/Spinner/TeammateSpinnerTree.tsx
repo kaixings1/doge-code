@@ -125,7 +125,7 @@ export function TeammateSpinnerTree(t0) {
       }
       let t18;
       if ($[39] !== isLeaderForegrounded || $[40] !== isLeaderSelected) {
-        t18 = isLeaderSelected && !isLeaderForegrounded && <Text dimColor={true}> · enter to view</Text>;
+        t18 = isLeaderSelected && !isLeaderForegrounded && <Text dimColor={true}> · 按 Enter 查看</Text>;
         $[39] = isLeaderForegrounded;
         $[40] = isLeaderSelected;
         $[41] = t18;
