@@ -545,7 +545,7 @@ export function DiscoverPlugins({
           <Text dimColor>
             <Byline>
               <ConfigurableShortcutHint action="select:accept" context="Select" fallback="Enter" description="选择" />
-              <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />
+              <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
             </Byline>
           </Text>
         </Box>
@@ -681,7 +681,7 @@ function DiscoverPluginsKeyHint(t0) {
   let t5;
   if ($[5] === Symbol.for("react.memo_cache_sentinel")) {
     t4 = <ConfigurableShortcutHint action="select:accept" context="Select" fallback="Enter" description="详情" />;
-    t5 = <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />;
+    t5 = <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />;
     $[5] = t4;
     $[6] = t5;
   } else {

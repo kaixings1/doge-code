@@ -556,7 +556,7 @@ export function ManageMarketplaces({
           <Text dimColor italic>
             {exitState.pending ? <>再次按 {exitState.keyName} 返回</> : <Byline>
                 <ConfigurableShortcutHint action="select:accept" context="Select" fallback="Enter" description="选择" />
-                <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />
+                <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
               </Byline>}
           </Text>
         </Box>
@@ -665,7 +665,7 @@ export function ManageMarketplaces({
           <Text dimColor italic>
             {isUpdating ? <>请稍候…</> : <Byline>
                 <ConfigurableShortcutHint action="select:accept" context="Select" fallback="Enter" description="选择" />
-                <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />
+                <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
               </Byline>}
           </Text>
         </Box>

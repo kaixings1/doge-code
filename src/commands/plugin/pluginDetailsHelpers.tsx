@@ -95,7 +95,7 @@ export function PluginSelectionKeyHint(t0) {
   if ($[2] === Symbol.for("react.memo_cache_sentinel")) {
     t2 = <ConfigurableShortcutHint action="plugin:toggle" context="Plugin" fallback="Space" description="切换" />;
     t3 = <ConfigurableShortcutHint action="select:accept" context="Select" fallback="Enter" description="详情" />;
-    t4 = <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />;
+    t4 = <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />;
     $[2] = t2;
     $[3] = t3;
     $[4] = t4;

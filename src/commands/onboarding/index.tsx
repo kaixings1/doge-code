@@ -28,7 +28,7 @@ export const call: LocalJSXCommandCall = async (onDone, _context, _args) => {
         <Text>{steps[step]}</Text>
       </Box>
       <Box marginTop={1}>
-        <Text dimColor>按 Enter 继续 | Esc 退出</Text>
+        <Text dimColor>按 Enter 继续 · Esc 退出</Text>
       </Box>
     </Box>
   )
