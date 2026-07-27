@@ -69,7 +69,7 @@ export function TeamMemCountParts(t0) {
       count++;
     }
     if (tmSearchCount > 0) {
-      const verb_0 = isActiveGroup ? count === 0 ? "Searching" : "searching" : count === 0 ? "Searched" : "searched";
+      const verb_0 = isActiveGroup ? count === 0 ? "正在搜索" : "搜索中" : count === 0 ? "已搜索" : "已搜索";
       if (count > 0) {
         let t2;
         if ($[13] === Symbol.for("react.memo_cache_sentinel")) {

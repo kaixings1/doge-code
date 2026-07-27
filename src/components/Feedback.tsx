@@ -308,7 +308,7 @@ export function Feedback({
     }
   });
   return <Dialog title="提交反馈 / 错误报告" onCancel={handleCancel} isCancelActive={step !== 'userInput'} inputGuide={exitState => exitState.pending ? <Text>按 {exitState.keyName} 再次退出</Text> : step === 'userInput' ? <Byline>
-            <KeyboardShortcutHint shortcut="Enter" action="继续" />
+            <KeyboardShortcutHint shortcut="Enter" action="下一步" />
             <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
           </Byline> : step === 'consent' ? <Byline>
             <KeyboardShortcutHint shortcut="Enter" action="提交" />
