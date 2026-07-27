@@ -11,14 +11,16 @@ import type { InternalMessage } from '../../../src/engine/messageNormalizer.js'
 import type { APIRequest } from '../../../src/engine/requestBuilder.js'
 import { getAllBaseTools, type Tool } from '../../../src/tools.js'
 import { zodToJsonSchema } from '../../../src/utils/zodToJsonSchema.js'
+import { getPermissionManager, DesktopPermissionManager } from './permissionManager.js'
 
 let mainWindow: BrowserWindow | null = null
 let tray: Tray | null = null
 const store = new Store()
 
 // ─── 路径 ───
-// 打包后 __dirname 可能指向源码目录，使用项目根目录计算
-const PROJECT_ROOT = path.resolve(__dirname, '..', '..', '..')
+// 打包后 __dirname = dist/main/，项目根目录 = __dirname/../..
+const PROJECT_ROOT = path.resolve(__dirname, '..', '..')
+const projectRoot = PROJECT_ROOT
 const DIST_DIR = path.join(PROJECT_ROOT, 'dist')
 const CONFIG_PATH = path.join(projectRoot, '.doge', 'api.json')
 
@@ -179,6 +181,7 @@ function createAdaptedTools(config: ReturnType<typeof loadConfig>): Map<string, 
   const adaptedTools = new Map<string, { name: string; description: string; parameters: Record<string, unknown>; execute: (params: unknown) => Promise<{ content: unknown }> }>()
 
   const ctx = buildToolContext(config)
+  const pm = getPermissionManager()
 
   for (const srcTool of srcTools) {
     if (!srcTool || !srcTool.name) continue
@@ -192,10 +195,23 @@ function createAdaptedTools(config: ReturnType<typeof loadConfig>): Map<string, 
       execute: async (params: unknown) => {
         try {
           const args = params as Record<string, unknown>
+
+          const permCtx = {
+            tool: srcTool.name,
+            action: 'execute',
+            params: args,
+            path: (args.file_path || args.path) as string | undefined,
+            command: (args.command || args.cmd) as string | undefined,
+          }
+          const decision = await pm.checkPermission(permCtx)
+          if (decision === 'deny') {
+            return { content: '用户拒绝了操作请求。' }
+          }
+
           const result = await srcTool.call(
             args,
             ctx,
-            async () => ({ allowed: true }),
+            async () => ({ allowed: decision === 'allow' || decision === 'allow_once' }),
             { role: 'user', content: '' },
             null,
           )
@@ -264,6 +280,7 @@ function getEngine(): QueryEngine {
     const config = loadConfig()
     engineConfig = config
 
+    getPermissionManager().setMainWindow(mainWindow)
     const adaptedTools = createAdaptedTools(config)
 
     engine = new QueryEngine({
@@ -1059,6 +1076,7 @@ ipcMain.handle('doge:execute-command', async (_event, commandName: string, args:
         engine = null
         const config = loadConfig()
         engineConfig = config
+        getPermissionManager().setMainWindow(mainWindow)
         const adaptedTools = createAdaptedTools(config)
         engine = new QueryEngine({
           model: config.model,
