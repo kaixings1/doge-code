@@ -17,29 +17,38 @@ declare global {
 function parseMessageContent(content: string): ContentBlock[] {
   const blocks: ContentBlock[] = []
   const toolUseRegex = /<tool_use>\s*<name>([^<]+)<\/name>\s*<input>(.*?)<\/input>\s*<\/tool_use>/gs
-  const toolEndRegex = /<\/tool_use>/g
 
-  let lastIndex = 0
+  const events: Array<{ type: 'tool_use'; start: number; end: number; name: string; input: string } | { type: 'thinking'; start: number; end: number; text: string } | { type: 'text'; start: number; end: number }> = []
+
   let match: RegExpExecArray | null
-  const matches: Array<{ start: number; end: number; name: string; input: string }> = []
-
   while ((match = toolUseRegex.exec(content)) !== null) {
-    matches.push({
-      start: match.index,
-      end: match.index + match[0].length,
-      name: match[1],
-      input: match[2],
-    })
+    events.push({ type: 'tool_use', start: match.index, end: match.index + match[0].length, name: match[1], input: match[2] })
   }
 
-  for (const tm of matches) {
-    if (tm.start > lastIndex) {
-      blocks.push({ type: 'text', text: content.slice(lastIndex, tm.start) })
+  // Extract <thinking> blocks
+  const thinkingRegex = /<thinking>(.*?)<\/thinking>/gs
+  let tMatch
+  while ((tMatch = thinkingRegex.exec(content)) !== null) {
+    events.push({ type: 'thinking', start: tMatch.index, end: tMatch.index + tMatch[0].length, text: tMatch[1].trim() })
+  }
+
+  // Sort by position
+  events.sort((a, b) => a.start - b.start)
+
+  // Build blocks in document order
+  let lastIndex = 0
+  for (const ev of events) {
+    if (ev.start > lastIndex) {
+      blocks.push({ type: 'text', text: content.slice(lastIndex, ev.start) })
     }
-    let input: Record<string, unknown> = {}
-    try { input = JSON.parse(tm.input) } catch { input = { raw: tm.input } }
-    blocks.push({ type: 'tool_use', id: `tool_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`, name: tm.name, input })
-    lastIndex = tm.end
+    if (ev.type === 'tool_use') {
+      let input: Record<string, unknown> = {}
+      try { input = JSON.parse(ev.input) } catch { input = { raw: ev.input } }
+      blocks.push({ type: 'tool_use', id: `tool_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`, name: ev.name, input })
+    } else if (ev.type === 'thinking') {
+      blocks.push({ type: 'thinking', text: ev.text })
+    }
+    lastIndex = ev.end
   }
   if (lastIndex < content.length) {
     blocks.push({ type: 'text', text: content.slice(lastIndex) })
@@ -174,7 +183,9 @@ type QueryState = 'idle' | 'responding' | 'needs_user' | 'should_continue' | 'do
 // ─── 消息内容块类型 ───
 interface TextBlock { type: 'text'; text: string }
 interface ToolUseBlock { type: 'tool_use'; id: string; name: string; input: Record<string, unknown> }
-type ContentBlock = TextBlock | ToolUseBlock
+interface ThinkingBlock { type: 'thinking'; text: string; signature?: string }
+interface ImageBlock { type: 'image'; url: string; alt?: string }
+type ContentBlock = TextBlock | ToolUseBlock | ThinkingBlock | ImageBlock
 
 // ─── 数据模型 ───
 interface Message {
@@ -851,18 +862,39 @@ function HighlightedDiff({ diffText }: { diffText: string }) {
     setLineNumbers(nums)
   }, [diffText])
 
+  const detectLang = (text: string): string => {
+    const m = text.match(/diff --git \/.+\.(\w+)/)
+    if (m) {
+      const ext = m[1].toLowerCase()
+      const map: Record<string, string> = { ts: 'typescript', tsx: 'typescript', js: 'javascript', jsx: 'javascript', json: 'json', css: 'css', scss: 'css', html: 'html', py: 'python', sh: 'bash', yaml: 'yaml', yml: 'yaml', rs: 'rust', md: 'markdown', sql: 'sql' }
+      if (map[ext]) return map[ext]
+    }
+    const m2 = text.match(/^\+\+\+\s+\S+\/([^\/]+)$/m)
+    if (m2) {
+      const ext = m2[1].split('.').pop()?.toLowerCase() || ''
+      const map: Record<string, string> = { ts: 'typescript', tsx: 'typescript', js: 'javascript', jsx: 'javascript', json: 'json', css: 'css', scss: 'css', html: 'html', py: 'python', sh: 'bash', yaml: 'yaml', yml: 'yaml', rs: 'rust', md: 'markdown', sql: 'sql' }
+      if (map[ext]) return map[ext]
+    }
+    return ''
+  }
+
+  const lang = detectLang(diffText)
+
   const highlightSyntax = (text: string): string => {
+    if (lang) {
+      const highlighted = highlightCode(text, lang)
+      if (highlighted !== text) return highlighted
+    }
     let html = text
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
     html = html.replace(/\b(const|let|var|function|return|if|else|for|while|class|import|export|from|async|await|try|catch|throw|new|this|true|false|null|undefined)\b/g, '<span style="color:#C678DD">$1</span>')
-    html = html.replace(/(['"`])(?:(?!\1|\\).|\\.)*?\1/g, '<span style="color:#98C379">$&</span>')
+    html = html.replace(/(['"`'])(?:(?!\1|\\)|\\.)*?\1/g, '<span style="color:#98C379">$&</span>')
     html = html.replace(/\b(\d+)\b/g, '<span style="color:#D19A66">$1</span>')
     html = html.replace(/(\/\/.*)$/gm, '<span style="color:#5C6370">$1</span>')
     return html
   }
-
   return (
     <div style={{ display: 'flex', fontFamily: "'Fira Code', 'Cascadia Code', Consolas, monospace", fontSize: '11px', lineHeight: '1.5' }}>
       <div style={{ color: '#444', textAlign: 'right', paddingRight: '8px', userSelect: 'none', minWidth: '36px', borderRight: '1px solid #1A1A1A' }}>
@@ -2291,10 +2323,16 @@ function App(): JSX.Element {
                               {toolResultContent.success ? '✓ 执行成功' : '✗ 执行失败'}
                             </div>
                           )}
-                          {toolResultContent.error && (
-                            <div style={{ color: '#FF6B6B', fontSize: '12px', marginBottom: '4px' }}>{toolResultContent.error}</div>
-                          )}
-                          {toolResultContent.output != null && (
+                          if (block.type === 'tool_use') {
+                            return <InlineToolUseBlock key={i} block={block} onExecute={executeToolFromBlock} executingIds={executingToolIds} />
+                          }
+                          if (block.type === 'thinking') {
+                            return <div key={i} style={{ padding: '6px 10px', margin: '4px 0', background: '#0F0F0F', border: '1px solid #262626', borderRadius: '4px', fontSize: '11px', color: '#888', fontStyle: 'italic' }}>{block.text}</div>
+                          }
+                          if (block.type === 'image') {
+                            return <div key={i} style={{ margin: '4px 0' }}><img src={block.url} alt={block.alt || ''} style={{ maxWidth: '100%', borderRadius: '4px' }} /></div>
+                          }
+                          return <div key={i} dangerouslySetInnerHTML={{ __html: renderMarkdown(block.text) }} />
                             <pre style={{ margin: 0, fontSize: '11px', color: '#ccc', whiteSpace: 'pre-wrap', wordBreak: 'break-all', fontFamily: 'Consolas, monospace', lineHeight: 1.5 }}>
                               {typeof toolResultContent.output === 'string' ? toolResultContent.output : JSON.stringify(toolResultContent.output, null, 2)}
                             </pre>
