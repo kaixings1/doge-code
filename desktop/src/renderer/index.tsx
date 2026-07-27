@@ -1231,6 +1231,10 @@ function App(): JSX.Element {
   const [isEditing, setIsEditing] = React.useState(false)
   const [editContent, setEditContent] = React.useState('')
   const [isSaving, setIsSaving] = React.useState(false)
+  const [searchQuery, setSearchQuery] = React.useState('')
+  const [replaceQuery, setReplaceQuery] = React.useState('')
+  const [searchResults, setSearchResults] = React.useState<Array<{ start: number; end: number }>>([])
+  const [currentResultIndex, setCurrentResultIndex] = React.useState(-1)
 
   const handlePreviewFile = React.useCallback(async (filePath: string) => {
     // 记录到最近文件
@@ -1271,6 +1275,55 @@ function App(): JSX.Element {
       setIsEditing(true)
     }
   }, [activePreviewFile])
+
+  const runSearch = React.useCallback(() => {
+    if (!activePreviewFile || !searchQuery) { setSearchResults([]); setCurrentResultIndex(-1); return }
+    const content = activePreviewFile.content
+    const results: Array<{ start: number; end: number }> = []
+    let pos = 0
+    while (true) {
+      const idx = content.toLowerCase().indexOf(searchQuery.toLowerCase(), pos)
+      if (idx === -1) break
+      results.push({ start: idx, end: idx + searchQuery.length })
+      pos = idx + 1
+    }
+    setSearchResults(results)
+    setCurrentResultIndex(results.length > 0 ? 0 : -1)
+  }, [activePreviewFile, searchQuery])
+
+  const handleNextResult = React.useCallback(() => {
+    if (searchResults.length === 0) return
+    setCurrentResultIndex(prev => (prev + 1) % searchResults.length)
+  }, [searchResults])
+
+  const handlePrevResult = React.useCallback(() => {
+    if (searchResults.length === 0) return
+    setCurrentResultIndex(prev => (prev - 1 + searchResults.length) % searchResults.length)
+  }, [searchResults])
+
+  const handleReplace = React.useCallback(async () => {
+    if (!activePreviewFile || !searchQuery || !replaceQuery || currentResultIndex === -1) return
+    const result = searchResults[currentResultIndex]
+    if (!result) return
+    const newContent = activePreviewFile.content.substring(0, result.start) + replaceQuery + activePreviewFile.content.substring(result.end)
+    setPreviewTabs(prev => prev.map(t => t.id === activePreviewFile.id ? { ...t, content: newContent } : t))
+    setEditContent(newContent)
+    runSearch()
+  }, [activePreviewFile, searchQuery, replaceQuery, currentResultIndex, searchResults, runSearch])
+
+  const handleReplaceAll = React.useCallback(async () => {
+    if (!activePreviewFile || !searchQuery || !replaceQuery || searchResults.length === 0) return
+    let newContent = activePreviewFile.content
+    const lowerContent = newContent.toLowerCase()
+    const lowerSearch = searchQuery.toLowerCase()
+    const offset = searchResults[0].start
+    const result = searchResults[currentResultIndex >= 0 ? currentResultIndex : 0]
+    if (!result) return
+    newContent = newContent.substring(0, result.start) + replaceQuery + newContent.substring(result.end)
+    setPreviewTabs(prev => prev.map(t => t.id === activePreviewFile.id ? { ...t, content: newContent } : t))
+    setEditContent(newContent)
+    runSearch()
+  }, [activePreviewFile, searchQuery, replaceQuery, searchResults, currentResultIndex, runSearch])
 
   const handleSaveEdit = React.useCallback(async () => {
     if (!activePreviewFile || isSaving) return
@@ -2220,26 +2273,52 @@ function App(): JSX.Element {
             </div>
             {/* 内容区域 */}
             {activePreviewFile ? (
-              <div style={{ borderBottom: '1px solid #262626', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', overflow: 'hidden' }}>
-                  <span style={{ fontSize: '11px', color: '#888', whiteSpace: 'nowrap' }}>{isEditing ? '✏️ 编辑中' : '👁️'} {activePreviewFile.path.split('/').pop()}</span>
+              <div style={{ borderBottom: '1px solid #262626', padding: '4px 12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', overflow: 'hidden' }}>
+                    <span style={{ fontSize: '11px', color: '#888', whiteSpace: 'nowrap' }}>{isEditing ? '✏️ 编辑中' : '👁️'} {activePreviewFile.path.split('/').pop()}</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
+                    {isEditing ? (
+                      <>
+                        <span style={{ cursor: 'pointer', color: '#4ECB71', fontSize: '11px' }} onClick={handleSaveEdit}>{isSaving ? '保存中...' : '💾 保存'}</span>
+                        <span style={{ cursor: 'pointer', color: '#555', fontSize: '11px' }} onClick={handleCancelEdit}>✕ 取消</span>
+                      </>
+                    ) : (
+                      <>
+                        <span style={{ cursor: 'pointer', color: '#888', fontSize: '11px' }} onClick={handleOpenTerminal} title="在终端中打开">💻</span>
+                        <span style={{ cursor: 'pointer', color: '#569CD6', fontSize: '11px' }} onClick={handleStartEdit}>✏️ 编辑</span>
+                        <span style={{ cursor: 'pointer', color: '#888', fontSize: '11px' }} onClick={handleCopyContent}>📝 复制内容</span>
+                        <span style={{ cursor: 'pointer', color: '#888', fontSize: '11px' }} onClick={handleRevealInExplorer}>📂 所在位置</span>
+                        <span style={{ cursor: 'pointer', color: '#555', fontSize: '11px' }} onClick={() => { navigator.clipboard.writeText(activePreviewFile.path); showToast('路径已复制', 'success') }}>📋</span>
+                      </>
+                    )}
+                  </div>
                 </div>
-                <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
-                  {isEditing ? (
-                    <>
-                      <span style={{ cursor: 'pointer', color: '#4ECB71', fontSize: '11px' }} onClick={handleSaveEdit}>{isSaving ? '保存中...' : '💾 保存'}</span>
-                      <span style={{ cursor: 'pointer', color: '#555', fontSize: '11px' }} onClick={handleCancelEdit}>✕ 取消</span>
-                    </>
-                  ) : (
-                    <>
-                      <span style={{ cursor: 'pointer', color: '#888', fontSize: '11px' }} onClick={handleOpenTerminal} title="在终端中打开">💻</span>
-                      <span style={{ cursor: 'pointer', color: '#569CD6', fontSize: '11px' }} onClick={handleStartEdit}>✏️ 编辑</span>
-                      <span style={{ cursor: 'pointer', color: '#888', fontSize: '11px' }} onClick={handleCopyContent}>📝 复制内容</span>
-                      <span style={{ cursor: 'pointer', color: '#888', fontSize: '11px' }} onClick={handleRevealInExplorer}>📂 所在位置</span>
-                      <span style={{ cursor: 'pointer', color: '#555', fontSize: '11px' }} onClick={() => { navigator.clipboard.writeText(activePreviewFile.path); showToast('路径已复制', 'success') }}>📋</span>
-                    </>
-                  )}
-                </div>
+                {/* 搜索替换工具栏 */}
+                {!isEditing && (
+                  <div style={{ display: 'flex', gap: '4px', marginTop: '4px', alignItems: 'center' }}>
+                    <input
+                      value={searchQuery}
+                      onChange={(e) => { setSearchQuery(e.target.value); runSearch() }}
+                      placeholder="搜索..."
+                      style={{ flex: 1, padding: '2px 6px', background: '#0F0F0F', border: '1px solid #262626', borderRadius: '3px', color: '#F5F5F5', fontSize: '10px', outline: 'none' }}
+                    />
+                    <span style={{ color: '#555', fontSize: '10px', minWidth: '40px', textAlign: 'center' }}>
+                      {searchResults.length > 0 ? `${currentResultIndex + 1}/${searchResults.length}` : '0/0'}
+                    </span>
+                    <button onClick={handlePrevResult} style={{ padding: '2px 6px', border: '1px solid #262626', borderRadius: '3px', background: '#0A0A0A', color: '#888', cursor: 'pointer', fontSize: '10px' }} title="上一个">↑</button>
+                    <button onClick={handleNextResult} style={{ padding: '2px 6px', border: '1px solid #262626', borderRadius: '3px', background: '#0A0A0A', color: '#888', cursor: 'pointer', fontSize: '10px' }} title="下一个">↓</button>
+                    <input
+                      value={replaceQuery}
+                      onChange={(e) => setReplaceQuery(e.target.value)}
+                      placeholder="替换为..."
+                      style={{ flex: 1, padding: '2px 6px', background: '#0F0F0F', border: '1px solid #262626', borderRadius: '3px', color: '#F5F5F5', fontSize: '10px', outline: 'none' }}
+                    />
+                    <button onClick={handleReplace} disabled={currentResultIndex === -1} style={{ padding: '2px 6px', border: '1px solid #262626', borderRadius: '3px', background: '#0A0A0A', color: currentResultIndex === -1 ? '#555' : '#4ECB71', cursor: 'pointer', fontSize: '10px' }} title="替换">替换</button>
+                    <button onClick={handleReplaceAll} disabled={searchResults.length === 0} style={{ padding: '2px 6px', border: '1px solid #262626', borderRadius: '3px', background: '#0A0A0A', color: searchResults.length === 0 ? '#555' : '#4ECB71', cursor: 'pointer', fontSize: '10px' }} title="全部替换">全部</button>
+                  </div>
+                )}
               </div>
             ) : (
               <div style={{ borderBottom: '1px solid #262626', padding: '8px', color: '#555', fontSize: '10px', textAlign: 'center' }}>所有标签页已关闭</div>
