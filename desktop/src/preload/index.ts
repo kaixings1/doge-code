@@ -70,6 +70,7 @@ interface DogeAPIValue {
   notify: (title: string, body: string) => Promise<{ success: boolean }>
   getWindowState: () => Promise<{ width?: number; height?: number; x?: number; y?: number }>
   saveWindowState: (state: { width?: number; height?: number; x?: number; y?: number }) => Promise<{ success: boolean }>
+  readFile: (filePath: string) => Promise<{ success: boolean; content?: string; size?: number; error?: string }>
 }
 
 const dogeAPI: DogeAPIValue = {
@@ -127,6 +128,7 @@ const dogeAPI: DogeAPIValue = {
   notify: (title: string, body: string) => ipcRenderer.invoke('doge:notify', title, body),
   getWindowState: () => ipcRenderer.invoke('doge:get-window-state'),
   saveWindowState: (state: { width?: number; height?: number; x?: number; y?: number }) => ipcRenderer.invoke('doge:save-window-state', state),
+  readFile: (filePath: string) => ipcRenderer.invoke('doge:read-file', filePath),
 }
 
 contextBridge.exposeInMainWorld('dogeAPI', dogeAPI)

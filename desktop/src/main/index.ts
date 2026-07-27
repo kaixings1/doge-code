@@ -1205,3 +1205,16 @@ ipcMain.handle('doge:save-window-state', (_event, state: { width?: number; heigh
   if (typeof state.y === 'number') store.set('y', state.y)
   return { success: true }
 })
+
+ipcMain.handle('doge:read-file', async (_event, filePath: string) => {
+  try {
+    if (!fs.existsSync(filePath)) return { success: false, error: '文件不存在' }
+    const stat = fs.statSync(filePath)
+    if (stat.isDirectory()) return { success: false, error: '无法预览文件夹' }
+    const content = fs.readFileSync(filePath, 'utf-8')
+    return { success: true, content, size: stat.size }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
