@@ -398,6 +398,12 @@ function createWindow(): void {
     })
   }
   mainWindow.webContents.openDevTools({ mode: 'detach' })
+
+  mainWindow.on('close', (e) => {
+    if (!mainWindow?.isVisible()) return
+    e.preventDefault()
+    mainWindow.hide()
+  })
 }
 
 function createTray(): void {
