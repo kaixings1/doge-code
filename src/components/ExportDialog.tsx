@@ -101,7 +101,7 @@ export function ExportDialog({
     if (showFilenameInput) {
       return <Byline>
           <KeyboardShortcutHint shortcut="Enter" action="保存" />
-          <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />
+          <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
         </Byline>;
     }
     if (exitState.pending) {

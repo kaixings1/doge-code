@@ -128,9 +128,9 @@ export function GenerateStep(): ReactNode {
       </WizardDialogLayout>;
   }
   return <WizardDialogLayout subtitle={subtitle} footerText={<Byline>
-          <ConfigurableShortcutHint action="confirm:yes" context="Confirmation" fallback="Enter" description="提交" />
+          <ConfigurableShortcutHint action="confirm:yes" context="Confirmation" fallback="Enter" description="确认" />
           <ConfigurableShortcutHint action="chat:externalEditor" context="Chat" fallback="Ctrl+g" description="在编辑器中打开" />
-          <ConfigurableShortcutHint action="confirm:no" context="Settings" fallback="Esc" description="返回" />
+          <ConfigurableShortcutHint action="confirm:no" context="Settings" fallback="Esc" description="取消" />
         </Byline>}>
       <Box flexDirection="column">
         {error && <Box marginBottom={1}>

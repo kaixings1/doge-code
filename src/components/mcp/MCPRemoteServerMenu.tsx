@@ -402,7 +402,7 @@ export function MCPRemoteServerMenu({
             在浏览器中完成身份验证后按 <Text bold>Enter</Text>。
           </Text>
           <Text dimColor italic>
-            <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />
+            <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
           </Text>
         </Box>
       </Box>;
@@ -432,7 +432,7 @@ export function MCPRemoteServerMenu({
                 完成后按 <Text bold>Enter</Text>。
               </Text>
               <Text dimColor italic>
-                <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />
+                <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
               </Text>
             </Box>
           </> : <>
@@ -445,7 +445,7 @@ export function MCPRemoteServerMenu({
                 按 <Text bold>Enter</Text> 打开浏览器。
               </Text>
               <Text dimColor italic>
-                <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />
+                <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
               </Text>
             </Box>
           </>}
@@ -636,9 +636,10 @@ export function MCPRemoteServerMenu({
           {exitState.pending ? <>再次按 {exitState.keyName} 退出</> : <Byline>
               <KeyboardShortcutHint shortcut="↑↓" action="导航" />
               <KeyboardShortcutHint shortcut="Enter" action="选择" />
-              <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />
+              <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" />
             </Byline>}
         </Text>
       </Box>
     </Box>;
 }
+
