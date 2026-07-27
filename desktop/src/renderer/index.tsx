@@ -521,6 +521,8 @@ function FileTree({ cwd, onPreviewFile }: { cwd: string; onPreviewFile?: (path: 
     result.push(
       <div
         key={node.path}
+        draggable
+        onDragStart={(e) => { e.dataTransfer.setData('text/plain', node.path) }}
         style={{ ...styles.fileItem, paddingLeft: `${12 + depth * 16}px`, color: node.isDirectory ? '#F5F5F5' : '#888888' }}
         onClick={() => toggleDir(node)}
         onDoubleClick={() => { if (!node.isDirectory) onPreviewFile?.(node.path) }}
@@ -2219,6 +2221,11 @@ function App(): JSX.Element {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
+              onDrop={(e) => {
+                const path = e.dataTransfer.getData('text/plain')
+                if (path) { e.preventDefault(); setInput(prev => prev ? prev + ' ' + path : path) }
+              }}
+              onDragOver={(e) => e.preventDefault()}
               placeholder={isProcessing ? '按 Enter 中断... (Shift+Enter 换行)' : '输入消息... (Enter 发送, Shift+Enter 换行, ↑↓ 历史导航)'}
               style={{
                 ...styles.inputBox,
