@@ -117,11 +117,13 @@ function renderMarkdown(text: string): string {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
 
-  // 代码块（带语法高亮）
+  // 代码块（带语法高亮 + 复制按钮）
   html = html.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) => {
-    const highlighted = highlightCode(code.trim(), lang.toLowerCase())
-    const langLabel = lang ? `<div style="color:#888;font-size:10px;margin-bottom:4px">${lang}</div>` : ''
-    return `${langLabel}<pre style="background:#0A0A0A;border:1px solid #262626;border-radius:4px;padding:10px;overflow-x:auto;font-size:12px;line-height:1.5;margin:4px 0"><code>${highlighted}</code></pre>`
+    const rawCode = code.trim()
+    const highlighted = highlightCode(rawCode, lang.toLowerCase())
+    const langLabel = lang ? `<span style="color:#888;font-size:10px">${lang}</span>` : '<span></span>'
+    const escaped = rawCode.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    return `<div style="position:relative;margin:4px 0" data-code="${escaped}"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">${langLabel}<button onclick="navigator.clipboard.writeText(this.closest('div').getAttribute('data-code')).catch(()=>{})" style="background:#262626;border:1px solid #333;color:#888;padding:1px 8px;border-radius:3px;cursor:pointer;font-size:10px">复制</button></div><pre style="background:#0A0A0A;border:1px solid #262626;border-radius:4px;padding:10px;overflow-x:auto;font-size:12px;line-height:1.5;margin:0"><code>${highlighted}</code></pre></div>`
   })
 
   // 行内代码
