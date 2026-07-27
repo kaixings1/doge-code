@@ -1231,3 +1231,42 @@ ipcMain.handle('doge:write-file', async (_event, filePath: string, content: stri
     return { success: false, error: message }
   }
 })
+
+ipcMain.handle('doge:search-files', async (_event, query: string, cwd: string, maxResults: number = 50) => {
+  try {
+    const results: Array<{ path: string; line: number; content: string }> = []
+    if (!query || query.length < 2) return results
+
+    const walk = (dir: string) => {
+      if (results.length >= maxResults) return
+      try {
+        const entries = fs.readdirSync(dir, { withFileTypes: true })
+        for (const entry of entries) {
+          if (results.length >= maxResults) break
+          const fullPath = path.join(dir, entry.name)
+          if (entry.isDirectory()) {
+            if (entry.name === 'node_modules' || entry.name === '.git' || entry.name.startsWith('.')) continue
+            walk(fullPath)
+          } else {
+            // skip binary-like and large files
+            const ext = entry.name.split('.').pop()?.toLowerCase() || ''
+            const skipExts = ['png','jpg','jpeg','gif','ico','woff','woff2','ttf','eot','zip','tar','gz','7z','exe','dll','so','dylib','pdf','mp3','mp4','avi','mov','lock','bin','o','a','pyc','class']
+            if (skipExts.includes(ext)) continue
+            try {
+              const content = fs.readFileSync(fullPath, 'utf-8')
+              const lines = content.split('\n')
+              for (let i = 0; i < lines.length; i++) {
+                if (lines[i].toLowerCase().includes(query.toLowerCase())) {
+                  results.push({ path: fullPath, line: i + 1, content: lines[i].trim() })
+                  if (results.length >= maxResults) break
+                }
+              }
+            } catch { /* skip unreadable files */ }
+          }
+        }
+      } catch { /* skip unreadable dirs */ }
+    }
+    walk(cwd)
+    return results
+  } catch { return [] }
+})
