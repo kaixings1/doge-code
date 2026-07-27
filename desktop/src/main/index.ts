@@ -1027,6 +1027,30 @@ ipcMain.handle('doge:get-session-id', () => {
   return currentSessionId
 })
 
+// 关闭当前会话并自动创建新会话（多 Tab 用）
+ipcMain.handle('doge:close-session', async () => {
+  try {
+    engine = null
+    engineConfig = null
+    if (currentSessionId) {
+      // 保存当前会话状态
+      const currentEngine = getEngine()
+      const msgs = (currentEngine as unknown as { conversation: { messages: InternalMessage[] } }).conversation?.messages ?? []
+      if (msgs.length > 0) {
+        const file = path.join(SESSIONS_DIR, `${currentSessionId}.json`)
+        const data = msgs.map(m => ({ role: m.role, content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content) }))
+        fs.writeFileSync(file, JSON.stringify({ id: currentSessionId, messages: data, createdAt: new Date().toISOString() }, null, 2), 'utf-8')
+      }
+    }
+    currentSessionId = null
+    const newSessionId = saveSession([])
+    return { success: true, sessionId: newSessionId }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
 ipcMain.handle('doge:notify', (_event, title: string, body: string) => {
   try {
     const { Notification } = require('electron')
