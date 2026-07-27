@@ -2323,6 +2323,13 @@ function App(): JSX.Element {
                               {toolResultContent.success ? '✓ 执行成功' : '✗ 执行失败'}
                             </div>
                           )}
+                          <pre style={{ margin: 0, fontSize: '11px', color: '#ccc', whiteSpace: 'pre-wrap', wordBreak: 'break-all', fontFamily: 'Consolas, monospace', lineHeight: 1.5 }}>
+                            {typeof toolResultContent.output === 'string' ? toolResultContent.output : JSON.stringify(toolResultContent.output, null, 2)}
+                          </pre>
+                        </div>
+                      )
+                    : blocks
+                      ? blocks.map((block, i) => {
                           if (block.type === 'tool_use') {
                             return <InlineToolUseBlock key={i} block={block} onExecute={executeToolFromBlock} executingIds={executingToolIds} />
                           }
@@ -2331,18 +2338,6 @@ function App(): JSX.Element {
                           }
                           if (block.type === 'image') {
                             return <div key={i} style={{ margin: '4px 0' }}><img src={block.url} alt={block.alt || ''} style={{ maxWidth: '100%', borderRadius: '4px' }} /></div>
-                          }
-                          return <div key={i} dangerouslySetInnerHTML={{ __html: renderMarkdown(block.text) }} />
-                            <pre style={{ margin: 0, fontSize: '11px', color: '#ccc', whiteSpace: 'pre-wrap', wordBreak: 'break-all', fontFamily: 'Consolas, monospace', lineHeight: 1.5 }}>
-                              {typeof toolResultContent.output === 'string' ? toolResultContent.output : JSON.stringify(toolResultContent.output, null, 2)}
-                            </pre>
-                          )}
-                        </div>
-                      )
-                    : blocks
-                      ? blocks.map((block, i) => {
-                          if (block.type === 'tool_use') {
-                            return <InlineToolUseBlock key={i} block={block} onExecute={executeToolFromBlock} executingIds={executingToolIds} />
                           }
                           return <div key={i} dangerouslySetInnerHTML={{ __html: renderMarkdown(block.text) }} />
                         })
