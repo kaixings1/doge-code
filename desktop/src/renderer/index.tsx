@@ -245,6 +245,9 @@ function FileTree({ cwd, onPreviewFile }: { cwd: string; onPreviewFile?: (path: 
   const [tree, setTree] = React.useState<FileTreeNode[]>([])
   const [loading, setLoading] = React.useState(true)
   const [filter, setFilter] = React.useState('')
+  const [searchMode, setSearchMode] = React.useState<'name' | 'content'>('name')
+  const [searchResults, setSearchResults] = React.useState<Array<{ path: string; line: number; content: string }>>([])
+  const [searching, setSearching] = React.useState(false)
   const [contextMenu, setContextMenu] = React.useState<{ x: number; y: number; node: FileTreeNode } | null>(null)
 
   React.useEffect(() => {
@@ -258,6 +261,21 @@ function FileTree({ cwd, onPreviewFile }: { cwd: string; onPreviewFile?: (path: 
     e.stopPropagation()
     setContextMenu({ x: e.clientX, y: e.clientY, node })
   }
+
+  // 内容搜索（防抖）
+  React.useEffect(() => {
+    if (searchMode !== 'content' || !filter || filter.length < 2) {
+      setSearchResults([])
+      return
+    }
+    setSearching(true)
+    const timer = setTimeout(async () => {
+      const results = await window.dogeAPI.searchFiles(filter, cwd, 80)
+      setSearchResults(results)
+      setSearching(false)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [filter, searchMode, cwd])
 
   const copyPath = () => {
     if (contextMenu) {
@@ -459,6 +477,7 @@ function FileTree({ cwd, onPreviewFile }: { cwd: string; onPreviewFile?: (path: 
   }
 
   const renderNode = (node: FileTreeNode, depth: number = 0): JSX.Element[] => {
+    if (searchMode === 'content') return []
     if (filter && !node.name.toLowerCase().includes(filter.toLowerCase())) return []
     const result: JSX.Element[] = []
     const isLoading = loadingPaths.has(node.path)
@@ -490,19 +509,54 @@ function FileTree({ cwd, onPreviewFile }: { cwd: string; onPreviewFile?: (path: 
 
   return (
     <>
-      {/* 文件搜索框 */}
+      {/* 搜索框 + 模式切换 */}
       <div style={{ padding: '4px 8px', borderBottom: '1px solid #1A1A1A' }}>
+        <div style={{ display: 'flex', gap: '2px', marginBottom: '3px' }}>
+          <button
+            onClick={() => setSearchMode('name')}
+            style={{
+              flex: 1, padding: '2px', border: 'none', borderRadius: '2px', cursor: 'pointer', fontSize: '9px',
+              background: searchMode === 'name' ? '#333' : 'transparent', color: searchMode === 'name' ? '#F5F5F5' : '#888'
+            }}
+          >文件名</button>
+          <button
+            onClick={() => setSearchMode('content')}
+            style={{
+              flex: 1, padding: '2px', border: 'none', borderRadius: '2px', cursor: 'pointer', fontSize: '9px',
+              background: searchMode === 'content' ? '#333' : 'transparent', color: searchMode === 'content' ? '#F5F5F5' : '#888'
+            }}
+          >内容搜索</button>
+        </div>
         <input
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          placeholder="🔍 搜索文件..."
+          placeholder={searchMode === 'name' ? '🔍 搜索文件...' : '🔍 搜索文件内容...'}
           style={{
             width: '100%', backgroundColor: '#0F0F0F', border: '1px solid #262626', borderRadius: '3px',
             padding: '3px 6px', color: '#F5F5F5', fontSize: '11px', outline: 'none'
           }}
         />
       </div>
-      {tree.flatMap((node) => renderNode(node))}
+      {searchMode === 'content' ? (
+        <div style={{ padding: '4px 8px', fontSize: '10px', color: '#666', borderBottom: '1px solid #1A1A1A' }}>
+          {searching ? '搜索中...' : searchResults.length > 0 ? `找到 ${searchResults.length} 个匹配` : filter.length >= 2 ? '输入至少 2 个字符开始搜索' : ''}
+        </div>
+      ) : null}
+      {searchMode === 'content' ? (
+        searchResults.map((r, i) => (
+          <div
+            key={`${r.path}-${r.line}-${i}`}
+            style={{ ...styles.fileItem, padding: '4px 8px', cursor: 'pointer', fontSize: '10px' }}
+            onClick={() => { onPreviewFile?.(r.path); setSearchResults([]); setFilter('') }}
+          >
+            <span style={{ color: '#888', marginRight: '4px', fontSize: '9px' }}>L{r.line}</span>
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>{r.path.replace(cwd + '/', '')}</span>
+            <span style={{ color: '#555', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '60%' }}>{r.content}</span>
+          </div>
+        ))
+      ) : (
+        tree.flatMap((node) => renderNode(node))
+      )}
       {/* 文件树右键菜单 */}
       {contextMenu && (
         <div
