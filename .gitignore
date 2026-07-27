@@ -168,3 +168,4 @@ src/commands/database/*.backup
 src/commands/updateskills/index.js
 src/commands/updateskills/updateskills.js
 updateskills.exe
+\"release/\" 
