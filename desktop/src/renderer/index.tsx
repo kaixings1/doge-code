@@ -1745,7 +1745,7 @@ function App(): JSX.Element {
               {currentStreaming && (
                 <div style={{ ...styles.messageBubble, ...styles.assistantBubble }}>
                   <div style={styles.roleLabel}>助手</div>
-                  <div>{currentStreaming}</div>
+                  <div dangerouslySetInnerHTML={{ __html: renderMarkdown(currentStreaming) }} />
                   <div style={styles.thinkingIndicator}>...</div>
                 </div>
               )}
