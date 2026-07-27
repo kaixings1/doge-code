@@ -43,7 +43,7 @@ const largeMemoryFilesNotice: StatusNoticeDefinition = {
                 Large <Text bold>{displayPath}</Text> will impact performance (
                 {formatNumber(file.content.length)} chars &gt;{' '}
                 {formatNumber(MAX_MEMORY_CHARACTER_COUNT)})
-                <Text dimColor> · /memory to edit</Text>
+                <Text dimColor> · /memory 编辑</Text>
               </Text>
             </Box>;
       })}
@@ -152,7 +152,7 @@ const largeAgentDescriptionsNotice: StatusNoticeDefinition = {
           Large cumulative agent descriptions will impact performance (~
           {formatNumber(totalTokens)} tokens &gt;{' '}
           {formatNumber(AGENT_DESCRIPTIONS_THRESHOLD)})
-          <Text dimColor> · /agents to manage</Text>
+          <Text dimColor> · /agents 管理</Text>
         </Text>
       </Box>;
   }

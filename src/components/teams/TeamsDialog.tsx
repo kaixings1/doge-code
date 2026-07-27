@@ -274,7 +274,7 @@ function TeamDetailView(t0) {
   }
   let t4;
   if ($[8] !== cycleModeShortcut) {
-    t4 = <Box marginLeft={1}><Text dimColor={true}>{figures.arrowUp}/{figures.arrowDown} select · Enter view · k kill · s shutdown · p prune idle{supportsHideShow && " \xB7 h hide/show \xB7 H hide/show all"}{" \xB7 "}{cycleModeShortcut} sync cycle modes for all · Esc close</Text></Box>;
+    t4 = <Box marginLeft={1}><Text dimColor={true}>{figures.arrowUp}/{figures.arrowDown} 选择 · Enter 查看 · k 终止 · s 关闭 · p 清理空闲{supportsHideShow && " \xB7 h 隐藏/显示 \xB7 H 全部隐藏/显示"}{" \xB7 "}{cycleModeShortcut} 同步切换所有模式 · Esc 关闭</Text></Box>;
     $[8] = cycleModeShortcut;
     $[9] = t4;
   } else {
@@ -521,7 +521,7 @@ function TeammateDetailView(t0) {
   }
   let t12;
   if ($[34] !== cycleModeShortcut) {
-    t12 = <Box marginLeft={1}><Text dimColor={true}>{figures.arrowLeft} back · Esc close · k kill · s shutdown{getCachedBackend()?.supportsHideShow && " \xB7 h hide/show"}{" \xB7 "}{cycleModeShortcut} cycle mode</Text></Box>;
+    t12 = <Box marginLeft={1}><Text dimColor={true}>{figures.arrowLeft} 返回 · Esc 关闭 · k 终止 · s 关闭{getCachedBackend()?.supportsHideShow && " \xB7 h 隐藏/显示"}{" \xB7 "}{cycleModeShortcut} 切换模式</Text></Box>;
     $[34] = cycleModeShortcut;
     $[35] = t12;
   } else {

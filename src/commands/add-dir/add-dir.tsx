@@ -61,7 +61,7 @@ export async function call(onDone: LocalJSXCommandOnDone, context: LocalJSXComma
     } else {
       message = `✅ ${chalk.bold(path)} 添加为本次会话的工作目录`;
     }
-    const messageWithHint = `${message} ${chalk.dim('· /permissions to manage')}`;
+    const messageWithHint = `${message} ${chalk.dim('· /permissions 管理')}`;
     // 同步调用 onDone，完成命令
     onDone(messageWithHint);
   };
