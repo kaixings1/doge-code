@@ -68,6 +68,8 @@ interface DogeAPIValue {
   closeSession: () => Promise<{ success: boolean; sessionId?: string; error?: string }>
   getCurrentSessionId: () => Promise<string | null>
   notify: (title: string, body: string) => Promise<{ success: boolean }>
+  getWindowState: () => Promise<{ width?: number; height?: number; x?: number; y?: number }>
+  saveWindowState: (state: { width?: number; height?: number; x?: number; y?: number }) => Promise<{ success: boolean }>
 }
 
 const dogeAPI: DogeAPIValue = {
@@ -123,6 +125,8 @@ const dogeAPI: DogeAPIValue = {
   closeSession: () => ipcRenderer.invoke('doge:close-session'),
   getCurrentSessionId: () => ipcRenderer.invoke('doge:get-session-id'),
   notify: (title: string, body: string) => ipcRenderer.invoke('doge:notify', title, body),
+  getWindowState: () => ipcRenderer.invoke('doge:get-window-state'),
+  saveWindowState: (state: { width?: number; height?: number; x?: number; y?: number }) => ipcRenderer.invoke('doge:save-window-state', state),
 }
 
 contextBridge.exposeInMainWorld('dogeAPI', dogeAPI)
