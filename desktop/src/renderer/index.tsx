@@ -1472,6 +1472,8 @@ function App(): JSX.Element {
   const [showSessions, setShowSessions] = React.useState(false)
   const [recentFiles, setRecentFiles] = React.useState<Array<{ path: string; name: string }>>([])
   const [toast, setToast] = React.useState<{ text: string; type: 'info' | 'success' | 'error' } | null>(null)
+  const [sidebarVisible, setSidebarVisible] = React.useState(true)
+  const [terminalVisible, setTerminalVisible] = React.useState(false)
   const toastTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
   const messagesEndRef = React.useRef<HTMLDivElement>(null)
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
@@ -1599,22 +1601,6 @@ function App(): JSX.Element {
   }, [input])
 
   React.useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages, currentStreaming])
-
-  React.useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key === 'p') {
-        e.preventDefault()
-        setPaletteMode('files')
-        setShowCommandPalette(p => !p)
-      } else if (e.ctrlKey && e.shiftKey && e.key === 'P') {
-        e.preventDefault()
-        setPaletteMode('commands')
-        setShowCommandPalette(p => !p)
-      }
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [])
 
   React.useEffect(() => {
     async function load(): Promise<void> {
@@ -1907,6 +1893,78 @@ function App(): JSX.Element {
   const handleAbort = React.useCallback(async () => { await window.dogeAPI.abort(); setCurrentStreaming('') }, [])
   const handleClear = React.useCallback(async () => { await window.dogeAPI.clearHistory(); setMessages([]); persistActiveTabMessages([]); setCurrentStreaming('') }, [persistActiveTabMessages])
 
+  // ─── 全局快捷键（集中注册） ───
+  React.useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const onCtrl = e.ctrlKey || e.metaKey
+
+      if (!onCtrl && e.key === 'Escape') {
+        e.preventDefault()
+        if (showCommandPalette) setShowCommandPalette(false)
+        else if (showSettings) setShowSettings(false)
+        else if (showShortcuts) setShowShortcuts(false)
+        else if (showSessions) setShowSessions(false)
+        else if (terminalVisible) setTerminalVisible(false)
+        return
+      }
+
+      if (!showCommandPalette && !showSettings && !showShortcuts && !showSessions) {
+        if (e.key === '?' && !terminalVisible) {
+          e.preventDefault()
+          setShowShortcuts(p => !p)
+          return
+        }
+      }
+
+      if (!onCtrl) return
+      switch (e.key.toLowerCase()) {
+        case 'p':
+          e.preventDefault()
+          setPaletteMode(e.shiftKey ? 'commands' : 'files')
+          setShowCommandPalette(p => !p)
+          break
+        case 'n': case 'N':
+          e.preventDefault()
+          handleNewTab()
+          break
+        case 'w': case 'W':
+          e.preventDefault()
+          if (activeTabId) handleCloseTab(activeTabId)
+          break
+        case ',':
+          e.preventDefault()
+          setShowSettings(p => !p)
+          break
+        case '/':
+          e.preventDefault()
+          inputRef.current?.focus()
+          break
+        case 'l': case 'L':
+          e.preventDefault()
+          handleClear()
+          break
+        case 'b': case 'B':
+          e.preventDefault()
+          setSidebarVisible(p => !p)
+          break
+        case 'r': case 'R':
+          e.preventDefault()
+          setMsgSearchQuery(p => p ? '' : '/')
+          break
+        case '`':
+          e.preventDefault()
+          setTerminalVisible(p => !p)
+          break
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [
+    showCommandPalette, showSettings, showShortcuts, showSessions,
+    terminalVisible, activeTabId,
+    handleNewTab, handleCloseTab, handleClear,
+  ])
+
   const handleCommit = React.useCallback(async () => {
     if (!commitMessage.trim() || isCommitting) return
     setIsCommitting(true)
@@ -2091,7 +2149,7 @@ function App(): JSX.Element {
         >+</div>
       </div>
       {/* 左栏：对话历史 */}
-      <div style={styles.sidebar}>
+      <div style={{ ...styles.sidebar, display: sidebarVisible ? 'flex' : 'none' }}>
         <div style={styles.sidebarHeader}>
           <span style={{ fontSize: '18px' }}>{'🐕'}</span>
           <span style={{ flex: 1 }}>Doge Code</span>
@@ -2412,6 +2470,19 @@ function App(): JSX.Element {
           <FileTree cwd={workingDir} onPreviewFile={handlePreviewFile} />
         </div>
 
+        {/* 终端面板 */}
+        {terminalVisible && (
+          <div style={{ borderTop: '1px solid #262626', height: '200px', display: 'flex', flexDirection: 'column', background: '#0A0A0A' }}>
+            <div style={{ ...styles.panelHeader, borderTop: 'none', justifyContent: 'space-between' }}>
+              <span>💻 终端</span>
+              <span style={{ cursor: 'pointer', color: '#555', fontSize: '12px' }} onClick={() => setTerminalVisible(false)}>✕</span>
+            </div>
+            <div style={{ flex: 1, padding: '8px 12px', fontFamily: 'monospace', fontSize: '12px', color: '#D4D4D4', overflowY: 'auto', background: '#0F0F0F' }}>
+              <span style={{ color: '#888' }}>终端集成需要安装 xterm.js 库。当前为占位界面。</span>
+            </div>
+          </div>
+        )}
+
         {/* 文件预览面板 */}
         {previewTabs.length > 0 && (
           <>
@@ -2601,15 +2672,20 @@ function App(): JSX.Element {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               {[
-                ['Ctrl + P', '打开文件搜索'],
-                ['Ctrl + Shift + P', '打开命令面板'],
-                ['Ctrl + K', '打开命令面板（旧）'],
+                ['Ctrl + P', '文件搜索'],
+                ['Ctrl + Shift + P', '命令面板'],
+                ['Ctrl + N', '新建会话'],
+                ['Ctrl + W', '关闭当前会话'],
+                ['Ctrl + ,', '设置'],
+                ['Ctrl + /', '聚焦输入框'],
+                ['Ctrl + L', '清除对话'],
+                ['Ctrl + B', '切换侧边栏'],
+                ['Ctrl + R', '历史搜索'],
+                ['Ctrl + `', '切换终端'],
                 ['Ctrl + Enter', '发送消息'],
                 ['Shift + Enter', '换行'],
-                ['↑ / ↓', '历史消息导航'],
-                ['Tab', '自动补全命令/文件路径'],
-                ['?', '快捷键帮助'],
                 ['Esc', '关闭面板'],
+                ['?', '快捷键帮助'],
               ].map(([key, desc]) => (
                 <div key={key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid #262626' }}>
                   <span style={{ color: '#888', fontSize: '12px' }}>{desc}</span>
