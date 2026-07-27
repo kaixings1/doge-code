@@ -2,7 +2,7 @@
  * Electron 主进程入口 — 集成 QueryEngine
  */
 
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import * as path from 'path'
 import * as fs from 'fs'
 import { QueryEngine, type ToolDefinition } from '../../../src/engine/index.js'
@@ -1046,6 +1046,63 @@ ipcMain.handle('doge:delete-file', async (_event, filePath: string) => {
     } else {
       fs.unlinkSync(filePath)
     }
+    return { success: true }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
+ipcMain.handle('doge:rename-file', async (_event, filePath: string, newName: string) => {
+  try {
+    if (!fs.existsSync(filePath)) return { success: false, error: '文件不存在' }
+    if (!newName || newName.includes('/') || newName.includes('\\')) return { success: false, error: '无效的文件名' }
+    const newPath = path.join(path.dirname(filePath), newName)
+    if (fs.existsSync(newPath)) return { success: false, error: '目标已存在: ' + newName }
+    fs.renameSync(filePath, newPath)
+    return { success: true, newPath }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
+ipcMain.handle('doge:new-file', async (_event, dirPath: string, fileName: string) => {
+  try {
+    const fullPath = path.join(dirPath, fileName)
+    if (fs.existsSync(fullPath)) return { success: false, error: '文件已存在' }
+    const dir = path.dirname(fullPath)
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
+    fs.writeFileSync(fullPath, '', 'utf-8')
+    return { success: true, path: fullPath }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
+ipcMain.handle('doge:new-folder', async (_event, dirPath: string, folderName: string) => {
+  try {
+    const fullPath = path.join(dirPath, folderName)
+    if (fs.existsSync(fullPath)) return { success: false, error: '文件夹已存在' }
+    fs.mkdirSync(fullPath, { recursive: true })
+    return { success: true, path: fullPath }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
+ipcMain.handle('doge:open-terminal', async (_event, dirPath: string) => {
+  try {
+    const targetDir = fs.existsSync(dirPath) ? dirPath : projectRoot
+    const cmd = process.platform === 'win32'
+      ? ['cmd', '/c', 'start', 'cmd', '/k', 'cd', '/d', targetDir]
+      : process.platform === 'darwin'
+        ? ['open', '-a', 'Terminal', targetDir]
+        : ['x-terminal-emulator', '--working-directory', targetDir]
+    const { execSync } = await import('node:child_process')
+    execSync(cmd.join(' '), { windowsHide: true })
     return { success: true }
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : '未知错误'
