@@ -65,6 +65,7 @@ interface DogeAPIValue {
   newFile: (dirPath: string, fileName: string) => Promise<{ success: boolean; path?: string; error?: string }>
   newFolder: (dirPath: string, folderName: string) => Promise<{ success: boolean; path?: string; error?: string }>
   openTerminal: (dirPath: string) => Promise<{ success: boolean; error?: string }>
+  closeSession: () => Promise<{ success: boolean; sessionId?: string; error?: string }>
   getCurrentSessionId: () => Promise<string | null>
   notify: (title: string, body: string) => Promise<{ success: boolean }>
 }
@@ -119,6 +120,7 @@ const dogeAPI: DogeAPIValue = {
   newFile: (dirPath: string, fileName: string) => ipcRenderer.invoke('doge:new-file', dirPath, fileName),
   newFolder: (dirPath: string, folderName: string) => ipcRenderer.invoke('doge:new-folder', dirPath, folderName),
   openTerminal: (dirPath: string) => ipcRenderer.invoke('doge:open-terminal', dirPath),
+  closeSession: () => ipcRenderer.invoke('doge:close-session'),
   getCurrentSessionId: () => ipcRenderer.invoke('doge:get-session-id'),
   notify: (title: string, body: string) => ipcRenderer.invoke('doge:notify', title, body),
 }

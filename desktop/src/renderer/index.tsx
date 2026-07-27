@@ -1015,6 +1015,39 @@ function App(): JSX.Element {
   const messagesEndRef = React.useRef<HTMLDivElement>(null)
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
 
+  // ─── 多 Tab 会话管理 ───
+  interface AppTab {
+    id: string
+    sessionId: string
+    title: string
+    messages: Message[]
+  }
+  const [tabs, setTabs] = React.useState<AppTab[]>([])
+  const [activeTabId, setActiveTabId] = React.useState<string | null>(null)
+  const tabIdCounter = React.useRef(0)
+
+  // 切换到指定 tab（同步 messages 到本地状态）
+  const switchTab = React.useCallback((tabId: string) => {
+    const tab = tabs.find(t => t.id === tabId)
+    if (tab) {
+      setActiveTabId(tabId)
+      setMessages(tab.messages)
+      setCurrentStreaming('')
+      setError(null)
+    }
+  }, [tabs])
+
+  // 将当前 messages 保存回 tabs
+  const saveMessagesToTab = React.useCallback((msgs: Message[]) => {
+    if (!activeTabId) return
+    setTabs(prev => prev.map(t => t.id === activeTabId ? { ...t, messages: msgs } : t))
+  }, [activeTabId])
+
+  // persistActiveTabMessages 别名（供 handleSend/handleClear 使用）
+  const persistActiveTabMessages = React.useCallback((msgs: Message[]) => {
+    saveMessagesToTab(msgs)
+  }, [saveMessagesToTab])
+
   const showToast = React.useCallback((text: string, type: 'info' | 'success' | 'error' = 'info') => {
     if (toastTimerRef.current) clearTimeout(toastTimerRef.current)
     setToast({ text, type })
@@ -1131,7 +1164,11 @@ function App(): JSX.Element {
   const handleNewSession = React.useCallback(async () => {
     await window.dogeAPI.newSession()
     const sid = await window.dogeAPI.getCurrentSessionId()
-    setCurrentSessionId(sid)
+    // 创建新 tab
+    tabIdCounter.current += 1
+    const newTab = { id: `tab-${tabIdCounter.current}-${Date.now()}`, sessionId: sid || '', title: `对话 ${tabIdCounter.current}`, messages: [] as Message[] }
+    setTabs(prev => [...prev, newTab])
+    setActiveTabId(newTab.id)
     setMessages([])
     setCurrentStreaming('')
     setError(null)
@@ -1145,20 +1182,42 @@ function App(): JSX.Element {
     window.dogeAPI.getCurrentSessionId().then(sid => setCurrentSessionId(sid))
   }, [])
 
+  // 应用启动时创建默认 Tab
+  React.useEffect(() => {
+    if (tabs.length === 0 && loaded) {
+      const sid = currentSessionId || ''
+      tabIdCounter.current = 1
+      const initialMsgs = historyRef.current
+      const defaultTab = { id: 'tab-1', sessionId: sid, title: '对话 1', messages: initialMsgs }
+      setTabs([defaultTab])
+      setActiveTabId('tab-1')
+      setMessages(initialMsgs)
+    }
+  }, [loaded, tabs.length, currentSessionId])
+
+  // 保存 history 的 ref，用于初始化
+  const historyRef = React.useRef<Message[]>([])
+  React.useEffect(() => { historyRef.current = messages }, [messages])
+
   const handleLoadSession = React.useCallback(async (sessionId: string) => {
     const result = await window.dogeAPI.loadSession(sessionId)
     if (result.success) {
       const history = await window.dogeAPI.getHistory()
-      if (history.messages?.length) {
-        setMessages(history.messages.map((m, i) => ({ id: `history-${i}`, role: m.role as Message['role'], content: m.content })))
-      }
+      const loadedMessages = history.messages?.length
+        ? history.messages.map((m, i) => ({ id: `history-${i}`, role: m.role as Message['role'], content: m.content }))
+        : []
+      setMessages(loadedMessages)
       setCurrentSessionId(sessionId)
+      // 同步到当前 tab
+      if (activeTabId) {
+        setTabs(prev => prev.map(t => t.id === activeTabId ? { ...t, sessionId, messages: loadedMessages } : t))
+      }
       setShowSessions(false)
       window.dogeAPI.notify('Doge Code', `已加载会话 (${result.messageCount} 条消息)`)
     } else {
       alert(result.error || '加载失败')
     }
-  }, [])
+  }, [activeTabId])
 
   const handleDeleteSession = React.useCallback(async (sessionId: string) => {
     const result = await window.dogeAPI.deleteSession(sessionId)
@@ -1193,6 +1252,39 @@ function App(): JSX.Element {
     }
   }, [editProvider, editModel, editApiKey, editBaseUrl, showToast])
 
+  // 新建 Tab
+  const handleNewTab = React.useCallback(async () => {
+    try {
+      const result = await window.dogeAPI.closeSession()
+      if (!result.success) { alert(result.error || '创建失败'); return }
+      const newSessionId = result.sessionId || ''
+      tabIdCounter.current += 1
+      const newTab = { id: `tab-${tabIdCounter.current}-${Date.now()}`, sessionId: newSessionId, title: `对话 ${tabIdCounter.current}`, messages: [] as Message[] }
+      setTabs(prev => [...prev, newTab])
+      switchTab(newTab.id)
+      showToast('已创建新标签页')
+    } catch { alert('创建新标签失败') }
+  }, [switchTab, showToast])
+
+  // 关闭 Tab
+  const handleCloseTab = React.useCallback(async (tabId: string) => {
+    const idx = tabs.findIndex(t => t.id === tabId)
+    if (idx === -1) return
+    const remaining = tabs.filter(t => t.id !== tabId)
+
+    if (tabId === activeTabId) {
+      if (remaining.length > 0) {
+        const newActive = remaining[Math.min(idx, remaining.length - 1)]
+        switchTab(newActive.id)
+      } else {
+        // 关闭最后一个 tab，自动创建新会话
+        await handleNewTab()
+        return
+      }
+    }
+    setTabs(remaining)
+  }, [tabs, activeTabId, switchTab, handleNewTab])
+
   React.useEffect(() => { loadSessions() }, [loadSessions])
 
   React.useEffect(() => {
@@ -1211,6 +1303,14 @@ function App(): JSX.Element {
     if (!text || state === 'responding') return
     setInput(''); setError(null); setCurrentStreaming('')
 
+    const appendMsg = (msg: Message) => {
+      setMessages(prev => {
+        const next = [...prev, msg]
+        persistActiveTabMessages(next)
+        return next
+      })
+    }
+
     // 命令模式：以 / 开头
     if (text.startsWith('/')) {
       const parts = text.split(' ')
@@ -1218,7 +1318,7 @@ function App(): JSX.Element {
       const cmdArgs = parts.slice(1)
       setState('responding')
       const userMsg: Message = { id: `msg-${Date.now()}`, role: 'user', content: text }
-      setMessages((p) => [...p, userMsg])
+      appendMsg(userMsg)
       let result: { success: boolean; output?: string; error?: string }
       try {
         result = await window.dogeAPI.executeCommand(cmdName, cmdArgs)
@@ -1230,14 +1330,14 @@ function App(): JSX.Element {
         role: 'assistant',
         content: result.success ? (result.output || '(无输出)') : `错误: ${result.error}`
       }
-      setMessages((p) => [...p, assistantMsg])
+      appendMsg(assistantMsg)
       setState('idle')
       return
     }
 
     // 普通对话
     const userMsg: Message = { id: `msg-${Date.now()}`, role: 'user', content: text }
-    setMessages((p) => [...p, userMsg])
+    appendMsg(userMsg)
 
     setState('responding')
 
@@ -1246,23 +1346,23 @@ function App(): JSX.Element {
       result = await window.dogeAPI.sendMessage(text)
     } catch (e) {
       const errMsg = e instanceof Error ? e.message : '发送失败'
-      setMessages((p) => [...p, { id: `msg-${Date.now() + 1}`, role: 'error', content: errMsg }])
+      appendMsg({ id: `msg-${Date.now() + 1}`, role: 'error', content: errMsg })
       setState('idle')
       return
     }
 
     if (result?.error) {
-      setMessages((p) => [...p, { id: `msg-${Date.now() + 1}`, role: 'error', content: result.error! }])
+      appendMsg({ id: `msg-${Date.now() + 1}`, role: 'error', content: result.error! })
     } else if (result?.content) {
       const assistantMsg: Message = { id: `msg-${Date.now() + 1}`, role: 'assistant', content: result.content }
-      setMessages((p) => [...p, assistantMsg])
+      appendMsg(assistantMsg)
     }
     setCurrentStreaming('')
     setState('idle')
-  }, [input, state])
+  }, [input, state, persistActiveTabMessages])
 
   const handleAbort = React.useCallback(async () => { await window.dogeAPI.abort(); setCurrentStreaming('') }, [])
-  const handleClear = React.useCallback(async () => { await window.dogeAPI.clearHistory(); setMessages([]); setCurrentStreaming('') }, [])
+  const handleClear = React.useCallback(async () => { await window.dogeAPI.clearHistory(); setMessages([]); persistActiveTabMessages([]); setCurrentStreaming('') }, [persistActiveTabMessages])
 
   const handleCommit = React.useCallback(async () => {
     if (!commitMessage.trim() || isCommitting) return
@@ -1394,6 +1494,7 @@ function App(): JSX.Element {
   if (!loaded) return <div style={{ ...styles.loadingOverlay }}>加载中...</div>
   const isProcessing = state === 'responding'
   const workingDir = config.workingDir || '/'
+  const displayMessages = messages
 
   return (
     <div style={styles.container}>
@@ -1402,6 +1503,34 @@ function App(): JSX.Element {
           {toast.text}
         </div>
       )}
+      {/* Tab 栏 */}
+      <div style={{ display: 'flex', background: '#0F0F0F', borderBottom: '1px solid #1A1A1A', minHeight: '32px', alignItems: 'stretch', overflowX: 'auto' }}>
+        {tabs.map(tab => (
+          <div
+            key={tab.id}
+            onClick={() => switchTab(tab.id)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 12px',
+              cursor: 'pointer', fontSize: '12px', borderRight: '1px solid #1A1A1A',
+              background: tab.id === activeTabId ? '#1A1A1A' : 'transparent',
+              color: tab.id === activeTabId ? '#F5F5F5' : '#555',
+              whiteSpace: 'nowrap', minWidth: 0, maxWidth: '180px'
+            }}
+          >
+            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>{tab.title}</span>
+            <span
+              onClick={(e) => { e.stopPropagation(); handleCloseTab(tab.id) }}
+              style={{ cursor: 'pointer', fontSize: '10px', color: '#555', padding: '0 2px', borderRadius: '2px', flexShrink: 0 }}
+              title="关闭"
+            >✕</span>
+          </div>
+        ))}
+        <div
+          onClick={handleNewTab}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px 10px', cursor: 'pointer', fontSize: '14px', color: '#555', borderRight: 'none' }}
+          title="新建标签页"
+        >+</div>
+      </div>
       {/* 左栏：对话历史 */}
       <div style={styles.sidebar}>
         <div style={styles.sidebarHeader}>
@@ -1478,10 +1607,10 @@ function App(): JSX.Element {
           </div>
         )}
         <div style={{ flex: 1, overflowY: 'auto' }}>
-          {messages.length === 0 && !currentStreaming ? (
+          {displayMessages.length === 0 && !currentStreaming ? (
             <div style={{ padding: '16px', color: '#555555', fontSize: '12px' }}>开始新对话</div>
           ) : (
-            messages.map((m) => (
+            displayMessages.map((m) => (
               <div key={m.id} style={{ padding: '8px 16px', borderBottom: '1px solid #1A1A1A', cursor: 'pointer' }}>
                 <div style={{ fontSize: '13px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {m.role === 'user' ? '用户' : m.role === 'assistant' ? '助手' : '系统'}
@@ -1501,7 +1630,7 @@ function App(): JSX.Element {
             )}
           </div>
           <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-            {messages.length > 0 && (
+            {displayMessages.length > 0 && (
               <button style={styles.clearButton} onClick={handleClear}>清除</button>
             )}
           </div>
