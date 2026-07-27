@@ -30,6 +30,7 @@ export interface MessageLoopDeps {
   systemPrompt: string;
   model: string;
   maxOutputTokens: number;
+  tools: Array<{ name: string; description: string; input_schema: Record<string, unknown> }>;
 }
 
 export class MessageLoop {
@@ -84,7 +85,7 @@ export class MessageLoop {
     const request = await this.deps.requestBuilder.build({
       messages: this.deps.conversation.messages,
       system: this.deps.systemPrompt,
-      tools: [],
+      tools: this.deps.toolDefinitions,
       model: this.deps.model,
       maxTokens: this.deps.maxOutputTokens,
     });
