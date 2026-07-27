@@ -1039,36 +1039,61 @@ function ToolPanel({ cwd }: { cwd: string }) {
 }
 
 // ─── 命令面板组件 ───
-function CommandPalette({ cwd, onClose }: { cwd: string; onClose: () => void }) {
+function CommandPalette({ cwd, onClose, mode, setMode }: { cwd: string; onClose: () => void; mode: 'files' | 'commands'; setMode: (m: 'files' | 'commands') => void }) {
   const [query, setQuery] = React.useState('')
   const [commands, setCommands] = React.useState<Array<{ name: string; description: string; category: string }>>([])
   const [selectedIndex, setSelectedIndex] = React.useState(0)
   const [results, setResults] = React.useState<{ success: boolean; output?: string; error?: string } | null>(null)
   const [executing, setExecuting] = React.useState(false)
+  const [files, setFiles] = React.useState<Array<{ name: string; path: string }>>([])
+  const [loadingFiles, setLoadingFiles] = React.useState(false)
   const inputRef = React.useRef<HTMLInputElement>(null)
 
   React.useEffect(() => {
-    async function load() {
-      try {
-        const cmds = await window.dogeAPI.getCommands()
-        setCommands(cmds)
-      } catch { /* ignore */ }
-    }
-    load()
     inputRef.current?.focus()
-  }, [])
+    if (mode === 'commands') {
+      async function load() {
+        try {
+          const cmds = await window.dogeAPI.getCommands()
+          setCommands(cmds)
+        } catch { /* ignore */ }
+      }
+      load()
+    } else if (mode === 'files') {
+      setLoadingFiles(true)
+      window.dogeAPI.listDir(cwd).then(items => {
+        const fileList = items
+          .filter((item: { name: string; isDirectory: boolean }) => !item.name.startsWith('.') && !item.name.startsWith('node_modules') && !item.name.startsWith('dist'))
+          .map((item: { name: string; isDirectory: boolean; path?: string }) => ({ name: item.name, path: item.path || `${cwd}/${item.name}` }))
+        setFiles(fileList)
+        setLoadingFiles(false)
+      }).catch(() => setLoadingFiles(false))
+    }
+  }, [cwd, mode])
 
-  const filtered = commands.filter(c =>
-    c.name.toLowerCase().includes(query.toLowerCase()) ||
-    c.description.toLowerCase().includes(query.toLowerCase())
-  )
+  const filtered = mode === 'files'
+    ? files.filter(f => f.name.toLowerCase().includes(query.toLowerCase()))
+    : commands.filter(c =>
+        c.name.toLowerCase().includes(query.toLowerCase()) ||
+        c.description.toLowerCase().includes(query.toLowerCase())
+      )
 
-  const handleSelect = async (cmdName: string) => {
-    const args = query.slice(cmdName.length).trim().split(' ').filter(Boolean)
+  const handleSelect = async (name: string) => {
+    if (mode === 'files') {
+      onClose()
+      window.dogeAPI.readFile(files.find(f => f.name === name)?.path || '').then(result => {
+        if (result.success) {
+          // 触发文件预览
+          window.dispatchEvent(new CustomEvent('doge:preview-file', { detail: files.find(f => f.name === name)?.path }))
+        }
+      })
+      return
+    }
+    const args = query.slice(name.length).trim().split(' ').filter(Boolean)
     setExecuting(true)
     setResults(null)
     try {
-      const result = await window.dogeAPI.executeCommand(cmdName, args)
+      const result = await window.dogeAPI.executeCommand(name, args)
       setResults(result)
     } catch (e) {
       setResults({ success: false, error: e instanceof Error ? e.message : '执行失败' })
@@ -1092,6 +1117,8 @@ function CommandPalette({ cwd, onClose }: { cwd: string; onClose: () => void }) 
     }
   }
 
+  const placeholder = mode === 'files' ? '输入文件名搜索 (Ctrl+P 打开)...' : '输入命令 (如 /commit, /status)...'
+
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.6)',
@@ -1101,13 +1128,29 @@ function CommandPalette({ cwd, onClose }: { cwd: string; onClose: () => void }) 
         width: '500px', maxHeight: '500px', background: '#1A1A1A', border: '1px solid #333',
         borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.8)', display: 'flex', flexDirection: 'column'
       }} onClick={(e) => e.stopPropagation()}>
+        <div style={{ padding: '8px 16px', borderBottom: '1px solid #262626', display: 'flex', gap: '4px' }}>
+          <button
+            onClick={() => { setMode('files'); setQuery(''); setSelectedIndex(0) }}
+            style={{
+              flex: 1, padding: '4px', border: 'none', borderRadius: '3px', cursor: 'pointer', fontSize: '10px',
+              background: mode === 'files' ? '#333' : 'transparent', color: mode === 'files' ? '#F5F5F5' : '#888'
+            }}
+          >📄 文件</button>
+          <button
+            onClick={() => { setMode('commands'); setQuery(''); setSelectedIndex(0) }}
+            style={{
+              flex: 1, padding: '4px', border: 'none', borderRadius: '3px', cursor: 'pointer', fontSize: '10px',
+              background: mode === 'commands' ? '#333' : 'transparent', color: mode === 'commands' ? '#F5F5F5' : '#888'
+            }}
+          >⚡ 命令</button>
+        </div>
         <div style={{ padding: '12px 16px', borderBottom: '1px solid #262626' }}>
           <input
             ref={inputRef}
             value={query}
             onChange={(e) => { setQuery(e.target.value); setSelectedIndex(0) }}
             onKeyDown={handleKeyDown}
-            placeholder="输入命令 (如 /commit, /status, /help)..."
+            placeholder={placeholder}
             style={{
               width: '100%', background: '#0F0F0F', border: '1px solid #262626', borderRadius: '4px',
               padding: '8px 12px', color: '#F5F5F5', fontSize: '14px', outline: 'none'
@@ -1115,26 +1158,37 @@ function CommandPalette({ cwd, onClose }: { cwd: string; onClose: () => void }) 
           />
         </div>
         <div style={{ flex: 1, overflowY: 'auto', maxHeight: '300px' }}>
-          {filtered.length === 0 ? (
-            <div style={{ padding: '16px', color: '#555', textAlign: 'center' }}>无匹配命令</div>
+          {loadingFiles ? (
+            <div style={{ padding: '16px', color: '#555', textAlign: 'center' }}>加载文件列表...</div>
+          ) : filtered.length === 0 ? (
+            <div style={{ padding: '16px', color: '#555', textAlign: 'center' }}>无匹配结果</div>
           ) : (
-            filtered.map((cmd, i) => (
+            filtered.map((item: { name: string; description?: string; category?: string }, i: number) => (
               <div
-                key={cmd.name}
-                onClick={() => handleSelect(cmd.name)}
+                key={item.name}
+                onClick={() => handleSelect(item.name)}
                 style={{
                   padding: '8px 16px', cursor: 'pointer', background: i === selectedIndex ? '#2A2A2A' : 'transparent',
                   borderBottom: '1px solid #1A1A1A', display: 'flex', alignItems: 'center', gap: '8px'
                 }}
               >
-                <span style={{ color: '#4ECB71', fontFamily: 'monospace', fontSize: '13px', minWidth: '120px' }}>{cmd.name}</span>
-                <span style={{ color: '#888', fontSize: '12px', flex: 1 }}>{cmd.description}</span>
-                <span style={{ color: '#555', fontSize: '10px' }}>{cmd.category}</span>
+                {mode === 'files' ? (
+                  <>
+                    <span style={{ color: '#569CD6', fontSize: '13px' }}>📄</span>
+                    <span style={{ color: '#F5F5F5', fontSize: '12px', flex: 1 }}>{item.name}</span>
+                  </>
+                ) : (
+                  <>
+                    <span style={{ color: '#4ECB71', fontFamily: 'monospace', fontSize: '13px', minWidth: '120px' }}>{item.name}</span>
+                    <span style={{ color: '#888', fontSize: '12px', flex: 1 }}>{item.description}</span>
+                    <span style={{ color: '#555', fontSize: '10px' }}>{item.category}</span>
+                  </>
+                )}
               </div>
             ))
           )}
         </div>
-        {results && (
+        {results && mode === 'commands' && (
           <div style={{ borderTop: '1px solid #262626', maxHeight: '200px', overflowY: 'auto' }}>
             <div style={{ padding: '8px 16px', fontSize: '10px', color: '#888', borderBottom: '1px solid #1A1A1A' }}>执行结果</div>
             <pre style={{
@@ -1234,6 +1288,7 @@ function App(): JSX.Element {
     setEditContent('')
   }, [])
   const [showCommandPalette, setShowCommandPalette] = React.useState(false)
+  const [paletteMode, setPaletteMode] = React.useState<'files' | 'commands'>('files')
   const [modelInfo, setModelInfo] = React.useState<{ provider: string; model: string; baseUrl: string; hasApiKey: boolean } | null>(null)
   const [tokenUsage, setTokenUsage] = React.useState<{ inputTokens: number; outputTokens: number; totalTokens: number; lastResponseLength: number; messageCount: number } | null>(null)
   const [themeSettings, setThemeSettings] = React.useState<{ theme: string; fontSize: number; fontFamily: string; sidebarWidth: number; rightPanelWidth: number }>({ theme: 'dark', fontSize: 13, fontFamily: 'system', sidebarWidth: 260, rightPanelWidth: 280 })
@@ -1376,8 +1431,13 @@ function App(): JSX.Element {
 
   React.useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.shiftKey && e.key === 'P') {
+      if (e.ctrlKey && e.key === 'p') {
         e.preventDefault()
+        setPaletteMode('files')
+        setShowCommandPalette(p => !p)
+      } else if (e.ctrlKey && e.shiftKey && e.key === 'P') {
+        e.preventDefault()
+        setPaletteMode('commands')
         setShowCommandPalette(p => !p)
       }
     }
@@ -2213,7 +2273,7 @@ function App(): JSX.Element {
           <ToolPanel cwd={workingDir} />
         </div>
       </div>
-      {showCommandPalette && <CommandPalette cwd={workingDir} onClose={() => setShowCommandPalette(false)} />}
+      {showCommandPalette && <CommandPalette cwd={workingDir} onClose={() => setShowCommandPalette(false)} mode={paletteMode} setMode={setPaletteMode} />}
     </div>
   )
 }
