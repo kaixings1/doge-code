@@ -1037,6 +1037,22 @@ ipcMain.handle('doge:notify', (_event, title: string, body: string) => {
   return { success: true }
 })
 
+ipcMain.handle('doge:delete-file', async (_event, filePath: string) => {
+  try {
+    if (!fs.existsSync(filePath)) return { success: false, error: '文件不存在' }
+    const stat = fs.statSync(filePath)
+    if (stat.isDirectory()) {
+      fs.rmSync(filePath, { recursive: true })
+    } else {
+      fs.unlinkSync(filePath)
+    }
+    return { success: true }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
 // ─── 应用生命周期 ───
 app.whenReady().then(createWindow)
 

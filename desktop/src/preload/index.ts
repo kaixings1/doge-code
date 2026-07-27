@@ -60,6 +60,7 @@ interface DogeAPIValue {
   loadSession: (sessionId: string) => Promise<{ success: boolean; messageCount?: number; error?: string }>
   newSession: () => Promise<{ success: boolean }>
   deleteSession: (sessionId: string) => Promise<{ success: boolean; error?: string }>
+  deleteFile: (filePath: string) => Promise<{ success: boolean; error?: string }>
   getCurrentSessionId: () => Promise<string | null>
   notify: (title: string, body: string) => Promise<{ success: boolean }>
 }
@@ -109,6 +110,7 @@ const dogeAPI: DogeAPIValue = {
   loadSession: (sessionId: string) => ipcRenderer.invoke('doge:load-session', sessionId),
   newSession: () => ipcRenderer.invoke('doge:new-session'),
   deleteSession: (sessionId: string) => ipcRenderer.invoke('doge:delete-session', sessionId),
+  deleteFile: (filePath: string) => ipcRenderer.invoke('doge:delete-file', filePath),
   getCurrentSessionId: () => ipcRenderer.invoke('doge:get-session-id'),
   notify: (title: string, body: string) => ipcRenderer.invoke('doge:notify', title, body),
 }
