@@ -1297,6 +1297,7 @@ function App(): JSX.Element {
   }, [])
   const [showCommandPalette, setShowCommandPalette] = React.useState(false)
   const [paletteMode, setPaletteMode] = React.useState<'files' | 'commands'>('files')
+  const [showShortcuts, setShowShortcuts] = React.useState(false)
   const [modelInfo, setModelInfo] = React.useState<{ provider: string; model: string; baseUrl: string; hasApiKey: boolean } | null>(null)
   const [tokenUsage, setTokenUsage] = React.useState<{ inputTokens: number; outputTokens: number; totalTokens: number; lastResponseLength: number; messageCount: number } | null>(null)
   const [themeSettings, setThemeSettings] = React.useState<{ theme: string; fontSize: number; fontFamily: string; sidebarWidth: number; rightPanelWidth: number }>({ theme: 'dark', fontSize: 13, fontFamily: 'system', sidebarWidth: 260, rightPanelWidth: 280 })
@@ -1671,11 +1672,13 @@ function App(): JSX.Element {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault()
         setShowCommandPalette(p => !p)
+      } else if (e.key === '?' && !showCommandPalette && !showSettings) {
+        setShowShortcuts(p => !p)
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [])
+  }, [showCommandPalette, showSettings])
 
   const handleSend = React.useCallback(async (): Promise<void> => {
     const text = input.trim()
@@ -2347,6 +2350,35 @@ function App(): JSX.Element {
         </div>
       </div>
       {showCommandPalette && <CommandPalette cwd={workingDir} onClose={() => setShowCommandPalette(false)} mode={paletteMode} setMode={setPaletteMode} />}
+      {/* 快捷键帮助面板 */}
+      {showShortcuts && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 9998, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowShortcuts(false)}>
+          <div style={{ background: '#1A1A1A', border: '1px solid #333', borderRadius: '8px', padding: '20px', minWidth: '360px', maxWidth: '480px', boxShadow: '0 8px 32px rgba(0,0,0,0.8)' }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ fontSize: '16px', fontWeight: 600, color: '#F5F5F5', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span>⌨ 快捷键</span>
+              <span style={{ cursor: 'pointer', color: '#555', fontSize: '18px' }} onClick={() => setShowShortcuts(false)}>✕</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {[
+                ['Ctrl + P', '打开文件搜索'],
+                ['Ctrl + Shift + P', '打开命令面板'],
+                ['Ctrl + K', '打开命令面板（旧）'],
+                ['Ctrl + Enter', '发送消息'],
+                ['Shift + Enter', '换行'],
+                ['↑ / ↓', '历史消息导航'],
+                ['Tab', '自动补全命令/文件路径'],
+                ['?', '快捷键帮助'],
+                ['Esc', '关闭面板'],
+              ].map(([key, desc]) => (
+                <div key={key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid #262626' }}>
+                  <span style={{ color: '#888', fontSize: '12px' }}>{desc}</span>
+                  <kbd style={{ background: '#0F0F0F', border: '1px solid #333', borderRadius: '3px', padding: '1px 6px', fontSize: '11px', color: '#4ECB71', fontFamily: 'monospace' }}>{key}</kbd>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
