@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 桌面端主应用组件
  */
 
@@ -273,9 +273,9 @@ export function App(): JSX.Element {
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const memoryUsage = useMemoryUsage()
   const recognitionRef = useRef<any>(null)
+  const utteranceRef = useRef<any>(null)
   const [isRecording, setIsRecording] = useState(false)
   const [interimTranscript, setInterimTranscript] = useState('')
-  // 语音输出状态
   const [isSpeaking, setIsSpeaking] = useState(false)
   const [autoSpeak, setAutoSpeak] = useState(false)
   const [mcpServers, setMcpServers] = useState<Array<{ name: string; command: string; args: string[]; transport: string }>>([])
@@ -815,7 +815,7 @@ export function App(): JSX.Element {
       appendMsg({ id: `msg-${Date.now() + 1}`, role: 'assistant', content: result.content })
       if (!document.hasFocus()) window.dogeAPI.notify('Doge Code', `回复完成: ${result.content.slice(0, 80)}`).catch(() => {})
       // 自动朗读（用户开启时）
-      if (autoSpeak && 'speechSynthesis' in window) {
+      if (autoSpeak && 'speechSynthesis' in window && result.content) {
         setTimeout(() => speakText(result.content), 200)
       }
     }
@@ -1112,32 +1112,38 @@ export function App(): JSX.Element {
     setMsgSearchMatches(matches)
   }, [msgSearchQuery, displayMessages, msgSearchQueryLower])
 
+  // 主题感知颜色辅助
+  const _tp = theme.bgPanel
+  const _bs = theme.border
+  const _tm = theme.textMuted
+  const c = theme
+
   return (
     <ThemeContext.Provider value={{ name: effectiveTheme, colors: theme, styles }}>
       <div style={styles.container}>
         {toast && (
-          <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', padding: '8px 20px', borderRadius: '6px', background: toast.type === 'error' ? '#5C2A2A' : '#1A3A2A', color: toast.type === 'error' ? '#FF6B6B' : '#4ECB71', fontSize: '12px', fontWeight: 600, zIndex: 1000, boxShadow: '0 4px 12px rgba(0,0,0,0.5)', transition: 'opacity 0.3s' }}>
+          <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', padding: '8px 20px', borderRadius: '6px', background: toast.type === 'error' ? c.errorBg : `${c.accent}22`, color: toast.type === 'error' ? c.errorText : c.accent, fontSize: '12px', fontWeight: 600, zIndex: 1000, boxShadow: `0 4px 12px ${c.bg}80`, transition: 'opacity 0.3s' }}>
             {toast.text}
           </div>
         )}
         {/* Tab 栏 */}
-        <div style={{ display: 'flex', background: '#0F0F0F', borderBottom: '1px solid #1A1A1A', minHeight: '32px', alignItems: 'stretch', overflowX: 'auto' }}>
+        <div style={{ display: 'flex', background: _tp, borderBottom: `1px solid ${_bs}`, minHeight: '32px', alignItems: 'stretch', overflowX: 'auto' }}>
           {tabs.map(tab => (
             <div
               key={tab.id}
               onClick={() => switchTab(tab.id)}
               style={{
                 display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 12px',
-                cursor: 'pointer', fontSize: '12px', borderRight: '1px solid #1A1A1A',
-                background: tab.id === activeTabId ? '#1A1A1A' : 'transparent',
-                color: tab.id === activeTabId ? '#F5F5F5' : '#555',
+                cursor: 'pointer', fontSize: '12px', borderRight: `1px solid ${_bs}`,
+                background: tab.id === activeTabId ? c.bg : 'transparent',
+                color: tab.id === activeTabId ? c.text : _tm,
                 whiteSpace: 'nowrap', minWidth: 0, maxWidth: '180px'
               }}
             >
               <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>{tab.title}</span>
               <span
                 onClick={(e) => { e.stopPropagation(); handleCloseTab(tab.id) }}
-                style={{ cursor: 'pointer', fontSize: '10px', color: '#555', padding: '0 2px', borderRadius: '2px', flexShrink: 0 }}
+                style={{ cursor: 'pointer', fontSize: '10px', color: _tm, padding: '0 2px', borderRadius: '2px', flexShrink: 0 }}
                 title="关闭"
               >✕</span>
             </div>
@@ -1224,40 +1230,40 @@ export function App(): JSX.Element {
           )}
           {/* 设置面板 */}
           {showSettings && (
-            <div style={{ borderBottom: '1px solid #262626', padding: '12px', background: '#0F0F0F' }}>
-              <div style={{ fontSize: '11px', color: '#888', marginBottom: '8px', fontWeight: 600 }}>主题设置</div>
+            <div style={{ borderBottom: `1px solid ${c.border}`, padding: '12px', background: c.bgPanel }}>
+              <div style={{ fontSize: '11px', color: c.textMuted, marginBottom: '8px', fontWeight: 600 }}>主题设置</div>
               <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
                 {['dark', 'light', 'auto'].map((t) => (
-                  <button key={t} onClick={async () => { await window.dogeAPI.setTheme({ theme: t }); setThemeSettings(p => ({ ...p, theme: t })) }} style={{ flex: 1, padding: '4px', border: '1px solid', borderColor: themeSettings.theme === t ? '#4ECB71' : '#262626', borderRadius: '3px', background: themeSettings.theme === t ? 'rgba(78,203,113,0.1)' : '#0A0A0A', color: themeSettings.theme === t ? '#4ECB71' : '#888', cursor: 'pointer', fontSize: '10px', textTransform: 'capitalize' }}>
+                  <button key={t} onClick={async () => { await window.dogeAPI.setTheme({ theme: t }); setThemeSettings(p => ({ ...p, theme: t })) }} style={{ flex: 1, padding: '4px', border: '1px solid', borderColor: themeSettings.theme === t ? c.accent : c.border, borderRadius: '3px', background: themeSettings.theme === t ? `${c.accent}22` : c.bgPanel, color: themeSettings.theme === t ? c.accent : c.textMuted, cursor: 'pointer', fontSize: '10px', textTransform: 'capitalize' }}>
                     {t === 'auto' ? '自动' : t === 'dark' ? '深色' : '浅色'}
                   </button>
                 ))}
               </div>
-              <div style={{ fontSize: '10px', color: '#555', marginBottom: '4px' }}>字体大小: {themeSettings.fontSize}px</div>
-              <input type="range" min="11" max="18" value={themeSettings.fontSize} onChange={(e) => { const v = Number(e.target.value); setThemeSettings(p => ({ ...p, fontSize: v })); window.dogeAPI.setTheme({ fontSize: v }) }} style={{ width: '100%', accentColor: '#4ECB71' }} />
-              <div style={{ borderTop: '1px solid #262626', marginTop: '12px', paddingTop: '10px' }}>
-                <div style={{ fontSize: '11px', color: '#888', marginBottom: '8px', fontWeight: 600 }}>模型配置</div>
+              <div style={{ fontSize: '10px', color: c.textFaint, marginBottom: '4px' }}>字体大小: {themeSettings.fontSize}px</div>
+              <input type="range" min="11" max="18" value={themeSettings.fontSize} onChange={(e) => { const v = Number(e.target.value); setThemeSettings(p => ({ ...p, fontSize: v })); window.dogeAPI.setTheme({ fontSize: v }) }} style={{ width: '100%', accentColor: c.accent }} />
+              <div style={{ borderTop: `1px solid ${c.border}`, marginTop: '12px', paddingTop: '10px' }}>
+                <div style={{ fontSize: '11px', color: c.textMuted, marginBottom: '8px', fontWeight: 600 }}>模型配置</div>
                 <div style={{ marginBottom: '6px' }}>
-                  <div style={{ fontSize: '10px', color: '#555', marginBottom: '3px' }}>提供商</div>
-                  <select value={editProvider} onChange={(e) => setEditProvider(e.target.value)} style={{ width: '100%', padding: '4px 6px', backgroundColor: '#0F0F0F', border: '1px solid #262626', borderRadius: '3px', color: '#F5F5F5', fontSize: '11px', outline: 'none' }}>
+                  <div style={{ fontSize: '10px', color: c.textFaint, marginBottom: '3px' }}>提供商</div>
+                  <select value={editProvider} onChange={(e) => setEditProvider(e.target.value)} style={{ width: '100%', padding: '4px 6px', backgroundColor: c.inputBg, border: `1px solid ${c.border}`, borderRadius: '3px', color: c.text, fontSize: '11px', outline: 'none' }}>
                     <option value="openai">OpenAI</option>
                     <option value="anthropic">Anthropic</option>
                     <option value="custom">Custom</option>
                   </select>
                 </div>
                 <div style={{ marginBottom: '6px' }}>
-                  <div style={{ fontSize: '10px', color: '#555', marginBottom: '3px' }}>模型</div>
-                  <input value={editModel} onChange={(e) => setEditModel(e.target.value)} placeholder="gpt-4o" style={{ width: '100%', padding: '4px 6px', backgroundColor: '#0F0F0F', border: '1px solid #262626', borderRadius: '3px', color: '#F5F5F5', fontSize: '11px', outline: 'none' }} />
+                  <div style={{ fontSize: '10px', color: c.textFaint, marginBottom: '3px' }}>模型</div>
+                  <input value={editModel} onChange={(e) => setEditModel(e.target.value)} placeholder="gpt-4o" style={{ width: '100%', padding: '4px 6px', backgroundColor: c.inputBg, border: `1px solid ${c.border}`, borderRadius: '3px', color: c.text, fontSize: '11px', outline: 'none' }} />
                 </div>
                 <div style={{ marginBottom: '6px' }}>
-                  <div style={{ fontSize: '10px', color: '#555', marginBottom: '3px' }}>API Key</div>
-                  <input value={editApiKey} onChange={(e) => setEditApiKey(e.target.value)} type="password" placeholder="sk-..." style={{ width: '100%', padding: '4px 6px', backgroundColor: '#0F0F0F', border: '1px solid #262626', borderRadius: '3px', color: '#F5F5F5', fontSize: '11px', outline: 'none' }} />
+                  <div style={{ fontSize: '10px', color: c.textFaint, marginBottom: '3px' }}>API Key</div>
+                  <input value={editApiKey} onChange={(e) => setEditApiKey(e.target.value)} type="password" placeholder="sk-..." style={{ width: '100%', padding: '4px 6px', backgroundColor: c.inputBg, border: `1px solid ${c.border}`, borderRadius: '3px', color: c.text, fontSize: '11px', outline: 'none' }} />
                 </div>
                 <div style={{ marginBottom: '8px' }}>
-                  <div style={{ fontSize: '10px', color: '#555', marginBottom: '3px' }}>Base URL</div>
-                  <input value={editBaseUrl} onChange={(e) => setEditBaseUrl(e.target.value)} placeholder="https://api.openai.com/v1" style={{ width: '100%', padding: '4px 6px', backgroundColor: '#0F0F0F', border: '1px solid #262626', borderRadius: '3px', color: '#F5F5F5', fontSize: '11px', outline: 'none' }} />
+                  <div style={{ fontSize: '10px', color: c.textFaint, marginBottom: '3px' }}>Base URL</div>
+                  <input value={editBaseUrl} onChange={(e) => setEditBaseUrl(e.target.value)} placeholder="https://api.openai.com/v1" style={{ width: '100%', padding: '4px 6px', backgroundColor: c.inputBg, border: `1px solid ${c.border}`, borderRadius: '3px', color: c.text, fontSize: '11px', outline: 'none' }} />
                 </div>
-                <button onClick={handleSaveConfig} disabled={savingConfig} style={{ width: '100%', padding: '5px', border: 'none', borderRadius: '3px', cursor: 'pointer', background: (!savingConfig) ? '#4ECB71' : '#1A1A1A', color: (!savingConfig) ? '#000' : '#555', fontSize: '11px', fontWeight: 600 }}>
+                <button onClick={handleSaveConfig} disabled={savingConfig} style={{ width: '100%', padding: '5px', border: 'none', borderRadius: '3px', cursor: 'pointer', background: (!savingConfig) ? c.accent : c.bgPanel, color: (!savingConfig) ? '#000' : c.textFaint, fontSize: '11px', fontWeight: 600 }}>
                   {savingConfig ? '保存中...' : '保存配置'}
                 </button>
               </div>
@@ -1486,6 +1492,7 @@ export function App(): JSX.Element {
               </div>
             )}
             {!config.apiKey && (<div style={{ color: '#FF6B6B', fontSize: '11px', marginTop: '6px' }}>未配置 API Key。请在 .doge/api.json 中配置。</div>)}
+            </div>
           </div>
         </div>
 
@@ -1661,7 +1668,7 @@ export function App(): JSX.Element {
                     <div style={{ fontSize: '9px', color: '#888', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.command} {(s.args || []).join(' ')}</div>
                   </div>
                   <div style={{ display: 'flex', gap: '4px' }}>
-                    <span style={{ cursor: 'pointer', fontSize: '9px', color: '#4ECB71' }} onClick={async () => { const r = await window.dogeAPI.mcpTest(s.name); showToast(r.success ? r.message : (r.error ?? '测试失败'), r.success ? 'success' : 'error') }}>测试</span>
+                    <span style={{ cursor: 'pointer', fontSize: '9px', color: '#4ECB71' }} onClick={async () => { const r = await window.dogeAPI.mcpTest(s.name); showToast(r.success ? (r.message || '已连接') : (r.error || '测试失败'), r.success ? 'success' : 'error') }}>测试</span>
                     <span style={{ cursor: 'pointer', fontSize: '9px', color: '#FF6B6B' }} onClick={() => handleMcpRemove(s.name)}>删除</span>
                   </div>
                 </div>
