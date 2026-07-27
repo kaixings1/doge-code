@@ -1911,30 +1911,48 @@ function App(): JSX.Element {
         <div style={{ padding: '8px 12px', display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
           <span style={styles.modelBadge}>{config.provider}</span>
           <span style={styles.modelBadge}>{config.model}</span>
-          <span style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '10px', color: '#555', padding: '2px 6px', border: '1px solid #262626', borderRadius: '3px' }} onClick={() => setShowSessions(p => !p)}>会话 ▼</span>
         </div>
-        {/* 会话下拉列表 */}
-        {showSessions && (
-          <div style={{ borderBottom: '1px solid #262626', maxHeight: '300px', overflowY: 'auto', background: '#0F0F0F' }}>
-            <div style={{ padding: '6px 12px', borderBottom: '1px solid #262626', display: 'flex', gap: '6px' }}>
-              <button onClick={handleNewSession} style={{ flex: 1, padding: '4px', border: '1px solid #262626', borderRadius: '3px', background: '#0A0A0A', color: '#4ECB71', cursor: 'pointer', fontSize: '10px' }}>+ 新会话</button>
-              <button onClick={loadSessions} style={{ flex: 1, padding: '4px', border: '1px solid #262626', borderRadius: '3px', background: '#0A0A0A', color: '#888', cursor: 'pointer', fontSize: '10px' }}>刷新</button>
-            </div>
+        {/* 会话侧边栏 */}
+        <div style={{ borderBottom: '1px solid #262626', background: '#0F0F0F', display: 'flex', flexDirection: 'column', maxHeight: '320px' }}>
+          <div style={{ padding: '6px 12px', borderBottom: '1px solid #262626', display: 'flex', gap: '6px', alignItems: 'center' }}>
+            <span style={{ fontSize: '10px', color: '#888', flex: 1 }}>历史会话</span>
+            <button onClick={handleNewSession} style={{ padding: '2px 6px', border: '1px solid #262626', borderRadius: '3px', background: '#0A0A0A', color: '#4ECB71', cursor: 'pointer', fontSize: '10px' }} title="新会话">+</button>
+            <button onClick={loadSessions} style={{ padding: '2px 6px', border: '1px solid #262626', borderRadius: '3px', background: '#0A0A0A', color: '#888', cursor: 'pointer', fontSize: '10px' }} title="刷新">↻</button>
+          </div>
+          <div style={{ flex: 1, overflowY: 'auto' }}>
             {sessions.length === 0 ? (
-              <div style={{ padding: '8px 12px', color: '#555', fontSize: '11px' }}>无历史会话</div>
+              <div style={{ padding: '8px 12px', color: '#555', fontSize: '11px', textAlign: 'center' }}>无历史会话</div>
             ) : (
-              sessions.slice(0, 15).map((s) => (
-                <div key={s.id} onClick={() => handleLoadSession(s.id)} style={{ padding: '6px 12px', fontSize: '11px', borderBottom: '1px solid #1A1A1A', cursor: 'pointer', color: '#888' }} title={`${s.messageCount} 条消息 · 点击加载，✕ 删除`}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'monospace', flex: 1 }}>{s.id}</div>
-                    <span style={{ color: '#555', fontSize: '10px', cursor: 'pointer', padding: '1px 4px', borderRadius: '2px', border: '1px solid #262626' }} onClick={(e) => { e.stopPropagation(); handleDeleteSession(s.id) }}>✕</span>
+              sessions.slice(0, 20).map((s) => {
+                const isActive = currentSessionId === s.id
+                return (
+                  <div
+                    key={s.id}
+                    onClick={() => handleLoadSession(s.id)}
+                    style={{
+                      padding: '6px 12px', fontSize: '11px', borderBottom: '1px solid #1A1A1A', cursor: 'pointer',
+                      background: isActive ? 'rgba(78,203,113,0.08)' : 'transparent',
+                      color: isActive ? '#4ECB71' : '#888',
+                      display: 'flex', alignItems: 'center', gap: '6px'
+                    }}
+                    title={`${s.messageCount} 条消息 · 点击加载`}
+                  >
+                    <span style={{ fontSize: '10px', flexShrink: 0 }}>💬</span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>{s.id}</div>
+                      <div style={{ color: '#555', fontSize: '9px', marginTop: '1px' }}>{new Date(s.createdAt).toLocaleString()} · {s.messageCount} 条</div>
+                    </div>
+                    <span
+                      style={{ color: '#555', fontSize: '9px', cursor: 'pointer', padding: '1px 3px', borderRadius: '2px', border: '1px solid #262626', flexShrink: 0 }}
+                      onClick={(e) => { e.stopPropagation(); handleDeleteSession(s.id) }}
+                      title="删除"
+                    >✕</span>
                   </div>
-                  <div style={{ color: '#555', fontSize: '10px', marginTop: '2px' }}>{new Date(s.createdAt).toLocaleString()} · {s.messageCount} 条</div>
-                </div>
-              ))
+                )
+              })
             )}
           </div>
-        )}
+        </div>
         {/* 设置面板 */}
         {showSettings && (
           <div style={{ borderBottom: '1px solid #262626', padding: '12px', background: '#0F0F0F' }}>
