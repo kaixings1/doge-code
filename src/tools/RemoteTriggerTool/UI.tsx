@@ -10,7 +10,7 @@ export function renderToolResultMessage(output: Output): React.ReactNode {
   const lines = countCharInString(output.json, '\n') + 1;
   return <MessageResponse>
       <Text>
-        HTTP {output.status} <Text dimColor>({lines} lines)</Text>
+        HTTP {output.status} <Text dimColor>({lines} 行)</Text>
       </Text>
     </MessageResponse>;
 }

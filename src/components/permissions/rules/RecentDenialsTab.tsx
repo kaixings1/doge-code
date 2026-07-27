@@ -141,7 +141,7 @@ export function RecentDenialsTab(t0) {
   if (denials.length === 0) {
     let t10;
     if ($[16] === Symbol.for("react.memo_cache_sentinel")) {
-      t10 = <Text dimColor={true}>No recent denials. Commands denied by the auto mode classifier will appear here.</Text>;
+      t10 = <Text dimColor={true}>最近没有被拒绝的命令。自动模式分类器拒绝的命令将显示在此处。</Text>;
       $[16] = t10;
     } else {
       t10 = $[16];

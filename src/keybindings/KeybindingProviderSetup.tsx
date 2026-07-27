@@ -72,12 +72,12 @@ function useKeybindingWarnings(warnings, isReload) {
       const warnCount = count(warnings, _temp2);
       let message;
       if (errorCount > 0 && warnCount > 0) {
-        message = `Found ${errorCount} keybinding ${plural(errorCount, "error")} and ${warnCount} ${plural(warnCount, "warning")}`;
+        message = `发现 ${errorCount} 个快捷键${plural(errorCount, "错误")} 和 ${warnCount} 个${plural(warnCount, "警告")}`;
       } else {
         if (errorCount > 0) {
-          message = `Found ${errorCount} keybinding ${plural(errorCount, "error")}`;
+          message = `发现 ${errorCount} 个快捷键${plural(errorCount, "错误")}`;
         } else {
-          message = `Found ${warnCount} keybinding ${plural(warnCount, "warning")}`;
+          message = `发现 ${warnCount} 个快捷键${plural(warnCount, "警告")}`;
         }
       }
       message = message + " \xB7 /doctor for details";

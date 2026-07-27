@@ -389,7 +389,7 @@ export function MessageSelector({
           </>}
         {!messageToRestore && <Text dimColor italic>
             {exitState.pending ? <>再按一次 {exitState.keyName} 键退出</> : <>
-                {!error && hasMessagesToSelect && 'Enter 继续 · '}Esc 退出
+                {!error && hasMessagesToSelect && '按 Enter 继续 · '}按 Esc 退出
               </>}
           </Text>}
       </Box>
@@ -435,7 +435,7 @@ function RestoreOptionDescription(t0) {
   }
   let t3;
   if ($[4] !== diffStatsForRestore || $[5] !== selectedRestoreOption || $[6] !== showCodeRestore) {
-    t3 = !isSummarizeOption(selectedRestoreOption) && (showCodeRestore ? <RestoreCodeConfirmation diffStatsForRestore={diffStatsForRestore} /> : <Text dimColor={true}>The code will be unchanged.</Text>);
+    t3 = !isSummarizeOption(selectedRestoreOption) && (showCodeRestore ? <RestoreCodeConfirmation diffStatsForRestore={diffStatsForRestore} /> : <Text dimColor={true}>代码将保持不变。</Text>);
     $[4] = diffStatsForRestore;
     $[5] = selectedRestoreOption;
     $[6] = showCodeRestore;

@@ -9,8 +9,8 @@ type Props = {
 };
 export function WizardNavigationFooter({
   instructions = <Byline>
-      <KeyboardShortcutHint shortcut="↑↓" action="navigate" />
-      <KeyboardShortcutHint shortcut="Enter" action="select" />
+      <KeyboardShortcutHint shortcut="↑↓" action="导航" />
+      <KeyboardShortcutHint shortcut="Enter" action="选择" />
       <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />
     </Byline>
 }: Props): ReactNode {

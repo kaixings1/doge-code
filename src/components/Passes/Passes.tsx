@@ -175,7 +175,7 @@ export function Passes({
 
         <Box>
           <Text dimColor italic>
-            {exitState.pending ? <>再按一次 {exitState.keyName} 键退出</> : <>Enter 复制链接 · Esc 取消</>}
+            {exitState.pending ? <>再按一次 {exitState.keyName} 键退出</> : <>按 Enter 复制链接 · 按 Esc 取消</>}
           </Text>
         </Box>
       </Box>

@@ -556,7 +556,7 @@ function OverviewTab({
       {/* Shot 统计（ant 专属） */}
       {shotStatsData && <>
           <Box marginTop={1}>
-            <Text>Shot 分布</Text>
+            <Text>Shot 统计</Text>
           </Box>
           <Box flexDirection="row" gap={4}>
             <Box flexDirection="column" width={28}>

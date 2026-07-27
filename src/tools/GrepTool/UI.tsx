@@ -41,9 +41,13 @@ function SearchResultSummary(t0) {
     t2 = $[4];
   }
   let t3;
-  if ($[5] !== t1 || $[6] !== t2) {
-    t3 = <Text>找到 {t1}{t2}</Text>;
-    $[5] = t1;
+  if ($[5] !== count || $[6] !== t2) {
+    if (count === 0) {
+      t3 = <Text color="error">找到 {t1}{t2}</Text>;
+    } else {
+      t3 = <><Text color="success">找到</Text> {t1}<Text color="success">{t2}</Text></>;
+    }
+    $[5] = count;
     $[6] = t2;
     $[7] = t3;
   } else {
@@ -138,9 +142,9 @@ export function renderToolUseMessage({
   if (!pattern) {
     return null;
   }
-  const parts = [`pattern: "${pattern}"`];
+  const parts = [`匹配模式: "${pattern}"`];
   if (path) {
-    parts.push(`path: "${verbose ? path : getDisplayPath(path)}"`);
+    parts.push(`路径: "${verbose ? path : getDisplayPath(path)}"`);
   }
   return parts.join(', ');
 }

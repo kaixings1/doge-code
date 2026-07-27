@@ -74,3 +74,4 @@ export class StateError extends DogeCodeError {
         });
     }
 }
+//# sourceMappingURL=index.js.map

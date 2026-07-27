@@ -175,7 +175,7 @@ export function AssistantTextMessage(t0) {
         }
         let t3;
         if ($[13] === Symbol.for("react.memo_cache_sentinel")) {
-          t3 = <MessageResponse><Box flexDirection="column" gap={1}>{t2}<Text>To continue immediately, use /model to switch to{" "}{renderModelName(getDefaultSonnetModel())} and continue coding.</Text></Box></MessageResponse>;
+          t3 = <MessageResponse><Box flexDirection="column" gap={1}>{t2}<Text>要立即继续，请使用 /model 切换到{" "}{renderModelName(getDefaultSonnetModel())} 并继续编码。</Text></Box></MessageResponse>;
           $[13] = t3;
         } else {
           t3 = $[13];

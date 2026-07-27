@@ -130,7 +130,7 @@ export function ThinkingToggle(t0) {
   }
   let t10;
   if ($[20] !== confirmationPending || $[21] !== exitState.keyName || $[22] !== exitState.pending) {
-    t10 = <Text dimColor={true} italic={true}>{exitState.pending ? <>再按一次 {exitState.keyName} 键退出</> : confirmationPending !== null ? <Byline><KeyboardShortcutHint shortcut="Enter" action="confirm" /><ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" /></Byline> : <Byline><KeyboardShortcutHint shortcut="Enter" action="confirm" /><ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="退出" /></Byline>}</Text>;
+    t10 = <Text dimColor={true} italic={true}>{exitState.pending ? <>再按一次 {exitState.keyName} 键退出</> : confirmationPending !== null ? <Byline><KeyboardShortcutHint shortcut="Enter" action="确认" /><ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" /></Byline> : <Byline><KeyboardShortcutHint shortcut="Enter" action="确认" /><ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="退出" /></Byline>}</Text>;
     $[20] = confirmationPending;
     $[21] = exitState.keyName;
     $[22] = exitState.pending;

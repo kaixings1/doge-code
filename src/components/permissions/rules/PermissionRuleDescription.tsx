@@ -26,7 +26,7 @@ export function PermissionRuleDescription(t0) {
             }
             let t2;
             if ($[2] !== t1) {
-              t2 = <Text dimColor={true}>Any Bash command starting with{" "}<Text bold={true}>{t1}</Text></Text>;
+              t2 = <Text dimColor={true}>以 " 开头的任意 Bash 命令 </Text>;
               $[2] = t1;
               $[3] = t2;
             } else {
@@ -36,7 +36,7 @@ export function PermissionRuleDescription(t0) {
           } else {
             let t1;
             if ($[4] !== ruleValue.ruleContent) {
-              t1 = <Text dimColor={true}>The Bash command <Text bold={true}>{ruleValue.ruleContent}</Text></Text>;
+              t1 = <Text dimColor={true}>Bash 命令 <Text bold={true}>{ruleValue.ruleContent}</Text></Text>;
               $[4] = ruleValue.ruleContent;
               $[5] = t1;
             } else {
@@ -47,7 +47,7 @@ export function PermissionRuleDescription(t0) {
         } else {
           let t1;
           if ($[6] === Symbol.for("react.memo_cache_sentinel")) {
-            t1 = <Text dimColor={true}>Any Bash command</Text>;
+            t1 = <Text dimColor={true}>任意 Bash 命令</Text>;
             $[6] = t1;
           } else {
             t1 = $[6];
