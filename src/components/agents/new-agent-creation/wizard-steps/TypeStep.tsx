@@ -59,7 +59,7 @@ export function TypeStep(_props) {
   const handleSubmit = t1;
   let t2;
   if ($[4] === Symbol.for("react.memo_cache_sentinel")) {
-    t2 = <Byline><KeyboardShortcutHint shortcut="Type" action="输入文本" /><KeyboardShortcutHint shortcut="Enter" action="继续" /><ConfigurableShortcutHint action="confirm:no" context="Settings" fallback="Esc" description="返回" /></Byline>;
+    t2 = <Byline><KeyboardShortcutHint shortcut="Type" action="输入" /><KeyboardShortcutHint shortcut="Enter" action="下一步" /><ConfigurableShortcutHint action="confirm:no" context="Settings" fallback="Esc" description="取消" /></Byline>;
     $[4] = t2;
   } else {
     t2 = $[4];

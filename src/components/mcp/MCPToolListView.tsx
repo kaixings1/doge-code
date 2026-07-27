@@ -133,7 +133,7 @@ export function MCPToolListView(t0) {
   return t8;
 }
 function _temp2(exitState) {
-  return exitState.pending ? <Text>再按一次 {exitState.keyName} 键退出</Text> : <Byline><KeyboardShortcutHint shortcut={"\u2191\u2193"} action="导航" /><KeyboardShortcutHint shortcut="Enter" action="选择" /><ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" /></Byline>;
+  return exitState.pending ? <Text>再按一次 {exitState.keyName} 键退出</Text> : <Byline><KeyboardShortcutHint shortcut={"\u2191\u2193"} action="导航" /><KeyboardShortcutHint shortcut="Enter" action="选择" /><ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="取消" /></Byline>;
 }
 function _temp(s) {
   return s.mcp.tools;
