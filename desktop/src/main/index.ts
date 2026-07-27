@@ -3,6 +3,7 @@
  */
 
 import { app, BrowserWindow, ipcMain, shell, Tray, Menu, nativeImage } from 'electron'
+import Store from 'electron-store'
 import * as path from 'path'
 import * as fs from 'fs'
 import { QueryEngine, type ToolDefinition } from '../../../src/engine/index.js'
@@ -11,6 +12,7 @@ import type { APIRequest } from '../../../src/engine/requestBuilder.js'
 
 let mainWindow: BrowserWindow | null = null
 let tray: Tray | null = null
+const store = new Store()
 
 // ─── 路径 ───
 const projectRoot = path.resolve(__dirname, '..', '..', '..')
@@ -375,9 +377,12 @@ function getEngine(): QueryEngine {
 
 // ─── 创建窗口 ───
 function createWindow(): void {
+  const saved = (store.get('windowState') as { width?: number; height?: number; x?: number; y?: number } | null)
   mainWindow = new BrowserWindow({
-    width: 1400,
-    height: 900,
+    width: saved?.width || 1400,
+    height: saved?.height || 900,
+    x: saved?.x,
+    y: saved?.y,
     minWidth: 1000,
     minHeight: 600,
     title: 'Doge Code',
@@ -388,6 +393,20 @@ function createWindow(): void {
       contextIsolation: true,
       nodeIntegration: false,
     },
+  })
+
+  mainWindow.on('resize', () => {
+    if (mainWindow.isMaximized() || mainWindow.isMinimized() || mainWindow.isFullScreen()) return
+    const [w, h] = mainWindow.getSize()
+    const s = (store.get('windowState') as Record<string, number>) || {}
+    store.set('windowState', { ...s, width: w, height: h })
+  })
+
+  mainWindow.on('move', () => {
+    if (mainWindow.isMaximized() || mainWindow.isMinimized() || mainWindow.isFullScreen()) return
+    const [x, y] = mainWindow.getPosition()
+    const s = (store.get('windowState') as Record<string, number>) || {}
+    store.set('windowState', { ...s, x, y })
   })
 
   if (process.env.VITE_DEV_SERVER_URL) {
@@ -1170,7 +1189,19 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
 })
 
-app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) createWindow()
+ipcMain.handle('doge:get-window-state', () => {
+  return {
+    width: store.get('width'),
+    height: store.get('height'),
+    x: store.get('x'),
+    y: store.get('y'),
+  }
 })
 
+ipcMain.handle('doge:save-window-state', (_event, state: { width?: number; height?: number; x?: number; y?: number }) => {
+  if (typeof state.width === 'number') store.set('width', state.width)
+  if (typeof state.height === 'number') store.set('height', state.height)
+  if (typeof state.x === 'number') store.set('x', state.x)
+  if (typeof state.y === 'number') store.set('y', state.y)
+  return { success: true }
+})
