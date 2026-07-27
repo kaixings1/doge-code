@@ -1474,6 +1474,10 @@ function App(): JSX.Element {
   const [toast, setToast] = React.useState<{ text: string; type: 'info' | 'success' | 'error' } | null>(null)
   const [sidebarVisible, setSidebarVisible] = React.useState(true)
   const [terminalVisible, setTerminalVisible] = React.useState(false)
+  // 语音输入状态
+  const [isRecording, setIsRecording] = React.useState(false)
+  const [interimTranscript, setInterimTranscript] = React.useState('')
+  const recognitionRef = React.useRef<SpeechRecognition | null>(null)
   const toastTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
   const messagesEndRef = React.useRef<HTMLDivElement>(null)
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
@@ -1901,6 +1905,68 @@ function App(): JSX.Element {
 
   const handleAbort = React.useCallback(async () => { await window.dogeAPI.abort(); setCurrentStreaming('') }, [])
   const handleClear = React.useCallback(async () => { await window.dogeAPI.clearHistory(); setMessages([]); persistActiveTabMessages([]); setCurrentStreaming('') }, [persistActiveTabMessages])
+
+  // ─── 语音输入（浏览器 Web Speech API） ───
+  const toggleVoiceInput = React.useCallback(() => {
+    if (isRecording) {
+      // 停止录音
+      recognitionRef.current?.stop()
+      setIsRecording(false)
+      setInterimTranscript('')
+      return
+    }
+
+    // 检查浏览器支持
+    const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    if (!SpeechRecognitionAPI) {
+      showToast('当前浏览器不支持语音识别 API', 'error')
+      return
+    }
+
+    const recognition = new SpeechRecognitionAPI()
+    recognition.lang = 'zh-CN'
+    recognition.continuous = false
+    recognition.interimResults = true
+
+    recognition.onstart = () => {
+      setIsRecording(true)
+      setInterimTranscript('')
+    }
+
+    recognition.onresult = (event: any) => {
+      let interim = ''
+      let final = ''
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript
+        if (event.results[i].isFinal) {
+          final += transcript
+        } else {
+          interim += transcript
+        }
+      }
+      if (interim) setInterimTranscript(interim)
+      if (final) {
+        setInput(prev => prev ? prev + ' ' + final : final)
+        setInterimTranscript('')
+      }
+    }
+
+    recognition.onerror = (event: any) => {
+      setIsRecording(false)
+      setInterimTranscript('')
+      if (event.error !== 'no-speech') {
+        showToast(`语音识别错误: ${event.error}`, 'error')
+      }
+    }
+
+    recognition.onend = () => {
+      setIsRecording(false)
+      setInterimTranscript('')
+    }
+
+    recognitionRef.current = recognition
+    recognition.start()
+  }, [isRecording, showToast])
 
   // ─── 全局快捷键（集中注册） ───
   React.useEffect(() => {
@@ -2436,7 +2502,7 @@ function App(): JSX.Element {
                 if (path) { e.preventDefault(); setInput(prev => prev ? prev + ' ' + path : path) }
               }}
               onDragOver={(e) => e.preventDefault()}
-              placeholder={isProcessing ? '按 Enter 中断... (Shift+Enter 换行)' : '输入消息... (Enter 发送, Shift+Enter 换行, ↑↓ 历史导航)'}
+              placeholder={isRecording ? `🎤 ${interimTranscript || '正在聆听...'}` : isProcessing ? '按 Enter 中断... (Shift+Enter 换行)' : '输入消息... (Enter 发送, Shift+Enter 换行, ↑↓ 历史导航, 🎤 语音)'}
               style={{
                 ...styles.inputBox,
                 minHeight: '44px',
@@ -2451,6 +2517,29 @@ function App(): JSX.Element {
               autoFocus
               rows={1}
             />
+            {/* 语音输入按钮 */}
+            <div style={{ position: 'absolute', right: '12px', bottom: '12px', display: 'flex', gap: '4px', alignItems: 'center' }}>
+              {isRecording && (
+                <span style={{ color: '#FF6B6B', fontSize: '11px', animation: 'pulse 1s infinite' }}>● 录音中</span>
+              )}
+              <button
+                type="button"
+                onClick={toggleVoiceInput}
+                style={{
+                  padding: '4px 8px',
+                  border: '1px solid',
+                  borderColor: isRecording ? '#FF6B6B' : '#333',
+                  borderRadius: '4px',
+                  background: isRecording ? 'rgba(255,107,107,0.1)' : '#0F0F0F',
+                  color: isRecording ? '#FF6B6B' : '#888',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                }}
+                title={isRecording ? '停止录音' : '开始语音输入 (浏览器内置识别)'}
+              >
+                {isRecording ? '⏹' : '🎤'}
+              </button>
+            </div>
           </form>
           {/* 自动补全提示 */}
           {completions.length > 0 && (
