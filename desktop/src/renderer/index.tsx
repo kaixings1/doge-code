@@ -189,7 +189,7 @@ function getFileIcon(name: string, isDirectory: boolean): string {
 }
 
 // ─── 文件树组件 ───
-function FileTree({ cwd }: { cwd: string }) {
+function FileTree({ cwd, onPreviewFile }: { cwd: string; onPreviewFile?: (path: string) => void }) {
   const [tree, setTree] = React.useState<FileTreeNode[]>([])
   const [loading, setLoading] = React.useState(true)
   const [filter, setFilter] = React.useState('')
@@ -415,6 +415,7 @@ function FileTree({ cwd }: { cwd: string }) {
         key={node.path}
         style={{ ...styles.fileItem, paddingLeft: `${12 + depth * 16}px`, color: node.isDirectory ? '#F5F5F5' : '#888888' }}
         onClick={() => toggleDir(node)}
+        onDoubleClick={() => { if (!node.isDirectory) onPreviewFile?.(node.path) }}
         onContextMenu={(e) => handleContextMenu(e, node)}
       >
         <span>{node.isDirectory ? (node.expanded ? '▼' : '▶') : getFileIcon(node.name, false)}</span>
@@ -998,6 +999,28 @@ function App(): JSX.Element {
   const [selectedGitFile, setSelectedGitFile] = React.useState<string | null>(null)
   const [commitMessage, setCommitMessage] = React.useState('')
   const [isCommitting, setIsCommitting] = React.useState(false)
+  const [previewFile, setPreviewFile] = React.useState<{ path: string; content: string; size?: number } | null>(null)
+  const [previewLoading, setPreviewLoading] = React.useState(false)
+  const [previewError, setPreviewError] = React.useState<string | null>(null)
+
+  const handlePreviewFile = React.useCallback(async (filePath: string) => {
+    setPreviewLoading(true)
+    setPreviewError(null)
+    try {
+      const result = await window.dogeAPI.readFile(filePath)
+      if (result.success) {
+        setPreviewFile({ path: filePath, content: result.content || '', size: result.size })
+      } else {
+        setPreviewError(result.error || '无法读取文件')
+        setPreviewFile(null)
+      }
+    } catch {
+      setPreviewError('读取文件失败')
+      setPreviewFile(null)
+    } finally {
+      setPreviewLoading(false)
+    }
+  }, [])
   const [showCommandPalette, setShowCommandPalette] = React.useState(false)
   const [modelInfo, setModelInfo] = React.useState<{ provider: string; model: string; baseUrl: string; hasApiKey: boolean } | null>(null)
   const [tokenUsage, setTokenUsage] = React.useState<{ inputTokens: number; outputTokens: number; totalTokens: number; lastResponseLength: number; messageCount: number } | null>(null)
@@ -1788,8 +1811,37 @@ function App(): JSX.Element {
       <div style={styles.rightPanel}>
         <div style={styles.panelHeader}>📁 文件树</div>
         <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0' }}>
-          <FileTree cwd={workingDir} />
+          <FileTree cwd={workingDir} onPreviewFile={handlePreviewFile} />
         </div>
+
+        {/* 文件预览面板 */}
+        {previewFile && (
+          <div style={{ ...styles.panelHeader, borderTop: '1px solid #262626', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>👁️ {previewFile.path.split('/').pop()}</span>
+            <span style={{ cursor: 'pointer', color: '#555', fontSize: '11px' }} onClick={() => setPreviewFile(null)}>✕ 关闭</span>
+          </div>
+        )}
+        {(previewFile || previewLoading) && (
+          <div style={{ flex: 1, overflowY: 'auto', padding: '8px', borderBottom: '1px solid #262626', maxHeight: previewFile ? '40%' : '40px' }}>
+            {previewLoading && <div style={{ color: '#888', fontSize: '11px', textAlign: 'center' }}>加载中...</div>}
+            {previewError && <div style={{ color: '#FF6B6B', fontSize: '11px' }}>{previewError}</div>}
+            {previewFile && (
+              <div>
+                <div style={{ fontSize: '10px', color: '#666', marginBottom: '6px' }}>
+                  {previewFile.path} {previewFile.size != null ? `(${(previewFile.size / 1024).toFixed(1)} KB)` : ''}
+                </div>
+                <pre style={{
+                  background: '#0A0A0A', border: '1px solid #262626', borderRadius: '4px', padding: '8px',
+                  fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all',
+                  color: '#D4D4D4', margin: 0, maxHeight: '300px', overflowY: 'auto'
+                }}>
+                  {previewFile.content || '(空文件)'}
+                </pre>
+              </div>
+            )}
+          </div>
+        )}
+
         <div style={{ ...styles.panelHeader, borderTop: '1px solid #262626' }}>🔄 Git 变更</div>
         <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0' }}>
           <GitChanges cwd={workingDir} onSelectFile={(path) => { setSelectedGitFile(path); setCommitMessage('') }} />
