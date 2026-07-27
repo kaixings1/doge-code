@@ -1237,6 +1237,8 @@ function App(): JSX.Element {
   const [replaceQuery, setReplaceQuery] = React.useState('')
   const [searchResults, setSearchResults] = React.useState<Array<{ start: number; end: number }>>([])
   const [currentResultIndex, setCurrentResultIndex] = React.useState(-1)
+  const [msgSearchQuery, setMsgSearchQuery] = React.useState('')
+  const [msgSearchMatches, setMsgSearchMatches] = React.useState<number[]>([])
 
   const handlePreviewFile = React.useCallback(async (filePath: string) => {
     // 记录到最近文件
@@ -1932,6 +1934,16 @@ function App(): JSX.Element {
   const isProcessing = state === 'responding'
   const workingDir = config.workingDir || '/'
   const displayMessages = messages
+  const msgSearchQueryLower = msgSearchQuery.toLowerCase()
+  const filteredDisplayMessages = msgSearchQuery
+    ? displayMessages.map((m, i) => ({ ...m, _origIndex: i, _match: m.content.toLowerCase().includes(msgSearchQueryLower) }))
+    : displayMessages.map((m, i) => ({ ...m, _origIndex: i, _match: true }))
+  React.useEffect(() => {
+    if (!msgSearchQuery) { setMsgSearchMatches([]); return }
+    const matches: number[] = []
+    displayMessages.forEach((m, i) => { if (m.content.toLowerCase().includes(msgSearchQueryLower)) matches.push(i) })
+    setMsgSearchMatches(matches)
+  }, [msgSearchQuery, displayMessages, msgSearchQueryLower])
 
   return (
     <div style={styles.container}>
@@ -2144,6 +2156,20 @@ function App(): JSX.Element {
 
       {/* 中栏：聊天界面 */}
       <div style={styles.chatView}>
+        {/* 消息搜索栏 */}
+        {messages.length > 0 && (
+          <div style={{ padding: '4px 12px', borderBottom: '1px solid #1A1A1A', display: 'flex', gap: '4px', alignItems: 'center' }}>
+            <input
+              value={msgSearchQuery}
+              onChange={(e) => setMsgSearchQuery(e.target.value)}
+              placeholder="搜索消息..."
+              style={{ flex: 1, padding: '3px 6px', background: '#0F0F0F', border: '1px solid #262626', borderRadius: '3px', color: '#F5F5F5', fontSize: '11px', outline: 'none' }}
+            />
+            {msgSearchQuery && (
+              <span style={{ color: '#555', fontSize: '10px', whiteSpace: 'nowrap' }}>{msgSearchMatches.length} 条匹配</span>
+            )}
+          </div>
+        )}
         <div style={styles.chatMessages}>
           {messages.length === 0 && !currentStreaming ? (
             <div style={styles.welcomeBlock}>
@@ -2171,8 +2197,9 @@ function App(): JSX.Element {
                   try { toolResultContent = JSON.parse(m.content) } catch { /* not JSON */ }
                 }
 
+                const matchesSearch = !msgSearchQuery || m.content.toLowerCase().includes(msgSearchQueryLower)
                 return (
-                <div key={m.id} style={{ ...styles.messageBubble, ...(m.role === 'user' ? styles.userBubble : isTool ? styles.toolResultBubble : styles.assistantBubble) }}>
+                <div key={m.id} style={{ ...styles.messageBubble, ...(m.role === 'user' ? styles.userBubble : isTool ? styles.toolResultBubble : styles.assistantBubble), opacity: msgSearchQuery ? (matchesSearch ? 1 : 0.3) : 1, transition: 'opacity 0.2s' }}>
                   <div style={styles.roleLabel}>{m.role === 'user' ? '用户' : m.role === 'assistant' ? '助手' : m.role === 'tool' ? '🔧 工具结果' : '系统'}</div>
                   {isTool && toolResultContent
                     ? (
