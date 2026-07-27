@@ -2027,16 +2027,40 @@ function App(): JSX.Element {
           {displayMessages.length === 0 && !currentStreaming ? (
             <div style={{ padding: '16px', color: '#555555', fontSize: '12px' }}>开始新对话</div>
           ) : (
-            displayMessages.map((m) => (
-              <div key={m.id} style={{ padding: '8px 16px', borderBottom: '1px solid #1A1A1A', cursor: 'pointer' }}>
-                <div style={{ fontSize: '13px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {m.role === 'user' ? '用户' : m.role === 'assistant' ? '助手' : '系统'}
+            (() => {
+              // Group messages into conversation turns
+              const turns: Array<{ userMsg: Message; assistantMsg: Message | null }> = []
+              let i = 0
+              while (i < displayMessages.length) {
+                if (displayMessages[i].role === 'user') {
+                  const next = i + 1 < displayMessages.length && displayMessages[i + 1].role === 'assistant' ? displayMessages[i + 1] : null
+                  turns.push({ userMsg: displayMessages[i], assistantMsg: next })
+                  i = next ? i + 2 : i + 1
+                } else if (displayMessages[i].role === 'assistant') {
+                  turns.push({ userMsg: { id: '', role: 'user' as const, content: '(系统)' }, assistantMsg: displayMessages[i] })
+                  i++
+                } else {
+                  i++
+                }
+              }
+              if (turns.length === 0 && currentStreaming) {
+                const lastUser = [...displayMessages].reverse().find(m => m.role === 'user')
+                if (lastUser) turns.push({ userMsg: lastUser, assistantMsg: null })
+              }
+              return turns.map((turn, idx) => (
+                <div key={idx} style={{ padding: '6px 12px', borderBottom: '1px solid #1A1A1A', cursor: 'pointer' }}>
+                  <div style={{ fontSize: '12px', color: '#F5F5F5', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: '1.4' }}>
+                    <span style={{ color: '#4ECB71', marginRight: '4px' }}>❯</span>
+                    {turn.userMsg.content || '(空消息)'}
+                  </div>
+                  {turn.assistantMsg && (
+                    <div style={{ fontSize: '10px', color: '#555555', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingLeft: '12px' }}>
+                      {turn.assistantMsg.content.slice(0, 60)}
+                    </div>
+                  )}
                 </div>
-                <div style={{ fontSize: '11px', color: '#555555', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {m.content.slice(0, 50)}
-                </div>
-              </div>
-            ))
+              ))
+            })()
           )}
         </div>
         <div style={styles.statusBar}>
