@@ -282,7 +282,7 @@ function hasVisibleSpaceEffect(styles: AnsiCode[]): boolean {
  * @see https://mitchellh.com/writing/grapheme-clusters-in-terminals
  */
 // 单元格宽度枚举（const enum 在 ESM 下内联，因此同时导出常量值供运行时使用）
-export const enum CellWidth {
+export enum CellWidth {
   // 非宽字符，单元格宽度 1
   Narrow = 0,
   // 宽字符，单元格宽度 2。此单元格包含实际字符。

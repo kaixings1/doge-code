@@ -595,7 +595,7 @@ export function BrowseMarketplace({
     }
     return <Box flexDirection="column">
         <Box marginBottom={1}>
-          <Text bold>Select marketplace</Text>
+          <Text bold>选择插件市场</Text>
         </Box>
 
         {/* Warning banner for marketplace load failures */}

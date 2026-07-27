@@ -44,7 +44,7 @@ export function TeammateViewHeader() {
   }
   let t3;
   if ($[6] === Symbol.for("react.memo_cache_sentinel")) {
-    t3 = <Text dimColor={true}>{" \xB7 "}<KeyboardShortcutHint shortcut="Esc" action="return" /></Text>;
+    t3 = <Text dimColor={true}>{" \xB7 "}<KeyboardShortcutHint shortcut="Esc" action="返回" /></Text>;
     $[6] = t3;
   } else {
     t3 = $[6];

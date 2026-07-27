@@ -195,7 +195,7 @@ export function GlobalSearchDialog(t0) {
   let t10;
   if ($[14] !== handleInsert) {
     t10 = {
-      action: "mention",
+      action: "提及",
       handler: m_5 => handleInsert(m_5, true)
     };
     $[14] = handleInsert;
@@ -206,7 +206,7 @@ export function GlobalSearchDialog(t0) {
   let t11;
   if ($[16] !== handleInsert) {
     t11 = {
-      action: "insert path",
+      action: "插入路径",
       handler: m_6 => handleInsert(m_6, false)
     };
     $[16] = handleInsert;

@@ -405,7 +405,7 @@ export function QuestionView(t0) {
   }
   let t23;
   if ($[98] !== t21 || $[99] !== t22) {
-    t23 = <Box marginTop={1}><Text color="inactive" dimColor={true}>Enter 选择 ·{" "}{t21}{t22}{" "}· Esc 取消</Text></Box>;
+    t23 = <Box marginTop={1}><Text color="inactive" dimColor={true}>按 Enter 选择 ·{" "}{t21}{t22}{" "}· 按 Esc 取消</Text></Box>;
     $[98] = t21;
     $[99] = t22;
     $[100] = t23;

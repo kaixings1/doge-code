@@ -115,8 +115,8 @@ export function MCPAgentServerMenu({
     value: 'back'
   });
   return <Dialog title={`${capitalizedServerName} MCP 服务器`} subtitle="仅限代理" onCancel={onCancel} inputGuide={exitState => exitState.pending ? <Text>再次按 {exitState.keyName} 退出</Text> : <Byline>
-            <KeyboardShortcutHint shortcut="↑↓" action="navigate" />
-            <KeyboardShortcutHint shortcut="Enter" action="confirm" />
+            <KeyboardShortcutHint shortcut="↑↓" action="导航" />
+            <KeyboardShortcutHint shortcut="Enter" action="确认" />
             <ConfigurableShortcutHint action="confirm:no" context="Confirmation" fallback="Esc" description="返回" />
           </Byline>}>
       <Box flexDirection="column" gap={0}>

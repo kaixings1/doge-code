@@ -47,7 +47,7 @@ export function ErrorStep(t0) {
   }
   let t5;
   if ($[7] === Symbol.for("react.memo_cache_sentinel")) {
-    t5 = <Box marginTop={1}><Text dimColor={true}>For manual setup instructions, see:{" "}<Text color="claude">{GITHUB_ACTION_SETUP_DOCS_URL}</Text></Text></Box>;
+    t5 = <Box marginTop={1}><Text dimColor={true}>手动设置说明请参阅：{" "}<Text color="claude">{GITHUB_ACTION_SETUP_DOCS_URL}</Text></Text></Box>;
     $[7] = t5;
   } else {
     t5 = $[7];

@@ -352,7 +352,7 @@ function StopHookSummaryMessage(t0) {
   }
   let t10;
   if ($[22] !== t6 || $[23] !== t7 || $[24] !== t8 || $[25] !== t9 || $[26] !== totalStr) {
-    t10 = <Text>Ran {t6} {t7}{" "}{t8}{totalStr}{t9}</Text>;
+    t10 = <Text>执行了 {t6} {t7}{" "}{t8}{totalStr}{t9}</Text>;
     $[22] = t6;
     $[23] = t7;
     $[24] = t8;

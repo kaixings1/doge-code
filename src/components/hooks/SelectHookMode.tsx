@@ -107,5 +107,5 @@ function _temp2(hook, index) {
   };
 }
 function _temp() {
-  return <Text>Esc 返回</Text>;
+  return <Text>按 Esc 返回</Text>;
 }
