@@ -1952,13 +1952,28 @@ function App(): JSX.Element {
                     }}
                   />
                 ) : (
-                  <pre style={{
-                    background: '#0A0A0A', border: '1px solid #262626', borderRadius: '4px', padding: '8px',
-                    fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all',
-                    color: '#D4D4D4', margin: 0, maxHeight: '300px', overflowY: 'auto'
-                  }}>
-                    {previewFile.content || '(空文件)'}
-                  </pre>
+                  (() => {
+                    const ext = previewFile.path.split('.').pop()?.toLowerCase() || ''
+                    const langMap: Record<string, string> = { ts: 'typescript', tsx: 'typescript', js: 'javascript', jsx: 'javascript', py: 'python', rb: 'ruby', sh: 'bash', yml: 'yaml', md: 'markdown', rs: 'rust', cpp: 'cpp', c: 'c', go: 'go', java: 'java', php: 'php', xml: 'html', json: 'json', css: 'css', scss: 'css', html: 'html', sql: 'sql', bash: 'bash', yaml: 'yaml', markdown: 'markdown', typescript: 'typescript', javascript: 'javascript', python: 'python', rust: 'rust', ruby: 'ruby' }
+                    const codeExts = ['ts','tsx','js','jsx','py','css','html','json','md','bash','sh','yaml','yml','sql','rust','go','java','c','cpp','php','ruby','rs','toml','ini','env','conf','xml','svg','tex','r','swift','kt','kts','scala','hs','lua','vim','dockerfile','makefile','gitignore']
+                    const detectedLang = langMap[ext] || (codeExts.includes(ext) ? ext : '')
+                    const highlighted = detectedLang ? highlightCode(previewFile.content || '', detectedLang) : null
+                    return highlighted !== null ? (
+                      <pre style={{
+                        background: '#0A0A0A', border: '1px solid #262626', borderRadius: '4px', padding: '8px',
+                        fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all',
+                        color: '#D4D4D4', margin: 0, maxHeight: '300px', overflowY: 'auto'
+                      }} dangerouslySetInnerHTML={{ __html: highlighted }} />
+                    ) : (
+                      <pre style={{
+                        background: '#0A0A0A', border: '1px solid #262626', borderRadius: '4px', padding: '8px',
+                        fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all',
+                        color: '#D4D4D4', margin: 0, maxHeight: '300px', overflowY: 'auto'
+                      }}>
+                        {previewFile.content || '(空文件)'}
+                      </pre>
+                    )
+                  })()
                 )}
               </div>
             )}
