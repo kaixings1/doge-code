@@ -1345,6 +1345,16 @@ function App(): JSX.Element {
     } catch { showToast('打开失败', 'error') }
   }, [previewFile, showToast])
 
+  const handleOpenTerminal = React.useCallback(async () => {
+    if (!previewFile) return
+    try {
+      const dirPath = previewFile.path.includes('/') ? previewFile.path.substring(0, previewFile.path.lastIndexOf('/')) : ''
+      const result = await window.dogeAPI.openTerminal(dirPath)
+      if (result.success) showToast('终端已打开', 'success')
+      else showToast(result.error || '打开终端失败', 'error')
+    } catch { showToast('打开终端失败', 'error') }
+  }, [previewFile, showToast])
+
   // textarea 自动高度
   React.useEffect(() => {
     const el = inputRef.current
@@ -2056,6 +2066,7 @@ function App(): JSX.Element {
                 </>
               ) : (
                 <>
+                  <span style={{ cursor: 'pointer', color: '#888', fontSize: '11px' }} onClick={handleOpenTerminal} title="在终端中打开">💻</span>
                   <span style={{ cursor: 'pointer', color: '#569CD6', fontSize: '11px' }} onClick={handleStartEdit}>✏️ 编辑</span>
                   <span style={{ cursor: 'pointer', color: '#888', fontSize: '11px' }} onClick={handleCopyContent}>📝 复制内容</span>
                   <span style={{ cursor: 'pointer', color: '#888', fontSize: '11px' }} onClick={handleRevealInExplorer}>📂 所在位置</span>
