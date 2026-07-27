@@ -73,6 +73,7 @@ interface DogeAPIValue {
   readFile: (filePath: string) => Promise<{ success: boolean; content?: string; size?: number; error?: string }>
   writeFile: (filePath: string, content: string) => Promise<{ success: boolean; error?: string }>
   searchFiles: (query: string, cwd: string, maxResults?: number) => Promise<Array<{ path: string; line: number; content: string }>>
+  revealInExplorer: (filePath: string) => Promise<{ success: boolean; error?: string }>
 }
 
 const dogeAPI: DogeAPIValue = {
@@ -133,6 +134,7 @@ const dogeAPI: DogeAPIValue = {
   readFile: (filePath: string) => ipcRenderer.invoke('doge:read-file', filePath),
   writeFile: (filePath: string, content: string) => ipcRenderer.invoke('doge:write-file', filePath, content),
   searchFiles: (query: string, cwd: string, maxResults?: number) => ipcRenderer.invoke('doge:search-files', query, cwd, maxResults),
+  revealInExplorer: (filePath: string) => ipcRenderer.invoke('doge:reveal-in-explorer', filePath),
 }
 
 contextBridge.exposeInMainWorld('dogeAPI', dogeAPI)

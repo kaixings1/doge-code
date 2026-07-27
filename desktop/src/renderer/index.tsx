@@ -1292,6 +1292,23 @@ function App(): JSX.Element {
     toastTimerRef.current = setTimeout(() => { setToast(null); toastTimerRef.current = null }, 3000)
   }, [])
 
+  const handleCopyContent = React.useCallback(async () => {
+    if (!previewFile) return
+    try {
+      await navigator.clipboard.writeText(previewFile.content)
+      showToast('文件内容已复制', 'success')
+    } catch { showToast('复制失败', 'error') }
+  }, [previewFile, showToast])
+
+  const handleRevealInExplorer = React.useCallback(async () => {
+    if (!previewFile) return
+    try {
+      const result = await window.dogeAPI.revealInExplorer(previewFile.path)
+      if (result.success) showToast('已打开文件所在位置', 'success')
+      else showToast(result.error || '打开失败', 'error')
+    } catch { showToast('打开失败', 'error') }
+  }, [previewFile, showToast])
+
   // textarea 自动高度
   React.useEffect(() => {
     const el = inputRef.current
@@ -2004,6 +2021,8 @@ function App(): JSX.Element {
               ) : (
                 <>
                   <span style={{ cursor: 'pointer', color: '#569CD6', fontSize: '11px' }} onClick={handleStartEdit}>✏️ 编辑</span>
+                  <span style={{ cursor: 'pointer', color: '#888', fontSize: '11px' }} onClick={handleCopyContent}>📝 复制内容</span>
+                  <span style={{ cursor: 'pointer', color: '#888', fontSize: '11px' }} onClick={handleRevealInExplorer}>📂 所在位置</span>
                   <span style={{ cursor: 'pointer', color: '#555', fontSize: '11px' }} onClick={() => { navigator.clipboard.writeText(previewFile.path); showToast('路径已复制', 'success') }}>📋</span>
                   <span style={{ cursor: 'pointer', color: '#555', fontSize: '11px' }} onClick={() => setPreviewFile(null)}>✕</span>
                 </>

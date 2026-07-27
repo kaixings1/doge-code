@@ -1182,6 +1182,26 @@ ipcMain.handle('doge:open-terminal', async (_event, dirPath: string) => {
   }
 })
 
+ipcMain.handle('doge:reveal-in-explorer', async (_event, filePath: string) => {
+  try {
+    if (!fs.existsSync(filePath)) return { success: false, error: '文件不存在' }
+    if (process.platform === 'win32') {
+      const { execSync } = await import('node:child_process')
+      execSync(`explorer.exe /select,"${filePath}"`, { windowsHide: true })
+    } else if (process.platform === 'darwin') {
+      const { execSync } = await import('node:child_process')
+      execSync(`open -R "${filePath}"`, { windowsHide: true })
+    } else {
+      const { execSync } = await import('node:child_process')
+      execSync(`xdg-open "${path.dirname(filePath)}"`, { windowsHide: true })
+    }
+    return { success: true }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
 // ─── 应用生命周期 ───
 app.whenReady().then(() => { createWindow(); createTray() })
 
