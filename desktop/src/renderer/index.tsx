@@ -1049,18 +1049,28 @@ function App(): JSX.Element {
   }, [saveMessagesToTab])
 
   // 根据第一条用户消息自动更新 Tab 标题
+  const titleUpdatedRef = React.useRef<Set<string>>(new Set())
   React.useEffect(() => {
     if (!activeTabId) return
+    // 如果该 tab 标题已经更新过，跳过
+    if (titleUpdatedRef.current.has(activeTabId)) return
+
     setTabs(prev => prev.map(t => {
-      if (t.id !== activeTabId || t.title !== `对话 ${tabIdCounter.current}`) return t
+      if (t.id !== activeTabId || t.title !== `对话 ${tabIdCounter.current}`) {
+        if (t.title !== `对话 ${tabIdCounter.current}`) {
+          titleUpdatedRef.current.add(activeTabId)
+        }
+        return t
+      }
       const firstUserMsg = t.messages.find(m => m.role === 'user')
       if (firstUserMsg) {
         const title = firstUserMsg.content.slice(0, 30) + (firstUserMsg.content.length > 30 ? '...' : '')
+        titleUpdatedRef.current.add(activeTabId)
         return { ...t, title }
       }
       return t
     }))
-  }, [tabs, activeTabId])
+  }, [activeTabId])
 
   // Tab 数据持久化（localStorage）
   React.useEffect(() => {
