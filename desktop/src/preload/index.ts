@@ -61,6 +61,10 @@ interface DogeAPIValue {
   newSession: () => Promise<{ success: boolean }>
   deleteSession: (sessionId: string) => Promise<{ success: boolean; error?: string }>
   deleteFile: (filePath: string) => Promise<{ success: boolean; error?: string }>
+  renameFile: (filePath: string, newName: string) => Promise<{ success: boolean; newPath?: string; error?: string }>
+  newFile: (dirPath: string, fileName: string) => Promise<{ success: boolean; path?: string; error?: string }>
+  newFolder: (dirPath: string, folderName: string) => Promise<{ success: boolean; path?: string; error?: string }>
+  openTerminal: (dirPath: string) => Promise<{ success: boolean; error?: string }>
   getCurrentSessionId: () => Promise<string | null>
   notify: (title: string, body: string) => Promise<{ success: boolean }>
 }
@@ -111,6 +115,10 @@ const dogeAPI: DogeAPIValue = {
   newSession: () => ipcRenderer.invoke('doge:new-session'),
   deleteSession: (sessionId: string) => ipcRenderer.invoke('doge:delete-session', sessionId),
   deleteFile: (filePath: string) => ipcRenderer.invoke('doge:delete-file', filePath),
+  renameFile: (filePath: string, newName: string) => ipcRenderer.invoke('doge:rename-file', filePath, newName),
+  newFile: (dirPath: string, fileName: string) => ipcRenderer.invoke('doge:new-file', dirPath, fileName),
+  newFolder: (dirPath: string, folderName: string) => ipcRenderer.invoke('doge:new-folder', dirPath, folderName),
+  openTerminal: (dirPath: string) => ipcRenderer.invoke('doge:open-terminal', dirPath),
   getCurrentSessionId: () => ipcRenderer.invoke('doge:get-session-id'),
   notify: (title: string, body: string) => ipcRenderer.invoke('doge:notify', title, body),
 }
