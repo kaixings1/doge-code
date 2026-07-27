@@ -644,6 +644,9 @@ function FileTree({ cwd, onPreviewFile }: { cwd: string; onPreviewFile?: (path: 
             </>
           ) : (
             <>
+              <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: '#F5F5F5' }} onClick={() => { onPreviewFile?.(contextMenu.node.path); setContextMenu(null) }}>
+                👁️ 预览文件
+              </div>
               <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: '#F5F5F5' }} onClick={copyContent}>
                 📝 复制内容
               </div>
