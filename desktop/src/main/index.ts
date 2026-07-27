@@ -3,6 +3,7 @@
  */
 
 import { app, BrowserWindow, ipcMain, shell, Tray, Menu, nativeImage } from 'electron'
+import pty from 'node-pty'
 import Store from 'electron-store'
 import * as path from 'path'
 import * as fs from 'fs'
@@ -18,10 +19,12 @@ let tray: Tray | null = null
 const store = new Store()
 
 // ─── 路径 ───
-// 打包后 __dirname = dist/main/，项目根目录 = __dirname/../..
-const PROJECT_ROOT = path.resolve(__dirname, '..', '..')
+// 打包后 __dirname = dist/main/，桌面目录 = __dirname/../..
+const DESKTOP_ROOT = path.resolve(__dirname, '..', '..')
+// 项目根目录（包含 .doge/api.json）
+const PROJECT_ROOT = path.resolve(DESKTOP_ROOT, '..')
 const projectRoot = PROJECT_ROOT
-const DIST_DIR = path.join(PROJECT_ROOT, 'dist')
+const DIST_DIR = path.join(DESKTOP_ROOT, 'dist')
 const CONFIG_PATH = path.join(projectRoot, '.doge', 'api.json')
 
 function loadConfig(): { provider: string; apiKey: string; model: string; baseUrl: string; workingDir: string } {
@@ -222,6 +225,28 @@ function createAdaptedTools(config: ReturnType<typeof loadConfig>): Map<string, 
       },
     })
   }
+
+  // ─── 桌面端补充工具：SnipTool（裁剪历史上下文） ───
+  try {
+    const { SnipTool: SnipToolCls } = require('../../../src/tools/SnipTool/SnipTool.js')
+    const snipInstance = SnipToolCls()
+    adaptedTools.set('SnipTool', {
+      name: 'SnipTool',
+      description: '裁剪历史上下文以减少 token 使用量',
+      parameters: { type: 'object', properties: { lines: { type: 'number' }, keepRecent: { type: 'number' }, preserveSystem: { type: 'boolean' } } },
+      execute: async (params: unknown) => {
+        const args = params as Record<string, unknown>
+        const result = await snipInstance.call(
+          { lines: args.lines ?? 100, keepRecent: args.keepRecent ?? 50, preserveSystem: args.preserveSystem ?? true, target: 'all' },
+          ctx,
+          async () => ({ allowed: true }),
+          { role: 'user', content: '' },
+          null,
+        )
+        return result
+      },
+    })
+  } catch { /* SnipTool 不可用，静默忽略 */ }
 
   return adaptedTools
 }
@@ -549,10 +574,20 @@ ipcMain.handle('doge:send-message', async (_event, content: string) => {
       const data = messages.map(m => ({ role: m.role, content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content) }))
       fs.writeFileSync(file, JSON.stringify({ id: currentSessionId, messages: data, createdAt: new Date().toISOString() }, null, 2), 'utf-8')
     }
+    // 崩溃恢复标记（成功发送后清除）
+    try {
+      const crashFile = path.join(SESSIONS_DIR, '.crash-recovery.json')
+      if (fs.existsSync(crashFile)) fs.unlinkSync(crashFile)
+    } catch { /* ignore */ }
     const lastAssistant = [...messages].reverse().find(m => m.role === 'assistant')
     const reply = typeof lastAssistant?.content === 'string' ? lastAssistant.content : JSON.stringify(lastAssistant?.content ?? '')
     return { success: true, content: reply }
   } catch (error: unknown) {
+    // 保存崩溃恢复标记
+    try {
+      const crashFile = path.join(SESSIONS_DIR, '.crash-recovery.json')
+      fs.writeFileSync(crashFile, JSON.stringify({ sessionId: currentSessionId, messageCount: 0, timestamp: new Date().toISOString() }, null, 2))
+    } catch { /* ignore */ }
     const message = error instanceof Error ? error.message : '未知错误'
     return { error: message }
   }
@@ -618,7 +653,10 @@ ipcMain.handle('doge:get-tools', () => {
     const currentEngine = getEngine()
     const tools = (currentEngine as unknown as { getTools?: () => ToolDefinition[] }).getTools?.()
     if (tools && tools.length > 0) {
-      return tools.map(t => ({ name: t.name, description: t.description, input_schema: t.input_schema }))
+      // 使用 JSON 序列化确保对象可被 IPC 结构化克隆
+      return JSON.parse(JSON.stringify(
+        tools.map(t => ({ name: t.name, description: t.description, input_schema: t.input_schema }))
+      ))
     }
   } catch { /* use static fallback */ }
 
@@ -732,6 +770,15 @@ ipcMain.handle('doge:get-model-info', () => {
 })
 
 // 获取 Token 使用量（从最近一次响应中提取）
+ipcMain.handle('doge:get-memory-usage', () => {
+  try {
+    const usage = process.memoryUsage()
+    return { success: true, heapUsed: usage.heapUsed, rss: usage.rss, external: usage.external }
+  } catch {
+    return { success: false, error: '无法获取内存信息' }
+  }
+})
+
 ipcMain.handle('doge:get-token-usage', () => {
   const currentEngine = getEngine()
   const msgs = (currentEngine as unknown as { conversation: { messages: InternalMessage[] } }).conversation?.messages ?? []
@@ -768,7 +815,7 @@ ipcMain.handle('doge:get-git-diff', async (_event, cwd: string, filePath: string
 
 // ─── 命令系统（桌面端轻量实现） ───
 // 动态导入 prompt 类型命令模板，避免顶层循环依赖
-const dynamicCommandImports: Record<string, () => Promise<{ default?: { getPromptForCommand?: () => Promise<unknown[]>; type?: string } }>> = {
+const dynamicCommandImports: Record<string, () => Promise<{ default?: { getPromptForCommand?: (...args: unknown[]) => Promise<unknown[]>; type?: string } }>> = {
   '/commit': () => import('../../../src/commands/commit.ts'),
   '/review': () => import('../../../src/commands/review.ts'),
   '/plan': () => import('../../../src/commands/plan-mode/index.ts').catch(() => ({ default: null })),
@@ -777,6 +824,8 @@ const dynamicCommandImports: Record<string, () => Promise<{ default?: { getPromp
   '/memory': () => import('../../../src/commands/memory/memory.tsx').catch(() => ({ default: null })),
   '/deploy': () => import('../../../src/commands/deploy/deploy.ts').catch(() => ({ default: null })),
   '/task': () => import('../../../src/commands/task/task.ts').catch(() => ({ default: null })),
+  '/session-search': () => import('../../../src/commands/session-search.ts'),
+  '/session-tag': () => import('../../../src/commands/session-tag.ts'),
 }
 
 interface CommandDef {
@@ -816,6 +865,8 @@ const DESKTOP_COMMANDS: CommandDef[] = [
   { name: '/resume', description: '恢复会话', category: '会话' },
   { name: '/bridge', description: '桥接模式', category: '系统' },
   { name: '/teleport', description: '远程会话', category: '系统' },
+  { name: '/session-search', description: '按内容搜索历史会话', category: '会话' },
+  { name: '/session-tag', description: '分析会话并生成标签', category: '会话' },
 ]
 
 ipcMain.handle('doge:get-commands', () => {
@@ -823,7 +874,7 @@ ipcMain.handle('doge:get-commands', () => {
 })
 
 // 将 prompt 类型命令模板转发给 QueryEngine，让 AI 通过已注册的工具执行
-async function executeAIDrivenCommand(commandName: string): Promise<{ success: boolean; output?: string; error?: string }> {
+async function executeAIDrivenCommand(commandName: string, args: string[] = []): Promise<{ success: boolean; output?: string; error?: string }> {
   const importFn = dynamicCommandImports[commandName]
   if (!importFn) return { success: false, error: `命令 ${commandName} 暂不支持 AI 驱动执行` }
 
@@ -834,10 +885,11 @@ async function executeAIDrivenCommand(commandName: string): Promise<{ success: b
       return { success: false, error: `命令 ${commandName} 无可用 prompt 模板` }
     }
 
-    const prompts = await cmd.getPromptForCommand([], {
+    const argsStr = args.join(' ')
+    const prompts = await cmd.getPromptForCommand(argsStr, {
       sessionId: currentSessionId || '',
       workingDirectory: projectRoot,
-      args: [],
+      args,
       options: {},
     })
 
@@ -866,9 +918,9 @@ ipcMain.handle('doge:execute-command', async (_event, commandName: string, args:
   const cwd = engineConfig?.workingDir || projectRoot
 
   // prompt 类型命令：通过 AI 引擎执行（利用已注册的工具）
-  const aiDrivenCommands = ['/commit', '/review', '/plan', '/diff', '/branch', '/memory', '/deploy', '/task']
+  const aiDrivenCommands = ['/commit', '/review', '/plan', '/diff', '/branch', '/memory', '/deploy', '/task', '/session-search', '/session-tag']
   if (aiDrivenCommands.includes(commandName)) {
-    return executeAIDrivenCommand(commandName)
+    return executeAIDrivenCommand(commandName, args)
   }
 
   try {
@@ -1167,6 +1219,7 @@ ipcMain.handle('doge:list-sessions', () => {
 ipcMain.handle('doge:load-session', async (_event, sessionId: string) => {
   const msgs = loadSession(sessionId)
   if (!msgs) return { success: false, error: '无法加载会话' }
+  const messages = msgs.map((m) => ({ role: m.role, content: m.content }))
   engine = null
   const config = loadConfig()
   engineConfig = config
@@ -1180,7 +1233,7 @@ ipcMain.handle('doge:load-session', async (_event, sessionId: string) => {
   const conv = (engine as unknown as { conversation: { messages: InternalMessage[]; addToolResults: (r: unknown[]) => void } }).conversation
   conv.messages = msgs
   currentSessionId = sessionId
-  return { success: true, messageCount: msgs.length }
+  return { success: true, messageCount: msgs.length, messages }
 })
 
 ipcMain.handle('doge:new-session', () => {
@@ -1306,6 +1359,77 @@ ipcMain.handle('doge:new-folder', async (_event, dirPath: string, folderName: st
   }
 })
 
+const activeTerminals = new Map<string, { proc: ReturnType<typeof pty.spawn>; cwd: string }>()
+
+ipcMain.handle('doge:spawn-terminal', async (_event, cwd: string) => {
+  try {
+    const shell = process.platform === 'win32' ? 'cmd.exe' : process.env.SHELL || 'bash'
+    const proc = pty.spawn(shell, [], {
+      cwd: cwd || projectRoot,
+      rows: 24,
+      cols: 80,
+      encoding: 'utf-8',
+    })
+    const id = `term_${Date.now()}`
+    activeTerminals.set(id, { proc, cwd: cwd || projectRoot })
+
+    proc.onData((data) => {
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('doge:terminal-data', id, data)
+      }
+    })
+
+    proc.onExit(() => {
+      activeTerminals.delete(id)
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('doge:terminal-exit', id)
+      }
+    })
+
+    return { success: true, id }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : 'spawn 失败'
+    return { success: false, error: message }
+  }
+})
+
+ipcMain.handle('doge:terminal-write', async (_event, id: string, data: string) => {
+  const t = activeTerminals.get(id)
+  if (!t) return { success: false, error: 'terminal not found' }
+  try {
+    t.proc.write(data)
+    return { success: true }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : 'write failed'
+    return { success: false, error: message }
+  }
+})
+
+ipcMain.handle('doge:terminal-resize', async (_event, id: string, cols: number, rows: number) => {
+  const t = activeTerminals.get(id)
+  if (!t) return { success: false, error: 'terminal not found' }
+  try {
+    t.proc.resize(cols, rows)
+    return { success: true }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : 'resize failed'
+    return { success: false, error: message }
+  }
+})
+
+ipcMain.handle('doge:terminal-kill', async (_event, id: string) => {
+  const t = activeTerminals.get(id)
+  if (!t) return { success: false, error: 'terminal not found' }
+  try {
+    t.proc.kill()
+    activeTerminals.delete(id)
+    return { success: true }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : 'kill failed'
+    return { success: false, error: message }
+  }
+})
+
 ipcMain.handle('doge:open-terminal', async (_event, dirPath: string) => {
   try {
     const targetDir = fs.existsSync(dirPath) ? dirPath : projectRoot
@@ -1365,6 +1489,23 @@ ipcMain.handle('doge:save-window-state', (_event, state: { width?: number; heigh
   if (typeof state.x === 'number') store.set('x', state.x)
   if (typeof state.y === 'number') store.set('y', state.y)
   return { success: true }
+})
+
+ipcMain.handle('doge:get-crash-recovery', async () => {
+  try {
+    const crashFile = path.join(SESSIONS_DIR, '.crash-recovery.json')
+    if (!fs.existsSync(crashFile)) return { hasRecovery: false }
+    const data = JSON.parse(fs.readFileSync(crashFile, 'utf-8'))
+    return { hasRecovery: true, sessionId: data.sessionId, messageCount: data.messageCount, timestamp: data.timestamp }
+  } catch { return { hasRecovery: false } }
+})
+
+ipcMain.handle('doge:clear-crash-recovery', async () => {
+  try {
+    const crashFile = path.join(SESSIONS_DIR, '.crash-recovery.json')
+    if (fs.existsSync(crashFile)) fs.unlinkSync(crashFile)
+    return { success: true }
+  } catch { return { success: false } }
 })
 
 ipcMain.handle('doge:read-file', async (_event, filePath: string) => {
