@@ -213,6 +213,23 @@ function FileTree({ cwd }: { cwd: string }) {
     }
   }
 
+  const deleteNode = async () => {
+    if (!contextMenu) return
+    const { node } = contextMenu
+    const confirmed = confirm(`确定要删除 "${node.name}" 吗？\n路径: ${node.path}\n\n此操作不可撤销。`)
+    if (!confirmed) { setContextMenu(null); return }
+    try {
+      const result = await window.dogeAPI.deleteFile(node.path)
+      if (result.success) {
+        // 刷新文件树
+        setTree(prev => prev.filter(n => n.path !== node.path))
+      } else {
+        alert(result.error || '删除失败')
+      }
+    } catch { alert('删除失败') }
+    setContextMenu(null)
+  }
+
   const [loadingPaths, setLoadingPaths] = React.useState<Set<string>>(new Set())
 
   React.useEffect(() => {
@@ -321,9 +338,25 @@ function FileTree({ cwd }: { cwd: string }) {
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: '#888' }} onClick={copyPath}>
-            复制路径
-          </div>
+          {contextMenu.node.isDirectory ? (
+            <>
+              <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: '#888' }} onClick={copyPath}>
+                复制路径
+              </div>
+              <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: '#FF6B6B' }} onClick={deleteNode}>
+                删除文件夹
+              </div>
+            </>
+          ) : (
+            <>
+              <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: '#888' }} onClick={copyPath}>
+                复制路径
+              </div>
+              <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: '#FF6B6B' }} onClick={deleteNode}>
+                删除文件
+              </div>
+            </>
+          )}
         </div>
       )}
     </>
