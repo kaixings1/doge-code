@@ -1882,9 +1882,18 @@ function App(): JSX.Element {
 
     if (result?.error) {
       appendMsg({ id: `msg-${Date.now() + 1}`, role: 'error', content: result.error! })
+      // 错误通知（应用不在前台时）
+      if (!document.hasFocus()) {
+        window.dogeAPI.notify('Doge Code', `错误: ${result.error.slice(0, 100)}`)
+      }
     } else if (result?.content) {
       const assistantMsg: Message = { id: `msg-${Date.now() + 1}`, role: 'assistant', content: result.content }
       appendMsg(assistantMsg)
+      // AI 回复完成通知（应用不在前台时）
+      if (!document.hasFocus()) {
+        const preview = result.content.slice(0, 80).replace(/\n/g, ' ')
+        window.dogeAPI.notify('Doge Code', `回复完成: ${preview}${result.content.length > 80 ? '...' : ''}`)
+      }
     }
     setCurrentStreaming('')
     setState('idle')
