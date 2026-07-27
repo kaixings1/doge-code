@@ -1231,6 +1231,12 @@ function App(): JSX.Element {
   const [isSaving, setIsSaving] = React.useState(false)
 
   const handlePreviewFile = React.useCallback(async (filePath: string) => {
+    // 记录到最近文件
+    const fileName = filePath.split('/').pop() || filePath
+    setRecentFiles(prev => {
+      const filtered = prev.filter(f => f.path !== filePath)
+      return [{ path: filePath, name: fileName }, ...filtered].slice(0, 20)
+    })
     // 如果已打开，直接切换
     const existing = previewTabs.find(t => t.path === filePath)
     if (existing) {
@@ -1300,6 +1306,7 @@ function App(): JSX.Element {
   const [savingConfig, setSavingConfig] = React.useState(false)
   const [sessions, setSessions] = React.useState<Array<{ id: string; createdAt: string; messageCount: number }>>([])
   const [showSessions, setShowSessions] = React.useState(false)
+  const [recentFiles, setRecentFiles] = React.useState<Array<{ path: string; name: string }>>([])
   const [toast, setToast] = React.useState<{ text: string; type: 'info' | 'success' | 'error' } | null>(null)
   const toastTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
   const messagesEndRef = React.useRef<HTMLDivElement>(null)
@@ -1953,6 +1960,28 @@ function App(): JSX.Element {
             )}
           </div>
         </div>
+        {/* 最近文件 */}
+        {recentFiles.length > 0 && (
+          <div style={{ borderBottom: '1px solid #262626', background: '#0F0F0F', flexDirection: 'column', maxHeight: '200px' }}>
+            <div style={{ padding: '6px 12px', borderBottom: '1px solid #262626', display: 'flex', gap: '6px', alignItems: 'center' }}>
+              <span style={{ fontSize: '10px', color: '#888', flex: 1 }}>最近文件</span>
+              <button onClick={() => setRecentFiles([])} style={{ padding: '1px 5px', border: '1px solid #262626', borderRadius: '3px', background: '#0A0A0A', color: '#555', cursor: 'pointer', fontSize: '9px' }} title="清空">清空</button>
+            </div>
+            <div style={{ flex: 1, overflowY: 'auto' }}>
+              {recentFiles.map((f) => (
+                <div
+                  key={f.path}
+                  onClick={() => handlePreviewFile(f.path)}
+                  style={{ padding: '4px 12px', fontSize: '11px', borderBottom: '1px solid #1A1A1A', cursor: 'pointer', color: '#888', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  title={f.path}
+                >
+                  <span style={{ fontSize: '9px', flexShrink: 0, color: '#569CD6' }}>📄</span>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>{f.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         {/* 设置面板 */}
         {showSettings && (
           <div style={{ borderBottom: '1px solid #262626', padding: '12px', background: '#0F0F0F' }}>
