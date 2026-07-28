@@ -201,6 +201,7 @@ function formatReport(issues: SecurityIssue[], format: string): string {
   return report
 }
 
+export { scanFile, scanDirectory, SECURITY_RULES }
 export const call: LocalCommandCall = async (args, context) => {
   const s = (args ?? '').trim()
 

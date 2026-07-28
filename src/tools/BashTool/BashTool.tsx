@@ -1179,7 +1179,7 @@ export const BashTool = buildTool({
   },
   async call(input: BashToolInput, toolUseContext, _canUseTool?: CanUseToolFn, parentMessage?: AssistantMessage, onProgress?: ToolCallProgress<BashProgress>) {
     // DOGE: 防御性检查 —— input 或 command 无效时直接返回失败而不是崩溃
-    if (!input || typeof input.command !== 'string') {
+    if (!input || typeof input.command !== 'string' || input.command.trim() === '') {
       return {
         type: 'tool_result' as const,
         content: [

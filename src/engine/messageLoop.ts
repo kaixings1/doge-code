@@ -3,6 +3,10 @@
  *
  * 驱动：预算检查 → 构建请求 → 发送 API → 处理响应 → 执行工具 → 决定继续。
  */
+function engineLog(prefix: string, ...args: unknown[]): void {
+  const t = new Date().toLocaleTimeString('zh-CN', { hour12: false })
+  console.log(`[${t}] [ENGINE:${prefix}]`, ...args)
+}
 import { QueryStateMachine } from "./stateMachine.ts";
 import { TokenBudgetManager } from "./tokenBudgetManager.ts";
 import { MessageNormalizer, type InternalMessage } from "./messageNormalizer.ts";
@@ -65,8 +69,9 @@ export class MessageLoop {
       } catch (error) {
         const errMsg = error instanceof Error ? error.message : String(error);
         const errStack = error instanceof Error ? error.stack : '';
-        console.error(`[ENGINE] runIteration error: ${errMsg}`);
-        console.error(`[ENGINE] stack: ${errStack}`);
+        const ts = new Date().toLocaleTimeString('zh-CN', { hour12: false })
+        console.error(`[${ts}] [ENGINE] runIteration error: ${errMsg}`);
+        console.error(`[${ts}] [ENGINE] stack: ${errStack}`);
         if (this.deps.stateMachine.isTerminal()) break;
         await this.deps.stateMachine.transition("crashed", { error: ErrorClassifier.classify(error) });
         break;
@@ -106,7 +111,8 @@ export class MessageLoop {
         role: "assistant",
         content: processed.content,
       } as InternalMessage);
-      this.consecutiveToolFailures = 0;
+      // 不在此处重置 consecutiveToolFailures——仅在工具成功执行后重置
+      // 防止 AI 交替发送空文本回复和无效工具调用来绕过失败计数器
     }
 
     if (processed.toolCalls.length > 0) {
@@ -118,7 +124,8 @@ export class MessageLoop {
       // 始终累加无效调用次数（不因有效调用而重置）
       if (invalidCalls.length > 0) {
         this.consecutiveToolFailures += invalidCalls.length;
-        console.warn(`[ENGINE] ${invalidCalls.length} invalid tool call(s) skipped. Valid: ${validCalls.length}, consecutive failures: ${this.consecutiveToolFailures}`);
+        const ts2 = new Date().toLocaleTimeString('zh-CN', { hour12: false })
+        engineLog('WARN', `${invalidCalls.length} invalid tool call(s) skipped. Valid: ${validCalls.length}, consecutive failures: ${this.consecutiveToolFailures}`);
       }
 
       // 如果全部无效，让 AI 用文本回答
@@ -128,7 +135,7 @@ export class MessageLoop {
           content: "Previous tool calls were invalid. Please answer directly without using tools.",
         } as InternalMessage);
         if (this.consecutiveToolFailures >= 2) {
-          console.warn('[ENGINE] Too many consecutive invalid tool calls, stopping');
+          engineLog('WARN', 'Too many consecutive invalid tool calls, stopping');
           return false;
         }
         await this.deps.stateMachine.transition("should_continue");
@@ -138,16 +145,19 @@ export class MessageLoop {
       // 执行有效调用
       const results = await this.deps.toolScheduler.execute(validCalls);
 
-      // 检查执行失败次数（始终累加，不重置）
+      // 检查执行失败次数
       const failedCount = results.filter(r => !r.success).length;
       if (failedCount > 0) {
         this.consecutiveToolFailures += failedCount;
-        console.warn(`[ENGINE] ${failedCount} tool call(s) failed, consecutive failures: ${this.consecutiveToolFailures}`);
+        engineLog('WARN', `${failedCount} tool call(s) failed, consecutive failures: ${this.consecutiveToolFailures}`);
+      } else if (validCalls.length > 0) {
+        // 全部成功时才重置计数器
+        this.consecutiveToolFailures = 0;
       }
 
       // 连续失败达到阈值时停止
       if (this.consecutiveToolFailures >= 3) {
-        console.warn('[ENGINE] Too many consecutive tool failures, stopping tool loop');
+        engineLog('WARN', 'Too many consecutive tool failures, stopping tool loop');
         this.deps.conversation.messages.push({
           role: "system",
           content: "Tool calls are failing. Please answer directly without using tools.",
