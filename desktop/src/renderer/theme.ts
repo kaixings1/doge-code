@@ -57,7 +57,7 @@ export function getStyles(theme: ThemeName): Record<string, CSSProperties> {
     errorBubble: { backgroundColor: c.errorBg, border: `1px solid ${c.errorBorder}`, color: c.errorText, padding: '10px 14px', borderRadius: '8px', marginBottom: '16px' },
     toolResultBubble: { backgroundColor: c.toolBg, border: `1px solid ${c.toolBorder}`, padding: '10px 14px', borderRadius: '8px', marginBottom: '16px' },
     clearButton: { background: 'none', border: `1px solid ${c.border}`, color: c.textMuted, padding: '4px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '11px' },
-    rightPanel: { width: 280, minWidth: 280, backgroundColor: c.bgAlt, borderLeft: `1px solid ${c.border}`, display: 'flex', flexDirection: 'column' },
+    rightPanel: { width: 280, minWidth: 280, backgroundColor: c.bgAlt, borderLeft: `1px solid ${c.border}`, display: 'flex', flexDirection: 'column', overflow: 'hidden' },
     panelHeader: { padding: '12px 16px', borderBottom: `1px solid ${c.border}`, fontSize: '12px', fontWeight: 600, color: c.textMuted, textTransform: 'uppercase' as const, letterSpacing: '0.5px' },
     fileItem: { padding: '4px 12px', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', userSelect: 'none' as const },
     fileItemDir: { color: c.text },
