@@ -245,18 +245,18 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
       // 发送请求（带基础重试）
       let response: Response | null = null
       let lastError = ''
-      for (let attempt = 0; attempt < 3; attempt++) {
+      for (let attempt = 0; attempt < 5; attempt++) {
         response = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body) })
         if (response.ok) break
         const text = await response.text().catch(() => '')
         lastError = `API 请求失败 (${response.status}): ${text || response.statusText}`
         if (response.status === 429) {
-          const waitMs = (attempt + 1) * 3000
-          console.warn(`[MAIN] 429 速率限制，等待 ${waitMs}ms 后重试 (${attempt + 1}/3)...`)
+          const waitMs = Math.min((attempt + 1) * 5000, 60000)
+          console.warn(`[MAIN] 429 速率限制，等待 ${waitMs}ms 后重试 (${attempt + 1}/5)...`)
           await new Promise(resolve => setTimeout(resolve, waitMs))
         } else if (response.status >= 500) {
-          console.warn(`[MAIN] ${response.status} 服务器错误，重试 (${attempt + 1}/3)...`)
-          await new Promise(resolve => setTimeout(resolve, 2000 * (attempt + 1)))
+          console.warn(`[MAIN] ${response.status} 服务器错误，重试 (${attempt + 1}/5)...`)
+          await new Promise(resolve => setTimeout(resolve, 3000 * (attempt + 1)))
         } else {
           console.error(`[MAIN] API error: ${response.status}, body: ${text?.slice(0, 200)}`)
           throw new Error(lastError)
