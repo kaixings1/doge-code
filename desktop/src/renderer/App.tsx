@@ -23,6 +23,7 @@ import { PluginPanel } from './components/PluginPanel.js'
 import { DatabaseBrowser } from './components/DatabaseBrowser.js'
 import { ApiTestPanel } from './components/ApiTestPanel.js'
 import { SnippetPanel } from './components/SnippetPanel.js'
+import { LspPanel } from './components/LspPanel.js'
 import { KanbanBoard } from './components/KanbanBoard.js'
 import { TimeTracker } from './components/TimeTracker.js'
 import { ProgressReport } from './components/ProgressReport.js'
@@ -33,6 +34,8 @@ import { AdvancedCodeEditor } from './components/AdvancedCodeEditor.js'
 import { SemanticSearchPanel } from './components/SemanticSearchPanel.js'
 import { AICodeReviewPanel } from './components/AICodeReviewPanel.js'
 import { OutlinePanel } from './components/OutlinePanel.js'
+import { DebuggerPanel } from './components/DebuggerPanel.js'
+import { CollaborationPanel } from './components/CollaborationPanel.js'
 import { parseMessageContent, InlineToolUseBlock, renderMarkdown } from './shared.js'
 import type { Message, ContentBlock, ToolUseBlock } from './shared.js'
 import { useDesktopVimInput, type VimMode } from '../hooks/useDesktopVimInput.js'
@@ -207,6 +210,7 @@ export function App(): JSX.Element {
   const [showDbPanel, setShowDbPanel] = useState(false)
   const [showApiTestPanel, setShowApiTestPanel] = useState(false)
   const [showSnippetPanel, setShowSnippetPanel] = useState(false)
+  const [showLspPanel, setShowLspPanel] = useState(false)
   const [mcpNewName, setMcpNewName] = useState('')
   const [mcpNewCommand, setMcpNewCommand] = useState('')
   const [mcpNewArgs, setMcpNewArgs] = useState('')
@@ -218,6 +222,8 @@ export function App(): JSX.Element {
   const [showAgentPanel, setShowAgentPanel] = useState(false)
   const [showPluginPanel, setShowPluginPanel] = useState(false)
   const [showSemanticSearch, setShowSemanticSearch] = useState(false)
+  const [showDebuggerPanel, setShowDebuggerPanel] = useState(false)
+  const [showCollabPanel, setShowCollabPanel] = useState(false)
   const [showAIOutline, setShowAIOutline] = useState(false)
   const [showCodeReview, setShowCodeReview] = useState(false)
   const [activeReviewFile, setActiveReviewFile] = useState<string | null>(null)
@@ -1697,6 +1703,10 @@ export function App(): JSX.Element {
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showDbPanel ? c.accent : c.textMuted }} onClick={() => setShowDbPanel(p => !p)}>🗄️ DB</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showApiTestPanel ? c.accent : c.textMuted }} onClick={() => setShowApiTestPanel(p => !p)}>🔌 API</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showSnippetPanel ? c.accent : c.textMuted }} onClick={() => setShowSnippetPanel(p => !p)}>✂️ 片段</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showLspPanel ? c.accent : c.textMuted }} onClick={() => setShowLspPanel(p => !p)}>🧠 LSP</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showSemanticSearch ? c.accent : c.textMuted }} onClick={() => setShowSemanticSearch(p => !p)}>🔍 搜索</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showDebuggerPanel ? c.accent : c.textMuted }} onClick={() => setShowDebuggerPanel(p => !p)}>🪲 调试器</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showCollabPanel ? c.accent : c.textMuted }} onClick={() => setShowCollabPanel(p => !p)}>🤝 协作</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: c.accent }} onClick={() => { setShowMcpPanel(p => !p); if (!showMcpPanel) { refreshMcpServers(); refreshAgents() } }}>{showMcpPanel ? '收起 MCP' : 'MCP 管理'}</span>
             </div>
           </div>
@@ -1855,6 +1865,29 @@ export function App(): JSX.Element {
                 }
               }}
             />
+          </div>
+        )}
+        {showLspPanel && activePreviewFile && (
+          <div style={{ position: 'fixed', top: 60, right: 300, width: 420, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+            <LspPanel
+              filePath={activePreviewFile.path}
+              content={activePreviewFile.content || ''}
+              cursorLine={0}
+              cursorColumn={0}
+              theme={theme}
+              onClose={() => setShowLspPanel(false)}
+              onGoToDefinition={(filePath, line) => { handlePreviewFile(filePath); setShowLspPanel(false) }}
+            />
+          </div>
+        )}
+        {showDebuggerPanel && (
+          <div style={{ position: 'fixed', top: 60, right: 20, width: 520, height: '75%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+            <DebuggerPanel cwd={workingDir} theme={theme} onClose={() => setShowDebuggerPanel(false)} />
+          </div>
+        )}
+        {showCollabPanel && (
+          <div style={{ position: 'fixed', top: 60, right: 20, width: 480, height: '75%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+            <CollaborationPanel cwd={workingDir} theme={theme} onClose={() => setShowCollabPanel(false)} />
           </div>
         )}
         {showShortcuts && (
