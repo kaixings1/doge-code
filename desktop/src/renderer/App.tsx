@@ -555,12 +555,15 @@ export function App(): JSX.Element {
     } catch { showToast('打开终端失败', 'error') }
   }, [activePreviewFile, showToast])
 
-  // textarea 自动高度
+  // textarea 高度
+  const [inputHeight, setInputHeight] = useState(44)
   useEffect(() => {
     const el = inputRef.current
     if (!el) return
-    el.style.height = 'auto'
-    el.style.height = Math.min(200, Math.max(44, el.scrollHeight)) + 'px'
+    requestAnimationFrame(() => {
+      const h = Math.min(200, Math.max(44, el.scrollHeight))
+      setInputHeight(h)
+    })
   }, [input])
 
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages, currentStreaming])
@@ -1492,9 +1495,8 @@ export function App(): JSX.Element {
                 onDrop={(e) => { const path = e.dataTransfer.getData('text/plain'); if (path) { e.preventDefault(); setInput(prev => prev ? prev + ' ' + path : path) } }}
                 onDragOver={(e) => e.preventDefault()}
                 placeholder={isProcessing ? '按 Enter 中断... (Shift+Enter 换行)' : '输入消息... (Enter 发送, Shift+Enter 换行, ↑↓ 历史导航)'}
-                style={{ ...styles.inputBox, minHeight: '44px', maxHeight: '200px', resize: 'none', overflowY: 'auto', lineHeight: '1.5', fontFamily: 'inherit', fontSize: `${themeSettings.fontSize}px` }}
+                style={{ ...styles.inputBox, height: `${inputHeight}px`, maxHeight: '200px', resize: 'none', overflowY: 'auto', lineHeight: '1.5', fontFamily: 'inherit', fontSize: `${themeSettings.fontSize}px` }}
                 disabled={!config.apiKey}
-                autoFocus
                 rows={1}
               />
             </form>
