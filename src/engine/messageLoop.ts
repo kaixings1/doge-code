@@ -118,14 +118,15 @@ export class MessageLoop {
       if (invalidCalls.length > 0) {
         this.consecutiveToolFailures += invalidCalls.length;
         console.warn(`[ENGINE] ${invalidCalls.length} invalid tool call(s) skipped. Valid: ${validCalls.length}`);
-        // 如果无效调用多于有效调用，说明 AI 在幻觉，停止工具循环
+        // 如果无效调用多于有效调用，说明 AI 在幻觉，让它用文本回复
         if (invalidCalls.length > validCalls.length) {
-          console.warn('[ENGINE] More invalid than valid tool calls, stopping tool loop');
+          console.warn('[ENGINE] More invalid than valid tool calls, asking AI to answer with text');
           this.deps.conversation.messages.push({
             role: "system",
             content: `STOP using tools. Answer directly with text.`,
           } as InternalMessage);
-          return false;
+          await this.deps.stateMachine.transition("should_continue");
+          return true;
         }
         // 如果全部无效，直接让 AI 用文本回复
         if (validCalls.length === 0) {
