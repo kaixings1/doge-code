@@ -20,6 +20,9 @@ import { VirtualMessageList } from './components/VirtualMessageList.js'
 import TerminalPanel from './TerminalPanel.js'
 import { AgentPanel } from './components/AgentPanel.js'
 import { PluginPanel } from './components/PluginPanel.js'
+import { DatabaseBrowser } from './components/DatabaseBrowser.js'
+import { ApiTestPanel } from './components/ApiTestPanel.js'
+import { SnippetPanel } from './components/SnippetPanel.js'
 import { KanbanBoard } from './components/KanbanBoard.js'
 import { TimeTracker } from './components/TimeTracker.js'
 import { ProgressReport } from './components/ProgressReport.js'
@@ -201,6 +204,9 @@ export function App(): JSX.Element {
   const [mcpServers, setMcpServers] = useState<Array<{ name: string; command: string; args: string[]; transport: string }>>([])
   const [mcpLoading, setMcpLoading] = useState(false)
   const [showMcpPanel, setShowMcpPanel] = useState(false)
+  const [showDbPanel, setShowDbPanel] = useState(false)
+  const [showApiTestPanel, setShowApiTestPanel] = useState(false)
+  const [showSnippetPanel, setShowSnippetPanel] = useState(false)
   const [mcpNewName, setMcpNewName] = useState('')
   const [mcpNewCommand, setMcpNewCommand] = useState('')
   const [mcpNewArgs, setMcpNewArgs] = useState('')
@@ -1687,7 +1693,12 @@ export function App(): JSX.Element {
           </div>
           <div style={{ ...styles.panelHeader, borderTop: `1px solid ${c.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span>🔧 工具</span>
-            <span style={{ cursor: 'pointer', fontSize: '10px', color: c.accent }} onClick={() => { setShowMcpPanel(p => !p); if (!showMcpPanel) { refreshMcpServers(); refreshAgents() } }}>{showMcpPanel ? '收起 MCP' : 'MCP 管理'}</span>
+            <div style={{ display: 'flex', gap: '6px' }}>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showDbPanel ? c.accent : c.textMuted }} onClick={() => setShowDbPanel(p => !p)}>🗄️ DB</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showApiTestPanel ? c.accent : c.textMuted }} onClick={() => setShowApiTestPanel(p => !p)}>🔌 API</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showSnippetPanel ? c.accent : c.textMuted }} onClick={() => setShowSnippetPanel(p => !p)}>✂️ 片段</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: c.accent }} onClick={() => { setShowMcpPanel(p => !p); if (!showMcpPanel) { refreshMcpServers(); refreshAgents() } }}>{showMcpPanel ? '收起 MCP' : 'MCP 管理'}</span>
+            </div>
           </div>
           <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0' }}>
             <ToolPanel cwd={workingDir} theme={THEMES[effectiveTheme]} />
@@ -1817,6 +1828,35 @@ export function App(): JSX.Element {
         {showCommandPalette && <CommandPalette cwd={workingDir} onClose={() => setShowCommandPalette(false)} mode={paletteMode} setMode={setPaletteMode} commandHistory={cmdHistory.commandHistory} theme={theme} />}
         {showAgentPanel && <AgentPanel cwd={workingDir} theme={theme} onClose={() => setShowAgentPanel(false)} />}
         {showPluginPanel && <PluginPanel theme={theme} onClose={() => setShowPluginPanel(false)} />}
+        {showDbPanel && (
+          <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9997 }}>
+            <DatabaseBrowser theme={theme} onClose={() => setShowDbPanel(false)} />
+          </div>
+        )}
+        {showApiTestPanel && (
+          <div style={{ position: 'fixed', top: 60, right: 300, width: 450, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+            <ApiTestPanel theme={theme} onClose={() => setShowApiTestPanel(false)} />
+          </div>
+        )}
+        {showSnippetPanel && activePreviewFile && (
+          <div style={{ position: 'fixed', top: 60, right: 300, width: 380, height: '65%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ padding: '8px 12px', borderBottom: `1px solid ${c.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontWeight: 600, color: c.text }}>✂️ 代码片段</span>
+              <span style={{ cursor: 'pointer', color: c.textFaint, fontSize: '12px' }} onClick={() => setShowSnippetPanel(false)}>✕</span>
+            </div>
+            <SnippetPanel
+              theme={theme}
+              currentFile={activePreviewFile.path}
+              onInsert={(code: string) => {
+                if (isEditing) {
+                  setEditContent(prev => prev + '\n' + code)
+                } else {
+                  setInput(prev => prev + code)
+                }
+              }}
+            />
+          </div>
+        )}
         {showShortcuts && (
           <div style={{ position: 'fixed', inset: 0, zIndex: 9998, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowShortcuts(false)}>
             <div style={{ background: c.surface, border: `1px solid ${c.border}`, borderRadius: '8px', padding: '20px', minWidth: '360px', maxWidth: '480px', boxShadow: `0 8px 32px ${c.bg}80` }} onClick={(e) => e.stopPropagation()}>

@@ -40,10 +40,10 @@ export class QueryStateMachine {
     this.transitions.set("idle", ["responding", "aborted_by_user"]);
     this.transitions.set("responding", ["needs_user", "should_continue", "crashed", "aborted_by_user", "done"]);
     this.transitions.set("needs_user", ["responding", "aborted_by_user", "done"]);
-    this.transitions.set("should_continue", ["responding", "done", "aborted_by_user"]);
+    this.transitions.set("should_continue", ["responding", "done", "aborted_by_user", "crashed"]);
     this.transitions.set("done", ["responding", "aborted_by_user"]);
     this.transitions.set("crashed", ["responding", "aborted_by_user"]);
-    this.transitions.set("aborted_by_user", []);
+    this.transitions.set("aborted_by_user", ["responding"]);
   }
 
   private setupGuards(): void {
@@ -55,9 +55,8 @@ export class QueryStateMachine {
       const c = ctx as { authorizationRequest?: unknown };
       return !!c && !!c.authorizationRequest;
     });
-    this.guards.set("should_continue:responding", async (ctx) => {
-      const c = ctx as { budgetCheck?: { shouldReject: boolean } };
-      return !!c && !!c.budgetCheck && !c.budgetCheck.shouldReject;
+    this.guards.set("should_continue:responding", async () => {
+      return true;
     });
   }
 
