@@ -86,6 +86,21 @@ interface DogeAPIValue {
   formatCode: (params: { code: string; language: string; tool: string; cwd: string; range?: { start: number; end: number } }) => Promise<{ success: boolean; output?: string; error?: string }>
   apiTestSend: (request: { url: string; method: string; headers: Record<string, string>; body?: string; bodyType: string }) => Promise<{ success: boolean; status: number; statusText: string; responseHeaders: Record<string, string>; body: string; error?: string }>
   getGitStats: (cwd: string) => Promise<{ commits: Array<{ hash: string; date: string; author: string; message: string; additions: number; deletions: number }> }>
+  lspStart: (languageId: string) => Promise<{ success: boolean; error?: string; serverName?: string }>
+  lspStop: (languageId: string) => Promise<{ success: boolean; error?: string }>
+  lspStopAll: () => Promise<{ success: boolean; error?: string }>
+  lspCompletion: (filePath: string, line: number, character: number) => Promise<{ success: boolean; items?: Array<{ label: string; insertText: string; kind?: number; detail?: string; documentation?: string }>; error?: string }>
+  lspDefinition: (filePath: string, line: number, character: number) => Promise<{ success: boolean; locations?: Array<{ uri: string; range: { start: { line: number; character: number }; end: { line: number; character: number } } }>; error?: string }>
+  lspHover: (filePath: string, line: number, character: number) => Promise<{ success: boolean; result?: { contents?: unknown }; error?: string }>
+  lspReferences: (filePath: string, line: number, character: number) => Promise<{ success: boolean; locations?: Array<{ uri: string; range: { start: { line: number; character: number }; end: { line: number; character: number } } }>; error?: string }>
+  lspDocumentSymbol: (filePath: string) => Promise<{ success: boolean; symbols?: Array<{ name: string; kind: number; range: { start: { line: number; character: number }; end: { line: number; character: number } } }>; error?: string }>
+  codeReview: (params: { filePath: string; cwd: string }) => Promise<{ success: boolean; result?: { score: { overall: number; security: number; performance: number; maintainability: number; testability: number }; findings: Array<{ id: string; category: string; severity: string; title: string; description: string; filePath: string; lineNumber: number; column?: number; suggestedFix?: string; originalCode?: string }>; duration?: number }; error?: string }>
+  getOutline: (params: { filePath: string; cwd: string }) => Promise<{ success: boolean; symbols?: Array<{ id: string; name: string; kind: string; range: { startLine: number; startColumn: number; endLine: number; endColumn: number }; children?: Array<unknown> }>; error?: string }>
+  semanticSearch: (params: { query: string; cwd: string; maxResults?: number; fileTypes?: string[]; directories?: string[] }) => Promise<{ success: boolean; results?: Array<{ filePath: string; lineNumber: number; column: number; content: string; score: number; context?: string }>; error?: string }>
+  lspWorkspaceSymbol: (query: string) => Promise<{ success: boolean; symbols?: Array<{ name: string; kind: number; location: { uri: string; range: { start: { line: number; character: number }; end: { line: number; character: number } } } }>; error?: string }>
+  lspDocumentHighlight: (filePath: string, line: number, character: number) => Promise<{ success: boolean; highlights?: Array<{ range: { start: { line: number; character: number }; end: { line: number; character: number } }; kind: number }>; error?: string }>
+  lspConnectedServers: () => Promise<{ success: boolean; servers?: string[]; error?: string }>
+  onLspDiagnostic: (callback: (uri: string, diagnostics: Array<{ range: { start: { line: number; character: number }; end: { line: number; character: number } }; severity: number; message: string; source?: string; code?: string | number }>) => void) => () => void
 }
 
 const dogeAPI: DogeAPIValue = {
@@ -197,6 +212,25 @@ const dogeAPI: DogeAPIValue = {
   },
   apiTestSend: (request: { url: string; method: string; headers: Record<string, string>; body?: string; bodyType: string }) => ipcRenderer.invoke('doge:api-test-send', request),
   getGitStats: async () => ({ commits: [] }),
+  lspStart: (languageId: string) => ipcRenderer.invoke('doge:lsp-start', languageId),
+  lspStop: (languageId: string) => ipcRenderer.invoke('doge:lsp-stop', languageId),
+  lspStopAll: () => ipcRenderer.invoke('doge:lsp-stop-all'),
+  lspCompletion: (filePath: string, line: number, character: number) => ipcRenderer.invoke('doge:lsp-completion', filePath, line, character),
+  lspDefinition: (filePath: string, line: number, character: number) => ipcRenderer.invoke('doge:lsp-definition', filePath, line, character),
+  lspHover: (filePath: string, line: number, character: number) => ipcRenderer.invoke('doge:lsp-hover', filePath, line, character),
+  lspReferences: (filePath: string, line: number, character: number) => ipcRenderer.invoke('doge:lsp-references', filePath, line, character),
+  lspDocumentSymbol: (filePath: string) => ipcRenderer.invoke('doge:lsp-document-symbol', filePath),
+  lspWorkspaceSymbol: (query: string) => ipcRenderer.invoke('doge:lsp-workspace-symbol', query),
+  lspDocumentHighlight: (filePath: string, line: number, character: number) => ipcRenderer.invoke('doge:lsp-document-highlight', filePath, line, character),
+  lspConnectedServers: () => ipcRenderer.invoke('doge:lsp-connected-servers'),
+  onLspDiagnostic: (callback: (uri: string, diagnostics: Array<{ range: { start: { line: number; character: number }; end: { line: number; character: number } }; severity: number; message: string; source?: string; code?: string | number }>) => void) => {
+    const handler = (_event: Electron.IpcRendererEvent, uri: string, diagnostics: unknown) => callback(uri, diagnostics as Array<{ range: { start: { line: number; character: number }; end: { line: number; character: number } }; severity: number; message: string; source?: string; code?: string | number }>)
+    ipcRenderer.on('doge:lsp-diagnostic', handler)
+    return () => ipcRenderer.removeListener('doge:lsp-diagnostic', handler)
+  },
+  codeReview: (params: { filePath: string; cwd: string }) => ipcRenderer.invoke('doge:code-review', params),
+  getOutline: (params: { filePath: string; cwd: string }) => ipcRenderer.invoke('doge:get-outline', params),
+  semanticSearch: (params: { query: string; cwd: string; maxResults?: number; fileTypes?: string[]; directories?: string[] }) => ipcRenderer.invoke('doge:semantic-search', params),
 }
 
 contextBridge.exposeInMainWorld('dogeAPI', dogeAPI)
