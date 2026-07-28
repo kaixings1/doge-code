@@ -21,7 +21,7 @@ import { createEngineApi, type EngineApi } from './engineApi.js'
 import { scanPlugins, setPluginEnabled, installPlugin, uninstallPlugin, getPluginCommandContent, type PluginInfo } from './pluginManager.js'
 import { createDesktopApiClient, type DesktopApiClient } from './apiClient.js'
 import { saveSession, listSessions, loadSession, deleteSession, updateSession, saveCrashRecovery, getCrashRecovery, clearCrashRecovery } from './sessionStore.js'
-import { createAdaptedTools, executeTool } from './toolExecutor.js'
+import { createAdaptedTools, executeTool, resetAdaptedToolsCache } from './toolExecutor.js'
 import { getLspClientManager, type LspServerConfig, type LspDiagnostic } from './lspClientManager.js'
 
 let mainWindow: BrowserWindow | null = null
@@ -371,6 +371,7 @@ ipcMain.handle('doge:update-config', async (_event, data: Record<string, string>
     engine = null
     engineApi = null
     engineConfig = null
+    resetAdaptedToolsCache()
     return { success: true }
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : '未知错误'
@@ -395,6 +396,7 @@ ipcMain.handle('doge:clear-history', () => {
   engine = null
   engineApi = null
   engineConfig = null
+  resetAdaptedToolsCache()
   currentSessionId = null
   return true
 })
@@ -428,7 +430,8 @@ ipcMain.handle('doge:get-tools', () => {
 
 // 执行单条工具（桌面端工具面板用）
 ipcMain.handle('doge:execute-tool', async (_event, call: ToolCallInput) => {
-  return executeTool(call)
+  const config = engineConfig || loadConfig()
+  return executeTool(call, config, projectRoot)
 })
 
 // 配置相关
@@ -1347,6 +1350,7 @@ ipcMain.handle('doge:execute-command', async (_event, commandName: string, args:
         engine = null
         engineApi = null
         engineConfig = null
+        resetAdaptedToolsCache()
         return { success: true, output: '对话历史已清除' }
       }
       case '/plan': {
@@ -1418,6 +1422,7 @@ ipcMain.handle('doge:execute-command', async (_event, commandName: string, args:
       case '/rstk': {
         engine = null
         engineConfig = null
+        resetAdaptedToolsCache()
         return { success: true, output: '会话已重启。' }
       }
       case '/stats': {
@@ -1916,6 +1921,7 @@ ipcMain.handle('doge:new-session', () => {
   engine = null
   engineApi = null
   engineConfig = null
+  resetAdaptedToolsCache()
   currentSessionId = saveSession([])
   return { success: true }
 })
@@ -1926,6 +1932,7 @@ ipcMain.handle('doge:delete-session', async (_event, sessionId: string) => {
     if (deleted && currentSessionId === sessionId) {
       engine = null
       engineConfig = null
+      resetAdaptedToolsCache()
       currentSessionId = null
     }
     return { success: deleted }
@@ -1955,6 +1962,7 @@ ipcMain.handle('doge:close-session', async () => {
     engine = null
     engineApi = null
     engineConfig = null
+    resetAdaptedToolsCache()
     currentSessionId = null
     const newSessionId = saveSession([])
     return { success: true, sessionId: newSessionId }

@@ -1220,11 +1220,7 @@ export const BashTool = buildTool({
         try {
           const signal = abortController?.signal;
           if (!signal) {
-            return {
-              type: 'tool_result' as const,
-              content: [{ type: 'text' as const, text: 'Error: abortController is not available in this context. Cannot use ripgrep shortcut.' }],
-              isError: true,
-            };
+            throw new Error('abortController is not available in this context. Cannot use ripgrep shortcut.');
           }
           const lines = await ripGrep(rgArgs, target, signal);
           const stdout = lines.join('\n');
@@ -1294,7 +1290,7 @@ export const BashTool = buildTool({
       // 从生成器的返回值中获取最终结果
       result = generatorResult.value;
       trackGitOperations(input.command, result.code, result.stdout);
-      const isInterrupt = result.interrupted && abortController.signal.reason === 'interrupt';
+      const isInterrupt = result.interrupted && abortController?.signal?.reason === 'interrupt';
 
       // stderr 已合并到 stdout（合并的文件描述符）—— result.stdout 包含两者
       stdoutAccumulator.append((result.stdout || '').trimEnd() + EOL);
@@ -1521,7 +1517,7 @@ async function* runShellCommand({
 
   // 确定是否应启用自动后台
   const shouldAutoBackground = !isBackgroundTasksDisabled && isAutobackgroundingAllowed(command);
-  const shellCommand = await exec(command, abortController.signal, resolvedShellType, {
+  const shellCommand = await exec(command, abortController?.signal, resolvedShellType, {
     timeout: timeoutMs,
     onProgress(lastLines, allLines, totalLines, totalBytes, isIncomplete) {
       lastProgressOutput = lastLines;

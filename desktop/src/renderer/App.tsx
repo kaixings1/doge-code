@@ -161,6 +161,7 @@ export function App(): JSX.Element {
   const [input, setInput] = useState('')
   const [pendingImages, setPendingImages] = useState<Array<{ id: string; url: string; name: string }>>([])
   const [state, setState] = useState<QueryState>('idle')
+  const [isSending, setIsSending] = useState(false)
   const [currentStreaming, setCurrentStreaming] = useState('')
   const currentStreamingRef = useRef('')
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
@@ -808,9 +809,9 @@ export function App(): JSX.Element {
   const handleSend = useCallback(async (): Promise<void> => {
     const text = input.trim()
     tsLog('RENDERER', 'handleSend called, text:', text, 'state:', state)
-    if (!text || state === 'responding') return
+    if (!text || state === 'responding' || isSending) return
     if (!isOnline) { showToast('网络已断开，无法发送消息', 'error'); return }
-    setInput(''); setError(null); setCurrentStreaming(''); currentStreamingRef.current = ''
+    setInput(''); setError(null); setCurrentStreaming(''); currentStreamingRef.current = ''; setIsSending(true)
 
     const appendMsg = (msg: Message) => {
       setMessages(prev => { const next = [...prev, msg]; persistActiveTabMessages(next); return next })
@@ -837,7 +838,7 @@ export function App(): JSX.Element {
       const assistantMsg: Message = { id: `msg-${Date.now() + 1}`, role: 'assistant', content: result.success ? (result.output || '(无输出)') : `错误: ${result.error}` }
       appendMsg(assistantMsg)
       cmdHistory.addCommand(text)
-      setState('idle')
+      setState('idle'); setIsSending(false)
       return
     }
 
@@ -866,7 +867,7 @@ export function App(): JSX.Element {
       const errMsg = e instanceof Error ? e.message : '发送失败'
       tsLog('RENDERER', 'sendMessage threw error:', errMsg)
       appendMsg({ id: `msg-${Date.now() + 1}`, role: 'error', content: errMsg })
-      setState('idle')
+      setState('idle'); setIsSending(false)
       return
     }
 
@@ -880,6 +881,8 @@ export function App(): JSX.Element {
       tsLog('RENDERER', 'result.content:', result?.content?.slice(0, 100), '| currentStreamingRef:', currentStreamingRef.current.slice(0, 100))
       if (finalContent) {
         tsLog('RENDERER', 'appending assistant message, length:', finalContent.length)
+        // 先清空 currentStreaming，防止与 messages 中的助手消息重复渲染
+        setCurrentStreaming(''); currentStreamingRef.current = ''
         appendMsg({ id: `msg-${Date.now() + 1}`, role: 'assistant', content: finalContent })
         if (!document.hasFocus()) window.dogeAPI.notify('Doge Code', `回复完成: ${finalContent.slice(0, 80)}`).catch(() => {})
         // 自动朗读（用户开启时）
@@ -888,13 +891,13 @@ export function App(): JSX.Element {
         }
       } else {
         tsLog('RENDERER', 'finalContent is empty, no message appended')
+        setCurrentStreaming(''); currentStreamingRef.current = ''
       }
     }
-    setCurrentStreaming(''); currentStreamingRef.current = ''
-    setState('idle')
+    setState('idle'); setIsSending(false)
   }, [input, state, persistActiveTabMessages, isOnline, showToast, autoSpeak, pendingImages])
 
-  const handleAbort = useCallback(async () => { await window.dogeAPI.abort(); setCurrentStreaming('') }, [])
+  const handleAbort = useCallback(async () => { await window.dogeAPI.abort(); setCurrentStreaming(''); setIsSending(false) }, [])
   const handleClear = useCallback(async () => {
     await window.dogeAPI.clearHistory()
     setMessages([])
