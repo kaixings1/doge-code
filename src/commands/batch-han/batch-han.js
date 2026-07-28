@@ -1,0 +1,3268 @@
+import * as fs from 'fs';
+import * as path from 'path';
+const DEFAULT_DIR = 'src';
+const PROGRESS_FILE = '.batch-progress.json';
+const LOG_FILE = '.batch-han-log.txt';
+const PID_FILE = '.batch-han-pid.txt';
+const MAX_BATCH_TOKENS = 80000;
+const CONCURRENCY = 2;
+const RETRY_LIMIT = 2;
+const DEFAULT_EXTENSIONS = ['.ts', '.tsx', '.md'];
+const DICT_FILE = 'batch-han-dict.json';
+const IGNORE_FILE = '.batch-han-ignore';
+function estimateTokens(text) {
+    return Math.ceil(text.length / 4);
+}
+function loadExternalDict(targetDir) {
+    const dictPath = path.join(targetDir, DICT_FILE);
+    try {
+        if (fs.existsSync(dictPath)) {
+            const raw = fs.readFileSync(dictPath, 'utf-8');
+            return JSON.parse(raw);
+        }
+    }
+    catch {
+        // ignore invalid dict file
+    }
+    return {};
+}
+function loadIgnorePatterns(targetDir) {
+    const ignorePath = path.join(targetDir, IGNORE_FILE);
+    try {
+        if (fs.existsSync(ignorePath)) {
+            return fs.readFileSync(ignorePath, 'utf-8')
+                .split('\n')
+                .map(l => l.trim())
+                .filter(l => l && !l.startsWith('#'));
+        }
+    }
+    catch {
+        // ignore
+    }
+    return [];
+}
+function getAllFilesWithInfo(dir, extensions = DEFAULT_EXTENSIONS, excludePatterns = []) {
+    const results = [];
+    const absDir = path.resolve(dir);
+    if (!fs.existsSync(absDir))
+        return results;
+    function shouldExclude(filePath) {
+        const relPath = path.relative(absDir, filePath);
+        return excludePatterns.some(pattern => {
+            if (pattern.includes('*')) {
+                const regex = new RegExp('^' + pattern.replace(/\*/g, '.*').replace(/\?/g, '.') + '$');
+                return regex.test(relPath) || regex.test(path.basename(filePath));
+            }
+            return relPath.includes(pattern) || path.basename(filePath).includes(pattern);
+        });
+    }
+    function walk(currentDir) {
+        let entries;
+        try {
+            entries = fs.readdirSync(currentDir, { withFileTypes: true });
+        }
+        catch {
+            return;
+        }
+        for (const entry of entries) {
+            const full = path.join(currentDir, entry.name);
+            try {
+                if (entry.isDirectory()) {
+                    const base = path.basename(full);
+                    if (base === 'node_modules' || base === '.git' || base === 'dist' || base === 'build' || base === '.doge')
+                        continue;
+                    walk(full);
+                }
+                else if (entry.isFile()) {
+                    if (shouldExclude(full))
+                        continue;
+                    const ext = path.extname(entry.name).toLowerCase();
+                    if (extensions.includes(ext)) {
+                        const stat = fs.statSync(full);
+                        let content = fs.readFileSync(full, 'utf-8');
+                        if (content.length > 0 && content.charCodeAt(0) === 0xFEFF) {
+                            content = content.slice(1);
+                        }
+                        results.push({
+                            path: full,
+                            content,
+                            mtime: stat.mtimeMs,
+                            tokenCount: estimateTokens(content),
+                            extension: ext
+                        });
+                    }
+                }
+            }
+            catch {
+                // skip unreadable files
+            }
+        }
+    }
+    walk(absDir);
+    return results;
+}
+function loadHistory(progressFile) {
+    try {
+        return JSON.parse(fs.readFileSync(progressFile, 'utf-8'));
+    }
+    catch {
+        return {};
+    }
+}
+function saveHistory(history, progressFile) {
+    fs.writeFileSync(progressFile, JSON.stringify(history, null, 2));
+}
+function appendLog(logFile, message) {
+    const timestamp = new Date().toISOString().replace('T', ' ').slice(0, 19);
+    fs.appendFileSync(logFile, `[${timestamp}] ${message}\n`);
+}
+// 专门针对 UI 字符串的翻译（仅在引号中的字符串替换）
+const UI_TRANSLATIONS = {
+    '排除的命令': '排除的命令',
+    '文件系统': '文件系统',
+    '网络': '网络',
+    'Unix 套接字': 'Unix 套接字',
+    'seatbelt 内置': 'seatbelt 内置',
+    '您的 bash 命令将在沙箱中执行': '您的 bash 命令将在沙箱中执行',
+    '了解更多': '了解更多',
+    '也已请求': '也已请求',
+    '受策略限制的钩子': '受策略限制的钩子',
+    '二进制文件': '二进制文件',
+    '大文件差异': '大文件差异',
+    '外部导入': '外部导入',
+};
+// 针对 Markdown 文档的常见英文词汇翻译
+const MD_TRANSLATIONS = {
+    // 标题和常见术语
+    'Overview': '概述',
+    'Introduction': '简介',
+    'Prerequisites': '前置条件',
+    'Quick Start': '快速开始',
+    'Getting Started': '入门指南',
+    'Installation': '安装',
+    'Configuration': '配置',
+    'Usage': '用法',
+    'Examples': '示例',
+    'API Reference': 'API 参考',
+    'Documentation': '文档',
+    'Tutorial': '教程',
+    'Guide': '指南',
+    'Manual': '手册',
+    'Reference': '参考',
+    'Specification': '规范',
+    'Requirements': '需求',
+    'Dependencies': '依赖项',
+    'Setup': '设置',
+    'Deployment': '部署',
+    'Migration': '迁移',
+    'Performance': '性能',
+    'Security': '安全性',
+    'Limitations': '限制',
+    'Known Issues': '已知问题',
+    'FAQ': '常见问题',
+    'Troubleshooting': '故障排除',
+    'Debugging': '调试',
+    'Testing': '测试',
+    'Contributing': '贡献指南',
+    'License': '许可证',
+    'Changelog': '更新日志',
+    'Release Notes': '发布说明',
+    'Roadmap': '路线图',
+    // 技能文件特定
+    'Skill': '技能',
+    'Description': '描述',
+    'When to Use': '使用场景',
+    'Best Practices': '最佳实践',
+    'Tool Discovery': '工具发现',
+    'Core Workflow Pattern': '核心工作流模式',
+    'Environment Variables': '环境变量',
+    'How It Works': '工作原理',
+    'Purpose': '目的',
+    'Authentication': '认证',
+    'Error Handling': '错误处理',
+    'Output Format': '输出格式',
+    'Workflow': '工作流',
+    'Resources': '资源',
+    'Related Skills': '相关技能',
+    'Core Workflows': '核心工作流',
+    'Capabilities': '能力',
+    'Common Pitfalls': '常见陷阱',
+    'Reference Links': '参考链接',
+    'Anti-Patterns': '反模式',
+    'Safety': '安全',
+    // 常见词汇
+    'Unhandled': '未处理',
+    'unhandled': '未处理',
+    'Handle': '处理',
+    'handle': '处理',
+    'Handler': '处理器',
+    'handler': '处理器',
+    'Handling': '处理中',
+    'handling': '处理中',
+    'Highlights': '亮点',
+    'Headless': '无头模式',
+    'Hot Reload': '热重载',
+    'Hot reload': '热重载',
+    'Hook': '钩子',
+    'Hooks': '钩子',
+    'hooks': '钩子',
+    'Host': '主机',
+    'host': '主机',
+    'Header': '头部',
+    'header': '头部',
+    'Headers': '头部',
+    'headers': '头部',
+    'Health': '健康检查',
+    'health': '健康检查',
+    'Heap': '堆',
+    'heap': '堆',
+    'Highlight': '高亮',
+    'highlight': '高亮',
+    'Hierarchy': '层次结构',
+    'hierarchy': '层次结构',
+    'Hash': '哈希',
+    'hash': '哈希',
+    'Hidden': '隐藏',
+    'hidden': '隐藏',
+    'High-level': '高层',
+    'high-level': '高层',
+    'Hardware': '硬件',
+    'hardware': '硬件',
+    'Horizontal': '水平',
+    'horizontal': '水平',
+    'Get Started': '开始使用',
+    'Get started': '开始使用',
+    'Getting Started': '入门指南',
+    'Global': '全局',
+    'global': '全局',
+    'Guideline': '指南',
+    'guideline': '指南',
+    'Guidelines': '指南',
+    'guidelines': '指南',
+    'Generate': '生成',
+    'generate': '生成',
+    'Generated': '已生成',
+    'generated': '已生成',
+    'Generator': '生成器',
+    'generator': '生成器',
+    'Generic': '通用',
+    'generic': '通用',
+    'Graceful': '优雅',
+    'graceful': '优雅',
+    'Gracefully': '优雅地',
+    'gracefully': '优雅地',
+    'Greedy': '贪婪',
+    'greedy': '贪婪',
+    'Graph': '图',
+    'graph': '图',
+    'Group': '组',
+    'group': '组',
+    'Groups': '组',
+    'groups': '组',
+    'Gateway': '网关',
+    'gateway': '网关',
+    'Feature': '功能',
+    'feature': '功能',
+    'Features': '功能',
+    'features': '功能',
+    'File': '文件',
+    'file': '文件',
+    'Files': '文件',
+    'files': '文件',
+    'Filter': '过滤',
+    'filter': '过滤',
+    'Filters': '过滤',
+    'filters': '过滤',
+    'Flag': '标志',
+    'flag': '标志',
+    'Flags': '标志',
+    'flags': '标志',
+    'Flow': '流程',
+    'flow': '流程',
+    'Format': '格式',
+    'format': '格式',
+    'Framework': '框架',
+    'framework': '框架',
+    'Frameworks': '框架',
+    'frameworks': '框架',
+    'Full': '完整',
+    'full': '完整',
+    'Function': '函数',
+    'function': '函数',
+    'Functions': '函数',
+    'functions': '函数',
+    'Fallback': '回退',
+    'fallback': '回退',
+    'Fatal': '致命',
+    'fatal': '致命',
+    'Fetch': '获取',
+    'fetch': '获取',
+    'Fork': '分支',
+    'fork': '分支',
+    'Forked': '已分支',
+    'forked': '已分支',
+    'Forward': '转发',
+    'forward': '转发',
+    'Free': '免费',
+    'free': '免费',
+    'From': '来自',
+    'from': '来自',
+    'Event': '事件',
+    'event': '事件',
+    'Events': '事件',
+    'events': '事件',
+    'Error': '错误',
+    'error': '错误',
+    'Errors': '错误',
+    'errors': '错误',
+    'Exit': '退出',
+    'exit': '退出',
+    'Export': '导出',
+    'export': '导出',
+    'Exports': '导出',
+    'exports': '导出',
+    'Extension': '扩展',
+    'extension': '扩展',
+    'Extensions': '扩展',
+    'extensions': '扩展',
+    'External': '外部',
+    'external': '外部',
+    'Evaluate': '评估',
+    'evaluate': '评估',
+    'Evaluation': '评估',
+    'evaluation': '评估',
+    'Exact': '精确',
+    'exact': '精确',
+    'Exclude': '排除',
+    'exclude': '排除',
+    'Excluded': '已排除',
+    'excluded': '已排除',
+    'Execute': '执行',
+    'execute': '执行',
+    'Execution': '执行',
+    'execution': '执行',
+    'Expire': '过期',
+    'expire': '过期',
+    'Expired': '已过期',
+    'expired': '已过期',
+    'Expiry': '过期',
+    'expiry': '过期',
+    'Explore': '探索',
+    'explore': '探索',
+    'Explorer': '浏览器',
+    'explorer': '浏览器',
+    'Emit': '触发',
+    'emit': '触发',
+    'Emitter': '触发器',
+    'emitter': '触发器',
+    'Enable': '启用',
+    'enable': '启用',
+    'Enabled': '已启用',
+    'enabled': '已启用',
+    'Encode': '编码',
+    'encode': '编码',
+    'Encoder': '编码器',
+    'encoder': '编码器',
+    'Encrypt': '加密',
+    'encrypt': '加密',
+    'Encryption': '加密',
+    'encryption': '加密',
+    'Endpoint': '端点',
+    'endpoint': '端点',
+    'Endpoints': '端点',
+    'endpoints': '端点',
+    'Engine': '引擎',
+    'engine': '引擎',
+    'Ensure': '确保',
+    'ensure': '确保',
+    'Entity': '实体',
+    'entity': '实体',
+    'Entities': '实体',
+    'entities': '实体',
+    'Entry': '入口',
+    'entry': '入口',
+    'Entries': '条目',
+    'entries': '条目',
+    'Enum': '枚举',
+    'enum': '枚举',
+    'Enumerate': '枚举',
+    'enumerate': '枚举',
+    'Environment': '环境',
+    'env': '环境',
+    'Environments': '环境',
+    'environments': '环境',
+    'Escape': '转义',
+    'escape': '转义',
+    'Escaped': '已转义',
+    'escaped': '已转义',
+    'Dynamic': '动态',
+    'dynamic': '动态',
+    'Dynamics': '动态',
+    'dynamics': '动态',
+    'Data': '数据',
+    'data': '数据',
+    'Database': '数据库',
+    'database': '数据库',
+    'Databases': '数据库',
+    'databases': '数据库',
+    'Dataset': '数据集',
+    'dataset': '数据集',
+    'Debug': '调试',
+    'debug': '调试',
+    'Debugging': '调试',
+    'Default': '默认',
+    'default': '默认',
+    'Delay': '延迟',
+    'delay': '延迟',
+    'Delete': '删除',
+    'delete': '删除',
+    'Deleted': '已删除',
+    'deleted': '已删除',
+    'Deploy': '部署',
+    'deploy': '部署',
+    'Deployment': '部署',
+    'deployment': '部署',
+    'Deployments': '部署',
+    'deployments': '部署',
+    'Deprecated': '已弃用',
+    'deprecated': '已弃用',
+    'Describe': '描述',
+    'describe': '描述',
+    'Description': '描述',
+    'description': '描述',
+    'Design': '设计',
+    'design': '设计',
+    'Destroy': '销毁',
+    'destroy': '销毁',
+    'Detect': '检测',
+    'detect': '检测',
+    'Detection': '检测',
+    'detection': '检测',
+    'Device': '设备',
+    'device': '设备',
+    'Devices': '设备',
+    'devices': '设备',
+    'Diagnostic': '诊断',
+    'diagnostic': '诊断',
+    'Diagnostics': '诊断',
+    'diagnostics': '诊断',
+    'Dictionary': '字典',
+    'dictionary': '字典',
+    'Diff': '差异',
+    'diff': '差异',
+    'Digest': '摘要',
+    'digest': '摘要',
+    'Digital': '数字',
+    'digital': '数字',
+    'Directory': '目录',
+    'directory': '目录',
+    'Directories': '目录',
+    'directories': '目录',
+    'Disable': '禁用',
+    'disable': '禁用',
+    'Disabled': '已禁用',
+    'disabled': '已禁用',
+    'Dispatch': '分发',
+    'dispatch': '分发',
+    'Display': '显示',
+    'display': '显示',
+    'Dispose': '释放',
+    'dispose': '释放',
+    'Distribute': '分发',
+    'distribute': '分发',
+    'Distribution': '分发',
+    'distribution': '分发',
+    'Document': '文档',
+    'document': '文档',
+    'Documents': '文档',
+    'documents': '文档',
+    'Domain': '领域',
+    'domain': '领域',
+    'Domains': '领域',
+    'domains': '领域',
+    'Download': '下载',
+    'download': '下载',
+    'Downloads': '下载',
+    'downloads': '下载',
+    'Draft': '草稿',
+    'draft': '草稿',
+    'Driver': '驱动',
+    'driver': '驱动',
+    'Drivers': '驱动',
+    'drivers': '驱动',
+    'Dump': '转储',
+    'dump': '转储',
+    'Duplicate': '重复',
+    'duplicate': '重复',
+    'Duration': '持续时间',
+    'duration': '持续时间',
+    'Durable': '持久',
+    'durable': '持久',
+    'Cache': '缓存',
+    'cache': '缓存',
+    'Cached': '已缓存',
+    'cached': '已缓存',
+    'Calculate': '计算',
+    'calculate': '计算',
+    'Calculation': '计算',
+    'calculation': '计算',
+    'Callback': '回调',
+    'callback': '回调',
+    'Callbacks': '回调',
+    'callbacks': '回调',
+    'Cancel': '取消',
+    'cancel': '取消',
+    'Cancelled': '已取消',
+    'cancelled': '已取消',
+    'Candidate': '候选',
+    'candidate': '候选',
+    'Capture': '捕获',
+    'capture': '捕获',
+    'Cascade': '级联',
+    'cascade': '级联',
+    'Case': '大小写',
+    'case': '大小写',
+    'Catalog': '目录',
+    'catalog': '目录',
+    'Catch': '捕获',
+    'catch': '捕获',
+    'Category': '类别',
+    'category': '类别',
+    'Categories': '类别',
+    'categories': '类别',
+    'Certificate': '证书',
+    'certificate': '证书',
+    'Certificates': '证书',
+    'certificates': '证书',
+    'Chain': '链',
+    'chain': '链',
+    'Chained': '链式',
+    'chained': '链式',
+    'Change': '变更',
+    'change': '变更',
+    'Changes': '变更',
+    'changes': '变更',
+    'Channel': '通道',
+    'channel': '通道',
+    'Channels': '通道',
+    'channels': '通道',
+    'Character': '字符',
+    'character': '字符',
+    'Characters': '字符',
+    'characters': '字符',
+    'Check': '检查',
+    'check': '检查',
+    'Checks': '检查',
+    'checks': '检查',
+    'Child': '子',
+    'child': '子',
+    'Children': '子',
+    'children': '子',
+    'Choose': '选择',
+    'choose': '选择',
+    'Chunk': '块',
+    'chunk': '块',
+    'Chunks': '块',
+    'chunks': '块',
+    'Cipher': '密码',
+    'cipher': '密码',
+    'Circle': '循环',
+    'circle': '循环',
+    'Circuit': '电路',
+    'circuit': '电路',
+    'Claim': '声明',
+    'claim': '声明',
+    'Claims': '声明',
+    'claims': '声明',
+    'Class': '类',
+    'class': '类',
+    'Classes': '类',
+    'classes': '类',
+    'Clean': '清理',
+    'clean': '清理',
+    'Cleanup': '清理',
+    'cleanup': '清理',
+    'Clear': '清除',
+    'clear': '清除',
+    'Client': '客户端',
+    'client': '客户端',
+    'Clients': '客户端',
+    'clients': '客户端',
+    'Clone': '克隆',
+    'clone': '克隆',
+    'Close': '关闭',
+    'close': '关闭',
+    'Closed': '已关闭',
+    'closed': '已关闭',
+    'Cluster': '集群',
+    'cluster': '集群',
+    'Clusters': '集群',
+    'clusters': '集群',
+    'Code': '代码',
+    'code': '代码',
+    'Collect': '收集',
+    'collect': '收集',
+    'Collection': '集合',
+    'collection': '集合',
+    'Collections': '集合',
+    'collections': '集合',
+    'Column': '列',
+    'column': '列',
+    'Columns': '列',
+    'columns': '列',
+    'Combine': '合并',
+    'combine': '合并',
+    'Combined': '已合并',
+    'combined': '已合并',
+    'Command': '命令',
+    'command': '命令',
+    'Commands': '命令',
+    'commands': '命令',
+    'Comment': '注释',
+    'comment': '注释',
+    'Comments': '注释',
+    'comments': '注释',
+    'Commit': '提交',
+    'commit': '提交',
+    'Committed': '已提交',
+    'committed': '已提交',
+    'Common': '通用',
+    'common': '通用',
+    'Communicate': '通信',
+    'communicate': '通信',
+    'Communication': '通信',
+    'communication': '通信',
+    'Compact': '压缩',
+    'compact': '压缩',
+    'Compare': '比较',
+    'compare': '比较',
+    'Comparison': '比较',
+    'comparison': '比较',
+    'Compile': '编译',
+    'compile': '编译',
+    'Compiled': '已编译',
+    'compiled': '已编译',
+    'Compiler': '编译器',
+    'compiler': '编译器',
+    'Complete': '完成',
+    'complete': '完成',
+    'Completed': '已完成',
+    'completed': '已完成',
+    'Completion': '完成',
+    'completion': '完成',
+    'Component': '组件',
+    'component': '组件',
+    'Components': '组件',
+    'components': '组件',
+    'Compose': '组合',
+    'compose': '组合',
+    'Composite': '复合',
+    'composite': '复合',
+    'Composition': '组合',
+    'composition': '组合',
+    'Compress': '压缩',
+    'compress': '压缩',
+    'Compression': '压缩',
+    'compression': '压缩',
+    'Compute': '计算',
+    'compute': '计算',
+    'Computed': '计算',
+    'computed': '计算',
+    'Computer': '计算机',
+    'computer': '计算机',
+    'Concat': '连接',
+    'concat': '连接',
+    'Concatenate': '连接',
+    'concatenate': '连接',
+    'Concurrent': '并发',
+    'concurrent': '并发',
+    'Concurrency': '并发',
+    'concurrency': '并发',
+    'Condition': '条件',
+    'condition': '条件',
+    'Conditions': '条件',
+    'conditions': '条件',
+    'Config': '配置',
+    'config': '配置',
+    'Configs': '配置',
+    'configs': '配置',
+    'Configure': '配置',
+    'configure': '配置',
+    'Configured': '已配置',
+    'configured': '已配置',
+    'Confirm': '确认',
+    'confirm': '确认',
+    'Confirmation': '确认',
+    'confirmation': '确认',
+    'Connect': '连接',
+    'connect': '连接',
+    'Connected': '已连接',
+    'connected': '已连接',
+    'Connection': '连接',
+    'connection': '连接',
+    'Connections': '连接',
+    'connections': '连接',
+    'Connector': '连接器',
+    'connector': '连接器',
+    'Connectors': '连接器',
+    'connectors': '连接器',
+    'Console': '控制台',
+    'console': '控制台',
+    'Constant': '常量',
+    'constant': '常量',
+    'Constants': '常量',
+    'constants': '常量',
+    'Constraint': '约束',
+    'constraint': '约束',
+    'Constraints': '约束',
+    'constraints': '约束',
+    'Construct': '构造',
+    'construct': '构造',
+    'Constructor': '构造函数',
+    'constructor': '构造函数',
+    'Consume': '消费',
+    'consume': '消费',
+    'Consumer': '消费者',
+    'consumer': '消费者',
+    'Consumers': '消费者',
+    'consumers': '消费者',
+    'Contact': '联系',
+    'contact': '联系',
+    'Container': '容器',
+    'container': '容器',
+    'Containers': '容器',
+    'containers': '容器',
+    'Content': '内容',
+    'content': '内容',
+    'Context': '上下文',
+    'context': '上下文',
+    'Contexts': '上下文',
+    'contexts': '上下文',
+    'Continue': '继续',
+    'continue': '继续',
+    'Continuous': '持续',
+    'continuous': '持续',
+    'Contract': '合同',
+    'contract': '合同',
+    'Control': '控制',
+    'control': '控制',
+    'Controller': '控制器',
+    'controller': '控制器',
+    'Controllers': '控制器',
+    'controllers': '控制器',
+    'Convert': '转换',
+    'convert': '转换',
+    'Converter': '转换器',
+    'converter': '转换器',
+    'Converters': '转换器',
+    'converters': '转换器',
+    'Cookie': 'Cookie',
+    'cookie': 'Cookie',
+    'Cookies': 'Cookie',
+    'cookies': 'Cookie',
+    'Copy': '复制',
+    'copy': '复制',
+    'Copied': '已复制',
+    'copied': '已复制',
+    'Core': '核心',
+    'core': '核心',
+    'Correct': '正确',
+    'correct': '正确',
+    'Correction': '纠正',
+    'correction': '纠正',
+    'Corrupt': '损坏',
+    'corrupt': '损坏',
+    'Corrupted': '已损坏',
+    'corrupted': '已损坏',
+    'Count': '计数',
+    'count': '计数',
+    'Counter': '计数器',
+    'counter': '计数器',
+    'Counters': '计数器',
+    'counters': '计数器',
+    'Create': '创建',
+    'create': '创建',
+    'Created': '已创建',
+    'created': '已创建',
+    'Creates': '创建',
+    'creates': '创建',
+    'Creating': '创建中',
+    'creating': '创建中',
+    'Creation': '创建',
+    'creation': '创建',
+    'Creative': '创意',
+    'creative': '创意',
+    'Credential': '凭证',
+    'credential': '凭证',
+    'Credentials': '凭证',
+    'credentials': '凭证',
+    'Critical': '关键',
+    'critical': '关键',
+    'Cron': '定时',
+    'cron': '定时',
+    'Cross': '跨',
+    'cross': '跨',
+    'Crypto': '加密',
+    'crypto': '加密',
+    'Cryptographic': '密码学',
+    'cryptographic': '密码学',
+    'Cryptography': '密码学',
+    'cryptography': '密码学',
+    'Cumulative': '累积',
+    'cumulative': '累积',
+    'Curl': '请求',
+    'curl': '请求',
+    'Current': '当前',
+    'current': '当前',
+    'Currently': '当前',
+    'currently': '当前',
+    'Cursor': '游标',
+    'cursor': '游标',
+    'Custom': '自定义',
+    'custom': '自定义',
+    'Customer': '客户',
+    'customer': '客户',
+    'Customers': '客户',
+    'customers': '客户',
+    'Customize': '定制',
+    'customize': '定制',
+    'Customized': '已定制',
+    'customized': '已定制',
+    'Cycle': '周期',
+    'cycle': '周期',
+    'Cycles': '周期',
+    'cycles': '周期',
+    'Cyclic': '循环',
+    'cyclic': '循环',
+    'Name': '名称',
+    'name': '名称',
+    'Names': '名称',
+    'names': '名称',
+    'Native': '原生',
+    'native': '原生',
+    'Natural': '自然',
+    'natural': '自然',
+    'Navigate': '导航',
+    'navigate': '导航',
+    'Navigation': '导航',
+    'navigation': '导航',
+    'Nested': '嵌套',
+    'nested': '嵌套',
+    'Nesting': '嵌套',
+    'nesting': '嵌套',
+    'Network': '网络',
+    'network': '网络',
+    'Networks': '网络',
+    'networks': '网络',
+    'Next': '下一个',
+    'next': '下一个',
+    'Node': '节点',
+    'node': '节点',
+    'Nodes': '节点',
+    'nodes': '节点',
+    'Noise': '噪声',
+    'noise': '噪声',
+    'Normal': '正常',
+    'normal': '正常',
+    'Normalize': '标准化',
+    'normalize': '标准化',
+    'Normalized': '已标准化',
+    'normalized': '已标准化',
+    'Normalization': '标准化',
+    'normalization': '标准化',
+    'Notify': '通知',
+    'notify': '通知',
+    'Notification': '通知',
+    'notification': '通知',
+    'Notifications': '通知',
+    'notifications': '通知',
+    'Null': '空',
+    'null': '空',
+    'Number': '数字',
+    'number': '数字',
+    'Numbers': '数字',
+    'numbers': '数字',
+    'Numeric': '数值',
+    'numeric': '数值',
+    'Package': '包',
+    'package': '包',
+    'Packages': '包',
+    'packages': '包',
+    'Packet': '数据包',
+    'packet': '数据包',
+    'Packets': '数据包',
+    'packets': '数据包',
+    'Padding': '填充',
+    'padding': '填充',
+    'Pair': '对',
+    'pair': '对',
+    'Pairs': '对',
+    'pairs': '对',
+    'Parallel': '并行',
+    'parallel': '并行',
+    'Parameter': '参数',
+    'parameter': '参数',
+    'Parameters': '参数',
+    'parameters': '参数',
+    'Param': '参数',
+    'param': '参数',
+    'Params': '参数',
+    'params': '参数',
+    'Parent': '父级',
+    'parent': '父级',
+    'Parents': '父级',
+    'parents': '父级',
+    'Parse': '解析',
+    'parse': '解析',
+    'Parsed': '已解析',
+    'parsed': '已解析',
+    'Parser': '解析器',
+    'parser': '解析器',
+    'Parsers': '解析器',
+    'parsers': '解析器',
+    'Parsing': '解析中',
+    'parsing': '解析中',
+    'Partial': '部分',
+    'partial': '部分',
+    'Partition': '分区',
+    'partition': '分区',
+    'Partitions': '分区',
+    'partitions': '分区',
+    'Password': '密码',
+    'password': '密码',
+    'Passwords': '密码',
+    'passwords': '密码',
+    'Patch': '补丁',
+    'patch': '补丁',
+    'Patches': '补丁',
+    'patches': '补丁',
+    'Path': '路径',
+    'path': '路径',
+    'Paths': '路径',
+    'paths': '路径',
+    'Pause': '暂停',
+    'pause': '暂停',
+    'Paused': '已暂停',
+    'paused': '已暂停',
+    'Payload': '负载',
+    'payload': '负载',
+    'Payloads': '负载',
+    'payloads': '负载',
+    'Peak': '峰值',
+    'peak': '峰值',
+    'Pending': '待处理',
+    'pending': '待处理',
+    'Percent': '百分比',
+    'percent': '百分比',
+    'Percentage': '百分比',
+    'percentage': '百分比',
+    'Perfect': '完美',
+    'perfect': '完美',
+    'Perform': '执行',
+    'perform': '执行',
+    'Performance': '性能',
+    'performance': '性能',
+    'Period': '周期',
+    'period': '周期',
+    'Periodic': '定期',
+    'periodic': '定期',
+    'Permission': '权限',
+    'permission': '权限',
+    'Permissions': '权限',
+    'permissions': '权限',
+    'Persist': '持久化',
+    'persist': '持久化',
+    'Persistence': '持久化',
+    'persistence': '持久化',
+    'Persistent': '持久',
+    'persistent': '持久',
+    'Pipeline': '管道',
+    'pipeline': '管道',
+    'Pipelines': '管道',
+    'pipelines': '管道',
+    'Place': '位置',
+    'place': '位置',
+    'Placeholder': '占位符',
+    'placeholder': '占位符',
+    'Plan': '计划',
+    'plan': '计划',
+    'Plans': '计划',
+    'plans': '计划',
+    'Platform': '平台',
+    'platform': '平台',
+    'Platforms': '平台',
+    'platforms': '平台',
+    'Play': '播放',
+    'play': '播放',
+    'Playback': '回放',
+    'playback': '回放',
+    'Plugin': '插件',
+    'plugin': '插件',
+    'Plugins': '插件',
+    'plugins': '插件',
+    'Point': '点',
+    'point': '点',
+    'Points': '点',
+    'points': '点',
+    'Policy': '策略',
+    'policy': '策略',
+    'Policies': '策略',
+    'policies': '策略',
+    'Poll': '轮询',
+    'poll': '轮询',
+    'Polling': '轮询',
+    'polling': '轮询',
+    'Pool': '池',
+    'pool': '池',
+    'Pools': '池',
+    'pools': '池',
+    'Port': '端口',
+    'port': '端口',
+    'Ports': '端口',
+    'ports': '端口',
+    'Position': '位置',
+    'position': '位置',
+    'Post': '提交',
+    'post': '提交',
+    'Postprocess': '后处理',
+    'postprocess': '后处理',
+    'Precision': '精度',
+    'precision': '精度',
+    'Prefer': '首选',
+    'prefer': '首选',
+    'Preference': '偏好',
+    'preference': '偏好',
+    'Preferences': '偏好',
+    'preferences': '偏好',
+    'Prefix': '前缀',
+    'prefix': '前缀',
+    'Prefixes': '前缀',
+    'prefixes': '前缀',
+    'Prepare': '准备',
+    'prepare': '准备',
+    'Prepared': '已准备',
+    'prepared': '已准备',
+    'Preset': '预设',
+    'preset': '预设',
+    'Presets': '预设',
+    'presets': '预设',
+    'Prevent': '防止',
+    'prevent': '防止',
+    'Preview': '预览',
+    'preview': '预览',
+    'Previous': '上一个',
+    'previous': '上一个',
+    'Primary': '主',
+    'primary': '主',
+    'Primitive': '原始',
+    'primitive': '原始',
+    'Primitives': '原始',
+    'primitives': '原始',
+    'Principal': '主体',
+    'principal': '主体',
+    'Print': '打印',
+    'print': '打印',
+    'Printed': '已打印',
+    'printed': '已打印',
+    'Printer': '打印机',
+    'printer': '打印机',
+    'Priority': '优先级',
+    'priority': '优先级',
+    'Priorities': '优先级',
+    'priorities': '优先级',
+    'Private': '私有',
+    'private': '私有',
+    'Privilege': '特权',
+    'privilege': '特权',
+    'Privileges': '特权',
+    'privileges': '特权',
+    'Proactive': '主动',
+    'proactive': '主动',
+    'Probability': '概率',
+    'probability': '概率',
+    'Probe': '探测',
+    'probe': '探测',
+    'Probes': '探测',
+    'probes': '探测',
+    'Problem': '问题',
+    'problem': '问题',
+    'Problems': '问题',
+    'problems': '问题',
+    'Procedure': '过程',
+    'procedure': '过程',
+    'Procedures': '过程',
+    'procedures': '过程',
+    'Process': '进程',
+    'process': '进程',
+    'Processes': '进程',
+    'processes': '进程',
+    'Processing': '处理中',
+    'processing': '处理中',
+    'Processor': '处理器',
+    'processor': '处理器',
+    'Produce': '生成',
+    'produce': '生成',
+    'Producer': '生产者',
+    'producer': '生产者',
+    'Producers': '生产者',
+    'producers': '生产者',
+    'Profile': '配置文件',
+    'profile': '配置文件',
+    'Profiles': '配置文件',
+    'profiles': '配置文件',
+    'Profiling': '分析',
+    'profiling': '分析',
+    'Program': '程序',
+    'program': '程序',
+    'Programs': '程序',
+    'programs': '程序',
+    'Progress': '进度',
+    'progress': '进度',
+    'Project': '项目',
+    'project': '项目',
+    'Projects': '项目',
+    'projects': '项目',
+    'Promise': '承诺',
+    'promise': '承诺',
+    'Promises': '承诺',
+    'promises': '承诺',
+    'Prompt': '提示',
+    'prompt': '提示',
+    'Prompts': '提示',
+    'prompts': '提示',
+    'Propagate': '传播',
+    'propagate': '传播',
+    'Propagation': '传播',
+    'propagation': '传播',
+    'Proper': '正确',
+    'proper': '正确',
+    'Property': '属性',
+    'property': '属性',
+    'Properties': '属性',
+    'properties': '属性',
+    'Proportional': '比例',
+    'proportional': '比例',
+    'Proposal': '提案',
+    'proposal': '提案',
+    'Proposals': '提案',
+    'proposals': '提案',
+    'Protect': '保护',
+    'protect': '保护',
+    'Protected': '受保护',
+    'protected': '受保护',
+    'Protection': '保护',
+    'protection': '保护',
+    'Protocol': '协议',
+    'protocol': '协议',
+    'Protocols': '协议',
+    'protocols': '协议',
+    'Provider': '提供者',
+    'provider': '提供者',
+    'Providers': '提供者',
+    'providers': '提供者',
+    'Proxy': '代理',
+    'proxy': '代理',
+    'Proxies': '代理',
+    'proxies': '代理',
+    'Public': '公开',
+    'public': '公开',
+    'Publish': '发布',
+    'publish': '发布',
+    'Published': '已发布',
+    'published': '已发布',
+    'Publisher': '发布者',
+    'publisher': '发布者',
+    'Pull': '拉取',
+    'pull': '拉取',
+    'Pulled': '已拉取',
+    'pulled': '已拉取',
+    'Pulse': '脉冲',
+    'pulse': '脉冲',
+    'Purge': '清除',
+    'purge': '清除',
+    'Purging': '清除中',
+    'purging': '清除中',
+    'Purpose': '目的',
+    'purpose': '目的',
+    'Push': '推送',
+    'push': '推送',
+    'Pushed': '已推送',
+    'pushed': '已推送',
+    'Range': '范围',
+    'range': '范围',
+    'Ranges': '范围',
+    'ranges': '范围',
+    'Rank': '排名',
+    'rank': '排名',
+    'Ranking': '排名',
+    'ranking': '排名',
+    'Rate': '速率',
+    'rate': '速率',
+    'Rates': '速率',
+    'rates': '速率',
+    'Raw': '原始',
+    'raw': '原始',
+    'Reach': '达到',
+    'reach': '达到',
+    'Reachable': '可达',
+    'reachable': '可达',
+    'React': '响应',
+    'react': '响应',
+    'Reactive': '响应式',
+    'reactive': '响应式',
+    'Read': '读取',
+    'read': '读取',
+    'Reader': '读取器',
+    'reader': '读取器',
+    'Readers': '读取器',
+    'readers': '读取器',
+    'Readable': '可读',
+    'readable': '可读',
+    'Reading': '读取中',
+    'reading': '读取中',
+    'Ready': '就绪',
+    'ready': '就绪',
+    'Realm': '领域',
+    'realm': '领域',
+    'Rebuild': '重建',
+    'rebuild': '重建',
+    'Rebuilt': '已重建',
+    'rebuilt': '已重建',
+    'Receive': '接收',
+    'receive': '接收',
+    'Received': '已接收',
+    'received': '已接收',
+    'Receiver': '接收器',
+    'receiver': '接收器',
+    'Receivers': '接收器',
+    'receivers': '接收器',
+    'Recent': '最近',
+    'recent': '最近',
+    'Recently': '最近',
+    'recently': '最近',
+    'Reconnect': '重连',
+    'reconnect': '重连',
+    'Reconnected': '已重连',
+    'reconnected': '已重连',
+    'Record': '记录',
+    'record': '记录',
+    'Records': '记录',
+    'records': '记录',
+    'Recover': '恢复',
+    'recover': '恢复',
+    'Recovered': '已恢复',
+    'recovered': '已恢复',
+    'Recovery': '恢复',
+    'recovery': '恢复',
+    'Recursive': '递归',
+    'recursive': '递归',
+    'Recursion': '递归',
+    'recursion': '递归',
+    'Redirect': '重定向',
+    'redirect': '重定向',
+    'Redirected': '已重定向',
+    'redirected': '已重定向',
+    'Redirection': '重定向',
+    'redirection': '重定向',
+    'Reduce': '减少',
+    'reduce': '减少',
+    'Reduced': '已减少',
+    'reduced': '已减少',
+    'Reduction': '减少',
+    'reduction': '减少',
+    'Reentrant': '可重入',
+    'reentrant': '可重入',
+    'Reference': '引用',
+    'reference': '引用',
+    'References': '引用',
+    'references': '引用',
+    'Referrer': '来源',
+    'referrer': '来源',
+    'Refresh': '刷新',
+    'refresh': '刷新',
+    'Refreshed': '已刷新',
+    'refreshed': '已刷新',
+    'Regex': '正则',
+    'regex': '正则',
+    'Register': '注册',
+    'register': '注册',
+    'Registered': '已注册',
+    'registered': '已注册',
+    'Registration': '注册',
+    'registration': '注册',
+    'Registry': '注册表',
+    'registry': '注册表',
+    'Reject': '拒绝',
+    'reject': '拒绝',
+    'Rejected': '已拒绝',
+    'rejected': '已拒绝',
+    'Relate': '关联',
+    'relate': '关联',
+    'Related': '相关',
+    'related': '相关',
+    'Relation': '关系',
+    'relation': '关系',
+    'Relations': '关系',
+    'relations': '关系',
+    'Relationship': '关系',
+    'relationship': '关系',
+    'Relative': '相对',
+    'relative': '相对',
+    'Relay': '中继',
+    'relay': '中继',
+    'Release': '发布',
+    'release': '发布',
+    'Released': '已发布',
+    'released': '已发布',
+    'Reload': '重载',
+    'reload': '重载',
+    'Reloaded': '已重载',
+    'reloaded': '已重载',
+    'Remain': '剩余',
+    'remain': '剩余',
+    'Remaining': '剩余',
+    'remaining': '剩余',
+    'Remember': '记住',
+    'remember': '记住',
+    'Remote': '远程',
+    'remote': '远程',
+    'Remove': '移除',
+    'remove': '移除',
+    'Removed': '已移除',
+    'removed': '已移除',
+    'Removing': '移除中',
+    'removing': '移除中',
+    'Rename': '重命名',
+    'rename': '重命名',
+    'Renamed': '已重命名',
+    'renamed': '已重命名',
+    'Render': '渲染',
+    'render': '渲染',
+    'Rendered': '已渲染',
+    'rendered': '已渲染',
+    'Renderer': '渲染器',
+    'renderer': '渲染器',
+    'Rendering': '渲染中',
+    'rendering': '渲染中',
+    'Repeat': '重复',
+    'repeat': '重复',
+    'Repeated': '重复',
+    'repeated': '重复',
+    'Replace': '替换',
+    'replace': '替换',
+    'Replaced': '已替换',
+    'replaced': '已替换',
+    'Replacement': '替换',
+    'replacement': '替换',
+    'Replica': '副本',
+    'replica': '副本',
+    'Replicas': '副本',
+    'replicas': '副本',
+    'Replicate': '复制',
+    'replicate': '复制',
+    'Replication': '复制',
+    'replication': '复制',
+    'Reply': '回复',
+    'reply': '回复',
+    'Report': '报告',
+    'report': '报告',
+    'Reports': '报告',
+    'reports': '报告',
+    'Reporter': '报告者',
+    'reporter': '报告者',
+    'Represent': '表示',
+    'represent': '表示',
+    'Representation': '表示',
+    'representation': '表示',
+    'Request': '请求',
+    'request': '请求',
+    'Requests': '请求',
+    'requests': '请求',
+    'Require': '需要',
+    'require': '需要',
+    'Required': '必需',
+    'required': '必需',
+    'Requirement': '需求',
+    'requirement': '需求',
+    'Requirements': '需求',
+    'requirements': '需求',
+    'Resend': '重发',
+    'resend': '重发',
+    'Reserve': '预留',
+    'reserve': '预留',
+    'Reserved': '已预留',
+    'reserved': '已预留',
+    'Reset': '重置',
+    'reset': '重置',
+    'Resize': '调整大小',
+    'resize': '调整大小',
+    'Resolved': '已解决',
+    'resolved': '已解决',
+    'Resolve': '解析',
+    'resolve': '解析',
+    'Resolver': '解析器',
+    'resolver': '解析器',
+    'Resolution': '分辨率',
+    'resolution': '分辨率',
+    'Resource': '资源',
+    'resource': '资源',
+    'Resources': '资源',
+    'resources': '资源',
+    'Respond': '响应',
+    'respond': '响应',
+    'Responder': '响应器',
+    'responder': '响应器',
+    'Response': '响应',
+    'response': '响应',
+    'Responses': '响应',
+    'responses': '响应',
+    'Rest': '休息',
+    'rest': '休息',
+    'Restart': '重启',
+    'restart': '重启',
+    'Restarted': '已重启',
+    'restarted': '已重启',
+    'Restore': '恢复',
+    'restore': '恢复',
+    'Restored': '已恢复',
+    'restored': '已恢复',
+    'Restrict': '限制',
+    'restrict': '限制',
+    'Restricted': '受限',
+    'restricted': '受限',
+    'Restriction': '限制',
+    'restriction': '限制',
+    'Restrictions': '限制',
+    'restrictions': '限制',
+    'Result': '结果',
+    'result': '结果',
+    'Results': '结果',
+    'results': '结果',
+    'Resume': '恢复',
+    'resume': '恢复',
+    'Retain': '保留',
+    'retain': '保留',
+    'Retained': '已保留',
+    'retained': '已保留',
+    'Retry': '重试',
+    'retry': '重试',
+    'Retries': '重试',
+    'retries': '重试',
+    'Return': '返回',
+    'return': '返回',
+    'Returned': '已返回',
+    'returned': '已返回',
+    'Reusable': '可复用',
+    'reusable': '可复用',
+    'Reuse': '复用',
+    'reuse': '复用',
+    'Reverse': '反向',
+    'reverse': '反向',
+    'Revert': '还原',
+    'revert': '还原',
+    'Reverted': '已还原',
+    'reverted': '已还原',
+    'Review': '审查',
+    'review': '审查',
+    'Reviewed': '已审查',
+    'reviewed': '已审查',
+    'Revoke': '撤销',
+    'revoke': '撤销',
+    'Revoked': '已撤销',
+    'revoked': '已撤销',
+    'Rewrite': '重写',
+    'rewrite': '重写',
+    'Rewritten': '已重写',
+    'rewritten': '已重写',
+    'Ring': '环',
+    'ring': '环',
+    'Ripple': '涟漪',
+    'ripple': '涟漪',
+    'Rise': '上升',
+    'rise': '上升',
+    'Risk': '风险',
+    'risk': '风险',
+    'Risks': '风险',
+    'risks': '风险',
+    'Robust': '健壮',
+    'robust': '健壮',
+    'Rollback': '回滚',
+    'rollback': '回滚',
+    'Rolled': '已回滚',
+    'rolled': '已回滚',
+    'Root': '根',
+    'root': '根',
+    'Roots': '根',
+    'roots': '根',
+    'Rotate': '轮换',
+    'rotate': '轮换',
+    'Rotation': '轮换',
+    'rotation': '轮换',
+    'Round': '轮次',
+    'round': '轮次',
+    'Rounds': '轮次',
+    'rounds': '轮次',
+    'Route': '路由',
+    'route': '路由',
+    'Routes': '路由',
+    'routes': '路由',
+    'Router': '路由器',
+    'router': '路由器',
+    'Routers': '路由器',
+    'routers': '路由器',
+    'Routine': '例程',
+    'routine': '例程',
+    'Routines': '例程',
+    'routines': '例程',
+    'Row': '行',
+    'row': '行',
+    'Rows': '行',
+    'rows': '行',
+    'Rule': '规则',
+    'rule': '规则',
+    'Rules': '规则',
+    'rules': '规则',
+    'Run': '运行',
+    'run': '运行',
+    'Running': '运行中',
+    'running': '运行中',
+    'Runtime': '运行时',
+    'runtime': '运行时',
+    'Safe': '安全',
+    'safe': '安全',
+    'Safety': '安全',
+    'safety': '安全',
+    'Sample': '样本',
+    'sample': '样本',
+    'Samples': '样本',
+    'samples': '样本',
+    'Sampling': '采样',
+    'sampling': '采样',
+    'Sanitize': '净化',
+    'sanitize': '净化',
+    'Sanitized': '已净化',
+    'sanitized': '已净化',
+    'Sanitization': '净化',
+    'sanitization': '净化',
+    'Save': '保存',
+    'save': '保存',
+    'Saved': '已保存',
+    'saved': '已保存',
+    'Saving': '保存中',
+    'saving': '保存中',
+    'Scale': '缩放',
+    'scale': '缩放',
+    'Scaled': '已缩放',
+    'scaled': '已缩放',
+    'Scaler': '缩放器',
+    'scaler': '缩放器',
+    'Scaling': '扩展',
+    'scaling': '扩展',
+    'Scan': '扫描',
+    'scan': '扫描',
+    'Scanned': '已扫描',
+    'scanned': '已扫描',
+    'Scanner': '扫描器',
+    'scanner': '扫描器',
+    'Scanning': '扫描中',
+    'scanning': '扫描中',
+    'Schedule': '调度',
+    'schedule': '调度',
+    'Scheduled': '已调度',
+    'scheduled': '已调度',
+    'Scheduler': '调度器',
+    'scheduler': '调度器',
+    'Schema': '模式',
+    'schema': '模式',
+    'Schemas': '模式',
+    'schemas': '模式',
+    'Scheme': '方案',
+    'scheme': '方案',
+    'Schemes': '方案',
+    'schemes': '方案',
+    'Scope': '范围',
+    'scope': '范围',
+    'Scopes': '范围',
+    'scopes': '范围',
+    'Score': '分数',
+    'score': '分数',
+    'Scores': '分数',
+    'scores': '分数',
+    'Scramble': '打乱',
+    'scramble': '打乱',
+    'Scrambled': '已打乱',
+    'scrambled': '已打乱',
+    'Screen': '屏幕',
+    'screen': '屏幕',
+    'Screens': '屏幕',
+    'screens': '屏幕',
+    'Script': '脚本',
+    'script': '脚本',
+    'Scripts': '脚本',
+    'scripts': '脚本',
+    'Scroll': '滚动',
+    'scroll': '滚动',
+    'Search': '搜索',
+    'search': '搜索',
+    'Searches': '搜索',
+    'searches': '搜索',
+    'Searching': '搜索中',
+    'searching': '搜索中',
+    'Second': '秒',
+    'second': '秒',
+    'Seconds': '秒',
+    'seconds': '秒',
+    'Secret': '秘密',
+    'secret': '秘密',
+    'Secrets': '秘密',
+    'secrets': '秘密',
+    'Section': '章节',
+    'section': '章节',
+    'Sections': '章节',
+    'sections': '章节',
+    'Secure': '安全',
+    'secure': '安全',
+    'Secured': '已安全',
+    'secured': '已安全',
+    'Security': '安全',
+    'security': '安全',
+    'Seed': '种子',
+    'seed': '种子',
+    'Seeds': '种子',
+    'seeds': '种子',
+    'Seek': '查找',
+    'seek': '查找',
+    'Segment': '段',
+    'segment': '段',
+    'Segments': '段',
+    'segments': '段',
+    'Select': '选择',
+    'select': '选择',
+    'Selected': '已选择',
+    'selected': '已选择',
+    'Selection': '选择',
+    'selection': '选择',
+    'Selector': '选择器',
+    'selector': '选择器',
+    'Selectors': '选择器',
+    'selectors': '选择器',
+    'Send': '发送',
+    'send': '发送',
+    'Sender': '发送者',
+    'sender': '发送者',
+    'Sending': '发送中',
+    'sending': '发送中',
+    'Sent': '已发送',
+    'sent': '已发送',
+    'Sense': '感知',
+    'sense': '感知',
+    'Sensitive': '敏感',
+    'sensitive': '敏感',
+    'Sequence': '序列',
+    'sequence': '序列',
+    'Sequences': '序列',
+    'sequences': '序列',
+    'Sequential': '顺序',
+    'sequential': '顺序',
+    'Serial': '串行',
+    'serial': '串行',
+    'Serialize': '序列化',
+    'serialize': '序列化',
+    'Serialized': '已序列化',
+    'serialized': '已序列化',
+    'Serialization': '序列化',
+    'serialization': '序列化',
+    'Server': '服务器',
+    'server': '服务器',
+    'Servers': '服务器',
+    'servers': '服务器',
+    'Service': '服务',
+    'service': '服务',
+    'Services': '服务',
+    'services': '服务',
+    'Session': '会话',
+    'session': '会话',
+    'Sessions': '会话',
+    'sessions': '会话',
+    'Set': '设置',
+    'set': '设置',
+    'Sets': '集合',
+    'sets': '集合',
+    'Setting': '设置',
+    'setting': '设置',
+    'Settings': '设置',
+    'settings': '设置',
+    'Setup': '设置',
+    'setup': '设置',
+    'Severity': '严重性',
+    'severity': '严重性',
+    'Shadow': '影子',
+    'shadow': '影子',
+    'Shallow': '浅',
+    'shallow': '浅',
+    'Shape': '形状',
+    'shape': '形状',
+    'Share': '共享',
+    'share': '共享',
+    'Shared': '共享',
+    'shared': '共享',
+    'Shard': '分片',
+    'shard': '分片',
+    'Shards': '分片',
+    'shards': '分片',
+    'Sheet': '表',
+    'sheet': '表',
+    'Sheets': '表',
+    'sheets': '表',
+    'Shell': 'Shell',
+    'shell': 'Shell',
+    'Shift': '移位',
+    'shift': '移位',
+    'Show': '显示',
+    'show': '显示',
+    'Shown': '已显示',
+    'shown': '已显示',
+    'Shrink': '收缩',
+    'shrink': '收缩',
+    'Shrinking': '收缩中',
+    'shrinking': '收缩中',
+    'Shutdown': '关闭',
+    'shutdown': '关闭',
+    'Shut down': '关闭',
+    'shut down': '关闭',
+    'Side': '侧',
+    'side': '侧',
+    'Sideload': '旁加载',
+    'sideload': '旁加载',
+    'Signal': '信号',
+    'signal': '信号',
+    'Signals': '信号',
+    'signals': '信号',
+    'Signature': '签名',
+    'signature': '签名',
+    'Signatures': '签名',
+    'signatures': '签名',
+    'Signed': '已签名',
+    'signed': '已签名',
+    'Sign': '签名',
+    'sign': '签名',
+    'Signing': '签名中',
+    'signing': '签名中',
+    'Significant': '显著',
+    'significant': '显著',
+    'Silent': '静默',
+    'silent': '静默',
+    'Simple': '简单',
+    'simple': '简单',
+    'Simplicity': '简单',
+    'simplicity': '简单',
+    'Simplify': '简化',
+    'simplify': '简化',
+    'Simplified': '已简化',
+    'simplified': '已简化',
+    'Simulate': '模拟',
+    'simulate': '模拟',
+    'Simulated': '已模拟',
+    'simulated': '已模拟',
+    'Simulation': '模拟',
+    'simulation': '模拟',
+    'Simulator': '模拟器',
+    'simulator': '模拟器',
+    'Single': '单个',
+    'single': '单个',
+    'Singular': '单数',
+    'singular': '单数',
+    'Sink': '接收端',
+    'sink': '接收端',
+    'Sinks': '接收端',
+    'sinks': '接收端',
+    'Site': '站点',
+    'site': '站点',
+    'Sites': '站点',
+    'sites': '站点',
+    'Size': '大小',
+    'size': '大小',
+    'Sizes': '大小',
+    'sizes': '大小',
+    'Skeleton': '骨架',
+    'skeleton': '骨架',
+    'Sketch': '草图',
+    'sketch': '草图',
+    'Skip': '跳过',
+    'skip': '跳过',
+    'Skipped': '已跳过',
+    'skipped': '已跳过',
+    'Slice': '切片',
+    'slice': '切片',
+    'Slices': '切片',
+    'slices': '切片',
+    'Smooth': '平滑',
+    'smooth': '平滑',
+    'Snapshot': '快照',
+    'snapshot': '快照',
+    'Snapshots': '快照',
+    'snapshots': '快照',
+    'Socket': '套接字',
+    'socket': '套接字',
+    'Sockets': '套接字',
+    'sockets': '套接字',
+    'Soft': '软',
+    'soft': '软',
+    'Software': '软件',
+    'software': '软件',
+    'Solid': '可靠',
+    'solid': '可靠',
+    'Sort': '排序',
+    'sort': '排序',
+    'Sorted': '已排序',
+    'sorted': '已排序',
+    'Sorting': '排序中',
+    'sorting': '排序中',
+    'Sound': '声音',
+    'sound': '声音',
+    'Source': '源',
+    'source': '源',
+    'Sources': '源',
+    'sources': '源',
+    'Space': '空间',
+    'space': '空间',
+    'Spaces': '空间',
+    'spaces': '空间',
+    'Span': '跨度',
+    'span': '跨度',
+    'Spawn': '生成',
+    'spawn': '生成',
+    'Spawned': '已生成',
+    'spawned': '已生成',
+    'Special': '特殊',
+    'special': '特殊',
+    'Specific': '特定',
+    'specific': '特定',
+    'Specification': '规范',
+    'specification': '规范',
+    'Specifications': '规范',
+    'specifications': '规范',
+    'Specify': '指定',
+    'specify': '指定',
+    'Specified': '已指定',
+    'specified': '已指定',
+    'Spec': '规范',
+    'spec': '规范',
+    'Specs': '规范',
+    'specs': '规范',
+    'Speed': '速度',
+    'speed': '速度',
+    'Speedy': '快速',
+    'speedy': '快速',
+    'Spill': '溢出',
+    'spill': '溢出',
+    'Spin': '自旋',
+    'spin': '自旋',
+    'Spinner': '旋转器',
+    'spinner': '旋转器',
+    'Split': '拆分',
+    'split': '拆分',
+    'Splitted': '已拆分',
+    'splitted': '已拆分',
+    'Spoof': '欺骗',
+    'spoof': '欺骗',
+    'Spoofing': '欺骗',
+    'spoofing': '欺骗',
+    'Spread': '传播',
+    'spread': '传播',
+    'Spy': '间谍',
+    'spy': '间谍',
+    'SQL': 'SQL',
+    'sql': 'SQL',
+    'Square': '平方',
+    'square': '平方',
+    'Stability': '稳定',
+    'stability': '稳定',
+    'Stable': '稳定',
+    'stable': '稳定',
+    'Stack': '栈',
+    'stack': '栈',
+    'Stacks': '栈',
+    'stacks': '栈',
+    'Stage': '阶段',
+    'stage': '阶段',
+    'Stages': '阶段',
+    'stages': '阶段',
+    'Stale': '过期',
+    'stale': '过期',
+    'Standalone': '独立',
+    'standalone': '独立',
+    'Standard': '标准',
+    'standard': '标准',
+    'Standards': '标准',
+    'standards': '标准',
+    'Start': '启动',
+    'start': '启动',
+    'Started': '已启动',
+    'started': '已启动',
+    'Starting': '启动中',
+    'starting': '启动中',
+    'Startup': '启动',
+    'startup': '启动',
+    'State': '状态',
+    'state': '状态',
+    'States': '状态',
+    'states': '状态',
+    'Statement': '语句',
+    'statement': '语句',
+    'Statements': '语句',
+    'statements': '语句',
+    'Static': '静态',
+    'static': '静态',
+    'Statistic': '统计',
+    'statistic': '统计',
+    'Statistics': '统计',
+    'statistics': '统计',
+    'Status': '状态',
+    'status': '状态',
+    'Stay': '保持',
+    'stay': '保持',
+    'Steady': '稳定',
+    'steady': '稳定',
+    'Step': '步骤',
+    'step': '步骤',
+    'Steps': '步骤',
+    'steps': '步骤',
+    'Sticky': '粘性',
+    'sticky': '粘性',
+    'Still': '仍然',
+    'still': '仍然',
+    'Stochastic': '随机',
+    'stochastic': '随机',
+    'Stop': '停止',
+    'stop': '停止',
+    'Stopped': '已停止',
+    'stopped': '已停止',
+    'Stopping': '停止中',
+    'stopping': '停止中',
+    'Storage': '存储',
+    'storage': '存储',
+    'Store': '存储',
+    'store': '存储',
+    'Stored': '已存储',
+    'stored': '已存储',
+    'Stores': '存储',
+    'stores': '存储',
+    'Storing': '存储中',
+    'storing': '存储中',
+    'Str': '字符串',
+    'str': '字符串',
+    'Strategy': '策略',
+    'strategy': '策略',
+    'Strategies': '策略',
+    'strategies': '策略',
+    'Stream': '流',
+    'stream': '流',
+    'Streams': '流',
+    'streams': '流',
+    'Streaming': '流式',
+    'streaming': '流式',
+    'Strict': '严格',
+    'strict': '严格',
+    'String': '字符串',
+    'string': '字符串',
+    'Strings': '字符串',
+    'strings': '字符串',
+    'Strip': '去除',
+    'strip': '去除',
+    'Stripped': '已去除',
+    'stripped': '已去除',
+    'Stroke': '笔画',
+    'stroke': '笔画',
+    'Strong': '强',
+    'strong': '强',
+    'Structure': '结构',
+    'structure': '结构',
+    'Structures': '结构',
+    'structures': '结构',
+    'Structured': '结构化',
+    'structured': '结构化',
+    'Stub': '桩',
+    'stub': '桩',
+    'Stubs': '桩',
+    'stubs': '桩',
+    'Study': '研究',
+    'study': '研究',
+    'Style': '样式',
+    'style': '样式',
+    'Styles': '样式',
+    'styles': '样式',
+    'Sub': '子',
+    'sub': '子',
+    'Subject': '主题',
+    'subject': '主题',
+    'Subjects': '主题',
+    'subjects': '主题',
+    'Submit': '提交',
+    'submit': '提交',
+    'Submitted': '已提交',
+    'submitted': '已提交',
+    'Subnet': '子网',
+    'subnet': '子网',
+    'Subnets': '子网',
+    'subnets': '子网',
+    'Subscribe': '订阅',
+    'subscribe': '订阅',
+    'Subscribed': '已订阅',
+    'subscribed': '已订阅',
+    'Subscriber': '订阅者',
+    'subscriber': '订阅者',
+    'Subscribers': '订阅者',
+    'subscribers': '订阅者',
+    'Subsequent': '后续',
+    'subsequent': '后续',
+    'Subset': '子集',
+    'subset': '子集',
+    'Subsystem': '子系统',
+    'subsystem': '子系统',
+    'Subsystems': '子系统',
+    'subsystems': '子系统',
+    'Subtask': '子任务',
+    'subtask': '子任务',
+    'Subtasks': '子任务',
+    'subtasks': '子任务',
+    'Subtle': '微妙',
+    'subtle': '微妙',
+    'Subtract': '减去',
+    'subtract': '减去',
+    'Subtraction': '减法',
+    'subtraction': '减法',
+    'Succeed': '成功',
+    'succeed': '成功',
+    'Succeeded': '已成功',
+    'succeeded': '已成功',
+    'Success': '成功',
+    'success': '成功',
+    'Successful': '成功',
+    'successful': '成功',
+    'Successfully': '成功',
+    'successfully': '成功',
+    'Suffix': '后缀',
+    'suffix': '后缀',
+    'Suffixes': '后缀',
+    'suffixes': '后缀',
+    'Suite': '套件',
+    'suite': '套件',
+    'Suites': '套件',
+    'suites': '套件',
+    'Summarize': '总结',
+    'summarize': '总结',
+    'Summarized': '已总结',
+    'summarized': '已总结',
+    'Summary': '摘要',
+    'summary': '摘要',
+    'Summaries': '摘要',
+    'summaries': '摘要',
+    'Super': '超级',
+    'super': '超级',
+    'Supervise': '监督',
+    'supervise': '监督',
+    'Supervised': '已监督',
+    'supervised': '已监督',
+    'Supervision': '监督',
+    'supervision': '监督',
+    'Supplier': '供应商',
+    'supplier': '供应商',
+    'Suppliers': '供应商',
+    'suppliers': '供应商',
+    'Supply': '供应',
+    'supply': '供应',
+    'Support': '支持',
+    'support': '支持',
+    'Supported': '已支持',
+    'supported': '已支持',
+    'Supports': '支持',
+    'supports': '支持',
+    'Suppress': '抑制',
+    'suppress': '抑制',
+    'Suppressed': '已抑制',
+    'suppressed': '已抑制',
+    'Suppression': '抑制',
+    'suppression': '抑制',
+    'Surface': '表面',
+    'surface': '表面',
+    'Surge': '突发',
+    'surge': '突发',
+    'Surplus': '过剩',
+    'surplus': '过剩',
+    'Surround': '环绕',
+    'surround': '环绕',
+    'Surrounding': '周围',
+    'surrounding': '周围',
+    'Survey': '调查',
+    'survey': '调查',
+    'Survive': '存活',
+    'survive': '存活',
+    'Survivor': '幸存者',
+    'survivor': '幸存者',
+    'Suspect': '可疑',
+    'suspect': '可疑',
+    'Suspend': '挂起',
+    'suspend': '挂起',
+    'Suspended': '已挂起',
+    'suspended': '已挂起',
+    'Suspension': '挂起',
+    'suspension': '挂起',
+    'Swap': '交换',
+    'swap': '交换',
+    'Swapped': '已交换',
+    'swapped': '已交换',
+    'Swarm': '集群',
+    'swarm': '集群',
+    'Sweep': '扫描',
+    'sweep': '扫描',
+    'Sweeping': '扫描中',
+    'sweeping': '扫描中',
+    'Switch': '开关',
+    'switch': '开关',
+    'Switched': '已切换',
+    'switched': '已切换',
+    'Switching': '切换中',
+    'switching': '切换中',
+    'Symbol': '符号',
+    'symbol': '符号',
+    'Symbols': '符号',
+    'symbols': '符号',
+    'Sync': '同步',
+    'sync': '同步',
+    'Synced': '已同步',
+    'synced': '已同步',
+    'Syncing': '同步中',
+    'syncing': '同步中',
+    'Synchronization': '同步',
+    'synchronization': '同步',
+    'Synchronize': '同步',
+    'synchronize': '同步',
+    'Synchronized': '已同步',
+    'synchronized': '已同步',
+    'Syntax': '语法',
+    'syntax': '语法',
+    'System': '系统',
+    'system': '系统',
+    'Systems': '系统',
+    'systems': '系统',
+    'Ultimate': '最终',
+    'ultimate': '最终',
+    'Unable': '无法',
+    'unable': '无法',
+    'Unavailable': '不可用',
+    'unavailable': '不可用',
+    'Unbalanced': '不平衡',
+    'unbalanced': '不平衡',
+    'Unbind': '解绑',
+    'unbind': '解绑',
+    'Unblock': '解除',
+    'unblock': '解除',
+    'Unbounded': '无界',
+    'unbounded': '无界',
+    'Uncertain': '不确定',
+    'uncertain': '不确定',
+    'Unchanged': '未变更',
+    'unchanged': '未变更',
+    'Uncle': '清理',
+    'uncle': '清理',
+    'Uncommitted': '未提交',
+    'uncommitted': '未提交',
+    'Uncommon': '不常见',
+    'uncommon': '不常见',
+    'Uncompress': '解压缩',
+    'uncompress': '解压缩',
+    'Uncompressed': '未压缩',
+    'uncompressed': '未压缩',
+    'Unconditional': '无条件',
+    'unconditional': '无条件',
+    'Unconfigure': '取消配置',
+    'unconfigure': '取消配置',
+    'Unconnected': '未连接',
+    'unconnected': '未连接',
+    'Unconscious': '无意识',
+    'unconscious': '无意识',
+    'Uncontrolled': '未控制',
+    'uncontrolled': '未控制',
+    'Uncover': '发现',
+    'uncover': '发现',
+    'Uncovered': '已发现',
+    'uncovered': '已发现',
+    'Undefined': '未定义',
+    'Under': '下',
+    'under': '下',
+    'Underflow': '下溢',
+    'underflow': '下溢',
+    'Underlying': '底层',
+    'underlying': '底层',
+    'Undermine': '破坏',
+    'undermine': '破坏',
+    'Understand': '理解',
+    'understand': '理解',
+    'Understanding': '理解',
+    'understanding': '理解',
+    'Undo': '撤销',
+    'undo': '撤销',
+    'Undocumented': '未记录',
+    'undocumented': '未记录',
+    'Unencrypted': '未加密',
+    'unencrypted': '未加密',
+    'Unexpected': '意外',
+    'unexpected': '意外',
+    'Unfair': '不公平',
+    'unfair': '不公平',
+    'Unfinished': '未完成',
+    'unfinished': '未完成',
+    'Unfit': '不适合',
+    'unfit': '不适合',
+    'Unfold': '展开',
+    'unfold': '展开',
+    'Unhandled': '未处理',
+    'unhandled': '未处理',
+    'Unhealthy': '不健康',
+    'unhealthy': '不健康',
+    'Unicode': 'Unicode',
+    'unicode': 'Unicode',
+    'Unified': '统一',
+    'unified': '统一',
+    'Uniform': '均匀',
+    'uniform': '均匀',
+    'Unify': '统一',
+    'unify': '统一',
+    'Uninitialized': '未初始化',
+    'uninitialized': '未初始化',
+    'Uninstall': '卸载',
+    'uninstall': '卸载',
+    'Uninstalled': '已卸载',
+    'uninstalled': '已卸载',
+    'Union': '联合',
+    'union': '联合',
+    'Unique': '唯一',
+    'unique': '唯一',
+    'Unit': '单元',
+    'unit': '单元',
+    'Units': '单元',
+    'units': '单元',
+    'Universal': '通用',
+    'universal': '通用',
+    'Unix': 'Unix',
+    'unix': 'Unix',
+    'Unknown': '未知',
+    'unknown': '未知',
+    'Unlimited': '无限',
+    'unlimited': '无限',
+    'Unlink': '取消链接',
+    'unlink': '取消链接',
+    'Unload': '卸载',
+    'unload': '卸载',
+    'Unloaded': '已卸载',
+    'unloaded': '已卸载',
+    'Unlock': '解锁',
+    'unlock': '解锁',
+    'Unlocked': '已解锁',
+    'unlocked': '已解锁',
+    'Unmanaged': '非托管',
+    'unmanaged': '非托管',
+    'Unmarshal': '反序列化',
+    'unmarshal': '反序列化',
+    'Unmatched': '不匹配',
+    'unmatched': '不匹配',
+    'Unmodified': '未修改',
+    'unmodified': '未修改',
+    'Unmonitored': '未监控',
+    'unmonitored': '未监控',
+    'Unmount': '卸载',
+    'unmount': '卸载',
+    'Unmounted': '已卸载',
+    'unmounted': '已卸载',
+    'Unnecessary': '不必要',
+    'unnecessary': '不必要',
+    'Unordered': '无序',
+    'unordered': '无序',
+    'Unorganized': '未组织',
+    'unorganized': '未组织',
+    'Unpack': '解包',
+    'unpack': '解包',
+    'Unpacked': '已解包',
+    'unpacked': '已解包',
+    'Unpaid': '未支付',
+    'unpaid': '未支付',
+    'Unpark': '取消驻留',
+    'unpark': '取消驻留',
+    'Unplanned': '未计划',
+    'unplanned': '未计划',
+    'Unpleasant': '不愉快',
+    'unpleasant': '不愉快',
+    'Unplug': '拔出',
+    'unplug': '拔出',
+    'Unplugged': '已拔出',
+    'unplugged': '已拔出',
+    'Unpopular': '不流行',
+    'unpopular': '不流行',
+    'Unreachable': '不可达',
+    'unreachable': '不可达',
+    'Unread': '未读',
+    'unread': '未读',
+    'Unreadable': '不可读',
+    'unreadable': '不可读',
+    'Unrealistic': '不现实',
+    'unrealistic': '不现实',
+    'Unrecognized': '未识别',
+    'unrecognized': '未识别',
+    'Unrelated': '无关',
+    'unrelated': '无关',
+    'Unreliable': '不可靠',
+    'unreliable': '不可靠',
+    'Unsafe': '不安全',
+    'unsafe': '不安全',
+    'Unsecured': '不安全',
+    'unsecured': '不安全',
+    'Unstable': '不稳定',
+    'unstable': '不稳定',
+    'Unsubscribe': '取消订阅',
+    'unsubscribe': '取消订阅',
+    'Unsubscribed': '已取消订阅',
+    'unsubscribed': '已取消订阅',
+    'Unsupported': '不支持',
+    'unsupported': '不支持',
+    'Unsurprising': '不意外',
+    'unsurprising': '不意外',
+    'Untagged': '未标记',
+    'untagged': '未标记',
+    'Untainted': '未污染',
+    'untainted': '未污染',
+    'Untested': '未测试',
+    'untested': '未测试',
+    'Untracked': '未跟踪',
+    'untracked': '未跟踪',
+    'Untrusted': '不受信',
+    'untrusted': '不受信',
+    'Unused': '未使用',
+    'unused': '未使用',
+    'Unusual': '不寻常',
+    'unusual': '不寻常',
+    'Unvalidate': '取消验证',
+    'unvalidate': '取消验证',
+    'Unverified': '未验证',
+    'unverified': '未验证',
+    'Unwanted': '不需要',
+    'unwanted': '不需要',
+    'Unwatch': '取消监视',
+    'unwatch': '取消监视',
+    'Unwrap': '解包',
+    'unwrap': '解包',
+    'Unwritten': '未写',
+    'unwritten': '未写',
+    'Update': '更新',
+    'update': '更新',
+    'Updated': '已更新',
+    'updated': '已更新',
+    'Updates': '更新',
+    'updates': '更新',
+    'Updating': '更新中',
+    'updating': '更新中',
+    'Upgrade': '升级',
+    'upgrade': '升级',
+    'Upgraded': '已升级',
+    'upgraded': '已升级',
+    'Upgrading': '升级中',
+    'upgrading': '升级中',
+    'Upload': '上传',
+    'upload': '上传',
+    'Uploaded': '已上传',
+    'uploaded': '已上传',
+    'Uploading': '上传中',
+    'uploading': '上传中',
+    'Uppercase': '大写',
+    'uppercase': '大写',
+    'Upsert': '更新插入',
+    'upsert': '更新插入',
+    'Upstream': '上游',
+    'upstream': '上游',
+    'Up-to-date': '最新',
+    'up-to-date': '最新',
+    'Upward': '向上',
+    'upward': '向上',
+    'Urgent': '紧急',
+    'urgent': '紧急',
+    'Usage': '用法',
+    'usage': '用法',
+    'Use': '使用',
+    'use': '使用',
+    'Used': '已使用',
+    'used': '已使用',
+    'Useful': '有用',
+    'useful': '有用',
+    'User': '用户',
+    'user': '用户',
+    'Users': '用户',
+    'users': '用户',
+    'Utility': '实用工具',
+    'utility': '实用工具',
+    'Utilities': '实用工具',
+    'utilities': '实用工具',
+    'Valid': '有效',
+    'valid': '有效',
+    'Validate': '验证',
+    'validate': '验证',
+    'Validated': '已验证',
+    'validated': '已验证',
+    'Validation': '验证',
+    'validation': '验证',
+    'Validator': '验证器',
+    'validator': '验证器',
+    'Validity': '有效性',
+    'validity': '有效性',
+    'Value': '值',
+    'value': '值',
+    'Values': '值',
+    'values': '值',
+    'Variable': '变量',
+    'variable': '变量',
+    'Variables': '变量',
+    'variables': '变量',
+    'Variant': '变体',
+    'variant': '变体',
+    'Variants': '变体',
+    'variants': '变体',
+    'Variation': '变化',
+    'variation': '变化',
+    'Variety': '多样',
+    'variety': '多样',
+    'Vector': '向量',
+    'vector': '向量',
+    'Vectors': '向量',
+    'vectors': '向量',
+    'Vendor': '供应商',
+    'vendor': '供应商',
+    'Vendors': '供应商',
+    'vendors': '供应商',
+    'Verb': '动词',
+    'verb': '动词',
+    'Verbose': '详细',
+    'verbose': '详细',
+    'Verification': '验证',
+    'verification': '验证',
+    'Verify': '验证',
+    'verify': '验证',
+    'Verified': '已验证',
+    'verified': '已验证',
+    'Version': '版本',
+    'version': '版本',
+    'Versions': '版本',
+    'versions': '版本',
+    'Vertical': '垂直',
+    'vertical': '垂直',
+    'Vet': '审查',
+    'vet': '审查',
+    'Vetted': '已审查',
+    'vetted': '已审查',
+    'Veto': '否决',
+    'veto': '否决',
+    'Viable': '可行',
+    'viable': '可行',
+    'Vibrant': '活跃',
+    'vibrant': '活跃',
+    'Victim': '受害者',
+    'victim': '受害者',
+    'Video': '视频',
+    'video': '视频',
+    'Videos': '视频',
+    'videos': '视频',
+    'View': '视图',
+    'view': '视图',
+    'Views': '视图',
+    'views': '视图',
+    'Viewer': '查看器',
+    'viewer': '查看器',
+    'Viewers': '查看器',
+    'viewers': '查看器',
+    'Virtual': '虚拟',
+    'virtual': '虚拟',
+    'Visibility': '可见性',
+    'visibility': '可见性',
+    'Visible': '可见',
+    'visible': '可见',
+    'Vision': '愿景',
+    'vision': '愿景',
+    'Visit': '访问',
+    'visit': '访问',
+    'Visitor': '访问者',
+    'visitor': '访问者',
+    'Visual': '视觉',
+    'visual': '视觉',
+    'Visualization': '可视化',
+    'visualization': '可视化',
+    'Visualize': '可视化',
+    'visualize': '可视化',
+    'Visualized': '已可视化',
+    'visualized': '已可视化',
+    'Voice': '语音',
+    'voice': '语音',
+    'Volume': '卷',
+    'volume': '卷',
+    'Volumes': '卷',
+    'volumes': '卷',
+    'Vulnerability': '漏洞',
+    'vulnerability': '漏洞',
+    'Vulnerabilities': '漏洞',
+    'vulnerabilities': '漏洞',
+    'Vulnerable': '脆弱',
+    'vulnerable': '脆弱',
+    'Wait': '等待',
+    'wait': '等待',
+    'Waiter': '等待者',
+    'waiter': '等待者',
+    'Waiting': '等待中',
+    'waiting': '等待中',
+    'Wake': '唤醒',
+    'wake': '唤醒',
+    'Wakeup': '唤醒',
+    'wakeup': '唤醒',
+    'Walk': '遍历',
+    'walk': '遍历',
+    'Walking': '遍历中',
+    'walking': '遍历中',
+    'Wall': '墙',
+    'wall': '墙',
+    'Wander': '漫游',
+    'wander': '漫游',
+    'Wanted': '需要',
+    'wanted': '需要',
+    'Warm': '预热',
+    'warm': '预热',
+    'Warmup': '预热',
+    'warmup': '预热',
+    'Warn': '警告',
+    'warn': '警告',
+    'Warning': '警告',
+    'warning': '警告',
+    'Warnings': '警告',
+    'warnings': '警告',
+    'Warranty': '保证',
+    'warranty': '保证',
+    'Watch': '监视',
+    'watch': '监视',
+    'Watched': '已监视',
+    'watched': '已监视',
+    'Watcher': '监视器',
+    'watcher': '监视器',
+    'Watching': '监视中',
+    'watching': '监视中',
+    'Watermark': '水印',
+    'watermark': '水印',
+    'Weak': '弱',
+    'weak': '弱',
+    'Weaken': '削弱',
+    'weaken': '削弱',
+    'Weakness': '弱点',
+    'weakness': '弱点',
+    'Wealth': '财富',
+    'wealth': '财富',
+    'Web': 'Web',
+    'web': 'Web',
+    'Webhook': 'Webhook',
+    'webhook': 'Webhook',
+    'Webhooks': 'Webhook',
+    'webhooks': 'Webhook',
+    'Weight': '权重',
+    'weight': '权重',
+    'Weights': '权重',
+    'weights': '权重',
+    'Welcome': '欢迎',
+    'welcome': '欢迎',
+    'Well': '良好',
+    'well': '良好',
+    'Wheel': '轮子',
+    'wheel': '轮子',
+    'Wide': '宽',
+    'wide': '宽',
+    'Width': '宽度',
+    'width': '宽度',
+    'Wild': '通配',
+    'wild': '通配',
+    'Wildcard': '通配符',
+    'wildcard': '通配符',
+    'Wildcards': '通配符',
+    'wildcards': '通配符',
+    'Will': '将',
+    'will': '将',
+    'Win': '获胜',
+    'win': '获胜',
+    'Window': '窗口',
+    'window': '窗口',
+    'Windows': '窗口',
+    'windows': '窗口',
+    'Wire': '线',
+    'wire': '线',
+    'Wired': '有线',
+    'wired': '有线',
+    'Wireless': '无线',
+    'wireless': '无线',
+    'Withdraw': '撤回',
+    'withdraw': '撤回',
+    'Withdrawn': '已撤回',
+    'withdrawn': '已撤回',
+    'Witness': '见证',
+    'witness': '见证',
+    'Word': '词',
+    'word': '词',
+    'Words': '词',
+    'words': '词',
+    'Work': '工作',
+    'work': '工作',
+    'Worker': '工作者',
+    'worker': '工作者',
+    'Workers': '工作者',
+    'workers': '工作者',
+    'Working': '工作中',
+    'working': '工作中',
+    'Workflow': '工作流',
+    'workflow': '工作流',
+    'Workflows': '工作流',
+    'workflows': '工作流',
+    'Works': '工作',
+    'works': '工作',
+    'Workspace': '工作区',
+    'workspace': '工作区',
+    'Workspaces': '工作区',
+    'workspaces': '工作区',
+    'Wrap': '包装',
+    'wrap': '包装',
+    'Wrapper': '包装器',
+    'wrapper': '包装器',
+    'Wrappers': '包装器',
+    'wrappers': '包装器',
+    'Wrapping': '包装中',
+    'wrapping': '包装中',
+    'Write': '写入',
+    'write': '写入',
+    'Writer': '写入器',
+    'writer': '写入器',
+    'Writers': '写入器',
+    'writers': '写入器',
+    'Writes': '写入',
+    'writes': '写入',
+    'Writing': '写入中',
+    'writing': '写入中',
+    'Written': '已写入',
+    'written': '已写入',
+    'Wrong': '错误',
+    'wrong': '错误',
+    'Xmit': '发送',
+    'xmit': '发送',
+    'XML': 'XML',
+    'xml': 'XML',
+    'YAML': 'YAML',
+    'yaml': 'YAML',
+    'Year': '年',
+    'year': '年',
+    'Years': '年',
+    'years': '年',
+    'Yield': '产出',
+    'yield': '产出',
+    'Yielder': '产出器',
+    'yielder': '产出器',
+    'Zero': '零',
+    'zero': '零',
+    'Zeros': '零',
+    'zeros': '零',
+    'Zip': '压缩',
+    'zip': '压缩',
+    'Zipped': '已压缩',
+    'zipped': '已压缩',
+    'Zone': '区域',
+    'zone': '区域',
+    'Zones': '区域',
+    'zones': '区域',
+    // 常见短语
+    'Use this skill when': '使用此技能当',
+    'This skill performs': '此技能执行',
+    'This skill provides': '此技能提供',
+    'This skill helps': '此技能帮助',
+    'You are an expert': '你是专家',
+    'Follow these steps': '按以下步骤操作',
+    'Do NOT': '不要',
+    'Always': '始终',
+    'Never': '绝不',
+    'Prefer': '优先',
+    'Consider': '考虑',
+    'Requires': '需要',
+    'Required': '必需',
+    'Optional': '可选',
+    'Default': '默认',
+    'See Also': '另请参阅',
+    'Learn More': '了解更多',
+    'Key Features': '主要功能',
+    'Core Concepts': '核心概念',
+    'Architecture': '架构',
+    'Integration': '集成',
+    'Scope': '范围',
+    'Context': '上下文',
+    'Constraints': '约束条件',
+    'Status': '状态',
+};
+// 反向词典（中文到英文），用于 --reverse 模式
+const REVERSE_UI = {};
+const REVERSE_MD = {};
+for (const [en, zh] of Object.entries(UI_TRANSLATIONS)) {
+    if (en !== zh)
+        REVERSE_UI[zh] = en;
+}
+for (const [en, zh] of Object.entries(MD_TRANSLATIONS)) {
+    if (en !== zh)
+        REVERSE_MD[zh] = en;
+}
+function localizeStrings(content, extension, externalDict, reverse) {
+    let result = content;
+    // TypeScript/JavaScript 文件：只处理引号内的字符串
+    if (extension === '.ts' || extension === '.tsx') {
+        const dict = reverse ? REVERSE_UI : UI_TRANSLATIONS;
+        const mergedDict = externalDict?.ui ? { ...dict, ...externalDict.ui } : dict;
+        for (const [english, chinese] of Object.entries(mergedDict)) {
+            const escapedEn = english.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            result = result.replace(new RegExp(`"${escapedEn}"`, 'g'), `"${chinese}"`);
+            result = result.replace(new RegExp(`'${escapedEn}'`, 'g'), `'${chinese}'`);
+            result = result.replace(new RegExp('`' + escapedEn + '`', 'g'), '`' + chinese + '`');
+        }
+        if (externalDict?.patterns) {
+            for (const rule of externalDict.patterns) {
+                if (!rule.type || rule.type === 'ts' || rule.type === 'tsx') {
+                    try {
+                        result = result.replace(new RegExp(rule.find, rule.flags || 'g'), rule.replace);
+                    }
+                    catch { /* skip */ }
+                }
+            }
+        }
+    }
+    // Markdown 文件：处理标题、段落和列表
+    else if (extension === '.md') {
+        const dict = reverse ? REVERSE_MD : MD_TRANSLATIONS;
+        const mergedDict = externalDict?.md ? { ...dict, ...externalDict.md } : dict;
+        for (const [english, chinese] of Object.entries(mergedDict)) {
+            const escapedEn = english.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            result = result.replace(new RegExp(`^(#+)\\s*${escapedEn}\\s*$`, 'gm'), `$1 ${chinese}`);
+            result = result.replace(new RegExp(`^(#+)\\s*${escapedEn}:\\s*$`, 'gm'), `$1 ${chinese}：`);
+            result = result.replace(new RegExp(`\\b${escapedEn}\\b`, 'gi'), chinese);
+        }
+        if (!reverse) {
+            const patterns = [
+                [/\b(The|This|An?)\s+([A-Z][a-z]+)/g, '$2'],
+                [/\bis used to\b/gi, '用于'],
+                [/\bis designed to\b/gi, '设计用于'],
+                [/\ballows you to\b/gi, '允许你'],
+                [/\bprovides a way to\b/gi, '提供一种方式'],
+                [/\bfor example\b/gi, '例如'],
+                [/\bin addition\b/gi, '此外'],
+                [/\bhowever\b/gi, '然而'],
+                [/\btherefore\b/gi, '因此'],
+                [/\bin conclusion\b/gi, '总之'],
+            ];
+            for (const [pattern, replacement] of patterns)
+                result = result.replace(pattern, replacement);
+        }
+        if (externalDict?.patterns) {
+            for (const rule of externalDict.patterns) {
+                if (!rule.type || rule.type === 'md') {
+                    try {
+                        result = result.replace(new RegExp(rule.find, rule.flags || 'g'), rule.replace);
+                    }
+                    catch { /* skip */ }
+                }
+            }
+        }
+    }
+    // JSON 文件：替换字符串值中的英文内容
+    else if (extension === '.json') {
+        try {
+            const obj = JSON.parse(result);
+            const dict = reverse ? { ...REVERSE_UI, ...REVERSE_MD } : { ...UI_TRANSLATIONS, ...MD_TRANSLATIONS };
+            const mergedDict = (externalDict?.ui || externalDict?.md) ? { ...dict, ...externalDict.ui, ...externalDict.md } : dict;
+            function walkJson(node) {
+                if (typeof node === 'string') {
+                    let s = node;
+                    let mod = false;
+                    for (const [en, zh] of Object.entries(mergedDict)) {
+                        const re = new RegExp(en.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                        if (re.test(s)) {
+                            s = s.replace(re, zh);
+                            mod = true;
+                        }
+                    }
+                    return [s, mod];
+                }
+                if (Array.isArray(node)) {
+                    let mod = false;
+                    const arr = node.map(v => { const [nv, nm] = walkJson(v); if (nm)
+                        mod = true; return nv; });
+                    return [arr, mod];
+                }
+                if (node !== null && typeof node === 'object') {
+                    let mod = false;
+                    const obj = {};
+                    for (const key of Object.keys(node)) {
+                        const [nv, nm] = walkJson(node[key]);
+                        if (nm)
+                            mod = true;
+                        obj[key] = nv;
+                    }
+                    return [obj, mod];
+                }
+                return [node, false];
+            }
+            const [newObj, modified] = walkJson(obj);
+            if (modified) {
+                result = JSON.stringify(newObj, null, 2);
+            }
+        }
+        catch { /* not valid JSON */ }
+    }
+    return result;
+}
+function processFile(filePath, logFile, externalDict, reverse) {
+    try {
+        let content = fs.readFileSync(filePath, 'utf-8');
+        if (content.length > 0 && content.charCodeAt(0) === 0xFEFF) {
+            content = content.slice(1);
+        }
+        const ext = path.extname(filePath).toLowerCase();
+        const newContent = localizeStrings(content, ext, externalDict, reverse);
+        if (newContent !== content) {
+            fs.writeFileSync(filePath, newContent);
+            appendLog(logFile, '✓ 已翻译: ' + path.basename(filePath));
+            return true;
+        }
+        return false;
+    }
+    catch (err) {
+        appendLog(logFile, '✗ 失败: ' + path.basename(filePath) + ' - ' + (err instanceof Error ? err.message : String(err)));
+        return false;
+    }
+}
+function dryRunProcessFile(filePath, externalDict, reverse) {
+    try {
+        let content = fs.readFileSync(filePath, 'utf-8');
+        if (content.length > 0 && content.charCodeAt(0) === 0xFEFF) {
+            content = content.slice(1);
+        }
+        const ext = path.extname(filePath).toLowerCase();
+        const newContent = localizeStrings(content, ext, externalDict, reverse);
+        if (newContent !== content) {
+            const oldLines = content.split('\n');
+            const newLines = newContent.split('\n');
+            const diffParts = [];
+            const maxLines = 20;
+            let lineCount = 0;
+            for (let i = 0; i < Math.max(oldLines.length, newLines.length); i++) {
+                if (lineCount >= maxLines) {
+                    diffParts.push('  ...（更多差异已省略）');
+                    break;
+                }
+                const oldLine = oldLines[i] ?? '';
+                const newLine = newLines[i] ?? '';
+                if (oldLine !== newLine) {
+                    diffParts.push('- ' + oldLine);
+                    diffParts.push('+ ' + newLine);
+                    lineCount += 2;
+                }
+            }
+            return { changed: true, diff: diffParts.join('\n') };
+        }
+        return { changed: false, diff: '' };
+    }
+    catch {
+        return { changed: false, diff: '' };
+    }
+}
+function generateReport(absTargetDir, allFiles, history, logFile) {
+    const extCount = {};
+    let totalSize = 0;
+    for (const f of allFiles) {
+        extCount[f.extension] = (extCount[f.extension] || 0) + 1;
+        totalSize += f.content.length;
+    }
+    const pending = allFiles.filter(f => !history[f.path] || history[f.path] !== f.mtime);
+    const processedCount = allFiles.length - pending.length;
+    return [
+        '📊 batch-han 统计报告',
+        '目标目录: ' + absTargetDir,
+        '文件总数: ' + allFiles.length,
+        '已处理: ' + processedCount,
+        '待处理: ' + pending.length,
+        '总字符数: ' + totalSize,
+        '文件类型分布:',
+        ...Object.entries(extCount).sort((a, b) => b[1] - a[1]).map(([ext, count]) => '  ' + ext + ': ' + count + ' 个文件'),
+        '日志文件: ' + logFile,
+    ].join('\n');
+}
+function createBatches(fileInfos, logFile) {
+    const batches = [];
+    let currentBatch = [];
+    let currentTokens = 0;
+    for (const info of fileInfos) {
+        if (info.tokenCount > MAX_BATCH_TOKENS - 5000) {
+            if (currentBatch.length > 0) {
+                batches.push(currentBatch);
+                currentBatch = [];
+                currentTokens = 0;
+            }
+            appendLog(logFile, '⚠️ 文件过大（' + info.tokenCount + ' tokens）: ' + path.basename(info.path) + '，单独处理');
+            batches.push([info]);
+            continue;
+        }
+        if (currentTokens + info.tokenCount > MAX_BATCH_TOKENS && currentBatch.length > 0) {
+            batches.push(currentBatch);
+            currentBatch = [];
+            currentTokens = 0;
+        }
+        currentBatch.push(info);
+        currentTokens += info.tokenCount;
+    }
+    if (currentBatch.length > 0)
+        batches.push(currentBatch);
+    return batches;
+}
+function isRunning(pidFile) {
+    try {
+        const pid = fs.readFileSync(pidFile, 'utf-8').trim();
+        if (!pid)
+            return false;
+        try {
+            process.kill(parseInt(pid, 10), 0);
+            return true;
+        }
+        catch {
+            return false;
+        }
+    }
+    catch {
+        return false;
+    }
+}
+function showHelp() {
+    return `📖 batch-han 使用说明
+
+用法:
+  /batch-han                   扫描 <src> 目录下的 .ts/.tsx/.md 文件进行汉化
+  /batch-han <目录路径>         扫描指定目录进行汉化
+  /batch-han --status          查看当前执行状态
+  /batch-han -c <并发数>       设置并发数
+
+示例:
+  /batch-han d:/doge-code/.claude/skills   汉化 skills 目录
+  /batch-han .                              汉化当前目录
+  /batch-han --status                       查看进度
+  /batch-han --types=.ts                   仅汉化 .ts 文件
+  /batch-han --types=.md                   仅汉化 .md 文件
+  /batch-han --types=.ts,.tsx,.md          汉化多种文件
+
+说明:
+  - 日志文件 (` + LOG_FILE + `) 和进度文件 (` + PROGRESS_FILE + `)
+    会存放在目标目录下
+  - 跳过 node_modules、.git、dist、build、.doge 目录
+  - 支持断点续传：处理过的文件不会重复处理
+  - 支持文件类型: .ts (UI 字符串) / .tsx (UI 字符串) / .md (文档词汇) / .json (JSON 值)
+  - 可通过 --types 参数指定要处理的文件扩展名（逗号分隔）
+  - .ts/.tsx: 仅替换引号中的 UI 字符串
+  - .md: 替换标题、段落中的英文词汇和常见短语
+
+扩展功能:
+  /batch-han . --dry-run                   预览模式（不实际修改文件）
+  /batch-han . --reverse                   逆向翻译（中文→英文）
+  /batch-han . --exclude=test,mock         排除包含 test/mock 的文件/目录
+  /batch-han . --only=Permission,Config    仅处理文件名含指定关键词的文件
+  /batch-han . --rollback                  回滚最近的备份
+  /batch-han . --report                    输出汉化统计报告
+  /batch-han . --types=.json               汉化 JSON 文件（替换字符串值）
+  /batch-han . --dict=D:/path/to/dict.json  使用外部词典文件
+  - 外部词典: 在目标目录放 ` + DICT_FILE + ` 文件可自定义翻译映射
+  - 忽略规则: 在目标目录放 ` + IGNORE_FILE + ` 文件（每行一个模式，支持 * 通配符）
+  - 备份: 每次修改前自动创建 .bak 文件，支持 --rollback 回滚`;
+}
+export const call = async (args) => {
+    const parts = args.trim().split(/\s+/).filter(Boolean);
+    // ❗ 空参数 → 显示帮助
+    if (parts.length === 0) {
+        return { type: 'text', value: showHelp() };
+    }
+    // 状态查询模式
+    if (parts.length === 1 && (parts[0] === '--status' || parts[0] === '-s')) {
+        const absTargetDir = path.resolve(DEFAULT_DIR);
+        const logFile = path.join(absTargetDir, LOG_FILE);
+        const pidFile = path.join(absTargetDir, PID_FILE);
+        const running = isRunning(pidFile);
+        let log;
+        try {
+            log = fs.readFileSync(logFile, 'utf-8');
+            const lines = log.trim().split('\n');
+            const tail = lines.slice(-20).join('\n');
+            return {
+                type: 'text',
+                value: (running ? '🟢 正在运行中\n' : '🔴 未在运行\n')
+                    + '--- 最近日志（末 20 行） ---\n'
+                    + tail
+                    + '\n---\n查看完整日志: type ' + logFile + '\n清空日志: del ' + logFile,
+            };
+        }
+        catch {
+            return { type: 'text', value: (running ? '🟢 正在运行中' : '🔴 未在运行') + '（无日志）' };
+        }
+    }
+    // ❗ 帮助模式
+    if (parts[0] === '--help' || parts[0] === '-h') {
+        return { type: 'text', value: showHelp() };
+    }
+    let targetDir = DEFAULT_DIR;
+    let concurrency = CONCURRENCY;
+    let extensions = null;
+    let dryRun = false;
+    let reverse = false;
+    let excludePatterns = [];
+    let onlyPatterns = [];
+    let rollback = false;
+    let reportMode = false;
+    let dictPath = null;
+    for (let i = 0; i < parts.length; i++) {
+        if (parts[i] === '--concurrency' || parts[i] === '-c') {
+            concurrency = parseInt(parts[i + 1], 10);
+            if (isNaN(concurrency) || concurrency < 1)
+                concurrency = CONCURRENCY;
+            i++;
+        }
+        else if (parts[i] === '--types') {
+            if (parts[i + 1] && !parts[i + 1].startsWith('-')) {
+                extensions = parts[i + 1].split(',').map(t => t.startsWith('.') ? t.toLowerCase() : '.' + t.toLowerCase());
+                i++;
+            }
+        }
+        else if (parts[i] === '--dry-run') {
+            dryRun = true;
+        }
+        else if (parts[i] === '--reverse') {
+            reverse = true;
+        }
+        else if (parts[i] === '--exclude') {
+            if (parts[i + 1] && !parts[i + 1].startsWith('-')) {
+                excludePatterns = parts[i + 1].split(',').map(s => s.trim()).filter(Boolean);
+                i++;
+            }
+        }
+        else if (parts[i] === '--only') {
+            if (parts[i + 1] && !parts[i + 1].startsWith('-')) {
+                onlyPatterns = parts[i + 1].split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+                i++;
+            }
+        }
+        else if (parts[i] === '--rollback') {
+            rollback = true;
+        }
+        else if (parts[i] === '--report') {
+            reportMode = true;
+        }
+        else if (parts[i] === '--dict') {
+            if (parts[i + 1] && !parts[i + 1].startsWith('-')) {
+                dictPath = path.resolve(parts[i + 1]);
+                i++;
+            }
+        }
+        else if (!parts[i].startsWith('-')) {
+            // ❗ 兼容中文"汉化"前缀：去掉开头的中文"汉化"文字
+            let cleaned = parts[i];
+            cleaned = cleaned.replace(/^[一-龥]+/, '');
+            targetDir = cleaned;
+        }
+    }
+    const absTargetDir = path.resolve(targetDir);
+    const progressFile = path.join(absTargetDir, PROGRESS_FILE);
+    const logFile = path.join(absTargetDir, LOG_FILE);
+    const pidFile = path.join(absTargetDir, PID_FILE);
+    if (!fs.existsSync(absTargetDir)) {
+        return { type: 'text', value: '错误：未找到目录：' + absTargetDir + '\n' + showHelp() };
+    }
+    // 回滚模式
+    if (rollback) {
+        return handleRollback(absTargetDir);
+    }
+    // 检查是否已有实例在运行（仅在非预览/报告模式时检查）
+    if (!dryRun && !reportMode && isRunning(pidFile)) {
+        return { type: 'text', value: '⚠️ 已有 batch-han 实例在运行（PID: ' + fs.readFileSync(pidFile, 'utf-8').trim() + '）\n使用 /batch-han --status 查看进度\n等待完成后重试，或手动删除 ' + pidFile };
+    }
+    // 写入 PID（非预览/报告模式）
+    if (!dryRun && !reportMode) {
+        fs.writeFileSync(pidFile, String(process.pid));
+    }
+    // 初始化日志文件
+    if (!reportMode) {
+        fs.writeFileSync(logFile, '');
+    }
+    const modeDesc = reverse ? ' 🔄 逆向' : dryRun ? ' 🔍 预览' : reportMode ? ' 📊 报告' : '';
+    if (!reportMode) {
+        appendLog(logFile, '🚀 batch-han 启动，PID=' + process.pid + '，目标目录=' + absTargetDir + '，并发数=' + concurrency + modeDesc);
+    }
+    // 同步执行（异步在 bun compiled exe 中不稳定）
+    try {
+        const result = await executeBatchHan(absTargetDir, progressFile, logFile, pidFile, concurrency, extensions, dryRun, reverse, excludePatterns, onlyPatterns, reportMode, dictPath);
+        return { type: 'text', value: result };
+    }
+    catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        if (!reportMode) {
+            appendLog(logFile, '❌ 执行失败: ' + msg);
+        }
+        return { type: 'text', value: '❌ batch-han 失败: ' + msg + '\n查看日志: type ' + logFile };
+    }
+};
+function handleRollback(absTargetDir) {
+    let rollbackCount = 0;
+    let failCount = 0;
+    const bakFiles = [];
+    function walk(cur) {
+        try {
+            for (const e of fs.readdirSync(cur, { withFileTypes: true })) {
+                const full = path.join(cur, e.name);
+                if (e.isDirectory()) {
+                    const b = path.basename(full);
+                    if (b === 'node_modules' || b === '.git' || b === 'dist' || b === 'build' || b === '.doge')
+                        continue;
+                    walk(full);
+                }
+                else if (e.isFile() && e.name.endsWith('.bak')) {
+                    bakFiles.push(full);
+                }
+            }
+        }
+        catch { }
+    }
+    try {
+        walk(absTargetDir);
+        for (const bak of bakFiles) {
+            try {
+                fs.writeFileSync(bak.slice(0, -4), fs.readFileSync(bak, 'utf-8'));
+                fs.unlinkSync(bak);
+                rollbackCount++;
+            }
+            catch {
+                failCount++;
+            }
+        }
+        return { type: 'text', value: '回滚完成: 已恢复 ' + rollbackCount + ' 个文件' + (failCount > 0 ? '，' + failCount + ' 个失败' : '') };
+    }
+    catch (err) {
+        return { type: 'text', value: '回滚失败: ' + (err instanceof Error ? err.message : String(err)) };
+    }
+}
+async function executeBatchHan(absTargetDir, progressFile, logFile, pidFile, concurrency, extensions, dryRun, reverse, excludePatterns, onlyPatterns, reportMode, dictPath) {
+    const extList = extensions || DEFAULT_EXTENSIONS;
+    const extName = extList.join(', ');
+    let externalDict = {};
+    if (dictPath) {
+        try {
+            externalDict = JSON.parse(fs.readFileSync(dictPath, 'utf-8'));
+            if (!reportMode)
+                appendLog(logFile, '已加载外部词典: ' + dictPath);
+        }
+        catch (err) {
+            if (!reportMode)
+                appendLog(logFile, '加载外部词典失败: ' + (err instanceof Error ? err.message : String(err)));
+        }
+    }
+    else {
+        externalDict = loadExternalDict(absTargetDir);
+        if ((externalDict.ui || externalDict.md || externalDict.patterns) && !reportMode)
+            appendLog(logFile, '已加载项目词典: ' + path.join(absTargetDir, DICT_FILE));
+    }
+    const ignorePatterns = loadIgnorePatterns(absTargetDir);
+    const allExcludePatterns = [...(excludePatterns || []), ...ignorePatterns];
+    if (!reportMode) {
+        appendLog(logFile, '扫描目录: ' + absTargetDir + ' (' + extName + ')');
+        if (allExcludePatterns.length > 0)
+            appendLog(logFile, '排除: ' + allExcludePatterns.join(', '));
+        if (dryRun)
+            appendLog(logFile, '预览模式');
+        if (reverse)
+            appendLog(logFile, '逆向模式');
+    }
+    const allFiles = getAllFilesWithInfo(absTargetDir, extList, allExcludePatterns);
+    let filteredFiles = allFiles;
+    if (onlyPatterns.length > 0) {
+        filteredFiles = allFiles.filter(f => {
+            const bn = path.basename(f.path).toLowerCase();
+            const rp = path.relative(absTargetDir, f.path).toLowerCase();
+            return onlyPatterns.some(p => bn.includes(p) || rp.includes(p));
+        });
+        if (!reportMode)
+            appendLog(logFile, '仅处理关键词: ' + onlyPatterns.join(',') + ' (匹配' + filteredFiles.length + ')');
+    }
+    if (filteredFiles.length === 0) {
+        const m = '未找到文件 (' + extName + ')';
+        if (!reportMode)
+            appendLog(logFile, m);
+        return m;
+    }
+    if (!reportMode)
+        appendLog(logFile, '共 ' + filteredFiles.length + ' 个文件');
+    if (reportMode)
+        return generateReport(absTargetDir, filteredFiles, loadHistory(progressFile), logFile);
+    const history = loadHistory(progressFile);
+    let pending = filteredFiles.filter(f => !history[f.path] || history[f.path] !== f.mtime);
+    if (dryRun)
+        pending = filteredFiles;
+    if (pending.length === 0) {
+        const m = '所有文件已是最新';
+        appendLog(logFile, m);
+        return m;
+    }
+    if (!dryRun)
+        appendLog(logFile, '待处理: ' + pending.length + ' 个');
+    let changedCount = 0;
+    const dryRunResults = [];
+    let processedCount = 0;
+    for (const file of pending) {
+        if (dryRun) {
+            const r = dryRunProcessFile(file.path, externalDict, reverse);
+            if (r.changed) {
+                changedCount++;
+                dryRunResults.push({ file: file.path, diff: r.diff });
+            }
+        }
+        else {
+            const changed = processFile(file.path, logFile, externalDict, reverse);
+            if (changed) {
+                changedCount++;
+                try {
+                    const bp = file.path + '.bak';
+                    if (!fs.existsSync(bp))
+                        fs.copyFileSync(file.path, bp);
+                }
+                catch { }
+            }
+            processedCount++;
+            try {
+                history[file.path] = fs.statSync(file.path).mtimeMs;
+            }
+            catch { }
+            if (processedCount % 50 === 0)
+                saveHistory(history, progressFile);
+        }
+    }
+    if (!dryRun) {
+        saveHistory(history, progressFile);
+        try {
+            fs.unlinkSync(pidFile);
+        }
+        catch { }
+        const s = '完成! 处理 ' + changedCount + ' 个文件' + (processedCount > changedCount ? ' (扫描' + processedCount + ')' : '');
+        appendLog(logFile, s);
+        return s;
+    }
+    else {
+        let o = '预览: ' + changedCount + ' 个文件将被修改\n';
+        if (changedCount > 0)
+            o += '\n' + dryRunResults.slice(0, 20).map(r => '文件: ' + path.relative(absTargetDir, r.file) + '\n' + r.diff).join('\n---\n');
+        if (dryRunResults.length > 20)
+            o += '\n... (还有' + (dryRunResults.length - 20) + '个)';
+        return o + '\n\n使用 /batch-han ' + absTargetDir + ' 执行实际汉化';
+    }
+}
+//# sourceMappingURL=batch-han.js.map

@@ -1,0 +1,13 @@
+import { isPolicyAllowed } from '../../services/policyLimits/index.js';
+import { isClaudeAISubscriber } from '../../utils/auth.js';
+export default {
+    type: 'local-jsx',
+    name: 'remote-env',
+    description: '配置远程会话的默认远程环境',
+    isEnabled: () => isClaudeAISubscriber() && isPolicyAllowed('allow_remote_sessions'),
+    get isHidden() {
+        return !isClaudeAISubscriber() || !isPolicyAllowed('allow_remote_sessions');
+    },
+    load: () => import('./remote-env.js'),
+};
+//# sourceMappingURL=index.js.map

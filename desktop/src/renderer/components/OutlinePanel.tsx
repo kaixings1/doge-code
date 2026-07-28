@@ -119,10 +119,10 @@ export function OutlinePanel({
         cwd,
       })
 
-      if (result.success && result.symbols) {
-        setSymbols(result.symbols)
+      if (result?.success && result.symbols) {
+        setSymbols(result.symbols as any[])
       } else {
-        setError(result.error || '无法获取符号大纲')
+        setError(result?.error || '无法获取符号大纲')
         setSymbols([])
       }
     } catch (e) {

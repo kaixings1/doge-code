@@ -80,6 +80,7 @@ interface DogeAPIValue {
   pluginUninstall: (pluginName: string) => Promise<{ success: boolean; error?: string }>
   pluginGetCommand: (pluginName: string, commandName: string) => Promise<{ content: string | null }>
   aiComplete: (input: { filePath: string; code: string; line: number; column: number }) => Promise<{ success: boolean; completions: Array<{ insertText: string; endLine?: number; endColumn?: number; documentation?: string }> }>
+  formatCode: (params: { code: string; language: string; tool: string; cwd: string; range?: { start: number; end: number } }) => Promise<{ success: boolean; output?: string; error?: string }>
   apiTestSend: (request: { url: string; method: string; headers: Record<string, string>; body?: string; bodyType: string }) => Promise<{ success: boolean; status: number; statusText: string; responseHeaders: Record<string, string>; body: string; error?: string }>
   getGitStats: (cwd: string) => Promise<{ commits: Array<{ hash: string; date: string; author: string; message: string; additions: number; deletions: number }> }>
 }
@@ -180,6 +181,14 @@ const dogeAPI: DogeAPIValue = {
   pluginGetCommand: (pluginName: string, commandName: string) => ipcRenderer.invoke('doge:plugin-get-command', pluginName, commandName),
   // 以下为占位 API（主进程 IPC handler 未实现，调用时返回失败）
   aiComplete: async () => ({ success: false, completions: [] }),
+  formatCode: async (params) => {
+    try {
+      const result = await ipcRenderer.invoke('doge:format-code', params)
+      return result
+    } catch (e) {
+      return { success: false, error: e instanceof Error ? e.message : '格式化服务不可用' }
+    }
+  },
   apiTestSend: async () => ({ success: false, status: 0, statusText: '未实现', responseHeaders: {}, body: '', error: 'API 测试功能尚未实现' }),
   getGitStats: async () => ({ commits: [] }),
 }

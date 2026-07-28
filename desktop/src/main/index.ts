@@ -307,6 +307,7 @@ let currentSessionId: string | null = null
 
 function getEngine(): QueryEngine {
   if (!engine) {
+    console.log('[MAIN] Creating new QueryEngine instance')
     const config = loadConfig()
     engineConfig = config
 
@@ -619,9 +620,27 @@ ipcMain.handle('doge:send-message', async (_event, content: string) => {
     }
 
     console.log('[MAIN] calling currentEngine.query(), engineInput type:', typeof engineInput)
+    console.log('[MAIN] conversation messages count:', (currentEngine as unknown as { conversation: { messages: unknown[] } }).conversation.messages.length)
+    const msgs = (currentEngine as unknown as { conversation: { messages: { role: string; content: string }[] } }).conversation.messages
+    for (const m of msgs) {
+      console.log('  history role:', m.role, 'content:', typeof m.content === 'string' ? m.content.slice(0, 60) : JSON.stringify(m.content).slice(0, 60))
+    }
+    const requestBuilder = (currentEngine as unknown as { requestBuilder: { build: (params: unknown) => Promise<{ messages: unknown[] }> } }).requestBuilder
+    const req = await requestBuilder.build({
+      messages: (currentEngine as unknown as { conversation: { messages: { role: string; content: string }[] } }).conversation.messages,
+      system: 'You are Doge Code, a helpful AI programming assistant.',
+      tools: currentEngine.getTools(),
+      model: config.model,
+      maxTokens: 40000,
+    })
+    console.log('[MAIN] API request messages count:', (req as { messages: unknown[] }).messages.length)
     const result = await currentEngine.query(engineInput)
     const messages = result.messages as InternalMessage[]
     console.log('[MAIN] query() returned, state:', result.state, 'messageCount:', messages.length)
+    console.log('[MAIN] all messages:')
+    for (const m of messages) {
+      console.log('  role:', m.role, 'content:', typeof m.content === 'string' ? m.content.slice(0, 80) : JSON.stringify(m.content).slice(0, 80))
+    }
     // 自动保存会话
     if (!currentSessionId && messages.length > 0) {
       currentSessionId = saveSession(messages)
@@ -637,7 +656,7 @@ ipcMain.handle('doge:send-message', async (_event, content: string) => {
     } catch { /* ignore */ }
     const lastAssistant = [...messages].reverse().find(m => m.role === 'assistant')
     const reply = typeof lastAssistant?.content === 'string' ? lastAssistant.content : JSON.stringify(lastAssistant?.content ?? '')
-    console.log('[MAIN] returning reply, length:', reply.length, 'content:', reply.slice(0, 100))
+    console.log('[MAIN] returning reply, length:', reply.length, 'content:', reply.slice(0, 200))
     return { success: true, content: reply }
   } catch (error: unknown) {
     // 保存崩溃恢复标记
@@ -1868,6 +1887,90 @@ ipcMain.handle('doge:open-terminal', async (_event, dirPath: string) => {
     const { execSync } = await import('node:child_process')
     execSync(cmd.join(' '), { windowsHide: true })
     return { success: true }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
+// ─── 代码格式化 ───
+ipcMain.handle('doge:format-code', async (_event, params: { code: string; language: string; tool: string; cwd: string; range?: { start: number; end: number } }) => {
+  try {
+    const { code, language, tool, cwd, range } = params
+    if (!code || !tool) return { success: false, error: '缺少 code 或 tool 参数' }
+
+    const targetFile = path.join(cwd || projectRoot, `__format_tmp__.${language === 'typescript' || language === 'ts' ? 'ts' : language === 'javascript' || language === 'js' ? 'js' : language === 'json' ? 'json' : language === 'python' || language === 'py' ? 'py' : 'txt'}`)
+
+    // 写入临时文件
+    let contentToFormat = code
+    if (range) {
+      const lines = code.split('\n')
+      contentToFormat = lines.slice(range.start, range.end).join('\n')
+    }
+
+    fs.writeFileSync(targetFile, contentToFormat, 'utf-8')
+
+    let result: string
+    switch (tool) {
+      case 'prettier': {
+        const prettierBin = path.join(projectRoot, 'node_modules', '.bin', 'prettier')
+        const hasPrettier = fs.existsSync(prettierBin)
+        if (!hasPrettier) return { success: false, error: '未找到 prettier，请运行 npm install -D prettier' }
+        const { execSync } = await import('node:child_process')
+        result = execSync(`"${prettierBin}" --parser ${language === 'typescript' || language === 'ts' ? 'typescript' : language === 'javascript' || language === 'js' ? 'babel' : language === 'json' ? 'json' : language === 'python' || language === 'py' ? 'python' : 'markdown'} --stdin-filepath "${targetFile}"`, {
+          input: contentToFormat,
+          encoding: 'utf-8',
+          cwd: cwd || projectRoot,
+          timeout: 30_000,
+        })
+        break
+      }
+      case 'biome': {
+        const biomeBin = path.join(projectRoot, 'node_modules', '.bin', 'biome')
+        const hasBiome = fs.existsSync(biomeBin)
+        if (!hasBiome) return { success: false, error: '未找到 biome，请运行 npm install -D @biomejs/biome' }
+        const { execSync } = await import('node:child_process')
+        result = execSync(`"${biomeBin}" format --stdin-file-path "${targetFile}"`, {
+          input: contentToFormat,
+          encoding: 'utf-8',
+          cwd: cwd || projectRoot,
+          timeout: 30_000,
+        })
+        break
+      }
+      case 'eslint': {
+        const eslintBin = path.join(projectRoot, 'node_modules', '.bin', 'eslint')
+        const hasEslint = fs.existsSync(eslintBin)
+        if (!hasEslint) return { success: false, error: '未找到 eslint，请运行 npm install -D eslint' }
+        return { success: false, error: 'eslint 格式化需要 --fix 标志，建议使用 prettier 或 biome 代替' }
+      }
+      case 'dprint': {
+        const dprintBin = path.join(projectRoot, 'node_modules', '.bin', 'dprint')
+        const hasDprint = fs.existsSync(dprintBin)
+        if (!hasDprint) return { success: false, error: '未找到 dprint，请运行 npm install -D dprint' }
+        const { execSync } = await import('node:child_process')
+        result = execSync(`"${dprintBin}" fmt --file "${targetFile}" --stdin`, {
+          input: contentToFormat,
+          encoding: 'utf-8',
+          cwd: cwd || projectRoot,
+          timeout: 30_000,
+        })
+        break
+      }
+      default:
+        return { success: false, error: `不支持的格式化工具: ${tool}。请使用 prettier、biome、eslint 或 dprint` }
+    }
+
+    fs.unlinkSync(targetFile)
+    // 恢复范围内的内容（仅替换范围部分）
+    if (range) {
+      const lines = code.split('\n')
+      const formattedLines = result.split('\n')
+      lines.splice(range.start, range.end - range.start, ...formattedLines)
+      result = lines.join('\n')
+    }
+
+    return { success: true, output: result }
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : '未知错误'
     return { success: false, error: message }
