@@ -36,6 +36,7 @@ import { AICodeReviewPanel } from './components/AICodeReviewPanel.js'
 import { OutlinePanel } from './components/OutlinePanel.js'
 import { DebuggerPanel } from './components/DebuggerPanel.js'
 import { CollaborationPanel } from './components/CollaborationPanel.js'
+import { MonacoEditorPanel } from './components/MonacoEditorPanel.js'
 import { parseMessageContent, InlineToolUseBlock, renderMarkdown } from './shared.js'
 import type { Message, ContentBlock, ToolUseBlock } from './shared.js'
 import { useDesktopVimInput, type VimMode } from '../hooks/useDesktopVimInput.js'
@@ -224,6 +225,7 @@ export function App(): JSX.Element {
   const [showSemanticSearch, setShowSemanticSearch] = useState(false)
   const [showDebuggerPanel, setShowDebuggerPanel] = useState(false)
   const [showCollabPanel, setShowCollabPanel] = useState(false)
+  const [showMonacoPanel, setShowMonacoPanel] = useState(false)
   const [showAIOutline, setShowAIOutline] = useState(false)
   const [showCodeReview, setShowCodeReview] = useState(false)
   const [activeReviewFile, setActiveReviewFile] = useState<string | null>(null)
@@ -1707,6 +1709,7 @@ export function App(): JSX.Element {
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showSemanticSearch ? c.accent : c.textMuted }} onClick={() => setShowSemanticSearch(p => !p)}>🔍 搜索</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showDebuggerPanel ? c.accent : c.textMuted }} onClick={() => setShowDebuggerPanel(p => !p)}>🪲 调试器</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showCollabPanel ? c.accent : c.textMuted }} onClick={() => setShowCollabPanel(p => !p)}>🤝 协作</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showMonacoPanel ? c.accent : c.textMuted }} onClick={() => setShowMonacoPanel(p => !p)}>🖥️ 编辑器</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: c.accent }} onClick={() => { setShowMcpPanel(p => !p); if (!showMcpPanel) { refreshMcpServers(); refreshAgents() } }}>{showMcpPanel ? '收起 MCP' : 'MCP 管理'}</span>
             </div>
           </div>
@@ -1888,6 +1891,11 @@ export function App(): JSX.Element {
         {showCollabPanel && (
           <div style={{ position: 'fixed', top: 60, right: 20, width: 480, height: '75%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
             <CollaborationPanel cwd={workingDir} theme={theme} onClose={() => setShowCollabPanel(false)} />
+          </div>
+        )}
+        {showMonacoPanel && (
+          <div style={{ position: 'fixed', top: 60, right: 20, width: 680, height: '75%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+            <MonacoEditorPanel cwd={workingDir} theme={theme} themeName={effectiveTheme} onClose={() => setShowMonacoPanel(false)} />
           </div>
         )}
         {showShortcuts && (
