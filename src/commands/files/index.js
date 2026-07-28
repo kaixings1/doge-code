@@ -1,0 +1,10 @@
+const files = {
+    type: 'local',
+    name: 'files',
+    description: '列出当前上下文中的所有文件',
+    isEnabled: () => process.env.USER_TYPE === 'ant',
+    supportsNonInteractive: true,
+    load: () => import('./files.js'),
+};
+export default files;
+//# sourceMappingURL=index.js.map

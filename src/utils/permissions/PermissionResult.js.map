@@ -1,0 +1,1 @@
+{"version":3,"file":"PermissionResult.js","sourceRoot":"","sources":["PermissionResult.ts"],"names":[],"mappings":"AAsBA,6EAA6E;AAC7E,MAAM,UAAU,0BAA0B,CACxC,gBAA8C;IAE9C,QAAQ,gBAAgB,EAAE,CAAC;QACzB,KAAK,OAAO;YACV,OAAO,SAAS,CAAA;QAClB,KAAK,MAAM;YACT,OAAO,QAAQ,CAAA;QACjB;YACE,OAAO,4BAA4B,CAAA;IACvC,CAAC;AACH,CAAC"}

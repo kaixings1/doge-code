@@ -13,6 +13,10 @@ doge-bundled.js
 *.bun-build/
 .bun-build/
 .*.bun-build
+*.js.map
+desktop/release/
+desktop/test-results/
+desktop/dist/
 
 # IDE & Editor
 .idea/
@@ -168,4 +172,3 @@ src/commands/database/*.backup
 src/commands/updateskills/index.js
 src/commands/updateskills/updateskills.js
 updateskills.exe
-\"release/\" 

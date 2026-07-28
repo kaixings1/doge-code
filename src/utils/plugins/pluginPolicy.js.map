@@ -1,0 +1,1 @@
+{"version":3,"file":"pluginPolicy.js","sourceRoot":"","sources":["pluginPolicy.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AAEH,OAAO,EAAE,oBAAoB,EAAE,MAAM,yBAAyB,CAAA;AAE9D;;;;;GAKG;AACH,MAAM,UAAU,uBAAuB,CAAC,QAAgB;IACtD,MAAM,aAAa,GAAG,oBAAoB,CAAC,gBAAgB,CAAC,EAAE,cAAc,CAAA;IAC5E,OAAO,aAAa,EAAE,CAAC,QAAQ,CAAC,KAAK,KAAK,CAAA;AAC5C,CAAC"}
