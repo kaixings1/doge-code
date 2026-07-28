@@ -43,7 +43,9 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
   const [bookmarks, setBookmarks] = useState<{line: number; column: number}[]>([])
   const [recentFiles, setRecentFiles] = useState<string[]>([])
   const [symbols, setSymbols] = useState<any[]>([])
+  const [showOutline, setShowOutline] = useState(false)
   const bookmarksRef = useRef<Set<number>>(new Set())
+  const bookmarkDecorationsRef = useRef<Map<number, string[]>>(new Map())
 
   const activeTab = tabs.find(t => t.id === activeTabId)
 
@@ -231,35 +233,36 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
     const position = editor.getPosition()
     if (!position) return
     const line = position.lineNumber
-    const existingIdx = bookmarksRef.current.has(line) ? -1 : bookmarks.findIndex(b => b.line === line)
-    if (existingIdx >= 0) {
+    const monaco = monacoRef.current
+    if (bookmarksRef.current.has(line)) {
+      // 移除书签
       setBookmarks(prev => prev.filter(b => b.line !== line))
       bookmarksRef.current.delete(line)
-      editor.deltaDecorations([], [])
-      bookmarksRef.current.forEach(l => {
-        editor.deltaDecorations([], [
-          {
-            range: new (monacoRef.current as any).Range(l, 1, l, 1),
-            options: { isWholeLine: true, className: 'bookmark-line', glyphMarginClassName: 'bookmark-glyph', glyphMarginHoverMessage: { value: '书签' } }
-          }
-        ])
-      })
+      const oldDecos = bookmarkDecorationsRef.current.get(line) || []
+      editor.deltaDecorations(oldDecos, [])
+      bookmarkDecorationsRef.current.delete(line)
     } else {
+      // 添加书签
       setBookmarks(prev => [...prev, { line, column: position.column }])
       bookmarksRef.current.add(line)
-      editor.deltaDecorations([], [
-        {
-          range: new (monacoRef.current as any).Range(line, 1, line, 1),
-          options: { isWholeLine: true, className: 'bookmark-line', glyphMarginClassName: 'bookmark-glyph', glyphMarginHoverMessage: { value: '书签' } }
-        }
-      ])
+      const decoIds = editor.deltaDecorations([], [{
+        range: new (monaco as any).Range(line, 1, line, 1),
+        options: { isWholeLine: true, className: 'bookmark-line', glyphMarginClassName: 'bookmark-glyph', glyphMarginHoverMessage: { value: '书签' } }
+      }])
+      bookmarkDecorationsRef.current.set(line, decoIds)
     }
   }, [])
 
   const clearBookmarks = useCallback(() => {
+    const editor = editorRef.current
+    if (!editor) return
+    // 清除所有书签装饰
+    bookmarkDecorationsRef.current.forEach((decoIds, _line) => {
+      editor.deltaDecorations(decoIds, [])
+    })
+    bookmarkDecorationsRef.current.clear()
     setBookmarks([])
     bookmarksRef.current.clear()
-    editorRef.current?.deltaDecorations([], [])
   }, [])
 
   const jumpToPrevBookmark = useCallback(() => {
@@ -327,6 +330,7 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
       }
       if (e.key === 'F12') { e.preventDefault(); goToDefinition() }
       if (e.shiftKey && e.key === 'F12') { e.preventDefault(); findReferences() }
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'O') { e.preventDefault(); setShowOutline(p => !p) }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
@@ -336,9 +340,9 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
   useEffect(() => {
     if (activeTab) {
       pushRecentFile(activeTab.filePath)
-      loadSymbols()
+      if (showOutline) loadSymbols()
     }
-  }, [activeTab?.id, pushRecentFile, loadSymbols])
+  }, [activeTab?.id, pushRecentFile, loadSymbols, showOutline])
 
   // 当激活标签页切换时，更新语言
   useEffect(() => {
@@ -346,6 +350,13 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
       setLanguage(activeTab.language)
     }
   }, [activeTab])
+
+  // 切换符号大纲可见性时重新加载
+  useEffect(() => {
+    if (showOutline && activeTab) {
+      loadSymbols()
+    }
+  }, [showOutline, activeTab?.id, loadSymbols])
 
   const monacoTheme = themeName === 'light' ? 'vs' : 'vs-dark'
 
@@ -378,6 +389,7 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
         <button onClick={clearBookmarks} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: 'transparent', color: c.text, cursor: 'pointer', fontSize: '9px' }} title="清除所有书签">清除</button>
         <button onClick={jumpToPrevBookmark} disabled={bookmarks.length === 0} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: 'transparent', color: c.text, cursor: bookmarks.length > 0 ? 'pointer' : 'default', fontSize: '9px' }} title="上一书签 (F2)">↑书签</button>
         <button onClick={jumpToNextBookmark} disabled={bookmarks.length === 0} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: 'transparent', color: c.text, cursor: bookmarks.length > 0 ? 'pointer' : 'default', fontSize: '9px' }} title="下一书签 (Shift+F2)">↓书签</button>
+        <button onClick={() => setShowOutline(p => !p)} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: showOutline ? c.accentDim : 'transparent', color: c.text, cursor: 'pointer', fontSize: '9px' }} title="切换符号大纲 (Ctrl+Shift+O)">📑 大纲</button>
       </div>
 
       {/* 标签页栏 */}
@@ -426,7 +438,7 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: c.textFaint, gap: '8px' }}>
           <div style={{ fontSize: '36px', opacity: 0.3 }}>📝</div>
           <div style={{ fontSize: '11px' }}>输入文件路径并点击"打开"开始编辑</div>
-          <div style={{ fontSize: '9px', color: c.textFaint }}>支持 Ctrl+S 保存 · LSP 补全/定义/引用/符号 · F12 跳转定义 · Shift+F12 查找引用 · 内联补全 · Ctrl+Click 多光标 · F2 书签 · Ctrl+Tab 最近文件</div>
+          <div style={{ fontSize: '9px', color: c.textFaint }}>支持 Ctrl+S 保存 · LSP 补全/定义/引用/符号 · F12 跳转定义 · Shift+F12 查找引用 · 内联补全 · Ctrl+Click 多光标 · F2 书签 · Ctrl+Shift+O 大纲 · Ctrl+Tab 最近文件</div>
         </div>
       ) : (
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex' }}>
@@ -462,7 +474,7 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
             />
           </div>
           {/* 符号大纲侧边栏 */}
-          {symbols.length > 0 && (
+          {showOutline && symbols.length > 0 && (
             <div style={{ width: '200px', borderLeft: `1px solid ${c.border}`, background: c.bgPanel, overflowY: 'auto', fontSize: '10px' }}>
               <div style={{ padding: '6px 8px', borderBottom: `1px solid ${c.border}`, fontWeight: 600, color: c.text, fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>符号大纲</div>
               <div>
