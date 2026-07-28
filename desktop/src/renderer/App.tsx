@@ -3,6 +3,12 @@
  */
 
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
+
+// ─── 日志辅助 ───
+function tsLog(tag: string, ...args: unknown[]): void {
+  const t = new Date().toLocaleTimeString('zh-CN', { hour12: false })
+  console.log(`[${t}] [${tag}]`, ...args)
+}
 import { createRoot } from 'react-dom/client'
 import { StrictMode } from 'react'
 import type { DesktopConfig } from '../desktop/types'
@@ -37,6 +43,7 @@ import { OutlinePanel } from './components/OutlinePanel.js'
 import { DebuggerPanel } from './components/DebuggerPanel.js'
 import { CollaborationPanel } from './components/CollaborationPanel.js'
 import { MonacoEditorPanel } from './components/MonacoEditorPanel.js'
+import { SecurityAuditPanel } from './components/SecurityAuditPanel.js'
 import { parseMessageContent, InlineToolUseBlock, renderMarkdown } from './shared.js'
 import type { Message, ContentBlock, ToolUseBlock } from './shared.js'
 import { useDesktopVimInput, type VimMode } from '../hooks/useDesktopVimInput.js'
@@ -228,6 +235,8 @@ export function App(): JSX.Element {
   const [showMonacoPanel, setShowMonacoPanel] = useState(false)
   const [showAIOutline, setShowAIOutline] = useState(false)
   const [showCodeReview, setShowCodeReview] = useState(false)
+  const [showSecurityAudit, setShowSecurityAudit] = useState(false)
+  const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [activeReviewFile, setActiveReviewFile] = useState<string | null>(null)
   const [showKanban, setShowKanban] = useState(false)
   const [showTimeTracker, setShowTimeTracker] = useState(false)
@@ -601,7 +610,7 @@ export function App(): JSX.Element {
   useEffect(() => {
     const unsub1 = window.dogeAPI.onStateChange((s) => setState(s as QueryState))
     const unsub2 = window.dogeAPI.onChunk((chunk) => {
-      console.log('[RENDERER] onChunk received:', chunk.text?.slice(0, 50))
+      tsLog('RENDERER', 'onChunk received:', chunk.text?.slice(0, 50))
       setCurrentStreaming((p) => {
         const next = p + chunk.text
         currentStreamingRef.current = next
@@ -618,7 +627,7 @@ export function App(): JSX.Element {
   })
   useEffect(() => {
     const unsub = window.dogeAPI.onAutoSend((text) => {
-      console.log('[RENDERER] auto-send received:', text)
+      tsLog('RENDERER', 'auto-send received:', text)
       setInput(text)
       setTimeout(() => {
         autoSendRef.current()
@@ -786,7 +795,7 @@ export function App(): JSX.Element {
 
   const handleSend = useCallback(async (): Promise<void> => {
     const text = input.trim()
-    console.log('[RENDERER] handleSend called, text:', text, 'state:', state)
+    tsLog('RENDERER', 'handleSend called, text:', text, 'state:', state)
     if (!text || state === 'responding') return
     if (!isOnline) { showToast('网络已断开，无法发送消息', 'error'); return }
     setInput(''); setError(null); setCurrentStreaming(''); currentStreamingRef.current = ''
@@ -827,7 +836,7 @@ export function App(): JSX.Element {
     // 构建发送载荷：纯文本或包含图片的 JSON
     let result: { success?: boolean; content?: string; error?: string } | null = null
     try {
-      console.log('[RENDERER] calling window.dogeAPI.sendMessage, text:', text)
+      tsLog('RENDERER', 'calling window.dogeAPI.sendMessage, text:', text)
       if (pendingImages.length > 0) {
         // 多模态消息：文本 + 图片 base64
         const payload = {
@@ -840,25 +849,25 @@ export function App(): JSX.Element {
         // 纯文本消息
         result = await window.dogeAPI.sendMessage(text)
       }
-      console.log('[RENDERER] sendMessage returned, result:', JSON.stringify(result))
+      tsLog('RENDERER', 'sendMessage returned, result:', JSON.stringify(result))
     } catch (e) {
       const errMsg = e instanceof Error ? e.message : '发送失败'
-      console.log('[RENDERER] sendMessage threw error:', errMsg)
+      tsLog('RENDERER', 'sendMessage threw error:', errMsg)
       appendMsg({ id: `msg-${Date.now() + 1}`, role: 'error', content: errMsg })
       setState('idle')
       return
     }
 
     if (result?.error) {
-      console.log('[RENDERER] result has error:', result.error)
+      tsLog('RENDERER', 'result has error:', result.error)
       appendMsg({ id: `msg-${Date.now() + 1}`, role: 'error', content: result.error! })
       if (!document.hasFocus()) window.dogeAPI.notify('Doge Code', `错误: ${result.error.slice(0, 100)}`).catch(() => {})
     } else {
       // 优先使用 result.content，否则使用流式累积的 currentStreaming
       const finalContent = result?.content || currentStreamingRef.current
-      console.log('[RENDERER] result.content:', result?.content?.slice(0, 100), '| currentStreamingRef:', currentStreamingRef.current.slice(0, 100))
+      tsLog('RENDERER', 'result.content:', result?.content?.slice(0, 100), '| currentStreamingRef:', currentStreamingRef.current.slice(0, 100))
       if (finalContent) {
-        console.log('[RENDERER] appending assistant message, length:', finalContent.length)
+        tsLog('RENDERER', 'appending assistant message, length:', finalContent.length)
         appendMsg({ id: `msg-${Date.now() + 1}`, role: 'assistant', content: finalContent })
         if (!document.hasFocus()) window.dogeAPI.notify('Doge Code', `回复完成: ${finalContent.slice(0, 80)}`).catch(() => {})
         // 自动朗读（用户开启时）
@@ -866,7 +875,7 @@ export function App(): JSX.Element {
           setTimeout(() => speakText(finalContent), 200)
         }
       } else {
-        console.log('[RENDERER] finalContent is empty, no message appended')
+        tsLog('RENDERER', 'finalContent is empty, no message appended')
       }
     }
     setCurrentStreaming(''); currentStreamingRef.current = ''
@@ -1712,6 +1721,7 @@ export function App(): JSX.Element {
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showDebuggerPanel ? c.accent : c.textMuted }} onClick={() => setShowDebuggerPanel(p => !p)}>🪲 调试器</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showCollabPanel ? c.accent : c.textMuted }} onClick={() => setShowCollabPanel(p => !p)}>🤝 协作</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showMonacoPanel ? c.accent : c.textMuted }} onClick={() => setShowMonacoPanel(p => !p)}>🖥️ 编辑器</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showSecurityAudit ? c.accent : c.textMuted }} onClick={() => setShowSecurityAudit(p => !p)}>🛡️ 安全</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: c.accent }} onClick={() => { setShowMcpPanel(p => !p); if (!showMcpPanel) { refreshMcpServers(); refreshAgents() } }}>{showMcpPanel ? '收起 MCP' : 'MCP 管理'}</span>
             </div>
           </div>
@@ -1898,6 +1908,11 @@ export function App(): JSX.Element {
         {showMonacoPanel && (
           <div style={{ position: 'fixed', top: 60, right: 20, width: 680, height: '75%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
             <MonacoEditorPanel cwd={workingDir} theme={theme} themeName={effectiveTheme} onClose={() => setShowMonacoPanel(false)} />
+          </div>
+        )}
+        {showSecurityAudit && (
+          <div style={{ position: 'fixed', top: 60, right: 20, width: 520, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+            <SecurityAuditPanel cwd={workingDir} theme={theme} scanPath={selectedFile || workingDir} onNavigateTo={(filePath, lineNumber) => { setSelectedFile(filePath); setShowSecurityAudit(false); /* 可扩展：滚动到对应行 */ }} />
           </div>
         )}
         {showShortcuts && (

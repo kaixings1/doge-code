@@ -8,6 +8,7 @@ import Store from 'electron-store'
 import * as path from 'path'
 import { pathToFileURL } from 'url'
 import * as fs from 'fs'
+import { scanFile as securityScanFile, scanDirectory as securityScanDirectory, SECURITY_RULES } from '../../../src/commands/security-audit/index.js'
 import { QueryEngine, type ToolDefinition } from '../../../src/engine/index.js'
 import type { InternalMessage } from '../../../src/engine/messageNormalizer.js'
 import type { APIRequest } from '../../../src/engine/requestBuilder.js'
@@ -26,6 +27,12 @@ import { getLspClientManager, type LspServerConfig, type LspDiagnostic } from '.
 let mainWindow: BrowserWindow | null = null
 let tray: Tray | null = null
 const store = new Store()
+
+// ─── 日志辅助 ───
+function tsLog(tag: string, ...args: unknown[]): void {
+  const t = new Date().toLocaleTimeString('zh-CN', { hour12: false })
+  console.log(`[${t}] [${tag}]`, ...args)
+}
 
 // ─── 路径 ───
 // 打包后 __dirname = dist/main/，桌面目录 = __dirname/../..
@@ -76,7 +83,7 @@ let currentSessionId: string | null = null
 
 function getEngine(): QueryEngine {
   if (!engine) {
-    console.log('[MAIN] Creating new QueryEngine instance')
+    tsLog('MAIN', 'Creating new QueryEngine instance')
     const config = loadConfig()
     engineConfig = config
 
@@ -120,7 +127,7 @@ Use tools when needed. If a tool call fails or returns empty, try a different ap
     // 将 StreamProcessor 的 chunk 回调连接到 notifyChunk
     engineApi.setChunkCallback((chunk: { type: string; text?: string }) => {
       if (chunk.type === 'text' && chunk.text && mainWindow) {
-        console.log('[MAIN] chunk callback, text:', chunk.text.slice(0, 50))
+        tsLog('MAIN', 'chunk callback, text:', chunk.text.slice(0, 50))
         mainWindow.webContents.send('doge:chunk', { text: chunk.text })
       }
     })
@@ -233,13 +240,13 @@ function createTray(): void {
 
 // 发送消息（使用 QueryEngine）
 ipcMain.handle('doge:send-message', async (_event, content: string) => {
-  console.log('[MAIN] doge:send-message called, content:', content?.slice(0, 100))
+  tsLog('MAIN', 'doge:send-message called, content:', content?.slice(0, 100))
   const currentEngine = getEngine()
   const config = engineConfig!
-  console.log('[MAIN] getEngine() returned, config:', { provider: config.provider, model: config.model, baseUrl: config.baseUrl })
+  tsLog('MAIN', 'getEngine() returned, config:', { provider: config.provider, model: config.model, baseUrl: config.baseUrl })
 
   if (!config.apiKey) {
-    console.log('[MAIN] no apiKey configured')
+    tsLog('MAIN', 'no apiKey configured')
     return { error: '未配置 API Key。请在 .doge/api.json 中配置。' }
   }
 
@@ -275,11 +282,11 @@ ipcMain.handle('doge:send-message', async (_event, content: string) => {
       engineInput = { text: queryText, images: formattedImages }
     }
 
-    console.log('[MAIN] calling currentEngine.query(), engineInput type:', typeof engineInput)
-    console.log('[MAIN] conversation messages count:', (currentEngine as unknown as { conversation: { messages: unknown[] } }).conversation.messages.length)
+    tsLog('MAIN', 'calling currentEngine.query(), engineInput type:', typeof engineInput)
+    tsLog('MAIN', 'conversation messages count:', (currentEngine as unknown as { conversation: { messages: unknown[] } }).conversation.messages.length)
     const msgs = (currentEngine as unknown as { conversation: { messages: { role: string; content: string }[] } }).conversation.messages
     for (const m of msgs) {
-      console.log('  history role:', m.role, 'content:', typeof m.content === 'string' ? m.content.slice(0, 60) : JSON.stringify(m.content).slice(0, 60))
+      tsLog('MAIN', 'history role:', m.role, 'content:', typeof m.content === 'string' ? m.content.slice(0, 60) : JSON.stringify(m.content).slice(0, 60))
     }
     const requestBuilder = (currentEngine as unknown as { requestBuilder: { build: (params: unknown) => Promise<{ messages: unknown[] }> } }).requestBuilder
     const req = await requestBuilder.build({
@@ -289,13 +296,13 @@ ipcMain.handle('doge:send-message', async (_event, content: string) => {
       model: config.model,
       maxTokens: 40000,
     })
-    console.log('[MAIN] API request messages count:', (req as { messages: unknown[] }).messages.length)
+    tsLog('MAIN', 'API request messages count:', (req as { messages: unknown[] }).messages.length)
     const result = await currentEngine.query(engineInput)
     const messages = result.messages as InternalMessage[]
-    console.log('[MAIN] query() returned, state:', result.state, 'messageCount:', messages.length)
-    console.log('[MAIN] all messages:')
+    tsLog('MAIN', 'query() returned, state:', result.state, 'messageCount:', messages.length)
+    tsLog('MAIN', 'all messages:')
     for (const m of messages) {
-      console.log('  role:', m.role, 'content:', typeof m.content === 'string' ? m.content.slice(0, 80) : JSON.stringify(m.content).slice(0, 80))
+      tsLog('MAIN', 'role:', m.role, 'content:', typeof m.content === 'string' ? m.content.slice(0, 80) : JSON.stringify(m.content).slice(0, 80))
     }
     // 自动保存会话
     if (!currentSessionId && messages.length > 0) {
@@ -307,7 +314,7 @@ ipcMain.handle('doge:send-message', async (_event, content: string) => {
     clearCrashRecovery()
     const lastAssistant = [...messages].reverse().find(m => m.role === 'assistant')
     const reply = typeof lastAssistant?.content === 'string' ? lastAssistant.content : JSON.stringify(lastAssistant?.content ?? '')
-    console.log('[MAIN] returning reply, length:', reply.length, 'content:', reply.slice(0, 200))
+    tsLog('MAIN', 'returning reply, length:', reply.length, 'content:', reply.slice(0, 200))
     if (!reply) {
       // 诊断：检查是否有工具调用消息但无文本回复
       const toolCalls = messages.filter(m => m.role === 'assistant' && typeof m.content !== 'string')
@@ -321,7 +328,7 @@ ipcMain.handle('doge:send-message', async (_event, content: string) => {
     // 保存崩溃恢复标记
     saveCrashRecovery(currentSessionId, 0)
     const message = error instanceof Error ? error.message : '未知错误'
-    console.log('[MAIN] query threw error:', message)
+    tsLog('MAIN', 'query threw error:', message)
     return { error: message }
   }
 })
@@ -385,7 +392,9 @@ ipcMain.handle('doge:get-history', () => {
 // 清除对话历史
 ipcMain.handle('doge:clear-history', () => {
   engine = null
+  engineApi = null
   engineConfig = null
+  currentSessionId = null
   return true
 })
 
@@ -678,6 +687,43 @@ ipcMain.handle('doge:apply-fix', async (_event, params: { filePath: string; line
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : String(e)
     return { success: false, error: msg }
+  }
+})
+
+// ─── 安全漏洞扫描 ───
+interface SecurityAuditIssue {
+  file: string
+  line: number
+  rule: string
+  severity: 'high' | 'medium' | 'low'
+  message: string
+  code: string
+}
+ipcMain.handle('doge:security-audit', async (_event, params: { scanPath: string; rules?: string[]; scanType?: 'file' | 'directory' }) => {
+  try {
+    const { scanPath, rules, scanType = 'file' } = params
+    const isFile = scanType === 'file'
+    const issues = isFile ? securityScanFile(scanPath, rules) : securityScanDirectory(scanPath, rules)
+    const issuesWithId: Array<SecurityAuditIssue & { id: string }> = issues.map((issue, idx) => ({ ...issue, id: `sec-${idx}` }))
+    const stats = {
+      total: issuesWithId.length,
+      high: issuesWithId.filter(i => i.severity === 'high').length,
+      medium: issuesWithId.filter(i => i.severity === 'medium').length,
+      low: issuesWithId.filter(i => i.severity === 'low').length,
+    }
+    return { success: true, issues: issuesWithId, stats }
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e)
+    return { success: false, error: msg }
+  }
+})
+
+ipcMain.handle('doge:security-rules', async () => {
+  try {
+    const rules = Object.entries(SECURITY_RULES).map(([key, val]) => ({ id: key, severity: val.severity, message: val.message }))
+    return { success: true, rules }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) }
   }
 })
 
