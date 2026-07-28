@@ -44,6 +44,7 @@ import { DebuggerPanel } from './components/DebuggerPanel.js'
 import { CollaborationPanel } from './components/CollaborationPanel.js'
 import { MonacoEditorPanel } from './components/MonacoEditorPanel.js'
 import { SecurityAuditPanel } from './components/SecurityAuditPanel.js'
+import { PerformanceRefactorPanel } from './components/PerformanceRefactorPanel.js'
 import { parseMessageContent, InlineToolUseBlock, renderMarkdown } from './shared.js'
 import type { Message, ContentBlock, ToolUseBlock } from './shared.js'
 import { useDesktopVimInput, type VimMode } from '../hooks/useDesktopVimInput.js'
@@ -236,6 +237,7 @@ export function App(): JSX.Element {
   const [showAIOutline, setShowAIOutline] = useState(false)
   const [showCodeReview, setShowCodeReview] = useState(false)
   const [showSecurityAudit, setShowSecurityAudit] = useState(false)
+  const [showPerformanceRefactor, setShowPerformanceRefactor] = useState(false)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [activeReviewFile, setActiveReviewFile] = useState<string | null>(null)
   const [showKanban, setShowKanban] = useState(false)
@@ -1722,6 +1724,7 @@ export function App(): JSX.Element {
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showCollabPanel ? c.accent : c.textMuted }} onClick={() => setShowCollabPanel(p => !p)}>🤝 协作</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showMonacoPanel ? c.accent : c.textMuted }} onClick={() => setShowMonacoPanel(p => !p)}>🖥️ 编辑器</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showSecurityAudit ? c.accent : c.textMuted }} onClick={() => setShowSecurityAudit(p => !p)}>🛡️ 安全</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showPerformanceRefactor ? c.accent : c.textMuted }} onClick={() => setShowPerformanceRefactor(p => !p)}>⚡ 重构</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: c.accent }} onClick={() => { setShowMcpPanel(p => !p); if (!showMcpPanel) { refreshMcpServers(); refreshAgents() } }}>{showMcpPanel ? '收起 MCP' : 'MCP 管理'}</span>
             </div>
           </div>
@@ -1913,6 +1916,11 @@ export function App(): JSX.Element {
         {showSecurityAudit && (
           <div style={{ position: 'fixed', top: 60, right: 20, width: 520, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
             <SecurityAuditPanel cwd={workingDir} theme={theme} scanPath={selectedFile || workingDir} onNavigateTo={(filePath, lineNumber) => { setSelectedFile(filePath); setShowSecurityAudit(false); /* 可扩展：滚动到对应行 */ }} />
+          </div>
+        )}
+        {showPerformanceRefactor && (
+          <div style={{ position: 'fixed', top: 60, right: 20, width: 520, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+            <PerformanceRefactorPanel cwd={workingDir} theme={theme} scanPath={selectedFile || workingDir} onNavigateTo={(filePath, lineNumber) => { setSelectedFile(filePath); setShowPerformanceRefactor(false); /* 可扩展：滚动到对应行 */ }} />
           </div>
         )}
         {showShortcuts && (
