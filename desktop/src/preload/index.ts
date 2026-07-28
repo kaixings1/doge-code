@@ -97,10 +97,43 @@ interface DogeAPIValue {
   codeReview: (params: { filePath: string; cwd: string }) => Promise<{ success: boolean; result?: { score: { overall: number; security: number; performance: number; maintainability: number; testability: number }; findings: Array<{ id: string; category: string; severity: string; title: string; description: string; filePath: string; lineNumber: number; column?: number; suggestedFix?: string; originalCode?: string }>; duration?: number }; error?: string }>
   getOutline: (params: { filePath: string; cwd: string }) => Promise<{ success: boolean; symbols?: Array<{ id: string; name: string; kind: string; range: { startLine: number; startColumn: number; endLine: number; endColumn: number }; children?: Array<unknown> }>; error?: string }>
   semanticSearch: (params: { query: string; cwd: string; maxResults?: number; fileTypes?: string[]; directories?: string[] }) => Promise<{ success: boolean; results?: Array<{ filePath: string; lineNumber: number; column: number; content: string; score: number; context?: string }>; error?: string }>
+  debugStart: (params: { cwd: string; script: string; args?: string[] }) => Promise<{ success: boolean; sessionId?: string; pid?: number; error?: string }>
+  debugStop: (sessionId: string) => Promise<{ success: boolean; error?: string }>
+  debugListSessions: () => Promise<{ success: boolean; sessions?: Array<{ id: string; pid: number; isRunning: boolean; isPaused: boolean; breakpointCount: number }> }>
+  debugSetBreakpoint: (params: { sessionId: string; file: string; line: number; condition?: string }) => Promise<{ success: boolean; message?: string; error?: string }>
+  debugRemoveBreakpoint: (params: { sessionId: string; file: string; line: number }) => Promise<{ success: boolean; error?: string }>
+  debugListBreakpoints: (sessionId: string) => Promise<{ success: boolean; breakpoints?: Array<{ file: string; line: number }> }>
+  debugContinue: (sessionId: string) => Promise<{ success: boolean; error?: string }>
+  debugPause: (sessionId: string) => Promise<{ success: boolean; error?: string }>
+  debugStepOver: (sessionId: string) => Promise<{ success: boolean; error?: string }>
+  debugStepInto: (sessionId: string) => Promise<{ success: boolean; error?: string }>
+  debugStepOut: (sessionId: string) => Promise<{ success: boolean; error?: string }>
+  debugGetCallstack: (sessionId: string) => Promise<{ success: boolean; callStack?: Array<{ name: string; file: string; line: number; column: number }> }>
+  debugGetVariables: (sessionId: string) => Promise<{ success: boolean; variables?: Record<string, string> }>
+  debugEvaluate: (params: { sessionId: string; expression: string }) => Promise<{ success: boolean; result?: string; type?: string; error?: string }>
   lspWorkspaceSymbol: (query: string) => Promise<{ success: boolean; symbols?: Array<{ name: string; kind: number; location: { uri: string; range: { start: { line: number; character: number }; end: { line: number; character: number } } } }>; error?: string }>
   lspDocumentHighlight: (filePath: string, line: number, character: number) => Promise<{ success: boolean; highlights?: Array<{ range: { start: { line: number; character: number }; end: { line: number; character: number } }; kind: number }>; error?: string }>
   lspConnectedServers: () => Promise<{ success: boolean; servers?: string[]; error?: string }>
   onLspDiagnostic: (callback: (uri: string, diagnostics: Array<{ range: { start: { line: number; character: number }; end: { line: number; character: number } }; severity: number; message: string; source?: string; code?: string | number }>) => void) => () => void
+
+  // ── 协作功能 ──
+  collabCreateRoom: (params: { name: string; cwd: string }) => Promise<{ success: boolean; roomId?: string; hostId?: string; error?: string }>
+  collabJoinRoom: (roomId: string) => Promise<{ success: boolean; roomId?: string; userId?: string; participants?: Array<{ id: string; name: string; color: string }>; comments?: Array<unknown>; error?: string }>
+  collabLeaveRoom: (params: { roomId: string; userId: string }) => Promise<{ success: boolean; error?: string }>
+  collabListRooms: () => Promise<{ success: boolean; rooms?: Array<{ id: string; name: string; hostId: string; participantCount: number; commentCount: number }> }>
+  collabGetParticipants: (roomId: string) => Promise<{ success: boolean; participants?: Array<{ id: string; name: string; color: string; cursorLine?: number; cursorCol?: number; file?: string }> }>
+  collabUpdateCursor: (params: { roomId: string; userId: string; file: string; line: number; col: number }) => Promise<{ success: boolean }>
+  collabAddComment: (params: { roomId: string; file: string; line: number; author: string; text: string }) => Promise<{ success: boolean; comment?: { id: string; file: string; line: number; author: string; text: string; resolved: boolean; createdAt: number }; error?: string }>
+  collabResolveComment: (params: { roomId: string; commentId: string }) => Promise<{ success: boolean }>
+  collabGetComments: (params: { roomId: string; file?: string }) => Promise<{ success: boolean; comments?: Array<{ id: string; file: string; line: number; author: string; text: string; resolved: boolean; createdAt: number }> }>
+  collabApplyEdit: (params: { roomId: string; userId: string; file: string; oldText: string; newText: string; line: number }) => Promise<{ success: boolean; version?: number; error?: string }>
+
+  // ── 远程协助 ──
+  remoteOffer: (params: { sessionId: string; callerId: string; calleeId: string; offer: RTCSessionDescriptionInit }) => Promise<{ success: boolean; error?: string }>
+  remoteAnswer: (params: { sessionId: string; answer: RTCSessionDescriptionInit }) => Promise<{ success: boolean; error?: string }>
+  remoteIceCandidate: (params: { sessionId: string; candidate: RTCIceCandidateInit }) => Promise<{ success: boolean }>
+  remoteGetSignal: (sessionId: string) => Promise<{ success: boolean; signal?: { offer?: RTCSessionDescriptionInit; answer?: RTCSessionDescriptionInit; iceCandidates?: RTCIceCandidateInit[] } | null }>
+  remoteClose: (sessionId: string) => Promise<{ success: boolean }>
 }
 
 const dogeAPI: DogeAPIValue = {
@@ -231,6 +264,39 @@ const dogeAPI: DogeAPIValue = {
   codeReview: (params: { filePath: string; cwd: string }) => ipcRenderer.invoke('doge:code-review', params),
   getOutline: (params: { filePath: string; cwd: string }) => ipcRenderer.invoke('doge:get-outline', params),
   semanticSearch: (params: { query: string; cwd: string; maxResults?: number; fileTypes?: string[]; directories?: string[] }) => ipcRenderer.invoke('doge:semantic-search', params),
+  debugStart: (params: { cwd: string; script: string; args?: string[] }) => ipcRenderer.invoke('doge:debug-start', params),
+  debugStop: (sessionId: string) => ipcRenderer.invoke('doge:debug-stop', sessionId),
+  debugListSessions: () => ipcRenderer.invoke('doge:debug-list-sessions'),
+  debugSetBreakpoint: (params: { sessionId: string; file: string; line: number; condition?: string }) => ipcRenderer.invoke('doge:debug-set-breakpoint', params),
+  debugRemoveBreakpoint: (params: { sessionId: string; file: string; line: number }) => ipcRenderer.invoke('doge:debug-remove-breakpoint', params),
+  debugListBreakpoints: (sessionId: string) => ipcRenderer.invoke('doge:debug-list-breakpoints', sessionId),
+  debugContinue: (sessionId: string) => ipcRenderer.invoke('doge:debug-continue', sessionId),
+  debugPause: (sessionId: string) => ipcRenderer.invoke('doge:debug-pause', sessionId),
+  debugStepOver: (sessionId: string) => ipcRenderer.invoke('doge:debug-step-over', sessionId),
+  debugStepInto: (sessionId: string) => ipcRenderer.invoke('doge:debug-step-into', sessionId),
+  debugStepOut: (sessionId: string) => ipcRenderer.invoke('doge:debug-step-out', sessionId),
+  debugGetCallstack: (sessionId: string) => ipcRenderer.invoke('doge:debug-get-callstack', sessionId),
+  debugGetVariables: (sessionId: string) => ipcRenderer.invoke('doge:debug-get-variables', sessionId),
+  debugEvaluate: (params: { sessionId: string; expression: string }) => ipcRenderer.invoke('doge:debug-evaluate', params),
+
+  // ── 协作功能 ──
+  collabCreateRoom: (params: { name: string; cwd: string }) => ipcRenderer.invoke('doge:collab-create-room', params),
+  collabJoinRoom: (roomId: string) => ipcRenderer.invoke('doge:collab-join-room', roomId),
+  collabLeaveRoom: (params: { roomId: string; userId: string }) => ipcRenderer.invoke('doge:collab-leave-room', params),
+  collabListRooms: () => ipcRenderer.invoke('doge:collab-list-rooms'),
+  collabGetParticipants: (roomId: string) => ipcRenderer.invoke('doge:collab-get-participants', roomId),
+  collabUpdateCursor: (params: { roomId: string; userId: string; file: string; line: number; col: number }) => ipcRenderer.invoke('doge:collab-update-cursor', params),
+  collabAddComment: (params: { roomId: string; file: string; line: number; author: string; text: string }) => ipcRenderer.invoke('doge:collab-add-comment', params),
+  collabResolveComment: (params: { roomId: string; commentId: string }) => ipcRenderer.invoke('doge:collab-resolve-comment', params),
+  collabGetComments: (params: { roomId: string; file?: string }) => ipcRenderer.invoke('doge:collab-get-comments', params),
+  collabApplyEdit: (params: { roomId: string; userId: string; file: string; oldText: string; newText: string; line: number }) => ipcRenderer.invoke('doge:collab-apply-edit', params),
+
+  // ── 远程协助 ──
+  remoteOffer: (params: { sessionId: string; callerId: string; calleeId: string; offer: RTCSessionDescriptionInit }) => ipcRenderer.invoke('doge:remote-offer', params),
+  remoteAnswer: (params: { sessionId: string; answer: RTCSessionDescriptionInit }) => ipcRenderer.invoke('doge:remote-answer', params),
+  remoteIceCandidate: (params: { sessionId: string; candidate: RTCIceCandidateInit }) => ipcRenderer.invoke('doge:remote-ice-candidate', params),
+  remoteGetSignal: (sessionId: string) => ipcRenderer.invoke('doge:remote-get-signal', sessionId),
+  remoteClose: (sessionId: string) => ipcRenderer.invoke('doge:remote-close', sessionId),
 }
 
 contextBridge.exposeInMainWorld('dogeAPI', dogeAPI)

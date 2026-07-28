@@ -201,7 +201,7 @@ export function LspPanel({ filePath, content, cursorLine, cursorColumn, theme, o
   const handleWorkspaceSymbol = useCallback(async () => {
     if (!wsQuery.trim()) return
     const results = await workspaceSymbol(wsQuery)
-    setWsResults(results)
+    setWsResults(results as { name: string; kind: number; uri: string; range: { start: { line: number; character: number }; end: { line: number; character: number } } }[])
   }, [wsQuery, workspaceSymbol])
 
   // 诊断数据

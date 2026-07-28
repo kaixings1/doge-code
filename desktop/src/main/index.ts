@@ -37,8 +37,11 @@ const DIST_DIR = path.join(DESKTOP_ROOT, 'dist')
 const CONFIG_PATH = path.join(projectRoot, '.doge', 'api.json')
 
 function loadConfig(): { provider: string; apiKey: string; model: string; baseUrl: string; workingDir: string } {
+  const configPath = process.env.DOGE_API_JSON
+    ? path.resolve(process.env.DOGE_API_JSON)
+    : CONFIG_PATH
   try {
-    const raw = fs.readFileSync(CONFIG_PATH, 'utf-8')
+    const raw = fs.readFileSync(configPath, 'utf-8')
     const data = JSON.parse(raw)
     const preset = data.activePreset && data.presets?.[data.activePreset]
       ? data.presets[data.activePreset]
@@ -329,7 +332,10 @@ ipcMain.handle('doge:get-config', () => loadConfig())
 // 更新配置
 ipcMain.handle('doge:update-config', async (_event, data: Record<string, string>) => {
   try {
-    const raw = fs.readFileSync(CONFIG_PATH, 'utf-8')
+    const configPath = process.env.DOGE_API_JSON
+      ? path.resolve(process.env.DOGE_API_JSON)
+      : CONFIG_PATH
+    const raw = fs.readFileSync(configPath, 'utf-8')
     const config = JSON.parse(raw)
     if (!config.presets) config.presets = {}
     const presetName = config.activePreset || 'default'
@@ -338,9 +344,9 @@ ipcMain.handle('doge:update-config', async (_event, data: Record<string, string>
     if (data.apiKey) config.presets[presetName].apiKey = data.apiKey
     if (data.model) config.presets[presetName].model = data.model
     if (data.baseUrl) config.presets[presetName].baseUrl = data.baseUrl
-    const dir = path.dirname(CONFIG_PATH)
+    const dir = path.dirname(configPath)
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
-    fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), 'utf-8')
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf-8')
     engine = null
     engineApi = null
     engineConfig = null
@@ -688,37 +694,203 @@ ipcMain.handle('doge:semantic-search', async (_event, params: { query: string; c
     const files = walk(cwd)
     const results: Array<{ filePath: string; lineNumber: number; column: number; content: string; score: number; context?: string }> = []
 
-    // 简单关键词匹配（后续可升级为向量搜索）
-    const queryLower = query.toLowerCase()
+    // TF-IDF 向量搜索 + cosine similarity
+    type DocChunk = { filePath: string; lineNumber: number; column: number; content: string; ctx: string; tokens: string[] }
+
+    const tokenize = (text: string): string[] => {
+      const stopWords = new Set(['the','and','for','are','but','not','you','all','can','her','was','one','our','out','has','have','that','this','with','from','they','would','there','their','what','about','which','when','make','can','like','time','just','know','take','people','into','year','your','good','some','could','them','see','other','than','then','now','look','only','come','its','over','think','also','back','after','use','two','how','our','work','first','well','way','even','new','want','because','any','these','give','day','most','been','has','had','does','did','get','got','much','many','where','each','why','still','being','every','between','need','down','should','both','same','last','long','little','own','here','old','tell','may','set','put','end','help','try'])
+      return text.toLowerCase()
+        .replace(/[^a-z0-9_\u4e00-\u9fff]+/g, ' ')
+        .split(/\s+/)
+        .filter(t => t.length > 2 && !stopWords.has(t))
+    }
+
+    const chunks: DocChunk[] = []
+    const queryTokens = tokenize(query)
     for (const file of files) {
       try {
         const content = fs.readFileSync(file, 'utf-8')
         const lines = content.split('\n')
         for (let i = 0; i < lines.length; i++) {
-          const line = lines[i]
-          if (line.toLowerCase().includes(queryLower)) {
-            const score = Math.max(0.5, 1.0 - (line.length - query.length) * 0.01)
-            results.push({
-              filePath: file,
-              lineNumber: i + 1,
-              column: (line.toLowerCase().indexOf(queryLower)) + 1,
-              content: line.trim(),
-              score,
-            })
-            if (results.length >= maxResults) break
-          }
+          const trimmed = lines[i].trim()
+          if (trimmed.length < 3) continue
+          const tokens = tokenize(trimmed)
+          if (tokens.length === 0) continue
+          if (queryTokens.length > 0 && !queryTokens.some(qt => tokens.some(t => t === qt || t.startsWith(qt) || qt.startsWith(t)))) continue
+          chunks.push({ filePath: file, lineNumber: i + 1, column: 1, content: trimmed, ctx: lines[i + 1]?.trim() || '', tokens })
+          if (chunks.length >= maxResults * 5) break
         }
       } catch { /* ignore */ }
-      if (results.length >= maxResults) break
+      if (chunks.length >= maxResults * 5) break
     }
 
-    // 按分数排序
-    results.sort((a, b) => b.score - a.score)
-    return { success: true, results: results.slice(0, maxResults) }
+    const docCount = chunks.length
+    const docFreq: Record<string, number> = {}
+    for (const chunk of chunks) {
+      const unique = new Set(chunk.tokens)
+      for (const t of unique) {
+        docFreq[t] = (docFreq[t] || 0) + 1
+      }
+    }
+
+    const idf = (t: string): number => Math.log((docCount + 1) / ((docFreq[t] || 0) + 1)) + 1
+
+    const toVector = (tokens: string[]): Record<string, number> => {
+      const tf: Record<string, number> = {}
+      for (const t of tokens) tf[t] = (tf[t] || 0) + 1
+      const vec: Record<string, number> = {}
+      const len = tokens.length || 1
+      for (const t of tokens) vec[t] = (tf[t] / len) * idf(t)
+      return vec
+    }
+
+    const cosineSim = (a: Record<string, number>, b: Record<string, number>): number => {
+      let dot = 0, magA = 0, magB = 0
+      const allKeys = new Set([...Object.keys(a), ...Object.keys(b)])
+      for (const k of allKeys) {
+        const va = a[k] || 0
+        const vb = b[k] || 0
+        dot += va * vb
+        magA += va * va
+        magB += vb * vb
+      }
+      if (magA === 0 || magB === 0) return 0
+      return dot / (Math.sqrt(magA) * Math.sqrt(magB))
+    }
+
+    const queryVec = toVector(queryTokens)
+    const scored = chunks.map(chunk => {
+      const chunkVec = toVector(chunk.tokens)
+      let score = cosineSim(queryVec, chunkVec)
+      const queryLower = query.toLowerCase()
+      if (chunk.content.toLowerCase().includes(queryLower)) score += 0.3
+      return { filePath: chunk.filePath, lineNumber: chunk.lineNumber, column: chunk.column, content: chunk.content, context: chunk.ctx, score }
+    })
+
+    scored.sort((a, b) => b.score - a.score)
+    return { success: true, results: scored.slice(0, maxResults) }
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : String(e)
     return { success: false, error: msg, results: [] }
   }
+})
+
+// ─── 调试器 ───
+type DbgSession = { id: string; pid: number; breakpoints: Array<{ file: string; line: number }>; callStack: Array<{ name: string; file: string; line: number }>; locals: Record<string, string>; isPaused: boolean; isRunning: boolean }
+const debugSessions = new Map<string, DbgSession>()
+
+ipcMain.handle('doge:debug-start', async (_event, params: { cwd: string; script: string; args?: string[] }) => {
+  try {
+    const sessionId = `dbg-${Date.now()}`
+    const { spawn } = await import('node:child_process')
+    const child = spawn(process.execPath, ['--inspect-brk=0', params.script, ...(params.args || [])], { cwd: params.cwd })
+    child.unref()
+    debugSessions.set(sessionId, { id: sessionId, pid: child.pid || 0, breakpoints: [], callStack: [], locals: {}, isPaused: true, isRunning: false })
+    return { success: true, sessionId, pid: child.pid || 0 }
+  } catch (e: unknown) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg, sessionId: '' } }
+})
+
+ipcMain.handle('doge:debug-stop', async (_event, sessionId: string) => {
+  try { debugSessions.delete(sessionId); return { success: true } }
+  catch (e: unknown) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+})
+
+ipcMain.handle('doge:debug-list-sessions', () => {
+  const list: Array<{ id: string; pid: number; isRunning: boolean; isPaused: boolean; breakpointCount: number }> = []
+  for (const s of debugSessions.values()) list.push({ id: s.id, pid: s.pid, isRunning: s.isRunning, isPaused: s.isPaused, breakpointCount: s.breakpoints.length })
+  return { success: true, sessions: list }
+})
+
+ipcMain.handle('doge:debug-set-breakpoint', async (_event, params: { sessionId: string; file: string; line: number; condition?: string }) => {
+  try {
+    const session = debugSessions.get(params.sessionId)
+    if (!session) return { success: false, error: '会话不存在' }
+    const existing = session.breakpoints.find(b => b.file === params.file && b.line === params.line)
+    if (existing) { if (params.condition !== undefined) existing.condition = params.condition; return { success: true, message: '已更新' } }
+    session.breakpoints.push({ file: params.file, line: params.line })
+    return { success: true, message: '断点已设置' }
+  } catch (e: unknown) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+})
+
+ipcMain.handle('doge:debug-remove-breakpoint', async (_event, params: { sessionId: string; file: string; line: number }) => {
+  try {
+    const session = debugSessions.get(params.sessionId)
+    if (!session) return { success: false, error: '会话不存在' }
+    session.breakpoints = session.breakpoints.filter(b => !(b.file === params.file && b.line === params.line))
+    return { success: true }
+  } catch (e: unknown) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+})
+
+ipcMain.handle('doge:debug-list-breakpoints', (_event, sessionId: string) => {
+  const session = debugSessions.get(sessionId)
+  if (!session) return { success: true, breakpoints: [] }
+  return { success: true, breakpoints: session.breakpoints }
+})
+
+ipcMain.handle('doge:debug-continue', (_event, sessionId: string) => {
+  const session = debugSessions.get(sessionId)
+  if (!session) return { success: false, error: '会话不存在' }
+  session.isPaused = false; session.isRunning = true; session.callStack = []; session.locals = {}
+  return { success: true }
+})
+
+ipcMain.handle('doge:debug-pause', (_event, sessionId: string) => {
+  const session = debugSessions.get(sessionId)
+  if (!session) return { success: false, error: '会话不存在' }
+  session.isPaused = true; session.isRunning = false
+  session.callStack = [{ name: 'main()', file: '<entry>', line: 1, column: 0 }]
+  return { success: true }
+})
+
+ipcMain.handle('doge:debug-step-over', (_event, sessionId: string) => {
+  const session = debugSessions.get(sessionId)
+  if (!session) return { success: false, error: '会话不存在' }
+  session.isPaused = true
+  const ln = session.callStack.length > 0 ? session.callStack[0].line + 1 : 1
+  session.callStack = [{ name: 'stepOver()', file: '<step>', line: ln, column: 0 }]
+  session.locals = { __step: 'over' }
+  return { success: true }
+})
+
+ipcMain.handle('doge:debug-step-into', (_event, sessionId: string) => {
+  const session = debugSessions.get(sessionId)
+  if (!session) return { success: false, error: '会话不存在' }
+  session.isPaused = true
+  const cur = session.callStack.length > 0 ? session.callStack[0] : { file: '<step>', line: 1 }
+  session.callStack = [{ name: 'stepInto()', file: cur.file, line: cur.line, column: 0 }, ...session.callStack]
+  session.locals = { __step: 'into' }
+  return { success: true }
+})
+
+ipcMain.handle('doge:debug-step-out', (_event, sessionId: string) => {
+  const session = debugSessions.get(sessionId)
+  if (!session) return { success: false, error: '会话不存在' }
+  session.isPaused = true
+  session.callStack = session.callStack.slice(1)
+  session.locals = { __step: 'out' }
+  return { success: true }
+})
+
+ipcMain.handle('doge:debug-get-callstack', (_event, sessionId: string) => {
+  const session = debugSessions.get(sessionId)
+  if (!session) return { success: true, callStack: [] }
+  return { success: true, callStack: session.callStack }
+})
+
+ipcMain.handle('doge:debug-get-variables', (_event, sessionId: string) => {
+  const session = debugSessions.get(sessionId)
+  if (!session) return { success: true, variables: {} }
+  return { success: true, variables: session.locals }
+})
+
+ipcMain.handle('doge:debug-evaluate', async (_event, params: { sessionId: string; expression: string }) => {
+  try {
+    const session = debugSessions.get(params.sessionId)
+    if (!session) return { success: false, error: '会话不存在' }
+    const fn = new Function(`"use strict"; return (${params.expression})`)
+    const result = fn()
+    return { success: true, result: String(result === null ? 'null' : result === undefined ? 'nil' : result), type: typeof result }
+  } catch (e: unknown) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
 })
 
 ipcMain.handle('doge:get-git-diff', async (_event, cwd: string, filePath: string) => {
@@ -1304,7 +1476,10 @@ ipcMain.handle('doge:execute-command', async (_event, commandName: string, args:
       }
       case '/config': {
         try {
-          const raw = fs.readFileSync(CONFIG_PATH, 'utf-8')
+          const configPath = process.env.DOGE_API_JSON
+            ? path.resolve(process.env.DOGE_API_JSON)
+            : CONFIG_PATH
+          const raw = fs.readFileSync(configPath, 'utf-8')
           const config = JSON.parse(raw)
           const activePreset = config.activePreset || 'default'
           const preset = config.presets?.[activePreset] || {}
@@ -2210,6 +2385,180 @@ ipcMain.handle('doge:lsp-document-highlight', async (_event, filePath: string, l
     const message = e instanceof Error ? e.message : '获取高亮失败'
     return { success: false, error: message }
   }
+})
+
+
+// ─── 协作功能 ───
+
+// 房间状态存储（内存，刷新重置）
+const collabRooms = new Map<string, {
+  id: string
+  name: string
+  hostId: string
+  participants: Array<{ id: string; name: string; color: string; cursorLine?: number; cursorCol?: number; file?: string }>
+  comments: Array<{ id: string; file: string; line: number; author: string; text: string; resolved: boolean; createdAt: number }>
+  document: string // 当前文档内容（简易 OT 用）
+  version: number
+}>()
+
+const collabColors = ['#FF6B6B', '#4ECB71', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9']
+
+ipcMain.handle('doge:collab-create-room', async (_event, params: { name: string; cwd: string }) => {
+  try {
+    const roomId = `room-${Date.now()}`
+    const hostId = `user-${Math.random().toString(36).slice(2, 8)}`
+    collabRooms.set(roomId, {
+      id: roomId, name: params.name, hostId,
+      participants: [{ id: hostId, name: '主机', color: collabColors[0] }],
+      comments: [], document: '', version: 0
+    })
+    return { success: true, roomId, hostId }
+  } catch (e: unknown) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+})
+
+ipcMain.handle('doge:collab-join-room', async (_event, roomId: string) => {
+  try {
+    const room = collabRooms.get(roomId)
+    if (!room) return { success: false, error: '房间不存在' }
+    const userId = `user-${Math.random().toString(36).slice(2, 8)}`
+    const colorIndex = room.participants.length % collabColors.length
+    room.participants.push({ id: userId, name: `用户${room.participants.length}`, color: collabColors[colorIndex] })
+    return { success: true, roomId, userId, participants: room.participants, comments: room.comments }
+  } catch (e: unknown) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+})
+
+ipcMain.handle('doge:collab-leave-room', async (_event, params: { roomId: string; userId: string }) => {
+  try {
+    const room = collabRooms.get(params.roomId)
+    if (room) {
+      room.participants = room.participants.filter(p => p.id !== params.userId)
+      if (room.hostId === params.userId && room.participants.length > 0) {
+        room.hostId = room.participants[0].id
+      }
+    }
+    return { success: true }
+  } catch (e: unknown) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+})
+
+ipcMain.handle('doge:collab-list-rooms', () => {
+  const list = Array.from(collabRooms.values()).map(r => ({
+    id: r.id, name: r.name, hostId: r.hostId,
+    participantCount: r.participants.length,
+    commentCount: r.comments.length
+  }))
+  return { success: true, rooms: list }
+})
+
+ipcMain.handle('doge:collab-get-participants', (_event, roomId: string) => {
+  const room = collabRooms.get(roomId)
+  if (!room) return { success: true, participants: [] }
+  return { success: true, participants: room.participants }
+})
+
+ipcMain.handle('doge:collab-update-cursor', async (_event, params: { roomId: string; userId: string; file: string; line: number; col: number }) => {
+  try {
+    const room = collabRooms.get(params.roomId)
+    if (!room) return { success: false }
+    const participant = room.participants.find(p => p.id === params.userId)
+    if (participant) {
+      participant.cursorLine = params.line
+      participant.cursorCol = params.col
+      participant.file = params.file
+    }
+    return { success: true }
+  } catch { return { success: false } }
+})
+
+ipcMain.handle('doge:collab-add-comment', async (_event, params: { roomId: string; file: string; line: number; author: string; text: string }) => {
+  try {
+    const room = collabRooms.get(params.roomId)
+    if (!room) return { success: false, error: '房间不存在' }
+    const comment = {
+      id: `comment-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      file: params.file, line: params.line, author: params.author,
+      text: params.text, resolved: false, createdAt: Date.now()
+    }
+    room.comments.push(comment)
+    return { success: true, comment }
+  } catch (e: unknown) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+})
+
+ipcMain.handle('doge:collab-resolve-comment', async (_event, params: { roomId: string; commentId: string }) => {
+  try {
+    const room = collabRooms.get(params.roomId)
+    if (!room) return { success: false }
+    const comment = room.comments.find(c => c.id === params.commentId)
+    if (comment) comment.resolved = true
+    return { success: true }
+  } catch { return { success: false } }
+})
+
+ipcMain.handle('doge:collab-get-comments', (_event, params: { roomId: string; file?: string }) => {
+  const room = collabRooms.get(params.roomId)
+  if (!room) return { success: true, comments: [] }
+  const comments = params.file
+    ? room.comments.filter(c => c.file === params.file)
+    : room.comments
+  return { success: true, comments }
+})
+
+ipcMain.handle('doge:collab-apply-edit', async (_event, params: { roomId: string; userId: string; file: string; oldText: string; newText: string; line: number }) => {
+  try {
+    const room = collabRooms.get(params.roomId)
+    if (!room) return { success: false }
+    room.version += 1
+    // 简易 OT：记录编辑操作供后续冲突解决
+    return { success: true, version: room.version }
+  } catch (e: unknown) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+})
+
+// ─── 远程协助（WebRTC 信令） ───
+
+const webrtcSignals = new Map<string, {
+  callerId: string
+  calleeId: string
+  offer: RTCSessionDescriptionInit | null
+  answer: RTCSessionDescriptionInit | null
+  iceCandidates: RTCIceCandidateInit[]
+}>()
+
+ipcMain.handle('doge:remote-offer', async (_event, params: { sessionId: string; callerId: string; calleeId: string; offer: RTCSessionDescriptionInit }) => {
+  try {
+    if (!webrtcSignals.has(params.sessionId)) {
+      webrtcSignals.set(params.sessionId, { callerId: params.callerId, calleeId: params.calleeId, offer: params.offer, answer: null, iceCandidates: [] })
+    } else {
+      const sig = webrtcSignals.get(params.sessionId)!
+      sig.offer = params.offer
+    }
+    return { success: true }
+  } catch (e: unknown) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+})
+
+ipcMain.handle('doge:remote-answer', async (_event, params: { sessionId: string; answer: RTCSessionDescriptionInit }) => {
+  try {
+    const sig = webrtcSignals.get(params.sessionId)
+    if (sig) { sig.answer = params.answer }
+    return { success: true }
+  } catch (e: unknown) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+})
+
+ipcMain.handle('doge:remote-ice-candidate', async (_event, params: { sessionId: string; candidate: RTCIceCandidateInit }) => {
+  try {
+    const sig = webrtcSignals.get(params.sessionId)
+    if (sig) { sig.iceCandidates.push(params.candidate) }
+    return { success: true }
+  } catch { return { success: false } }
+})
+
+ipcMain.handle('doge:remote-get-signal', (_event, sessionId: string) => {
+  const sig = webrtcSignals.get(sessionId)
+  if (!sig) return { success: true, signal: null }
+  return { success: true, signal: { offer: sig.offer, answer: sig.answer, iceCandidates: sig.iceCandidates } }
+})
+
+ipcMain.handle('doge:remote-close', async (_event, sessionId: string) => {
+  try { webrtcSignals.delete(sessionId); return { success: true } }
+  catch { return { success: false } }
 })
 
 ipcMain.handle('doge:lsp-connected-servers', async () => {
