@@ -117,6 +117,10 @@ interface DogeAPIValue {
   lspConnectedServers: () => Promise<{ success: boolean; servers?: string[]; error?: string }>
   onLspDiagnostic: (callback: (uri: string, diagnostics: Array<{ range: { start: { line: number; character: number }; end: { line: number; character: number } }; severity: number; message: string; source?: string; code?: string | number }>) => void) => () => void
 
+  // ── 安全审计 ──
+  securityAudit: (params: { scanPath: string; rules?: string[]; scanType?: 'file' | 'directory' }) => Promise<{ success: boolean; issues?: Array<{ id: string; file: string; line: number; rule: string; severity: string; message: string; code: string }>; stats?: { total: number; high: number; medium: number; low: number }; error?: string }>
+  securityRules: () => Promise<{ success: boolean; rules?: Array<{ id: string; severity: string; message: string }>; error?: string }>
+
   // ── 协作功能 ──
   collabCreateRoom: (params: { name: string; cwd: string }) => Promise<{ success: boolean; roomId?: string; hostId?: string; error?: string }>
   collabJoinRoom: (roomId: string) => Promise<{ success: boolean; roomId?: string; userId?: string; participants?: Array<{ id: string; name: string; color: string }>; comments?: Array<unknown>; error?: string }>
@@ -264,6 +268,8 @@ const dogeAPI: DogeAPIValue = {
   },
   codeReview: (params: { filePath: string; cwd: string }) => ipcRenderer.invoke('doge:code-review', params),
   applyFix: (params: { filePath: string; lineNumber: number; column: number; fixedCode: string; originalCode?: string }) => ipcRenderer.invoke('doge:apply-fix', params),
+  securityAudit: (params: { scanPath: string; rules?: string[]; scanType?: 'file' | 'directory' }) => ipcRenderer.invoke('doge:security-audit', params),
+  securityRules: () => ipcRenderer.invoke('doge:security-rules'),
   getOutline: (params: { filePath: string; cwd: string }) => ipcRenderer.invoke('doge:get-outline', params),
   semanticSearch: (params: { query: string; cwd: string; maxResults?: number; fileTypes?: string[]; directories?: string[] }) => ipcRenderer.invoke('doge:semantic-search', params),
   debugStart: (params: { cwd: string; script: string; args?: string[] }) => ipcRenderer.invoke('doge:debug-start', params),
