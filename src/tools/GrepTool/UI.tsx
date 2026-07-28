@@ -56,7 +56,7 @@ function SearchResultSummary(t0) {
   const primaryText = t3;
   let t4;
   if ($[8] !== secondaryCount || $[9] !== secondaryLabel) {
-    t4 = secondaryCount !== undefined && secondaryLabel ? <Text>{" "}跨 <Text bold={true}>{secondaryCount} </Text>{secondaryCount === 0 || secondaryCount > 1 ? secondaryLabel : secondaryLabel.slice(0, -1)}</Text> : null;
+    t4 = secondaryCount !== undefined && secondaryLabel ? <Text> 跨 <Text bold={true}>{secondaryCount} </Text>{secondaryCount === 0 || secondaryCount > 1 ? secondaryLabel : secondaryLabel.slice(0, -1)}</Text> : null;
     $[8] = secondaryCount;
     $[9] = secondaryLabel;
     $[10] = t4;

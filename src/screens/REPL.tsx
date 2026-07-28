@@ -3696,14 +3696,6 @@ export function REPL({
         level: 'error'
       });
       logError(initError);
-      addNotification({
-        key: 'restored-repl-init-failed',
-        jsx: <>
-            <Text color="warning">startup degraded</Text>
-            <Text dimColor> · REPL init failed, running in fallback mode</Text>
-          </>,
-        priority: 'high'
-      });
     }
   }
 
@@ -3977,13 +3969,7 @@ export function REPL({
 
   // Initial load
   useEffect(() => {
-    void onInit().catch(error => {
-      const initError = error instanceof Error ? error : new Error(String(error));
-      logForDebugging(`[REPL:init:unhandled] ${initError.stack ?? initError.message}`, {
-        level: 'error'
-      });
-      logError(initError);
-    });
+    void onInit();
 
     // 卸载时清理
     return () => {
@@ -4667,7 +4653,6 @@ export function REPL({
                       {/* Skill improvement survey - appears when improvements detected (ant-only) */}
                       {false && skillImprovementSurvey.suggestion && <SkillImprovementSurvey isOpen={skillImprovementSurvey.isOpen} skillName={skillImprovementSurvey.suggestion.skillName} updates={skillImprovementSurvey.suggestion.updates} handleSelect={skillImprovementSurvey.handleSelect} inputValue={inputValue} setInputValue={setInputValue} />}
                       {showIssueFlagBanner && <IssueFlagBanner />}
-                      {}
                       <PromptInput debug={debug} ideSelection={ideSelection} hasSuppressedDialogs={!!hasSuppressedDialogs} isLocalJSXCommandActive={isShowingLocalJSXCommand} getToolUseContext={getToolUseContext} toolPermissionContext={toolPermissionContext} setToolPermissionContext={setToolPermissionContext} apiKeyStatus={apiKeyStatus} commands={commands} agents={agentDefinitions.activeAgents} isLoading={isLoading} onExit={handleExit} verbose={verbose} messages={messages} onAutoUpdaterResult={setAutoUpdaterResult} autoUpdaterResult={autoUpdaterResult} input={inputValue} onInputChange={setInputValue} mode={inputMode} onModeChange={setInputMode} stashedPrompt={stashedPrompt} setStashedPrompt={setStashedPrompt} submitCount={submitCount} onShowMessageSelector={handleShowMessageSelector} onMessageActionsEnter={
             // 在 isLoading 期间工作 — 编辑首先取消；uuid 选择在追加中存活。
             feature('MESSAGE_ACTIONS') && isFullscreenEnvEnabled() && !disableMessageActions ? enterMessageActions : undefined} mcpClients={mcpClients} pastedContents={pastedContents} setPastedContents={setPastedContents} vimMode={vimMode} setVimMode={setVimMode} showBashesDialog={showBashesDialog} setShowBashesDialog={setShowBashesDialog} onSubmit={onSubmit} onAgentSubmit={onAgentSubmit} isSearchingHistory={isSearchingHistory} setIsSearchingHistory={setIsSearchingHistory} helpOpen={isHelpOpen} setHelpOpen={setIsHelpOpen} insertTextRef={feature('VOICE_MODE') ? insertTextRef : undefined} voiceInterimRange={voice.interimRange} />

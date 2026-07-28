@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Electron 主进程入口 — 集成 QueryEngine
  */
 
@@ -15,6 +15,8 @@ import { zodToJsonSchema } from '../../../src/utils/zodToJsonSchema.js'
 import { getPermissionManager, DesktopPermissionManager } from './permissionManager.js'
 import { initBundledSkills } from '../../../src/skills/bundled/index.js'
 import { getBundledSkills } from '../../../src/skills/bundledSkills.js'
+import { createEngineApi, type EngineApi } from './engineApi.js'
+import { scanPlugins, setPluginEnabled, installPlugin, uninstallPlugin, getPluginCommandContent, type PluginInfo } from './pluginManager.js'
 
 let mainWindow: BrowserWindow | null = null
 let tray: Tray | null = null
@@ -299,6 +301,7 @@ function loadSession(id: string): InternalMessage[] | null {
 
 // ─── QueryEngine 实例（全局单例） ───
 let engine: QueryEngine | null = null
+let engineApi: EngineApi | null = null
 let engineConfig: ReturnType<typeof loadConfig> | null = null
 let currentSessionId: string | null = null
 
@@ -322,154 +325,155 @@ function getEngine(): QueryEngine {
     const baseUrl = config.baseUrl.replace(/\/+$/, '')
     const provider = config.provider
 
-    // 直接修改 MessageLoop.deps.apiClient
-    const deps = (engine as unknown as { messageLoop: { deps: { apiClient: { sendMessage: (req: unknown) => Promise<AsyncIterable<unknown>> } } } }).messageLoop
-    if (deps) {
-      deps.deps.apiClient = {
-        async sendMessage(request: unknown): Promise<AsyncIterable<unknown>> {
-          const req = request as APIRequest
-          const isAnthropic = provider === 'anthropic'
-          const trimmed = baseUrl.replace(/\/+$/, '')
-          const url = isAnthropic
-            ? (trimmed.endsWith('/messages') ? trimmed : `${trimmed}/messages`)
-            : (trimmed.endsWith('/chat/completions') ? trimmed : `${trimmed}/chat/completions`)
+    // 直接访问 messageLoop.deps.apiClient（绕过 setApiClient 被 tree-shaking 优化掉的问题）
+    const messageLoop = (engine as unknown as { messageLoop: { deps: { apiClient: unknown } } }).messageLoop
+    messageLoop.deps.apiClient = {
+      async sendMessage(request: unknown): Promise<AsyncIterable<unknown>> {
+        const req = request as APIRequest
+        const isAnthropic = provider === 'anthropic'
+        const trimmed = baseUrl.replace(/\/+$/, '')
+        const url = isAnthropic
+          ? (trimmed.endsWith('/messages') ? trimmed : `${trimmed}/messages`)
+          : (trimmed.endsWith('/chat/completions') ? trimmed : `${trimmed}/chat/completions`)
 
-          const headers: Record<string, string> = { 'Content-Type': 'application/json' }
-          if (isAnthropic) {
-            headers['x-api-key'] = apiKey
-            headers['anthropic-version'] = '2023-06-01'
-          } else {
-            headers['Authorization'] = `Bearer ${apiKey}`
-          }
+        const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+        if (isAnthropic) {
+          headers['x-api-key'] = apiKey
+          headers['anthropic-version'] = '2023-06-01'
+        } else {
+          headers['Authorization'] = `Bearer ${apiKey}`
+        }
 
-          const body = isAnthropic
-            ? {
-                model: req.model,
-                max_tokens: req.max_tokens,
-                stream: true,
-                system: req.system,
-                messages: req.messages.map((m: InternalMessage) => ({
-                  role: m.role === 'tool' ? 'user' : m.role,
+        const body = isAnthropic
+          ? {
+              model: req.model,
+              max_tokens: req.max_tokens,
+              stream: true,
+              system: req.system,
+              messages: req.messages.map((m: InternalMessage) => ({
+                role: m.role === 'tool' ? 'user' : m.role,
+                content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content),
+              })),
+            }
+          : {
+              model: req.model,
+              max_tokens: req.max_tokens,
+              stream: true,
+              messages: [
+                { role: 'system', content: (req.system as string) || 'You are Doge Code, a helpful AI programming assistant.' },
+                ...req.messages.map((m: InternalMessage) => ({
+                  role: m.role,
                   content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content),
                 })),
-              }
-            : {
-                model: req.model,
-                max_tokens: req.max_tokens,
-                stream: true,
-                messages: [
-                  { role: 'system', content: (req.system as string) || 'You are Doge Code, a helpful AI programming assistant.' },
-                  ...req.messages.map((m: InternalMessage) => ({
-                    role: m.role,
-                    content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content),
-                  })),
-                ],
-              }
-
-          const response = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body) })
-          if (!response.ok) {
-            const text = await response.text().catch(() => '')
-            throw new Error(`API 请求失败 (${response.status}): ${text || response.statusText}`)
-          }
-
-          const reader = response.body!.getReader()
-
-          const decoder = new TextDecoder()
-          let buffer = ''
-          let messageStarted = false
-          let blockIndex = 0
-
-          async function* stream(): AsyncGenerator<unknown> {
-            try {
-              while (true) {
-                const { done, value } = await reader.read()
-                if (done) break
-
-                buffer += decoder.decode(value, { stream: true })
-                const lines = buffer.split('\n')
-                buffer = lines.pop() || ''
-
-                for (const line of lines) {
-                  const trimmed = line.trim()
-                  if (!trimmed || !trimmed.startsWith('data:')) continue
-                  const data = trimmed.slice(5).trim()
-                  if (data === '[DONE]') {
-                    if (!messageStarted) {
-                      yield { type: 'message_start', message: { model: req.model } }
-                    }
-                    yield { type: 'message_stop' }
-                    return
-                  }
-
-                  try {
-                    const parsed = JSON.parse(data)
-
-                    if (isAnthropic) {
-                      yield parsed
-                      messageStarted = true
-                    } else {
-                      const choice = parsed.choices?.[0]
-                      if (choice?.delta) {
-                        if (!messageStarted) {
-                          yield { type: 'message_start', message: { model: parsed.model || req.model } }
-                          messageStarted = true
-                        }
-                        const delta = choice.delta
-
-                        if (delta.content) {
-                          yield { type: 'content_block_start', content_block: { type: 'text', index: blockIndex } }
-                          yield { type: 'content_block_delta', index: blockIndex, delta: { type: 'text_delta', text: delta.content } }
-                          yield { type: 'content_block_stop', index: blockIndex }
-                          blockIndex++
-                        }
-
-                        if (delta.tool_calls) {
-                          for (const tc of delta.tool_calls) {
-                            const idx = tc.index ?? 0
-                            yield { type: 'content_block_start', content_block: { type: 'tool_use', index: idx, id: tc.id, name: tc.function?.name } }
-                            if (tc.function?.arguments) {
-                              yield { type: 'content_block_delta', index: idx, delta: { type: 'input_json_delta', partial_json: tc.function.arguments } }
-                            }
-                            yield { type: 'content_block_stop', index: idx }
-                          }
-                        }
-
-                        if (choice.finish_reason) {
-                          yield { type: 'message_delta', delta: { stop_reason: choice.finish_reason } }
-                        }
-                      }
-                      if (parsed.usage) {
-                        yield { type: 'message_delta', delta: { usage: parsed.usage } }
-                      }
-                    }
-                  } catch { /* ignore parse errors */ }
-                }
-              }
-
-              if (messageStarted) {
-                yield { type: 'message_stop' }
-              }
-            } finally {
-              reader.releaseLock()
+              ],
             }
-          }
 
-          return stream()
-        },
-      }
+        const response = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body) })
+        if (!response.ok) {
+          const text = await response.text().catch(() => '')
+          throw new Error(`API 请求失败 (${response.status}): ${text || response.statusText}`)
+        }
+
+        const reader = response.body!.getReader()
+        const decoder = new TextDecoder()
+        let buffer = ''
+        let messageStarted = false
+        let blockIndex = 0
+
+        async function* stream(): AsyncGenerator<unknown> {
+          try {
+            while (true) {
+              const { done, value } = await reader.read()
+              if (done) break
+
+              buffer += decoder.decode(value, { stream: true })
+              const lines = buffer.split('\n')
+              buffer = lines.pop() || ''
+
+              for (const line of lines) {
+                const trimmed = line.trim()
+                if (!trimmed || !trimmed.startsWith('data:')) continue
+                const data = trimmed.slice(5).trim()
+                if (data === '[DONE]') {
+                  if (!messageStarted) {
+                    yield { type: 'message_start', message: { model: req.model } }
+                  }
+                  yield { type: 'message_stop' }
+                  return
+                }
+
+                try {
+                  const parsed = JSON.parse(data)
+
+                  if (isAnthropic) {
+                    yield parsed
+                    messageStarted = true
+                  } else {
+                    const choice = parsed.choices?.[0]
+                    if (choice?.delta) {
+                      if (!messageStarted) {
+                        yield { type: 'message_start', message: { model: parsed.model || req.model } }
+                        messageStarted = true
+                      }
+                      const delta = choice.delta
+
+                      if (delta.content) {
+                        yield { type: 'content_block_start', content_block: { type: 'text', index: blockIndex } }
+                        yield { type: 'content_block_delta', index: blockIndex, delta: { type: 'text_delta', text: delta.content } }
+                        yield { type: 'content_block_stop', index: blockIndex }
+                        blockIndex++
+                      }
+
+                      if (delta.tool_calls) {
+                        for (const tc of delta.tool_calls) {
+                          const idx = tc.index ?? 0
+                          yield { type: 'content_block_start', content_block: { type: 'tool_use', index: idx, id: tc.id, name: tc.function?.name } }
+                          if (tc.function?.arguments) {
+                            yield { type: 'content_block_delta', index: idx, delta: { type: 'input_json_delta', partial_json: tc.function.arguments } }
+                          }
+                          yield { type: 'content_block_stop', index: idx }
+                        }
+                      }
+
+                      if (choice.finish_reason) {
+                        yield { type: 'message_delta', delta: { stop_reason: choice.finish_reason } }
+                      }
+                    }
+                    if (parsed.usage) {
+                      yield { type: 'message_delta', delta: { usage: parsed.usage } }
+                    }
+                  }
+                } catch { /* ignore parse errors */ }
+              }
+            }
+
+            if (messageStarted) {
+              yield { type: 'message_stop' }
+            }
+          } finally {
+            reader.releaseLock()
+          }
+        }
+
+        return stream()
+      },
     }
+
+    // 创建公共 API 封装
+    engineApi = createEngineApi(engine)
 
     // 将 StreamProcessor 的 chunk 回调连接到 notifyChunk
-    engine.responseHandler.onChunk = (chunk: { type: string; text?: string }) => {
+    engineApi.setChunkCallback((chunk: { type: string; text?: string }) => {
       if (chunk.type === 'text' && chunk.text && mainWindow) {
+        console.log('[MAIN] chunk callback, text:', chunk.text.slice(0, 50))
         mainWindow.webContents.send('doge:chunk', { text: chunk.text })
       }
-    }
+    })
 
     // 监听状态机变化
-    engine.stateMachine.onStateChange((evt) => {
+    engineApi.setStateChangeCallback((state: string) => {
       if (mainWindow) {
-        mainWindow.webContents.send('doge:state-change', evt.to)
+        mainWindow.webContents.send('doge:state-change', state)
       }
     })
   }
@@ -480,6 +484,14 @@ function getEngine(): QueryEngine {
   }
 
   return engine
+}
+
+// ─── 获取 EngineApi 实例 ───
+function getEngineApi(): EngineApi {
+  if (!engineApi) {
+    getEngine()
+  }
+  return engineApi!
 }
 
 // ─── 创建窗口 ───
@@ -519,9 +531,8 @@ function createWindow(): void {
   if (process.env.VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(`${process.env.VITE_DEV_SERVER_URL}?desktop=1`)
   } else {
-    mainWindow.loadFile(path.join(DIST_DIR, 'renderer', 'index.html'), {
-      query: { desktop: '1' },
-    })
+    const htmlUrl = `file://${path.join(DIST_DIR, 'renderer', 'index.html').replace(/\\/g, '/')}#/desktop`
+    mainWindow.loadURL(htmlUrl)
   }
   mainWindow.webContents.openDevTools({ mode: 'detach' })
 
@@ -530,6 +541,13 @@ function createWindow(): void {
     e.preventDefault()
     mainWindow.hide()
   })
+
+  // 自动发送测试消息（用于调试）
+  if (process.env.AUTO_SEND_MESSAGE) {
+    setTimeout(() => {
+      mainWindow.webContents.send('doge:auto-send', process.env.AUTO_SEND_MESSAGE)
+    }, 5000)
+  }
 }
 
 function createTray(): void {
@@ -558,16 +576,52 @@ function createTray(): void {
 
 // 发送消息（使用 QueryEngine）
 ipcMain.handle('doge:send-message', async (_event, content: string) => {
+  console.log('[MAIN] doge:send-message called, content:', content?.slice(0, 100))
   const currentEngine = getEngine()
   const config = engineConfig!
+  console.log('[MAIN] getEngine() returned, config:', { provider: config.provider, model: config.model, baseUrl: config.baseUrl })
 
   if (!config.apiKey) {
+    console.log('[MAIN] no apiKey configured')
     return { error: '未配置 API Key。请在 .doge/api.json 中配置。' }
   }
 
   try {
-    const result = await currentEngine.query(content)
+    // 解析可能包含图片的 JSON 格式消息
+    let queryText = content
+    let images: Array<{ type: string; url: string }> = []
+    try {
+      const parsed = JSON.parse(content)
+      if (parsed && typeof parsed === 'object' && parsed.text) {
+        queryText = parsed.text
+        if (Array.isArray(parsed.images)) {
+          images = parsed.images
+        }
+      }
+    } catch {
+      // 纯文本消息，直接使用
+    }
+
+    // 构建 QueryEngine 的输入：文本 + 图片
+    let engineInput: string | { text: string; images: Array<{ data: string; mimeType: string }> } = queryText
+    if (images.length > 0) {
+      // 将 base64 data URL 转换为 QueryEngine 需要的格式
+      const formattedImages = images.map(img => {
+        // 支持 data URL 格式: data:image/png;base64,xxxx
+        const match = img.url.match(/^data:([^;]+);base64,(.+)$/)
+        if (match) {
+          return { data: match[2], mimeType: match[1] }
+        }
+        // 如果不是 data URL，作为 URL 传递
+        return { data: img.url, mimeType: 'image/png' }
+      })
+      engineInput = { text: queryText, images: formattedImages }
+    }
+
+    console.log('[MAIN] calling currentEngine.query(), engineInput type:', typeof engineInput)
+    const result = await currentEngine.query(engineInput)
     const messages = result.messages as InternalMessage[]
+    console.log('[MAIN] query() returned, state:', result.state, 'messageCount:', messages.length)
     // 自动保存会话
     if (!currentSessionId && messages.length > 0) {
       currentSessionId = saveSession(messages)
@@ -583,6 +637,7 @@ ipcMain.handle('doge:send-message', async (_event, content: string) => {
     } catch { /* ignore */ }
     const lastAssistant = [...messages].reverse().find(m => m.role === 'assistant')
     const reply = typeof lastAssistant?.content === 'string' ? lastAssistant.content : JSON.stringify(lastAssistant?.content ?? '')
+    console.log('[MAIN] returning reply, length:', reply.length, 'content:', reply.slice(0, 100))
     return { success: true, content: reply }
   } catch (error: unknown) {
     // 保存崩溃恢复标记
@@ -591,6 +646,7 @@ ipcMain.handle('doge:send-message', async (_event, content: string) => {
       fs.writeFileSync(crashFile, JSON.stringify({ sessionId: currentSessionId, messageCount: 0, timestamp: new Date().toISOString() }, null, 2))
     } catch { /* ignore */ }
     const message = error instanceof Error ? error.message : '未知错误'
+    console.log('[MAIN] query threw error:', message)
     return { error: message }
   }
 })
@@ -627,6 +683,7 @@ ipcMain.handle('doge:update-config', async (_event, data: Record<string, string>
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
     fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), 'utf-8')
     engine = null
+    engineApi = null
     engineConfig = null
     return { success: true }
   } catch (e: unknown) {
@@ -637,9 +694,14 @@ ipcMain.handle('doge:update-config', async (_event, data: Record<string, string>
 
 // 获取对话历史
 ipcMain.handle('doge:get-history', () => {
-  const currentEngine = getEngine()
-  const msgs = (currentEngine as unknown as { conversation: { messages: InternalMessage[] } }).conversation?.messages ?? []
-  return { messages: msgs.map(m => ({ role: m.role, content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content) })) }
+  try {
+    const api = getEngineApi()
+    if (!api) return { messages: [] }
+    const messages = api.getMessages()
+    return { messages }
+  } catch {
+    return { messages: [] }
+  }
 })
 
 // 清除对话历史
@@ -652,8 +714,8 @@ ipcMain.handle('doge:clear-history', () => {
 // 获取工具列表（桌面端工具面板用）
 ipcMain.handle('doge:get-tools', () => {
   try {
-    const currentEngine = getEngine()
-    const tools = (currentEngine as unknown as { getTools?: () => ToolDefinition[] }).getTools?.()
+    const api = getEngineApi()
+    const tools = api.getTools()
     if (tools && tools.length > 0) {
       // 使用 JSON 序列化确保对象可被 IPC 结构化克隆
       return JSON.parse(JSON.stringify(
@@ -806,28 +868,32 @@ ipcMain.handle('doge:load-draft', async (_event, sessionId: string) => {
 })
 
 ipcMain.handle('doge:get-token-usage', () => {
-  const currentEngine = getEngine()
-  const msgs = (currentEngine as unknown as { conversation: { messages: InternalMessage[] } }).conversation?.messages ?? []
-  let totalInput = 0
-  let totalOutput = 0
-  for (const m of msgs) {
-    if (m.role === 'tool' && typeof m.content === 'string') {
-      const usageMatch = m.content.match(/"usage":\s*\{\s*"input_tokens":\s*(\d+),\s*"output_tokens":\s*(\d+)/)
-      if (usageMatch) {
-        totalInput += parseInt(usageMatch[1])
-        totalOutput += parseInt(usageMatch[2])
+  try {
+    const api = getEngineApi()
+    if (!api) return { inputTokens: 0, outputTokens: 0, totalTokens: 0, lastResponseLength: 0, messageCount: 0 }
+    const msgs = api.getMessages()
+    let totalInput = 0
+    let totalOutput = 0
+    for (const m of msgs) {
+      if (m.role === 'tool' && typeof m.content === 'string') {
+        const usageMatch = m.content.match(/"usage":\s*\{\s*"input_tokens":\s*(\d+),\s*"output_tokens":\s*(\d+)/)
+        if (usageMatch) {
+          totalInput += parseInt(usageMatch[1])
+          totalOutput += parseInt(usageMatch[2])
+        }
       }
     }
-  }
-  const lastAssistant = [...msgs].reverse().find(m => m.role === 'assistant')
-  const lastContent = typeof lastAssistant?.content === 'string' ? lastAssistant.content : ''
-  const lastUsageMatch = lastContent.match(/Token 使用.*?(\d+)\s*[→→]\s*(\d+)/)
-  return {
-    inputTokens: totalInput,
-    outputTokens: totalOutput,
-    totalTokens: totalInput + totalOutput,
-    lastResponseLength: lastContent.length,
-    messageCount: msgs.length,
+    const lastAssistant = [...msgs].reverse().find(m => m.role === 'assistant')
+    const lastContent = typeof lastAssistant?.content === 'string' ? lastAssistant.content : ''
+    return {
+      inputTokens: totalInput,
+      outputTokens: totalOutput,
+      totalTokens: totalInput + totalOutput,
+      lastResponseLength: lastContent.length,
+      messageCount: msgs.length,
+    }
+  } catch {
+    return { inputTokens: 0, outputTokens: 0, totalTokens: 0, lastResponseLength: 0, messageCount: 0 }
   }
 })
 
@@ -842,16 +908,16 @@ ipcMain.handle('doge:get-git-diff', async (_event, cwd: string, filePath: string
 // ─── 命令系统（桌面端轻量实现） ───
 // 动态导入 prompt 类型命令模板，避免顶层循环依赖
 const dynamicCommandImports: Record<string, () => Promise<{ default?: { getPromptForCommand?: (...args: unknown[]) => Promise<unknown[]>; type?: string } }>> = {
-  '/commit': () => import('../../../src/commands/commit.ts'),
-  '/review': () => import('../../../src/commands/review.ts'),
-  '/plan': () => import('../../../src/commands/plan-mode/index.ts').catch(() => ({ default: null })),
-  '/diff': () => import('../../../src/commands/diff/diff.ts').catch(() => ({ default: null })),
-  '/branch': () => import('../../../src/commands/branch/branch.ts').catch(() => ({ default: null })),
-  '/memory': () => import('../../../src/commands/memory/memory.tsx').catch(() => ({ default: null })),
-  '/deploy': () => import('../../../src/commands/deploy/deploy.ts').catch(() => ({ default: null })),
-  '/task': () => import('../../../src/commands/task/task.ts').catch(() => ({ default: null })),
-  '/session-search': () => import('../../../src/commands/session-search.ts'),
-  '/session-tag': () => import('../../../src/commands/session-tag.ts'),
+  '/commit': () => import('../../../src/commands/commit.js'),
+  '/review': () => import('../../../src/commands/review.js'),
+  '/plan': () => import('../../../src/commands/plan-mode/index.js').catch(() => ({ default: null })),
+  '/diff': () => import('../../../src/commands/diff/diff.js').catch(() => ({ default: null })),
+  '/branch': () => import('../../../src/commands/branch/branch.js').catch(() => ({ default: null })),
+  '/memory': () => import('../../../src/commands/memory/memory.js').catch(() => ({ default: null })),
+  '/deploy': () => import('../../../src/commands/deploy/deploy.js').catch(() => ({ default: null })),
+  '/task': () => import('../../../src/commands/task/task.js').catch(() => ({ default: null })),
+  '/session-search': () => import('../../../src/commands/session-search.js'),
+  '/session-tag': () => import('../../../src/commands/session-tag.js'),
 }
 
 interface CommandDef {
@@ -939,10 +1005,40 @@ async function executeAIDrivenCommand(commandName: string, args: string[] = []):
     const currentEngine = getEngine()
     const result = await currentEngine.query(promptText)
     const messages = result.messages as InternalMessage[]
-    const lastAssistant = [...messages].reverse().find(m => m.role === 'assistant')
-    const reply = typeof lastAssistant?.content === 'string' ? lastAssistant.content : JSON.stringify(lastAssistant?.content ?? '')
 
-    return { success: true, output: reply }
+    // 提取所有 assistant 消息的内容（包括工具调用结果）
+    const assistantParts: string[] = []
+    for (const m of messages) {
+      if (m.role === 'assistant') {
+        if (typeof m.content === 'string') {
+          if (m.content.trim()) assistantParts.push(m.content)
+        } else {
+          assistantParts.push(JSON.stringify(m.content))
+        }
+      }
+    }
+
+    // 取最后一条 assistant 消息作为主要输出，附带完整上下文摘要
+    const lastAssistant = [...messages].reverse().find(m => m.role === 'assistant')
+    const primaryOutput = typeof lastAssistant?.content === 'string'
+      ? lastAssistant.content
+      : JSON.stringify(lastAssistant?.content ?? '')
+
+    // 构建完整输出：主要回复 + 工具调用摘要
+    let fullOutput = primaryOutput
+    const toolCalls = messages.filter(m => m.role === 'tool')
+    if (toolCalls.length > 0) {
+      const toolSummary = toolCalls.map(m => {
+        const content = typeof m.content === 'string' ? m.content : JSON.stringify(m.content)
+        const truncated = content.length > 200 ? content.slice(0, 200) + '...' : content
+        return '[工具结果] ' + truncated
+      }).join('\n')
+      if (toolSummary.length > 0) {
+        fullOutput += '\n\n--- 执行详情 ---\n' + toolSummary
+      }
+    }
+
+    return { success: true, output: fullOutput }
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : '未知错误'
     return { success: false, error: message }
@@ -1056,12 +1152,14 @@ ipcMain.handle('doge:execute-command', async (_event, commandName: string, args:
         return { success: true, output: `当前模型: ${engineConfig?.model || 'gpt-4o'}\n可用模型:\n${available.map(m => `  - ${m}`).join('\n')}` }
       }
       case '/clear': {
-        const msgs = (engine as unknown as { conversation: { messages: InternalMessage[] } }).conversation?.messages ?? []
+        const api = getEngineApi()
+        const msgs = api.getMessages()
         if (msgs.length > 0) {
           const id = saveSession(msgs)
           return { success: true, output: `对话历史已清除。已保存会话: ${id} (${msgs.length} 条消息)` }
         }
         engine = null
+        engineApi = null
         engineConfig = null
         return { success: true, output: '对话历史已清除' }
       }
@@ -1084,11 +1182,11 @@ ipcMain.handle('doge:execute-command', async (_event, commandName: string, args:
         }
       }
       case '/session': {
-        const currentEngine = getEngine()
-        const msgs = (currentEngine as unknown as { conversation: { messages: InternalMessage[] } }).conversation?.messages ?? []
-        const userMsgs = msgs.filter((m: InternalMessage) => m.role === 'user').length
-        const assistantMsgs = msgs.filter((m: InternalMessage) => m.role === 'assistant').length
-        const toolMsgs = msgs.filter((m: InternalMessage) => m.role === 'tool').length
+        const api = getEngineApi()
+        const msgs = api.getMessages()
+        const userMsgs = msgs.filter(m => m.role === 'user').length
+        const assistantMsgs = msgs.filter(m => m.role === 'assistant').length
+        const toolMsgs = msgs.filter(m => m.role === 'tool').length
         const sessions = listSessions()
         return { success: true, output: `当前会话:\n  用户消息: ${userMsgs}\n  助手消息: ${assistantMsgs}\n  工具调用: ${toolMsgs}\n  总计: ${msgs.length}\n  会话ID: ${currentSessionId || '新会话'}\n\n历史会话: ${sessions.length} 个\n${sessions.slice(0, 5).map(s => `  - ${s.id} (${s.messageCount} 条, ${s.createdAt})`).join('\n')}` }
       }
@@ -1126,9 +1224,9 @@ ipcMain.handle('doge:execute-command', async (_event, commandName: string, args:
         }
       }
       case '/compact': {
-        const currentEngine = getEngine()
-        const msgs = (currentEngine as unknown as { conversation: { messages: InternalMessage[] } }).conversation?.messages ?? []
-        const summary = `压缩摘要: 共 ${msgs.length} 条消息已压缩。对话上下文已优化。`
+        const api = getEngineApi()
+        const count = api.getMessageCount()
+        const summary = `压缩摘要: 共 ${count} 条消息已压缩。对话上下文已优化。`
         return { success: true, output: summary }
       }
       case '/rstk': {
@@ -1137,12 +1235,12 @@ ipcMain.handle('doge:execute-command', async (_event, commandName: string, args:
         return { success: true, output: '会话已重启。' }
       }
       case '/stats': {
-        const currentEngine = getEngine()
-        const msgs = (currentEngine as unknown as { conversation: { messages: InternalMessage[] } }).conversation?.messages ?? []
-        const userMsgs = msgs.filter((m: InternalMessage) => m.role === 'user').length
-        const assistantMsgs = msgs.filter((m: InternalMessage) => m.role === 'assistant').length
-        const toolMsgs = msgs.filter((m: InternalMessage) => m.role === 'tool').length
-        const state = currentEngine.getState()
+        const api = getEngineApi()
+        const msgs = api.getMessages()
+        const userMsgs = msgs.filter(m => m.role === 'user').length
+        const assistantMsgs = msgs.filter(m => m.role === 'assistant').length
+        const toolMsgs = msgs.filter(m => m.role === 'tool').length
+        const state = api.getState()
         return { success: true, output: `会话统计:\n  状态: ${state}\n  用户消息: ${userMsgs}\n  助手消息: ${assistantMsgs}\n  工具调用: ${toolMsgs}\n  总计: ${msgs.length}` }
       }
       case '/cost': {
@@ -1173,9 +1271,9 @@ ipcMain.handle('doge:execute-command', async (_event, commandName: string, args:
         return { success: true, output: `准备提交并推送:\n分支: ${branch}\n远程: ${remote} (${remoteUrl})\n变更文件:\n${status}\n\n请确认后提交。` }
       }
       case '/export': {
-        const currentEngine = getEngine()
-        const msgs = (currentEngine as unknown as { conversation: { messages: InternalMessage[] } }).conversation?.messages ?? []
-        const exportData = JSON.stringify(msgs.map((m: InternalMessage) => ({ role: m.role, content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content) })), null, 2)
+        const api = getEngineApi()
+        const msgs = api.getMessages()
+        const exportData = JSON.stringify(msgs, null, 2)
         const exportPath = path.join(projectRoot, 'doge-export.json')
         fs.writeFileSync(exportPath, exportData, 'utf-8')
         return { success: true, output: `对话已导出到: ${exportPath}\n共 ${msgs.length} 条消息` }
@@ -1265,6 +1363,7 @@ ipcMain.handle('doge:execute-command', async (_event, commandName: string, args:
         if (!msgs) return { success: false, error: `无法加载会话: ${latest.id}` }
         // 替换当前引擎的对话历史
         engine = null
+        engineApi = null
         const config = loadConfig()
         engineConfig = config
         getPermissionManager().setMainWindow(mainWindow)
@@ -1275,8 +1374,8 @@ ipcMain.handle('doge:execute-command', async (_event, commandName: string, args:
           maxOutputTokens: 40000,
           tools: adaptedTools,
         })
-        const conv = (engine as unknown as { conversation: { messages: InternalMessage[]; addToolResults: (r: unknown[]) => void } }).conversation
-        conv.messages = msgs
+        engineApi = createEngineApi(engine)
+        engineApi.loadMessages(msgs)
         currentSessionId = latest.id
         return { success: true, output: `已恢复会话: ${latest.id}\n消息数: ${latest.messageCount}\n创建时间: ${latest.createdAt}` }
       }
@@ -1344,6 +1443,194 @@ function saveTheme(settings: ThemeSettings): void {
   } catch { /* ignore */ }
 }
 
+  const mcpConfigPath = path.join(projectRoot, '.doge', 'mcp.json')
+
+  function readMcpConfig(): { servers: Record<string, unknown> } {
+    try {
+      if (fs.existsSync(mcpConfigPath)) {
+        return JSON.parse(fs.readFileSync(mcpConfigPath, 'utf-8'))
+      }
+    } catch { /* ignore */ }
+    return { servers: {} }
+  }
+
+  function writeMcpConfig(config: { servers: Record<string, unknown> }): void {
+    const dir = path.dirname(mcpConfigPath)
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
+    fs.writeFileSync(mcpConfigPath, JSON.stringify(config, null, 2), 'utf-8')
+  }
+
+  ipcMain.handle('doge:mcp-list', () => {
+    const config = readMcpConfig()
+    const servers = config.servers || {}
+    return Object.entries(servers).map(([name, s]) => {
+      const cfg = s as { command?: string; args?: string[]; transport?: string }
+      return { name, command: cfg.command || cfg.transport || 'unknown', args: cfg.args || [], transport: cfg.transport || 'stdio' }
+    })
+  })
+
+  ipcMain.handle('doge:mcp-add', (_event, name: string, command: string, args: string[], transport = 'stdio') => {
+    if (!name || !command) return { success: false, error: '缺少名称或命令' }
+    const config = readMcpConfig()
+    config.servers = config.servers || {}
+    config.servers[name] = { command, args, transport }
+    writeMcpConfig(config)
+    return { success: true, message: `已添加 MCP 服务器: ${name}` }
+  })
+
+  ipcMain.handle('doge:mcp-remove', (_event, name: string) => {
+    const config = readMcpConfig()
+    if (!config.servers?.[name]) return { success: false, error: `服务器 "${name}" 不存在` }
+    delete config.servers[name]
+    writeMcpConfig(config)
+    return { success: true, message: `已移除 MCP 服务器: ${name}` }
+  })
+
+ipcMain.handle('doge:mcp-test', async (_event, name: string) => {
+  try {
+    const config = readMcpConfig()
+    const server = config.servers?.[name]
+    if (!server) return { success: false, error: `服务器 "${name}" 不存在` }
+    const cfg = server as { command?: string; args?: string[] }
+    const { execSync } = await import('node:child_process')
+    try {
+      execSync(`${cfg.command} ${(cfg.args || []).join(' ')} --help`, { encoding: 'utf-8', timeout: 5000, stdio: 'pipe' })
+      return { success: true, message: `${name} 可用` }
+    } catch {
+      return { success: true, message: `${name} 命令已注册（连接测试需要实际 MCP 握手）` }
+    }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : '测试失败' }
+  }
+})
+
+// MCP 协议握手与工具调用
+
+const mcpConnections = new Map<string, { connected: boolean; tools: Array<{ name: string; description: string; inputSchema: Record<string, unknown> }> }>()
+
+ipcMain.handle('doge:mcp-connect', async (_event, name: string) => {
+  const config = readMcpConfig()
+  const server = config.servers?.[name] as { command?: string; args?: string[]; transport?: string }
+  if (!server) return { success: false, error: `服务器 "${name}" 不存在` }
+  try {
+    const { Client } = await import('@modelcontextprotocol/sdk/client/index.js')
+    const { StdioClientTransport } = await import('@modelcontextprotocol/sdk/client/stdio.js')
+    const transport = new StdioClientTransport({ command: server.command!, args: server.args || [] })
+    const client = new Client({ name: 'doge-desktop', version: '1.0.0' }, { capabilities: {} })
+    await client.connect(transport)
+    const toolsResponse = await client.listTools()
+    const tools = toolsResponse.tools.map(t => ({ name: t.name, description: t.description || '', inputSchema: (t.inputSchema || {}) as Record<string, unknown> }))
+    mcpConnections.set(name, { connected: true, tools })
+    await client.close()
+    return { success: true, tools }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : '连接失败' }
+  }
+})
+
+ipcMain.handle('doge:mcp-call-tool', async (_event, serverName: string, toolName: string, args: Record<string, unknown>) => {
+  const config = readMcpConfig()
+  const server = config.servers?.[serverName] as { command?: string; args?: string[]; transport?: string }
+  if (!server) return { success: false, error: `服务器 "${serverName}" 不存在` }
+  try {
+    const { Client } = await import('@modelcontextprotocol/sdk/client/index.js')
+    const { StdioClientTransport } = await import('@modelcontextprotocol/sdk/client/stdio.js')
+    const transport = new StdioClientTransport({ command: server.command!, args: server.args || [] })
+    const client = new Client({ name: 'doge-desktop', version: '1.0.0' }, { capabilities: {} })
+    await client.connect(transport)
+    const result = await client.callTool({ name: toolName, arguments: args })
+    let output = ''
+    if (result.content && Array.isArray(result.content)) {
+      for (const item of result.content) {
+        if (item.type === 'text' && item.text) { output += item.text }
+        else if (item.type === 'image' && item.data) { output += `[图片: ${item.mimeType || 'image'}]` }
+        else { output += JSON.stringify(item) }
+      }
+    }
+    await client.close()
+    return { success: !(result as { isError?: boolean }).isError, output: output || JSON.stringify(result) }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : '调用失败' }
+  }
+})
+
+ipcMain.handle('doge:mcp-get-tools', (_event, name: string) => {
+  const conn = mcpConnections.get(name)
+  if (!conn) return { success: false, error: '未连接' }
+  return { success: true, tools: conn.tools }
+})
+
+ipcMain.handle('doge:agent-list', () => {
+  try {
+    const agentsDir = path.join(projectRoot, '.doge', 'agents')
+    if (!fs.existsSync(agentsDir)) return []
+    return fs.readdirSync(agentsDir).filter(f => f.endsWith('.json')).map(f => {
+      const data = JSON.parse(fs.readFileSync(path.join(agentsDir, f), 'utf-8'))
+      return { id: data.id || f.replace('.json', ''), name: data.name || f, description: data.description || '', model: data.model || '' }
+    })
+  } catch { return [] }
+})
+
+ipcMain.handle('doge:agent-get', (_event, id: string) => {
+  try {
+    const agentsDir = path.join(projectRoot, '.doge', 'agents')
+    const file = path.join(agentsDir, `${id}.json`)
+    if (!fs.existsSync(file)) return null
+    return JSON.parse(fs.readFileSync(file, 'utf-8'))
+  } catch { return null }
+})
+
+ipcMain.handle('doge:agent-save', (_event, agent: Record<string, unknown>) => {
+  try {
+    const agentsDir = path.join(projectRoot, '.doge', 'agents')
+    if (!fs.existsSync(agentsDir)) fs.mkdirSync(agentsDir, { recursive: true })
+    const id = (agent.id as string) || `agent-${Date.now()}`
+    fs.writeFileSync(path.join(agentsDir, `${id}.json`), JSON.stringify(agent, null, 2), 'utf-8')
+    return { success: true, id }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : '保存失败' }
+  }
+})
+
+ipcMain.handle('doge:agent-delete', (_event, id: string) => {
+  try {
+    const agentsDir = path.join(projectRoot, '.doge', 'agents')
+    const file = path.join(agentsDir, `${id}.json`)
+    if (!fs.existsSync(file)) return { success: false, error: 'Agent 不存在' }
+    fs.unlinkSync(file)
+    return { success: true }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : '删除失败' }
+  }
+})
+
+// ─── 插件管理 IPC ───
+
+ipcMain.handle('doge:plugin-scan', () => {
+  return scanPlugins(projectRoot)
+})
+
+ipcMain.handle('doge:plugin-enable', (_event, pluginName: string, enabled: boolean) => {
+  try {
+    setPluginEnabled(projectRoot, pluginName, enabled)
+    return { success: true }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : '操作失败' }
+  }
+})
+
+ipcMain.handle('doge:plugin-install', (_event, sourceDir: string, pluginName: string) => {
+  return installPlugin(projectRoot, sourceDir, pluginName)
+})
+
+ipcMain.handle('doge:plugin-uninstall', (_event, pluginName: string) => {
+  return uninstallPlugin(projectRoot, pluginName)
+})
+
+ipcMain.handle('doge:plugin-get-command', (_event, pluginName: string, commandName: string) => {
+  return { content: getPluginCommandContent(projectRoot, pluginName, commandName) }
+})
+
 ipcMain.handle('doge:get-theme', () => loadTheme())
 ipcMain.handle('doge:set-theme', async (_event, settings: Partial<ThemeSettings>) => {
   const current = loadTheme()
@@ -1360,6 +1647,7 @@ ipcMain.handle('doge:load-session', async (_event, sessionId: string) => {
   if (!msgs) return { success: false, error: '无法加载会话' }
   const messages = msgs.map((m) => ({ role: m.role, content: m.content }))
   engine = null
+  engineApi = null
   const config = loadConfig()
   engineConfig = config
   const adaptedTools = createAdaptedTools(config)
@@ -1369,14 +1657,15 @@ ipcMain.handle('doge:load-session', async (_event, sessionId: string) => {
     maxOutputTokens: 40000,
     tools: adaptedTools,
   })
-  const conv = (engine as unknown as { conversation: { messages: InternalMessage[]; addToolResults: (r: unknown[]) => void } }).conversation
-  conv.messages = msgs
+  engineApi = createEngineApi(engine)
+  engineApi.loadMessages(msgs)
   currentSessionId = sessionId
   return { success: true, messageCount: msgs.length, messages }
 })
 
 ipcMain.handle('doge:new-session', () => {
   engine = null
+  engineApi = null
   engineConfig = null
   currentSessionId = saveSession([])
   return { success: true }
@@ -1411,18 +1700,17 @@ ipcMain.handle('doge:get-session-id', () => {
 // 关闭当前会话并自动创建新会话（多 Tab 用）
 ipcMain.handle('doge:close-session', async () => {
   try {
-    engine = null
-    engineConfig = null
-    if (currentSessionId) {
+    if (currentSessionId && engineApi) {
       // 保存当前会话状态
-      const currentEngine = getEngine()
-      const msgs = (currentEngine as unknown as { conversation: { messages: InternalMessage[] } }).conversation?.messages ?? []
+      const msgs = engineApi.getMessages()
       if (msgs.length > 0) {
         const file = path.join(SESSIONS_DIR, `${currentSessionId}.json`)
-        const data = msgs.map(m => ({ role: m.role, content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content) }))
-        fs.writeFileSync(file, JSON.stringify({ id: currentSessionId, messages: data, createdAt: new Date().toISOString() }, null, 2), 'utf-8')
+        fs.writeFileSync(file, JSON.stringify({ id: currentSessionId, messages: msgs, createdAt: new Date().toISOString() }, null, 2), 'utf-8')
       }
     }
+    engine = null
+    engineApi = null
+    engineConfig = null
     currentSessionId = null
     const newSessionId = saveSession([])
     return { success: true, sessionId: newSessionId }

@@ -41,8 +41,8 @@ export class QueryStateMachine {
     this.transitions.set("responding", ["needs_user", "should_continue", "crashed", "aborted_by_user", "done"]);
     this.transitions.set("needs_user", ["responding", "aborted_by_user", "done"]);
     this.transitions.set("should_continue", ["responding", "done", "aborted_by_user"]);
-    this.transitions.set("done", []);
-    this.transitions.set("crashed", []);
+    this.transitions.set("done", ["responding", "aborted_by_user"]);
+    this.transitions.set("crashed", ["responding", "aborted_by_user"]);
     this.transitions.set("aborted_by_user", []);
   }
 

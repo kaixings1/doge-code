@@ -366,7 +366,11 @@ const reconciler = createReconciler<
     internalHandle?: unknown,
   ): TextNode {
     if (!hostContext.isInsideText) {
-      const msg = `Text string "${text}" must be rendered inside <Text> component`
+      const trimmed = text.trim()
+      if (trimmed === '') {
+        return createTextNode(text)
+      }
+      const msg = `Text string "${trimmed}" must be rendered inside <Text> component`
       const err = new Error(msg)
       try {
         // Write diagnostic info to debug log via appendFileSync
@@ -375,7 +379,7 @@ const reconciler = createReconciler<
         const stackLines = (err.stack || '').split('\n').slice(0, 6).join('\n')
         appendFileSync(
           join(homedir(), '.doge', 'DOGE_DEBUG.log'),
-          `[${new Date().toISOString()}] Text="${text}" stack=${stackLines}${chainStr}\n`,
+          `[${new Date().toISOString()}] Text="${trimmed}" stack=${stackLines}${chainStr}\n`,
         )
       } catch {
         // silently ignore

@@ -77,8 +77,8 @@ function FileWriteToolCreatedMessage(t0) {
   let t4;
   if ($[7] !== t1 || $[8] !== t3) {
     t4 = t1 === 0
-      ? <Text color="error">写入 {t1} 行到{" "}{t3}</Text>
-      : <><Text color="success">写入</Text> <Text bold={true}>{t1}</Text> <Text color="success">行到</Text> {" "}{t3}</>;
+      ? <Text color="error">写入 {t1} 行到 {t3}</Text>
+      : <><Text color="success">写入</Text> <Text bold={true}>{t1}</Text> <Text color="success">行到</Text> {t3}</>;
     $[7] = t1;
     $[8] = t3;
     $[9] = t4;
@@ -107,7 +107,7 @@ function FileWriteToolCreatedMessage(t0) {
   }
   let t8;
   if ($[17] !== numLines || $[18] !== plusLines || $[19] !== verbose) {
-    t8 = !verbose && plusLines > 0 && <Text dimColor={true}>… +{plusLines} {plusLines === 1 ? "行" : "行"}{" "}{numLines > 0 && <CtrlOToExpand />}</Text>;
+    t8 = !verbose && plusLines > 0 && <Text dimColor={true}>… +{plusLines} {plusLines === 1 ? "行" : "行"} {numLines > 0 && <CtrlOToExpand />}</Text>;
     $[17] = numLines;
     $[18] = plusLines;
     $[19] = verbose;

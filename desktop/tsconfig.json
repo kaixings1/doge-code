@@ -13,6 +13,14 @@
     "outDir": "./dist",
     "rootDir": "src"
   },
-  "include": ["src/renderer/**/*", "src/preload/**/*", "src/desktop/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/renderer/**/*",
+    "src/preload/**/*",
+    "src/desktop/**/*",
+    "src/renderer/types/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

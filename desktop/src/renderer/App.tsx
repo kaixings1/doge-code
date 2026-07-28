@@ -2,12 +2,11 @@
  * 桌面端主应用组件
  */
 
-import React, { useCallback, useContext, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { StrictMode } from 'react'
 import type { DesktopConfig } from '../desktop/types'
 import type { DogeAPI } from '../preload/index.js'
-import { useMemoryUsage } from './hooks/useMemoryUsage.js'
 import { FileTree, type FileTreeNode } from './components/FileTree.js'
 import { GitChanges, type GitFile } from './components/GitChanges.js'
 import { GitDiff } from './components/GitDiff.js'
@@ -17,13 +16,44 @@ import { HighlightedDiff } from './components/HighlightedDiff.js'
 import { ToolErrorBanner } from './components/ToolErrorBanner.js'
 import { ToolProgressBar } from './components/ToolProgressBar.js'
 import { ToolResultRenderer } from './components/MarkdownRenderer.js'
+import { VirtualMessageList } from './components/VirtualMessageList.js'
+import TerminalPanel from './TerminalPanel.js'
+import { AgentPanel } from './components/AgentPanel.js'
+import { PluginPanel } from './components/PluginPanel.js'
+import { KanbanBoard } from './components/KanbanBoard.js'
+import { TimeTracker } from './components/TimeTracker.js'
+import { ProgressReport } from './components/ProgressReport.js'
+import { useTimeTracker } from './hooks/useTimeTracker.js'
+import { useGitStats } from './hooks/useGitStats.js'
 import { getStyles, getEffectiveTheme, THEMES, type ThemeName, type ThemeColors } from './theme.js'
+import { AdvancedCodeEditor } from './components/AdvancedCodeEditor.js'
+import { SemanticSearchPanel } from './components/SemanticSearchPanel.js'
+import { AICodeReviewPanel } from './components/AICodeReviewPanel.js'
+import { OutlinePanel } from './components/OutlinePanel.js'
+import { parseMessageContent, InlineToolUseBlock, renderMarkdown } from './shared.js'
+import type { Message, ContentBlock, ToolUseBlock } from './shared.js'
+import { useDesktopVimInput, type VimMode } from '../hooks/useDesktopVimInput.js'
+import { useCommandHistory } from './hooks/useCommandHistory.js'
+import { useTabManager } from './hooks/useTabManager.js'
 
-declare global {
-  interface Window {
-    dogeAPI: DogeAPI
-  }
+/** 包装 TerminalPanel，注入 window.dogeAPI */
+function TerminalPanelWrapper({ cwd, onClose }: { cwd: string; onClose: () => void }) {
+  return (
+    <div style={{ position: 'relative' }}>
+      <button
+        onClick={onClose}
+        style={{
+          position: 'absolute', top: '4px', right: '8px', zIndex: 10,
+          background: 'none', border: 'none', color: '#555', cursor: 'pointer', fontSize: '12px',
+        }}
+        title="关闭终端"
+      >✕</button>
+      <TerminalPanel cwd={cwd} dogeAPI={window.dogeAPI as any} />
+    </div>
+  )
 }
+
+
 
 // ─── 主题 Context ───
 interface ThemeCtx {
@@ -36,92 +66,29 @@ export const ThemeContext = React.createContext<ThemeCtx>({ name: 'dark', colors
 // ─── 状态类型 ───
 type QueryState = 'idle' | 'responding' | 'needs_user' | 'should_continue' | 'done' | 'crashed' | 'aborted_by_user'
 
-// ─── 消息内容块类型 ───
-interface TextBlock { type: 'text'; text: string }
-interface ToolUseBlock { type: 'tool_use'; id: string; name: string; input: Record<string, unknown> }
-interface ThinkingBlock { type: 'thinking'; text: string; signature?: string }
-interface ImageBlock { type: 'image'; url: string; alt?: string }
-type ContentBlock = TextBlock | ToolUseBlock | ThinkingBlock | ImageBlock
-
-// ─── 数据模型 ───
-interface Message {
-  id: string
-  role: 'user' | 'assistant' | 'system' | 'error' | 'tool'
-  content: string
+// ─── 语法高亮颜色（主题感知） ───
+interface SyntaxColors {
+  string: string; keyword: string; number: string; comment: string;
+  property: string;
 }
 
-// ─── 消息内容解析：将 assistant 消息拆分为文本块 + 工具调用块 ───
-function parseMessageContent(content: string): ContentBlock[] {
-  const blocks: ContentBlock[] = []
-  const toolUseRegex = /<tool_use>\s*<name>([^<]+)<\/name>\s*<input>(.*?)<\/input>\s*<\/tool_use>/gs
-
-  const events: Array<{ type: 'tool_use'; start: number; end: number; name: string; input: string } | { type: 'thinking'; start: number; end: number; text: string } | { type: 'text'; start: number; end: number }> = []
-
-  let match: RegExpExecArray | null
-  while ((match = toolUseRegex.exec(content)) !== null) {
-    events.push({ type: 'tool_use', start: match.index, end: match.index + match[0].length, name: match[1], input: match[2] })
-  }
-
-  // Extract <thinking> blocks
-  const thinkingRegex = /<thinking>(.*?)<\/thinking>/gs
-  let tMatch
-  while ((tMatch = thinkingRegex.exec(content)) !== null) {
-    events.push({ type: 'thinking', start: tMatch.index, end: tMatch.index + tMatch[0].length, text: tMatch[1].trim() })
-  }
-
-  // Sort by position
-  events.sort((a, b) => a.start - b.start)
-
-  // Build blocks in document order
-  let lastIndex = 0
-  for (const ev of events) {
-    if (ev.start > lastIndex) {
-      blocks.push({ type: 'text', text: content.slice(lastIndex, ev.start) })
-    }
-    if (ev.type === 'tool_use') {
-      let input: Record<string, unknown> = {}
-      try { input = JSON.parse(ev.input) } catch { input = { raw: ev.input } }
-      blocks.push({ type: 'tool_use', id: `tool_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`, name: ev.name, input })
-    } else if (ev.type === 'thinking') {
-      blocks.push({ type: 'thinking', text: ev.text })
-    }
-    lastIndex = ev.end
-  }
-  if (lastIndex < content.length) {
-    blocks.push({ type: 'text', text: content.slice(lastIndex) })
-  }
-  if (blocks.length === 0 && content.trim()) {
-    blocks.push({ type: 'text', text: content })
-  }
-  return blocks
+const DARK_SYNTAX: SyntaxColors = {
+  string: '#CE9178', keyword: '#569CD6', number: '#B5CEA8', comment: '#6A9955',
+  property: '#9CDCFE',
 }
 
-function InlineToolUseBlock({ block, onExecute, executingIds }: { block: ToolUseBlock; onExecute: (block: ToolUseBlock) => void; executingIds: Set<string> }) {
-  const [expanded, setExpanded] = React.useState(false)
-  const inputStr = typeof block.input === 'string' ? block.input : JSON.stringify(block.input, null, 2)
-  const truncated = expanded ? inputStr : (inputStr.length > 200 ? inputStr.slice(0, 200) + '...' : inputStr)
-  const isExecuting = executingIds.has(block.id)
-
-  return (
-    <div style={{ background: '#0A0A0A', border: '1px solid #262626', borderRadius: '4px', padding: '8px 10px', margin: '4px 0', fontFamily: 'monospace', fontSize: '11px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-        <div style={{ color: '#4ECB71', fontWeight: 600 }}>🔧 {block.name}</div>
-        <div style={{ display: 'flex', gap: '4px' }}>
-          <button onClick={() => setExpanded(!expanded)} style={{ padding: '1px 6px', border: '1px solid #333', borderRadius: '3px', background: '#0F0F0F', color: '#888', cursor: 'pointer', fontSize: '10px' }}>
-            {expanded ? '收起' : '展开'}
-          </button>
-          <button onClick={() => onExecute(block)} disabled={isExecuting} style={{ padding: '1px 8px', border: 'none', borderRadius: '3px', background: isExecuting ? '#333' : '#4ECB71', color: isExecuting ? '#555' : '#000', cursor: isExecuting ? 'not-allowed' : 'pointer', fontSize: '10px', fontWeight: 600 }}>
-            {isExecuting ? '执行中...' : '执行'}
-          </button>
-        </div>
-      </div>
-      <div style={{ color: '#888', whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{truncated.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
-    </div>
-  )
+const LIGHT_SYNTAX: SyntaxColors = {
+  string: '#A31515', keyword: '#0000FF', number: '#098658', comment: '#008000',
+  property: '#001080',
 }
 
-// ─── 轻量语法高亮 ───
-function highlightCode(code: string, lang: string): string {
+function getSyntaxColors(isDark: boolean): SyntaxColors {
+  return isDark ? DARK_SYNTAX : LIGHT_SYNTAX
+}
+
+// ─── 轻量语法高亮（主题感知） ───
+function highlightCode(code: string, lang: string, isDark = true): string {
+  const c = getSyntaxColors(isDark)
   let result = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
   if (['typescript', 'ts', 'javascript', 'js'].includes(lang)) {
@@ -172,49 +139,6 @@ function highlightCode(code: string, lang: string): string {
   return result
 }
 
-// ─── 轻量 Markdown 渲染器 ───
-function renderMarkdown(text: string): string {
-  let html = text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-
-  // 代码块（带语法高亮 + 复制按钮）
-  html = html.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) => {
-    const rawCode = code.trim()
-    const highlighted = highlightCode(rawCode, lang.toLowerCase())
-    const langLabel = lang ? `<span style="color:#888;font-size:10px">${lang}</span>` : '<span></span>'
-    const escaped = rawCode.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    return `<div style="position:relative;margin:4px 0" data-code="${escaped}"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">${langLabel}<button onclick="navigator.clipboard.writeText(this.closest('div').getAttribute('data-code')).catch(()=>{})" style="background:#262626;border:1px solid #333;color:#888;padding:1px 8px;border-radius:3px;cursor:pointer;font-size:10px">复制</button></div><pre style="background:#0A0A0A;border:1px solid #262626;border-radius:4px;padding:10px;overflow-x:auto;font-size:12px;line-height:1.5;margin:0"><code>${highlighted}</code></pre></div>`
-  })
-
-  // 行内代码
-  html = html.replace(/`([^`]+)`/g, '<code style="background:#1A1A1A;padding:1px 4px;border-radius:2px;font-size:12px;font-family:monospace">$1</code>')
-
-  // 标题
-  html = html.replace(/^### (.+)$/gm, '<h3 style="font-size:14px;font-weight:600;color:#F5F5F5;margin:8px 0 4px">$1</h3>')
-  html = html.replace(/^## (.+)$/gm, '<h2 style="font-size:16px;font-weight:600;color:#F5F5F5;margin:10px 0 4px">$1</h2>')
-  html = html.replace(/^# (.+)$/gm, '<h1 style="font-size:18px;font-weight:600;color:#F5F5F5;margin:12px 0 4px">$1</h1>')
-
-  // 粗体 & 斜体
-  html = html.replace(/\*\*(.+?)\*\*/g, '<strong style="color:#F5F5F5">$1</strong>')
-  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>')
-
-  // 链接
-  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color:#4ECB71;text-decoration:none" target="_blank">$1</a>')
-
-  // 无序列表
-  html = html.replace(/^(\s*)[-*] (.+)$/gm, '$1<li style="margin-left:16px;list-style:disc">$2</li>')
-
-  // 有序列表
-  html = html.replace(/^(\s*)\d+\. (.+)$/gm, '$1<li style="margin-left:16px;list-style:decimal">$2</li>')
-
-  // 换行
-  html = html.replace(/\n/g, '<br/>')
-
-  return html
-}
-
 // ─── 主组件 ───
 export function App(): JSX.Element {
   const [config, setConfig] = useState<DesktopConfig>({ provider: 'openai', apiKey: '', model: 'gpt-4o', workingDir: '' })
@@ -223,6 +147,7 @@ export function App(): JSX.Element {
   const [pendingImages, setPendingImages] = useState<Array<{ id: string; url: string; name: string }>>([])
   const [state, setState] = useState<QueryState>('idle')
   const [currentStreaming, setCurrentStreaming] = useState('')
+  const currentStreamingRef = useRef('')
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loaded, setLoaded] = useState(false)
@@ -231,7 +156,6 @@ export function App(): JSX.Element {
   const [isCommitting, setIsCommitting] = useState(false)
   const [previewTabs, setPreviewTabs] = useState<Array<{ id: string; path: string; content: string; size?: number }>>([])
   const [activePreviewTabId, setActivePreviewTabId] = useState<string | null>(null)
-  const previewTabCounter = useRef(0)
   const activePreviewFile = previewTabs.find(t => t.id === activePreviewTabId) || null
   const [previewLoading, setPreviewLoading] = useState(false)
   const [previewError, setPreviewError] = useState<string | null>(null)
@@ -246,7 +170,8 @@ export function App(): JSX.Element {
   const [msgSearchMatches, setMsgSearchMatches] = useState<number[]>([])
   const [executingToolIds, setExecutingToolIds] = useState<Set<string>>(new Set())
   const [toolProgress, setToolProgress] = useState<{ toolName: string; status: 'pending' | 'running' | 'success' | 'error'; progress?: number; duration?: number } | null>(null)
-  const [commandHistory, setCommandHistory] = useState<Array<{ cmd: string; time: number }>>([])
+  // commandHistory 使用 Hook 管理（替代内联状态）
+  const [commandHistory] = useState<Array<{ cmd: string; time: number }>>([])
   const [showCommandPalette, setShowCommandPalette] = useState(false)
   const [paletteMode, setPaletteMode] = useState<'files' | 'commands'>('files')
   const [showShortcuts, setShowShortcuts] = useState(false)
@@ -268,12 +193,7 @@ export function App(): JSX.Element {
   const [isOnline, setIsOnline] = useState(navigator.onLine)
   const [splitScreen, setSplitScreen] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
-  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLTextAreaElement>(null)
-  const memoryUsage = useMemoryUsage()
-  const recognitionRef = useRef<any>(null)
-  const utteranceRef = useRef<any>(null)
+  const [memoryUsage, setMemoryUsage] = useState<{ heapUsed: number; status: 'normal' | 'high' | 'critical' } | null>(null)
   const [isRecording, setIsRecording] = useState(false)
   const [interimTranscript, setInterimTranscript] = useState('')
   const [isSpeaking, setIsSpeaking] = useState(false)
@@ -284,8 +204,28 @@ export function App(): JSX.Element {
   const [mcpNewName, setMcpNewName] = useState('')
   const [mcpNewCommand, setMcpNewCommand] = useState('')
   const [mcpNewArgs, setMcpNewArgs] = useState('')
+  const [mcpConnectedTools, setMcpConnectedTools] = useState<Record<string, Array<{ name: string; description: string }>>>({})
+  const [mcpSelectedServer, setMcpSelectedServer] = useState<string | null>(null)
+  const [mcpToolInput, setMcpToolInput] = useState('')
+  const [mcpToolResult, setMcpToolResult] = useState<string | null>(null)
   const [agents, setAgents] = useState<Array<{ id: string; name: string; description: string; model: string }>>([])
   const [showAgentPanel, setShowAgentPanel] = useState(false)
+  const [showPluginPanel, setShowPluginPanel] = useState(false)
+  const [showSemanticSearch, setShowSemanticSearch] = useState(false)
+  const [showAIOutline, setShowAIOutline] = useState(false)
+  const [showCodeReview, setShowCodeReview] = useState(false)
+  const [activeReviewFile, setActiveReviewFile] = useState<string | null>(null)
+  const [showKanban, setShowKanban] = useState(false)
+  const [showTimeTracker, setShowTimeTracker] = useState(false)
+  const [showProgressReport, setShowProgressReport] = useState(false)
+  const [cursorOffset, setCursorOffset] = useState(0)
+  const [vimEnabled, setVimEnabled] = useState(false)
+  const previewTabCounter = useRef(0)
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
+  const recognitionRef = useRef<any>(null)
+  const utteranceRef = useRef<any>(null)
 
   // ─── 多 Tab 会话管理 ───
   interface AppTab {
@@ -298,9 +238,25 @@ export function App(): JSX.Element {
   const [activeTabId, setActiveTabId] = useState<string | null>(null)
   const tabIdCounter = useRef(0)
 
+  // ─── Vim 模式 ───
+  const vim = useDesktopVimInput({
+    value: input,
+    onChange: setInput,
+    onSubmit: () => { if (input.trim()) handleSend() },
+    onCursorOffsetChange: setCursorOffset,
+    cursorOffset,
+  })
+
+  // ─── 命令历史 Hook ───
+  const cmdHistory = useCommandHistory()
+
+  // ─── Tab 管理 Hook ───
+  const tabMgr = useTabManager()
+
   const effectiveTheme = getEffectiveTheme(themeSettings.theme as ThemeName | 'auto')
   const styles = getStyles(effectiveTheme)
   const theme = THEMES[effectiveTheme]
+  const c = theme
 
   // 切换到指定 tab
   const switchTab = useCallback((tabId: string) => {
@@ -401,6 +357,35 @@ export function App(): JSX.Element {
     if (result.success) { showToast(`已移除: ${name}`, 'success'); refreshMcpServers() }
     else { showToast(result.error || '移除失败', 'error') }
   }, [refreshMcpServers, showToast])
+
+  // MCP 连接与工具调用
+  const handleMcpConnect = useCallback(async (name: string) => {
+    setMcpLoading(true)
+    try {
+      const result = await window.dogeAPI.mcpConnect(name)
+      if (result.success && result.tools) {
+        setMcpConnectedTools(prev => ({ ...prev, [name]: result.tools! }))
+        showToast(`已连接 ${name} (${result.tools.length} 个工具)`, 'success')
+      } else {
+        showToast(result.error || '连接失败', 'error')
+      }
+    } catch { showToast('连接失败', 'error') } finally { setMcpLoading(false) }
+  }, [showToast])
+
+  const handleMcpCallTool = useCallback(async (serverName: string, toolName: string, args: Record<string, unknown>) => {
+    setMcpLoading(true)
+    setMcpToolResult(null)
+    try {
+      const result = await window.dogeAPI.mcpCallTool(serverName, toolName, args)
+      if (result.success) {
+        setMcpToolResult(result.output || '(无输出)')
+        showToast(`工具 ${toolName} 调用成功`, 'success')
+      } else {
+        setMcpToolResult(`错误: ${result.error}`)
+        showToast(`工具 ${toolName} 调用失败`, 'error')
+      }
+    } catch { showToast('工具调用失败', 'error') } finally { setMcpLoading(false) }
+  }, [showToast])
 
   // 网络状态监听
   useEffect(() => {
@@ -598,8 +583,31 @@ export function App(): JSX.Element {
 
   useEffect(() => {
     const unsub1 = window.dogeAPI.onStateChange((s) => setState(s as QueryState))
-    const unsub2 = window.dogeAPI.onChunk((chunk) => setCurrentStreaming((p) => p + chunk.text))
+    const unsub2 = window.dogeAPI.onChunk((chunk) => {
+      console.log('[RENDERER] onChunk received:', chunk.text?.slice(0, 50))
+      setCurrentStreaming((p) => {
+        const next = p + chunk.text
+        currentStreamingRef.current = next
+        return next
+      })
+    })
     return () => { unsub1(); unsub2() }
+  }, [])
+
+  // 自动发送测试消息（用于调试）- 必须在 handleSend 之后
+  const autoSendRef = useRef<() => void>(() => {})
+  useEffect(() => {
+    autoSendRef.current = handleSend
+  })
+  useEffect(() => {
+    const unsub = window.dogeAPI.onAutoSend((text) => {
+      console.log('[RENDERER] auto-send received:', text)
+      setInput(text)
+      setTimeout(() => {
+        autoSendRef.current()
+      }, 500)
+    })
+    return () => unsub()
   }, [])
 
   useEffect(() => {
@@ -761,15 +769,21 @@ export function App(): JSX.Element {
 
   const handleSend = useCallback(async (): Promise<void> => {
     const text = input.trim()
+    console.log('[RENDERER] handleSend called, text:', text, 'state:', state)
     if (!text || state === 'responding') return
     if (!isOnline) { showToast('网络已断开，无法发送消息', 'error'); return }
-    setInput(''); setError(null); setCurrentStreaming('')
+    setInput(''); setError(null); setCurrentStreaming(''); currentStreamingRef.current = ''
 
     const appendMsg = (msg: Message) => {
       setMessages(prev => { const next = [...prev, msg]; persistActiveTabMessages(next); return next })
     }
 
     if (text.startsWith('/')) {
+      // Project management commands
+      if (text === '/kanban') { setShowKanban(p => !p); setInput(''); setState('idle'); return }
+      if (text === '/timer') { setShowTimeTracker(p => !p); setInput(''); setState('idle'); return }
+      if (text === '/report') { setShowProgressReport(p => !p); setInput(''); setState('idle'); return }
+
       const parts = text.split(' ')
       const cmdName = parts[0]
       const cmdArgs = parts.slice(1)
@@ -784,7 +798,7 @@ export function App(): JSX.Element {
       }
       const assistantMsg: Message = { id: `msg-${Date.now() + 1}`, role: 'assistant', content: result.success ? (result.output || '(无输出)') : `错误: ${result.error}` }
       appendMsg(assistantMsg)
-      setCommandHistory(prev => [...prev, { cmd: text, time: Date.now() }].slice(-50))
+      cmdHistory.addCommand(text)
       setState('idle')
       return
     }
@@ -793,35 +807,54 @@ export function App(): JSX.Element {
     appendMsg(userMsg)
     setState('responding')
 
-    const sendPayload = pendingImages.length > 0
-      ? { text, images: pendingImages.map(img => ({ type: 'image', url: img.url })) }
-      : text
-
+    // 构建发送载荷：纯文本或包含图片的 JSON
     let result: { success?: boolean; content?: string; error?: string } | null = null
     try {
-      result = await window.dogeAPI.sendMessage(typeof sendPayload === 'string' ? sendPayload : JSON.stringify(sendPayload))
-      setPendingImages([])
+      console.log('[RENDERER] calling window.dogeAPI.sendMessage, text:', text)
+      if (pendingImages.length > 0) {
+        // 多模态消息：文本 + 图片 base64
+        const payload = {
+          text,
+          images: pendingImages.map(img => ({ type: 'image', url: img.url })),
+        }
+        result = await window.dogeAPI.sendMessage(JSON.stringify(payload))
+        setPendingImages([])
+      } else {
+        // 纯文本消息
+        result = await window.dogeAPI.sendMessage(text)
+      }
+      console.log('[RENDERER] sendMessage returned, result:', JSON.stringify(result))
     } catch (e) {
       const errMsg = e instanceof Error ? e.message : '发送失败'
+      console.log('[RENDERER] sendMessage threw error:', errMsg)
       appendMsg({ id: `msg-${Date.now() + 1}`, role: 'error', content: errMsg })
       setState('idle')
       return
     }
 
     if (result?.error) {
+      console.log('[RENDERER] result has error:', result.error)
       appendMsg({ id: `msg-${Date.now() + 1}`, role: 'error', content: result.error! })
       if (!document.hasFocus()) window.dogeAPI.notify('Doge Code', `错误: ${result.error.slice(0, 100)}`).catch(() => {})
-    } else if (result?.content) {
-      appendMsg({ id: `msg-${Date.now() + 1}`, role: 'assistant', content: result.content })
-      if (!document.hasFocus()) window.dogeAPI.notify('Doge Code', `回复完成: ${result.content.slice(0, 80)}`).catch(() => {})
-      // 自动朗读（用户开启时）
-      if (autoSpeak && 'speechSynthesis' in window && result.content) {
-        setTimeout(() => speakText(result.content), 200)
+    } else {
+      // 优先使用 result.content，否则使用流式累积的 currentStreaming
+      const finalContent = result?.content || currentStreamingRef.current
+      console.log('[RENDERER] result.content:', result?.content?.slice(0, 100), '| currentStreamingRef:', currentStreamingRef.current.slice(0, 100))
+      if (finalContent) {
+        console.log('[RENDERER] appending assistant message, length:', finalContent.length)
+        appendMsg({ id: `msg-${Date.now() + 1}`, role: 'assistant', content: finalContent })
+        if (!document.hasFocus()) window.dogeAPI.notify('Doge Code', `回复完成: ${finalContent.slice(0, 80)}`).catch(() => {})
+        // 自动朗读（用户开启时）
+        if (autoSpeak && 'speechSynthesis' in window) {
+          setTimeout(() => speakText(finalContent), 200)
+        }
+      } else {
+        console.log('[RENDERER] finalContent is empty, no message appended')
       }
     }
-    setCurrentStreaming('')
+    setCurrentStreaming(''); currentStreamingRef.current = ''
     setState('idle')
-  }, [input, state, persistActiveTabMessages, isOnline, showToast, autoSpeak])
+  }, [input, state, persistActiveTabMessages, isOnline, showToast, autoSpeak, pendingImages])
 
   const handleAbort = useCallback(async () => { await window.dogeAPI.abort(); setCurrentStreaming('') }, [])
   const handleClear = useCallback(async () => { await window.dogeAPI.clearHistory(); setMessages([]); persistActiveTabMessages([]); setCurrentStreaming('') }, [persistActiveTabMessages])
@@ -830,17 +863,17 @@ export function App(): JSX.Element {
   const speakText = useCallback((text: string) => {
     if (!('speechSynthesis' in window)) return
     window.speechSynthesis.cancel()
-    const utterance = new SpeechSynthesisUtterance(text)
-    utterance.lang = 'zh-CN'
-    utterance.rate = 1.0
+    const utter = new SpeechSynthesisUtterance(text)
+    utter.lang = 'zh-CN'
+    utter.rate = 1.0
     const voices = window.speechSynthesis.getVoices()
     const zhVoice = voices.find((v: SpeechSynthesisVoice) => v.lang.startsWith('zh'))
-    if (zhVoice) utterance.voice = zhVoice
-    utterance.onstart = () => setIsSpeaking(true)
-    utterance.onend = () => setIsSpeaking(false)
-    utterance.onerror = () => setIsSpeaking(false)
-    utteranceRef.current = utterance
-    window.speechSynthesis.speak(utterance)
+    if (zhVoice) utter.voice = zhVoice
+    utter.onstart = () => setIsSpeaking(true)
+    utter.onend = () => setIsSpeaking(false)
+    utter.onerror = () => setIsSpeaking(false)
+    utteranceRef.current = utter
+    window.speechSynthesis.speak(utter)
   }, [])
 
   const toggleSpeak = useCallback(() => {
@@ -870,6 +903,9 @@ export function App(): JSX.Element {
 
       if (!onCtrl) return
       switch (e.key.toLowerCase()) {
+        case 'k': if (e.shiftKey) { e.preventDefault(); setShowKanban(p => !p); } break
+        case 't': if (e.shiftKey) { e.preventDefault(); setShowTimeTracker(p => !p); } break
+        case 'g': if (e.shiftKey) { e.preventDefault(); setShowProgressReport(p => !p); } break
         case 'p': e.preventDefault(); setPaletteMode(e.shiftKey ? 'commands' : 'files'); setShowCommandPalette(p => !p); break
         case 'n': case 'N': e.preventDefault(); handleNewTab(); break
         case 'w': case 'W': e.preventDefault(); if (activeTabId) handleCloseTab(activeTabId); break
@@ -879,6 +915,9 @@ export function App(): JSX.Element {
         case 'b': case 'B': e.preventDefault(); setSidebarVisible(p => !p); break
         case 'r': case 'R': e.preventDefault(); setMsgSearchQuery(p => p ? '' : '/'); break
         case '`': e.preventDefault(); setTerminalVisible(p => !p); break
+        case 's': e.preventDefault(); setShowSemanticSearch(p => !p); break
+        case 'o': e.preventDefault(); setShowAIOutline(p => !p); break
+        case 'e': e.preventDefault(); setShowCodeReview(p => !p); break
       }
     }
     window.addEventListener('keydown', handler)
@@ -1008,7 +1047,31 @@ export function App(): JSX.Element {
     recognition.start()
   }, [isRecording, showToast])
 
+  // 同步光标位置到 Vim hook
+  useEffect(() => {
+    const el = inputRef.current
+    if (el) {
+      el.setSelectionRange(cursorOffset, cursorOffset)
+    }
+  }, [cursorOffset])
+
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Vim 模式下使用 Vim hook 处理键绑定
+    if (vimEnabled) {
+      vim.handleKeyDown(e)
+      // 阻止 Vim 不处理的键（如 F11、Tab 补全）
+      if (e.key === 'F11') { e.preventDefault(); toggleFullscreen(); return }
+      if (e.key === '\\' && e.ctrlKey) { e.preventDefault(); toggleSplitScreen(); return }
+      if (e.key === 'Tab') {
+        // Vim NORMAL 模式下 Tab 不处理，交给补全
+        if (vim.mode === 'INSERT') return
+      }
+      // Vim 已处理的键直接返回
+      if (vim.mode === 'NORMAL') return
+      // INSERT 模式下继续处理 Tab 补全等
+      if (e.key !== 'Tab') return
+    }
+
     if (e.key === 'F11') { e.preventDefault(); toggleFullscreen(); return }
     if (e.key === '\\' && e.ctrlKey) { e.preventDefault(); toggleSplitScreen(); return }
     if (e.key === 'Tab') {
@@ -1041,6 +1104,9 @@ export function App(): JSX.Element {
           { text: '/cost', display: '/cost — 费用' },
           { text: '/todo', display: '/todo — TODO' },
           { text: '/task', display: '/task — 任务' },
+          { text: '/kanban', display: '/kanban — 任务看板' },
+          { text: '/timer', display: '/timer — 时间追踪' },
+          { text: '/report', display: '/report — 进度报告' },
           { text: '/export', display: '/export — 导出' },
           { text: '/mcp', display: '/mcp — MCP' },
         ].filter(c => c.text.startsWith(lastWord))
@@ -1096,15 +1162,14 @@ export function App(): JSX.Element {
     }
   }, [handleSend, handleAbort, state, messages, input, config.workingDir])
 
-  if (!loaded) return <div style={{ ...styles.loadingOverlay }}>加载中...</div>
-  const isProcessing = state === 'responding'
-  const workingDir = config.workingDir || '/'
+  // 派生值
   const displayMessages = messages
   const msgSearchQueryLower = msgSearchQuery.toLowerCase()
   const filteredDisplayMessages = msgSearchQuery
     ? displayMessages.map((m, i) => ({ ...m, _origIndex: i, _match: m.content.toLowerCase().includes(msgSearchQueryLower) }))
     : displayMessages.map((m, i) => ({ ...m, _origIndex: i, _match: true }))
 
+  // 消息搜索过滤（必须在所有 hook 之后、if (!loaded) 之前）
   useEffect(() => {
     if (!msgSearchQuery) { setMsgSearchMatches([]); return }
     const matches: number[] = []
@@ -1112,17 +1177,20 @@ export function App(): JSX.Element {
     setMsgSearchMatches(matches)
   }, [msgSearchQuery, displayMessages, msgSearchQueryLower])
 
+  if (!loaded) return <div style={{ ...styles.loadingOverlay }}>加载中...</div>
+  const isProcessing = state === 'responding'
+  const workingDir = config.workingDir || '/'
+
   // 主题感知颜色辅助
   const _tp = theme.bgPanel
   const _bs = theme.border
   const _tm = theme.textMuted
-  const c = theme
 
   return (
     <ThemeContext.Provider value={{ name: effectiveTheme, colors: theme, styles }}>
       <div style={styles.container}>
         {toast && (
-          <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', padding: '8px 20px', borderRadius: '6px', background: toast.type === 'error' ? c.errorBg : `${c.accent}22`, color: toast.type === 'error' ? c.errorText : c.accent, fontSize: '12px', fontWeight: 600, zIndex: 1000, boxShadow: `0 4px 12px ${c.bg}80`, transition: 'opacity 0.3s' }}>
+          <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', padding: '8px 20px', borderRadius: '6px', background: toast.type === 'error' ? theme.errorBg : `${theme.accent}22`, color: toast.type === 'error' ? theme.errorText : theme.accent, fontSize: '12px', fontWeight: 600, zIndex: 1000, boxShadow: `0 4px 12px ${theme.bg}80`, transition: 'opacity 0.3s' }}>
             {toast.text}
           </div>
         )}
@@ -1150,7 +1218,7 @@ export function App(): JSX.Element {
           ))}
           <div
             onClick={handleNewTab}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px 10px', cursor: 'pointer', fontSize: '14px', color: '#555', borderRight: 'none' }}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px 10px', cursor: 'pointer', fontSize: '14px', color: c.textFaint, borderRight: 'none' }}
             title="新建标签页"
           >+</div>
         </div>
@@ -1159,22 +1227,22 @@ export function App(): JSX.Element {
           <div style={styles.sidebarHeader}>
             <span style={{ fontSize: '18px' }}>{'🐕'}</span>
             <span style={{ flex: 1 }}>Doge Code</span>
-            <span style={{ cursor: 'pointer', fontSize: '14px', padding: '2px 6px', borderRadius: '4px', border: '1px solid #262626', color: '#888' }} onClick={() => setShowSettings(p => !p)}>⚙</span>
+            <span style={{ cursor: 'pointer', fontSize: '14px', padding: '2px 6px', borderRadius: '4px', border: `1px solid ${c.border}`, color: c.textMuted }} onClick={() => setShowSettings(p => !p)}>⚙</span>
           </div>
           <div style={{ padding: '8px 12px', display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
             <span style={styles.modelBadge}>{config.provider}</span>
             <span style={styles.modelBadge}>{config.model}</span>
           </div>
           {/* 会话侧边栏 */}
-          <div style={{ borderBottom: '1px solid #262626', background: '#0F0F0F', display: 'flex', flexDirection: 'column', maxHeight: '320px' }}>
-            <div style={{ padding: '6px 12px', borderBottom: '1px solid #262626', display: 'flex', gap: '6px', alignItems: 'center' }}>
-              <span style={{ fontSize: '10px', color: '#888', flex: 1 }}>历史会话</span>
-              <button onClick={handleNewSession} style={{ padding: '2px 6px', border: '1px solid #262626', borderRadius: '3px', background: '#0A0A0A', color: '#4ECB71', cursor: 'pointer', fontSize: '10px' }} title="新会话">+</button>
-              <button onClick={loadSessions} style={{ padding: '2px 6px', border: '1px solid #262626', borderRadius: '3px', background: '#0A0A0A', color: '#888', cursor: 'pointer', fontSize: '10px' }} title="刷新">↻</button>
+          <div style={{ borderBottom: `1px solid ${c.border}`, background: c.bgPanel, display: 'flex', flexDirection: 'column', maxHeight: '320px' }}>
+            <div style={{ padding: '6px 12px', borderBottom: `1px solid ${c.border}`, display: 'flex', gap: '6px', alignItems: 'center' }}>
+              <span style={{ fontSize: '10px', color: c.textMuted, flex: 1 }}>历史会话</span>
+              <button onClick={handleNewSession} style={{ padding: '2px 6px', border: `1px solid ${c.border}`, borderRadius: '3px', background: c.bgAlt, color: c.accent, cursor: 'pointer', fontSize: '10px' }} title="新会话">+</button>
+              <button onClick={loadSessions} style={{ padding: '2px 6px', border: `1px solid ${c.border}`, borderRadius: '3px', background: c.bgAlt, color: c.textMuted, cursor: 'pointer', fontSize: '10px' }} title="刷新">↻</button>
             </div>
             <div style={{ flex: 1, overflowY: 'auto' }}>
               {sessions.length === 0 ? (
-                <div style={{ padding: '8px 12px', color: '#555', fontSize: '11px', textAlign: 'center' }}>无历史会话</div>
+                <div style={{ padding: '8px 12px', color: c.textFaint, fontSize: '11px', textAlign: 'center' }}>无历史会话</div>
               ) : (
                 sessions.slice(0, 20).map((s) => {
                   const isActive = currentSessionId === s.id
@@ -1183,9 +1251,9 @@ export function App(): JSX.Element {
                       key={s.id}
                       onClick={() => handleLoadSession(s.id)}
                       style={{
-                        padding: '6px 12px', fontSize: '11px', borderBottom: '1px solid #1A1A1A', cursor: 'pointer',
-                        background: isActive ? 'rgba(78,203,113,0.08)' : 'transparent',
-                        color: isActive ? '#4ECB71' : '#888',
+                        padding: '6px 12px', fontSize: '11px', borderBottom: `1px solid ${c.borderSubtle}`, cursor: 'pointer',
+                        background: isActive ? c.accentDim : 'transparent',
+                        color: isActive ? c.accent : c.textMuted,
                         display: 'flex', alignItems: 'center', gap: '6px'
                       }}
                       title={`${s.messageCount} 条消息 · 点击加载`}
@@ -1208,20 +1276,20 @@ export function App(): JSX.Element {
           </div>
           {/* 最近文件 */}
           {recentFiles.length > 0 && (
-            <div style={{ borderBottom: '1px solid #262626', background: '#0F0F0F', flexDirection: 'column', maxHeight: '200px' }}>
-              <div style={{ padding: '6px 12px', borderBottom: '1px solid #262626', display: 'flex', gap: '6px', alignItems: 'center' }}>
-                <span style={{ fontSize: '10px', color: '#888', flex: 1 }}>最近文件</span>
-                <button onClick={() => setRecentFiles([])} style={{ padding: '1px 5px', border: '1px solid #262626', borderRadius: '3px', background: '#0A0A0A', color: '#555', cursor: 'pointer', fontSize: '9px' }} title="清空">清空</button>
+            <div style={{ borderBottom: `1px solid ${c.border}`, background: c.bgPanel, flexDirection: 'column', maxHeight: '200px' }}>
+              <div style={{ padding: '6px 12px', borderBottom: `1px solid ${c.border}`, display: 'flex', gap: '6px', alignItems: 'center' }}>
+                <span style={{ fontSize: '10px', color: c.textMuted, flex: 1 }}>最近文件</span>
+                <button onClick={() => setRecentFiles([])} style={{ padding: '1px 5px', border: `1px solid ${c.border}`, borderRadius: '3px', background: c.bgAlt, color: c.textFaint, cursor: 'pointer', fontSize: '9px' }} title="清空">清空</button>
               </div>
               <div style={{ flex: 1, overflowY: 'auto' }}>
                 {recentFiles.map((f) => (
                   <div
                     key={f.path}
                     onClick={() => handlePreviewFile(f.path)}
-                    style={{ padding: '4px 12px', fontSize: '11px', borderBottom: '1px solid #1A1A1A', cursor: 'pointer', color: '#888', display: 'flex', alignItems: 'center', gap: '6px' }}
+                    style={{ padding: '4px 12px', fontSize: '11px', borderBottom: `1px solid ${c.borderSubtle}`, cursor: 'pointer', color: c.textMuted, display: 'flex', alignItems: 'center', gap: '6px' }}
                     title={f.path}
                   >
-                    <span style={{ fontSize: '9px', flexShrink: 0, color: '#569CD6' }}>📄</span>
+                    <span style={{ fontSize: '9px', flexShrink: 0, color: c.accent }}>📄</span>
                     <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>{f.name}</span>
                   </div>
                 ))}
@@ -1241,6 +1309,18 @@ export function App(): JSX.Element {
               </div>
               <div style={{ fontSize: '10px', color: c.textFaint, marginBottom: '4px' }}>字体大小: {themeSettings.fontSize}px</div>
               <input type="range" min="11" max="18" value={themeSettings.fontSize} onChange={(e) => { const v = Number(e.target.value); setThemeSettings(p => ({ ...p, fontSize: v })); window.dogeAPI.setTheme({ fontSize: v }) }} style={{ width: '100%', accentColor: c.accent }} />
+              {/* Vim 模式开关 */}
+              <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '10px', color: c.textMuted, fontWeight: 600 }}>Vim 模式</span>
+                <button
+                  onClick={() => setVimEnabled(p => !p)}
+                  style={{
+                    padding: '3px 12px', border: '1px solid', borderColor: vimEnabled ? c.accent : c.border,
+                    borderRadius: '3px', background: vimEnabled ? `${c.accent}22` : 'transparent',
+                    color: vimEnabled ? c.accent : c.textMuted, cursor: 'pointer', fontSize: '10px', fontWeight: 600,
+                  }}
+                >{vimEnabled ? '✓ 已开启' : '开启'}</button>
+              </div>
               <div style={{ borderTop: `1px solid ${c.border}`, marginTop: '12px', paddingTop: '10px' }}>
                 <div style={{ fontSize: '11px', color: c.textMuted, marginBottom: '8px', fontWeight: 600 }}>模型配置</div>
                 <div style={{ marginBottom: '6px' }}>
@@ -1271,7 +1351,7 @@ export function App(): JSX.Element {
           )}
           <div style={{ flex: 1, overflowY: 'auto' }}>
             {displayMessages.length === 0 && !currentStreaming ? (
-              <div style={{ padding: '16px', color: '#555555', fontSize: '12px' }}>开始新对话</div>
+              <div style={{ padding: '16px', color: c.textFaint, fontSize: '12px' }}>开始新对话</div>
             ) : (
               (() => {
                 const turns: Array<{ userMsg: Message; assistantMsg: Message | null }> = []
@@ -1291,13 +1371,13 @@ export function App(): JSX.Element {
                   if (lastUser) turns.push({ userMsg: lastUser, assistantMsg: null })
                 }
                 return turns.map((turn, idx) => (
-                  <div key={idx} style={{ padding: '6px 12px', borderBottom: '1px solid #1A1A1A', cursor: 'pointer' }}>
-                    <div style={{ fontSize: '12px', color: '#F5F5F5', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: '1.4' }}>
-                      <span style={{ color: '#4ECB71', marginRight: '4px' }}>❯</span>
+                  <div key={idx} style={{ padding: '6px 12px', borderBottom: `1px solid ${c.borderSubtle}`, cursor: 'pointer' }}>
+                    <div style={{ fontSize: '12px', color: c.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: '1.4' }}>
+                      <span style={{ color: c.accent, marginRight: '4px' }}>❯</span>
                       {turn.userMsg.content || '(空消息)'}
                     </div>
                     {turn.assistantMsg && (
-                      <div style={{ fontSize: '10px', color: '#555555', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingLeft: '12px' }}>
+                      <div style={{ fontSize: '10px', color: c.textFaint, marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingLeft: '12px' }}>
                         {turn.assistantMsg.content.slice(0, 60)}
                       </div>
                     )}
@@ -1308,27 +1388,44 @@ export function App(): JSX.Element {
           </div>
           <div style={styles.statusBar}>
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <span style={{ color: isProcessing ? '#4ECB71' : '#666' }}>{isProcessing ? '● 回复中' : '○ 就绪'}</span>
-              {modelInfo && (<span style={{ color: '#555' }}>{modelInfo.provider}/{modelInfo.model}</span>)}
+              <span style={{ color: isProcessing ? c.accent : c.textMuted }}>{isProcessing ? '● 回复中' : '○ 就绪'}</span>
+              {modelInfo && (<span style={{ color: c.textFaint }}>{modelInfo.provider}/{modelInfo.model}</span>)}
               {tokenUsage && tokenUsage.totalTokens > 0 && (
                 <>
-                  <span style={{ color: '#56B6C2' }}>In: {tokenUsage.inputTokens.toLocaleString()}</span>
-                  <span style={{ color: '#E06C75' }}>Out: {tokenUsage.outputTokens.toLocaleString()}</span>
-                  <span style={{ color: '#555' }}>Total: {tokenUsage.totalTokens.toLocaleString()}</span>
-                  <span style={{ color: '#444', fontSize: '10px' }}>| {displayMessages.length} 条消息</span>
+                  <span style={{ color: c.accent }}>In: {tokenUsage.inputTokens.toLocaleString()}</span>
+                  <span style={{ color: c.errorText }}>Out: {tokenUsage.outputTokens.toLocaleString()}</span>
+                  <span style={{ color: c.textFaint }}>Total: {tokenUsage.totalTokens.toLocaleString()}</span>
+                  <span style={{ color: c.textFaint, fontSize: '10px' }}>| {displayMessages.length} 条消息</span>
                 </>
               )}
               {memoryUsage && memoryUsage.status !== 'normal' && (
-                <span style={{ color: memoryUsage.status === 'critical' ? '#E06C75' : '#E5C07B' }}>
+                <span style={{ color: memoryUsage.status === 'critical' ? c.errorText : '#E5C07B' }}>
                   MEM: {(memoryUsage.heapUsed / 1024 / 1024).toFixed(0)}MB
                 </span>
               )}
-              <span style={{ color: isOnline ? '#4ECB71' : '#E06C75', fontSize: '10px' }}>
+              {vimEnabled && (
+                <span style={{
+                  color: vim.mode === 'NORMAL' ? '#FFA726' : '#4ECB71',
+                  fontSize: '10px', fontWeight: 600,
+                  background: vim.mode === 'NORMAL' ? 'rgba(255,167,38,0.15)' : 'rgba(78,203,113,0.15)',
+                  padding: '1px 6px', borderRadius: '2px',
+                }}>
+                  {vim.mode === 'NORMAL' ? 'ⓥ NORMAL' : 'ⓘ INSERT'}
+                </span>
+              )}
+              <span style={{ color: isOnline ? c.accent : c.errorText, fontSize: '10px' }}>
                 {isOnline ? '🟢' : '🔴 离线'}
               </span>
             </div>
             <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-              <span style={{ color: '#444', fontSize: '10px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '180px' }} title={workingDir}>{workingDir}</span>
+              <span style={{ color: c.textFaint, fontSize: '10px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '180px' }} title={workingDir}>{workingDir}</span>
+              {(showKanban || showTimeTracker || showProgressReport) && (
+                <span style={{ fontSize: '10px', color: c.accent }}>
+                  {showKanban && '[看板]'}
+                  {showTimeTracker && '[计时]'}
+                  {showProgressReport && '[报告]'}
+                </span>
+              )}
               {displayMessages.length > 0 && (<button style={styles.clearButton} onClick={handleClear}>清除</button>)}
               <button style={styles.clearButton} onClick={toggleSplitScreen} title="分屏模式 (Ctrl+\\)">{splitScreen ? '⧉ 退出分屏' : '⧉ 分屏'}</button>
               <button style={styles.clearButton} onClick={toggleFullscreen} title="全屏模式 (F11)">{isFullscreen ? '⧸ 退出全屏' : '⛶ 全屏'}</button>
@@ -1339,80 +1436,32 @@ export function App(): JSX.Element {
         {/* 中栏：聊天界面 */}
         <div style={{ ...styles.chatView, ...(splitScreen ? { flex: 1, width: 'auto', maxWidth: '50%' } : {}) }}>
           {messages.length > 0 && (
-            <div style={{ padding: '4px 12px', borderBottom: '1px solid #1A1A1A', display: 'flex', gap: '4px', alignItems: 'center' }}>
+            <div style={{ padding: '4px 12px', borderBottom: `1px solid ${c.borderSubtle}`, display: 'flex', gap: '4px', alignItems: 'center' }}>
               <input
                 value={msgSearchQuery}
                 onChange={(e) => setMsgSearchQuery(e.target.value)}
                 placeholder="搜索消息..."
-                style={{ flex: 1, padding: '3px 6px', background: '#0F0F0F', border: '1px solid #262626', borderRadius: '3px', color: '#F5F5F5', fontSize: '11px', outline: 'none' }}
+                style={{ flex: 1, padding: '3px 6px', background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '3px', color: c.text, fontSize: '11px', outline: 'none' }}
               />
-              {msgSearchQuery && (<span style={{ color: '#555', fontSize: '10px', whiteSpace: 'nowrap' }}>{msgSearchMatches.length} 条匹配</span>)}
+              {msgSearchQuery && (<span style={{ color: c.textFaint, fontSize: '10px', whiteSpace: 'nowrap' }}>{msgSearchMatches.length} 条匹配</span>)}
             </div>
           )}
-          <div style={styles.chatMessages}>
-            {messages.length === 0 && !currentStreaming ? (
-              <div style={styles.welcomeBlock}>
-                <div style={styles.welcomeTitle}>Doge Code</div>
-                <div style={styles.welcomeSubtitle}>{config.provider} / {config.model}</div>
-                <div style={{ marginTop: '24px', fontSize: '13px', color: '#666666' }}>输入消息开始对话</div>
-              </div>
-            ) : (
-              <>
-                {messages.map((m) => {
-                  if (m.role === 'error') {
-                    return (<div key={m.id} style={styles.errorBubble}><div style={styles.roleLabel}>错误</div><div>{m.content}</div></div>)
-                  }
-                  const isAssistant = m.role === 'assistant'
-                  const isTool = m.role === 'tool'
-                  const blocks = isAssistant ? parseMessageContent(m.content) : null
-
-                  let toolResultContent: { success?: boolean; output?: unknown; error?: string } | null = null
-                  if (isTool) { try { toolResultContent = JSON.parse(m.content) } catch { /* not JSON */ } }
-
-                  const matchesSearch = !msgSearchQuery || m.content.toLowerCase().includes(msgSearchQueryLower)
-                  return (
-                    <div key={m.id} style={{ ...styles.messageBubble, ...(m.role === 'user' ? styles.userBubble : isTool ? styles.toolResultBubble : styles.assistantBubble), opacity: msgSearchQuery ? (matchesSearch ? 1 : 0.3) : 1, transition: 'opacity 0.2s' }}>
-                      <div style={styles.roleLabel}>{m.role === 'user' ? '用户' : m.role === 'assistant' ? '助手' : m.role === 'tool' ? '🔧 工具结果' : '系统'}</div>
-                      {isTool && toolResultContent
-                        ? (<div>{toolResultContent.success != null && (<div style={{ color: toolResultContent.success ? '#4ECB71' : '#FF6B6B', fontSize: '11px', fontWeight: 600, marginBottom: '4px' }}>{toolResultContent.success ? '✓ 执行成功' : '✗ 执行失败'}</div>)}{toolResultContent.error && <ToolErrorBanner error={toolResultContent.error} toolName={m.id} />}<ToolResultRenderer output={toolResultContent.output} error={toolResultContent.error} success={toolResultContent.success} maxHeight={250} /></div>)
-                        : blocks
-                          ? blocks.map((block, i) => {
-                              if (block.type === 'tool_use') { return <InlineToolUseBlock key={i} block={block} onExecute={executeToolFromBlock} executingIds={executingToolIds} /> }
-                              if (block.type === 'thinking') { return <div key={i} style={{ padding: '6px 10px', margin: '4px 0', background: '#0F0F0F', border: '1px solid #262626', borderRadius: '4px', fontSize: '11px', color: '#888', fontStyle: 'italic' }}>{block.text}</div> }
-                              if (block.type === 'image') { return <div key={i} style={{ margin: '4px 0' }}><img src={block.url} alt={block.alt || ''} style={{ maxWidth: '100%', borderRadius: '4px' }} /></div> }
-                              return <div key={i} dangerouslySetInnerHTML={{ __html: renderMarkdown(block.text) }} />
-                            })
-                          : <div dangerouslySetInnerHTML={{ __html: renderMarkdown(m.content) }} />
-                      }
-                    </div>
-                  )
-                })}
-                {currentStreaming && (
-                  <div style={{ ...styles.messageBubble, ...styles.assistantBubble }}>
-                    <div style={styles.roleLabel}>助手</div>
-                    <div dangerouslySetInnerHTML={{ __html: renderMarkdown(currentStreaming) }} />
-                    <div style={styles.thinkingIndicator}>...</div>
-                  </div>
-                )}
-                {toolProgress && toolProgress.status !== 'success' && (
-                  <ToolProgressBar
-                    toolName={toolProgress.toolName}
-                    status={toolProgress.status}
-                    progress={toolProgress.progress}
-                    duration={toolProgress.duration}
-                    onCancel={() => window.dogeAPI.abort()}
-                  />
-                )}
-                <div ref={messagesEndRef} />
-              </>
-            )}
-          </div>
+          <VirtualMessageList
+            messages={messages}
+            currentStreaming={currentStreaming}
+            toolProgress={toolProgress}
+            executingToolIds={executingToolIds}
+            msgSearchQuery={msgSearchQuery}
+            msgSearchMatches={msgSearchMatches}
+            executeToolFromBlock={executeToolFromBlock}
+            styles={styles}
+          />
           <div style={styles.chatInput}>
             {pendingImages.length > 0 && (
               <div style={{ display: 'flex', gap: '6px', marginBottom: '8px', flexWrap: 'wrap' }}>
                 {pendingImages.map(img => (
                   <div key={img.id} style={{ position: 'relative', width: '48px', height: '48px' }}>
-                    <img src={img.url} style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #262626' }} />
+                    <img src={img.url} style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '4px', border: `1px solid ${c.border}` }} />
                     <span onClick={() => removePendingImage(img.id)} style={{ position: 'absolute', top: '-4px', right: '-4px', width: '14px', height: '14px', borderRadius: '50%', background: '#FF6B6B', color: '#fff', fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>✕</span>
                   </div>
                 ))}
@@ -1440,9 +1489,9 @@ export function App(): JSX.Element {
               onClick={toggleVoiceInput}
               title={isRecording ? '停止录音' : '语音输入'}
               style={{
-                padding: '6px 10px', border: '1px solid', borderColor: isRecording ? '#FF6B6B' : '#262626',
-                borderRadius: '4px', background: isRecording ? 'rgba(255,107,107,0.15)' : '#0F0F0F',
-                color: isRecording ? '#FF6B6B' : '#888', cursor: 'pointer', fontSize: '14px',
+                padding: '6px 10px', border: '1px solid', borderColor: isRecording ? c.errorText : c.border,
+                borderRadius: '4px', background: isRecording ? c.errorBg : c.bgPanel,
+                color: isRecording ? c.errorText : c.textMuted, cursor: 'pointer', fontSize: '14px',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '36px', height: '36px',
                 flexShrink: 0
               }}
@@ -1454,9 +1503,9 @@ export function App(): JSX.Element {
               onClick={toggleSpeak}
               title={isSpeaking ? '停止朗读' : '朗读最后回复'}
               style={{
-                padding: '6px 10px', border: '1px solid', borderColor: isSpeaking ? '#4ECB71' : '#262626',
-                borderRadius: '4px', background: isSpeaking ? 'rgba(78,203,113,0.15)' : '#0F0F0F',
-                color: isSpeaking ? '#4ECB71' : '#888', cursor: 'pointer', fontSize: '14px',
+                padding: '6px 10px', border: '1px solid', borderColor: isSpeaking ? c.accent : c.border,
+                borderRadius: '4px', background: isSpeaking ? c.accentDim : c.bgPanel,
+                color: isSpeaking ? c.accent : c.textMuted, cursor: 'pointer', fontSize: '14px',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '36px', height: '36px',
                 flexShrink: 0
               }}
@@ -1468,9 +1517,9 @@ export function App(): JSX.Element {
               onClick={() => setAutoSpeak(p => !p)}
               title={autoSpeak ? '关闭自动朗读' : '开启自动朗读'}
               style={{
-                padding: '6px 10px', border: '1px solid', borderColor: autoSpeak ? '#569CD6' : '#262626',
-                borderRadius: '4px', background: autoSpeak ? 'rgba(86,156,214,0.15)' : '#0F0F0F',
-                color: autoSpeak ? '#569CD6' : '#888', cursor: 'pointer', fontSize: '14px',
+                padding: '6px 10px', border: '1px solid', borderColor: autoSpeak ? c.accent : c.border,
+                borderRadius: '4px', background: autoSpeak ? c.accentDim : c.bgPanel,
+                color: autoSpeak ? c.accent : c.textMuted, cursor: 'pointer', fontSize: '14px',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: '36px', height: '36px',
                 flexShrink: 0
               }}
@@ -1478,20 +1527,20 @@ export function App(): JSX.Element {
               {autoSpeak ? '🗣️' : '🔕'}
             </button>
             {interimTranscript && (
-              <div style={{ fontSize: '10px', color: '#888', fontStyle: 'italic', marginBottom: '4px', padding: '0 2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div style={{ fontSize: '10px', color: c.textMuted, fontStyle: 'italic', marginBottom: '4px', padding: '0 2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 识别中: {interimTranscript}
               </div>
             )}
             {completions.length > 0 && (
-              <div style={{ position: 'absolute', bottom: '100%', left: 0, right: 0, background: '#1A1A1A', border: '1px solid #333', borderRadius: '4px', maxHeight: '160px', overflowY: 'auto', marginBottom: '4px', zIndex: 100 }}>
-                {completions.map((c, i) => (
-                  <div key={i} style={{ padding: '4px 10px', cursor: 'pointer', background: i === completionIndex ? '#333' : 'transparent', color: '#F5F5F5', fontSize: '11px' }}
-                    onMouseDown={(e) => { e.preventDefault(); const words = input.split(/\s+/); words[words.length - 1] = c.text; setInput(words.join(' ') + ' '); setCompletions([]); completionIndexRef.current = 0 }}
-                  >{c.display}</div>
+              <div style={{ position: 'absolute', bottom: '100%', left: 0, right: 0, background: c.surface, border: `1px solid ${c.border}`, borderRadius: '4px', maxHeight: '160px', overflowY: 'auto', marginBottom: '4px', zIndex: 100 }}>
+                {completions.map((comp, i) => (
+                  <div key={i} style={{ padding: '4px 10px', cursor: 'pointer', background: i === completionIndex ? c.border : 'transparent', color: c.text, fontSize: '11px' }}
+                    onMouseDown={(e) => { e.preventDefault(); const words = input.split(/\s+/); words[words.length - 1] = comp.text; setInput(words.join(' ') + ' '); setCompletions([]); completionIndexRef.current = 0 }}
+                  >{comp.display}</div>
                 ))}
               </div>
             )}
-            {!config.apiKey && (<div style={{ color: '#FF6B6B', fontSize: '11px', marginTop: '6px' }}>未配置 API Key。请在 .doge/api.json 中配置。</div>)}
+            {!config.apiKey && (<div style={{ color: c.errorText, fontSize: '11px', marginTop: '6px' }}>未配置 API Key。请在 .doge/api.json 中配置。</div>)}
             </div>
           </div>
         </div>
@@ -1504,75 +1553,67 @@ export function App(): JSX.Element {
           </div>
 
           {terminalVisible && (
-            <div style={{ borderTop: '1px solid #262626', height: '200px', display: 'flex', flexDirection: 'column', background: '#0A0A0A' }}>
-              <div style={{ ...styles.panelHeader, borderTop: 'none', justifyContent: 'space-between' }}>
-                <span>💻 终端</span>
-                <span style={{ cursor: 'pointer', color: '#555', fontSize: '12px' }} onClick={() => setTerminalVisible(false)}>✕</span>
-              </div>
-              <div style={{ flex: 1, padding: '8px 12px', fontFamily: 'monospace', fontSize: '12px', color: '#D4D4D4', overflowY: 'auto', background: '#0F0F0F' }}>
-                <span style={{ color: '#888' }}>终端集成需要安装 xterm.js 库。当前为占位界面。</span>
-              </div>
-            </div>
+            <TerminalPanelWrapper cwd={workingDir} onClose={() => setTerminalVisible(false)} />
           )}
 
           {previewTabs.length > 0 && (
             <>
-              <div style={{ borderTop: '1px solid #262626', borderBottom: '1px solid #262626', display: 'flex', background: '#0A0A0A', overflowX: 'auto' }}>
+              <div style={{ borderTop: `1px solid ${c.border}`, borderBottom: `1px solid ${c.border}`, display: 'flex', background: c.bgAlt, overflowX: 'auto' }}>
                 {previewTabs.map(tab => (
                   <div
                     key={tab.id}
-                    style={{ padding: '4px 8px', fontSize: '10px', cursor: 'pointer', whiteSpace: 'nowrap', borderRight: '1px solid #1A1A1A', display: 'flex', alignItems: 'center', gap: '4px', background: tab.id === activePreviewTabId ? '#1A1A1A' : 'transparent', color: tab.id === activePreviewTabId ? '#F5F5F5' : '#888' }}
+                    style={{ padding: '4px 8px', fontSize: '10px', cursor: 'pointer', whiteSpace: 'nowrap', borderRight: `1px solid ${c.borderSubtle}`, display: 'flex', alignItems: 'center', gap: '4px', background: tab.id === activePreviewTabId ? c.surface : 'transparent', color: tab.id === activePreviewTabId ? c.text : c.textMuted }}
                     onClick={() => { setActivePreviewTabId(tab.id); setIsEditing(false); setEditContent('') }}
                   >
                     <span>{tab.path.split('/').pop()}</span>
-                    <span style={{ color: '#555', fontSize: '9px', cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); setPreviewTabs(prev => prev.filter(t => t.id !== tab.id)); if (activePreviewTabId === tab.id) setActivePreviewTabId(previewTabs.find(t => t.id !== tab.id)?.id || null) }}>✕</span>
+                    <span style={{ color: c.textFaint, fontSize: '9px', cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); setPreviewTabs(prev => prev.filter(t => t.id !== tab.id)); if (activePreviewTabId === tab.id) setActivePreviewTabId(previewTabs.find(t => t.id !== tab.id)?.id || null) }}>✕</span>
                   </div>
                 ))}
               </div>
               {activePreviewFile ? (
-                <div style={{ borderBottom: '1px solid #262626', padding: '4px 12px' }}>
+                <div style={{ borderBottom: `1px solid ${c.border}`, padding: '4px 12px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', overflow: 'hidden' }}>
-                      <span style={{ fontSize: '11px', color: '#888', whiteSpace: 'nowrap' }}>{isEditing ? '✏️ 编辑中' : '👁️'} {activePreviewFile.path.split('/').pop()}</span>
+                      <span style={{ fontSize: '11px', color: c.textMuted, whiteSpace: 'nowrap' }}>{isEditing ? '✏️ 编辑中' : '👁️'} {activePreviewFile.path.split('/').pop()}</span>
                     </div>
                     <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
                       {isEditing ? (
                         <>
-                          <span style={{ cursor: 'pointer', color: '#4ECB71', fontSize: '11px' }} onClick={handleSaveEdit}>{isSaving ? '保存中...' : '💾 保存'}</span>
-                          <span style={{ cursor: 'pointer', color: '#555', fontSize: '11px' }} onClick={handleCancelEdit}>✕ 取消</span>
+                          <span style={{ cursor: 'pointer', color: c.accent, fontSize: '11px' }} onClick={handleSaveEdit}>{isSaving ? '保存中...' : '💾 保存'}</span>
+                          <span style={{ cursor: 'pointer', color: c.textFaint, fontSize: '11px' }} onClick={handleCancelEdit}>✕ 取消</span>
                         </>
                       ) : (
                         <>
-                          <span style={{ cursor: 'pointer', color: '#888', fontSize: '11px' }} onClick={handleOpenTerminal} title="在终端中打开">💻</span>
-                          <span style={{ cursor: 'pointer', color: '#569CD6', fontSize: '11px' }} onClick={handleStartEdit}>✏️ 编辑</span>
-                          <span style={{ cursor: 'pointer', color: '#888', fontSize: '11px' }} onClick={handleCopyContent}>📝 复制内容</span>
-                          <span style={{ cursor: 'pointer', color: '#888', fontSize: '11px' }} onClick={handleRevealInExplorer}>📂 所在位置</span>
-                          <span style={{ cursor: 'pointer', color: '#555', fontSize: '11px' }} onClick={() => { navigator.clipboard.writeText(activePreviewFile.path); showToast('路径已复制', 'success') }}>📋</span>
+                          <span style={{ cursor: 'pointer', color: c.textMuted, fontSize: '11px' }} onClick={handleOpenTerminal} title="在终端中打开">💻</span>
+                          <span style={{ cursor: 'pointer', color: c.accent, fontSize: '11px' }} onClick={handleStartEdit}>✏️ 编辑</span>
+                          <span style={{ cursor: 'pointer', color: c.textMuted, fontSize: '11px' }} onClick={handleCopyContent}>📝 复制内容</span>
+                          <span style={{ cursor: 'pointer', color: c.textMuted, fontSize: '11px' }} onClick={handleRevealInExplorer}>📂 所在位置</span>
+                          <span style={{ cursor: 'pointer', color: c.textFaint, fontSize: '11px' }} onClick={() => { navigator.clipboard.writeText(activePreviewFile.path); showToast('路径已复制', 'success') }}>📋</span>
                         </>
                       )}
                     </div>
                   </div>
                   {!isEditing && (
                     <div style={{ display: 'flex', gap: '4px', marginTop: '4px', alignItems: 'center' }}>
-                      <input value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); runSearch() }} placeholder="搜索..." style={{ flex: 1, padding: '2px 6px', background: '#0F0F0F', border: '1px solid #262626', borderRadius: '3px', color: '#F5F5F5', fontSize: '10px', outline: 'none' }} />
-                      <span style={{ color: '#555', fontSize: '10px', minWidth: '40px', textAlign: 'center' }}>{searchResults.length > 0 ? `${currentResultIndex + 1}/${searchResults.length}` : '0/0'}</span>
-                      <button onClick={handlePrevResult} style={{ padding: '2px 6px', border: '1px solid #262626', borderRadius: '3px', background: '#0A0A0A', color: '#888', cursor: 'pointer', fontSize: '10px' }} title="上一个">↑</button>
-                      <button onClick={handleNextResult} style={{ padding: '2px 6px', border: '1px solid #262626', borderRadius: '3px', background: '#0A0A0A', color: '#888', cursor: 'pointer', fontSize: '10px' }} title="下一个">↓</button>
-                      <input value={replaceQuery} onChange={(e) => setReplaceQuery(e.target.value)} placeholder="替换为..." style={{ flex: 1, padding: '2px 6px', background: '#0F0F0F', border: '1px solid #262626', borderRadius: '3px', color: '#F5F5F5', fontSize: '10px', outline: 'none' }} />
-                      <button onClick={handleReplace} disabled={currentResultIndex === -1} style={{ padding: '2px 6px', border: '1px solid #262626', borderRadius: '3px', background: '#0A0A0A', color: currentResultIndex === -1 ? '#555' : '#4ECB71', cursor: 'pointer', fontSize: '10px' }} title="替换">替换</button>
-                      <button onClick={handleReplaceAll} disabled={searchResults.length === 0} style={{ padding: '2px 6px', border: '1px solid #262626', borderRadius: '3px', background: '#0A0A0A', color: searchResults.length === 0 ? '#555' : '#4ECB71', cursor: 'pointer', fontSize: '10px' }} title="全部替换">全部</button>
+                      <input value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); runSearch() }} placeholder="搜索..." style={{ flex: 1, padding: '2px 6px', background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '3px', color: c.text, fontSize: '10px', outline: 'none' }} />
+                      <span style={{ color: c.textFaint, fontSize: '10px', minWidth: '40px', textAlign: 'center' }}>{searchResults.length > 0 ? `${currentResultIndex + 1}/${searchResults.length}` : '0/0'}</span>
+                      <button onClick={handlePrevResult} style={{ padding: '2px 6px', border: `1px solid ${c.border}`, borderRadius: '3px', background: c.bgAlt, color: c.textMuted, cursor: 'pointer', fontSize: '10px' }} title="上一个">↑</button>
+                      <button onClick={handleNextResult} style={{ padding: '2px 6px', border: `1px solid ${c.border}`, borderRadius: '3px', background: c.bgAlt, color: c.textMuted, cursor: 'pointer', fontSize: '10px' }} title="下一个">↓</button>
+                      <input value={replaceQuery} onChange={(e) => setReplaceQuery(e.target.value)} placeholder="替换为..." style={{ flex: 1, padding: '2px 6px', background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '3px', color: c.text, fontSize: '10px', outline: 'none' }} />
+                      <button onClick={handleReplace} disabled={currentResultIndex === -1} style={{ padding: '2px 6px', border: `1px solid ${c.border}`, borderRadius: '3px', background: c.bgAlt, color: currentResultIndex === -1 ? c.textFaint : c.accent, cursor: 'pointer', fontSize: '10px' }} title="替换">替换</button>
+                      <button onClick={handleReplaceAll} disabled={searchResults.length === 0} style={{ padding: '2px 6px', border: `1px solid ${c.border}`, borderRadius: '3px', background: c.bgAlt, color: searchResults.length === 0 ? c.textFaint : c.accent, cursor: 'pointer', fontSize: '10px' }} title="全部替换">全部</button>
                     </div>
                   )}
                 </div>
               ) : (
-                <div style={{ borderBottom: '1px solid #262626', padding: '8px', color: '#555', fontSize: '10px', textAlign: 'center' }}>所有标签页已关闭</div>
+                <div style={{ borderBottom: `1px solid ${c.border}`, padding: '8px', color: c.textFaint, fontSize: '10px', textAlign: 'center' }}>所有标签页已关闭</div>
               )}
               {activePreviewFile && (
-                <div style={{ flex: 1, overflowY: 'auto', padding: '8px', borderBottom: '1px solid #262626', maxHeight: '50%' }}>
-                  {previewLoading && <div style={{ color: '#888', fontSize: '11px', textAlign: 'center' }}>加载中...</div>}
-                  {previewError && <div style={{ color: '#FF6B6B', fontSize: '11px' }}>{previewError}</div>}
+                <div style={{ flex: 1, overflowY: 'auto', padding: '8px', borderBottom: `1px solid ${c.border}`, maxHeight: '50%' }}>
+                  {previewLoading && <div style={{ color: c.textMuted, fontSize: '11px', textAlign: 'center' }}>加载中...</div>}
+                  {previewError && <div style={{ color: c.errorText, fontSize: '11px' }}>{previewError}</div>}
                   <div>
-                    <div style={{ fontSize: '10px', color: '#666', marginBottom: '6px', display: 'flex', justifyContent: 'space-between' }}>
+                    <div style={{ fontSize: '10px', color: c.textMuted, marginBottom: '6px', display: 'flex', justifyContent: 'space-between' }}>
                       <span>{activePreviewFile.path}</span>
                       <span>{activePreviewFile.size != null ? `${(activePreviewFile.size / 1024).toFixed(1)} KB` : ''} {activePreviewFile.content ? `${activePreviewFile.content.split('\n').length} 行` : ''}</span>
                     </div>
@@ -1580,7 +1621,7 @@ export function App(): JSX.Element {
                       <textarea
                         value={editContent}
                         onChange={(e) => setEditContent(e.target.value)}
-                        style={{ width: '100%', minHeight: '200px', background: '#0A0A0A', border: '1px solid #569CD6', borderRadius: '4px', padding: '8px', color: '#D4D4D4', fontSize: '11px', fontFamily: 'Consolas, Monaco, monospace', lineHeight: '1.5', resize: 'vertical', outline: 'none', whiteSpace: 'pre', overflowWrap: 'normal', overflowX: 'auto' }}
+                        style={{ width: '100%', minHeight: '200px', background: c.bgAlt, border: `1px solid ${c.accent}`, borderRadius: '4px', padding: '8px', color: c.text, fontSize: '11px', fontFamily: 'Consolas, Monaco, monospace', lineHeight: '1.5', resize: 'vertical', outline: 'none', whiteSpace: 'pre', overflowWrap: 'normal', overflowX: 'auto' }}
                         onKeyDown={(e) => { if (e.key === 's' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); handleSaveEdit() } }}
                       />
                     ) : (
@@ -1594,16 +1635,16 @@ export function App(): JSX.Element {
                           const codeLines = activePreviewFile.content.split('\n')
                           const lineNums = codeLines.map((_, i) => i + 1).join('\n')
                           return (
-                            <pre style={{ display: 'flex', background: '#0A0A0A', border: '1px solid #262626', borderRadius: '4px', fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', maxHeight: '300px', overflowY: 'auto', margin: 0 }}>
-                              <div style={{ color: '#444', textAlign: 'right', paddingRight: '8px', userSelect: 'none', minWidth: '36px', borderRight: '1px solid #1A1A1A', flexShrink: 0 }}>
+                            <pre style={{ display: 'flex', background: c.codeBg, border: `1px solid ${c.border}`, borderRadius: '4px', fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', maxHeight: '300px', overflowY: 'auto', margin: 0 }}>
+                              <div style={{ color: c.textFaint, textAlign: 'right', paddingRight: '8px', userSelect: 'none', minWidth: '36px', borderRight: `1px solid ${c.borderSubtle}`, flexShrink: 0 }}>
                                 {lineNums.split('\n').map((n, i) => (<div key={i} style={{ height: '1.5em' }}>{n}</div>))}
                               </div>
-                              <div style={{ flex: 1, overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all', padding: '0 8px', color: '#D4D4D4' }} dangerouslySetInnerHTML={{ __html: highlighted }} />
+                              <div style={{ flex: 1, overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all', padding: '0 8px', color: c.text }} dangerouslySetInnerHTML={{ __html: highlighted }} />
                             </pre>
                           )
                         }
                         return (
-                          <pre style={{ background: '#0A0A0A', border: '1px solid #262626', borderRadius: '4px', padding: '8px', fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all', color: '#D4D4D4', margin: 0, maxHeight: '300px', overflowY: 'auto' }}>
+                          <pre style={{ background: c.codeBg, border: `1px solid ${c.border}`, borderRadius: '4px', padding: '8px', fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all', color: c.text, margin: 0, maxHeight: '300px', overflowY: 'auto' }}>
                             {activePreviewFile.content || '(空文件)'}
                           </pre>
                         )
@@ -1615,28 +1656,28 @@ export function App(): JSX.Element {
             </>
           )}
 
-          <div style={{ ...styles.panelHeader, borderTop: '1px solid #262626' }}>🔄 Git 变更</div>
+          <div style={{ ...styles.panelHeader, borderTop: `1px solid ${c.border}` }}>🔄 Git 变更</div>
           <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0' }}>
-            <GitChanges cwd={workingDir} onSelectFile={(path) => { setSelectedGitFile(path); setCommitMessage('') }} />
+            <GitChanges cwd={workingDir} onSelectFile={(path) => { setSelectedGitFile(path); setCommitMessage('') }} theme={theme} />
             {selectedGitFile && (
-              <div style={{ borderTop: '1px solid #262626' }}>
-                <div style={{ padding: '4px 12px', fontSize: '11px', color: '#888', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ borderTop: `1px solid ${c.border}` }}>
+                <div style={{ padding: '4px 12px', fontSize: '11px', color: c.textMuted, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={selectedGitFile}>{selectedGitFile.replace(workingDir + '/', '')}</span>
-                  <span style={{ cursor: 'pointer', color: '#555' }} onClick={() => setSelectedGitFile(null)}>✕</span>
+                  <span style={{ cursor: 'pointer', color: c.textFaint }} onClick={() => setSelectedGitFile(null)}>✕</span>
                 </div>
-                <GitDiff cwd={workingDir} filePath={selectedGitFile} />
-                <div style={{ padding: '8px 12px', borderTop: '1px solid #262626' }}>
+                <GitDiff cwd={workingDir} filePath={selectedGitFile} theme={theme} />
+                <div style={{ padding: '8px 12px', borderTop: `1px solid ${c.border}` }}>
                   <input
                     value={commitMessage}
                     onChange={(e) => setCommitMessage(e.target.value)}
                     placeholder="提交信息..."
-                    style={{ width: '100%', backgroundColor: '#0F0F0F', border: '1px solid #262626', borderRadius: '4px', padding: '6px 10px', color: '#F5F5F5', fontSize: '12px', outline: 'none', marginBottom: '6px' }}
+                    style={{ width: '100%', backgroundColor: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '4px', padding: '6px 10px', color: c.text, fontSize: '12px', outline: 'none', marginBottom: '6px' }}
                     onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleCommit() } }}
                   />
                   <button
                     onClick={handleCommit}
                     disabled={!commitMessage.trim() || isCommitting}
-                    style={{ width: '100%', padding: '6px', border: 'none', borderRadius: '4px', cursor: 'pointer', background: commitMessage.trim() ? '#4ECB71' : '#1A1A1A', color: commitMessage.trim() ? '#000' : '#555', fontSize: '12px', fontWeight: 600 }}
+                    style={{ width: '100%', padding: '6px', border: 'none', borderRadius: '4px', cursor: 'pointer', background: commitMessage.trim() ? c.accent : c.surface, color: commitMessage.trim() ? '#000' : c.textFaint, fontSize: '12px', fontWeight: 600 }}
                   >
                     {isCommitting ? '提交中...' : '提交'}
                   </button>
@@ -1644,49 +1685,144 @@ export function App(): JSX.Element {
               </div>
             )}
           </div>
-          <div style={{ ...styles.panelHeader, borderTop: '1px solid #262626', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ ...styles.panelHeader, borderTop: `1px solid ${c.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span>🔧 工具</span>
-            <span style={{ cursor: 'pointer', fontSize: '10px', color: '#4ECB71' }} onClick={() => { setShowMcpPanel(p => !p); if (!showMcpPanel) { refreshMcpServers(); refreshAgents() } }}>{showMcpPanel ? '收起 MCP' : 'MCP 管理'}</span>
+            <span style={{ cursor: 'pointer', fontSize: '10px', color: c.accent }} onClick={() => { setShowMcpPanel(p => !p); if (!showMcpPanel) { refreshMcpServers(); refreshAgents() } }}>{showMcpPanel ? '收起 MCP' : 'MCP 管理'}</span>
           </div>
           <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0' }}>
-            <ToolPanel cwd={workingDir} />
+            <ToolPanel cwd={workingDir} theme={THEMES[effectiveTheme]} />
           </div>
           {showMcpPanel && (
-            <div style={{ borderTop: '1px solid #262626', padding: '8px 12px', maxHeight: '220px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <div style={{ fontSize: '10px', color: '#888', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>MCP 服务器</div>
-              <div style={{ display: 'flex', gap: '4px' }}>
-                <input value={mcpNewName} onChange={e => setMcpNewName(e.target.value)} placeholder="名称" style={{ flex: 1, padding: '3px 6px', background: '#0F0F0F', border: '1px solid #262626', borderRadius: '3px', color: '#F5F5F5', fontSize: '10px', outline: 'none' }} />
-                <input value={mcpNewCommand} onChange={e => setMcpNewCommand(e.target.value)} placeholder="命令 (npx ...)" style={{ flex: 2, padding: '3px 6px', background: '#0F0F0F', border: '1px solid #262626', borderRadius: '3px', color: '#F5F5F5', fontSize: '10px', outline: 'none' }} />
-                <input value={mcpNewArgs} onChange={e => setMcpNewArgs(e.target.value)} placeholder="参数" style={{ flex: 1, padding: '3px 6px', background: '#0F0F0F', border: '1px solid #262626', borderRadius: '3px', color: '#F5F5F5', fontSize: '10px', outline: 'none' }} />
-                <button onClick={handleMcpAdd} disabled={mcpLoading || !mcpNewName.trim() || !mcpNewCommand.trim()} style={{ padding: '3px 8px', border: 'none', borderRadius: '3px', background: mcpLoading ? '#333' : '#4ECB71', color: mcpLoading ? '#555' : '#000', cursor: mcpLoading ? 'not-allowed' : 'pointer', fontSize: '10px', fontWeight: 600 }}>+</button>
+            <div style={{ borderTop: `1px solid ${c.border}`, padding: '8px 12px', maxHeight: '220px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '10px', color: c.textMuted, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>MCP / Agents</span>
+                <span style={{ cursor: 'pointer', fontSize: '10px', color: c.accent }} onClick={() => setShowAgentPanel(true)}>🤖 管理 Agent</span>
+                <span style={{ cursor: 'pointer', fontSize: '10px', color: c.textMuted, marginLeft: '8px' }} onClick={() => setShowPluginPanel(true)}>🧩 插件</span>
               </div>
-              {mcpServers.length === 0 && <div style={{ fontSize: '10px', color: '#555' }}>暂无 MCP 服务器。使用 /mcp add 或上方表单添加。</div>}
-              {mcpServers.map(s => (
-                <div key={s.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '3px 6px', background: '#0F0F0F', border: '1px solid #262626', borderRadius: '3px' }}>
-                  <div style={{ flex: 1, overflow: 'hidden' }}>
-                    <div style={{ fontSize: '11px', color: '#F5F5F5', fontWeight: 500 }}>{s.name}</div>
-                    <div style={{ fontSize: '9px', color: '#888', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.command} {(s.args || []).join(' ')}</div>
+              <div style={{ display: 'flex', gap: '4px' }}>
+                <input value={mcpNewName} onChange={e => setMcpNewName(e.target.value)} placeholder="名称" style={{ flex: 1, padding: '3px 6px', background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '3px', color: c.text, fontSize: '10px', outline: 'none' }} />
+                <input value={mcpNewCommand} onChange={e => setMcpNewCommand(e.target.value)} placeholder="命令 (npx ...)" style={{ flex: 2, padding: '3px 6px', background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '3px', color: c.text, fontSize: '10px', outline: 'none' }} />
+                <input value={mcpNewArgs} onChange={e => setMcpNewArgs(e.target.value)} placeholder="参数" style={{ flex: 1, padding: '3px 6px', background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '3px', color: c.text, fontSize: '10px', outline: 'none' }} />
+                <button onClick={handleMcpAdd} disabled={mcpLoading || !mcpNewName.trim() || !mcpNewCommand.trim()} style={{ padding: '3px 8px', border: 'none', borderRadius: '3px', background: mcpLoading ? c.surface : c.accent, color: mcpLoading ? c.textFaint : '#000', cursor: mcpLoading ? 'not-allowed' : 'pointer', fontSize: '10px', fontWeight: 600 }}>+</button>
+              </div>
+              {mcpServers.length === 0 && <div style={{ fontSize: '10px', color: c.textFaint }}>暂无 MCP 服务器。使用 /mcp add 或上方表单添加。</div>}
+              {mcpServers.map(s => {
+                const connected = s.name in mcpConnectedTools
+                const selected = mcpSelectedServer === s.name
+                return (
+                  <div key={s.name} style={{ padding: '4px 6px', background: selected ? c.accentDim : c.bgPanel, border: '1px solid ' + (selected ? c.accent : c.border), borderRadius: '3px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ flex: 1, overflow: 'hidden' }}>
+                        <div style={{ fontSize: '11px', color: c.text, fontWeight: 500 }}>
+                          {s.name}
+                          {connected && <span style={{ fontSize: '9px', color: c.accent, marginLeft: '4px' }}>{'● 已连接 (' + mcpConnectedTools[s.name].length + ')'}</span>}
+                        </div>
+                        <div style={{ fontSize: '9px', color: c.textMuted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.command} {(s.args || []).join(' ')}</div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '4px' }}>
+                        {!connected && <span style={{ cursor: 'pointer', fontSize: '9px', color: c.accent }} onClick={() => handleMcpConnect(s.name)}>连接</span>}
+                        {connected && <span style={{ cursor: 'pointer', fontSize: '9px', color: c.textMuted }} onClick={() => setMcpSelectedServer(selected ? null : s.name)}>{selected ? '收起' : '工具'}</span>}
+                        <span style={{ cursor: 'pointer', fontSize: '9px', color: c.errorText }} onClick={() => handleMcpRemove(s.name)}>删除</span>
+                      </div>
+                    </div>
+                    {connected && selected && (
+                      <div style={{ marginTop: '4px', borderTop: '1px solid ' + c.borderSubtle, paddingTop: '4px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                        {mcpConnectedTools[s.name].map(t => (
+                          <div key={t.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '2px 4px', background: c.bgAlt, borderRadius: '2px' }}>
+                            <div style={{ flex: 1, overflow: 'hidden' }}>
+                              <div style={{ fontSize: '10px', color: c.text, fontFamily: 'monospace' }}>{t.name}</div>
+                              {t.description && <div style={{ fontSize: '9px', color: c.textFaint, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t.description}</div>}
+                            </div>
+                            <span style={{ cursor: 'pointer', fontSize: '9px', color: c.accent, flexShrink: 0, marginLeft: '4px' }}
+                              onClick={() => {
+                                const argsStr = prompt('输入参数 JSON (工具: ' + t.name + '):', '{}')
+                                if (argsStr) {
+                                  try { handleMcpCallTool(s.name, t.name, JSON.parse(argsStr)) } catch { showToast('参数 JSON 格式错误', 'error') }
+                                }
+                              }}>调用</span>
+                          </div>
+                        ))}
+                        {mcpToolResult && mcpSelectedServer === s.name && (
+                          <div style={{ marginTop: '4px', padding: '4px', background: c.codeBg, border: '1px solid ' + c.border, borderRadius: '3px', fontSize: '10px', fontFamily: 'monospace', whiteSpace: 'pre-wrap', wordBreak: 'break-all', maxHeight: '100px', overflowY: 'auto', color: c.textMuted }}>
+                            {mcpToolResult}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
-                  <div style={{ display: 'flex', gap: '4px' }}>
-                    <span style={{ cursor: 'pointer', fontSize: '9px', color: '#4ECB71' }} onClick={async () => { const r = await window.dogeAPI.mcpTest(s.name); showToast(r.success ? (r.message || '已连接') : (r.error || '测试失败'), r.success ? 'success' : 'error') }}>测试</span>
-                    <span style={{ cursor: 'pointer', fontSize: '9px', color: '#FF6B6B' }} onClick={() => handleMcpRemove(s.name)}>删除</span>
-                  </div>
-                </div>
-              ))}
-              {agents.length > 0 && <div style={{ fontSize: '10px', color: '#888', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '4px' }}>Agents ({agents.length})</div>}
+                )
+              })}
+              {agents.length > 0 && <div style={{ fontSize: '10px', color: c.textMuted, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '4px' }}>Agents ({agents.length})</div>}
               {agents.slice(0, 5).map(a => (
-                <div key={a.id} style={{ fontSize: '10px', color: '#666', padding: '2px 6px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{a.name} {a.model ? `(${a.model})` : ''}</div>
+                <div key={a.id} style={{ fontSize: '10px', color: c.textMuted, padding: '2px 6px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{a.name} {a.model ? `(${a.model})` : ''}</div>
               ))}
             </div>
           )}
         </div>
-        {showCommandPalette && <CommandPalette cwd={workingDir} onClose={() => setShowCommandPalette(false)} mode={paletteMode} setMode={setPaletteMode} commandHistory={commandHistory} />}
+        {/* Project Management Panels */}
+        {showKanban && (
+          <div style={{ position: 'fixed', inset: 0, zIndex: 9998, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowKanban(false)}>
+            <div style={{ background: theme.surface, border: `1px solid ${theme.border}`, borderRadius: '8px', width: '80%', maxWidth: '900px', height: '70%', maxHeight: '600px', display: 'flex', flexDirection: 'column' }} onClick={e => e.stopPropagation()}>
+              <div style={{ padding: '10px 16px', borderBottom: `1px solid ${theme.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontWeight: 600, color: theme.text }}>📋 任务看板</span>
+                <span style={{ cursor: 'pointer', color: theme.textFaint }} onClick={() => setShowKanban(false)}>✕</span>
+              </div>
+              <div style={{ flex: 1, overflow: 'hidden' }}>
+                <KanbanBoard cwd={workingDir} theme={theme} />
+              </div>
+            </div>
+          </div>
+        )}
+        {showTimeTracker && (
+          <div style={{ position: 'fixed', inset: 0, zIndex: 9998, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowTimeTracker(false)}>
+            <div style={{ background: theme.surface, border: `1px solid ${theme.border}`, borderRadius: '8px', width: '70%', maxWidth: '700px', height: '70%', maxHeight: '550px', display: 'flex', flexDirection: 'column' }} onClick={e => e.stopPropagation()}>
+              <div style={{ padding: '10px 16px', borderBottom: `1px solid ${theme.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontWeight: 600, color: theme.text }}>⏱️ 时间追踪</span>
+                <span style={{ cursor: 'pointer', color: theme.textFaint }} onClick={() => setShowTimeTracker(false)}>✕</span>
+              </div>
+              <div style={{ flex: 1, overflow: 'hidden' }}>
+                <TimeTracker />
+              </div>
+            </div>
+          </div>
+        )}
+        {showProgressReport && (
+          <div style={{ position: 'fixed', inset: 0, zIndex: 9998, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowProgressReport(false)}>
+            <div style={{ background: theme.surface, border: `1px solid ${theme.border}`, borderRadius: '8px', width: '75%', maxWidth: '800px', height: '75%', maxHeight: '600px', display: 'flex', flexDirection: 'column' }} onClick={e => e.stopPropagation()}>
+              <div style={{ padding: '10px 16px', borderBottom: `1px solid ${theme.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontWeight: 600, color: theme.text }}>📊 进度报告</span>
+                <span style={{ cursor: 'pointer', color: theme.textFaint }} onClick={() => setShowProgressReport(false)}>✕</span>
+              </div>
+              <div style={{ flex: 1, overflow: 'hidden' }}>
+                <ProgressReport cwd={workingDir} theme={theme} />
+              </div>
+            </div>
+          </div>
+        )}
+        {showSemanticSearch && activePreviewFile && (
+          <div style={{ position: 'fixed', top: 60, right: 300, width: 360, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+            <SemanticSearchPanel cwd={workingDir} theme={theme} onResultClick={(filePath, line) => { handlePreviewFile(filePath) }} />
+          </div>
+        )}
+        {showAIOutline && activePreviewFile && (
+          <div style={{ position: 'fixed', top: 60, right: 300, width: 320, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+            <OutlinePanel filePath={activePreviewFile.path} cwd={workingDir} theme={theme} onSymbolClick={(filePath, line) => { handlePreviewFile(filePath) }} />
+          </div>
+        )}
+        {showCodeReview && activePreviewFile && (
+          <div style={{ position: 'fixed', top: 60, right: 300, width: 380, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+            <AICodeReviewPanel filePath={activePreviewFile.path} cwd={workingDir} theme={theme} onNavigateTo={(filePath, line) => { handlePreviewFile(filePath) }} />
+          </div>
+        )}
+        {showCommandPalette && <CommandPalette cwd={workingDir} onClose={() => setShowCommandPalette(false)} mode={paletteMode} setMode={setPaletteMode} commandHistory={cmdHistory.commandHistory} theme={theme} />}
+        {showAgentPanel && <AgentPanel cwd={workingDir} theme={theme} onClose={() => setShowAgentPanel(false)} />}
+        {showPluginPanel && <PluginPanel theme={theme} onClose={() => setShowPluginPanel(false)} />}
         {showShortcuts && (
           <div style={{ position: 'fixed', inset: 0, zIndex: 9998, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowShortcuts(false)}>
-            <div style={{ background: '#1A1A1A', border: '1px solid #333', borderRadius: '8px', padding: '20px', minWidth: '360px', maxWidth: '480px', boxShadow: '0 8px 32px rgba(0,0,0,0.8)' }} onClick={(e) => e.stopPropagation()}>
-              <div style={{ fontSize: '16px', fontWeight: 600, color: '#F5F5F5', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ background: c.surface, border: `1px solid ${c.border}`, borderRadius: '8px', padding: '20px', minWidth: '360px', maxWidth: '480px', boxShadow: `0 8px 32px ${c.bg}80` }} onClick={(e) => e.stopPropagation()}>
+              <div style={{ fontSize: '16px', fontWeight: 600, color: c.text, marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span>⌨ 快捷键</span>
-                <span style={{ cursor: 'pointer', color: '#555', fontSize: '18px' }} onClick={() => setShowShortcuts(false)}>✕</span>
+                <span style={{ cursor: 'pointer', color: c.textFaint, fontSize: '18px' }} onClick={() => setShowShortcuts(false)}>✕</span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 {[
@@ -1697,9 +1833,9 @@ export function App(): JSX.Element {
                   ['F11', '全屏'], ['Ctrl + \\', '分屏模式'],
                   ['Esc', '关闭面板'], ['?', '快捷键帮助'],
                 ].map(([key, desc]) => (
-                  <div key={key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid #262626' }}>
-                    <span style={{ color: '#888', fontSize: '12px' }}>{desc}</span>
-                    <kbd style={{ background: '#0F0F0F', border: '1px solid #333', borderRadius: '3px', padding: '1px 6px', fontSize: '11px', color: '#4ECB71', fontFamily: 'monospace' }}>{key}</kbd>
+                  <div key={key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', borderBottom: `1px solid ${c.borderSubtle}` }}>
+                    <span style={{ color: c.textMuted, fontSize: '12px' }}>{desc}</span>
+                    <kbd style={{ background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '3px', padding: '1px 6px', fontSize: '11px', color: c.accent, fontFamily: 'monospace' }}>{key}</kbd>
                   </div>
                 ))}
               </div>
