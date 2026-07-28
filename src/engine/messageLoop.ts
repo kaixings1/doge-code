@@ -102,8 +102,12 @@ export class MessageLoop {
       maxTokens: this.deps.maxOutputTokens,
     });
 
+    engineLog('REQ', JSON.stringify(request, null, 2).slice(0, 5000));
+
     const stream = await this.deps.apiClient.sendMessage(request);
     const processed = await this.deps.responseHandler.handle(stream as AsyncIterable<{ type: string; [k: string]: unknown }>);
+
+    engineLog('RESP', JSON.stringify(processed, null, 2).slice(0, 10000));
 
     // 将助手回复写入 conversation，使下游能获取完整消息列表
     if (processed.content && processed.toolCalls.length === 0) {
@@ -142,8 +146,12 @@ export class MessageLoop {
         return true;
       }
 
+      engineLog('TOOL_CALLS', JSON.stringify(validCalls, null, 2).slice(0, 10000));
+
       // 执行有效调用
       const results = await this.deps.toolScheduler.execute(validCalls);
+
+      engineLog('TOOL_RESULTS', JSON.stringify(results, null, 2).slice(0, 10000));
 
       // 检查执行失败次数
       const failedCount = results.filter(r => !r.success).length;

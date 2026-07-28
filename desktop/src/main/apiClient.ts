@@ -303,9 +303,16 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
 
                 try {
                   const parsed = JSON.parse(data)
+                  console.log(`[SSE] ${JSON.stringify(parsed).slice(0, 2000)}`)
 
                   if (isAnthropic) {
                     // Anthropic 原生格式：直接透传
+                    if (typeof parsed === 'object' && parsed !== null && (parsed as Record<string, unknown>).type === 'content_block_stop') {
+                      const cb = (parsed as Record<string, unknown>).content_block
+                      if (cb && typeof cb === 'object' && (cb as Record<string, unknown>).type === 'tool_use') {
+                        console.log(`[TOOL] tool_use id=${(cb as Record<string, unknown>).id} name=${(cb as Record<string, unknown>).name} input=${JSON.stringify((cb as Record<string, unknown>).input).slice(0, 1000)}`)
+                      }
+                    }
                     yield parsed
                     messageStarted = true
                   } else {
@@ -343,6 +350,7 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
                         for (const tc of delta.tool_calls as Array<Record<string, unknown>>) {
                           const idx = (tc.index as number) ?? 0
                           const func = tc.function as Record<string, unknown> | undefined
+                          console.log(`[TOOL-OAI] tool_use id=${tc.id} name=${func?.name} args=${(func?.arguments as string | undefined)?.slice(0, 500)}`)
                           yield { type: 'content_block_start', index: idx, content_block: { type: 'tool_use', id: tc.id as string, name: func?.name as string, input: '' } }
                           if (func?.arguments) {
                             yield { type: 'content_block_delta', index: idx, delta: { type: 'input_json_delta', partial_json: func.arguments as string } }
