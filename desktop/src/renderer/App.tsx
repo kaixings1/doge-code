@@ -1468,7 +1468,7 @@ export function App(): JSX.Element {
               </div>
             )}
             <div style={{ display: 'flex', gap: '6px', alignItems: 'flex-end' }}>
-              <form onSubmit={(e) => { e.preventDefault(); isProcessing ? handleAbort() : handleSend() }} style={{ flex: 1 }}>
+              <form onSubmit={(e) => { e.preventDefault() }} style={{ flex: 1 }}>
                 <textarea
                 ref={inputRef}
                 value={input}

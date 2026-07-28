@@ -63,6 +63,9 @@ interface DogeAPIValue {
   revealInExplorer: (filePath: string) => Promise<{ success: boolean; error?: string }>
   getCrashRecovery: () => Promise<{ hasRecovery: boolean; sessionId?: string; messageCount?: number; timestamp?: string }>
   clearCrashRecovery: () => Promise<{ success: boolean }>
+  dbConnect: (conn: { id: string; type: string; path: string; name: string }) => Promise<{ success: boolean; error?: string }>
+  dbTables: (connectionId: string) => Promise<{ success: boolean; tables: Array<{ name: string; columns: any[]; indexes: any[]; rowCount?: number }>; error?: string }>
+  dbQuery: (connectionId: string, sql: string) => Promise<{ success: boolean; rows: Array<Record<string, unknown>>; columns?: string[]; rowCount?: number; error?: string }>
   mcpList: () => Promise<Array<{ name: string; command: string; args: string[]; transport: string }>>
   mcpAdd: (name: string, command: string, args: string[], transport?: string) => Promise<{ success: boolean; error?: string; message?: string }>
   mcpRemove: (name: string) => Promise<{ success: boolean; error?: string; message?: string }>
@@ -163,6 +166,9 @@ const dogeAPI: DogeAPIValue = {
   },
   getCrashRecovery: () => ipcRenderer.invoke('doge:get-crash-recovery'),
   clearCrashRecovery: () => ipcRenderer.invoke('doge:clear-crash-recovery'),
+  dbConnect: (conn: { id: string; type: string; path: string; name: string }) => ipcRenderer.invoke('doge:db-connect', conn),
+  dbTables: (connectionId: string) => ipcRenderer.invoke('doge:db-tables', connectionId),
+  dbQuery: (connectionId: string, sql: string) => ipcRenderer.invoke('doge:db-query', connectionId, sql),
   mcpList: () => ipcRenderer.invoke('doge:mcp-list'),
   mcpAdd: (name: string, command: string, args: string[], transport?: string) => ipcRenderer.invoke('doge:mcp-add', name, command, args, transport),
   mcpRemove: (name: string) => ipcRenderer.invoke('doge:mcp-remove', name),
@@ -180,7 +186,7 @@ const dogeAPI: DogeAPIValue = {
   pluginUninstall: (pluginName: string) => ipcRenderer.invoke('doge:plugin-uninstall', pluginName),
   pluginGetCommand: (pluginName: string, commandName: string) => ipcRenderer.invoke('doge:plugin-get-command', pluginName, commandName),
   // 以下为占位 API（主进程 IPC handler 未实现，调用时返回失败）
-  aiComplete: async () => ({ success: false, completions: [] }),
+  aiComplete: (input: { filePath: string; code: string; line: number; column: number }) => ipcRenderer.invoke('doge:ai-complete', input),
   formatCode: async (params) => {
     try {
       const result = await ipcRenderer.invoke('doge:format-code', params)
@@ -189,7 +195,7 @@ const dogeAPI: DogeAPIValue = {
       return { success: false, error: e instanceof Error ? e.message : '格式化服务不可用' }
     }
   },
-  apiTestSend: async () => ({ success: false, status: 0, statusText: '未实现', responseHeaders: {}, body: '', error: 'API 测试功能尚未实现' }),
+  apiTestSend: (request: { url: string; method: string; headers: Record<string, string>; body?: string; bodyType: string }) => ipcRenderer.invoke('doge:api-test-send', request),
   getGitStats: async () => ({ commits: [] }),
 }
 

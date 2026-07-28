@@ -82,7 +82,7 @@ export class ResponseHandler {
     chunks: { type: string; text?: string }[],
   ): string {
     return chunks
-      .filter((c) => c.type === "text" && c.text)
+      .filter((c) => c.type === "text" && c.text != null)
       .map((c) => c.text as string)
       .join("");
   }

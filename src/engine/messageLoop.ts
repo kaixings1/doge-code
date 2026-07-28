@@ -60,6 +60,10 @@ export class MessageLoop {
           await this.deps.stateMachine.transition("responding");
         }
       } catch (error) {
+        const errMsg = error instanceof Error ? error.message : String(error);
+        const errStack = error instanceof Error ? error.stack : '';
+        console.error(`[ENGINE] runIteration error: ${errMsg}`);
+        console.error(`[ENGINE] stack: ${errStack}`);
         if (this.deps.stateMachine.isTerminal()) break;
         await this.deps.stateMachine.transition("crashed", { error: ErrorClassifier.classify(error) });
         break;

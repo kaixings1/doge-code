@@ -104,7 +104,7 @@ export interface GetOutlineResult {
 }
 
 /** 格式化工具类型 */
-export type FormatterTool = 'prettier' | 'biome' | 'dprint' | 'clang-format'
+export type FormatterTool = 'prettier' | 'biome' | 'dprint' | 'clang-format' | 'eslint'
 
 // ─── 扩展的 DogeAPI 接口 ───
 
@@ -143,23 +143,11 @@ export interface ExtendedDogeAPI extends DogeAPI {
   }) => Promise<{ success: boolean; output?: string; error?: string }>
 }
 
-// ─── 数据库 IPC API 类型声明 ───
-
-export interface DatabaseIPC {
-  dogeDBConnect?: (conn: any) => Promise<{ success: boolean; error?: string }>
-  dogeDBTables?: (connectionId: string) => Promise<{ success: boolean; tables: Array<{ name: string; columns: any[]; indexes: any[] }>; error?: string }>
-  dogeDBQuery?: (connectionId: string, sql: string) => Promise<{ success: boolean; rows: any[]; error?: string }>
-}
-
 // ─── 全局 Window 接口声明（唯一入口） ───
 
 declare global {
   interface Window {
     /** Doge Code Desktop 主 API（扩展版本） */
     dogeAPI: ExtendedDogeAPI & Record<string, any>
-    /** 数据库 IPC API（主进程 IPC handler 未实现，占位） */
-    dogeDBConnect?: DatabaseIPC['dogeDBConnect']
-    dogeDBTables?: DatabaseIPC['dogeDBTables']
-    dogeDBQuery?: DatabaseIPC['dogeDBQuery']
   }
 }
