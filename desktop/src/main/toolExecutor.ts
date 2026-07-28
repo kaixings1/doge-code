@@ -107,7 +107,8 @@ export function createAdaptedTools(config: EngineConfig) {
           )
           return result
         } catch (e) {
-          return { content: String(e instanceof Error ? e.message : '未知错误') }
+          const message = e instanceof Error ? e.message : '未知错误'
+          throw new Error(message)
         }
       },
     })

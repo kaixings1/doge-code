@@ -1662,7 +1662,7 @@ export function App(): JSX.Element {
                           const codeLines = activePreviewFile.content.split('\n')
                           const lineNums = codeLines.map((_, i) => i + 1).join('\n')
                           return (
-                            <pre style={{ display: 'flex', background: c.codeBg, border: `1px solid ${c.border}`, borderRadius: '4px', fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', maxHeight: '300px', overflowY: 'auto', margin: 0 }}>
+                            <pre style={{ display: 'flex', background: c.codeBg, border: `1px solid ${c.border}`, borderRadius: '4px', fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', maxHeight: '300px', margin: 0 }}>
                               <div style={{ color: c.textFaint, textAlign: 'right', paddingRight: '8px', userSelect: 'none', minWidth: '36px', borderRight: `1px solid ${c.borderSubtle}`, flexShrink: 0 }}>
                                 {lineNums.split('\n').map((n, i) => (<div key={i} style={{ height: '1.5em' }}>{n}</div>))}
                               </div>
@@ -1671,7 +1671,7 @@ export function App(): JSX.Element {
                           )
                         }
                         return (
-                          <pre style={{ background: c.codeBg, border: `1px solid ${c.border}`, borderRadius: '4px', padding: '8px', fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all', color: c.text, margin: 0, maxHeight: '300px', overflowY: 'auto' }}>
+                          <pre style={{ background: c.codeBg, border: `1px solid ${c.border}`, borderRadius: '4px', padding: '8px', fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all', color: c.text, margin: 0, maxHeight: '300px' }}>
                             {activePreviewFile.content || '(空文件)'}
                           </pre>
                         )
