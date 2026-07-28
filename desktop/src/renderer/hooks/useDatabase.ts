@@ -224,16 +224,16 @@ export function useDatabase(): UseDatabaseReturn {
     setConnectionError(null)
 
     try {
-      if (!window.dogeDBConnect || !window.dogeDBTables) {
+      if (!window.dogeAPI.dbConnect || !window.dogeAPI.dbTables) {
         setConnectionError('数据库功能尚未实现')
         return false
       }
-      const result = await window.dogeDBConnect!(conn)
+      const result = await window.dogeAPI.dbConnect({ ...conn, path: conn.database || ':memory:' })
       if (result.success) {
         setActiveConnectionId(id)
         setIsConnected(true)
         // 加载表列表
-        const tablesResult = await window.dogeDBTables!(id)
+        const tablesResult = await window.dogeAPI.dbTables(id)
         if (tablesResult.success && tablesResult.tables) {
           setTables(tablesResult.tables as DbTable[])
         }
@@ -264,8 +264,8 @@ export function useDatabase(): UseDatabaseReturn {
     if (!conn) return false
 
     try {
-      if (!window.dogeDBConnect) return false
-      const result = await window.dogeDBConnect!(conn)
+      if (!window.dogeAPI.dbConnect) return false
+      const result = await window.dogeAPI.dbConnect({ ...conn, path: conn.database || ':memory:' })
       return result.success
     } catch {
       return false
@@ -280,8 +280,8 @@ export function useDatabase(): UseDatabaseReturn {
     const startTime = Date.now()
 
     try {
-      if (!window.dogeDBQuery) return null
-      const result = await window.dogeDBQuery!(activeConnectionId, sql)
+      if (!window.dogeAPI.dbQuery) return null
+      const result = await window.dogeAPI.dbQuery!(activeConnectionId, sql)
       const duration = Date.now() - startTime
 
       if (result.success) {
@@ -351,9 +351,9 @@ export function useDatabase(): UseDatabaseReturn {
   }, [executeQuery, pageSize])
 
   const fetchTables = useCallback(async (): Promise<DbTable[]> => {
-    if (!activeConnectionId || !window.dogeDBTables) return []
+    if (!activeConnectionId || !window.dogeAPI.dbTables) return []
     try {
-      const result = await window.dogeDBTables!(activeConnectionId)
+      const result = await window.dogeAPI.dbTables!(activeConnectionId)
       if (result.success && result.tables) {
         setTables(result.tables)
         return result.tables
