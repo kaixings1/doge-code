@@ -192,7 +192,7 @@ export function AICodeReviewPanel({
         cwd,
       })
 
-      if (reviewResult.success && reviewResult.result) {
+      if (reviewResult?.success && reviewResult.result) {
         const newResult: ReviewResult = {
           score: reviewResult.result.score,
           findings: reviewResult.result.findings || [],
@@ -213,7 +213,7 @@ export function AICodeReviewPanel({
         setHistory(newHistory)
         saveReviewHistory(newHistory)
       } else {
-        setError(reviewResult.error || '审查失败')
+        setError(reviewResult?.error || '审查失败')
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : '审查请求失败')
@@ -233,10 +233,10 @@ export function AICodeReviewPanel({
         fixedCode: finding.suggestedFix,
         originalCode: finding.originalCode,
       })
-      if (fixResult.success) {
+      if (fixResult?.success) {
         setFixedFindings(prev => new Set(prev).add(finding.id))
       } else {
-        console.error('修复失败:', fixResult.error)
+        console.error('修复失败:', fixResult?.error)
       }
     } catch {
       console.error('修复请求失败')

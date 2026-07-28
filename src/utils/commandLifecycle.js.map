@@ -1,0 +1,1 @@
+{"version":3,"file":"commandLifecycle.js","sourceRoot":"","sources":["commandLifecycle.ts"],"names":[],"mappings":"AAOA,IAAI,QAAQ,GAAoC,IAAI,CAAA;AAEpD,MAAM,UAAU,2BAA2B,CACzC,EAAmC;IAEnC,QAAQ,GAAG,EAAE,CAAA;AACf,CAAC;AAED,MAAM,UAAU,sBAAsB,CACpC,IAAY,EACZ,KAA4B;IAE5B,QAAQ,EAAE,CAAC,IAAI,EAAE,KAAK,CAAC,CAAA;AACzB,CAAC"}

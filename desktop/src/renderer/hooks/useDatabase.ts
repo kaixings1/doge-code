@@ -10,15 +10,6 @@
 
 import { useCallback, useState } from 'react'
 
-// 数据库 IPC API 类型声明（主进程 IPC handler 未实现时为占位）
-declare global {
-  interface Window {
-    dogeDBConnect?: (conn: any) => Promise<{ success: boolean; error?: string }>
-    dogeDBTables?: (connectionId: string) => Promise<{ success: boolean; tables: Array<{ name: string; columns: any[]; indexes: any[] }>; error?: string }>
-    dogeDBQuery?: (connectionId: string, sql: string) => Promise<{ success: boolean; rows: any[]; error?: string }>
-  }
-}
-
 // ─── 类型定义 ───
 
 export type DbType = 'mysql' | 'postgresql' | 'sqlite' | 'mongodb'
@@ -237,12 +228,12 @@ export function useDatabase(): UseDatabaseReturn {
         setConnectionError('数据库功能尚未实现')
         return false
       }
-      const result = await window.dogeDBConnect(conn)
+      const result = await window.dogeDBConnect!(conn)
       if (result.success) {
         setActiveConnectionId(id)
         setIsConnected(true)
         // 加载表列表
-        const tablesResult = await window.dogeDBTables(id)
+        const tablesResult = await window.dogeDBTables!(id)
         if (tablesResult.success && tablesResult.tables) {
           setTables(tablesResult.tables as DbTable[])
         }
@@ -274,7 +265,7 @@ export function useDatabase(): UseDatabaseReturn {
 
     try {
       if (!window.dogeDBConnect) return false
-      const result = await window.dogeDBConnect(conn)
+      const result = await window.dogeDBConnect!(conn)
       return result.success
     } catch {
       return false
@@ -290,7 +281,7 @@ export function useDatabase(): UseDatabaseReturn {
 
     try {
       if (!window.dogeDBQuery) return null
-      const result = await window.dogeDBQuery(activeConnectionId, sql)
+      const result = await window.dogeDBQuery!(activeConnectionId, sql)
       const duration = Date.now() - startTime
 
       if (result.success) {
@@ -360,9 +351,9 @@ export function useDatabase(): UseDatabaseReturn {
   }, [executeQuery, pageSize])
 
   const fetchTables = useCallback(async (): Promise<DbTable[]> => {
-    if (!activeConnectionId) return []
+    if (!activeConnectionId || !window.dogeDBTables) return []
     try {
-      const result = await window.dogeDBTables(activeConnectionId)
+      const result = await window.dogeDBTables!(activeConnectionId)
       if (result.success && result.tables) {
         setTables(result.tables)
         return result.tables
