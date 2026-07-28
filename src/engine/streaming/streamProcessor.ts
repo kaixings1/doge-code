@@ -77,9 +77,12 @@ export class StreamProcessor {
     }
     if (this.currentBlock.type === "tool_use") {
       const json = blockChunks.filter((c) => c.type === "tool_use").map((c) => c.inputDelta ?? "").join("");
+      console.log(`[STREAM-PROC] processBlockStop index=${event.index} blockType=tool_use blockChunks=${blockChunks.length} json="${json.slice(0, 200)}"`)
       try {
         this.currentBlock.input = JSON.parse(json);
-      } catch {
+        console.log(`[STREAM-PROC] parsed input:`, JSON.stringify(this.currentBlock.input).slice(0, 200))
+      } catch (e) {
+        console.log(`[STREAM-PROC] JSON.parse failed:`, e instanceof Error ? e.message : String(e))
         this.currentBlock.input = {};
       }
     }

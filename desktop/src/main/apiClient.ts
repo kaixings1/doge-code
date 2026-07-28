@@ -93,7 +93,7 @@ function convertAnthropicRequestToOpenAI(req: APIRequest): OpenAIChatRequest {
         if (block.type === 'tool_result') {
           messages.push({
             role: 'tool',
-            tool_call_id: block.tool_use_id as string | void 0,
+            tool_call_id: block.tool_use_id as string | undefined,
             content: typeof block.content === 'string' ? block.content : JSON.stringify(block.content),
           })
         }
@@ -331,7 +331,7 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
                     // OpenAI 格式：转换为 Anthropic 事件
                     const chunk = parsed as OpenAIStreamChunk
                     const choice = chunk.choices?.[0]
-                    const delta = choice ? (choice.delta as Record<string, unknown> | void 0) : void 0
+                    const delta = choice ? (choice.delta as Record<string, unknown> | undefined) : undefined
 
                     if (choice && (delta || choice.finish_reason)) {
                       if (!messageStarted) {
@@ -361,9 +361,9 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
                       if (delta && Array.isArray(delta.tool_calls)) {
                         for (const tc of delta.tool_calls as Array<Record<string, unknown>>) {
                           const idx = (tc.index as number) ?? 0
-                          const func = tc.function as Record<string, unknown> | void 0
-                          const name = func?.name as string | void 0
-                          const args = func?.arguments as string | void 0
+                          const func = tc.function as Record<string, unknown> | undefined
+                          const name = func?.name as string | undefined
+                          const args = func?.arguments as string | undefined
                           console.log(`[TOOL-OAI] tool_use idx=${idx} id=${tc.id} name=${name} args=${args?.slice(0, 500)}`)
 
                           const isFirst = !toolCallAccum.has(idx)
@@ -382,13 +382,9 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
 
                       // finish_reason — 工具调用完成时 flush 所有 tool_calls
                       if (choice.finish_reason) {
-                        const stopReason = mapFinishReason(choice.finish_reason as string | void 0)
+                        const stopReason = mapFinishReason(choice.finish_reason as string | undefined)
                         if (toolCallAccum.size > 0) {
                           for (const [idx, tc] of toolCallAccum) {
-                            yield { type: 'content_block_start', index: idx, content_block: { type: 'tool_use', id: tc.id, name: tc.name, input: tc.args } }
-                            if (tc.args) {
-                              yield { type: 'content_block_delta', index: idx, delta: { type: 'input_json_delta', partial_json: tc.args } }
-                            }
                             yield { type: 'content_block_stop', index: idx }
                           }
                           toolCallAccum.clear()
