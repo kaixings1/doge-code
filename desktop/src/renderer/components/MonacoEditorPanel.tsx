@@ -3,7 +3,8 @@
  *
  * 功能：
  * - Monaco Editor 组件（使用 @monaco-editor/react 动态导入）
- * - LSP 集成（自动启动服务器、内联补全、诊断标记、跳转定义）
+ * - LSP 集成（自动启动服务器、补全、定义、引用、悬停、文档符号、工作区符号、高亮、诊断标记）
+ * - 内联补全（灰色文字跟随光标）
  * - 主题适配（dark/light → vs-dark/vs）
  * - 文件编辑 IPC（openEditor/saveEditor）
  * - 编辑器标签页（多文件切换 + Dirty 标记）
@@ -38,6 +39,11 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
   const monacoRef = useRef<any>(null)
   const diagnosticsRef = useRef<any>(null)
   const lspStartedRef = useRef<Set<string>>(new Set())
+  const highlightsDecorationsRef = useRef<Set<string>>(new Set())
+  const [bookmarks, setBookmarks] = useState<{line: number; column: number}[]>([])
+  const [recentFiles, setRecentFiles] = useState<string[]>([])
+  const [symbols, setSymbols] = useState<any[]>([])
+  const bookmarksRef = useRef<Set<number>>(new Set())
 
   const activeTab = tabs.find(t => t.id === activeTabId)
 
@@ -90,7 +96,6 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
       if (!diagnosticsRef.current || !editorRef.current) return
       const currentModel = editorRef.current.getModel()
       if (!currentModel) return
-      // 只处理当前文件
       const currentUri = currentModel.uri.toString()
       const targetUri = uri.replace('file://', '')
       if (!currentUri.includes(targetUri) && !targetUri.includes(currentUri.split('/').pop() || '')) return
@@ -138,7 +143,6 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
         setTabs(prev => [...prev, newTab])
         setActiveTabId(newTab.id)
         setOpenStatus('')
-        // 启动对应语言的 LSP 服务器
         if (lang !== 'plaintext' && lang !== 'markdown') {
           startLspServer(lang)
         }
@@ -220,6 +224,122 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
     return () => window.removeEventListener('keydown', handler)
   }, [handleSave])
 
+  // 书签操作
+  const toggleBookmark = useCallback(() => {
+    const editor = editorRef.current
+    if (!editor) return
+    const position = editor.getPosition()
+    if (!position) return
+    const line = position.lineNumber
+    const existingIdx = bookmarksRef.current.has(line) ? -1 : bookmarks.findIndex(b => b.line === line)
+    if (existingIdx >= 0) {
+      setBookmarks(prev => prev.filter(b => b.line !== line))
+      bookmarksRef.current.delete(line)
+      editor.deltaDecorations([], [])
+      bookmarksRef.current.forEach(l => {
+        editor.deltaDecorations([], [
+          {
+            range: new (monacoRef.current as any).Range(l, 1, l, 1),
+            options: { isWholeLine: true, className: 'bookmark-line', glyphMarginClassName: 'bookmark-glyph', glyphMarginHoverMessage: { value: '书签' } }
+          }
+        ])
+      })
+    } else {
+      setBookmarks(prev => [...prev, { line, column: position.column }])
+      bookmarksRef.current.add(line)
+      editor.deltaDecorations([], [
+        {
+          range: new (monacoRef.current as any).Range(line, 1, line, 1),
+          options: { isWholeLine: true, className: 'bookmark-line', glyphMarginClassName: 'bookmark-glyph', glyphMarginHoverMessage: { value: '书签' } }
+        }
+      ])
+    }
+  }, [])
+
+  const clearBookmarks = useCallback(() => {
+    setBookmarks([])
+    bookmarksRef.current.clear()
+    editorRef.current?.deltaDecorations([], [])
+  }, [])
+
+  const jumpToPrevBookmark = useCallback(() => {
+    const editor = editorRef.current
+    if (!editor || bookmarks.length === 0) return
+    const currentLine = editor.getPosition()?.lineNumber || 0
+    const sorted = [...bookmarks].sort((a, b) => a.line - b.line)
+    const prev = [...sorted].reverse().find(b => b.line < currentLine) || sorted[sorted.length - 1]
+    if (prev) editor.setPosition({ lineNumber: prev.line, column: prev.column })
+  }, [bookmarks])
+
+  const jumpToNextBookmark = useCallback(() => {
+    const editor = editorRef.current
+    if (!editor || bookmarks.length === 0) return
+    const currentLine = editor.getPosition()?.lineNumber || 0
+    const sorted = [...bookmarks].sort((a, b) => a.line - b.line)
+    const next = sorted.find(b => b.line > currentLine) || sorted[0]
+    if (next) editor.setPosition({ lineNumber: next.line, column: next.column })
+  }, [bookmarks])
+
+  // 最近文件
+  const pushRecentFile = useCallback((fp: string) => {
+    setRecentFiles(prev => {
+      const filtered = prev.filter(f => f !== fp)
+      return [fp, ...filtered].slice(0, 20)
+    })
+  }, [])
+
+  const switchToRecentFile = useCallback(async (index: number) => {
+    const fp = recentFiles[index]
+    if (!fp) return
+    setFilePath(fp)
+    await handleOpenFile()
+  }, [recentFiles, handleOpenFile])
+
+  // 符号大纲
+  const loadSymbols = useCallback(async () => {
+    if (!activeTab) { setSymbols([]); return }
+    try {
+      const result = (window as any).dogeAPI?.lspDocumentSymbol?.(activeTab.filePath)
+      if (result?.success && result.symbols) {
+        setSymbols(result.symbols)
+      } else {
+        setSymbols([])
+      }
+    } catch { setSymbols([]) }
+  }, [activeTab])
+
+  // 跳转到定义
+  const goToDefinition = useCallback(() => {
+    editorRef.current?.getAction('editor.action.goToDefinition')?.run()
+  }, [])
+
+  // 查找引用
+  const findReferences = useCallback(() => {
+    editorRef.current?.getAction('editor.action.referenceSearch.trigger')?.run()
+  }, [])
+
+  // 快捷键绑定
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Tab') {
+        e.preventDefault()
+        if (recentFiles.length > 0) switchToRecentFile(0)
+      }
+      if (e.key === 'F12') { e.preventDefault(); goToDefinition() }
+      if (e.shiftKey && e.key === 'F12') { e.preventDefault(); findReferences() }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [recentFiles, switchToRecentFile, goToDefinition, findReferences])
+
+  // 当文件打开时更新最近文件和符号
+  useEffect(() => {
+    if (activeTab) {
+      pushRecentFile(activeTab.filePath)
+      loadSymbols()
+    }
+  }, [activeTab?.id, pushRecentFile, loadSymbols])
+
   // 当激活标签页切换时，更新语言
   useEffect(() => {
     if (activeTab) {
@@ -254,6 +374,10 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
           <option value="plaintext">Plain Text</option>
         </select>
         <button onClick={handleFormat} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: 'transparent', color: c.text, cursor: 'pointer', fontSize: '9px' }}>格式化</button>
+        <button onClick={toggleBookmark} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: bookmarks.length > 0 ? c.accentDim : 'transparent', color: c.text, cursor: 'pointer', fontSize: '9px' }} title="添加/删除书签 (Ctrl+F2)">🔖 书签</button>
+        <button onClick={clearBookmarks} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: 'transparent', color: c.text, cursor: 'pointer', fontSize: '9px' }} title="清除所有书签">清除</button>
+        <button onClick={jumpToPrevBookmark} disabled={bookmarks.length === 0} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: 'transparent', color: c.text, cursor: bookmarks.length > 0 ? 'pointer' : 'default', fontSize: '9px' }} title="上一书签 (F2)">↑书签</button>
+        <button onClick={jumpToNextBookmark} disabled={bookmarks.length === 0} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: 'transparent', color: c.text, cursor: bookmarks.length > 0 ? 'pointer' : 'default', fontSize: '9px' }} title="下一书签 (Shift+F2)">↓书签</button>
       </div>
 
       {/* 标签页栏 */}
@@ -302,29 +426,64 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: c.textFaint, gap: '8px' }}>
           <div style={{ fontSize: '36px', opacity: 0.3 }}>📝</div>
           <div style={{ fontSize: '11px' }}>输入文件路径并点击"打开"开始编辑</div>
-          <div style={{ fontSize: '9px', color: c.textFaint }}>支持 Ctrl+S 保存 · LSP 自动补全 · F12 跳转定义</div>
+          <div style={{ fontSize: '9px', color: c.textFaint }}>支持 Ctrl+S 保存 · LSP 补全/定义/引用/符号 · F12 跳转定义 · Shift+F12 查找引用 · 内联补全 · Ctrl+Click 多光标 · F2 书签 · Ctrl+Tab 最近文件</div>
         </div>
       ) : (
-        <div style={{ flex: 1, overflow: 'hidden' }}>
-          <MonacoEditor
-            path={activeTab.filePath}
-            value={activeTab.content}
-            language={language}
-            theme={monacoTheme}
-            fontSize={fontSize}
-            cwd={cwd}
-            onChange={handleEditorChange}
-            onMount={(editor: any, monaco: any) => {
-              editorRef.current = editor
-              monacoRef.current = monaco
-              // 注册 LSP 补全 Provider
-              registerLspCompletion(monaco, editor, cwd)
-              // 注册 LSP 跳转定义 Provider
-              registerLspDefinition(monaco, editor, cwd)
-              // 注册 LSP 悬停 Provider
-              registerLspHover(monaco, editor, cwd)
-            }}
-          />
+        <div style={{ flex: 1, overflow: 'hidden', display: 'flex' }}>
+          <div style={{ flex: 1, overflow: 'hidden' }}>
+            <MonacoEditor
+              path={activeTab.filePath}
+              value={activeTab.content}
+              language={language}
+              theme={monacoTheme}
+              fontSize={fontSize}
+              cwd={cwd}
+              onChange={handleEditorChange}
+              onMount={(editor: any, monaco: any) => {
+                editorRef.current = editor
+                monacoRef.current = monaco
+                // 注册 LSP 补全 Provider
+                registerLspCompletion(monaco, editor, cwd)
+                // 注册 LSP 跳转定义 Provider
+                registerLspDefinition(monaco, editor, cwd)
+                // 注册 LSP 查找引用 Provider
+                registerLspReferences(monaco, editor)
+                // 注册 LSP 悬停 Provider
+                registerLspHover(monaco, editor, cwd)
+                // 注册 LSP 文档符号 Provider
+                registerLspDocumentSymbol(monaco, editor)
+                // 注册 LSP 工作区符号 Provider
+                registerLspWorkspaceSymbol(monaco, editor)
+                // 注册 LSP 文档高亮 Provider
+                registerLspDocumentHighlight(monaco, editor)
+                // 注册内联补全 Provider
+                registerInlineCompletion(monaco, editor, cwd)
+              }}
+            />
+          </div>
+          {/* 符号大纲侧边栏 */}
+          {symbols.length > 0 && (
+            <div style={{ width: '200px', borderLeft: `1px solid ${c.border}`, background: c.bgPanel, overflowY: 'auto', fontSize: '10px' }}>
+              <div style={{ padding: '6px 8px', borderBottom: `1px solid ${c.border}`, fontWeight: 600, color: c.text, fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>符号大纲</div>
+              <div>
+                {symbols.map((s: any, i: number) => (
+                  <div
+                    key={i}
+                    style={{ padding: '4px 8px', cursor: 'pointer', color: c.text, borderBottom: `1px solid ${c.border}`, display: 'flex', alignItems: 'center', gap: '4px' }}
+                    onClick={() => {
+                      if (!editorRef.current) return
+                      editorRef.current.setPosition({ lineNumber: s.range.start.line + 1, column: s.range.start.character + 1 })
+                      editorRef.current.revealLineInCenter(s.range.start.line + 1)
+                      editorRef.current.focus()
+                    }}
+                  >
+                    <span style={{ color: c.textFaint, fontSize: '8px' }}>●</span>
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -341,7 +500,7 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
         />
         <button onClick={handleSave} disabled={!activeTab?.isDirty} style={{ padding: '3px 10px', border: 'none', borderRadius: '3px', background: activeTab?.isDirty ? c.accent : c.border, color: activeTab?.isDirty ? '#000' : c.textFaint, cursor: activeTab?.isDirty ? 'pointer' : 'default', fontSize: '10px', fontWeight: 600 }}>💾 保存</button>
         {openStatus && <span style={{ color: c.textFaint, fontSize: '9px' }}>{openStatus}</span>}
-        {saveStatus && !saveStatus.includes('已保存') && <span style={{ color: c.errorText || '#f59e0b', fontSize: '9px' }}>{saveStatus}</span>}
+        {saveStatus && !saveStatus.includes('已保存') && <span style={{ color: '#f59e0b', fontSize: '9px' }}>{saveStatus}</span>}
       </div>
     </div>
   )
@@ -399,6 +558,85 @@ async function fetchLspHover(filePath: string, line: number, character: number):
   return null
 }
 
+async function fetchLspReferences(filePath: string, line: number, character: number): Promise<any[]> {
+  const api = (window as any).dogeAPI as Record<string, any> | undefined
+  if (!api?.lspReferences) return []
+  try {
+    const result = await api.lspReferences(filePath, line, character)
+    if (result?.success && result.locations) {
+      return result.locations.map((loc: any) => ({
+        uri: loc.uri,
+        range: loc.range,
+      }))
+    }
+  } catch { /* ignore */ }
+  return []
+}
+
+async function fetchLspDocumentSymbol(filePath: string): Promise<any[]> {
+  const api = (window as any).dogeAPI as Record<string, any> | undefined
+  if (!api?.lspDocumentSymbol) return []
+  try {
+    const result = await api.lspDocumentSymbol(filePath)
+    if (result?.success && result.symbols) {
+      return result.symbols.map((s: any) => ({
+        name: s.name,
+        kind: s.kind,
+        range: s.range,
+        children: s.children || [],
+      }))
+    }
+  } catch { /* ignore */ }
+  return []
+}
+
+async function fetchLspWorkspaceSymbol(query: string): Promise<any[]> {
+  const api = (window as any).dogeAPI as Record<string, any> | undefined
+  if (!api?.lspWorkspaceSymbol) return []
+  try {
+    const result = await api.lspWorkspaceSymbol(query)
+    if (result?.success && result.symbols) {
+      return result.symbols.map((s: any) => ({
+        name: s.name,
+        kind: s.kind,
+        containerName: s.containerName || '',
+        location: s.location,
+      }))
+    }
+  } catch { /* ignore */ }
+  return []
+}
+
+async function fetchLspDocumentHighlight(filePath: string, line: number, character: number): Promise<any[]> {
+  const api = (window as any).dogeAPI as Record<string, any> | undefined
+  if (!api?.lspDocumentHighlight) return []
+  try {
+    const result = await api.lspDocumentHighlight(filePath, line, character)
+    if (result?.success && result.highlights) {
+      return result.highlights.map((h: any) => ({
+        range: h.range,
+        kind: h.kind,
+      }))
+    }
+  } catch { /* ignore */ }
+  return []
+}
+
+async function fetchLspInlineCompletion(filePath: string, line: number, character: number): Promise<string> {
+  const api = (window as any).dogeAPI as Record<string, any> | undefined
+  if (!api?.lspCompletion) return ''
+  try {
+    const result = await api.lspCompletion(filePath, line, character)
+    if (result?.success && result.items && result.items.length > 0) {
+      const best = result.items[0]
+      return best.insertText || best.label || ''
+    }
+  } catch { /* ignore */ }
+  return ''
+}
+
+// ─── LSP Provider 注册函数 ───
+
 function registerLspCompletion(monaco: any, editor: any, cwd: string) {
   monaco.languages.registerCompletionItemProvider('*', {
     triggerCharacters: ['.', '<', ' ', '/'],
@@ -433,6 +671,27 @@ function registerLspDefinition(monaco: any, editor: any, _cwd: string) {
   })
 }
 
+function registerLspReferences(monaco: any, editor: any) {
+  monaco.languages.registerReferenceProvider('*', {
+    async provideReferences(model: any, position: any, context: any) {
+      const filePath = model.uri.path
+      const line = position.lineNumber - 1
+      const character = position.column - 1
+      const locations = await fetchLspReferences(filePath, line, character)
+      if (locations.length === 0) return { references: [] }
+      return {
+        references: locations.map((loc: any) => ({
+          uri: monaco.Uri.parse(loc.uri),
+          range: new monaco.Range(
+            loc.range.start.line + 1, loc.range.start.character + 1,
+            loc.range.end.line + 1, loc.range.end.character + 1
+          ),
+        }))
+      }
+    }
+  })
+}
+
 function registerLspHover(monaco: any, editor: any, _cwd: string) {
   monaco.languages.registerHoverProvider('*', {
     async provideHover(model: any, position: any) {
@@ -449,7 +708,102 @@ function registerLspHover(monaco: any, editor: any, _cwd: string) {
   })
 }
 
-// Monaco Editor 子组件（动态导入避免 SSR 问题）
+function registerLspDocumentSymbol(monaco: any, editor: any) {
+  monaco.languages.registerDocumentSymbolProvider('*', {
+    async provideDocumentSymbols(model: any) {
+      const filePath = model.uri.path
+      const symbols = await fetchLspDocumentSymbol(filePath)
+      if (symbols.length === 0) return { symbols: [] }
+      return {
+        symbols: symbols.map((s: any) => ({
+          name: s.name,
+          kind: s.kind,
+          range: new monaco.Range(
+            s.range.start.line + 1, s.range.start.character + 1,
+            s.range.end.line + 1, s.range.end.character + 1
+          ),
+          detail: '',
+          children: s.children?.length ? s.children.map((child: any) => ({
+            name: child.name,
+            kind: child.kind,
+            range: new monaco.Range(
+              child.range.start.line + 1, child.range.start.character + 1,
+              child.range.end.line + 1, child.range.end.character + 1
+            ),
+            detail: '',
+          })) : undefined,
+        }))
+      }
+    }
+  })
+}
+
+function registerLspWorkspaceSymbol(monaco: any, editor: any) {
+  monaco.languages.registerWorkspaceSymbolProvider({
+    async provideWorkspaceSymbols(query: string) {
+      const symbols = await fetchLspWorkspaceSymbol(query)
+      return {
+        symbols: symbols.map((s: any) => ({
+          name: s.name,
+          kind: s.kind,
+          containerName: s.containerName || '',
+          location: {
+            uri: monaco.Uri.parse(s.location?.uri || ''),
+            range: s.location?.range ? new monaco.Range(
+              s.location.range.start.line + 1, s.location.range.start.character + 1,
+              s.location.range.end.line + 1, s.location.range.end.character + 1
+            ) : new monaco.Range(1, 1, 1, 1),
+          },
+        }))
+      }
+    }
+  })
+}
+
+function registerLspDocumentHighlight(monaco: any, editor: any) {
+  monaco.languages.registerDocumentHighlightProvider('*', {
+    async provideDocumentHighlights(model: any, position: any) {
+      const filePath = model.uri.path
+      const line = position.lineNumber - 1
+      const character = position.column - 1
+      const highlights = await fetchLspDocumentHighlight(filePath, line, character)
+      if (highlights.length === 0) return { highlights: [] }
+      const monacoInstance = monaco
+      return {
+        highlights: highlights.map((h: any) => ({
+          range: new monacoInstance.Range(
+            h.range.start.line + 1, h.range.start.character + 1,
+            h.range.end.line + 1, h.range.end.character + 1
+          ),
+          kind: h.kind,
+        }))
+      }
+    }
+  })
+}
+
+function registerInlineCompletion(monaco: any, editor: any, cwd: string) {
+  if (!monaco.languages.registerInlineCompletionItemProvider) return
+  monaco.languages.registerInlineCompletionItemProvider('*', {
+    async provideInlineCompletions(model: any, position: any) {
+      const filePath = model.uri.path
+      const line = position.lineNumber - 1
+      const character = position.column - 1
+      const text = await fetchLspInlineCompletion(filePath, line, character)
+      if (!text) return { items: [] }
+      return {
+        items: [{
+          insertText: text,
+          range: new monaco.Range(position.lineNumber, position.column, position.lineNumber, position.column),
+        }]
+      }
+    },
+    freeInlineCompletions(completions: any) { /* keep completions */ },
+  })
+}
+
+// ─── Monaco Editor 子组件（动态导入避免 SSR 问题） ───
+
 function MonacoEditor({
   path, value, language, theme, fontSize, cwd, onChange, onMount
 }: {
@@ -489,7 +843,9 @@ function MonacoEditor({
         wordWrap: 'on',
         lineNumbers: 'on',
         folding: true,
-        bracketPairColorization: { enabled: true },
+        foldingStrategy: 'indentation',
+        bracketPairColorization: { enabled: true, guides: true },
+        bracketPairGuides: { enabled: true, activeScopeBrackets: 'hover' },
         automaticLayout: true,
         tabSize: 2,
         insertSpaces: true,
@@ -499,8 +855,18 @@ function MonacoEditor({
         quickSuggestions: true,
         parameterHints: { enabled: true },
         lightbulb: { enabled: true },
+        multiCursorModifier: 'ctrlCmd',
+        autoIndent: 'full',
         goToDefinition: true,
         find: { addExtraSpaceOnTop: false },
+        inlineSuggest: { enabled: true },
+        suggest: {
+          showKeywords: true,
+          showSnippets: true,
+          showFunctions: true,
+          showVariables: true,
+          showClasses: true,
+        },
       }}
     />
   )
