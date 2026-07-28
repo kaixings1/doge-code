@@ -85,7 +85,20 @@ function getEngine(): QueryEngine {
 
     engine = new QueryEngine({
       model: config.model,
-      systemPrompt: `You are Doge Code, a helpful AI programming assistant. You have access to tools: BashTool (run shell commands), FileReadTool (read file contents), FileWriteTool (write files), GrepTool (search text in files), GlobTool (find files by pattern). Use tools when needed, but if a tool call fails, try a different approach or answer directly with text.`,
+      systemPrompt: `You are Doge Code, a helpful AI programming assistant.
+
+Available tools:
+- BashTool: run shell commands (ls, cat, grep, find, etc.)
+- FileReadTool: read file contents
+- FileWriteTool: write files
+- FileEditTool: edit files with search/replace
+- GlobTool: find files by pattern
+- WebFetchTool: fetch web pages
+- NotebookEditTool: edit Jupyter notebooks
+- TaskStopTool: stop a running task
+- BriefTool: create project brief
+
+Use tools when needed. If a tool call fails or returns empty, try a different approach or answer directly with text.`,
       maxOutputTokens: 40000,
       tools: adaptedTools,
     })
@@ -625,6 +638,43 @@ ipcMain.handle('doge:code-review', async (_event, params: { filePath: string; cw
     } catch { /* parse error, fall through */ }
 
     return { success: true, result: { score: { overall: 70, security: 70, performance: 70, maintainability: 70, testability: 70 }, findings: [], duration: 0 } }
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e)
+    return { success: false, error: msg }
+  }
+})
+
+// ─── AI 代码一键修复 ───
+ipcMain.handle('doge:apply-fix', async (_event, params: { filePath: string; lineNumber: number; column: number; fixedCode: string; originalCode?: string }) => {
+  try {
+    const { filePath, lineNumber, column, fixedCode, originalCode } = params
+    if (!fs.existsSync(filePath)) return { success: false, error: '文件不存在' }
+    let content = fs.readFileSync(filePath, 'utf-8')
+    const lines = content.split('\n')
+
+    // 策略：优先按行号范围精确替换；回退到 originalCode 文本搜索替换
+    if (originalCode) {
+      if (content.includes(originalCode)) {
+        content = content.replace(originalCode, fixedCode)
+      } else {
+        // 按行号替换该行
+        const targetLine = lineNumber - 1
+        if (targetLine >= 0 && targetLine < lines.length) {
+          lines[targetLine] = fixedCode
+          content = lines.join('\n')
+        }
+      }
+    } else {
+      // 无 originalCode 时直接替换目标行
+      const targetLine = lineNumber - 1
+      if (targetLine >= 0 && targetLine < lines.length) {
+        lines[targetLine] = fixedCode
+        content = lines.join('\n')
+      }
+    }
+
+    fs.writeFileSync(filePath, content, 'utf-8')
+    return { success: true }
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : String(e)
     return { success: false, error: msg }
@@ -1459,7 +1509,20 @@ ipcMain.handle('doge:execute-command', async (_event, commandName: string, args:
         const adaptedTools = createAdaptedTools(config)
         engine = new QueryEngine({
           model: config.model,
-          systemPrompt: `You are Doge Code, a helpful AI programming assistant. You have access to tools: BashTool (run shell commands), FileReadTool (read file contents), FileWriteTool (write files), GrepTool (search text in files), GlobTool (find files by pattern). Use tools when needed, but if a tool call fails, try a different approach or answer directly with text.`,
+          systemPrompt: `You are Doge Code, a helpful AI programming assistant.
+
+Available tools:
+- BashTool: run shell commands (ls, cat, grep, find, etc.)
+- FileReadTool: read file contents
+- FileWriteTool: write files
+- FileEditTool: edit files with search/replace
+- GlobTool: find files by pattern
+- WebFetchTool: fetch web pages
+- NotebookEditTool: edit Jupyter notebooks
+- TaskStopTool: stop a running task
+- BriefTool: create project brief
+
+Use tools when needed. If a tool call fails or returns empty, try a different approach or answer directly with text.`,
           maxOutputTokens: 40000,
           tools: adaptedTools,
         })

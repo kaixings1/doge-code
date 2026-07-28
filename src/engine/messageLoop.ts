@@ -30,7 +30,7 @@ export interface MessageLoopDeps {
   systemPrompt: string;
   model: string;
   maxOutputTokens: number;
-  tools: Array<{ name: string; description: string; input_schema: Record<string, unknown> }>;
+  toolDefinitions: Array<{ name: string; description: string; input_schema: Record<string, unknown> }>;
 }
 
 export class MessageLoop {
@@ -115,49 +115,44 @@ export class MessageLoop {
       const validCalls = processed.toolCalls.filter(tc => tc.name && availableTools.has(tc.name));
       const invalidCalls = processed.toolCalls.filter(tc => !tc.name || !availableTools.has(tc.name));
 
+      // 始终累加无效调用次数（不因有效调用而重置）
       if (invalidCalls.length > 0) {
         this.consecutiveToolFailures += invalidCalls.length;
-        console.warn(`[ENGINE] ${invalidCalls.length} invalid tool call(s) skipped. Valid: ${validCalls.length}`);
-        // 如果无效调用多于有效调用，说明 AI 在幻觉，让它用文本回复
-        if (invalidCalls.length > validCalls.length) {
-          console.warn('[ENGINE] More invalid than valid tool calls, asking AI to answer with text');
-          this.deps.conversation.messages.push({
-            role: "system",
-            content: `STOP using tools. Answer directly with text.`,
-          } as InternalMessage);
-          await this.deps.stateMachine.transition("should_continue");
-          return true;
-        }
-        // 如果全部无效，直接让 AI 用文本回复
-        if (validCalls.length === 0) {
-          this.deps.conversation.messages.push({
-            role: "system",
-            content: `Previous tool calls failed. Please answer directly without using tools.`,
-          } as InternalMessage);
-          if (this.consecutiveToolFailures >= 2) return false;
-          await this.deps.stateMachine.transition("should_continue");
-          return true;
-        }
+        console.warn(`[ENGINE] ${invalidCalls.length} invalid tool call(s) skipped. Valid: ${validCalls.length}, consecutive failures: ${this.consecutiveToolFailures}`);
       }
 
-      // 只执行有效的工具调用
+      // 如果全部无效，让 AI 用文本回答
+      if (validCalls.length === 0) {
+        this.deps.conversation.messages.push({
+          role: "system",
+          content: "Previous tool calls were invalid. Please answer directly without using tools.",
+        } as InternalMessage);
+        if (this.consecutiveToolFailures >= 2) {
+          console.warn('[ENGINE] Too many consecutive invalid tool calls, stopping');
+          return false;
+        }
+        await this.deps.stateMachine.transition("should_continue");
+        return true;
+      }
+
+      // 执行有效调用
       const results = await this.deps.toolScheduler.execute(validCalls);
 
-      // 检查工具调用失败次数
+      // 检查执行失败次数（始终累加，不重置）
       const failedCount = results.filter(r => !r.success).length;
       if (failedCount > 0) {
         this.consecutiveToolFailures += failedCount;
         console.warn(`[ENGINE] ${failedCount} tool call(s) failed, consecutive failures: ${this.consecutiveToolFailures}`);
-        if (this.consecutiveToolFailures >= 3) {
-          console.warn('[ENGINE] Too many consecutive tool failures, stopping tool loop');
-          this.deps.conversation.messages.push({
-            role: "assistant",
-            content: "I'll answer directly instead of using tools.",
-          } as InternalMessage);
-          return false;
-        }
-      } else {
-        this.consecutiveToolFailures = 0;
+      }
+
+      // 连续失败达到阈值时停止
+      if (this.consecutiveToolFailures >= 3) {
+        console.warn('[ENGINE] Too many consecutive tool failures, stopping tool loop');
+        this.deps.conversation.messages.push({
+          role: "system",
+          content: "Tool calls are failing. Please answer directly without using tools.",
+        } as InternalMessage);
+        return false;
       }
 
       this.deps.conversation.addToolResults(results);

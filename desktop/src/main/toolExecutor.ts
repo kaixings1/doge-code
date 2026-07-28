@@ -79,7 +79,11 @@ export function createAdaptedTools(config: EngineConfig) {
       name: srcTool.name,
       description: srcTool.description,
       parameters: zodToJsonSchema(srcTool.inputSchema),
-      validate: (_input: unknown) => ({ valid: true }),
+      validate: (input) => {
+        const args = input as Record<string, unknown>
+        if (!args) return { valid: false, errors: ['参数为空'] }
+        return { valid: true }
+      },
       execute: async (params: unknown) => {
         try {
           const args = params as Record<string, unknown>
@@ -117,7 +121,11 @@ export function createAdaptedTools(config: EngineConfig) {
       name: 'SnipTool',
       description: '裁剪历史上下文以减少 token 使用量',
       parameters: { type: 'object', properties: { lines: { type: 'number' }, keepRecent: { type: 'number' }, preserveSystem: { type: 'boolean' } } },
-      validate: (_input: unknown) => ({ valid: true }),
+      validate: (input) => {
+        const args = input as Record<string, unknown>
+        if (!args) return { valid: false, errors: ['参数为空'] }
+        return { valid: true }
+      },
       execute: async (params: unknown) => {
         const args = params as Record<string, unknown>
         const result = await snipInstance.call(
@@ -288,3 +296,4 @@ export async function executeTool(call: ToolCallInput, config: EngineConfig | nu
     return { toolUseId, success: false, error: message }
   }
 }
+

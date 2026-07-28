@@ -95,6 +95,7 @@ interface DogeAPIValue {
   lspReferences: (filePath: string, line: number, character: number) => Promise<{ success: boolean; locations?: Array<{ uri: string; range: { start: { line: number; character: number }; end: { line: number; character: number } } }>; error?: string }>
   lspDocumentSymbol: (filePath: string) => Promise<{ success: boolean; symbols?: Array<{ name: string; kind: number; range: { start: { line: number; character: number }; end: { line: number; character: number } } }>; error?: string }>
   codeReview: (params: { filePath: string; cwd: string }) => Promise<{ success: boolean; result?: { score: { overall: number; security: number; performance: number; maintainability: number; testability: number }; findings: Array<{ id: string; category: string; severity: string; title: string; description: string; filePath: string; lineNumber: number; column?: number; suggestedFix?: string; originalCode?: string }>; duration?: number }; error?: string }>
+  applyFix: (params: { filePath: string; lineNumber: number; column: number; fixedCode: string; originalCode?: string }) => Promise<{ success: boolean; error?: string }>
   getOutline: (params: { filePath: string; cwd: string }) => Promise<{ success: boolean; symbols?: Array<{ id: string; name: string; kind: string; range: { startLine: number; startColumn: number; endLine: number; endColumn: number }; children?: Array<unknown> }>; error?: string }>
   semanticSearch: (params: { query: string; cwd: string; maxResults?: number; fileTypes?: string[]; directories?: string[] }) => Promise<{ success: boolean; results?: Array<{ filePath: string; lineNumber: number; column: number; content: string; score: number; context?: string }>; error?: string }>
   debugStart: (params: { cwd: string; script: string; args?: string[] }) => Promise<{ success: boolean; sessionId?: string; pid?: number; error?: string }>
@@ -262,6 +263,7 @@ const dogeAPI: DogeAPIValue = {
     return () => ipcRenderer.removeListener('doge:lsp-diagnostic', handler)
   },
   codeReview: (params: { filePath: string; cwd: string }) => ipcRenderer.invoke('doge:code-review', params),
+  applyFix: (params: { filePath: string; lineNumber: number; column: number; fixedCode: string; originalCode?: string }) => ipcRenderer.invoke('doge:apply-fix', params),
   getOutline: (params: { filePath: string; cwd: string }) => ipcRenderer.invoke('doge:get-outline', params),
   semanticSearch: (params: { query: string; cwd: string; maxResults?: number; fileTypes?: string[]; directories?: string[] }) => ipcRenderer.invoke('doge:semantic-search', params),
   debugStart: (params: { cwd: string; script: string; args?: string[] }) => ipcRenderer.invoke('doge:debug-start', params),
