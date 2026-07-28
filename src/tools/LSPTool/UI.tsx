@@ -94,7 +94,7 @@ function LSPResultSummary(t0) {
   const primaryText = t2;
   let t3;
   if ($[7] !== fileCount) {
-    t3 = fileCount > 1 ? <Text>{" "}跨 <Text bold={true}>{fileCount} </Text>个文件</Text> : null;
+    t3 = fileCount > 1 ? <Text> 跨 <Text bold={true}>{fileCount} </Text>个文件</Text> : null;
     $[7] = fileCount;
     $[8] = t3;
   } else {
