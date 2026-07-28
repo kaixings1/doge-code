@@ -1801,7 +1801,7 @@ export function App(): JSX.Element {
         )}
         {showSemanticSearch && activePreviewFile && (
           <div style={{ position: 'fixed', top: 60, right: 300, width: 360, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
-            <SemanticSearchPanel cwd={workingDir} theme={theme} onResultClick={(filePath, line) => { handlePreviewFile(filePath) }} />
+            <SemanticSearchPanel cwd={workingDir} theme={theme} onSelectResult={(result) => { handlePreviewFile(result.filePath) }} />
           </div>
         )}
         {showAIOutline && activePreviewFile && (
