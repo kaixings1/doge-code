@@ -1,6 +1,7 @@
 import { feature } from 'bun:bundle'
 import { isEnvTruthy } from '../../utils/envUtils.js'
 import { shouldAutoEnableClaudeInChrome } from '../../utils/claudeInChrome/setup.js'
+import { registerBundledSkillsSummarySkill } from './bundledSkillsSummary.js'
 import { registerBatchSkill } from './batch.js'
 import { registerHandoffSkill } from './handoff.js'
 import { registerDiagnosingBugsSkill } from './diagnosingBugs.js'
@@ -97,6 +98,7 @@ export function initBundledSkills(): void {
   registerCuratorReviewSkill()
   registerMemoryManagerSkill()
   registerSkillBundleCommand()
+  registerBundledSkillsSummarySkill()
   registerStuckSkill()
   if (feature('KAIROS') || feature('KAIROS_DREAM')) {
      

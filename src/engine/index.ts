@@ -39,13 +39,15 @@ export class QueryEngine {
   readonly retryHandler = new RetryHandler();
   readonly subAgentManager = new SubAgentManager();
   readonly recovery: ErrorRecovery;
+  readonly conversation: Conversation;
 
   private messageLoop: MessageLoop;
-  private conversation: Conversation = {
+  private _toolDefinitions: ToolDefinition[] = [];
+  private _conversation: Conversation = {
     messages: [],
     addToolResults: (results) => {
       for (const r of results) {
-        this.conversation.messages.push({
+        this._conversation.messages.push({
           role: "system" as const,
           content: typeof r === "string" ? r : JSON.stringify(r),
         });
@@ -79,9 +81,10 @@ export class QueryEngine {
     const toolScheduler = new ToolScheduler(registry, permissionManager, executor);
 
     this.recovery = new ErrorRecovery(this.stateMachine, this.retryHandler, this.autoCompactor);
+    this.conversation = this._conversation;
 
     // 将内部工具注册表转换为请求构建器所需的 ToolDefinition 格式
-    const toolDefinitions: ToolDefinition[] = Array.from(registry.values()).map((t) => ({
+    this._toolDefinitions = Array.from(registry.values()).map((t) => ({
       name: t.name,
       description: t.description,
       input_schema: t.parameters,
@@ -98,11 +101,11 @@ export class QueryEngine {
           return [Promise.resolve({ type: "message_stop" })] as unknown as AsyncIterable<unknown>;
         },
       },
-      conversation: this.conversation,
+      conversation: this._conversation,
       systemPrompt: opts.systemPrompt ?? "You are Doge Code, a helpful AI programming assistant.",
       model: opts.model,
       maxOutputTokens: opts.maxOutputTokens ?? 40000,
-      toolDefinitions,
+      toolDefinitions: this._toolDefinitions,
     };
     this.messageLoop = new MessageLoop(deps);
   }
@@ -142,8 +145,19 @@ export class QueryEngine {
   }
 
   getTools(): ToolDefinition[] {
-    const loop = (this as unknown as { messageLoop: { deps: { toolDefinitions: ToolDefinition[] } } }).messageLoop
-    return loop?.deps?.toolDefinitions ?? []
+    return this._toolDefinitions;
+  }
+
+  /**
+   * 注入 API 客户端（用于自定义 HTTP 请求实现）
+   * 允许外部提供自定义的 API 实现，避免直接访问内部 messageLoop
+   */
+  setApiClient(apiClient: { sendMessage: (request: unknown) => Promise<AsyncIterable<unknown>> }): void {
+    // 通过内部引用更新 apiClient（MessageLoop 依赖注入模式）
+    const loop = (this as unknown as { messageLoop: { deps: { apiClient: unknown } } }).messageLoop;
+    if (loop) {
+      loop.deps.apiClient = apiClient;
+    }
   }
 }
 

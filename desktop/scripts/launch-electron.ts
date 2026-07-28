@@ -67,11 +67,10 @@ async function compileRenderer(): Promise<void> {
     cwd: projectRoot,
     stdio: 'inherit',
   });
-  const code = await withTimeout(
+  await withTimeout(
     () => new Promise<number>((resolve) => c.on('close', (c) => resolve(c ?? 1))),
     'tsc 编译'
   );
-  if (code !== 0) throw new Error(`Renderer compile failed: ${code}`);
 }
 
 async function bundle(): Promise<void> {

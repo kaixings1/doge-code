@@ -1,4 +1,4 @@
-import React, { PureComponent, type ReactNode } from 'react';
+﻿import React, { PureComponent, type ReactNode } from 'react';
 import { updateLastInteractionTime } from '../../bootstrap/state.js';
 import { logForDebugging } from '../../utils/debug.js';
 import { stopCapturingEarlyInput } from '../../utils/earlyInput.js';
@@ -218,11 +218,9 @@ export default class App extends PureComponent<Props, State> {
       stdin
     } = this.props;
     if (!this.isRawModeSupported()) {
-      if (stdin === process.stdin) {
-        throw new Error('当前 process.stdin 不支持原始模式，Ink 默认将其用作输入流。\n了解如何防止此错误，请访问 https://github.com/vadimdemedes/ink/#israwmodesupported');
-      } else {
-        throw new Error('提供给 Ink 的 stdin 不支持原始模式。\n了解如何防止此错误，请访问 https://github.com/vadimdemedes/ink/#israwmodesupported');
-      }
+      // In non-TTY environments (e.g. piped input, CI), silently skip
+      // setRawMode instead of throwing. The app can still render output.
+      return;
     }
     stdin.setEncoding('utf8');
     if (isEnabled) {
