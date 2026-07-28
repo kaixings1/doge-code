@@ -93,7 +93,7 @@ function convertAnthropicRequestToOpenAI(req: APIRequest): OpenAIChatRequest {
         if (block.type === 'tool_result') {
           messages.push({
             role: 'tool',
-            tool_call_id: block.tool_use_id as string | undefined,
+            tool_call_id: block.tool_use_id as string | void 0,
             content: typeof block.content === 'string' ? block.content : JSON.stringify(block.content),
           })
         }
@@ -273,6 +273,9 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
       let messageStarted = false
       let blockIndex = 0
 
+      // 累积 OpenAI tool_calls 的增量，直到流结束才 emit content_block_stop
+      const toolCallAccum = new Map<number, { id: string; name: string; args: string }>()
+
       async function* stream(): AsyncGenerator<Record<string, unknown>> {
         try {
           while (true) {
@@ -295,6 +298,15 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
                     if (!messageStarted) {
                       yield { type: 'message_start', message: { model: request.model } }
                     }
+                    // 在流结束时 flush 所有累积的 tool_calls
+                    for (const [idx, tc] of toolCallAccum) {
+                      yield { type: 'content_block_start', index: idx, content_block: { type: 'tool_use', id: tc.id, name: tc.name, input: tc.args } }
+                      if (tc.args) {
+                        yield { type: 'content_block_delta', index: idx, delta: { type: 'input_json_delta', partial_json: tc.args } }
+                      }
+                      yield { type: 'content_block_stop', index: idx }
+                    }
+                    toolCallAccum.clear()
                     yield { type: 'message_stop' }
                     return
                   }
@@ -319,7 +331,7 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
                     // OpenAI 格式：转换为 Anthropic 事件
                     const chunk = parsed as OpenAIStreamChunk
                     const choice = chunk.choices?.[0]
-                    const delta = choice ? (choice.delta as Record<string, unknown>) : undefined
+                    const delta = choice ? (choice.delta as Record<string, unknown> | void 0) : void 0
 
                     if (choice && (delta || choice.finish_reason)) {
                       if (!messageStarted) {
@@ -345,23 +357,43 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
                         blockIndex++
                       }
 
-                      // 工具调用
+                      // 工具调用 — 累积增量，不立即 emit content_block_stop
                       if (delta && Array.isArray(delta.tool_calls)) {
                         for (const tc of delta.tool_calls as Array<Record<string, unknown>>) {
                           const idx = (tc.index as number) ?? 0
-                          const func = tc.function as Record<string, unknown> | undefined
-                          console.log(`[TOOL-OAI] tool_use id=${tc.id} name=${func?.name} args=${(func?.arguments as string | undefined)?.slice(0, 500)}`)
-                          yield { type: 'content_block_start', index: idx, content_block: { type: 'tool_use', id: tc.id as string, name: func?.name as string, input: '' } }
-                          if (func?.arguments) {
-                            yield { type: 'content_block_delta', index: idx, delta: { type: 'input_json_delta', partial_json: func.arguments as string } }
+                          const func = tc.function as Record<string, unknown> | void 0
+                          const name = func?.name as string | void 0
+                          const args = func?.arguments as string | void 0
+                          console.log(`[TOOL-OAI] tool_use idx=${idx} id=${tc.id} name=${name} args=${args?.slice(0, 500)}`)
+
+                          const isFirst = !toolCallAccum.has(idx)
+                          if (isFirst) {
+                            toolCallAccum.set(idx, { id: tc.id as string, name: (name as string) || '', args: '' })
+                            yield { type: 'content_block_start', index: idx, content_block: { type: 'tool_use', id: tc.id as string, name: (name as string) } }
                           }
-                          yield { type: 'content_block_stop', index: idx }
+
+                          if (args) {
+                            const entry = toolCallAccum.get(idx)!
+                            entry.args += args
+                            yield { type: 'content_block_delta', index: idx, delta: { type: 'input_json_delta', partial_json: args } }
+                          }
                         }
                       }
 
-                      // finish_reason
+                      // finish_reason — 工具调用完成时 flush 所有 tool_calls
                       if (choice.finish_reason) {
-                        yield { type: 'message_delta', delta: { stop_reason: mapFinishReason(choice.finish_reason), usage: chunk.usage } }
+                        const stopReason = mapFinishReason(choice.finish_reason as string | void 0)
+                        if (toolCallAccum.size > 0) {
+                          for (const [idx, tc] of toolCallAccum) {
+                            yield { type: 'content_block_start', index: idx, content_block: { type: 'tool_use', id: tc.id, name: tc.name, input: tc.args } }
+                            if (tc.args) {
+                              yield { type: 'content_block_delta', index: idx, delta: { type: 'input_json_delta', partial_json: tc.args } }
+                            }
+                            yield { type: 'content_block_stop', index: idx }
+                          }
+                          toolCallAccum.clear()
+                        }
+                        yield { type: 'message_delta', delta: { stop_reason: stopReason }, usage: chunk.usage }
                       }
                     }
 

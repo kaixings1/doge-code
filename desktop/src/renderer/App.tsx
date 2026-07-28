@@ -730,9 +730,19 @@ export function App(): JSX.Element {
 
   const handleDeleteSession = useCallback(async (sessionId: string) => {
     const result = await window.dogeAPI.deleteSession(sessionId)
-    if (result.success) { setSessions(p => p.filter(s => s.id !== sessionId)); showToast('会话已删除', 'success') }
+    if (result.success) {
+      setSessions(p => p.filter(s => s.id !== sessionId))
+      // 如果删除的是当前会话，清空消息和会话 ID，使 UI 与引擎状态同步
+      if (currentSessionId === sessionId) {
+        setMessages([])
+        setCurrentSessionId(null)
+        setCurrentStreaming('')
+        persistActiveTabMessages([])
+      }
+      showToast('会话已删除', 'success')
+    }
     else { alert(result.error || '删除失败') }
-  }, [showToast])
+  }, [showToast, currentSessionId, persistActiveTabMessages])
 
   const handleSaveConfig = useCallback(async () => {
     setSavingConfig(true)
@@ -885,7 +895,13 @@ export function App(): JSX.Element {
   }, [input, state, persistActiveTabMessages, isOnline, showToast, autoSpeak, pendingImages])
 
   const handleAbort = useCallback(async () => { await window.dogeAPI.abort(); setCurrentStreaming('') }, [])
-  const handleClear = useCallback(async () => { await window.dogeAPI.clearHistory(); setMessages([]); persistActiveTabMessages([]); setCurrentStreaming('') }, [persistActiveTabMessages])
+  const handleClear = useCallback(async () => {
+    await window.dogeAPI.clearHistory()
+    setMessages([])
+    setCurrentSessionId(null)
+    persistActiveTabMessages([])
+    setCurrentStreaming('')
+  }, [persistActiveTabMessages])
 
   // ─── 语音输出（浏览器 SpeechSynthesis API） ───
   const speakText = useCallback((text: string) => {

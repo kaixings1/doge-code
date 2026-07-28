@@ -295,6 +295,7 @@ ipcMain.handle('doge:send-message', async (_event, content: string) => {
       tools: currentEngine.getTools(),
       model: config.model,
       maxTokens: 40000,
+      provider: config.provider,
     })
     tsLog('MAIN', 'API request messages count:', (req as { messages: unknown[] }).messages.length)
     const result = await currentEngine.query(engineInput)
