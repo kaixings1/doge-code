@@ -92,7 +92,7 @@ function getSeverityColor(severity: number, theme: ThemeColors): string {
     case 2: return '#FFB347'
     case 3: return '#4ECB71'
     case 4: return '#888'
-    default: return theme.textSecondary
+    default: return theme.textMuted
   }
 }
 
@@ -113,9 +113,9 @@ export function LspPanel({ filePath, content, cursorLine, cursorColumn, theme, o
   const [definitions, setDefinitions] = useState<LspLocation[]>([])
   const [refs, setRefs] = useState<LspLocation[]>([])
   const [hoverInfo, setHoverInfo] = useState<{ contents?: unknown } | null>(null)
-  const [symbols, setSymbols] = useState<{ name: string; kind: number; range: { start: { line: number; character: number }; end: { line: number; character: number } } }[]>([])
+  const [symbols, setSymbols] = useState<{ name: string; kind: number; range: { start: { line: number; character: number }; end: { line: number; character: number } }; uri?: string }[]>([])
   const [wsQuery, setWsQuery] = useState('')
-  const [wsResults, setWsResults] = useState<{ name: string; kind: number; location: { uri: string; range: { start: { line: number; character: number }; end: { line: number; character: number } } } }[]>([])
+  const [wsResults, setWsResults] = useState<{ name: string; kind: number; uri: string; range: { start: { line: number; character: number }; end: { line: number; character: number } } }[]>([])
   const [serverError, setServerError] = useState<string | null>(null)
 
   // 当文件路径变化时自动检测语言
@@ -219,10 +219,10 @@ export function LspPanel({ filePath, content, cursorLine, cursorColumn, theme, o
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
-    background: c.bgPrimary,
-    color: c.textPrimary,
-    fontFamily: c.fontFamily,
-    fontSize: c.fontSize,
+    background: c.bgPanel,
+    color: c.text,
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    fontSize: '13px',
   }
 
   const headerStyle: React.CSSProperties = {
@@ -230,26 +230,26 @@ export function LspPanel({ filePath, content, cursorLine, cursorColumn, theme, o
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: '8px 12px',
-    borderBottom: `1px solid ${c.borderColor}`,
-    background: c.bgSecondary,
+    borderBottom: `1px solid ${c.border}`,
+    background: c.bgAlt,
   }
 
   const tabsStyle: React.CSSProperties = {
     display: 'flex',
     gap: '2px',
-    borderBottom: `1px solid ${c.borderColor}`,
-    background: c.bgSecondary,
+    borderBottom: `1px solid ${c.border}`,
+    background: c.bgAlt,
     overflowX: 'auto',
   }
 
   const tabButtonStyle = (active: boolean): React.CSSProperties => ({
     padding: '6px 12px',
     border: 'none',
-    background: active ? c.bgPrimary : 'transparent',
-    color: active ? c.textPrimary : c.textSecondary,
+    background: active ? c.bgPanel : 'transparent',
+    color: active ? c.text : c.textMuted,
     cursor: 'pointer',
-    fontSize: c.fontSize,
-    fontFamily: c.fontFamily,
+    fontSize: '13px',
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     whiteSpace: 'nowrap',
     borderBottom: active ? `2px solid ${c.accent}` : '2px solid transparent',
   })
@@ -262,13 +262,13 @@ export function LspPanel({ filePath, content, cursorLine, cursorColumn, theme, o
 
   const buttonStyle: React.CSSProperties = {
     padding: '4px 10px',
-    border: `1px solid ${c.borderColor}`,
+    border: `1px solid ${c.border}`,
     borderRadius: '4px',
-    background: c.bgSecondary,
-    color: c.textPrimary,
+    background: c.bgAlt,
+    color: c.text,
     cursor: 'pointer',
-    fontSize: c.fontSize,
-    fontFamily: c.fontFamily,
+    fontSize: '13px',
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
   }
 
   const primaryButtonStyle: React.CSSProperties = {
@@ -280,31 +280,31 @@ export function LspPanel({ filePath, content, cursorLine, cursorColumn, theme, o
 
   const selectStyle: React.CSSProperties = {
     padding: '4px 8px',
-    border: `1px solid ${c.borderColor}`,
+    border: `1px solid ${c.border}`,
     borderRadius: '4px',
-    background: c.bgPrimary,
-    color: c.textPrimary,
-    fontSize: c.fontSize,
-    fontFamily: c.fontFamily,
+    background: c.bgPanel,
+    color: c.text,
+    fontSize: '13px',
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
   }
 
   const inputStyle: React.CSSProperties = {
     padding: '4px 8px',
-    border: `1px solid ${c.borderColor}`,
+    border: `1px solid ${c.border}`,
     borderRadius: '4px',
-    background: c.bgPrimary,
-    color: c.textPrimary,
-    fontSize: c.fontSize,
-    fontFamily: c.fontFamily,
+    background: c.bgPanel,
+    color: c.text,
+    fontSize: '13px',
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     flex: 1,
   }
 
   const cardStyle: React.CSSProperties = {
     padding: '8px',
-    border: `1px solid ${c.borderColor}`,
+    border: `1px solid ${c.border}`,
     borderRadius: '4px',
     marginBottom: '6px',
-    background: c.bgSecondary,
+    background: c.bgAlt,
   }
 
   const badgeStyle = (color: string): React.CSSProperties => ({
@@ -316,13 +316,13 @@ export function LspPanel({ filePath, content, cursorLine, cursorColumn, theme, o
     background: color + '22',
     color,
     fontSize: '11px',
-    fontFamily: c.fontFamily,
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
   })
 
   const errorStyle: React.CSSProperties = {
     color: '#FF6B6B',
     padding: '8px',
-    fontSize: c.fontSize,
+    fontSize: '13px',
   }
 
   // ─── 渲染服务器列表 ───
@@ -367,11 +367,11 @@ export function LspPanel({ filePath, content, cursorLine, cursorColumn, theme, o
       {serverError && <div style={errorStyle}>{serverError}</div>}
 
       <div style={{ marginBottom: '12px' }}>
-        <div style={{ fontWeight: 600, marginBottom: '6px', color: c.textSecondary, fontSize: '12px' }}>
+        <div style={{ fontWeight: 600, marginBottom: '6px', color: c.textMuted, fontSize: '12px' }}>
           已连接服务器 ({connectedServers.length})
         </div>
         {connectedServers.length === 0 ? (
-          <div style={{ color: c.textSecondary, fontSize: '12px', fontStyle: 'italic' }}>
+          <div style={{ color: c.textMuted, fontSize: '12px', fontStyle: 'italic' }}>
             无已连接的 LSP 服务器。请选择语言并点击"启动"。
           </div>
         ) : (
@@ -379,7 +379,7 @@ export function LspPanel({ filePath, content, cursorLine, cursorColumn, theme, o
             <div key={name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 0' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4ECB71' }} />
-                <span style={{ fontSize: c.fontSize }}>{name}</span>
+                <span style={{ fontSize: '13px' }}>{name}</span>
               </div>
               <button onClick={() => handleStopServer(name)} style={{ ...buttonStyle, padding: '2px 8px', fontSize: '11px' }}>
                 停止
@@ -391,7 +391,7 @@ export function LspPanel({ filePath, content, cursorLine, cursorColumn, theme, o
 
       {!isConnected && (
         <div style={cardStyle}>
-          <div style={{ color: c.textSecondary, fontSize: '12px', lineHeight: 1.5 }}>
+          <div style={{ color: c.textMuted, fontSize: '12px', lineHeight: 1.5 }}>
             <strong>使用说明:</strong>
             <ol style={{ margin: '4px 0', paddingLeft: '16px' }}>
               <li>选择当前文件对应的语言</li>
@@ -415,44 +415,44 @@ export function LspPanel({ filePath, content, cursorLine, cursorColumn, theme, o
         <button onClick={handleCompletion} disabled={!isConnected || isLoadingCompletions} style={!isConnected || isLoadingCompletions ? { ...primaryButtonStyle, opacity: 0.6 } : primaryButtonStyle}>
           {isLoadingCompletions ? '获取中...' : '获取补全'}
         </button>
-        <span style={{ color: c.textSecondary, fontSize: '12px', alignSelf: 'center' }}>
+        <span style={{ color: c.textMuted, fontSize: '12px', alignSelf: 'center' }}>
           位置: 行 {cursorLine + 1}, 列 {cursorColumn + 1}
         </span>
       </div>
 
       {completions.length === 0 ? (
-        <div style={{ color: c.textSecondary, fontSize: '12px', fontStyle: 'italic' }}>
+        <div style={{ color: c.textMuted, fontSize: '12px', fontStyle: 'italic' }}>
           {isConnected ? '点击"获取补全"查看代码补全建议' : '请先启动 LSP 服务器'}
         </div>
       ) : (
         <div>
-          <div style={{ fontSize: '12px', color: c.textSecondary, marginBottom: '4px' }}>
+          <div style={{ fontSize: '12px', color: c.textMuted, marginBottom: '4px' }}>
             共 {completions.length} 个补全建议
           </div>
           {completions.map((item, idx) => (
             <div key={idx} style={cardStyle}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: item.detail ? '2px' : '0' }}>
-                <span style={{ fontWeight: 600, fontSize: c.fontSize }}>{item.label}</span>
+                <span style={{ fontWeight: 600, fontSize: '13px' }}>{item.label}</span>
                 {item.kind !== undefined && (
                   <span style={badgeStyle(c.accent)}>kind: {item.kind}</span>
                 )}
               </div>
               {item.detail && (
-                <div style={{ color: c.textSecondary, fontSize: '12px' }}>{item.detail}</div>
+                <div style={{ color: c.textMuted, fontSize: '12px' }}>{item.detail}</div>
               )}
               {item.documentation && (
-                <div style={{ color: c.textSecondary, fontSize: '11px', marginTop: '2px' }}>
+                <div style={{ color: c.textMuted, fontSize: '11px', marginTop: '2px' }}>
                   {typeof item.documentation === 'string' ? item.documentation : JSON.stringify(item.documentation)}
                 </div>
               )}
               <div style={{
                 marginTop: '4px',
                 padding: '4px',
-                background: c.bgPrimary,
+                background: c.bgPanel,
                 borderRadius: '2px',
                 fontFamily: 'monospace',
                 fontSize: '12px',
-                color: c.textPrimary,
+                color: c.text,
               }}>
                 {item.insertText}
               </div>
@@ -481,8 +481,8 @@ export function LspPanel({ filePath, content, cursorLine, cursorColumn, theme, o
 
       {hoverInfo && (
         <div style={{ ...cardStyle, marginBottom: '8px' }}>
-          <div style={{ fontSize: '12px', color: c.textSecondary, marginBottom: '4px' }}>悬停信息:</div>
-          <div style={{ fontSize: c.fontSize }}>
+          <div style={{ fontSize: '12px', color: c.textMuted, marginBottom: '4px' }}>悬停信息:</div>
+          <div style={{ fontSize: '13px' }}>
             {typeof hoverInfo.contents === 'string' ? hoverInfo.contents : JSON.stringify(hoverInfo.contents, null, 2)}
           </div>
         </div>
@@ -490,13 +490,13 @@ export function LspPanel({ filePath, content, cursorLine, cursorColumn, theme, o
 
       {definitions.length > 0 && (
         <div style={{ marginBottom: '8px' }}>
-          <div style={{ fontSize: '12px', color: c.textSecondary, marginBottom: '4px' }}>定义位置:</div>
+          <div style={{ fontSize: '12px', color: c.textMuted, marginBottom: '4px' }}>定义位置:</div>
           {definitions.map((loc, idx) => (
             <div key={idx} style={cardStyle}>
-              <div style={{ fontSize: c.fontSize }}>
+              <div style={{ fontSize: '13px' }}>
                 {loc.uri.replace('file:///', '')}
               </div>
-              <div style={{ fontSize: '12px', color: c.textSecondary }}>
+              <div style={{ fontSize: '12px', color: c.textMuted }}>
                 行 {loc.range.start.line + 1}, 列 {loc.range.start.character + 1}
               </div>
             </div>
@@ -506,13 +506,13 @@ export function LspPanel({ filePath, content, cursorLine, cursorColumn, theme, o
 
       {refs.length > 0 && (
         <div>
-          <div style={{ fontSize: '12px', color: c.textSecondary, marginBottom: '4px' }}>引用位置:</div>
+          <div style={{ fontSize: '12px', color: c.textMuted, marginBottom: '4px' }}>引用位置:</div>
           {refs.map((loc, idx) => (
             <div key={idx} style={cardStyle}>
-              <div style={{ fontSize: c.fontSize }}>
+              <div style={{ fontSize: '13px' }}>
                 {loc.uri.replace('file:///', '')}
               </div>
-              <div style={{ fontSize: '12px', color: c.textSecondary }}>
+              <div style={{ fontSize: '12px', color: c.textMuted }}>
                 行 {loc.range.start.line + 1}, 列 {loc.range.start.character + 1}
               </div>
             </div>
@@ -521,7 +521,7 @@ export function LspPanel({ filePath, content, cursorLine, cursorColumn, theme, o
       )}
 
       {!isConnected && definitions.length === 0 && refs.length === 0 && !hoverInfo && (
-        <div style={{ color: c.textSecondary, fontSize: '12px', fontStyle: 'italic' }}>
+        <div style={{ color: c.textMuted, fontSize: '12px', fontStyle: 'italic' }}>
           请先启动 LSP 服务器
         </div>
       )}
@@ -554,16 +554,16 @@ export function LspPanel({ filePath, content, cursorLine, cursorColumn, theme, o
 
       {symbols.length > 0 && (
         <div style={{ marginBottom: '12px' }}>
-          <div style={{ fontSize: '12px', color: c.textSecondary, marginBottom: '4px' }}>文档符号:</div>
+          <div style={{ fontSize: '12px', color: c.textMuted, marginBottom: '4px' }}>文档符号:</div>
           {symbols.map((sym, idx) => (
             <div key={idx} style={{ ...cardStyle, cursor: 'pointer' }}
               onClick={() => onGoToDefinition?.(filePath, sym.range.start.line, sym.range.start.character)}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <span style={badgeStyle(c.accent)}>kind: {sym.kind}</span>
-                <span style={{ fontSize: c.fontSize }}>{sym.name}</span>
+                <span style={{ fontSize: '13px' }}>{sym.name}</span>
               </div>
-              <div style={{ fontSize: '12px', color: c.textSecondary, marginTop: '2px' }}>
+              <div style={{ fontSize: '12px', color: c.textMuted, marginTop: '2px' }}>
                 行 {sym.range.start.line + 1}, 列 {sym.range.start.character + 1}
               </div>
             </div>
@@ -573,17 +573,17 @@ export function LspPanel({ filePath, content, cursorLine, cursorColumn, theme, o
 
       {wsResults.length > 0 && (
         <div>
-          <div style={{ fontSize: '12px', color: c.textSecondary, marginBottom: '4px' }}>
+          <div style={{ fontSize: '12px', color: c.textMuted, marginBottom: '4px' }}>
             工作区搜索结果 ({wsResults.length}):
           </div>
           {wsResults.map((result, idx) => (
             <div key={idx} style={cardStyle}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <span style={badgeStyle(c.accent)}>kind: {result.kind}</span>
-                <span style={{ fontSize: c.fontSize }}>{result.name}</span>
+                <span style={{ fontSize: '13px' }}>{result.name}</span>
               </div>
-              <div style={{ fontSize: '12px', color: c.textSecondary, marginTop: '2px' }}>
-                {result.location.uri.replace('file:///', '')} — 行 {result.location.range.start.line + 1}
+              <div style={{ fontSize: '12px', color: c.textMuted, marginTop: '2px' }}>
+                {result.uri.replace('file:///', '')} — 行 {result.range.start.line + 1}
               </div>
             </div>
           ))}
@@ -591,7 +591,7 @@ export function LspPanel({ filePath, content, cursorLine, cursorColumn, theme, o
       )}
 
       {symbols.length === 0 && wsResults.length === 0 && (
-        <div style={{ color: c.textSecondary, fontSize: '12px', fontStyle: 'italic' }}>
+        <div style={{ color: c.textMuted, fontSize: '12px', fontStyle: 'italic' }}>
           点击"文档符号"查看当前文件符号，或在搜索框中输入关键词搜索工作区符号
         </div>
       )}
@@ -602,13 +602,13 @@ export function LspPanel({ filePath, content, cursorLine, cursorColumn, theme, o
 
   const renderDiagnosticsTab = () => (
     <div>
-      <div style={{ fontSize: '12px', color: c.textSecondary, marginBottom: '8px' }}>
+      <div style={{ fontSize: '12px', color: c.textMuted, marginBottom: '8px' }}>
         {diagnosticEntries.length === 0 ? '暂无诊断信息。打开文件后 LSP 服务器会自动发送诊断。' : `${diagnosticEntries.reduce((sum, e) => sum + e.diagnostics.length, 0)} 个问题`}
       </div>
 
       {diagnosticEntries.map(({ uri, diagnostics: diags }) => (
         <div key={uri} style={{ marginBottom: '8px' }}>
-          <div style={{ fontSize: '12px', color: c.textSecondary, marginBottom: '4px', fontWeight: 600 }}>
+          <div style={{ fontSize: '12px', color: c.textMuted, marginBottom: '4px', fontWeight: 600 }}>
             {uri.replace('file:///', '')}
           </div>
           {diags.map((diag, idx) => (
@@ -618,11 +618,11 @@ export function LspPanel({ filePath, content, cursorLine, cursorColumn, theme, o
                   {getSeverityLabel(diag.severity)}
                 </span>
                 {diag.source && (
-                  <span style={{ fontSize: '11px', color: c.textSecondary }}>{diag.source}</span>
+                  <span style={{ fontSize: '11px', color: c.textMuted }}>{diag.source}</span>
                 )}
               </div>
-              <div style={{ fontSize: c.fontSize, marginBottom: '2px' }}>{diag.message}</div>
-              <div style={{ fontSize: '12px', color: c.textSecondary }}>
+              <div style={{ fontSize: '13px', marginBottom: '2px' }}>{diag.message}</div>
+              <div style={{ fontSize: '12px', color: c.textMuted }}>
                 行 {diag.range.start.line + 1}, 列 {diag.range.start.character + 1}
                 {diag.code !== undefined && ` — 代码: ${diag.code}`}
               </div>
