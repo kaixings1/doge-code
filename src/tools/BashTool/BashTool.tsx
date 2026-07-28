@@ -781,7 +781,7 @@ const isBackgroundTasksDisabled =
   // eslint-disable-next-line custom-rules/no-process-env-top-level -- 有意为之：schema 必须在模块加载时定义
   isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_BACKGROUND_TASKS);
 const fullInputSchema = lazySchema(() => z.strictObject({
-  command: z.string().describe('要执行的命令'),
+  command: z.string().min(1, '命令不能为空').describe('要执行的命令'),
   timeout: semanticNumber(z.number().optional()).describe(`可选的超时时间（毫秒），最大 ${getMaxTimeoutMs()}`),
   description: z.string().optional().describe(`对此命令作用的清晰、简洁的描述，使用主动语态。绝不要在描述中使用“复杂”或“风险”等词——只需描述其功能。
 
@@ -1180,16 +1180,7 @@ export const BashTool = buildTool({
   async call(input: BashToolInput, toolUseContext, _canUseTool?: CanUseToolFn, parentMessage?: AssistantMessage, onProgress?: ToolCallProgress<BashProgress>) {
     // DOGE: 防御性检查 —— input 或 command 无效时直接返回失败而不是崩溃
     if (!input || typeof input.command !== 'string' || input.command.trim() === '') {
-      return {
-        type: 'tool_result' as const,
-        content: [
-          {
-            type: 'text' as const,
-            text: 'Error: Bash command input is empty or invalid. Please provide a valid command.',
-          },
-        ],
-        isError: true,
-      }
+      throw new Error('Bash command input is empty or invalid. Please provide a valid command.')
     }
     // 处理模拟的 sed 编辑 —— 直接应用而不是运行 sed
     // 这确保用户预览的内容就是实际写入的内容
@@ -1227,7 +1218,15 @@ export const BashTool = buildTool({
         if (grepInput.output_mode === 'count') rgArgs.push('-c');
         const target = grepInput.path || process.cwd();
         try {
-          const lines = await ripGrep(rgArgs, target, abortController.signal);
+          const signal = abortController?.signal;
+          if (!signal) {
+            return {
+              type: 'tool_result' as const,
+              content: [{ type: 'text' as const, text: 'Error: abortController is not available in this context. Cannot use ripgrep shortcut.' }],
+              isError: true,
+            };
+          }
+          const lines = await ripGrep(rgArgs, target, signal);
           const stdout = lines.join('\n');
           return {
             type: 'tool_result' as const,
