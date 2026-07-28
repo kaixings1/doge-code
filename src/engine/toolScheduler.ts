@@ -97,7 +97,10 @@ export class ToolScheduler {
 
   private async executeSingle(call: ToolCall): Promise<ToolResult> {
     const tool = this.registry.get(call.name);
-    if (!tool) return { success: false, error: `Tool not found: ${call.name}`, toolUseId: call.id };
+    if (!tool) {
+      console.warn(`[TOOL] Tool not found: ${call.name}. Available tools: ${Array.from(this.registry.keys()).join(', ')}`);
+      return { success: false, error: `Tool not found: ${call.name}`, toolUseId: call.id };
+    }
     const validation = tool.validate(call.input);
     if (!validation.valid) {
       return { success: false, error: `Invalid: ${validation.errors.join(", ")}`, toolUseId: call.id };

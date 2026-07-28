@@ -39,9 +39,12 @@ export class MessageLoop {
 
   constructor(private deps: MessageLoopDeps) {}
 
+  private consecutiveToolFailures = 0;
+
   async run(userMessage: string): Promise<QueryResult> {
     this.deps.conversation.messages.push({ role: "user", content: userMessage } as InternalMessage);
     await this.deps.stateMachine.transition("responding", { message: userMessage });
+    this.consecutiveToolFailures = 0;
 
     const start = Date.now();
     while (this.deps.stateMachine.canContinue()) {
@@ -103,10 +106,59 @@ export class MessageLoop {
         role: "assistant",
         content: processed.content,
       } as InternalMessage);
+      this.consecutiveToolFailures = 0;
     }
 
     if (processed.toolCalls.length > 0) {
-      const results = await this.deps.toolScheduler.execute(processed.toolCalls);
+      // 过滤掉无效的工具调用（空名称、幻觉名称）
+      const availableTools = new Set(this.deps.toolDefinitions.map(t => t.name));
+      const validCalls = processed.toolCalls.filter(tc => tc.name && availableTools.has(tc.name));
+      const invalidCalls = processed.toolCalls.filter(tc => !tc.name || !availableTools.has(tc.name));
+
+      if (invalidCalls.length > 0) {
+        this.consecutiveToolFailures += invalidCalls.length;
+        console.warn(`[ENGINE] ${invalidCalls.length} invalid tool call(s) skipped. Valid: ${validCalls.length}`);
+        // 如果无效调用多于有效调用，说明 AI 在幻觉，停止工具循环
+        if (invalidCalls.length > validCalls.length) {
+          console.warn('[ENGINE] More invalid than valid tool calls, stopping tool loop');
+          this.deps.conversation.messages.push({
+            role: "system",
+            content: `STOP using tools. Answer directly with text.`,
+          } as InternalMessage);
+          return false;
+        }
+        // 如果全部无效，直接让 AI 用文本回复
+        if (validCalls.length === 0) {
+          this.deps.conversation.messages.push({
+            role: "system",
+            content: `Previous tool calls failed. Please answer directly without using tools.`,
+          } as InternalMessage);
+          if (this.consecutiveToolFailures >= 2) return false;
+          await this.deps.stateMachine.transition("should_continue");
+          return true;
+        }
+      }
+
+      // 只执行有效的工具调用
+      const results = await this.deps.toolScheduler.execute(validCalls);
+
+      // 检查工具调用失败次数
+      const failedCount = results.filter(r => !r.success).length;
+      if (failedCount > 0) {
+        this.consecutiveToolFailures += failedCount;
+        console.warn(`[ENGINE] ${failedCount} tool call(s) failed, consecutive failures: ${this.consecutiveToolFailures}`);
+        if (this.consecutiveToolFailures >= 3) {
+          console.warn('[ENGINE] Too many consecutive tool failures, stopping tool loop');
+          this.deps.conversation.messages.push({
+            role: "assistant",
+            content: "I'll answer directly instead of using tools.",
+          } as InternalMessage);
+          return false;
+        }
+      } else {
+        this.consecutiveToolFailures = 0;
+      }
+
       this.deps.conversation.addToolResults(results);
       await this.deps.stateMachine.transition("should_continue");
       return true;
