@@ -20,10 +20,5 @@ declare global {
      * Record<string, any> 允许组件扩展未在 DogeAPI 中声明的 API
      */
     dogeAPI: import('../../preload/index.js').DogeAPI & Record<string, any>
-
-    // ─── 数据库 API（主进程 IPC handler 未实现，占位） ───
-    dogeDBConnect?: (conn: any) => Promise<{ success: boolean; error?: string }>
-    dogeDBTables?: (connectionId: string) => Promise<{ success: boolean; tables: any[]; error?: string }>
-    dogeDBQuery?: (connectionId: string, sql: string) => Promise<{ success: boolean; rows: any[]; error?: string }>
   }
 }

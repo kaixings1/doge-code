@@ -608,7 +608,7 @@ export function ApiTestPanel({ theme, onClose }: ApiTestPanelProps) {
             {showEnvironments && activeTab !== 'params' && (
               <div style={{ marginTop: '16px', borderTop: `1px solid ${c.border}`, paddingTop: '12px' }}>
                 <div style={{ fontSize: '11px', fontWeight: 600, color: c.textMuted, marginBottom: '8px' }}>
-                  环境变量 ({{env}})
+                  环境变量 ({activeEnv})
                 </div>
                 {Object.entries(envVariables).map(([key, value]) => (
                   <div key={key} style={{ display: 'flex', gap: '8px', marginBottom: '6px' }}>
