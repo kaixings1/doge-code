@@ -4,7 +4,7 @@ const exit = {
     aliases: ['quit'],
     description: '退出 REPL',
     immediate: true,
-    load: () => import('./exit.js'),
+    load: () => import('./exit.tsx'),
 };
 export default exit;
 //# sourceMappingURL=index.js.map

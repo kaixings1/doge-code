@@ -36,5 +36,5 @@ export const call: LocalJSXCommandCall = async (args) => {
   return { type: 'text', value: r || '(无输出)' }
 }
 
-const cmd = { type: 'local-jsx' as const, name: 'image', description: '图片信息查看与管理：info/ls/convert', argumentHint: '<info|ls|convert> [args]', isEnabled: () => true, load: () => import('./index.js') } satisfies Command
+const cmd = { type: 'local-jsx' as const, name: 'image', description: '图片信息查看与管理：info/ls/convert', argumentHint: '<info|ls|convert> [args]', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
 export default cmd

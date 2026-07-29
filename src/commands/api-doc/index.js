@@ -57,6 +57,6 @@ export const call = async (args) => {
     }
     return { type: 'text', value: r || '(无输出)' };
 };
-const cmd = { type: 'local-jsx', name: 'api-doc', description: 'API 文档生成器：gen/scan', argumentHint: '<gen|scan> <file|dir>', isEnabled: () => true, load: () => import('./index.js') };
+const cmd = { type: 'local-jsx', name: 'api-doc', description: 'API 文档生成器：gen/scan', argumentHint: '<gen|scan> <file|dir>', isEnabled: () => true, load: () => import('./index.ts') };
 export default cmd;
 //# sourceMappingURL=index.js.map

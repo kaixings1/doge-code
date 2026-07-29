@@ -8,6 +8,6 @@ export default {
     get isHidden() {
         return !isClaudeAISubscriber() || !isPolicyAllowed('allow_remote_sessions');
     },
-    load: () => import('./remote-env.js'),
+    load: () => import('./remote-env.tsx'),
 };
 //# sourceMappingURL=index.js.map

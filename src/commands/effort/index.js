@@ -7,6 +7,6 @@ export default {
     get immediate() {
         return shouldInferenceConfigCommandBeImmediate();
     },
-    load: () => import('./effort.js'),
+    load: () => import('./effort.tsx'),
 };
 //# sourceMappingURL=index.js.map

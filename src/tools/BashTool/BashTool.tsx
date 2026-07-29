@@ -325,6 +325,71 @@ function collapseMultilineScript(script: string): string {
 }
 
 /**
+ * 将常见的 Unix 命令转换为 Windows cmd.exe 兼容命令
+ * 当实际底层 shell 是 cmd.exe 时使用。
+ * 支持：ls→dir, cat→type, grep→findstr, which→where, head→more, diff→fc, cp→copy, mv→move, rm→del 等
+ */
+function normalizeUnixCommandForWindows(cmd: string): string {
+  if (process.platform !== 'win32') return cmd;
+
+  // 跳过空命令
+  const trimmed = cmd.trim();
+  if (!trimmed) return cmd;
+
+  // 提取第一个 token（命令名），跳过开头的空白
+  const firstTokenMatch = trimmed.match(/^(\s*)([^\s]+)/);
+  if (!firstTokenMatch) return cmd;
+
+  const leadingWhitespace = firstTokenMatch[1];
+  const firstToken = firstTokenMatch[2];
+  const rest = trimmed.slice(firstTokenMatch[0].length);
+
+  // 跳过以 -/ 开头的标志参数（它们不是命令）
+  if (/^-/.test(firstToken)) return cmd;
+
+  // 跳过 shell 操作符和控制结构关键字
+  const shellOperators = new Set(['&&', '||', '|', ';', '>', '>>', '2>', '<', '(', ')', '{', '}', 'do', 'then', 'else', 'fi', 'esac', 'done', 'elif', 'rof', 'for', 'while', 'until', 'case', 'if', 'in']);
+  if (shellOperators.has(firstToken.toLowerCase())) return cmd;
+
+  // 跳过以 # 开头的注释行
+  if (firstToken.startsWith('#')) return cmd;
+
+  // 跳过 env 变量赋值（如 VAR=value command）
+  if (/^[a-zA-Z_][a-zA-Z0-9_]*=/.test(firstToken)) return cmd;
+
+  // 去掉命令名末尾的任何参数引用（如 ${VAR} 或 $(CMD)）
+  const commandName = firstToken.replace(/\(.*\)$/, '').replace(/\$\{.*\}$/, '');
+  const cleanCommandName = commandName.replace(/^['"`]/, '').replace(/['"`]$/, '').toLowerCase();
+
+  // Unix → Windows 命令映射表
+  // 只转换 cmd.exe 不认识的常用命令，不覆盖 Windows 原生命令
+  const unixToWindows: { [key: string]: string } = {
+    'ls': 'dir',
+    'cat': 'type',
+    'grep': 'findstr',
+    'which': 'where',
+    'head': 'more',
+    'diff': 'fc',
+    'cp': 'copy',
+    'mv': 'move',
+    'rm': 'del',
+    'touch': 'type nul >',
+    'pwd': 'cd',
+    'uname': 'ver',
+    'clear': 'cls',
+    'env': 'set',
+    'export': 'set',
+  };
+
+  if (cleanCommandName in unixToWindows) {
+    const replacement = unixToWindows[cleanCommandName];
+    return leadingWhitespace + replacement + rest;
+  }
+
+  return cmd;
+}
+
+/**
  * 将常见的 Windows cmd 命令转换为 bash 兼容命令
  * 支持：dir, copy, del, type, move, findstr, fc, cls, cd.. 等
  * 仅在 Windows 平台上启用完整转换。
@@ -1486,6 +1551,14 @@ async function* runShellCommand({
     command = normalizeWindowsCommand(command);
     if (originalCommand !== command) {
       console.debug(`[BashTool] 命令归一化: "${originalCommand}" → "${command}"`);
+    }
+  } else if (isWindows) {
+    // 当实际底层 shell 是 cmd.exe 时，将模型生成的 Unix 命令转换为 Windows 等效命令
+    // 例如：ls → dir, cat → type, grep → findstr, which → where
+    const originalCommand = command;
+    command = normalizeUnixCommandForWindows(command);
+    if (originalCommand !== command) {
+      console.debug(`[BashTool] cmd.exe 兼容转换: "${originalCommand}" → "${command}"`);
     }
   }
 

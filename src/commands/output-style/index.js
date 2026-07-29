@@ -3,7 +3,7 @@ const outputStyle = {
     name: 'output-style',
     description: '已弃用：使用 /config 更改输出样式',
     isHidden: true,
-    load: () => import('./output-style.js'),
+    load: () => import('./output-style.tsx'),
 };
 export default outputStyle;
 //# sourceMappingURL=index.js.map

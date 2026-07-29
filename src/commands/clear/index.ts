@@ -13,7 +13,7 @@ const clear = {
   description: '清除对话历史并释放上下文',
   aliases: ['reset', 'new'],
   supportsNonInteractive: false, // Should just create a new session
-  load: () => import('./clear.js'),
+  load: () => import('./clear.ts'),
 } satisfies Command
 
 export default clear

@@ -109,22 +109,27 @@ function convertAnthropicRequestToOpenAI(req: APIRequest): OpenAIChatRequest {
         messages.push({ role: 'user', content: msg.content })
       }
     } else if (msg.role === 'assistant') {
-      const blocks = Array.isArray(msg.content) ? msg.content as Array<Record<string, unknown>> : []
-      const text = blocks
-        .filter(b => b.type === 'text')
-        .map(b => (typeof b.text === 'string' ? b.text : ''))
-        .join('')
-      const toolCalls = blocks
-        .filter(b => b.type === 'tool_use')
-        .map(b => ({
-          id: b.id as string,
-          type: 'function' as const,
-          function: {
-            name: b.name as string,
-            arguments: JSON.stringify(b.input ?? {}),
-          },
-        }))
+      let text = ''
+      const toolCalls: Array<{ id: string; type: 'function'; function: { name: string; arguments: string } }> = []
+      if (Array.isArray(msg.content)) {
+        const blocks = msg.content as Array<Record<string, unknown>>
+        text = blocks.filter(b => b.type === 'text').map(b => (typeof b.text === 'string' ? b.text : '')).join('')
+        toolCalls.push(...blocks.filter(b => b.type === 'tool_use').map(b => ({
+          id: b.id as string, type: 'function' as const,
+          function: { name: b.name as string, arguments: JSON.stringify(b.input ?? {}) },
+        })))
+      } else if (typeof msg.content === 'string') {
+        text = msg.content
+      }
       messages.push({ role: 'assistant', content: text || null, ...(toolCalls.length > 0 ? { tool_calls: toolCalls } : {}) })
+    } else if (msg.role === 'tool') {
+      const toolUseId = (msg as Record<string, unknown>).toolUseId
+      const toolCallId = typeof toolUseId === 'string' ? toolUseId : ''
+      messages.push({
+        role: 'tool',
+        tool_call_id: toolCallId,
+        content: typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content),
+      })
     } else {
       messages.push({
         role: msg.role,
@@ -238,13 +243,25 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
           }))
         }
       } else {
-        const openaiReq = convertAnthropicRequestToOpenAI(request)
-        body = openaiReq as unknown as Record<string, unknown>
+        const reqTools = request.tools && request.tools.length > 0
+        body = {
+          model: request.model,
+          max_tokens: request.max_tokens,
+          stream: true,
+          messages: request.messages,
+          ...(reqTools ? { tools: request.tools.map(t => ({
+            type: 'function',
+            function: { name: t.name, description: t.description, parameters: t.input_schema },
+          }))} : {}),
+          ...(request.temperature ? { temperature: request.temperature } : {}),
+        }
       }
 
       // 发送请求（带基础重试）
       let response: Response | null = null
       let lastError = ''
+      const bodyJson = JSON.stringify(body)
+      console.log(`[MAIN] request body (first 3000): ${bodyJson.slice(0, 3000)}`)
       for (let attempt = 0; attempt < 5; attempt++) {
         response = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body) })
         if (response.ok) break
@@ -298,15 +315,13 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
                     if (!messageStarted) {
                       yield { type: 'message_start', message: { model: request.model } }
                     }
-                    // 在流结束时 flush 所有累积的 tool_calls
-                    for (const [idx, tc] of toolCallAccum) {
-                      yield { type: 'content_block_start', index: idx, content_block: { type: 'tool_use', id: tc.id, name: tc.name, input: tc.args } }
-                      if (tc.args) {
-                        yield { type: 'content_block_delta', index: idx, delta: { type: 'input_json_delta', partial_json: tc.args } }
+                    // 仅 flush 尚未通过 finish_reason 关闭的 tool_calls
+                    if (toolCallAccum.size > 0) {
+                      for (const [idx, tc] of toolCallAccum) {
+                        yield { type: 'content_block_stop', index: idx }
                       }
-                      yield { type: 'content_block_stop', index: idx }
+                      toolCallAccum.clear()
                     }
-                    toolCallAccum.clear()
                     yield { type: 'message_stop' }
                     return
                   }
@@ -348,13 +363,15 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
                         blockIndex++
                       }
 
-                      // 文本增量（使用 != null 而非 truthy，支持空字符串）
+                      // 文本增量 — 空字符串仅跳过块创建，不跳过 tool_calls 处理
                       if (delta && delta.content != null) {
                         const text = delta.content as string
-                        yield { type: 'content_block_start', index: blockIndex, content_block: { type: 'text', text: '' } }
-                        yield { type: 'content_block_delta', index: blockIndex, delta: { type: 'text_delta', text } }
-                        yield { type: 'content_block_stop', index: blockIndex }
-                        blockIndex++
+                        if (text !== '') {
+                          yield { type: 'content_block_start', index: blockIndex, content_block: { type: 'text', text: '' } }
+                          yield { type: 'content_block_delta', index: blockIndex, delta: { type: 'text_delta', text } }
+                          yield { type: 'content_block_stop', index: blockIndex }
+                          blockIndex++
+                        }
                       }
 
                       // 工具调用 — 累积增量，不立即 emit content_block_stop
@@ -374,15 +391,19 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
 
                           if (args) {
                             const entry = toolCallAccum.get(idx)!
-                            entry.args += args
-                            yield { type: 'content_block_delta', index: idx, delta: { type: 'input_json_delta', partial_json: args } }
+                            if (!entry.args.endsWith(args)) {
+                              const newArgs = args.slice(entry.args.length)
+                              entry.args = args
+                              yield { type: 'content_block_delta', index: idx, delta: { type: 'input_json_delta', partial_json: newArgs } }
+                            }
                           }
                         }
                       }
 
                       // finish_reason — 工具调用完成时 flush 所有 tool_calls
                       if (choice.finish_reason) {
-                        const stopReason = mapFinishReason(choice.finish_reason as string | undefined)
+                        const stopReason = mapFinishReason(choice.finish_reason as string)
+                        console.log(`[TOOL-OAI] finish_reason=${choice.finish_reason} mapped=${stopReason} toolCallAccum.size=${toolCallAccum.size}`)
                         if (toolCallAccum.size > 0) {
                           for (const [idx, tc] of toolCallAccum) {
                             yield { type: 'content_block_stop', index: idx }

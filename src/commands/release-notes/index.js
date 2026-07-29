@@ -3,7 +3,7 @@ const releaseNotes = {
     name: 'release-notes',
     type: 'local',
     supportsNonInteractive: true,
-    load: () => import('./release-notes.js'),
+    load: () => import('./release-notes.ts'),
 };
 export default releaseNotes;
 //# sourceMappingURL=index.js.map

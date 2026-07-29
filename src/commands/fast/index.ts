@@ -20,7 +20,7 @@ const fast = {
   get immediate() {
     return shouldInferenceConfigCommandBeImmediate()
   },
-  load: () => import('./fast.js'),
+  load: () => import('./fast.tsx'),
 } satisfies Command
 
 export default fast

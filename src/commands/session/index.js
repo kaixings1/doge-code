@@ -8,7 +8,7 @@ const session = {
     get isHidden() {
         return !getIsRemoteMode();
     },
-    load: () => import('./session.js'),
+    load: () => import('./session.tsx'),
 };
 export default session;
 //# sourceMappingURL=index.js.map

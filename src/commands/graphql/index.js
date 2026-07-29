@@ -3,7 +3,7 @@ const graphql = {
     name: 'graphql',
     description: '执行 GraphQL 查询',
     argumentHint: '<查询语句>',
-    load: () => import('./graphql.js'),
+    load: () => import('./graphql.ts'),
 };
 export default graphql;
 //# sourceMappingURL=index.js.map

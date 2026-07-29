@@ -20,7 +20,7 @@ const feedback = {
       process.env.USER_TYPE === 'ant' ||
       !isPolicyAllowed('allow_product_feedback')
     ),
-  load: () => import('./feedback.js'),
+  load: () => import('./feedback.tsx'),
 } satisfies Command
 
 export default feedback

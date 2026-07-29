@@ -25,5 +25,5 @@ export const call: LocalJSXCommandCall = async (args) => {
   return { type: 'text', value: r || '(无输出)' }
 }
 
-const cmd = { type: 'local-jsx' as const, name: 'redis', description: 'Redis 缓存操作：get/set/del/keys/ping/info/flush', argumentHint: '<get|set|del|keys|ping|info|flush> [args]', isEnabled: () => true, load: () => import('./index.js') } satisfies Command
+const cmd = { type: 'local-jsx' as const, name: 'redis', description: 'Redis 缓存操作：get/set/del/keys/ping/info/flush', argumentHint: '<get|set|del|keys|ping|info|flush> [args]', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
 export default cmd

@@ -10,7 +10,7 @@ const rateLimitOptions = {
         return true;
     },
     isHidden: true, // Hidden from help - only used internally
-    load: () => import('./rate-limit-options.js'),
+    load: () => import('./rate-limit-options.tsx'),
 };
 export default rateLimitOptions;
 //# sourceMappingURL=index.js.map

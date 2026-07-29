@@ -27,6 +27,6 @@ export const call = async (args) => {
     }
     return { type: 'text', value: r || '(无输出)' };
 };
-const cmd = { type: 'local-jsx', name: 'diagram', description: 'Mermaid 图表模板生成：template/mermaid', argumentHint: '<template|mermaid> [type|file]', isEnabled: () => true, load: () => import('./index.js') };
+const cmd = { type: 'local-jsx', name: 'diagram', description: 'Mermaid 图表模板生成：template/mermaid', argumentHint: '<template|mermaid> [type|file]', isEnabled: () => true, load: () => import('./index.ts') };
 export default cmd;
 //# sourceMappingURL=index.js.map

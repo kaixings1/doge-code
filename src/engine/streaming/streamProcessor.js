@@ -7,6 +7,8 @@ export class StreamProcessor {
         switch (event.type) {
             case "message_start":
                 this.messageStart = event.message;
+                this.buffer = [];
+                this.currentBlock = null;
                 return { type: "message_start", model: event.message?.model };
             case "content_block_start":
                 this.currentBlock = event.content_block;

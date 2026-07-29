@@ -3,7 +3,7 @@ const permissions = {
     name: 'permissions',
     aliases: ['allowed-tools'],
     description: '管理允许和拒绝工具权限规则',
-    load: () => import('./permissions.js'),
+    load: () => import('./permissions.tsx'),
 };
 export default permissions;
 //# sourceMappingURL=index.js.map

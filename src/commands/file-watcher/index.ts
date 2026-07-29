@@ -5,7 +5,7 @@ const fileWatcher = {
   name: 'file-watcher',
   description: '监听文件变化并执行相应操作',
   argumentHint: '<文件路径>',
-  load: () => import('./fileWatcher.js'),
+  load: () => import('./fileWatcher.ts'),
 } satisfies Command
 
 export default fileWatcher

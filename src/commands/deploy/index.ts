@@ -28,5 +28,5 @@ export const call: LocalJSXCommandCall = async (args) => {
   return { type: 'text', value: r || '(无输出)' }
 }
 
-const cmd = { type: 'local-jsx' as const, name: 'deploy', description: '部署工具：ssh/scp/pm2 管理', argumentHint: '<ssh|scp|pm2> [args]', isEnabled: () => true, load: () => import('./index.js') } satisfies Command
+const cmd = { type: 'local-jsx' as const, name: 'deploy', description: '部署工具：ssh/scp/pm2 管理', argumentHint: '<ssh|scp|pm2> [args]', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
 export default cmd

@@ -686,9 +686,12 @@ export async function* createAnthropicStreamFromOpenAI(input: {
               if (tc.id) state.id = tc.id
               if (tc.function?.name) state.name = tc.function.name
               if (tc.function?.arguments) {
-                state.arguments += tc.function.arguments
-                logForDebugging(`[openaiCompat] 工具参数增量: index=${oi}, 累积参数长度=${state.arguments.length}`, { level: 'debug' })
-                yield { type: 'content_block_delta', index: ai, delta: { type: 'input_json_delta', partial_json: tc.function.arguments } } as BetaRawMessageStreamEvent
+                const newArgs = tc.function.arguments
+                const prevLen = state.arguments.length
+                state.arguments += newArgs
+                const delta = newArgs.length > prevLen ? newArgs.slice(prevLen) : newArgs
+                logForDebugging(`[openaiCompat] 工具参数增量: index=${oi}, 新增长度=${delta.length}, 累积长度=${state.arguments.length}`, { level: 'debug' })
+                yield { type: 'content_block_delta', index: ai, delta: { type: 'input_json_delta', partial_json: delta } } as BetaRawMessageStreamEvent
               }
             }
           }

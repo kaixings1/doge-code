@@ -4,6 +4,6 @@ export default {
     name: 'logout',
     description: '退出您的 Anthropic 账户',
     isEnabled: () => !isEnvTruthy(process.env.DISABLE_LOGOUT_COMMAND),
-    load: () => import('./logout.js'),
+    load: () => import('./logout.tsx'),
 };
 //# sourceMappingURL=index.js.map

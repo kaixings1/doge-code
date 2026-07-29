@@ -5,7 +5,7 @@ const command = {
   description: '在 Vim 和普通编辑模式之间切换',
   supportsNonInteractive: false,
   type: 'local',
-  load: () => import('./vim.js'),
+  load: () => import('./vim.ts'),
 } satisfies Command
 
 export default command

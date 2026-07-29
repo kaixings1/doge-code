@@ -35,6 +35,6 @@ export const call = async (args) => {
     }
     return { type: 'text', value: r || '(无输出)' };
 };
-const cmd = { type: 'local-jsx', name: 'excel', description: 'Excel 文件读取与转换：read/info/sheets/csv', argumentHint: '<read|info|sheets|csv> <file>', isEnabled: () => true, load: () => import('./index.js') };
+const cmd = { type: 'local-jsx', name: 'excel', description: 'Excel 文件读取与转换：read/info/sheets/csv', argumentHint: '<read|info|sheets|csv> <file>', isEnabled: () => true, load: () => import('./index.ts') };
 export default cmd;
 //# sourceMappingURL=index.js.map

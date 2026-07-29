@@ -4,7 +4,7 @@ const thinkback = {
     name: 'think-back',
     description: '您的 2025 Claude Code 年度回顾',
     isEnabled: () => checkStatsigFeatureGate_CACHED_MAY_BE_STALE('tengu_thinkback'),
-    load: () => import('./thinkback.js'),
+    load: () => import('./thinkback.tsx'),
 };
 export default thinkback;
 //# sourceMappingURL=index.js.map

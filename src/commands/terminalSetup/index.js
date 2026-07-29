@@ -13,7 +13,7 @@ const terminalSetup = {
         ? '启用 Option+Enter 键绑定用于换行和视觉铃音'
         : '安装 Shift+Enter 键绑定用于换行',
     isHidden: env.terminal !== null && env.terminal in NATIVE_CSIU_TERMINALS,
-    load: () => import('./terminalSetup.js'),
+    load: () => import('./terminalSetup.tsx'),
 };
 export default terminalSetup;
 //# sourceMappingURL=index.js.map

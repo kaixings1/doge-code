@@ -3,7 +3,6 @@
  */
 
 import { app, BrowserWindow, ipcMain, shell, Tray, Menu, nativeImage } from 'electron'
-import pty from 'node-pty'
 import Store from 'electron-store'
 import * as path from 'path'
 import { pathToFileURL } from 'url'
@@ -108,6 +107,7 @@ Available tools:
 Use tools when needed. If a tool call fails or returns empty, try a different approach or answer directly with text.`,
       maxOutputTokens: 40000,
       tools: adaptedTools,
+      provider: config.provider,
     })
 
     // 注入 API 客户端（复用 src/services/api/ 的成熟实现）
@@ -314,15 +314,21 @@ ipcMain.handle('doge:send-message', async (_event, content: string) => {
     // 崩溃恢复标记（成功发送后清除）
     clearCrashRecovery()
     const lastAssistant = [...messages].reverse().find(m => m.role === 'assistant')
-    const reply = typeof lastAssistant?.content === 'string' ? lastAssistant.content : JSON.stringify(lastAssistant?.content ?? '')
+    let reply: string
+    if (typeof lastAssistant?.content === 'string') {
+      reply = lastAssistant.content
+    } else if (Array.isArray(lastAssistant?.content)) {
+      const textBlocks = (lastAssistant.content as Array<Record<string, unknown>>)
+        .filter(b => b.type === 'text' && typeof b.text === 'string')
+        .map(b => b.text as string)
+      reply = textBlocks.join('')
+    } else {
+      reply = ''
+    }
     tsLog('MAIN', 'returning reply, length:', reply.length, 'content:', reply.slice(0, 200))
     if (!reply) {
-      // 诊断：检查是否有工具调用消息但无文本回复
-      const toolCalls = messages.filter(m => m.role === 'assistant' && typeof m.content !== 'string')
-      if (toolCalls.length > 0) {
-        return { error: `AI 返回了工具调用但无文本内容。请检查模型是否支持工具调用。` }
-      }
-      return { error: `AI 回复为空 (state: ${result.state}, messages: ${messages.length})。请检查 API Key、模型名称和 base URL 配置。` }
+      // 工具调用消息：前端已通过事件流显示工具执行过程
+      return { success: true, content: reply }
     }
     return { success: true, content: reply }
   } catch (error: unknown) {
@@ -1577,6 +1583,7 @@ Available tools:
 Use tools when needed. If a tool call fails or returns empty, try a different approach or answer directly with text.`,
           maxOutputTokens: 40000,
           tools: adaptedTools,
+          provider: config.provider,
         })
         engineApi = createEngineApi(engine)
         engineApi.loadMessages(msgs)
@@ -1910,6 +1917,7 @@ ipcMain.handle('doge:load-session', async (_event, sessionId: string) => {
     systemPrompt: 'You are Doge Code, a helpful AI programming assistant.',
     maxOutputTokens: 40000,
     tools: adaptedTools,
+    provider: config.provider,
   })
   engineApi = createEngineApi(engine)
   engineApi.loadMessages(msgs)
@@ -2038,10 +2046,16 @@ ipcMain.handle('doge:new-folder', async (_event, dirPath: string, folderName: st
   }
 })
 
-const activeTerminals = new Map<string, { proc: ReturnType<typeof pty.spawn>; cwd: string }>()
+const activeTerminals = new Map<string, { proc: any; cwd: string }>()
 
 ipcMain.handle('doge:spawn-terminal', async (_event, cwd: string) => {
   try {
+    let pty: any
+    try {
+      pty = require('node-pty')
+    } catch {
+      return { success: false, error: 'node-pty 未安装，终端功能不可用。请安装 Visual Studio Build Tools 后重新安装 node-pty。' }
+    }
     const shell = process.platform === 'win32' ? 'cmd.exe' : process.env.SHELL || 'bash'
     const proc = pty.spawn(shell, [], {
       cwd: cwd || projectRoot,

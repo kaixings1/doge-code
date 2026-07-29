@@ -5,7 +5,7 @@ const rewind = {
     argumentHint: '',
     type: 'local',
     supportsNonInteractive: false,
-    load: () => import('./rewind.js'),
+    load: () => import('./rewind.ts'),
 };
 export default rewind;
 //# sourceMappingURL=index.js.map

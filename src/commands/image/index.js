@@ -43,6 +43,6 @@ export const call = async (args) => {
     }
     return { type: 'text', value: r || '(无输出)' };
 };
-const cmd = { type: 'local-jsx', name: 'image', description: '图片信息查看与管理：info/ls/convert', argumentHint: '<info|ls|convert> [args]', isEnabled: () => true, load: () => import('./index.js') };
+const cmd = { type: 'local-jsx', name: 'image', description: '图片信息查看与管理：info/ls/convert', argumentHint: '<info|ls|convert> [args]', isEnabled: () => true, load: () => import('./index.ts') };
 export default cmd;
 //# sourceMappingURL=index.js.map

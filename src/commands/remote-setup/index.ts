@@ -14,7 +14,7 @@ const web = {
   get isHidden() {
     return !isPolicyAllowed('allow_remote_sessions')
   },
-  load: () => import('./remote-setup.js'),
+  load: () => import('./remote-setup.tsx'),
 } satisfies Command
 
 export default web

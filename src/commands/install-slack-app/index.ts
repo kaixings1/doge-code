@@ -6,7 +6,7 @@ const installSlackApp = {
   description: '安装 Claude Slack 应用',
   availability: ['claude-ai'],
   supportsNonInteractive: false,
-  load: () => import('./install-slack-app.js'),
+  load: () => import('./install-slack-app.ts'),
 } satisfies Command
 
 export default installSlackApp

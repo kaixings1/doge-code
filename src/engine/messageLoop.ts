@@ -35,6 +35,7 @@ export interface MessageLoopDeps {
   model: string;
   maxOutputTokens: number;
   toolDefinitions: Array<{ name: string; description: string; input_schema: Record<string, unknown> }>;
+  provider: "anthropic" | "openai";
 }
 
 export class MessageLoop {
@@ -100,6 +101,7 @@ export class MessageLoop {
       tools: this.deps.toolDefinitions,
       model: this.deps.model,
       maxTokens: this.deps.maxOutputTokens,
+      provider: this.deps.provider,
     });
 
     engineLog('REQ', JSON.stringify(request, null, 2).slice(0, 5000));
@@ -115,9 +117,22 @@ export class MessageLoop {
         role: "assistant",
         content: processed.content,
       } as InternalMessage);
-      // 不在此处重置 consecutiveToolFailures——仅在工具成功执行后重置
-      // 防止 AI 交替发送空文本回复和无效工具调用来绕过失败计数器
+    } else if (processed.toolCalls.length > 0) {
+      // 工具调用：推送含 tool_use 块的 assistant 消息，确保下一轮模型能看到完整历史
+      const blocks: Array<Record<string, unknown>> = [];
+      if (typeof processed.content === "string" && processed.content) {
+        blocks.push({ type: "text", text: processed.content });
+      }
+      for (const tc of processed.toolCalls) {
+        blocks.push({ type: "tool_use", id: tc.id, name: tc.name, input: tc.input });
+      }
+      this.deps.conversation.messages.push({
+        role: "assistant",
+        content: blocks,
+      } as InternalMessage);
     }
+    // 不在此处重置 consecutiveToolFailures——仅在工具成功执行后重置
+    // 防止 AI 交替发送空文本回复和无效工具调用来绕过失败计数器
 
     if (processed.toolCalls.length > 0) {
       // 过滤掉无效的工具调用（空名称、幻觉名称）

@@ -8,7 +8,7 @@ const buddy = {
     get isHidden() {
         return !isBuddyLive();
     },
-    load: () => import('./buddy.js'),
+    load: () => import('./buddy.ts'),
 };
 export default buddy;
 //# sourceMappingURL=index.js.map

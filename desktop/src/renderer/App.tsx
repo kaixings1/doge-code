@@ -837,6 +837,14 @@ export function App(): JSX.Element {
       }
       const assistantMsg: Message = { id: `msg-${Date.now() + 1}`, role: 'assistant', content: result.success ? (result.output || '(无输出)') : `错误: ${result.error}` }
       appendMsg(assistantMsg)
+      // /clear 成功后同步清除界面上的历史消息
+      if (result.success && cmdName === '/clear') {
+        setMessages([])
+        setCurrentSessionId(null)
+        setCurrentStreaming('')
+        currentStreamingRef.current = ''
+        persistActiveTabMessages([])
+      }
       cmdHistory.addCommand(text)
       setState('idle'); setIsSending(false)
       return

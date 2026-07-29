@@ -27,6 +27,7 @@ export interface EngineOptions {
   maxOutputTokens?: number;
   systemPrompt?: string;
   tools?: Map<string, Tool>;
+  provider?: "anthropic" | "openai";
 }
 
 export class QueryEngine {
@@ -47,9 +48,13 @@ export class QueryEngine {
     messages: [],
     addToolResults: (results) => {
       for (const r of results) {
+        const resultRecord = r as Record<string, unknown>
+        const toolUseId = typeof resultRecord.toolUseId === 'string' ? resultRecord.toolUseId : null
+        const contentVal = typeof resultRecord.output === 'string' ? resultRecord.output : JSON.stringify(resultRecord.output ?? resultRecord.error ?? '')
         this._conversation.messages.push({
-          role: "system" as const,
-          content: typeof r === "string" ? r : JSON.stringify(r),
+          role: "tool" as const,
+          ...(toolUseId ? { toolUseId } : {}),
+          content: contentVal,
         });
       }
     },
@@ -106,6 +111,7 @@ export class QueryEngine {
       model: opts.model,
       maxOutputTokens: opts.maxOutputTokens ?? 40000,
       toolDefinitions: this._toolDefinitions,
+      provider: opts.provider ?? "openai",
     };
     this.messageLoop = new MessageLoop(deps);
   }
@@ -137,6 +143,7 @@ export class QueryEngine {
   }
 
   async abort(): Promise<void> {
+    this.abortController.abort()
     await this.stateMachine.transition("aborted_by_user");
   }
 
