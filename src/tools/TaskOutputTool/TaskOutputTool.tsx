@@ -30,7 +30,7 @@ import { TASK_OUTPUT_TOOL_NAME } from './constants.js';
 const inputSchema = lazySchema(() => z.strictObject({
   task_id: z.string().describe('要获取输出的任务 ID'),
   block: semanticBoolean(z.boolean().default(true)).describe('是否等待完成'),
-  timeout: z.number().min(0).max(600000).default(30000).describe('最大等待时间（毫秒）')
+  timeout: z.number().default(30000).describe('最大等待时间（毫秒）')
 }));
 type InputSchema = ReturnType<typeof inputSchema>;
 type TaskOutputToolInput = z.infer<InputSchema>;

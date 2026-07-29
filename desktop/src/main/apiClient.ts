@@ -1,21 +1,11 @@
 /**
  * desktop/src/main/apiClient.ts — 桌面端 API 客户端
- *
- * 复用 src/services/api/openaiCompat.ts 的成熟实现，
- * 提供 Anthropic/OpenAI 兼容的流式 API 请求能力。
- *
- * 特性：
- * - 自动检测 Anthropic/OpenAI 格式并转换
- * - 完整的 SSE 流解析（parseSSEChunk）
- * - 429/529/5xx 错误分类（APIError）
- * - 非流式响应兜底（tryParseNonStreamingResponse）
- * - thinking_delta 支持
- * - AbortSignal 取消支持
+ * 将内部 APIRequest 格式转换为 Anthropic/OpenAI 兼容的格式并发送请求，处理 SSE 流式响应。
  */
 
 import type { APIRequest } from '../../../src/engine/requestBuilder.js'
 
-// ─── 类型定义（与 src/services/api/openaiCompat.ts 对齐） ───
+// ─── 类型定义 ───
 
 interface OpenAIChatMessage {
   role: 'system' | 'user' | 'assistant' | 'tool'
@@ -42,7 +32,6 @@ interface OpenAIChatRequest {
       parameters?: Record<string, unknown>
     }
   }>
-  tool_choice?: string
   max_tokens?: number
 }
 
@@ -74,87 +63,108 @@ function mapFinishReason(reason: string | null | undefined): string {
   return 'end_turn'
 }
 
-// ─── 请求体转换（Anthropic → OpenAI） ───
+// ─── 清理工具参数 schema：移除 OpenAI 兼容端点不接受的字段 ───
 
-function convertAnthropicRequestToOpenAI(req: APIRequest): OpenAIChatRequest {
-  const messages: OpenAIChatMessage[] = []
-
-  // system prompt
-  if (req.system) {
-    messages.push({ role: 'system', content: req.system })
-  }
-
-  // 消息转换
-  for (const msg of req.messages) {
-    if (msg.role === 'user') {
-      // 提取 tool_result → OpenAI tool 消息
-      const blocks = Array.isArray(msg.content) ? msg.content as Array<Record<string, unknown>> : []
-      for (const block of blocks) {
-        if (block.type === 'tool_result') {
-          messages.push({
-            role: 'tool',
-            tool_call_id: block.tool_use_id as string | undefined,
-            content: typeof block.content === 'string' ? block.content : JSON.stringify(block.content),
-          })
-        }
-      }
-      // 用户文本
-      const text = blocks
-        .filter(b => b.type !== 'tool_result')
-        .map(b => (b.type === 'text' && typeof b.text === 'string') ? b.text : '')
-        .join('')
-      if (text) {
-        messages.push({ role: 'user', content: text })
-      } else if (typeof msg.content === 'string' && msg.content) {
-        messages.push({ role: 'user', content: msg.content })
-      }
-    } else if (msg.role === 'assistant') {
-      let text = ''
-      const toolCalls: Array<{ id: string; type: 'function'; function: { name: string; arguments: string } }> = []
-      if (Array.isArray(msg.content)) {
-        const blocks = msg.content as Array<Record<string, unknown>>
-        text = blocks.filter(b => b.type === 'text').map(b => (typeof b.text === 'string' ? b.text : '')).join('')
-        toolCalls.push(...blocks.filter(b => b.type === 'tool_use').map(b => ({
-          id: b.id as string, type: 'function' as const,
-          function: { name: b.name as string, arguments: JSON.stringify(b.input ?? {}) },
-        })))
-      } else if (typeof msg.content === 'string') {
-        text = msg.content
-      }
-      messages.push({ role: 'assistant', content: text || null, ...(toolCalls.length > 0 ? { tool_calls: toolCalls } : {}) })
-    } else if (msg.role === 'tool') {
-      const toolUseId = (msg as Record<string, unknown>).toolUseId
-      const toolCallId = typeof toolUseId === 'string' ? toolUseId : ''
-      messages.push({
-        role: 'tool',
-        tool_call_id: toolCallId,
-        content: typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content),
-      })
+function sanitizeToolSchema(schema: Record<string, unknown>): Record<string, unknown> {
+  if (!schema || typeof schema !== 'object') return schema
+  const REMOVE_KEYS = new Set([
+    'minimum', 'maximum', 'minLength', 'maxLength', 'minItems', 'maxItems',
+    'exclusiveMinimum', 'exclusiveMaximum', 'default',
+    '$schema', 'additionalProperties',
+  ])
+  const removed: string[] = []
+  const kept: string[] = []
+  const cleaned: Record<string, unknown> = {}
+  for (const [key, value] of Object.entries(schema)) {
+    if (REMOVE_KEYS.has(key)) {
+      removed.push(key)
+      continue
+    }
+    kept.push(key)
+    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      cleaned[key] = sanitizeToolSchema(value as Record<string, unknown>)
     } else {
-      messages.push({
-        role: msg.role,
-        content: typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content),
-      })
+      cleaned[key] = value
     }
   }
+  if (removed.length > 0) {
+    console.log(`[SANITIZE] removed=${JSON.stringify(removed)} kept=${JSON.stringify(kept)}`)
+  }
+  return cleaned
+}
 
-  // 工具转换
-  const tools = req.tools?.map(t => ({
-    type: 'function' as const,
-    function: {
-      name: t.name,
-      description: t.description,
-      parameters: t.input_schema as Record<string, unknown>,
-    },
-  }))
+// ─── 构建 OpenAI Chat Completions 请求体 ───
+
+function buildOpenAIRequest(request: APIRequest): OpenAIChatRequest {
+  const messages: OpenAIChatMessage[] = []
+
+  for (const m of request.messages || []) {
+    const msg = m as Record<string, unknown>
+
+    // 清理 content：确保为 string 或简单 array
+    let content: OpenAIChatMessage['content']
+    if (msg.content === null || msg.content === undefined) {
+      content = null
+    } else if (Array.isArray(msg.content)) {
+      // 过滤 content blocks，保留 text 和 tool_result 类型
+      const blocks = msg.content as Array<Record<string, unknown>>
+      content = blocks
+        .filter(b => b.type === 'text' || b.type === 'tool_result')
+        .map(b => {
+          const cleaned: Record<string, unknown> = { type: b.type }
+          if (typeof b.text === 'string') cleaned.text = b.text
+          if (typeof b.content === 'string') cleaned.content = b.content
+          if (typeof b.tool_use_id === 'string') cleaned.tool_use_id = b.tool_use_id
+          return cleaned
+        })
+    } else if (typeof msg.content === 'string') {
+      content = msg.content
+    } else {
+      content = String(msg.content)
+    }
+
+    const chatMsg: OpenAIChatMessage = {
+      role: String(msg.role || 'user') as OpenAIChatMessage['role'],
+      content,
+    }
+    if (msg.tool_calls) {
+      chatMsg.tool_calls = msg.tool_calls as OpenAIChatMessage['tool_calls']
+    }
+    if (msg.tool_call_id) {
+      chatMsg.tool_call_id = msg.tool_call_id as OpenAIChatMessage['tool_call_id']
+    }
+    messages.push(chatMsg)
+  }
+
+  // 清理工具定义
+  // 注意 request.tools 结构: [{type:'function', function:{name, description, parameters}}]
+  const tools = (request.tools || []).map(t => {
+    const wrapper = t as { type?: unknown; function?: Record<string, unknown> }
+    const fn = wrapper.function || {}
+    const rawSchema = fn.parameters as Record<string, unknown> | null | undefined
+    const cleanedSchema = rawSchema ? sanitizeToolSchema(rawSchema) : null
+    const toolDef: OpenAIChatRequest['tools'][0] = {
+      type: 'function',
+      function: {
+        name: String(fn.name || ''),
+        description: typeof fn.description === 'string' ? fn.description : undefined,
+        ...(cleanedSchema !== null ? { parameters: cleanedSchema } : {}),
+      },
+    }
+    return toolDef
+  })
+
+  console.log(`[TOOLS-FINAL] toolCount=${tools.length}, names=${tools.map(t => t.function.name).join(',')}`)
+  const toolsSnapshot = JSON.stringify(tools)
+  console.log(`[TOOLS-BODY] (first 5000): ${toolsSnapshot.slice(0, 5000)}`)
 
   return {
-    model: req.model,
+    model: request.model,
     messages,
     stream: true,
-    temperature: req.temperature,
-    max_tokens: req.max_tokens,
-    tools,
+    max_tokens: request.max_tokens,
+    temperature: request.temperature ?? 0,
+    ...(tools.length > 0 ? { tools } : {}),
   }
 }
 
@@ -163,7 +173,12 @@ function convertAnthropicRequestToOpenAI(req: APIRequest): OpenAIChatRequest {
 function tryParseNonStreamingResponse(
   buffer: string,
   model: string,
-): { events: Array<Record<string, unknown>>; resultMessage: Record<string, unknown>; promptTokens: number; completionTokens: number } | null {
+): {
+  events: Array<Record<string, unknown>>
+  resultMessage: Record<string, unknown>
+  promptTokens: number
+  completionTokens: number
+} | null {
   try {
     const parsed = JSON.parse(buffer)
     const content = parsed.choices?.[0]?.message?.content ?? parsed.content?.[0]?.text ?? ''
@@ -174,14 +189,21 @@ function tryParseNonStreamingResponse(
 
     return {
       events: [
-        { type: 'message_start', message: { model, content: [], usage: { input_tokens: promptTokens, output_tokens: 0 } } },
+        { type: 'message_start', message: { model, content: [], usage: { input_tokens: 0, output_tokens: 0 } } },
         { type: 'content_block_start', index: 0, content_block: { type: 'text', text: '' } },
         { type: 'content_block_delta', index: 0, delta: { type: 'text_delta', text: content } },
         { type: 'content_block_stop', index: 0 },
         { type: 'message_delta', delta: { stop_reason: 'end_turn' }, usage: { output_tokens: completionTokens } },
         { type: 'message_stop' },
       ],
-      resultMessage: { type: 'message', role: 'assistant', model, content: [{ type: 'text', text: content }], stop_reason: 'end_turn', usage: { input_tokens: promptTokens, output_tokens: completionTokens } },
+      resultMessage: {
+        type: 'message',
+        role: 'assistant',
+        model,
+        content: [{ type: 'text', text: content }],
+        stop_reason: 'end_turn',
+        usage: { input_tokens: promptTokens, output_tokens: completionTokens },
+      },
       promptTokens,
       completionTokens,
     }
@@ -217,11 +239,7 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
   }
 
   return {
-    /**
-     * 发送 API 请求并返回 Anthropic 格式的流式事件
-     */
     async sendMessage(request: APIRequest): Promise<AsyncIterable<Record<string, unknown>>> {
-      // 构建请求体
       let body: Record<string, unknown>
 
       if (isAnthropic) {
@@ -230,10 +248,28 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
           max_tokens: request.max_tokens,
           stream: true,
           system: request.system,
-          messages: request.messages.map(m => ({
-            role: m.role === 'tool' ? 'user' : m.role,
-            content: typeof m.content === 'string' ? m.content : JSON.stringify(m.content),
-          })),
+          messages: request.messages.map(m => {
+            const msg = m as Record<string, unknown>
+            if (msg.role === 'tool') {
+              const toolUseId = (msg as Record<string, unknown>).toolUseId
+              return {
+                role: 'user' as const,
+                content: [
+                  {
+                    type: 'tool_result' as const,
+                    tool_use_id: typeof toolUseId === 'string' ? toolUseId : undefined,
+                    content: typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content),
+                  },
+                ],
+              }
+            }
+            const content = typeof msg.content === 'string'
+              ? msg.content
+              : Array.isArray(msg.content)
+                ? msg.content
+                : JSON.stringify(msg.content)
+            return { role: msg.role, content }
+          }),
         }
         if (request.tools && request.tools.length > 0) {
           body.tools = request.tools.map(t => ({
@@ -243,18 +279,7 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
           }))
         }
       } else {
-        const reqTools = request.tools && request.tools.length > 0
-        body = {
-          model: request.model,
-          max_tokens: request.max_tokens,
-          stream: true,
-          messages: request.messages,
-          ...(reqTools ? { tools: request.tools.map(t => ({
-            type: 'function',
-            function: { name: t.name, description: t.description, parameters: t.input_schema },
-          }))} : {}),
-          ...(request.temperature ? { temperature: request.temperature } : {}),
-        }
+        body = buildOpenAIRequest(request)
       }
 
       // 发送请求（带基础重试）
@@ -263,7 +288,7 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
       const bodyJson = JSON.stringify(body)
       console.log(`[MAIN] request body (first 3000): ${bodyJson.slice(0, 3000)}`)
       for (let attempt = 0; attempt < 5; attempt++) {
-        response = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body) })
+        response = await fetch(url, { method: 'POST', headers, body })
         if (response.ok) break
         const text = await response.text().catch(() => '')
         lastError = `API 请求失败 (${response.status}): ${text || response.statusText}`
@@ -290,7 +315,7 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
       let messageStarted = false
       let blockIndex = 0
 
-      // 累积 OpenAI tool_calls 的增量，直到流结束才 emit content_block_stop
+      // 累积 OpenAI tool_calls 的增量
       const toolCallAccum = new Map<number, { id: string; name: string; args: string }>()
 
       async function* stream(): AsyncGenerator<Record<string, unknown>> {
@@ -315,9 +340,8 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
                     if (!messageStarted) {
                       yield { type: 'message_start', message: { model: request.model } }
                     }
-                    // 仅 flush 尚未通过 finish_reason 关闭的 tool_calls
                     if (toolCallAccum.size > 0) {
-                      for (const [idx, tc] of toolCallAccum) {
+                      for (const [idx] of toolCallAccum) {
                         yield { type: 'content_block_stop', index: idx }
                       }
                       toolCallAccum.clear()
@@ -333,24 +357,23 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
                   console.log(`[SSE] ${JSON.stringify(parsed).slice(0, 2000)}`)
 
                   if (isAnthropic) {
-                    // Anthropic 原生格式：直接透传
-                    if (typeof parsed === 'object' && parsed !== null && (parsed as Record<string, unknown>).type === 'content_block_stop') {
-                      const cb = (parsed as Record<string, unknown>).content_block
-                      if (cb && typeof cb === 'object' && (cb as Record<string, unknown>).type === 'tool_use') {
-                        console.log(`[TOOL] tool_use id=${(cb as Record<string, unknown>).id} name=${(cb as Record<string, unknown>).name} input=${JSON.stringify((cb as Record<string, unknown>).input).slice(0, 1000)}`)
-                      }
-                    }
                     yield parsed
                     messageStarted = true
                   } else {
-                    // OpenAI 格式：转换为 Anthropic 事件
                     const chunk = parsed as OpenAIStreamChunk
                     const choice = chunk.choices?.[0]
                     const delta = choice ? (choice.delta as Record<string, unknown> | undefined) : undefined
 
                     if (choice && (delta || choice.finish_reason)) {
                       if (!messageStarted) {
-                        yield { type: 'message_start', message: { model: chunk.model || request.model, content: [], usage: { input_tokens: chunk.usage?.prompt_tokens ?? 0, output_tokens: 0 } } }
+                        yield {
+                          type: 'message_start',
+                          message: {
+                            model: chunk.model || request.model,
+                            content: [],
+                            usage: { input_tokens: chunk.usage?.prompt_tokens ?? 0, output_tokens: 0 },
+                          },
+                        }
                         messageStarted = true
                       }
 
@@ -363,7 +386,7 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
                         blockIndex++
                       }
 
-                      // 文本增量 — 空字符串仅跳过块创建，不跳过 tool_calls 处理
+                      // 文本增量
                       if (delta && delta.content != null) {
                         const text = delta.content as string
                         if (text !== '') {
@@ -374,7 +397,7 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
                         }
                       }
 
-                      // 工具调用 — 累积增量，不立即 emit content_block_stop
+                      // 工具调用
                       if (delta && Array.isArray(delta.tool_calls)) {
                         for (const tc of delta.tool_calls as Array<Record<string, unknown>>) {
                           const idx = (tc.index as number) ?? 0
@@ -400,12 +423,12 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
                         }
                       }
 
-                      // finish_reason — 工具调用完成时 flush 所有 tool_calls
+                      // finish_reason
                       if (choice.finish_reason) {
                         const stopReason = mapFinishReason(choice.finish_reason as string)
                         console.log(`[TOOL-OAI] finish_reason=${choice.finish_reason} mapped=${stopReason} toolCallAccum.size=${toolCallAccum.size}`)
                         if (toolCallAccum.size > 0) {
-                          for (const [idx, tc] of toolCallAccum) {
+                          for (const [idx] of toolCallAccum) {
                             yield { type: 'content_block_stop', index: idx }
                           }
                           toolCallAccum.clear()
@@ -418,31 +441,31 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
                       yield { type: 'message_delta', delta: { usage: chunk.usage } }
                     }
                   }
-                } catch { /* ignore parse errors */ }
+                } catch {
+                  /* ignore parse errors */
+                }
               }
             }
-          }
-
-          // 非流式响应兜底
-          if (!messageStarted && buffer.trim()) {
-            const maybeParsed = tryParseNonStreamingResponse(buffer.trim(), request.model)
-            if (maybeParsed) {
-              for (const ev of maybeParsed.events) {
-                yield ev
-              }
-              return
-            }
-          }
-
-          if (messageStarted) {
-            yield { type: 'message_stop' }
           }
         } finally {
           reader.releaseLock()
         }
-      }
 
-      return stream()
+        // 非流式响应兜底
+        if (!messageStarted && buffer.trim()) {
+          const maybeParsed = tryParseNonStreamingResponse(buffer.trim(), request.model)
+          if (maybeParsed) {
+            for (const ev of maybeParsed.events) {
+              yield ev
+            }
+            return
+          }
+        }
+
+        if (messageStarted) {
+          yield { type: 'message_stop' }
+        }
+      }
     },
   }
 }
