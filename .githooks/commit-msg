@@ -1,0 +1,26 @@
+#!/bin/sh
+# 自动在提交消息标题后追加时间戳 [yyyy-mm-dd HH:MM:SS]
+# 仅在标题行（第一行）没有时间戳时才追加
+
+COMMIT_MSG_FILE="$1"
+MSG=$(head -n 1 "$COMMIT_MSG_FILE")
+
+# 如果标题已经有时间戳，跳过
+if echo "$MSG" | grep -qE '^\[.+ \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]$'; then
+    exit 0
+fi
+
+TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
+
+# 如果标题已以时间戳结尾（无括号），跳过
+if echo "$MSG" | grep -qE '^.*\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$'; then
+    exit 0
+fi
+
+# 追加时间戳到标题
+NEW_TITLE="${MSG} [${TIMESTAMP}]"
+# 替换文件第一行
+TEMP=$(mktemp)
+echo "$NEW_TITLE" > "$TEMP"
+tail -n +2 "$COMMIT_MSG_FILE" >> "$TEMP"
+mv "$TEMP" "$COMMIT_MSG_FILE"

@@ -112,6 +112,12 @@ bun run build
 
 项目使用 GitHub Actions（.github/workflows/）进行 CI。
 
+## 提交规范
+
+- **时间戳**：所有提交消息标题末尾必须追加 ` [yyyy-mm-dd HH:MM:SS]` 格式的时间戳
+- **.gitignore**：每次提交必须同步暂存 `.gitignore`，将新出现的构建产物/临时目录纳入忽略规则
+- 自动通过 `.git/hooks/commit-msg` hook 追加时间戳，无需手动添加
+
 ## 权限与安全
 
 - 权限检查通过 PermissionManager 接口
