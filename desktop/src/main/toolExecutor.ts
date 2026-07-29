@@ -71,6 +71,9 @@ function buildToolContext(config: EngineConfig): ToolUseContext {
 
 export function createAdaptedTools(config: EngineConfig) {
   const srcTools = getAllBaseTools()
+  console.log('[TOOLEXEC] getAllBaseTools returned', srcTools.length, 'tools',
+    srcTools.map(t => t.name).slice(0, 10).join(', '))
+
   const adaptedTools = new Map<string, {
     name: string
     description: string
@@ -82,7 +85,10 @@ export function createAdaptedTools(config: EngineConfig) {
   const ctx = buildToolContext(config)
 
   for (const srcTool of srcTools) {
-    if (!srcTool || !srcTool.name) continue
+    if (!srcTool || !srcTool.name) {
+      console.log('[TOOLEXEC] skip tool (no name):', JSON.stringify(srcTool).slice(0, 100))
+      continue
+    }
     ctx.options.tools = srcTools
 
     adaptedTools.set(srcTool.name, {

@@ -102,53 +102,54 @@ function getSyntaxColors(isDark: boolean): SyntaxColors {
 }
 
 // ─── 轻量语法高亮（主题感知） ───
-function highlightCode(code: string, lang: string, isDark = true): string {
+function highlightCode(code: string, lang: string, isDark = true, fontSize?: number): string {
   const c = getSyntaxColors(isDark)
+  const fs = fontSize ? `font-size:${fontSize}px;` : ''
   let result = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
   if (['typescript', 'ts', 'javascript', 'js'].includes(lang)) {
-    result = result.replace(/(?:"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g, '<span style="color:#CE9178">$1</span>')
-    result = result.replace(/\b(const|let|var|function|return|if|else|for|while|class|import|export|from|async|await|try|catch|throw|new|this|typeof|instanceof|interface|type|extends|implements|static|get|set|yield|of|in|switch|case|break|default|void|null|undefined|true|false)\b/g, '<span style="color:#569CD6">$1</span>')
-    result = result.replace(/\b(\d+\.?\d*)\b/g, '<span style="color:#B5CEA8">$1</span>')
-    result = result.replace(/(\/\/[^\n]*)/g, '<span style="color:#6A9955">$1</span>')
-    result = result.replace(/(\/\*[\s\S]*?\*\/)/g, '<span style="color:#6A9955">$1</span>')
+    result = result.replace(/(?:"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g, '<span style="color:' + c.string + '">$1</span>')
+    result = result.replace(/\b(const|let|var|function|return|if|else|for|while|class|import|export|from|async|await|try|catch|throw|new|this|typeof|instanceof|interface|type|extends|implements|static|get|set|yield|of|in|switch|case|break|default|void|null|undefined|true|false)\b/g, '<span style="color:' + c.keyword + '">$1</span>')
+    result = result.replace(/\b(\d+\.?\d*)\b/g, '<span style="color:' + c.number + '">$1</span>')
+    result = result.replace(/(\/\/[^\n]*)/g, '<span style="color:' + c.comment + '">$1</span>')
+    result = result.replace(/(\/\*[\s\S]*?\*\/)/g, '<span style="color:' + c.comment + '">$1</span>')
   } else if (lang === 'json') {
-    result = result.replace(/("(?:[^"\\]|\\.)*")\s*:/g, '<span style="color:#9CDCFE">$1</span>:')
-    result = result.replace(/:\s*("(?:[^"\\]|\\.)*")/g, ': <span style="color:#CE9178">$1</span>')
-    result = result.replace(/:\s*(\d+\.?\d*)/g, ': <span style="color:#B5CEA8">$1</span>')
-    result = result.replace(/:\s*(true|false|null)/g, ': <span style="color:#569CD6">$1</span>')
+    result = result.replace(/("(?:[^"\\]|\\.)*")\s*:/g, '<span style="color:' + c.property + '">$1</span>:')
+    result = result.replace(/:\s*("(?:[^"\\]|\\.)*")/g, ': <span style="color:' + c.string + '">$1</span>')
+    result = result.replace(/:\s*(\d+\.?\d*)/g, ': <span style="color:' + c.number + '">$1</span>')
+    result = result.replace(/:\s*(true|false|null)/g, ': <span style="color:' + c.keyword + '">$1</span>')
   } else if (['css', 'scss'].includes(lang)) {
-    result = result.replace(/\.([\w-]+)/g, '.<span style="color:#9CDCFE">$1</span>')
-    result = result.replace(/([\w-]+)\s*:/g, '<span style="color:#9CDCFE">$1</span>:')
-    result = result.replace(/(#[0-9a-fA-F]{3,8})\b/g, '<span style="color:#CE9178">$1</span>')
-    result = result.replace(/\b(\d+\.?\d*(?:px|em|rem|%|vh|vw|s|ms)?)\b/g, '<span style="color:#B5CEA8">$1</span>')
+    result = result.replace(/\.([\w-]+)/g, '.<span style="color:' + c.property + '">$1</span>')
+    result = result.replace(/([\w-]+)\s*:/g, '<span style="color:' + c.property + '">$1</span>:')
+    result = result.replace(/(#[0-9a-fA-F]{3,8})\b/g, '<span style="color:' + c.string + '">$1</span>')
+    result = result.replace(/\b(\d+\.?\d*(?:px|em|rem|%|vh|vw|s|ms)?)\b/g, '<span style="color:' + c.number + '">$1</span>')
   } else if (lang === 'html') {
-    result = result.replace(/(&lt;\/?)([\w-]+)/g, '$1<span style="color:#569CD6">$2</span>')
-    result = result.replace(/([\w-]+)=/g, '<span style="color:#9CDCFE">$1</span>=')
-    result = result.replace(/="([^"]*)"/g, '=<span style="color:#CE9178">"$1"</span>')
+    result = result.replace(/(&lt;\/?)([\w-]+)/g, '$1<span style="color:' + c.keyword + '">$2</span>')
+    result = result.replace(/([\w-]+)=/g, '<span style="color:' + c.property + '">$1</span>=')
+    result = result.replace(/="([^"]*)"/g, '=<span style="color:' + c.string + '">"$1"</span>')
   } else if (lang === 'python' || lang === 'py') {
-    result = result.replace(/(?:"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*'|"""[\s\S]*?"""|'''[\s\S]*?''')/g, '<span style="color:#CE9178">$1</span>')
-    result = result.replace(/\b(def|class|return|if|elif|else|for|while|import|from|as|try|except|with|yield|lambda|pass|break|continue|and|or|not|in|is|True|False|None|self|async|await)\b/g, '<span style="color:#569CD6">$1</span>')
-    result = result.replace(/#[^\n]*/g, '<span style="color:#6A9955">$&</span>')
-    result = result.replace(/\b(\d+\.?\d*)\b/g, '<span style="color:#B5CEA8">$1</span>')
+    result = result.replace(/(?:"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*'|"""[\s\S]*?"""|'''[\s\S]*?''')/g, '<span style="color:' + c.string + '">$1</span>')
+    result = result.replace(/\b(def|class|return|if|elif|else|for|while|import|from|as|try|except|with|yield|lambda|pass|break|continue|and|or|not|in|is|True|False|None|self|async|await)\b/g, '<span style="color:' + c.keyword + '">$1</span>')
+    result = result.replace(/#[^\n]*/g, '<span style="color:' + c.comment + '">$&</span>')
+    result = result.replace(/\b(\d+\.?\d*)\b/g, '<span style="color:' + c.number + '">$1</span>')
   } else if (['bash', 'sh', 'shell'].includes(lang)) {
-    result = result.replace(/(#.*)$/gm, '<span style="color:#6A9955">$1</span>')
-    result = result.replace(/\b(echo|cd|ls|rm|cp|mv|mkdir|cat|grep|find|sed|awk|git|npm|bun|node|export|source|sudo|chmod|chown|pwd|touch|head|tail|wc|sort|uniq|diff|tar|zip|curl|wget)\b/g, '<span style="color:#569CD6">$1</span>')
+    result = result.replace(/(#.*)$/gm, '<span style="color:' + c.comment + '">$1</span>')
+    result = result.replace(/\b(echo|cd|ls|rm|cp|mv|mkdir|cat|grep|find|sed|awk|git|npm|bun|node|export|source|sudo|chmod|chown|pwd|touch|head|tail|wc|sort|uniq|diff|tar|zip|curl|wget)\b/g, '<span style="color:' + c.keyword + '">$1</span>')
   } else if (lang === 'sql') {
-    result = result.replace(/\b(SELECT|FROM|WHERE|AND|OR|INSERT|UPDATE|DELETE|CREATE|DROP|ALTER|TABLE|INDEX|JOIN|ON|GROUP|BY|ORDER|HAVING|LIMIT|OFFSET|AS|IN|NOT|NULL|IS|LIKE|BETWEEN|EXISTS|CASE|WHEN|THEN|ELSE|END|UNION|ALL|DISTINCT|COUNT|SUM|AVG|MAX|MIN|INTO|VALUES|SET|PRIMARY|KEY|FOREIGN|REFERENCES|CONSTRAINT|DEFAULT|CHECK|VIEW)\b/gi, '<span style="color:#569CD6">$1</span>')
+    result = result.replace(/\b(SELECT|FROM|WHERE|AND|OR|INSERT|UPDATE|DELETE|CREATE|DROP|ALTER|TABLE|INDEX|JOIN|ON|GROUP|BY|ORDER|HAVING|LIMIT|OFFSET|AS|IN|NOT|NULL|IS|LIKE|BETWEEN|EXISTS|CASE|WHEN|THEN|ELSE|END|UNION|ALL|DISTINCT|COUNT|SUM|AVG|MAX|MIN|INTO|VALUES|SET|PRIMARY|KEY|FOREIGN|REFERENCES|CONSTRAINT|DEFAULT|CHECK|VIEW)\b/gi, '<span style="color:' + c.keyword + '">$1</span>')
   } else if (['yaml', 'yml'].includes(lang)) {
-    result = result.replace(/^(\s*)([\w-]+)(\s*:)/gm, '$1<span style="color:#9CDCFE">$2</span>$3')
-    result = result.replace(/:\s*("(?:[^"\\]|\\.)*")/g, ': <span style="color:#CE9178">$1</span>')
-    result = result.replace(/:\s*(\d+\.?\d*)/g, ': <span style="color:#B5CEA8">$1</span>')
-    result = result.replace(/(#[^\n]*)/g, '<span style="color:#6A9955">$1</span>')
+    result = result.replace(/^(\s*)([\w-]+)(\s*:)/gm, '$1<span style="color:' + c.property + '">$2</span>$3')
+    result = result.replace(/:\s*("(?:[^"\\]|\\.)*")/g, ': <span style="color:' + c.string + '">$1</span>')
+    result = result.replace(/:\s*(\d+\.?\d*)/g, ': <span style="color:' + c.number + '">$1</span>')
+    result = result.replace(/(#[^\n]*)/g, '<span style="color:' + c.comment + '">$1</span>')
   } else if (['markdown', 'md'].includes(lang)) {
-    result = result.replace(/^(#{1,6}\s.+)$/gm, '<span style="color:#569CD6">$1</span>')
-    result = result.replace(/(\*\*[^*]+\*\*|__[^_]+__)/g, '<span style="color:#CE9178">$1</span>')
-    result = result.replace(/(`[^`]+`)/g, '<span style="color:#CE9178">$1</span>')
+    result = result.replace(/^(#{1,6}\s.+)$/gm, '<span style="color:' + c.keyword + '">$1</span>')
+    result = result.replace(/(\*\*[^*]+\*\*|__[^_]+__)/g, '<span style="color:' + c.string + '">$1</span>')
+    result = result.replace(/(`[^`]+`)/g, '<span style="color:' + c.string + '">$1</span>')
   } else if (['rust', 'rs'].includes(lang)) {
-    result = result.replace(/\b(fn|let|mut|pub|struct|enum|impl|trait|use|mod|where|for|in|if|else|match|return|loop|while|break|continue|move|async|await|unsafe|dyn|type|const|static|ref|self|super|crate|true|false|Some|None|Ok|Err|Result|Option|Vec|String|Box|Rc|Arc)\b/g, '<span style="color:#569CD6">$1</span>')
-    result = result.replace(/("(?:[^"\\]|\\.)*")/g, '<span style="color:#CE9178">$1</span>')
-    result = result.replace(/\/\/[^\n]*/g, '<span style="color:#6A9955">$&</span>')
+    result = result.replace(/\b(fn|let|mut|pub|struct|enum|impl|trait|use|mod|where|for|in|if|else|match|return|loop|while|break|continue|move|async|await|unsafe|dyn|type|const|static|ref|self|super|crate|true|false|Some|None|Ok|Err|Result|Option|Vec|String|Box|Rc|Arc)\b/g, '<span style="color:' + c.keyword + '">$1</span>')
+    result = result.replace(/("(?:[^"\\]|\\.)*")/g, '<span style="color:' + c.string + '">$1</span>')
+    result = result.replace(/\/\/[^\n]*/g, '<span style="color:' + c.comment + '">$&</span>')
   }
 
   return result
@@ -161,6 +162,7 @@ export function App(): JSX.Element {
   const [input, setInput] = useState('')
   const [pendingImages, setPendingImages] = useState<Array<{ id: string; url: string; name: string }>>([])
   const [state, setState] = useState<QueryState>('idle')
+  const stateRef = useRef('idle')
   const [isSending, setIsSending] = useState(false)
   const [currentStreaming, setCurrentStreaming] = useState('')
   const currentStreamingRef = useRef('')
@@ -280,9 +282,20 @@ export function App(): JSX.Element {
   const tabMgr = useTabManager()
 
   const effectiveTheme = getEffectiveTheme(themeSettings.theme as ThemeName | 'auto')
-  const styles = getStyles(effectiveTheme)
+  const styles = getStyles(effectiveTheme, themeSettings.fontSize)
   const theme = THEMES[effectiveTheme]
   const c = theme
+
+  // ─── Ctrl+滚轮缩放 ───
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault()
+      setThemeSettings(prev => ({
+        ...prev,
+        fontSize: Math.min(24, Math.max(8, prev.fontSize + (e.deltaY < 0 ? 1 : -1)))
+      }))
+    }
+  }, [])
 
   // 切换到指定 tab
   const switchTab = useCallback((tabId: string) => {
@@ -611,7 +624,7 @@ export function App(): JSX.Element {
   }, [])
 
   useEffect(() => {
-    const unsub1 = window.dogeAPI.onStateChange((s) => setState(s as QueryState))
+    const unsub1 = window.dogeAPI.onStateChange((s) => { stateRef.current = s; setState(s as QueryState) })
     const unsub2 = window.dogeAPI.onChunk((chunk) => {
       tsLog('RENDERER', 'onChunk received:', chunk.text?.slice(0, 50))
       setCurrentStreaming((p) => {
@@ -713,6 +726,115 @@ export function App(): JSX.Element {
       setMessages(initialMsgs)
     }
   }, [loaded, tabs.length, currentSessionId])
+
+  // ─── 自动测试命令序列（启动后自动执行，在 UI 中显示结果） ───
+  useEffect(() => {
+    if (!loaded || !currentSessionId) return
+
+    const TEST_CMDS = [
+      '使用 dir 命令列出当前工作目录的文件和文件夹',
+      '使用 ls 命令列出当前目录内容',
+      '使用 pwd 命令显示当前工作目录路径',
+      '使用 echo 命令输出 "Doge Code Desktop 自动测试完成"',
+      '请帮我查看项目根目录下的 src/main/index.ts 文件内容，使用 cat 命令读取',
+    ]
+
+    let cancelled = false
+    let cmdIndex = 0
+
+    async function sendNext(): Promise<void> {
+      if (cancelled || cmdIndex >= TEST_CMDS.length) return
+      const cmd = TEST_CMDS[cmdIndex++]
+      tsLog('AUTO-TEST', `[${cmdIndex}/${TEST_CMDS.length}] 发送: ${cmd}`)
+
+      // 标记系统提示
+      const sysMsg: Message = {
+        id: `auto-sys-${Date.now()}`,
+        role: 'system',
+        content: `[自动测试 ${cmdIndex}/${TEST_CMDS.length}] 执行命令: ${cmd}`,
+      }
+      const appendMsg = (msg: Message) => {
+        setMessages(prev => { const next = [...prev, msg]; persistActiveTabMessages(next); return next })
+      }
+      appendMsg(sysMsg)
+
+      // 每次发送前新建会话，避免 conversation 累积导致 API 格式错误
+      await window.dogeAPI.newSession()
+      setCurrentSessionId(null)
+
+      try {
+        const result = await window.dogeAPI.sendMessage(cmd)
+        setCurrentStreaming(''); currentStreamingRef.current = ''
+        if (result?.error) {
+          const errMsgEl: Message = {
+            id: `auto-err-${Date.now()}`,
+            role: 'error',
+            content: `[自动测试错误] ${result.error}`,
+          }
+          appendMsg(errMsgEl)
+        } else {
+          const finalContent = result?.content || currentStreamingRef.current
+          if (finalContent) {
+            const asstMsg: Message = {
+              id: `auto-asst-${Date.now()}`,
+              role: 'assistant',
+              content: finalContent,
+            }
+            appendMsg(asstMsg)
+          } else {
+            // 文本内容为空但命令可能已通过工具执行成功，获取历史消息显示工具结果
+            try {
+              const history = await window.dogeAPI.getHistory()
+              const allMsgs = history.messages || []
+              const toolResult = allMsgs.filter(m => m.role === 'system' && typeof m.content === 'string' && m.content.includes('"success":true'))
+              if (toolResult.length > 0) {
+                const lastResult = toolResult[toolResult.length - 1].content
+                let display = lastResult
+                try {
+                  const parsed = JSON.parse(lastResult)
+                  if (typeof parsed.output === 'string') {
+                    const ec = parsed.exitCode
+                    const suffix = (ec === 0 || ec === null) ? '' : `[exit code: ${ec}]\n`
+                    display = suffix + parsed.output.replace(/\u001b\[[0-9;]*m/g, '')
+                  }
+                } catch { /* raw */ }
+                appendMsg({ id: `auto-asst-${Date.now()}`, role: 'assistant', content: display })
+              } else if (allMsgs.length > 1) {
+                appendMsg({ id: `auto-asst-${Date.now()}`, role: 'assistant', content: '(命令已执行，无文本输出)' })
+              }
+            } catch { /* ignore */ }
+          }
+        }
+      } catch (e) {
+        const errMsg = e instanceof Error ? e.message : '发送失败'
+        tsLog('AUTO-TEST', '发送失败:', errMsg)
+        const errMsgEl: Message = {
+          id: `auto-err-${Date.now()}`,
+          role: 'error',
+          content: `[自动测试错误] ${errMsg}`,
+        }
+        appendMsg(errMsgEl)
+      }
+
+      // 等待响应完成（state 回到 idle 或 crashed）
+      await new Promise<void>(resolve => {
+        const check = setInterval(() => {
+          if (cancelled || stateRef.current === 'idle' || stateRef.current === 'crashed') { clearInterval(check); resolve() }
+        }, 300)
+        setTimeout(() => { clearInterval(check); resolve() }, 90000)
+      })
+
+      // 间隔 2s 再发下一条
+      if (!cancelled && cmdIndex < TEST_CMDS.length) {
+        await new Promise(r => setTimeout(r, 2000))
+        sendNext()
+      }
+    }
+
+    // 延迟 3s 启动（等 UI 完全就绪）
+    const startTimer = setTimeout(() => sendNext(), 3000)
+    return () => { cancelled = true; clearTimeout(startTimer) }
+  }, [loaded, currentSessionId])
 
   const handleLoadSession = useCallback(async (sessionId: string) => {
     const result = await window.dogeAPI.loadSession(sessionId)
@@ -1243,7 +1365,7 @@ export function App(): JSX.Element {
 
   return (
     <ThemeContext.Provider value={{ name: effectiveTheme, colors: theme, styles }}>
-      <div style={styles.container}>
+      <div style={styles.container} onWheel={handleWheel}>
         {toast && (
           <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', padding: '8px 20px', borderRadius: '6px', background: toast.type === 'error' ? theme.errorBg : `${theme.accent}22`, color: toast.type === 'error' ? theme.errorText : theme.accent, fontSize: '12px', fontWeight: 600, zIndex: 1000, boxShadow: `0 4px 12px ${theme.bg}80`, transition: 'opacity 0.3s' }}>
             {toast.text}
@@ -1409,7 +1531,7 @@ export function App(): JSX.Element {
               <div style={{ padding: '16px', color: c.textFaint, fontSize: '12px' }}>开始新对话</div>
             ) : (
               (() => {
-                const turns: Array<{ userMsg: Message; assistantMsg: Message | null }> = []
+                const turns: Array<{ userMsg: Message; assistantMsg: Message | null; isSystem?: boolean }> = []
                 let i = 0
                 while (i < displayMessages.length) {
                   if (displayMessages[i].role === 'user') {
@@ -1419,25 +1541,43 @@ export function App(): JSX.Element {
                   } else if (displayMessages[i].role === 'assistant') {
                     turns.push({ userMsg: { id: '', role: 'user' as const, content: '(系统)' }, assistantMsg: displayMessages[i] })
                     i++
+                  } else if (displayMessages[i].role === 'system' || displayMessages[i].role === 'error') {
+                    turns.push({ userMsg: displayMessages[i], assistantMsg: null, isSystem: true })
+                    i++
                   } else { i++ }
                 }
                 if (turns.length === 0 && currentStreaming) {
                   const lastUser = [...displayMessages].reverse().find(m => m.role === 'user')
                   if (lastUser) turns.push({ userMsg: lastUser, assistantMsg: null })
                 }
-                return turns.map((turn, idx) => (
-                  <div key={idx} style={{ padding: '6px 12px', borderBottom: `1px solid ${c.borderSubtle}`, cursor: 'pointer' }}>
-                    <div style={{ fontSize: '12px', color: c.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: '1.4' }}>
-                      <span style={{ color: c.accent, marginRight: '4px' }}>❯</span>
-                      {turn.userMsg.content || '(空消息)'}
+                return turns.map((turn, idx) => {
+                  const isSystem = turn.isSystem
+                  return (
+                    <div key={idx} style={{
+                      padding: '6px 12px',
+                      borderBottom: `1px solid ${c.borderSubtle}`,
+                      background: isSystem ? 'rgba(255,255,255,0.03)' : 'transparent',
+                    }}>
+                      {isSystem ? (
+                        <div style={{ fontSize: '11px', color: turn.userMsg.role === 'error' ? '#FF6B6B' : c.textFaint, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: '1.5', fontFamily: 'monospace' }}>
+                          {turn.userMsg.content}
+                        </div>
+                      ) : (
+                        <>
+                          <div style={{ fontSize: '12px', color: c.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: '1.4' }}>
+                            <span style={{ color: c.accent, marginRight: '4px' }}>❯</span>
+                            {turn.userMsg.content || '(空消息)'}
+                          </div>
+                          {turn.assistantMsg && (
+                            <div style={{ fontSize: '10px', color: c.textFaint, marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingLeft: '12px' }}>
+                              {turn.assistantMsg.content.slice(0, 60)}
+                            </div>
+                          )}
+                        </>
+                      )}
                     </div>
-                    {turn.assistantMsg && (
-                      <div style={{ fontSize: '10px', color: c.textFaint, marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingLeft: '12px' }}>
-                        {turn.assistantMsg.content.slice(0, 60)}
-                      </div>
-                    )}
-                  </div>
-                ))
+                  )
+                })
               })()
             )}
           </div>
@@ -1664,10 +1804,10 @@ export function App(): JSX.Element {
               )}
               {activePreviewFile && (
                 <div style={{ flex: 1, overflowY: 'auto', padding: '8px', borderBottom: `1px solid ${c.border}`, maxHeight: '50%' }}>
-                  {previewLoading && <div style={{ color: c.textMuted, fontSize: '11px', textAlign: 'center' }}>加载中...</div>}
-                  {previewError && <div style={{ color: c.errorText, fontSize: '11px' }}>{previewError}</div>}
+                  {previewLoading && <div style={{ color: c.textMuted, fontSize: `${themeSettings.fontSize}px`, textAlign: 'center' }}>加载中...</div>}
+                  {previewError && <div style={{ color: c.errorText, fontSize: `${themeSettings.fontSize}px` }}>{previewError}</div>}
                   <div>
-                    <div style={{ fontSize: '10px', color: c.textMuted, marginBottom: '6px', display: 'flex', justifyContent: 'space-between' }}>
+                    <div style={{ fontSize: `${Math.max(8, themeSettings.fontSize - 3)}px`, color: c.textMuted, marginBottom: '6px', display: 'flex', justifyContent: 'space-between' }}>
                       <span>{activePreviewFile.path}</span>
                       <span>{activePreviewFile.size != null ? `${(activePreviewFile.size / 1024).toFixed(1)} KB` : ''} {activePreviewFile.content ? `${activePreviewFile.content.split('\n').length} 行` : ''}</span>
                     </div>
@@ -1675,7 +1815,7 @@ export function App(): JSX.Element {
                       <textarea
                         value={editContent}
                         onChange={(e) => setEditContent(e.target.value)}
-                        style={{ width: '100%', minHeight: '200px', background: c.bgAlt, border: `1px solid ${c.accent}`, borderRadius: '4px', padding: '8px', color: c.text, fontSize: '11px', fontFamily: 'Consolas, Monaco, monospace', lineHeight: '1.5', resize: 'vertical', outline: 'none', whiteSpace: 'pre', overflowWrap: 'normal', overflowX: 'auto' }}
+                        style={{ width: '100%', minHeight: '200px', background: c.bgAlt, border: `1px solid ${c.accent}`, borderRadius: '4px', padding: '8px', color: c.text, fontSize: `${themeSettings.fontSize}px`, fontFamily: 'Consolas, Monaco, monospace', lineHeight: '1.5', resize: 'vertical', outline: 'none', whiteSpace: 'pre', overflowWrap: 'normal', overflowX: 'auto' }}
                         onKeyDown={(e) => { if (e.key === 's' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); handleSaveEdit() } }}
                       />
                     ) : (
@@ -1684,12 +1824,12 @@ export function App(): JSX.Element {
                         const langMap: Record<string, string> = { ts: 'typescript', tsx: 'typescript', js: 'javascript', jsx: 'javascript', py: 'python', rb: 'ruby', sh: 'bash', yml: 'yaml', md: 'markdown', rs: 'rust', cpp: 'cpp', c: 'c', go: 'go', java: 'java', php: 'php', xml: 'html', json: 'json', css: 'css', scss: 'css', html: 'html', sql: 'sql', bash: 'bash', yaml: 'yaml', markdown: 'markdown', typescript: 'typescript', javascript: 'javascript', python: 'python', rust: 'rust', ruby: 'ruby' }
                         const codeExts = ['ts','tsx','js','jsx','py','css','html','json','md','bash','sh','yaml','yml','sql','rust','go','java','c','cpp','php','ruby','rs','toml','ini','env','conf','xml','svg','tex','r','swift','kt','kts','scala','hs','lua','vim','dockerfile','makefile','gitignore']
                         const detectedLang = langMap[ext] || (codeExts.includes(ext) ? ext : '')
-                        const highlighted = detectedLang ? highlightCode(activePreviewFile.content || '', detectedLang) : null
+                        const highlighted = detectedLang ? highlightCode(activePreviewFile.content || '', detectedLang, effectiveTheme !== 'light', themeSettings.fontSize) : null
                         if (highlighted !== null) {
                           const codeLines = activePreviewFile.content.split('\n')
                           const lineNums = codeLines.map((_, i) => i + 1).join('\n')
                           return (
-                            <pre style={{ display: 'flex', background: c.codeBg, border: `1px solid ${c.border}`, borderRadius: '4px', fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', maxHeight: '300px', margin: 0 }}>
+                            <pre style={{ display: 'flex', background: c.codeBg, border: `1px solid ${c.border}`, borderRadius: '4px', fontSize: `${themeSettings.fontSize}px`, lineHeight: '1.5', overflowX: 'auto', maxHeight: '300px', margin: 0 }}>
                               <div style={{ color: c.textFaint, textAlign: 'right', paddingRight: '8px', userSelect: 'none', minWidth: '36px', borderRight: `1px solid ${c.borderSubtle}`, flexShrink: 0 }}>
                                 {lineNums.split('\n').map((n, i) => (<div key={i} style={{ height: '1.5em' }}>{n}</div>))}
                               </div>

@@ -59,7 +59,7 @@ export function GitDiff({ cwd, filePath, theme }: GitDiffProps) {
         </button>
       </div>
       <div style={{ maxHeight: '400px', overflow: 'auto' }}>
-        <HighlightedDiff diffText={diff} />
+        <HighlightedDiff diffText={diff} theme={theme} />
       </div>
     </div>
   )

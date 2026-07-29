@@ -2,7 +2,7 @@
  * 主题定义和样式生成
  */
 
-import type { CSSProperties } from 'react'
+import React, { type CSSProperties } from 'react'
 
 export type ThemeName = 'dark' | 'light'
 
@@ -34,10 +34,19 @@ export const THEMES: Record<ThemeName, ThemeColors> = {
   },
 }
 
-export function getStyles(theme: ThemeName): Record<string, CSSProperties> {
+export interface ThemeCtx {
+  name: ThemeName
+  colors: ThemeColors
+  styles: Record<string, CSSProperties>
+}
+
+export const ThemeContext = React.createContext<ThemeCtx>({ name: 'dark', colors: THEMES.dark, styles: getStyles('dark') })
+
+export function getStyles(theme: ThemeName, fontSize?: number): Record<string, CSSProperties> {
   const c = THEMES[theme]
+  const baseFs = fontSize || 13
   return {
-    container: { display: 'flex', height: '100vh', backgroundColor: c.bg, color: c.text, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', fontSize: '13px' },
+    container: { display: 'flex', height: '100vh', backgroundColor: c.bg, color: c.text, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', fontSize: `${baseFs}px` },
     sidebar: { width: 260, minWidth: 260, backgroundColor: c.bgAlt, borderRight: `1px solid ${c.border}`, display: 'flex', flexDirection: 'column' },
     sidebarHeader: { padding: '16px', borderBottom: `1px solid ${c.border}`, fontSize: '16px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' },
     modelBadge: { padding: '4px 10px', fontSize: '11px', backgroundColor: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '4px', color: c.textMuted },

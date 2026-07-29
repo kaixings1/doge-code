@@ -77,7 +77,6 @@ export class StreamProcessor {
     if (delta.type === "text_delta") {
       const chunk = { type: "text", text: delta.text, index: event.index }
       this.buffer.push(chunk)
-      if (this.onChunkCallback) this.onChunkCallback(chunk)
       return { type: "content_block_delta", chunk }
     }
     if (delta.type === "input_json_delta") {
@@ -93,7 +92,11 @@ export class StreamProcessor {
     if (!this.currentBlock) return { type: "content_block_stop", block: null }
     const blockChunks = this.buffer.filter((c) => c.index === event.index)
     if (this.currentBlock.type === "text") {
-      this.currentBlock.text = blockChunks.filter((c) => c.type === "text").map((c) => c.text ?? "").join("")
+      const fullText = blockChunks.filter((c) => c.type === "text").map((c) => c.text || "").join("")
+      this.currentBlock.text = fullText
+      if (this.onChunkCallback && fullText) {
+        this.onChunkCallback({ type: "text", text: fullText })
+      }
     }
     if (this.currentBlock.type === "tool_use") {
       if (this.currentBlock.input === null || this.currentBlock.input === undefined) {
