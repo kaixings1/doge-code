@@ -96,6 +96,7 @@ function sanitizeToolSchema(schema: Record<string, unknown>): Record<string, unk
 // ─── 构建 OpenAI Chat Completions 请求体 ───
 
 function buildOpenAIRequest(request: APIRequest): OpenAIChatRequest {
+  console.log('[APICLIENT] request.tools raw:', JSON.stringify(request.tools || []).slice(0, 500))
   const messages: OpenAIChatMessage[] = []
 
   for (const m of request.messages || []) {
@@ -282,13 +283,15 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
         body = buildOpenAIRequest(request)
       }
 
-      // 发送请求（带基础重试）
+      // 发送请求（带基础重试 + 400 时无工具兜底）
       let response: Response | null = null
       let lastError = ''
       const bodyJson = JSON.stringify(body)
       console.log(`[MAIN] request body (first 3000): ${bodyJson.slice(0, 3000)}`)
+      let retryBody = bodyJson
+      let strippedTools = false
       for (let attempt = 0; attempt < 5; attempt++) {
-        response = await fetch(url, { method: 'POST', headers, body })
+        response = await fetch(url, { method: 'POST', headers, body: retryBody })
         if (response.ok) break
         const text = await response.text().catch(() => '')
         lastError = `API 请求失败 (${response.status}): ${text || response.statusText}`
@@ -299,6 +302,13 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
         } else if (response.status >= 500) {
           console.warn(`[MAIN] ${response.status} 服务器错误，重试 (${attempt + 1}/5)...`)
           await new Promise(resolve => setTimeout(resolve, 3000 * (attempt + 1)))
+        } else if (response.status === 400 && !strippedTools) {
+          const cleanBody = { ...(body as Record<string, unknown>) }
+          delete cleanBody.tools
+          retryBody = JSON.stringify(cleanBody)
+          strippedTools = true
+          console.warn(`[MAIN] 400 请求格式错误，去掉 tools 重试 (${attempt + 1}/5)...`)
+          await new Promise(resolve => setTimeout(resolve, 1000))
         } else {
           console.error(`[MAIN] API error: ${response.status}, body: ${text?.slice(0, 200)}`)
           throw new Error(lastError)
@@ -309,19 +319,45 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
       }
       console.log(`[MAIN] API response: ${response.status}, content-type: ${response.headers.get('content-type')}`)
 
-      const reader = response.body!.getReader()
-      const decoder = new TextDecoder()
-      let buffer = ''
-      let messageStarted = false
-      let blockIndex = 0
-
-      // 累积 OpenAI tool_calls 的增量
-      const toolCallAccum = new Map<number, { id: string; name: string; args: string }>()
-
       async function* stream(): AsyncGenerator<Record<string, unknown>> {
+        // 非流式兜底：Electron fetch 可能不暴露 response.body
+        if (!response!.body) {
+          const fullText = await response!.text()
+          const maybeParsed = tryParseNonStreamingResponse(fullText, request.model)
+          if (maybeParsed) {
+            for (const ev of maybeParsed.events) {
+              yield ev
+            }
+            return
+          }
+          throw new Error(`API 返回非流式响应但无法解析: ${fullText.slice(0, 500)}`)
+        }
+
+        let streamReader: ReadableStreamDefaultReader | null
         try {
+          if (response!.body) {
+            streamReader = response!.body.getReader()
+          }
+          const decoder = new TextDecoder()
+          let textBuffer = ''
+          let buffer = ''
+          let messageStarted = false
+          let blockIndex = 0
+          const toolCallAccum = new Map<number, { id: string; name: string; args: string }>()
+          if (!streamReader) {
+            const fullText = await response!.text()
+            const maybeParsed = tryParseNonStreamingResponse(fullText, request.model)
+            if (maybeParsed) {
+              for (const ev of maybeParsed.events) {
+                yield ev
+              }
+              return
+            }
+            throw new Error(`API 返回非流式响应但无法解析: ${fullText.slice(0, 500)}`)
+          }
+
           while (true) {
-            const { done, value } = await reader.read()
+            const { done, value } = await streamReader.read()
             if (done) break
 
             buffer += decoder.decode(value, { stream: true })
@@ -386,14 +422,17 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
                         blockIndex++
                       }
 
-                      // 文本增量
+                      // 文本增量 —— 累积到同一个 block
                       if (delta && delta.content != null) {
                         const text = delta.content as string
                         if (text !== '') {
-                          yield { type: 'content_block_start', index: blockIndex, content_block: { type: 'text', text: '' } }
+                          if (!textBuffer) {
+                            textBuffer = text
+                            yield { type: 'content_block_start', index: blockIndex, content_block: { type: 'text', text: '' } }
+                          } else {
+                            textBuffer += text
+                          }
                           yield { type: 'content_block_delta', index: blockIndex, delta: { type: 'text_delta', text } }
-                          yield { type: 'content_block_stop', index: blockIndex }
-                          blockIndex++
                         }
                       }
 
@@ -448,7 +487,9 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
             }
           }
         } finally {
-          reader.releaseLock()
+          if (streamReader) {
+            streamReader.releaseLock()
+          }
         }
 
         // 非流式响应兜底
@@ -466,8 +507,10 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
           yield { type: 'message_stop' }
         }
       }
+      return stream()
     },
   }
 }
 
 export type DesktopApiClient = ReturnType<typeof createDesktopApiClient>
+

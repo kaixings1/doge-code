@@ -68,55 +68,56 @@ export function parseMessageContent(content: string): ContentBlock[] {
 }
 
 // ─── 轻量语法高亮 ───
-function highlightCode(code: string, lang: string): string {
+function highlightCode(code: string, lang: string, isDark: boolean = true): string {
+  const c = { string: isDark ? '#CE9178' : '#A31515', keyword: isDark ? '#569CD6' : '#0000FF', number: isDark ? '#B5CEA8' : '#098658', comment: isDark ? '#6A9955' : '#008000', property: isDark ? '#9CDCFE' : '#001080' }
   let result = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
   if (['typescript', 'ts', 'javascript', 'js'].includes(lang)) {
-    result = result.replace(/(?:"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g, '<span style="color:#CE9178">$1</span>')
-    result = result.replace(/\b(const|let|var|function|return|if|else|for|while|class|import|export|from|async|await|try|catch|throw|new|this|typeof|instanceof|interface|type|extends|implements|static|get|set|yield|of|in|switch|case|break|default|void|null|undefined|true|false)\b/g, '<span style="color:#569CD6">$1</span>')
-    result = result.replace(/\b(\d+\.?\d*)\b/g, '<span style="color:#B5CEA8">$1</span>')
-    result = result.replace(/(\/\/[^\n]*)/g, '<span style="color:#6A9955">$1</span>')
-    result = result.replace(/(\/\*[\s\S]*?\*\/)/g, '<span style="color:#6A9955">$1</span>')
+    result = result.replace(/(?:"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g, '<span style="color:' + c.string + '">$1</span>')
+    result = result.replace(/\b(const|let|var|function|return|if|else|for|while|class|import|export|from|async|await|try|catch|throw|new|this|typeof|instanceof|interface|type|extends|implements|static|get|set|yield|of|in|switch|case|break|default|void|null|undefined|true|false)\b/g, '<span style="color:' + c.keyword + '">$1</span>')
+    result = result.replace(/\b(\d+\.?\d*)\b/g, '<span style="color:' + c.number + '">$1</span>')
+    result = result.replace(/(\/\/[^\n]*)/g, '<span style="color:' + c.comment + '">$1</span>')
+    result = result.replace(/(\/\*[\s\S]*?\*\/)/g, '<span style="color:' + c.comment + '">$1</span>')
   } else if (lang === 'json') {
-    result = result.replace(/("(?:[^"\\]|\\.)*")\s*:/g, '<span style="color:#9CDCFE">$1</span>:')
-    result = result.replace(/:\s*("(?:[^"\\]|\\.)*")/g, ': <span style="color:#CE9178">$1</span>')
-    result = result.replace(/:\s*(\d+\.?\d*)/g, ': <span style="color:#B5CEA8">$1</span>')
-    result = result.replace(/:\s*(true|false|null)/g, ': <span style="color:#569CD6">$1</span>')
+    result = result.replace(/("(?:[^"\\]|\\.)*")\s*:/g, '<span style="color:' + c.property + '">$1</span>:')
+    result = result.replace(/:\s*("(?:[^"\\]|\\.)*")/g, ': <span style="color:' + c.string + '">$1</span>')
+    result = result.replace(/:\s*(\d+\.?\d*)/g, ': <span style="color:' + c.number + '">$1</span>')
+    result = result.replace(/:\s*(true|false|null)/g, ': <span style="color:' + c.keyword + '">$1</span>')
   } else if (['css', 'scss'].includes(lang)) {
-    result = result.replace(/\.([\w-]+)/g, '.<span style="color:#9CDCFE">$1</span>')
-    result = result.replace(/([\w-]+)\s*:/g, '<span style="color:#9CDCFE">$1</span>:')
-    result = result.replace(/(#[0-9a-fA-F]{3,8})\b/g, '<span style="color:#CE9178">$1</span>')
-    result = result.replace(/\b(\d+\.?\d*(?:px|em|rem|%|vh|vw|s|ms)?)\b/g, '<span style="color:#B5CEA8">$1</span>')
+    result = result.replace(/\.([\w-]+)/g, '.<span style="color:' + c.property + '">$1</span>')
+    result = result.replace(/([\w-]+)\s*:/g, '<span style="color:' + c.property + '">$1</span>:')
+    result = result.replace(/(#[0-9a-fA-F]{3,8})\b/g, '<span style="color:' + c.string + '">$1</span>')
+    result = result.replace(/\b(\d+\.?\d*(?:px|em|rem|%|vh|vw|s|ms)?)\b/g, '<span style="color:' + c.number + '">$1</span>')
   } else if (lang === 'html') {
-    result = result.replace(/(&lt;\/?)([\w-]+)/g, '$1<span style="color:#569CD6">$2</span>')
-    result = result.replace(/([\w-]+)=/g, '<span style="color:#9CDCFE">$1</span>=')
-    result = result.replace(/="([^"]*)"/g, '=<span style="color:#CE9178">"$1"</span>')
+    result = result.replace(/(&lt;\/?)([\w-]+)/g, '$1<span style="color:' + c.keyword + '">$2</span>')
+    result = result.replace(/([\w-]+)=/g, '<span style="color:' + c.property + '">$1</span>=')
+    result = result.replace(/="([^"]*)"/g, '=<span style="color:' + c.string + '">"$1"</span>')
   } else if (['python', 'py'].includes(lang)) {
-    result = result.replace(/(?:"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*'|"""[\s\S]*?"""|'''[\s\S]*?''')/g, '<span style="color:#CE9178">$1</span>')
-    result = result.replace(/\b(def|class|return|if|elif|else|for|while|import|from|as|try|except|with|yield|lambda|pass|break|continue|and|or|not|in|is|True|False|None|self|async|await)\b/g, '<span style="color:#569CD6">$1</span>')
-    result = result.replace(/#[^\n]*/g, '<span style="color:#6A9955">$&</span>')
-    result = result.replace(/\b(\d+\.?\d*)\b/g, '<span style="color:#B5CEA8">$1</span>')
+    result = result.replace(/(?:"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*'|"""[\s\S]*?"""|'''[\s\S]*?''')/g, '<span style="color:' + c.string + '">$1</span>')
+    result = result.replace(/\b(def|class|return|if|elif|else|for|while|import|from|as|try|except|with|yield|lambda|pass|break|continue|and|or|not|in|is|True|False|None|self|async|await)\b/g, '<span style="color:' + c.keyword + '">$1</span>')
+    result = result.replace(/#[^\n]*/g, '<span style="color:' + c.comment + '">$&</span>')
+    result = result.replace(/\b(\d+\.?\d*)\b/g, '<span style="color:' + c.number + '">$1</span>')
   } else if (['bash', 'sh', 'shell'].includes(lang)) {
-    result = result.replace(/(#.*)$/gm, '<span style="color:#6A9955">$1</span>')
-    result = result.replace(/\b(echo|cd|ls|rm|cp|mv|mkdir|cat|grep|find|sed|awk|git|npm|bun|node|export|source|sudo|chmod|chown|pwd|touch|head|tail|wc|sort|uniq|diff|tar|zip|curl|wget)\b/g, '<span style="color:#569CD6">$1</span>')
+    result = result.replace(/(#.*)$/gm, '<span style="color:' + c.comment + '">$1</span>')
+    result = result.replace(/\b(echo|cd|ls|rm|cp|mv|mkdir|cat|grep|find|sed|awk|git|npm|bun|node|export|source|sudo|chmod|chown|pwd|touch|head|tail|wc|sort|uniq|diff|tar|zip|curl|wget)\b/g, '<span style="color:' + c.keyword + '">$1</span>')
   } else if (lang === 'sql') {
-    result = result.replace(/\b(SELECT|FROM|WHERE|AND|OR|INSERT|UPDATE|DELETE|CREATE|DROP|ALTER|TABLE|INDEX|JOIN|ON|GROUP|BY|ORDER|HAVING|LIMIT|OFFSET|AS|IN|NOT|NULL|IS|LIKE|BETWEEN|EXISTS|CASE|WHEN|THEN|ELSE|END|UNION|ALL|DISTINCT|COUNT|SUM|AVG|MAX|MIN|INTO|VALUES|SET|PRIMARY|KEY|FOREIGN|REFERENCES|CONSTRAINT|DEFAULT|CHECK|VIEW)\b/gi, '<span style="color:#569CD6">$1</span>')
+    result = result.replace(/\b(SELECT|FROM|WHERE|AND|OR|INSERT|UPDATE|DELETE|CREATE|DROP|ALTER|TABLE|INDEX|JOIN|ON|GROUP|BY|ORDER|HAVING|LIMIT|OFFSET|AS|IN|NOT|NULL|IS|LIKE|BETWEEN|EXISTS|CASE|WHEN|THEN|ELSE|END|UNION|ALL|DISTINCT|COUNT|SUM|AVG|MAX|MIN|INTO|VALUES|SET|PRIMARY|KEY|FOREIGN|REFERENCES|CONSTRAINT|DEFAULT|CHECK|VIEW)\b/gi, '<span style="color:' + c.keyword + '">$1</span>')
   } else if (['yaml', 'yml'].includes(lang)) {
-    result = result.replace(/^(\s*)([\w-]+)(\s*:)/gm, '$1<span style="color:#9CDCFE">$2</span>$3')
-    result = result.replace(/:\s*("(?:[^"\\]|\\.)*")/g, ': <span style="color:#CE9178">$1</span>')
-    result = result.replace(/:\s*(\d+\.?\d*)/g, ': <span style="color:#B5CEA8">$1</span>')
-    result = result.replace(/(#[^\n]*)/g, '<span style="color:#6A9955">$1</span>')
+    result = result.replace(/^(\s*)([\w-]+)(\s*:)/gm, '$1<span style="color:' + c.property + '">$2</span>$3')
+    result = result.replace(/:\s*("(?:[^"\\]|\\.)*")/g, ': <span style="color:' + c.string + '">$1</span>')
+    result = result.replace(/:\s*(\d+\.?\d*)/g, ': <span style="color:' + c.number + '">$1</span>')
+    result = result.replace(/(#[^\n]*)/g, '<span style="color:' + c.comment + '">$1</span>')
   } else if (['rust', 'rs'].includes(lang)) {
-    result = result.replace(/\b(fn|let|mut|pub|struct|enum|impl|trait|use|mod|where|for|in|if|else|match|return|loop|while|break|continue|move|async|await|unsafe|dyn|type|const|static|ref|self|super|crate|true|false|Some|None|Ok|Err|Result|Option|Vec|String|Box|Rc|Arc)\b/g, '<span style="color:#569CD6">$1</span>')
-    result = result.replace(/("(?:[^"\\]|\\.)*")/g, '<span style="color:#CE9178">$1</span>')
-    result = result.replace(/\/\/[^\n]*/g, '<span style="color:#6A9955">$&</span>')
+    result = result.replace(/\b(fn|let|mut|pub|struct|enum|impl|trait|use|mod|where|for|in|if|else|match|return|loop|while|break|continue|move|async|await|unsafe|dyn|type|const|static|ref|self|super|crate|true|false|Some|None|Ok|Err|Result|Option|Vec|String|Box|Rc|Arc)\b/g, '<span style="color:' + c.keyword + '">$1</span>')
+    result = result.replace(/("(?:[^"\\]|\\.)*")/g, '<span style="color:' + c.string + '">$1</span>')
+    result = result.replace(/\/\/[^\n]*/g, '<span style="color:' + c.comment + '">$&</span>')
   }
 
   return result
 }
 
 // ─── 轻量 Markdown 渲染器 ───
-export function renderMarkdown(text: string): string {
+export function renderMarkdown(text: string, isDark: boolean = true): string {
   let html = text
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -125,7 +126,7 @@ export function renderMarkdown(text: string): string {
   // 代码块（带语法高亮 + 复制按钮）
   html = html.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) => {
     const rawCode = code.trim()
-    const highlighted = highlightCode(rawCode, lang.toLowerCase())
+    const highlighted = highlightCode(rawCode, lang.toLowerCase(), isDark)
     const langLabel = lang ? `<span style="color:#888;font-size:10px">${lang}</span>` : '<span></span>'
     const escaped = rawCode.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     return `<div style="position:relative;margin:4px 0" data-code="${escaped}"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">${langLabel}<button onclick="navigator.clipboard.writeText(this.closest('div').getAttribute('data-code')).catch(()=>{})" style="background:#262626;border:1px solid #333;color:#888;padding:1px 8px;border-radius:3px;cursor:pointer;font-size:10px">复制</button></div><pre style="background:#0A0A0A;border:1px solid #262626;border-radius:4px;padding:10px;overflow-x:auto;font-size:12px;line-height:1.5;margin:0"><code>${highlighted}</code></pre></div>`
