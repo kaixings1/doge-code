@@ -1050,7 +1050,7 @@ const dynamicCommandImports: Record<string, () => Promise<{ default?: { getPromp
   '/diff': () => import('../../../src/commands/diff/diff.js').catch(() => ({ default: null })),
   '/branch': () => import('../../../src/commands/branch/branch.js').catch(() => ({ default: null })),
   '/memory': () => import('../../../src/commands/memory/memory.js').catch(() => ({ default: null })),
-  '/deploy': () => import('../../../src/commands/deploy/deploy.js').catch(() => ({ default: null })),
+  '/deploy': () => import('../../../src/commands/deploy/index.js').catch(() => ({ default: null })),
   '/task': () => import('../../../src/commands/task/task.js').catch(() => ({ default: null })),
   '/session-search': () => import('../../../src/commands/session-search.js'),
   '/session-tag': () => import('../../../src/commands/session-tag.js'),
