@@ -20,7 +20,7 @@ const desktop = {
   get isHidden() {
     return !isSupportedPlatform()
   },
-  load: () => import('./desktop.js'),
+  load: () => import('./desktop.tsx'),
 } satisfies Command
 
 export default desktop

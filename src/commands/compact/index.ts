@@ -9,7 +9,7 @@ const compact = {
   isEnabled: () => !isEnvTruthy(process.env.DISABLE_COMPACT),
   supportsNonInteractive: true,
   argumentHint: '<可选的自定义摘要指令>',
-  load: () => import('./compact.js'),
+  load: () => import('./compact.ts'),
 } satisfies Command
 
 export default compact

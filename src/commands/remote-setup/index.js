@@ -10,7 +10,7 @@ const web = {
     get isHidden() {
         return !isPolicyAllowed('allow_remote_sessions');
     },
-    load: () => import('./remote-setup.js'),
+    load: () => import('./remote-setup.tsx'),
 };
 export default web;
 //# sourceMappingURL=index.js.map

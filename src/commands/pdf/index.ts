@@ -24,5 +24,5 @@ export const call: LocalJSXCommandCall = async (args) => {
   return { type: 'text', value: r || '(无内容)' }
 }
 
-const cmd = { type: 'local-jsx' as const, name: 'pdf', description: 'PDF 文件读取与信息查看：read/info', argumentHint: '<read|info> <file>', isEnabled: () => true, load: () => import('./index.js') } satisfies Command
+const cmd = { type: 'local-jsx' as const, name: 'pdf', description: 'PDF 文件读取与信息查看：read/info', argumentHint: '<read|info> <file>', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
 export default cmd

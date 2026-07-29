@@ -33,7 +33,7 @@
     "electron-store": "^8.1.0",
     "esbuild": "^0.28.1",
     "monaco-editor": "^0.56.0",
-    "node-pty": "^1.1.0",
+    "node-pty": "^1.0.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
@@ -43,6 +43,7 @@
     "@types/react-dom": "18",
     "electron": "^43.2.0",
     "electron-builder": "^26.15.3",
+    "electron-rebuild": "^3.2.9",
     "electron-updater": "^6.3.0",
     "typescript": "^5.6.0"
   },

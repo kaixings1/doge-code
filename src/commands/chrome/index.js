@@ -5,7 +5,7 @@ const command = {
     availability: ['claude-ai'],
     isEnabled: () => !getIsNonInteractiveSession(),
     type: 'local-jsx',
-    load: () => import('./chrome.js'),
+    load: () => import('./chrome.tsx'),
 };
 export default command;
 //# sourceMappingURL=index.js.map

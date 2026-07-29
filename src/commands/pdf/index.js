@@ -27,6 +27,6 @@ export const call = async (args) => {
     }
     return { type: 'text', value: r || '(无内容)' };
 };
-const cmd = { type: 'local-jsx', name: 'pdf', description: 'PDF 文件读取与信息查看：read/info', argumentHint: '<read|info> <file>', isEnabled: () => true, load: () => import('./index.js') };
+const cmd = { type: 'local-jsx', name: 'pdf', description: 'PDF 文件读取与信息查看：read/info', argumentHint: '<read|info> <file>', isEnabled: () => true, load: () => import('./index.ts') };
 export default cmd;
 //# sourceMappingURL=index.js.map

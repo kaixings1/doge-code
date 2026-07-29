@@ -5,7 +5,7 @@ const keybindings = {
     isEnabled: () => isKeybindingCustomizationEnabled(),
     supportsNonInteractive: false,
     type: 'local',
-    load: () => import('./keybindings.js'),
+    load: () => import('./keybindings.ts'),
 };
 export default keybindings;
 //# sourceMappingURL=index.js.map

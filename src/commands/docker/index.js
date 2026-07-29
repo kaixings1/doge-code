@@ -39,6 +39,6 @@ export const call = async (args) => {
     }
     return { type: 'text', value: r || '(无输出)' };
 };
-const cmd = { type: 'local-jsx', name: 'docker', description: 'Docker 容器管理：ps/logs/start/stop/build/images/exec', argumentHint: '<ps|logs|start|stop|build|images|exec>', isEnabled: () => true, load: () => import('./index.js') };
+const cmd = { type: 'local-jsx', name: 'docker', description: 'Docker 容器管理：ps/logs/start/stop/build/images/exec', argumentHint: '<ps|logs|start|stop|build|images|exec>', isEnabled: () => true, load: () => import('./index.ts') };
 export default cmd;
 //# sourceMappingURL=index.js.map

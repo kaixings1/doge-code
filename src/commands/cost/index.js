@@ -11,7 +11,7 @@ const cost = {
         return isClaudeAISubscriber();
     },
     supportsNonInteractive: true,
-    load: () => import('./cost.js'),
+    load: () => import('./cost.ts'),
 };
 export default cost;
 //# sourceMappingURL=index.js.map

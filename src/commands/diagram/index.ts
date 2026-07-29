@@ -28,5 +28,5 @@ export const call: LocalJSXCommandCall = async (args) => {
   return { type: 'text', value: r || '(无输出)' }
 }
 
-const cmd = { type: 'local-jsx' as const, name: 'diagram', description: 'Mermaid 图表模板生成：template/mermaid', argumentHint: '<template|mermaid> [type|file]', isEnabled: () => true, load: () => import('./index.js') } satisfies Command
+const cmd = { type: 'local-jsx' as const, name: 'diagram', description: 'Mermaid 图表模板生成：template/mermaid', argumentHint: '<template|mermaid> [type|file]', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
 export default cmd

@@ -15,7 +15,7 @@ const feedback = {
         isEssentialTrafficOnly() ||
         process.env.USER_TYPE === 'ant' ||
         !isPolicyAllowed('allow_product_feedback')),
-    load: () => import('./feedback.js'),
+    load: () => import('./feedback.tsx'),
 };
 export default feedback;
 //# sourceMappingURL=index.js.map

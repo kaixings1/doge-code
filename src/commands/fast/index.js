@@ -15,7 +15,7 @@ const fast = {
     get immediate() {
         return shouldInferenceConfigCommandBeImmediate();
     },
-    load: () => import('./fast.js'),
+    load: () => import('./fast.tsx'),
 };
 export default fast;
 //# sourceMappingURL=index.js.map

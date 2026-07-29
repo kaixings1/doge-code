@@ -3,6 +3,6 @@ export default {
     name: 'add-model',
     description: '将自定义模型添加到已保存的模型列表',
     supportsNonInteractive: false,
-    load: () => import('./add-model.js'),
+    load: () => import('./add-model.ts'),
 };
 //# sourceMappingURL=index.js.map

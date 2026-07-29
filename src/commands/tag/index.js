@@ -4,7 +4,7 @@ const tag = {
     description: '为当前会话切换可搜索标签',
     isEnabled: () => process.env.USER_TYPE === 'ant',
     argumentHint: '<tag-name>',
-    load: () => import('./tag.js'),
+    load: () => import('./tag.tsx'),
 };
 export default tag;
 //# sourceMappingURL=index.js.map

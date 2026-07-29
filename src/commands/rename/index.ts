@@ -6,7 +6,7 @@ const rename = {
   description: '重命名当前对话',
   immediate: true,
   argumentHint: '[name]',
-  load: () => import('./rename.js'),
+  load: () => import('./rename.ts'),
 } satisfies Command
 
 export default rename

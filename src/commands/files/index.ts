@@ -6,7 +6,7 @@ const files = {
   description: '列出当前上下文中的所有文件',
   isEnabled: () => process.env.USER_TYPE === 'ant',
   supportsNonInteractive: true,
-  load: () => import('./files.js'),
+  load: () => import('./files.ts'),
 } satisfies Command
 
 export default files

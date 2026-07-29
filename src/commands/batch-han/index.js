@@ -4,7 +4,7 @@ const batchHan = {
     description: '批量汉化 TypeScript 文件',
     aliases: ['bh'],
     supportsNonInteractive: true,
-    load: () => import('./batch-han.js'),
+    load: () => import('./batch-han.ts'),
 };
 export default batchHan;
 //# sourceMappingURL=index.js.map

@@ -10,7 +10,7 @@ const session = {
   get isHidden() {
     return !getIsRemoteMode()
   },
-  load: () => import('./session.js'),
+  load: () => import('./session.tsx'),
 } satisfies Command
 
 export default session

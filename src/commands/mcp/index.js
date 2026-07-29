@@ -4,7 +4,7 @@ const mcp = {
     description: '管理 MCP 服务器',
     immediate: true,
     argumentHint: '[enable|disable [server-name]]',
-    load: () => import('./mcp.js'),
+    load: () => import('./mcp.tsx'),
 };
 export default mcp;
 //# sourceMappingURL=index.js.map

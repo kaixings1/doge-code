@@ -38,7 +38,7 @@ const ragCommand = {
     description: 'RAG 本地知识库 - 索引文件夹和搜索',
     argumentHint: '<add|query|list|clear> [args]',
     isEnabled: () => true,
-    load: () => import('./index.js'),
+    load: () => import('./index.ts'),
 };
 export default ragCommand;
 //# sourceMappingURL=index.js.map
