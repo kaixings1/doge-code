@@ -22,7 +22,7 @@ async function compileMain(): Promise<void> {
   if (!fs.existsSync(mainOutDir)) fs.mkdirSync(mainOutDir, { recursive: true });
 
   console.log('Bundling main process with Bun...');
-  const c = spawn('cmd', ['/c', 'bun', 'build', '--outfile', mainOutFile, '--format', 'esm', '--target', 'node', '--external', 'electron', '--external', 'electron-store', '--external', 'node-pty', '--external', 'bun:sqlite', '--external', 'bun:bundle', path.join('src', 'main', 'index.ts')], {
+  const c = spawn('cmd', ['/c', 'bun', 'build', '--no-cache', '--outfile', mainOutFile, '--format', 'esm', '--target', 'node', '--external', 'electron', '--external', 'electron-store', '--external', 'bun:sqlite', '--external', 'bun:bundle', path.join('src', 'main', 'index.ts')], {
     cwd: projectRoot,
     stdio: 'inherit',
   });
@@ -59,6 +59,14 @@ async function compileMain(): Promise<void> {
   }
 
   console.log('Main process bundled OK');
+
+  // 将 node-pty 复制到 dist/main/，使其 require('node-pty') 能找到原生二进制
+  const ptySrc = path.join(projectRoot, 'node_modules', 'node-pty')
+  const ptyDst = path.join(distDir, 'main', 'node_modules', 'node-pty')
+  if (fs.existsSync(ptySrc)) {
+    fs.cpSync(ptySrc, ptyDst, { recursive: true })
+    console.log('Copied node-pty to dist/main/node_modules/')
+  }
 }
 
 async function compileRenderer(): Promise<void> {
