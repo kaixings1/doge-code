@@ -6,7 +6,7 @@ const branch = {
     aliases: feature('FORK_SUBAGENT') ? [] : ['fork'],
     description: '在当前位置创建对话分支',
     argumentHint: '[name]',
-    load: () => import('./branch.js'),
+    load: () => import('./branch.ts'),
 };
 export default branch;
 //# sourceMappingURL=index.js.map

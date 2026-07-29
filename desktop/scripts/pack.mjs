@@ -45,7 +45,7 @@ async function checkBuild() {
   if (!fs.existsSync(distDir)) {
     throw new Error('dist 目录不存在，请先运行 build');
   }
-  const mainEntry = path.join(distDir, 'main', 'index.mjs');
+  const mainEntry = path.join(distDir, 'main', 'index.js');
   if (!fs.existsSync(mainEntry)) {
     throw new Error('主进程入口不存在，请先运行 build');
   }
@@ -77,10 +77,14 @@ async function pack() {
     }
 
     // 如果指定了架构
-    const archArg = args.find(arg => arg.startsWith('--arch='))?.split('=')[1] ||
-                    args[args.indexOf('--arch') + 1];
-    if (archArg) {
-      cmd += ` --${archArg}`;
+    const archIndex = args.indexOf('--arch');
+    if (archIndex >= 0) {
+      const archArg = args[archIndex].startsWith('--arch=')
+        ? args[archIndex].split('=')[1]
+        : args[archIndex + 1];
+      if (archArg) {
+        cmd += ` --${archArg}`;
+      }
     }
 
     console.log(`执行: ${cmd}`);

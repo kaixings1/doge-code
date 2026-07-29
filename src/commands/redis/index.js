@@ -40,6 +40,6 @@ export const call = async (args) => {
     }
     return { type: 'text', value: r || '(无输出)' };
 };
-const cmd = { type: 'local-jsx', name: 'redis', description: 'Redis 缓存操作：get/set/del/keys/ping/info/flush', argumentHint: '<get|set|del|keys|ping|info|flush> [args]', isEnabled: () => true, load: () => import('./index.js') };
+const cmd = { type: 'local-jsx', name: 'redis', description: 'Redis 缓存操作：get/set/del/keys/ping/info/flush', argumentHint: '<get|set|del|keys|ping|info|flush> [args]', isEnabled: () => true, load: () => import('./index.ts') };
 export default cmd;
 //# sourceMappingURL=index.js.map

@@ -6,7 +6,7 @@ const game = {
   description: '玩一个简单的猜数字游戏',
   aliases: ['guess'],
   argumentHint: '[数字]',
-  load: () => import('./game.js'),
+  load: () => import('./game.tsx'),
 } satisfies Command
 
 export default game

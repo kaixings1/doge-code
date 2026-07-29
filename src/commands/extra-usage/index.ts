@@ -15,7 +15,7 @@ export const extraUsage = {
   name: 'extra-usage',
   description: '配置额外用量以在达到限制时继续工作',
   isEnabled: () => isExtraUsageAllowed() && !getIsNonInteractiveSession(),
-  load: () => import('./extra-usage.js'),
+  load: () => import('./extra-usage.tsx'),
 } satisfies Command
 
 export const extraUsageNonInteractive = {
@@ -27,5 +27,5 @@ export const extraUsageNonInteractive = {
   get isHidden() {
     return !getIsNonInteractiveSession()
   },
-  load: () => import('./extra-usage-noninteractive.js'),
+  load: () => import('./extra-usage-noninteractive.ts'),
 } satisfies Command

@@ -8,7 +8,7 @@ const config = {
     get immediate() {
         return shouldInferenceConfigCommandBeImmediate();
     },
-    load: () => import('./config.js'),
+    load: () => import('./config.tsx'),
 };
 export default config;
 //# sourceMappingURL=index.js.map

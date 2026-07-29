@@ -13,6 +13,6 @@ export default {
         const { eligible, hasCache } = checkCachedPassesEligibility();
         return !eligible || !hasCache;
     },
-    load: () => import('./passes.js'),
+    load: () => import('./passes.tsx'),
 };
 //# sourceMappingURL=index.js.map

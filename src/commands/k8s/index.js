@@ -36,6 +36,6 @@ export const call = async (args) => {
     }
     return { type: 'text', value: r || '(无输出)' };
 };
-const cmd = { type: 'local-jsx', name: 'k8s', description: 'Kubernetes 集群管理：pods/deploy/svc/get/describe/logs', argumentHint: '<pods|deploy|svc|get|describe|logs>', isEnabled: () => true, load: () => import('./index.js') };
+const cmd = { type: 'local-jsx', name: 'k8s', description: 'Kubernetes 集群管理：pods/deploy/svc/get/describe/logs', argumentHint: '<pods|deploy|svc|get|describe|logs>', isEnabled: () => true, load: () => import('./index.ts') };
 export default cmd;
 //# sourceMappingURL=index.js.map

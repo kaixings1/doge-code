@@ -12,5 +12,5 @@ export default {
   get immediate() {
     return shouldInferenceConfigCommandBeImmediate()
   },
-  load: () => import('./model.js'),
+  load: () => import('./model.tsx'),
 } satisfies Command

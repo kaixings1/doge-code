@@ -3,7 +3,7 @@ const skillsI18n = {
     name: 'skills-i18n',
     description: '检查并修复 SKILL.md 汉化问题。用法: /skills-i18n [check|fix|force|restore]',
     supportsNonInteractive: true,
-    load: () => import('./skills-i18n.js'),
+    load: () => import('./skills-i18n.ts'),
 };
 export default skillsI18n;
 //# sourceMappingURL=index.js.map

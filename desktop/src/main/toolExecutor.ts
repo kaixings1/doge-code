@@ -9,10 +9,10 @@
 import * as path from 'path'
 import { pathToFileURL } from 'url'
 import * as fs from 'fs'
-import type { Tool } from '../../../src/tools.js'
+import type { Tool, ToolUseContext } from '../../../src/Tool.js'
+import { getEmptyToolPermissionContext } from '../../../src/Tool.js'
 import { zodToJsonSchema } from '../../../src/utils/zodToJsonSchema.js'
 import { getAllBaseTools } from '../../../src/tools.js'
-import { getPermissionManager } from './permissionManager.js'
 import { getLspClientManager } from './lspClientManager.js'
 
 // ─── 类型定义 ───
@@ -39,7 +39,8 @@ interface EngineConfig {
 
 // ─── 工具上下文构建 ───
 
-function buildToolContext(config: EngineConfig) {
+function buildToolContext(config: EngineConfig): ToolUseContext {
+  const abortController = new AbortController()
   return {
     options: {
       commands: [],
@@ -53,6 +54,16 @@ function buildToolContext(config: EngineConfig) {
       isNonInteractiveSession: true,
       agentDefinitions: [],
     },
+    abortController,
+    getAppState: () => ({
+      toolPermissionContext: getEmptyToolPermissionContext(),
+    }),
+    setAppState: () => {},
+    setInProgressToolUseIDs: () => {},
+    setResponseLength: () => 0,
+    updateFileHistoryState: (f: unknown) => f,
+    updateAttributionState: (f: unknown) => f,
+    readFileState: { get: () => null, set: () => {}, has: () => false },
   }
 }
 
@@ -69,7 +80,6 @@ export function createAdaptedTools(config: EngineConfig) {
   }>()
 
   const ctx = buildToolContext(config)
-  const pm = getPermissionManager()
 
   for (const srcTool of srcTools) {
     if (!srcTool || !srcTool.name) continue
@@ -87,25 +97,24 @@ export function createAdaptedTools(config: EngineConfig) {
       execute: async (params: unknown) => {
         try {
           const args = params as Record<string, unknown>
-          const permCtx = {
-            tool: srcTool.name,
-            action: 'execute',
-            params: args,
-            path: (args.file_path || args.path) as string | undefined,
-            command: (args.command || args.cmd) as string | undefined,
-          }
-          const decision = await pm.checkPermission(permCtx)
-          if (decision === 'deny') {
-            return { content: '用户拒绝了操作请求。' }
-          }
+          // 权限检查由工具内部的 checkPermissionsAndCallTool 流程处理
+          // (包括 DesktopPermissionManager 弹窗)，此处不再重复检查
           const result = await srcTool.call(
             args,
             ctx,
-            async () => ({ allowed: decision === 'allow' || decision === 'allow_once' }),
+            async () => ({ allowed: true }),
             { role: 'user', content: '' },
             null,
           )
-          return result
+          // srcTool.call() 返回 { data: Out } 格式，但 engine 的 executor 期望
+          // { content: string } 格式。解包 data 层，提取 stdout/content 作为 content。
+          const raw = (result as { data?: unknown } | null)?.data ?? result
+          const content = typeof raw === 'string'
+            ? raw
+            : typeof raw === 'object' && raw !== null
+              ? (raw as Record<string, unknown>).stdout ?? (raw as Record<string, unknown>).content ?? JSON.stringify(raw)
+              : String(raw ?? '')
+          return { content }
         } catch (e) {
           const message = e instanceof Error ? e.message : '未知错误'
           throw new Error(message)

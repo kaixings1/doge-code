@@ -23,5 +23,5 @@ export const call: LocalJSXCommandCall = async (args) => {
   return { type: 'text', value: r || '(无输出)' }
 }
 
-const cmd = { type: 'local-jsx' as const, name: 'docker', description: 'Docker 容器管理：ps/logs/start/stop/build/images/exec', argumentHint: '<ps|logs|start|stop|build|images|exec>', isEnabled: () => true, load: () => import('./index.js') } satisfies Command
+const cmd = { type: 'local-jsx' as const, name: 'docker', description: 'Docker 容器管理：ps/logs/start/stop/build/images/exec', argumentHint: '<ps|logs|start|stop|build|images|exec>', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
 export default cmd

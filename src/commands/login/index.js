@@ -7,6 +7,6 @@ export default () => ({
         ? '切换 Anthropic 账户'
         : '使用您的 Anthropic 账户登录',
     isEnabled: () => !isEnvTruthy(process.env.DISABLE_LOGIN_COMMAND),
-    load: () => import('./login.js'),
+    load: () => import('./login.tsx'),
 });
 //# sourceMappingURL=index.js.map

@@ -17,7 +17,7 @@ const desktop = {
     get isHidden() {
         return !isSupportedPlatform();
     },
-    load: () => import('./desktop.js'),
+    load: () => import('./desktop.tsx'),
 };
 export default desktop;
 //# sourceMappingURL=index.js.map

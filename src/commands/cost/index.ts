@@ -17,7 +17,7 @@ const cost = {
     return isClaudeAISubscriber()
   },
   supportsNonInteractive: true,
-  load: () => import('./cost.js'),
+  load: () => import('./cost.ts'),
 } satisfies Command
 
 export default cost

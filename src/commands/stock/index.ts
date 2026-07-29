@@ -27,7 +27,7 @@ const stockCommand = {
   description: '股票行情和财务数据',
   argumentHint: '<code> [price|finance|overview]',
   isEnabled: () => true,
-  load: () => import('./index.js'),
+  load: () => import('./index.ts'),
 } satisfies Command
 
 export default stockCommand

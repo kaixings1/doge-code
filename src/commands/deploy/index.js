@@ -41,6 +41,6 @@ export const call = async (args) => {
     }
     return { type: 'text', value: r || '(无输出)' };
 };
-const cmd = { type: 'local-jsx', name: 'deploy', description: '部署工具：ssh/scp/pm2 管理', argumentHint: '<ssh|scp|pm2> [args]', isEnabled: () => true, load: () => import('./index.js') };
+const cmd = { type: 'local-jsx', name: 'deploy', description: '部署工具：ssh/scp/pm2 管理', argumentHint: '<ssh|scp|pm2> [args]', isEnabled: () => true, load: () => import('./index.ts') };
 export default cmd;
 //# sourceMappingURL=index.js.map

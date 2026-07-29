@@ -5,5 +5,5 @@ export default {
   name: 'usage',
   description: '显示计划用量限制',
   availability: ['claude-ai'],
-  load: () => import('./usage.js'),
+  load: () => import('./usage.tsx'),
 } satisfies Command

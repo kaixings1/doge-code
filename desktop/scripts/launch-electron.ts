@@ -22,7 +22,7 @@ async function compileMain(): Promise<void> {
   if (!fs.existsSync(mainOutDir)) fs.mkdirSync(mainOutDir, { recursive: true });
 
   console.log('Bundling main process with Bun...');
-  const c = spawn('cmd', ['/c', 'bun', 'build', '--outfile', mainOutFile, '--format', 'esm', '--target', 'node', '--external', 'electron', '--external', 'electron-store', '--external', 'bun:sqlite', '--external', 'bun:bundle', path.join('src', 'main', 'index.ts')], {
+  const c = spawn('cmd', ['/c', 'bun', 'build', '--outfile', mainOutFile, '--format', 'esm', '--target', 'node', '--external', 'electron', '--external', 'electron-store', '--external', 'node-pty', '--external', 'bun:sqlite', '--external', 'bun:bundle', path.join('src', 'main', 'index.ts')], {
     cwd: projectRoot,
     stdio: 'inherit',
   });

@@ -4,7 +4,7 @@ const color = {
     description: '设置此会话的提示栏颜色',
     immediate: true,
     argumentHint: '<color|default>',
-    load: () => import('./color.js'),
+    load: () => import('./color.ts'),
 };
 export default color;
 //# sourceMappingURL=index.js.map

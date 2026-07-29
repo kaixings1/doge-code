@@ -53,6 +53,6 @@ export const call = async (args) => {
     }
     return { type: 'text', value: r || '(无输出)' };
 };
-const cmd = { type: 'local-jsx', name: 'nginx', description: 'Nginx 管理：status/start/stop/reload/test/sites/logs/config', argumentHint: '<status|start|stop|reload|test|sites|logs|config> [args]', isEnabled: () => true, load: () => import('./index.js') };
+const cmd = { type: 'local-jsx', name: 'nginx', description: 'Nginx 管理：status/start/stop/reload/test/sites/logs/config', argumentHint: '<status|start|stop|reload|test|sites|logs|config> [args]', isEnabled: () => true, load: () => import('./index.ts') };
 export default cmd;
 //# sourceMappingURL=index.js.map

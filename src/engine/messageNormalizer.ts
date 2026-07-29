@@ -47,7 +47,31 @@ export class MessageNormalizer {
       } else if (msg.role === "user") {
         result.push({ role: "user", content: this.asString(msg.content) });
       } else if (msg.role === "assistant") {
-        result.push({ role: "assistant", content: this.asString(msg.content) });
+        const blocks = Array.isArray(msg.content) ? (msg.content as Array<Record<string, unknown>>) : [];
+        const textParts: string[] = [];
+        const toolCalls: Array<{ id: string; type: 'function'; function: { name: string; arguments: string } }> = [];
+        for (const block of blocks) {
+          if (block.type === "text" && typeof block.text === "string") {
+            textParts.push(block.text);
+          } else if (block.type === "tool_use") {
+            toolCalls.push({
+              id: block.id as string,
+              type: "function",
+              function: {
+                name: block.name as string,
+                arguments: JSON.stringify(block.input ?? {}),
+              },
+            });
+          }
+        }
+        const openAIMsg: Record<string, unknown> = {
+          role: "assistant",
+          content: textParts.length > 0 ? textParts.join("") : null,
+        };
+        if (toolCalls.length > 0) {
+          openAIMsg.tool_calls = toolCalls;
+        }
+        result.push(openAIMsg);
       } else if (msg.role === "tool" && msg.toolUseId) {
         result.push({ role: "tool", tool_call_id: msg.toolUseId, content: this.asString(msg.content) });
       }

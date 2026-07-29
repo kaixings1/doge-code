@@ -6,7 +6,7 @@ export const context: Command = {
   description: '以彩色网格可视化当前上下文使用情况',
   isEnabled: () => !getIsNonInteractiveSession(),
   type: 'local-jsx',
-  load: () => import('./context.js'),
+  load: () => import('./context.tsx'),
 }
 
 export const contextNonInteractive: Command = {
@@ -20,5 +20,5 @@ export const contextNonInteractive: Command = {
   isEnabled() {
     return getIsNonInteractiveSession()
   },
-  load: () => import('./context-noninteractive.js'),
+  load: () => import('./context-noninteractive.ts'),
 }

@@ -22,5 +22,5 @@ export const call: LocalJSXCommandCall = async (args) => {
   return { type: 'text', value: r || '(无输出)' }
 }
 
-const cmd = { type: 'local-jsx' as const, name: 'k8s', description: 'Kubernetes 集群管理：pods/deploy/svc/get/describe/logs', argumentHint: '<pods|deploy|svc|get|describe|logs>', isEnabled: () => true, load: () => import('./index.js') } satisfies Command
+const cmd = { type: 'local-jsx' as const, name: 'k8s', description: 'Kubernetes 集群管理：pods/deploy/svc/get/describe/logs', argumentHint: '<pods|deploy|svc|get|describe|logs>', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
 export default cmd

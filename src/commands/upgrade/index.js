@@ -7,7 +7,7 @@ const upgrade = {
     availability: ['claude-ai'],
     isEnabled: () => !isEnvTruthy(process.env.DISABLE_UPGRADE_COMMAND) &&
         getSubscriptionType() !== 'enterprise',
-    load: () => import('./upgrade.js'),
+    load: () => import('./upgrade.tsx'),
 };
 export default upgrade;
 //# sourceMappingURL=index.js.map

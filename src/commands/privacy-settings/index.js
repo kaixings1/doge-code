@@ -6,7 +6,7 @@ const privacySettings = {
     isEnabled: () => {
         return isConsumerSubscriber();
     },
-    load: () => import('./privacy-settings.js'),
+    load: () => import('./privacy-settings.tsx'),
 };
 export default privacySettings;
 //# sourceMappingURL=index.js.map
