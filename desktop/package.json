@@ -176,7 +176,8 @@
     "compression": "maximum",
     "asar": true,
     "asarUnpack": [
-      "**/node_modules/{@electron,electron-updater}/**"
+      "**/node_modules/{@electron,electron-updater}/**",
+      "**/node_modules/node-pty/**"
     ]
   }
 }

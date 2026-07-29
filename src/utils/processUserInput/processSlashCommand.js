@@ -1,1 +1,1 @@
-export { default } from './processSlashCommand.tsx'
+export { processSlashCommand, looksLikeCommand, formatSkillLoadingMetadata, processPromptSlashCommand } from './processSlashCommand.tsx'

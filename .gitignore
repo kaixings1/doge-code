@@ -17,6 +17,9 @@ doge-bundled.js
 desktop/release/
 desktop/test-results/
 desktop/dist/
+desktop/release-out/
+desktop/node_modules/
+desktop/.doge/
 
 # IDE & Editor
 .idea/
