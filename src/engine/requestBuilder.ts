@@ -37,7 +37,7 @@ export class RequestBuilder {
   private normalizer = new MessageNormalizer();
 
   async build(params: RequestParams): Promise<APIRequest> {
-    const provider = params.provider ?? "anthropic";
+    const provider = params.provider ?? "openai";
     const messages = this.normalizer.normalize(
       params.messages.map((m) => ({ ...m, role: m.role === "tool" ? "tool" : m.role })),
       provider,
