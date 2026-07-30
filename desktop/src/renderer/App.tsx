@@ -37,7 +37,9 @@ import { useTimeTracker } from './hooks/useTimeTracker.js'
 import { useGitStats } from './hooks/useGitStats.js'
 import { useWorkflowMode } from './hooks/useWorkflowMode.js'
 import { usePreAnalysis } from './hooks/usePreAnalysis.js'
+import { useSmartImport } from './hooks/useSmartImport.js'
 import { InlineSuggestion } from './components/InlineSuggestion.js'
+import { SmartImportSuggestion } from './components/SmartImportSuggestion.js'
 import { getStyles, getEffectiveTheme, THEMES, type ThemeName, type ThemeColors } from './theme.js'
 import { AdvancedCodeEditor } from './components/AdvancedCodeEditor.js'
 import { SemanticSearchPanel } from './components/SemanticSearchPanel.js'
@@ -288,6 +290,7 @@ export function App(): JSX.Element {
   // ─── Agent 编排层 Hook ───
   const [gitChangesCount, setGitChangesCount] = useState(0)
   const [dismissedSuggestions, setDismissedSuggestions] = useState<Set<string>>(new Set())
+  const [dismissedSmartImports, setDismissedSmartImports] = useState<Set<string>>(new Set())
   const workflowMode = useWorkflowMode(selectedFile, gitChangesCount, showDebuggerPanel)
 
   // ─── 预测性 AI 助手：静态分析 Hook ───
@@ -295,6 +298,13 @@ export function App(): JSX.Element {
     activePreviewFile?.content || '',
     { extension: activePreviewFile?.path?.split('.').pop() || '', enabled: !!activePreviewFile }
   )
+
+  // ─── 智能导入建议 Hook ───
+  const smartImports = useSmartImport({
+    content: activePreviewFile?.content || '',
+    filePath: activePreviewFile?.path || '',
+    enabled: !!activePreviewFile,
+  })
 
   // ─── 工作流模式面板自动联动 ───
   useEffect(() => {
@@ -1769,6 +1779,16 @@ export function App(): JSX.Element {
             suggestions={preAnalysis.filter(s => !dismissedSuggestions.has(s.id))}
             onDismiss={(id) => setDismissedSuggestions(prev => new Set(prev).add(id))}
             onDismissAll={() => setDismissedSuggestions(new Set(preAnalysis.map(s => s.id)))}
+            theme={{
+              accent: theme.accent, text: theme.text, textFaint: theme.textFaint, textMuted: theme.textMuted,
+              bgPanel: theme.bgPanel, border: theme.border, surface: theme.surface,
+              errorText: theme.errorText, successText: theme.accent, warningText: '#FFB74D',
+            }}
+          />
+          <SmartImportSuggestion
+            suggestions={smartImports.filter(s => !dismissedSmartImports.has(s.id))}
+            onDismiss={(id) => setDismissedSmartImports(prev => new Set(prev).add(id))}
+            onDismissAll={() => setDismissedSmartImports(new Set(smartImports.map(s => s.id)))}
             theme={{
               accent: theme.accent, text: theme.text, textFaint: theme.textFaint, textMuted: theme.textMuted,
               bgPanel: theme.bgPanel, border: theme.border, surface: theme.surface,
