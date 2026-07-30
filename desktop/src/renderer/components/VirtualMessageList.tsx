@@ -386,7 +386,7 @@ export function VirtualMessageList({
               msgSearchQuery={msgSearchQuery}
               msgSearchMatches={msgSearchMatches}
               executeToolFromBlock={executeToolFromBlock}
-              measureHeight={measureHeight}
+              measureMessage={measureMessage}
               styles={styles}
             />
           )
@@ -427,7 +427,7 @@ interface MessageItemProps {
   msgSearchQuery: string
   msgSearchMatches: number[]
   executeToolFromBlock: (block: any) => void
-  measureHeight: (id: string, height: number) => void
+  measureMessage: (id: string, height: number) => void
   styles: Record<string, React.CSSProperties>
 }
 
@@ -442,22 +442,22 @@ function MessageItem({
   msgSearchQuery,
   msgSearchMatches,
   executeToolFromBlock,
-  measureHeight,
+  measureMessage,
   styles,
 }: MessageItemProps) {
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (ref.current) {
-      measureHeight(message.id, ref.current.getBoundingClientRect().height)
+      measureMessage(message.id, ref.current.getBoundingClientRect().height)
     }
   })
 
   useEffect(() => {
     if (ref.current) {
-      measureHeight(message.id, ref.current.getBoundingClientRect().height)
+      measureMessage(message.id, ref.current.getBoundingClientRect().height)
     }
-  }, [message.content, measureHeight])
+  }, [message.content, measureMessage])
 
   if (message.role === 'error') {
     return (
