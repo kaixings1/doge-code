@@ -16,15 +16,9 @@ import { ErrorClassifier } from "./errors/classifier.ts";
 import { RetryHandler } from "./errors/retryHandler.ts";
 import { ErrorRecovery } from "./errors/recovery.ts";
 import { SubAgentManager } from "./subagent/subAgentManager.ts";
-// 导入真实工具
-import { FileReadTool } from "../tools/FileReadTool/FileReadTool.js";
-import { FileWriteTool } from "../tools/FileWriteTool/FileWriteTool.js";
-import { FileEditTool } from "../tools/FileEditTool/FileEditTool.js";
-import { BashTool } from "../tools/BashTool/BashTool.js";
-import { GlobTool } from "../tools/GlobTool/GlobTool.js";
-import { GrepTool } from "../tools/GrepTool/GrepTool.js";
-import { WebFetchTool } from "../tools/WebFetchTool/WebFetchTool.js";
-import { NotebookEditTool } from "../tools/NotebookEditTool/NotebookEditTool.js";
+// 导入工具注册表（复用 src/tools.ts 中 buildTool() 构建的完整工具实例）
+import { getAllBaseTools } from "../tools.js";
+import { type Tools, type ToolInfo } from "../Tool.js";
 
 export interface Conversation {
   messages: InternalMessage[];
@@ -72,9 +66,9 @@ export class QueryEngine {
     messages: [],
     addToolResults: (results) => {
       for (const r of results) {
-        const resultRecord = r as Record<string, unknown>
-        const toolUseId = typeof resultRecord.toolUseId === 'string' ? resultRecord.toolUseId : null
-        const contentVal = typeof resultRecord.output === 'string' ? resultRecord.output : JSON.stringify(resultRecord.output ?? resultRecord.error ?? '')
+        const resultRecord = r as Record<string, unknown>;
+        const toolUseId = typeof resultRecord.toolUseId === 'string' ? resultRecord.toolUseId : null;
+        const contentVal = typeof resultRecord.output === 'string' ? resultRecord.output : JSON.stringify(resultRecord.output ?? resultRecord.error ?? '');
         this._conversation.messages.push({
           role: "tool" as const,
           ...(toolUseId ? { toolUseId } : {}),
@@ -173,32 +167,82 @@ export class QueryEngine {
     });
   }
 
+  /**
+   * 构建最小化的 ToolUseContext，用于工具内部的 validateInput/call 调用。
+   * 不依赖 UI 层，所有权限检查由引擎外部的 PermissionManager 处理。
+   */
+  private static buildMinimalContext() {
+    const abortController = new AbortController();
+    return {
+      options: {
+        commands: [],
+        debug: false,
+        mainLoopModel: '',
+        tools: [] as Tools,
+        verbose: false,
+        thinkingConfig: { type: 'none' as const },
+        mcpClients: [],
+        mcpResources: {},
+        isNonInteractiveSession: true,
+        agentDefinitions: [],
+      },
+      abortController,
+      getAppState: () => ({ toolPermissionContext: {} as any }),
+      setAppState: () => {},
+      setInProgressToolUseIDs: () => {},
+      setResponseLength: () => 0,
+      updateFileHistoryState: (f: any) => f,
+      updateAttributionState: (f: any) => f,
+      readFileState: { get: () => null, set: () => {}, has: () => false },
+    };
+  }
+
   private buildRegistry(): Map<string, Tool> {
     const map = new Map<string, Tool>();
-    const adapters: { name: string; instance: { call: (...args: unknown[]) => Promise<unknown> }; desc: string }[] = [
-      { name: "BashTool", instance: BashTool, desc: "执行 shell 命令" },
-      { name: "FileReadTool", instance: FileReadTool, desc: "读取文件内容" },
-      { name: "FileWriteTool", instance: FileWriteTool, desc: "写入文件" },
-      { name: "FileEditTool", instance: FileEditTool, desc: "编辑文件" },
-      { name: "GrepTool", instance: GrepTool, desc: "搜索文件内容" },
-      { name: "GlobTool", instance: GlobTool, desc: "查找文件" },
-      { name: "WebFetchTool", instance: WebFetchTool, desc: "获取网页内容" },
-      { name: "NotebookEditTool", instance: NotebookEditTool, desc: "编辑 Jupyter 笔记本" },
-    ];
-    for (const { name, instance, desc } of adapters) {
-      map.set(name, {
-        name,
-        description: desc,
-        parameters: { type: "object", properties: {} },
-        validate(_params: unknown) { return { valid: true }; },
-        async execute(params: unknown) {
+    const baseTools = getAllBaseTools();
+    // 复用最小上下文和始终允许的 canUseTool
+    const ctx = QueryEngine.buildMinimalContext();
+    const canUseTool = async () => ({ behavior: 'allow', updatedInput: {} as any });
+    const parentMessage = { role: 'user', content: '' } as any;
+
+    for (const tool of baseTools) {
+      if (!tool || !tool.name) continue;
+      const info = tool.info();
+      map.set(tool.name, {
+        name: tool.name,
+        description: tool.description,
+        parameters: info.parameters,
+        validate(params) {
           try {
-            const result = await instance.call(params as never, {} as never, {} as never, {} as never);
+            if (tool.validateInput) {
+              const result = tool.validateInput(params as any, ctx as any);
+              if (result && result.result === false) {
+                return { valid: false, errors: [result.message] };
+              }
+            }
+          } catch { /* 验证异常视为无效 */ }
+          return { valid: true };
+        },
+        async execute(params) {
+          try {
+            // 调用真实工具的 call() 方法获取完整执行结果
+            const result = await tool.call(
+              params as any,
+              ctx as any,
+              canUseTool,
+              parentMessage,
+            );
+            // 解包 { data: ... } 包装，提取输出内容
             const raw = (result as { data?: unknown } | null)?.data ?? result;
-            const content = typeof raw === "string" ? raw : JSON.stringify(raw ?? "");
-            return { content };
+            if (typeof raw === 'string') return { content: raw };
+            if (typeof raw === 'object' && raw !== null) {
+              const obj = raw as Record<string, unknown>;
+              const content = obj.stdout ?? obj.content ?? JSON.stringify(raw);
+              return { content: String(content) };
+            }
+            return { content: String(raw ?? '') };
           } catch (e) {
-            const message = e instanceof Error ? e.message : "未知错误";
+            const message = e instanceof Error ? e.message : '未知错误';
             return { content: `错误: ${message}` };
           }
         },
