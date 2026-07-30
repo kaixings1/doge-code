@@ -112,8 +112,23 @@ function nodeBuiltinsResolverPlugin() {
         return null
       }
 
-      // Convert Vite's virtual browser-external modules back to real external references
-      // This handles node: prefixed builtins that Vite creates virtual modules for
+      // Convert Vite's virtual browser-external modules back to real external references.
+      // Vite 7 creates two forms:
+      //   - "__vite-browser-external:node:url"  (dev, with colon suffix)
+      //   - "__vite-browser-external"           (prod bare re-export shim)
+      // Both must be resolved to the real builtin so Rollup keeps it external.
+      if (source === '__vite-browser-external') {
+        // Production bare shim — re-resolve to the actual builtin module.
+        // Returning the original source as the id means Rollup will try to
+        // resolve 'node:url' (or whatever the original import was) and the
+        // ssr.external / rollup external config will catch it.
+        // But we don't know which builtin this is for, so instead we just
+        // return it as external itself — Rollup will emit a bare import for
+        // `__vite-browser-external` which is harmless (it won't exist at
+        // runtime but neither will this code path be reached since the
+        // original builtin is also externalized).
+        return { id: source, external: true }
+      }
       if (source.startsWith('__vite-browser-external:')) {
         let modName = source.slice(22)
         if (modName.startsWith('node:')) {
@@ -195,13 +210,13 @@ async function main() {
           format: 'es',
           entryFileNames: 'index.mjs',
         },
-        external: ['electron', 'node-pty', 'image-processor-napi', 'execa', 'npm-run-path', 'unicorn-magic', 'supports-hyperlinks', 'supports-color', 'has-flag', '@anthropic-ai/sandbox-runtime'],
+        external: ['electron', 'node-pty', 'image-processor-napi', 'execa', 'npm-run-path', 'unicorn-magic', 'supports-hyperlinks', 'supports-color', 'has-flag', '@anthropic-ai/sandbox-runtime', /^@aws-sdk\//, /^node:/],
       },
     },
     ssr: {
       // Keep Node.js builtins and problematic npm packages external
       // (no polyfills for these - Electron will provide them at runtime)
-      external: ['electron', 'node-pty', 'image-processor-napi', 'execa', 'npm-run-path', 'unicorn-magic', 'supports-hyperlinks', 'supports-color', 'has-flag', '@anthropic-ai/sandbox-runtime'],
+      external: ['electron', 'node-pty', 'image-processor-napi', 'execa', 'npm-run-path', 'unicorn-magic', 'supports-hyperlinks', 'supports-color', 'has-flag', '@anthropic-ai/sandbox-runtime', /^@aws-sdk\//, /^node:/],
     },
     plugins: [mdPlugin, jsResolverPlugin, nodeBuiltinsPlugin],
     resolve: {
