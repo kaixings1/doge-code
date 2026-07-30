@@ -6,56 +6,17 @@
  * - 自定义工作流创建
  * - 工作流执行（模拟执行，显示步骤进度）
  * - 执行历史记录
+ * - 批量处理（对多个文件执行工作流）
  * - localStorage 持久化
  * - 事件触发器（file-save、timer）
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react'
-
-export interface WorkflowStep {
-  id: string
-  name: string
-  description?: string
-  type: 'prompt' | 'tool' | 'condition' | 'loop'
-  params: Record<string, unknown>
-  nextStepId?: string
-  trueStepId?: string
-  falseStepId?: string
-  loopStepId?: string
-  afterLoopStepId?: string
-}
-
-export interface WorkflowDefinition {
-  id: string
-  name: string
-  description?: string
-  icon?: string
-  steps: WorkflowStep[]
-  trigger: 'manual' | 'file-save' | 'timer'
-  triggerConfig?: Record<string, unknown>
-  isTemplate?: boolean
-  createdAt: number
-  lastRunAt?: number
-}
-
-export interface WorkflowRunResult {
-  workflowId: string
-  status: 'running' | 'completed' | 'failed' | 'cancelled'
-  startedAt: number
-  finishedAt?: number
-  stepResults: Array<{
-    stepId: string
-    status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped'
-    output?: string
-    error?: string
-    durationMs: number
-  }>
-  output?: string
-  error?: string
-}
+import type { WorkflowStep, WorkflowDefinition, WorkflowRunResult, BatchFileItem, BatchJob } from './workflowAutomation.types'
 
 const STORAGE_KEY = 'doge-workflows'
 const HISTORY_KEY = 'doge-workflow-history'
+const BATCH_HISTORY_KEY = 'doge-batch-history'
 
 // 内置模板
 export const BUILTIN_TEMPLATES: WorkflowDefinition[] = [
@@ -133,32 +94,23 @@ function saveToStorage(key: string, value: unknown): void {
 }
 
 export interface UseWorkflowAutomationReturn {
-  /** 所有工作流（自定义 + 内置模板） */
   workflows: WorkflowDefinition[]
-  /** 执行历史 */
   history: WorkflowRunResult[]
-  /** 当前执行状态 */
   currentRun: WorkflowRunResult | null
-  /** 创建工作流 */
+  batchJobs: BatchJob[]
+  batchHistory: BatchJob[]
   createWorkflow: (workflow: Omit<WorkflowDefinition, 'id' | 'createdAt'>) => WorkflowDefinition
-  /** 更新工作流 */
   updateWorkflow: (id: string, updates: Partial<WorkflowDefinition>) => void
-  /** 删除工作流 */
   deleteWorkflow: (id: string) => void
-  /** 从模板创建工作流 */
   createFromTemplate: (template: WorkflowDefinition) => WorkflowDefinition
-  /** 执行工作流 */
   executeWorkflow: (workflowId: string, context: Record<string, unknown>) => Promise<WorkflowRunResult>
-  /** 取消执行 */
   cancelRun: () => void
-  /** 清除历史 */
   clearHistory: () => void
-  /** 获取单个工作流 */
   getWorkflow: (id: string) => WorkflowDefinition | undefined
-  /** 文件保存事件（供 file-save 触发器使用） */
   onFileSave: (filePath: string) => void
-  /** 注册 file-save 回调 */
   registerFileSaveCallback: (cb: (filePath: string) => void) => void
+  executeBatch: (workflowId: string, files: Array<{ filePath: string; fileName?: string }>) => Promise<BatchJob>
+  cancelBatch: (batchId: string) => void
 }
 
 export function useWorkflowAutomation(filePath?: string): UseWorkflowAutomationReturn {
@@ -173,9 +125,18 @@ export function useWorkflowAutomation(filePath?: string): UseWorkflowAutomationR
     loadFromStorage<WorkflowRunResult[]>(HISTORY_KEY, [])
   )
   const [currentRun, setCurrentRun] = useState<WorkflowRunResult | null>(null)
+  const [batchJobs, setBatchJobs] = useState<BatchJob[]>(() =>
+    loadFromStorage<BatchJob[]>(STORAGE_KEY.replace('doge-workflows', 'doge-batch-jobs'), [])
+  )
+  const [batchHistory, setBatchHistory] = useState<BatchJob[]>(() =>
+    loadFromStorage<BatchJob[]>(BATCH_HISTORY_KEY, [])
+  )
   const cancelRef = useRef(false)
   const filePathRef = useRef(filePath)
   filePathRef.current = filePath
+
+  // 批量任务取消控制
+  const batchCancelRef = useRef<Map<string, boolean>>(new Map())
 
   // 触发器系统
   const fileSaveCallbackRef = useRef<((filePath: string) => void) | null>(null)
@@ -190,6 +151,14 @@ export function useWorkflowAutomation(filePath?: string): UseWorkflowAutomationR
   useEffect(() => {
     saveToStorage(HISTORY_KEY, history)
   }, [history])
+
+  useEffect(() => {
+    saveToStorage(STORAGE_KEY.replace('doge-workflows', 'doge-batch-jobs'), batchJobs)
+  }, [batchJobs])
+
+  useEffect(() => {
+    saveToStorage(BATCH_HISTORY_KEY, batchHistory)
+  }, [batchHistory])
 
   const createWorkflow = useCallback((workflow: Omit<WorkflowDefinition, 'id' | 'createdAt'>): WorkflowDefinition => {
     const newWorkflow: WorkflowDefinition = {
@@ -343,6 +312,92 @@ export function useWorkflowAutomation(filePath?: string): UseWorkflowAutomationR
     fileSaveCallbackRef.current = cb
   }, [])
 
+  // 批量执行工作流
+  const executeBatch = useCallback(async (
+    workflowId: string,
+    files: Array<{ filePath: string; fileName?: string }>
+  ): Promise<BatchJob> => {
+    const workflow = workflows.find(w => w.id === workflowId)
+    if (!workflow) {
+      throw new Error('工作流不存在')
+    }
+
+    const batchId = `batch-${Date.now()}`
+    const batchItems: BatchFileItem[] = files.map(f => ({
+      id: `item-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      filePath: f.filePath,
+      fileName: f.fileName || f.filePath.split(/[/\\]/).pop() || f.filePath,
+      status: 'pending' as const,
+    }))
+
+    const batchJob: BatchJob = {
+      id: batchId,
+      name: `批量: ${workflow.name}`,
+      workflowId,
+      files: batchItems,
+      status: 'running',
+      startedAt: Date.now(),
+      completedCount: 0,
+      failedCount: 0,
+    }
+
+    setBatchJobs(prev => [batchJob, ...prev])
+    batchCancelRef.current.set(batchId, false)
+
+    // 逐个执行工作流
+    for (const item of batchItems) {
+      if (batchCancelRef.current.get(batchId)) {
+        batchJob.status = 'cancelled'
+        batchJob.finishedAt = Date.now()
+        item.status = 'skipped'
+        break
+      }
+
+      item.status = 'running'
+      setBatchJobs(prev => [...prev])
+
+      try {
+        const result = await executeWorkflow(workflowId, { filePath: item.filePath })
+        if (result.status === 'completed') {
+          item.status = 'completed'
+          item.output = result.output
+          batchJob.completedCount++
+        } else {
+          item.status = 'failed'
+          item.error = result.error || '执行失败'
+          batchJob.failedCount++
+        }
+      } catch (err) {
+        item.status = 'failed'
+        item.error = err instanceof Error ? err.message : String(err)
+        batchJob.failedCount++
+      }
+
+      item.durationMs = item.durationMs || 0
+      setBatchJobs(prev => [...prev])
+    }
+
+    batchJob.status = batchJob.status === 'cancelled' ? 'cancelled' : 'completed'
+    batchJob.finishedAt = Date.now()
+
+    // 移到历史
+    setBatchHistory(prev => [batchJob, ...prev].slice(0, 50))
+    setBatchJobs(prev => prev.filter(j => j.id !== batchId))
+    batchCancelRef.current.delete(batchId)
+
+    return batchJob
+  }, [workflows, executeWorkflow])
+
+  const cancelBatch = useCallback((batchId: string) => {
+    batchCancelRef.current.set(batchId, true)
+    setBatchJobs(prev => prev.map(j => {
+      if (j.id === batchId) {
+        return { ...j, status: 'cancelled' as const, finishedAt: Date.now() }
+      }
+      return j
+    }))
+  }, [])
+
   // 触发器：timer
   useEffect(() => {
     const timerWorkflows = workflows.filter(w => w.trigger === 'timer')
@@ -390,6 +445,8 @@ export function useWorkflowAutomation(filePath?: string): UseWorkflowAutomationR
     workflows: [...workflows],
     history,
     currentRun,
+    batchJobs,
+    batchHistory,
     createWorkflow,
     updateWorkflow,
     deleteWorkflow,
@@ -400,5 +457,7 @@ export function useWorkflowAutomation(filePath?: string): UseWorkflowAutomationR
     getWorkflow,
     onFileSave,
     registerFileSaveCallback,
+    executeBatch,
+    cancelBatch,
   }
 }
