@@ -186,6 +186,75 @@ export function resetAdaptedToolsCache(): void {
   adaptedToolsCache = null
 }
 
+// ─── 操作快照 + 回滚 (Phase 3) ───
+
+interface FileSnapshot {
+  path: string
+  content: string
+  timestamp: number
+}
+
+const snapshotStore = new Map<string, FileSnapshot[]>()
+
+/** 记录工具调用前的文件快照 */
+export function takeBeforeSnapshot(toolUseId: string, files: string[]): void {
+  const snapshots: FileSnapshot[] = []
+  for (const fp of files) {
+    try {
+      const content = fs.readFileSync(fp, 'utf-8')
+      snapshots.push({ path: fp, content, timestamp: Date.now() })
+    } catch { /* 文件不存在则跳过 */ }
+  }
+  if (snapshots.length > 0) {
+    snapshotStore.set(toolUseId, snapshots)
+  }
+}
+
+/** 记录工具调用后的文件快照（追加到同一 toolUseId） */
+export function takeAfterSnapshot(toolUseId: string, files: string[]): void {
+  const existing = snapshotStore.get(toolUseId) ?? []
+  for (const fp of files) {
+    try {
+      const content = fs.readFileSync(fp, 'utf-8')
+      existing.push({ path: fp, content, timestamp: Date.now() })
+    } catch { /* 跳过 */ }
+  }
+  snapshotStore.set(toolUseId, existing)
+}
+
+/** 回滚到工具调用前的状态 */
+export function rollbackTool(toolUseId: string): string[] {
+  const snapshots = snapshotStore.get(toolUseId)
+  if (!snapshots || snapshots.length === 0) {
+    return ['没有可回滚的快照']
+  }
+  const restored: string[] = []
+  // 只恢复到第一个快照（执行前状态）
+  const beforeSnapshots = snapshots.filter(s => s.timestamp === snapshots[0].timestamp)
+  for (const snap of beforeSnapshots) {
+    try {
+      fs.writeFileSync(snap.path, snap.content, 'utf-8')
+      restored.push(snap.path)
+    } catch (e) {
+      restored.push(`${snap.path}: ${e instanceof Error ? e.message : '写入失败'}`)
+    }
+  }
+  snapshotStore.delete(toolUseId)
+  return restored
+}
+
+/** 清理过期快照 */
+export function cleanupSnapshots(maxAgeMs = 3600000): void {
+  const cutoff = Date.now() - maxAgeMs
+  for (const [id, snaps] of snapshotStore) {
+    const allOld = snaps.every(s => s.timestamp < cutoff)
+    if (allOld) snapshotStore.delete(id)
+  }
+}
+
+// 每 5 分钟清理一次过期快照
+setInterval(cleanupSnapshots, 300000)
+
 export async function executeTool(call: ToolCallInput, config: EngineConfig | null, projectRoot: string): Promise<ToolResult> {
   const { name, input } = call
   const toolUseId = 'tool_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8)
@@ -206,8 +275,35 @@ export async function executeTool(call: ToolCallInput, config: EngineConfig | nu
       return { toolUseId, success: false, error: '参数无效: ' + (validation.errors || []).join(', ') }
     }
 
+    const toolName = name
+    const args = input as Record<string, unknown>
+
+    // Phase 3: 对文件修改类工具自动记录快照
+    const shouldSnapshot = ['WriteTool', 'Edit', 'MultiEdit'].includes(toolName)
+    let snapshotFiles: string[] = []
+    if (shouldSnapshot) {
+      const filePath = args.file_path ?? args.filePath
+      if (typeof filePath === 'string' && filePath.length > 0) {
+        snapshotFiles = [filePath]
+      }
+      // MultiEdit 可能有多文件
+      const files = args.files
+      if (Array.isArray(files)) {
+        for (const f of files) {
+          if (typeof f === 'string' && !snapshotFiles.includes(f)) snapshotFiles.push(f)
+        }
+      }
+      takeBeforeSnapshot(toolUseId, snapshotFiles)
+    }
+
     const result = await adapted.execute(input)
     const output = typeof result.content === 'string' ? result.content : JSON.stringify(result.content)
+
+    // 成功后追加 after 快照
+    if (shouldSnapshot && snapshotFiles.length > 0) {
+      takeAfterSnapshot(toolUseId, snapshotFiles)
+    }
+
     return { toolUseId, success: true, output }
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : '未知错误'
