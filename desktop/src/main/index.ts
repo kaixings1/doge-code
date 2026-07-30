@@ -14,6 +14,7 @@ import type { APIRequest } from '../../../src/engine/requestBuilder.js'
 import { getAllBaseTools, type Tool } from '../../../src/tools.js'
 import { zodToJsonSchema } from '../../../src/utils/zodToJsonSchema.js'
 import { getPermissionManager, DesktopPermissionManager } from './permissionManager.js'
+import { setOriginalCwd, setCwdState, getProjectRoot } from '../../../src/bootstrap/state.js'
 import { initBundledSkills } from '../../../src/skills/bundled/index.js'
 import { getBundledSkills } from '../../../src/skills/bundledSkills.js'
 import { createEngineApi, type EngineApi } from './engineApi.js'
@@ -85,6 +86,13 @@ function getEngine(): QueryEngine {
     tsLog('MAIN', 'Creating new QueryEngine instance')
     const config = loadConfig()
     engineConfig = config
+
+    // 确保工具执行时 cwd 指向项目根目录
+    // Electron 打包后 process.cwd() 可能不是项目目录
+    const cwdRoot = getProjectRoot()
+    setOriginalCwd(cwdRoot)
+    setCwdState(cwdRoot)
+    tsLog('MAIN', 'Working directory set to:', cwdRoot)
 
     getPermissionManager().setMainWindow(mainWindow)
     const adaptedTools = createAdaptedTools(config)
