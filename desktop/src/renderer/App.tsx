@@ -53,7 +53,9 @@ import { MonacoEditorPanel } from './components/MonacoEditorPanel.js'
 import { SecurityAuditPanel } from './components/SecurityAuditPanel.js'
 import { PerformanceRefactorPanel } from './components/PerformanceRefactorPanel.js'
 import { WorkflowPanel } from './components/WorkflowPanel.js'
+import { CallChainPanel } from './components/CallChainPanel.js'
 import { useWorkflowAutomation } from './hooks/useWorkflowAutomation.js'
+import { useCallChain } from './hooks/useCallChain.js'
 import { parseMessageContent, InlineToolUseBlock, renderMarkdown } from './shared.js'
 import type { Message, ContentBlock, ToolUseBlock } from './shared.js'
 import { useDesktopVimInput, type VimMode } from '../hooks/useDesktopVimInput.js'
@@ -258,6 +260,7 @@ export function App(): JSX.Element {
   const [showKanban, setShowKanban] = useState(false)
   const [showTimeTracker, setShowTimeTracker] = useState(false)
   const [showProgressReport, setShowProgressReport] = useState(false)
+  const [showCallChain, setShowCallChain] = useState(false)
   const [cursorOffset, setCursorOffset] = useState(0)
   const [vimEnabled, setVimEnabled] = useState(false)
   const previewTabCounter = useRef(0)
@@ -304,6 +307,15 @@ export function App(): JSX.Element {
 
   // ─── LSP Hook ───
   const lsp = useLsp()
+
+  // ─── 调用链分析 Hook ───
+  const callChain = useCallChain({
+    content: activePreviewFile?.content || '',
+    filePath: activePreviewFile?.path || '',
+    fetchReferences: lsp.references,
+    fetchDefinition: lsp.definition,
+    enabled: !!activePreviewFile,
+  })
 
   // ─── 预测性 AI 助手：静态分析 Hook ───
   const preAnalysis = usePreAnalysis(
@@ -2053,6 +2065,7 @@ export function App(): JSX.Element {
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showSnippetPanel ? c.accent : c.textMuted }} onClick={() => setShowSnippetPanel(p => !p)}>✂️ 片段</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showLspPanel ? c.accent : c.textMuted }} onClick={() => setShowLspPanel(p => !p)}>🧠 LSP</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showReferencesPanel ? c.accent : c.textMuted }} onClick={() => { setShowReferencesPanel(p => !p) }}>📎 引用</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showCallChain ? c.accent : c.textMuted }} onClick={() => { setShowCallChain(p => !p) }}>🔗 调用链</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showSemanticSearch ? c.accent : c.textMuted }} onClick={() => setShowSemanticSearch(p => !p)}>🔍 搜索</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showDebuggerPanel ? c.accent : c.textMuted }} onClick={() => setShowDebuggerPanel(p => !p)}>🪲 调试器</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showCollabPanel ? c.accent : c.textMuted }} onClick={() => setShowCollabPanel(p => !p)}>🤝 协作</span>
@@ -2242,6 +2255,15 @@ export function App(): JSX.Element {
             onClose={() => setShowReferencesPanel(false)}
             onGoToDefinition={(filePath, line) => { handlePreviewFile(filePath) }}
             referencesQuery={(filePath, line, character) => lsp.references(filePath, line, character)}
+          />
+        )}
+        {showCallChain && activePreviewFile && (
+          <CallChainPanel
+            result={callChain}
+            filePath={activePreviewFile.path}
+            theme={theme}
+            onClose={() => setShowCallChain(false)}
+            onGoToDefinition={(filePath, line) => { handlePreviewFile(filePath) }}
           />
         )}
         {showDebuggerPanel && (
