@@ -82,6 +82,8 @@ interface DogeAPIValue {
   pluginInstall: (sourceDir: string, pluginName: string) => Promise<{ success: boolean; error?: string }>
   pluginUninstall: (pluginName: string) => Promise<{ success: boolean; error?: string }>
   pluginGetCommand: (pluginName: string, commandName: string) => Promise<{ content: string | null }>
+  marketplaceList: () => Promise<Array<{ name: string; source: string; plugins: Array<{ name: string; description?: string; version?: string; source: string; repo?: string; installed: boolean }> }>>
+  marketplaceInstall: (pluginName: string, repo: string) => Promise<{ success: boolean; error?: string }>
   aiComplete: (input: { filePath: string; code: string; line: number; column: number }) => Promise<{ success: boolean; completions: Array<{ insertText: string; endLine?: number; endColumn?: number; documentation?: string }> }>
   formatCode: (params: { code: string; language: string; tool: string; cwd: string; range?: { start: number; end: number } }) => Promise<{ success: boolean; output?: string; error?: string }>
   apiTestSend: (request: { url: string; method: string; headers: Record<string, string>; body?: string; bodyType: string }) => Promise<{ success: boolean; status: number; statusText: string; responseHeaders: Record<string, string>; body: string; error?: string }>
@@ -238,6 +240,8 @@ const dogeAPI: DogeAPIValue = {
   pluginInstall: (sourceDir: string, pluginName: string) => ipcRenderer.invoke('doge:plugin-install', sourceDir, pluginName),
   pluginUninstall: (pluginName: string) => ipcRenderer.invoke('doge:plugin-uninstall', pluginName),
   pluginGetCommand: (pluginName: string, commandName: string) => ipcRenderer.invoke('doge:plugin-get-command', pluginName, commandName),
+  marketplaceList: () => ipcRenderer.invoke('doge:marketplace-list'),
+  marketplaceInstall: (pluginName: string, repo: string) => ipcRenderer.invoke('doge:marketplace-install', pluginName, repo),
   // 以下为占位 API（主进程 IPC handler 未实现，调用时返回失败）
   aiComplete: (input: { filePath: string; code: string; line: number; column: number }) => ipcRenderer.invoke('doge:ai-complete', input),
   formatCode: async (params) => {
