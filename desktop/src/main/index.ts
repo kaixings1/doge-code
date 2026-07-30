@@ -206,7 +206,9 @@ function createWindow(): void {
     const htmlUrl = `file://${path.join(DIST_DIR, 'renderer', 'index.html').replace(/\\/g, '/')}#/desktop`
     mainWindow.loadURL(htmlUrl)
   }
-  mainWindow.webContents.openDevTools({ mode: 'detach' })
+  if (process.env.NODE_ENV !== 'test') {
+    mainWindow.webContents.openDevTools({ mode: 'detach' })
+  }
 
   mainWindow.on('close', (e) => {
     if (process.platform === 'darwin') {
