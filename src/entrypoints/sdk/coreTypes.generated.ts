@@ -4,6 +4,7 @@
  * Run: bun scripts/generate-sdk-types.ts
  */
 
+import { z } from 'zod/v4'
 import type {
   ModelUsageSchema,
   OutputFormatTypeSchema,
