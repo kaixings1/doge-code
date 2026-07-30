@@ -111,7 +111,7 @@ import {
 } from './elicitationHandler.js'
 import { buildMcpToolName } from './mcpStringUtils.js'
 import { normalizeNameForMCP } from './normalization.js'
-import { getLoggingSafeMcpBaseUrl } from './utils.js'
+import { getLoggingSafeMcpBaseUrl, filterToolsByServer } from './utils.js'
 
  
 const fetchMcpSkillsForClient = feature('MCP_SKILLS')
@@ -3305,3 +3305,7 @@ export async function setupSdkMcpClients(
 
   return { clients, tools }
 }
+
+// Re-export for tests
+export { filterToolsByServer, isMcpTool, hashMcpConfig } from './utils.js'
+export { createLinkedTransportPair } from './InProcessTransport.js'
