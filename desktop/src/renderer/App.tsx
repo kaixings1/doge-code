@@ -795,23 +795,35 @@ export function App(): JSX.Element {
             }
             appendMsg(asstMsg)
           } else {
-            // 文本内容为空但命令可能已通过工具执行成功，获取历史消息显示工具结果
+            // 文本内容为空：工具调用结果可能在历史消息中
+            // 工具结果消息 role 为 'tool'，content 为 JSON 或错误字符串
             try {
               const history = await window.dogeAPI.getHistory()
               const allMsgs = history.messages || []
-              const toolResult = allMsgs.filter(m => m.role === 'system' && typeof m.content === 'string' && m.content.includes('"success":true'))
-              if (toolResult.length > 0) {
-                const lastResult = toolResult[toolResult.length - 1].content
-                let display = lastResult
+
+              // 优先查找 tool 角色消息（包含成功或失败的工具执行结果）
+              const toolMsgs = allMsgs.filter(m => m.role === 'tool' && typeof m.content === 'string')
+              if (toolMsgs.length > 0) {
+                const lastTool = toolMsgs[toolMsgs.length - 1].content
                 try {
-                  const parsed = JSON.parse(lastResult)
+                  const parsed = JSON.parse(lastTool)
                   if (typeof parsed.output === 'string') {
                     const ec = parsed.exitCode
                     const suffix = (ec === 0 || ec === null) ? '' : `[exit code: ${ec}]\n`
-                    display = suffix + parsed.output.replace(/\u001b\[[0-9;]*m/g, '')
+                    appendMsg({ id: `auto-asst-${Date.now()}`, role: 'assistant', content: suffix + parsed.output.replace(/\u001b\[[0-9;]*m/g, '') })
+                  } else if (typeof parsed.error === 'string') {
+                    appendMsg({ id: `auto-err-${Date.now()}`, role: 'error', content: `工具执行失败: ${parsed.error}` })
+                  } else {
+                    appendMsg({ id: `auto-asst-${Date.now()}`, role: 'assistant', content: '(命令已执行)' })
                   }
-                } catch { /* raw */ }
-                appendMsg({ id: `auto-asst-${Date.now()}`, role: 'assistant', content: display })
+                } catch {
+                  // tool content 不是 JSON（可能是纯错误字符串）
+                  if (lastTool.includes('failed') || lastTool.includes('error') || lastTool.includes('Error')) {
+                    appendMsg({ id: `auto-err-${Date.now()}`, role: 'error', content: `工具执行失败: ${lastTool.slice(0, 300)}` })
+                  } else {
+                    appendMsg({ id: `auto-asst-${Date.now()}`, role: 'assistant', content: lastTool.slice(0, 2000) })
+                  }
+                }
               } else if (allMsgs.length > 1) {
                 appendMsg({ id: `auto-asst-${Date.now()}`, role: 'assistant', content: '(命令已执行，无文本输出)' })
               }
