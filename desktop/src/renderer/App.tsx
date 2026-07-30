@@ -18,6 +18,7 @@ import { GitChanges, type GitFile } from './components/GitChanges.js'
 import { GitDiff } from './components/GitDiff.js'
 import { ToolPanel } from './components/ToolPanel.js'
 import { CommandPalette } from './components/CommandPalette.js'
+import { ReferencesPanel } from './components/ReferencesPanel.js'
 import { HighlightedDiff } from './components/HighlightedDiff.js'
 import { ToolErrorBanner } from './components/ToolErrorBanner.js'
 import { ToolProgressBar } from './components/ToolProgressBar.js'
@@ -36,6 +37,7 @@ import { ProgressReport } from './components/ProgressReport.js'
 import { useTimeTracker } from './hooks/useTimeTracker.js'
 import { useGitStats } from './hooks/useGitStats.js'
 import { useWorkflowMode } from './hooks/useWorkflowMode.js'
+import { useLsp } from './hooks/useLsp.js'
 import { usePreAnalysis } from './hooks/usePreAnalysis.js'
 import { useSmartImport } from './hooks/useSmartImport.js'
 import { InlineSuggestion } from './components/InlineSuggestion.js'
@@ -250,6 +252,7 @@ export function App(): JSX.Element {
   const [showSecurityAudit, setShowSecurityAudit] = useState(false)
   const [showPerformanceRefactor, setShowPerformanceRefactor] = useState(false)
   const [showWorkflowPanel, setShowWorkflowPanel] = useState(false)
+  const [showReferencesPanel, setShowReferencesPanel] = useState(false)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [activeReviewFile, setActiveReviewFile] = useState<string | null>(null)
   const [showKanban, setShowKanban] = useState(false)
@@ -298,6 +301,9 @@ export function App(): JSX.Element {
 
   // ─── AI 工作流自动化 Hook ───
   const wf = useWorkflowAutomation(selectedFile || '')
+
+  // ─── LSP Hook ───
+  const lsp = useLsp()
 
   // ─── 预测性 AI 助手：静态分析 Hook ───
   const preAnalysis = usePreAnalysis(
@@ -2046,6 +2052,7 @@ export function App(): JSX.Element {
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showApiTestPanel ? c.accent : c.textMuted }} onClick={() => setShowApiTestPanel(p => !p)}>🔌 API</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showSnippetPanel ? c.accent : c.textMuted }} onClick={() => setShowSnippetPanel(p => !p)}>✂️ 片段</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showLspPanel ? c.accent : c.textMuted }} onClick={() => setShowLspPanel(p => !p)}>🧠 LSP</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showReferencesPanel ? c.accent : c.textMuted }} onClick={() => { setShowReferencesPanel(p => !p) }}>📎 引用</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showSemanticSearch ? c.accent : c.textMuted }} onClick={() => setShowSemanticSearch(p => !p)}>🔍 搜索</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showDebuggerPanel ? c.accent : c.textMuted }} onClick={() => setShowDebuggerPanel(p => !p)}>🪲 调试器</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showCollabPanel ? c.accent : c.textMuted }} onClick={() => setShowCollabPanel(p => !p)}>🤝 协作</span>
@@ -2225,6 +2232,17 @@ export function App(): JSX.Element {
               onGoToDefinition={(filePath, line) => { handlePreviewFile(filePath); setShowLspPanel(false) }}
             />
           </div>
+        )}
+        {showReferencesPanel && activePreviewFile && (
+          <ReferencesPanel
+            filePath={activePreviewFile.path}
+            cursorLine={0}
+            cursorColumn={0}
+            theme={theme}
+            onClose={() => setShowReferencesPanel(false)}
+            onGoToDefinition={(filePath, line) => { handlePreviewFile(filePath) }}
+            referencesQuery={(filePath, line, character) => lsp.references(filePath, line, character)}
+          />
         )}
         {showDebuggerPanel && (
           <div style={{ position: 'fixed', top: 60, right: 20, width: 520, height: '75%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
