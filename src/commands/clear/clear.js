@@ -1,1 +1,1 @@
-export { call } from "./clear.ts";
+export * from './clear.ts'

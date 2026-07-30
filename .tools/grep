@@ -1,0 +1,63 @@
+#!/bin/bash
+# Shim: grep -> rg.exe
+# Replaces MSYS2 grep which has compatibility issues on Windows native filesystems
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+RG="$SCRIPT_DIR/rg.exe"
+
+# Convert grep-style args to rg-style args
+args=()
+while [ $# -gt 0 ]; do
+  arg="$1"
+  case "$arg" in
+    -n) args+=("--line-number") ;;
+    -i) args+=("--ignore-case") ;;
+    -v) args+=("--invert-match") ;;
+    -w) args+=("--word-regexp") ;;
+    -c) args+=("--count") ;;
+    -l) args+=("--files-with-matches") ;;
+    -r|-R) args+=("--no-follow") ;;
+    -E) args+=("--pcre2") ;;
+    -F) args+=("--fixed-strings") ;;
+    -e)
+      shift
+      args+=("-e" "$1")
+      ;;
+    -A)
+      shift
+      args+=("--after-context" "$1")
+      ;;
+    -B)
+      shift
+      args+=("--before-context" "$1")
+      ;;
+    -C)
+      shift
+      args+=("--context" "$1")
+      ;;
+    --include=*)
+      args+=("--glob" "${arg#--include=}")
+      ;;
+    --exclude=*)
+      args+=("--glob" "!${arg#--exclude=}")
+      ;;
+    --include)
+      shift
+      args+=("--glob" "$1")
+      ;;
+    --exclude)
+      shift
+      args+=("--glob" "!$1")
+      ;;
+    -*)
+      args+=("$arg")
+      ;;
+    *)
+      # Convert POSIX path to Windows path for native rg.exe
+      win_path=$(cygpath -w "$arg" 2>/dev/null || echo "$arg")
+      args+=("$win_path")
+      ;;
+  esac
+  shift
+done
+
+exec "$RG" "${args[@]}" --no-config

@@ -5,7 +5,7 @@ import {
   StreamMessageReader,
   StreamMessageWriter,
   Trace,
-} from 'vscode-jsonrpc/node.js'
+} from 'vscode-jsonrpc/node'
 import type {
   InitializeParams,
   InitializeResult,

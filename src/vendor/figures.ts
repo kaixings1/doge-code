@@ -1,63 +1,46 @@
-/**
- * 图汧户 figures ti代価实例
- * 可用管理中文(保接DI是吗实用的符号
- */
-
-// 检查確劣是吐收整中改存（绷单检查）
-const isUnicodeSupported = (): boolean => {
-  if (process.platform === 'win32') {
-    return process.env.TERM_PROGRAM === 'vscode' ||
-           !!process.env.WT_SESSION ||
-           process.env.ConEmuANSI === 'ON' ||
-           process.env.TERM === 'xterm-256color';
-  }
-  return process.env.TERM !== 'linux' && process.env.TERM !== 'dumb';
-};
-
-const common = {
-  heart: '♥',
-  pointer: '❯',
-  pointerSmall: '›',
-  cross: '✘',
-  warning: '⚠',
-  tick: '✔',
-  info: 'ℹ',
-  ellipsis: '…',
-  arrowUp: '↑',
-  arrowDown: '↓',
-  arrowLeft: '←',
-  arrowRight: '→',
-  bullet: '●',
-  dot: '․',
-  square: '█',
-  star: '★',
-  line: '─',
-  lineVertical: '│',
-};
-
-const fallback = {
-  heart: '<3',
-  pointer: '>',
-  pointerSmall: '>',
-  cross: '×',
-  warning: '‼',
-  tick: '√',
-  info: 'i',
-  ellipsis: '...',
-  arrowUp: '^',
-  arrowDown: 'v',
-  arrowLeft: '<',
-  arrowRight: '>',
-  bullet: '*',
-  dot: '.',
-  square: '#',
-  star: '*',
-  line: '-',
-  lineVertical: '|',
-};
-
-const shouldUseMain = isUnicodeSupported();
-const figures = shouldUseMain ? common : fallback;
-
-export default figures;
-export { common as mainSymbols, fallback as fallbackSymbols };
+export const tick = '✓'
+export const cross = '✗'
+export const circle = '○'
+export const circleFilled = '●'
+export const warning = '⚠'
+export const BLACK_CIRCLE = '●'
+export const DIAMOND_FILLED = '◆'
+export const DIAMOND_OPEN = '◇'
+export const TEARDROP_ASTERISK = '✿'
+export const LIGHTNING_BOLT = '⚡'
+export const UP_ARROW = '↑'
+export const DOWN_ARROW = '↓'
+export const REFRESH_ARROW = '↻'
+export const CHANNEL_ARROW = '➜'
+export const PAUSE_ICON = '⏸'
+export const PLAY_ICON = '▶'
+export const BRIDGE_READY_INDICATOR = '●'
+export const BRIDGE_FAILED_INDICATOR = '✗'
+export const FLAG_ICON = '🚩'
+export const REFERENCE_MARK = '※'
+export const BULLET_OPERATOR = '•'
+export const BLOCKQUOTE_BAR = '│'
+export default {
+  tick,
+  cross,
+  circle,
+  circleFilled,
+  warning,
+  BLACK_CIRCLE,
+  DIAMOND_FILLED,
+  DIAMOND_OPEN,
+  TEARDROP_ASTERISK,
+  LIGHTNING_BOLT,
+  UP_ARROW,
+  DOWN_ARROW,
+  REFRESH_ARROW,
+  CHANNEL_ARROW,
+  PAUSE_ICON,
+  PLAY_ICON,
+  BRIDGE_READY_INDICATOR,
+  BRIDGE_FAILED_INDICATOR,
+  FLAG_ICON,
+  REFERENCE_MARK,
+  BULLET_OPERATOR,
+  BLOCKQUOTE_BAR,
+}

@@ -19,7 +19,6 @@ import {
 import { readCustomApiStorage } from '../../utils/customApiStorage.js'
 import { isEnvTruthy } from '../../utils/envUtils.js'
 import { logForDebugging } from '../../utils/debug.js'
-import { getSmallFastModel } from '../../utils/model/model.js'
 import {
   getAPIProvider,
   isFirstPartyAnthropicBaseUrl,

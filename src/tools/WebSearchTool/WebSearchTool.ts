@@ -33,7 +33,6 @@ import type { WebSearchProgress } from '../../types/tools.js'
 import { WEB_SEARCH_TOOL_NAME } from './prompt.js'
 import type { PermissionResult } from '../../utils/permissions/PermissionResult.js'
 import * as crypto from 'crypto'
-import { getLocalISODate, getLocalMonthYear } from '../../constants/common.js'
 
 // ============================================================
 //  兼容层
