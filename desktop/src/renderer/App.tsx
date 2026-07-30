@@ -36,6 +36,8 @@ import { ProgressReport } from './components/ProgressReport.js'
 import { useTimeTracker } from './hooks/useTimeTracker.js'
 import { useGitStats } from './hooks/useGitStats.js'
 import { useWorkflowMode } from './hooks/useWorkflowMode.js'
+import { usePreAnalysis } from './hooks/usePreAnalysis.js'
+import { InlineSuggestion } from './components/InlineSuggestion.js'
 import { getStyles, getEffectiveTheme, THEMES, type ThemeName, type ThemeColors } from './theme.js'
 import { AdvancedCodeEditor } from './components/AdvancedCodeEditor.js'
 import { SemanticSearchPanel } from './components/SemanticSearchPanel.js'
@@ -285,7 +287,14 @@ export function App(): JSX.Element {
 
   // ─── Agent 编排层 Hook ───
   const [gitChangesCount, setGitChangesCount] = useState(0)
+  const [dismissedSuggestions, setDismissedSuggestions] = useState<Set<string>>(new Set())
   const workflowMode = useWorkflowMode(selectedFile, gitChangesCount, showDebuggerPanel)
+
+  // ─── 预测性 AI 助手：静态分析 Hook ───
+  const preAnalysis = usePreAnalysis(
+    activePreviewFile?.content || '',
+    { extension: activePreviewFile?.path?.split('.').pop() || '', enabled: !!activePreviewFile }
+  )
 
   // ─── 工作流模式面板自动联动 ───
   useEffect(() => {
@@ -1756,6 +1765,16 @@ export function App(): JSX.Element {
               {msgSearchQuery && (<span style={{ color: c.textFaint, fontSize: '10px', whiteSpace: 'nowrap' }}>{msgSearchMatches.length} 条匹配</span>)}
             </div>
           )}
+          <InlineSuggestion
+            suggestions={preAnalysis.filter(s => !dismissedSuggestions.has(s.id))}
+            onDismiss={(id) => setDismissedSuggestions(prev => new Set(prev).add(id))}
+            onDismissAll={() => setDismissedSuggestions(new Set(preAnalysis.map(s => s.id)))}
+            theme={{
+              accent: theme.accent, text: theme.text, textFaint: theme.textFaint, textMuted: theme.textMuted,
+              bgPanel: theme.bgPanel, border: theme.border, surface: theme.surface,
+              errorText: theme.errorText, successText: theme.accent, warningText: '#FFB74D',
+            }}
+          />
           <VirtualMessageList
             messages={messages}
             currentStreaming={currentStreaming}
