@@ -53,6 +53,9 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
   const [showOutline, setShowOutline] = useState(false)
   const [columnSelectMode, setColumnSelectMode] = useState(false)
   const [showCallChain, setShowCallChain] = useState(false)
+  const [showTypeHint, setShowTypeHint] = useState(false)
+  const [typeHint, setTypeHint] = useState<{ text: string; line: number; column: number } | null>(null)
+  const typeHintTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const bookmarksRef = useRef<Set<number>>(new Set())
   const bookmarkDecorationsRef = useRef<Map<number, string[]>>(new Map())
 
@@ -309,6 +312,35 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
     editor.updateOptions({ columnSelection: newMode })
   }, [columnSelectMode])
 
+  // 类型推导提示切换
+  const toggleTypeHint = useCallback(() => {
+    setShowTypeHint(p => !p)
+  }, [])
+
+  // 监听光标变化，实时获取类型信息
+  const handleCursorChange = useCallback(async () => {
+    if (!showTypeHint) { setTypeHint(null); return }
+    const editor = editorRef.current
+    if (!editor) return
+    const model = editor.getModel()
+    if (!model) return
+    const position = editor.getPosition()
+    if (!position) return
+    const filePath = model.uri.path
+    const line = position.lineNumber - 1
+    const character = position.column - 1
+    try {
+      const contents = await fetchLspHover(filePath, line, character)
+      if (contents && contents.trim()) {
+        setTypeHint({ text: contents.trim(), line: position.lineNumber, column: position.column })
+      } else {
+        setTypeHint(null)
+      }
+    } catch {
+      setTypeHint(null)
+    }
+  }, [showTypeHint])
+
   // 最近文件
   const pushRecentFile = useCallback((fp: string) => {
     setRecentFiles(prev => {
@@ -414,10 +446,11 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'O') { e.preventDefault(); setShowOutline(p => !p) }
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); handleInlineEdit() }
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') { e.preventDefault(); setShowCallChain(p => !p) }
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'T') { e.preventDefault(); toggleTypeHint() }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [recentFiles, switchToRecentFile, goToDefinition, findReferences, handleInlineEdit])
+  }, [recentFiles, switchToRecentFile, goToDefinition, findReferences, handleInlineEdit, toggleTypeHint, setShowCallChain])
 
   // 当文件打开时更新最近文件和符号
   useEffect(() => {
@@ -475,6 +508,7 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
         <button onClick={toggleColumnSelect} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: columnSelectMode ? c.accentDim : 'transparent', color: c.text, cursor: 'pointer', fontSize: '9px' }} title="列选择模式 (Alt+Shift+拖拽)">▦ 列选</button>
         <button onClick={() => setShowOutline(p => !p)} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: showOutline ? c.accentDim : 'transparent', color: c.text, cursor: 'pointer', fontSize: '9px' }} title="切换符号大纲 (Ctrl+Shift+O)">📑 大纲</button>
         <button onClick={() => setShowCallChain(p => !p)} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: showCallChain ? c.accentDim : 'transparent', color: c.text, cursor: 'pointer', fontSize: '9px' }} title="调用链分析 (Ctrl+Shift+C)">🔗 调用链</button>
+        <button onClick={toggleTypeHint} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: showTypeHint ? c.accentDim : 'transparent', color: c.text, cursor: 'pointer', fontSize: '9px' }} title="切换类型推导提示 (Ctrl+Shift+T)">🔍 类型</button>
       </div>
 
       {/* 标签页栏 */}
@@ -516,6 +550,7 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
             {lspStatus && <span style={{ color: '#4ECB71' }}>{lspStatus}</span>}
             {columnSelectMode && <span style={{ color: '#FFB74D' }}>列选模式</span>}
             {showCallChain && <span style={{ color: '#4FC3F7' }}>调用链分析</span>}
+            {showTypeHint && <span style={{ color: '#81C784' }}>类型提示</span>}
           </div>
         </div>
       )}
@@ -554,6 +589,11 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
                 }}
               />
             )}
+            {showTypeHint && typeHint && (
+              <div style={{ position: 'absolute', bottom: '8px', left: '8px', zIndex: 100, background: c.bgPanel, border: `1px solid ${c.accent}`, borderRadius: '4px', padding: '6px 10px', maxWidth: '400px', maxHeight: '120px', overflow: 'auto', boxShadow: '0 2px 8px rgba(0,0,0,0.3)', pointerEvents: 'none' }}>
+                <span style={{ color: c.accent, fontSize: '10px', fontFamily: 'monospace', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{typeHint.text}</span>
+              </div>
+            )}
             {inlineEditVisible && (
               <div style={{ position: 'absolute', top: '8px', right: '8px', zIndex: 100, background: c.bgPanel, border: '1px solid ' + c.accent, borderRadius: '6px', padding: '8px', display: 'flex', gap: '4px', alignItems: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
                 <span style={{ color: c.accent, fontSize: '10px', fontWeight: 600 }}>AI Edit</span>
@@ -587,6 +627,15 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
               onMount={(editor: any, monaco: any) => {
                 editorRef.current = editor
                 monacoRef.current = monaco
+                // 注册光标变化监听器（类型推导提示）
+                editor.onDidChangeCursorPosition(() => {
+                  if (typeHintTimerRef.current) {
+                    clearTimeout(typeHintTimerRef.current)
+                  }
+                  typeHintTimerRef.current = setTimeout(() => {
+                    handleCursorChange()
+                  }, 300)
+                })
                 // 注册 LSP 补全 Provider
                 registerLspCompletion(monaco, editor, cwd)
                 // 注册 LSP 跳转定义 Provider
