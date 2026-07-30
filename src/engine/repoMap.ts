@@ -99,9 +99,7 @@ export class RepoMap {
     const fs = getFsImplementation();
 
     // 检查目录是否存在
-    try {
-      await fs.access(root);
-    } catch {
+    if (!fs.existsSync(root)) {
       return [];
     }
 

@@ -72,6 +72,7 @@ export function launchDesktop(): void {
     env,
     stdio: 'inherit',
     detached: false,
+    windowsHide: true,
   })
 
   child.on('error', (err) => {

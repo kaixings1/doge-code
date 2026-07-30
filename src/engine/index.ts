@@ -268,3 +268,4 @@ export * from "./errors/classifier.ts";
 export * from "./errors/retryHandler.ts";
 export * from "./errors/recovery.ts";
 export * from "./repoMap.ts";
+export * from "./coders/index.ts";
