@@ -3,7 +3,9 @@ import * as fs from 'node:fs'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import react from '@vitejs/plugin-react'
 
-const mainEntry = path.resolve(__dirname, 'src/main/index.ts')
+const projectRoot = path.resolve(__dirname, '.')
+const mainEntry = path.resolve(projectRoot, 'desktop', 'src', 'main', 'index.ts')
+const entrypointPath = path.resolve(projectRoot, 'desktop', 'src', 'main', 'entrypoint.ts')
 
 // 将 .js 扩展名重写为 .ts/.tsx，并回退到目录下的 index.ts/index.tsx
 const jsToTsCache = new Map<string, string>()
@@ -40,7 +42,6 @@ function resolveJsToTs(source: string, importer?: string) {
     base + '/index.ts',
     base + '/index.tsx',
   ]
-  const projectRoot = path.resolve(__dirname, '..')
   // 1. 相对于项目根目录直接查找（处理 src/utils/... 等已带前缀的路径）
   for (const rel of candidates) {
     const absolutePath = path.resolve(projectRoot, rel)
@@ -78,7 +79,7 @@ export default defineConfig({
     build: {
       outDir: 'dist/main',
       rollupOptions: {
-        input: { index: mainEntry },
+        input: { index: './src/main/entrypoint.ts' },
         output: { format: 'es', entryFileNames: '[name].mjs' },
         external: ['electron', 'electron-store', 'node-pty'],
       },
@@ -86,14 +87,14 @@ export default defineConfig({
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.json'],
       alias: {
-        '@main': path.resolve(__dirname, 'src/main'),
-        '@commands': path.resolve(__dirname, '../src/commands'),
-        '@engine': path.resolve(__dirname, '../src/engine'),
-        '@tools': path.resolve(__dirname, '../src/tools'),
-        '@skills': path.resolve(__dirname, '../src/skills'),
-        '@utils': path.resolve(__dirname, '../src/utils'),
-        'bun:bundle': path.resolve(__dirname, 'src/polyfills/bun-bundle-polyfill.ts'),
-        'bun:sqlite': path.resolve(__dirname, 'src/polyfills/bun-sqlite-polyfill.ts'),
+        '@main': path.resolve(projectRoot, 'src', 'main'),
+        '@commands': path.resolve(projectRoot, 'src', 'commands'),
+        '@engine': path.resolve(projectRoot, 'src', 'engine'),
+        '@tools': path.resolve(projectRoot, 'src', 'tools'),
+        '@skills': path.resolve(projectRoot, 'src', 'skills'),
+        '@utils': path.resolve(projectRoot, 'src', 'utils'),
+        'bun:bundle': path.resolve(projectRoot, 'src', 'polyfills', 'bun-bundle-polyfill.ts'),
+        'bun:sqlite': path.resolve(projectRoot, 'src', 'polyfills', 'bun-sqlite-polyfill.ts'),
       },
     },
   },
@@ -102,7 +103,7 @@ export default defineConfig({
     build: {
       outDir: 'dist/preload',
       rollupOptions: {
-        input: { index: path.resolve(__dirname, 'src/preload/index.ts') },
+        input: { index: path.resolve(projectRoot, 'src', 'preload', 'index.ts') },
         external: ['electron'],
       },
     },
@@ -110,12 +111,12 @@ export default defineConfig({
   renderer: {
     root: 'src/renderer',
     resolve: {
-      alias: { '@': path.resolve(__dirname, 'src/renderer') },
+      alias: { '@': path.resolve(projectRoot, 'src', 'renderer') },
     },
     plugins: [react(), jsToTsResolver()],
     build: {
       outDir: 'dist/renderer',
-      rollupOptions: { input: { index: path.resolve(__dirname, 'src/renderer/index.html') } },
+      rollupOptions: { input: { index: path.resolve(projectRoot, 'src', 'renderer', 'index.html') } },
     },
     server: { port: 5173 },
   },

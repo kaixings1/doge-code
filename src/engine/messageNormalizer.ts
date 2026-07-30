@@ -15,7 +15,7 @@ export interface InternalMessage {
 export type APIMessage = { role: string; content: unknown; [k: string]: unknown };
 
 export class MessageNormalizer {
-  normalize(messages: InternalMessage[], provider: "anthropic" | "openai"): APIMessage[] {
+  normalize(messages: InternalMessage[], provider: "anthropic" | "openai" | "google" | "azure" | "bedrock" | "vertexai" | "copilot" | "groq" | "openrouter" | "local" | "xai"): APIMessage[] {
     return provider === "anthropic"
       ? this.normalizeForAnthropic(messages)
       : this.normalizeForOpenAI(messages);
@@ -64,9 +64,9 @@ export class MessageNormalizer {
             });
           }
         }
-        const openAIMsg: Record<string, unknown> = {
+        const openAIMsg: APIMessage = {
           role: "assistant",
-          content: textParts.length > 0 ? textParts.join("") : null,
+          content: textParts.length > 0 ? textParts.join("") : "",
         };
         if (toolCalls.length > 0) {
           openAIMsg.tool_calls = toolCalls;

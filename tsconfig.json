@@ -20,10 +20,12 @@
     },
     "types": [
       "bun"
-    ]
+    ],
+    "allowImportingTsExtensions": true
   },
   "include": [
     "src/**/*",
+    "src/desktop-electron/**/*",
     "vendor/**/*",
     "shims/**/*"
   ],

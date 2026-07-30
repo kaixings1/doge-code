@@ -14,6 +14,7 @@ import { RequestBuilder } from "./requestBuilder.ts";
 import { ResponseHandler } from "./responseHandler.ts";
 import { ToolScheduler } from "./toolScheduler.ts";
 import { ErrorClassifier } from "./errors/classifier.ts";
+import { AutoCompactor } from "./autoCompactor.ts";
 
 export interface QueryResult {
   state: string;
@@ -22,6 +23,23 @@ export interface QueryResult {
   tokenUsage: unknown;
   duration: number;
 }
+
+/**
+ * Agent 事件类型，对齐 OpenCode (Go) 的 AgentEvent。
+ * 用于事件驱动的 UI 更新，解耦 Agent 循环和 UI 层。
+ */
+export type AgentEvent =
+  | { type: 'iteration_start'; iteration: number }
+  | { type: 'request_sent'; model: string }
+  | { type: 'response_chunk'; content: string }
+  | { type: 'tool_call_start'; toolUseId: string; toolName: string; input: Record<string, unknown> }
+  | { type: 'tool_call_end'; toolUseId: string; success: boolean; output?: string; error?: string }
+  | { type: 'tool_result'; toolUseId: string; content: string; isError: boolean }
+  | { type: 'iteration_end'; iteration: number; hasToolCalls: boolean }
+  | { type: 'done'; result: QueryResult }
+  | { type: 'error'; error: string; stack?: string }
+  | { type: 'aborted' }
+  | { type: 'permission_request'; id: string; toolName: string; input: Record<string, unknown>; description?: string }
 
 export interface MessageLoopDeps {
   stateMachine: QueryStateMachine;
@@ -35,14 +53,23 @@ export interface MessageLoopDeps {
   model: string;
   maxOutputTokens: number;
   toolDefinitions: Array<{ name: string; description: string; input_schema: Record<string, unknown> }>;
-  provider: "anthropic" | "openai";
+  provider: "anthropic" | "openai" | "google" | "azure" | "bedrock" | "vertexai" | "copilot" | "groq" | "openrouter" | "local" | "xai";
+  /** 事件回调，用于 UI 层订阅 Agent 循环状态变化 */
+  onEvent?: (event: AgentEvent) => void;
+  /** 自动压缩器：在 token 预算接近上限时触发会话压缩 */
+  autoCompactor?: AutoCompactor;
 }
 
 export class MessageLoop {
   private maxIterations = 100;
   private currentIteration = 0;
 
-  constructor(private deps: MessageLoopDeps) {}
+  constructor(private deps: MessageLoopDeps) {
+    // 确保 onEvent 始终有默认值
+    if (!this.deps.onEvent) {
+      this.deps.onEvent = () => {}
+    }
+  }
 
   private consecutiveToolFailures = 0;
 
@@ -58,6 +85,7 @@ export class MessageLoop {
         await this.deps.stateMachine.transition("crashed", { reason: "超过最大迭代次数" });
         break;
       }
+      this.deps.onEvent({ type: 'iteration_start', iteration: this.currentIteration });
       try {
         const shouldContinue = await this.runIteration();
         if (!shouldContinue) {
@@ -73,26 +101,35 @@ export class MessageLoop {
         const ts = new Date().toLocaleTimeString('zh-CN', { hour12: false })
         console.error(`[${ts}] [ENGINE] runIteration error: ${errMsg}`);
         console.error(`[${ts}] [ENGINE] stack: ${errStack}`);
+        this.deps.onEvent({ type: 'error', error: errMsg, stack: errStack });
         if (this.deps.stateMachine.isTerminal()) break;
         await this.deps.stateMachine.transition("crashed", { error: ErrorClassifier.classify(error) });
         break;
       }
     }
 
-    return {
+    const result = {
       state: this.deps.stateMachine.state,
       messages: this.deps.conversation.messages,
       iterations: this.currentIteration,
       tokenUsage: this.deps.tokenBudget.getUsage(),
       duration: Date.now() - start,
     };
+    this.deps.onEvent({ type: 'done', result });
+    return result;
   }
 
   private async runIteration(): Promise<boolean> {
     const budget = this.deps.tokenBudget.checkBudget(this.deps.conversation.messages);
     if (budget.shouldReject) throw new Error(`Token limit exceeded: ${budget.percentage * 100}%`);
-    if (budget.shouldCompact) {
-      // 占位：触发自动压缩 conversation
+    if (budget.shouldCompact && this.deps.autoCompactor) {
+      // 对齐 OpenCode agent.go Summarize：在 token 预算接近上限时自动压缩会话
+      const before = this.deps.conversation.messages.length;
+      this.deps.conversation.messages = await this.deps.autoCompactor.compact(this.deps.conversation.messages);
+      const removed = before - this.deps.conversation.messages.length;
+      if (removed > 0) {
+        engineLog('COMPACT', `Compacted ${removed} messages due to budget limit`);
+      }
     }
 
     const request = await this.deps.requestBuilder.build({
@@ -108,6 +145,9 @@ export class MessageLoop {
 
     const stream = await this.deps.apiClient.sendMessage(request);
     const processed = await this.deps.responseHandler.handle(stream as AsyncIterable<{ type: string; [k: string]: unknown }>);
+
+    // 记录真实 API token 使用量用于成本追踪
+    this.deps.tokenBudget.recordUsage(processed.usage.inputTokens, processed.usage.outputTokens);
 
     engineLog('RESP', JSON.stringify(processed, null, 2).slice(0, 10000));
 
@@ -162,11 +202,33 @@ export class MessageLoop {
       }
 
       engineLog('TOOL_CALLS', JSON.stringify(validCalls, null, 2).slice(0, 10000));
+      this.deps.onEvent({ type: 'request_sent', model: this.deps.model });
+
+      // 发射工具调用开始事件
+      for (const tc of validCalls) {
+        this.deps.onEvent({
+          type: 'tool_call_start',
+          toolUseId: tc.id,
+          toolName: tc.name,
+          input: tc.input as Record<string, unknown>,
+        });
+      }
 
       // 执行有效调用
       const results = await this.deps.toolScheduler.execute(validCalls);
 
       engineLog('TOOL_RESULTS', JSON.stringify(results, null, 2).slice(0, 10000));
+
+      // 发射工具调用结束事件
+      for (const r of results) {
+        this.deps.onEvent({
+          type: 'tool_call_end',
+          toolUseId: r.toolUseId,
+          success: r.success,
+          output: typeof r.output === 'string' ? r.output : JSON.stringify(r.output ?? ''),
+          error: r.error,
+        });
+      }
 
       // 检查执行失败次数
       const failedCount = results.filter(r => !r.success).length;
@@ -189,9 +251,13 @@ export class MessageLoop {
       }
 
       this.deps.conversation.addToolResults(results);
+      this.deps.onEvent({ type: 'iteration_end', iteration: this.currentIteration, hasToolCalls: true });
       await this.deps.stateMachine.transition("should_continue");
       return true;
     }
+
+    // 无工具调用的回合结束
+    this.deps.onEvent({ type: 'iteration_end', iteration: this.currentIteration, hasToolCalls: false });
 
     if (processed.needsUserInput) {
       await this.deps.stateMachine.transition("needs_user", { prompt: processed.content });

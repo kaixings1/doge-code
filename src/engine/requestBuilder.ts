@@ -17,13 +17,13 @@ export interface RequestParams {
   tools: ToolDefinition[];
   model: string;
   maxTokens: number;
-  provider?: "anthropic" | "openai";
+  provider?: "anthropic" | "openai" | "google" | "azure" | "bedrock" | "vertexai" | "copilot" | "groq" | "openrouter" | "local" | "xai";
   temperature?: number;
   stream?: boolean;
 }
 
 export interface APIRequest {
-  provider: "anthropic" | "openai";
+  provider: "anthropic" | "openai" | "google" | "azure" | "bedrock" | "vertexai" | "copilot" | "groq" | "openrouter" | "local" | "xai";
   system?: string;
   messages: { role: string; content: unknown }[];
   tools?: unknown;
@@ -31,6 +31,29 @@ export interface APIRequest {
   max_tokens: number;
   temperature: number;
   stream: boolean;
+  /**
+   * Provider-specific extra fields (e.g. reasoning params for Google, deployment for Azure).
+   * 对齐 OpenCode (Go) 的 Model.Provider 字段。
+   */
+  extra?: Record<string, unknown>;
+}
+
+/**
+ * 模型元信息，对齐 OpenCode (Go) 的 models.Model 结构。
+ * 用于成本追踪、上下文窗口管理、provider 自动识别。
+ */
+export interface ModelConfig {
+  id: string;
+  name: string;
+  provider: APIRequest["provider"];
+  contextWindow: number;
+  defaultMaxTokens: number;
+  supportsReasoning?: boolean;
+  supportsAttachments?: boolean;
+  /** USD per 1M input tokens, 0 if unknown */
+  costPer1MIn?: number;
+  /** USD per 1M output tokens, 0 if unknown */
+  costPer1MOut?: number;
 }
 
 export class RequestBuilder {
@@ -58,6 +81,9 @@ export class RequestBuilder {
         ...modelParams,
       };
     }
+    // 非 Anthropic provider（OpenAI, Google, Azure, Bedrock, Gemini, Groq, OpenRouter, 等）
+    // 统一使用 OpenAI-compatible 请求格式（system role in messages + function tools）
+    // 各 provider 可通过 extra 字段注入额外参数（如 reasoning params、deployment name）
     return {
       provider,
       messages: [{ role: "system", content: params.system }, ...messages],

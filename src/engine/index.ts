@@ -16,6 +16,15 @@ import { ErrorClassifier } from "./errors/classifier.ts";
 import { RetryHandler } from "./errors/retryHandler.ts";
 import { ErrorRecovery } from "./errors/recovery.ts";
 import { SubAgentManager } from "./subagent/subAgentManager.ts";
+// 导入真实工具
+import { FileReadTool } from "../tools/FileReadTool/FileReadTool.js";
+import { FileWriteTool } from "../tools/FileWriteTool/FileWriteTool.js";
+import { FileEditTool } from "../tools/FileEditTool/FileEditTool.js";
+import { BashTool } from "../tools/BashTool/BashTool.js";
+import { GlobTool } from "../tools/GlobTool/GlobTool.js";
+import { GrepTool } from "../tools/GrepTool/GrepTool.js";
+import { WebFetchTool } from "../tools/WebFetchTool/WebFetchTool.js";
+import { NotebookEditTool } from "../tools/NotebookEditTool/NotebookEditTool.js";
 
 export interface Conversation {
   messages: InternalMessage[];
@@ -28,6 +37,19 @@ export interface EngineOptions {
   systemPrompt?: string;
   tools?: Map<string, Tool>;
   provider?: "anthropic" | "openai";
+  /** Agent 事件回调，用于 UI 层订阅循环状态变化 */
+  onEvent?: (event: import("./messageLoop.ts").AgentEvent) => void;
+}
+
+/**
+ * 引擎级权限请求信息，对齐 OpenCode (Go) 的 PermissionRequest。
+ * UI 层通过 grantPermission/denyPermission 响应。
+ */
+export interface AgentPermissionRequest {
+  id: string;
+  toolName: string;
+  input: Record<string, unknown>;
+  description?: string;
 }
 
 export class QueryEngine {
@@ -41,9 +63,11 @@ export class QueryEngine {
   readonly subAgentManager = new SubAgentManager();
   readonly recovery: ErrorRecovery;
   readonly conversation: Conversation;
+  private abortController: AbortController = new AbortController();
 
   private messageLoop: MessageLoop;
   private _toolDefinitions: ToolDefinition[] = [];
+  private pendingRequests = new Map<string, { resolve: (v: boolean) => void }>();
   private _conversation: Conversation = {
     messages: [],
     addToolResults: (results) => {
@@ -67,6 +91,32 @@ export class QueryEngine {
       },
       async requestAuthorization() {
         return true;
+      },
+      async requestPermission(tool, input) {
+        // 检查是否已有 auto-approve 规则
+        if (opts.onEvent) {
+          const requestId = `${tool.name}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+          const request: AgentPermissionRequest = {
+            id: requestId,
+            toolName: tool.name,
+            input,
+            description: tool.description,
+          };
+          // 发射权限请求事件，等待 UI 响应
+          opts.onEvent({
+            type: 'permission_request',
+            id: requestId,
+            toolName: tool.name,
+            input,
+            description: tool.description,
+          });
+          // 返回一个 pending promise，由 grantPermission/denyPermission 解析
+          return new Promise<boolean>((resolve) => {
+            this.pendingRequests.set(requestId, { resolve });
+          });
+        }
+        // 无事件回调时默认拒绝
+        return false;
       },
     };
     const executor: ToolExecutor = {
@@ -112,26 +162,45 @@ export class QueryEngine {
       maxOutputTokens: opts.maxOutputTokens ?? 40000,
       toolDefinitions: this._toolDefinitions,
       provider: opts.provider ?? "openai",
+      onEvent: opts.onEvent,
+      autoCompactor: this.autoCompactor,
     };
     this.messageLoop = new MessageLoop(deps);
+
+    // 注入 API client 到 AutoCompactor，使 SummaryStrategy 能通过 LLM 生成真实摘要
+    this.autoCompactor.setApiClient({
+      sendMessage: deps.apiClient.sendMessage.bind(deps.apiClient),
+    });
   }
 
   private buildRegistry(): Map<string, Tool> {
     const map = new Map<string, Tool>();
-    for (const name of [
-      "BashTool",
-      "FileReadTool",
-      "FileWriteTool",
-      "GrepTool",
-      "GlobTool",
-    ]) {
+    const adapters: { name: string; instance: { call: (...args: unknown[]) => Promise<unknown> }; desc: string }[] = [
+      { name: "BashTool", instance: BashTool, desc: "执行 shell 命令" },
+      { name: "FileReadTool", instance: FileReadTool, desc: "读取文件内容" },
+      { name: "FileWriteTool", instance: FileWriteTool, desc: "写入文件" },
+      { name: "FileEditTool", instance: FileEditTool, desc: "编辑文件" },
+      { name: "GrepTool", instance: GrepTool, desc: "搜索文件内容" },
+      { name: "GlobTool", instance: GlobTool, desc: "查找文件" },
+      { name: "WebFetchTool", instance: WebFetchTool, desc: "获取网页内容" },
+      { name: "NotebookEditTool", instance: NotebookEditTool, desc: "编辑 Jupyter 笔记本" },
+    ];
+    for (const { name, instance, desc } of adapters) {
       map.set(name, {
         name,
-        description: `${name} — 骨架占位，待接入真实工具`,
+        description: desc,
         parameters: { type: "object", properties: {} },
         validate(_params: unknown) { return { valid: true }; },
-        async execute(_params: unknown) {
-          return { content: `[${name}] 骨架占位，待接入真实工具` };
+        async execute(params: unknown) {
+          try {
+            const result = await instance.call(params as never, {} as never, {} as never, {} as never);
+            const raw = (result as { data?: unknown } | null)?.data ?? result;
+            const content = typeof raw === "string" ? raw : JSON.stringify(raw ?? "");
+            return { content };
+          } catch (e) {
+            const message = e instanceof Error ? e.message : "未知错误";
+            return { content: `错误: ${message}` };
+          }
         },
       });
     }
@@ -145,6 +214,24 @@ export class QueryEngine {
   async abort(): Promise<void> {
     this.abortController.abort()
     await this.stateMachine.transition("aborted_by_user");
+  }
+
+  /** UI 层调用：授予权限，解析 pending permission request promise */
+  grantPermission(requestId: string): void {
+    const entry = this.pendingRequests.get(requestId);
+    if (entry) {
+      entry.resolve(true);
+      this.pendingRequests.delete(requestId);
+    }
+  }
+
+  /** UI 层调用：拒绝权限，解析 pending permission request promise */
+  denyPermission(requestId: string): void {
+    const entry = this.pendingRequests.get(requestId);
+    if (entry) {
+      entry.resolve(false);
+      this.pendingRequests.delete(requestId);
+    }
   }
 
   getState(): string {

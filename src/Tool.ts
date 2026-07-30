@@ -20,6 +20,17 @@ export type ToolInputJSONSchema = {
   }
 }
 
+/**
+ * 标准化工具元信息，对齐 OpenCode (Go) 的 ToolInfo。
+ * 用于：LLM 工具列表生成、权限系统参数级检查、MCP 自动注册。
+ */
+export type ToolInfo = {
+  name: string
+  description: string
+  parameters: Record<string, unknown>
+  required: string[]
+}
+
 import type { Notification } from './context/notifications.js'
 import type {
   MCPServerConnection,
@@ -446,6 +457,11 @@ export type Tool<
   mcpInfo?: { serverName: string; toolName: string }
   readonly name: string
   /**
+   * 返回标准化的工具元信息，对齐 OpenCode (Go) 的 ToolInfo 接口。
+   * 用于 LLM 工具列表生成、权限系统参数级检查、MCP 工具自动注册。
+   */
+  info(): ToolInfo
+  /**
    * 工具结果在被持久化到磁盘之前的最大字符大小。
    * 超过时，结果将保存到文件中，Claude 将收到包含文件路径的预览，而不是完整内容。
    *
@@ -685,6 +701,7 @@ type DefaultableToolKeys =
   | 'toAutoClassifierInput'
   | 'userFacingName'
   | 'mapToolResultToToolResultBlockParam'
+  | 'info'
 
 /**
  * `buildTool` 接受的工具定义。与 `Tool` 形状相同，但可默认化的方法是可选的 ——
@@ -741,6 +758,12 @@ const TOOL_DEFAULTS = {
   mapToolResultToToolResultBlockParam: (_content: unknown, _toolUseID: string) => ({
     type: 'tool_result' as const,
     content: '',
+  }),
+  info: (): ToolInfo => ({
+    name: '',
+    description: '未命名工具',
+    parameters: { type: 'object', properties: {} },
+    required: [],
   }),
 }
 
