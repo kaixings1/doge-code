@@ -55,32 +55,10 @@ if (activeConfig?.baseURL && !activeConfig.baseURL.startsWith('http://0.0.0.0'))
 }
 
 async function main(): Promise<void> {
-  // 桌面模式：DOGE_DESKTOP=1 时启动 Electron 桌面应用（cd desktop && bun run dev）
+  // 桌面模式：DOGE_DESKTOP=1 时通过 launch-electron.ts spawn Electron 进程
   if (process.env.DOGE_DESKTOP === '1') {
-    const desktopDir = path.resolve(__dirname, '..', 'desktop')
-
-    if (!fs.existsSync(path.join(desktopDir, 'package.json'))) {
-      console.error('桌面模式需要 desktop/ 目录，请确保已初始化')
-      process.exit(1)
-    }
-
-    const child = spawn(
-      process.execPath,
-      ['run', 'dev'],
-      {
-        cwd: desktopDir,
-        stdio: 'inherit',
-        env: { ...process.env, DOGE_DESKTOP: '1' },
-      }
-    )
-
-    child.on('error', (err) => {
-      console.error('启动桌面模式失败:', err.message)
-      console.error('请先安装依赖: cd desktop && bun install')
-      process.exit(1)
-    })
-
-    await new Promise<void>((resolve) => child.on('exit', resolve))
+    const { launchDesktop } = await import('./desktop-electron/launch-electron.ts')
+    launchDesktop()
     return
   }
 

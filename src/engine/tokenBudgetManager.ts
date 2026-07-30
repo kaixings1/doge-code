@@ -15,6 +15,23 @@ export interface BudgetConfig {
   limitThreshold: number;
   outputReservedRatio: number;
   compactTriggerRatio: number;
+  costPer1MIn?: number;
+  costPer1MOut?: number;
+}
+
+/**
+ * Token 使用报告，包含成本估算。
+ * 对齐 OpenCode (Go) 的 TokenUsage 概念。
+ */
+export interface TokenUsageReport {
+  totalInputTokens: number;
+  totalOutputTokens: number;
+  /** Estimated USD cost based on model pricing */
+  estimatedCostUSD: number;
+  /** Cost per 1M input tokens used for calculation */
+  costPer1MIn: number;
+  /** Cost per 1M output tokens used for calculation */
+  costPer1MOut: number;
 }
 
 export interface BudgetCheckResult {
@@ -53,6 +70,8 @@ export class TokenBudgetManager {
   private config: BudgetConfig;
   private calculator = new TokenCalculator();
   private usageHistory: { usedTokens: number; percentage: number; status: BudgetStatus }[] = [];
+  private inputTokens = 0;
+  private outputTokens = 0;
 
   constructor(config: Partial<BudgetConfig> = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config };
@@ -84,15 +103,35 @@ export class TokenBudgetManager {
     return result;
   }
 
+  /**
+   * 记录 API 响应的真实 token 使用量，用于成本追踪。
+   * 对齐 OpenCode (Go) 的 TokenUsage 概念。
+   */
+  recordUsage(inputTokens: number, outputTokens: number): void {
+    this.inputTokens += inputTokens;
+    this.outputTokens += outputTokens;
+  }
+
+  /**
+   * 获取增强的 token 使用报告，包含成本估算。
+   * 对齐 OpenCode (Go) 的 TokenUsage 结构。
+   */
+  getUsage(): TokenUsageReport {
+    const costIn = this.inputTokens * (this.config.costPer1MIn ?? 0) / 1_000_000;
+    const costOut = this.outputTokens * (this.config.costPer1MOut ?? 0) / 1_000_000;
+    return {
+      totalInputTokens: this.inputTokens,
+      totalOutputTokens: this.outputTokens,
+      estimatedCostUSD: costIn + costOut,
+      costPer1MIn: this.config.costPer1MIn ?? 0,
+      costPer1MOut: this.config.costPer1MOut ?? 0,
+    };
+  }
+
   estimateAvailableOutput(messages: InternalMessage[]): number {
     const used = this.calculator.calculateMessages(messages);
     const remaining = this.config.maxContextTokens - used;
     return Math.max(0, Math.min(remaining, this.config.maxOutputTokens));
-  }
-
-  getUsage() {
-    const latest = this.usageHistory[this.usageHistory.length - 1];
-    return { current: latest ?? { usedTokens: 0, percentage: 0, status: "safe" as BudgetStatus }, history: [...this.usageHistory] };
   }
 
   updateConfig(newConfig: Partial<BudgetConfig>): void {
