@@ -14,6 +14,7 @@ export type EditBlock = {
   path: string;
   original: string;
   updated: string;
+  endIndex: number;
 };
 
 export interface Coder {
@@ -22,7 +23,7 @@ export interface Coder {
   applyEdits(
     edits: EditBlock[],
     rootDir: string,
-  ): { applied: EditBlock[]; failed: { edit: EditBlock; reason: string }[] };
+  ): Promise<{ applied: EditBlock[]; failed: { edit: EditBlock; reason: string }[] }>;
 }
 
 /**
@@ -161,10 +162,10 @@ export class EditBlockCoder implements Coder {
       // 文件不存在或无法读取
     }
 
-    // 回退：在根目录下查找相似文件名
+    // 回退：查找相似文件名
     if (!path.isAbsolute(edit.path)) {
       try {
-        const similar = await findSimilarFile(edit.path, rootDir);
+        const similar = findSimilarFile(edit.path);
         if (similar) {
           const content = await fs.readFile(similar, 'utf-8');
           const newContent = this.replaceContent(content, edit.original, edit.updated);
@@ -182,9 +183,9 @@ export class EditBlockCoder implements Coder {
   }
 
   private replaceContent(content: string, before: string, after: string): string | null {
-    // 精确匹配
+    // 精确匹配（仅替换第一个出现）
     if (before.trim() && content.includes(before)) {
-      return content.replace(before, after, 1);
+      return content.replace(before, after);
     }
 
     // 空 before：追加到文件末尾

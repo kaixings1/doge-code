@@ -187,6 +187,15 @@ export class McpToolCallError_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS extends T
  * 根据 MCP 规范，当会话 ID 不再有效时，服务器会返回 404。
  * 我们同时检查两个信号，以避免与通用 404（URL 错误、服务器不存在等）混淆。
  */
+export function isOfficialMcpUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return parsed.hostname === 'mcp.example.com' || parsed.hostname === 'modelcontextprotocol.io';
+  } catch {
+    return false;
+  }
+}
+
 export function isMcpSessionExpiredError(error: Error): boolean {
   const httpStatus =
     'code' in error ? (error as Error & { code?: number }).code : undefined
