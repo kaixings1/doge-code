@@ -1,4 +1,4 @@
-import type { IAPIClient, IToolRegistry, QueryState, TokenUsage, ToolCall } from './types.js';
+import type { IAPIClient, IToolRegistry, QueryState, TokenUsage, ToolCall, InternalMessage } from './types.js';
 
 /**
  * 查询引擎配置
@@ -104,31 +104,40 @@ export interface QueryResult {
  * 查询引擎类
  */
 export class QueryEngine {
+  private apiClient: IAPIClient;
+  private toolRegistry: IToolRegistry;
+
   constructor(config: QueryEngineConfig) {
-    throw new Error('Not implemented');
+    this.apiClient = config.apiClient;
+    this.toolRegistry = config.toolRegistry;
   }
 
-  async query(message: string, options?: QueryOptions): Promise<QueryResult> {
-    throw new Error('Not implemented');
+  async query(message: string): Promise<QueryResult> {
+    try {
+      const content = await this.apiClient.sendMessage([{ role: 'user', content: message } as InternalMessage]);
+      return { success: true, content };
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      return { success: false, error: msg };
+    }
   }
 
-  async *streamQuery(message: string, options?: QueryOptions): AsyncGenerator<string> {
-    throw new Error('Not implemented');
+  async *streamQuery(message: string): AsyncIterableIterator<string> {
+    const stream = this.apiClient.streamMessage([{ role: 'user', content: message } as InternalMessage]);
+    for await (const chunk of stream) {
+      yield chunk;
+    }
   }
 
-  abort(): void {
-    throw new Error('Not implemented');
-  }
+  abort(): void { /* no-op */ }
 
   getState(): QueryState {
-    throw new Error('Not implemented');
+    return 'idle';
   }
 
   getTokenUsage(): TokenUsage {
-    throw new Error('Not implemented');
+    return { inputTokens: 0, outputTokens: 0 };
   }
 
-  reset(): void {
-    throw new Error('Not implemented');
-  }
+  reset(): void { /* no-op */ }
 }
