@@ -608,8 +608,8 @@ function MessageItem({
       )}
 
       {/* 错误消息：红色 */}
-      {message.role === 'error' && (
-        <div style={{ color: COLORS.errorText, whiteSpace: 'pre-wrap' }}>
+      {(message as { role: string }).role === 'error' && (
+        <div style={{ color: '#ff4444', whiteSpace: 'pre-wrap' }}>
           {message.content}
         </div>
       )}
