@@ -34,6 +34,11 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
   const [language, setLanguage] = useState('typescript')
   const [fontSize, setFontSize] = useState(14)
   const [lspStatus, setLspStatus] = useState('')
+  const inlineEditPosRef = useRef<{ lineNumber: number; column: number } | null>(null)
+  const inlineEditSelectionRef = useRef<string>('')
+  const [inlineEditVisible, setInlineEditVisible] = useState(false)
+  const [inlineEditPrompt, setInlineEditPrompt] = useState('')
+  const [inlineEditLoading, setInlineEditLoading] = useState(false)
 
   const editorRef = useRef<any>(null)
   const monacoRef = useRef<any>(null)
@@ -321,6 +326,61 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
     editorRef.current?.getAction('editor.action.referenceSearch.trigger')?.run()
   }, [])
 
+  // 内联编辑 (Ctrl+K)
+  const handleInlineEdit = useCallback(() => {
+    const editor = editorRef.current
+    if (!editor) return
+    const model = editor.getModel()
+    if (!model) return
+    const selection = editor.getSelection()
+    const selectedText = selection && !selection.isEmpty() ? model.getValueInRange(selection) : ''
+    inlineEditSelectionRef.current = selectedText
+    if (selection && !selection.isEmpty()) {
+      inlineEditPosRef.current = { lineNumber: selection.startLineNumber, column: selection.startColumn }
+    } else {
+      const pos = editor.getPosition()
+      inlineEditPosRef.current = pos ? { lineNumber: pos.lineNumber, column: pos.column } : null
+    }
+    setInlineEditVisible(true)
+    setInlineEditPrompt('')
+  }, [])
+
+  const handleInlineEditSubmit = useCallback(async () => {
+    if (!inlineEditPrompt.trim()) return
+    setInlineEditLoading(true)
+    try {
+      const api = (window as any).dogeAPI as Record<string, any> | undefined
+      const model = editorRef.current?.getModel()
+      const code = model ? model.getValue() : ''
+      const pos = inlineEditPosRef.current
+      if (!api?.sendMessage || !pos) { setInlineEditLoading(false); return }
+      const sysMsg = '你是代码编辑器助手。根据用户修改意图输出替换代码片段。只输出代码。'
+      const userContent = '当前代码：\n```\n' + code + '\n```\n' + (inlineEditSelectionRef.current ? '选中代码：\n' + inlineEditSelectionRef.current + '\n' : '') + '修改意图：' + inlineEditPrompt
+      const fullPrompt = sysMsg + '\n\n' + userContent
+      const result = await api.sendMessage(fullPrompt)
+      const reply = result?.content || ''
+      const cleanCode = reply.replace(/```[\w]*\n?/, '').replace(/```$/, '').trim()
+      if (cleanCode && editorRef.current) {
+        const ed = editorRef.current
+        const selectedText = inlineEditSelectionRef.current
+        const startLine = pos.lineNumber
+        const startCol = pos.column
+        const newlineCount = (selectedText.match(/\n/g) || []).length
+        const endLine = startLine + newlineCount
+        const lastLineText = (selectedText.split('\n').pop() || '')
+        const endCol = selectedText ? startCol + lastLineText.length : startCol + 200
+        ed.executeEdits('ai-edit', [{ range: new monacoRef.current.Range(startLine, startCol, endLine, endCol), text: cleanCode }])
+        ed.focus()
+      }
+    } catch (err) {
+      console.error('Inline edit failed:', err)
+    } finally {
+      setInlineEditLoading(false)
+      setInlineEditVisible(false)
+      setInlineEditPrompt('')
+    }
+  }, [])
+
   // 快捷键绑定
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -331,10 +391,11 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
       if (e.key === 'F12') { e.preventDefault(); goToDefinition() }
       if (e.shiftKey && e.key === 'F12') { e.preventDefault(); findReferences() }
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'O') { e.preventDefault(); setShowOutline(p => !p) }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); handleInlineEdit() }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [recentFiles, switchToRecentFile, goToDefinition, findReferences])
+  }, [recentFiles, switchToRecentFile, goToDefinition, findReferences, handleInlineEdit])
 
   // 当文件打开时更新最近文件和符号
   useEffect(() => {
@@ -442,7 +503,29 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
         </div>
       ) : (
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex' }}>
-          <div style={{ flex: 1, overflow: 'hidden' }}>
+          <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
+            {inlineEditVisible && (
+              <div style={{ position: 'absolute', top: '8px', right: '8px', zIndex: 100, background: c.bgPanel, border: '1px solid ' + c.accent, borderRadius: '6px', padding: '8px', display: 'flex', gap: '4px', alignItems: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
+                <span style={{ color: c.accent, fontSize: '10px', fontWeight: 600 }}>AI Edit</span>
+                <input
+                  value={inlineEditPrompt}
+                  onChange={e => setInlineEditPrompt(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') handleInlineEditSubmit(); if (e.key === 'Escape') { setInlineEditVisible(false); setInlineEditPrompt('') } }}
+                  placeholder="Describe changes..."
+                  autoFocus
+                  style={{ padding: '4px 8px', background: c.inputBg, border: '1px solid ' + c.border, borderRadius: '3px', color: c.text, fontSize: '10px', outline: 'none', width: '200px' }}
+                />
+                <button
+                  onClick={handleInlineEditSubmit}
+                  disabled={inlineEditLoading}
+                  style={{ padding: '4px 10px', border: 'none', borderRadius: '3px', background: inlineEditLoading ? c.border : c.accent, color: inlineEditLoading ? c.textFaint : '#000', cursor: inlineEditLoading ? 'not-allowed' : 'pointer', fontSize: '10px', fontWeight: 600 }}
+                >{inlineEditLoading ? '...' : 'Run'}</button>
+                <button
+                  onClick={() => { setInlineEditVisible(false); setInlineEditPrompt('') }}
+                  style={{ padding: '2px 6px', border: '1px solid ' + c.border, borderRadius: '3px', background: 'transparent', color: c.textFaint, cursor: 'pointer', fontSize: '10px' }}
+                >X</button>
+              </div>
+            )}
             <MonacoEditor
               path={activeTab.filePath}
               value={activeTab.content}
@@ -794,6 +877,18 @@ function registerLspDocumentHighlight(monaco: any, editor: any) {
   })
 }
 
+async function fetchAiInlineCompletion(filePath: string, line: number, column: number): Promise<string> {
+  const api = (window as any).dogeAPI as Record<string, any> | undefined
+  if (!api?.aiComplete) return ''
+  try {
+    const result = await api.aiComplete({ filePath, code: '', line, column })
+    if (result?.success && result.completions && result.completions.length > 0) {
+      return result.completions[0].insertText || ''
+    }
+  } catch { /* ignore */ }
+  return ''
+}
+
 function registerInlineCompletion(monaco: any, editor: any, cwd: string) {
   if (!monaco.languages.registerInlineCompletionItemProvider) return
   monaco.languages.registerInlineCompletionItemProvider('*', {
@@ -801,7 +896,16 @@ function registerInlineCompletion(monaco: any, editor: any, cwd: string) {
       const filePath = model.uri.path
       const line = position.lineNumber - 1
       const character = position.column - 1
-      const text = await fetchLspInlineCompletion(filePath, line, character)
+      const code = model.getValue()
+      const api = (window as any).dogeAPI as Record<string, any> | undefined
+      // 优先使用 AI 补全，fallback 到 LSP
+      let text = ''
+      if (api?.aiComplete) {
+        text = await fetchAiInlineCompletion(filePath, line, character)
+      }
+      if (!text) {
+        text = await fetchLspInlineCompletion(filePath, line, character)
+      }
       if (!text) return { items: [] }
       return {
         items: [{
