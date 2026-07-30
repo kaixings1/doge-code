@@ -128,8 +128,10 @@ function renderEnhancedMarkdown(raw: string): string {
 }
 
 interface MarkdownPart {
-  type: 'paragraph' | 'codeBlock' | 'inlineCode' | 'bold' | 'plain'
+  type: 'paragraph' | 'codeBlock' | 'inlineCode' | 'bold' | 'plain' | 'table'
   content: string
+  headers?: string[]
+  rows?: string[][]
 }
 
 function parseMarkdownBlocks(text: string): MarkdownPart[] {
@@ -139,26 +141,76 @@ function parseMarkdownBlocks(text: string): MarkdownPart[] {
   let match: RegExpExecArray | null
 
   while ((match = codeBlockRegex.exec(text)) !== null) {
-    // 代码块前面的普通文本
     if (match.index > lastIndex) {
       const before = text.slice(lastIndex, match.index)
-      parts.push(...parseInlineParts(before))
+      parts.push(...parseTextBlocks(before))
     }
-    // 代码块
-    const codeContent = match[0].slice(3, -3) // 去掉 ```
+    const codeContent = match[0].slice(3, -3)
     const langMatch = codeContent.match(/^(\w+)\n/)
-    const lang = langMatch ? langMatch[1] : ''
     const body = langMatch ? codeContent.slice(langMatch[0].length) : codeContent
     parts.push({ type: 'codeBlock', content: escapeHtml(body.trim()) })
     lastIndex = match.index + match[0].length
   }
 
-  // 剩余普通文本
   if (lastIndex < text.length) {
-    parts.push(...parseInlineParts(text.slice(lastIndex)))
+    parts.push(...parseTextBlocks(text.slice(lastIndex)))
   }
 
   return parts.length > 0 ? parts : [{ type: 'plain', content: escapeHtml(text) }]
+}
+
+function parseTextBlocks(text: string): MarkdownPart[] {
+  const parts: MarkdownPart[] = []
+  const lines = text.split('\n')
+
+  // 检测表格：连续行中，至少有1行包含 | 且第2行是分隔线（|---|---|）
+  let tableStart = -1
+  const tableLines: string[] = []
+
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i].trim()
+    if (trimmed.includes('|') && trimmed.startsWith('|')) {
+      // 可能是表格行
+      const isSeparator = /^\|[\s\-:|]+\|$/.test(trimmed)
+      if (isSeparator && tableStart >= 0) {
+        // 分隔线确认表格存在
+        tableLines.push(lines[i])
+      } else if (!isSeparator) {
+        if (tableStart < 0) tableStart = i
+        tableLines.push(lines[i])
+      }
+    } else {
+      if (tableStart >= 0 && tableLines.length >= 2) {
+        // 表格结束，解析它
+        parts.push(parseTable(tableLines))
+      }
+      tableStart = -1
+      tableLines.length = 0
+    }
+  }
+
+  // 处理末尾表格
+  if (tableStart >= 0 && tableLines.length >= 2) {
+    parts.push(parseTable(tableLines))
+    tableStart = -1
+    tableLines.length = 0
+  }
+
+  if (parts.length === 0) {
+    parts.push(...parseInlineParts(text))
+  }
+
+  return parts
+}
+
+function parseTable(lines: string[]): MarkdownPart {
+  const headers = lines[0].split('|').map(c => c.trim()).filter(c => c.length > 0)
+  const rows: string[][] = []
+  for (let i = 2; i < lines.length; i++) {
+    const cells = lines[i].split('|').map(c => c.trim()).filter(c => c.length > 0)
+    if (cells.length > 0) rows.push(cells)
+  }
+  return { type: 'table', content: '', headers, rows }
 }
 
 function parseInlineParts(text: string): MarkdownPart[] {
@@ -228,6 +280,32 @@ function renderPart(part: MarkdownPart): string {
       return `<code style="background:${COLORS.inlineCodeBg};color:${COLORS.inlineCodeText};padding:1px 5px;border-radius:3px;font-family:'Cascadia Code','Fira Code',monospace;font-size:12px;">${part.content}</code>`
     case 'bold':
       return `<strong style="color:${COLORS.boldText};font-weight:700;">${part.content}</strong>`
+    case 'table': {
+      const { headers, rows } = part
+      const cellStyle = `padding:4px 10px;font-size:12px;border:1px solid #1a3a5c;color:#d0e0f0;`
+      const headerStyle = `background:#1a3a5c;${cellStyle}font-weight:600;color:#ffffff;`
+      const rowStyle = `background:#0f2030;`
+      const altStyle = `background:#162a3d;`
+      let html = '<table style="border-collapse:collapse;width:100%;margin:6px 0;border-radius:4px;overflow:hidden;font-size:12px;">'
+      if (headers && headers.length > 0) {
+        html += '<thead><tr>'
+        for (const h of headers) {
+          html += `<th style="${headerStyle}">${escapeHtml(h)}</th>`
+        }
+        html += '</tr></thead>'
+      }
+      html += '<tbody>'
+      for (let r = 0; r < (rows?.length || 0); r++) {
+        html += `<tr style="${r % 2 === 0 ? rowStyle : altStyle}">`
+        const row = rows![r]
+        for (const cell of row) {
+          html += `<td style="${cellStyle}">${escapeHtml(cell)}</td>`
+        }
+        html += '</tr>'
+      }
+      html += '</tbody></table>'
+      return html
+    }
     case 'plain':
     default:
       return part.content
