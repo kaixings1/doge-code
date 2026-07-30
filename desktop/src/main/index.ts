@@ -19,6 +19,7 @@ import { initBundledSkills } from '../../../src/skills/bundled/index.js'
 import { getBundledSkills } from '../../../src/skills/bundledSkills.js'
 import { createEngineApi, type EngineApi } from './engineApi.js'
 import { scanPlugins, setPluginEnabled, installPlugin, uninstallPlugin, getPluginCommandContent, type PluginInfo } from './pluginManager.js'
+import { getMarketplaces, installPluginFromMarketplace, type MarketplacePlugin } from './pluginMarketplace.js'
 import { createDesktopApiClient, type DesktopApiClient } from './apiClient.js'
 import { saveSession, listSessions, loadSession, deleteSession, updateSession, saveCrashRecovery, getCrashRecovery, clearCrashRecovery } from './sessionStore.js'
 import { createAdaptedTools, executeTool, resetAdaptedToolsCache } from './toolExecutor.js'
@@ -1852,6 +1853,20 @@ ipcMain.handle('doge:plugin-uninstall', (_event, pluginName: string) => {
 
 ipcMain.handle('doge:plugin-get-command', (_event, pluginName: string, commandName: string) => {
   return { content: getPluginCommandContent(projectRoot, pluginName, commandName) }
+})
+
+// ─── 插件市场 IPC ───
+
+ipcMain.handle('doge:marketplace-list', async () => {
+  try {
+    return await getMarketplaces(projectRoot)
+  } catch (e: unknown) {
+    return []
+  }
+})
+
+ipcMain.handle('doge:marketplace-install', async (_event, pluginName: string, repo: string) => {
+  return await installPluginFromMarketplace(projectRoot, pluginName, repo)
 })
 
 ipcMain.handle('doge:get-theme', () => loadTheme())
