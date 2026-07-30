@@ -80,6 +80,9 @@ export function WorkflowPanel({
   const [newName, setNewName] = useState('')
   const [newDesc, setNewDesc] = useState('')
   const [newIcon, setNewIcon] = useState('⚡')
+  const [newTrigger, setNewTrigger] = useState<'manual' | 'file-save' | 'timer'>('manual')
+  const [triggerFilePattern, setTriggerFilePattern] = useState('*')
+  const [triggerInterval, setTriggerInterval] = useState(60)
 
   const containerStyle: React.CSSProperties = {
     position: 'fixed',
@@ -109,21 +112,21 @@ export function WorkflowPanel({
     background: c.bgAlt,
   }
 
-  const tabsStyle: React.CSSProperties = {
+  const tabBarStyle: React.CSSProperties = {
     display: 'flex',
-    gap: '2px',
+    gap: '0',
     borderBottom: `1px solid ${c.border}`,
     background: c.bgAlt,
   }
 
-  const tabButtonStyle = (active: boolean): React.CSSProperties => ({
-    padding: '7px 14px',
-    border: 'none',
-    background: active ? c.bgPanel : 'transparent',
-    color: active ? c.text : c.textMuted,
+  const tabStyle = (active: boolean): React.CSSProperties => ({
+    padding: '8px 14px',
     cursor: 'pointer',
     fontSize: '12px',
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    fontWeight: active ? 600 : 400,
+    color: active ? c.accent : c.textMuted,
+    background: 'none',
+    border: 'none',
     borderBottom: active ? `2px solid ${c.accent}` : '2px solid transparent',
   })
 
@@ -177,7 +180,7 @@ export function WorkflowPanel({
     padding: '5px 8px',
     border: `1px solid ${c.border}`,
     borderRadius: '4px',
-    background: c.inputBg,
+    background: c.bgPanel,
     color: c.text,
     fontSize: '12px',
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
@@ -186,20 +189,36 @@ export function WorkflowPanel({
     boxSizing: 'border-box',
   }
 
-  const stepNodeStyle = (step: WorkflowStep, isRunning?: boolean, runStatus?: WorkflowRunResult['stepResults'][0]['status']): React.CSSProperties => {
-    const typeConfig = STEP_TYPE_CONFIG[step.type]
-    const statusConfig = runStatus ? STEP_STATUS_CONFIG[runStatus] : null
-    return {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '8px',
-      padding: '8px 10px',
-      border: `1px solid ${isRunning ? c.accent : c.border}`,
-      borderRadius: '4px',
-      marginBottom: '4px',
-      background: isRunning ? c.accentDim : c.bgAlt,
+  // 步骤操作
+  const addStep = useCallback((type: WorkflowStep['type']) => {
+    if (!editingWorkflow) return
+    const newStep: WorkflowStep = {
+      id: `step_${Date.now()}`,
+      name: type === 'prompt' ? '新 AI 对话步骤' : type === 'tool' ? '新工具调用' : type === 'condition' ? '新条件分支' : '新循环',
+      description: '',
+      type,
+      params: {},
+      nextStepId: undefined,
     }
-  }
+    const steps = [...editingWorkflow.steps, newStep]
+    setEditingWorkflow({ ...editingWorkflow, steps })
+  }, [editingWorkflow])
+
+  const removeStep = useCallback((stepId: string) => {
+    if (!editingWorkflow) return
+    setEditingWorkflow({
+      ...editingWorkflow,
+      steps: editingWorkflow.steps.filter(s => s.id !== stepId),
+    })
+  }, [editingWorkflow])
+
+  const updateStep = useCallback((stepId: string, updates: Partial<WorkflowStep>) => {
+    if (!editingWorkflow) return
+    setEditingWorkflow({
+      ...editingWorkflow,
+      steps: editingWorkflow.steps.map(s => s.id === stepId ? { ...s, ...updates } : s),
+    })
+  }, [editingWorkflow])
 
   // 渲染工作流列表
   const renderWorkflows = () => {
@@ -231,19 +250,71 @@ export function WorkflowPanel({
             placeholder="描述（可选）"
             style={{ marginBottom: '8px', ...inputStyle }}
           />
+          <div style={{ marginBottom: '8px' }}>
+            <div style={{ fontSize: '11px', color: c.textMuted, marginBottom: '4px' }}>触发器类型</div>
+            <select
+              value={newTrigger}
+              onChange={e => setNewTrigger(e.target.value as 'manual' | 'file-save' | 'timer')}
+              style={{ ...inputStyle, width: '100%' }}
+            >
+              <option value="manual">手动触发</option>
+              <option value="file-save">文件保存时触发</option>
+              <option value="timer">定时触发</option>
+            </select>
+          </div>
+          {newTrigger === 'file-save' && (
+            <div style={{ marginBottom: '8px' }}>
+              <div style={{ fontSize: '11px', color: c.textMuted, marginBottom: '4px' }}>文件匹配模式</div>
+              <input
+                value={triggerFilePattern}
+                onChange={e => setTriggerFilePattern(e.target.value)}
+                placeholder="*（所有文件）或 *.ts/*.py"
+                style={{ ...inputStyle, width: '100%' }}
+              />
+              <div style={{ fontSize: '10px', color: c.textFaint, marginTop: '2px' }}>
+                支持通配符：* 匹配任意字符，? 匹配单个字符
+              </div>
+            </div>
+          )}
+          {newTrigger === 'timer' && (
+            <div style={{ marginBottom: '8px' }}>
+              <div style={{ fontSize: '11px', color: c.textMuted, marginBottom: '4px' }}>执行间隔（秒）</div>
+              <input
+                type="number"
+                value={triggerInterval}
+                onChange={e => setTriggerInterval(Number(e.target.value))}
+                min={5}
+                max={86400}
+                style={{ ...inputStyle, width: '100%' }}
+              />
+            </div>
+          )}
           <button
             onClick={() => {
               if (!newName.trim()) return
-              onCreateWorkflow({
+              const triggerConfig: Record<string, unknown> = {}
+              if (newTrigger === 'file-save') {
+                triggerConfig.filePattern = triggerFilePattern || '*'
+              } else if (newTrigger === 'timer') {
+                triggerConfig.interval = triggerInterval || 60
+              }
+              const workflowData: Omit<WorkflowDefinition, 'id' | 'createdAt'> = {
                 name: newName.trim(),
-                description: newDesc.trim() || undefined,
+                description: newDesc.trim() || '',
                 icon: newIcon || '⚡',
                 steps: [],
-                trigger: 'manual',
+                trigger: newTrigger,
                 isTemplate: false,
-              })
+              }
+              if (Object.keys(triggerConfig).length > 0) {
+                workflowData.triggerConfig = triggerConfig
+              }
+              onCreateWorkflow(workflowData)
               setNewName('')
               setNewDesc('')
+              setNewTrigger('manual')
+              setTriggerFilePattern('*')
+              setTriggerInterval(60)
             }}
             disabled={!newName.trim()}
             style={{ ...primaryButtonStyle, opacity: newName.trim() ? 1 : 0.5 }}
@@ -285,18 +356,33 @@ export function WorkflowPanel({
                   </button>
                   <button
                     onClick={() => onDelete(wf.id)}
-                    style={{ ...buttonStyle, padding: '3px 8px', fontSize: '10px', color: '#FF6B6B' }}
+                    style={{ ...buttonStyle, padding: '3px 8px', fontSize: '10px', color: '#ef5350' }}
                     title="删除"
                   >
                     🗑️
                   </button>
                 </div>
               </div>
-              {wf.description && <div style={{ color: c.textMuted, fontSize: '11px', marginBottom: '4px' }}>{wf.description}</div>}
-              <div style={{ display: 'flex', gap: '6px', fontSize: '10px' }}>
-                <span style={badgeStyle(c.textMuted)}>{wf.steps.length} 步</span>
-                <span style={badgeStyle(c.accent)}>手动</span>
-                {wf.lastRunAt && <span style={badgeStyle(c.textFaint)}>{new Date(wf.lastRunAt).toLocaleString('zh-CN')}</span>}
+              {wf.description && (
+                <div style={{ fontSize: '11px', color: c.textMuted, marginBottom: '4px' }}>{wf.description}</div>
+              )}
+              <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                <span style={badgeStyle(wf.trigger === 'manual' ? '#B0BEC5' : wf.trigger === 'file-save' ? '#4FC3F7' : '#FFB74D')}>
+                  {wf.trigger === 'manual' ? '手动' : wf.trigger === 'file-save' ? '文件保存' : '定时'}
+                </span>
+                <span style={{ fontSize: '10px', color: c.textFaint }}>
+                  {wf.steps.length} 个步骤
+                </span>
+                {wf.triggerConfig && wf.trigger === 'file-save' && (
+                  <span style={{ fontSize: '10px', color: c.textFaint }}>
+                    匹配: {(wf.triggerConfig as { filePattern?: string }).filePattern || '*'}
+                  </span>
+                )}
+                {wf.triggerConfig && wf.trigger === 'timer' && (
+                  <span style={{ fontSize: '10px', color: c.textFaint }}>
+                    间隔: {(wf.triggerConfig as { interval?: number }).interval || 60}s
+                  </span>
+                )}
               </div>
             </div>
           ))
@@ -305,228 +391,258 @@ export function WorkflowPanel({
     )
   }
 
-  // 渲染模板列表
-  const renderTemplates = () => {
-    const builtinTemplates = workflows.filter(w => w.isTemplate)
-
-    return (
-      <div>
-        <div style={{ marginBottom: '12px', color: c.textMuted, fontSize: '11px' }}>
-          从模板创建工作流，可在此基础上自定义修改。
-        </div>
-        {builtinTemplates.map(template => (
-          <div key={template.id} style={cardStyle}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              <span style={{ fontSize: '20px' }}>{template.icon}</span>
-              <div>
-                <div style={{ fontWeight: 600, fontSize: '13px' }}>{template.name}</div>
-                <div style={{ color: c.textMuted, fontSize: '11px' }}>{template.description}</div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: '6px', marginTop: '8px' }}>
-              <button
-                onClick={() => onCreateFromTemplate(template)}
-                style={{ ...primaryButtonStyle, padding: '4px 12px', fontSize: '11px' }}
-              >
-                使用模板
-              </button>
-              <span style={badgeStyle(c.textMuted)}>{template.steps.length} 步</span>
-            </div>
-          </div>
-        ))}
-      </div>
-    )
-  }
-
   // 渲染编辑器
   const renderEditor = () => {
     if (!editingWorkflow) {
       return (
-        <div style={{ textAlign: 'center', padding: '20px', color: c.textMuted, fontSize: '12px' }}>
-          选择一个工作流进行编辑，或创建新工作流。
+        <div style={{ color: c.textMuted, fontSize: '12px', textAlign: 'center', padding: '20px' }}>
+          选择一个工作流进行编辑
         </div>
       )
     }
 
     return (
       <div>
-        <div style={{ marginBottom: '12px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <input
-            value={editingWorkflow.name}
-            onChange={e => setEditingWorkflow({ ...editingWorkflow, name: e.target.value })}
-            style={{ flex: 1, padding: '6px 8px', ...inputStyle }}
-            placeholder="工作流名称"
-          />
-          <button onClick={() => setEditingWorkflow(null)} style={{ ...buttonStyle, padding: '6px 12px' }}>
-            完成
-          </button>
+        <div style={{ marginBottom: '12px' }}>
+          <div style={{ fontWeight: 600, marginBottom: '8px', fontSize: '12px' }}>编辑工作流: {editingWorkflow.icon} {editingWorkflow.name}</div>
+          <div style={{ marginBottom: '6px' }}>
+            <input
+              value={editingWorkflow.name}
+              onChange={e => setEditingWorkflow({ ...editingWorkflow, name: e.target.value })}
+              placeholder="工作流名称"
+              style={{ ...inputStyle }}
+            />
+          </div>
+          <div style={{ marginBottom: '6px' }}>
+            <input
+              value={editingWorkflow.description || ''}
+              onChange={e => setEditingWorkflow({ ...editingWorkflow, description: e.target.value })}
+              placeholder="描述"
+              style={{ ...inputStyle }}
+            />
+          </div>
+          <div style={{ marginBottom: '8px' }}>
+            <div style={{ fontSize: '11px', color: c.textMuted, marginBottom: '4px' }}>触发器类型</div>
+            <select
+              value={editingWorkflow.trigger}
+              onChange={e => setEditingWorkflow({ ...editingWorkflow, trigger: e.target.value as 'manual' | 'file-save' | 'timer' })}
+              style={{ ...inputStyle, width: '100%' }}
+            >
+              <option value="manual">手动触发</option>
+              <option value="file-save">文件保存时触发</option>
+              <option value="timer">定时触发</option>
+            </select>
+          </div>
         </div>
 
         {/* 步骤列表 */}
-        <div style={{ marginBottom: '12px', fontWeight: 600, fontSize: '12px', color: c.textMuted }}>
+        <div style={{ marginBottom: '8px', fontWeight: 600, fontSize: '12px' }}>
           步骤 ({editingWorkflow.steps.length})
         </div>
-        {editingWorkflow.steps.map((step, index) => {
-          const typeConfig = STEP_TYPE_CONFIG[step.type]
-          return (
-            <div key={step.id} style={{ ...stepNodeStyle(step), opacity: 1 }}>
-              <span style={{ fontSize: '16px' }}>{typeConfig.icon}</span>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 600, fontSize: '12px' }}>{step.name}</div>
-                <div style={{ color: c.textMuted, fontSize: '10px' }}>
-                  {typeConfig.label} — {step.description || '无描述'}
-                </div>
-              </div>
-              <span style={badgeStyle(typeConfig.color)}>Step {index + 1}</span>
-            </div>
-          )
-        })}
-
-        {/* 添加步骤 */}
-        <button style={{ ...buttonStyle, width: '100%', padding: '6px', marginTop: '8px' }}>
-          + 添加步骤
-        </button>
-      </div>
-    )
-  }
-
-  // 渲染执行历史
-  const renderHistory = () => {
-    return (
-      <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-          <span style={{ fontWeight: 600, fontSize: '12px', color: c.textMuted }}>
-            执行历史 ({history.length})
-          </span>
-          {history.length > 0 && (
-            <button onClick={onCancel} style={{ ...buttonStyle, padding: '3px 8px', fontSize: '10px' }}>
-              清除历史
-            </button>
-          )}
-        </div>
-        {history.length === 0 ? (
+        {editingWorkflow.steps.length === 0 ? (
           <div style={{ color: c.textMuted, fontSize: '11px', fontStyle: 'italic', padding: '8px' }}>
-            暂无执行记录。
+            暂无步骤。使用下方按钮添加。
           </div>
         ) : (
-          history.map(run => {
-            const wf = workflows.find(w => w.id === run.workflowId)
-            const duration = run.finishedAt ? run.finishedAt - run.startedAt : 0
-            const statusColor = run.status === 'completed' ? '#81C784' : run.status === 'failed' ? '#FF6B6B' : '#FFB74D'
-
+          editingWorkflow.steps.map((step, idx) => {
+            const typeConfig = STEP_TYPE_CONFIG[step.type]
             return (
-              <div key={`${run.workflowId}-${run.startedAt}`} style={{ ...cardStyle, opacity: run.status === 'running' ? 0.7 : 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span>{wf?.icon || '⚡'}</span>
-                    <span style={{ fontWeight: 600, fontSize: '12px' }}>{wf?.name || '未知工作流'}</span>
-                  </div>
-                  <span style={{ color: statusColor, fontSize: '10px', fontWeight: 600 }}>
-                    {run.status.toUpperCase()}
-                  </span>
+              <div key={step.id} style={{ ...cardStyle, marginBottom: '6px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                  <span>{typeConfig.icon}</span>
+                  <input
+                    value={step.name}
+                    onChange={e => updateStep(step.id, { name: e.target.value })}
+                    style={{ ...inputStyle, flex: 1, marginBottom: 0 }}
+                  />
+                  <button
+                    onClick={() => removeStep(step.id)}
+                    style={{ ...buttonStyle, padding: '2px 6px', fontSize: '10px', color: '#ef5350' }}
+                  >
+                    ✕
+                  </button>
                 </div>
-                <div style={{ display: 'flex', gap: '8px', fontSize: '10px', color: c.textMuted }}>
-                  <span>{new Date(run.startedAt).toLocaleString('zh-CN')}</span>
-                  <span>{(duration / 1000).toFixed(1)}s</span>
-                  <span>
-                    {run.stepResults.filter(s => s.status === 'completed').length}/{run.stepResults.length} 步完成
-                  </span>
+                <div style={{ display: 'flex', gap: '4px', marginBottom: '4px' }}>
+                  <select
+                    value={step.type}
+                    onChange={e => updateStep(step.id, { type: e.target.value as WorkflowStep['type'] })}
+                    style={{ ...inputStyle, flex: 1 }}
+                  >
+                    <option value="prompt">AI 对话</option>
+                    <option value="tool">工具调用</option>
+                    <option value="condition">条件分支</option>
+                    <option value="loop">循环</option>
+                  </select>
                 </div>
-                {run.error && <div style={{ color: '#FF6B6B', fontSize: '10px', marginTop: '4px' }}>{run.error}</div>}
+                <textarea
+                  value={step.description || ''}
+                  onChange={e => updateStep(step.id, { description: e.target.value })}
+                  placeholder="步骤描述"
+                  rows={2}
+                  style={{ ...inputStyle, resize: 'vertical', minHeight: '40px' }}
+                />
               </div>
             )
           })
         )}
-      </div>
-    )
-  }
 
-  // 当前执行状态
-  const renderCurrentRun = () => {
-    if (!currentRun) return null
-    const wf = workflows.find(w => w.id === currentRun.workflowId)
+        {/* 添加步骤按钮 */}
+        <div style={{ display: 'flex', gap: '6px', marginBottom: '12px' }}>
+          <button onClick={() => addStep('prompt')} style={{ ...buttonStyle, flex: 1 }}>💬 添加 AI 对话</button>
+          <button onClick={() => addStep('tool')} style={{ ...buttonStyle, flex: 1 }}>🔧 添加工具调用</button>
+          <button onClick={() => addStep('condition')} style={{ ...buttonStyle, flex: 1 }}>🔀 添加条件</button>
+          <button onClick={() => addStep('loop')} style={{ ...buttonStyle, flex: 1 }}>🔁 添加循环</button>
+        </div>
 
-    return (
-      <div style={{ position: 'absolute', bottom: '0', left: '0', right: '0', background: c.bgAlt, borderTop: `2px solid ${c.accent}`, padding: '10px 14px', zIndex: 10 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontWeight: 600, fontSize: '12px' }}>⏱️ 执行中: {wf?.name || '未知'}</span>
-            <span style={badgeStyle('#FFB74D')}>
-              {currentRun.stepResults.filter(s => s.status === 'completed').length}/{currentRun.stepResults.length}
-            </span>
-          </div>
-          <button onClick={onCancel} style={{ ...buttonStyle, padding: '3px 10px', fontSize: '10px', color: '#FF6B6B' }}>
+        {/* 保存/取消 */}
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button
+            onClick={() => {
+              if (!editingWorkflow.name.trim()) return
+              onCreateWorkflow({
+                name: editingWorkflow.name,
+                description: editingWorkflow.description || undefined,
+                icon: editingWorkflow.icon || '⚡',
+                steps: editingWorkflow.steps,
+                trigger: editingWorkflow.trigger,
+                isTemplate: false,
+              })
+              setEditingWorkflow(null)
+            }}
+            disabled={!editingWorkflow.name.trim()}
+            style={{ ...primaryButtonStyle, flex: 1 }}
+          >
+            保存工作流
+          </button>
+          <button onClick={() => setEditingWorkflow(null)} style={{ ...buttonStyle, flex: 1 }}>
             取消
           </button>
         </div>
-        <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-          {currentRun.stepResults.map((stepResult, idx) => {
-            const wfStep = wf?.steps[idx]
-            const typeConfig = wfStep ? STEP_TYPE_CONFIG[wfStep.type] : null
-            const statusConfig = STEP_STATUS_CONFIG[stepResult.status]
-
-            return (
-              <div
-                key={stepResult.stepId}
-                style={{
-                  padding: '4px 8px',
-                  borderRadius: '3px',
-                  background: statusConfig?.color + '22',
-                  color: statusConfig?.color,
-                  fontSize: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                }}
-              >
-                <span>{typeConfig?.icon || '•'}</span>
-                <span>{wfStep?.name || `Step ${idx + 1}`}</span>
-                <span>{statusConfig?.icon}</span>
-              </div>
-            )
-          })}
-        </div>
       </div>
     )
   }
 
-  const tabs = [
-    { type: 'workflows' as TabType, label: '工作流' },
-    { type: 'templates' as TabType, label: '模板' },
-    { type: 'editor' as TabType, label: '编辑器' },
-    { type: 'history' as TabType, label: '历史' },
-  ]
+  // 渲染历史
+  const renderHistory = () => {
+    if (history.length === 0) {
+      return (
+        <div style={{ color: c.textMuted, fontSize: '12px', textAlign: 'center', padding: '20px' }}>
+          暂无执行历史
+        </div>
+      )
+    }
+
+    return (
+      <div>
+        {history.slice(0, 20).map(run => {
+          const wf = workflows.find(w => w.id === run.workflowId)
+          const statusConfig = STEP_STATUS_CONFIG[run.stepResults[0]?.status || 'pending']
+          return (
+            <div key={run.workflowId + run.startedAt} style={{ ...cardStyle, marginBottom: '6px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                <span>{wf?.icon || '⚡'}</span>
+                <span style={{ fontWeight: 600, fontSize: '12px' }}>{wf?.name || '未知工作流'}</span>
+                <span style={{ ...badgeStyle(statusConfig.color), marginLeft: 'auto' }}>
+                  {statusConfig.icon} {run.status}
+                </span>
+              </div>
+              <div style={{ fontSize: '10px', color: c.textFaint }}>
+                {new Date(run.startedAt).toLocaleString()}
+                {run.finishedAt && ` (耗时 ${((run.finishedAt - run.startedAt) / 1000).toFixed(1)}s)`}
+              </div>
+              {run.error && (
+                <div style={{ fontSize: '11px', color: '#ef5350', marginTop: '4px' }}>{run.error}</div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+
+  // 渲染模板
+  const renderTemplates = () => {
+    const templates = workflows.filter(w => w.isTemplate)
+
+    return (
+      <div>
+        <div style={{ marginBottom: '8px', fontSize: '11px', color: c.textMuted }}>
+          从模板创建工作流，自动填充步骤配置
+        </div>
+        {templates.map(template => (
+          <div key={template.id} style={{ ...cardStyle, marginBottom: '6px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+              <span>{template.icon || '📋'}</span>
+              <span style={{ fontWeight: 600, fontSize: '13px' }}>{template.name}</span>
+            </div>
+            {template.description && (
+              <div style={{ fontSize: '11px', color: c.textMuted, marginBottom: '4px' }}>{template.description}</div>
+            )}
+            <div style={{ display: 'flex', gap: '4px', marginBottom: '6px' }}>
+              <span style={badgeStyle('#4FC3F7')}>{template.steps.length} 步骤</span>
+              {template.steps.map((step, idx) => (
+                <span key={step.id} style={{ fontSize: '10px', color: c.textFaint }}>
+                  {idx + 1}. {STEP_TYPE_CONFIG[step.type].icon} {step.name}
+                </span>
+              ))}
+            </div>
+            <button
+              onClick={() => onCreateFromTemplate(template)}
+              style={{ ...primaryButtonStyle, width: '100%' }}
+            >
+              使用此模板
+            </button>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  const stepTypeConfig = STEP_TYPE_CONFIG
 
   return (
     <div style={containerStyle}>
       {/* 头部 */}
       <div style={headerStyle}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontWeight: 600, fontSize: '14px' }}>⚡ AI 工作流</span>
-          {filePath && <span style={{ color: c.textMuted, fontSize: '11px' }}>{filePath.split(/[/\\]/).pop()}</span>}
+          <span style={{ fontWeight: 600, fontSize: '14px' }}>⚡ 工作流自动化</span>
+          <span style={{ color: c.textMuted, fontSize: '11px' }}>可视化编排 AI 任务</span>
         </div>
         <button onClick={onClose} style={{ background: 'none', border: 'none', color: c.textFaint, cursor: 'pointer', fontSize: '16px', lineHeight: 1 }}>✕</button>
       </div>
 
-      {/* 标签页 */}
-      <div style={tabsStyle}>
-        {tabs.map(tab => (
-          <button key={tab.type} onClick={() => setActiveTab(tab.type)} style={tabButtonStyle(activeTab === tab.type)}>
-            {tab.label}
-          </button>
-        ))}
+      {/* 标签栏 */}
+      <div style={tabBarStyle}>
+        <button style={tabStyle(activeTab === 'workflows')} onClick={() => setActiveTab('workflows')}>工作流</button>
+        <button style={tabStyle(activeTab === 'editor')} onClick={() => setActiveTab('editor')}>编辑器</button>
+        <button style={tabStyle(activeTab === 'templates')} onClick={() => setActiveTab('templates')}>模板</button>
+        <button style={tabStyle(activeTab === 'history')} onClick={() => setActiveTab('history')}>
+          历史 {history.length > 0 && `(${history.length})`}
+        </button>
       </div>
 
-      {/* 内容 */}
-      <div style={{ ...bodyStyle, paddingBottom: currentRun ? '80px' : '12px' }}>
+      {/* 内容区 */}
+      <div style={bodyStyle}>
         {activeTab === 'workflows' && renderWorkflows()}
-        {activeTab === 'templates' && renderTemplates()}
         {activeTab === 'editor' && renderEditor()}
+        {activeTab === 'templates' && renderTemplates()}
         {activeTab === 'history' && renderHistory()}
       </div>
 
-      {/* 当前执行状态栏 */}
-      {renderCurrentRun()}
+      {/* 执行状态栏 */}
+      {currentRun && (
+        <div style={{ padding: '8px 12px', borderTop: `1px solid ${c.border}`, background: c.bgAlt, display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '12px' }}>
+            ⏱️ 执行中: {workflows.find(w => w.id === currentRun.workflowId)?.name || '未知'}
+          </span>
+          <span style={{ fontSize: '11px', color: c.textMuted }}>
+            步骤 {currentRun.stepResults.filter(s => s.status === 'completed').length}/{currentRun.stepResults.length}
+          </span>
+          <button onClick={onCancel} style={{ ...buttonStyle, marginLeft: 'auto', padding: '3px 10px', fontSize: '11px', color: '#ef5350' }}>
+            取消
+          </button>
+        </div>
+      )}
     </div>
   )
 }
