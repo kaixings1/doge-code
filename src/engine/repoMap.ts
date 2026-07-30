@@ -167,24 +167,6 @@ export class RepoMap {
       }
     }
 
-    for (const line of result) {
-      // 格式: file:line:content
-      const match = line.match(/^(.*?):(\d+):\s*(.+)$/);
-      if (!match) continue;
-
-      const content = match[3];
-      const lineNum = parseInt(match[2], 10);
-      const defMatch = content.match(
-        /^(?:export\s+)?(?:default\s+)?(?:async\s+)?(?:abstract\s+)?(function|class|interface|type|enum|const|let|var)\s+(\w+)/
-      );
-
-      if (defMatch) {
-        const kind = defMatch[1] as SymbolKind;
-        const name = defMatch[2];
-        symbols.push({ name, kind, file, line: lineNum });
-      }
-    }
-
     return symbols;
   }
 
