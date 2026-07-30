@@ -63,3 +63,28 @@ export interface WorkflowRunResult {
   /** 错误信息 */
   error?: string
 }
+
+/** 批量处理文件项 */
+export interface BatchFileItem {
+  id: string
+  filePath: string
+  fileName: string
+  status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped'
+  output?: string
+  error?: string
+  durationMs?: number
+}
+
+/** 批量处理任务 */
+export interface BatchJob {
+  id: string
+  name: string
+  workflowId: string
+  files: BatchFileItem[]
+  status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled'
+  startedAt: number
+  finishedAt?: number
+  completedCount: number
+  failedCount: number
+  error?: string
+}
