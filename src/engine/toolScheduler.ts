@@ -27,6 +27,11 @@ export interface ToolResult {
 export interface PermissionManager {
   check(tool: Tool, input: Record<string, unknown>): Promise<boolean>;
   requestAuthorization(tool: Tool, input: Record<string, unknown>): Promise<boolean>;
+  /**
+   * 异步权限请求：通过事件通道等待 UI 层的 grant/deny 响应。
+   * 对齐 OpenCode (Go) 的 PermissionService.Request() 模式。
+   */
+  requestPermission?(tool: Tool, input: Record<string, unknown>): Promise<boolean>;
 }
 
 export interface ToolExecutor {
@@ -57,13 +62,29 @@ export class ToolScheduler {
     for (const call of calls) {
       const tool = this.registry.get(call.name);
       if (!tool) {
-        out.push({ ...call });
+        out.push(call);
         continue;
       }
       const has = await this.permissionManager.check(tool, call.input);
-      if (has || (await this.permissionManager.requestAuthorization(tool, call.input))) {
+      if (has) {
         out.push(call);
+        continue;
       }
+      // 尝试自动授权（工具自身规则）
+      const autoAuth = await this.permissionManager.requestAuthorization(tool, call.input);
+      if (autoAuth) {
+        out.push(call);
+        continue;
+      }
+      // 异步权限请求：通过事件通道等待 UI 响应（对齐 OpenCode Request()）
+      if (this.permissionManager.requestPermission) {
+        const granted = await this.permissionManager.requestPermission(tool, call.input);
+        if (granted) {
+          out.push(call);
+          continue;
+        }
+      }
+      // 拒绝：不加入 out，merge 会标记为失败
     }
     return out;
   }

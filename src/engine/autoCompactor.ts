@@ -16,21 +16,98 @@ export interface CompactStrategy {
   compact(messages: InternalMessage[], options: CompactOptions): Promise<InternalMessage[]>;
 }
 
+/**
+ * LLM 驱动的会话摘要策略（对齐 OpenCode agent.go Summarize）。
+ * 依赖外部 LLM API client 生成真实摘要，而非简单 join。
+ */
 export class SummaryStrategy implements CompactStrategy {
   name = "summary";
+
+  private _llmClient?: { sendMessage: (req: unknown) => Promise<AsyncIterable<unknown>> };
+
+  /** 设置 LLM API client（由 AutoCompactor.setApiClient 调用） */
+  setLlmClient(client?: { sendMessage: (req: unknown) => Promise<AsyncIterable<unknown>> }): void {
+    this._llmClient = client;
+  }
+
   async compact(messages: InternalMessage[], options: CompactOptions): Promise<InternalMessage[]> {
     const system = options.preserveSystemMessages ? messages.filter((m) => m.role === "system") : [];
     const nonSys = messages.filter((m) => m.role !== "system");
     const recent = nonSys.slice(-options.preserveRecentCount);
     const old = nonSys.slice(0, -options.preserveRecentCount);
     if (old.length === 0) return [...system, ...recent];
-    const summary = await this.generateSummary(old);
+
+    // 有 LLM client 时生成真实摘要，否则回退到占位摘要
+    const summary = this._llmClient
+      ? await this.generateSummaryWithLLM(old)
+      : await this.generateSummaryFallback(old);
+
     return [...system, { role: "system", content: `[会话摘要]\n${summary}` }, ...recent];
   }
-  private async generateSummary(messages: InternalMessage[]): Promise<string> {
-    return messages
-      .map((m) => `[${m.role}]: ${typeof m.content === "string" ? m.content : JSON.stringify(m.content)}`)
-      .join("\n");
+
+  /**
+   * 通过 LLM 生成摘要（对齐 OpenCode Summarize prompt）。
+   * 将旧消息 + 摘要 prompt 发给模型，提取摘要内容。
+   */
+  private async generateSummaryWithLLM(messages: InternalMessage[]): Promise<string> {
+    if (!this._llmClient) return this.generateSummaryFallback(messages);
+
+    const summarizePrompt = "Provide a detailed but concise summary of our conversation above. Focus on information that would be helpful for continuing the conversation, including what we did, what we're doing, which files we're working on, and what we're going to do next.";
+
+    const contextMsgs: InternalMessage[] = [
+      ...messages,
+      { role: "user", content: summarizePrompt },
+    ];
+
+    try {
+      const stream = await this._llmClient!.sendMessage({
+        messages: contextMsgs.map((m) => ({ role: m.role, content: m.content })),
+        max_tokens: 2000,
+        temperature: 0.3,
+      });
+
+      // 从流中聚合 text content
+      const chunks: string[] = [];
+      for await (const event of stream as AsyncIterable<{ type: string; text?: string }>) {
+        if (event.type === "content_block_delta" && event.text) {
+          chunks.push(event.text);
+        }
+      }
+      const summary = chunks.join("").trim();
+      if (summary.length > 100) return summary;
+    } catch {
+      // 降级到占位摘要
+    }
+
+    return this.generateSummaryFallback(messages);
+  }
+
+  /**
+   * 占位摘要（无 LLM client 时使用）。
+   * 统计消息轮次 + 列出涉及的工具名。
+   */
+  private async generateSummaryFallback(messages: InternalMessage[]): Promise<string> {
+    const toolCalls: string[] = [];
+    let turns = 0;
+
+    for (const m of messages) {
+      if (m.role === "assistant") turns++;
+      if (m.role === "assistant" && Array.isArray(m.content)) {
+        for (const block of m.content) {
+          if (block && typeof block === "object" && (block as Record<string, unknown>).type === "tool_use") {
+            toolCalls.push((block as Record<string, unknown>).name as string);
+          }
+        }
+      }
+    }
+
+    const parts = [`${turns} 轮对话`];
+    if (toolCalls.length > 0) {
+      parts.push(`调用工具: ${[...new Set(toolCalls)].join(", ")}`);
+    }
+    parts.push(`共 ${messages.length} 条消息`);
+
+    return parts.join("；");
   }
 }
 
@@ -64,11 +141,21 @@ export class SelectiveStrategy implements CompactStrategy {
 export class AutoCompactor {
   private strategies = new Map<string, CompactStrategy>();
   private defaultStrategy = "summary";
+  private _summaryStrategy?: SummaryStrategy;
 
   constructor() {
-    this.registerStrategy(new SummaryStrategy());
+    const summaryStrat = new SummaryStrategy();
+    this._summaryStrategy = summaryStrat;
+    this.registerStrategy(summaryStrat);
     this.registerStrategy(new TruncateStrategy());
     this.registerStrategy(new SelectiveStrategy());
+  }
+
+  /** 注入 LLM API client，使 SummaryStrategy 能生成真实摘要 */
+  setApiClient(client: { sendMessage: (req: unknown) => Promise<AsyncIterable<unknown>> }): void {
+    if (this._summaryStrategy) {
+      this._summaryStrategy.setLlmClient(client);
+    }
   }
 
   registerStrategy(s: CompactStrategy): void {
@@ -91,6 +178,13 @@ export class AutoCompactor {
       preserveSystemMessages: options.preserveSystemMessages ?? true,
       preserveToolResults: options.preserveToolResults ?? true,
     });
+  }
+
+  /** 便捷方法：返回被压缩掉的消息数量 */
+  async compactCount(messages: InternalMessage[]): Promise<number> {
+    const original = messages.length;
+    const result = await this.compact(messages);
+    return original - result.length;
   }
 
   /** 供 recovery.ts 调用的轻量占位的压缩（§9.4） */

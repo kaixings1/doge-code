@@ -2711,3 +2711,11 @@ ipcMain.handle('doge:lsp-connected-servers', async () => {
     return { success: false, error: message }
   }
 })
+
+// ─── 导出入口函数 ───
+export function bootDesktop(): void {
+  createWindow()
+  createTray()
+  tsLog('MAIN', 'Desktop boot complete')
+}
+
