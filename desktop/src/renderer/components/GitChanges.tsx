@@ -15,10 +15,11 @@ export interface GitFile {
 interface GitChangesProps {
   cwd: string
   onSelectFile: (path: string) => void
+  onChangesCount?: (count: number) => void
   theme?: import('../theme.js').ThemeColors
 }
 
-export function GitChanges({ cwd, onSelectFile, theme: externalTheme }: GitChangesProps) {
+export function GitChanges({ cwd, onSelectFile, onChangesCount, theme: externalTheme }: GitChangesProps) {
   const themeCtx = useContext(ThemeContext)
   const theme = externalTheme ?? themeCtx.colors
   const appStyles = themeCtx.styles
@@ -32,8 +33,9 @@ export function GitChanges({ cwd, onSelectFile, theme: externalTheme }: GitChang
     try {
       const result = await window.dogeAPI.getGitStatus(cwd)
       setFiles(result)
+      if (onChangesCount) onChangesCount(result.length)
     } catch { /* ignore */ } finally { setLoading(false) }
-  }, [cwd])
+  }, [cwd, onChangesCount])
 
   useEffect(() => { refresh() }, [refresh])
 

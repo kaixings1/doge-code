@@ -35,6 +35,7 @@ import { TimeTracker } from './components/TimeTracker.js'
 import { ProgressReport } from './components/ProgressReport.js'
 import { useTimeTracker } from './hooks/useTimeTracker.js'
 import { useGitStats } from './hooks/useGitStats.js'
+import { useWorkflowMode } from './hooks/useWorkflowMode.js'
 import { getStyles, getEffectiveTheme, THEMES, type ThemeName, type ThemeColors } from './theme.js'
 import { AdvancedCodeEditor } from './components/AdvancedCodeEditor.js'
 import { SemanticSearchPanel } from './components/SemanticSearchPanel.js'
@@ -281,6 +282,10 @@ export function App(): JSX.Element {
 
   // ─── Tab 管理 Hook ───
   const tabMgr = useTabManager()
+
+  // ─── Agent 编排层 Hook ───
+  const [gitChangesCount, setGitChangesCount] = useState(0)
+  const workflowMode = useWorkflowMode(selectedFile, gitChangesCount, showDebuggerPanel)
 
   const effectiveTheme = getEffectiveTheme(themeSettings.theme as ThemeName | 'auto')
   const styles = getStyles(effectiveTheme, themeSettings.fontSize)
@@ -1900,7 +1905,7 @@ export function App(): JSX.Element {
 
           <div style={{ ...styles.panelHeader, borderTop: `1px solid ${c.border}` }}>🔄 Git 变更</div>
           <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0' }}>
-            <GitChanges cwd={workingDir} onSelectFile={(path) => { setSelectedGitFile(path); setCommitMessage('') }} theme={theme} />
+            <GitChanges cwd={workingDir} onSelectFile={(path) => { setSelectedGitFile(path); setCommitMessage('') }} onChangesCount={setGitChangesCount} theme={theme} />
             {selectedGitFile && (
               <div style={{ borderTop: `1px solid ${c.border}` }}>
                 <div style={{ padding: '4px 12px', fontSize: '11px', color: c.textMuted, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
