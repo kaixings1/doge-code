@@ -422,17 +422,27 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
                         blockIndex++
                       }
 
-                      // 文本增量 —— 累积到同一个 block
+                      // 文本增量 —— 累积到同一个 block，防止 API 发送完整累积文本导致重复
                       if (delta && delta.content != null) {
                         const text = delta.content as string
                         if (text !== '') {
                           if (!textBuffer) {
                             textBuffer = text
                             yield { type: 'content_block_start', index: blockIndex, content_block: { type: 'text', text: '' } }
+                            yield { type: 'content_block_delta', index: blockIndex, delta: { type: 'text_delta', text } }
                           } else {
+                            // 防止 API 发送完整累积文本导致重复
+                            const prevBuffer = textBuffer
                             textBuffer += text
+                            if (text.startsWith(prevBuffer)) {
+                              // API 发送了包含已累积内容的完整文本，只 yield 新增部分
+                              const deltaText = text.slice(prevBuffer.length)
+                              if (deltaText) yield { type: 'content_block_delta', index: blockIndex, delta: { type: 'text_delta', text: deltaText } }
+                            } else {
+                              // text 已是增量，直接 yield
+                              yield { type: 'content_block_delta', index: blockIndex, delta: { type: 'text_delta', text } }
+                            }
                           }
-                          yield { type: 'content_block_delta', index: blockIndex, delta: { type: 'text_delta', text } }
                         }
                       }
 

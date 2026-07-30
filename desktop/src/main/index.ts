@@ -169,7 +169,7 @@ function createWindow(): void {
     title: 'Doge Code',
     backgroundColor: '#000000',
     webPreferences: {
-      preload: path.join(DIST_DIR, 'preload', 'index.cjs'),
+      preload: path.join(DIST_DIR, 'preload', 'index.js'),
       sandbox: false,
       contextIsolation: true,
       nodeIntegration: false,
@@ -190,8 +190,9 @@ function createWindow(): void {
     store.set('windowState', { ...s, x, y })
   })
 
-  if (process.env.VITE_DEV_SERVER_URL) {
-    mainWindow.loadURL(`${process.env.VITE_DEV_SERVER_URL}?desktop=1`)
+  const rendererUrl = process.env.VITE_DEV_SERVER_URL || process.env.ELECTRON_RENDERER_URL
+  if (rendererUrl) {
+    mainWindow.loadURL(`${rendererUrl}?desktop=1`)
   } else {
     const htmlUrl = `file://${path.join(DIST_DIR, 'renderer', 'index.html').replace(/\\/g, '/')}#/desktop`
     mainWindow.loadURL(htmlUrl)

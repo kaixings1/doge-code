@@ -27,14 +27,21 @@ console.log('- 渲染进程: HMR (热更新)')
 console.log('- Preload: HMR (自动重载)')
 console.log('')
 
-const child = spawn('npx', ['electron-vite', 'dev'], {
+const electronViteBin = process.platform === 'win32'
+  ? path.join(projectRoot, 'node_modules', '.bin', 'electron-vite.exe')
+  : path.join(projectRoot, 'node_modules', '.bin', 'electron-vite')
+
+const child = spawn(electronViteBin, ['dev'], {
   cwd: projectRoot,
   stdio: 'inherit',
-  shell: true,
+  shell: false,
   env: {
     ...process.env,
     DOGE_DESKTOP: '1',
     NODE_TLS_REJECT_UNAUTHORIZED: '0',
+    ELECTRON_MAJOR_VER: '43',
+    ELECTRON_EXEC_PATH: path.join(projectRoot, 'node_modules', 'electron', 'dist', 'electron.exe'),
+    ELECTRON_OVERRIDE_DIST_PATH: path.join(projectRoot, 'node_modules', 'electron', 'dist'),
   },
 })
 

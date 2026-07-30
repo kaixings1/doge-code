@@ -94,9 +94,6 @@ export class StreamProcessor {
     if (this.currentBlock.type === "text") {
       const fullText = blockChunks.filter((c) => c.type === "text").map((c) => c.text || "").join("")
       this.currentBlock.text = fullText
-      if (this.onChunkCallback && fullText) {
-        this.onChunkCallback({ type: "text", text: fullText })
-      }
     }
     if (this.currentBlock.type === "tool_use") {
       if (this.currentBlock.input === null || this.currentBlock.input === undefined) {

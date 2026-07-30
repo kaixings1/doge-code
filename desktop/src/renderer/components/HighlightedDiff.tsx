@@ -26,16 +26,16 @@ function detectLang(text: string): string {
   return ''
 }
 
-function highlightCode(text: string, lang: string, isDark: boolean, colors: ThemeColors): string {
-  const c = colors
+function highlightCode(text: string, lang: string, colors: ThemeColors): string {
+  const isDark = colors.bg === '#000000'
   let html = text
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-  const kwColor = isDark ? '#569CD6' : '#0000FF'
-  const strColor = isDark ? '#CE9178' : '#A31515'
-  const numColor = isDark ? '#B5CEA8' : '#098658'
-  const cmtColor = isDark ? '#6A9955' : '#008000'
+  const kwColor = colors.accent
+  const strColor = colors.accent
+  const numColor = colors.accent
+  const cmtColor = colors.textMuted
   html = html.replace(/\b(const|let|var|function|return|if|else|for|while|class|import|export|from|async|await|try|catch|throw|new|this|true|false|null|undefined)\b/g, '<span style="color:' + kwColor + '">$1</span>')
   html = html.replace(/(['"`'])(?:(?!\1|\\)|\\.)*?\1/g, '<span style="color:' + strColor + '">$&</span>')
   html = html.replace(/\b(\d+)\b/g, '<span style="color:' + numColor + '">$1</span>')
@@ -57,22 +57,22 @@ export function HighlightedDiff({ diffText, theme }: HighlightedDiffProps) {
     setLineNumbers(nums)
   }, [diffText])
 
-  const isDark = theme.bg === '#000000'
+  
   const lang = detectLang(diffText)
 
   const highlightSyntax = (text: string): string => {
     if (lang) {
-      const highlighted = highlightCode(text, lang, isDark, theme)
+      const highlighted = highlightCode(text, lang, theme)
       if (highlighted !== text) return highlighted
     }
     let html = text
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
-    const kwColor = isDark ? '#569CD6' : '#0000FF'
-    const strColor = isDark ? '#CE9178' : '#A31515'
-    const numColor = isDark ? '#B5CEA8' : '#098658'
-    const cmtColor = isDark ? '#6A9955' : '#008000'
+    const kwColor = theme.accent
+    const strColor = theme.accent
+    const numColor = theme.accent
+    const cmtColor = theme.textMuted
     html = html.replace(/\b(const|let|var|function|return|if|else|for|while|class|import|export|from|async|await|try|catch|throw|new|this|true|false|null|undefined)\b/g, '<span style="color:' + kwColor + '">$1</span>')
     html = html.replace(/(['"`'])(?:(?!\1|\\)|\\.)*?\1/g, '<span style="color:' + strColor + '">$&</span>')
     html = html.replace(/\b(\d+)\b/g, '<span style="color:' + numColor + '">$1</span>')
@@ -80,16 +80,16 @@ export function HighlightedDiff({ diffText, theme }: HighlightedDiffProps) {
     return html
   }
 
-  const baseFontSize = isDark ? '11px' : '11px'
-  const lineNumColor = isDark ? '#555555' : '#999999'
-  const textColor = isDark ? '#abb2bf' : '#1A1A1A'
-  const addBg = isDark ? 'rgba(78,203,113,0.1)' : 'rgba(0,102,204,0.08)'
-  const addText = isDark ? '#98C379' : '#0066CC'
-  const delBg = isDark ? 'rgba(255,107,107,0.1)' : 'rgba(204,0,0,0.08)'
-  const delText = isDark ? '#E06C75' : '#CC0000'
-  const hunkColor = isDark ? '#56B6C2' : '#0066CC'
-  const metaColor = isDark ? '#5C6370' : '#999999'
-  const borderColor = isDark ? '#1A1A1A' : '#E0E0E0'
+  const baseFontSize = '11px'
+  const lineNumColor = theme.textFaint
+  const textColor = theme.textMuted
+  const addBg = theme.accentDim
+  const addText = theme.accent
+  const delBg = theme.errorBg
+  const delText = theme.errorText
+  const hunkColor = theme.accent
+  const metaColor = theme.textFaint
+  const borderColor = theme.borderSubtle
 
   return (
     <div style={{ display: 'flex', fontFamily: "'Fira Code', 'Cascadia Code', Consolas, monospace", fontSize: baseFontSize, lineHeight: '1.5' }}>
@@ -117,3 +117,4 @@ export function HighlightedDiff({ diffText, theme }: HighlightedDiffProps) {
     </div>
   )
 }
+

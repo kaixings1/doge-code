@@ -67,6 +67,10 @@ auto-translate-from-bottom.cjs
 *.7z
 src.rar
 
+# Prevent .js/.js.map conflicts with .ts sources (compiled artifacts)
+src/**/*.js
+src/**/*.js.map
+
 # OS Files
 .DS_Store
 latest/
