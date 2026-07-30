@@ -43,10 +43,10 @@ export interface CallChainResult {
 interface UseCallChainOptions {
   filePath?: string
   content?: string
-  /** LSP references API */
-  fetchReferences?: (filePath: string, line: number, column: number) => Promise<CallNode[]>
-  /** LSP definition API */
-  fetchDefinition?: (filePath: string, line: number, column: number) => Promise<CallNode | null>
+  /** LSP references API — 接受任意返回值（实际调用链分析基于静态分析） */
+  fetchReferences?: (filePath: string, line: number, column: number) => Promise<unknown[]>
+  /** LSP definition API — 接受任意返回值 */
+  fetchDefinition?: (filePath: string, line: number, column: number) => Promise<unknown[]>
   enabled?: boolean
 }
 
@@ -108,8 +108,8 @@ function extractLocalFunctions(content: string): Array<{ name: string; line: num
 function buildCallChainTree(
   localFuncs: Array<{ name: string; line: number; column: number }>,
   content: string,
-  fetchRefs?: (filePath: string, line: number, column: number) => Promise<CallNode[]>,
-  fetchDef?: (filePath: string, line: number, column: number) => Promise<CallNode | null>,
+  fetchRefs?: (filePath: string, line: number, column: number) => Promise<unknown[]>,
+  fetchDef?: (filePath: string, line: number, column: number) => Promise<unknown[]>,
   currentFilePath?: string,
 ): { nodes: CallNode[]; totalChains: number; maxDepth: number } {
   const nodes: CallNode[] = []
