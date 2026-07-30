@@ -166,6 +166,7 @@ export function App(): JSX.Element {
   const [isSending, setIsSending] = useState(false)
   const [currentStreaming, setCurrentStreaming] = useState('')
   const currentStreamingRef = useRef('')
+  const streamingActiveRef = useRef(false) // result 处理完成后锁定，阻止延迟 chunk 污染
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loaded, setLoaded] = useState(false)
@@ -616,7 +617,7 @@ export function App(): JSX.Element {
 
         const history = await window.dogeAPI.getHistory()
         if (history.messages?.length) {
-          setMessages(history.messages.map((m, i) => ({ id: `history-${i}`, role: m.role as Message['role'], content: m.content })))
+          setMessages(history.messages.map((m, i) => ({ id: `history-${i}`, role: m.role as Message['role'], content: typeof m.content === 'string' ? m.content : '' })))
         }
       } catch { /* ignore */ } finally { setLoaded(true) }
     }
@@ -626,7 +627,12 @@ export function App(): JSX.Element {
   useEffect(() => {
     const unsub1 = window.dogeAPI.onStateChange((s) => { stateRef.current = s; setState(s as QueryState) })
     const unsub2 = window.dogeAPI.onChunk((chunk) => {
-      tsLog('RENDERER', 'onChunk received:', chunk.text?.slice(0, 50))
+      if (!chunk || !chunk.text) return
+      if (!streamingActiveRef.current) {
+        tsLog('RENDERER', 'onChunk ignored (locked):', chunk.text.slice(0, 50))
+        return
+      }
+      tsLog('RENDERER', 'onChunk received:', chunk.text.slice(0, 50))
       setCurrentStreaming((p) => {
         const next = p + chunk.text
         currentStreamingRef.current = next
@@ -728,8 +734,11 @@ export function App(): JSX.Element {
   }, [loaded, tabs.length, currentSessionId])
 
   // ─── 自动测试命令序列（启动后自动执行，在 UI 中显示结果） ───
+  // 使用 ref 追踪命令索引，避免依赖 currentSessionId 导致的循环重触发
+  const autoTestCmdIndexRef = useRef(0)
+
   useEffect(() => {
-    if (!loaded || !currentSessionId) return
+    if (!loaded) return
 
     const TEST_CMDS = [
       '使用 dir 命令列出当前工作目录的文件和文件夹',
@@ -740,18 +749,20 @@ export function App(): JSX.Element {
     ]
 
     let cancelled = false
-    let cmdIndex = 0
+    autoTestCmdIndexRef.current = 0
 
     async function sendNext(): Promise<void> {
-      if (cancelled || cmdIndex >= TEST_CMDS.length) return
-      const cmd = TEST_CMDS[cmdIndex++]
-      tsLog('AUTO-TEST', `[${cmdIndex}/${TEST_CMDS.length}] 发送: ${cmd}`)
+      if (cancelled || autoTestCmdIndexRef.current >= TEST_CMDS.length) return
+      const idx = autoTestCmdIndexRef.current++
+      const cmd = TEST_CMDS[idx]
+      const cmdNumber = idx + 1
+      tsLog('AUTO-TEST', `[${cmdNumber}/${TEST_CMDS.length}] 发送: ${cmd}`)
 
       // 标记系统提示
       const sysMsg: Message = {
         id: `auto-sys-${Date.now()}`,
         role: 'system',
-        content: `[自动测试 ${cmdIndex}/${TEST_CMDS.length}] 执行命令: ${cmd}`,
+        content: `[自动测试 ${cmdNumber}/${TEST_CMDS.length}] 执行命令: ${cmd}`,
       }
       const appendMsg = (msg: Message) => {
         setMessages(prev => { const next = [...prev, msg]; persistActiveTabMessages(next); return next })
@@ -763,7 +774,9 @@ export function App(): JSX.Element {
       setCurrentSessionId(null)
 
       try {
+        streamingActiveRef.current = true
         const result = await window.dogeAPI.sendMessage(cmd)
+        streamingActiveRef.current = false
         setCurrentStreaming(''); currentStreamingRef.current = ''
         if (result?.error) {
           const errMsgEl: Message = {
@@ -825,7 +838,7 @@ export function App(): JSX.Element {
       })
 
       // 间隔 2s 再发下一条
-      if (!cancelled && cmdIndex < TEST_CMDS.length) {
+      if (!cancelled && autoTestCmdIndexRef.current < TEST_CMDS.length) {
         await new Promise(r => setTimeout(r, 2000))
         sendNext()
       }
@@ -834,14 +847,14 @@ export function App(): JSX.Element {
     // 延迟 3s 启动（等 UI 完全就绪）
     const startTimer = setTimeout(() => sendNext(), 3000)
     return () => { cancelled = true; clearTimeout(startTimer) }
-  }, [loaded, currentSessionId])
+  }, [loaded])
 
   const handleLoadSession = useCallback(async (sessionId: string) => {
     const result = await window.dogeAPI.loadSession(sessionId)
     if (result.success) {
       const history = await window.dogeAPI.getHistory()
       const loadedMessages = history.messages?.length
-        ? history.messages.map((m, i) => ({ id: `history-${i}`, role: m.role as Message['role'], content: m.content }))
+        ? history.messages.map((m, i) => ({ id: `history-${i}`, role: m.role as Message['role'], content: typeof m.content === 'string' ? m.content : '' }))
         : []
       setMessages(loadedMessages)
       setCurrentSessionId(sessionId)
@@ -934,6 +947,7 @@ export function App(): JSX.Element {
     if (!text || state === 'responding' || isSending) return
     if (!isOnline) { showToast('网络已断开，无法发送消息', 'error'); return }
     setInput(''); setError(null); setCurrentStreaming(''); currentStreamingRef.current = ''; setIsSending(true)
+    streamingActiveRef.current = true // 打开请求级锁，允许 chunk 进入 currentStreaming
 
     const appendMsg = (msg: Message) => {
       setMessages(prev => { const next = [...prev, msg]; persistActiveTabMessages(next); return next })
@@ -1006,12 +1020,33 @@ export function App(): JSX.Element {
       appendMsg({ id: `msg-${Date.now() + 1}`, role: 'error', content: result.error! })
       if (!document.hasFocus()) window.dogeAPI.notify('Doge Code', `错误: ${result.error.slice(0, 100)}`).catch(() => {})
     } else {
-      // 优先使用 result.content，否则使用流式累积的 currentStreaming
-      const finalContent = result?.content || currentStreamingRef.current
-      tsLog('RENDERER', 'result.content:', result?.content?.slice(0, 100), '| currentStreamingRef:', currentStreamingRef.current.slice(0, 100))
+      // result.content 是 messageLoop 返回的完整回复
+      // 清空 currentStreaming 防止与 messages 中的助手消息重复渲染
+      const resultText = result?.content || ''
+      const streamedText = currentStreamingRef.current
+      let finalContent = resultText
+
+      // 如果 result.content 与已流式文本不同，且 resultText 是 streamedText 的超集
+      // 说明 streaming 路径漏掉了部分文本（textBuffer 去重可能过度），只补上差异部分
+      if (resultText && streamedText && resultText !== streamedText) {
+        if (resultText.startsWith(streamedText)) {
+          // result 比 streamed 多：只添加尾部差异
+          finalContent = resultText
+          tsLog('RENDERER', `result has extra ${resultText.length - streamedText.length} chars after streamed text`)
+        } else if (streamedText.startsWith(resultText)) {
+          // streamed 比 result 多：streaming 路径显示了更多，直接用 streamed
+          finalContent = streamedText
+          tsLog('RENDERER', `streamed has extra ${streamedText.length - resultText.length} chars, using streamed`)
+        } else {
+          // 内容不连续相关：取较长的
+          finalContent = resultText.length >= streamedText.length ? resultText : streamedText
+          tsLog('RENDERER', `content mismatch, using ${resultText.length >= streamedText.length ? 'result' : 'stream'}`)
+        }
+      }
+
       if (finalContent) {
         tsLog('RENDERER', 'appending assistant message, length:', finalContent.length)
-        // 先清空 currentStreaming，防止与 messages 中的助手消息重复渲染
+        streamingActiveRef.current = false // 锁定：此后延迟到达的 chunk 全部丢弃
         setCurrentStreaming(''); currentStreamingRef.current = ''
         appendMsg({ id: `msg-${Date.now() + 1}`, role: 'assistant', content: finalContent })
         if (!document.hasFocus()) window.dogeAPI.notify('Doge Code', `回复完成: ${finalContent.slice(0, 80)}`).catch(() => {})
@@ -1116,7 +1151,7 @@ export function App(): JSX.Element {
   useEffect(() => { historyIndexRef.current = -1 }, [messages])
 
   const navigateHistory = (direction: 'up' | 'down') => {
-    const userMessages = messages.filter(m => m.role === 'user').map(m => m.content).reverse()
+    const userMessages = messages.filter(m => m.role === 'user').map(m => typeof m.content === 'string' ? m.content : '').reverse()
     if (userMessages.length === 0) return
     const current = historyIndexRef.current
     if (direction === 'up') {
@@ -1342,15 +1377,16 @@ export function App(): JSX.Element {
   // 派生值
   const displayMessages = messages
   const msgSearchQueryLower = msgSearchQuery.toLowerCase()
+  const safeContent = (c: unknown) => typeof c === 'string' ? c : ''
   const filteredDisplayMessages = msgSearchQuery
-    ? displayMessages.map((m, i) => ({ ...m, _origIndex: i, _match: m.content.toLowerCase().includes(msgSearchQueryLower) }))
+    ? displayMessages.map((m, i) => ({ ...m, _origIndex: i, _match: safeContent(m.content).toLowerCase().includes(msgSearchQueryLower) }))
     : displayMessages.map((m, i) => ({ ...m, _origIndex: i, _match: true }))
 
   // 消息搜索过滤（必须在所有 hook 之后、if (!loaded) 之前）
   useEffect(() => {
     if (!msgSearchQuery) { setMsgSearchMatches([]); return }
     const matches: number[] = []
-    displayMessages.forEach((m, i) => { if (m.content.toLowerCase().includes(msgSearchQueryLower)) matches.push(i) })
+    displayMessages.forEach((m, i) => { if (safeContent(m.content).toLowerCase().includes(msgSearchQueryLower)) matches.push(i) })
     setMsgSearchMatches(matches)
   }, [msgSearchQuery, displayMessages, msgSearchQueryLower])
 
