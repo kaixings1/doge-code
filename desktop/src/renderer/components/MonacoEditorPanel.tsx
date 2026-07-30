@@ -14,6 +14,8 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import type { ThemeColors } from '../theme.js'
+import { useCallChain } from '../hooks/useCallChain.js'
+import { CallChainPanel } from './CallChainPanel.js'
 
 interface EditorTab {
   id: string
@@ -49,10 +51,19 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
   const [recentFiles, setRecentFiles] = useState<string[]>([])
   const [symbols, setSymbols] = useState<any[]>([])
   const [showOutline, setShowOutline] = useState(false)
+  const [columnSelectMode, setColumnSelectMode] = useState(false)
+  const [showCallChain, setShowCallChain] = useState(false)
   const bookmarksRef = useRef<Set<number>>(new Set())
   const bookmarkDecorationsRef = useRef<Map<number, string[]>>(new Map())
 
   const activeTab = tabs.find(t => t.id === activeTabId)
+
+  // 调用链分析
+  const callChainResult = useCallChain({
+    filePath: activeTab?.filePath || '',
+    content: activeTab?.content || '',
+    enabled: !!activeTab && showCallChain,
+  })
 
   // 检测语言
   const detectLanguage = useCallback((fp: string): string => {
@@ -288,6 +299,16 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
     if (next) editor.setPosition({ lineNumber: next.line, column: next.column })
   }, [bookmarks])
 
+  // 列选择模式
+  const toggleColumnSelect = useCallback(() => {
+    const editor = editorRef.current
+    if (!editor) return
+    const newMode = !columnSelectMode
+    setColumnSelectMode(newMode)
+    // Monaco 通过 changeConfiguration 切换 columnSelection
+    editor.updateOptions({ columnSelection: newMode })
+  }, [columnSelectMode])
+
   // 最近文件
   const pushRecentFile = useCallback((fp: string) => {
     setRecentFiles(prev => {
@@ -392,6 +413,7 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
       if (e.shiftKey && e.key === 'F12') { e.preventDefault(); findReferences() }
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'O') { e.preventDefault(); setShowOutline(p => !p) }
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); handleInlineEdit() }
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') { e.preventDefault(); setShowCallChain(p => !p) }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
@@ -450,7 +472,9 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
         <button onClick={clearBookmarks} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: 'transparent', color: c.text, cursor: 'pointer', fontSize: '9px' }} title="清除所有书签">清除</button>
         <button onClick={jumpToPrevBookmark} disabled={bookmarks.length === 0} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: 'transparent', color: c.text, cursor: bookmarks.length > 0 ? 'pointer' : 'default', fontSize: '9px' }} title="上一书签 (F2)">↑书签</button>
         <button onClick={jumpToNextBookmark} disabled={bookmarks.length === 0} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: 'transparent', color: c.text, cursor: bookmarks.length > 0 ? 'pointer' : 'default', fontSize: '9px' }} title="下一书签 (Shift+F2)">↓书签</button>
+        <button onClick={toggleColumnSelect} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: columnSelectMode ? c.accentDim : 'transparent', color: c.text, cursor: 'pointer', fontSize: '9px' }} title="列选择模式 (Alt+Shift+拖拽)">▦ 列选</button>
         <button onClick={() => setShowOutline(p => !p)} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: showOutline ? c.accentDim : 'transparent', color: c.text, cursor: 'pointer', fontSize: '9px' }} title="切换符号大纲 (Ctrl+Shift+O)">📑 大纲</button>
+        <button onClick={() => setShowCallChain(p => !p)} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: showCallChain ? c.accentDim : 'transparent', color: c.text, cursor: 'pointer', fontSize: '9px' }} title="调用链分析 (Ctrl+Shift+C)">🔗 调用链</button>
       </div>
 
       {/* 标签页栏 */}
@@ -490,6 +514,8 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
             <span>{language}</span>
             <span>UTF-8</span>
             {lspStatus && <span style={{ color: '#4ECB71' }}>{lspStatus}</span>}
+            {columnSelectMode && <span style={{ color: '#FFB74D' }}>列选模式</span>}
+            {showCallChain && <span style={{ color: '#4FC3F7' }}>调用链分析</span>}
           </div>
         </div>
       )}
@@ -499,11 +525,35 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: c.textFaint, gap: '8px' }}>
           <div style={{ fontSize: '36px', opacity: 0.3 }}>📝</div>
           <div style={{ fontSize: '11px' }}>输入文件路径并点击"打开"开始编辑</div>
-          <div style={{ fontSize: '9px', color: c.textFaint }}>支持 Ctrl+S 保存 · LSP 补全/定义/引用/符号 · F12 跳转定义 · Shift+F12 查找引用 · 内联补全 · Ctrl+Click 多光标 · F2 书签 · Ctrl+Shift+O 大纲 · Ctrl+Tab 最近文件</div>
+          <div style={{ fontSize: '9px', color: c.textFaint }}>支持 Ctrl+S 保存 · LSP 补全/定义/引用/符号 · F12 跳转定义 · Shift+F12 查找引用 · 内联补全 · Ctrl+Click 多光标 · F2 书签 · Ctrl+Shift+O 大纲 · Ctrl+Shift+C 调用链 · Ctrl+Tab 最近文件 · Alt+Shift+拖拽 列选择</div>
         </div>
       ) : (
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex' }}>
           <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
+            {showCallChain && (
+              <CallChainPanel
+                result={callChainResult}
+                filePath={activeTab.filePath}
+                theme={theme}
+                onClose={() => setShowCallChain(false)}
+                onGoToDefinition={(fp, line, column) => {
+                  // 切换标签页到目标文件
+                  if (fp !== activeTab.filePath) {
+                    setFilePath(fp)
+                    handleOpenFile()
+                  }
+                  // 跳转行
+                  setTimeout(() => {
+                    const editor = editorRef.current
+                    if (editor) {
+                      editor.setPosition({ lineNumber: line, column })
+                      editor.revealLineInCenter(line)
+                      editor.focus()
+                    }
+                  }, 300)
+                }}
+              />
+            )}
             {inlineEditVisible && (
               <div style={{ position: 'absolute', top: '8px', right: '8px', zIndex: 100, background: c.bgPanel, border: '1px solid ' + c.accent, borderRadius: '6px', padding: '8px', display: 'flex', gap: '4px', alignItems: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
                 <span style={{ color: c.accent, fontSize: '10px', fontWeight: 600 }}>AI Edit</span>
