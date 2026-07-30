@@ -1,11 +1,10 @@
 import { memoize } from '../vendor/lodash.js'
-import {
+export {
   getDefaultOpusModel,
   getDefaultSonnetModel,
   getSmallFastModel,
   isNonCustomOpusModel,
 } from './model/model.js'
-export { getSmallFastModel } from './model/model.js'
 
 import { homedir } from 'os'
 import { join } from 'path'

@@ -23,7 +23,6 @@ import { logError } from '../log.js'
 import { getPlatform } from '../platform.js'
 import { clone, jsonStringify } from '../slowOperations.js'
 import { profileCheckpoint } from '../startupProfiler.js'
-import { filterInvalidPermissionRules, type ValidationError } from './validation.js'
 import {
   type EditableSettingSource,
   getEnabledSettingSources,
