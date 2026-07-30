@@ -38,7 +38,12 @@ import {
  */
 export function filterToolsByServer(tools: Tool[], serverName: string): Tool[] {
   const prefix = `mcp__${normalizeNameForMCP(serverName)}__`
-  return tools.filter(tool => tool.name?.startsWith(prefix))
+  const oldPrefix = `${serverName}/`
+  return tools.filter(
+    tool =>
+      tool.name?.startsWith(prefix) || tool.name?.startsWith(oldPrefix) ||
+      tool._originalName?.startsWith(oldPrefix),
+  )
 }
 
 /**
@@ -243,7 +248,11 @@ export function isToolFromMcpServer(
  * @returns True if the tool is from an MCP server
  */
 export function isMcpTool(tool: Tool): boolean {
-  return tool.name?.startsWith('mcp__') || tool.isMcp === true
+  return (
+    tool.name?.startsWith('mcp__') ||
+    tool.isMcp === true ||
+    tool._originalName?.includes('/')
+  )
 }
 
 /**
