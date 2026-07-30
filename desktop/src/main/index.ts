@@ -327,9 +327,11 @@ ipcMain.handle('doge:send-message', async (_event, content: string) => {
       reply = ''
     }
     tsLog('MAIN', 'returning reply, length:', reply.length, 'content:', reply.slice(0, 200))
-    // 流式响应已通过 onChunk 回调逐字推送到渲染进程，currentStreamingRef 已累积完整文本
-    // 不返回 reply 作为 result.content，避免渲染进程再次 appendMsg 造成重复
-    return { success: true, content: '' }
+    if (!reply) {
+      // 纯工具调用消息：前端已通过事件流显示工具执行过程
+      return { success: true, content: '' }
+    }
+    return { success: true, content: reply }
   } catch (error: unknown) {
     // 保存崩溃恢复标记
     saveCrashRecovery(currentSessionId, 0)
