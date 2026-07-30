@@ -287,6 +287,56 @@ export function App(): JSX.Element {
   const [gitChangesCount, setGitChangesCount] = useState(0)
   const workflowMode = useWorkflowMode(selectedFile, gitChangesCount, showDebuggerPanel)
 
+  // ─── 工作流模式面板自动联动 ───
+  useEffect(() => {
+    if (workflowMode.locked) return
+    const m = workflowMode.mode
+    switch (m) {
+      case 'edit':
+        // 编码模式: 打开 Monaco 编辑器 + LSP 面板, 显示终端
+        setShowMonacoPanel(true)
+        setShowLspPanel(!!activePreviewFile)
+        setTerminalVisible(true)
+        setShowDebuggerPanel(false)
+        setShowCodeReview(false)
+        setShowSecurityAudit(false)
+        setShowPerformanceRefactor(false)
+        setShowDbPanel(false)
+        setShowApiTestPanel(false)
+        break
+      case 'review':
+        // 审查模式: 打开代码审查 + LSP 面板
+        setShowCodeReview(true)
+        setShowLspPanel(!!activePreviewFile)
+        setShowMonacoPanel(false)
+        setShowDebuggerPanel(false)
+        setTerminalVisible(false)
+        setShowSecurityAudit(false)
+        setShowPerformanceRefactor(false)
+        break
+      case 'debug':
+        // 调试模式: 打开调试器 + 终端
+        setShowDebuggerPanel(true)
+        setTerminalVisible(true)
+        setShowMonacoPanel(false)
+        setShowCodeReview(false)
+        setShowLspPanel(false)
+        setShowSecurityAudit(false)
+        setShowPerformanceRefactor(false)
+        break
+      case 'chat':
+      default:
+        // 对话模式: 关闭所有专业面板, 保持终端状态
+        setShowMonacoPanel(false)
+        setShowCodeReview(false)
+        setShowDebuggerPanel(false)
+        setShowLspPanel(false)
+        setShowSecurityAudit(false)
+        setShowPerformanceRefactor(false)
+        break
+    }
+  }, [workflowMode.mode, workflowMode.locked, activePreviewFile])
+
   const effectiveTheme = getEffectiveTheme(themeSettings.theme as ThemeName | 'auto')
   const styles = getStyles(effectiveTheme, themeSettings.fontSize)
   const theme = THEMES[effectiveTheme]
@@ -1659,6 +1709,18 @@ export function App(): JSX.Element {
                   padding: '1px 6px', borderRadius: '2px',
                 }}>
                   {vim.mode === 'NORMAL' ? 'ⓥ NORMAL' : 'ⓘ INSERT'}
+                </span>
+              )}
+              <span
+                style={{ cursor: 'pointer', fontSize: '10px', color: workflowMode.locked ? c.accent : c.textFaint }}
+                title={workflowMode.locked ? '点击解锁自动模式' : '点击锁定当前模式'}
+                onClick={() => workflowMode.setLocked(!workflowMode.locked)}
+              >
+                {workflowMode.locked ? '🔒' : '🔓'} {workflowMode.mode}
+              </span>
+              {workflowMode.reason && !workflowMode.locked && (
+                <span style={{ color: c.textFaint, fontSize: '9px', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={workflowMode.reason}>
+                  {workflowMode.reason}
                 </span>
               )}
               <span style={{ color: isOnline ? c.accent : c.errorText, fontSize: '10px' }}>
