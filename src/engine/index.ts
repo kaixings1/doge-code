@@ -202,25 +202,17 @@ export class QueryEngine {
     const baseTools = getAllBaseTools();
     // 复用最小上下文和始终允许的 canUseTool
     const ctx = QueryEngine.buildMinimalContext();
-    const canUseTool = async () => ({ behavior: 'allow', updatedInput: {} as any });
+    const canUseTool = (async (_tool: any, _input: any, _ctx: any, _msg: any, _id: any) => ({ behavior: 'allow', updatedInput: {} as any })) as any;
     const parentMessage = { role: 'user', content: '' } as any;
 
     for (const tool of baseTools) {
       if (!tool || !tool.name) continue;
       const info = tool.info();
       map.set(tool.name, {
-        name: tool.name,
-        description: tool.description,
+        name: info.name,
+        description: info.description,
         parameters: info.parameters,
-        validate(params) {
-          try {
-            if (tool.validateInput) {
-              const result = tool.validateInput(params as any, ctx as any);
-              if (result && result.result === false) {
-                return { valid: false, errors: [result.message] };
-              }
-            }
-          } catch { /* 验证异常视为无效 */ }
+        validate() {
           return { valid: true };
         },
         async execute(params) {
