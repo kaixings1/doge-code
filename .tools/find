@@ -1,0 +1,49 @@
+#!/bin/bash
+# Shim: find -> rg.exe --files
+# Replaces MSYS2 find which has path issues on Windows native filesystems
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+RG="$SCRIPT_DIR/rg.exe"
+
+args=("--files" "--no-config")
+target="."
+
+while [ $# -gt 0 ]; do
+  arg="$1"
+  case "$arg" in
+    -name)
+      shift
+      if [ -n "$1" ]; then
+        pattern="${1//\[/\\[}"
+        pattern="${pattern//\]/\\]}"
+        args+=("--glob" "$pattern")
+      fi
+      ;;
+    -type)
+      shift
+      t="$1"
+      case "$t" in
+        f) args+=("--type" "f") ;;
+        d) args+=("--type" "d") ;;
+        l) args+=("--type" "l") ;;
+        *) args+=("--type" "$t") ;;
+      esac
+      ;;
+    -maxdepth)
+      shift
+      args+=("--max-depth" "$1")
+      ;;
+    -not|-!)
+      # Skip negation
+      ;;
+    -*)
+      args+=("$arg")
+      ;;
+    *)
+      # Convert POSIX path to Windows path for native rg.exe
+      target=$(cygpath -w "$arg" 2>/dev/null || echo "$arg")
+      ;;
+  esac
+  shift
+done
+
+exec "$RG" "${args[@]}" "$target"
