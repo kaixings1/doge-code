@@ -7,11 +7,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/secret-blocker.sh"
+            "command": "python3 .claude/hooks/secret-blocker.py"
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/protected-files.sh"
+            "command": "python3 .claude/hooks/protected-files.py"
           }
         ]
       },
@@ -20,7 +20,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/sensitive-data-blocker.sh"
+            "command": "python3 .claude/hooks/sensitive-data-blocker.py"
           }
         ]
       },
@@ -29,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/sensitive-data-mcp-blocker.sh"
+            "command": "python3 .claude/hooks/sensitive-data-mcp-blocker.py"
           }
         ]
       }
@@ -40,11 +40,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/auto-format.sh"
+            "command": "python3 .claude/hooks/auto-format.py"
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/test-on-change.sh"
+            "command": "python3 .claude/hooks/test-on-change.py"
           }
         ]
       },
@@ -53,7 +53,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/sensitive-data-output-blocker.sh"
+            "command": "python3 .claude/hooks/sensitive-data-output-blocker.py"
           }
         ]
       },
@@ -62,7 +62,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/sensitive-data-output-blocker.sh"
+            "command": "python3 .claude/hooks/sensitive-data-output-blocker.py"
           }
         ]
       },
@@ -71,7 +71,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/sensitive-data-output-blocker.sh"
+            "command": "python3 .claude/hooks/sensitive-data-output-blocker.py"
           }
         ]
       }
@@ -81,7 +81,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/auto-executor.sh",
+            "command": "python3 .claude/hooks/auto-executor.py",
             "timeout": 10000,
             "async": true
           }
@@ -93,7 +93,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/auto-executor.sh",
+            "command": "python3 .claude/hooks/auto-executor.py",
             "timeout": 10000,
             "async": true
           }
@@ -105,11 +105,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/uat-reminder.sh"
+            "command": "python3 .claude/hooks/uat-reminder.py"
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/self-improve.sh"
+            "command": "python3 .claude/hooks/self-improve.py"
           }
         ]
       }

@@ -80,13 +80,12 @@ function jsToTsResolverPlugin() {
   }
 }
 
-// Plugin to resolve Vite's __vite-browser-external:xxx placeholders back to
-// proper Node.js built-in module references so Rollup treats them as external.
 // Plugin to prevent Vite from polyfilling Node.js builtins.
-// When Vite sees `import { resolve } from 'path'` in a non-browser context,
-// it would normally replace 'path' with a browser polyfill virtual module.
-// This plugin intercepts bare Node.js builtin imports and marks them as
-// external so Rollup keeps them as bare imports in the output.
+// When Vite sees `import { resolve } from 'path'` or `import x from 'node:url'`,
+// it would normally replace them with browser polyfill virtual modules
+// (__vite-browser-external:xxx). This plugin intercepts ALL such imports
+// before Vite can process them and marks them as external so Rollup keeps
+// them as bare imports in the output.
 function nodeBuiltinsResolverPlugin() {
   const NODE_BUILTINS = new Set([
     'path', 'fs', 'fs/promises', 'crypto', 'os', 'util', 'stream', 'events',
@@ -101,15 +100,36 @@ function nodeBuiltinsResolverPlugin() {
     enforce: 'pre',
     resolveId(source, importer) {
       if (typeof source !== 'string') return null
-      // Handle bare Node.js builtin imports BEFORE Vite can polyfill them
-      // Only process bare module specifiers (no slashes)
-      if (source.includes('/') || source.includes('\\')) return null
-      // Must be a Node.js builtin
-      if (!NODE_BUILTINS.has(source)) return null
-      // Only externalize imports from our source files, not from node_modules
-      if (importer && importer.includes('node_modules')) return null
-      // Return as external Node.js builtin - this prevents Vite from polyfilling
-      return { id: source, external: true }
+
+      // Intercept node: prefixed imports (e.g. 'node:url', 'node:fs/promises')
+      if (source.startsWith('node:')) {
+        const modName = source.slice(5)
+        if (NODE_BUILTINS.has(modName)) {
+          return { id: modName, external: true }
+        }
+        return null
+      }
+
+      // Intercept subpath builtin imports (e.g. 'fs/promises', 'node:fs/promises')
+      // These are NOT caught by the node: prefix handler above
+      if (source.includes('/') || source.includes('\\')) {
+        // Check if it's a known subpath builtin (starts with a known builtin name)
+        const parts = source.split(/[\/\\]/)
+        const topLevel = parts[0]
+        if (NODE_BUILTINS.has(topLevel)) {
+          return { id: source, external: true }
+        }
+        return null
+      }
+
+      // Intercept bare builtin imports (e.g. 'path', 'fs')
+      // Skip anything with dots (version specifiers, etc.)
+      if (source.includes('.')) return null
+      if (NODE_BUILTINS.has(source)) {
+        return { id: source, external: true }
+      }
+
+      return null
     },
   }
 }
@@ -155,7 +175,6 @@ async function main() {
   console.log('=== Building main process ===')
   await build({
     root: '.',
-    ssr: true,
     build: {
       outDir: 'desktop-electron/dist/main',
       emptyOutDir: false,
@@ -165,21 +184,15 @@ async function main() {
           format: 'es',
           entryFileNames: 'index.mjs',
         },
-        external: ['electron', 'node-pty', 'image-processor-napi'],
+        external: ['electron', 'node-pty', 'image-processor-napi', 'execa', 'npm-run-path', 'unicorn-magic'],
       },
     },
-    plugins: [mdPlugin, jsResolverPlugin, nodeBuiltinsPlugin],
     ssr: {
-      external: [
-        'electron', 'node-pty', 'image-processor-napi', '@sentry/node', 'plist', 'execa',
-        'path', 'fs', 'fs/promises', 'crypto', 'os', 'util', 'stream', 'events',
-        'buffer', 'process', 'child_process', 'http', 'https', 'url', 'zlib',
-        'string_decoder', 'querystring', 'punycode', 'timers', 'console', 'module',
-        'perf_hooks', 'inspector', 'async_hooks', 'wasi', 'vm', 'worker_threads',
-        'tls', 'net', 'dns', 'dgram', 'readline', 'repl', 'domain', 'cluster',
-        'v8', 'async_wait', 'http2',
-      ],
+      // Keep Node.js builtins and problematic npm packages external
+      // (no polyfills for these - Electron will provide them at runtime)
+      external: ['electron', 'node-pty', 'image-processor-napi', 'execa', 'npm-run-path', 'unicorn-magic'],
     },
+    plugins: [mdPlugin, jsResolverPlugin, nodeBuiltinsPlugin],
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.json'],
       alias: {
@@ -191,45 +204,6 @@ async function main() {
         '@utils': path.resolve(projectRoot, 'src/desktop-electron/utils'),
         'bun:bundle': path.resolve(projectRoot, 'src/desktop-electron/polyfills/bun-bundle-polyfill.ts'),
         'bun:sqlite': path.resolve(projectRoot, 'src/desktop-electron/polyfills/bun-sqlite-polyfill.ts'),
-        // Prevent Vite from polyfilling Node.js builtins
-        path: false,
-        fs: false,
-        'fs/promises': false,
-        crypto: false,
-        os: false,
-        util: false,
-        stream: false,
-        events: false,
-        buffer: false,
-        process: false,
-        'child_process': false,
-        http: false,
-        https: false,
-        url: false,
-        zlib: false,
-        string_decoder: false,
-        querystring: false,
-        punycode: false,
-        timers: false,
-        console: false,
-        module: false,
-        perf_hooks: false,
-        inspector: false,
-        async_hooks: false,
-        wasi: false,
-        vm: false,
-        'worker_threads': false,
-        tls: false,
-        net: false,
-        dns: false,
-        dgram: false,
-        readline: false,
-        repl: false,
-        domain: false,
-        cluster: false,
-        v8: false,
-        'async_wait': false,
-        http2: false,
       },
     },
   })
