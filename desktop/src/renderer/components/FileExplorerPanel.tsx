@@ -70,7 +70,7 @@ export function FileExplorerPanel({
   onClose,
 }: FileExplorerPanelProps): JSX.Element {
   const c = theme
-  const { treeData, expanded, selectedPath, searchQuery, loading, error, setSearchQuery, toggleExpand, selectNode, handleCreateFile, handleCreateFolder, handleDelete, handleRename, setContextMenu, refresh } = fileTree
+  const { treeData, expanded, selectedPath, searchQuery, loading, error, setSearchQuery, toggleExpand, setExpanded, selectNode, handleCreateFile, handleCreateFolder, handleDelete, handleRename, setContextMenu, refresh } = fileTree
   const [contextMenuState, setContextMenuState] = useState<{ x: number; y: number; node: FileNode } | null>(null)
   const [renameId, setRenameId] = useState<string | null>(null)
   const [renameValue, setRenameValue] = useState('')
@@ -122,7 +122,7 @@ export function FileExplorerPanel({
     setRenameId(null)
   }, [renameId, renameValue, treeData, handleRename])
 
-  const handleCreateFile = useCallback(async (parent: FileNode, name: string) => {
+  const handleCreateFileLocal = useCallback(async (parent: FileNode, name: string) => {
     const result = await handleCreateFile(parent.path, name)
     if (result.success) refresh()
     setShowCreateMenu(false)
@@ -258,7 +258,7 @@ export function FileExplorerPanel({
         >
           <CreateFileMenu onFile={(name) => {
             const node = contextMenuState?.node || { id: 'root', path: '', name: '', isDirectory: true, depth: 0 }
-            handleCreateFile(node, name)
+            handleCreateFileLocal(node, name)
           }} onFolder={(name) => {
             const node = contextMenuState?.node || { id: 'root', path: '', name: '', isDirectory: true, depth: 0 }
             handleCreateFolderAction(node, name)
@@ -334,7 +334,7 @@ interface TreeNodeProps {
   onRenameStart: () => void
   onRenameCommit: () => void
   onRenameChange: (v: string) => void
-  inputRef: React.RefObject<HTMLInputElement | null>
+  inputRef: React.RefObject<HTMLInputElement>
   onOpenFile?: (path: string) => void
 }
 

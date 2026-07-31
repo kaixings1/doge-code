@@ -163,6 +163,9 @@ interface DogeAPIValue {
   logStreamStop: () => Promise<{ success: boolean }>
   onLogEntry: (callback: (entry: { level: string; timestamp: string; message: string }) => void) => () => void
 
+  // ── 诊断数据 ──
+  getAllDiagnostics: () => Promise<{ success: boolean; diagnostics: Array<{ uri: string; diagnostics: Array<{ range: { start: { line: number; character: number }; end: { line: number; character: number } }; severity: number; message: string; source?: string; code?: string | number }> }> }>
+
   // ── 语音权限 ──
   requestMicrophonePermission: () => Promise<{ granted: boolean }>
 }
@@ -359,6 +362,7 @@ const dogeAPI: DogeAPIValue = {
     ipcRenderer.on('doge:log-entry', handler)
     return () => ipcRenderer.removeListener('doge:log-entry', handler)
   },
+  getAllDiagnostics: () => ipcRenderer.invoke('doge:get-all-diagnostics'),
 }
 
 contextBridge.exposeInMainWorld('dogeAPI', dogeAPI)
