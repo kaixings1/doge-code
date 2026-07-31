@@ -102,6 +102,16 @@ cookbooks/
 # Temp scripts
 .tmp-*.py
 
+# 临时调试脚本
+check-*.cjs
+debug-*.cjs
+find-*.cjs
+list-*.cjs
+run-build.cjs
+tail-log.cjs
+trace-*.cjs
+src/latest/
+
 # =========================
 # 汉化辅助脚本 & 临时文件
 # =========================
