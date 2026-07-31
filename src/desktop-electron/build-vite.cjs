@@ -189,7 +189,7 @@ async function main() {
         input: mainEntry,
         output: {
           format: 'es',
-          entryFileNames: 'index.mjs',
+          entryFileNames: 'index.js',
         },
         external: ['electron','node-pty','image-processor-napi','execa','npm-run-path','unicorn-magic','supports-hyperlinks','supports-color','has-flag','@anthropic-ai/sandbox-runtime',/^@aws-sdk\//,/^node:/,'path','path/win32','path/posix','fs','fs/promises','crypto','os','util','stream','stream/promises','events','buffer','process','child_process','http','http2','https','url','zlib','querystring','v8','async_hooks','net','tls','assert','dns','readline','tty','string_decoder','perf_hooks','diagnostics_channel','worker_threads','module'],
       },
@@ -228,7 +228,7 @@ async function main() {
         input: preloadEntry,
         output: {
           format: 'es',
-          entryFileNames: 'index.mjs',
+          entryFileNames: 'index.js',
         },
         external: ['electron','node-pty','image-processor-napi','execa','npm-run-path','unicorn-magic','supports-hyperlinks','supports-color','has-flag','@anthropic-ai/sandbox-runtime',/^@aws-sdk\//,/^node:/,'path','path/win32','path/posix','fs','fs/promises','crypto','os','util','stream','stream/promises','events','buffer','process','child_process','http','http2','https','url','zlib','querystring','v8','async_hooks','net','tls','assert','dns','readline','tty','string_decoder','perf_hooks','diagnostics_channel','worker_threads','module'],
       },
@@ -237,17 +237,26 @@ async function main() {
 
   console.log('=== Building renderer ===')
   await build({
-    root: rendererRoot,
+    root: projectRoot,
     build: {
-      outDir: 'desktop-electron/dist/renderer',
+      outDir: path.resolve(projectRoot, 'desktop-electron/dist/renderer'),
       emptyOutDir: false,
       rollupOptions: { input: rendererEntry },
     },
     plugins: [reactPlugin(), mdPlugin, jsResolverPlugin, nodeBuiltinsResolver],
   })
 
+  console.log('\nCopying build output to desktop/dist/')
+  const desktopDist = path.resolve('desktop/dist')
+  if (fs.existsSync(desktopDist)) {
+    fs.rmSync(desktopDist, { recursive: true, force: true })
+  }
+  fs.mkdirSync(desktopDist, { recursive: true })
+  fs.cpSync(path.join(distDir, 'main'), path.join(desktopDist, 'main'), { recursive: true })
+  fs.cpSync(path.join(distDir, 'preload'), path.join(desktopDist, 'preload'), { recursive: true })
+  fs.cpSync(path.join(distDir, 'renderer'), path.join(desktopDist, 'renderer'), { recursive: true })
+  console.log('Copied to:', desktopDist)
   console.log('\nBuild complete')
-  console.log('Output:', distDir)
 }
 
 main().catch(err => {
