@@ -80,6 +80,40 @@ function jsToTsResolverPlugin() {
   }
 }
 
+// Plugin to resolve Vite's __vite-browser-external:xxx placeholders back to
+// proper Node.js built-in module references so Rollup treats them as external.
+// Plugin to prevent Vite from polyfilling Node.js builtins.
+// When Vite sees `import { resolve } from 'path'` in a non-browser context,
+// it would normally replace 'path' with a browser polyfill virtual module.
+// This plugin intercepts bare Node.js builtin imports and marks them as
+// external so Rollup keeps them as bare imports in the output.
+function nodeBuiltinsResolverPlugin() {
+  const NODE_BUILTINS = new Set([
+    'path', 'fs', 'fs/promises', 'crypto', 'os', 'util', 'stream', 'events',
+    'buffer', 'process', 'child_process', 'http', 'https', 'url', 'zlib',
+    'string_decoder', 'querystring', 'punycode', 'timers', 'console', 'module',
+    'perf_hooks', 'inspector', 'async_hooks', 'wasi', 'vm', 'worker_threads',
+    'tls', 'net', 'dns', 'dgram', 'readline', 'repl', 'domain', 'cluster',
+    'v8', 'async_wait', 'http2',
+  ])
+  return {
+    name: 'node-builtins-resolver',
+    enforce: 'pre',
+    resolveId(source, importer) {
+      if (typeof source !== 'string') return null
+      // Handle bare Node.js builtin imports BEFORE Vite can polyfill them
+      // Only process bare module specifiers (no slashes)
+      if (source.includes('/') || source.includes('\\')) return null
+      // Must be a Node.js builtin
+      if (!NODE_BUILTINS.has(source)) return null
+      // Only externalize imports from our source files, not from node_modules
+      if (importer && importer.includes('node_modules')) return null
+      // Return as external Node.js builtin - this prevents Vite from polyfilling
+      return { id: source, external: true }
+    },
+  }
+}
+
 // Clean
 for (const d of ['main', 'preload', 'renderer']) {
   const full = path.join(distDir, d)
@@ -90,6 +124,7 @@ for (const d of ['main', 'preload', 'renderer']) {
 
 const mdPlugin = markdownTextPlugin()
 const jsResolverPlugin = jsToTsResolverPlugin()
+const nodeBuiltinsPlugin = nodeBuiltinsResolverPlugin()
 const reactPlugin = require('@vitejs/plugin-react').default
 
 // Build alias map for .js -> .tsx/.ts resolution
@@ -120,6 +155,7 @@ async function main() {
   console.log('=== Building main process ===')
   await build({
     root: '.',
+    ssr: true,
     build: {
       outDir: 'desktop-electron/dist/main',
       emptyOutDir: false,
@@ -129,10 +165,21 @@ async function main() {
           format: 'es',
           entryFileNames: 'index.mjs',
         },
-        external: ['electron', 'electron-store', 'node-pty', 'image-processor-napi', '@sentry/node', 'sharp'],
+        external: ['electron', 'node-pty', 'image-processor-napi'],
       },
     },
-    plugins: [mdPlugin, jsResolverPlugin],
+    plugins: [mdPlugin, jsResolverPlugin, nodeBuiltinsPlugin],
+    ssr: {
+      external: [
+        'electron', 'node-pty', 'image-processor-napi', '@sentry/node', 'plist', 'execa',
+        'path', 'fs', 'fs/promises', 'crypto', 'os', 'util', 'stream', 'events',
+        'buffer', 'process', 'child_process', 'http', 'https', 'url', 'zlib',
+        'string_decoder', 'querystring', 'punycode', 'timers', 'console', 'module',
+        'perf_hooks', 'inspector', 'async_hooks', 'wasi', 'vm', 'worker_threads',
+        'tls', 'net', 'dns', 'dgram', 'readline', 'repl', 'domain', 'cluster',
+        'v8', 'async_wait', 'http2',
+      ],
+    },
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.json'],
       alias: {
@@ -144,6 +191,45 @@ async function main() {
         '@utils': path.resolve(projectRoot, 'src/desktop-electron/utils'),
         'bun:bundle': path.resolve(projectRoot, 'src/desktop-electron/polyfills/bun-bundle-polyfill.ts'),
         'bun:sqlite': path.resolve(projectRoot, 'src/desktop-electron/polyfills/bun-sqlite-polyfill.ts'),
+        // Prevent Vite from polyfilling Node.js builtins
+        path: false,
+        fs: false,
+        'fs/promises': false,
+        crypto: false,
+        os: false,
+        util: false,
+        stream: false,
+        events: false,
+        buffer: false,
+        process: false,
+        'child_process': false,
+        http: false,
+        https: false,
+        url: false,
+        zlib: false,
+        string_decoder: false,
+        querystring: false,
+        punycode: false,
+        timers: false,
+        console: false,
+        module: false,
+        perf_hooks: false,
+        inspector: false,
+        async_hooks: false,
+        wasi: false,
+        vm: false,
+        'worker_threads': false,
+        tls: false,
+        net: false,
+        dns: false,
+        dgram: false,
+        readline: false,
+        repl: false,
+        domain: false,
+        cluster: false,
+        v8: false,
+        'async_wait': false,
+        http2: false,
       },
     },
   })
@@ -151,7 +237,8 @@ async function main() {
   console.log('=== Building preload ===')
   await build({
     root: '.',
-    plugins: [mdPlugin, jsResolverPlugin],
+    ssr: true,
+    plugins: [mdPlugin, jsResolverPlugin, nodeBuiltinsPlugin],
     build: {
       outDir: 'desktop-electron/dist/preload',
       emptyOutDir: false,

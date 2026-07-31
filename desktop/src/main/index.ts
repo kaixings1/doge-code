@@ -713,6 +713,73 @@ ipcMain.handle('doge:git-log-graph', async (_event, cwd: string, maxCount: numbe
   }
 })
 
+ipcMain.handle('doge:git-show', async (_event, cwd: string, sha: string) => {
+  try {
+    const { execSync } = await import('node:child_process')
+    const output = execSync(`git show --stat --format=fuller -- "${sha}"`, { cwd, encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 })
+    const raw = output as string
+    const lines = raw.split('\n')
+    const header: Record<string, string> = {}
+    let inStat = false
+    const stats: Array<{ file: string; additions: number; deletions: number }> = []
+    for (const line of lines) {
+      if (line.startsWith('commit ')) header.sha = line.replace('commit ', '').trim()
+      else if (line.startsWith('Author: ')) header.author = line.replace('Author: ', '').trim()
+      else if (line.startsWith('Date:   ')) header.date = line.replace('Date:   ', '').trim()
+      else if (line.startsWith('    ')) header.message = (header.message || '') + line.trim()
+      else if (line.startsWith(' ') && line.includes('|')) inStat = true
+      else if (inStat && line.includes('|')) {
+        const statPart = line.trim()
+        const idx = statPart.indexOf('|')
+        if (idx > -1) {
+          const file = statPart.slice(0, idx).trim()
+          const tail = statPart.slice(idx + 1).trim()
+          const additions = tail.match(/\+(\d+)/)?.[1] ? Number(tail.match(/\+(\d+)/)?.[1]) : 0
+          const deletions = tail.match(/-(\d+)/)?.[1] ? Number(tail.match(/-(\d+)/)?.[1]) : 0
+          stats.push({ file, additions, deletions })
+        }
+      }
+    }
+    if (!header.message && header.sha) header.message = header.sha
+    return { sha: header.sha || sha, author: header.author || '', date: header.date || '', message: header.message || '', stats }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { sha, author: '', date: '', message: '', stats: [], error: message }
+  }
+})
+
+ipcMain.handle('doge:git-diff', async (_event, cwd: string, shaA: string, shaB: string, filePath?: string) => {
+  try {
+    const { execSync } = await import('node:child_process')
+    const target = filePath ? ` -- "${filePath}"` : ''
+    const output = execSync(`git diff --stat ${shaA} ${shaB}${target}`, { cwd, encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 })
+    const raw = output as string
+    const stats: Array<{ file: string; additions: number; deletions: number; changeType: string }> = []
+    const lines = raw.split('\n')
+    for (const line of lines) {
+      const trimmed = line.trim()
+      if (!trimmed) continue
+      const match = trimmed.match(/^(.*)\s+\|\s+(\d+)\s+([+-]+)$/)
+      if (match) {
+        const file = match[1].trim()
+        const changes = Number(match[2].trim())
+        const signs = match[3].trim()
+        const additions = (signs.match(/\+/g) || []).length
+        const deletions = (signs.match(/-/g) || []).length
+        let changeType = 'modified'
+        if (file.startsWith('{')) changeType = 'renamed'
+        else if (trimmed.includes('create mode')) changeType = 'added'
+        else if (trimmed.includes('delete mode')) changeType = 'deleted'
+        stats.push({ file, additions, deletions, changeType })
+      }
+    }
+    return { stats }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { stats: [], error: message }
+  }
+})
+
 // 获取模型信息
 ipcMain.handle('doge:get-model-info', () => {
   const config = engineConfig || loadConfig()
@@ -2978,6 +3045,84 @@ ipcMain.handle('doge:get-logs', async (_event, _params: { level?: string; limit?
     ],
     total: 1,
   }
+})
+
+// ─── 日志实时流 ───
+interface LogEntry {
+  level: 'debug' | 'info' | 'warn' | 'error'
+  timestamp: string
+  message: string
+}
+
+interface LogStreamListener {
+  level?: string
+  interval: NodeJS.Timeout
+}
+
+const logStreamListeners = new Map<number, LogStreamListener>()
+
+function parseLogLine(line: string): LogEntry | null {
+  const match = line.match(/^\[(DEBUG|INFO|WARN|ERROR)\]\s+(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})\s+(.*)$/)
+  if (!match) return null
+  return {
+    level: match[1].toLowerCase() as LogEntry['level'],
+    timestamp: match[2],
+    message: match[3],
+  }
+}
+
+ipcMain.handle('doge:log-stream-start', (event, options?: { level?: string }) => {
+  const webContents = event.sender
+  const id = webContents.id
+  const level = options?.level?.toLowerCase()
+
+  let lastSize = 0
+  const interval = setInterval(async () => {
+    try {
+      const logPath = path.join(app.getPath('userData'), 'logs', 'doge.log')
+      if (!fs.existsSync(logPath)) return
+
+      const stat = fs.statSync(logPath)
+      if (stat.size < lastSize) {
+        // 文件被轮转或截断，从头读取
+        lastSize = 0
+      }
+
+      if (stat.size <= lastSize) return
+
+      const stream = fs.createReadStream(logPath, { start: lastSize, encoding: 'utf-8' })
+      let buffer = ''
+      for await (const chunk of stream) {
+        buffer += chunk
+      }
+
+      if (buffer) {
+        const lines = buffer.split('\n').filter(l => l.trim())
+        for (const line of lines) {
+          const entry = parseLogLine(line)
+          if (entry) {
+            if (!level || entry.level === level || entry.level === 'error') {
+              webContents.send('doge:log-entry', entry)
+            }
+          }
+        }
+        lastSize = stat.size
+      }
+    } catch { /* ignore */ }
+  }, 500)
+
+  logStreamListeners.set(id, { level, interval })
+  return { success: true }
+})
+
+ipcMain.handle('doge:log-stream-stop', (event) => {
+  const id = event.sender.id
+  const listener = logStreamListeners.get(id)
+  if (listener?.interval) {
+    clearInterval(listener.interval)
+    logStreamListeners.delete(id)
+  }
+  return { success: true }
 })
 
 // ─── 导出入口函数 ───
