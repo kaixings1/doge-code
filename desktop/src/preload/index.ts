@@ -151,6 +151,13 @@ interface DogeAPIValue {
   remoteGetSignal: (sessionId: string) => Promise<{ success: boolean; signal?: { offer?: RTCSessionDescriptionInit; answer?: RTCSessionDescriptionInit; iceCandidates?: RTCIceCandidateInit[] } | null }>
   remoteClose: (sessionId: string) => Promise<{ success: boolean }>
 
+  // ── 测试运行器 ──
+  testRun: (cwd: string, testCommand: string) => Promise<{ success: boolean; output?: string; error?: string; exitCode?: number }>
+  testList: (cwd: string) => Promise<{ framework: string; tests: string[] }>
+
+  // ── 日志查看器 ──
+  getLogs: (params?: { level?: string; limit?: number; offset?: number }) => Promise<{ logs: Array<{ id: string; timestamp: string; level: string; source: string; message: string }>; total: number }>
+
   // ── 语音权限 ──
   requestMicrophonePermission: () => Promise<{ granted: boolean }>
 }
@@ -331,6 +338,13 @@ const dogeAPI: DogeAPIValue = {
   remoteGetSignal: (sessionId: string) => ipcRenderer.invoke('doge:remote-get-signal', sessionId),
   remoteClose: (sessionId: string) => ipcRenderer.invoke('doge:remote-close', sessionId),
   requestMicrophonePermission: () => ipcRenderer.invoke('doge:request-microphone-permission'),
+
+  // ── 测试运行器 ──
+  testRun: (cwd: string, testCommand: string) => ipcRenderer.invoke('doge:test-run', cwd, testCommand),
+  testList: (cwd: string) => ipcRenderer.invoke('doge:test-list', cwd),
+
+  // ── 日志查看器 ──
+  getLogs: (params?: { level?: string; limit?: number; offset?: number }) => ipcRenderer.invoke('doge:get-logs', params),
 }
 
 contextBridge.exposeInMainWorld('dogeAPI', dogeAPI)
