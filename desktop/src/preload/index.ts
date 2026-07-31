@@ -97,6 +97,8 @@ interface DogeAPIValue {
   formatCode: (params: { code: string; language: string; tool: string; cwd: string; range?: { start: number; end: number } }) => Promise<{ success: boolean; output?: string; error?: string }>
   apiTestSend: (request: { url: string; method: string; headers: Record<string, string>; body?: string; bodyType: string }) => Promise<{ success: boolean; status: number; statusText: string; responseHeaders: Record<string, string>; body: string; error?: string }>
   getGitStats: (cwd: string) => Promise<{ commits: Array<{ hash: string; date: string; author: string; message: string; additions: number; deletions: number }> }>
+  gitShow: (cwd: string, sha: string) => Promise<{ success: boolean; sha: string; author: string; date: string; message: string; stats: Array<{ file: string; additions: number; deletions: number }>; error?: string }>
+  gitDiff: (cwd: string, shaA: string, shaB: string, filePath?: string) => Promise<{ success: boolean; stats: Array<{ file: string; additions: number; deletions: number; changeType: string }>; error?: string }>
   lspStart: (languageId: string) => Promise<{ success: boolean; error?: string; serverName?: string }>
   lspStop: (languageId: string) => Promise<{ success: boolean; error?: string }>
   lspStopAll: () => Promise<{ success: boolean; error?: string }>
@@ -157,6 +159,9 @@ interface DogeAPIValue {
 
   // ── 日志查看器 ──
   getLogs: (params?: { level?: string; limit?: number; offset?: number }) => Promise<{ logs: Array<{ id: string; timestamp: string; level: string; source: string; message: string }>; total: number }>
+  logStreamStart: (options?: { level?: string }) => Promise<{ success: boolean }>
+  logStreamStop: () => Promise<{ success: boolean }>
+  onLogEntry: (callback: (entry: { level: string; timestamp: string; message: string }) => void) => () => void
 
   // ── 语音权限 ──
   requestMicrophonePermission: () => Promise<{ granted: boolean }>
@@ -282,6 +287,8 @@ const dogeAPI: DogeAPIValue = {
   },
   apiTestSend: (request: { url: string; method: string; headers: Record<string, string>; body?: string; bodyType: string }) => ipcRenderer.invoke('doge:api-test-send', request),
   getGitStats: async () => ({ commits: [] }),
+  gitShow: (cwd: string, sha: string) => ipcRenderer.invoke('doge:git-show', cwd, sha),
+  gitDiff: (cwd: string, shaA: string, shaB: string, filePath?: string) => ipcRenderer.invoke('doge:git-diff', cwd, shaA, shaB, filePath),
   lspStart: (languageId: string) => ipcRenderer.invoke('doge:lsp-start', languageId),
   lspStop: (languageId: string) => ipcRenderer.invoke('doge:lsp-stop', languageId),
   lspStopAll: () => ipcRenderer.invoke('doge:lsp-stop-all'),
@@ -345,6 +352,13 @@ const dogeAPI: DogeAPIValue = {
 
   // ── 日志查看器 ──
   getLogs: (params?: { level?: string; limit?: number; offset?: number }) => ipcRenderer.invoke('doge:get-logs', params),
+  logStreamStart: (options?: { level?: string }) => ipcRenderer.invoke('doge:log-stream-start', options),
+  logStreamStop: () => ipcRenderer.invoke('doge:log-stream-stop'),
+  onLogEntry: (callback: (entry: { level: string; timestamp: string; message: string }) => void) => {
+    const handler = (_event: Electron.IpcRendererEvent, entry: { level: string; timestamp: string; message: string }) => callback(entry)
+    ipcRenderer.on('doge:log-entry', handler)
+    return () => ipcRenderer.removeListener('doge:log-entry', handler)
+  },
 }
 
 contextBridge.exposeInMainWorld('dogeAPI', dogeAPI)

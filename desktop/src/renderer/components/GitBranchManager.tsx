@@ -10,6 +10,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react'
 import type { ThemeColors } from '../theme.js'
+import { VersionComparePanel } from './VersionComparePanel.js'
 
 export interface GitBranch {
   name: string
@@ -45,8 +46,10 @@ export function GitBranchManager({ cwd, theme, onClose, onBranchChanged }: GitBr
   const [mergeTarget, setMergeTarget] = useState('')
   const [graph, setGraph] = useState('')
   const [showGraph, setShowGraph] = useState(false)
+  const [showVersionCompare, setShowVersionCompare] = useState(false)
   const [actionMessage, setActionMessage] = useState('')
   const [actionLoading, setActionLoading] = useState(false)
+  const [selectedCommitForCompare, setSelectedCommitForCompare] = useState<string | null>(null)
 
   const refresh = useCallback(async () => {
     setLoading(true)
@@ -358,6 +361,24 @@ export function GitBranchManager({ cwd, theme, onClose, onBranchChanged }: GitBr
           </div>
         )}
       </div>
+
+      {/* 版本对比入口 */}
+      <div style={{ textAlign: 'right' }}>
+        <button onClick={() => setShowVersionCompare(p => !p)} style={{ ...buttonStyle, color: c.accent }}>
+          {showVersionCompare ? '隐藏版本对比' : '显示版本对比'}
+        </button>
+      </div>
+
+      {/* 版本对比面板 */}
+      {showVersionCompare && (
+        <VersionComparePanel
+          cwd={cwd}
+          theme={theme}
+          selectedCommitSha={selectedCommitForCompare}
+          onCompareCommits={(shaA, shaB) => { /* future: external compare action */ }}
+          onClose={() => { setShowVersionCompare(false); setSelectedCommitForCompare(null) }}
+        />
+      )}
 
       {/* 关闭按钮 */}
       {onClose && (
