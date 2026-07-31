@@ -50,6 +50,8 @@ export function ColorPickerDialog({
       value: trimmed,
       displayValue: trimmed,
       type,
+      startOffset: color.startOffset,
+      endOffset: color.endOffset,
     })
   }
 

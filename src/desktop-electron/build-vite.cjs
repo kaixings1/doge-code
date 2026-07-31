@@ -50,26 +50,53 @@ function jsToTsResolverPlugin() {
     resolveId(source, importer) {
       if (source.startsWith('http') || source.startsWith('//')) return null
 
-      // Only process .js/.jsx extension imports
-      const dotIdx = source.lastIndexOf('.')
-      if (dotIdx === -1) return null
-      const ext = source.slice(dotIdx)
-      if (ext !== '.js' && ext !== '.jsx') return null
-
       // Determine search base
       let baseForSearch
+      let hasExt = false
+      const dotIdx = source.lastIndexOf('.')
+      if (dotIdx > 0) {
+        const ext = source.slice(dotIdx)
+        if (['.ts','.tsx','.js','.jsx','.json','.md'].includes(ext)) {
+          hasExt = true
+        }
+      }
+
       if (source.startsWith('.')) {
         // Relative import: resolve relative to importer directory
-        baseForSearch = path.resolve(path.dirname(importer), source.slice(0, dotIdx))
+        const baseNoExt = hasExt ? source.slice(0, dotIdx) : source
+        baseForSearch = path.resolve(path.dirname(importer), baseNoExt)
       } else if (source.startsWith('src/')) {
         // src/ absolute import: resolve relative to project root
-        baseForSearch = path.resolve(projectRoot, source.slice(0, dotIdx))
+        const baseNoExt = hasExt ? source.slice(0, dotIdx) : source
+        baseForSearch = path.resolve(projectRoot, baseNoExt)
       } else {
         return null
       }
 
-      // Try each candidate extension in preference order
-      for (const [jsExt, tsExt] of extMap) {
+      // If already has a known extension, just check if it exists
+      if (hasExt) {
+        const ext = source.slice(dotIdx)
+        if (fs.existsSync(source.startsWith('.') ? path.resolve(path.dirname(importer), source) : path.resolve(projectRoot, source))) {
+          // Resolve src/ imports to their full path
+          if (source.startsWith('src/')) {
+            return path.resolve(projectRoot, source)
+          }
+          return null // relative - let Vite handle it
+        }
+        // Try .ts/.tsx alternatives for .js/.jsx imports
+        if (ext === '.js' || ext === '.jsx') {
+          for (const [, tsExt] of extMap) {
+            const candidate = baseForSearch + tsExt
+            if (fs.existsSync(candidate)) {
+              return candidate
+            }
+          }
+        }
+        return null
+      }
+
+      // No extension - try adding .ts, .tsx, .js, .jsx
+      for (const [, tsExt] of extMap) {
         const candidate = baseForSearch + tsExt
         if (fs.existsSync(candidate)) {
           return candidate
@@ -80,87 +107,65 @@ function jsToTsResolverPlugin() {
   }
 }
 
-// Plugin to prevent Vite from polyfilling Node.js builtins.
-// When Vite sees `import { resolve } from 'path'` or `import x from 'node:url'`,
-// it would normally replace them with browser polyfill virtual modules
-// (__vite-browser-external:xxx). This plugin intercepts ALL such imports
-// before Vite can process them and marks them as external so Rollup keeps
-// them as bare imports in the output.
-function nodeBuiltinsResolverPlugin() {
-  const NODE_BUILTINS = new Set([
-    'path', 'fs', 'fs/promises', 'crypto', 'os', 'util', 'stream', 'events',
-    'buffer', 'process', 'child_process', 'http', 'https', 'url', 'zlib',
-    'string_decoder', 'querystring', 'punycode', 'timers', 'console', 'module',
-    'perf_hooks', 'inspector', 'async_hooks', 'wasi', 'vm', 'worker_threads',
-    'tls', 'net', 'dns', 'dgram', 'readline', 'repl', 'domain', 'cluster',
-    'v8', 'async_wait', 'http2',
-  ])
-  return {
-    name: 'node-builtins-resolver',
-    enforce: 'pre',
-    resolveId(source, importer) {
-      if (typeof source !== 'string') return null
 
-      // Handle Bun builtins: resolve to polyfill files
-      if (source.startsWith('bun:')) {
-        if (source === 'bun:bundle') {
-          return path.resolve(projectRoot, 'src/desktop-electron/polyfills/bun-bundle-polyfill.ts')
+// Plugin to replace __vite-browser-external virtual modules with real named exports.
+// Vite 7 generates these as empty Proxy objects for browser compat, but Rollup
+// cannot verify named exports against them. This plugin intercepts the virtual
+// module source via transform hook and replaces it with proper export declarations.
+// Dynamically discover Node.js builtin exports at build time.
+function getBuiltinExports(modName) {
+  try {
+    const mod = require(modName)
+    const seen = new Set()
+    const result = []
+    let obj = mod
+    while (obj && obj !== Object.prototype && obj !== Function.prototype) {
+      const desc = Object.getOwnPropertyNames(obj)
+      for (const key of desc) {
+        if (!seen.has(key) && key !== 'default' && key !== 'length' && key !== 'name' && key !== 'prototype') {
+          seen.add(key)
+          result.push(key)
         }
-        if (source === 'bun:sqlite') {
-          return path.resolve(projectRoot, 'src/desktop-electron/polyfills/bun-sqlite-polyfill.ts')
-        }
-        return null
       }
-
-      // Convert Vite's virtual browser-external modules back to real external references.
-      // Vite 7 creates two forms:
-      //   - "__vite-browser-external:node:url"  (dev, with colon suffix)
-      //   - "__vite-browser-external"           (prod bare re-export shim)
-      // Both must be resolved to the real builtin so Rollup keeps it external.
-      if (source === '__vite-browser-external') {
-        // Production bare shim — re-resolve to the actual builtin module.
-        // Returning the original source as the id means Rollup will try to
-        // resolve 'node:url' (or whatever the original import was) and the
-        // ssr.external / rollup external config will catch it.
-        // But we don't know which builtin this is for, so instead we just
-        // return it as external itself — Rollup will emit a bare import for
-        // `__vite-browser-external` which is harmless (it won't exist at
-        // runtime but neither will this code path be reached since the
-        // original builtin is also externalized).
-        return { id: source, external: true }
-      }
-      if (source.startsWith('__vite-browser-external:')) {
-        let modName = source.slice(22)
-        if (modName.startsWith('node:')) {
-          modName = modName.slice(5)
-        }
-        return { id: modName, external: true }
-      }
-
-      // Intercept subpath builtin imports (e.g. 'fs/promises', 'stream/consumers', 'path/win32')
-      // These are NOT caught by the node: prefix handler above
-      if (source.includes('/') || source.includes('\\')) {
-        const parts = source.split(/[\/\\]/)
-        const topLevel = parts[0]
-        if (NODE_BUILTINS.has(topLevel)) {
-          return { id: source, external: true }
-        }
-        return null
-      }
-
-      // Intercept bare builtin imports (e.g. 'path', 'fs')
-      // Skip anything with dots (version specifiers, etc.)
-      if (source.includes('.')) return null
-      if (NODE_BUILTINS.has(source)) {
-        return { id: source, external: true }
-      }
-
-      return null
-    },
+      obj = Object.getPrototypeOf(obj)
+    }
+    return result
+  } catch {
+    return []
   }
 }
 
-// Clean
+function hasDefaultExport(modName) {
+  try {
+    const mod = require(modName)
+    return mod.default !== undefined || typeof mod === 'function'
+  } catch {
+    return false
+  }
+}
+
+function nodeBuiltinsResolverPlugin() {
+  const UNDEF = 'undefined'
+  return {
+    name: 'node-builtins-resolver',
+    enforce: 'post',
+    transform(code, id) {
+      if (!id.startsWith('__vite-browser-external:')) return null
+      // Skip commonjs-proxy variants
+      if (id.includes('?commonjs-proxy')) return null
+      let modName = id.slice(22)
+      if (modName.startsWith('node:')) modName = modName.slice(5)
+      const namedExports = getBuiltinExports(modName)
+      const hasDefault = hasDefaultExport(modName)
+      const stmts = []
+      for (const e of namedExports) {
+        stmts.push('export const ' + e + ' = ' + UNDEF)
+      }
+      if (hasDefault) stmts.push('export default ' + UNDEF)
+      return stmts.length > 0 ? stmts.join(';') : 'export {}'
+    },
+  }
+}
 for (const d of ['main', 'preload', 'renderer']) {
   const full = path.join(distDir, d)
   if (fs.existsSync(full)) {
@@ -170,32 +175,8 @@ for (const d of ['main', 'preload', 'renderer']) {
 
 const mdPlugin = markdownTextPlugin()
 const jsResolverPlugin = jsToTsResolverPlugin()
-const nodeBuiltinsPlugin = nodeBuiltinsResolverPlugin()
+const nodeBuiltinsResolver = nodeBuiltinsResolverPlugin()
 const reactPlugin = require('@vitejs/plugin-react').default
-
-// Build alias map for .js -> .tsx/.ts resolution
-function buildJSAlias(dir) {
-  const alias = {}
-  if (!fs.existsSync(dir)) return alias
-  const entries = fs.readdirSync(dir, { withFileTypes: true })
-  for (const entry of entries) {
-    if (entry.isFile()) {
-      const fullPath = path.join(dir, entry.name)
-      const dotIdx = entry.name.lastIndexOf('.')
-      if (dotIdx > 0) {
-        const ext = entry.name.slice(dotIdx)
-        if (ext === '.js' || ext === '.jsx') {
-          const tsName = entry.name.slice(0, dotIdx) + (ext === '.jsx' ? '.tsx' : '.ts')
-          const tsPath = path.join(dir, tsName)
-          if (fs.existsSync(tsPath)) {
-            alias[entry.name] = tsPath
-          }
-        }
-      }
-    }
-  }
-  return alias
-}
 
 async function main() {
   console.log('=== Building main process ===')
@@ -210,15 +191,14 @@ async function main() {
           format: 'es',
           entryFileNames: 'index.mjs',
         },
-        external: ['electron', 'node-pty', 'image-processor-napi', 'execa', 'npm-run-path', 'unicorn-magic', 'supports-hyperlinks', 'supports-color', 'has-flag', '@anthropic-ai/sandbox-runtime', /^@aws-sdk\//, /^node:/],
+        external: ['electron','node-pty','image-processor-napi','execa','npm-run-path','unicorn-magic','supports-hyperlinks','supports-color','has-flag','@anthropic-ai/sandbox-runtime',/^@aws-sdk\//,/^node:/,'path','path/win32','path/posix','fs','fs/promises','crypto','os','util','stream','stream/promises','events','buffer','process','child_process','http','http2','https','url','zlib','querystring','v8','async_hooks','net','tls','assert','dns','readline','tty','string_decoder','perf_hooks','diagnostics_channel','worker_threads','module'],
       },
     },
     ssr: {
-      // Keep Node.js builtins and problematic npm packages external
-      // (no polyfills for these - Electron will provide them at runtime)
-      external: ['electron', 'node-pty', 'image-processor-napi', 'execa', 'npm-run-path', 'unicorn-magic', 'supports-hyperlinks', 'supports-color', 'has-flag', '@anthropic-ai/sandbox-runtime', /^@aws-sdk\//, /^node:/],
+      target: 'node',
+      external: ['electron','node-pty','image-processor-napi','execa','npm-run-path','unicorn-magic','supports-hyperlinks','supports-color','has-flag','@anthropic-ai/sandbox-runtime',/^@aws-sdk\//,/^node:/,'path','path/win32','path/posix','fs','fs/promises','crypto','os','util','stream','stream/promises','events','buffer','process','child_process','http','http2','https','url','zlib','querystring','v8','async_hooks','net','tls','assert','dns','readline','tty','string_decoder','perf_hooks','diagnostics_channel','worker_threads','module'],
     },
-    plugins: [mdPlugin, jsResolverPlugin, nodeBuiltinsPlugin],
+    plugins: [mdPlugin, jsResolverPlugin, nodeBuiltinsResolver],
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.json'],
       alias: {
@@ -237,8 +217,10 @@ async function main() {
   console.log('=== Building preload ===')
   await build({
     root: '.',
-    ssr: true,
-    plugins: [mdPlugin, jsResolverPlugin, nodeBuiltinsPlugin],
+    ssr: {
+      target: 'node',
+    },
+    plugins: [mdPlugin, jsResolverPlugin, nodeBuiltinsResolver],
     build: {
       outDir: 'desktop-electron/dist/preload',
       emptyOutDir: false,
@@ -248,7 +230,7 @@ async function main() {
           format: 'es',
           entryFileNames: 'index.mjs',
         },
-        external: ['electron'],
+        external: ['electron','node-pty','image-processor-napi','execa','npm-run-path','unicorn-magic','supports-hyperlinks','supports-color','has-flag','@anthropic-ai/sandbox-runtime',/^@aws-sdk\//,/^node:/,'path','path/win32','path/posix','fs','fs/promises','crypto','os','util','stream','stream/promises','events','buffer','process','child_process','http','http2','https','url','zlib','querystring','v8','async_hooks','net','tls','assert','dns','readline','tty','string_decoder','perf_hooks','diagnostics_channel','worker_threads','module'],
       },
     },
   })
@@ -261,7 +243,7 @@ async function main() {
       emptyOutDir: false,
       rollupOptions: { input: rendererEntry },
     },
-    plugins: [reactPlugin(), mdPlugin],
+    plugins: [reactPlugin(), mdPlugin, jsResolverPlugin, nodeBuiltinsResolver],
   })
 
   console.log('\nBuild complete')

@@ -15,6 +15,7 @@ doge-bundled.js
 .*.bun-build
 *.js.map
 desktop/release/
+desktop-electron/release/
 desktop/test-results/
 desktop/dist/
 desktop/release-out/

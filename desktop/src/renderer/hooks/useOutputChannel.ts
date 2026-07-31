@@ -9,7 +9,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { OutputChannelManager, type OutputEntry } from '../utils/OutputChannelManager.js'
 
 export interface UseOutputChannelOptions {
-  channelIds?: string[]
+  channelIds?: Array<{ id: string; name: string }>
 }
 
 export interface UseOutputChannelResult {

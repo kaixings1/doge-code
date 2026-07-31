@@ -2658,9 +2658,11 @@ ipcMain.handle('doge:search-files', async (_event, query: string, cwd: string, m
 // ─── LSP IPC Handlers ───
 
 const lspManager = getLspClientManager(projectRoot)
+const lspDiagnosticCache = new Map<string, LspDiagnostic[]>()
 
 // 转发 LSP 诊断到渲染进程
 lspManager.onDiagnostic((uri: string, diagnostics: LspDiagnostic[]) => {
+  lspDiagnosticCache.set(uri, diagnostics)
   if (mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.webContents.send('doge:lsp-diagnostic', uri, diagnostics)
   }
@@ -3123,6 +3125,93 @@ ipcMain.handle('doge:log-stream-stop', (event) => {
     logStreamListeners.delete(id)
   }
   return { success: true }
+})
+
+// ─── 文件树 API ───
+ipcMain.handle('doge:file-tree', async (_event, dirPath: string, maxDepth: number) => {
+  try {
+    const result = buildFileTree(dirPath, 0, maxDepth)
+    return { success: true, tree: result }
+  } catch (e) {
+    return { success: false, error: e instanceof Error ? e.message : '获取文件树失败' }
+  }
+})
+
+function buildFileTree(dirPath: string, depth: number, maxDepth: number): Array<{ name: string; path: string; isDirectory: boolean; children?: Array<{ name: string; path: string; isDirectory: boolean; children?: unknown[] }> }> {
+  if (depth > maxDepth) return []
+  try {
+    const entries = fs.readdirSync(dirPath, { withFileTypes: true })
+    const nodes: Array<{ name: string; path: string; isDirectory: boolean; children?: unknown[] }> = []
+    for (const entry of entries) {
+      if (entry.name.startsWith('.') && entry.name !== '.git') continue
+      const fullPath = path.join(dirPath, entry.name)
+      if (entry.isDirectory()) {
+        const children = buildFileTree(fullPath, depth + 1, maxDepth)
+        nodes.push({ name: entry.name, path: fullPath, isDirectory: true, children })
+      } else {
+        nodes.push({ name: entry.name, path: fullPath, isDirectory: false })
+      }
+    }
+    nodes.sort((a, b) => {
+      if (a.isDirectory !== b.isDirectory) return a.isDirectory ? -1 : 1
+      return a.name.localeCompare(b.name)
+    })
+    return nodes
+  } catch {
+    return []
+  }
+}
+
+ipcMain.handle('doge:file-create', async (_event, parentPath: string, fileName: string) => {
+  try {
+    const targetPath = path.join(parentPath, fileName)
+    await fs.promises.writeFile(targetPath, '', 'utf-8')
+    return { success: true, path: targetPath }
+  } catch (e) {
+    return { success: false, error: e instanceof Error ? e.message : '创建文件失败' }
+  }
+})
+
+ipcMain.handle('doge:file-mkdir', async (_event, parentPath: string, folderName: string) => {
+  try {
+    const targetPath = path.join(parentPath, folderName)
+    await fs.promises.mkdir(targetPath, { recursive: true })
+    return { success: true, path: targetPath }
+  } catch (e) {
+    return { success: false, error: e instanceof Error ? e.message : '创建目录失败' }
+  }
+})
+
+ipcMain.handle('doge:file-delete', async (_event, filePath: string) => {
+  try {
+    const stat = await fs.promises.stat(filePath)
+    if (stat.isDirectory()) {
+      await fs.promises.rm(filePath, { recursive: true, force: true })
+    } else {
+      await fs.promises.unlink(filePath)
+    }
+    return { success: true }
+  } catch (e) {
+    return { success: false, error: e instanceof Error ? e.message : '删除失败' }
+  }
+})
+
+ipcMain.handle('doge:file-rename', async (_event, filePath: string, newName: string) => {
+  try {
+    const newPath = path.join(path.dirname(filePath), newName)
+    await fs.promises.rename(filePath, newPath)
+    return { success: true, newPath }
+  } catch (e) {
+    return { success: false, error: e instanceof Error ? e.message : '重命名失败' }
+  }
+})
+
+ipcMain.handle('doge:get-all-diagnostics', async () => {
+  const diagnostics: Array<{ uri: string; diagnostics: Array<{ range: { start: { line: number; character: number }; end: { line: number; character: number } }; severity: number; message: string; source?: string }> }> = []
+  lspDiagnosticCache.forEach((entries, uri) => {
+    diagnostics.push({ uri, diagnostics: entries })
+  })
+  return { success: true, diagnostics }
 })
 
 // ─── 导出入口函数 ───

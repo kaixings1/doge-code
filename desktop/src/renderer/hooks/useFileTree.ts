@@ -30,6 +30,7 @@ export interface UseFileTreeReturn {
   error: string | null
   setSearchQuery: (query: string) => void
   toggleExpand: (nodeId: string) => void
+  setExpanded: (expanded: Set<string> | ((prev: Set<string>) => Set<string>)) => void
   selectNode: (node: FileNode) => void
   refresh: () => Promise<void>
   handleCreateFile: (parentPath: string, name: string) => Promise<{ success: boolean; error?: string }>
@@ -163,6 +164,7 @@ export function useFileTree(cwd: string): UseFileTreeReturn {
     error,
     setSearchQuery,
     toggleExpand,
+    setExpanded,
     selectNode,
     refresh,
     handleCreateFile,
