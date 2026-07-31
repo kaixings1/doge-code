@@ -54,7 +54,7 @@ import { WorkflowPanel } from './components/WorkflowPanel.js'
 import { useWorkflowAutomation } from './hooks/useWorkflowAutomation.js'
 import { parseMessageContent, InlineToolUseBlock, renderMarkdown } from './shared.js'
 import type { Message, ContentBlock, ToolUseBlock } from './shared.js'
-import { useDesktopVimInput, type VimMode } from '../hooks/useDesktopVimInput.js'
+import { useDesktopVimInput, type VimMode } from './hooks/useDesktopVimInput.js'
 import { useCommandHistory } from './hooks/useCommandHistory.js'
 import { useTabManager } from './hooks/useTabManager.js'
 
