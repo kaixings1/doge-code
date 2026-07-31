@@ -101,19 +101,30 @@ function nodeBuiltinsResolverPlugin() {
     resolveId(source, importer) {
       if (typeof source !== 'string') return null
 
-      // Intercept node: prefixed imports (e.g. 'node:url', 'node:fs/promises')
-      if (source.startsWith('node:')) {
-        const modName = source.slice(5)
-        if (NODE_BUILTINS.has(modName)) {
-          return { id: modName, external: true }
+      // Handle Bun builtins: resolve to polyfill files
+      if (source.startsWith('bun:')) {
+        if (source === 'bun:bundle') {
+          return path.resolve(projectRoot, 'src/desktop-electron/polyfills/bun-bundle-polyfill.ts')
+        }
+        if (source === 'bun:sqlite') {
+          return path.resolve(projectRoot, 'src/desktop-electron/polyfills/bun-sqlite-polyfill.ts')
         }
         return null
       }
 
-      // Intercept subpath builtin imports (e.g. 'fs/promises', 'node:fs/promises')
+      // Convert Vite's virtual browser-external modules back to real external references
+      // This handles node: prefixed builtins that Vite creates virtual modules for
+      if (source.startsWith('__vite-browser-external:')) {
+        let modName = source.slice(22)
+        if (modName.startsWith('node:')) {
+          modName = modName.slice(5)
+        }
+        return { id: modName, external: true }
+      }
+
+      // Intercept subpath builtin imports (e.g. 'fs/promises', 'stream/consumers', 'path/win32')
       // These are NOT caught by the node: prefix handler above
       if (source.includes('/') || source.includes('\\')) {
-        // Check if it's a known subpath builtin (starts with a known builtin name)
         const parts = source.split(/[\/\\]/)
         const topLevel = parts[0]
         if (NODE_BUILTINS.has(topLevel)) {
@@ -184,13 +195,13 @@ async function main() {
           format: 'es',
           entryFileNames: 'index.mjs',
         },
-        external: ['electron', 'node-pty', 'image-processor-napi', 'execa', 'npm-run-path', 'unicorn-magic'],
+        external: ['electron', 'node-pty', 'image-processor-napi', 'execa', 'npm-run-path', 'unicorn-magic', 'supports-hyperlinks', 'supports-color', 'has-flag'],
       },
     },
     ssr: {
       // Keep Node.js builtins and problematic npm packages external
       // (no polyfills for these - Electron will provide them at runtime)
-      external: ['electron', 'node-pty', 'image-processor-napi', 'execa', 'npm-run-path', 'unicorn-magic'],
+      external: ['electron', 'node-pty', 'image-processor-napi', 'execa', 'npm-run-path', 'unicorn-magic', 'supports-hyperlinks', 'supports-color', 'has-flag'],
     },
     plugins: [mdPlugin, jsResolverPlugin, nodeBuiltinsPlugin],
     resolve: {
