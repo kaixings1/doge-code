@@ -27,6 +27,15 @@ interface DogeAPIValue {
   gitUnstage: (cwd: string, filePath: string) => Promise<{ success: boolean; error?: string }>
   gitDiscard: (cwd: string, filePath: string) => Promise<{ success: boolean; error?: string }>
   gitCommit: (cwd: string, message: string) => Promise<{ success: boolean; error?: string }>
+  gitMergeStatus: (cwd: string) => Promise<{ inMerge: boolean; conflicts: Array<{ file: string; base: string; ours: string; theirs: string }>; message: string; error?: string }>
+  gitMergeResolve: (cwd: string, filePath: string, resolvedContent: string, strategy: 'ours' | 'theirs' | 'manual') => Promise<{ success: boolean; error?: string }>
+  gitAbortMerge: (cwd: string) => Promise<{ success: boolean; error?: string }>
+  gitBranchList: (cwd: string) => Promise<{ local: Array<{ name: string; commit: string; date: string; isCurrent: boolean; isRemote: boolean }>; remote: Array<{ name: string; commit: string; date: string; isCurrent: boolean; isRemote: boolean }>; current: string; error?: string }>
+  gitBranchCreate: (cwd: string, branchName: string, checkout: boolean) => Promise<{ success: boolean; error?: string }>
+  gitBranchSwitch: (cwd: string, branchName: string) => Promise<{ success: boolean; error?: string }>
+  gitBranchDelete: (cwd: string, branchName: string, force: boolean) => Promise<{ success: boolean; error?: string }>
+  gitBranchMerge: (cwd: string, sourceBranch: string, targetBranch: string) => Promise<{ success: boolean; output?: string; error?: string }>
+  gitLogGraph: (cwd: string, maxCount?: number) => Promise<{ success: boolean; graph?: string; error?: string }>
   getTheme: () => Promise<{ theme: string; fontSize: number; fontFamily: string; sidebarWidth: number; rightPanelWidth: number }>
   setTheme: (settings: Record<string, unknown>) => Promise<{ success: boolean }>
   getModelInfo: () => Promise<{ provider: string; model: string; baseUrl: string; hasApiKey: boolean }>
@@ -141,6 +150,9 @@ interface DogeAPIValue {
   remoteIceCandidate: (params: { sessionId: string; candidate: RTCIceCandidateInit }) => Promise<{ success: boolean }>
   remoteGetSignal: (sessionId: string) => Promise<{ success: boolean; signal?: { offer?: RTCSessionDescriptionInit; answer?: RTCSessionDescriptionInit; iceCandidates?: RTCIceCandidateInit[] } | null }>
   remoteClose: (sessionId: string) => Promise<{ success: boolean }>
+
+  // ── 语音权限 ──
+  requestMicrophonePermission: () => Promise<{ granted: boolean }>
 }
 
 const dogeAPI: DogeAPIValue = {
@@ -165,6 +177,15 @@ const dogeAPI: DogeAPIValue = {
   gitUnstage: (cwd: string, filePath: string) => ipcRenderer.invoke('doge:git-unstage', cwd, filePath),
   gitDiscard: (cwd: string, filePath: string) => ipcRenderer.invoke('doge:git-discard', cwd, filePath),
   gitCommit: (cwd: string, message: string) => ipcRenderer.invoke('doge:git-commit', cwd, message),
+  gitMergeStatus: (cwd: string) => ipcRenderer.invoke('doge:git-merge-status', cwd),
+  gitMergeResolve: (cwd: string, filePath: string, resolvedContent: string, strategy: 'ours' | 'theirs' | 'manual') => ipcRenderer.invoke('doge:git-merge-resolve', cwd, filePath, resolvedContent, strategy),
+  gitAbortMerge: (cwd: string) => ipcRenderer.invoke('doge:git-abort-merge', cwd),
+  gitBranchList: (cwd: string) => ipcRenderer.invoke('doge:git-branch-list', cwd),
+  gitBranchCreate: (cwd: string, branchName: string, checkout: boolean) => ipcRenderer.invoke('doge:git-branch-create', cwd, branchName, checkout),
+  gitBranchSwitch: (cwd: string, branchName: string) => ipcRenderer.invoke('doge:git-branch-switch', cwd, branchName),
+  gitBranchDelete: (cwd: string, branchName: string, force: boolean) => ipcRenderer.invoke('doge:git-branch-delete', cwd, branchName, force),
+  gitBranchMerge: (cwd: string, sourceBranch: string, targetBranch: string) => ipcRenderer.invoke('doge:git-branch-merge', cwd, sourceBranch, targetBranch),
+  gitLogGraph: (cwd: string, maxCount?: number) => ipcRenderer.invoke('doge:git-log-graph', cwd, maxCount),
   onChunk: (callback: (chunk: { text: string }) => void) => {
     const handler = (_event: Electron.IpcRendererEvent, chunk: { text: string }) => callback(chunk)
     ipcRenderer.on('doge:chunk', handler)
@@ -309,6 +330,7 @@ const dogeAPI: DogeAPIValue = {
   remoteIceCandidate: (params: { sessionId: string; candidate: RTCIceCandidateInit }) => ipcRenderer.invoke('doge:remote-ice-candidate', params),
   remoteGetSignal: (sessionId: string) => ipcRenderer.invoke('doge:remote-get-signal', sessionId),
   remoteClose: (sessionId: string) => ipcRenderer.invoke('doge:remote-close', sessionId),
+  requestMicrophonePermission: () => ipcRenderer.invoke('doge:request-microphone-permission'),
 }
 
 contextBridge.exposeInMainWorld('dogeAPI', dogeAPI)

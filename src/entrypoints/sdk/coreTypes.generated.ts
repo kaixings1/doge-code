@@ -246,6 +246,7 @@ export type RewindFilesResult = z.infer<ReturnType<typeof RewindFilesResultSchem
 // SDK Message Types
 export type SDKAssistantMessageError = z.infer<ReturnType<typeof SDKAssistantMessageErrorSchema>>
 export type SDKStatus = z.infer<ReturnType<typeof SDKStatusSchema>>
+export type SDKUserMessage = z.infer<ReturnType<typeof SDKUserMessageSchema>>
 export type SDKUserMessageContent = z.infer<ReturnType<typeof SDKUserMessageContentSchema>>
 export type SDKUserMessageReplay = z.infer<ReturnType<typeof SDKUserMessageReplaySchema>>
 export type SDKRateLimitInfo = z.infer<ReturnType<typeof SDKRateLimitInfoSchema>>
