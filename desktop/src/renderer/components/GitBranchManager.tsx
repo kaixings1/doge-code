@@ -218,9 +218,9 @@ export function GitBranchManager({ cwd, theme, onClose, onBranchChanged }: GitBr
         </div>
       )}
 
-      {/*� 创建分支 */}
+      {/* ➕ 创建分支 */}
       <div style={cardStyle}>
-        <div style={{ fontWeight: 600, marginBottom: '6px', fontSize: '12px' }}➕ 创建分支</div>
+        <div style={{ fontWeight: 600, marginBottom: '6px', fontSize: '12px' }}>➕ 创建分支</div>
         <div style={{ display: 'flex', gap: '4px' }}>
           <input
             value={newBranchName}
@@ -241,7 +241,7 @@ export function GitBranchManager({ cwd, theme, onClose, onBranchChanged }: GitBr
 
       {/* 合并分� */}
       <div style={cardStyle}>
-        <div style={{ fontWeight: 600, marginBottom: '6px', fontSize: '12px' }}🔀 合并分支</div>
+        <div style={{ fontWeight: 600, marginBottom: '6px', fontSize: '12px' }}>🔀 合并分支</div>
         <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
           <select value={mergeSource} onChange={e => setMergeSource(e.target.value)} style={{ ...inputStyle, flex: 1, fontFamily: 'sans-serif' }}>
             <option value="">选择源分支</option>
@@ -260,7 +260,7 @@ export function GitBranchManager({ cwd, theme, onClose, onBranchChanged }: GitBr
       {/* 分支列表 */}
       <div style={cardStyle}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-          <span style={{ fontWeight: 600, fontSize: '12px' }}🌿 分支 ({allBranches.length})</span>
+          <span style={{ fontWeight: 600, fontSize: '12px' }}>🌿 分支 ({allBranches.length})</span>
           <button onClick={() => setShowGraph(p => !p)} style={{ ...buttonStyle, fontSize: '10px' }}>
             {showGraph ? '隐藏' : '显示'}分支图
           </button>

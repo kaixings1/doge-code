@@ -93,7 +93,8 @@ export function GitMergePanel({ cwd, theme, onClose, onResolved }: GitMergePanel
         default:
           resolvedContent = ''
       }
-      const result = await window.dogeAPI.gitMergeResolve(cwd, currentConflict.file, resolvedContent, currentResolution.strategy)
+      const strategy = currentResolution.strategy === 'base' ? 'manual' : currentResolution.strategy
+      const result = await window.dogeAPI.gitMergeResolve(cwd, currentConflict.file, resolvedContent, strategy as 'ours' | 'theirs' | 'manual')
       if (result.success) {
         setMessage(`✅ ${currentConflict.file} 已解决`)
         // 刷新状态
@@ -346,7 +347,7 @@ export function GitMergePanel({ cwd, theme, onClose, onResolved }: GitMergePanel
       )}
 
       {/* 已解决但未保存的冲突 */}
-      {currentConflict && resolutions.has(currentFile) && currentResolution.strategy !== 'manual' && (
+      {currentConflict && currentResolution && currentResolution.strategy !== 'manual' && (
         <div style={cardStyle}>
           <div style={{ fontWeight: 600, marginBottom: '6px', fontSize: '11px', color: '#81C784' }}>
             ✅ 已选择: {currentResolution.strategy === 'ours' ? 'Ours' : currentResolution.strategy === 'theirs' ? 'Theirs' : 'Base'}
