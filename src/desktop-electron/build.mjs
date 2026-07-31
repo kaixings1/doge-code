@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const projectRoot = path.resolve(__dirname, '..', '..')
-const desktopDir = path.resolve(projectRoot, 'desktop')
+const desktopDir = path.resolve(projectRoot, 'desktop-electron')
 const distDir = path.join(desktopDir, 'dist')
 
 const BUILD_TIMEOUT = 120000 // 2 分钟超时
@@ -32,7 +32,7 @@ function withTimeout(fn, label, ms = BUILD_TIMEOUT) {
 function run(cmd, args, options = {}) {
   return new Promise((resolve, reject) => {
     const child = spawn(cmd, args, {
-      cwd: desktopDir,
+      cwd: projectRoot,
       stdio: 'inherit',
       shell: true,
       ...options,
