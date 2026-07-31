@@ -185,6 +185,17 @@ function createWindow(): void {
     },
   })
 
+  // ─── 麦克风权限处理 ───
+  // 在 Electron 中，navigator.permissions.query('microphone') 需要主进程响应
+  // 否则 webkitSpeechRecognition 无法获取麦克风权限
+  mainWindow.webContents.session.setPermissionRequestHandler((webContents, permission, callback) => {
+    if (permission === 'media') {
+      callback(true)
+    } else {
+      callback(false)
+    }
+  })
+
   mainWindow.on('resize', () => {
     if (mainWindow.isMaximized() || mainWindow.isMinimized() || mainWindow.isFullScreen()) return
     const [w, h] = mainWindow.getSize()
@@ -249,6 +260,11 @@ function createTray(): void {
 }
 
 // ─── IPC 处理程序 ───
+
+ipcMain.handle('doge:request-microphone-permission', async () => {
+  // 权限已在 setPermissionRequestHandler 中授予，此处仅做状态确认
+  return { granted: true }
+})
 
 // 发送消息（使用 QueryEngine）
 ipcMain.handle('doge:send-message', async (_event, content: string) => {
@@ -525,6 +541,172 @@ ipcMain.handle('doge:git-commit', async (_event, cwd: string, message: string) =
     const { execSync } = await import('node:child_process')
     execSync(`git commit -m ${JSON.stringify(message)}`, { cwd, encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 })
     return { success: true }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
+// ─── Git 合并冲突 ───
+ipcMain.handle('doge:git-merge-status', async (_event, cwd: string) => {
+  try {
+    const { execSync } = await import('node:child_process')
+    // 检查是否在合并中
+    const mergeHead = path.join(cwd, '.git', 'MERGE_HEAD')
+    const inMerge = fs.existsSync(mergeHead)
+    if (!inMerge) {
+      return { inMerge: false, conflicts: [], message: '当前无合并冲突' }
+    }
+    // 获取冲突文件列表
+    const output = execSync('git diff --name-only --diff-filter=U', { cwd, encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 })
+    const conflictFiles = output.trim().split('\n').filter(Boolean)
+    // 获取每个文件的冲突内容
+    const conflicts: Array<{ file: string; base: string; ours: string; theirs: string }> = []
+    for (const file of conflictFiles) {
+      const fullPath = path.join(cwd, file)
+      const content = fs.readFileSync(fullPath, 'utf-8')
+      // 解析冲突标记
+      const ours: string[] = []
+      const theirs: string[] = []
+      const base: string[] = []
+      let inOurs = false
+      let inTheirs = false
+      let inBase = false
+      for (const line of content.split('\n')) {
+        if (line.startsWith('<<<<<<< ')) { inOurs = true; inBase = false; continue }
+        if (line.startsWith('=======')) { inOurs = false; inTheirs = true; continue }
+        if (line.startsWith('>>>>>>> ')) { inTheirs = false; continue }
+        if (inOurs) ours.push(line)
+        else if (inTheirs) theirs.push(line)
+        else base.push(line)
+      }
+      conflicts.push({
+        file,
+        base: base.join('\n'),
+        ours: ours.join('\n'),
+        theirs: theirs.join('\n'),
+      })
+    }
+    return { inMerge: true, conflicts, message: `发现 ${conflicts.length} 个冲突文件` }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { inMerge: false, conflicts: [], error: message }
+  }
+})
+
+ipcMain.handle('doge:git-merge-resolve', async (_event, cwd: string, filePath: string, resolvedContent: string, strategy: 'ours' | 'theirs' | 'manual') => {
+  try {
+    const { execSync } = await import('node:child_process')
+    const fullPath = path.join(cwd, filePath)
+    if (strategy === 'ours') {
+      execSync(`git checkout --ours -- "${filePath}"`, { cwd, encoding: 'utf-8' })
+      execSync(`git add -- "${filePath}"`, { cwd, encoding: 'utf-8' })
+    } else if (strategy === 'theirs') {
+      execSync(`git checkout --theirs -- "${filePath}"`, { cwd, encoding: 'utf-8' })
+      execSync(`git add -- "${filePath}"`, { cwd, encoding: 'utf-8' })
+    } else {
+      fs.writeFileSync(fullPath, resolvedContent, 'utf-8')
+      execSync(`git add -- "${filePath}"`, { cwd, encoding: 'utf-8' })
+    }
+    return { success: true }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
+ipcMain.handle('doge:git-abort-merge', async (_event, cwd: string) => {
+  try {
+    const { execSync } = await import('node:child_process')
+    execSync('git merge --abort', { cwd, encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 })
+    return { success: true }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
+// ─── Git 分支管理 ───
+ipcMain.handle('doge:git-branch-list', async (_event, cwd: string) => {
+  try {
+    const { execSync } = await import('node:child_process')
+    // 获取本地分支列表
+    const local = execSync('git branch --format="%(refname:short) %(objectname:short) %(committerdate:relative)"', { cwd, encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 })
+    // 获取当前分支
+    const current = execSync('git branch --show-current', { cwd, encoding: 'utf-8' }).trim()
+    // 获取远程分支
+    const remote = execSync('git branch -r --format="%(refname:short)"', { cwd, encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 })
+    const localBranches = local.trim().split('\n').filter(Boolean).map(line => {
+      const parts = line.split(' ')
+      return { name: parts[0], commit: parts[1] || '', date: parts.slice(2).join(' ') || '', isCurrent: parts[0] === current, isRemote: false }
+    })
+    const remoteBranches = remote.trim().split('\n').filter(Boolean).map(name => ({
+      name: name.replace('origin/', ''),
+      commit: '',
+      date: '',
+      isCurrent: false,
+      isRemote: true,
+    }))
+    return { local: localBranches, remote: remoteBranches, current }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { local: [], remote: [], current: '', error: message }
+  }
+})
+
+ipcMain.handle('doge:git-branch-create', async (_event, cwd: string, branchName: string, checkout: boolean) => {
+  try {
+    const { execSync } = await import('node:child_process')
+    execSync(`git branch "${branchName}"`, { cwd, encoding: 'utf-8' })
+    if (checkout) execSync(`git checkout "${branchName}"`, { cwd, encoding: 'utf-8' })
+    return { success: true }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
+ipcMain.handle('doge:git-branch-switch', async (_event, cwd: string, branchName: string) => {
+  try {
+    const { execSync } = await import('node:child_process')
+    execSync(`git checkout "${branchName}"`, { cwd, encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 })
+    return { success: true }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
+ipcMain.handle('doge:git-branch-delete', async (_event, cwd: string, branchName: string, force: boolean) => {
+  try {
+    const { execSync } = await import('node:child_process')
+    const flag = force ? '-D' : '-d'
+    execSync(`git branch ${flag} "${branchName}"`, { cwd, encoding: 'utf-8' })
+    return { success: true }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
+ipcMain.handle('doge:git-branch-merge', async (_event, cwd: string, sourceBranch: string, targetBranch: string) => {
+  try {
+    const { execSync } = await import('node:child_process')
+    // 先切换到目标分支
+    execSync(`git checkout "${targetBranch}"`, { cwd, encoding: 'utf-8' })
+    const output = execSync(`git merge "${sourceBranch}"`, { cwd, encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 })
+    return { success: true, output: output as string }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
+ipcMain.handle('doge:git-log-graph', async (_event, cwd: string, maxCount: number) => {
+  try {
+    const { execSync } = await import('node:child_process')
+    const output = execSync(`git log --graph --oneline --all -n ${maxCount || 20}`, { cwd, encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 })
+    return { success: true, graph: output }
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : '未知错误'
     return { success: false, error: message }

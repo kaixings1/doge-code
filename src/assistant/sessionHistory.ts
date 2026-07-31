@@ -139,7 +139,12 @@ export async function listAssistantSessions(): Promise<AssistantSession[]> {
     // 从事件中提取唯一的会话
     const sessionMap = new Map<string, AssistantSession>()
     
-    history.events.forEach(event => {
+    ;(history.events as unknown as Array<{
+      type: string
+      session_id?: string
+      data?: { title?: string }
+      timestamp?: string
+    }>).forEach((event) => {
       if (event.session_id) {
         if (!sessionMap.has(event.session_id)) {
           sessionMap.set(event.session_id, {

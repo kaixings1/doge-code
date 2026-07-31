@@ -1,6 +1,4 @@
-import { defineConfig } from 'electron-builder'
-
-export default defineConfig({
+export default {
   appId: 'com.doge-code.desktop',
   productName: 'DogeCode',
   copyright: 'Copyright © 2026 kaixings',

@@ -193,7 +193,7 @@ import { installOAuthTokens } from 'src/cli/handlers/auth.js'
 import { getAPIProvider } from 'src/utils/model/providers.js'
 import type { HookCallbackMatcher } from 'src/types/hooks.js'
 import { AwsAuthStatusManager } from 'src/utils/awsAuthStatusManager.js'
-import type { HookEvent, SDKMessage } from 'src/entrypoints/agentSdkTypes.js'
+import type { HookEvent } from 'src/entrypoints/agentSdkTypes.js'
 import { needsToolCallProcessing, extractToolCallsFromResponse, MessageHandler, SimpleServerProtocol } from 'src/commands/clear/tool-protocol-handler.js'
 import {
   registerHookCallbacks,
@@ -2681,7 +2681,7 @@ function runHeadlessStreaming(
   }
 
   const sendControlResponseSuccess = function (
-    message: SDKControlRequest,
+    message: { request_id: string },
     response?: Record<string, unknown>,
   ) {
     output.enqueue({
@@ -2695,7 +2695,7 @@ function runHeadlessStreaming(
   }
 
   const sendControlResponseError = function (
-    message: SDKControlRequest,
+    message: { request_id: string },
     errorMessage: string,
   ) {
     output.enqueue({

@@ -27,7 +27,8 @@
     "src/**/*",
     "src/desktop-electron/**/*",
     "vendor/**/*",
-    "shims/**/*"
+    "shims/**/*",
+    "src/generated/**/*"
   ],
   "exclude": [
     "src/**/*.mjs"

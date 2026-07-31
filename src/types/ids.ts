@@ -7,14 +7,20 @@
  * 会话 ID，唯一标识一个 Claude Code 会话。
  * 由 getSessionId() 返回。
  */
-export type 会话ID = string & { readonly __brand: 'SessionId' }
+export type SessionId = string & { readonly __brand: 'SessionId' }
+
+/** 中文别名：会话ID */
+export { SessionId as 会话ID }
 
 /**
  * 代理ID唯一标识会话中的子代理。
  * 由createAgentId()返回。
  * 当存在时，表示上下文是子代理（非主会话）。
  */
-export type 代理ID = string & { readonly __brand: 'AgentId' }
+export type AgentId = string & { readonly __brand: 'AgentId' }
+
+/** 中文别名：代理ID */
+export { AgentId as 代理ID }
 
 /**
  * 将原始字符串转换为 SessionId。

@@ -1188,9 +1188,19 @@ export function App(): JSX.Element {
     const utter = new SpeechSynthesisUtterance(text)
     utter.lang = 'zh-CN'
     utter.rate = 1.0
+    // 语音列表可能是异步加载的，如果当前没有中文语音则等待
     const voices = window.speechSynthesis.getVoices()
-    const zhVoice = voices.find((v: SpeechSynthesisVoice) => v.lang.startsWith('zh'))
-    if (zhVoice) utter.voice = zhVoice
+    let zhVoice = voices.find((v: SpeechSynthesisVoice) => v.lang.startsWith('zh'))
+    if (!zhVoice && voices.length === 0) {
+      // 语音列表尚未加载，等待后重试
+      window.speechSynthesis.onvoiceschanged = () => {
+        const vs = window.speechSynthesis.getVoices()
+        const v = vs.find((vv: SpeechSynthesisVoice) => vv.lang.startsWith('zh'))
+        if (v) utter.voice = v
+      }
+    } else if (zhVoice) {
+      utter.voice = zhVoice
+    }
     utter.onstart = () => setIsSpeaking(true)
     utter.onend = () => setIsSpeaking(false)
     utter.onerror = () => setIsSpeaking(false)
@@ -1310,12 +1320,23 @@ export function App(): JSX.Element {
     setPendingImages(prev => prev.filter(img => img.id !== id))
   }, [])
 
-  const toggleVoiceInput = useCallback(() => {
+  const toggleVoiceInput = useCallback(async () => {
     if (isRecording) {
       recognitionRef.current?.stop()
       setIsRecording(false)
       setInterimTranscript('')
       return
+    }
+
+    // 请求麦克风权限（Electron 需要通过 IPC 桥接确认）
+    try {
+      const permResult = await window.dogeAPI.requestMicrophonePermission()
+      if (!permResult.granted) {
+        showToast('麦克风权限被拒绝，请在系统设置中允许访问', 'error')
+        return
+      }
+    } catch {
+      // 非 Electron 环境（如浏览器直接访问），继续尝试
     }
 
     const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
@@ -1366,7 +1387,13 @@ export function App(): JSX.Element {
     }
 
     recognitionRef.current = recognition
-    recognition.start()
+
+    try {
+      recognition.start()
+    } catch (e) {
+      showToast(`语音识别启动失败: ${e instanceof Error ? e.message : '未知错误'}`, 'error')
+      setIsRecording(false)
+    }
   }, [isRecording, showToast])
 
   // 同步光标位置到 Vim hook
@@ -2296,6 +2323,8 @@ export function App(): JSX.Element {
             workflows={wf.workflows}
             history={wf.history}
             currentRun={wf.currentRun}
+            batchJobs={wf.batchJobs}
+            batchHistory={wf.batchHistory}
             filePath={selectedFile || ''}
             theme={theme}
             onClose={() => setShowWorkflowPanel(false)}
@@ -2303,6 +2332,8 @@ export function App(): JSX.Element {
             onCreateFromTemplate={wf.createFromTemplate}
             onExecute={(id, ctx) => wf.executeWorkflow(id, ctx)}
             onCancel={wf.cancelRun}
+            onExecuteBatch={(workflowId, files) => wf.executeBatch(workflowId, files)}
+            onCancelBatch={(batchId) => wf.cancelBatch(batchId)}
             onDelete={wf.deleteWorkflow}
           />
         )}

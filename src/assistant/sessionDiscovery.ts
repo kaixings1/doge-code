@@ -23,7 +23,13 @@ export async function discoverAssistantSessions(options?: {
     const history = await getSessionHistory()
     
     // 过滤和转换会话数据
-    const sessions: AssistantSession[] = history.events
+    const sessions: AssistantSession[] = (history.events as unknown as Array<{
+      type: string
+      session_id?: string
+      id?: string
+      data?: { status?: string; title?: string; message_count?: number }
+      timestamp?: string
+    }>)
       .filter(event => {
         // 只包含会话开始事件
         if (event.type !== 'session_start') {

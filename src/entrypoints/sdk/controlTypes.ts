@@ -53,10 +53,33 @@ export type SDKPartialAssistantMessage = {
 
 export type StdinMessage = {
   type: string
+  subtype?: string
+  request?: SDKControlRequestInner
+  request_id?: string
+  response?: Record<string, unknown>
+  sdkMcpServers?: unknown[]
+  reason?: string
+  promptSuggestions?: unknown[]
+  agentProgressSummaries?: unknown[]
+  serverName?: string
+  path?: string
+  mtime?: number
+  max_thinking_tokens?: number
+  user_message_id?: string
+  dry_run?: boolean
+  message_uuid?: string
+  message?: unknown
+  enabled?: boolean
+  callbackUrl?: string
+  servers?: unknown[]
   [key: string]: unknown
 }
 
 export type StdoutMessage = {
   type: string
+  subtype?: string
+  data?: unknown
+  timestamp?: string
+  id?: string
   [key: string]: unknown
 }
