@@ -1,30 +1,73 @@
-const fs = require('fs')
+const { build } = require('vite')
 const path = require('path')
 
-const projectRoot = path.resolve('.')
-const source = 'src/utils/processUserInput/processSlashCommand.js'
-const dotIdx = source.lastIndexOf('.')
-const ext = source.slice(dotIdx)
-const baseForSearch = path.resolve(projectRoot, source.slice(0, dotIdx))
+async function test() {
+  const NODE_BUILTINS = new Set([
+    'path', 'fs', 'fs/promises', 'crypto', 'os', 'util', 'stream', 'events',
+    'buffer', 'process', 'child_process', 'http', 'https', 'url', 'zlib',
+    'string_decoder', 'querystring', 'punycode', 'timers', 'console', 'module',
+    'perf_hooks', 'inspector', 'async_hooks', 'wasi', 'vm', 'worker_threads',
+    'tls', 'net', 'dns', 'dgram', 'readline', 'repl', 'domain', 'cluster',
+    'v8', 'async_wait', 'http2',
+  ])
 
-console.log('ext:', ext)
-console.log('baseForSearch:', baseForSearch)
+  const testPlugin = {
+    name: 'test-resolver',
+    enforce: 'pre',
+    resolveId(source, importer) {
+      if (source.includes('fs/promises') || source === 'fs' || source === 'path' || source.startsWith('node:')) {
+        console.log(`[test-resolver] source="${source}", importer="${importer}"`)
+      }
 
-const candidates = ['.tsx', '.ts', '.jsx', '.js']
-for (const tryExt of candidates) {
-  const candidate = baseForSearch + tryExt
-  console.log('checking:', candidate, 'exists:', fs.existsSync(candidate))
+      if (source.startsWith('node:')) {
+        const modName = source.slice(5)
+        if (NODE_BUILTINS.has(modName)) {
+          console.log(`  -> node: matched: ${modName}`)
+          return { id: modName, external: true }
+        }
+        return null
+      }
+
+      if (source.includes('/')) {
+        const parts = source.split('/')
+        const topLevel = parts[0]
+        if (NODE_BUILTINS.has(topLevel)) {
+          console.log(`  -> subpath matched: ${source}`)
+          return { id: source, external: true }
+        }
+      }
+
+      if (NODE_BUILTINS.has(source)) {
+        console.log(`  -> bare matched: ${source}`)
+        return { id: source, external: true }
+      }
+
+      return null
+    },
+  }
+
+  try {
+    await build({
+      root: 'D:/doge-code',
+      build: {
+        outDir: 'D:/doge-code/test-build-out',
+        emptyOutDir: true,
+        rollupOptions: {
+          input: 'D:/doge-code/src/utils/fsOperations.ts',
+          output: { format: 'es' },
+          external: ['electron', 'node-pty', 'image-processor-napi', 'execa', 'npm-run-path', 'unicorn-magic'],
+        },
+      },
+      ssr: {
+        external: ['electron', 'node-pty', 'image-processor-napi', 'execa', 'npm-run-path', 'unicorn-magic'],
+      },
+      plugins: [testPlugin],
+      logLevel: 'warn',
+    })
+    console.log('BUILD SUCCESS')
+  } catch (err) {
+    console.log('BUILD FAILED:', err.message)
+  }
 }
 
-// Also check the importer-based resolution
-const importer = 'D:/doge-code/src/tools/SkillTool/SkillTool.ts'
-const importerDir = path.dirname(importer)
-const relSource = './processSlashCommand.js'
-const relDotIdx = relSource.lastIndexOf('.')
-const relBase = path.resolve(importerDir, relSource.slice(0, relDotIdx))
-console.log('\nimporter dir:', importerDir)
-console.log('relative base:', relBase)
-for (const tryExt of candidates) {
-  const candidate = relBase + tryExt
-  console.log('checking relative:', candidate, 'exists:', fs.existsSync(candidate))
-}
+test().catch(e => console.error(e))
