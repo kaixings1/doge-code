@@ -153,6 +153,11 @@ export function GitBranchManager({ cwd, theme, onClose, onBranchChanged }: GitBr
     } catch { /* ignore */ } finally { setLoading(false) }
   }, [cwd])
 
+  // 自动加载分支图
+  useEffect(() => {
+    if (showGraph && !graph) loadGraph()
+  }, [showGraph, graph, loadGraph])
+
   const allBranches = branches ? [...branches.local.map(b => ({ ...b, isRemote: false })), ...branches.remote] : []
 
   const containerStyle: React.CSSProperties = {

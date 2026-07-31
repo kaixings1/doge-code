@@ -1,0 +1,5 @@
+owner: kaixings
+repo: doge-code
+provider: github
+releaseType: release
+updaterCacheDirName: '@doge-codecli-updater'
