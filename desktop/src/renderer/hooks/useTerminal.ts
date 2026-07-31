@@ -1,14 +1,14 @@
 /**
- * useTerminal — 多标签终端状态 Hook
+ * useTerminal — 多标签终端状态管理 Hook
  *
- * 提供：
- * - 终端列表 / 活跃标签
- * - 创建 / 切换 / 关闭标签
- * - 输出历史缓存
- * - 数据写入 / 尺寸调整 / 清屏
+ * 管理：
+ * - 终端标签列表
+ * - 活跃标签
+ * - 创建/关闭标签
+ * - DogeAPI terminal 操作封装
  */
 
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export interface TerminalTab {
   id: string
@@ -20,16 +20,15 @@ export interface TerminalTab {
 export interface UseTerminalReturn {
   tabs: TerminalTab[]
   activeTabId: string | null
-  outputs: Record<string, string[]>
   activeOutput: string[]
-  createTerminal: () => Promise<void>
+  outputs: Record<string, string[]>
+  createTerminal: (cwd?: string) => Promise<void>
   switchTerminal: (tabId: string) => void
   closeTerminal: (tabId: string) => Promise<void>
   writeTerminal: (tabId: string, data: string) => Promise<void>
   resizeTerminal: (tabId: string, cols: number, rows: number) => Promise<void>
   clearOutput: (tabId: string) => void
 }
-
 const terminalIdRef = new Map<string, string>()
 const unsubDataRef = new Map<string, () => void>()
 const unsubExitRef = new Map<string, () => void>()
@@ -179,3 +178,5 @@ export function useTerminal(cwd: string): UseTerminalReturn {
     clearOutput,
   }
 }
+
+export default useTerminal

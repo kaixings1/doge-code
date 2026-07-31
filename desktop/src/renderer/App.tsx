@@ -34,6 +34,15 @@ import { LspPanel } from './components/LspPanel.js'
 import { KanbanBoard } from './components/KanbanBoard.js'
 import { TimeTracker } from './components/TimeTracker.js'
 import { ProgressReport } from './components/ProgressReport.js'
+import { useFileTree } from './hooks/useFileTree.js'
+import { useProblems } from './hooks/useProblems.js'
+import { useErrorLens } from './hooks/useErrorLens.js'
+import { useColorPicker } from './hooks/useColorPicker.js'
+import { useFindReplace } from './hooks/useFindReplace.js'
+import { useOutputChannel } from './hooks/useOutputChannel.js'
+import { useTerminal } from './hooks/useTerminal.js'
+import { useBreadcrumb } from './hooks/useBreadcrumb.js'
+import { useSymbolOutline } from './hooks/useSymbolOutline.js'
 import { useTimeTracker } from './hooks/useTimeTracker.js'
 import { useGitStats } from './hooks/useGitStats.js'
 import { useWorkflowMode } from './hooks/useWorkflowMode.js'
@@ -54,6 +63,13 @@ import { SecurityAuditPanel } from './components/SecurityAuditPanel.js'
 import { PerformanceRefactorPanel } from './components/PerformanceRefactorPanel.js'
 import { WorkflowPanel } from './components/WorkflowPanel.js'
 import { CallChainPanel } from './components/CallChainPanel.js'
+import { FileExplorerPanel } from './components/FileExplorerPanel.js'
+import { ProblemsPanel } from './components/ProblemsPanel.js'
+import { ErrorLensOverlay } from './components/ErrorLensOverlay.js'
+import { OutputPanel } from './components/OutputPanel.js'
+import { FindReplacePanel } from './components/FindReplacePanel.js'
+import { SymbolOutlinePanel } from './components/SymbolOutlinePanel.js'
+import { ColorPickerDialog } from './components/ColorPickerDialog.js'
 import { ProjectStructurePlanner } from './components/ProjectStructurePlanner.js'
 import { GitMergePanel } from './components/GitMergePanel.js'
 import { GitBranchManager } from './components/GitBranchManager.js'
@@ -174,6 +190,7 @@ function highlightCode(code: string, lang: string, isDark = true, fontSize?: num
 // ─── 主组件 ───
 export function App(): JSX.Element {
   const [config, setConfig] = useState<DesktopConfig>({ provider: 'openai', apiKey: '', model: 'gpt-4o', workingDir: '' })
+  const workingDir = config.workingDir || '/'
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [pendingImages, setPendingImages] = useState<Array<{ id: string; url: string; name: string }>>([])
@@ -192,6 +209,13 @@ export function App(): JSX.Element {
   const [previewTabs, setPreviewTabs] = useState<Array<{ id: string; path: string; content: string; size?: number }>>([])
   const [activePreviewTabId, setActivePreviewTabId] = useState<string | null>(null)
   const activePreviewFile = previewTabs.find(t => t.id === activePreviewTabId) || null
+
+  // ─── 面板依赖 Hooks ───
+  const fileTreeHook = useFileTree(workingDir)
+  const problemsHook = useProblems()
+  const errorLensHook = useErrorLens(activePreviewFile?.path || '')
+  const colorPickerHook = useColorPicker()
+
   const [previewLoading, setPreviewLoading] = useState(false)
   const [previewError, setPreviewError] = useState<string | null>(null)
   const [isEditing, setIsEditing] = useState(false)
@@ -266,6 +290,13 @@ export function App(): JSX.Element {
   const [showTimeTracker, setShowTimeTracker] = useState(false)
   const [showProgressReport, setShowProgressReport] = useState(false)
   const [showCallChain, setShowCallChain] = useState(false)
+  const [showFileExplorer, setShowFileExplorer] = useState(false)
+  const [showProblemsPanel, setShowProblemsPanel] = useState(false)
+  const [showErrorLens, setShowErrorLens] = useState(false)
+  const [showOutputPanel, setShowOutputPanel] = useState(false)
+  const [showFindReplace, setShowFindReplace] = useState(false)
+  const [showSymbolOutline, setShowSymbolOutline] = useState(false)
+  const [showColorPicker, setShowColorPicker] = useState(false)
   const [showProjectStructure, setShowProjectStructure] = useState(false)
   const [showGitMerge, setShowGitMerge] = useState(false)
   const [showGitBranch, setShowGitBranch] = useState(false)
@@ -1539,7 +1570,6 @@ export function App(): JSX.Element {
 
   if (!loaded) return <div style={{ ...styles.loadingOverlay }}>加载中...</div>
   const isProcessing = state === 'responding'
-  const workingDir = config.workingDir || '/'
 
   // 主题感知颜色辅助
   const _tp = theme.bgPanel
@@ -2103,6 +2133,13 @@ export function App(): JSX.Element {
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showLspPanel ? c.accent : c.textMuted }} onClick={() => setShowLspPanel(p => !p)}>🧠 LSP</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showReferencesPanel ? c.accent : c.textMuted }} onClick={() => { setShowReferencesPanel(p => !p) }}>📎 引用</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showCallChain ? c.accent : c.textMuted }} onClick={() => { setShowCallChain(p => !p) }}>🔗 调用链</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showFileExplorer ? c.accent : c.textMuted }} onClick={() => { setShowFileExplorer(p => !p) }}>📁 文件</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showProblemsPanel ? c.accent : c.textMuted }} onClick={() => { setShowProblemsPanel(p => !p) }}>⚠️ 问题</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showErrorLens ? c.accent : c.textMuted }} onClick={() => { setShowErrorLens(p => !p) }}>🔍 错误</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showOutputPanel ? c.accent : c.textMuted }} onClick={() => { setShowOutputPanel(p => !p) }}>📟 输出</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showFindReplace ? c.accent : c.textMuted }} onClick={() => { setShowFindReplace(p => !p) }}>🔎 替换</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showSymbolOutline ? c.accent : c.textMuted }} onClick={() => { setShowSymbolOutline(p => !p) }}>📑 大纲</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showColorPicker ? c.accent : c.textMuted }} onClick={() => { setShowColorPicker(p => !p) }}>🎨 颜色</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showProjectStructure ? c.accent : c.textMuted }} onClick={() => { setShowProjectStructure(p => !p) }}>📊 结构</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showGitMerge ? c.accent : c.textMuted }} onClick={() => { setShowGitMerge(p => !p) }}>🔀 合并</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showGitBranch ? c.accent : c.textMuted }} onClick={() => { setShowGitBranch(p => !p) }}>🌿 分支</span>
@@ -2307,6 +2344,47 @@ export function App(): JSX.Element {
             onClose={() => setShowCallChain(false)}
             onGoToDefinition={(filePath, line) => { handlePreviewFile(filePath) }}
           />
+        )}
+        {showFileExplorer && activePreviewFile && (
+          <div style={{ position: 'fixed', top: 60, right: 20, width: 340, height: '65%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+            <FileExplorerPanel fileTree={fileTreeHook} theme={theme} onClose={() => setShowFileExplorer(false)} onOpenFile={(path) => { handlePreviewFile(path); setShowFileExplorer(false) }} />
+          </div>
+        )}
+        {showProblemsPanel && (
+          <div style={{ position: 'fixed', top: 60, right: 20, width: 420, height: '65%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+            <ProblemsPanel
+              problems={problemsHook.problems}
+              filteredProblems={problemsHook.filteredProblems}
+              filterLevels={problemsHook.filterLevels}
+              onToggleFilterLevel={problemsHook.toggleFilterLevel}
+              filterFiles={problemsHook.filterFiles}
+              onToggleFilterFile={problemsHook.toggleFilterFile}
+              onClear={problemsHook.clear}
+              theme={theme}
+              onNavigate={(filePath) => { handlePreviewFile(filePath); setShowProblemsPanel(false) }}
+            />
+          </div>
+        )}
+        {showErrorLens && (
+          <div style={{ position: 'fixed', top: 60, right: 20, width: 480, height: '65%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+            <ErrorLensOverlay items={errorLensHook.items} theme={theme} onNavigate={(filePath, line) => { handlePreviewFile(filePath); setShowErrorLens(false) }} />
+          </div>
+        )}
+        {showOutputPanel && (
+          <OutputPanel theme={theme} onClose={() => setShowOutputPanel(false)} />
+        )}
+        {showFindReplace && activePreviewFile && (
+          <div style={{ position: 'fixed', top: 52, right: 20, width: 520, maxWidth: 'calc(100% - 40px)', zIndex: 9999, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '6px', boxShadow: '0 8px 24px rgba(0,0,0,0.45)', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', fontSize: '12px', color: c.text }}>
+            <FindReplacePanel theme={theme} onClose={() => setShowFindReplace(false)} text={activePreviewFile.content || ''} onReplace={(nextText) => { setPreviewTabs(prev => prev.map(t => t.id === activePreviewFile.id ? { ...t, content: nextText } : t)) }} />
+          </div>
+        )}
+        {showSymbolOutline && activePreviewFile && (
+          <div style={{ position: 'fixed', top: 60, right: 20, width: 320, height: '65%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+            <SymbolOutlinePanel filePath={activePreviewFile.path} theme={theme} onSymbolClick={(filePath, line) => { handlePreviewFile(filePath) }} />
+          </div>
+        )}
+        {showColorPicker && activePreviewFile && (
+          <ColorPickerDialog color={colorPickerHook.selectedColor || { value: '', displayValue: '', type: 'hex', startOffset: 0, endOffset: 0 }} theme={theme} onClose={() => setShowColorPicker(false)} onChange={(color) => { colorPickerHook.handlePickerChange(color) }} />
         )}
         {showProjectStructure && activePreviewFile && (
           <div style={{ position: 'fixed', top: 60, right: 20, width: 480, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>

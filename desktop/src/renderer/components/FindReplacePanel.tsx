@@ -8,7 +8,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import type { ThemeColors } from '../theme.js'
-import { find, type FindMatch } from '../utils/FindReplaceEngine.js'
+import { FindReplaceEngine, type MatchResult } from '../utils/FindReplaceEngine.js'
 
 export interface FindReplacePanelProps {
   theme: ThemeColors
@@ -25,6 +25,15 @@ export interface FindReplacePanelProps {
 
 type Mode = 'find' | 'replace'
 
+/** 统一的匹配结果接口（兼容 Monaco 和 Engine） */
+interface UnifiedMatch {
+  start: number
+  end: number
+  text: string
+  line: number
+  column: number
+}
+
 export function FindReplacePanel({ theme, onClose, editor, monaco, text = '', onReplace }: FindReplacePanelProps): JSX.Element {
   const c = theme
   const [mode, setMode] = useState<Mode>('find')
@@ -38,11 +47,11 @@ export function FindReplacePanel({ theme, onClose, editor, monaco, text = '', on
 
   const options = useMemo(() => ({ caseSensitive, regex, wholeWord }), [caseSensitive, regex, wholeWord])
 
-  const monacoMatches = useMemo(() => {
-    if (!editor || !monaco || !query) return [] as FindMatch[]
+  const monacoMatches = useMemo((): UnifiedMatch[] => {
+    if (!editor || !monaco || !query) return []
     try {
       const model = editor.getModel()
-      if (!model) return [] as FindMatch[]
+      if (!model) return []
       const raw = monaco.editor.findMatches(model.getValue(), query, false, options.caseSensitive, options.regex, false, options.wholeWord)
       return (raw || []).map((m: any) => ({
         start: m.range.startColumn,
@@ -52,13 +61,28 @@ export function FindReplacePanel({ theme, onClose, editor, monaco, text = '', on
         text: model.getValueInRange(m.range),
       }))
     } catch {
-      return [] as FindMatch[]
+      return []
     }
   }, [editor, monaco, query, options, text])
 
-  const matches: FindMatch[] = monacoMatches.length > 0 ? monacoMatches : find(text, query, options)
+  const engineMatches = useMemo((): MatchResult[] => {
+    if (!query) return []
+    return FindReplaceEngine.find(text, query, options)
+  }, [text, query, options])
 
-  const count = matches.length
+  const matches = useMemo((): UnifiedMatch[] => {
+    if (monacoMatches.length > 0) return monacoMatches
+    return engineMatches.map(m => ({
+      start: m.index,
+      end: m.index + m.length,
+      text: m.text,
+      line: m.line,
+      column: m.column,
+    }))
+  }, [monacoMatches, engineMatches])
+
+  const displayMatches = matches.slice(0, 50)
+  const count = displayMatches.length
 
   useEffect(() => {
     setCurrentIndex(0)
@@ -68,7 +92,7 @@ export function FindReplacePanel({ theme, onClose, editor, monaco, text = '', on
     if (count === 0) return
     const safeIndex = ((index % count) + count) % count
     setCurrentIndex(safeIndex)
-    const m = matches[safeIndex]
+    const m = displayMatches[safeIndex]
     if (!m) return
     if (editor) {
       try {
@@ -77,7 +101,7 @@ export function FindReplacePanel({ theme, onClose, editor, monaco, text = '', on
         editor.focus()
       } catch { /* ignore */ }
     }
-  }, [count, matches, editor, monaco])
+  }, [count, displayMatches, editor, monaco])
 
   const handleNext = useCallback(() => {
     goToMatch(currentIndex + 1)
@@ -89,7 +113,7 @@ export function FindReplacePanel({ theme, onClose, editor, monaco, text = '', on
 
   const handleReplaceCurrent = useCallback(() => {
     if (!onReplace || count === 0) return
-    const current = matches[currentIndex]
+    const current = displayMatches[currentIndex]
     if (!current) return
     const before = text.substring(0, current.start)
     const after = text.substring(current.end)
@@ -97,13 +121,13 @@ export function FindReplacePanel({ theme, onClose, editor, monaco, text = '', on
     onReplace(nextText)
     setReplaceSuccess('已替换 1 处')
     setTimeout(() => setReplaceSuccess(null), 1500)
-  }, [count, currentIndex, matches, onReplace, replacement, text])
+  }, [count, currentIndex, displayMatches, onReplace, replacement, text])
 
   const handleReplaceAll = useCallback(() => {
     if (!onReplace || !query) return
     let nextText = text
     let replaced = 0
-    const sorted = [...matches].sort((a, b) => b.start - a.start)
+    const sorted = [...displayMatches].sort((a, b) => b.start - a.start)
     for (const m of sorted) {
       nextText = nextText.substring(0, m.start) + replacement + nextText.substring(m.end)
       replaced++
@@ -111,7 +135,7 @@ export function FindReplacePanel({ theme, onClose, editor, monaco, text = '', on
     onReplace(nextText)
     setReplaceSuccess(`已替换 ${replaced} 处`)
     setTimeout(() => setReplaceSuccess(null), 1500)
-  }, [matches, onReplace, query, replacement, text])
+  }, [displayMatches, onReplace, query, replacement, text])
 
   const inputStyle: React.CSSProperties = {
     flex: 1,
@@ -244,15 +268,15 @@ export function FindReplacePanel({ theme, onClose, editor, monaco, text = '', on
 
       {/* 选项 */}
       <div style={{ padding: '8px 12px', borderBottom: `1px solid ${c.border}`, display: 'flex', gap: '8px', alignItems: 'center' }}>
-        {toggleBtn(options.caseSensitive, 'Aa', () => setOption('caseSensitive', !options.caseSensitive))}
-        {toggleBtn(options.regex, '.*', () => setOption('regex', !options.regex))}
-        {toggleBtn(options.wholeWord, '\\b', () => setOption('wholeWord', !options.wholeWord))}
+        {toggleBtn(options.caseSensitive, 'Aa', () => setCaseSensitive(!options.caseSensitive))}
+        {toggleBtn(options.regex, '.*', () => setRegex(!options.regex))}
+        {toggleBtn(options.wholeWord, '\\b', () => setWholeWord(!options.wholeWord))}
       </div>
 
       {/* 匹配列表预览 */}
       {count > 0 && (
         <div style={{ maxHeight: '180px', overflowY: 'auto', padding: '4px 0' }}>
-          {matches.slice(0, 50).map((m, idx) => (
+          {displayMatches.map((m, idx) => (
             <div
               key={idx}
               onClick={() => goToMatch(idx)}

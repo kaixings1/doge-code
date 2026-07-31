@@ -16,24 +16,20 @@ import { useSymbolOutline, jumpToSymbol } from '../hooks/useSymbolOutline.js'
 /** 符号类型 */
 type SymbolKind = 'function' | 'method' | 'class' | 'interface' | 'type' | 'variable' | 'constant' | 'enum' | 'module' | 'property' | 'import'
 
-/** 文件符号 */
+/** 文件符号（与 useSymbolOutline 的 SymbolNode 兼容） */
 interface DocumentSymbol {
   id: string
   name: string
-  kind: SymbolKind
+  kind: string
   range: { startLine: number; startColumn: number; endLine: number; endColumn: number }
   children?: DocumentSymbol[]
-  /** 可见性修饰符 */
-  modifiers?: string[]
-  /** 返回类型 / 变量类型 */
   detail?: string
+  modifiers?: string[]
 }
 
 interface SymbolOutlinePanelProps {
   /** 文件路径 */
   filePath: string
-  /** 工作目录 */
-  cwd: string
   /** 主题颜色 */
   theme: ThemeColors
   /** 符号点击跳转回调 */
@@ -43,7 +39,7 @@ interface SymbolOutlinePanelProps {
 }
 
 /** 符号类型图标映射 */
-const SYMBOL_ICONS: Record<SymbolKind, string> = {
+const SYMBOL_ICONS: Record<string, string> = {
   function: '𝑓',
   method: '𝓂',
   class: '𝐂',
@@ -58,7 +54,7 @@ const SYMBOL_ICONS: Record<SymbolKind, string> = {
 }
 
 /** 符号类型颜色映射 */
-const SYMBOL_COLORS: Record<SymbolKind, string> = {
+const SYMBOL_COLORS: Record<string, string> = {
   function: '#DCAD5A',
   method: '#DCAD5A',
   class: '#4ECB71',
@@ -72,7 +68,7 @@ const SYMBOL_COLORS: Record<SymbolKind, string> = {
   import: '#888888',
 }
 
-const SYMBOL_KIND_LABELS: Record<SymbolKind, string> = {
+const SYMBOL_KIND_LABELS: Record<string, string> = {
   function: '函数',
   method: '方法',
   class: '类',
@@ -88,7 +84,7 @@ const SYMBOL_KIND_LABELS: Record<SymbolKind, string> = {
 
 export function SymbolOutlinePanel({
   filePath,
-  cwd,
+
   theme,
   onSymbolClick,
   defaultExpanded = false,
