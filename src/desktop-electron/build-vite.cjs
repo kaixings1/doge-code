@@ -195,13 +195,13 @@ async function main() {
           format: 'es',
           entryFileNames: 'index.mjs',
         },
-        external: ['electron', 'node-pty', 'image-processor-napi', 'execa', 'npm-run-path', 'unicorn-magic', 'supports-hyperlinks', 'supports-color', 'has-flag'],
+        external: ['electron', 'node-pty', 'image-processor-napi', 'execa', 'npm-run-path', 'unicorn-magic', 'supports-hyperlinks', 'supports-color', 'has-flag', '@anthropic-ai/sandbox-runtime'],
       },
     },
     ssr: {
       // Keep Node.js builtins and problematic npm packages external
       // (no polyfills for these - Electron will provide them at runtime)
-      external: ['electron', 'node-pty', 'image-processor-napi', 'execa', 'npm-run-path', 'unicorn-magic', 'supports-hyperlinks', 'supports-color', 'has-flag'],
+      external: ['electron', 'node-pty', 'image-processor-napi', 'execa', 'npm-run-path', 'unicorn-magic', 'supports-hyperlinks', 'supports-color', 'has-flag', '@anthropic-ai/sandbox-runtime'],
     },
     plugins: [mdPlugin, jsResolverPlugin, nodeBuiltinsPlugin],
     resolve: {
