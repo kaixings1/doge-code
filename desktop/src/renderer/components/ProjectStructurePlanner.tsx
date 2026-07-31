@@ -94,7 +94,7 @@ export function ProjectStructurePlanner({ cwd, theme, onClose }: ProjectStructur
   const [files, setFiles] = useState<ProjectFile[]>([])
   const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState<ProjectStats | null>(null)
-  const [viewMode, setViewMode] = useState<'tree' | 'stats' | 'heatmap'>('tree')
+  const [viewMode, setViewMode] = useState<'tree' | 'stats' | 'heatmap' | 'dependency'>('tree')
   const [expandedDirs, setExpandedDirs] = useState<Set<string>>(new Set())
   const [message, setMessage] = useState('')
 
@@ -375,6 +375,7 @@ export function ProjectStructurePlanner({ cwd, theme, onClose }: ProjectStructur
         <button onClick={() => setViewMode('tree')} style={{ ...buttonStyle, background: viewMode === 'tree' ? c.accent + '22' : c.bgAlt, color: viewMode === 'tree' ? c.accent : c.text }}>📁 目录树</button>
         <button onClick={() => setViewMode('stats')} style={{ ...buttonStyle, background: viewMode === 'stats' ? c.accent + '22' : c.bgAlt, color: viewMode === 'stats' ? c.accent : c.text }}>📊 语言统计</button>
         <button onClick={() => setViewMode('heatmap')} style={{ ...buttonStyle, background: viewMode === 'heatmap' ? c.accent + '22' : c.bgAlt, color: viewMode === 'heatmap' ? c.accent : c.text }}>🔥 行数热力图</button>
+        <button onClick={() => setViewMode('dependency')} style={{ ...buttonStyle, background: viewMode === 'dependency' ? c.accent + '22' : c.bgAlt, color: viewMode === 'dependency' ? c.accent : c.text }}>🔗 依赖关系</button>
       </div>
 
       {/* 目录树视图 */}
@@ -434,6 +435,59 @@ export function ProjectStructurePlanner({ cwd, theme, onClose }: ProjectStructur
                   </div>
                 )
               })
+          })()}
+        </div>
+      )}
+
+      {/* 模块依赖关系图 */}
+      {viewMode === 'dependency' && (
+        <div style={cardStyle}>
+          <div style={{ fontWeight: 600, marginBottom: '6px', fontSize: '12px' }}>🔗 模块依赖关系</div>
+          {(() => {
+            // 基于目录分组的模块视图
+            const moduleGroups = new Map<string, string[]>()
+            for (const f of files) {
+              if (f.extension !== 'ts' && f.extension !== 'tsx' && f.extension !== 'js' && f.extension !== 'jsx') continue
+              const parts = f.path.replace(cwd, '').replace(/^[/\\]/, '').split(/[/\\]/)
+              const dir = parts.length > 1 ? parts[parts.length - 2] : 'root'
+              if (!moduleGroups.has(dir)) moduleGroups.set(dir, [])
+              moduleGroups.get(dir)!.push(f.name)
+            }
+
+            if (moduleGroups.size === 0) {
+              return <div style={{ color: c.textMuted, fontSize: '10px', padding: '8px' }}>未找到源代码模块</div>
+            }
+
+            return (
+              <div>
+                {Array.from(moduleGroups.entries()).map(([group, mods]) => (
+                  <div key={group} style={{ marginBottom: '8px', padding: '6px', borderRadius: '3px', background: c.bgPanel, border: `1px solid ${c.border}` }}>
+                    <div style={{ fontSize: '10px', fontWeight: 600, marginBottom: '4px', color: c.accent }}>📦 {group}/</div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                      {mods.slice(0, 15).map(m => {
+                        const modName = m.replace(/\.(ts|tsx|js|jsx)$/, '')
+                        const isIndex = m === 'index.ts' || m === 'index.tsx' || m === 'index.js'
+                        return (
+                          <span key={m} style={{
+                            padding: '2px 6px', borderRadius: '3px', fontSize: '9px',
+                            background: isIndex ? c.accent + '22' : c.bgAlt,
+                            color: isIndex ? c.accent : c.text,
+                            border: `1px solid ${isIndex ? c.accent + '44' : c.border}`,
+                            fontFamily: 'monospace',
+                          }} title={m}>
+                            {isIndex ? '📌' : '📄'} {modName}
+                          </span>
+                        )
+                      })}
+                      {mods.length > 15 && <span style={{ fontSize: '9px', color: c.textMuted }}>+{mods.length - 15} more</span>}
+                    </div>
+                  </div>
+                ))}
+                <div style={{ fontSize: '9px', color: c.textMuted, marginTop: '4px' }}>
+                  💡 基于目录分组的模块视图 — 完整依赖图需静态分析 import/require
+                </div>
+              </div>
+            )
           })()}
         </div>
       )}
