@@ -57,6 +57,8 @@ import { CallChainPanel } from './components/CallChainPanel.js'
 import { ProjectStructurePlanner } from './components/ProjectStructurePlanner.js'
 import { GitMergePanel } from './components/GitMergePanel.js'
 import { GitBranchManager } from './components/GitBranchManager.js'
+import { TestRunnerPanel } from './components/TestRunnerPanel.js'
+import { LogViewer } from './components/LogViewer.js'
 import { useWorkflowAutomation } from './hooks/useWorkflowAutomation.js'
 import { useCallChain } from './hooks/useCallChain.js'
 import { parseMessageContent, InlineToolUseBlock, renderMarkdown } from './shared.js'
@@ -267,6 +269,8 @@ export function App(): JSX.Element {
   const [showProjectStructure, setShowProjectStructure] = useState(false)
   const [showGitMerge, setShowGitMerge] = useState(false)
   const [showGitBranch, setShowGitBranch] = useState(false)
+  const [showTestRunner, setShowTestRunner] = useState(false)
+  const [showLogViewer, setShowLogViewer] = useState(false)
   const [cursorOffset, setCursorOffset] = useState(0)
   const [vimEnabled, setVimEnabled] = useState(false)
   const previewTabCounter = useRef(0)
@@ -2102,6 +2106,8 @@ export function App(): JSX.Element {
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showProjectStructure ? c.accent : c.textMuted }} onClick={() => { setShowProjectStructure(p => !p) }}>📊 结构</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showGitMerge ? c.accent : c.textMuted }} onClick={() => { setShowGitMerge(p => !p) }}>🔀 合并</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showGitBranch ? c.accent : c.textMuted }} onClick={() => { setShowGitBranch(p => !p) }}>🌿 分支</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showTestRunner ? c.accent : c.textMuted }} onClick={() => { setShowTestRunner(p => !p) }}>🧪 测试</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showLogViewer ? c.accent : c.textMuted }} onClick={() => { setShowLogViewer(p => !p) }}>📋 日志</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showSemanticSearch ? c.accent : c.textMuted }} onClick={() => setShowSemanticSearch(p => !p)}>🔍 搜索</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showDebuggerPanel ? c.accent : c.textMuted }} onClick={() => setShowDebuggerPanel(p => !p)}>🪲 调试器</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showCollabPanel ? c.accent : c.textMuted }} onClick={() => setShowCollabPanel(p => !p)}>🤝 协作</span>
@@ -2315,6 +2321,16 @@ export function App(): JSX.Element {
         {showGitBranch && (
           <div style={{ position: 'fixed', top: 60, right: 20, width: 420, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
             <GitBranchManager cwd={workingDir} theme={theme} onClose={() => setShowGitBranch(false)} onBranchChanged={() => { showToast('分支已更新', 'success') }} />
+          </div>
+        )}
+        {showTestRunner && (
+          <div style={{ position: 'fixed', top: 60, right: 20, width: 520, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+            <TestRunnerPanel cwd={workingDir} theme={theme} onClose={() => setShowTestRunner(false)} />
+          </div>
+        )}
+        {showLogViewer && (
+          <div style={{ position: 'fixed', top: 60, right: 20, width: 520, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+            <LogViewer cwd={workingDir} theme={theme} onClose={() => setShowLogViewer(false)} />
           </div>
         )}
         {showDebuggerPanel && (

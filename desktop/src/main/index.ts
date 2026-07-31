@@ -2548,7 +2548,7 @@ ipcMain.handle('doge:write-file', async (_event, filePath: string, content: stri
 ipcMain.handle('doge:search-files', async (_event, query: string, cwd: string, maxResults: number = 50) => {
   try {
     const results: Array<{ path: string; line: number; content: string }> = []
-    if (!query || query.length < 2) return results
+    const isListingAll = !query || query.length < 2
 
     const walk = (dir: string) => {
       if (results.length >= maxResults) return
@@ -2567,11 +2567,15 @@ ipcMain.handle('doge:search-files', async (_event, query: string, cwd: string, m
             if (skipExts.includes(ext)) continue
             try {
               const content = fs.readFileSync(fullPath, 'utf-8')
-              const lines = content.split('\n')
-              for (let i = 0; i < lines.length; i++) {
-                if (lines[i].toLowerCase().includes(query.toLowerCase())) {
-                  results.push({ path: fullPath, line: i + 1, content: lines[i].trim() })
-                  if (results.length >= maxResults) break
+              if (isListingAll) {
+                results.push({ path: fullPath, line: 1, content: '' })
+              } else {
+                const lines = content.split('\n')
+                for (let i = 0; i < lines.length; i++) {
+                  if (lines[i].toLowerCase().includes(query.toLowerCase())) {
+                    results.push({ path: fullPath, line: i + 1, content: lines[i].trim() })
+                    if (results.length >= maxResults) break
+                  }
                 }
               }
             } catch { /* skip unreadable files */ }
@@ -2908,6 +2912,71 @@ ipcMain.handle('doge:lsp-connected-servers', async () => {
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : '获取服务器列表失败'
     return { success: false, error: message }
+  }
+})
+
+// ─── Test Runner IPC Handlers ───
+ipcMain.handle('doge:test-run', async (_event, cwd: string, testCommand: string) => {
+  try {
+    const result = await execCommand(testCommand, cwd, 60000)
+    return { success: true, output: result.stdout, error: result.stderr, exitCode: result.code }
+  } catch (e) {
+    return { success: false, error: e instanceof Error ? e.message : 'Test execution failed' }
+  }
+})
+
+ipcMain.handle('doge:test-list', async (_event, cwd: string) => {
+  try {
+    const frameworks = [
+      { cmd: 'npx jest --listTests --json', name: 'jest' },
+      { cmd: 'npx vitest run --reporter=json', name: 'vitest' },
+      { cmd: 'npx mocha --reporter json', name: 'mocha' },
+      { cmd: 'go test -list . ./...', name: 'go' },
+      { cmd: 'pytest --collect-only -q', name: 'pytest' },
+    ]
+
+    for (const fw of frameworks) {
+      try {
+        const result = await execCommand(fw.cmd, cwd, 10000)
+        if (result.code === 0) {
+          return { framework: fw.name, tests: result.stdout.split('\n').filter(l => l.trim()) }
+        }
+      } catch { /* try next */ }
+    }
+
+    return { framework: 'unknown', tests: [] }
+  } catch {
+    return { framework: 'unknown', tests: [] }
+  }
+})
+
+ipcMain.handle('doge:get-logs', async (_event, _params: { level?: string; limit?: number; offset?: number }) => {
+  // In production, read from actual log files or log store
+  // For now, return recent application logs from memory
+  const logFile = path.join(app.getPath('userData'), 'logs', 'doge.log')
+  try {
+    if (fs.existsSync(logFile)) {
+      const content = fs.readFileSync(logFile, 'utf-8')
+      const lines = content.split('\n').filter(l => l.trim()).slice(-200)
+      return {
+        logs: lines.map((line, i) => ({
+          id: `log-${i}`,
+          timestamp: new Date().toISOString(),
+          level: (line.match(/\[(DEBUG|INFO|WARN|ERROR)\]/i)?.[1]?.toLowerCase() as LogEntry['level']) || 'info',
+          source: 'application',
+          message: line,
+        })),
+        total: lines.length,
+      }
+    }
+  } catch { /* ignore */ }
+
+  // Return empty with current timestamp logs for demo
+  return {
+    logs: [
+      { id: '1', timestamp: new Date().toISOString(), level: 'info' as const, source: 'system', message: '日志查看器已就绪' },
+    ],
+    total: 1,
   }
 })
 
