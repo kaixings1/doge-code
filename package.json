@@ -22,7 +22,7 @@
     "version": "bun run ./src/bootstrap-entry.ts --version",
     "dev:restore-check": "bun run ./src/dev-entry.ts",
     "dev:desktop": "bun run ./src/bootstrap-entry.ts --desktop",
-    "build:desktop": "bun run prebuild && electron-builder",
+    "build:desktop": "bun run prebuild && node src/desktop-electron/build-vite.cjs && electron-builder",
     "lint": "biome check src/",
     "lint:fix": "biome check --apply src/",
     "format": "biome format --write src/",
@@ -76,6 +76,7 @@
     "@opentelemetry/sdk-metrics": "*",
     "@opentelemetry/sdk-trace-base": "*",
     "@opentelemetry/semantic-conventions": "*",
+    "@sentry/node": "^10.69.0",
     "@xterm/addon-fit": "^0.11.0",
     "@xterm/xterm": "^6.0.0",
     "ajv": "^8.20.0",
@@ -149,14 +150,17 @@
     "@types/node": "^22.0.0",
     "@types/react": "18",
     "@types/react-dom": "18",
+    "@vitejs/plugin-react": "^5.2.0",
     "bun-types": "^1.3.13",
     "electron": "^43.2.0",
     "electron-builder": "^26.15.3",
     "electron-rebuild": "^3.2.9",
     "electron-updater": "^6.3.0",
+    "electron-vite": "^5.0.0",
     "google-auth-library": "*",
     "tsx": "^4.21.0",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vite": "^7.3.6"
   },
   "peerDependencies": {
     "google-auth-library": "*"
@@ -167,4 +171,3 @@
     }
   }
 }
-
