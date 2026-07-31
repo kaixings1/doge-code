@@ -54,6 +54,8 @@ import { SecurityAuditPanel } from './components/SecurityAuditPanel.js'
 import { PerformanceRefactorPanel } from './components/PerformanceRefactorPanel.js'
 import { WorkflowPanel } from './components/WorkflowPanel.js'
 import { CallChainPanel } from './components/CallChainPanel.js'
+import { GitMergePanel } from './components/GitMergePanel.js'
+import { GitBranchManager } from './components/GitBranchManager.js'
 import { useWorkflowAutomation } from './hooks/useWorkflowAutomation.js'
 import { useCallChain } from './hooks/useCallChain.js'
 import { parseMessageContent, InlineToolUseBlock, renderMarkdown } from './shared.js'
@@ -261,6 +263,8 @@ export function App(): JSX.Element {
   const [showTimeTracker, setShowTimeTracker] = useState(false)
   const [showProgressReport, setShowProgressReport] = useState(false)
   const [showCallChain, setShowCallChain] = useState(false)
+  const [showGitMerge, setShowGitMerge] = useState(false)
+  const [showGitBranch, setShowGitBranch] = useState(false)
   const [cursorOffset, setCursorOffset] = useState(0)
   const [vimEnabled, setVimEnabled] = useState(false)
   const previewTabCounter = useRef(0)
@@ -2093,6 +2097,8 @@ export function App(): JSX.Element {
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showLspPanel ? c.accent : c.textMuted }} onClick={() => setShowLspPanel(p => !p)}>🧠 LSP</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showReferencesPanel ? c.accent : c.textMuted }} onClick={() => { setShowReferencesPanel(p => !p) }}>📎 引用</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showCallChain ? c.accent : c.textMuted }} onClick={() => { setShowCallChain(p => !p) }}>🔗 调用链</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showGitMerge ? c.accent : c.textMuted }} onClick={() => { setShowGitMerge(p => !p) }}>🔀 合并</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showGitBranch ? c.accent : c.textMuted }} onClick={() => { setShowGitBranch(p => !p) }}>🌿 分支</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showSemanticSearch ? c.accent : c.textMuted }} onClick={() => setShowSemanticSearch(p => !p)}>🔍 搜索</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showDebuggerPanel ? c.accent : c.textMuted }} onClick={() => setShowDebuggerPanel(p => !p)}>🪲 调试器</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showCollabPanel ? c.accent : c.textMuted }} onClick={() => setShowCollabPanel(p => !p)}>🤝 协作</span>
@@ -2292,6 +2298,16 @@ export function App(): JSX.Element {
             onClose={() => setShowCallChain(false)}
             onGoToDefinition={(filePath, line) => { handlePreviewFile(filePath) }}
           />
+        )}
+        {showGitMerge && (
+          <div style={{ position: 'fixed', top: 60, right: 20, width: 520, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+            <GitMergePanel cwd={workingDir} theme={theme} onClose={() => setShowGitMerge(false)} onResolved={() => { setShowGitMerge(false); showToast('合并冲突已解决', 'success') }} />
+          </div>
+        )}
+        {showGitBranch && (
+          <div style={{ position: 'fixed', top: 60, right: 20, width: 420, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+            <GitBranchManager cwd={workingDir} theme={theme} onClose={() => setShowGitBranch(false)} onBranchChanged={() => { showToast('分支已更新', 'success') }} />
+          </div>
         )}
         {showDebuggerPanel && (
           <div style={{ position: 'fixed', top: 60, right: 20, width: 520, height: '75%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
