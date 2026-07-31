@@ -306,23 +306,26 @@ export const SYNTHETIC_MESSAGES = new Set([
 ])
 
 export function isSyntheticMessage(message: Message): boolean {
+  const msg = message as AssistantMessage | UserMessage
+  const content = msg.message?.content
   return (
     message.type !== 'progress' &&
     message.type !== 'attachment' &&
     message.type !== 'system' &&
-    Array.isArray(message.message.content) &&
-    message.message.content[0]?.type === 'text' &&
-    SYNTHETIC_MESSAGES.has(message.message.content[0].text)
+    Array.isArray(content) &&
+    content[0]?.type === 'text' &&
+    SYNTHETIC_MESSAGES.has(content[0].text)
   )
 }
 
 function isSyntheticApiErrorMessage(
   message: Message,
 ): message is AssistantMessage & { isApiErrorMessage: true } {
+  if (message.type !== 'assistant') return false
+  const msg = message as AssistantMessage
   return (
-    message.type === 'assistant' &&
-    message.isApiErrorMessage === true &&
-    message.message.model === SYNTHETIC_MODEL
+    msg.isApiErrorMessage === true &&
+    msg.message.model === SYNTHETIC_MODEL
   )
 }
 
@@ -605,7 +608,7 @@ export function createProgressMessage<P extends Progress>({
   toolUseID: string
   parentToolUseID: string
   data: P
-}): ProgressMessage<P> {
+}): ProgressMessage {
   return {
     type: 'progress',
     data,

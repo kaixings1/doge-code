@@ -11,7 +11,9 @@
 
 import React, { useState, useCallback, useMemo } from 'react'
 import type { ThemeColors } from '../theme.js'
-import type { WorkflowDefinition, WorkflowStep, WorkflowRunResult } from '../hooks/useWorkflowAutomation'
+import type { WorkflowDefinition, WorkflowStep, WorkflowRunResult } from '../hooks/workflowAutomation.types'
+import type { BatchJob } from '../hooks/workflowAutomation.types'
+import { BatchProcessor } from './BatchProcessor.js'
 
 interface WorkflowPanelProps {
   /** 所有工作流 */
@@ -20,6 +22,10 @@ interface WorkflowPanelProps {
   history: WorkflowRunResult[]
   /** 当前执行状态 */
   currentRun: WorkflowRunResult | null
+  /** 批量任务 */
+  batchJobs: BatchJob[]
+  /** 批量任务历史 */
+  batchHistory: BatchJob[]
   /** 当前文件路径 */
   filePath?: string
   /** 主题颜色 */
@@ -34,13 +40,17 @@ interface WorkflowPanelProps {
   onExecute: (workflowId: string, context: Record<string, unknown>) => Promise<WorkflowRunResult>
   /** 取消执行回调 */
   onCancel: () => void
+  /** 执行批量任务回调 */
+  onExecuteBatch: (workflowId: string, files: Array<{ filePath: string; fileName?: string }>) => Promise<BatchJob>
+  /** 取消批量任务回调 */
+  onCancelBatch: (batchId: string) => void
   /** 删除工作流回调 */
   onDelete: (id: string) => void
   /** 跳转到文件回调 */
   onGoToFile?: (filePath: string) => void
 }
 
-type TabType = 'workflows' | 'editor' | 'history' | 'templates'
+type TabType = 'workflows' | 'editor' | 'batch' | 'history' | 'templates'
 
 const STEP_TYPE_CONFIG: Record<WorkflowStep['type'], { icon: string; color: string; label: string }> = {
   prompt: { icon: '💬', color: '#4FC3F7', label: 'AI 对话' },
@@ -61,6 +71,8 @@ export function WorkflowPanel({
   workflows,
   history,
   currentRun,
+  batchJobs,
+  batchHistory,
   filePath,
   theme,
   onClose,
@@ -68,6 +80,8 @@ export function WorkflowPanel({
   onCreateFromTemplate,
   onExecute,
   onCancel,
+  onExecuteBatch,
+  onCancelBatch,
   onDelete,
   onGoToFile,
 }: WorkflowPanelProps): JSX.Element {
@@ -522,6 +536,21 @@ export function WorkflowPanel({
     )
   }
 
+  // 渲染批量处理
+  const renderBatch = () => {
+    return (
+      <BatchProcessor
+        workflows={workflows}
+        batchJobs={batchJobs}
+        batchHistory={batchHistory}
+        onExecute={onExecuteBatch}
+        onCancel={onCancelBatch}
+        theme={theme}
+        defaultFilePath={filePath}
+      />
+    )
+  }
+
   // 渲染历史
   const renderHistory = () => {
     if (history.length === 0) {
@@ -615,6 +644,9 @@ export function WorkflowPanel({
       <div style={tabBarStyle}>
         <button style={tabStyle(activeTab === 'workflows')} onClick={() => setActiveTab('workflows')}>工作流</button>
         <button style={tabStyle(activeTab === 'editor')} onClick={() => setActiveTab('editor')}>编辑器</button>
+        <button style={tabStyle(activeTab === 'batch')} onClick={() => setActiveTab('batch')}>
+          批量 {batchJobs.length > 0 ? `(${batchJobs.length})` : ''}
+        </button>
         <button style={tabStyle(activeTab === 'templates')} onClick={() => setActiveTab('templates')}>模板</button>
         <button style={tabStyle(activeTab === 'history')} onClick={() => setActiveTab('history')}>
           历史 {history.length > 0 && `(${history.length})`}
@@ -625,6 +657,7 @@ export function WorkflowPanel({
       <div style={bodyStyle}>
         {activeTab === 'workflows' && renderWorkflows()}
         {activeTab === 'editor' && renderEditor()}
+        {activeTab === 'batch' && renderBatch()}
         {activeTab === 'templates' && renderTemplates()}
         {activeTab === 'history' && renderHistory()}
       </div>
