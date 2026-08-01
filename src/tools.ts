@@ -23,7 +23,7 @@ const SuggestBackgroundPRTool =
         .SuggestBackgroundPRTool
     : null
 const SleepTool =
-  feature('PROACTIVE') || feature('KAIROS')||true
+  feature('PROACTIVE') || feature('KAIROS')
     ? require('./tools/SleepTool/SleepTool.js').SleepTool
     : null
 const cronTools = feature('AGENT_TRIGGERS')

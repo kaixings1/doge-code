@@ -1,4 +1,4 @@
-/**
+﻿/**
 - MonacoEditorPanel — Monaco 编辑器面板 + LSP 深度集成
 - 功能：
 	- Monaco Editor 组件（使用 @monaco-editor/react 动态导入）
@@ -629,29 +629,25 @@ return () => {
 								<span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.name}</span>
 							</div>
 						))}
-					</div>
-				</div>
-			)}
+
+			{/* 底部工具栏 */}
+			<div style={{ borderTop: `1px solid ${c.border}`, padding: '4px 8px', display: 'flex', gap: '4px', alignItems: 'center', background: c.bgPanel }}>
+				<span style={{ color: c.textFaint, fontSize: '9px' }}>字体:</span>
+				<input
+					type="number"
+					value={fontSize}
+					onChange={e => setFontSize(Number(e.target.value) || 12)}
+					min={10}
+					max={24}
+					style={{ width: '40px', padding: '2px 4px', background: c.inputBg, border: `1px solid ${c.border}`, borderRadius: '2px', color: c.text, fontSize: '9px', outline: 'none' }}
+				/>
+				<button onClick={handleSave} disabled={!activeTab?.isDirty} style={{ padding: '3px 10px', border: 'none', borderRadius: '3px', background: activeTab?.isDirty ? c.accent : c.border, color: activeTab?.isDirty ? '#000' : c.textFaint, cursor: activeTab?.isDirty ? 'pointer' :'default', fontSize: '10px', fontWeight: 600 }}>💾 保存</button>
+				{openStatus && <span style={{ color: c.textFaint, fontSize: '9px' }}>{openStatus}</span>}
+				{saveStatus && !saveStatus.includes('已保存') && <span style={{ color: '#f59e0b', fontSize: '9px' }}>{saveStatus}</span>}
+
 		</div>
-	)}
 
-	{/* 底部工具栏 */}
-	<div style={{ borderTop: `1px solid ${c.border}`, padding: '4px 8px', display: 'flex', gap: '4px', alignItems: 'center', background: c.bgPanel }}>
-		<span style={{ color: c.textFaint, fontSize: '9px' }}>字体:</span>
-		<input
-			type="number"
-			value={fontSize}
-			onChange={e => setFontSize(Number(e.target.value) || 12)}
-			min={10}
-			max={24}
-			style={{ width: '40px', padding: '2px 4px', background: c.inputBg, border: `1px solid ${c.border}`, borderRadius: '2px', color: c.text, fontSize: '9px', outline: 'none' }}
-		/>
-		<button onClick={handleSave} disabled={!activeTab?.isDirty} style={{ padding: '3px 10px', border: 'none', borderRadius: '3px', background: activeTab?.isDirty ? c.accent : c.border, color: activeTab?.isDirty ? '#000' : c.textFaint, cursor: activeTab?.isDirty ? 'pointer' :'default', fontSize: '10px', fontWeight: 600 }}>💾 保存</button>
-		{openStatus && <span style={{ color: c.textFaint, fontSize: '9px' }}>{openStatus}</span>}
-		{saveStatus && !saveStatus.includes('已保存') && <span style={{ color: '#f59e0b', fontSize: '9px' }}>{saveStatus}</span>}
-
-</div>
-</div>
+		</div>
 
 }
 	)
