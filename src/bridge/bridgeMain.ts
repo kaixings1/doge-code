@@ -1,4 +1,3 @@
-import { feature } from 'bun:bundle'
 import { randomUUID } from 'crypto'
 import { hostname, tmpdir } from 'os'
 import { basename, join, resolve } from 'path'
@@ -1439,9 +1438,9 @@ export async function runBridgeLoop(
   // 后端通过 4 小时 TTL 对陈旧环境进行 GC（BRIDGE_LAST_POLL_TTL）。
   // 归档会话或注销环境会使打印的恢复命令成为谎言 —— 注销会删除 Firestore + Redis 流。
   // 如果循环因致命原因退出（环境过期、认证失败、放弃），则跳过 —— 此时恢复不可能，消息会与已打印的错误相矛盾。
-  // feature('KAIROS') 开关：--session-id 仅限蚂蚁内部；没有开关时回退到 PR 之前的行为（每次关闭都归档+注销）。
+  // isFeatureEnabled('KAIROS') 开关：--session-id 仅限蚂蚁内部；没有开关时回退到 PR 之前的行为（每次关闭都归档+注销）。
   if (
-    feature('KAIROS') &&
+    (feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') &&
     config.spawnMode === 'single-session' &&
     initialSessionId &&
     !fatalExit
@@ -1691,7 +1690,7 @@ export function parseArgs(args: string[]): ParsedArgs {
     } else if (arg.startsWith('--name=')) {
       name = arg.slice('--name='.length)
     } else if (
-      feature('KAIROS') &&
+      (feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') &&
       arg === '--session-id' &&
       i + 1 < args.length
     ) {
@@ -1699,12 +1698,12 @@ export function parseArgs(args: string[]): ParsedArgs {
       if (!sessionId) {
         return makeError('--session-id 需要一个值')
       }
-    } else if (feature('KAIROS') && arg.startsWith('--session-id=')) {
+    } else if ((feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') && arg.startsWith('--session-id=')) {
       sessionId = arg.slice('--session-id='.length)
       if (!sessionId) {
         return makeError('--session-id 需要一个值')
       }
-    } else if (feature('KAIROS') && (arg === '--continue' || arg === '-c')) {
+    } else if ((feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') && (arg === '--continue' || arg === '-c')) {
       continueSession = true
     } else if (arg === '--spawn' || arg.startsWith('--spawn=')) {
       if (spawnMode !== undefined) {
@@ -1836,7 +1835,7 @@ async function printHelp(): Promise<void> {
 选项
   --name <名称>                    会话名称（显示在 claude.ai/code 中）
 ${
-  feature('KAIROS')
+  feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1'
     ? `  -c, --continue                   恢复此目录中的最后一次会话
   --session-id <id>                按 ID 恢复特定会话（不能与生成标志或
                                    --continue 一起使用）
@@ -2043,7 +2042,7 @@ export async function bridgeMain(args: string[]): Promise<void> {
   // REPL 桥接器写入 getOriginalCwd()，EnterWorktreeTool/activeWorktreeSession 可以指向工作树，
   // 而用户的 shell 位于仓库根目录。
   // 在 parseArgs 处受 KAIROS 开关限制 —— 外部构建中 continueSession 始终为 false，因此此块会被 tree-shaking。
-  if (feature('KAIROS') && continueSession) {
+  if ((feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') && continueSession) {
     const { readBridgePointerAcrossWorktrees } = await import(
       './bridgePointer.js'
     )
@@ -2235,10 +2234,10 @@ export async function bridgeMain(args: string[]): Promise<void> {
 
   // 当通过 --session-id 恢复会话时，获取它以获知其 environment_id 并在注册时复用（后端幂等）。
   // 否则保持 undefined —— 后端拒绝客户端生成的 UUID，并将分配一个新环境。
-  // feature('KAIROS') 开关：--session-id 仅限蚂蚁内部；parseArgs 已在开关关闭时拒绝该标志，
+  // isFeatureEnabled('KAIROS') 开关：--session-id 仅限蚂蚁内部；parseArgs 已在开关关闭时拒绝该标志，
   // 因此外部构建中 resumeSessionId 在此处始终为 undefined —— 此守卫用于 tree-shaking。
   let reuseEnvironmentId: string | undefined
-  if (feature('KAIROS') && resumeSessionId) {
+  if ((feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') && resumeSessionId) {
     try {
       validateBridgeId(resumeSessionId, 'sessionId')
     } catch {
@@ -2346,7 +2345,7 @@ export async function bridgeMain(args: string[]): Promise<void> {
   // 用于下方跳过新会话创建，并为 initialSessionId 提供种子。
   // 在环境不匹配时清除，以便优雅地回退到新会话。
   let effectiveResumeSessionId: string | undefined
-  if (feature('KAIROS') && resumeSessionId) {
+  if ((feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') && resumeSessionId) {
     if (reuseEnvironmentId && environmentId !== reuseEnvironmentId) {
       // 后端返回了不同的 environment_id —— 原始环境已过期或被回收。
       // 重新连接无法针对新环境工作（会话绑定到旧环境）。记录到 sentry 以引起注意，
@@ -2534,10 +2533,10 @@ export async function bridgeMain(args: string[]): Promise<void> {
   // 当恢复请求因环境不匹配失败时，effectiveResumeSessionId 为 undefined，
   // 因此我们回退到全新会话创建（遵循上面打印的“改为创建全新会话”警告）。
   let initialSessionId: string | null =
-    feature('KAIROS') && effectiveResumeSessionId
+    (feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') && effectiveResumeSessionId
       ? effectiveResumeSessionId
       : null
-  if (preCreateSession && !(feature('KAIROS') && effectiveResumeSessionId)) {
+  if (preCreateSession && !((feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') && effectiveResumeSessionId)) {
     const { createBridgeSession } = await import('./createSession.js')
     try {
       initialSessionId = await createBridgeSession({
