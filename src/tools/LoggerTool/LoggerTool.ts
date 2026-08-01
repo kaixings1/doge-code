@@ -57,15 +57,15 @@ export const LoggerTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const level = (input as any)?.level ?? '?'
-    const message = (input as any)?.message ?? ''
+    const level = (input as Record<string, unknown>)?.level ?? '?'
+    const message = (input as Record<string, unknown>)?.message ?? ''
     return `Logger: ${level} ${message}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',
-      content: `Logged at level ${(content as any).level}`,
+      content: `Logged at level ${(content as Record<string, unknown>).level}`,
     }
   },
   async call({ level, message, context }) {

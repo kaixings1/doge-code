@@ -407,8 +407,8 @@ ${taskList}`
 找不到 ID 为 \`${id}\` 的任务。`
       }
     }
-    if ((t as any).error) {
-      return { type: 'text', value: `❌ ${(t as any).error}` }
+    if ((t as Record<string, unknown>).error) {
+      return { type: 'text', value: `❌ ${(t as Record<string, unknown>).error}` }
     }
     return {
       type: 'text',
@@ -440,8 +440,8 @@ ${taskList}`
 找不到 ID 为 \`${id}\` 的任务。`
       }
     }
-    if ((t as any).error) {
-      return { type: 'text', value: `❌ ${(t as any).error}` }
+    if ((t as Record<string, unknown>).error) {
+      return { type: 'text', value: `❌ ${(t as Record<string, unknown>).error}` }
     }
     return {
       type: 'text',
@@ -472,8 +472,8 @@ ${taskList}`
 找不到 ID 为 \`${id}\` 的任务。`
       }
     }
-    if ((t as any).error) {
-      return { type: 'text', value: `❌ ${(t as any).error}` }
+    if ((t as Record<string, unknown>).error) {
+      return { type: 'text', value: `❌ ${(t as Record<string, unknown>).error}` }
     }
     return {
       type: 'text',

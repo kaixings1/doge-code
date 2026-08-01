@@ -4,6 +4,7 @@ import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import react from '@vitejs/plugin-react'
 
 const projectRoot = path.resolve(__dirname, '.')
+const repoRoot = path.resolve(projectRoot, '..')
 const mainEntry = path.resolve(projectRoot, 'desktop', 'src', 'main', 'index.ts')
 const entrypointPath = path.resolve(projectRoot, 'desktop', 'src', 'main', 'entrypoint.ts')
 
@@ -27,7 +28,27 @@ function jsToTsResolver() {
 }
 
 function resolveJsToTs(source: string, importer?: string) {
-  if (typeof source !== 'string' || !source.endsWith('.js')) return null
+  if (typeof source !== 'string') return null
+
+  // 处理以 src/ 开头的导入（从 repo 根目录解析，回退到 projectRoot）
+  if (source.startsWith('src/')) {
+    const searchRoots = [repoRoot, projectRoot]
+    for (const root of searchRoots) {
+      // 直接尝试源路径
+      const direct = path.resolve(root, source)
+      if (fs.existsSync(direct)) return { id: direct }
+      // 如果是 .js 导入，尝试 .ts/.tsx
+      if (source.endsWith('.js')) {
+        for (const repl of ['.ts', '.tsx']) {
+          const p = direct.slice(0, -3) + repl
+          if (fs.existsSync(p)) return { id: p }
+        }
+      }
+    }
+    return null
+  }
+
+  if (!source.endsWith('.js')) return null
   // 跳过 node_modules 内部的导入
   if (importer && importer.includes('node_modules')) return null
   // 只有以 '.'、'/'、'src/' 开头的 .js 导入才是项目内文件
@@ -73,15 +94,19 @@ function markdownTextPlugin() {
   }
 }
 
+
 export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin(), jsToTsResolver(), markdownTextPlugin()],
+    ssr: {
+      external: ['electron', 'electron-store', 'node-pty', 'turndown', '@mixmark-io/domino', 'he', 'highlight.js', 'cli-highlight', 'node-forge', 'better-sqlite3'],
+    },
     build: {
       outDir: 'dist/main',
       rollupOptions: {
         input: { index: './src/main/entrypoint.ts' },
         output: { format: 'es', entryFileNames: '[name].mjs' },
-        external: ['electron', 'electron-store', 'node-pty'],
+        external: ['electron', 'electron-store', 'node-pty', 'turndown', '@mixmark-io/domino', 'he', 'highlight.js', 'cli-highlight', 'node-forge', 'better-sqlite3'],
       },
     },
     resolve: {

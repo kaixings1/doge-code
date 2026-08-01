@@ -30,19 +30,19 @@ const fork = {
         }
 
         try {
-          const toolUseContext = context as any
-          const result = await (m.AgentTool as any).call(
+          const toolUseContext = context as Record<string, unknown>
+          const result = await (m.AgentTool as Record<string, unknown>).call(
             {
               prompt,
               description: prompt.length > 50 ? prompt.slice(0, 50) + '…' : prompt,
             },
             toolUseContext,
-            async (_name: string, _input: any) => true,
+            async (_name: string, _input: unknown) => true,
             undefined,
           )
 
           if (result && typeof result === 'object' && 'data' in result) {
-            const data = result.data as any
+            const data = result.data as Record<string, unknown>
             if (data.status === 'async_launched') {
               return {
                 type: 'text',

@@ -8,6 +8,13 @@ import { MessageResponse } from '../MessageResponse.js';
 
 const MAX_API_ERROR_CHARS = 1000;
 
+function isTimeoutError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false
+  const err = error as { name?: string; message?: string }
+  return err.name === 'APIConnectionTimeoutError' ||
+    (err.message && String(err.message).toLowerCase().includes('timeout'))
+}
+
 type Props = {
   message: SystemAPIErrorMessageType;
   verbose: boolean;
@@ -48,10 +55,7 @@ export function SystemAPIErrorMessage({ message, verbose }: Props) {
   const displayText = truncated ? formatted.slice(0, MAX_API_ERROR_CHARS) + '\u2026' : formatted;
   const secLabel = retryInSecondsLive === 1 ? '秒' : '秒';
   // DOGE: 检测是否为超时错误，显示更具体的提示
-  const isTimeout = error && (
-    (error as any).name === 'APIConnectionTimeoutError' ||
-    ((error as any).message && String((error as any).message).toLowerCase().includes('timeout'))
-  )
+  const isTimeout = isTimeoutError(error)
   const timeoutHint = process.env.API_TIMEOUT_MS
     ? ` · API_TIMEOUT_MS=${process.env.API_TIMEOUT_MS}ms${isTimeout ? '（当前值可能过小）' : '，可以尝试增加'}`
     : isTimeout

@@ -48,18 +48,23 @@ const readStoredToken = memoize((): string | undefined => {
   if (envToken) {
     return envToken
   }
-  return getSecureStorage().read()?.trustedDeviceToken
-})
+  const data = getSecureStorage().read()
+  const token = data?.trustedDeviceToken
+  if (typeof token === 'string') {
+    return token
+  }
+  return
+}, () => 'trustedDeviceToken')
 
 export function getTrustedDeviceToken(): string | undefined {
   if (!isGateEnabled()) {
-    return undefined
+    return
   }
   return readStoredToken()
 }
 
 export function clearTrustedDeviceTokenCache(): void {
-  readStoredToken.cache?.clear?.()
+  ;(readStoredToken as { cache?: { clear?: () => void } }).cache?.clear?.()
 }
 
 /**
@@ -83,7 +88,7 @@ export function clearTrustedDeviceToken(): void {
   } catch {
     // Best-effort — don't block login if storage is inaccessible
   }
-  readStoredToken.cache?.clear?.()
+  ;(readStoredToken as { cache?: { clear?: () => void } }).cache?.clear?.()
 }
 
 /**
@@ -118,10 +123,10 @@ export async function enrollTrustedDevice(): Promise<void> {
     // Lazy require — utils/auth.ts transitively pulls ~1300 modules
     // (config → file → permissions → sessionStorage → commands). Daemon callers
     // of getTrustedDeviceToken() don't need this; only /login does.
-     
+
     const { getClaudeAIOAuthTokens } =
       require('../utils/auth.js') as typeof import('../utils/auth.js')
-     
+
     const accessToken = getClaudeAIOAuthTokens()?.accessToken
     if (!accessToken) {
       logForDebugging('[trusted-device] 无 OAuth 令牌，跳过注册')
@@ -195,7 +200,7 @@ export async function enrollTrustedDevice(): Promise<void> {
         )
         return
       }
-      readStoredToken.cache?.clear?.()
+      ;(readStoredToken as { cache?: { clear?: () => void } }).cache?.clear?.()
       logForDebugging(
         `[trusted-device] Enrolled device_id=${response.data.device_id ?? 'unknown'}`,
       )

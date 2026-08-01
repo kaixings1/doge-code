@@ -50,6 +50,11 @@ function jsToTsResolverPlugin() {
     resolveId(source, importer) {
       if (source.startsWith('http') || source.startsWith('//')) return null
 
+      // Skip resolution for imports originating from within node_modules.
+      // Node modules should be bundled as-is (or excluded via external), not
+      // resolved to .ts/.tsx source files which may use browser-only APIs.
+      if (importer && importer.includes('node_modules' + path.sep)) return null
+
       // Determine search base
       let baseForSearch
       let hasExt = false
@@ -191,12 +196,12 @@ async function main() {
           format: 'es',
           entryFileNames: 'index.js',
         },
-        external: ['electron','node-pty','image-processor-napi','execa','npm-run-path','unicorn-magic','supports-hyperlinks','supports-color','has-flag','@anthropic-ai/sandbox-runtime',/^@aws-sdk\//,/^node:/,'path','path/win32','path/posix','fs','fs/promises','crypto','os','util','stream','stream/promises','events','buffer','process','child_process','http','http2','https','url','zlib','querystring','v8','async_hooks','net','tls','assert','dns','readline','tty','string_decoder','perf_hooks','diagnostics_channel','worker_threads','module'],
+        external: ['electron','node-pty','image-processor-napi','execa','npm-run-path','unicorn-magic','supports-hyperlinks','supports-color','has-flag','@anthropic-ai/sandbox-runtime','@mixmark-io/domino',/^@aws-sdk\//,/^node:/,'path','path/win32','path/posix','fs','fs/promises','crypto','os','util','stream','stream/promises','events','buffer','process','child_process','http','http2','https','url','zlib','querystring','v8','async_hooks','net','tls','assert','dns','readline','tty','string_decoder','perf_hooks','diagnostics_channel','worker_threads','module','turndown','he'],
       },
     },
     ssr: {
       target: 'node',
-      external: ['electron','node-pty','image-processor-napi','execa','npm-run-path','unicorn-magic','supports-hyperlinks','supports-color','has-flag','@anthropic-ai/sandbox-runtime',/^@aws-sdk\//,/^node:/,'path','path/win32','path/posix','fs','fs/promises','crypto','os','util','stream','stream/promises','events','buffer','process','child_process','http','http2','https','url','zlib','querystring','v8','async_hooks','net','tls','assert','dns','readline','tty','string_decoder','perf_hooks','diagnostics_channel','worker_threads','module'],
+      external: ['electron','node-pty','image-processor-napi','execa','npm-run-path','unicorn-magic','supports-hyperlinks','supports-color','has-flag','@anthropic-ai/sandbox-runtime','@mixmark-io/domino',/^@aws-sdk\//,/^node:/,'path','path/win32','path/posix','fs','fs/promises','crypto','os','util','stream','stream/promises','events','buffer','process','child_process','http','http2','https','url','zlib','querystring','v8','async_hooks','net','tls','assert','dns','readline','tty','string_decoder','perf_hooks','diagnostics_channel','worker_threads','module','turndown','he'],
     },
     plugins: [mdPlugin, jsResolverPlugin, nodeBuiltinsResolver],
     resolve: {

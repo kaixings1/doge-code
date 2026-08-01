@@ -609,11 +609,17 @@ function parseXmlThinking(text: string): string | null {
 function extractUsage(
   result: Anthropic.Beta.Messages.BetaMessage,
 ): ClassifierUsage {
+  const usage = result.usage ?? {
+    input_tokens: 0,
+    output_tokens: 0,
+    cache_read_input_tokens: 0,
+    cache_creation_input_tokens: 0,
+  }
   return {
-    inputTokens: result.usage.input_tokens,
-    outputTokens: result.usage.output_tokens,
-    cacheReadInputTokens: result.usage.cache_read_input_tokens ?? 0,
-    cacheCreationInputTokens: result.usage.cache_creation_input_tokens ?? 0,
+    inputTokens: usage.input_tokens,
+    outputTokens: usage.output_tokens,
+    cacheReadInputTokens: usage.cache_read_input_tokens ?? 0,
+    cacheCreationInputTokens: usage.cache_creation_input_tokens ?? 0,
   }
 }
 
@@ -1165,11 +1171,17 @@ export async function classifyYoloAction(
     const stage1MsgId = result.id
 
     // Extract usage for overhead telemetry
+    const rawUsage = result.usage ?? {
+      input_tokens: 0,
+      output_tokens: 0,
+      cache_read_input_tokens: 0,
+      cache_creation_input_tokens: 0,
+    }
     const usage = {
-      inputTokens: result.usage.input_tokens,
-      outputTokens: result.usage.output_tokens,
-      cacheReadInputTokens: result.usage.cache_read_input_tokens ?? 0,
-      cacheCreationInputTokens: result.usage.cache_creation_input_tokens ?? 0,
+      inputTokens: rawUsage.input_tokens,
+      outputTokens: rawUsage.output_tokens,
+      cacheReadInputTokens: rawUsage.cache_read_input_tokens ?? 0,
+      cacheCreationInputTokens: rawUsage.cache_creation_input_tokens ?? 0,
     }
     // Actual total input tokens the classifier API consumed (uncached + cache)
     const classifierInputTokens =

@@ -20,6 +20,8 @@ export interface RequestParams {
   provider?: "anthropic" | "openai" | "google" | "azure" | "bedrock" | "vertexai" | "copilot" | "groq" | "openrouter" | "local" | "xai";
   temperature?: number;
   stream?: boolean;
+  /** 预测性 AI 助手：当前文件的静态分析建议 */
+  preAnalysis?: Array<{ type: string; message: string; line?: number }>;
 }
 
 export interface APIRequest {
@@ -65,6 +67,14 @@ export class RequestBuilder {
       params.messages.map((m) => ({ ...m, role: m.role === "tool" ? "tool" : m.role })),
       provider,
     );
+
+    // Phase 2: 注入 preAnalysis 建议到 system prompt
+    let systemPrompt = params.system
+    if (params.preAnalysis && params.preAnalysis.length > 0) {
+      const suggestions = params.preAnalysis.map(s => `[${s.type}] L${s.line ?? '?'}: ${s.message}`).join('\n')
+      systemPrompt = `${params.system}\n\n[预测性建议]\n${suggestions}\n`
+    }
+
     const modelParams = {
       model: params.model,
       max_tokens: params.maxTokens,
@@ -75,18 +85,15 @@ export class RequestBuilder {
     if (provider === "anthropic") {
       return {
         provider,
-        system: params.system,
+        system: systemPrompt,
         messages,
         tools: params.tools,
         ...modelParams,
       };
     }
-    // 非 Anthropic provider（OpenAI, Google, Azure, Bedrock, Gemini, Groq, OpenRouter, 等）
-    // 统一使用 OpenAI-compatible 请求格式（system role in messages + function tools）
-    // 各 provider 可通过 extra 字段注入额外参数（如 reasoning params、deployment name）
     return {
       provider,
-      messages: [{ role: "system", content: params.system }, ...messages],
+      messages: [{ role: "system", content: systemPrompt }, ...messages],
       tools: this.convertToolsForOpenAI(params.tools),
       ...modelParams,
     };

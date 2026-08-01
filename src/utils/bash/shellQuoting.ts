@@ -86,6 +86,20 @@ export function hasStdinRedirect(command: string): boolean {
 }
 
 /**
+ * Detects if a command contains nested quotes (quotes inside quotes).
+ * Commands like `cmd /c "echo 'hello'"` or `node -e 'console.log("hi")'`
+ * have nested quotes that break when wrapped in single quotes by quoteShellCommand.
+ */
+function hasNestedQuotes(command: string): boolean {
+  // Match double-quoted string containing single quote: "content with 'inside"
+  const doubleWithSingle = /"[^"]*'[^"]*"/
+  // Match single-quoted string containing double quote: 'content with "inside'
+  const singleWithDouble = /'[^']*"[^']*'/
+
+  return doubleWithSingle.test(command) || singleWithDouble.test(command)
+}
+
+/**
  * Checks if stdin redirect should be added to a command
  * @param command The command to check
  * @returns true if stdin redirect can be safely added
@@ -98,6 +112,13 @@ export function shouldAddStdinRedirect(command: string): boolean {
 
   // Don't add stdin redirect if command already has one
   if (hasStdinRedirect(command)) {
+    return false
+  }
+
+  // Don't add stdin redirect for commands with nested quotes.
+  // Wrapping in single quotes would turn inner quotes into literal characters,
+  // breaking commands like: node -e 'console.log("hi")' or cmd /c "echo 'done'"
+  if (hasNestedQuotes(command)) {
     return false
   }
 

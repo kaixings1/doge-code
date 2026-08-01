@@ -58,6 +58,8 @@ export interface MessageLoopDeps {
   onEvent?: (event: AgentEvent) => void;
   /** 自动压缩器：在 token 预算接近上限时触发会话压缩 */
   autoCompactor?: AutoCompactor;
+  /** 预测性 AI 助手：当前文件的静态分析建议 */
+  preAnalysis?: Array<{ type: string; message: string; line?: number }>;
 }
 
 export class MessageLoop {
@@ -139,6 +141,7 @@ export class MessageLoop {
       model: this.deps.model,
       maxTokens: this.deps.maxOutputTokens,
       provider: this.deps.provider,
+      preAnalysis: this.deps.preAnalysis,
     });
 
     engineLog('REQ', JSON.stringify(request, null, 2).slice(0, 5000));
@@ -147,7 +150,9 @@ export class MessageLoop {
     const processed = await this.deps.responseHandler.handle(stream as AsyncIterable<{ type: string; [k: string]: unknown }>);
 
     // 记录真实 API token 使用量用于成本追踪
-    this.deps.tokenBudget.recordUsage(processed.usage.inputTokens, processed.usage.outputTokens);
+    if (processed.usage) {
+      this.deps.tokenBudget.recordUsage(processed.usage.inputTokens, processed.usage.outputTokens);
+    }
 
     engineLog('RESP', JSON.stringify(processed, null, 2).slice(0, 10000));
 

@@ -12,7 +12,7 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react'
 
-export type WorkflowMode = 'chat' | 'edit' | 'review' | 'debug'
+export type WorkflowMode = 'chat' | 'edit' | 'review' | 'debug' | 'project'
 
 export interface WorkflowModeState {
   mode: WorkflowMode
@@ -34,6 +34,7 @@ export function useWorkflowMode(
   selectedFile: string | null,
   gitChangesCount: number,
   hasDebugSession: boolean,
+  todoCount: number = 0,
 ): WorkflowModeState {
   const [mode, setModeState] = useState<WorkflowMode>('chat')
   const [reason, setReason] = useState<string | undefined>(undefined)
@@ -68,6 +69,14 @@ export function useWorkflowMode(
       setMode('chat')
     }
   }, [selectedFile, gitChangesCount, setMode, locked])
+
+  // 检测 TODO/任务描述 → 项目管理模式
+  useEffect(() => {
+    if (locked) return
+    if (todoCount > 0 && mode !== 'edit' && mode !== 'debug') {
+      setMode('project', `检测到 ${todoCount} 个 TODO/任务标记，自动进入项目管理模式`)
+    }
+  }, [todoCount, mode, setMode, locked])
 
   // 如果有活跃的 debug session，自动切换到 debug 模式
   useEffect(() => {

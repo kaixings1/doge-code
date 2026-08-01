@@ -6,12 +6,14 @@
  * The npm semver fallback always uses { loose: true }.
  */
 
+import { createRequire } from 'node:module'
+
+const _require = createRequire(import.meta.url)
 let _npmSemver: typeof import('semver') | undefined
 
 function getNpmSemver(): typeof import('semver') {
   if (!_npmSemver) {
-     
-    _npmSemver = require('semver') as typeof import('semver')
+    _npmSemver = _require('semver') as typeof import('semver')
   }
   return _npmSemver
 }

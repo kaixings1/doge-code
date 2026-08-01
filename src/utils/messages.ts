@@ -346,7 +346,9 @@ export function hasToolCallsInLastAssistantTurn(messages: Message[]): boolean {
       const assistantMessage = message as AssistantMessage
       const content = assistantMessage.message.content
       if (Array.isArray(content)) {
-        return content.some(block => block.type === 'tool_use')
+        return content.some(
+          block => (block as ContentBlock).type === 'tool_use',
+        )
       }
     }
   }
@@ -363,6 +365,7 @@ function baseCreateAssistantMessage({
   usage = {
     input_tokens: 0,
     output_tokens: 0,
+    output_tokens_details: null,
     cache_creation_input_tokens: 0,
     cache_read_input_tokens: 0,
     server_tool_use: { web_search_requests: 0, web_fetch_requests: 0 },
@@ -504,7 +507,7 @@ export function createUserMessage({
     type: 'user',
     message: {
       role: 'user',
-      content: content || NO_CONTENT_MESSAGE, // 确保不发送空消息
+      content: (content || NO_CONTENT_MESSAGE) as UserMessage['message']['content'],
     },
     isMeta,
     isVisibleInTranscriptOnly,
@@ -695,27 +698,29 @@ export function isNotEmptyMessage(message: Message): boolean {
     return true
   }
 
-  if (typeof message.message.content === 'string') {
-    return message.message.content.trim().length > 0
+  const msg = message as UserMessage | AssistantMessage
+  const content = msg.message && msg.message.content != null ? msg.message.content : null
+  if (typeof content === 'string') {
+    return content.trim().length > 0
   }
 
-  if (message.message.content.length === 0) {
+  if (!Array.isArray(content) || content.length === 0) {
     return false
   }
 
-  // 暂时跳过包含多个块的消息
-  if (message.message.content.length > 1) {
+  if (content.length > 1) {
     return true
   }
 
-  if (message.message.content[0]!.type !== 'text') {
+  const first = content[0] as { type?: string; text?: string } | undefined
+  if (!first || first.type !== 'text') {
     return true
   }
 
   return (
-    message.message.content[0]!.text.trim().length > 0 &&
-    message.message.content[0]!.text !== NO_CONTENT_MESSAGE &&
-    message.message.content[0]!.text !== INTERRUPT_MESSAGE_FOR_TOOL_USE
+    (first.text ?? '').trim().length > 0 &&
+    first.text !== NO_CONTENT_MESSAGE &&
+    first.text !== INTERRUPT_MESSAGE_FOR_TOOL_USE
   )
 }
 
@@ -749,8 +754,15 @@ export function normalizeMessages(messages: Message[]): NormalizedMessage[] {
   return messages.flatMap(message => {
     switch (message.type) {
       case 'assistant': {
-        isNewChain = isNewChain || message.message.content.length > 1
-        return message.message.content.map((_, index) => {
+        const assistantContent = message.message.content as AssistantMessageContent
+        const contentBlocks = Array.isArray(assistantContent)
+          ? assistantContent
+          : [assistantContent].filter(
+              (c): c is ContentBlock =>
+                typeof c === 'object' && c !== null && 'type' in c,
+            )
+        isNewChain = isNewChain || contentBlocks.length > 1
+        return contentBlocks.map((_, index) => {
           const uuid = isNewChain
             ? deriveUUID(message.uuid, index)
             : message.uuid
@@ -760,7 +772,7 @@ export function normalizeMessages(messages: Message[]): NormalizedMessage[] {
             message: {
               ...message.message,
               content: [_],
-              context_management: message.message.context_management ?? null,
+              context_management: (message.message as { context_management?: unknown }).context_management ?? null,
             },
             isMeta: message.isMeta,
             isVirtual: message.isVirtual,
@@ -804,7 +816,7 @@ export function normalizeMessages(messages: Message[]): NormalizedMessage[] {
           if (isImage) imageIndex++
           return {
             ...createUserMessage({
-              content: [_],
+              content: [_] as ContentBlockParam[],
               toolUseResult: message.toolUseResult,
               mcpMeta: message.mcpMeta,
               isMeta: message.isMeta,
@@ -823,7 +835,7 @@ export function normalizeMessages(messages: Message[]): NormalizedMessage[] {
 }
 
 type ToolUseRequestMessage = NormalizedAssistantMessage & {
-  message: { content: [ToolUseBlock] }
+  message: { content: [ToolUseBlockParam] }
 }
 
 export function isToolUseRequestMessage(
@@ -831,8 +843,11 @@ export function isToolUseRequestMessage(
 ): message is ToolUseRequestMessage {
   return (
     message.type === 'assistant' &&
+    Array.isArray(message.message.content) &&
     // 注意：stop_reason === 'tool_use' 不可靠 —— 它并不总是正确设置
-    message.message.content.some(_ => _.type === 'tool_use')
+    message.message.content.some(
+      block => (block as ContentBlock).type === 'tool_use',
+    )
   )
 }
 
@@ -846,7 +861,7 @@ export function isToolUseResultMessage(
   return (
     message.type === 'user' &&
     ((Array.isArray(message.message.content) &&
-      message.message.content[0]?.type === 'tool_result') ||
+      (message.message.content[0] as { type?: string } | undefined)?.type === 'tool_result') ||
       Boolean(message.toolUseResult))
   )
 }
@@ -1027,17 +1042,19 @@ export function reorderMessagesInUI(
 
 function isHookAttachmentMessage(
   message: Message,
-): message is AttachmentMessage<HookAttachment> {
+): message is AttachmentMessage & { attachment: HookAttachment } {
+  const attachment = message.attachment as HookAttachment | undefined
   return (
     message.type === 'attachment' &&
-    (message.attachment.type === 'hook_blocking_error' ||
-      message.attachment.type === 'hook_cancelled' ||
-      message.attachment.type === 'hook_error_during_execution' ||
-      message.attachment.type === 'hook_non_blocking_error' ||
-      message.attachment.type === 'hook_success' ||
-      message.attachment.type === 'hook_system_message' ||
-      message.attachment.type === 'hook_additional_context' ||
-      message.attachment.type === 'hook_stopped_continuation')
+    attachment != null &&
+    (attachment.type === 'hook_blocking_error' ||
+      attachment.type === 'hook_cancelled' ||
+      attachment.type === 'hook_error_during_execution' ||
+      attachment.type === 'hook_non_blocking_error' ||
+      attachment.type === 'hook_success' ||
+      attachment.type === 'hook_system_message' ||
+      attachment.type === 'hook_additional_context' ||
+      attachment.type === 'hook_stopped_continuation')
   )
 }
 
@@ -5507,3 +5524,15 @@ export function wrapCommandText(
       return `用户在你工作时发送了一条新消息：\n${raw}\n\n重要：完成当前任务后，你必须处理上述用户消息。不得忽略。`
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+

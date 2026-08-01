@@ -317,6 +317,7 @@ export async function countTokensViaHaikuFallback(
   })
 
   const usage = response.usage
+  if (!usage) return 0
   const inputTokens = usage.input_tokens
   const cacheCreationTokens = usage.cache_creation_input_tokens || 0
   const cacheReadTokens = usage.cache_read_input_tokens || 0

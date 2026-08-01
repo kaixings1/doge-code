@@ -33,6 +33,8 @@ export interface EngineOptions {
   provider?: "anthropic" | "openai";
   /** Agent 事件回调，用于 UI 层订阅循环状态变化 */
   onEvent?: (event: import("./messageLoop.ts").AgentEvent) => void;
+  /** 预测性 AI 助手：当前文件的静态分析建议 */
+  preAnalysis?: Array<{ type: string; message: string; line?: number }>;
 }
 
 /**
@@ -56,6 +58,7 @@ export class QueryEngine {
   readonly retryHandler = new RetryHandler();
   readonly subAgentManager = new SubAgentManager();
   readonly recovery: ErrorRecovery;
+  private _preAnalysis: Array<{ type: string; message: string; line?: number }>;
   readonly conversation: Conversation;
   private abortController: AbortController = new AbortController();
 
@@ -131,6 +134,7 @@ export class QueryEngine {
 
     this.recovery = new ErrorRecovery(this.stateMachine, this.retryHandler, this.autoCompactor);
     this.conversation = this._conversation;
+    this._preAnalysis = opts.preAnalysis;
 
     // 将内部工具注册表转换为请求构建器所需的 ToolDefinition 格式
     this._toolDefinitions = Array.from(registry.values()).map((t) => ({
@@ -158,6 +162,7 @@ export class QueryEngine {
       provider: opts.provider ?? "openai",
       onEvent: opts.onEvent,
       autoCompactor: this.autoCompactor,
+      preAnalysis: this._preAnalysis,
     };
     this.messageLoop = new MessageLoop(deps);
 
@@ -187,7 +192,7 @@ export class QueryEngine {
         agentDefinitions: [],
       },
       abortController,
-      getAppState: () => ({ toolPermissionContext: {} as any }),
+      getAppState: () => ({ toolPermissionContext: {} as Record<string, unknown> }),
       setAppState: () => {},
       setInProgressToolUseIDs: () => {},
       setResponseLength: () => 0,
@@ -202,8 +207,8 @@ export class QueryEngine {
     const baseTools = getAllBaseTools();
     // 复用最小上下文和始终允许的 canUseTool
     const ctx = QueryEngine.buildMinimalContext();
-    const canUseTool = (async (_tool: any, _input: any, _ctx: any, _msg: any, _id: any) => ({ behavior: 'allow', updatedInput: {} as any })) as any;
-    const parentMessage = { role: 'user', content: '' } as any;
+    const canUseTool = (async (_tool: unknown, _input: unknown, _ctx: unknown, _msg: unknown, _id: unknown) => ({ behavior: 'allow', updatedInput: {} as Record<string, unknown> })) as (tool: unknown, input: unknown, ctx: unknown, msg: unknown, id: unknown) => Promise<{ behavior: string; updatedInput: Record<string, unknown> }>;
+    const parentMessage = { role: 'user', content: '' } as Record<string, unknown>;
 
     for (const tool of baseTools) {
       if (!tool || !tool.name) continue;
@@ -219,8 +224,8 @@ export class QueryEngine {
           try {
             // 调用真实工具的 call() 方法获取完整执行结果
             const result = await tool.call(
-              params as any,
-              ctx as any,
+              params as Record<string, unknown>,
+              ctx as Record<string, unknown>,
               canUseTool,
               parentMessage,
             );
@@ -276,6 +281,14 @@ export class QueryEngine {
 
   getTools(): ToolDefinition[] {
     return this._toolDefinitions;
+  }
+
+  /**
+   * 注入预测性 AI 助手的静态分析结果
+   * 由主进程在发送消息前设置，注入到 system prompt
+   */
+  setPreAnalysis(preAnalysis: Array<{ type: string; message: string; line?: number }>): void {
+    this._preAnalysis = preAnalysis;
   }
 
   /**

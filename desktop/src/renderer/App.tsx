@@ -26,6 +26,7 @@ import { ToolResultRenderer } from './components/MarkdownRenderer.js'
 import { VirtualMessageList } from './components/VirtualMessageList.js'
 import TerminalPanel from './TerminalPanel.js'
 import { AgentPanel } from './components/AgentPanel.js'
+import { OperationHistory, type OperationEntry } from './components/OperationHistory.js'
 import { PluginPanel } from './components/PluginPanel.js'
 import { DatabaseBrowser } from './components/DatabaseBrowser.js'
 import { ApiTestPanel } from './components/ApiTestPanel.js'
@@ -83,8 +84,8 @@ import { useDesktopVimInput, type VimMode } from '../hooks/useDesktopVimInput.js
 import { useCommandHistory } from './hooks/useCommandHistory.js'
 import { useTabManager } from './hooks/useTabManager.js'
 
-/** 包装 TerminalPanel，注入 window.dogeAPI */
-function TerminalPanelWrapper({ cwd, onClose }: { cwd: string; onClose: () => void }) {
+/** 包装 TerminalPanel，注入 window.dogeAPI + 命令历史 */
+function TerminalPanelWrapper({ cwd, onClose, cmdHistory }: { cwd: string; onClose: () => void; cmdHistory: ReturnType<typeof useCommandHistory> }) {
   return (
     <div style={{ position: 'relative' }}>
       <button
@@ -95,7 +96,7 @@ function TerminalPanelWrapper({ cwd, onClose }: { cwd: string; onClose: () => vo
         }}
         title="关闭终端"
       >✕</button>
-      <TerminalPanel cwd={cwd} dogeAPI={window.dogeAPI as any} />
+      <TerminalPanel cwd={cwd} dogeAPI={window.dogeAPI as any} cmdHistory={cmdHistory} />
     </div>
   )
 }
@@ -301,6 +302,8 @@ export function App(): JSX.Element {
   const [showGitMerge, setShowGitMerge] = useState(false)
   const [showGitBranch, setShowGitBranch] = useState(false)
   const [showTestRunner, setShowTestRunner] = useState(false)
+  const [showOperationHistory, setShowOperationHistory] = useState(false)
+  const [operations, setOperations] = useState<OperationEntry[]>([])
   const [showLogViewer, setShowLogViewer] = useState(false)
   const [cursorOffset, setCursorOffset] = useState(0)
   const [vimEnabled, setVimEnabled] = useState(false)
@@ -341,13 +344,20 @@ export function App(): JSX.Element {
   const [gitChangesCount, setGitChangesCount] = useState(0)
   const [dismissedSuggestions, setDismissedSuggestions] = useState<Set<string>>(new Set())
   const [dismissedSmartImports, setDismissedSmartImports] = useState<Set<string>>(new Set())
-  const workflowMode = useWorkflowMode(selectedFile, gitChangesCount, showDebuggerPanel)
-
-  // ─── AI 工作流自动化 Hook ───
-  const wf = useWorkflowAutomation(selectedFile || '')
 
   // ─── LSP Hook ───
   const lsp = useLsp()
+
+  // ─── 预测性 AI 助手：静态分析 Hook ───
+  const preAnalysis = usePreAnalysis(
+    activePreviewFile?.content || '',
+    { extension: activePreviewFile?.path?.split('.').pop() || '', enabled: !!activePreviewFile }
+  )
+  const todoCount = preAnalysis.filter(s => s.type === 'todo').length
+  const workflowMode = useWorkflowMode(selectedFile, gitChangesCount, showDebuggerPanel, todoCount)
+
+  // ─── AI 工作流自动化 Hook ───
+  const wf = useWorkflowAutomation(selectedFile || '')
 
   // ─── 调用链分析 Hook ───
   const callChain = useCallChain({
@@ -357,12 +367,6 @@ export function App(): JSX.Element {
     fetchDefinition: lsp.definition,
     enabled: !!activePreviewFile,
   })
-
-  // ─── 预测性 AI 助手：静态分析 Hook ───
-  const preAnalysis = usePreAnalysis(
-    activePreviewFile?.content || '',
-    { extension: activePreviewFile?.path?.split('.').pop() || '', enabled: !!activePreviewFile }
-  )
 
   // ─── 智能导入建议 Hook ───
   const smartImports = useSmartImport({
@@ -408,6 +412,17 @@ export function App(): JSX.Element {
         setShowSecurityAudit(false)
         setShowPerformanceRefactor(false)
         break
+      case 'project':
+        // 项目管理模式: 打开 Kanban + TimeTracker
+        setShowKanban(true)
+        setShowTimeTracker(true)
+        setShowMonacoPanel(false)
+        setShowCodeReview(false)
+        setShowDebuggerPanel(false)
+        setShowLspPanel(false)
+        setShowSecurityAudit(false)
+        setShowPerformanceRefactor(false)
+        break
       case 'chat':
       default:
         // 对话模式: 关闭所有专业面板, 保持终端状态
@@ -417,6 +432,8 @@ export function App(): JSX.Element {
         setShowLspPanel(false)
         setShowSecurityAudit(false)
         setShowPerformanceRefactor(false)
+        setShowKanban(false)
+        setShowTimeTracker(false)
         break
     }
   }, [workflowMode.mode, workflowMode.locked, activePreviewFile])
@@ -1151,11 +1168,11 @@ export function App(): JSX.Element {
           text,
           images: pendingImages.map(img => ({ type: 'image', url: img.url })),
         }
-        result = await window.dogeAPI.sendMessage(JSON.stringify(payload))
+        result = await window.dogeAPI.sendMessage(JSON.stringify(payload), preAnalysis)
         setPendingImages([])
       } else {
         // 纯文本消息
-        result = await window.dogeAPI.sendMessage(text)
+        result = await window.dogeAPI.sendMessage(text, preAnalysis)
       }
       tsLog('RENDERER', 'sendMessage returned, result:', JSON.stringify(result))
     } catch (e) {
@@ -1214,6 +1231,29 @@ export function App(): JSX.Element {
   }, [input, state, persistActiveTabMessages, isOnline, showToast, autoSpeak, pendingImages])
 
   const handleAbort = useCallback(async () => { await window.dogeAPI.abort(); setCurrentStreaming(''); setIsSending(false) }, [])
+
+  // ─── 操作历史（回滚） ───
+  const loadOperations = useCallback(async () => {
+    try {
+      const ops = await window.dogeAPI.getToolOperations?.()
+      if (Array.isArray(ops)) setOperations(ops)
+    } catch { /* 忽略 */ }
+  }, [])
+
+  const handleRollback = useCallback(async (toolUseId: string) => {
+    try {
+      const res = await window.dogeAPI.rollbackTool(toolUseId)
+      if (res.success) {
+        showToast(`已回滚 ${res.restored.length} 个文件`, 'success')
+        setOperations(prev => prev.map(op => op.toolUseId === toolUseId ? { ...op, rolledBack: true } : op))
+      } else {
+        showToast(`回滚失败: ${res.error}`, 'error')
+      }
+    } catch (e) {
+      showToast(`回滚失败: ${e instanceof Error ? e.message : '未知错误'}`, 'error')
+    }
+  }, [showToast])
+
   const handleClear = useCallback(async () => {
     await window.dogeAPI.clearHistory()
     setMessages([])
@@ -1992,7 +2032,7 @@ export function App(): JSX.Element {
           </div>
 
           {terminalVisible && (
-            <TerminalPanelWrapper cwd={workingDir} onClose={() => setTerminalVisible(false)} />
+            <TerminalPanelWrapper cwd={workingDir} onClose={() => setTerminalVisible(false)} cmdHistory={cmdHistory} />
           )}
 
           {previewTabs.length > 0 && (
@@ -2152,6 +2192,7 @@ export function App(): JSX.Element {
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showSecurityAudit ? c.accent : c.textMuted }} onClick={() => setShowSecurityAudit(p => !p)}>🛡️ 安全</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showPerformanceRefactor ? c.accent : c.textMuted }} onClick={() => setShowPerformanceRefactor(p => !p)}>⚡ 重构</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showWorkflowPanel ? c.accent : c.textMuted }} onClick={() => setShowWorkflowPanel(p => !p)}>⚙️ 工作流</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showOperationHistory ? c.accent : c.textMuted }} onClick={() => { setShowOperationHistory(p => !p); if (!showOperationHistory) { loadOperations() } }}>📜 历史</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: c.accent }} onClick={() => { setShowMcpPanel(p => !p); if (!showMcpPanel) { refreshMcpServers(); refreshAgents() } }}>{showMcpPanel ? '收起 MCP' : 'MCP 管理'}</span>
             </div>
           </div>
@@ -2454,6 +2495,16 @@ export function App(): JSX.Element {
             onCancelBatch={(batchId) => wf.cancelBatch(batchId)}
             onDelete={wf.deleteWorkflow}
           />
+        )}
+        {showOperationHistory && (
+          <div style={{ position: 'fixed', top: 60, right: 20, width: 480, height: '75%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+            <OperationHistory
+              operations={operations}
+              onRollback={handleRollback}
+              onClear={() => setOperations([])}
+              theme={theme}
+            />
+          </div>
         )}
         {showShortcuts && (
           <div style={{ position: 'fixed', inset: 0, zIndex: 9998, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowShortcuts(false)}>

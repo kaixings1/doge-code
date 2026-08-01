@@ -596,6 +596,7 @@ export function buildSchemaNotSentHint(
   )
 }
 
+
 async function checkPermissionsAndCallTool(
   tool: Tool,
   toolUseID: string,
@@ -613,6 +614,7 @@ async function checkPermissionsAndCallTool(
 ): Promise<MessageUpdateLazy[]> {
   // Validate input types with zod (surprisingly, the model is not great at generating valid input)
   const parsedInput = tool.inputSchema.safeParse(input)
+
   if (!parsedInput.success) {
     let errorContent = formatZodValidationError(tool.name, parsedInput.error)
 

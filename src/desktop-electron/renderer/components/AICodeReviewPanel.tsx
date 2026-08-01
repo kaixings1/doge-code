@@ -195,7 +195,7 @@ export function AICodeReviewPanel({
       if (reviewResult?.success && reviewResult.result) {
         const newResult: ReviewResult = {
           score: reviewResult.result.score,
-          findings: (reviewResult.result.findings || []) as any[],
+          findings: (reviewResult.result.findings || []) as unknown[],
           timestamp: Date.now(),
           duration: reviewResult.result.duration || 0,
         }

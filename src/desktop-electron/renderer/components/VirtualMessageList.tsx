@@ -7,6 +7,10 @@ import { ToolResultRenderer } from './MarkdownRenderer.js'
 import { ToolErrorBanner } from './ToolErrorBanner.js'
 import { ToolProgressBar, type ProgressStatus } from './ToolProgressBar.js'
 
+function isRecord(obj: unknown): obj is Record<string, unknown> {
+  return obj != null && typeof obj === 'object'
+}
+
 interface Message {
   id: string
   role: 'user' | 'assistant' | 'system' | 'error' | 'tool'
@@ -647,10 +651,10 @@ function MessageItem({
                   fontFamily: "'Cascadia Code','Fira Code',monospace",
                   fontSize: '12px',
                 }}>
-                  <div style={{ color: COLORS.toolUseName, marginBottom: block.input && Object.keys(block.input).length > 0 ? '6px' : '0' }}>
+                  <div style={{ color: COLORS.toolUseName, marginBottom: isRecord(block.input) && Object.keys(block.input).length > 0 ? '6px' : '0' }}>
                     ● {block.name}
                   </div>
-                  {block.input && Object.keys(block.input).length > 0 && (
+                  {isRecord(block.input) && Object.keys(block.input).length > 0 && (
                     <div style={{
                       color: COLORS.toolUseArg,
                       fontSize: '11px',

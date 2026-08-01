@@ -161,10 +161,7 @@ export function parseFrontmatter(
     } catch (retryError) {
       // Still failed - log for debugging so users can diagnose broken frontmatter
       const location = sourcePath ? ` in ${sourcePath}` : ''
-      logForDebugging(
-        `Failed to parse YAML frontmatter${location}: ${retryError instanceof Error ? retryError.message : retryError}`,
-        { level: 'warn' },
-      )
+      logForDebugging(`Failed to parse YAML frontmatter${location}: ${retryError instanceof Error ? retryError.message : retryError}`,{ level: 'warn' },)
     }
   }
 
@@ -319,9 +316,7 @@ export function coerceDescriptionToString(
   const source = pluginName
     ? `${pluginName}:${componentName}`
     : (componentName ?? 'unknown')
-  logForDebugging(`Description invalid for ${source} - omitting`, {
-    level: 'warn',
-  })
+  //logForDebugging(`Description invalid for ${source} - omitting`, {   level: 'warn',  })
   return null
 }
 
@@ -362,9 +357,6 @@ export function parseShellFrontmatter(
   if ((FRONTMATTER_SHELLS as readonly string[]).includes(normalized)) {
     return normalized as FrontmatterShell
   }
-  logForDebugging(
-    `Frontmatter 'shell: ${value}' in ${source} is not recognized. Valid values: ${FRONTMATTER_SHELLS.join(', ')}. Falling back to bash.`,
-    { level: 'warn' },
-  )
+  //logForDebugging(`Frontmatter 'shell: ${value}' in ${source} is not recognized. Valid values: ${FRONTMATTER_SHELLS.join(', ')}. Falling back to bash.`,{ level: 'warn' },)
   return undefined
 }

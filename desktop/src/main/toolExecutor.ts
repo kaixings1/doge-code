@@ -9,6 +9,9 @@
 import * as path from 'path'
 import { pathToFileURL } from 'url'
 import * as fs from 'fs'
+import { createRequire } from 'node:module'
+
+const requireModule = createRequire(import.meta.url)
 import type { Tool, ToolUseContext } from '../../../src/Tool.js'
 import { getEmptyToolPermissionContext } from '../../../src/Tool.js'
 import { zodToJsonSchema } from '../../../src/utils/zodToJsonSchema.js'
@@ -131,7 +134,7 @@ export function createAdaptedTools(config: EngineConfig) {
 
   // 桌面端补充工具：SnipTool（裁剪历史上下文）
   try {
-    const { SnipTool: SnipToolCls } = require('../../../src/tools/SnipTool/SnipTool.js')
+    const { SnipTool: SnipToolCls } = requireModule('../../../src/tools/SnipTool/SnipTool.js')
     const snipInstance = SnipToolCls()
     adaptedTools.set('SnipTool', {
       name: 'SnipTool',
@@ -241,6 +244,31 @@ export function rollbackTool(toolUseId: string): string[] {
   }
   snapshotStore.delete(toolUseId)
   return restored
+}
+
+/** 获取所有操作历史（从 snapshotStore 导出） */
+export function getAllOperations(): Array<{ toolUseId: string; toolName: string; timestamp: number; files: string[]; hasSnapshot: boolean; rolledBack: boolean }> {
+  const ops: Array<{ toolUseId: string; toolName: string; timestamp: number; files: string[]; hasSnapshot: boolean; rolledBack: boolean }> = []
+  for (const [toolUseId, snapshots] of snapshotStore) {
+    const firstSnap = snapshots[0]
+    const hasBefore = snapshots.some(s => s.timestamp === firstSnap?.timestamp)
+    const files = Array.from(new Set(snapshots.map(s => s.path)))
+    ops.push({
+      toolUseId,
+      toolName: firstSnap ? extractToolName(toolUseId) : 'unknown',
+      timestamp: firstSnap?.timestamp ?? Date.now(),
+      files,
+      hasSnapshot: hasBefore,
+      rolledBack: !snapshotStore.has(toolUseId),
+    })
+  }
+  return ops.sort((a, b) => b.timestamp - a.timestamp)
+}
+
+function extractToolName(toolUseId: string): string {
+  // toolUseId format: tool_timestamp_random
+  // toolName is not stored directly in snapshotStore, return generic
+  return 'FileEdit'
 }
 
 /** 清理过期快照 */

@@ -127,7 +127,8 @@ function containsExcludedCommand(command: string): boolean {
 }
 
 export function shouldUseSandbox(input: Partial<SandboxInput>): boolean {
-  if (!SandboxManager.isSandboxingEnabled()) {
+  // 防御性检查：input 为空（渲染层传递非法/空工具输入）时直接跳过
+  if (!input || !SandboxManager.isSandboxingEnabled()) {
     return false
   }
 

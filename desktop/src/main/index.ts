@@ -5,6 +5,9 @@
 import { app, BrowserWindow, ipcMain, shell, Tray, Menu, nativeImage } from 'electron'
 import Store from 'electron-store'
 import * as path from 'path'
+import { createRequire } from 'node:module'
+
+const requireModule = createRequire(import.meta.url)
 import { pathToFileURL } from 'url'
 import * as fs from 'fs'
 import { scanFile as securityScanFile, scanDirectory as securityScanDirectory, SECURITY_RULES } from '../../../src/commands/security-audit/index.js'
@@ -22,7 +25,7 @@ import { scanPlugins, setPluginEnabled, installPlugin, uninstallPlugin, getPlugi
 import { getMarketplaces, installPluginFromMarketplace, type MarketplacePlugin } from './pluginMarketplace.js'
 import { createDesktopApiClient, type DesktopApiClient } from './apiClient.js'
 import { saveSession, listSessions, loadSession, deleteSession, updateSession, saveCrashRecovery, getCrashRecovery, clearCrashRecovery } from './sessionStore.js'
-import { createAdaptedTools, executeTool, resetAdaptedToolsCache } from './toolExecutor.js'
+import { createAdaptedTools, executeTool, resetAdaptedToolsCache, rollbackTool, getAllOperations } from './toolExecutor.js'
 import { getLspClientManager, type LspServerConfig, type LspDiagnostic } from './lspClientManager.js'
 
 let mainWindow: BrowserWindow | null = null
@@ -267,18 +270,18 @@ ipcMain.handle('doge:request-microphone-permission', async () => {
 })
 
 // 发送消息（使用 QueryEngine）
-ipcMain.handle('doge:send-message', async (_event, content: string) => {
-  tsLog('MAIN', 'doge:send-message called, content:', content?.slice(0, 100))
+ipcMain.handle('doge:send-message', async (_event, content: string, preAnalysis?: Array<{ type: string; message: string; line?: number }>) => {
   const currentEngine = getEngine()
   const config = engineConfig!
-  tsLog('MAIN', 'getEngine() returned, config:', { provider: config.provider, model: config.model, baseUrl: config.baseUrl })
 
   if (!config.apiKey) {
-    tsLog('MAIN', 'no apiKey configured')
     return { error: '未配置 API Key。请在 .doge/api.json 中配置。' }
   }
 
   try {
+    // 注入预测性 AI 建议
+    currentEngine.setPreAnalysis(preAnalysis)
+
     // 解析可能包含图片的 JSON 格式消息
     let queryText = content
     let images: Array<{ type: string; url: string }> = []
@@ -310,29 +313,8 @@ ipcMain.handle('doge:send-message', async (_event, content: string) => {
       engineInput = { text: queryText, images: formattedImages }
     }
 
-    tsLog('MAIN', 'calling currentEngine.query(), engineInput type:', typeof engineInput)
-    tsLog('MAIN', 'conversation messages count:', (currentEngine as unknown as { conversation: { messages: unknown[] } }).conversation.messages.length)
-    const msgs = (currentEngine as unknown as { conversation: { messages: { role: string; content: string }[] } }).conversation.messages
-    for (const m of msgs) {
-      tsLog('MAIN', 'history role:', m.role, 'content:', typeof m.content === 'string' ? m.content.slice(0, 60) : JSON.stringify(m.content).slice(0, 60))
-    }
-    const requestBuilder = (currentEngine as unknown as { requestBuilder: { build: (params: unknown) => Promise<{ messages: unknown[] }> } }).requestBuilder
-    const req = await requestBuilder.build({
-      messages: (currentEngine as unknown as { conversation: { messages: { role: string; content: string }[] } }).conversation.messages,
-      system: 'You are Doge Code, a helpful AI programming assistant.',
-      tools: currentEngine.getTools(),
-      model: config.model,
-      maxTokens: 40000,
-      provider: config.provider,
-    })
-    tsLog('MAIN', 'API request messages count:', (req as { messages: unknown[] }).messages.length)
     const result = await currentEngine.query(engineInput)
     const messages = result.messages as InternalMessage[]
-    tsLog('MAIN', 'query() returned, state:', result.state, 'messageCount:', messages.length)
-    tsLog('MAIN', 'all messages:')
-    for (const m of messages) {
-      tsLog('MAIN', 'role:', m.role, 'content:', typeof m.content === 'string' ? m.content.slice(0, 80) : JSON.stringify(m.content).slice(0, 80))
-    }
     // 自动保存会话
     if (!currentSessionId && messages.length > 0) {
       currentSessionId = saveSession(messages)
@@ -353,7 +335,6 @@ ipcMain.handle('doge:send-message', async (_event, content: string) => {
     } else {
       reply = ''
     }
-    tsLog('MAIN', 'returning reply, length:', reply.length, 'content:', reply.slice(0, 200))
     if (!reply) {
       // 纯工具调用消息：前端已通过事件流显示工具执行过程
       return { success: true, content: '' }
@@ -365,6 +346,26 @@ ipcMain.handle('doge:send-message', async (_event, content: string) => {
     const message = error instanceof Error ? error.message : '未知错误'
     tsLog('MAIN', 'query threw error:', message)
     return { error: message }
+  }
+})
+
+// 回滚工具操作
+ipcMain.handle('doge:rollback-tool', async (_event, toolUseId: string) => {
+  try {
+    const restored = rollbackTool(toolUseId)
+    return { success: true, restored }
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : '未知错误'
+    return { success: false, error: message }
+  }
+})
+
+// 获取工具操作历史
+ipcMain.handle('doge:get-tool-operations', () => {
+  try {
+    return getAllOperations()
+  } catch {
+    return []
   }
 })
 
@@ -2132,7 +2133,7 @@ const dbStore = new Map()
 ipcMain.handle('doge:db-connect', async (_event, conn) => {
   try {
     if (conn.type !== 'sqlite') return { success: false, error: '仅支持 SQLite' }
-    const { Database } = require('better-sqlite3')
+    const { Database } = requireModule('better-sqlite3')
     const db = new Database(conn.path || ':memory:')
     dbStore.set(conn.id, db)
     return { success: true }
@@ -2257,7 +2258,7 @@ ipcMain.handle('doge:close-session', async () => {
 
 ipcMain.handle('doge:notify', (_event, title: string, body: string) => {
   try {
-    const { Notification } = require('electron')
+    const { Notification } = requireModule('electron')
     if (Notification.isSupported()) {
       new Notification({ title, body, icon: path.join(projectRoot, 'assets', 'icon.png') }).show()
     }
@@ -2327,7 +2328,7 @@ ipcMain.handle('doge:spawn-terminal', async (_event, cwd: string) => {
   try {
     let pty: any
     try {
-      pty = require('node-pty')
+      pty = requireModule('node-pty')
     } catch {
       return { success: false, error: 'node-pty 未安装，终端功能不可用。请安装 Visual Studio Build Tools 后重新安装 node-pty。' }
     }

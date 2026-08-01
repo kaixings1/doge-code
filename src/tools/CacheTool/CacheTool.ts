@@ -64,15 +64,15 @@ export const CacheTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const action = (input as any)?.action ?? '?'
-    const key = (input as any)?.key
+    const action = (input as Record<string, unknown>)?.action ?? '?'
+    const key = (input as Record<string, unknown>)?.key
     return `Cache: ${action}${key ? ` (${key})` : ''}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',
-      content: (content as any).message || '缓存操作完成',
+      content: (content as Record<string, unknown>).message || '缓存操作完成',
     }
   },
   async call({ action, key, value }) {

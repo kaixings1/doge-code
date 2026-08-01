@@ -51,7 +51,7 @@ export function hasContentAfterIndex(messages: RenderableMessage[], index: numbe
   for (let i = index + 1; i < messages.length; i++) {
     const msg = messages[i];
     if (msg?.type === 'assistant') {
-      const content = msg.message.content[0];
+      const content = Array.isArray(msg.message.content) ? msg.message.content[0] : undefined;
       if (content?.type === 'thinking' || content?.type === 'redacted_thinking') {
         continue;
       }
@@ -73,7 +73,7 @@ export function hasContentAfterIndex(messages: RenderableMessage[], index: numbe
     }
     // Tool results arrive while the collapsed group is still being built
     if (msg?.type === 'user') {
-      const content = msg.message.content[0];
+      const content = Array.isArray(msg.message.content) ? msg.message.content[0] : undefined;
       if (content?.type === 'tool_result') {
         continue;
       }
@@ -81,7 +81,7 @@ export function hasContentAfterIndex(messages: RenderableMessage[], index: numbe
     // Collapsible grouped_tool_use messages arrive transiently before being
     // merged into the current collapsed group on the next render cycle
     if (msg?.type === 'grouped_tool_use') {
-      const firstInput = msg.messages[0]?.message.content[0]?.input;
+      const firstInput = Array.isArray(msg.messages[0]?.message.content) ? msg.messages[0].message.content[0]?.input : undefined;
       if (getToolSearchOrReadInfo(msg.toolName, firstInput, tools).isCollapsible) {
         continue;
       }
@@ -173,7 +173,7 @@ function MessageRowImpl(t0) {
         let t6;
         if ($[26] !== inProgressToolUseIDs) {
           t6 = m => {
-            const content = m.message.content[0];
+            const content = Array.isArray(m.message.content) ? m.message.content[0] : undefined;
             return content?.type === "tool_use" && inProgressToolUseIDs.has(content.id);
           };
           $[26] = inProgressToolUseIDs;
@@ -296,7 +296,7 @@ function _temp(c) {
 export function isMessageStreaming(msg: RenderableMessage, streamingToolUseIDs: Set<string>): boolean {
   if (msg.type === 'grouped_tool_use') {
     return msg.messages.some(m => {
-      const content = m.message.content[0];
+      const content = Array.isArray(m.message.content) ? m.message.content[0] : undefined;
       return content?.type === 'tool_use' && streamingToolUseIDs.has(content.id);
     });
   }
@@ -315,7 +315,7 @@ export function isMessageStreaming(msg: RenderableMessage, streamingToolUseIDs: 
 export function allToolsResolved(msg: RenderableMessage, resolvedToolUseIDs: Set<string>): boolean {
   if (msg.type === 'grouped_tool_use') {
     return msg.messages.every(m => {
-      const content = m.message.content[0];
+      const content = Array.isArray(m.message.content) ? m.message.content[0] : undefined;
       return content?.type === 'tool_use' && resolvedToolUseIDs.has(content.id);
     });
   }
@@ -324,7 +324,7 @@ export function allToolsResolved(msg: RenderableMessage, resolvedToolUseIDs: Set
     return toolIds.every(id => resolvedToolUseIDs.has(id));
   }
   if (msg.type === 'assistant') {
-    const block = msg.message.content[0];
+    const block = Array.isArray(msg.message.content) ? msg.message.content[0] : undefined;
     if (block?.type === 'server_tool_use') {
       return resolvedToolUseIDs.has(block.id);
     }

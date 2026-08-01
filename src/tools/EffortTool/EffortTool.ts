@@ -56,13 +56,13 @@ export const EffortTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const level = (input as any)?.level ?? '?'
-    const model = (input as any)?.model
+    const level = (input as Record<string, unknown>)?.level ?? '?'
+    const model = (input as Record<string, unknown>)?.model
     return `Effort: ${level}${model ? ` (${model})` : ''}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
-    const prev = (content as any).previousLevel
-    const next = (content as any).newLevel
+    const prev = (content as Record<string, unknown>).previousLevel
+    const next = (content as Record<string, unknown>).newLevel
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',
