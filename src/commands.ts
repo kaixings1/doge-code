@@ -142,54 +142,72 @@ import usage from './commands/usage/index.ts'
 import theme from './commands/theme/index.ts'
 import vim from './commands/vim/index.ts'
 import { feature } from 'bun:bundle'
+
 // 死代码消除：条件导入
 
 const proactive =
-  feature('PROACTIVE') || feature('KAIROS')
+  (feature('PROACTIVE') || process.env['CLAUDE_CODE_FEATURE_PROACTIVE'] === '1') ||
+  (feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1')
     ? safeRequire('./commands/proactive.js')?.default
     : null
 const briefCommand =
-  feature('KAIROS') || feature('KAIROS_BRIEF')
+  (feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') ||
+  (feature('KAIROS_BRIEF') || process.env['CLAUDE_CODE_FEATURE_KAIROS_BRIEF'] === '1')
     ? safeRequire('./commands/brief.js')?.default
     : null
-const assistantCommand = feature('KAIROS')
-  ? safeRequire('./commands/assistant/index.js')?.default
+const assistantCommand =
+  feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1'
+    ? safeRequire('./commands/assistant/index.js')?.default
     : null
-const bridge = feature('BRIDGE_MODE')
-  ? safeRequire('./commands/bridge/index.js')?.default
+const bridge =
+  feature('BRIDGE_MODE') || process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1'
+    ? safeRequire('./commands/bridge/index.js')?.default
     : null
 const remoteControlServerCommand =
-  feature('DAEMON') && feature('BRIDGE_MODE')
+  (feature('DAEMON') || process.env['CLAUDE_CODE_FEATURE_DAEMON'] === '1') &&
+  (feature('BRIDGE_MODE') || process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1')
     ? safeRequire('./commands/remoteControlServer/index.js')?.default
     : null
-const voiceCommand = feature('VOICE_MODE')
-  ? safeRequire('./commands/voice/index.js')?.default
+const voiceCommand =
+  feature('VOICE_MODE') || process.env['CLAUDE_CODE_FEATURE_VOICE_MODE'] === '1'
+    ? safeRequire('./commands/voice/index.js')?.default
     : null
-const forceSnip = feature('HISTORY_SNIP')
-  ? safeRequire('./commands/force-snip.js')?.default
+const forceSnip =
+  feature('HISTORY_SNIP') || process.env['CLAUDE_CODE_FEATURE_HISTORY_SNIP'] === '1'
+    ? safeRequire('./commands/force-snip.js')?.default
     : null
-const workflowsCmd = feature('WORKflow_SCRIPTS')
-  ? safeRequire('./commands/workflows/index.js')?.default
-  : null
-const webCmd = feature('CCR_REMOTE_SETUP')
-  ? safeRequire('./commands/remote-setup/index.js')?.default
-  : null
-const clearSkillIndexCache = feature('EXPERIMENTAL_SKILL_SEARCH')
-  ? safeRequire('./services/skillSearch/localSearch.js')?.clearSkillIndexCache
-  : null
-const subscribePr = feature('KAIROS_GITHUB_WEBHOOKS')
-  ? safeRequire('./commands/subscribe-pr.js')?.default
-  : null
-const ultraplan = feature('ULTRAPLAN')
-  ? safeRequire('./commands/ultraplan.js')?.default
-  : null
-const torch = feature('TORCH') ? safeRequire('./commands/torch.js')?.default : null
-const peersCmd = feature('UDS_INBOX')
-  ? safeRequire('./commands/peers/index.js')?.default
-  : null
-const forkCmd = feature('FORK_SUBAGENT')
-  ? safeRequire('./commands/fork/index.js')?.default
-  : null
+const workflowsCmd =
+  feature('WORKflow_SCRIPTS') || process.env['CLAUDE_CODE_FEATURE_WORKFLOW_SCRIPTS'] === '1'
+    ? safeRequire('./commands/workflows/index.js')?.default
+    : null
+const webCmd =
+  feature('CCR_REMOTE_SETUP') || process.env['CLAUDE_CODE_FEATURE_CCR_REMOTE_SETUP'] === '1'
+    ? safeRequire('./commands/remote-setup/index.js')?.default
+    : null
+const clearSkillIndexCache =
+  feature('EXPERIMENTAL_SKILL_SEARCH') || process.env['CLAUDE_CODE_FEATURE_EXPERIMENTAL_SKILL_SEARCH'] === '1'
+    ? safeRequire('./services/skillSearch/localSearch.js')?.clearSkillIndexCache
+    : null
+const subscribePr =
+  feature('KAIROS_GITHUB_WEBHOOKS') || process.env['CLAUDE_CODE_FEATURE_KAIROS_GITHUB_WEBHOOKS'] === '1'
+    ? safeRequire('./commands/subscribe-pr.js')?.default
+    : null
+const ultraplan =
+  feature('ULTRAPLAN') || process.env['CLAUDE_CODE_FEATURE_ULTRAPLAN'] === '1'
+    ? safeRequire('./commands/ultraplan.js')?.default
+    : null
+const torch =
+  feature('TORCH') || process.env['CLAUDE_CODE_FEATURE_TORCH'] === '1'
+    ? safeRequire('./commands/torch.js')?.default
+    : null
+const peersCmd =
+  feature('UDS_INBOX') || process.env['CLAUDE_CODE_FEATURE_UDS_INBOX'] === '1'
+    ? safeRequire('./commands/peers/index.js')?.default
+    : null
+const forkCmd =
+  feature('FORK_SUBAGENT') || process.env['CLAUDE_CODE_FEATURE_FORK_SUBAGENT'] === '1'
+    ? safeRequire('./commands/fork/index.js')?.default
+    : null
 import buddy from './commands/buddy/index.ts'
 
 import thinkback from './commands/thinkback/index.ts'
@@ -578,11 +596,12 @@ async function getSkills(cwd: string): Promise<{
   }
 }
 
-const getWorkflowCommands = feature('WORKFLOW_SCRIPTS')
-  ? (
-      safeRequire('./tools/WorkflowTool/createWorkflowCommand.js') as { getWorkflowCommands: (cwd: string) => Promise<Command[]> } | null
-    )?.getWorkflowCommands ?? null
-  : null
+const getWorkflowCommands =
+  feature('WORKFLOW_SCRIPTS') || process.env['CLAUDE_CODE_FEATURE_WORKFLOW_SCRIPTS'] === '1'
+    ? (
+        safeRequire('./tools/WorkflowTool/createWorkflowCommand.js') as { getWorkflowCommands: (cwd: string) => Promise<Command[]> } | null
+      )?.getWorkflowCommands ?? null
+    : null
 
 /**
  * 根据命令声明的 `availability`（认证/提供商要求）进行过滤。
@@ -723,7 +742,7 @@ export function clearCommandsCache(): void {
 export function getMcpSkillCommands(
   mcpCommands: readonly Command[],
 ): readonly Command[] {
-  if (feature('MCP_SKILLS')) {
+  if (feature('MCP_SKILLS') || process.env['CLAUDE_CODE_FEATURE_MCP_SKILLS'] === '1') {
     return mcpCommands.filter(
       cmd =>
         cmd.type === 'prompt' &&

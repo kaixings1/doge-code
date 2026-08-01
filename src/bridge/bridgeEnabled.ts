@@ -1,9 +1,9 @@
-import { feature } from 'bun:bundle'
 import {
   checkGate_CACHED_OR_BLOCKING,
   getDynamicConfig_CACHED_MAY_BE_STALE,
   getFeatureValue_CACHED_MAY_BE_STALE,
 } from '../services/analytics/growthbook.js'
+
 // 命名空间导入会打破 bridgeEnabled → auth → config → bridgeEnable
 // 循环 — authModule.foo 是一个实时绑定，所以当下面的辅助函数
 // call it, auth.js is fully loaded. Previously used require() for the same
@@ -27,7 +27,7 @@ export function isBridgeEnabled(): boolean {
   // 肯定三元模式 — 参见 docs/feature-gating.md。
   // 否定模式 (if (!feature(...)) return) 不会从外部构建中消除
   // 内联字符串字面量。
-  return feature('BRIDGE_MODE')
+  return feature('BRIDGE_MODE') || process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1'
     ? isClaudeAISubscriber() &&
         getFeatureValue_CACHED_MAY_BE_STALE('tengu_ccr_bridge', false)
     : false
@@ -46,7 +46,7 @@ export function isBridgeEnabled(): boolean {
  * `isBridgeEnabled()` instead.
  */
 export async function isBridgeEnabledBlocking(): Promise<boolean> {
-  return feature('BRIDGE_MODE')
+  return feature('BRIDGE_MODE') || process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1'
     ? isClaudeAISubscriber() &&
         (await checkGate_CACHED_OR_BLOCKING('tengu_ccr_bridge'))
     : false
@@ -66,7 +66,7 @@ export async function isBridgeEnabledBlocking(): Promise<boolean> {
  * that re-login would fix it. See CC-1165 / gh-33105.
  */
 export async function getBridgeDisabledReason(): Promise<string | null> {
-  if (feature('BRIDGE_MODE')) {
+  if (feature('BRIDGE_MODE') || process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1') {
     if (!isClaudeAISubscriber()) {
       return '远程控制需要 claude.ai 订阅。运行 `claude auth login` 使用你的 claude.ai 账户登录。'
     }
@@ -113,7 +113,7 @@ function getOauthAccountInfo(): ReturnType<
  * on the env-based implementation regardless of this gate.
  */
 export function isEnvLessBridgeEnabled(): boolean {
-  return feature('BRIDGE_MODE')
+  return feature('BRIDGE_MODE') || process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1'
     ? getFeatureValue_CACHED_MAY_BE_STALE('tengu_bridge_repl_v2', false)
     : false
 }
@@ -128,7 +128,7 @@ export function isEnvLessBridgeEnabled(): boolean {
  * Defaults to true — the shim stays active until explicitly disabled.
  */
 export function isCseShimEnabled(): boolean {
-  return feature('BRIDGE_MODE')
+  return feature('BRIDGE_MODE') || process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1'
     ? getFeatureValue_CACHED_MAY_BE_STALE(
         'tengu_bridge_repl_v2_cse_shim_enabled',
         true,
@@ -150,7 +150,7 @@ export function checkBridgeMinVersion(): string | null {
   // 肯定模式——参见 docs/feature-gating.md。
   // 否定模式 (if (!feature(...)) return) 不会从外部构建中消除
   // 内联字符串字面量。
-  if (feature('BRIDGE_MODE')) {
+  if (feature('BRIDGE_MODE') || process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1') {
     const config = getDynamicConfig_CACHED_MAY_BE_STALE<{
       minVersion: string
     }>('tengu_bridge_min_version', { minVersion: '0.0.0' })
@@ -172,7 +172,7 @@ export function checkBridgeMinVersion(): string | null {
  * config.ts → growthbook.ts import cycle (growthbook.ts → user.ts → config.ts).
  */
 export function getCcrAutoConnectDefault(): boolean {
-  return feature('CCR_AUTO_CONNECT')
+  return feature('CCR_AUTO_CONNECT') || process.env['CLAUDE_CODE_FEATURE_CCR_AUTO_CONNECT'] === '1'
     ? getFeatureValue_CACHED_MAY_BE_STALE('tengu_cobalt_harbor', false)
     : false
 }
@@ -184,7 +184,7 @@ export function getCcrAutoConnectDefault(): boolean {
  * local opt-in; GrowthBook controls rollout.
  */
 export function isCcrMirrorEnabled(): boolean {
-  return feature('CCR_MIRROR')
+  return feature('CCR_MIRROR') || process.env['CLAUDE_CODE_FEATURE_CCR_MIRROR'] === '1'
     ? isEnvTruthy(process.env.CLAUDE_CODE_CCR_MIRROR) ||
         getFeatureValue_CACHED_MAY_BE_STALE('tengu_ccr_mirror', false)
     : false
