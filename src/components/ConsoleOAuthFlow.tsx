@@ -1359,7 +1359,7 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
             visibleOptionCount={20}
             options={selectOptions}
             onChange={(selected) => {
-              const val = typeof selected === 'string' ? selected : (selected as any)?.value;
+              const val = typeof selected === 'string' ? selected : (selected as { value?: string })?.value;
               if (val === '__NEW__') {
                 setEditingApiKey('');
                 setOriginalApiKeyForDelete('');

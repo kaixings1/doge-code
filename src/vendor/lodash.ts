@@ -17,6 +17,20 @@ export function isEqual(a, b) { if (a === b) return true; if (a == null || b == 
 export function cloneDeep(val) { if (val === null || typeof val !== 'object') return val; if (Array.isArray(val)) return val.map(cloneDeep); var result = {}; for (var key in val) { if (Object.prototype.hasOwnProperty.call(val, key)) { result[key] = cloneDeep(val[key]); } } return result; }
 export function setWith(obj, path, value, customizer) { if (obj == null) return obj; var pathArr = typeof path === 'string' ? path.split('.') : path; var current = obj; for (var i = 0; i < pathArr.length - 1; i++) { var key = pathArr[i]; if (current[key] == null || typeof current[key] !== 'object') { var next = pathArr[i + 1]; current[key] = customizer ? customizer(current[key], key, obj) : {}; } current = current[key]; } current[pathArr[pathArr.length - 1]] = value; return obj; }
 export function mergeWith(obj, src, customizer) { function merge(a, b) { if (customizer) { var c = customizer(a, b); if (c !== undefined) return c; } if (b === null || typeof b !== 'object') return b; if (Array.isArray(b)) { var arr = Array.isArray(a) ? a.slice() : []; for (var i = 0; i < b.length; i++) { arr[i] = merge(arr[i], b[i]); } return arr; } var result = (a && typeof a === 'object' && !Array.isArray(a)) ? a : {}; for (var key in b) { if (Object.prototype.hasOwnProperty.call(b, key)) { result[key] = merge(result[key], b[key]); } } return result; } return merge(obj, src); }
-export function memoize(func, resolver) { var memoized = function() { var key = resolver ? resolver.apply(this, arguments) : arguments[0]; var cache = memoized.cache; if (cache.has(key)) return cache.get(key); var result = func.apply(this, arguments); cache.set(key, result); return result; }; memoized.cache = new Map(); return memoized; }
+export function memoize<T extends (...args: any[]) => any>(
+  func: T,
+  resolver?: (...args: Parameters<T>) => string | number,
+): T & { cache: Map<string | number, ReturnType<T>> } {
+  var memoized = function (this: any, ...args: any[]) {
+    var key = resolver ? resolver.apply(this, args) : args[0];
+    var cache = (memoized as any).cache;
+    if (cache.has(key)) return cache.get(key);
+    var result = func.apply(this, args);
+    cache.set(key, result);
+    return result;
+  } as T & { cache: Map<string | number, ReturnType<T>> };
+  memoized.cache = new Map();
+  return memoized;
+}
 export function diffLines(oldStr, newStr) { if (oldStr === newStr) return ''; var oldLines = oldStr.split('\n'); var newLines = newStr.split('\n'); var result = ''; for (var i = 0; i < Math.max(oldLines.length, newLines.length); i++) { if (i < oldLines.length && i < newLines.length) { if (oldLines[i] !== newLines[i]) { result += '- ' + oldLines[i] + '\n+ ' + newLines[i] + '\n'; } else { result += '  ' + oldLines[i] + '\n'; } } else if (i >= oldLines.length) { result += '+ ' + newLines[i] + '\n'; } else { result += '- ' + oldLines[i] + '\n'; } } return result; }
 export function throttle(func, wait) { var lastCall = 0; var timeoutId; var lastArgs; var lastThis; function invoke() { lastCall = Date.now(); func.apply(lastThis, lastArgs); timeoutId = null; } function throttled() { lastArgs = arguments; lastThis = this; var now = Date.now(); var remaining = wait - (now - lastCall); if (remaining <= 0) { if (timeoutId) { clearTimeout(timeoutId); timeoutId = null; } invoke(); } else if (!timeoutId) { timeoutId = setTimeout(invoke, remaining); } } throttled.cancel = function() { if (timeoutId) { clearTimeout(timeoutId); timeoutId = null; } }; return throttled; }

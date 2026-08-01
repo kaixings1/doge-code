@@ -172,7 +172,7 @@ export async function call(
  args?: string
 ): Promise<React.ReactNode> {
  // 优先使用第三个参数（processSlashCommand 传入），回退到 context 中的 args
- const input = args || (context.options as any).args?.[0] || "";
+ const input = args || (context.options as Record<string, unknown>).args?.[0] || "";
  const sources = getAllSources();
 
  if (input === "all") {

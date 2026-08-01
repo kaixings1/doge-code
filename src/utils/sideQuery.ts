@@ -201,6 +201,12 @@ export async function sideQuery(opts: SideQueryOptions): Promise<BetaMessage> {
     (response as { _request_id?: string | null })._request_id ?? undefined
   const now = Date.now()
   const lastCompletion = getLastApiCompletionTimestamp()
+  const safeUsage = response.usage ?? {
+    input_tokens: 0,
+    output_tokens: 0,
+    cache_read_input_tokens: 0,
+    cache_creation_input_tokens: 0,
+  }
   logEvent('tengu_api_success', {
     requestId:
       requestId as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
@@ -208,10 +214,10 @@ export async function sideQuery(opts: SideQueryOptions): Promise<BetaMessage> {
       opts.querySource as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
     model:
       normalizedModel as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
-    inputTokens: response.usage.input_tokens,
-    outputTokens: response.usage.output_tokens,
-    cachedInputTokens: response.usage.cache_read_input_tokens ?? 0,
-    uncachedInputTokens: response.usage.cache_creation_input_tokens ?? 0,
+    inputTokens: safeUsage.input_tokens,
+    outputTokens: safeUsage.output_tokens,
+    cachedInputTokens: safeUsage.cache_read_input_tokens ?? 0,
+    uncachedInputTokens: safeUsage.cache_creation_input_tokens ?? 0,
     durationMsIncludingRetries: now - start,
     timeSinceLastApiCallMs:
       lastCompletion !== null ? now - lastCompletion : undefined,

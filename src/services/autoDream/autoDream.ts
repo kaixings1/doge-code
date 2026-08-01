@@ -51,6 +51,10 @@ import {
 import { FILE_EDIT_TOOL_NAME } from '../../tools/FileEditTool/constants.js'
 import { FILE_WRITE_TOOL_NAME } from '../../tools/FileWriteTool/prompt.js'
 
+function isRecord(obj: unknown): obj is Record<string, unknown> {
+  return obj != null && typeof obj === 'object'
+}
+
 // Scan throttle: when time-gate passes but session-gate doesn't, the lock
 // mtime doesn't advance, so the time-gate keeps passing every turn.
 const SESSION_SCAN_INTERVAL_MS = 10 * 60 * 1000
@@ -296,7 +300,8 @@ function makeDreamProgressWatcher(
           block.name === FILE_EDIT_TOOL_NAME ||
           block.name === FILE_WRITE_TOOL_NAME
         ) {
-          const input = block.input as { file_path?: unknown }
+          const input = isRecord(block.input) ? block.input : null
+          if (!input) continue
           if (typeof input.file_path === 'string') {
             touchedPaths.push(input.file_path)
           }

@@ -49,12 +49,12 @@ export const ShellTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const cmd = (input as any)?.command ?? '?'
+    const cmd = (input as Record<string, unknown>)?.command ?? '?'
     return `Shell: ${cmd.substring(0, 50)}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
-    const code = (content as any)?.exitCode
-    const dur = (content as any)?.durationMs
+    const code = (content as Record<string, unknown>)?.exitCode
+    const dur = (content as Record<string, unknown>)?.durationMs
     let msg = `Exit code: ${code}`
     if (dur) msg += ` (${dur}ms)`
     return {

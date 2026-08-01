@@ -55,7 +55,7 @@ export function CollaborationPanel({ cwd, theme, onClose }: { cwd: string; theme
   const [remoteStatus, setRemoteStatus] = useState<string>('')
   const [errorMsg, setErrorMsg] = useState('')
 
-  const api = (window as any).dogeAPI as Record<string, any> | undefined
+  const api = (window as { [key: string]: unknown }).dogeAPI as Record<string, any> | undefined
 
   const refreshRooms = useCallback(async () => {
     if (!api?.collabListRooms) return

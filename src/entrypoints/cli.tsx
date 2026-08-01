@@ -43,6 +43,13 @@ async function main(): Promise<void> {
     return;
   }
 
+  // --desktop 快速路径：spawn Electron 桌面应用
+  if (args[0] === '--desktop') {
+    const { launchDesktop } = await import('../desktop-electron/launch-electron.ts');
+    launchDesktop();
+    return;
+  }
+
   // 对于所有其他路径，加载启动分析器
   const {
     profileCheckpoint

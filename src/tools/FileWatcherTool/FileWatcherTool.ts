@@ -63,12 +63,12 @@ export const FileWatcherTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const action = (input as any)?.action ?? '?'
-    const path = (input as any)?.path ?? ''
+    const action = (input as Record<string, unknown>)?.action ?? '?'
+    const path = (input as Record<string, unknown>)?.path ?? ''
     return `FileWatcher: ${action} ${path.substring(0, 40)}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
-    const msg = (content as any).message || '文件监视器操作完成'
+    const msg = (content as Record<string, unknown>).message || '文件监视器操作完成'
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',

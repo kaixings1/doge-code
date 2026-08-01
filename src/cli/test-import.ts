@@ -4,4 +4,3 @@ import {
   redownloadUserSettings,
 } from '../../services/settingsSync/index.js'
 
-console.log('SUCCESS:', typeof downloadUserSettings, typeof redownloadUserSettings);

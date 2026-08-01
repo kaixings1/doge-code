@@ -19,9 +19,9 @@ import { useSelectedMessageBg } from '../messageActions.js';
 import { PrBadge } from '../PrBadge.js';
 import { ToolUseLoader } from '../ToolUseLoader.js';
 
- 
+
 const teamMemCollapsed = feature('TEAMMEM') ? require('./teamMemCollapsed.js') as typeof import('./teamMemCollapsed.js') : null;
- 
+
 
 // Hold each ⤿ hint for a minimum duration so fast-completing tool calls
 // (bash commands, file reads, search patterns) are actually readable instead
@@ -210,8 +210,8 @@ export function CollapsedReadSearchContent({
           command?: string;
           pattern?: string;
           file_path?: string;
-        };
-        incomingHint = input.file_path ?? (input.pattern ? `"${input.pattern}"` : undefined) ?? input.command ?? latest.toolName;
+        } | null;
+        incomingHint = input?.file_path ?? (input?.pattern ? `"${input?.pattern}"` : input?.command) ?? latest.toolName;
       }
     }
   }
@@ -229,7 +229,7 @@ export function CollapsedReadSearchContent({
     }
     return <Box flexDirection="column">
         {toolUses.map(msg_0 => {
-        const content = msg_0.message.content[0];
+        const content = Array.isArray(msg_0.message.content) ? msg_0.message.content[0] : undefined;
         if (content?.type !== 'tool_use') return null;
         return <VerboseToolUse key={content.id} content={content} tools={tools} lookups={lookups} inProgressToolUseIDs={inProgressToolUseIDs} shouldAnimate={shouldAnimate} theme={theme} />;
       })}
@@ -458,7 +458,7 @@ export function CollapsedReadSearchContent({
           {isActiveGroup && <Text key="ellipsis">…</Text>} <CtrlOToExpand />
         </Text>
       </Box>
-      {isActiveGroup && displayedHint !== undefined &&
+      {isActiveGroup && displayedHint !== null &&
     // Row layout: 5-wide gutter for ⎿, then a flex column for the text.
     // Ink's wrap stays inside the right column so continuation lines
     // indent under ⎿. MAX_HINT_CHARS in commandAsHint caps total at ~5 lines.

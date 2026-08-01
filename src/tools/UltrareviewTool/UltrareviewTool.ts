@@ -81,11 +81,11 @@ export const UltrareviewTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const target = (input as any)?.target || 'current state'
+    const target = (input as Record<string, unknown>)?.target || 'current state'
     return `Ultrareview: ${target.substring(0, 50)}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
-    const summary = (content as any).summary || 'Ultrareview completed'
+    const summary = (content as Record<string, unknown>).summary || 'Ultrareview completed'
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',

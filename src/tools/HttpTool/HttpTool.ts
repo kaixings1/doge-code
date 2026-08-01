@@ -51,13 +51,13 @@ export const HttpTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const method = (input as any)?.method ?? '?'
-    const url = (input as any)?.url ?? ''
+    const method = (input as Record<string, unknown>)?.method ?? '?'
+    const url = (input as Record<string, unknown>)?.url ?? ''
     return `HTTP ${method} ${url}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
-    const status = (content as any).status
-    const duration = (content as any).durationMs
+    const status = (content as Record<string, unknown>).status
+    const duration = (content as Record<string, unknown>).durationMs
     let msg = `HTTP ${status}`
     if (duration) msg += ` (${duration}ms)`
     return {

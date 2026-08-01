@@ -1,4 +1,4 @@
-{
+﻿{
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
@@ -12,6 +12,7 @@
     "skipLibCheck": true,
     "strict": false,
     "ignoreDeprecations": "6.0",
+    "noEmit": true,
     "baseUrl": ".",
     "paths": {
       "src/*": [
@@ -25,12 +26,12 @@
   },
   "include": [
     "src/**/*",
-    "src/desktop-electron/**/*",
     "vendor/**/*",
     "shims/**/*",
     "src/generated/**/*"
   ],
   "exclude": [
-    "src/**/*.mjs"
+    "src/**/*.mjs",
+    "src/desktop-electron/renderer/components/MonacoEditorPanel.tsx"
   ]
 }

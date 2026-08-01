@@ -51,12 +51,12 @@ export const BranchTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const action = (input as any)?.action ?? '?'
-    const name = (input as any)?.name
+    const action = (input as Record<string, unknown>)?.action ?? '?'
+    const name = (input as Record<string, unknown>)?.name
     return `Branch: ${action}${name ? ` (${name})` : ''}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
-    const msg = (content as any).message || '分支操作完成'
+    const msg = (content as Record<string, unknown>).message || '分支操作完成'
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',

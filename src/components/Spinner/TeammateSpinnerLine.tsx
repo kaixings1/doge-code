@@ -35,18 +35,36 @@ function getMessagePreview(messages: InProcessTeammateTaskState['messages']): st
   for (let i = messages.length - 1; i >= 0 && allLines.length < 3; i--) {
     const msg = messages[i];
     // Only process messages that have content (user/assistant messages)
-    if (!msg || msg.type !== 'user' && msg.type !== 'assistant' || !msg.message?.content?.length) {
+    if (!msg || msg.type !== 'user' && msg.type !== 'assistant') {
       continue;
     }
-    const content = msg.message.content;
+
+    const content = msg.message?.content;
+    if (!content) continue;
+
+    // Handle string content (UserMessage)
+    if (typeof content === 'string') {
+      const textLines = content.split('\n').filter(l => l.trim());
+      // Take from end of text (most recent lines)
+      for (let j = textLines.length - 1; j >= 0 && allLines.length < 3; j--) {
+        const line = textLines[j];
+        if (!line) continue;
+        allLines.push(truncateToWidth(line, maxLineLength));
+      }
+      continue;
+    }
+
+    // Handle array content
+    if (!Array.isArray(content)) continue;
+
     for (const block of content) {
       if (allLines.length >= 3) break;
       if (!block || typeof block !== 'object') continue;
       if ('type' in block && block.type === 'tool_use' && 'name' in block) {
         // Try to show meaningful info from tool input
-        const input = 'input' in block ? block.input as Record<string, unknown> : null;
+        const input = (block as { input?: Record<string, unknown> }).input;
         let toolLine = `Using ${block.name}…`;
-        if (input) {
+        if (input != null && typeof input === 'object') {
           // Look for common descriptive fields
           const desc = input.description as string | undefined || input.prompt as string | undefined || input.command as string | undefined || input.query as string | undefined || input.pattern as string | undefined;
           if (desc) {
@@ -231,3 +249,5 @@ export function TeammateSpinnerLine({
         </Box>)}
     </Box>;
 }
+
+

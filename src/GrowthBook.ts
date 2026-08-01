@@ -911,7 +911,6 @@ export class GrowthBook<
   log(msg: string, ctx: Record<string, unknown>) {
     if (!this.debug) return;
     if (this._options.log) this._options.log(msg, ctx);
-    else console.log(msg, ctx);
   }
 
   public getDeferredTrackingCalls(): TrackingData[] {

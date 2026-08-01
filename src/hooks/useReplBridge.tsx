@@ -177,7 +177,7 @@ export function useReplBridge(messages: Message[], setMessages: (action: React.S
                   type: 'user' as const,
                   message: {
                     role: 'user' as const,
-                    content: fields.content as any,
+                    content: fields.content as unknown as Record<string, unknown>[],
                   },
                   session_id: 'bridge-inbound',
                   parent_tool_use_id: null,

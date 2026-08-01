@@ -15,7 +15,7 @@ export interface ContextStats {
 }
 // 默认数据提供者（当真实数据未注入时，返回占位值，不进行任何估算/随机）
 function defaultStatsProvider(): ContextStats {
-  const g = (global as any).__CLAUDE_CONTEXT__ || {}
+  const g = (global as { [key: string]: unknown }).__CLAUDE_CONTEXT__ || {}
   return {
     tokensUsed: typeof g.tokensUsed === 'number' ? g.tokensUsed : 0,
     maxTokens: typeof g.maxTokens === 'number' ? g.maxTokens : (parseInt(process.env.CLAUDE_CODE_MAX_TOKENS || '0', 10) || 0),

@@ -62,7 +62,6 @@ export const init = memoize(async (): Promise<void> => {
   const log = (msg: string) => {
     const t = Date.now();
     require('fs').writeFileSync('d:/init_debug.log', `[${t - initStartTime}ms] ${msg} at ${t}\n`, { flag: 'a' });
-    console.error(`[INIT-DEBUG] [${t - initStartTime}ms] ${msg}`);
   };
   //log('init STARTED');
 

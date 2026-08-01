@@ -88,7 +88,7 @@ export async function fileHistoryTrackEdit(
     updater: (prev: FileHistoryState) => FileHistoryState,
   ) => void,
   filePath: string,
-  messageId: UUID,
+  messageId: string,
 ): Promise<void> {
   if (!fileHistoryEnabled()) {
     return

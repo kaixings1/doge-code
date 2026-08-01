@@ -1012,11 +1012,11 @@ async function* queryModel(
   // - 启动时从文件读取
   // - 用户切换预设时刷新（通过 _dogeConfigChanged 标志）
   // - 定期检测 api.json 文件修改时间，感知其他进程的变更
-  if ((queryModel as any)._cachedConfig === void 0 || (process as any)._dogeConfigChanged || checkProjectConfigChanged()) {
-    ;(queryModel as any)._cachedConfig = readCustomApiStorage()
-    ;(process as any)._dogeConfigChanged = false
+  if ((queryModel as unknown as Record<string, unknown>)._cachedConfig === void 0 || (process as unknown as Record<string, unknown>)._dogeConfigChanged || checkProjectConfigChanged()) {
+    ;(queryModel as unknown as Record<string, unknown>)._cachedConfig = readCustomApiStorage()
+    ;(process as unknown as Record<string, unknown>)._dogeConfigChanged = false
   }
-  const cachedConfig = (queryModel as any)._cachedConfig
+  const cachedConfig = (queryModel as unknown as Record<string, unknown>)._cachedConfig
 
   // 将缓存配置同步到环境变量，确保 API 客户端每次请求都使用最新配置。
   // 覆盖时机：配置不为空，且与当前环境变量存在实质差异。
@@ -1812,7 +1812,7 @@ if (process.env.ANTHROPIC_BASE_URL === 'http://0.0.0.0:1' || !process.env.DOGE_A
         usage: { input_tokens: 0, output_tokens: 0 }
       }
     }
-  })() as any;
+  })() as unknown as AsyncGenerator<unknown>;
 }
 
     const generator = withRetry(

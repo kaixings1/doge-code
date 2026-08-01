@@ -286,11 +286,11 @@ export function useDatabase(): UseDatabaseReturn {
 
       if (result.success) {
         const queryRes: QueryResult = {
-          columns: (result as any).columns || [],
+          columns: (result as Record<string, unknown>).columns || [],
           rows: result.rows || [],
-          rowCount: (result as any).rowCount || result.rows?.length || 0,
+          rowCount: (result as Record<string, unknown>).rowCount || result.rows?.length || 0,
           duration,
-          affectedRows: (result as any).affectedRows,
+          affectedRows: (result as Record<string, unknown>).affectedRows,
         }
         setQueryResult(queryRes)
         setTotalRows(queryRes.rowCount)

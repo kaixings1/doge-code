@@ -172,27 +172,27 @@ export function readCustomApiStorage(presetName?: string): CustomApiStorageData 
   const rawName = presetName ?? project.activePreset;
   const activeName = (typeof rawName === 'string' && rawName.trim()) ? rawName.trim() : undefined;
   
-  logForDebugging('[readCustomApiStorage] activeName: ' + activeName, { level: 'debug' });
+  //logForDebugging('[readCustomApiStorage] activeName: ' + activeName, { level: 'debug' });
   
   if (activeName) {
     if (project.presets[activeName]) {
-      logForDebugging('[readCustomApiStorage] ✅ using project preset: ' + activeName, { level: 'debug' });
+      //logForDebugging('[readCustomApiStorage] ✅ using project preset: ' + activeName, { level: 'debug' });
       return { ...project.presets[activeName] };
     }
     const global = readGlobalStorage();
     if (global.presets[activeName]) {
-      logForDebugging('[readCustomApiStorage] ✅ using global preset: ' + activeName, { level: 'debug' });
+      //logForDebugging('[readCustomApiStorage] ✅ using global preset: ' + activeName, { level: 'debug' });
       return { ...global.presets[activeName] };
     }
   }
 
   const envConfig = loadConfigFromEnv(activeName);
   if (envConfig.baseURL || envConfig.apiKey) {
-    logForDebugging('[readCustomApiStorage] ⚠️ using env fallback', { level: 'debug' });
+    //logForDebugging('[readCustomApiStorage] ⚠️ using env fallback', { level: 'debug' });
     return { provider: 'openai', baseURL: envConfig.baseURL, apiKey: envConfig.apiKey, model: envConfig.model };
   }
 
-  logForDebugging('[readCustomApiStorage] ❌ returning empty', { level: 'debug' });
+  //logForDebugging('[readCustomApiStorage] ❌ returning empty', { level: 'debug' });
   return {};
 }
 /**
@@ -252,9 +252,9 @@ export function writeCustomApiStorage(
   project.activePreset = name;
   try {
     writeProjectStorage(project);
-    logForDebugging('[Storage] Saved preset: ' + name, { level: 'debug' });
+    //logForDebugging('[Storage] Saved preset: ' + name, { level: 'debug' });
   } catch (e) {
-    logForDebugging('[Storage] Failed to write: ' + e, { level: 'error' });
+    //logForDebugging('[Storage] Failed to write: ' + e, { level: 'error' });
   }
 
   // 同步环境变量，确保下一次 queryModel() 能立即读到新配置
@@ -263,7 +263,7 @@ export function writeCustomApiStorage(
   process.env.ANTHROPIC_MODEL = next.model || ''
   process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER = next.provider || 'openai'
   // 通知 queryModel 刷新缓存
-  ;(process as any)._dogeConfigChanged = true
+  ;(process as unknown as Record<string, unknown>)._dogeConfigChanged = true
 }
 /**
  * 切换激活预设，并立即同步环境变量。
@@ -275,7 +275,7 @@ export function switchActivePreset(presetName: string): boolean {
     writeProjectStorage(project)
 
     const config = project.presets[presetName]
-    logForDebugging('[switchActivePreset] set active to: ' + presetName + ' config: ' + JSON.stringify(config), { level: 'debug' })
+    //logForDebugging('[switchActivePreset] set active to: ' + presetName + ' config: ' + JSON.stringify(config), { level: 'debug' })
 
     // 同步环境变量（这是关键，只有这里做了，界面才能立刻变）
     // 注意：这里需要覆盖之前的 dummy 值，因为它们是在启动时设置的
@@ -285,7 +285,7 @@ export function switchActivePreset(presetName: string): boolean {
     process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER = config.provider || 'openai'
 
     // 通过设置标志通知 queryModel 刷新缓存
-    ;(process as any)._dogeConfigChanged = true
+    ;(process as unknown as Record<string, unknown>)._dogeConfigChanged = true
 
     return true
   }
@@ -355,6 +355,6 @@ export function addPresetTokens(
 
     fs.writeFileSync(p, JSON.stringify(data, null, 2), 'utf-8')
   } catch (e) {
-    logForDebugging('[addPresetTokens] Failed: ' + e, { level: 'error' })
+    //logForDebugging('[addPresetTokens] Failed: ' + e, { level: 'error' })
   }
 }

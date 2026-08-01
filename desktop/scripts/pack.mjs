@@ -45,9 +45,13 @@ async function checkBuild() {
   if (!fs.existsSync(distDir)) {
     throw new Error('dist 目录不存在，请先运行 build');
   }
-  const mainEntry = path.join(distDir, 'main', 'index.js');
+  const mainEntry = path.join(distDir, 'main', 'index.mjs');
   if (!fs.existsSync(mainEntry)) {
-    throw new Error('主进程入口不存在，请先运行 build');
+    // 兼容旧构建输出
+    const legacyEntry = path.join(distDir, 'main', 'index.js');
+    if (!fs.existsSync(legacyEntry)) {
+      throw new Error('主进程入口不存在，请先运行 build');
+    }
   }
 }
 

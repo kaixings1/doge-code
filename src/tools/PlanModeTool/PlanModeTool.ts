@@ -47,11 +47,11 @@ export const PlanModeTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const action = (input as any)?.action ?? '?'
+    const action = (input as Record<string, unknown>)?.action ?? '?'
     return `PlanMode: ${action}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
-    const msg = (content as any).message || 'Plan mode operation completed'
+    const msg = (content as Record<string, unknown>).message || 'Plan mode operation completed'
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',

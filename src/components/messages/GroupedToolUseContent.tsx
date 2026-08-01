@@ -1,7 +1,7 @@
 import type { ToolResultBlockParam, ToolUseBlockParam } from '@anthropic-ai/sdk/resources/messages/messages.mjs';
 import * as React from 'react';
-import { filterToolProgressMessages, findToolByName, type Tools } from '../../Tool.js';
-import type { GroupedToolUseMessage } from '../../types/message.js';
+import { filterToolProgressMessages, findToolByName, type ToolProgressData, type Tools } from '../../Tool.js';
+import type { GroupedToolUseMessage, ProgressMessage } from '../../types/message.js';
 import type { buildMessageLookups } from '../../utils/messages.js';
 type Props = {
   message: GroupedToolUseMessage;
@@ -38,7 +38,8 @@ export function GroupedToolUseContent({
     }
   }
   const toolUsesData = message.messages.map(msg => {
-    const content = msg.message.content[0];
+    const content = Array.isArray(msg.message?.content) ? msg.message.content[0] : undefined;
+    if (!content) return { param: {} as ToolUseBlockParam, isResolved: false, isError: false, isInProgress: false, progressMessages: [] as ProgressMessage<ToolProgressData>[], result: undefined };
     const result = resultsByToolUseId.get(content.id);
     return {
       param: content as ToolUseBlockParam,
@@ -55,3 +56,4 @@ export function GroupedToolUseContent({
     tools
   });
 }
+

@@ -340,11 +340,23 @@ export function jsonStringify(
  */
 export const jsonParse: typeof JSON.parse = (text, reviver) => {
   using _ = slowLogging`JSON.parse(${text})`
-  // V8 de-opts JSON.parse when a second argument is passed, even if undefined.
+  // V8 de-opts JSON.parse when a second argument is passed.
   // Branch explicitly so the common (no-reviver) path stays on the fast path.
-  return typeof reviver === 'undefined'
-    ? JSON.parse(text)
-    : JSON.parse(text, reviver)
+  if (typeof reviver === 'function') {
+    return JSON.parse(text, reviver)
+  }
+  try {
+    return JSON.parse(text)
+  } catch {
+    const sanitized = text
+      .replace(/[\u{D800}-\u{DBFF}](?![\u{DC00}-\u{DFFF}])/gu, '\uFFFD')
+      .replace(/(?<![\u{D800}-\u{DBFF}])[\u{DC00}-\u{DFFF}]/gu, '\uFFFD')
+    try {
+      return JSON.parse(sanitized)
+    } catch {
+      return JSON.parse(text.replace(/[\u{0080}-\u{FFFF}]/gu, '\uFFFD'))
+    }
+  }
 }
 
 /**

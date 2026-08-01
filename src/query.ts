@@ -751,7 +751,7 @@ async function* queryLoop(
               } else {
                 logForDebugging('[DEBUG] no tool blocks found in message');
                 logForDebugging(`[DEBUG] content blocks: ${JSON.stringify(message.message.content.map(c => c.type))}`);
-                logForDebugging(`[DEBUG] tool_calls exists? ${!!(message as any).tool_calls}`);
+                logForDebugging(`[DEBUG] tool_calls exists? ${!!(message as Record<string, unknown>).tool_calls}`);
               }
 
               if (

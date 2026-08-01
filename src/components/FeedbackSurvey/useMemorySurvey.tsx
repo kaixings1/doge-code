@@ -15,6 +15,10 @@ import { submitTranscriptShare } from './submitTranscriptShare.js';
 import type { TranscriptShareResponse } from './TranscriptSharePrompt.js';
 import { useSurveyState } from './useSurveyState.js';
 import type { FeedbackSurveyResponse } from './utils.js';
+
+function isRecord(obj: unknown): obj is Record<string, unknown> {
+  return obj != null && typeof obj === 'object'
+}
 const HIDE_THANKS_AFTER_MS = 3000;
 const MEMORY_SURVEY_GATE = 'tengu_dunwich_bell';
 const MEMORY_SURVEY_EVENT = 'tengu_memory_survey_event';
@@ -34,9 +38,8 @@ function hasMemoryFileRead(messages: Message[]): boolean {
       if (block.type !== 'tool_use' || block.name !== FILE_READ_TOOL_NAME) {
         continue;
       }
-      const input = block.input as {
-        file_path?: unknown;
-      };
+      const input = isRecord(block.input) ? block.input : null;
+      if (!input) continue;
       if (typeof input.file_path === 'string' && isAutoManagedMemoryFile(input.file_path)) {
         return true;
       }

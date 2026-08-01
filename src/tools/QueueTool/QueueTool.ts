@@ -69,15 +69,15 @@ export const QueueTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const action = (input as any)?.action ?? '?'
-    const queue = (input as any)?.queue ?? ''
+    const action = (input as Record<string, unknown>)?.action ?? '?'
+    const queue = (input as Record<string, unknown>)?.queue ?? ''
     return `Queue: ${action} ${queue}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',
-      content: (content as any).message || 'Queue operation completed',
+      content: (content as Record<string, unknown>).message || 'Queue operation completed',
     }
   },
   async call({ action, queue, job }) {

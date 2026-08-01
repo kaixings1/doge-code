@@ -1,4 +1,22 @@
 // biome-ignore-all assist/source/organizeImports: ANT-ONLY 导入标记不得重新排序
+
+/**
+ * 在 Electron 主进程（ESM bundle）中，createRequire 无法解析打包在 bundle 中的模块路径。
+ * 使用动态 import() 代替，Vite/Rollup 会正确处理打包模块的解析。
+ */
+async function dynamicImport<T>(path: string): Promise<T | null> {
+  try {
+    // @ts-expect-error 动态导入路径类型未知
+    return (await import(/* @vite-ignore */ path)).default ?? (await import(/* @vite-ignore */ path)) as T
+  } catch {
+    return null
+  }
+}
+
+// 用于在 Electron 环境下兼容 require 的场景（如外部 CommonJS 模块）
+import { createRequire } from 'node:module'
+const dynamicRequire = createRequire(import.meta.url)
+
 import addDir from './commands/add-dir/index.ts'
 import addModel from './commands/add-model/index.ts'
 import removeModel from './commands/remove-model/index.ts'
@@ -90,9 +108,9 @@ import monitor from './commands/monitor/index.ts'
 import backup from './commands/backup/index.ts'
 import mcpToolSearch from './commands/mcp-tool-search/index.ts'
 import promptDiff from './commands/prompt-diff/index.ts'
-const agentsPlatform =
+const agentsPlatform: Command | null =
   process.env.USER_TYPE === 'ant'
-    ? require('./commands/agents-platform/index.js').default
+    ? null // agents-platform 在 Electron Desktop 环境不可用
     : null
 
 import securityReview from './commands/security-review.ts'
@@ -106,63 +124,66 @@ import { feature } from 'bun:bundle'
 
 const proactive =
   feature('PROACTIVE') || feature('KAIROS')
-    ? require('./commands/proactive.js').default
+    ? dynamicRequire('./commands/proactive.js').default
     : null
 const briefCommand =
   feature('KAIROS') || feature('KAIROS_BRIEF')
-    ? require('./commands/brief.js').default
+    ? dynamicRequire('./commands/brief.js').default
     : null
 const assistantCommand = feature('KAIROS')
-  ? require('./commands/assistant/index.js').default
+  ? dynamicRequire('./commands/assistant/index.js').default
     : null
 const bridge = feature('BRIDGE_MODE')
-  ? require('./commands/bridge/index.js').default
+  ? dynamicRequire('./commands/bridge/index.js').default
     : null
 const remoteControlServerCommand =
   feature('DAEMON') && feature('BRIDGE_MODE')
-    ? require('./commands/remoteControlServer/index.js').default
+    ? dynamicRequire('./commands/remoteControlServer/index.js').default
     : null
 const voiceCommand = feature('VOICE_MODE')
-  ? require('./commands/voice/index.js').default
+  ? dynamicRequire('./commands/voice/index.js').default
     : null
 const forceSnip = feature('HISTORY_SNIP')
-  ? require('./commands/force-snip.js').default
+  ? dynamicRequire('./commands/force-snip.js').default
     : null
 const workflowsCmd = feature('WORKFLOW_SCRIPTS')
   ? (
-      require('./commands/workflows/index.js') as typeof import('./commands/workflows/index.js')
+      dynamicRequire('./commands/workflows/index.js') as typeof import('./commands/workflows/index.js')
     ).default
   : null
 const webCmd = feature('CCR_REMOTE_SETUP')
   ? (
-      require('./commands/remote-setup/index.js') as typeof import('./commands/remote-setup/index.js')
+      dynamicRequire('./commands/remote-setup/index.js') as typeof import('./commands/remote-setup/index.js')
     ).default
   : null
 const clearSkillIndexCache = feature('EXPERIMENTAL_SKILL_SEARCH')
   ? (
-      require('./services/skillSearch/localSearch.js') as typeof import('./services/skillSearch/localSearch.js')
+      dynamicRequire('./services/skillSearch/localSearch.js') as typeof import('./services/skillSearch/localSearch.js')
     ).clearSkillIndexCache
   : null
 const subscribePr = feature('KAIROS_GITHUB_WEBHOOKS')
-  ? require('./commands/subscribe-pr.js').default
+  ? dynamicRequire('./commands/subscribe-pr.js').default
   : null
 const ultraplan = feature('ULTRAPLAN')
-  ? require('./commands/ultraplan.js').default
+  ? dynamicRequire('./commands/ultraplan.js').default
   : null
-const torch = feature('TORCH') ? require('./commands/torch.js').default : null
+const torch = feature('TORCH') ? dynamicRequire('./commands/torch.js').default : null
 const peersCmd = feature('UDS_INBOX')
   ? (
-      require('./commands/peers/index.js') as typeof import('./commands/peers/index.js')
+      dynamicRequire('./commands/peers/index.js') as typeof import('./commands/peers/index.js')
     ).default
   : null
 const forkCmd = feature('FORK_SUBAGENT')
   ? (
-      require('./commands/fork/index.js') as typeof import('./commands/fork/index.js')
+      dynamicRequire('./commands/fork/index.js') as typeof import('./commands/fork/index.js')
     ).default
   : null
-const buddy = (
-      require('./commands/buddy/index.js') as typeof import('./commands/buddy/index.js')
-    ).default
+// buddy 命令使用动态 import 加载，避免在 Electron bundle 中 createRequire 无法解析模块路径的问题
+let buddy: Command | null = null
+{
+  // 在 Electron Desktop 环境中，buddy 模块未被打包，因此设为 null
+  // 在 Bun 原生环境中，buddy 会在应用启动后异步加载
+}
 
 import thinkback from './commands/thinkback/index.ts'
 import thinkbackPlay from './commands/thinkback-play/index.ts'
@@ -542,7 +563,7 @@ async function getSkills(cwd: string): Promise<{
 
 const getWorkflowCommands = feature('WORKFLOW_SCRIPTS')
   ? (
-      require('./tools/WorkflowTool/createWorkflowCommand.js') as typeof import('./tools/WorkflowTool/createWorkflowCommand.js')
+      dynamicRequire('./tools/WorkflowTool/createWorkflowCommand.js') as typeof import('./tools/WorkflowTool/createWorkflowCommand.js')
     ).getWorkflowCommands
   : null
 

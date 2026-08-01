@@ -63,12 +63,12 @@ export const CronTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const action = (input as any)?.action ?? '?'
-    const command = (input as any)?.command
+    const action = (input as Record<string, unknown>)?.action ?? '?'
+    const command = (input as Record<string, unknown>)?.command
     return `Cron: ${action}${command ? ` (${command.substring(0, 30)})` : ''}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
-    const msg = (content as any).message || 'Cron 操作完成'
+    const msg = (content as Record<string, unknown>).message || 'Cron 操作完成'
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',
