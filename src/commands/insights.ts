@@ -550,7 +550,7 @@ function extractToolStats(log: LogOption): {
 
             const input = (block as { input?: Record<string, unknown> }).input
 
-            if (input) {
+            if (!input || typeof input !== 'object') continue
               const filePath = (input.file_path as string) || ''
               if (filePath) {
                 const lang = getLanguageFromPath(filePath)
@@ -583,7 +583,6 @@ function extractToolStats(log: LogOption): {
               const command = (input.command as string) || ''
               if (command.includes('git commit')) gitCommits++
               if (command.includes('git push')) gitPushes++
-            }
           }
         }
       }
