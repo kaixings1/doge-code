@@ -256,6 +256,7 @@ export function isToolResultContentEmpty(
   if (content.length === 0) return true
   return content.every(
     block =>
+      block &&
       typeof block === 'object' &&
       'type' in block &&
       block.type === 'text' &&

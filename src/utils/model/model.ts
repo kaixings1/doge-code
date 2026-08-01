@@ -239,6 +239,13 @@ export function firstPartyNameToCanonical(name: ModelName): ModelShortName {
   if (name.includes('claude-haiku-4-5')) {
     return 'claude-haiku-4-5'
   }
+  // Gemini models (via OpenAI-compatible API)
+  if (name.includes('gemini-2-0-flash')) {
+    return 'gemini-2-0-flash'
+  }
+  if (name.includes('gemini-2-0-pro')) {
+    return 'gemini-2-0-pro'
+  }
   // Claude 3.x 模型使用不同的命名方案（claude-3-{family}）
   if (name.includes('claude-3-7-sonnet')) {
     return 'claude-3-7-sonnet'
@@ -372,6 +379,9 @@ export function getPublicModelDisplayName(model: ModelName): string | null {
     case getModelStrings().haiku35:
       return 'Haiku 3.5'
     default:
+      // Gemini models (via OpenAI-compatible API)
+      if (model === 'gemini-2.0-flash') return 'Gemini 2.0 Flash'
+      if (model === 'gemini-2.0-pro') return 'Gemini 2.0 Pro'
       return null
   }
 }
@@ -593,6 +603,12 @@ export function getMarketingNameForModel(modelId: string): string | undefined {
   }
   if (canonical.includes('claude-3-5-haiku')) {
     return 'Claude 3.5 Haiku'
+  }
+  if (canonical.includes('gemini-2-0-flash')) {
+    return 'Gemini 2.0 Flash'
+  }
+  if (canonical.includes('gemini-2-0-pro')) {
+    return 'Gemini 2.0 Pro'
   }
 
   return undefined

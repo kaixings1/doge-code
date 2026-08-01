@@ -275,7 +275,7 @@ function normalizeAssistantMessageForSDK(
       if (plan) {
         return {
           ...block,
-          input: { ...(block.input as Record<string, unknown>), plan },
+          input: { ...(block.input ?? {}), plan },
         }
       }
     }

@@ -167,30 +167,27 @@ export function extractToolCalls(message: string): string[] {
     // 2. 尝试提取并解析 JSON
     if (jsonEnd !== -1) {
       jsonStr = message.substring(jsonStart, jsonEnd + 1);
-      // 首先尝试直接解析（无换行等特殊情况）
       try {
         JSON.parse(jsonStr);
         calls.push(`${prefix} ${jsonStr}`);
         extractionSucceeded = true;
       } catch {
-        // 直接解析失败，使用增强的清理函数处理后重试
         const cleaned = cleanJsonString(jsonStr);
         try {
           JSON.parse(cleaned);
           calls.push(`${prefix} ${cleaned}`);
           extractionSucceeded = true;
         } catch {
-          // 仍然失败，保留错误状态，后续可能进入补齐括号分支
+          // 解析失败，进入兜底分支
         }
       }
       pos = jsonEnd + 1;
     }
 
-    // 3. 如果正常闭合分支未成功提取，尝试补齐缺失的括号（无论原来是否闭合）
-    //    此举可以应对 jsonEnd === -1 的情况，也能作为 jsonEnd 虽存在但解析失败的兜底策略
+    // 3. 如果正常分支未成功，尝试补齐缺失括号
     if (!extractionSucceeded) {
       const tailPart = message.substring(jsonStart);
-      const repaired = tailPart + '}'.repeat(Math.max(depth, 0)); // 保证深度非负
+      const repaired = tailPart + '}'.repeat(Math.max(depth, 0));
       const cleaned = cleanJsonString(repaired);
       try {
         JSON.parse(cleaned);
@@ -198,19 +195,60 @@ export function extractToolCalls(message: string): string[] {
         pos = message.length;
         continue;
       } catch {
-        // 修复失败，移动指针防止死循环
+        // JSON 修复失败，尝试容错提取
+        const lenient = tryLenientExtract(tailPart);
+        if (lenient) {
+          calls.push(`${prefix} ${lenient}`);
+        }
       }
       pos = start + prefix.length;
       continue;
     }
-
-    // 4. 死循环保护：理论上不应走到这里，但以防万一
-    if (!extractionSucceeded) {
-      pos = start + prefix.length;
-    }
   }
 
   return calls;
+}
+
+/**
+ * 容错提取：当 JSON 完全无法解析时，通过正则尽力提取 tool 名称和参数
+ * 适用于未闭合的工具调用（如流式传输中断、JSON 被截断等场景）
+ */
+function tryLenientExtract(tailPart: string): string | null {
+  // 提取 tool 字段
+  const toolMatch = tailPart.match(/"tool"\s*:\s*"([^"\\]*(?:\\.[^"\\]*)*)/);
+  if (!toolMatch) return null;
+
+  const toolName = toolMatch[1].replace(/\\"/g, '"');
+  const result: Record<string, unknown> = { tool: toolName };
+
+  // 提取 parameters 对象中的各个参数
+  const paramsMatch = tailPart.match(/"parameters"\s*:\s*\{/);
+  if (paramsMatch) {
+    const paramsStart = paramsMatch.index! + paramsMatch[0].length;
+    const paramsStr = tailPart.substring(paramsStart);
+    // 逐个提取 "key": value 对
+    const paramPattern = /"([^"\\]*(?:\\.[^"\\]*)*)"\s*:\s*("(?:[^"\\]|\\.)*"|-?\d+(?:\.\d+)?|true|false|null)/g;
+    let pm: RegExpExecArray | null;
+    while ((pm = paramPattern.exec(paramsStr)) !== null) {
+      const key = pm[1].replace(/\\"/g, '"');
+      let value: unknown = pm[2];
+      // 尝试解析 JSON 值
+      try {
+        value = JSON.parse(pm[2]);
+      } catch {
+        // 保持原始字符串
+      }
+      result.parameters = result.parameters || {};
+      (result.parameters as Record<string, unknown>)[key] = value;
+    }
+  }
+
+  // 尝试生成合法 JSON
+  try {
+    return JSON.stringify(result);
+  } catch {
+    return null;
+  }
 }
 
 /**

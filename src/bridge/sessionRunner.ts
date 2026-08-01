@@ -133,7 +133,7 @@ function extractActivities(
 
         if (b.type === 'tool_use') {
           const name = (b.name as string) ?? 'Tool'
-          const input = (b.input as Record<string, unknown>) ?? {}
+          const input = (b.input != null && typeof b.input === 'object') ? b.input : {}
           const summary = toolSummary(name, input)
           activities.push({
             type: 'tool_start',

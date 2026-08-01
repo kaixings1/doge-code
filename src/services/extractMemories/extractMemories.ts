@@ -206,6 +206,8 @@ export function createAutoMemCanUseTool(memoryDir: string): CanUseToolFn {
     if (
       (tool.name === FILE_EDIT_TOOL_NAME ||
         tool.name === FILE_WRITE_TOOL_NAME) &&
+      input &&
+      typeof input === 'object' &&
       'file_path' in input
     ) {
       const filePath = input.file_path

@@ -45,7 +45,11 @@ export function modelSupports1M(model: string): boolean {
     return false
   }
   const canonical = getCanonicalName(model)
-  return canonical.includes('claude-sonnet-4') || canonical.includes('opus-4-6')
+  return (
+    canonical.includes('claude-sonnet-4') ||
+    canonical.includes('opus-4-6') ||
+    canonical.includes('gemini-2-0-flash')
+  )
 }
 
 export function getContextWindowForModel(
@@ -80,6 +84,15 @@ export function getContextWindowForModel(
       return MODEL_CONTEXT_WINDOW_DEFAULT
     }
     return cap.max_input_tokens
+  }
+
+  // Gemini models (via OpenAI-compatible API) — native large context
+  const lower = model.toLowerCase()
+  if (lower.includes('gemini-2-0-pro')) {
+    return 2_000_000
+  }
+  if (lower.includes('gemini-2-0-flash')) {
+    return 1_000_000
   }
 
   if (betas?.includes(CONTEXT_1M_BETA_HEADER) && modelSupports1M(model)) {

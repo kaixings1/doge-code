@@ -287,7 +287,8 @@ export const PowerShellTool = buildTool({
     isSearch: boolean;
     isRead: boolean;
   } {
-    if (!input.command) {
+    // DOGE: 防御性检查 —— input 为空时避免访问 input.command 崩溃
+    if (!input || typeof input.command !== 'string') {
       return {
         isSearch: false,
         isRead: false

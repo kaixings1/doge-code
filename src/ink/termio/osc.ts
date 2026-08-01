@@ -469,6 +469,61 @@ export function supportsTabStatus(): boolean {
 }
 
 /**
+ * iTerm2 inline image: ESC ] 1337 ; File=inline=1: <base64> BEL
+ * Requires iTerm2 3.0+ with image rendering enabled.
+ */
+export function iTerm2Image(base64: string): string {
+  const payload = `1337;File=inline=1;width=auto;height=auto:${base64}`
+  return `${OSC_PREFIX}${payload}${BEL}`
+}
+
+/**
+ * Kitty graphics protocol: ESC _G <control> <payload> ESC \
+ * Renders inline image in Kitty terminal.
+ */
+export function kittyImage(base64: string): string {
+  // Kitty graphics protocol: a=T (transfer), f=100 (PNG), t=d (deferred)
+  const control = `a=T,f=100,t=d`
+  // Chunk the base64 data (Kitty has limits per chunk)
+  const maxChunk = 4096
+  let payload = `${control};${base64.length},`
+  if (base64.length <= maxChunk) {
+    payload += base64
+  }
+  // For large images, just send the full base64 (Kitty will handle it)
+  payload += base64
+  return `${ESC}_G${payload}${ST}`
+}
+
+/**
+ * Render an image using the appropriate protocol for the current terminal.
+ * Falls back gracefully for unsupported terminals.
+ */
+export function renderImage(base64: string): string {
+  const term = env.terminal || process.env.TERM_PROGRAM || ''
+  if (term === 'iTerm.app' || term === 'iTerm2') {
+    return iTerm2Image(base64)
+  }
+  if (term === 'kitty') {
+    return kittyImage(base64)
+  }
+  // tmux: wrap for passthrough if in tmux
+  const iterm = iTerm2Image(base64)
+  if (process.env['TMUX']) {
+    return wrapForMultiplexer(iterm)
+  }
+  return iterm
+}
+
+/**
+ * Check if the current terminal supports inline images.
+ */
+export function supportsInlineImages(): boolean {
+  const term = env.terminal || process.env.TERM_PROGRAM || ''
+  return term === 'iTerm.app' || term === 'iTerm2' || term === 'kitty' || !!process.env['TMUX']
+}
+
+/**
  * Emit an OSC 21337 tab-status sequence. Omitted fields are left unchanged
  * by the receiving terminal; `null` sends an empty value to clear.
  * `;` and `\` in status text are escaped per the spec.

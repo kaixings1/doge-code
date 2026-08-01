@@ -54,6 +54,10 @@ import config from './commands/config/index.ts'
 import { context, contextNonInteractive } from './commands/context/index.ts'
 import cost from './commands/cost/index.ts'
 import diff from './commands/diff/index.ts'
+import codeSearch from './commands/code-search/index.tsx'
+import diffMode from './commands/diff-mode/index.ts'
+import blockMode from './commands/block-mode/index.ts'
+import repoMap from './commands/repo-map/index.tsx'
 import ctx_viz from './commands/ctx_viz/index.tsx'
 import doctor from './commands/doctor/index.ts'
 import memory from './commands/memory/index.ts'
@@ -78,6 +82,9 @@ import rename from './commands/rename/index.ts'
 import resume from './commands/resume/index.ts'
 import review, { ultrareview } from './commands/review.ts'
 import session from './commands/session/index.ts'
+import sessions from './commands/sessions/index.tsx'
+import browser from './commands/browser/index.tsx'
+import { vectorSearchCommand } from './commands/vector-search/index.tsx'
 import share from './commands/share/index.ts'
 import skills from './commands/skills/index.ts'
 import status from './commands/status/index.ts'
@@ -212,6 +219,7 @@ import {
 import antTrace from './commands/ant-trace/index.tsx'
 import perfIssue from './commands/perf-issue/index.tsx'
 import sandboxToggle from './commands/sandbox-toggle/index.ts'
+import dockerSandboxCommand from './commands/docker-sandbox/index.ts'
 import chrome from './commands/chrome/index.ts'
 import stickers from './commands/stickers/index.ts'
 import advisor from './commands/advisor.ts'
@@ -353,6 +361,7 @@ const COMMANDS = memoize((): Command[] => [
   btw,
   commit,
   commitPushPr,
+  codeSearch,
   chrome,
   clear,
   color,
@@ -365,6 +374,9 @@ const COMMANDS = memoize((): Command[] => [
   ctx_viz,
   cost,
   diff,
+  diffMode,
+  blockMode,
+  repoMap,
   doctor,
   effort,
   exit,
@@ -401,6 +413,8 @@ const COMMANDS = memoize((): Command[] => [
   rename,
   resume,
   session,
+  sessions,
+  browser,
   skills,
   stats,
   status,
@@ -425,6 +439,7 @@ const COMMANDS = memoize((): Command[] => [
   rateLimitOptions,
   usage,
   usageReport,
+  vectorSearchCommand,
   version,
   vim,
   ...(webCmd ? [webCmd] : []),
@@ -456,10 +471,12 @@ const COMMANDS = memoize((): Command[] => [
   rag,
   stock,
   sandboxToggle,
+  dockerSandboxCommand,
   ...(!isUsing3PServices() ? [logout, login()] : []),
   passes,
   ...(peersCmd ? [peersCmd] : []),
   tasks,
+  testGen,
   ...(workflowsCmd ? [workflowsCmd] : []),
   ...(torch ? [torch] : []),
   lessPermissionPrompts,

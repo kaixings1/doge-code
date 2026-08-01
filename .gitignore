@@ -61,6 +61,10 @@ api.json
 usage_stats.json
 test-prompt-patterns.js
 auto-translate-from-bottom.cjs
+bun
+fix_prefire2.ts
+search_free_apis.cjs
+free_api_search_results.txt
 
 # Source Archives
 *.rar

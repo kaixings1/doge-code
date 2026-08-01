@@ -1,4 +1,4 @@
-﻿/**
+/**
 - MonacoEditorPanel — Monaco 编辑器面板 + LSP 深度集成
 - 功能：
 	- Monaco Editor 组件（使用 @monaco-editor/react 动态导入）

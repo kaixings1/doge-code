@@ -459,6 +459,12 @@ export async function startSpeculation(
       cacheSafeParams: cacheSafeParams ?? createCacheSafeParams(context),
       skipTranscript: true,
       canUseTool: async (tool, input) => {
+        if (!input || typeof input !== 'object') {
+          return denySpeculation(
+            'Speculation: invalid tool input',
+            'speculation_invalid_input',
+          )
+        }
         const isWriteTool = WRITE_TOOLS.has(tool.name)
         const isSafeReadOnlyTool = SAFE_READ_ONLY_TOOLS.has(tool.name)
 
