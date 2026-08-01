@@ -8,6 +8,7 @@ src-zh/
 # Build Artifacts
 dist/
 build/
+doge
 doge-bundled.js
 *.exe
 *.bun-build/

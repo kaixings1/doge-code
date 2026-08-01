@@ -7,6 +7,7 @@
  *   - tmux: DCS passthrough wrapper
  */
 
+import { useEffect } from 'react'
 import { renderImage, supportsInlineImages } from '../ink/termio/osc.js'
 
 // ============================================================================
@@ -62,24 +63,24 @@ function ImageRenderer({
   sequence: string
   mediaType: string
 }): JSX.Element {
-  // 在 Ink 中，使用 useEffect 直接写入 stdout
-  // 返回一个零宽度的占位元素
+  // 在挂载时直接写入 stdout，返回一个零宽度的占位元素
   return <ImageWriter sequence={sequence} />
 }
 
 function ImageWriter({ sequence }: { sequence: string }): JSX.Element {
-  // 使用 useStdout 直接写入
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { useStdout } = require('ink') as typeof import('ink')
-  const { stdout } = useStdout()
-
-  if (typeof window === 'undefined' && stdout?.write) {
-    try {
-      stdout.write(sequence)
-    } catch {
-      // 静默失败
+  // 挂载时写一次转义序列到 process.stdout。
+  // 注意：这里不依赖 ink 的 useStdout —— ink/reconciler 含 top-level await，
+  // 会被 bun --compile 可执行文件打包判为非法 require 上下文，导致构建失败。
+  useEffect(() => {
+    const stdout = process.stdout
+    if (stdout?.write) {
+      try {
+        stdout.write(sequence)
+      } catch {
+        // 静默失败
+      }
     }
-  }
+  }, [sequence])
 
   return null
 }
