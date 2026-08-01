@@ -12,7 +12,6 @@
  * query.enableRemoteControl）通过动态导入调用。
  */
 
-import { feature } from 'bun:bundle'
 import { hostname } from 'os'
 import { getOriginalCwd, getSessionId } from '../bootstrap/state.js'
 import type { SDKMessage } from '../entrypoints/agentSdkTypes.js'
@@ -468,7 +467,7 @@ export async function initReplBridge(
   // 可以将它们筛选到专用的选择器中。KAIROS 守卫将
   // 助手模块完全排除在外部构建之外。
   let workerType: BridgeWorkerType = 'claude_code'
-  if (feature('KAIROS')) {
+  if (feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') {
      
     const { isAssistantMode } =
       require('../assistant/index.js') as typeof import('../assistant/index.js')

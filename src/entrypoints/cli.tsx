@@ -1,4 +1,4 @@
-import { feature } from 'bun:bundle';
+import { isFeatureEnabled } from '../bridge/bridgeEnabled.js';
 import '../generated/macro.js';
 import '../generated/status-line-embedded.js';
 
@@ -20,7 +20,7 @@ if (process.env.CLAUDE_CODE_REMOTE === 'true') {
 // 模块级常量中 — init() 运行得太晚。feature() 门控
 // 从外部构建中死代码消除整个块。
 // eslint-disable-next-line custom-rules/no-top-level-side-effects, custom-rules/no-process-env-top-level
-if (feature('ABLATION_BASELINE') && process.env.CLAUDE_CODE_ABLATION_BASELINE) {
+if (feature('ABLATION_BASELINE') || process.env['CLAUDE_CODE_FEATURE_ABLATION_BASELINE'] === '1') {
   for (const k of ['CLAUDE_CODE_SIMPLE', 'CLAUDE_CODE_DISABLE_THINKING', 'DISABLE_INTERLEAVED_THINKING', 'DISABLE_COMPACT', 'DISABLE_AUTO_COMPACT', 'CLAUDE_CODE_DISABLE_AUTO_MEMORY', 'CLAUDE_CODE_DISABLE_BACKGROUND_TASKS']) {
     // eslint-disable-next-line custom-rules/no-top-level-side-effects, custom-rules/no-process-env-top-level
     process.env[k] ??= '1';
@@ -59,7 +59,7 @@ async function main(): Promise<void> {
   // --dump-system-prompt 的快速路径：输出渲染后的系统提示并退出。
   // 用于提示敏感性评估，以提取特定提交处的系统提示。
   // 仅 Ant 内部：通过 feature 标志从外部构建中排除。
-  if (feature('DUMP_SYSTEM_PROMPT') && args[0] === '--dump-system-prompt') {
+  if ((feature('DUMP_SYSTEM_PROMPT') || process.env['CLAUDE_CODE_FEATURE_DUMP_SYSTEM_PROMPT'] === '1') && args[0] === '--dump-system-prompt') {
     profileCheckpoint('cli_dump_system_prompt_path');
     const {
       enableConfigs
@@ -92,7 +92,7 @@ async function main(): Promise<void> {
     } = await import('../utils/claudeInChrome/chromeNativeHost.js');
     await runChromeNativeHost();
     return;
-  } else if (feature('CHICAGO_MCP') && process.argv[2] === '--computer-use-mcp') {
+  } else if ((feature('CHICAGO_MCP') || process.env['CLAUDE_CODE_FEATURE_CHICAGO_MCP'] === '1') && process.argv[2] === '--computer-use-mcp') {
     profileCheckpoint('cli_computer_use_mcp_path');
     const {
       runComputerUseMcpServer
@@ -106,7 +106,7 @@ async function main(): Promise<void> {
   // 对性能敏感。此层没有 enableConfigs()，没有分析 sinks —
   // 工作进程保持精简。如果工作进程类型需要配置/认证（助手将会需要），
   // 它会在自己的 run() 函数内调用它们。
-  if (feature('DAEMON') && args[0] === '--daemon-worker') {
+  if ((feature('DAEMON') || process.env['CLAUDE_CODE_FEATURE_DAEMON'] === '1') && args[0] === '--daemon-worker') {
     const {
       runDaemonWorker
     } = await import('../daemon/workerRegistry.js');
@@ -118,7 +118,7 @@ async function main(): Promise<void> {
   // 将本地机器作为 bridge 环境提供服务。
   // feature() 必须保持内联以实现构建时死代码消除；
   // isBridgeEnabled() 检查运行时的 GrowthBook 门控。
-  if (feature('BRIDGE_MODE') && (args[0] === 'remote-control' || args[0] === 'rc' || args[0] === 'remote' || args[0] === 'sync' || args[0] === 'bridge')) {
+  if ((feature('BRIDGE_MODE') || process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1') && (args[0] === 'remote-control' || args[0] === 'rc' || args[0] === 'remote' || args[0] === 'sync' || args[0] === 'bridge')) {
     profileCheckpoint('cli_bridge_path');
     const {
       enableConfigs
@@ -171,7 +171,7 @@ async function main(): Promise<void> {
   }
 
   // `claude daemon [subcommand]` 的快速路径：长时间运行的主管进程。
-  if (feature('DAEMON') && args[0] === 'daemon') {
+  if ((feature('DAEMON') || process.env['CLAUDE_CODE_FEATURE_DAEMON'] === '1') && args[0] === 'daemon') {
     profileCheckpoint('cli_daemon_path');
     const {
       enableConfigs
@@ -191,7 +191,7 @@ async function main(): Promise<void> {
   // `claude ps|logs|attach|kill` 和 `--bg`/`--background` 的快速路径。
   // 针对 ~/.claude/sessions/ 注册表的会话管理。标志
   // 字面量已内联，因此 bg.js 仅在实际分发时加载。
-  if (feature('BG_SESSIONS') && (args[0] === 'ps' || args[0] === 'logs' || args[0] === 'attach' || args[0] === 'kill' || args.includes('--bg') || args.includes('--background'))) {
+  if ((feature('BG_SESSIONS') || process.env['CLAUDE_CODE_FEATURE_BG_SESSIONS'] === '1') && (args[0] === 'ps' || args[0] === 'logs' || args[0] === 'attach' || args[0] === 'kill' || args.includes('--bg') || args.includes('--background'))) {
     profileCheckpoint('cli_bg_path');
     const {
       enableConfigs
@@ -218,7 +218,7 @@ async function main(): Promise<void> {
   }
 
   // 模板任务命令的快速路径。
-  if (feature('TEMPLATES') && (args[0] === 'new' || args[0] === 'list' || args[0] === 'reply')) {
+  if ((feature('TEMPLATES') || process.env['CLAUDE_CODE_FEATURE_TEMPLATES'] === '1') && (args[0] === 'new' || args[0] === 'list' || args[0] === 'reply')) {
     profileCheckpoint('cli_templates_path');
     const {
       templatesMain
@@ -232,7 +232,7 @@ async function main(): Promise<void> {
 
   // `claude environment-runner` 的快速路径：无头 BYOC 运行器。
   // feature() 必须保持内联以实现构建时死代码消除。
-  if (feature('BYOC_ENVIRONMENT_RUNNER') && args[0] === 'environment-runner') {
+  if ((feature('BYOC_ENVIRONMENT_RUNNER') || process.env['CLAUDE_CODE_FEATURE_BYOC_ENVIRONMENT_RUNNER'] === '1') && args[0] === 'environment-runner') {
     profileCheckpoint('cli_environment_runner_path');
     const {
       environmentRunnerMain
@@ -244,7 +244,7 @@ async function main(): Promise<void> {
   // `claude self-hosted-runner` 的快速路径：无头自托管运行器
   // 针对 SelfHostedRunnerWorkerService API（注册 + 轮询；轮询即
   // 心跳）。feature() 必须保持内联以实现构建时死代码消除。
-  if (feature('SELF_HOSTED_RUNNER') && args[0] === 'self-hosted-runner') {
+  if ((feature('SELF_HOSTED_RUNNER') || process.env['CLAUDE_CODE_FEATURE_SELF_HOSTED_RUNNER'] === '1') && args[0] === 'self-hosted-runner') {
     profileCheckpoint('cli_self_hosted_runner_path');
     const {
       selfHostedRunnerMain
