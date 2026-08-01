@@ -70,7 +70,7 @@ function TerminalPanelWrapper({ cwd, onClose }: { cwd: string; onClose: () => vo
         }}
         title="关闭终端"
       >✕</button>
-      <TerminalPanel cwd={cwd} dogeAPI={window.dogeAPI as any} />
+      <TerminalPanel cwd={cwd} dogeAPI={window.dogeAPI as unknown as Record<string, unknown>} />
     </div>
   )
 }
@@ -1300,7 +1300,7 @@ export function App(): JSX.Element {
       return
     }
 
-    const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    const SpeechRecognitionAPI = (window as { [key: string]: unknown }).SpeechRecognition || (window as { [key: string]: unknown }).webkitSpeechRecognition
     if (!SpeechRecognitionAPI) {
       showToast('当前浏览器不支持语音识别 API', 'error')
       return

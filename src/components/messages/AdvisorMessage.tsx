@@ -8,6 +8,11 @@ import { jsonStringify } from '../../utils/slowOperations.js';
 import { CtrlOToExpand } from '../CtrlOToExpand.js';
 import { MessageResponse } from '../MessageResponse.js';
 import { ToolUseLoader } from '../ToolUseLoader.js';
+
+function isRecord(obj: unknown): obj is Record<string, unknown> {
+  return obj != null && typeof obj === 'object'
+}
+
 type Props = {
   block: AdvisorBlock;
   addMargin: boolean;
@@ -31,7 +36,7 @@ export function AdvisorMessage(t0) {
   if (block.type === "server_tool_use") {
     let t1;
     if ($[0] !== block.input) {
-      t1 = block.input && Object.keys(block.input).length > 0 ? jsonStringify(block.input) : null;
+      t1 = isRecord(block.input) && Object.keys(block.input).length > 0 ? jsonStringify(block.input) : null;
       $[0] = block.input;
       $[1] = t1;
     } else {

@@ -62,13 +62,13 @@ export const CompareTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const left = (input as any)?.left ?? '?'
-    const right = (input as any)?.right ?? '?'
+    const left = (input as Record<string, unknown>)?.left ?? '?'
+    const right = (input as Record<string, unknown>)?.right ?? '?'
     return `Compare: ${left.substring(0, 30)} ↔ ${right.substring(0, 30)}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
-    const changes = (content as any).changes
-    const identical = (content as any).identical
+    const changes = (content as Record<string, unknown>).changes
+    const identical = (content as Record<string, unknown>).identical
     const msg = identical
       ? '内容相同，无差异'
       : changes && changes.length > 0

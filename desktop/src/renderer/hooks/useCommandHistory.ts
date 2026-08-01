@@ -1,4 +1,4 @@
-/**
+﻿/**
  * useCommandHistory — 命令历史记录管理 Hook
  *
  * 提供命令历史记录功能：
@@ -15,7 +15,7 @@ interface CommandHistoryEntry {
   time: number
 }
 
-interface UseCommandHistoryReturn {
+export interface UseCommandHistoryReturn {
   commandHistory: CommandHistoryEntry[]
   addCommand: (cmd: string) => void
   navigateHistory: (direction: 'up' | 'down', currentInput: string) => string

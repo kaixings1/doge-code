@@ -144,7 +144,7 @@ export class InputValidator {
     }
 
     for (const [key, rule] of Object.entries(schema)) {
-      const fieldRule = rule as any;
+      const fieldRule = rule as Record<string, unknown>;
 
       if (fieldRule.required && !(key in value)) {
         errors.push(`Missing required field: ${key}`);

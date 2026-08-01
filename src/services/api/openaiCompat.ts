@@ -152,11 +152,9 @@ export function convertAnthropicRequestToOpenAI(input: {
   temperature?: number
   max_tokens?: number
 }): OpenAIChatRequest {
-  logForDebugging('[openaiCompat] 开始将 Anthropic 请求转换为 OpenAI 格式', { level: 'debug' })
   // 支持通过环境变量覆盖模型名称
   const configuredModel = process.env.ANTHROPIC_MODEL?.trim()
   const targetModel = configuredModel || input.model
-  logForDebugging(`[openaiCompat] 目标模型: ${targetModel} (原始: ${input.model}, 环境覆盖: ${configuredModel ?? '无'})`, { level: 'debug' })
   const messages: OpenAIChatMessage[] = []
 
   // 处理 system prompt（可能是字符串或内容块数组）
@@ -166,13 +164,11 @@ export function convertAnthropicRequestToOpenAI(input: {
       : input.system
     if (systemText) {
       messages.push({ role: 'system', content: systemText })
-      logForDebugging(`[openaiCompat] 添加 system 消息 (长度: ${systemText.length})`, { level: 'debug' })
     }
   }
 
   // 逐条转换消息
   for (const message of input.messages) {
-    logForDebugging(`[openaiCompat] 处理消息 role=${message.role}`, { level: 'debug' })
     if (message.role === 'user') {
       const blocks = toBlocks(message.content)
 
@@ -187,7 +183,6 @@ export function convertAnthropicRequestToOpenAI(input: {
           tool_call_id: toolUseId,
           content: typeof content === 'string' ? content : JSON.stringify(content),
         })
-        logForDebugging(`[openaiCompat] 添加 tool 消息 (tool_use_id=${toolUseId}, content长度=${typeof content === 'string' ? content.length : 'object'})`, { level: 'debug' })
       }
 
       // 将剩余的非工具结果内容拼接为用户消息
@@ -196,7 +191,6 @@ export function convertAnthropicRequestToOpenAI(input: {
       )
       if (text) {
         messages.push({ role: 'user', content: text })
-        logForDebugging(`[openaiCompat] 添加 user 消息 (长度: ${text.length})`, { level: 'debug' })
       }
       continue
     }
@@ -254,7 +248,6 @@ export function convertAnthropicRequestToOpenAI(input: {
         content: text || null,
         ...(toolCalls.length > 0 ? { tool_calls: toolCalls } : {}),
       })
-      logForDebugging(`[openaiCompat] 添加 assistant 消息 (text长度=${text.length}, toolCalls数量=${toolCalls.length}, reasoning_content=${reasoningContent ? '有' : '无'})`, { level: 'debug' })
     }
   }
 
@@ -277,7 +270,6 @@ export function convertAnthropicRequestToOpenAI(input: {
         ? { tool_choice: 'auto' as const }
         : {}),
   }
-  logForDebugging(`[openaiCompat] 转换完成: 模型: ${targetModel}，总消息数=${messages.length}, 工具数=${result.tools?.length ?? 0}`, { level: 'debug' })
   return result
 }
 
@@ -291,9 +283,7 @@ export async function createOpenAICompatStream(
   signal: AbortSignal,
 ): Promise<ReadableStreamDefaultReader<Uint8Array>> {
   const url = config.baseURL;
-  console.error('[DEBUG] 请求 URL:', url);
-  logForDebugging('[openaiCompat] 准备请求 URL: ' + url, { level: 'debug' })
-  logForDebugging(`[openaiCompat] 请求体: ${JSON.stringify({ ...request, stream: true })}`, { level: 'debug' })
+  logForDebugging(`[openaiCompat] 请求 URL: ${url}`, { level: 'debug' })
   const response = await (config.fetch ?? globalThis.fetch)(
     url,
     {
@@ -307,6 +297,7 @@ export async function createOpenAICompatStream(
       body: JSON.stringify({ ...request, stream: true }),
     },
   );
+  //logForDebugging(`[openaiCompat] 请求体: ${JSON.stringify({ ...request, stream: true })}`, { level: 'debug' })
 
   if (!response.ok || !response.body) {
     let responseText = ''
@@ -355,6 +346,52 @@ function parseSSEChunk(buffer: string): { events: string[]; remainder: string } 
 }
 
 /**
+ * 尝试将非流式 JSON 响应解析为 Anthropic 流事件序列
+ * 兜底方案：当服务端返回完整 JSON 而非 SSE 流时使用
+ */
+function tryParseNonStreamingResponse(
+  buffer: string,
+  model: string,
+): {
+  events: Array<Record<string, unknown>>
+  resultMessage: Record<string, unknown>
+  promptTokens: number
+  completionTokens: number
+} | null {
+  try {
+    const parsed = JSON.parse(buffer)
+    const content = parsed.choices?.[0]?.message?.content ?? parsed.content?.[0]?.text ?? ''
+    if (!content) return null
+
+    const promptTokens = parsed.usage?.prompt_tokens ?? 0
+    const completionTokens = parsed.usage?.completion_tokens ?? 0
+
+    return {
+      events: [
+        { type: 'message_start', message: { model, content: [], usage: { input_tokens: 0, output_tokens: 0 } } },
+        { type: 'content_block_start', index: 0, content_block: { type: 'text', text: '' } },
+        { type: 'content_block_delta', index: 0, delta: { type: 'text_delta', text: content } },
+        { type: 'content_block_stop', index: 0 },
+        { type: 'message_delta', delta: { stop_reason: 'end_turn' }, usage: { output_tokens: completionTokens } },
+        { type: 'message_stop' },
+      ],
+      resultMessage: {
+        type: 'message',
+        role: 'assistant',
+        model,
+        content: [{ type: 'text', text: content }],
+        stop_reason: 'end_turn',
+        usage: { input_tokens: promptTokens, output_tokens: completionTokens },
+      },
+      promptTokens,
+      completionTokens,
+    }
+  } catch {
+    return null
+  }
+}
+
+/**
  * 将 OpenAI 的 finish_reason 映射为 Anthropic 的 stop_reason
  */
 function mapFinishReason(reason: string | null | undefined): BetaMessage['stop_reason'] {
@@ -387,13 +424,11 @@ export async function* createAnthropicStreamFromOpenAI(input: {
   const toolIdxMap = new Map<number, number>()               // 上游 tool_calls index -> Anthropic index
   const toolState = new Map<number, { id: string; name: string; arguments: string }>()
 
-  logForDebugging(`[openaiCompat] 开始将 OpenAI 流转换为 Anthropic 事件, model=${input.model}`, { level: 'debug' })
   /**
    * 关闭当前活动的文本块（如有）
    */
   async function* closeActiveBlock() {
     if (activeBlockType && activeBlockIndex !== null) {
-      logForDebugging(`[openaiCompat] 关闭文本块 index=${activeBlockIndex}`, { level: 'debug' })
       yield { type: 'content_block_stop', index: activeBlockIndex } as BetaRawMessageStreamEvent
       activeBlockType = null
       activeBlockIndex = null
@@ -405,14 +440,11 @@ export async function* createAnthropicStreamFromOpenAI(input: {
    */
   async function* closeAllNativeBlocks() {
     for (const [idx] of nativeBlockType) {
-      logForDebugging(`[openaiCompat] 关闭原生块 index=${idx}`, { level: 'debug' })
       yield { type: 'content_block_stop', index: idx } as BetaRawMessageStreamEvent
     }
     nativeBlockType.clear()
     nativeIdxMap.clear()
   }
-  logForDebugging('[openaiCompat] 开始将 OpenAI 流转换为 Anthropic 事件', { level: 'debug' })
-
   while (true) {
     const { done, value } = await input.reader.read()
     if (done) {
@@ -422,7 +454,7 @@ export async function* createAnthropicStreamFromOpenAI(input: {
     if (value?.byteLength) {
       responseBytes += value.byteLength
       const partialText = decoder.decode(value, { stream: true })
-      logForDebugging(`[openaiCompat] 读取到 chunk, 字节长度=${value.byteLength}, 部分文本预览: ${partialText.slice(0, 200)}${partialText.length > 200 ? '...' : ''}`, { level: 'debug' })
+      logForDebugging(`[openaiCompat] 读取到 chunk, 字节长度=${value.byteLength}, 部分文本预览: ${partialText.slice(0, 21000)}${partialText.length > 21000 ? '...' : ''}`, { level: 'debug' })
     }
     buffer += decoder.decode(value, { stream: true })
     const sse = parseSSEChunk(buffer)
@@ -439,16 +471,13 @@ export async function* createAnthropicStreamFromOpenAI(input: {
 
       for (const data of dataLines) {
         if (!data || data === '[DONE]') {
-          if (data === '[DONE]') 
-	  {
-            logForDebugging('[openaiCompat] 收到 [DONE] 事件，开始收尾', { level: 'debug' })
+          if (data === '[DONE]')
+          {
             await closeActiveBlock()
             for (const ai of toolIdxMap.values()) {
-              logForDebugging(`[openaiCompat] 关闭工具块 index=${ai}`, { level: 'debug' })
               yield { type: 'content_block_stop', index: ai } as BetaRawMessageStreamEvent
             }
             if (!nativeMessageDeltaSent && started) {
-              logForDebugging('[openaiCompat] 发送 message_delta (end_turn)', { level: 'debug' })
               yield { type: 'message_delta', delta: { stop_reason: 'end_turn', stop_sequence: null }, usage: { output_tokens: completionTokens } } as BetaRawMessageStreamEvent
             }
             yield { type: 'message_stop' } as BetaRawMessageStreamEvent
@@ -475,7 +504,6 @@ export async function* createAnthropicStreamFromOpenAI(input: {
           continue
         }
         if (!event || typeof event !== 'object') continue
-        logForDebugging(`[openaiCompat] 收到事件: ${JSON.stringify(event).slice(0, 500)}`, { level: 'debug' })
 
         const hasChoices = Array.isArray(event.choices) && event.choices.length > 0
 
@@ -488,7 +516,6 @@ export async function* createAnthropicStreamFromOpenAI(input: {
             logForDebugging(`[openaiCompat] 事件缺少 type 字段, 原始内容: ${JSON.stringify(event).slice(0, 200)}`, { level: 'debug' })
             continue
           }
-          logForDebugging(`[openaiCompat] 原生事件类型: ${evType}`, { level: 'debug' })
 
           switch (evType) {
             case 'message_start': {
@@ -497,7 +524,6 @@ export async function* createAnthropicStreamFromOpenAI(input: {
               if (msg && !msg.model) msg.model = input.model
               const u = event.usage as Record<string, unknown>
               if (u?.input_tokens) promptTokens = u.input_tokens as number
-              logForDebugging(`[openaiCompat] message_start, 输入 token 数=${promptTokens}`, { level: 'debug' })
               yield { type: 'message_start', message: msg ?? { id: 'anthropic-native', type: 'message', role: 'assistant', model: input.model, content: [], stop_reason: null, stop_sequence: null, usage: { input_tokens: 0, output_tokens: 0 } } } as BetaRawMessageStreamEvent
               break
             }
@@ -508,7 +534,6 @@ export async function* createAnthropicStreamFromOpenAI(input: {
               if (anthropicIdx === undefined) {
                 anthropicIdx = nextContentIndex++
                 nativeIdxMap.set(upstreamIdx, anthropicIdx)
-                logForDebugging(`[openaiCompat] 分配原生块索引: upstream ${upstreamIdx} -> Anthropic ${anthropicIdx}`, { level: 'debug' })
               }
               const block = event.content_block as Record<string, unknown>
               if (block?.type === 'tool_use') {
@@ -517,12 +542,10 @@ export async function* createAnthropicStreamFromOpenAI(input: {
                   id: (block.id as string) || '',
                   name: (block.name as string) || '',
                 })
-                logForDebugging(`[openaiCompat] 原生 tool_use 开始: index=${anthropicIdx}, name=${block.name}, id=${block.id}`, { level: 'debug' })
                 yield { type: 'content_block_start', index: anthropicIdx, content_block: block as BetaRawMessageStreamEvent['content_block'] } as BetaRawMessageStreamEvent
               } else {
                 // thinking / text 一律视为 text 块
                 nativeBlockType.set(anthropicIdx, 'text')
-                logForDebugging(`[openaiCompat] 原生文本块开始: index=${anthropicIdx}`, { level: 'debug' })
                 yield { type: 'content_block_start', index: anthropicIdx, content_block: { type: 'text', text: '' } } as BetaRawMessageStreamEvent
               }
               break
@@ -536,7 +559,6 @@ export async function* createAnthropicStreamFromOpenAI(input: {
 
               // 跳过签名增量
               if (originalType === 'signature_delta') {
-                logForDebugging(`[openaiCompat] 跳过 signature_delta (index=${upstreamIdx})`, { level: 'debug' })
                 continue
               }
 
@@ -544,7 +566,6 @@ export async function* createAnthropicStreamFromOpenAI(input: {
               let outputDelta = delta
               if (originalType === 'thinking_delta') {
                 outputDelta = { type: 'text_delta', text: delta.thinking }
-                logForDebugging(`[openaiCompat] 转换 thinking_delta 为 text_delta, 文本长度=${String(delta.thinking).length}`, { level: 'debug' })
               }
 
               if (anthropicIdx === undefined) {
@@ -553,12 +574,11 @@ export async function* createAnthropicStreamFromOpenAI(input: {
                 nativeIdxMap.set(upstreamIdx, anthropicIdx)
                 const guessType = originalType === 'input_json_delta' ? 'tool_use' : 'text'
                 nativeBlockType.set(anthropicIdx, guessType)
-                logForDebugging(`[openaiCompat] 自动合成 ${guessType} 块 (upstream ${upstreamIdx} -> Anthropic ${anthropicIdx})`, { level: 'debug' })
                 if (guessType === 'tool_use') {
                   const id = (delta?.id as string) || `toolu_${anthropicIdx}`
                   const name = (delta?.name as string) || ''
                   nativeToolUseInfo.set(anthropicIdx, { id, name })
-                  yield { type: 'content_block_start', index: anthropicIdx, content_block: { type: 'tool_use', id, name, input: '' } } as BetaRawMessageStreamEvent
+                  yield { type: 'content_block_start', index: anthropicIdx, content_block: { type: 'tool_use', id, name } } as BetaRawMessageStreamEvent
                 } else {
                   yield { type: 'content_block_start', index: anthropicIdx, content_block: { type: 'text', text: '' } } as BetaRawMessageStreamEvent
                 }
@@ -571,11 +591,9 @@ export async function* createAnthropicStreamFromOpenAI(input: {
                   if (delta.id) info.id = delta.id as string
                   if (delta.name) info.name = delta.name as string
                   nativeToolUseInfo.set(anthropicIdx, info)
-                  logForDebugging(`[openaiCompat] 更新 tool_use 元数据: index=${anthropicIdx}, id=${info.id}, name=${info.name}`, { level: 'debug' })
                 }
               }
 
-              logForDebugging(`[openaiCompat] content_block_delta: index=${anthropicIdx}, delta类型=${outputDelta.type}`, { level: 'debug' })
               yield { type: 'content_block_delta', index: anthropicIdx, delta: outputDelta as BetaRawMessageStreamEvent['delta'] } as BetaRawMessageStreamEvent
               break
             }
@@ -584,12 +602,10 @@ export async function* createAnthropicStreamFromOpenAI(input: {
               const upstreamIdx = Number(event.index) || 0
               const anthropicIdx = nativeIdxMap.get(upstreamIdx)
               if (anthropicIdx !== undefined) {
-                logForDebugging(`[openaiCompat] content_block_stop: upstream ${upstreamIdx} -> Anthropic ${anthropicIdx}`, { level: 'debug' })
                 nativeBlockType.delete(anthropicIdx)
                 nativeIdxMap.delete(upstreamIdx)
                 yield { type: 'content_block_stop', index: anthropicIdx } as BetaRawMessageStreamEvent
               } else {
-                logForDebugging(`[openaiCompat] 警告: content_block_stop 找不到映射 upstream ${upstreamIdx}`, { level: 'debug' })
               }
               break
             }
@@ -598,16 +614,13 @@ export async function* createAnthropicStreamFromOpenAI(input: {
               const u = event.usage as Record<string, unknown>
               if (u?.output_tokens) completionTokens = u.output_tokens as number
               nativeMessageDeltaSent = true
-              logForDebugging(`[openaiCompat] message_delta: stop_reason=${(event.delta as any)?.stop_reason}, output_tokens=${completionTokens}`, { level: 'debug' })
-              yield { type: 'message_delta', delta: event.delta as any, usage: { output_tokens: completionTokens } } as BetaRawMessageStreamEvent
+              yield { type: 'message_delta', delta: event.delta as unknown as MessageDelta, usage: { output_tokens: completionTokens } } as BetaRawMessageStreamEvent
               break
             }
 
             case 'message_stop': {
-              logForDebugging('[openaiCompat] 原生 message_stop, 清理并返回', { level: 'debug' })
               yield* closeAllNativeBlocks()
               if (!nativeMessageDeltaSent) {
-                logForDebugging('[openaiCompat] 发送补充的 message_delta (原生路径)', { level: 'debug' })
                 yield { type: 'message_delta', delta: { stop_reason: 'end_turn', stop_sequence: null }, usage: { output_tokens: completionTokens } } as BetaRawMessageStreamEvent
               }
               _lastResponseBytes = responseBytes
@@ -630,23 +643,34 @@ export async function* createAnthropicStreamFromOpenAI(input: {
         if (!started) {
           started = true
           promptTokens = chunk.usage?.prompt_tokens ?? 0
-          logForDebugging(`[openaiCompat] 自动发送 message_start, 输入 token 数=${promptTokens}, chunk.id=${chunk.id}`, { level: 'debug' })
           yield { type: 'message_start', message: { id: chunk.id ?? 'openai-compat', type: 'message', role: 'assistant', model: input.model, content: [], stop_reason: null, stop_sequence: null, usage: { input_tokens: promptTokens, output_tokens: 0 } } } as BetaRawMessageStreamEvent
         }
 
         // 将 thinking 增量当作文本增量处理
-        if (delta && (delta as any).thinking !== undefined) {
-          const t = (delta as any).thinking as string
-          logForDebugging(`[openaiCompat] 检测到 thinking 增量, 长度=${t.length}`, { level: 'debug' })
+        if (delta && (delta as Record<string, unknown>).thinking !== undefined) {
+          const t = (delta as Record<string, unknown>).thinking as string
           if (activeBlockType !== 'text') {
             yield* closeActiveBlock()
             activeBlockIndex = nextContentIndex++
-            logForDebugging(`[openaiCompat] 创建新文本块 index=${activeBlockIndex} 用于 thinking`, { level: 'debug' })
             yield { type: 'content_block_start', index: activeBlockIndex, content_block: { type: 'text', text: '' } } as BetaRawMessageStreamEvent
             activeBlockType = 'text'
           }
           if (activeBlockIndex !== null) {
             yield { type: 'content_block_delta', index: activeBlockIndex, delta: { type: 'text_delta', text: t } } as BetaRawMessageStreamEvent
+          }
+        }
+
+        // reasoning_content 增量（DeepSeek 等模型的推理输出）
+        if (delta?.reasoning_content) {
+          const text = delta.reasoning_content as string
+          if (activeBlockType !== 'text') {
+            yield* closeActiveBlock()
+            activeBlockIndex = nextContentIndex++
+            yield { type: 'content_block_start', index: activeBlockIndex, content_block: { type: 'text', text: '' } } as BetaRawMessageStreamEvent
+            activeBlockType = 'text'
+          }
+          if (activeBlockIndex !== null) {
+            yield { type: 'content_block_delta', index: activeBlockIndex, delta: { type: 'text_delta', text } } as BetaRawMessageStreamEvent
           }
         }
 
@@ -657,7 +681,6 @@ export async function* createAnthropicStreamFromOpenAI(input: {
           if (activeBlockType !== 'text') {
             yield* closeActiveBlock()
             activeBlockIndex = nextContentIndex++
-            logForDebugging(`[openaiCompat] 创建新文本块 index=${activeBlockIndex} 用于普通文本`, { level: 'debug' })
             yield { type: 'content_block_start', index: activeBlockIndex, content_block: { type: 'text', text: '' } } as BetaRawMessageStreamEvent
             activeBlockType = 'text'
           }
@@ -667,43 +690,75 @@ export async function* createAnthropicStreamFromOpenAI(input: {
         }
 
         // 工具调用增量
-        if (delta && Array.isArray((delta as any).tool_calls)) {
-          logForDebugging(`[openaiCompat] 检测到 ${(delta as any).tool_calls.length} 个工具调用增量`, { level: 'debug' })
-          yield* closeActiveBlock()
-          for (const tc of (delta as any).tool_calls as any[]) {
+        const rawToolCalls = (delta as Record<string, unknown>).tool_calls
+        if (delta && Array.isArray(rawToolCalls) && rawToolCalls.length > 0) {
+          // 过滤掉空的 tool_call 占位条目，以及新 tool_call 的 arguments 不完整碎片
+          // 兼容非标准流式格式：模型可能把 arguments 拆成多个碎片（如 "\"dir" "\""），
+          // 同一 index 的续传碎片通过 toolStateMap 识别并合并，不新建块
+          const toolCalls = rawToolCalls.filter((tc: any) => {
             const oi = tc.index ?? 0
-            let ai = toolIdxMap.get(oi)
-            if (ai === undefined) {
-              ai = nextContentIndex++
-              toolIdxMap.set(oi, ai)
-              const state = { id: tc.id ?? `toolu_${oi}`, name: tc.function?.name ?? '', arguments: '' }
-              toolState.set(oi, state)
-              logForDebugging(`[openaiCompat] 新工具块: upstream index=${oi} -> Anthropic index=${ai}, name=${state.name}, id=${state.id}`, { level: 'debug' })
-              yield { type: 'content_block_start', index: ai, content_block: { type: 'tool_use', id: state.id, name: state.name, input: '' } } as BetaRawMessageStreamEvent
-            }
-            const state = toolState.get(oi)
-            if (state) {
-              if (tc.id) state.id = tc.id
-              if (tc.function?.name) state.name = tc.function.name
-              if (tc.function?.arguments) {
-                const newArgs = tc.function.arguments
-                const prevLen = state.arguments.length
-                state.arguments += newArgs
-                const delta = newArgs.length > prevLen ? newArgs.slice(prevLen) : newArgs
-                logForDebugging(`[openaiCompat] 工具参数增量: index=${oi}, 新增长度=${delta.length}, 累积长度=${state.arguments.length}`, { level: 'debug' })
-                yield { type: 'content_block_delta', index: ai, delta: { type: 'input_json_delta', partial_json: delta } } as BetaRawMessageStreamEvent
+            // 已有该 index 的 tool state → 续传碎片，保留
+            if (toolState.has(oi)) return true
+            // 带 id 或 name → 正式声明，保留
+            if (tc.id || tc.function?.name) return true
+            // 全新 index 且无 id/name：仅当有非空 arguments 时保留
+            // （不按 JSON 完整性过滤，分片传输的 JSON 天然不完整）
+            if (tc.function?.arguments && tc.function.arguments.trim().length > 0) return true
+            return false
+          })
+          if (toolCalls.length > 0) {
+            yield* closeActiveBlock()
+            for (const tc of toolCalls) {
+              const oi = tc.index ?? 0
+              // 跳过无任何数据的占位条目
+              if (toolState.has(oi)) {
+                if (!tc.id && !tc.function?.name && !tc.function?.arguments) continue
+              } else if (!tc.id && !tc.function?.name) {
+                continue
+              }
+              let ai = toolIdxMap.get(oi)
+              if (ai === undefined) {
+                ai = nextContentIndex++
+                toolIdxMap.set(oi, ai)
+                const state = { id: tc.id ?? `toolu_${oi}`, name: tc.function?.name ?? '', arguments: '' }
+                toolState.set(oi, state)
+                yield { type: 'content_block_start', index: ai, content_block: { type: 'tool_use', id: state.id, name: state.name } } as BetaRawMessageStreamEvent
+              }
+              const state = toolState.get(oi)
+              if (state) {
+                if (tc.id) state.id = tc.id
+                if (tc.function?.name) state.name = tc.function.name
+                if (tc.function?.arguments) {
+                  const newArgs = tc.function.arguments
+                  // 区分两种模式：
+                  // 1) 模型每帧发送完整 arguments（startsWith 匹配）→ 只发增量部分
+                  // 2) 模型发送增量碎片（不匹配）→ 直接拼接并发送完整碎片
+                  if (newArgs.startsWith(state.arguments) && newArgs.length > state.arguments.length) {
+                    // 全量重发模式：只发新增的增量部分
+                    const delta = newArgs.slice(state.arguments.length)
+                    state.arguments = newArgs
+                    yield { type: 'content_block_delta', index: ai, delta: { type: 'input_json_delta', partial_json: delta } } as BetaRawMessageStreamEvent
+                  } else if (newArgs.startsWith(state.arguments)) {
+                    // 全量重发且内容完全相同（delta 为空）：仍需要产生一个 delta 事件
+                    // 让 StreamProcessor 能解析到完整的 JSON
+                    state.arguments = newArgs
+                    yield { type: 'content_block_delta', index: ai, delta: { type: 'input_json_delta', partial_json: newArgs } } as BetaRawMessageStreamEvent
+                  } else {
+                    // 碎片模式：拼接累积
+                    state.arguments += newArgs
+                    yield { type: 'content_block_delta', index: ai, delta: { type: 'input_json_delta', partial_json: newArgs } } as BetaRawMessageStreamEvent
+                  }
+                }
               }
             }
           }
-        }
 
+        }
         // finish_reason 出现时，结束消息
         //if (choice && Object.prototype.hasOwnProperty.call(choice, 'finish_reason')) {
         if (choice?.finish_reason) {
-          logForDebugging(`[openaiCompat] 收到 finish_reason=${choice.finish_reason}, 准备结束消息`, { level: 'debug' })
           yield* closeActiveBlock()
           for (const ai of toolIdxMap.values()) {
-            logForDebugging(`[openaiCompat] 关闭工具块 index=${ai}`, { level: 'debug' })
             yield { type: 'content_block_stop', index: ai } as BetaRawMessageStreamEvent
           }
           completionTokens = chunk.usage?.completion_tokens ?? completionTokens
@@ -741,20 +796,13 @@ export async function* createAnthropicStreamFromOpenAI(input: {
   }
   // 流意外结束时的清理
   logForDebugging(`[openaiCompat] 流意外结束 - started=${started}, promptTokens=${promptTokens}, completionTokens=${completionTokens}, responseBytes=${responseBytes}, buffer=${buffer.slice(0, 200)}`, { level: 'debug' })
-  logForDebugging(`[openaiCompat] nativeIdxMap size=${nativeIdxMap.size}, nativeBlockType size=${nativeBlockType.size}`, { level: 'debug' })
   yield* closeActiveBlock()
   for (const ai of toolIdxMap.values()) {
-    logForDebugging(`[openaiCompat] 清理工具块 index=${ai}`, { level: 'debug' })
     yield { type: 'content_block_stop', index: ai } as BetaRawMessageStreamEvent
   }
   yield* closeAllNativeBlocks()
   _lastResponseBytes = responseBytes
   throw new Error(`[openaiCompat] stream ended unexpectedly before message_stop for model=${input.model}`)
-  if (!started) {
-    logForDebugging(`[openaiCompat] 致命错误: 未收到 message_start 事件`, { level: 'error' })
-    throw new Error(`[openaiCompat] 流式响应格式错误: 未收到 message_start 事件。请确认服务端返回的是 Anthropic 格式的流式响应，而不是 OpenAI 格式。当前模型: ${input.model}`)
-  }
-  throw new Error(`[openaiCompat] 流式响应格式错误: 在收到 message_stop 之前流已结束。请确认服务端返回的是完整的 Anthropic 格式流式响应。当前模型: ${input.model}`)
 }
 
 // 记录最近一次 OpenAI 兼容请求的响应字节数（供外部监控使用）

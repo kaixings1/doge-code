@@ -92,6 +92,5 @@ export function getAttributionHeader(fingerprint: string): string {
   const workloadPair = workload ? ` cc_workload=${workload};` : ''
   const header = `x-anthropic-billing-header: cc_version=${version}; cc_entrypoint=${entrypoint};${cch}${workloadPair}`
 
-  logForDebugging(`归因头部 ${header}`)
   return header
 }

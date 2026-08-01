@@ -14,7 +14,7 @@ import * as fs from 'fs'
 // 构建后 __dirname 指向 src/desktop-electron/，构建产物在 desktop/dist/main/
 const DESKTOP_ROOT = path.resolve(__dirname, '..')
 const PROJECT_ROOT = path.resolve(DESKTOP_ROOT, '..')
-const DIST_MAIN = path.join(DESKTOP_ROOT, 'dist', 'main', 'index.mjs')
+const DIST_MAIN = path.join(DESKTOP_ROOT, 'dist', 'main', 'index.js')
 
 // ─── 配置 ───
 function loadConfig() {

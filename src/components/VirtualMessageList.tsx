@@ -146,7 +146,7 @@ function computeStickyPromptText(msg: RenderableMessage): string | null {
   let raw: string | null = null;
   if (msg.type === 'user') {
     if (msg.isMeta || msg.isVisibleInTranscriptOnly) return null;
-    const block = msg.message.content[0];
+    const block = Array.isArray(msg.message.content) ? msg.message.content[0] : undefined;
     if (block?.type !== 'text') return null;
     raw = block.text;
   } else if (msg.type === 'attachment' && msg.attachment.type === 'queued_command' && msg.attachment.commandMode !== 'task-notification' && !msg.attachment.isMeta) {

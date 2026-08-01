@@ -583,13 +583,13 @@ export async function revokeServerTokens(
     tokenData &&
     (tokenData.stepUpScope || tokenData.discoveryState)
   ) {
-    const freshData = storage.read() || {}
+    const freshData = (storage.read() ?? {}) as SecureStorageData
     const updatedData: SecureStorageData = {
       ...freshData,
       mcpOAuth: {
-        ...freshData.mcpOAuth,
+        ...(freshData.mcpOAuth as Record<string, unknown>),
         [serverKey]: {
-          ...freshData.mcpOAuth?.[serverKey],
+          ...((freshData.mcpOAuth as Record<string, unknown>)?.[serverKey] as Record<string, unknown> | undefined),
           serverName,
           serverUrl: serverConfig.url,
           accessToken: freshData.mcpOAuth?.[serverKey]?.accessToken ?? '',
@@ -794,13 +794,13 @@ async function performMCPXaaAuth(
     // (instead of ClaudeAuthProvider.saveTokens) to avoid instantiating the
     // whole provider just to write the same keys.
     const storage = getSecureStorage()
-    const existingData = storage.read() || {}
+    const existingData = (storage.read() ?? {}) as SecureStorageData
     const serverKey = getServerKey(serverName, serverConfig)
     const prev = existingData.mcpOAuth?.[serverKey]
     storage.update({
       ...existingData,
       mcpOAuth: {
-        ...existingData.mcpOAuth,
+        ...(existingData.mcpOAuth as Record<string, unknown>),
         [serverKey]: {
           ...prev,
           serverName,
@@ -1308,7 +1308,7 @@ export async function performMCPOAuthFlow(
         error.message.includes('Client not found')
       ) {
         const storage = getSecureStorage()
-        const existingData = storage.read() || {}
+        const existingData = (storage.read() ?? {}) as SecureStorageData
         const serverKey = getServerKey(serverName, serverConfig)
         if (existingData.mcpOAuth?.[serverKey]) {
           delete existingData.mcpOAuth[serverKey].clientId
@@ -1514,15 +1514,15 @@ export class ClaudeAuthProvider implements OAuthClientProvider {
     clientInformation: OAuthClientInformationFull,
   ): Promise<void> {
     const storage = getSecureStorage()
-    const existingData = storage.read() || {}
+    const existingData = (storage.read() ?? {}) as SecureStorageData
     const serverKey = getServerKey(this.serverName, this.serverConfig)
 
     const updatedData: SecureStorageData = {
       ...existingData,
       mcpOAuth: {
-        ...existingData.mcpOAuth,
+        ...(existingData.mcpOAuth as Record<string, unknown>),
         [serverKey]: {
-          ...existingData.mcpOAuth?.[serverKey],
+          ...((existingData.mcpOAuth as Record<string, unknown>)?.[serverKey] as Record<string, unknown> | undefined),
           serverName: this.serverName,
           serverUrl: this.serverConfig.url,
           clientId: clientInformation.client_id,
@@ -1704,7 +1704,7 @@ export class ClaudeAuthProvider implements OAuthClientProvider {
   async saveTokens(tokens: OAuthTokens): Promise<void> {
     this._pendingStepUpScope = undefined
     const storage = getSecureStorage()
-    const existingData = storage.read() || {}
+    const existingData = (storage.read() ?? {}) as SecureStorageData
     const serverKey = getServerKey(this.serverName, this.serverConfig)
 
     logMCPDebug(this.serverName, `Saving tokens`)
@@ -1714,9 +1714,9 @@ export class ClaudeAuthProvider implements OAuthClientProvider {
     const updatedData: SecureStorageData = {
       ...existingData,
       mcpOAuth: {
-        ...existingData.mcpOAuth,
+        ...(existingData.mcpOAuth as Record<string, unknown>),
         [serverKey]: {
-          ...existingData.mcpOAuth?.[serverKey],
+          ...((existingData.mcpOAuth as Record<string, unknown>)?.[serverKey] as Record<string, unknown> | undefined),
           serverName: this.serverName,
           serverUrl: this.serverConfig.url,
           accessToken: tokens.access_token,
@@ -1807,13 +1807,13 @@ export class ClaudeAuthProvider implements OAuthClientProvider {
       // revokeServerTokens would later read tokenData.clientId as undefined
       // and send a client_id-less RFC 7009 request that strict ASes reject.
       const storage = getSecureStorage()
-      const existingData = storage.read() || {}
+      const existingData = (storage.read() ?? {}) as SecureStorageData
       const serverKey = getServerKey(this.serverName, this.serverConfig)
       const prev = existingData.mcpOAuth?.[serverKey]
       storage.update({
         ...existingData,
         mcpOAuth: {
-          ...existingData.mcpOAuth,
+          ...(existingData.mcpOAuth as Record<string, unknown>),
           [serverKey]: {
             ...prev,
             serverName: this.serverName,
@@ -1889,7 +1889,7 @@ export class ClaudeAuthProvider implements OAuthClientProvider {
     // (where the scope may come from metadata scopes_supported rather than a 401).
     if (this._scopes && !this.handleRedirection) {
       const storage = getSecureStorage()
-      const existingData = storage.read() || {}
+      const existingData = (storage.read() ?? {}) as SecureStorageData
       const serverKey = getServerKey(this.serverName, this.serverConfig)
       const existing = existingData.mcpOAuth?.[serverKey]
       if (existing) {
@@ -1996,7 +1996,7 @@ export class ClaudeAuthProvider implements OAuthClientProvider {
 
   async saveDiscoveryState(state: OAuthDiscoveryState): Promise<void> {
     const storage = getSecureStorage()
-    const existingData = storage.read() || {}
+    const existingData = (storage.read() ?? {}) as SecureStorageData
     const serverKey = getServerKey(this.serverName, this.serverConfig)
 
     logMCPDebug(
@@ -2016,9 +2016,9 @@ export class ClaudeAuthProvider implements OAuthClientProvider {
     const updatedData: SecureStorageData = {
       ...existingData,
       mcpOAuth: {
-        ...existingData.mcpOAuth,
+        ...(existingData.mcpOAuth as Record<string, unknown>),
         [serverKey]: {
-          ...existingData.mcpOAuth?.[serverKey],
+          ...((existingData.mcpOAuth as Record<string, unknown>)?.[serverKey] as Record<string, unknown> | undefined),
           serverName: this.serverName,
           serverUrl: this.serverConfig.url,
           accessToken: existingData.mcpOAuth?.[serverKey]?.accessToken || '',
@@ -2402,12 +2402,12 @@ export function saveMcpClientSecret(
   clientSecret: string,
 ): void {
   const storage = getSecureStorage()
-  const existingData = storage.read() || {}
+  const existingData = (storage.read() ?? {}) as SecureStorageData
   const serverKey = getServerKey(serverName, serverConfig)
   storage.update({
     ...existingData,
     mcpOAuthClientConfig: {
-      ...existingData.mcpOAuthClientConfig,
+      ...(existingData.mcpOAuthClientConfig as Record<string, unknown>),
       [serverKey]: { clientSecret },
     },
   })
@@ -2463,3 +2463,6 @@ function getScopeFromMetadata(
   }
   return undefined
 }
+
+
+

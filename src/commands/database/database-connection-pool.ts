@@ -42,7 +42,7 @@ class DatabaseConnectionPool {
     this.stats.connectionRequests++;
     return {
       id: 'mock',
-      type: type as any,
+      type: type as unknown as string,
       connection: { type, config: connectionConfig },
       lastUsed: Date.now(),
       inUse: true,

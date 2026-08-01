@@ -360,6 +360,7 @@ export function MessageSelector({
             const metadataLoaded = optionIndex in fileHistoryMetadata;
             const metadata = fileHistoryMetadata[optionIndex];
             const numFilesChanged = metadata?.filesChanged && metadata.filesChanged.length;
+            const changedFileName = metadata?.filesChanged?.[0];
             return <Box key={msg.uuid} height={isFileHistoryEnabled ? 3 : 2} overflow="hidden" width="100%" flexDirection="row">
                       <Box width={2} minWidth={2}>
                         {isSelected ? <Text color="permission" bold>
@@ -374,7 +375,7 @@ export function MessageSelector({
                             {metadata ? <>
                                 <Text dimColor={!isSelected} color="inactive">
                                   {numFilesChanged ? <>
-                                      {numFilesChanged === 1 && metadata.filesChanged![0] ? `${path.basename(metadata.filesChanged![0])} ` : `${numFilesChanged} files changed `}
+                                      {numFilesChanged === 1 && changedFileName ? `${path.basename(changedFileName)} ` : `${numFilesChanged} files changed `}
                                       <DiffStatsText diffStats={metadata} />
                                     </> : <>无代码更改</>}
                                 </Text>

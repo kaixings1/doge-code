@@ -50,12 +50,12 @@ export const GraphqlTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const query = (input as any)?.query
+    const query = (input as Record<string, unknown>)?.query
     return `GraphQL: ${query ? query.substring(0, 50) : '?'}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
-    const errors = (content as any).errors
-    const data = (content as any).data
+    const errors = (content as Record<string, unknown>).errors
+    const data = (content as Record<string, unknown>).data
     const hasErrors = errors && errors.length > 0
     const msg = hasErrors
       ? `GraphQL 错误: ${errors.map((e: any) => e.message || String(e)).join('; ')}`

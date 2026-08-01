@@ -82,7 +82,7 @@ function isMemorySearch(toolInput: unknown): boolean {
   const input = toolInput as
     | { path?: string; pattern?: string; glob?: string; command?: string }
     | undefined
-  if (!input) {
+  if (input === null || typeof input !== 'object') {
     return false
   }
   // Check if the search path targets a memory file or directory (Grep/Glob tools)

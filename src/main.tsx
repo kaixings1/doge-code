@@ -260,8 +260,7 @@ function isBeingDebugged() {
   // 检查检查器是否可用且处于活动状态（表示正在调试）
   try {
     // 动态导入更好但需异步 - 改用全局对象
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const inspector = (global as any).require('inspector');
+    const inspector = (global as { [key: string]: unknown }).require('inspector');
     const hasInspectorUrl = !!inspector.url();
     return hasInspectorUrl || hasInspectArg || hasInspectEnv;
   } catch {
@@ -1677,7 +1676,6 @@ async function run(): Promise<CommanderCommand> {
     // 处理 ant 用户过于宽泛的 shell 允许规则（Bash(*)、PowerShell(*)）
     if ("external" === 'ant' && overlyBroadBashPermissions.length > 0) {
       for (const permission of overlyBroadBashPermissions) {
-        logForDebugging(`忽略来自 ${permission.sourceDisplay} 的过于宽泛的 shell 权限 ${permission.ruleDisplay}`);
       }
       toolPermissionContext = removeDangerousPermissions(toolPermissionContext, overlyBroadBashPermissions);
     }
@@ -1709,7 +1707,6 @@ async function run(): Promise<CommanderCommand> {
     // 尽早启动 MCP 配置加载（安全 - 仅读取文件，不执行）。
     // 交互式和 -p 都使用 getClaudeCodeMcpConfigs（仅本地文件读取）。
     // 本地 promise 稍后（在 prefetchAllMcpResources 之前）等待，以便配置 I/O 与 setup()、命令加载和信任对话框重叠。
-    logForDebugging('[STARTUP] 正在加载 MCP 配置...');
     const mcpConfigStart = Date.now();
     let mcpConfigResolvedMs: number | undefined;
     // --bare 跳过自动发现的 MCP（.mcp.json、用户设置、插件）—— 只有显式的 --mcp-config 有效。dynamicMcpConfig 在下游被展开到 allMcpConfigs 上，因此在此跳过中幸存。
@@ -1818,7 +1815,6 @@ async function run(): Promise<CommanderCommand> {
     // 重要：setup() 必须在任何其他依赖于工作目录或工作树设置的代码之前调用
     // profileCheckpoint('action_before_setup');
     // require('fs').writeFileSync('d:/init_debug.log', `BEFORE setup() import at ${Date.now()}\n`, { flag: 'a' });
-    logForDebugging('[STARTUP] 正在运行 setup()...');
     const setupStart = Date.now();
     const {
       setup
@@ -1844,7 +1840,6 @@ async function run(): Promise<CommanderCommand> {
     commandsPromise?.catch(() => {});
     agentDefsPromise?.catch(() => {});
     await setupPromise;
-    logForDebugging(`[STARTUP] setup() 完成，耗时 ${Date.now() - setupStart}ms`);
     // profileCheckpoint('action_after_setup');
 // console.warn(chalk.yellow('[STARTUP] setup() 完成??'));
     // 仅当显式请求套接字时，才将用户消息重放到 stream-json。自动生成的套接字是被动的 —— 它允许工具在需要时注入，但默认开启不应为从未使用它的 SDK 消费者重塑 stream-json。
@@ -1893,14 +1888,12 @@ async function run(): Promise<CommanderCommand> {
 
     // 重用 preSetupCwd，除非 setup() 进行了 chdir（worktreeEnabled）。在常见路径中节省一次 getCwd() 系统调用。
     const currentCwd = worktreeEnabled ? getCwd() : preSetupCwd;
-    logForDebugging('[STARTUP] 正在加载命令和代理...');
     const commandsStart = Date.now();
     // 汇合在 setup() 之前启动的 promise（如果 worktreeEnabled 门控了早期启动，则重新开始）。两者都根据工作目录进行记忆。
     //require('fs').writeFileSync('d:/trace.log', `BEFORE Promise.all commands at ${Date.now()}\n`, { flag: 'a' });
     // require('fs').writeFileSync('d:/init_debug.log', `BEFORE Promise.all commands at ${Date.now()}\n`, { flag: 'a' });
     const [commands, agentDefinitionsResult] = await Promise.all([commandsPromise ?? getCommands(currentCwd), agentDefsPromise ?? getAgentDefinitionsWithOverrides(currentCwd)]);
     // require('fs').writeFileSync('d:/init_debug.log', `AFTER Promise.all commands at ${Date.now()}\n`, { flag: 'a' });
-    logForDebugging(`[STARTUP] 命令和代理加载完成，耗时 ${Date.now() - commandsStart}ms`);
     // profileCheckpoint('action_commands_loaded');
 // console.warn(chalk.yellow('action_commands_loaded???'));
     // 如果通过 --agents 标志提供了 CLI 代理，则进行解析
@@ -1930,7 +1923,6 @@ async function run(): Promise<CommanderCommand> {
     if (agentSetting) {
       mainThreadAgentDefinition = agentDefinitions.activeAgents.find(agent => agent.agentType === agentSetting);
       if (!mainThreadAgentDefinition) {
-        logForDebugging(`警告：未找到代理 "${agentSetting}"。` + `可用代理：${agentDefinitions.activeAgents.map(a => a.agentType).join(', ')}。` + `使用默认行为。`);
       }
     }
 
@@ -1988,7 +1980,6 @@ async function run(): Promise<CommanderCommand> {
         advisor?: string;
       }).advisor : undefined;
       if (advisorOption) {
-        logForDebugging(`[AdvisorTool] --advisor ${advisorOption}`);
         if (!modelSupportsAdvisor(resolvedInitialModel)) {
           process.stderr.write(chalk.red(`错误：模型 "${resolvedInitialModel}" 不支持 advisor 工具。\n`));
           process.exit(1);
@@ -2001,7 +1992,6 @@ async function run(): Promise<CommanderCommand> {
       }
       advisorModel = canUserConfigureAdvisor() ? advisorOption ?? getInitialAdvisorSetting() : advisorOption;
       if (advisorModel) {
-        logForDebugging(`[AdvisorTool] Advisor 模型: ${advisorModel}`);
       }
     }
 
@@ -2015,7 +2005,6 @@ async function run(): Promise<CommanderCommand> {
         if (customAgent.source === 'built-in') {
           // 内置代理的 getSystemPrompt 需要 toolUseContext 参数
           // 此处无法访问完整的 toolUseContext，因此暂时跳过
-          logForDebugging(`[teammate] 内置代理 ${storedTeammateOpts.agentType} - 跳过自定义提示（不支持）`);
         } else {
           // 自定义代理的 getSystemPrompt 无参数
           customPrompt = customAgent.getSystemPrompt();
@@ -2036,7 +2025,6 @@ async function run(): Promise<CommanderCommand> {
           appendSystemPrompt = appendSystemPrompt ? `${appendSystemPrompt}\n\n${customInstructions}` : customInstructions;
         }
       } else {
-        logForDebugging(`[teammate] 在可用代理中未找到自定义代理 ${storedTeammateOpts.agentType}`);
       }
     }
     maybeActivateBrief(options);
@@ -2108,10 +2096,8 @@ async function run(): Promise<CommanderCommand> {
         event: 'startup' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
         durationMs: Math.round(process.uptime() * 1000)
       });
-      logForDebugging('[STARTUP] 正在运行 showSetupScreens()...');
       const setupScreensStart = Date.now();
       const onboardingShown = await showSetupScreens(root, permissionMode, allowDangerouslySkipPermissions, commands, enableClaudeInChrome, devChannels);
-      logForDebugging(`[STARTUP] showSetupScreens() 完成，耗时 ${Date.now() - setupScreensStart}ms`);
       //try { require('fs').writeFileSync('d:/trace.txt', 'AFTER_SETUP_SCREENS\n', {flag:'a'}); } catch(e) {}
 
       // 现在信任已建立且 GrowthBook 拥有认证标头，解析 --remote-control / --rc 授权门控。
@@ -2175,7 +2161,6 @@ async function run(): Promise<CommanderCommand> {
 
     // 如果已启动优雅关闭（例如，用户拒绝了信任对话框），则 process.exitCode 将被设置。跳过所有可能在进程退出前触发代码执行的后继操作（例如，如果未建立信任，我们不希望 apiKeyHelper 运行）。
     if (process.exitCode !== undefined) {
-      logForDebugging('已启动优雅关闭，跳过进一步初始化');
       return;
     }
 
@@ -2205,7 +2190,6 @@ async function run(): Promise<CommanderCommand> {
     const skipStartupPrefetches = isBareMode() || bgRefreshThrottleMs > 0 && Date.now() - lastPrefetched < bgRefreshThrottleMs;
     if (!skipStartupPrefetches) {
       const lastPrefetchedInfo = lastPrefetched > 0 ? `上次运行于 ${Math.round((Date.now() - lastPrefetched) / 1000)} 秒前` : '';
-      logForDebugging(`开始后台启动预取${lastPrefetchedInfo}`);
       checkQuotaStatus().catch(error => logError(error));
 
       // 从服务器获取引导数据并更新所有缓存值。
@@ -2227,7 +2211,6 @@ async function run(): Promise<CommanderCommand> {
         }));
       }
     } else {
-      logForDebugging(`跳过启动预取，上次运行于 ${Math.round((Date.now() - lastPrefetched) / 1000)} 秒前`);
       // 从缓存解析快速模式组织状态（无网络）
       resolveFastModeStatusFromCache();
     }
@@ -2239,7 +2222,6 @@ async function run(): Promise<CommanderCommand> {
     const {
       servers: existingMcpConfigs
     } = await mcpConfigPromise;
-    logForDebugging(`[STARTUP] MCP 配置在 ${mcpConfigResolvedMs}ms 内解析完成（在 +${Date.now() - mcpConfigStart}ms 处等待）`);
     // CLI 标志（--mcp-config）应覆盖基于文件的配置，匹配设置优先级
     const allMcpConfigs = {
       ...existingMcpConfigs,
@@ -3286,8 +3268,7 @@ if (options.continue) {
 	if (teleport === true || teleport === '') {
 	  // 交互模式：显示任务选择器并处理恢复
 	  logEvent('tengu_teleport_interactive_mode', {});
-	  logForDebugging('selectAndResumeTeleportTask: 正在启动teleport流程...');
-	  const teleportResult = await launchTeleportResumeWrapper(root);
+		  const teleportResult = await launchTeleportResumeWrapper(root);
 	  if (!teleportResult) {
 		// 用户取消或发生错误
 		await gracefulShutdown(0);

@@ -132,15 +132,15 @@ export const MonitorTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const target = (input as any)?.target ?? '?'
-    const action = (input as any)?.action ?? '?'
+    const target = (input as Record<string, unknown>)?.target ?? '?'
+    const action = (input as Record<string, unknown>)?.action ?? '?'
     return `Monitor: ${target} ${action}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',
-      content: (content as any).message || 'Monitor task completed',
+      content: (content as Record<string, unknown>).message || 'Monitor task completed',
     }
   },
   async call({ target, action }) {

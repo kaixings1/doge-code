@@ -56,8 +56,10 @@ interface DetectedFramework {
 }
 
 function detectFramework(cwd: string): DetectedFramework {
-  const fs = require('fs')
-  const path = require('path')
+  // @ts-ignore - require is provided by Electron's renderer process with nodeIntegration
+  const fs = require('fs') as typeof import('fs')
+  // @ts-ignore - require is provided by Electron's renderer process with nodeIntegration
+  const path = require('path') as typeof import('path')
 
   if (fs.existsSync(path.join(cwd, 'jest.config.js')) ||
       fs.existsSync(path.join(cwd, 'jest.config.ts')) ||

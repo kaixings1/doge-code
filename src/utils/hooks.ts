@@ -232,6 +232,7 @@ import { registerPendingAsyncHook } from './hooks/AsyncHookRegistry.js'
 import { enqueuePendingNotification } from './messageQueueManager.js'
 import {
   extractTextContent,
+  getContentText,
   getLastAssistantMessage,
   wrapInSystemReminder,
 } from './messages.js'
@@ -244,7 +245,7 @@ import { createAttachmentMessage } from './attachments.js'
 import { all } from './generators.js'
 import { findToolByName, type Tools, type ToolUseContext } from '../Tool.js'
 import { execPromptHook } from './hooks/execPromptHook.js'
-import type { Message, AssistantMessage } from '../types/message.js'
+import type { Message, AssistantMessage, AttachmentMessage, ProgressMessage } from '../types/message.js'
 import { execAgentHook } from './hooks/execAgentHook.js'
 import { execHttpHook } from './hooks/execHttpHook.js'
 import type { ShellCommand } from './ShellCommand.js'
@@ -434,7 +435,7 @@ export interface HookBlockingError {
 export type ElicitationResponse = ElicitResult
 
 export interface HookResult {
-  message?: HookResultMessage
+  message?: HookResultMessage | AttachmentMessage | ProgressMessage
   systemMessage?: string
   blockingError?: HookBlockingError
   outcome: 'success' | 'blocking' | 'non_blocking_error' | 'cancelled'
@@ -455,7 +456,7 @@ export interface HookResult {
 }
 
 export type AggregatedHookResult = {
-  message?: HookResultMessage
+  message?: HookResultMessage | AttachmentMessage | ProgressMessage
   blockingError?: HookBlockingError
   preventContinuation?: boolean
   stopReason?: string
@@ -3699,7 +3700,7 @@ export async function executeStopFailureHooks(
   if (!hasHookForEvent('StopFailure', appState, sessionId)) return
 
   const lastAssistantText =
-    extractTextContent(lastMessage.message.content, '\n').trim() || undefined
+    getContentText(lastMessage.message?.content)?.trim()
 
   // 某些 createAssistantAPIErrorMessage 调用站点省略了 `error`（例如
   // errors.ts:431 中的 image-size）。默认为 'unknown'，
@@ -3757,8 +3758,7 @@ export async function* executeStopHooks(
     ? getLastAssistantMessage(messages)
     : undefined
   const lastAssistantText = lastAssistantMessage
-    ? extractTextContent(lastAssistantMessage.message.content, '\n').trim() ||
-      undefined
+    ? getContentText(lastAssistantMessage.message?.content)?.trim()
     : undefined
 
   const hookInput: StopHookInput | SubagentStopHookInput = subagentId
@@ -5137,3 +5137,6 @@ function getHookDefinitionsForTelemetry(
     return { type: 'unknown' }
   })
 }
+
+
+

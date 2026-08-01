@@ -120,7 +120,7 @@ export function filterForBriefTool<T extends {
     // hook timing) that defeats the point of brief mode. Still visible in
     // transcript mode (ctrl+o) which bypasses this filter.
     if (msg.type === 'system') return msg.subtype !== 'api_metrics';
-    const block = msg.message?.content[0];
+    const block = Array.isArray(msg.message?.content) ? msg.message.content[0] : undefined;
     if (msg.type === 'assistant') {
       // API error messages (auth failures, rate limits, etc.) must stay visible
       if (msg.isApiErrorMessage) return true;
@@ -184,7 +184,7 @@ export function dropTextInBriefTurns<T extends {
   let turn = 0;
   for (let i = 0; i < messages.length; i++) {
     const msg = messages[i]!;
-    const block = msg.message?.content[0];
+    const block = Array.isArray(msg.message?.content) ? msg.message.content[0] : undefined;
     if (msg.type === 'user' && block?.type !== 'tool_result' && !msg.isMeta) {
       turn++;
       continue;
@@ -582,11 +582,11 @@ const MessagesImpl = ({
   const isItemClickable = useCallback((msg_6: RenderableMessage): boolean => {
     if (msg_6.type === 'collapsed_read_search') return true;
     if (msg_6.type === 'assistant') {
-      const b = msg_6.message.content[0] as unknown as AdvisorBlock | undefined;
+      const b = Array.isArray(msg_6.message.content) ? msg_6.message.content[0] as unknown as AdvisorBlock | undefined : undefined;
       return b != null && isAdvisorBlock(b) && b.type === 'advisor_tool_result' && b.content.type === 'advisor_result';
     }
     if (msg_6.type !== 'user') return false;
-    const b_0 = msg_6.message.content[0];
+    const b_0 = Array.isArray(msg_6.message.content) ? msg_6.message.content[0] : undefined;
     if (b_0?.type !== 'tool_result' || b_0.is_error || !msg_6.toolUseResult) return false;
     const name = lookupsRef.current.toolUseByToolUseID.get(b_0.tool_use_id)?.name;
     const tool = name ? findToolByName(tools, name) : undefined;
@@ -786,7 +786,7 @@ export function shouldRenderStatically(message: RenderableMessage, streamingTool
     case 'assistant':
       {
         if (message.type === 'assistant') {
-          const block = message.message.content[0];
+          const block = Array.isArray(message.message.content) ? message.message.content[0] : undefined;
           if (block?.type === 'server_tool_use') {
             return lookups.resolvedToolUseIDs.has(block.id);
           }
@@ -818,7 +818,7 @@ export function shouldRenderStatically(message: RenderableMessage, streamingTool
     case 'grouped_tool_use':
       {
         const allResolved = message.messages.every(msg => {
-          const content = msg.message.content[0];
+          const content = Array.isArray(msg.message.content) ? msg.message.content[0] : undefined;
           return content?.type === 'tool_use' && lookups.resolvedToolUseIDs.has(content.id);
         });
         return allResolved;

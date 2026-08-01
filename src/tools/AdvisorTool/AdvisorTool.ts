@@ -233,14 +233,14 @@ export const AdvisorTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const focus = (input as any)?.focus ?? 'code'
+    const focus = (input as Record<string, unknown>)?.focus ?? 'code'
     return `Advisor: ${focus} analysis`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',
-      content: (content as any).advice || '分析完成',
+      content: (content as Record<string, unknown>).advice || '分析完成',
     }
   },
   async call({ query, focus = 'code', path }) {

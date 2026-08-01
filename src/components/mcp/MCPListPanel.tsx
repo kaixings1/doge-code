@@ -78,10 +78,11 @@ function groupServersByScope(serverList: ServerInfo[]): Map<ConfigScope, ServerI
   const groups = new Map<ConfigScope, ServerInfo[]>();
   for (const server of serverList) {
     const scope = server.scope;
-    if (!groups.has(scope)) {
-      groups.set(scope, []);
+    let group = groups.get(scope);
+    if (!group) {
+      groups.set(scope, group = []);
     }
-    groups.get(scope)!.push(server);
+    group.push(server);
   }
   // Sort servers within each group alphabetically
   for (const [, groupServers] of groups) {

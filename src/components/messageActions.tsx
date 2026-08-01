@@ -19,7 +19,7 @@ export function isNavigableMessage(msg: NavigableMessage): boolean {
   switch (msg.type) {
     case 'assistant':
       {
-        const b = msg.message.content[0];
+        const b = Array.isArray(msg.message.content) ? msg.message.content[0] : undefined;
         // Text responses (minus AssistantTextMessage's return-null cases — tier-1
         // misses unmeasured virtual items), or tool calls with extractable input.
         return b?.type === 'text' && !isEmptyMessageText(b.text) && !SYNTHETIC_MESSAGES.has(b.text) || b?.type === 'tool_use' && b.name in PRIMARY_INPUT;
@@ -27,7 +27,7 @@ export function isNavigableMessage(msg: NavigableMessage): boolean {
     case 'user':
       {
         if (msg.isMeta || msg.isCompactSummary) return false;
-        const b = msg.message.content[0];
+        const b = Array.isArray(msg.message.content) ? msg.message.content[0] : undefined;
         if (b?.type !== 'text') return false;
         // Interrupt etc. — synthetic, not user-authored.
         if (SYNTHETIC_MESSAGES.has(b.text)) return false;
@@ -124,14 +124,14 @@ export function toolCallOf(msg: NavigableMessage): {
   input: Record<string, unknown>;
 } | undefined {
   if (msg.type === 'assistant') {
-    const b = msg.message.content[0];
+    const b = Array.isArray(msg.message.content) ? msg.message.content[0] : undefined;
     if (b?.type === 'tool_use') return {
       name: b.name,
       input: b.input as Record<string, unknown>
     };
   }
   if (msg.type === 'grouped_tool_use') {
-    const b = msg.messages[0]?.message.content[0];
+    const b = Array.isArray(msg.messages[0]?.message.content) ? msg.messages[0].message.content[0] : undefined;
     if (b?.type === 'tool_use') return {
       name: msg.toolName,
       input: b.input as Record<string, unknown>
@@ -410,12 +410,12 @@ export function copyTextOf(msg: NavigableMessage): string {
   switch (msg.type) {
     case 'user':
       {
-        const b = msg.message.content[0];
+        const b = Array.isArray(msg.message.content) ? msg.message.content[0] : undefined;
         return b?.type === 'text' ? stripSystemReminders(b.text) : '';
       }
     case 'assistant':
       {
-        const b = msg.message.content[0];
+        const b = Array.isArray(msg.message.content) ? msg.message.content[0] : undefined;
         if (b?.type === 'text') return b.text;
         const tc = toolCallOf(msg);
         return tc ? PRIMARY_INPUT[tc.name]?.extract(tc.input) ?? '' : '';
@@ -440,7 +440,7 @@ export function copyTextOf(msg: NavigableMessage): string {
   }
 }
 function toolResultText(r: NormalizedUserMessage): string {
-  const b = r.message.content[0];
+  const b = Array.isArray(r.message.content) ? r.message.content[0] : undefined;
   if (b?.type !== 'tool_result') return '';
   const c = b.content;
   if (typeof c === 'string') return c;

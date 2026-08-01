@@ -118,14 +118,14 @@ export const SnipTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const lines = (input as any)?.lines ?? '?'
+    const lines = (input as Record<string, unknown>)?.lines ?? '?'
     return `Snip: ${lines} lines`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',
-      content: (content as any).message || 'Snip completed',
+      content: (content as Record<string, unknown>).message || 'Snip completed',
     }
   },
   async call({ lines = 100, keepRecent = 50, target = 'all', preserveSystem = true }) {

@@ -70,6 +70,7 @@ export function updateProgressFromMessage(tracker: ProgressTracker, message: Mes
     return;
   }
   const usage = message.message.usage;
+  if (!usage) return;
   // Keep latest input (it's cumulative in the API), sum outputs
   tracker.latestInputTokens = usage.input_tokens + (usage.cache_creation_input_tokens ?? 0) + (usage.cache_read_input_tokens ?? 0);
   tracker.cumulativeOutputTokens += usage.output_tokens;

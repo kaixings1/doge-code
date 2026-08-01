@@ -120,7 +120,7 @@ export function OutlinePanel({
       })
 
       if (result?.success && result.symbols) {
-        setSymbols(result.symbols as any[])
+        setSymbols(result.symbols as unknown[])
       } else {
         setError(result?.error || '无法获取符号大纲')
         setSymbols([])

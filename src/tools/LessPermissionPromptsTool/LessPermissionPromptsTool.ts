@@ -137,14 +137,14 @@ export const LessPermissionPromptsTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const scope = (input as any)?.scope ?? 'session'
+    const scope = (input as Record<string, unknown>)?.scope ?? 'session'
     return `Permission Whitelist: ${scope}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',
-      content: (content as any).recommendations || 'No suggestions',
+      content: (content as Record<string, unknown>).recommendations || 'No suggestions',
     }
   },
   async call({ scope = 'session', dryRun = false, minCount = 1 }) {

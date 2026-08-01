@@ -138,10 +138,6 @@ export async function ensureMemoryDirExists(memoryDir: string): Promise<void> {
       e instanceof Error && 'code' in e && typeof e.code === 'string'
         ? e.code
         : undefined
-    logForDebugging(
-      `ensureMemoryDirExists failed for ${memoryDir}: ${code ?? String(e)}`,
-      { level: 'debug' },
-    )
   }
 }
 

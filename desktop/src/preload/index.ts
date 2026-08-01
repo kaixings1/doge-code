@@ -16,7 +16,7 @@ interface DogeAPIValue {
   executeTool: (call: { name: string; input: any }) => Promise<{ toolUseId: string; success: boolean; output?: any; error?: string }>
   getCommands: () => Promise<Array<{ name: string; description: string; category: string }>>
   executeCommand: (name: string, args: string[]) => Promise<{ success: boolean; output?: string; error?: string }>
-  sendMessage: (content: string) => Promise<{ success: boolean; content?: string; error?: string }>
+  sendMessage: (content: string, preAnalysis?: Array<{ type: string; message: string; line?: number }>) => Promise<{ success: boolean; content?: string; error?: string }>
   getState: () => Promise<string>
   abort: () => Promise<boolean>
   getHistory: () => Promise<{ messages: Array<{ role: string; content: string }> }>
@@ -168,6 +168,8 @@ interface DogeAPIValue {
 
   // ── 语音权限 ──
   requestMicrophonePermission: () => Promise<{ granted: boolean }>
+  rollbackTool: (toolUseId: string) => Promise<{ success: boolean; restored: string[]; error?: string }>
+  getToolOperations: () => Promise<Array<{ toolUseId: string; toolName: string; timestamp: number; files: string[]; hasSnapshot: boolean; rolledBack: boolean }>>
 }
 
 const dogeAPI: DogeAPIValue = {
@@ -181,7 +183,7 @@ const dogeAPI: DogeAPIValue = {
   executeTool: (call: { name: string; input: Record<string, unknown> }) => ipcRenderer.invoke('doge:execute-tool', call),
   getCommands: () => ipcRenderer.invoke('doge:get-commands'),
   executeCommand: (name: string, args: string[]) => ipcRenderer.invoke('doge:execute-command', name, args),
-  sendMessage: (content: string) => ipcRenderer.invoke('doge:send-message', content),
+  sendMessage: (content: string, preAnalysis?: Array<{ type: string; message: string; line?: number }>) => ipcRenderer.invoke('doge:send-message', content, preAnalysis),
   getState: () => ipcRenderer.invoke('doge:get-state'),
   abort: () => ipcRenderer.invoke('doge:abort'),
   getHistory: () => ipcRenderer.invoke('doge:get-history'),
@@ -363,6 +365,8 @@ const dogeAPI: DogeAPIValue = {
     return () => ipcRenderer.removeListener('doge:log-entry', handler)
   },
   getAllDiagnostics: () => ipcRenderer.invoke('doge:get-all-diagnostics'),
+  rollbackTool: (toolUseId: string) => ipcRenderer.invoke('doge:rollback-tool', toolUseId),
+  getToolOperations: () => ipcRenderer.invoke('doge:get-tool-operations'),
 }
 
 contextBridge.exposeInMainWorld('dogeAPI', dogeAPI)

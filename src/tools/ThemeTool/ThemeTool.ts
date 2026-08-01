@@ -122,15 +122,15 @@ export const ThemeTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const action = (input as any)?.action ?? '?'
-    const name = (input as any)?.name
+    const action = (input as Record<string, unknown>)?.action ?? '?'
+    const name = (input as Record<string, unknown>)?.name
     return `Theme: ${action}${name ? ` (${name})` : ''}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',
-      content: (content as any).message || 'Theme operation completed',
+      content: (content as Record<string, unknown>).message || 'Theme operation completed',
     }
   },
   async call({ action, name, accent, background, foreground }) {

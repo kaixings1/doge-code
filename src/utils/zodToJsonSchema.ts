@@ -18,6 +18,12 @@ export function zodToJsonSchema(schema: ZodTypeAny): JsonSchema7Type {
   const hit = cache.get(schema)
   if (hit) return hit
   const result = toJSONSchema(schema, { unrepresentable: 'any' }) as JsonSchema7Type
+  // Zod v4 的 .transform() / ZodPipe 无法被 toJSONSchema 序列化，会返回仅含
+  // $schema 的对象（缺少 type 字段）。OpenAI 兼容端点要求 type: "object"，
+  // 因此在此兜底补全。
+  if (!result.type) {
+    result.type = 'object'
+  }
   cache.set(schema, result)
   return result
 }

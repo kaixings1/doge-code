@@ -190,3 +190,34 @@ src/commands/database/*.backup
 src/commands/updateskills/index.js
 src/commands/updateskills/updateskills.js
 updateskills.exe
+
+
+# Debug scripts & temp files (desktop development)
+debug*.txt
+process-check.txt
+build-log.txt
+ts-errors.txt
+ts_output.txt
+tsc_output*.txt
+console.log(f))
+
+# Debug .mjs scripts at root
+analyze-doc.mjs
+build-vite-part1.cjs
+fix-batch-han-keys.cjs
+inspect-vite*.cjs
+repack-asar.cjs
+run-build-out.cjs
+test-node-env.mjs
+
+# Debug scripts in desktop/scripts/
+desktop/scripts/check-*.mjs
+desktop/scripts/run-*.mjs
+
+# Temp config files
+tsconfig.temp.json
+tsconfig.tsbuildinfo
+
+# Release directories
+desktop/release-fresh/
+desktop/release-v2/

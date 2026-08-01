@@ -31,6 +31,10 @@ import {
   type SystemPrompt,
 } from '../../utils/systemPrompt.js'
 
+function isRecord(obj: unknown): obj is Record<string, unknown> {
+  return obj != null && typeof obj === 'object'
+}
+
  
 const reactiveCompact = feature('REACTIVE_COMPACT')
   ? (require('../../services/compact/reactiveCompact.js') as typeof import('../../services/compact/reactiveCompact.js'))
@@ -60,7 +64,8 @@ export const call: LocalCommandCall = async (args, context) => {
         if (Array.isArray(content)) {
           for (const block of content) {
             if (block.type === 'tool_use' && block.name === 'Bash') {
-              const input = block.input as Record<string, unknown>
+              const input = isRecord(block.input) ? block.input : null
+              if (!input) continue
               if (input.error != null) {
                 errorIndices.push(i)
                 break

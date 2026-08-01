@@ -77,15 +77,15 @@ export const MetricsTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const metric = (input as any)?.metric ?? '?'
-    const value = (input as any)?.value
+    const metric = (input as Record<string, unknown>)?.metric ?? '?'
+    const value = (input as Record<string, unknown>)?.value
     return `Metrics: ${metric}${value !== undefined ? ` = ${value}` : ''}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',
-      content: `Metric ${(content as any).metric} recorded`,
+      content: `Metric ${(content as Record<string, unknown>).metric} recorded`,
     }
   },
   async call({ metric, value, tags }) {

@@ -266,7 +266,7 @@ async function buildRequestBody(options: any) {
     }
       } catch {}
     } else if (Object.keys(options.form).length > 0) {
-      const encoded = querystring.stringify(options.form as any)
+      const encoded = querystring.stringify(options.form as Record<string, unknown>)
       options.body = encoded
       if (!options.headers['Content-Type']) {
         options.headers['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -386,7 +386,7 @@ async function performRequest(requestOptions: any, options: any) {
   const timeoutPromise = new Promise((_, reject) => {
     setTimeout(() => reject(new Error(`请求超时 (${options.timeout}ms)`)), options.timeout + 500)
   })
-  const response = await Promise.race([responsePromise, timeoutPromise]) as any
+  const response = await Promise.race([responsePromise, timeoutPromise]) as unknown as Record<string, unknown>
   const duration = Date.now() - startTime
   return { response, duration, responseData: response.body }
 }

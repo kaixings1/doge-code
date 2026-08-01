@@ -62,12 +62,12 @@ export const ScheduleTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const action = (input as any)?.action ?? '?'
-    const task = (input as any)?.task
+    const action = (input as Record<string, unknown>)?.action ?? '?'
+    const task = (input as Record<string, unknown>)?.task
     return `Schedule: ${action}${task ? ` (${task})` : ''}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
-    const msg = (content as any).message || 'Schedule operation completed'
+    const msg = (content as Record<string, unknown>).message || 'Schedule operation completed'
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',

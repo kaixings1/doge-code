@@ -1050,7 +1050,7 @@ export const bashToolCheckPermission = (
   // DOGE: 防御性检查
   if (!input || typeof input.command !== 'string' || !input.command.trim()) {
     return {
-      behavior: 'allow',
+      behavior: 'passthrough',
       message: '命令输入为空，跳过权限检查',
     }
   }
@@ -1672,7 +1672,7 @@ export async function bashToolHasPermission(
       { level: 'warn' },
     )
     return {
-      behavior: 'allow',
+      behavior: 'passthrough',
       message: '命令输入为空，跳过权限检查',
     }
   }

@@ -171,8 +171,8 @@ export function accumulateStreamEvents(
         // 对于 thinking_delta，提取 thinking 字段；对于 text_delta，提取 text 字段
         const text =
           msg.event.delta.type === 'thinking_delta'
-            ? (msg.event.delta as any).thinking
-            : (msg.event.delta as any).text
+            ? (msg.event.delta as Record<string, unknown>).thinking
+            : (msg.event.delta as Record<string, unknown>).text
         chunks.push(text)
         const existing = touched.get(chunks)
         if (existing) {

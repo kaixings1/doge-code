@@ -90,15 +90,15 @@ export const EventStreamTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const action = (input as any)?.action ?? '?'
-    const source = (input as any)?.source ?? ''
+    const action = (input as Record<string, unknown>)?.action ?? '?'
+    const source = (input as Record<string, unknown>)?.source ?? ''
     return `EventStream: ${action} ${source}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',
-      content: (content as any).message || '事件流操作完成',
+      content: (content as Record<string, unknown>).message || '事件流操作完成',
     }
   },
   async call({ source, action, eventType, data, limit = 50 }) {

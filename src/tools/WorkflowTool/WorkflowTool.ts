@@ -123,14 +123,14 @@ export const WorkflowTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const mode = (input as any)?.mode || (input as any)?.script?.slice(0, 20) ?? '?'
+    const mode = (input as Record<string, unknown>)?.mode || (input as Record<string, unknown>)?.script?.slice(0, 20) ?? '?'
     return `Workflow: ${mode}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',
-      content: (content as any).output || (content as any).message || 'Workflow operation completed',
+      content: (content as Record<string, unknown>).output || (content as Record<string, unknown>).message || 'Workflow operation completed',
     }
   },
   async call({ script, args = {}, mode = 'run' }) {

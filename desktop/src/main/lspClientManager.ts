@@ -12,7 +12,7 @@
  * - 未来可扩展：gopls, rust-analyzer, pyright 等
  */
 
-import { spawn, ChildProcess } from 'node:child_process'
+import { spawn, execSync, ChildProcess } from 'node:child_process'
 import * as path from 'node:path'
 import * as fs from 'node:fs'
 import type { EventEmitter } from 'node:events'
@@ -512,7 +512,7 @@ export class LspClientManager {
   private resolveCommand(command: string): string | null {
     // 优先使用 npx 查找全局安装的命令
     try {
-      const { execSync } = require('node:child_process')
+      // execSync is already imported at the top of this file
       const result = execSync(`where "${command}" 2>nul || which "${command}" 2>/dev/null`, {
         encoding: 'utf-8',
         stdio: ['pipe', 'pipe', 'pipe'],

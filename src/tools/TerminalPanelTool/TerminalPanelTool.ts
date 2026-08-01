@@ -73,15 +73,15 @@ export const TerminalPanelTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const action = (input as any)?.action ?? '?'
-    const content = (input as any)?.content
+    const action = (input as Record<string, unknown>)?.action ?? '?'
+    const content = (input as Record<string, unknown>)?.content
     return `Terminal: ${action}${content ? ` "${content.slice(0, 40)}"` : ''}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',
-      content: (content as any).message || 'Terminal panel action completed',
+      content: (content as Record<string, unknown>).message || 'Terminal panel action completed',
     }
   },
   async call({ action, content, title, stream = 'stdout' }) {

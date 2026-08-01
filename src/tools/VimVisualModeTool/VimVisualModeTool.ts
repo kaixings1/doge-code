@@ -145,15 +145,15 @@ export const VimVisualModeTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const mode = (input as any)?.mode ?? '?'
-    const op = (input as any)?.operation
+    const mode = (input as Record<string, unknown>)?.mode ?? '?'
+    const op = (input as Record<string, unknown>)?.operation
     return `Vim: ${mode}${op ? ` ${op}` : ''}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',
-      content: (content as any).message || 'Visual mode operation completed',
+      content: (content as Record<string, unknown>).message || 'Visual mode operation completed',
     }
   },
   async call({ mode, selection, startLine, endLine, startCol, endCol, content, operation }) {

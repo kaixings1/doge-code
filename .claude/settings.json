@@ -1,4 +1,4 @@
-{
+﻿{
   "enableAllProjectMcpServers": true,
   "hooks": {
     "PreToolUse": [
@@ -7,11 +7,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 .claude/hooks/secret-blocker.py"
+            "command": "python3 D:/doge-code/.claude/hooks/secret-blocker.py"
           },
           {
             "type": "command",
-            "command": "python3 .claude/hooks/protected-files.py"
+            "command": "python3 D:/doge-code/.claude/hooks/protected-files.py"
           }
         ]
       },
@@ -20,7 +20,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 .claude/hooks/sensitive-data-blocker.py"
+            "command": "python3 D:/doge-code/.claude/hooks/sensitive-data-blocker.py"
           }
         ]
       },
@@ -29,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 .claude/hooks/sensitive-data-mcp-blocker.py"
+            "command": "python3 D:/doge-code/.claude/hooks/sensitive-data-mcp-blocker.py"
           }
         ]
       }
@@ -40,11 +40,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 .claude/hooks/auto-format.py"
+            "command": "python3 D:/doge-code/.claude/hooks/auto-format.py"
           },
           {
             "type": "command",
-            "command": "python3 .claude/hooks/test-on-change.py"
+            "command": "python3 D:/doge-code/.claude/hooks/test-on-change.py"
           }
         ]
       },
@@ -53,7 +53,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 .claude/hooks/sensitive-data-output-blocker.py"
+            "command": "python3 D:/doge-code/.claude/hooks/sensitive-data-output-blocker.py"
           }
         ]
       },
@@ -62,7 +62,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 .claude/hooks/sensitive-data-output-blocker.py"
+            "command": "python3 D:/doge-code/.claude/hooks/sensitive-data-output-blocker.py"
           }
         ]
       },
@@ -71,7 +71,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 .claude/hooks/sensitive-data-output-blocker.py"
+            "command": "python3 D:/doge-code/.claude/hooks/sensitive-data-output-blocker.py"
           }
         ]
       }
@@ -81,7 +81,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 .claude/hooks/auto-executor.py",
+            "command": "python3 D:/doge-code/.claude/hooks/auto-executor.py",
             "timeout": 10000,
             "async": true
           }
@@ -93,7 +93,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 .claude/hooks/auto-executor.py",
+            "command": "python3 D:/doge-code/.claude/hooks/auto-executor.py",
             "timeout": 10000,
             "async": true
           }
@@ -105,11 +105,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 .claude/hooks/uat-reminder.py"
+            "command": "python3 D:/doge-code/.claude/hooks/uat-reminder.py"
           },
           {
             "type": "command",
-            "command": "python3 .claude/hooks/self-improve.py"
+            "command": "python3 D:/doge-code/.claude/hooks/self-improve.py"
           }
         ]
       }

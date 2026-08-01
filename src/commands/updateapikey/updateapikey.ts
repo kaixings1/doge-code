@@ -532,7 +532,7 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
       context.setMessages(prev => {
         if (replaceLast && prev.length > 0) {
           const last = prev[prev.length - 1]
-          if (last.type === 'assistant' && (last as any).isMeta) {
+          if (last.type === 'assistant' && (last as Record<string, unknown>).isMeta) {
             return [
               ...prev.slice(0, -1),
               { ...last, uuid: `progress-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`, message: { content: [{ type: 'text', text }] } },

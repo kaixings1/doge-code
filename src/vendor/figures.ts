@@ -20,6 +20,7 @@ export const FLAG_ICON = '🚩'
 export const REFERENCE_MARK = '※'
 export const BULLET_OPERATOR = '•'
 export const BLOCKQUOTE_BAR = '│'
+export const pointer = '❯'
 export default {
   tick,
   cross,
@@ -43,4 +44,5 @@ export default {
   REFERENCE_MARK,
   BULLET_OPERATOR,
   BLOCKQUOTE_BAR,
+  pointer,
 }

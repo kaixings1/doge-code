@@ -72,15 +72,15 @@ export const WebSocketTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const action = (input as any)?.action ?? '?'
-    const url = (input as any)?.url ?? ''
+    const action = (input as Record<string, unknown>)?.action ?? '?'
+    const url = (input as Record<string, unknown>)?.url ?? ''
     return `WebSocket: ${action} ${url}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',
-      content: (content as any).message || 'WebSocket operation completed',
+      content: (content as Record<string, unknown>).message || 'WebSocket operation completed',
     }
   },
   async call({ url, action, message, timeout = 5000, headers }) {

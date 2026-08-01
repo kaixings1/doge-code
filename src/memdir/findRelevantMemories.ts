@@ -127,10 +127,6 @@ async function selectRelevantMemories(
     if (signal.aborted) {
       return []
     }
-    logForDebugging(
-      `[memdir] selectRelevantMemories 失败：${errorMessage(e)}`,
-      { level: 'warn' },
-    )
     return []
   }
 }

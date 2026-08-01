@@ -48,11 +48,11 @@ export const McpToolSearchTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const query = (input as any)?.query ?? '?'
+    const query = (input as Record<string, unknown>)?.query ?? '?'
     return `MCP Tool Search: ${query}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
-    const count = (content as any).count ?? 0
+    const count = (content as Record<string, unknown>).count ?? 0
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',

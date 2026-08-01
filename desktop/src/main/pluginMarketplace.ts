@@ -12,7 +12,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import * as https from 'https'
 import * as zlib from 'zlib'
-import { spawn } from 'child_process'
+import { spawn, execFile } from 'child_process'
 
 // ─── 类型 ───
 
@@ -98,7 +98,7 @@ function extractZip(zipPath: string, destDir: string): Promise<void> {
 
     // 更简单的方式：使用 Node.js 内置 unzip
     // 由于 Node.js 没有内置 zip 解析器，我们使用 child_process 调用 tar
-    const { execFile } = require('child_process')
+    // execFile is already imported at the top of this file
     fs.unlinkSync(zipPath)
 
     // 使用 PowerShell 的 Expand-Archive（Windows 自带）

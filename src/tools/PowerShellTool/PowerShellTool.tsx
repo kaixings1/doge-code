@@ -609,7 +609,7 @@ export const PowerShellTool = buildTool({
       const MAX_PERSISTED_SIZE = 64 * 1024 * 1024;
       let persistedOutputPath: string | undefined;
       let persistedOutputSize: number | undefined;
-      if (result.outputFilePath && result.outputTaskId) {
+      if (result?.outputFilePath && result?.outputTaskId) {
         try {
           const fileStat = await fsStat(result.outputFilePath);
           persistedOutputSize = fileStat.size;
@@ -635,7 +635,7 @@ export const PowerShellTool = buildTool({
       let isImage = isImageOutput(stdout);
       let compressedStdout = stdout;
       if (isImage) {
-        const resized = await resizeShellImageOutput(stdout, result.outputFilePath, persistedOutputSize);
+        const resized = await resizeShellImageOutput(stdout, result?.outputFilePath, persistedOutputSize);
         if (resized) {
           compressedStdout = resized;
         } else {
@@ -646,19 +646,19 @@ export const PowerShellTool = buildTool({
           isImage = false;
         }
       }
-      const finalStderr = [result.stderr || '', stderrForShellReset].filter(Boolean).join('\n');
+      const finalStderr = [result?.stderr || '', stderrForShellReset].filter(Boolean).join('\n');
       logEvent('tengu_powershell_tool_command_executed', {
         command_type: getCommandTypeForLogging(input.command),
         stdout_length: compressedStdout.length,
         stderr_length: finalStderr.length,
-        exit_code: result.code,
-        interrupted: result.interrupted
+        exit_code: result?.code,
+        interrupted: result?.interrupted
       });
       return {
         data: {
           stdout: compressedStdout,
           stderr: finalStderr,
-          interrupted: result.interrupted,
+          interrupted: result?.interrupted,
           returnCodeInterpretation: interpretation.message,
           isImage,
           persistedOutputPath,

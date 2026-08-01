@@ -5,7 +5,7 @@ import {
   getToolNameForPermissionCheck,
   mcpInfoFromString,
 } from '../../services/mcp/mcpStringUtils.js'
-import type { Tool, ToolPermissionContext, ToolUseContext } from '../../Tool.js'
+import type { Tool, ToolPermissionContext, ToolUseContext, BuiltTool } from '../../Tool.js'
 import { AGENT_TOOL_NAME } from '../../tools/AgentTool/constants.js'
 import { shouldUseSandbox } from '../../tools/BashTool/shouldUseSandbox.js'
 import { BASH_TOOL_NAME } from '../../tools/BashTool/toolName.js'
@@ -348,7 +348,7 @@ export function filterDeniedAgents<T extends { agentType: string }>(
  */
 export function getRuleByContentsForTool(
   context: ToolPermissionContext,
-  tool: Tool,
+  tool: Tool | BuiltTool<any>,
   behavior: PermissionBehavior,
 ): Map<string, PermissionRule> {
   return getRuleByContentsForToolName(

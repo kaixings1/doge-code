@@ -4,6 +4,8 @@ export type MessageOrigin = {
   [key: string]: unknown
 }
 
+import type { ContentBlock, ContentBlockParam } from '@anthropic-ai/sdk'
+
 /** 消息基类 */
 export type MessageBase = {
   /** 消息唯一标识 */
@@ -32,6 +34,8 @@ export type AttachmentMessage = MessageBase & {
   type: 'attachment'
   /** 附件路径 */
   path?: string
+  /** 附件数据 */
+  attachment?: Attachment
 }
 
 /** 用户消息 */
@@ -39,26 +43,62 @@ export type UserMessage = MessageBase & {
   type: 'user'
   /** 消息内容 */
   message: {
-    content: string | Array<{ type: string; text?: string; [key: string]: unknown }>
+    content: string | ContentBlockParam[]
     [key: string]: unknown
   }
+  /** 对于 tool_result 消息：包含匹配 tool_use 的 assistant 消息的 UUID */
+  sourceToolAssistantUUID?: UUID
 }
+
+/** 助手消息内容块类型 */
+export type AssistantMessageContent = string | ContentBlock[]
 
 /** 助手消息 */
 export type AssistantMessage = MessageBase & {
   type: 'assistant'
   /** 消息内容 */
   message?: {
-    content?: unknown
+    /** 消息ID */
+    id?: string
+    /** 内容块数组或字符串 */
+    content?: AssistantMessageContent
+    /** 模型名称 */
+    model?: string
+    /** 角色 */
+    role?: string
+    /** 停止原因 */
+    stop_reason?: string
+    /** 停止序列 */
+    stop_sequence?: string
+    /** 错误信息 */
+    error?: string
+    /** 错误详情 */
+    errorDetails?: string
+    /** Token 使用统计 */
+    usage?: {
+      input_tokens?: number
+      output_tokens?: number
+      output_tokens_details?: unknown | null
+      cache_creation_input_tokens?: number
+      cache_read_input_tokens?: number
+      cache_creation?: {
+        ephemeral_1h_input_tokens?: number
+        ephemeral_5m_input_tokens?: number
+      }
+      service_tier?: string | null
+      [key: string]: unknown
+    }
+    /** 上下文管理 */
+    context_management?: unknown
     [key: string]: unknown
   }
 }
 
-/** 进度消息 */
-export type ProgressMessage = MessageBase & {
+/** 进度消息（泛型：支持任意进度数据类型，默认 unknown） */
+export type ProgressMessage<P = unknown> = MessageBase & {
   type: 'progress'
   /** 进度数据 */
-  progress?: unknown
+  data: P
 }
 
 /** 系统消息级别 */
@@ -93,7 +133,15 @@ export type SystemStopHookSummaryMessage = SystemMessage
 /** 系统信息消息 */
 export type SystemInformationalMessage = SystemMessage
 /** 系统压缩边界消息 */
-export type SystemCompactBoundaryMessage = SystemMessage
+export type SystemCompactBoundaryMessage = SystemMessage & {
+  compactMetadata?: {
+    preservedSegment?: {
+      tailUuid: UUID
+      headUuid: UUID
+      anchorUuid?: UUID
+    }
+  }
+}
 /** 系统微压缩边界消息 */
 export type SystemMicrocompactBoundaryMessage = SystemMessage
 /** 系统权限重试消息 */

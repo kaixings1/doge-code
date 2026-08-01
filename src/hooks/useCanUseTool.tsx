@@ -124,18 +124,18 @@ function useCanUseTool(setToolUseConfirmQueue, setToolPermissionContext) {
                 return;
               }
               if (feature("BASH_CLASSIFIER") && result.pendingClassifierCheck && tool.name === BASH_TOOL_NAME && !appState.toolPermissionContext.awaitAutomatedChecksBeforeDialog) {
-                const speculativePromise = peekSpeculativeClassifierCheck((input as {
-                  command: string;
-                }).command);
+                // 防御性检查：input 为空时避免访问 input.command 崩溃
+                const cmdValue = (input as {
+                  command?: string;
+                } | null | void)?.command;
+                const speculativePromise = cmdValue === void 0 ? void 0 : peekSpeculativeClassifierCheck(cmdValue as string);
                 if (speculativePromise) {
                   const raceResult = await Promise.race([speculativePromise.then(_temp), new Promise(_temp2)]);
                   if (ctx.resolveIfAborted(resolve)) {
                     return;
                   }
                   if (raceResult.type === "result" && raceResult.result.matches && raceResult.result.confidence === "high" && feature("BASH_CLASSIFIER")) {
-                    consumeSpeculativeClassifierCheck((input as {
-                      command: string;
-                    }).command);
+                    consumeSpeculativeClassifierCheck(cmdValue as string);
                     const matchedRule = raceResult.result.matchedDescription ?? undefined;
                     if (matchedRule) {
                       setClassifierApproval(toolUseID, matchedRule);

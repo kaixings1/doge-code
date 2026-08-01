@@ -103,7 +103,6 @@ export async function deleteAssistantSession(sessionId: string): Promise<boolean
   try {
     // 这里可以添加实际的删除逻辑
     // 目前只是模拟删除操作
-    console.log(`删除会话: ${sessionId}`)
     return true
   } catch (error) {
     console.error('删除助手会话失败:', error)

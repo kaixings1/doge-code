@@ -1,11 +1,12 @@
-/**
+﻿/**
  * TerminalPanel — xterm.js + node-pty 终端模拟器组件
  */
 
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useCallback, useState } from 'react'
 import { Terminal } from '@xterm/xterm'
 import { FitAddon } from '@xterm/addon-fit'
 import '@xterm/xterm/css/xterm.css'
+import type { UseCommandHistoryReturn } from './hooks/useCommandHistory.js'
 
 interface TerminalPanelProps {
   cwd: string
@@ -17,9 +18,10 @@ interface TerminalPanelProps {
     onTerminalData: (callback: (id: string, data: string) => void) => () => void
     onTerminalExit: (callback: (id: string) => void) => () => void
   }
+  cmdHistory: UseCommandHistoryReturn
 }
 
-export default function TerminalPanel({ cwd, dogeAPI }: TerminalPanelProps) {
+export default function TerminalPanel({ cwd, dogeAPI, cmdHistory }: TerminalPanelProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const terminalRef = useRef<Terminal | null>(null)
   const fitAddonRef = useRef<FitAddon | null>(null)
@@ -28,6 +30,9 @@ export default function TerminalPanel({ cwd, dogeAPI }: TerminalPanelProps) {
 
   const unsubData = useRef<(() => void) | null>(null)
   const unsubExit = useRef<(() => void) | null>(null)
+
+  // 命令历史（由父组件传入，与 CommandPalette 共享）
+  const currentLineRef = useRef('')
 
   // 初始化终端实例
   useEffect(() => {
@@ -100,7 +105,7 @@ export default function TerminalPanel({ cwd, dogeAPI }: TerminalPanelProps) {
     }
   }, [status, dogeAPI])
 
-  // 用户输入 → PTY
+  // 用户输入 → PTY（含命令历史导航）
   useEffect(() => {
     const term = terminalRef.current
     if (!term) return
@@ -108,12 +113,47 @@ export default function TerminalPanel({ cwd, dogeAPI }: TerminalPanelProps) {
     const handler = (data: string) => {
       const id = terminalIdRef.current
       if (!id) return
-      // 特殊键处理
-      if (data === '\r') {
-        dogeAPI.terminalWrite(id, '\r')
-      } else {
-        dogeAPI.terminalWrite(id, data)
+
+      // 上箭头键：导航历史命令
+      if (data === '\x1b[A') {
+        const historyCmd = cmdHistory.navigateHistory('up', currentLineRef.current)
+        currentLineRef.current = historyCmd
+        // 清除当前行并写入历史命令
+        term.write('\x1b[2K\r')
+        term.write(historyCmd)
+        return
       }
+
+      // 下箭头键：导航历史命令
+      if (data === '\x1b[B') {
+        const historyCmd = cmdHistory.navigateHistory('down', currentLineRef.current)
+        currentLineRef.current = historyCmd
+        term.write('\x1b[2K\r')
+        term.write(historyCmd)
+        return
+      }
+
+      // 回车键：记录命令到历史
+      if (data === '\r') {
+        const trimmed = currentLineRef.current.trim()
+        if (trimmed) {
+          cmdHistory.addCommand(trimmed)
+        }
+        currentLineRef.current = ''
+        cmdHistory.resetNavigation()
+        dogeAPI.terminalWrite(id, '\r')
+        return
+      }
+
+      // 记录可打印字符到当前行
+      if (data.length === 1 && data >= ' ' && data <= '~') {
+        currentLineRef.current += data
+      } else if (data === '\x7f' || data === '\b') {
+        // Backspace
+        currentLineRef.current = currentLineRef.current.slice(0, -1)
+      }
+
+      dogeAPI.terminalWrite(id, data)
     }
 
     term.onData(handler)
@@ -125,7 +165,7 @@ export default function TerminalPanel({ cwd, dogeAPI }: TerminalPanelProps) {
     return () => {
       // xterm.js 的 onData 监听器在 dispose 时自动清理
     }
-  }, [dogeAPI, status])
+  }, [dogeAPI, status, cmdHistory])
 
   return (
     <div

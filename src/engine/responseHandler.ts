@@ -3,7 +3,8 @@
  *
  * 解析流式响应、检测工具调用、聚合内容、判断是否需要用户输入。
  */
-import { StreamProcessor } from "./streaming/streamProcessor.ts";
+import { StreamProcessor, preAnalysis, type PreAnalysisSuggestion } from "./streaming/streamProcessor.ts";
+import { containsPlainTextToolCalls, parsePlainTextToolCalls, type PlainTextToolCallBlock } from "../utils/plainTextToolCallRepair.ts";
 
 export interface ToolCall {
   id: string;
@@ -67,7 +68,31 @@ export class ResponseHandler {
       }
     }
 
-    const fullContent = this.aggregateContent(chunks);
+    let fullContent = this.aggregateContent(chunks);
+
+    // 修复纯文本工具调用：某些模型将工具调用以 XML/纯文本形式写入响应内容
+    // 而非使用结构化 tool_use block，此处检测并转换
+    if (toolCalls.length === 0 && containsPlainTextToolCalls(fullContent)) {
+      const parsedBlocks = parsePlainTextToolCalls(fullContent);
+      if (parsedBlocks && parsedBlocks.length > 0) {
+        for (const block of parsedBlocks) {
+          // 将参数值转换为字符串（工具执行器期望字符串类型）
+          const stringArgs: Record<string, string> = {};
+          for (const [key, val] of Object.entries(block.arguments)) {
+            stringArgs[key] = typeof val === 'string' ? val : JSON.stringify(val);
+          }
+          toolCalls.push({
+            id: `toolu_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+            name: block.name,
+            input: stringArgs,
+          });
+        }
+        // 从内容中移除已解析的工具调用文本，避免重复显示
+        fullContent = "";
+        console.log(`[RESP-HANDLER] 修复了 ${toolCalls.length} 个纯文本工具调用`);
+      }
+    }
+
     return {
       content: fullContent,
       toolCalls,

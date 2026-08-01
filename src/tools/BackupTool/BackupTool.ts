@@ -68,15 +68,15 @@ export const BackupTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const action = (input as any)?.action ?? '?'
-    const name = (input as any)?.name
+    const action = (input as Record<string, unknown>)?.action ?? '?'
+    const name = (input as Record<string, unknown>)?.name
     return `Backup: ${action}${name ? ` (${name})` : ''}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',
-      content: (content as any).message || '备份操作完成',
+      content: (content as Record<string, unknown>).message || '备份操作完成',
     }
   },
   async call({ action, path, name }) {

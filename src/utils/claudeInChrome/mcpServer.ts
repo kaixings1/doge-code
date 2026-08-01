@@ -205,12 +205,20 @@ export function createChromeContext(
             textBlocks.push({ type: 'text', text: b.text })
           }
         }
+        const safeUsage = response.usage ?? {
+          input_tokens: 0,
+          output_tokens: 0,
+          cache_read_input_tokens: 0,
+          cache_creation_input_tokens: 0,
+        }
         return {
           content: textBlocks,
           stop_reason: response.stop_reason,
           usage: {
-            input_tokens: response.usage.input_tokens,
-            output_tokens: response.usage.output_tokens,
+            input_tokens: safeUsage.input_tokens,
+            output_tokens: safeUsage.output_tokens,
+            cache_read_input_tokens: safeUsage.cache_read_input_tokens ?? 0,
+            cache_creation_input_tokens: safeUsage.cache_creation_input_tokens ?? 0,
           },
         }
       },

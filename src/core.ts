@@ -924,8 +924,7 @@ function mergeOverrides<T>(
     experiment = Object.assign({}, experiment, o[key]);
     if (typeof experiment.url === "string") {
       experiment.url = getUrlRegExp(
-        // eslint-disable-next-line
-        experiment.url as any,
+        experiment.url as string,
       );
     }
   }

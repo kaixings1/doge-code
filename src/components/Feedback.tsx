@@ -456,7 +456,8 @@ async function generateTitle(description: string, abortSignal: AbortSignal): Pro
         mcpTools: []
       }
     });
-    const title = response.message.content[0]?.type === 'text' ? response.message.content[0].text : 'Bug Report';
+    const firstBlock = Array.isArray(response.message.content) ? response.message.content[0] : undefined;
+    const title = firstBlock?.type === 'text' ? firstBlock.text : 'Bug Report';
 
     // 检查标题是否包含 API 错误消息
     if (startsWithApiErrorPrefix(title)) {

@@ -6,6 +6,7 @@
  * 2. 通过 CLI 参数：doge --desktop → bootstrap-entry.ts 检测后启动 Electron
  */
 
+import './require-shim.js'
 import { app, BrowserWindow } from 'electron'
 import * as path from 'path'
 import * as fs from 'fs'

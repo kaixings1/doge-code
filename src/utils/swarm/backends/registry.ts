@@ -93,9 +93,7 @@ export function registerTmuxBackend(backendClass: new () => PaneBackend): void {
 export function registerITermBackend(
   backendClass: new () => PaneBackend,
 ): void {
-  logForDebugging(
-    `[registry] registerITermBackend called, class=${backendClass?.name || 'undefined'}`,
-  )
+  //logForDebugging(`[registry] registerITermBackend called, class=${backendClass?.name || 'undefined'}`,)
   ITermBackendClass = backendClass
 }
 
@@ -139,27 +137,21 @@ export async function detectAndGetBackend(): Promise<BackendDetectionResult> {
 
   // Return cached result if available
   if (cachedDetectionResult) {
-    logForDebugging(
-      `[BackendRegistry] Using cached backend: ${cachedDetectionResult.backend.type}`,
-    )
+    //logForDebugging(`[BackendRegistry] Using cached backend: ${cachedDetectionResult.backend.type}`,)
     return cachedDetectionResult
   }
 
-  logForDebugging('[BackendRegistry] Starting backend detection...')
+  //logForDebugging('[BackendRegistry] Starting backend detection...')
 
   // Check all environment conditions upfront for logging
   const insideTmux = await isInsideTmux()
   const inITerm2 = isInITerm2()
 
-  logForDebugging(
-    `[BackendRegistry] Environment: insideTmux=${insideTmux}, inITerm2=${inITerm2}`,
-  )
+  //logForDebugging(`[BackendRegistry] Environment: insideTmux=${insideTmux}, inITerm2=${inITerm2}`,)
 
   // Priority 1: If inside tmux, always use tmux
   if (insideTmux) {
-    logForDebugging(
-      '[BackendRegistry] Selected: tmux (running inside tmux session)',
-    )
+    //logForDebugging('[BackendRegistry] Selected: tmux (running inside tmux session)',)
     const backend = createTmuxBackend()
     cachedBackend = backend
     cachedDetectionResult = {
@@ -175,19 +167,13 @@ export async function detectAndGetBackend(): Promise<BackendDetectionResult> {
     // Check if user previously chose to prefer tmux over iTerm2
     const preferTmux = getPreferTmuxOverIterm2()
     if (preferTmux) {
-      logForDebugging(
-        '[BackendRegistry] User prefers tmux over iTerm2, skipping iTerm2 detection',
-      )
+      //logForDebugging('[BackendRegistry] User prefers tmux over iTerm2, skipping iTerm2 detection',)
     } else {
       const it2Available = await isIt2CliAvailable()
-      logForDebugging(
-        `[BackendRegistry] iTerm2 detected, it2 CLI available: ${it2Available}`,
-      )
+      //logForDebugging(`[BackendRegistry] iTerm2 detected, it2 CLI available: ${it2Available}`,)
 
       if (it2Available) {
-        logForDebugging(
-          '[BackendRegistry] Selected: iterm2 (native iTerm2 with it2 CLI)',
-        )
+        //logForDebugging('[BackendRegistry] Selected: iterm2 (native iTerm2 with it2 CLI)',)
         const backend = createITermBackend()
         cachedBackend = backend
         cachedDetectionResult = {
@@ -201,14 +187,10 @@ export async function detectAndGetBackend(): Promise<BackendDetectionResult> {
 
     // In iTerm2 but it2 not available - check if tmux can be used as fallback
     const tmuxAvailable = await isTmuxAvailable()
-    logForDebugging(
-      `[BackendRegistry] it2 not available, tmux available: ${tmuxAvailable}`,
-    )
+    //logForDebugging(`[BackendRegistry] it2 not available, tmux available: ${tmuxAvailable}`,)
 
     if (tmuxAvailable) {
-      logForDebugging(
-        '[BackendRegistry] Selected: tmux (fallback in iTerm2, it2 setup recommended)',
-      )
+      //logForDebugging('[BackendRegistry] Selected: tmux (fallback in iTerm2, it2 setup recommended)',)
       // Return tmux as fallback. Only signal it2 setup if the user hasn't already
       // chosen to prefer tmux - otherwise they'd be re-prompted on every spawn.
       const backend = createTmuxBackend()
@@ -222,22 +204,16 @@ export async function detectAndGetBackend(): Promise<BackendDetectionResult> {
     }
 
     // In iTerm2 with no it2 and no tmux - it2 setup is required
-    logForDebugging(
-      '[BackendRegistry] ERROR: iTerm2 detected but no it2 CLI and no tmux',
-    )
-    throw new Error(
-      'iTerm2 detected but it2 CLI not installed. Install it2 with: pip install it2',
-    )
+    //logForDebugging('[BackendRegistry] ERROR: iTerm2 detected but no it2 CLI and no tmux',)
+    throw new Error('iTerm2 detected but it2 CLI not installed. Install it2 with: pip install it2',)
   }
 
   // Priority 3: Fall back to tmux external session
   const tmuxAvailable = await isTmuxAvailable()
-  logForDebugging(
-    `[BackendRegistry] Not in tmux or iTerm2, tmux available: ${tmuxAvailable}`,
-  )
+  //logForDebugging(`[BackendRegistry] Not in tmux or iTerm2, tmux available: ${tmuxAvailable}`,)
 
   if (tmuxAvailable) {
-    logForDebugging('[BackendRegistry] Selected: tmux (external session mode)')
+    //logForDebugging('[BackendRegistry] Selected: tmux (external session mode)')
     const backend = createTmuxBackend()
     cachedBackend = backend
     cachedDetectionResult = {
@@ -249,7 +225,7 @@ export async function detectAndGetBackend(): Promise<BackendDetectionResult> {
   }
 
   // No backend available - tmux is not installed
-  logForDebugging('[BackendRegistry] ERROR: No pane backend available')
+  //logForDebugging('[BackendRegistry] ERROR: No pane backend available')
   throw new Error(getTmuxInstallInstructions())
 }
 
@@ -324,7 +300,7 @@ export function getCachedDetectionResult(): BackendDetectionResult | null {
  * spawns short-circuit to in-process (the environment won't change mid-session).
  */
 export function markInProcessFallback(): void {
-  logForDebugging('[BackendRegistry] Marking in-process fallback as active')
+  //logForDebugging('[BackendRegistry] Marking in-process fallback as active')
   inProcessFallbackActive = true
 }
 
@@ -352,9 +328,7 @@ export function isInProcessEnabled(): boolean {
   // Force in-process mode for non-interactive sessions (-p mode)
   // since tmux-based teammates don't make sense without a terminal UI
   if (getIsNonInteractiveSession()) {
-    logForDebugging(
-      '[BackendRegistry] isInProcessEnabled: true (non-interactive session)',
-    )
+    //logForDebugging('[BackendRegistry] isInProcessEnabled: true (non-interactive session)',)
     return true
   }
 
@@ -370,9 +344,7 @@ export function isInProcessEnabled(): boolean {
     // backend was available, stay in-process (scoped to auto mode only so a
     // mid-session Settings change to explicit 'tmux' still takes effect).
     if (inProcessFallbackActive) {
-      logForDebugging(
-        '[BackendRegistry] isInProcessEnabled: true (fallback after pane backend unavailable)',
-      )
+      //logForDebugging('[BackendRegistry] isInProcessEnabled: true (fallback after pane backend unavailable)',)
       return true
     }
     // Check if a pane backend environment is available
@@ -382,9 +354,7 @@ export function isInProcessEnabled(): boolean {
     enabled = !insideTmux && !inITerm2
   }
 
-  logForDebugging(
-    `[BackendRegistry] isInProcessEnabled: ${enabled} (mode=${mode}, insideTmux=${isInsideTmuxSync()}, inITerm2=${isInITerm2()})`,
-  )
+  //logForDebugging(`[BackendRegistry] isInProcessEnabled: ${enabled} (mode=${mode}, insideTmuxisInsideTmuxSync()}, inITerm2=${isInITerm2()})`,)
   return enabled
 }
 
@@ -426,12 +396,12 @@ export async function getTeammateExecutor(
   preferInProcess: boolean = false,
 ): Promise<TeammateExecutor> {
   if (preferInProcess && isInProcessEnabled()) {
-    logForDebugging('[BackendRegistry] Using in-process executor')
+    //logForDebugging('[BackendRegistry] Using in-process executor')
     return getInProcessBackend()
   }
 
   // Return pane backend executor
-  logForDebugging('[BackendRegistry] Using pane backend executor')
+  //logForDebugging('[BackendRegistry] Using pane backend executor')
   return getPaneBackendExecutor()
 }
 
@@ -443,9 +413,7 @@ async function getPaneBackendExecutor(): Promise<TeammateExecutor> {
   if (!cachedPaneBackendExecutor) {
     const detection = await detectAndGetBackend()
     cachedPaneBackendExecutor = createPaneBackendExecutor(detection.backend)
-    logForDebugging(
-      `[BackendRegistry] Created PaneBackendExecutor wrapping ${detection.backend.type}`,
-    )
+    //logForDebugging(`[BackendRegistry] Created PaneBackendExecutor wrapping ${detection.backend.type}`,)
   }
   return cachedPaneBackendExecutor
 }

@@ -719,7 +719,7 @@ export type ToolDef<
  * 如果 D 提供了它（必需），则使用 D 的类型；如果 D 省略了它或它是可选的（从约束中的 Partial<> 继承），
  * 则默认值填充。所有其他键直接来自 D —— 精确保留参数数量、可选存在性和字面类型，如同 `satisfies Tool` 那样。
  */
-type BuiltTool<D> = Omit<D, DefaultableToolKeys> & {
+type BuiltTool<D> = D & {
   [K in DefaultableToolKeys]-?: K extends keyof D
     ? undefined extends D[K]
       ? ToolDefaults[K]
@@ -785,3 +785,4 @@ export function buildTool<D extends AnyToolDef>(def: D): BuiltTool<D> {
     ...def,
   } as BuiltTool<D>
 }
+

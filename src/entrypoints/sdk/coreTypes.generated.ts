@@ -62,6 +62,7 @@ import type {
   WorktreeRemoveHookInputSchema,
   CwdChangedHookInputSchema,
   FileChangedHookInputSchema,
+  SessionEndHookInputSchema,
   ExitReasonSchema,
   HookInputSchema,
   AsyncHookJSONOutputSchema,
@@ -200,6 +201,7 @@ export type WorktreeCreateHookInput = z.infer<ReturnType<typeof WorktreeCreateHo
 export type WorktreeRemoveHookInput = z.infer<ReturnType<typeof WorktreeRemoveHookInputSchema>>
 export type CwdChangedHookInput = z.infer<ReturnType<typeof CwdChangedHookInputSchema>>
 export type FileChangedHookInput = z.infer<ReturnType<typeof FileChangedHookInputSchema>>
+export type SessionEndHookInput = z.infer<ReturnType<typeof SessionEndHookInputSchema>>
 export type ExitReason = z.infer<ReturnType<typeof ExitReasonSchema>>
 export type HookInput = z.infer<ReturnType<typeof HookInputSchema>>
 

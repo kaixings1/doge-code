@@ -46,18 +46,18 @@ const workflows = {
 
       try {
         const { WorkflowTool } = await import('../../tools/WorkflowTool/WorkflowTool.js')
-        const toolInstance = new (WorkflowTool as any)()
+        const toolInstance = new WorkflowTool()
 
         const script = mode === 'list' ? '' : rest
         const result = await toolInstance.call(
-          { script, mode: mode as any },
-          context as any,
+          { script, mode: mode as unknown as string },
+          context as unknown as Record<string, unknown>,
           context.canUseTool,
           undefined,
         )
 
         if (result && typeof result === 'object' && 'data' in result) {
-          const data = result.data as any
+          const data = result.data as Record<string, unknown>
           return {
             type: 'text',
             value: data.output || data.message || JSON.stringify(data, null, 2)

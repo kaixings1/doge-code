@@ -135,14 +135,14 @@ export const ContextCollapseTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const target = (input as any)?.target ?? '?'
+    const target = (input as Record<string, unknown>)?.target ?? '?'
     return `ContextCollapse: ${target}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',
-      content: (content as any).message || '上下文压缩完成',
+      content: (content as Record<string, unknown>).message || '上下文压缩完成',
     }
   },
   async call({ target, threshold = 10000, keepMessages = 20, format = 'summary' }) {

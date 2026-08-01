@@ -409,7 +409,7 @@ function normalizeWindowsCommand(cmd: string): string {
     // 使用 tokenizer 健壮地解析 dir 参数，正确处理引号路径
     if (/^dir\b/i.test(trimmed)) {
         const rest = trimmed.slice(3).trim();
-        if (!rest) return 'ls -C .'; // 无参数 dir → ls -C .
+        if (!rest) return cmd; // 无参数 dir 在 Git Bash 中本身可用，保持原样
 
         const dirTokens = tokenizeCommand(rest);
         let path = '.';
@@ -1266,6 +1266,12 @@ export const BashTool = buildTool({
     let result: ExecResult;
     const isMainThread = !toolUseContext.agentId;
     const preventCwdChanges = !isMainThread;
+    const shellEnv = (process.env.CLAUDE_CODE_SHELL || process.env.SHELL || '').toLowerCase()
+    const wantsNativeWinShell = shellEnv.includes('cmd') || shellEnv.includes('powershell') || shellEnv.includes('pwsh')
+    const isWindows = process.platform === 'win32'
+    const actualShellIsNativeWin = isWindows
+      ? wantsNativeWinShell && !process.env.CLAUDE_CODE_SHELL_WANT_BASH
+      : false
     // 路由：检测简单 grep/rg 搜索命令，直接调用 ripgrep 引擎（绕过 MSYS2 shell 卡死问题）
     // 仅处理不含管道、重定向、子 shell 的简单搜索命令
     if (isGrepSearchCommand(input.command)) {
@@ -1287,7 +1293,7 @@ export const BashTool = buildTool({
           if (!signal) {
             throw new Error('abortController is not available in this context. Cannot use ripgrep shortcut.');
           }
-          const lines = await ripGrep(rgArgs, target, signal);
+          const lines = await ripGrep(rgArgs, target, signal as AbortSignal);
           const stdout = lines.join('\n');
           return {
             type: 'tool_result' as const,
@@ -1318,8 +1324,18 @@ export const BashTool = buildTool({
     }
     // ===== 原有 shell 执行入口 =====
     // 使用 runShellCommand 的新异步生成器版本
+    let retriedForUnixFallback = false;
+    let command = input.command;
+    // 根据条件修改 command（与 runShellCommand 中的逻辑同步）
+    if (!actualShellIsNativeWin) {
+      command = normalizeWindowsCommand(command);
+    } else if (isWindows && !(input as Record<string, unknown>)._skipUnixToWindowsNormalization) {
+      command = normalizeUnixCommandForWindows(command);
+    }
+    const modifiedInput = { ...input, command };
+    let runShellCommandBlock = async (): void => {
       const commandGenerator = runShellCommand({
-        input,
+        input: modifiedInput,
         abortController,
         // 使用始终共享的任务通道，以便异步代理的后台 bash 任务也能被正确注册（并在代理退出时可被终止）。
         setAppState: toolUseContext.setAppStateForTasks ?? setAppState,
@@ -1327,7 +1343,11 @@ export const BashTool = buildTool({
         preventCwdChanges,
         isMainThread,
         toolUseId: toolUseContext.toolUseId,
-        agentId: toolUseContext.agentId
+        agentId: toolUseContext.agentId,
+        actualShellIsNativeWin,
+        isWindows,
+        wantsNativeWinShell,
+        shellEnv
       });
 
       // 消费生成器并捕获返回值
@@ -1391,6 +1411,32 @@ export const BashTool = buildTool({
         throw new ShellError('', outputWithSbFailures, result.code, result.interrupted);
       }
     // ===== /原有 shell 执行入口 =====
+    };
+
+    try {
+      await runShellCommandBlock();
+    } catch (shellError) {
+      // 静默重试：当 Windows cmd.exe 上 Unix 命令转换后失败时，用原始 Unix 命令重试
+      if (
+        !retriedForUnixFallback &&
+        actualShellIsNativeWin &&
+        shellError instanceof ShellError &&
+        input.command !== (command as string)
+      ) {
+        retriedForUnixFallback = true;
+        logForDebugging(`[BashTool] cmd.exe 转换命令失败，用原始 Unix 命令重试: "${input.command}"`);
+        // 恢复原始命令，跳过 Unix→Windows 转换
+        command = input.command;
+        try {
+          await runShellCommandBlock();
+        } catch {
+          // 重试也失败，抛出原始错误
+          throw shellError;
+        }
+      } else {
+        throw shellError;
+      }
+    }
 
     // 从累加器获取最终字符串
     const stdout = stdoutAccumulator.toString();
@@ -1401,7 +1447,7 @@ export const BashTool = buildTool({
     const MAX_PERSISTED_SIZE = 64 * 1024 * 1024;
     let persistedOutputPath: string | undefined;
     let persistedOutputSize: number | undefined;
-    if (result.outputFilePath && result.outputTaskId) {
+    if (result?.outputFilePath && result?.outputTaskId) {
       try {
         const fileStat = await fsStat(result.outputFilePath);
         persistedOutputSize = fileStat.size;
@@ -1425,7 +1471,7 @@ export const BashTool = buildTool({
       command_type: commandType as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
       stdout_length: stdout.length,
       stderr_length: 0,
-      exit_code: result.code,
+      exit_code: result?.code,
       interrupted: wasInterrupted
     });
 
@@ -1435,7 +1481,7 @@ export const BashTool = buildTool({
       logEvent('tengu_code_indexing_tool_used', {
         tool: codeIndexingTool as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
         source: 'cli' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
-        success: result.code === 0
+        success: result?.code === 0
       });
     }
     let strippedStdout = stripEmptyLines(stdout);
@@ -1455,7 +1501,7 @@ export const BashTool = buildTool({
     // 在构建输出 Out 对象前释放解码后的缓冲区，以便回收内存。
     let compressedStdout = strippedStdout;
     if (isImage) {
-      const resized = await resizeShellImageOutput(strippedStdout, result.outputFilePath, persistedOutputSize);
+      const resized = await resizeShellImageOutput(strippedStdout, result?.outputFilePath, persistedOutputSize);
       if (resized) {
         compressedStdout = resized;
       } else {
@@ -1472,9 +1518,9 @@ export const BashTool = buildTool({
       isImage,
       returnCodeInterpretation: interpretationResult?.message,
       noOutputExpected: isSilentBashCommand(input.command),
-      backgroundTaskId: result.backgroundTaskId,
-      backgroundedByUser: result.backgroundedByUser,
-      assistantAutoBackgrounded: result.assistantAutoBackgrounded,
+      backgroundTaskId: result?.backgroundTaskId,
+      backgroundedByUser: result?.backgroundedByUser,
+      assistantAutoBackgrounded: result?.assistantAutoBackgrounded,
       dangerouslyDisableSandbox: 'dangerouslyDisableSandbox' in input ? input.dangerouslyDisableSandbox as boolean | undefined : undefined,
       persistedOutputPath,
       persistedOutputSize
@@ -1496,7 +1542,11 @@ async function* runShellCommand({
   preventCwdChanges,
   isMainThread,
   toolUseId,
-  agentId
+  agentId,
+  actualShellIsNativeWin,
+  isWindows,
+  wantsNativeWinShell,
+  shellEnv
 }: {
   input: BashToolInput;
   abortController: AbortController;
@@ -1506,6 +1556,10 @@ async function* runShellCommand({
   isMainThread?: boolean;
   toolUseId?: string;
   agentId?: AgentId;
+  actualShellIsNativeWin: boolean;
+  isWindows: boolean;
+  wantsNativeWinShell: boolean;
+  shellEnv: string;
 }): AsyncGenerator<{
   type: 'progress';
   output: string;
@@ -1523,36 +1577,13 @@ async function* runShellCommand({
     run_in_background
   } = input;
   // 判断实际的底层 shell 类型
-  // 注意：Windows 安全保护（exec 函数内）会强制降级到 cmd.exe，
-  // 因此即使 CLAUDE_CODE_SHELL 未设置，实际执行的也可能是 cmd.exe。
-  // 我们必须在此处模拟 exec 中的降级逻辑，以确保命令归一化方向正确。
-  const shellEnv = (process.env.CLAUDE_CODE_SHELL || process.env.SHELL || '').toLowerCase()
-  const wantsNativeWinShell = shellEnv.includes('cmd') || shellEnv.includes('powershell') || shellEnv.includes('pwsh')
-  const isWindows = process.platform === 'win32'
-
-  // 🔴 Windows 关键修复：
-  // 当实际底层 shell 是 cmd.exe 或 powershell 时，跳过 normalizeWindowsCommand。
-  // normalizeWindowsCommand 会将 dir/type/findstr 转为 ls/cat/grep 等 Unix 命令，
-  // 但 cmd.exe 和 powershell 原生使用 Windows 命令，不认识 ls/cat/grep。
-  //
-  // Windows 安全保护逻辑（Shell.ts exec 函数）：
-  // - Windows 上，未设置 CLAUDE_CODE_SHELL_WANT_BASH=1 时
-  // - 且 CLAUDE_CODE_SHELL 不是 cmd/powershell/pwsh 时
-  // → 强制降级到 cmd.exe（无论 CLAUDE_CODE_SHELL 和 SHELL 设置了什么）
-  //
-  // 因此当 isWindows && !process.env.CLAUDE_CODE_SHELL_WANT_BASH 时，
-  // 实际 shell 是 cmd.exe → 必须跳过 Unix 命令归一化。
-  const actualShellIsNativeWin = isWindows
-    ? !process.env.CLAUDE_CODE_SHELL_WANT_BASH || wantsNativeWinShell
-    : false
-
   if (!actualShellIsNativeWin) {
     const originalCommand = command;
     command = normalizeWindowsCommand(command);
     if (originalCommand !== command) {
       console.debug(`[BashTool] 命令归一化: "${originalCommand}" → "${command}"`);
     }
-  } else if (isWindows) {
+  } else if (isWindows && !(input as Record<string, unknown>)._skipUnixToWindowsNormalization) {
     // 当实际底层 shell 是 cmd.exe 时，将模型生成的 Unix 命令转换为 Windows 等效命令
     // 例如：ls → dir, cat → type, grep → findstr, which → where
     const originalCommand = command;
