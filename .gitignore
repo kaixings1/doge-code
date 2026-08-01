@@ -226,3 +226,5 @@ tsconfig.tsbuildinfo
 # Release directories
 desktop/release-fresh/
 desktop/release-v2/
+desktop/dist.main.backup/
+desktop/release.backup/

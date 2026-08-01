@@ -52,7 +52,11 @@ export class ResponseHandler {
             toolCalls.push({
               id: processed.block.id,
               name: processed.block.name,
-              input: processed.block.input ?? {},
+              input:
+              processed.block.input != null &&
+              typeof processed.block.input === 'object'
+                ? processed.block.input
+                : {},
             });
           }
           break;

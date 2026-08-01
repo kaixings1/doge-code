@@ -213,9 +213,17 @@ export function getToolSearchOrReadInfo(
   // The tool's isSearchOrReadCommand method handles its own input validation via safeParse,
   // so passing the raw input is safe. The type assertion is necessary because Tool[] uses
   // the default generic which expects { [x: string]: any }, but we receive unknown at runtime.
-  const result = tool.isSearchOrReadCommand(
-    toolInput as { [x: string]: unknown },
-  )
+  let result: { isSearch?: boolean; isRead?: boolean; isList?: boolean }
+  try {
+    result = tool.isSearchOrReadCommand(
+      toolInput as { [x: string]: unknown },
+    )
+  } catch {
+    // DOGE: 兜底防线 —— 即使工具的 isSearchOrReadCommand 实现有缺陷，或传入畸形
+    // input（如空串 arguments 解析出的非对象），也不能让 REPL 渲染崩溃。
+    // 返回非折叠默认值，该工具会被当作普通消息展示。
+    result = { isSearch: false, isRead: false, isList: false }
+  }
   const isList = result.isList ?? false
   const isCollapsible = result.isSearch || result.isRead || isList
   // Under fullscreen mode, non-search/read Bash commands are also collapsible

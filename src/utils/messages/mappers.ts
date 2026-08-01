@@ -275,7 +275,12 @@ function normalizeAssistantMessageForSDK(
       if (plan) {
         return {
           ...block,
-          input: { ...(block.input ?? {}), plan },
+          input: {
+            ...((block.input != null && typeof block.input === 'object')
+              ? block.input
+              : {}),
+            plan,
+          },
         }
       }
     }

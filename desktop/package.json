@@ -60,6 +60,8 @@
     "appId": "com.doge-code.desktop",
     "productName": "DogeCode",
     "copyright": "Copyright © 2026 kaixings",
+    "npmRebuild": false,
+    "electronDist": "node_modules/electron/dist",
     "directories": {
       "output": "release",
       "buildResources": "build"
