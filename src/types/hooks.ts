@@ -12,7 +12,7 @@ import type {
   AsyncHookJSONOutput,
   SyncHookJSONOutput,
 } from '../entrypoints/agentSdkTypes.js'
-import type { Message } from './types/message.js'
+import type { Message } from './message.js'
 import type { PermissionResult } from '../utils/permissions/PermissionResult.js'
 import { permissionBehaviorSchema } from '../utils/permissions/PermissionRule.js'
 import { permissionUpdateSchema } from '../utils/permissions/PermissionUpdateSchema.js'

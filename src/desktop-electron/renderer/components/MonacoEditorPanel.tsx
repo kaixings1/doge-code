@@ -649,7 +649,8 @@ return () => {
 		<button onClick={handleSave} disabled={!activeTab?.isDirty} style={{ padding: '3px 10px', border: 'none', borderRadius: '3px', background: activeTab?.isDirty ? c.accent : c.border, color: activeTab?.isDirty ? '#000' : c.textFaint, cursor: activeTab?.isDirty ? 'pointer' :'default', fontSize: '10px', fontWeight: 600 }}>💾 保存</button>
 		{openStatus && <span style={{ color: c.textFaint, fontSize: '9px' }}>{openStatus}</span>}
 		{saveStatus && !saveStatus.includes('已保存') && <span style={{ color: '#f59e0b', fontSize: '9px' }}>{saveStatus}</span>}
-	</div>
+
+</div>
 </div>
 
 	)
