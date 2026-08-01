@@ -1076,13 +1076,13 @@ export async function getClaudeCodeMcpConfigs(
   // 如果企业 MCP 配置存在，则不使用其他配置；它对所有 MCP 服务器拥有独占控制权
   // （企业客户通常不希望其用户能够添加自己的 MCP 服务器）。
   if (doesEnterpriseMcpConfigExist()) {
-    dbg('enterprise config exists');
+    logForDebugging('enterprise config exists');
     // 对企业服务器应用策略过滤
     const filtered: Record<string, ScopedMcpServerConfig> = {}
 
     for (const [name, serverConfig] of Object.entries(enterpriseServers)) {
       if (!isMcpServerAllowedByPolicy(name, serverConfig)) {
-        dbg(`enterprise server blocked by policy: ${name}`);
+        logForDebugging(`enterprise server blocked by policy: ${name}`);
         continue
       }
       filtered[name] = serverConfig
@@ -1094,22 +1094,22 @@ export async function getClaudeCodeMcpConfigs(
   // 加载其他作用域——除非托管策略将 MCP 锁定为仅插件。
   // 与上面的企业独占块不同，此处保留插件服务器。
   const mcpLocked = isRestrictedToPluginOnly('mcp')
-  dbg(`mcpLocked=${mcpLocked}`);
+  logForDebugging(`mcpLocked=${mcpLocked}`);
   const noServers: { servers: Record<string, ScopedMcpServerConfig> } = {
     servers: {},
   }
   const { servers: userServers } = mcpLocked
     ? noServers
     : getMcpConfigsByScope('user')
-  dbg(`userServers=${Object.keys(userServers).length}`);
+  logForDebugging(`userServers=${Object.keys(userServers).length}`);
   const { servers: projectServers } = mcpLocked
     ? noServers
     : getMcpConfigsByScope('project')
-  dbg(`projectServers=${Object.keys(projectServers).length}`);
+  logForDebugging(`projectServers=${Object.keys(projectServers).length}`);
   const { servers: localServers } = mcpLocked
     ? noServers
     : getMcpConfigsByScope('local')
-  dbg(`localServers=${Object.keys(localServers).length}`);
+  logForDebugging(`localServers=${Object.keys(localServers).length}`);
 
   // 加载插件 MCP 服务器
   const pluginMcpServers: Record<string, ScopedMcpServerConfig> = {}

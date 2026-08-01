@@ -205,6 +205,37 @@ export function parsePlainTextToolCalls(
 }
 
 /**
+ * Extract plain-text tool call blocks that may be embedded among ordinary
+ * prose/other text, returning the blocks found (possibly zero).
+ *
+ * Unlike `parsePlainTextToolCalls` (which requires the ENTIRE text to be tool
+ * calls), this scans line-by-line so that "explanation + <function=...>"
+ * mixtures still yield their tool blocks. This mirrors the scanning strategy
+ * used by `stripPlainTextToolCalls`.
+ */
+export function extractPlainTextToolCalls(
+  text: string,
+  allowedNames?: string[],
+): PlainTextToolCallBlock[] {
+  const as = allowedNames ? new Set(allowedNames) : void 0
+  const blocks: PlainTextToolCallBlock[] = []
+  if (!text || !(/\[(?:tool:)?[A-Za-z0-9_-]+\]/.test(text)
+    || /<\|channel\|>/.test(text) || /<function=/.test(text))) {
+    return blocks
+  }
+  let idx = 0
+  while (idx < text.length) {
+    if (idx !== 0 && text[idx - 1] !== '\n') { idx++; continue }
+    const bs = skipHWS(text, idx)
+    const block = pb2(text, bs, as) || xb2(text, bs, as)
+    if (!block) { idx++; continue }
+    blocks.push(block)
+    idx = lb(text, block.end) ?? block.end
+  }
+  return blocks
+}
+
+/**
  * Strip plain-text tool call blocks from text, leaving only user-visible text.
  */
 export function stripPlainTextToolCalls(text: string): string {
@@ -216,10 +247,9 @@ export function stripPlainTextToolCalls(text: string): string {
   while (idx < text.length) {
     if (idx !== 0 && text[idx - 1] !== '\n') { idx++; continue }
     const bs = skipHWS(text, idx)
-    const b = pb2(text, bs)
-    const be = b ? b.end : (xb2(text, bs) ? xb2(text, bs)!.end : null)
-    if (be === null) { idx++; continue }
-    result += text.slice(cursor, idx); cursor = be
+    const b = pb2(text, bs) || xb2(text, bs)
+    if (!b) { idx++; continue }
+    result += text.slice(cursor, idx); cursor = b.end
     const lbr = lb(text, cursor); if (lbr !== null) cursor = lbr
     idx = cursor
   }

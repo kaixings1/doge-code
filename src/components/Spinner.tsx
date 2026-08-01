@@ -261,9 +261,10 @@ function SpinnerWithVerbInner({
   const showBtwTip = tipsEnabled && elapsedSnapshot > 30_000 && !getGlobalConfig().btwUseCount;
   const effectiveTip = contextTipsActive ? undefined : showClearTip && !nextTask ? '切换主题时使用 /clear 重新开始并释放上下文' : showBtwTip && !nextTask ? '使用 /btw 快速提问，不会打断 Claude 当前的工作' : spinnerTip;
 
-  // Budget text (ant-only) — shown above the tip line
+  // Budget text — shown above the tip line when TOKEN_BUDGET feature flag
+  // is active OR when user enables streamingPerformance setting
   let budgetText: string | null = null;
-  if (feature('TOKEN_BUDGET')) {
+  if (feature('TOKEN_BUDGET') || settings.streamingPerformance) {
     const budget = getCurrentTurnTokenBudget();
     if (budget !== null && budget > 0) {
       const tokens = getTurnOutputTokens();

@@ -116,7 +116,7 @@ function accumulateToolUses(
   }
 
   for (const block of content) {
-    if (block.type === 'tool_use' && 'name' in block) {
+    if (block && typeof block === 'object' && block.type === 'tool_use' && 'name' in block) {
       const category = categorizeToolName(block.name as string)
       counts[category]++
     }

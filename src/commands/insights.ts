@@ -550,7 +550,7 @@ function extractToolStats(log: LogOption): {
 
             const input = (block as { input?: Record<string, unknown> }).input
 
-            if (!input || typeof input !== 'object') continue
+            if (!input || input === null || typeof input !== 'object') continue
               const filePath = (input.file_path as string) || ''
               if (filePath) {
                 const lang = getLanguageFromPath(filePath)

@@ -40,7 +40,7 @@ export interface RepoMapResult {
   rankedTags: RankedTag[];
 }
 
-const SYMBOL_REGEX = '^(?:export\\s+)?(?:default\\s+)?(?:async\\s+)?(?:abstract\\s+)?(function|class|interface|type|enum|const|let|var)\\s+(\\w+)';
+export const SYMBOL_REGEX = '^(?:export\\s+)?(?:default\\s+)?(?:async\\s+)?(?:abstract\\s+)?(function|class|interface|type|enum|const|let|var)\\s+(\\w+)';
 const CACHE_TTL_MS = 5 * 60_000; // 5 分钟
 
 export class RepoMap {

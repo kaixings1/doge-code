@@ -669,6 +669,18 @@ export const SettingsSchema = lazySchema(() =>
         .boolean()
         .optional()
         .describe('是否在差异视图中禁用语法高亮'),
+      sideBySideDiff: z
+        .boolean()
+        .optional()
+        .describe('是否使用并排差异视图'),
+      blockOutput: z
+        .boolean()
+        .optional()
+        .describe('是否使用块状输出（为工具和 Bash 输出添加边框和折叠功能）'),
+      streamingPerformance: z
+        .boolean()
+        .optional()
+        .describe('是否显示流式渲染性能指示器（Token 速度、ETA 估算）'),
       terminalTitleFromRename: z
         .boolean()
         .optional()
