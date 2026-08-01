@@ -3700,17 +3700,19 @@ export async function executeStopFailureHooks(
   if (!hasHookForEvent('StopFailure', appState, sessionId)) return
 
   const lastAssistantText =
-    getContentText(lastMessage.message?.content)?.trim()
+    lastMessage.message?.content
+      ? getContentText(lastMessage.message.content)?.trim()
+      : undefined
 
   // 某些 createAssistantAPIErrorMessage 调用站点省略了 `error`（例如
   // errors.ts:431 中的 image-size）。默认为 'unknown'，
   // 以便 getMatchingHooks:1525 的匹配器过滤始终适用。
-  const error = lastMessage.error ?? 'unknown'
+  const error = ((lastMessage.error as string | undefined) ?? 'unknown') as StopFailureHookInput['error']
   const hookInput: StopFailureHookInput = {
     ...createBaseHookInput(undefined, undefined, toolUseContext),
     hook_event_name: 'StopFailure',
     error,
-    error_details: lastMessage.errorDetails,
+    error_details: lastMessage.errorDetails as string | undefined,
     last_assistant_message: lastAssistantText,
   }
 
@@ -3757,8 +3759,8 @@ export async function* executeStopHooks(
   const lastAssistantMessage = messages
     ? getLastAssistantMessage(messages)
     : undefined
-  const lastAssistantText = lastAssistantMessage
-    ? getContentText(lastAssistantMessage.message?.content)?.trim()
+  const lastAssistantText = lastAssistantMessage?.message?.content
+    ? getContentText(lastAssistantMessage.message.content)?.trim()
     : undefined
 
   const hookInput: StopHookInput | SubagentStopHookInput = subagentId
