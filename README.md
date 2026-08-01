@@ -61,7 +61,27 @@
 /plan 或者Shift+Tab 两次进入计划模式。
 /init 重新审视项目，更新CLAUDE.md文件。
 
+## 核心功能特性（特性吸收计划产物）
 
+本项目在基础 CLI 之上，吸收仿照业界优秀编程代理功能，集成了一批扩展能力（部分命令）：
+
+| 功能 | 命令 | 说明 |
+|------|------|------|
+| 并排 Diff 视图 | `/diff-mode` | GitHub 风格左右对照 diff |
+| 块状结构化输出 | `/block-mode` | Bash/工具输出独立边框可折叠块 |
+| Repo Map 代码库映射 | `/repo-map` | 目录结构 + 符号分组 AI 摘要 |
+| 多会话/多 Tab 管理 | `/sessions` | 类似 tmux 的多会话切换 |
+| 浏览器自动化 | `/browser` | Playwright 网页调试/E2E 测试 |
+| 代码库向量搜索 | `/vector-search` | SQLite FTS5 + BM25 全库搜索（零外部依赖）|
+| Git 工作流深度集成 | `/commit-push-pr` | AI 生成 commit message + 推送 + PR |
+| 代码搜索增强 | `/code-search` | 正则 + 语义 + 混合 + 符号四模式 |
+| 超长上下文 | Gemini 1M/2M、Opus 1M | 支持百万级 token 上下文窗口 |
+| Docker 沙箱隔离 | 内置 | 在容器内执行命令，隔离工作环境 |
+| AI 测试生成 | `/test-gen` | 自动生成测试并运行，失败自动修复（最多5轮）|
+| 安全扫描 | `/security-audit`（别名 `/audit`、`/sast`）| 检测 SQL 注入、XSS、硬编码密钥等 |
+| 多 Agent 协作 | `/agents` + AgentTool | 多专用子代理协作（规划/探索/执行/审查）|
+
+> 说明：完整实现细节见仓库 `CLAUDE.md` 的"核心功能区"章节。
 
 如果用 ACG 比喻，大概属于：
 
