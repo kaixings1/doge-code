@@ -28,6 +28,7 @@
  * REPL-only — daemon/print stay on env-based.
  */
 
+import { feature } from 'bun:bundle'
 import axios from 'axios'
 import {
   createV2ReplTransport,
