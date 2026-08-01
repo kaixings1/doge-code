@@ -50,6 +50,32 @@ src/
 ├── screen/                # 终端 UI：REPL.tsx, 状态行组件
 ```
 
+## 核心功能区（特性吸收计划产物）
+
+以下功能模块均已实现并通过 `bun run build` 完整编译验证（对应 `TODO_feature_absorption_plan.md` 的状态追踪表）。此列表是理解本项目扩展能力的功能地图：
+
+| # | 功能模块 | 核心实现文件 | 命令/入口 | 说明 |
+|---|---------|------------|----------|------|
+| 1 | 并排 Diff 视图 | `src/components/SideBySideDiff.tsx` | `/diff-mode`（`src/commands/diff-mode/`）| GitHub 风格左右对照 diff 渲染 |
+| 2 | 块状结构化输出 | `src/components/tools/ToolOutputBlock.tsx` | `/block-mode`（`src/commands/block-mode/`）| Bash/工具输出的独立边框+折叠块 |
+| 3 | Repo Map 代码库映射 | `src/engine/repoMap.ts` | `/repo-map`（`src/commands/repo-map/`）| Aider 风格目录结构 + 符号分组 AI 摘要 |
+| 4 | 流式渲染优化 | `src/components/Spinner.tsx` | streamingPerformance 设置 | token 计数 + 实时渲染节流 |
+| 5 | 多 Tab/会话管理 | `src/commands/sessions/` | `/sessions` | 类似 tmux 的多会话切换 |
+| 6 | 浏览器自动化 | `src/tools/WebBrowserTool/WebBrowserTool.ts` + `src/commands/browser/` | `/browser` | Playwright 集成，运行时懒加载 `import('playwright')` |
+| 7 | 代码库向量存储 | `src/engine/codeVectorStore.ts` | `/vector-search`（`src/commands/vector-search/`）| bun:sqlite + SQLite FTS5 + BM25 全文索引（零外部 embedding 依赖）|
+| 8 | Git 工作流集成 | `src/commands/commit-push-pr.ts` | `/commit-push-pr` | AI commit message + 推送 + PR |
+| 9 | 多模态图片预览 | `src/components/ImageDisplay.tsx` + `src/ink/termio/osc.ts` | 随 image tool_use 触发 | iTerm2/Kitty/tmux inline image 协议；**不依赖 ink（避免 top-level await 编译冲突）** |
+| 10 | 代码搜索增强 | `src/commands/code-search/` | `/code-search` | regex + semantic + hybrid + symbol 四模式，30+ 语言过滤 |
+| 11 | 超长上下文窗口 | `src/utils/model/model.ts` | gemini-2-0-flash/pro 映射 | Gemini 1M/2M + Opus 1M 上下文（`modelSupports1M`, `[1m]` 后缀）|
+| 12 | Docker 沙箱隔离 | `src/utils/sandbox/docker-sandbox.ts` | `DockerSandboxManager` 类 | 容器内执行 bash，工作目录映射 + extra mount |
+| 13 | AI 测试生成 | `src/commands/test-gen.ts` | `/test-gen` | prompt 命令，vitest/pytest/go/cargo 多框架 + 5 轮修复循环 |
+| 14 | 安全扫描 | `src/commands/security-audit/` | `/security-audit`（别名 `/audit`,`/sast`）| local 命令，6 种规则（SQL注入/XSS/命令注入/硬编码密钥等）+ 递归扫描 + JSON/text 输出 |
+| 15 | 多 Agent 协作 | `src/tools/AgentTool/AgentTool.tsx` + `src/cli/handlers/agents.ts` | AgentTool + `/agents` | 复用项目既有通用 Agent（general-purpose/plan/explore 等）|
+
+**注意**：
+- 特性 6/9（浏览器、多模态）的 `ImageDisplay` 组件**不得使用 `require('ink')`/`useStdout()`**——ink/reconciler 含 top-level await，会触发 `bun build --compile` 报 "require call not allowed"。应使用 `useEffect` + `process.stdout.write`。
+- 特性 15 主要复用项目既有 AgentTool 子系统，TODO 中宣称的 `AgentMemory.ts`/`ForkSubagent.ts` **不存在**，勿按 TODO 描述去查找这些文件。
+
 ## 关键文件
 
 - `src/entrypoints/cli.tsx` / `src/bootstrap-entry.ts`：应用启动入口，包含多个快速路径
