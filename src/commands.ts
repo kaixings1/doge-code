@@ -1,21 +1,22 @@
 // biome-ignore-all assist/source/organizeImports: ANT-ONLY 导入标记不得重新排序
+import { createRequire } from 'node:module'
+
+// 用于在 Electron 环境下兼容 require 的场景（如外部 CommonJS 模块）
+const dynamicRequire = createRequire(import.meta.url)
 
 /**
- * 在 Electron 主进程（ESM bundle）中，createRequire 无法解析打包在 bundle 中的模块路径。
- * 使用动态 import() 代替，Vite/Rollup 会正确处理打包模块的解析。
+ * 安全的动态加载函数，避免在 Electron bundle 中 createRequire 无法解析模块路径时崩溃。
+ * 在 Electron/Vite 构建中，feature() 返回 false，所有条件加载的命令都为 null。
+ * 在 Bun 原生构建中，feature() 进行编译时死代码消除，相关 import 会被内联。
+ * 此函数仅作为后备，防止任何动态 require/import 加载失败导致崩溃。
  */
-async function dynamicImport<T>(path: string): Promise<T | null> {
+function safeRequire<T>(path: string): T | null {
   try {
-    // @ts-expect-error 动态导入路径类型未知
-    return (await import(/* @vite-ignore */ path)).default ?? (await import(/* @vite-ignore */ path)) as T
+    return dynamicRequire(path) as T
   } catch {
     return null
   }
 }
-
-// 用于在 Electron 环境下兼容 require 的场景（如外部 CommonJS 模块）
-import { createRequire } from 'node:module'
-const dynamicRequire = createRequire(import.meta.url)
 
 /**
  * 安全的动态加载函数，避免在 Electron bundle 中 createRequire 无法解析模块路径时崩溃。
