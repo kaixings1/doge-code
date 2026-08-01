@@ -12,6 +12,7 @@
  * query.enableRemoteControl）通过动态导入调用。
  */
 
+import { feature } from 'bun:bundle'
 import { hostname } from 'os'
 import { getOriginalCwd, getSessionId } from '../bootstrap/state.js'
 import type { SDKMessage } from '../entrypoints/agentSdkTypes.js'

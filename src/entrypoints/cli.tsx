@@ -1,4 +1,4 @@
-import { isFeatureEnabled } from '../bridge/bridgeEnabled.js';
+import { feature } from 'bun:bundle'
 import '../generated/macro.js';
 import '../generated/status-line-embedded.js';
 
