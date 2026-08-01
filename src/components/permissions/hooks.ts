@@ -131,7 +131,7 @@ export function usePermissionRequestLogging(
     // Log analytics event
     logEvent('tengu_tool_use_show_permission_request', {
       messageID: toolUseConfirm.assistantMessage.message
-        .id as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
+        ?.id as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
       toolName: sanitizeToolNameForAnalytics(toolUseConfirm.tool.name),
       isMcp: toolUseConfirm.tool.isMcp ?? false,
       decisionReasonType: toolUseConfirm.permissionResult.decisionReason
@@ -149,7 +149,7 @@ export function usePermissionRequestLogging(
         // Log if no rule suggestions ("always allow") are provided
         logEvent('tengu_internal_tool_use_permission_request_no_always_allow', {
           messageID: toolUseConfirm.assistantMessage.message
-            .id as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
+            ?.id as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
           toolName: sanitizeToolNameForAnalytics(toolUseConfirm.tool.name),
           isMcp: toolUseConfirm.tool.isMcp ?? false,
           decisionReasonType: (permissionResult.decisionReason?.type ??
@@ -201,7 +201,7 @@ export function usePermissionRequestLogging(
       event: 'response',
       metadata: {
         language_name: unaryEvent.language_name,
-        message_id: toolUseConfirm.assistantMessage.message.id,
+        message_id: toolUseConfirm.assistantMessage.message!.id,
         platform: env.platform,
       },
     })
