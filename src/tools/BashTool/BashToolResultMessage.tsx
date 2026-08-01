@@ -5,6 +5,8 @@ import { KeyboardShortcutHint } from '../../components/design-system/KeyboardSho
 import { MessageResponse } from '../../components/MessageResponse.js';
 import { OutputLine } from '../../components/shell/OutputLine.js';
 import { ShellTimeDisplay } from '../../components/shell/ShellTimeDisplay.js';
+import { ToolOutputBlock } from '../../components/tools/ToolOutputBlock.js';
+import { useSettings } from '../../hooks/useSettings.js';
 import { Box, Text } from '../../ink.js';
 import type { Out as BashOut } from './BashTool.js';
 type Props = {
@@ -64,12 +66,13 @@ function extractCwdResetWarning(stderr: string): {
   };
 }
 export default function BashToolResultMessage(t0) {
-  const $ = _c(34);
+  const $ = _c(37);
   const {
     content: t1,
     verbose,
     timeoutMs
   } = t0;
+  const settings = useSettings();
   const {
     stdout: t2,
     stderr: t3,
@@ -186,5 +189,19 @@ export default function BashToolResultMessage(t0) {
   } else {
     t11 = $[33];
   }
-  return t11;
+  const blockOutputEnabled = settings.blockOutput ?? false;
+  const outputLines = (stdout + '\n' + stderr).split('\n').length;
+  const isLong = outputLines > 20;
+  let t12;
+  if ($[34] !== blockOutputEnabled || $[35] !== t11) {
+    t12 = blockOutputEnabled
+      ? <ToolOutputBlock header="Bash Output" status={stderr ? 'error' : 'success'} isLong={isLong}>{t11}</ToolOutputBlock>
+      : t11;
+    $[34] = blockOutputEnabled;
+    $[35] = t11;
+    $[36] = t12;
+  } else {
+    t12 = $[36];
+  }
+  return t12;
 }

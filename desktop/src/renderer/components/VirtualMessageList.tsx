@@ -81,22 +81,210 @@ function tryParseJsonBlocks(raw: string): ContentBlock[] | null {
   }
 }
 
+// 跨调用累积未闭合的 tool_use 片段，实现流式兼容
+// 等闭合标签 </tool_use> 或新开始标签 <tool_use> 出现后才提取
+let xmlToolUseBuffer = ''
+// 状态机：跟踪当前是否在 tool_use 块内
+type XmlParseState = 'text' | 'in_tool_use' | 'in_name' | 'in_input'
+let xmlParseState: XmlParseState = 'text'
+let xmlCurrentName = ''
+
 function parseXmlToolUse(content: string): ContentBlock[] {
   const blocks: ContentBlock[] = []
-  const toolUseRegex = /<tool_use>\s*<name>([^<]+)<\/name>\s*<input>(.*?)<\/input>\s*<\/tool_use>/gs
-  let match: RegExpExecArray | null
-  while ((match = toolUseRegex.exec(content)) !== null) {
-    blocks.push({ type: 'tool_use', name: match[1], input: {} })
+  xmlToolUseBuffer += content
+
+  let i = 0
+  while (i < xmlToolUseBuffer.length) {
+    if (xmlParseState === 'text') {
+      // 检查是否有新的 <tool_use> 开始
+      const tagStart = xmlToolUseBuffer.indexOf('<tool_use>', i)
+      if (tagStart === -1) {
+        // 没有 tool_use 标签，剩余内容全部作为纯文本
+        if (i < xmlToolUseBuffer.length && xmlToolUseBuffer.slice(i).trim()) {
+          blocks.push({ type: 'text', text: xmlToolUseBuffer.slice(i).trim() })
+        }
+        break
+      }
+      // 遇到 <tool_use>，之前的内容作为纯文本
+      if (tagStart > i) {
+        blocks.push({ type: 'text', text: xmlToolUseBuffer.slice(i, tagStart).trim() })
+      }
+      xmlParseState = 'in_tool_use'
+      xmlCurrentName = ''
+      i = tagStart + '<tool_use>'.length
+    } else if (xmlParseState === 'in_tool_use') {
+      const nameStart = xmlToolUseBuffer.indexOf('<name>', i)
+      const toolUseEnd = xmlToolUseBuffer.indexOf('</tool_use>', i)
+      const hasClosingTag = toolUseEnd !== -1
+      // 如果有闭合标签，name 必须在闭合标签之前；如果没有闭合标签，直接处理 name
+      if (nameStart !== -1 && (!hasClosingTag || nameStart < toolUseEnd)) {
+        const nameEnd = xmlToolUseBuffer.indexOf('</name>', nameStart)
+        if (nameEnd !== -1) {
+          xmlCurrentName = xmlToolUseBuffer.slice(nameStart + '<name>'.length, nameEnd)
+          xmlParseState = 'in_name'
+          i = nameEnd + '</name>'.length
+          continue
+        }
+      }
+      // 没有找到 name 标签，跳过这个 tool_use
+      xmlParseState = 'text'
+      i = hasClosingTag ? toolUseEnd + '</tool_use>'.length : xmlToolUseBuffer.length
+    } else if (xmlParseState === 'in_name') {
+      const inputStart = xmlToolUseBuffer.indexOf('<input>', i)
+      if (inputStart !== -1) {
+        xmlParseState = 'in_input'
+        i = inputStart + '<input>'.length
+        continue
+      }
+      // 没有 input 标签，跳过
+      xmlParseState = 'text'
+    } else if (xmlParseState === 'in_input') {
+      const inputEnd = xmlToolUseBuffer.indexOf('</input>', i)
+      if (inputEnd !== -1) {
+        const input = xmlToolUseBuffer.slice(i, inputEnd).trim()
+        blocks.push({ type: 'tool_use', name: xmlCurrentName, input: {} })
+        // 重置状态，继续处理 tool_use 后面的内容
+        xmlParseState = 'text'
+        xmlCurrentName = ''
+        i = inputEnd + '</input>'.length
+        continue
+      }
+      // 没有找到 </input>，tool_use 未闭合，停止处理，等待更多内容
+      break
+    }
   }
-  if (blocks.length === 0 && content.trim()) {
-    blocks.push({ type: 'text', text: content })
-  }
+
+  // 保留未闭合的 tool_use 片段在缓冲区中
+  // 从当前处理位置截断，保留未闭合部分
+  xmlToolUseBuffer = xmlToolUseBuffer.slice(i)
+
   return blocks
+}
+
+// ─── <function> 格式工具调用提取 ───
+// 处理 <function name="ToolName">...</function> 格式
+// 以及用户自定义格式 <function>ToolName>...</function>
+
+// 跨调用累积未闭合的 function 片段
+let functionToolUseBuffer = ''
+type FunctionParseState = 'text' | 'in_function' | 'in_params'
+let functionParseState: FunctionParseState = 'text'
+let functionToolName = ''
+
+function parseFunctionToolUse(content: string): ContentBlock[] {
+  const blocks: ContentBlock[] = []
+  functionToolUseBuffer += content
+
+  let i = 0
+  while (i < functionToolUseBuffer.length) {
+    if (functionParseState === 'text') {
+      const tagStart = functionToolUseBuffer.indexOf('<function', i)
+      if (tagStart === -1) {
+        if (i < functionToolUseBuffer.length && functionToolUseBuffer.slice(i).trim()) {
+          blocks.push({ type: 'text', text: functionToolUseBuffer.slice(i).trim() })
+        }
+        break
+      }
+      if (tagStart > i) {
+        blocks.push({ type: 'text', text: functionToolUseBuffer.slice(i, tagStart).trim() })
+      }
+      functionParseState = 'in_function'
+      functionToolName = ''
+      i = tagStart + '<function'.length
+    } else if (functionParseState === 'in_function') {
+      const tagEnd = functionToolUseBuffer.indexOf('>', i)
+      if (tagEnd !== -1) {
+        const beforeTagEnd = functionToolUseBuffer.slice(i, tagEnd)
+        // 优先从 name="..." 属性提取
+        const nameMatch = beforeTagEnd.match(/name\s*=\s*"([^"]+)"/)
+        if (nameMatch) {
+          functionToolName = nameMatch[1]
+        } else {
+          // 自定义格式：<function>ToolName> 中的 ToolName 作为工具名
+          const trimmed = beforeTagEnd.trim()
+          if (trimmed) {
+            functionToolName = trimmed
+          }
+        }
+        functionParseState = 'in_params'
+        i = tagEnd + 1
+        continue
+      }
+      // 未找到 >，等待更多内容
+      break
+    } else if (functionParseState === 'in_params') {
+      const closingTag = functionToolUseBuffer.indexOf('</function>', i)
+      const nextFunction = functionToolUseBuffer.indexOf('<function', i)
+
+      if (closingTag !== -1 && (nextFunction === -1 || closingTag < nextFunction)) {
+        const paramsText = functionToolUseBuffer.slice(i, closingTag)
+        const params = extractFunctionParams(paramsText)
+        if (functionToolName) {
+          blocks.push({ type: 'tool_use', name: functionToolName, input: params })
+        }
+        functionParseState = 'text'
+        functionToolName = ''
+        i = closingTag + '</function>'.length
+        continue
+      }
+
+      if (nextFunction !== -1 && (closingTag === -1 || nextFunction < closingTag)) {
+        const paramsText = functionToolUseBuffer.slice(i, nextFunction)
+        const params = extractFunctionParams(paramsText)
+        if (functionToolName) {
+          blocks.push({ type: 'tool_use', name: functionToolName, input: params })
+        }
+        functionParseState = 'in_function'
+        functionToolName = ''
+        i = nextFunction
+        continue
+      }
+
+      // 没有闭合标签也没有新标签，等待更多内容
+      break
+    }
+  }
+
+  functionToolUseBuffer = functionToolUseBuffer.slice(i)
+  return blocks
+}
+
+function extractFunctionParams(text: string): Record<string, string> {
+  const params: Record<string, string> = {}
+  // 匹配 <parameter name="key">value</parameter> 或 <parameter>key>value</parameter>
+  const paramRegex = /<parameter\s+(?:name\s*=\s*"([^"]+)"\s*)?>([\s\S]*?)<\/parameter>/g
+  let match
+  while ((match = paramRegex.exec(text)) !== null) {
+    let key: string
+    let value: string
+    if (match[1]) {
+      // 标准格式：<parameter name="key">value</parameter>
+      key = match[1]
+      value = match[2].trim()
+    } else {
+      // 自定义格式：<parameter>key>value</parameter>
+      const body = match[2]
+      const gtIndex = body.indexOf('>')
+      if (gtIndex !== -1) {
+        key = body.slice(0, gtIndex).trim()
+        value = body.slice(gtIndex + 1).trim()
+      } else {
+        key = body.trim()
+        value = ''
+      }
+    }
+    if (key) {
+      params[key] = value
+    }
+  }
+  return params
 }
 
 function parseMessageContent(content: string): ContentBlock[] {
   const jsonBlocks = tryParseJsonBlocks(content)
   if (jsonBlocks) return jsonBlocks
+  const functionBlocks = parseFunctionToolUse(content)
+  if (functionBlocks.length > 0) return functionBlocks
   return parseXmlToolUse(content)
 }
 

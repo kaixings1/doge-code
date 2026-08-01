@@ -165,7 +165,7 @@ export function renderToolUseMessage(input: Partial<Input>, {
 }: {
   verbose: boolean;
 }): React.ReactNode {
-  if (!input.operation) {
+  if (!input || !input.operation) {
     return null;
   }
   const parts: string[] = [];

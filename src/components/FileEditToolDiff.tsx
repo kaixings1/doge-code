@@ -2,6 +2,7 @@ import { c as _c } from "react/compiler-runtime";
 import type { StructuredPatchHunk } from 'diff';
 import * as React from 'react';
 import { Suspense, use, useState } from 'react';
+import { useSettings } from '../hooks/useSettings.js';
 import { useTerminalSize } from '../hooks/useTerminalSize.js';
 import { Box, Text } from '../ink.js';
 import type { FileEdit } from '../tools/FileEditTool/types.js';
@@ -21,40 +22,45 @@ type DiffData = {
   fileContent: string | undefined;
 };
 export function FileEditToolDiff(props) {
-  const $ = _c(7);
+  const $ = _c(9);
+  const settings = useSettings();
+  const sideBySide = settings.sideBySideDiff ?? false;
   let t0;
-  if ($[0] !== props.edits || $[1] !== props.file_path) {
+  if ($[0] !== props.edits || $[1] !== props.file_path || $[2] !== sideBySide) {
     t0 = () => loadDiffData(props.file_path, props.edits);
     $[0] = props.edits;
     $[1] = props.file_path;
-    $[2] = t0;
+    $[2] = sideBySide;
+    $[3] = t0;
   } else {
-    t0 = $[2];
+    t0 = $[3];
   }
   const [dataPromise] = useState(t0);
   let t1;
-  if ($[3] === Symbol.for("react.memo_cache_sentinel")) {
+  if ($[4] === Symbol.for("react.memo_cache_sentinel")) {
     t1 = <DiffFrame placeholder={true} />;
-    $[3] = t1;
+    $[4] = t1;
   } else {
-    t1 = $[3];
+    t1 = $[4];
   }
   let t2;
-  if ($[4] !== dataPromise || $[5] !== props.file_path) {
-    t2 = <Suspense fallback={t1}><DiffBody promise={dataPromise} file_path={props.file_path} /></Suspense>;
-    $[4] = dataPromise;
-    $[5] = props.file_path;
-    $[6] = t2;
+  if ($[5] !== dataPromise || $[6] !== props.file_path || $[7] !== sideBySide) {
+    t2 = <Suspense fallback={t1}><DiffBody promise={dataPromise} file_path={props.file_path} sideBySide={sideBySide} /></Suspense>;
+    $[5] = dataPromise;
+    $[6] = props.file_path;
+    $[7] = sideBySide;
+    $[8] = t2;
   } else {
-    t2 = $[6];
+    t2 = $[8];
   }
   return t2;
 }
 function DiffBody(t0) {
-  const $ = _c(6);
+  const $ = _c(8);
   const {
     promise,
-    file_path
+    file_path,
+    sideBySide
   } = t0;
   const {
     patch,
@@ -65,14 +71,15 @@ function DiffBody(t0) {
     columns
   } = useTerminalSize();
   let t1;
-  if ($[0] !== columns || $[1] !== fileContent || $[2] !== file_path || $[3] !== firstLine || $[4] !== patch) {
-    t1 = <DiffFrame><StructuredDiffList hunks={patch} dim={false} width={columns} filePath={file_path} firstLine={firstLine} fileContent={fileContent} /></DiffFrame>;
+  if ($[0] !== columns || $[1] !== fileContent || $[2] !== file_path || $[3] !== firstLine || $[4] !== patch || $[7] !== sideBySide) {
+    t1 = <DiffFrame><StructuredDiffList hunks={patch} dim={false} width={columns} filePath={file_path} firstLine={firstLine} fileContent={fileContent} sideBySide={sideBySide} /></DiffFrame>;
     $[0] = columns;
     $[1] = fileContent;
     $[2] = file_path;
     $[3] = firstLine;
     $[4] = patch;
     $[5] = t1;
+    $[7] = sideBySide;
   } else {
     t1 = $[5];
   }

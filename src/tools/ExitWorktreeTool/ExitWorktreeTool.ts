@@ -187,7 +187,7 @@ export const ExitWorktreeTool: Tool<InputSchema, Output> = buildTool({
       }
     }
 
-    if (input.action === 'remove' && !input.discard_changes) {
+    if (!input || input.action !== 'remove' || !input.discard_changes) {
       const summary = await countWorktreeChanges(
         session.worktreePath,
         session.originalHeadCommit,

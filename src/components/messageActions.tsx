@@ -125,14 +125,14 @@ export function toolCallOf(msg: NavigableMessage): {
 } | undefined {
   if (msg.type === 'assistant') {
     const b = Array.isArray(msg.message.content) ? msg.message.content[0] : undefined;
-    if (b?.type === 'tool_use') return {
+    if (b?.type === 'tool_use' && b.input != null && typeof b.input === 'object') return {
       name: b.name,
       input: b.input as Record<string, unknown>
     };
   }
   if (msg.type === 'grouped_tool_use') {
     const b = Array.isArray(msg.messages[0]?.message.content) ? msg.messages[0].message.content[0] : undefined;
-    if (b?.type === 'tool_use') return {
+    if (b?.type === 'tool_use' && b.input != null && typeof b.input === 'object') return {
       name: msg.toolName,
       input: b.input as Record<string, unknown>
     };
@@ -447,3 +447,4 @@ function toolResultText(r: NormalizedUserMessage): string {
   if (!c) return '';
   return c.flatMap(x => x.type === 'text' ? [x.text] : []).join('\n');
 }
+
