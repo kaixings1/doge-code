@@ -5,6 +5,9 @@
 .remember/
 src-zh/
 
+# Memory Bank
+.memory/
+
 # Build Artifacts
 dist/
 build/
