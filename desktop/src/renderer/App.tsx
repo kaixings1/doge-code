@@ -1081,7 +1081,7 @@ export function App(): JSX.Element {
       // 间隔 2s 再发下一条
       if (!cancelled && autoTestCmdIndexRef.current < TEST_CMDS.length) {
         await new Promise(r => setTimeout(r, 2000))
-        sendNext()
+        await sendNext()
       }
     }
 
