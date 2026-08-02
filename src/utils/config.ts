@@ -132,12 +132,54 @@ export type ProjectConfig = {
   }
   /** `claude remote-control` 多会话的生成模式。由首次运行对话框或 `w` 切换设置。 */
   remoteControlSpawnMode?: 'same-dir' | 'worktree'
+  // ─── 更新日志新功能配置 (2.1.128-2.1.220) ───
+  /** 工作流大小指南 (v2.1.219) */
+  workflowSizeGuideline?: number
+  /** 网络沙箱严格白名单 (v2.1.219) */
+  sandboxNetworkStrictAllowlist?: string[]
+  /** 禁用文件系统沙箱 (v2.1.216) */
+  sandboxFilesystemDisabled?: boolean
+  /** 并发子代理上限 (v2.1.217) */
+  maxConcurrentSubAgents?: number
+  /** 子代理嵌套深度 (v2.1.217) */
+  maxSubAgentSpawnDepth?: number
+  /** 每会话 WebSearch 限制 (v2.1.212) */
+  maxWebSearchesPerSession?: number
+  /** MCP 自动后台化时间 ms (v2.1.212) */
+  mcpAutoBackgroundMs?: number
+  /** 转发子代理文本 (v2.1.211) */
+  forwardSubagentText?: boolean
+  /** 父设置行为 (v2.1.133) */
+  parentSettingsBehavior?: 'inherit' | 'override' | 'merge'
+  /** bubblewrap 路径 (v2.1.133) */
+  sandboxBwrapPath?: string
+  /** socat 路径 (v2.1.133) */
+  sandboxSocPath?: string
+  /** worktree 基础引用 (v2.1.133) */
+  worktreeBaseRef?: 'fresh' | 'head'
+  /** 强制终端超链接 (v2.1.217) */
+  forceHyperlink?: boolean
+  /** Emoji 自动补全 (v2.1.217) */
+  emojiCompletionEnabled?: boolean
 }
 
 const DEFAULT_PROJECT_CONFIG: ProjectConfig = {
   allowedTools: [],
   mcpContextUris: [],
   mcpServers: {},
+  // 更新日志新功能默认值
+  workflowSizeGuideline: 15,
+  sandboxNetworkStrictAllowlist: [],
+  sandboxFilesystemDisabled: false,
+  maxConcurrentSubAgents: 20,
+  maxSubAgentSpawnDepth: 3,
+  maxWebSearchesPerSession: 200,
+  mcpAutoBackgroundMs: 120000,
+  forwardSubagentText: false,
+  parentSettingsBehavior: 'inherit',
+  worktreeBaseRef: 'fresh',
+  forceHyperlink: true,
+  emojiCompletionEnabled: true,
   enabledMcpjsonServers: [],
   disabledMcpjsonServers: [],
   hasTrustDialogAccepted: false,

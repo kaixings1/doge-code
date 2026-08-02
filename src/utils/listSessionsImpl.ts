@@ -25,6 +25,9 @@ import {
   validateUuid,
 } from './sessionStoragePortable.js'
 
+// Re-export for consumers that import from this module (e.g. session-search command)
+export { getProjectsDir, readSessionLite }
+
 /**
  * Session metadata returned by listSessions.
  * Contains only data extractable from stat + head/tail reads — no full
@@ -153,7 +156,7 @@ export function parseSessionInfoFromLite(
 // data reads. Lets us sort/filter before doing expensive head/tail reads.
 // ---------------------------------------------------------------------------
 
-type Candidate = {
+export type Candidate = {
   sessionId: string
   filePath: string
   mtime: number

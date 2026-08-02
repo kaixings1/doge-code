@@ -2,12 +2,14 @@ import { feature } from 'bun:bundle';
 import figures from '../../../vendor/figures.js';
 import * as React from 'react';
 import { SentryErrorBoundary } from '../../../components/SentryErrorBoundary.js';
+import { ToolOutputBlock } from '../../tools/ToolOutputBlock.js';
 import { Box, Text, useTheme } from '../../../ink.js';
 import { useAppState } from '../../../state/AppState.js';
 import { filterToolProgressMessages, type Tool, type Tools } from '../../../Tool.js';
 import type { NormalizedUserMessage, ProgressMessage } from '../../../types/message.js';
 import { deleteClassifierApproval, getClassifierApproval, getYoloClassifierApproval } from '../../../utils/classifierApprovals.js';
 import type { buildMessageLookups } from '../../../utils/messages.js';
+import { useSettings } from '../../../hooks/useSettings.js';
 import { MessageResponse } from '../../MessageResponse.js';
 import { HookProgressMessage } from '../HookProgressMessage.js';
 type Props = {
