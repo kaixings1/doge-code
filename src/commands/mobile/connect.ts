@@ -9,9 +9,7 @@
  */
 
 import type { Command } from '../../commands.js'
-import { isMobileBridgeAvailable, initMobileBridge } from '../../bridge/mobileBridge.js'
-import { getLocalBridgeUrl } from '../../bridge/bridgeConfig.js'
-import { qrToString } from 'qrcode'
+import { isMobileBridgeAvailable } from '../../bridge/mobileBridge.js'
 
 const mobileConnectCommand: Command = {
   type: 'local-jsx',

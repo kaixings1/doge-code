@@ -2756,7 +2756,16 @@ app.on('window-all-closed', () => {
     }
     activeTerminals.clear()
   } catch { /* ignore */ }
-  if (process.platform !== 'darwin') app.quit()
+  if (process.platform !== 'darwin') {
+    // 强制退出进程（双重保障：app.quit() + process.exit(0)）
+    // 有时 app.quit() 可能被 IPC handler 或其他异步操作拦截，
+    // 导致进程无法退出，这里添加 process.exit(0) 作为兜底
+    app.quit().then(() => {
+      process.exit(0)
+    }).catch(() => {
+      process.exit(0)
+    })
+  }
 })
 
 app.on('before-quit', () => {

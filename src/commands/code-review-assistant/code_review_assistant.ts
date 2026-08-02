@@ -206,7 +206,7 @@ class CodeReviewer {
         const items = readdirSync(dir, { withFileTypes: true })
         for (const item of items) {
           const fullPath = join(dir, item.name)
-          if (item.isDirectory() && !item.name.startsWith('.') && item.name !== 'node_modules' && item.name !== 'dist' && item.name !== 'build') {
+          if (item.isDirectory() && !item.name.startsWith('.') && item.name !== 'node_modules' && item.name !== 'dist' && item.name !== 'build' && item.name !== '.git' && item.name !== '.claude') {
             collectFiles(fullPath)
           } else if (item.isFile()) {
             const ext = extname(item.name).toLowerCase()
@@ -413,6 +413,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           ' scan <目录>       - 扫描整个目录（真实分析）',
           ' security <文件>   - 深度安全检查（真实分析）',
           ' report            - 生成分析报告（真实统计）',
+          ' export <文件路径> - 导出审查报告为文件',
           ' patterns          - 查看检测模式',
           ' stats             - 查看统计信息（真实数据）',
           '',
@@ -800,6 +801,91 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       lines.push('💡 提示: 使用 /code-review-assistant check <文件> 查看具体文件和行号')
 
       return { type: 'jsx', render: () => lines.join('\n') }
+    }
+
+    // 导出报告到文件
+    if (command === 'export') {
+      const exportPath = parts.length > 1 ? parts.slice(1).join(' ') : join(cwd, 'code-review-report.md')
+      const analysis = reviewer.analyzeProject(cwd)
+      const ext = extname(exportPath).toLowerCase()
+
+      if (ext === '.json') {
+        const json = JSON.stringify({
+          projectPath: analysis.projectPath,
+          filesAnalyzed: analysis.filesAnalyzed,
+          totalIssues: analysis.totalIssues,
+          filesByScore: analysis.filesByScore,
+          issuesByType: analysis.issuesByType,
+          issuesBySeverity: analysis.issuesBySeverity,
+          topIssues: analysis.topIssues,
+          recommendations: analysis.recommendations,
+        }, null, 2)
+        writeFileSync(exportPath, json, 'utf-8')
+        return { type: 'jsx', render: () => `✅ 报告已导出为 JSON: ${exportPath}` }
+      }
+
+      // 默认 Markdown 格式
+      const lines = [
+        '# 📊 代码审查报告',
+        '',
+        `**项目路径:** ${analysis.projectPath}`,
+        `**分析文件数:** ${analysis.filesAnalyzed}`,
+        `**总问题数:** ${analysis.totalIssues}`,
+        `**生成时间:** ${new Date().toISOString()}`,
+        '',
+        '## 📈 文件质量分布',
+        '',
+        `| 等级 | 文件数 |`,
+        `|------|--------|`,
+        `| 优秀 (90+) | ${analysis.filesByScore.excellent} |`,
+        `| 良好 (70+) | ${analysis.filesByScore.good} |`,
+        `| 一般 (50+) | ${analysis.filesByScore.fair} |`,
+        `| 较差 (<50) | ${analysis.filesByScore.poor} |`,
+        '',
+        '## 📋 问题严重程度',
+        '',
+      ]
+      const sev = analysis.issuesBySeverity
+      lines.push(`| 严重程度 | 数量 |`)
+      lines.push(`|----------|------|`)
+      if (sev.critical) lines.push(`| 🔴 严重 | ${sev.critical} |`)
+      if (sev.high) lines.push(`| 🟠 高风险 | ${sev.high} |`)
+      if (sev.medium) lines.push(`| 🟡 中风险 | ${sev.medium} |`)
+      if (sev.low) lines.push(`| 🟢 低风险 | ${sev.low} |`)
+      if (sev.info) lines.push(`| 🔵 信息 | ${sev.info} |`)
+      lines.push('')
+
+      if (Object.keys(analysis.issuesByType).length > 0) {
+        lines.push('## 📋 问题类型分析')
+        lines.push('')
+        lines.push(`| 类型 | 数量 |`)
+        lines.push(`|------|------|`)
+        for (const [type, count] of Object.entries(analysis.issuesByType)) {
+          lines.push(`| ${type} | ${count} |`)
+        }
+        lines.push('')
+      }
+
+      if (analysis.topIssues.length > 0) {
+        lines.push('## 🚨 最严重的问题')
+        lines.push('')
+        analysis.topIssues.forEach((issue, i) => {
+          const icon = issue.severity === 'critical' ? '🔴' : issue.severity === 'high' ? '🟠' : '🟡'
+          lines.push(`${icon} **${i + 1}.** ${issue.message}`)
+          if (issue.suggestion) lines.push(`   - 建议: ${issue.suggestion}`)
+        })
+        lines.push('')
+      }
+
+      if (analysis.recommendations.length > 0) {
+        lines.push('## 💡 改进建议')
+        lines.push('')
+        analysis.recommendations.forEach(r => lines.push(`- ${r}`))
+        lines.push('')
+      }
+
+      writeFileSync(exportPath, lines.join('\n'), 'utf-8')
+      return { type: 'jsx', render: () => `✅ 报告已导出为 Markdown: ${exportPath}` }
     }
 
     return {

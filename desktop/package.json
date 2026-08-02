@@ -47,6 +47,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.62.0",
+    "@rollup/rollup-win32-x64-msvc": "^4.62.4",
     "@types/node": "^22.0.0",
     "@types/react": "18",
     "@types/react-dom": "18",

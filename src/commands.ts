@@ -56,6 +56,7 @@ import cost from './commands/cost/index.ts'
 import diff from './commands/diff/index.ts'
 import codeSearch from './commands/code-search/index.tsx'
 import diffMode from './commands/diff-mode/index.ts'
+import diffReview from './commands/diff-review/index.ts'
 import blockMode from './commands/block-mode/index.ts'
 import repoMap from './commands/repo-map/index.tsx'
 import ctx_viz from './commands/ctx_viz/index.tsx'
@@ -75,6 +76,7 @@ import installSlackApp from './commands/install-slack-app/index.ts'
 import breakCache from './commands/break-cache/index.ts'
 import mcp from './commands/mcp/index.ts'
 import mobile from './commands/mobile/index.ts'
+import mobileConnect from './commands/mobile/connect.ts'
 import onboarding from './commands/onboarding/index.tsx'
 import pr_comments from './commands/pr_comments/index.ts'
 import releaseNotes from './commands/release-notes/index.ts'
@@ -104,6 +106,7 @@ import refactor from './commands/refactor.ts'
 import autocomplete from './commands/autocomplete/index.ts'
 import terminalComplete from './commands/complete/index.ts'
 import testGen from './commands/test-gen.ts'
+import snippet from './commands/snippet/index.ts'
 
 // 导入新增的21个命令
 import lessPermissionPrompts from './commands/less-permission-prompts/index.ts'
@@ -234,6 +237,7 @@ import bridgeKick from './commands/bridge-kick.ts'
 import version from './commands/version.ts'
 import summary from './commands/summary/index.ts'
 import bridgeSessions from './commands/bridge-sessions/index.ts'
+import memoryBank from './commands/memory-bank/index.ts'
 import {
   resetLimits,
   resetLimitsNonInteractive,
@@ -329,6 +333,7 @@ import benchmark from './commands/benchmark/index.ts'
 import scaffold from './commands/scaffold/index.ts'
 import translate from './commands/translate/index.ts'
 import securityAudit from './commands/security-audit/index.ts'
+import agentNew from './commands/agent-new/index.ts'
 import { getSettingSourceName } from './utils/settings/constants.js'
 import {
   type Command,
@@ -403,6 +408,7 @@ const COMMANDS = memoize((): Command[] => [
   costHistory,
   diff,
   diffMode,
+  diffReview,
   blockMode,
   repoMap,
   doctor,
@@ -431,6 +437,7 @@ const COMMANDS = memoize((): Command[] => [
   mcp,
   memory,
   mobile,
+  mobileConnect,
   model,
   outputStyle,
   remoteEnv,
@@ -507,6 +514,7 @@ const COMMANDS = memoize((): Command[] => [
   ...(peersCmd ? [peersCmd] : []),
   tasks,
   testGen,
+  snippet,
   ...(workflowsCmd ? [workflowsCmd] : []),
   ...(torch ? [torch] : []),
   lessPermissionPrompts,
@@ -547,12 +555,14 @@ const COMMANDS = memoize((): Command[] => [
   scaffold,
   translate,
   securityAudit,
+  agentNew,
   updateskills,
   diagramCmd,
   apiDebug,
   pluginMarket,
   pair,
   bridgeSessions,
+  memoryBank,
   ...(process.env.USER_TYPE === 'ant' && !process.env.IS_DEMO
     ? INTERNAL_ONLY_COMMANDS
     : []),

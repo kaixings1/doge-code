@@ -1,97 +1,130 @@
 /**
- * /mobile-connect 命令 — 启动移动端连接会话
+ * /mobile-connect 命令 — 启动移动端连接服务器
  *
  * 功能：
  * - 启动移动端桥接服务器（WebSocket + HTTP）
- * - 生成连接二维码供移动端 App 扫描
+ * - 生成二维码供移动端 App 扫描，扫描后自动下载 App 并连接
  * - 显示连接信息和状态
  * - 管理移动端会话生命周期
+ *
+ * 使用环境变量：
+ * - CLAUDE_CODE_MOBILE_BRIDGE=1: 启用移动端桥接
+ * - CLAUDE_CODE_MOBILE_SECRET=<key>: 共享密钥用于认证
+ * - CLAUDE_CODE_LOCAL_BRIDGE=1: 本地桥接模式（自动启用移动端）
  */
 
 import { c as _c } from "react/compiler-runtime"
 import { toString as qrToString } from 'qrcode'
 import * as React from 'react'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, Text } from '../../ink.js'
 import { Pane } from '../../components/design-system/Pane.js'
 import { useKeybinding } from '../../keybindings/useKeybinding.js'
 import type { LocalJSXCommandOnDone } from '../../types/command.js'
-import { isMobileBridgeAvailable, initMobileBridge } from '../../bridge/mobileBridge.js'
-import { getLocalBridgeUrl } from '../../bridge/bridgeConfig.js'
+import { isMobileBridgeAvailable, MobileBridgeServer, getMobileBridgeUrl } from '../../bridge/mobileBridge.js'
+import { getMobileSessionManager } from '../../bridge/mobileSession.js'
 import { logForDebugging } from '../../utils/debug.js'
-
-type Platform = 'ios' | 'android' | 'both'
 
 interface ConnectInfo {
   sessionId: string
   wsUrl: string
   httpUrl: string
+  connectUrl: string
   qrCode: string
-  status: 'waiting' | 'connected' | 'failed'
+  iosUrl: string
+  androidUrl: string
+  status: 'starting' | 'ready' | 'connected' | 'failed'
+  clientCount: number
+}
+
+const PLATFORMS = {
+  ios: { url: 'https://apps.apple.com/app/claude-by-anthropic/id6473753684' },
+  android: { url: 'https://play.google.com/store/apps/details?id=com.anthropic.claude' },
 }
 
 function MobileConnectScreen(t0) {
-  const $ = _c(28)
-  const {
-    onDone
-  } = t0
-  const [platform, setPlatform] = useState("both")
+  const $ = _c(38)
+  const { onDone } = t0
   const [connectInfo, setConnectInfo] = useState<ConnectInfo | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [server, setServer] = useState<MobileBridgeServer | null>(null)
 
   let t1
   if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
     t1 = () => {
-      const startConnection = async () => {
+      const startServer = async () => {
         try {
           const sessionId = `mobile-${Date.now()}`
-          const bridgeUrl = getLocalBridgeUrl().replace(/^http/, 'ws')
-          const wsUrl = `${bridgeUrl}/mobile/session-ingress/${sessionId}`
-          const httpUrl = `${getLocalBridgeUrl().replace('5678', '5679')}/mobile/command`
-
-          // 生成连接二维码
-          const qrData = JSON.stringify({
-            type: 'claude-code-mobile',
-            sessionId,
-            wsUrl,
-            httpUrl,
-            secret: '',
-          })
-          const qrCode = await qrToString(qrData, {
-            type: 'utf8',
-            errorCorrectionLevel: 'L',
-          })
+          const wsUrl = `${getMobileBridgeUrl().replace(/^http/, 'ws')}/mobile/ws?deviceId=claude-code&deviceType=desktop`
+          const httpUrl = `${getMobileBridgeUrl()}/mobile/command`
+          const bridgeSecret = process.env.CLAUDE_CODE_MOBILE_SECRET ?? ''
 
           setConnectInfo({
             sessionId,
             wsUrl,
             httpUrl,
+            connectUrl: '',
+            qrCode: '',
+            iosUrl: PLATFORMS.ios.url,
+            androidUrl: PLATFORMS.android.url,
+            status: 'starting',
+            clientCount: 0,
+          })
+
+          // 启动移动端桥接服务器
+          const mobileServer = new MobileBridgeServer({ sessionId, port: 5680 })
+          await mobileServer.start()
+
+          if (!mobileServer.isServerRunning()) {
+            setError('移动端桥接服务器启动失败')
+            setConnectInfo(prev => prev ? { ...prev, status: 'failed' } : null)
+            return
+          }
+
+          setServer(mobileServer)
+
+          // 生成二维码 — 包含连接 URL + 下载链接
+          // 格式: claude://mobile-bridge?sessionId=...&wsUrl=...&iosUrl=...&androidUrl=...
+          const connectUrl = `claude://mobile-bridge?sessionId=${encodeURIComponent(sessionId)}&wsUrl=${encodeURIComponent(wsUrl)}&httpUrl=${encodeURIComponent(httpUrl)}&secret=${encodeURIComponent(bridgeSecret)}&iosUrl=${encodeURIComponent(PLATFORMS.ios.url)}&androidUrl=${encodeURIComponent(PLATFORMS.android.url)}`
+
+          const qrCode = await qrToString(connectUrl, {
+            type: 'utf8',
+            errorCorrectionLevel: 'L',
+          })
+
+          setConnectInfo(prev => prev ? {
+            ...prev,
+            connectUrl,
             qrCode,
-            status: 'waiting',
-          })
+            status: 'ready',
+          } : null)
 
-          // 尝试启动桥接连接
-          const bridge = await initMobileBridge({
-            sessionId,
-            onStateChange: (state) => {
-              setConnectInfo(prev => prev ? { ...prev, status: state === 'ready' ? 'connected' : 'waiting' } : null)
-            },
-            onInboundMessage: (msg) => {
-              logForDebugging(`[MobileBridge] inbound: ${msg.type}`)
-            },
-          })
+          logForDebugging(`[MobileConnect] 服务器已启动，等待移动端连接...`)
 
-          if (bridge) {
-            setConnectInfo(prev => prev ? { ...prev, status: 'connected' } : null)
-          } else {
-            setError('无法启动移动端桥接连接')
+          // 定期更新客户端数量
+          const interval = setInterval(() => {
+            setConnectInfo(prev => prev ? {
+              ...prev,
+              clientCount: mobileServer.getClientCount(),
+            } : null)
+          }, 1000)
+
+          // 清理函数
+          return () => {
+            clearInterval(interval)
+            mobileServer.stop().catch(() => {})
           }
         } catch (e) {
           const msg = e instanceof Error ? e.message : String(e)
           setError(msg)
+          setConnectInfo(prev => prev ? { ...prev, status: 'failed' } : null)
         }
       }
-      startConnection().catch(_temp)
+
+      const cleanup = startServer()
+      return () => {
+        cleanup?.then(fn => fn?.())
+      }
     }
     $[0] = t1
   } else {
@@ -99,9 +132,23 @@ function MobileConnectScreen(t0) {
   }
   useEffect(t1, [])
 
+  // 清理服务器
+  useEffect(() => {
+    return () => {
+      if (server) {
+        server.stop().catch(() => {})
+      }
+    }
+  }, [server])
+
   let t2
   if ($[1] !== onDone) {
-    t2 = () => { onDone() }
+    t2 = () => {
+      if (server) {
+        server.stop().catch(() => {})
+      }
+      onDone()
+    }
     $[1] = onDone
   } else {
     t2 = $[1]
@@ -122,190 +169,178 @@ function MobileConnectScreen(t0) {
     t4 = (e) => {
       if (e.key === 'q' || e.ctrl && e.key === 'c') {
         e.preventDefault()
-        onDone()
+        handleClose()
         return
       }
-      if (e.key === 'tab' || e.key === 'left' || e.key === 'right') {
-        e.preventDefault()
-        setPlatform(_temp2)
-      }
     }
-    $[3] = onDone
-    $[4] = t4
+    $[3] = t4
   } else {
-    t4 = $[4]
+    t4 = $[3]
   }
   const handleKeyDown = t4
 
+  // QR 码行
   let t5
-  if ($[5] !== connectInfo) {
-    t5 = connectInfo?.qrCode.split("\n").filter((l) => l.length > 0) ?? []
-    $[5] = connectInfo
+  if ($[4] !== connectInfo?.qrCode) {
+    t5 = connectInfo?.qrCode ? connectInfo.qrCode.split("\n").filter(l => l.length > 0).map((line, i) => <Text key={i}>{line}</Text>) : []
+    $[4] = connectInfo?.qrCode
   } else {
-    t5 = $[5]
+    t5 = $[4]
   }
   const qrLines = t5
 
+  // 状态文本
   let t6
-  if ($[6] === Symbol.for("react.memo_cache_sentinel")) {
-    t6 = <Text> </Text>
-    $[6] = t6
+  if ($[5] !== connectInfo?.status) {
+    const statusText = connectInfo?.status === 'connected' ? '已连接' :
+      connectInfo?.status === 'ready' ? '等待中' :
+      connectInfo?.status === 'starting' ? '启动中...' :
+      connectInfo?.status === 'failed' ? '失败' : '...'
+    const color = connectInfo?.status === 'connected' ? 'green' :
+      connectInfo?.status === 'failed' ? 'red' :
+      connectInfo?.status === 'starting' ? 'yellow' : 'yellow'
+    t6 = <Text color={color}>{statusText}</Text>
+    $[5] = connectInfo?.status
   } else {
-    t6 = $[6]
+    t6 = $[5]
   }
-  const spacer1 = t6
 
   let t7
-  if ($[7] === Symbol.for("react.memo_cache_sentinel")) {
-    t7 = <Text> </Text>
-    $[7] = t7
+  if ($[6] !== connectInfo?.clientCount) {
+    t7 = <Text>已连接设备: {connectInfo?.clientCount ?? 0}</Text>
+    $[6] = connectInfo?.clientCount
   } else {
-    t7 = $[7]
+    t7 = $[6]
   }
-  const spacer2 = t7
 
   let t8
-  if ($[8] !== platform) {
-    t8 = platform === "ios" ? <Text bold={true} underline={true}>iOS</Text> : <Text>iOS</Text>
-    $[8] = platform
+  if ($[7] !== connectInfo?.sessionId) {
+    t8 = <Text>会话 ID: {connectInfo?.sessionId ?? ''}</Text>
+    $[7] = connectInfo?.sessionId
   } else {
-    t8 = $[8]
+    t8 = $[7]
   }
 
   let t9
-  if ($[9] === Symbol.for("react.memo_cache_sentinel")) {
-    t9 = <Text dimColor={true}>{" / "}</Text>
-    $[9] = t9
+  if ($[8] !== connectInfo?.wsUrl) {
+    t9 = <Text>WebSocket: {connectInfo?.wsUrl ?? ''}</Text>
+    $[8] = connectInfo?.wsUrl
   } else {
-    t9 = $[9]
+    t9 = $[8]
   }
-  const slash = t9
 
   let t10
-  if ($[10] !== platform) {
-    t10 = platform === "android" ? <Text bold={true} underline={true}>Android</Text> : <Text>Android</Text>
-    $[10] = platform
+  if ($[9] !== connectInfo?.httpUrl) {
+    t10 = <Text>HTTP: {connectInfo?.httpUrl ?? ''}</Text>
+    $[9] = connectInfo?.httpUrl
   } else {
-    t10 = $[10]
+    t10 = $[9]
   }
-  const platformText = t10
 
   let t11
-  if ($[11] !== t8 || $[12] !== slash || $[13] !== t10) {
-    t11 = <Box flexDirection="row" gap={2}>{t8}{slash}{t10}</Box>
-    $[11] = t8
-    $[12] = slash
-    $[13] = t10
+  if ($[10] !== connectInfo?.connectUrl) {
+    t11 = <Text dimColor={true}>{connectInfo?.connectUrl ?? ''}</Text>
+    $[10] = connectInfo?.connectUrl
   } else {
-    t11 = $[11]
+    t11 = $[10]
   }
 
   let t12
-  if ($[14] !== t11) {
-    t12 = <Text>{t11} <Text dimColor={true}>（Tab 切换，Esc 关闭）</Text></Text>
-    $[14] = t11
+  if ($[11] !== connectInfo?.iosUrl) {
+    t12 = <Text dimColor={true}>iOS 下载: {connectInfo?.iosUrl ?? ''}</Text>
+    $[11] = connectInfo?.iosUrl
   } else {
-    t12 = $[14]
+    t12 = $[11]
   }
 
   let t13
-  if ($[15] !== error) {
-    t13 = error ? <Text color="red">{error}</Text> : <Text> </Text>
-    $[15] = error
+  if ($[12] !== connectInfo?.androidUrl) {
+    t13 = <Text dimColor={true}>Android 下载: {connectInfo?.androidUrl ?? ''}</Text>
+    $[12] = connectInfo?.androidUrl
   } else {
-    t13 = $[15]
+    t13 = $[12]
   }
 
   let t14
-  if ($[16] !== connectInfo?.status) {
-    t14 = connectInfo ? (
-      <Text>
-        状态: {connectInfo.status === 'connected' ? <Text color="green">已连接</Text> : connectInfo.status === 'waiting' ? <Text color="yellow">等待中...</Text> : <Text color="red">连接失败</Text>}
-      </Text>
-    ) : <Text> </Text>
-    $[16] = connectInfo?.status
+  if ($[13] !== error) {
+    t14 = error ? <Text color="red">{error}</Text> : <Text> </Text>
+    $[13] = error
   } else {
-    t14 = $[16]
+    t14 = $[13]
   }
 
   let t15
-  if ($[17] !== connectInfo?.sessionId) {
-    t15 = connectInfo ? <Text dimColor={true}>会话: {connectInfo.sessionId}</Text> : <Text> </Text>
-    $[17] = connectInfo?.sessionId
+  if ($[14] !== qrLines.length) {
+    t15 = qrLines.length > 0 ? (
+      <Box flexDirection="column">
+        {qrLines}
+      </Box>
+    ) : <Text>二维码加载中...</Text>
+    $[14] = qrLines.length
   } else {
-    t15 = $[17]
+    t15 = $[14]
   }
 
   let t16
-  if ($[18] !== qrLines.length) {
-    t16 = qrLines.map((line, i) => <Text key={i}>{line}</Text>)
-    $[18] = qrLines.length
-  } else {
-    t16 = $[18]
-  }
-
-  let t17
-  if ($[19] !== t12 || $[20] !== t13 || $[21] !== t14 || $[22] !== t15 || $[23] !== t16) {
-    t17 = (
+  if ($[15] !== t6 || $[16] !== t14 || $[17] !== t7 || $[18] !== t8 || $[19] !== t9 || $[20] !== t10 || $[21] !== t11 || $[22] !== t12 || $[23] !== t13 || $[24] !== t15 || $[25] !== handleKeyDown) {
+    t16 = (
       <Pane>
         <Box flexDirection="column">
           <Text bold={true}>📱 移动端连接</Text>
+          {t14}
+          <Text>状态: {t6}</Text>
+          {t7}
+          {t8}
+          {t9}
+          {t10}
+          <Text>二维码 — 扫描后自动下载 Claude App 并连接：</Text>
+          {t15}
+          <Text dimColor={true}>链接（可复制到手机浏览器）:</Text>
+          {t11}
           {t12}
           {t13}
-          {t14}
-          {t15}
-          <Text>扫码或手动连接：</Text>
-          {t16}
-          <Text dimColor={true}>在移动端 Claude App 中选择"连接到桌面"并扫描二维码</Text>
+          <Text dimColor={true}>按 Esc 或 Q 关闭</Text>
         </Box>
       </Pane>
     )
-    $[19] = t12
-    $[20] = t13
-    $[21] = t14
-    $[22] = t15
-    $[23] = t16
+    $[15] = t6
+    $[16] = t14
+    $[17] = t7
+    $[18] = t8
+    $[19] = t9
+    $[20] = t10
+    $[21] = t11
+    $[22] = t12
+    $[23] = t13
+    $[24] = t15
+    $[25] = handleKeyDown
+    $[26] = t16
+    $[27] = t16
   } else {
-    t17 = $[23]
+    t16 = $[26]
   }
 
-  let t18
-  if ($[24] !== t17) {
-    t18 = <Box flexDirection="column">{t17}</Box>
-    $[24] = t17
+  let t17
+  if ($[28] !== handleKeyDown || $[29] !== t16) {
+    t17 = <Box flexDirection="column" tabIndex={0} autoFocus={true} onKeyDown={handleKeyDown}>{t16}</Box>
+    $[28] = handleKeyDown
+    $[29] = t16
   } else {
-    t18 = $[24]
+    t17 = $[29]
   }
 
-  let t19
-  if ($[25] !== t18) {
-    t19 = <Pane>{t18}</Pane>
-    $[25] = t18
-  } else {
-    t19 = $[25]
-  }
-
-  let t20
-  if ($[26] !== handleKeyDown || $[27] !== t19) {
-    t20 = <Box flexDirection="column" tabIndex={0} autoFocus={true} onKeyDown={handleKeyDown}>{t19}</Box>
-    $[26] = handleKeyDown
-    $[27] = t19
-  } else {
-    t20 = $[27]
-  }
-
-  return t20
+  return t17
 }
-
-function _temp2(prev) {
-  return prev === "ios" ? "android" : prev === "android" ? "both" : "ios"
-}
-
-function _temp() {}
 
 export async function call(onDone: LocalJSXCommandOnDone): Promise<React.ReactNode> {
   if (!isMobileBridgeAvailable()) {
-    return <Text>移动端桥接不可用。请设置 CLAUDE_CODE_MOBILE_BRIDGE=1 或 CLAUDE_CODE_LOCAL_BRIDGE=1 后重试。</Text>
+    return (
+      <Box flexDirection="column">
+        <Text>移动端桥接不可用。请设置环境变量：</Text>
+        <Text>  Windows: set CLAUDE_CODE_MOBILE_BRIDGE=1 && claude /mobile-connect</Text>
+        <Text>  macOS/Linux: export CLAUDE_CODE_MOBILE_BRIDGE=1 && claude /mobile-connect</Text>
+      </Box>
+    )
   }
   return <MobileConnectScreen onDone={onDone} />
 }

@@ -262,12 +262,17 @@ function hardenCliRegexPlugin() {
     transform(code, id) {
       const norm = id.replace(/\\/g, '/')
       if (!/\/src\/engine\/autoFixLoop\.ts$/.test(norm)) return null
-      // 精确替换形如 /expected\s*'...'/ 的正则字面量，把引号字符转义为 \'
-      // 覆盖 ) ( 等可能被 esbuild 误解析的字符，按原意保留字面引号匹配
+      // 精确替换形如 /expected\s*'...'/ 或 /expected\s*\)'...'/ 的正则字面量，
+      // 把引号字符和其间可能被 esbuild 误解析的字符转义为 \'（语义不变，均为字面引号）。
+      // 覆盖 ) ( 等可能被 esbuild 误解析的字符，按原意保留字面引号匹配。
+      // 注意：\s* 后可能紧跟 '（如 \s*';'），也可能有转义字符后跟 '（如 \s*\)'），
+      // 因此需要捕获中间的可选转义字符序列。
       const original = code
-      code = code.replace(/(\\s\*)(['])([^'\n]*)(['])(\/i)/g, (_m, a, q1, mid, q2, tail) => {
-        // 只有当闭引号后的正则内容不含多余引号时才转义（避免误伤多段正则）
-        return a + "'" + mid.replace(/[()<>{}\]]/g, (ch) => '\\' + ch) + "'" + tail
+      code = code.replace(/(\\s\*)((?:\\[a-zA-Z])*?)(['])([^'\n]*)(['])(\/i)/g, (_m, a, escSeq, q1, mid, q2, tail) => {
+        // 转义 escSeq 中可能被 esbuild 误解析的字符（如 )），同时保留原始转义前缀
+        const safeEscSeq = escSeq.replace(/[()<>{}\]]/g, (ch) => '\\' + ch)
+        // 转义 mid 中可能被 esbuild 误解析的字符
+        return a + safeEscSeq + "'" + mid.replace(/[()<>{}\]]/g, (ch) => '\\' + ch) + "'" + tail
       })
       if (code !== original) {
         console.log(`[harden-cli-regex] 修复 autoFixLoop.ts 中的正则字面量引号转义, 文件: ${id}`)

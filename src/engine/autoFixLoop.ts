@@ -37,7 +37,7 @@ const LINT_ERROR_PATTERNS = [
   /missing\s*return/i,
   /expected\s*';'/i,
   /expected\s*'}'/i,
-  /expected\s*\)'/i,
+  /expected\s*[)]'/i,
   /undefined\s*variable/i,
   /cannot\s*find\s*module/i,
 ]

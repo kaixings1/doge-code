@@ -1,177 +1,84 @@
-# 未实现功能清单（基于更新日志 2.1.128 → 2.1.220）
+# 未实现 / 未集成功能清单
 
-> 以下功能在官方更新日志中提到，但在 doge-code 代码库中**未找到实现**。
-> 按优先级和实现难度排序。
-
----
-
-## 一、高优先级（核心功能缺失）
-
-### 1. EndConversation 工具
-- **来源**: 2.1.214
-- **描述**: Claude 可以在用户滥用或尝试越狱时结束会话
-- **现状**: ❌ 未实现
-- **实现难度**: 低
-- **建议**: 在 QueryEngine 中检测到恶意输入时返回结束信号
-
-### 2. 子代理并发控制
-- **来源**: 2.1.217, 2.1.212
-- **描述**: 限制同时运行的子代理数量（默认 20）和嵌套深度（默认 3）
-- **环境变量**: `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`, `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`
-- **现状**: ❌ 未实现
-- **实现难度**: 中
-- **建议**: 在 AgentTool 中添加计数器，超过上限时排队或拒绝
-
-### 3. 网络沙箱严格白名单
-- **来源**: 2.1.219
-- **描述**: `sandbox.network.strictAllowlist` 设置，阻止非白名单主机的沙箱命令
-- **现状**: ❌ 未实现
-- **实现难度**: 中
-- **建议**: 在 DockerSandboxManager 中添加网络访问控制
-
-### 4. 文件系统沙箱禁用选项
-- **来源**: 2.1.216
-- **描述**: `sandbox.filesystem.disabled` 设置，跳过文件系统隔离但保留网络出口控制
-- **现状**: ❌ 未实现
-- **实现难度**: 低
-- **建议**: 在沙箱配置中添加开关
-
-### 5. 工作流大小指南
-- **来源**: 2.1.219
-- **描述**: `workflowSizeGuideline` 设置，限制动态工作流的代理数量（默认 < 15）
-- **现状**: ❌ 未实现
-- **实现难度**: 低
-- **建议**: 在 settings 中添加配置项，在工作流创建时检查
+> 基于更新日志 2.1.128 → 2.1.220
+> 状态: 2026-08-02
 
 ---
 
-## 二、中优先级（体验改进）
+## 一、功能模块存在但**未集成**到主流程（15 个）
 
-### 6. Emoji 短代码自动补全
-- **来源**: 2.1.217
-- **描述**: 输入 `:heart:` 自动插入 ❤️，设置 `emojiCompletionEnabled` 控制
-- **现状**: ❌ 未实现
-- **实现难度**: 低
-- **建议**: 在 PromptInput 组件中添加 emoji 映射表和自动补全逻辑
+> 这些功能在 `src/features/` 中有独立模块，但**从未在运行时被调用**。
+> 只是定义了类/函数，没有与 QueryEngine、PromptInput、MCPTool、BashTool 等核心组件连接。
 
-### 7. MCP 错误报告
-- **来源**: 2.1.219
-- **描述**: 在 headless stream-json 初始化事件中报告 MCP 服务器错误
-- **现状**: ❌ 未实现
-- **实现难度**: 低
-- **建议**: 在 MCP 初始化失败时输出错误列表
-
-### 8. DirectoryAdded Hook
-- **来源**: 2.1.219
-- **描述**: 当 `/add-dir` 或 SDK `register_repo_root` 注册新工作目录后触发
-- **现状**: ❌ 未实现
-- **实现难度**: 中
-- **建议**: 在 add-dir 命令执行后触发 hook 系统
-
-### 9. MCP 自动后台化
-- **来源**: 2.1.212
-- **描述**: MCP 工具调用超过 2 分钟自动移到后台，`CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS` 配置
-- **现状**: ❌ 未实现
-- **实现难度**: 中
-- **建议**: 在 MCPTool 执行时添加超时检测
-
-### 10. 子代理文本转发
-- **来源**: 2.1.211
-- **描述**: `--forward-subagent-text` 标志将子代理文本和思考包含在 stream-json 中
-- **现状**: ❌ 未实现
-- **实现难度**: 中
-- **建议**: 在 stream-json 输出中添加子代理消息转发
+| # | 功能 | 模块文件 | 缺失的集成 |
+|---|------|---------|-----------|
+| 1 | **Emoji 自动补全** | `features/emojiAutocomplete.ts` | 未集成到 PromptInput 组件 |
+| 2 | **MCP 自动后台化** | `features/mcpAutoBackground.ts` | 未集成到 MCPTool.execute() |
+| 3 | **网络沙箱白名单** | `features/featureFlags.ts` (配置) | DEFAULT_SETTINGS 中有但 DockerSandboxManager 未读取 |
+| 4 | **文件系统沙箱禁用** | `features/featureFlags.ts` (配置) | DEFAULT_SETTINGS 中有但沙箱初始化未读取 |
+| 5 | **工作流大小指南** | `features/featureFlags.ts` (配置) | DEFAULT_SETTINGS 中有但工作流创建未检查 |
+| 6 | **子代理并发控制** | `features/featureFlags.ts` (SubAgentManager) | QueryEngine 导入了但未在 AgentTool 中调用 |
+| 7 | **子代理嵌套深度** | `features/featureFlags.ts` (配置) | DEFAULT_SETTINGS 中有但未传递给 AgentTool |
+| 8 | **子代理文本转发** | `features/additionalFeatures.ts` | 未集成到 stream-json 输出 |
+| 9 | **父设置行为** | `features/additionalFeatures.ts` | 未集成到 settings 层级解析 |
+| 10 | **worktree.baseRef** | `features/featureFlags.ts` (配置) | DEFAULT_SETTINGS 中有但 worktree 创建未使用 |
+| 11 | **沙箱路径 bwrap/soc** | `features/featureFlags.ts` (配置) | DEFAULT_SETTINGS 中有但 Linux 沙箱初始化未读取 |
+| 12 | **--plugin-url** | `features/additionalFeatures.ts` | 未集成到 CLI 参数解析 |
+| 13 | **WebSearch 限制** | `features/featureFlags.ts` (配置) | DEFAULT_SETTINGS 中有但 WebSearchTool 未检查 |
+| 14 | **后台代码审查** | `features/additionalFeatures.ts` | 未集成到 /code-review 命令 |
+| 15 | **Fork 对话复制** | `features/additionalFeatures.ts` | 未集成到 /fork 命令 |
+| 16 | **自动模式重置** | `features/additionalFeatures.ts` | 未集成到 /config 或 CLI |
+| 17 | **MCP 错误报告** | `features/additionalFeatures.ts` | 未集成到 MCP 初始化流程 |
+| 18 | **TURN 服务器** | RemotePanel 中有配置 | 仅有 UI，未集成到 WebRTC 连接 |
 
 ---
 
-## 三、低优先级（边缘功能）
+## 二、已集成到主流程（4 个）
 
-### 11. parentSettingsBehavior
-- **来源**: 2.1.133
-- **描述**: 管理层级密钥，控制子代理继承父代理设置的方式
-- **现状**: ❌ 未实现
-- **实现难度**: 中
-- **建议**: 在 settings 层级中添加 inheritance 行为配置
-
-### 12. worktree.baseRef 设置
-- **来源**: 2.1.133
-- **描述**: 控制 worktree 基础引用 (fresh | head)
-- **现状**: ❌ 未实现
-- **实现难度**: 低
-- **建议**: 在 worktree 创建逻辑中添加 baseRef 选项
-
-### 13. sandbox.bwrapPath / sandbox.socPath
-- **来源**: 2.1.133
-- **描述**: Linux/WSL 下的沙箱路径配置
-- **现状**: ❌ 未实现
-- **实现难度**: 低（仅 Linux）
-- **建议**: 在 Linux 平台检测时添加这些配置
-
-### 14. --plugin-url 标志
-- **来源**: 2.1.129
-- **描述**: 从 URL 安装插件
-- **现状**: ❌ 未实现（仅有 PluginSettings 中的 URL 字段）
-- **实现难度**: 中
-- **建议**: 在 CLI 启动时添加 --plugin-url 参数解析
-
-### 15. CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION
-- **来源**: 2.1.212
-- **描述**: 每会话 WebSearch 工具调用限制（默认 200）
-- **现状**: ❌ 未实现
-- **实现难度**: 低
-- **建议**: 在 WebSearchTool 中添加会话级计数器
-
-### 16. /code-review 作为后台子代理
-- **来源**: 2.1.218
-- **描述**: code-review 命令作为后台子代理运行，不填充对话
-- **现状**: ❌ 未实现（code-review 命令存在但不是子代理模式）
-- **实现难度**: 中
-- **建议**: 将 code-review 改为异步子代理执行
-
-### 17. /fork 对话复制
-- **来源**: 2.1.212
-- **描述**: 复制当前对话到新后台会话
-- **现状**: ❌ 未实现
-- **实现难度**: 高
-- **建议**: 需要实现会话分叉机制
-
-### 18. 自动模式重置
-- **来源**: 2.1.212
-- **描述**: `claude auto-mode reset` 恢复默认自动模式配置
-- **现状**: ❌ 未实现
-- **实现难度**: 低
-- **建议**: 添加 auto-mode reset 子命令
-
-### 19. FORCE_HYPERLINK 设置
-- **来源**: 2.1.217
-- **描述**: 控制终端中的超链接显示
-- **现状**: ❌ 未实现
-- **实现难度**: 低
-- **建议**: 在 ink 渲染中添加超链接支持
+| # | 功能 | 集成位置 | 实际效果 |
+|---|------|---------|---------|
+| 1 | **EndConversation** | `QueryEngine.query()` | 输入包含"越狱"/"忽略规则"等关键词时自动终止会话 ✅ |
+| 2 | **自动模式管理** | `BashTool.checkPermissions()` | 危险命令（rm -rf, sudo）在权限检查前被拦截 ✅ |
+| 3 | **DirectoryAdded Hook** | `/add-dir` 命令 | 注册新目录后触发 hook 事件 ✅ |
+| 4 | **子代理并发控制** | `QueryEngine` 构造函数 | SubAgentManager 已初始化但未在 AgentTool 逻辑中使用 ⚠️ |
 
 ---
 
-## 四、已实现 ✅
+## 三、已实现 ✅（来自早期更新日志）
 
 | 功能 | 版本 | 状态 |
 |------|------|------|
-| CLAUDE_CODE_SESSION_ID 环境变量 | 2.1.132 | ✅ 已实现 |
+| CLAUDE_CODE_SESSION_ID | 2.1.132 | ✅ 已实现 |
 | CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN | 2.1.132 | ✅ 已实现 |
-| --max-budget-usd 最大预算 | 2.1.217 | ✅ 已实现（QueryEngine.ts） |
-| effort.level Hook 输入 | 2.1.133 | ✅ 已实现 |
-| 远程协助/桥接（部分） | 2.1.219 | ✅ 基础功能已实现 |
+| --max-budget-usd | 2.1.217 | ✅ 已实现（QueryEngine.ts） |
+| effort.level Hook | 2.1.133 | ✅ 已实现 |
+| 桥接服务器 | 2.1.219 | ✅ 基础功能已实现 |
+| CRDT 文档协作 | 2.1.218 | ✅ 已实现 |
+| 批量处理引擎 | - | ✅ 已实现 |
+| 插件沙箱安全 | - | ✅ 已实现 |
 
 ---
 
-## 五、建议实现顺序
+## 四、需要完成的工作
 
-1. **EndConversation 工具** — 安全相关，简单
-2. **CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION** — 低难度，实用
-3. **sandbox.filesystem.disabled** — 低难度
-4. **workflowSizeGuideline** — 低难度
-5. **Emoji 短代码自动补全** — 用户体验，简单
-6. **子代理并发控制** — 中难度，重要
-7. **网络沙箱严格白名单** — 安全相关
-8. **MCP 错误报告** — 调试友好
-9. **DirectoryAdded Hook** — Hook 扩展
-10. **MCP 自动后台化** — 体验改进
+### 必须做（让功能真正生效）：
+
+1. **Emoji 自动补全** → 修改 `PromptInput.tsx`，在输入时调用 `EmojiAutocompleter.getSuggestions()`
+2. **MCP 自动后台化** → 修改 `MCPTool.call()`，调用 `MCPAutoBackgroundManager.trackCall()`
+3. **子代理并发控制** → 修改 `AgentTool`，在生成子代理前调用 `SubAgentManager.canSpawn()` 和 `SubAgentManager.spawn()`
+4. **网络沙箱白名单** → 修改 `DockerSandboxManager`，读取 `sandboxNetworkStrictAllowlist` 配置
+5. **文件系统沙箱禁用** → 修改沙箱初始化代码，读取 `sandboxFilesystemDisabled` 配置
+6. **工作流大小指南** → 修改工作流创建代码，读取 `workflowSizeGuideline` 配置
+7. **WebSearch 限制** → 修改 `WebSearchTool`，检查 `maxWebSearchesPerSession`
+8. **后台代码审查** → 修改 `/code-review` 命令，使用 `CodeReviewBackgroundManager.startReview()`
+9. **TURN 服务器** → `RemoteControlPanel.tsx` 中的 ICE 配置需要连接到信令服务器
+10. **自动模式重置** → 添加 `/auto-mode-reset` 命令或集成到 `/config`
+
+### 可选做（增强功能）：
+
+11. **子代理文本转发** → 修改 stream-json 输出逻辑
+12. **父设置行为** → 修改 settings 层级合并逻辑
+13. **worktree.baseRef** → 修改 worktree 创建逻辑
+14. **--plugin-url** → 修改 CLI 启动参数解析
+15. **Fork 对话复制** → 修改 `/fork` 命令使用 ForkManager
+16. **MCP 错误报告** → 修改 MCP 初始化错误处理

@@ -57,11 +57,24 @@ function runReviewMode(code: string, round: number): PairResult {
     }
   })
 
+  // 深度分析
+  const deep = runDeepAnalysis(code)
+
   const output = [
     `## 🔍 审查结果 (第 ${round} 轮)`,
     '',
     `**文件**: ${code.split('\n').length} 行`,
     `**问题数**: ${suggestions.length}`,
+    '',
+    '### 📊 六维评分',
+    `| 维度 | 评分 | 状态 |`,
+    `|------|------|------|`,
+    `| 类型安全 | ${deep.typeSafety.score}/100 | ${deep.typeSafety.score >= 80 ? '✅' : deep.typeSafety.score >= 60 ? '⚠️' : '🔴'} |`,
+    `| 错误处理 | ${deep.errorHandling.score}/100 | ${deep.errorHandling.score >= 80 ? '✅' : deep.errorHandling.score >= 60 ? '⚠️' : '🔴'} |`,
+    `| 性能 | ${deep.performance.score}/100 | ${deep.performance.score >= 80 ? '✅' : deep.performance.score >= 60 ? '⚠️' : '🔴'} |`,
+    `| 可读性 | ${deep.readability.score}/100 | ${deep.readability.score >= 80 ? '✅' : deep.readability.score >= 60 ? '⚠️' : '🔴'} |`,
+    `| 可测试性 | ${deep.testability.score}/100 | ${deep.testability.score >= 80 ? '✅' : deep.testability.score >= 60 ? '⚠️' : '🔴'} |`,
+    `| 安全性 | ${deep.security.score}/100 | ${deep.security.score >= 80 ? '✅' : deep.security.score >= 60 ? '⚠️' : '🔴'} |`,
     '',
     suggestions.length > 0 ? '### 发现的问题\n' : '### ✅ 未发现明显问题\n',
     ...suggestions.map(s => `- ${s}`),
@@ -184,6 +197,214 @@ function runDebugMode(code: string, round: number): PairResult {
   return { success: true, mode: 'debug', round, output, suggestions, fixes }
 }
 
+// ─── 增强分析引擎 ───────────────────────────────────────────
+
+interface DeepAnalysis {
+  typeSafety: { score: number; issues: string[] }
+  errorHandling: { score: number; issues: string[] }
+  performance: { score: number; issues: string[] }
+  readability: { score: number; issues: string[] }
+  testability: { score: number; issues: string[] }
+  security: { score: number; issues: string[] }
+}
+
+function runDeepAnalysis(code: string): DeepAnalysis {
+  const lines = code.split('\n')
+  const issues = {
+    typeSafety: [] as string[],
+    errorHandling: [] as string[],
+    performance: [] as string[],
+    readability: [] as string[],
+    testability: [] as string[],
+    security: [] as string[],
+  }
+
+  let typedCount = 0
+  let totalParams = 0
+  let hasTryCatch = 0
+  let hasAsyncAwait = 0
+  let hasConsole = 0
+  let hasAnyType = 0
+  let hasEval = 0
+  let hasInnerHTML = 0
+  let deepNest = 0
+  let maxNest = 0
+  let funcCount = 0
+  let longFuncs = 0
+  let currentNest = 0
+  let funcStart = -1
+  let braceDepth = 0
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+    const trimmed = line.trim()
+
+    // 类型安全
+    totalParams += (trimmed.match(/\(([^)]*)\)/g) || []).length
+    if (trimmed.includes(': ') && !trimmed.includes('//')) typedCount++
+    if (trimmed.includes(': any') || trimmed.includes('as any')) {
+      hasAnyType++
+      issues.typeSafety.push(`第${i + 1}行: 使用 any 类型，建议定义具体类型`)
+    }
+
+    // 错误处理
+    if (trimmed.includes('try')) hasTryCatch++
+    if (trimmed.includes('async')) hasAsyncAwait++
+    if (trimmed.includes('.catch(')) hasTryCatch++
+
+    // 性能
+    if (trimmed.includes('console.log') || trimmed.includes('console.debug')) {
+      hasConsole++
+      issues.performance.push(`第${i + 1}行: console 语句可能影响生产环境性能`)
+    }
+
+    // 可读性
+    currentNest = (line.match(/^(\s+)/)?.[1]?.length || 0) / 2
+    if (currentNest > maxNest) maxNest = currentNest
+    if (trimmed.length > 120) {
+      issues.readability.push(`第${i + 1}行: 行过长 (${trimmed.length} 字符)`)
+    }
+    if (funcStart >= 0 && trimmed.includes('}')) {
+      if (i - funcStart > 50) longFuncs++
+      funcStart = -1
+    }
+    if (/\b(function|def|func|fn)\s+\w+/.test(trimmed)) {
+      funcStart = i
+      funcCount++
+    }
+
+    // 安全性
+    if (trimmed.includes('eval(')) {
+      hasEval++
+      issues.security.push(`第${i + 1}行: 使用 eval() 存在代码注入风险`)
+    }
+    if (trimmed.includes('innerHTML')) {
+      hasInnerHTML++
+      issues.security.push(`第${i + 1}行: 使用 innerHTML 可能导致 XSS 攻击`)
+    }
+    if (/\b(password|secret|token|apikey)\s*[:=]\s*['"]/i.test(trimmed)) {
+      issues.security.push(`第${i + 1}行: 疑似硬编码敏感信息`)
+    }
+
+    // 可测试性
+    if (trimmed.includes('new Date()') || trimmed.includes('Date.now()')) {
+      issues.testability.push(`第${i + 1}行: 直接依赖时间，测试时可注入 mock`)
+    }
+    if (trimmed.includes('Math.random()')) {
+      issues.testability.push(`第${i + 1}行: 使用 Math.random() 不可测试，建议注入`)
+    }
+  }
+
+  if (hasAnyType > 0) issues.typeSafety.push(`共 ${hasAnyType} 处 any 类型使用`)
+  if (hasTryCatch === 0 && hasAsyncAwait > 0) {
+    issues.errorHandling.push('代码包含异步操作但缺少错误处理')
+  }
+  if (hasTryCatch === 0 && funcCount > 2) {
+    issues.errorHandling.push('多个函数缺少错误处理机制')
+  }
+  if (maxNest > 4) {
+    issues.readability.push(`最大嵌套深度 ${maxNest} 层，建议不超过 4 层`)
+  }
+  if (longFuncs > 0) {
+    issues.readability.push(`${longFuncs} 个函数超过 50 行，建议拆分`)
+  }
+  if (funcCount > 0 && hasTryCatch === 0) {
+    issues.testability.push('函数缺少错误路径，建议添加异常场景测试')
+  }
+
+  const calcScore = (issuesCount: number) => Math.max(0, 100 - issuesCount * 15)
+
+  return {
+    typeSafety: { score: calcScore(issues.typeSafety.length), issues: issues.typeSafety },
+    errorHandling: { score: calcScore(issues.errorHandling.length), issues: issues.errorHandling },
+    performance: { score: calcScore(issues.performance.length), issues: issues.performance },
+    readability: { score: calcScore(issues.readability.length), issues: issues.readability },
+    testability: { score: calcScore(issues.testability.length), issues: issues.testability },
+    security: { score: calcScore(issues.security.length), issues: issues.security },
+  }
+}
+
+// ─── 深度分析模式 ───────────────────────────────────────────
+
+function runDeepMode(code: string, round: number): PairResult {
+  const deep = runDeepAnalysis(code)
+  const allIssues = [
+    ...deep.typeSafety.issues,
+    ...deep.errorHandling.issues,
+    ...deep.performance.issues,
+    ...deep.readability.issues,
+    ...deep.testability.issues,
+    ...deep.security.issues,
+  ]
+  const avgScore = Math.round(
+    (deep.typeSafety.score + deep.errorHandling.score + deep.performance.score +
+      deep.readability.score + deep.testability.score + deep.security.score) / 6,
+  )
+
+  const lines = [
+    `## 🔬 深度分析 (第 ${round} 轮)`,
+    '',
+    `**综合评分: ${avgScore}/100**`,
+    '',
+    '### 📊 六维雷达',
+    '',
+    '| 维度 | 评分 | 问题数 |',
+    '|------|------|--------|',
+    `| 🛡️ 类型安全 | ${deep.typeSafety.score} | ${deep.typeSafety.issues.length} |`,
+    `| 🔧 错误处理 | ${deep.errorHandling.score} | ${deep.errorHandling.issues.length} |`,
+    `| ⚡ 性能 | ${deep.performance.score} | ${deep.performance.issues.length} |`,
+    `| 📖 可读性 | ${deep.readability.score} | ${deep.readability.issues.length} |`,
+    `| 🧪 可测试性 | ${deep.testability.score} | ${deep.testability.issues.length} |`,
+    `| 🔒 安全性 | ${deep.security.score} | ${deep.security.issues.length} |`,
+    '',
+  ]
+
+  // 按维度输出详细问题
+  const dimensions = [
+    { name: '🛡️ 类型安全', data: deep.typeSafety },
+    { name: '🔧 错误处理', data: deep.errorHandling },
+    { name: '⚡ 性能', data: deep.performance },
+    { name: '📖 可读性', data: deep.readability },
+    { name: '🧪 可测试性', data: deep.testability },
+    { name: '🔒 安全性', data: deep.security },
+  ]
+
+  for (const dim of dimensions) {
+    if (dim.data.issues.length > 0) {
+      lines.push(`### ${dim.name} (${dim.data.score}分)`)
+      dim.data.issues.forEach(issue => lines.push(`- ${issue}`))
+      lines.push('')
+    }
+  }
+
+  // 架构建议
+  lines.push('### 🏗️ 架构建议')
+  if (avgScore >= 80) {
+    lines.push('- 代码质量良好，保持当前实践')
+    lines.push('- 考虑添加更多边界测试')
+  } else if (avgScore >= 60) {
+    lines.push('- 优先修复安全性和错误处理问题')
+    lines.push('- 考虑引入静态分析工具（ESLint, Prettier）')
+    lines.push('- 增加代码审查流程')
+  } else {
+    lines.push('- 建议进行大规模重构')
+    lines.push('- 优先解决安全漏洞和类型安全问题')
+    lines.push('- 建立测试覆盖率基线')
+    lines.push('- 考虑引入 CI/CD 自动化检查')
+  }
+
+  return {
+    success: true,
+    mode: 'deep',
+    round,
+    output: lines.join('\n'),
+    suggestions: allIssues,
+    fixes: [],
+  }
+}
+
+// ─── 辅助函数 ───────────────────────────────────────────────
+
 /**
  * 生成增强代码（协同编写模式）
  */
@@ -249,9 +470,10 @@ export const call: LocalCommandCall = async (args) => {
         '  /pair <文件路径> <模式>        使用指定模式分析',
         '',
         '模式:',
-        '  review       审查模式 - 分析代码并提供改进建议',
+        '  review       审查模式 - 六维评分 + 问题检测 + 修复建议',
         '  coauthor     协同编写 - 生成增强代码和最佳实践',
         '  debug        调试模式 - 检测潜在运行时问题',
+        '  deep         深度分析 - 全面质量评估 + 架构建议',
         '',
         '选项:',
         '  --rounds N   执行轮数（默认: 1，最多 5）',
@@ -277,7 +499,7 @@ export const call: LocalCommandCall = async (args) => {
   const autoFix = flags.includes('--auto-fix')
 
   // 验证模式
-  const validModes: PairOptions['mode'][] = ['review', 'coauthor', 'debug']
+  const validModes: PairOptions['mode'][] = ['review', 'coauthor', 'debug', 'deep']
   const selectedMode = validModes.includes(mode as PairOptions['mode']) ? mode as PairOptions['mode'] : 'review'
 
   // 读取代码
@@ -322,6 +544,9 @@ async function fetchData(url) {
         break
       case 'debug':
         result = runDebugMode(code, round)
+        break
+      case 'deep':
+        result = runDeepMode(code, round)
         break
       case 'review':
       default:

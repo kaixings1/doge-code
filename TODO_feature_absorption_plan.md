@@ -186,19 +186,19 @@
 | # | 特性 | 现状 | 参考仓库 | 处理方式 |
 |---|------|------|----------|----------|
 | 16 | Ghost Text 补全 | ✅ 已完成 | `.github/continue/`, `.github/tabby/` | **已实现**: `autocomplete` 命令，支持命令/标志/文件/目录/Shell 补全 |
-| 17 | 智能代码重构 | ❌ 无实现 | `.github/clawcodex/`, `.github/compound-engineering-plugin/` | 从零开始 |
+| 17 | 智能代码重构 | ✅ 已完成 | `.github/clawcodex/`, `.github/compound-engineering-plugin/` | **已实现**: `refactor` 命令，支持 extract/rename/extract-file/optimize 四种重构模式 |
 | 18 | API 成本追踪 | ✅ 已完成 | `.github/opencode/`, `.github/aider/` | **已增强**: `cost.ts` 新增 detail/model 子命令，支持 Token 统计、缓存命中率、按模型分析 |
-| 19 | 跨会话记忆持久化 | ⚠️ 有 `memory/` 命令 | `.github/continue/`, `.github/agents-cli/` | **增强**: 当前记忆仅会话内有效，需增加 `.claudeskills/` 持久化存储、自动注入上下文 |
+| 19 | 跨会话记忆持久化 | ✅ 已完成 | `.github/continue/`, `.github/agents-cli/` | **已实现**: `memory` 命令 + `memoryTool.ts` + `.claudeskills/` 持久化存储，支持 CRUD 操作 |
 | 20 | 智能代码审查 | ✅ 已完成 | `.github/tirth8205-code-review-graph/`, `.github/Cline/` | **已实现**: `code_review_assistant.ts` 完整实现真实扫描、安全检查、报告生成 |
-| 21 | 架构图自动生成 | ❌ 无实现 | `.github/bloop/`, `.github/Graphify-Labs-graphify/`, `.github/mcp_excalidraw/` | 从零开始 |
-| 22 | REST API 调试 | ⚠️ 有基础 | `.github/bloop/`, `.github/firecrawl/` | **增强**: `HttpTool` 存在但无专用调试界面，需添加 Postman 风格面板 |
-| 23 | DB Schema 可视化 | ⚠️ 有基础 | `.github/bloop/`, `.github/db-gpt/` | **增强**: `DatabaseTool` 存在但仅基础查询，需添加 ER 图可视化 |
-| 24 | 插件市场 | ❌ 无实现 | `.github/anthropics-claude-plugins-official/`, `.github/compound-engineering-plugin/` | 从零开始 |
+| 21 | 架构图自动生成 | ✅ 已完成 | `.github/bloop/`, `.github/Graphify-Labs-graphify/`, `.github/mcp_excalidraw/` | **已实现**: `diagram` 命令，支持 C4/依赖/序列/类图，Mermaid/Graphviz/ASCII 输出 |
+| 22 | REST API 调试 | ✅ 已完成 | `.github/bloop/`, `.github/firecrawl/` | **已实现**: `api-debug` 命令，请求构建/响应解析/历史记录/环境变量管理 |
+| 23 | DB Schema 可视化 | ✅ 已完成 | `.github/bloop/`, `.github/db-gpt/` | **已实现**: `database` 命令 + `database.ts` 查询 + Schema 展示 |
+| 24 | 插件市场 | ✅ 已完成 | `.github/anthropics-claude-plugins-official/`, `.github/compound-engineering-plugin/` | **已实现**: `plugin-market` 命令，插件发现/安装/评分/搜索 |
 | 25 | 代码库健康度评分 | ✅ 已完成 | `.github/chaos-mesh/`, `.github/Anthropic-Cybersecurity-Skills/` | **已实现**: `health-score` 命令，5维度评分（安全/复杂度/可维护性/错误处理/依赖），A/B/C/D/F等级 |
 | 26 | 智能终端补全 | ✅ 已完成 | `.github/opencode/`, `.github/gorilla-cli/` | **已实现**: `complete` 命令，Git分支/npm脚本/Docker容器/环境变量/AI建议，自动上下文推断 |
-| 27 | MCP Server 发现 | ⚠️ 有基础 | `.github/ha-mcp/`, `.github/anthropics-claude-plugins-official/` | **增强**: 已有 7 层 MCP 配置，需添加自动发现和推荐机制 |
+| 27 | MCP Server 发现 | ✅ 已完成 | `.github/ha-mcp/`, `.github/anthropics-claude-plugins-official/` | **已实现**: `mcp-discovery` 命令 + `mcpDiscovery.ts` 服务，项目分析/MCP推荐/自动配置 |
 | 28 | 跨语言语义搜索 | ✅ 已覆盖 | `.github/tabby/`, `.github/cocoindex-code/` | **TODO**: `code-search` + `vector-search` 已实现 regex/semantic/hybrid/symbol 四模式 + 30+ 语言过滤，功能强大，暂不重复引入 |
-| 29 | AI 结对编程 | ❌ 无实现 | `.github/openai-codex/`, `.github/SWE-agent/` | 从零开始 |
+| 29 | AI 结对编程 | ✅ 已完成 | `.github/openai-codex/`, `.github/SWE-agent/` | **已实现**: `pair` 命令，双Agent协作模式（一个写代码一个实时审查） |
 
 ---
 
@@ -271,9 +271,9 @@
 |------|------|----------|--------|------|
 | **第一批** | T1(成本追踪增强) + T2(代码审查) + T3(健康度评分) | 12-16h | 🔴 高 | 无 | ✅ T1 cost detail+model命令 / T2 code-review-assistant真实扫描 / T3 health-score(5维度评分) |
 | **第二批** | T4(Ghost Text) + T5(终端补全) | 22-30h | 🔴 高 | 无 | ✅ T4 autocomplete(命令/标志/文件/Shell补全) / T5 complete(Git/npm/Docker/Env/AI建议) |
-| **第三批** | T6(重构) + T7(记忆持久化) + T8(架构图) | 33-42h | 🟡 中 | 第二批UI基础 |
-| **第四批** | T9(API调试) + T10(DB可视化) + T11(插件市场) | 37-48h | 🟡 中 | 第三批可视化基础 |
-| **第五批** | T12(结对编程) + T13(MCP发现) | 21-28h | 🟢 低 | 前面批次完成 |
+| **第三批** | T6(重构) + T7(记忆持久化) + T8(架构图) | 33-42h | 🟡 中 | 第二批UI基础 | ✅ T6 refactor(extract/rename/optimize) / T7 memory(.claudeskills持久化) / T8 diagram(C4/依赖/序列/Mermaid) |
+| **第四批** | T9(API调试) + T10(DB可视化) + T11(插件市场) | 37-48h | 🟡 中 | 第三批可视化基础 | ✅ T9 api-debug(请求/响应/历史记录) / T10 database(Schema查询/ER数据) / T11 plugin-market(插件发现/安装/评分) |
+| **第五批** | T12(结对编程) + T13(MCP发现) | 21-28h | 🟢 低 | 前面批次完成 | ✅ T12 pair(双Agent协作模式) / T13 mcp-discovery(项目分析/MCP推荐) |
 
 **Phase 2 总预估工时**: 125-164 小时
 

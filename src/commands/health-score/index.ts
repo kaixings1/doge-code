@@ -156,7 +156,7 @@ const COMPLEXITY_RULES: Record<string, ComplexityRule> = {
     category: 'complexity',
   },
   'long-function': {
-    pattern: /^(?:function\s+\w+|const\s+\w+\s*=\s*(?:async\s+)?(?:\([^)]*\)|[a-zA-Z_$][a-zA-Z0-9_$]*)\s*=>)/m,
+    pattern: /(?:function\s+\w+|const\s+\w+\s*=\s*(?:async\s+)?(?:\([^)]*\)|[a-zA-Z_$][a-zA-Z0-9_$]*)\s*=>)[\s\S]*?^}/m,
     severity: 'minor',
     message: '检测到可能的超长函数（>50 行）',
     suggestion: '将函数拆分为更小的单一职责函数',
@@ -298,6 +298,53 @@ interface CategoryIssues {
   dependencies: HealthIssue[]
 }
 
+/**
+ * Detect long functions by counting lines between function definition and closing brace.
+ */
+function detectLongFunctions(filePath: string, content: string): HealthIssue[] {
+  const issues: HealthIssue[] = []
+  const lines = content.split('\n')
+  const MAX_FUNCTION_LINES = 50
+
+  // Match function definitions: function name(...), const name = (...) =>, export function, etc.
+  const funcStartRegex = /^\s*(?:export\s+)?(?:async\s+)?(?:function\s+\w+|const\s+\w+\s*=\s*(?:async\s*)?(?:\([^)]*\)|[^=])\s*=>)/
+
+  for (let i = 0; i < lines.length; i++) {
+    if (!funcStartRegex.test(lines[i])) continue
+
+    // Found a function start - now find its closing brace
+    let braceCount = 0
+    let foundOpenBrace = false
+    const funcStart = i
+
+    for (let j = i; j < lines.length; j++) {
+      for (const ch of lines[j]) {
+        if (ch === '{') { braceCount++; foundOpenBrace = true }
+        else if (ch === '}') { braceCount-- }
+      }
+      if (foundOpenBrace && braceCount === 0) {
+        const funcLength = j - funcStart + 1
+        if (funcLength > MAX_FUNCTION_LINES) {
+          issues.push({
+            file: filePath,
+            line: funcStart + 1,
+            category: 'complexity',
+            severity: funcLength > 100 ? 'major' : 'minor',
+            message: `函数过长 (${funcLength} 行, 建议 <= ${MAX_FUNCTION_LINES} 行)`,
+            code: lines[funcStart].trim().substring(0, 100),
+            suggestion: '将函数拆分为更小的单一职责函数',
+          })
+        }
+        break
+      }
+      // Safety: if we go 200 lines without closing, skip
+      if (j - funcStart > 200) break
+    }
+  }
+
+  return issues
+}
+
 function collectIssuesFromFile(
   filePath: string,
   content: string,
@@ -325,6 +372,9 @@ function collectIssuesFromFile(
     if (!rules) continue
 
     for (const [ruleName, rule] of Object.entries(rules)) {
+      // Skip long-function rule - handled by detectLongFunctions
+      if (ruleName === 'long-function') continue
+
       let count = 0
       lines.forEach((line, index) => {
         if (count >= ISSUE_LIMIT_PER_FILE) return
@@ -342,6 +392,11 @@ function collectIssuesFromFile(
         }
       })
     }
+  }
+
+  // Add function-based long function detection
+  if (categories.includes('complexity')) {
+    issues.complexity.push(...detectLongFunctions(filePath, content))
   }
 
   return issues
