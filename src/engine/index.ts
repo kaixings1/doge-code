@@ -25,6 +25,7 @@ import { type Tools, type ToolInfo } from "../Tool.js";
 import { getEndConversationManager } from "../features/endConversation.js";
 import { getSubAgentManager } from "../features/featureFlags.js";
 import { getAutoModeManager } from "../features/additionalFeatures.js";
+import { getForwardSubagentTextManager } from "../features/additionalFeatures.js";
 
 export interface Conversation {
   messages: InternalMessage[];

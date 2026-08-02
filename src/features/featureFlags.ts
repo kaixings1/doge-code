@@ -242,7 +242,11 @@ let globalSubAgentManager: SubAgentManager | null = null
 
 export function getSubAgentManager(): SubAgentManager {
   if (!globalSubAgentManager) {
-    globalSubAgentManager = new SubAgentManager()
+    // 读取环境变量配置（更新日志 2.1.217）
+    const maxConcurrent = parseInt(process.env.CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS || '20', 10)
+    const maxDepth = parseInt(process.env.CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH || '3', 10)
+    const maxSearches = parseInt(process.env.CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION || '200', 10)
+    globalSubAgentManager = new SubAgentManager(maxConcurrent, maxDepth, maxSearches)
   }
   return globalSubAgentManager
 }
