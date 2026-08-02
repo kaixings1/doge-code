@@ -90,7 +90,7 @@ interface DogeAPIValue {
   pluginEnable: (pluginName: string, enabled: boolean) => Promise<{ success: boolean; error?: string }>
   pluginInstall: (sourceDir: string, pluginName: string) => Promise<{ success: boolean; error?: string }>
   pluginUninstall: (pluginName: string) => Promise<{ success: boolean; error?: string }>
-  pluginGetCommand: (pluginName: string, commandName: string) => Promise<{ content: string | null }>
+  pluginGetCommand: (pluginName: string, commandName: string) => Promise<{ content: string | null; error?: string; warnings?: string[] }>
   marketplaceList: () => Promise<Array<{ name: string; source: string; plugins: Array<{ name: string; description?: string; version?: string; source: string; repo?: string; installed: boolean }> }>>
   marketplaceInstall: (pluginName: string, repo: string) => Promise<{ success: boolean; error?: string }>
   aiComplete: (input: { filePath: string; code: string; line: number; column: number }) => Promise<{ success: boolean; completions: Array<{ insertText: string; endLine?: number; endColumn?: number; documentation?: string }> }>
@@ -144,7 +144,26 @@ interface DogeAPIValue {
   collabAddComment: (params: { roomId: string; file: string; line: number; author: string; text: string }) => Promise<{ success: boolean; comment?: { id: string; file: string; line: number; author: string; text: string; resolved: boolean; createdAt: number }; error?: string }>
   collabResolveComment: (params: { roomId: string; commentId: string }) => Promise<{ success: boolean }>
   collabGetComments: (params: { roomId: string; file?: string }) => Promise<{ success: boolean; comments?: Array<{ id: string; file: string; line: number; author: string; text: string; resolved: boolean; createdAt: number }> }>
-  collabApplyEdit: (params: { roomId: string; userId: string; file: string; oldText: string; newText: string; line: number }) => Promise<{ success: boolean; version?: number; error?: string }>
+  collabApplyEdit: (params: { roomId: string; userId: string; file: string; operation: { type: 'insert' | 'delete'; position: number; text?: string; length?: number } }) => Promise<{ success: boolean; version?: number; operationId?: string; error?: string }>
+
+  // ── CRDT 文档同步 ──
+  collabSyncDocument: (params: { roomId: string; file?: string }) => Promise<{ success: boolean; snapshot?: { content: string; version: number; lamportClock: number }; operations?: Array<unknown>; error?: string }>
+  collabJoinSync: (params: { roomId: string; userId: string }) => Promise<{ success: boolean; snapshot?: { content: string; version: number; lamportClock: number }; operations?: Array<unknown>; document?: string; error?: string }>
+  collabApplyRemoteOp: (params: { roomId: string; userId: string; operation: { type: 'insert' | 'delete'; position: number; text?: string; length?: number; lamport: number; parentVersion: number } }) => Promise<{ success: boolean; version?: number; snapshot?: { content: string; version: number; lamportClock: number }; error?: string }>
+  onCollabRemoteEdit: (callback: (edit: { roomId: string; userId: string; operation: { type: 'insert' | 'delete'; position: number; text?: string; length?: number }; version: number; file: string }) => void) => () => void
+
+  // ── 批量处理 ──
+  batchStart: (params: { workflowId: string; workflowName: string; files: Array<{ filePath: string; fileName?: string }>; config?: Partial<{ concurrency: number; timeout: number; retryCount: number; dryRun: boolean }> }) => Promise<{ success: boolean; batchId?: string; totalFiles?: number; error?: string }>
+  batchCancel: (batchId: string) => Promise<{ success: boolean; error?: string }>
+  batchStatus: (batchId: string) => Promise<{ success: boolean; job?: Record<string, unknown>; error?: string }>
+  batchList: () => Promise<{ success: boolean; jobs?: Array<Record<string, unknown>>; error?: string }>
+  batchScanFiles: (params: { dirPath: string; extensions?: string[]; maxFiles?: number }) => Promise<{ success: boolean; files?: string[]; error?: string }>
+  batchCleanup: (batchId: string) => Promise<{ success: boolean; error?: string }>
+  onBatchProgress: (callback: (progress: { batchId: string; fileId: string; fileName: string; status: string; progress: number; totalFiles: number; completedFiles: number; failedFiles: number; error?: string; output?: string }) => void) => () => void
+  onBatchComplete: (callback: (event: { batchId: string; name: string; status: string; completedCount: number; failedCount: number; totalFiles: number; durationMs: number }) => void) => () => void
+
+  // ── 插件安全 ──
+  pluginSecurityAudit: (pluginName: string) => Promise<{ valid: boolean; errors: string[]; warnings: string[] }>
 
   // ── 远程协助 ──
   remoteOffer: (params: { sessionId: string; callerId: string; calleeId: string; offer: RTCSessionDescriptionInit }) => Promise<{ success: boolean; error?: string }>
@@ -152,6 +171,13 @@ interface DogeAPIValue {
   remoteIceCandidate: (params: { sessionId: string; candidate: RTCIceCandidateInit }) => Promise<{ success: boolean }>
   remoteGetSignal: (sessionId: string) => Promise<{ success: boolean; signal?: { offer?: RTCSessionDescriptionInit; answer?: RTCSessionDescriptionInit; iceCandidates?: RTCIceCandidateInit[] } | null }>
   remoteClose: (sessionId: string) => Promise<{ success: boolean }>
+
+  // ── 远程信令服务器管理 ──
+  remoteSignalingStatus: () => Promise<{ success: boolean; running: boolean; port: number; peers: number; sessions: number }>
+  remoteSignalingStart: () => Promise<{ success: boolean; port?: number; message?: string; error?: string }>
+  remoteSignalingStop: () => Promise<{ success: boolean; error?: string }>
+  remoteSignalingRestart: () => Promise<{ success: boolean; port?: number; error?: string }>
+  onRemoteSignal: (callback: (msg: { type: string; timestamp: number; sessionId: string; payload: Record<string, unknown> }) => void) => () => void
 
   // ── 测试运行器 ──
   testRun: (cwd: string, testCommand: string) => Promise<{ success: boolean; output?: string; error?: string; exitCode?: number }>
@@ -277,7 +303,7 @@ const dogeAPI: DogeAPIValue = {
   pluginEnable: (pluginName: string, enabled: boolean) => ipcRenderer.invoke('doge:plugin-enable', pluginName, enabled),
   pluginInstall: (sourceDir: string, pluginName: string) => ipcRenderer.invoke('doge:plugin-install', sourceDir, pluginName),
   pluginUninstall: (pluginName: string) => ipcRenderer.invoke('doge:plugin-uninstall', pluginName),
-  pluginGetCommand: (pluginName: string, commandName: string) => ipcRenderer.invoke('doge:plugin-get-command', pluginName, commandName),
+  pluginGetCommand: (pluginName: string, commandName: string) => ipcRenderer.invoke('doge:plugin-get-command', pluginName, commandName) as unknown as Promise<{ content: string | null; error?: string; warnings?: string[] }>,
   marketplaceList: () => ipcRenderer.invoke('doge:marketplace-list'),
   marketplaceInstall: (pluginName: string, repo: string) => ipcRenderer.invoke('doge:marketplace-install', pluginName, repo),
   // 以下为占位 API（主进程 IPC handler 未实现，调用时返回失败）
@@ -341,7 +367,38 @@ const dogeAPI: DogeAPIValue = {
   collabAddComment: (params: { roomId: string; file: string; line: number; author: string; text: string }) => ipcRenderer.invoke('doge:collab-add-comment', params),
   collabResolveComment: (params: { roomId: string; commentId: string }) => ipcRenderer.invoke('doge:collab-resolve-comment', params),
   collabGetComments: (params: { roomId: string; file?: string }) => ipcRenderer.invoke('doge:collab-get-comments', params),
-  collabApplyEdit: (params: { roomId: string; userId: string; file: string; oldText: string; newText: string; line: number }) => ipcRenderer.invoke('doge:collab-apply-edit', params),
+  collabApplyEdit: (params: { roomId: string; userId: string; file: string; operation: { type: 'insert' | 'delete'; position: number; text?: string; length?: number } }) => ipcRenderer.invoke('doge:collab-apply-edit', params),
+
+  // ── CRDT 文档同步 ──
+  collabSyncDocument: (params: { roomId: string; file?: string }) => ipcRenderer.invoke('doge:collab-sync-document', params),
+  collabJoinSync: (params: { roomId: string; userId: string }) => ipcRenderer.invoke('doge:collab-join-sync', params),
+  collabApplyRemoteOp: (params: { roomId: string; userId: string; operation: { type: 'insert' | 'delete'; position: number; text?: string; length?: number; lamport: number; parentVersion: number } }) => ipcRenderer.invoke('doge:collab-apply-remote-op', params),
+  onCollabRemoteEdit: (callback: (edit: { roomId: string; userId: string; operation: { type: 'insert' | 'delete'; position: number; text?: string; length?: number }; version: number; file: string }) => void) => {
+    const handler = (_event: Electron.IpcRendererEvent, edit: { roomId: string; userId: string; operation: { type: 'insert' | 'delete'; position: number; text?: string; length?: number }; version: number; file: string }) => callback(edit)
+    ipcRenderer.on('doge:collab-remote-edit', handler)
+    return () => ipcRenderer.removeListener('doge:collab-remote-edit', handler)
+  },
+
+  // ── 批量处理 ──
+  batchStart: (params: { workflowId: string; workflowName: string; files: Array<{ filePath: string; fileName?: string }>; config?: Partial<{ concurrency: number; timeout: number; retryCount: number; dryRun: boolean }> }) => ipcRenderer.invoke('doge:batch-start', params),
+  batchCancel: (batchId: string) => ipcRenderer.invoke('doge:batch-cancel', batchId),
+  batchStatus: (batchId: string) => ipcRenderer.invoke('doge:batch-status', batchId),
+  batchList: () => ipcRenderer.invoke('doge:batch-list'),
+  batchScanFiles: (params: { dirPath: string; extensions?: string[]; maxFiles?: number }) => ipcRenderer.invoke('doge:batch-scan-files', params),
+  batchCleanup: (batchId: string) => ipcRenderer.invoke('doge:batch-cleanup', batchId),
+  onBatchProgress: (callback: (progress: { batchId: string; fileId: string; fileName: string; status: string; progress: number; totalFiles: number; completedFiles: number; failedFiles: number; error?: string; output?: string }) => void) => {
+    const handler = (_event: Electron.IpcRendererEvent, progress: { batchId: string; fileId: string; fileName: string; status: string; progress: number; totalFiles: number; completedFiles: number; failedFiles: number; error?: string; output?: string }) => callback(progress)
+    ipcRenderer.on('doge:batch-progress', handler)
+    return () => ipcRenderer.removeListener('doge:batch-progress', handler)
+  },
+  onBatchComplete: (callback: (event: { batchId: string; name: string; status: string; completedCount: number; failedCount: number; totalFiles: number; durationMs: number }) => void) => {
+    const handler = (_event: Electron.IpcRendererEvent, event: { batchId: string; name: string; status: string; completedCount: number; failedCount: number; totalFiles: number; durationMs: number }) => callback(event)
+    ipcRenderer.on('doge:batch-complete', handler)
+    return () => ipcRenderer.removeListener('doge:batch-complete', handler)
+  },
+
+  // ── 插件安全 ──
+  pluginSecurityAudit: (pluginName: string) => ipcRenderer.invoke('doge:plugin-security-audit', pluginName),
 
   // ── 远程协助 ──
   remoteOffer: (params: { sessionId: string; callerId: string; calleeId: string; offer: RTCSessionDescriptionInit }) => ipcRenderer.invoke('doge:remote-offer', params),
@@ -349,6 +406,17 @@ const dogeAPI: DogeAPIValue = {
   remoteIceCandidate: (params: { sessionId: string; candidate: RTCIceCandidateInit }) => ipcRenderer.invoke('doge:remote-ice-candidate', params),
   remoteGetSignal: (sessionId: string) => ipcRenderer.invoke('doge:remote-get-signal', sessionId),
   remoteClose: (sessionId: string) => ipcRenderer.invoke('doge:remote-close', sessionId),
+
+  // ── 远程信令服务器管理 ──
+  remoteSignalingStatus: () => ipcRenderer.invoke('doge:remote-signaling-status'),
+  remoteSignalingStart: () => ipcRenderer.invoke('doge:remote-signaling-start'),
+  remoteSignalingStop: () => ipcRenderer.invoke('doge:remote-signaling-stop'),
+  remoteSignalingRestart: () => ipcRenderer.invoke('doge:remote-signaling-restart'),
+  onRemoteSignal: (callback: (msg: { type: string; timestamp: number; sessionId: string; payload: Record<string, unknown> }) => void) => {
+    const handler = (_event: Electron.IpcRendererEvent, msg: { type: string; timestamp: number; sessionId: string; payload: Record<string, unknown> }) => callback(msg)
+    ipcRenderer.on('doge:remote-signal', handler)
+    return () => ipcRenderer.removeListener('doge:remote-signal', handler)
+  },
   requestMicrophonePermission: () => ipcRenderer.invoke('doge:request-microphone-permission'),
 
   // ── 测试运行器 ──

@@ -46,6 +46,7 @@ import { formatDuration, formatNumber } from './utils/format.js'
 import type { FpsMetrics } from './utils/fpsTracker.js'
 import { getCanonicalName } from './utils/model/model.js'
 import { calculateUSDCost } from './utils/modelCost.js'
+import { getCostDatabase } from './utils/cost-database.js'
 export {
   getTotalCostUSD as getTotalCost,
   getTotalDuration,
@@ -338,5 +339,13 @@ export function addToTotalSessionCost(
       advisorUsage.model,
     )
   }
+
+  // Persist to SQLite cost database
+  try {
+    getCostDatabase().recordUsage(getSessionId(), model, usage, cost)
+  } catch {
+    // Silently ignore persistence errors — cost tracking should not break the main flow
+  }
+
   return totalCost
 }

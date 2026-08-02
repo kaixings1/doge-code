@@ -193,6 +193,8 @@ export function App(): JSX.Element {
   const [config, setConfig] = useState<DesktopConfig>({ provider: 'openai', apiKey: '', model: 'gpt-4o', workingDir: '' })
   const workingDir = config.workingDir || '/'
   const [messages, setMessages] = useState<Message[]>([])
+  const messagesRef = useRef(messages)
+  useEffect(() => { messagesRef.current = messages }, [messages])
   const [input, setInput] = useState('')
   const [pendingImages, setPendingImages] = useState<Array<{ id: string; url: string; name: string }>>([])
   const [state, setState] = useState<QueryState>('idle')
@@ -229,6 +231,7 @@ export function App(): JSX.Element {
   const [msgSearchQuery, setMsgSearchQuery] = useState('')
   const [msgSearchMatches, setMsgSearchMatches] = useState<number[]>([])
   const [executingToolIds, setExecutingToolIds] = useState<Set<string>>(new Set())
+  const executedToolIdsRef = useRef<Set<string>>(new Set())
   const [toolProgress, setToolProgress] = useState<{ toolName: string; status: 'pending' | 'running' | 'success' | 'error'; progress?: number; duration?: number } | null>(null)
   // commandHistory 使用 Hook 管理（替代内联状态）
   const [commandHistory] = useState<Array<{ cmd: string; time: number }>>([])
@@ -754,19 +757,28 @@ export function App(): JSX.Element {
   useEffect(() => {
     async function load(): Promise<void> {
       try {
+        // 主进程 loadConfig（findApiConfig 会向上一级查找 .doge/api.json，portable/unpacked 均可靠）
         const apiConfig = await window.dogeAPI.getConfig()
         const cwd = await window.dogeAPI.getCwd()
-        const apiKeyData = await window.dogeAPI.readConfig(`${cwd}/.doge/api.json`) as
-          | { activePreset?: string; presets?: Record<string, { provider?: string; apiKey?: string; model?: string }> }
-          | null
-
         let provider = 'openai', apiKeyStr = '', model = 'gpt-4o'
-        if (apiKeyData) {
-          const presetName = apiKeyData.activePreset
-          const preset = presetName && apiKeyData.presets?.[presetName] ? apiKeyData.presets[presetName] : apiKeyData.presets?.default || {}
-          provider = preset.provider || 'openai'
-          apiKeyStr = preset.apiKey || ''
-          model = preset.model || 'gpt-4o'
+
+        // 优先使用主进程已解析的 apiKey（避免用 cwd 拼路径——portable 运行时 cwd 在 %TEMP% 解压目录，找不到配置）
+        if (apiConfig.apiKey) {
+          provider = apiConfig.provider || 'openai'
+          apiKeyStr = apiConfig.apiKey
+          model = apiConfig.model || 'gpt-4o'
+        } else {
+          // 主进程无 apiKey 时，回退到按 cwd 读取 .doge/api.json（开发模式等场景）
+          const apiKeyData = await window.dogeAPI.readConfig(`${cwd}/.doge/api.json`) as
+            | { activePreset?: string; presets?: Record<string, { provider?: string; apiKey?: string; model?: string }> }
+            | null
+          if (apiKeyData) {
+            const presetName = apiKeyData.activePreset
+            const preset = presetName && apiKeyData.presets?.[presetName] ? apiKeyData.presets[presetName] : apiKeyData.presets?.default || {}
+            provider = preset.provider || 'openai'
+            apiKeyStr = preset.apiKey || ''
+            model = preset.model || 'gpt-4o'
+          }
         }
 
         setConfig({ provider, apiKey: apiKeyStr, model, workingDir: apiConfig.workingDir || cwd })
@@ -797,6 +809,44 @@ export function App(): JSX.Element {
     })
     return () => { unsub1(); unsub2() }
   }, [])
+
+  // 自动执行工具调用：流式传输停止后，检测并执行 assistant 消息中的 tool_use block
+  // 策略：宁可提取不完整执行报错，让模型根据错误反馈自我修正
+  useEffect(() => {
+    if (currentStreaming) return // 仍在流式传输中
+    const msgs = messagesRef.current
+    if (!msgs || msgs.length === 0) return
+    // 找最新的 assistant 消息
+    const lastAssistant = [...msgs].reverse().find(m => m.role === 'assistant')
+    if (!lastAssistant?.content) return
+    const content = lastAssistant.content
+    // 快速检测：内容中是否有 <function 标签
+    if (!content.includes('<function')) return
+    // 用完整解析器提取 tool_use block
+    const blocks: ContentBlock[] = parseMessageContent(content)
+    let executed = false
+    for (const block of blocks) {
+      if (block.type === 'tool_use' && !executedToolIdsRef.current.has(block.id)) {
+        executedToolIdsRef.current.add(block.id)
+        executed = true
+        // 异步执行，不阻塞
+        Promise.resolve()
+          .then(() => window.dogeAPI.executeTool({
+            name: block.name,
+            input: typeof block.input === 'string' ? JSON.parse(block.input) : block.input,
+          }))
+          .then(result => {
+            if (result.error) {
+              showToast(`工具 ${block.name} 执行失败: ${result.error.slice(0, 100)}`, 'error')
+            }
+          })
+          .catch(() => { showToast(`工具 ${block.name} 调用失败`, 'error') })
+      }
+    }
+    if (executed) {
+      tsLog('AUTO-EXEC', `auto-executed ${executedToolIdsRef.current.size} tool blocks from latest message`)
+    }
+  }, [currentStreaming, messages])
 
   // 自动发送测试消息（用于调试）- 必须在 handleSend 之后
   const autoSendRef = useRef<() => void>(() => {})
@@ -925,9 +975,11 @@ export function App(): JSX.Element {
       }
       appendMsg(sysMsg)
 
-      // 每次发送前新建会话，避免 conversation 累积导致 API 格式错误
-      await window.dogeAPI.newSession()
-      setCurrentSessionId(null)
+      // 每 5 条命令才新建会话，避免引擎重建导致状态丢失
+      if (idx > 0 && idx % 5 === 0) {
+        await window.dogeAPI.newSession()
+        setCurrentSessionId(null)
+      }
 
       try {
         streamingActiveRef.current = true
@@ -980,7 +1032,7 @@ export function App(): JSX.Element {
                     appendMsg({ id: `auto-asst-${Date.now()}`, role: 'assistant', content: lastTool.slice(0, 2000) })
                   }
                 }
-              } else if (allMsgs.length > 1) {
+              } else if (allMsgs.length > 0) {
                 appendMsg({ id: `auto-asst-${Date.now()}`, role: 'assistant', content: '(命令已执行，无文本输出)' })
               }
             } catch { /* ignore */ }
@@ -1240,7 +1292,7 @@ export function App(): JSX.Element {
     } catch { /* 忽略 */ }
   }, [])
 
-  const handleRollback = useCallback(async (toolUseId: string) => {
+  const handleRollback = useCallback(async (toolUseId: string): Promise<{ success: boolean; restored: string[]; error?: string }> => {
     try {
       const res = await window.dogeAPI.rollbackTool(toolUseId)
       if (res.success) {
@@ -1249,8 +1301,11 @@ export function App(): JSX.Element {
       } else {
         showToast(`回滚失败: ${res.error}`, 'error')
       }
+      return res
     } catch (e) {
-      showToast(`回滚失败: ${e instanceof Error ? e.message : '未知错误'}`, 'error')
+      const errorMsg = e instanceof Error ? e.message : '未知错误'
+      showToast(`回滚失败: ${errorMsg}`, 'error')
+      return { success: false, restored: [], error: errorMsg }
     }
   }, [showToast])
 

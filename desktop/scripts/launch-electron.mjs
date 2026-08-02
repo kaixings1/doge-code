@@ -31,7 +31,11 @@ if (!fs.existsSync(electronBinary)) {
 
 const child = spawn(electronBinary, [mainEntry], {
   stdio: 'inherit',
-  env: { ...process.env, DOGE_DESKTOP: '1' },
+  env: {
+    ...process.env,
+    DOGE_DESKTOP: '1',
+    DOGE_API_JSON: path.join(projectRoot, '..', '.doge', 'api.json'),
+  },
 })
 
 child.on('error', (err) => {

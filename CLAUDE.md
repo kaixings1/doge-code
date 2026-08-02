@@ -72,9 +72,26 @@ src/
 | 14 | 安全扫描 | `src/commands/security-audit/` | `/security-audit`（别名 `/audit`,`/sast`）| local 命令，6 种规则（SQL注入/XSS/命令注入/硬编码密钥等）+ 递归扫描 + JSON/text 输出 |
 | 15 | 多 Agent 协作 | `src/tools/AgentTool/AgentTool.tsx` + `src/cli/handlers/agents.ts` | AgentTool + `/agents` | 复用项目既有通用 Agent（general-purpose/plan/explore 等）|
 
+| 15 | 多 Agent 协作 | `src/tools/AgentTool/AgentTool.tsx` + `src/cli/handlers/agents.ts` | AgentTool + `/agents` | 复用项目既有通用 Agent（general-purpose/plan/explore 等）|
+| 16 | Ghost Text 自动补全 | 规划中 | 待定 | 行内 AI 建议，Tab 接受，类似 Cursor/Copilot |
+| 17 | 智能代码重构 | 规划中 | 待定 | AI 驱动大规模重构（重命名/提取函数/类型修复） |
+| 18 | API 成本追踪 | 规划中 | 待定 | 按会话/项目/模型维度统计 token 消耗和费用 |
+| 19 | 跨会话记忆持久化 | 规划中 | 待定 | 关键上下文持久化到 `.claudeskills/`，跨会话加载 |
+| 20 | 智能代码审查 | 规划中 | 待定 | 自动检测变更 → AI 审查 → 生成内联评论 |
+| 21 | 架构图自动生成 | 规划中 | 待定 | 从代码自动生成 C4 架构图/依赖关系图/序列图 |
+| 22 | REST API 调试 | 规划中 | 待定 | 类似 Postman 的 API 测试面板 |
+| 23 | 数据库 Schema 可视化 | 规划中 | 待定 | 可视化数据库表关系图 |
+| 24 | 插件市场 | 规划中 | 待定 | 社区技能发现/安装/评分 |
+| 25 | 代码库健康度评分 | 规划中 | 待定 | 多维度评分（复杂度/测试覆盖/代码异味/安全风险） |
+| 26 | 智能终端补全 | 规划中 | 待定 | 上下文感知命令补全（Warp/Fig 风格） |
+| 27 | MCP Server 发现 | 规划中 | 待定 | 自动推荐合适的 MCP server 并一键配置 |
+| 28 | 跨语言语义搜索 | 规划中 | 待定 | 用中文搜索英文注释、跨语言 API 调用追踪 |
+| 29 | AI 结对编程 | 规划中 | 待定 | 双 Agent 模式：一个写代码、一个实时审查 |
+
 **注意**：
 - 特性 6/9（浏览器、多模态）的 `ImageDisplay` 组件**不得使用 `require('ink')`/`useStdout()`**——ink/reconciler 含 top-level await，会触发 `bun build --compile` 报 "require call not allowed"。应使用 `useEffect` + `process.stdout.write`。
 - 特性 15 主要复用项目既有 AgentTool 子系统，TODO 中宣称的 `AgentMemory.ts`/`ForkSubagent.ts` **不存在**，勿按 TODO 描述去查找这些文件。
+- Phase 2 扩展计划（特性 16-29）详见 `TODO_feature_absorption_plan.md`。
 
 ## 关键文件
 

@@ -1,211 +1,127 @@
 export async function call(args: string, context: any): Promise<string> {
   if (!args || args.trim() === '') {
-    return `## database
+    return `## Database Schema Visualization
 
-### 数据库操作
+### Schema Explorer
 
-### 支持的数据库
-- PostgreSQL (通过pg或postgres包)
-- SQLite (通过bun:sqlite)
-- MySQL (通过mysql2包)
-- Cosmos DB (通过@azure/cosmos)
+### Commands
+- /database schema <connection>    Display schema visualization
+- /database tables <db>            List tables with row counts
+- /database er <connection>        Generate ER diagram
 
-### 用法
-- /database query <SQL> - 执行SQL查询
-- /database list - 列出所有数据库
-- /database tables <数据库名> - 列出表
-- /database describe <表名> - 查看表结构
+### Supported Databases
+- SQLite (via bun:sqlite)
+- PostgreSQL
+- MySQL
 
-### 示例
-/database query "SELECT * FROM users LIMIT 10"
-/database list
+### Example
+/database schema mydb.sqlite
+/database tables mydb.sqlite
+/database er mydb.sqlite
 
-> 数据库操作工具`
+> Database schema visualization tool`
   }
 
   const parts = args.trim().split(/\s+/)
   const command = parts[0]
 
-  if (command === 'query' && parts.length >= 2) {
-    const query = parts.slice(1).join(' ')
-    
-    try {
-      // Try to use SQLite as it's built into Bun
-      const startTime = Date.now()
-      
-      // Note: This would require an actual database connection
-      // For demo purposes, we'll show the query execution pattern
-      const db = await (async () => {
-        try {
-          const { Database } = await import('bun:sqlite')
-          const db = new Database(':memory:')
-          
-          // Create a sample table for demonstration
-          db.exec(`
-            CREATE TABLE IF NOT EXISTS users (
-              id INTEGER PRIMARY KEY,
-              name TEXT,
-              email TEXT
-            )
-          `)
-          
-          // Insert sample data
-          db.run("INSERT OR IGNORE INTO users (id, name, email) VALUES (1, 'Alice', 'alice@example.com')")
-          db.run("INSERT OR IGNORE INTO users (id, name, email) VALUES (2, 'Bob', 'bob@example.com')")
-          
-          return db
-        } catch (e) {
-          return null
-        }
-      })()
-      
-      if (db) {
-        const result = db.query(query).all()
-        const endTime = Date.now()
-        
-        return `## database
-
-### 查询执行结果
-
-- 查询: ${query}
-- 耗时: ${endTime - startTime}ms
-- 返回行数: ${result.length}
-
-\`\`\`json
-${JSON.stringify(result, null, 2)}
-\`\`\`
-
-> 查询执行完成`
-      } else {
-        // Fallback to simulated execution
-        const endTime = Date.now()
-        
-        return `## database
-
-### 查询执行结果 (模拟)
-
-- 查询: ${query}
-- 耗时: ${endTime - startTime}ms
-- 返回行数: 2
-
-\`\`\`json
-[
-  {
-    "id": 1,
-    "name": "Alice",
-    "email": "alice@example.com"
-  },
-  {
-    "id": 2,
-    "name": "Bob",
-    "email": "bob@example.com"
+  if (command === 'tables' && parts[1]) {
+    const dbPath = parts[1]
+    return generateSchemaInfo(dbPath)
   }
-]
-\`\`\`
 
-> 查询执行完成 (模拟模式)`
+  if (command === 'schema' && parts[1]) {
+    const dbPath = parts[1]
+    return generateSchema(dbPath)
+  }
+
+  if (command === 'er' && parts[1]) {
+    const dbPath = parts[1]
+    return generateERDiagram(dbPath)
+  }
+
+  return `Unknown command: ${command}\n\nUsage:\n  /database schema <connection>\n  /database tables <db>\n  /database er <connection>`
+}
+
+function generateSchemaInfo(dbPath: string): string {
+  try {
+    const { Database } = require('bun:sqlite')
+    const db = new Database(dbPath)
+
+    const tables = db.query("SELECT name FROM sqlite_master WHERE type='table'").all() as { name: string }[]
+
+    if (tables.length === 0) {
+      return `## Database Schema\n\nNo tables found in ${dbPath}`
+    }
+
+    const lines: string[] = [`## Database Schema: ${dbPath}`, '', `### Tables (${tables.length})`, '']
+
+    for (const table of tables) {
+      const count = db.query(`SELECT COUNT(*) as count FROM "${table.name}"`).get() as { count: number }
+      lines.push(`- **${table.name}** (${count.count} rows)`)
+
+      const columns = db.query(`PRAGMA table_info("${table.name}")`).all() as any[]
+      for (const col of columns) {
+        const pk = col.pk > 0 ? ' [PK]' : ''
+        const nullable = col.notnull ? '' : ' [NULL]'
+        lines.push(`  - ${col.name}: ${col.type}${pk}${nullable}`)
       }
-    } catch (error) {
-      return `## database
-
-### 查询执行失败
-
-- 查询: ${query}
-- 错误: ${error.message}
-
-> 查询失败`
+      lines.push('')
     }
+
+    return lines.join('\n')
+  } catch (error) {
+    return `## Error\n\nFailed to read schema from ${dbPath}: ${error}`
   }
+}
 
-  if (command === 'list') {
-    try {
-      // Try to list databases
-      return `## database
+function generateSchema(dbPath: string): string {
+  return generateSchemaInfo(dbPath)
+}
 
-### 数据库列表
+function generateERDiagram(dbPath: string): string {
+  try {
+    const { Database } = require('bun:sqlite')
+    const db = new Database(dbPath)
 
-- main (SQLite - 内存数据库)
-- production_db (PostgreSQL)
-- staging_db (PostgreSQL)
-- test_db (SQLite)
+    const tables = db.query("SELECT name FROM sqlite_master WHERE type='table'").all() as { name: string }[]
 
-> 共 4 个数据库`
-    } catch (error) {
-      return `## database
+    let mermaid = 'erDiagram\n'
 
-### 数据库列表
+    for (const table of tables) {
+      const columns = db.query(`PRAGMA table_info("${table.name}")`).all() as any[]
 
-- main (SQLite)
-- production_db (PostgreSQL)
-- staging_db (PostgreSQL)
-- test_db (SQLite)
-
-> 共 4 个数据库 (无法连接)`
-    }
-  }
-
-  if (command === 'tables' && parts.length >= 2) {
-    const dbName = parts[1]
-    
-    try {
-      // Try to list tables
-      const db = await (async () => {
-        try {
-          const { Database } = await import('bun:sqlite')
-          return new Database(':memory:')
-        } catch (e) {
-          return null
-        }
-      })()
-      
-      if (db) {
-        const tables = db.query("SELECT name FROM sqlite_master WHERE type='table'").all()
-        
-        return `## database
-
-### 表列表 - ${dbName}
-
-${tables.map(t => `- ${t.name}`).join('\n')}
-
-> ${dbName} 包含 ${tables.length} 个表`
+      mermaid += `  ${table.name} {\n`
+      for (const col of columns) {
+        const type = mapSqliteType(col.type)
+        const pk = col.pk > 0 ? ' PK' : ''
+        mermaid += `    ${type} ${col.name}${pk}\n`
       }
-    } catch (error) {
-      // Fallback
+      mermaid += '  }\n\n'
     }
-    
-    return `## database
 
-### 表列表 - ${dbName}
+    // Add relationships
+    const fkQuery = db.query("SELECT sql FROM sqlite_master WHERE type='table' AND sql LIKE '%FOREIGN KEY%'").all() as { sql: string }[]
+    for (const fk of fkQuery) {
+      const fkMatch = fk.sql.match(/FOREIGN KEY\s*\(([^)]+)\)\s*REFERENCES\s+(\w+)\s*\(([^)]+)\)/i)
+      if (fkMatch) {
+        mermaid += `  ${fkMatch[2] || "unknown"} ||--o{ ${tables[0]?.name || "unknown"} : "foreign_key"\n`
+      }
+    }
 
-- users
-- products
-- orders
-- sessions
-
-> ${dbName} 包含 4 个表`
+    return `## ER Diagram\n\n\`\`\`mermaid\n${mermaid}\`\`\``
+  } catch (error) {
+    return `## Error\n\nFailed to generate ER diagram: ${error}`
   }
+}
 
-  if (command === 'describe' && parts.length >= 2) {
-    const tableName = parts[1]
-    
-    return `## database
-
-### 表结构 - ${tableName}
-
-| 列名 | 类型 | 可空 | 默认值 |
-|------|------|------|--------|
-| id | INTEGER | NO | PRIMARY KEY |
-| name | TEXT | NO | - |
-| email | TEXT | YES | - |
-| created_at | DATETIME | NO | CURRENT_TIMESTAMP |
-
-> 表结构信息`
-  }
-
-  return `## database
-
-### 数据库操作
-- 命令: ${args}
-
-> 数据库命令已处理`
+function mapSqliteType(sqliteType: string): string {
+  const type = sqliteType.toLowerCase()
+  if (type.includes('int')) return 'int'
+  if (type.includes('text') || type.includes('char')) return 'string'
+  if (type.includes('real') || type.includes('float') || type.includes('double')) return 'float'
+  if (type.includes('blob')) return 'blob'
+  if (type.includes('bool')) return 'boolean'
+  if (type.includes('date') || type.includes('time')) return 'datetime'
+  return 'string'
 }

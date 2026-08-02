@@ -16,6 +16,8 @@ import { ErrorClassifier } from "./errors/classifier.ts";
 import { RetryHandler } from "./errors/retryHandler.ts";
 import { ErrorRecovery } from "./errors/recovery.ts";
 import { SubAgentManager } from "./subagent/subAgentManager.ts";
+import { AutoFixLoop } from "./autoFixLoop.ts";
+import { GitContextInjector, type GitContextConfig } from "./gitContext.ts";
 // 导入工具注册表（复用 src/tools.ts 中 buildTool() 构建的完整工具实例）
 import { getAllBaseTools } from "../tools.js";
 import { type Tools, type ToolInfo } from "../Tool.js";
@@ -35,6 +37,13 @@ export interface EngineOptions {
   onEvent?: (event: import("./messageLoop.ts").AgentEvent) => void;
   /** 预测性 AI 助手：当前文件的静态分析建议 */
   preAnalysis?: Array<{ type: string; message: string; line?: number }>;
+  /** 自动修复循环配置（吸收自 Aider）：编辑工具后自动 lint→test→fix */
+  autoFixLoop?: {
+    enabled?: boolean
+    maxIterations?: number
+  };
+  /** Git 上下文感知配置（吸收自 Aider）：编辑文件时自动获取 git blame + log */
+  gitContext?: GitContextConfig;
 }
 
 /**
@@ -135,6 +144,7 @@ export class QueryEngine {
     this.recovery = new ErrorRecovery(this.stateMachine, this.retryHandler, this.autoCompactor);
     this.conversation = this._conversation;
     this._preAnalysis = opts.preAnalysis;
+    const autoFixLoopConfig = opts.autoFixLoop;
 
     // 将内部工具注册表转换为请求构建器所需的 ToolDefinition 格式
     this._toolDefinitions = Array.from(registry.values()).map((t) => ({
@@ -163,6 +173,14 @@ export class QueryEngine {
       onEvent: opts.onEvent,
       autoCompactor: this.autoCompactor,
       preAnalysis: this._preAnalysis,
+      autoFixLoop: {
+        enabled: autoFixLoopConfig?.enabled ?? true,
+        maxIterations: autoFixLoopConfig?.maxIterations ?? 3,
+        onEvent: (event) => {
+          engineLog('AUTOFIX', event.type)
+        },
+      },
+      gitContext: opts.gitContext,
     };
     this.messageLoop = new MessageLoop(deps);
 

@@ -4,7 +4,7 @@ import { useNotifications } from '../context/notifications.js';
 import { Text } from '../ink.js';
 import { logEvent } from '../services/analytics/index.js';
 import { useDebounceCallback } from 'usehooks-ts';
-import { type Command, getCommandName } from '../commands.js';
+import { type Command, getCommand, getCommandName } from '../commands.js';
 import { getModeFromInput, getValueFromInput } from '../components/PromptInput/inputModes.js';
 import type { SuggestionItem, SuggestionType } from '../components/PromptInput/PromptInputFooterSuggestions.js';
 import { useIsModalOverlayActive, useRegisterOverlay } from '../context/overlayContext.js';
@@ -770,6 +770,26 @@ export function useTypeahead({
           }
         }
 
+        // 即使没有空格，如果输入精确匹配某个命令名，也不显示建议。
+        // 避免 Fuse.js 模糊匹配将用户的精确命令替换为相似命令（例如 /compact -> /compare）。
+        // 参数提示仍可正常显示。
+        if (value.length > 1) {
+          const exactMatchNoSpace = commands.find(cmd => getCommandName(cmd) === commandName);
+          if (exactMatchNoSpace) {
+            if (exactMatchNoSpace.argumentHint) {
+              commandArgumentHint = exactMatchNoSpace.argumentHint;
+            }
+            setSuggestionsState(() => ({
+              commandArgumentHint,
+              suggestions: [],
+              selectedSuggestion: -1
+            }));
+            setSuggestionType('none');
+            setMaxColumnWidth(undefined);
+            return;
+          }
+        }
+
         // 注意：参数提示仅在恰好有一个尾随空格时显示（当 hasExactlyOneTrailingSpace 为 true 时在上面设置）
       }
       const commandItems = generateCommandSuggestions(value, commands);
@@ -1135,6 +1155,18 @@ export function useTypeahead({
     const suggestion = suggestions[selectedSuggestion];
     if (suggestionType === 'command' && selectedSuggestion < suggestions.length) {
       if (suggestion) {
+        // 如果当前输入已经是完整有效的命令，直接提交原始输入
+        // 避免建议系统用另一个相似命令覆盖用户的精确输入
+        const currentInput = input.trim()
+        if (isCommandInput(currentInput)) {
+          const commandName = currentInput.startsWith('/') ? currentInput.slice(1).split(/\s/)[0] : currentInput.split(/\s/)[0]
+          const matchedCmd = getCommand(commandName, commands)
+          if (matchedCmd && getCommandName(matchedCmd) === commandName) {
+            clearSuggestions()
+            onSubmit(currentInput, /* isSubmittingSlashCommand */ true)
+            return
+          }
+        }
         applyCommandSuggestion(suggestion, true,
         // 在回车时执行
         commands, onInputChange, setCursorOffset, onSubmit);
