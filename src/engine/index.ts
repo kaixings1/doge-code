@@ -21,6 +21,10 @@ import { GitContextInjector, type GitContextConfig } from "./gitContext.ts";
 // 导入工具注册表（复用 src/tools.ts 中 buildTool() 构建的完整工具实例）
 import { getAllBaseTools } from "../tools.js";
 import { type Tools, type ToolInfo } from "../Tool.js";
+// 导入新功能模块
+import { getEndConversationManager } from "../features/endConversation.js";
+import { getSubAgentManager } from "../features/featureFlags.js";
+import { getAutoModeManager } from "../features/additionalFeatures.js";
 
 export interface Conversation {
   messages: InternalMessage[];
@@ -146,6 +150,11 @@ export class QueryEngine {
     this._preAnalysis = opts.preAnalysis;
     const autoFixLoopConfig = opts.autoFixLoop;
 
+    // 初始化新功能管理器
+    const endConvManager = getEndConversationManager();
+    const subAgentMgr = getSubAgentManager();
+    const autoModeMgr = getAutoModeManager();
+
     // 将内部工具注册表转换为请求构建器所需的 ToolDefinition 格式
     this._toolDefinitions = Array.from(registry.values()).map((t) => ({
       name: t.name,
@@ -267,6 +276,23 @@ export class QueryEngine {
   }
 
   async query(userMessage: string): Promise<QueryResult> {
+    // EndConversation 安全检查
+    const endConvManager = getEndConversationManager()
+    const check = endConvManager.checkInput(userMessage)
+    if (check.shouldEnd) {
+      return {
+        type: 'ended' as const,
+        output: endConvManager.getEndMessage(),
+        reason: check.reason,
+      }
+    }
+    if (check.shouldWarn) {
+      // 将警告注入对话
+      this._conversation.messages.push({
+        role: 'assistant' as const,
+        content: endConvManager.getWarningMessage(),
+      })
+    }
     return this.messageLoop.run(userMessage);
   }
 
