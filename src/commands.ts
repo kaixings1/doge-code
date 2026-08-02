@@ -102,6 +102,7 @@ import team from './commands/team/index.ts'
 import game from './commands/game/index.ts'
 import refactor from './commands/refactor.ts'
 import autocomplete from './commands/autocomplete/index.ts'
+import terminalComplete from './commands/complete/index.ts'
 import testGen from './commands/test-gen.ts'
 
 // 导入新增的21个命令
@@ -381,6 +382,7 @@ const COMMANDS = memoize((): Command[] => [
   removeModel,
   advisor,
   autocomplete,
+  terminalComplete,
   agents,
   branch,
   btw,

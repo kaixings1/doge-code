@@ -185,17 +185,17 @@
 
 | # | 特性 | 现状 | 参考仓库 | 处理方式 |
 |---|------|------|----------|----------|
-| 16 | Ghost Text 补全 | ❌ 无实现 | `.github/continue/`, `.github/tabby/` | 从零开始 |
+| 16 | Ghost Text 补全 | ✅ 已完成 | `.github/continue/`, `.github/tabby/` | **已实现**: `autocomplete` 命令，支持命令/标志/文件/目录/Shell 补全 |
 | 17 | 智能代码重构 | ❌ 无实现 | `.github/clawcodex/`, `.github/compound-engineering-plugin/` | 从零开始 |
-| 18 | API 成本追踪 | ⚠️ 基础实现 | `.github/opencode/`, `.github/aider/` | **增强**: `cost.ts` 仅展示费用，需增加按会话/模型/项目的详细统计、图表、趋势追踪 |
+| 18 | API 成本追踪 | ✅ 已完成 | `.github/opencode/`, `.github/aider/` | **已增强**: `cost.ts` 新增 detail/model 子命令，支持 Token 统计、缓存命中率、按模型分析 |
 | 19 | 跨会话记忆持久化 | ⚠️ 有 `memory/` 命令 | `.github/continue/`, `.github/agents-cli/` | **增强**: 当前记忆仅会话内有效，需增加 `.claudeskills/` 持久化存储、自动注入上下文 |
-| 20 | 智能代码审查 | ⚠️ 骨架实现 | `.github/tirth8205-code-review-graph/`, `.github/Cline/` | **增强**: `codeReviewAssistant.ts` 仅 help 文本，需完整实现自动检测变更、AI 审查、内联评论生成 |
+| 20 | 智能代码审查 | ✅ 已完成 | `.github/tirth8205-code-review-graph/`, `.github/Cline/` | **已实现**: `code_review_assistant.ts` 完整实现真实扫描、安全检查、报告生成 |
 | 21 | 架构图自动生成 | ❌ 无实现 | `.github/bloop/`, `.github/Graphify-Labs-graphify/`, `.github/mcp_excalidraw/` | 从零开始 |
 | 22 | REST API 调试 | ⚠️ 有基础 | `.github/bloop/`, `.github/firecrawl/` | **增强**: `HttpTool` 存在但无专用调试界面，需添加 Postman 风格面板 |
 | 23 | DB Schema 可视化 | ⚠️ 有基础 | `.github/bloop/`, `.github/db-gpt/` | **增强**: `DatabaseTool` 存在但仅基础查询，需添加 ER 图可视化 |
 | 24 | 插件市场 | ❌ 无实现 | `.github/anthropics-claude-plugins-official/`, `.github/compound-engineering-plugin/` | 从零开始 |
-| 25 | 代码库健康度评分 | ⚠️ 部分实现 | `.github/chaos-mesh/`, `.github/Anthropic-Cybersecurity-Skills/` | **增强**: `security-audit` 仅 5 条基础规则，需扩展为多维度评分（复杂度/测试覆盖/代码异味/依赖健康/安全风险） |
-| 26 | 智能终端补全 | ❌ 无实现 | `.github/opencode/`, `.github/gorilla-cli/` | 从零开始 |
+| 25 | 代码库健康度评分 | ✅ 已完成 | `.github/chaos-mesh/`, `.github/Anthropic-Cybersecurity-Skills/` | **已实现**: `health-score` 命令，5维度评分（安全/复杂度/可维护性/错误处理/依赖），A/B/C/D/F等级 |
+| 26 | 智能终端补全 | ✅ 已完成 | `.github/opencode/`, `.github/gorilla-cli/` | **已实现**: `complete` 命令，Git分支/npm脚本/Docker容器/环境变量/AI建议，自动上下文推断 |
 | 27 | MCP Server 发现 | ⚠️ 有基础 | `.github/ha-mcp/`, `.github/anthropics-claude-plugins-official/` | **增强**: 已有 7 层 MCP 配置，需添加自动发现和推荐机制 |
 | 28 | 跨语言语义搜索 | ✅ 已覆盖 | `.github/tabby/`, `.github/cocoindex-code/` | **TODO**: `code-search` + `vector-search` 已实现 regex/semantic/hybrid/symbol 四模式 + 30+ 语言过滤，功能强大，暂不重复引入 |
 | 29 | AI 结对编程 | ❌ 无实现 | `.github/openai-codex/`, `.github/SWE-agent/` | 从零开始 |
@@ -269,8 +269,8 @@
 
 | 批次 | 任务 | 预计工时 | 优先级 | 依赖 |
 |------|------|----------|--------|------|
-| **第一批** | T1(成本追踪增强) + T2(代码审查) + T3(健康度评分) | 12-16h | 🔴 高 | 无 |
-| **第二批** | T4(Ghost Text) + T5(终端补全) | 22-30h | 🔴 高 | 无 |
+| **第一批** | T1(成本追踪增强) + T2(代码审查) + T3(健康度评分) | 12-16h | 🔴 高 | 无 | ✅ T1 cost detail+model命令 / T2 code-review-assistant真实扫描 / T3 health-score(5维度评分) |
+| **第二批** | T4(Ghost Text) + T5(终端补全) | 22-30h | 🔴 高 | 无 | ✅ T4 autocomplete(命令/标志/文件/Shell补全) / T5 complete(Git/npm/Docker/Env/AI建议) |
 | **第三批** | T6(重构) + T7(记忆持久化) + T8(架构图) | 33-42h | 🟡 中 | 第二批UI基础 |
 | **第四批** | T9(API调试) + T10(DB可视化) + T11(插件市场) | 37-48h | 🟡 中 | 第三批可视化基础 |
 | **第五批** | T12(结对编程) + T13(MCP发现) | 21-28h | 🟢 低 | 前面批次完成 |

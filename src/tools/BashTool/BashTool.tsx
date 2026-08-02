@@ -1159,6 +1159,14 @@ export const BashTool = buildTool({
     };
   },
   async checkPermissions(input, context): Promise<PermissionResult> {
+    // 自动模式安全检查（更新日志 2.1.217+）
+    const { getAutoModeManager } = await import('../../features/additionalFeatures.js')
+    const autoModeMgr = getAutoModeManager()
+    const cmd = typeof input?.command === 'string' ? input.command : ''
+    const modeCheck = autoModeMgr.checkCommand(cmd)
+    if (!modeCheck.allowed) {
+      return { result: false, message: modeCheck.reason }
+    }
     return bashToolHasPermission(input, context);
   },
   renderToolUseMessage,
