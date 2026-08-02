@@ -196,14 +196,14 @@
 | 35 | 项目 Wiki | `/wiki` | ✅ 已丰富 | 18子命令: architecture/api/changelog/readme/generate/export/search/graph/toc/link/render/watch/diff/template/index/clean + Mermaid依赖图 + 模板系统 + 终端渲染 + 文档链接 |
 | 36 | 自定义命令 | `/custom-cmd` | ✅ 已完成 | create/delete/show/enable/disable |
 | 37 | 主动代码建议 | `/proactive` | ✅ 已丰富 | 16子命令: scan/watch/stop-watch/fix-all/fix/ignore/ignore-pattern/report/trend/rules/schedule/export/list/status + 文件监视 + 定时扫描 + 规则管理 + HTML/Markdown报告 + 趋势分析 + 自动修复 |
-| 38 | 后台任务管理 | `/bg` | ✅ 已完成 | run/list/status/kill/clear |
-| 39 | 依赖管理 | `/deps` | ✅ 已完成 | status/outdated/update/add/remove/audit |
-| 40 | 代码书签 | `/bookmark` | ✅ 已完成 | add/delete/search/tags/clear |
-| 41 | 通知系统 | `/notify` | ✅ 已完成 | add/test/enable/delete + 6种事件类型 |
-| 42 | 项目模板 | `/templates` | ✅ 已完成 | 5+ 模板 + 搜索 + 一键创建 |
-| 43 | Git Stash 管理 | `/stash` | ✅ 已完成 | save/pop/apply/show/branch/drop/clear |
-| 44 | 代码健康仪表盘 | `/code-health` | ✅ 已完成 | 复杂度/语言/热点/A-F评分 |
-| 45 | 错误监控 | `/errors` | ✅ 已完成 | scan/list/resolve/stats/clear |
+| 38 | 后台任务管理 | `/bg` | ✅ 已丰富 | 9子命令: run/list/status/tail/watch/logs/kill/clear + PID追踪 + 运行时长 + 输出尾部 + 日志聚合 |
+| 39 | 依赖管理 | `/deps` | ✅ 已完成 | status/outdated/update/add/remove/audit + npm/yarn/pnpm/bun自动检测 |
+| 40 | 代码书签 | `/bookmark` | ✅ 已完成 | add/delete/search/tags/clear + 文件:行定位 |
+| 41 | 通知系统 | `/notify` | ✅ 已丰富 | 10子命令: list/add/test/enable/delete/log/mark-read/clear-log/config + 8种事件 + Webhook + 冷却时间 + 历史日志 |
+| 42 | 项目模板 | `/templates` | ✅ 已完成 | 5+ 模板 + 搜索 + 一键创建 + 变量替换 |
+| 43 | Git Stash 管理 | `/stash` | ✅ 已丰富 | 12子命令: list/save/pop/apply/show/files/branch/drop/clear/note/rename/compare + 统计 + 笔记 + Stash间比较 |
+| 44 | 代码健康仪表盘 | `/code-health` | ✅ 已丰富 | 10子命令: dashboard/file/trend/compare/recommend/save/export/watch/languages/complexity/hotspots + 历史快照 + 趋势图 + A-F评分 + 智能建议 |
+| 45 | 错误监控 | `/errors` | ✅ 已丰富 | 12子命令: list/scan/resolve/attempt-fix/resolve-all/stats/patterns/pattern/export/import/clear + 12种内置模式 + 正则匹配 + 自动修复 + 导入导出 |
 
 **图例**:
 - ⏳ 待开始
