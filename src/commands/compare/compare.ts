@@ -76,5 +76,8 @@ export async function call(args: string, context: any): Promise<string> {
   }
 
   result += `\n> 比较完成`
-  return result
+  return {
+    type: 'text' as const,
+    value: result,
+  }
 }

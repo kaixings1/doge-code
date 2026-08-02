@@ -10,10 +10,10 @@ import './require-shim.js'
 import { app, BrowserWindow } from 'electron'
 import * as path from 'path'
 import * as fs from 'fs'
+import { fileURLToPath } from 'url'
 
 // ─── 路径 ───
-// 构建后 __dirname 指向 desktop/src/main/，构建产物在 desktop/dist/main/
-const DESKTOP_ROOT = path.resolve(__dirname, '..')
+const DESKTOP_ROOT = path.dirname(fileURLToPath(import.meta.url))
 const PROJECT_ROOT = path.resolve(DESKTOP_ROOT, '..')
 
 // ─── 配置 ───

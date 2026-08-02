@@ -463,9 +463,21 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
 
                           if (args) {
                             const entry = toolCallAccum.get(idx)!
-                            if (!entry.args.endsWith(args)) {
-                              const newArgs = args.slice(entry.args.length)
-                              entry.args = args
+                            // 与 src/services/api/openaiCompat.ts 对齐的递增处理：
+                            // 1) 模型每帧发送完整 arguments（前累积作前缀）→ 只发新增部分
+                            // 2) 全量无新增（重复帧）→ 不发
+                            // 3) 模型按增量发送片段 → 直接累积并原样 yield
+                            const newArgs = args
+                            if (newArgs.startsWith(entry.args) && newArgs.length > entry.args.length) {
+                              const delta = newArgs.slice(entry.args.length)
+                              entry.args = newArgs
+                              yield { type: 'content_block_delta', index: idx, delta: { type: 'input_json_delta', partial_json: delta } }
+                            } else if (newArgs.startsWith(entry.args)) {
+                              // 与累积一致，无新增内容，跳过
+                              entry.args = newArgs
+                            } else {
+                              // 兼容增量式流式：把片段直接累积并透传
+                              entry.args += newArgs
                               yield { type: 'content_block_delta', index: idx, delta: { type: 'input_json_delta', partial_json: newArgs } }
                             }
                           }

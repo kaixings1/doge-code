@@ -1,13 +1,15 @@
 import { feature } from 'bun:bundle'
-import { isBridgeEnabled } from '../../bridge/bridgeEnabled.js'
+import { isLocalBridgeMode } from '../../bridge/bridgeConfig.js'
 import type { Command } from '../../commands.js'
 
 function isEnabled(): boolean {
-  // feature(BRIDGE_MODE) removed for Doge Code
-  if (false) {
-    return false
+  if (feature('BRIDGE_MODE')) {
+    return true
   }
-  return isBridgeEnabled()
+  if (isLocalBridgeMode()) {
+    return true
+  }
+  return process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1'
 }
 
 const bridge = {

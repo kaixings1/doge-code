@@ -6,9 +6,9 @@ import { app, BrowserWindow, ipcMain, shell, Tray, Menu, nativeImage } from 'ele
 import Store from 'electron-store'
 import * as path from 'path'
 import { createRequire } from 'node:module'
+import { fileURLToPath, pathToFileURL } from 'url'
 
 const requireModule = createRequire(import.meta.url)
-import { pathToFileURL } from 'url'
 import * as fs from 'fs'
 import { scanFile as securityScanFile, scanDirectory as securityScanDirectory, SECURITY_RULES } from '../../../src/commands/security-audit/index.js'
 import { QueryEngine, type ToolDefinition } from '../../../src/engine/index.js'
@@ -23,6 +23,10 @@ import { getBundledSkills } from '../../../src/skills/bundledSkills.js'
 import { createEngineApi, type EngineApi } from './engineApi.js'
 import { scanPlugins, setPluginEnabled, installPlugin, uninstallPlugin, getPluginCommandContent, type PluginInfo } from './pluginManager.js'
 import { getMarketplaces, installPluginFromMarketplace, type MarketplacePlugin } from './pluginMarketplace.js'
+import { DocumentManager, type DocOperation } from './collaborativeDoc.js'
+import { BatchEngine, safeReadFile, safeWriteFile, scanFiles, type BatchConfig } from './batchEngine.js'
+import { validateManifest, validatePluginPath, scanPluginSecurity, safeReadCommand, validateSource, DEFAULT_SANDBOX_CONFIG } from './pluginSandbox.js'
+import { RemoteSignalingServer, type RemoteMessage } from './remoteSignaling.js'
 import { createDesktopApiClient, type DesktopApiClient } from './apiClient.js'
 import { saveSession, listSessions, loadSession, deleteSession, updateSession, saveCrashRecovery, getCrashRecovery, clearCrashRecovery } from './sessionStore.js'
 import { createAdaptedTools, executeTool, resetAdaptedToolsCache, rollbackTool, getAllOperations } from './toolExecutor.js'
@@ -32,6 +36,32 @@ let mainWindow: BrowserWindow | null = null
 let tray: Tray | null = null
 const store = new Store()
 
+// ─── CRDT 文档协作引擎 ───
+const docManager = new DocumentManager()
+
+// ─── 批量处理引擎 ───
+const batchEngine = new BatchEngine()
+
+// ─── 远程信令服务器（内置 WebSocket） ───
+const signalingServer = new RemoteSignalingServer()
+let signalingServerPort = 0
+
+// 启动远程信令服务器（异步，不阻塞）
+signalingServer.start(0).then(port => {
+  signalingServerPort = port
+  tsLog('SIGNALING', `WebSocket signaling server started on port ${port}`)
+}).catch(err => {
+  tsLog('SIGNALING', 'Failed to start signaling server:', err)
+})
+
+// 监听信令消息，转发到渲染进程
+signalingServer.onMessage((msg: RemoteMessage) => {
+  const windows = BrowserWindow.getAllWindows()
+  windows.forEach(win => {
+    win.webContents.send('doge:remote-signal', msg)
+  })
+})
+
 // ─── 日志辅助 ───
 function tsLog(tag: string, ...args: unknown[]): void {
   const t = new Date().toLocaleTimeString('zh-CN', { hour12: false })
@@ -39,18 +69,86 @@ function tsLog(tag: string, ...args: unknown[]): void {
 }
 
 // ─── 路径 ───
-// 打包后 __dirname = dist/main/，桌面目录 = __dirname/../..
-const DESKTOP_ROOT = path.resolve(__dirname, '..', '..')
+const DESKTOP_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
 // 项目根目录（包含 .doge/api.json）
 const PROJECT_ROOT = path.resolve(DESKTOP_ROOT, '..')
 const projectRoot = PROJECT_ROOT
 const DIST_DIR = path.join(DESKTOP_ROOT, 'dist')
-const CONFIG_PATH = path.join(projectRoot, '.doge', 'api.json')
+const CONFIG_PATH_DEFAULT = path.join(projectRoot, '.doge', 'api.json')
+
+/**
+ * 定位 .doge/api.json。
+ * 开发模式：desktop/src/main → doge-code/.doge/api.json（常规计算正确）。
+ * 打包后（portable / unpacked）：主进程被 bundle 进 app.asar，dirname 层级变化导致
+ * CONFIG_PATH_DEFAULT 指向 app.asar 内部（不存在）。因此从多个候选起点（当前 cwd、
+ * 可执行文件目录、process.env 指定）向上回溯查找最近的 .doge/api.json。
+ */
+// 配置查找诊断日志（写入 %TEMP%\doge_debug_config.log），便于真实 portable 环境定位
+const DEBUG_CONFIG_LOG = path.join(process.env.TEMP || 'C:/Windows/Temp', 'doge_debug_config.log')
+function cfgDbg(msg: string): void {
+  try {
+    fs.appendFileSync(DEBUG_CONFIG_LOG, `[${new Date().toISOString()}] ${msg}\n`)
+  } catch { /* ignore */ }
+}
+
+function findApiConfig(): string {
+  const pad = (s: string) => (s ? s : '(null)')
+  cfgDbg('=== findApiConfig start ===')
+  cfgDbg(`  cwd = ${pad(process.cwd())}`)
+  cfgDbg(`  execPath = ${pad(process.execPath)}`)
+  cfgDbg(`  DOGE_API_JSON = ${pad(process.env.DOGE_API_JSON)}`)
+  cfgDbg(`  PORTABLE_EXECUTABLE_DIR = ${pad(process.env.PORTABLE_EXECUTABLE_DIR)}`)
+  cfgDbg(`  PORTABLE_EXECUTABLE_FILE = ${pad(process.env.PORTABLE_EXECUTABLE_FILE)}`)
+  cfgDbg(`  CONFIG_PATH_DEFAULT = ${pad(CONFIG_PATH_DEFAULT)}`)
+  if (process.env.DOGE_API_JSON) {
+    const explicit = path.resolve(process.env.DOGE_API_JSON)
+    if (isFileSync(explicit)) {
+      cfgDbg(`  通过 DOGE_API_JSON 找到配置: ${explicit}`)
+      tsLog('CONFIG', 'findApiConfig: 通过 DOGE_API_JSON 找到配置:', explicit)
+      return explicit
+    }
+    cfgDbg(`  DOGE_API_JSON 指定文件不存在: ${explicit}`)
+  }
+  const candidates: string[] = []
+  // electron-builder portable 的 7z SFX 运行时可能注入这些变量，指向用户放置 portable exe 的目录。
+  if (process.env.PORTABLE_EXECUTABLE_DIR) {
+    try { candidates.push(path.resolve(process.env.PORTABLE_EXECUTABLE_DIR)) } catch { /* ignore */ }
+  }
+  try { candidates.push(path.dirname(process.execPath)) } catch { /* ignore */ }
+  try { candidates.push(process.cwd()) } catch { /* ignore */ }
+  candidates.push(projectRoot)
+  for (const start of candidates) {
+    try {
+      let dir = path.resolve(start)
+      cfgDbg(`  候选起点: ${dir}`)
+      for (let i = 0; i < 10; i++) {
+        const candidate = path.join(dir, '.doge', 'api.json')
+        if (isFileSync(candidate)) {
+          cfgDbg(`  找到配置: ${candidate}`)
+          tsLog('CONFIG', 'findApiConfig: 找到配置:', candidate)
+          return candidate
+        }
+        const parent = path.dirname(dir)
+        if (parent === dir) break
+        dir = parent
+      }
+    } catch { /* 继续下一个候选起点 */ }
+  }
+  cfgDbg('  所有候选路径均未找到 .doge/api.json, 回退默认')
+  return CONFIG_PATH_DEFAULT
+}
+
+function isFileSync(p: string): boolean {
+  try { return fs.statSync(p).isFile() } catch { return false }
+}
 
 function loadConfig(): { provider: string; apiKey: string; model: string; baseUrl: string; workingDir: string } {
-  const configPath = process.env.DOGE_API_JSON
-    ? path.resolve(process.env.DOGE_API_JSON)
-    : CONFIG_PATH
+  const configPath = findApiConfig()
+  cfgDbg(`loadConfig: 读取配置文件: ${configPath}`)
+  tsLog('CONFIG', 'loadConfig: 尝试读取配置文件:', configPath)
+  // 工作目录 = 包含 .doge 目录的上一级（即项目根）
+  const configDirParent = path.dirname(configPath)   // .../.doge
+  const workingDir = path.resolve(configDirParent, '..')
   try {
     const raw = fs.readFileSync(configPath, 'utf-8')
     const data = JSON.parse(raw)
@@ -62,14 +160,18 @@ function loadConfig(): { provider: string; apiKey: string; model: string; baseUr
     const baseUrl = provider === 'anthropic'
       ? 'https://api.anthropic.com/v1'
       : (configuredUrl || 'https://api.openai.com/v1')
+    const hasKey = !!preset.apiKey
+    cfgDbg(`loadConfig: 读到 activePreset=${data.activePreset}, model=${preset.model || 'gpt-4o'}, apiKey非空=${hasKey}, baseURL=${baseUrl}`)
+    tsLog('CONFIG', 'loadConfig: 配置加载成功, provider:', provider, 'apiKey 已配置:', hasKey)
     return {
       provider,
       apiKey: preset.apiKey || '',
       model: preset.model || 'gpt-4o',
       baseUrl,
-      workingDir: projectRoot,
+      workingDir,
     }
-  } catch {
+  } catch (e) {
+    tsLog('CONFIG', 'loadConfig: 读取配置失败 -', e instanceof Error ? e.message : String(e))
     return { provider: 'openai', apiKey: '', model: 'gpt-4o', baseUrl: 'https://api.openai.com/v1', workingDir: projectRoot }
   }
 }
@@ -181,7 +283,7 @@ function createWindow(): void {
     title: 'Doge Code',
     backgroundColor: '#000000',
     webPreferences: {
-      preload: path.join(DIST_DIR, 'preload', 'index.js'),
+      preload: path.join(DIST_DIR, 'preload', 'index.cjs'),
       sandbox: false,
       contextIsolation: true,
       nodeIntegration: false,
@@ -2080,7 +2182,7 @@ ipcMain.handle('doge:agent-delete', (_event, id: string) => {
   }
 })
 
-// ─── 插件管理 IPC ───
+// ─── 插件管理 IPC（带沙箱安全） ───
 
 ipcMain.handle('doge:plugin-scan', () => {
   return scanPlugins(projectRoot)
@@ -2088,6 +2190,10 @@ ipcMain.handle('doge:plugin-scan', () => {
 
 ipcMain.handle('doge:plugin-enable', (_event, pluginName: string, enabled: boolean) => {
   try {
+    // 沙箱: 验证插件名格式
+    if (!/^[a-zA-Z0-9_\-\.]+$/.test(pluginName)) {
+      return { success: false, error: '非法插件名' }
+    }
     setPluginEnabled(projectRoot, pluginName, enabled)
     return { success: true }
   } catch (e: unknown) {
@@ -2096,15 +2202,126 @@ ipcMain.handle('doge:plugin-enable', (_event, pluginName: string, enabled: boole
 })
 
 ipcMain.handle('doge:plugin-install', (_event, sourceDir: string, pluginName: string) => {
+  // 沙箱: 验证插件名格式
+  if (!/^[a-zA-Z0-9_\-\.]+$/.test(pluginName)) {
+    return { success: false, error: '非法插件名' }
+  }
+
+  // 沙箱: 验证路径安全
+  const allowedDirs = [
+    path.join(projectRoot, '.doge', 'plugins'),
+    path.join(projectRoot, 'plugins'),
+    path.join(projectRoot, '.claude', 'plugins'),
+  ]
+  const pathCheck = validatePluginPath(sourceDir, [...allowedDirs, path.dirname(sourceDir)])
+  if (!pathCheck.valid) {
+    return { success: false, error: `路径安全检查失败: ${pathCheck.error}` }
+  }
+
+  // 沙箱: 安全扫描源目录
+  const securityResult = scanPluginSecurity(sourceDir)
+  if (!securityResult.valid) {
+    return { success: false, error: `安全扫描失败: ${securityResult.errors.join('; ')}` }
+  }
+
+  // 沙箱: 验证 manifest
+  const manifestPath = path.join(sourceDir, 'plugin.json')
+  if (fs.existsSync(manifestPath)) {
+    try {
+      const raw = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'))
+      const manifestCheck = validateManifest(raw)
+      if (!manifestCheck.valid) {
+        return { success: false, error: `清单验证失败: ${manifestCheck.errors.join('; ')}` }
+      }
+    } catch {
+      return { success: false, error: 'manifest.json 解析失败' }
+    }
+  }
+
   return installPlugin(projectRoot, sourceDir, pluginName)
 })
 
 ipcMain.handle('doge:plugin-uninstall', (_event, pluginName: string) => {
+  // 沙箱: 验证插件名格式
+  if (!/^[a-zA-Z0-9_\-\.]+$/.test(pluginName)) {
+    return { success: false, error: '非法插件名' }
+  }
   return uninstallPlugin(projectRoot, pluginName)
 })
 
 ipcMain.handle('doge:plugin-get-command', (_event, pluginName: string, commandName: string) => {
-  return { content: getPluginCommandContent(projectRoot, pluginName, commandName) }
+  // 沙箱: 使用安全读取（带内容净化）
+  // 先找到插件目录
+  const pluginDirs = [
+    path.join(projectRoot, '.doge', 'plugins'),
+    path.join(projectRoot, 'plugins'),
+    path.join(projectRoot, '.claude', 'plugins'),
+  ]
+
+  for (const dir of pluginDirs) {
+    const pluginDir = path.join(dir, pluginName)
+    if (fs.existsSync(pluginDir)) {
+      const result = safeReadCommand(pluginDir, commandName)
+      return {
+        content: result.content || null,
+        error: result.error,
+        warnings: result.warnings,
+      }
+    }
+  }
+
+  return { content: null, error: '插件不存在' }
+})
+
+// ─── 插件安全审计 IPC ───
+
+ipcMain.handle('doge:plugin-security-audit', (_event, pluginName: string) => {
+  try {
+    const pluginDirs = [
+      path.join(projectRoot, '.doge', 'plugins'),
+      path.join(projectRoot, 'plugins'),
+      path.join(projectRoot, '.claude', 'plugins'),
+    ]
+
+    for (const dir of pluginDirs) {
+      const pluginDir = path.join(dir, pluginName)
+      if (fs.existsSync(pluginDir)) {
+        // 路径安全检查
+        const pathCheck = validatePluginPath(pluginDir, pluginDirs)
+        if (!pathCheck.valid) {
+          return { valid: false, errors: [`路径安全: ${pathCheck.error}`], warnings: [] }
+        }
+
+        // 安全扫描
+        const scanResult = scanPluginSecurity(pluginDir)
+
+        // Manifest 验证
+        const manifestPath = path.join(pluginDir, 'plugin.json')
+        let manifestErrors: string[] = []
+        let manifestWarnings: string[] = []
+        if (fs.existsSync(manifestPath)) {
+          try {
+            const raw = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'))
+            const mf = validateManifest(raw)
+            manifestErrors = mf.errors
+            manifestWarnings = mf.warnings
+          } catch {
+            manifestErrors = ['manifest.json 解析失败']
+          }
+        }
+
+        return {
+          valid: scanResult.valid && manifestErrors.length === 0,
+          errors: [...scanResult.errors, ...manifestErrors],
+          warnings: [...scanResult.warnings, ...manifestWarnings],
+        }
+      }
+    }
+
+    return { valid: false, errors: ['插件不存在'], warnings: [] }
+  } catch (e: unknown) {
+    return { valid: false, errors: [e instanceof Error ? e.message : '审计失败'], warnings: [] }
+  }
 })
 
 // ─── 插件市场 IPC ───
@@ -2521,11 +2738,8 @@ ipcMain.handle('doge:reveal-in-explorer', async (_event, filePath: string) => {
 })
 
 // ─── 应用生命周期 ───
-app.whenReady().then(() => {
-  // 初始化内置技能（注册到 bundledSkills 注册表）
-  try { initBundledSkills() } catch { /* ignore skill init errors */ }
-  createWindow(); createTray()
-})
+// 注意：createWindow / createTray 由 entrypoint.ts → bootDesktop() 调用。
+// 此处不再重复创建，避免 dev 模式（entrypoint.ts + index.ts 同时加载）产生双窗口。
 
 app.on('window-all-closed', () => {
   // 清理数据库连接
@@ -2916,18 +3130,95 @@ ipcMain.handle('doge:collab-get-comments', (_event, params: { roomId: string; fi
   return { success: true, comments }
 })
 
-ipcMain.handle('doge:collab-apply-edit', async (_event, params: { roomId: string; userId: string; file: string; oldText: string; newText: string; line: number }) => {
+ipcMain.handle('doge:collab-apply-edit', async (_event, params: { roomId: string; userId: string; file: string; operation: { type: 'insert' | 'delete'; position: number; text?: string; length?: number } }) => {
   try {
     const room = collabRooms.get(params.roomId)
-    if (!room) return { success: false }
-    room.version += 1
-    // 简易 OT：记录编辑操作供后续冲突解决
-    return { success: true, version: room.version }
+    if (!room) return { success: false, error: '房间不存在' }
+
+    const doc = docManager.getOrCreate(params.roomId)
+    let op: DocOperation
+
+    if (params.operation.type === 'insert' && params.operation.text) {
+      op = doc.localInsert(params.userId, params.operation.position, params.operation.text)
+    } else if (params.operation.type === 'delete' && params.operation.length) {
+      op = doc.localDelete(params.userId, params.operation.position, params.operation.length)
+    } else {
+      return { success: false, error: '无效的操作类型' }
+    }
+
+    room.version = doc.getVersion()
+
+    // 广播给房间内所有协作者（通过渲染进程事件）
+    const windows = BrowserWindow.getAllWindows()
+    windows.forEach(win => {
+      win.webContents.send('doge:collab-remote-edit', {
+        roomId: params.roomId,
+        userId: params.userId,
+        operation: { type: op.type, position: op.position, text: op.text, length: op.length },
+        version: room.version,
+        file: params.file,
+      })
+    })
+
+    return { success: true, version: room.version, operationId: op.id }
   } catch (e: unknown) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
 })
 
-// ─── 远程协助（WebRTC 信令） ───
+// ─── CRDT 文档同步 ───
 
+ipcMain.handle('doge:collab-sync-document', async (_event, params: { roomId: string; file?: string }) => {
+  try {
+    const doc = docManager.get(params.roomId)
+    if (!doc) return { success: true, snapshot: { content: '', version: 0, lamportClock: 0 }, operations: [] }
+    const snapshot = doc.getSnapshot()
+    return { success: true, snapshot, operations: doc.getOperations() }
+  } catch (e: unknown) { return { success: false, error: e instanceof Error ? e.message : '同步失败' } }
+})
+
+ipcMain.handle('doge:collab-join-sync', async (_event, params: { roomId: string; userId: string }) => {
+  try {
+    const room = collabRooms.get(params.roomId)
+    if (!room) return { success: false, error: '房间不存在' }
+
+    const doc = docManager.getOrCreate(params.roomId)
+    const snapshot = doc.getSnapshot()
+
+    return {
+      success: true,
+      snapshot,
+      operations: doc.getOperations(),
+      document: room.document,
+    }
+  } catch (e: unknown) { return { success: false, error: e instanceof Error ? e.message : '加入同步失败' } }
+})
+
+ipcMain.handle('doge:collab-apply-remote-op', async (_event, params: { roomId: string; userId: string; operation: { type: 'insert' | 'delete'; position: number; text?: string; length?: number; lamport: number; parentVersion: number } }) => {
+  try {
+    const doc = docManager.getOrCreate(params.roomId)
+    const op: DocOperation = {
+      id: `op-remote-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      roomId: params.roomId,
+      userId: params.userId,
+      type: params.operation.type,
+      position: params.operation.position,
+      text: params.operation.text,
+      length: params.operation.length,
+      lamport: params.operation.lamport,
+      parentVersion: params.operation.parentVersion,
+      timestamp: Date.now(),
+    }
+
+    const applied = doc.applyRemote(op)
+    const room = collabRooms.get(params.roomId)
+    if (room) room.version = doc.getVersion()
+
+    return { success: applied, version: doc.getVersion(), snapshot: doc.getSnapshot() }
+  } catch (e: unknown) { return { success: false, error: e instanceof Error ? e.message : '应用远程操作失败' } }
+})
+
+// ─── 远程协助（WebRTC + 内置信令服务器） ───
+
+// 保留旧 API 兼容层（内部转发到新的信令服务器）
 const webrtcSignals = new Map<string, {
   callerId: string
   calleeId: string
@@ -2944,6 +3235,16 @@ ipcMain.handle('doge:remote-offer', async (_event, params: { sessionId: string; 
       const sig = webrtcSignals.get(params.sessionId)!
       sig.offer = params.offer
     }
+    // 同时转发到信令服务器
+    const windows = BrowserWindow.getAllWindows()
+    windows.forEach(win => {
+      win.webContents.send('doge:remote-signal', {
+        type: 'sdp-offer',
+        timestamp: Date.now(),
+        sessionId: params.sessionId,
+        payload: { callerId: params.callerId, calleeId: params.calleeId, sdp: params.offer },
+      })
+    })
     return { success: true }
   } catch (e: unknown) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
 })
@@ -2952,6 +3253,16 @@ ipcMain.handle('doge:remote-answer', async (_event, params: { sessionId: string;
   try {
     const sig = webrtcSignals.get(params.sessionId)
     if (sig) { sig.answer = params.answer }
+    // 转发到信令服务器
+    const windows = BrowserWindow.getAllWindows()
+    windows.forEach(win => {
+      win.webContents.send('doge:remote-signal', {
+        type: 'sdp-answer',
+        timestamp: Date.now(),
+        sessionId: params.sessionId,
+        payload: { sdp: params.answer },
+      })
+    })
     return { success: true }
   } catch (e: unknown) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
 })
@@ -2960,6 +3271,16 @@ ipcMain.handle('doge:remote-ice-candidate', async (_event, params: { sessionId: 
   try {
     const sig = webrtcSignals.get(params.sessionId)
     if (sig) { sig.iceCandidates.push(params.candidate) }
+    // 转发到信令服务器
+    const windows = BrowserWindow.getAllWindows()
+    windows.forEach(win => {
+      win.webContents.send('doge:remote-signal', {
+        type: 'ice-candidate',
+        timestamp: Date.now(),
+        sessionId: params.sessionId,
+        payload: { candidate: params.candidate },
+      })
+    })
     return { success: true }
   } catch { return { success: false } }
 })
@@ -2971,8 +3292,68 @@ ipcMain.handle('doge:remote-get-signal', (_event, sessionId: string) => {
 })
 
 ipcMain.handle('doge:remote-close', async (_event, sessionId: string) => {
-  try { webrtcSignals.delete(sessionId); return { success: true } }
-  catch { return { success: false } }
+  try {
+    webrtcSignals.delete(sessionId)
+    // 广播断开
+    const windows = BrowserWindow.getAllWindows()
+    windows.forEach(win => {
+      win.webContents.send('doge:remote-signal', {
+        type: 'disconnect',
+        timestamp: Date.now(),
+        sessionId,
+        payload: { reason: 'session_closed' },
+      })
+    })
+    return { success: true }
+  } catch { return { success: false } }
+})
+
+// ─── 远程控制增强 API ───
+
+ipcMain.handle('doge:remote-signaling-status', () => {
+  const stats = signalingServer.getStats()
+  return {
+    success: true,
+    running: signalingServer.isRunning,
+    port: signalingServerPort,
+    ...stats,
+  }
+})
+
+ipcMain.handle('doge:remote-signaling-start', async () => {
+  try {
+    if (signalingServer.isRunning) {
+      return { success: true, port: signalingServerPort, message: 'Already running' }
+    }
+    const port = await signalingServer.start(0)
+    signalingServerPort = port
+    return { success: true, port }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : '启动失败' }
+  }
+})
+
+ipcMain.handle('doge:remote-signaling-stop', async () => {
+  try {
+    await signalingServer.stop()
+    signalingServerPort = 0
+    return { success: true }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : '停止失败' }
+  }
+})
+
+ipcMain.handle('doge:remote-signaling-restart', async () => {
+  try {
+    if (signalingServer.isRunning) {
+      await signalingServer.stop()
+    }
+    const port = await signalingServer.start(signalingServerPort || 0)
+    signalingServerPort = port
+    return { success: true, port }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : '重启失败' }
+  }
 })
 
 ipcMain.handle('doge:lsp-connected-servers', async () => {
@@ -3126,6 +3507,85 @@ ipcMain.handle('doge:log-stream-stop', (event) => {
     logStreamListeners.delete(id)
   }
   return { success: true }
+})
+
+// ─── 批量处理引擎 IPC ───
+
+ipcMain.handle('doge:batch-start', async (_event, params: { workflowId: string; workflowName: string; files: Array<{ filePath: string; fileName?: string }>; config?: Partial<BatchConfig> }) => {
+  try {
+    const job = batchEngine.createJob(params.workflowId, params.workflowName, params.files, params.config)
+
+    // 启动异步执行
+    batchEngine.execute(job.id, async (filePath, _workflowId) => {
+      // 读取文件内容
+      const readResult = safeReadFile(filePath)
+      if (readResult.error) {
+        return { error: readResult.error }
+      }
+
+      // 这里可以集成真实 AI 处理逻辑
+      // 目前返回文件基本信息作为演示
+      const content = readResult.content || ''
+      const lineCount = content.split('\n').length
+      const charCount = content.length
+
+      return {
+        output: `已处理: ${path.basename(filePath)} (${lineCount} 行, ${charCount} 字符)`,
+      }
+    }, params.config).catch(err => {
+      tsLog('BATCH', `Job ${job.id} failed:`, err)
+    })
+
+    return { success: true, batchId: job.id, totalFiles: job.files.length }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : '启动批量任务失败' }
+  }
+})
+
+ipcMain.handle('doge:batch-cancel', async (_event, batchId: string) => {
+  try {
+    const cancelled = batchEngine.cancelJob(batchId)
+    return { success: cancelled }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : '取消失败' }
+  }
+})
+
+ipcMain.handle('doge:batch-status', async (_event, batchId: string) => {
+  try {
+    const job = batchEngine.getJob(batchId)
+    if (!job) return { success: false, error: '任务不存在' }
+    return { success: true, job }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : '查询失败' }
+  }
+})
+
+ipcMain.handle('doge:batch-list', async () => {
+  try {
+    const jobs = batchEngine.getAllJobs()
+    return { success: true, jobs }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : '查询失败' }
+  }
+})
+
+ipcMain.handle('doge:batch-scan-files', async (_event, params: { dirPath: string; extensions?: string[]; maxFiles?: number }) => {
+  try {
+    const files = scanFiles(params.dirPath, params.extensions, params.maxFiles || 500)
+    return { success: true, files }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : '扫描失败' }
+  }
+})
+
+ipcMain.handle('doge:batch-cleanup', async (_event, batchId: string) => {
+  try {
+    batchEngine.cleanup(batchId)
+    return { success: true }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : '清理失败' }
+  }
 })
 
 // ─── 文件树 API ───

@@ -101,6 +101,7 @@ import insights from './commands/insights/index.ts'
 import team from './commands/team/index.ts'
 import game from './commands/game/index.ts'
 import refactor from './commands/refactor.ts'
+import autocomplete from './commands/autocomplete/index.ts'
 import testGen from './commands/test-gen.ts'
 
 // 导入新增的21个命令
@@ -112,6 +113,7 @@ import planMode from './commands/plan-mode/index.ts'
 import compare from './commands/compare/index.ts'
 import graphQL from './commands/graphql/index.ts'
 import http from './commands/http/index.ts'
+import costHistory from './commands/cost-history/index.ts'
 import database from './commands/database/index.ts'
 import depsViz from './commands/deps-viz/index.ts'
 import shell from './commands/shell/index.ts'
@@ -230,6 +232,7 @@ import mockLimits from './commands/mock-limits/index.ts'
 import bridgeKick from './commands/bridge-kick.ts'
 import version from './commands/version.ts'
 import summary from './commands/summary/index.ts'
+import bridgeSessions from './commands/bridge-sessions/index.ts'
 import {
   resetLimits,
   resetLimitsNonInteractive,
@@ -245,6 +248,9 @@ import tui from './commands/tui/index.ts'
 import batchHan from './commands/batch-han/index.ts'
 import updateApiKey from './commands/updateapikey/index.ts'
 
+import apiDebug from './commands/api-debug/index.ts'
+import pluginMarket from './commands/plugin-market/index.ts'
+import pair from './commands/pair/index.ts'
 import { logError } from './utils/log.js'
 import { toError } from './utils/errors.js'
 import { logForDebugging } from './utils/debug.js'
@@ -374,6 +380,7 @@ const COMMANDS = memoize((): Command[] => [
   addModel,
   removeModel,
   advisor,
+  autocomplete,
   agents,
   branch,
   btw,
@@ -391,6 +398,7 @@ const COMMANDS = memoize((): Command[] => [
   contextNonInteractive,
   ctx_viz,
   cost,
+  costHistory,
   diff,
   diffMode,
   blockMode,
@@ -429,6 +437,7 @@ const COMMANDS = memoize((): Command[] => [
   releaseNotes,
   reloadPlugins,
   rename,
+  refactor,
   resume,
   session,
   sessions,
@@ -448,6 +457,7 @@ const COMMANDS = memoize((): Command[] => [
   rewind,
   rstk,
   batchHan,
+  autocomplete,
   updateApiKey,
   securityReview,
   terminalSetup,
@@ -536,6 +546,11 @@ const COMMANDS = memoize((): Command[] => [
   translate,
   securityAudit,
   updateskills,
+  diagramCmd,
+  apiDebug,
+  pluginMarket,
+  pair,
+  bridgeSessions,
   ...(process.env.USER_TYPE === 'ant' && !process.env.IS_DEMO
     ? INTERNAL_ONLY_COMMANDS
     : []),

@@ -1,3 +1,6 @@
 [install.scopes]
-electron = "" 
-electron-builder = "" 
+electron = ""
+electron-builder = ""
+
+[exports]
+"bun:bundle" = "./src/utils/bun-bundle-polyfill.ts"

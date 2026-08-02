@@ -495,7 +495,7 @@ async function checkBridgePrerequisites(): Promise<string | null> {
   if (versionError) {
     return versionError;
   }
-  if (!getBridgeAccessToken()) {
+  if (!(process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1') && !getBridgeAccessToken()) {
     return BRIDGE_LOGIN_INSTRUCTION;
   }
   logForDebugging('[bridge] Prerequisites passed, enabling bridge');

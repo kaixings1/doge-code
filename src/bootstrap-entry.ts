@@ -5,6 +5,7 @@ import { ensureBootstrapMacro } from './bootstrapMacro'
 import * as fs from 'fs'
 import * as path from 'path'
 import { spawn } from 'child_process'
+import { fileURLToPath } from 'url'
 //process.env.CLAUDE_CODE_SIMPLE=1
 // 🔴 清除 PATH 中的 MSYS2/Git bash 目录，防止 cmd.exe 子进程调用 MSYS2 的 grep/find 等程序触发 fork 卡死
 process.env.PATH = process.env.PATH?.split(';').filter(p => !/msys2/i.test(p) && !/git\\bin/i.test(p) && !/git\\usr\\bin/i.test(p) && !/^F:\\bin$/i.test(p)).join(';')
@@ -12,7 +13,7 @@ process.env.PATH = process.env.PATH?.split(';').filter(p => !/msys2/i.test(p) &&
 // 将 .tools/ 加入 PATH 前端，确保安全 shim 优先于 MSYS2 工具
 // 编译为 exe 后，__dirname 可能指向虚拟路径，改用 process.execPath 的目录
 const exeDir = path.dirname(process.execPath)
-const computedToolsDir = path.resolve(__dirname, '..', '.tools')
+const computedToolsDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '.tools')
 const toolsDir = fs.existsSync(path.join(exeDir, '.tools'))
   ? path.join(exeDir, '.tools')
   : computedToolsDir

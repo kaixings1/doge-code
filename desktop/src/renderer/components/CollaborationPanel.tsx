@@ -2,13 +2,15 @@
  * CollaborationPanel — 协作功能面板
  *
  * 功能：
- * - 实时协作（房间创建/加入/离开 + 光标同步 + OT 编辑）
+ * - 实时协作（房间创建/加入/离开 + 光标同步 + CRDT 文档同步）
  * - 评论标注（行内评论 + 解决/关闭）
  * - 远程协助（WebRTC 屏幕共享 + 远程控制信令）
+ * - CRDT 引擎驱动实时文档协作（操作日志 + 操作变换）
  */
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import type { ThemeColors } from '../theme.js'
+import { RemoteControlPanel } from './RemoteControlPanel.js'
 
 interface Participant {
   id: string
@@ -37,7 +39,7 @@ interface RoomInfo {
   commentCount: number
 }
 
-type TabId = 'rooms' | 'participants' | 'comments' | 'remote'
+type TabId = 'rooms' | 'participants' | 'comments' | 'remote' | 'document'
 
 export function CollaborationPanel({ cwd, theme, onClose }: { cwd: string; theme: ThemeColors; onClose: () => void }): JSX.Element {
   const c = theme
@@ -51,9 +53,12 @@ export function CollaborationPanel({ cwd, theme, onClose }: { cwd: string; theme
   const [commentText, setCommentText] = useState('')
   const [commentFile, setCommentFile] = useState('')
   const [commentLine, setCommentLine] = useState(0)
-  const [remoteSessionId, setRemoteSessionId] = useState('')
-  const [remoteStatus, setRemoteStatus] = useState<string>('')
+
   const [errorMsg, setErrorMsg] = useState('')
+  // CRDT 文档同步状态
+  const [docContent, setDocContent] = useState('')
+  const [docVersion, setDocVersion] = useState(0)
+  const [syncStatus, setSyncStatus] = useState('')
 
   const api = (window as any).dogeAPI as Record<string, any> | undefined
 
@@ -68,6 +73,47 @@ export function CollaborationPanel({ cwd, theme, onClose }: { cwd: string; theme
     const timer = setInterval(refreshRooms, 3000)
     return () => clearInterval(timer)
   }, [refreshRooms])
+
+  // 加入房间时同步 CRDT 文档
+  useEffect(() => {
+    if (!currentRoomId || !api?.collabJoinSync) return
+    let cancelled = false
+
+    const syncDoc = async () => {
+      const result = await api.collabJoinSync({ roomId: currentRoomId, userId: userId || 'unknown' })
+      if (!cancelled && result?.success && result?.snapshot) {
+        setDocContent(result.snapshot.content || '')
+        setDocVersion(result.snapshot.version || 0)
+        setSyncStatus('已同步 (CRDT v' + (result.snapshot.version || 0) + ')')
+      }
+    }
+    syncDoc()
+
+    return () => { cancelled = true }
+  }, [currentRoomId, userId, api])
+
+  // 监听远程编辑事件（CRDT 实时同步）
+  useEffect(() => {
+    if (!currentRoomId || !api?.onCollabRemoteEdit) return
+    const unsub = api.onCollabRemoteEdit((edit: { roomId: string; userId: string; operation: { type: string; position: number; text?: string; length?: number }; version: number; file: string }) => {
+      if (edit.roomId === currentRoomId && edit.userId !== userId) {
+        setDocContent(prev => {
+          if (edit.operation.type === 'insert' && edit.operation.text) {
+            const pos = Math.min(edit.operation.position, prev.length)
+            return prev.slice(0, pos) + edit.operation.text + prev.slice(pos)
+          }
+          if (edit.operation.type === 'delete' && edit.operation.length) {
+            const pos = Math.min(edit.operation.position, prev.length)
+            return prev.slice(0, pos) + prev.slice(pos + edit.operation.length)
+          }
+          return prev
+        })
+        setDocVersion(edit.version)
+        setSyncStatus('实时同步中 (v' + edit.version + ')')
+      }
+    })
+    return unsub
+  }, [currentRoomId, userId, api])
 
   useEffect(() => {
     if (!currentRoomId || !api?.collabGetParticipants) return
@@ -84,6 +130,42 @@ export function CollaborationPanel({ cwd, theme, onClose }: { cwd: string; theme
     const timer = setInterval(tick, 2000)
     return () => { cancelled = true; clearInterval(timer) }
   }, [currentRoomId, api])
+
+  // 文档编辑：本地操作 + CRDT 广播
+  const handleDocInsert = useCallback(async (position: number, text: string) => {
+    if (!currentRoomId || !userId || !api?.collabApplyEdit) return
+    const result = await api.collabApplyEdit({
+      roomId: currentRoomId,
+      userId,
+      file: 'document',
+      operation: { type: 'insert', position, text }
+    })
+    if (result?.success) {
+      setDocVersion(result.version || 0)
+      // 更新本地显示
+      setDocContent(prev => {
+        const pos = Math.min(position, prev.length)
+        return prev.slice(0, pos) + text + prev.slice(pos)
+      })
+    }
+  }, [currentRoomId, userId, api])
+
+  const handleDocDelete = useCallback(async (position: number, length: number) => {
+    if (!currentRoomId || !userId || !api?.collabApplyEdit) return
+    const result = await api.collabApplyEdit({
+      roomId: currentRoomId,
+      userId,
+      file: 'document',
+      operation: { type: 'delete', position, length }
+    })
+    if (result?.success) {
+      setDocVersion(result.version || 0)
+      setDocContent(prev => {
+        const pos = Math.min(position, prev.length)
+        return prev.slice(0, pos) + prev.slice(pos + length)
+      })
+    }
+  }, [currentRoomId, userId, api])
 
   const handleCreateRoom = useCallback(async () => {
     if (!roomName.trim() || !api?.collabCreateRoom) return
@@ -120,6 +202,9 @@ export function CollaborationPanel({ cwd, theme, onClose }: { cwd: string; theme
     setUserId(null)
     setParticipants([])
     setComments([])
+    setDocContent('')
+    setDocVersion(0)
+    setSyncStatus('')
     setActiveTab('rooms')
   }, [currentRoomId, userId, api])
 
@@ -141,26 +226,9 @@ export function CollaborationPanel({ cwd, theme, onClose }: { cwd: string; theme
   const handleResolveComment = useCallback(async (commentId: string) => {
     if (!currentRoomId || !api?.collabResolveComment) return
     await api.collabResolveComment({ roomId: currentRoomId, commentId })
-    setComments(prev => prev.map(c => c.id === commentId ? { ...c, resolved: true } : c))
+    setComments(prev => prev.map(cm => cm.id === commentId ? { ...cm, resolved: true } : cm))
   }, [currentRoomId, api])
 
-  const handleCreateRemoteSession = useCallback(async () => {
-    if (!remoteSessionId.trim() || !api?.remoteOffer) return
-    setRemoteStatus('正在创建信令会话...')
-    // 生成模拟的 SDP offer
-    const mockOffer: RTCSessionDescriptionInit = { type: 'offer', sdp: 'mock-sdp-for-signaling' }
-    const result = await api.remoteOffer({
-      sessionId: remoteSessionId.trim(),
-      callerId: userId || 'host',
-      calleeId: 'remote-user',
-      offer: mockOffer
-    })
-    if (result?.success) {
-      setRemoteStatus('信令会话已创建，等待对方响应')
-    } else {
-      setRemoteStatus('创建失败: ' + (result?.error || '未知错误'))
-    }
-  }, [remoteSessionId, userId, api])
 
   const formatTime = (ts: number) => new Date(ts).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
 
@@ -172,6 +240,7 @@ export function CollaborationPanel({ cwd, theme, onClose }: { cwd: string; theme
           { id: 'rooms', label: '房间' },
           { id: 'participants', label: '协作者' },
           { id: 'comments', label: '评论' },
+          { id: 'document', label: '文档' },
           { id: 'remote', label: '远程' }
         ] as { id: TabId; label: string }[]).map(tab => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
@@ -253,24 +322,67 @@ export function CollaborationPanel({ cwd, theme, onClose }: { cwd: string; theme
           </div>
         )}
 
-        {activeTab === 'remote' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <div style={{ padding: '8px', background: `${c.accent}11`, border: `1px solid ${c.border}`, borderRadius: '3px', fontSize: '9px', color: c.textMuted, lineHeight: '1.5' }}>
-              远程协助基于 WebRTC 信令。创建会话后将信令信息发送给对方，对方输入同一 ID 即可建立 P2P 连接。
-            </div>
-            <div style={{ display: 'flex', gap: '4px' }}>
-              <input value={remoteSessionId} onChange={e => setRemoteSessionId(e.target.value)} placeholder="会话 ID（双方需相同）" style={{ flex: 1, padding: '4px 6px', background: c.inputBg, border: `1px solid ${c.border}`, borderRadius: '3px', color: c.text, fontSize: '10px', outline: 'none' }} />
-              <button onClick={handleCreateRemoteSession} style={{ padding: '4px 10px', border: 'none', borderRadius: '3px', background: '#45B7D1', color: '#fff', cursor: 'pointer', fontSize: '10px', fontWeight: 600 }}>创建信令</button>
-            </div>
-            {remoteStatus && <div style={{ padding: '4px 6px', background: c.codeBg, borderRadius: '3px', color: c.textMuted, fontSize: '9px' }}>{remoteStatus}</div>}
-            {remoteSessionId && (
-              <div style={{ padding: '6px 8px', border: `1px solid ${c.border}`, borderRadius: '3px' }}>
-                <div style={{ color: c.textFaint, fontSize: '9px' }}>会话 ID</div>
-                <div style={{ color: c.text, fontSize: '10px', fontFamily: 'monospace', marginTop: '2px' }}>{remoteSessionId}</div>
-                <div style={{ color: c.textFaint, fontSize: '9px', marginTop: '4px' }}>让对方在"远程"标签输入相同 ID 即可连接</div>
-              </div>
+        {/* CRDT 文档协作标签页 */}
+        {activeTab === 'document' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', height: '100%' }}>
+            {!currentRoomId ? (
+              <div style={{ padding: '16px', textAlign: 'center', color: c.textFaint, fontSize: '10px' }}>请先加入或创建一个房间以使用文档协作</div>
+            ) : (
+              <>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 6px', background: c.codeBg, borderRadius: '3px' }}>
+                  <span style={{ color: c.textMuted, fontSize: '9px' }}>CRDT 协作文档</span>
+                  <span style={{ color: syncStatus ? c.accent : c.textFaint, fontSize: '9px' }}>{syncStatus || '未连接'}</span>
+                </div>
+                <div style={{ fontSize: '9px', color: c.textFaint, padding: '2px 6px' }}>
+                  版本: v{docVersion} | 长度: {docContent.length} 字符 | 在下方输入框编辑，CRDT 自动同步到所有协作者
+                </div>
+                <textarea
+                  value={docContent}
+                  onChange={e => {
+                    const newContent = e.target.value
+                    // 简单 diff：计算差异并发送操作
+                    if (newContent.length > docContent.length) {
+                      // 插入
+                      const diff = newContent.length - docContent.length
+                      // 找到第一个不同位置
+                      let pos = 0
+                      while (pos < docContent.length && pos < newContent.length && docContent[pos] === newContent[pos]) pos++
+                      const inserted = newContent.slice(pos, pos + diff)
+                      handleDocInsert(pos, inserted)
+                    } else if (newContent.length < docContent.length) {
+                      // 删除
+                      const diff = docContent.length - newContent.length
+                      let pos = 0
+                      while (pos < newContent.length && pos < docContent.length && docContent[pos] === newContent[pos]) pos++
+                      handleDocDelete(pos, diff)
+                    }
+                    setDocContent(newContent)
+                  }}
+                  placeholder="开始输入以进行协作编辑..."
+                  style={{
+                    flex: 1,
+                    minHeight: '200px',
+                    padding: '8px',
+                    background: c.inputBg,
+                    border: `1px solid ${c.border}`,
+                    borderRadius: '4px',
+                    color: c.text,
+                    fontSize: '10px',
+                    fontFamily: 'monospace',
+                    outline: 'none',
+                    resize: 'vertical',
+                  }}
+                />
+                <div style={{ fontSize: '8px', color: c.textFaint, padding: '2px 6px', textAlign: 'center' }}>
+                  💡 多人同时编辑时，CRDT 引擎自动解决冲突，保证最终一致性
+                </div>
+              </>
             )}
           </div>
+        )}
+
+        {activeTab === 'remote' && (
+          <RemoteControlPanel theme={c} />
         )}
       </div>
     </div>

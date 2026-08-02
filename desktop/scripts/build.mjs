@@ -73,9 +73,9 @@ async function compileMain() {
   const mainOutFile = path.join(distDir, 'main', 'index.mjs');
   ensureDir(path.dirname(mainOutFile));
 
-  // 使用 Bun 打包主进程
+  // 使用 Bun 打包主进程（以 entrypoint.ts 为入口，它负责调用 bootDesktop）
   await withTimeout(
-    () => run(`bun build --outfile "${mainOutFile}" --format esm --target node --external electron --external electron-store --external bun:sqlite --external bun:bundle src/main/index.ts`),
+    () => run(`bun build --outfile "${mainOutFile}" --format esm --target node --external electron --external electron-store --external bun:sqlite --external bun:bundle --external chromium-bidi src/main/entrypoint.ts`),
     '主进程编译'
   );
 

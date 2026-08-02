@@ -2,7 +2,9 @@ import * as path from 'path'
 import * as fs from 'node:fs'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import react from '@vitejs/plugin-react'
+import { fileURLToPath } from 'node:url'
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const projectRoot = path.resolve(__dirname, '.')
 const repoRoot = path.resolve(projectRoot, '..')
 const mainEntry = path.resolve(projectRoot, 'desktop', 'src', 'main', 'index.ts')
@@ -134,30 +136,47 @@ function optionalDepsShimPlugin() {
  * 出现的那个重复 `safeRequire` 函数定义整块移除（两个函数体完全相同，移除一个
  * 不影响任何调用——所有调用继续绑定到第一个定义）。
  */
-function dedupSafeRequirePlugin() {
+function dedupTopLevelSymbolPlugin() {
+  // 针对已知"顶层重复声明"（Bun 容忍、esbuild 报 "already been declared"）做去重。
+  // 配置：[文件名后缀正则, { 唯一标识文本, 替换后保留原文给第一个、重命名后续 }]
+  const cases: Array<{
+    match: RegExp
+    marker: string      // 声明行的唯一标识（精确文本）
+    replacement: (m: string) => string   // 把后续出现的声明改名为唯一名
+    label: string
+  }> = [
+    {
+      match: /src\/commands\.ts$/,
+      marker: 'function safeRequire<T>(path: string): T | null {',
+      replacement: () => 'function _safeRequireDupArchive<T>(path: string): T | null {',
+      label: 'commands.ts safeRequire',
+    },
+    {
+      match: /src\/utils\/modelCost\.ts$/,
+      marker: 'const DEFAULT_UNKNOWN_MODEL_COST = COST_TIER_5_25',
+      replacement: () => 'const _DEFAULT_UNKNOWN_MODEL_COST_DUP = COST_TIER_5_25',
+      label: 'modelCost.ts DEFAULT_UNKNOWN_MODEL_COST',
+    },
+  ]
   return {
-    name: 'dedup-safe-require-plugin',
+    name: 'dedup-top-level-symbol',
     enforce: 'pre',
     transform(code, id) {
-      // 仅处理根 CLI 的 src/commands.ts（Windows 磁盘路径归一化后做后缀匹配）
       const norm = id.replace(/\\/g, '/')
-      if (!/src\/commands\.ts$/.test(norm)) return null
-      // 精确匹配"函数定义签名行"，不含 JSDoc 注释里的 safeRequire 文本
-      const sig = 'function safeRequire<T>(path: string): T | null {'
-      let firstIdx = code.indexOf(sig)
-      if (firstIdx === -1) return null
-      let count = 0
+      const c = cases.find(x => x.match.test(norm))
+      if (!c) return null
       let out = code
-      while (true) {
-        const nextIdx = out.indexOf(sig, firstIdx + 1)
-        if (nextIdx === -1) break
-        count++
-        // 把重复的定义重命名为唯一名（函数体无自引用，调用点绑定到第一个定义，行为一致）
-        out = out.slice(0, nextIdx) + 'function _safeRequireDupArchive<T>(path: string): T | null {' + out.slice(nextIdx + sig.length)
-        firstIdx = nextIdx + sig.length
-      }
+      let count = 0
+      let firstIdx = out.indexOf(c.marker)
+      if (firstIdx === -1) return null
+      // 从第一个之后查找重复（真正重复的与第一个文本相同或近似）
+      const secondIdx = out.indexOf(c.marker, firstIdx + c.marker.length)
+      if (secondIdx === -1) return null
+      // 把第二次出现的声明重命名为唯一名（不改变语义：调用绑定到第一个）
+      out = out.slice(0, secondIdx) + c.replacement(c.marker) + out.slice(secondIdx + c.marker.length)
+      count++
       if (count > 0) {
-        console.log(`[dedup-safe-require] 重命名 src/commands.ts 中重复的 safeRequire 定义 (${count} 个), 文件: ${id}`)
+        console.log(`[dedup-top-level] 重命名 ${c.label} (${count} 处), 文件: ${id}`)
         return out
       }
       return null
@@ -227,15 +246,102 @@ function hardenCliLazyRequirePlugin() {
   }
 }
 
+/**
+ * CLI 源码 src/engine/autoFixLoop.ts 里有一些正则字面量形如
+ *   /expected\s*')'/i
+ * 这种在 Bun/TS 里合法（正则字面量中的单引号是字面字符），但 esbuild 的
+ * 严格语法解析会把其中的 `)` 误判为正则闭合而产生 "Unexpected ) in regular
+ * expression" 硬错误，导致 desktop 构建中断。由于不允许改 src，此插件在
+ * desktop 构建期把这类正则字面量中的引号转义为 `\'`（语义不变，均为字面引号），
+ * 让 esbuild 能正常解析。
+ */
+function hardenCliRegexPlugin() {
+  return {
+    name: 'harden-cli-regex',
+    enforce: 'pre',
+    transform(code, id) {
+      const norm = id.replace(/\\/g, '/')
+      if (!/\/src\/engine\/autoFixLoop\.ts$/.test(norm)) return null
+      // 精确替换形如 /expected\s*'...'/ 的正则字面量，把引号字符转义为 \'
+      // 覆盖 ) ( 等可能被 esbuild 误解析的字符，按原意保留字面引号匹配
+      const original = code
+      code = code.replace(/(\\s\*)(['])([^'\n]*)(['])(\/i)/g, (_m, a, q1, mid, q2, tail) => {
+        // 只有当闭引号后的正则内容不含多余引号时才转义（避免误伤多段正则）
+        return a + "'" + mid.replace(/[()<>{}\]]/g, (ch) => '\\' + ch) + "'" + tail
+      })
+      if (code !== original) {
+        console.log(`[harden-cli-regex] 修复 autoFixLoop.ts 中的正则字面量引号转义, 文件: ${id}`)
+        return code
+      }
+      return null
+    },
+  }
+}
+
+/**
+ * root CLI 的 src/commands/bridge-sessions/bridge.tsx 引用了
+ * `import { ..., setupSSHTunnel } from '../../services/bridgeSessions/sessionManager.js'`，
+ * 但 sessionManager.ts 里实际导出的是 `setupRealSSHTunnel`（参数签名兼容）。
+ * Bun 打包 CLI 时不校验命名导出（运行时该功能分支不常用所以未被发现），
+ * 但 vite/rollup 严格校验会以 "setupSSHTunnel is not exported" 硬报错。
+ * 此插件在 desktop 构建期把 bridge.tsx 的该命名导入改写为别名到 setupRealSSHTunnel，
+ * 不改动任何 src 文件。
+ */
+function hardenBridgeSshImportPlugin() {
+  return {
+    name: 'harden-bridge-ssh-import',
+    enforce: 'pre',
+    transform(code, id) {
+      const norm = id.replace(/\\/g, '/')
+      if (!/\/src\/commands\/bridge-sessions\/bridge\.tsx$/.test(norm)) return null
+      let original = code
+      // 把“从 sessionManager import 的 setupSSHTunnel”改写为别名导入 setupRealSSHTunnel
+      // （实现里实际导出的是 setupRealSSHTunnel，bridge.tsx 曾引用不存在的 setupSSHTunnel)。
+      // 幂等：若源码已是 setupRealSSHTunnel as setupSSHTunnel 形式则不再改写，避免重复别名。
+      if (!/\bsetupRealSSHTunnel\s+as\s+setupSSHTunnel\b/.test(code)) {
+        const importMarker = /from\s*['"]\.\.\/\.\.\/services\/bridgeSessions\/sessionManager\.js['"]/
+        if (importMarker.test(code)) {
+          // 逐条重写 import 语句，把花括号内的裸 setupSSHTunnel 成员改写为别名导入
+          code = code.replace(/import\s*\{[^}]*?setupSSHTunnel[^}]*?\}\s*from\s*['"]\.\.\/\.\.\/services\/bridgeSessions\/sessionManager\.js['"]/g, (stmt) => {
+            // 仅把成员名 setupSSHTunnel 替换为 setupRealSSHTunnel as setupSSHTunnel
+            return stmt.replace(/(^|[,{]\s*)setupSSHTunnel(\s*[,}])/g, (_m, pre, post) => pre + 'setupRealSSHTunnel as setupSSHTunnel' + post)
+          })
+        }
+      }
+      // 清理该文件源码中的非法 Unicode 替换符（U+FFFD �）：它们通常是损坏的
+      // 缩进/空白字符，Bun 能容忍但 esbuild 会报 "Unexpected �"。
+      if (code.includes('\uFFFD')) {
+        code = code.split('\uFFFD').join(' ')
+      }
+      // bridge.tsx:468 的 JSX 文本里有裸的 `>`（`...sshPort} -> 本地端口 ...`），
+      // JSX 文本中 `>` 必须是 `&gt;`，否则 esbuild 报 "> is not valid inside a JSX element"。
+      if (code.includes('} -> 本地端口') || /\}\s*-{1,2}>\s*本地端口/.test(code)) {
+        code = code.replace(/\}(\s*)-{1,2}>\s*本地端口/g, '} &gt; 本地端口')
+      }
+      if (code !== original) {
+        console.log(`[harden-bridge-ssh] 修复 bridge.tsx 的 SSHS import/JSX/Unicode 兼容问题, 文件: ${id}`)
+        return code
+      }
+      return null
+    },
+  }
+}
+
 
 export default defineConfig({
   main: {
-    plugins: [externalizeDepsPlugin(), jsToTsResolver(), markdownTextPlugin(), dedupSafeRequirePlugin(), hardenCliLazyRequirePlugin(), optionalDepsShimPlugin()],
+    plugins: [externalizeDepsPlugin(), jsToTsResolver(), markdownTextPlugin(), dedupTopLevelSymbolPlugin(), hardenCliLazyRequirePlugin(), hardenCliRegexPlugin(), hardenBridgeSshImportPlugin(), optionalDepsShimPlugin()],
     ssr: {
       external: ['electron', 'electron-store', 'node-pty', 'turndown', '@mixmark-io/domino', 'he', 'highlight.js', 'cli-highlight', 'node-forge', 'better-sqlite3'],
     },
     build: {
       outDir: 'dist/main',
+      esbuildOptions: {
+        define: {
+          __dirname: 'path.dirname(fileURLToPath(import.meta.url))',
+          __filename: 'fileURLToPath(import.meta.url)',
+        },
+      },
       rollupOptions: {
         input: { index: './src/main/entrypoint.ts' },
         output: { format: 'es', entryFileNames: '[name].mjs' },
@@ -262,6 +368,11 @@ export default defineConfig({
       outDir: 'dist/preload',
       rollupOptions: {
         input: { index: path.resolve(projectRoot, 'src', 'preload', 'index.ts') },
+        // preload 必须输出 CommonJS（.cjs）。package.json 的 "type":"module" 会让
+        // electron-vite 默认输出 ESM(.mjs)，而 Electron 渲染进程加载 ESM preload
+        // 有兼容限制，且主进程 index.ts 引用的路径也与 .mjs 不匹配。
+        // 这里强制 CJS，并让入口文件名与主进程引用(desktop/src/main/index.ts:183)一致。
+        output: { format: 'cjs', entryFileNames: '[name].cjs' },
         external: ['electron'],
       },
     },
@@ -274,7 +385,12 @@ export default defineConfig({
     plugins: [react(), jsToTsResolver()],
     build: {
       outDir: 'dist/renderer',
-      rollupOptions: { input: { index: path.resolve(projectRoot, 'src', 'renderer', 'index.html') } },
+      esbuildOptions: {
+        external: ['fs', 'path', 'node:fs', 'node:path'],
+      },
+      rollupOptions: {
+        input: { index: path.resolve(projectRoot, 'src', 'renderer', 'index.html') },
+      },
     },
     server: { port: 5173 },
   },

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 虚拟滚动消息列表 - 仅渲染可视区域内的消息
  */
 
@@ -6,6 +6,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { ToolResultRenderer } from './MarkdownRenderer.js'
 import { ToolErrorBanner } from './ToolErrorBanner.js'
 import { ToolProgressBar, type ProgressStatus } from './ToolProgressBar.js'
+import type { ToolUseBlock } from '../shared.js'
 
 interface Message {
   id: string
@@ -171,6 +172,10 @@ type FunctionParseState = 'text' | 'in_function' | 'in_params'
 let functionParseState: FunctionParseState = 'text'
 let functionToolName = ''
 
+function makeToolUseBlock(name: string, input: Record<string, unknown>): ToolUseBlock {
+  return { type: 'tool_use', id: `func-${name}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, name, input }
+}
+
 function parseFunctionToolUse(content: string): ContentBlock[] {
   const blocks: ContentBlock[] = []
   functionToolUseBuffer += content
@@ -185,8 +190,9 @@ function parseFunctionToolUse(content: string): ContentBlock[] {
         }
         break
       }
-      if (tagStart > i) {
-        blocks.push({ type: 'text', text: functionToolUseBuffer.slice(i, tagStart).trim() })
+      const textBefore = functionToolUseBuffer.slice(i, tagStart).trim()
+      if (textBefore) {
+        blocks.push({ type: 'text', text: textBefore })
       }
       functionParseState = 'in_function'
       functionToolName = ''
@@ -210,7 +216,23 @@ function parseFunctionToolUse(content: string): ContentBlock[] {
         i = tagEnd + 1
         continue
       }
-      // 未找到 >，等待更多内容
+      const nextFunction = functionToolUseBuffer.indexOf('<function', i)
+      if (nextFunction !== -1) {
+        // 新的 <function 出现，丢弃当前未完成标签之前的无效内容，从头开始
+        functionToolName = ''
+        i = nextFunction
+        continue
+      }
+
+      // 检测是否已进入普通文本区域（100 字符内无 > 也无 <function）
+      // 防止 AI 把 <function 当作文本发送时死等
+      const lookAhead = functionToolUseBuffer.slice(i, i + 100)
+      if (lookAhead.indexOf('>') === -1 && lookAhead.indexOf('<function') === -1) {
+        // 100 字符内无 > 也无 <function>，等下一 chunk
+        break
+      }
+
+      // 没有找到 >，等待更多内容
       break
     } else if (functionParseState === 'in_params') {
       const closingTag = functionToolUseBuffer.indexOf('</function>', i)
@@ -220,7 +242,7 @@ function parseFunctionToolUse(content: string): ContentBlock[] {
         const paramsText = functionToolUseBuffer.slice(i, closingTag)
         const params = extractFunctionParams(paramsText)
         if (functionToolName) {
-          blocks.push({ type: 'tool_use', name: functionToolName, input: params })
+          blocks.push(makeToolUseBlock(functionToolName, params))
         }
         functionParseState = 'text'
         functionToolName = ''
@@ -232,11 +254,28 @@ function parseFunctionToolUse(content: string): ContentBlock[] {
         const paramsText = functionToolUseBuffer.slice(i, nextFunction)
         const params = extractFunctionParams(paramsText)
         if (functionToolName) {
-          blocks.push({ type: 'tool_use', name: functionToolName, input: params })
+          blocks.push(makeToolUseBlock(functionToolName, params))
         }
         functionParseState = 'in_function'
         functionToolName = ''
         i = nextFunction
+        continue
+      }
+
+      // 检测是否已进入普通文本区域（100 字符内无 <function 标签）
+      // 防止 AI 发送未闭合 <function> 后继续发送其他内容时死等
+      const lookAhead = functionToolUseBuffer.slice(i, i + 100)
+      const nextFunctionInWindow = lookAhead.indexOf('<function')
+      if (nextFunctionInWindow === -1) {
+        // 100 字符内无新 function 标签，强制提取已有内容
+        const paramsText = functionToolUseBuffer.slice(i)
+        const params = extractFunctionParams(paramsText)
+        if (functionToolName) {
+          blocks.push(makeToolUseBlock(functionToolName, params))
+        }
+        functionParseState = 'text'
+        functionToolName = ''
+        i = functionToolUseBuffer.length
         continue
       }
 
@@ -246,13 +285,29 @@ function parseFunctionToolUse(content: string): ContentBlock[] {
   }
 
   functionToolUseBuffer = functionToolUseBuffer.slice(i)
+
+  // 如果缓冲区被完全消费，重置状态机避免下次调用从残留状态开始
+  if (functionToolUseBuffer.length === 0 && functionParseState !== 'text') {
+    functionParseState = 'text'
+    functionToolName = ''
+  }
+
+  // 兜底清理：提取后扫描文本块中是否还有残留的 <function> 标签
+  for (const block of blocks) {
+    if (block.type === 'text' && block.text) {
+      const cleaned = block.text.replace(/<function[\s\S]*?(?:$|(?=<function))/gi, '').trim()
+      if (cleaned !== block.text) {
+        block.text = cleaned
+      }
+    }
+  }
   return blocks
 }
 
 function extractFunctionParams(text: string): Record<string, string> {
   const params: Record<string, string> = {}
   // 匹配 <parameter name="key">value</parameter> 或 <parameter>key>value</parameter>
-  const paramRegex = /<parameter\s+(?:name\s*=\s*"([^"]+)"\s*)?>([\s\S]*?)<\/parameter>/g
+  const paramRegex = /<parameter\s*(?:name\s*=\s*"([^"]+)"\s*)?>([\s\S]*?)<\/parameter>/g
   let match
   while ((match = paramRegex.exec(text)) !== null) {
     let key: string

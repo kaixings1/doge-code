@@ -15,6 +15,8 @@ import { ResponseHandler } from "./responseHandler.ts";
 import { ToolScheduler } from "./toolScheduler.ts";
 import { ErrorClassifier } from "./errors/classifier.ts";
 import { AutoCompactor } from "./autoCompactor.ts";
+import { AutoFixLoop, type AutoFixLoopConfig } from "./autoFixLoop.ts";
+import { GitContextInjector, type GitContextConfig } from "./gitContext.ts";
 
 export interface QueryResult {
   state: string;
@@ -60,6 +62,10 @@ export interface MessageLoopDeps {
   autoCompactor?: AutoCompactor;
   /** 预测性 AI 助手：当前文件的静态分析建议 */
   preAnalysis?: Array<{ type: string; message: string; line?: number }>;
+  /** 自动修复循环：在编辑工具成功后自动 lint→test→fix（吸收自 Aider） */
+  autoFixLoop?: AutoFixLoopConfig;
+  /** Git 上下文感知：编辑文件时自动获取 git blame + log 帮助理解代码意图（吸收自 Aider） */
+  gitContext?: GitContextConfig;
 }
 
 export class MessageLoop {
@@ -71,11 +77,40 @@ export class MessageLoop {
     if (!this.deps.onEvent) {
       this.deps.onEvent = () => {}
     }
+    // 初始化自动修复循环（吸收自 Aider）
+    if (this.deps.autoFixLoop?.enabled) {
+      this.autoFixLoop = new AutoFixLoop({
+        ...this.deps.autoFixLoop,
+        onEvent: (event) => {
+          engineLog('AUTOFIX', event.type)
+          this.deps.autoFixLoop?.onEvent?.(event)
+        },
+      })
+    }
+    // 初始化 git 上下文感知（吸收自 Aider）
+    if (this.deps.gitContext?.enabled) {
+      this.gitContext = new GitContextInjector(this.deps.gitContext)
+    }
   }
 
   private consecutiveToolFailures = 0;
+  private autoFixLoop: AutoFixLoop | null = null;
+  private gitContext: GitContextInjector | null = null;
+
+  /** 重置自动修复循环计数器（新任务开始时调用） */
+  resetAutoFixLoop(): void {
+    this.autoFixLoop?.reset()
+  }
+
+  /** 重置 git 上下文轮次（新任务开始时调用） */
+  resetGitContext(): void {
+    this.gitContext = null
+  }
 
   async run(userMessage: string): Promise<QueryResult> {
+    // 新任务开始时重置自动修复循环和 git 上下文
+    this.resetAutoFixLoop()
+    this.resetGitContext()
     this.deps.conversation.messages.push({ role: "user", content: userMessage } as InternalMessage);
     await this.deps.stateMachine.transition("responding", { message: userMessage });
     this.consecutiveToolFailures = 0;
@@ -256,6 +291,28 @@ export class MessageLoop {
       }
 
       this.deps.conversation.addToolResults(results);
+
+      // Git 上下文感知：为编辑的文件注入 git blame + log（吸收自 Aider）
+      if (this.gitContext) {
+        const editedFiles = this.gitContext.extractFiles(
+          results.map(r => ({ toolUseId: r.toolUseId, success: r.success, output: r.output })),
+        )
+        if (editedFiles.length > 0) {
+          const gitMessages = await this.gitContext.injectForFiles(editedFiles, '')
+          for (const msg of gitMessages) {
+            this.deps.conversation.messages.push(msg as InternalMessage)
+          }
+        }
+      }
+
+      // 自动修复循环：编辑工具成功后自动 lint→test→fix（吸收自 Aider）
+      if (this.autoFixLoop) {
+        const fixMessages = await this.autoFixLoop.maybeRun(results)
+        for (const msg of fixMessages) {
+          this.deps.conversation.messages.push(msg as InternalMessage)
+        }
+      }
+
       this.deps.onEvent({ type: 'iteration_end', iteration: this.currentIteration, hasToolCalls: true });
       await this.deps.stateMachine.transition("should_continue");
       return true;

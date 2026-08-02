@@ -4,6 +4,7 @@ import {
   getDynamicConfig_CACHED_MAY_BE_STALE,
   getFeatureValue_CACHED_MAY_BE_STALE,
 } from '../services/analytics/growthbook.js'
+import { isLocalBridgeMode } from './bridgeConfig.js'
 
 // 命名空间导入会打破 bridgeEnabled → auth → config → bridgeEnable
 // 循环 — authModule.foo 是一个实时绑定，所以当下面的辅助函数
@@ -25,6 +26,8 @@ import { lt } from '../utils/semver.js'
  * `feature('BRIDGE_MODE')` 防护确保 GrowthBook 字符串字面量仅在构建时启用桥模式时被引用。
  */
 export function isBridgeEnabled(): boolean {
+  // 本地桥接模式跳过所有 GrowthBook/OAuth 检查。
+  if (isLocalBridgeMode()) return true
   // 肯定三元模式 — 参见 docs/feature-gating.md。
   // 否定模式 (if (!feature(...)) return) 不会从外部构建中消除
   // 内联字符串字面量。
@@ -47,6 +50,7 @@ export function isBridgeEnabled(): boolean {
  * `isBridgeEnabled()` instead.
  */
 export async function isBridgeEnabledBlocking(): Promise<boolean> {
+  if (isLocalBridgeMode()) return true
   return feature('BRIDGE_MODE') || process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1'
     ? isClaudeAISubscriber() &&
         (await checkGate_CACHED_OR_BLOCKING('tengu_ccr_bridge'))
@@ -67,6 +71,7 @@ export async function isBridgeEnabledBlocking(): Promise<boolean> {
  * that re-login would fix it. See CC-1165 / gh-33105.
  */
 export async function getBridgeDisabledReason(): Promise<string | null> {
+  if (isLocalBridgeMode()) return null
   if (feature('BRIDGE_MODE') || process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1') {
     if (!isClaudeAISubscriber()) {
       return '远程控制需要 claude.ai 订阅。运行 `claude auth login` 使用你的 claude.ai 账户登录。'
@@ -74,10 +79,10 @@ export async function getBridgeDisabledReason(): Promise<string | null> {
     if (!hasProfileScope()) {
       return '远程控制需要完整权限的登录令牌。出于安全原因，长期令牌（来自 `claude setup-token` 或 CLAUDE_CODE_OAUTH_TOKEN）仅限于推理用途。运行 `claude auth login` 以使用远程控制。'
     }
-    if (!getOauthAccountInfo()?.organizationUuid) {
+    if (!(process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1') && !getOauthAccountInfo()?.organizationUuid) {
       return '无法确定你的组织的远程控制资格。运行 `claude auth login` 刷新你的账户信息。'
     }
-    if (!(await checkGate_CACHED_OR_BLOCKING('tengu_ccr_bridge'))) {
+    if (!(process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1') && !(await checkGate_CACHED_OR_BLOCKING('tengu_ccr_bridge'))) {
       return '远程控制尚未在你的账户中启用。'
     }
     return null
@@ -89,6 +94,7 @@ function isClaudeAISubscriber(): boolean {
   return true
 }
 function hasProfileScope(): boolean {
+  if (process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1') return true
   try {
     return authModule.hasProfileScope()
   } catch {
@@ -114,6 +120,7 @@ function getOauthAccountInfo(): ReturnType<
  * on the env-based implementation regardless of this gate.
  */
 export function isEnvLessBridgeEnabled(): boolean {
+  if (isLocalBridgeMode()) return true
   return feature('BRIDGE_MODE') || process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1'
     ? getFeatureValue_CACHED_MAY_BE_STALE('tengu_bridge_repl_v2', false)
     : false
