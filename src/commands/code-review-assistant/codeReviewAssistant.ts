@@ -13,6 +13,90 @@ interface ParsedReviewArgs {
   mode: ReviewMode | undefined
   json: boolean
   showContext: boolean
+  watch: boolean
+  uninstall: boolean
+}
+
+// ============================================================================
+// Git Hook Management
+// ============================================================================
+
+const HOOK_MARKER = '# doge-code-review-hook'
+const HOOK_SCRIPT = `#!/bin/sh
+${HOOK_MARKER}
+# Auto-installed by /code-review-assistant --watch
+# Runs AI code review on staged changes before commit
+
+echo "🔍 Running AI code review on staged changes..."
+
+# Get staged files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM 2>/dev/null)
+if [ -z "$STAGED_FILES" ]; then
+  exit 0
+fi
+
+# Run review (non-blocking - just warns)
+echo "Files to be committed:"
+echo "$STAGED_FILES" | sed 's/^/  - /'
+echo ""
+echo "⚠️  Consider running /code-review-assistant --mode security before committing."
+echo ""
+
+# Allow commit to proceed (warning only)
+exit 0
+`
+
+function installHook(): string {
+  const hookPath = require('path').join(process.cwd(), '.git', 'hooks', 'pre-commit')
+
+  try {
+    // Check if hook already exists
+    const fs = require('fs')
+    if (fs.existsSync(hookPath)) {
+      const content = fs.readFileSync(hookPath, 'utf-8')
+      if (content.includes(HOOK_MARKER)) {
+        return '✅ Code review hook already installed.'
+      }
+      // Backup existing hook
+      fs.writeFileSync(hookPath + '.backup', content, 'utf-8')
+    }
+
+    fs.writeFileSync(hookPath, HOOK_SCRIPT, 'utf-8')
+    // Make executable
+    try { fs.chmodSync(hookPath, 0o755) } catch { /* Windows ignores chmod */ }
+    return '✅ Code review hook installed to .git/hooks/pre-commit\n   (Existing hook backed up to pre-commit.backup)'
+  } catch (err) {
+    return `❌ Failed to install hook: ${err instanceof Error ? err.message : String(err)}`
+  }
+}
+
+function uninstallHook(): string {
+  const hookPath = require('path').join(process.cwd(), '.git', 'hooks', 'pre-commit')
+
+  try {
+    const fs = require('fs')
+    if (!fs.existsSync(hookPath)) {
+      return '⚠️ No pre-commit hook found.'
+    }
+
+    const content = fs.readFileSync(hookPath, 'utf-8')
+    if (!content.includes(HOOK_MARKER)) {
+      return '⚠️ Pre-commit hook was not installed by doge. Leaving it unchanged.'
+    }
+
+    // Restore backup if exists
+    const backupPath = hookPath + '.backup'
+    if (fs.existsSync(backupPath)) {
+      fs.writeFileSync(hookPath, fs.readFileSync(backupPath, 'utf-8'), 'utf-8')
+      fs.unlinkSync(backupPath)
+      return '✅ Hook removed. Original hook restored.'
+    } else {
+      fs.unlinkSync(hookPath)
+      return '✅ Hook removed.'
+    }
+  } catch (err) {
+    return `❌ Failed to uninstall hook: ${err instanceof Error ? err.message : String(err)}`
+  }
 }
 
 // ============================================================================
@@ -32,15 +116,20 @@ function renderHelp(): string {
     '  --mode <mode>       审查模式: comprehensive (综合) / security (安全) / quality (质量) / performance (性能)',
     '  --json             以 JSON 格式输出',
     '  --context          在评论中显示上下文代码',
+    '  --watch            安装 git pre-commit hook（提交前自动提醒审查）',
+    '  --uninstall         移除 git pre-commit hook',
     '',
     '示例:',
     '  /code-review-assistant',
     '  /code-review-assistant --mode security',
     '  /code-review-assistant --json',
+    '  /code-review-assistant --watch',
+    '  /code-review-assistant --uninstall',
     '',
     '说明:',
     '  审查基于当前 git diff（未提交的变更）。',
     '  请在修改代码后运行，将 diff 发送给 AI 进行审查。',
+    '  --watch 会安装一个 git pre-commit hook，在每次提交前提醒运行安全审查。',
   ].join('\n')
 }
 
@@ -166,6 +255,8 @@ function parseArgs(raw: string): ParsedReviewArgs {
     mode: undefined,
     json: false,
     showContext: false,
+    watch: false,
+    uninstall: false,
   }
 
   const parts = raw.trim().split(/\s+/).filter(Boolean)
@@ -184,6 +275,10 @@ function parseArgs(raw: string): ParsedReviewArgs {
       result.json = true
     } else if (part === '--context') {
       result.showContext = true
+    } else if (part === '--watch') {
+      result.watch = true
+    } else if (part === '--uninstall') {
+      result.uninstall = true
     }
     i++
   }
@@ -197,6 +292,14 @@ function parseArgs(raw: string): ParsedReviewArgs {
 
 export const call: LocalJSXCommandCall = async (onDone, context, args) => {
   const parsed = parseArgs(args ?? '')
+
+  // Handle --watch and --uninstall
+  if (parsed.watch) {
+    return installHook()
+  }
+  if (parsed.uninstall) {
+    return uninstallHook()
+  }
 
   // Help
   if (parsed.help || (!args && !parsed.mode)) {

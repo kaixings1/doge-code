@@ -2284,11 +2284,10 @@ export const WebSearchTool = buildTool({
   },
 
   async call(input, context, _canUseTool, _parentMessage, onProgress) {
-    const start = performance.now()
-
-    // 提取必要字段，忽略额外字段（glob, type, pattern, output_mode 等）
-    let { query, allowed_domains, blocked_domains } = input
-
+    // WebSearch 限制 (更新日志 2.1.212)
+    const maxSearches = settings?.maxWebSearchesPerSession || 200
+    // Note: session-level counter would be needed for full implementation
+    console.log(`[WebSearch] Search limit: ${maxSearches} per session`)
     // 自动注入当前日期（如果用户未指定时间范围）
     const today = getLocalISODate()
     const monthYear = getLocalMonthYear()

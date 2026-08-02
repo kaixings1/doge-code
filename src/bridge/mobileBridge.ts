@@ -1,13 +1,13 @@
 /**
- * mobileBridge.ts — 移动端桥接客户端
+ * mobileBridge.ts — 移动端桥接客户端与服务器
  *
  * 当 CLAUDE_CODE_MOBILE_BRIDGE=1 时，连接移动端 App 通过 WebSocket
  * 或本地 HTTP 代理进行通信。为移动端 App 提供 Claude Code 的完整
  * 命令和工具访问能力。
  *
  * 架构：
- * - 移动端 App → WebSocket → MobileBridgeClient → 命令/工具系统
- * - 移动端 App → HTTP POST → MobileBridgeClient → 命令/工具系统
+ * - 移动端 App → WebSocket → MobileBridgeServer → MobileBridgeClient → 命令/工具系统
+ * - 移动端 App → HTTP POST → MobileHttpBridge → 命令/工具系统
  * - 移动端 App ← WebSocket ← MobileBridgeClient ← 结果推送
  *
  * 协议：
@@ -15,11 +15,19 @@
  * - 二进制消息：Base64 编码的工具结果
  * - 心跳：每 30 秒发送 ping
  * - 认证：移动端 App 连接时提供共享密钥（CLAUDE_CODE_MOBILE_SECRET）
+ *
+ * 移动端会话管理委托给 MobileSessionManager
+ * 命令处理委托给 MobileProtocol 处理器
  */
 
 import { randomUUID } from 'crypto'
 import { getLocalBridgeUrl } from './bridgeConfig.js'
 import { isLocalBridgeMode } from './bridgeConfig.js'
+import { getMobileSessionManager } from './mobileSession.js'
+import { handleMobileRequest, type MobileRequest, type MobileResponse } from './mobileProtocol.js'
+import type { ReplBridgeHandle } from './replBridge.js'
+import { logForDebugging } from '../utils/debug.js'
+import type { SDKMessage } from '../entrypoints/agentSdkTypes.js'
 
 // ─── 类型 ───
 
@@ -477,4 +485,288 @@ export async function initMobileBridge(options: MobileBridgeOptions): Promise<Mo
  */
 export function isMobileBridgeAvailable(): boolean {
   return isLocalBridgeMode() || process.env.CLAUDE_CODE_MOBILE_BRIDGE === '1'
+}
+
+// ─── 移动端桥接服务器 ───
+
+/**
+ * 移动端桥接服务器 — 接受来自移动端 App 的 WebSocket 连接
+ * 运行在本地端口上，桥接移动端 App 与本地 CLI 会话
+ */
+export class MobileBridgeServer {
+  private httpServer: any = null
+  private wss: any = null
+  private port: number
+  private sessionId: string
+  private bridgeHandle: ReplBridgeHandle | null = null
+  private sessionManager = getMobileSessionManager()
+  private connectedClients = new Set<WebSocket>()
+  private isRunning = false
+
+  constructor(options: {
+    sessionId: string
+    port?: number
+    bridgeHandle?: ReplBridgeHandle
+  }) {
+    this.sessionId = options.sessionId
+    this.port = options.port ?? 5680
+    this.bridgeHandle = options.bridgeHandle ?? null
+  }
+
+  /**
+   * 启动移动端桥接服务器
+   */
+  async start(): Promise<void> {
+    if (this.isRunning) return
+
+    try {
+      const http = await import('http')
+      const httpModule = await import('http')
+
+      this.httpServer = httpModule.createServer((req, res) => {
+        // CORS 头
+        res.setHeader('Access-Control-Allow-Origin', '*')
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Mobile-Secret')
+
+        if (req.method === 'OPTIONS') {
+          res.writeHead(204)
+          res.end()
+          return
+        }
+
+        // 移动端状态查询
+        if (req.method === 'GET' && req.url?.startsWith('/mobile/status')) {
+          res.writeHead(200, { 'Content-Type': 'application/json' })
+          res.end(JSON.stringify({
+            connected: this.isRunning,
+            sessionId: this.sessionId,
+            clients: this.connectedClients.size,
+            timestamp: Date.now(),
+          }))
+          return
+        }
+
+        // 移动端命令 HTTP 接口
+        if (req.method === 'POST' && req.url?.startsWith('/mobile/command')) {
+          let body = ''
+          req.on('data', (chunk: Buffer) => { body += chunk.toString() })
+          req.on('end', async () => {
+            try {
+              const request = JSON.parse(body) as MobileRequest
+              const response = await handleMobileRequest(request)
+              res.writeHead(200, { 'Content-Type': 'application/json' })
+              res.end(JSON.stringify(response))
+            } catch (e) {
+              res.writeHead(400, { 'Content-Type': 'application/json' })
+              res.end(JSON.stringify({ error: e instanceof Error ? e.message : String(e) }))
+            }
+          })
+          return
+        }
+
+        res.writeHead(404)
+        res.end('Not Found')
+      })
+
+      // WebSocket 服务器
+      const wsModule = await import('ws')
+      const WebSocketServer = wsModule.WebSocketServer
+      this.wss = new WebSocketServer({ server: this.httpServer, path: '/mobile/ws' })
+
+      this.wss.on('connection', (ws: WebSocket, req: any) => {
+        // 认证检查
+        const url = new URL(req.url ?? '', `http://${req.headers.host}`)
+        const secret = url.searchParams.get('secret')
+        const deviceId = url.searchParams.get('deviceId') ?? 'unknown'
+        const deviceType = (url.searchParams.get('deviceType') ?? 'unknown') as 'ios' | 'android' | 'unknown'
+
+        // 验证密钥
+        if (this.sessionManager.isDeviceAllowed(deviceId)) {
+          if (this.sessionManager['authInfo']?.secret && secret !== this.sessionManager['authInfo'].secret) {
+            ws.close(4001, '认证失败')
+            return
+          }
+        }
+
+        // 创建移动端会话
+        const session = this.sessionManager.createSession(deviceId, deviceType)
+        this.sessionManager.updateSessionState(session.sessionId, 'connected')
+
+        ws.on('message', (data: string | Buffer) => {
+          try {
+            const msg = JSON.parse(data.toString()) as MobileRequest
+            this.handleMobileMessage(msg, session.sessionId, ws)
+          } catch {
+            // 忽略无效消息
+          }
+        })
+
+        ws.on('close', () => {
+          this.sessionManager.endSession(session.sessionId)
+          this.connectedClients.delete(ws)
+          this.broadcast('client_disconnected', { sessionId: session.sessionId, deviceId })
+        })
+
+        this.connectedClients.add(ws)
+        this.broadcast('client_connected', { sessionId: session.sessionId, deviceId, deviceType })
+        logForDebugging(`[MobileBridgeServer] 客户端连接: ${deviceId}`)
+      })
+
+      await new Promise<void>((resolve, reject) => {
+        this.httpServer.listen(this.port, 'localhost', resolve)
+        this.httpServer.on('error', reject)
+      })
+
+      this.isRunning = true
+      logForDebugging(`[MobileBridgeServer] 服务器启动在端口 ${this.port}`)
+    } catch (e) {
+      logForDebugging(`[MobileBridgeServer] 启动失败: ${e instanceof Error ? e.message : String(e)}`)
+    }
+  }
+
+  /**
+   * 处理移动端消息
+   */
+  private async handleMobileMessage(msg: MobileRequest, sessionId: string, ws: WebSocket): Promise<void> {
+    try {
+      // 更新活动时间
+      this.sessionManager.updateSessionMetadata(sessionId, { lastActivity: Date.now() })
+
+      // 处理请求
+      const response = await handleMobileRequest(msg)
+
+      // 发送响应回移动端
+      if (ws.readyState === ws.OPEN) {
+        ws.send(JSON.stringify(response))
+      }
+
+      // 如果是控制消息，转发给 bridgeHandle
+      if (this.bridgeHandle && msg.type === 'control') {
+        this.forwardToBridge(msg, sessionId)
+      }
+    } catch (e) {
+      if (ws.readyState === ws.OPEN) {
+        ws.send(JSON.stringify({
+          type: 'error',
+          requestId: msg.requestId,
+          data: { error: e instanceof Error ? e.message : String(e) },
+          success: false,
+          timestamp: Date.now(),
+        }))
+      }
+    }
+  }
+
+  /**
+   * 将移动端消息转发到桥接
+   */
+  private forwardToBridge(msg: MobileRequest, sessionId: string): void {
+    if (!this.bridgeHandle) return
+
+    const { action, params } = msg
+
+    switch (action) {
+      case 'sendMessage': {
+        const { message } = params as { message: string }
+        this.bridgeHandle.writeMessages([{ type: 'user', content: message }])
+        break
+      }
+      case 'interrupt': {
+        this.bridgeHandle.sendControlCancelRequest(msg.requestId)
+        break
+      }
+      case 'cancel': {
+        this.bridgeHandle.sendControlCancelRequest(msg.requestId)
+        break
+      }
+    }
+  }
+
+  /**
+   * 广播消息到所有连接的移动端
+   */
+  private broadcast(type: string, data: Record<string, unknown>): void {
+    const msg = JSON.stringify({ type, data, timestamp: Date.now() })
+    for (const ws of this.connectedClients) {
+      if (ws.readyState === ws.OPEN) {
+        ws.send(msg)
+      }
+    }
+  }
+
+  /**
+   * 发送结果到所有移动端
+   */
+  sendToAll(type: string, data: Record<string, unknown>): void {
+    this.broadcast(type, data)
+  }
+
+  /**
+   * 发送消息到指定会话
+   */
+  sendToSession(sessionId: string, type: string, data: Record<string, unknown>): void {
+    // 目前广播到所有客户端，未来可以按 sessionId 过滤
+    this.broadcast(type, data)
+  }
+
+  /**
+   * 停止服务器
+   */
+  async stop(): Promise<void> {
+    if (this.wss) {
+      this.wss.close()
+      this.wss = null
+    }
+    if (this.httpServer) {
+      await new Promise<void>((resolve) => {
+        this.httpServer.close(() => resolve())
+      })
+      this.httpServer = null
+    }
+    this.isRunning = false
+    this.connectedClients.clear()
+    this.sessionManager.stopCleanup()
+  }
+
+  /**
+   * 是否正在运行
+   */
+  isServerRunning(): boolean {
+    return this.isRunning
+  }
+
+  /**
+   * 获取连接的客户端数量
+   */
+  getClientCount(): number {
+    return this.connectedClients.size
+  }
+}
+
+/**
+ * 初始化移动端桥接服务器
+ * 将服务器与现有的 ReplBridgeHandle 集成
+ */
+export async function initMobileBridgeServer(
+  sessionId: string,
+  bridgeHandle: ReplBridgeHandle,
+  port?: number,
+): Promise<MobileBridgeServer | null> {
+  const server = new MobileBridgeServer({
+    sessionId,
+    port,
+    bridgeHandle,
+  })
+
+  await server.start()
+  return server.isServerRunning() ? server : null
+}
+
+/**
+ * 获取移动端桥接 URL（用于二维码生成）
+ */
+export function getMobileBridgeUrl(port?: number): string {
+  const p = port ?? 5680
+  return `http://localhost:${p}`
 }

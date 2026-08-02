@@ -251,7 +251,17 @@ export const AgentTool = buildTool({
     const startTime = Date.now();
     const model = isCoordinatorMode() ? undefined : modelParam;
 
-    // 获取 app state 用于权限模式和代理过滤
+    // 获取 app state
+    // 子代理并发控制 (更新日志 2.1.217)
+    try {
+      const { getSubAgentManager } = await import('../../features/featureFlags.js')
+      const subAgentMgr = getSubAgentManager()
+      if (!subAgentMgr.canSpawn()) {
+        return { status: 'failed' as const, error: '并发子代理已达上限，请等待当前子代理完成后再试。' }
+      }
+    } catch { /* module not available */ }
+
+ 用于权限模式和代理过滤
     const appState = toolUseContext.getAppState();
     const permissionMode = appState.toolPermissionContext.mode;
     // 进程内协作者获得空操作 setAppState；setAppStateForTasks
