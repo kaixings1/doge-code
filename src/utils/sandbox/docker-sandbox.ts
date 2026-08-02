@@ -37,6 +37,15 @@ export interface DockerSandboxConfig {
   autoRemove: boolean
   /** Whether to use --init to run tini as PID 1 */
   useInit: boolean
+  // ─── 更新日志新功能 (2.1.128-2.1.220) ───
+  /** 网络沙箱严格白名单（仅允许指定主机）(更新日志 2.1.219) */
+  strictNetworkAllowlist?: string[]
+  /** 禁用文件系统沙箱（保留网络出口控制）(更新日志 2.1.216) */
+  filesystemDisabled?: boolean
+  /** bubblewrap 路径 (Linux/WSL, 更新日志 2.1.133) */
+  bwrapPath?: string
+  /** socat 路径 (Linux/WSL, 更新日志 2.1.133) */
+  socPath?: string
 }
 
 export interface DockerSandboxStatus {
@@ -77,6 +86,11 @@ const DEFAULT_CONFIG: DockerSandboxConfig = {
   extraMounts: [],
   autoRemove: true,
   useInit: true,
+  // 更新日志新功能默认值
+  strictNetworkAllowlist: [],
+  filesystemDisabled: false,
+  bwrapPath: '',
+  socPath: '',
 }
 
 // ============================================================================
@@ -239,6 +253,16 @@ export class DockerSandboxManager {
       args.push(`--network=${this.config.networkMode}`)
     }
 
+    // 网络沙箱严格白名单 (更新日志 2.1.219)
+    if (this.config.strictNetworkAllowlist && this.config.strictNetworkAllowlist.length > 0) {
+      // 不允许时使用 --network=none 然后仅允许白名单主机
+      if (this.config.networkMode === 'bridge') {
+        args.push('--network=none')
+      }
+      // 写入 /etc/hosts 白名单（通过环境变量传递）
+      args.push('-e', `SANDBOX_NETWORK_ALLOWLIST=${this.config.strictNetworkAllowlist.join(',')}`)
+    }
+
     // Memory limit
     if (this.config.memoryLimitMB > 0) {
       args.push(`--memory=${this.config.memoryLimitMB}m`)
@@ -270,8 +294,13 @@ export class DockerSandboxManager {
     // HOME directory
     args.push('-e', `HOME=${DEFAULT_WORKDIR}`)
 
-    // Workspace mount
-    args.push('-v', `${resolvedWorkspace}:${this.config.workdir}`)
+    // Workspace mount（文件系统沙箱禁用时跳过, 更新日志 2.1.216）
+    if (!this.config.filesystemDisabled) {
+      args.push('-v', `${resolvedWorkspace}:${this.config.workdir}`)
+    } else {
+      // 仅在不禁用文件系统时使用额外挂载
+      args.push('-e', 'SANDBOX_FS_DISABLED=1')
+    }
 
     // Extra mounts
     for (const mount of this.config.extraMounts) {

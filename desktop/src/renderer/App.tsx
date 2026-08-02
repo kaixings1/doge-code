@@ -1002,6 +1002,27 @@ export function App(): JSX.Element {
               content: finalContent,
             }
             appendMsg(asstMsg)
+          } else if (result?.toolOutput) {
+            // IPC handler returned tool output directly (non-streaming mode)
+            const toolContent = result.toolOutput
+            try {
+              const parsed = JSON.parse(toolContent)
+              if (typeof parsed.output === 'string') {
+                const ec = parsed.exitCode
+                const suffix = (ec === 0 || ec === null) ? '' : `[exit code: ${ec}]\n`
+                appendMsg({ id: `auto-asst-${Date.now()}`, role: 'assistant', content: suffix + parsed.output.replace(/\u001b\[[0-9;]*m/g, '') })
+              } else if (typeof parsed.error === 'string') {
+                appendMsg({ id: `auto-err-${Date.now()}`, role: 'error', content: `工具执行失败: ${parsed.error}` })
+              } else {
+                appendMsg({ id: `auto-asst-${Date.now()}`, role: 'assistant', content: '(命令已执行)' })
+              }
+            } catch {
+              if (toolContent.includes('failed') || toolContent.includes('error') || toolContent.includes('Error')) {
+                appendMsg({ id: `auto-err-${Date.now()}`, role: 'error', content: `工具执行失败: ${toolContent.slice(0, 300)}` })
+              } else {
+                appendMsg({ id: `auto-asst-${Date.now()}`, role: 'assistant', content: toolContent.slice(0, 2000) })
+              }
+            }
           } else {
             // 文本内容为空：工具调用结果可能在历史消息中
             // 工具结果消息 role 为 'tool'，content 为 JSON 或错误字符串
