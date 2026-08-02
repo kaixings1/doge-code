@@ -1,223 +1,418 @@
 /**
  * OpenHands 风格工程代理循环策略
  *
- * 核心概念：
- * - 计划（Plan）：先制定详细执行计划，再开始行动
- * - 执行（Execute）：按计划逐步执行具体操作
- * - 验证（Verify）：验证执行结果是否符合预期
- * - 迭代改进：验证失败则修改计划重新执行
- * - 状态追踪：维护计划状态和执行历史
+ * 移植自 OpenHands（https://github.com/All-Hands-AI/OpenHands）
  *
- * 循环流程：
- *   plan → execute → verify
- *     ↑                  │
- *     └─── (迭代改进) ───┘
- *     ↓ (连续 2 次验证无改进)
- *     plan（重新规划）
+ * 核心架构：
+ * - Plan Phase：分析需求，制定详细执行计划
+ * - Execute Phase：按计划执行具体操作
+ * - Verify Phase：验证执行结果是否符合预期
+ * - Iterate Phase：验证失败则修改计划重新执行
+ *
+ * 三个核心角色：
+ * 1. Planner - 分析任务、制定计划、评估可行性
+ * 2. Executor - 执行计划、处理异常、报告进度
+ * 3. Verifier - 验证结果、检测问题、提出改进
+ *
+ * 执行流程：
+ *   1. Planner 分析目标，生成执行计划（步骤列表）
+ *   2. Executor 按计划逐步执行
+ *   3. Verifier 验证每步结果
+ *   4. 验证通过 → 继续下一步
+ *   5. 验证失败 → 回退到 Planner 重新计划
+ *   6. 连续 2 次计划失败 → 终止
  */
 
 import { BaseLoopStrategy } from './base.js'
 import type { LoopGoal, LoopStrategyName, SubTask } from '../types.js'
 
+// ============================================================================
+// 类型定义
+// ============================================================================
+
 /** OpenHands 三阶段标识 */
 type OpenHandsPhase = 'plan' | 'execute' | 'verify'
 
-/** 计划条目 */
-interface PlanStep {
-  id: string
+/** 计划步骤状态 */
+type PlanStepStatus = 'pending' | 'executed' | 'verified' | 'failed'
+
+/**
+ * PlanStep — 计划步骤
+ *
+ * OpenHands 风格：每个步骤是一个原子操作，
+ * 包含具体动作、预期输出、实际输出和验证结果。
+ */
+class PlanStep {
+  /** 步骤唯一标识 */
+  readonly id: string
+  /** 步骤序号（从 1 开始） */
+  readonly index: number
+  /** 具体操作描述 */
   action: string
+  /** 预期输出（可验证的标准） */
   expectedOutcome: string
-  status: 'pending' | 'executed' | 'verified' | 'failed'
+  /** 当前状态 */
+  status: PlanStepStatus
+  /** 实际执行结果 */
   executionResult?: string
+  /** 验证反馈 */
   verificationResult?: string
+  /** 创建时间 */
+  readonly createdAt: number
+  /** 执行时间 */
+  executedAt?: number
+  /** 验证时间 */
+  verifiedAt?: number
+  /** 重试次数 */
+  retryCount: number
+  /** 所属计划版本（每次重新计划时递增） */
+  planVersion: number
+
+  constructor(
+    id: string,
+    index: number,
+    action: string,
+    expectedOutcome: string,
+    planVersion = 1,
+  ) {
+    this.id = id
+    this.index = index
+    this.action = action
+    this.expectedOutcome = expectedOutcome
+    this.status = 'pending'
+    this.createdAt = Date.now()
+    this.retryCount = 0
+    this.planVersion = planVersion
+  }
+
+  /**
+   * 标记步骤为已执行
+   */
+  markExecuted(result: string): void {
+    this.executionResult = result
+    this.status = 'executed'
+    this.executedAt = Date.now()
+  }
+
+  /**
+   * 标记步骤验证结果
+   */
+  markVerified(passed: boolean, feedback: string): void {
+    this.verificationResult = feedback
+    this.status = passed ? 'verified' : 'failed'
+    this.verifiedAt = Date.now()
+    if (!passed) {
+      this.retryCount++
+    }
+  }
+
+  /**
+   * 重置步骤状态（重新计划时调用）
+   */
+  reset(newAction?: string, newExpectedOutcome?: string): void {
+    if (newAction) this.action = newAction
+    if (newExpectedOutcome) this.expectedOutcome = newExpectedOutcome
+    this.status = 'pending'
+    this.executionResult = undefined
+    this.verificationResult = undefined
+    this.executedAt = undefined
+    this.verifiedAt = undefined
+  }
+
+  /**
+   * 获取步骤摘要（用于日志和报告）
+   */
+  toString(): string {
+    const statusMark = this.status === 'verified' ? '[通过]'
+      : this.status === 'executed' ? '[执行]'
+      : this.status === 'failed' ? '[失败]'
+      : '[待办]'
+    return `${this.index}. ${statusMark} ${this.action}`
+  }
 }
 
 /** 验证轮次结果 */
 interface VerificationRound {
+  /** 轮次编号 */
   iteration: number
+  /** 计划版本 */
+  planVersion: number
+  /** 被验证的步骤 ID */
   stepId: string
+  /** 是否通过 */
   passed: boolean
+  /** 验证反馈 */
   feedback: string
+  /** 验证时间 */
   timestamp: number
 }
 
+/** Planner 角色状态 */
+interface PlannerState {
+  /** 当前计划版本（每次重新计划 +1） */
+  currentPlanVersion: number
+  /** 计划历史（每次计划的快照） */
+  planHistory: Array<{ version: number; steps: string[]; timestamp: number; reason: string }>
+  /** 连续计划失败次数 */
+  consecutivePlanFailures: number
+  /** 最大连续计划失败次数（终止条件） */
+  maxPlanFailures: number
+  /** 历史验证反馈（用于改进计划） */
+  verificationFeedbackHistory: string[]
+}
+
+/** Executor 角色状态 */
+interface ExecutorState {
+  /** 当前执行步骤索引 */
+  currentStepIndex: number
+  /** 已完成步骤数 */
+  completedSteps: number
+  /** 执行历史 */
+  executionLog: Array<{ stepId: string; action: string; result: string; timestamp: number }>
+  /** 异常计数 */
+  errorCount: number
+  /** 最大连续异常数 */
+  maxConsecutiveErrors: number
+}
+
+/** Verifier 角色状态 */
+interface VerifierState {
+  /** 验证轮次计数 */
+  totalVerificationRounds: number
+  /** 通过次数 */
+  passCount: number
+  /** 失败次数 */
+  failCount: number
+  /** 验证历史 */
+  verificationHistory: VerificationRound[]
+  /** 连续无改进验证轮次 */
+  stagnationCount: number
+  /** 最大连续无改进次数（终止条件） */
+  maxStagnation: number
+}
+
+// ============================================================================
+// OpenHands Strategy
+// ============================================================================
+
+/**
+ * OpenHands 策略
+ *
+ * 三个核心角色协作的工程代理循环：
+ * - Planner：分析任务、制定计划、评估可行性
+ * - Executor：执行计划、处理异常、报告进度
+ * - Verifier：验证结果、检测问题、提出改进
+ *
+ * 循环流程：
+ *   plan → execute → verify
+ *     ↑                  │
+ *     └─── (迭代改进) ───┘
+ *     ↓ (连续 2 次计划失败)
+ *     plan（重新规划）
+ */
 export class OpenHandsStrategy extends BaseLoopStrategy {
   readonly name: LoopStrategyName = 'openhands'
   readonly displayName = 'OpenHands 工程代理循环'
-  readonly description = '工程代理风格的计划-执行-验证循环。先计划、再执行、最后验证，失败则迭代改进。'
-
-  /** 当前详细计划步骤列表 */
-  private planSteps: PlanStep[] = []
+  readonly description = '工程代理风格的计划-执行-验证循环。三个核心角色协作：Planner 制定计划、Executor 执行计划、Verifier 验证结果，失败则迭代改进。'
 
   /** 当前活跃阶段 */
   private currentPhase: OpenHandsPhase = 'plan'
 
-  /** 验证历史记录 */
-  private verificationHistory: VerificationRound[] = []
+  /** 当前计划步骤列表 */
+  private planSteps: PlanStep[] = []
 
-  /** 各阶段连续失败次数 */
-  private phaseFailures: Record<OpenHandsPhase, number> = {
-    plan: 0,
-    execute: 0,
-    verify: 0,
-  }
+  /** Planner 角色状态 */
+  private plannerState: PlannerState
 
-  /** 连续验证无改进计数（核心终止条件） */
-  private stagnationCount = 0
+  /** Executor 角色状态 */
+  private executorState: ExecutorState
 
-  /** 最大连续验证无改进次数 */
-  private readonly maxStagnation = 2
+  /** Verifier 角色状态 */
+  private verifierState: VerifierState
 
-  /** 最大阶段连续失败次数 */
-  private readonly maxPhaseFailure = 3
+  constructor() {
+    super()
 
-  /**
-   * 将目标分解为计划、执行、验证三个阶段
-   *
-   * OpenHands 风格：每个阶段是一个 SubTask。
-   * plan 阶段将产生具体的 PlanStep 列表，
-   * execute 和 verify 阶段基于 PlanStep 逐步推进。
-   *
-   * 子任务按顺序排列：plan → execute → verify
-   */
-  decompose(goal: LoopGoal): SubTask[] {
-    // 如果目标已预定义子任务，直接使用
-    if (goal.subTasks && goal.subTasks.length > 0) {
-      // 将预定义子任务映射为 PlanStep
-      this.planSteps = goal.subTasks.map((st) => ({
-        id: st.id,
-        action: st.action ?? st.description,
-        expectedOutcome: goal.successCriteria?.join('; ') ?? '完成目标',
-        status: st.status === 'completed' ? 'verified' : 'pending',
-        executionResult: st.result,
-      }))
-      return goal.subTasks
+    this.plannerState = {
+      currentPlanVersion: 0,
+      planHistory: [],
+      consecutivePlanFailures: 0,
+      maxPlanFailures: 2,
+      verificationFeedbackHistory: [],
     }
 
-    // OpenHands 风格：生成 3 个阶段的框架任务
-    const phases: SubTask[] = [
+    this.executorState = {
+      currentStepIndex: -1,
+      completedSteps: 0,
+      executionLog: [],
+      errorCount: 0,
+      maxConsecutiveErrors: 3,
+    }
+
+    this.verifierState = {
+      totalVerificationRounds: 0,
+      passCount: 0,
+      failCount: 0,
+      verificationHistory: [],
+      stagnationCount: 0,
+      maxStagnation: 2,
+    }
+  }
+
+  /**
+   * 将目标分解为三个核心阶段的子任务
+   *
+   * OpenHands 风格：每个阶段是一个 SubTask。
+   * - plan 阶段：生成 PlanStep 列表
+   * - execute 阶段：基于 PlanStep 逐步执行
+   * - verify 阶段：验证每个 PlanStep 的执行结果
+   *
+   * 如果目标已预定义子任务，将它们作为初始计划步骤使用。
+   */
+  decompose(goal: LoopGoal): SubTask[] {
+    // 如果目标已预定义子任务，将它们映射为 PlanStep
+    if (goal.subTasks && goal.subTasks.length > 0) {
+      this.planSteps = goal.subTasks.map((st, i) => {
+        const step = new PlanStep(
+          st.id,
+          i + 1,
+          st.description,
+          goal.successCriteria?.join('; ') ?? '完成目标要求',
+          1,
+        )
+        // 如果已有结果，恢复状态
+        if (st.status === 'completed') {
+          st.status = 'verified'
+        }
+        return step
+      })
+    }
+
+    // 返回三个核心阶段的 SubTask
+    return [
       {
         id: 'openhands-plan',
-        description: `[plan] 制定详细执行计划：分析目标 "${goal.description}"，分解为具体可执行的步骤，明确每个步骤的预期输出。`,
+        description: `[plan] Planner 制定详细执行计划：分析目标 "${goal.description}"，分解为具体可执行的步骤，明确每个步骤的预期输出。`,
         status: 'pending',
       },
       {
         id: 'openhands-execute',
-        description: `[execute] 按计划执行：逐步执行 plan 阶段制定的步骤，记录每个步骤的实际执行结果。`,
+        description: `[execute] Executor 按计划执行：逐步执行 plan 阶段制定的步骤，记录每个步骤的实际执行结果。`,
         status: 'pending',
       },
       {
         id: 'openhands-verify',
-        description: `[verify] 验证结果：逐一检查每个步骤的实际结果是否符合预期，判断整体目标是否达成。失败则触发迭代改进。`,
+        description: `[verify] Verifier 验证结果：逐一检查每个步骤的实际结果是否符合预期，判断整体目标是否达成。失败则触发迭代改进。`,
         status: 'pending',
       },
     ]
-
-    return phases
   }
 
   /**
    * OpenHands 风格的验证评估
    *
-   * 判定逻辑（按优先级）：
-   * 1. 连续 2 次验证无改进 → 目标失败（无法进一步推进）
-   * 2. 任一阶段连续失败 3 次 → 目标失败（无法推进）
-   * 3. 所有 PlanStep 状态为 verified → 目标达成
-   * 4. 所有子任务完成且满足成功标准 → 目标达成
-   * 5. 否则继续迭代
+   * 三个角色协作判定：
+   * 1. Verifier 检测连续无改进 → 终止
+   * 2. Planner 检测连续计划失败 → 终止
+   * 3. 所有步骤验证通过 + 满足成功标准 → 达成
+   * 4. 否则继续迭代
    */
   evaluate(goal: LoopGoal, subTasks: SubTask[]): { achieved: boolean; reason: string } {
-    // 1. 检查连续验证无改进
-    if (this.stagnationCount >= this.maxStagnation) {
+    // 1. Verifier：检测连续验证无改进
+    if (this.verifierState.stagnationCount >= this.verifierState.maxStagnation) {
       return {
         achieved: false,
-        reason: `连续 ${this.maxStagnation} 轮验证均无改进，无法进一步推进目标`,
+        reason: `Verifier 检测到连续 ${this.verifierState.maxStagnation} 轮验证无改进，无法进一步推进目标`,
       }
     }
 
-    // 2. 检查是否有阶段连续失败达到上限
-    for (const [phase, count] of Object.entries(this.phaseFailures)) {
-      if (count >= this.maxPhaseFailure) {
-        return {
-          achieved: false,
-          reason: `阶段 [${phase}] 已连续失败 ${count} 次，计划-执行-验证循环无法继续推进`,
-        }
+    // 2. Planner：检测连续计划失败
+    if (this.plannerState.consecutivePlanFailures >= this.plannerState.maxPlanFailures) {
+      return {
+        achieved: false,
+        reason: `Planner 连续 ${this.plannerState.maxPlanFailures} 次计划失败，无法制定有效执行方案`,
       }
     }
 
-    // 3. 检查所有 PlanStep 是否已验证通过
+    // 3. Executor：检测连续执行异常
+    if (this.executorState.errorCount >= this.executorState.maxConsecutiveErrors) {
+      return {
+        achieved: false,
+        reason: `Executor 连续 ${this.executorState.maxConsecutiveErrors} 次执行异常，执行流程受阻`,
+      }
+    }
+
+    // 4. 检查所有计划步骤是否已验证通过
     if (this.planSteps.length > 0) {
       const allVerified = this.planSteps.every(s => s.status === 'verified')
       if (allVerified) {
-        return {
-          achieved: true,
-          reason: `计划所有 ${this.planSteps.length} 个步骤均已验证通过`,
-        }
-      }
+        // 检查成功标准
+        if (goal.successCriteria && goal.successCriteria.length > 0) {
+          const allResults = this.planSteps
+            .filter(s => s.executionResult)
+            .map(s => s.executionResult!)
+            .join('\n')
+          const criteriaMet = goal.successCriteria.filter(c =>
+            allResults.toLowerCase().includes(c.toLowerCase())
+          ).length
 
-      // 检查是否有步骤失败（需要迭代）
-      const failedSteps = this.planSteps.filter(s => s.status === 'failed')
-      if (failedSteps.length > 0) {
-        return {
-          achieved: false,
-          reason: `${failedSteps.length} 个计划步骤验证失败，需要迭代改进：${failedSteps.map(s => s.action).slice(0, 3).join(', ')}`,
-        }
-      }
-
-      // 计划步骤尚未全部执行
-      const executedCount = this.planSteps.filter(s => s.status === 'executed' || s.status === 'verified').length
-      return {
-        achieved: false,
-        reason: `计划执行进度 ${executedCount}/${this.planSteps.length}，当前阶段: [${this.currentPhase}]`,
-      }
-    }
-
-    // 4. 检查所有子任务是否完成
-    const completedCount = subTasks.filter(t => t.status === 'completed').length
-    const totalCount = subTasks.length
-
-    if (totalCount > 0 && completedCount === totalCount) {
-      // 检查成功标准
-      if (goal.successCriteria && goal.successCriteria.length > 0) {
-        const allResults = subTasks
-          .filter(t => t.result)
-          .map(t => t.result!)
-          .join('\n')
-
-        const criteriaMet = goal.successCriteria.filter((c) =>
-          allResults.toLowerCase().includes(c.toLowerCase())
-        ).length
-
-        if (criteriaMet === goal.successCriteria.length) {
+          if (criteriaMet === goal.successCriteria.length) {
+            return {
+              achieved: true,
+              reason: `所有 ${this.planSteps.length} 个计划步骤验证通过，成功标准全部满足（${criteriaMet}/${goal.successCriteria.length}）`,
+            }
+          }
           return {
-            achieved: true,
-            reason: `所有 ${totalCount} 个阶段已完成，成功标准全部满足（${criteriaMet}/${goal.successCriteria.length}）`,
+            achieved: false,
+            reason: `步骤全部验证通过，但成功标准仅满足 ${criteriaMet}/${goal.successCriteria.length}，需要迭代改进`,
           }
         }
 
         return {
-          achieved: false,
-          reason: `阶段全部完成，但成功标准仅满足 ${criteriaMet}/${goal.successCriteria.length}，需要迭代改进`,
+          achieved: true,
+          reason: `所有 ${this.planSteps.length} 个计划步骤均已验证通过，计划-执行-验证循环完整执行`,
         }
       }
 
+      // 有失败的步骤 → 需要迭代
+      const failedSteps = this.planSteps.filter(s => s.status === 'failed')
+      if (failedSteps.length > 0) {
+        return {
+          achieved: false,
+          reason: `Verifier: ${failedSteps.length} 个步骤验证失败，触发迭代改进 → Planner 重新制定计划`,
+        }
+      }
+
+      // 还有未执行的步骤
+      const executedCount = this.planSteps.filter(s => s.status === 'executed' || s.status === 'verified').length
       return {
-        achieved: true,
-        reason: `所有 ${totalCount} 个阶段已完成，计划-执行-验证循环完整执行`,
+        achieved: false,
+        reason: `Executor: 计划执行进度 ${executedCount}/${this.planSteps.length}，当前阶段: [${this.currentPhase}]`,
       }
     }
 
-    // 5. 默认：继续循环
+    // 5. 检查三阶段子任务完成情况
+    const completedCount = subTasks.filter(t => t.status === 'completed').length
+    const totalCount = subTasks.length
+
+    if (totalCount > 0 && completedCount === totalCount) {
+      return {
+        achieved: true,
+        reason: `三阶段循环完成（plan → execute → verify），所有 ${totalCount} 个阶段已完成`,
+      }
+    }
+
+    // 6. 默认：继续迭代
     return {
       achieved: false,
-      reason: `计划-执行-验证循环运行中，完成进度 ${completedCount}/${totalCount}，当前阶段: [${this.currentPhase}]，停滞计数: ${this.stagnationCount}/${this.maxStagnation}`,
+      reason: `计划-执行-验证循环运行中，当前阶段: [${this.currentPhase}]，计划版本: v${this.plannerState.currentPlanVersion}，停滞: ${this.verifierState.stagnationCount}/${this.verifierState.maxStagnation}`,
     }
   }
 
   /**
-   * 返回 OpenHands 风格的系统提示词
+   * OpenHands 风格的系统提示词
    *
-   * 描述计划-执行-验证的工程代理循环逻辑，
+   * 描述三个角色的职责分工和协作方式，
    * 包含迭代改进策略和状态追踪规则
    */
   getSystemPrompt(goal: LoopGoal): string {
@@ -226,86 +421,97 @@ export class OpenHandsStrategy extends BaseLoopStrategy {
       : ''
 
     const planSection = this.planSteps.length > 0
-      ? `\n\n## 当前计划（${this.planSteps.length} 步）\n${this.planSteps.map((s, i) => {
-          const statusMark = s.status === 'verified' ? '[通过]' : s.status === 'executed' ? '[执行]' : s.status === 'failed' ? '[失败]' : '[待办]'
-          return `${i + 1}. ${statusMark} ${s.action}\n   预期: ${s.expectedOutcome}${s.executionResult ? `\n   实际: ${s.executionResult.slice(0, 100)}` : ''}`
+      ? `\n\n## 当前计划（v${this.plannerState.currentPlanVersion}，${this.planSteps.length} 步）\n${this.planSteps.map((s) => {
+          const statusMark = s.status === 'verified' ? '[通过]'
+            : s.status === 'executed' ? '[执行]'
+            : s.status === 'failed' ? '[失败]'
+            : '[待办]'
+          return `  ${s.index}. ${statusMark} ${s.action}\n     预期: ${s.expectedOutcome}${s.executionResult ? `\n     实际: ${s.executionResult.slice(0, 100)}` : ''}${s.verificationResult ? `\n     验证: ${s.verificationResult.slice(0, 80)}` : ''}`
         }).join('\n')}`
       : ''
 
-    const verificationSection = this.verificationHistory.length > 0
-      ? `\n\n## 验证历史（最近 5 轮）\n${this.verificationHistory.slice(-5).map((v, i) => {
-          return `  轮次 ${i + 1}: 步骤 [${v.stepId}] ${v.passed ? '通过' : '未通过'} — ${v.feedback.slice(0, 80)}`
-        }).join('\n')}`
+    const recentFeedback = this.plannerState.verificationFeedbackHistory.slice(-3)
+    const feedbackSection = recentFeedback.length > 0
+      ? `\n\n## 历史验证反馈（Planner 制定新计划时参考）\n${recentFeedback.map((f, i) => `  ${i + 1}. ${f}`).join('\n')}`
       : ''
 
-    return `你是 OpenHands 工程代理。你需要通过计划-执行-验证的工程循环来完成以下目标。
+    return `你是 OpenHands 工程代理，由三个专业角色协作完成任务。
 
 ## 目标
-${goal.description}${criteria}${planSection}${verificationSection}
+${goal.description}${criteria}${planSection}${feedbackSection}
 
-## 工程代理循环（Plan-Execute-Verify）
+## 三个核心角色
 
-\`\`\`
-plan → execute → verify
-  ↑                  │
-  └────── (迭代改进) ───┘
-\`\`\`
+### Planner（规划者）
+- 分析目标的核心需求和约束条件
+- 将目标分解为有序、可执行、可验证的步骤
+- 为每个步骤定义明确的预期输出
+- 根据 Verifier 的反馈改进计划
+- 评估计划的可行性
 
-### 阶段 1：plan（制定计划）
-- 分析目标，理解需求的核心要素
-- 将目标分解为具体、可执行、可验证的步骤
-- 为每个步骤定义明确的预期输出（可验证的标准）
-- 输出格式：
-  \`\`\`
-  步骤 1: <具体操作>
-    预期输出: <可验证的结果描述>
-  步骤 2: <具体操作>
-    预期输出: <可验证的结果描述>
-  \`\`\`
-- 计划应该足够详细，使得 execute 阶段可以机械执行
-
-### 阶段 2：execute（执行计划）
-- 严格按照 plan 阶段的步骤顺序执行
+### Executor（执行者）
+- 严格按照 Plan 阶段的步骤顺序执行
 - 每个步骤执行后记录实际输出
-- 如果某个步骤无法执行，记录失败原因并继续后续步骤
-- 执行过程中严格遵循计划，不自行修改计划（计划修改由 verify 失败触发）
-- 输出格式：
-  \`\`\`
-  步骤 1 执行结果: <实际输出>
-  步骤 2 执行结果: <实际输出>
-  \`\`\`
+- 遇到异常时记录详细错误信息
+- 不自行修改计划（计划修改由 verify 失败触发）
+- 向 Verifier 报告执行结果
 
-### 阶段 3：verify（验证结果）
-- 逐一比对每个步骤的实际输出与预期输出
-- 判断每个步骤是否通过验证：
-  - 通过：实际输出满足预期要求
-  - 未通过：实际输出不满足预期要求，记录具体差异
-- 判断整体目标是否达成（所有步骤通过 + 满足成功标准）
-- 如果验证失败，生成具体的改进反馈：
-  - 哪个步骤失败了
-  - 失败的具体原因
-  - 建议的改进方向
-- 输出格式：
-  \`\`\`
-  验证结果:
-  - 步骤 1: [通过/未通过] <理由>
-  - 步骤 2: [通过/未通过] <理由>
-  整体判定: [达成/未达成]
-  改进建议: <具体建议>
-  \`\`\`
+### Verifier（验证者）
+- 逐一比对实际输出与预期输出
+- 诚实评估：不将不满足的结果标记为通过
+- 未通过时给出具体的改进建议
+- 检测连续无改进（ stagnation 检测）
+- 判断整体目标是否达成
+
+## 工程代理循环
+
+\`\`\`
+Planner.plan() → Executor.execute() → Verifier.verify()
+       ↑                                    │
+       └─────────── (迭代改进) ──────────────┘
+       ↓ (连续 ${this.plannerState.maxPlanFailures} 次计划失败)
+       终止循环
+\`\`\`
+
+### 阶段 1：Plan（Planner 制定计划）
+输出格式：
+\`\`\`
+步骤 1: <具体操作>
+  预期输出: <可验证的结果描述>
+步骤 2: <具体操作>
+  预期输出: <可验证的结果描述>
+\`\`\`
+
+### 阶段 2：Execute（Executor 执行计划）
+输出格式：
+\`\`\`
+步骤 1 执行结果: <实际输出>
+步骤 2 执行结果: <实际输出>
+\`\`\`
+
+### 阶段 3：Verify（Verifier 验证结果）
+输出格式：
+\`\`\`
+验证结果:
+- 步骤 1: [通过/未通过] <理由>
+- 步骤 2: [通过/未通过] <理由>
+整体判定: [达成/未达成]
+改进建议: <具体建议>
+\`\`\`
 
 ## 迭代改进规则
-1. 验证失败时，回到 plan 阶段重新制定计划
+1. Verifier 验证失败 → Planner 重新制定计划（保持已通过的步骤）
 2. 新计划必须针对上次验证失败的具体原因进行改进
-3. 连续 ${this.maxStagnation} 轮验证无改进将触发终止（防止无效迭代）
-4. 改进时应保持已经验证通过的步骤，只修改失败的步骤
-5. 如果某个步骤连续 ${this.maxPhaseFailure} 次失败，尝试完全不同的替代方案
+3. 连续 ${this.verifierState.maxStagnation} 轮验证无改进 → 终止（防止无效迭代）
+4. 连续 ${this.plannerState.maxPlanFailures} 次计划失败 → 终止（Planner 无法找到有效方案）
+5. Executor 连续 ${this.executorState.maxConsecutiveErrors} 次异常 → 终止（执行环境有问题）
 
-## 执行约束
-- 每次迭代专注一个阶段，不要跨阶段混合
-- 计划必须可验证：每个步骤的预期输出必须是具体的、可检查的
-- 验证必须诚实：不要将不满足的结果标记为通过
-- 记录所有验证历史，作为迭代改进的依据
+## 当前状态
+- 计划版本: v${this.plannerState.currentPlanVersion}
+- 当前阶段: [${this.currentPhase}]
+- 验证轮次: ${this.verifierState.totalVerificationRounds}
+- 停滞计数: ${this.verifierState.stagnationCount}/${this.verifierState.maxStagnation}
+- 计划失败计数: ${this.plannerState.consecutivePlanFailures}/${this.plannerState.maxPlanFailures}
 `
   }
 
@@ -314,165 +520,237 @@ plan → execute → verify
    *
    * 停止条件（满足任一即停止）：
    * 1. 达到最大迭代次数
-   * 2. 连续验证无改进达到上限（停滞检测）
-   * 3. 任一阶段连续失败达到上限
-   * 4. 所有计划步骤验证通过（目标达成）
+   * 2. 连续验证无改进达到上限（Verifier 终止）
+   * 3. 连续计划失败达到上限（Planner 终止）
+   * 4. 连续执行异常达到上限（Executor 终止）
+   * 5. 所有步骤验证通过（目标达成）
    */
-  shouldContinue(iteration: number, maxIterations: number, subTasks: SubTask[]): boolean {
+  shouldContinue(iteration: number, maxIterations: number, _subTasks: SubTask[]): boolean {
     // 条件 1：达到最大迭代次数
     if (iteration >= maxIterations) {
       return false
     }
 
     // 条件 2：连续验证无改进达到上限
-    if (this.stagnationCount >= this.maxStagnation) {
+    if (this.verifierState.stagnationCount >= this.verifierState.maxStagnation) {
       return false
     }
 
-    // 条件 3：任一阶段连续失败达到上限
-    for (const count of Object.values(this.phaseFailures)) {
-      if (count >= this.maxPhaseFailure) {
-        return false
-      }
+    // 条件 3：连续计划失败达到上限
+    if (this.plannerState.consecutivePlanFailures >= this.plannerState.maxPlanFailures) {
+      return false
     }
 
-    // 条件 4：所有计划步骤已验证通过（目标达成）
+    // 条件 4：连续执行异常达到上限
+    if (this.executorState.errorCount >= this.executorState.maxConsecutiveErrors) {
+      return false
+    }
+
+    // 条件 5：所有步骤已验证通过（目标达成）
     if (this.planSteps.length > 0 && this.planSteps.every(s => s.status === 'verified')) {
-      return false
-    }
-
-    // 条件 5：所有子任务完成
-    const allCompleted = subTasks.length > 0 && subTasks.every(t => t.status === 'completed')
-    if (allCompleted) {
       return false
     }
 
     return true
   }
 
-  // ─── OpenHands 特色方法：三阶段工程代理 ───────────────────────
+  // ─── Planner 角色方法 ─────────────────────────────────────────
 
   /**
-   * 计划：将目标分解为具体可执行的步骤
+   * Planner：制定执行计划
    *
-   * OpenHands 的核心是"先计划再执行"。plan 阶段：
-   * 1. 分析目标的复杂度
-   * 2. 分解为有序的步骤序列
-   * 3. 为每个步骤定义可验证的预期输出
+   * 分析目标并生成步骤列表。
+   * 如果有历史验证反馈，会参考反馈改进计划。
    *
    * @param goal 原始目标
-   * @returns 格式化后的计划文本
+   * @param stepActions 步骤操作描述列表（由 AI 生成）
+   * @param stepOutcomes 步骤预期输出列表（与操作一一对应）
+   * @return 格式化的计划文本
    */
-  plan(goal: LoopGoal): string {
-    // 如果有预定义子任务，基于它们构建计划
-    if (goal.subTasks && goal.subTasks.length > 0) {
-      this.planSteps = goal.subTasks.map((st) => ({
-        id: st.id,
-        action: st.action ?? st.description,
-        expectedOutcome: goal.successCriteria?.join('; ') ?? '完成目标要求',
-        status: 'pending',
-      }))
+  plan(goal: LoopGoal, stepActions: string[], stepOutcomes: string[]): string {
+    const newVersion = this.plannerState.currentPlanVersion + 1
+
+    // 创建新的计划步骤
+    const newSteps: PlanStep[] = stepActions.map((action, i) => {
+      const outcome = stepOutcomes[i] ?? goal.successCriteria?.join('; ') ?? '完成要求'
+      return new PlanStep(
+        `plan-step-v${newVersion}-${i}`,
+        i + 1,
+        action,
+        outcome,
+        newVersion,
+      )
+    })
+
+    // 保留之前版本中已验证通过的步骤，替换失败的步骤
+    if (this.planSteps.length > 0 && newVersion > 1) {
+      const verifiedSteps = this.planSteps.filter(s => s.status === 'verified')
+      const failedSteps = this.planSteps.filter(s => s.status === 'failed')
+
+      // 如果有已验证的步骤，保留它们并追加新步骤
+      if (verifiedSteps.length > 0 && failedSteps.length > 0) {
+        const mergedSteps = [...verifiedSteps]
+        let nextIndex = verifiedSteps.length + 1
+
+        for (const newStep of newSteps) {
+          mergedSteps.push(new PlanStep(
+            newStep.id,
+            nextIndex++,
+            newStep.action,
+            newStep.expectedOutcome,
+            newVersion,
+          ))
+        }
+
+        this.planSteps = mergedSteps
+      } else {
+        this.planSteps = newSteps
+      }
+    } else {
+      this.planSteps = newSteps
     }
 
-    if (this.planSteps.length === 0) {
-      // 没有子任务时，生成默认的单步计划
-      this.planSteps = [{
-        id: `plan-step-1`,
-        action: goal.description,
-        expectedOutcome: goal.successCriteria?.join('且') ?? '达成目标',
-        status: 'pending',
-      }]
-    }
+    // 更新 Planner 状态
+    this.plannerState.currentPlanVersion = newVersion
+    this.plannerState.planHistory.push({
+      version: newVersion,
+      steps: this.planSteps.map(s => s.action),
+      timestamp: Date.now(),
+      reason: newVersion === 1 ? '初始计划' : `基于验证反馈改进（反馈: ${this.plannerState.verificationFeedbackHistory.slice(-1)[0] ?? '无'}）`,
+    })
 
-    const planText = this.planSteps
-      .map((s, i) => `${i + 1}. ${s.action}\n   预期输出: ${s.expectedOutcome}`)
-      .join('\n')
-
+    // 切换阶段到 execute
     this.currentPhase = 'execute'
+    this.executorState.currentStepIndex = this.planSteps.findIndex(s => s.status === 'pending')
 
-    return `## 执行计划（${this.planSteps.length} 步）\n\n${planText}\n\n下一步：开始执行步骤 1`
+    return this.formatPlanText()
   }
 
   /**
-   * 执行：执行指定步骤并记录结果
+   * Planner：获取当前计划文本
+   */
+  getPlanText(): string {
+    return this.formatPlanText()
+  }
+
+  // ─── Executor 角色方法 ────────────────────────────────────────
+
+  /**
+   * Executor：执行指定步骤
    *
    * @param stepId 要执行的步骤 ID
    * @param result 实际执行结果
-   * @returns 执行确认文本
+   * @return 执行确认文本
    */
   executeStep(stepId: string, result: string): string {
     const step = this.planSteps.find(s => s.id === stepId)
     if (!step) {
-      return `错误: 未找到步骤 [${stepId}]，无法执行`
+      this.executorState.errorCount++
+      return `Executor 错误: 未找到步骤 [${stepId}]，无法执行`
     }
 
-    step.status = 'executed'
-    step.executionResult = result
-    this.currentPhase = 'verify'
+    // 记录执行结果
+    step.markExecuted(result)
+    this.executorState.completedSteps++
+    this.executorState.errorCount = 0  // 成功后重置异常计数
+    this.executorState.executionLog.push({
+      stepId,
+      action: step.action,
+      result,
+      timestamp: Date.now(),
+    })
 
-    // 检查是否还有未执行的步骤
+    // 查找下一个待执行步骤
     const nextPending = this.planSteps.find(s => s.status === 'pending')
 
-    return `## 步骤执行完成: [${step.action.slice(0, 50)}]\n\n实际输出: ${result.slice(0, 300)}\n\n${nextPending ? `下一步: 执行步骤 "${nextPending.action.slice(0, 50)}"` : '所有步骤已执行，进入验证阶段'}`
+    if (nextPending) {
+      this.executorState.currentStepIndex = this.planSteps.indexOf(nextPending)
+      return `## Executor 执行完成: [${step.action.slice(0, 50)}]\n\n实际输出: ${result.slice(0, 300)}\n\n下一步: 执行步骤 ${nextPending.index} "${nextPending.action.slice(0, 50)}"`
+    }
+
+    // 所有步骤已执行，切换到验证阶段
+    this.currentPhase = 'verify'
+    return `## Executor 执行完成: [${step.action.slice(0, 50)}]\n\n实际输出: ${result.slice(0, 300)}\n\n所有步骤已执行完毕，切换到 Verifier 验证阶段`
   }
 
   /**
-   * 验证：验证步骤执行结果是否符合预期
-   *
-   * 这是 OpenHands 的核心差异化能力。verify 阶段：
-   * 1. 逐一检查实际输出与预期输出的匹配度
-   * 2. 标记每个步骤的验证状态
-   * 3. 检测是否有改进（与上次验证比较）
-   * 4. 决定是否触发迭代改进
+   * Executor：获取下一个待执行步骤
+   */
+  getNextPendingStep(): PlanStep | undefined {
+    return this.planSteps.find(s => s.status === 'pending')
+  }
+
+  /**
+   * Executor：获取执行日志
+   */
+  getExecutionLog(): ReadonlyArray<{ stepId: string; action: string; result: string; timestamp: number }> {
+    return [...this.executorState.executionLog]
+  }
+
+  // ─── Verifier 角色方法 ────────────────────────────────────────
+
+  /**
+   * Verifier：验证步骤执行结果
    *
    * @param stepId 要验证的步骤 ID
    * @param passed 是否通过验证
-   * @param feedback 验证反馈（未通过时描述具体差异）
-   * @returns 验证报告
+   * @param feedback 验证反馈
+   * @return 验证报告
    */
   verify(stepId: string, passed: boolean, feedback: string): string {
     const step = this.planSteps.find(s => s.id === stepId)
     if (!step) {
-      return `错误: 未找到步骤 [${stepId}]，无法验证`
+      return `Verifier 错误: 未找到步骤 [${stepId}]，无法验证`
     }
 
     // 更新步骤状态
-    step.status = passed ? 'verified' : 'failed'
-    step.verificationResult = feedback
+    step.markVerified(passed, feedback)
 
-    // 记录验证历史
-    const verificationRound: VerificationRound = {
-      iteration: this.verificationHistory.length + 1,
+    // 记录验证轮次
+    this.verifierState.totalVerificationRounds++
+    if (passed) {
+      this.verifierState.passCount++
+    } else {
+      this.verifierState.failCount++
+    }
+
+    this.verifierState.verificationHistory.push({
+      iteration: this.verifierState.totalVerificationRounds,
+      planVersion: this.plannerState.currentPlanVersion,
       stepId,
       passed,
       feedback,
       timestamp: Date.now(),
-    }
-    this.verificationHistory.push(verificationRound)
+    })
 
-    // 更新阶段状态
-    this.currentPhase = passed ? 'execute' : 'plan'
-
-    // 检测停滞：检查最近两轮验证结果
+    // 更新停滞检测
     this.updateStagnationCount()
 
-    // 更新阶段失败计数
+    // 更新 Planner 的反馈历史（用于下次重新计划）
     if (!passed) {
-      this.phaseFailures.verify = (this.phaseFailures.verify ?? 0) + 1
+      this.plannerState.verificationFeedbackHistory.push(
+        `步骤 [${step.action.slice(0, 40)}] 验证失败: ${feedback.slice(0, 100)}`
+      )
+      this.plannerState.consecutivePlanFailures++
     } else {
-      this.phaseFailures.verify = 0
+      this.plannerState.consecutivePlanFailures = 0
+    }
+
+    // 决定下一阶段
+    if (passed) {
+      this.currentPhase = 'execute'
+    } else {
+      this.currentPhase = 'plan'
     }
 
     return this.generateVerificationReport(step, passed, feedback)
   }
 
   /**
-   * 批量验证所有已执行步骤
+   * Verifier：批量验证所有已执行步骤
    *
-   * 验证所有状态为 'executed' 的步骤，生成完整验证报告
-   *
-   * @param results 步骤 ID 到验证结果的映射
-   * @returns 完整验证报告
+   * @param results 验证结果列表
+   * @return 完整验证报告
    */
   verifyAll(results: Array<{ stepId: string; passed: boolean; feedback: string }>): string {
     const reports: string[] = []
@@ -482,130 +760,141 @@ plan → execute → verify
       const step = this.planSteps.find(s => s.id === stepId)
       if (!step) continue
 
-      step.status = passed ? 'verified' : 'failed'
-      step.verificationResult = feedback
+      step.markVerified(passed, feedback)
 
-      this.verificationHistory.push({
-        iteration: this.verificationHistory.length + 1,
+      this.verifierState.totalVerificationRounds++
+      if (passed) {
+        this.verifierState.passCount++
+      } else {
+        this.verifierState.failCount++
+        allPassed = false
+        this.plannerState.verificationFeedbackHistory.push(
+          `步骤 [${step.action.slice(0, 40)}] 验证失败: ${feedback.slice(0, 100)}`
+        )
+      }
+
+      this.verifierState.verificationHistory.push({
+        iteration: this.verifierState.totalVerificationRounds,
+        planVersion: this.plannerState.currentPlanVersion,
         stepId,
         passed,
         feedback,
         timestamp: Date.now(),
       })
-
-      if (!passed) allPassed = false
     }
 
     this.updateStagnationCount()
-    this.currentPhase = allPassed ? 'execute' : 'plan'
+
     if (!allPassed) {
-      this.phaseFailures.verify = (this.phaseFailures.verify ?? 0) + 1
+      this.plannerState.consecutivePlanFailures++
+      this.currentPhase = 'plan'
     } else {
-      this.phaseFailures.verify = 0
+      this.plannerState.consecutivePlanFailures = 0
+      this.currentPhase = 'execute'
     }
 
     return this.generateBatchVerificationReport()
   }
 
   /**
-   * 获取当前计划的完整状态
-   *
-   * 包含所有步骤的执行情况，用于外部引擎判断进度
-   */
-  getPlanStatus(): {
-    totalSteps: number
-    pendingCount: number
-    executedCount: number
-    verifiedCount: number
-    failedCount: number
-    currentPhase: OpenHandsPhase
-    stagnationCount: number
-    steps: ReadonlyArray<PlanStep>
-  } {
-    return {
-      totalSteps: this.planSteps.length,
-      pendingCount: this.planSteps.filter(s => s.status === 'pending').length,
-      executedCount: this.planSteps.filter(s => s.status === 'executed').length,
-      verifiedCount: this.planSteps.filter(s => s.status === 'verified').length,
-      failedCount: this.planSteps.filter(s => s.status === 'failed').length,
-      currentPhase: this.currentPhase,
-      stagnationCount: this.stagnationCount,
-      steps: [...this.planSteps],
-    }
-  }
-
-  /**
-   * 获取验证历史
+   * Verifier：获取验证历史
    */
   getVerificationHistory(): ReadonlyArray<VerificationRound> {
-    return [...this.verificationHistory]
+    return [...this.verifierState.verificationHistory]
+  }
+
+  // ─── 状态查询 ─────────────────────────────────────────────────
+
+  /**
+   * 获取完整状态快照
+   *
+   * 包含三个角色的状态和计划信息
+   */
+  getStateSnapshot(): {
+    currentPhase: OpenHandsPhase
+    planVersion: number
+    totalSteps: number
+    pendingSteps: number
+    executedSteps: number
+    verifiedSteps: number
+    failedSteps: number
+    verificationRounds: number
+    stagnationCount: number
+    planFailureCount: number
+    errorCount: number
+  } {
+    return {
+      currentPhase: this.currentPhase,
+      planVersion: this.plannerState.currentPlanVersion,
+      totalSteps: this.planSteps.length,
+      pendingSteps: this.planSteps.filter(s => s.status === 'pending').length,
+      executedSteps: this.planSteps.filter(s => s.status === 'executed').length,
+      verifiedSteps: this.planSteps.filter(s => s.status === 'verified').length,
+      failedSteps: this.planSteps.filter(s => s.status === 'failed').length,
+      verificationRounds: this.verifierState.totalVerificationRounds,
+      stagnationCount: this.verifierState.stagnationCount,
+      planFailureCount: this.plannerState.consecutivePlanFailures,
+      errorCount: this.executorState.errorCount,
+    }
   }
 
   /**
    * 重置策略到初始状态
    */
   reset(): void {
-    this.planSteps = []
     this.currentPhase = 'plan'
-    this.verificationHistory = []
-    this.phaseFailures = { plan: 0, execute: 0, verify: 0 }
-    this.stagnationCount = 0
+    this.planSteps = []
+
+    this.plannerState = {
+      currentPlanVersion: 0,
+      planHistory: [],
+      consecutivePlanFailures: 0,
+      maxPlanFailures: 2,
+      verificationFeedbackHistory: [],
+    }
+
+    this.executorState = {
+      currentStepIndex: -1,
+      completedSteps: 0,
+      executionLog: [],
+      errorCount: 0,
+      maxConsecutiveErrors: 3,
+    }
+
+    this.verifierState = {
+      totalVerificationRounds: 0,
+      passCount: 0,
+      failCount: 0,
+      verificationHistory: [],
+      stagnationCount: 0,
+      maxStagnation: 2,
+    }
   }
 
-  // ─── 私有辅助方法 ───────────────────────────────────────────
+  // ─── 私有辅助方法 ─────────────────────────────────────────────
 
   /**
-   * 更新停滞计数
-   *
-   * 检测逻辑：比较最近两轮验证结果
-   * - 如果连续两轮验证失败的步骤完全相同（无改进）→ 停滞计数 +1
-   * - 如果有改进（不同的失败步骤，或失败步骤减少）→ 重置停滞计数
+   * 格式化计划文本
    */
-  private updateStagnationCount(): void {
-    // 获取最近两轮验证的失败步骤
-    const recentFailures = this.verificationHistory
-      .slice(-2)
-      .filter(v => !v.passed)
-      .map(v => v.stepId)
+  private formatPlanText(): string {
+    const lines: string[] = []
+    lines.push(`## 执行计划（v${this.plannerState.currentPlanVersion}，${this.planSteps.length} 步）`)
+    lines.push('')
 
-    if (recentFailures.length < 2) {
-      // 不足两轮失败数据，检查是否有改进
-      const lastTwoRounds = this.verificationHistory.slice(-2)
-      const recentFailedSteps = new Set(lastTwoRounds.filter(v => !v.passed).map(v => v.stepId))
-      const previousFailedSteps = new Set(
-        this.verificationHistory.slice(-4, -2).filter(v => !v.passed).map(v => v.stepId)
-      )
-
-      // 如果失败步骤集合没有变化，说明停滞
-      if (recentFailedSteps.size > 0 &&
-          recentFailedSteps.size === previousFailedSteps.size &&
-          [...recentFailedSteps].every(id => previousFailedSteps.has(id))) {
-        this.stagnationCount++
-        return
-      }
-
-      // 有改进则重置
-      if (recentFailedSteps.size < previousFailedSteps.size) {
-        this.stagnationCount = 0
-        return
-      }
+    for (const step of this.planSteps) {
+      const statusMark = step.status === 'verified' ? '[通过]'
+        : step.status === 'executed' ? '[执行]'
+        : step.status === 'failed' ? '[失败]'
+        : '[待办]'
+      lines.push(`${step.index}. ${statusMark} ${step.action}`)
+      lines.push(`   预期输出: ${step.expectedOutcome}`)
     }
 
-    // 检查连续两次验证是否完全重复
-    const lastRound = this.verificationHistory[this.verificationHistory.length - 1]
-    const prevRound = this.verificationHistory[this.verificationHistory.length - 2]
+    lines.push('')
+    const nextStep = this.planSteps.find(s => s.status === 'pending')
+    lines.push(nextStep ? `下一步：执行步骤 ${nextStep.index}` : '所有步骤已执行，准备验证')
 
-    if (lastRound && prevRound && !lastRound.passed && !prevRound.passed) {
-      if (lastRound.stepId === prevRound.stepId) {
-        this.stagnationCount++
-      } else {
-        // 不同的步骤失败，说明在尝试不同方向，不算停滞
-        this.stagnationCount = 0
-      }
-    } else if (lastRound?.passed) {
-      // 最近一次验证通过，重置停滞
-      this.stagnationCount = 0
-    }
+    return lines.join('\n')
   }
 
   /**
@@ -615,21 +904,22 @@ plan → execute → verify
     const statusMark = passed ? '通过' : '未通过'
     const nextAction = passed
       ? (this.planSteps.some(s => s.status === 'pending')
-        ? '继续执行下一个步骤'
-        : '所有步骤已执行，准备整体验证')
-      : '需要迭代改进计划，重新制定失败步骤的执行方案'
+        ? 'Executor: 继续执行下一个步骤'
+        : 'Verifier: 所有步骤已执行，准备整体验证')
+      : 'Planner: 需要重新制定计划，改进步骤的执行方案'
 
-    return `## 验证结果: [${step.action.slice(0, 50)}]
+    return `## Verifier 验证结果: [${step.action.slice(0, 50)}]
 
 状态: ${statusMark}
 预期输出: ${step.expectedOutcome}
 实际输出: ${step.executionResult?.slice(0, 200) ?? '无'}
 验证反馈: ${feedback}
-下一步: ${nextAction}`
+下一步: ${nextAction}
+停滞计数: ${this.verifierState.stagnationCount}/${this.verifierState.maxStagnation}`
   }
 
   /**
-   * 生成批量验证的完整报告
+   * 生成批量验证报告
    */
   private generateBatchVerificationReport(): string {
     const total = this.planSteps.length
@@ -643,28 +933,56 @@ plan → execute → verify
       .join('\n')
 
     const overallVerdict = failed === 0
-      ? '全部通过'
-      : this.stagnationCount >= this.maxStagnation
-        ? '停滞检测触发，需要终止'
-        : '部分未通过，需要迭代改进'
+      ? '全部通过 — 目标达成'
+      : this.verifierState.stagnationCount >= this.verifierState.maxStagnation
+        ? '停滞检测触发 — 终止循环'
+        : '部分未通过 — Planner 需要迭代改进'
 
-    return `## 批量验证报告
+    return `## Verifier 批量验证报告
 
 总计: ${total} 步 | 通过: ${verified} | 未通过: ${failed} | 未执行: ${pending}
 
 ${failedSteps ? `### 失败步骤\n${failedSteps}` : '### 所有步骤验证通过'}
 
 ### 判定: ${overallVerdict}
-### 停滞计数: ${this.stagnationCount}/${this.maxStagnation}
-### 下一阶段: ${this.currentPhase === 'plan' ? '重新制定计划' : '继续执行'}`
+### 停滞计数: ${this.verifierState.stagnationCount}/${this.verifierState.maxStagnation}
+### 下一阶段: ${this.currentPhase === 'plan' ? 'Planner 重新制定计划' : this.currentPhase === 'execute' ? 'Executor 继续执行' : 'Verifier 继续验证'}`
+  }
+
+  /**
+   * 更新停滞计数
+   *
+   * 检测逻辑：比较最近两轮验证结果
+   * - 如果连续两轮验证失败的步骤完全相同（无改进）→ 停滞计数 +1
+   * - 如果有改进（不同的失败步骤，或失败步骤减少）→ 重置停滞计数
+   */
+  private updateStagnationCount(): void {
+    const lastRound = this.verifierState.verificationHistory[this.verifierState.verificationHistory.length - 1]
+    const prevRound = this.verifierState.verificationHistory[this.verifierState.verificationHistory.length - 2]
+
+    if (!lastRound) return
+
+    if (lastRound.passed) {
+      // 最近验证通过，重置停滞
+      this.verifierState.stagnationCount = 0
+      return
+    }
+
+    if (prevRound && !lastRound.passed && !prevRound.passed) {
+      if (lastRound.stepId === prevRound.stepId) {
+        // 同一个步骤连续失败 → 停滞
+        this.verifierState.stagnationCount++
+      } else {
+        // 不同步骤失败 → 在尝试不同方向，不算停滞
+        this.verifierState.stagnationCount = 0
+      }
+    } else if (!prevRound || prevRound.passed) {
+      // 只有一轮失败，尚未形成停滞
+      // 不增加停滞计数
+    }
   }
 }
 
-// ─── 扩展 SubTask 支持可选 action 字段 ───────────────────────────
-// 注意：action 字段不在原始 types.ts 中，这里通过 module augmentation 扩展
-declare module '../types.js' {
-  interface SubTask {
-    /** 可选的具体动作描述（用于 OpenHands 计划步骤） */
-    action?: string
-  }
-}
+// 导出 PlanStep 类，供外部使用
+export { PlanStep }
+export type { VerificationRound, PlannerState, ExecutorState, VerifierState, PlanStepStatus }
