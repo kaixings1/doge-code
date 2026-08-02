@@ -19,8 +19,8 @@ fi
 
 # 追加时间戳到标题
 NEW_TITLE="${MSG} [${TIMESTAMP}]"
-# 替换文件第一行
-TEMP=$(mktemp)
+# 替换文件第一行（Windows/MSYS2 兼容：避免 mktemp 路径问题）
+TEMP="${COMMIT_MSG_FILE}.tmp.$$"
 echo "$NEW_TITLE" > "$TEMP"
 tail -n +2 "$COMMIT_MSG_FILE" >> "$TEMP"
 mv "$TEMP" "$COMMIT_MSG_FILE"
