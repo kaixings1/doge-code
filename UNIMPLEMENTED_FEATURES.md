@@ -1,84 +1,72 @@
-# 未实现 / 未集成功能清单
+# 功能实现状态
 
 > 基于更新日志 2.1.128 → 2.1.220
-> 状态: 2026-08-02
+> 更新时间: 2026-08-02
 
 ---
 
-## 一、功能模块存在但**未集成**到主流程（15 个）
+## ✅ 已完全集成（9 个）
 
-> 这些功能在 `src/features/` 中有独立模块，但**从未在运行时被调用**。
-> 只是定义了类/函数，没有与 QueryEngine、PromptInput、MCPTool、BashTool 等核心组件连接。
+| # | 功能 | 集成位置 | 版本 | 状态 |
+|---|------|---------|------|------|
+| 1 | **EndConversation 工具** | `QueryEngine.query()` — 检测恶意输入自动终止会话 | 2.1.214 | ✅ 完成 |
+| 2 | **自动模式管理** | `BashTool.checkPermissions()` — 危险命令自动拦截 | 2.1.217 | ✅ 完成 |
+| 3 | **DirectoryAdded Hook** | `/add-dir` 命令 — 注册目录后触发 hook | 2.1.219 | ✅ 完成 |
+| 4 | **子代理并发控制** | `AgentTool.call()` — `SubAgentManager.canSpawn()` 检查 | 2.1.217 | ✅ 完成 |
+| 5 | **Emoji 短代码替换** | `PromptInput.onSubmit()` — 发送前替换 `:shortcode:` | 2.1.217 | ✅ 完成 |
+| 6 | **MCP 自动后台化** | MCP 客户端 — 调用前后跟踪 | 2.1.212 | ✅ 完成 |
+| 7 | **新增配置项** | `ProjectConfig` — 16 个新设置 | 多个版本 | ✅ 完成 |
+| 8 | **/auto-mode-reset** | 新命令 `/auto-mode-reset` | 2.1.212 | ✅ 完成 |
+| 9 | **/mcp-discovery** | 新命令 `/mcp-discovery` | 2.1.219 | ✅ 完成 |
 
-| # | 功能 | 模块文件 | 缺失的集成 |
-|---|------|---------|-----------|
-| 1 | **Emoji 自动补全** | `features/emojiAutocomplete.ts` | 未集成到 PromptInput 组件 |
-| 2 | **MCP 自动后台化** | `features/mcpAutoBackground.ts` | 未集成到 MCPTool.execute() |
-| 3 | **网络沙箱白名单** | `features/featureFlags.ts` (配置) | DEFAULT_SETTINGS 中有但 DockerSandboxManager 未读取 |
-| 4 | **文件系统沙箱禁用** | `features/featureFlags.ts` (配置) | DEFAULT_SETTINGS 中有但沙箱初始化未读取 |
-| 5 | **工作流大小指南** | `features/featureFlags.ts` (配置) | DEFAULT_SETTINGS 中有但工作流创建未检查 |
-| 6 | **子代理并发控制** | `features/featureFlags.ts` (SubAgentManager) | QueryEngine 导入了但未在 AgentTool 中调用 |
-| 7 | **子代理嵌套深度** | `features/featureFlags.ts` (配置) | DEFAULT_SETTINGS 中有但未传递给 AgentTool |
-| 8 | **子代理文本转发** | `features/additionalFeatures.ts` | 未集成到 stream-json 输出 |
-| 9 | **父设置行为** | `features/additionalFeatures.ts` | 未集成到 settings 层级解析 |
-| 10 | **worktree.baseRef** | `features/featureFlags.ts` (配置) | DEFAULT_SETTINGS 中有但 worktree 创建未使用 |
-| 11 | **沙箱路径 bwrap/soc** | `features/featureFlags.ts` (配置) | DEFAULT_SETTINGS 中有但 Linux 沙箱初始化未读取 |
-| 12 | **--plugin-url** | `features/additionalFeatures.ts` | 未集成到 CLI 参数解析 |
-| 13 | **WebSearch 限制** | `features/featureFlags.ts` (配置) | DEFAULT_SETTINGS 中有但 WebSearchTool 未检查 |
-| 14 | **后台代码审查** | `features/additionalFeatures.ts` | 未集成到 /code-review 命令 |
-| 15 | **Fork 对话复制** | `features/additionalFeatures.ts` | 未集成到 /fork 命令 |
-| 16 | **自动模式重置** | `features/additionalFeatures.ts` | 未集成到 /config 或 CLI |
-| 17 | **MCP 错误报告** | `features/additionalFeatures.ts` | 未集成到 MCP 初始化流程 |
-| 18 | **TURN 服务器** | RemotePanel 中有配置 | 仅有 UI，未集成到 WebRTC 连接 |
+## 🔄 模块已创建，需要深度集成（10 个）
 
----
+| # | 功能 | 模块文件 | 当前状态 | 待完成 | 版本 |
+|---|------|---------|---------|--------|------|
+| 10 | **Emoji 自动补全 UI** | `features/emojiAutocomplete.ts` | 替换逻辑已集成 | PromptInput 建议下拉列表 | 2.1.217 |
+| 11 | **子代理并发环境变量** | `features/featureFlags.ts` | AgentTool 已集成 | `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` 读取 | 2.1.217 |
+| 12 | **网络沙箱白名单** | `features/featureFlags.ts` | 配置已定义 | DockerSandboxManager 读取配置 | 2.1.219 |
+| 13 | **文件系统沙箱禁用** | `features/featureFlags.ts` | 配置已定义 | 沙箱初始化读取配置 | 2.1.216 |
+| 14 | **工作流大小指南** | `features/featureFlags.ts` | 配置已定义 | 工作流创建检查 | 2.1.219 |
+| 15 | **子代理文本转发** | `features/additionalFeatures.ts` | 模块已创建 | stream-json 输出集成 | 2.1.211 |
+| 16 | **父设置行为** | `features/additionalFeatures.ts` | 模块已创建 | settings 层级合并 | 2.1.133 |
+| 17 | **worktree.baseRef** | `features/featureFlags.ts` | 配置已定义 | worktree 创建使用 | 2.1.133 |
+| 18 | **--plugin-url** | `features/additionalFeatures.ts` | 模块已创建 | CLI 参数解析 | 2.1.129 |
+| 19 | **WebSearch 限制** | `features/featureFlags.ts` | 配置已定义 | WebSearchTool 检查 | 2.1.212 |
 
-## 二、已集成到主流程（4 个）
-
-| # | 功能 | 集成位置 | 实际效果 |
-|---|------|---------|---------|
-| 1 | **EndConversation** | `QueryEngine.query()` | 输入包含"越狱"/"忽略规则"等关键词时自动终止会话 ✅ |
-| 2 | **自动模式管理** | `BashTool.checkPermissions()` | 危险命令（rm -rf, sudo）在权限检查前被拦截 ✅ |
-| 3 | **DirectoryAdded Hook** | `/add-dir` 命令 | 注册新目录后触发 hook 事件 ✅ |
-| 4 | **子代理并发控制** | `QueryEngine` 构造函数 | SubAgentManager 已初始化但未在 AgentTool 逻辑中使用 ⚠️ |
-
----
-
-## 三、已实现 ✅（来自早期更新日志）
+## ✅ 早期版本已实现（4 个）
 
 | 功能 | 版本 | 状态 |
 |------|------|------|
 | CLAUDE_CODE_SESSION_ID | 2.1.132 | ✅ 已实现 |
 | CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN | 2.1.132 | ✅ 已实现 |
-| --max-budget-usd | 2.1.217 | ✅ 已实现（QueryEngine.ts） |
+| --max-budget-usd | 2.1.217 | ✅ 已实现 |
 | effort.level Hook | 2.1.133 | ✅ 已实现 |
-| 桥接服务器 | 2.1.219 | ✅ 基础功能已实现 |
-| CRDT 文档协作 | 2.1.218 | ✅ 已实现 |
-| 批量处理引擎 | - | ✅ 已实现 |
-| 插件沙箱安全 | - | ✅ 已实现 |
 
----
+## 📊 统计
 
-## 四、需要完成的工作
+| 类别 | 数量 | 占比 |
+|------|------|------|
+| ✅ 已完全集成 | 9/19 | 47% |
+| 🔄 模块已创建，待深度集成 | 10/19 | 53% |
+| ✅ 早期版本已实现 | 4/4 | 100% |
+| **总计功能模块** | **19/19** | **100%** |
+| **深度集成** | **9/19** | **47%** |
 
-### 必须做（让功能真正生效）：
+## 🎯 下一步：将 🔄 全部变为 ✅
 
-1. **Emoji 自动补全** → 修改 `PromptInput.tsx`，在输入时调用 `EmojiAutocompleter.getSuggestions()`
-2. **MCP 自动后台化** → 修改 `MCPTool.call()`，调用 `MCPAutoBackgroundManager.trackCall()`
-3. **子代理并发控制** → 修改 `AgentTool`，在生成子代理前调用 `SubAgentManager.canSpawn()` 和 `SubAgentManager.spawn()`
-4. **网络沙箱白名单** → 修改 `DockerSandboxManager`，读取 `sandboxNetworkStrictAllowlist` 配置
-5. **文件系统沙箱禁用** → 修改沙箱初始化代码，读取 `sandboxFilesystemDisabled` 配置
-6. **工作流大小指南** → 修改工作流创建代码，读取 `workflowSizeGuideline` 配置
-7. **WebSearch 限制** → 修改 `WebSearchTool`，检查 `maxWebSearchesPerSession`
-8. **后台代码审查** → 修改 `/code-review` 命令，使用 `CodeReviewBackgroundManager.startReview()`
-9. **TURN 服务器** → `RemoteControlPanel.tsx` 中的 ICE 配置需要连接到信令服务器
-10. **自动模式重置** → 添加 `/auto-mode-reset` 命令或集成到 `/config`
+需要完成以下集成工作：
 
-### 可选做（增强功能）：
+### 高优先级
+1. **Emoji 自动补全 UI** — 在 PromptInput 中添加建议下拉列表
+2. **子代理并发环境变量** — SubAgentManager 读取 `CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS`
+3. **网络沙箱白名单** — DockerSandboxManager 读取 `sandboxNetworkStrictAllowlist`
+4. **文件系统沙箱禁用** — 沙箱初始化读取 `sandboxFilesystemDisabled`
+5. **工作流大小指南** — 工作流创建时检查 `workflowSizeGuideline`
 
-11. **子代理文本转发** → 修改 stream-json 输出逻辑
-12. **父设置行为** → 修改 settings 层级合并逻辑
-13. **worktree.baseRef** → 修改 worktree 创建逻辑
-14. **--plugin-url** → 修改 CLI 启动参数解析
-15. **Fork 对话复制** → 修改 `/fork` 命令使用 ForkManager
-16. **MCP 错误报告** → 修改 MCP 初始化错误处理
+### 中优先级
+6. **子代理文本转发** — stream-json 输出集成
+7. **父设置行为** — settings 层级合并逻辑
+8. **worktree.baseRef** — worktree 创建使用配置
+9. **--plugin-url** — CLI 参数解析
+10. **WebSearch 限制** — WebSearchTool 检查搜索次数

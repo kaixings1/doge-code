@@ -16,7 +16,7 @@ interface DogeAPIValue {
   executeTool: (call: { name: string; input: any }) => Promise<{ toolUseId: string; success: boolean; output?: any; error?: string }>
   getCommands: () => Promise<Array<{ name: string; description: string; category: string }>>
   executeCommand: (name: string, args: string[]) => Promise<{ success: boolean; output?: string; error?: string }>
-  sendMessage: (content: string, preAnalysis?: Array<{ type: string; message: string; line?: number }>) => Promise<{ success: boolean; content?: string; error?: string }>
+  sendMessage: (content: string, preAnalysis?: Array<{ type: string; message: string; line?: number }>) => Promise<{ success: boolean; content?: string; toolOutput?: string; error?: string }>
   getState: () => Promise<string>
   abort: () => Promise<boolean>
   getHistory: () => Promise<{ messages: Array<{ role: string; content: string }> }>

@@ -106,9 +106,30 @@ function completeFiles(query: string, cwd: string, limit: number): CompletionIte
   return results.sort((a, b) => b.score - a.score).slice(0, limit)
 }
 
-function completeShellCommands(query: string, limit: number): CompletionItem[] {
-  if (!query) return []
+let _systemCommandsCache: string[] | null = null
 
+function getSystemCommands(): string[] {
+  if (_systemCommandsCache) return _systemCommandsCache
+
+  const commands = new Set<string>()
+
+  // Try to get commands from shell completion
+  try {
+    const { execSync } = require('child_process')
+    const output = execSync('bash -c "compgen -c"', {
+      encoding: 'utf-8',
+      timeout: 5000,
+      stdio: ['pipe', 'pipe', 'ignore'],
+    })
+    for (const cmd of output.split('\n')) {
+      const trimmed = cmd.trim()
+      if (trimmed && !trimmed.includes(' ')) commands.add(trimmed)
+    }
+  } catch {
+    // compgen not available (Windows or no bash) - use fallback
+  }
+
+  // Add common commands as fallback
   const common = [
     'git', 'npm', 'bun', 'node', 'python', 'python3',
     'docker', 'kubectl', 'make', 'cargo', 'go', 'rustc',
@@ -116,8 +137,18 @@ function completeShellCommands(query: string, limit: number): CompletionItem[] {
     'git add', 'git commit', 'git push', 'git pull', 'git status',
     'git diff', 'git checkout', 'git branch', 'git merge',
   ]
+  for (const cmd of common) commands.add(cmd)
 
-  return common
+  _systemCommandsCache = Array.from(commands)
+  return _systemCommandsCache
+}
+
+function completeShellCommands(query: string, limit: number): CompletionItem[] {
+  if (!query) return []
+
+  const commands = getSystemCommands()
+
+  return commands
     .filter(c => c.toLowerCase().startsWith(query.toLowerCase()))
     .slice(0, limit)
     .map(c => ({

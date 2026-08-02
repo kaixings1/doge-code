@@ -107,6 +107,8 @@ import autocomplete from './commands/autocomplete/index.ts'
 import terminalComplete from './commands/complete/index.ts'
 import testGen from './commands/test-gen.ts'
 import snippet from './commands/snippet/index.ts'
+import autoCommit from './commands/auto-commit/index.ts'
+import wiki from './commands/wiki/index.ts'
 
 // 导入新增的21个命令
 import lessPermissionPrompts from './commands/less-permission-prompts/index.ts'
@@ -256,6 +258,7 @@ import updateApiKey from './commands/updateapikey/index.ts'
 import apiDebug from './commands/api-debug/index.ts'
 import pluginMarket from './commands/plugin-market/index.ts'
 import pair from './commands/pair/index.ts'
+import memorySearch from './commands/memory-search/index.ts'
 import { logError } from './utils/log.js'
 import { toError } from './utils/errors.js'
 import { logForDebugging } from './utils/debug.js'
@@ -515,6 +518,8 @@ const COMMANDS = memoize((): Command[] => [
   tasks,
   testGen,
   snippet,
+  autoCommit,
+  wiki,
   ...(workflowsCmd ? [workflowsCmd] : []),
   ...(torch ? [torch] : []),
   lessPermissionPrompts,
@@ -561,6 +566,7 @@ const COMMANDS = memoize((): Command[] => [
   apiDebug,
   pluginMarket,
   pair,
+  memorySearch,
   bridgeSessions,
   memoryBank,
   ...(process.env.USER_TYPE === 'ant' && !process.env.IS_DEMO

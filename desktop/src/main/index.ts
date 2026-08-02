@@ -439,6 +439,16 @@ ipcMain.handle('doge:send-message', async (_event, content: string, preAnalysis?
     }
     if (!reply) {
       // 纯工具调用消息：前端已通过事件流显示工具执行过程
+      // 但为了兼容非流式调用模式（如自动测试），同时返回最后一条 tool 消息的内容
+      const toolMsgs = [...messages].filter(m => m.role === 'tool')
+      if (toolMsgs.length > 0) {
+        const lastTool = toolMsgs[toolMsgs.length - 1]
+        const toolContent = typeof lastTool.content === 'string'
+          ? lastTool.content
+          : JSON.stringify(lastTool.content)
+        // 标记为工具结果，让前端知道这是工具输出而不是 AI 回复
+        return { success: true, content: '', toolOutput: toolContent }
+      }
       return { success: true, content: '' }
     }
     return { success: true, content: reply }

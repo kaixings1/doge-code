@@ -299,6 +299,15 @@ async function main(): Promise<void> {
     process.env.CLAUDE_CODE_SAFE_MODE = '1';
   }
 
+  // --plugin-url：从 URL 安装插件（更新日志 2.1.129）
+  const pluginUrlIdx = args.indexOf('--plugin-url');
+  if (pluginUrlIdx !== -1 && args[pluginUrlIdx + 1]) {
+    process.env.CLAUDE_CODE_PLUGIN_URL = args[pluginUrlIdx + 1];
+    // 移除 --plugin-url 和它的值，避免干扰后续解析
+    args.splice(pluginUrlIdx, 2);
+    process.argv = [process.argv[0]!, process.argv[1]!, ...args];
+  }
+
   // 未检测到特殊标志，加载并运行完整 CLI
   const {
     startCapturingEarlyInput
