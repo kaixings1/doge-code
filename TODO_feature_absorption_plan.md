@@ -170,6 +170,41 @@
 | 14. 安全扫描 | 🟢 P3 | ✅ 已完成 | - | - | security-audit命令 + secretScanner(25+ gitleaks规则) + 多规则检测 |
 | 15. 多Agent协作 | 🟢 P4 | ✅ 已完成 | - | - | 6个内置Agent(plan/explore/verification/general/guide) + Coordinator模式 + AgentMemory + ForkSubagent |
 
+## 📦 Phase 3 新增功能（扩展能力）
+
+| # | 功能 | 命令 | 状态 | 说明 |
+|---|------|------|------|------|
+| 16 | Ghost Text 补全 | `/autocomplete` | ✅ 已完成 | 命令/标志/文件/目录/Shell 五类补全 |
+| 17 | 智能代码重构 | `/refactor` | ✅ 已完成 | 自动代码分析引擎 + extract/rename/extract-file/optimize + analyze/batch |
+| 18 | API 成本追踪 | `/cost detail` + `/cost model` | ✅ 已完成 | Token 统计、缓存命中率、按模型分析、效率指标 |
+| 19 | 跨会话记忆持久化 | `/memory` | ✅ 已完成 | .claudeskills/ 持久化存储 + CRUD |
+| 20 | 智能代码审查 | `/code-review-assistant` | ✅ 已完成 | check/scan/security/report/stats/fix/export 六命令 + export 报告导出 |
+| 21 | 架构图自动生成 | `/diagram` | ✅ 已完成 | C4/依赖/序列/类图，Mermaid/Graphviz/ASCII 输出 |
+| 22 | REST API 调试 | `/api-debug` | ✅ 已完成 | 请求构建/响应解析/历史记录/环境变量管理 |
+| 23 | DB Schema 可视化 | `/database` | ✅ 已完成 | Schema/ER图/索引/外键/统计/查询/导出 |
+| 24 | 插件市场 | `/plugin-market` | ✅ 已完成 | 插件发现/安装/评分/搜索 |
+| 25 | 代码库健康度评分 | `/health-score` | ✅ 已完成 | 5维度评分（安全/复杂度/可维护性/错误处理/依赖）A/B/C/D/F 等级 |
+| 26 | 智能终端补全 | `/complete` | ✅ 已完成 | Git分支/npm脚本/Docker容器/环境变量/AI建议，自动上下文推断 |
+| 27 | MCP Server 发现 | `/mcp-discovery` | ✅ 已完成 | 项目分析/MCP推荐/自动配置 |
+| 28 | 跨语言语义搜索 | `/code-search` + `/vector-search` | ✅ 已完成 | regex/semantic/hybrid/symbol 四模式 + 30+ 语言过滤 |
+| 29 | AI 结对编程 | `/pair` | ✅ 已完成 | review/coauthor/debug/deep 四模式 + 六维评分引擎 |
+| 30 | 代码片段管理 | `/snippet` | ✅ 已丰富 | 18子命令: save/list/get/use/delete/edit/rename/duplicate/favorite/recent/stats/sync/import-url/copy/insert + 收藏/使用统计/远程同步/URL导入 |
+| 31 | Diff 交互审查 | `/diff-review` | ✅ 已完成 | review/stage/compare/list/stats |
+| 32 | 自定义 Agent | `/agent-new` | ✅ 已完成 | 6种内置模板 + 自定义创建/编辑/删除/导入/导出 |
+| 33 | Memory Bank | `/memory-bank` | ✅ 已完成 | init/add/get/list/search/update/delete/summary/export/stats |
+| 34 | 自动 Git 提交 | `/auto-commit` | ✅ 已丰富 | 10子命令: status/enable/disable/commit/amend/history/undo/config/preview + conventional commits + scope检测 + sign-off + 4种风格 |
+| 35 | 项目 Wiki | `/wiki` | ✅ 已丰富 | 18子命令: architecture/api/changelog/readme/generate/export/search/graph/toc/link/render/watch/diff/template/index/clean + Mermaid依赖图 + 模板系统 + 终端渲染 + 文档链接 |
+| 36 | 自定义命令 | `/custom-cmd` | ✅ 已完成 | create/delete/show/enable/disable |
+| 37 | 主动代码建议 | `/proactive` | ✅ 已丰富 | 16子命令: scan/watch/stop-watch/fix-all/fix/ignore/ignore-pattern/report/trend/rules/schedule/export/list/status + 文件监视 + 定时扫描 + 规则管理 + HTML/Markdown报告 + 趋势分析 + 自动修复 |
+| 38 | 后台任务管理 | `/bg` | ✅ 已完成 | run/list/status/kill/clear |
+| 39 | 依赖管理 | `/deps` | ✅ 已完成 | status/outdated/update/add/remove/audit |
+| 40 | 代码书签 | `/bookmark` | ✅ 已完成 | add/delete/search/tags/clear |
+| 41 | 通知系统 | `/notify` | ✅ 已完成 | add/test/enable/delete + 6种事件类型 |
+| 42 | 项目模板 | `/templates` | ✅ 已完成 | 5+ 模板 + 搜索 + 一键创建 |
+| 43 | Git Stash 管理 | `/stash` | ✅ 已完成 | save/pop/apply/show/branch/drop/clear |
+| 44 | 代码健康仪表盘 | `/code-health` | ✅ 已完成 | 复杂度/语言/热点/A-F评分 |
+| 45 | 错误监控 | `/errors` | ✅ 已完成 | scan/list/resolve/stats/clear |
+
 **图例**:
 - ⏳ 待开始
 - 🔄 进行中

@@ -70,18 +70,18 @@ function tsLog(tag: string, ...args: unknown[]): void {
 
 // ─── 路径 ───
 const DESKTOP_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
-// 项目根目录（包含 .doge/api.json）
+// 项目根目录（包含 .doge/lc2.json）
 const PROJECT_ROOT = path.resolve(DESKTOP_ROOT, '..')
 const projectRoot = PROJECT_ROOT
 const DIST_DIR = path.join(DESKTOP_ROOT, 'dist')
-const CONFIG_PATH_DEFAULT = path.join(projectRoot, '.doge', 'api.json')
+const CONFIG_PATH_DEFAULT = path.join(projectRoot, '.doge', 'lc2.json')
 
 /**
- * 定位 .doge/api.json。
- * 开发模式：desktop/src/main → doge-code/.doge/api.json（常规计算正确）。
+ * 定位 .doge/lc2.json（默认）或 .doge/api.json（备用）。
+ * 开发模式：desktop/src/main → doge-code/.doge/lc2.json（常规计算正确）。
  * 打包后（portable / unpacked）：主进程被 bundle 进 app.asar，dirname 层级变化导致
  * CONFIG_PATH_DEFAULT 指向 app.asar 内部（不存在）。因此从多个候选起点（当前 cwd、
- * 可执行文件目录、process.env 指定）向上回溯查找最近的 .doge/api.json。
+ * 可执行文件目录、process.env 指定）向上回溯查找最近的 .doge/lc2.json。
  */
 // 配置查找诊断日志（写入 %TEMP%\doge_debug_config.log），便于真实 portable 环境定位
 const DEBUG_CONFIG_LOG = path.join(process.env.TEMP || 'C:/Windows/Temp', 'doge_debug_config.log')
@@ -117,16 +117,19 @@ function findApiConfig(): string {
   try { candidates.push(path.dirname(process.execPath)) } catch { /* ignore */ }
   try { candidates.push(process.cwd()) } catch { /* ignore */ }
   candidates.push(projectRoot)
+  const configFiles = ['lc2.json', 'api.json'] // 优先查找 lc2.json
   for (const start of candidates) {
     try {
       let dir = path.resolve(start)
       cfgDbg(`  候选起点: ${dir}`)
       for (let i = 0; i < 10; i++) {
-        const candidate = path.join(dir, '.doge', 'api.json')
-        if (isFileSync(candidate)) {
-          cfgDbg(`  找到配置: ${candidate}`)
-          tsLog('CONFIG', 'findApiConfig: 找到配置:', candidate)
-          return candidate
+        for (const cfgFile of configFiles) {
+          const candidate = path.join(dir, '.doge', cfgFile)
+          if (isFileSync(candidate)) {
+            cfgDbg(`  找到配置: ${candidate}`)
+            tsLog('CONFIG', 'findApiConfig: 找到配置:', candidate)
+            return candidate
+          }
         }
         const parent = path.dirname(dir)
         if (parent === dir) break
@@ -134,7 +137,7 @@ function findApiConfig(): string {
       }
     } catch { /* 继续下一个候选起点 */ }
   }
-  cfgDbg('  所有候选路径均未找到 .doge/api.json, 回退默认')
+  cfgDbg('  所有候选路径均未找到 .doge/lc2.json 或 api.json, 回退默认')
   return CONFIG_PATH_DEFAULT
 }
 
@@ -377,7 +380,7 @@ ipcMain.handle('doge:send-message', async (_event, content: string, preAnalysis?
   const config = engineConfig!
 
   if (!config.apiKey) {
-    return { error: '未配置 API Key。请在 .doge/api.json 中配置。' }
+    return { error: '未配置 API Key。请在 .doge/lc2.json 中配置。' }
   }
 
   try {
@@ -425,6 +428,14 @@ ipcMain.handle('doge:send-message', async (_event, content: string, preAnalysis?
     }
     // 崩溃恢复标记（成功发送后清除）
     clearCrashRecovery()
+
+    // 诊断日志：输出消息角色分布和内容概况
+    tsLog('MAIN', 'query() returned, messages count:', messages.length)
+    for (const m of messages) {
+      const preview = typeof m.content === 'string' ? m.content.slice(0, 50) : JSON.stringify(m.content).slice(0, 50)
+      tsLog('MAIN', `  msg role=${m.role} content_preview=${preview}...`)
+    }
+
     const lastAssistant = [...messages].reverse().find(m => m.role === 'assistant')
     let reply: string
     if (typeof lastAssistant?.content === 'string') {
@@ -441,14 +452,17 @@ ipcMain.handle('doge:send-message', async (_event, content: string, preAnalysis?
       // 纯工具调用消息：前端已通过事件流显示工具执行过程
       // 但为了兼容非流式调用模式（如自动测试），同时返回最后一条 tool 消息的内容
       const toolMsgs = [...messages].filter(m => m.role === 'tool')
+      tsLog('MAIN', 'no text reply, toolMsgs count:', toolMsgs.length, 'lastAssistant exists:', !!lastAssistant)
       if (toolMsgs.length > 0) {
         const lastTool = toolMsgs[toolMsgs.length - 1]
         const toolContent = typeof lastTool.content === 'string'
           ? lastTool.content
           : JSON.stringify(lastTool.content)
+        tsLog('MAIN', 'toolOutput preview:', toolContent.slice(0, 80))
         // 标记为工具结果，让前端知道这是工具输出而不是 AI 回复
         return { success: true, content: '', toolOutput: toolContent }
       }
+      tsLog('MAIN', 'NO tool messages found! Returning empty content.')
       return { success: true, content: '' }
     }
     return { success: true, content: reply }
@@ -3046,6 +3060,10 @@ const collabRooms = new Map<string, {
   comments: Array<{ id: string; file: string; line: number; author: string; text: string; resolved: boolean; createdAt: number }>
   document: string // 当前文档内容（简易 OT 用）
   version: number
+  permissions: Map<string, 'read' | 'write' | 'admin'>  // [NEW] 权限管理 只读/编辑/管理员
+  issues: Array<{ id: string; title: string; description: string; severity: 'critical' | 'high' | 'medium' | 'low'; assignee: string; status: 'open' | 'in_progress' | 'closed'; createdAt: number }>  // [NEW] 问题标记
+  notifications: Array<{ id: string; type: 'comment' | 'mention' | 'issue' | 'permission'; message: string; from: string; timestamp: number; read: boolean }>  // [NEW] 评论通知
+  recording: { isRecording: boolean; startTime: number; events: Array<{ type: string; data: unknown; timestamp: number }> } | null  // [NEW] 会话录制
 }>()
 
 const collabColors = ['#FF6B6B', '#4ECB71', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9']
@@ -3054,10 +3072,14 @@ ipcMain.handle('doge:collab-create-room', async (_event, params: { name: string;
   try {
     const roomId = `room-${Date.now()}`
     const hostId = `user-${Math.random().toString(36).slice(2, 8)}`
+    const permissions = new Map<string, 'read' | 'write' | 'admin'>()
+    permissions.set(hostId, 'admin')
     collabRooms.set(roomId, {
       id: roomId, name: params.name, hostId,
       participants: [{ id: hostId, name: '主机', color: collabColors[0] }],
-      comments: [], document: '', version: 0
+      comments: [], document: '', version: 0,
+      permissions,
+      issues: [], notifications: [], recording: null
     })
     return { success: true, roomId, hostId }
   } catch (e: unknown) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
@@ -3147,6 +3169,133 @@ ipcMain.handle('doge:collab-get-comments', (_event, params: { roomId: string; fi
     ? room.comments.filter(c => c.file === params.file)
     : room.comments
   return { success: true, comments }
+})
+
+
+// ─── 权限管理 IPC (更新日志功能) ───
+
+ipcMain.handle('doge:collab-set-permission', async (_event, params: { roomId: string; userId: string; permission: 'read' | 'write' | 'admin'; requesterId: string }) => {
+  try {
+    const room = collabRooms.get(params.roomId)
+    if (!room) return { success: false, error: '房间不存在' }
+    const requesterPerm = room.permissions.get(params.requesterId)
+    if (requesterPerm !== 'admin') return { success: false, error: '只有管理员可以修改权限' }
+    room.permissions.set(params.userId, params.permission)
+    return { success: true }
+  } catch (e: unknown) { return { success: false, error: e instanceof Error ? e.message : String(e) } }
+})
+
+ipcMain.handle('doge:collab-get-permission', (_event, params: { roomId: string; userId: string }) => {
+  const room = collabRooms.get(params.roomId)
+  if (!room) return { success: false, error: '房间不存在' }
+  return { success: true, permission: room.permissions.get(params.userId) || 'read' }
+})
+
+// ─── 问题标记 IPC ───
+
+ipcMain.handle('doge:issue-create', async (_event, params: { roomId: string; title: string; description: string; severity: 'critical' | 'high' | 'medium' | 'low'; assignee?: string }) => {
+  try {
+    const room = collabRooms.get(params.roomId)
+    if (!room) return { success: false, error: '房间不存在' }
+    const issue = {
+      id: `issue-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      title: params.title, description: params.description, severity: params.severity,
+      assignee: params.assignee || '', status: 'open' as const, createdAt: Date.now()
+    }
+    room.issues.push(issue)
+    // 创建通知
+    if (params.assignee) {
+      room.notifications.push({
+        id: `notif-${Date.now()}`, type: 'issue',
+        message: `被分配问题: ${params.title}`, from: 'system', timestamp: Date.now(), read: false
+      })
+    }
+    return { success: true, issue }
+  } catch (e: unknown) { return { success: false, error: e instanceof Error ? e.message : String(e) } }
+})
+
+ipcMain.handle('doge:issue-update', async (_event, params: { roomId: string; issueId: string; status?: 'open' | 'in_progress' | 'closed'; assignee?: string }) => {
+  try {
+    const room = collabRooms.get(params.roomId)
+    if (!room) return { success: false, error: '房间不存在' }
+    const issue = room.issues.find(i => i.id === params.issueId)
+    if (!issue) return { success: false, error: '问题不存在' }
+    if (params.status) issue.status = params.status
+    if (params.assignee) issue.assignee = params.assignee
+    return { success: true, issue }
+  } catch (e: unknown) { return { success: false, error: e instanceof Error ? e.message : String(e) } }
+})
+
+ipcMain.handle('doge:issue-list', (_event, params: { roomId: string; status?: string }) => {
+  const room = collabRooms.get(params.roomId)
+  if (!room) return { success: true, issues: [] }
+  const issues = params.status ? room.issues.filter(i => i.status === params.status) : room.issues
+  return { success: true, issues }
+})
+
+// ─── 评论通知 IPC ───
+
+ipcMain.handle('doge:notify-list', (_event, params: { roomId: string }) => {
+  const room = collabRooms.get(params.roomId)
+  if (!room) return { success: true, notifications: [] }
+  return { success: true, notifications: room.notifications.sort((a, b) => b.timestamp - a.timestamp) }
+})
+
+ipcMain.handle('doge:notify-mark-read', (_event, params: { roomId: string; notificationId: string }) => {
+  try {
+    const room = collabRooms.get(params.roomId)
+    if (!room) return { success: false }
+    const notif = room.notifications.find(n => n.id === params.notificationId)
+    if (notif) notif.read = true
+    return { success: true }
+  } catch { return { success: false } }
+})
+
+ipcMain.handle('doge:notify-unread-count', (_event, params: { roomId: string }) => {
+  const room = collabRooms.get(params.roomId)
+  if (!room) return { success: true, count: 0 }
+  return { success: true, count: room.notifications.filter(n => !n.read).length }
+})
+
+// ─── 会话录制 IPC ───
+
+ipcMain.handle('doge:recording-start', (_event, params: { roomId: string }) => {
+  try {
+    const room = collabRooms.get(params.roomId)
+    if (!room) return { success: false, error: '房间不存在' }
+    room.recording = { isRecording: true, startTime: Date.now(), events: [] }
+    return { success: true }
+  } catch (e: unknown) { return { success: false, error: e instanceof Error ? e.message : String(e) } }
+})
+
+ipcMain.handle('doge:recording-stop', (_event, params: { roomId: string }) => {
+  try {
+    const room = collabRooms.get(params.roomId)
+    if (!room || !room.recording) return { success: false, error: '没有正在进行的录制' }
+    room.recording.isRecording = false
+    const recording = { ...room.recording }
+    room.recording = null
+    return { success: true, recording }
+  } catch (e: unknown) { return { success: false, error: e instanceof Error ? e.message : String(e) } }
+})
+
+ipcMain.handle('doge:recording-log', (_event, params: { roomId: string; type: string; data?: unknown }) => {
+  try {
+    const room = collabRooms.get(params.roomId)
+    if (!room || !room.recording || !room.recording.isRecording) return { success: false }
+    room.recording.events.push({ type: params.type, data: params.data, timestamp: Date.now() })
+    return { success: true }
+  } catch { return { success: false } }
+})
+
+ipcMain.handle('doge:recording-list', () => {
+  const recordings: Array<{ roomId: string; name: string; startTime: number; eventCount: number }> = []
+  for (const [roomId, room] of collabRooms.entries()) {
+    if (room.recording) {
+      recordings.push({ roomId, name: room.name, startTime: room.recording.startTime, eventCount: room.recording.events.length })
+    }
+  }
+  return { success: true, recordings }
 })
 
 ipcMain.handle('doge:collab-apply-edit', async (_event, params: { roomId: string; userId: string; file: string; operation: { type: 'insert' | 'delete'; position: number; text?: string; length?: number } }) => {
