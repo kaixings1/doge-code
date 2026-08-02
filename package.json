@@ -140,7 +140,7 @@
     "vscode-languageserver-protocol": "*",
     "vscode-languageserver-types": "*",
     "wrap-ansi": "*",
-    "ws": "^8.21.0",
+    "ws": "^8.21.1",
     "xss": "*",
     "yaml": "*",
     "zod": "^4.4.3"

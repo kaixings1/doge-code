@@ -28,8 +28,8 @@ console.log('- Preload: HMR (自动重载)')
 console.log('')
 
 const electronViteBin = process.platform === 'win32'
-  ? path.join(projectRoot, 'node_modules', '.bin', 'electron-vite.exe')
-  : path.join(projectRoot, 'node_modules', '.bin', 'electron-vite')
+  ? path.join(projectRoot, '..', 'node_modules', '.bin', 'electron-vite.exe')
+  : path.join(projectRoot, '..', 'node_modules', '.bin', 'electron-vite')
 
 const child = spawn(electronViteBin, ['dev'], {
   cwd: projectRoot,
@@ -38,6 +38,7 @@ const child = spawn(electronViteBin, ['dev'], {
   env: {
     ...process.env,
     DOGE_DESKTOP: '1',
+    DOGE_API_JSON: path.join(projectRoot, '..', '.doge', 'api.json'),
     NODE_TLS_REJECT_UNAUTHORIZED: '0',
     ELECTRON_MAJOR_VER: '43',
     ELECTRON_EXEC_PATH: path.join(projectRoot, 'node_modules', 'electron', 'dist', 'electron.exe'),

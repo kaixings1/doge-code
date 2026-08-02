@@ -51,6 +51,7 @@ import {
   getBridgeAccessToken,
   getBridgeBaseUrl,
   getBridgeTokenOverride,
+  isLocalBridgeMode,
 } from './bridgeConfig.js'
 import {
   checkBridgeMinVersion,
@@ -136,6 +137,9 @@ export async function initReplBridge(
     return null
   }
 
+  // 本地桥接模式标记 — 后续 OAuth/策略检查全部跳过。
+  const isLocalBridge = isLocalBridgeMode()
+
   // 1b. 最低版本检查 — 推迟到下面的 v1/v2 分支之后，
   // 因为每个实现有自己的最低要求（v1 为 tengu_bridge_min_version，
   // v2 为 tengu_bridge_repl_v2_config.min_version）。
@@ -143,27 +147,31 @@ export async function initReplBridge(
   // 2. 检查 OAuth — 必须使用 claude.ai 登录。在策略检查之前运行，
   // 以便控制台认证用户获得可操作的"/login"提示，
   // 而不是来自过期/错误组织缓存的误导性策略错误。
-  if (!getBridgeAccessToken()) {
+  // 本地桥接模式跳过此检查。
+  if (!isLocalBridge && !getBridgeAccessToken()) {
     logBridgeSkip('no_oauth', '[bridge:repl] Skipping: no OAuth tokens')
     onStateChange?.('failed', '/login')
     return null
   }
 
-  // 3. 检查组织策略 — 远程控制可能被禁用
-  await waitForPolicyLimitsToLoad()
-  if (!isPolicyAllowed('allow_remote_control')) {
-    logBridgeSkip(
-      'policy_denied',
-      '[bridge:repl] Skipping: allow_remote_control policy not allowed',
-    )
-    onStateChange?.('failed', "被您组织的策略禁用")
-    return null
+  // 3. 检查组织策略 — 远程控制可能被禁用。本地桥接模式跳过。
+  if (!isLocalBridge) {
+    await waitForPolicyLimitsToLoad()
+    if (!isPolicyAllowed('allow_remote_control')) {
+      logBridgeSkip(
+        'policy_denied',
+        '[bridge:repl] Skipping: allow_remote_control policy not allowed',
+      )
+      onStateChange?.('failed', "被您组织的策略禁用")
+      return null
+    }
   }
 
+  // 本地桥接模式跳过所有令牌过期/刷新检查（2a/2b/2c）。
   // 当设置了 CLAUDE_BRIDGE_OAUTH_TOKEN（蚂蚁内部本地开发）时，桥接器
   // 通过 getBridgeAccessToken() 直接使用该令牌 — 钥匙串状态无关紧要。
   // 跳过 2b/2c 以保持解耦：过期的钥匙串令牌不应阻止不使用它的桥接器连接。
-  if (!getBridgeTokenOverride()) {
+  if (!getBridgeTokenOverride() && !isLocalBridge) {
     // 2a. 跨进程退避。如果 N 个先前进程已经看到这个确切的
     // 死亡令牌（通过 expiresAt 匹配），静默跳过 — 无事件、无刷新尝试。
     // 计数阈值容忍瞬态刷新失败（认证服务器 5xx、auth.ts:1437/1444/1485 的锁文件错误）：
@@ -381,7 +389,10 @@ export async function initReplBridge(
   // 环境注册；v2 用于归档（位于兼容的
   // /v1/sessions/{id}/archive，而非 /v1/code/sessions）。没有它，v2
   // 归档会返回 404，且会话在 /exit 后仍在 CCR 中存活。
-  const orgUUID = await getOrganizationUUID()
+  // 本地桥接模式使用伪 orgUUID。
+  const orgUUID = isLocalBridge
+    ? 'local-org-uuid'
+    : await getOrganizationUUID()
   if (!orgUUID) {
     logBridgeSkip('no_org_uuid', '[bridge:repl] Skipping: no org UUID')
     onStateChange?.('failed', '/login')
@@ -402,15 +413,17 @@ export async function initReplBridge(
   // 与环境耦合的，此处尚未实现 — 当设置时回退到基于环境的方案，
   // 以便 KAIROS 用户不会静默丢失跨重启的连续性。
   if (isEnvLessBridgeEnabled() && !perpetual) {
-    const versionError = await checkEnvLessBridgeMinVersion()
-    if (versionError) {
-      logBridgeSkip(
-        'version_too_old',
-        `[bridge:repl] Skipping: ${versionError}`,
-        true,
-      )
-      onStateChange?.('failed', '运行 `claude update` 进行升级')
-      return null
+    if (!isLocalBridge) {
+      const versionError = await checkEnvLessBridgeMinVersion()
+      if (versionError) {
+        logBridgeSkip(
+          'version_too_old',
+          `[bridge:repl] Skipping: ${versionError}`,
+          true,
+        )
+        onStateChange?.('failed', '运行 `claude update` 进行升级')
+        return null
+      }
     }
     logForDebugging(
       '[bridge:repl] Using env-less bridge path (tengu_bridge_repl_v2)',
@@ -421,7 +434,7 @@ export async function initReplBridge(
       orgUUID,
       title,
       getAccessToken: getBridgeAccessToken,
-      onAuth401: handleOAuth401Error,
+      onAuth401: isLocalBridge ? void 0 : handleOAuth401Error,
       toSDKMessages,
       initialHistoryCap,
       initialMessages,

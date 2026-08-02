@@ -1,1 +1,5 @@
-\"release/\"  
+release/
+dist.main.backup/
+_merged_src_backup/
+dist.diag/
+node_modules/

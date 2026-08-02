@@ -11,6 +11,7 @@ export interface ThemeColors {
   text: string; textMuted: string; textFaint: string;
   inputBg: string; userBubble: string; assistantBubble: string;
   accent: string; accentDim: string; errorBg: string; errorBorder: string; errorText: string;
+  successText: string; warningText: string;
   toolBg: string; toolBorder: string; statusBorder: string;
   codeBg: string; selectionBg: string; hoverBg: string;
 }
@@ -20,7 +21,7 @@ export const THEMES: Record<ThemeName, ThemeColors> = {
     bg: '#000000', bgAlt: '#0A0A0A', bgPanel: '#0F0F0F', surface: '#1A1A1A', border: '#262626', borderSubtle: '#1A1A1A',
     text: '#F5F5F5', textMuted: '#888888', textFaint: '#555555',
     inputBg: '#0F0F0F', userBubble: '#1A3A5C', assistantBubble: '#0F0F0F',
-    accent: '#4ECB71', accentDim: 'rgba(78,203,113,0.15)', errorBg: '#3A1A1A', errorBorder: '#5C2A2A', errorText: '#FF6B6B',
+    accent: '#4ECB71', accentDim: 'rgba(78,203,113,0.15)', errorBg: '#3A1A1A', errorBorder: '#5C2A2A', errorText: '#FF6B6B', successText: '#4ECB71', warningText: '#FFA500',
     toolBg: '#1A1A2E', toolBorder: '#2A2A4A', statusBorder: '#1A1A1A',
     codeBg: '#0A0A0A', selectionBg: '#264F78', hoverBg: '#2A2A2A',
   },
@@ -28,7 +29,7 @@ export const THEMES: Record<ThemeName, ThemeColors> = {
     bg: '#FFFFFF', bgAlt: '#F5F5F5', bgPanel: '#FAFAFA', surface: '#FFFFFF', border: '#E0E0E0', borderSubtle: '#EEEEEE',
     text: '#1A1A1A', textMuted: '#666666', textFaint: '#999999',
     inputBg: '#FFFFFF', userBubble: '#0066CC', assistantBubble: '#F0F0F0',
-    accent: '#0066CC', accentDim: 'rgba(0,102,204,0.1)', errorBg: '#FFF0F0', errorBorder: '#FFCCCC', errorText: '#CC0000',
+    accent: '#0066CC', accentDim: 'rgba(0,102,204,0.1)', errorBg: '#FFF0F0', errorBorder: '#FFCCCC', errorText: '#CC0000', successText: '#16A34A', warningText: '#D97706',
     toolBg: '#F5F8FF', toolBorder: '#D0E0FF', statusBorder: '#E0E0E0',
     codeBg: '#F5F5F5', selectionBg: '#ADD6FF', hoverBg: '#E8E8E8',
   },
