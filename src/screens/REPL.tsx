@@ -452,12 +452,13 @@ const TITLE_ANIMATION_INTERVAL_MS = 960;
  * 设置终端标签页标题，在查询运行时显示动画前缀符号。与 REPL 隔离，使得 960ms 动画滴答只重新渲染这个叶子组件（返回 null — 纯副作用），而不是整个 REPL 树。提取之前，滴答导致每次响应的整个持续时间内每秒约 1 次 REPL 渲染，拖累 PromptInput 及其相关组件。
  */
 function AnimatedTerminalTitle(t0) {
-  const $ = _c(6);
+  const $ = _c(7);
   const {
     isAnimating,
     title,
     disabled,
-    noPrefix
+    noPrefix,
+    sessionId
   } = t0;
   const terminalFocused = useTerminalFocus();
   const [frame, setFrame] = useState(0);
@@ -484,7 +485,9 @@ function AnimatedTerminalTitle(t0) {
   }
   useEffect(t1, t2);
   const prefix = isAnimating ? TITLE_ANIMATION_FRAMES[frame] ?? TITLE_STATIC_PREFIX : TITLE_STATIC_PREFIX;
-  useTerminalTitle(disabled ? null : noPrefix ? title : `${prefix} ${title}`);
+  // 当提供 sessionId 时，在标题末尾附加完整会话ID，便于意外退出后用 --resume 恢复
+  const titleWithSession = sessionId ? `${title} ${sessionId}` : title;
+  useTerminalTitle(disabled ? null : noPrefix ? titleWithSession : `${prefix} ${titleWithSession}`);
   return null;
 }
 function _temp2(setFrame_0) {
@@ -1076,7 +1079,13 @@ export function REPL({
       return () => stopPreventSleep();
     }
   }, [isLoading, isWaitingForApproval, isShowingLocalJSXCommand]);
-  const sessionStatus: TabStatusKind = isWaitingForApproval || isShowingLocalJSXCommand ? 'waiting' : isLoading ? 'busy' : 'idle';
+  // ⚠️ 此 useState 必须在使用 inProgressToolUseIDs 的代码（hasActiveTools）之前声明，
+  // 否则会触发 TDZ 错误：Cannot access 'inProgressToolUseIDs' before initialization
+  const [inProgressToolUseIDs, setInProgressToolUseIDs] = useState<Set<string>>(new Set());
+  // 工具执行中（inProgressToolUseIDs 非空）也应视为 busy，避免 queryGuard.end() 后
+  // 下一次 onQuery() 调用前出现短暂/长时间的 idle 间隙（图标变绿）
+  const hasActiveTools = inProgressToolUseIDs.size > 0;
+  const sessionStatus: TabStatusKind = isWaitingForApproval || isShowingLocalJSXCommand ? 'waiting' : (isLoading || hasActiveTools) ? 'busy' : 'idle';
           const waitingFor = sessionStatus !== 'waiting' ? undefined : toolUseConfirmQueue.length > 0 ? `批准 ${toolUseConfirmQueue[0]!.tool.name}` : pendingWorkerRequest ? '工作器请求' : pendingSandboxRequest ? '沙箱请求' : isShowingLocalJSXCommand ? '对话框打开' : '需要输入';
 
   // 将状态推送到 PID 文件以供 `claude ps` 使用。即发即弃；当缺少/过时时，ps 回退到对话记录尾部推导。
@@ -1089,11 +1098,10 @@ export function REPL({
     }
   }, [sessionStatus, waitingFor]);
 
-  // 第三方默认：关闭 — OSC 21337 仅在 ant 中使用，直到规范稳定。
-  // 使用门控，以便在同时渲染标题微调器和侧边栏指示器的终端中发生冲突时可以回滚。当标志打开时，用户 facing 配置设置控制它是否活动。
-  const tabStatusGateEnabled = getFeatureValue_CACHED_MAY_BE_STALE('tengu_terminal_sidebar', false);
-  const showStatusInTerminalTab = tabStatusGateEnabled && (getGlobalConfig().showStatusInTerminalTab ?? false);
-  useTabStatus(titleDisabled || !showStatusInTerminalTab ? null : sessionStatus);
+  // 状态栏始终显示会话状态 + sessionId，与标题栏保持一致。
+  // useTabStatus 内部通过 supportsTabStatus() 自动检测终端兼容性，
+  // 不支持 OSC 21337 的终端会静默忽略，无需额外门控。
+  useTabStatus(titleDisabled ? null : sessionStatus, getSessionId());
 
   // 多窗口声音提醒：状态变化时播放提示音
   // - busy -> idle: 对话完成提醒
@@ -1288,7 +1296,6 @@ export function REPL({
     // Keep commands that CCR lists OR that are in the local-safe set
     setLocalCommands(prev => prev.filter(cmd => remoteCommandSet.has(cmd.name) || REMOTE_SAFE_COMMANDS.has(cmd)));
   }, [setLocalCommands]);
-  const [inProgressToolUseIDs, setInProgressToolUseIDs] = useState<Set<string>>(new Set());
   const hasInterruptibleToolInProgressRef = useRef(false);
 
   // Remote session hook - manages WebSocket connection and message handling for --remote mode
@@ -4233,7 +4240,7 @@ export function REPL({
         {toolJSX.jsx}
       </Box>;
     const transcriptReturn = <KeybindingSetup>
-        <AnimatedTerminalTitle isAnimating={titleIsAnimating} title={terminalTitle} disabled={titleDisabled} noPrefix={showStatusInTerminalTab} />
+        <AnimatedTerminalTitle isAnimating={titleIsAnimating} title={terminalTitle} disabled={titleDisabled} noPrefix={true} sessionId={getSessionId()} />
         <GlobalKeybindingHandlers {...globalKeybindingProps} />
         {feature('VOICE_MODE') ? <VoiceKeybindingHandler voiceHandleKeyEvent={voice.handleKeyEvent} stripTrailing={voice.stripTrailing} resetAnchor={voice.resetAnchor} isActive={!toolJSX?.isLocalJSXCommand} /> : null}
         <CommandKeybindingHandlers onSubmit={onSubmit} isActive={!toolJSX?.isLocalJSXCommand} />
@@ -4319,7 +4326,7 @@ export function REPL({
 
   // 根部的 <AlternateScreen>：其内部的所有内容都在其 <Box height={rows}> 内。处理程序/上下文是零高度的，因此 FullscreenLayout 中 ScrollBox 的 flexGrow 相对于此 Box 解析。上面的对话记录早期返回以同样的方式包装其虚拟滚动分支；只有 30 上限转储分支保持未包装，以支持原生终端滚动回退。
   const mainReturn = <KeybindingSetup>
-      <AnimatedTerminalTitle isAnimating={titleIsAnimating} title={terminalTitle} disabled={titleDisabled} noPrefix={showStatusInTerminalTab} />
+      <AnimatedTerminalTitle isAnimating={titleIsAnimating} title={terminalTitle} disabled={titleDisabled} noPrefix={true} sessionId={getSessionId()} />
       <GlobalKeybindingHandlers {...globalKeybindingProps} />
       {feature('VOICE_MODE') ? <VoiceKeybindingHandler voiceHandleKeyEvent={voice.handleKeyEvent} stripTrailing={voice.stripTrailing} resetAnchor={voice.resetAnchor} isActive={!toolJSX?.isLocalJSXCommand} /> : null}
       <CommandKeybindingHandlers onSubmit={onSubmit} isActive={!toolJSX?.isLocalJSXCommand} />

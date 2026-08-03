@@ -1,7 +1,7 @@
 /**
  * Electron 主进程入口 — 集成 QueryEngine
  */
-
+console.log('[MAIN] Electron main process starting...')
 import { app, BrowserWindow, ipcMain, shell, Tray, Menu, nativeImage } from 'electron'
 import Store from 'electron-store'
 import * as path from 'path'
@@ -10,16 +10,16 @@ import { fileURLToPath, pathToFileURL } from 'url'
 
 const requireModule = createRequire(import.meta.url)
 import * as fs from 'fs'
-import { scanFile as securityScanFile, scanDirectory as securityScanDirectory, SECURITY_RULES } from '../../../src/commands/security-audit/index.js'
-import { QueryEngine, type ToolDefinition } from '../../../src/engine/index.js'
-import type { InternalMessage } from '../../../src/engine/messageNormalizer.js'
-import type { APIRequest } from '../../../src/engine/requestBuilder.js'
-import { getAllBaseTools, type Tool } from '../../../src/tools.js'
-import { zodToJsonSchema } from '../../../src/utils/zodToJsonSchema.js'
+import { scanFile as securityScanFile, scanDirectory as securityScanDirectory, SECURITY_RULES } from '../commands/security-audit/index.js'
+import { QueryEngine, type ToolDefinition } from '../engine/index.js'
+import type { InternalMessage } from '../engine/messageNormalizer.js'
+import type { APIRequest } from '../engine/requestBuilder.js'
+import { getAllBaseTools, type Tool } from '../tools.js'
+import { zodToJsonSchema } from '../utils/zodToJsonSchema.js'
 import { getPermissionManager, DesktopPermissionManager } from './permissionManager.js'
-import { setOriginalCwd, setCwdState, getProjectRoot } from '../../../src/bootstrap/state.js'
-import { initBundledSkills } from '../../../src/skills/bundled/index.js'
-import { getBundledSkills } from '../../../src/skills/bundledSkills.js'
+import { setOriginalCwd, setCwdState, getProjectRoot } from '../bootstrap/state.js'
+import { initBundledSkills } from '../skills/bundled/index.js'
+import { getBundledSkills } from '../skills/bundledSkills.js'
 import { createEngineApi, type EngineApi } from './engineApi.js'
 import { scanPlugins, setPluginEnabled, installPlugin, uninstallPlugin, getPluginCommandContent, type PluginInfo } from './pluginManager.js'
 import { getMarketplaces, installPluginFromMarketplace, type MarketplacePlugin } from './pluginMarketplace.js'
@@ -1436,16 +1436,16 @@ ipcMain.handle('doge:api-test-send', async (_event, request: { url: string; meth
 // ─── 命令系统（桌面端轻量实现） ───
 // 动态导入 prompt 类型命令模板，避免顶层循环依赖
 const dynamicCommandImports: Record<string, () => Promise<{ default?: { getPromptForCommand?: (...args: unknown[]) => Promise<unknown[]>; type?: string } }>> = {
-  '/commit': () => import('../../../src/commands/commit.js'),
-  '/review': () => import('../../../src/commands/review.js'),
-  '/plan': () => import('../../../src/commands/plan-mode/index.js').catch(() => ({ default: null })),
-  '/diff': () => import('../../../src/commands/diff/diff.js').catch(() => ({ default: null })),
-  '/branch': () => import('../../../src/commands/branch/branch.js').catch(() => ({ default: null })),
-  '/memory': () => import('../../../src/commands/memory/memory.js').catch(() => ({ default: null })),
-  '/deploy': () => import('../../../src/commands/deploy/index.js').catch(() => ({ default: null })),
-  '/task': () => import('../../../src/commands/task/task.js').catch(() => ({ default: null })),
-  '/session-search': () => import('../../../src/commands/session-search.js'),
-  '/session-tag': () => import('../../../src/commands/session-tag.js'),
+  '/commit': () => import('../commands/commit.js'),
+  '/review': () => import('../commands/review.js'),
+  '/plan': () => import('../commands/plan-mode/index.js').catch(() => ({ default: null })),
+  '/diff': () => import('../commands/diff/diff.js').catch(() => ({ default: null })),
+  '/branch': () => import('../commands/branch/branch.js').catch(() => ({ default: null })),
+  '/memory': () => import('../commands/memory/memory.js').catch(() => ({ default: null })),
+  '/deploy': () => import('../commands/deploy/index.js').catch(() => ({ default: null })),
+  '/task': () => import('../commands/task/task.js').catch(() => ({ default: null })),
+  '/session-search': () => import('../commands/session-search.js'),
+  '/session-tag': () => import('../commands/session-tag.js'),
 }
 
 // ─── 命令注册表（动态构建，复用 src/commands/ 和 bundledSkills） ───
@@ -2788,11 +2788,8 @@ app.on('window-all-closed', () => {
     // 强制退出进程（双重保障：app.quit() + process.exit(0)）
     // 有时 app.quit() 可能被 IPC handler 或其他异步操作拦截，
     // 导致进程无法退出，这里添加 process.exit(0) 作为兜底
-    app.quit().then(() => {
-      process.exit(0)
-    }).catch(() => {
-      process.exit(0)
-    })
+    app.quit()
+    process.exit(0)
   }
 })
 
@@ -3863,7 +3860,7 @@ ipcMain.handle('doge:plugin-hot-reload', async (_event, pluginName: string) => {
     ]
     for (const dir of pluginDirs) {
       const pluginDir = path.join(dir, pluginName)
-      if (require('fs').existsSync(pluginDir)) {
+      if (fs.existsSync(pluginDir)) {
         // 重新加载插件
         BrowserWindow.getAllWindows().forEach(win => {
           win.webContents.send('doge:plugin-reloaded', { pluginName, path: pluginDir })
@@ -3877,18 +3874,17 @@ ipcMain.handle('doge:plugin-hot-reload', async (_event, pluginName: string) => {
 
 ipcMain.handle('doge:plugin-watch', async (_event, pluginName: string) => {
   try {
-    const { watch } = require('fs')
     const pluginDirs = [
       path.join(projectRoot, '.doge', 'plugins'),
       path.join(projectRoot, 'plugins'),
     ]
     for (const dir of pluginDirs) {
       const pluginDir = path.join(dir, pluginName)
-      if (require('fs').existsSync(pluginDir)) {
+      if (fs.existsSync(pluginDir)) {
         if (pluginWatchers.has(pluginName)) {
           pluginWatchers.get(pluginName)!.watcher.close()
         }
-        const watcher = watch(pluginDir, { recursive: true }, () => {
+        const watcher = fs.watch(pluginDir, { recursive: true }, () => {
           BrowserWindow.getAllWindows().forEach(win => {
             win.webContents.send('doge:plugin-reloaded', { pluginName, path: pluginDir })
           })
@@ -4094,6 +4090,45 @@ ipcMain.handle('doge:get-all-diagnostics', async () => {
     diagnostics.push({ uri, diagnostics: entries })
   })
   return { success: true, diagnostics }
+})
+
+// ─── 测试框架检测（在主进程中执行文件系统操作） ───
+ipcMain.handle('doge:detect-framework', async (_event, cwd: string) => {
+  try {
+    const checkExists = (file: string) => fs.existsSync(path.join(cwd, file))
+
+    if (checkExists('jest.config.js') || checkExists('jest.config.ts') || checkExists('jest.config.json')) {
+      return { success: true, framework: 'jest', configFile: 'jest.config.*', testCommand: 'npm test -- --verbose', coverageCommand: 'npm test -- --coverage' }
+    }
+    if (checkExists('vitest.config.ts') || checkExists('vitest.config.js') || checkExists('vite.config.ts') || checkExists('vite.config.js')) {
+      return { success: true, framework: 'vitest', configFile: 'vitest.config.*', testCommand: 'npx vitest run', coverageCommand: 'npx vitest run --coverage' }
+    }
+    if (checkExists('.mocharc.js') || checkExists('.mocharc.json') || checkExists('mocha.opts')) {
+      return { success: true, framework: 'mocha', configFile: '.mocharc.*', testCommand: 'npx mocha', coverageCommand: 'npx mocha --require nyc/register' }
+    }
+    if (checkExists('pytest.ini') || checkExists('pyproject.toml') || checkExists('setup.cfg')) {
+      return { success: true, framework: 'pytest', configFile: 'pytest.ini', testCommand: 'pytest -v', coverageCommand: 'pytest --cov' }
+    }
+    if (checkExists('go.mod')) {
+      return { success: true, framework: 'go', configFile: 'go.mod', testCommand: 'go test -v ./...', coverageCommand: 'go test -cover ./...' }
+    }
+    if (checkExists('Cargo.toml')) {
+      return { success: true, framework: 'cargo', configFile: 'Cargo.toml', testCommand: 'cargo test', coverageCommand: 'cargo tarpaulin' }
+    }
+
+    // 检查 package.json 中的 test 脚本
+    try {
+      const pkgRaw = fs.readFileSync(path.join(cwd, 'package.json'), 'utf-8')
+      const pkg = JSON.parse(pkgRaw)
+      if (pkg.scripts?.test) {
+        return { success: true, framework: 'unknown', configFile: 'package.json', testCommand: 'npm test -- --verbose', coverageCommand: 'npm test -- --coverage' }
+      }
+    } catch { /* ignore */ }
+
+    return { success: true, framework: 'unknown', testCommand: 'npm test', coverageCommand: 'npm test -- --coverage' }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) }
+  }
 })
 
 // ─── 导出入口函数 ───

@@ -1,7 +1,8 @@
 /**
- * bun:bundle polyfill for Electron environment
- * 原 bun:bundle 用于编译时死代码消除（feature flags）
- * 默认返回 false，可通过环境变量 CLAUDE_CODE_FEATURE_<NAME>=1 启用
+ * Runtime polyfill for Bun's `bun:bundle` feature flag system.
+ * In CLI mode (bun run), feature flags default to false.
+ * This polyfill reads from environment variables to allow runtime override:
+ *   CLAUDE_CODE_FEATURE_<NAME>=1  → enables the feature
  */
 
 const envKey = (name: string) => `CLAUDE_CODE_FEATURE_${name.toUpperCase()}`
