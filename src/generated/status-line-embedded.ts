@@ -12,7 +12,7 @@ try {
 \`, { flag: "a" });
 } catch {}
 var input = JSON.parse(rawInput);
-var { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration, doge_api_json } = input;
+var { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration, doge_api_json, session_id } = input;
 var segments = [];
 if (workspace?.current_dir) {
   let dir = workspace.current_dir;
@@ -76,6 +76,10 @@ if (doge_api_json) {
     }
   } catch {}
   segments.push("\uD83D\uDCDC " + configName);
+}
+if (session_id) {
+  const sid = session_id.length > 8 ? session_id.slice(0, 8) + "…" : session_id;
+  segments.push("\uD83D\uDD17 " + sid);
 }
 console.log(segments.join("  "));
 function fmtNum(n) {
