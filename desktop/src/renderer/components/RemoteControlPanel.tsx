@@ -595,20 +595,40 @@ export function RemoteControlPanel({ theme }: { theme: ThemeColors; cwd?: string
 }
 
 /**
- * 获取本机 IP 地址（简化版）
+ * 获取本机 IP 地址
+ * 优先通过 Electron 的 ipcRenderer 从主进程获取真实 IP，
+ * 若不可用则回退到 localhost
  */
 function getLocalIP(): string {
   try {
-    const interfaces = require('os')?.networkInterfaces?.()
-    for (const name of Object.keys(interfaces)) {
-      for (const iface of interfaces[name]) {
-        if (iface.family === 'IPv4' && !iface.internal) {
-          return iface.address
+    // 尝试通过 Electron IPC 从主进程获取真实 IP（主进程可使用 os 模块）
+    const { ipcRenderer } = require('electron')
+    if (ipcRenderer) {
+      const ip = ipcRenderer.sendSync?.('get-local-ip')
+      if (ip && typeof ip === 'string' && ip !== 'localhost') {
+        return ip
+      }
+    }
+  } catch {
+    // IPC 不可用，继续回退
+  }
+
+  try {
+    // 尝试使用 os 模块（在 Node.js 集成开启的渲染进程中可用）
+    const os = require('os')
+    const interfaces = os?.networkInterfaces?.()
+    if (interfaces) {
+      for (const name of Object.keys(interfaces)) {
+        for (const iface of interfaces[name]!) {
+          if (iface.family === 'IPv4' && !iface.internal) {
+            return iface.address
+          }
         }
       }
     }
   } catch {
-    // ignore
+    // 渲染进程无法使用 os 模块，忽略
   }
+
   return 'localhost'
 }

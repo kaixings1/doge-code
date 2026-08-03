@@ -22,7 +22,7 @@
     "version": "bun run ./src/bootstrap-entry.ts --version",
     "dev:restore-check": "bun run ./src/dev-entry.ts",
     "dev:desktop": "bun run ./src/bootstrap-entry.ts --desktop",
-    "build:desktop": "bun run prebuild && node src/desktop-electron/build-vite.cjs && cd desktop && electron-builder -c.npmRebuild=false -c.asarUnpack=\"**/node_modules/{@electron,electron-updater}/**\" -c.asarUnpack=\"**/node_modules/node-pty/**\"",
+    "build:desktop": "bun run prebuild && node desktop/_desktop-build.cjs && cd desktop && electron-builder -c.npmRebuild=false -c.asarUnpack=\"**/node_modules/{@electron,electron-updater}/**\" -c.asarUnpack=\"**/node_modules/node-pty/**\"",
     "lint": "biome check src/",
     "lint:fix": "biome check --apply src/",
     "format": "biome format --write src/",

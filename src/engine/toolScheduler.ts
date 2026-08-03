@@ -120,11 +120,11 @@ export class ToolScheduler {
     const tool = this.registry.get(call.name);
     if (!tool) {
       console.warn(`[TOOL] Tool not found: ${call.name}. Available tools: ${Array.from(this.registry.keys()).join(', ')}`);
-      return { success: false, error: `Tool not found: ${call.name}`, toolUseId: call.id };
+      return { success: false, error: `工具未找到: ${call.name}`, toolUseId: call.id };
     }
     const validation = tool.validate(call.input);
     if (!validation.valid) {
-      return { success: false, error: `Invalid: ${validation.errors.join(", ")}`, toolUseId: call.id };
+      return { success: false, error: `无效的: ${validation.errors.join(", ")}`, toolUseId: call.id };
     }
     try {
       const output = await this.executor.execute(tool, call.input, {
