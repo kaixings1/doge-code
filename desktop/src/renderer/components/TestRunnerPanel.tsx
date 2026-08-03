@@ -55,48 +55,19 @@ interface DetectedFramework {
   coverageCommand?: string
 }
 
-function detectFramework(cwd: string): DetectedFramework {
-  // @ts-ignore - require is provided by Electron's renderer process with nodeIntegration
-  const fs = require('fs') as typeof import('fs')
-  // @ts-ignore - require is provided by Electron's renderer process with nodeIntegration
-  const path = require('path') as typeof import('path')
-
-  if (fs.existsSync(path.join(cwd, 'jest.config.js')) ||
-      fs.existsSync(path.join(cwd, 'jest.config.ts')) ||
-      fs.existsSync(path.join(cwd, 'jest.config.json'))) {
-    return { type: 'jest', configFile: 'jest.config.*', testCommand: 'npm test -- --verbose', coverageCommand: 'npm test -- --coverage' }
-  }
-
-  if (fs.existsSync(path.join(cwd, 'vitest.config.ts')) ||
-      fs.existsSync(path.join(cwd, 'vitest.config.js')) ||
-      fs.existsSync(path.join(cwd, 'vite.config.ts')) ||
-      fs.existsSync(path.join(cwd, 'vite.config.js'))) {
-    return { type: 'vitest', configFile: 'vitest.config.*', testCommand: 'npx vitest run', coverageCommand: 'npx vitest run --coverage' }
-  }
-
-  if (fs.existsSync(path.join(cwd, '.mocharc.js')) ||
-      fs.existsSync(path.join(cwd, '.mocharc.json')) ||
-      fs.existsSync(path.join(cwd, 'mocha.opts'))) {
-    return { type: 'mocha', configFile: '.mocharc.*', testCommand: 'npx mocha', coverageCommand: 'npx mocha --require nyc/register' }
-  }
-
-  if (fs.existsSync(path.join(cwd, 'pytest.ini')) ||
-      fs.existsSync(path.join(cwd, 'pyproject.toml')) ||
-      fs.existsSync(path.join(cwd, 'setup.cfg'))) {
-    return { type: 'pytest', configFile: 'pytest.ini', testCommand: 'pytest -v', coverageCommand: 'pytest --cov' }
-  }
-
-  if (fs.existsSync(path.join(cwd, 'go.mod'))) {
-    return { type: 'go', configFile: 'go.mod', testCommand: 'go test -v ./...', coverageCommand: 'go test -cover ./...' }
-  }
-
-  try {
-    const pkg = JSON.parse(fs.readFileSync(path.join(cwd, 'package.json'), 'utf-8'))
-    if (pkg.scripts?.test) {
-      return { type: 'unknown', configFile: 'package.json', testCommand: 'npm test -- --verbose', coverageCommand: 'npm test -- --coverage' }
+async function detectFrameworkAsync(cwd: string): Promise<DetectedFramework> {
+  if (window.dogeAPI?.detectFramework) {
+    const result = await window.dogeAPI.detectFramework(cwd)
+    if (result.success && result.framework) {
+      return {
+        type: result.framework as TestFramework,
+        configFile: result.configFile,
+        testCommand: result.testCommand,
+        coverageCommand: result.coverageCommand,
+      }
     }
-  } catch { /* ignore */ }
-
+  }
+  // 回退：返回未知框架
   return { type: 'unknown', testCommand: 'npm test', coverageCommand: 'npm test -- --coverage' }
 }
 
@@ -181,10 +152,10 @@ export function TestRunnerPanel({ cwd, theme, onClose }: TestRunnerPanelProps): 
   const [showCoverage, setShowCoverage] = useState(false)
   const [message, setMessage] = useState('')
 
-  const detect = useCallback(() => {
+  const detect = useCallback(async () => {
     setLoading(true)
     try {
-      const fw = detectFramework(cwd)
+      const fw = await detectFrameworkAsync(cwd)
       setFramework(fw)
       setTestCommand(fw.testCommand || 'npm test')
     } catch { /* ignore */ } finally { setLoading(false) }

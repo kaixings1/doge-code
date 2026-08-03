@@ -3,7 +3,7 @@
  * 将内部 APIRequest 格式转换为 Anthropic/OpenAI 兼容的格式并发送请求，处理 SSE 流式响应。
  */
 
-import type { APIRequest } from '../../../src/engine/requestBuilder.js'
+import type { APIRequest } from '../engine/requestBuilder.js'
 
 // ─── 类型定义 ───
 

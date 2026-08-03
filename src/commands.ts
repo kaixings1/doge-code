@@ -18,20 +18,6 @@ function safeRequire<T>(path: string): T | null {
   }
 }
 
-/**
- * 安全的动态加载函数，避免在 Electron bundle 中 createRequire 无法解析模块路径时崩溃。
- * 在 Electron/Vite 构建中，feature() 返回 false，所有条件加载的命令都为 null。
- * 在 Bun 原生构建中，feature() 进行编译时死代码消除，相关 import 会被内联。
- * 此函数仅作为后备，防止任何动态 require/import 加载失败导致崩溃。
- */
-function safeRequire<T>(path: string): T | null {
-  try {
-    return dynamicRequire(path) as T
-  } catch {
-    return null
-  }
-}
-
 import addDir from './commands/add-dir/index.ts'
 import addModel from './commands/add-model/index.ts'
 import removeModel from './commands/remove-model/index.ts'
@@ -118,6 +104,14 @@ import templates from './commands/templates/index.ts'
 import stash from './commands/stash/index.ts'
 import codeHealth from './commands/code-health/index.ts'
 import errorsCmd from './commands/errors/index.ts'
+import prReview from './commands/pr-review/index.ts'
+import env from './commands/env/index.ts'
+import logs from './commands/logs/index.ts'
+import ports from './commands/ports/index.ts'
+import symbol from './commands/symbol/index.ts'
+import imports from './commands/imports/index.ts'
+import fmt from './commands/fmt/index.ts'
+import testRun from './commands/test-run/index.ts'
 
 // 导入新增的21个命令
 import lessPermissionPrompts from './commands/less-permission-prompts/index.ts'
@@ -130,7 +124,7 @@ import graphQL from './commands/graphql/index.ts'
 import http from './commands/http/index.ts'
 import costHistory from './commands/cost-history/index.ts'
 import database from './commands/database/index.ts'
-import depsViz from './commands/deps-viz/index.ts'
+import deps from './commands/deps-viz/index.ts'
 import shell from './commands/shell/index.ts'
 import focus from './commands/focus/index.ts'
 import fileWatcher from './commands/file-watcher/index.ts'
@@ -268,7 +262,7 @@ import apiDebug from './commands/api-debug/index.ts'
 import pluginMarket from './commands/plugin-market/index.ts'
 import pair from './commands/pair/index.ts'
 import memorySearch from './commands/memory-search/index.ts'
-import loopCommand from './commands/loop/index.ts'
+import loopCommand from './commands/loop/index.tsx'
 import { loopShortcuts } from './commands/loop/shortcuts.ts'
 import { logError } from './utils/log.js'
 import { toError } from './utils/errors.js'
@@ -371,7 +365,6 @@ export { getCommandName, isCommandEnabled } from './types/command.js'
 export const INTERNAL_ONLY_COMMANDS = [
   backfillSessions,
   breakCache,
-  bughunter,
   goodClaude,
   issue,
   initVerifiers,
@@ -425,6 +418,7 @@ const COMMANDS = memoize((): Command[] => [
   diffReview,
   blockMode,
   repoMap,
+  diagnose,
   doctor,
   effort,
   exit,
@@ -532,7 +526,6 @@ const COMMANDS = memoize((): Command[] => [
   autoCommit,
   wiki,
   customCmd,
-  proactive,
   background,
   deps,
   bookmark,
@@ -541,6 +534,14 @@ const COMMANDS = memoize((): Command[] => [
   stash,
   codeHealth,
   errorsCmd,
+  prReview,
+  env,
+  logs,
+  ports,
+  symbol,
+  imports,
+  fmt,
+  testRun,
   ...(workflowsCmd ? [workflowsCmd] : []),
   ...(torch ? [torch] : []),
   lessPermissionPrompts,
@@ -588,6 +589,7 @@ const COMMANDS = memoize((): Command[] => [
   pluginMarket,
   pair,
   memorySearch,
+  sessionSearch,
   loopCommand,
   ...loopShortcuts,
   bridgeSessions,
@@ -595,6 +597,7 @@ const COMMANDS = memoize((): Command[] => [
   ...(process.env.USER_TYPE === 'ant' && !process.env.IS_DEMO
     ? INTERNAL_ONLY_COMMANDS
     : []),
+  bughunter,
 ])
 
 export const builtInCommandNames = memoize(

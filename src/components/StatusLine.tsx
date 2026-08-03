@@ -159,6 +159,8 @@ function buildStatusLineCommandInput(permissionMode: PermissionMode, exceeds200k
     },
     // DOGE: 环境变量 DOGE_API_JSON 显示
     doge_api_json: process.env.DOGE_API_JSON || '',
+    // DOGE: 会话 ID
+    session_id: sessionId,
   };
 }
 type Props = {

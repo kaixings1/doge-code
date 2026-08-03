@@ -7,7 +7,7 @@
 
 import * as fs from 'fs'
 import * as path from 'path'
-import type { InternalMessage } from '../../../src/engine/messageNormalizer.js'
+import type { InternalMessage } from '../engine/messageNormalizer.js'
 
 export const SESSIONS_DIR = path.join(process.cwd(), '.doge', 'sessions')
 

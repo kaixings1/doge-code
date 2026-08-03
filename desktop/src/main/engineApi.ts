@@ -6,9 +6,9 @@
  */
 
 import type { BrowserWindow } from 'electron'
-import type { QueryEngine } from '../../../src/engine/index.js';
-import type { InternalMessage } from '../../../src/engine/messageNormalizer.js';
-import type { ToolDefinition } from '../../../src/engine/requestBuilder.js';
+import type { QueryEngine } from '../engine/index.js';
+import type { InternalMessage } from '../engine/messageNormalizer.js';
+import type { ToolDefinition } from '../engine/requestBuilder.js';
 
 /**
  * 引擎状态信息

@@ -27,9 +27,21 @@
 import { createSignal } from './signal.js'
 
 export class QueryGuard {
-  private _status: 'idle' | 'dispatching' | 'running' = 'idle'
+  private _status: 'idle' | 'dispatching' | 'running' | 'pending-idle' = 'idle'
   private _generation = 0
   private _changed = createSignal()
+  private _pendingIdleTimer: ReturnType<typeof setTimeout> | null = null
+  // Generation captured when end() was called — used by tryStart to detect
+  // "same work continuation" vs "new query after idle".
+  private _endedGeneration = 0
+
+  /**
+   * Grace period after end() before the guard truly becomes idle.
+   * If tryStart() fires within this window, the guard snaps back to
+   * running without ever reporting idle to subscribers — preventing
+   * the tab-status icon from flashing green between tool-loop turns.
+   */
+  static PENDING_IDLE_GRACE_MS = 500
 
   /**
    * Reserve the guard for queue processing. Transitions idle → dispatching.
@@ -57,9 +69,22 @@ export class QueryGuard {
    * or null if a query is already running (concurrent guard).
    * Accepts transitions from both idle (direct user submit)
    * and dispatching (queue processor path).
+   *
+   * If called during the pending-idle grace period for the SAME generation,
+   * cancels the pending timer and resumes running without emitting an
+   * idle snapshot — keeps the status icon from flashing green.
    */
   tryStart(): number | null {
     if (this._status === 'running') return null
+
+    // Resume from pending-idle: same work continuation (tool loop).
+    if (this._status === 'pending-idle' && this._generation === this._endedGeneration) {
+      this._clearPendingIdle()
+      this._status = 'running'
+      this._notify()
+      return this._generation
+    }
+
     this._status = 'running'
     ++this._generation
     this._notify()
@@ -70,12 +95,27 @@ export class QueryGuard {
    * End a query. Returns true if this generation is still current
    * (meaning the caller should perform cleanup). Returns false if a
    * newer query has started (stale finally block from a cancelled query).
+   *
+   * Instead of immediately transitioning to idle, enters a brief
+   * 'pending-idle' grace period. If no tryStart() arrives within
+   * PENDING_IDLE_GRACE_MS, the guard transitions to idle. This prevents
+   * the tab-status indicator from flashing green during rapid tool-loop
+   * turn boundaries where the next onQuery follows within milliseconds.
    */
   end(generation: number): boolean {
     if (this._generation !== generation) return false
     if (this._status !== 'running') return false
-    this._status = 'idle'
+    this._endedGeneration = generation
+    this._status = 'pending-idle'
     this._notify()
+    // Schedule the actual idle transition; tryStart() can cancel this.
+    this._pendingIdleTimer = setTimeout(() => {
+      this._pendingIdleTimer = null
+      if (this._status === 'pending-idle') {
+        this._status = 'idle'
+        this._notify()
+      }
+    }, QueryGuard.PENDING_IDLE_GRACE_MS)
     return true
   }
 
@@ -87,6 +127,7 @@ export class QueryGuard {
    */
   forceEnd(): void {
     if (this._status === 'idle') return
+    this._clearPendingIdle()
     this._status = 'idle'
     ++this._generation
     this._notify()
@@ -95,6 +136,9 @@ export class QueryGuard {
   /**
    * Is the guard active (dispatching or running)?
    * Always synchronous — not subject to React state batching delays.
+   *
+   * 'pending-idle' reports as active so subscribers (tab icon) don't
+   * see a transient idle state during tool-loop gaps.
    */
   get isActive(): boolean {
     return this._status !== 'idle'
@@ -110,12 +154,26 @@ export class QueryGuard {
   /** Subscribe to state changes. Stable reference — safe as useEffect dep. */
   subscribe = this._changed.subscribe
 
-  /** Snapshot for useSyncExternalStore. Returns `isActive`. */
+  /**
+   * Snapshot for useSyncExternalStore. Returns `isActive`.
+   *
+   * 'pending-idle' returns true so the tab icon stays orange during
+   * brief gaps between tool-loop turns. React's useSyncExternalStore
+   * only re-renders when the snapshot changes, so the grace period
+   * is invisible to the UI unless the gap exceeds PENDING_IDLE_GRACE_MS.
+   */
   getSnapshot = (): boolean => {
     return this._status !== 'idle'
   }
 
   private _notify(): void {
     this._changed.emit()
+  }
+
+  private _clearPendingIdle(): void {
+    if (this._pendingIdleTimer !== null) {
+      clearTimeout(this._pendingIdleTimer)
+      this._pendingIdleTimer = null
+    }
   }
 }

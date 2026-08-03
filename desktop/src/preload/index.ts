@@ -182,6 +182,7 @@ interface DogeAPIValue {
   // ── 测试运行器 ──
   testRun: (cwd: string, testCommand: string) => Promise<{ success: boolean; output?: string; error?: string; exitCode?: number }>
   testList: (cwd: string) => Promise<{ framework: string; tests: string[] }>
+  detectFramework: (cwd: string) => Promise<{ success: boolean; framework?: string; configFile?: string; testCommand?: string; coverageCommand?: string; error?: string }>
 
   // ── 日志查看器 ──
   getLogs: (params?: { level?: string; limit?: number; offset?: number }) => Promise<{ logs: Array<{ id: string; timestamp: string; level: string; source: string; message: string }>; total: number }>
@@ -422,6 +423,7 @@ const dogeAPI: DogeAPIValue = {
   // ── 测试运行器 ──
   testRun: (cwd: string, testCommand: string) => ipcRenderer.invoke('doge:test-run', cwd, testCommand),
   testList: (cwd: string) => ipcRenderer.invoke('doge:test-list', cwd),
+  detectFramework: (cwd: string) => ipcRenderer.invoke('doge:detect-framework', cwd),
 
   // ── 日志查看器 ──
   getLogs: (params?: { level?: string; limit?: number; offset?: number }) => ipcRenderer.invoke('doge:get-logs', params),

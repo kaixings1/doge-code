@@ -12,10 +12,10 @@ import * as fs from 'fs'
 import { createRequire } from 'node:module'
 
 const requireModule = createRequire(import.meta.url)
-import type { Tool, ToolUseContext } from '../../../src/Tool.js'
-import { getEmptyToolPermissionContext } from '../../../src/Tool.js'
-import { zodToJsonSchema } from '../../../src/utils/zodToJsonSchema.js'
-import { getAllBaseTools } from '../../../src/tools.js'
+import type { Tool, ToolUseContext } from '../Tool.js'
+import { getEmptyToolPermissionContext } from '../Tool.js'
+import { zodToJsonSchema } from '../utils/zodToJsonSchema.js'
+import { getAllBaseTools } from '../tools.js'
 import { getLspClientManager } from './lspClientManager.js'
 
 // ─── 类型定义 ───

@@ -49,11 +49,12 @@ export function CommandPalette({ cwd, onClose, mode, setMode, commandHistory = [
     }
   }, [cwd, mode])
 
+  const queryLower = query.toLowerCase()
   const filtered = mode === 'files'
-    ? files.filter(f => f.name.toLowerCase().includes(query.toLowerCase()))
+    ? files.filter(f => (f.name || '').toLowerCase().includes(queryLower))
     : commands.filter(cmd =>
-        cmd.name.toLowerCase().includes(query.toLowerCase()) ||
-        cmd.description.toLowerCase().includes(query.toLowerCase())
+        (cmd.name || '').toLowerCase().includes(queryLower) ||
+        (cmd.description || '').toLowerCase().includes(queryLower)
       )
 
   const handleSelect = async (name: string) => {

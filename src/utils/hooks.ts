@@ -20,7 +20,7 @@ try {
   writeFileSync(join(homedir(), ".doge", "status-line-debug.log"), rawInput + "\\n---\\n", { flag: "a" });
 } catch {}
 var input = JSON.parse(rawInput);
-var { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration, doge_api_json } = input;
+var { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration, doge_api_json, session_id } = input;
 var segments = [];
 if (workspace && workspace.current_dir) {
   var dir = workspace.current_dir;
@@ -101,6 +101,10 @@ if (doge_api_json) {
     }
   } catch {}
   segments.push("\\u{1F4DC} " + configName);
+}
+if (session_id) {
+  var sid = session_id.length > 8 ? session_id.slice(0, 8) + "\\u2026" : session_id;
+  segments.push("\\u{1F517} " + sid);
 }
 console.log(segments.join("  "));
 `;

@@ -50,23 +50,33 @@ const TAB_STATUS_PRESETS: Record<
  * `null` emits CLEAR_TAB_STATUS so toggling off mid-session doesn't leave
  * a stale dot. Process-exit cleanup is handled by ink.tsx's unmount path.
  */
-export function useTabStatus(kind: TabStatusKind | null): void {
+export function useTabStatus(kind: TabStatusKind | null, sessionId?: string): void {
   const writeRaw = useContext(TerminalWriteContext)
   const prevKindRef = useRef<TabStatusKind | null>(null)
+  const prevSessionRef = useRef("")
 
   useEffect(() => {
     // When kind transitions from non-null to null (e.g. user toggles off
     // showStatusInTerminalTab mid-session), clear the stale dot.
     if (kind === null) {
-      if (prevKindRef.current !== null && writeRaw && supportsTabStatus()) {
+      if ((prevKindRef.current !== null || prevSessionRef.current !== "") && writeRaw && supportsTabStatus()) {
         writeRaw(wrapForMultiplexer(CLEAR_TAB_STATUS))
       }
       prevKindRef.current = null
+      prevSessionRef.current = ""
       return
     }
 
     prevKindRef.current = kind
+    prevSessionRef.current = sessionId || ""
     if (!writeRaw || !supportsTabStatus()) return
-    writeRaw(wrapForMultiplexer(tabStatus(TAB_STATUS_PRESETS[kind])))
-  }, [kind, writeRaw])
+    const preset = TAB_STATUS_PRESETS[kind]
+    // Append full session ID to status text for crash recovery
+    const suffix = sessionId ? ` ${sessionId}` : ''
+    writeRaw(wrapForMultiplexer(tabStatus({
+      indicator: preset.indicator,
+      status: preset.status + suffix,
+      statusColor: preset.statusColor,
+    })))
+  }, [kind, sessionId, writeRaw])
 }

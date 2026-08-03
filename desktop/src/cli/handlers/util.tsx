@@ -1,0 +1,107 @@
+import { c as _c } from "react/compiler-runtime";
+/**
+ * 杂项子命令处理函数 — 从 main.tsx 提取以实现懒加载。
+ * setup-token、doctor、install
+ */
+/* eslint-disable custom-rules/no-process-exit -- CLI 子命令处理程序意图退出 */
+
+import { cwd } from 'process';
+import React from 'react';
+import { WelcomeV2 } from '../../components/LogoV2/WelcomeV2.js';
+import { useManagePlugins } from '../../hooks/useManagePlugins.js';
+import type { Root } from '../../ink.js';
+import { Box, Text } from '../../ink.js';
+import { KeybindingSetup } from '../../keybindings/KeybindingProviderSetup.js';
+import { logEvent } from '../../services/analytics/index.js';
+import { MCPConnectionManager } from '../../services/mcp/MCPConnectionManager.js';
+import { AppStateProvider } from '../../state/AppState.js';
+import { onChangeAppState } from '../../state/onChangeAppState.js';
+import { isAnthropicAuthEnabled } from '../../utils/auth.js';
+export async function setupTokenHandler(root: Root): Promise<void> {
+  logEvent('tengu_setup_token_command', {});
+  const showAuthWarning = !isAnthropicAuthEnabled();
+  const {
+    ConsoleOAuthFlow
+  } = await import('../../components/ConsoleOAuthFlow.js');
+  await new Promise<void>(resolve => {
+    root.render(<AppStateProvider onChangeAppState={onChangeAppState}>
+        <KeybindingSetup>
+          <Box flexDirection="column" gap={1}>
+            <WelcomeV2 />
+            {showAuthWarning && <Box flexDirection="column">
+				<Text color="warning">
+				  警告：您已通过环境变量或 API 密钥助手配置了身份验证。
+				</Text>
+                <Text color="warning">
+                  setup-token 命令将创建一个新的 OAuth 令牌，您可以改用该令牌。
+                </Text>
+              </Box>}
+            <ConsoleOAuthFlow onDone={() => {
+            void resolve();
+          }} mode="setup-token" startingMessage="这将指导您为 Claude 账户设置长期（1 年）身份验证令牌。需要 Claude 订阅。" />
+          </Box>
+        </KeybindingSetup>
+      </AppStateProvider>);
+  });
+  root.unmount();
+  process.exit(0);
+}
+
+// DoctorWithPlugins 包装器 + doctor 处理函数
+const DoctorLazy = React.lazy(() => import('../../screens/Doctor.js').then(m => ({
+  default: m.Doctor
+})));
+function DoctorWithPlugins(t0) {
+  const $ = _c(2);
+  const {
+    onDone
+  } = t0;
+  useManagePlugins();
+  let t1;
+  if ($[0] !== onDone) {
+    t1 = <React.Suspense fallback={null}><DoctorLazy onDone={onDone} /></React.Suspense>;
+    $[0] = onDone;
+    $[1] = t1;
+  } else {
+    t1 = $[1];
+  }
+  return t1;
+}
+export async function doctorHandler(root: Root): Promise<void> {
+  logEvent('tengu_doctor_command', {});
+  await new Promise<void>(resolve => {
+    root.render(<AppStateProvider>
+        <KeybindingSetup>
+          <MCPConnectionManager dynamicMcpConfig={undefined} isStrictMcpConfig={false}>
+            <DoctorWithPlugins onDone={() => {
+            void resolve();
+          }} />
+          </MCPConnectionManager>
+        </KeybindingSetup>
+      </AppStateProvider>);
+  });
+  root.unmount();
+  process.exit(0);
+}
+
+// install 处理函数
+export async function installHandler(target: string | undefined, options: {
+  force?: boolean;
+}): Promise<void> {
+  const {
+    setup
+  } = await import('../../setup.js');
+  await setup(cwd(), 'default', false, false, undefined, false);
+  const {
+    install
+  } = await import('../../commands/install.js');
+  await new Promise<void>(resolve => {
+    const args: string[] = [];
+    if (target) args.push(target);
+    if (options.force) args.push('--force');
+    void install.call(result => {
+      void resolve();
+      process.exit(result.includes('failed') ? 1 : 0);
+    }, {}, args);
+  });
+}

@@ -20,6 +20,7 @@ interface InputData {
   api_key?: string;
   duration?: { total_str?: string };
   doge_api_json?: string;
+  session_id?: string;
 }
 
 const rawInput = readFileSync(0, 'utf-8');
@@ -28,7 +29,7 @@ try {
 } catch {}
 
 const input: InputData = JSON.parse(rawInput);
-const { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration, doge_api_json } = input;
+const { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration, doge_api_json, session_id } = input;
 
 const segments: string[] = [];
 
@@ -115,6 +116,12 @@ if (doge_api_json) {
     }
   } catch {}
   segments.push('\u{1F4DC} ' + configName);
+}
+
+// 会话 ID（截断显示前8位）
+if (session_id) {
+  const sid = session_id.length > 8 ? session_id.slice(0, 8) + '\u2026' : session_id;
+  segments.push('\u{1F517} ' + sid);
 }
 
 console.log(segments.join('  '));
