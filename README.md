@@ -60,6 +60,15 @@
 /cost 计费情况查看，待完善。
 /plan 或者Shift+Tab 两次进入计划模式。
 /init 重新审视项目，更新CLAUDE.md文件。
+/stock 股票查询（行情、财务、指标、自选股管理）
+/sessions 多会话管理（新建、切换、统计、删除）
+/diagnose 系统环境诊断（环境、系统、依赖、配置）
+/workspace 工作区管理（保存、加载、列表、统计）
+/memory-search 记忆搜索（全文搜索、标签过滤、统计）
+/diff-mode 差异视图（对比文件、目录、Git变更）
+/autocomplete 智能补全（命令、Git分支、文件路径）
+/release-notes 发布说明（Changelog生成、版本对比）
+/bughunter Bug猎人（代码扫描、模式检测、快速检查）
 
 ## 核心功能特性（特性吸收计划产物）
 
