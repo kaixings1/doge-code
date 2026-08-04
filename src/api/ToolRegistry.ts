@@ -5,6 +5,10 @@ export interface ITool {
   name: string;
   description: string;
   parameters: ToolParameters;
+  /** 依赖的其他工具名（注册时自动解析注入） */
+  dependencies?: string[];
+  /** 工具组合：将多个工具组合为复合工具 */
+  compose?: (tools: Record<string, ITool>) => (params: Record<string, any>, context: ToolExecutionContext) => Promise<ToolResult>;
   execute(params: Record<string, any>, context: ToolExecutionContext): Promise<ToolResult>;
 }
 
@@ -61,11 +65,8 @@ export class ToolRegistry {
   private tools = new Map<string, ITool>();
   private stats = new Map<string, { calls: number; failures: number; totalDurationMs: number; avgDurationMs: number }>();
   private permissionCache = new Map<string, boolean>();
-  private readonly DEFAULT_TIMEOUT_MS = 60000;
 
-  constructor(private maxTimeoutMs: number = 60000) {
-    this.DEFAULT_TIMEOUT_MS = maxTimeoutMs;
-  }
+  constructor(private maxTimeoutMs: number = 60000) {}
 
   register(tool: ITool): void {
     if (!tool || !tool.name) throw new Error('Invalid tool: name is required');
@@ -81,6 +82,15 @@ export class ToolRegistry {
       this.stats.set(tool.name, { calls: 0, failures: 0, totalDurationMs: 0, avgDurationMs: 0 });
     }
     this.permissionCache.delete(tool.name); // 清除权限缓存
+
+    // 自动解析依赖：检查声明的依赖是否已注册
+    if (tool.dependencies) {
+      for (const dep of tool.dependencies) {
+        if (!this.tools.has(dep)) {
+          throw new Error(`Tool '${tool.name}' has unresolved dependency: ${dep}`);
+        }
+      }
+    }
   }
 
   unregister(name: string): void {
@@ -210,10 +220,13 @@ export class ToolRegistry {
       return { success: false, error: `Permission denied for tool: ${name}`, errorType: 'permission', durationMs: Date.now() - start };
     }
 
-    // 3. 执行（带超时）
+    // 3. 执行（带超时；组合工具用 compose，普通工具用 execute）
     try {
+      const executor = tool.compose
+        ? tool.compose(this.getDependencies(tool))
+        : tool.execute.bind(tool);
       const result = await Promise.race([
-        tool.execute(params, context),
+        executor(params, context),
         new Promise<never>((_, reject) =>
           setTimeout(() => reject(new Error(`Tool execution timeout after ${this.maxTimeoutMs}ms`)), this.maxTimeoutMs)
         ),
@@ -261,5 +274,135 @@ export class ToolRegistry {
   /** 列出所有工具名 */
   listNames(): string[] {
     return Array.from(this.tools.keys());
+  }
+
+  /**
+   * 获取工具依赖（按名称解析）
+   */
+  getDependencies(tool: ITool): Record<string, ITool> {
+    const resolved: Record<string, ITool> = {};
+    if (tool.dependencies) {
+      for (const depName of tool.dependencies) {
+        const dep = this.tools.get(depName);
+        if (dep) resolved[depName] = dep;
+      }
+    }
+    return resolved;
+  }
+
+  /**
+   * 组合多个工具为一个复合工具
+   * @param name 组合工具名
+   * @param dependencies 依赖的工具名
+   * @param compose 组合执行函数
+   */
+  compose(name: string, dependencies: string[], composeFn: (tools: Record<string, ITool>) => (params: Record<string, any>, context: ToolExecutionContext) => Promise<ToolResult>): ITool {
+    // 验证依赖存在
+    for (const dep of dependencies) {
+      if (!this.tools.has(dep)) {
+        throw new Error(`Cannot compose '${name}': missing dependency '${dep}'`);
+      }
+    }
+    const composite: ITool = {
+      name,
+      description: `Composite tool combining: ${dependencies.join(', ')}`,
+      parameters: { type: 'object', properties: {}, required: [] },
+      dependencies,
+      compose: composeFn,
+      execute: async () => ({ success: false, error: 'Composite tool must use compose function', errorType: 'execution' }),
+    };
+    this.register(composite);
+    return composite;
+  }
+
+  /**
+   * 检查工具依赖是否完整解析
+   */
+  checkDependencies(): string[] {
+    const unresolved: string[] = [];
+    for (const tool of this.tools.values()) {
+      if (tool.dependencies) {
+        for (const dep of tool.dependencies) {
+          if (!this.tools.has(dep)) unresolved.push(`${tool.name} -> ${dep}`);
+        }
+      }
+    }
+    return unresolved;
+  }
+
+  /**
+   * 依赖拓扑排序（被依赖的工具排前面）
+   * 使用 Kahn 算法处理依赖顺序，检测循环依赖
+   * @returns 排序后的工具名数组
+   * @throws 存在循环依赖时抛错
+   */
+  topoSort(): string[] {
+    const inDegree = new Map<string, number>();
+    const adjList = new Map<string, string[]>();
+
+    // 初始化
+    for (const name of this.tools.keys()) {
+      inDegree.set(name, 0);
+      adjList.set(name, []);
+    }
+
+    // 构建邻接表（依赖者 -> 被依赖者反向边）
+    for (const tool of this.tools.values()) {
+      if (tool.dependencies) {
+        for (const dep of tool.dependencies) {
+          if (!this.tools.has(dep)) continue;
+          // tool 依赖 dep，所以 dep 应排在 tool 前面
+          adjList.get(dep)!.push(tool.name);
+          inDegree.set(tool.name, (inDegree.get(tool.name) || 0) + 1);
+        }
+      }
+    }
+
+    // Kahn 算法
+    const queue: string[] = [];
+    for (const [name, deg] of inDegree) {
+      if (deg === 0) queue.push(name);
+    }
+
+    const sorted: string[] = [];
+    while (queue.length > 0) {
+      const node = queue.shift()!;
+      sorted.push(node);
+      for (const neighbor of adjList.get(node) || []) {
+        const newDeg = (inDegree.get(neighbor) || 0) - 1;
+        inDegree.set(neighbor, newDeg);
+        if (newDeg === 0) queue.push(neighbor);
+      }
+    }
+
+    // 检测循环依赖
+    if (sorted.length !== this.tools.size) {
+      const cyclic = Array.from(this.tools.keys()).filter(n => !sorted.includes(n));
+      throw new Error(`Circular dependency detected among: ${cyclic.join(', ')}`);
+    }
+
+    return sorted;
+  }
+
+  /**
+   * 获取依赖深度（被依赖层次）
+   */
+  getDependencyDepth(name: string): number {
+    const tool = this.tools.get(name);
+    if (!tool || !tool.dependencies) return 0;
+    let maxDepth = 0;
+    for (const dep of tool.dependencies) {
+      maxDepth = Math.max(maxDepth, 1 + this.getDependencyDepth(dep));
+    }
+    return maxDepth;
+  }
+
+  /**
+   * 列出无依赖的工具（叶子工具）
+   */
+  listLeafTools(): string[] {
+    return Array.from(this.tools.values())
+      .filter(t => !t.dependencies || t.dependencies.length === 0)
+      .map(t => t.name);
   }
 }

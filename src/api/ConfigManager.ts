@@ -252,4 +252,44 @@ export class ConfigManager {
       }
     } catch { /* ignore */ }
   }
+
+  private watcher: { close: () => void } | null = null;
+
+  /**
+   * 监听配置文件变更，自动热重载
+   * @param debounceMs 防抖毫秒数
+   * @returns 停止监听的函数
+   */
+  watchFile(debounceMs = 300): () => void {
+    if (!this.filePath || this.watcher) return () => {};
+    try {
+      const fs = require('fs');
+      let timer: ReturnType<typeof setTimeout> | null = null;
+      const onChange = () => {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(() => {
+          try {
+            const data = fs.readFileSync(this.filePath, 'utf-8');
+            const parsed = JSON.parse(data);
+            this.config = this.deepMerge(this.defaults, parsed);
+            for (const key of this.watchers.keys()) {
+              this.notifyWatchers(key, this.get(key), this.get(key));
+            }
+          } catch { /* 解析失败不中断 */ }
+        }, debounceMs);
+      };
+      this.watcher = fs.watch(this.filePath, onChange);
+      return () => this.stopWatchFile();
+    } catch {
+      return () => {};
+    }
+  }
+
+  /** 停止配置文件监听 */
+  stopWatchFile(): void {
+    if (this.watcher) {
+      try { this.watcher.close(); } catch { /* ignore */ }
+      this.watcher = null;
+    }
+  }
 }

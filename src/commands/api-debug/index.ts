@@ -1,5 +1,5 @@
 import type { Command } from '../../commands.js'
-import type { LocalCommandCall } from '../../types/command.js'
+import type { LocalCommandCall, LocalCommandResult } from '../../types/command.js'
 import * as fs from 'fs'
 import * as path from 'path'
 import { homedir } from 'os'
@@ -279,7 +279,7 @@ export const call: LocalCommandCall = async (args) => {
   }
 }
 
-function showHistory(): { type: string; value: string } {
+function showHistory(): LocalCommandResult {
   const history = loadHistory()
 
   if (history.length === 0) {
@@ -314,7 +314,7 @@ function showHistory(): { type: string; value: string } {
   return { type: 'text', value: lines.join('\n') }
 }
 
-function clearHistory(): { type: string; value: string } {
+function clearHistory(): LocalCommandResult {
   try {
     if (fs.existsSync(HISTORY_FILE)) {
       fs.unlinkSync(HISTORY_FILE)
@@ -341,7 +341,7 @@ const apiDebug = {
   description: 'REST API 调试客户端 - Postman 风格的 API 测试工具',
   aliases: ['/api-debug', '/api-test', '/http-client'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 } satisfies Command
 
 export default apiDebug

@@ -1,4 +1,16 @@
 /**
+ * 命令参数定义
+ */
+export interface CommandArgument {
+  name: string;
+  description?: string;
+  required?: boolean;
+  type?: 'string' | 'number' | 'boolean' | 'enum';
+  enum?: string[];
+  default?: any;
+}
+
+/**
  * 命令接口
  */
 export interface ICommand {
@@ -7,6 +19,9 @@ export interface ICommand {
   aliases?: string[];
   usage?: string;
   examples?: string[];
+  arguments?: CommandArgument[];
+  /** 命令分组（用于 /help 分类显示） */
+  category?: string;
   execute(args: string[], context: CommandContext): Promise<CommandResult>;
 }
 
@@ -47,7 +62,35 @@ export class CommandRegistry {
   private commands = new Map<string, ICommand>();
   private aliasMap = new Map<string, string>();
   private history: string[] = [];
+  private usageCount = new Map<string, number>();
   private readonly MAX_HISTORY = 100;
+
+  /** 按分组列出命令 */
+  groupByCategory(): Record<string, ICommand[]> {
+    const groups: Record<string, ICommand[]> = {};
+    for (const cmd of this.commands.values()) {
+      const cat = cmd.category || '未分类';
+      if (!groups[cat]) groups[cat] = [];
+      groups[cat].push(cmd);
+    }
+    return groups;
+  }
+
+  /** 获取使用频率统计（降序） */
+  getUsageStats(limit = 20): Array<{ name: string; count: number; lastUsed: string }> {
+    const sorted = Array.from(this.usageCount.entries()).sort((a, b) => b[1] - a[1]);
+    return sorted.slice(0, limit).map(([name, count]) => {
+      // 从历史记录找最后使用时间
+      let lastUsed = 'unknown';
+      for (let i = this.history.length - 1; i >= 0; i--) {
+        if (this.history[i].replace(/^\//, '').startsWith(name)) {
+          lastUsed = `history[${i}]`;
+          break;
+        }
+      }
+      return { name, count, lastUsed };
+    });
+  }
 
   register(command: ICommand): void {
     if (!command || !command.name) throw new Error('Invalid command: name is required');
@@ -197,16 +240,60 @@ export class CommandRegistry {
   }
 
   /**
-   * 执行命令（带历史记录）
+   * 验证命令参数是否符合 schema
+   */
+  private validateArgs(cmd: ICommand, args: string[], options: Record<string, any>): string | null {
+    if (!cmd.arguments || cmd.arguments.length === 0) return null;
+
+    // 位置参数
+    for (let i = 0; i < cmd.arguments.length; i++) {
+      const argDef = cmd.arguments[i];
+      if (i < args.length) {
+        const val = args[i];
+        if (argDef.type === 'number' && isNaN(Number(val))) {
+          return `Argument '${argDef.name}' must be a number, got '${val}'`;
+        }
+        if (argDef.type === 'enum' && argDef.enum && !argDef.enum.includes(val)) {
+          return `Argument '${argDef.name}' must be one of: ${argDef.enum.join(', ')}`;
+        }
+      } else if (argDef.required) {
+        return `Missing required argument: ${argDef.name}${argDef.description ? ` (${argDef.description})` : ''}`;
+      }
+    }
+
+    // 选项参数
+    for (const [key, value] of Object.entries(options)) {
+      const argDef = cmd.arguments.find(a => a.name === key);
+      if (!argDef) continue;
+      if (argDef.type === 'number' && typeof value === 'string' && isNaN(Number(value))) {
+        return `Option '--${key}' must be a number`;
+      }
+      if (argDef.type === 'enum' && argDef.enum && !argDef.enum.includes(String(value))) {
+        return `Option '--${key}' must be one of: ${argDef.enum.join(', ')}`;
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * 执行命令（带历史记录 + 参数验证）
    */
   async execute(input: string, context: CommandContext): Promise<CommandResult> {
     const parsed = this.parse(input);
     const cmd = this.get(parsed.name);
     if (!cmd) return { success: false, error: `Command not found: ${parsed.name}`, exitCode: 1 };
 
-    // 记录历史
+    // 参数验证
+    const validationError = this.validateArgs(cmd, parsed.args, parsed.options);
+    if (validationError) {
+      return { success: false, error: validationError, exitCode: 2 };
+    }
+
+    // 记录历史 + 使用频率
     this.history.push(input);
     if (this.history.length > this.MAX_HISTORY) this.history.shift();
+    this.usageCount.set(parsed.name, (this.usageCount.get(parsed.name) || 0) + 1);
 
     try {
       const result = await cmd.execute(parsed.args, { ...context, args: parsed.args, options: parsed.options });

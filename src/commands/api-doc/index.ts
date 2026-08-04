@@ -51,6 +51,47 @@ function extractJSdocs(content: string): APIEndpoint[] {
   return endpoints
 }
 
+/**
+ * 精确路由提取：支持 Express/Fastify/Koa 链式 + 装饰器 + Next.js App Router
+ */
+function extractRoutesAdvanced(content: string): APIEndpoint[] {
+  const endpoints: APIEndpoint[] = []
+  const lines = content.split('\n')
+  const lineStarts = new Map<string, number>()
+
+  // Next.js App Router: export const GET/POST/PUT/DELETE = async (req) => {...}
+  const appRouterMethods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD']
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+    for (const m of appRouterMethods) {
+      const match = line.match(new RegExp(`export\\s+(?:async\\s+)?(?:const|function)\\s+${m}\\b`))
+      if (match) {
+        endpoints.push({ name: m, method: m, path: '', description: 'Next.js App Router handler', params: [], returnType: 'Response', file: '', line: i + 1 })
+        break
+      }
+    }
+    // 装饰器路由: @Get('/users') / @Post('/users')
+    const decoratorMatch = line.match(/@(Get|Post|Put|Delete|Patch|Options|Head)\(\s*['"]([^'"]+)['"]\s*\)/)
+    if (decoratorMatch) {
+      endpoints.push({ name: decoratorMatch[2], method: decoratorMatch[1].toUpperCase(), path: decoratorMatch[2], description: 'Decorator route', params: [], returnType: '', file: '', line: i + 1 })
+    }
+    // 链式路由: app.route('/users').get(...)
+    const chainMatch = line.match(/\.route\(\s*['"]([^'"]+)['"]\s*\)\s*\.(get|post|put|delete|patch)\s*\(/)
+    if (chainMatch) {
+      endpoints.push({ name: chainMatch[1], method: chainMatch[2].toUpperCase(), path: chainMatch[1], description: 'Chained route', params: [], returnType: '', file: '', line: i + 1 })
+    }
+    // 参数提取: async (req: Request<{ params: { id: string } }>
+    if (line.includes('params:')) {
+      const paramMatch = line.match(/params:\s*\{\s*(\w+)\s*:/)
+      if (paramMatch && endpoints.length > 0) {
+        const last = endpoints[endpoints.length - 1]
+        if (last && last.line === i + 1) last.params.push(paramMatch[1])
+      }
+    }
+  }
+  return endpoints
+}
+
 function extractRoutes(content: string, framework: 'express' | 'fastify' | 'koa'): APIEndpoint[] {
   const endpoints: APIEndpoint[] = []
   const routeRegex = /\.(get|post|put|delete|patch|options|head)\s*\(\s*['"`]([^'"`]+)['"`]/g
@@ -114,7 +155,7 @@ export const call: LocalCommandCall = async (args) => {
     const file = p[1]; const format = p[2] || 'md'
     if (!file || !existsSync(file)) return { type: 'text', value: 'File not found: ' + (file || '') }
     const content = readFileSync(file, 'utf-8')
-    const endpoints = [...extractJSdocs(content), ...extractRoutes(content, 'express')]
+    const endpoints = [...extractJSdocs(content), ...extractRoutes(content, 'express'), ...extractRoutesAdvanced(content)]
     const title = basename(file, extname(file))
     if (endpoints.length === 0) {
       // Try to extract function-like declarations as API endpoints
@@ -147,6 +188,7 @@ export const call: LocalCommandCall = async (args) => {
               const content = readFileSync(fp, 'utf-8')
               allEndpoints.push(...extractJSdocs(content).map(e => ({ ...e, file: fp })))
               allEndpoints.push(...extractRoutes(content, 'express').map(e => ({ ...e, file: fp })))
+              allEndpoints.push(...extractRoutesAdvanced(content).map(e => ({ ...e, file: fp })))
             } catch { /* ignore */ }
           }
         }
@@ -221,6 +263,7 @@ export const call: LocalCommandCall = async (args) => {
               const content = readFileSync(fp, 'utf-8')
               allEndpoints.push(...extractJSdocs(content).map(e => ({ ...e, file: fp })))
               allEndpoints.push(...extractRoutes(content, 'express').map(e => ({ ...e, file: fp })))
+              allEndpoints.push(...extractRoutesAdvanced(content).map(e => ({ ...e, file: fp })))
             } catch { /* ignore */ }
           }
         }
