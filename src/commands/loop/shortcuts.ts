@@ -5,10 +5,80 @@
  */
 
 import type { Command } from '../../commands.js'
-import type { LocalCommandCall, LocalCommandModule } from '../../types/command.js'
+import type { LocalJSXCommandCall } from '../../types/command.js'
 import { executeLoop } from './engine.js'
 import type { LoopStrategyName } from './types.js'
 import { strategyManuals } from './strategy-manuals.js'
+import { createAITaskExecutor } from './ai-task-executor.js'
+import type { ExecutorOptions } from './ai-task-executor.js'
+import { formatStatusLine, formatFinalReport, formatSubTaskSummary, type ProgressState } from './progress-ui.js'
+
+/**
+ * 解析 loop 命令的 CLI 选项
+ */
+function parseLoopArgs(args: string[]): {
+  goal: string
+  strategy: LoopStrategyName
+  maxIterations: number
+  criteria: string[]
+  outputPath: string | undefined
+  timeout: number
+  retries: number
+  cleanup: boolean
+  json: boolean
+  help: boolean
+  examples: boolean
+} {
+  const result = {
+    goal: '',
+    strategy: 'openhands' as LoopStrategyName,
+    maxIterations: 20,
+    criteria: [] as string[],
+    outputPath: undefined as string | undefined,
+    timeout: 120000,
+    retries: 3,
+    cleanup: false,
+    json: false,
+    help: false,
+    examples: false,
+  }
+
+  const parts = args.trim().split(/\s+/).filter(Boolean)
+  const goalParts: string[] = []
+  let i = 0
+
+  while (i < parts.length) {
+    const part = parts[i]
+    if (part === '--help' || part === 'help') {
+      result.help = true
+    } else if (part === '--examples' || part === 'examples') {
+      result.examples = true
+    } else if (part === '--json') {
+      result.json = true
+    } else if (part === '--cleanup') {
+      result.cleanup = true
+    } else if (part === '--strategy' && i + 1 < parts.length) {
+      result.strategy = parts[++i] as LoopStrategyName
+    } else if (part === '--max-iterations' && i + 1 < parts.length) {
+      result.maxIterations = parseInt(parts[++i], 10) || 20
+    } else if (part === '--criteria' && i + 1 < parts.length) {
+      result.criteria.push(parts[++i])
+    } else if (part === '--output' && i + 1 < parts.length) {
+      result.outputPath = parts[++i]
+    } else if (part === '--timeout' && i + 1 < parts.length) {
+      result.timeout = parseInt(parts[++i], 10) || 120000
+    } else if (part === '--retries' && i + 1 < parts.length) {
+      result.retries = parseInt(parts[++i], 10) || 3
+    } else {
+      goalParts.push(part)
+    }
+    i++
+  }
+
+  result.goal = goalParts.join(' ')
+  return result
+}
+
 
 const complexityIcon = (c: string) => {
   if (c === '入门') return '🟢'
@@ -161,41 +231,134 @@ function generateManualText(strategyName: LoopStrategyName): string {
 }
 
 function createShortcutCommand(strategyName: LoopStrategyName, aliases: string[]): Command {
-  const call: LocalCommandCall = async (args) => {
-    const goal = (args ?? '').trim()
-    if (!goal) {
-      return {
-        type: 'text',
-        value: generateManualText(strategyName),
-      }
+  const call: LocalJSXCommandCall = async (onDone, context, args) => {
+    // Parse CLI options from args
+    const parsed = parseLoopArgs(args)
+    if (parsed.help) {
+      onDone(generateManualText(strategyName))
+      return null
     }
 
     try {
-      const result = await executeLoop({
+      const loopOptions: Parameters<typeof executeLoop>[0] = {
         strategy: strategyName,
-        goal: { description: goal, maxIterations: 20 },
+        goal: { description: parsed.goal, maxIterations: parsed.maxIterations },
+      }
+      if (context) {
+        loopOptions.taskExecutor = createAITaskExecutor(context, {
+          maxRetries: parsed.retries,
+          taskTimeout: parsed.timeout,
+          apiTimeout: 30000,
+          autoCleanup: parsed.cleanup,
+          outputPath: parsed.outputPath,
+        })
+      }
+
+      const startTime = Date.now()
+      let fileCount = 0
+      const createdFiles: string[] = []
+      const progressState: ProgressState = {
+        strategy: strategyName,
+        currentIteration: 0,
+        maxIterations: 20,
+        currentTask: '',
+        fileCount: 0,
+        startTime,
+        phase: 'idle',
+      }
+
+      // 实时状态更新（单行覆盖模式）
+      loopOptions.onProgress = (event: { type: string; [k: string]: unknown }) => {
+        switch (event.type) {
+          case 'loop_start':
+            progressState.phase = 'planning'
+            onDone(formatStatusLine(progressState), { display: 'system' })
+            break
+          case 'iteration_start':
+            progressState.phase = 'executing'
+            progressState.currentIteration = event.iteration as number
+            progressState.maxIterations = event.maxIterations as number
+            progressState.fileCount = fileCount
+            onDone(formatStatusLine(progressState), { display: 'system' })
+            break
+          case 'task_start':
+            progressState.currentTask = (event.description as string) ?? ''
+            onDone(formatStatusLine(progressState), { display: 'system' })
+            break
+          case 'task_end': {
+            const fileMatches = (event.output as string ?? '').match(/📄\s*(.+?)(?:\s|$)/g)
+            if (fileMatches) {
+              fileCount += fileMatches.length
+              for (const m of fileMatches) {
+                createdFiles.push(m.replace('📄 ', '').trim())
+              }
+              progressState.fileCount = fileCount
+            }
+            onDone(formatStatusLine(progressState), { display: 'system' })
+            break
+          }
+          case 'task_failed':
+            progressState.phase = 'error'
+            progressState.currentTask = `失败: ${event.error?.toString().slice(0, 30)}`
+            onDone(formatStatusLine(progressState), { display: 'system' })
+            break
+          case 'evaluation':
+            if (event.achieved) {
+              progressState.phase = 'verifying'
+              onDone(formatStatusLine(progressState), { display: 'system' })
+            }
+            break
+          case 'loop_end': {
+            progressState.phase = 'done'
+            progressState.fileCount = fileCount
+            onDone(formatStatusLine(progressState), { display: 'user' })
+            break
+          }
+          case 'error':
+            progressState.phase = 'error'
+            onDone(formatStatusLine(progressState), { display: 'system' })
+            break
+        }
+      }
+
+      const result = await executeLoop(loopOptions)
+
+      const lines: string[] = [
+        formatFinalReport(
+          { ...progressState, phase: result.success ? 'done' : 'error', fileCount },
+          result.success,
+          result.reason,
+          createdFiles,
+        ),
+        formatSubTaskSummary(result.subTasks),
+      ]
+
+      onDone(lines.join('\n'))
+      return null
+
+      lines.push('')
+      lines.push('子任务:')
+      result.subTasks.forEach((t, i) => {
+        const icon = t.status === 'completed' ? '✅' : t.status === 'failed' ? '❌' : '⏳'
+        const resultLen = t.result?.length ?? 0
+        lines.push(`  ${i + 1}. ${icon} ${t.description}${resultLen > 0 ? ` (${resultLen}字符)` : ''}`)
       })
 
-      const statusIcon = result.success ? '✅' : '⏸️'
-      const lines = [
-        `${statusIcon} [${strategyName}] 循环完成 — ${result.iterations} 轮`,
-        `结果: ${result.reason}`,
-        '',
-        ...result.subTasks.map((t, i) => `  ${i + 1}. [${t.status}] ${t.description}`),
-      ]
-      return { type: 'text', value: lines.join('\n') }
+      onDone(lines.join('\n'))
+      return null
     } catch (error) {
-      return { type: 'text', value: `❌ 执行失败: ${error instanceof Error ? error.message : String(error)}` }
+      onDone(`❌ 执行失败: ${error instanceof Error ? error.message : String(error)}`)
+      return null
     }
   }
 
   return {
-    type: 'local',
+    type: 'local-jsx',
     name: `loop-${strategyName}`,
     description: `循环引擎 (${strategyName} 策略)`,
     aliases,
-    supportsNonInteractive: true,
-    load: async () => ({ call }) as LocalCommandModule,
+    supportsNonInteractive: false,
+    load: async () => ({ call }),
   } satisfies Command
 }
 

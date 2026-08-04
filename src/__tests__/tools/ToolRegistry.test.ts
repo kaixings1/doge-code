@@ -88,13 +88,13 @@ describe('ToolRegistry', () => {
       };
 
       mockRegistry.register!(tool);
-      const result = await mockRegistry.execute!('TestTool', {});
+      const result = await mockRegistry.execute!('TestTool', {}, {} as any);
 
       expect(result.success).toBe(true);
     });
 
     it('应该处理未找到的工具', async () => {
-      const result = await mockRegistry.execute!('NonExistentTool', {});
+      const result = await mockRegistry.execute!('NonExistentTool', {}, {} as any);
       expect(result.success).toBe(false);
     });
   });
@@ -109,8 +109,8 @@ describe('ToolRegistry', () => {
       };
 
       mockRegistry.register!(tool);
-      await mockRegistry.execute!('TestTool', {});
-      await mockRegistry.execute!('TestTool', {});
+      await mockRegistry.execute!('TestTool', {}, {} as any);
+      await mockRegistry.execute!('TestTool', {}, {} as any);
 
       const stats = mockRegistry.getStats!();
       expect(stats.TestTool).toEqual({ calls: 0, failures: 0 });

@@ -1,4 +1,4 @@
-import { LRUCache } from 'lru-cache'
+import LRUCache from 'lru-cache'
 import { basename, dirname, join, sep } from 'path'
 import type { SuggestionItem } from '../../components/PromptInput/PromptInputFooterSuggestions.js'
 import { getCwd } from '../../utils/cwd.js'

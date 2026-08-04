@@ -1,0 +1,92 @@
+{
+  "name": "doge-code",
+  "displayName": "Doge Code",
+  "description": "Doge Code - AI 编程助手 VS Code 扩展",
+  "version": "0.0.1",
+  "publisher": "doge-code",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Machine Learning",
+    "Programming Languages",
+    "Snippets",
+    "Other"
+  ],
+  "keywords": [
+    "ai",
+    "claude",
+    "coding assistant",
+    "doge"
+  ],
+  "activationEvents": [
+    "onCommand:doge-code.openChat",
+    "onView:doge-code.chatView"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "doge-code.openChat",
+        "title": "打开 Doge Code 聊天",
+        "icon": "$(comment-discussion)"
+      },
+      {
+        "command": "doge-code.showStats",
+        "title": "显示用量统计"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "doge-code-sidebar",
+          "title": "Doge Code",
+          "icon": "$(robot)"
+        }
+      ]
+    },
+    "views": {
+      "doge-code-sidebar": [
+        {
+          "id": "doge-code.chatView",
+          "name": "聊天"
+        },
+        {
+          "id": "doge-code.statsView",
+          "name": "用量统计"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Doge Code",
+      "properties": {
+        "doge-code.serverUrl": {
+          "type": "string",
+          "default": "http://127.0.0.1:3456",
+          "description": "Doge Code 服务器地址"
+        },
+        "doge-code.enableChat": {
+          "type": "boolean",
+          "default": true,
+          "description": "启用聊天功能"
+        },
+        "doge-code.enableAutocomplete": {
+          "type": "boolean",
+          "default": false,
+          "description": "启用自动补全"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@types/node": "^18.0.0",
+    "typescript": "^5.0.0"
+  }
+}

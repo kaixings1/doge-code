@@ -11,9 +11,11 @@ src-zh/
 # Build Artifacts
 dist/
 build/
-doge
+/doge
 doge-bundled.js
 *.exe
+coverage/
+vscode-extension/out/
 *.bun-build/
 .bun-build/
 .*.bun-build

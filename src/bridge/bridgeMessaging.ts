@@ -149,7 +149,7 @@ export function handleIngressMessage(
       `[bridge:repl] handleIngressMessage: 原始数据内容(前2000字符): ${data.slice(0, 2000)}${data.length > 2000 ? '...(truncated)' : ''}`,
     )
     logForDebugging(
-      `[bridge:repl] handleIngressMessage: recentPostedUUIDs size=${recentPostedUUIDs.size}, recentInboundUUIDs size=${recentInboundUUIDs.size}`,
+      `[bridge:repl] handleIngressMessage: recentPostedUUIDs count=${(recentPostedUUIDs as any).size ?? 'N/A'}, recentInboundUUIDs count=${(recentInboundUUIDs as any).size ?? 'N/A'}`,
     )
     // =====================================================
 
@@ -385,7 +385,7 @@ export function handleServerControlRequest(
       break
 
     case 'set_model':
-      onSetModel?.(request.request.model)
+      onSetModel?.(request.request.model as string)
       response = {
         type: 'control_response',
         response: {
@@ -396,7 +396,7 @@ export function handleServerControlRequest(
       break
 
     case 'set_max_thinking_tokens':
-      onSetMaxThinkingTokens?.(request.request.max_thinking_tokens)
+      onSetMaxThinkingTokens?.(request.request.max_thinking_tokens as number)
       response = {
         type: 'control_response',
         response: {
@@ -414,7 +414,7 @@ export function handleServerControlRequest(
       // 参见 daemonBridge.ts），返回错误裁决而不是静默
       // 假成功：该上下文中永远不会实际应用该模式，
       // 因此成功会欺骗客户端。
-      const verdict = onSetPermissionMode?.(request.request.mode) ?? {
+      const verdict = onSetPermissionMode?.(request.request.mode as any) ?? {
         ok: false,
         error:
           'set_permission_mode is not supported in this context (onSetPermissionMode callback not registered)',
@@ -433,7 +433,7 @@ export function handleServerControlRequest(
           response: {
             subtype: 'error',
             request_id: request.request_id,
-            error: verdict.error,
+            error: 'ok' in verdict && !verdict.ok ? (verdict as any).error : 'Unknown error',
           },
         }
       }

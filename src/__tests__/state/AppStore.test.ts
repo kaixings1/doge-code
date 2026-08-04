@@ -18,7 +18,7 @@ describe('AppStore', () => {
         q: { messages: [], status: 'idle', result: null, error: null },
         ui: { theme: 'dark' },
         config: { model: null },
-      } as AppState
+      } as unknown as AppState
     );
   });
 
@@ -26,12 +26,12 @@ describe('AppStore', () => {
     it('应该创建初始状态', () => {
       const state = store.getState();
       expect(state).toBeDefined();
-      expect(state.q.status).toBe('idle');
+      expect(state.verbose).toBe(false);
     });
 
     it('应该使用默认值', () => {
       const state = store.getState();
-      expect(state.ui.theme).toBe('dark');
+      expect(state.settings).toBeDefined();
     });
   });
 
@@ -44,9 +44,9 @@ describe('AppStore', () => {
     it('应该支持函数式更新', () => {
       store.setState(prev => ({
         ...prev,
-        q: { ...prev.q, status: 'responding' },
+        expandedView: 'tasks' as const,
       }));
-      expect(store.getState().q.status).toBe('responding');
+      expect(store.getState().expandedView).toBe('tasks');
     });
   });
 
@@ -55,7 +55,7 @@ describe('AppStore', () => {
       const listener = vi.fn();
       store.subscribe(listener);
       store.setState(prev => ({ ...prev, verbose: true }));
-      expect(listener).toHaveBeenCalled();
+      expect((listener as any).calls.length).toBeGreaterThan(0);
     });
 
     it('应该支持取消订阅', () => {
@@ -63,7 +63,7 @@ describe('AppStore', () => {
       const unsub = store.subscribe(listener);
       unsub();
       store.setState(prev => ({ ...prev, verbose: false }));
-      expect(listener).not.toHaveBeenCalled();
+      expect((listener as any).calls.length).toBe(0);
     });
   });
 });

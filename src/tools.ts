@@ -1,6 +1,7 @@
 // biome-ignore-all assist/source/organizeImports: ANT-ONLY 导入标记不得重新排序
 import { toolMatchesName, type Tool, type Tools } from './Tool.js'
 import { AgentTool } from './tools/AgentTool/AgentTool.js'
+import { AgentIntegrationTool } from './tools/AgentIntegrationTool/AgentIntegrationTool.js'
 import { SkillTool } from './tools/SkillTool/SkillTool.js'
 import { BashTool } from './tools/BashTool/BashTool.js'
 import { FileEditTool } from './tools/FileEditTool/FileEditTool.js'
@@ -250,6 +251,7 @@ export function getAllBaseTools(): Tools {
   const _tools: Tool[] = [];
   try {
     _tools.push(AgentTool);
+    _tools.push(AgentIntegrationTool);
     _tools.push(TaskOutputTool);
     _tools.push(BashTool);
     _tools.push(GlobTool, GrepTool);

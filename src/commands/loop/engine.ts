@@ -79,7 +79,7 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
       try {
         const currentTask = state.subTasks.find(t => t.status === 'pending' || t.status === 'running')
         if (!currentTask) {
-          const evaluation = strategy.evaluate(goal, state.subTasks)
+          const evaluation = await strategy.evaluate(goal, state.subTasks)
           if (evaluation.achieved) {
             emit({ type: 'evaluation', achieved: true, reason: evaluation.reason })
             break
@@ -92,7 +92,7 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
           }
         }
 
-        if (currentTask) {
+        if (currentTask && !strategy.handlesOwnExecution?.()) {
           currentTask.status = 'running'
           emit({ type: 'task_start', taskId: currentTask.id, description: currentTask.description })
 
@@ -118,9 +118,12 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
           } else {
             emit({ type: 'task_failed', taskId: currentTask.id, error: result.error ?? 'Unknown error' })
           }
+        } else if (currentTask && strategy.handlesOwnExecution?.()) {
+          // 策略自行处理执行，发送任务开始事件但不实际执行
+          emit({ type: 'task_start', taskId: currentTask.id, description: currentTask.description })
         }
 
-        const evaluation = strategy.evaluate(goal, state.subTasks)
+        const evaluation = await strategy.evaluate(goal, state.subTasks)
         emit({ type: 'evaluation', achieved: evaluation.achieved, reason: evaluation.reason })
 
         if (evaluation.achieved) {
@@ -138,7 +141,7 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
       }
     }
 
-    const finalEvaluation = strategy.evaluate(goal, state.subTasks)
+    const finalEvaluation = await strategy.evaluate(goal, state.subTasks)
     const duration = Date.now() - state.startTime
 
     const result: LoopResult = {

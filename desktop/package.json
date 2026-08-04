@@ -69,7 +69,8 @@
     },
     "files": [
       "dist/**/*",
-      "package.json"
+      "package.json",
+      "node_modules/zod/**/*"
     ],
     "extraResources": [
       {
@@ -83,14 +84,13 @@
     "win": {
       "target": [
         {
-          "target": "nsis",
+          "target": "portable",
           "arch": [
-            "x64",
-            "ia32"
+            "x64"
           ]
         },
         {
-          "target": "portable",
+          "target": "nsis",
           "arch": [
             "x64"
           ]

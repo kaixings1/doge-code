@@ -444,7 +444,7 @@ export const strategyExamples: StrategyExamples = {
       command: '/loop-crew "开发医疗影像 AI 分析平台" --criteria "DICOM 影像加载" --criteria "AI 辅助诊断" --criteria "病灶标注" --max-iterations 30',
       strategy: 'crew（多 Agent 协作）',
       result: 'manager 拆分影像/AI/标注/报告任务 → developer 实现 → tester 精度验证 → reviewer 合规审查',
-      parameters: ['--max-iterations 30 支持复杂 AI 模型集成开发', '--max-retries 2  '--criteria 定义医疗级精度和合规标准'],
+      parameters: ['--max-iterations 30 支持复杂 AI 模型集成开发', '--max-retries 2', '--criteria 定义医疗级精度和合规标准'],
       outcome: '医疗级影像分析平台，AI 辅助诊断准确率 95%+，支持 DICOM 标准',
     },
     {

@@ -1,17 +1,18 @@
 // 自动生成的存根 — 替换为真实实现
 import type React from 'react';
 import type { Command } from '../commands.js'
+import type { LocalCommandCall } from '../types/command.js';
 import { getAssistantSystemPromptAddendum } from './index.js'
 
 /**
  * 助手模式命令
- * 
+ *
  * 允许用户与助手模式进行交互，包括：
  * - 查看助手模式状态
  * - 切换助手模式
  * - 获取助手相关的帮助信息
  */
-const call: Command['call'] = async (args, context) => {
+const call: LocalCommandCall = async (args, context) => {
   const arg = args.trim().toLowerCase()
 
   if (!arg) {

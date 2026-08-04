@@ -8,5 +8,8 @@
 
 import { createRequire } from 'node:module'
 
-// @ts-ignore - 注入到全局以便源代码中的 require() 调用工作
-globalThis.require = createRequire(import.meta.url)
+// 在 ESM 作用域中定义局部 require 变量，使打包后的 bundle 中所有 require() 调用都能找到
+const require = createRequire(import.meta.url)
+
+// 同时注入到全局以便其他可能的引用方式工作
+globalThis.require = require

@@ -26,6 +26,16 @@
     "lint": "biome check src/",
     "lint:fix": "biome check --apply src/",
     "format": "biome format --write src/",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:unit:watch": "vitest tests/unit",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "deploy:staging": "bash scripts/deploy.sh staging",
+    "deploy:production": "bash scripts/deploy.sh production",
+    "docker:build": "docker build -t doge-code:latest .",
+    "docker:run": "docker-compose up -d",
+    "docker:down": "docker-compose down",
     "knip": "knip"
   },
   "compilerOptions": {
@@ -163,7 +173,9 @@
     "node-pty": "^1.0.0",
     "tsx": "^4.21.0",
     "typescript": "^6.0.3",
-    "vite": "^7.3.6"
+    "vite": "^7.3.6",
+    "vitest": "^3.2.4",
+    "@vitest/coverage-v8": "^3.2.4"
   },
   "peerDependencies": {
     "google-auth-library": "*"

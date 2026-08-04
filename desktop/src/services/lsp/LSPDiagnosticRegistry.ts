@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto'
-import { LRUCache } from 'lru-cache'
+import LRUCache from 'lru-cache'
 import { logForDebugging } from '../../utils/debug.js'
 import { toError } from '../../utils/errors.js'
 import { logError } from '../../utils/log.js'

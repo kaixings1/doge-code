@@ -53,26 +53,28 @@ export async function installOAuthTokens(tokens: OAuthTokens): Promise<void> {
 
   // 复用预获取的 profile（如果可用），否则获取新的
   const profile =
-    tokens.profile ?? (await getOauthProfileFromOauthToken(tokens.accessToken))
+    (tokens.profile as Record<string, unknown> | undefined) ?? (await getOauthProfileFromOauthToken(tokens.accessToken))
   if (profile) {
+    const p = profile as Record<string, unknown>
+    const account = p.account as Record<string, unknown> | undefined
+    const org = p.organization as Record<string, unknown> | undefined
     storeOAuthAccountInfo({
-      accountUuid: profile.account.uuid,
-      emailAddress: profile.account.email,
-      organizationUuid: profile.organization.uuid,
-      displayName: profile.account.display_name || undefined,
-      hasExtraUsageEnabled:
-        profile.organization.has_extra_usage_enabled ?? undefined,
-      billingType: profile.organization.billing_type ?? undefined,
-      subscriptionCreatedAt:
-        profile.organization.subscription_created_at ?? undefined,
-      accountCreatedAt: profile.account.created_at,
+      accountUuid: (account?.uuid as string) ?? '',
+      emailAddress: (account?.email as string) ?? '',
+      organizationUuid: (org?.uuid as string) ?? '',
+      displayName: (account?.display_name as string) || undefined,
+      hasExtraUsageEnabled: org?.has_extra_usage_enabled as boolean | undefined,
+      billingType: org?.billing_type as string | undefined,
+      subscriptionCreatedAt: org?.subscription_created_at as string | undefined,
+      accountCreatedAt: (account?.created_at as string) ?? '',
     })
   } else if (tokens.tokenAccount) {
     // 当 profile 端点失败时，回退到令牌交换账户数据
+    const ta = tokens.tokenAccount as Record<string, unknown>
     storeOAuthAccountInfo({
-      accountUuid: tokens.tokenAccount.uuid,
-      emailAddress: tokens.tokenAccount.emailAddress,
-      organizationUuid: tokens.tokenAccount.organizationUuid,
+      accountUuid: (ta.uuid as string) ?? '',
+      emailAddress: (ta.emailAddress as string) ?? '',
+      organizationUuid: (ta.organizationUuid as string) ?? '',
     })
   }
 
@@ -159,7 +161,7 @@ export async function authLogin({
 
       const orgResult = await validateForceLoginOrg()
       if (!orgResult.valid) {
-        process.stderr.write(orgResult.message + '\n')
+        process.stderr.write((orgResult as unknown as { message: string }).message + '\n')
         process.exit(1)
       }
 
@@ -209,7 +211,7 @@ export async function authLogin({
 
     const orgResult = await validateForceLoginOrg()
     if (!orgResult.valid) {
-      process.stderr.write(orgResult.message + '\n')
+      process.stderr.write((orgResult as unknown as { message: string }).message + '\n')
       process.exit(1)
     }
 
