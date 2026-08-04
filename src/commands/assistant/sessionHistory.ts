@@ -1,8 +1,8 @@
 import axios from 'axios'
-import { getOauthConfig } from '../constants/oauth.js'
-import type { SDKMessage } from '../entrypoints/agentSdkTypes.js'
-import { logForDebugging } from '../utils/debug.js'
-import { getOAuthHeaders, prepareApiRequest } from '../utils/teleport/api.js'
+import { getOauthConfig } from '../../constants/oauth.js'
+import type { SDKMessage } from '../../entrypoints/agentSdkTypes.js'
+import { logForDebugging } from '../../utils/debug.js'
+import { getOAuthHeaders, prepareApiRequest } from '../../utils/teleport/api.js'
 
 export const HISTORY_PAGE_SIZE = 100
 
