@@ -331,3 +331,27 @@
 - [x] 测试：vitest run 13/13 通过 + API 层 53/53 通过
 - [x] 顺带修复既有错误 7 个（AssistantSessionChooser.ts 2 个 + sessionHistory.ts 路径 3 个 + connectHeadless 类型 2 个）
 - [x] 说明：initReplBridge.ts 的 perpetual 回退逻辑已存在（`!perpetual` 条件），属设计说明非缺失功能
+
+---
+
+## ✅ 已完成（第九轮：残余存根清理 + 第八轮测试覆盖）
+
+### 残余存根清理（3 个文件）
+- [x] **src/components/agents/SnapshotUpdateDialog.ts** — 从 stub（返回 null）实现为真实 Ink 对话框组件
+  - 显示快照信息（agentType/scope/snapshotTimestamp）
+  - merge/keep/replace 三选项键盘导航（↑/↓ 或 j/k + Enter，Esc/q 取消）
+  - buildMergePrompt 生成合并提示文本
+- [x] **src/components/agents/SnapshotUpdateDialog.tsx** — 改为 re-export .ts 实现（dialogLaunchers 导入 .js 解析到 .ts）
+- [x] **src/components/ui/option.ts** — 接口已完整，去除误写的 Stub 注释
+
+### 第八轮测试覆盖（5 个新测试文件 26 个测试）
+- [x] **parseConnectUrl.test.ts**（6 个）— cc:// / cc+unix:// / http(s) URL 解析、token 提取、无 token/无法识别
+- [x] **ccshareResume.test.ts**（6 个）— parseCcshareId URL 路径/裸 ID/查询参数/前缀/空输入/过短
+- [x] **mobileProtocol.test.ts**（6 个）— recordCommand/getCommandHistory 记录与上限 100、getHistory handler、sendMessage
+- [x] **compactState.test.ts**（4 个）— markPostCompaction 回调执行/清空/取消注册/异常隔离
+- [x] **serverLog.test.ts**（4 个）— 日志写文件（时间戳/级别）、级别过滤、raw 行、console 模式
+
+### 第九轮验证 ✅
+- [x] 类型检查：本次修改全部文件零错误（剩余为既有错误）
+- [x] 测试：vitest run 15/15 + API 层 79/79 = 94 个测试全部通过
+- [x] 错误总数累计 5089 → 4749（净减少 340 个）
