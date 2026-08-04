@@ -4,6 +4,10 @@
  * 驱动：预算检查 → 构建请求 → 发送 API → 处理响应 → 执行工具 → 决定继续。
  */
 function engineLog(prefix: string, ...args: unknown[]): void {
+  // REQ/RESP 打印完整请求/响应 JSON，流式输出时刷屏严重，默认静音（仅 DOGE_DEBUG_SSE=1 时输出）
+  if ((prefix === 'REQ' || prefix === 'RESP') && process.env.DOGE_DEBUG_SSE !== '1') {
+    return
+  }
   const t = new Date().toLocaleTimeString('zh-CN', { hour12: false })
   console.log(`[${t}] [ENGINE:${prefix}]`, ...args)
 }
@@ -94,6 +98,7 @@ export class MessageLoop {
   }
 
   private consecutiveToolFailures = 0;
+  private consecutiveMaxTokens = 0;
   private autoFixLoop: AutoFixLoop | null = null;
   private gitContext: GitContextInjector | null = null;
 
@@ -111,9 +116,12 @@ export class MessageLoop {
     // 新任务开始时重置自动修复循环和 git 上下文
     this.resetAutoFixLoop()
     this.resetGitContext()
+    // 重置迭代计数，防止多次 run 之间累积导致过早触发 maxIterations
+    this.currentIteration = 0
     this.deps.conversation.messages.push({ role: "user", content: userMessage } as InternalMessage);
     await this.deps.stateMachine.transition("responding", { message: userMessage });
     this.consecutiveToolFailures = 0;
+    this.consecutiveMaxTokens = 0;
 
     const start = Date.now();
     while (this.deps.stateMachine.canContinue()) {
@@ -125,6 +133,8 @@ export class MessageLoop {
       this.deps.onEvent({ type: 'iteration_start', iteration: this.currentIteration });
       try {
         const shouldContinue = await this.runIteration();
+        const ts = new Date().toLocaleTimeString('zh-CN', { hour12: false })
+        console.log(`[${ts}] [LOOP] iter=${this.currentIteration}/${this.maxIterations} shouldContinue=${shouldContinue} state=${this.deps.stateMachine.state}`)
         if (!shouldContinue) {
           await this.deps.stateMachine.transition("done");
           break;
@@ -321,6 +331,9 @@ export class MessageLoop {
     // 无工具调用的回合结束
     this.deps.onEvent({ type: 'iteration_end', iteration: this.currentIteration, hasToolCalls: false });
 
+    const ts = new Date().toLocaleTimeString('zh-CN', { hour12: false })
+    console.log(`[${ts}] [LOOP] no-tool round: stopReason=${processed.stopReason} needsUserInput=${processed.needsUserInput} contentLen=${typeof processed.content === 'string' ? processed.content.length : JSON.stringify(processed.content).length}`)
+
     if (processed.needsUserInput) {
       await this.deps.stateMachine.transition("needs_user", { prompt: processed.content });
       return true;
@@ -328,6 +341,15 @@ export class MessageLoop {
 
     if (processed.stopReason === "end_turn") return false;
     if (processed.stopReason === "max_tokens") {
+      // 连续 max_tokens 保护：某些模型/代理一直返回 length，
+      // 若连续 3 次无进展（无工具调用且 max_tokens），强制结束，避免无限循环
+      this.consecutiveMaxTokens++;
+      if (this.consecutiveMaxTokens >= 3) {
+        const ts2 = new Date().toLocaleTimeString('zh-CN', { hour12: false })
+        console.log(`[${ts2}] [LOOP] consecutive max_tokens reached ${this.consecutiveMaxTokens}, stopping loop`)
+        this.consecutiveMaxTokens = 0
+        return false;
+      }
       await this.deps.stateMachine.transition("should_continue");
       return true;
     }

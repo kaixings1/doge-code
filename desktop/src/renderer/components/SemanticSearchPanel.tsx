@@ -53,7 +53,34 @@ export function SemanticSearchPanel({ cwd, theme, onSelectResult }: SemanticSear
     fileTypes: [],
     directories: [],
   })
+  const [indexInfo, setIndexInfo] = useState<{ fileCount: number; chunkCount: number; lastIndexedAt: number } | null>(null)
+  const [rebuilding, setRebuilding] = useState(false)
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // 加载索引状态
+  const loadIndexStatus = useCallback(async () => {
+    try {
+      const api = window.dogeAPI as Record<string, any>
+      const res = await api?.indexStatus?.()
+      if (res?.success && res.stats) {
+        setIndexInfo({ fileCount: res.stats.fileCount, chunkCount: res.stats.chunkCount, lastIndexedAt: res.stats.lastIndexedAt })
+      }
+    } catch { /* ignore */ }
+  }, [])
+
+  useEffect(() => { loadIndexStatus() }, [loadIndexStatus])
+
+  const handleRebuild = useCallback(async () => {
+    setRebuilding(true)
+    try {
+      const api = window.dogeAPI as Record<string, any>
+      const res = await api?.indexRebuild?.(true)
+      if (res?.success && res.stats) {
+        setIndexInfo({ fileCount: res.stats.fileCount, chunkCount: res.stats.chunkCount, lastIndexedAt: res.stats.lastIndexedAt })
+      }
+    } catch { /* ignore */ }
+    setRebuilding(false)
+  }, [])
 
   // 加载搜索历史
   useEffect(() => {
@@ -122,6 +149,26 @@ export function SemanticSearchPanel({ cwd, theme, onSelectResult }: SemanticSear
 
   return (
     <div style={{ fontSize: '11px', display: 'flex', flexDirection: 'column', height: '100%' }}>
+      {/* 索引状态 */}
+      {indexInfo && (
+        <div style={{ padding: '4px 8px', borderBottom: `1px solid ${c.borderSubtle}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: c.bgPanel }}>
+          <span style={{ color: c.textFaint, fontSize: '9px' }}>
+            📚 {indexInfo.fileCount} 文件 · {indexInfo.chunkCount} chunks
+          </span>
+          <button
+            onClick={handleRebuild}
+            disabled={rebuilding}
+            style={{
+              padding: '1px 6px', border: `1px solid ${c.border}`, borderRadius: '2px',
+              background: 'transparent', color: c.accent, cursor: rebuilding ? 'default' : 'pointer',
+              fontSize: '9px', opacity: rebuilding ? 0.5 : 1,
+            }}
+          >
+            {rebuilding ? '重建中...' : '⟳ 重建'}
+          </button>
+        </div>
+      )}
+
       {/* 搜索框 */}
       <div style={{ padding: '8px', borderBottom: `1px solid ${c.border}` }}>
         <input

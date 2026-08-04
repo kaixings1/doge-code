@@ -9,6 +9,7 @@ import type { CliHighlight } from './cliHighlight.js'
 import { logForDebugging } from './debug.js'
 import { createHyperlink } from './hyperlink.js'
 import { stripPromptXMLTags } from './messages.js'
+import { beautifyInlineText } from './inlineBeautify.js'
 import type { ThemeName } from './theme.js'
 
 // Use \n unconditionally — os.EOL is \r\n on Windows, and the extra \r
@@ -199,9 +200,9 @@ export function formatToken(
         return token.text
       }
       if (parent?.type === 'list_item') {
-        return `${orderedListNumber === null ? '-' : getListNumber(listDepth, orderedListNumber) + '.'} ${token.tokens ? token.tokens.map(_ => formatToken(_, theme, listDepth, orderedListNumber, token, highlight)).join('') : linkifyIssueReferences(token.text)}${EOL}`
+        return `${orderedListNumber === null ? '-' : getListNumber(listDepth, orderedListNumber) + '.'} ${token.tokens ? token.tokens.map(_ => formatToken(_, theme, listDepth, orderedListNumber, token, highlight)).join('') : beautifyInlineText(linkifyIssueReferences(token.text), theme)}${EOL}`
       }
-      return linkifyIssueReferences(token.text)
+      return beautifyInlineText(linkifyIssueReferences(token.text), theme)
     case 'table': {
       const tableToken = token as Tokens.Table
 

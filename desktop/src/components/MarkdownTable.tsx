@@ -1,5 +1,6 @@
 import type { Token, Tokens } from 'marked';
 import React from 'react';
+import chalk from 'chalk';
 import stripAnsi from '../vendor/stripAnsi.js';
 import { useTerminalSize } from '../hooks/useTerminalSize.js';
 import { stringWidth } from '../ink/stringWidth.js';
@@ -24,9 +25,6 @@ const MIN_COLUMN_WIDTH = 3;
  */
 const MAX_ROW_LINES = 4;
 
-/** ANSI escape codes for text formatting */
-const ANSI_BOLD_START = '\x1b[1m';
-const ANSI_BOLD_END = '\x1b[22m';
 type Props = {
   token: Tokens.Table;
   highlight: CliHighlight | null;
@@ -206,7 +204,7 @@ export function MarkdownTable({
     // Build each line of the row as a single string
     const result: string[] = [];
     for (let lineIdx = 0; lineIdx < maxLines_0; lineIdx++) {
-      let line = '│';
+      let line = chalk.green('│');
       for (let colIndex_2 = 0; colIndex_2 < cells.length; colIndex_2++) {
         const lines_1 = cellLines[colIndex_2]!;
         const offset = verticalOffsets[colIndex_2]!;
@@ -215,7 +213,10 @@ export function MarkdownTable({
         const width_0 = columnWidths[colIndex_2]!;
         // Headers always centered; data uses table alignment
         const align = isHeader ? 'center' : token.align?.[colIndex_2] ?? 'left';
-        line += ' ' + padAligned(lineText, stringWidth(lineText), width_0, align) + ' │';
+        // 统一颜色：剥离单元格内部格式颜色后，表头统一淡蓝色，数据行统一默认色
+        const plainText = stripAnsi(lineText);
+        const cellText = isHeader ? chalk.blueBright(plainText) : plainText;
+        line += ' ' + padAligned(cellText, stringWidth(plainText), width_0, align) + chalk.green(' │');
       }
       result.push(line);
     }
@@ -234,7 +235,8 @@ export function MarkdownTable({
       line_0 += mid.repeat(width_1 + 2);
       line_0 += colIndex_3 < columnWidths.length - 1 ? cross : right;
     });
-    return line_0;
+    // 边框线条使用绿色
+    return chalk.green(line_0);
   }
 
   // Render vertical format (key-value pairs) for extra-narrow terminals
@@ -247,7 +249,7 @@ export function MarkdownTable({
     const wrapIndent = '  ';
     token.rows.forEach((row_2, rowIndex) => {
       if (rowIndex > 0) {
-        lines_2.push(separator);
+        lines_2.push(chalk.green(separator));
       }
       row_2.forEach((cell_0, colIndex_4) => {
         const label = headers[colIndex_4] || `Column ${colIndex_4 + 1}`;
@@ -273,12 +275,12 @@ export function MarkdownTable({
           wrappedValue = [firstLine, ...rewrapped];
         }
 
-        // First line: bold label + value
-        lines_2.push(`${ANSI_BOLD_START}${label}:${ANSI_BOLD_END} ${wrappedValue[0] || ''}`);
+        // First line: bold label + value（值统一默认色）
+        lines_2.push(`${chalk.blueBright.bold(`${label}:`)} ${stripAnsi(wrappedValue[0] || '')}`);
 
         // Subsequent lines with small indent (skip empty lines)
         for (let i_3 = 1; i_3 < wrappedValue.length; i_3++) {
-          const line_1 = wrappedValue[i_3]!;
+          const line_1 = stripAnsi(wrappedValue[i_3]!);
           if (!line_1.trim()) continue;
           lines_2.push(`${wrapIndent}${line_1}`);
         }

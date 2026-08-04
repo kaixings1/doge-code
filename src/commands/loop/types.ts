@@ -17,6 +17,20 @@ export interface LoopGoal {
   maxConcurrent?: number
 }
 
+/** 验证模式 */
+export type VerifyMode = 'none' | 'test' | 'build' | 'lint' | 'files'
+
+/** 检查点状态（用于中断恢复） */
+export interface CheckpointState {
+  strategy: LoopStrategyName
+  goal: string
+  subTasks: SubTask[]
+  iteration: number
+  maxIterations: number
+  savedAt: string
+  createdFiles: string[]
+}
+
 /** A sub-task within a loop iteration */
 export interface SubTask {
   id: string
@@ -33,6 +47,16 @@ export interface LoopOptions {
   goal: LoopGoal
   onProgress?: (event: LoopEvent) => void
   language?: 'zh' | 'en'
+  /** 并行执行度（多个独立任务同时执行） */
+  parallel?: number
+  /** 时间预算（毫秒），超过自动停止 */
+  budgetMs?: number
+  /** 验证模式：任务完成后自动运行验证 */
+  verifyMode?: VerifyMode
+  /** 检查点文件路径（保存/恢复进度） */
+  checkpoint?: string
+  /** 最终报告输出路径 */
+  report?: string
 }
 
 /** Loop event types */

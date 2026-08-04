@@ -390,7 +390,10 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
 
                 try {
                   const parsed = JSON.parse(data)
-                  console.log(`[SSE] ${JSON.stringify(parsed).slice(0, 2000)}`)
+                  // 默认不打印 SSE 原始事件（流式输出时刷屏严重，看起来像死循环），仅调试时开启
+                  if (process.env.DOGE_DEBUG_SSE === '1') {
+                    console.log(`[SSE] ${JSON.stringify(parsed).slice(0, 2000)}`)
+                  }
 
                   if (isAnthropic) {
                     yield parsed
@@ -453,7 +456,9 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
                           const func = tc.function as Record<string, unknown> | undefined
                           const name = func?.name as string | undefined
                           const args = func?.arguments as string | undefined
-                          console.log(`[TOOL-OAI] tool_use idx=${idx} id=${tc.id} name=${name} args=${args?.slice(0, 500)}`)
+                          if (process.env.DOGE_DEBUG_SSE === '1') {
+                            console.log(`[TOOL-OAI] tool_use idx=${idx} id=${tc.id} name=${name} args=${args?.slice(0, 500)}`)
+                          }
 
                           const isFirst = !toolCallAccum.has(idx)
                           if (isFirst) {
@@ -487,7 +492,9 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
                       // finish_reason
                       if (choice.finish_reason) {
                         const stopReason = mapFinishReason(choice.finish_reason as string)
-                        console.log(`[TOOL-OAI] finish_reason=${choice.finish_reason} mapped=${stopReason} toolCallAccum.size=${toolCallAccum.size}`)
+                        if (process.env.DOGE_DEBUG_SSE === '1') {
+                          console.log(`[TOOL-OAI] finish_reason=${choice.finish_reason} mapped=${stopReason} toolCallAccum.size=${toolCallAccum.size}`)
+                        }
                         if (toolCallAccum.size > 0) {
                           for (const [idx] of toolCallAccum) {
                             yield { type: 'content_block_stop', index: idx }

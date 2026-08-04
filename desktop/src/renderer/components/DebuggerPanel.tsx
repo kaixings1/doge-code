@@ -21,9 +21,11 @@ interface DebuggerPanelProps {
   cwd: string
   theme: ThemeColors
   onClose: () => void
+  onNavigateTo?: (filePath: string, line: number) => void
+  onBreakpointsChange?: (breakpoints: BreakpointItem[]) => void
 }
 
-export function DebuggerPanel({ cwd, theme, onClose }: DebuggerPanelProps): JSX.Element {
+export function DebuggerPanel({ cwd, theme, onClose, onNavigateTo, onBreakpointsChange }: DebuggerPanelProps): JSX.Element {
   const c = theme
   const [sessions, setSessions] = useState<DebugSessionInfo[]>([])
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
@@ -36,7 +38,48 @@ export function DebuggerPanel({ cwd, theme, onClose }: DebuggerPanelProps): JSX.
   const [scriptArgs, setScriptArgs] = useState('')
   const [isStarting, setIsStarting] = useState(false)
   const [activeTab, setActiveTab] = useState<'sessions' | 'breakpoints' | 'stack' | 'vars' | 'eval'>('sessions')
+  const [pausedAt, setPausedAt] = useState<{ file: string; line: number; functionName: string; reason: string } | null>(null)
+  const [watchExpressions, setWatchExpressions] = useState<string[]>([])
+  const [watchResults, setWatchResults] = useState<Record<string, string>>({})
+  const [newWatch, setNewWatch] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [bpFile, setBpFile] = useState('')
+  const [bpLine, setBpLine] = useState('')
   const refreshTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const unsubPausedRef = useRef<(() => void) | null>(null)
+  const WATCH_STORAGE_KEY = 'doge-debug-watch-expressions'
+
+  // Watch 表达式持久化（localStorage）
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(WATCH_STORAGE_KEY)
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed)) setWatchExpressions(parsed.filter((e): e is string => typeof e === 'string'))
+      }
+    } catch { /* ignore */ }
+  }, [])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(WATCH_STORAGE_KEY, JSON.stringify(watchExpressions.slice(0, 20)))
+    } catch { /* ignore */ }
+  }, [watchExpressions])
+
+  // 监听断点命中事件（CDP Debugger.paused）
+  useEffect(() => {
+    const api = window.dogeAPI as Record<string, any>
+    if (typeof api?.onDebugPaused === 'function') {
+      unsubPausedRef.current = api.onDebugPaused((info: { sessionId: string; file: string; line: number; functionName: string; reason: string }) => {
+        setPausedAt({ file: info.file, line: info.line, functionName: info.functionName || '(anonymous)', reason: info.reason })
+        // 自�切到调用栈 tab
+        setActiveTab('stack')
+        // 自动跳转到暂停位置
+        if (info.file && onNavigateTo) onNavigateTo(info.file, info.line)
+      })
+    }
+    return () => { unsubPausedRef.current?.() }
+  }, [onNavigateTo])
 
   const refreshSessions = useCallback(async () => {
     try {
@@ -60,9 +103,10 @@ export function DebuggerPanel({ cwd, theme, onClose }: DebuggerPanelProps): JSX.
       const result = await api?.debugListBreakpoints?.(activeSessionId)
       if (result?.success && result?.breakpoints) {
         setBreakpoints(result.breakpoints)
+        onBreakpointsChange?.(result.breakpoints)
       }
     } catch { /* ignore */ }
-  }, [activeSessionId])
+  }, [activeSessionId, onBreakpointsChange])
 
   const refreshCallStack = useCallback(async () => {
     if (!activeSessionId) return
@@ -86,6 +130,23 @@ export function DebuggerPanel({ cwd, theme, onClose }: DebuggerPanelProps): JSX.
     } catch { /* ignore */ }
   }, [activeSessionId])
 
+  // 求值所有 watch 表达式（仅在暂停时）
+  const refreshWatches = useCallback(async () => {
+    if (!activeSessionId || watchExpressions.length === 0) return
+    const api = window.dogeAPI as Record<string, any>
+    const results: Record<string, string> = {}
+    await Promise.all(watchExpressions.map(async (expr) => {
+      try {
+        const res = await api?.debugEvaluate?.({ sessionId: activeSessionId, expression: expr })
+        if (res?.success) results[expr] = res.result || 'nil'
+        else results[expr] = `⚠ ${res?.error || '求值失败'}`
+      } catch {
+        results[expr] = '⚠ 求值失败'
+      }
+    }))
+    setWatchResults(results)
+  }, [activeSessionId, watchExpressions])
+
   useEffect(() => {
     refreshSessions()
     refreshTimerRef.current = setInterval(refreshSessions, 2000)
@@ -99,6 +160,13 @@ export function DebuggerPanel({ cwd, theme, onClose }: DebuggerPanelProps): JSX.
       refreshVariables()
     }
   }, [activeSessionId, refreshBreakpoints, refreshCallStack, refreshVariables])
+
+  // 暂停时刷新 watch 表达式
+  useEffect(() => {
+    if (activeSessionId && pausedAt) {
+      refreshWatches()
+    }
+  }, [activeSessionId, pausedAt, refreshWatches])
 
   const handleStart = useCallback(async () => {
     if (!scriptPath.trim()) return
@@ -133,12 +201,23 @@ export function DebuggerPanel({ cwd, theme, onClose }: DebuggerPanelProps): JSX.
 
   const handleSetBreakpoint = useCallback(async () => {
     if (!activeSessionId) return
+    const filePath = bpFile.trim()
+    const lineNo = Number(bpLine)
+    if (!filePath) { setError('请输入断点文件路径'); return }
+    if (!lineNo || lineNo < 1) { setError('请输入有效行号'); return }
     try {
       const api = window.dogeAPI as Record<string, any>
-      await api?.debugSetBreakpoint?.({ sessionId: activeSessionId, file: '', line: 0 })
+      const result = await api?.debugSetBreakpoint?.({ sessionId: activeSessionId, file: filePath, line: lineNo })
+      if (result && !result.success) {
+        setError(result.error || '断点设置失败')
+      } else {
+        setError(null)
+        setBpFile('')
+        setBpLine('')
+      }
       refreshBreakpoints()
     } catch { /* ignore */ }
-  }, [activeSessionId, refreshBreakpoints])
+  }, [activeSessionId, refreshBreakpoints, bpFile, bpLine])
 
   const handleEval = useCallback(async () => {
     if (!activeSessionId || !evalExpr.trim()) return
@@ -163,6 +242,25 @@ export function DebuggerPanel({ cwd, theme, onClose }: DebuggerPanelProps): JSX.
         <input value={scriptArgs} onChange={e => setScriptArgs(e.target.value)} placeholder="参数" style={{ width: '80px', padding: '3px 6px', background: c.inputBg, border: `1px solid ${c.border}`, borderRadius: '3px', color: c.text, fontSize: '9px', outline: 'none' }} />
         <button onClick={handleStart} disabled={isStarting} style={{ padding: '3px 10px', border: 'none', borderRadius: '3px', background: c.accent, color: '#000', cursor: 'pointer', fontSize: '9px', fontWeight: 600 }}>{isStarting ? '启动中...' : '▶ 启动'}</button>
       </div>
+
+      {/* 暂停位置横幅 */}
+      {pausedAt && (
+        <div style={{
+          padding: '4px 8px', background: 'rgba(245,158,11,0.12)', borderBottom: `1px solid ${c.border}`,
+          fontSize: '10px', color: '#f59e0b', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        }}>
+          <span>⏸ 暂停于 {pausedAt.functionName || '(anonymous)'} — {pausedAt.file.replace(/\\/g, '/').split('/').pop()}:{pausedAt.line}</span>
+          <button
+            onClick={() => onNavigateTo?.(pausedAt.file, pausedAt.line)}
+            style={{
+              padding: '1px 6px', border: `1px solid #f59e0b55`, borderRadius: '2px',
+              background: 'transparent', color: '#f59e0b', cursor: 'pointer', fontSize: '9px',
+            }}
+          >
+            跳转
+          </button>
+        </div>
+      )}
 
       {/* 标签页 */}
       <div style={{ display: 'flex', borderBottom: `1px solid ${c.border}` }}>
@@ -199,10 +297,18 @@ export function DebuggerPanel({ cwd, theme, onClose }: DebuggerPanelProps): JSX.
                 </div>
               ))}
             </div>
-            <div style={{ borderTop: `1px solid ${c.border}`, padding: '6px 8px', display: 'flex', gap: '4px' }}>
-              <input value={scriptPath} onChange={e => setScriptPath(e.target.value)} placeholder="文件路径" style={{ flex: 1, padding: '2px 4px', background: c.inputBg, border: `1px solid ${c.border}`, borderRadius: '2px', color: c.text, fontSize: '9px', outline: 'none' }} />
-              <input value={evalExpr} onChange={e => setEvalExpr(e.target.value)} placeholder="行号" style={{ width: '40px', padding: '2px 4px', background: c.inputBg, border: `1px solid ${c.border}`, borderRadius: '2px', color: c.text, fontSize: '9px', outline: 'none' }} />
-              <button onClick={handleSetBreakpoint} style={{ padding: '2px 6px', border: 'none', borderRadius: '2px', background: c.accent, color: '#000', cursor: 'pointer', fontSize: '9px' }}>+</button>
+            <div style={{ borderTop: `1px solid ${c.border}`, padding: '6px 8px', display: 'flex', gap: '4px', flexDirection: 'column' }}>
+              {error && (
+                <div style={{ padding: '3px 6px', background: c.errorBg, color: c.errorText, borderRadius: '2px', fontSize: '9px' }}>
+                  {error}
+                  <span style={{ marginLeft: '6px', cursor: 'pointer' }} onClick={() => setError(null)}>✕</span>
+                </div>
+              )}
+              <div style={{ display: 'flex', gap: '4px' }}>
+                <input value={bpFile} onChange={e => setBpFile(e.target.value)} placeholder="文件绝对路径（如 D:/proj/src/main.js）" style={{ flex: 1, padding: '2px 4px', background: c.inputBg, border: `1px solid ${c.border}`, borderRadius: '2px', color: c.text, fontSize: '9px', outline: 'none' }} />
+                <input value={bpLine} onChange={e => setBpLine(e.target.value)} placeholder="行号" style={{ width: '50px', padding: '2px 4px', background: c.inputBg, border: `1px solid ${c.border}`, borderRadius: '2px', color: c.text, fontSize: '9px', outline: 'none' }} />
+                <button onClick={handleSetBreakpoint} style={{ padding: '2px 6px', border: 'none', borderRadius: '2px', background: c.accent, color: '#000', cursor: 'pointer', fontSize: '9px' }}>+</button>
+              </div>
             </div>
           </>
         )}
@@ -210,8 +316,20 @@ export function DebuggerPanel({ cwd, theme, onClose }: DebuggerPanelProps): JSX.
         {activeTab === 'stack' && (
           <div style={{ flex: 1, overflowY: 'auto' }}>
             {callStack.length === 0 ? <div style={{ padding: '16px', textAlign: 'center', color: c.textFaint }}>调用栈为空（会话未暂停）</div> : callStack.map((frame, i) => (
-              <div key={i} style={{ padding: '4px 8px', borderBottom: `1px solid ${c.borderSubtle}`, fontSize: '10px' }}>
-                <div style={{ color: c.accent, fontWeight: 500 }}>{frame.name}</div>
+              <div
+                key={i}
+                onClick={() => onNavigateTo?.(frame.file, frame.line)}
+                style={{
+                  padding: '4px 8px', borderBottom: `1px solid ${c.borderSubtle}`, fontSize: '10px',
+                  cursor: onNavigateTo && frame.file ? 'pointer' : 'default',
+                  background: i === 0 && pausedAt ? 'rgba(245,158,11,0.08)' : 'transparent',
+                }}
+                title={frame.file}
+              >
+                <div style={{ color: c.accent, fontWeight: 500, display: 'flex', justifyContent: 'space-between' }}>
+                  <span>{frame.name}</span>
+                  {i === 0 && pausedAt && <span style={{ color: '#f59e0b', fontSize: '9px' }}>← 当前帧</span>}
+                </div>
                 <div style={{ color: c.textFaint, fontSize: '9px', fontFamily: 'monospace' }}>
                   {frame.file.replace(cwd + '\\', '').replace(cwd + '/', '')}:{frame.line}:{frame.column}
                 </div>
@@ -222,6 +340,63 @@ export function DebuggerPanel({ cwd, theme, onClose }: DebuggerPanelProps): JSX.
 
         {activeTab === 'vars' && (
           <div style={{ flex: 1, overflowY: 'auto' }}>
+            {/* Watch 表达式区 */}
+            <div style={{ padding: '6px 8px', borderBottom: `1px solid ${c.borderSubtle}` }}>
+              <div style={{ fontSize: '9px', color: c.textMuted, marginBottom: '4px' }}>👁 Watch 表达式（暂停时求值）</div>
+              <div style={{ display: 'flex', gap: '4px' }}>
+                <input
+                  value={newWatch}
+                  onChange={e => setNewWatch(e.target.value)}
+                  placeholder="如: this.count / process.pid"
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' && newWatch.trim()) {
+                      setWatchExpressions(prev => [...prev, newWatch.trim()])
+                      setNewWatch('')
+                      if (pausedAt) setTimeout(refreshWatches, 50)
+                    }
+                  }}
+                  style={{
+                    flex: 1, padding: '3px 6px', background: c.inputBg, border: `1px solid ${c.border}`,
+                    borderRadius: '3px', color: c.text, fontSize: '9px', outline: 'none', fontFamily: 'monospace',
+                  }}
+                />
+                <button
+                  onClick={() => {
+                    if (newWatch.trim()) {
+                      setWatchExpressions(prev => [...prev, newWatch.trim()])
+                      setNewWatch('')
+                      if (pausedAt) setTimeout(refreshWatches, 50)
+                    }
+                  }}
+                  style={{
+                    padding: '3px 8px', border: 'none', borderRadius: '3px',
+                    background: c.accent, color: '#000', cursor: 'pointer', fontSize: '9px', fontWeight: 600,
+                  }}
+                >
+                  +
+                </button>
+              </div>
+              {watchExpressions.length > 0 && (
+                <div style={{ marginTop: '4px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  {watchExpressions.map(expr => (
+                    <div key={expr} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '9px', padding: '2px 4px', background: c.codeBg, borderRadius: '2px' }}>
+                      <span style={{ color: c.accent, fontFamily: 'monospace' }}>{expr}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span style={{ color: c.text, fontFamily: 'monospace', maxWidth: '140px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {watchResults[expr] ?? '—'}
+                        </span>
+                        <button
+                          onClick={() => setWatchExpressions(prev => prev.filter(e => e !== expr))}
+                          style={{ padding: '0 3px', border: 'none', background: 'transparent', color: c.errorText, cursor: 'pointer', fontSize: '9px' }}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             {Object.keys(variables).length === 0 ? <div style={{ padding: '16px', textAlign: 'center', color: c.textFaint }}>无变量（会话未暂停）</div> : Object.entries(variables).map(([k, v]) => (
               <div key={k} style={{ padding: '3px 8px', borderBottom: `1px solid ${c.borderSubtle}`, display: 'flex', justifyContent: 'space-between', fontSize: '10px' }}>
                 <span style={{ color: c.accent, fontFamily: 'monospace' }}>{k}</span>
