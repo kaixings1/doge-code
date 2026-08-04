@@ -297,6 +297,9 @@ function createWindow(): void {
       sandbox: false,
       contextIsolation: true,
       nodeIntegration: false,
+      // 本地 file:// 协议下 ES module 加载受 CORS 限制（origin 为 null），
+      // 必须关闭 webSecurity 才能加载 index.html 中的 <script type="module">
+      webSecurity: false,
     },
   })
 
@@ -332,7 +335,19 @@ function createWindow(): void {
     const htmlUrl = `file://${path.join(DIST_DIR, 'renderer', 'index.html').replace(/\\/g, '/')}#/desktop`
     mainWindow.loadURL(htmlUrl)
   }
-  if (process.env.NODE_ENV === 'development') {
+
+  // ─── 渲染进程诊断：将 console 错误打印到主进程终端 ───
+  mainWindow.webContents.on('console-message', (_e, level, message, line, sourceId) => {
+    console.log(`[RENDERER:${level}] ${message} (${sourceId}:${line})`)
+  })
+  mainWindow.webContents.on('did-fail-load', (_e, errorCode, errorDescription, validatedURL) => {
+    console.error('[RENDERER:did-fail-load]', errorCode, errorDescription, validatedURL)
+  })
+  mainWindow.webContents.on('render-process-gone', (_e, details) => {
+    console.error('[RENDERER:render-process-gone]', JSON.stringify(details))
+  })
+
+  if (process.env.NODE_ENV === 'development' || process.env.DOGE_DEVTOOLS === '1') {
     mainWindow.webContents.openDevTools({ mode: 'detach' })
   }
 

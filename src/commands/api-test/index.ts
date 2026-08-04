@@ -1,6 +1,5 @@
 import type { Command } from '../../commands.js'
 import type { LocalCommandCall } from '../../types/command.js'
-import { execSync } from 'child_process'
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
 import { homedir } from 'os'
@@ -16,12 +15,12 @@ interface APITest {
   tags: string[]
 }
 
-interface TestResult {
-  name: string
-  status: 'pass' | 'fail' | 'error'
-  statusCode: number
-  duration: number
-  message: string
+interface HttpResponse {
+  status: number
+  body: string
+  headers: Record<string, string>
+  durationMs: number
+  ok: boolean
 }
 
 const API_TESTS_DIR = join(homedir(), '.doge', 'api-tests')
@@ -29,7 +28,8 @@ const API_TESTS_DIR = join(homedir(), '.doge', 'api-tests')
 function loadTests(): APITest[] {
   try {
     if (!existsSync(API_TESTS_DIR)) return []
-    return require('fs').readdirSync(API_TESTS_DIR).filter((f: string) => f.endsWith('.json')).map((f: string) => JSON.parse(readFileSync(join(API_TESTS_DIR, f), 'utf-8')))
+    const fs = require('fs')
+    return fs.readdirSync(API_TESTS_DIR).filter((f: string) => f.endsWith('.json')).map((f: string) => JSON.parse(readFileSync(join(API_TESTS_DIR, f), 'utf-8')))
   } catch { return [] }
 }
 
@@ -38,6 +38,50 @@ function saveTest(t: APITest) {
     if (!existsSync(API_TESTS_DIR)) mkdirSync(API_TESTS_DIR, { recursive: true })
     writeFileSync(join(API_TESTS_DIR, t.id + '.json'), JSON.stringify(t, null, 2), 'utf-8')
   } catch { /* ignore */ }
+}
+
+/**
+ * 使用原生 fetch 发送 HTTP 请求
+ */
+async function httpRequest(method: string, url: string, headers: Record<string, string> = {}, body?: string, timeoutMs = 15000): Promise<HttpResponse> {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), timeoutMs)
+  try {
+    const start = Date.now()
+    const headersObj: Record<string, string> = { ...headers }
+    if (body) headersObj['Content-Type'] = headersObj['Content-Type'] || 'application/json'
+    const res = await fetch(url, {
+      method,
+      headers: headersObj,
+      body: body || undefined,
+      signal: controller.signal,
+      redirect: 'follow',
+    })
+    const text = await res.text()
+    const durationMs = Date.now() - start
+    const resHeaders: Record<string, string> = {}
+    res.headers.forEach((v, k) => { resHeaders[k] = v })
+    return { status: res.status, body: text, headers: resHeaders, durationMs, ok: res.ok }
+  } finally {
+    clearTimeout(timeout)
+  }
+}
+
+function recordHistory(name: string, status: string, duration: number) {
+  try {
+    const historyFile = join(API_TESTS_DIR, 'history.json')
+    let history: any[] = []
+    if (existsSync(historyFile)) history = JSON.parse(readFileSync(historyFile, 'utf-8'))
+    history.push({ name, status, duration, timestamp: new Date().toISOString() })
+    if (history.length > 100) history = history.slice(-100)
+    if (!existsSync(API_TESTS_DIR)) mkdirSync(API_TESTS_DIR, { recursive: true })
+    writeFileSync(historyFile, JSON.stringify(history, null, 2), 'utf-8')
+  } catch { /* ignore */ }
+}
+
+function formatResponse(res: HttpResponse, maxLen = 2000): string {
+  const bodyPreview = res.body.length > maxLen ? res.body.slice(0, maxLen) + `... (${res.body.length} bytes total)` : res.body
+  return `Status: ${res.status}${res.ok ? ' ✅' : ' ❌'}\nDuration: ${res.durationMs}ms\n\n${bodyPreview}`
 }
 
 export const call: LocalCommandCall = async (args) => {
@@ -53,16 +97,13 @@ export const call: LocalCommandCall = async (args) => {
     const test = tests.find(t => t.name.toLowerCase().includes(name.toLowerCase()))
     if (!test) return { type: 'text', value: 'Test not found: ' + name }
     try {
-      const start = Date.now()
-      const headerArgs = Object.entries(test.headers).map(([k, v]) => '-H "' + k + ': ' + v + '"').join(' ')
-      const bodyArg = test.body ? ' -d \'' + test.body + '\'' : ''
-      const output = execSync('curl -s -o /dev/null -w "%{http_code}" -X ' + test.method + ' ' + headerArgs + bodyArg + ' "' + test.url + '" 2>&1', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'], timeout: 30000 })
-      const duration = Date.now() - start
-      const status = parseInt(output.trim())
-      const passed = status === test.expectedStatus
-      return { type: 'text', value: (passed ? '[PASS]' : '[FAIL]') + ' ' + test.name + '\nExpected: ' + test.expectedStatus + ', Got: ' + status + '\nDuration: ' + duration + 'ms' }
+      const res = await httpRequest(test.method, test.url, test.headers, test.body, 30000)
+      const passed = res.status === test.expectedStatus
+      recordHistory(test.name, passed ? 'pass' : 'fail', res.durationMs)
+      return { type: 'text', value: (passed ? '[PASS]' : '[FAIL]') + ' ' + test.name + '\nExpected: ' + test.expectedStatus + ', Got: ' + res.status + '\nDuration: ' + res.durationMs + 'ms' }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
+      const msg = err instanceof Error ? err.message : String(err)
+      return { type: 'text', value: '[ERROR] ' + msg }
     }
   }
 
@@ -71,15 +112,17 @@ export const call: LocalCommandCall = async (args) => {
     if (tests.length === 0) return { type: 'text', value: 'No tests saved. Use /api-test add to create one.' }
     const lines = ['Running ' + tests.length + ' tests...', '']
     let passed = 0
-    tests.forEach(t => {
+    for (const t of tests) {
       try {
-        const headerArgs = Object.entries(t.headers).map(([k, v]) => '-H "' + k + ': ' + v + '"').join(' ')
-        const output = execSync('curl -s -o /dev/null -w "%{http_code}" -X ' + t.method + ' ' + headerArgs + ' "' + t.url + '" 2>&1', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'], timeout: 15000 })
-        const status = parseInt(output.trim())
-        if (status === t.expectedStatus) { passed++; lines.push('[PASS] ' + t.name) }
-        else lines.push('[FAIL] ' + t.name + ' (expected ' + t.expectedStatus + ', got ' + status + ')')
-      } catch { lines.push('[ERROR] ' + t.name) }
-    })
+        const res = await httpRequest(t.method, t.url, t.headers, t.body, 15000)
+        if (res.status === t.expectedStatus) { passed++; lines.push('[PASS] ' + t.name) }
+        else lines.push('[FAIL] ' + t.name + ' (expected ' + t.expectedStatus + ', got ' + res.status + ')')
+        recordHistory(t.name, res.status === t.expectedStatus ? 'pass' : 'fail', res.durationMs)
+      } catch (err) {
+        lines.push('[ERROR] ' + t.name + ': ' + (err instanceof Error ? err.message : 'timeout'))
+        recordHistory(t.name, 'error', 0)
+      }
+    }
     lines.push('', 'Results: ' + passed + '/' + tests.length + ' passed')
     return { type: 'text', value: lines.join('\n') }
   }
@@ -109,8 +152,8 @@ export const call: LocalCommandCall = async (args) => {
     const url = parts[1]
     if (!url) return { type: 'text', value: 'Usage: /api-test quick <url>' }
     try {
-      const output = execSync('curl -s -w "\\nHTTP_CODE:%{http_code}\\nTIME:%{time_total}s" "' + url + '" 2>&1', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'], timeout: 15000 })
-      return { type: 'text', value: output }
+      const res = await httpRequest('GET', url)
+      return { type: 'text', value: formatResponse(res) }
     } catch (err) {
       return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
     }
@@ -120,35 +163,94 @@ export const call: LocalCommandCall = async (args) => {
     const url = parts[1]; const body = parts.slice(2).join(' ')
     if (!url) return { type: 'text', value: 'Usage: /api-test post <url> <body>' }
     try {
-      const output = execSync('curl -s -X POST -H "Content-Type: application/json" -d \'' + body + '\' "' + url + '" 2>&1', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'], timeout: 15000 })
-      return { type: 'text', value: output.slice(0, 2000) }
+      const res = await httpRequest('POST', url, {}, body)
+      return { type: 'text', value: formatResponse(res) }
     } catch (err) {
       return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
-  if (cmd === 'history') return { type: 'text', value: 'No test history. Run tests first.' }
-  if (cmd === 'export') return { type: 'text', value: 'Export: Copy test files from ' + API_TESTS_DIR }
+  if (cmd === 'history') {
+    const historyFile = join(API_TESTS_DIR, 'history.json')
+    if (!existsSync(historyFile)) return { type: 'text', value: 'No test history. Run tests first.' }
+    try {
+      const history = JSON.parse(readFileSync(historyFile, 'utf-8')) as Array<{ name: string; status: string; duration: number; timestamp: string }>
+      const lines = ['Test History:', '==================', '']
+      history.slice(-20).reverse().forEach((h: any) => lines.push(`[${h.status}] ${h.name} (${h.duration}ms) - ${h.timestamp}`))
+      return { type: 'text', value: lines.join('\n') }
+    } catch { return { type: 'text', value: 'Error reading history file' } }
+  }
+
+  if (cmd === 'export') {
+    const tests = loadTests()
+    if (tests.length === 0) return { type: 'text', value: 'No tests to export.' }
+    const exportPath = join(process.cwd(), 'api-tests-export.json')
+    writeFileSync(exportPath, JSON.stringify(tests, null, 2), 'utf-8')
+    return { type: 'text', value: 'Exported ' + tests.length + ' tests to ' + exportPath }
+  }
 
   if (cmd === 'collection') {
     const file = parts[1]
     if (!file || !existsSync(file)) return { type: 'text', value: 'File not found: ' + file }
-    return { type: 'text', value: 'Import: Parse collection from ' + file + ' and save to ' + API_TESTS_DIR }
+    try {
+      const content = readFileSync(file, 'utf-8')
+      const collection = JSON.parse(content)
+      const items = collection?.item || collection?.requests || collection?.items || (Array.isArray(collection) ? collection : [collection])
+      if (!Array.isArray(items)) return { type: 'text', value: 'Unable to parse collection format from ' + file }
+      let imported = 0
+      items.forEach((item: any) => {
+        const req = item.request || item
+        const test: APITest = {
+          id: 'test-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+          name: item.name || req.method || 'unnamed',
+          method: (req.method || 'GET').toUpperCase(),
+          url: req.url?.raw || req.url || '',
+          headers: (req.header || []).reduce((acc: any, h: any) => { acc[h.key || h.name] = h.value; return acc }, {}),
+          body: item.body || '',
+          expectedStatus: 200,
+          tags: []
+        }
+        if (test.url) { saveTest(test); imported++ }
+      })
+      return { type: 'text', value: 'Imported ' + imported + ' tests from ' + file }
+    } catch { return { type: 'text', value: 'Error parsing collection from ' + file } }
   }
 
   if (cmd === 'compare') {
     const a = parts[1]; const b = parts[2]
     if (!a || !b) return { type: 'text', value: 'Usage: /api-test compare <name1> <name2>' }
-    return { type: 'text', value: 'Compare responses from ' + a + ' and ' + b }
+    const tests = loadTests()
+    const testA = tests.find(t => t.name.toLowerCase().includes(a.toLowerCase()))
+    const testB = tests.find(t => t.name.toLowerCase().includes(b.toLowerCase()))
+    if (!testA) return { type: 'text', value: 'Test not found: ' + a }
+    if (!testB) return { type: 'text', value: 'Test not found: ' + b }
+    try {
+      const [resA, resB] = await Promise.all([
+        httpRequest(testA.method, testA.url, testA.headers, testA.body),
+        httpRequest(testB.method, testB.url, testB.headers, testB.body),
+      ])
+      const lines = ['Comparing: ' + testA.name + ' vs ' + testB.name, '', '']
+      lines.push('Test A: ' + testA.name + ' -> ' + resA.status + ' (' + resA.durationMs + 'ms)')
+      lines.push('Test B: ' + testB.name + ' -> ' + resB.status + ' (' + resB.durationMs + 'ms)')
+      lines.push('')
+      lines.push(resA.status === resB.status ? '✅ Same status code' : '❌ Different status codes')
+      if (resA.body === resB.body) lines.push('✅ Identical response bodies')
+      else lines.push('⚠️ Different response bodies')
+      return { type: 'text', value: lines.join('\n') }
+    } catch (err) {
+      return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
+    }
   }
 
   if (cmd === 'status') {
     const url = parts[1]
     if (!url) return { type: 'text', value: 'Usage: /api-test status <url>' }
     try {
-      const output = execSync('curl -s -o /dev/null -w "%{http_code} %{time_total}s" "' + url + '" 2>&1', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'], timeout: 10000 })
-      return { type: 'text', value: 'Status: ' + output }
-    } catch { return { type: 'text', value: '[ERROR] Cannot reach endpoint' } }
+      const res = await httpRequest('GET', url, {}, undefined, 10000)
+      return { type: 'text', value: 'Status: ' + res.status + ' (' + res.durationMs + 'ms)' + (res.ok ? ' ✅' : ' ❌') }
+    } catch (err) {
+      return { type: 'text', value: '[ERROR] Cannot reach endpoint: ' + (err instanceof Error ? err.message : 'timeout') }
+    }
   }
 
   if (cmd === 'bench') {
@@ -156,11 +258,12 @@ export const call: LocalCommandCall = async (args) => {
     if (!url) return { type: 'text', value: 'Usage: /api-test bench <url> [count]' }
     const lines = ['Benchmarking ' + url + ' (' + n + ' requests):', '']
     const times: number[] = []
+    let success = 0
     for (let i = 0; i < n; i++) {
       try {
-        const start = Date.now()
-        execSync('curl -s -o /dev/null "' + url + '" 2>&1', { stdio: 'ignore', timeout: 10000 })
-        times.push(Date.now() - start)
+        const res = await httpRequest('GET', url, {}, undefined, 10000)
+        times.push(res.durationMs)
+        if (res.ok) success++
       } catch { times.push(-1) }
     }
     const valid = times.filter(t => t >= 0)
@@ -171,7 +274,8 @@ export const call: LocalCommandCall = async (args) => {
     lines.push('Average: ' + avg + 'ms')
     lines.push('Min: ' + min + 'ms')
     lines.push('Max: ' + max + 'ms')
-    lines.push('Success: ' + valid.length + '/' + n)
+    lines.push('Success: ' + success + '/' + n)
+    lines.push('Requests/sec: ' + (success / (avg / 1000)).toFixed(1))
     return { type: 'text', value: lines.join('\n') }
   }
 
@@ -183,7 +287,7 @@ const apiTest: Command = {
   description: 'API testing - run/run-all/add/list/quick/post/bench/status/history/compare',
   aliases: '/api-test, /api, /curl, /test'.split(','),
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default apiTest

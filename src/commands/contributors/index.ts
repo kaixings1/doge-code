@@ -124,7 +124,7 @@ const contributors: Command = {
   description: 'Contributor analysis - list/graph/files/trend/email/all',
   aliases: '/contributors, /contrib, /authors'.split(','),
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default contributors

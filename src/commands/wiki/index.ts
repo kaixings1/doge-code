@@ -1027,7 +1027,7 @@ const wiki: Command = {
   description: '项目 Wiki 生成 - 架构/API/文档/变更日志/依赖图/模板/搜索',
   aliases: ['/wiki', '/docs'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default wiki

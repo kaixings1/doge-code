@@ -131,7 +131,7 @@ const notes: Command = {
   description: 'Quick notes - list/add/show/edit/delete/search/pin/tags/export/import',
   aliases: '/notes, /note, /n'.split(','),
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default notes

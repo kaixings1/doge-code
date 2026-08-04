@@ -177,7 +177,7 @@ const dbMigrate: Command = {
   description: 'DB migrations - status/up/down/create/apply/rollback/verify/reset/history/generate',
   aliases: '/db-migrate, /migrate, /dbm'.split(','),
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default dbMigrate

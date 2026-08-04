@@ -157,7 +157,7 @@ const imports: Command = {
   type: 'local', name: 'imports',
   description: 'Import management - analyze/unused/organize/sort/convert/circular/graph',
   aliases: ['/imports', '/imp'], supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default imports

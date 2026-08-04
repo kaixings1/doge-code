@@ -118,7 +118,7 @@ const tc: Command = {
   description: 'Test coverage - run/report/show/missing/trend/badge/html/json/threshold',
   aliases: '/tc, /coverage, /cov'.split(','),
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default tc

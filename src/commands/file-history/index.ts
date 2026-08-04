@@ -107,7 +107,7 @@ const fileHistory: Command = {
   type: 'local', name: 'file-history',
   description: 'File history - changes, diff, restore, authors, trend',
   aliases: ['/file-history', '/fh'], supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default fileHistory

@@ -315,7 +315,7 @@ const htaccess: Command = {
   description: 'htaccess - security/spa/caching/compression/redirect/performance/api/maintenance',
   aliases: ['/htaccess', '/hta'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default htaccess

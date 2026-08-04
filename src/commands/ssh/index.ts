@@ -134,7 +134,7 @@ const ssh: Command = {
   description: 'SSH manager - list/add/connect/exec/copy/keys/test/logs',
   aliases: '/ssh, /remote'.split(','),
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default ssh

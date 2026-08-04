@@ -200,7 +200,7 @@ const deps: Command = {
   description: 'Dependency management - status/outdated/update/add/remove/audit',
   aliases: ['/deps', '/dep', '/packages'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default deps

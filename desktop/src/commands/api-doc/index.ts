@@ -1,9 +1,9 @@
 import type { Command } from '../../commands.js'
-import type { LocalJSXCommandCall } from '../../types/command.js'
+import type { LocalCommandCall } from '../../types/command.js'
 import fs from 'fs'
 import path from 'path'
 
-export const call: LocalJSXCommandCall = async (args) => {
+export const call: LocalCommandCall = async (args) => {
   const p = args.trim().split(/\s+/)
   const c = p[0] || ''
   if (!c) return { type: 'text', value: '/api-doc gen <file.ts> | 从代码生成 API 文档\n/api-doc scan <dir> | 扫描目录中的 API\n/api-doc openapi <file> | 解析 OpenAPI 规范' }
@@ -53,5 +53,5 @@ export const call: LocalJSXCommandCall = async (args) => {
   return { type: 'text', value: r || '(无输出)' }
 }
 
-const cmd = { type: 'local' as const, name: 'api-doc', description: 'API 文档生成器：gen/scan', argumentHint: '<gen|scan> <file|dir>', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
+const cmd = { type: 'local' as const, name: 'api-doc', description: 'API 文档生成器：gen/scan', argumentHint: '<gen|scan> <file|dir>', isEnabled: () => true, supportsNonInteractive: true, load: () => Promise.resolve({ call }) } satisfies Command
 export default cmd

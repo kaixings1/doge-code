@@ -936,7 +936,7 @@ const proactive: Command = {
   description: 'Proactive code suggestions - scan for issues and improvements',
   aliases: ['/proactive', '/suggest'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default proactive

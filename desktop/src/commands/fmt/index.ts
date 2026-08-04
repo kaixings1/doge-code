@@ -111,7 +111,7 @@ const fmt: Command = {
   type: 'local', name: 'fmt',
   description: 'Code formatting - check/fix/all/diff/config/install/languages',
   aliases: ['/fmt', '/format', '/prettier'], supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default fmt

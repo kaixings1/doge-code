@@ -167,7 +167,7 @@ const notify: Command = {
   type: 'local', name: 'notify',
   description: 'Notifications - rules, events, history, webhooks',
   aliases: ['/notify', '/alert'], supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default notify

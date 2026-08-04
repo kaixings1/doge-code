@@ -493,7 +493,7 @@ const codeReview: Command = {
   description: 'Deep code review - file/branch/commit/fix/baseline/history/trends/config',
   aliases: ['/code-review', '/review', '/cr'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default codeReview

@@ -206,7 +206,7 @@ const stash: Command = {
   type: 'local', name: 'stash',
   description: 'Git stash - save/pop/apply/show/files/branch/drop/note/rename/compare',
   aliases: ['/stash', '/st'], supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default stash
