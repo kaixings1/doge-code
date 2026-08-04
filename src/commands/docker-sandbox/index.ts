@@ -9,7 +9,7 @@ const command = {
   description: 'Docker 沙箱隔离：在容器内运行 Agent（OpenHands/Devin 风格）',
   argumentHint: '<start|stop|status|logs|exec|shell>',
   isEnabled: () => true,
-  load: () => import('./docker-sandbox.tsx'),
+  load: () => import('./docker-sandbox.tsx').then(m => ({ call: m.dockerSandboxUI })),
 } satisfies Command
 
 export default command

@@ -144,7 +144,7 @@ const robots: Command = {
   description: 'Robots.txt - default/strict/permissive/ecommerce/blog/app/list/view/custom',
   aliases: ['/robots', '/robots-txt'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default robots

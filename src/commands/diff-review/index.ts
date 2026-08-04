@@ -775,7 +775,7 @@ const diffReview: Command = {
   description: '交互式 Diff 审查 - 逐 hunk 审查/暂存/比较 git diff',
   aliases: ['/diff-review', '/diff-review', '/dr'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default diffReview

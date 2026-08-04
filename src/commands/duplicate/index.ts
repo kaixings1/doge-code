@@ -226,7 +226,7 @@ const duplicate: Command = {
   description: 'Duplicate - list/files/ratio/config/history/export/tips',
   aliases: ['/duplicate', '/dup'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default duplicate

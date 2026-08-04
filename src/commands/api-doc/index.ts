@@ -1,5 +1,5 @@
 import type { Command } from '../../commands.js'
-import type { LocalJSXCommandCall } from '../../types/command.js'
+import type { LocalCommandCall } from '../../types/command.js'
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'fs'
 import { join, extname, basename, dirname } from 'path'
 
@@ -91,7 +91,7 @@ ${endpoints.map(e => `<div class="endpoint"><span class="method ${e.method.toLow
 </body></html>`
 }
 
-export const call: LocalJSXCommandCall = async (args) => {
+export const call: LocalCommandCall = async (args) => {
   const p = args.trim().split(/\s+/)
   const c = p[0] || ''
   if (!c) return { type: 'text', value: [
@@ -116,6 +116,18 @@ export const call: LocalJSXCommandCall = async (args) => {
     const content = readFileSync(file, 'utf-8')
     const endpoints = [...extractJSdocs(content), ...extractRoutes(content, 'express')]
     const title = basename(file, extname(file))
+    if (endpoints.length === 0) {
+      // Try to extract function-like declarations as API endpoints
+      const funcRegex = /(?:export\s+)?(?:async\s+)?function\s+(\w+)\s*\([^)]*\)/g
+      const classRegex = /(?:export\s+)?class\s+(\w+)/g
+      let match
+      while ((match = funcRegex.exec(content)) !== null) {
+        endpoints.push({ name: match[1], method: '', path: '', description: '', params: [], returnType: '', file: file, line: content.substring(0, match.index).split('\n').length })
+      }
+      while ((match = classRegex.exec(content)) !== null) {
+        endpoints.push({ name: match[1], method: '', path: '', description: 'Class', params: [], returnType: '', file: file, line: content.substring(0, match.index).split('\n').length })
+      }
+    }
     if (format === 'html') { r = generateHTML(title, endpoints) }
     else if (format === 'json') { r = JSON.stringify(endpoints, null, 2) }
     else { r = generateMarkdown(title, endpoints) }
@@ -223,5 +235,5 @@ export const call: LocalJSXCommandCall = async (args) => {
   return { type: 'text', value: r || '(no output)' }
 }
 
-const cmd = { type: 'local' as const, name: 'api-doc', description: 'API docs - gen/scan/routes/jsdoc/openapi/classes/interfaces/types/exports/all + html/md/json', argumentHint: '<gen|scan|routes|jsdoc|openapi|classes|interfaces|types|exports|all> [file|dir]', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
+const cmd = { type: 'local' as const, name: 'api-doc', description: 'API docs - gen/scan/routes/jsdoc/openapi/classes/interfaces/types/exports/all + html/md/json', argumentHint: '<gen|scan|routes|jsdoc|openapi|classes|interfaces|types|exports|all> [file|dir]', isEnabled: () => true, supportsNonInteractive: true, load: () => Promise.resolve({ call }) } satisfies Command
 export default cmd

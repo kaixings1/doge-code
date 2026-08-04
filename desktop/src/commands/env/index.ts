@@ -160,7 +160,7 @@ const env: Command = {
   type: 'local', name: 'env',
   description: 'Environment variables - list/get/set/delete/diff/copy/check/export/import',
   aliases: ['/env', '/environment'], supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default env

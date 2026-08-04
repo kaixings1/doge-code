@@ -306,7 +306,7 @@ const performance: Command = {
   description: 'Performance profiler - file/functions/hotspots/complexity/size/async/baseline',
   aliases: ['/performance', '/perf'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default performance

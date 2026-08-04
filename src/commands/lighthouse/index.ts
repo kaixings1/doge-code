@@ -237,7 +237,7 @@ const lighthouse: Command = {
   description: 'Lighthouse - run/report/compare/trend/history/budgets/export/categories',
   aliases: ['/lighthouse', '/lh'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default lighthouse

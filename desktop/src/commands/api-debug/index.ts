@@ -340,41 +340,8 @@ const apiDebug = {
   name: 'api-debug',
   description: 'REST API 调试客户端 - Postman 风格的 API 测试工具',
   aliases: ['/api-debug', '/api-test', '/http-client'],
-  load: () => import('./index.js'),
-  arguments: [
-    {
-      name: 'method',
-      description: 'HTTP 方法: GET / POST / PUT / DELETE / PATCH',
-      required: false,
-    },
-    {
-      name: 'url',
-      description: '请求 URL',
-      required: false,
-    },
-    {
-      name: 'body',
-      description: '请求体（JSON）',
-      required: false,
-    },
-    {
-      name: '--header',
-      description: '请求头（KEY=VALUE 格式）',
-      required: false,
-    },
-    {
-      name: '--timeout',
-      description: '超时时间（毫秒）',
-      required: false,
-    },
-    {
-      name: '--no-body',
-      description: '不显示响应体',
-      required: false,
-    },
-  ],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 } satisfies Command
 
 export default apiDebug

@@ -101,7 +101,7 @@ const blame: Command = {
   type: 'local', name: 'blame',
   description: 'Git blame - file blame, author stats, heatmap, recent changes',
   aliases: ['/blame', '/bl'], supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default blame

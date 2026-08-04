@@ -106,7 +106,7 @@ const terminal: Command = {
   description: 'Terminal manager - open/split/tab/kill/send/shortcuts/history/size',
   aliases: '/terminal, /term, /t'.split(','),
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default terminal

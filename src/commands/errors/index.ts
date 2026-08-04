@@ -260,7 +260,7 @@ const errorsCmd: Command = {
   type: 'local', name: 'errors',
   description: 'Error monitoring - scan, track, auto-fix, patterns, export',
   aliases: ['/errors', '/err'], supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default errorsCmd

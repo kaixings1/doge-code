@@ -164,7 +164,7 @@ const prReview: Command = {
   type: 'local', name: 'pr-review',
   description: 'GitHub PR review - summary, issues, checklist, approve, comment',
   aliases: ['/pr-review', '/pr'], supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default prReview

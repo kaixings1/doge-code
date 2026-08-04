@@ -597,7 +597,7 @@ const codeHealth: Command = {
   description: 'Code health - file/complexity/size/docs/testing/duplication/style/security/history/baseline',
   aliases: ['/code-health', '/ch', '/health'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default codeHealth

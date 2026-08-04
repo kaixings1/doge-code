@@ -131,7 +131,7 @@ const changelogGen: Command = {
   description: 'Changelog - generate/since/preview/save/json/html/unreleased/stats/types',
   aliases: '/changelog-gen, /clg, /cl'.split(','),
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default changelogGen

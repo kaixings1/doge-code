@@ -135,7 +135,7 @@ const bookmark: Command = {
   description: 'Code bookmarks - mark and jump to important code locations',
   aliases: ['/bookmark', '/bm'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default bookmark

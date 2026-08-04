@@ -149,7 +149,7 @@ const testRun: Command = {
   type: 'local', name: 'test-run',
   description: 'Test runner - run/watch/coverage/debug/snapshot/time/framework',
   aliases: ['/test-run', '/test', '/t'], supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default testRun

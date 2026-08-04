@@ -16,7 +16,7 @@ import { formatStatusLine, formatFinalReport, formatSubTaskSummary, type Progres
 /**
  * 解析 loop 命令的 CLI 选项
  */
-function parseLoopArgs(args: string[]): {
+export function parseLoopArgs(args: string): {
   goal: string
   strategy: LoopStrategyName
   maxIterations: number

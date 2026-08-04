@@ -146,7 +146,7 @@ const fileSearch: Command = {
   description: 'File search - regex/search/count/files/replace/grep/rg/stats/context',
   aliases: '/file-search, /fs, /find, /search'.split(','),
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default fileSearch

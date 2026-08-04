@@ -160,7 +160,7 @@ const release: Command = {
   type: 'local', name: 'release',
   description: 'Release - bump/version/notes/changelog/tag/create/publish',
   aliases: ['/release', '/rel'], supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default release

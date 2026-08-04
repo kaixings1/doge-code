@@ -264,7 +264,7 @@ const gitGraph: Command = {
   description: 'Git graph - stats/authors/timeline/hotfiles/churn/activity/streaks/insights',
   aliases: ['/git-graph', '/gg', '/gitlog'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default gitGraph

@@ -477,7 +477,7 @@ const pluginMarket = {
     },
   ],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 } satisfies Command
 
 export default pluginMarket

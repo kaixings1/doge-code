@@ -155,7 +155,7 @@ const templates: Command = {
   description: 'Project templates - scaffold new projects from templates',
   aliases: ['/templates', '/tmpl', '/scaffold'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default templates

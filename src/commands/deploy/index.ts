@@ -332,7 +332,7 @@ const deploy: Command = {
   description: 'Deploy - multi-environment with history/health/rollback/check/config',
   aliases: ['/deploy', '/ship'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default deploy

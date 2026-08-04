@@ -212,7 +212,7 @@ const watch: Command = {
   description: 'Watch - snapshot/check/scan/status/logs/clear/config/set-action',
   aliases: ['/watch', '/w'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default watch

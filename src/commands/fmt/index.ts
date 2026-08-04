@@ -317,7 +317,7 @@ const fmt: Command = {
   description: 'Formatter - check/fix/all/diff/stats/history/config/install/languages',
   aliases: ['/fmt', '/format'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default fmt

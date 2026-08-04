@@ -18,6 +18,84 @@ import type { TaskExecutor } from './types.js'
 import { execSync } from 'child_process'
 import { mkdir, writeFile } from 'fs/promises'
 import { formatStatusLine, formatFinalReport, formatSubTaskSummary, type ProgressState } from './progress-ui.js'
+import { parseLoopArgs } from './shortcuts.js'
+
+type ParsedLoopArgs = ReturnType<typeof parseLoopArgs>
+
+// ============================================================================
+// 帮助 / 示例 / 交互提示 渲染
+// ============================================================================
+
+function renderHelp(): string {
+  return `# /loop — 目标导向循环引擎
+
+给 AI 一个目标，循环执行直到达成。
+
+## 用法
+  /loop "目标描述" [选项]
+
+## 选项
+  --strategy <策略>        循环策略: langgraph / crew / autogpt / openhands / swe-agent（默认 openhands）
+  --max-iterations <N>     最大迭代次数（默认 20）
+  --criteria <标准>        成功标准（可多次指定）
+  --json                   JSON 格式输出
+  --help                   显示本帮助
+  --examples               显示详细示例
+
+## 示例
+  /loop "创建一个 Node.js Hello World 服务器"
+  /loop "重构 utils 目录" --strategy langgraph --max-iterations 30
+  /loop "写完 README 并运行测试" --criteria "测试全部通过"
+
+## 快捷命令
+  /loop-langgraph, /loop-crew, /loop-autogpt, /loop-openhands, /loop-swe
+  分别使用对应策略执行，支持 --help 查看该策略的详细手册`
+}
+
+function renderExamples(): string {
+  return `# /loop — 使用示例
+
+## 示例 1: 简单目标
+  /loop "创建一个 Node.js Hello World HTTP 服务器，监听 3000 端口"
+  → 使用默认 openhands 策略，最多 20 轮迭代
+
+## 示例 2: 指定策略和迭代上限
+  /loop "重构 utils 目录中的重复代码" --strategy langgraph --max-iterations 30
+  → 使用 langgraph（状态机图）策略，最多 30 轮
+
+## 示例 3: 设置成功标准
+  /loop "为项目添加单元测试" --criteria "覆盖率超过 80%" --criteria "测试全部通过"
+  → 多个 --criteria 都会作为成功判断标准
+
+## 示例 4: JSON 输出
+  /loop "扫描代码中的安全问题" --json
+  → 以 JSON 格式输出完整结果
+
+## 示例 5: 快捷策略命令
+  /loop-autogpt "实现一个 CLI 待办应用" --help
+  → /loop-autogpt 使用 autogpt 策略；--help 显示该策略的完整手册
+
+## 可用策略
+  - langgraph  : 状态机图引擎，适合有明确状态流转的任务
+  - crew       : 多角色协作，适合需要分工的任务
+  - autogpt    : 自主规划，适合探索性任务
+  - openhands  : 默认策略，通用目标执行
+  - swe-agent  : 软件工程代理，适合代码库级任务`
+}
+
+function renderInteractivePrompt(): string {
+  return `# /loop — 目标导向循环引擎
+
+给 AI 一个目标，循环执行直到达成。
+
+请输入你的目标，例如：
+  /loop 创建一个 Node.js Hello World 服务器
+  /loop 重构 utils 目录 --strategy langgraph
+  /loop "写完 README 并运行测试" --criteria "测试全部通过"
+
+查看帮助: /loop --help
+查看示例: /loop --examples`
+}
 async function createTaskExecutor(
   context: LocalJSXCommandContext,
 ): Promise<TaskExecutor> {
@@ -207,7 +285,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
 
   let parsed: ParsedLoopArgs
   try {
-    parsed = parseArgs(s)
+    parsed = parseLoopArgs(s)
   } catch (err) {
     onDone(`❌ 参数错误: ${err instanceof Error ? err.message : String(err)}
 

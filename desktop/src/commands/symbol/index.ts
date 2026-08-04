@@ -106,7 +106,7 @@ const symbol: Command = {
   type: 'local', name: 'symbol',
   description: 'Symbol operations - find/rename/preview/extract/inline/usages',
   aliases: ['/symbol', '/sym', '/sr'], supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default symbol

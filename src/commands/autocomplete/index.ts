@@ -1319,7 +1319,7 @@ const autocomplete = {
     { name: 'help', description: '显示帮助', required: false },
   ],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 } satisfies Command
 
 export default autocomplete

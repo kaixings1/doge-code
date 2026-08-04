@@ -205,7 +205,7 @@ const grep: Command = {
   description: 'Grep - search/context/regex/count/files-only/config/history/stats',
   aliases: ['/grep', '/g', '/rg'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default grep

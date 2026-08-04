@@ -246,7 +246,7 @@ const bundle: Command = {
   description: 'Bundle - size/largest/types/analyze/optimize/history/trend/config/export',
   aliases: ['/bundle', '/bun'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default bundle

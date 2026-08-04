@@ -151,7 +151,7 @@ const projectStats: Command = {
   description: 'Project stats - all/files/lines/git/contributors/activity/size/health/export',
   aliases: '/project-stats, /ps, /stats'.split(','),
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default projectStats

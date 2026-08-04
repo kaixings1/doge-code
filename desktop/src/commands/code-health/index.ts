@@ -306,7 +306,7 @@ const codeHealth: Command = {
   type: 'local', name: 'code-health',
   description: 'Code health - dashboard, trends, file analysis, recommendations, export',
   aliases: ['/code-health', '/ch'], supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default codeHealth

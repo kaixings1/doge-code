@@ -193,7 +193,7 @@ const background: Command = {
   description: 'Run commands in background with task management',
   aliases: ['/bg', '/background'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default background

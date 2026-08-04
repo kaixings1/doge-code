@@ -431,7 +431,7 @@ const security: Command = {
   description: 'Security scan - secrets/vulns/deps/owasp/npm-audit/baseline/history/sarif',
   aliases: ['/security', '/sec', '/scan'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default security

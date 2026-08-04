@@ -184,7 +184,7 @@ const tree: Command = {
   description: 'Tree - depth/sizes/icons/files/dirs/hidden/git/sort-size/export/config',
   aliases: ['/tree', '/t'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default tree

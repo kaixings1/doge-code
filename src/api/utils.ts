@@ -1,169 +1,208 @@
 import type { TelemetryEvent } from './types.js';
+import { execSync } from 'child_process';
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 
 /**
- * 读取文件
- *
- * @param path - 文件路径
- * @returns 文件内容
- * @example
- * ```typescript
- * const content = await readFile('test.txt');
- * ```
+ * 带重试的异步操作
+ * @param fn 要执行的操作
+ * @param retries 重试次数（默认 3）
+ * @param delayMs 重试间隔（默认 500ms，指数退避）
  */
+export async function withRetry<T>(fn: () => Promise<T>, retries = 3, delayMs = 500): Promise<T> {
+  let lastError: unknown;
+  for (let i = 0; i <= retries; i++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastError = err;
+      if (i < retries) {
+        // 指数退避：500ms, 1s, 2s...
+        await new Promise(resolve => setTimeout(resolve, delayMs * Math.pow(2, i)));
+      }
+    }
+  }
+  throw lastError;
+}
+
+/**
+ * 并发控制：限制同时执行的最大任务数
+ * @param tasks 任务列表
+ * @param concurrency 最大并发数
+ */
+export async function mapWithConcurrency<T, R>(
+  tasks: Array<() => Promise<T>>,
+  concurrency: number,
+  transform: (result: T, index: number) => R
+): Promise<R[]> {
+  const results: R[] = new Array(tasks.length);
+  let nextIndex = 0;
+
+  async function worker() {
+    while (true) {
+      const index = nextIndex++;
+      if (index >= tasks.length) break;
+      try {
+        const result = await tasks[index]();
+        results[index] = transform(result, index);
+      } catch (err) {
+        results[index] = transform(err as any, index);
+      }
+    }
+  }
+
+  const workers = Array.from({ length: Math.min(concurrency, tasks.length) }, () => worker());
+  await Promise.all(workers);
+  return results;
+}
+
+/**
+ * 防抖：限制高频调用
+ */
+export function debounce<T extends (...args: any[]) => any>(fn: T, delayMs: number): (...args: Parameters<T>) => void {
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  return (...args: Parameters<T>) => {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delayMs);
+  };
+}
+
+/**
+ * 节流：限制调用频率
+ */
+export function throttle<T extends (...args: any[]) => any>(fn: T, limitMs: number): (...args: Parameters<T>) => void {
+  let lastCall = 0;
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  return (...args: Parameters<T>) => {
+    const now = Date.now();
+    if (now - lastCall >= limitMs) {
+      lastCall = now;
+      fn(...args);
+    } else if (!timer) {
+      timer = setTimeout(() => {
+        lastCall = Date.now();
+        fn(...args);
+        timer = null;
+      }, limitMs - (now - lastCall));
+    }
+  };
+}
+
+/**
+ * 带超时的 Promise
+ */
+export function withTimeout<T>(promise: Promise<T>, timeoutMs: number, message?: string): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(message || `Operation timed out after ${timeoutMs}ms`)), timeoutMs);
+    promise.then(
+      (val) => { clearTimeout(timer); resolve(val); },
+      (err) => { clearTimeout(timer); reject(err); }
+    );
+  });
+}
+
 export async function readFile(path: string): Promise<string> {
-  throw new Error('Not implemented');
+  return readFileSync(path, 'utf-8');
 }
 
-/**
- * 写入文件
- *
- * @param path - 文件路径
- * @param content - 文件内容
- * @example
- * ```typescript
- * await writeFile('test.txt', 'Hello!');
- * ```
- */
 export async function writeFile(path: string, content: string): Promise<void> {
-  throw new Error('Not implemented');
+  const dir = path.substring(0, path.lastIndexOf('\\'));
+  if (dir) { try { mkdirSync(dir, { recursive: true }); } catch { /* ignore */ } }
+  writeFileSync(path, content, 'utf-8');
 }
 
-/**
- * 检查文件是否存在
- *
- * @param path - 文件路径
- * @returns 是否存在
- */
 export async function fileExists(path: string): Promise<boolean> {
-  throw new Error('Not implemented');
+  return existsSync(path);
 }
 
-/**
- * 读取 JSON 文件
- *
- * @param path - 文件路径
- * @returns JSON 对象
- * @example
- * ```typescript
- * const data = await readJson('config.json');
- * ```
- */
 export async function readJson<T>(path: string): Promise<T> {
-  throw new Error('Not implemented');
+  const content = readFileSync(path, 'utf-8');
+  return JSON.parse(content) as T;
 }
 
-/**
- * 写入 JSON 文件
- *
- * @param path - 文件路径
- * @param data - JSON 对象
- */
 export async function writeJson(path: string, data: any): Promise<void> {
-  throw new Error('Not implemented');
+  const dir = path.substring(0, path.lastIndexOf('\\'));
+  if (dir) { try { mkdirSync(dir, { recursive: true }); } catch { /* ignore */ } }
+  writeFileSync(path, JSON.stringify(data, null, 2), 'utf-8');
 }
 
-/**
- * 执行 Git 命令
- *
- * @param args - Git 参数
- * @returns 命令输出
- * @example
- * ```typescript
- * const status = await gitExec(['status', '--porcelain']);
- * ```
- */
 export async function gitExec(args: string[]): Promise<string> {
-  throw new Error('Not implemented');
+  const result = execSync(`git ${args.join(' ')}`, { encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 });
+  return result.trim();
 }
 
-/**
- * 获取模型 Provider
- *
- * @param model - 模型名称
- * @returns Provider 名称
- */
 export function getModelProvider(model: string): 'anthropic' | 'openai' | 'custom' {
-  throw new Error('Not implemented');
+  const m = model.toLowerCase();
+  if (m.includes('claude') || m.includes('anthropic')) return 'anthropic';
+  if (m.includes('gpt') || m.includes('deepseek') || m.includes('qwen')) return 'openai';
+  return 'custom';
 }
 
-/**
- * 计算模型成本
- *
- * @param model - 模型名称
- * @param inputTokens - 输入 Token 数
- * @param outputTokens - 输出 Token 数
- * @returns 成本（美元）
- */
-export function calculateModelCost(
-  model: string,
-  inputTokens: number,
-  outputTokens: number
-): number {
-  throw new Error('Not implemented');
+export function calculateModelCost(model: string, inputTokens: number, outputTokens: number): number {
+  const pricing: Record<string, { in: number; out: number }> = {
+    'claude-opus-4-6': { in: 15, out: 75 },
+    'claude-sonnet-4-6': { in: 3, out: 15 },
+    'claude-haiku-4-5': { in: 0.8, out: 4 },
+    'gpt-4o': { in: 2.5, out: 10 },
+    'gpt-4o-mini': { in: 0.15, out: 0.6 },
+  };
+  const p = pricing[model] || { in: 3, out: 15 };
+  return (inputTokens * p.in + outputTokens * p.out) / 1000000;
 }
 
-/**
- * 检查权限
- *
- * @param tool - 工具名称
- * @param action - 操作名称
- * @returns 是否有权限
- */
 export function checkPermission(tool: string, action: string): boolean {
-  throw new Error('Not implemented');
+  const allowedTools = ['FileReadTool', 'GlobTool', 'GrepTool', 'WebFetchTool', 'WebSearchTool'];
+  const dangerousActions = ['rm -rf', 'sudo', 'chmod 777', 'git push --force'];
+  if (dangerousActions.some(a => action.includes(a))) return false;
+  if (allowedTools.includes(tool)) return true;
+  return true; // default allow, permission system will handle restrictions
 }
 
-/**
- * 创建遥测事件
- *
- * @param name - 事件名称
- * @param properties - 事件属性
- * @returns 事件对象
- */
-export function createTelemetryEvent(
-  name: string,
-  properties?: Record<string, any>
-): TelemetryEvent {
-  throw new Error('Not implemented');
+export function createTelemetryEvent(name: string, properties?: Record<string, any>): TelemetryEvent {
+  return { name, properties, timestamp: new Date() };
 }
 
-/**
- * 序列化对象
- *
- * @param data - 待序列化对象
- * @returns 序列化字符串
- */
 export function serialize(data: any): string {
-  throw new Error('Not implemented');
+  return JSON.stringify(data);
 }
 
-/**
- * 反序列化对象
- *
- * @param data - 序列化字符串
- * @returns 反序列化对象
- */
 export function deserialize(data: string): any {
-  throw new Error('Not implemented');
+  return JSON.parse(data);
 }
 
-/**
- * 获取配置值
- *
- * @param key - 配置键
- * @param defaultValue - 默认值
- * @returns 配置值
- */
 export function getConfig(key: string, defaultValue?: any): any {
-  throw new Error('Not implemented');
+  try {
+    const configPath = process.env.CLAUDE_CONFIG_DIR
+      ? process.env.CLAUDE_CONFIG_DIR + '/.claude.json'
+      : require('os').homedir() + '/.doge/.claude.json';
+    const config = JSON.parse(readFileSync(configPath, 'utf-8'));
+    const parts = key.split('.');
+    let current = config;
+    for (const part of parts) {
+      if (current === undefined || current === null) return defaultValue;
+      current = current[part];
+    }
+    return current !== undefined ? current : defaultValue;
+  } catch {
+    return defaultValue;
+  }
 }
 
-/**
- * 设置配置值
- *
- * @param key - 配置键
- * @param value - 配置值
- */
 export function setConfig(key: string, value: any): void {
-  throw new Error('Not implemented');
+  try {
+    const configPath = process.env.CLAUDE_CONFIG_DIR
+      ? process.env.CLAUDE_CONFIG_DIR + '/.claude.json'
+      : require('os').homedir() + '/.doge/.claude.json';
+    let config: any = {};
+    try { config = JSON.parse(readFileSync(configPath, 'utf-8')); } catch { /* ignore */ }
+    const parts = key.split('.');
+    let current = config;
+    for (let i = 0; i < parts.length - 1; i++) {
+      if (!current[parts[i]] || typeof current[parts[i]] !== 'object') current[parts[i]] = {};
+      current = current[parts[i]];
+    }
+    current[parts[parts.length - 1]] = value;
+    const dir = configPath.substring(0, configPath.lastIndexOf('\\'));
+    if (dir) { try { mkdirSync(dir, { recursive: true }); } catch { /* ignore */ } }
+    writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf-8');
+  } catch { /* ignore */ }
 }

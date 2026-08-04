@@ -228,7 +228,7 @@ const outdated: Command = {
   description: 'Outdated - major/minor/patch/security/update-safe/update-all/stats/history',
   aliases: ['/outdated', '/old', '/update'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default outdated

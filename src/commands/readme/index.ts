@@ -118,7 +118,7 @@ const readme: Command = {
   description: 'README - generate/preview/save/badges/toc/check/update/sections',
   aliases: '/readme, /rm'.split(','),
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default readme

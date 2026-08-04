@@ -119,7 +119,7 @@ const debug: Command = {
   description: 'Debug integration - start/attach/breakpoints/step/vscode/config',
   aliases: '/debug, /dbg, /d'.split(','),
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default debug
