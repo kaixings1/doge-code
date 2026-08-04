@@ -34,7 +34,7 @@ function resolveJsToTs(source: string, importer?: string) {
 
   // 处理以 src/ 开头的导入（从 repo 根目录解析，回退到 projectRoot）
   if (source.startsWith('src/')) {
-    const searchRoots = [repoRoot, projectRoot]
+    const searchRoots = [projectRoot, repoRoot]
     for (const root of searchRoots) {
       // 直接尝试源路径
       const direct = path.resolve(root, source)
@@ -337,7 +337,7 @@ export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin(), jsToTsResolver(), markdownTextPlugin(), dedupTopLevelSymbolPlugin(), hardenCliLazyRequirePlugin(), hardenCliRegexPlugin(), hardenBridgeSshImportPlugin(), optionalDepsShimPlugin()],
     ssr: {
-      external: ['electron', 'electron-store', 'node-pty', 'turndown', '@mixmark-io/domino', 'he', 'highlight.js', 'cli-highlight', 'node-forge', 'better-sqlite3'],
+      external: ['electron', 'electron-store', 'node-pty', 'turndown', '@mixmark-io/domino', 'he', 'highlight.js', 'cli-highlight', 'node-forge', 'better-sqlite3', 'zod', 'zod/v4'],
     },
     build: {
       outDir: 'dist/main',
@@ -350,7 +350,7 @@ export default defineConfig({
       rollupOptions: {
         input: { index: './src/main/entrypoint.ts' },
         output: { format: 'es', entryFileNames: '[name].mjs' },
-        external: ['electron', 'electron-store', 'node-pty', 'turndown', '@mixmark-io/domino', 'he', 'highlight.js', 'cli-highlight', 'node-forge', 'better-sqlite3'],
+        external: ['electron', 'electron-store', 'node-pty', 'turndown', '@mixmark-io/domino', 'he', 'highlight.js', 'cli-highlight', 'node-forge', 'better-sqlite3', 'zod', 'zod/v4'],
       },
     },
     resolve: {

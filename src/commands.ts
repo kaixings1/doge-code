@@ -112,6 +112,44 @@ import symbol from './commands/symbol/index.ts'
 import imports from './commands/imports/index.ts'
 import fmt from './commands/fmt/index.ts'
 import testRun from './commands/test-run/index.ts'
+import gitGraph from './commands/git-graph/index.ts'
+import release from './commands/release/index.ts'
+import blame from './commands/blame/index.ts'
+import conflict from './commands/conflict/index.ts'
+import fileHistory from './commands/file-history/index.ts'
+import contributors from './commands/contributors/index.ts'
+import performance from './commands/performance/index.ts'
+import tc from './commands/tc/index.ts'
+import security from './commands/security/index.ts'
+import snippets from './commands/snippets/index.ts'
+import debug from './commands/debug/index.ts'
+import changelogGen from './commands/changelog-gen/index.ts'
+import fileSearch from './commands/file-search/index.ts'
+import apiTest from './commands/api-test/index.ts'
+import dbMigrate from './commands/db-migrate/index.ts'
+import codeReview from './commands/code-review/index.ts'
+import projectStats from './commands/project-stats/index.ts'
+import envDiff from './commands/env-diff/index.ts'
+import backupFull from './commands/backup-full/index.ts'
+import ssh from './commands/ssh/index.ts'
+import notes from './commands/notes/index.ts'
+import terminal from './commands/terminal/index.ts'
+import watch from './commands/watch/index.ts'
+import docs from './commands/docs/index.ts'
+import graph from './commands/graph/index.ts'
+import lighthouse from './commands/lighthouse/index.ts'
+import sitemap from './commands/sitemap/index.ts'
+import htaccess from './commands/htaccess/index.ts'
+import robots from './commands/robots/index.ts'
+import readme from './commands/readme/index.ts'
+import importMap from './commands/import-map/index.ts'
+import bundle from './commands/bundle/index.ts'
+import deadCode from './commands/dead-code/index.ts'
+import duplicate from './commands/duplicate/index.ts'
+import license from './commands/license/index.ts'
+import outdated from './commands/outdated/index.ts'
+import tree from './commands/tree/index.ts'
+import grep from './commands/grep/index.ts'
 
 // 导入新增的21个命令
 import lessPermissionPrompts from './commands/less-permission-prompts/index.ts'
@@ -148,6 +186,8 @@ if (process.env.USER_TYPE === 'ant') {
 
 import securityReview from './commands/security-review.ts'
 import bughunter from './commands/bughunter/index.tsx'
+import dashboard from './commands/dashboard/index.ts'
+import rules from './commands/rules/index.ts'
 import terminalSetup from './commands/terminalSetup/index.ts'
 import usage from './commands/usage/index.ts'
 import theme from './commands/theme/index.ts'
@@ -542,6 +582,44 @@ const COMMANDS = memoize((): Command[] => [
   imports,
   fmt,
   testRun,
+  gitGraph,
+  release,
+  blame,
+  conflict,
+  fileHistory,
+  contributors,
+  performance,
+  tc,
+  security,
+  snippets,
+  debug,
+  changelogGen,
+  fileSearch,
+  apiTest,
+  dbMigrate,
+  codeReview,
+  projectStats,
+  envDiff,
+  backupFull,
+  ssh,
+  notes,
+  terminal,
+  watch,
+  docs,
+  graph,
+  lighthouse,
+  sitemap,
+  htaccess,
+  robots,
+  readme,
+  importMap,
+  bundle,
+  deadCode,
+  duplicate,
+  license,
+  outdated,
+  tree,
+  grep,
   ...(workflowsCmd ? [workflowsCmd] : []),
   ...(torch ? [torch] : []),
   lessPermissionPrompts,
@@ -597,6 +675,8 @@ const COMMANDS = memoize((): Command[] => [
   ...(process.env.USER_TYPE === 'ant' && !process.env.IS_DEMO
     ? INTERNAL_ONLY_COMMANDS
     : []),
+  dashboard,
+  rules,
   bughunter,
 ])
 

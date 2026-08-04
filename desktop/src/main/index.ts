@@ -204,7 +204,14 @@ function getEngine(): QueryEngine {
     tsLog('MAIN', 'Working directory set to:', cwdRoot)
 
     getPermissionManager().setMainWindow(mainWindow)
-    const adaptedTools = createAdaptedTools(config)
+    let adaptedTools: Map<string, unknown>
+    try {
+      adaptedTools = createAdaptedTools(config)
+    } catch (toolErr) {
+      tsLog('MAIN', 'createAdaptedTools failed:', toolErr instanceof Error ? toolErr.message : String(toolErr))
+      tsLog('MAIN', 'Stack:', toolErr instanceof Error ? toolErr.stack : 'no stack')
+      adaptedTools = new Map()
+    }
 
     engine = new QueryEngine({
       model: config.model,
@@ -325,7 +332,7 @@ function createWindow(): void {
     const htmlUrl = `file://${path.join(DIST_DIR, 'renderer', 'index.html').replace(/\\/g, '/')}#/desktop`
     mainWindow.loadURL(htmlUrl)
   }
-  if (process.env.NODE_ENV !== 'test') {
+  if (process.env.NODE_ENV === 'development') {
     mainWindow.webContents.openDevTools({ mode: 'detach' })
   }
 

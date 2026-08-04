@@ -16,6 +16,9 @@ import type { Tool, ToolUseContext } from '../Tool.js'
 import { getEmptyToolPermissionContext } from '../Tool.js'
 import { zodToJsonSchema } from '../utils/zodToJsonSchema.js'
 import { getAllBaseTools } from '../tools.js'
+import { AgentIntegrationTool } from '../tools/AgentIntegrationTool/index.js'
+import { PowerTools } from '../tools/PowerTools/index.js'
+import { PowerTools2 } from '../tools/PowerTools/index2.js'
 import { getLspClientManager } from './lspClientManager.js'
 
 // ─── 类型定义 ───
@@ -73,7 +76,7 @@ function buildToolContext(config: EngineConfig): ToolUseContext {
 // ─── 创建适配 QueryEngine 的工具集 ───
 
 export function createAdaptedTools(config: EngineConfig) {
-  const srcTools = getAllBaseTools()
+  const srcTools = [...getAllBaseTools(), AgentIntegrationTool, ...PowerTools, ...PowerTools2]
   console.log('[TOOLEXEC] getAllBaseTools returned', srcTools.length, 'tools',
     srcTools.map(t => t.name).slice(0, 10).join(', '))
 
@@ -92,12 +95,24 @@ export function createAdaptedTools(config: EngineConfig) {
       console.log('[TOOLEXEC] skip tool (no name):', JSON.stringify(srcTool).slice(0, 100))
       continue
     }
+    if (!srcTool.inputSchema) {
+      console.log('[TOOLEXEC] skip tool (no inputSchema):', srcTool.name)
+      continue
+    }
     ctx.options.tools = srcTools
+
+    let jsonSchema: Record<string, unknown>
+    try {
+      jsonSchema = zodToJsonSchema(srcTool.inputSchema)
+    } catch (zodErr) {
+      console.error('[TOOLEXEC] zodToJsonSchema failed for tool:', srcTool.name, 'inputSchema type:', typeof srcTool.inputSchema, 'error:', zodErr instanceof Error ? zodErr.message : String(zodErr))
+      jsonSchema = { type: 'object', properties: {} }
+    }
 
     adaptedTools.set(srcTool.name, {
       name: srcTool.name,
       description: srcTool.description,
-      parameters: zodToJsonSchema(srcTool.inputSchema),
+      parameters: jsonSchema,
       validate: (input) => {
         const args = input as Record<string, unknown>
         if (!args) return { valid: false, errors: ['参数为空'] }

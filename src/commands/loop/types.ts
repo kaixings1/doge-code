@@ -72,7 +72,7 @@ export interface LoopStrategy {
   readonly displayName: string
   readonly description: string
   decompose(goal: LoopGoal): SubTask[]
-  evaluate(goal: LoopGoal, subTasks: SubTask[]): { achieved: boolean; reason: string }
+  evaluate(goal: LoopGoal, subTasks: SubTask[]): { achieved: boolean; reason: string } | Promise<{ achieved: boolean; reason: string }>
   getSystemPrompt(goal: LoopGoal): string
   shouldContinue(iteration: number, maxIterations: number, subTasks: SubTask[]): boolean
   /**
@@ -82,4 +82,12 @@ export interface LoopStrategy {
    * 默认实现为空操作，不需要此功能的策略无需覆盖。
    */
   setTaskExecutor?(executor: TaskExecutor): void
+  /**
+   * 策略是否在 evaluate() 中自行处理任务执行
+   *
+   * 返回 true 时，LoopEngine 主循环不会主动执行 pending 任务，
+   * 而是将所有执行控制权交给策略的 evaluate() 方法。
+   * 默认返回 false，LoopEngine 按默认模式执行。
+   */
+  handlesOwnExecution?(): boolean
 }

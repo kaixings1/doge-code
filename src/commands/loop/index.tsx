@@ -15,228 +15,180 @@ import type { LoopGoal, LoopStrategyName, SubTask } from './types.js'
 import { getStrategy, getStrategyInfo, getAvailableStrategies } from './strategies/index.js'
 import { isValidStrategy } from './engine.js'
 import type { TaskExecutor } from './types.js'
-
-// ============================================================================
-// 帮助文本
-// ============================================================================
-
-function renderHelp(): string {
-  const strategies = getStrategyInfo()
-  const lines: string[] = [
-    '🔄 目标导向循环引擎',
-    '',
-    '给 AI 一个目标，在达成目标前一直循环处理。',
-    '',
-    '用法:',
-    '  /loop <目标描述> [策略] [选项]',
-    '',
-    '策略（--strategy <name>）：',
-    '',
-  ]
-  for (const s of strategies) {
-    lines.push(`  ${s.name.padEnd(12)} ${s.displayName}`)
-    lines.push(`  ${' '.repeat(12)} ${s.description}`)
-    lines.push('')
-  }
-  lines.push('选项:')
-  lines.push('  --strategy <name>     循环策略（默认: openhands）')
-  lines.push('  --max-iterations <n>  最大迭代次数（默认: 20）')
-  lines.push('  --criteria <标准>     成功标准（可多次指定）')
-  lines.push('  --json                JSON 格式输出结果')
-  lines.push('  --examples            显示详细示例')
-  lines.push('  --help                显示此帮助')
-  lines.push('')
-  lines.push('快捷方式:')
-  for (const s of strategies) {
-    lines.push(`  /loop-${s.name} <目标>  等同于 /loop <目标> --strategy ${s.name}`)
-  }
-  lines.push('')
-  lines.push('示例:')
-  lines.push('  /loop "重构用户模块"')
-  lines.push('  /loop "修复所有 TypeScript 错误" --strategy swe-agent')
-  lines.push('  /loop "实现用户注册功能" --strategy autogpt --max-iterations 30')
-  lines.push('  /loop "优化数据库查询性能" --strategy langgraph --criteria "查询时间 < 100ms"')
-  return lines.join('\n')
-}
-
-function renderExamples(): string {
-  return [
-    '🔄 循环引擎 — 详细示例',
-    '',
-    '示例 1: LangGraph 状态机循环（条件分支）',
-    '  /loop "分析代码库，如果发现安全问题则修复" --strategy langgraph',
-    '  工作流程: analyze → plan → execute → verify → 条件跳转',
-    '',
-    '示例 2: CrewAI 多 Agent 协作',
-    '  /loop "开发 REST API：设计、编码、测试、审查" --strategy crew',
-    '  工作流程: manager → developer → tester → reviewer',
-    '',
-    '示例 3: AutoGPT 目标驱动',
-    '  /loop "调研 CLI 工具，写对比报告" --strategy autogpt',
-    '  工作流程: 图节点执行 + 并发控制 + 自动重试',
-    '',
-    '示例 4: OpenHands 工程代理',
-    '  /loop "实现用户认证，所有测试必须通过" --strategy openhands --criteria "测试通过"',
-    '  工作流程: plan → execute → verify → 失败则重新计划',
-    '',
-    '示例 5: SWE-agent Bug 修复',
-    '  /loop "修复登录页面 TypeError" --strategy swe-agent',
-    '  工作流程: localize → analyze → patch → verify',
-    '',
-    '提示:',
-    '  • 首次使用建议先用 --max-iterations 5 限制迭代次数',
-    '  • 用 --criteria 指定明确的成功标准',
-    '  • 不同策略可以尝试同一任务，选择最适合的',
-  ].join('\n')
-}
-
-function renderInteractivePrompt(): string {
-  const lines = [
-    '🔄 目标导向循环引擎 — 交互式启动',
-    '',
-    '请描述你的目标（或选择下面的示例）：',
-    '',
-    '  1. 重构代码模块，提高可维护性',
-    '  2. 修复所有 TypeScript 类型错误',
-    '  3. 实现一个新功能模块',
-    '  4. 优化性能并验证改进',
-    '  5. 代码审查并修复发现的问题',
-    '  6. 编写测试并确保全部通过',
-    '',
-    '用法: /loop "你的目标" --strategy <策略名>',
-    '帮助: /loop --help',
-    '示例: /loop --examples',
-    '',
-    '可用策略:',
-  ]
-  for (const s of getStrategyInfo()) {
-    lines.push(`  ${s.name.padEnd(12)} — ${s.description}`)
-  }
-  return lines.join('\n')
-}
-
-// ============================================================================
-// 参数解析
-// ============================================================================
-
-interface ParsedLoopArgs {
-  goal: string
-  strategy: LoopStrategyName
-  maxIterations: number
-  criteria: string[]
-  json: boolean
-  help: boolean
-  examples: boolean
-}
-
-function parseArgs(args: string): ParsedLoopArgs {
-  const result: ParsedLoopArgs = {
-    goal: '',
-    strategy: 'openhands',
-    maxIterations: 20,
-    criteria: [],
-    json: false,
-    help: false,
-    examples: false,
-  }
-
-  const parts = args.trim().split(/\s+/).filter(Boolean)
-  const goalParts: string[] = []
-  let i = 0
-
-  while (i < parts.length) {
-    const part = parts[i]
-    if (part === '--help' || part === 'help') {
-      result.help = true
-    } else if (part === '--examples' || part === 'examples') {
-      result.examples = true
-    } else if (part === '--json') {
-      result.json = true
-    } else if (part === '--strategy' && i + 1 < parts.length) {
-      const s = parts[++i] as LoopStrategyName
-      if (isValidStrategy(s)) {
-        result.strategy = s
-      } else {
-        throw new Error(`未知策略: ${s}。可用策略: ${getAvailableStrategies().join(', ')}`)
-      }
-    } else if (part === '--max-iterations' && i + 1 < parts.length) {
-      const n = parseInt(parts[++i], 10)
-      if (!isNaN(n) && n > 0) result.maxIterations = n
-    } else if (part === '--criteria' && i + 1 < parts.length) {
-      result.criteria.push(parts[++i])
-    } else {
-      goalParts.push(part)
-    }
-    i++
-  }
-
-  result.goal = goalParts.join(' ')
-  return result
-}
-
-// ============================================================================
-// 循环执行引擎（接入真实 AI）
-// ============================================================================
-
-/**
- * 通过 QueryEngine 执行任务
- * 接入真实的 AI 推理 + 工具执行能力
- */
+import { execSync } from 'child_process'
+import { mkdir, writeFile } from 'fs/promises'
+import { formatStatusLine, formatFinalReport, formatSubTaskSummary, type ProgressState } from './progress-ui.js'
 async function createTaskExecutor(
   context: LocalJSXCommandContext,
 ): Promise<TaskExecutor> {
-  return async (prompt: string, systemPrompt: string, task: SubTask) => {
-    try {
-      // 构建完整的执行提示词
-      const fullPrompt = `${systemPrompt}
+  const apiKey = process.env.DOGE_API_KEY || process.env.ANTHROPIC_API_KEY || ''
+  const baseURL = process.env.ANTHROPIC_BASE_URL || 'https://api.longcat.chat/openai/v1/chat/completions'
+  const model = context.options.mainLoopModel || process.env.ANTHROPIC_MODEL || 'LongCat-2.0'
 
-## 当前任务
+  return async (prompt: string, systemPrompt: string, task: SubTask) => {
+    const outputLines: string[] = []
+    const createdFiles: string[] = []
+    let commandsExecuted = 0
+
+    try {
+      const fullPrompt = `你是一个专业的工程师。请完成以下任务，必须执行真实的 bash 命令来创建文件。
+
+## 任务
 ${task.description}
 
 ## 执行指南
 ${prompt}
 
-## 可用工具
-- BashTool: 执行 shell 命令
-- FileReadTool: 读取文件
-- FileWriteTool: 写入文件
-- FileEditTool: 编辑文件
-- Grep: 搜索代码
-- Glob: 查找文件
-- AgentTool: 创建子代理
+## 关键要求（必须遵守）
+1. 所有产出必须写入文件！不要只输出文本描述！
+2. 用 bash 命令创建文件：
+   - 简单文件：echo "内容" > 路径
+   - 多行文件：cat << 'EOF' > 路径
+内容
+EOF
+3. 配置文件（YAML/JSON/JS 等）必须写入对应路径
+4. 每个步骤都要用 bash 命令创建，用代码块包裹
+5. 如果命令失败，分析原因并重试
+6. 最后列出所有创建的文件
 
-请使用可用工具执行任务。完成后输出执行结果。`
+## 期望输出格式
+\`\`\`bash
+mkdir -p 目录
+echo '内容' > 文件路径
+\`\`\`
 
-      // 通过 QueryEngine 执行
-      const result = await context.options.tools.execute({
-        name: 'ask',
-        input: {
-          prompt: fullPrompt,
-          maxTokens: 4096,
+现在开始执行:`
+
+      outputLines.push(`🤖 [AI] 调用 API (model: ${model})`)
+
+      const response = await fetch(baseURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
         },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: 'system', content: '你是一个工程师。请执行真实的 bash 命令来创建文件。' },
+            { role: 'user', content: fullPrompt },
+          ],
+          max_tokens: 4000,
+          stream: false,
+        }),
       })
 
-      const content = result.content
-      let output = ''
-      if (typeof content === 'string') {
-        output = content
-      } else if (Array.isArray(content)) {
-        output = content
-          .map((block: { type: string; text?: string }) => {
-            if (typeof block === 'string') return block
-            if (block && typeof block === 'object' && 'text' in block) return block.text ?? ''
-            return ''
-          })
-          .join('\n')
+      if (!response.ok) {
+        const errorText = await response.text()
+        return { success: false, output: outputLines.join('\n'), error: `API HTTP ${response.status}: ${errorText.slice(0, 200)}` }
       }
 
-      return { success: true, output: output.slice(0, 4000) }
-    } catch (error) {
-      return {
-        success: false,
-        output: '',
-        error: error instanceof Error ? error.message : String(error),
+      const data = await response.json() as {
+        choices?: Array<{ message?: { content?: string; reasoning_content?: string } }>
+        error?: { message?: string }
       }
+
+      if (data.error) {
+        return { success: false, output: outputLines.join('\n'), error: `API 错误: ${data.error.message || 'unknown'}` }
+      }
+
+      // Save raw API response for debugging
+      try {
+        await writeFile(`loop-api-response-${task.id}.json`, JSON.stringify(data, null, 2), 'utf-8')
+      } catch { /* ignore */ }
+
+      const aiOutput = data.choices?.[0]?.message?.content || data.choices?.[0]?.message?.reasoning_content || ''
+      outputLines.push(`🤖 [AI] 返回 (${aiOutput.length} 字符)`)
+
+      // Parse bash commands
+      const bashBlocks = aiOutput.match(/```(?:bash|sh|shell|yaml|json|yml)?\s*([\s\S]*?)```/g) || []
+      let commands: string[] = []
+      for (const block of bashBlocks) {
+        const content = block.replace(/```(?:bash|sh|shell|yaml|json|yml)?\s*/, '').replace(/```\s*$/, '').trim()
+        if (content.includes('<<')) {
+          commands.push(content)
+        } else {
+          for (const line of content.split('\n')) {
+            const trimmed = line.trim()
+            if (trimmed && !trimmed.startsWith('#') && !trimmed.startsWith('//')) {
+              commands.push(trimmed)
+            }
+          }
+        }
+      }
+
+      // If no bash commands found, make a second AI call to convert
+      if (commands.length === 0 && aiOutput.length > 0) {
+        outputLines.push(`⚠️  无 bash 命令，进行第二次 AI 转换...`)
+        const conversionPrompt = `请将下面的计划转换为可执行的 bash 命令：\n\n---\n\n${aiOutput}\n\n---\n\n要求：只输出 bash 命令，用代码块包裹。\n\n输出格式：\n\`\`\`bash\nmkdir -p 目录\necho '内容' > 文件路径\n\`\`\``
+        try {
+          const secondResponse = await fetch(baseURL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+            body: JSON.stringify({ model, messages: [{ role: 'system', content: 'bash 专家' }, { role: 'user', content: conversionPrompt }], max_tokens: 4000, stream: false }),
+          })
+          if (secondResponse.ok) {
+            const secondData = await secondResponse.json() as { choices?: Array<{ message?: { content?: string } }> }
+            const secondOutput = secondData.choices?.[0]?.message?.content || ''
+            const secondBlocks = secondOutput.match(/```(?:bash|sh|shell|yaml|json|yml)?\s*([\s\S]*?)```/g) || []
+            for (const block of secondBlocks) {
+              const c = block.replace(/```(?:bash|sh|shell|yaml|json|yml)?\s*/, '').replace(/```\s*$/, '').trim()
+              if (c.includes('<<')) { commands.push(c) }
+              else { for (const line of c.split('\n')) { const t = line.trim(); if (t && !t.startsWith('#') && !t.startsWith('//')) commands.push(t) } }
+            }
+            outputLines.push(`🤖 [AI] 第二次调用 (${secondOutput.length} 字符, ${commands.length} 个命令)`)
+          }
+        } catch (secondErr) {
+          outputLines.push(`✗ 第二次调用失败`)
+        }
+      }
+
+      // Execute bash commands
+      if (commands.length > 0) {
+        outputLines.push(`⚡ [执行] ${commands.length} 个命令:`)
+        for (const cmd of commands) {
+          outputLines.push(`  > ${cmd.slice(0, 100)}${cmd.length > 100 ? '...' : ''}`)
+          try {
+            const isWin = process.platform === 'win32'
+            const shellPath = isWin ? 'C:\\Program Files\\Git\\bin\\bash.exe' : null
+            const result = execSync(cmd, { cwd: process.cwd(), encoding: 'utf-8', timeout: 60000, shell: shellPath, stdio: ['pipe', 'pipe', 'pipe'] })
+            outputLines.push(`    ✓ (${result.length} 字符)`)
+            commandsExecuted++
+            const fileMatch = cmd.match(/>\s*([^\s&|]+)/g)
+            if (fileMatch) { for (const m of fileMatch) { const fp = m.replace(/^>\s*/, '').trim(); if (fp && !fp.startsWith('/dev/')) createdFiles.push(fp) } }
+          } catch (execErr: unknown) {
+            const err = execErr as { stdout?: string; stderr?: string; status?: number }
+            outputLines.push(`    ✗ (${err.status ?? '?'})`)
+          }
+        }
+      } else if (aiOutput.length > 0) {
+        outputLines.push(`⚠️  无 bash 命令，写入报告文件`)
+        try {
+          const reportPath = `loop-report-${task.id}.md`
+          await writeFile(reportPath, `# ${task.description}
+
+${aiOutput}`, 'utf-8')
+          createdFiles.push(reportPath)
+          outputLines.push(`  📄 ${reportPath}`)
+        } catch (writeErr) {
+          outputLines.push(`  ✗ 写入失败`)
+        }
+      } else {
+        outputLines.push(`❌ AI 返回为空`)
+        return { success: false, output: outputLines.join('\n'), error: 'AI 返回了空内容' }
+      }
+
+      const uniqueFiles = [...new Set(createdFiles)]
+      if (uniqueFiles.length > 0) {
+        outputLines.push(`
+📁 创建了 ${uniqueFiles.length} 个文件:`)
+        for (const f of uniqueFiles) { outputLines.push(`   • ${f}`) }
+      }
+
+      return { success: true, output: outputLines.join('\n').slice(0, 8000) }
+    } catch (error) {
+      outputLines.push(`💥 [异常] ${error instanceof Error ? error.message : String(error)}`)
+      return { success: false, output: outputLines.join('\n'), error: error instanceof Error ? error.message : String(error) }
     }
   }
 }
@@ -257,7 +209,9 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
   try {
     parsed = parseArgs(s)
   } catch (err) {
-    onDone(`❌ 参数错误: ${err instanceof Error ? err.message : String(err)}\n\n用 /loop --help 查看帮助`)
+    onDone(`❌ 参数错误: ${err instanceof Error ? err.message : String(err)}
+
+用 /loop --help 查看帮助`)
     return
   }
 
@@ -284,19 +238,75 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       maxIterations: parsed.maxIterations,
     }
 
-    // 创建任务执行器（接入真实 AI）
     const taskExecutor = await createTaskExecutor(context)
 
-    // 导入 executeLoop
     const { executeLoop } = await import('./engine.js')
 
-    // 执行循环
+    const startTime = Date.now()
+    let fileCount = 0
+    const createdFiles: string[] = []
+    const progressState: ProgressState = {
+      strategy: parsed.strategy,
+      currentIteration: 0,
+      maxIterations: parsed.maxIterations,
+      currentTask: '',
+      fileCount: 0,
+      startTime,
+      phase: 'idle',
+    }
+
     const result = await executeLoop({
       strategy: parsed.strategy,
       goal,
       taskExecutor,
-      onProgress: (event) => {
-        console.log(`[LOOP] ${event.type}: ${JSON.stringify(event)}`)
+      onProgress: (event: { type: string; [k: string]: unknown }) => {
+        switch (event.type) {
+          case 'loop_start':
+            progressState.phase = 'planning'
+            onDone(formatStatusLine(progressState), { display: 'system' })
+            break
+          case 'iteration_start':
+            progressState.phase = 'executing'
+            progressState.currentIteration = event.iteration as number
+            progressState.maxIterations = event.maxIterations as number
+            progressState.fileCount = fileCount
+            onDone(formatStatusLine(progressState), { display: 'system' })
+            break
+          case 'task_start':
+            progressState.currentTask = (event.description as string) ?? ''
+            onDone(formatStatusLine(progressState), { display: 'system' })
+            break
+          case 'task_end': {
+            const fileMatches = (event.output as string ?? '').match(/📄\s*(.+?)(?:\s|$)/g)
+            if (fileMatches) {
+              fileCount += fileMatches.length
+              for (const m of fileMatches) { createdFiles.push(m.replace('📄 ', '').trim()) }
+              progressState.fileCount = fileCount
+            }
+            onDone(formatStatusLine(progressState), { display: 'system' })
+            break
+          }
+          case 'task_failed':
+            progressState.phase = 'error'
+            progressState.currentTask = `失败: ${event.error?.toString().slice(0, 30)}`
+            onDone(formatStatusLine(progressState), { display: 'system' })
+            break
+          case 'evaluation':
+            if (event.achieved) {
+              progressState.phase = 'verifying'
+              onDone(formatStatusLine(progressState), { display: 'system' })
+            }
+            break
+          case 'loop_end':
+            progressState.phase = 'done'
+            progressState.fileCount = fileCount
+            onDone(formatStatusLine(progressState), { display: 'user' })
+            break
+          case 'error':
+            progressState.phase = 'error'
+            onDone(formatStatusLine(progressState), { display: 'system' })
+            break
+        }
       },
     })
 
@@ -305,24 +315,31 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       return
     }
 
-    const statusIcon = result.success ? '✅' : '⏸️'
     const lines: string[] = [
-      `${statusIcon} 循环执行完成`,
-      '',
-      `策略: ${parsed.strategy}`,
-      `迭代: ${result.iterations} 轮`,
-      `结果: ${result.reason}`,
-      '',
-      '子任务:',
+      formatFinalReport(
+        { ...progressState, phase: result.success ? 'done' : 'error', fileCount },
+        result.success,
+        result.reason,
+        createdFiles,
+      ),
+      formatSubTaskSummary(result.subTasks),
     ]
 
-    result.subTasks.forEach((t, i) => {
-      const icon = t.status === 'completed' ? '✅' : t.status === 'failed' ? '❌' : '⏳'
-      lines.push(`  ${i + 1}. ${icon} ${t.description}`)
-    })
+    if (createdFiles.length > 0) {
+      const uniqueFiles = [...new Set(createdFiles)]
+      lines.push('')
+      lines.push(`📁 创建了 ${uniqueFiles.length} 个文件:`)
+      for (const f of uniqueFiles.slice(0, 20)) { lines.push(`   • ${f}`) }
+      if (uniqueFiles.length > 20) { lines.push(`   ... 还有 ${uniqueFiles.length - 20} 个文件`) }
+    }
 
     lines.push('')
-    lines.push(result.finalOutput.slice(0, 2000))
+    lines.push('子任务:')
+    result.subTasks.forEach((t, i) => {
+      const icon = t.status === 'completed' ? '✅' : t.status === 'failed' ? '❌' : '⏳'
+      const resultLen = t.result?.length ?? 0
+      lines.push(`  ${i + 1}. ${icon} ${t.description}${resultLen > 0 ? ` (${resultLen}字符)` : ''}`)
+    })
 
     onDone(lines.join('\n'))
   } catch (error) {
@@ -330,10 +347,6 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
     onDone(`❌ 循环执行失败: ${message}`)
   }
 }
-
-// ============================================================================
-// 命令注册
-// ============================================================================
 
 const loopCommand: Command = {
   type: 'local-jsx',

@@ -111,7 +111,7 @@ if (
       windowContext.stickyBucketPrefix ||
       dataContext.stickyBucketPrefix ||
       undefined,
-    jsCookie: Cookies,
+    jsCookie: Cookies as any,
   });
 } else if (
   windowContext.useStickyBucketService === "localStorage" ||

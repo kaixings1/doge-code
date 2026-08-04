@@ -465,7 +465,7 @@ export const CLEAR_TAB_STATUS = osc(
  * DCS-passthrough carries the sequence to the outer terminal.
  */
 export function supportsTabStatus(): boolean {
-  return process.env.USER_TYPE === 'ant'
+  return process.env.USER_TYPE === 'ant' || process.env.USER_TYPE === 'ant0'
 }
 
 /**

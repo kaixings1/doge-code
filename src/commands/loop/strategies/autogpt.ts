@@ -748,6 +748,14 @@ export class AutoGPTStrategy extends BaseLoopStrategy {
   }
 
   /**
+   * AutoGPT 策略在 evaluate() 中通过 executeGraphNodes() 自行处理任务执行
+   * LoopEngine 主循环不应重复执行 pending 任务
+   */
+  handlesOwnExecution(): boolean {
+    return true
+  }
+
+  /**
    * 将目标分解为子任务（图节点）
    *
    * 策略：
@@ -821,50 +829,69 @@ export class AutoGPTStrategy extends BaseLoopStrategy {
       return nodes
     }
 
-    // 未预定义子任务：创建入口节点 + 执行节点 + 出口节点的三阶段结构
-    const entryId = 'autogpt-entry'
-    const execId = 'autogpt-exec'
-    const exitId = 'autogpt-exit'
+    // 未预定义子任务：根据目标描述创建有意义的多阶段任务
+    const desc = goal.description.toLowerCase()
+    const criteria = goal.successCriteria || []
 
-    this.executor.addNode({
-      id: entryId,
-      name: '分析目标',
-      description: `分析目标并制定执行计划: ${goal.description}`,
-      parentIds: [],
-      childIds: [execId],
-      maxRetries: 3,
+    // 根据目标关键词创建有意义的任务列表
+    const taskDefs: Array<{ id: string; name: string; desc: string }> = []
+
+    // 阶段 1: 分析和规划
+    taskDefs.push({
+      id: 'autogpt-analyze',
+      name: '分析需求',
+      desc: `分析目标: "${goal.description}"。${criteria.length > 0 ? `成功标准: ${criteria.join(', ')}` : ''}输出需求分析报告。`,
     })
 
-    this.executor.addNode({
-      id: execId,
-      name: '执行目标',
-      description: goal.description,
-      parentIds: [entryId],
-      childIds: [exitId],
-      maxRetries: 3,
-    })
-
-    this.executor.addNode({
-      id: exitId,
-      name: '完成确认',
-      description: `确认目标已达成: ${goal.description}`,
-      parentIds: [execId],
-      childIds: [],
-      maxRetries: 1,
-    })
-
-    this.executor.setEntryNode(entryId)
-
-    const subTasks: SubTask[] = [
-      { id: entryId, description: `[entry] 分析目标: ${goal.description}`, status: 'pending' },
-      { id: execId, description: `[exec] ${goal.description}`, status: 'pending' },
-      { id: exitId, description: `[exit] 确认目标完成`, status: 'pending' },
-    ]
-
-    for (const st of subTasks) {
-      this.nodeSubTaskMap.set(st.id, st)
+    // 阶段 2: 根据目标类型添加具体任务
+    if (desc.includes('devops') || desc.includes('部署') || desc.includes('pipeline') || desc.includes('ci/cd')) {
+      taskDefs.push({ id: 'autogpt-design', name: '设计流水线', desc: `设计 DevOps 部署流水线架构。${criteria.includes('代码检查') ? '包含代码检查阶段。' : ''}${criteria.includes('自动化测试') ? '包含自动化测试阶段。' : ''}${criteria.includes('自动部署') ? '包含自动部署阶段。' : ''}` })
+      if (criteria.includes('代码检查') || desc.includes('lint') || desc.includes('检查')) {
+        taskDefs.push({ id: 'autogpt-lint', name: '配置代码检查', desc: '配置并运行代码检查工具（ESLint、Prettier 等），确保代码质量。' })
+      }
+      if (criteria.includes('自动化测试') || desc.includes('test') || desc.includes('测试')) {
+        taskDefs.push({ id: 'autogpt-test', name: '配置自动化测试', desc: '配置并运行自动化测试（Jest、Vitest 等），确保功能正确。' })
+      }
+      taskDefs.push({ id: 'autogpt-pipeline', name: '创建流水线配置', desc: '创建 CI/CD 配置文件（GitHub Actions、Jenkins 或 GitLab CI）。' })
+      if (criteria.includes('自动部署') || desc.includes('deploy') || desc.includes('部署')) {
+        taskDefs.push({ id: 'autogpt-deploy', name: '配置自动部署', desc: '配置自动部署脚本和流程。' })
+      }
+    } else if (desc.includes('修复') || desc.includes('bug') || desc.includes('fix')) {
+      taskDefs.push({ id: 'autogpt-reproduce', name: '复现问题', desc: `复现并分析问题: ${goal.description}` })
+      taskDefs.push({ id: 'autogpt-fix', name: '修复问题', desc: '定位根因并修复问题。' })
+      taskDefs.push({ id: 'autogpt-verify', name: '验证修复', desc: '运行测试验证修复有效。' })
+    } else {
+      // 通用任务分解
+      taskDefs.push({ id: 'autogpt-plan', name: '制定计划', desc: `制定执行计划: ${goal.description}` })
+      taskDefs.push({ id: 'autogpt-execute', name: '执行任务', desc: `执行核心任务: ${goal.description}` })
     }
 
+    // 阶段 N: 验证和总结
+    taskDefs.push({ id: 'autogpt-verify', name: '验证结果', desc: `验证目标是否达成: ${goal.description}。${criteria.length > 0 ? `检查标准: ${criteria.join(', ')}` : ''}` })
+
+    // 创建图节点和子任务
+    const subTasks: SubTask[] = []
+    for (let i = 0; i < taskDefs.length; i++) {
+      const td = taskDefs[i]
+      this.executor.addNode({
+        id: td.id,
+        name: td.name,
+        description: td.desc,
+        parentIds: i > 0 ? [taskDefs[i - 1].id] : [],
+        childIds: i < taskDefs.length - 1 ? [taskDefs[i + 1].id] : [],
+        maxRetries: 3,
+      })
+      const st: SubTask = { id: td.id, description: td.desc, status: 'pending' }
+      subTasks.push(st)
+      this.nodeSubTaskMap.set(td.id, st)
+    }
+
+    // 建立边
+    for (let i = 0; i < taskDefs.length - 1; i++) {
+      try { this.executor.addEdge(taskDefs[i].id, taskDefs[i + 1].id) } catch { /* ignore */ }
+    }
+
+    this.executor.setEntryNode(taskDefs[0].id)
     this.graphInitialized = true
     return subTasks
   }
@@ -882,9 +909,9 @@ export class AutoGPTStrategy extends BaseLoopStrategy {
    * 3. 有节点失败且不可重试 → 目标可能失败
    * 4. 否则继续执行
    */
-  evaluate(goal: LoopGoal, subTasks: SubTask[]): { achieved: boolean; reason: string } {
+  async evaluate(goal: LoopGoal, subTasks: SubTask[]): Promise<{ achieved: boolean; reason: string }> {
     // ─── 步骤 1：执行就绪图节点 ───
-    this.executeGraphNodes(goal, subTasks)
+    await this.executeGraphNodes(goal, subTasks)
 
     // ─── 步骤 2：基于图状态评估进展 ───
     const snapshot = this.executor.getStateSnapshot()
@@ -1065,7 +1092,7 @@ pending → running → completed
    * @param goal 当前目标（用于构建执行提示词）
    * @param subTasks 子任务列表（用于状态同步）
    */
-  private executeGraphNodes(goal: LoopGoal, subTasks: SubTask[]): void {
+  private async executeGraphNodes(goal: LoopGoal, subTasks: SubTask[]): Promise<void> {
     // 获取所有就绪节点（依赖已满足的 pending 节点）
     const readyNodes = this.executor.getReadyNodes()
 
@@ -1073,27 +1100,31 @@ pending → running → completed
       return
     }
 
-    for (const node of readyNodes) {
+    // 并行执行所有就绪节点（最多 3 个并发）
+    const maxConcurrency = 3
+    const batches: GraphNode[][] = []
+    for (let i = 0; i < readyNodes.length; i += maxConcurrency) {
+      batches.push(readyNodes.slice(i, i + maxConcurrency))
+    }
+
+    for (const batch of batches) {
       // 检查全局终止条件
       const snapshot = this.executor.getStateSnapshot()
       if (snapshot.consecutiveFailures >= this.maxConsecutiveFailures) {
         break
       }
 
-      // 标记节点为运行中
-      this.executor.markNodeRunning(node.id)
+      // 并行执行当前批次
+      const promises = batch.map(async (node) => {
+        this.executor.markNodeRunning(node.id)
+        const nodePrompt = this.buildNodePrompt(goal, node, subTasks)
+        const result = await this.executeNodeTask(node, nodePrompt)
+        this.executor.applyNodeResult(node.id, result)
+        this.syncNodeToSubTask(node.id, subTasks)
+        return { node, result }
+      })
 
-      // 构建节点执行提示词
-      const nodePrompt = this.buildNodePrompt(goal, node, subTasks)
-
-      // 执行节点
-      const result = this.executeNodeTask(node, nodePrompt)
-
-      // 将结果反馈给 GraphExecutor
-      this.executor.applyNodeResult(node.id, result)
-
-      // 同步状态回 subTasks 数组
-      this.syncNodeToSubTask(node.id, subTasks)
+      await Promise.all(promises)
     }
   }
 
@@ -1111,10 +1142,28 @@ pending → running → completed
    * @param prompt 执行提示词
    * @returns 节点执行结果
    */
-  private executeNodeTask(node: GraphNode, prompt: string): NodeExecutionResult {
-    const desc = node.description.toLowerCase()
+  private async executeNodeTask(node: GraphNode, prompt: string): Promise<NodeExecutionResult> {
+    // 如果有 AI taskExecutor，优先使用 AI 执行
+    if (this.taskExecutor) {
+      try {
+        const result = await this.taskExecutor(prompt, this.cachedSystemPrompt, {
+          id: node.id,
+          description: node.description,
+          status: 'running',
+        })
+        return {
+          success: result.success,
+          output: result.output,
+          error: result.error,
+          data: { type: 'ai_execution', nodeId: node.id },
+        }
+      } catch (aiError) {
+        // AI 执行失败，回退到关键词匹配
+      }
+    }
 
-    // 根据任务类型选择执行命令
+    // 回退：根据任务类型选择执行命令
+    const desc = node.description.toLowerCase()
     let cmd: string | null = null
 
     if (desc.includes('测试') || desc.includes('test') || desc.includes('运行测试')) {
@@ -1151,11 +1200,14 @@ pending → running → completed
 
     if (cmd) {
       try {
+        const isWin = process.platform === 'win32'
+        const shellPath = isWin ? 'C:\\Program Files\\Git\\bin\\bash.exe' : null
         const output = execSync(cmd, {
           cwd: process.cwd(),
           encoding: 'utf-8',
           timeout: 60000,
           stdio: ['pipe', 'pipe', 'pipe'],
+          shell: shellPath,
         })
         return {
           success: true,

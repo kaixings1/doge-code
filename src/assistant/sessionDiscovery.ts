@@ -44,10 +44,10 @@ export async function discoverAssistantSessions(options?: {
         return true
       })
       .map(event => ({
-        id: event.session_id || event.id,
+        id: event.session_id || event.id || '',
         title: event.data?.title || `会话 ${event.session_id?.slice(0, 8)}`,
         createdAt: event.timestamp || new Date().toISOString(),
-        status: event.data?.status || 'active',
+        status: (event.data?.status || 'active') as 'active' | 'ended' | 'paused',
         messageCount: event.data?.message_count || 0
       }))
       .slice(0, limit)
@@ -77,9 +77,9 @@ export async function getAssistantSession(sessionId: string): Promise<AssistantS
       return null
     }
     
-    const startEvent = sessionEvents.find(e => e.type === 'session_start')
-    const endEvent = sessionEvents.find(e => e.type === 'session_end')
-    
+    const startEvent = sessionEvents.find(e => (e.type as string) === 'session_start') as any
+    const endEvent = sessionEvents.find(e => (e.type as string) === 'session_end') as any
+
     return {
       id: sessionId,
       title: startEvent?.data?.title || `会话 ${sessionId.slice(0, 8)}`,

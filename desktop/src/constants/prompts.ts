@@ -49,6 +49,7 @@ import { feature } from 'bun:bundle'
 import { getFeatureValue_CACHED_MAY_BE_STALE } from '../services/analytics/growthbook.js'
 import { shouldUseGlobalCacheScope } from '../utils/betas.js'
 import { isForkSubagentEnabled } from '../tools/AgentTool/forkSubagent.js'
+import { loadDogerules, formatDogerulesForSystemPrompt } from '../utils/dogerules.js'
 import {
   systemPromptSection,
   DANGEROUS_uncachedSystemPromptSection,
@@ -493,6 +494,15 @@ ${CYBER_RISK_INSTRUCTION}`,
       getSessionSpecificGuidanceSection(enabledTools, skillToolCommands),
     ),
     systemPromptSection('memory', () => loadMemoryPrompt()),
+    systemPromptSection('dogerules', () => {
+      try {
+        const entries = loadDogerules(getCwd())
+        if (entries.length === 0) return ''
+        return formatDogerulesForSystemPrompt(entries)
+      } catch {
+        return ''
+      }
+    }),
     systemPromptSection('ant_model_override', () =>
       getAntModelOverrideSection(),
     ),
