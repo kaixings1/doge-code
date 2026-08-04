@@ -223,5 +223,5 @@ export const call: LocalJSXCommandCall = async (args) => {
   return { type: 'text', value: r || '(no output)' }
 }
 
-const cmd = { type: 'local-jsx' as const, name: 'api-doc', description: 'API docs - gen/scan/routes/jsdoc/openapi/classes/interfaces/types/exports/all + html/md/json', argumentHint: '<gen|scan|routes|jsdoc|openapi|classes|interfaces|types|exports|all> [file|dir]', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
+const cmd = { type: 'local' as const, name: 'api-doc', description: 'API docs - gen/scan/routes/jsdoc/openapi/classes/interfaces/types/exports/all + html/md/json', argumentHint: '<gen|scan|routes|jsdoc|openapi|classes|interfaces|types|exports|all> [file|dir]', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
 export default cmd

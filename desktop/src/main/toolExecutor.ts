@@ -17,6 +17,7 @@ import { getEmptyToolPermissionContext } from '../Tool.js'
 import { zodToJsonSchema } from '../utils/zodToJsonSchema.js'
 import { getAllBaseTools } from '../tools.js'
 import { AgentIntegrationTool } from '../tools/AgentIntegrationTool/index.js'
+import { AgentProxyTool } from '../tools/AgentProxyTool/index.js'
 import { PowerTools } from '../tools/PowerTools/index.js'
 import { PowerTools2 } from '../tools/PowerTools/index2.js'
 import { getLspClientManager } from './lspClientManager.js'
@@ -76,7 +77,7 @@ function buildToolContext(config: EngineConfig): ToolUseContext {
 // ─── 创建适配 QueryEngine 的工具集 ───
 
 export function createAdaptedTools(config: EngineConfig) {
-  const srcTools = [...getAllBaseTools(), AgentIntegrationTool, ...PowerTools, ...PowerTools2]
+  const srcTools = [...getAllBaseTools(), AgentIntegrationTool, AgentProxyTool, ...PowerTools, ...PowerTools2]
   console.log('[TOOLEXEC] getAllBaseTools returned', srcTools.length, 'tools',
     srcTools.map(t => t.name).slice(0, 10).join(', '))
 
@@ -91,60 +92,60 @@ export function createAdaptedTools(config: EngineConfig) {
   const ctx = buildToolContext(config)
 
   for (const srcTool of srcTools) {
-    if (!srcTool || !srcTool.name) {
-      console.log('[TOOLEXEC] skip tool (no name):', JSON.stringify(srcTool).slice(0, 100))
-      continue
-    }
-    if (!srcTool.inputSchema) {
-      console.log('[TOOLEXEC] skip tool (no inputSchema):', srcTool.name)
-      continue
-    }
-    ctx.options.tools = srcTools
-
-    let jsonSchema: Record<string, unknown>
     try {
-      jsonSchema = zodToJsonSchema(srcTool.inputSchema)
-    } catch (zodErr) {
-      console.error('[TOOLEXEC] zodToJsonSchema failed for tool:', srcTool.name, 'inputSchema type:', typeof srcTool.inputSchema, 'error:', zodErr instanceof Error ? zodErr.message : String(zodErr))
-      jsonSchema = { type: 'object', properties: {} }
-    }
+      if (!srcTool || !srcTool.name) {
+        console.log('[TOOLEXEC] skip tool (no name):', JSON.stringify(srcTool).slice(0, 100))
+        continue
+      }
+      if (!srcTool.inputSchema) {
+        console.log('[TOOLEXEC] skip tool (no inputSchema):', srcTool.name)
+        continue
+      }
+      ctx.options.tools = srcTools
 
-    adaptedTools.set(srcTool.name, {
-      name: srcTool.name,
-      description: srcTool.description,
-      parameters: jsonSchema,
-      validate: (input) => {
-        const args = input as Record<string, unknown>
-        if (!args) return { valid: false, errors: ['参数为空'] }
-        return { valid: true }
-      },
-      execute: async (params: unknown) => {
-        try {
-          const args = params as Record<string, unknown>
-          // 权限检查由工具内部的 checkPermissionsAndCallTool 流程处理
-          // (包括 DesktopPermissionManager 弹窗)，此处不再重复检查
-          const result = await srcTool.call(
-            args,
-            ctx,
-            async () => ({ allowed: true }),
-            { role: 'user', content: '' },
-            null,
-          )
-          // srcTool.call() 返回 { data: Out } 格式，但 engine 的 executor 期望
-          // { content: string } 格式。解包 data 层，提取 stdout/content 作为 content。
-          const raw = (result as { data?: unknown } | null)?.data ?? result
-          const content = typeof raw === 'string'
-            ? raw
-            : typeof raw === 'object' && raw !== null
-              ? (raw as Record<string, unknown>).stdout ?? (raw as Record<string, unknown>).content ?? JSON.stringify(raw)
-              : String(raw ?? '')
-          return { content }
-        } catch (e) {
-          const message = e instanceof Error ? e.message : '未知错误'
-          throw new Error(message)
-        }
-      },
-    })
+      let jsonSchema: Record<string, unknown>
+      try {
+        jsonSchema = zodToJsonSchema(srcTool.inputSchema)
+      } catch (zodErr) {
+        console.error('[TOOLEXEC] zodToJsonSchema failed for tool:', srcTool.name, 'inputSchema type:', typeof srcTool.inputSchema, 'error:', zodErr instanceof Error ? zodErr.message : String(zodErr))
+        jsonSchema = { type: 'object', properties: {} }
+      }
+
+      adaptedTools.set(srcTool.name, {
+        name: srcTool.name,
+        description: srcTool.description,
+        parameters: jsonSchema,
+        validate: (input) => {
+          const args = input as Record<string, unknown>
+          if (!args) return { valid: false, errors: ['参数为空'] }
+          return { valid: true }
+        },
+        execute: async (params: unknown) => {
+          try {
+            const args = params as Record<string, unknown>
+            const result = await srcTool.call(
+              args,
+              ctx,
+              async () => ({ allowed: true }),
+              { role: 'user', content: '' },
+              null,
+            )
+            const raw = (result as { data?: unknown } | null)?.data ?? result
+            const content = typeof raw === 'string'
+              ? raw
+              : typeof raw === 'object' && raw !== null
+                ? (raw as Record<string, unknown>).stdout ?? (raw as Record<string, unknown>).content ?? JSON.stringify(raw)
+                : String(raw ?? '')
+            return { content }
+          } catch (e) {
+            const message = e instanceof Error ? e.message : '未知错误'
+            throw new Error(message)
+          }
+        },
+      })
+    } catch (toolLoopErr) {
+      console.error('[TOOLEXEC] unexpected error processing tool:', srcTool?.name || 'unknown', 'error:', toolLoopErr instanceof Error ? toolLoopErr.message : String(toolLoopErr))
+    }
   }
 
   // 桌面端补充工具：SnipTool（裁剪历史上下文）

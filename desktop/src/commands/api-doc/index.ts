@@ -53,5 +53,5 @@ export const call: LocalJSXCommandCall = async (args) => {
   return { type: 'text', value: r || '(无输出)' }
 }
 
-const cmd = { type: 'local-jsx' as const, name: 'api-doc', description: 'API 文档生成器：gen/scan', argumentHint: '<gen|scan> <file|dir>', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
+const cmd = { type: 'local' as const, name: 'api-doc', description: 'API 文档生成器：gen/scan', argumentHint: '<gen|scan> <file|dir>', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
 export default cmd

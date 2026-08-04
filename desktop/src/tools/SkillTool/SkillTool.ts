@@ -663,7 +663,7 @@ export const SkillTool: Tool<InputSchema, Output, Progress> = buildTool({
 
     // 处理技能及可选参数
     const { processPromptSlashCommand } = await import(
-      'src/utils/processUserInput/processSlashCommand.tsx'
+      '../../utils/processUserInput/processSlashCommand.tsx'
     )
     const processedCommand = await processPromptSlashCommand(
       commandName,
