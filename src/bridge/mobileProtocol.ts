@@ -18,6 +18,35 @@
 
 import type { Command } from '../commands.js'
 
+// ─── 命令历史记录（模块级，上限 100 条） ───
+
+export interface CommandHistoryEntry {
+  action: string
+  requestId: string
+  timestamp: number
+  params?: Record<string, unknown>
+}
+
+const commandHistory: CommandHistoryEntry[] = []
+
+/**
+ * 记录一次命令调用到历史（供 getHistory 查询）。
+ */
+export function recordCommand(action: string, requestId: string, params?: Record<string, unknown>): void {
+  commandHistory.push({ action, requestId, timestamp: Date.now(), params })
+  if (commandHistory.length > 100) commandHistory.shift()
+}
+
+/** 获取命令历史（最新的 n 条，默认 20） */
+export function getCommandHistory(limit = 20): CommandHistoryEntry[] {
+  return commandHistory.slice(-Math.max(1, limit))
+}
+
+/** 清空命令历史 */
+export function clearCommandHistory(): void {
+  commandHistory.length = 0
+}
+
 // ─── 移动端请求类型 ───
 
 export interface MobileRequest {
@@ -162,11 +191,12 @@ export const defaultMobileHandlers: MobileCommandMap = {
   /** 获取命令历史 */
   async getHistory(params, requestId) {
     const { limit } = params as { limit?: number }
+    const n = typeof limit === 'number' && limit > 0 ? limit : 20
     return {
       requestId,
-      limit,
-      history: [],
-      message: '历史记录功能待实现',
+      limit: n,
+      history: getCommandHistory(n),
+      message: 'ok',
     }
   },
 

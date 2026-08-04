@@ -57,7 +57,7 @@ export const AssistantSessionChooser: React.FC<{
       ),
       React.createElement('select', {
         value: filter,
-        onChange: (e) => setFilter(e.target.value as unknown as string),
+        onChange: (e: React.ChangeEvent<HTMLSelectElement>) => setFilter(e.target.value as 'all' | 'active' | 'ended'),
         style: {
           padding: '4px 8px',
           backgroundColor: '#2d2d2d',
