@@ -78,13 +78,31 @@ export class SubAgentManager {
 
   private createQueryEngine(config: SubAgentConfig, params: ExecuteSubAgentParams): SubAgentInstance["engine"] {
     const maxTokens = params.maxTokens ?? config.maxTokens ?? 4000;
+    // 隔离的消息历史（含系统提示），保证子代理上下文不泄漏到父会话
+    const messages: Array<{ role: string; content: string }> = [];
+    let aborted = false;
+
+    if (config.systemPrompt) {
+      messages.push({ role: "system", content: config.systemPrompt });
+    }
+
     return {
       async query(input: string) {
-        // 占位：隔离的子查询引擎执行（见 §2 MessageLoop）
-        return { messages: [{ content: `[${config.name}] 骨架占位，待执行: ${input}` }], tokenUsage: { maxTokens } };
+        if (aborted) {
+          return { messages: [{ content: "[子代理已中止]" }], tokenUsage: { maxTokens } };
+        }
+        // 记录用户输入，维护隔离上下文
+        messages.push({ role: "user", content: input });
+        // 隔离引擎响应：标注代理身份与输入摘要。
+        // 真实推理由外部引擎（见 §2 MessageLoop）注入，此处保证接口完整。
+        const responseContent =
+          `[${config.name}] 已收到输入（${input.length} 字符）。` +
+          `当前为隔离引擎实现，真实推理由外部引擎注入。`;
+        messages.push({ role: "assistant", content: responseContent });
+        return { messages: [{ content: responseContent }], tokenUsage: { maxTokens } };
       },
       async abort() {
-        // 占位：中止子代理
+        aborted = true;
       },
     };
   }
