@@ -69,6 +69,8 @@
 /autocomplete 智能补全（命令、Git分支、文件路径）
 /release-notes 发布说明（Changelog生成、版本对比）
 /bughunter Bug猎人（代码扫描、模式检测、快速检查）
+/rules 持久化规则管理（创建、编辑、查看跨会话规则）
+/dashboard 用量仪表盘（Web界面统计、费用、用量分析）
 
 ## 核心功能特性（特性吸收计划产物）
 
@@ -91,6 +93,268 @@
 | 多 Agent 协作 | `/agents` + AgentTool | 多专用子代理协作（规划/探索/执行/审查）|
 
 > 说明：完整实现细节见仓库 `CLAUDE.md` 的"核心功能区"章节。
+
+## 智能工作流与预测性助手（桌面端）
+
+Doge Code 桌面端（Electron GUI）集成了智能工作流系统，能够根据当前工作状态自动调整界面，并提供预测性建议和操作回滚能力。
+
+### 一、智能上下文工作流
+
+系统根据当前上下文自动切换工作模式，无需手动切换面板：
+
+| 模式 | 触发条件 | 自动调整 |
+|------|----------|----------|
+| **编码模式** | 选择 `.ts`/`.py` 等代码文件 | 打开 MonacoEditor + ToolPanel，底栏显示 Terminal |
+| **调试模式** | 检测到 `Error:`/`Traceback:` 等错误 | 右侧切换 Debugger + Terminal |
+| **审查模式** | 检测到 Git 代码变更 | 右侧切换 GitDiff + ReviewPanel |
+| **项目管理** | 检测到 `TODO`/任务描述 | 右侧切换 Kanban + TimeTracker |
+
+**使用方法：**
+- 打开文件时自动进入编码模式
+- 代码有 Git 变更时自动进入审查模式
+- 检测到错误时自动进入调试模式
+- 点击右上角模式指示器可手动锁定/解锁模式
+- 锁定后不会自动切换，避免干扰
+
+### 二、预测性 AI 助手
+
+系统对当前文件进行轻量静态分析，在消息流中展示智能建议：
+
+**支持的检测类型：**
+- 🔍 **待办标记** — 检测 TODO/FIXME/HACK/XXX/OPTIMIZE 等标记
+- 📏 **长函数** — 检测超过 80 行的函数，建议拆分
+- 📋 **重复代码** — 检测重复代码块，建议提取为公共函数
+- 🌀 **复杂嵌套** — 检测超过 4 层的嵌套，建议简化逻辑
+- ⚠️ **废弃 API** — 检测 componentWillMount 等废弃 API 使用
+
+**使用方法：**
+- 打开文件后自动分析，建议显示在消息流中
+- 点击建议可查看详情
+- 点击 "✕" 可忽略单条建议
+- 点击 "全部忽略" 可清除所有建议
+- 分析结果仅前端 regex 检测，不调用 AI API，无额外费用
+
+### 三、操作快照 + 一键回滚
+
+所有文件编辑操作自动记录快照，支持一键回滚到操作前状态：
+
+**快照机制：**
+- 文件编辑（WriteTool/Edit/MultiEdit）自动记录 before/after 快照
+- 快照保存最近 1 小时的操作记录
+- 支持回滚到任意操作前的状态
+
+**使用方法：**
+- 点击右上角 "📜 历史" 按钮打开操作历史面板
+- 面板显示所有文件编辑操作的时间、工具、文件列表
+- 点击 "↩ 回滚" 按钮可恢复到操作前状态
+- 回滚后状态显示为 "已回滚"
+- 点击 "清除全部" 可清空历史记录
+
+**注意事项：**
+- 回滚会覆盖当前文件内容，请确认后再操作
+- 快照仅保存文件内容，不保存 git 状态
+- 建议重要操作前先提交 git，以便双重保障
+
+## 新增功能（竞品对标补完 — 2026-08-04）
+
+Doge Code 持续对标业界主流编程智能体（Cursor、Copilot、Cline、Aider、Windsurf 等），补完以下关键能力。
+
+### 一、持久化规则系统 (.dogerules)
+
+类似 Cursor 的 `.cursorrules`，提供跨会话的持久化指令能力。支持三级规则加载（后者优先级更高）：
+
+| 级别 | 文件路径 | 说明 |
+|------|----------|------|
+| **全局规则** | `~/.dogerules` | 适用于所有项目的私有规则 |
+| **项目规则** | `./.dogerules` | 签入代码库的团队规则 |
+| **本地规则** | `./.dogerules.local` | 个人项目规则（gitignore） |
+
+**使用方法：**
+```
+/rules init              # 创建项目规则文件
+/rules add 使用2空格缩进  # 添加规则
+/rules add 提交前必须运行测试
+/rules show               # 查看规则详情
+/rules list               # 列出所有规则
+/rules edit # 新规则内容  # 替换整个规则文件
+/rules remove 2           # 删除第2行规则
+/rules clear              # 清空项目规则
+```
+
+**规则示例：**
+```markdown
+# 编码规范
+- 代码风格使用 2 空格缩进
+- 提交前必须运行测试
+- 使用 TypeScript 而非 JavaScript
+- 优先使用函数式编程风格
+
+# 项目约定
+- API 路由使用 RESTful 规范
+- 数据库查询使用 Prisma ORM
+- 日志使用 pino 库
+```
+
+**技术实现：**
+- 规则在会话启动时自动注入系统提示（通过 `appendSystemPrompt`）
+- 支持 CLI（`main.tsx`）和桌面端（`prompts.ts`）双入口
+- 优先级：本地 > 项目 > 全局
+- 实现位置：`src/utils/dogerules.ts`（加载/格式化）、`src/commands/rules/index.ts`（命令）
+
+### 二、用量分析仪表盘 (/dashboard)
+
+Web 可视化仪表盘，实时展示用量统计和费用分析。
+
+**使用方法：**
+```cmd
+/dashboard open           # 启动仪表盘（浏览器访问 http://127.0.0.1:3456）
+/dashboard stop           # 停止仪表盘
+/dashboard status         # 查看当前统计
+/dashboard export         # 导出数据到 JSON
+/dashboard reset          # 重置统计数据
+```
+
+**仪表盘功能：**
+- 📊 **总体统计** — 总费用、总 Token、缓存命中、代码变更、运行时长
+- 🤖 **按模型统计** — 各模型的 Token 用量和费用占比
+- 📈 **每日趋势** — 按天统计的使用量变化
+- 🔄 **自动刷新** — 每 30 秒自动更新数据
+
+**API 端点：**
+- `GET /` — Web 仪表盘界面（HTML）
+- `GET /api/stats` — JSON 格式统计数据
+- `GET /api/health` — 健康检查
+
+**技术实现：**
+- HTTP 服务器：`src/services/dashboard/server.ts`
+- 数据聚合：`src/services/dashboard/api.ts`
+- 数据类型：`src/services/dashboard/types.ts`
+- 费用追踪：集成 `cost-tracker.ts` 和 `cost-database.ts`
+
+### 三、IDE 扩展
+
+Doge Code 提供 VS Code 扩展和 JetBrains 插件，让开发者可以在 IDE 中直接使用 AI 能力。
+
+#### VS Code 扩展
+
+**安装：**
+```bash
+cd vscode-extension
+npm install
+npm run compile
+# 在 VS Code 中按 F5 启动调试
+```
+
+**功能：**
+- 🐕 AI 聊天面板 — 在 VS Code 中与 Doge Code 对话
+- 📊 用量统计 — 实时查看费用和 Token 用量
+- ⚙️ 配置面板 — 自定义服务器地址和功能开关
+
+**命令：**
+- `Doge Code: 打开聊天` — 打开聊天面板
+- `Doge Code: 显示用量统计` — 显示费用统计
+
+**配置项：**
+```json
+{
+  "doge-code.serverUrl": "http://127.0.0.1:3456",
+  "doge-code.enableChat": true,
+  "doge-code.enableAutocomplete": false
+}
+```
+
+#### JetBrains 插件
+
+**构建：**
+```bash
+cd jetbrains-plugin
+./gradlew buildPlugin
+```
+
+**功能：**
+- 🐕 侧边栏聊天窗口 — 在 JetBrains IDE 中与 Doge Code 对话
+- 📊 用量统计 — 查看费用和 Token 用量
+- ⚙️ 设置面板 — 配置服务器地址
+
+**支持 IDE：**
+- IntelliJ IDEA、PyCharm、WebStorm、PhpStorm、RubyMine、CLion、GoLand、Rider 等
+
+### 四、代码质量改进
+
+#### 已修复的 TypeScript 错误
+
+| 文件 | 错误类型 | 修复方式 |
+|------|----------|----------|
+| `strategy-examples.ts` | 字符串字面量 | 修复数组分隔符 |
+| `proactive.ts` | 导入路径 + async | 修正导入 + 添加 async |
+| `workflow.test.ts` | Mock 类型不完整 | 添加 streamMessage/healthCheck |
+| `QueryEngine.test.ts` | 属性不存在 | 改用 getState() |
+| `AppStore.test.ts` | 属性不存在 | 改用实际属性 |
+| `ToolRegistry.test.ts` | 参数缺失 | 添加第三个参数 |
+| `sessionDiscovery.ts` | 类型不匹配 | 添加类型断言 |
+| `auth.ts` | 未知类型 | 添加类型断言 |
+| `assistant/assistant.ts` | 类型未导入 | 添加 Command 导入 |
+| `loop/index.tsx` | 字符串跨行 | 改用 \n 转义 |
+| `bridge/bridgeConfig.ts` | 返回类型 | 改用 \|\| 和类型断言 |
+| `bridge/bridgeMessaging.ts` | 4处类型错误 | 添加类型断言 |
+| `auto-wrapper.ts` | Cookie 类型 | 改用 as any |
+
+#### 构建状态
+
+- ✅ `bun run build` — 编译通过
+- ✅ VS Code 扩展 — 编译通过
+- ✅ 新功能测试 — 全部通过
+
+### 五、故障排除
+
+#### 规则系统问题
+
+| 问题 | 解决方案 |
+|------|----------|
+| 规则未生效 | 检查 `.dogerules` 文件是否在项目根目录 |
+| 规则冲突 | 本地规则优先级最高，检查 `.dogerules.local` |
+| 规则格式错误 | 使用 Markdown 格式，每行一条规则 |
+
+#### 仪表盘问题
+
+| 问题 | 解决方案 |
+|------|----------|
+| 无法启动 | 检查端口 3456 是否被占用 |
+| 无法连接 | 先运行 `/dashboard open` 启动服务器 |
+| 数据为空 | 需要开始对话后才有统计数据 |
+| 端口被占用 | 修改 `src/services/dashboard/server.ts` 中的端口号 |
+
+#### IDE 扩展问题
+
+| 问题 | 解决方案 |
+|------|----------|
+| VS Code 扩展无法编译 | 运行 `npm install` 安装依赖 |
+| 无法连接到服务器 | 检查 `doge-code.serverUrl` 配置 |
+| JetBrains 插件构建失败 | 确保已安装 Gradle 和 JDK 17+ |
+
+### 六、更新日志
+
+#### v19.0 (2026-08-04)
+
+**新增功能：**
+- ✨ 持久化规则系统 (.dogerules)
+- ✨ 用量分析仪表盘 (/dashboard)
+- ✨ VS Code 扩展
+- ✨ JetBrains 插件
+
+**代码质量：**
+- 🔧 修复 13 个文件的 TypeScript 错误
+- 🔧 修复 `bridge/bridgeConfig.ts` 返回类型问题
+- 🔧 修复 `bridge/bridgeMessaging.ts` 类型错误
+- 🔧 修复 `loop/index.tsx` 字符串字面量问题
+- 🔧 修复 `auth.ts` 类型断言问题
+
+**测试：**
+- ✅ 规则系统功能测试通过
+- ✅ 仪表盘 API 测试通过
+- ✅ 仪表盘服务器启动测试通过
+- ✅ VS Code 扩展编译通过
+- ✅ 主项目构建通过
 
 如果用 ACG 比喻，大概属于：
 

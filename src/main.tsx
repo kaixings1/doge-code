@@ -215,6 +215,7 @@ import { checkOutTeleportedSessionBranch, processMessagesForTeleportResume, tele
 import { shouldEnableThinkingByDefault, type ThinkingConfig } from './utils/thinking.js';
 import { initUser, resetUserCache } from './utils/user.js';
 import { getTmuxInstallInstructions, isTmuxAvailable, parsePRReference } from './utils/worktree.js';
+import { loadDogerules, formatDogerulesForSystemPrompt, hasDogerules } from './utils/dogerules.js';
 
 // eslint-disable-next-line custom-rules/no-top-level-side-effects
 // profileCheckpoint('main_tsx_imports_loaded');
@@ -2074,6 +2075,15 @@ async function run(): Promise<CommanderCommand> {
     if (feature('KAIROS') && kairosEnabled && assistantModule) {
       const assistantAddendum = assistantModule.getAssistantSystemPromptAddendum();
       appendSystemPrompt = appendSystemPrompt ? `${appendSystemPrompt}\n\n${assistantAddendum}` : assistantAddendum;
+    }
+
+    // 加载持久化规则 (dogerules)
+    const dogerulesEntries = loadDogerules(process.cwd())
+    if (dogerulesEntries.length > 0) {
+      const dogerulesContent = formatDogerulesForSystemPrompt(dogerulesEntries)
+      if (dogerulesContent) {
+        appendSystemPrompt = appendSystemPrompt ? `${appendSystemPrompt}\n\n${dogerulesContent}` : dogerulesContent
+      }
     }
 
     // Ink 根节点仅交互式会话需要 — Ink 构造函数中的 patchConsole 会在无头模式下吞噬控制台输出。

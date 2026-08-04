@@ -42,9 +42,10 @@ export function getBridgeBaseUrlOverride(): string | void {
 /**
  * Access token for bridge API calls. In local bridge mode, returns a dummy token.
  */
-export function getBridgeAccessToken(): string | void {
+export function getBridgeAccessToken(): string {
   if (isLocalBridgeMode()) return 'local-bridge-token'
-  return getBridgeTokenOverride() ?? getClaudeAIOAuthTokens()?.accessToken
+  const token = getBridgeTokenOverride() ?? getClaudeAIOAuthTokens()?.accessToken
+  return (token as string) ?? ''
 }
 
 /**
@@ -52,5 +53,5 @@ export function getBridgeAccessToken(): string | void {
  */
 export function getBridgeBaseUrl(): string {
   if (isLocalBridgeMode()) return getLocalBridgeUrl()
-  return getBridgeBaseUrlOverride() ?? getOauthConfig().BASE_API_URL
+  return getBridgeBaseUrlOverride() || getOauthConfig().BASE_API_URL
 }

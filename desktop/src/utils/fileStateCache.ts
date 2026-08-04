@@ -1,4 +1,4 @@
-import { LRUCache } from 'lru-cache'
+import LRUCache from 'lru-cache'
 import { normalize } from 'path'
 
 export type FileState = {

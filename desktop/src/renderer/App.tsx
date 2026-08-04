@@ -233,6 +233,7 @@ export function App(): JSX.Element {
   const [executingToolIds, setExecutingToolIds] = useState<Set<string>>(new Set())
   const executedToolIdsRef = useRef<Set<string>>(new Set())
   const [toolProgress, setToolProgress] = useState<{ toolName: string; status: 'pending' | 'running' | 'success' | 'error'; progress?: number; duration?: number } | null>(null)
+  const [hasResponded, setHasResponded] = useState(false)
   // commandHistory 使用 Hook 管理（替代内联状态）
   const [commandHistory] = useState<Array<{ cmd: string; time: number }>>([])
   const [showCommandPalette, setShowCommandPalette] = useState(false)
@@ -1229,6 +1230,7 @@ export function App(): JSX.Element {
 
     const userMsg: Message = { id: `msg-${Date.now()}`, role: 'user', content: text }
     appendMsg(userMsg)
+    setHasResponded(false)
     setState('responding')
 
     // 构建发送载荷：纯文本或包含图片的 JSON
@@ -1300,6 +1302,7 @@ export function App(): JSX.Element {
         setCurrentStreaming(''); currentStreamingRef.current = ''
       }
     }
+    setHasResponded(true)
     setState('idle'); setIsSending(false)
   }, [input, state, persistActiveTabMessages, isOnline, showToast, autoSpeak, pendingImages])
 
@@ -1912,7 +1915,7 @@ export function App(): JSX.Element {
           </div>
           <div style={styles.statusBar}>
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <span style={{ color: isProcessing ? c.accent : c.textMuted }}>{isProcessing ? '● 回复中' : '○ 就绪'}</span>
+              <span style={{ color: isProcessing ? c.accent : hasResponded ? '#4ECB71' : c.textMuted }}>{isProcessing ? '● 回复中' : hasResponded ? '● 就绪' : '○ 就绪'}</span>
               {modelInfo && (<span style={{ color: c.textFaint }}>{modelInfo.provider}/{modelInfo.model}</span>)}
               {tokenUsage && tokenUsage.totalTokens > 0 && (
                 <>

@@ -11,6 +11,10 @@ describe('端到端测试', () => {
         sendMessage: vi.fn(() =>
           Promise.resolve(JSON.stringify({ content: 'E2E response' }))
         ),
+        streamMessage: vi.fn(async function* () {
+          yield 'E2E response';
+        }),
+        healthCheck: vi.fn(() => Promise.resolve(true)),
       },
       toolRegistry: {
         get: vi.fn(() => ({
@@ -46,6 +50,10 @@ describe('端到端测试', () => {
       const errorEngine = new QueryEngine({
         apiClient: {
           sendMessage: () => Promise.reject(new Error('API Error')),
+          streamMessage: vi.fn(async function* () {
+            throw new Error('API Error');
+          }),
+          healthCheck: vi.fn(() => Promise.resolve(false)),
         },
         toolRegistry: {} as any,
       });

@@ -77,8 +77,8 @@ function FileWriteToolCreatedMessage(t0) {
   let t4;
   if ($[7] !== t1 || $[8] !== t3) {
     t4 = t1 === 0
-      ? <><Text color="error">写入</Text> <Text bold={true}>{t1}</Text><Text color="error">行到</Text> {t3}</>
-      : <><Text color="success">写入</Text> <Text bold={true}>{t1}</Text> <Text color="success">行到</Text> {t3}</>;
+      ? <Box flexDirection="row"><Text color="error">写入</Text> <Text bold={true}>{t1}</Text><Text color="error">行到</Text> {t3}</Box>
+      : <Box flexDirection="row"><Text color="success">写入</Text> <Text bold={true}>{t1}</Text> <Text color="success">行到</Text> {t3}</Box>;
     $[7] = t1;
     $[8] = t3;
     $[9] = t4;
