@@ -1,5 +1,8 @@
 import { type Tool } from '../../engine/types.js'
 import { execSync } from 'child_process'
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs'
+import { join } from 'path'
+import { homedir } from 'os'
 
 interface NotificationItem {
   title: string
@@ -7,6 +10,15 @@ interface NotificationItem {
   sound: boolean
   priority: 'low' | 'normal' | 'high'
 }
+
+interface NotificationRecord {
+  title: string
+  message: string
+  priority: string
+  timestamp: string
+}
+
+const HISTORY_FILE = join(homedir(), '.doge', 'notifications.json')
 
 export class PushNotificationTool implements Tool {
   name = 'push_notification'
@@ -29,6 +41,37 @@ export class PushNotificationTool implements Tool {
   private lastSent: string | null = null
   private sentCount = 0
 
+  private recordHistory(item: NotificationItem): void {
+    try {
+      let history: NotificationRecord[] = []
+      if (existsSync(HISTORY_FILE)) {
+        history = JSON.parse(readFileSync(HISTORY_FILE, 'utf-8'))
+      }
+      history.push({ title: item.title, message: item.message, priority: item.priority, timestamp: new Date().toISOString() })
+      if (history.length > 100) history = history.slice(-100)
+      const dir = HISTORY_FILE.substring(0, HISTORY_FILE.lastIndexOf('\\'))
+      if (dir) mkdirSync(dir, { recursive: true })
+      writeFileSync(HISTORY_FILE, JSON.stringify(history, null, 2), 'utf-8')
+    } catch { /* ignore */ }
+  }
+
+  /** 获取通知历史 */
+  getHistory(limit = 10): NotificationRecord[] {
+    try {
+      if (!existsSync(HISTORY_FILE)) return []
+      const history = JSON.parse(readFileSync(HISTORY_FILE, 'utf-8'))
+      return Array.isArray(history) ? history.slice(-limit).reverse() : []
+    } catch { return [] }
+  }
+
+  /** 清空通知历史 */
+  clearHistory(): boolean {
+    try {
+      if (existsSync(HISTORY_FILE)) writeFileSync(HISTORY_FILE, '[]', 'utf-8')
+      return true
+    } catch { return false }
+  }
+
   private async processQueue(): Promise<void> {
     if (this.sending || this.queue.length === 0) return
     this.sending = true
@@ -40,6 +83,7 @@ export class PushNotificationTool implements Tool {
         this.sendNotification(item)
         this.lastSent = `${item.title}: ${item.message}`
         this.sentCount++
+        this.recordHistory(item)
         // 低优先级通知之间稍等，避免刷屏
         if (item.priority === 'low') {
           await new Promise(resolve => setTimeout(resolve, 500))
@@ -54,10 +98,10 @@ export class PushNotificationTool implements Tool {
     try {
       const title = item.title.replace(/[\\"']/g, '')
       const message = item.message.replace(/[\\"']/g, '')
+      const soundFlag = item.sound ? '' : ' -silent'
 
       if (process.platform === 'win32') {
         // Windows: 使用 PowerShell toast（支持优先级的简单方式）
-        const soundFlag = item.sound ? '' : ' -silent'
         const psScript = `
           [Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] > $null
           $template = [Windows.UI.Notifications.ToastNotificationManager]::GetTemplateContent([Windows.UI.Notifications.ToastTemplateType]::ToastText02)
@@ -85,6 +129,25 @@ export class PushNotificationTool implements Tool {
     const sound = params?.sound !== false
     const priority = params?.priority || 'normal'
     const wait = params?.wait === true
+    const action = params?.action || 'send'
+
+    // 历史管理操作
+    if (action === 'history') {
+      const limit = params?.limit || 10
+      const history = this.getHistory(limit)
+      if (history.length === 0) return { content: [{ type: 'text', text: 'No notification history.' }] }
+      const lines = ['## Notification History', '']
+      history.forEach(h => lines.push(`- [${h.priority}] ${h.title}: ${h.message} (${h.timestamp})`))
+      return { content: [{ type: 'text', text: lines.join('\n') }] }
+    }
+    if (action === 'clear-history') {
+      const ok = this.clearHistory()
+      return { content: [{ type: 'text', text: ok ? 'Notification history cleared.' : 'Failed to clear history.' }] }
+    }
+    if (action === 'stats') {
+      const stats = this.getStats()
+      return { content: [{ type: 'text', text: `Notifications sent: ${stats.sentCount}\nQueue: ${stats.queueLength}\nLast: ${stats.lastSent || 'none'}` }] }
+    }
 
     const item: NotificationItem = { title, message, sound, priority }
 
@@ -93,6 +156,7 @@ export class PushNotificationTool implements Tool {
       this.sendNotification(item)
       this.lastSent = `${title}: ${message}`
       this.sentCount++
+      this.recordHistory(item)
       return {
         content: [{ type: 'text', text: `Notification sent: ${title} - ${message}` }]
       }
