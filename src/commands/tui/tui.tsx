@@ -435,90 +435,69 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       onDone('\x1b[2J\x1b[H', { display: 'system' })  // 发送清屏转义序列
       break
 
-    // sysinfo 详细系统信息（JSX 面板）────────────────
+    // sysinfo 详细系统信息─────────────────────────
     case 'sysinfo':
-      return (
-        <div style={{ padding: '1rem' }}>
-          <h2>📋 系统详细信息</h2>
-          <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-            <tbody>
-              <tr><td><strong>主机名</strong></td><td>{systemInfo.hostname}</td></tr>
-              <tr><td><strong>操作系统</strong></td><td>{systemInfo.platform} {systemInfo.release}</td></tr>
-              <tr><td><strong>架构</strong></td><td>{systemInfo.arch}</td></tr>
-              <tr><td><strong>CPU</strong></td><td>{systemInfo.cpuModel} ({systemInfo.cpus} 核心)</td></tr>
-              <tr><td><strong>平均负载</strong></td><td>{systemInfo.loadAvg}</td></tr>
-              <tr><td><strong>运行时间</strong></td><td>{systemInfo.uptime}</td></tr>
-              <tr><td><strong>内存总量</strong></td><td>{systemInfo.memory.total} MB</td></tr>
-              <tr><td><strong>已用内存</strong></td><td>{systemInfo.memory.used} MB ({systemInfo.memory.percent}%)</td></tr>
-              <tr><td><strong>空闲内存</strong></td><td>{systemInfo.memory.free} MB</td></tr>
-              <tr><td><strong>当前用户</strong></td><td>{systemInfo.user}</td></tr>
-            </tbody>
-          </table>
-        </div>
-      )
+      onDone(systemMessage([
+        '📋 系统详细信息',
+        '',
+        `  主机名：${systemInfo.hostname}`,
+        `  操作系统：${systemInfo.platform} ${systemInfo.release}`,
+        `  架构：${systemInfo.arch}`,
+        `  CPU：${systemInfo.cpuModel} (${systemInfo.cpus} 核心)`,
+        `  平均负载：${systemInfo.loadAvg}`,
+        `  运行时间：${systemInfo.uptime}`,
+        `  内存总量：${systemInfo.memory.total} MB`,
+        `  已用内存：${systemInfo.memory.used} MB (${systemInfo.memory.percent}%)`,
+        `  空闲内存：${systemInfo.memory.free} MB`,
+        `  当前用户：${systemInfo.user}`,
+      ]), { display: 'system' })
+      break
 
-    // help 帮助面板（JSX）───────────────────────────
+    // help 帮助面板────────────────────────────────
     case 'help':
-      return (
-        <div style={{ padding: '1rem' }}>
-          <h2>/tui 命令参考</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '0.5rem 1rem' }}>
-            <span style={{ color: '#8b5cf6' }}>/tui start</span><span>启用 TUI 模式</span>
-            <span style={{ color: '#8b5cf6' }}>/tui stop</span><span>禁用 TUI 模式</span>
-            <span style={{ color: '#8b5cf6' }}>/tui status</span><span>显示状态与系统概要</span>
-            <span style={{ color: '#8b5cf6' }}>/tui config [key] [value]</span><span>配置主题/字体/行列等</span>
-            <span style={{ color: '#8b5cf6' }}>/tui theme &lt;name&gt;</span><span>快速切换主题（6种预设）</span>
-            <span style={{ color: '#8b5cf6' }}>/tui monitor</span><span>系统实时监控仪表盘</span>
-            <span style={{ color: '#8b5cf6' }}>/tui session save/load/list</span><span>配置会话持久化</span>
-            <span style={{ color: '#8b5cf6' }}>/tui doctor</span><span>终端环境诊断</span>
-            <span style={{ color: '#8b5cf6' }}>/tui shortcuts</span><span>快捷键列表</span>
-            <span style={{ color: '#8b5cf6' }}>/tui sysinfo</span><span>详细系统信息面板</span>
-            <span style={{ color: '#8b5cf6' }}>/tui clear</span><span>清屏</span>
-            <span style={{ color: '#8b5cf6' }}>/tui help</span><span>显示本帮助</span>
-          </div>
-          <div style={{ marginTop: '1rem', padding: '0.5rem', background: '#252525', borderRadius: '0.5rem' }}>
-            💡 提示：主题预设包含 catppuccin-mocha, dracula, gruvbox-dark, nord 等
-          </div>
-        </div>
-      )
+      onDone(systemMessage([
+        '📖 /tui 命令参考',
+        '',
+        '  /tui start             启用 TUI 模式',
+        '  /tui stop              禁用 TUI 模式',
+        '  /tui status            显示状态与系统概要',
+        '  /tui config [k] [v]    配置主题/字体/行列等',
+        '  /tui theme <name>      快速切换主题（6种预设）',
+        '  /tui monitor           系统实时监控仪表盘',
+        '  /tui session s/l/list  配置会话持久化',
+        '  /tui doctor            终端环境诊断',
+        '  /tui shortcuts         快捷键列表',
+        '  /tui sysinfo           详细系统信息面板',
+        '  /tui clear             清屏',
+        '  /tui help              显示本帮助',
+        '',
+        '💡 提示：主题预设包含 catppuccin-mocha, dracula, gruvbox-dark, nord 等',
+      ]), { display: 'system' })
+      break
 
     // 默认（无参数或未知命令）—— 信息面板 ─────────────────
     default: {
       const isUnknown = operation !== '' && !['start','on','stop','off','exit','status','info','config','theme','monitor','session','doctor','shortcuts','clear','sysinfo','help'].includes(operation)
-      const themeColors = THEMES[tuiConfig.theme] || THEMES.dark
-      return (
-        <div style={{
-          padding: '1rem',
-          fontFamily: tuiConfig.fontFamily,
-          fontSize: `${tuiConfig.fontSize}px`,
-          color: themeColors.fg,
-          backgroundColor: themeColors.bg,
-          border: `1px solid ${themeColors.accent}`,
-          borderRadius: '0.5rem'
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h2 style={{ margin: 0 }}>🎮 TUI 模式</h2>
-            <span style={{ background: isFullscreen ? '#16a34a' : '#6b7280', padding: '0.25rem 0.5rem', borderRadius: '0.25rem', fontSize: '0.75rem', color: 'white' }}>
-              {isFullscreen ? '闪烁免模式' : '普通模式'}
-            </span>
-          </div>
-          {isUnknown && <div style={{ color: '#f97316', marginBottom: '0.5rem' }}>⚠️ 未知命令：{operation}<br/>输入 /tui help 查看帮助</div>}
-          <div><strong>状态：</strong> {tuiConfig.active ? (isFullscreen ? '全屏运行中' : '运行中') : '已停止'}</div>
-          <div><strong>主题：</strong> {tuiConfig.theme} {tuiConfig.userThemeOverride && '🔒'}</div>
-          <div><strong>分辨率：</strong> {tuiConfig.cols}x{tuiConfig.rows}</div>
-          <div><strong>字体：</strong> {tuiConfig.fontSize}px</div>
-          <div><strong>光标：</strong> {tuiConfig.cursor} {tuiConfig.blink ? '闪烁' : ''}</div>
-          {tuiConfig.layout === 'full' && (
-            <>
-              <div><strong>系统：</strong> {systemInfo.hostname} | {systemInfo.cpus}核 | 内存 {systemInfo.memory.percent}%</div>
-              <div><strong>负载：</strong> {systemInfo.loadAvg}</div>
-            </>
-          )}
-          <div style={{ marginTop: '0.5rem', padding: '0.5rem', background: '#252525', borderRadius: '0.5rem' }}>
-            💡 新功能：/tui theme dracula, /tui monitor, /tui session save myconfig
-          </div>
-        </div>
-      )
+      const lines = [
+        `🎮 TUI 模式${isFullscreen ? ' [闪烁免模式]' : ' [普通模式]'}`,
+        '',
+      ]
+      if (isUnknown) {
+        lines.push(`⚠️ 未知命令：${operation}`, '输入 /tui help 查看帮助', '')
+      }
+      lines.push(`  状态：${tuiConfig.active ? (isFullscreen ? '全屏运行中' : '运行中') : '已停止'}`)
+      lines.push(`  主题：${tuiConfig.theme}${tuiConfig.userThemeOverride ? ' 🔒' : ''}`)
+      lines.push(`  分辨率：${tuiConfig.cols}x${tuiConfig.rows}`)
+      lines.push(`  字体：${tuiConfig.fontSize}px`)
+      lines.push(`  光标：${tuiConfig.cursor}${tuiConfig.blink ? ' 闪烁' : ''}`)
+      if (tuiConfig.layout === 'full') {
+        lines.push(`  系统：${systemInfo.hostname} | ${systemInfo.cpus}核 | 内存 ${systemInfo.memory.percent}%`)
+        lines.push(`  负载：${systemInfo.loadAvg}`)
+      }
+      lines.push('')
+      lines.push('💡 新功能：/tui theme dracula, /tui monitor, /tui session save myconfig')
+      onDone(systemMessage(lines), { display: 'system' })
+      break
     }
   }
   return null

@@ -15,9 +15,20 @@ const cache = new WeakMap<ZodTypeAny, JsonSchema7Type>()
  * Converts a Zod v4 schema to JSON Schema format.
  * Returns a fallback empty schema if the input is not a valid Zod schema.
  */
+/**
+ * 检查一个值是否为有效的 Zod v4 schema 对象
+ * Zod v4 的 schema 对象上必有 `_zod` 内部属性
+ */
+function isValidZodSchema(schema: unknown): schema is ZodTypeAny {
+  if (!schema || typeof schema !== 'object') return false
+  // 检查 _zod 属性是否存在（Zod v4 内部标记）
+  if (!('_zod' in (schema as Record<string, unknown>))) return false
+  return true
+}
+
 export function zodToJsonSchema(schema: ZodTypeAny): JsonSchema7Type {
   // 兜底：schema 不是有效的 Zod schema 时返回空对象 schema
-  if (!schema || typeof schema !== 'object') {
+  if (!isValidZodSchema(schema)) {
     return { type: 'object', properties: {} }
   }
   const hit = cache.get(schema)

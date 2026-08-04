@@ -383,7 +383,14 @@ ipcMain.handle('doge:request-microphone-permission', async () => {
 
 // 发送消息（使用 QueryEngine）
 ipcMain.handle('doge:send-message', async (_event, content: string, preAnalysis?: Array<{ type: string; message: string; line?: number }>) => {
-  const currentEngine = getEngine()
+  let currentEngine: QueryEngine
+  try {
+    currentEngine = getEngine()
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : '未知错误'
+    tsLog('MAIN', 'getEngine failed:', msg)
+    return { error: '引擎初始化失败: ' + msg }
+  }
   const config = engineConfig!
 
   if (!config.apiKey) {
@@ -521,9 +528,7 @@ ipcMain.handle('doge:get-config', () => loadConfig())
 // 更新配置
 ipcMain.handle('doge:update-config', async (_event, data: Record<string, string>) => {
   try {
-    const configPath = process.env.DOGE_API_JSON
-      ? path.resolve(process.env.DOGE_API_JSON)
-      : CONFIG_PATH
+    const configPath = findApiConfig()
     const raw = fs.readFileSync(configPath, 'utf-8')
     const config = JSON.parse(raw)
     if (!config.presets) config.presets = {}
@@ -1997,9 +2002,7 @@ Use tools when needed. If a tool call fails or returns empty, try a different ap
       }
       case '/config': {
         try {
-          const configPath = process.env.DOGE_API_JSON
-            ? path.resolve(process.env.DOGE_API_JSON)
-            : CONFIG_PATH
+          const configPath = findApiConfig()
           const raw = fs.readFileSync(configPath, 'utf-8')
           const config = JSON.parse(raw)
           const activePreset = config.activePreset || 'default'
