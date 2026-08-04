@@ -55,7 +55,18 @@ interface MarketplaceInfo {
   plugins: MarketplacePlugin[]
 }
 
-type Tab = 'installed' | 'marketplace'
+type Tab = 'installed' | 'marketplace' | 'runtime'
+
+interface RuntimePlugin {
+  name: string
+  dir: string
+  entry: string
+  enabled: boolean
+  commandCount: number
+  hookCount: number
+  loadedAt: number
+  errors: string[]
+}
 
 interface PluginPanelProps {
   theme: ThemeColors
@@ -233,6 +244,17 @@ export function PluginPanel({ theme, onClose }: PluginPanelProps): JSX.Element {
               >
                 插件市场
               </button>
+              <button
+                onClick={() => setTab('runtime')}
+                style={{
+                  padding: '2px 10px', border: 'none', borderRadius: '3px',
+                  background: tab === 'runtime' ? c.accent : 'transparent',
+                  color: tab === 'runtime' ? '#000' : c.textMuted,
+                  cursor: 'pointer', fontSize: '11px', fontWeight: 600,
+                }}
+              >
+                ⚡ 运行时
+              </button>
             </div>
           </div>
           <button
@@ -263,6 +285,9 @@ export function PluginPanel({ theme, onClose }: PluginPanelProps): JSX.Element {
         )}
 
         {/* ─��─ 已安装标签页 ─── */}
+        {/* 运行时标签页（JS 插件沙箱执行 + hooks + 热加载） */}
+        {tab === 'runtime' && <RuntimeView theme={c} />}
+
         {tab === 'installed' && (
           <>
             {/* 安装面板 */}
@@ -505,6 +530,196 @@ export function PluginPanel({ theme, onClose }: PluginPanelProps): JSX.Element {
           </div>
         )}
       </div>
+    </div>
+  )
+}
+
+// ─── 运行时视图（JS 插件沙箱执行 + hooks + 热加载） ───
+
+interface RuntimeViewProps {
+  theme: ThemeColors
+}
+
+function RuntimeView({ theme }: RuntimeViewProps): JSX.Element {
+  const c = theme
+  const [plugins, setPlugins] = useState<RuntimePlugin[]>([])
+  const [commands, setCommands] = useState<string[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [watching, setWatching] = useState<Set<string>>(new Set())
+  const [invokeResult, setInvokeResult] = useState<{ cmd: string; result?: unknown; error?: string } | null>(null)
+  const [scaffoldName, setScaffoldName] = useState('')
+  const [showScaffold, setShowScaffold] = useState(false)
+  const [scaffolding, setScaffolding] = useState(false)
+
+  const refresh = useCallback(async () => {
+    const api = window.dogeAPI as Record<string, any>
+    try {
+      const res = await api?.pluginRuntimeList?.()
+      if (res?.success) {
+        setPlugins(res.plugins || [])
+        setCommands(res.commands || [])
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '加载失败')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => { refresh() }, [refresh])
+
+  const loadAll = useCallback(async () => {
+    setLoading(true)
+    const api = window.dogeAPI as Record<string, any>
+    const res = await api?.pluginRuntimeLoadAll?.()
+    if (res?.success) refresh()
+    else setError(res?.error || '加载失败')
+    setLoading(false)
+  }, [refresh])
+
+  const toggleWatch = useCallback(async (name: string) => {
+    const api = window.dogeAPI as Record<string, any>
+    if (watching.has(name)) {
+      await api?.pluginRuntimeUnwatch?.(name)
+      setWatching(prev => { const n = new Set(prev); n.delete(name); return n })
+    } else {
+      const res = await api?.pluginRuntimeWatch?.(name)
+      if (res?.success) setWatching(prev => new Set(prev).add(name))
+    }
+  }, [watching])
+
+  const invoke = useCallback(async (cmd: string) => {
+    const api = window.dogeAPI as Record<string, any>
+    const res = await api?.pluginRuntimeInvoke?.(cmd)
+    setInvokeResult({ cmd, result: res?.result, error: res?.error })
+  }, [])
+
+  const handleScaffold = useCallback(async () => {
+    if (!scaffoldName.trim()) { setError('请输入插件名称'); return }
+    setScaffolding(true)
+    try {
+      const api = window.dogeAPI as Record<string, any>
+      const res = await api?.pluginScaffold?.(scaffoldName.trim())
+      if (res?.success) {
+        setScaffoldName('')
+        setShowScaffold(false)
+        setError(null)
+        refresh()
+      } else {
+        setError(res?.error || '创建失败')
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '创建失败')
+    } finally {
+      setScaffolding(false)
+    }
+  }, [scaffoldName, refresh])
+
+  return (
+    <div style={{ flex: 1, overflowY: 'auto', padding: '8px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
+        <button onClick={loadAll} style={{
+          padding: '4px 10px', border: 'none', borderRadius: '3px',
+          background: c.accent, color: '#000', cursor: 'pointer', fontSize: '10px', fontWeight: 600,
+        }}>
+          ⟳ 加载全部插件
+        </button>
+        <button onClick={() => { setShowScaffold(v => !v); setScaffoldName('') }} style={{
+          padding: '4px 10px', border: `1px solid ${c.border}`, borderRadius: '3px',
+          background: c.bgPanel, color: c.accent, cursor: 'pointer', fontSize: '10px',
+        }}>
+          ✨ 新建插件
+        </button>
+        {showScaffold && (
+          <span style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+            <input
+              value={scaffoldName}
+              onChange={e => setScaffoldName(e.target.value)}
+              placeholder="插件名（a-zA-Z0-9_-）"
+              onKeyDown={e => { if (e.key === 'Enter') handleScaffold() }}
+              style={{
+                width: '120px', padding: '3px 6px', background: c.bgPanel, border: `1px solid ${c.border}`,
+                borderRadius: '3px', color: c.text, fontSize: '10px', outline: 'none',
+              }}
+            />
+            <button onClick={handleScaffold} disabled={scaffolding} style={{
+              padding: '3px 8px', border: 'none', borderRadius: '3px',
+              background: c.accent, color: '#000', cursor: scaffolding ? 'default' : 'pointer', fontSize: '10px', fontWeight: 600,
+            }}>
+              {scaffolding ? '生成中...' : '生成'}
+            </button>
+          </span>
+        )}
+        <span style={{ fontSize: '9px', color: c.textFaint }}>JS 插件在 vm 沙箱中执行，支持 registerCommand / registerHook / on / emit</span>
+      </div>
+
+      {error && <div style={{ padding: '5px 8px', background: c.errorBg, color: c.errorText, borderRadius: '3px', fontSize: '10px' }}>{error}</div>}
+
+      {loading ? (
+        <div style={{ padding: '16px', textAlign: 'center', color: c.textFaint, fontSize: '11px' }}>加载中...</div>
+      ) : plugins.length === 0 ? (
+        <div style={{ padding: '24px', textAlign: 'center' }}>
+          <div style={{ fontSize: '12px', color: c.textFaint, marginBottom: '4px' }}>没有已加载的运行时插件</div>
+          <div style={{ fontSize: '10px', color: c.textFaint }}>点击「加载全部插件」扫描并执行 .doge/plugins 下的 JS 插件</div>
+        </div>
+      ) : (
+        <>
+          {plugins.map(p => (
+            <div key={p.name} style={{ border: `1px solid ${c.borderSubtle}`, borderRadius: '3px', padding: '6px 8px', background: c.bgPanel }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '11px', fontWeight: 600, color: p.enabled ? c.text : c.textMuted }}>
+                  {p.name} {!p.enabled && '(加载失败)'}
+                </span>
+                <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                  <span style={{ fontSize: '9px', color: c.textFaint }}>⚡{p.commandCount} 命令 · 🔗{p.hookCount} hooks</span>
+                  <button onClick={() => toggleWatch(p.name)} style={{
+                    padding: '1px 6px', border: `1px solid ${watching.has(p.name) ? '#10b981' : c.border}`, borderRadius: '2px',
+                    background: watching.has(p.name) ? 'rgba(16,185,129,0.15)' : 'transparent',
+                    color: watching.has(p.name) ? '#10b981' : c.textMuted, cursor: 'pointer', fontSize: '9px',
+                  }}>
+                    {watching.has(p.name) ? '● 热加载中' : '◌ 热加载'}
+                  </button>
+                </div>
+              </div>
+              <div style={{ fontSize: '9px', color: c.textFaint, marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.entry}</div>
+              {p.errors.length > 0 && (
+                <div style={{ marginTop: '4px' }}>
+                  {p.errors.map((err, i) => (
+                    <div key={i} style={{ fontSize: '9px', color: c.errorText }}>⚠ {err}</div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+
+          {commands.length > 0 && (
+            <div>
+              <div style={{ fontSize: '10px', color: c.textFaint, marginBottom: '4px' }}>可用命令</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                {commands.map(cmd => (
+                  <button key={cmd} onClick={() => invoke(cmd)} style={{
+                    padding: '2px 8px', border: `1px solid ${c.border}`, borderRadius: '3px',
+                    background: c.surface, color: c.accent, cursor: 'pointer', fontSize: '10px', fontFamily: 'monospace',
+                  }}>
+                    {cmd}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {invokeResult && (
+            <div style={{ padding: '6px 8px', background: c.codeBg, borderRadius: '3px', fontSize: '10px' }}>
+              <span style={{ color: c.accent, fontFamily: 'monospace' }}>{invokeResult.cmd}</span>
+              <span style={{ color: c.textFaint, margin: '0 6px' }}>→</span>
+              {invokeResult.error
+                ? <span style={{ color: c.errorText }}>{invokeResult.error}</span>
+                : <span style={{ color: c.text, fontFamily: 'monospace' }}>{String(invokeResult.result ?? 'ok')}</span>}
+            </div>
+          )}
+        </>
+      )}
     </div>
   )
 }

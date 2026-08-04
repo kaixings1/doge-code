@@ -16,7 +16,7 @@
  */
 
 import { diffArrays } from 'diff'
-import type * as hljsNamespace from 'highlight.js'
+import type { HLJSApi } from 'highlight.js'
 import { basename, extname } from 'path'
 
 // 懒加载：延迟加载 highlight.js 直到首次渲染。完整包在 require 时注册
@@ -27,7 +27,6 @@ import { basename, extname } from 'path'
 // 后续测试推入 GC 暂停区域并导致 beforeEach/afterEach 钩子超时
 //（officialRegistry.test.ts，PR #24150）。
 // 与 NAPI 包装器用于 dlopen 的懒加载模式相同。
-type HLJSApi = typeof hljsNamespace
 let cachedHljs: HLJSApi | null = null
 function hljs(): HLJSApi {
   if (cachedHljs) return cachedHljs

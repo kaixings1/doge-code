@@ -78,6 +78,7 @@ import { useFpsMetrics } from '../context/fpsMetrics.js';
 import { useAfterFirstRender } from '../hooks/useAfterFirstRender.js';
 import { useDeferredHookMessages } from '../hooks/useDeferredHookMessages.js';
 import { addToHistory, removeLastFromHistory, expandPastedTextRefs, parseReferences } from '../history.js';
+import { extractLoopIntent, toLoopCommand } from '../commands/loop/intent.js';
 import { prependModeCharacterToInput } from '../components/PromptInput/inputModes.js';
 import { prependToShellHistoryCache } from '../utils/suggestions/shellHistoryCompletion.js';
 import { useApiKeyVerification } from '../hooks/useApiKeyVerification.js';
@@ -3067,6 +3068,35 @@ export function REPL({
     // Resume loop mode if paused
     if (feature('PROACTIVE') || feature('KAIROS')) {
       proactiveModule?.resumeProactive();
+    }
+
+    // ─── 循环意图自动捕获 ───
+    // 用户用自然语言下达循环指令（"直到 X，利用 Y，直到 Z"）时，自动转换为
+    // /loop 命令执行。仅在非斜杠命令、非远程模式、非推测接受时检测。
+    if (!speculationAccept && !activeRemote.isRemoteMode && !input.trim().startsWith('/')) {
+      const intent = extractLoopIntent(input);
+      if (intent) {
+        // 记录历史（保留用户原始输入）
+        if (!options?.fromKeybinding) {
+          addToHistory({
+            display: input,
+            pastedContents,
+          });
+        }
+        const loopCmd = toLoopCommand(intent);
+        logEvent('tengu_loop_intent_detected', {
+          goal: intent.goal as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
+          criteriaCount: intent.criteria.length,
+          strategy: (intent.strategyHint ?? 'openhands') as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
+        });
+        // 清空输入并将转换后的命令排队执行（复用标准命令分发链）
+        setInputValue('');
+        helpers.setCursorOffset(0);
+        helpers.clearBuffer();
+        setPastedContents({});
+        enqueue({ value: loopCmd, mode: 'prompt' });
+        return;
+      }
     }
 
     // Handle immediate commands - these bypass the queue and execute right away

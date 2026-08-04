@@ -218,6 +218,9 @@ export class OpenHandsStrategy extends BaseLoopStrategy {
   /** 当前活跃阶段 */
   private currentPhase: OpenHandsPhase = 'plan'
 
+  /** 任务计数器（生成唯一任务 id） */
+  private taskCounter = 0
+
   /** 当前计划步骤列表 */
   private planSteps: PlanStep[] = []
 
@@ -260,49 +263,44 @@ export class OpenHandsStrategy extends BaseLoopStrategy {
   }
 
   /**
-   * 将目标分解为三个核心阶段的子任务
+   * 将目标分解为可执行的子任务
    *
-   * OpenHands 风格：每个阶段是一个 SubTask。
-   * - plan 阶段：生成 PlanStep 列表
-   * - execute 阶段：基于 PlanStep 逐步执行
-   * - verify 阶段：验证每个 PlanStep 的执行结果
+   * 真实执行模式：每次迭代返回一个执行任务，
+   * 任务内容为完整目标（AI 直接执行创建文件）。
+   * 循环通过 evaluate 验证结果，失败则生成新任务迭代改进。
    *
-   * 如果目标已预定义子任务，将它们作为初始计划步骤使用。
+   * 如果目标已预定义子任务，直接使用它们。
    */
   decompose(goal: LoopGoal): SubTask[] {
-    // 如果目标已预定义子任务，将它们映射为 PlanStep
+    // 如果目标已预定义子任务，直接使用（真实可执行的子任务）
     if (goal.subTasks && goal.subTasks.length > 0) {
-      this.planSteps = goal.subTasks.map((st, i) => {
-        const step = new PlanStep(
-          st.id,
-          i + 1,
-          st.description,
-          goal.successCriteria?.join('; ') ?? '完成目标要求',
-          1,
-        )
-        // 如果已有结果，恢复状态
-        if (st.status === 'completed') {
-          st.status = 'verified'
-        }
-        return step
-      })
+      return goal.subTasks.map(st => ({ ...st, status: 'pending' as const }))
     }
 
-    // 返回三个核心阶段的 SubTask
+    this.taskCounter++
+    const attempt = this.taskCounter
+
+    // 智能分解：根据目标关键词生成多个可并行执行的子任务
+    const smartTasks = smartDecompose(goal.description, attempt)
+
+    // 如果智能分解出多个任务，直接使用（支持并行执行）
+    if (smartTasks.length > 1) {
+      return smartTasks.map(st => ({
+        id: `openhands-task-${attempt}-${Date.now()}-${st.id}`,
+        description: `执行子任务（属于目标：${goal.description.slice(0, 50)}）：\n${st.description}`,
+        status: 'pending' as const,
+      }))
+    }
+
+    // 否则返回单个执行任务（目标本身，带上迭代计数提示）
+    const iterationHint = attempt > 1
+      ? `\n\n注意：这是第 ${attempt} 次尝试执行。前一次执行未达到预期，请分析原因，采用不同方案重新生成并执行必要的 bash 命令（不要重复上次失败的方案）。`
+      : ''
+
     return [
       {
-        id: 'openhands-plan',
-        description: `[plan] Planner 制定详细执行计划：分析目标 "${goal.description}"，分解为具体可执行的步骤，明确每个步骤的预期输出。`,
-        status: 'pending',
-      },
-      {
-        id: 'openhands-execute',
-        description: `[execute] Executor 按计划执行：逐步执行 plan 阶段制定的步骤，记录每个步骤的实际执行结果。`,
-        status: 'pending',
-      },
-      {
-        id: 'openhands-verify',
-        description: `[verify] Verifier 验证结果：逐一检查每个步骤的实际结果是否符合预期，判断整体目标是否达成。失败则触发迭代改进。`,
+        id: `openhands-task-${attempt}-${Date.now()}`,
+        description: `执行以下目标，必须使用 bash 命令创建/修改实际文件：\n${goal.description}${iterationHint}`,
         status: 'pending',
       },
     ]
@@ -311,101 +309,85 @@ export class OpenHandsStrategy extends BaseLoopStrategy {
   /**
    * OpenHands 风格的验证评估
    *
-   * 三个角色协作判定：
-   * 1. Verifier 检测连续无改进 → 终止
-   * 2. Planner 检测连续计划失败 → 终止
-   * 3. 所有步骤验证通过 + 满足成功标准 → 达成
-   * 4. 否则继续迭代
+   * 基于实际执行结果判定，而非阶段状态：
+   * 1. 检查最后一个执行任务的结果
+   * 2. 验证是否创建了文件（output 中的 📁 标记）
+   * 3. 验证成功标准是否满足
+   * 4. 失败则继续迭代（AI 重新执行改进）
    */
   evaluate(goal: LoopGoal, subTasks: SubTask[]): { achieved: boolean; reason: string } {
-    // 1. Verifier：检测连续验证无改进
-    if (this.verifierState.stagnationCount >= this.verifierState.maxStagnation) {
-      return {
-        achieved: false,
-        reason: `Verifier 检测到连续 ${this.verifierState.maxStagnation} 轮验证无改进，无法进一步推进目标`,
-      }
-    }
-
-    // 2. Planner：检测连续计划失败
-    if (this.plannerState.consecutivePlanFailures >= this.plannerState.maxPlanFailures) {
-      return {
-        achieved: false,
-        reason: `Planner 连续 ${this.plannerState.maxPlanFailures} 次计划失败，无法制定有效执行方案`,
-      }
-    }
-
-    // 3. Executor：检测连续执行异常
-    if (this.executorState.errorCount >= this.executorState.maxConsecutiveErrors) {
-      return {
-        achieved: false,
-        reason: `Executor 连续 ${this.executorState.maxConsecutiveErrors} 次执行异常，执行流程受阻`,
-      }
-    }
-
-    // 4. 检查所有计划步骤是否已验证通过
-    if (this.planSteps.length > 0) {
-      const allVerified = this.planSteps.every(s => s.status === 'verified')
-      if (allVerified) {
-        // 检查成功标准
-        if (goal.successCriteria && goal.successCriteria.length > 0) {
-          const allResults = this.planSteps
-            .filter(s => s.executionResult)
-            .map(s => s.executionResult!)
-            .join('\n')
-          const criteriaMet = goal.successCriteria.filter(c =>
-            allResults.toLowerCase().includes(c.toLowerCase())
-          ).length
-
-          if (criteriaMet === goal.successCriteria.length) {
-            return {
-              achieved: true,
-              reason: `所有 ${this.planSteps.length} 个计划步骤验证通过，成功标准全部满足（${criteriaMet}/${goal.successCriteria.length}）`,
-            }
-          }
-          return {
-            achieved: false,
-            reason: `步骤全部验证通过，但成功标准仅满足 ${criteriaMet}/${goal.successCriteria.length}，需要迭代改进`,
-          }
-        }
-
-        return {
-          achieved: true,
-          reason: `所有 ${this.planSteps.length} 个计划步骤均已验证通过，计划-执行-验证循环完整执行`,
-        }
-      }
-
-      // 有失败的步骤 → 需要迭代
-      const failedSteps = this.planSteps.filter(s => s.status === 'failed')
-      if (failedSteps.length > 0) {
+    // 检测连续无进展（多次失败或未创建文件）
+    const failedCount = subTasks.filter(t => t.status === 'failed').length
+    if (failedCount >= this.verifierState.maxStagnation) {
+      this.verifierState.stagnationCount++
+      if (this.verifierState.stagnationCount >= this.verifierState.maxStagnation) {
         return {
           achieved: false,
-          reason: `Verifier: ${failedSteps.length} 个步骤验证失败，触发迭代改进 → Planner 重新制定计划`,
+          reason: `连续 ${this.verifierState.maxStagnation} 次执行未成功创建文件，停止迭代`,
         }
       }
+    } else {
+      this.verifierState.stagnationCount = 0
+    }
 
-      // 还有未执行的步骤
-      const executedCount = this.planSteps.filter(s => s.status === 'executed' || s.status === 'verified').length
+    // 取最后一个执行任务
+    const lastTask = subTasks[subTasks.length - 1]
+
+    if (!lastTask) {
+      return { achieved: false, reason: '尚未生成执行任务' }
+    }
+
+    if (lastTask.status === 'running' || lastTask.status === 'pending') {
+      return { achieved: false, reason: '任务执行中，等待完成' }
+    }
+
+    if (lastTask.status === 'failed') {
       return {
         achieved: false,
-        reason: `Executor: 计划执行进度 ${executedCount}/${this.planSteps.length}，当前阶段: [${this.currentPhase}]`,
+        reason: `执行失败：${lastTask.error ?? '未知错误'}。重新执行目标（第 ${subTasks.length} 次尝试）`,
       }
     }
 
-    // 5. 检查三阶段子任务完成情况
-    const completedCount = subTasks.filter(t => t.status === 'completed').length
-    const totalCount = subTasks.length
+    // 任务已完成，检查实际产物
+    const output = lastTask.result || ''
 
-    if (totalCount > 0 && completedCount === totalCount) {
+    // 检查是否创建了文件（输出含明确的文件创建标记，避免误判"未创建文件"）
+    const filePatterns = [
+      /📁\s*创建了\s*\d+\s*个文件/i,
+      /created\s+\d+\s*files?/i,
+      /成功写入文件|文件已成功创建/i,
+      /^\s*(?:•|·|-)\s*[\w./-]+\.[\w]+/m,
+    ]
+    const hasFiles = filePatterns.some(p => p.test(output))
+
+    // 检查成功标准
+    if (goal.successCriteria && goal.successCriteria.length > 0) {
+      const criteriaMet = goal.successCriteria.filter(c =>
+        output.toLowerCase().includes(c.toLowerCase())
+      ).length
+
+      if (criteriaMet === goal.successCriteria.length && hasFiles) {
+        return {
+          achieved: true,
+          reason: `执行成功：成功标准全部满足（${criteriaMet}/${goal.successCriteria.length}），文件已创建`,
+        }
+      }
+      return {
+        achieved: false,
+        reason: `执行完成但未完全达标：成功标准满足 ${criteriaMet}/${goal.successCriteria.length}${hasFiles ? '' : '，且未检测到创建文件'}。继续迭代改进`,
+      }
+    }
+
+    if (hasFiles) {
       return {
         achieved: true,
-        reason: `三阶段循环完成（plan → execute → verify），所有 ${totalCount} 个阶段已完成`,
+        reason: `执行成功：检测到文件已创建（第 ${subTasks.length} 次尝试）`,
       }
     }
 
-    // 6. 默认：继续迭代
     return {
       achieved: false,
-      reason: `计划-执行-验证循环运行中，当前阶段: [${this.currentPhase}]，计划版本: v${this.plannerState.currentPlanVersion}，停滞: ${this.verifierState.stagnationCount}/${this.verifierState.maxStagnation}`,
+      reason: `执行完成但未检测到文件创建。请确认已用 bash 命令实际创建文件，继续迭代（第 ${subTasks.length} 次尝试）`,
     }
   }
 
@@ -981,6 +963,100 @@ ${failedSteps ? `### 失败步骤\n${failedSteps}` : '### 所有步骤验证通�
       // 不增加停滞计数
     }
   }
+}
+
+// ============================================================================
+// 智能目标分解 — 根据目标关键词生成多个可并行执行的子任务
+// ============================================================================
+
+interface SmartTask {
+  id: string
+  description: string
+}
+
+function smartDecompose(goal: string, attempt: number): SmartTask[] {
+  const g = goal.toLowerCase()
+
+  // 根据关键词匹配任务类型模板
+  const templates: Array<{ keywords: string[]; tasks: string[] }> = [
+    {
+      // Web 服务器/API
+      keywords: ['服务器', 'server', 'api', 'http', 'web', '网页', '网站'],
+      tasks: [
+        `创建项目基础结构（package.json、目录结构）`,
+        `实现核心功能代码（服务器/API 主文件）`,
+        `创建配置文件和依赖声明`,
+        `添加 README 说明文档`,
+      ],
+    },
+    {
+      // CLI 工具
+      keywords: ['cli', '命令行', '工具', 'command', 'terminal'],
+      tasks: [
+        `创建入口文件（bin/主脚本）`,
+        `实现命令解析和核心逻辑`,
+        `添加依赖声明（package.json）`,
+        `编写使用说明文档`,
+      ],
+    },
+    {
+      // 前端/React
+      keywords: ['react', '前端', 'component', '页面', 'ui', '界面'],
+      tasks: [
+        `创建组件目录结构和入口文件`,
+        `实现 UI 组件和样式`,
+        `创建构建配置（vite/webpack）`,
+        `添加项目依赖声明`,
+      ],
+    },
+    {
+      // 脚本/自动化
+      keywords: ['脚本', 'script', '自动化', '批处理', '定时'],
+      tasks: [
+        `编写主脚本文件`,
+        `创建配置（如 .env 模板、配置文件）`,
+        `添加执行说明文档`,
+      ],
+    },
+    {
+      // 测试
+      keywords: ['测试', 'test', '单元测试', '覆盖率'],
+      tasks: [
+        `创建测试文件（针对核心功能）`,
+        `添加测试框架配置`,
+        `编写测试用例`,
+      ],
+    },
+    {
+      // 数据/数据库
+      keywords: ['数据', 'data', '数据库', 'database', 'sql', 'json', 'csv'],
+      tasks: [
+        `创建数据模型/结构定义`,
+        `实现数据处理逻辑`,
+        `创建示例数据文件`,
+      ],
+    },
+    {
+      // 重构/优化
+      keywords: ['重构', 'refactor', '优化', '优化代码', '清理'],
+      tasks: [
+        `分析现有代码结构`,
+        `实施重构/优化修改`,
+        `验证修改后的代码（运行 lint/build）`,
+      ],
+    },
+  ]
+
+  // 匹配关键词
+  for (const template of templates) {
+    if (template.keywords.some(k => g.includes(k))) {
+      // 尝试次数 > 1 时，合并为单任务（避免重复拆分导致循环退化）
+      if (attempt > 1) return []
+      return template.tasks.map((t, i) => ({ id: `st-${i}`, description: t }))
+    }
+  }
+
+  return []
 }
 
 // 导出 PlanStep 类，供外部使用

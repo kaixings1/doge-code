@@ -1,0 +1,1420 @@
+════════════════════════════════════════════════════════════════
+  Doge Code Loop 策略引擎 - 完整示例与使用指南
+  生成日期: 2026/8/3 09:58:07
+════════════════════════════════════════════════════════════════
+
+════════════════════════════════════════════════════════════════
+  第一部分: 简洁示例列表 (Strategy Examples)
+════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────────────
+  策略: LANGGRAPH (23 个示例)
+────────────────────────────────────────────────────────────────
+
+  [1] Hello World Web 服务器
+      复杂度: 简单
+      描述: 创建一个返回 "Hello World" 的最简 HTTP 服务器
+      命令: /loop-langgraph "创建一个 Node.js Hello World HTTP 服务器，监听 3000 端口"
+      策略: langgraph（状态机图引擎）
+      结果: 生成 server.js，包含 http.createServer 和 res.end("Hello World")
+      参数:
+        - 无额外参数，默认最大迭代 20 轮
+      产出: 一个可运行的 Web 服务器文件，node server.js 即可启动
+
+  [2] 命令行待办事项应用
+      复杂度: 简单
+      描述: 实现 CLI 待办应用，支持增删改查和 JSON 持久化
+      命令: /loop-langgraph "实现一个命令行待办事项应用" --criteria "能添加任务" --criteria "能标记完成" --criteria "能删除任务" --criteria "数据保存到 JSON 文件"
+      策略: langgraph（状态机图引擎）
+      结果: 生成 todo.js，包含 add/complete/delete/list 命令和读写 JSON 逻辑
+      参数:
+        - --criteria 定义 4 个成功标准
+        - --max-iterations 10
+      产出: 一个完整的 CLI 应用，支持 node todo.js add "任务描述" 等命令
+
+  [3] Markdown 转 HTML 转换器
+      复杂度: 中等
+      描述: 将 Markdown 文件解析并转换为对应 HTML，支持标题、列表、代码块、链接
+      命令: /loop-langgraph "实现 Markdown 到 HTML 的命令行转换工具，支持 # 标题、- 列表、代码块、链接"
+      策略: langgraph（状态机图引擎）
+      结果: 生成 md2html.js，包含正则解析或 marked 库调用，输出 .html 文件
+      参数:
+        - 可选 --criteria "支持表格" --criteria "支持图片"
+      产出: 一个 CLI 工具，node md2html.js input.md output.html 即可转换
+
+  [4] 用户注册登录系统
+      复杂度: 中等
+      描述: 实现完整的注册/登录/登出功能，包含密码哈希、JWT、邮箱验证
+      命令: /loop-langgraph "实现用户认证系统，包含注册、登录、登出、密码重置功能" --criteria "密码必须哈希存储" --criteria "使用 JWT Token" --criteria "支持邮箱验证"
+      策略: langgraph（状态机图引擎）
+      结果: 生成 auth.js + userModel.js，包含 bcrypt 哈希、jsonwebtoken、nodemailer 集成
+      参数:
+        - --criteria 定义安全标准
+        - --max-iterations 15
+      产出: 完整的认证模块，可直接集成到 Express/Koa 项目中使用
+
+  [5] Git 工作流自动化工具
+      复杂度: 中等
+      描述: 自动检测 git 分支状态，执行 commit、push、PR、merge，支持 hook
+      命令: /loop-langgraph "开发 Git 工作流自动化工具，支持 git cm \\"msg\\" 提交、git sync 同步、git pr 创建 PR"
+      策略: langgraph（状态机图引擎）
+      结果: 生成 git-wf.js，包含 execSync 调用 git 命令、分支检测、PR 创建逻辑
+      参数:
+        - 可选 --criteria "支持 hook 机制" --criteria "支持冲突检测"
+      产出: 一个 npm 全局工具，安装后可用 git-wf cm "提交信息" 等命令
+
+  [6] RESTful API 服务（博客系统）
+      复杂度: 中等
+      描述: 开发博客后端 API，包含文章 CRUD、评论、标签、分页、搜索
+      命令: /loop-langgraph "开发博客 RESTful API，包含文章的增删改查、评论、标签、分页、搜索、鉴权"
+      策略: langgraph（状态机图引擎）
+      结果: 生成 routes/ + models/ + middleware/，包含 JWT 鉴权、分页中间件、搜索接口
+      参数:
+        - --criteria "支持分页" --criteria "支持全文搜索"
+      产出: 完整后端服务，npm install && npm start 即可运行在 localhost:3000
+
+  [7] 实时聊天应用
+      复杂度: 复杂
+      描述: 基于 WebSocket 的多人实时聊天室，支持私聊、群聊、消息持久化
+      命令: /loop-langgraph "构建实时聊天应用，支持多人群聊、私聊、消息存储到 MongoDB、在线状态显示"
+      策略: langgraph（状态机图引擎）
+      结果: 生成 server.js（ws 库）+ chatModel.js + client.html，包含房间、私聊、历史消息
+      参数:
+        - --criteria "支持群聊" --criteria "支持私聊" --criteria "消息持久化"
+      产出: 完整聊天应用，支持多人同时在线聊天，消息实时推送
+
+  [8] 分布式任务调度器
+      复杂度: 复杂
+      描述: 实现任务分发、Worker 管理、失败重试、优先级队列、定时任务
+      命令: /loop-langgraph "实现分布式任务调度系统，支持任务分发、Worker 注册、失败重试、优先级队列、Cron 定时任务"
+      策略: langgraph（状态机图引擎）
+      结果: 生成 scheduler.js + worker.js + queue.js，包含 Redis 队列、心跳检测、重试策略
+      参数:
+        - --criteria "支持失败重试 3 次" --criteria "支持优先级"
+      产出: 生产级调度系统，支持多 Worker 并行处理任务，自动负载均衡
+
+  [9] 插件化架构框架
+      复杂度: 复杂
+      描述: 设计支持插件热加载、依赖管理、生命周期钩子、事件总线的插件框架
+      命令: /loop-langgraph "设计插件化框架，支持插件热加载/卸载、依赖声明、生命周期钩子（onLoad/onUnload）、事件总线通信"
+      策略: langgraph（状态机图引擎）
+      结果: 生成 PluginManager.js + EventBus.js + 示例插件，包含依赖解析、热加载、钩子调度
+      参数:
+        - --criteria "支持热加载" --criteria "支持依赖管理"
+      产出: 可复用的插件框架，开发者只需继承 BasePlugin 即可快速开发插件
+
+  [10] 工作流引擎
+      复杂度: 复杂
+      描述: 开发可视化工作流引擎，支持节点拖拽、条件分支、并行执行、审批流转
+      命令: /loop-langgraph "开发工作流引擎，支持可视化节点编辑、条件分支网关、并行执行、审批流转、超时处理、回调通知"
+      策略: langgraph（状态机图引擎）
+      结果: 生成 WorkflowEngine.js + NodeRunner.js + ConditionEvaluator.js + UI 编辑器
+      参数:
+        - --criteria "支持条件分支" --criteria "支持并行网关"
+      产出: 企业级工作流平台，可用于 OA 审批、数据处理流水线等场景
+
+  [11] C++ 高性能日志库开发
+      复杂度: 中等
+      描述: 开发一个线程安全的 C++ 日志库，支持多级别日志、异步写入、日志滚动和格式化输出
+      命令: /loop-langgraph "开发一个 C++ 高性能日志库，支持 DEBUG/INFO/WARN/ERROR 级别、异步写入文件、按大小滚动、自定义格式" --criteria "线程安全" --criteria "异步写入" --criteria "日志滚动"
+      策略: langgraph（状态机图引擎）
+      结果: 生成 logger.h + logger.cpp，包含 LogSink 接口、AsyncWriter、RollingFile、Formatter 组件
+      参数:
+        - --criteria 定义线程安全和异步写入标准
+        - --max-iterations 15
+      产出: 可直接 include 使用的 C++ 日志库，支持 LOG_INFO << "msg" 语法，性能达 100万条/秒
+
+  [12] 网页版可视化数据看板
+      复杂度: 复杂
+      描述: 开发一个实时数据可视化看板，支持折线图、柱状图、饼图、地图等多种图表类型和数据刷新
+      命令: /loop-langgraph "开发一个可视化数据看板网页，支持折线图、柱状图、饼图、实时数据刷新、响应式布局" --criteria "支持 ECharts 图表" --criteria "WebSocket 实时推送" --criteria "响应式布局"
+      策略: langgraph（状态机图引擎）
+      结果: 生成 dashboard.html + dashboard.js + websocket-server.js，包含图表组件、数据适配器、WebSocket 推送
+      参数:
+        - --criteria 定义图表类型和刷新频率
+        - --max-iterations 20
+      产出: 一个完整的可视化看板网页，打开浏览器即可查看实时数据图表，支持 PC 和移动端
+
+  [13] 分布式微服务治理平台
+      复杂度: 复杂
+      描述: 构建服务注册发现、限流熔断、链路追踪、配置中心于一体的服务治理平台
+      命令: /loop-langgraph "构建微服务治理平台：服务注册发现、限流熔断、链路追踪、配置中心" --criteria "服务注册发现" --criteria "限流熔断" --criteria "链路追踪"
+      策略: langgraph（状态机图引擎）
+      结果: 生成 registry-service + circuit-breaker + trace-collector + config-center，包含服务健康检查、滑动窗口限流、调用链追踪
+      参数:
+        - --criteria 定义服务治理各模块标准
+        - --max-iterations 20
+      产出: 生产级服务治理平台，支持服务自动注册发现、智能限流熔断、全链路追踪
+
+  [14] 实时协作编辑系统
+      复杂度: 复杂
+      描述: 实现多人实时协作文档编辑，支持 OT/CRDT 算法、WebSocket 同步、光标同步
+      命令: /loop-langgraph "实现多人实时协作文档编辑系统，支持 OT/CRDT 算法、WebSocket 同步、光标同步" --criteria "支持 OT/CRDT 算法" --criteria "WebSocket 实时同步" --criteria "光标位置同步"
+      策略: langgraph（状态机图引擎）
+      结果: 生成 collab-editor.html + ot-engine.js + websocket-server.js，包含操作转换、冲突解决、状态同步
+      参数:
+        - --criteria 定义协作编辑各模块标准
+        - --max-iterations 20
+      产出: 支持多人同时编辑同一文档，实时同步操作，自动解决冲突
+
+  [15] 电商秒杀系统
+      复杂度: 复杂
+      描述: 构建高并发电商秒杀系统，支持限时抢购、库存扣减、防超卖、队列削峰、限流防刷
+      命令: /loop-langgraph "构建电商秒杀系统：限时抢购、Redis 预扣库存、MQ 异步下单、防超卖、限流防刷" --criteria "Redis 预扣库存" --criteria "MQ 异步下单" --criteria "防超卖" --criteria "限流防刷"
+      策略: langgraph（状态机图引擎）
+      结果: 生成 seckill-service + stock-service + order-queue，包含 Redis 原子扣减、Kafka 异步下单、令牌桶限流
+      参数:
+        - --criteria 定义秒杀各环节标准
+        - --max-iterations 20
+      产出: 支持 10 万 QPS 秒杀场景，库存零超卖，订单异步可靠处理
+
+  [16] 金融交易风控引擎
+      复杂度: 复杂
+      描述: 构建实时金融风控引擎，支持规则引擎、黑白名单、交易拦截、风险评分、实时决策
+      命令: /loop-langgraph "构建金融交易风控引擎：实时规则引擎、黑白名单、交易拦截、风险评分、实时决策" --criteria "规则引擎" --criteria "黑白名单" --criteria "交易拦截" --criteria "风险评分"
+      策略: langgraph（状态机图引擎）
+      结果: 生成 risk-engine + rule-engine + decision-service，包含 Drools 规则引擎、实时评分、拦截决策
+      参数:
+        - --criteria 定义风控各模块标准
+        - --max-iterations 20
+      产出: 毫秒级风控决策，支持千条规则实时匹配，风险交易秒级拦截
+
+  [17] 物联网设备管理平台
+      复杂度: 复杂
+      描述: 构建 IoT 设备管理平台，支持设备接入、数据采集、远程控制、告警联动、设备影子
+      命令: /loop-langgraph "构建物联网设备管理平台：MQTT 设备接入、数据采集、远程控制、告警联动、设备影子" --criteria "MQTT 接入" --criteria "数据采集" --criteria "远程控制" --criteria "告警联动"
+      策略: langgraph（状态机图引擎）
+      结果: 生成 iot-platform + device-service + rule-engine，包含 MQTT 接入、时序数据库、规则联动
+      参数:
+        - --criteria 定义 IoT 平台各模块标准
+        - --max-iterations 20
+      产出: 支持百万级设备接入，毫秒级数据采集，秒级远程控制响应
+
+  [18] 智能客服对话系统（多轮+意图+知识库）
+      复杂度: 中等
+      描述: 构建智能客服系统，支持多轮对话管理、意图识别、知识库检索、情感分析、人工转接
+      命令: /loop-langgraph "构建智能客服系统：多轮对话、意图识别、知识库检索、情感分析" --criteria "多轮对话管理" --criteria "意图识别准确率 > 90%" --criteria "知识库检索" --max-iterations 30
+      策略: langgraph（状态机图引擎）
+      结果: 生成 chatbot-engine + intent-classifier + knowledge-base，包含对话状态机、意图分类器、检索引擎
+      参数:
+        - --max-iterations 30 支持复杂多轮对话逻辑开发
+        - --task-budget 100000 控制 API 成本
+      产出: 支持 30 轮连续对话，意图识别准确率 90%+，知识库秒级检索
+
+  [19] 代码自动生成器（需求→代码）
+      复杂度: 中等
+      描述: 根据自然语言需求自动生成代码，支持多语言、代码审查、单元测试生成
+      命令: /loop-langgraph "构建代码自动生成器" --criteria "支持 Python/Java/Go" --criteria "代码审查" --criteria "单元测试生成" --max-iterations 25
+      策略: langgraph（状态机图引擎）
+      结果: 生成 code-generator + code-reviewer + test-generator，包含需求解析、代码生成、质量检查
+      参数:
+        - --criteria 定义多语言支持和质量标准
+        - --max-iterations 25 支持复杂代码生成逻辑
+      产出: 自然语言描述自动生成可运行代码，附带单元测试和审查报告
+
+  [20] 大规模数据 ETL Pipeline（TB 级）
+      复杂度: 复杂
+      描述: 构建大数据处理 Pipeline，支持 TB 级数据抽取、清洗转换、聚合分析、可视化报告
+      命令: /loop-langgraph "构建大规模数据 ETL Pipeline" --criteria "TB 级数据处理" --criteria "数据清洗率 99.9%" --criteria "聚合分析" --task-budget 200000
+      策略: langgraph（状态机图引擎）
+      结果: 生成 etl-pipeline + data-cleaner + aggregator + visualizer，包含分布式抽取、清洗规则引擎
+      参数:
+        - --task-budget 200000 控制大规模数据处理成本
+        - --max-iterations 20
+      产出: TB 级数据端到端处理，数据清洗率 99.9%，秒级聚合分析
+
+  [21] 视频流处理平台（RTMP/HLS/WebRTC）
+      复杂度: 复杂
+      描述: 构建实时视频流处理平台，支持 RTMP 推流、HLS 切片、WebRTC 实时通信、录制回放
+      命令: /loop-langgraph "构建视频流处理平台：RTMP 推流、HLS 切片、WebRTC 实时通信、录制回放" --criteria "RTMP 推流" --criteria "HLS 切片" --criteria "WebRTC 通信" --max-iterations 25
+      策略: langgraph（状态机图引擎）
+      结果: 生成 video-server + rtmp-handler + hls-transcoder + webrtc-gateway
+      参数:
+        - --max-iterations 25 支持复杂流媒体处理逻辑
+        - --task-budget 100000
+      产出: 支持万级并发推流，毫秒级延迟实时通信，自动录制回放
+
+  [22] 智能推荐系统（协同过滤+内容推荐）
+      复杂度: 复杂
+      描述: 构建推荐系统，支持协同过滤、内容推荐、实时更新、A/B 测试、个性化推送
+      命令: /loop-langgraph "构建智能推荐系统：协同过滤、内容推荐、实时更新、A/B 测试" --criteria "协同过滤" --criteria "内容推荐" --criteria "实时更新" --max-iterations 25
+      策略: langgraph（状态机图引擎）
+      结果: 生成 recommendation-engine + cf-algorithm + content-analyzer + ab-test
+      参数:
+        - --max-iterations 25 支持复杂推荐算法开发
+        - --criteria 定义推荐准确率标准
+      产出: 支持百万用户个性化推荐，实时更新推荐结果，A/B 测试验证效果
+
+  [23] 知识图谱构建系统（实体+关系+推理）
+      复杂度: 复杂
+      描述: 构建知识图谱系统，支持实体抽取、关系抽取、图数据库存储、知识推理、可视化
+      命令: /loop-langgraph "构建知识图谱系统：实体抽取、关系抽取、图数据库、知识推理、可视化" --criteria "实体抽取" --criteria "关系抽取" --criteria "知识推理" --max-iterations 30
+      策略: langgraph（状态机图引擎）
+      结果: 生成 kg-builder + entity-extractor + relation-extractor + graph-db + reasoner
+      参数:
+        - --max-iterations 30 支持复杂知识图谱构建
+        - --task-budget 100000
+      产出: 百万级实体关系知识图谱，支持多跳推理和可视化探索
+
+────────────────────────────────────────────────────────────────
+  策略: CREW (23 个示例)
+────────────────────────────────────────────────────────────────
+
+  [1] 代码审查：发现并修复潜在 bug
+      复杂度: 简单
+      描述: 模拟团队协作：manager 分配任务、developer 写代码、tester 写测试、reviewer 审查
+      命令: /loop-crew "审查 src/utils.js 中的潜在 bug 并修复"
+      策略: crew（多 Agent 协作）
+      结果: manager 分配审查任务 → developer 定位问题 → tester 编写复现测试 → reviewer 确认修复
+      参数:
+        - 无额外参数，默认 4 个角色协作
+      产出: 
+
+  [2] 为核心模块编写单元测试
+      复杂度: 简单
+      描述: 团队协作为指定模块生成高覆盖率单元测试，包含边界条件和异常场景
+      命令: /loop-crew "为 src/auth.js 编写单元测试" --criteria "覆盖率 > 90%" --criteria "包含边界条件" --criteria "包含异常场景"
+      策略: crew（多 Agent 协作）
+      结果: developer 分析源码 → tester 编写正常/边界/异常用例 → reviewer 审查覆盖率
+      参数:
+        - --criteria 定义覆盖率要求
+        - --max-iterations 10
+      产出: auth.test.js，包含 20+ 个测试用例，覆盖正常流程和异常分支
+
+  [3] 自动生成 API 文档
+      复杂度: 中等
+      描述: 扫描代码中的路由和参数，自动生成 OpenAPI/Swagger 格式文档
+      命令: /loop-crew "扫描 routes/ 目录，生成 OpenAPI 3.0 文档"
+      策略: crew（多 Agent 协作）
+      结果: developer 解析路由注解 → tester 验证接口返回 → reviewer 检查文档完整性
+      参数:
+        - 可选 --criteria "包含请求示例" --criteria "包含错误码"
+      产出: openapi.yaml + swagger-ui 可浏览的 API 文档站点
+
+  [4] 博客系统全栈开发
+      复杂度: 中等
+      描述: 从需求分析到部署的全栈开发：前端 UI、后端 API、数据库、管理后台
+      命令: /loop-crew "开发个人博客系统，包含文章展示、评论、标签、管理后台"
+      策略: crew（多 Agent 协作）
+      结果: manager 拆分为前端/后端/数据库任务 → developer 并行开发 → tester 集成测试 → reviewer 验收
+      参数:
+        - --criteria "响应式设计" --criteria "支持 Markdown" --criteria "支持评论"
+      产出: 可部署的全栈博客系统，包含前端页面、REST API 和管理后台
+
+  [5] 电商网站核心模块
+      复杂度: 中等
+      描述: 开发商品管理、购物车、订单处理、支付集成、库存管理
+      命令: /loop-crew "开发电商核心模块：商品列表/详情、购物车、下单、支付回调、库存扣减"
+      策略: crew（多 Agent 协作）
+      结果: manager 分配微服务任务 → developer 开发商品/订单/支付模块 → tester 端到端测试
+      参数:
+        - --criteria "支持支付宝" --criteria "支持微信支付" --criteria "库存一致性"
+      产出: 完整电商平台核心，支持浏览→加购→下单→支付→发货全流程
+
+  [6] SaaS 多租户平台
+      复杂度: 复杂
+      描述: 构建支持多租户隔离、订阅计费、权限管理、用量统计的 SaaS 平台
+      命令: /loop-crew "构建 SaaS 平台：多租户数据隔离、订阅计划管理、RBAC 权限、用量统计仪表盘"
+      策略: crew（多 Agent 协作）
+      结果: manager 拆分租户/计费/权限/分析模块 → developer 并行实现 → tester 安全测试
+      参数:
+        - --criteria "租户数据隔离" --criteria "支持按月/按年订阅"
+      产出: 生产级 SaaS 基础平台，可在此基础上快速开发垂直应用
+
+  [7] 微服务架构设计与实现
+      复杂度: 复杂
+      描述: 将单体应用拆分为微服务，设计服务发现、负载均衡、熔断降级、API 网关
+      命令: /loop-crew "将现有单体应用拆分为微服务：用户服务、订单服务、商品服务，设计 API 网关和熔断机制"
+      策略: crew（多 Agent 协作）
+      结果: manager 制定拆分策略 → developer 实现各服务 → tester 集成测试 → reviewer 架构评审
+      参数:
+        - --criteria "服务独立部署" --criteria "支持熔断降级"
+      产出: 微服务架构系统，各服务可独立部署、独立扩展、独立维护
+
+  [8] DevOps 工具链搭建
+      复杂度: 复杂
+      描述: 搭建完整 CI/CD 流水线：代码检查、自动化测试、构建打包、部署发布
+      命令: /loop-crew "搭建 CI/CD 工具链：ESLint 检查、Jest 测试、Docker 构建、K8s 部署、钉钉通知"
+      策略: crew（多 Agent 协作）
+      结果: manager 分配各阶段任务 → developer 编写 CI 配置 → tester 验证流水线 → reviewer 优化
+      参数:
+        - --criteria "支持自动回滚" --criteria "部署通知"
+      产出: 完整 DevOps 工具链，代码提交后自动检查→测试→构建→部署
+
+  [9] 数据管道 ETL 系统
+      复杂度: 复杂
+      描述: 设计数据采集、清洗、转换、加载的全流程，支持实时和批量
+      命令: /loop-crew "设计 ETL 数据管道：从 MySQL 抽取数据 → 清洗转换 → 加载到 ClickHouse，支持定时批量和实时 CDC"
+      策略: crew（多 Agent 协作）
+      结果: manager 设计数据流 → developer 实现抽取/清洗/加载 → tester 数据质量验证
+      参数:
+        - --criteria "支持数据校验" --criteria "支持失败重试"
+      产出: 生产级数据管道，支持 TB 级数据迁移和实时同步
+
+  [10] 企业级 CRM 系统
+      复杂度: 复杂
+      描述: 开发客户关系管理系统：客户管理、销售漏斗、合同管理、报表分析
+      命令: /loop-crew "开发 CRM 系统：客户信息管理、销售漏斗跟踪、合同审批流程、数据报表仪表盘"
+      策略: crew（多 Agent 协作）
+      结果: manager 分配模块 → developer 并行开发 → tester 集成测试 → reviewer 业务验收
+      参数:
+        - --criteria "支持导入导出" --criteria "支持自定义报表"
+      产出: 企业级 CRM 平台，提升销售团队客户管理效率 50%
+
+  [11] C++ 跨平台网络库开发
+      复杂度: 中等
+      描述: 团队协作开发跨平台 C++ 网络库，包含 TCP/UDP 封装、事件循环、线程池、协议解析
+      命令: /loop-crew "开发跨平台 C++ 网络库，封装 TCP/UDP socket、实现 epoll/kqueue/IOCP 事件循环、线程池、Protobuf 协议编解码" --criteria "支持 Linux/Windows/macOS" --criteria "单线程 10万并发" --criteria "零内存泄漏"
+      策略: crew（多 Agent 协作）
+      结果: manager 拆分网络层/协议层/测试层 → developer 实现 Socket/EventLoop/ThreadPool → tester 压力测试 → reviewer 安全审查
+      参数:
+        - --criteria 定义跨平台标准和性能指标
+        - --max-iterations 20
+      产出: 可直接编译使用的 C++ 网络库，提供 net::TCPClient、net::TCPServer、net::EventLoop 等 API
+
+  [12] 团队协作出题系统（网页版）
+      复杂度: 复杂
+      描述: 团队协作开发在线编程出题平台，支持题目管理、在线代码编辑、实时编译、评测队列、排行榜
+      命令: /loop-crew "开发在线编程出题平台网页：题目管理后台、在线代码编辑器（Monaco）、实时编译评测、提交排行榜、用户组队" --criteria "支持 C++/Java/Python 编译" --criteria "代码高亮" --criteria "评测结果实时推送"
+      策略: crew（多 Agent 协作）
+      结果: manager 拆分前端/后端/评测机任务 → developer 并行开发 → tester 集成测试 → reviewer 验收
+      参数:
+        - --criteria 定义支持的编程语言和评测延迟
+        - --max-iterations 25
+      产出: 可部署的出题平台，支持多语言在线提交、实时编译、排行榜展示，类似 LeetCode 的简化版
+
+  [13] 编译器前端开发（C++ 子集）
+      复杂度: 复杂
+      描述: 团队协作开发 C++ 编译器前端，包含词法分析、语法分析、语义分析、中间代码生成
+      命令: /loop-crew "开发 C++ 子集编译器前端：词法分析（Lexer）、语法分析（Parser）、语义分析、中间代码生成" --criteria "支持基本类型和运算符" --criteria "支持控制流" --criteria "支持函数定义"
+      策略: crew（多 Agent 协作）
+      结果: manager 拆分词法/语法/语义/代码生成任务 → developer 实现各模块 → tester 编写测试用例 → reviewer 审查正确性
+      参数:
+        - --criteria 定义编译器各阶段标准
+        - --max-iterations 25
+      产出: 可编译 C++ 子集的编译器前端，支持词法分析、语法分析、语义分析和中间代码生成
+
+  [14] 机器学习平台（MLOps）
+      复杂度: 复杂
+      描述: 构建端到端机器学习平台，支持数据管理、模型训练、实验追踪、模型部署、监控
+      命令: /loop-crew "构建 MLOps 机器学习平台：数据版本管理、分布式训练、实验追踪、模型部署、性能监控" --criteria "支持数据版本管理" --criteria "支持分布式训练" --criteria "支持模型部署"
+      策略: crew（多 Agent 协作）
+      结果: manager 拆分数据/训练/部署/监控任务 → developer 实现各模块 → tester 验证流程 → reviewer 审查架构
+      参数:
+        - --criteria 定义 MLOps 各模块标准
+        - --max-iterations 25
+      产出: 完整的机器学习平台，支持数据管理、模型训练、实验追踪、模型部署和监控
+
+  [15] 游戏引擎核心开发
+      复杂度: 复杂
+      描述: 团队协作开发 2D/3D 游戏引擎，包含 ECS 架构、渲染管线、物理引擎、AI 行为树、网络同步
+      命令: /loop-crew "开发 2D/3D 游戏引擎核心：ECS 架构、渲染管线、物理引擎、AI 行为树、网络同步" --criteria "ECS 架构" --criteria "渲染管线" --criteria "物理引擎"
+      策略: crew（多 Agent 协作）
+      结果: manager 拆分 ECS/渲染/物理/AI/网络任务 → developer 实现各模块 → tester 集成测试 → reviewer 审查架构
+      参数:
+        - --criteria 定义游戏引擎各模块标准
+        - --max-iterations 25
+      产出: 可运行的游戏引擎核心，支持实体组件系统、物理模拟、AI 行为和多人网络同步
+
+  [16] 音视频处理平台
+      复杂度: 复杂
+      描述: 构建实时音视频处理平台，支持转码、流媒体分发、实时通信、AI 降噪、画质增强
+      命令: /loop-crew "构建音视频处理平台：实时转码、流媒体分发、WebRTC 实时通信、AI 降噪、画质增强" --criteria "实时转码" --criteria "流媒体分发" --criteria "WebRTC 通信"
+      策略: crew（多 Agent 协作）
+      结果: manager 拆分转码/流媒体/通信/AI任务 → developer 实现各模块 → tester 端到端测试 → reviewer 审查质量
+      参数:
+        - --criteria 定义音视频平台各模块标准
+        - --max-iterations 25
+      产出: 完整的音视频处理平台，支持实时转码、低延迟流媒体和 AI 增强处理
+
+  [17] 区块链 DApp 全栈开发
+      复杂度: 复杂
+      描述: 团队协作开发去中心化应用，包含智能合约、钱包集成、交易签名、NFT 市场、链上数据索引
+      命令: /loop-crew "开发区块链 DApp：Solidity 智能合约、钱包集成、NFT 市场、链上数据索引、交易签名" --criteria "智能合约" --criteria "钱包集成" --criteria "NFT 市场"
+      策略: crew（多 Agent 协作）
+      结果: manager 拆分合约/前端/后端/索引任务 → developer 实现各模块 → tester 测试网验证 → reviewer 安全审计
+      参数:
+        - --criteria 定义 DApp 各模块标准
+        - --max-iterations 25
+      产出: 可部署的完整 DApp，支持 NFT 铸造交易、钱包连接和链上数据查询
+
+  [18] 自动驾驶仿真系统（感知+规划+控制）
+      复杂度: 复杂
+      描述: 团队协作开发自动驾驶仿真系统，包含传感器融合、路径规划、车辆控制、场景仿真
+      命令: /loop-crew "开发自动驾驶仿真系统" --criteria "传感器融合" --criteria "路径规划" --criteria "车辆控制" --max-iterations 30 --max-retries 3
+      策略: crew（多 Agent 协作）
+      结果: manager 拆分感知/规划/控制/仿真任务 → developer 实现 → tester 仿真测试 → reviewer 安全审查
+      参数:
+        - --max-retries 3 关键安全模块允许 3 次返工确保可靠性
+        - --max-iterations 30 支持复杂系统集成
+      产出: 可运行的自动驾驶仿真系统，支持多传感器融合、实时路径规划和车辆控制
+
+  [19] 医疗影像 AI 分析平台
+      复杂度: 复杂
+      描述: 构建医疗影像分析平台，支持 CT/MRI 影像加载、AI 辅助诊断、病灶标注、报告生成
+      命令: /loop-crew "开发医疗影像 AI 分析平台" --criteria "DICOM 影像加载" --criteria "AI 辅助诊断" --criteria "病灶标注" --max-iterations 30
+      策略: crew（多 Agent 协作）
+      结果: manager 拆分影像/AI/标注/报告任务 → developer 实现 → tester 精度验证 → reviewer 合规审查
+      参数:
+        - --max-iterations 30 支持复杂 AI 模型集成开发
+        - --max-retries 2  
+      产出: 医疗级影像分析平台，AI 辅助诊断准确率 95%+，支持 DICOM 标准
+
+  [20] 金融量化交易系统
+      复杂度: 复杂
+      描述: 构建量化交易平台，支持策略回测、实时行情、自动交易、风险管理、收益分析
+      命令: /loop-crew "开发金融量化交易系统" --criteria "策略回测" --criteria "实时行情" --criteria "自动交易" --criteria "风险管理" --max-iterations 25 --max-retries 3
+      策略: crew（多 Agent 协作）
+      结果: manager 拆分策略/行情/交易/风控任务 → developer 实现 → tester 回测验证 → reviewer 风控审查
+      参数:
+        - --max-retries 3 交易核心模块允许 3 次返工确保安全
+        - --criteria 定义回测收益率和最大回撤标准
+      产出: 生产级量化交易平台，支持多策略回测、实时交易和风险控制
+
+  [21] 网络安全攻防平台（渗透测试+入侵检测）
+      复杂度: 复杂
+      描述: 团队协作构建网络安全平台，包含渗透测试、漏洞扫描、入侵检测、应急响应、日志分析
+      命令: /loop-crew "构建网络安全攻防平台：渗透测试、漏洞扫描、入侵检测、应急响应、日志分析" --criteria "渗透测试" --criteria "漏洞扫描" --criteria "入侵检测" --max-iterations 30 --max-retries 3
+      策略: crew（多 Agent 协作）
+      结果: manager 拆分渗透/检测/响应/分析任务 → developer 实现 → tester 红蓝对抗 → reviewer 安全审查
+      参数:
+        - --max-iterations 30 安全系统需要充分迭代
+        - --max-retries 3 关键模块允许 3 次返工
+      产出: 生产级安全攻防平台，支持自动化渗透测试、实时入侵检测和应急响应
+
+  [22] 生物信息学平台（基因序列+蛋白质结构）
+      复杂度: 复杂
+      描述: 构建生物信息学分析平台，支持基因序列比对、蛋白质结构预测、药物分子筛选、可视化
+      命令: /loop-crew "构建生物信息学平台：基因序列比对、蛋白质结构预测、药物分子筛选、可视化" --criteria "序列比对" --criteria "结构预测" --criteria "药物筛选" --max-iterations 30
+      策略: crew（多 Agent 协作）
+      结果: manager 拆分序列/结构/筛选/可视化任务 → developer 实现 → tester 精度验证 → reviewer 学术审查
+      参数:
+        - --max-iterations 30 生物信息学计算需要大量迭代
+        - --criteria 定义比对准确率和预测精度标准
+      产出: 完整的生物信息学平台，支持大规模基因分析和蛋白质结构预测
+
+  [23] 机器人仿真系统（SLAM+路径规划+运动控制）
+      复杂度: 复杂
+      描述: 构建机器人仿真系统，支持 SLAM 建图、路径规划、运动控制、传感器仿真、数字孪生
+      命令: /loop-crew "构建机器人仿真系统：SLAM 建图、路径规划、运动控制、传感器仿真、数字孪生" --criteria "SLAM 建图" --criteria "路径规划" --criteria "运动控制" --max-iterations 30
+      策略: crew（多 Agent 协作）
+      结果: manager 拆分建图/规划/控制/仿真任务 → developer 实现 → tester 仿真验证 → reviewer 审查算法
+      参数:
+        - --max-iterations 30 机器人系统需要充分迭代调优
+        - --criteria 定义建图精度和控制稳定性标准
+      产出: 完整的机器人仿真系统，支持自主导航和数字孪生
+
+────────────────────────────────────────────────────────────────
+  策略: AUTOGPT (23 个示例)
+────────────────────────────────────────────────────────────────
+
+  [1] 批量重命名项目文件
+      复杂度: 简单
+      描述: 扫描目录下所有文件，按规则批量重命名（添加前缀、替换空格、统一大小写）
+      命令: /loop-autogpt "将 src/ 下所有 .js 文件重命名为 kebab-case，空格替换为连字符"
+      策略: autogpt（图执行引擎）
+      结果: 自动扫描文件 → 生成重命名映射 → 批量执行 rename → 输出重命名日志
+      参数:
+        - 可选 --criteria "支持预览模式" --criteria "支持撤销"
+      产出: src/ 下所有文件变为 kebab-case 命名，如 myComponent.js → my-component.js
+
+  [2] JSON 与 XML 数据格式转换
+      复杂度: 简单
+      描述: 将 XML 配置文件转换为 JSON 格式，保持数据结构完整
+      命令: /loop-autogpt "将 config.xml 转换为 config.json，保留所有属性和嵌套结构"
+      策略: autogpt（图执行引擎）
+      结果: 解析 XML DOM → 递归转换为 JS 对象 → JSON.stringify 格式化输出
+      参数:
+        - 可选 --criteria "支持 XML 属性" --criteria "支持 CDATA"
+      产出: config.json 文件，结构与 XML 完全等价，可直接 require() 使用
+
+  [3] 图片压缩与格式批处理
+      复杂度: 中等
+      描述: 扫描目录下所有图片，按指定质量压缩，并转换为 WebP/AVIF
+      命令: /loop-autogpt "将 images/ 下所有 PNG/JPG 压缩 70% 质量并转换为 WebP 格式" --criteria "保持 EXIF 信息"
+      策略: autogpt（图执行引擎）
+      结果: 扫描图片文件 → 调用 sharp 库压缩 → 转换格式 → 输出到 dist/ 目录
+      参数:
+        - --criteria "压缩质量 70%"
+        - --criteria "输出 WebP"
+      产出: images/ 体积减少 60%，加载速度提升 3 倍
+
+  [4] 日志分析与异常检测
+      复杂度: 中等
+      描述: 分析应用日志文件，统计错误频率、识别异常模式、生成可视化报告
+      命令: /loop-autogpt "分析 access.log，统计每小时请求数、错误率 Top 10、异常 IP、生成 HTML 报告"
+      策略: autogpt（图执行引擎）
+      结果: 逐行解析日志 → 聚合统计 → 异常检测算法 → 生成 ECharts 可视化 HTML
+      参数:
+        - --criteria "支持按小时聚合" --criteria "识别异常 IP"
+      产出: report.html，包含请求趋势图、错误率饼图、异常 IP 列表
+
+  [5] 自动化测试套件生成
+      复杂度: 中等
+      描述: 分析项目结构，自动生成单元测试、集成测试、E2E 测试框架和用例
+      命令: /loop-autogpt "分析 src/ 目录结构，为每个模块生成 Jest 单元测试骨架"
+      策略: autogpt（图执行引擎）
+      结果: AST 解析源码 → 提取函数签名 → 生成测试用例模板 → 填充 mock 数据
+      参数:
+        - --criteria "覆盖所有导出函数" --criteria "包含 mock 数据"
+      产出: 每个 .js 文件对应一个 .test.js，覆盖正常/异常/边界场景
+
+  [6] 数据库迁移与同步
+      复杂度: 中等
+      描述: 实现跨数据库表结构迁移和数据同步，支持 MySQL/PostgreSQL/MongoDB
+      命令: /loop-autogpt "将 MySQL 的 users 表迁移到 PostgreSQL，包含索引和约束"
+      策略: autogpt（图执行引擎）
+      结果: 读取源表 DDL → 类型映射 → 生成目标 DDL → 批量迁移数据 → 校验一致性
+      参数:
+        - --criteria "支持索引迁移" --criteria "支持数据校验"
+      产出: users 表完整迁移到 PostgreSQL，数据零丢失，索引和约束正确
+
+  [7] CI/CD 流水线搭建
+      复杂度: 复杂
+      描述: 配置完整持续集成和持续部署流水线：代码检查→测试→构建→部署→通知
+      命令: /loop-autogpt "配置 GitHub Actions 流水线：ESLint → Jest → Docker Build → K8s Deploy → 钉钉通知"
+      策略: autogpt（图执行引擎）
+      结果: 分析项目技术栈 → 生成 workflow YAML → 配置 secrets → 验证流水线可运行
+      参数:
+        - --criteria "支持多环境部署" --criteria "支持自动回滚"
+      产出: 完整的 .github/workflows/deploy.yml，提交代码后自动部署到生产
+
+  [8] 自动化部署脚本
+      复杂度: 复杂
+      描述: 编写一键部署脚本：环境检查、依赖安装、服务配置、健康检查、回滚
+      命令: /loop-autogpt "编写 deploy.sh 一键部署脚本，支持环境检查、PM2 启动、Nginx 配置、健康检查、失败回滚"
+      策略: autogpt（图执行引擎）
+      结果: 生成 deploy.sh → 包含 check_env()、install_deps()、configure_nginx()、health_check()、rollback()
+      参数:
+        - --criteria "支持回滚到上一版本" --criteria "健康检查 3 次重试"
+      产出: bash deploy.sh 即可完成从代码到生产环境的全自动部署
+
+  [9] 监控告警系统
+      复杂度: 复杂
+      描述: 搭建系统监控平台：指标采集、仪表盘展示、阈值告警、通知升级、自愈策略
+      命令: /loop-autogpt "搭建 Node.js 监控告警系统：采集 CPU/内存/磁盘指标 → InfluxDB 存储 → Grafana 仪表盘 → 超阈值告警"
+      策略: autogpt（图执行引擎）
+      结果: 生成 collector.js + alerter.js + dashboard.json → 集成企业微信/钉钉告警
+      参数:
+        - --criteria "支持多主机监控" --criteria "支持告警升级"
+      产出: 7x24 小时系统监控，异常 5 秒内告警，支持自动重启故障服务
+
+  [10] 全栈项目脚手架
+      复杂度: 复杂
+      描述: 根据用户输入的技术栈（React/Node/MongoDB 等），自动生成完整项目骨架
+      命令: /loop-autogpt "开发 create-doge-app 脚手架，支持选择 React/Vue + Node/Go + MySQL/MongoDB"
+      策略: autogpt（图执行引擎）
+      结果: 交互式 CLI 选择技术栈 → 生成项目结构 → 配置 webpack/vite → 安装依赖 → 生成 README
+      参数:
+        - --criteria "支持 TypeScript" --criteria "包含示例代码"
+      产出: npx create-doge-app my-app 一键生成可运行的全栈项目
+
+  [11] C++ 项目 CMake 构建系统自动化
+      复杂度: 中等
+      描述: 自动化生成跨平台 CMake 构建配置，支持多目标（库/可执行文件/测试）、依赖管理、安装包生成
+      命令: /loop-autogpt "为 C++ 项目生成完整 CMake 构建系统：CMakeLists.txt 配置、静态库/动态库目标、单元测试目标、CPack 打包" --criteria "支持 Linux/Windows/macOS" --criteria "支持静态库和动态库" --criteria "集成 Google Test"
+      策略: autogpt（图执行引擎）
+      结果: 扫描项目结构 → 生成 CMakeLists.txt → 配置目标依赖 → 添加测试目标 → 配置 CPack 打包
+      参数:
+        - --criteria 定义跨平台标准和目标类型
+        - --max-concurrency 5
+      产出: 完整的 CMake 构建系统，运行 cmake && make && ctest && cpack 即可完成构建、测试、打包
+
+  [12] 自动化生成响应式企业官网
+      复杂度: 中等
+      描述: 根据需求自动生成响应式企业网站，包含首页、关于我们、产品展示、新闻动态、联系表单、SEO 优化
+      命令: /loop-autogpt "生成响应式企业官网：首页 Hero 区、产品展示网格、关于我们时间线、联系表单、SEO meta 标签" --criteria "移动端适配" --criteria "SEO 友好" --criteria "页面加载 < 2 秒"
+      策略: autogpt（图执行引擎）
+      结果: 并行生成 HTML/CSS/JS → 优化图片资源 → 添加 meta 标签 → 生成 sitemap → 部署到静态托管
+      参数:
+        - --criteria 定义响应式断点和性能指标
+        - --max-concurrency 5
+      产出: 可直接部署的企业官网，PC/平板/手机自适应，Lighthouse 评分 90+
+
+  [13] 容器编排系统（简化版 Kubernetes）
+      复杂度: 复杂
+      描述: 开发容器编排平台，支持 Pod 调度、服务发现、自动扩缩容、滚动更新、健康检查
+      命令: /loop-autogpt "开发容器编排系统：Pod 调度、服务发现、自动扩缩容、滚动更新、健康检查" --criteria "支持 Pod 调度" --criteria "支持自动扩缩容" --criteria "支持滚动更新"
+      策略: autogpt（图执行引擎）
+      结果: 分解 → 设计调度器、控制器、API 服务器 → 并行实现各组件 → 集成测试 → 验证
+      参数:
+        - --criteria 定义编排系统各模块标准
+        - --max-concurrency 5
+      产出: 简化版 Kubernetes，支持容器编排、服务发现、自动扩缩容和滚动更新
+
+  [14] 分布式爬虫引擎
+      复杂度: 复杂
+      描述: 构建高性能分布式爬虫系统，支持任务调度、URL 去重、数据存储、反爬处理、可视化监控
+      命令: /loop-autogpt "构建分布式爬虫引擎：任务调度、URL 去重、数据存储、反爬处理、可视化监控" --criteria "支持任务调度" --criteria "支持 URL 去重" --criteria "支持反爬处理"
+      策略: autogpt（图执行引擎）
+      结果: 分解 → 设计调度器、下载器、解析器、存储器 → 并行实现 → 集成测试
+      参数:
+        - --criteria 定义爬虫系统各模块标准
+        - --max-concurrency 5
+      产出: 高性能分布式爬虫引擎，支持大规模数据采集、智能反爬和可视化监控
+
+  [15] 数据分析 Pipeline 自动化
+      复杂度: 复杂
+      描述: 构建端到端数据分析 Pipeline，支持 ETL 抽取、数据清洗、聚合分析、可视化图表、自动报告生成
+      命令: /loop-autogpt "构建数据分析 Pipeline：ETL 抽取、数据清洗、聚合分析、可视化图表、自动报告" --criteria "ETL 抽取" --criteria "数据清洗" --criteria "可视化图表"
+      策略: autogpt（图执行引擎）
+      结果: 分解 → 设计数据流 → 并行实现各阶段 → 集成测试 → 验证数据准确性
+      参数:
+        - --criteria 定义 Pipeline 各阶段标准
+        - --max-concurrency 5
+      产出: 自动化数据分析 Pipeline，支持多源数据接入、清洗转换、可视化报告一键生成
+
+  [16] 自动化测试平台
+      复杂度: 复杂
+      描述: 构建自动化测试平台，支持用例生成、并行执行、覆盖率分析、缺陷管理、测试报告
+      命令: /loop-autogpt "构建自动化测试平台：用例生成、并行执行、覆盖率分析、缺陷管理、测试报告" --criteria "用例生成" --criteria "并行执行" --criteria "覆盖率分析"
+      策略: autogpt（图执行引擎）
+      结果: 分解 → 设计测试框架 → 并行实现各模块 → 集成测试 → 验证覆盖率
+      参数:
+        - --criteria 定义测试平台各模块标准
+        - --max-concurrency 5
+      产出: 完整的自动化测试平台，支持大规模并行测试、智能缺陷定位和可视化报告
+
+  [17] 知识库构建与 RAG 系统
+      复杂度: 复杂
+      描述: 构建知识库系统，支持文档解析、向量嵌入、语义检索、检索增强生成（RAG）、多轮问答
+      命令: /loop-autogpt "构建知识库 RAG 系统：文档解析、向量嵌入、语义检索、检索增强生成、多轮问答" --criteria "文档解析" --criteria "语义检索" --criteria "RAG 生成"
+      策略: autogpt（图执行引擎）
+      结果: 分解 → 设计知识库架构 → 并行实现各模块 → 集成测试 → 验证检索准确性
+      参数:
+        - --criteria 定义知识库各模块标准
+        - --max-concurrency 5
+      产出: 生产级 RAG 系统，支持百万文档索引、毫秒级语义检索、智能多轮问答
+
+  [18] 大规模图像批处理系统（10 万张）
+      复杂度: 中等
+      描述: 构建图像处理平台，支持批量压缩、水印添加、格式转换、AI 抠图、EXIF 处理
+      命令: /loop-autogpt "构建图像批处理系统：批量压缩、水印、格式转换、AI 抠图、EXIF 处理" --criteria "批量压缩" --criteria "AI 抠图" --max-concurrency 10
+      策略: autogpt（图执行引擎）
+      结果: 分解 → 设计图像处理流水线 → 并行实现各处理模块 → 批量执行 → 验证质量
+      参数:
+        - --max-concurrency 10 充分利用多核并行处理 10 万张图片
+        - --retry-delay 2000 失败任务 2 秒后重试
+      产出: 10 万张图片批量处理，支持压缩、水印、AI 抠图等操作
+
+  [19] 多源数据同步系统（MySQL+Mongo+ES）
+      复杂度: 中等
+      描述: 构建数据同步平台，支持多数据源实时同步、冲突检测、断点续传、数据校验
+      命令: /loop-autogpt "构建多源数据同步系统：MySQL/MongoDB/Elasticsearch 实时同步、冲突检测、断点续传" --criteria "实时同步" --criteria "冲突检测" --retry-delay 5000
+      策略: autogpt（图执行引擎）
+      结果: 分解 → 设计同步拓扑 → 并行实现各同步通道 → 集成测试 → 验证一致性
+      参数:
+        - --retry-delay 5000 网络抖动时 5 秒后重试避免雪崩
+        - --max-concurrency 3 控制同步通道并发数
+      产出: 多数据源毫秒级实时同步，支持冲突自动检测和断点续传
+
+  [20] 自动化部署流水线（DevOps）
+      复杂度: 中等
+      描述: 构建 CI/CD 流水线，支持代码检查、测试、构建、部署、通知、回滚
+      命令: /loop-autogpt "构建 DevOps 部署流水线" --criteria "代码检查" --criteria "自动化测试" --criteria "自动部署" --max-iterations 15
+      策略: autogpt（图执行引擎）
+      结果: 分解 → 设计流水线阶段 → 并行实现各阶段 → 集成测试 → 验证全流程
+      参数:
+        - --max-iterations 15 控制流水线复杂度
+        - --retry-delay 3000 部署失败 3 秒后重试
+      产出: 完整的 CI/CD 流水线，代码提交后自动检查→测试→构建→部署
+
+  [21] 财务报表自动化（采集+生成+合规）
+      复杂度: 中等
+      描述: 构建财务报表自动化系统，支持多源数据采集、报表生成、合规检查、审计追踪
+      命令: /loop-autogpt "构建财务报表自动化系统：多源数据采集、报表生成、合规检查、审计追踪" --criteria "数据采集" --criteria "报表生成" --criteria "合规检查" --max-concurrency 5
+      策略: autogpt（图执行引擎）
+      结果: 分解 → 设计数据采集和报表生成流程 → 并行实现各模块 → 集成测试
+      参数:
+        - --max-concurrency 5 并行采集多个数据源
+        - --retry-delay 3000 采集失败 3 秒后重试
+      产出: 财务报表自动生成，支持多源数据接入和合规检查
+
+  [22] 电商价格监控系统（竞品抓取+预警）
+      复杂度: 中等
+      描述: 构建电商价格监控系统，支持竞品价格抓取、价格分析、异常预警、趋势预测
+      命令: /loop-autogpt "构建电商价格监控系统：竞品价格抓取、价格分析、异常预警、趋势预测" --criteria "价格抓取" --criteria "异常预警" --criteria "趋势预测" --max-concurrency 10
+      策略: autogpt（图执行引擎）
+      结果: 分解 → 设计抓取和分析流程 → 并行实现各模块 → 集成测试
+      参数:
+        - --max-concurrency 10 并行抓取多个电商平台
+        - --retry-delay 5000 抓取失败 5 秒后重试
+      产出: 实时监控竞品价格变动，自动预警异常价格波动
+
+  [23] 社交媒体舆情分析（抓取+情感+影响力）
+      复杂度: 中等
+      描述: 构建社交媒体分析平台，支持内容抓取、情感分析、影响力评估、热点发现
+      命令: /loop-autogpt "构建社交媒体舆情分析平台：内容抓取、情感分析、影响力评估、热点发现" --criteria "内容抓取" --criteria "情感分析" --criteria "影响力评估" --max-concurrency 8
+      策略: autogpt（图执行引擎）
+      结果: 分解 → 设计抓取和分析流程 → 并行实现各模块 → 集成测试
+      参数:
+        - --max-concurrency 8 并行抓取多个社交平台
+        - --retry-delay 3000 抓取失败 3 秒后重试
+      产出: 实时分析社交媒体舆情，自动发现热点和评估影响力
+
+────────────────────────────────────────────────────────────────
+  策略: OPENHANDS (23 个示例)
+────────────────────────────────────────────────────────────────
+
+  [1] 修复拼写错误和格式问题
+      复杂度: 简单
+      描述: 扫描项目中的拼写错误、缩进不一致、缺失分号等问题并自动修复
+      命令: /loop-openhands "扫描并修复 src/ 下所有文件的拼写错误和格式问题"
+      策略: openhands（计划-执行-验证）
+      结果: 计划：使用 cspell + ESLint 扫描 → 执行：自动修复可修复的问题 → 验证：确认无破坏
+      参数:
+        - 无额外参数，默认迭代直到无错误
+      产出: 代码库拼写错误清零，格式统一，ESLint 零警告
+
+  [2] 更新项目依赖到最新版本
+      复杂度: 简单
+      描述: 检查 package.json 中所有依赖的最新版本，安全升级并验证兼容性
+      命令: /loop-openhands "检查并更新 package.json 中的所有依赖到最新稳定版"
+      策略: openhands（计划-执行-验证）
+      结果: 计划：npm outdated 获取过期列表 → 执行：逐个升级并运行测试 → 验证：确认所有测试通过
+      参数:
+        - 可选 --criteria "只更新 patch 版本" --criteria "更新后测试通过"
+      产出: 所有依赖更新到最新版本，项目功能零回归
+
+  [3] 重构超长函数提高可读性
+      复杂度: 中等
+      描述: 识别超过 50 行的函数，按职责拆分为多个小函数，优化命名和注释
+      命令: /loop-openhands "重构 src/ 中超过 50 行的函数，拆分为职责单一的小函数"
+      策略: openhands（计划-执行-验证）
+      结果: 计划：ESLint complexity 检测 → 执行：提取子函数、优化命名 → 验证：测试通过
+      参数:
+        - --criteria "函数不超过 30 行" --criteria "圈复杂度 < 10"
+      产出: 代码可读性提升，平均函数长度从 80 行降到 25 行
+
+  [4] 优化数据库查询性能
+      复杂度: 中等
+      描述: 分析慢查询日志，添加合适索引，优化 JOIN 和子查询，减少全表扫描
+      命令: /loop-openhands "分析并优化慢查询：添加索引、重写 JOIN、消除子查询" --criteria "查询时间 < 100ms"
+      策略: openhands（计划-执行-验证）
+      结果: 计划：EXPLAIN 分析执行计划 → 执行：添加索引 + 重写 SQL → 验证：对比优化前后耗时
+      参数:
+        - --criteria "查询时间 < 100ms" --criteria "不使用 SELECT *"
+      产出: 数据库查询性能提升 10 倍，从平均 500ms 降到 50ms
+
+  [5] 实现缓存策略减少负载
+      复杂度: 中等
+      描述: 为热点数据添加 Redis 缓存层，设计缓存淘汰策略，处理缓存穿透/雪崩
+      命令: /loop-openhands "为 API 添加 Redis 缓存层，设计 LRU 淘汰策略，处理缓存穿透和雪崩"
+      策略: openhands（计划-执行-验证）
+      结果: 计划：识别热点接口 → 执行：添加 Redis 缓存中间件 → 验证：压力测试对比
+      参数:
+        - --criteria "缓存命中率 > 80%" --criteria "支持缓存预热"
+      产出: API 响应速度提升 5 倍，数据库负载降低 70%
+
+  [6] 模块解耦与接口设计
+      复杂度: 中等
+      描述: 分析模块间耦合度，提取公共接口，引入依赖注入，降低模块间直接依赖
+      命令: /loop-openhands "解耦 src/modules/ 中高耦合模块，提取公共接口，引入依赖注入"
+      策略: openhands（计划-执行-验证）
+      结果: 计划：依赖图分析 → 执行：提取接口 + 引入 DI 容器 → 验证：模块可独立测试
+      参数:
+        - --criteria "模块间无循环依赖" --criteria "支持独立测试"
+      产出: 模块独立性提升，单个模块可独立开发、测试、部署
+
+  [7] 架构迁移（单体→微服务）
+      复杂度: 复杂
+      描述: 制定渐进式迁移计划，拆分服务边界，设计数据同步方案，确保平滑过渡
+      命令: /loop-openhands "制定从单体到微服务的渐进迁移计划，先拆分用户服务和订单服务"
+      策略: openhands（计划-执行-验证）
+      结果: 计划：领域分析 + 拆分策略 → 执行：绞杀者模式逐步迁移 → 验证：双跑对比
+      参数:
+        - --criteria "支持灰度发布" --criteria "支持回滚"
+      产出: 平滑完成架构迁移，用户零感知，系统可独立扩展
+
+  [8] 安全审计与漏洞修复
+      复杂度: 复杂
+      描述: 全面安全审计：SQL 注入、XSS、CSRF、敏感数据泄露，逐一修复并添加防护
+      命令: /loop-openhands "全面安全审计并修复：SQL 注入、XSS、CSRF、敏感信息泄露"
+      策略: openhands（计划-执行-验证）
+      结果: 计划：OWASP Top 10 检查 → 执行：逐一修复漏洞 → 验证：渗透测试确认
+      参数:
+        - --criteria "OWASP Top 10 零漏洞" --criteria "通过渗透测试"
+      产出: 安全等级从 C 提升到 A，通过第三方安全审计
+
+  [9] 性能压测与调优
+      复杂度: 复杂
+      描述: 设计压测方案，模拟高并发场景，定位瓶颈（CPU/内存/IO），针对性优化
+      命令: /loop-openhands "设计压测方案，模拟 10000 并发，定位性能瓶颈并优化" --criteria "QPS > 5000"
+      策略: openhands（计划-执行-验证）
+      结果: 计划：wrk 压测脚本 → 执行：火焰图分析瓶颈 → 验证：优化后再次压测
+      参数:
+        - --criteria "QPS > 5000" --criteria "P99 延迟 < 200ms"
+      产出: 系统吞吐量提升 10 倍，可支撑 10000 并发
+
+  [10] 代码审查与质量提升
+      复杂度: 复杂
+      描述: 全面代码审查：复杂度分析、重复代码检测、设计模式应用、技术债务清理
+      命令: /loop-openhands "全面代码审查：降低圈复杂度、消除重复代码、应用技术债务清理"
+      策略: openhands（计划-执行-验证）
+      结果: 计划：SonarQube 扫描 → 执行：重构问题代码 → 验证：扫描结果对比
+      参数:
+        - --criteria "零 Critical 问题" --criteria "技术债务 < 1 天"
+      产出: SonarQube 评分从 C 提升到 A，技术债务清零
+
+  [11] C++ 内存泄漏与性能优化
+      复杂度: 中等
+      描述: 分析并修复 C++ 项目中的内存泄漏、资源未释放、性能瓶颈，添加智能指针和 RAII 优化
+      命令: /loop-openhands "分析并修复 src/engine/ 下的 C++ 代码内存泄漏和性能问题：使用 Valgrind 检测、替换裸指针为智能指针、添加 RAII 封装" --criteria "零内存泄漏" --criteria "性能提升 50%" --criteria "通过 Valgrind 检测"
+      策略: openhands（计划-执行-验证）
+      结果: 计划：Valgrind 检测定位泄漏点 → 执行：替换为 unique_ptr/shared_ptr + RAII 封装 → 验证：对比优化前后内存和性能
+      参数:
+        - --criteria 定义泄漏检测和性能提升标准
+        - --max-iterations 15
+      产出: C++ 代码内存泄漏清零，性能提升 50%，通过 Valgrind 严格检测
+
+  [12] Web 应用前端性能优化
+      复杂度: 中等
+      描述: 分析并优化网页前端性能，包括资源压缩、懒加载、缓存策略、Core Web Vitals 优化
+      命令: /loop-openhands "优化公司官网前端性能：LCP < 2.5s、FID < 100ms、CLS < 0.1，图片懒加载、代码分割、CDN 配置" --criteria "Lighthouse 评分 > 90" --criteria "LCP < 2.5s" --criteria "CLS < 0.1"
+      策略: openhands（计划-执行-验证）
+      结果: 计划：Lighthouse 审计定位瓶颈 → 执行：图片压缩 + 代码分割 + 预加载 + Service Worker 缓存 → 验证：Lighthouse 复测
+      参数:
+        - --criteria 定义 Core Web Vitals 指标
+        - --max-iterations 15
+      产出: 网页 Lighthouse 评分从 60 提升到 95+，Core Web Vitals 全部达标
+
+  [13] 数据库查询优化器重构
+      复杂度: 复杂
+      描述: 重构数据库查询优化器，支持执行计划优化、索引建议、查询重写、统计信息收集
+      命令: /loop-openhands "重构数据库查询优化器：执行计划优化、索引建议、查询重写、统计信息收集" --criteria "查询性能提升 10 倍" --criteria "支持索引建议" --criteria "支持查询重写"
+      策略: openhands（计划-执行-验证）
+      结果: 计划：分析现有优化器瓶颈 → 执行：重构执行计划生成算法 → 验证：对比优化前后性能
+      参数:
+        - --criteria 定义优化器性能标准
+        - --max-iterations 20
+      产出: 数据库查询性能提升 10 倍，自动索引建议和查询重写
+
+  [14] 大规模遗留系统架构升级
+      复杂度: 复杂
+      描述: 将单体遗留系统逐步迁移到微服务架构，支持灰度发布、数据迁移、回滚机制
+      命令: /loop-openhands "将单体遗留系统迁移到微服务架构：服务拆分、数据迁移、灰度发布、回滚机制" --criteria "服务独立部署" --criteria "数据零丢失" --criteria "支持灰度发布"
+      策略: openhands（计划-执行-验证）
+      结果: 计划：分析现有架构 → 执行：逐步拆分服务 → 验证：灰度发布验证
+      参数:
+        - --criteria 定义迁移各阶段标准
+        - --max-iterations 25
+      产出: 完成遗留系统到微服务的平滑迁移，支持灰度发布和回滚
+
+  [15] 数据库性能调优全流程
+      复杂度: 复杂
+      描述: 分析并优化数据库性能，支持慢查询分析、索引优化、SQL 重写、配置调优、容量规划
+      命令: /loop-openhands "全面优化数据库性能：慢查询分析、索引优化、SQL 重写、配置调优、容量规划" --criteria "查询性能提升 10 倍" --criteria "零慢查询" --criteria "配置最优"
+      策略: openhands（计划-执行-验证）
+      结果: 计划：慢查询日志分析 → 执行：添加索引 + SQL 重写 + 配置调优 → 验证：性能基准对比
+      参数:
+        - --criteria 定义数据库性能标准
+        - --max-iterations 20
+      产出: 数据库整体性能提升 10 倍，慢查询清零，配置达到最优
+
+  [16] 安全合规审计与整改
+      复杂度: 复杂
+      描述: 进行等保 2.0 合规审计，识别安全差距，生成整改方案，自动化修复常见漏洞
+      命令: /loop-openhands "进行等保 2.0 安全审计：识别安全差距、生成整改方案、自动化修复常见漏洞" --criteria "等保二级合规" --criteria "零高危漏洞" --criteria "整改方案完整"
+      策略: openhands（计划-执行-验证）
+      结果: 计划：安全差距分析 → 执行：自动化修复漏洞 + 生成整改报告 → 验证：渗透测试确认
+      参数:
+        - --criteria 定义安全合规标准
+        - --max-iterations 20
+      产出: 系统达到等保二级合规要求，高危漏洞清零，整改报告自动生成
+
+  [17] 代码质量治理与 SonarQube 集成
+      复杂度: 复杂
+      描述: 全面代码质量治理，支持静态分析、技术债务量化、质量门禁、自动修复、趋势监控
+      命令: /loop-openhands "全面代码质量治理：SonarQube 静态分析、技术债务量化、质量门禁、自动修复、趋势监控" --criteria "零 Critical 问题" --criteria "技术债务 < 1 天" --criteria "质量门禁生效"
+      策略: openhands（计划-执行-验证）
+      结果: 计划：SonarQube 扫描定位问题 → 执行：自动修复可修复问题 + 生成修复报告 → 验证：扫描结果对比
+      参数:
+        - --criteria 定义代码质量标准
+        - --max-iterations 20
+      产出: SonarQube 评分从 C 提升到 A，技术债务清零，质量门禁自动拦截不合规代码
+
+  [18] 编译器优化 Passes 调优（LLVM）
+      复杂度: 复杂
+      描述: 优化 LLVM 编译器 Pass 管道，支持死代码消除、循环展开、向量化、内联优化
+      命令: /loop-openhands "优化 LLVM 编译器 Pass 管道" --criteria "编译后代码性能提升 30%" --criteria "编译时间不增加" --max-iterations 25
+      策略: openhands（计划-执行-验证）
+      结果: 计划：分析 Pass 管道瓶颈 → 执行：调整 Pass 顺序和参数 → 验证：对比编译后性能
+      参数:
+        - --max-iterations 25 深度优化需要更多迭代次数
+        - --criteria 定义编译性能和编译时间双重标准
+      产出: 编译后代码性能提升 30%，编译时间不增加
+
+  [19] 机器学习超参数自动调优
+      复杂度: 复杂
+      描述: 自动调优 ML 模型超参数，支持网格搜索、贝叶斯优化、早停策略、交叉验证
+      命令: /loop-openhands "自动调优机器学习模型超参数" --criteria "模型准确率 > 95%" --criteria "训练时间 < 1 小时" --max-iterations 30
+      策略: openhands（计划-执行-验证）
+      结果: 计划：分析模型结构和参数空间 → 执行：贝叶斯优化搜索最优参数 → 验证：交叉验证确认泛化能力
+      参数:
+        - --max-iterations 30 超参数搜索需要大量迭代
+        - --criteria 定义准确率和训练时间双重标准
+      产出: 模型准确率从 85% 提升到 95%+，训练时间控制在 1 小时内
+
+  [20] 网络协议栈性能调优（TCP/UDP）
+      复杂度: 复杂
+      描述: 优化网络协议栈性能，支持拥塞控制、缓冲区调优、零拷贝、内核旁路（DPDK）
+      命令: /loop-openhands "优化网络协议栈性能" --criteria "网络吞吐量提升 5 倍" --criteria "延迟 < 50us" --max-iterations 20
+      策略: openhands（计划-执行-验证）
+      结果: 计划：分析网络瓶颈 → 执行：调整拥塞控制 + 缓冲区 + 启用 DPDK → 验证：iperf 性能测试
+      参数:
+        - --max-iterations 20 网络调优需要多次迭代测试
+        - --criteria 定义吞吐量和延迟双重标准
+      产出: 网络吞吐量提升 5 倍，延迟降至 50us 以下
+
+  [21] 微服务治理优化（服务网格+流量管理）
+      复杂度: 复杂
+      描述: 优化微服务治理体系，支持服务网格、流量染色、灰度发布、熔断降级、可观测性
+      命令: /loop-openhands "优化微服务治理体系：服务网格、流量染色、灰度发布、熔断降级、可观测性" --criteria "服务网格" --criteria "灰度发布" --criteria "熔断降级" --max-iterations 25
+      策略: openhands（计划-执行-验证）
+      结果: 计划：分析现有治理痛点 → 执行：引入 Istio + 配置流量规则 → 验证：灰度发布验证
+      参数:
+        - --max-iterations 25 治理优化需要多次迭代
+        - --criteria 定义可用性和延迟标准
+      产出: 微服务治理体系优化完成，支持细粒度流量管理和自动熔断
+
+  [22] 存储系统调优（RocksDB/LevelDB）
+      复杂度: 复杂
+      描述: 优化嵌入式存储引擎性能，支持 compaction 调优、缓存优化、IO 优化、压缩策略
+      命令: /loop-openhands "优化 RocksDB 存储引擎性能" --criteria "写吞吐量提升 3 倍" --criteria "读延迟 < 1ms" --max-iterations 25
+      策略: openhands（计划-执行-验证）
+      结果: 计划：分析存储瓶颈 → 执行：调整 compaction + 缓存 + IO 调度 → 验证：benchmark 测试
+      参数:
+        - --max-iterations 25 存储调优需要多次迭代测试
+        - --criteria 定义写吞吐量和读延迟标准
+      产出: 存储引擎写吞吐量提升 3 倍，读延迟降至 1ms 以下
+
+  [23] 任务调度算法优化（K8s Scheduler）
+      复杂度: 复杂
+      描述: 优化 Kubernetes 调度算法，支持亲和性调度、资源分配、负载均衡、抢占策略
+      命令: /loop-openhands "优化 K8s 调度算法" --criteria "资源利用率提升 30%" --criteria "调度延迟 < 100ms" --max-iterations 20
+      策略: openhands（计划-执行-验证）
+      结果: 计划：分析调度瓶颈 → 执行：实现自定义调度器 + 亲和性规则 → 验证：集群负载测试
+      参数:
+        - --max-iterations 20 调度优化需要多次迭代
+        - --criteria 定义资源利用率和调度延迟标准
+      产出: 集群资源利用率提升 30%，调度延迟降至 100ms 以下
+
+────────────────────────────────────────────────────────────────
+  策略: SWE-AGENT (23 个示例)
+────────────────────────────────────────────────────────────────
+
+  [1] 修复 NullPointerException
+      复杂度: 简单
+      描述: 定位并修复 Java/Python 中的空指针异常，添加空值检查和默认值处理
+      命令: /loop-swe-agent "修复 src/auth.js 第 42 行的 NullPointerException"
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：堆栈追踪找到第 42 行 → 分析：user 对象可能为 null → 修复：添加 user?.name 安全访问
+      参数:
+        - 可选 --criteria "添加单元测试覆盖该场景"
+      产出: NullPointerException 修复，添加防御性编程，同类型 bug 不再出现
+
+  [2] 修复数组越界错误
+      复杂度: 简单
+      描述: 修复 IndexOutOfBoundsException，添加边界检查和安全的集合访问模式
+      命令: /loop-swe-agent "修复 utils/array.js 中的数组越界错误：当数组为空时访问 [0] 崩溃"
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：复现空数组场景 → 分析：缺少 length 检查 → 修复：添加 arr[arr.length - 1] 或默认值
+      参数:
+        - 可选 --criteria "支持空数组返回默认值"
+      产出: 数组操作不再崩溃，空数组场景返回合理默认值
+
+  [3] 修复类型转换异常
+      复杂度: 中等
+      描述: 修复 ClassCastException/TypeError，添加类型检查和安全的转换策略
+      命令: /loop-swe-agent "修复 models/product.js 中的类型转换错误：price 字段有时是字符串有时是数字"
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：price 字段类型不一致 → 分析：API 返回和数据库存储格式不同 → 修复：统一用 Number() 转换
+      参数:
+        - --criteria "price 始终为数字类型" --criteria "支持字符串输入"
+      产出: price 字段类型统一，计算精度提升，前端展示不再出错
+
+  [4] 修复内存泄漏问题
+      复杂度: 中等
+      描述: 使用堆转储分析工具定位泄漏源，修复未关闭的资源、监听器泄漏、静态引用
+      命令: /loop-swe-agent "修复 server.js 中的内存泄漏：服务运行 24 小时后 OOM"
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：heapdump 对比分析 → 分析：事件监听器未移除 + 大对象缓存未释放 → 修复：添加 removeListener + LRU 缓存
+      参数:
+        - --criteria "7x24 小时稳定运行" --criteria "内存波动 < 20%"
+      产出: 内存泄漏修复，服务可长期稳定运行，不再 OOM
+
+  [5] 修复死锁和竞态条件
+      复杂度: 中等
+      描述: 分析线程转储检测死锁，使用锁排序、无锁数据结构、原子操作修复并发问题
+      命令: /loop-swe-agent "修复 payment.js 中的死锁：并发扣款时两个线程互相等待"
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：jstack 线程转储分析 → 分析：锁获取顺序不一致 → 修复：统一按 userId 排序获取锁
+      参数:
+        - --criteria "并发扣款结果一致" --criteria "无死锁"
+      产出: 并发死锁修复，1000 并发扣款测试全部正确
+
+  [6] 修复 SQL 注入漏洞
+      复杂度: 中等
+      描述: 审计所有 SQL 查询，将字符串拼接改为参数化查询，添加输入验证和转义
+      命令: /loop-swe-agent "修复 userDao.js 中的 SQL 注入：search 参数直接拼接到 SQL"
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：找到字符串拼接 SQL → 分析：用户输入未转义 → 修复：改为参数化查询 + 输入白名单验证
+      参数:
+        - --criteria "通过 SQL 注入测试" --criteria "所有查询参数化"
+      产出: SQL 注入漏洞修复，通过 OWASP ZAP 安全扫描
+
+  [7] 修复 XSS 跨站脚本攻击
+      复杂度: 复杂
+      描述: 检测所有用户输入输出点，添加 HTML 转义、CSP 头、HttpOnly Cookie 防护
+      命令: /loop-swe-agent "修复 comment.js 中的 XSS 漏洞：用户评论未转义直接渲染"
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：评论渲染点 innerHTML → 分析：缺少 HTML 转义 → 修复：DOMPurify + CSP 头 + HttpOnly
+      参数:
+        - --criteria "通过 XSS 攻击测试" --criteria "CSP 策略生效"
+      产出: XSS 漏洞修复，通过 OWASP ZAP 和手工渗透测试
+
+  [8] 修复性能退化问题
+      复杂度: 复杂
+      描述: 对比版本差异定位退化原因，分析火焰图，优化算法复杂度或添加缓存
+      命令: /loop-swe-agent "修复 search.js 性能退化：v2.0 比 v1.0 慢 10 倍"
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：git diff 对比变更 → 分析：新增的模糊匹配是 O(n²) → 修复：改为倒排索引 O(1)
+      参数:
+        - --criteria "搜索响应时间 < 100ms" --criteria "支持 100 万数据量"
+      产出: 搜索性能恢复并超越 v1.0，支持百万级数据秒级搜索
+
+  [9] 修复分布式一致性问题
+      复杂度: 复杂
+      描述: 分析分布式事务场景，引入 Saga/TCC 模式，实现幂等性和最终一致性
+      命令: /loop-swe-agent "修复 order-service 分布式事务：订单已支付但库存未扣减"
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：分布式链路追踪 → 分析：支付和库存操作非原子 → 修复：引入 Saga 模式 + 幂等校验
+      参数:
+        - --criteria "数据最终一致" --criteria "支持幂等重试"
+      产出: 分布式事务修复，支付和库存数据 100% 一致
+
+  [10] 修复系统崩溃和数据损坏
+      复杂度: 复杂
+      描述: 分析崩溃日志和核心转储，修复资源耗尽、竞争条件，添加数据校验和恢复
+      命令: /loop-swe-agent "修复 database.js 崩溃：高并发下 SQLite database is locked 导致数据损坏"
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：core dump 分析 → 分析：写操作未加锁 + WAL 模式未启用 → 修复：连接池 + WAL + 自动恢复
+      参数:
+        - --criteria "1000 并发写入不崩溃" --criteria "数据零损坏"
+      产出: 系统稳定性修复，高并发场景零崩溃，数据零损坏
+
+  [11] C++ 智能指针误用修复
+      复杂度: 中等
+      描述: 定位并修复 C++ 代码中智能指针的常见误用：循环引用、裸指针混用、 ownership 不明确
+      命令: /loop-swe-agent "修复 src/cache.cpp 中 shared_ptr 循环引用导致的内存泄漏：Cache 持有 Entry 的 shared_ptr，Entry 又回调 Cache"
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：heapdump 发现 Cache 和 Entry 互相引用 → 分析：循环引用导致引用计数永不为零 → 修复：将 Entry 中的回调改为 weak_ptr<Cache>
+      参数:
+        - --criteria "零循环引用" --criteria "通过 Valgrind 检测"
+      产出: 循环引用修复，相关对象正确释放，Valgrind 零泄漏报告
+
+  [12] WebSocket 断线重连 Bug 修复
+      复杂度: 中等
+      描述: 修复网页版聊天室中 WebSocket 断线后无法自动重连、消息丢失、状态不同步的问题
+      命令: /loop-swe-agent "修复 chat.js 中 WebSocket 断线后不重连的 bug：网络恢复后连接未自动重建，消息发送静默失败"
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：复现网络断线场景 → 分析：onclose 未触发重连逻辑 + 发送队列未持久化 → 修复：指数退避重连 + localStorage 暂存消息
+      参数:
+        - --criteria "断线 5 秒内自动重连" --criteria "消息零丢失"
+      产出: WebSocket 断线自动重连恢复，网络波动时消息零丢失
+
+  [13] 并发死锁调试修复
+      复杂度: 中等
+      描述: 定位并修复多线程环境下的死锁问题，分析线程转储，修复锁顺序不一致
+      命令: /loop-swe-agent "修复 payment.js 中的死锁：并发扣款时两个线程互相等待" --criteria "并发扣款结果一致" --criteria "无死锁"
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：jstack 线程转储分析 → 分析：锁获取顺序不一致 → 修复：统一按 userId 排序获取锁
+      参数:
+        - --criteria "并发扣款结果一致" --criteria "无死锁"
+      产出: 并发死锁修复，1000 并发扣款测试全部正确
+
+  [14] 性能退化回归定位
+      复杂度: 复杂
+      描述: 对比版本差异定位性能退化原因，分析火焰图，优化算法复杂度
+      命令: /loop-swe-agent "修复 search.js 性能退化：v2.0 比 v1.0 慢 10 倍" --criteria "搜索响应时间 < 100ms" --criteria "支持 100 万数据量"
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：git diff 对比变更 → 分析：新增的模糊匹配是 O(n²) → 修复：改为倒排索引 O(1)
+      参数:
+        - --criteria "搜索响应时间 < 100ms" --criteria "支持 100 万数据量"
+      产出: 搜索性能恢复并超越 v1.0，支持百万级数据秒级搜索
+
+  [15] C++ 内存泄漏排查修复
+      复杂度: 中等
+      描述: 定位并修复 C++ 项目中的内存泄漏，支持堆分析、引用链追踪、智能指针修复
+      命令: /loop-swe-agent "修复 engine.dll 中的内存泄漏：运行 24 小时后内存增长 2GB" --criteria "零内存泄漏" --criteria "通过 Valgrind 检测"
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：Valgrind/heaptrack 分析堆分配 → 分析：纹理缓存未释放 + 循环引用 → 修复：添加缓存淘汰 + weak_ptr
+      参数:
+        - --criteria "零内存泄漏" --criteria "通过 Valgrind 检测"
+      产出: 内存泄漏修复，服务可长期稳定运行不再 OOM
+
+  [16] 并发数据竞争修复
+      复杂度: 中等
+      描述: 定位并修复多线程数据竞争问题，分析线程转储，添加锁保护和原子操作
+      命令: /loop-swe-agent "修复 counter.cpp 中的数据竞争：多线程递增结果不正确" --criteria "线程安全" --criteria "结果正确"
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：ThreadSanitizer 检测数据竞争 → 分析：共享变量无保护 → 修复：改为 atomic 或加锁
+      参数:
+        - --criteria "线程安全" --criteria "结果正确"
+      产出: 数据竞争修复，1000 并发线程测试结果全部正确
+
+  [17] 安全漏洞修复（注入与权限）
+      复杂度: 复杂
+      描述: 定位并修复 Web 应用安全漏洞，包括 SQL 注入、XSS、CSRF、权限提升、加密缺陷
+      命令: /loop-swe-agent "修复 portal.jsp 中的安全漏洞：OWASP ZAP 扫描发现的 SQL 注入和权限绕过" --criteria "通过 OWASP ZAP 扫描" --criteria "零高危漏洞"
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：安全扫描报告分析 → 分析：参数拼接 SQL + 权限校验缺失 → 修复：参数化查询 + RBAC 权限
+      参数:
+        - --criteria "通过 OWASP ZAP 扫描" --criteria "零高危漏洞"
+      产出: 安全漏洞全部修复，通过 OWASP ZAP 和手工渗透测试
+
+  [18] 嵌入式系统死机调试（ARM Cortex-M）
+      复杂度: 复杂
+      描述: 定位嵌入式系统随机死机问题，分析 HardFault 堆栈、内存溢出、中断优先级配置
+      命令: /loop-swe-agent "调试 ARM Cortex-M 嵌入式系统随机死机：HardFault 分析、栈溢出、中断优先级" --criteria "零死机" --criteria "通过 72 小时压力测试" --max-iterations 25
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：HardFault 堆栈回溯 → 分析：中断优先级配置错误导致嵌套溢出 → 修复：调整优先级 + 栈溢出检测
+      参数:
+        - --max-iterations 25 嵌入式调试需要精细迭代
+        - --max-budget 15 控制调试成本
+      产出: 嵌入式系统稳定运行，通过 72 小时压力测试零死机
+
+  [19] 分布式系统脑裂问题修复
+      复杂度: 复杂
+      描述: 修复分布式数据库脑裂导致的数据不一致，分析 Raft/Paxos 共识算法实现
+      命令: /loop-swe-agent "修复 distributed-db 脑裂问题：网络分区后出现双主导致数据不一致" --criteria "零脑裂" --criteria "数据最终一致" --max-iterations 30
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：Raft 共识算法边界条件 → 分析：选举超时配置不当导致双主 → 修复：优化选举超时 + 预投票机制
+      参数:
+        - --max-iterations 30 分布式共识调试需要大量迭代
+        - --criteria 定义一致性和可用性标准
+      产出: 分布式数据库零脑裂，网络分区恢复后数据自动合并一致
+
+  [20] 内核驱动内存损坏修复
+      复杂度: 复杂
+      描述: 定位并修复 Linux 内核驱动中的内存损坏问题，分析 slab 分配器、use-after-free
+      命令: /loop-swe-agent "修复 netdev-driver 内核内存损坏：kmalloc 后 use-after-free 导致 kernel panic" --criteria "零 kernel panic" --criteria "通过 KASAN 检测" --max-iterations 20
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：KASAN 报告 use-after-free → 分析：驱动卸载后未释放的回调仍在执行 → 修复：添加同步销毁 + 引用计数
+      参数:
+        - --max-iterations 20 内核调试需要谨慎迭代
+        - --max-budget 10 控制调试成本
+      产出: 内核驱动稳定运行，通过 KASAN 严格检测，零 kernel panic
+
+  [21] Java 应用内存泄漏排查（OOM 调试）
+      复杂度: 中等
+      描述: 定位并修复 Java 应用内存泄漏，分析 heap dump、GC 日志、对象引用链
+      命令: /loop-swe-agent "修复 order-service OOM：堆内存持续增长 Full GC 频繁" --criteria "零 OOM" --criteria "GC 暂停 < 100ms" --max-iterations 25
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：MAT 分析 heap dump → 分析：订单缓存无淘汰策略导致对象堆积 → 修复：添加 LRU 缓存淘汰
+      参数:
+        - --max-iterations 25 内存调试需要多次迭代分析
+        - --max-budget 10 控制调试成本
+      产出: 内存泄漏修复，GC 暂停降至 100ms 以下，服务稳定运行
+
+  [22] 多线程死锁问题调试（锁顺序修复）
+      复杂度: 中等
+      描述: 定位并修复多线程死锁，分析线程转储、锁依赖图、修复锁顺序不一致
+      命令: /loop-swe-agent "修复 transfer-service 死锁：A 账户锁等待 B 账户锁，B 账户锁等待 A 账户锁" --criteria "零死锁" --criteria "通过 10000 并发测试" --max-iterations 20
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：jstack 线程转储分析 → 分析：转账双方锁顺序不一致 → 修复：统一按账户 ID 排序获取锁
+      参数:
+        - --max-iterations 20 死锁调试需要多次迭代
+        - --criteria 定义并发安全标准
+      产出: 死锁修复，10000 并发转账测试零死锁
+
+  [23] Web 应用安全漏洞修复（OWASP Top 10）
+      复杂度: 复杂
+      描述: 修复 Web 应用安全漏洞，包括 SQL 注入、XSS、CSRF、不安全反序列化、敏感数据泄露
+      命令: /loop-swe-agent "修复 webapp 安全漏洞：OWASP ZAP 扫描发现的 Top 10 漏洞" --criteria "通过 OWASP ZAP 扫描" --criteria "零高危漏洞" --max-iterations 25
+      策略: swe-agent（Bug 修复专用）
+      结果: 定位：安全扫描报告逐项分析 → 分析：每类漏洞的根因 → 修复：参数化查询 + HTML 转义 + CSRF Token
+      参数:
+        - --max-iterations 25 安全修复需要逐项迭代
+        - --max-budget 15 控制修复成本
+      产出: 所有安全漏洞修复，通过 OWASP ZAP 和手工渗透测试
+
+
+
+════════════════════════════════════════════════════════════════
+  第二部分: 详细使用手册 (Strategy Manuals)
+════════════════════════════════════════════════════════════════
+
+────────────────────────────────────────────────────────────────
+  策略: LANGGRAPH - LangGraph 状态机图引擎
+  简介: 用节点、边和条件跳转构建精确控制流程
+────────────────────────────────────────────────────────────────
+
+  ▶ 适用场景
+    ✓ 需要精确控制执行顺序的工作流
+    ✓ 需要条件分支（if/else）的决策流程
+    ✓ 需要循环重试直到满足条件的场景
+    ✓ 需要状态持久化和恢复的长流程
+    ✓ 需要可视化调试执行流程的场景
+    ✓ 多阶段审批流程（提交→审核→批准/拒绝）
+
+  ▶ 不适用场景
+    ✗ 目标模糊、需要 AI 自主探索的场景
+    ✗ 单步骤的简单任务
+    ✗ 需要大量创造性思维的任务
+    ✗ 对执行顺序没有要求的批处理
+
+  ▶ 最佳实践
+    ✓ 先定义清晰的成功标准（--criteria），再执行主任务
+    ✓ 将复杂目标拆分为多个可验证的子目标
+    ✓ 使用条件跳转来处理重试和异常流程
+    ✓ 每个节点的输出应该是可验证的
+    ✓ 设置合理的 --max-iterations 防止无限循环
+    ✓ 状态对象应尽量精简，只保留必要信息
+
+  ▶ 常见陷阱
+    ❌ 目标太模糊：❌ "做个网站" → ✅ "做个博客网站，支持文章 CRUD、评论、标签"
+    ❌ 没有成功标准：❌ 不设置 --criteria → ✅ 设置 3-5 个具体的 --criteria
+    ❌ 节点太多：❌ 一个节点做太多事 → ✅ 每个节点只做一件事
+    ❌ 忘记循环退出条件：❌ 永远重试 → ✅ 设置 --max-iterations 上限
+    ❌ 状态对象过大：❌ 把所有数据放状态里 → ✅ 只放当前步骤需要的数据
+
+
+────────────────────────────────────────────────────────────────
+  策略: CREW - CrewAI 多 Agent 协作引擎
+  简介: 模拟真实团队协作，多角色分工合作完成复杂任务
+────────────────────────────────────────────────────────────────
+
+  ▶ 适用场景
+    ✓ 需要多角色协作的复杂项目
+    ✓ 需要代码审查和质量控制的场景
+    ✓ 需要测试驱动开发（TDD）的项目
+    ✓ 需要多模块并行开发的场景
+    ✓ 需要迭代改进和返工的任务
+    ✓ 模拟真实团队协作的教学场景
+
+  ▶ 不适用场景
+    ✗ 单步骤的简单任务
+    ✗ 需要精确控制执行顺序的场景
+    ✗ 对执行时间敏感的快速任务
+    ✗ 不需要团队协作的个人任务
+
+  ▶ 最佳实践
+    ✓ 为每个子任务设置明确的 --criteria，方便对应角色验证
+    ✓ 利用返工机制持续改进，不要期望一次通过
+    ✓ Manager 会自动识别任务依赖关系，按正确顺序执行
+    ✓ 复杂项目建议拆分为 3-5 个子任务，每个子任务 1 个 --criteria
+    ✓ 返工次数不宜过多，建议 --max-retries 设为 2-3
+
+  ▶ 常见陷阱
+    ❌ 角色冲突：❌ 给 Developer 和 Reviewer 相同目标 → ✅ 明确分工
+    ❌ 任务过大：❌ "开发整个系统" → ✅ 拆分为 3-5 个子任务
+    ❌ 没有质量标准：❌ 不设置 --criteria → ✅ 每个子任务 1-2 个标准
+    ❌ 返工次数过多：❌ --max-retries 10 → ✅ 2-3 次即可
+    ❌ 忽略依赖关系：❌ 并行开发有依赖的模块 → ✅ 让 Manager 自动排序
+
+
+────────────────────────────────────────────────────────────────
+  策略: AUTOGPT - AutoGPT 图执行引擎
+  简介: 将复杂任务分解为可执行的图结构，支持并发和智能重试
+────────────────────────────────────────────────────────────────
+
+  ▶ 适用场景
+    ✓ 可以分解为多个独立子任务的复杂目标
+    ✓ 需要并行执行提升效率的场景
+    ✓ 任务间有明确依赖关系的场景
+    ✓ 需要智能重试和容错处理的场景
+    ✓ 数据处理管道、ETL 流程
+    ✓ 自动化测试套件、CI/CD 流水线
+
+  ▶ 不适用场景
+    ✗ 需要条件分支和循环的场景
+    ✗ 需要多角色协作的场景
+    ✗ 单步骤的简单任务
+    ✗ 需要人工审批的流程
+
+  ▶ 最佳实践
+    ✓ 将复杂目标拆分为 3-7 个子任务，每个子任务独立可验证
+    ✓ 利用并行执行提升效率，无依赖的任务会自动并行
+    ✓ 设置合理的 --max-concurrency 控制并发数
+    ✓ 使用指数退避重试策略处理临时性失败
+    ✓ 每个子任务设置 --criteria 确保质量
+
+  ▶ 常见陷阱
+    ❌ 任务粒度过粗：❌ "开发整个系统" → ✅ 拆分为 5-10 个子任务
+    ❌ 忽略依赖关系：❌ 并行执行有依赖的任务 → ✅ 让引擎自动分析依赖
+    ❌ 并发过高：❌ --max-concurrency 10 → ✅ 3-5 即可
+    ❌ 没有重试策略：❌ 失败就放弃 → ✅ 设置指数退避重试
+    ❌ 结果未聚合：❌ 子任务各自为政 → ✅ 定义清晰的输出格式
+
+
+────────────────────────────────────────────────────────────────
+  策略: OPENHANDS - OpenHands 工程代理循环
+  简介: 计划-执行-验证三阶段循环，迭代改进直到目标达成
+────────────────────────────────────────────────────────────────
+
+  ▶ 适用场景
+    ✓ 需要反复迭代改进的任务
+    ✓ 目标明确但路径不清晰的场景
+    ✓ 需要验证每一步执行结果的场景
+    ✓ 代码重构、性能优化、安全加固
+    ✓ 需要持续反馈和调整的任务
+
+  ▶ 不适用场景
+    ✗ 流程固定、不需要迭代的场景
+    ✗ 需要多角色协作的任务
+    ✗ 一次性执行的批处理任务
+    ✗ 需要并行执行的场景
+
+  ▶ 最佳实践
+    ✓ 设置明确的 --criteria 作为 Verifier 的验证标准
+    ✓ 每次迭代只做一件事，便于定位问题
+    ✓ 失败时分析根本原因，而不是简单重试
+    ✓ 记录每次迭代的变更，便于回滚
+    ✓ 设置合理的 --max-iterations 防止无限循环
+
+  ▶ 常见陷阱
+    ❌ 没有验证标准：❌ 不设置 --criteria → ✅ 设置 3-5 个具体标准
+    ❌ 计划过大：❌ 一次改太多 → ✅ 每次迭代只做一件事
+    ❌ 忽略失败原因：❌ 简单重试 → ✅ 分析原因调整策略
+    ❌ 无限循环：❌ 不设 --max-iterations → ✅ 设置 10-20 次上限
+    ❌ 没有回滚机制：❌ 改坏了无法恢复 → ✅ 每次迭代前备份
+
+
+────────────────────────────────────────────────────────────────
+  策略: SWE-AGENT - SWE-agent Bug 修复引擎
+  简介: 定位→分析→生成补丁→验证，自动迭代直到 bug 修复
+────────────────────────────────────────────────────────────────
+
+  ▶ 适用场景
+    ✓ 修复运行时异常（NullPointerException、TypeError 等）
+    ✓ 修复内存泄漏和资源耗尽问题
+    ✓ 修复并发问题（死锁、竞态条件）
+    ✓ 修复安全漏洞（SQL 注入、XSS）
+    ✓ 修复性能退化和响应缓慢
+    ✓ 修复数据不一致和损坏问题
+
+  ▶ 不适用场景
+    ✗ 功能开发和模块创建
+    ✗ 代码重构和架构迁移
+    ✗ 文档编写和测试用例设计
+    ✗ 需要多角色协作的复杂项目
+
+  ▶ 最佳实践
+    ✓ 提供完整的错误日志和堆栈追踪，便于定位
+    ✓ 设置明确的 --criteria 作为修复验证标准
+    ✓ 每次只修复一个 bug，避免混淆
+    ✓ 修复后运行完整测试套件，防止回归
+    ✓ 记录修复过程，便于后续复盘
+
+  ▶ 常见陷阱
+    ❌ 没有错误日志：❌ "有 bug" → ✅ 提供完整堆栈追踪
+    ❌ 修复范围过大：❌ 一次改太多文件 → ✅ 最小化修复
+    ❌ 没有回归测试：❌ 改完不测试 → ✅ 运行完整测试套件
+    ❌ 忽略根因：❌ 只治标不治本 → ✅ 分析根本原因
+    ❌ 没有验证标准：❌ 不设置 --criteria → ✅ 设置具体的验证标准
+
+
+════════════════════════════════════════════════════════════════
+  文档结束
+════════════════════════════════════════════════════════════════

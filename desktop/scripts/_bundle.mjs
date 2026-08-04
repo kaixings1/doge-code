@@ -25,6 +25,12 @@ async function main() {
     jsx: 'automatic',
     globalName: '__dogeRenderer',
     banner: { js: '"use strict";' },
+    // 渲染进程没有 Node 的 process 全局对象。
+    // 通过 define 把 process.env.NODE_ENV 替换为 "production"，
+    // 其余 process.env.xxx 由 index.html 中的 window.process polyfill 兜底（值为 undefined，不会崩溃）。
+    define: {
+      'process.env.NODE_ENV': '"production"',
+    },
   });
 
   const bundledRenderer = path.join(rendererTmp, 'index.js');

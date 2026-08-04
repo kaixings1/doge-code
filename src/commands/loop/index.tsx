@@ -18,7 +18,7 @@ import type { TaskExecutor } from './types.js'
 import { execSync } from 'child_process'
 import { mkdir, writeFile } from 'fs/promises'
 import { formatStatusLine, formatFinalReport, formatSubTaskSummary, type ProgressState } from './progress-ui.js'
-import { parseLoopArgs } from './shortcuts.js'
+import { parseLoopArgs, autoSelectStrategy } from './shortcuts.js'
 
 type ParsedLoopArgs = ReturnType<typeof parseLoopArgs>
 
@@ -36,11 +36,20 @@ function renderHelp(): string {
 
 ## 选项
   --strategy <策略>        循环策略: langgraph / crew / autogpt / openhands / swe-agent（默认 openhands）
+  --auto                   自动选择策略（根据目标关键词）
+  --parallel <N>           并行执行度（多个子任务同时执行）
+  --budget <时间>          时间预算（如 30s / 5m / 2h），超时自动停止
+  --verify <模式>          验证模式: test / build / lint / files
+  --report <路径>          生成 Markdown 报告到指定路径
+  --checkpoint <路径>      保存/恢复执行进度（中断后可恢复）
   --max-iterations <N>     最大迭代次数（默认 20）
   --criteria <标准>        成功标准（可多次指定）
   --json                   JSON 格式输出
   --help                   显示本帮助
   --examples               显示详细示例
+
+## 极限模式示例
+  /loop "创建 Web 应用" --auto --parallel 3 --budget 5m --verify files --report report.md
 
 ## 示例
   /loop "创建一个 Node.js Hello World 服务器"
@@ -311,7 +320,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
   try {
     const strategy = getStrategy(parsed.strategy)
     const goal: LoopGoal = {
-      description: parsed.goal,
+      description: parsed.tools ? `${parsed.goal}\n\n可用工具提示: ${parsed.tools}` : parsed.goal,
       successCriteria: parsed.criteria.length > 0 ? parsed.criteria : undefined,
       maxIterations: parsed.maxIterations,
     }
@@ -324,7 +333,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
     let fileCount = 0
     const createdFiles: string[] = []
     const progressState: ProgressState = {
-      strategy: parsed.strategy,
+      strategy: effectiveStrategy,
       currentIteration: 0,
       maxIterations: parsed.maxIterations,
       currentTask: '',
@@ -334,9 +343,14 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
     }
 
     const result = await executeLoop({
-      strategy: parsed.strategy,
+      strategy: effectiveStrategy,
       goal,
       taskExecutor,
+      parallel: parsed.parallel,
+      budgetMs: parsed.budget > 0 ? parsed.budget : void 0,
+      verifyMode: parsed.verify !== 'none' ? parsed.verify as never : void 0,
+      checkpoint: parsed.checkpoint ?? void 0,
+      report: parsed.report ?? void 0,
       onProgress: (event: { type: string; [k: string]: unknown }) => {
         switch (event.type) {
           case 'loop_start':
@@ -346,7 +360,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           case 'iteration_start':
             progressState.phase = 'executing'
             progressState.currentIteration = event.iteration as number
-            progressState.maxIterations = event.maxIterations as number
+            progressState.maxIterations = (event.maxIterations as number) ?? parsed.maxIterations
             progressState.fileCount = fileCount
             onDone(formatStatusLine(progressState), { display: 'system' })
             break
@@ -355,10 +369,24 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
             onDone(formatStatusLine(progressState), { display: 'system' })
             break
           case 'task_end': {
-            const fileMatches = (event.output as string ?? '').match(/📄\s*(.+?)(?:\s|$)/g)
-            if (fileMatches) {
-              fileCount += fileMatches.length
-              for (const m of fileMatches) { createdFiles.push(m.replace('📄 ', '').trim()) }
+            // 从执行输出中提取创建的文件（支持 📁 创建了 N 个文件 + • file 格式，以及 📄 格式）
+            const output = (event.output as string) ?? ''
+            const fileMatches = output.match(/^\s*(?:•|·|-)\s*(.+)$/gm) || []
+            const fileMatches2 = output.match(/📄\s*(.+?)(?:\s|$)/g) || []
+            if (fileMatches.length > 0 || fileMatches2.length > 0) {
+              const newFiles = new Set<string>()
+              for (const m of fileMatches) {
+                const fp = m.replace(/^\s*(?:•|·|-)\s*/, '').trim()
+                if (fp && /[\w./-]+\.[\w]+/.test(fp)) newFiles.add(fp)
+              }
+              for (const m of fileMatches2) {
+                const fp = m.replace('📄 ', '').trim()
+                if (fp) newFiles.add(fp)
+              }
+              newFiles.forEach(fp => {
+                createdFiles.push(fp)
+                fileCount++
+              })
               progressState.fileCount = fileCount
             }
             onDone(formatStatusLine(progressState), { display: 'system' })

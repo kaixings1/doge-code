@@ -12,38 +12,60 @@ import { strategyManuals } from './strategy-manuals.js'
 import { createAITaskExecutor } from './ai-task-executor.js'
 import type { ExecutorOptions } from './ai-task-executor.js'
 import { formatStatusLine, formatFinalReport, formatSubTaskSummary, type ProgressState } from './progress-ui.js'
+import { extractLoopIntent } from './intent.js'
 
 /**
- * 解析 loop 命令的 CLI 选项
+ * 解析 loop 命令的 CLI 选项（极限版）
  */
 export function parseLoopArgs(args: string): {
   goal: string
   strategy: LoopStrategyName
   maxIterations: number
   criteria: string[]
-  outputPath: string | undefined
+  outputPath: string | null
   timeout: number
   retries: number
   cleanup: boolean
   json: boolean
   help: boolean
   examples: boolean
+  parallel: number
+  auto: boolean
+  budget: number
+  verify: string
+  report: string | null
+  checkpoint: string | null
+  tools: string
 } {
   const result = {
     goal: '',
     strategy: 'openhands' as LoopStrategyName,
     maxIterations: 20,
     criteria: [] as string[],
-    outputPath: undefined as string | undefined,
+    outputPath: null as string | null,
     timeout: 120000,
     retries: 3,
     cleanup: false,
     json: false,
     help: false,
     examples: false,
+    parallel: 1,
+    auto: false,
+    budget: 0,
+    verify: 'none',
+    report: null as string | null,
+    checkpoint: null as string | null,
+    tools: '',
   }
 
-  const parts = args.trim().split(/\s+/).filter(Boolean)
+  // 引号感知分词：保留 "..." 内的空格（如 --criteria "文章 CRUD"）
+  const parts = (args.trim().match(/"([^"]*)"|\S+/g) || []).map(tok => {
+    // 剥离包裹的引号
+    if (tok.startsWith('"') && tok.endsWith('"') && tok.length >= 2) {
+      return tok.slice(1, -1)
+    }
+    return tok
+  }).filter(Boolean)
   const goalParts: string[] = []
   let i = 0
 
@@ -57,6 +79,30 @@ export function parseLoopArgs(args: string): {
       result.json = true
     } else if (part === '--cleanup') {
       result.cleanup = true
+    } else if (part === '--auto') {
+      result.auto = true
+    } else if (part === '--tools' && i + 1 < parts.length) {
+      result.tools = parts[++i]
+    } else if (part === '--parallel' && i + 1 < parts.length) {
+      result.parallel = parseInt(parts[++i], 10) || 1
+    } else if (part === '--budget' && i + 1 < parts.length) {
+      // 支持 30s / 5m / 2h / 60000 (ms)
+      const raw = parts[++i]
+      const m = raw.match(/^(\d+)(s|m|h|ms)?$/i)
+      if (m) {
+        const n = parseInt(m[1], 10)
+        const unit = (m[2] || 'ms').toLowerCase()
+        result.budget = unit === 's' ? n * 1000 : unit === 'm' ? n * 60000 : unit === 'h' ? n * 3600000 : n
+      }
+    } else if (part === '--verify' && i + 1 < parts.length) {
+      const v = parts[++i].toLowerCase()
+      if (['none', 'test', 'build', 'lint', 'files'].includes(v)) {
+        result.verify = v
+      }
+    } else if (part === '--report' && i + 1 < parts.length) {
+      result.report = parts[++i]
+    } else if (part === '--checkpoint' && i + 1 < parts.length) {
+      result.checkpoint = parts[++i]
     } else if (part === '--strategy' && i + 1 < parts.length) {
       result.strategy = parts[++i] as LoopStrategyName
     } else if (part === '--max-iterations' && i + 1 < parts.length) {
@@ -76,7 +122,49 @@ export function parseLoopArgs(args: string): {
   }
 
   result.goal = goalParts.join(' ')
+
+  // ─── 从自然语言 goal 中提取"直到/直至"成功标准 ───
+  // 例如: /loop 创建服务器，直到能返回 200 → goal="创建服务器" criteria=["能返回 200"]
+  if (result.goal && !result.help && !result.examples) {
+    const loopIntent = extractLoopIntent(result.goal)
+    if (loopIntent) {
+      result.goal = loopIntent.goal
+      if (loopIntent.criteria.length > 0) {
+        for (const c of loopIntent.criteria) {
+          if (!result.criteria.includes(c)) {
+            result.criteria.push(c)
+          }
+        }
+      }
+      if (!result.tools && loopIntent.toolHints.length > 0) {
+        result.tools = loopIntent.toolHints.slice(0, 3).join(', ')
+      }
+      // 自动策略推断：仅当用户未显式指定策略时
+      if (!result.auto && loopIntent.strategyHint) {
+        result.strategy = loopIntent.strategyHint
+      }
+    }
+  }
+
   return result
+}
+
+/**
+ * 自适应策略选择 — 根据目标关键词自动选择最合适的策略
+ */
+export function autoSelectStrategy(goal: string): LoopStrategyName {
+  const g = goal.toLowerCase()
+
+  // 有明确状态流转/工作流 → langgraph
+  if (/工作流|workflow|状态机|流程|pipeline|多步|阶段/.test(g)) return 'langgraph'
+  // 多角色协作/团队 → crew
+  if (/团队|协作|多角色|crew|分工|assign/.test(g)) return 'crew'
+  // 探索性/创新/研究 → autogpt
+  if (/研究|探索|调研|创新|发明|brainstorm|探索性/.test(g)) return 'autogpt'
+  // 软件工程/代码库级任务 → swe-agent
+  if (/重构|代码|代码库|软件|工程|bug|缺陷|修复.*代码|github|仓库/.test(g)) return 'swe-agent'
+  // 默认 → openhands
+  return 'openhands'
 }
 
 
@@ -243,6 +331,11 @@ function createShortcutCommand(strategyName: LoopStrategyName, aliases: string[]
       const loopOptions: Parameters<typeof executeLoop>[0] = {
         strategy: strategyName,
         goal: { description: parsed.goal, maxIterations: parsed.maxIterations },
+        parallel: parsed.parallel,
+        budgetMs: parsed.budget > 0 ? parsed.budget : undefined,
+        verifyMode: parsed.verify !== 'none' ? parsed.verify as any : undefined,
+        checkpoint: parsed.checkpoint ?? undefined,
+        report: parsed.report ?? undefined,
       }
       if (context) {
         loopOptions.taskExecutor = createAITaskExecutor(context, {
@@ -250,7 +343,7 @@ function createShortcutCommand(strategyName: LoopStrategyName, aliases: string[]
           taskTimeout: parsed.timeout,
           apiTimeout: 30000,
           autoCleanup: parsed.cleanup,
-          outputPath: parsed.outputPath,
+          outputPath: parsed.outputPath ?? undefined,
         })
       }
 
@@ -277,7 +370,7 @@ function createShortcutCommand(strategyName: LoopStrategyName, aliases: string[]
           case 'iteration_start':
             progressState.phase = 'executing'
             progressState.currentIteration = event.iteration as number
-            progressState.maxIterations = event.maxIterations as number
+            progressState.maxIterations = (event.maxIterations as number) ?? 20
             progressState.fileCount = fileCount
             onDone(formatStatusLine(progressState), { display: 'system' })
             break
@@ -332,17 +425,6 @@ function createShortcutCommand(strategyName: LoopStrategyName, aliases: string[]
         ),
         formatSubTaskSummary(result.subTasks),
       ]
-
-      onDone(lines.join('\n'))
-      return null
-
-      lines.push('')
-      lines.push('子任务:')
-      result.subTasks.forEach((t, i) => {
-        const icon = t.status === 'completed' ? '✅' : t.status === 'failed' ? '❌' : '⏳'
-        const resultLen = t.result?.length ?? 0
-        lines.push(`  ${i + 1}. ${icon} ${t.description}${resultLen > 0 ? ` (${resultLen}字符)` : ''}`)
-      })
 
       onDone(lines.join('\n'))
       return null

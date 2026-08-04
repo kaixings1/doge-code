@@ -43,6 +43,10 @@ import {
   getUserPromptSubmitHookBlockingMessage,
 } from '../hooks.js'
 import {
+  extractLoopIntent,
+  toLoopInstruction,
+} from '../../commands/loop/intent.js'
+import {
   createImageMetadataText,
   maybeResizeAndDownsampleImageBlock,
 } from '../imageResizer.js'
@@ -173,6 +177,28 @@ export async function processUserInput({
 
   if (!result.shouldQuery) {
     return result
+  }
+
+  // ─── 内置循环意图检测（第二层防线）───
+  // 覆盖非交互入口（初始消息、队列消息等）的循环指令：
+  // 检测到"直到 X … 直到 Y"模式时，向模型注入循环执行指令（meta 消息）。
+  // 注意：交互输入已在 REPL 层转换为 /loop 命令，此处仅兜底非 REPL 路径。
+  if (
+    !isMeta &&
+    !skipSlashCommands &&
+    !bridgeOrigin &&
+    typeof input === 'string' &&
+    !input.trim().startsWith('/')
+  ) {
+    const loopIntent = extractLoopIntent(input)
+    if (loopIntent) {
+      result.messages.push(
+        createUserMessage({
+          content: toLoopInstruction(loopIntent),
+          isMeta: true,
+        }),
+      )
+    }
   }
 
   // Execute UserPromptSubmit hooks and handle blocking
