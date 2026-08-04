@@ -26,6 +26,10 @@ import { getMarketplaces, installPluginFromMarketplace, type MarketplacePlugin }
 import { DocumentManager, type DocOperation } from './collaborativeDoc.js'
 import { BatchEngine, safeReadFile, safeWriteFile, scanFiles, type BatchConfig } from './batchEngine.js'
 import { validateManifest, validatePluginPath, scanPluginSecurity, safeReadCommand, validateSource, DEFAULT_SANDBOX_CONFIG } from './pluginSandbox.js'
+import { createPluginRuntime } from './pluginRuntime.js'
+import { createCodeIndexer } from './localIndex.js'
+import { createDebuggerManager } from './debuggerManager.js'
+import { createAgentOrchestrator, loadAllRoles } from './agentOrchestrator.js'
 import { RemoteSignalingServer, type RemoteMessage } from './remoteSignaling.js'
 import { createDesktopApiClient, type DesktopApiClient } from './apiClient.js'
 import { saveSession, listSessions, loadSession, deleteSession, updateSession, saveCrashRecovery, getCrashRecovery, clearCrashRecovery } from './sessionStore.js'
@@ -75,6 +79,21 @@ const PROJECT_ROOT = path.resolve(DESKTOP_ROOT, '..')
 const projectRoot = PROJECT_ROOT
 const DIST_DIR = path.join(DESKTOP_ROOT, 'dist')
 const CONFIG_PATH_DEFAULT = path.join(projectRoot, '.doge', 'lc2.json')
+
+// ─── 插件运行时（JS 沙箱执行 + hooks + 热加载） ───
+// 必须在 projectRoot 定义之后创建（原在第 47 行过早调用导致路径参数为空）
+const pluginRuntime = createPluginRuntime(projectRoot, { timeoutMs: 8000 })
+
+// ─── 本地代码索引（BM25 + 增量 + 持久化） ───
+const codeIndexer = createCodeIndexer(projectRoot)
+codeIndexer.load()
+// 启动时异步重建（不阻塞主进程）
+void codeIndexer.rebuild().then(() => {
+  codeIndexer.watch()
+  tsLog('INDEX', `本地索引就绪: ${codeIndexer.getStats().fileCount} 文件`)
+}).catch(err => {
+  console.warn('[INDEX] 启动重建失败:', err)
+})
 
 /**
  * 定位 .doge/lc2.json（默认）或 .doge/api.json（备用）。
@@ -251,7 +270,6 @@ Use tools when needed. If a tool call fails or returns empty, try a different ap
     // 将 StreamProcessor 的 chunk 回调连接到 notifyChunk
     engineApi.setChunkCallback((chunk: { type: string; text?: string }) => {
       if (chunk.type === 'text' && chunk.text && mainWindow) {
-        tsLog('MAIN', 'chunk callback, text:', chunk.text.slice(0, 50))
         mainWindow.webContents.send('doge:chunk', { text: chunk.text })
       }
     })
@@ -336,7 +354,7 @@ function createWindow(): void {
     mainWindow.loadURL(htmlUrl)
   }
 
-  // ─── 渲染进程诊断：将 console 错误打印到主进程终端 ───
+  // ─── 渲染进程诊断：转发所有级别，便于定位渲染进程问题 ───
   mainWindow.webContents.on('console-message', (_e, level, message, line, sourceId) => {
     console.log(`[RENDERER:${level}] ${message} (${sourceId}:${line})`)
   })
@@ -1191,231 +1209,223 @@ ipcMain.handle('doge:get-outline', async (_event, params: { filePath: string; cw
 // ─── 语义代码搜索 ───
 ipcMain.handle('doge:semantic-search', async (_event, params: { query: string; cwd: string; maxResults?: number; fileTypes?: string[]; directories?: string[] }) => {
   try {
-    const { query, cwd, maxResults = 20 } = params
-
-    // 收集候选文件
-    const walk = (dir: string): string[] => {
-      const results: string[] = []
-      try {
-        const entries = fs.readdirSync(dir, { withFileTypes: true })
-        for (const entry of entries) {
-          if (results.length >= maxResults * 3) break
-          const fullPath = path.join(dir, entry.name)
-          if (entry.isDirectory()) {
-            if (!['node_modules', '.git', 'dist', 'build', '.next'].includes(entry.name)) {
-              results.push(...walk(fullPath))
-            }
-          } else {
-            const ext = entry.name.split('.').pop()?.toLowerCase() || ''
-            if (['ts', 'tsx', 'js', 'jsx', 'py', 'go', 'java', 'rs', 'c', 'cpp', 'css', 'html', 'json', 'md'].includes(ext)) {
-              results.push(fullPath)
-            }
-          }
-        }
-      } catch { /* ignore */ }
-      return results
-    }
-
-    const files = walk(cwd)
-    const results: Array<{ filePath: string; lineNumber: number; column: number; content: string; score: number; context?: string }> = []
-
-    // TF-IDF 向量搜索 + cosine similarity
-    type DocChunk = { filePath: string; lineNumber: number; column: number; content: string; ctx: string; tokens: string[] }
-
-    const tokenize = (text: string): string[] => {
-      const stopWords = new Set(['the','and','for','are','but','not','you','all','can','her','was','one','our','out','has','have','that','this','with','from','they','would','there','their','what','about','which','when','make','can','like','time','just','know','take','people','into','year','your','good','some','could','them','see','other','than','then','now','look','only','come','its','over','think','also','back','after','use','two','how','our','work','first','well','way','even','new','want','because','any','these','give','day','most','been','has','had','does','did','get','got','much','many','where','each','why','still','being','every','between','need','down','should','both','same','last','long','little','own','here','old','tell','may','set','put','end','help','try'])
-      return text.toLowerCase()
-        .replace(/[^a-z0-9_\u4e00-\u9fff]+/g, ' ')
-        .split(/\s+/)
-        .filter(t => t.length > 2 && !stopWords.has(t))
-    }
-
-    const chunks: DocChunk[] = []
-    const queryTokens = tokenize(query)
-    for (const file of files) {
-      try {
-        const content = fs.readFileSync(file, 'utf-8')
-        const lines = content.split('\n')
-        for (let i = 0; i < lines.length; i++) {
-          const trimmed = lines[i].trim()
-          if (trimmed.length < 3) continue
-          const tokens = tokenize(trimmed)
-          if (tokens.length === 0) continue
-          if (queryTokens.length > 0 && !queryTokens.some(qt => tokens.some(t => t === qt || t.startsWith(qt) || qt.startsWith(t)))) continue
-          chunks.push({ filePath: file, lineNumber: i + 1, column: 1, content: trimmed, ctx: lines[i + 1]?.trim() || '', tokens })
-          if (chunks.length >= maxResults * 5) break
-        }
-      } catch { /* ignore */ }
-      if (chunks.length >= maxResults * 5) break
-    }
-
-    const docCount = chunks.length
-    const docFreq: Record<string, number> = {}
-    for (const chunk of chunks) {
-      const unique = new Set(chunk.tokens)
-      for (const t of unique) {
-        docFreq[t] = (docFreq[t] || 0) + 1
-      }
-    }
-
-    const idf = (t: string): number => Math.log((docCount + 1) / ((docFreq[t] || 0) + 1)) + 1
-
-    const toVector = (tokens: string[]): Record<string, number> => {
-      const tf: Record<string, number> = {}
-      for (const t of tokens) tf[t] = (tf[t] || 0) + 1
-      const vec: Record<string, number> = {}
-      const len = tokens.length || 1
-      for (const t of tokens) vec[t] = (tf[t] / len) * idf(t)
-      return vec
-    }
-
-    const cosineSim = (a: Record<string, number>, b: Record<string, number>): number => {
-      let dot = 0, magA = 0, magB = 0
-      const allKeys = new Set([...Object.keys(a), ...Object.keys(b)])
-      for (const k of allKeys) {
-        const va = a[k] || 0
-        const vb = b[k] || 0
-        dot += va * vb
-        magA += va * va
-        magB += vb * vb
-      }
-      if (magA === 0 || magB === 0) return 0
-      return dot / (Math.sqrt(magA) * Math.sqrt(magB))
-    }
-
-    const queryVec = toVector(queryTokens)
-    const scored = chunks.map(chunk => {
-      const chunkVec = toVector(chunk.tokens)
-      let score = cosineSim(queryVec, chunkVec)
-      const queryLower = query.toLowerCase()
-      if (chunk.content.toLowerCase().includes(queryLower)) score += 0.3
-      return { filePath: chunk.filePath, lineNumber: chunk.lineNumber, column: chunk.column, content: chunk.content, context: chunk.ctx, score }
-    })
-
-    scored.sort((a, b) => b.score - a.score)
-    return { success: true, results: scored.slice(0, maxResults) }
+    const { query, maxResults = 20, fileTypes, directories } = params
+    // 使用本地索引（BM25，增量+持久化）
+    const results = codeIndexer.search(query, { maxResults, fileTypes, directories })
+    return { success: true, results, indexed: true }
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : String(e)
     return { success: false, error: msg, results: [] }
   }
 })
 
-// ─── 调试器 ───
-type DbgSession = { id: string; pid: number; breakpoints: Array<{ file: string; line: number }>; callStack: Array<{ name: string; file: string; line: number }>; locals: Record<string, string>; isPaused: boolean; isRunning: boolean }
-const debugSessions = new Map<string, DbgSession>()
+// ─── 本地索引状态 IPC ───
+
+ipcMain.handle('doge:index-status', async () => {
+  try {
+    return { success: true, stats: codeIndexer.getStats() }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) }
+  }
+})
+
+ipcMain.handle('doge:index-rebuild', async (_event, force: boolean) => {
+  try {
+    const stats = await codeIndexer.rebuild(force)
+    return { success: true, stats }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) }
+  }
+})
+
+// ─── 调试器（真实 CDP / Inspector 协议） ───
+const debuggerManager = createDebuggerManager()
+
+// ─── 多 Agent 并行编排引擎 ───
+const agentOrchestrator = createAgentOrchestrator()
 
 ipcMain.handle('doge:debug-start', async (_event, params: { cwd: string; script: string; args?: string[] }) => {
   try {
-    const sessionId = `dbg-${Date.now()}`
-    const { spawn } = await import('node:child_process')
-    const child = spawn(process.execPath, ['--inspect-brk=0', params.script, ...(params.args || [])], { cwd: params.cwd })
-    child.unref()
-    debugSessions.set(sessionId, { id: sessionId, pid: child.pid || 0, breakpoints: [], callStack: [], locals: {}, isPaused: true, isRunning: false })
-    return { success: true, sessionId, pid: child.pid || 0 }
-  } catch (e: unknown) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg, sessionId: '' } }
+    const result = await debuggerManager.start(params.cwd, params.script, params.args || [])
+    if (result.error) return { success: false, error: result.error, sessionId: '' }
+    return { success: true, sessionId: result.sessionId, pid: result.pid }
+  } catch (e) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg, sessionId: '' } }
 })
 
-ipcMain.handle('doge:debug-stop', async (_event, sessionId: string) => {
-  try { debugSessions.delete(sessionId); return { success: true } }
-  catch (e: unknown) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+ipcMain.handle('doge:debug-stop', async (_event, sessionId) => {
+  try { const ok = await debuggerManager.stop(sessionId); return { success: ok } }
+  catch (e) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
 })
 
 ipcMain.handle('doge:debug-list-sessions', () => {
-  const list: Array<{ id: string; pid: number; isRunning: boolean; isPaused: boolean; breakpointCount: number }> = []
-  for (const s of debugSessions.values()) list.push({ id: s.id, pid: s.pid, isRunning: s.isRunning, isPaused: s.isPaused, breakpointCount: s.breakpoints.length })
-  return { success: true, sessions: list }
+  return { success: true, sessions: debuggerManager.list() }
 })
 
-ipcMain.handle('doge:debug-set-breakpoint', async (_event, params: { sessionId: string; file: string; line: number; condition?: string }) => {
+ipcMain.handle('doge:debug-set-breakpoint', async (_event, params) => {
+  try { return await debuggerManager.setBreakpoint(params.sessionId, params.file, params.line, params.condition) }
+  catch (e) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+})
+
+ipcMain.handle('doge:debug-remove-breakpoint', async (_event, params) => {
+  try { const ok = debuggerManager.removeBreakpoint(params.sessionId, params.file, params.line); return { success: ok } }
+  catch (e) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+})
+
+ipcMain.handle('doge:debug-list-breakpoints', (_event, sessionId) => {
+  return { success: true, breakpoints: debuggerManager.listBreakpoints(sessionId) }
+})
+
+ipcMain.handle('doge:debug-continue', async (_event, sessionId) => {
+  try { const ok = await debuggerManager.resume(sessionId); return { success: ok } }
+  catch (e) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+})
+
+ipcMain.handle('doge:debug-pause', async (_event, sessionId) => {
+  try { const ok = await debuggerManager.pause(sessionId); return { success: ok } }
+  catch (e) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+})
+
+ipcMain.handle('doge:debug-step-over', async (_event, sessionId) => {
+  try { const ok = await debuggerManager.step(sessionId, 'over'); return { success: ok } }
+  catch (e) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+})
+
+ipcMain.handle('doge:debug-step-into', async (_event, sessionId) => {
+  try { const ok = await debuggerManager.step(sessionId, 'into'); return { success: ok } }
+  catch (e) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+})
+
+ipcMain.handle('doge:debug-step-out', async (_event, sessionId) => {
+  try { const ok = await debuggerManager.step(sessionId, 'out'); return { success: ok } }
+  catch (e) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+})
+
+ipcMain.handle('doge:debug-get-callstack', (_event, sessionId) => {
+  const s = debuggerManager.get(sessionId)
+  return { success: true, callStack: s ? s.callStack : [] }
+})
+
+ipcMain.handle('doge:debug-get-variables', (_event, sessionId) => {
+  const s = debuggerManager.get(sessionId)
+  return { success: true, variables: s ? s.variables : {} }
+})
+
+ipcMain.handle('doge:debug-evaluate', async (_event, params) => {
   try {
-    const session = debugSessions.get(params.sessionId)
-    if (!session) return { success: false, error: '会话不存在' }
-    const existing = session.breakpoints.find(b => b.file === params.file && b.line === params.line)
-    if (existing) { if (params.condition !== undefined) existing.condition = params.condition; return { success: true, message: '已更新' } }
-    session.breakpoints.push({ file: params.file, line: params.line })
-    return { success: true, message: '断点已设置' }
-  } catch (e: unknown) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+    return await debuggerManager.evaluate(params.sessionId, params.expression)
+  } catch (e) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
 })
 
-ipcMain.handle('doge:debug-remove-breakpoint', async (_event, params: { sessionId: string; file: string; line: number }) => {
+// ─── 多 Agent 编排 IPC ───
+
+ipcMain.handle('doge:agent-list-roles', () => {
   try {
-    const session = debugSessions.get(params.sessionId)
-    if (!session) return { success: false, error: '会话不存在' }
-    session.breakpoints = session.breakpoints.filter(b => !(b.file === params.file && b.line === params.line))
-    return { success: true }
-  } catch (e: unknown) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+    // 内置角色 + .doge/agents 自定义角色
+    return { success: true, roles: loadAllRoles(projectRoot) }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e), roles: [] }
+  }
 })
 
-ipcMain.handle('doge:debug-list-breakpoints', (_event, sessionId: string) => {
-  const session = debugSessions.get(sessionId)
-  if (!session) return { success: true, breakpoints: [] }
-  return { success: true, breakpoints: session.breakpoints }
-})
-
-ipcMain.handle('doge:debug-continue', (_event, sessionId: string) => {
-  const session = debugSessions.get(sessionId)
-  if (!session) return { success: false, error: '会话不存在' }
-  session.isPaused = false; session.isRunning = true; session.callStack = []; session.locals = {}
-  return { success: true }
-})
-
-ipcMain.handle('doge:debug-pause', (_event, sessionId: string) => {
-  const session = debugSessions.get(sessionId)
-  if (!session) return { success: false, error: '会话不存在' }
-  session.isPaused = true; session.isRunning = false
-  session.callStack = [{ name: 'main()', file: '<entry>', line: 1, column: 0 }]
-  return { success: true }
-})
-
-ipcMain.handle('doge:debug-step-over', (_event, sessionId: string) => {
-  const session = debugSessions.get(sessionId)
-  if (!session) return { success: false, error: '会话不存在' }
-  session.isPaused = true
-  const ln = session.callStack.length > 0 ? session.callStack[0].line + 1 : 1
-  session.callStack = [{ name: 'stepOver()', file: '<step>', line: ln, column: 0 }]
-  session.locals = { __step: 'over' }
-  return { success: true }
-})
-
-ipcMain.handle('doge:debug-step-into', (_event, sessionId: string) => {
-  const session = debugSessions.get(sessionId)
-  if (!session) return { success: false, error: '会话不存在' }
-  session.isPaused = true
-  const cur = session.callStack.length > 0 ? session.callStack[0] : { file: '<step>', line: 1 }
-  session.callStack = [{ name: 'stepInto()', file: cur.file, line: cur.line, column: 0 }, ...session.callStack]
-  session.locals = { __step: 'into' }
-  return { success: true }
-})
-
-ipcMain.handle('doge:debug-step-out', (_event, sessionId: string) => {
-  const session = debugSessions.get(sessionId)
-  if (!session) return { success: false, error: '会话不存在' }
-  session.isPaused = true
-  session.callStack = session.callStack.slice(1)
-  session.locals = { __step: 'out' }
-  return { success: true }
-})
-
-ipcMain.handle('doge:debug-get-callstack', (_event, sessionId: string) => {
-  const session = debugSessions.get(sessionId)
-  if (!session) return { success: true, callStack: [] }
-  return { success: true, callStack: session.callStack }
-})
-
-ipcMain.handle('doge:debug-get-variables', (_event, sessionId: string) => {
-  const session = debugSessions.get(sessionId)
-  if (!session) return { success: true, variables: {} }
-  return { success: true, variables: session.locals }
-})
-
-ipcMain.handle('doge:debug-evaluate', async (_event, params: { sessionId: string; expression: string }) => {
+ipcMain.handle('doge:agent-orchestrate', async (_event, params: { task: string; roles: Array<{ id: string; name: string; description?: string; systemPrompt: string; model?: string }>; defaultModel: string; maxTokens?: number; timeoutMs?: number; mode?: 'parallel' | 'discuss'; maxRounds?: number }) => {
   try {
-    const session = debugSessions.get(params.sessionId)
-    if (!session) return { success: false, error: '会话不存在' }
-    const fn = new Function(`"use strict"; return (${params.expression})`)
-    const result = fn()
-    return { success: true, result: String(result === null ? 'null' : result === undefined ? 'nil' : result), type: typeof result }
-  } catch (e: unknown) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+    const config = loadConfig()
+    const result = await agentOrchestrator.orchestrate(
+      { apiKey: config.apiKey, baseUrl: config.baseUrl, provider: config.provider },
+      {
+        task: params.task,
+        roles: params.roles,
+        defaultModel: params.defaultModel,
+        maxTokens: params.maxTokens,
+        timeoutMs: params.timeoutMs,
+        mode: params.mode,
+        maxRounds: params.maxRounds,
+      }
+    )
+    return { success: true, result }
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e)
+    return { success: false, error: msg }
+  }
+})
+
+ipcMain.handle('doge:agent-cancel', (_event, orchestrationId: string) => {
+  const ok = agentOrchestrator.cancel(orchestrationId)
+  return { success: ok }
+})
+
+// ─── Agent 编排工作流持久化 ───
+
+interface AgentWorkflow {
+  id: string
+  name: string
+  description?: string
+  task: string
+  mode: 'parallel' | 'discuss'
+  maxRounds?: number
+  roleIds: string[]
+  createdAt: number
+  updatedAt: number
+}
+
+function getWorkflowsDir(): string {
+  const dir = path.join(projectRoot, '.doge', 'workflows')
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
+  return dir
+}
+
+ipcMain.handle('doge:agent-workflow-save', async (_event, wf: AgentWorkflow) => {
+  try {
+    const dir = getWorkflowsDir()
+    const now = Date.now()
+    const data: AgentWorkflow = {
+      id: wf.id || `wf-${now}`,
+      name: wf.name || '未命名工作流',
+      description: wf.description,
+      task: wf.task,
+      mode: wf.mode,
+      maxRounds: wf.maxRounds,
+      roleIds: wf.roleIds || [],
+      createdAt: wf.createdAt || now,
+      updatedAt: now,
+    }
+    // 清理文件名不安全字符
+    const safeId = data.id.replace(/[^a-zA-Z0-9_-]/g, '_')
+    fs.writeFileSync(path.join(dir, `${safeId}.json`), JSON.stringify(data, null, 2), 'utf-8')
+    return { success: true, workflow: data }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) }
+  }
+})
+
+ipcMain.handle('doge:agent-workflow-list', async () => {
+  try {
+    const dir = getWorkflowsDir()
+    const files = fs.readdirSync(dir).filter(f => f.endsWith('.json'))
+    const workflows: AgentWorkflow[] = files.map(f => {
+      try { return JSON.parse(fs.readFileSync(path.join(dir, f), 'utf-8')) as AgentWorkflow }
+      catch { return null }
+    }).filter((w): w is AgentWorkflow => w !== null)
+    workflows.sort((a, b) => b.updatedAt - a.updatedAt)
+    return { success: true, workflows }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e), workflows: [] }
+  }
+})
+
+ipcMain.handle('doge:agent-workflow-delete', async (_event, workflowId: string) => {
+  try {
+    const dir = getWorkflowsDir()
+    const safeId = workflowId.replace(/[^a-zA-Z0-9_-]/g, '_')
+    const file = path.join(dir, `${safeId}.json`)
+    if (fs.existsSync(file)) {
+      fs.unlinkSync(file)
+      return { success: true }
+    }
+    return { success: false, error: '工作流不存在' }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) }
+  }
 })
 
 ipcMain.handle('doge:get-git-diff', async (_event, cwd: string, filePath: string) => {
@@ -3949,6 +3959,147 @@ ipcMain.handle('doge:plugin-list-active', () => {
     const plugins = scanPlugins(projectRoot)
     return { success: true, plugins: plugins.filter((p: any) => p.enabled) }
   } catch { return { success: true, plugins: [] } }
+})
+
+// ─── 插件运行时 IPC（JS 沙箱执行 + hooks + 热加载） ───
+
+ipcMain.handle('doge:plugin-runtime-load-all', async () => {
+  try {
+    const loaded = pluginRuntime.loadAll()
+    return { success: true, count: loaded.length, plugins: pluginRuntime.list() }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) }
+  }
+})
+
+ipcMain.handle('doge:plugin-runtime-load', async (_event, pluginDir: string) => {
+  try {
+    const p = pluginRuntime.loadPlugin(pluginDir)
+    if (!p) return { success: false, error: '未找到可执行入口（index.js/main.js）' }
+    return { success: true, plugin: pluginRuntime.list().find(x => x.name === p.name) }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) }
+  }
+})
+
+ipcMain.handle('doge:plugin-runtime-list', async () => {
+  return { success: true, plugins: pluginRuntime.list(), commands: pluginRuntime.getCommandNames() }
+})
+
+ipcMain.handle('doge:plugin-runtime-invoke', async (_event, fullName: string, ...args: unknown[]) => {
+  return pluginRuntime.invokeCommand(fullName, ...args)
+})
+
+ipcMain.handle('doge:plugin-runtime-reload', async (_event, pluginName: string) => {
+  try {
+    const p = pluginRuntime.get(pluginName)
+    if (!p) return { success: false, error: `插件 ${pluginName} 未加载` }
+    pluginRuntime.loadPlugin(p.dir)
+    return { success: true, plugin: pluginRuntime.list().find(x => x.name === pluginName) }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) }
+  }
+})
+
+ipcMain.handle('doge:plugin-runtime-unload', async (_event, pluginName: string) => {
+  try {
+    const ok = pluginRuntime.unloadPlugin(pluginName)
+    return { success: ok }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) }
+  }
+})
+
+ipcMain.handle('doge:plugin-runtime-watch', async (_event, pluginName: string) => {
+  try {
+    const ok = pluginRuntime.watch(pluginName)
+    return { success: ok }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) }
+  }
+})
+
+ipcMain.handle('doge:plugin-runtime-unwatch', async (_event, pluginName: string) => {
+  try {
+    pluginRuntime.stopWatch(pluginName)
+    return { success: true }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) }
+  }
+})
+
+ipcMain.handle('doge:plugin-runtime-emit', async (_event, event: string, data: unknown) => {
+  pluginRuntime.emitEvent(event, data)
+  return { success: true }
+})
+
+// ─── 插件 Scaffold 生成器 ───
+
+ipcMain.handle('doge:plugin-scaffold', async (_event, pluginName: string) => {
+  try {
+    const name = pluginName.trim()
+    if (!name) return { success: false, error: '请输入插件名称' }
+    // 名称校验：字母数字下划线横线
+    if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
+      return { success: false, error: '插件名称仅允许字母、数字、下划线、横线' }
+    }
+    const dir = path.join(projectRoot, '.doge', 'plugins', name)
+    if (fs.existsSync(dir)) return { success: false, error: `插件 "${name}" 已存在` }
+    fs.mkdirSync(dir, { recursive: true })
+
+    const manifest = {
+      name,
+      description: `${name} 插件`,
+      version: '0.1.0',
+      author: 'user',
+    }
+    fs.writeFileSync(path.join(dir, 'plugin.json'), JSON.stringify(manifest, null, 2), 'utf-8')
+
+    const entry = `/**
+ * ${name} 插件入口 — Doge Code 插件运行时 SDK
+ *
+ * SDK 能力：
+ * - registerCommand(name, fn)：注册可调用命令
+ * - registerHook(hook)：注册生命周期 hooks（onFileOpen/onFileSave/onToolExecuted/onMessageSent/onStateChange）
+ * - on/emit：插件间事件总线
+ * - log：日志输出
+ *
+ * 插件形态：module.exports = (ctx) => { ... } 或 exports.activate = (ctx) => { ... }
+ */
+module.exports = (ctx) => {
+  // 注册一个示例命令（在 PluginPanel「运行时」Tab 点击执行）
+  ctx.registerCommand('hello', () => {
+    return '你好，来自插件 ${name} 👋'
+  })
+
+  // 注册生命周期 hook
+  ctx.registerHook({
+    onFileOpen: (filePath) => {
+      ctx.log('文件被打开:', filePath)
+    },
+    onStateChange: (state) => {
+      ctx.log('状态变化:', state)
+    },
+  })
+
+  // 事件总线示例
+  ctx.on('custom-event', (data) => {
+    ctx.log('收到事件:', data)
+  })
+
+  ctx.log('插件 ${name} 已激活')
+}
+`
+    fs.writeFileSync(path.join(dir, 'index.js'), entry, 'utf-8')
+
+    // 立即加载到运行时
+    const loaded = pluginRuntime.loadPlugin(dir)
+    if (loaded) pluginRuntime.watch(name)
+
+    return { success: true, path: dir, entry: path.join(dir, 'index.js'), commands: ['hello'] }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) }
+  }
 })
 
 // ─── 文件树 API ───

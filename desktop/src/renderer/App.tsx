@@ -189,7 +189,23 @@ function highlightCode(code: string, lang: string, isDark = true, fontSize?: num
 }
 
 // ─── 主组件 ───
+// 模块级防重：防止 StrictMode / 组件重挂载导致 IPC 订阅重复（重复订阅会使 chunk 重复累积）
+let chunkSubInstalled = false
+let stateSubInstalled = false
+// 渲染计数（检测无限重渲染）：模块级，不被组件重挂载重置
+let __renderCount = 0
+let __mountCount = 0
+let __renderWarned = false
+
 export function App(): JSX.Element {
+  __renderCount++
+  if (__renderCount % 50 === 0) {
+    console.log(`[DIAG] renderCount=${__renderCount} mountCount=${__mountCount} messages=${/* 渲染期引用 */ 0}`)
+  }
+  if (__renderCount > 500 && !__renderWarned) {
+    __renderWarned = true
+    console.error(`[DIAG] ⚠ 疑似无限重渲染！renderCount=${__renderCount}`)
+  }
   const [config, setConfig] = useState<DesktopConfig>({ provider: 'openai', apiKey: '', model: 'gpt-4o', workingDir: '' })
   const workingDir = config.workingDir || '/'
   const [messages, setMessages] = useState<Message[]>([])
@@ -206,6 +222,12 @@ export function App(): JSX.Element {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loaded, setLoaded] = useState(false)
+  // ─── 挂载/卸载诊断 ───
+  useEffect(() => {
+    __mountCount++
+    console.log(`[DIAG] App mounted #${__mountCount}`)
+    return () => console.log(`[DIAG] App unmounted #${__mountCount}`)
+  }, [])
   const [selectedGitFile, setSelectedGitFile] = useState<string | null>(null)
   const [commitMessage, setCommitMessage] = useState('')
   const [isCommitting, setIsCommitting] = useState(false)
@@ -290,6 +312,8 @@ export function App(): JSX.Element {
   const [showWorkflowPanel, setShowWorkflowPanel] = useState(false)
   const [showReferencesPanel, setShowReferencesPanel] = useState(false)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
+  const [debugBreakpoints, setDebugBreakpoints] = useState<Map<string, number[]>>(new Map())
+  const [debugPaused, setDebugPaused] = useState<{ file: string; line: number } | null>(null)
   const [activeReviewFile, setActiveReviewFile] = useState<string | null>(null)
   const [showKanban, setShowKanban] = useState(false)
   const [showTimeTracker, setShowTimeTracker] = useState(false)
@@ -653,6 +677,18 @@ export function App(): JSX.Element {
     if (activePreviewFile) { setEditContent(activePreviewFile.content); setIsEditing(true) }
   }, [activePreviewFile])
 
+  // 监听调试器暂停事件 → 记录暂停位置（预览区高亮）
+  useEffect(() => {
+    const api = window.dogeAPI as Record<string, any>
+    if (typeof api?.onDebugPaused === 'function') {
+      const unsub = api.onDebugPaused((info: { file: string; line: number }) => {
+        setDebugPaused({ file: info.file, line: info.line })
+      })
+      return () => { unsub() }
+    }
+    return () => {}
+  }, [])
+
   const runSearch = useCallback(() => {
     if (!activePreviewFile || !searchQuery) { setSearchResults([]); setCurrentResultIndex(-1); return }
     const content = activePreviewFile.content
@@ -752,7 +788,8 @@ export function App(): JSX.Element {
     })
   }, [input])
 
-  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages, currentStreaming])
+  // 仅在消息列表变化时滚动（不用 smooth 动画，避免流式 chunk 频繁触发导致界面跳动）
+  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'auto' }) }, [messages])
 
   // 初始化配置
   useEffect(() => {
@@ -794,21 +831,42 @@ export function App(): JSX.Element {
   }, [])
 
   useEffect(() => {
-    const unsub1 = window.dogeAPI.onStateChange((s) => { stateRef.current = s; setState(s as QueryState) })
-    const unsub2 = window.dogeAPI.onChunk((chunk) => {
-      if (!chunk || !chunk.text) return
-      if (!streamingActiveRef.current) {
-        tsLog('RENDERER', 'onChunk ignored (locked):', chunk.text.slice(0, 50))
-        return
-      }
-      tsLog('RENDERER', 'onChunk received:', chunk.text.slice(0, 50))
-      setCurrentStreaming((p) => {
-        const next = p + chunk.text
-        currentStreamingRef.current = next
-        return next
-      })
-    })
-    return () => { unsub1(); unsub2() }
+    const unsubs: Array<() => void> = []
+    // 模块级防重：防止 StrictMode / 组件重挂载导致 IPC 订阅重复，
+    // 重复订阅会使同一 doge:chunk 被多次追加到 currentStreaming，造成文本重复累积
+    if (!stateSubInstalled) {
+      stateSubInstalled = true
+      unsubs.push(window.dogeAPI.onStateChange((s) => { stateRef.current = s; setState(s as QueryState) }))
+    }
+    if (!chunkSubInstalled) {
+      chunkSubInstalled = true
+      // 最近收到的 chunk（文本+时间戳），用于去重
+      const recentChunks: Array<{ text: string; time: number }> = []
+      unsubs.push(window.dogeAPI.onChunk((chunk) => {
+        if (!chunk || !chunk.text) return
+        if (!streamingActiveRef.current) return
+        const now = Date.now()
+        // 去重：同一文本在 600ms 内重复到达视为重复发送，忽略
+        const dup = recentChunks.some(c => c.text === chunk.text && now - c.time < 600)
+        if (dup) {
+          console.log(`[DIAG] onChunk DUP ignored: "${chunk.text}" streamLen=${currentStreamingRef.current.length}`)
+          return
+        }
+        recentChunks.push({ text: chunk.text, time: now })
+        if (recentChunks.length > 20) recentChunks.shift()
+        console.log(`[DIAG] onChunk: "${chunk.text}" streamLen=${currentStreamingRef.current.length}`)
+        setCurrentStreaming((p) => {
+          const next = p + chunk.text
+          currentStreamingRef.current = next
+          return next
+        })
+      }))
+    }
+    return () => {
+      unsubs.forEach(u => u())
+      chunkSubInstalled = false
+      stateSubInstalled = false
+    }
   }, [])
 
   // 自动执行工具调用：流式传输停止后，检测并执行 assistant 消息中的 tool_use block
@@ -946,6 +1004,9 @@ export function App(): JSX.Element {
 
   useEffect(() => {
     if (!loaded) return
+    // 自动测试默认禁用：仅当 localStorage 显式设置 doge-auto-test=1 时才自动运行，
+    // 避免启动后 5 条测试命令连续发送导致界面看起来像死循环
+    if (localStorage.getItem('doge-auto-test') !== '1') return
 
     const TEST_CMDS = [
       '使用 dir 命令列出当前工作目录的文件和文件夹',
@@ -1249,10 +1310,15 @@ export function App(): JSX.Element {
         // 纯文本消息
         result = await window.dogeAPI.sendMessage(text, preAnalysis)
       }
+      console.log(`[DIAG] sendMessage returned: resultTextLen=${(result?.content || '').length} error=${result?.error ? 'Y' : 'N'} streamedLen=${currentStreamingRef.current.length}`)
       tsLog('RENDERER', 'sendMessage returned, result:', JSON.stringify(result))
     } catch (e) {
       const errMsg = e instanceof Error ? e.message : '发送失败'
       tsLog('RENDERER', 'sendMessage threw error:', errMsg)
+      // 异常路径也要清理流式状态，防止重复的 currentStreaming 残留导致界面一直显示重复文本
+      streamingActiveRef.current = false
+      setCurrentStreaming(''); currentStreamingRef.current = ''
+      setPendingImages([])
       appendMsg({ id: `msg-${Date.now() + 1}`, role: 'error', content: errMsg })
       setState('idle'); setIsSending(false)
       return
@@ -1260,32 +1326,23 @@ export function App(): JSX.Element {
 
     if (result?.error) {
       tsLog('RENDERER', 'result has error:', result.error)
+      // 错误路径同样清理流式状态
+      streamingActiveRef.current = false
+      setCurrentStreaming(''); currentStreamingRef.current = ''
+      setPendingImages([])
       appendMsg({ id: `msg-${Date.now() + 1}`, role: 'error', content: result.error! })
       if (!document.hasFocus()) window.dogeAPI.notify('Doge Code', `错误: ${result.error.slice(0, 100)}`).catch(() => {})
     } else {
-      // result.content 是 messageLoop 返回的完整回复
-      // 清空 currentStreaming 防止与 messages 中的助手消息重复渲染
+      // result.content 是 messageLoop 返回的完整回复（aggregateContent 的权威结果，不会重复）
+      // 流式文本 currentStreamingRef.current 可能因 chunk 重复订阅/发送而重复累积，
+      // 因此**始终优先使用 resultText**，只有当 resultText 为空时才回退到流式文本。
       const resultText = result?.content || ''
       const streamedText = currentStreamingRef.current
       let finalContent = resultText
-
-      // 如果 result.content 与已流式文本不同，且 resultText 是 streamedText 的超集
-      // 说明 streaming 路径漏掉了部分文本（textBuffer 去重可能过度），只补上差异部分
-      if (resultText && streamedText && resultText !== streamedText) {
-        if (resultText.startsWith(streamedText)) {
-          // result 比 streamed 多：只添加尾部差异
-          finalContent = resultText
-          tsLog('RENDERER', `result has extra ${resultText.length - streamedText.length} chars after streamed text`)
-        } else if (streamedText.startsWith(resultText)) {
-          // streamed 比 result 多：streaming 路径显示了更多，直接用 streamed
-          finalContent = streamedText
-          tsLog('RENDERER', `streamed has extra ${streamedText.length - resultText.length} chars, using streamed`)
-        } else {
-          // 内容不连续相关：取较长的
-          finalContent = resultText.length >= streamedText.length ? resultText : streamedText
-          tsLog('RENDERER', `content mismatch, using ${resultText.length >= streamedText.length ? 'result' : 'stream'}`)
-        }
+      if (!finalContent && streamedText) {
+        finalContent = streamedText
       }
+      console.log(`[DIAG] finalContent: resultTextLen=${resultText.length} streamedLen=${streamedText.length} finalLen=${finalContent.length}`)
 
       if (finalContent) {
         tsLog('RENDERER', 'appending assistant message, length:', finalContent.length)
@@ -2195,7 +2252,21 @@ export function App(): JSX.Element {
                           return (
                             <pre style={{ display: 'flex', background: c.codeBg, border: `1px solid ${c.border}`, borderRadius: '4px', fontSize: `${themeSettings.fontSize}px`, lineHeight: '1.5', overflowX: 'auto', maxHeight: '300px', margin: 0 }}>
                               <div style={{ color: c.textFaint, textAlign: 'right', paddingRight: '8px', userSelect: 'none', minWidth: '36px', borderRight: `1px solid ${c.borderSubtle}`, flexShrink: 0 }}>
-                                {lineNums.split('\n').map((n, i) => (<div key={i} style={{ height: '1.5em' }}>{n}</div>))}
+                                {lineNums.split('\n').map((n, i) => {
+                                  const lineNo = i + 1
+                                  const normPath = activePreviewFile.path.replace(/\\/g, '/')
+                                  const isBp = (debugBreakpoints.get(normPath) || []).includes(lineNo)
+                                  const isPaused = debugPaused && debugPaused.file.replace(/\\/g, '/') === normPath && debugPaused.line === lineNo
+                                  return (
+                                    <div key={i} style={{
+                                      height: '1.5em', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '4px',
+                                      background: isPaused ? 'rgba(245,158,11,0.25)' : isBp ? 'rgba(239,68,68,0.15)' : 'transparent',
+                                    }}>
+                                      {isBp && <span style={{ color: '#ef4444', fontSize: '9px', flexShrink: 0 }}>●</span>}
+                                      <span style={{ color: isPaused ? '#f59e0b' : c.textFaint, fontWeight: isPaused ? 700 : 400 }}>{n}</span>
+                                    </div>
+                                  )
+                                })}
                               </div>
                               <div style={{ flex: 1, overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all', padding: '0 8px', color: c.text }} dangerouslySetInnerHTML={{ __html: highlighted }} />
                             </pre>
@@ -2533,7 +2604,16 @@ export function App(): JSX.Element {
         )}
         {showDebuggerPanel && (
           <div style={{ position: 'fixed', top: 60, right: 20, width: 520, height: '75%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
-            <DebuggerPanel cwd={workingDir} theme={theme} onClose={() => setShowDebuggerPanel(false)} />
+            <DebuggerPanel cwd={workingDir} theme={theme} onClose={() => setShowDebuggerPanel(false)} onNavigateTo={(filePath) => { handlePreviewFile(filePath) }} onBreakpointsChange={(bps) => {
+              const map = new Map<string, number[]>()
+              for (const bp of bps) {
+                const key = bp.file.replace(/\\/g, '/')
+                const arr = map.get(key) || []
+                arr.push(bp.line)
+                map.set(key, arr)
+              }
+              setDebugBreakpoints(map)
+            }} />
           </div>
         )}
         {showCollabPanel && (

@@ -21,6 +21,31 @@ export const REFERENCE_MARK = '※'
 export const BULLET_OPERATOR = '•'
 export const BLOCKQUOTE_BAR = '│'
 export const pointer = '❯'
+export const arrowUp = '↑'
+export const arrowDown = '↓'
+export const arrowLeft = '←'
+export const arrowRight = '→'
+export const bullet = '●'
+export const checkboxOn = '☒'
+export const checkboxOff = '☐'
+export const circleDouble = '◎'
+export const ellipsis = '…'
+export const heart = '♥'
+export const info = 'ℹ'
+export const lineUpDownRight = '├'
+export const lineUpRight = '└'
+export const lineVertical = '│'
+export const play = '▶'
+export const pointerSmall = '›'
+export const questionMarkPrefix = '?'
+export const radioOn = '◉'
+export const radioOff = '◯'
+export const squareSmall = '◻'
+export const squareSmallFilled = '◼'
+export const star = '★'
+export const triangleDownSmall = '▾'
+export const triangleRightSmall = '▸'
+export const triangleUpOutline = '△'
 export default {
   tick,
   cross,
@@ -45,4 +70,29 @@ export default {
   BULLET_OPERATOR,
   BLOCKQUOTE_BAR,
   pointer,
+  arrowUp,
+  arrowDown,
+  arrowLeft,
+  arrowRight,
+  bullet,
+  checkboxOn,
+  checkboxOff,
+  circleDouble,
+  ellipsis,
+  heart,
+  info,
+  lineUpDownRight,
+  lineUpRight,
+  lineVertical,
+  play,
+  pointerSmall,
+  questionMarkPrefix,
+  radioOn,
+  radioOff,
+  squareSmall,
+  squareSmallFilled,
+  star,
+  triangleDownSmall,
+  triangleRightSmall,
+  triangleUpOutline,
 }

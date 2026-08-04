@@ -3,7 +3,8 @@ import figures from '../../vendor/figures.js';
 import * as React from 'react';
 import { useContext } from 'react';
 import { useQueuedMessage } from '../../context/QueuedMessageContext.js';
-import { Box, Text } from '../../ink.js';
+import { Ansi, Box, Text, useTheme } from '../../ink.js';
+import { beautifyInlineText } from '../../utils/inlineBeautify.js';
 import { formatBriefTimestamp } from '../../utils/formatBriefTimestamp.js';
 import { findThinkingTriggerPositions, getRainbowColor, isUltrathinkEnabled } from '../../utils/thinking.js';
 import { MessageActionsSelectedContext } from '../messageActions.js';
@@ -22,6 +23,8 @@ export function HighlightedThinkingText(t0) {
   const isQueued = useQueuedMessage()?.isQueued ?? false;
   const isSelected = useContext(MessageActionsSelectedContext);
   const pointerColor = isSelected ? "suggestion" : "subtle";
+  // 用户聊天内容美化：中文"词语："标绿、确认/询问词标琥珀色
+  const [theme] = useTheme();
   if (useBriefLayout) {
     let t1;
     if ($[0] !== timestamp) {
@@ -61,7 +64,7 @@ export function HighlightedThinkingText(t0) {
     const t6 = isQueued ? "subtle" : "text";
     let t7;
     if ($[9] !== t6 || $[10] !== text) {
-      t7 = <Text color={t6}>{text}</Text>;
+      t7 = <Ansi>{beautifyInlineText(text, theme)}</Ansi>;
       $[9] = t6;
       $[10] = text;
       $[11] = t7;
@@ -96,7 +99,7 @@ export function HighlightedThinkingText(t0) {
         }
         let t3;
         if ($[21] !== text) {
-          t3 = <Text color="text">{text}</Text>;
+          t3 = <Ansi>{beautifyInlineText(text, theme)}</Ansi>;
           $[21] = text;
           $[22] = t3;
         } else {
@@ -118,7 +121,7 @@ export function HighlightedThinkingText(t0) {
       let cursor = 0;
       for (const t of triggers) {
         if (t.start > cursor) {
-          parts.push(<Text key={`plain-${cursor}`} color="text">{text.slice(cursor, t.start)}</Text>);
+          parts.push(<Text key={`plain-${cursor}`}><Ansi>{beautifyInlineText(text.slice(cursor, t.start), theme)}</Ansi></Text>);
         }
         for (let i = t.start; i < t.end; i++) {
           parts.push(<Text key={`rb-${i}`} color={getRainbowColor(i - t.start)}>{text[i]}</Text>);
@@ -126,7 +129,7 @@ export function HighlightedThinkingText(t0) {
         cursor = t.end;
       }
       if (cursor < text.length) {
-        parts.push(<Text key={`plain-${cursor}`} color="text">{text.slice(cursor)}</Text>);
+        parts.push(<Text key={`plain-${cursor}`}><Ansi>{beautifyInlineText(text.slice(cursor), theme)}</Ansi></Text>);
       }
     }
     $[15] = pointerColor;

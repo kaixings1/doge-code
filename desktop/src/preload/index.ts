@@ -165,6 +165,36 @@ interface DogeAPIValue {
   // ── 插件安全 ──
   pluginSecurityAudit: (pluginName: string) => Promise<{ valid: boolean; errors: string[]; warnings: string[] }>
 
+  // ── 插件运行时（JS 沙箱执行 + hooks + 热加载） ──
+  pluginRuntimeLoadAll: () => Promise<{ success: boolean; count?: number; plugins?: Array<Record<string, unknown>>; error?: string }>
+  pluginRuntimeLoad: (pluginDir: string) => Promise<{ success: boolean; plugin?: Record<string, unknown>; error?: string }>
+  pluginRuntimeList: () => Promise<{ success: boolean; plugins?: Array<Record<string, unknown>>; commands?: string[] }>
+  pluginRuntimeInvoke: (fullName: string, ...args: unknown[]) => Promise<{ success: boolean; result?: unknown; error?: string }>
+  pluginRuntimeReload: (pluginName: string) => Promise<{ success: boolean; plugin?: Record<string, unknown>; error?: string }>
+  pluginRuntimeUnload: (pluginName: string) => Promise<{ success: boolean; error?: string }>
+  pluginRuntimeWatch: (pluginName: string) => Promise<{ success: boolean; error?: string }>
+  pluginRuntimeUnwatch: (pluginName: string) => Promise<{ success: boolean; error?: string }>
+  pluginRuntimeEmit: (event: string, data: unknown) => Promise<{ success: boolean }>
+  pluginScaffold: (pluginName: string) => Promise<{ success: boolean; path?: string; entry?: string; commands?: string[]; error?: string }>
+
+  // ── 本地代码索引 ──
+  indexStatus: () => Promise<{ success: boolean; stats?: { fileCount: number; chunkCount: number; indexSize: number; lastIndexedAt: number; totalTokens: number }; error?: string }>
+  indexRebuild: (force?: boolean) => Promise<{ success: boolean; stats?: { fileCount: number; chunkCount: number; indexSize: number; lastIndexedAt: number; totalTokens: number }; error?: string }>
+
+  // ── 多 Agent 编排 ──
+  agentListRoles: () => Promise<{ success: boolean; roles?: Array<{ id: string; name: string; description?: string; systemPrompt: string; model?: string }>; error?: string }>
+  agentOrchestrate: (params: { task: string; roles: Array<{ id: string; name: string; description?: string; systemPrompt: string; model?: string }>; defaultModel: string; maxTokens?: number; timeoutMs?: number; mode?: 'parallel' | 'discuss'; maxRounds?: number }) => Promise<{ success: boolean; result?: Record<string, unknown>; error?: string }>
+  agentCancel: (orchestrationId: string) => Promise<{ success: boolean; error?: string }>
+  onAgentProgress: (callback: (progress: { orchestrationId: string; completedCount: number; totalCount: number; runningRoles: string[]; status: string }) => void) => () => void
+
+  // ── Agent 编排工作流 ──
+  agentWorkflowSave: (wf: { id?: string; name: string; description?: string; task: string; mode: 'parallel' | 'discuss'; maxRounds?: number; roleIds: string[]; createdAt?: number }) => Promise<{ success: boolean; workflow?: Record<string, unknown>; error?: string }>
+  agentWorkflowList: () => Promise<{ success: boolean; workflows?: Array<Record<string, unknown>>; error?: string }>
+  agentWorkflowDelete: (workflowId: string) => Promise<{ success: boolean; error?: string }>
+
+  // ── 调试器暂停事件 ──
+  onDebugPaused: (callback: (info: { sessionId: string; pid: number; reason: string; file: string; line: number; functionName: string; stackDepth: number }) => void) => () => void
+
   // ── 远程协助 ──
   remoteOffer: (params: { sessionId: string; callerId: string; calleeId: string; offer: RTCSessionDescriptionInit }) => Promise<{ success: boolean; error?: string }>
   remoteAnswer: (params: { sessionId: string; answer: RTCSessionDescriptionInit }) => Promise<{ success: boolean; error?: string }>
@@ -400,6 +430,44 @@ const dogeAPI: DogeAPIValue = {
 
   // ── 插件安全 ──
   pluginSecurityAudit: (pluginName: string) => ipcRenderer.invoke('doge:plugin-security-audit', pluginName),
+
+  // ── 插件运行时（JS 沙箱执行 + hooks + 热加载） ──
+  pluginRuntimeLoadAll: () => ipcRenderer.invoke('doge:plugin-runtime-load-all'),
+  pluginRuntimeLoad: (pluginDir: string) => ipcRenderer.invoke('doge:plugin-runtime-load', pluginDir),
+  pluginRuntimeList: () => ipcRenderer.invoke('doge:plugin-runtime-list'),
+  pluginRuntimeInvoke: (fullName: string, ...args: unknown[]) => ipcRenderer.invoke('doge:plugin-runtime-invoke', fullName, ...args),
+  pluginRuntimeReload: (pluginName: string) => ipcRenderer.invoke('doge:plugin-runtime-reload', pluginName),
+  pluginRuntimeUnload: (pluginName: string) => ipcRenderer.invoke('doge:plugin-runtime-unload', pluginName),
+  pluginRuntimeWatch: (pluginName: string) => ipcRenderer.invoke('doge:plugin-runtime-watch', pluginName),
+  pluginRuntimeUnwatch: (pluginName: string) => ipcRenderer.invoke('doge:plugin-runtime-unwatch', pluginName),
+  pluginRuntimeEmit: (event: string, data: unknown) => ipcRenderer.invoke('doge:plugin-runtime-emit', event, data),
+  pluginScaffold: (pluginName: string) => ipcRenderer.invoke('doge:plugin-scaffold', pluginName),
+
+  // ── 本地代码索引 ──
+  indexStatus: () => ipcRenderer.invoke('doge:index-status'),
+  indexRebuild: (force?: boolean) => ipcRenderer.invoke('doge:index-rebuild', force),
+
+  // ── 多 Agent 编排 ──
+  agentListRoles: () => ipcRenderer.invoke('doge:agent-list-roles'),
+  agentOrchestrate: (params: { task: string; roles: Array<{ id: string; name: string; description?: string; systemPrompt: string; model?: string }>; defaultModel: string; maxTokens?: number; timeoutMs?: number }) => ipcRenderer.invoke('doge:agent-orchestrate', params),
+  agentCancel: (orchestrationId: string) => ipcRenderer.invoke('doge:agent-cancel', orchestrationId),
+  onAgentProgress: (callback: (progress: { orchestrationId: string; completedCount: number; totalCount: number; runningRoles: string[]; status: string }) => void) => {
+    const handler = (_event: Electron.IpcRendererEvent, progress: { orchestrationId: string; completedCount: number; totalCount: number; runningRoles: string[]; status: string }) => callback(progress)
+    ipcRenderer.on('doge:agent-progress', handler)
+    return () => ipcRenderer.removeListener('doge:agent-progress', handler)
+  },
+
+  // ── Agent 编排工作流 ──
+  agentWorkflowSave: (wf: { id?: string; name: string; description?: string; task: string; mode: 'parallel' | 'discuss'; maxRounds?: number; roleIds: string[]; createdAt?: number }) => ipcRenderer.invoke('doge:agent-workflow-save', wf),
+  agentWorkflowList: () => ipcRenderer.invoke('doge:agent-workflow-list'),
+  agentWorkflowDelete: (workflowId: string) => ipcRenderer.invoke('doge:agent-workflow-delete', workflowId),
+
+  // ── 调试器暂停事件 ──
+  onDebugPaused: (callback: (info: { sessionId: string; pid: number; reason: string; file: string; line: number; functionName: string; stackDepth: number }) => void) => {
+    const handler = (_event: Electron.IpcRendererEvent, info: { sessionId: string; pid: number; reason: string; file: string; line: number; functionName: string; stackDepth: number }) => callback(info)
+    ipcRenderer.on('doge:debug-paused', handler)
+    return () => ipcRenderer.removeListener('doge:debug-paused', handler)
+  },
 
   // ── 远程协助 ──
   remoteOffer: (params: { sessionId: string; callerId: string; calleeId: string; offer: RTCSessionDescriptionInit }) => ipcRenderer.invoke('doge:remote-offer', params),

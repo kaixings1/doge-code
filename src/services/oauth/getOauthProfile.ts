@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { getOauthConfig, OAUTH_BETA_HEADER } from '../../constants/oauth.js'
-import type { OAuthProfileResponse } from '../../services/oauth/types.js'
+import type { OAuthProfileResponse, UserRolesResponse } from '../../services/oauth/types.js'
 import { getAnthropicApiKey } from '../../utils/auth.js'
 import { getGlobalConfig } from '../../utils/config.js'
 import { logError } from '../../utils/log.js'
@@ -36,10 +36,10 @@ export async function getOauthProfileFromApiKey(): Promise<
 
 export async function getOauthProfileFromOauthToken(
   accessToken: string,
-): Promise<OAuthProfileResponse | undefined> {
+): Promise<UserRolesResponse | undefined> {
   const endpoint = `${getOauthConfig().BASE_API_URL}/api/oauth/profile`
   try {
-    const response = await axios.get<OAuthProfileResponse>(endpoint, {
+    const response = await axios.get<UserRolesResponse>(endpoint, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         'Content-Type': 'application/json',

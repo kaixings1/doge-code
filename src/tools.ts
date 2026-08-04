@@ -153,6 +153,7 @@ const SnipTool = feature('HISTORY_SNIP')
 const ListPeersTool = feature('UDS_INBOX')
   ? require('./tools/ListPeersTool/ListPeersTool.js').ListPeersTool
   : null
+const AgentProxyTool = require('./tools/AgentProxyTool/index.js').AgentProxyTool
 const WorkflowTool = feature('WORKFLOW_SCRIPTS')
   ? (() => {
       require('./tools/WorkflowTool/bundled/index.js').initBundledWorkflows()
@@ -285,6 +286,7 @@ export function getAllBaseTools(): Tools {
     if (isWorktreeModeEnabled()) { _tools.push(EnterWorktreeTool, ExitWorktreeTool); }
     _tools.push(getSendMessageTool());
     if (ListPeersTool) { _tools.push(ListPeersTool); }
+    if (AgentProxyTool) { _tools.push(new AgentProxyTool()); }
     if (isAgentSwarmsEnabled()) {
       _tools.push(getTeamCreateTool(), getTeamDeleteTool());
     }

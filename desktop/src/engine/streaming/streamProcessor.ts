@@ -142,6 +142,14 @@ export interface ProcessedEvent {
   data?: unknown;
 }
 
+// 流式处理日志辅助：默认静音（流式输出时事件日志刷屏严重，看起来像死循环），
+// 仅当 DOGE_DEBUG_SSE=1 时打印
+function spLog(...args: unknown[]): void {
+  if (process.env.DOGE_DEBUG_SSE === '1') {
+    console.log(...args)
+  }
+}
+
 export class StreamProcessor {
   private buffer: { type: string; text?: string; id?: string; inputDelta?: string; index?: number }[] = [];
   private currentBlock: { type: string; id?: string; name?: string; input?: Record<string, unknown>; text?: string } | null = null;
@@ -151,7 +159,7 @@ export class StreamProcessor {
   process(event: APIEvent): ProcessedEvent {
     const eventType = event.type
     if (eventType === 'content_block_start' || eventType === 'content_block_stop' || eventType === 'message_delta' || eventType === 'message_start') {
-      console.log(`[STREAM-PROC] event type=${eventType}`, JSON.stringify(event).slice(0, 400))
+      spLog(`[STREAM-PROC] event type=${eventType}`, JSON.stringify(event).slice(0, 400))
     }
     switch (eventType) {
       case "message_start":
@@ -164,16 +172,16 @@ export class StreamProcessor {
         this.currentBlock = cb.input !== null && cb.input !== undefined
           ? { type: cb.type, id: cb.id, name: cb.name, input: cb.input }
           : { type: cb.type, id: cb.id, name: cb.name }
-        console.log(`[STREAM-PROC] content_block_start type=${cb.type} id=${cb.id} name=${cb.name} currentBlockSet=true`)
+        spLog(`[STREAM-PROC] content_block_start type=${cb.type} id=${cb.id} name=${cb.name} currentBlockSet=true`)
         return { type: "content_block_start", block: this.currentBlock }
       }
       case "content_block_delta":
         return this.processDelta(event as unknown as { index: number; delta: { type: string; text?: string; partial_json?: string } })
       case "content_block_stop": {
         const idx = (event as unknown as { index: number }).index
-        console.log(`[STREAM-PROC] content_block_stop index=${idx} currentBlockType=${this.currentBlock?.type ?? 'null'} currentBlockId=${this.currentBlock?.id ?? 'null'}`)
+        spLog(`[STREAM-PROC] content_block_stop index=${idx} currentBlockType=${this.currentBlock?.type ?? 'null'} currentBlockId=${this.currentBlock?.id ?? 'null'}`)
         const result = this.processBlockStop(event as unknown as { index: number })
-        console.log(`[STREAM-PROC] content_block_stop result blockType=${result.block?.type ?? 'null'} blockId=${result.block?.id ?? 'null'}`)
+        spLog(`[STREAM-PROC] content_block_stop result blockType=${result.block?.type ?? 'null'} blockId=${result.block?.id ?? 'null'}`)
         return result
       }
       case "message_delta":
@@ -193,7 +201,7 @@ export class StreamProcessor {
 
   private processDelta(event: { index: number; delta: { type: string; text?: string; partial_json?: string } }): ProcessedEvent {
     if (!this.currentBlock) {
-      console.warn(`[STREAM-PROC] processDelta but currentBlock is null, delta type=${event.delta.type}`)
+      spLog(`[STREAM-PROC] processDelta but currentBlock is null, delta type=${event.delta.type}`)
       return { type: "content_block_delta", chunk: null }
     }
     const delta = event.delta
@@ -207,7 +215,7 @@ export class StreamProcessor {
       this.buffer.push(chunk)
       return { type: "content_block_delta", chunk }
     }
-    console.log(`[STREAM-PROC] unexpected delta type=${delta.type} keys=${Object.keys(delta).join(',')}`)
+    spLog(`[STREAM-PROC] unexpected delta type=${delta.type} keys=${Object.keys(delta).join(',')}`)
     return { type: "content_block_delta", chunk: null }
   }
 
@@ -221,18 +229,18 @@ export class StreamProcessor {
     if (this.currentBlock.type === "tool_use") {
       if (this.currentBlock.input === null || this.currentBlock.input === undefined) {
         const json = blockChunks.filter((c) => c.type === "tool_use").map((c) => c.inputDelta ?? "").join("")
-        console.log(`[STREAM-PROC] processBlockStop index=${event.index} blockType=tool_use blockChunks=${blockChunks.length} json="${json.slice(0, 200)}"`)
+        spLog(`[STREAM-PROC] processBlockStop index=${event.index} blockType=tool_use blockChunks=${blockChunks.length} json="${json.slice(0, 200)}"`)
         try {
           this.currentBlock.input = JSON.parse(json)
-          console.log(`[STREAM-PROC] parsed input:`, JSON.stringify(this.currentBlock.input).slice(0, 200))
+          spLog(`[STREAM-PROC] parsed input:`, JSON.stringify(this.currentBlock.input).slice(0, 200))
         } catch (e) {
-          console.log(`[STREAM-PROC] JSON.parse failed:`, e instanceof Error ? e.message : String(e))
-          console.log(`[STREAM-PROC] raw json: "${json}"`)
+          spLog(`[STREAM-PROC] JSON.parse failed:`, e instanceof Error ? e.message : String(e))
+          spLog(`[STREAM-PROC] raw json: "${json}"`)
           // Strip trailing incomplete tokens (e.g. partial strings like "dir)
           const cleaned = json.replace(/"\s*$/, '').trim()
           try {
             this.currentBlock.input = JSON.parse(cleaned)
-            console.log(`[STREAM-PROC] parsed input after cleanup:`, JSON.stringify(this.currentBlock.input).slice(0, 200))
+            spLog(`[STREAM-PROC] parsed input after cleanup:`, JSON.stringify(this.currentBlock.input).slice(0, 200))
           } catch {
             this.currentBlock.input = {}
           }
