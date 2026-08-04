@@ -340,6 +340,7 @@ const apiDebug = {
   name: 'api-debug',
   description: 'REST API 调试客户端 - Postman 风格的 API 测试工具',
   aliases: ['/api-debug', '/api-test', '/http-client'],
+  load: () => import('./index.js'),
   arguments: [
     {
       name: 'method',
