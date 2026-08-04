@@ -20,6 +20,141 @@ interface OpenAPIInfo {
   paths: Record<string, Record<string, { summary: string; parameters: any[]; responses: Record<string, any> }>>
 }
 
+interface ParamInfo {
+  name: string
+  type: string
+  optional?: boolean
+  rest?: boolean
+}
+
+interface FunctionSignature {
+  name: string
+  params: ParamInfo[]
+  returnType: string
+  isAsync: boolean
+  isExport: boolean
+  line: number
+}
+
+/** 解析参数列表字符串 "a: string, b?: number, ...rest: any[]" 为结构化参数 */
+function parseParams(paramStr: string): ParamInfo[] {
+  const params: ParamInfo[] = []
+  if (!paramStr || paramStr.trim() === '') return params
+  let depth = 0
+  let current = ''
+  for (const ch of paramStr) {
+    if (ch === '{' || ch === '(' || ch === '[') depth++
+    else if (ch === '}' || ch === ')' || ch === ']') depth--
+    if (ch === ',' && depth === 0) {
+      params.push(parseSingleParam(current.trim()))
+      current = ''
+    } else {
+      current += ch
+    }
+  }
+  if (current.trim()) params.push(parseSingleParam(current.trim()))
+  return params
+}
+
+function parseSingleParam(raw: string): ParamInfo {
+  // 处理 rest: ...args: T[]
+  let rest = false
+  let r = raw.trim()
+  if (r.startsWith('...')) {
+    rest = true
+    r = r.slice(3).trim()
+  }
+  // 处理可选: name?: type
+  const qIndex = r.indexOf('?:')
+  if (qIndex !== -1) {
+    return { name: r.slice(0, qIndex).trim(), type: r.slice(qIndex + 2).trim(), optional: true, rest }
+  }
+  // 处理带默认值: name: type = default
+  const eqIndex = r.indexOf(' = ')
+  if (eqIndex !== -1) {
+    return { name: r.slice(0, r.indexOf(':')).trim(), type: r.slice(r.indexOf(':') + 1, eqIndex).trim(), rest }
+  }
+  const colonIndex = r.indexOf(':')
+  if (colonIndex !== -1) {
+    return { name: r.slice(0, colonIndex).trim(), type: r.slice(colonIndex + 1).trim(), rest }
+  }
+  // 无类型标注（TS 推断）
+  return { name: r, type: 'any', rest }
+}
+
+/**
+ * TypeScript 函数签名提取（声明式 + 箭头函数 + 类方法）
+ */
+function extractFunctionSignatures(content: string): FunctionSignature[] {
+  const signatures: FunctionSignature[] = []
+  const lines = content.split('\n')
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+
+    // 1. 函数声明: export async function foo(a: string): Promise<void> {
+    const declMatch = line.match(/^\s*(?:export\s+)?(?:async\s+)?function\s+(\w+)\s*\(([^)]*)\)(?:\s*:\s*([^{]+))?\s*\{/)
+    if (declMatch) {
+      signatures.push({
+        name: declMatch[1],
+        params: parseParams(declMatch[2]),
+        returnType: (declMatch[3] || 'void').trim(),
+        isAsync: line.includes('async '),
+        isExport: line.includes('export '),
+        line: i + 1,
+      })
+      continue
+    }
+
+    // 2. 箭头函数: export const foo = async (a: string): Promise<void> => {
+    const arrowMatch = line.match(/^\s*(?:export\s+)?(?:const|let|var)\s+(\w+)\s*=\s*(?:async\s*)?\(([^)]*)\)(?:\s*:\s*([^=]+))?\s*=>/)
+    if (arrowMatch) {
+      signatures.push({
+        name: arrowMatch[1],
+        params: parseParams(arrowMatch[2]),
+        returnType: (arrowMatch[3] || 'void').trim(),
+        isAsync: line.includes('async '),
+        isExport: line.includes('export '),
+        line: i + 1,
+      })
+      continue
+    }
+
+    // 3. 类方法: public async foo(a: string): Promise<void> {
+    const methodMatch = line.match(/^\s*(?:private|public|protected|static|readonly|async|get|set|\s)*(\w+)\s*\(([^)]*)\)(?:\s*:\s*([^{]+))?\s*\{/)
+    if (methodMatch && !line.includes('function') && !line.includes('=>')) {
+      // 排除构造函数名和常见关键词
+      if (!['if', 'for', 'while', 'switch', 'catch'].includes(methodMatch[1])) {
+        signatures.push({
+          name: methodMatch[1],
+          params: parseParams(methodMatch[2]),
+          returnType: (methodMatch[3] || 'void').trim(),
+          isAsync: line.includes('async '),
+          isExport: false,
+          line: i + 1,
+        })
+      }
+    }
+  }
+  return signatures
+}
+
+/** 生成函数签名 Markdown 文档 */
+function generateSignaturesMarkdown(file: string, sigs: FunctionSignature[]): string {
+  if (sigs.length === 0) return ''
+  const lines = ['## Function Signatures', '']
+  sigs.forEach(s => {
+    const params = s.params.map(p => `\`${p.name}${p.optional ? '?' : ''}: ${p.type}\``).join(', ')
+    const flags = [s.isExport ? 'export' : '', s.isAsync ? 'async' : ''].filter(Boolean).join(' ')
+    lines.push(`### ${flags ? flags + ' ' : ''}${s.name}(${params})`)
+    lines.push(`- **返回类型:** \`${s.returnType}\``)
+    lines.push(`- **行号:** ${s.line}`)
+    if (s.params.length === 0) lines.push('- **参数:** 无')
+    lines.push('')
+  })
+  return lines.join('\n')
+}
+
 function extractJSdocs(content: string): APIEndpoint[] {
   const endpoints: APIEndpoint[] = []
   const lines = content.split('\n')
@@ -142,6 +277,7 @@ export const call: LocalCommandCall = async (args) => {
     '  /api-doc routes <file>           Extract routes',
     '  /api-doc jsdoc <file>            Extract JSDoc comments',
     '  /api-doc openapi <file>          Parse OpenAPI spec',
+    '  /api-doc sigs <file>             Extract function signatures (params/return types)',
     '  /api-doc classes <file>          Extract classes',
     '  /api-doc interfaces <file>       Extract interfaces',
     '  /api-doc types <file>            Extract type aliases',
@@ -171,7 +307,18 @@ export const call: LocalCommandCall = async (args) => {
     }
     if (format === 'html') { r = generateHTML(title, endpoints) }
     else if (format === 'json') { r = JSON.stringify(endpoints, null, 2) }
-    else { r = generateMarkdown(title, endpoints) }
+    else {
+      r = generateMarkdown(title, endpoints)
+      const sigDoc = generateSignaturesMarkdown(file, extractFunctionSignatures(content))
+      if (sigDoc) r += '\n' + sigDoc
+    }
+  }
+
+  else if (c === 'sigs') {
+    const file = p[1]
+    if (!file || !existsSync(file)) return { type: 'text', value: 'File not found: ' + (file || '') }
+    const sigs = extractFunctionSignatures(readFileSync(file, 'utf-8'))
+    r = generateSignaturesMarkdown(file, sigs) || 'No function signatures found in ' + file
   }
 
   else if (c === 'scan') {

@@ -209,3 +209,38 @@
 - [x] api-debug: 同上 + `LocalCommandResult` 返回类型标注（showHistory/clearHistory）
 - [x] PushNotificationTool: soundFlag 作用域错误（win32 分支内声明、else 分支使用）
 - [x] 本轮修改的全部文件类型检查零错误（既有错误排除：useSSHSession/RemoteSessionManager/types.hooks/utils.hooks）
+
+---
+
+## ✅ 已完成（第七轮：工具强化 + 测试覆盖）
+
+### TerminalCaptureTool ✅
+- [x] 重构为纯 spawn 流式执行（移除 execSync 同步阻塞 + 双重逻辑）
+- [x] 执行时长统计（durationMs）+ 输出行数统计
+- [x] 退出码语义化（success/error/timeout/信号终止）
+- [x] 输出缓冲内存保护（超 maxOutput*2 自动终止 + buffer-limit 标记）
+- [x] env 环境变量透传 + powershell 加 -NoProfile
+- [x] 参数校验（timeout/maxOutput 正数校验）
+
+### SendUserFileTool ✅
+- [x] offset/length 参数校验（负数/越界/超文件大小）
+- [x] 二进制内容检测（前 512 字节 NUL 扫描，替代仅扩展名判断）
+- [x] 预览模式（preview 参数，只显示前 N 行）
+- [x] SHA-256 哈希（hash 参数，支持 chunk/base64/text 模式）
+- [x] 移除 require('fs')（改用已导入的 openSync/readSync/closeSync）
+- [x] 大文本文件分片预览（前 5KB 示例 + 行数/分片建议）
+
+### api-doc ✅
+- [x] TypeScript 函数签名提取（extractFunctionSignatures）
+- [x] 函数声明 / 箭头函数 / 类方法三种模式解析
+- [x] 参数结构化解析（rest/可选/默认值/泛型嵌套逗号）
+- [x] gen 命令 md 格式自动附加签名文档
+- [x] 新子命令 `sigs <file>` 单独提取签名
+- [x] 验证：自身 11 个签名正确提取（bun 实测）
+
+### API 层单元测试 ✅
+- [x] CommandRegistry.test.ts（注册/别名冲突/解析/历史/搜索/分组/统计）
+- [x] SessionManager.test.ts（CRUD/持久化/搜索/标签/TTL/导出导入）
+- [x] ConfigManager.test.ts（get/set/环境变量回退/watchers/schema/快照/迁移）
+- [x] 3 个测试文件 53 个测试全部通过（vitest + 临时目录隔离）
+- [x] 测试文件类型检查零错误（matcher 类型冲突已用基础断言规避）
