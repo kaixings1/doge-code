@@ -23,9 +23,9 @@ describe('ToolRegistry', () => {
         return tool.execute({}, {} as any);
       }),
       getStats: vi.fn(() => {
-        const stats: Record<string, { calls: number; failures: number }> = {};
+        const stats: Record<string, { calls: number; failures: number; avgDurationMs: number }> = {};
         for (const t of registeredTools) {
-          stats[t.name] = { calls: 0, failures: 0 };
+          stats[t.name] = { calls: 0, failures: 0, avgDurationMs: 0 };
         }
         return stats;
       }),
@@ -113,7 +113,7 @@ describe('ToolRegistry', () => {
       await mockRegistry.execute!('TestTool', {}, {} as any);
 
       const stats = mockRegistry.getStats!();
-      expect(stats.TestTool).toEqual({ calls: 0, failures: 0 });
+      expect(stats.TestTool).toEqual({ calls: 0, failures: 0, avgDurationMs: 0 });
     });
   });
 });

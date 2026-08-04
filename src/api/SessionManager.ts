@@ -212,4 +212,99 @@ export class SessionManager {
   count(): number {
     return this.sessions.size;
   }
+
+  /**
+   * 清理超过 TTL 的会话
+   * @param ttlHours 超过多少小时未活动的会话将被清理
+   * @param onlyArchived 只清理已归档的会话
+   * @returns 被清理的会话数量
+   */
+  async cleanupStale(ttlHours: number, onlyArchived = false): Promise<number> {
+    const cutoff = new Date(Date.now() - ttlHours * 3600 * 1000)
+    let cleaned = 0
+    for (const [id, session] of Array.from(this.sessions.entries())) {
+      const lastActive = session.state.lastActive || session.updatedAt
+      if (lastActive < cutoff) {
+        if (onlyArchived && session.state.status !== 'archived') continue
+        this.sessions.delete(id)
+        try { rmSync(this.sessionPath(id), { force: true }) } catch { /* ignore */ }
+        if (this.activeSessionId === id) {
+          this.activeSessionId = null
+        }
+        cleaned++
+      }
+    }
+    return cleaned
+  }
+
+  /**
+   * 获取会话健康状态
+   */
+  getHealth(): { total: number; active: number; archived: number; inactive: number; storageDir: string } {
+    let active = 0, archived = 0, inactive = 0
+    for (const s of this.sessions.values()) {
+      if (s.state.status === 'active') active++
+      else if (s.state.status === 'archived') archived++
+      else inactive++
+    }
+    return { total: this.sessions.size, active, archived, inactive, storageDir: this.storageDir }
+  }
+
+  /**
+   * 会话树形组织（按标签/项目分组）
+   */
+  getTree(): Record<string, ISession[]> {
+    const tree: Record<string, ISession[]> = {}
+    for (const session of this.sessions.values()) {
+      // 使用第一个标签作为分组，没有标签用 "未分组"
+      const group = session.metadata.tags && session.metadata.tags.length > 0
+        ? session.metadata.tags[0]
+        : '未分组'
+      if (!tree[group]) tree[group] = []
+      tree[group].push(session)
+    }
+    return tree
+  }
+
+  /**
+   * 标签云（按标签统计会话数）
+   */
+  getTagCloud(): Array<{ tag: string; count: number }> {
+    const counts = new Map<string, number>()
+    for (const session of this.sessions.values()) {
+      if (session.metadata.tags) {
+        for (const tag of session.metadata.tags) {
+          counts.set(tag, (counts.get(tag) || 0) + 1)
+        }
+      }
+    }
+    return Array.from(counts.entries())
+      .map(([tag, count]) => ({ tag, count }))
+      .sort((a, b) => b.count - a.count)
+  }
+
+  /**
+   * 为会话添加标签
+   */
+  async addTag(sessionId: string, tag: string): Promise<void> {
+    const session = this.sessions.get(sessionId)
+    if (!session) throw new Error(`Session not found: ${sessionId}`)
+    if (!session.metadata.tags) session.metadata.tags = []
+    if (!session.metadata.tags.includes(tag)) {
+      session.metadata.tags.push(tag)
+      this.persist(session)
+    }
+  }
+
+  /**
+   * 移除会话标签
+   */
+  async removeTag(sessionId: string, tag: string): Promise<void> {
+    const session = this.sessions.get(sessionId)
+    if (!session) throw new Error(`Session not found: ${sessionId}`)
+    if (session.metadata.tags) {
+      session.metadata.tags = session.metadata.tags.filter(t => t !== tag)
+      this.persist(session)
+    }
+  }
 }

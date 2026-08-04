@@ -67,6 +67,100 @@ async function httpRequest(method: string, url: string, headers: Record<string, 
   }
 }
 
+/**
+ * 带环境变量替换的 HTTP 请求
+ */
+async function httpRequestResolved(method: string, url: string, headers: Record<string, string> = {}, body?: string, timeoutMs = 15000): Promise<HttpResponse> {
+  const resolvedUrl = resolveEnvVars(url)
+  const resolvedBody = body ? resolveEnvVars(body) : body
+  const resolvedHeaders: Record<string, string> = {}
+  for (const [k, v] of Object.entries(headers)) {
+    resolvedHeaders[k] = resolveEnvVars(v)
+  }
+  return httpRequest(method, resolvedUrl, resolvedHeaders, resolvedBody, timeoutMs)
+}
+
+/**
+ * 替换 URL/body 中的环境变量占位符 ${VAR}
+ */
+function resolveEnvVars(input: string): string {
+  let result = input
+  const pattern = /\$\{([A-Z_][A-Z0-9_]*)\}/g
+  result = result.replace(pattern, (match, name) => {
+    const envVal = process.env[name]
+    return envVal != null ? envVal : match
+  })
+  return result
+}
+
+/**
+ * 评估断言表达式
+ * 支持: status == 200, status != 404, status >= 500, body contains "xxx", body ~ regex
+ */
+function evaluateAssertion(assertion: string, res: HttpResponse): boolean {
+  const body = res.body
+  if (assertion.includes('body contains')) {
+    const target = assertion.split('contains')[1].trim().replace(/^['"]|['"]$/g, '')
+    return body.includes(target)
+  }
+  if (assertion.startsWith('body ~ ')) {
+    const pattern = assertion.slice(7).trim().replace(/^['"]|['"]$/g, '')
+    try { return new RegExp(pattern).test(body) } catch { return false }
+  }
+  const statusMatch = assertion.match(/^status\s*(==|!=|>=|<=|>|<)\s*(\d+)$/)
+  if (statusMatch) {
+    const op = statusMatch[1]
+    const expected = parseInt(statusMatch[2])
+    switch (op) {
+      case '==': return res.status === expected
+      case '!=': return res.status !== expected
+      case '>=': return res.status >= expected
+      case '<=': return res.status <= expected
+      case '>': return res.status > expected
+      case '<': return res.status < expected
+    }
+  }
+  return true
+}
+
+/**
+ * 轻量 JSON Schema 验证（支持常见类型）
+ */
+function validateJsonSchema(data: any, schema: any): string | null {
+  if (schema.type) {
+    const valType = Array.isArray(data) ? 'array' : typeof data
+    const ok =
+      (schema.type === 'number' && valType === 'number') ||
+      (schema.type === 'integer' && typeof data === 'number' && Number.isInteger(data)) ||
+      (schema.type === 'string' && valType === 'string') ||
+      (schema.type === 'boolean' && valType === 'boolean') ||
+      (schema.type === 'object' && valType === 'object') ||
+      (schema.type === 'array' && valType === 'array') ||
+      (schema.type === 'null' && data === null)
+    if (!ok) return 'expected ' + schema.type + ', got ' + valType
+  }
+  if (schema.required && Array.isArray(schema.required)) {
+    for (const key of schema.required) {
+      if (data[key] == null) return 'missing required property: ' + key
+    }
+  }
+  if (schema.properties && data && typeof data === 'object') {
+    for (const [key, propSchema] of Object.entries<any>(schema.properties)) {
+      if (data[key] != null) {
+        const err = validateJsonSchema(data[key], propSchema)
+        if (err) return key + ': ' + err
+      }
+    }
+  }
+  if (schema.items && Array.isArray(data)) {
+    for (let i = 0; i < Math.min(data.length, 10); i++) {
+      const err = validateJsonSchema(data[i], schema.items)
+      if (err) return '[' + i + ']: ' + err
+    }
+  }
+  return null
+}
+
 function recordHistory(name: string, status: string, duration: number) {
   try {
     const historyFile = join(API_TESTS_DIR, 'history.json')
@@ -97,10 +191,40 @@ export const call: LocalCommandCall = async (args) => {
     const test = tests.find(t => t.name.toLowerCase().includes(name.toLowerCase()))
     if (!test) return { type: 'text', value: 'Test not found: ' + name }
     try {
-      const res = await httpRequest(test.method, test.url, test.headers, test.body, 30000)
-      const passed = res.status === test.expectedStatus
+      const res = await httpRequestResolved(test.method, test.url, test.headers, test.body, 30000)
+      // 支持自定义断言（tests 中可添加 assertions 数组）+ 响应 Schema 验证
+      const assertions = (test as any).assertions
+      const responseSchema = (test as any).responseSchema
+      let passed: boolean
+      let details: string
+      if (assertions && assertions.length > 0) {
+        const results = assertions.map((a: string) => ({ assertion: a, ok: evaluateAssertion(a, res) }))
+        passed = results.every((r: any) => r.ok)
+        details = results.map((r: any) => '  ' + (r.ok ? '✅' : '❌') + ' ' + r.assertion).join('\n')
+        // 追加 schema 验证结果
+        if (responseSchema) {
+          let schemaErr: string | null = null
+          try { schemaErr = validateJsonSchema(JSON.parse(res.body), responseSchema) } catch { schemaErr = 'response is not valid JSON' }
+          if (schemaErr) { passed = false; details += '\n  ❌ schema: ' + schemaErr }
+          else details += '\n  ✅ schema matches'
+        }
+      } else if (responseSchema) {
+        let schemaErr: string | null = null
+        try { schemaErr = validateJsonSchema(JSON.parse(res.body), responseSchema) } catch { schemaErr = 'response is not valid JSON' }
+        passed = res.status === test.expectedStatus && !schemaErr
+        details = '  expected: ' + test.expectedStatus + ', got: ' + res.status + (schemaErr ? '\n  ❌ schema: ' + schemaErr : '')
+      } else {
+        passed = res.status === test.expectedStatus
+        details = '  expected: ' + test.expectedStatus + ', got: ' + res.status
+      }
       recordHistory(test.name, passed ? 'pass' : 'fail', res.durationMs)
-      return { type: 'text', value: (passed ? '[PASS]' : '[FAIL]') + ' ' + test.name + '\nExpected: ' + test.expectedStatus + ', Got: ' + res.status + '\nDuration: ' + res.durationMs + 'ms' }
+      // 失败时显示响应体摘要（前 500 字符）
+      let responseSummary = ''
+      if (!passed) {
+        const preview = res.body.length > 500 ? res.body.slice(0, 500) + '... (' + res.body.length + ' bytes)' : res.body
+        responseSummary = '\n\n📄 Response Preview:\n' + (preview || '(empty response)')
+      }
+      return { type: 'text', value: (passed ? '[PASS]' : '[FAIL]') + ' ' + test.name + '\n' + details + '\nDuration: ' + res.durationMs + 'ms' + responseSummary }
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err)
       return { type: 'text', value: '[ERROR] ' + msg }
@@ -152,7 +276,7 @@ export const call: LocalCommandCall = async (args) => {
     const url = parts[1]
     if (!url) return { type: 'text', value: 'Usage: /api-test quick <url>' }
     try {
-      const res = await httpRequest('GET', url)
+      const res = await httpRequestResolved('GET', url)
       return { type: 'text', value: formatResponse(res) }
     } catch (err) {
       return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
@@ -287,7 +411,7 @@ const apiTest: Command = {
   description: 'API testing - run/run-all/add/list/quick/post/bench/status/history/compare',
   aliases: '/api-test, /api, /curl, /test'.split(','),
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default apiTest

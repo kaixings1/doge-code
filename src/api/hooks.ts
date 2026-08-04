@@ -1,13 +1,18 @@
 import type { InternalMessage, QueryState } from './types.js';
 import type { QueryEngine } from './QueryEngine.js';
 import type { ToolRegistry, ToolResult } from './ToolRegistry.js';
-import type { ISession, SessionManager } from './SessionManager.js';
+import type { ISession } from './SessionManager.js';
+import { SessionManager } from './SessionManager.js';
 
 // 尝试加载 React（如果可用）
-// @ts-ignore - React 可能不存在于非 React 环境
-let React: any = null;
+// React 类型声明为宽松对象，允许泛型调用
+let React: {
+  useState: <T>(initial: T | (() => T)) => [T, (value: T) => void];
+  useEffect: (effect: () => void | (() => void), deps?: readonly unknown[]) => void;
+  useRef: <T>(initial: T) => { current: T };
+} | null = null;
 try {
-  React = require('react');
+  React = require('react') as typeof React;
 } catch { /* 非 React 环境 */ }
 
 let sessionManagerInstance: SessionManager | null = null;
@@ -178,7 +183,7 @@ export function useQuery(queryEngine: QueryEngine): {
     get result() { return currentResult; },
     get error() { return currentError; },
     abort: () => { currentState = 'aborted_by_user'; queryEngine.abort(); },
-    loading: currentState === 'responding',
+    get loading() { return currentState === 'responding'; },
   };
 }
 
