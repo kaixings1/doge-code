@@ -131,7 +131,7 @@ const ports: Command = {
   type: 'local', name: 'ports',
   description: 'Port management - list/check/kill/find/monitor',
   aliases: ['/ports', '/port'], supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default ports

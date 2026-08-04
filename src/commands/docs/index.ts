@@ -116,7 +116,7 @@ const docs: Command = {
   description: 'Documentation - generate/api/readme/classes/functions/serve/export/search',
   aliases: '/docs, /doc, /documentation'.split(','),
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default docs

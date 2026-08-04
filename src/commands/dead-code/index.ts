@@ -286,7 +286,7 @@ const deadCode: Command = {
   description: 'Dead code - static/tools/exports/imports/functions/classes/stats/history/export',
   aliases: ['/dead-code', '/dead', '/unused'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default deadCode

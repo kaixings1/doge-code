@@ -142,7 +142,7 @@ const conflict: Command = {
   type: 'local', name: 'conflict',
   description: 'Merge conflicts - list/show/resolve (ours/theirs/both)/abort/continue',
   aliases: ['/conflict', '/merge'], supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default conflict

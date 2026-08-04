@@ -278,7 +278,7 @@ const symbol: Command = {
   description: 'Symbol ops - find/def/rename/preview/extract/inline/usages/graph/backups/restore',
   aliases: ['/symbol', '/sym', '/sr'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default symbol

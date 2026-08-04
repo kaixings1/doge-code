@@ -22,7 +22,9 @@ async function compileMain(): Promise<void> {
   if (!fs.existsSync(mainOutDir)) fs.mkdirSync(mainOutDir, { recursive: true });
 
   console.log('Bundling main process with Bun...');
-  const c = spawn('cmd', ['/c', 'bun', 'build', '--no-cache', '--outfile', mainOutFile, '--format', 'esm', '--target', 'node', '--external', 'electron', '--external', 'electron-store', '--external', 'bun:sqlite', '--external', 'bun:bundle', path.join('src', 'main', 'index.ts')], {
+  // 入口必须是 entrypoint.ts：index.ts 只导出 bootDesktop()，
+  // 由 entrypoint.ts 调用 app.whenReady() → bootDesktop() → createWindow()
+  const c = spawn('cmd', ['/c', 'bun', 'build', '--no-cache', '--outfile', mainOutFile, '--format', 'esm', '--target', 'node', '--external', 'electron', '--external', 'electron-store', '--external', 'bun:sqlite', '--external', 'bun:bundle', '--external', 'playwright', '--external', 'playwright-core', '--external', 'chromium-bidi', path.join('src', 'main', 'entrypoint.ts')], {
     cwd: projectRoot,
     stdio: 'inherit',
   });

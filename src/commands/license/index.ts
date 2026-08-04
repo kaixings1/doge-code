@@ -320,7 +320,7 @@ const license: Command = {
   description: 'License - list/check/audit/report/generate/templates/allow/restrict/history',
   aliases: ['/license', '/lic'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default license

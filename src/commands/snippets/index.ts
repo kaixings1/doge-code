@@ -138,7 +138,7 @@ const snippets: Command = {
   description: 'Snippet manager - list/search/use/add/edit/delete/copy/tags/recent/init',
   aliases: '/snippets, /snip, /template'.split(','),
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default snippets

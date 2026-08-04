@@ -131,7 +131,7 @@ const customCmd: Command = {
   description: 'Manage custom slash commands',
   aliases: ['/custom-cmd', '/cc'],
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default customCmd

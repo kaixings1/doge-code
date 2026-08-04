@@ -141,7 +141,7 @@ const envDiff: Command = {
   description: 'Env diff - compare/missing/extra/shared/template/validate/sync/export/import',
   aliases: '/env-diff, /envd, /env-compare'.split(','),
   supportsNonInteractive: true,
-  call: call as unknown as Command['call'],
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default envDiff
