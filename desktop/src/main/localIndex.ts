@@ -21,11 +21,26 @@ export interface IndexedChunk {
   tokens: string[]
 }
 
+export interface IndexedSymbol {
+  name: string
+  kind: 'function' | 'class' | 'interface' | 'type' | 'const' | 'let' | 'var' | 'method' | 'component'
+  line: number
+}
+
 export interface IndexedFile {
   path: string
   mtimeMs: number
   size: number
   chunks: IndexedChunk[]
+  symbols: IndexedSymbol[]
+}
+
+export interface SymbolSearchResult {
+  filePath: string
+  name: string
+  kind: IndexedSymbol['kind']
+  line: number
+  score: number
 }
 
 export interface SearchResult {
@@ -80,6 +95,54 @@ function tokenize(text: string): string[] {
   return out
 }
 
+// ─── 符号提取（函数/类/接口/变量声明） ───
+
+const SYMBOL_PATTERNS: Array<{ kind: IndexedSymbol['kind']; re: RegExp }> = [
+  { kind: 'function', re: /(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_$][\w$]*)/g },
+  { kind: 'class', re: /(?:export\s+)?(?:abstract\s+)?class\s+([A-Za-z_$][\w$]*)/g },
+  { kind: 'interface', re: /(?:export\s+)?interface\s+([A-Za-z_$][\w$]*)/g },
+  { kind: 'type', re: /(?:export\s+)?type\s+([A-Za-z_$][\w$]*)/g },
+  { kind: 'const', re: /(?:export\s+)?const\s+([A-Za-z_$][\w$]*)\s*=/g },
+  { kind: 'let', re: /(?:export\s+)?let\s+([A-Za-z_$][\w$]*)/g },
+  { kind: 'var', re: /(?:export\s+)?var\s+([A-Za-z_$][\w$]*)/g },
+  { kind: 'method', re: /^\s{2,}(?:async\s+)?([A-Za-z_$][\w$]*)\s*\([^)]*\)\s*(?::[^=]+)?\{/gm },
+  { kind: 'component', re: /(?:export\s+)?(?:function|const)\s+([A-Z][A-Za-z0-9_$]*)\s*(?:=\s*(?:\([^)]*\)\s*=>|\([^)]*\)\s*=>)|\([^)]*\)\s*(?::[^=]+)?\s*=>|\([^)]*\)\s*\{)/g },
+]
+
+/** 提取文件中的符号声明 */
+function extractSymbols(content: string): IndexedSymbol[] {
+  const symbols: IndexedSymbol[] = []
+  const lines = content.split('\n')
+  const seen = new Set<string>()
+
+  for (const { kind, re } of SYMBOL_PATTERNS) {
+    re.lastIndex = 0
+    for (let i = 0; i < lines.length; i++) {
+      re.lastIndex = 0
+      const m = re.exec(lines[i])
+      if (m && m[1]) {
+        const key = `${kind}:${m[1]}:${i + 1}`
+        if (seen.has(key)) continue
+        seen.add(key)
+        symbols.push({ name: m[1], kind, line: i + 1 })
+      }
+    }
+  }
+
+  // 去重（同名同类型只保留第一个）
+  const nameSeen = new Map<string, IndexedSymbol>()
+  for (const s of symbols) {
+    const key = `${s.kind}:${s.name}`
+    if (!nameSeen.has(key)) nameSeen.set(key, s)
+  }
+  return Array.from(nameSeen.values())
+}
+
+/** 符号名归一化（小写 + 下划线转驼峰片段） */
+function normalizeSymbolName(name: string): string {
+  return name.replace(/[_\-\s]/g, '').toLowerCase()
+}
+
 // ─── BM25 参数 ───
 
 const K1 = 1.2
@@ -115,7 +178,10 @@ export class CodeIndexer {
       this.avgChunkLen = raw.avgChunkLen || 0
       this.lastIndexedAt = raw.lastIndexedAt || 0
       for (const f of raw.files as IndexedFile[]) {
-        if (f.path && f.mtimeMs && f.chunks) this.files.set(f.path, f)
+        if (f.path && f.mtimeMs && f.chunks) {
+          if (!f.symbols) f.symbols = []
+          this.files.set(f.path, f)
+        }
       }
       console.log(`[INDEX] 加载持久化索引: ${this.files.size} 文件, ${this.totalChunks} chunks`)
     } catch (e) {
@@ -241,7 +307,10 @@ export class CodeIndexer {
       this.recalcAvg()
     }
 
-    const file: IndexedFile = { path: filePath, mtimeMs, size, chunks }
+    // 提取符号声明
+    const symbols = extractSymbols(content)
+
+    const file: IndexedFile = { path: filePath, mtimeMs, size, chunks, symbols }
     this.files.set(filePath, file)
     this.totalChunks += chunks.length
     this.recalcAvg()
@@ -352,6 +421,33 @@ export class CodeIndexer {
       context: s.raw.trim(),
       score: s.score,
     }))
+  }
+
+  // ─── 符号检索 ───
+
+  searchSymbols(query: string, maxResults = 20): SymbolSearchResult[] {
+    if (!query.trim() || this.files.size === 0) return []
+    const qNorm = normalizeSymbolName(query)
+    if (!qNorm) return []
+
+    const results: SymbolSearchResult[] = []
+    for (const file of this.files.values()) {
+      for (const sym of file.symbols) {
+        const symNorm = normalizeSymbolName(sym.name)
+        let score = 0
+        if (symNorm === qNorm) score = 100 // 完全匹配
+        else if (symNorm.startsWith(qNorm)) score = 80 // 前缀
+        else if (symNorm.includes(qNorm)) score = 50 // 包含
+        else if (query.length >= 2 && symNorm.includes(query.toLowerCase())) score = 30 // 原文小写包含
+        else continue
+        // 文件名加分
+        const base = path.basename(file.path).replace(/\.[^.]+$/, '')
+        if (normalizeSymbolName(base).includes(qNorm) || qNorm.includes(normalizeSymbolName(base))) score += 10
+        results.push({ filePath: file.path, name: sym.name, kind: sym.kind, line: sym.line, score })
+      }
+    }
+    results.sort((a, b) => b.score - a.score || a.name.localeCompare(b.name))
+    return results.slice(0, maxResults)
   }
 
   // ─── 实时监听 ───

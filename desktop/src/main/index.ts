@@ -1238,6 +1238,15 @@ ipcMain.handle('doge:index-rebuild', async (_event, force: boolean) => {
   }
 })
 
+ipcMain.handle('doge:index-symbol-search', async (_event, params: { query: string; maxResults?: number }) => {
+  try {
+    const results = codeIndexer.searchSymbols(params.query, params.maxResults || 20)
+    return { success: true, results }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e), results: [] }
+  }
+})
+
 // ─── 调试器（真实 CDP / Inspector 协议） ───
 const debuggerManager = createDebuggerManager()
 
@@ -1307,13 +1316,149 @@ ipcMain.handle('doge:debug-get-callstack', (_event, sessionId) => {
 
 ipcMain.handle('doge:debug-get-variables', (_event, sessionId) => {
   const s = debuggerManager.get(sessionId)
-  return { success: true, variables: s ? s.variables : {} }
+  return { success: true, variables: s ? s.variables : {}, variableObjects: s ? s.variableObjects : {} }
 })
 
 ipcMain.handle('doge:debug-evaluate', async (_event, params) => {
   try {
     return await debuggerManager.evaluate(params.sessionId, params.expression)
   } catch (e) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+})
+
+ipcMain.handle('doge:debug-get-object-props', async (_event, params: { sessionId: string; objectId: string }) => {
+  try {
+    return await debuggerManager.getObjectProperties(params.sessionId, params.objectId)
+  } catch (e) { const msg = e instanceof Error ? e.message : String(e); return { success: false, error: msg } }
+})
+
+// ─── 断点方案导出/导入为文件（跨机器迁移） ───
+
+ipcMain.handle('doge:debug-scheme-export', async (_event, params: { name: string; breakpoints: Array<{ file: string; line: number; condition?: string }> }) => {
+  try {
+    const dir = path.join(projectRoot, '.doge', 'debug-schemes')
+    fs.mkdirSync(dir, { recursive: true })
+    const safeName = (params.name || 'scheme').replace(/[\\/:*?"<>|]/g, '_').slice(0, 60)
+    const outPath = path.join(dir, `${safeName}.json`)
+    fs.writeFileSync(outPath, JSON.stringify({ name: params.name, breakpoints: params.breakpoints, exportedAt: new Date().toISOString() }, null, 2), 'utf-8')
+    return { success: true, path: outPath }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) }
+  }
+})
+
+ipcMain.handle('doge:debug-scheme-list', () => {
+  try {
+    const dir = path.join(projectRoot, '.doge', 'debug-schemes')
+    if (!fs.existsSync(dir)) return { success: true, schemes: [] }
+    const schemes = fs.readdirSync(dir)
+      .filter(f => f.endsWith('.json'))
+      .map(f => {
+        try {
+          const raw = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf-8')) as { name?: string; breakpoints?: unknown[]; exportedAt?: string }
+          return { file: f, name: raw.name || f.replace(/\.json$/, ''), breakpointCount: Array.isArray(raw.breakpoints) ? raw.breakpoints.length : 0, exportedAt: raw.exportedAt || '' }
+        } catch { return null }
+      })
+      .filter((s): s is { file: string; name: string; breakpointCount: number; exportedAt: string } => s !== null)
+    return { success: true, schemes }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) }
+  }
+})
+
+ipcMain.handle('doge:debug-scheme-import', async (_event, fileName: string) => {
+  try {
+    if (typeof fileName !== 'string' || !fileName.endsWith('.json') || fileName.includes('..') || fileName.includes('/') || fileName.includes('\\')) {
+      return { success: false, error: '非法文件名' }
+    }
+    const filePath = path.join(projectRoot, '.doge', 'debug-schemes', fileName)
+    if (!fs.existsSync(filePath)) return { success: false, error: '方案文件不存在' }
+    const raw = JSON.parse(fs.readFileSync(filePath, 'utf-8')) as { name?: string; breakpoints?: Array<{ file?: string; line?: number; condition?: string }> }
+    if (!Array.isArray(raw.breakpoints)) return { success: false, error: '方案格式无效' }
+    const breakpoints = raw.breakpoints
+      .filter(b => typeof b.file === 'string' && typeof b.line === 'number' && b.line > 0)
+      .map(b => ({ file: b.file as string, line: b.line as number, condition: b.condition }))
+    return { success: true, name: raw.name || fileName.replace(/\.json$/, ''), breakpoints }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) }
+  }
+})
+
+// ─── 调试会话快照（保存/恢复会话配置） ───
+
+ipcMain.handle('doge:debug-snapshot-save', async (_event, params: { sessionId: string; name?: string; watchExpressions?: string[] }) => {
+  try {
+    const config = debuggerManager.getSessionConfig(params.sessionId)
+    if (!config) return { success: false, error: '会话不存在' }
+    const dir = path.join(projectRoot, '.doge', 'debug-snapshots')
+    fs.mkdirSync(dir, { recursive: true })
+    const safeName = (params.name || `snapshot-${Date.now()}`).replace(/[\\/:*?"<>|]/g, '_').slice(0, 60)
+    const outPath = path.join(dir, `${safeName}.json`)
+    fs.writeFileSync(outPath, JSON.stringify({
+      name: params.name || safeName,
+      script: config.script,
+      args: config.args,
+      breakpoints: config.breakpoints,
+      watchExpressions: params.watchExpressions || [],
+      savedAt: new Date().toISOString(),
+    }, null, 2), 'utf-8')
+    return { success: true, path: outPath }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) }
+  }
+})
+
+ipcMain.handle('doge:debug-snapshot-list', () => {
+  try {
+    const dir = path.join(projectRoot, '.doge', 'debug-snapshots')
+    if (!fs.existsSync(dir)) return { success: true, snapshots: [] }
+    const snapshots = fs.readdirSync(dir)
+      .filter(f => f.endsWith('.json'))
+      .map(f => {
+        try {
+          const raw = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf-8')) as { name?: string; script?: string; breakpoints?: unknown[]; watchExpressions?: unknown[]; savedAt?: string }
+          return {
+            file: f,
+            name: raw.name || f.replace(/\.json$/, ''),
+            script: raw.script || '',
+            breakpointCount: Array.isArray(raw.breakpoints) ? raw.breakpoints.length : 0,
+            watchCount: Array.isArray(raw.watchExpressions) ? raw.watchExpressions.length : 0,
+            savedAt: raw.savedAt || '',
+          }
+        } catch { return null }
+      })
+      .filter((s): s is { file: string; name: string; script: string; breakpointCount: number; watchCount: number; savedAt: string } => s !== null)
+    return { success: true, snapshots }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) }
+  }
+})
+
+ipcMain.handle('doge:debug-snapshot-restore', async (_event, fileName: string) => {
+  try {
+    if (typeof fileName !== 'string' || !fileName.endsWith('.json') || fileName.includes('..') || fileName.includes('/') || fileName.includes('\\')) {
+      return { success: false, error: '非法文件名' }
+    }
+    const filePath = path.join(projectRoot, '.doge', 'debug-snapshots', fileName)
+    if (!fs.existsSync(filePath)) return { success: false, error: '快照文件不存在' }
+    const raw = JSON.parse(fs.readFileSync(filePath, 'utf-8')) as {
+      name?: string; script?: string; args?: string[];
+      breakpoints?: Array<{ file?: string; line?: number; condition?: string }>
+      watchExpressions?: string[]
+    }
+    if (!raw.script) return { success: false, error: '快照缺少脚本路径' }
+    return {
+      success: true,
+      name: raw.name || fileName.replace(/\.json$/, ''),
+      script: raw.script,
+      args: Array.isArray(raw.args) ? raw.args : [],
+      breakpoints: Array.isArray(raw.breakpoints)
+        ? raw.breakpoints.filter(b => typeof b.file === 'string' && typeof b.line === 'number' && b.line > 0).map(b => ({ file: b.file as string, line: b.line as number, condition: b.condition }))
+        : [],
+      watchExpressions: Array.isArray(raw.watchExpressions) ? raw.watchExpressions.filter((w): w is string => typeof w === 'string') : [],
+    }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) }
+  }
 })
 
 // ─── 多 Agent 编排 IPC ───

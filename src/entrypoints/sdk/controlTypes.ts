@@ -1,5 +1,12 @@
+import type { InternalPermissionMode } from 'src/types/permissions.js'
+
 export type SDKControlInitializeRequest = {
   subtype: 'initialize'
+  sdkMcpServers?: string[]
+  promptSuggestions?: unknown[]
+  systemPrompt?: string
+  appendSystemPrompt?: string
+  jsonSchema?: Record<string, unknown>
   [key: string]: unknown
 }
 
@@ -17,7 +24,47 @@ export type SDKControlRequestInner =
   | SDKControlInitializeRequest
   | SDKControlCancelRequest
   | SDKControlPermissionRequest
-  | { subtype: string; [key: string]: unknown }
+  | { subtype: 'interrupt'; [key: string]: unknown }
+  | {
+      subtype: 'set_permission_mode'
+      mode: InternalPermissionMode
+      ultraplan?: boolean
+      [key: string]: unknown
+    }
+  | { subtype: 'set_model'; model?: string; [key: string]: unknown }
+  | {
+      subtype: 'set_max_thinking_tokens'
+      max_thinking_tokens?: number | null
+      [key: string]: unknown
+    }
+  | {
+      subtype: string
+      reason?: string
+      sdkMcpServers?: string[]
+      promptSuggestions?: unknown[]
+      agentProgressSummaries?: unknown[]
+      mode?: InternalPermissionMode
+      ultraplan?: boolean
+      model?: string
+      max_thinking_tokens?: number | null
+      user_message_id?: string
+      dry_run?: boolean
+      message_uuid?: string
+      path?: string
+      mtime?: number
+      task_id?: string
+      description?: string
+      persist?: boolean
+      question?: string
+      servers?: unknown[]
+      serverName?: string
+      callbackUrl?: string
+      authorizationCode?: string
+      state?: string
+      settings?: Record<string, unknown>
+      loginWithClaudeAi?: boolean
+      [key: string]: unknown
+    }
 
 export type SDKControlRequest = {
   type: 'control_request'

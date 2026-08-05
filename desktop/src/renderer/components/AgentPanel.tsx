@@ -379,6 +379,12 @@ function OrchestrationView({ theme, onOrchestrated }: OrchestrationViewProps): J
   const [showWorkflows, setShowWorkflows] = useState(false)
   const [saveName, setSaveName] = useState('')
   const [showSaveInput, setShowSaveInput] = useState(false)
+  const [consensus, setConsensus] = useState<{ consensusPoints: Array<{ text: string; agents: string[] }>; divergencePoints: Array<{ text: string; agent: string }>; agentStats: Array<{ name: string; sentenceCount: number; chars: number; consensusHits: number }> } | null>(null)
+  const [showConsensus, setShowConsensus] = useState(false)
+  // 结果收藏（localStorage 持久化）
+  const FAVORITES_KEY = 'doge-agent-favorites'
+  const [favorites, setFavorites] = useState<Array<{ id: string; name: string; roleId: string; content: string; task: string; favoritedAt: number }>>([])
+  const [showFavorites, setShowFavorites] = useState(false)
   const unsubRef = useRef<(() => void) | null>(null)
 
   // 加载内置角色
@@ -403,8 +409,42 @@ function OrchestrationView({ theme, onOrchestrated }: OrchestrationViewProps): J
     void api?.agentWorkflowList?.().then((res: any) => {
       if (res?.success && res.workflows) setWorkflows(res.workflows)
     })
+    // 加载收藏
+    try {
+      const saved = localStorage.getItem(FAVORITES_KEY)
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed)) setFavorites(parsed)
+      }
+    } catch { /* ignore */ }
     return () => { unsubRef.current?.() }
   }, [])
+
+  const saveFavorites = useCallback((items: typeof favorites) => {
+    try {
+      localStorage.setItem(FAVORITES_KEY, JSON.stringify(items.slice(0, 30)))
+    } catch { /* ignore */ }
+    setFavorites(items.slice(0, 30))
+  }, [])
+
+  // 收藏/取消收藏某条结果
+  const toggleFavorite = useCallback((out: AgentOutputItem) => {
+    setFavorites(prev => {
+      const existing = prev.find(f => f.roleId === out.roleId && f.content === out.content)
+      if (existing) {
+        const next = prev.filter(f => f.id !== existing.id)
+        saveFavorites(next)
+        return next
+      }
+      const next = [{ id: `fav-${Date.now()}-${out.roleId}`, name: out.name, roleId: out.roleId, content: out.content, task: task.trim(), favoritedAt: Date.now() }, ...prev]
+      saveFavorites(next)
+      return next
+    })
+  }, [task, saveFavorites])
+
+  const isFavorite = useCallback((out: AgentOutputItem): boolean => {
+    return favorites.some(f => f.roleId === out.roleId && f.content === out.content)
+  }, [favorites])
 
   const toggleRole = useCallback((id: string) => {
     setSelected(prev => {
@@ -536,6 +576,76 @@ function OrchestrationView({ theme, onOrchestrated }: OrchestrationViewProps): J
 
   const statusText = (s: string): string =>
     s === 'completed' ? '完成' : s === 'failed' ? '失败' : s === 'timeout' ? '超时' : s === 'cancelled' ? '取消' : '未知'
+
+  // 共识/分歧分析：对多个 Agent 结果做轻量文本分析（句子切分 + 归一化 + 跨 Agent 交集）
+  const handleConsensusAnalysis = useCallback(() => {
+    const completed = outputs.filter(o => o.status === 'completed' && o.content && o.content.trim())
+    if (completed.length < 2) {
+      setError('至少需要 2 个成功完成的 Agent 结果才能做共识分析')
+      return
+    }
+    const normalize = (s: string): string => s.replace(/[\s\u3000]/g, '').replace(/[，。！？、；：""''（）()【】\[\]·,.;:!?'"\-—_]/g, '').toLowerCase()
+    const splitSentences = (text: string): string[] => {
+      // 按换行/句末标点切分，过滤过短片段
+      return text
+        .split(/\n+|(?<=[。！？；.!?])/u)
+        .map(s => s.trim())
+        .filter(s => s.length >= 4 && s.length <= 120)
+    }
+    interface Doc { name: string; sentences: string[]; normSet: Set<string> }
+    const docs: Doc[] = completed.map(o => {
+      const sentences = splitSentences(o.content)
+      return { name: o.name, sentences, normSet: new Set(sentences.map(normalize)) }
+    })
+    // 共识点：某归一化句出现在 ≥2 个 Agent 中
+    const sentenceAgents = new Map<string, string[]>()
+    docs.forEach(doc => {
+      doc.normSet.forEach(norm => {
+        const arr = sentenceAgents.get(norm) || []
+        if (!arr.includes(doc.name)) arr.push(doc.name)
+        sentenceAgents.set(norm, arr)
+      })
+    })
+    const consensusPoints: Array<{ text: string; agents: string[] }> = []
+    for (const [norm, agents] of sentenceAgents.entries()) {
+      if (agents.length >= 2) {
+        const orig = docs.flatMap(d => d.sentences).find(s => normalize(s) === norm)
+        consensusPoints.push({ text: orig || norm, agents })
+      }
+    }
+    consensusPoints.sort((a, b) => b.agents.length - a.agents.length)
+    // 分歧点：每个 Agent 独有的关键句（不在任何其他 Agent 中出现）
+    const divergencePoints: Array<{ text: string; agent: string }> = []
+    docs.forEach(doc => {
+      doc.normSet.forEach(norm => {
+        const shared = sentenceAgents.get(norm) || []
+        if (shared.length === 1) {
+          const orig = doc.sentences.find(s => normalize(s) === norm)
+          if (orig) divergencePoints.push({ text: orig, agent: doc.name })
+        }
+      })
+    })
+    // 各 Agent 观点统计（可视化用）
+    const agentStats = docs.map(doc => {
+      let consensusHits = 0
+      doc.normSet.forEach(norm => {
+        if ((sentenceAgents.get(norm) || []).length >= 2) consensusHits++
+      })
+      return {
+        name: doc.name,
+        sentenceCount: doc.sentences.length,
+        chars: doc.sentences.reduce((sum, s) => sum + s.length, 0),
+        consensusHits,
+      }
+    })
+    setConsensus({
+      consensusPoints: consensusPoints.slice(0, 10),
+      divergencePoints: divergencePoints.slice(0, 10),
+      agentStats,
+    })
+    setShowConsensus(true)
+    setError(null)
+  }, [outputs])
 
   return (
     <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -783,6 +893,27 @@ function OrchestrationView({ theme, onOrchestrated }: OrchestrationViewProps): J
             >
               📄 导出报告
             </button>
+            <button
+              onClick={() => { setShowFavorites(v => !v) }}
+              title={`已收藏的 Agent 结果（${favorites.length} 条）`}
+              style={{
+                padding: '1px 8px', border: `1px solid ${showFavorites ? '#f59e0b' : c.border}`, borderRadius: '3px',
+                background: showFavorites ? 'rgba(245,158,11,0.12)' : c.bgPanel,
+                color: showFavorites ? '#f59e0b' : c.textMuted, cursor: 'pointer', fontSize: '9px',
+              }}
+            >
+              ★ 收藏 {favorites.length > 0 ? `(${favorites.length})` : ''}
+            </button>
+            <button
+              onClick={handleConsensusAnalysis}
+              title="提取多 Agent 的共识点与分歧点（本地文本分析）"
+              style={{
+                padding: '1px 8px', border: `1px solid ${c.border}`, borderRadius: '3px',
+                background: c.bgPanel, color: '#8b5cf6', cursor: 'pointer', fontSize: '9px',
+              }}
+            >
+              🧠 共识分析
+            </button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             {outputs.map(out => {
@@ -795,6 +926,19 @@ function OrchestrationView({ theme, onOrchestrated }: OrchestrationViewProps): J
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3px' }}>
                     <span style={{ color: c.accent, fontSize: '10px', fontWeight: 600 }}>{out.name}</span>
                     <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                      <button
+                        onClick={() => out.status === 'completed' && toggleFavorite(out)}
+                        disabled={out.status !== 'completed'}
+                        style={{
+                          padding: '1px 6px', border: `1px solid ${isFavorite(out) ? '#f59e0b' : c.border}`, borderRadius: '2px',
+                          background: isFavorite(out) ? 'rgba(245,158,11,0.12)' : 'transparent',
+                          color: isFavorite(out) ? '#f59e0b' : c.textMuted,
+                          cursor: out.status === 'completed' ? 'pointer' : 'default', fontSize: '9px', opacity: out.status === 'completed' ? 1 : 0.4,
+                        }}
+                        title={isFavorite(out) ? '取消收藏' : '收藏此结果（跨会话保留）'}
+                      >
+                        {isFavorite(out) ? '★ 已收藏' : '☆ 收藏'}
+                      </button>
                       {showCompare && (
                         <button
                           onClick={() => setCompareRoleId(prev => prev === out.roleId ? null : out.roleId)}
@@ -849,6 +993,150 @@ function OrchestrationView({ theme, onOrchestrated }: OrchestrationViewProps): J
         }}>
           ✅ 报告已导出: {exportPath}
           <span style={{ marginLeft: '8px', cursor: 'pointer' }} onClick={() => setExportPath(null)}>✕</span>
+        </div>
+      )}
+
+      {/* 共识/分歧分析 */}
+      {consensus && showConsensus && (
+        <div style={{ border: `1px solid #8b5cf655`, borderRadius: '3px', padding: '6px 8px', background: 'rgba(139,92,246,0.06)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+            <span style={{ fontSize: '10px', color: '#8b5cf6', fontWeight: 600 }}>🧠 共识/分歧分析</span>
+            <span style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+              <span style={{ fontSize: '9px', color: c.textMuted }}>{consensus.consensusPoints.length} 共识 · {consensus.divergencePoints.length} 分歧</span>
+              <button
+                onClick={() => setShowConsensus(false)}
+                style={{ padding: '0 4px', border: 'none', background: 'transparent', color: c.textFaint, cursor: 'pointer', fontSize: '9px' }}
+              >
+                ✕
+              </button>
+            </span>
+          </div>
+
+          {/* 观点可视化：各 Agent 贡献度条形图 + 共识/分歧占比 */}
+          {consensus.agentStats && consensus.agentStats.length > 0 && (
+            <div style={{ marginBottom: '6px', padding: '4px 6px', background: c.codeBg, borderRadius: '3px' }}>
+              <div style={{ fontSize: '9px', color: c.textMuted, marginBottom: '3px' }}>📊 观点贡献度（句子数，含共识命中）</div>
+              {(() => {
+                const maxSentences = Math.max(...consensus.agentStats.map(s => s.sentenceCount), 1)
+                const totalConsensus = consensus.consensusPoints.length
+                const totalDivergence = consensus.divergencePoints.length
+                const totalPoints = totalConsensus + totalDivergence
+                const consensusPct = totalPoints > 0 ? (totalConsensus / totalPoints) * 100 : 0
+                return (
+                  <>
+                    {consensus.agentStats.map((s, i) => (
+                      <div key={`astat-${i}`} style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+                        <span style={{ fontSize: '8px', color: c.textMuted, width: '72px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flexShrink: 0 }} title={s.name}>{s.name}</span>
+                        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '2px', background: c.bgPanel, borderRadius: '2px', height: '10px', overflow: 'hidden' }}>
+                          {/* 总句子数条（浅色） */}
+                          <div style={{ width: `${(s.sentenceCount / maxSentences) * 100}%`, height: '100%', background: '#8b5cf655', borderRadius: '2px 0 0 2px', position: 'relative' }}>
+                            {/* 共识命中部分（绿色覆盖） */}
+                            {s.consensusHits > 0 && (
+                              <div style={{ width: `${(s.consensusHits / s.sentenceCount) * 100}%`, height: '100%', background: '#10b98188' }} />
+                            )}
+                          </div>
+                        </div>
+                        <span style={{ fontSize: '8px', color: c.textFaint, width: '46px', textAlign: 'right', flexShrink: 0 }}>{s.sentenceCount}句 · {s.consensusHits}共识</span>
+                      </div>
+                    ))}
+                    {totalPoints > 0 && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px' }}>
+                        <span style={{ fontSize: '8px', color: c.textMuted, width: '72px', flexShrink: 0 }}>共识占比</span>
+                        <div style={{ flex: 1, display: 'flex', height: '8px', borderRadius: '2px', overflow: 'hidden', background: '#f59e0b44' }}>
+                          <div style={{ width: `${consensusPct}%`, background: '#10b981' }} title={`共识 ${totalConsensus}`} />
+                          <div style={{ width: `${100 - consensusPct}%`, background: '#f59e0b' }} title={`分歧 ${totalDivergence}`} />
+                        </div>
+                        <span style={{ fontSize: '8px', color: c.textFaint, width: '46px', textAlign: 'right', flexShrink: 0 }}>
+                          {totalConsensus}/{totalPoints}
+                        </span>
+                      </div>
+                    )}
+                  </>
+                )
+              })()}
+            </div>
+          )}
+
+          {consensus.consensusPoints.length > 0 && (
+            <div style={{ marginBottom: '6px' }}>
+              <div style={{ fontSize: '9px', color: '#10b981', marginBottom: '2px' }}>✅ 共识点（多个 Agent 一致）</div>
+              {consensus.consensusPoints.map((p, i) => (
+                <div key={`c-${i}`} style={{ padding: '3px 4px', borderLeft: `2px solid #10b981`, background: c.codeBg, borderRadius: '2px', marginBottom: '2px' }}>
+                  <div style={{ fontSize: '9px', color: c.text }}>{p.text}</div>
+                  <div style={{ fontSize: '8px', color: '#10b981', marginTop: '1px' }}>共 {p.agents.length} 个 Agent: {p.agents.join('、')}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {consensus.divergencePoints.length > 0 && (
+            <div>
+              <div style={{ fontSize: '9px', color: '#f59e0b', marginBottom: '2px' }}>⚡ 分歧点（单 Agent 独有观点）</div>
+              {consensus.divergencePoints.map((p, i) => (
+                <div key={`d-${i}`} style={{ padding: '3px 4px', borderLeft: `2px solid #f59e0b`, background: c.codeBg, borderRadius: '2px', marginBottom: '2px' }}>
+                  <div style={{ fontSize: '9px', color: c.text }}>{p.text}</div>
+                  <div style={{ fontSize: '8px', color: '#f59e0b', marginTop: '1px' }}>仅 {p.agent}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {consensus.consensusPoints.length === 0 && consensus.divergencePoints.length === 0 && (
+            <div style={{ fontSize: '9px', color: c.textFaint }}>未能提取出足够的句子级共识/分歧（结果可能过短或风格差异过大）</div>
+          )}
+        </div>
+      )}
+
+      {/* 收藏列表 */}
+      {showFavorites && (
+        <div style={{ border: `1px solid #f59e0b55`, borderRadius: '3px', padding: '6px 8px', background: 'rgba(245,158,11,0.05)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+            <span style={{ fontSize: '10px', color: '#f59e0b', fontWeight: 600 }}>★ 已收藏的 Agent 结果（{favorites.length}）</span>
+            <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+              {favorites.length > 0 && (
+                <button
+                  onClick={() => { if (confirm('确定清空全部收藏？')) saveFavorites([]) }}
+                  style={{ padding: '1px 6px', border: `1px solid ${c.border}`, borderRadius: '2px', background: 'transparent', color: c.errorText, cursor: 'pointer', fontSize: '9px' }}
+                >
+                  清空全部
+                </button>
+              )}
+              <button
+                onClick={() => setShowFavorites(false)}
+                style={{ padding: '0 4px', border: 'none', background: 'transparent', color: c.textFaint, cursor: 'pointer', fontSize: '9px' }}
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+          {favorites.length === 0 ? (
+            <div style={{ fontSize: '9px', color: c.textFaint }}>暂无收藏 · 点击结果卡片上的 ☆ 收藏按钮保存重要输出</div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: '200px', overflowY: 'auto' }}>
+              {favorites.map(f => (
+                <div key={f.id} style={{ border: `1px solid ${c.borderSubtle}`, borderRadius: '3px', padding: '4px 6px', background: c.bgPanel }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center', minWidth: 0 }}>
+                      <span style={{ color: '#f59e0b', fontSize: '9px' }}>★</span>
+                      <span style={{ color: c.accent, fontSize: '10px', fontWeight: 600 }}>{f.name}</span>
+                      <span style={{ color: c.textFaint, fontSize: '8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '160px' }} title={f.task}>{f.task}</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '4px', alignItems: 'center', flexShrink: 0 }}>
+                      <span style={{ color: c.textFaint, fontSize: '8px' }}>{new Date(f.favoritedAt).toLocaleString()}</span>
+                      <button
+                        onClick={() => setFavorites(prev => { const next = prev.filter(x => x.id !== f.id); saveFavorites(next); return next })}
+                        style={{ padding: '0 4px', border: 'none', background: 'transparent', color: c.errorText, cursor: 'pointer', fontSize: '9px' }}
+                        title="删除收藏"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+                  <pre style={{ margin: 0, color: c.text, fontSize: '9px', whiteSpace: 'pre-wrap', wordBreak: 'break-word', maxHeight: '60px', overflowY: 'auto' }}>{f.content}</pre>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

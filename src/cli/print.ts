@@ -242,6 +242,7 @@ import { executeNotificationHooks } from 'src/utils/hooks.js'
 import {
   ElicitRequestSchema,
   ElicitationCompleteNotificationSchema,
+  type JSONRPCMessage,
 } from '@modelcontextprotocol/sdk/types.js'
 import { getMcpPrefix } from 'src/services/mcp/mcpStringUtils.js'
 import {
@@ -921,9 +922,9 @@ export async function runHeadless(
         }
       }
       if (needsFullArray) {
-        messages.push(message)
+        messages.push(message as SDKMessage)
       }
-      lastMessage = message
+      lastMessage = message as SDKMessage
     }
   }
 
@@ -1049,7 +1050,10 @@ function runHeadlessStreaming(
   registerCleanup(async () => {
     const bg: Record<string, number> = {}
     for (const t of getRunningTasks(getAppState())) {
-      if (isBackgroundTask(t)) bg[t.type] = (bg[t.type] ?? 0) + 1
+      if (isBackgroundTask(t)) {
+        const type = String(t.type)
+        bg[type] = (bg[type] ?? 0) + 1
+      }
     }
     logForDiagnosticsNoPII('info', 'run_state_at_shutdown', {
       run_active: running,
@@ -1615,30 +1619,25 @@ function runHeadlessStreaming(
       ...dynamicMcpState.clients.filter(c => !existingNames.has(c.name)),
     ].map(connection => {
       let config
-      if (
-        connection.config.type === 'sse' ||
-        connection.config.type === 'http'
-      ) {
+      const cfg = connection.config
+      if (cfg.type === 'sse' || cfg.type === 'http') {
         config = {
-          type: connection.config.type,
-          url: connection.config.url,
-          headers: connection.config.headers,
-          oauth: connection.config.oauth,
+          type: cfg.type,
+          url: cfg.url,
+          headers: cfg.headers,
+          oauth: cfg.oauth,
         }
-      } else if (connection.config.type === 'claudeai-proxy') {
+      } else if (cfg.type === 'claudeai-proxy') {
         config = {
           type: 'claudeai-proxy' as const,
-          url: connection.config.url,
-          id: connection.config.id,
+          url: cfg.url,
+          id: cfg.id,
         }
-      } else if (
-        connection.config.type === 'stdio' ||
-        connection.config.type === undefined
-      ) {
+      } else if ('command' in cfg) {
         config = {
           type: 'stdio' as const,
-          command: connection.config.command,
-          args: connection.config.args,
+          command: cfg.command,
+          args: cfg.args,
         }
       }
       const serverTools =
@@ -1773,13 +1772,13 @@ function runHeadlessStreaming(
     const supportedConfigs: Record<string, McpServerConfigForProcessTransport> =
       {}
     for (const [name, config] of Object.entries(newConfigs)) {
-      const type = config.type
-      if (
-        type === undefined ||
-        type === 'stdio' ||
-        type === 'sse' ||
-        type === 'http' ||
-        type === 'sdk'
+      if (typeof config.type !== 'string') {
+        supportedConfigs[name] = config
+      } else if (
+        config.type === 'stdio' ||
+        config.type === 'sse' ||
+        config.type === 'http' ||
+        config.type === 'sdk'
       ) {
         supportedConfigs[name] = config
       }
@@ -1795,7 +1794,7 @@ function runHeadlessStreaming(
       void updateSdkMcp()
     }
     logForDebugging(
-      `无头 MCP 刷新: 已添加=${response.added.length}, 已移除=${response.removed.length}`,
+      `无头 MCP 刷新: 已添加=${(response.added as unknown[]).length}, 已移除=${(response.removed as unknown[]).length}`,
     )
   }
 
@@ -2753,7 +2752,7 @@ function runHeadlessStreaming(
     for await (const message of structuredIO.structuredInput) {
       // 非用户事件被内联处理（不入队）。在同一次 tick 中从 started 到 completed 不携带信息，因此仅触发 completed。
       // control_response 由 StructuredIO.processLine 报告（它也会看到从未在此处产生的孤立响应）。
-      const eventId = 'uuid' in message ? message.uuid : undefined
+      const eventId = 'uuid' in message ? String(message.uuid) : undefined
       if (
         eventId &&
         message.type !== 'user' &&
@@ -2813,7 +2812,7 @@ function runHeadlessStreaming(
           }
 
           await handleInitializeRequest(
-            message.request,
+            message.request as SDKControlInitializeRequest,
             message.request_id,
             initialized,
             output,
@@ -2921,7 +2920,9 @@ function runHeadlessStreaming(
             sdkClient.type === 'connected' &&
             sdkClient.client?.transport?.onmessage
           ) {
-            sdkClient.client.transport.onmessage(mcpRequest.message)
+            sdkClient.client.transport.onmessage(
+              mcpRequest.message as JSONRPCMessage,
+            )
           }
           sendControlResponseSuccess(message)
         } else if (message.request.subtype === 'rewind_files') {
@@ -2980,7 +2981,10 @@ function runHeadlessStreaming(
           sendControlResponseSuccess(message)
         } else if (message.request.subtype === 'mcp_set_servers') {
           const { response, sdkServersChanged } = await applyMcpServerChanges(
-            message.request.servers,
+            message.request.servers as unknown as Record<
+              string,
+              McpServerConfigForProcessTransport
+            >,
           )
           sendControlResponseSuccess(message, response)
 
@@ -3384,7 +3388,7 @@ function runHeadlessStreaming(
             // 这将使认证 promise 处于未解决状态，并阻塞控制消息循环直到超时。
             let hasCodeOrError = false
             try {
-              const parsed = new URL(callbackUrl)
+              const parsed = new URL(String(callbackUrl))
               hasCodeOrError =
                 parsed.searchParams.has('code') ||
                 parsed.searchParams.has('error')
@@ -3398,7 +3402,7 @@ function runHeadlessStreaming(
               )
             } else {
               oauthManualCallbackUsed.add(serverName)
-              submit(callbackUrl)
+              submit(String(callbackUrl))
               // 在响应之前等待认证（令牌交换）完成。
               // 重连由扩展程序通过 handleAuthDone → mcp_reconnect 处理（它会更新 dynamicMcpState 以进行工具注册）。
               const authPromise = oauthAuthPromises.get(serverName)
@@ -3662,7 +3666,7 @@ function runHeadlessStreaming(
         } else if (message.request.subtype === 'stop_task') {
           const { task_id: taskId } = message.request
           try {
-            await stopTask(taskId, {
+            await stopTask(String(taskId), {
               getAppState,
               setAppState,
             })
@@ -3683,7 +3687,10 @@ function runHeadlessStreaming(
           ).signal
           void (async () => {
             try {
-              const title = await generateSessionTitle(description, titleSignal)
+              const title = await generateSessionTitle(
+                String(description),
+                titleSignal,
+              )
               if (title && persist) {
                 try {
                   saveAiGeneratedTitle(getSessionId() as UUID, title)
@@ -3746,7 +3753,7 @@ function runHeadlessStreaming(
                     agents: currentAgents,
                   })
               const result = await runSideQuestion({
-                question,
+                question: String(question),
                 cacheSafeParams,
               })
               sendControlResponseSuccess(message, { response: result.response })
@@ -3820,7 +3827,7 @@ function runHeadlessStreaming(
                       enqueue({
                       value: message,
                         mode: 'prompt' as const,
-                      uuid: resultMessage.uuid,
+                      uuid: resultMessage.uuid as UUID,
                         skipSlashCommands: true,
                       })
                   }
@@ -3961,7 +3968,7 @@ function runHeadlessStreaming(
         continue
       } else if (message.type === 'assistant' || message.type === 'system') {
         // 来自桥接的历史重放：注入到 mutableMessages 中作为对话上下文，以便模型看到之前的轮次。
-        const internalMsgs = toInternalMessages([message])
+        const internalMsgs = toInternalMessages([message as SDKMessage])
         mutableMessages.push(...internalMsgs)
         // 回显助手消息，以便 CCR 显示它们
         if (message.type === 'assistant' && options.replayUserMessages) {
@@ -3978,11 +3985,11 @@ function runHeadlessStreaming(
       initialized = true
 
       // 检查重复的用户消息 —— 如果已处理则跳过
-      if (message.uuid) {
+      if (typeof message.uuid === 'string' && message.uuid) {
         const sessionId = getSessionId() as UUID
         const existsInSession = await doesMessageExistInSession(
           sessionId,
-          message.uuid,
+          message.uuid as UUID,
         )
 
         // 同时检查历史重复（来自文件）和运行时重复（此会话）
@@ -4164,7 +4171,7 @@ export function createCanUseToolWithPermissionPrompt(
       )
     }
     return permissionPromptToolResultToPermissionDecision(
-      permissionPromptToolOutputSchema().parse(
+      permissionToolOutputSchema().parse(
         safeParseJSON(permissionToolResultBlockParam.content[0].text),
       ),
       permissionPromptTool,
@@ -4474,7 +4481,7 @@ async function handleRewindFiles(
 }
 
 function handleSetPermissionMode(
-  request: { mode: InternalPermissionMode },
+  request: { mode?: InternalPermissionMode },
   requestId: string,
   toolPermissionContext: ToolPermissionContext,
   output: Stream<StdoutMessage>,
@@ -5145,8 +5152,7 @@ export async function handleOrphanedPermissionResponse({
 }): Promise<boolean> {
   if (
     message.response.subtype === 'success' &&
-    message.response.response?.toolUseID &&
-    typeof message.response.response.toolUseID === 'string'
+    typeof message.response.response?.toolUseID === 'string'
   ) {
     const permissionResult = message.response.response as PermissionResult
     const { toolUseID } = permissionResult
@@ -5319,9 +5325,12 @@ export async function handleMcpSetServers(
 
   return {
     response: {
-      added: [...sdkAdded, ...processResult.response.added],
-      removed: [...sdkRemoved, ...processResult.response.removed],
-      errors: { ...policyErrors, ...processResult.response.errors },
+      added: [...sdkAdded, ...(processResult.response.added as unknown[])],
+      removed: [...sdkRemoved, ...(processResult.response.removed as unknown[])],
+      errors: {
+        ...policyErrors,
+        ...(processResult.response.errors as Record<string, unknown>),
+      },
     },
     newSdkState: {
       configs: newSdkConfigs,

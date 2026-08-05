@@ -527,7 +527,7 @@ function toListItem(task: BackgroundTaskState): ListItem {
       return {
         id: task.id,
         type: 'local_workflow',
-        label: task.summary ?? task.description,
+        label: String(task.summary ?? task.description),
         status: task.status,
         task
       };

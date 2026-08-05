@@ -200,7 +200,13 @@ export function formatToken(
         return token.text
       }
       if (parent?.type === 'list_item') {
-        return `${orderedListNumber === null ? '-' : getListNumber(listDepth, orderedListNumber) + '.'} ${token.tokens ? token.tokens.map(_ => formatToken(_, theme, listDepth, orderedListNumber, token, highlight)).join('') : beautifyInlineText(linkifyIssueReferences(token.text), theme)}${EOL}`
+        // 序号/圆点标蓝，与正文区分（宽度用 stripAnsi 计算，颜色不影响布局）
+        const marker =
+          orderedListNumber === null
+            ? '-'
+            : getListNumber(listDepth, orderedListNumber) + '.'
+        const coloredMarker = color('suggestion', theme)(marker)
+        return `${coloredMarker} ${token.tokens ? token.tokens.map(_ => formatToken(_, theme, listDepth, orderedListNumber, token, highlight)).join('') : beautifyInlineText(linkifyIssueReferences(token.text), theme)}${EOL}`
       }
       return beautifyInlineText(linkifyIssueReferences(token.text), theme)
     case 'table': {
@@ -225,7 +231,8 @@ export function formatToken(
         return Math.max(maxWidth, 3) // Minimum width of 3
       })
 
-      // Format header row
+      // Format header row — bold the header for visual distinction.
+      // Width uses stringWidth(stripAnsi) so bold (which adds no width) is safe.
       let tableOutput = '| '
       tableToken.header.forEach((header, index) => {
         const content =
@@ -236,7 +243,7 @@ export function formatToken(
         const width = columnWidths[index]!
         const align = tableToken.align?.[index]
         tableOutput +=
-          padAligned(content, stringWidth(displayText), width, align) + ' | '
+          padAligned(chalk.bold(content), stringWidth(displayText), width, align) + ' | '
       })
       tableOutput = tableOutput.trimEnd() + EOL
 
