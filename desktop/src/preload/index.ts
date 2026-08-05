@@ -176,6 +176,9 @@ interface DogeAPIValue {
   pluginRuntimeUnwatch: (pluginName: string) => Promise<{ success: boolean; error?: string }>
   pluginRuntimeEmit: (event: string, data: unknown) => Promise<{ success: boolean }>
   pluginScaffold: (pluginName: string) => Promise<{ success: boolean; path?: string; entry?: string; commands?: string[]; error?: string }>
+  pluginExport: (pluginName: string) => Promise<{ success: boolean; path?: string; fileCount?: number; size?: number; error?: string }>
+  pluginListExports: () => Promise<{ success: boolean; exports?: Array<{ name: string; path: string; size: number; modifiedAt: number }>; error?: string }>
+  pluginImport: (exportName: string) => Promise<{ success: boolean; pluginName?: string; path?: string; error?: string }>
 
   // ── 本地代码索引 ──
   indexStatus: () => Promise<{ success: boolean; stats?: { fileCount: number; chunkCount: number; indexSize: number; lastIndexedAt: number; totalTokens: number }; error?: string }>
@@ -191,6 +194,7 @@ interface DogeAPIValue {
   agentWorkflowSave: (wf: { id?: string; name: string; description?: string; task: string; mode: 'parallel' | 'discuss'; maxRounds?: number; roleIds: string[]; createdAt?: number }) => Promise<{ success: boolean; workflow?: Record<string, unknown>; error?: string }>
   agentWorkflowList: () => Promise<{ success: boolean; workflows?: Array<Record<string, unknown>>; error?: string }>
   agentWorkflowDelete: (workflowId: string) => Promise<{ success: boolean; error?: string }>
+  agentExportReport: (params: { task: string; mode: string; roundsUsed?: number; outputs: Array<{ name: string; roleId: string; content: string; status: string; durationMs: number; error?: string }> }) => Promise<{ success: boolean; path?: string; error?: string }>
 
   // ── 调试器暂停事件 ──
   onDebugPaused: (callback: (info: { sessionId: string; pid: number; reason: string; file: string; line: number; functionName: string; stackDepth: number }) => void) => () => void
@@ -442,6 +446,9 @@ const dogeAPI: DogeAPIValue = {
   pluginRuntimeUnwatch: (pluginName: string) => ipcRenderer.invoke('doge:plugin-runtime-unwatch', pluginName),
   pluginRuntimeEmit: (event: string, data: unknown) => ipcRenderer.invoke('doge:plugin-runtime-emit', event, data),
   pluginScaffold: (pluginName: string) => ipcRenderer.invoke('doge:plugin-scaffold', pluginName),
+  pluginExport: (pluginName: string) => ipcRenderer.invoke('doge:plugin-export', pluginName),
+  pluginListExports: () => ipcRenderer.invoke('doge:plugin-list-exports'),
+  pluginImport: (exportName: string) => ipcRenderer.invoke('doge:plugin-import', exportName),
 
   // ── 本地代码索引 ──
   indexStatus: () => ipcRenderer.invoke('doge:index-status'),
@@ -461,6 +468,7 @@ const dogeAPI: DogeAPIValue = {
   agentWorkflowSave: (wf: { id?: string; name: string; description?: string; task: string; mode: 'parallel' | 'discuss'; maxRounds?: number; roleIds: string[]; createdAt?: number }) => ipcRenderer.invoke('doge:agent-workflow-save', wf),
   agentWorkflowList: () => ipcRenderer.invoke('doge:agent-workflow-list'),
   agentWorkflowDelete: (workflowId: string) => ipcRenderer.invoke('doge:agent-workflow-delete', workflowId),
+  agentExportReport: (params: { task: string; mode: string; roundsUsed?: number; outputs: Array<{ name: string; roleId: string; content: string; status: string; durationMs: number; error?: string }> }) => ipcRenderer.invoke('doge:agent-export-report', params),
 
   // ── 调试器暂停事件 ──
   onDebugPaused: (callback: (info: { sessionId: string; pid: number; reason: string; file: string; line: number; functionName: string; stackDepth: number }) => void) => {

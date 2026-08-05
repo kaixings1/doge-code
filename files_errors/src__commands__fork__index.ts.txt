@@ -1,0 +1,2 @@
+src/commands/fork/index.ts(34,73): error TS2349: This expression is not callable.
+src/commands/fork/index.ts(58,15): error TS2322: Type 'unknown' is not assignable to type 'string'.

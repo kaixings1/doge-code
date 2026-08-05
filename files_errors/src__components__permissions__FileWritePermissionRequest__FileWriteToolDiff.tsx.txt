@@ -1,0 +1,2 @@
+src/components/permissions/FileWritePermissionRequest/FileWriteToolDiff.tsx(65,78): error TS2322: Type '{ key: any; patch: any; dim: boolean; filePath: any; firstLine: any; fileContent: any; width: number; }' is not assignable to type 'IntrinsicAttributes & object'.
+src/components/permissions/FileWritePermissionRequest/FileWriteToolDiff.tsx(65,219): error TS2322: Type '{ code: any; filePath: any; }' is not assignable to type 'IntrinsicAttributes & object'.

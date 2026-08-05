@@ -1,0 +1,19 @@
+src/commands.ts(99,8): error TS2440: Import declaration conflicts with local declaration of 'proactive'.
+src/commands.ts(108,8): error TS2300: Duplicate identifier 'env'.
+src/commands.ts(184,72): error TS2339: Property 'default' does not exist on type 'unknown'.
+src/commands.ts(202,47): error TS2339: Property 'default' does not exist on type 'unknown'.
+src/commands.ts(207,43): error TS2339: Property 'default' does not exist on type 'unknown'.
+src/commands.ts(211,53): error TS2339: Property 'default' does not exist on type 'unknown'.
+src/commands.ts(215,50): error TS2339: Property 'default' does not exist on type 'unknown'.
+src/commands.ts(220,63): error TS2339: Property 'default' does not exist on type 'unknown'.
+src/commands.ts(224,49): error TS2339: Property 'default' does not exist on type 'unknown'.
+src/commands.ts(228,48): error TS2339: Property 'default' does not exist on type 'unknown'.
+src/commands.ts(232,53): error TS2339: Property 'default' does not exist on type 'unknown'.
+src/commands.ts(236,56): error TS2339: Property 'default' does not exist on type 'unknown'.
+src/commands.ts(240,61): error TS2339: Property 'clearSkillIndexCache' does not exist on type 'unknown'.
+src/commands.ts(244,50): error TS2339: Property 'default' does not exist on type 'unknown'.
+src/commands.ts(248,47): error TS2339: Property 'default' does not exist on type 'unknown'.
+src/commands.ts(252,43): error TS2339: Property 'default' does not exist on type 'unknown'.
+src/commands.ts(256,49): error TS2339: Property 'default' does not exist on type 'unknown'.
+src/commands.ts(260,48): error TS2339: Property 'default' does not exist on type 'unknown'.
+src/commands.ts(326,8): error TS2300: Duplicate identifier 'env'.

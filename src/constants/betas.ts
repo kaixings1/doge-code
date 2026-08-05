@@ -28,6 +28,9 @@ export const AFK_MODE_BETA_HEADER = feature('TRANSCRIPT_CLASSIFIER')
   : ''
 export const CLI_INTERNAL_BETA_HEADER =
   process.env.USER_TYPE === 'ant' ? 'cli-internal-2026-02-09' : ''
+export const CACHE_EDITING_BETA_HEADER = feature('CACHED_MICROCOMPACT')
+  ? 'cache-editing-2026-01-30'
+  : ''
 export const ADVISOR_BETA_HEADER = 'advisor-tool-2026-03-01'
 
 /**

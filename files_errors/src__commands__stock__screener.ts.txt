@@ -1,0 +1,11 @@
+src/commands/stock/screener.ts(50,27): error TS2345: Argument of type 'ScreenResult' is not assignable to parameter of type 'ScreenCriteria & { code: string; name: string; industry: string; }'.
+src/commands/stock/screener.ts(88,42): error TS2365: Operator '<' cannot be applied to types '{ min?: number; max?: number; }' and 'number'.
+src/commands/stock/screener.ts(89,42): error TS2365: Operator '>' cannot be applied to types '{ min?: number; max?: number; }' and 'number'.
+src/commands/stock/screener.ts(92,42): error TS2365: Operator '<' cannot be applied to types '{ min?: number; max?: number; }' and 'number'.
+src/commands/stock/screener.ts(93,42): error TS2365: Operator '>' cannot be applied to types '{ min?: number; max?: number; }' and 'number'.
+src/commands/stock/screener.ts(96,49): error TS2365: Operator '<' cannot be applied to types '{ min?: number; max?: number; }' and 'number'.
+src/commands/stock/screener.ts(97,49): error TS2365: Operator '>' cannot be applied to types '{ min?: number; max?: number; }' and 'number'.
+src/commands/stock/screener.ts(100,45): error TS2365: Operator '<' cannot be applied to types '{ min?: number; max?: number; }' and 'number'.
+src/commands/stock/screener.ts(101,45): error TS2365: Operator '>' cannot be applied to types '{ min?: number; max?: number; }' and 'number'.
+src/commands/stock/screener.ts(104,53): error TS2365: Operator '<' cannot be applied to types '{ min?: number; max?: number; }' and 'number'.
+src/commands/stock/screener.ts(105,53): error TS2365: Operator '>' cannot be applied to types '{ min?: number; max?: number; }' and 'number'.

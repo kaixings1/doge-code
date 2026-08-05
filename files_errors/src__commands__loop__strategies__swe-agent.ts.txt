@@ -1,0 +1,1 @@
+src/commands/loop/strategies/swe-agent.ts(617,3): error TS2416: Property 'evaluate' in type 'SWEAgentStrategy' is not assignable to the same property in base type 'BaseLoopStrategy'.

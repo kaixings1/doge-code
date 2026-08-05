@@ -1,0 +1,3 @@
+src/components/messages/UserTextMessage.tsx(107,40): error TS2322: Type '{ addMargin: any; param: any; }' is not assignable to type 'IntrinsicAttributes'.
+src/components/messages/UserTextMessage.tsx(204,42): error TS2322: Type '{ addMargin: any; param: any; }' is not assignable to type 'IntrinsicAttributes'.
+src/components/messages/UserTextMessage.tsx(228,39): error TS2322: Type '{ addMargin: any; param: any; }' is not assignable to type 'IntrinsicAttributes'.

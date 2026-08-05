@@ -1,0 +1,1 @@
+src/bridge/inboundMessages.ts(32,32): error TS2339: Property 'content' does not exist on type 'unknown'.

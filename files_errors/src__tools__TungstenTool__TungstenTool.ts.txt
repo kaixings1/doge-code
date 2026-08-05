@@ -1,0 +1,1 @@
+src/tools/TungstenTool/TungstenTool.ts(3,39): error TS2345: Argument of type '{ name: string; userFacingName(): string; description(): Promise<string>; prompt(): Promise<string>; inputSchema: never; outputSchema: never; isEnabled(): false; isReadOnly(): true; isConcurrencySafe(): true; call(): Promise<...>; }' is not assignable to parameter of type 'AnyToolDef'.

@@ -1,0 +1,1 @@
+src/entrypoints/sdk/coreTypes.generated.ts(100,3): error TS2724: '"./coreSchemas.js"' has no exported member named 'SDKUserMessageContentSchema'. Did you mean 'SDKUserMessageSchema'?

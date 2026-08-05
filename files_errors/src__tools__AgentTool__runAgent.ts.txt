@@ -1,0 +1,6 @@
+src/tools/AgentTool/runAgent.ts(762,7): error TS2322: Type 'string' is not assignable to type '`${string}-${string}-${string}-${string}-${string}`'.
+src/tools/AgentTool/runAgent.ts(780,23): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/tools/AgentTool/runAgent.ts(783,46): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'number'.
+src/tools/AgentTool/runAgent.ts(805,15): error TS2322: Type 'AttachmentMessage | StreamEvent' is not assignable to type 'Message'.
+src/tools/AgentTool/runAgent.ts(819,11): error TS2322: Type 'string' is not assignable to type '`${string}-${string}-${string}-${string}-${string}`'.
+src/tools/AgentTool/runAgent.ts(868,14): error TS2339: Property 'killMonitorMcpTasksForAgent' does not exist on type 'typeof import("D:/doge-code/src/tasks/MonitorMcpTask/MonitorMcpTask")'.

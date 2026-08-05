@@ -1,0 +1,5 @@
+src/commands/test-gen.ts(492,39): error TS2339: Property 'lower' does not exist on type 'string'.
+src/commands/test-gen.ts(497,25): error TS2339: Property 'lower' does not exist on type 'string'.
+src/commands/test-gen.ts(1251,14): error TS2322: Type '(args: string) => Promise<{ type: "text"; value: string; } | { type: "json"; value: string; }>' is not assignable to type 'LocalCommandCall'.
+src/commands/test-gen.ts(1338,3): error TS2353: Object literal may only specify known properties, and 'arguments' does not exist in type 'CommandBase & LocalCommand'.
+src/commands/test-gen.ts(1347,66): error TS2339: Property 'call' does not exist on type 'Command'.

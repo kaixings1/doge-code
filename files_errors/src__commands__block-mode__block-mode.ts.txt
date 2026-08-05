@@ -1,0 +1,3 @@
+src/commands/block-mode/block-mode.ts(2,3): error TS2724: '"../../types/command.js"' has no exported member named 'LocalCommandContext'. Did you mean 'LocalJSXCommandContext'?
+src/commands/block-mode/block-mode.ts(3,3): error TS2724: '"../../types/command.js"' has no exported member named 'LocalCommandOnDone'. Did you mean 'LocalJSXCommandOnDone'?
+src/commands/block-mode/block-mode.ts(14,26): error TS2339: Property 'blockOutput' does not exist on type 'GlobalConfig'.

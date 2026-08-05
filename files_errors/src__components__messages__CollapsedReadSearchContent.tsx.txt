@@ -1,0 +1,43 @@
+src/components/messages/CollapsedReadSearchContent.tsx(165,24): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/components/messages/CollapsedReadSearchContent.tsx(165,49): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/components/messages/CollapsedReadSearchContent.tsx(165,72): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/components/messages/CollapsedReadSearchContent.tsx(176,63): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'number'.
+src/components/messages/CollapsedReadSearchContent.tsx(177,67): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'number'.
+src/components/messages/CollapsedReadSearchContent.tsx(178,63): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'number'.
+src/components/messages/CollapsedReadSearchContent.tsx(179,61): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'number'.
+src/components/messages/CollapsedReadSearchContent.tsx(180,63): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'number'.
+src/components/messages/CollapsedReadSearchContent.tsx(189,86): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/components/messages/CollapsedReadSearchContent.tsx(190,80): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/components/messages/CollapsedReadSearchContent.tsx(190,134): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/components/messages/CollapsedReadSearchContent.tsx(195,39): error TS2339: Property 'at' does not exist on type 'unknown'.
+src/components/messages/CollapsedReadSearchContent.tsx(197,33): error TS2339: Property 'at' does not exist on type 'unknown'.
+src/components/messages/CollapsedReadSearchContent.tsx(208,19): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/components/messages/CollapsedReadSearchContent.tsx(208,55): error TS2339: Property 'phase' does not exist on type 'unknown'.
+src/components/messages/CollapsedReadSearchContent.tsx(209,30): error TS2339: Property 'toolInput' does not exist on type 'unknown'.
+src/components/messages/CollapsedReadSearchContent.tsx(214,112): error TS2339: Property 'toolName' does not exist on type 'unknown'.
+src/components/messages/CollapsedReadSearchContent.tsx(223,23): error TS2488: Type 'unknown' must have a '[Symbol.iterator]()' method that returns an iterator.
+src/components/messages/CollapsedReadSearchContent.tsx(236,49): error TS2339: Property 'length' does not exist on type 'unknown'.
+src/components/messages/CollapsedReadSearchContent.tsx(239,35): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'number'.
+src/components/messages/CollapsedReadSearchContent.tsx(241,32): error TS2339: Property 'map' does not exist on type 'unknown'.
+src/components/messages/CollapsedReadSearchContent.tsx(246,36): error TS2339: Property 'map' does not exist on type 'unknown'.
+src/components/messages/CollapsedReadSearchContent.tsx(279,17): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/components/messages/CollapsedReadSearchContent.tsx(279,51): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/components/messages/CollapsedReadSearchContent.tsx(282,41): error TS2339: Property 'elapsedTimeSeconds' does not exist on type 'unknown'.
+src/components/messages/CollapsedReadSearchContent.tsx(283,24): error TS2339: Property 'elapsedTimeSeconds' does not exist on type 'unknown'.
+src/components/messages/CollapsedReadSearchContent.tsx(284,22): error TS2339: Property 'totalLines' does not exist on type 'unknown'.
+src/components/messages/CollapsedReadSearchContent.tsx(305,52): error TS2339: Property 'length' does not exist on type 'unknown'.
+src/components/messages/CollapsedReadSearchContent.tsx(312,36): error TS2339: Property 'filter' does not exist on type 'unknown'.
+src/components/messages/CollapsedReadSearchContent.tsx(318,51): error TS2339: Property 'length' does not exist on type 'unknown'.
+src/components/messages/CollapsedReadSearchContent.tsx(319,42): error TS2339: Property 'map' does not exist on type 'unknown'.
+src/components/messages/CollapsedReadSearchContent.tsx(322,53): error TS2339: Property 'length' does not exist on type 'unknown'.
+src/components/messages/CollapsedReadSearchContent.tsx(327,21): error TS2488: Type 'unknown' must have a '[Symbol.iterator]()' method that returns an iterator.
+src/components/messages/CollapsedReadSearchContent.tsx(331,48): error TS2339: Property 'length' does not exist on type 'unknown'.
+src/components/messages/CollapsedReadSearchContent.tsx(340,22): error TS2488: Type 'unknown' must have a '[Symbol.iterator]()' method that returns an iterator.
+src/components/messages/CollapsedReadSearchContent.tsx(377,7): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/components/messages/CollapsedReadSearchContent.tsx(388,49): error TS2339: Property 'map' does not exist on type 'unknown'.
+src/components/messages/CollapsedReadSearchContent.tsx(417,7): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/components/messages/CollapsedReadSearchContent.tsx(428,7): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/components/messages/CollapsedReadSearchContent.tsx(436,7): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/components/messages/CollapsedReadSearchContent.tsx(470,28): error TS2339: Property 'split' does not exist on type 'unknown'.
+src/components/messages/CollapsedReadSearchContent.tsx(476,45): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/components/messages/CollapsedReadSearchContent.tsx(479,31): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'number'.

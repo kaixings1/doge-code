@@ -1,0 +1,2 @@
+src/ink/components/Link.tsx(22,18): error TS2339: Property 'ink-link' does not exist on type 'JSX.IntrinsicElements'.
+src/ink/components/Link.tsx(22,48): error TS2339: Property 'ink-link' does not exist on type 'JSX.IntrinsicElements'.

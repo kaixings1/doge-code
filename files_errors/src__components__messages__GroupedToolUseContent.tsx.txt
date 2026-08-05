@@ -1,0 +1,3 @@
+src/components/messages/GroupedToolUseContent.tsx(20,38): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/components/messages/GroupedToolUseContent.tsx(30,27): error TS2488: Type 'unknown' must have a '[Symbol.iterator]()' method that returns an iterator.
+src/components/messages/GroupedToolUseContent.tsx(40,41): error TS2339: Property 'map' does not exist on type 'unknown'.

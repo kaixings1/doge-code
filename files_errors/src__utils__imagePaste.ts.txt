@@ -1,0 +1,2 @@
+src/utils/imagePaste.ts(108,48): error TS2307: Cannot find module 'image-processor-napi' or its corresponding type declarations.
+src/utils/imagePaste.ts(137,48): error TS2307: Cannot find module 'image-processor-napi' or its corresponding type declarations.

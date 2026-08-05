@@ -1,0 +1,3 @@
+src/commands/autocomplete/index.ts(1275,59): error TS2304: Cannot find name 'LocalCommandResult'.
+src/commands/autocomplete/index.ts(1304,3): error TS2353: Object literal may only specify known properties, and 'arguments' does not exist in type 'CommandBase & LocalCommand'.
+src/commands/autocomplete/index.ts(1322,66): error TS2339: Property 'call' does not exist on type 'Command'.

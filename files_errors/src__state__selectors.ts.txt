@@ -1,0 +1,1 @@
+src/state/selectors.ts(71,37): error TS2322: Type 'LocalAgentTaskState | LocalWorkflowTaskState | MonitorMcpTaskState' is not assignable to type 'LocalAgentTaskState'.

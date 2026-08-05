@@ -1,0 +1,2 @@
+src/commands/stock/types.ts(22,16): error TS2304: Cannot find name 'float'.
+src/commands/stock/types.ts(23,16): error TS2304: Cannot find name 'float'.

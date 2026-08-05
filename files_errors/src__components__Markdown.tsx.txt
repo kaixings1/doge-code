@@ -1,0 +1,1 @@
+src/components/Markdown.tsx(139,24): error TS2322: Type '{ children: string; key: any; dimColor: any; }' is not assignable to type 'IntrinsicAttributes & object'.

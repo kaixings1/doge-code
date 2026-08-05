@@ -1,0 +1,3 @@
+src/commands/fmt/index.ts(168,5): error TS2578: Unused '@ts-expect-error' directive.
+src/commands/fmt/index.ts(176,5): error TS2578: Unused '@ts-expect-error' directive.
+src/commands/fmt/index.ts(320,66): error TS2339: Property 'call' does not exist on type 'Command'.

@@ -1,0 +1,3 @@
+src/utils/transcriptSearch.ts(104,10): error TS2678: Type '"collapsed_read_search"' is not comparable to type '"progress" | "user" | "assistant" | "system" | "tool_use_summary" | "attachment" | "hook_result" | "tombstone" | "grouped_tool_use"'.
+src/utils/transcriptSearch.ts(108,15): error TS2339: Property 'relevantMemories' does not exist on type 'never'.
+src/utils/transcriptSearch.ts(109,19): error TS2339: Property 'relevantMemories' does not exist on type 'never'.

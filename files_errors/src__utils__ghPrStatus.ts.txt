@@ -1,0 +1,2 @@
+src/utils/ghPrStatus.ts(105,18): error TS2339: Property 'prUrlTemplate' does not exist on type 'GlobalConfig'.
+src/utils/ghPrStatus.ts(106,24): error TS2339: Property 'prUrlTemplate' does not exist on type 'GlobalConfig'.

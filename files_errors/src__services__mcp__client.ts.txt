@@ -1,0 +1,8 @@
+src/services/mcp/client.ts(896,51): error TS2339: Property 'type' does not exist on type 'never'.
+src/services/mcp/client.ts(917,51): error TS2339: Property 'type' does not exist on type 'never'.
+src/services/mcp/client.ts(933,59): error TS2339: Property 'type' does not exist on type 'never'.
+src/services/mcp/client.ts(949,48): error TS2339: Property 'type' does not exist on type 'never'.
+src/services/mcp/client.ts(1373,36): error TS2339: Property 'cache' does not exist on type '() => Promise<any[]>'.
+src/services/mcp/client.ts(1650,30): error TS2339: Property 'cache' does not exist on type '() => Promise<any[]>'.
+src/services/mcp/client.ts(2147,36): error TS2554: Expected 0 arguments, but got 1.
+src/services/mcp/client.ts(2316,38): error TS2554: Expected 0 arguments, but got 1.

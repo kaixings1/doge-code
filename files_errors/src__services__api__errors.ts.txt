@@ -1,0 +1,2 @@
+src/services/api/errors.ts(108,5): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/services/api/errors.ts(143,22): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.

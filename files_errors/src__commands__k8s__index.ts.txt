@@ -1,0 +1,2 @@
+src/commands/k8s/index.ts(10,14): error TS2322: Type '(args: LocalJSXCommandOnDone) => Promise<{ type: string; value: string; }>' is not assignable to type 'LocalJSXCommandCall'.
+src/commands/k8s/index.ts(11,18): error TS2339: Property 'trim' does not exist on type 'LocalJSXCommandOnDone'.

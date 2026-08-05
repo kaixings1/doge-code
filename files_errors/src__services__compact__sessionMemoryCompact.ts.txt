@@ -1,0 +1,4 @@
+src/services/compact/sessionMemoryCompact.ts(138,20): error TS2339: Property 'some' does not exist on type 'AssistantMessageContent'.
+src/services/compact/sessionMemoryCompact.ts(450,5): error TS2345: Argument of type 'string' is not assignable to parameter of type '`${string}-${string}-${string}-${string}-${string}`'.
+src/services/compact/sessionMemoryCompact.ts(454,36): error TS2339: Property 'preCompactDiscoveredTools' does not exist on type '{ preservedSegment?: { tailUuid: UUID; headUuid: UUID; anchorUuid?: UUID; }; }'.
+src/services/compact/sessionMemoryCompact.ts(490,7): error TS2345: Argument of type 'string' is not assignable to parameter of type '`${string}-${string}-${string}-${string}-${string}`'.

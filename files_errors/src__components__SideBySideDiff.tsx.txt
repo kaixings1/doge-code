@@ -1,0 +1,2 @@
+src/components/SideBySideDiff.tsx(270,18): error TS2304: Cannot find name 'useMemo'.
+src/components/SideBySideDiff.tsx(271,21): error TS2304: Cannot find name 'useMemo'.

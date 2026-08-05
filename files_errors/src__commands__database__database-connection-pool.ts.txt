@@ -1,0 +1,1 @@
+src/commands/database/database-connection-pool.ts(45,7): error TS2322: Type 'string' is not assignable to type '"sqlite" | "mysql" | "postgresql"'.

@@ -1,0 +1,20 @@
+src/keybindings/defaultBindings.ts(48,7): error TS2353: Object literal may only specify known properties, and ''Ctrl+shift+o'' does not exist in type 'ParsedBinding[]'.
+src/keybindings/defaultBindings.ts(68,7): error TS2353: Object literal may only specify known properties, and 'escape' does not exist in type 'ParsedBinding[]'.
+src/keybindings/defaultBindings.ts(104,7): error TS2353: Object literal may only specify known properties, and 'tab' does not exist in type 'ParsedBinding[]'.
+src/keybindings/defaultBindings.ts(114,7): error TS2353: Object literal may only specify known properties, and 'escape' does not exist in type 'ParsedBinding[]'.
+src/keybindings/defaultBindings.ts(135,7): error TS2353: Object literal may only specify known properties, and 'y' does not exist in type 'ParsedBinding[]'.
+src/keybindings/defaultBindings.ts(156,7): error TS2353: Object literal may only specify known properties, and 'tab' does not exist in type 'ParsedBinding[]'.
+src/keybindings/defaultBindings.ts(165,7): error TS2353: Object literal may only specify known properties, and ''Ctrl+e'' does not exist in type 'ParsedBinding[]'.
+src/keybindings/defaultBindings.ts(176,7): error TS2353: Object literal may only specify known properties, and ''Ctrl+r'' does not exist in type 'ParsedBinding[]'.
+src/keybindings/defaultBindings.ts(188,7): error TS2353: Object literal may only specify known properties, and ''Ctrl+b'' does not exist in type 'ParsedBinding[]'.
+src/keybindings/defaultBindings.ts(194,7): error TS2353: Object literal may only specify known properties, and ''Ctrl+t'' does not exist in type 'ParsedBinding[]'.
+src/keybindings/defaultBindings.ts(200,7): error TS2353: Object literal may only specify known properties, and 'pageup' does not exist in type 'ParsedBinding[]'.
+src/keybindings/defaultBindings.ts(219,7): error TS2353: Object literal may only specify known properties, and 'escape' does not exist in type 'ParsedBinding[]'.
+src/keybindings/defaultBindings.ts(226,7): error TS2353: Object literal may only specify known properties, and 'right' does not exist in type 'ParsedBinding[]'.
+src/keybindings/defaultBindings.ts(238,7): error TS2353: Object literal may only specify known properties, and 'up' does not exist in type 'ParsedBinding[]'.
+src/keybindings/defaultBindings.ts(252,7): error TS2353: Object literal may only specify known properties, and 'up' does not exist in type 'ParsedBinding[]'.
+src/keybindings/defaultBindings.ts(275,13): error TS2322: Type '{ context: "MessageActions"; bindings: { up: "messageActions:prev"; down: "messageActions:next"; k: "messageActions:prev"; j: "messageActions:next"; 'meta+up': "messageActions:top"; 'meta+down': "messageActions:bottom"; ... 8 more ...; p: "messageActions:p"; }; }' is not assignable to type 'KeybindingBlock'.
+src/keybindings/defaultBindings.ts(302,7): error TS2353: Object literal may only specify known properties, and 'escape' does not exist in type 'ParsedBinding[]'.
+src/keybindings/defaultBindings.ts(315,7): error TS2353: Object literal may only specify known properties, and 'left' does not exist in type 'ParsedBinding[]'.
+src/keybindings/defaultBindings.ts(323,7): error TS2353: Object literal may only specify known properties, and 'up' does not exist in type 'ParsedBinding[]'.
+src/keybindings/defaultBindings.ts(338,7): error TS2353: Object literal may only specify known properties, and 'space' does not exist in type 'ParsedBinding[]'.

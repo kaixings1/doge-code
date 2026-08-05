@@ -551,6 +551,9 @@ function RuntimeView({ theme }: RuntimeViewProps): JSX.Element {
   const [scaffoldName, setScaffoldName] = useState('')
   const [showScaffold, setShowScaffold] = useState(false)
   const [scaffolding, setScaffolding] = useState(false)
+  const [exports, setExports] = useState<Array<{ name: string; size: number; modifiedAt: number }>>([])
+  const [showExports, setShowExports] = useState(false)
+  const [exportMsg, setExportMsg] = useState<string | null>(null)
 
   const refresh = useCallback(async () => {
     const api = window.dogeAPI as Record<string, any>
@@ -560,12 +563,45 @@ function RuntimeView({ theme }: RuntimeViewProps): JSX.Element {
         setPlugins(res.plugins || [])
         setCommands(res.commands || [])
       }
+      const expRes = await api?.pluginListExports?.()
+      if (expRes?.success && expRes.exports) setExports(expRes.exports)
     } catch (e) {
       setError(e instanceof Error ? e.message : '加载失败')
     } finally {
       setLoading(false)
     }
   }, [])
+
+  const handleExport = useCallback(async (name: string) => {
+    try {
+      const api = window.dogeAPI as Record<string, any>
+      const res = await api?.pluginExport?.(name)
+      if (res?.success) {
+        setExportMsg(`✅ 已导出: ${res.path} (${res.fileCount} 文件)`)
+        refresh()
+      } else {
+        setExportMsg(`❌ ${res?.error || '导出失败'}`)
+      }
+    } catch (e) {
+      setExportMsg(`❌ ${e instanceof Error ? e.message : '导出失败'}`)
+    }
+  }, [refresh])
+
+  const handleImport = useCallback(async (exportName: string) => {
+    try {
+      const api = window.dogeAPI as Record<string, any>
+      const res = await api?.pluginImport?.(exportName)
+      if (res?.success) {
+        setExportMsg(`✅ 已导入插件: ${res.pluginName}`)
+        setShowExports(false)
+        refresh()
+      } else {
+        setExportMsg(`❌ ${res?.error || '导入失败'}`)
+      }
+    } catch (e) {
+      setExportMsg(`❌ ${e instanceof Error ? e.message : '导入失败'}`)
+    }
+  }, [refresh])
 
   useEffect(() => { refresh() }, [refresh])
 
@@ -631,6 +667,12 @@ function RuntimeView({ theme }: RuntimeViewProps): JSX.Element {
         }}>
           ✨ 新建插件
         </button>
+        <button onClick={() => { setShowExports(v => !v) }} style={{
+          padding: '4px 10px', border: `1px solid ${c.border}`, borderRadius: '3px',
+          background: showExports ? c.accentDim : c.bgPanel, color: c.accent, cursor: 'pointer', fontSize: '10px',
+        }}>
+          📦 导入 ({exports.length})
+        </button>
         {showScaffold && (
           <span style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
             <input
@@ -654,6 +696,33 @@ function RuntimeView({ theme }: RuntimeViewProps): JSX.Element {
         <span style={{ fontSize: '9px', color: c.textFaint }}>JS 插件在 vm 沙箱中执行，支持 registerCommand / registerHook / on / emit</span>
       </div>
 
+      {/* 导入列表 */}
+      {showExports && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', maxHeight: '110px', overflowY: 'auto', border: `1px solid ${c.borderSubtle}`, borderRadius: '3px', padding: '4px' }}>
+          <div style={{ fontSize: '9px', color: c.textMuted }}>本地插件包（.doge/exports/）</div>
+          {exports.length === 0 ? (
+            <div style={{ fontSize: '9px', color: c.textFaint, padding: '3px' }}>暂无导出包。先在运行时 Tab 中点「📦 导出」。</div>
+          ) : exports.map(exp => (
+            <div key={exp.name} onClick={() => handleImport(exp.name)} style={{
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              padding: '3px 6px', border: `1px solid ${c.borderSubtle}`, borderRadius: '2px',
+              background: c.bgPanel, cursor: 'pointer',
+            }}>
+              <span style={{ fontSize: '10px', color: c.text, fontWeight: 500 }}>{exp.name}</span>
+              <span style={{ fontSize: '9px', color: c.textFaint }}>{(exp.size / 1024).toFixed(1)} KB</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* 导出/导入消息 */}
+      {exportMsg && (
+        <div style={{ padding: '5px 8px', background: c.codeBg, borderRadius: '3px', fontSize: '10px', color: c.text }}>
+          {exportMsg}
+          <span style={{ marginLeft: '8px', cursor: 'pointer' }} onClick={() => setExportMsg(null)}>✕</span>
+        </div>
+      )}
+
       {error && <div style={{ padding: '5px 8px', background: c.errorBg, color: c.errorText, borderRadius: '3px', fontSize: '10px' }}>{error}</div>}
 
       {loading ? (
@@ -673,6 +742,12 @@ function RuntimeView({ theme }: RuntimeViewProps): JSX.Element {
                 </span>
                 <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
                   <span style={{ fontSize: '9px', color: c.textFaint }}>⚡{p.commandCount} 命令 · 🔗{p.hookCount} hooks</span>
+                  <button onClick={() => handleExport(p.name)} title="导出为 .dogeplugin 包" style={{
+                    padding: '1px 6px', border: `1px solid ${c.border}`, borderRadius: '2px',
+                    background: 'transparent', color: c.textMuted, cursor: 'pointer', fontSize: '9px',
+                  }}>
+                    📦 导出
+                  </button>
                   <button onClick={() => toggleWatch(p.name)} style={{
                     padding: '1px 6px', border: `1px solid ${watching.has(p.name) ? '#10b981' : c.border}`, borderRadius: '2px',
                     background: watching.has(p.name) ? 'rgba(16,185,129,0.15)' : 'transparent',

@@ -1,0 +1,6 @@
+src/remote/RemoteSessionManager.ts(145,33): error TS2345: Argument of type 'SDKControlCancelRequest | SDKControlRequest' is not assignable to parameter of type 'SDKControlRequest'.
+src/remote/RemoteSessionManager.ts(152,65): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/remote/RemoteSessionManager.ts(156,45): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/remote/RemoteSessionManager.ts(158,9): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/remote/RemoteSessionManager.ts(186,54): error TS2345: Argument of type '{ [key: string]: unknown; subtype: string; }' is not assignable to parameter of type 'SDKControlPermissionRequest'.
+src/remote/RemoteSessionManager.ts(187,42): error TS2345: Argument of type '{ [key: string]: unknown; subtype: string; }' is not assignable to parameter of type 'SDKControlPermissionRequest'.

@@ -1,0 +1,9 @@
+src/components/MessageRow.tsx(85,35): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/components/MessageRow.tsx(298,25): error TS2339: Property 'some' does not exist on type 'unknown'.
+src/components/MessageRow.tsx(303,7): error TS2367: This comparison appears to be unintentional because the types '"progress" | "user" | "assistant" | "system" | "tool_use_summary" | "attachment" | "hook_result" | "tombstone"' and '"collapsed_read_search"' have no overlap.
+src/components/MessageRow.tsx(307,34): error TS2345: Argument of type 'AttachmentMessage | UserMessage | AssistantMessage | SystemMessage | HookResultMessage | ToolUseSummaryMessage | TombstoneMessage | ProgressMessage<...>' is not assignable to parameter of type 'NormalizedMessage'.
+src/components/MessageRow.tsx(317,25): error TS2339: Property 'every' does not exist on type 'unknown'.
+src/components/MessageRow.tsx(322,7): error TS2367: This comparison appears to be unintentional because the types '"progress" | "user" | "assistant" | "system" | "tool_use_summary" | "attachment" | "hook_result" | "tombstone"' and '"collapsed_read_search"' have no overlap.
+src/components/MessageRow.tsx(332,34): error TS2345: Argument of type 'AttachmentMessage | UserMessage | AssistantMessage | SystemMessage | HookResultMessage | ToolUseSummaryMessage | TombstoneMessage | ProgressMessage<...>' is not assignable to parameter of type 'NormalizedMessage'.
+src/components/MessageRow.tsx(353,7): error TS2367: This comparison appears to be unintentional because the types '"progress" | "user" | "assistant" | "system" | "tool_use_summary" | "attachment" | "hook_result" | "tombstone" | "grouped_tool_use"' and '"collapsed_read_search"' have no overlap.
+src/components/MessageRow.tsx(368,83): error TS2345: Argument of type 'Message' is not assignable to parameter of type '{ type: string; message?: { content: { type: string; }[]; }; }'.

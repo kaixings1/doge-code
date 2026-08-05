@@ -1,0 +1,4 @@
+src/commands/ultraplan.tsx(57,40): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/commands/ultraplan.tsx(320,42): error TS2339: Property 'errors' does not exist on type 'RemoteAgentPreconditionResult'.
+src/commands/ultraplan.tsx(322,35): error TS2339: Property 'errors' does not exist on type 'RemoteAgentPreconditionResult'.
+src/commands/ultraplan.tsx(467,20): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.

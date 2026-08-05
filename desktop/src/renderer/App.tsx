@@ -314,6 +314,7 @@ export function App(): JSX.Element {
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
   const [debugBreakpoints, setDebugBreakpoints] = useState<Map<string, number[]>>(new Map())
   const [debugPaused, setDebugPaused] = useState<{ file: string; line: number } | null>(null)
+  const [debugSessionId, setDebugSessionId] = useState<string | null>(null)
   const [activeReviewFile, setActiveReviewFile] = useState<string | null>(null)
   const [showKanban, setShowKanban] = useState(false)
   const [showTimeTracker, setShowTimeTracker] = useState(false)
@@ -688,6 +689,21 @@ export function App(): JSX.Element {
     }
     return () => {}
   }, [])
+
+  // 行号点击：切换断点（需活跃调试会话）
+  const handleToggleBreakpoint = useCallback(async (filePath: string, line: number) => {
+    if (!debugSessionId) return
+    const normPath = filePath.replace(/\\/g, '/')
+    const existing = (debugBreakpoints.get(normPath) || []).includes(line)
+    try {
+      const api = window.dogeAPI as Record<string, any>
+      if (existing) {
+        await api?.debugRemoveBreakpoint?.({ sessionId: debugSessionId, file: filePath, line })
+      } else {
+        await api?.debugSetBreakpoint?.({ sessionId: debugSessionId, file: filePath, line })
+      }
+    } catch { /* ignore */ }
+  }, [debugSessionId, debugBreakpoints])
 
   const runSearch = useCallback(() => {
     if (!activePreviewFile || !searchQuery) { setSearchResults([]); setCurrentResultIndex(-1); return }
@@ -2258,10 +2274,16 @@ export function App(): JSX.Element {
                                   const isBp = (debugBreakpoints.get(normPath) || []).includes(lineNo)
                                   const isPaused = debugPaused && debugPaused.file.replace(/\\/g, '/') === normPath && debugPaused.line === lineNo
                                   return (
-                                    <div key={i} style={{
-                                      height: '1.5em', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '4px',
-                                      background: isPaused ? 'rgba(245,158,11,0.25)' : isBp ? 'rgba(239,68,68,0.15)' : 'transparent',
-                                    }}>
+                                    <div
+                                      key={i}
+                                      onClick={() => handleToggleBreakpoint(activePreviewFile.path, lineNo)}
+                                      title={debugSessionId ? (isBp ? '点击删除断点' : '点击设置断点') : '启动调试会话后可点击设置断点'}
+                                      style={{
+                                        height: '1.5em', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '4px',
+                                        background: isPaused ? 'rgba(245,158,11,0.25)' : isBp ? 'rgba(239,68,68,0.15)' : 'transparent',
+                                        cursor: debugSessionId ? 'pointer' : 'default',
+                                      }}
+                                    >
                                       {isBp && <span style={{ color: '#ef4444', fontSize: '9px', flexShrink: 0 }}>●</span>}
                                       <span style={{ color: isPaused ? '#f59e0b' : c.textFaint, fontWeight: isPaused ? 700 : 400 }}>{n}</span>
                                     </div>
@@ -2613,7 +2635,7 @@ export function App(): JSX.Element {
                 map.set(key, arr)
               }
               setDebugBreakpoints(map)
-            }} />
+            }} onActiveSessionChange={(sid) => setDebugSessionId(sid)} />
           </div>
         )}
         {showCollabPanel && (

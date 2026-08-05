@@ -1,0 +1,6 @@
+src/services/tips/tipRegistry.ts(82,33): error TS2339: Property 'size' does not exist on type 'unknown'.
+src/services/tips/tipRegistry.ts(83,43): error TS2339: Property 'has' does not exist on type 'unknown'.
+src/services/tips/tipRegistry.ts(88,33): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'FileStateCache'.
+src/services/tips/tipRegistry.ts(681,56): error TS2349: This expression is not callable.
+src/services/tips/tipRegistry.ts(684,18): error TS2365: Operator '>=' cannot be applied to types 'number' and 'unknown'.
+src/services/tips/tipRegistry.ts(684,44): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.

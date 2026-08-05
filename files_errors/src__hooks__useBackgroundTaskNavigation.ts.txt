@@ -1,0 +1,7 @@
+src/hooks/useBackgroundTaskNavigation.ts(31,52): error TS2345: Argument of type '{ [taskId: string]: TaskState; }' is not assignable to parameter of type 'Record<string, TaskStateBase>'.
+src/hooks/useBackgroundTaskNavigation.ts(77,51): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Record<string, TaskStateBase>'.
+src/hooks/useBackgroundTaskNavigation.ts(94,58): error TS2345: Argument of type '{ [taskId: string]: TaskState; }' is not assignable to parameter of type 'Record<string, TaskStateBase>'.
+src/hooks/useBackgroundTaskNavigation.ts(141,32): error TS2538: Type 'unknown' cannot be used as an index type.
+src/hooks/useBackgroundTaskNavigation.ts(155,28): error TS2538: Type 'unknown' cannot be used as an index type.
+src/hooks/useBackgroundTaskNavigation.ts(210,18): error TS2365: Operator '>=' cannot be applied to types 'unknown' and 'number'.
+src/hooks/useBackgroundTaskNavigation.ts(231,7): error TS2365: Operator '>=' cannot be applied to types 'unknown' and 'number'.

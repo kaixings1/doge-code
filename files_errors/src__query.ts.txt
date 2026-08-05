@@ -1,0 +1,41 @@
+src/query.ts(106,15): error TS2305: Module '"./query/transitions.js"' has no exported member 'Terminal'.
+src/query.ts(106,25): error TS2305: Module '"./query/transitions.js"' has no exported member 'Continue'.
+src/query.ts(119,8): error TS2307: Cannot find module './services/compact/truncateContext.js' or its corresponding type declarations.
+src/query.ts(123,8): error TS2307: Cannot find module './utils/truncateRecovery.js' or its corresponding type declarations.
+src/query.ts(142,60): error TS2339: Property 'filter' does not exist on type 'AssistantMessageContent'.
+src/query.ts(157,9): error TS2322: Type 'string' is not assignable to type '`${string}-${string}-${string}-${string}-${string}`'.
+src/query.ts(345,49): error TS2339: Property 'startSkillDiscoveryPrefetch' does not exist on type 'typeof import("D:/doge-code/src/services/skillSearch/prefetch")'.
+src/query.ts(409,36): error TS2339: Property 'tokensFreed' does not exist on type '{ messages: Message[]; changed: boolean; }'.
+src/query.ts(410,22): error TS2339: Property 'boundaryMessage' does not exist on type '{ messages: Message[]; changed: boolean; }'.
+src/query.ts(411,26): error TS2339: Property 'boundaryMessage' does not exist on type '{ messages: Message[]; changed: boolean; }'.
+src/query.ts(431,9): error TS2554: Expected 1 arguments, but got 3.
+src/query.ts(563,24): error TS2339: Property 'isReactiveCompactEnabled' does not exist on type 'typeof import("D:/doge-code/src/services/compact/reactiveCompact")'.
+src/query.ts(569,26): error TS2339: Property 'isReactiveCompactEnabled' does not exist on type 'typeof import("D:/doge-code/src/services/compact/reactiveCompact")'.
+src/query.ts(648,84): error TS2339: Property 'map' does not exist on type 'AssistantMessageContent'.
+src/query.ts(673,101): error TS2339: Property 'content' does not exist on type 'unknown'.
+src/query.ts(674,88): error TS2339: Property 'content' does not exist on type 'unknown'.
+src/query.ts(675,57): error TS2339: Property 'content' does not exist on type 'unknown'.
+src/query.ts(676,51): error TS2339: Property 'content' does not exist on type 'unknown'.
+src/query.ts(677,47): error TS2339: Property 'content' does not exist on type 'unknown'.
+src/query.ts(696,61): error TS2339: Property 'content' does not exist on type 'unknown'.
+src/query.ts(708,30): error TS2698: Spread types may only be created from object types.
+src/query.ts(716,19): error TS2554: Expected 0 arguments, but got 3.
+src/query.ts(724,34): error TS2339: Property 'isWithheldPromptTooLong' does not exist on type 'typeof import("D:/doge-code/src/services/compact/reactiveCompact")'.
+src/query.ts(729,32): error TS2339: Property 'isWithheldMediaSizeError' does not exist on type 'typeof import("D:/doge-code/src/services/compact/reactiveCompact")'.
+src/query.ts(740,101): error TS2339: Property 'content' does not exist on type 'unknown'.
+src/query.ts(741,89): error TS2339: Property 'content' does not exist on type 'unknown'.
+src/query.ts(742,38): error TS2345: Argument of type 'AssistantMessage | StreamEvent' is not assignable to parameter of type 'AssistantMessage'.
+src/query.ts(744,56): error TS2339: Property 'content' does not exist on type 'unknown'.
+src/query.ts(753,91): error TS2339: Property 'content' does not exist on type 'unknown'.
+src/query.ts(762,60): error TS2345: Argument of type 'AssistantMessage | StreamEvent' is not assignable to parameter of type 'AssistantMessage'.
+src/query.ts(865,29): error TS2339: Property 'filter' does not exist on type 'AssistantMessageContent'.
+src/query.ts(976,26): error TS2339: Property 'isWithheldMediaSizeError' does not exist on type 'typeof import("D:/doge-code/src/services/compact/reactiveCompact")'.
+src/query.ts(985,13): error TS2554: Expected 1 arguments, but got 2.
+src/query.ts(987,23): error TS2339: Property 'committed' does not exist on type 'Message[]'.
+src/query.ts(990,33): error TS2339: Property 'messages' does not exist on type 'Message[]'.
+src/query.ts(993,36): error TS2339: Property 'committed' does not exist on type 'Message[]'.
+src/query.ts(1001,49): error TS2551: Property 'tryReactiveCompact' does not exist on type 'typeof import("D:/doge-code/src/services/compact/reactiveCompact")'. Did you mean 'runReactiveCompact'?
+src/query.ts(1244,65): error TS2339: Property 'filter' does not exist on type 'AssistantMessageContent'.
+src/query.ts(1404,29): error TS2339: Property 'collectSkillDiscoveryPrefetch' does not exist on type 'typeof import("D:/doge-code/src/services/skillSearch/prefetch")'.
+src/query.ts(1474,28): error TS2339: Property 'shouldGenerateTaskSummary' does not exist on type 'typeof import("D:/doge-code/src/utils/taskSummary")'.
+src/query.ts(1477,28): error TS2339: Property 'maybeGenerateTaskSummary' does not exist on type 'typeof import("D:/doge-code/src/utils/taskSummary")'.

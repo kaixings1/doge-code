@@ -1,0 +1,2 @@
+src/commands/htaccess/index.ts(224,14): error TS2322: Type '(args: string) => Promise<string | { type: "text"; value: string; }>' is not assignable to type 'LocalCommandCall'.
+src/commands/htaccess/index.ts(318,66): error TS2339: Property 'call' does not exist on type 'Command'.

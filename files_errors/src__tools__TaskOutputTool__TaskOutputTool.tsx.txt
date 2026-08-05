@@ -1,0 +1,7 @@
+src/tools/TaskOutputTool/TaskOutputTool.tsx(70,36): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/tools/TaskOutputTool/TaskOutputTool.tsx(73,34): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/tools/TaskOutputTool/TaskOutputTool.tsx(76,5): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/tools/TaskOutputTool/TaskOutputTool.tsx(77,5): error TS2322: Type 'unknown' is not assignable to type 'TaskType'.
+src/tools/TaskOutputTool/TaskOutputTool.tsx(78,5): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/tools/TaskOutputTool/TaskOutputTool.tsx(79,5): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/tools/TaskOutputTool/TaskOutputTool.tsx(164,12): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.

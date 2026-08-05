@@ -1,0 +1,1 @@
+src/commands/pr-review/index.ts(167,66): error TS2339: Property 'call' does not exist on type 'Command'.

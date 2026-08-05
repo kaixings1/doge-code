@@ -1,0 +1,1 @@
+src/commands/graphql/index.ts(8,15): error TS2322: Type 'Promise<typeof import("D:/doge-code/src/commands/graphql/graphql")>' is not assignable to type 'Promise<LocalCommandModule>'.

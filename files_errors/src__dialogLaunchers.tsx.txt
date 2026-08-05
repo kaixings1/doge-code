@@ -1,0 +1,2 @@
+src/dialogLaunchers.tsx(10,15): error TS2724: '"./assistant/sessionDiscovery.js"' has no exported member named 'AssistantSession'. Did you mean 'getAssistantSession'?
+src/dialogLaunchers.tsx(64,132): error TS2322: Type '{ sessions: AssistantSession[]; onSelect: (id: string) => void; onCancel: () => void; }' is not assignable to type 'IntrinsicAttributes & { sessions: AssistantSession[]; onSelect: (sessionId: string) => void; onClose: () => void; title?: string; }'.

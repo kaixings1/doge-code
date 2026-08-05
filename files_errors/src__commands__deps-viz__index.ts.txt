@@ -1,0 +1,1 @@
+src/commands/deps-viz/index.ts(21,3): error TS2322: Type '(args: string) => string' is not assignable to type '(args: string, context: ToolUseContext) => Promise<ContentBlockParam[]>'.

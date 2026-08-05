@@ -1,0 +1,3 @@
+src/components/agents/ToolSelector.tsx(61,42): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/components/agents/ToolSelector.tsx(254,70): error TS2339: Property 'name' does not exist on type 'unknown'.
+src/components/agents/ToolSelector.tsx(324,74): error TS2339: Property 'name' does not exist on type 'unknown'.

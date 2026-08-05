@@ -1,0 +1,5 @@
+src/commands/commit-push-pr.ts(308,15): error TS2339: Property 'updateProgress' does not exist on type 'LocalJSXCommandContext'.
+src/commands/commit-push-pr.ts(326,15): error TS2339: Property 'updateProgress' does not exist on type 'LocalJSXCommandContext'.
+src/commands/commit-push-pr.ts(338,15): error TS2339: Property 'updateProgress' does not exist on type 'LocalJSXCommandContext'.
+src/commands/commit-push-pr.ts(361,15): error TS2339: Property 'updateProgress' does not exist on type 'LocalJSXCommandContext'.
+src/commands/commit-push-pr.ts(384,15): error TS2339: Property 'updateProgress' does not exist on type 'LocalJSXCommandContext'.

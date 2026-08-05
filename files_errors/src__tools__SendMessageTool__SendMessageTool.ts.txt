@@ -1,0 +1,6 @@
+src/tools/SendMessageTool/SendMessageTool.ts(355,55): error TS2345: Argument of type '{ [taskId: string]: TaskState; }' is not assignable to parameter of type 'Record<string, TaskStateBase>'.
+src/tools/SendMessageTool/SendMessageTool.ts(370,55): error TS2345: Argument of type '{ [taskId: string]: TaskState; }' is not assignable to parameter of type 'Record<string, TaskStateBase>'.
+src/tools/SendMessageTool/SendMessageTool.ts(758,19): error TS2339: Property 'postInterClaudeMessage' does not exist on type 'typeof import("D:/doge-code/src/bridge/peerSessions")'.
+src/tools/SendMessageTool/SendMessageTool.ts(777,19): error TS2339: Property 'sendToUdsSocket' does not exist on type 'typeof import("D:/doge-code/src/utils/udsClient")'.
+src/tools/SendMessageTool/SendMessageTool.ts(829,17): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/tools/SendMessageTool/SendMessageTool.ts(856,17): error TS2322: Type 'unknown' is not assignable to type 'string'.

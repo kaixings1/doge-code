@@ -1,0 +1,6 @@
+src/services/api/openaiCompat.ts(534,21): error TS2352: Conversion of type '{ type: "message_start"; message: Record<string, unknown>; }' to type 'BetaRawMessageStreamEvent' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+src/services/api/openaiCompat.ts(552,125): error TS2339: Property 'content_block' does not exist on type 'BetaRawMessageStreamEvent'.
+src/services/api/openaiCompat.ts(604,121): error TS2339: Property 'delta' does not exist on type 'BetaRawMessageStreamEvent'.
+src/services/api/openaiCompat.ts(624,79): error TS2304: Cannot find name 'MessageDelta'.
+src/services/api/openaiCompat.ts(797,15): error TS2322: Type 'Record<string, unknown>' is not assignable to type 'BetaRawMessageStreamEvent'.
+src/services/api/openaiCompat.ts(801,14): error TS2352: Conversion of type 'Record<string, unknown>' to type 'BetaMessage' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.

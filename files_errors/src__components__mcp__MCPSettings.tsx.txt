@@ -1,0 +1,14 @@
+src/components/mcp/MCPSettings.tsx(28,26): error TS2339: Property 'clients' does not exist on type 'unknown'.
+src/components/mcp/MCPSettings.tsx(48,33): error TS2339: Property 'allAgents' does not exist on type 'unknown'.
+src/components/mcp/MCPSettings.tsx(49,50): error TS2339: Property 'allAgents' does not exist on type 'unknown'.
+src/components/mcp/MCPSettings.tsx(50,29): error TS2339: Property 'allAgents' does not exist on type 'unknown'.
+src/components/mcp/MCPSettings.tsx(67,48): error TS2339: Property 'tools' does not exist on type 'unknown'.
+src/components/mcp/MCPSettings.tsx(81,99): error TS2339: Property 'tools' does not exist on type 'unknown'.
+src/components/mcp/MCPSettings.tsx(132,32): error TS2339: Property 'tools' does not exist on type 'unknown'.
+src/components/mcp/MCPSettings.tsx(134,16): error TS2339: Property 'tools' does not exist on type 'unknown'.
+src/components/mcp/MCPSettings.tsx(201,27): error TS2339: Property 'tools' does not exist on type 'unknown'.
+src/components/mcp/MCPSettings.tsx(202,40): error TS2339: Property 'tools' does not exist on type 'unknown'.
+src/components/mcp/MCPSettings.tsx(203,23): error TS2339: Property 'tools' does not exist on type 'unknown'.
+src/components/mcp/MCPSettings.tsx(321,27): error TS2339: Property 'tools' does not exist on type 'unknown'.
+src/components/mcp/MCPSettings.tsx(322,40): error TS2339: Property 'tools' does not exist on type 'unknown'.
+src/components/mcp/MCPSettings.tsx(323,23): error TS2339: Property 'tools' does not exist on type 'unknown'.

@@ -1,0 +1,17 @@
+src/utils/status-line.ts(132,17): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'number'.
+src/utils/status-line.ts(133,18): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'number'.
+src/utils/status-line.ts(134,7): error TS2365: Operator '>=' cannot be applied to types 'unknown' and 'number'.
+src/utils/status-line.ts(134,33): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/utils/status-line.ts(135,7): error TS2365: Operator '>=' cannot be applied to types 'unknown' and 'number'.
+src/utils/status-line.ts(135,32): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/utils/status-line.ts(136,7): error TS2365: Operator '>=' cannot be applied to types 'unknown' and 'number'.
+src/utils/status-line.ts(136,28): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/utils/status-line.ts(137,7): error TS2365: Operator '>=' cannot be applied to types 'unknown' and 'number'.
+src/utils/status-line.ts(137,27): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/utils/status-line.ts(143,17): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'number'.
+src/utils/status-line.ts(143,27): error TS2365: Operator '<' cannot be applied to types 'unknown' and 'number'.
+src/utils/status-line.ts(144,7): error TS2365: Operator '>=' cannot be applied to types 'unknown' and 'number'.
+src/utils/status-line.ts(144,39): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/utils/status-line.ts(145,7): error TS2365: Operator '>=' cannot be applied to types 'unknown' and 'number'.
+src/utils/status-line.ts(145,35): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/utils/status-line.ts(146,11): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.

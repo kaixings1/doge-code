@@ -1,0 +1,24 @@
+src/services/oauth/client.ts(27,3): error TS2305: Module '"./types.js"' has no exported member 'OAuthTokenExchangeResponse'.
+src/services/oauth/client.ts(29,3): error TS2305: Module '"./types.js"' has no exported member 'RateLimitTier'.
+src/services/oauth/client.ts(31,3): error TS2305: Module '"./types.js"' has no exported member 'UserRolesResponse'.
+src/services/oauth/client.ts(366,42): error TS2339: Property 'organization_type' does not exist on type 'unknown'.
+src/services/oauth/client.ts(399,43): error TS2339: Property 'rate_limit_tier' does not exist on type 'unknown'.
+src/services/oauth/client.ts(401,30): error TS2339: Property 'has_extra_usage_enabled' does not exist on type 'unknown'.
+src/services/oauth/client.ts(402,41): error TS2339: Property 'billing_type' does not exist on type 'unknown'.
+src/services/oauth/client.ts(405,25): error TS2339: Property 'display_name' does not exist on type 'unknown'.
+src/services/oauth/client.ts(406,42): error TS2339: Property 'display_name' does not exist on type 'unknown'.
+src/services/oauth/client.ts(409,25): error TS2339: Property 'created_at' does not exist on type 'unknown'.
+src/services/oauth/client.ts(410,47): error TS2339: Property 'created_at' does not exist on type 'unknown'.
+src/services/oauth/client.ts(413,30): error TS2339: Property 'subscription_created_at' does not exist on type 'unknown'.
+src/services/oauth/client.ts(414,57): error TS2339: Property 'subscription_created_at' does not exist on type 'unknown'.
+src/services/oauth/client.ts(439,33): error TS2339: Property 'organizationUuid' does not exist on type 'unknown'.
+src/services/oauth/client.ts(440,28): error TS2339: Property 'organization' does not exist on type 'unknown'.
+src/services/oauth/client.ts(451,49): error TS2339: Property 'uuid' does not exist on type 'unknown'.
+src/services/oauth/client.ts(511,38): error TS2339: Property 'uuid' does not exist on type 'unknown'.
+src/services/oauth/client.ts(512,39): error TS2339: Property 'email' does not exist on type 'unknown'.
+src/services/oauth/client.ts(513,48): error TS2339: Property 'uuid' does not exist on type 'unknown'.
+src/services/oauth/client.ts(514,38): error TS2339: Property 'display_name' does not exist on type 'unknown'.
+src/services/oauth/client.ts(516,32): error TS2339: Property 'has_extra_usage_enabled' does not exist on type 'unknown'.
+src/services/oauth/client.ts(517,43): error TS2339: Property 'billing_type' does not exist on type 'unknown'.
+src/services/oauth/client.ts(518,43): error TS2339: Property 'created_at' does not exist on type 'unknown'.
+src/services/oauth/client.ts(520,32): error TS2339: Property 'subscription_created_at' does not exist on type 'unknown'.

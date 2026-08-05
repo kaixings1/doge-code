@@ -1,0 +1,7 @@
+src/types/message.ts(7,15): error TS2614: Module '"@anthropic-ai/sdk"' has no exported member 'ContentBlock'. Did you mean to use 'import ContentBlock from "@anthropic-ai/sdk"' instead?
+src/types/message.ts(7,29): error TS2614: Module '"@anthropic-ai/sdk"' has no exported member 'ContentBlockParam'. Did you mean to use 'import ContentBlockParam from "@anthropic-ai/sdk"' instead?
+src/types/message.ts(38,16): error TS2304: Cannot find name 'Attachment'.
+src/types/message.ts(50,29): error TS2304: Cannot find name 'UUID'.
+src/types/message.ts(139,17): error TS2304: Cannot find name 'UUID'.
+src/types/message.ts(140,17): error TS2304: Cannot find name 'UUID'.
+src/types/message.ts(141,20): error TS2304: Cannot find name 'UUID'.

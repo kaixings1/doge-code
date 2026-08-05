@@ -1,0 +1,5 @@
+src/commands/diagram/index.ts(348,14): error TS2322: Type '(args: string) => Promise<{ type: "text"; value: string; } | { type: "json"; value: string; }>' is not assignable to type 'LocalCommandCall'.
+src/commands/diagram/index.ts(410,37): error TS2304: Cannot find name 'target'.
+src/commands/diagram/index.ts(413,40): error TS2304: Cannot find name 'target'.
+src/commands/diagram/index.ts(470,3): error TS2353: Object literal may only specify known properties, and 'arguments' does not exist in type 'CommandBase & LocalCommand'.
+src/commands/diagram/index.ts(503,66): error TS2339: Property 'call' does not exist on type 'Command'.

@@ -1428,6 +1428,56 @@ ipcMain.handle('doge:agent-workflow-delete', async (_event, workflowId: string) 
   }
 })
 
+// ─── 编排结果导出 Markdown 报告 ───
+
+ipcMain.handle('doge:agent-export-report', async (_event, params: { task: string; mode: string; roundsUsed?: number; outputs: Array<{ name: string; roleId: string; content: string; status: string; durationMs: number; error?: string }> }) => {
+  try {
+    const reportsDir = path.join(projectRoot, '.doge', 'reports')
+    if (!fs.existsSync(reportsDir)) fs.mkdirSync(reportsDir, { recursive: true })
+
+    const now = new Date()
+    const ts = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`
+    const outPath = path.join(reportsDir, `agent-report-${ts}.md`)
+
+    const modeLabel = params.mode === 'discuss' ? '多轮讨论' : '并行编排'
+    const lines: string[] = []
+    lines.push(`# 🤖 Agent 军团编排报告`)
+    lines.push('')
+    lines.push(`- **时间**: ${now.toLocaleString('zh-CN')}`)
+    lines.push(`- **模式**: ${modeLabel}${params.roundsUsed ? `（${params.roundsUsed} 轮）` : ''}`)
+    lines.push(`- **Agent 数**: ${params.outputs.length}`)
+    lines.push('')
+    lines.push(`## 📋 任务`)
+    lines.push('')
+    lines.push(params.task || '(空)')
+    lines.push('')
+    lines.push(`## 📊 结果`)
+    lines.push('')
+    for (const out of params.outputs) {
+      lines.push(`### ${out.name} \`${out.roleId}\``)
+      lines.push('')
+      const statusLabel = out.status === 'completed' ? '✅ 完成' : out.status === 'failed' ? '❌ 失败' : out.status === 'timeout' ? '⏱ 超时' : '⚠️ 取消'
+      lines.push(`- **状态**: ${statusLabel}（${(out.durationMs / 1000).toFixed(1)}s）`)
+      lines.push('')
+      if (out.error) {
+        lines.push(`> ⚠️ ${out.error}`)
+        lines.push('')
+      } else {
+        lines.push(out.content.trim())
+        lines.push('')
+      }
+      lines.push('---')
+      lines.push('')
+    }
+    lines.push(`*报告由 Doge Code 桌面版自动生成*`)
+
+    fs.writeFileSync(outPath, lines.join('\n'), 'utf-8')
+    return { success: true, path: outPath }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) }
+  }
+})
+
 ipcMain.handle('doge:get-git-diff', async (_event, cwd: string, filePath: string) => {
   try {
     const { execSync } = await import('node:child_process')
@@ -4097,6 +4147,116 @@ module.exports = (ctx) => {
     if (loaded) pluginRuntime.watch(name)
 
     return { success: true, path: dir, entry: path.join(dir, 'index.js'), commands: ['hello'] }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) }
+  }
+})
+
+// ─── 插件导出/导入协议 ───
+
+function getPluginExportsDir(): string {
+  const dir = path.join(projectRoot, '.doge', 'exports')
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
+  return dir
+}
+
+// 读取插件目录所有文件（相对路径 → base64）
+function readPluginFiles(pluginDir: string): Record<string, string> {
+  const files: Record<string, string> = {}
+  const walk = (dir: string, rel: string): void => {
+    const entries = fs.readdirSync(dir, { withFileTypes: true })
+    for (const entry of entries) {
+      if (entry.name === 'node_modules') continue
+      const full = path.join(dir, entry.name)
+      const relPath = rel ? `${rel}/${entry.name}` : entry.name
+      if (entry.isDirectory()) walk(full, relPath)
+      else files[relPath] = fs.readFileSync(full).toString('base64')
+    }
+  }
+  walk(pluginDir, '')
+  return files
+}
+
+// 还原插件包文件到目录
+function writePluginFiles(pluginDir: string, files: Record<string, string>): void {
+  fs.mkdirSync(pluginDir, { recursive: true })
+  for (const [relPath, b64] of Object.entries(files)) {
+    // 路径安全：拒绝 ../ 和绝对路径
+    const norm = relPath.replace(/\\/g, '/')
+    if (norm.startsWith('../') || path.isAbsolute(norm) || norm.includes('/../')) continue
+    const target = path.join(pluginDir, ...norm.split('/'))
+    if (!target.startsWith(pluginDir + path.sep)) continue
+    fs.mkdirSync(path.dirname(target), { recursive: true })
+    fs.writeFileSync(target, Buffer.from(b64, 'base64'))
+  }
+}
+
+ipcMain.handle('doge:plugin-export', async (_event, pluginName: string) => {
+  try {
+    const pluginDirs = [
+      path.join(projectRoot, '.doge', 'plugins'),
+      path.join(projectRoot, 'plugins'),
+    ]
+    for (const dir of pluginDirs) {
+      const pluginDir = path.join(dir, pluginName)
+      if (fs.existsSync(pluginDir)) {
+        // 读取 manifest 获取版本
+        let manifest: Record<string, unknown> = { name: pluginName }
+        try {
+          const mp = path.join(pluginDir, 'plugin.json')
+          if (fs.existsSync(mp)) manifest = JSON.parse(fs.readFileSync(mp, 'utf-8'))
+        } catch { /* ignore */ }
+
+        const pkg = {
+          format: 'doge-plugin',
+          version: 1,
+          manifest,
+          files: readPluginFiles(pluginDir),
+          exportedAt: Date.now(),
+        }
+        const safeName = pluginName.replace(/[^a-zA-Z0-9_-]/g, '_')
+        const outPath = path.join(getPluginExportsDir(), `${safeName}.dogeplugin`)
+        fs.writeFileSync(outPath, JSON.stringify(pkg, null, 2), 'utf-8')
+        return { success: true, path: outPath, fileCount: Object.keys(pkg.files).length, size: fs.statSync(outPath).size }
+      }
+    }
+    return { success: false, error: `插件 "${pluginName}" 不存在` }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e) }
+  }
+})
+
+ipcMain.handle('doge:plugin-list-exports', async () => {
+  try {
+    const dir = getPluginExportsDir()
+    const files = fs.readdirSync(dir).filter(f => f.endsWith('.dogeplugin'))
+    const list = files.map(f => {
+      try {
+        const stat = fs.statSync(path.join(dir, f))
+        return { name: f.replace(/\.dogeplugin$/, ''), path: path.join(dir, f), size: stat.size, modifiedAt: stat.mtimeMs }
+      } catch { return null }
+    }).filter((x): x is { name: string; path: string; size: number; modifiedAt: number } => x !== null)
+    return { success: true, exports: list }
+  } catch (e: unknown) {
+    return { success: false, error: e instanceof Error ? e.message : String(e), exports: [] }
+  }
+})
+
+ipcMain.handle('doge:plugin-import', async (_event, exportName: string) => {
+  try {
+    const pkgPath = path.join(getPluginExportsDir(), `${exportName.replace(/[^a-zA-Z0-9_-]/g, '_')}.dogeplugin`)
+    if (!fs.existsSync(pkgPath)) return { success: false, error: '导出包不存在' }
+    const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
+    if (pkg.format !== 'doge-plugin' || !pkg.manifest?.name || !pkg.files) {
+      return { success: false, error: '无效的插件包格式' }
+    }
+    const pluginName = String(pkg.manifest.name)
+    const destDir = path.join(projectRoot, '.doge', 'plugins', pluginName)
+    writePluginFiles(destDir, pkg.files)
+    // 加载到运行时 + 热加载
+    const loaded = pluginRuntime.loadPlugin(destDir)
+    if (loaded) pluginRuntime.watch(pluginName)
+    return { success: true, pluginName, path: destDir }
   } catch (e: unknown) {
     return { success: false, error: e instanceof Error ? e.message : String(e) }
   }

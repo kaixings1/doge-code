@@ -8,6 +8,7 @@ import { createDisabledBypassPermissionsContext, isBypassPermissionsModeDisabled
 import { applySettingsChange } from '../utils/settings/applySettingsChange.js';
 import type { SettingSource } from '../utils/settings/constants.js';
 import { createStore } from './store.js';
+import type { AppState } from './AppStateStore.js';
 
 // DCE：语音上下文仅限 ant 内部。外部构建使用透传。
  
@@ -137,7 +138,7 @@ function useAppStore(): AppStateStore {
  * const { text, promptId } = useAppState(s => s.promptSuggestion) // 好
  * ```
  */
-export function useAppState(selector) {
+export function useAppState<T>(selector: (state: AppState) => T): T {
   const $ = _c(3);
   const store = useAppStore();
   let t0;

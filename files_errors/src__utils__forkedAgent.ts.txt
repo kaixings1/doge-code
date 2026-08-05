@@ -1,0 +1,9 @@
+src/utils/forkedAgent.ts(245,5): error TS2345: Argument of type 'AssistantMessageContent' is not assignable to parameter of type 'readonly { readonly type: string; }[]'.
+src/utils/forkedAgent.ts(537,5): error TS2322: Type 'string' is not assignable to type '`${string}-${string}-${string}-${string}-${string}`'.
+src/utils/forkedAgent.ts(561,26): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/utils/forkedAgent.ts(562,25): error TS2339: Property 'usage' does not exist on type 'unknown'.
+src/utils/forkedAgent.ts(564,75): error TS2339: Property 'usage' does not exist on type 'unknown'.
+src/utils/forkedAgent.ts(595,11): error TS2322: Type 'string' is not assignable to type '`${string}-${string}-${string}-${string}-${string}`'.
+src/utils/forkedAgent.ts(671,18): error TS2339: Property 'service_tier' does not exist on type 'NonNullableUsage'.
+src/utils/forkedAgent.ts(673,18): error TS2339: Property 'cache_creation' does not exist on type 'NonNullableUsage'.
+src/utils/forkedAgent.ts(675,18): error TS2339: Property 'cache_creation' does not exist on type 'NonNullableUsage'.

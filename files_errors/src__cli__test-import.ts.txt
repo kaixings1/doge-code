@@ -1,0 +1,1 @@
+src/cli/test-import.ts(5,8): error TS2307: Cannot find module '../../services/settingsSync/index.js' or its corresponding type declarations.

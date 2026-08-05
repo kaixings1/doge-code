@@ -1,0 +1,1 @@
+src/tools/NotebookEditTool/UI.tsx(88,28): error TS2322: Type '{ code: string; filePath: string; }' is not assignable to type 'IntrinsicAttributes & object'.

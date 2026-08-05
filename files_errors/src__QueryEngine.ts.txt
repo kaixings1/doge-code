@@ -1,0 +1,38 @@
+src/QueryEngine.ts(570,70): error TS2345: Argument of type 'string' is not assignable to parameter of type '`${string}-${string}-${string}-${string}-${string}`'.
+src/QueryEngine.ts(579,52): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'CompactMetadata'.
+src/QueryEngine.ts(628,13): error TS2345: Argument of type 'string' is not assignable to parameter of type '`${string}-${string}-${string}-${string}-${string}`'.
+src/QueryEngine.ts(678,53): error TS2339: Property 'preservedSegment' does not exist on type 'unknown'.
+src/QueryEngine.ts(688,23): error TS2345: Argument of type 'UserMessage | AssistantMessage | SystemMessage | StreamEvent' is not assignable to parameter of type 'Message'.
+src/QueryEngine.ts(733,31): error TS2339: Property 'stop_reason' does not exist on type 'unknown'.
+src/QueryEngine.ts(734,46): error TS2339: Property 'stop_reason' does not exist on type 'unknown'.
+src/QueryEngine.ts(736,37): error TS2345: Argument of type 'AssistantMessage | StreamEvent' is not assignable to parameter of type 'Message'.
+src/QueryEngine.ts(737,35): error TS2345: Argument of type 'AssistantMessage | StreamEvent' is not assignable to parameter of type 'Message'.
+src/QueryEngine.ts(740,37): error TS2345: Argument of type 'StreamEvent | ProgressMessage<unknown>' is not assignable to parameter of type 'Message'.
+src/QueryEngine.ts(746,27): error TS2345: Argument of type 'StreamEvent | ProgressMessage<unknown>' is not assignable to parameter of type 'Message'.
+src/QueryEngine.ts(749,35): error TS2345: Argument of type 'StreamEvent | ProgressMessage<unknown>' is not assignable to parameter of type 'Message'.
+src/QueryEngine.ts(752,37): error TS2345: Argument of type 'UserMessage | StreamEvent' is not assignable to parameter of type 'Message'.
+src/QueryEngine.ts(753,35): error TS2345: Argument of type 'UserMessage | StreamEvent' is not assignable to parameter of type 'Message'.
+src/QueryEngine.ts(756,29): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/QueryEngine.ts(761,29): error TS2339: Property 'message' does not exist on type 'unknown'.
+src/QueryEngine.ts(764,29): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/QueryEngine.ts(767,29): error TS2339: Property 'usage' does not exist on type 'unknown'.
+src/QueryEngine.ts(772,31): error TS2339: Property 'delta' does not exist on type 'unknown'.
+src/QueryEngine.ts(773,46): error TS2339: Property 'delta' does not exist on type 'unknown'.
+src/QueryEngine.ts(776,29): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/QueryEngine.ts(799,37): error TS2345: Argument of type 'AttachmentMessage | StreamEvent' is not assignable to parameter of type 'Message'.
+src/QueryEngine.ts(802,27): error TS2345: Argument of type 'AttachmentMessage | StreamEvent' is not assignable to parameter of type 'Message'.
+src/QueryEngine.ts(873,13): error TS2345: Argument of type 'SystemMessage | StreamEvent' is not assignable to parameter of type 'Message'.
+src/QueryEngine.ts(883,37): error TS2345: Argument of type 'SystemMessage | StreamEvent' is not assignable to parameter of type 'Message'.
+src/QueryEngine.ts(905,15): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/QueryEngine.ts(906,54): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'CompactMetadata'.
+src/QueryEngine.ts(913,15): error TS2322: Type 'unknown' is not assignable to type 'number'.
+src/QueryEngine.ts(914,15): error TS2322: Type 'unknown' is not assignable to type 'number'.
+src/QueryEngine.ts(915,15): error TS2322: Type 'unknown' is not assignable to type 'number'.
+src/QueryEngine.ts(916,43): error TS2339: Property 'status' does not exist on type 'unknown'.
+src/QueryEngine.ts(917,50): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'APIError<number, Headers, Object>'.
+src/QueryEngine.ts(919,15): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/QueryEngine.ts(929,13): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/QueryEngine.ts(930,13): error TS2740: Type '{}' is missing the following properties from type 'string[]': length, pop, push, concat, and 35 more.
+src/QueryEngine.ts(932,13): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/QueryEngine.ts(1209,34): error TS2345: Argument of type '{ snipReplay?: (yielded: Message, store: Message[]) => { messages: Message[]; changed: boolean; }; cwd: string; tools: Tools; commands: Command[]; mcpClients: MCPServerConnection[]; ... 21 more ...; orphanedPermission: OrphanedPermission; }' is not assignable to parameter of type 'QueryEngineConfig'.
+src/QueryEngine.ts(1239,56): error TS2554: Expected 0 arguments, but got 1.

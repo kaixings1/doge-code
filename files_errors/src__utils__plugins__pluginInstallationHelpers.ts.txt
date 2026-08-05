@@ -1,0 +1,9 @@
+src/utils/plugins/pluginInstallationHelpers.ts(411,54): error TS2322: Type 'ResolutionResult' is not assignable to type '({ ok: false; reason: "cycle"; chain: string[]; } & { ok: false; }) | ({ ok: false; reason: "not-found"; missing: string; requiredBy: string; } & { ok: false; }) | ({ ok: false; reason: "cross-marketplace"; dependency: string; requiredBy: string; } & { ...; })'.
+src/utils/plugins/pluginInstallationHelpers.ts(528,22): error TS2339: Property 'reason' does not exist on type 'InstallCoreResult'.
+src/utils/plugins/pluginInstallationHelpers.ts(532,53): error TS2339: Property 'pluginName' does not exist on type 'InstallCoreResult'.
+src/utils/plugins/pluginInstallationHelpers.ts(537,37): error TS2339: Property 'message' does not exist on type 'InstallCoreResult'.
+src/utils/plugins/pluginInstallationHelpers.ts(542,49): error TS2339: Property 'resolution' does not exist on type 'InstallCoreResult'.
+src/utils/plugins/pluginInstallationHelpers.ts(547,34): error TS2339: Property 'pluginName' does not exist on type 'InstallCoreResult'.
+src/utils/plugins/pluginInstallationHelpers.ts(552,36): error TS2339: Property 'pluginName' does not exist on type 'InstallCoreResult'.
+src/utils/plugins/pluginInstallationHelpers.ts(552,62): error TS2339: Property 'blockedDependency' does not exist on type 'InstallCoreResult'.
+src/utils/plugins/pluginInstallationHelpers.ts(588,45): error TS2339: Property 'depNote' does not exist on type 'InstallCoreResult'.

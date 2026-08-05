@@ -1,0 +1,7 @@
+src/commands/pair/index.ts(497,32): error TS2345: Argument of type '"--focus"' is not assignable to parameter of type 'never'.
+src/commands/pair/index.ts(498,69): error TS2339: Property 'startsWith' does not exist on type 'never'.
+src/commands/pair/index.ts(499,34): error TS2345: Argument of type '"--auto-fix"' is not assignable to parameter of type 'never'.
+src/commands/pair/index.ts(502,77): error TS2322: Type '"deep"' is not assignable to type '"debug" | "review" | "coauthor"'.
+src/commands/pair/index.ts(548,12): error TS2678: Type '"deep"' is not comparable to type '"debug" | "review" | "coauthor"'.
+src/commands/pair/index.ts(599,3): error TS2353: Object literal may only specify known properties, and 'arguments' does not exist in type 'CommandBase & LocalCommand'.
+src/commands/pair/index.ts(627,66): error TS2339: Property 'call' does not exist on type 'Command'.

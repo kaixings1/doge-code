@@ -1,0 +1,2 @@
+src/commands/upgrade/upgrade.tsx(19,43): error TS2339: Property 'organization_type' does not exist on type 'unknown'.
+src/commands/upgrade/upgrade.tsx(19,104): error TS2339: Property 'rate_limit_tier' does not exist on type 'unknown'.

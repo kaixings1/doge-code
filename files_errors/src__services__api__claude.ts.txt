@@ -1,0 +1,61 @@
+src/services/api/claude.ts(50,8): error TS2305: Module '"../../types/connectorText.js"' has no exported member 'ConnectorTextDelta'.
+src/services/api/claude.ts(451,5): error TS2322: Type 'string' is not assignable to type '"low" | "medium" | "high" | "max" | "xhigh"'.
+src/services/api/claude.ts(728,7): error TS2322: Type 'AssistantMessage | StreamEvent' is not assignable to type 'AssistantMessage'.
+src/services/api/claude.ts(913,7): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/services/api/claude.ts(946,23): error TS2345: Argument of type 'BetaTextBlockParam | BetaImageBlockParam | BetaRequestDocumentBlock | BetaSearchResultBlockParam | BetaToolReferenceBlockParam' is not assignable to parameter of type 'BetaContentBlockParam'.
+src/services/api/claude.ts(969,39): error TS2345: Argument of type 'BetaTextBlockParam | BetaImageBlockParam | BetaRequestDocumentBlock | BetaSearchResultBlockParam | BetaToolReferenceBlockParam' is not assignable to parameter of type 'BetaContentBlockParam'.
+src/services/api/claude.ts(1028,21): error TS2339: Property 'baseURL' does not exist on type 'unknown'.
+src/services/api/claude.ts(1034,38): error TS2339: Property 'baseURL' does not exist on type 'unknown'.
+src/services/api/claude.ts(1035,37): error TS2339: Property 'apiKey' does not exist on type 'unknown'.
+src/services/api/claude.ts(1035,60): error TS2339: Property 'apiKey' does not exist on type 'unknown'.
+src/services/api/claude.ts(1036,39): error TS2339: Property 'model' does not exist on type 'unknown'.
+src/services/api/claude.ts(1036,61): error TS2339: Property 'model' does not exist on type 'unknown'.
+src/services/api/claude.ts(1037,42): error TS2339: Property 'provider' does not exist on type 'unknown'.
+src/services/api/claude.ts(1037,67): error TS2339: Property 'provider' does not exist on type 'unknown'.
+src/services/api/claude.ts(1039,53): error TS2339: Property 'baseURL' does not exist on type 'unknown'.
+src/services/api/claude.ts(1040,24): error TS2339: Property 'apiKey' does not exist on type 'unknown'.
+src/services/api/claude.ts(1040,72): error TS2339: Property 'apiKey' does not exist on type 'unknown'.
+src/services/api/claude.ts(1041,24): error TS2339: Property 'model' does not exist on type 'unknown'.
+src/services/api/claude.ts(1041,74): error TS2339: Property 'model' does not exist on type 'unknown'.
+src/services/api/claude.ts(1042,24): error TS2339: Property 'provider' does not exist on type 'unknown'.
+src/services/api/claude.ts(1042,97): error TS2339: Property 'provider' does not exist on type 'unknown'.
+src/services/api/claude.ts(1213,36): error TS2339: Property 'CACHE_EDITING_BETA_HEADER' does not exist on type 'typeof import("D:/doge-code/src/constants/betas")'.
+src/services/api/claude.ts(1219,145): error TS2339: Property 'supportedModels' does not exist on type '{ triggerThreshold: number; keepRecent: number; }'.
+src/services/api/claude.ts(1479,7): error TS2322: Type 'void | "low" | "high"' is not assignable to type 'EffortValue'.
+src/services/api/claude.ts(1715,9): error TS2345: Argument of type 'CacheEditsBlock' is not assignable to parameter of type 'CachedMCEditsBlock'.
+src/services/api/claude.ts(1805,3): error TS2322: Type 'AsyncGenerator<unknown, any, any>' is not assignable to type 'void'.
+src/services/api/claude.ts(1911,13): error TS2554: Expected 3 arguments, but got 4.
+src/services/api/claude.ts(2061,80): error TS2339: Property 'provider' does not exist on type 'unknown'.
+src/services/api/claude.ts(2322,15): error TS2322: Type '{ content: BetaContentBlock[]; id: string; container: BetaContainer | null; context_management: BetaContextManagementResponse | null; ... 7 more ...; usage: BetaUsage; }' is not assignable to type '{ [key: string]: unknown; id?: string; content?: AssistantMessageContent; model?: string; role?: string; stop_reason?: string; stop_sequence?: string; error?: string; errorDetails?: string; usage?: { ...; }; context_management?: unknown; }'.
+src/services/api/claude.ts(2372,68): error TS2345: Argument of type 'NonNullableUsage' is not assignable to parameter of type 'BetaUsage'.
+src/services/api/claude.ts(2375,15): error TS2345: Argument of type 'NonNullableUsage' is not assignable to parameter of type 'BetaUsage'.
+src/services/api/claude.ts(2717,9): error TS2322: Type '{ content: BetaContentBlock[]; id: string; container: BetaContainer | null; context_management: BetaContextManagementResponse | null; ... 7 more ...; usage: BetaUsage; }' is not assignable to type '{ [key: string]: unknown; id?: string; content?: AssistantMessageContent; model?: string; role?: string; stop_reason?: string; stop_sequence?: string; error?: string; errorDetails?: string; usage?: { ...; }; context_management?: unknown; }'.
+src/services/api/claude.ts(2805,11): error TS2322: Type '{ content: BetaContentBlock[]; id: string; container: BetaContainer | null; context_management: BetaContextManagementResponse | null; ... 7 more ...; usage: BetaUsage; }' is not assignable to type '{ [key: string]: unknown; id?: string; content?: AssistantMessageContent; model?: string; role?: string; stop_reason?: string; stop_sequence?: string; error?: string; errorDetails?: string; usage?: { ...; }; context_management?: unknown; }'.
+src/services/api/claude.ts(2955,42): error TS2345: Argument of type '{ [key: string]: unknown; input_tokens?: number; output_tokens?: number; output_tokens_details?: unknown; cache_creation_input_tokens?: number; cache_read_input_tokens?: number; cache_creation?: { ephemeral_1h_input_tokens?: number; ephemeral_5m_input_tokens?: number; }; service_tier?: string; }' is not assignable to parameter of type 'BetaMessageDeltaUsage'.
+src/services/api/claude.ts(2956,9): error TS2322: Type 'string' is not assignable to type 'BetaStopReason'.
+src/services/api/claude.ts(2957,62): error TS2345: Argument of type '{ [key: string]: unknown; input_tokens?: number; output_tokens?: number; output_tokens_details?: unknown; cache_creation_input_tokens?: number; cache_read_input_tokens?: number; cache_creation?: { ephemeral_1h_input_tokens?: number; ephemeral_5m_input_tokens?: number; }; service_tier?: string; }' is not assignable to parameter of type 'BetaUsage'.
+src/services/api/claude.ts(2960,11): error TS2345: Argument of type '{ [key: string]: unknown; input_tokens?: number; output_tokens?: number; output_tokens_details?: unknown; cache_creation_input_tokens?: number; cache_read_input_tokens?: number; cache_creation?: { ephemeral_1h_input_tokens?: number; ephemeral_5m_input_tokens?: number; }; service_tier?: string; }' is not assignable to parameter of type 'BetaUsage'.
+src/services/api/claude.ts(2970,9): error TS2322: Type 'string' is not assignable to type 'BetaStopReason'.
+src/services/api/claude.ts(3084,15): error TS2339: Property 'server_tool_use' does not exist on type 'Readonly<NonNullableUsage>'.
+src/services/api/claude.ts(3087,15): error TS2339: Property 'server_tool_use' does not exist on type 'Readonly<NonNullableUsage>'.
+src/services/api/claude.ts(3089,25): error TS2339: Property 'service_tier' does not exist on type 'Readonly<NonNullableUsage>'.
+src/services/api/claude.ts(3094,15): error TS2339: Property 'cache_creation' does not exist on type 'Readonly<NonNullableUsage>'.
+src/services/api/claude.ts(3097,15): error TS2339: Property 'cache_creation' does not exist on type 'Readonly<NonNullableUsage>'.
+src/services/api/claude.ts(3114,5): error TS2353: Object literal may only specify known properties, and 'inference_geo' does not exist in type 'NonNullableUsage'.
+src/services/api/claude.ts(3114,26): error TS2339: Property 'inference_geo' does not exist on type 'Readonly<NonNullableUsage>'.
+src/services/api/claude.ts(3115,47): error TS2339: Property 'iterations' does not exist on type 'Readonly<NonNullableUsage>'.
+src/services/api/claude.ts(3116,52): error TS2339: Property 'speed' does not exist on type 'Readonly<NonNullableUsage>'.
+src/services/api/claude.ts(3138,20): error TS2339: Property 'server_tool_use' does not exist on type 'Readonly<NonNullableUsage>'.
+src/services/api/claude.ts(3139,22): error TS2339: Property 'server_tool_use' does not exist on type 'Readonly<NonNullableUsage>'.
+src/services/api/claude.ts(3141,20): error TS2339: Property 'server_tool_use' does not exist on type 'Readonly<NonNullableUsage>'.
+src/services/api/claude.ts(3142,22): error TS2339: Property 'server_tool_use' does not exist on type 'Readonly<NonNullableUsage>'.
+src/services/api/claude.ts(3144,32): error TS2339: Property 'service_tier' does not exist on type 'Readonly<NonNullableUsage>'.
+src/services/api/claude.ts(3147,20): error TS2339: Property 'cache_creation' does not exist on type 'Readonly<NonNullableUsage>'.
+src/services/api/claude.ts(3148,22): error TS2339: Property 'cache_creation' does not exist on type 'Readonly<NonNullableUsage>'.
+src/services/api/claude.ts(3150,20): error TS2339: Property 'cache_creation' does not exist on type 'Readonly<NonNullableUsage>'.
+src/services/api/claude.ts(3151,22): error TS2339: Property 'cache_creation' does not exist on type 'Readonly<NonNullableUsage>'.
+src/services/api/claude.ts(3164,5): error TS2353: Object literal may only specify known properties, and 'inference_geo' does not exist in type 'NonNullableUsage'.
+src/services/api/claude.ts(3164,33): error TS2339: Property 'inference_geo' does not exist on type 'Readonly<NonNullableUsage>'.
+src/services/api/claude.ts(3165,30): error TS2339: Property 'iterations' does not exist on type 'Readonly<NonNullableUsage>'.
+src/services/api/claude.ts(3166,25): error TS2339: Property 'speed' does not exist on type 'Readonly<NonNullableUsage>'.
+src/services/api/claude.ts(3274,28): error TS2345: Argument of type 'CachedMCEditsBlock' is not assignable to parameter of type 'CacheEditsBlock'.

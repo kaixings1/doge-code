@@ -1,0 +1,1 @@
+src/commands/terminalSetup/terminalSetup.tsx(122,7): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.

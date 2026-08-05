@@ -1,0 +1,2 @@
+src/components/wizard/WizardProvider.tsx(8,44): error TS2315: Type 'WizardContextValue' is not generic.
+src/components/wizard/WizardProvider.tsx(22,35): error TS2304: Cannot find name 'T'.

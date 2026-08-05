@@ -1,0 +1,1 @@
+src/services/notifier.ts(139,11): error TS2322: Type 'PlistValue' is not assignable to type 'Record<string, unknown>'.

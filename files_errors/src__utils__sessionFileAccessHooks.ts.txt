@@ -1,0 +1,1 @@
+src/utils/sessionFileAccessHooks.ts(217,29): error TS2339: Property 'logMemoryWriteShape' does not exist on type 'typeof import("D:/doge-code/src/memdir/memoryShapeTelemetry")'.

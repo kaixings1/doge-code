@@ -1,0 +1,3 @@
+src/setup.ts(99,15): error TS2339: Property 'startUdsMessaging' does not exist on type 'typeof import("D:/doge-code/src/utils/udsMessaging")'.
+src/setup.ts(100,34): error TS2339: Property 'getDefaultUdsSocketPath' does not exist on type 'typeof import("D:/doge-code/src/utils/udsMessaging")'.
+src/setup.ts(301,9): error TS2551: Property 'initContextCollapse' does not exist on type 'typeof import("D:/doge-code/src/services/contextCollapse/index")'. Did you mean 'resetContextCollapse'?

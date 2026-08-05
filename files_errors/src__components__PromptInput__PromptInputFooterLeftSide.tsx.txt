@@ -1,0 +1,10 @@
+src/components/PromptInput/PromptInputFooterLeftSide.tsx(251,10): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/components/PromptInput/PromptInputFooterLeftSide.tsx(281,13): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/components/PromptInput/PromptInputFooterLeftSide.tsx(333,33): error TS2339: Property 'teammates' does not exist on type 'unknown'.
+src/components/PromptInput/PromptInputFooterLeftSide.tsx(334,14): error TS2339: Property 'name' does not exist on type 'unknown'.
+src/components/PromptInput/PromptInputFooterLeftSide.tsx(343,49): error TS2538: Type 'unknown' cannot be used as an index type.
+src/components/PromptInput/PromptInputFooterLeftSide.tsx(414,9): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/components/PromptInput/PromptInputFooterLeftSide.tsx(454,9): error TS2345: Argument of type 'unknown' is not assignable to parameter of type '"none" | "tasks" | "teammates"'.
+src/components/PromptInput/PromptInputFooterLeftSide.tsx(506,5): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/components/PromptInput/PromptInputFooterLeftSide.tsx(506,50): error TS2345: Argument of type 'unknown' is not assignable to parameter of type '{ [taskId: string]: TaskState; }'.
+src/components/PromptInput/PromptInputFooterLeftSide.tsx(512,71): error TS2345: Argument of type 'unknown' is not assignable to parameter of type '{ [taskId: string]: TaskState; }'.

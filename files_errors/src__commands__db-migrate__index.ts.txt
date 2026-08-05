@@ -1,0 +1,2 @@
+src/commands/db-migrate/index.ts(151,5): error TS2578: Unused '@ts-expect-error' directive.
+src/commands/db-migrate/index.ts(180,66): error TS2339: Property 'call' does not exist on type 'Command'.

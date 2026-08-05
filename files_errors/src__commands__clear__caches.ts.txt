@@ -1,0 +1,2 @@
+src/commands/clear/caches.ts(97,10): error TS2339: Property 'clearSessionsWithTungstenUsage' does not exist on type 'typeof import("D:/doge-code/src/tools/TungstenTool/TungstenTool")'.
+src/commands/clear/caches.ts(97,42): error TS2339: Property 'resetInitializationState' does not exist on type 'typeof import("D:/doge-code/src/tools/TungstenTool/TungstenTool")'.

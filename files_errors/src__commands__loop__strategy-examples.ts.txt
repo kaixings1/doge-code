@@ -1,0 +1,1 @@
+src/commands/loop/strategy-examples.ts(268,7): error TS2353: Object literal may only specify known properties, and 'output' does not exist in type 'StrategyExample'.

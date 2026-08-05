@@ -1,0 +1,9 @@
+src/commands/http/http.ts(244,53): error TS2769: No overload matches this call.
+src/commands/http/http.ts(245,99): error TS2339: Property 'filename' does not exist on type 'object & Record<"filePath", unknown>'.
+src/commands/http/http.ts(269,45): error TS2345: Argument of type 'Record<string, unknown>' is not assignable to parameter of type 'ParsedUrlQueryInput'.
+src/commands/http/http.ts(622,21): error TS2339: Property 'body' does not exist on type '{ method: string; headers: { [x: string]: string; }; url: string; }'.
+src/commands/http/http.ts(623,25): error TS2339: Property 'body' does not exist on type '{ method: string; headers: { [x: string]: string; }; url: string; }'.
+src/commands/http/http.ts(623,56): error TS2339: Property 'body' does not exist on type '{ method: string; headers: { [x: string]: string; }; url: string; }'.
+src/commands/http/http.ts(624,23): error TS2339: Property 'body' does not exist on type '{ method: string; headers: { [x: string]: string; }; url: string; }'.
+src/commands/http/http.ts(624,46): error TS2339: Property 'body' does not exist on type '{ method: string; headers: { [x: string]: string; }; url: string; }'.
+src/commands/http/http.ts(627,21): error TS2339: Property 'body' does not exist on type '{ method: string; headers: { [x: string]: string; }; url: string; }'.

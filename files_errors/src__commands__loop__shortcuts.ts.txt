@@ -1,0 +1,1 @@
+src/commands/loop/shortcuts.ts(442,5): error TS2353: Object literal may only specify known properties, and 'supportsNonInteractive' does not exist in type 'CommandBase & LocalJSXCommand'.

@@ -1,0 +1,101 @@
+src/screens/REPL.tsx(221,36): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/screens/REPL.tsx(222,39): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/screens/REPL.tsx(223,36): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/screens/REPL.tsx(509,19): error TS4113: This member cannot have an 'override' modifier because it is not declared in the base class 'Component<{ children: ReactNode; }, ReplRuntimeBoundaryState, any>'.
+src/screens/REPL.tsx(610,42): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/screens/REPL.tsx(649,55): error TS2538: Type 'unknown' cannot be used as an index type.
+src/screens/REPL.tsx(654,39): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/screens/REPL.tsx(656,30): error TS2538: Type 'unknown' cannot be used as an index type.
+src/screens/REPL.tsx(665,13): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+src/screens/REPL.tsx(692,45): error TS2345: Argument of type 'unknown' is not assignable to parameter of type '{ readonly mode: InternalPermissionMode; readonly additionalWorkingDirectories: { readonly clear: () => void; readonly delete: (key: string) => boolean; readonly forEach: (callbackfn: (value: AdditionalWorkingDirectory, key: string, map: Map<...>) => void, thisArg?: any) => void; ... 10 more ...; readonly [Symbol.to...'.
+src/screens/REPL.tsx(716,62): error TS2339: Property 'clients' does not exist on type 'unknown'.
+src/screens/REPL.tsx(725,9): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/screens/REPL.tsx(788,104): error TS2339: Property 'mode' does not exist on type 'unknown'.
+src/screens/REPL.tsx(795,64): error TS2339: Property 'tools' does not exist on type 'unknown'.
+src/screens/REPL.tsx(795,71): error TS2345: Argument of type 'unknown' is not assignable to parameter of type '{ readonly mode: InternalPermissionMode; readonly additionalWorkingDirectories: { readonly clear: () => void; readonly delete: (key: string) => boolean; readonly forEach: (callbackfn: (value: AdditionalWorkingDirectory, key: string, map: Map<...>) => void, thisArg?: any) => void; ... 10 more ...; readonly [Symbol.to...'.
+src/screens/REPL.tsx(816,72): error TS2339: Property 'commands' does not exist on type 'unknown'.
+src/screens/REPL.tsx(817,69): error TS2339: Property 'commands' does not exist on type 'unknown'.
+src/screens/REPL.tsx(820,59): error TS2339: Property 'clients' does not exist on type 'unknown'.
+src/screens/REPL.tsx(821,61): error TS2339: Property 'clients' does not exist on type 'unknown'.
+src/screens/REPL.tsx(958,9): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/screens/REPL.tsx(1459,35): error TS2349: This expression is not callable.
+src/screens/REPL.tsx(1505,74): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Record<string, TaskStateBase>'.
+src/screens/REPL.tsx(1531,33): error TS2339: Property 'mode' does not exist on type 'unknown'.
+src/screens/REPL.tsx(1553,29): error TS2339: Property 'mode' does not exist on type 'unknown'.
+src/screens/REPL.tsx(1603,143): error TS2339: Property 'queue' does not exist on type 'unknown'.
+src/screens/REPL.tsx(1603,188): error TS2339: Property 'queue' does not exist on type 'unknown'.
+src/screens/REPL.tsx(1635,56): error TS2554: Expected 0 arguments, but got 4.
+src/screens/REPL.tsx(1645,59): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'FileHistoryState'.
+src/screens/REPL.tsx(1724,87): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'AgentDefinitionsResult'.
+src/screens/REPL.tsx(1947,63): error TS2339: Property 'queue' does not exist on type 'unknown'.
+src/screens/REPL.tsx(1948,50): error TS2339: Property 'queue' does not exist on type 'unknown'.
+src/screens/REPL.tsx(1958,9): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/screens/REPL.tsx(1961,9): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/screens/REPL.tsx(1982,161): error TS2339: Property 'queue' does not exist on type 'unknown'.
+src/screens/REPL.tsx(1982,185): error TS2339: Property 'queue' does not exist on type 'unknown'.
+src/screens/REPL.tsx(2399,28): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/screens/REPL.tsx(2449,178): error TS2339: Property 'additionalWorkingDirectories' does not exist on type 'unknown'.
+src/screens/REPL.tsx(2522,92): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/screens/REPL.tsx(2535,109): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/screens/REPL.tsx(2535,134): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/screens/REPL.tsx(2562,36): error TS2345: Argument of type 'string' is not assignable to parameter of type '`${string}-${string}-${string}-${string}-${string}`'.
+src/screens/REPL.tsx(2684,46): error TS2345: Argument of type 'unknown' is not assignable to parameter of type '{ readonly mode: InternalPermissionMode; readonly additionalWorkingDirectories: { readonly clear: () => void; readonly delete: (key: string) => boolean; readonly forEach: (callbackfn: (value: AdditionalWorkingDirectory, key: string, map: Map<...>) => void, thisArg?: any) => void; ... 10 more ...; readonly [Symbol.to...'.
+src/screens/REPL.tsx(2686,72): error TS2345: Argument of type 'unknown' is not assignable to parameter of type '{ readonly mode: InternalPermissionMode; readonly additionalWorkingDirectories: { readonly clear: () => void; readonly delete: (key: string) => boolean; readonly forEach: (callbackfn: (value: AdditionalWorkingDirectory, key: string, map: Map<...>) => void, thisArg?: any) => void; ... 10 more ...; readonly [Symbol.to...'.
+src/screens/REPL.tsx(2686,229): error TS2339: Property 'additionalWorkingDirectories' does not exist on type 'unknown'.
+src/screens/REPL.tsx(2714,4): error TS2353: Object literal may only specify known properties, and 'includePartialMessages' does not exist in type 'QueryParams'.
+src/screens/REPL.tsx(2720,12): error TS2304: Cannot find name 'fireCompanionObserver'.
+src/screens/REPL.tsx(2729,9): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/screens/REPL.tsx(2857,13): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/screens/REPL.tsx(2890,70): error TS2345: Argument of type '{ [taskId: string]: TaskState; }' is not assignable to parameter of type 'Record<string, TaskStateBase>'.
+src/screens/REPL.tsx(2952,22): error TS2339: Property 'clearContext' does not exist on type '{}'.
+src/screens/REPL.tsx(2955,40): error TS2339: Property 'message' does not exist on type '{}'.
+src/screens/REPL.tsx(2980,57): error TS2339: Property 'message' does not exist on type '{}'.
+src/screens/REPL.tsx(2980,80): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/screens/REPL.tsx(2983,55): error TS2339: Property 'mode' does not exist on type '{}'.
+src/screens/REPL.tsx(2983,147): error TS2339: Property 'mode' does not exist on type '{}'.
+src/screens/REPL.tsx(2983,164): error TS2339: Property 'allowedPrompts' does not exist on type '{}'.
+src/screens/REPL.tsx(2986,60): error TS2339: Property 'mode' does not exist on type '{}'.
+src/screens/REPL.tsx(2999,32): error TS2339: Property 'message' does not exist on type '{}'.
+src/screens/REPL.tsx(3014,23): error TS2339: Property 'message' does not exist on type '{}'.
+src/screens/REPL.tsx(3025,34): error TS2339: Property 'message' does not exist on type '{}'.
+src/screens/REPL.tsx(3030,54): error TS2339: Property 'message' does not exist on type '{}'.
+src/screens/REPL.tsx(3043,34): error TS2339: Property 'message' does not exist on type '{}'.
+src/screens/REPL.tsx(3529,21): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/screens/REPL.tsx(3611,7): error TS2719: Type '{ readonly mode: import("D:/doge-code/src/types/permissions").InternalPermissionMode; readonly additionalWorkingDirectories: { readonly clear: () => void; readonly delete: (key: string) => boolean; ... 11 more ...; readonly [Symbol.toStringTag]: string; }; ... 8 more ...; readonly prePlanMode?: import("D:/doge-code/...' is not assignable to type '{ readonly mode: import("D:/doge-code/src/types/permissions").InternalPermissionMode; readonly additionalWorkingDirectories: { readonly clear: () => void; readonly delete: (key: string) => boolean; ... 11 more ...; readonly [Symbol.toStringTag]: string; }; ... 8 more ...; readonly prePlanMode?: import("D:/doge-code/...'. Two different types with this name exist, but they are unrelated.
+src/screens/REPL.tsx(3687,62): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'FileHistoryState'.
+src/screens/REPL.tsx(3971,7): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/screens/REPL.tsx(3989,43): error TS2339: Property 'mode' does not exist on type 'unknown'.
+src/screens/REPL.tsx(4077,9): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/screens/REPL.tsx(4268,293): error TS2739: Type '{}' is missing the following properties from type 'AgentDefinitionsResult': activeAgents, allAgents
+src/screens/REPL.tsx(4334,49): error TS2538: Type 'unknown' cannot be used as an index type.
+src/screens/REPL.tsx(4377,88): error TS2322: Type 'unknown' is not assignable to type 'boolean'.
+src/screens/REPL.tsx(4377,466): error TS2739: Type '{}' is missing the following properties from type 'AgentDefinitionsResult': activeAgents, allAgents
+src/screens/REPL.tsx(4377,652): error TS2322: Type 'unknown' is not assignable to type 'boolean'.
+src/screens/REPL.tsx(4391,66): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/screens/REPL.tsx(4391,229): error TS2322: Type 'unknown' is not assignable to type 'boolean'.
+src/screens/REPL.tsx(4470,98): error TS2339: Property 'toolName' does not exist on type 'unknown'.
+src/screens/REPL.tsx(4470,142): error TS2339: Property 'description' does not exist on type 'unknown'.
+src/screens/REPL.tsx(4472,131): error TS2339: Property 'host' does not exist on type 'unknown'.
+src/screens/REPL.tsx(4474,128): error TS2339: Property 'queue' does not exist on type 'unknown'.
+src/screens/REPL.tsx(4475,44): error TS2339: Property 'queue' does not exist on type 'unknown'.
+src/screens/REPL.tsx(4485,61): error TS2339: Property 'queue' does not exist on type 'unknown'.
+src/screens/REPL.tsx(4490,145): error TS2339: Property 'teamName' does not exist on type 'unknown'.
+src/screens/REPL.tsx(4518,94): error TS2339: Property 'queue' does not exist on type 'unknown'.
+src/screens/REPL.tsx(4518,142): error TS2339: Property 'queue' does not exist on type 'unknown'.
+src/screens/REPL.tsx(4518,183): error TS2339: Property 'queue' does not exist on type 'unknown'.
+src/screens/REPL.tsx(4519,48): error TS2339: Property 'queue' does not exist on type 'unknown'.
+src/screens/REPL.tsx(4537,48): error TS2339: Property 'queue' does not exist on type 'unknown'.
+src/screens/REPL.tsx(4647,113): error TS2304: Cannot find name 'UltraplanChoiceDialog'.
+src/screens/REPL.tsx(4647,164): error TS2339: Property 'plan' does not exist on type 'unknown'.
+src/screens/REPL.tsx(4647,204): error TS2339: Property 'sessionId' does not exist on type 'unknown'.
+src/screens/REPL.tsx(4647,246): error TS2339: Property 'taskId' does not exist on type 'unknown'.
+src/screens/REPL.tsx(4649,113): error TS2304: Cannot find name 'UltraplanLaunchDialog'.
+src/screens/REPL.tsx(4650,50): error TS2339: Property 'blurb' does not exist on type 'unknown'.
+src/screens/REPL.tsx(4674,18): error TS2304: Cannot find name 'launchUltraplan'.
+src/screens/REPL.tsx(4690,45): error TS2339: Property 'state' does not exist on type 'boolean'.
+src/screens/REPL.tsx(4690,111): error TS2339: Property 'state' does not exist on type 'boolean'.
+src/screens/REPL.tsx(4690,207): error TS2339: Property 'handleTranscriptSelect' does not exist on type 'boolean'.
+src/screens/REPL.tsx(4694,213): error TS2740: Type '{}' is missing the following properties from type '{ readonly mode: InternalPermissionMode; readonly additionalWorkingDirectories: { readonly clear: () => void; readonly delete: (key: string) => boolean; readonly forEach: (callbackfn: (value: AdditionalWorkingDirectory, key: string, map: Map<...>) => void, thisArg?: any) => void; ... 10 more ...; readonly [Symbol.to...': mode, additionalWorkingDirectories, alwaysAllowRules, alwaysDenyRules, and 2 more.
+src/screens/REPL.tsx(4694,384): error TS2339: Property 'activeAgents' does not exist on type 'unknown'.
+src/screens/REPL.tsx(4694,440): error TS2322: Type 'unknown' is not assignable to type 'boolean'.
+src/screens/REPL.tsx(4708,16): error TS2345: Argument of type 'string' is not assignable to parameter of type '`${string}-${string}-${string}-${string}-${string}`'.

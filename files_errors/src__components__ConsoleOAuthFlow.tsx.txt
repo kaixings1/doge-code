@@ -1,0 +1,2 @@
+src/components/ConsoleOAuthFlow.tsx(35,44): error TS2440: Import declaration conflicts with local declaration of 'CompatibleApiProvider'.
+src/components/ConsoleOAuthFlow.tsx(1038,90): error TS2554: Expected 1-2 arguments, but got 3.

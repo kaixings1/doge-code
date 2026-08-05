@@ -1,0 +1,2 @@
+src/commands/rules/index.ts(6,30): error TS2307: Cannot find module '../commands.js' or its corresponding type declarations.
+src/commands/rules/index.ts(7,39): error TS2307: Cannot find module '../types/command.js' or its corresponding type declarations.

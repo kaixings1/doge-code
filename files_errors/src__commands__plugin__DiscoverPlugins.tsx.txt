@@ -1,0 +1,7 @@
+src/commands/plugin/DiscoverPlugins.tsx(251,26): error TS2339: Property 'error' does not exist on type 'InstallPluginResult'.
+src/commands/plugin/DiscoverPlugins.tsx(274,24): error TS2345: Argument of type '{ type: string; }' is not assignable to parameter of type 'string'.
+src/commands/plugin/DiscoverPlugins.tsx(304,26): error TS2345: Argument of type '{ type: string; }' is not assignable to parameter of type 'string'.
+src/commands/plugin/DiscoverPlugins.tsx(309,32): error TS2339: Property 'error' does not exist on type 'InstallPluginResult'.
+src/commands/plugin/DiscoverPlugins.tsx(331,24): error TS2345: Argument of type '{ type: string; }' is not assignable to parameter of type 'string'.
+src/commands/plugin/DiscoverPlugins.tsx(379,32): error TS2345: Argument of type '{ type: string; targetPlugin: string; targetMarketplace: string; }' is not assignable to parameter of type 'string'.
+src/commands/plugin/DiscoverPlugins.tsx(474,26): error TS2345: Argument of type '{ type: string; }' is not assignable to parameter of type 'string'.

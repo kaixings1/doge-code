@@ -1,0 +1,1 @@
+src/components/permissions/ComputerUseApproval/ComputerUseApproval.tsx(341,46): error TS2554: Expected 0 arguments, but got 1.

@@ -1016,7 +1016,11 @@ async function* queryModel(
     ;(queryModel as unknown as Record<string, unknown>)._cachedConfig = readCustomApiStorage()
     ;(process as unknown as Record<string, unknown>)._dogeConfigChanged = false
   }
-  const cachedConfig = (queryModel as unknown as Record<string, unknown>)._cachedConfig
+  const cachedConfig = (
+    queryModel as unknown as {
+      _cachedConfig?: { baseURL?: string; apiKey?: string; model?: string; provider?: string }
+    }
+  )._cachedConfig
 
   // 将缓存配置同步到环境变量，确保 API 客户端每次请求都使用最新配置。
   // 覆盖时机：配置不为空，且与当前环境变量存在实质差异。

@@ -1,0 +1,6 @@
+src/components/permissions/NotebookEditPermissionRequest/NotebookEditToolDiff.tsx(6,15): error TS2724: '"../../../types/notebook.js"' has no exported member named 'NotebookCellType'. Did you mean 'NotebookCell'?
+src/components/permissions/NotebookEditPermissionRequest/NotebookEditToolDiff.tsx(6,33): error TS2305: Module '"../../../types/notebook.js"' has no exported member 'NotebookContent'.
+src/components/permissions/NotebookEditPermissionRequest/NotebookEditToolDiff.tsx(209,96): error TS2322: Type '{ code: any; filePath: any; }' is not assignable to type 'IntrinsicAttributes & object'.
+src/components/permissions/NotebookEditPermissionRequest/NotebookEditToolDiff.tsx(209,235): error TS2322: Type '{ code: any; filePath: any; }' is not assignable to type 'IntrinsicAttributes & object'.
+src/components/permissions/NotebookEditPermissionRequest/NotebookEditToolDiff.tsx(209,396): error TS2322: Type '{ key: any; patch: any; dim: boolean; width: any; filePath: any; firstLine: any; fileContent: any; }' is not assignable to type 'IntrinsicAttributes & object'.
+src/components/permissions/NotebookEditPermissionRequest/NotebookEditToolDiff.tsx(209,559): error TS2322: Type '{ code: any; filePath: any; }' is not assignable to type 'IntrinsicAttributes & object'.

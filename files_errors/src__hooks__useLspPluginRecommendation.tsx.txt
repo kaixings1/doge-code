@@ -1,0 +1,1 @@
+src/hooks/useLspPluginRecommendation.tsx(69,28): error TS2488: Type 'unknown' must have a '[Symbol.iterator]()' method that returns an iterator.

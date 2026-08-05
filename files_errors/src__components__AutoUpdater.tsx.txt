@@ -1,0 +1,2 @@
+src/components/AutoUpdater.tsx(52,9): error TS2367: This comparison appears to be unintentional because the types '"production"' and '"test"' have no overlap.
+src/components/AutoUpdater.tsx(52,36): error TS2367: This comparison appears to be unintentional because the types '"production"' and '"development"' have no overlap.

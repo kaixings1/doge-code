@@ -1,0 +1,1 @@
+src/commands/plugin/AddMarketplace.tsx(93,22): error TS2345: Argument of type '{ type: string; targetMarketplace: string; }' is not assignable to parameter of type 'string'.

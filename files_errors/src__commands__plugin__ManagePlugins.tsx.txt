@@ -1,0 +1,15 @@
+src/commands/plugin/ManagePlugins.tsx(52,15): error TS2724: '"./unifiedTypes.js"' has no exported member named 'UnifiedInstalledItem'. Did you mean 'UnifiedInstalledPlugin'?
+src/commands/plugin/ManagePlugins.tsx(546,26): error TS2345: Argument of type '{ type: string; }' is not assignable to parameter of type 'string'.
+src/commands/plugin/ManagePlugins.tsx(582,26): error TS2488: Type 'unknown' must have a '[Symbol.iterator]()' method that returns an iterator.
+src/commands/plugin/ManagePlugins.tsx(606,35): error TS2339: Property 'filter' does not exist on type 'unknown'.
+src/commands/plugin/ManagePlugins.tsx(640,25): error TS2488: Type 'unknown' must have a '[Symbol.iterator]()' method that returns an iterator.
+src/commands/plugin/ManagePlugins.tsx(648,16): error TS2339: Property 'push' does not exist on type 'unknown'.
+src/commands/plugin/ManagePlugins.tsx(669,28): error TS2339: Property 'length' does not exist on type 'unknown'.
+src/commands/plugin/ManagePlugins.tsx(676,26): error TS2488: Type 'unknown' must have a '[Symbol.iterator]()' method that returns an iterator.
+src/commands/plugin/ManagePlugins.tsx(1151,32): error TS2345: Argument of type '{ type: string; }' is not assignable to parameter of type 'string'.
+src/commands/plugin/ManagePlugins.tsx(1195,26): error TS2345: Argument of type '{ type: string; }' is not assignable to parameter of type 'string'.
+src/commands/plugin/ManagePlugins.tsx(1634,28): error TS2345: Argument of type '{ type: string; }' is not assignable to parameter of type 'string'.
+src/commands/plugin/ManagePlugins.tsx(1670,30): error TS2345: Argument of type '{ type: string; }' is not assignable to parameter of type 'string'.
+src/commands/plugin/ManagePlugins.tsx(1762,26): error TS2345: Argument of type '{ type: string; }' is not assignable to parameter of type 'string'.
+src/commands/plugin/ManagePlugins.tsx(2001,47): error TS2339: Property 'filter' does not exist on type 'unknown'.
+src/commands/plugin/ManagePlugins.tsx(2199,50): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Tool[]'.

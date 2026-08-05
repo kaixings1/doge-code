@@ -1,0 +1,1 @@
+src/commands/notebook/notebook-view.tsx(4,8): error TS2613: Module '"D:/doge-code/src/components/BaseTextInput"' has no default export. Did you mean to use 'import { BaseTextInput } from "D:/doge-code/src/components/BaseTextInput"' instead?

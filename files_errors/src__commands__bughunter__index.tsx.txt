@@ -1,0 +1,3 @@
+src/commands/bughunter/index.tsx(974,14): error TS2322: Type '(onDone: LocalJSXCommandOnDone, _context: ToolUseContext & { canUseTool?: CanUseToolFn; setMessages: (updater: (prev: Message[]) => Message[]) => void; ... 4 more ...; resume?: (sessionId: `${string}-${string}-${string}-${string}-${string}`, log: LogOption, entrypoint: ResumeEntrypoint) => Promise<...>; }, args: str...' is not assignable to type 'LocalJSXCommandCall'.
+src/commands/bughunter/index.tsx(1088,64): error TS2339: Property '_config' does not exist on type 'ResultsUIProps'.
+src/commands/bughunter/index.tsx(1233,3): error TS2353: Object literal may only specify known properties, and 'supportsNonInteractive' does not exist in type 'CommandBase & LocalJSXCommand'.

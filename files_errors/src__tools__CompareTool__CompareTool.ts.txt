@@ -1,0 +1,8 @@
+src/tools/CompareTool/CompareTool.ts(46,7): error TS2322: Type 'ZodObject<{ left: ZodString; right: ZodString; }, $strip>' is not assignable to type '() => ZodObject<{ left: ZodString; right: ZodString; }, $strip>'.
+src/tools/CompareTool/CompareTool.ts(61,9): error TS2322: Type '(input: unknown) => Promise<{ behavior: "allow"; updatedInput: unknown; }>' is not assignable to type '(input: any, context: ToolUseContext) => Promise<PermissionResult>'.
+src/tools/CompareTool/CompareTool.ts(61,9): error TS2322: Type '(input: unknown) => Promise<{ behavior: "allow"; updatedInput: unknown; }>' is not assignable to type '(input: unknown, context: ToolUseContext) => Promise<PermissionResult>'.
+src/tools/CompareTool/CompareTool.ts(67,29): error TS2339: Property 'substring' does not exist on type 'unknown'.
+src/tools/CompareTool/CompareTool.ts(67,57): error TS2339: Property 'substring' does not exist on type 'unknown'.
+src/tools/CompareTool/CompareTool.ts(74,28): error TS2339: Property 'length' does not exist on type 'unknown'.
+src/tools/CompareTool/CompareTool.ts(75,25): error TS2339: Property 'length' does not exist on type 'unknown'.
+src/tools/CompareTool/CompareTool.ts(124,21): error TS2344: Type '() => ZodObject<{ left: ZodString; right: ZodString; }, $strip>' does not satisfy the constraint 'AnyObject'.

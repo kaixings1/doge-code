@@ -1,0 +1,2 @@
+src/utils/autoRunIssue.tsx(84,7): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/utils/autoRunIssue.tsx(103,7): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.

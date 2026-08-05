@@ -373,6 +373,8 @@ function OrchestrationView({ theme, onOrchestrated }: OrchestrationViewProps): J
   const [maxRounds, setMaxRounds] = useState(3)
   const [round1Outputs, setRound1Outputs] = useState<AgentOutputItem[]>([])
   const [roundsUsed, setRoundsUsed] = useState<number | null>(null)
+  const [exportPath, setExportPath] = useState<string | null>(null)
+  const [compareRoleId, setCompareRoleId] = useState<string | null>(null)
   const [workflows, setWorkflows] = useState<Array<{ id: string; name: string; description?: string; task: string; mode: string; maxRounds?: number; roleIds: string[] }>>([])
   const [showWorkflows, setShowWorkflows] = useState(false)
   const [saveName, setSaveName] = useState('')
@@ -505,6 +507,29 @@ function OrchestrationView({ theme, onOrchestrated }: OrchestrationViewProps): J
       if (listRes?.success && listRes.workflows) setWorkflows(listRes.workflows)
     } catch { /* ignore */ }
   }, [])
+
+  // 导出编排结果为 Markdown 报告
+  const handleExportReport = useCallback(async () => {
+    if (outputs.length === 0) return
+    try {
+      const api = window.dogeAPI as Record<string, any>
+      const reportParams: Record<string, unknown> = {
+        task: task.trim(),
+        mode: discussMode ? 'discuss' : 'parallel',
+        outputs: outputs.map(o => ({ name: o.name, roleId: o.roleId, content: o.content, status: o.status, durationMs: o.durationMs, error: o.error })),
+      }
+      if (roundsUsed) reportParams.roundsUsed = roundsUsed
+      const res = await api?.agentExportReport?.(reportParams)
+      if (res?.success) {
+        setError(null)
+        setExportPath(res.path || '')
+      } else {
+        setError(res?.error || '导出失败')
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '导出失败')
+    }
+  }, [outputs, task, discussMode, roundsUsed])
 
   const statusColor = (s: string): string =>
     s === 'completed' ? '#10b981' : s === 'failed' || s === 'timeout' ? '#ef4444' : s === 'cancelled' ? '#f59e0b' : c.textFaint
@@ -741,37 +766,89 @@ function OrchestrationView({ theme, onOrchestrated }: OrchestrationViewProps): J
         </div>
       )}
 
-      {/* 结果（第 2 轮最终结论） */}
+      {/* 结果（最终结论） */}
       {outputs.length > 0 && (
         <div>
-          <div style={{ fontSize: '10px', color: c.textFaint, marginBottom: '4px' }}>
-            {discussMode ? `最终结论（共 ${roundsUsed ?? maxRounds} 轮${roundsUsed && roundsUsed < maxRounds ? '，已收敛提前结束' : ''}）` : `聚合结果（${outputs.length} 个 Agent）`}
+          <div style={{ fontSize: '10px', color: c.textFaint, marginBottom: '4px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>
+              {discussMode ? `最终结论（共 ${roundsUsed ?? maxRounds} 轮${roundsUsed && roundsUsed < maxRounds ? '，已收敛提前结束' : ''}）` : `聚合结果（${outputs.length} 个 Agent）`}
+            </span>
+            <button
+              onClick={handleExportReport}
+              title="导出为 Markdown 报告到 .doge/reports/"
+              style={{
+                padding: '1px 8px', border: `1px solid ${c.border}`, borderRadius: '3px',
+                background: c.bgPanel, color: c.accent, cursor: 'pointer', fontSize: '9px',
+              }}
+            >
+              📄 导出报告
+            </button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            {outputs.map(out => (
-              <div key={out.roleId} style={{
-                border: `1px solid ${c.borderSubtle}`, borderRadius: '3px', padding: '6px 8px', background: c.bgPanel,
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3px' }}>
-                  <span style={{ color: c.accent, fontSize: '10px', fontWeight: 600 }}>{out.name}</span>
-                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                    <span style={{ color: statusColor(out.status), fontSize: '9px' }}>{statusText(out.status)}</span>
-                    {out.status === 'completed' && (
-                      <span style={{ color: c.textFaint, fontSize: '9px' }}>{((out.durationMs) / 1000).toFixed(1)}s · ⬆{out.inputTokens}/⬇{out.outputTokens}</span>
-                    )}
+            {outputs.map(out => {
+              const round1 = round1Outputs.find(o => o.roleId === out.roleId)
+              const showCompare = discussMode && round1 && round1.status === 'completed' && round1.content.trim() !== out.content.trim()
+              return (
+                <div key={out.roleId} style={{
+                  border: `1px solid ${c.borderSubtle}`, borderRadius: '3px', padding: '6px 8px', background: c.bgPanel,
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3px' }}>
+                    <span style={{ color: c.accent, fontSize: '10px', fontWeight: 600 }}>{out.name}</span>
+                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                      {showCompare && (
+                        <button
+                          onClick={() => setCompareRoleId(prev => prev === out.roleId ? null : out.roleId)}
+                          style={{
+                            padding: '1px 6px', border: `1px solid ${c.border}`, borderRadius: '2px',
+                            background: compareRoleId === out.roleId ? c.accentDim : 'transparent',
+                            color: c.accent, cursor: 'pointer', fontSize: '9px',
+                          }}
+                          title="对比第 1 轮观点（讨论如何演变）"
+                        >
+                          🔄 {compareRoleId === out.roleId ? '收起对比' : '对比第1轮'}
+                        </button>
+                      )}
+                      <span style={{ color: statusColor(out.status), fontSize: '9px' }}>{statusText(out.status)}</span>
+                      {out.status === 'completed' && (
+                        <span style={{ color: c.textFaint, fontSize: '9px' }}>{((out.durationMs) / 1000).toFixed(1)}s · ⬆{out.inputTokens}/⬇{out.outputTokens}</span>
+                      )}
+                    </div>
                   </div>
+                  {compareRoleId === out.roleId && round1 && (
+                    <div style={{
+                      marginBottom: '4px', padding: '4px 6px', borderLeft: `2px solid ${c.accent}`,
+                      background: c.codeBg, borderRadius: '2px',
+                    }}>
+                      <div style={{ fontSize: '9px', color: c.textMuted, marginBottom: '2px' }}>📝 第 1 轮观点（讨论前）</div>
+                      <pre style={{
+                        margin: 0, color: c.textFaint, fontSize: '9px', whiteSpace: 'pre-wrap', wordBreak: 'break-word',
+                        maxHeight: '80px', overflowY: 'auto',
+                      }}>{round1.content}</pre>
+                    </div>
+                  )}
+                  {out.error ? (
+                    <div style={{ color: c.errorText, fontSize: '9px' }}>{out.error}</div>
+                  ) : (
+                    <pre style={{
+                      margin: 0, color: c.text, fontSize: '9px', whiteSpace: 'pre-wrap', wordBreak: 'break-word',
+                      maxHeight: '120px', overflowY: 'auto',
+                    }}>{out.content}</pre>
+                  )}
                 </div>
-                {out.error ? (
-                  <div style={{ color: c.errorText, fontSize: '9px' }}>{out.error}</div>
-                ) : (
-                  <pre style={{
-                    margin: 0, color: c.text, fontSize: '9px', whiteSpace: 'pre-wrap', wordBreak: 'break-word',
-                    maxHeight: '120px', overflowY: 'auto',
-                  }}>{out.content}</pre>
-                )}
-              </div>
-            ))}
+              )
+            })}
           </div>
+        </div>
+      )}
+
+      {/* 导出成功提示 */}
+      {exportPath && (
+        <div style={{
+          padding: '5px 8px', background: 'rgba(16,185,129,0.1)', color: '#10b981',
+          borderRadius: '3px', fontSize: '9px', wordBreak: 'break-all',
+        }}>
+          ✅ 报告已导出: {exportPath}
+          <span style={{ marginLeft: '8px', cursor: 'pointer' }} onClick={() => setExportPath(null)}>✕</span>
         </div>
       )}
     </div>

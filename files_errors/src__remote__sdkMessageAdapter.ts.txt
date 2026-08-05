@@ -1,0 +1,2 @@
+src/remote/sdkMessageAdapter.ts(32,5): error TS2322: Type 'unknown' is not assignable to type '{ [key: string]: unknown; id?: string; content?: AssistantMessageContent; model?: string; role?: string; stop_reason?: string; stop_sequence?: string; error?: string; errorDetails?: string; usage?: { ...; }; context_management?: unknown; }'.
+src/remote/sdkMessageAdapter.ts(161,36): error TS2339: Property 'content' does not exist on type 'unknown'.
