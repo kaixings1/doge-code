@@ -376,3 +376,33 @@
 - [x] 测试：API 层 111/111 全部通过（累计 10 个测试文件）
 - [x] 完整 vitest 失败项均为并行会话引入（AppStore 测试修改中、integration 依赖 bun:bundle），非本任务范围
 - [x] 错误总数累计 5089 → 4282（净减少 807 个）
+
+---
+
+## ✅ 已完成（第十一轮：修复 3 个失败测试文件，完整 vitest 全绿）
+
+### 背景
+完整 vitest run 曾有 3 个失败文件：
+1. **AppStore.test.ts** — `(listener).calls` 应为 `.mock.calls`（并行会话已修复，无需再改）
+2. **integration/api.test.ts** — 导入链依赖 bun 特性
+3. **integration/mcp.test.ts** — 同上
+
+### 根因分析
+- 项目源码 **461 处 require / 181 个文件** 依赖 bun 的 `.js` → `.ts` 隐式解析
+- `bunfig.toml [exports]` 映射的 `bun:bundle` 在 vitest 中不生效（vitest 用自己的解析器）
+- 宿主进程注入的 `CLAUDE_CODE_FEATURE_*` 环境变量使 polyfill `feature()` 返回 true，
+  触发条件 require（teamMemPaths.js 等），而 vitest 的 Node 解析无法 `.js` → `.ts`
+
+### 修复方案（三层）
+- [x] **vitest.config.ts**：`bun:bundle` alias → polyfill；`src/__tests__/integration` 移出 exclude
+- [x] **tests/setup.ts**：删除 `CLAUDE_CODE_FEATURE_*` env（polyfill 全部默认 false）；
+      patch `Module._resolveFilename`（require 的 `.js`/无扩展名 → `.ts`/`.tsx`，基于父模块目录）；
+      注册 ESM resolve hook
+- [x] **tests/esm-resolver.mjs**：Node ESM resolve hook，`.js` 后缀 import 回退 `.ts`
+      （覆盖 Node type stripping 加载的 .ts 内部 import）
+
+### 第十一轮验证 ✅
+- [x] 完整 vitest run：**20 个测试文件 / 184 个测试全部通过**（此前 16/147）
+- [x] integration 测试（7 个）从失败 → 全部通过
+- [x] AppStore.test.ts 6/6 通过（并行会话已修复）
+- [x] 本次修改文件类型检查零新增错误（reporter 报错为既有、非本次引入）
