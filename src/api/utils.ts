@@ -158,7 +158,7 @@ export function checkPermission(tool: string, action: string): boolean {
 }
 
 export function createTelemetryEvent(name: string, properties?: Record<string, any>): TelemetryEvent {
-  return { name, properties, timestamp: new Date() };
+  return { name, properties: properties || {}, timestamp: new Date() };
 }
 
 export function serialize(data: any): string {
