@@ -55,7 +55,7 @@ describe('AppStore', () => {
       const listener = vi.fn();
       store.subscribe(listener);
       store.setState(prev => ({ ...prev, verbose: true }));
-      expect((listener as any).calls.length).toBeGreaterThan(0);
+      expect((listener as any).mock.calls.length).toBeGreaterThan(0);
     });
 
     it('应该支持取消订阅', () => {
@@ -63,7 +63,7 @@ describe('AppStore', () => {
       const unsub = store.subscribe(listener);
       unsub();
       store.setState(prev => ({ ...prev, verbose: false }));
-      expect((listener as any).calls.length).toBe(0);
+      expect((listener as any).mock.calls.length).toBe(0);
     });
   });
 });
