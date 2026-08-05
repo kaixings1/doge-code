@@ -3,10 +3,10 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     // 测试文件匹配模式
-    include: ['tests/unit/**/*.test.ts', 'tests/unit/**/*.test.tsx'],
+    include: ['tests/unit/**/*.test.ts', 'tests/unit/**/*.test.tsx', 'src/__tests__/**/*.test.ts', 'src/__tests__/**/*.test.tsx'],
 
     // 排除文件
-    exclude: ['node_modules', 'dist', 'tests/e2e'],
+    exclude: ['node_modules', 'dist', 'tests/e2e', 'src/__tests__/integration', 'src/__tests__/e2e'],
 
     // 覆盖率配置
     coverage: {
