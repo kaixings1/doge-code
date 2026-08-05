@@ -2,11 +2,14 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
+    // 全局 setup（清理宿主的 feature 开关环境变量）
+    setupFiles: ['tests/setup.ts'],
+
     // 测试文件匹配模式
     include: ['tests/unit/**/*.test.ts', 'tests/unit/**/*.test.tsx', 'src/__tests__/**/*.test.ts', 'src/__tests__/**/*.test.tsx'],
 
     // 排除文件
-    exclude: ['node_modules', 'dist', 'tests/e2e', 'src/__tests__/integration', 'src/__tests__/e2e'],
+    exclude: ['node_modules', 'dist', 'tests/e2e', 'src/__tests__/e2e'],
 
     // 覆盖率配置
     coverage: {
@@ -47,6 +50,9 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': '/src',
+      // bunfig.toml [exports] 的映射在 vitest 中不生效，这里显式将 bun:bundle
+      // 指向运行时 polyfill（与 bun run 行为一致）
+      'bun:bundle': '/src/utils/bun-bundle-polyfill.ts',
     },
   },
 });
