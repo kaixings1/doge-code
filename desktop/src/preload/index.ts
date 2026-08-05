@@ -111,6 +111,7 @@ interface DogeAPIValue {
   applyFix: (params: { filePath: string; lineNumber: number; column: number; fixedCode: string; originalCode?: string }) => Promise<{ success: boolean; error?: string }>
   getOutline: (params: { filePath: string; cwd: string }) => Promise<{ success: boolean; symbols?: Array<{ id: string; name: string; kind: string; range: { startLine: number; startColumn: number; endLine: number; endColumn: number }; children?: Array<unknown> }>; error?: string }>
   semanticSearch: (params: { query: string; cwd: string; maxResults?: number; fileTypes?: string[]; directories?: string[] }) => Promise<{ success: boolean; results?: Array<{ filePath: string; lineNumber: number; column: number; content: string; score: number; context?: string }>; error?: string }>
+  indexSymbolSearch: (params: { query: string; maxResults?: number }) => Promise<{ success: boolean; results?: Array<{ filePath: string; name: string; kind: string; line: number; score: number }>; error?: string }>
   debugStart: (params: { cwd: string; script: string; args?: string[] }) => Promise<{ success: boolean; sessionId?: string; pid?: number; error?: string }>
   debugStop: (sessionId: string) => Promise<{ success: boolean; error?: string }>
   debugListSessions: () => Promise<{ success: boolean; sessions?: Array<{ id: string; pid: number; isRunning: boolean; isPaused: boolean; breakpointCount: number }> }>
@@ -123,8 +124,15 @@ interface DogeAPIValue {
   debugStepInto: (sessionId: string) => Promise<{ success: boolean; error?: string }>
   debugStepOut: (sessionId: string) => Promise<{ success: boolean; error?: string }>
   debugGetCallstack: (sessionId: string) => Promise<{ success: boolean; callStack?: Array<{ name: string; file: string; line: number; column: number }> }>
-  debugGetVariables: (sessionId: string) => Promise<{ success: boolean; variables?: Record<string, string> }>
+  debugGetVariables: (sessionId: string) => Promise<{ success: boolean; variables?: Record<string, string>; variableObjects?: Record<string, { objectId: string; type: string; description?: string }> }>
   debugEvaluate: (params: { sessionId: string; expression: string }) => Promise<{ success: boolean; result?: string; type?: string; error?: string }>
+  debugGetObjectProps: (params: { sessionId: string; objectId: string }) => Promise<{ success: boolean; properties?: Array<{ name: string; type: string; value?: string; objectId?: string; isExpandable: boolean }>; error?: string }>
+  debugSchemeExport: (params: { name: string; breakpoints: Array<{ file: string; line: number; condition?: string }> }) => Promise<{ success: boolean; path?: string; error?: string }>
+  debugSchemeList: () => Promise<{ success: boolean; schemes?: Array<{ file: string; name: string; breakpointCount: number; exportedAt: string }>; error?: string }>
+  debugSchemeImport: (fileName: string) => Promise<{ success: boolean; name?: string; breakpoints?: Array<{ file: string; line: number; condition?: string }>; error?: string }>
+  debugSnapshotSave: (params: { sessionId: string; name?: string; watchExpressions?: string[] }) => Promise<{ success: boolean; path?: string; error?: string }>
+  debugSnapshotList: () => Promise<{ success: boolean; snapshots?: Array<{ file: string; name: string; script: string; breakpointCount: number; watchCount: number; savedAt: string }>; error?: string }>
+  debugSnapshotRestore: (fileName: string) => Promise<{ success: boolean; name?: string; script?: string; args?: string[]; breakpoints?: Array<{ file: string; line: number; condition?: string }>; watchExpressions?: string[]; error?: string }>
   lspWorkspaceSymbol: (query: string) => Promise<{ success: boolean; symbols?: Array<{ name: string; kind: number; location: { uri: string; range: { start: { line: number; character: number }; end: { line: number; character: number } } } }>; error?: string }>
   lspDocumentHighlight: (filePath: string, line: number, character: number) => Promise<{ success: boolean; highlights?: Array<{ range: { start: { line: number; character: number }; end: { line: number; character: number } }; kind: number }>; error?: string }>
   lspConnectedServers: () => Promise<{ success: boolean; servers?: string[]; error?: string }>
@@ -377,6 +385,7 @@ const dogeAPI: DogeAPIValue = {
   securityRules: () => ipcRenderer.invoke('doge:security-rules'),
   getOutline: (params: { filePath: string; cwd: string }) => ipcRenderer.invoke('doge:get-outline', params),
   semanticSearch: (params: { query: string; cwd: string; maxResults?: number; fileTypes?: string[]; directories?: string[] }) => ipcRenderer.invoke('doge:semantic-search', params),
+  indexSymbolSearch: (params: { query: string; maxResults?: number }) => ipcRenderer.invoke('doge:index-symbol-search', params),
   debugStart: (params: { cwd: string; script: string; args?: string[] }) => ipcRenderer.invoke('doge:debug-start', params),
   debugStop: (sessionId: string) => ipcRenderer.invoke('doge:debug-stop', sessionId),
   debugListSessions: () => ipcRenderer.invoke('doge:debug-list-sessions'),
@@ -391,6 +400,13 @@ const dogeAPI: DogeAPIValue = {
   debugGetCallstack: (sessionId: string) => ipcRenderer.invoke('doge:debug-get-callstack', sessionId),
   debugGetVariables: (sessionId: string) => ipcRenderer.invoke('doge:debug-get-variables', sessionId),
   debugEvaluate: (params: { sessionId: string; expression: string }) => ipcRenderer.invoke('doge:debug-evaluate', params),
+  debugGetObjectProps: (params: { sessionId: string; objectId: string }) => ipcRenderer.invoke('doge:debug-get-object-props', params),
+  debugSchemeExport: (params: { name: string; breakpoints: Array<{ file: string; line: number; condition?: string }> }) => ipcRenderer.invoke('doge:debug-scheme-export', params),
+  debugSchemeList: () => ipcRenderer.invoke('doge:debug-scheme-list'),
+  debugSchemeImport: (fileName: string) => ipcRenderer.invoke('doge:debug-scheme-import', fileName),
+  debugSnapshotSave: (params: { sessionId: string; name?: string; watchExpressions?: string[] }) => ipcRenderer.invoke('doge:debug-snapshot-save', params),
+  debugSnapshotList: () => ipcRenderer.invoke('doge:debug-snapshot-list'),
+  debugSnapshotRestore: (fileName: string) => ipcRenderer.invoke('doge:debug-snapshot-restore', fileName),
 
   // ── 协作功能 ──
   collabCreateRoom: (params: { name: string; cwd: string }) => ipcRenderer.invoke('doge:collab-create-room', params),
