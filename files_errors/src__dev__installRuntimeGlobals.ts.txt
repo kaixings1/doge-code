@@ -1,0 +1,3 @@
+src/dev/installRuntimeGlobals.ts(82,12): error TS2339: Property 'MACRO' does not exist on type 'typeof globalThis'.
+src/dev/installRuntimeGlobals.ts(84,25): error TS2339: Property 'MACRO' does not exist on type 'typeof globalThis'.
+src/dev/installRuntimeGlobals.ts(84,65): error TS2339: Property 'MACRO' does not exist on type 'typeof globalThis'.

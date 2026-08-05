@@ -1,0 +1,2 @@
+src/utils/telemetry/instrumentation.ts(393,48): error TS2554: Expected 1 arguments, but got 2.
+src/utils/telemetry/instrumentation.ts(587,51): error TS2554: Expected 1 arguments, but got 2.

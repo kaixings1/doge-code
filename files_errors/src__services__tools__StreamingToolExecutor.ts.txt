@@ -1,0 +1,4 @@
+src/services/tools/StreamingToolExecutor.ts(97,13): error TS2322: Type 'string' is not assignable to type '`${string}-${string}-${string}-${string}-${string}`'.
+src/services/tools/StreamingToolExecutor.ts(171,9): error TS2322: Type 'string' is not assignable to type '`${string}-${string}-${string}-${string}-${string}`'.
+src/services/tools/StreamingToolExecutor.ts(186,9): error TS2322: Type 'string' is not assignable to type '`${string}-${string}-${string}-${string}-${string}`'.
+src/services/tools/StreamingToolExecutor.ts(203,7): error TS2322: Type 'string' is not assignable to type '`${string}-${string}-${string}-${string}-${string}`'.

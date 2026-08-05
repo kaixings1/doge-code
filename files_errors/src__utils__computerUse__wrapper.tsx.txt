@@ -1,0 +1,1 @@
+src/utils/computerUse/wrapper.tsx(62,27): error TS4104: The type 'readonly { bundleId: string; displayName: string; grantedAt: number; }[]' is 'readonly' and cannot be assigned to the mutable type '{ bundleId?: string; displayName?: string; }[]'.

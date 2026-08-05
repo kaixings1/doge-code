@@ -1,0 +1,5 @@
+src/components/Passes/Passes.tsx(66,52): error TS2339: Property 'referral_link' does not exist on type 'unknown'.
+src/components/Passes/Passes.tsx(67,65): error TS2339: Property 'referral_link' does not exist on type 'unknown'.
+src/components/Passes/Passes.tsx(71,27): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'SetStateAction<ReferrerRewardInfo>'.
+src/components/Passes/Passes.tsx(74,65): error TS2339: Property 'campaign' does not exist on type 'unknown'.
+src/components/Passes/Passes.tsx(91,25): error TS2365: Operator '<' cannot be applied to types 'number' and 'unknown'.

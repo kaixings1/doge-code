@@ -1,0 +1,14 @@
+src/keybindings/resolver.ts(44,17): error TS2339: Property 'chord' does not exist on type 'ParsedBinding'.
+src/keybindings/resolver.ts(45,29): error TS2339: Property 'context' does not exist on type 'ParsedBinding'.
+src/keybindings/resolver.ts(74,35): error TS2339: Property 'context' does not exist on type 'ParsedBinding'.
+src/keybindings/resolver.ts(76,42): error TS2339: Property 'chord' does not exist on type 'ParsedBinding'.
+src/keybindings/resolver.ts(97,5): error TS2353: Object literal may only specify known properties, and 'super' does not exist in type 'ParsedKeystroke'.
+src/keybindings/resolver.ts(116,7): error TS2339: Property 'super' does not exist on type 'ParsedKeystroke'.
+src/keybindings/resolver.ts(116,19): error TS2339: Property 'super' does not exist on type 'ParsedKeystroke'.
+src/keybindings/resolver.ts(127,32): error TS2339: Property 'chord' does not exist on type 'ParsedBinding'.
+src/keybindings/resolver.ts(130,32): error TS2339: Property 'chord' does not exist on type 'ParsedBinding'.
+src/keybindings/resolver.ts(144,32): error TS2339: Property 'chord' does not exist on type 'ParsedBinding'.
+src/keybindings/resolver.ts(147,32): error TS2339: Property 'chord' does not exist on type 'ParsedBinding'.
+src/keybindings/resolver.ts(194,61): error TS2339: Property 'context' does not exist on type 'ParsedBinding'.
+src/keybindings/resolver.ts(203,15): error TS2339: Property 'chord' does not exist on type 'ParsedBinding'.
+src/keybindings/resolver.ts(206,46): error TS2339: Property 'chord' does not exist on type 'ParsedBinding'.

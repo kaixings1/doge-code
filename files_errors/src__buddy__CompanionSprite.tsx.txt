@@ -1,0 +1,5 @@
+src/buddy/CompanionSprite.tsx(155,39): error TS2339: Property 'length' does not exist on type 'unknown'.
+src/buddy/CompanionSprite.tsx(155,75): error TS2339: Property 'slice' does not exist on type 'unknown'.
+src/buddy/CompanionSprite.tsx(219,21): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/buddy/CompanionSprite.tsx(231,24): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/buddy/CompanionSprite.tsx(253,7): error TS2322: Type 'unknown' is not assignable to type 'string'.

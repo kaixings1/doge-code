@@ -1,0 +1,1 @@
+src/hooks/useClaudeCodeHintRecommendation.tsx(93,40): error TS2339: Property 'error' does not exist on type 'InstallPluginResult'.

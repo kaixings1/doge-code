@@ -1,0 +1,7 @@
+src/tasks/RemoteAgentTask/RemoteAgentTask.tsx(213,53): error TS2339: Property 'content' does not exist on type 'unknown'.
+src/tasks/RemoteAgentTask/RemoteAgentTask.tsx(268,53): error TS2339: Property 'content' does not exist on type 'unknown'.
+src/tasks/RemoteAgentTask/RemoteAgentTask.tsx(281,135): error TS2339: Property 'content' does not exist on type 'unknown'.
+src/tasks/RemoteAgentTask/RemoteAgentTask.tsx(309,53): error TS2339: Property 'content' does not exist on type 'unknown'.
+src/tasks/RemoteAgentTask/RemoteAgentTask.tsx(366,117): error TS2339: Property 'content' does not exist on type 'unknown'.
+src/tasks/RemoteAgentTask/RemoteAgentTask.tsx(370,41): error TS2339: Property 'content' does not exist on type 'unknown'.
+src/tasks/RemoteAgentTask/RemoteAgentTask.tsx(571,32): error TS2339: Property 'content' does not exist on type 'unknown'.

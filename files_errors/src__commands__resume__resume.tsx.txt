@@ -1,0 +1,2 @@
+src/commands/resume/resume.tsx(159,56): error TS2339: Property 'command' does not exist on type '{ isCrossProject: true; isSameRepoWorktree: true; projectPath: string; } | { isCrossProject: true; isSameRepoWorktree: false; command: string; projectPath: string; }'.
+src/commands/resume/resume.tsx(167,82): error TS2339: Property 'command' does not exist on type '{ isCrossProject: true; isSameRepoWorktree: true; projectPath: string; } | { isCrossProject: true; isSameRepoWorktree: false; command: string; projectPath: string; }'.

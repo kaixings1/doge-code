@@ -1,0 +1,1 @@
+src/components/diff/DiffDialog.tsx(144,3): error TS2554: Expected 2 arguments, but got 1.

@@ -1,0 +1,3 @@
+src/commands/graph/index.ts(27,33): error TS2339: Property 'match' does not exist on type 'never'.
+src/commands/graph/index.ts(32,35): error TS2339: Property 'match' does not exist on type 'never'.
+src/commands/graph/index.ts(126,66): error TS2339: Property 'call' does not exist on type 'Command'.

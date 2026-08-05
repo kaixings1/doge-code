@@ -1,0 +1,1 @@
+src/components/Settings/Settings.tsx(101,48): error TS2304: Cannot find name 'Gates'.

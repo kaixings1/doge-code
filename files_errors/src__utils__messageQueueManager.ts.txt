@@ -1,0 +1,5 @@
+src/utils/messageQueueManager.ts(290,18): error TS2345: Argument of type '"remove"' is not assignable to parameter of type 'QueueOperation'.
+src/utils/messageQueueManager.ts(311,20): error TS2345: Argument of type '"remove"' is not assignable to parameter of type 'QueueOperation'.
+src/utils/messageQueueManager.ts(343,53): error TS2769: No overload matches this call.
+src/utils/messageQueueManager.ts(345,3): error TS1360: Type 'string[]' does not satisfy the expected type '"task-notification"'.
+src/utils/messageQueueManager.ts(473,7): error TS2345: Argument of type '"popAll"' is not assignable to parameter of type 'QueueOperation'.

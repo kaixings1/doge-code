@@ -2681,7 +2681,7 @@ function runHeadlessStreaming(
   }
 
   const sendControlResponseSuccess = function (
-    message: { request_id: string },
+    message: { request_id?: string },
     response?: Record<string, unknown>,
   ) {
     output.enqueue({
@@ -2695,7 +2695,7 @@ function runHeadlessStreaming(
   }
 
   const sendControlResponseError = function (
-    message: { request_id: string },
+    message: { request_id?: string },
     errorMessage: string,
   ) {
     output.enqueue({

@@ -1,0 +1,1 @@
+src/tools/BriefTool/upload.ts(70,3): error TS2322: Type 'string | void' is not assignable to type 'string'.

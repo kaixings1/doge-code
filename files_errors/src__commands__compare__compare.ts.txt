@@ -1,0 +1,1 @@
+src/commands/compare/compare.ts(79,3): error TS2322: Type '{ type: "text"; value: string; }' is not assignable to type 'string'.

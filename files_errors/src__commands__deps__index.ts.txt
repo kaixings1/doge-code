@@ -1,0 +1,2 @@
+src/commands/deps/index.ts(39,11): error TS2322: Type 'string' is not assignable to type '"dependency" | "devDependency"'.
+src/commands/deps/index.ts(203,66): error TS2339: Property 'call' does not exist on type 'Command'.

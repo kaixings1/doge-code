@@ -1,0 +1,2 @@
+src/security/InputValidator.ts(161,70): error TS2365: Operator '>' cannot be applied to types 'number' and 'unknown'.
+src/security/InputValidator.ts(165,87): error TS2339: Property 'test' does not exist on type 'unknown'.

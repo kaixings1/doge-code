@@ -1,0 +1,3 @@
+src/commands/dashboard/index.ts(6,30): error TS2307: Cannot find module '../commands.js' or its corresponding type declarations.
+src/commands/dashboard/index.ts(7,39): error TS2307: Cannot find module '../types/command.js' or its corresponding type declarations.
+src/commands/dashboard/index.ts(11,40): error TS2307: Cannot find module '../utils/envUtils.js' or its corresponding type declarations.

@@ -1,0 +1,10 @@
+src/components/Spinner.tsx(118,5): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/components/Spinner.tsx(119,5): error TS2322: Type 'unknown' is not assignable to type '{ [taskId: string]: TaskState; }'.
+src/components/Spinner.tsx(185,60): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'EffortValue'.
+src/components/Spinner.tsx(188,57): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Record<string, TaskStateBase>'.
+src/components/Spinner.tsx(225,7): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/components/Spinner.tsx(225,31): error TS2304: Cannot find name 'apiMetricsRef'.
+src/components/Spinner.tsx(225,57): error TS2304: Cannot find name 'apiMetricsRef'.
+src/components/Spinner.tsx(226,32): error TS2304: Cannot find name 'apiMetricsRef'.
+src/components/Spinner.tsx(395,21): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/components/Spinner.tsx(465,21): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.

@@ -1,0 +1,6 @@
+src/hooks/useSkillImprovementSurvey.ts(47,40): error TS2339: Property 'skillName' does not exist on type 'unknown'.
+src/hooks/useSkillImprovementSurvey.ts(69,19): error TS2339: Property 'skillName' does not exist on type 'unknown'.
+src/hooks/useSkillImprovementSurvey.ts(73,44): error TS2339: Property 'skillName' does not exist on type 'unknown'.
+src/hooks/useSkillImprovementSurvey.ts(73,63): error TS2339: Property 'updates' does not exist on type 'unknown'.
+src/hooks/useSkillImprovementSurvey.ts(78,32): error TS2339: Property 'skillName' does not exist on type 'unknown'.
+src/hooks/useSkillImprovementSurvey.ts(102,5): error TS2739: Type '{}' is missing the following properties from type 'SkillImprovementSuggestion': skillName, updates

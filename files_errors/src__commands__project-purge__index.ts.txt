@@ -1,0 +1,1 @@
+src/commands/project-purge/index.ts(7,15): error TS2322: Type 'Promise<typeof import("D:/doge-code/src/commands/project-purge/project-purge")>' is not assignable to type 'Promise<LocalJSXCommandModule>'.

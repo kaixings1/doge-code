@@ -1,0 +1,12 @@
+src/commands/ctx_viz/index.tsx(20,26): error TS2339: Property 'tokensUsed' does not exist on type 'unknown'.
+src/commands/ctx_viz/index.tsx(20,54): error TS2339: Property 'tokensUsed' does not exist on type 'unknown'.
+src/commands/ctx_viz/index.tsx(21,25): error TS2339: Property 'maxTokens' does not exist on type 'unknown'.
+src/commands/ctx_viz/index.tsx(21,52): error TS2339: Property 'maxTokens' does not exist on type 'unknown'.
+src/commands/ctx_viz/index.tsx(22,28): error TS2339: Property 'messageCount' does not exist on type 'unknown'.
+src/commands/ctx_viz/index.tsx(22,58): error TS2339: Property 'messageCount' does not exist on type 'unknown'.
+src/commands/ctx_viz/index.tsx(22,76): error TS2339: Property 'messages' does not exist on type 'unknown'.
+src/commands/ctx_viz/index.tsx(23,25): error TS2339: Property 'toolCalls' does not exist on type 'unknown'.
+src/commands/ctx_viz/index.tsx(23,52): error TS2339: Property 'toolCalls' does not exist on type 'unknown'.
+src/commands/ctx_viz/index.tsx(23,67): error TS2339: Property 'toolCallCount' does not exist on type 'unknown'.
+src/commands/ctx_viz/index.tsx(24,28): error TS2339: Property 'sessionStart' does not exist on type 'unknown'.
+src/commands/ctx_viz/index.tsx(24,58): error TS2339: Property 'sessionStart' does not exist on type 'unknown'.

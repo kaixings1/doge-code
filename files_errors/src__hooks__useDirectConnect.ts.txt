@@ -1,0 +1,8 @@
+src/hooks/useDirectConnect.ts(93,44): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/hooks/useDirectConnect.ts(94,26): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/hooks/useDirectConnect.ts(103,11): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/hooks/useDirectConnect.ts(105,11): error TS2740: Type '{}' is missing the following properties from type 'PermissionUpdate[]': length, pop, push, concat, and 35 more.
+src/hooks/useDirectConnect.ts(106,11): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/hooks/useDirectConnect.ts(112,11): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/hooks/useDirectConnect.ts(114,11): error TS2322: Type 'unknown' is not assignable to type '{ [key: string]: unknown; }'.
+src/hooks/useDirectConnect.ts(116,11): error TS2322: Type 'unknown' is not assignable to type 'string'.

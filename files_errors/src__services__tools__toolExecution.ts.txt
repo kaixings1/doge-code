@@ -1,0 +1,12 @@
+src/services/tools/toolExecution.ts(256,24): error TS2488: Type 'unknown' must have a '[Symbol.iterator]()' method that returns an iterator.
+src/services/tools/toolExecution.ts(407,9): error TS2322: Type 'string' is not assignable to type '`${string}-${string}-${string}-${string}-${string}`'.
+src/services/tools/toolExecution.ts(449,11): error TS2322: Type 'string' is not assignable to type '`${string}-${string}-${string}-${string}-${string}`'.
+src/services/tools/toolExecution.ts(463,7): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/services/tools/toolExecution.ts(486,9): error TS2322: Type 'string' is not assignable to type '`${string}-${string}-${string}-${string}-${string}`'.
+src/services/tools/toolExecution.ts(551,11): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/services/tools/toolExecution.ts(678,11): error TS2322: Type 'string' is not assignable to type '`${string}-${string}-${string}-${string}-${string}`'.
+src/services/tools/toolExecution.ts(731,11): error TS2322: Type 'string' is not assignable to type '`${string}-${string}-${string}-${string}-${string}`'.
+src/services/tools/toolExecution.ts(859,13): error TS2322: Type 'string' is not assignable to type '`${string}-${string}-${string}-${string}-${string}`'.
+src/services/tools/toolExecution.ts(1071,9): error TS2322: Type 'string' is not assignable to type '`${string}-${string}-${string}-${string}-${string}`'.
+src/services/tools/toolExecution.ts(1467,11): error TS2322: Type 'string' is not assignable to type '`${string}-${string}-${string}-${string}-${string}`'.
+src/services/tools/toolExecution.ts(1735,11): error TS2322: Type 'string' is not assignable to type '`${string}-${string}-${string}-${string}-${string}`'.

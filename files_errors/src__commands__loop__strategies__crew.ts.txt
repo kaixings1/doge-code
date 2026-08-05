@@ -1,0 +1,2 @@
+src/commands/loop/strategies/crew.ts(807,3): error TS2416: Property 'evaluate' in type 'CrewStrategy' is not assignable to the same property in base type 'BaseLoopStrategy'.
+src/commands/loop/strategies/crew.ts(988,38): error TS2341: Property 'executeTask' is private and only accessible within class 'Crew'.

@@ -1,0 +1,1 @@
+src/ink/frame.ts(1,15): error TS2305: Module '"./cursor.js"' has no exported member 'Cursor'.

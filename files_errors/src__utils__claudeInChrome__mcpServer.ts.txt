@@ -1,0 +1,2 @@
+src/utils/claudeInChrome/mcpServer.ts(220,13): error TS2353: Object literal may only specify known properties, and 'cache_read_input_tokens' does not exist in type '{ input_tokens: number; output_tokens: number; }'.
+src/utils/claudeInChrome/mcpServer.ts(281,24): error TS2554: Expected 0 arguments, but got 1.

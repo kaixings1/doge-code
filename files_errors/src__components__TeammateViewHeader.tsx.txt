@@ -1,0 +1,9 @@
+src/components/TeammateViewHeader.tsx(21,31): error TS2339: Property 'identity' does not exist on type 'unknown'.
+src/components/TeammateViewHeader.tsx(22,36): error TS2339: Property 'identity' does not exist on type 'unknown'.
+src/components/TeammateViewHeader.tsx(23,27): error TS2339: Property 'identity' does not exist on type 'unknown'.
+src/components/TeammateViewHeader.tsx(37,53): error TS2339: Property 'identity' does not exist on type 'unknown'.
+src/components/TeammateViewHeader.tsx(38,63): error TS2339: Property 'identity' does not exist on type 'unknown'.
+src/components/TeammateViewHeader.tsx(40,27): error TS2339: Property 'identity' does not exist on type 'unknown'.
+src/components/TeammateViewHeader.tsx(61,31): error TS2339: Property 'prompt' does not exist on type 'unknown'.
+src/components/TeammateViewHeader.tsx(62,48): error TS2339: Property 'prompt' does not exist on type 'unknown'.
+src/components/TeammateViewHeader.tsx(63,27): error TS2339: Property 'prompt' does not exist on type 'unknown'.

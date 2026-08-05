@@ -1,0 +1,1 @@
+src/utils/teammate.ts(284,36): error TS2488: Type 'unknown' must have a '[Symbol.iterator]()' method that returns an iterator.

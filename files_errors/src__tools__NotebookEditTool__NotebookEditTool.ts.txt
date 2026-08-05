@@ -1,0 +1,1 @@
+src/tools/NotebookEditTool/NotebookEditTool.ts(9,29): error TS2305: Module '"../../types/notebook.js"' has no exported member 'NotebookContent'.

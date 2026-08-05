@@ -1,0 +1,2 @@
+src/components/wizard/useWizard.ts(7,6): error TS2315: Type 'WizardContextValue' is not generic.
+src/components/wizard/useWizard.ts(8,48): error TS2315: Type 'WizardContextValue' is not generic.

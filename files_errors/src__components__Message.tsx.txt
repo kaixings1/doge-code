@@ -1,0 +1,4 @@
+src/components/Message.tsx(254,13): error TS2339: Property 'isSnipMarkerMessage' does not exist on type 'typeof import("D:/doge-code/src/services/compact/snipCompact")'.
+src/components/Message.tsx(256,37): error TS2554: Expected 0 arguments, but got 1.
+src/components/Message.tsx(269,41): error TS2322: Type '{ message: any; }' is not assignable to type 'IntrinsicAttributes'.
+src/components/Message.tsx(609,83): error TS2345: Argument of type 'AttachmentMessage | UserMessage | AssistantMessage | SystemMessage | CollapsedReadSearchGroup | GroupedToolUseMessage' is not assignable to parameter of type '{ type: string; message?: { content: { type: string; }[]; }; }'.

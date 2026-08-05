@@ -1,0 +1,2 @@
+src/components/ThemePicker.tsx(75,3): error TS2554: Expected 2 arguments, but got 1.
+src/components/ThemePicker.tsx(246,173): error TS2322: Type '{ patch: any; dim: boolean; filePath: string; firstLine: null; width: number; }' is not assignable to type 'IntrinsicAttributes & object'.

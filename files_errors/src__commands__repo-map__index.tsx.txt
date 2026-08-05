@@ -1,0 +1,11 @@
+src/commands/repo-map/index.tsx(12,50): error TS2694: Namespace '"D:/doge-code/src/engine/repoMap"' has no exported member 'SymbolKind'.
+src/commands/repo-map/index.tsx(42,76): error TS2694: Namespace '"D:/doge-code/src/engine/repoMap"' has no exported member 'SymbolEntry'.
+src/commands/repo-map/index.tsx(80,11): error TS2322: Type 'Map<string, SymbolEntry[]>' is not assignable to type 'Map<string, { symbols: any[]; }>'.
+src/commands/repo-map/index.tsx(119,71): error TS2694: Namespace '"D:/doge-code/src/engine/repoMap"' has no exported member 'SymbolEntry'.
+src/commands/repo-map/index.tsx(162,26): error TS2339: Property 'length' does not exist on type '{ symbols: any[]; }'.
+src/commands/repo-map/index.tsx(162,40): error TS2339: Property 'length' does not exist on type '{ symbols: any[]; }'.
+src/commands/repo-map/index.tsx(168,36): error TS2339: Property 'slice' does not exist on type '{ symbols: any[]; }'.
+src/commands/repo-map/index.tsx(169,29): error TS2339: Property 'length' does not exist on type '{ symbols: any[]; }'.
+src/commands/repo-map/index.tsx(177,37): error TS2339: Property 'length' does not exist on type '{ symbols: any[]; }'.
+src/commands/repo-map/index.tsx(182,46): error TS2339: Property 'length' does not exist on type '{ symbols: any[]; }'.
+src/commands/repo-map/index.tsx(227,3): error TS2353: Object literal may only specify known properties, and 'supportsNonInteractive' does not exist in type 'CommandBase & LocalJSXCommand'.

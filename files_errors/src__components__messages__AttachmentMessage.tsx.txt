@@ -1,0 +1,9 @@
+src/components/messages/AttachmentMessage.tsx(116,20): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/components/messages/AttachmentMessage.tsx(353,23): error TS1360: Type '"structured_output" | "output_style" | "companion_intro" | "mcp_instructions_delta" | "auto_mode" | "plan_mode" | "edited_text_file" | "edited_image_file" | "opened_file_in_ide" | ... 23 more ... | "bagel_console"' does not satisfy the expected type '"structured_output" | "output_style" | "companion_intro" | "mcp_instructions_delta" | "auto_mode" | "plan_mode" | "edited_text_file" | "edited_image_file" | "opened_file_in_ide" | ... 26 more ... | "pen_mode_exit"'.
+src/components/messages/AttachmentMessage.tsx(446,13): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/components/messages/AttachmentMessage.tsx(458,21): error TS2339: Property 'identity' does not exist on type 'unknown'.
+src/components/messages/AttachmentMessage.tsx(459,26): error TS2339: Property 'identity' does not exist on type 'unknown'.
+src/components/messages/AttachmentMessage.tsx(460,17): error TS2339: Property 'identity' does not exist on type 'unknown'.
+src/components/messages/AttachmentMessage.tsx(475,44): error TS2339: Property 'identity' does not exist on type 'unknown'.
+src/components/messages/AttachmentMessage.tsx(476,71): error TS2339: Property 'identity' does not exist on type 'unknown'.
+src/components/messages/AttachmentMessage.tsx(478,17): error TS2339: Property 'identity' does not exist on type 'unknown'.

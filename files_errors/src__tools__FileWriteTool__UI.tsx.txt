@@ -1,0 +1,1 @@
+src/tools/FileWriteTool/UI.tsx(100,55): error TS2322: Type '{ code: any; filePath: any; width: number; }' is not assignable to type 'IntrinsicAttributes & object'.

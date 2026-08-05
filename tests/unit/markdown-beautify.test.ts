@@ -7,7 +7,8 @@ vi.mock('../../src/components/design-system/color.js', () => ({
   color: (key: string) => (text: string) => {
     if (key === 'success') return `\x1b[32m${text}\x1b[39m`;
     if (key === 'warning') return `\x1b[33m${text}\x1b[39m`;
-    return `\x1b[31m${text}\x1b[39m`; // error → 红
+    if (key === 'error') return `\x1b[31m${text}\x1b[39m`;
+    return `\x1b[34m${text}\x1b[39m`; // suggestion → 蓝
   },
 }));
 
@@ -18,9 +19,10 @@ const theme = 'dark';
 const GREEN = '\x1b[32m';
 const AMBER = '\x1b[33m';
 const RED = '\x1b[31m';
+const BLUE = '\x1b[34m';
 const RESET = '\x1b[39m';
 
-describe('markdown 正文美化（中文label冒号 / 确认询问词 / 强调词）', () => {
+describe('markdown 正文美化（label / 确认词 / 强调词 / 数值）', () => {
   it('中文词语（2-6字）+ 冒号 → 绿色（success）', () => {
     const out = beautifyInlineText('摘要：这是内容', theme);
     expect(out).toContain(`${GREEN}摘要：${RESET}`);
@@ -51,12 +53,13 @@ describe('markdown 正文美化（中文label冒号 / 确认询问词 / 强调�
     expect(stripAnsi(out)).toBe('是否继续？');
   });
 
-  it('扩充的询问词（请问/可不可以/没问题）→ 琥珀色', () => {
-    const out = beautifyInlineText('请问可不可以继续？没问题吧', theme);
+  it('扩充的询问词（请问/可不可以/没问题/是不是/可否）→ 琥珀色', () => {
+    const out = beautifyInlineText('请问是不是可以继续？可否确认一下', theme);
     expect(out).toContain(`${AMBER}请问${RESET}`);
-    expect(out).toContain(`${AMBER}可不可以${RESET}`);
-    expect(out).toContain(`${AMBER}没问题吧${RESET}`);
-    expect(stripAnsi(out)).toBe('请问可不可以继续？没问题吧');
+    expect(out).toContain(`${AMBER}是不是${RESET}`);
+    expect(out).toContain(`${AMBER}可否${RESET}`);
+    expect(out).toContain(`${AMBER}确认一下${RESET}`);
+    expect(stripAnsi(out)).toBe('请问是不是可以继续？可否确认一下');
   });
 
   it('强调词（注意/警告/务必）→ 红色（error）', () => {
@@ -68,6 +71,19 @@ describe('markdown 正文美化（中文label冒号 / 确认询问词 / 强调�
     expect(stripAnsi(out)).toBe('注意安全，危险操作务必小心');
   });
 
+  it('百分比/时间数值 → 蓝色（suggestion）', () => {
+    const out = beautifyInlineText('完成度 80%，预计耗时 10分钟，剩余 3天', theme);
+    expect(out).toContain(`${BLUE}80%${RESET}`);
+    expect(out).toContain(`${BLUE}10分钟${RESET}`);
+    expect(out).toContain(`${BLUE}3天${RESET}`);
+    expect(stripAnsi(out)).toBe('完成度 80%，预计耗时 10分钟，剩余 3天');
+  });
+
+  it('裸数字/版本号不标色', () => {
+    expect(beautifyInlineText('Version 1.2.3', theme)).toBe('Version 1.2.3');
+    expect(beautifyInlineText('共 42 个文件', theme)).toBe('共 42 个文件');
+  });
+
   it('label 优先于确认词/强调词，不嵌套着色', () => {
     const out = beautifyInlineText('注意：方案一', theme);
     // "注意：" 前面是行首 → label 匹配，整体绿色（而非"注意"红色）
@@ -77,15 +93,15 @@ describe('markdown 正文美化（中文label冒号 / 确认询问词 / 强调�
     expect(stripAnsi(out)).toBe('注意：方案一');
   });
 
-  it('普通英文/数字文本不加色', () => {
+  it('普通英文文本不加色', () => {
     expect(beautifyInlineText('Hello world', theme)).toBe('Hello world');
-    expect(beautifyInlineText('Version 1.2.3', theme)).toBe('Version 1.2.3');
   });
 
   it('着色的纯文本与原文本一致（不影响宽度计算）', () => {
-    const out = beautifyInlineText('如果继续学习，需要先配置环境', theme);
-    expect(stripAnsi(out)).toBe('如果继续学习，需要先配置环境');
+    const out = beautifyInlineText('如果继续学习，需要先配置环境，耗时约 2小时', theme);
+    expect(stripAnsi(out)).toBe('如果继续学习，需要先配置环境，耗时约 2小时');
     expect(out).toContain(`${AMBER}继续${RESET}`);
     expect(out).toContain(`${AMBER}需要${RESET}`);
+    expect(out).toContain(`${BLUE}2小时${RESET}`);
   });
 });

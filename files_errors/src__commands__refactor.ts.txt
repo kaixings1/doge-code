@@ -1,0 +1,1 @@
+src/commands/refactor.ts(375,9): error TS2353: Object literal may only specify known properties, and 'call' does not exist in type 'CommandBase & LocalCommand'.

@@ -1,0 +1,4 @@
+src/services/PromptSuggestion/speculation.ts(257,61): error TS2339: Property 'content' does not exist on type 'unknown'.
+src/services/PromptSuggestion/speculation.ts(258,35): error TS2339: Property 'content' does not exist on type 'unknown'.
+src/services/PromptSuggestion/speculation.ts(259,42): error TS2339: Property 'content' does not exist on type 'unknown'.
+src/services/PromptSuggestion/speculation.ts(268,35): error TS2698: Spread types may only be created from object types.

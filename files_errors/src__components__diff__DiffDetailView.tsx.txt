@@ -1,0 +1,1 @@
+src/components/diff/DiffDetailView.tsx(243,124): error TS2322: Type '{ key: any; patch: any; filePath: any; firstLine: any; fileContent: any; dim: boolean; width: number; }' is not assignable to type 'IntrinsicAttributes & object'.

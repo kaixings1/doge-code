@@ -1,0 +1,1 @@
+src/commands/context-collapse/contextCollapse.ts(6,86): error TS2559: Type 'number' has no properties in common with type '{ includeSnipped?: boolean; }'.

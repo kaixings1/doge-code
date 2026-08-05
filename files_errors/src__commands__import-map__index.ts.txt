@@ -1,0 +1,2 @@
+src/commands/import-map/index.ts(25,33): error TS2339: Property 'match' does not exist on type 'never'.
+src/commands/import-map/index.ts(123,66): error TS2339: Property 'call' does not exist on type 'Command'.

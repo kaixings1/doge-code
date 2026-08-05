@@ -1,0 +1,8 @@
+src/commands/context/context-noninteractive.ts(52,13): error TS2339: Property 'projectView' does not exist on type 'typeof import("D:/doge-code/src/services/contextCollapse/operations")'.
+src/commands/context/context-noninteractive.ts(125,76): error TS2339: Property 'collapsedMessages' does not exist on type 'Stats'.
+src/commands/context/context-noninteractive.ts(132,15): error TS2339: Property 'totalSpawns' does not exist on type '{ totalErrors: number; totalEmptySpawns: number; emptySpawnWarningEmitted: boolean; }'.
+src/commands/context/context-noninteractive.ts(133,20): error TS2339: Property 'totalSpawns' does not exist on type '{ totalErrors: number; totalEmptySpawns: number; emptySpawnWarningEmitted: boolean; }'.
+src/commands/context/context-noninteractive.ts(133,45): error TS2339: Property 'totalSpawns' does not exist on type '{ totalErrors: number; totalEmptySpawns: number; emptySpawnWarningEmitted: boolean; }'.
+src/commands/context/context-noninteractive.ts(138,51): error TS2339: Property 'totalSpawns' does not exist on type '{ totalErrors: number; totalEmptySpawns: number; emptySpawnWarningEmitted: boolean; }'.
+src/commands/context/context-noninteractive.ts(139,15): error TS2339: Property 'lastError' does not exist on type '{ totalErrors: number; totalEmptySpawns: number; emptySpawnWarningEmitted: boolean; }'.
+src/commands/context/context-noninteractive.ts(140,34): error TS2339: Property 'lastError' does not exist on type '{ totalErrors: number; totalEmptySpawns: number; emptySpawnWarningEmitted: boolean; }'.
