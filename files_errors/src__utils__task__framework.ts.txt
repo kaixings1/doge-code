@@ -1,0 +1,13 @@
+src/utils/task/framework.ts(80,33): error TS2538: Type 'unknown' cannot be used as an index type.
+src/utils/task/framework.ts(98,47): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+src/utils/task/framework.ts(107,5): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/utils/task/framework.ts(108,5): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/utils/task/framework.ts(109,5): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/utils/task/framework.ts(110,5): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/utils/task/framework.ts(132,31): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'TaskStatus'.
+src/utils/task/framework.ts(138,29): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/utils/task/framework.ts(178,31): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/utils/task/framework.ts(191,9): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/utils/task/framework.ts(195,28): error TS2538: Type 'unknown' cannot be used as an index type.
+src/utils/task/framework.ts(238,43): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'TaskStatus'.
+src/utils/task/framework.ts(241,32): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.

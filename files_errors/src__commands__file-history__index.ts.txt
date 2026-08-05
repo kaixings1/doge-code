@@ -1,0 +1,1 @@
+src/commands/file-history/index.ts(110,66): error TS2339: Property 'call' does not exist on type 'Command'.

@@ -1,0 +1,10 @@
+src/tools/WebSearchTool/WebSearchTool.ts(2286,9): error TS2322: Type '(input: { [x: string]: unknown; query: string; allowed_domains?: string[]; blocked_domains?: string[]; }, context: ToolUseContext, _canUseTool: CanUseToolFn, _parentMessage: AssistantMessage, onProgress: ToolCallProgress<...>) => Promise<...>' is not assignable to type '(args: { [x: string]: unknown; query: string; allowed_domains?: string[]; blocked_domains?: string[]; }, context: ToolUseContext, canUseTool: CanUseToolFn, parentMessage: AssistantMessage, onProgress?: ToolCallProgress<...>) => Promise<...>'.
+src/tools/WebSearchTool/WebSearchTool.ts(2288,25): error TS2304: Cannot find name 'settings'.
+src/tools/WebSearchTool/WebSearchTool.ts(2294,23): error TS2304: Cannot find name 'query'.
+src/tools/WebSearchTool/WebSearchTool.ts(2313,45): error TS2304: Cannot find name 'allowed_domains'.
+src/tools/WebSearchTool/WebSearchTool.ts(2313,62): error TS2304: Cannot find name 'blocked_domains'.
+src/tools/WebSearchTool/WebSearchTool.ts(2316,40): error TS2304: Cannot find name 'start'.
+src/tools/WebSearchTool/WebSearchTool.ts(2327,51): error TS2339: Property 'type' does not exist on type '{}'.
+src/tools/WebSearchTool/WebSearchTool.ts(2347,39): error TS2304: Cannot find name 'allowed_domains'.
+src/tools/WebSearchTool/WebSearchTool.ts(2347,56): error TS2304: Cannot find name 'blocked_domains'.
+src/tools/WebSearchTool/WebSearchTool.ts(2367,38): error TS2304: Cannot find name 'start'.

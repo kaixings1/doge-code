@@ -1,0 +1,2 @@
+src/commands/proactive/index.ts(471,7): error TS2578: Unused '@ts-expect-error' directive.
+src/commands/proactive/index.ts(939,66): error TS2339: Property 'call' does not exist on type 'Command'.

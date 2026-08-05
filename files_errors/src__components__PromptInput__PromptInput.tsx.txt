@@ -1,0 +1,50 @@
+src/components/PromptInput/PromptInput.tsx(297,47): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/components/PromptInput/PromptInput.tsx(298,29): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/components/PromptInput/PromptInput.tsx(337,70): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Record<string, TaskStateBase>'.
+src/components/PromptInput/PromptInput.tsx(394,95): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/components/PromptInput/PromptInput.tsx(400,16): error TS2365: Operator '<' cannot be applied to types 'unknown' and 'number'.
+src/components/PromptInput/PromptInput.tsx(441,59): error TS2339: Property 'teammates' does not exist on type 'unknown'.
+src/components/PromptInput/PromptInput.tsx(441,78): error TS2339: Property 'name' does not exist on type 'unknown'.
+src/components/PromptInput/PromptInput.tsx(443,25): error TS2339: Property 'teamName' does not exist on type 'unknown'.
+src/components/PromptInput/PromptInput.tsx(458,55): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/components/PromptInput/PromptInput.tsx(458,131): error TS2345: Argument of type 'unknown' is not assignable to parameter of type '{ [taskId: string]: TaskState; }'.
+src/components/PromptInput/PromptInput.tsx(467,73): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'FooterItem'.
+src/components/PromptInput/PromptInput.tsx(495,58): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'FooterItem'.
+src/components/PromptInput/PromptInput.tsx(547,23): error TS2339: Property 'teammates' does not exist on type 'unknown'.
+src/components/PromptInput/PromptInput.tsx(553,33): error TS2339: Property 'teammates' does not exist on type 'unknown'.
+src/components/PromptInput/PromptInput.tsx(567,47): error TS2339: Property 'name' does not exist on type 'unknown'.
+src/components/PromptInput/PromptInput.tsx(568,19): error TS2339: Property 'color' does not exist on type 'unknown'.
+src/components/PromptInput/PromptInput.tsx(569,62): error TS2339: Property 'color' does not exist on type 'unknown'.
+src/components/PromptInput/PromptInput.tsx(1016,50): error TS2339: Property 'text' does not exist on type 'unknown'.
+src/components/PromptInput/PromptInput.tsx(1020,23): error TS2339: Property 'status' does not exist on type 'unknown'.
+src/components/PromptInput/PromptInput.tsx(1031,11): error TS2740: Type '{}' is missing the following properties from type '{ status: "active"; id: string; abort: () => void; startTime: number; messagesRef: { current: Message[]; }; writtenPathsRef: { current: Set<string>; }; boundary: CompletionBoundary; ... 4 more ...; pipelinedSuggestion?: { ...; }; }': status, id, abort, startTime, and 7 more.
+src/components/PromptInput/PromptInput.tsx(1032,11): error TS2322: Type 'unknown' is not assignable to type 'number'.
+src/components/PromptInput/PromptInput.tsx(1039,33): error TS2339: Property 'shownAt' does not exist on type 'unknown'.
+src/components/PromptInput/PromptInput.tsx(1049,106): error TS2345: Argument of type 'unknown' is not assignable to parameter of type '{ teamName: string; teamFilePath: string; leadAgentId: string; selfAgentId?: string; selfAgentName?: string; isLeader?: boolean; selfAgentColor?: string; teammates: { [teammateId: string]: { name: string; agentType?: string; ... 5 more ...; spawnedAt: number; }; }; }'.
+src/components/PromptInput/PromptInput.tsx(1062,27): error TS2339: Property 'error' does not exist on type 'DirectMessageResult'.
+src/components/PromptInput/PromptInput.tsx(1085,31): error TS2339: Property 'text' does not exist on type 'unknown'.
+src/components/PromptInput/PromptInput.tsx(1085,61): error TS2339: Property 'shownAt' does not exist on type 'unknown'.
+src/components/PromptInput/PromptInput.tsx(1143,29): error TS2339: Property 'text' does not exist on type 'unknown'.
+src/components/PromptInput/PromptInput.tsx(1143,80): error TS2339: Property 'shownAt' does not exist on type 'unknown'.
+src/components/PromptInput/PromptInput.tsx(1144,61): error TS2339: Property 'text' does not exist on type 'unknown'.
+src/components/PromptInput/PromptInput.tsx(1429,33): error TS2538: Type 'unknown' cannot be used as an index type.
+src/components/PromptInput/PromptInput.tsx(1440,13): error TS2464: A computed property name must be of type 'string', 'number', 'symbol', or 'any'.
+src/components/PromptInput/PromptInput.tsx(1455,67): error TS2345: Argument of type 'unknown' is not assignable to parameter of type '{ leadAgentId: string; }'.
+src/components/PromptInput/PromptInput.tsx(1525,52): error TS2345: Argument of type 'unknown' is not assignable to parameter of type '{ leadAgentId: string; }'.
+src/components/PromptInput/PromptInput.tsx(1555,45): error TS2339: Property 'teamName' does not exist on type 'unknown'.
+src/components/PromptInput/PromptInput.tsx(1741,41): error TS2339: Property 'status' does not exist on type 'unknown'.
+src/components/PromptInput/PromptInput.tsx(1750,28): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/components/PromptInput/PromptInput.tsx(1750,80): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/components/PromptInput/PromptInput.tsx(1758,28): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/components/PromptInput/PromptInput.tsx(1759,13): error TS2365: Operator '<' cannot be applied to types 'unknown' and 'number'.
+src/components/PromptInput/PromptInput.tsx(1811,57): error TS2345: Argument of type 'unknown' is not assignable to parameter of type '{ [taskId: string]: TaskState; }'.
+src/components/PromptInput/PromptInput.tsx(1811,64): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/components/PromptInput/PromptInput.tsx(1821,15): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/components/PromptInput/PromptInput.tsx(1847,28): error TS2365: Operator '>=' cannot be applied to types 'unknown' and 'number'.
+src/components/PromptInput/PromptInput.tsx(1848,43): error TS2345: Argument of type 'unknown' is not assignable to parameter of type '{ [taskId: string]: TaskState; }'.
+src/components/PromptInput/PromptInput.tsx(1848,50): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/components/PromptInput/PromptInput.tsx(1929,23): error TS2339: Property 'status' does not exist on type 'unknown'.
+src/components/PromptInput/PromptInput.tsx(1975,87): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'EffortValue'.
+src/components/PromptInput/PromptInput.tsx(1996,76): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'boolean'.
+src/components/PromptInput/PromptInput.tsx(2069,248): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/components/PromptInput/PromptInput.tsx(2314,26): error TS2488: Type 'unknown' must have a '[Symbol.iterator]()' method that returns an iterator.

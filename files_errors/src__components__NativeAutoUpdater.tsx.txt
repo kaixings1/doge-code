@@ -1,0 +1,3 @@
+src/components/NativeAutoUpdater.tsx(77,9): error TS2367: This comparison appears to be unintentional because the types '"production"' and '"test"' have no overlap.
+src/components/NativeAutoUpdater.tsx(77,36): error TS2367: This comparison appears to be unintentional because the types '"production"' and '"development"' have no overlap.
+src/components/NativeAutoUpdater.tsx(187,27): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.

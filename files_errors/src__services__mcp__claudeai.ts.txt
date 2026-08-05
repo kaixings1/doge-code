@@ -1,0 +1,2 @@
+src/services/mcp/claudeai.ts(66,27): error TS2339: Property 'includes' does not exist on type 'unknown'.
+src/services/mcp/claudeai.ts(68,83): error TS2339: Property 'join' does not exist on type 'unknown'.

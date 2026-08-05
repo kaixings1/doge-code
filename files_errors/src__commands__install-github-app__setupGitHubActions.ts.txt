@@ -1,0 +1,6 @@
+src/commands/install-github-app/setupGitHubActions.ts(131,60): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Workflow'.
+src/commands/install-github-app/setupGitHubActions.ts(133,36): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Workflow'.
+src/commands/install-github-app/setupGitHubActions.ts(224,38): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Workflow'.
+src/commands/install-github-app/setupGitHubActions.ts(232,38): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Workflow'.
+src/commands/install-github-app/setupGitHubActions.ts(299,60): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Workflow'.
+src/commands/install-github-app/setupGitHubActions.ts(301,36): error TS2345: Argument of type 'string' is not assignable to parameter of type 'Workflow'.

@@ -1,0 +1,1 @@
+src/types/hooks.ts(201,3): error TS2344: Type 'false' does not satisfy the constraint 'true'.

@@ -1,0 +1,4 @@
+src/services/api/sessionIngress.ts(82,36): error TS2345: Argument of type 'string' is not assignable to parameter of type '`${string}-${string}-${string}-${string}-${string}`'.
+src/services/api/sessionIngress.ts(93,38): error TS2345: Argument of type 'string' is not assignable to parameter of type '`${string}-${string}-${string}-${string}-${string}`'.
+src/services/api/sessionIngress.ts(228,34): error TS2345: Argument of type 'string' is not assignable to parameter of type '`${string}-${string}-${string}-${string}-${string}`'.
+src/services/api/sessionIngress.ts(430,73): error TS2339: Property 'uuid' does not exist on type 'Entry'.

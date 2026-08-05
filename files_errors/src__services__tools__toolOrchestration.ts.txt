@@ -1,0 +1,2 @@
+src/services/tools/toolOrchestration.ts(133,27): error TS2339: Property 'some' does not exist on type 'AssistantMessageContent'.
+src/services/tools/toolOrchestration.ts(166,29): error TS2339: Property 'some' does not exist on type 'AssistantMessageContent'.

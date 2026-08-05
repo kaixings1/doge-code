@@ -1,0 +1,1 @@
+src/utils/updater.ts(64,32): error TS2304: Cannot find name 'getPlatformInfo'.

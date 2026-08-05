@@ -1,0 +1,1 @@
+src/outputStyles/loadOutputStylesDir.ts(96,30): error TS2339: Property 'cache' does not exist on type '(subdir: any, cwd: string) => Promise<MarkdownFile[]>'.

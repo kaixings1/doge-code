@@ -1,0 +1,3 @@
+src/server/web-term.ts(19,19): error TS2304: Cannot find name 'BunSubprocess'.
+src/server/web-term.ts(188,6): error TS2339: Property 'sendBlob' does not exist on type 'ServerWebSocket<undefined>'.
+src/server/web-term.ts(280,18): error TS2339: Property 'data' does not exist on type 'Server<{ ws?: ServerWebSocket<undefined>; }>'.

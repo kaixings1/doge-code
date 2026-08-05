@@ -1,0 +1,8 @@
+src/utils/teleport.tsx(847,62): error TS2339: Property 'error' does not exist on type 'BundleUploadResult'.
+src/utils/teleport.tsx(1011,60): error TS2339: Property 'error' does not exist on type 'BundleUploadResult'.
+src/utils/teleport.tsx(1015,24): error TS2339: Property 'failReason' does not exist on type 'BundleUploadResult'.
+src/utils/teleport.tsx(1023,46): error TS2339: Property 'error' does not exist on type 'BundleUploadResult'.
+src/utils/teleport.tsx(1026,41): error TS2339: Property 'error' does not exist on type 'BundleUploadResult'.
+src/utils/teleport.tsx(1030,21): error TS2322: Type 'any' is not assignable to type 'never'.
+src/utils/teleport.tsx(1030,49): error TS2339: Property 'failReason' does not exist on type 'BundleUploadResult'.
+src/utils/teleport.tsx(1032,53): error TS2339: Property 'error' does not exist on type 'BundleUploadResult'.

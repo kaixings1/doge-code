@@ -1,0 +1,14 @@
+src/commands/loop/strategies/langgraph.ts(30,35): error TS2304: Cannot find name 'NodeFunction'.
+src/commands/loop/strategies/langgraph.ts(32,62): error TS2304: Cannot find name 'ConditionFunction'.
+src/commands/loop/strategies/langgraph.ts(35,29): error TS2304: Cannot find name 'NodeFunction'.
+src/commands/loop/strategies/langgraph.ts(37,48): error TS2304: Cannot find name 'ConditionFunction'.
+src/commands/loop/strategies/langgraph.ts(42,32): error TS2304: Cannot find name 'NodeFunction'.
+src/commands/loop/strategies/langgraph.ts(44,64): error TS2304: Cannot find name 'ConditionFunction'.
+src/commands/loop/strategies/langgraph.ts(49,27): error TS2304: Cannot find name 'START'.
+src/commands/loop/strategies/langgraph.ts(51,24): error TS2304: Cannot find name 'END'.
+src/commands/loop/strategies/langgraph.ts(55,23): error TS2304: Cannot find name 'START'.
+src/commands/loop/strategies/langgraph.ts(130,19): error TS2304: Cannot find name 'START'.
+src/commands/loop/strategies/langgraph.ts(139,16): error TS2304: Cannot find name 'END'.
+src/commands/loop/strategies/langgraph.ts(142,16): error TS2304: Cannot find name 'END'.
+src/commands/loop/strategies/langgraph.ts(148,5): error TS2739: Type '{ invoke: (state: Partial<LangGraphLoopState>) => Promise<LangGraphLoopState>; }' is missing the following properties from type 'CompiledGraph<LangGraphLoopState>': nodes, edges, conditionalEdges, stateFactory, findNext
+src/commands/loop/strategies/langgraph.ts(266,3): error TS2416: Property 'evaluate' in type 'LangGraphStrategy' is not assignable to the same property in base type 'BaseLoopStrategy'.

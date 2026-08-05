@@ -1,0 +1,1 @@
+src/commands/chrome/chrome.tsx(49,21): error TS2339: Property 'find' does not exist on type 'unknown'.

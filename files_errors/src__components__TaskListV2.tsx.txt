@@ -1,0 +1,5 @@
+src/components/TaskListV2.tsx(95,46): error TS2339: Property 'teammates' does not exist on type 'unknown'.
+src/components/TaskListV2.tsx(96,54): error TS2339: Property 'teammates' does not exist on type 'unknown'.
+src/components/TaskListV2.tsx(97,20): error TS2339: Property 'color' does not exist on type 'unknown'.
+src/components/TaskListV2.tsx(98,64): error TS2339: Property 'color' does not exist on type 'unknown'.
+src/components/TaskListV2.tsx(100,35): error TS2339: Property 'name' does not exist on type 'unknown'.

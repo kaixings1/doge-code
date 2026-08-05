@@ -1,0 +1,3 @@
+src/engine/index.ts(190,11): error TS2304: Cannot find name 'engineLog'.
+src/engine/index.ts(256,15): error TS2345: Argument of type 'Record<string, unknown>' is not assignable to parameter of type 'ToolUseContext'.
+src/engine/index.ts(285,9): error TS2353: Object literal may only specify known properties, and 'type' does not exist in type 'QueryResult'.

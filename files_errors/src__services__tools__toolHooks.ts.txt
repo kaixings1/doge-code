@@ -1,0 +1,3 @@
+src/services/tools/toolHooks.ts(102,19): error TS2322: Type 'AttachmentMessage | HookResultMessage | ProgressMessage' is not assignable to type 'AttachmentMessage | ProgressMessage<HookProgress>'.
+src/services/tools/toolHooks.ts(254,19): error TS2322: Type 'AttachmentMessage | HookResultMessage | ProgressMessage' is not assignable to type 'AttachmentMessage | ProgressMessage<HookProgress>'.
+src/services/tools/toolHooks.ts(479,47): error TS2322: Type 'AttachmentMessage | HookResultMessage | ProgressMessage' is not assignable to type 'AttachmentMessage | ProgressMessage<HookProgress>'.

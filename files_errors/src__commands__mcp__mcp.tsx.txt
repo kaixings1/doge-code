@@ -1,0 +1,2 @@
+src/commands/mcp/mcp.tsx(31,34): error TS2339: Property 'filter' does not exist on type 'unknown'.
+src/commands/mcp/mcp.tsx(80,7): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.

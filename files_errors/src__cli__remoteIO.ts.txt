@@ -1,0 +1,3 @@
+src/cli/remoteIO.ts(98,20): error TS2551: Property 'setOnData' does not exist on type 'Transport'. Did you mean 'onData'?
+src/cli/remoteIO.ts(106,20): error TS2551: Property 'setOnClose' does not exist on type 'Transport'. Did you mean 'onClose'?
+src/cli/remoteIO.ts(235,28): error TS2339: Property 'write' does not exist on type 'Transport'.

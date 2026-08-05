@@ -1,0 +1,1 @@
+src/commands/diff-review/index.ts(778,66): error TS2339: Property 'call' does not exist on type 'Command'.

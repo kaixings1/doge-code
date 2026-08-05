@@ -1,0 +1,1 @@
+src/commands/readme/index.ts(121,66): error TS2339: Property 'call' does not exist on type 'Command'.

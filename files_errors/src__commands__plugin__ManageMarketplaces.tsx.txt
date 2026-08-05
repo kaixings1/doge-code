@@ -1,0 +1,4 @@
+src/commands/plugin/ManageMarketplaces.tsx(327,22): error TS2345: Argument of type '{ type: string; }' is not assignable to parameter of type 'string'.
+src/commands/plugin/ManageMarketplaces.tsx(436,18): error TS2345: Argument of type '{ type: string; }' is not assignable to parameter of type 'string'.
+src/commands/plugin/ManageMarketplaces.tsx(454,22): error TS2345: Argument of type '{ type: string; }' is not assignable to parameter of type 'string'.
+src/commands/plugin/ManageMarketplaces.tsx(505,22): error TS2345: Argument of type '{ type: string; targetMarketplace: string; }' is not assignable to parameter of type 'string'.

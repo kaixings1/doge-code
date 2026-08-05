@@ -1,0 +1,1 @@
+src/services/api/bootstrap.ts(21,20): error TS2554: Expected 2-3 arguments, but got 1.

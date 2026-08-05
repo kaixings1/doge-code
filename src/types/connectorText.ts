@@ -5,6 +5,13 @@ export type ConnectorTextBlock = {
   [key: string]: unknown
 }
 
+/** 连接器文本增量（流式 content_block_delta） */
+export type ConnectorTextDelta = {
+  type?: string
+  text?: string
+  [key: string]: unknown
+}
+
 /**
  * 判断是否为连接器文本块
  * @param value - 待检查的值

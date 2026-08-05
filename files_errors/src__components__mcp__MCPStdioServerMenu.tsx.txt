@@ -1,0 +1,22 @@
+src/components/mcp/MCPStdioServerMenu.tsx(45,38): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/components/mcp/MCPStdioServerMenu.tsx(47,29): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/components/mcp/MCPStdioServerMenu.tsx(54,21): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/components/mcp/MCPStdioServerMenu.tsx(58,60): error TS2339: Property 'commands' does not exist on type 'unknown'.
+src/components/mcp/MCPStdioServerMenu.tsx(58,70): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/components/mcp/MCPStdioServerMenu.tsx(62,21): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/components/mcp/MCPStdioServerMenu.tsx(70,21): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/components/mcp/MCPStdioServerMenu.tsx(77,26): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/components/mcp/MCPStdioServerMenu.tsx(109,28): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/components/mcp/MCPStdioServerMenu.tsx(109,128): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/components/mcp/MCPStdioServerMenu.tsx(109,224): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/components/mcp/MCPStdioServerMenu.tsx(117,43): error TS2339: Property 'command' does not exist on type 'unknown'.
+src/components/mcp/MCPStdioServerMenu.tsx(120,26): error TS2339: Property 'args' does not exist on type 'unknown'.
+src/components/mcp/MCPStdioServerMenu.tsx(120,48): error TS2339: Property 'args' does not exist on type 'unknown'.
+src/components/mcp/MCPStdioServerMenu.tsx(122,45): error TS2339: Property 'args' does not exist on type 'unknown'.
+src/components/mcp/MCPStdioServerMenu.tsx(128,61): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/components/mcp/MCPStdioServerMenu.tsx(132,26): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/components/mcp/MCPStdioServerMenu.tsx(132,174): error TS2339: Property 'resources' does not exist on type 'unknown'.
+src/components/mcp/MCPStdioServerMenu.tsx(134,26): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/components/mcp/MCPStdioServerMenu.tsx(147,55): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/components/mcp/MCPStdioServerMenu.tsx(150,49): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/components/mcp/MCPStdioServerMenu.tsx(153,56): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.

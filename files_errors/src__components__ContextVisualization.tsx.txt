@@ -1,0 +1,7 @@
+src/components/ContextVisualization.tsx(43,95): error TS2339: Property 'collapsedMessages' does not exist on type 'Stats'.
+src/components/ContextVisualization.tsx(48,65): error TS2339: Property 'totalSpawns' does not exist on type '{ totalErrors: number; totalEmptySpawns: number; emptySpawnWarningEmitted: boolean; }'.
+src/components/ContextVisualization.tsx(48,88): error TS2339: Property 'totalSpawns' does not exist on type '{ totalErrors: number; totalEmptySpawns: number; emptySpawnWarningEmitted: boolean; }'.
+src/components/ContextVisualization.tsx(48,112): error TS2339: Property 'totalSpawns' does not exist on type '{ totalErrors: number; totalEmptySpawns: number; emptySpawnWarningEmitted: boolean; }'.
+src/components/ContextVisualization.tsx(51,65): error TS2339: Property 'totalSpawns' does not exist on type '{ totalErrors: number; totalEmptySpawns: number; emptySpawnWarningEmitted: boolean; }'.
+src/components/ContextVisualization.tsx(51,86): error TS2339: Property 'lastError' does not exist on type '{ totalErrors: number; totalEmptySpawns: number; emptySpawnWarningEmitted: boolean; }'.
+src/components/ContextVisualization.tsx(51,108): error TS2339: Property 'lastError' does not exist on type '{ totalErrors: number; totalEmptySpawns: number; emptySpawnWarningEmitted: boolean; }'.

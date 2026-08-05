@@ -1,0 +1,1 @@
+src/commands/schedule/index.ts(7,15): error TS2322: Type 'Promise<typeof import("D:/doge-code/src/commands/schedule/schedule")>' is not assignable to type 'Promise<LocalCommandModule>'.

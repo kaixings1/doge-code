@@ -1,0 +1,2 @@
+src/commands/remote-setup/remote-setup.tsx(135,28): error TS2339: Property 'error' does not exist on type '{ ok: true; result: ImportTokenResult; } | { ok: false; error: ImportTokenError; }'.
+src/commands/remote-setup/remote-setup.tsx(137,34): error TS2339: Property 'error' does not exist on type '{ ok: true; result: ImportTokenResult; } | { ok: false; error: ImportTokenError; }'.

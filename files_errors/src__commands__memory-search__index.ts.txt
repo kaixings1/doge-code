@@ -1,0 +1,4 @@
+src/commands/memory-search/index.ts(903,9): error TS2304: Cannot find name 'copyFileSync'.
+src/commands/memory-search/index.ts(972,14): error TS2322: Type '(args: string) => Promise<{ type: "text"; value: string; } | { type: "json"; value: string; }>' is not assignable to type 'LocalCommandCall'.
+src/commands/memory-search/index.ts(1179,3): error TS2353: Object literal may only specify known properties, and 'arguments' does not exist in type 'CommandBase & LocalCommand'.
+src/commands/memory-search/index.ts(1197,66): error TS2339: Property 'call' does not exist on type 'Command'.

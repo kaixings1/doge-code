@@ -1,0 +1,1 @@
+src/tasks/pillLabel.ts(32,59): error TS2339: Property 'teamName' does not exist on type 'unknown'.

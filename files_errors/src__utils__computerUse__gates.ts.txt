@@ -1,0 +1,1 @@
+src/utils/computerUse/gates.ts(20,3): error TS2322: Type '"pixels"' is not assignable to type 'CoordinateMode'.

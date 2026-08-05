@@ -1,0 +1,1 @@
+src/utils/Shell.ts(415,53): error TS2304: Cannot find name 'shellType'.

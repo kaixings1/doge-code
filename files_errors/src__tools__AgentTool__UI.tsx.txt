@@ -1,0 +1,30 @@
+src/tools/AgentTool/UI.tsx(66,15): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(67,47): error TS2339: Property 'message' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(71,15): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(72,29): error TS2339: Property 'message' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(102,7): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
+src/tools/AgentTool/UI.tsx(103,121): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(134,26): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(135,40): error TS2339: Property 'message' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(153,28): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(168,28): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(380,5): error TS2741: Property 'output_tokens_details' is missing in type '{ inference_geo: null; iterations: null; speed: null; input_tokens: number; output_tokens: number; cache_creation_input_tokens?: number; cache_read_input_tokens?: number; server_tool_use?: { ...; }; service_tier?: "priority" | ... 1 more ... | "batch"; cache_creation?: { ...; }; }' but required in type 'BetaUsage'.
+src/tools/AgentTool/UI.tsx(477,22): error TS2339: Property 'message' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(479,156): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(481,39): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(482,50): error TS2339: Property 'message' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(526,25): error TS2339: Property 'message' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(542,28): error TS2345: Argument of type 'ToolProgressData[]' is not assignable to parameter of type '{ message: UserMessage | AssistantMessage; }[]'.
+src/tools/AgentTool/UI.tsx(594,70): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/tools/AgentTool/UI.tsx(634,20): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(634,47): error TS2339: Property 'message' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(636,154): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(638,37): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(639,48): error TS2339: Property 'message' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(795,25): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(796,39): error TS2339: Property 'message' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(815,28): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(836,20): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(836,47): error TS2339: Property 'message' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(838,36): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/tools/AgentTool/UI.tsx(839,57): error TS2339: Property 'message' does not exist on type 'unknown'.

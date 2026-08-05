@@ -1,0 +1,3 @@
+src/components/messages/teamMemCollapsed.tsx(12,10): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/components/messages/teamMemCollapsed.tsx(12,54): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
+src/components/messages/teamMemCollapsed.tsx(12,96): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.

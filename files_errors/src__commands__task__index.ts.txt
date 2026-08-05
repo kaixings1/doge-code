@@ -1,0 +1,1 @@
+src/commands/task/index.ts(9,3): error TS1360: Type '{ type: "local"; name: string; description: string; argumentHint: string; load: () => Promise<typeof import("./task.ts")>; }' does not satisfy the expected type 'Command'.

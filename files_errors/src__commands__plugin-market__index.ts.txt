@@ -1,0 +1,3 @@
+src/commands/plugin-market/index.ts(132,14): error TS2322: Type '(args: string) => Promise<{ type: string; value: string; }>' is not assignable to type 'LocalCommandCall'.
+src/commands/plugin-market/index.ts(462,3): error TS2353: Object literal may only specify known properties, and 'arguments' does not exist in type 'CommandBase & LocalCommand'.
+src/commands/plugin-market/index.ts(480,66): error TS2339: Property 'call' does not exist on type 'Command'.

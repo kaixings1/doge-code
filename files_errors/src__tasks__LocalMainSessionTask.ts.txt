@@ -1,0 +1,9 @@
+src/tasks/LocalMainSessionTask.ts(381,11): error TS2322: Type 'string' is not assignable to type '`${string}-${string}-${string}-${string}-${string}`'.
+src/tasks/LocalMainSessionTask.ts(411,25): error TS2345: Argument of type 'UserMessage | AssistantMessage | SystemMessage | StreamEvent' is not assignable to parameter of type 'Message'.
+src/tasks/LocalMainSessionTask.ts(416,41): error TS2322: Type 'UserMessage | AssistantMessage | SystemMessage | StreamEvent' is not assignable to type 'Message'.
+src/tasks/LocalMainSessionTask.ts(419,9): error TS2322: Type 'unknown' is not assignable to type '`${string}-${string}-${string}-${string}-${string}`'.
+src/tasks/LocalMainSessionTask.ts(422,45): error TS2339: Property 'content' does not exist on type 'unknown'.
+src/tasks/LocalMainSessionTask.ts(444,27): error TS2339: Property 'tokenCount' does not exist on type 'unknown'.
+src/tasks/LocalMainSessionTask.ts(445,26): error TS2339: Property 'toolUseCount' does not exist on type 'unknown'.
+src/tasks/LocalMainSessionTask.ts(460,35): error TS2339: Property 'toolUseCount' does not exist on type 'unknown'.
+src/tasks/LocalMainSessionTask.ts(461,38): error TS2339: Property 'recentActivities' does not exist on type 'unknown'.

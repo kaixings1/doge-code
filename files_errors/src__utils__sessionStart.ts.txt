@@ -1,0 +1,4 @@
+src/utils/sessionStart.ts(142,25): error TS2345: Argument of type 'AttachmentMessage | HookResultMessage | ProgressMessage' is not assignable to parameter of type 'HookResultMessage'.
+src/utils/sessionStart.ts(171,23): error TS2345: Argument of type 'AttachmentMessage' is not assignable to parameter of type 'HookResultMessage'.
+src/utils/sessionStart.ts(210,25): error TS2345: Argument of type 'AttachmentMessage | HookResultMessage | ProgressMessage' is not assignable to parameter of type 'HookResultMessage'.
+src/utils/sessionStart.ts(228,23): error TS2345: Argument of type 'AttachmentMessage' is not assignable to parameter of type 'HookResultMessage'.

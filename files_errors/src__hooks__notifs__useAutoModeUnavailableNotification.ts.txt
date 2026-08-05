@@ -1,0 +1,2 @@
+src/hooks/notifs/useAutoModeUnavailableNotification.ts(26,46): error TS2769: No overload matches this call.
+src/hooks/notifs/useAutoModeUnavailableNotification.ts(30,5): error TS2322: Type 'unknown' is not assignable to type 'InternalPermissionMode'.

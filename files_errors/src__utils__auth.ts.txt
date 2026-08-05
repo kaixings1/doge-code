@@ -1,0 +1,16 @@
+src/utils/auth.ts(206,29): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string[]'.
+src/utils/auth.ts(1213,30): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string[]'.
+src/utils/auth.ts(1226,19): error TS2339: Property 'name' does not exist on type 'SecureStorage'.
+src/utils/auth.ts(1241,51): error TS2339: Property 'subscriptionType' does not exist on type 'unknown'.
+src/utils/auth.ts(1243,48): error TS2339: Property 'rateLimitTier' does not exist on type 'unknown'.
+src/utils/auth.ts(1306,21): error TS2339: Property 'accessToken' does not exist on type 'unknown'.
+src/utils/auth.ts(1310,5): error TS2322: Type 'unknown' is not assignable to type 'OAuthTokens'.
+src/utils/auth.ts(1429,21): error TS2339: Property 'accessToken' does not exist on type 'unknown'.
+src/utils/auth.ts(1432,5): error TS2322: Type 'unknown' is not assignable to type 'OAuthTokens'.
+src/utils/auth.ts(1483,30): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string[]'.
+src/utils/auth.ts(1550,7): error TS2740: Type '{}' is missing the following properties from type 'string[]': length, pop, push, concat, and 35 more.
+src/utils/auth.ts(1550,37): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string[]'.
+src/utils/auth.ts(1593,39): error TS2339: Property 'includes' does not exist on type 'unknown'.
+src/utils/auth.ts(1687,3): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/utils/auth.ts(1722,3): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/utils/auth.ts(1983,45): error TS2339: Property 'uuid' does not exist on type 'unknown'.

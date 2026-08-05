@@ -1,0 +1,1 @@
+src/tools/FileReadTool/imageProcessor.ts(46,43): error TS2307: Cannot find module 'image-processor-napi' or its corresponding type declarations.

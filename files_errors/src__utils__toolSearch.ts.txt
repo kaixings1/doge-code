@@ -1,0 +1,1 @@
+src/utils/toolSearch.ts(564,44): error TS2339: Property 'preCompactDiscoveredTools' does not exist on type 'unknown'.

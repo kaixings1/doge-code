@@ -1,0 +1,4 @@
+src/components/FullscreenLayout.tsx(355,14): error TS2604: JSX element type 'ScrollChromeContext' does not have any construct or call signatures.
+src/components/FullscreenLayout.tsx(355,14): error TS2786: 'ScrollChromeContext' cannot be used as a JSX component.
+src/components/FullscreenLayout.tsx(424,31): error TS2604: JSX element type 'ModalContext' does not have any construct or call signatures.
+src/components/FullscreenLayout.tsx(424,31): error TS2786: 'ModalContext' cannot be used as a JSX component.

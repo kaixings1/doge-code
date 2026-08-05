@@ -1,0 +1,2 @@
+src/services/mcp/xaaIdpLogin.ts(119,7): error TS2698: Spread types may only be created from object types.
+src/services/mcp/xaaIdpLogin.ts(168,7): error TS2698: Spread types may only be created from object types.

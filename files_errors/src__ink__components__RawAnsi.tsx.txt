@@ -1,0 +1,1 @@
+src/ink/components/RawAnsi.tsx(47,10): error TS2339: Property 'ink-raw-ansi' does not exist on type 'JSX.IntrinsicElements'.

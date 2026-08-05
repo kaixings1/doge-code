@@ -1,0 +1,25 @@
+src/utils/collapseReadSearch.ts(324,7): error TS2345: Argument of type '{ type: string; name: unknown; input: any; }' is not assignable to parameter of type '{ type: string; name?: string; input?: unknown; }'.
+src/utils/collapseReadSearch.ts(330,16): error TS2322: Type 'unknown' is not assignable to type 'string'.
+src/utils/collapseReadSearch.ts(370,27): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/utils/collapseReadSearch.ts(417,11): error TS2677: A type predicate's type must be assignable to its parameter's type.
+src/utils/collapseReadSearch.ts(429,26): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+src/utils/collapseReadSearch.ts(442,11): error TS2677: A type predicate's type must be assignable to its parameter's type.
+src/utils/collapseReadSearch.ts(444,45): error TS2339: Property 'filter' does not exist on type 'string | ContentBlockParam[]'.
+src/utils/collapseReadSearch.ts(469,8): error TS2339: Property 'map' does not exist on type 'unknown'.
+src/utils/collapseReadSearch.ts(485,21): error TS2488: Type 'unknown' must have a '[Symbol.iterator]()' method that returns an iterator.
+src/utils/collapseReadSearch.ts(512,16): error TS2339: Property 'type' does not exist on type 'unknown'.
+src/utils/collapseReadSearch.ts(513,21): error TS2339: Property 'displayMessage' does not exist on type 'unknown'.
+src/utils/collapseReadSearch.ts(515,3): error TS2322: Type 'unknown' is not assignable to type 'MessageBase'.
+src/utils/collapseReadSearch.ts(523,25): error TS2339: Property 'length' does not exist on type 'unknown'.
+src/utils/collapseReadSearch.ts(544,21): error TS2488: Type 'unknown' must have a '[Symbol.iterator]()' method that returns an iterator.
+src/utils/collapseReadSearch.ts(574,31): error TS2339: Property 'content' does not exist on type 'unknown'.
+src/utils/collapseReadSearch.ts(782,17): error TS2345: Argument of type 'CollapsedReadSearchGroup' is not assignable to parameter of type 'Message'.
+src/utils/collapseReadSearch.ts(907,37): error TS2339: Property 'hookCount' does not exist on type 'never'.
+src/utils/collapseReadSearch.ts(909,13): error TS2339: Property 'totalDurationMs' does not exist on type 'never'.
+src/utils/collapseReadSearch.ts(910,13): error TS2339: Property 'hookInfos' does not exist on type 'never'.
+src/utils/collapseReadSearch.ts(911,42): error TS2339: Property 'hookInfos' does not exist on type 'never'.
+src/utils/collapseReadSearch.ts(914,11): error TS2339: Property 'type' does not exist on type 'never'.
+src/utils/collapseReadSearch.ts(915,11): error TS2339: Property 'attachment' does not exist on type 'never'.
+src/utils/collapseReadSearch.ts(925,49): error TS2339: Property 'attachment' does not exist on type 'never'.
+src/utils/collapseReadSearch.ts(935,15): error TS2339: Property 'type' does not exist on type 'never'.
+src/utils/collapseReadSearch.ts(935,44): error TS2339: Property 'attachment' does not exist on type 'never'.

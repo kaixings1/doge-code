@@ -1,0 +1,66 @@
+src/skills/bundled/code-analyzer/ReportGenerator.ts(19,32): error TS2693: 'ReportGenerator' only refers to a type, but is being used as a value here.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(22,28): error TS2304: Cannot find name 'CodeAnalysisReport'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(39,46): error TS2345: Argument of type 'Map<string, string>' is not assignable to parameter of type 'FileContent[]'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(43,7): error TS2353: Object literal may only specify known properties, and 'asts' does not exist in type 'AnalysisData'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(56,32): error TS2339: Property 'globFiles' does not exist on type 'CodeAnalyzer'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(82,59): error TS2694: Namespace 'ts' has no exported member 'NodeFile'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(90,16): error TS2339: Property 'getFileLanguage' does not exist on type 'CodeAnalyzer'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(95,19): error TS2339: Property 'getDefaultCompilerOptions' does not exist on type 'CodeAnalyzer'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(117,23): error TS2339: Property 'createNodeVisitor' does not exist on type 'typeof ts'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(122,10): error TS2551: Property 'NodeKind' does not exist on type 'typeof ts'. Did you mean 'IndexKind'?
+src/skills/bundled/code-analyzer/ReportGenerator.ts(134,7): error TS2322: Type 'ClassInfo' is not assignable to type 'Declaration'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(134,30): error TS2345: Argument of type 'Declaration' is not assignable to parameter of type 'ClassDeclaration'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(136,19): error TS2339: Property 'parseInterface' does not exist on type 'CodeAnalyzer'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(138,19): error TS2339: Property 'parseEnum' does not exist on type 'CodeAnalyzer'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(140,7): error TS2739: Type 'MethodInfo' is missing the following properties from type 'Declaration': kind, properties, methods
+src/skills/bundled/code-analyzer/ReportGenerator.ts(140,33): error TS2345: Argument of type 'Declaration' is not assignable to parameter of type 'FunctionDeclaration'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(149,48): error TS2339: Property 'expressions' does not exist on type 'HeritageClause'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(156,38): error TS2339: Property 'properties' does not exist on type 'ClassDeclaration'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(162,25): error TS2488: Type 'unknown' must have a '[Symbol.iterator]()' method that returns an iterator.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(162,28): error TS2554: Expected 2-3 arguments, but got 1.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(170,5): error TS2741: Property 'kind' is missing in type '{ name: string; extends: any; implements: any[]; properties: {}; methods: any[]; }' but required in type 'ClassInfo'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(175,32): error TS2339: Property 'signatures' does not exist on type 'FunctionDeclaration'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(181,27): error TS2339: Property 'text' does not exist on type 'BindingName'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(185,37): error TS2339: Property 'text' does not exist on type 'Expression'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(190,29): error TS2551: Property 'calculateMethodComplexity' does not exist on type 'CodeAnalyzer'. Did you mean 'calculateComplexity'?
+src/skills/bundled/code-analyzer/ReportGenerator.ts(198,7): error TS2322: Type 'string' is not assignable to type 'JSDoc'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(204,24): error TS2339: Property 'text' does not exist on type 'PropertyName'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(206,17): error TS2367: This comparison appears to be unintentional because the types 'boolean' and 'ModifierFlags' have no overlap.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(206,24): error TS2339: Property 'modifierFlag' does not exist on type 'PropertyDeclaration'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(207,25): error TS2551: Property 'parseJSDocComment' does not exist on type 'CodeAnalyzer'. Did you mean 'getJSDocComment'?
+src/skills/bundled/code-analyzer/ReportGenerator.ts(213,34): error TS2339: Property 'signatures' does not exist on type 'MethodDeclaration'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(216,29): error TS2339: Property 'text' does not exist on type 'PropertyName'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(220,7): error TS2322: Type 'string' is not assignable to type 'JSDoc'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(228,19): error TS2339: Property 'getNodeText' does not exist on type 'CodeAnalyzer'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(235,11): error TS2352: Conversion of type 'Symbol' to type 'ParameterDeclaration' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(235,85): error TS2345: Argument of type 'Symbol' is not assignable to parameter of type 'Node'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(235,91): error TS2352: Conversion of type 'Symbol' to type 'ParameterDeclaration' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(235,127): error TS2339: Property 'text' does not exist on type 'BindingName'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(264,5): error TS2322: Type '{ summary: any; tags: any[]; }' is not assignable to type 'string'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(264,29): error TS2339: Property 'text' does not exist on type 'JSDoc'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(274,31): error TS2339: Property 'getDocumentationComment' does not exist on type 'Node'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(300,23): error TS2693: 'DependencyGraph' only refers to a type, but is being used as a value here.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(304,28): error TS2339: Property 'collectExports' does not exist on type 'CodeAnalyzer'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(307,46): error TS2339: Property 'fileName' does not exist on type 'Declaration'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(313,28): error TS2339: Property 'collectImports' does not exist on type 'CodeAnalyzer'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(330,28): error TS2339: Property 'fileName' does not exist on type 'Declaration'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(333,38): error TS2693: 'CallGraph' only refers to a type, but is being used as a value here.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(339,38): error TS2339: Property 'collectMethods' does not exist on type 'CodeAnalyzer'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(345,23): error TS2339: Property 'addMethod' does not exist on type 'CallGraph'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(349,5): error TS2322: Type 'CallGraph[]' is not assignable to type 'CallGraphData[]'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(359,25): error TS2339: Property 'createNodeVisitor' does not exist on type 'typeof ts'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(364,12): error TS2551: Property 'NodeKind' does not exist on type 'typeof ts'. Did you mean 'IndexKind'?
+src/skills/bundled/code-analyzer/ReportGenerator.ts(373,5): error TS2322: Type 'Map<string, number>' is not assignable to type 'ComplexityMetrics'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(376,35): error TS2304: Cannot find name 'FileContent'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(381,31): error TS2339: Property 'normalizeContent' does not exist on type 'CodeAnalyzer'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(382,16): error TS2339: Property 'isDuplicate' does not exist on type 'CodeAnalyzer'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(396,13): error TS2365: Operator '>' cannot be applied to types 'Map<string, number>' and 'number'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(399,13): error TS2322: Type 'number' is not assignable to type '"low" | "medium" | "high" | "critical"'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(399,49): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(410,28): error TS2339: Property 'calculateNestingDepth' does not exist on type 'CodeAnalyzer'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(414,11): error TS2322: Type 'number' is not assignable to type '"low" | "medium" | "high" | "critical"'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(615,11): error TS2430: Interface 'DependencyGraph' incorrectly extends interface 'ImportMap'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(616,3): error TS2411: Property 'addExport' of type '(name: string, sourceFile: string) => void' is not assignable to 'string' index type 'Set<string>'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(617,3): error TS2411: Property 'getExportOwner' of type '(importedName: string) => string' is not assignable to 'string' index type 'Set<string>'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(618,3): error TS2411: Property 'hasExport' of type '(name: string) => boolean' is not assignable to 'string' index type 'Set<string>'.
+src/skills/bundled/code-analyzer/ReportGenerator.ts(619,3): error TS2411: Property 'getCallers' of type '(methodName: string) => Set<string>' is not assignable to 'string' index type 'Set<string>'.

@@ -1,0 +1,2 @@
+src/components/GhostText.tsx(3,21): error TS2724: '"../ink.js"' has no exported member named 'useAppTheme'. Did you mean 'useTheme'?
+src/components/GhostText.tsx(110,7): error TS2322: Type 'Timeout' is not assignable to type 'number'.

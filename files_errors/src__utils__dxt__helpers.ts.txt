@@ -1,0 +1,3 @@
+src/utils/dxt/helpers.ts(1,15): error TS2724: '"@anthropic-ai/mcpb"' has no exported member named 'McpbManifest'. Did you mean 'McpbManifestAny'?
+src/utils/dxt/helpers.ts(16,11): error TS2339: Property 'McpbManifestSchema' does not exist on type 'typeof import("D:/doge-code/node_modules/@anthropic-ai/mcpb/dist/index")'.
+src/utils/dxt/helpers.ts(23,47): error TS2339: Property 'join' does not exist on type 'unknown'.

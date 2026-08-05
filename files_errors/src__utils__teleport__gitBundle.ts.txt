@@ -1,0 +1,5 @@
+src/utils/teleport/gitBundle.ts(234,45): error TS2339: Property 'error' does not exist on type 'BundleCreateResult'.
+src/utils/teleport/gitBundle.ts(237,18): error TS2339: Property 'failReason' does not exist on type 'BundleCreateResult'.
+src/utils/teleport/gitBundle.ts(242,23): error TS2339: Property 'error' does not exist on type 'BundleCreateResult'.
+src/utils/teleport/gitBundle.ts(243,28): error TS2339: Property 'failReason' does not exist on type 'BundleCreateResult'.
+src/utils/teleport/gitBundle.ts(257,46): error TS2339: Property 'error' does not exist on type 'UploadResult'.

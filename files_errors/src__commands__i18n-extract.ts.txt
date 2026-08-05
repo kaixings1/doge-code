@@ -1,0 +1,1 @@
+src/commands/i18n-extract.ts(94,3): error TS2322: Type '(args: string) => string' is not assignable to type '(args: string, context: ToolUseContext) => Promise<ContentBlockParam[]>'.

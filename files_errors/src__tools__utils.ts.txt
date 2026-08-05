@@ -1,0 +1,1 @@
+src/tools/utils.ts(34,54): error TS2339: Property 'find' does not exist on type 'AssistantMessageContent'.

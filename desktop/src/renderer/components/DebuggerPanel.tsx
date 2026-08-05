@@ -13,7 +13,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import type { ThemeColors } from '../theme.js'
 
-interface BreakpointItem { file: string; line: number }
+interface BreakpointItem { file: string; line: number; condition?: string }
 interface CallFrame { name: string; file: string; line: number; column: number }
 interface DebugSessionInfo { id: string; pid: number; isRunning: boolean; isPaused: boolean; breakpointCount: number }
 
@@ -23,9 +23,10 @@ interface DebuggerPanelProps {
   onClose: () => void
   onNavigateTo?: (filePath: string, line: number) => void
   onBreakpointsChange?: (breakpoints: BreakpointItem[]) => void
+  onActiveSessionChange?: (sessionId: string | null) => void
 }
 
-export function DebuggerPanel({ cwd, theme, onClose, onNavigateTo, onBreakpointsChange }: DebuggerPanelProps): JSX.Element {
+export function DebuggerPanel({ cwd, theme, onClose, onNavigateTo, onBreakpointsChange, onActiveSessionChange }: DebuggerPanelProps): JSX.Element {
   const c = theme
   const [sessions, setSessions] = useState<DebugSessionInfo[]>([])
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
@@ -45,6 +46,7 @@ export function DebuggerPanel({ cwd, theme, onClose, onNavigateTo, onBreakpoints
   const [error, setError] = useState<string | null>(null)
   const [bpFile, setBpFile] = useState('')
   const [bpLine, setBpLine] = useState('')
+  const [bpCondition, setBpCondition] = useState('')
   const refreshTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const unsubPausedRef = useRef<(() => void) | null>(null)
   const WATCH_STORAGE_KEY = 'doge-debug-watch-expressions'
@@ -168,6 +170,11 @@ export function DebuggerPanel({ cwd, theme, onClose, onNavigateTo, onBreakpoints
     }
   }, [activeSessionId, pausedAt, refreshWatches])
 
+  // 上报活跃会话给父组件（行号点击设置断点用）
+  useEffect(() => {
+    onActiveSessionChange?.(activeSessionId)
+  }, [activeSessionId, onActiveSessionChange])
+
   const handleStart = useCallback(async () => {
     if (!scriptPath.trim()) return
     setIsStarting(true)
@@ -207,17 +214,20 @@ export function DebuggerPanel({ cwd, theme, onClose, onNavigateTo, onBreakpoints
     if (!lineNo || lineNo < 1) { setError('请输入有效行号'); return }
     try {
       const api = window.dogeAPI as Record<string, any>
-      const result = await api?.debugSetBreakpoint?.({ sessionId: activeSessionId, file: filePath, line: lineNo })
+      const bpParams: Record<string, unknown> = { sessionId: activeSessionId, file: filePath, line: lineNo }
+      if (bpCondition.trim()) bpParams.condition = bpCondition.trim()
+      const result = await api?.debugSetBreakpoint?.(bpParams)
       if (result && !result.success) {
         setError(result.error || '断点设置失败')
       } else {
         setError(null)
         setBpFile('')
         setBpLine('')
+        setBpCondition('')
       }
       refreshBreakpoints()
     } catch { /* ignore */ }
-  }, [activeSessionId, refreshBreakpoints, bpFile, bpLine])
+  }, [activeSessionId, refreshBreakpoints, bpFile, bpLine, bpCondition])
 
   const handleEval = useCallback(async () => {
     if (!activeSessionId || !evalExpr.trim()) return
@@ -292,8 +302,13 @@ export function DebuggerPanel({ cwd, theme, onClose, onNavigateTo, onBreakpoints
           <>
             <div style={{ flex: 1, overflowY: 'auto' }}>
               {breakpoints.length === 0 ? <div style={{ padding: '16px', textAlign: 'center', color: c.textFaint }}>无断点</div> : breakpoints.map((bp, i) => (
-                <div key={`${bp.file}-${bp.line}-${i}`} style={{ padding: '4px 8px', borderBottom: `1px solid ${c.borderSubtle}`, fontSize: '10px', display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: c.text, fontFamily: 'monospace' }}>{bp.file.replace(cwd + '\\', '').replace(cwd + '/', '')}:{bp.line}</span>
+                <div key={`${bp.file}-${bp.line}-${i}`} style={{ padding: '4px 8px', borderBottom: `1px solid ${c.borderSubtle}`, fontSize: '10px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ color: c.text, fontFamily: 'monospace' }}>{bp.file.replace(cwd + '\\', '').replace(cwd + '/', '')}:{bp.line}</span>
+                    {bp.condition && (
+                      <span style={{ color: '#f59e0b', fontSize: '9px', fontFamily: 'monospace' }}>if {bp.condition}</span>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -308,6 +323,9 @@ export function DebuggerPanel({ cwd, theme, onClose, onNavigateTo, onBreakpoints
                 <input value={bpFile} onChange={e => setBpFile(e.target.value)} placeholder="文件绝对路径（如 D:/proj/src/main.js）" style={{ flex: 1, padding: '2px 4px', background: c.inputBg, border: `1px solid ${c.border}`, borderRadius: '2px', color: c.text, fontSize: '9px', outline: 'none' }} />
                 <input value={bpLine} onChange={e => setBpLine(e.target.value)} placeholder="行号" style={{ width: '50px', padding: '2px 4px', background: c.inputBg, border: `1px solid ${c.border}`, borderRadius: '2px', color: c.text, fontSize: '9px', outline: 'none' }} />
                 <button onClick={handleSetBreakpoint} style={{ padding: '2px 6px', border: 'none', borderRadius: '2px', background: c.accent, color: '#000', cursor: 'pointer', fontSize: '9px' }}>+</button>
+              </div>
+              <div style={{ display: 'flex', gap: '4px', marginTop: '4px' }}>
+                <input value={bpCondition} onChange={e => setBpCondition(e.target.value)} placeholder="条件（可选，如 i &gt; 5 / status === 'error'）" style={{ flex: 1, padding: '2px 4px', background: c.inputBg, border: `1px solid ${c.border}`, borderRadius: '2px', color: c.text, fontSize: '9px', outline: 'none', fontFamily: 'monospace' }} />
               </div>
             </div>
           </>
