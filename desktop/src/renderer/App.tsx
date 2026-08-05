@@ -233,7 +233,69 @@ export function App(): JSX.Element {
   const [isCommitting, setIsCommitting] = useState(false)
   const [previewTabs, setPreviewTabs] = useState<Array<{ id: string; path: string; content: string; size?: number }>>([])
   const [activePreviewTabId, setActivePreviewTabId] = useState<string | null>(null)
+  const [tabContextMenu, setTabContextMenu] = useState<{ x: number; y: number; tabId: string } | null>(null)
   const activePreviewFile = previewTabs.find(t => t.id === activePreviewTabId) || null
+
+  // 关闭指定标签（若关闭的是活跃标签则激活相邻标签）
+  const closePreviewTab = useCallback((tabId: string) => {
+    setPreviewTabs(prev => {
+      const idx = prev.findIndex(t => t.id === tabId)
+      if (idx === -1) return prev
+      const next = prev.filter(t => t.id !== tabId)
+      if (activePreviewTabId === tabId) {
+        const neighbor = next[idx - 1] || next[idx] || null
+        setActivePreviewTabId(neighbor?.id || null)
+      }
+      return next
+    })
+  }, [activePreviewTabId])
+
+  // 关闭其他标签
+  const closeOtherTabs = useCallback((tabId: string) => {
+    setPreviewTabs(prev => prev.filter(t => t.id === tabId))
+    setActivePreviewTabId(tabId)
+  }, [])
+
+  // 关闭全部标签
+  const closeAllTabs = useCallback(() => {
+    setPreviewTabs([])
+    setActivePreviewTabId(null)
+  }, [])
+
+  // 拖拽排序：记录拖拽源索引
+  const [dragTabIndex, setDragTabIndex] = useState<number | null>(null)
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
+
+  // 拖放：把 dragTabIndex 位置的标签移动到 dropIndex
+  const handleTabDrop = useCallback((dropIndex: number) => {
+    if (dragTabIndex === null || dragTabIndex === dropIndex) {
+      setDragTabIndex(null)
+      setDragOverIndex(null)
+      return
+    }
+    setPreviewTabs(prev => {
+      const next = [...prev]
+      const [moved] = next.splice(dragTabIndex, 1)
+      next.splice(dropIndex, 0, moved)
+      return next
+    })
+    setDragTabIndex(null)
+    setDragOverIndex(null)
+  }, [dragTabIndex])
+
+  // 全局点击关闭右键菜单
+  useEffect(() => {
+    if (!tabContextMenu) return
+    const close = () => setTabContextMenu(null)
+    window.addEventListener('click', close)
+    window.addEventListener('blur', close)
+    window.addEventListener('contextmenu', close, { capture: true })
+    return () => {
+      window.removeEventListener('click', close)
+      window.removeEventListener('blur', close)
+      window.removeEventListener('contextmenu', close, { capture: true })
+    }
+  }, [tabContextMenu])
 
   // ─── 面板依赖 Hooks ───
   const fileTreeHook = useFileTree(workingDir)
@@ -336,6 +398,103 @@ export function App(): JSX.Element {
   const [showLogViewer, setShowLogViewer] = useState(false)
   const [cursorOffset, setCursorOffset] = useState(0)
   const [vimEnabled, setVimEnabled] = useState(false)
+
+  // ─── 工作区会话持久化（重启恢复标签页/面板状态） ───
+  const WORKSPACE_STATE_KEY = 'doge-workspace-state'
+  const workspaceSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const saveWorkspaceState = useCallback(() => {
+    if (workspaceSaveTimerRef.current) clearTimeout(workspaceSaveTimerRef.current)
+    workspaceSaveTimerRef.current = setTimeout(() => {
+      try {
+        const state = {
+          tabPaths: previewTabs.map(t => t.path),
+          activeTabPath: previewTabs.find(t => t.id === activePreviewTabId)?.path || null,
+          terminalVisible,
+          panels: {
+            agent: showAgentPanel, debugger: showDebuggerPanel, plugin: showPluginPanel,
+            semanticSearch: showSemanticSearch, codeReview: showCodeReview, securityAudit: showSecurityAudit,
+            performanceRefactor: showPerformanceRefactor, workflow: showWorkflowPanel, lsp: showLspPanel,
+            output: showOutputPanel, problems: showProblemsPanel, findReplace: showFindReplace,
+            references: showReferencesPanel, callChain: showCallChain, kanban: showKanban,
+            timeTracker: showTimeTracker, testRunner: showTestRunner, db: showDbPanel,
+            apiTest: showApiTestPanel, snippet: showSnippetPanel, monaco: showMonacoPanel,
+          },
+          savedAt: Date.now(),
+        }
+        localStorage.setItem(WORKSPACE_STATE_KEY, JSON.stringify(state))
+      } catch { /* ignore */ }
+    }, 500)
+  }, [previewTabs, activePreviewTabId, terminalVisible, showAgentPanel, showDebuggerPanel, showPluginPanel, showSemanticSearch, showCodeReview, showSecurityAudit, showPerformanceRefactor, showWorkflowPanel, showLspPanel, showOutputPanel, showProblemsPanel, showFindReplace, showReferencesPanel, showCallChain, showKanban, showTimeTracker, showTestRunner, showDbPanel, showApiTestPanel, showSnippetPanel, showMonacoPanel])
+
+  useEffect(() => { saveWorkspaceState() })
+
+  // 启动时恢复工作区（读取标签内容 + 恢复面板开关）
+  useEffect(() => {
+    let cancelled = false
+    try {
+      const raw = localStorage.getItem(WORKSPACE_STATE_KEY)
+      if (!raw) return
+      const state = JSON.parse(raw)
+      const panelKeys = Object.keys(state.panels || {})
+      if (panelKeys.length === 0 && !Array.isArray(state.tabPaths)) return
+
+      const applyPanel = (key: string, setter: (v: boolean) => void): void => {
+        if (state.panels && typeof state.panels[key] === 'boolean' && state.panels[key]) setter(true)
+      }
+      applyPanel('agent', setShowAgentPanel)
+      applyPanel('debugger', setShowDebuggerPanel)
+      applyPanel('plugin', setShowPluginPanel)
+      applyPanel('semanticSearch', setShowSemanticSearch)
+      applyPanel('codeReview', setShowCodeReview)
+      applyPanel('securityAudit', setShowSecurityAudit)
+      applyPanel('performanceRefactor', setShowPerformanceRefactor)
+      applyPanel('workflow', setShowWorkflowPanel)
+      applyPanel('lsp', setShowLspPanel)
+      applyPanel('output', setShowOutputPanel)
+      applyPanel('problems', setShowProblemsPanel)
+      applyPanel('findReplace', setShowFindReplace)
+      applyPanel('references', setShowReferencesPanel)
+      applyPanel('callChain', setShowCallChain)
+      applyPanel('kanban', setShowKanban)
+      applyPanel('timeTracker', setShowTimeTracker)
+      applyPanel('testRunner', setShowTestRunner)
+      applyPanel('db', setShowDbPanel)
+      applyPanel('apiTest', setShowApiTestPanel)
+      applyPanel('snippet', setShowSnippetPanel)
+      applyPanel('monaco', setShowMonacoPanel)
+      if (state.terminalVisible) setTerminalVisible(true)
+
+      // 恢复标签页：批量读取内容
+      const paths = Array.isArray(state.tabPaths) ? state.tabPaths.filter((p: unknown): p is string => typeof p === 'string') : []
+      const activePath = typeof state.activeTabPath === 'string' ? state.activeTabPath : null
+      if (paths.length > 0) {
+        void (async () => {
+          const restored: Array<{ id: string; path: string; content: string; size?: number }> = []
+          for (const p of paths) {
+            if (cancelled) return
+            try {
+              const result = await window.dogeAPI.readFile(p)
+              if (result.success) {
+                previewTabCounter.current += 1
+                restored.push({ id: `preview-${previewTabCounter.current}-${Date.now()}`, path: p, content: result.content || '', size: result.size })
+              }
+            } catch { /* ignore */ }
+          }
+          if (cancelled) return
+          if (restored.length > 0) {
+            setPreviewTabs(restored)
+            const active = restored.find(t => t.path === activePath) || restored[0]
+            setActivePreviewTabId(active.id)
+          }
+        })()
+      }
+    } catch { /* ignore */ }
+    return () => { cancelled = true }
+    // 只在挂载时执行一次
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const previewTabCounter = useRef(0)
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -1269,7 +1428,15 @@ export function App(): JSX.Element {
     streamingActiveRef.current = true // 打开请求级锁，允许 chunk 进入 currentStreaming
 
     const appendMsg = (msg: Message) => {
-      setMessages(prev => { const next = [...prev, msg]; persistActiveTabMessages(next); return next })
+      setMessages(prev => {
+        const next = [...prev, msg]
+        // 诊断：检查重复消息（同 id 或同 role+content 出现多次）
+        const dupCount = next.filter(m => m.role === msg.role && m.content === msg.content).length
+        const ids = new Set(next.map(m => m.id))
+        console.log(`[DIAG-MSG] append role=${msg.role} len=${next.length} dupInState=${dupCount} uniqueIds=${ids.size}`)
+        persistActiveTabMessages(next)
+        return next
+      })
     }
 
     if (text.startsWith('/')) {
@@ -2190,17 +2357,66 @@ export function App(): JSX.Element {
           {previewTabs.length > 0 && (
             <>
               <div style={{ borderTop: `1px solid ${c.border}`, borderBottom: `1px solid ${c.border}`, display: 'flex', background: c.bgAlt, overflowX: 'auto' }}>
-                {previewTabs.map(tab => (
+                {previewTabs.map((tab, tabIdx) => (
                   <div
                     key={tab.id}
-                    style={{ padding: '4px 8px', fontSize: '10px', cursor: 'pointer', whiteSpace: 'nowrap', borderRight: `1px solid ${c.borderSubtle}`, display: 'flex', alignItems: 'center', gap: '4px', background: tab.id === activePreviewTabId ? c.surface : 'transparent', color: tab.id === activePreviewTabId ? c.text : c.textMuted }}
+                    draggable
+                    onDragStart={(e) => { setDragTabIndex(tabIdx); setDragOverIndex(tabIdx); e.dataTransfer.effectAllowed = 'move' }}
+                    onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); if (dragOverIndex !== tabIdx) setDragOverIndex(tabIdx) }}
+                    onDrop={(e) => { e.preventDefault(); e.stopPropagation(); handleTabDrop(tabIdx) }}
+                    onDragEnd={() => { setDragTabIndex(null); setDragOverIndex(null) }}
+                    style={{
+                      padding: '4px 8px', fontSize: '10px', cursor: 'pointer', whiteSpace: 'nowrap',
+                      borderRight: `1px solid ${c.borderSubtle}`, display: 'flex', alignItems: 'center', gap: '4px',
+                      background: tab.id === activePreviewTabId ? c.surface : (dragOverIndex === tabIdx && dragTabIndex !== null ? c.accentDim : 'transparent'),
+                      color: tab.id === activePreviewTabId ? c.text : c.textMuted,
+                      opacity: dragTabIndex === tabIdx ? 0.4 : 1,
+                      borderLeft: dragOverIndex === tabIdx && dragTabIndex !== null && dragTabIndex !== tabIdx ? `2px solid ${c.accent}` : '2px solid transparent',
+                      outline: 'none',
+                    }}
                     onClick={() => { setActivePreviewTabId(tab.id); setIsEditing(false); setEditContent('') }}
+                    onAuxClick={(e) => { if (e.button === 1) { e.preventDefault(); closePreviewTab(tab.id) } }}
+                    onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); setTabContextMenu({ x: e.clientX, y: e.clientY, tabId: tab.id }) }}
+                    title={tab.path}
                   >
                     <span>{tab.path.split('/').pop()}</span>
-                    <span style={{ color: c.textFaint, fontSize: '9px', cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); setPreviewTabs(prev => prev.filter(t => t.id !== tab.id)); if (activePreviewTabId === tab.id) setActivePreviewTabId(previewTabs.find(t => t.id !== tab.id)?.id || null) }}>✕</span>
+                    <span style={{ color: c.textFaint, fontSize: '9px', cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); closePreviewTab(tab.id) }}>✕</span>
                   </div>
                 ))}
+                {previewTabs.length > 1 && (
+                  <div
+                    onClick={closeAllTabs}
+                    title="关闭全部标签"
+                    style={{ padding: '4px 8px', fontSize: '10px', cursor: 'pointer', whiteSpace: 'nowrap', color: c.textFaint, borderRight: `1px solid ${c.borderSubtle}` }}
+                  >
+                    ✕✕
+                  </div>
+                )}
               </div>
+              {tabContextMenu && (
+                <div style={{
+                  position: 'fixed', left: tabContextMenu.x, top: tabContextMenu.y, zIndex: 10000,
+                  background: c.surface, border: `1px solid ${c.border}`, borderRadius: '4px',
+                  boxShadow: `0 4px 16px ${c.bg}80`, padding: '3px 0', minWidth: '130px', fontSize: '10px',
+                }} onClick={e => e.stopPropagation()}>
+                  {([
+                    { label: '🗑 关闭', fn: () => closePreviewTab(tabContextMenu.tabId) },
+                    { label: '✂ 关闭其他', fn: () => closeOtherTabs(tabContextMenu.tabId) },
+                    { label: '✖ 关闭全部', fn: () => closeAllTabs() },
+                    { label: '📋 复制路径', fn: () => { const t = previewTabs.find(x => x.id === tabContextMenu.tabId); if (t) navigator.clipboard.writeText(t.path) } },
+                  ] as Array<{ label: string; fn: () => void }>).map(item => (
+                    <div
+                      key={item.label}
+                      onClick={() => { item.fn(); setTabContextMenu(null) }}
+                      style={{ padding: '4px 12px', cursor: 'pointer', color: c.text }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.background = c.accentDim }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.background = 'transparent' }}
+                    >
+                      {item.label}
+                    </div>
+                  ))}
+                </div>
+              )}
               {activePreviewFile ? (
                 <div style={{ borderBottom: `1px solid ${c.border}`, padding: '4px 12px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

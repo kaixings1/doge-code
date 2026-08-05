@@ -59,6 +59,7 @@ interface DebugSession {
   id: string
   pid: number
   script: string
+  args: string[]
   child: ChildProcess
   ws: WebSocket | null
   nextId: number
@@ -67,9 +68,21 @@ interface DebugSession {
   breakpoints: DebugBreakpoint[]
   callStack: DebugCallFrame[]
   variables: Record<string, string>
+  /** 变量 → 对象引用（用于嵌套展开） */
+  variableObjects: Record<string, { objectId: string; type: string; description?: string }>
   scriptIdToUrl: Map<string, string>
   urlToScriptId: Map<string, string>
   lastEvalResult: { result: string; type: string } | null
+}
+
+// ─── 对象属性（变量嵌套展开用） ───
+
+export interface ObjectProperty {
+  name: string
+  type: string
+  value?: string
+  objectId?: string
+  isExpandable: boolean
 }
 
 // ─── 调试器管理器 ───
@@ -108,6 +121,7 @@ export class DebuggerManager {
       id: sessionId,
       pid: child.pid || 0,
       script,
+      args,
       child,
       ws: null,
       nextId: 1,
@@ -116,6 +130,7 @@ export class DebuggerManager {
       breakpoints: [],
       callStack: [],
       variables: {},
+      variableObjects: {},
       scriptIdToUrl: new Map(),
       urlToScriptId: new Map(),
       lastEvalResult: null,
@@ -223,12 +238,20 @@ export class DebuggerManager {
     return this.sessions.get(sessionId)?.breakpoints || []
   }
 
+  /** 获取会话配置（快照用）：脚本路径 + 参数 + 断点 */
+  getSessionConfig(sessionId: string): { script: string; args: string[]; breakpoints: DebugBreakpoint[] } | null {
+    const s = this.sessions.get(sessionId)
+    if (!s) return null
+    return { script: s.script, args: s.args || [], breakpoints: s.breakpoints.map(b => ({ file: b.file, line: b.line, condition: b.condition })) }
+  }
+
   async resume(sessionId: string): Promise<boolean> {
     const s = this.sessions.get(sessionId)
     if (!s || !s.isPaused) return false
     s.isPaused = false
     s.callStack = []
     s.variables = {}
+    s.variableObjects = {}
     await this.send(s, 'Debugger.resume')
     return true
   }
@@ -262,6 +285,35 @@ export class DebuggerManager {
       const v = r?.result
       const val = v?.value !== undefined ? String(v.value) : (v?.description ?? 'undefined')
       return { success: true, result: val, type: v?.type || 'unknown' }
+    } catch (e) {
+      return { success: false, error: e instanceof Error ? e.message : String(e) }
+    }
+  }
+
+  /** 获取对象的子属性（变量嵌套展开用） */
+  async getObjectProperties(sessionId: string, objectId: string): Promise<{ success: boolean; properties?: ObjectProperty[]; error?: string }> {
+    const s = this.sessions.get(sessionId)
+    if (!s) return { success: false, error: '会话不存在' }
+    if (!objectId) return { success: false, error: '缺少 objectId' }
+    try {
+      const res = await this.send(s, 'Runtime.getProperties', { objectId, ownProperties: true })
+      const raw = (res?.result as Array<{ name?: string; value?: { description?: string; value?: unknown; type?: string; objectId?: string } }>) || []
+      const properties: ObjectProperty[] = []
+      for (const p of raw) {
+        if (!p.name) continue
+        if (p.name.startsWith('#')) continue // 忽略 V8 内部属性
+        const v = p.value
+        const val = String(v?.value ?? v?.description ?? '')
+        const isExpandable = v?.type === 'object' && !!v.objectId && v.objectId !== objectId
+        properties.push({
+          name: p.name,
+          type: v?.type || 'unknown',
+          value: val,
+          ...(isExpandable && v?.objectId ? { objectId: v.objectId } : {}),
+          isExpandable,
+        })
+      }
+      return { success: true, properties }
     } catch (e) {
       return { success: false, error: e instanceof Error ? e.message : String(e) }
     }
@@ -321,12 +373,19 @@ export class DebuggerManager {
       if (scope?.object?.objectId) {
         this.send(s, 'Runtime.getProperties', { objectId: scope.object.objectId, ownProperties: true })
           .then(res => {
-            const props = (res?.result as Array<{ name?: string; value?: { description?: string; value?: unknown; type?: string } }>) || []
+            const props = (res?.result as Array<{ name?: string; value?: { description?: string; value?: unknown; type?: string; objectId?: string } }>) || []
             for (const p of props) {
               if (!p.name) continue
               const v = p.value
               const val = v?.value !== undefined ? String(v.value) : (v?.description ?? '')
               s.variables[p.name] = val
+            }
+            // 保留对象引用（对象/数组等可展开的）
+            for (const p of props) {
+              const v = p.value
+              if (v?.type === 'object' && v.objectId && p.name) {
+                s.variableObjects[p.name] = { objectId: v.objectId, type: v.type, description: String(v.description ?? '') }
+              }
             }
           })
           .catch(() => { /* ignore */ })
