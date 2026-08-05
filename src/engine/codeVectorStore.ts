@@ -149,7 +149,7 @@ export class CodeVectorStore {
     let symbolsIndexed = 0
 
     for (const file of files) {
-      const content = await fs.readFile(file, 'utf-8').catch(() => null)
+      const content = await fs.readFile(file, { encoding: 'utf-8' }).catch(() => null)
       if (!content) continue
 
       const relativePath = file.replace(this.rootDir, '').replace(/^[/\\]/, '')
@@ -173,18 +173,18 @@ export class CodeVectorStore {
         : content
 
       // Delete old entry if exists
-      this.db.prepire('DELETE FROM code_fts WHERE path = ?').run(file)
-      this.db.prepire('DELETE FROM code_symbols WHERE path = ?').run(file)
+      this.db.prepare('DELETE FROM code_fts WHERE path = ?').run(file)
+      this.db.prepare('DELETE FROM code_symbols WHERE path = ?').run(file)
 
       // Insert into FTS5
-      this.db.prepire(
+      this.db.prepare(
         'INSERT INTO code_fts (path, content) VALUES (?, ?)',
       ).run(file, truncated)
 
       // Extract and index symbols
       const symbols = this.extractSymbols(content, relativePath)
       for (const sym of symbols) {
-        this.db.prepire(
+        this.db.prepare(
           `INSERT INTO code_symbols (path, line, column, name, kind, context)
            VALUES (?, ?, ?, ?, ?, ?)`,
         ).run(file, sym.line, sym.column, sym.name, sym.kind, sym.context)
@@ -192,7 +192,7 @@ export class CodeVectorStore {
       }
 
       // Update files metadata
-      this.db.prepire(
+      this.db.prepare(
         `INSERT OR REPLACE INTO code_files (path, relative_path, language, size, modified_at, indexed_at)
          VALUES (?, ?, ?, ?, ?, ?)`,
       ).run(file, relativePath, this.detectLanguage(relativePath), content.length, modifiedAt, Date.now())
@@ -208,7 +208,7 @@ export class CodeVectorStore {
     this.ensureDb()
     const fs = getFsImplementation()
 
-    const content = await fs.readFile(filePath, 'utf-8').catch(() => null)
+    const content = await fs.readFile(filePath, { encoding: 'utf-8' }).catch(() => null)
     if (!content) return
 
     const relativePath = filePath.replace(this.rootDir, '').replace(/^[/\\]/, '')
@@ -217,23 +217,23 @@ export class CodeVectorStore {
 
     const modifiedAt = stat.mtimeMs ?? Date.now()
 
-    this.db.prepire('DELETE FROM code_fts WHERE path = ?').run(filePath)
-    this.db.prepire('DELETE FROM code_symbols WHERE path = ?').run(filePath)
+    this.db.prepare('DELETE FROM code_fts WHERE path = ?').run(filePath)
+    this.db.prepare('DELETE FROM code_symbols WHERE path = ?').run(filePath)
 
     const truncated = content.length > this.maxFileSize
       ? content.slice(0, this.maxFileSize) + '\n... [truncated]'
       : content
 
-    this.db.prepire('INSERT INTO code_fts (path, content) VALUES (?, ?)').run(filePath, truncated)
+    this.db.prepare('INSERT INTO code_fts (path, content) VALUES (?, ?)').run(filePath, truncated)
 
     const symbols = this.extractSymbols(content, relativePath)
     for (const sym of symbols) {
-      this.db.prepire(
+      this.db.prepare(
         `INSERT INTO code_symbols (path, line, column, name, kind, context) VALUES (?, ?, ?, ?, ?, ?)`,
       ).run(filePath, sym.line, sym.column, sym.name, sym.kind, sym.context)
     }
 
-    this.db.prepire(
+    this.db.prepare(
       `INSERT OR REPLACE INTO code_files (path, relative_path, language, size, modified_at, indexed_at)
        VALUES (?, ?, ?, ?, ?, ?)`,
     ).run(filePath, relativePath, this.detectLanguage(relativePath), content.length, modifiedAt, Date.now())
@@ -255,7 +255,7 @@ export class CodeVectorStore {
     }
 
     // Use FTS5 BM25 ranking for content search
-    const contentResults = this.db.prepire(
+    const contentResults = this.db.prepare(
       `SELECT path, rank, snippet(code_fts, 1, '>>>', '<<<', '...', 10) as snippet
        FROM code_fts
        WHERE code_fts MATCH ?
@@ -277,7 +277,7 @@ export class CodeVectorStore {
     })
 
     // Also search symbols by name
-    const symbolResults = this.db.prepire(
+    const symbolResults = this.db.prepare(
       `SELECT path, line, column, name, kind, context FROM code_symbols
        WHERE name LIKE ? OR kind LIKE ?
        LIMIT ?`,
@@ -321,7 +321,7 @@ export class CodeVectorStore {
 
     query += ' ORDER BY line LIMIT 20'
 
-    const rows = this.db.prepire(query).all(...params) as any[]
+    const rows = this.db.prepare(query).all(...params) as any[]
     return rows.map((row: any) => ({
       file: row.path,
       line: row.line,
@@ -339,10 +339,10 @@ export class CodeVectorStore {
     let symbolsIndexed = 0
 
     try {
-      const fileCount = this.db.prepire('SELECT COUNT(*) as cnt FROM code_files').get() as any
+      const fileCount = this.db.prepare('SELECT COUNT(*) as cnt FROM code_files').get() as any
       filesIndexed = fileCount?.cnt ?? 0
 
-      const symCount = this.db.prepire('SELECT COUNT(*) as cnt FROM code_symbols').get() as any
+      const symCount = this.db.prepare('SELECT COUNT(*) as cnt FROM code_symbols').get() as any
       symbolsIndexed = symCount?.cnt ?? 0
     } catch {
       // Tables may not exist yet
@@ -368,13 +368,12 @@ export class CodeVectorStore {
 
     for (const pattern of this.includePatterns) {
       try {
-        const matches = await ripGrep({
-          rootDir: this.rootDir,
-          pattern: '',
-          glob: pattern,
-          type: 'files',
-          maxMatches: 200,
-        })
+        // rg --files -g <pattern> 输出匹配的文件路径（相对 target）
+        const matches = await ripGrep(
+          ['--files', '--glob', pattern],
+          this.rootDir,
+          new AbortController().signal,
+        )
 
         for (const match of matches) {
           const fullPath = match.startsWith(this.rootDir)
