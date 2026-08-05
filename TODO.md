@@ -355,3 +355,24 @@
 - [x] 类型检查：本次修改全部文件零错误（剩余为既有错误）
 - [x] 测试：vitest run 15/15 + API 层 79/79 = 94 个测试全部通过
 - [x] 错误总数累计 5089 → 4749（净减少 340 个）
+
+---
+
+## ✅ 已完成（第十轮：API 工具函数 + CLI 提取逻辑测试覆盖）
+
+### cli/up.ts 强化 ✅
+- [x] 导出 findClaudeMd / extractUpSection / extractCommands（支持单元测试）
+- [x] UP_SECTION_HEADING 支持多级标题（`#`/`##`/`### claude up`）
+
+### api/utils.ts 强化 ✅
+- [x] createTelemetryEvent 无属性时默认空对象（避免返回空值）
+
+### 测试覆盖（2 个新测试文件 32 个测试）
+- [x] **utils.test.ts**（21 个）— getModelProvider / calculateModelCost / withRetry / mapWithConcurrency / withTimeout / checkPermission / serialize / createTelemetryEvent
+- [x] **upExtract.test.ts**（11 个）— extractUpSection（多级标题/边界）/ extractCommands（代码块/$ 前缀/注释过滤）/ findClaudeMd（当前目录/父目录/优先级/找不到）
+
+### 第十轮验证 ✅
+- [x] 类型检查：本次修改全部文件零错误（剩余为既有错误）
+- [x] 测试：API 层 111/111 全部通过（累计 10 个测试文件）
+- [x] 完整 vitest 失败项均为并行会话引入（AppStore 测试修改中、integration 依赖 bun:bundle），非本任务范围
+- [x] 错误总数累计 5089 → 4282（净减少 807 个）

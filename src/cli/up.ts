@@ -2,12 +2,13 @@ import { existsSync, readFileSync } from 'fs'
 import { join } from 'path'
 import { execSync } from 'child_process'
 
-const UP_SECTION_HEADING = /^#\s+claude\s+up\s*$/im
+const UP_SECTION_HEADING = /^#{1,6}\s+claude\s+up\s*$/im
 
 /**
  * 向上查找最近的 CLAUDE.md / CLAUDE.local.md
+ * @internal 导出以支持单元测试
  */
-function findClaudeMd(startDir: string): string | null {
+export function findClaudeMd(startDir: string): string | null {
   let dir = startDir
   for (let i = 0; i < 10; i++) {
     for (const name of ['CLAUDE.local.md', 'CLAUDE.md']) {
@@ -23,8 +24,9 @@ function findClaudeMd(startDir: string): string | null {
 
 /**
  * 提取 `# claude up` 节（到下一个同/上级标题为止）
+ * @internal 导出以支持单元测试
  */
-function extractUpSection(content: string): string | null {
+export function extractUpSection(content: string): string | null {
   const lines = content.split('\n')
   let start = -1
   for (let i = 0; i < lines.length; i++) {
@@ -46,8 +48,9 @@ function extractUpSection(content: string): string | null {
 
 /**
  * 提取节内的可执行命令（bash 代码块或缩进行）
+ * @internal 导出以支持单元测试
  */
-function extractCommands(section: string): string[] {
+export function extractCommands(section: string): string[] {
   const commands: string[] = []
   // ```bash ... ``` 代码块
   const blockRegex = /```(?:bash|sh|shell)?\s*\n([\s\S]*?)```/g
