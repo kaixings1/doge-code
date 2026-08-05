@@ -24,6 +24,14 @@
 import { BaseLoopStrategy } from './base.js'
 import type { LoopGoal, LoopStrategyName, SubTask } from '../types.js'
 
+// 图节点函数：接收状态，返回部分状态更新
+type NodeFunction<S> = (state: S) => Partial<S> | Promise<Partial<S>>
+// 条件边函数：根据状态返回下一节点名（null 表示无路由）
+type ConditionFunction<S> = (state: S) => string | null
+// 特殊节点标识
+const START = '__start__'
+const END = '__end__'
+
 // 纯 TypeScript 实现（无外部依赖）
 // StateGraph 内部类
 class StateGraph<S extends object> {
@@ -145,7 +153,7 @@ export class LangGraphStrategy extends BaseLoopStrategy {
     })
 
     // 编译图
-    this.compiled = graph.compile() as { invoke: (state: Partial<LangGraphLoopState>) => Promise<LangGraphLoopState> }
+    this.compiled = graph.compile()
     this.graph = graph
   }
 
