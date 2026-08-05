@@ -265,7 +265,7 @@ export const strategyExamples: StrategyExamples = {
       strategy: 'crew（多 Agent 协作）',
       result: 'manager 分配审查任务 → developer 定位问题 → tester 编写复现测试 → reviewer 确认修复',
       parameters: ['无额外参数，默认 4 个角色协作'],
-      output: '修复后的 utils.js + 测试报告 + 审查意见清单',
+      outcome: '修复后的 utils.js + 测试报告 + 审查意见清单',
     },
     {
       title: '为核心模块编写单元测试',
