@@ -36,6 +36,10 @@ export function parseLoopArgs(args: string): {
   report: string | null
   checkpoint: string | null
   tools: string
+  snapshot: boolean
+  autoRepair: boolean
+  progressInterval: number
+  ask: boolean
 } {
   const result = {
     goal: '',
@@ -56,6 +60,10 @@ export function parseLoopArgs(args: string): {
     report: null as string | null,
     checkpoint: null as string | null,
     tools: '',
+    snapshot: false,
+    autoRepair: true,
+    progressInterval: 0,
+    ask: false,
   }
 
   // 引号感知分词：保留 "..." 内的空格（如 --criteria "文章 CRUD"）
@@ -109,6 +117,19 @@ export function parseLoopArgs(args: string): {
       result.maxIterations = parseInt(parts[++i], 10) || 20
     } else if (part === '--criteria' && i + 1 < parts.length) {
       result.criteria.push(parts[++i])
+    } else if (part === '--snapshot') {
+      // B3 安全快照：执行前自动快照，失败可回滚
+      result.snapshot = true
+    } else if (part === '--no-repair') {
+      // B2 禁用验证失败自动修复
+      result.autoRepair = false
+    } else if (part === '--progress' && i + 1 < parts.length) {
+      // B4 定期进度汇报间隔（秒）
+      const n = parseInt(parts[++i], 10)
+      if (!isNaN(n) && n > 0) result.progressInterval = n
+    } else if (part === '--ask') {
+      // B4 关键节点询问用户方向
+      result.ask = true
     } else if (part === '--output' && i + 1 < parts.length) {
       result.outputPath = parts[++i]
     } else if (part === '--timeout' && i + 1 < parts.length) {
@@ -337,6 +358,18 @@ function createShortcutCommand(strategyName: LoopStrategyName, aliases: string[]
         checkpoint: parsed.checkpoint ?? undefined,
         report: parsed.report ?? undefined,
       }
+      // B3/B2/B4：安全快照 / 自动修复 / 进度汇报与询问
+      loopOptions.snapshot = parsed.snapshot
+      loopOptions.autoRepair = parsed.autoRepair
+      if (parsed.progressInterval > 0) {
+        loopOptions.progressIntervalMs = parsed.progressInterval * 1000
+      }
+      if (parsed.ask) {
+        loopOptions.askUser = async (question: string) => {
+          onDone(`\n${question}\n（当前模式无法交互，自动选择「继续执行」）`, { display: 'system' })
+          return '继续执行'
+        }
+      }
       if (context) {
         loopOptions.taskExecutor = createAITaskExecutor(context, {
           maxRetries: parsed.retries,
@@ -439,7 +472,6 @@ function createShortcutCommand(strategyName: LoopStrategyName, aliases: string[]
     name: `loop-${strategyName}`,
     description: `循环引擎 (${strategyName} 策略)`,
     aliases,
-    supportsNonInteractive: false,
     load: async () => ({ call }),
   } satisfies Command
 }

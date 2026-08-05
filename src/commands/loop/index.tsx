@@ -8,7 +8,7 @@
  */
 
 import * as React from 'react'
-import { Box, Text, useInput, useAppState } from '../../ink.js'
+import { Box, Text, useInput } from '../../ink.js'
 import type { Command } from '../../commands.js'
 import type { LocalJSXCommandCall, LocalJSXCommandContext } from '../../types/command.js'
 import type { LoopGoal, LoopStrategyName, SubTask } from './types.js'
@@ -19,6 +19,7 @@ import { execSync } from 'child_process'
 import { mkdir, writeFile } from 'fs/promises'
 import { formatStatusLine, formatFinalReport, formatSubTaskSummary, type ProgressState } from './progress-ui.js'
 import { parseLoopArgs, autoSelectStrategy } from './shortcuts.js'
+import { formatPlan } from './planner.js'
 
 type ParsedLoopArgs = ReturnType<typeof parseLoopArgs>
 
@@ -44,12 +45,17 @@ function renderHelp(): string {
   --checkpoint <路径>      保存/恢复执行进度（中断后可恢复）
   --max-iterations <N>     最大迭代次数（默认 20）
   --criteria <标准>        成功标准（可多次指定）
+  --snapshot               执行前自动快照，失败可回滚（安全回滚 B3）
+  --no-repair              禁用验证失败自动修复（执行验证 B2）
+  --progress <秒>          定期汇报进度间隔（进度汇报 B4）
+  --ask                    关键节点询问用户方向（进度汇报 B4）
   --json                   JSON 格式输出
   --help                   显示本帮助
   --examples               显示详细示例
 
-## 极限模式示例
-  /loop "创建 Web 应用" --auto --parallel 3 --budget 5m --verify files --report report.md
+## 自主闭环模式示例
+  /loop "重构 utils 并跑通测试" --snapshot --verify test --progress 30 --ask
+  /loop "实现功能并验证" --auto --snapshot --verify build --parallel 2 --progress 60
 
 ## 示例
   /loop "创建一个 Node.js Hello World 服务器"
@@ -289,7 +295,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
 
   if (!s) {
     onDone(renderInteractivePrompt())
-    return
+    return null
   }
 
   let parsed: ParsedLoopArgs
@@ -299,22 +305,22 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
     onDone(`❌ 参数错误: ${err instanceof Error ? err.message : String(err)}
 
 用 /loop --help 查看帮助`)
-    return
+    return null
   }
 
   if (parsed.help) {
     onDone(renderHelp())
-    return
+    return null
   }
 
   if (parsed.examples) {
     onDone(renderExamples())
-    return
+    return null
   }
 
   if (!parsed.goal) {
     onDone(renderInteractivePrompt())
-    return
+    return null
   }
 
   try {
@@ -333,7 +339,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
     let fileCount = 0
     const createdFiles: string[] = []
     const progressState: ProgressState = {
-      strategy: effectiveStrategy,
+      strategy: strategy.name,
       currentIteration: 0,
       maxIterations: parsed.maxIterations,
       currentTask: '',
@@ -343,7 +349,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
     }
 
     const result = await executeLoop({
-      strategy: effectiveStrategy,
+      strategy: strategy.name,
       goal,
       taskExecutor,
       parallel: parsed.parallel,
@@ -351,6 +357,15 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       verifyMode: parsed.verify !== 'none' ? parsed.verify as never : void 0,
       checkpoint: parsed.checkpoint ?? void 0,
       report: parsed.report ?? void 0,
+      snapshot: parsed.snapshot,
+      autoRepair: parsed.autoRepair,
+      progressIntervalMs: parsed.progressInterval > 0 ? parsed.progressInterval * 1000 : void 0,
+      askUser: parsed.ask
+        ? async (question: string, choices: string[]) => {
+            onDone(`\n${question}\n选项: ${choices.join(' / ')}\n（当前模式无法交互，自动选择「继续执行」）`, { display: 'system' })
+            return '继续执行'
+          }
+        : void 0,
       onProgress: (event: { type: string; [k: string]: unknown }) => {
         switch (event.type) {
           case 'loop_start':
@@ -408,6 +423,32 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
             progressState.fileCount = fileCount
             onDone(formatStatusLine(progressState), { display: 'user' })
             break
+          case 'plan':
+            // B1 任务计划（DAG）
+            onDone(formatPlan(event.subTasks as SubTask[]), { display: 'system' })
+            break
+          case 'snapshot': {
+            // B3 安全快照
+            const actionText =
+              event.action === 'create' ? '已创建快照' :
+              event.action === 'restore' ? '已回滚快照' :
+              event.action === 'cleanup' ? '已清理快照' : '跳过快照'
+            onDone(`📸 [快照] ${actionText} (${event.snapshotId})`, { display: 'system' })
+            break
+          }
+          case 'repair':
+            // B2 自动修复
+            progressState.currentTask = `🔧 自动修复 (第 ${event.attempt} 次)`
+            onDone(formatStatusLine(progressState), { display: 'system' })
+            break
+          case 'progress':
+            // B4 定期进度汇报
+            onDone(event.summary as string, { display: 'system' })
+            break
+          case 'ask':
+            // B4 关键节点询问（等待用户决策）
+            onDone(`\n${event.question as string}`, { display: 'system' })
+            break
           case 'error':
             progressState.phase = 'error'
             onDone(formatStatusLine(progressState), { display: 'system' })
@@ -418,7 +459,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
 
     if (parsed.json) {
       onDone(JSON.stringify(result, null, 2))
-      return
+      return null
     }
 
     const lines: string[] = [
@@ -448,9 +489,11 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
     })
 
     onDone(lines.join('\n'))
+    return null
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
     onDone(`❌ 循环执行失败: ${message}`)
+    return null
   }
 }
 
@@ -459,16 +502,6 @@ const loopCommand: Command = {
   name: 'loop',
   description: '目标导向循环引擎 — 给 AI 个目标，循环直到达成',
   aliases: ['/loop', '/循环'],
-  arguments: [
-    { name: 'goal', description: '目标描述', required: false },
-    { name: '--strategy', description: '循环策略: langgraph / crew / autogpt / openhands / swe-agent', required: false },
-    { name: '--max-iterations', description: '最大迭代次数（默认 20）', required: false },
-    { name: '--criteria', description: '成功标准（可多次指定）', required: false },
-    { name: '--json', description: 'JSON 格式输出', required: false },
-    { name: '--examples', description: '显示详细示例', required: false },
-    { name: 'help', description: '显示帮助', required: false },
-  ],
-  supportsNonInteractive: false,
   load: () => Promise.resolve({ call }),
 } satisfies Command
 
