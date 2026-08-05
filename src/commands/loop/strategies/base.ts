@@ -23,7 +23,7 @@ export abstract class BaseLoopStrategy implements LoopStrategy {
     }]
   }
 
-  async evaluate(goal: LoopGoal, subTasks: SubTask[]): Promise<{ achieved: boolean; reason: string }> {
+  evaluate(goal: LoopGoal, subTasks: SubTask[]): { achieved: boolean; reason: string } | Promise<{ achieved: boolean; reason: string }> {
     if (goal.successCriteria && goal.successCriteria.length > 0) {
       const completedCount = subTasks.filter(t => t.status === 'completed').length
       const allDone = subTasks.length > 0 && completedCount === subTasks.length

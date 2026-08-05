@@ -499,7 +499,7 @@ class Crew {
   /**
    * 执行单个 Task（含返工逻辑）
    */
-  private async executeTask(
+  async executeTask(
     task: Task,
     agent: Agent,
     contextOutputs: Map<string, string>,

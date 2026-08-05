@@ -11,7 +11,7 @@ declare module 'vitest' {
     toBeNull(): void
     toBeTruthy(): void
     toBeFalsy(): void
-    toContain(expected: T): void
+    toContain(expected: T extends readonly any[] ? T[number] : T): void
     toHaveLength(expected: number): void
     toThrow(expected?: unknown): void
     toThrowError(expected?: unknown): void
@@ -24,11 +24,14 @@ declare module 'vitest' {
     toBeLessThanOrEqual(expected: number): void
     toHaveProperty(property: string, value?: unknown): void
     toMatchObject(expected: object): void
+    toHaveBeenCalled(): void
+    toHaveBeenCalledTimes(expected: number): void
+    toHaveBeenCalledWith(...args: any[]): void
     not: {
       toBe(expected: T): void
       toEqual(expected: T): void
       toStrictEqual(expected: T): void
-      toContain(expected: T): void
+      toContain(expected: T extends readonly any[] ? T[number] : T): void
       toHaveLength(expected: number): void
       toThrow(expected?: unknown): void
       toThrowError(expected?: unknown): void
@@ -66,6 +69,7 @@ declare module 'vitest' {
     mockReset(): void
     mockRestore(): void
     calls: { args: any[]; result?: { type: string; value?: ReturnType<T> } }
+    mock: { calls: Array<{ args: any[] }> }
   }
   export const AssertionError: typeof Error
   export namespace vi {
@@ -79,6 +83,7 @@ declare module 'vitest' {
       mockReset(): void
       mockRestore(): void
       calls: { args: any[]; result?: { type: string; value?: ReturnType<T> } }
+      mock: { calls: Array<{ args: any[] }> }
     }
     export function spyOn(obj: unknown, method: string): {
       (...args: any[]): unknown
@@ -86,6 +91,10 @@ declare module 'vitest' {
       mockClear(): void
       calls: { args: any[] }
     }
+    export function useFakeTimers(): void
+    export function useRealTimers(): void
+    export function advanceTimersByTime(ms: number): void
+    export function runAllTimers(): void
     export function clearAllMocks(): void
     export function resetAllMocks(): void
     export function restoreAllMocks(): void
