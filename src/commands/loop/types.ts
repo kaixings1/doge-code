@@ -39,7 +39,21 @@ export interface SubTask {
   result?: string
   error?: string
   assignedTo?: string
+  /** 依赖的子任务 id 列表（全部完成后本任务才可执行）— DAG 规划 */
+  dependencies?: string[]
+  /** 验证条件描述（该子任务完成标准） */
+  verify?: string
+  /** 优先级（越大越先执行，默认 0） */
+  priority?: number
+  /** 失败重试次数（自动修复引擎用） */
+  attempts?: number
 }
+
+/** 用户决策函数（关键节点询问，返回选择） */
+export type AskUserFn = (
+  question: string,
+  options: string[],
+) => Promise<string>
 
 /** Loop execution options */
 export interface LoopOptions {
@@ -57,12 +71,24 @@ export interface LoopOptions {
   checkpoint?: string
   /** 最终报告输出路径 */
   report?: string
+  /** B3 安全快照：执行前自动快照，失败可回滚（默认 false） */
+  snapshot?: boolean
+  /** B2 自动修复：验证失败后自动生成修复子任务重试（默认 true） */
+  autoRepair?: boolean
+  /** 验证失败最大修复次数（默认 2） */
+  maxRepairAttempts?: number
+  /** B4 进度汇报间隔（毫秒，默认 60_000） */
+  progressIntervalMs?: number
+  /** B4 关键节点询问函数（提供则启用询问） */
+  askUser?: AskUserFn
+  /** 连续无进展轮数阈值（触发询问，默认 3） */
+  stagnantThreshold?: number
 }
 
 /** Loop event types */
 export type LoopEvent =
   | { type: 'loop_start'; strategy: LoopStrategyName; goal: string }
-  | { type: 'iteration_start'; iteration: number }
+  | { type: 'iteration_start'; iteration: number; maxIterations?: number }
   | { type: 'iteration_end'; iteration: number; result: string }
   | { type: 'task_start'; taskId: string; description: string }
   | { type: 'task_end'; taskId: string; success: boolean; output: string }
@@ -72,6 +98,15 @@ export type LoopEvent =
   | { type: 'loop_end'; success: boolean; iterations: number; duration: number; reason: string }
   | { type: 'error'; error: string }
   | { type: 'warn'; message: string }
+  // ─── B1 任务规划器事件 ───
+  | { type: 'plan'; subTasks: SubTask[]; hasCycle: boolean }
+  // ─── B2 自动修复事件 ───
+  | { type: 'repair'; taskId: string; attempt: number; error: string }
+  // ─── B3 安全快照事件 ───
+  | { type: 'snapshot'; action: 'create' | 'restore' | 'cleanup' | 'skip'; snapshotId: string; label?: string }
+  // ─── B4 进度汇报/询问事件 ───
+  | { type: 'progress'; summary: string; iteration: number; completed: number; failed: number; elapsedMs: number }
+  | { type: 'ask'; question: string; options: string[] }
 
 /** Loop execution result */
 export interface LoopResult {

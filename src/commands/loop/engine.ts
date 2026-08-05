@@ -19,6 +19,15 @@ import { writeFile, readFile, mkdir } from 'fs/promises'
 import * as path from 'path'
 import type { LoopGoal, LoopOptions, LoopResult, LoopEvent, SubTask, VerifyMode, CheckpointState } from './types.js'
 import { getStrategy } from './strategies/index.js'
+import { decomposeToDag, getReadyTasks, hasCycle } from './planner.js'
+import { createSnapshot, restoreSnapshot, cleanupSnapshot, type Snapshot } from './snapshot.js'
+import {
+  createProgressReporter,
+  shouldAskUser,
+  buildAskQuestion,
+  summarizeSubtasks,
+  type ProgressReporter,
+} from './progress.js'
 
 const DEFAULT_MAX_ITERATIONS = 20
 
@@ -26,8 +35,9 @@ interface LoopState {
   iteration: number
   maxIterations: number
   subTasks: SubTask[]
-  history: Array<{ iteration: number; event: string; details?: string }>
+  history: Array<{ iteration: number; event: string; details?: string; completedDelta?: number }>
   startTime: number
+  lastCompletedCount: number
 }
 
 /**
@@ -61,11 +71,60 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
     subTasks: [],
     history: [],
     startTime: Date.now(),
+    lastCompletedCount: 0,
   }
 
   const emit = (event: LoopEvent) => { options.onProgress?.(event) }
 
   emit({ type: 'loop_start', strategy: options.strategy, goal: goal.description })
+
+  // ─── B3 安全快照：执行前自动快照，失败可回滚 ───
+  let snapshot: Snapshot | null = null
+  if (options.snapshot) {
+    try {
+      snapshot = await createSnapshot(process.cwd(), goal.description.slice(0, 60))
+      if (snapshot) {
+        emit({ type: 'snapshot', action: 'create', snapshotId: snapshot.id, label: snapshot.label })
+      } else {
+        emit({ type: 'snapshot', action: 'skip', snapshotId: 'none', label: '工作区无改动' })
+      }
+    } catch (snapErr) {
+      emit({ type: 'warn', message: `快照创建失败，继续执行（无回滚保护）: ${snapErr instanceof Error ? snapErr.message : String(snapErr)}` })
+    }
+  }
+
+  // ─── B4 进度汇报器：定时输出进度摘要 ───
+  let progressReporter: ProgressReporter | null = null
+  const progressInterval = options.progressIntervalMs ?? 60_000
+  if (progressInterval > 0) {
+    progressReporter = createProgressReporter({
+      intervalMs: progressInterval,
+      getState: () => {
+        const s = summarizeSubtasks(state.subTasks)
+        return {
+          iteration: state.iteration,
+          maxIterations: state.maxIterations,
+          totalTasks: s.total,
+          completed: s.completed,
+          failed: s.failed,
+          currentTask: s.currentTask,
+          elapsedMs: Date.now() - state.startTime,
+        }
+      },
+      onReport: (summary) => {
+        const s = summarizeSubtasks(state.subTasks)
+        emit({
+          type: 'progress',
+          summary,
+          iteration: state.iteration,
+          completed: s.completed,
+          failed: s.failed,
+          elapsedMs: Date.now() - state.startTime,
+        })
+      },
+    })
+    progressReporter.start()
+  }
 
   // ─── 检查点恢复 ───
   if (options.checkpoint) {
@@ -87,10 +146,11 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
       strategy.setTaskExecutor(options.taskExecutor)
     }
 
-    // 如果检查点没有恢复任务，则进行初始分解
+    // 如果检查点没有恢复任务，则进行初始分解（B1 任务规划器：DAG 带依赖）
     if (state.subTasks.length === 0) {
-      state.subTasks = strategy.decompose(goal)
+      state.subTasks = decomposeToDag(goal)
       emit({ type: 'decomposition', subTasks: state.subTasks })
+      emit({ type: 'plan', subTasks: state.subTasks, hasCycle: hasCycle(state.subTasks) })
     }
 
     // ─── 预算检查 ───
@@ -112,10 +172,11 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
       emit({ type: 'iteration_start', iteration: state.iteration, maxIterations: state.maxIterations })
 
       try {
-        // 找出待执行任务（支持并行）
+        // 找出待执行任务（B1：依赖感知调度 — 只执行依赖已满足的任务）
         const pendingTasks = state.subTasks.filter(t => t.status === 'pending')
         const runningTasks = state.subTasks.filter(t => t.status === 'running')
-        const currentTasks = pendingTasks.length > 0 ? pendingTasks : runningTasks
+        const readyTasks = getReadyTasks(state.subTasks, Math.max(1, options.parallel || 1))
+        const currentTasks = readyTasks.length > 0 ? readyTasks : (pendingTasks.length > 0 ? pendingTasks : runningTasks)
 
         if (currentTasks.length === 0) {
           const evaluation = await strategy.evaluate(goal, state.subTasks)
@@ -169,6 +230,37 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
             task.result = result.output
             task.error = result.error
 
+            // B2 自动修复：失败任务生成修复子任务（最多 maxRepairAttempts 次）
+            if (!result.success && options.autoRepair !== false) {
+              const maxRepairs = options.maxRepairAttempts ?? 2
+              const attempt = (task.attempts ?? 0) + 1
+              if (attempt <= maxRepairs) {
+                const repairId = `${task.id}-repair-${attempt}`
+                const repairTask: SubTask = {
+                  id: repairId,
+                  description: `🔧 修复任务「${task.description.slice(0, 50)}」（第 ${attempt} 次自动修复）— 分析错误并修正`,
+                  status: 'pending',
+                  dependencies: task.dependencies,
+                  priority: (task.priority ?? 0) + 5,
+                  verify: task.verify,
+                  attempts: attempt,
+                }
+                state.subTasks.push(repairTask)
+                emit({ type: 'repair', taskId: task.id, attempt, error: result.error ?? '未知错误' })
+              }
+            }
+
+            // B2 修复任务完成后，将被替代的失败任务恢复为 completed（解除下游依赖阻塞）
+            if (task.id.includes('-repair-') && result.success) {
+              const baseId = task.id.split('-repair-')[0]
+              const baseTask = state.subTasks.find(t => t.id === baseId)
+              if (baseTask && baseTask.status === 'failed') {
+                baseTask.status = 'completed'
+                baseTask.result = result.output
+                baseTask.error = ''
+              }
+            }
+
             // 提取创建的文件
             extractCreatedFiles(result.output).forEach(f => {
               if (!createdFiles.includes(f)) createdFiles.push(f)
@@ -214,7 +306,58 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
         }
 
         emit({ type: 'iteration_end', iteration: state.iteration, result: evaluation.reason })
-        state.history.push({ iteration: state.iteration, event: 'iteration_complete', details: evaluation.reason })
+
+        // 记录本轮完成增量（B4 停滞检测用）
+        const completedNow = state.subTasks.filter(t => t.status === 'completed').length
+        const completedDelta = completedNow - state.lastCompletedCount
+        state.lastCompletedCount = completedNow
+        state.history.push({ iteration: state.iteration, event: 'iteration_complete', details: evaluation.reason, completedDelta })
+
+        // B4 关键节点询问：连续无进展 / 过半未达标 / 预算将尽时，询问用户方向
+        if (options.askUser) {
+          const s = summarizeSubtasks(state.subTasks)
+          const shouldAsk = shouldAskUser(
+            state.history.map(h => ({ iteration: h.iteration, event: h.event, completedDelta: h.completedDelta })),
+            {
+              iteration: state.iteration,
+              maxIterations: state.maxIterations,
+              totalTasks: s.total,
+              completed: s.completed,
+              failed: s.failed,
+              elapsedMs: Date.now() - state.startTime,
+              budgetMs: options.budgetMs,
+              consecutiveStagnantRounds: options.stagnantThreshold,
+            },
+          )
+          if (shouldAsk) {
+            const question = buildAskQuestion(goal.description, {
+              iteration: state.iteration,
+              maxIterations: state.maxIterations,
+              completed: s.completed,
+              failed: s.failed,
+              currentTask: s.currentTask,
+            })
+            const choices = ['继续执行', '回滚并停止', '中止']
+            emit({ type: 'ask', question, options: choices })
+            try {
+              const choice = await options.askUser(question, choices)
+              if (choice.includes('回滚')) {
+                if (snapshot) {
+                  await restoreSnapshot(process.cwd(), snapshot)
+                  emit({ type: 'snapshot', action: 'restore', snapshotId: snapshot.id })
+                }
+                emit({ type: 'warn', message: '用户选择回滚并停止' })
+                break
+              }
+              if (choice.includes('中止')) {
+                emit({ type: 'warn', message: '用户选择中止' })
+                break
+              }
+            } catch {
+              emit({ type: 'warn', message: '询问用户失败，继续执行' })
+            }
+          }
+        }
 
       } catch (error) {
         const errMsg = error instanceof Error ? error.message : String(error)
@@ -225,6 +368,17 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
 
     const finalEvaluation = await strategy.evaluate(goal, state.subTasks)
     const duration = Date.now() - state.startTime
+
+    // ─── B3/B4 清理：停止进度汇报器，快照按结果处置 ───
+    if (progressReporter) progressReporter.stop()
+    if (snapshot) {
+      if (finalEvaluation.achieved) {
+        await cleanupSnapshot(snapshot)
+        emit({ type: 'snapshot', action: 'cleanup', snapshotId: snapshot.id })
+      } else {
+        emit({ type: 'warn', message: `快照保留: .loop-snapshots/${snapshot.id}（失败时可用 restoreSnapshot 恢复）` })
+      }
+    }
 
     // 生成报告
     let reportPath: string | null = null
@@ -260,6 +414,7 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
 
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : String(error)
+    if (progressReporter) progressReporter.stop()
     emit({ type: 'error', error: errMsg })
     emit({ type: 'loop_end', success: false, iterations: state.iteration, duration: Date.now() - state.startTime, reason: errMsg })
 
