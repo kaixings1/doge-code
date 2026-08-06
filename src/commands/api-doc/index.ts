@@ -2,6 +2,7 @@ import type { Command } from '../../commands.js'
 import type { LocalCommandCall } from '../../types/command.js'
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'fs'
 import { join, extname, basename, dirname } from 'path'
+import ts from 'typescript'
 
 interface APIEndpoint {
   name: string
@@ -37,7 +38,7 @@ interface FunctionSignature {
 }
 
 /** 解析参数列表字符串 "a: string, b?: number, ...rest: any[]" 为结构化参数 */
-function parseParams(paramStr: string): ParamInfo[] {
+export function parseParams(paramStr: string): ParamInfo[] {
   const params: ParamInfo[] = []
   if (!paramStr || paramStr.trim() === '') return params
   let depth = 0
@@ -56,7 +57,7 @@ function parseParams(paramStr: string): ParamInfo[] {
   return params
 }
 
-function parseSingleParam(raw: string): ParamInfo {
+export function parseSingleParam(raw: string): ParamInfo {
   // 处理 rest: ...args: T[]
   let rest = false
   let r = raw.trim()
@@ -85,7 +86,7 @@ function parseSingleParam(raw: string): ParamInfo {
 /**
  * TypeScript 函数签名提取（声明式 + 箭头函数 + 类方法）
  */
-function extractFunctionSignatures(content: string): FunctionSignature[] {
+export function extractFunctionSignatures(content: string): FunctionSignature[] {
   const signatures: FunctionSignature[] = []
   const lines = content.split('\n')
 
@@ -140,7 +141,7 @@ function extractFunctionSignatures(content: string): FunctionSignature[] {
 }
 
 /** 生成函数签名 Markdown 文档 */
-function generateSignaturesMarkdown(file: string, sigs: FunctionSignature[]): string {
+export function generateSignaturesMarkdown(file: string, sigs: FunctionSignature[]): string {
   if (sigs.length === 0) return ''
   const lines = ['## Function Signatures', '']
   sigs.forEach(s => {
@@ -155,7 +156,7 @@ function generateSignaturesMarkdown(file: string, sigs: FunctionSignature[]): st
   return lines.join('\n')
 }
 
-function extractJSdocs(content: string): APIEndpoint[] {
+export function extractJSdocs(content: string): APIEndpoint[] {
   const endpoints: APIEndpoint[] = []
   const lines = content.split('\n')
   let currentComment = ''
@@ -186,10 +187,178 @@ function extractJSdocs(content: string): APIEndpoint[] {
   return endpoints
 }
 
+// ============================================================================
+// TypeScript AST 精确类型提取（D3：api-doc AST）
+// 使用 TypeScript Compiler API 解析接口成员 / 类型别名结构 / 枚举成员 / 类成员
+// ============================================================================
+
+export interface TypeMemberInfo {
+  name: string
+  type: string
+  optional: boolean
+  kind: 'property' | 'method' | 'index'
+}
+
+export interface TypeDeclInfo {
+  name: string
+  kind: 'interface' | 'type' | 'enum' | 'class'
+  typeParams: string[]
+  extends: string[]
+  members: TypeMemberInfo[]
+  line: number
+}
+
+/** 将 TS 类型节点序列化为紧凑文本 */
+function typeNodeText(node: ts.TypeNode | null, source: ts.SourceFile): string {
+  if (!node) return 'any'
+  return node.getText(source).replace(/\s+/g, ' ')
+}
+
+/** 解析类型参数列表（泛型） */
+function typeParamsOf(node: ts.Node): string[] {
+  const decl = node as ts.InterfaceDeclaration
+  const params = decl.typeParameters
+  if (!params) return []
+  return params.map(p => p.getText())
+}
+
+/** 提取接口成员（属性/方法/索引签名） */
+function membersOfInterface(node: ts.InterfaceDeclaration, source: ts.SourceFile): TypeMemberInfo[] {
+  const members: TypeMemberInfo[] = []
+  for (const member of node.members) {
+    if (ts.isPropertySignature(member)) {
+      const nameText = (member.name as ts.Identifier).text
+      members.push({ name: nameText, type: typeNodeText(member.type ?? null, source), optional: !!member.questionToken, kind: 'property' })
+    } else if (ts.isMethodSignature(member)) {
+      const nameText = (member.name as ts.Identifier).text
+      const params = member.parameters.map(p => p.getText(source)).join(', ')
+      const returnType = typeNodeText(member.type ?? null, source)
+      members.push({ name: nameText, type: '(' + params + ') => ' + returnType, optional: !!member.questionToken, kind: 'method' })
+    } else if (ts.isIndexSignatureDeclaration(member)) {
+      members.push({ name: '[index]', type: typeNodeText(member.type ?? null, source), optional: false, kind: 'index' })
+    }
+  }
+  return members
+}
+
+/**
+ * TypeScript AST 精确类型提取
+ * 解析 interface / type 别名 / enum / class 的成员结构与泛型参数
+ */
+export function extractTypesAST(content: string): TypeDeclInfo[] {
+  const result: TypeDeclInfo[] = []
+  const source = ts.createSourceFile('doc.ts', content, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS)
+  const lineStarts = source.getLineStarts()
+
+  const lineOf = (pos: number): number => {
+    let lo = 0, hi = lineStarts.length - 1
+    while (lo < hi) {
+      const mid = (lo + hi + 1) >> 1
+      if (lineStarts[mid] <= pos) lo = mid
+      else hi = mid - 1
+    }
+    return lo + 1
+  }
+
+  const visit = (node: ts.Node): void => {
+    if (ts.isInterfaceDeclaration(node)) {
+      const extendsList = node.heritageClauses
+        ? node.heritageClauses.flatMap(h => h.types.map(t => t.getText(source)))
+        : []
+      result.push({
+        name: node.name.text,
+        kind: 'interface',
+        typeParams: typeParamsOf(node),
+        extends: extendsList,
+        members: membersOfInterface(node, source),
+        line: lineOf(node.getStart(source)),
+      })
+    } else if (ts.isTypeAliasDeclaration(node)) {
+      // 对象字面量类型的成员也解析
+      let members: TypeMemberInfo[] = []
+      if (node.type && ts.isTypeLiteralNode(node.type)) {
+        for (const member of node.type.members) {
+          if (ts.isPropertySignature(member)) {
+            const nameText = (member.name as ts.Identifier).text
+            members.push({ name: nameText, type: typeNodeText(member.type ?? null, source), optional: !!member.questionToken, kind: 'property' })
+          } else if (ts.isMethodSignature(member)) {
+            const nameText = (member.name as ts.Identifier).text
+            const params = member.parameters.map(p => p.getText(source)).join(', ')
+            members.push({ name: nameText, type: '(' + params + ') => ' + typeNodeText(member.type ?? null, source), optional: !!member.questionToken, kind: 'method' })
+          }
+        }
+      }
+      result.push({
+        name: node.name.text,
+        kind: 'type',
+        typeParams: typeParamsOf(node),
+        extends: [],
+        members,
+        line: lineOf(node.getStart(source)),
+      })
+    } else if (ts.isEnumDeclaration(node)) {
+      const members: TypeMemberInfo[] = node.members.map(m => ({
+        name: m.name.getText(source),
+        type: m.initializer ? m.initializer.getText(source) : 'auto',
+        optional: false,
+        kind: 'property' as const,
+      }))
+      result.push({ name: node.name.text, kind: 'enum', typeParams: [], extends: [], members, line: lineOf(node.getStart(source)) })
+    } else if (ts.isClassDeclaration(node) && node.name) {
+      const extendsList = node.heritageClauses
+        ? node.heritageClauses.flatMap(h => h.types.map(t => t.getText(source)))
+        : []
+      const members: TypeMemberInfo[] = []
+      for (const member of node.members) {
+        if (ts.isPropertyDeclaration(member) && member.name) {
+          members.push({
+            name: member.name.getText(source),
+            type: typeNodeText(member.type ?? null, source),
+            optional: !!member.questionToken,
+            kind: 'property',
+          })
+        } else if (ts.isMethodDeclaration(member) && member.name) {
+          const params = member.parameters.map(p => p.getText(source)).join(', ')
+          const returnType = typeNodeText(member.type ?? null, source)
+          members.push({ name: member.name.getText(source), type: '(' + params + ') => ' + returnType, optional: false, kind: 'method' })
+        }
+      }
+      result.push({ name: node.name.text, kind: 'class', typeParams: typeParamsOf(node), extends: extendsList, members, line: lineOf(node.getStart(source)) })
+    }
+    ts.forEachChild(node, visit)
+  }
+
+  visit(source)
+  return result
+}
+
+/** 生成类型声明的 Markdown 文档 */
+export function generateTypesMarkdown(file: string, types: TypeDeclInfo[]): string {
+  if (types.length === 0) return ''
+  const lines = ['## Type Declarations', '']
+  for (const t of types) {
+    const typeParams = t.typeParams.length > 0 ? '<' + t.typeParams.join(', ') + '>' : ''
+    const extendsStr = t.extends.length > 0 ? ' extends ' + t.extends.join(', ') : ''
+    lines.push('### ' + t.kind + ' ' + t.name + typeParams + extendsStr)
+    lines.push('- **行号:** ' + t.line)
+    if (t.members.length === 0) {
+      lines.push('- **成员:** 无')
+    } else {
+      lines.push('')
+      for (const m of t.members) {
+        const marker = t.kind === 'enum' ? '·' : (m.optional ? '?' : '')
+        lines.push('- ' + marker + ' `' + m.name + marker + '`: `' + m.type + '`')
+      }
+    }
+    lines.push('')
+  }
+  return lines.join('\n')
+}
+
 /**
  * 精确路由提取：支持 Express/Fastify/Koa 链式 + 装饰器 + Next.js App Router
  */
-function extractRoutesAdvanced(content: string): APIEndpoint[] {
+export function extractRoutesAdvanced(content: string): APIEndpoint[] {
   const endpoints: APIEndpoint[] = []
   const lines = content.split('\n')
   const lineStarts = new Map<string, number>()
@@ -227,7 +396,7 @@ function extractRoutesAdvanced(content: string): APIEndpoint[] {
   return endpoints
 }
 
-function extractRoutes(content: string, framework: 'express' | 'fastify' | 'koa'): APIEndpoint[] {
+export function extractRoutes(content: string, framework: 'express' | 'fastify' | 'koa'): APIEndpoint[] {
   const endpoints: APIEndpoint[] = []
   const routeRegex = /\.(get|post|put|delete|patch|options|head)\s*\(\s*['"`]([^'"`]+)['"`]/g
   let match
@@ -238,7 +407,7 @@ function extractRoutes(content: string, framework: 'express' | 'fastify' | 'koa'
   return endpoints
 }
 
-function generateMarkdown(title: string, endpoints: APIEndpoint[]): string {
+export function generateMarkdown(title: string, endpoints: APIEndpoint[]): string {
   const lines = ['# ' + title, '', '## API Reference', '']
   const grouped: Record<string, APIEndpoint[]> = {}
   endpoints.forEach(e => { const group = e.path.split('/')[1] || 'root'; if (!grouped[group]) grouped[group] = []; grouped[group].push(e) })
@@ -280,7 +449,7 @@ export const call: LocalCommandCall = async (args) => {
     '  /api-doc sigs <file>             Extract function signatures (params/return types)',
     '  /api-doc classes <file>          Extract classes',
     '  /api-doc interfaces <file>       Extract interfaces',
-    '  /api-doc types <file>            Extract type aliases',
+    '  /api-doc types <file>            Extract type aliases (AST)',
     '  /api-doc exports <file>          List all exports',
     '  /api-doc all [dir]               Full project documentation',
   ].join('\n') }
@@ -311,6 +480,8 @@ export const call: LocalCommandCall = async (args) => {
       r = generateMarkdown(title, endpoints)
       const sigDoc = generateSignaturesMarkdown(file, extractFunctionSignatures(content))
       if (sigDoc) r += '\n' + sigDoc
+      const typeDoc = generateTypesMarkdown(file, extractTypesAST(content))
+      if (typeDoc) r += '\n' + typeDoc
     }
   }
 
@@ -319,6 +490,13 @@ export const call: LocalCommandCall = async (args) => {
     if (!file || !existsSync(file)) return { type: 'text', value: 'File not found: ' + (file || '') }
     const sigs = extractFunctionSignatures(readFileSync(file, 'utf-8'))
     r = generateSignaturesMarkdown(file, sigs) || 'No function signatures found in ' + file
+  }
+
+  else if (c === 'types') {
+    const file = p[1]
+    if (!file || !existsSync(file)) return { type: 'text', value: 'File not found: ' + (file || '') }
+    const types = extractTypesAST(readFileSync(file, 'utf-8'))
+    r = generateTypesMarkdown(file, types) || 'No type declarations found in ' + file
   }
 
   else if (c === 'scan') {
@@ -378,11 +556,11 @@ export const call: LocalCommandCall = async (args) => {
     } catch { r = 'Invalid JSON: ' + file }
   }
 
-  else if (c === 'classes' || c === 'interfaces' || c === 'types') {
+  else if (c === 'classes' || c === 'interfaces') {
     const file = p[1]
     if (!file || !existsSync(file)) return { type: 'text', value: 'File not found: ' + (file || '') }
     const content = readFileSync(file, 'utf-8')
-    const regex = c === 'classes' ? /class\s+(\w+)/g : c === 'interfaces' ? /interface\s+(\w+)/g : /type\s+(\w+)\s*=/g
+    const regex = c === 'classes' ? /class\s+(\w+)/g : /interface\s+(\w+)/g
     const names: string[] = []
     let match
     while ((match = regex.exec(content)) !== null) names.push(match[1])

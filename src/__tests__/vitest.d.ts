@@ -98,6 +98,11 @@ declare module 'vitest' {
     export function clearAllMocks(): void
     export function resetAllMocks(): void
     export function restoreAllMocks(): void
+    export function hoisted<T>(factory: () => T): T
+    export function mock<T>(path: string, factory?: () => T): void
+    export function unmock(path: string): void
+    export function doMock<T>(path: string, factory?: () => T): void
+    export function doUnmock(path: string): void
   }
   export function beforeAll(fn: () => void | Promise<void>): void
   export function afterAll(fn: () => void | Promise<void>): void

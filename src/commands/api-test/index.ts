@@ -43,7 +43,7 @@ function saveTest(t: APITest) {
 /**
  * 使用原生 fetch 发送 HTTP 请求
  */
-async function httpRequest(method: string, url: string, headers: Record<string, string> = {}, body?: string, timeoutMs = 15000): Promise<HttpResponse> {
+export async function httpRequest(method: string, url: string, headers: Record<string, string> = {}, body?: string, timeoutMs = 15000): Promise<HttpResponse> {
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), timeoutMs)
   try {
@@ -83,7 +83,7 @@ async function httpRequestResolved(method: string, url: string, headers: Record<
 /**
  * 替换 URL/body 中的环境变量占位符 ${VAR}
  */
-function resolveEnvVars(input: string): string {
+export function resolveEnvVars(input: string): string {
   let result = input
   const pattern = /\$\{([A-Z_][A-Z0-9_]*)\}/g
   result = result.replace(pattern, (match, name) => {
@@ -97,7 +97,7 @@ function resolveEnvVars(input: string): string {
  * 评估断言表达式
  * 支持: status == 200, status != 404, status >= 500, body contains "xxx", body ~ regex
  */
-function evaluateAssertion(assertion: string, res: HttpResponse): boolean {
+export function evaluateAssertion(assertion: string, res: HttpResponse): boolean {
   const body = res.body
   if (assertion.includes('body contains')) {
     const target = assertion.split('contains')[1].trim().replace(/^['"]|['"]$/g, '')
@@ -126,7 +126,7 @@ function evaluateAssertion(assertion: string, res: HttpResponse): boolean {
 /**
  * 轻量 JSON Schema 验证（支持常见类型）
  */
-function validateJsonSchema(data: any, schema: any): string | null {
+export function validateJsonSchema(data: any, schema: any): string | null {
   if (schema.type) {
     const valType = Array.isArray(data) ? 'array' : typeof data
     const ok =
@@ -173,7 +173,7 @@ function recordHistory(name: string, status: string, duration: number) {
   } catch { /* ignore */ }
 }
 
-function formatResponse(res: HttpResponse, maxLen = 2000): string {
+export function formatResponse(res: HttpResponse, maxLen = 2000): string {
   const bodyPreview = res.body.length > maxLen ? res.body.slice(0, maxLen) + `... (${res.body.length} bytes total)` : res.body
   return `Status: ${res.status}${res.ok ? ' ✅' : ' ❌'}\nDuration: ${res.durationMs}ms\n\n${bodyPreview}`
 }
