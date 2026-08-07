@@ -771,10 +771,10 @@ export async function* createAnthropicStreamFromOpenAI(input: {
         // 20秒后无新数据时，自动回复服务器一个消息告诉服务器通讯中断了，继续先前的工作
         if (lastContentText.endsWith('：') || lastContentText.endsWith(':')) {
           // 抛出通讯中断错误，触发 withRetry 的重试机制
-          const error = new APIConnectionError(
-            `[openaiCompat] 服务器主动发送 [DONE] 导致通讯中断，lastContent="${lastContentText.slice(-50)}"，将自动重试继续工作`,
-            { cause: new Error('server_done_interrupt') },
-          )
+          const error = new APIConnectionError({
+            message: `[openaiCompat] 服务器主动发送 [DONE] 导致通讯中断，lastContent="${lastContentText.slice(-50)}"，将自动重试继续工作`,
+            cause: new Error('server_done_interrupt'),
+          })
           logForDebugging(`[openaiCompat] 检测到冒号结尾的消息后收到 [DONE]，抛出通讯中断错误`, { level: 'debug' })
           throw error
         }

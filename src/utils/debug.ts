@@ -1,4 +1,5 @@
 import { appendFile, mkdir, symlink, unlink } from 'fs/promises'
+import { appendFile as appendFileCb, mkdirSync } from 'fs'
 import { memoize } from '../vendor/lodash.js'
 import { dirname, join } from 'path'
 import { getSessionId } from '../bootstrap/state.js'
@@ -162,18 +163,16 @@ function getDebugWriter(): BufferedWriter {
         const needMkdir = ensuredDir !== dir
         ensuredDir = dir
         if (isDebugMode()) {
-          // immediateMode: must stay sync. Async writes are lost on direct
-          // process.exit() and keep the event loop alive in beforeExit
-          // handlers (infinite loop with Perfetto tracing). See #22257.
           if (needMkdir) {
             try {
-              getFsImplementation().mkdirSync(dir)
+              mkdirSync(dir, { recursive: true })
             } catch {
               // Directory already exists
             }
           }
-          getFsImplementation().appendFileSync(path, content)
-          void updateLatestDebugLogSymlink()
+          appendFileCb(path, content, () => {
+            void updateLatestDebugLogSymlink()
+          })
           return
         }
         // Buffered path (ants without --debug): flushes ~1/sec so chain
