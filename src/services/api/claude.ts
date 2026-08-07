@@ -196,6 +196,8 @@ import {
   extractDiscoveredToolNames,
   isDeferredToolsDeltaEnabled,
   isToolSearchEnabled,
+  filterToolsForMessage,
+  isSimpleConversationMessage,
 } from '../../utils/toolSearch.js'
 import { API_MAX_MEDIA_PER_REQUEST } from '../../constants/apiLimits.js'
 import { ADVISOR_BETA_HEADER } from '../../constants/betas.js'
@@ -1186,9 +1188,58 @@ async function* queryModel(
       return discoveredToolNames.has(tool.name)
     })
   } else {
-    filteredTools = tools.filter(
-      t => !toolMatchesName(t, TOOL_SEARCH_TOOL_NAME),
-    )
+    // Even without tool search enabled, apply message-based tool filtering
+    // to reduce token overhead for simple conversations (e.g., "hi", "hello").
+    // This prevents sending all 60+ tool definitions when they aren't needed.
+    // See: filterToolsForMessage in utils/toolSearch.ts for keyword-based filtering.
+    let lastUserMessage = ''
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].type === 'user') {
+        const content = messages[i].message?.content
+        lastUserMessage =
+          typeof content === 'string'
+            ? content
+            : Array.isArray(content)
+              ? content.map((b: { type: string; text?: string }) => b.text ?? '').join(' ')
+              : ''
+        break
+      }
+    }
+
+    if (isSimpleConversationMessage(lastUserMessage)) {
+      // For simple conversations, use only message-filtered tools.
+      // Always include tools already used in conversation history so the model
+      // can continue using them without needing rediscovery.
+      const previouslyUsedToolNames = new Set<string>()
+      for (const msg of messages) {
+        if (msg.type === 'assistant') {
+          const content = msg.message?.content
+          if (Array.isArray(content)) {
+            for (const block of content) {
+              if (
+                typeof block === 'object' &&
+                block !== null &&
+                block.type === 'tool_use' &&
+                'name' in block &&
+                typeof block.name === 'string'
+              ) {
+                previouslyUsedToolNames.add(block.name)
+              }
+            }
+          }
+        }
+      }
+      const baseFiltered = filterToolsForMessage(tools, lastUserMessage)
+      const baseFilteredNames = new Set(baseFiltered.map(t => t.name))
+      // Union: message-filtered tools + previously used tools
+      filteredTools = tools.filter(
+        t => baseFilteredNames.has(t.name) || previouslyUsedToolNames.has(t.name),
+      )
+    } else {
+      filteredTools = tools.filter(
+        t => !toolMatchesName(t, TOOL_SEARCH_TOOL_NAME),
+      )
+    }
   }
 
   // 如果启用了工具搜索，添加工具搜索 beta 头 - defer_loading 被接受所必需
@@ -1896,7 +1947,6 @@ async (anthropic, attempt, context) => {
               `[claude.ts] openai 兼容请求没有消息；source=${options.querySource} model=${params.model}`,
             )
           }
-          const retryNonce = Date.now().toString() + "." + attempt.toString() + "." + Math.random().toString(36).slice(2, 8)
           logForDebugging("[claude] 原始 baseURL: " + baseURL, { level: "debug" });
           // Strip /v1/chat/completions if already present to avoid double path
           const cleanBaseURL = baseURL.replace(/\/v1\/(chat\/completions|messages)\/?$/, '')
@@ -1912,7 +1962,6 @@ async (anthropic, attempt, context) => {
             },
             openAIRequest,
             signal,
-            retryNonce,
           )
           queryCheckpoint('query_response_headers_received')
           return createAnthropicStreamFromOpenAI({
