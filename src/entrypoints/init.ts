@@ -20,18 +20,11 @@ import {
 import { preconnectAnthropicApi } from '../utils/apiPreconnect.js'
 import { applyExtraCACertsFromConfig } from '../utils/caCertsConfig.js'
 import { registerCleanup } from '../utils/cleanupRegistry.js'
+import { setupGracefulShutdown } from '../utils/gracefulShutdown.js'
 import { enableConfigs, recordFirstStartTime } from '../utils/config.js'
 import { logForDebugging } from '../utils/debug.js'
 import { detectCurrentRepository } from '../utils/detectRepository.js'
-import { logForDiagnosticsNoPII } from '../utils/diagLogs.js'
-import { initJetBrainsDetection } from '../utils/envDynamic.js'
-import { isEnvTruthy } from '../utils/envUtils.js'
 import { ConfigParseError, errorMessage } from '../utils/errors.js'
-// showInvalidConfigDialog 在错误路径中动态导入，以避免在初始化时加载 React
-import {
-  gracefulShutdownSync,
-  setupGracefulShutdown,
-} from '../utils/gracefulShutdown.js'
 import {
   applyConfigEnvironmentVariables,
   applySafeConfigEnvironmentVariables,
@@ -57,7 +50,6 @@ let telemetryInitialized = false
 
 export const init = memoize(async (): Promise<void> => {
   const initStartTime = Date.now()
-  logForDiagnosticsNoPII('info', 'init_started')
   profileCheckpoint('init_function_start')
   const log = (msg: string) => {
     const t = Date.now();
@@ -70,9 +62,6 @@ export const init = memoize(async (): Promise<void> => {
     const configsStart = Date.now()
     enableConfigs()
     //log('enableConfigs DONE')
-    logForDiagnosticsNoPII('info', 'init_configs_enabled', {
-      duration_ms: Date.now() - configsStart,
-    })
     profileCheckpoint('init_configs_enabled')
 
     // 在信任对话框之前仅应用安全的环境变量
@@ -96,9 +85,6 @@ export const init = memoize(async (): Promise<void> => {
     //log('initSentry DONE')
 
     require('fs').writeFileSync('d:/init_debug.log', `applySafeConfigEnvironmentVariables done at ${Date.now()}\n`, { flag: 'a' });
-    logForDiagnosticsNoPII('info', 'init_safe_env_vars_applied', {
-      duration_ms: Date.now() - envVarsStart,
-    })
     profileCheckpoint('init_safe_env_vars_applied')
 
     // 确保退出时刷新所有内容
@@ -160,9 +146,6 @@ export const init = memoize(async (): Promise<void> => {
     //log('configureGlobalAgents START')
     configureGlobalAgents()
     //log('configureGlobalAgents DONE')
-    logForDiagnosticsNoPII('info', 'init_proxy_configured', {
-      duration_ms: Date.now() - proxyStart,
-    })
     //logForDebugging('[init] configureGlobalAgents complete')
     //profileCheckpoint('init_network_configured')
 
@@ -217,14 +200,8 @@ export const init = memoize(async (): Promise<void> => {
     if (isScratchpadEnabled()) {
       const scratchpadStart = Date.now()
       await ensureScratchpadDir()
-      logForDiagnosticsNoPII('info', 'init_scratchpad_created', {
-        duration_ms: Date.now() - scratchpadStart,
-      })
     }
 
-    logForDiagnosticsNoPII('info', 'init_completed', {
-      duration_ms: Date.now() - initStartTime,
-    })
     //profileCheckpoint('init_function_end')
     //require('fs').writeFileSync('d:/init_debug.log', `init() COMPLETED at ${Date.now()}\n`, { flag: 'a' });
   } catch (error) {
