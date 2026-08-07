@@ -11,23 +11,8 @@ import {
 import { getRemoteManagedSettingsSyncFromCache } from '../../services/remoteManagedSettings/syncCacheState.js'
 import { uniq } from '../array.js'
 import { logForDebugging } from '../debug.js'
-import { logForDiagnosticsNoPII } from '../diagLogs.js'
-import { getClaudeConfigHomeDir, isEnvTruthy } from '../envUtils.js'
-import { getErrnoCode, isENOENT } from '../errors.js'
-import { writeFileSyncAndFlush_DEPRECATED } from '../file.js'
-import { readFileSync } from '../fileRead.js'
-import { getFsImplementation, safeResolvePath } from '../fsOperations.js'
-import { addFileGlobRuleToGitignore } from '../git/gitignore.js'
-import { safeParseJSON } from '../json.js'
 import { logError } from '../log.js'
-import { getPlatform } from '../platform.js'
-import { clone, jsonStringify } from '../slowOperations.js'
 import { profileCheckpoint } from '../startupProfiler.js'
-import {
-  type EditableSettingSource,
-  getEnabledSettingSources,
-  type SettingSource,
-} from './constants.js'
 import { markInternalWrite } from './internalWrites.js'
 import {
   getManagedFilePath,
@@ -45,12 +30,19 @@ import {
   setSessionSettingsCache,
 } from './settingsCache.js'
 import { type SettingsJson, SettingsSchema } from './types.js'
+import { getEnabledSettingSources } from './constants.js'
 import {
   filterInvalidPermissionRules,
   formatZodError,
   type SettingsWithErrors,
   type ValidationError,
 } from './validation.js'
+import { getClaudeConfigHomeDir, isEnvTruthy } from '../envUtils.js'
+import { getErrnoCode } from '../errors.js'
+import { getFsImplementation, safeResolvePath } from '../fsOperations.js'
+import { safeParseJSON } from '../json.js'
+import { writeFileSyncAndFlush_DEPRECATED } from '../file.js'
+import { jsonStringify } from '../slowOperations.js'
 
 /**
  * 根据当前平台获取托管设置文件的路径
@@ -656,7 +648,6 @@ function loadSettingsFromDisk(): SettingsWithErrors {
 
   const startTime = Date.now()
   profileCheckpoint('loadSettingsFromDisk_start')
-  logForDiagnosticsNoPII('info', 'settings_load_started')
 
   isLoadingSettings = true
   try {
@@ -788,12 +779,6 @@ function loadSettingsFromDisk(): SettingsWithErrors {
         }
       }
     }
-
-    logForDiagnosticsNoPII('info', 'settings_load_completed', {
-      duration_ms: Date.now() - startTime,
-      source_count: seenFiles.size,
-      error_count: allErrors.length,
-    })
 
     return { settings: mergedSettings, errors: allErrors }
   } finally {
