@@ -12,14 +12,6 @@
 import { logEvent } from '../../services/analytics/index.js'
 import { registerCleanup } from '../cleanupRegistry.js'
 import { logForDebugging } from '../debug.js'
-import { withDiagnosticsTiming } from '../diagLogs.js'
-import { getFsImplementation } from '../fsOperations.js'
-import { logError } from '../log.js'
-import {
-  clearMarketplacesCache,
-  getDeclaredMarketplaces,
-  registerSeedMarketplaces,
-} from './marketplaceManager.js'
 import { detectAndUninstallDelistedPlugins } from './pluginBlocklist.js'
 import { clearPluginCache } from './pluginLoader.js'
 import { reconcileMarketplaces } from './reconciler.js'
@@ -91,33 +83,23 @@ export async function installPluginsForHeadless(): Promise<boolean> {
     } else {
       // Reconcile declared marketplaces (settings intent + implicit official)
       // with materialized state. Zip cache: skip unsupported source types.
-      const reconcileResult = await withDiagnosticsTiming(
-        'headless_marketplace_reconcile',
-        () =>
-          reconcileMarketplaces({
-            skip: zipCacheMode
-              ? (_name, source) =>
-                  !isMarketplaceSourceSupportedByZipCache(source)
-              : undefined,
-            onProgress: event => {
-              if (event.type === 'installed') {
-                logForDebugging(
-                  `installPluginsForHeadless: installed marketplace ${event.name}`,
-                )
-              } else if (event.type === 'failed') {
-                logForDebugging(
-                  `installPluginsForHeadless: failed to install marketplace ${event.name}: ${event.error}`,
-                )
-              }
-            },
-          }),
-        r => ({
-          installed_count: r.installed.length,
-          updated_count: r.updated.length,
-          failed_count: r.failed.length,
-          skipped_count: r.skipped.length,
-        }),
-      )
+      const reconcileResult = await reconcileMarketplaces({
+        skip: zipCacheMode
+          ? (_name, source) =>
+              !isMarketplaceSourceSupportedByZipCache(source)
+          : undefined,
+        onProgress: event => {
+          if (event.type === 'installed') {
+            logForDebugging(
+              `installPluginsForHeadless: installed marketplace ${event.name}`,
+            )
+          } else if (event.type === 'failed') {
+            logForDebugging(
+              `installPluginsForHeadless: failed to install marketplace ${event.name}: ${event.error}`,
+            )
+          }
+        },
+      })
 
       if (reconcileResult.skipped.length > 0) {
         logForDebugging(

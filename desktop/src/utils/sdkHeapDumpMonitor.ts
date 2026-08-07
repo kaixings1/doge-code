@@ -1,2 +1,1 @@
-// Stub: utils/sdkHeapDumpMonitor.ts
-export function startSdkMemoryMonitor(): void {}
+export { startSdkMemoryMonitor } from '../../src/utils/sdkHeapDumpMonitor.js'

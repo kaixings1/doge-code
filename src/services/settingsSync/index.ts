@@ -26,13 +26,6 @@ import {
 } from '../../utils/auth.js'
 import { clearMemoryFileCaches } from '../../utils/claudemd.js'
 import { getMemoryPath } from '../../utils/config.js'
-import { logForDiagnosticsNoPII } from '../../utils/diagLogs.js'
-import { classifyAxiosError } from '../../utils/errors.js'
-import { getRepoRemoteHash } from '../../utils/git.js'
-import {
-  getAPIProvider,
-  isFirstPartyAnthropicBaseUrl,
-} from '../../utils/model/providers.js'
 import { markInternalWrite } from '../../utils/settings/internalWrites.js'
 import { getSettingsFilePathForSource } from '../../utils/settings/settings.js'
 import { resetSettingsCache } from '../../utils/settings/settingsCache.js'
@@ -68,15 +61,12 @@ export async function uploadUserSettingsInBackground(): Promise<void> {
       !getIsInteractive() ||
       !isUsingOAuth()
     ) {
-      logForDiagnosticsNoPII('info', 'settings_sync_upload_skipped')
       logEvent('tengu_settings_sync_upload_skipped_ineligible', {})
       return
     }
 
-    logForDiagnosticsNoPII('info', 'settings_sync_upload_starting')
     const result = await fetchUserSettings()
     if (!result.success) {
-      logForDiagnosticsNoPII('warn', 'settings_sync_upload_fetch_failed')
       logEvent('tengu_settings_sync_upload_fetch_failed', {})
       return
     }
@@ -91,22 +81,18 @@ export async function uploadUserSettingsInBackground(): Promise<void> {
 
     const entryCount = Object.keys(changedEntries).length
     if (entryCount === 0) {
-      logForDiagnosticsNoPII('info', 'settings_sync_upload_no_changes')
       logEvent('tengu_settings_sync_upload_skipped', {})
       return
     }
 
     const uploadResult = await uploadUserSettings(changedEntries)
     if (uploadResult.success) {
-      logForDiagnosticsNoPII('info', 'settings_sync_upload_success')
       logEvent('tengu_settings_sync_upload_success', { entryCount })
     } else {
-      logForDiagnosticsNoPII('warn', 'settings_sync_upload_failed')
       logEvent('tengu_settings_sync_upload_failed', { entryCount })
     }
   } catch {
     // Fail-open: log unexpected errors but don't block startup
-    logForDiagnosticsNoPII('error', 'settings_sync_unexpected_error')
   }
 }
 
@@ -163,21 +149,17 @@ async function doDownloadUserSettings(
         !getFeatureValue_CACHED_MAY_BE_STALE('tengu_strap_foyer', false) ||
         !isUsingOAuth()
       ) {
-        logForDiagnosticsNoPII('info', 'settings_sync_download_skipped')
         logEvent('tengu_settings_sync_download_skipped', {})
         return false
       }
 
-      logForDiagnosticsNoPII('info', 'settings_sync_download_starting')
       const result = await fetchUserSettings(maxRetries)
       if (!result.success) {
-        logForDiagnosticsNoPII('warn', 'settings_sync_download_fetch_failed')
         logEvent('tengu_settings_sync_download_fetch_failed', {})
         return false
       }
 
       if (result.isEmpty) {
-        logForDiagnosticsNoPII('info', 'settings_sync_download_empty')
         logEvent('tengu_settings_sync_download_empty', {})
         return false
       }
@@ -185,15 +167,11 @@ async function doDownloadUserSettings(
       const entries = result.data!.content.entries
       const projectId = await getRepoRemoteHash()
       const entryCount = Object.keys(entries).length
-      logForDiagnosticsNoPII('info', 'settings_sync_download_applying', {
-        entryCount,
-      })
       await applyRemoteEntriesToLocal(entries, projectId)
       logEvent('tengu_settings_sync_download_success', { entryCount })
       return true
     } catch {
       // Fail-open: log error but don't block CCR startup
-      logForDiagnosticsNoPII('error', 'settings_sync_download_error')
       logEvent('tengu_settings_sync_download_error', {})
       return false
     }
@@ -271,7 +249,6 @@ async function fetchUserSettingsOnce(): Promise<SettingsSyncFetchResult> {
 
     // 404 means no settings exist yet
     if (response.status === 404) {
-      logForDiagnosticsNoPII('info', 'settings_sync_fetch_empty')
       return {
         success: true,
         isEmpty: true,
@@ -280,14 +257,12 @@ async function fetchUserSettingsOnce(): Promise<SettingsSyncFetchResult> {
 
     const parsed = UserSyncDataSchema().safeParse(response.data)
     if (!parsed.success) {
-      logForDiagnosticsNoPII('warn', 'settings_sync_fetch_invalid_format')
       return {
         success: false,
         error: 'Invalid settings sync response format',
       }
     }
 
-    logForDiagnosticsNoPII('info', 'settings_sync_fetch_success')
     return {
       success: true,
       data: parsed.data,
@@ -333,11 +308,6 @@ async function fetchUserSettings(
     }
 
     const delayMs = getRetryDelay(attempt)
-    logForDiagnosticsNoPII('info', 'settings_sync_retry', {
-      attempt,
-      maxRetries,
-      delayMs,
-    })
     await sleep(delayMs)
   }
 
@@ -374,16 +344,12 @@ async function uploadUserSettings(
       },
     )
 
-    logForDiagnosticsNoPII('info', 'settings_sync_uploaded', {
-      entryCount: Object.keys(entries).length,
-    })
     return {
       success: true,
       checksum: response.data?.checksum,
       lastModified: response.data?.lastModified,
     }
   } catch (error) {
-    logForDiagnosticsNoPII('warn', 'settings_sync_upload_error')
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -399,7 +365,6 @@ async function tryReadFileForSync(filePath: string): Promise<string | null> {
   try {
     const stats = await stat(filePath)
     if (stats.size > MAX_FILE_SIZE_BYTES) {
-      logForDiagnosticsNoPII('info', 'settings_sync_file_too_large')
       return null
     }
 
@@ -469,10 +434,8 @@ async function writeFileForSync(
     }
 
     await writeFile(filePath, content, 'utf8')
-    logForDiagnosticsNoPII('info', 'settings_sync_file_written')
     return true
   } catch {
-    logForDiagnosticsNoPII('warn', 'settings_sync_file_write_failed')
     return false
   }
 }
@@ -497,10 +460,6 @@ async function applyRemoteEntriesToLocal(
   const exceedsSizeLimit = (content: string, _path: string): boolean => {
     const sizeBytes = Buffer.byteLength(content, 'utf8')
     if (sizeBytes > MAX_FILE_SIZE_BYTES) {
-      logForDiagnosticsNoPII('info', 'settings_sync_file_too_large', {
-        sizeBytes,
-        maxBytes: MAX_FILE_SIZE_BYTES,
-      })
       return true
     }
     return false
@@ -575,7 +534,4 @@ async function applyRemoteEntriesToLocal(
     clearMemoryFileCaches()
   }
 
-  logForDiagnosticsNoPII('info', 'settings_sync_applied', {
-    appliedCount,
-  })
 }

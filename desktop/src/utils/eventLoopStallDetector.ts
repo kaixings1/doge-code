@@ -1,2 +1,1 @@
-// Stub: utils/eventLoopStallDetector.ts
-export function startEventLoopStallDetector(): void {}
+export { startEventLoopStallDetector } from '../../src/utils/eventLoopStallDetector.js'

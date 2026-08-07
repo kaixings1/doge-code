@@ -26,8 +26,6 @@ declare const BUILD_PLATFORM: string | undefined
 /** Safe JSON stringify helper */
 declare function jsonStringify(value: unknown, replacer?: unknown, space?: number): string
 
-/** Diagnostics logging helper */
-declare function logForDiagnosticsNoPII(message: string, ...args: unknown[]): void
 
 /** Hook timing display threshold in ms */
 declare const HOOK_TIMING_DISPLAY_THRESHOLD_MS: number | undefined

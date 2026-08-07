@@ -10,10 +10,11 @@ import {
   getClaudeMds,
   getMemoryFiles,
 } from './utils/claudemd.js'
-import { logForDiagnosticsNoPII } from './utils/diagLogs.js'
+import { getGlossary as loadGlossary } from './utils/glossary.js'
 import { isBareMode, isEnvTruthy } from './utils/envUtils.js'
 import { execFileNoThrow } from './utils/execFileNoThrow.js'
 import { getBranch, getDefaultBranch, getIsGit, gitExe } from './utils/git.js'
+import { getSessionEpoch } from './bootstrap/state.js'
 import { shouldIncludeGitInstructions } from './utils/gitSettings.js'
 import { logError } from './utils/log.js'
 
@@ -40,19 +41,11 @@ export const getGitStatus = memoize(async (): Promise<string | null> => {
   }
 
   const startTime = Date.now()
-  logForDiagnosticsNoPII('info', 'git_status_started')
 
   const isGitStart = Date.now()
   const isGit = await getIsGit()
-  logForDiagnosticsNoPII('info', 'git_is_git_check_completed', {
-    duration_ms: Date.now() - isGitStart,
-    is_git: isGit,
-  })
 
   if (!isGit) {
-    logForDiagnosticsNoPII('info', 'git_status_skipped_not_git', {
-      duration_ms: Date.now() - startTime,
-    })
     return null
   }
 
@@ -76,22 +69,12 @@ export const getGitStatus = memoize(async (): Promise<string | null> => {
       }).then(({ stdout }) => stdout.trim()),
     ])
 
-    logForDiagnosticsNoPII('info', 'git_commands_completed', {
-      duration_ms: Date.now() - gitCmdsStart,
-      status_length: status.length,
-    })
-
     // Check if status exceeds character limit
     const truncatedStatus =
       status.length > MAX_STATUS_CHARS
         ? status.substring(0, MAX_STATUS_CHARS) +
           '\n... (已截断，因为超过了 2k 字符。如果你需要更多信息，请使用 Bash 工具运行 "git status")'
         : status
-
-    logForDiagnosticsNoPII('info', 'git_status_completed', {
-      duration_ms: Date.now() - startTime,
-      truncated: status.length > MAX_STATUS_CHARS,
-    })
 
     return [
       `这是对话开始时的 git 状态。注意，这个状态是时间快照，在对话期间不会更新。`,
@@ -102,9 +85,6 @@ export const getGitStatus = memoize(async (): Promise<string | null> => {
       `最近的提交:\n${log}`,
     ].join('\n\n')
   } catch (error) {
-    logForDiagnosticsNoPII('error', 'git_status_failed', {
-      duration_ms: Date.now() - startTime,
-    })
     logError(error)
     return null
   }
@@ -118,7 +98,6 @@ export const getSystemContext = memoize(
     [k: string]: string
   }> => {
     const startTime = Date.now()
-    logForDiagnosticsNoPII('info', 'system_context_started')
 
     // Skip git status in CCR (unnecessary overhead on resume) or when git instructions are disabled
     const gitStatus =
@@ -132,16 +111,12 @@ export const getSystemContext = memoize(
       ? getSystemPromptInjection()
       : null
 
-    logForDiagnosticsNoPII('info', 'system_context_completed', {
-      duration_ms: Date.now() - startTime,
-      has_git_status: gitStatus !== null,
-      has_injection: injection !== null,
-    })
-
     // 检测平台信息（Windows/Linux/Mac）
     const platform = process.platform === 'win32' ? 'Windows' : process.platform === 'darwin' ? 'macOS' : 'Linux'
     const shell = process.env.CLAUDE_CODE_SHELL || process.env.SHELL || (process.platform === 'win32' ? 'cmd' : 'bash')
     const shellInfo = `运行平台: ${platform}\n默认 Shell: ${shell}\n命令格式: ${process.platform === 'win32' ? '请返回 Windows cmd 格式的命令（使用 dir、type、del、findstr 等，避免 bash 特有语法）' : '请返回 Unix shell 格式的命令'}`
+
+    const glossary = await loadGlossary()
 
     return {
       ...(gitStatus && { gitStatus }),
@@ -151,6 +126,8 @@ export const getSystemContext = memoize(
             cacheBreaker: `[CACHE_BREAKER: ${injection}]`,
           }
         : {}),
+      ...glossary,
+      sessionEpoch: `当前对话 epoch: ${getSessionEpoch()}（每次压缩后递增）`,
     }
   },
 )
@@ -163,7 +140,6 @@ export const getUserContext = memoize(
     [k: string]: string
   }> => {
     const startTime = Date.now()
-    logForDiagnosticsNoPII('info', 'user_context_started')
 
     // CLAUDE_CODE_DISABLE_CLAUDE_MDS: hard off, always.
     // --bare: skip auto-discovery (cwd walk), BUT honor explicit --add-dir.
@@ -181,15 +157,10 @@ export const getUserContext = memoize(
     // cycle through permissions/filesystem → permissions → yoloClassifier).
     setCachedClaudeMdContent(claudeMd || null)
 
-    logForDiagnosticsNoPII('info', 'user_context_completed', {
-      duration_ms: Date.now() - startTime,
-      claudemd_length: claudeMd?.length ?? 0,
-      claudemd_disabled: Boolean(shouldDisableClaudeMd),
-    })
-
     return {
       ...(claudeMd && { claudeMd }),
       currentDate: `今天的日期是: ${getLocalISODate()}.`,
     }
   },
 )
+

@@ -28,10 +28,6 @@ import {
 } from 'src/services/analytics/index.js'
 import { getFeatureValue_CACHED_MAY_BE_STALE } from 'src/services/analytics/growthbook.js'
 import { logForDebugging } from 'src/utils/debug.js'
-import {
-  logForDiagnosticsNoPII,
-  withDiagnosticsTiming,
-} from 'src/utils/diagLogs.js'
 import { toolMatchesName, type Tool, type Tools } from 'src/Tool.js'
 import {
   type AgentDefinition,
@@ -321,10 +317,6 @@ import {
   startQueryProfile,
   logQueryProfileReport,
 } from 'src/utils/queryProfiler.js'
-
-	
-
-
 
 import { asSessionId } from 'src/types/ids.js'
 import { jsonStringify } from '../utils/slowOperations.js'
@@ -1038,7 +1030,6 @@ function runHeadlessStreaming(
   // -p 模式下的 Ctrl+C：中止进行中的查询，然后优雅关闭。
   // gracefulShutdown 持久化会话状态并刷新分析数据，并带有故障安全计时器，如果清理挂起则强制退出。
   const sigintHandler = () => {
-    logForDiagnosticsNoPII('info', 'shutdown_signal', { signal: 'SIGINT' })
     if (abortController && !abortController.signal.aborted) {
       abortController.abort()
     }
@@ -1055,13 +1046,6 @@ function runHeadlessStreaming(
         bg[type] = (bg[type] ?? 0) + 1
       }
     }
-    logForDiagnosticsNoPII('info', 'run_state_at_shutdown', {
-      run_active: running,
-      run_phase: runPhase,
-      worker_status: getSessionState(),
-      internal_events_pending: structuredIO.internalEventsPending,
-      bg_tasks: bg,
-    })
   })
 
   // 将中央 onChangeAppState 模式差异钩子连接到 SDK 输出流。
@@ -1694,13 +1678,9 @@ function runHeadlessStreaming(
       await Promise.all([
         feature('DOWNLOAD_USER_SETTINGS') &&
         (isEnvTruthy(process.env.CLAUDE_CODE_REMOTE) || getIsRemoteMode())
-          ? withDiagnosticsTiming('headless_user_settings_download', () =>
-              downloadUserSettings(),
-            )
+          ? downloadUserSettings()
           : Promise.resolve(),
-        withDiagnosticsTiming('headless_managed_settings_wait', () =>
-          waitForRemoteManagedSettingsToLoad(),
-        ),
+        waitForRemoteManagedSettingsToLoad(),
       ])
 
       const pluginsInstalled = await installPluginsForHeadless()
@@ -2748,7 +2728,6 @@ function runHeadlessStreaming(
   // 当输入流完成且队列中的最后一次生成完成时，进程结束。
   void (async () => {
     let initialized = false
-    logForDiagnosticsNoPII('info', 'cli_message_loop_started')
     for await (const message of structuredIO.structuredInput) {
       // 非用户事件被内联处理（不入队）。在同一次 tick 中从 started 到 completed 不携带信息，因此仅触发 completed。
       // control_response 由 StructuredIO.processLine 报告（它也会看到从未在此处产生的孤立响应）。
@@ -5491,10 +5470,3 @@ export async function reconcileMcpServers(
     newState,
   }
 }
-
-
-
-
-
-
- 

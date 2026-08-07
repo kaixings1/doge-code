@@ -233,3 +233,15 @@ desktop/release-fresh/
 desktop/release-v2/
 desktop/dist.main.backup/
 desktop/release.backup/
+
+# Temp debug/error output files (this session)
+_cleanup_*.ts
+_find_cycles.ts
+_err_*.txt
+_errors_*.txt
+_rg_errors_out.txt
+_tsc_out.txt
+_tsc_errors.txt
+_tsc_current_errors.txt
+loop-api-response-*.json
+loop-report-*.md

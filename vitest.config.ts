@@ -9,7 +9,7 @@ export default defineConfig({
     include: ['tests/unit/**/*.test.ts', 'tests/unit/**/*.test.tsx', 'src/__tests__/**/*.test.ts', 'src/__tests__/**/*.test.tsx'],
 
     // 排除文件
-    exclude: ['node_modules', 'dist', 'tests/e2e', 'src/__tests__/e2e'],
+    exclude: ['node_modules', 'dist', 'tests/e2e', 'src/__tests__/e2e', 'desktop/e2e/**/*'],
 
     // 覆盖率配置
     coverage: {
@@ -36,8 +36,9 @@ export default defineConfig({
     testTimeout: 10000,
     hookTimeout: 10000,
 
-    // 并发执行
-    pool: 'threads',
+    // 并发执行（forks 避免线程间 module cache 污染导致的
+    // DEFAULT_PROJECT_CONFIG ReferenceError）
+    pool: 'forks',
 
     // 报告器
     reporter: ['verbose', 'json'],

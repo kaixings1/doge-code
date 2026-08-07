@@ -6,6 +6,9 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { spawn } from 'child_process'
 import { fileURLToPath } from 'url'
+
+// TRACE: bootstrap-entry start
+console.error('[TRACE] bootstrap-entry.ts: script start')
 //process.env.CLAUDE_CODE_SIMPLE=1
 // 🔴 清除 PATH 中的 MSYS2/Git bash 目录，防止 cmd.exe 子进程调用 MSYS2 的 grep/find 等程序触发 fork 卡死
 process.env.PATH = process.env.PATH?.split(';').filter(p => !/msys2/i.test(p) && !/git\\bin/i.test(p) && !/git\\usr\\bin/i.test(p) && !/^F:\\bin$/i.test(p)).join(';')
@@ -19,6 +22,7 @@ const toolsDir = fs.existsSync(path.join(exeDir, '.tools'))
   : computedToolsDir
 process.env.PATH = toolsDir + ';' + process.env.PATH
 ensureBootstrapMacro();
+console.error('[TRACE] bootstrap-entry.ts: after ensureBootstrapMacro')
 
 // 优先使用环境变量 DOGE_API_JSON 指定自定义配置路径（进程隔离用）
 const apiJsonPath = (() => {
@@ -54,8 +58,10 @@ if (activeConfig?.baseURL && !activeConfig.baseURL.startsWith('http://0.0.0.0'))
   process.env.ANTHROPIC_MODEL = 'claude-dummy';
   process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER = 'openai';
 }
+console.error('[TRACE] bootstrap-entry.ts: after config loading, before main()')
 
 async function main(): Promise<void> {
+  console.error('[TRACE] bootstrap-entry.ts: main() started')
   // 桌面模式：DOGE_DESKTOP=1 时通过 launch-electron.ts spawn Electron 进程
   if (process.env.DOGE_DESKTOP === '1') {
     const { launchDesktop } = await import('./desktop-electron/launch-electron.ts')
@@ -63,7 +69,9 @@ async function main(): Promise<void> {
     return
   }
 
+  console.error('[TRACE] bootstrap-entry.ts: about to import cli.tsx')
   await import('./entrypoints/cli.tsx')
+  console.error('[TRACE] bootstrap-entry.ts: after cli.tsx import')
 }
 
 void main()

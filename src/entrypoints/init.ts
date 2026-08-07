@@ -50,6 +50,7 @@ let telemetryInitialized = false
 
 export const init = memoize(async (): Promise<void> => {
   const initStartTime = Date.now()
+  console.error('[TRACE] init.ts: init() START')
   profileCheckpoint('init_function_start')
   const log = (msg: string) => {
     const t = Date.now();
@@ -61,6 +62,7 @@ export const init = memoize(async (): Promise<void> => {
   try {
     const configsStart = Date.now()
     enableConfigs()
+    console.error('[TRACE] init.ts: enableConfigs() DONE')
     //log('enableConfigs DONE')
     profileCheckpoint('init_configs_enabled')
 
@@ -69,6 +71,7 @@ export const init = memoize(async (): Promise<void> => {
     const envVarsStart = Date.now()
     //log('applySafeConfigEnvironmentVariables START')
     applySafeConfigEnvironmentVariables()
+    console.error('[TRACE] init.ts: applySafeConfigEnvironmentVariables() DONE')
     //log('applySafeConfigEnvironmentVariables DONE')
 
     // 尽早将 settings.json 中的 NODE_EXTRA_CA_CERTS 应用到 process.env，
@@ -76,26 +79,31 @@ export const init = memoize(async (): Promise<void> => {
     // 因此这必须在第一次 TLS 握手之前完成。
     //log('applyExtraCACertsFromConfig START')
     applyExtraCACertsFromConfig()
+    console.error('[TRACE] init.ts: applyExtraCACertsFromConfig() DONE')
     //log('applyExtraCACertsFromConfig DONE')
 
     // 初始化 Sentry（如果配置了 SENTRY_DSN）— 必须在 proxy/CA 配置之后，
     // 这样 Sentry 的网络请求会使用正确的代理和 CA 证书。
     //log('initSentry START')
     initSentry()
+    console.error('[TRACE] init.ts: initSentry() DONE')
     //log('initSentry DONE')
 
     require('fs').writeFileSync('d:/init_debug.log', `applySafeConfigEnvironmentVariables done at ${Date.now()}\n`, { flag: 'a' });
+    console.error('[TRACE] init.ts: init() after applySafeConfigEnvironmentVariables')
     profileCheckpoint('init_safe_env_vars_applied')
 
     // 确保退出时刷新所有内容
     //log('setupGracefulShutdown START')
     setupGracefulShutdown()
+    console.error('[TRACE] init.ts: init() after setupGracefulShutdown')
     //log('setupGracefulShutdown DONE')
     profileCheckpoint('init_after_graceful_shutdown')
 
     // 初始化第一方事件日志记录（没有安全问题，但推迟到启动后以避免
     // 在启动时加载 OpenTelemetry sdk-logs）。growthbook.js 此时已在
     // 模块缓存中（firstPartyEventLogger 导入了它），因此第二次动态导入不会增加加载成本。
+    console.error('[TRACE] init.ts: init() about to Promise.all for analytics')
     void Promise.all([
       import('../services/analytics/firstPartyEventLogger.js'),
       import('../services/analytics/growthbook.js'),
@@ -107,19 +115,28 @@ export const init = memoize(async (): Promise<void> => {
         void fp.reinitialize1PEventLoggingIfConfigChanged()
       })
     })
+    console.error('[TRACE] init.ts: init() after Promise.all for analytics (fire and forget)')
     //profileCheckpoint('init_after_1p_event_logging')
 
     // 如果 OAuth 账户信息尚未缓存在配置中，则填充它。这是必需的，因为通过
     // VSCode 扩展登录时 OAuth 账户信息可能不会被填充。
+    console.error('[TRACE] init.ts: init() about to populateOAuthAccountInfoIfNeeded')
     void populateOAuthAccountInfoIfNeeded()
+    console.error('[TRACE] init.ts: init() after populateOAuthAccountInfoIfNeeded')
     //profileCheckpoint('init_after_oauth_populate')
 
     // 异步初始化 JetBrains IDE 检测（为后续同步访问填充缓存）
+    console.error('[TRACE] init.ts: init() about to initJetBrainsDetection')
+    require('fs').writeFileSync('d:/trace_before_jb.txt', 'BEFORE initJetBrainsDetection at ' + Date.now() + '\n')
     void initJetBrainsDetection()
+    require('fs').writeFileSync('d:/trace_after_jb.txt', 'AFTER initJetBrainsDetection at ' + Date.now() + '\n')
+    console.error('[TRACE] init.ts: init() after initJetBrainsDetection')
     //profileCheckpoint('init_after_jetbrains_detection')
 
     // 异步检测 GitHub 仓库（为 gitDiff PR 链接填充缓存）
+    console.error('[TRACE] init.ts: init() about to detectCurrentRepository')
     void detectCurrentRepository()
+    console.error('[TRACE] init.ts: init() after detectCurrentRepository')
 
     // 尽早初始化加载 promise，以便其他系统（如插件钩子）
     // 可以等待远程设置加载。该 promise 包含超时，以防止
@@ -139,12 +156,14 @@ export const init = memoize(async (): Promise<void> => {
     const mtlsStart = Date.now()
     //log('configureGlobalMTLS START')
     configureGlobalMTLS()
+    console.error('[TRACE] init.ts: init() after configureGlobalMTLS')
     //log('configureGlobalMTLS DONE')
 
     // 配置全局 HTTP 代理器（proxy 和/或 mTLS）
     const proxyStart = Date.now()
     //log('configureGlobalAgents START')
     configureGlobalAgents()
+    console.error('[TRACE] init.ts: init() after configureGlobalAgents')
     //log('configureGlobalAgents DONE')
     //logForDebugging('[init] configureGlobalAgents complete')
     //profileCheckpoint('init_network_configured')
@@ -154,7 +173,9 @@ export const init = memoize(async (): Promise<void> => {
     // 以便预热连接使用正确的传输。即发即弃；对于代理/mTLS/unix/云提供商
     // 会跳过，因为 SDK 的调度器不会重用全局连接池。
     //log('preconnectAnthropicApi START')
+    console.error('[TRACE] init.ts: init() about to preconnectAnthropicApi')
     preconnectAnthropicApi()
+    console.error('[TRACE] init.ts: init() after preconnectAnthropicApi')
     //log('preconnectAnthropicApi DONE')
 
     // CCR upstreamproxy：启动本地 CONNECT 中继，以便代理子进程

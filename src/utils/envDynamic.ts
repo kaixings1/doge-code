@@ -64,33 +64,41 @@ let jetBrainsIDECache: string | null | undefined
 async function detectJetBrainsIDEFromParentProcessAsync(): Promise<
   string | null
 > {
-  if (jetBrainsIDECache !== undefined) {
-    return jetBrainsIDECache
+  console.error('[TRACE] detectJetBrainsIDE: ENTRY, platform=' + process.platform)
+  const cacheVal = jetBrainsIDECache
+  if (cacheVal !== undefined) {
+    console.error('[TRACE] detectJetBrainsIDE: cache hit=' + String(cacheVal))
+    return cacheVal
   }
 
   if (process.platform === 'darwin') {
+    console.error('[TRACE] detectJetBrainsIDE: macOS, returning null')
     jetBrainsIDECache = null
     return null // macOS uses bundle ID detection which is already handled
   }
 
   try {
+    console.error('[TRACE] detectJetBrainsIDE: about to call getAncestorCommandsAsync(pid=' + process.pid + ')')
     // Get ancestor commands in a single call (avoids sync bash in loop)
     const commands = await getAncestorCommandsAsync(process.pid, 10)
+    console.error('[TRACE] detectJetBrainsIDE: getAncestorCommandsAsync returned ' + commands.length + ' commands')
 
     for (const command of commands) {
       const lowerCommand = command.toLowerCase()
       // Check for specific JetBrains IDEs in the command line
       for (const ide of JETBRAINS_IDES) {
         if (lowerCommand.includes(ide)) {
+          console.error('[TRACE] detectJetBrainsIDE: found IDE=' + ide)
           jetBrainsIDECache = ide
           return ide
         }
       }
     }
-  } catch {
-    // Silently fail - this is a best-effort detection
+  } catch (err) {
+    console.error('[TRACE] detectJetBrainsIDE: CATCH ' + (err instanceof Error ? err.message : String(err)))
   }
 
+  console.error('[TRACE] detectJetBrainsIDE: no IDE found, returning null')
   jetBrainsIDECache = null
   return null
 }
@@ -134,18 +142,86 @@ export function getTerminalWithJetBrainsDetection(): string | null {
  * After this resolves, getTerminalWithJetBrainsDetection() will return accurate results.
  */
 export async function initJetBrainsDetection(): Promise<void> {
+  require('fs').writeFileSync('d:/trace_jb_entry.txt', 'ENTRY at ' + Date.now() + '\n')
+  console.error('[TRACE] initJetBrainsDetection: ENTRY, TERMINAL_EMULATOR=' + (process.env.TERMINAL_EMULATOR ?? '(not set)'))
   if (process.env.TERMINAL_EMULATOR === 'JetBrains-JediTerm') {
+    require('fs').writeFileSync('d:/trace_jb_before_await.txt', 'BEFORE_AWAIT at ' + Date.now() + '\n')
+    console.error('[TRACE] initJetBrainsDetection: JetBrains-JediTerm detected, calling detectJetBrainsIDEFromParentProcessAsync')
     await detectJetBrainsIDEFromParentProcessAsync()
+    require('fs').writeFileSync('d:/trace_jb_after_await.txt', 'AFTER_AWAIT at ' + Date.now() + '\n')
+    console.error('[TRACE] initJetBrainsDetection: detectJetBrainsIDEFromParentProcessAsync RETURNED')
   }
+  require('fs').writeFileSync('d:/trace_jb_returning.txt', 'RETURNING at ' + Date.now() + '\n')
+  console.error('[TRACE] initJetBrainsDetection: RETURNING')
 }
 
-// Combined export that includes all env properties plus dynamic functions
-export const envDynamic = {
-  ...env, // Include all properties from env
-  terminal: getTerminalWithJetBrainsDetection(),
+// envDynamic exports env properties plus dynamic overrides.
+// The ...env spread is deferred via Proxy + queueMicrotask to avoid ESM TDZ
+// errors when envDynamic is imported by modules that form a cycle with env.ts.
+const envDynamicOverrides: Record<string, unknown> = {
   getIsDocker,
   getIsBubblewrapSandbox,
   isMuslEnvironment,
   getTerminalWithJetBrainsDetectionAsync,
   initJetBrainsDetection,
 }
+
+// 'terminal' is a lazy getter so getTerminalWithJetBrainsDetection() is NOT
+// called at module top-level (which would trigger TDZ via the env.ts cycle).
+Object.defineProperty(envDynamicOverrides, 'terminal', {
+  get: () => getTerminalWithJetBrainsDetection(),
+  enumerable: true,
+  configurable: true,
+})
+
+let _envDynamic: Record<string, unknown> | undefined
+
+export const envDynamic = new Proxy(
+  envDynamicOverrides as Record<string, unknown>,
+  {
+    get(_, prop: string | symbol) {
+      // Once the microtask has run, return the merged snapshot
+      if (_envDynamic) {
+        const val = _envDynamic[prop as string]
+        if (val !== undefined) return val
+      }
+      // Before microtask: return from env directly (no TDZ since env.ts
+      // bindings are live by the time any consumer actually reads them)
+      if (prop in env) return (env as any)[prop]
+      return undefined
+    },
+    has(_, prop: string | symbol) {
+      if (_envDynamic && prop in _envDynamic) return true
+      return prop in (env as object)
+    },
+    ownKeys() {
+      if (_envDynamic) return Reflect.ownKeys(_envDynamic)
+      return [...Reflect.ownKeys(envDynamicOverrides), ...Reflect.ownKeys(env)]
+    },
+    getOwnPropertyDescriptor(_, prop: string | symbol) {
+      if (_envDynamic) return Reflect.getOwnPropertyDescriptor(_envDynamic, prop as string)
+      if (prop in envDynamicOverrides) return Reflect.getOwnPropertyDescriptor(envDynamicOverrides, prop as string)
+      if (prop in env) return Reflect.getOwnPropertyDescriptor(env, prop as string)
+      return undefined
+    },
+    enumerate() {
+      if (_envDynamic) return Reflect.ownKeys(_envDynamic)
+      return [...Reflect.ownKeys(envDynamicOverrides), ...Reflect.ownKeys(env)]
+    },
+    set(_, prop: string | symbol, value: any) {
+      if (_envDynamic) {
+        _envDynamic[prop as string] = value
+        return true
+      }
+      ;(envDynamicOverrides as any)[prop as string] = value
+      return true
+    },
+  },
+) as typeof envDynamicOverrides & typeof env
+
+// Defer the ...env spread until after env.ts is fully initialized.
+// This avoids TS5094 "Cannot access 'env' before initialization" when
+// envDynamic is imported by modules that form a cycle with env.ts.
+queueMicrotask(() => {
+  _envDynamic = { ...env, ...envDynamicOverrides }
+})

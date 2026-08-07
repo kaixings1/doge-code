@@ -53,15 +53,6 @@ import {
 } from './bridgeMessaging.js'
 import { logBridgeSkip } from './debugUtils.js'
 import { logForDebugging } from '../utils/debug.js'
-import { logForDiagnosticsNoPII } from '../utils/diagLogs.js'
-import { isInProtectedNamespace } from '../utils/envUtils.js'
-import { errorMessage } from '../utils/errors.js'
-import { sleep } from '../utils/sleep.js'
-import { registerCleanup } from '../utils/cleanupRegistry.js'
-import {
-  type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
-  logEvent,
-} from '../services/analytics/index.js'
 import type { ReplBridgeHandle, BridgeState } from './replBridge.js'
 import type { Message } from '../types/message.js'
 import type { SDKMessage } from '../entrypoints/agentSdkTypes.js'
@@ -70,6 +61,14 @@ import type {
   SDKControlResponse,
 } from '../entrypoints/sdk/controlTypes.js'
 import type { PermissionMode } from '../utils/permissions/PermissionMode.js'
+import { errorMessage } from '../utils/errors.js'
+import { sleep } from '../utils/sleep.js'
+import { registerCleanup } from '../utils/cleanupRegistry.js'
+import { isInProtectedNamespace } from '../utils/envUtils.js'
+import {
+  type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
+  logEvent,
+} from '../services/analytics/index.js'
 
 const ANTHROPIC_VERSION = '2023-06-01'
 
@@ -183,7 +182,6 @@ export async function initEnvLessBridgeCore(
   }
   const sessionId: string = createdSessionId
   logForDebugging(`[remote-bridge] Created session ${sessionId}`)
-  logForDiagnosticsNoPII('info', 'bridge_repl_v2_session_created')
 
   // ── 2. Fetch bridge credentials (POST /bridge → worker_jwt, expires_in, api_base_url) ──
   const credentials = await withRetry(
@@ -360,10 +358,6 @@ export async function initEnvLessBridgeCore(
             `[remote-bridge] Proactive refresh rebuild failed: ${errorMessage(err)}`,
             { level: 'error' },
           )
-          logForDiagnosticsNoPII(
-            'error',
-            'bridge_repl_v2_proactive_refresh_failed',
-          )
           if (!tornDown) {
             onStateChange?.('failed', `刷新失败: ${errorMessage(err)}`)
           }
@@ -381,7 +375,6 @@ export async function initEnvLessBridgeCore(
     transport.setOnConnect(() => {
       clearTimeout(connectDeadline)
       logForDebugging('[remote-bridge] v2 transport connected')
-      logForDiagnosticsNoPII('info', 'bridge_repl_v2_transport_connected')
       logEvent('tengu_bridge_repl_ws_connected', {
         v2: true,
         cause:
@@ -580,7 +573,6 @@ export async function initEnvLessBridgeCore(
         `[remote-bridge] 401 recovery failed: ${errorMessage(err)}`,
         { level: 'error' },
       )
-      logForDiagnosticsNoPII('error', 'bridge_repl_v2_jwt_refresh_failed')
       if (!tornDown) {
         onStateChange?.('failed', `JWT 刷新失败: ${errorMessage(err)}`)
       }
@@ -727,7 +719,6 @@ export async function initEnvLessBridgeCore(
               : 'ok'
 
     logForDebugging(`[remote-bridge] Torn down (archive=${status})`)
-    logForDiagnosticsNoPII('info', 'bridge_repl_v2_teardown')
     logEvent(
       (feature('CCR_MIRROR') || process.env['CLAUDE_CODE_FEATURE_CCR_MIRROR'] === '1') && outboundOnly
         ? 'tengu_ccr_mirror_teardown'

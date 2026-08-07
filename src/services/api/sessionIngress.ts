@@ -3,7 +3,6 @@ import type { UUID } from 'crypto'
 import { getOauthConfig } from '../../constants/oauth.js'
 import type { Entry, TranscriptMessage } from '../../types/logs.js'
 import { logForDebugging } from '../../utils/debug.js'
-import { logForDiagnosticsNoPII } from '../../utils/diagLogs.js'
 import { isEnvTruthy } from '../../utils/envUtils.js'
 import { logError } from '../../utils/log.js'
 import { sequential } from '../../utils/sequential.js'
@@ -94,7 +93,6 @@ async function appendSessionLogImpl(
           logForDebugging(
             `会话条目 ${entry.uuid} 已存在于服务端，从陈旧状态中恢复`,
           )
-          logForDiagnosticsNoPII('info', 'session_persist_recovered_from_409')
           return true
         }
 
@@ -123,20 +121,14 @@ async function appendSessionLogImpl(
                 `会话持久化冲突：会话 ${sessionId} 的 UUID 不匹配，条目 ${entry.uuid}。${errorMessage}`,
               ),
             )
-            logForDiagnosticsNoPII(
-              'error',
-              'session_persist_fail_concurrent_modification',
-            )
             return false
           }
         }
-        logForDiagnosticsNoPII('info', 'session_persist_409_adopt_server_uuid')
         continue // 使用更新后的 lastUuid 重试
       }
 
       if (response.status === 401) {
         logForDebugging('会话令牌已过期或无效')
-        logForDiagnosticsNoPII('error', 'session_persist_fail_bad_token')
         return false // 不可重试
       }
 
@@ -144,27 +136,14 @@ async function appendSessionLogImpl(
       logForDebugging(
         `持久化会话日志失败: ${response.status} ${response.statusText}`,
       )
-      logForDiagnosticsNoPII('error', 'session_persist_fail_status', {
-        status: response.status,
-        attempt,
-      })
     } catch (error) {
       // 网络错误、5xx——可重试
       const axiosError = error as AxiosError<SessionIngressError>
       logError(new Error(`持久化会话日志出错: ${axiosError.message}`))
-      logForDiagnosticsNoPII('error', 'session_persist_fail_status', {
-        status: axiosError.status,
-        attempt,
-      })
     }
 
     if (attempt === MAX_RETRIES) {
       logForDebugging(`远程持久化失败，已重试 ${MAX_RETRIES} 次`)
-      logForDiagnosticsNoPII(
-        'error',
-        'session_persist_error_retries_exhausted',
-        { attempt },
-      )
       return false
     }
 
@@ -191,7 +170,6 @@ export async function appendSessionLog(
   const sessionToken = getSessionIngressAuthToken()
   if (!sessionToken) {
     logForDebugging('无可用的会话令牌用于会话持久化')
-    logForDiagnosticsNoPII('error', 'session_persist_fail_jwt_no_token')
     return false
   }
 
@@ -214,7 +192,6 @@ export async function getSessionLogs(
   const sessionToken = getSessionIngressAuthToken()
   if (!sessionToken) {
     logForDebugging('无可用的会话令牌用于获取会话日志')
-    logForDiagnosticsNoPII('error', 'session_get_fail_no_token')
     return null
   }
 
@@ -315,7 +292,6 @@ export async function getTeleportEvents(
     } catch (e) {
       const err = e as AxiosError
       logError(new Error(`获取 Teleport 事件失败: ${err.message}`))
-      logForDiagnosticsNoPII('error', 'teleport_events_fetch_fail')
       return null
     }
 
@@ -331,12 +307,10 @@ export async function getTeleportEvents(
       logForDebugging(
         `[teleport] 会话 ${sessionId} 未找到 (第 ${pages} 页)`,
       )
-      logForDiagnosticsNoPII('warn', 'teleport_events_not_found')
       return pages === 0 ? null : all
     }
 
     if (response.status === 401) {
-      logForDiagnosticsNoPII('error', 'teleport_events_bad_token')
       throw new Error(
         '您的会话已过期。请运行 /login 重新登录。',
       )
@@ -348,7 +322,6 @@ export async function getTeleportEvents(
           `Teleport 事件返回 ${response.status}: ${jsonStringify(response.data)}`,
         ),
       )
-      logForDiagnosticsNoPII('error', 'teleport_events_bad_status')
       return null
     }
 
@@ -359,7 +332,6 @@ export async function getTeleportEvents(
           `Teleport 事件响应格式无效: ${jsonStringify(response.data)}`,
         ),
       )
-      logForDiagnosticsNoPII('error', 'teleport_events_invalid_shape')
       return null
     }
 
@@ -384,7 +356,6 @@ export async function getTeleportEvents(
     logError(
       new Error(`Teleport 事件已达页数上限 (${maxPages})，会话 ${sessionId}`),
     )
-    logForDiagnosticsNoPII('warn', 'teleport_events_page_cap')
   }
 
   logForDebugging(
@@ -421,7 +392,6 @@ async function fetchSessionLogsFromUrl(
             `获取会话日志的响应格式无效: ${jsonStringify(data)}`,
           ),
         )
-        logForDiagnosticsNoPII('error', 'session_get_fail_invalid_response')
         return null
       }
 
@@ -434,13 +404,11 @@ async function fetchSessionLogsFromUrl(
 
     if (response.status === 404) {
       logForDebugging(`会话 ${sessionId} 无现有日志`)
-      logForDiagnosticsNoPII('warn', 'session_get_no_logs_for_session')
       return []
     }
 
     if (response.status === 401) {
       logForDebugging('认证令牌已过期或无效')
-      logForDiagnosticsNoPII('error', 'session_get_fail_bad_token')
       throw new Error(
         '您的会话已过期。请运行 /login 重新登录。',
       )
@@ -449,16 +417,10 @@ async function fetchSessionLogsFromUrl(
     logForDebugging(
       `获取会话日志失败: ${response.status} ${response.statusText}`,
     )
-    logForDiagnosticsNoPII('error', 'session_get_fail_status', {
-      status: response.status,
-    })
     return null
   } catch (error) {
     const axiosError = error as AxiosError<SessionIngressError>
     logError(new Error(`获取会话日志出错: ${axiosError.message}`))
-    logForDiagnosticsNoPII('error', 'session_get_fail_status', {
-      status: axiosError.status,
-    })
     return null
   }
 }

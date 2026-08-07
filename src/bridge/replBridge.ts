@@ -8,11 +8,6 @@ import {
 } from './bridgeApi.js'
 import type { BridgeConfig, BridgeApiClient } from './types.js'
 import { logForDebugging } from '../utils/debug.js'
-import { logForDiagnosticsNoPII } from '../utils/diagLogs.js'
-import {
-  type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
-  logEvent,
-} from '../services/analytics/index.js'
 import { registerCleanup } from '../utils/cleanupRegistry.js'
 import {
   handleIngressMessage,
@@ -60,6 +55,10 @@ import {
 } from './pollConfigDefaults.js'
 import { errorMessage } from '../utils/errors.js'
 import { sleep } from '../utils/sleep.js'
+import {
+  type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
+  logEvent,
+} from '../services/analytics/index.js'
 import {
   wrapApiForFaultInjection,
   registerBridgeDebugHandle,
@@ -356,7 +355,6 @@ export async function initBridgeCore(
   }
 
   logForDebugging(`[bridge:repl] Environment registered: ${environmentId}`)
-  logForDiagnosticsNoPII('info', 'bridge_repl_env_registered')
   logEvent('tengu_bridge_repl_env_registered', {})
 
   /**
@@ -423,7 +421,6 @@ export async function initBridgeCore(
   // 可变的会话 ID — 在连接丢失后重新创建环境+会话对时更新。
   let currentSessionId: string
 
-
   if (reusedPriorSession && prior) {
     currentSessionId = prior.sessionId
     logForDebugging(
@@ -470,7 +467,6 @@ export async function initBridgeCore(
     environmentId,
     source: 'repl',
   })
-  logForDiagnosticsNoPII('info', 'bridge_repl_session_created')
   logEvent('tengu_bridge_repl_started', {
     has_initial_messages: !!(initialMessages && initialMessages.length > 0),
     inProtectedNamespace: isInProtectedNamespace(),
@@ -796,7 +792,6 @@ export async function initBridgeCore(
     // 清除已刷新的 UUID，以便初始消息重新发送到新会话。
     // UUID 在服务端是按会话作用域的，因此重新刷新是安全的。
     previouslyFlushedUUIDs?.clear()
-
 
     // 重置计数器，使相隔数小时的独立重连不会耗尽限制 —
     // 它防范的是快速连续失败，而非生命周期总数。
@@ -2248,11 +2243,6 @@ async function startWorkPollLoop({
           error_type:
             err.errorType as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
         })
-        logForDiagnosticsNoPII(
-          isExpiry ? 'info' : 'error',
-          'bridge_repl_fatal_error',
-          { status: err.status, error_type: err.errorType },
-        )
         // Cosmetic 403 errors (e.g., external_poll_sessions scope,
         // environments:manage permission) — suppress user-visible error
         // but always trigger teardown so cleanup runs.
@@ -2283,9 +2273,6 @@ async function startWorkPollLoop({
         logForDebugging(
           `[bridge:repl] Detected system sleep (${Math.round((now - lastPollErrorTime) / 1000)}s gap), resetting poll error budget`,
         )
-        logForDiagnosticsNoPII('info', 'bridge_repl_poll_sleep_detected', {
-          gapMs: now - lastPollErrorTime,
-        })
         consecutiveErrors = 0
         firstErrorTime = null
       }
@@ -2320,7 +2307,6 @@ async function startWorkPollLoop({
         logForDebugging(
           `[bridge:repl] Poll failures exceeded ${POLL_ERROR_GIVE_UP_MS / 1000}s (${consecutiveErrors} errors), giving up`,
         )
-        logForDiagnosticsNoPII('info', 'bridge_repl_poll_give_up')
         logEvent('tengu_bridge_repl_poll_give_up', {
           consecutiveErrors,
           elapsedMs: elapsed,

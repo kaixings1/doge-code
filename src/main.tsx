@@ -3,12 +3,8 @@
 // 2. startMdmRawRead 启动 MDM 子进程（plutil/reg query），使其与下方剩余的约 135ms 导入并行执行
 // 3. startKeychainPrefetch 并行启动两个 macOS 钥匙串读取（OAuth + 旧版 API key）—— 否则 isRemoteManagedSettingsEligible() 会在 applySafeConfigEnvironmentVariables() 内部通过同步 spawn 顺序读取它们（每次 macOS 启动约 65ms）
 
-
-
-
-
-
-
+// TRACE: main.tsx module evaluation start
+console.error('[TRACE] main.tsx: module evaluation start')
 import { profileCheckpoint, profileReport } from './utils/startupProfiler.js';
 
 // eslint-disable-next-line custom-rules/no-top-level-side-effects
@@ -104,7 +100,9 @@ import { exitWithError, exitWithMessage, getRenderContext, renderAndRun, showSet
 import { initBuiltinPlugins } from './plugins/bundled/index.js';
 /* eslint-enable @typescript-eslint/no-require-imports */
 import { checkQuotaStatus } from './services/claudeAiLimits.js';
+console.error('[TRACE] main.tsx: imported claudeAiLimits');
 import { getMcpToolsCommandsAndResources, prefetchAllMcpResources } from './services/mcp/client.js';
+console.error('[TRACE] main.tsx: imported mcp/client');
 import { VALID_INSTALLABLE_SCOPES, VALID_UPDATE_SCOPES } from './services/plugins/pluginCliCommands.js';
 import { initBundledSkills } from './skills/bundled/index.js';
 import type { AgentColorName } from './tools/AgentTool/agentColorManager.js';
@@ -130,6 +128,7 @@ import { getDefaultMainLoopModel, getUserSpecifiedModelSetting, normalizeModelSt
 import { ensureModelStringsInitialized } from './utils/model/modelStrings.js';
 import { PERMISSION_MODES } from './utils/permissions/PermissionMode.js';
 import { checkAndDisableBypassPermissions, getAutoModeEnabledStateIfCached, initializeToolPermissionContext, initialPermissionModeFromCLI, isDefaultPermissionModeAuto, parseToolListFromCLI, removeDangerousPermissions, stripDangerousPermissionsForAutoMode, verifyAutoModeGateAccess } from './utils/permissions/permissionSetup.js';
+console.error('[TRACE] main.tsx: imported permissions');
 import { cleanupOrphanedPluginVersionsInBackground } from './utils/plugins/cacheUtils.js';
 import { initializeVersionedPlugins } from './utils/plugins/installedPluginsManager.js';
 import { getManagedPluginNames } from './utils/plugins/managedPlugins.js';
@@ -139,6 +138,7 @@ import { countFilesRoundedRg } from './utils/ripgrep.js';
 import { processSessionStartHooks, processSetupHooks } from './utils/sessionStart.js';
 import { cacheSessionTitle, getSessionIdFromLog, loadTranscriptFromFile, saveAgentSetting, saveMode, searchSessionsByCustomTitle, sessionIdExists } from './utils/sessionStorage.js';
 import { ensureMdmSettingsLoaded } from './utils/settings/mdm/settings.js';
+console.error('[TRACE] main.tsx: imported mdm/settings');
 import { getInitialSettings, getManagedSettingsKeysForLogging, getSettingsForSource, getSettingsWithErrors } from './utils/settings/settings.js';
 import { resetSettingsCache } from './utils/settings/settingsCache.js';
 import type { ValidationError } from './utils/settings/validation.js';
@@ -205,7 +205,6 @@ import { createStore } from './state/store.js';
 import { asSessionId } from './types/ids.js';
 import { filterAllowedSdkBetas } from './utils/betas.js';
 import { isInBundledMode, isRunningWithBun } from './utils/bundledMode.js';
-import { logForDiagnosticsNoPII } from './utils/diagLogs.js';
 import { filterExistingPaths, getKnownPathsForRepo } from './utils/githubRepoPathMapping.js';
 import { clearPluginCache, loadAllPluginsCacheOnly } from './utils/plugins/pluginLoader.js';
 import { migrateChangelogFromConfig } from './utils/releaseNotes.js';
@@ -364,7 +363,6 @@ function prefetchSystemContextIfSafe(): void {
 
   // 在非交互模式（--print）中，信任对话框被跳过，执行被视为受信任（如帮助文本所述）
   if (isNonInteractiveSession) {
-    logForDiagnosticsNoPII('info', 'prefetch_system_context_non_interactive');
     void getSystemContext();
     return;
   }
@@ -372,10 +370,8 @@ function prefetchSystemContextIfSafe(): void {
   // 在交互模式下，仅在信任已建立时预取
   const hasTrust = checkHasTrustDialogAccepted();
   if (hasTrust) {
-    logForDiagnosticsNoPII('info', 'prefetch_system_context_has_trust');
     void getSystemContext();
   } else {
-    logForDiagnosticsNoPII('info', 'prefetch_system_context_skipped_no_trust');
   }
   // 否则，不预取 - 等待信任建立后再进行
 }
@@ -488,11 +484,14 @@ function loadSettingSourcesFromFlag(settingSourcesArg: string): void {
  * 这确保从初始化开始就对设置进行过滤
  */
 function eagerLoadSettings(): void {
+  console.error('[TRACE] main.tsx: eagerLoadSettings() START')
   // profileCheckpoint('eagerLoadSettings_start');
   // 尽早解析 --settings 标志以确保在 init() 之前加载设置
   const settingsFile = eagerParseCliFlag('--settings');
+  console.error('[TRACE] main.tsx: eagerLoadSettings() parsed --settings flag')
   if (settingsFile) {
     loadSettingsFromFlag(settingsFile);
+    console.error('[TRACE] main.tsx: eagerLoadSettings() loaded settings from flag')
   }
 
   // 尽早解析 --setting-sources 标志以控制加载哪些来源
@@ -503,8 +502,10 @@ function eagerLoadSettings(): void {
   // profileCheckpoint('eagerLoadSettings_end');
 }
 function initializeEntrypoint(isNonInteractive: boolean): void {
+  console.error('[TRACE] main.tsx: initializeEntrypoint() START')
   // 如果已设置（例如通过 SDK 或其他入口点），则跳过
   if (process.env.CLAUDE_CODE_ENTRYPOINT) {
+    console.error('[TRACE] main.tsx: initializeEntrypoint() SKIPPED, already set')
     return;
   }
   const cliArgs = process.argv.slice(2);
@@ -568,6 +569,7 @@ const _pendingSSH: PendingSSH | undefined = feature('SSH_REMOTE') ? {
   extraCliArgs: []
 } : undefined;
 export async function main() {
+  console.error('[TRACE] main.tsx: main() function START')
   // profileCheckpoint('main_function_start');
 
   // 保留恢复的调试别名，而不在 Commander 中注册无效的多字符短标志。
@@ -787,13 +789,16 @@ export async function main() {
   if (isNonInteractive) {
     stopCapturingEarlyInput();
   }
+  console.error('[TRACE] main.tsx: after stopCapturingEarlyInput')
 
   // 设置简化的跟踪字段
   const isInteractive = !isNonInteractive;
   setIsInteractive(isInteractive);
+  console.error('[TRACE] main.tsx: after setIsInteractive')
 
   // 根据模式初始化入口点 - 需要在记录任何事件之前设置
   initializeEntrypoint(isNonInteractive);
+  console.error('[TRACE] main.tsx: after initializeEntrypoint')
 
   // 确定客户端类型
   const clientType = (() => {
@@ -829,7 +834,9 @@ export async function main() {
   // profileCheckpoint('main_client_type_determined');
 
   // 在 init() 之前尽早解析并加载设置标志
+  console.error('[TRACE] main.tsx: about to call eagerLoadSettings()')
   eagerLoadSettings();
+  console.error('[TRACE] main.tsx: eagerLoadSettings() DONE, about to call run()')
   // profileCheckpoint('main_before_run');
   await run();
   // profileCheckpoint('main_after_run');
@@ -858,6 +865,7 @@ async function getInputPrompt(prompt: string, inputFormat: 'text' | 'stream-json
   return prompt;
 }
 async function run(): Promise<CommanderCommand> {
+  console.error('[TRACE] main.tsx: run() START')
   // profileCheckpoint('run_function_start');
 	// console.warn(chalk.yellow('run_function_start'));
   // 创建按长选项名称排序的帮助配置。
@@ -875,10 +883,12 @@ async function run(): Promise<CommanderCommand> {
     });
   }
   const program = new CommanderCommand().configureHelp(createSortedHelpConfig()).enablePositionalOptions();
+  console.error('[TRACE] main.tsx: run() CommanderCommand created')
   // profileCheckpoint('run_commander_initialized');
 	// console.warn(chalk.yellow('run_commander_initialized'));
   // 使用 preAction 钩子仅在实际执行命令时运行初始化，而不是显示帮助时。这避免了使用环境变量信号的需求。
   program.hook('preAction', async thisCommand => {
+    console.error('[TRACE] main.tsx: preAction hook START')
     // profileCheckpoint('preAction_start');
     const log = (msg: string) => {
       const t = Date.now();
@@ -891,11 +901,13 @@ async function run(): Promise<CommanderCommand> {
     // 必须在 init() 之前解析，init() 会触发首次设置读取（applySafeConfigEnvironmentVariables → getSettingsForSource('policySettings') → isRemoteManagedSettingsEligible → 否则同步钥匙串读取约 65ms）。
     //log('ensureMdmSettingsLoaded+ensureKeychainPrefetchCompleted START');
     await Promise.all([ensureMdmSettingsLoaded(), ensureKeychainPrefetchCompleted()]);
-    //log('ensureMdmSettingsLoaded+ensureKeychainPrefetchCompleted DONE');
+    console.error('[TRACE] main.tsx: preAction after ensureMdmSettingsLoaded+ensureKeychainPrefetchCompleted')
     // profileCheckpoint('preAction_after_mdm');
     //log('init() START');
     // require('fs').writeFileSync('d:/init_debug.log', `BEFORE init() at ${Date.now()}\n`, { flag: 'a' });
+    console.error('[TRACE] main.tsx: preAction about to call init()')
     await init();
+    console.error('[TRACE] main.tsx: preAction init() DONE')
     // require('fs').writeFileSync('d:/init_debug.log', `AFTER init() at ${Date.now()}\n`, { flag: 'a' });
     //log('init() DONE');
     // profileCheckpoint('preAction_after_init');
@@ -914,7 +926,9 @@ async function run(): Promise<CommanderCommand> {
     const {
       initSinks
     } = await import('./utils/sinks.js');
+    console.error('[TRACE] main.tsx: preAction sinks.js loaded, about to call initSinks()')
     initSinks();
+    console.error('[TRACE] main.tsx: preAction initSinks() DONE')
     //try { require('fs').writeFileSync('d:/trace.txt', 'AFTER_SINKS\n', {flag:'a'}); } catch(e) {}
     // profileCheckpoint('preAction_after_sinks');
 	//log('preAction_after_sinks');
@@ -998,24 +1012,24 @@ async function run(): Promise<CommanderCommand> {
   .option('--plugin-dir <path>', '仅为此会话从目录加载插件（可重复：--plugin-dir A --plugin-dir B）', (val: string, prev: string[]) => [...prev, val], [] as string[]).option('--disable-slash-commands', '禁用所有技能', () => true).option('--chrome', '启用 Claude in Chrome 集成').option('--no-chrome', '禁用 Claude in Chrome 集成').option('--file <specs...>', '在启动时下载的文件资源。格式：file_id:relative_path（例如 --file file_abc:doc.txt file_def:img.png）').action(async (prompt, options) => {
     //profileCheckpoint('action_handler_start');
     //try { require('fs').writeFileSync('d:/trace.txt', 'ACTION_HANDLER_START\n', {flag:'a'}); } catch(e) {}
-		//console.warn(chalk.yellow('action_handler_start'));
+		console.warn(chalk.yellow('action_handler_start'));
     // --- TEMP: skip all heavy init, go straight to Ink render ---
     //try { require('fs').writeFileSync('d:/trace.txt', 'BEFORE_SKIP_HEAVY\n', {flag:'a'}); } catch(e) {}
     // --- END TEMP ---
-		//console.warn(chalk.yellow('action_handler_start writeFileSync'));
+		console.warn(chalk.yellow('action_handler_start writeFileSync'));
     // --bare = 一键最小模式。设置 SIMPLE 以便所有现有的门控触发（CLAUDE.md、技能、executeHooks 内部的钩子、代理目录遍历）。必须在 setup() / 任何门控工作运行之前设置。
     if ((options as {
       bare?: boolean;
     }).bare) {
       process.env.CLAUDE_CODE_SIMPLE = '1';
     }
-		//console.warn(chalk.yellow('options as'));
+		console.warn(chalk.yellow('options as'));
     // --safe-mode: 禁用所有自定义项（CLAUDE.md、插件、技能、钩子、MCP 服务器）
     if ((options as { safeMode?: boolean }).safeMode) {
       process.env.CLAUDE_CODE_SIMPLE = '1';
       process.env.CLAUDE_CODE_SAFE_MODE = '1';
     }
-		//console.warn(chalk.yellow('options as2'));
+		console.warn(chalk.yellow('options as2'));
     // 忽略 "code" 作为提示 - 将其视为无提示
     if (prompt === 'code') {
       logEvent('tengu_code_prompt_ignored', {});
@@ -2343,12 +2357,7 @@ async function run(): Promise<CommanderCommand> {
         }
       }
     }
-    logForDiagnosticsNoPII('info', 'started', {
-      version: MACRO.VERSION,
-      is_native_binary: isInBundledMode()
-    });
     registerCleanup(async () => {
-      logForDiagnosticsNoPII('info', 'exited');
     });
     void logTenguInit({
       hasInitialPrompt: Boolean(prompt),

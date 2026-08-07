@@ -23,13 +23,6 @@ import type { CanUseToolFn } from '../hooks/useCanUseTool.js'
 import type { Tool, ToolUseContext } from '../Tool.js'
 import { type HookCallback, hookJSONOutputSchema } from '../types/hooks.js'
 import { logForDebugging } from '../utils/debug.js'
-import { logForDiagnosticsNoPII } from '../utils/diagLogs.js'
-import { AbortError } from '../utils/errors.js'
-import {
-  type Output as PermissionToolOutput,
-  permissionPromptToolResultToPermissionDecision,
-  outputSchema as permissionToolOutputSchema,
-} from '../utils/permissions/PermissionPromptToolResultSchema.js'
 import type {
   PermissionDecision,
   PermissionDecisionReason,
@@ -231,9 +224,6 @@ export class StructuredIO {
         content = content.slice(newline + 1)
         const message = await this.processLine(line)
         if (message) {
-          logForDiagnosticsNoPII('info', 'cli_stdin_message_parsed', {
-            type: message.type,
-          })
           yield message
         }
       }

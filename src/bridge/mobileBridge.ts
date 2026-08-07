@@ -181,11 +181,11 @@ export class MobileBridgeClient {
         clearTimeout(timeout)
 
         // 注册为移动端会话
-        this.send(createMessage('mobile-register', {
+        this.send('mobile-register', {
           sessionId: this.sessionId,
           secret: this.mobileSecret,
           capabilities: ['tools', 'commands', 'messages', 'files'],
-        }))
+        })
 
         // 启动心跳
         this.startHeartbeat()
@@ -230,7 +230,7 @@ export class MobileBridgeClient {
     }
 
     // 未处理的消息转发给入站处理
-    this.onInboundMessage?.(msg)
+    this.onInboundMessage?.(msg as unknown as Record<string, unknown>)
   }
 
   /**

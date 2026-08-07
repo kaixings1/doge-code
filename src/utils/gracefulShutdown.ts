@@ -39,7 +39,6 @@ import type { AppState } from '../state/AppState.js'
 import { runCleanupFunctions } from './cleanupRegistry.js'
 import { getCliCommandName } from './cliCommandName.js'
 import { logForDebugging } from './debug.js'
-import { logForDiagnosticsNoPII } from './diagLogs.js'
 import { isEnvTruthy } from './envUtils.js'
 import { getCurrentSessionTitle, sessionIdExists } from './sessionStorage.js'
 import { sleep } from './sleep.js'
@@ -264,16 +263,13 @@ export const setupGracefulShutdown = memoize(() => {
     if (process.argv.includes('-p') || process.argv.includes('--print')) {
       return
     }
-    logForDiagnosticsNoPII('info', 'shutdown_signal', { signal: 'SIGINT' })
     void gracefulShutdown(0)
   })
   process.on('SIGTERM', () => {
-    logForDiagnosticsNoPII('info', 'shutdown_signal', { signal: 'SIGTERM' })
     void gracefulShutdown(143) // Exit code 143 (128 + 15) for SIGTERM
   })
   if (process.platform !== 'win32') {
     process.on('SIGHUP', () => {
-      logForDiagnosticsNoPII('info', 'shutdown_signal', { signal: 'SIGHUP' })
       void gracefulShutdown(129) // Exit code 129 (128 + 1) for SIGHUP
     })
 
@@ -288,9 +284,6 @@ export const setupGracefulShutdown = memoize(() => {
         // process.stdout.writable becomes false when the TTY is revoked
         if (!process.stdout.writable || !process.stdin.readable) {
           clearInterval(orphanCheckInterval)
-          logForDiagnosticsNoPII('info', 'shutdown_signal', {
-            signal: 'orphan_detected',
-          })
           void gracefulShutdown(129)
         }
       }, 30_000) // Check every 30 seconds
@@ -301,10 +294,6 @@ export const setupGracefulShutdown = memoize(() => {
   // Log uncaught exceptions for container observability and analytics
   // Error names (e.g., "TypeError") are not sensitive - safe to log
   process.on('uncaughtException', error => {
-    logForDiagnosticsNoPII('error', 'uncaught_exception', {
-      error_name: error.name,
-      error_message: error.message.slice(0, 2000),
-    })
     logEvent('tengu_uncaught_exception', {
       error_name:
         error.name as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
@@ -327,7 +316,6 @@ export const setupGracefulShutdown = memoize(() => {
             error_stack: reason.stack?.slice(0, 4000),
           }
         : { error_message: String(reason).slice(0, 2000) }
-    logForDiagnosticsNoPII('error', 'unhandled_rejection', errorInfo)
     logEvent('tengu_unhandled_rejection', {
       error_name:
         errorName as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,

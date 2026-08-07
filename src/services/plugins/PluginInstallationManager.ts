@@ -7,13 +7,6 @@
 
 import type { AppState } from '../../state/AppState.js'
 import { logForDebugging } from '../../utils/debug.js'
-import { logForDiagnosticsNoPII } from '../../utils/diagLogs.js'
-import { logError } from '../../utils/log.js'
-import {
-  clearMarketplacesCache,
-  getDeclaredMarketplaces,
-  loadKnownMarketplacesConfig,
-} from '../../utils/plugins/marketplaceManager.js'
 import { clearPluginCache } from '../../utils/plugins/pluginLoader.js'
 import {
   diffMarketplaces,
@@ -126,11 +119,6 @@ export async function performBackgroundPluginInstallations(
       up_to_date_count: result.upToDate.length,
     }
     logEvent('tengu_marketplace_background_install', metrics)
-    logForDiagnosticsNoPII(
-      'info',
-      'tengu_marketplace_background_install',
-      metrics,
-    )
 
     if (result.installed.length > 0) {
       // New marketplaces were installed — auto-refresh plugins. This fixes

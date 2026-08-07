@@ -6,18 +6,6 @@ import { basename, dirname, join, resolve, sep } from 'path'
 import { hasBinaryExtension, isBinaryContent } from '../constants/files.js'
 import { getCwd } from './cwd.js'
 import { logForDebugging } from './debug.js'
-import { logForDiagnosticsNoPII } from './diagLogs.js'
-import { execFileNoThrow } from './execFileNoThrow.js'
-import { getFsImplementation } from './fsOperations.js'
-import {
-  getCachedBranch,
-  getCachedDefaultBranch,
-  getCachedHead,
-  getCachedRemoteUrl,
-  getWorktreeCountFromFs,
-  isShallowClone as isShallowCloneFs,
-  resolveGitDir,
-} from './git/gitFilesystem.js'
 import { logError } from './log.js'
 import { memoizeWithLRU } from './memoize.js'
 import { whichSync } from './which.js'
@@ -27,24 +15,23 @@ const GIT_ROOT_NOT_FOUND = Symbol('git-root-not-found')
 const findGitRootImpl = memoizeWithLRU(
   (startPath: string): string | typeof GIT_ROOT_NOT_FOUND => {
     const startTime = Date.now()
-    logForDiagnosticsNoPII('info', 'find_git_root_started')
+    console.error(`[TRACE] findGitRootImpl: START path=${startPath}`)
 
     let current = resolve(startPath)
     const root = current.substring(0, current.indexOf(sep) + 1) || sep
     let statCount = 0
 
     while (current !== root) {
+      statCount++
+      if (statCount <= 5 || statCount % 10 === 0) {
+        console.error(`[TRACE] findGitRootImpl: checking ${current} (stat #${statCount})`)
+      }
       try {
         const gitPath = join(current, '.git')
-        statCount++
         const stat = statSync(gitPath)
         // .git can be a directory (regular repo) or file (worktree/submodule)
         if (stat.isDirectory() || stat.isFile()) {
-          logForDiagnosticsNoPII('info', 'find_git_root_completed', {
-            duration_ms: Date.now() - startTime,
-            stat_count: statCount,
-            found: true,
-          })
+          console.error(`[TRACE] findGitRootImpl: FOUND .git at ${current}`)
           return current.normalize('NFC')
         }
       } catch {
@@ -63,22 +50,12 @@ const findGitRootImpl = memoizeWithLRU(
       statCount++
       const stat = statSync(gitPath)
       if (stat.isDirectory() || stat.isFile()) {
-        logForDiagnosticsNoPII('info', 'find_git_root_completed', {
-          duration_ms: Date.now() - startTime,
-          stat_count: statCount,
-          found: true,
-        })
         return root.normalize('NFC')
       }
     } catch {
       // .git doesn't exist at root
     }
 
-    logForDiagnosticsNoPII('info', 'find_git_root_completed', {
-      duration_ms: Date.now() - startTime,
-      stat_count: statCount,
-      found: false,
-    })
     return GIT_ROOT_NOT_FOUND
   },
   path => path,
@@ -217,14 +194,9 @@ export const gitExe = memoize((): string => {
 
 export const getIsGit = memoize(async (): Promise<boolean> => {
   const startTime = Date.now()
-  logForDiagnosticsNoPII('info', 'is_git_check_started')
 
   const isGit = findGitRoot(getCwd()) !== null
 
-  logForDiagnosticsNoPII('info', 'is_git_check_completed', {
-    duration_ms: Date.now() - startTime,
-    is_git: isGit,
-  })
   return isGit
 })
 

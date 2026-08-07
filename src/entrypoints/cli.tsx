@@ -309,10 +309,12 @@ async function main(): Promise<void> {
   }
 
   // 未检测到特殊标志，加载并运行完整 CLI
+  console.error('[TRACE] cli.tsx: about to import earlyInput and main.js');
   const {
     startCapturingEarlyInput
   } = await import('../utils/earlyInput.js');
   startCapturingEarlyInput();
+  console.error('[TRACE] cli.tsx: earlyInput loaded, about to import main.js');
   profileCheckpoint('cli_before_main_import');
   const {
     main: cliMain

@@ -1,6 +1,5 @@
 import { logEvent } from '../services/analytics/index.js'
 import { logForDebugging } from '../utils/debug.js'
-import { logForDiagnosticsNoPII } from '../utils/diagLogs.js'
 import { errorMessage } from '../utils/errors.js'
 import { jsonParse } from '../utils/slowOperations.js'
 
@@ -188,7 +187,6 @@ export function createTokenRefreshScheduler({
         `[${label}:token] No OAuth token available for refresh, sessionId=${sessionId} (failure ${failures}/${MAX_REFRESH_FAILURES})`,
         { level: 'error' },
       )
-      logForDiagnosticsNoPII('error', 'bridge_token_refresh_no_oauth')
       // 调度重试，以便在令牌重新可用时刷新链可以恢复
       //（例如刷新期间瞬时缓存清除）。
       // 限制重试次数以避免在真正失败时反复重试。

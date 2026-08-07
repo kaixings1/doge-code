@@ -200,9 +200,6 @@ export function handleIngressMessage(
       logForDebugging(
         `[bridge:repl] handleIngressMessage:   response=${jsonStringify(pObj.response).slice(0, 1000)}`,
       )
-      logForDiagnosticsNoPII('info', 'cli_bridge_control_response', {
-        subtype: String(respObj.subtype),
-      })
       onPermissionResponse?.(parsed)
       return
     }
@@ -218,9 +215,6 @@ export function handleIngressMessage(
       logForDebugging(
         `[bridge:repl] handleIngressMessage:   request=${jsonStringify(pObj.request).slice(0, 1000)}`,
       )
-      logForDiagnosticsNoPII('info', 'cli_bridge_control_request', {
-        subtype: String(reqObj.subtype),
-      })
       onControlRequest?.(parsed)
       return
     }
@@ -234,18 +228,19 @@ export function handleIngressMessage(
       return
     }
 
-    // ====== 调试日志：SDKMessage 详情 ======
-    const parsedObj = parsed as Record<string, unknown>
-    logForDebugging(
-      `[bridge:repl] handleIngressMessage: SDKMessage type=${parsedObj.type} uuid=${uuid || '(无)'} session_id=${(parsedObj.session_id as string) || '(无)'}`,
-    )
-    // =====================================================
 
     // 检查 UUID 以检测我们自己的消息的回声
     const uuid =
       'uuid' in parsed && typeof parsed.uuid === 'string'
         ? parsed.uuid
         : undefined
+
+    // ====== 调试日志：SDKMessage 详情 ======
+    const parsedObj = parsed as Record<string, unknown>
+    logForDebugging(
+      `[bridge:repl] handleIngressMessage: SDKMessage type=${parsedObj.type} uuid=${uuid || '(无)'} session_id=${(parsedObj.session_id as string) || '(无)'}`,
+    )
+    // =====================================================
 
     if (uuid && recentPostedUUIDs.has(uuid)) {
       logForDebugging(

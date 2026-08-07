@@ -113,6 +113,8 @@ export type SystemMessage = MessageBase & {
   level?: SystemMessageLevel
   /** 消息内容 */
   message?: string
+  /** 恢复一致性检查点：写入此消息时的累计消息计数 */
+  messageCount?: number
 }
 
 /** 系统本地命令消息 */

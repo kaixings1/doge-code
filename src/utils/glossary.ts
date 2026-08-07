@@ -81,7 +81,7 @@ async function loadGlossaryFiles(): Promise<GlossaryEntry[]> {
         const parsed = parseGlossaryEntries(content)
         allEntries.push(...parsed)
       } catch (err) {
-        logError(err as Error, `glossary: 读取文件失败 ${filePath}`)
+        logError(err as Error)
       }
     }
 

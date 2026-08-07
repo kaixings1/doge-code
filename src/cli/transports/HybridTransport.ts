@@ -1,14 +1,6 @@
 import axios, { type AxiosError } from 'axios'
 import type { StdoutMessage } from '../../entrypoints/sdk/controlTypes.js'
 import { logForDebugging } from '../../utils/debug.js'
-import { logForDiagnosticsNoPII } from '../../utils/diagLogs.js'
-import { getSessionIngressAuthToken } from '../../utils/sessionIngressAuth.js'
-import { jsonStringify } from '../../utils/slowOperations.js'
-import { SerialBatchEventUploader } from './SerialBatchEventUploader.js'
-import {
-  WebSocketTransport,
-  type WebSocketTransportOptions,
-} from './WebSocketTransport.js'
 
 const BATCH_FLUSH_INTERVAL_MS = 100
 // 单次 POST 尝试的超时时间。限制单个卡住的 POST 阻塞序列化队列的时间。
@@ -95,20 +87,11 @@ export class HybridTransport extends WebSocketTransport {
       // replBridge 设置这个；1P transportUtils 路径不设置。
       maxConsecutiveFailures,
       onBatchDropped: (batchSize, failures) => {
-        logForDiagnosticsNoPII(
-          'error',
-          'cli_hybrid_batch_dropped_max_failures',
-          {
-            batchSize,
-            failures,
-          },
-        )
         onBatchDropped?.(batchSize, failures)
       },
       send: batch => this.postOnce(batch),
     })
     logForDebugging(`混合传输: POST 地址 = ${this.postUrl}`)
-    logForDiagnosticsNoPII('info', 'cli_hybrid_transport_initialized')
   }
 
   /**
@@ -207,7 +190,6 @@ export class HybridTransport extends WebSocketTransport {
     const sessionToken = getSessionIngressAuthToken()
     if (!sessionToken) {
       logForDebugging('HybridTransport: 没有可用于 POST 的会话令牌')
-      logForDiagnosticsNoPII('warn', 'cli_hybrid_post_no_token')
       return
     }
 
@@ -236,7 +218,6 @@ export class HybridTransport extends WebSocketTransport {
     } catch (error) {
       const axiosError = error as AxiosError
       logForDebugging(`混合⬆ POST错误: ${axiosError.message}`)
-      logForDiagnosticsNoPII('warn', 'cli_hybrid_post_network_error')
       throw error
     }
 
@@ -254,9 +235,6 @@ export class HybridTransport extends WebSocketTransport {
       logForDebugging(
         `HybridTransport: POST 返回 ${response.status} (永久)，正在丢弃`,
       )
-      logForDiagnosticsNoPII('warn', 'cli_hybrid_post_client_error', {
-        status: response.status,
-      })
       return
     }
 
@@ -264,9 +242,6 @@ export class HybridTransport extends WebSocketTransport {
     logForDebugging(
       `HybridTransport: POST 返回 ${response.status} (可重试)`,
     )
-    logForDiagnosticsNoPII('warn', 'cli_hybrid_post_retryable_error', {
-      status: response.status,
-    })
     throw new Error(`POST 失败，状态码 ${response.status}`)
   }
 }
