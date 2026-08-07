@@ -1,4 +1,4 @@
-import { APIError } from '@anthropic-ai/sdk'
+import { APIError, APIConnectionError } from '@anthropic-ai/sdk'
 // 引入调试日志工具（实际写入文件或控制台，取决于项目配置）
 import { logForDebugging } from "../../utils/debug.js"
 import type {
@@ -418,6 +418,7 @@ export async function* createAnthropicStreamFromOpenAI(input: {
   let promptTokens = 0
   let completionTokens = 0
   let responseBytes = 0
+  let lastContentText = ''          // 上一次收到的非空文本内容
 
   // 原生事件路径的索引映射：上游 index -> Anthropic index，以及块类型
   const nativeIdxMap = new Map<number, number>()
@@ -664,6 +665,7 @@ export async function* createAnthropicStreamFromOpenAI(input: {
           }
           if (activeBlockIndex !== null) {
             yield { type: 'content_block_delta', index: activeBlockIndex, delta: { type: 'text_delta', text: t } } as BetaRawMessageStreamEvent
+            lastContentText = t
           }
         }
 
@@ -678,6 +680,7 @@ export async function* createAnthropicStreamFromOpenAI(input: {
           }
           if (activeBlockIndex !== null) {
             yield { type: 'content_block_delta', index: activeBlockIndex, delta: { type: 'text_delta', text } } as BetaRawMessageStreamEvent
+            lastContentText = text
           }
         }
 
@@ -694,6 +697,8 @@ export async function* createAnthropicStreamFromOpenAI(input: {
           if (activeBlockIndex !== null) {
             yield { type: 'content_block_delta', index: activeBlockIndex, delta: { type: 'text_delta', text } } as BetaRawMessageStreamEvent
           }
+          // 记录最后收到的文本内容，用于检测冒号结尾的消息
+          lastContentText = text
         }
 
         // 工具调用增量
@@ -761,6 +766,19 @@ export async function* createAnthropicStreamFromOpenAI(input: {
           }
 
         }
+        // 检测冒号结尾的消息（服务器主动发送 "[DONE]" 前的中断信号）
+        // 当收到类似"现在执行xxx："的消息（最后是冒号），又收到了 [DONE]，
+        // 20秒后无新数据时，自动回复服务器一个消息告诉服务器通讯中断了，继续先前的工作
+        if (lastContentText.endsWith('：') || lastContentText.endsWith(':')) {
+          // 抛出通讯中断错误，触发 withRetry 的重试机制
+          const error = new APIConnectionError(
+            `[openaiCompat] 服务器主动发送 [DONE] 导致通讯中断，lastContent="${lastContentText.slice(-50)}"，将自动重试继续工作`,
+            { cause: new Error('server_done_interrupt') },
+          )
+          logForDebugging(`[openaiCompat] 检测到冒号结尾的消息后收到 [DONE]，抛出通讯中断错误`, { level: 'debug' })
+          throw error
+        }
+
         // finish_reason 出现时，结束消息
         //if (choice && Object.prototype.hasOwnProperty.call(choice, 'finish_reason')) {
         if (choice?.finish_reason) {
