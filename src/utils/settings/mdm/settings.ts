@@ -20,21 +20,20 @@
 
 import { join } from 'path'
 import { logForDebugging } from '../../debug.js'
-import { logForDiagnosticsNoPII } from '../../diagLogs.js'
+import { profileCheckpoint } from '../../startupProfiler.js'
 import { readFileSync } from '../../fileRead.js'
 import { getFsImplementation } from '../../fsOperations.js'
 import { safeParseJSON } from '../../json.js'
-import { profileCheckpoint } from '../../startupProfiler.js'
-import {
-  getManagedFilePath,
-  getManagedSettingsDropInDir,
-} from '../managedPath.js'
 import { type SettingsJson, SettingsSchema } from '../types.js'
 import {
   filterInvalidPermissionRules,
   formatZodError,
   type ValidationError,
 } from '../validation.js'
+import {
+  getManagedFilePath,
+  getManagedSettingsDropInDir,
+} from '../managedPath.js'
 import {
   WINDOWS_REGISTRY_KEY_PATH_HKCU,
   WINDOWS_REGISTRY_KEY_PATH_HKLM,
@@ -85,11 +84,6 @@ export function startMdmSettingsLoad(): void {
         `MDM settings found: ${Object.keys(mdm.settings).join(', ')}`,
       )
       try {
-        logForDiagnosticsNoPII('info', 'mdm_settings_loaded', {
-          duration_ms: duration,
-          key_count: Object.keys(mdm.settings).length,
-          error_count: mdm.errors.length,
-        })
       } catch {
         // Diagnostic logging is best-effort
       }
