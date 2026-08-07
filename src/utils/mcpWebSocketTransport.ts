@@ -4,7 +4,6 @@ import {
   JSONRPCMessageSchema,
 } from '@modelcontextprotocol/sdk/types.js'
 import type WsWebSocket from 'ws'
-import { logForDiagnosticsNoPII } from './diagLogs.js'
 import { toError } from './errors.js'
 import { jsonParse, jsonStringify } from './slowOperations.js'
 
@@ -38,7 +37,6 @@ export class WebSocketTransport implements Transport {
         const onError = (event: Event) => {
           nws.removeEventListener('open', onOpen)
           nws.removeEventListener('error', onError)
-          logForDiagnosticsNoPII('error', 'mcp_websocket_connect_fail')
           reject(event)
         }
         nws.addEventListener('open', onOpen)
@@ -49,7 +47,6 @@ export class WebSocketTransport implements Transport {
           resolve()
         })
         nws.on('error', error => {
-          logForDiagnosticsNoPII('error', 'mcp_websocket_connect_fail')
           reject(error)
         })
       }
@@ -115,7 +112,6 @@ export class WebSocketTransport implements Transport {
 
   // Shared error handler
   private handleError(error: unknown): void {
-    logForDiagnosticsNoPII('error', 'mcp_websocket_message_fail')
     this.onerror?.(toError(error))
   }
 
@@ -145,7 +141,6 @@ export class WebSocketTransport implements Transport {
     }
     await this.opened
     if (this.ws.readyState !== WS_OPEN) {
-      logForDiagnosticsNoPII('error', 'mcp_websocket_start_not_opened')
       throw new Error('WebSocket 未打开。无法启动传输层。')
     }
     this.started = true
@@ -172,7 +167,6 @@ export class WebSocketTransport implements Transport {
    */
   async send(message: JSONRPCMessage): Promise<void> {
     if (this.ws.readyState !== WS_OPEN) {
-      logForDiagnosticsNoPII('error', 'mcp_websocket_send_not_opened')
       throw new Error('WebSocket 未打开。无法发送消息。')
     }
     const json = jsonStringify(message)

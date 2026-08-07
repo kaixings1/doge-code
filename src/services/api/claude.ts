@@ -52,6 +52,7 @@ import {
 } from '../../types/connectorText.js'
 import type {
   AssistantMessage,
+  AssistantMessageContent,
   Message,
   StreamEvent,
   SystemAPIErrorMessage,
@@ -75,8 +76,10 @@ import {
   getModelMaxOutputTokens,
   getSonnet1mExpTreatmentEnabled,
 } from '../../utils/context.js'
-import { resolveAppliedEffort, resolveAutoEffort } from '../../utils/effort.js'
+import { EffortValue, modelSupportsEffort, resolveAppliedEffort, resolveAutoEffort } from '../../utils/effort.js'
+import type { CacheEditsBlock, PinnedCacheEdits } from '../compact/cachedMicrocompact.js'
 import { isEnvTruthy } from '../../utils/envUtils.js'
+import { isFastModeAvailable, isFastModeCooldown, isFastModeEnabled, isFastModeSupportedByModel } from '../../utils/fastMode.js'
 import { errorMessage } from '../../utils/errors.js'
 import { computeFingerprintFromMessages } from '../../utils/fingerprint.js'
 import { captureAPIRequest, logError } from '../../utils/log.js'
@@ -109,7 +112,6 @@ import {
 } from '../claudeAiLimits.js'
 import { getAPIContextManagement } from '../compact/apiMicrocompact.js'
 
- 
 const autoModeStateModule = feature('TRANSCRIPT_CLASSIFIER')
   ? (require('../../utils/permissions/autoModeState.js') as typeof import('../../utils/permissions/autoModeState.js'))
   : null
@@ -174,14 +176,6 @@ import { CLAUDE_IN_CHROME_MCP_SERVER_NAME } from '../../utils/claudeInChrome/com
 import { CHROME_TOOL_SEARCH_INSTRUCTIONS } from '../../utils/claudeInChrome/prompt.js'
 import { getMaxThinkingTokensForModel } from '../../utils/context.js'
 import { logForDebugging } from '../../utils/debug.js'
-import { logForDiagnosticsNoPII } from '../../utils/diagLogs.js'
-import { type EffortValue, modelSupportsEffort } from '../../utils/effort.js'
-import {
-  isFastModeAvailable,
-  isFastModeCooldown,
-  isFastModeEnabled,
-  isFastModeSupportedByModel,
-} from '../../utils/fastMode.js'
 import { returnValue } from '../../utils/generators.js'
 import { headlessProfilerCheckpoint } from '../../utils/headlessProfiler.js'
 import { isMcpInstructionsDeltaEnabled } from '../../utils/mcpInstructionsDelta.js'
@@ -450,7 +444,7 @@ function configureEffortParams(
     betas.push(EFFORT_BETA_HEADER)
   } else if (typeof effortValue === 'string') {
     // 按原样发送字符串 effort 等级
-    outputConfig.effort = effortValue
+    outputConfig.effort = effortValue as unknown as "high" | "medium" | "low" | "max" | "xhigh"
     betas.push(EFFORT_BETA_HEADER)
   } else if (process.env.USER_TYPE === 'ant') {
     // 数值 effort 覆盖 - 仅限蚂蚁内部（使用 anthropic_internal）
@@ -727,7 +721,7 @@ export async function queryModelWithoutStreaming({
     )
   })) {
     if (message.type === 'assistant') {
-      assistantMessage = message
+      assistantMessage = message as AssistantMessage
     }
   }
   if (!assistantMessage) {
@@ -861,7 +855,6 @@ export async function* executeNonStreamingRequest(
         if (err instanceof APIUserAbortError) throw err
 
         // 仪表：记录非流式请求出错（包括超时）。让我们区分“回退在容器终止后挂起”（无事件）和“回退达到限制超时”（此事件）。
-        logForDiagnosticsNoPII('error', 'cli_nonstreaming_fallback_error')
         logEvent('tengu_nonstreaming_fallback_error', {
           model:
             clientOptions.model as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
@@ -912,7 +905,7 @@ function getPreviousRequestIdFromMessages(
   for (let i = messages.length - 1; i >= 0; i--) {
     const msg = messages[i]!
     if (msg.type === 'assistant' && msg.requestId) {
-      return msg.requestId
+      return msg.requestId as string
     }
   }
   return undefined
@@ -945,7 +938,7 @@ export function stripExcessMediaItems(
       if (isMedia(block)) toRemove++
       if (isToolResult(block) && Array.isArray(block.content)) {
         for (const nested of block.content) {
-          if (isMedia(nested)) toRemove++
+          if (isMedia(nested as BetaContentBlockParam)) toRemove++
         }
       }
     }
@@ -967,8 +960,8 @@ export function stripExcessMediaItems(
           !Array.isArray(block.content)
         )
           return block
-        const filtered = block.content.filter(n => {
-          if (toRemove > 0 && isMedia(n)) {
+        const filtered = block.content.filter((n): boolean => {
+          if (toRemove > 0 && isMedia(n as BetaContentBlockParam)) {
             toRemove--
             return false
           }
@@ -1272,7 +1265,7 @@ async function* queryModel(
     cachedMCEnabled = featureEnabled && modelSupported
     const config = getCachedMCConfig()
     logForDebugging(
-      `Cached MC gate: enabled=${featureEnabled} modelSupported=${modelSupported} model=${options.model} supportedModels=${jsonStringify(config.supportedModels)}`,
+      `Cached MC gate: enabled=${featureEnabled} modelSupported=${modelSupported} model=${options.model} supportedModels=${jsonStringify((config as Record<string, unknown>).supportedModels)}`,
     )
   }
 
@@ -1532,7 +1525,7 @@ async function* queryModel(
   if (effort === void 0) {
     const lastMsg = getLastUserMessageText(messages)
     if (lastMsg) {
-      effort = resolveAutoEffort(lastMsg)
+      effort = resolveAutoEffort(lastMsg) as EffortValue
     }
   }
 
@@ -1768,8 +1761,8 @@ async function* queryModel(
         enablePromptCaching,
         options.querySource,
         useCachedMC,
-        consumedCacheEdits,
-        consumedPinnedEdits,
+        consumedCacheEdits as unknown as CachedMCEditsBlock,
+        consumedPinnedEdits as unknown as CachedMCPinnedEdits[] ,
         options.skipCacheWrite,
       ),
       system,
@@ -1855,10 +1848,9 @@ async function* queryModel(
 		logForDebugging(`[request] ANTHROPIC_BASE_URL=${process.env.ANTHROPIC_BASE_URL}`, { level: 'debug' });
 		logForDebugging(`[request] CLAUDE_CODE_COMPATIBLE_API_PROVIDER=${process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER}`, { level: 'debug' });
 
-
 	// 防止在无端点配置时发出真实请求
 if (process.env.ANTHROPIC_BASE_URL === 'http://0.0.0.0:1' || !process.env.DOGE_API_KEY) {
-  return (async function* () {
+  ;(async function* () {
     yield {
       type: 'assistant',
       message: {
@@ -1868,7 +1860,8 @@ if (process.env.ANTHROPIC_BASE_URL === 'http://0.0.0.0:1' || !process.env.DOGE_A
         usage: { input_tokens: 0, output_tokens: 0 }
       }
     }
-  })() as unknown as AsyncGenerator<unknown>;
+  })()
+  return
 }
 
     const generator = withRetry(
@@ -1923,7 +1916,6 @@ async (anthropic, attempt, context) => {
 		//const hasURL = stored.baseURL || process.env.ANTHROPIC_BASE_URL;
 		//const compatProvider = process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER || 'openai';
 		
-
 		/*if (hasURL) {
 		  process.stderr.write(`\n[FIX] compatProvider=openai, baseURL=${process.env.ANTHROPIC_BASE_URL}, apiKey=${process.env.DOGE_API_KEY ? '***' : 'missing'}, model=${process.env.ANTHROPIC_MODEL || 'missing'}\n\n`);
 		} else {
@@ -2075,7 +2067,6 @@ async (anthropic, attempt, context) => {
             `流式空闲警告: 已 ${warnMs / 1000} 秒未收到数据块`,
             { level: 'warn' },
           )
-          logForDiagnosticsNoPII('warn', 'cli_streaming_idle_warning')
         },
         STREAM_IDLE_WARNING_MS,
         STREAM_IDLE_WARNING_MS,
@@ -2087,7 +2078,6 @@ async (anthropic, attempt, context) => {
           `流式空闲超时: 已 ${STREAM_IDLE_TIMEOUT_MS / 1000} 秒未收到数据块，正在中止流`,
           { level: 'error' },
         )
-        logForDiagnosticsNoPII('error', 'cli_streaming_idle_timeout')
         logEvent('tengu_streaming_idle_timeout', {
           model:
             options.model as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
@@ -2257,7 +2247,7 @@ async (anthropic, attempt, context) => {
                 })
                 throw new Error('内容块不是 connector_text 块')
               }
-              contentBlock.connector_text += delta.connector_text
+              ;(contentBlock as any).connector_text += (delta as any).connector_text
             } else {
               switch (delta.type) {
                 case 'citations_delta':
@@ -2278,7 +2268,7 @@ async (anthropic, attempt, context) => {
                     })
                     throw new Error('内容块不是 input_json 块')
                   }
-				   appendTokenText(delta.partial_json); 
+				   appendTokenText((delta as any).partial_json as string); 
                   if (typeof contentBlock.input !== 'string') {
                     logEvent('tengu_streaming_error', {
                       error_type:
@@ -2325,7 +2315,7 @@ async (anthropic, attempt, context) => {
                     throw new Error('内容块不是思考块')
                   }
                   contentBlock.signature = delta.signature
-				  appendTokenText(delta.thinking); 
+				  appendTokenText((delta as { thinking?: string }).thinking ?? ''); 
                   break
                 case 'thinking_delta':
                   if (contentBlock.type !== 'thinking') {
@@ -2339,8 +2329,8 @@ async (anthropic, attempt, context) => {
                     })
                     throw new Error('内容块不是思考块')
                   }
-                  contentBlock.thinking += delta.thinking
-				  appendTokenText(delta.thinking); 
+                  ;(contentBlock as any).thinking += (delta as any).thinking
+				  appendTokenText((delta as any).thinking); 
                   break
               }
             }
@@ -2374,12 +2364,12 @@ async (anthropic, attempt, context) => {
             }
             const m: AssistantMessage = {
               message: {
-                ...partialMessage,
+                ...(partialMessage as unknown as Message),
                 content: normalizeContentFromAPI(
                   [contentBlock] as BetaContentBlock[],
                   tools,
                   options.agentId,
-                ),
+                ) as AssistantMessageContent,
               },
               requestId: streamRequestId ?? undefined,
               type: 'assistant',
@@ -2423,10 +2413,10 @@ async (anthropic, attempt, context) => {
             }
 
             // 更新成本
-            const costUSDForPart = calculateUSDCost(resolvedModel, usage)
+            const costUSDForPart = calculateUSDCost(resolvedModel, usage as unknown as BetaUsage)
             costUSD += addToTotalSessionCost(
               costUSDForPart,
-              usage,
+              usage as unknown as BetaUsage,
               options.model,
             )
 
@@ -2508,10 +2498,6 @@ async (anthropic, attempt, context) => {
           streamWatchdogFiredAt !== null
             ? Math.round(performance.now() - streamWatchdogFiredAt)
             : -1
-        logForDiagnosticsNoPII(
-          'info',
-          'cli_stream_loop_exited_after_watchdog_clean',
-        )
         logEvent('tengu_stream_loop_exited_after_watchdog', {
           request_id: (streamRequestId ??
             'unknown') as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
@@ -2547,7 +2533,6 @@ async (anthropic, attempt, context) => {
         })
 //这里是自己加的
 
-
         // 检查是否有工具调用 - 如果有工具调用，则继续等待而不是抛出错误
         const hasToolCall = newMessages.some(msg => {
           if (msg.message?.content && Array.isArray(msg.message.content)) {
@@ -2564,9 +2549,6 @@ async (anthropic, attempt, context) => {
         throw new Error('流结束但未收到任何事件')
         }
 //------------自己加的	
-	
-	
-	
 	
       }
 
@@ -2616,10 +2598,6 @@ async (anthropic, attempt, context) => {
       if (streamIdleAborted && streamWatchdogFiredAt !== null) {
         const exitDelayMs = Math.round(
           performance.now() - streamWatchdogFiredAt,
-        )
-        logForDiagnosticsNoPII(
-          'info',
-          'cli_stream_loop_exited_after_watchdog_error',
         )
         logEvent('tengu_stream_loop_exited_after_watchdog', {
           request_id: (streamRequestId ??
@@ -2737,7 +2715,6 @@ async (anthropic, attempt, context) => {
       // 如果流式失败本身是 529，则将其计入连续 529 预算，以便无论过载是在流式还是非流式模式下遇到，模型回退前的总 529 次数相同。
       // 这是针对 https://github.com/anthropics/claude-code/issues/1513 的推测性修复
       // 仪表：证明 executeNonStreamingRequest 已被进入（与回退事件触发但调用本身在分发时挂起的情况相对照）。
-      logForDiagnosticsNoPII('info', 'cli_nonstreaming_fallback_started')
       logEvent('tengu_nonstreaming_fallback_started', {
         request_id: (streamRequestId ??
           'unknown') as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
@@ -2769,12 +2746,12 @@ async (anthropic, attempt, context) => {
 
       const m: AssistantMessage = {
         message: {
-          ...result,
+          ...(result as unknown as Message),
           content: normalizeContentFromAPI(
             result.content,
             tools,
             options.agentId,
-          ),
+          ) as AssistantMessageContent,
         },
         requestId: streamRequestId ?? undefined,
         type: 'assistant',
@@ -2857,7 +2834,7 @@ async (anthropic, attempt, context) => {
 
         const m: AssistantMessage = {
           message: {
-            ...result,
+            ...(result as unknown as Message),
             content: normalizeContentFromAPI(
               result.content,
               tools,
@@ -3006,12 +2983,12 @@ async (anthropic, attempt, context) => {
       const fallbackUsage = fallbackMessage.message.usage
       // 防止来自非标准 API 响应的 undefined usage
       if (fallbackUsage) {
-        usage = updateUsage(EMPTY_USAGE, fallbackUsage)
-        stopReason = fallbackMessage.message.stop_reason
-        const fallbackCost = calculateUSDCost(resolvedModel, fallbackUsage)
+        usage = updateUsage(EMPTY_USAGE, fallbackUsage as unknown as BetaMessageDeltaUsage)
+        stopReason = fallbackMessage.message.stop_reason as BetaStopReason as BetaStopReason
+        const fallbackCost = calculateUSDCost(resolvedModel, fallbackUsage as unknown as BetaUsage)
         costUSD += addToTotalSessionCost(
           fallbackCost,
-          fallbackUsage,
+          fallbackUsage as unknown as BetaUsage,
           options.model,
         )
         // DOGE: 持久化 token 累计到 api.json（非流式回退路径）
@@ -3021,7 +2998,7 @@ async (anthropic, attempt, context) => {
         addPresetTokens(fallbackUsage.input_tokens, fallbackUsage.output_tokens, jsonSentBytes, jsonReceivedBytes)
       } else {
         usage = EMPTY_USAGE
-        stopReason = fallbackMessage.message.stop_reason
+        stopReason = fallbackMessage.message.stop_reason as BetaStopReason as BetaStopReason
       }
     }
   }
@@ -3166,7 +3143,7 @@ export function updateUsage(
         }
       : {}),
     inference_geo: usage.inference_geo,
-    iterations: partUsage.iterations ?? usage.iterations,
+    iterations: (partUsage.iterations as unknown as number | undefined) ?? usage.iterations,
     speed: (partUsage as BetaUsage).speed ?? usage.speed,
   }
 }
@@ -3325,7 +3302,7 @@ export function addCacheBreakpoints(
           }
           insertBlockAfterToolResults(msg.content, dedupedNewEdits)
           // 固定，以便该块在未来的调用中在相同位置重新发送
-          pinCacheEdits(i, newCacheEdits)
+          pinCacheEdits(i, newCacheEdits as unknown as CacheEditsBlock)
 
           logForDebugging(
             `在消息[${i}]中添加了 cache_edits 块，包含 ${dedupedNewEdits.edits.length} 个删除: ${dedupedNewEdits.edits.map(e => e.cache_reference).join(', ')}`,

@@ -244,6 +244,8 @@ type State = {
   // 由 logAPISuccess 消费，标记压缩后的首次 API 调用，
   // 以便区分压缩导致的缓存未命中和 TTL 过期。
   pendingPostCompaction: boolean
+  // 对话压缩轮次计数器（epoch）。每次压缩后递增，用于 AI 感知上下文已刷新。
+  sessionEpoch: number
 }
 
 // 再次提醒 - 修改前请三思
@@ -410,6 +412,7 @@ function getInitialState(): State {
     lastMainRequestId: undefined,
     lastApiCompletionTimestamp: null,
     pendingPostCompaction: false,
+    sessionEpoch: 0,
   }
 
   return state
@@ -756,6 +759,16 @@ export function consumePostCompaction(): boolean {
   const was = STATE.pendingPostCompaction
   STATE.pendingPostCompaction = false
   return was
+}
+
+/** 获取当前对话 epoch（压缩轮次）。 */
+export function getSessionEpoch(): number {
+  return STATE.sessionEpoch
+}
+
+/** 递增对话 epoch（每次压缩后调用）。 */
+export function incrementSessionEpoch(): void {
+  STATE.sessionEpoch++
 }
 
 export function getLastInteractionTime(): number {

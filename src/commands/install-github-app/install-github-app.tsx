@@ -23,9 +23,30 @@ import { InstallAppStep } from './InstallAppStep.js';
 import { OAuthFlowStep } from './OAuthFlowStep.js';
 import { SuccessStep } from './SuccessStep.js';
 import { setupGitHubActions } from './setupGitHubActions.js';
-import type { State, Warning, Workflow } from './types.js';
+import type { Warning } from './types.js';
 import { WarningsStep } from './WarningsStep.js';
-const INITIAL_STATE: State = {
+interface InstallGitHubAppState {
+  step: 'check-gh' | 'warnings' | 'choose-repo' | 'install-app' | 'check-existing-workflow' | 'check-existing-secret' | 'api-key' | 'creating' | 'success' | 'error' | 'select-workflows' | 'oauth-flow'
+  selectedRepoName: string
+  currentRepo: string
+  useCurrentRepo: boolean
+  apiKeyOrOAuthToken: string
+  useExistingKey: boolean
+  currentWorkflowInstallStep: number
+  warnings: Warning[]
+  secretExists: boolean
+  secretName: string
+  useExistingSecret: boolean
+  workflowExists: boolean
+  selectedWorkflows: string[]
+  selectedApiKeyOption: 'existing' | 'new' | 'oauth'
+  authType: 'api_key' | 'oauth_token'
+  error?: string
+  errorReason?: string
+  errorInstructions?: string[]
+  workflowAction?: 'update' | 'skip' | 'exit'
+}
+const INITIAL_STATE: InstallGitHubAppState = {
   step: 'check-gh',
   selectedRepoName: '',
   currentRepo: '',
@@ -39,7 +60,7 @@ const INITIAL_STATE: State = {
   secretName: 'DOGE_API_KEY',
   useExistingSecret: true,
   workflowExists: false,
-  selectedWorkflows: ['claude', 'claude-review'] as Workflow[],
+  selectedWorkflows: ['claude', 'claude-review'],
   selectedApiKeyOption: 'new' as 'existing' | 'new' | 'oauth',
   authType: 'api_key'
 };
@@ -47,7 +68,7 @@ function InstallGitHubApp(props: {
   onDone: (message: string) => void;
 }): React.ReactNode {
   const [existingApiKey] = useState(() => getAnthropicApiKey());
-  const [state, setState] = useState({
+  const [state, setState] = useState<InstallGitHubAppState>({
     ...INITIAL_STATE,
     useExistingKey: !!existingApiKey,
     selectedApiKeyOption: (existingApiKey ? 'existing' : isAnthropicAuthEnabled() ? 'oauth' : 'new') as 'existing' | 'new' | 'oauth'

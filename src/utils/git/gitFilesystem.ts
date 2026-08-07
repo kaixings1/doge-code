@@ -41,12 +41,15 @@ export async function resolveGitDir(
   startPath?: string,
 ): Promise<string | null> {
   const cwd = resolve(startPath ?? getCwd())
+  console.error(`[TRACE] resolveGitDir: cwd=${cwd}`)
   const cached = resolveGitDirCache.get(cwd)
   if (cached !== undefined) {
     return cached
   }
 
+  console.error('[TRACE] resolveGitDir: about to call findGitRoot')
   const root = findGitRoot(cwd)
+  console.error(`[TRACE] resolveGitDir: findGitRoot returned ${root ?? 'null'}`)
   if (!root) {
     resolveGitDirCache.set(cwd, null)
     return null
@@ -351,16 +354,21 @@ class GitFileWatcher {
   }
 
   private async start(): Promise<void> {
+    console.error('[TRACE] GitFileWatcher.start: START')
     this.gitDir = await resolveGitDir()
+    console.error(`[TRACE] GitFileWatcher.start: resolveGitDir returned ${this.gitDir ?? 'null'}`)
     this.initialized = true
     if (!this.gitDir) {
+      console.error('[TRACE] GitFileWatcher.start: no gitDir, returning early')
       return
     }
 
     // In a worktree, branch refs and the main config are shared and live in
     // commonDir, not the per-worktree gitDir. Resolve once so we don't
     // re-read the commondir file on every branch switch.
+    console.error('[TRACE] GitFileWatcher.start: about to call getCommonDir')
     this.commonDir = await getCommonDir(this.gitDir)
+    console.error(`[TRACE] GitFileWatcher.start: getCommonDir returned ${this.commonDir ?? 'null'}`)
 
     // Watch .git/HEAD and .git/config
     this.watchPath(join(this.gitDir, 'HEAD'), () => {
@@ -525,11 +533,15 @@ async function computeHead(): Promise<string> {
 }
 
 async function computeRemoteUrl(): Promise<string | null> {
+  console.error('[TRACE] computeRemoteUrl: START')
   const gitDir = await resolveGitDir()
+  console.error(`[TRACE] computeRemoteUrl: resolveGitDir returned ${gitDir ?? 'null'}`)
   if (!gitDir) {
     return null
   }
+  console.error('[TRACE] computeRemoteUrl: about to call parseGitConfigValue')
   const url = await parseGitConfigValue(gitDir, 'remote', 'origin', 'url')
+  console.error(`[TRACE] computeRemoteUrl: parseGitConfigValue returned ${url ?? 'null'}`)
   if (url) {
     return url
   }

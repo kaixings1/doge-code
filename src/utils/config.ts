@@ -13,64 +13,46 @@ import type {
   ReferralEligibilityResponse,
 } from '../services/oauth/types.js'
 import { getCwd } from '../utils/cwd.js'
-import { registerCleanup } from './cleanupRegistry.js'
-import { logForDebugging } from './debug.js'
-import { logForDiagnosticsNoPII } from './diagLogs.js'
-import { getGlobalClaudeFile } from './env.js'
-import { getClaudeConfigHomeDir, isEnvTruthy } from './envUtils.js'
-import { ConfigParseError, getErrnoCode } from './errors.js'
-import { writeFileSyncAndFlush_DEPRECATED } from './file.js'
+import { getErrnoCode } from './errors.js'
 import { getFsImplementation } from './fsOperations.js'
 import { findCanonicalGitRoot } from './git.js'
-import { safeParseJSON } from './json.js'
-import { stripBOM } from './jsonRead.js'
+import { normalizePathForConfigKey } from './path.js'
+import { registerCleanup } from './cleanupRegistry.js'
+import { logForDebugging } from './debug.js'
+import { getGlobalClaudeFile } from './env.js'
 import * as lockfile from './lockfile.js'
 import { logError } from './log.js'
-import type { MemoryType } from './memory/types.js'
-import { normalizePathForConfigKey } from './path.js'
-import { getEssentialTrafficOnlyReason } from './privacyLevel.js'
-import { getManagedFilePath } from './settings/managedPath.js'
-import type { ThemeSetting } from './theme.js'
-
- 
-const teamMemPaths = feature('TEAMMEM')
-  ? (require('../memdir/teamMemPaths.js') as typeof import('../memdir/teamMemPaths.js'))
-  : null
-const ccrAutoConnect = feature('CCR_AUTO_CONNECT')
-  ? (require('../bridge/bridgeEnabled.js') as typeof import('../bridge/bridgeEnabled.js'))
-  : null
-
- 
-import type { ImageDimensions } from './imageResizer.js'
-import type { ModelOption } from './model/modelOptions.js'
+import { safeParseJSON } from './json.js'
+import { stripBOM } from './jsonRead.js'
 import { jsonParse, jsonStringify } from './slowOperations.js'
+import { writeFileSyncAndFlush_DEPRECATED } from './file.js'
+import { isEnvTruthy } from './envUtils.js'
 
-// 重入防护：防止配置文件损坏时发生 getConfig → logEvent → getGlobalConfig → getConfig
-// 无限递归。logEvent 的采样检查从全局配置中读取 GrowthBook 特性，这又会调用 getConfig。
-let insideGetConfig = false
+import type { EDITOR_MODES, NOTIFICATION_CHANNELS } from './configConstants.js'
 
-// 图片坐标映射的尺寸信息（仅在图片被调整大小时设置）
-export type PastedContent = {
-  id: number // 顺序数字 ID
-  type: 'text' | 'image'
-  content: string
-  mediaType?: string // 例如 'image/png', 'image/jpeg'
-  filename?: string // 图片在附件槽中的显示名称
-  dimensions?: ImageDimensions
-  sourcePath?: string // 拖拽到终端的图片的原始文件路径
+export type NotificationChannel = (typeof NOTIFICATION_CHANNELS)[number]
+
+export type AccountInfo = {
+  accountUuid: string
+  emailAddress: string
+  organizationUuid?: string
+  organizationName?: string | null // added 4/23/2025, not populated for existing users
+  organizationRole?: string | null
+  workspaceRole?: string | null
+  // 由 /api/oauth/profile 填充
+  displayName?: string
+  hasExtraUsageEnabled?: boolean
+  billingType?: BillingType | null
+  accountCreatedAt?: string
+  subscriptionCreatedAt?: string
 }
 
-export interface SerializedStructuredHistoryEntry {
-  display: string
-  pastedContents?: Record<number, PastedContent>
-  pastedText?: string
-}
-export interface HistoryEntry {
-  display: string
-  pastedContents: Record<number, PastedContent>
-}
+// TODO: 为向后兼容保留 'emacs' —— 几个版本后移除
+export type EditorMode = 'emacs' | (typeof EDITOR_MODES)[number]
 
-export type ReleaseChannel = 'stable' | 'latest'
+export type DiffTool = 'terminal' | 'auto'
+
+export type OutputStyle = string
 
 export type ProjectConfig = {
   allowedTools: string[]
@@ -105,23 +87,16 @@ export type ProjectConfig = {
   lastSessionMetrics?: Record<string, number>
   exampleFiles?: string[]
   exampleFilesGeneratedAt?: number
-
-  // 信任对话框设置
   hasTrustDialogAccepted?: boolean
-
   hasCompletedProjectOnboarding?: boolean
   projectOnboardingSeenCount: number
   hasClaudeMdExternalIncludesApproved?: boolean
   hasClaudeMdExternalIncludesWarningShown?: boolean
-  // MCP 服务器审批字段 - 已迁移到设置但保留向后兼容性
   enabledMcpjsonServers?: string[]
   disabledMcpjsonServers?: string[]
   enableAllProjectMcpServers?: boolean
-  // 禁用的 MCP 服务器列表（所有作用域）- 用于启用/禁用切换
   disabledMcpServers?: string[]
-  // 默认为禁用的内置 MCP 服务器的选择加入列表
   enabledMcpServers?: string[]
-  // Worktree 会话管理
   activeWorktreeSession?: {
     originalCwd: string
     worktreePath: string
@@ -130,96 +105,22 @@ export type ProjectConfig = {
     sessionId: string
     hookBased?: boolean
   }
-  /** `claude remote-control` 多会话的生成模式。由首次运行对话框或 `w` 切换设置。 */
   remoteControlSpawnMode?: 'same-dir' | 'worktree'
-  // ─── 更新日志新功能配置 (2.1.128-2.1.220) ───
-  /** 工作流大小指南 (v2.1.219) */
   workflowSizeGuideline?: number
-  /** 网络沙箱严格白名单 (v2.1.219) */
   sandboxNetworkStrictAllowlist?: string[]
-  /** 禁用文件系统沙箱 (v2.1.216) */
   sandboxFilesystemDisabled?: boolean
-  /** 并发子代理上限 (v2.1.217) */
   maxConcurrentSubAgents?: number
-  /** 子代理嵌套深度 (v2.1.217) */
   maxSubAgentSpawnDepth?: number
-  /** 每会话 WebSearch 限制 (v2.1.212) */
   maxWebSearchesPerSession?: number
-  /** MCP 自动后台化时间 ms (v2.1.212) */
   mcpAutoBackgroundMs?: number
-  /** 转发子代理文本 (v2.1.211) */
   forwardSubagentText?: boolean
-  /** 父设置行为 (v2.1.133) */
   parentSettingsBehavior?: 'inherit' | 'override' | 'merge'
-  /** bubblewrap 路径 (v2.1.133) */
   sandboxBwrapPath?: string
-  /** socat 路径 (v2.1.133) */
   sandboxSocPath?: string
-  /** worktree 基础引用 (v2.1.133) */
   worktreeBaseRef?: 'fresh' | 'head'
-  /** 强制终端超链接 (v2.1.217) */
   forceHyperlink?: boolean
-  /** Emoji 自动补全 (v2.1.217) */
   emojiCompletionEnabled?: boolean
 }
-
-const DEFAULT_PROJECT_CONFIG: ProjectConfig = {
-  allowedTools: [],
-  mcpContextUris: [],
-  mcpServers: {},
-  // 更新日志新功能默认值
-  workflowSizeGuideline: 15,
-  sandboxNetworkStrictAllowlist: [],
-  sandboxFilesystemDisabled: false,
-  maxConcurrentSubAgents: 20,
-  maxSubAgentSpawnDepth: 3,
-  maxWebSearchesPerSession: 200,
-  mcpAutoBackgroundMs: 120000,
-  forwardSubagentText: false,
-  parentSettingsBehavior: 'inherit',
-  worktreeBaseRef: 'fresh',
-  forceHyperlink: true,
-  emojiCompletionEnabled: true,
-  enabledMcpjsonServers: [],
-  disabledMcpjsonServers: [],
-  hasTrustDialogAccepted: false,
-  projectOnboardingSeenCount: 0,
-  hasClaudeMdExternalIncludesApproved: false,
-  hasClaudeMdExternalIncludesWarningShown: false,
-}
-
-export type InstallMethod = 'local' | 'native' | 'global' | 'unknown'
-
-export {
-  EDITOR_MODES,
-  NOTIFICATION_CHANNELS,
-} from './configConstants.js'
-
-import type { EDITOR_MODES, NOTIFICATION_CHANNELS } from './configConstants.js'
-
-export type NotificationChannel = (typeof NOTIFICATION_CHANNELS)[number]
-
-export type AccountInfo = {
-  accountUuid: string
-  emailAddress: string
-  organizationUuid?: string
-  organizationName?: string | null // added 4/23/2025, not populated for existing users
-  organizationRole?: string | null
-  workspaceRole?: string | null
-  // 由 /api/oauth/profile 填充
-  displayName?: string
-  hasExtraUsageEnabled?: boolean
-  billingType?: BillingType | null
-  accountCreatedAt?: string
-  subscriptionCreatedAt?: string
-}
-
-// TODO: 为向后兼容保留 'emacs' —— 几个版本后移除
-export type EditorMode = 'emacs' | (typeof EDITOR_MODES)[number]
-
-export type DiffTool = 'terminal' | 'auto'
-
-export type OutputStyle = string
 
 export type GlobalConfig = {
   customApiEndpoint?: {
@@ -609,7 +510,6 @@ export type GlobalConfig = {
   // DOGE: 列表视图每次可见的最大条目数（/help /agents /skills 等）
   maxListItems?: number // 默认 40
 
-
   // 用于服务端实验的客户端数据（在引导期间获取）。
   clientDataCache?: Record<string, unknown> | null
 
@@ -684,6 +584,30 @@ function createDefaultGlobalConfig(): GlobalConfig {
 }
 
 export const DEFAULT_GLOBAL_CONFIG: GlobalConfig = createDefaultGlobalConfig()
+
+const DEFAULT_PROJECT_CONFIG: ProjectConfig = {
+  allowedTools: [],
+  mcpContextUris: [],
+  mcpServers: {},
+  workflowSizeGuideline: 15,
+  sandboxNetworkStrictAllowlist: [],
+  sandboxFilesystemDisabled: false,
+  maxConcurrentSubAgents: 20,
+  maxSubAgentSpawnDepth: 3,
+  maxWebSearchesPerSession: 200,
+  mcpAutoBackgroundMs: 120000,
+  forwardSubagentText: false,
+  parentSettingsBehavior: 'inherit',
+  worktreeBaseRef: 'fresh',
+  forceHyperlink: true,
+  emojiCompletionEnabled: true,
+  enabledMcpjsonServers: [],
+  disabledMcpjsonServers: [],
+  hasTrustDialogAccepted: false,
+  projectOnboardingSeenCount: 0,
+  hasClaudeMdExternalIncludesApproved: false,
+  hasClaudeMdExternalIncludesWarningShown: false,
+}
 
 export const GLOBAL_CONFIG_KEYS = [
   'customApiEndpoint',
@@ -1101,7 +1025,6 @@ function writeThroughGlobalConfigCache(config: GlobalConfig): void {
   lastReadFileStats = null
 }
 
-
 // 父设置行为 (更新日志 2.1.133)
 export type ParentSettingsBehavior = 'inherit' | 'override' | 'merge'
 
@@ -1428,7 +1351,6 @@ export function enableConfigs(): void {
   }
 
   const startTime = Date.now()
-  logForDiagnosticsNoPII('info', 'enable_configs_started')
 
   // 在此标记设置前对配置的任何读取都会显示控制台警告，
   // 以防止我们在模块初始化期间添加配置读取
@@ -1440,9 +1362,6 @@ export function enableConfigs(): void {
     true /* throw on invalid */,
   )
 
-  logForDiagnosticsNoPII('info', 'enable_configs_completed', {
-    duration_ms: Date.now() - startTime,
-  })
 }
 
 /**

@@ -216,7 +216,9 @@ export function logForDebugging(
   if (hasFormattedOutput && message.includes('\n')) {
     message = jsonStringify(message)
   }
-  const timestamp = new Date().toISOString().replace('T', ' ').slice(0, 19)
+  // 使用本地时间而非 UTC（toISOString 返回的是 UTC 时间）
+  const now = new Date()
+  const timestamp = now.toLocaleString('sv-SE').replace('T', ' ').slice(0, 19)
   const output = `${timestamp} [${level.toUpperCase()}] ${message.trim()}\n`
   if (isDebugToStdErr()) {
     writeToStderr(output)

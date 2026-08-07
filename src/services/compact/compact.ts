@@ -8,7 +8,7 @@ const sessionTranscriptModule = feature('KAIROS')
   : null
 
 import { APIUserAbortError } from '@anthropic-ai/sdk'
-import { markPostCompaction } from '../../bootstrap/state.js'
+import { incrementSessionEpoch, markPostCompaction } from '../../bootstrap/state.js'
 import { getInvokedSkillsForAgent } from '../../bootstrap/state.js'
 import type { QuerySource } from '../../constants/querySource.js'
 import type { CanUseToolFn } from '../../hooks/useCanUseTool.js'
@@ -669,6 +669,7 @@ export async function compactConversation(
       )
     }
     markPostCompaction()
+    incrementSessionEpoch()
 
     // 重新追加会话元数据（自定义标题、标签），使其保持在 readLiteMetadata 读取的 16KB 尾部窗口内，用于 --resume 显示。
     // 没有这个，足够多的压缩后消息会将元数据条目推出窗口，导致 --resume 显示自动生成的标题而非用户设置的会话名称。
@@ -1006,6 +1007,7 @@ export async function partialCompactConversation(
       )
     }
     markPostCompaction()
+    incrementSessionEpoch()
 
     // 重新追加会话元数据（自定义标题、标签），使其保持在 readLiteMetadata 读取的 16KB 尾部窗口内，用于 --resume 显示。
     reAppendSessionMetadata()

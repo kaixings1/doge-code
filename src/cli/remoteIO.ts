@@ -6,17 +6,6 @@ import { getPollIntervalConfig } from '../bridge/pollConfig.js'
 import { registerCleanup } from '../utils/cleanupRegistry.js'
 import { setCommandLifecycleListener } from '../utils/commandLifecycle.js'
 import { isDebugMode, logForDebugging } from '../utils/debug.js'
-import { logForDiagnosticsNoPII } from '../utils/diagLogs.js'
-import { isEnvTruthy } from '../utils/envUtils.js'
-import { errorMessage } from '../utils/errors.js'
-import { gracefulShutdown } from '../utils/gracefulShutdown.js'
-import { logError } from '../utils/log.js'
-import { writeToStdout } from '../utils/process.js'
-import { getSessionIngressAuthToken } from '../utils/sessionIngressAuth.js'
-import {
-  setSessionMetadataChangedListener,
-  setSessionStateChangedListener,
-} from '../utils/sessionState.js'
 import {
   setInternalEventReader,
   setInternalEventWriter,
@@ -127,9 +116,6 @@ export class RemoteIO extends StructuredIO {
       const init = this.ccrClient.initialize()
       this.restoredWorkerState = init.catch(() => null)
       init.catch((error: unknown) => {
-        logForDiagnosticsNoPII('error', 'cli_worker_lifecycle_init_failed', {
-          reason: error instanceof CCRInitError ? error.reason : 'unknown',
-        })
         logError(
           new Error(`CCRClient 初始化失败: ${errorMessage(error)}`),
         )

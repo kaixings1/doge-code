@@ -1,4 +1,1 @@
-// Stub: utils/sessionDataUploader.ts
-export async function createSessionTurnUploader(): Promise<any> {
-  return null
-}
+export { createSessionTurnUploader } from '../../src/utils/sessionDataUploader.js'

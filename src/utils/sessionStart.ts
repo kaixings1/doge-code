@@ -2,7 +2,6 @@ import { getMainThreadAgentType } from '../bootstrap/state.js'
 import type { HookResultMessage } from '../types/message.js'
 import { createAttachmentMessage } from './attachments.js'
 import { logForDebugging } from './debug.js'
-import { withDiagnosticsTiming } from './diagLogs.js'
 import { isBareMode } from './envUtils.js'
 import { updateWatchPaths } from './hooks/fileChangedWatcher.js'
 import { shouldAllowManagedHooksOnly } from './hooks/hooksConfigSnapshot.js'
@@ -62,7 +61,7 @@ export async function processSessionStartHooks(
     // This function is memoized, so if hooks are already loaded, this returns immediately
     // with negligible overhead (just a cache lookup).
     try {
-      await withDiagnosticsTiming('load_plugin_hooks', () => loadPluginHooks())
+      await loadPluginHooks()
     } catch (error) {
       // Log error but don't crash - continue with session start without plugin hooks
        
@@ -75,7 +74,6 @@ export async function processSessionStartHooks(
               `Failed to load plugin hooks during ${source}: ${String(error)}`,
             )
        
-
       if (error instanceof Error && error.stack) {
         enhancedError.stack = error.stack
       }

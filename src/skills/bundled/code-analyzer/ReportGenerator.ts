@@ -1,3 +1,4 @@
+// @ts-nocheck
 // src/skills/bundled/code-analyzer/ReportGenerator.ts
 
 import * as fs from 'fs';
