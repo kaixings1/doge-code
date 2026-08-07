@@ -94,18 +94,18 @@ export function showSetupDialog<T = void>(root: Root, renderer: (done: (result: 
  * 处理通用结尾：启动延迟预取，等待退出，优雅关闭。
  */
 export async function renderAndRun(root: Root, element: React.ReactNode): Promise<void> {
-  console.error('[STEP-A] renderAndRun: before root.render');
+  //console.error('[STEP-A] renderAndRun: before root.render');
   root.render(element);
-  console.error('[STEP-B] renderAndRun: after root.render');
+  //console.error('[STEP-B] renderAndRun: after root.render');
   startDeferredPrefetches();
-  console.error('[STEP-C] renderAndRun: after startDeferredPrefetches, before waitUntilExit');
+  //console.error('[STEP-C] renderAndRun: after startDeferredPrefetches, before waitUntilExit');
   await root.waitUntilExit();
-  console.error('[STEP-D] renderAndRun: after waitUntilExit');
+  //console.error('[STEP-D] renderAndRun: after waitUntilExit');
   await gracefulShutdown(0);
-  console.error('[STEP-E] renderAndRun: after gracefulShutdown');
+  //console.error('[STEP-E] renderAndRun: after gracefulShutdown');
 }
 export async function showSetupScreens(root: Root, permissionMode: PermissionMode, allowDangerouslySkipPermissions: boolean, commands?: Command[], claudeInChrome?: boolean, devChannels?: ChannelEntry[]): Promise<boolean> {
-  console.error('[SETUP-0] showSetupScreens: start, permissionMode=' + permissionMode);
+  //console.error('[SETUP-0] showSetupScreens: start, permissionMode=' + permissionMode);
   // 🔑 彻底绕过所有需要 stdin 交互的对话框（TrustDialog、Onboarding、Grove、ApproveApiKey 等）。
   // 在 Windows cmd.exe + Git Bash 环境下，Ink TUI 的 keypress 事件监听可能失效，
   // 导致 <Select> 组件永久等待用户按 Enter/Esc，程序卡死。
@@ -118,7 +118,7 @@ export async function showSetupScreens(root: Root, permissionMode: PermissionMod
     projects[projectPath] = { ...existing, hasTrustDialogAccepted: true };
     return { ...current, projects };
   });
-  console.error('[SETUP-AUTO-TRUST] trust accepted, all dialogs skipped');
+  //console.error('[SETUP-AUTO-TRUST] trust accepted, all dialogs skipped');
   return false;
 }
 export function getRenderContext(exitOnCtrlC: boolean): {

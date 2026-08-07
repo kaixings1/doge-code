@@ -1,1 +1,0 @@
-{"model":"LongCat-2.0","messages":[{"role":"user","content":"ls"}],"stream":true,"max_tokens":50,"tools":[{"type":"function","function":{"name":"Bash","parameters":{"type":"object","properties":{"command":{"type":"string"}}}}]}

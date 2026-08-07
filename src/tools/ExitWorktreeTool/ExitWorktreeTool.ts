@@ -13,6 +13,7 @@ import { count } from '../../utils/array.js'
 import { clearMemoryFileCaches } from '../../utils/claudemd.js'
 import { execFileNoThrow } from '../../utils/execFileNoThrow.js'
 import { updateHooksConfigSnapshot } from '../../utils/hooks/hooksConfigSnapshot.js'
+import { clearToolFilterCache } from '../../utils/toolSearch.js'
 import { lazySchema } from '../../utils/lazySchema.js'
 import { getPlansDirectory } from '../../utils/plans.js'
 import { setCwd } from '../../utils/Shell.js'
@@ -141,6 +142,7 @@ function restoreSessionToOriginalCwd(
   }
   saveWorktreeState(null)
   clearSystemPromptSections()
+  clearToolFilterCache()
   clearMemoryFileCaches()
   getPlansDirectory.cache.clear?.()
 }

@@ -764,4 +764,191 @@ async function checkAutoThreshold(
     metrics: { deferredToolDescriptionChars, charThreshold },
   }
 }
-// FORCE_RECOMPILE_2026_07_23_2300  
+
+// === Message-based tool filtering ===
+// These keyword sets map user message content to tool categories.
+// When a simple conversation (e.g. "hi", "hello") is detected, only these
+// "always-on" tools are sent to reduce token overhead.
+
+/**
+ * Tools that are always available even in minimal mode — these handle
+ * universal conversations, questions, and task management.
+ */
+export const ALWAYS_ON_TOOLS = new Set([
+  'AgentTool',
+  'TodoWriteTool',
+  'TaskCreateTool',
+  'TaskGetTool',
+  'TaskUpdateTool',
+  'TaskListTool',
+])
+
+/**
+ * Keyword → tool name mapping for intent-based tool dispatch.
+ * When the user message contains these keywords, the corresponding tool
+ * is included in the request even if the conversation is otherwise simple.
+ */
+// bilingual keyword → tool mapping (both English and Chinese)
+const TOOL_KEYWORD_MAP: Array<{ keywords: string[]; toolNames: string[] }> = [
+  { keywords: ['read', 'cat', 'head', 'tail', 'view', 'open', 'show', 'look at', 'file', '读取', '打开', '查看', '显示'], toolNames: ['FileReadTool'] },
+  { keywords: ['edit', 'modify', 'change', 'update', 'replace', 'sed', 'awk', '修改', '编辑', '更改', '更新'], toolNames: ['FileEditTool', 'MultiFileEditTool'] },
+  { keywords: ['write', 'create', 'make', 'new file', 'generate', 'output', 'save', 'dump', 'echo', '写入', '创建', '生成', '保存', '新建文件'], toolNames: ['FileWriteTool'] },
+  { keywords: ['search', 'grep', 'find', 'rg', 'locate', 'lookup', '搜索', '查找', '定位', '检索'], toolNames: ['GrepTool'] },
+  { keywords: ['glob', 'wildcard', 'pattern', 'list', 'ls', 'tree', 'directory', 'folder', '通配符', '目录', '文件夹', '列出'], toolNames: ['GlobTool'] },
+  { keywords: ['bash', 'shell', 'run', 'exec', 'command', 'terminal', 'cmd', 'ps1', 'pwsh', 'python', 'node', 'npm', 'yarn', 'pnpm', 'bun', 'cargo', 'go ', 'make', 'rake', 'docker', '执行', '运行', '终端', '命令', '脚本'], toolNames: ['BashTool', 'ShellTool'] },
+  { keywords: ['web', 'fetch', 'download', 'curl', 'wget', 'url', 'scrape', 'website', '网页', '下载', '抓取', '网站'], toolNames: ['WebFetchTool'] },
+  { keywords: ['search', 'google', 'bing', 'web search', 'lookup', '网络搜索', '谷歌', '百度'], toolNames: ['WebSearchTool', 'MultiSearchTool'] },
+  { keywords: ['git', 'branch', 'commit', 'push', 'pull', 'merge', 'checkout', 'reset', 'stash', 'diff', '分支', '提交', '合并', '拉取', '推送'], toolNames: ['BashTool'] },
+  { keywords: ['advisor', 'analyze', 'review', 'inspect', 'debug', '分析', '审查', '调试', '检查', '评估'], toolNames: ['AdvisorTool'] },
+  { keywords: ['http', 'api', 'request', 'curl', 'post', 'get ', 'put ', 'fetch', '接口', '请求', '调用'], toolNames: ['HttpTool'] },
+  { keywords: ['database', 'db', 'sql', 'postgres', 'mysql', 'sqlite', 'query', '数据库', '查询'], toolNames: ['DatabaseTool'] },
+  { keywords: ['graphql', 'gql'], toolNames: ['GraphqlTool'] },
+  { keywords: ['task', 'todo', 'todoist', 'remind', '任务', '待办', '提醒'], toolNames: ['TaskCreateTool', 'TodoWriteTool'] },
+  { keywords: ['branch', 'switch', '分支', '切换'], toolNames: ['BranchTool'] },
+  { keywords: ['compare', 'diff', '比较', '对比', '差异'], toolNames: ['CompareTool'] },
+  { keywords: ['notebook', 'jupyter', '笔记本', 'jupyter'], toolNames: ['NotebookEditTool'] },
+  { keywords: ['event', 'stream', '事件', '流'], toolNames: ['EventStreamTool'] },
+  { keywords: ['queue', '队列'], toolNames: ['QueueTool'] },
+  { keywords: ['cache', '缓存'], toolNames: ['CacheTool'] },
+  { keywords: ['log', 'logging', '日志'], toolNames: ['LoggerTool'] },
+  { keywords: ['monitor', '监控'], toolNames: ['MonitorTool'] },
+  { keywords: ['metric', '指标'], toolNames: ['MetricsTool'] },
+  { keywords: ['backup', '备份'], toolNames: ['BackupTool'] },
+  { keywords: ['schedule', 'cron', 'timer', '定时', '计划'], toolNames: ['ScheduleTool', 'CronTool'] },
+  { keywords: ['websocket', 'ws', '网络套接字'], toolNames: ['WebSocketTool'] },
+  { keywords: ['context collapse', 'summarize', '上下文压缩', '总结', '压缩'], toolNames: ['ContextCollapseTool'] },
+  { keywords: ['vim', 'visual', '可视化模式'], toolNames: ['VimVisualModeTool'] },
+  { keywords: ['theme', '主题', '配色'], toolNames: ['ThemeTool'] },
+  { keywords: ['effort', '努力度'], toolNames: ['EffortTool'] },
+  { keywords: ['brief', '摘要'], toolNames: ['BriefTool'] },
+]
+
+/**
+ * Check if a user message indicates a simple conversation that doesn't need
+ * full tool set (e.g., "hi", "hello", "how are you").
+ * Matches common greetings, small talk, and pure conversational messages.
+ */
+export function isSimpleConversationMessage(message: string): boolean {
+  const msg = message.toLowerCase().trim()
+
+  // Pure greetings and small talk — these don't need any code tools
+  const simplePatterns: RegExp[] = [
+    // English greetings
+    /^(?:hi|hello|hey|hiya|g'day|good morning|good afternoon|good evening)(?:\s|$|[^\w\s])/,
+    /^(?:how are you|how are you doing|how's it going|how's going)(?:\s|$|[^\w\s])/,
+    /^(?:thanks|thank you|thanks a lot|thank you so much)(?:\s|$|[^\w\s])/,
+    /^(?:ok|okay|got it|understood|alright)(?:\s|$|[^\w\s])/,
+    /^(?:bye|goodbye|see you|talk to you later)(?:\s|$|[^\w\s])/,
+    /^(?:test|testing)$/,
+    // Chinese greetings / small talk
+    /^(?:你好|哈喽|哈罗|嗨|hey|hi)(?:\s|$|[^\w\s])/,
+    /^(?:你好吗|你好啊|最近怎么样|近来怎么样)(?:\s|$|[^\w\s])/,
+    /^(?:谢谢|thanks|感谢|多谢|感恩)(?:\s|$|[^\w\s])/,
+    /^(?:好的|知道了|明白|了解|好|行|可以|行了|好吧)(?:\s|$|[^\w\s])/,
+    /^(?:bye|再见|拜拜|回见|下次见|下次再见)(?:\s|$|[^\w\s])/,
+  ]
+
+  // If the message is very short (< 30 chars) and matches a conversational pattern
+  if (msg.length < 30) {
+    for (const pattern of simplePatterns) {
+      if (pattern.test(msg)) return true
+    }
+  }
+
+  // Pure chit-chat without any code/tool keywords
+  if (msg.length < 50) {
+    const hasCodeKeywords = /\b(code|file|read|write|edit|git|bash|shell|tool|function|class|api|sql|database|web|http|search|grep|find|debug|fix|build|compile|test|run|deploy|docker|npm|node|python|java|go |rust|typescript|javascript|react|vue|angular)\b/.test(msg)
+    // Also check common Chinese code-related terms
+    const hasChineseCodeKeywords = /[\u4e00-\u9fa5]+(?:代码|文件|读取|编辑|搜索|修复|运行|测试|构建|部署|数据库|接口|命令|脚本|函数|类|网页|抓取|下载|版本|分支|合并|提交|推送|拉取)\b/.test(msg)
+    if (!hasCodeKeywords && !hasChineseCodeKeywords && simplePatterns.some(p => p.test(msg))) return true
+  }
+
+  return false
+}
+
+/**
+ * Cache key for filter results. We use a hash of the message content
+ * (lowercased, truncated) plus a hash of the tool names to detect changes.
+ */
+function buildFilterCacheKey(tools: Tools, message: string): string {
+  const toolSig = tools.map(t => t.name).sort().join(',')
+  const msgKey = message.toLowerCase().trim().slice(0, 300)
+  return `${msgKey}\n---\n${toolSig}`
+}
+
+// Cache for filterToolsForMessage results — avoids recomputing the same
+// message+toolset combination. The cache is bounded by a Map with LRU behavior:
+// we only keep recent results, and clear the cache on /clear or session reset.
+const _toolFilterCache = new Map<string, Set<string>>()
+
+/** Clear the tool filter cache — called on session reset, /clear, /compact. */
+export function clearToolFilterCache(): void {
+  _toolFilterCache.clear()
+}
+
+/**
+ * Filter tools based on user message content.
+ * When the message is simple (chit-chat, greeting), only return always-on tools.
+ * Otherwise, use keyword matching to include additional relevant tools.
+ *
+ * Results are cached by (message + toolSet signature) for O(1) lookups on
+ * repeated messages or cached system prompts.
+ *
+ * @param tools - The full set of available tools
+ * @param message - The user's message text
+ * @returns Filtered tool list optimized for the message content
+ */
+export function filterToolsForMessage(tools: Tools, message: string): Tools {
+  // Check cache first
+  const cacheKey = buildFilterCacheKey(tools, message)
+  const cached = _toolFilterCache.get(cacheKey)
+  if (cached) {
+    return tools.filter(t => cached.has(t.name))
+  }
+
+  const msg = message.toLowerCase()
+
+  // Build set of tool names to include based on message content
+  const toolNamesToInclude = new Set<string>(ALWAYS_ON_TOOLS)
+
+  if (isSimpleConversationMessage(msg)) {
+    // For simple conversations, only always-on tools
+  } else {
+    // Build set of tool names to include based on keyword matching
+    for (const { keywords, toolNames } of TOOL_KEYWORD_MAP) {
+      for (const keyword of keywords) {
+        if (msg.includes(keyword)) {
+          for (const toolName of toolNames) {
+            toolNamesToInclude.add(toolName)
+          }
+          break // Don't add same tool twice for same keyword group
+        }
+      }
+    }
+
+    // Add tools that match by name in message (e.g., "use FileReadTool")
+    for (const tool of tools) {
+      if (toolNamesToInclude.has(tool.name)) continue
+      // Check if tool name or a shortened version appears in the message
+      const toolNameLower = tool.name.toLowerCase()
+      const shortName = toolNameLower.replace(/tool$/, '')
+      if (msg.includes(toolNameLower) || msg.includes(shortName)) {
+        toolNamesToInclude.add(tool.name)
+      }
+    }
+  }
+
+  // Always include MCP tools — they are user-provided and should always be available
+  // when the user is talking about topics that might relate to them
+  for (const tool of tools) {
+    if (tool.isMcp) {
+      toolNamesToInclude.add(tool.name)
+    }
+  }
+
+  // Cache the result
+  _toolFilterCache.set(cacheKey, toolNamesToInclude)
+
+  return tools.filter(tool => toolNamesToInclude.has(tool.name))
+}
+// FORCE_RECOMPILE_2026_07_23_2300

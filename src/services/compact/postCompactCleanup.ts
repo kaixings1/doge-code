@@ -7,6 +7,7 @@ import { clearClassifierApprovals } from '../../utils/classifierApprovals.js'
 import { resetGetMemoryFilesCache } from '../../utils/claudemd.js'
 import { clearSessionMessagesCache } from '../../utils/sessionStorage.js'
 import { clearBetaTracingState } from '../../utils/telemetry/betaSessionTracing.js'
+import { clearToolFilterCache } from '../../utils/toolSearch.js'
 import { resetMicrocompactState } from './microCompact.js'
 
 /**
@@ -60,6 +61,7 @@ export function runPostCompactCleanup(querySource?: QuerySource): void {
     resetGetMemoryFilesCache('compact')
   }
   clearSystemPromptSections()
+  clearToolFilterCache()
   clearClassifierApprovals()
   clearSpeculativeChecks()
   // Intentionally NOT calling resetSentSkillNames(): re-injecting the full
