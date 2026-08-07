@@ -1013,54 +1013,58 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
               visibleOptionCount={20}
               options={allOptions}
               onChange={(value) => {
-                if (typeof value === 'string' && value.startsWith('saved:')) {
-                  const presetName = value.slice(6);
-                  logForDebugging('[OAuthFlow] switching to saved preset: ' + presetName, { level: 'debug' });
-                  const ok = switchActivePreset(presetName);
-                  if (!ok) return;
-                  const config = readCustomApiStorage(presetName);
-                  logForDebugging('[OAuthFlow] loaded config: ' + JSON.stringify(config), { level: 'debug' });
-                  setCustomBaseURL(config.baseURL ?? '');
-                  setCustomApiKey(config.apiKey ?? '');
-                  setCustomModel(config.model ?? '');
-                  setCompatibleApiProvider(config.provider || 'openai');
-                  setCurrentPresetName(presetName);
-                  refreshPresets();
-                  setTimeout(() => refreshPresets(), 50);
-                  setOAuthStatus({
-                    state: 'apikey_confirm',
-                    apiKey: config.apiKey || '',
-                    savedApiKeys: config.savedApiKeys || [],
-                  });
-                } else if (typeof value === 'string' && value.startsWith('preset:')) {
-                  const idx = parseInt(value.split(':')[1], 10);
-                  const preset = PRESET_ENDPOINTS[idx];
-                  logForDebugging('[OAuthFlow] selected preset endpoint:', preset.label, preset.baseURL);
-                  if (!preset) return;
-                  setCustomBaseURL(preset.baseURL);
-                  setCustomModel(preset.defaultModel);
-                  setCompatibleApiProvider(preset.provider);
-                  setCurrentPresetName(preset.label);
-                  writeCustomApiStorage(
-                    {
-                      provider: preset.provider,
-                      baseURL: preset.baseURL,
+                try {
+                  if (typeof value === 'string' && value.startsWith('saved:')) {
+                    const presetName = value.slice(6);
+                    logForDebugging('[OAuthFlow] switching to saved preset: ' + presetName, { level: 'debug' });
+                    const ok = switchActivePreset(presetName);
+                    if (!ok) return;
+                    const config = readCustomApiStorage(presetName);
+                    logForDebugging('[OAuthFlow] loaded config: ' + JSON.stringify(config), { level: 'debug' });
+                    setCustomBaseURL(config.baseURL ?? '');
+                    setCustomApiKey(config.apiKey ?? '');
+                    setCustomModel(config.model ?? '');
+                    setCompatibleApiProvider(config.provider || 'openai');
+                    setCurrentPresetName(presetName);
+                    refreshPresets();
+                    setTimeout(() => refreshPresets(), 50);
+                    setOAuthStatus({
+                      state: 'apikey_confirm',
+                      apiKey: config.apiKey || '',
+                      savedApiKeys: config.savedApiKeys || [],
+                    });
+                  } else if (typeof value === 'string' && value.startsWith('preset:')) {
+                    const idx = parseInt(value.split(':')[1], 10);
+                    const preset = PRESET_ENDPOINTS[idx];
+                    logForDebugging('[OAuthFlow] selected preset endpoint:', preset.label, preset.baseURL);
+                    if (!preset) return;
+                    setCustomBaseURL(preset.baseURL);
+                    setCustomModel(preset.defaultModel);
+                    setCompatibleApiProvider(preset.provider);
+                    setCurrentPresetName(preset.label);
+                    writeCustomApiStorage(
+                      {
+                        provider: preset.provider,
+                        baseURL: preset.baseURL,
+                        apiKey: '',
+                        model: preset.defaultModel,
+                        savedModels: [preset.defaultModel],
+                        savedApiKeys: [],
+                      },
+                      preset.label,
+                    );
+                    refreshPresets();
+                    setOAuthStatus({
+                      state: 'apikey_confirm',
                       apiKey: '',
-                      model: preset.defaultModel,
-                      savedModels: [preset.defaultModel],
                       savedApiKeys: [],
-                    },
-                    preset.label,
-                  );
-                  refreshPresets();
-                  setOAuthStatus({
-                    state: 'apikey_confirm',
-                    apiKey: '',
-                    savedApiKeys: [],
-                  });
-                } else {
-                  setCurrentPresetName('');
-                  startCompatibleApiConfig(value as CompatibleApiProvider);
+                    });
+                  } else {
+                    setCurrentPresetName('');
+                    startCompatibleApiConfig(value as CompatibleApiProvider);
+                  }
+                } catch (err) {
+                  logForDebugging('[OAuthFlow] select onChange error: ' + (err instanceof Error ? err.message : String(err)), { level: 'error' });
                 }
               }}
             />

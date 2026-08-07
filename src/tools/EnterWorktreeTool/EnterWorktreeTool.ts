@@ -11,6 +11,7 @@ import { lazySchema } from '../../utils/lazySchema.js'
 import { getPlanSlug, getPlansDirectory } from '../../utils/plans.js'
 import { setCwd } from '../../utils/Shell.js'
 import { saveWorktreeState } from '../../utils/sessionStorage.js'
+import { clearToolFilterCache } from '../../utils/toolSearch.js'
 import {
   createWorktreeForSession,
   getCurrentWorktreeSession,
@@ -97,6 +98,7 @@ export const EnterWorktreeTool: Tool<InputSchema, Output> = buildTool({
     saveWorktreeState(worktreeSession)
     // Clear cached system prompt sections so env_info_simple recomputes with worktree context
     clearSystemPromptSections()
+    clearToolFilterCache()
     // Clear memoized caches that depend on CWD
     clearMemoryFileCaches()
     getPlansDirectory.cache.clear?.()

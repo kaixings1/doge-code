@@ -1195,13 +1195,14 @@ async function* queryModel(
     let lastUserMessage = ''
     for (let i = messages.length - 1; i >= 0; i--) {
       if (messages[i].type === 'user') {
-        const content = messages[i].message?.content
-        lastUserMessage =
-          typeof content === 'string'
-            ? content
-            : Array.isArray(content)
-              ? content.map((b: { type: string; text?: string }) => b.text ?? '').join(' ')
+        const msgContent = (messages[i].message as any)?.content
+        const content =
+          typeof msgContent === 'string'
+            ? msgContent
+            : Array.isArray(msgContent)
+              ? msgContent.map((b: any) => b.text ?? '').join(' ')
               : ''
+        lastUserMessage = content
         break
       }
     }
