@@ -1,7 +1,6 @@
 import axios, { type AxiosError } from 'axios'
 import type { StdoutMessage } from '../../entrypoints/sdk/controlTypes.js'
 import { logForDebugging } from '../../utils/debug.js'
-import { logForDiagnosticsNoPII } from '../../utils/diagLogs.js'
 import { errorMessage } from '../../utils/errors.js'
 import { getSessionIngressAuthHeaders } from '../../utils/sessionIngressAuth.js'
 import { sleep } from '../../utils/sleep.js'
@@ -213,7 +212,6 @@ export class SSETransport implements Transport {
     }
     logForDebugging(`SSETransport: SSE 地址 = ${url.href}`)
     logForDebugging(`SSETransport: POST 地址 = ${this.postUrl}`)
-    logForDiagnosticsNoPII('info', 'cli_sse_transport_initialized')
   }
 
   /**
@@ -232,7 +230,6 @@ export class SSETransport implements Transport {
         `SSETransport: 无法连接，当前状态为 ${this.state}`,
         { level: 'error' },
       )
-      logForDiagnosticsNoPII('error', 'cli_sse_connect_failed')
       return
     }
 
@@ -266,7 +263,6 @@ export class SSETransport implements Transport {
     logForDebugging(`SSETransport: 正在打开 ${sseUrl.href}`)
     logForDebugging(`SSETransport: 连接请求头部: ${jsonStringify(headers)}`)
     logForDebugging(`SSETransport: lastSequenceNum=${this.lastSequenceNum}`)
-    logForDiagnosticsNoPII('info', 'cli_sse_connect_opening')
 
     this.abortController = new AbortController()
 
@@ -302,9 +298,6 @@ export class SSETransport implements Transport {
           `SSETransport: HTTP ${response.status}${isPermanent ? ' (永久)' : ''}`,
           { level: 'error' },
         )
-        logForDiagnosticsNoPII('error', 'cli_sse_connect_http_error', {
-          status: response.status,
-        })
 
         if (isPermanent) {
           this.state = 'closed'
@@ -326,9 +319,6 @@ export class SSETransport implements Transport {
       const connectDuration = Date.now() - connectStartTime
       logForDebugging('SSETransport: 已连接')
       logForDebugging(`SSETransport: 连接耗时 ${connectDuration}ms`)
-      logForDiagnosticsNoPII('info', 'cli_sse_connect_connected', {
-        duration_ms: connectDuration,
-      })
 
       this.state = 'connected'
       this.reconnectAttempts = 0
@@ -348,7 +338,6 @@ export class SSETransport implements Transport {
         `SSETransport: 连接错误: ${errorMessage(error)}`,
         { level: 'error' },
       )
-      logForDiagnosticsNoPII('error', 'cli_sse_connect_error')
       this.handleConnectionError()
     }
   }
@@ -411,7 +400,6 @@ export class SSETransport implements Transport {
                   `SSETransport: 重复帧 seq=${seqNum} (lastSequenceNum=${this.lastSequenceNum}, seenCount=${this.seenSequenceNums.size})`,
                   { level: 'warn' },
                 )
-                logForDiagnosticsNoPII('warn', 'cli_sse_duplicate_sequence')
               } else {
                 this.seenSequenceNums.add(seqNum)
                 // 防止无界增长：一旦有很多条目，修剪
@@ -444,7 +432,6 @@ export class SSETransport implements Transport {
               'SSETransport: Frame has data: but no event: field — dropped',
               { level: 'warn' },
             )
-            logForDiagnosticsNoPII('warn', 'cli_sse_frame_missing_event_field')
           }
         }
       }
@@ -454,7 +441,6 @@ export class SSETransport implements Transport {
         `SSETransport: 流读取错误: ${errorMessage(error)}`,
         { level: 'error' },
       )
-      logForDiagnosticsNoPII('error', 'cli_sse_stream_read_error')
     } finally {
       reader.releaseLock()
     }
@@ -488,9 +474,6 @@ export class SSETransport implements Transport {
         `SSETransport: 意外的 SSE 事件类型 '${eventType}'`,
         { level: 'warn' },
       )
-      logForDiagnosticsNoPII('warn', 'cli_sse_unexpected_event_type', {
-        event_type: eventType,
-      })
       return
     }
 
@@ -519,7 +502,6 @@ export class SSETransport implements Transport {
       logForDebugging(
         `SSE⬇ 解析事件 seq=${ev.sequence_num} event_id=${ev.event_id} event_type=${ev.event_type} source=${ev.source} payload_type=${String(payload.type)}${sessionLabel}\n  payload=${payloadPreview}`,
       )
-      logForDiagnosticsNoPII('info', 'cli_sse_message_received')
       // ====== 调试日志：记录收到的完整 payload JSON ======
       try {
         logForDebugging(
@@ -598,9 +580,6 @@ export class SSETransport implements Transport {
       logForDebugging(
         `SSETransport: Reconnecting in ${Math.round(delay)}ms (attempt ${this.reconnectAttempts}, ${Math.round(elapsed / 1000)}s elapsed)`,
       )
-      logForDiagnosticsNoPII('error', 'cli_sse_reconnect_attempt', {
-        reconnectAttempts: this.reconnectAttempts,
-      })
 
       this.reconnectTimer = setTimeout(() => {
         this.reconnectTimer = null
@@ -611,10 +590,6 @@ export class SSETransport implements Transport {
         `SSETransport: Reconnection time budget exhausted after ${Math.round(elapsed / 1000)}s`,
         { level: 'error' },
       )
-      logForDiagnosticsNoPII('error', 'cli_sse_reconnect_exhausted', {
-        reconnectAttempts: this.reconnectAttempts,
-        elapsedMs: elapsed,
-      })
       this.state = 'closed'
       this.onCloseCallback?.()
     }
@@ -630,7 +605,6 @@ export class SSETransport implements Transport {
     logForDebugging('SSETransport: 活跃性超时，正在重新连接', {
       level: 'error',
     })
-    logForDiagnosticsNoPII('error', 'cli_sse_liveness_timeout')
     this.abortController?.abort()
     this.handleConnectionError()
   }
@@ -659,7 +633,6 @@ export class SSETransport implements Transport {
     const authHeaders = this.getAuthHeaders()
     if (Object.keys(authHeaders).length === 0) {
       logForDebugging('SSETransport: No session token available for POST')
-      logForDiagnosticsNoPII('warn', 'cli_sse_post_no_token')
       return
     }
 
@@ -701,9 +674,6 @@ export class SSETransport implements Transport {
           logForDebugging(
             `SSETransport: POST 返回 ${response.status} (客户端错误)，不重试`,
           )
-          logForDiagnosticsNoPII('warn', 'cli_sse_post_client_error', {
-            status: response.status,
-          })
           return
         }
 
@@ -711,25 +681,17 @@ export class SSETransport implements Transport {
         logForDebugging(
           `SSETransport: POST 返回 ${response.status}，第 ${attempt}/${POST_MAX_RETRIES} 次尝试`,
         )
-        logForDiagnosticsNoPII('warn', 'cli_sse_post_retryable_error', {
-          status: response.status,
-          attempt,
-        })
       } catch (error) {
         const axiosError = error as AxiosError
         logForDebugging(
           `SSETransport: POST 错误: ${axiosError.message}，第 ${attempt}/${POST_MAX_RETRIES} 次尝试`,
         )
-        logForDiagnosticsNoPII('warn', 'cli_sse_post_network_error', {
-          attempt,
-        })
       }
 
       if (attempt === POST_MAX_RETRIES) {
         logForDebugging(
           `SSETransport: POST 在 ${POST_MAX_RETRIES} 次尝试后失败，继续`,
         )
-        logForDiagnosticsNoPII('warn', 'cli_sse_post_retries_exhausted')
         return
       }
 

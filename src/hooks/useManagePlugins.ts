@@ -10,7 +10,6 @@ import { useAppState, useSetAppState } from '../state/AppState.js'
 import type { AgentDefinition } from '../tools/AgentTool/loadAgentsDir.js'
 import { count } from '../utils/array.js'
 import { logForDebugging } from '../utils/debug.js'
-import { logForDiagnosticsNoPII } from '../utils/diagLogs.js'
 import { toError } from '../utils/errors.js'
 import { logError } from '../utils/log.js'
 import { loadPluginAgents } from '../utils/plugins/loadPluginAgents.js'
@@ -280,7 +279,6 @@ export function useManagePlugins({
           enabled_names: ant_enabled_names,
         }),
       })
-      logForDiagnosticsNoPII('info', 'tengu_plugins_loaded', allMetrics)
     })
   }, [initialPluginLoad, enabled])
 

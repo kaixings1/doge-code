@@ -180,13 +180,13 @@ export class LocalBridgeClient {
         break
 
       case 'control_response':
-        this.onPermissionResponse?.(msg)
+        this.onPermissionResponse?.(msg as unknown as Record<string, unknown>)
         break
 
       default:
         // 其他消息转发给入站处理
         if (msg.type.startsWith('pointer-') || msg.type.startsWith('key-') || msg.type === 'clipboard-set') {
-          this.onInboundMessage?.(msg)
+          this.onInboundMessage?.(msg as unknown as Record<string, unknown>)
         }
         break
     }

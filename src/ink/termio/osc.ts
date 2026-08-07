@@ -416,8 +416,15 @@ function osc8Id(url: string): string {
   return (h >>> 0).toString(36)
 }
 
-/** End a hyperlink (OSC 8) */
-export const LINK_END = osc(OSC.HYPERLINK, '', '')
+/** End a hyperlink (OSC 8).
+ * Deferred via queueMicrotask to avoid TS5094 TDZ errors when osc.ts
+ * is part of a cycle involving env.ts (env.terminal is read inside osc()). */
+let _LINK_END: string
+export let LINK_END: string = ''
+queueMicrotask(() => {
+  _LINK_END = osc(OSC.HYPERLINK, '', '')
+  LINK_END = _LINK_END
+})
 
 // iTerm2 OSC 9 subcommands
 

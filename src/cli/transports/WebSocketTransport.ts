@@ -3,13 +3,6 @@ import type WsWebSocket from 'ws'
 import { logEvent } from '../../services/analytics/index.js'
 import { CircularBuffer } from '../../utils/CircularBuffer.js'
 import { logForDebugging } from '../../utils/debug.js'
-import { logForDiagnosticsNoPII } from '../../utils/diagLogs.js'
-import { isEnvTruthy } from '../../utils/envUtils.js'
-import { getWebSocketTLSOptions } from '../../utils/mtls.js'
-import {
-  getWebSocketProxyAgent,
-  getWebSocketProxyUrl,
-} from '../../utils/proxy.js'
 import {
   registerSessionActivityCallback,
   unregisterSessionActivityCallback,
@@ -137,14 +130,12 @@ export class WebSocketTransport implements Transport {
         `WebSocketTransport: 无法连接，当前状态为 ${this.state}`,
         { level: 'error' },
       )
-      logForDiagnosticsNoPII('error', 'cli_websocket_connect_failed')
       return
     }
     this.state = 'reconnecting'
 
     this.connectStartTime = Date.now()
     logForDebugging(`WebSocketTransport: Opening ${this.url.href}`)
-    logForDiagnosticsNoPII('info', 'cli_websocket_connect_opening')
 
     // 从提供的头部开始并添加运行时头部
     const headers = { ...this.headers }
@@ -224,9 +215,6 @@ export class WebSocketTransport implements Transport {
     logForDebugging(
       `WS⬇ 收到数据 length=${message.length}${sessionLabel} preview=${message.slice(0, 500).replace(/\n/g, '↵')}`,
     )
-    logForDiagnosticsNoPII('info', 'cli_websocket_message_received', {
-      length: message.length,
-    })
     // ====== 调试日志：记录收到的原始 WebSocket 消息 ======
     logForDebugging(
       `WebSocketTransport: 收到消息 length=${message.length} data=${message.slice(0, 500)}${message.length > 500 ? '...(truncated)' : ''}`,
@@ -259,7 +247,6 @@ export class WebSocketTransport implements Transport {
     logForDebugging('WebSocketTransport: Error', {
       level: 'error',
     })
-    logForDiagnosticsNoPII('error', 'cli_websocket_connect_error')
     // close 事件在 error 后触发 —— 让它调用 handleConnectionError
   }
 
@@ -270,7 +257,6 @@ export class WebSocketTransport implements Transport {
       `WebSocketTransport: Closed: code=${event.code} reason="${event.reason}" wasClean=${event.wasClean}`,
       isClean ? { level: "debug" } : { level: "error" },
     )
-    logForDiagnosticsNoPII('error', 'cli_websocket_connect_closed')
     this.handleConnectionError(event.code)
   }
 
@@ -309,9 +295,6 @@ export class WebSocketTransport implements Transport {
     logForDebugging(
       `WS⬇ 收到数据 length=${message.length}${sessionLabel} preview=${message.slice(0, 500).replace(/\n/g, '↵')}`,
     )
-    logForDiagnosticsNoPII('info', 'cli_websocket_message_received', {
-      length: message.length,
-    })
     // ====== 调试日志：记录收到的原始 WebSocket 消息 ======
     logForDebugging(
       `WebSocketTransport: 收到消息 length=${message.length} data=${message.slice(0, 500)}${message.length > 500 ? '...(truncated)' : ''}`,
@@ -345,7 +328,6 @@ export class WebSocketTransport implements Transport {
       `WebSocketTransport: Error: ${err.message}\n${err.stack || '(无堆栈)'}`,
       { level: 'error' },
     )
-    logForDiagnosticsNoPII('error', 'cli_websocket_connect_error')
     // close 事件在 error 后触发 —— 让它调用 handleConnectionError
   }
 
@@ -355,7 +337,6 @@ export class WebSocketTransport implements Transport {
       `WebSocketTransport: Closed: ${code}`,
       isClean ? { level: "debug" } : { level: "error" },
     )
-    logForDiagnosticsNoPII('error', 'cli_websocket_connect_closed')
     this.handleConnectionError(code)
   }
 
@@ -368,9 +349,6 @@ export class WebSocketTransport implements Transport {
   private handleOpenEvent(): void {
     const connectDuration = Date.now() - this.connectStartTime
     logForDebugging('WebSocketTransport: Connected')
-    logForDiagnosticsNoPII('info', 'cli_websocket_connect_connected', {
-      duration_ms: connectDuration,
-    })
 
     // 重连成功 —— 在重置前记录尝试次数 + 停机时间。
     // reconnectStartTime 在首次连接时为 null，重新打开时非 null。
@@ -405,7 +383,6 @@ export class WebSocketTransport implements Transport {
       logForDebugging(
         `WebSocketTransport: WS 未连接，跳过发送 (state=${this.state}, ws=${this.ws ? 'exists' : 'null'})`,
       )
-      logForDiagnosticsNoPII('info', 'cli_websocket_send_not_connected')
       return false
     }
 
@@ -432,7 +409,6 @@ export class WebSocketTransport implements Transport {
         `WebSocketTransport: Failed to send: ${error}\n${error instanceof Error ? error.stack || '(无堆栈)' : '(非Error)'}`,
         { level: 'error' },
       )
-      logForDiagnosticsNoPII('error', 'cli_websocket_send_error')
       // 不要在这里将 this.ws 设为 null —— 让 doDisconnect()（通过 handleConnectionError）
       // 处理清理，以便在 WS 释放前移除监听器。
       this.handleConnectionError()
@@ -494,11 +470,6 @@ export class WebSocketTransport implements Transport {
         `, state=${this.state}, reconnectAttempts=${this.reconnectAttempts}, lastActivity=${this.lastActivityTime > 0 ? Date.now() - this.lastActivityTime + 'ms ago' : 'never'}`,
       { level: 'error' },
     )
-    logForDiagnosticsNoPII('info', 'cli_websocket_disconnected', {
-      closeCode: closeCode ?? -1,
-      state: this.state,
-      reconnectAttempts: this.reconnectAttempts,
-    })
     if (this.isBridge) {
       // 每次关闭时触发 —— 包括重连风暴期间的中间关闭
       //（这些永远不会暴露给 onCloseCallback 调用者）。
@@ -538,7 +509,6 @@ export class WebSocketTransport implements Transport {
         logForDebugging(
           'WebSocketTransport: 4003 认证头部已刷新，准备重连',
         )
-        logForDiagnosticsNoPII('info', 'cli_websocket_4003_token_refreshed')
       } else {
         logForDebugging(
           'WebSocketTransport: 4003 刷新后认证头部未变化，不重连',
@@ -558,9 +528,6 @@ export class WebSocketTransport implements Transport {
       logForDebugging(
         `WebSocketTransport: PERMANENT_CLOSE_CODES=${JSON.stringify([...PERMANENT_CLOSE_CODES])}, headersRefreshed=${headersRefreshed}`,
       )
-      logForDiagnosticsNoPII('error', 'cli_websocket_permanent_close', {
-        closeCode,
-      })
       this.state = 'closed'
       this.onCloseCallback?.(closeCode)
       return
@@ -595,9 +562,6 @@ export class WebSocketTransport implements Transport {
       logForDebugging(
         `WebSocketTransport: Detected system sleep (${Math.round((now - this.lastReconnectAttemptTime) / 1000)}s gap), resetting reconnection budget`,
       )
-      logForDiagnosticsNoPII('info', 'cli_websocket_sleep_detected', {
-        gapMs: now - this.lastReconnectAttemptTime,
-      })
       this.reconnectStartTime = now
       this.reconnectAttempts = 0
     }
@@ -645,9 +609,6 @@ export class WebSocketTransport implements Transport {
       logForDebugging(
         `WebSocketTransport: Reconnecting in ${Math.round(delay)}ms (attempt ${this.reconnectAttempts}, ${Math.round(elapsed / 1000)}s elapsed)`,
       )
-      logForDiagnosticsNoPII('error', 'cli_websocket_reconnect_attempt', {
-        reconnectAttempts: this.reconnectAttempts,
-      })
       if (this.isBridge) {
         logEvent('tengu_ws_transport_reconnecting', {
           attempt: this.reconnectAttempts,
@@ -665,10 +626,6 @@ export class WebSocketTransport implements Transport {
         `WebSocketTransport: 重连时间预算耗尽 after ${Math.round(elapsed / 1000)}s for ${this.url.href}, totalAttempts=${this.reconnectAttempts}`,
         { level: 'error' },
       )
-      logForDiagnosticsNoPII('error', 'cli_websocket_reconnect_exhausted', {
-        reconnectAttempts: this.reconnectAttempts,
-        elapsedMs: elapsed,
-      })
       this.state = 'closed'
       logForDebugging(
         `WebSocketTransport: 状态已设置为 closed, 即将调用 onCloseCallback`,
@@ -745,14 +702,6 @@ export class WebSocketTransport implements Transport {
         logForDebugging(
           `WebSocketTransport: 已驱逐 ${startIndex} 条已确认消息，剩余 ${remaining.length} 条`,
         )
-        logForDiagnosticsNoPII(
-          'info',
-          'cli_websocket_evicted_confirmed_messages',
-          {
-            evicted: startIndex,
-            remaining: remaining.length,
-          },
-        )
       } else {
         logForDebugging(
           `WebSocketTransport: 未在缓冲区中找到 lastId=${lastId}，将重播全部消息`,
@@ -767,16 +716,12 @@ export class WebSocketTransport implements Transport {
     const messagesToReplay = messages.slice(startIndex)
     if (messagesToReplay.length === 0) {
       logForDebugging('WebSocketTransport: 无新消息需要重播')
-      logForDiagnosticsNoPII('info', 'cli_websocket_no_messages_to_replay')
       return
     }
 
     logForDebugging(
       `WebSocketTransport: 将重播 ${messagesToReplay.length} 条缓冲消息`,
     )
-    logForDiagnosticsNoPII('info', 'cli_websocket_messages_to_replay', {
-      count: messagesToReplay.length,
-    })
 
     for (let i = 0; i < messagesToReplay.length; i++) {
       const message = messagesToReplay[i]
@@ -916,11 +861,6 @@ export class WebSocketTransport implements Transport {
             `WebSocketTransport: ${Math.round(gap / 1000)}s tick gap detected (${tickCount} ticks) — process was suspended, forcing reconnect`,
             { level: 'error' },
           )
-          logForDiagnosticsNoPII(
-            'info',
-            'cli_websocket_sleep_detected_on_ping',
-            { gapMs: gap, tickCount },
-          )
           this.handleConnectionError()
           return
         }
@@ -930,7 +870,6 @@ export class WebSocketTransport implements Transport {
             `WebSocketTransport: tick #${tickCount} 未收到 pong，连接似乎已死`,
             { level: 'error' },
           )
-          logForDiagnosticsNoPII('error', 'cli_websocket_pong_timeout')
           this.handleConnectionError()
           return
         }
@@ -946,7 +885,6 @@ export class WebSocketTransport implements Transport {
             `WebSocketTransport: Ping 失败: ${error} (tick #${tickCount})`,
             { level: 'error' },
           )
-          logForDiagnosticsNoPII('error', 'cli_websocket_ping_failed')
         }
       } else {
         logForDebugging(
@@ -1000,7 +938,6 @@ export class WebSocketTransport implements Transport {
             `WebSocketTransport: 定期 keep_alive 失败: ${error}`,
             { level: 'error' },
           )
-          logForDiagnosticsNoPII('error', 'cli_websocket_keepalive_failed')
         }
       } else {
         logForDebugging(

@@ -12,7 +12,6 @@
  */
 
 import { registerCleanup } from './cleanupRegistry.js'
-import { logForDiagnosticsNoPII } from './diagLogs.js'
 import { isEnvTruthy } from './envUtils.js'
 
 const SESSION_ACTIVITY_INTERVAL_MS = 30_000
@@ -30,9 +29,6 @@ let cleanupRegistered = false
 function startHeartbeatTimer(): void {
   clearIdleTimer()
   heartbeatTimer = setInterval(() => {
-    logForDiagnosticsNoPII('debug', 'session_keepalive_heartbeat', {
-      refcount,
-    })
     if (isEnvTruthy(process.env.CLAUDE_CODE_REMOTE_SEND_KEEPALIVES)) {
       activityCallback?.()
     }
@@ -45,7 +41,6 @@ function startIdleTimer(): void {
     return
   }
   idleTimer = setTimeout(() => {
-    logForDiagnosticsNoPII('info', 'session_idle_30s')
     idleTimer = null
   }, SESSION_ACTIVITY_INTERVAL_MS)
 }
@@ -101,15 +96,6 @@ export function startSessionActivity(reason: SessionActivityReason): void {
   if (!cleanupRegistered) {
     cleanupRegistered = true
     registerCleanup(async () => {
-      logForDiagnosticsNoPII('info', 'session_activity_at_shutdown', {
-        refcount,
-        active: Object.fromEntries(activeReasons),
-        // Only meaningful while work is in-flight; stale otherwise.
-        oldest_activity_ms:
-          refcount > 0 && oldestActivityStartedAt !== null
-            ? Date.now() - oldestActivityStartedAt
-            : null,
-      })
     })
   }
 }

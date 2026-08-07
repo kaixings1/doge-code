@@ -54,15 +54,6 @@ import {
   getUserClaudeRulesDir,
 } from './config.js'
 import { logForDebugging } from './debug.js'
-import { logForDiagnosticsNoPII } from './diagLogs.js'
-import { getClaudeConfigHomeDir, isEnvTruthy } from './envUtils.js'
-import { getErrnoCode } from './errors.js'
-import { normalizePathForComparison } from './file.js'
-import { cacheKeys, type FileStateCache } from './fileStateCache.js'
-import {
-  parseFrontmatter,
-  splitPathInFrontmatter,
-} from './frontmatterParser.js'
 import { getFsImplementation, safeResolvePath } from './fsOperations.js'
 import { findCanonicalGitRoot, findGitRoot } from './git.js'
 import {
@@ -77,12 +68,10 @@ import { pathInWorkingPath } from './permissions/filesystem.js'
 import { isSettingSourceEnabled } from './settings/constants.js'
 import { getInitialSettings } from './settings/settings.js'
 
- 
 const teamMemPaths = feature('TEAMMEM')
   ? (require('../memdir/teamMemPaths.js') as typeof import('../memdir/teamMemPaths.js'))
   : null
  
-
 let hasLoggedInitialLoad = false
 
 const MEMORY_INSTRUCTION_PROMPT =
@@ -769,7 +758,6 @@ export async function processMdRules({
 export const getMemoryFiles = memoize(
   async (forceIncludeExternal: boolean = false): Promise<MemoryFileInfo[]> => {
     const startTime = Date.now()
-    logForDiagnosticsNoPII('info', 'memory_files_started')
 
     const result: MemoryFileInfo[] = []
     const processedPaths = new Set<string>()
@@ -984,12 +972,6 @@ export const getMemoryFiles = memoize(
       (sum, f) => sum + f.content.length,
       0,
     )
-
-    logForDiagnosticsNoPII('info', 'memory_files_completed', {
-      duration_ms: Date.now() - startTime,
-      file_count: result.length,
-      total_content_length: totalContentLength,
-    })
 
     const typeCounts: Record<string, number> = {}
     for (const f of result) {

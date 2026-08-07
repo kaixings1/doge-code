@@ -30,11 +30,15 @@ export async function detectCurrentRepository(): Promise<string | null> {
  * GitHub host should use this variant.
  */
 export async function detectCurrentRepositoryWithHost(): Promise<ParsedRepository | null> {
+  console.error('[TRACE] detectCurrentRepositoryWithHost: START')
   const cwd = getCwd()
+  console.error(`[TRACE] detectCurrentRepositoryWithHost: cwd=${cwd}`)
 
   if (repositoryWithHostCache.has(cwd)) {
+    console.error('[TRACE] detectCurrentRepositoryWithHost: cache hit')
     return repositoryWithHostCache.get(cwd) ?? null
   }
+  console.error('[TRACE] detectCurrentRepositoryWithHost: cache miss, about to getRemoteUrl')
 
   try {
     const remoteUrl = await getRemoteUrl()

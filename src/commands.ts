@@ -32,6 +32,8 @@ import clear from './commands/clear/index.ts'
 import color from './commands/color/index.ts'
 import commit from './commands/commit.ts'
 import copy from './commands/copy/index.ts'
+import cmd from './commands/cmd/index.ts'
+import glossary from './commands/glossary/index.ts'
 import desktop from './commands/desktop/index.ts'
 import diagnose from './commands/diagnose.ts'
 import commitPushPr from './commands/commit-push-pr.ts'
@@ -47,6 +49,7 @@ import blockMode from './commands/block-mode/index.ts'
 import repoMap from './commands/repo-map/index.tsx'
 import ctx_viz from './commands/ctx_viz/index.tsx'
 import doctor from './commands/doctor/index.ts'
+import mcpConfig from './commands/mcp-config/index.ts'
 import memory from './commands/memory/index.ts'
 import help from './commands/help/index.ts'
 import ide from './commands/ide/index.ts'
@@ -54,6 +57,7 @@ import init from './commands/init.ts'
 import initVerifiers from './commands/init-verifiers.ts'
 import sessionSearch from './commands/session-search.ts'
 import sessionTag from './commands/session-tag.ts'
+import snapshot from './commands/snapshot/index.ts'
 import keybindings from './commands/keybindings/index.ts'
 import login from './commands/login/index.ts'
 import logout from './commands/logout/index.ts'
@@ -447,7 +451,10 @@ const COMMANDS = memoize((): Command[] => [
   compact,
   config,
   copy,
+  cmd,
   desktop,
+  glossary,
+  mcpConfig,
   context,
   contextNonInteractive,
   ctx_viz,
@@ -668,6 +675,7 @@ const COMMANDS = memoize((): Command[] => [
   pair,
   memorySearch,
   sessionSearch,
+  snapshot,
   loopCommand,
   ...loopShortcuts,
   bridgeSessions,
@@ -958,7 +966,10 @@ export const REMOTE_SAFE_COMMANDS: Set<Command> = new Set([
   vim, // 切换 vim 模式
   cost, // 显示会话成本（本地成本跟踪）
   usage, // 显示使用信息
+  cmd, // 搜索和浏览可用命令
   copy, // 复制最后一条消息
+  glossary, // 查看项目术语表
+  mcpConfig, // 管理项目级 MCP 服务器配置
   btw, // 快速备注
   feedback, // 发送反馈
   plan, // 计划模式切换

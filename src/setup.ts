@@ -26,17 +26,6 @@ import { checkAndRestoreTerminalBackup } from './utils/appleTerminalBackup.js'
 import { prefetchApiKeyFromApiKeyHelperIfSafe } from './utils/auth.js'
 import { clearMemoryFileCaches } from './utils/claudemd.js'
 import { getCurrentProjectConfig, getGlobalConfig } from './utils/config.js'
-import { logForDiagnosticsNoPII } from './utils/diagLogs.js'
-import { env } from './utils/env.js'
-import { envDynamic } from './utils/envDynamic.js'
-import { isBareMode, isEnvTruthy } from './utils/envUtils.js'
-import { errorMessage } from './utils/errors.js'
-import { findCanonicalGitRoot, findGitRoot, getIsGit } from './utils/git.js'
-import { initializeFileChangedWatcher } from './utils/hooks/fileChangedWatcher.js'
-import {
-  captureHooksConfigSnapshot,
-  updateHooksConfigSnapshot,
-} from './utils/hooks/hooksConfigSnapshot.js'
 import { hasWorktreeCreateHook } from './utils/hooks.js'
 import { checkAndRestoreITerm2Backup } from './utils/iTermBackup.js'
 import { logError } from './utils/log.js'
@@ -66,7 +55,6 @@ export async function setup(
   messagingSocketPath?: string,
 ): Promise<void> {
   require('fs').writeFileSync('d:/init_debug.log', `setup() ENTER at ${Date.now()}\n`, { flag: 'a' });
-  logForDiagnosticsNoPII('info', 'setup_started')
 
   // Check for Node.js version < 18
   const nodeVersion = process.version.match(/^v(\d+)\./)?.[1]
@@ -166,9 +154,6 @@ export async function setup(
   // IMPORTANT: Must be called AFTER setCwd() so hooks are loaded from the correct directory
   const hooksStart = Date.now()
   captureHooksConfigSnapshot()
-  logForDiagnosticsNoPII('info', 'setup_hooks_captured', {
-    duration_ms: Date.now() - hooksStart,
-  })
 
   // Initialize FileChanged hook watcher — sync, reads hook config snapshot
   initializeFileChangedWatcher(cwd)
@@ -214,7 +199,6 @@ export async function setup(
 
       // If we're inside a worktree, switch to the main repo for worktree creation
       if (mainRepoRoot !== (findGitRoot(getCwd()) ?? getCwd())) {
-        logForDiagnosticsNoPII('info', 'worktree_resolved_to_main_repo')
         process.chdir(mainRepoRoot)
         setCwd(mainRepoRoot)
       }
@@ -287,7 +271,6 @@ export async function setup(
   }
 
   // Background jobs - only critical registrations that must happen before first query
-  logForDiagnosticsNoPII('info', 'setup_background_jobs_starting')
   // Bundled skills/plugins are registered in main.tsx before the parallel
   // getCommands() kick — see comment there. Moved out of setup() because
   // the await points above (startUdsMessaging, ~20ms) meant getCommands()
@@ -303,11 +286,9 @@ export async function setup(
     }
   }
   void lockCurrentVersion() // Lock current version to prevent deletion by other processes
-  logForDiagnosticsNoPII('info', 'setup_background_jobs_launched')
 
   profileCheckpoint('setup_before_prefetch')
   // Pre-fetch promises - only items needed before render
-  logForDiagnosticsNoPII('info', 'setup_prefetch_starting')
   // When CLAUDE_CODE_SYNC_PLUGIN_INSTALL is set, skip all plugin prefetch.
   // The sync install path in print.ts calls refreshPluginState() after
   // installing, which reloads commands, hooks, and agents. Prefetching here

@@ -5,13 +5,6 @@ import type {
 } from '../../entrypoints/sdk/controlTypes.js'
 import { decodeJwtExpiry } from '../../bridge/jwtUtils.js'
 import { logForDebugging } from '../../utils/debug.js'
-import { logForDiagnosticsNoPII } from '../../utils/diagLogs.js'
-import { errorMessage, getErrnoCode } from '../../utils/errors.js'
-import { createAxiosInstance } from '../../utils/proxy.js'
-import {
-  registerSessionActivityCallback,
-  unregisterSessionActivityCallback,
-} from '../../utils/sessionActivity.js'
 import {
   getSessionIngressAuthHeaders,
   getSessionIngressAuthToken,
@@ -503,10 +496,6 @@ export class CCRClient {
     })
 
     logForDebugging(`CCRClient: 已初始化，epoch=${this.workerEpoch}`)
-    logForDiagnosticsNoPII('info', 'cli_worker_lifecycle_initialized', {
-      epoch: this.workerEpoch,
-      duration_ms: Date.now() - startMs,
-    })
 
     // 等待并发的 GET 并在此记录 state_restored，在 PUT 成功后 —
     // 在 getWorkerState() 内部记录存在竞态：如果 GET
@@ -514,10 +503,6 @@ export class CCRClient {
     // init_failed 和 state_restored。
     const { metadata, durationMs } = await restoredPromise
     if (!this.closed) {
-      logForDiagnosticsNoPII('info', 'cli_worker_state_restored', {
-        duration_ms: durationMs,
-        had_state: metadata !== null,
-      })
     }
     return metadata
   }
@@ -604,7 +589,6 @@ export class CCRClient {
             `CCRClient: 会话令牌已过期 (exp=${new Date(exp * 1000).toISOString()}) — 未收到刷新，正在退出`,
             { level: 'error' },
           )
-          logForDiagnosticsNoPII('error', 'cli_worker_token_expired_no_refresh')
           this.onEpochMismatch()
         }
         // 令牌看起来有效但服务器返回 401 — 可能是服务器端
@@ -615,17 +599,11 @@ export class CCRClient {
             `CCRClient: 连续 ${this.consecutiveAuthFailures} 次认证失败（令牌看似有效）— 服务端认证无法恢复，正在退出`,
             { level: 'error' },
           )
-          logForDiagnosticsNoPII('error', 'cli_worker_auth_failures_exhausted')
           this.onEpochMismatch()
         }
       }
       logForDebugging(`CCR⬇ ${label} 返回 ${response.status}`, {
         level: 'warn',
-      })
-      logForDiagnosticsNoPII('warn', 'cli_worker_request_failed', {
-        method,
-        path,
-        status: response.status,
       })
       if (response.status === 429) {
         const raw = response.headers?.['retry-after']
@@ -638,11 +616,6 @@ export class CCRClient {
     } catch (error) {
       logForDebugging(`CCR⬇ ${label} 请求异常: ${errorMessage(error)}`, {
         level: 'warn',
-      })
-      logForDiagnosticsNoPII('warn', 'cli_worker_request_error', {
-        method,
-        path,
-        error_code: getErrnoCode(error),
       })
       return { ok: false }
     }
@@ -677,7 +650,6 @@ export class CCRClient {
     logForDebugging('CCRClient: Epoch 不匹配 (409)，正在关闭', {
       level: 'error',
     })
-    logForDiagnosticsNoPII('error', 'cli_worker_epoch_mismatch')
     this.onEpochMismatch()
   }
 
@@ -967,9 +939,6 @@ export class CCRClient {
     }
 
     logForDebugging('CCRClient: GET 重试已耗尽', { level: 'error' })
-    logForDiagnosticsNoPII('error', 'cli_worker_get_retries_exhausted', {
-      context,
-    })
     return null
   }
 

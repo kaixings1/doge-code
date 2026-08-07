@@ -154,22 +154,32 @@ echo '内容' > 文件路径
 
       outputLines.push(`🤖 [AI] 调用 API (model: ${model})`)
 
-      const response = await fetch(baseURL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model,
-          messages: [
-            { role: 'system', content: '你是一个工程师。请执行真实的 bash 命令来创建文件。' },
-            { role: 'user', content: fullPrompt },
-          ],
-          max_tokens: 4000,
-          stream: false,
-        }),
-      })
+      // 带超时的 fetch — 防止 API 不可达/挂起时循环永久卡死
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 30_000)
+
+      let response: Response
+      try {
+        response = await fetch(baseURL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model,
+            messages: [
+              { role: 'system', content: '你是一个工程师。请执行真实的 bash 命令来创建文件。' },
+              { role: 'user', content: fullPrompt },
+            ],
+            max_tokens: 4000,
+            stream: false,
+          }),
+          signal: controller.signal,
+        })
+      } finally {
+        clearTimeout(timeoutId)
+      }
 
       if (!response.ok) {
         const errorText = await response.text()
@@ -215,11 +225,19 @@ echo '内容' > 文件路径
         outputLines.push(`⚠️  无 bash 命令，进行第二次 AI 转换...`)
         const conversionPrompt = `请将下面的计划转换为可执行的 bash 命令：\n\n---\n\n${aiOutput}\n\n---\n\n要求：只输出 bash 命令，用代码块包裹。\n\n输出格式：\n\`\`\`bash\nmkdir -p 目录\necho '内容' > 文件路径\n\`\`\``
         try {
-          const secondResponse = await fetch(baseURL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-            body: JSON.stringify({ model, messages: [{ role: 'system', content: 'bash 专家' }, { role: 'user', content: conversionPrompt }], max_tokens: 4000, stream: false }),
-          })
+          const controller2 = new AbortController()
+          const timeoutId2 = setTimeout(() => controller2.abort(), 30_000)
+          let secondResponse: Response
+          try {
+            secondResponse = await fetch(baseURL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+              body: JSON.stringify({ model, messages: [{ role: 'system', content: 'bash 专家' }, { role: 'user', content: conversionPrompt }], max_tokens: 4000, stream: false }),
+              signal: controller2.signal,
+            })
+          } finally {
+            clearTimeout(timeoutId2)
+          }
           if (secondResponse.ok) {
             const secondData = await secondResponse.json() as { choices?: Array<{ message?: { content?: string } }> }
             const secondOutput = secondData.choices?.[0]?.message?.content || ''

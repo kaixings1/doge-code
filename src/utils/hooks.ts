@@ -222,13 +222,6 @@ import type {
 } from './settings/types.js'
 import { getHookDisplayText } from './hooks/hooksSettings.js'
 import { logForDebugging } from './debug.js'
-import { logForDiagnosticsNoPII } from './diagLogs.js'
-import { firstLineOf } from './stringUtils.js'
-import {
-  normalizeLegacyToolName,
-  getLegacyToolNames,
-  permissionRuleValueFromString,
-} from './permissions/permissionRuleParser.js'
 import { logError } from './log.js'
 import { createCombinedAbortSignal } from './combinedAbortSignal.js'
 import type { PermissionResult } from './permissions/PermissionResult.js'
@@ -1360,10 +1353,6 @@ async function execCommandHook(
   // stdin 写入、异步检测和进程完成之间的竞态
   try {
     if (shouldEmitDiag) {
-      logForDiagnosticsNoPII('info', 'hook_spawn_started', {
-        hook_event_name: hookEvent,
-        index: hookIndex,
-      })
     }
     await Promise.race([stdinWritePromise, childErrorPromise])
 
@@ -1416,13 +1405,6 @@ async function execCommandHook(
     }
   } finally {
     if (shouldEmitDiag) {
-      logForDiagnosticsNoPII('info', 'hook_spawn_completed', {
-        hook_event_name: hookEvent,
-        index: hookIndex,
-        duration_ms: Date.now() - diagStartMs,
-        exit_code: diagExitCode,
-        aborted: diagAborted,
-      })
     }
     stopProgressInterval()
     // 清理流资源，除非所有权已转移（例如，转给异步钩子注册表）
@@ -1574,7 +1556,6 @@ function getPluginHookCounts(
   }
   return counts
 }
-
 
 /**
  * 从匹配的钩子构建 {hookType: count} 映射。
@@ -5143,6 +5124,3 @@ function getHookDefinitionsForTelemetry(
     return { type: 'unknown' }
   })
 }
-
-
-

@@ -13,21 +13,7 @@ import {
 } from '../services/analytics/index.js'
 import { isInBundledMode } from '../utils/bundledMode.js'
 import { logForDebugging } from '../utils/debug.js'
-import { logForDiagnosticsNoPII } from '../utils/diagLogs.js'
-import { isEnvTruthy, isInProtectedNamespace } from '../utils/envUtils.js'
-import { errorMessage } from '../utils/errors.js'
-import { truncateToWidth } from '../utils/format.js'
-import { logError } from '../utils/log.js'
-import { sleep } from '../utils/sleep.js'
-import { createAgentWorktree, removeAgentWorktree } from '../utils/worktree.js'
-import {
-  BridgeFatalError,
-  createBridgeApiClient,
-  isExpiredErrorType,
-  isSuppressible403,
-  validateBridgeId,
-} from './bridgeApi.js'
-import { formatDuration } from './bridgeStatusUtil.js'
+import { formatDuration, truncatePrompt } from './bridgeStatusUtil.js'
 import { createBridgeLogger } from './bridgeUI.js'
 import { createCapacityWake } from './capacityWake.js'
 import { describeAxiosError } from './debugUtils.js'
@@ -55,6 +41,18 @@ import {
   registerWorker,
   sameSessionId,
 } from './workSecret.js'
+import { errorMessage } from '../utils/errors.js'
+import { logError } from '../utils/log.js'
+import { sleep } from '../utils/sleep.js'
+import { isEnvTruthy, isInProtectedNamespace } from '../utils/envUtils.js'
+import { createAgentWorktree, removeAgentWorktree } from '../utils/worktree.js'
+import {
+  BridgeFatalError,
+  createBridgeApiClient,
+  isExpiredErrorType,
+  isSuppressible403,
+  validateBridgeId,
+} from './bridgeApi.js'
 
 export type BackoffConfig = {
   connInitialMs: number
@@ -315,10 +313,6 @@ export async function runBridgeLoop(
   logForDebugging(
     `[bridge:work] 开始轮询循环 spawnMode=${config.spawnMode} maxSessions=${config.maxSessions} environmentId=${environmentId}`,
   )
-  logForDiagnosticsNoPII('info', 'bridge_loop_started', {
-    max_sessions: config.maxSessions,
-    spawn_mode: config.spawnMode,
-  })
 
   // 对于蚂蚁用户，展示会话调试日志的落脚点，方便他们 tail。
   // sessionRunner.ts 使用相同的基础路径。会话生成后文件即会出现。
@@ -455,10 +449,6 @@ export async function runBridgeLoop(
       logEvent('tengu_bridge_session_done', {
         status:
           status as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
-        duration_ms: durationMs,
-      })
-      logForDiagnosticsNoPII('info', 'bridge_session_done', {
-        status,
         duration_ms: durationMs,
       })
 
@@ -1041,12 +1031,6 @@ export async function runBridgeLoop(
             worktree_create_ms: worktreeCreateMs,
             inProtectedNamespace: isInProtectedNamespace(),
           })
-          logForDiagnosticsNoPII('info', 'bridge_session_started', {
-            spawn_mode: spawnModeAtDecision,
-            in_worktree: sessionWorktrees.has(sessionId),
-            spawn_duration_ms: spawnDurationMs,
-            worktree_create_ms: worktreeCreateMs,
-          })
 
           activeSessions.set(sessionId, handle)
           sessionWorkIds.set(sessionId, work.id)
@@ -1187,11 +1171,6 @@ export async function runBridgeLoop(
           error_type:
             err.errorType as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
         })
-        logForDiagnosticsNoPII(
-          isExpiredErrorType(err.errorType) ? 'info' : 'error',
-          'bridge_fatal_error',
-          { status: err.status, error_type: err.errorType },
-        )
         break
       }
 
@@ -1209,9 +1188,6 @@ export async function runBridgeLoop(
           logForDebugging(
             `[bridge:work] 检测到系统休眠 (间隔 ${Math.round((now - lastPollErrorTime) / 1000)} 秒)，重置错误预算`,
           )
-          logForDiagnosticsNoPII('info', 'bridge_poll_sleep_detected', {
-            gapMs: now - lastPollErrorTime,
-          })
           connErrorStart = null
           connBackoff = 0
           generalErrorStart = null
@@ -1230,10 +1206,6 @@ export async function runBridgeLoop(
           logEvent('tengu_bridge_poll_give_up', {
             error_type:
               'connection' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
-            elapsed_ms: elapsed,
-          })
-          logForDiagnosticsNoPII('error', 'bridge_poll_give_up', {
-            error_type: 'connection',
             elapsed_ms: elapsed,
           })
           fatalExit = true
@@ -1273,9 +1245,6 @@ export async function runBridgeLoop(
           logForDebugging(
             `[bridge:work] 检测到系统休眠 (间隔 ${Math.round((now - lastPollErrorTime) / 1000)} 秒)，重置错误预算`,
           )
-          logForDiagnosticsNoPII('info', 'bridge_poll_sleep_detected', {
-            gapMs: now - lastPollErrorTime,
-          })
           connErrorStart = null
           connBackoff = 0
           generalErrorStart = null
@@ -1294,10 +1263,6 @@ export async function runBridgeLoop(
           logEvent('tengu_bridge_poll_give_up', {
             error_type:
               'general' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
-            elapsed_ms: elapsed,
-          })
-          logForDiagnosticsNoPII('error', 'bridge_poll_give_up', {
-            error_type: 'general',
             elapsed_ms: elapsed,
           })
           fatalExit = true
@@ -1333,10 +1298,6 @@ export async function runBridgeLoop(
 
   const loopDurationMs = Date.now() - loopStartTime
   logEvent('tengu_bridge_shutdown', {
-    active_sessions: activeSessions.size,
-    loop_duration_ms: loopDurationMs,
-  })
-  logForDiagnosticsNoPII('info', 'bridge_shutdown', {
     active_sessions: activeSessions.size,
     loop_duration_ms: loopDurationMs,
   })
@@ -1565,10 +1526,6 @@ async function stopWorkWithRetry(
         } else {
           logger.logError(`停止工作 ${workId} 失败: ${err.message}`)
         }
-        logForDiagnosticsNoPII('error', 'bridge_stop_work_failed', {
-          attempts: attempt,
-          fatal: true,
-        })
         return
       }
       const errMsg = errorMessage(err)
@@ -1582,9 +1539,6 @@ async function stopWorkWithRetry(
         logger.logError(
           `在 ${MAX_ATTEMPTS} 次尝试后停止工作 ${workId} 失败: ${errMsg}`,
         )
-        logForDiagnosticsNoPII('error', 'bridge_stop_work_failed', {
-          attempts: MAX_ATTEMPTS,
-        })
       }
     }
   }
@@ -1866,7 +1820,7 @@ const TITLE_MAX_LEN = 80
 function deriveSessionTitle(text: string): string {
   // 折叠空白字符 —— 换行/制表符会破坏单行状态显示。
   const flat = text.replace(/\s+/g, ' ').trim()
-  return truncateToWidth(flat, TITLE_MAX_LEN)
+  return truncatePrompt(flat, TITLE_MAX_LEN)
 }
 
 /**
@@ -2433,11 +2387,6 @@ export async function bridgeMain(args: string[]): Promise<void> {
     multi_session_gate: multiSessionEnabled,
     pre_create_session: preCreateSession,
     worktree_available: worktreeAvailable,
-  })
-  logForDiagnosticsNoPII('info', 'bridge_started', {
-    max_sessions: config.maxSessions,
-    sandbox: config.sandbox,
-    spawn_mode: config.spawnMode,
   })
 
   const spawner = createSessionSpawner({

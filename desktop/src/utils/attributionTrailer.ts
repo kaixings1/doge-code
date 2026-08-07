@@ -1,4 +1,1 @@
-// Stub: utils/attributionTrailer.ts
-export function buildPRTrailers(_attributionData: any, _attribution: any): string[] {
-  return []
-}
+export { buildPRTrailers } from '../../src/utils/attributionTrailer.js'
