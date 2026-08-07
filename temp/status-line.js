@@ -77,8 +77,7 @@ if (doge_api_json) {
   segments.push("\uD83D\uDCDC " + configName);
 }
 if (session_id) {
-  const sid = session_id.length > 8 ? session_id.slice(0, 8) + "…" : session_id;
-  segments.push("\uD83D\uDD17 " + sid);
+  segments.push("\uD83D\uDD17 " + session_id);
 }
 console.log(segments.join("  "));
 function fmtNum(n) {

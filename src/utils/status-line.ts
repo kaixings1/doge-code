@@ -118,10 +118,9 @@ if (doge_api_json) {
   segments.push('\u{1F4DC} ' + configName);
 }
 
-// 会话 ID（截断显示前8位）
+// 会话 ID（全量显示）
 if (session_id) {
-  const sid = session_id.length > 8 ? session_id.slice(0, 8) + '\u2026' : session_id;
-  segments.push('\u{1F517} ' + sid);
+  segments.push('\u{1F517} ' + session_id);
 }
 
 console.log(segments.join('  '));
