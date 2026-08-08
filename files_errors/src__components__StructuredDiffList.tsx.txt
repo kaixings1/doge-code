@@ -1,1 +1,0 @@
-src/components/StructuredDiffList.tsx(33,25): error TS2322: Type '{ patch: StructuredPatchHunk; dim: boolean; width: number; filePath: string; firstLine: string; fileContent: string; }' is not assignable to type 'IntrinsicAttributes & object'.

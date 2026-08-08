@@ -1,2 +1,0 @@
-src/tools/PowerShellTool/powershellPermissions.ts(442,7): error TS2353: Object literal may only specify known properties, and 'message' does not exist in type 'PermissionAllowDecision<{ [key: string]: unknown; }>'.
-src/tools/PowerShellTool/powershellPermissions.ts(651,7): error TS2353: Object literal may only specify known properties, and 'message' does not exist in type 'PermissionAllowDecision<{ [key: string]: unknown; }>'.

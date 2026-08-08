@@ -1,1 +1,0 @@
-src/cli/transports/SSETransport.ts(163,11): error TS2416: Property 'onData' in type 'SSETransport' is not assignable to the same property in base type 'Transport'.

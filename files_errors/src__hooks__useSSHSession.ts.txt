@@ -1,8 +1,0 @@
-src/hooks/useSSHSession.ts(72,29): error TS2349: This expression is not callable.
-src/hooks/useSSHSession.ts(184,32): error TS2349: This expression is not callable.
-src/hooks/useSSHSession.ts(186,39): error TS2339: Property 'exitCode' does not exist on type 'unknown'.
-src/hooks/useSSHSession.ts(196,80): error TS2339: Property 'signalCode' does not exist on type 'unknown'.
-src/hooks/useSSHSession.ts(211,21): error TS2339: Property 'stop' does not exist on type 'unknown'.
-src/hooks/useSSHSession.ts(221,16): error TS2339: Property 'sendMessage' does not exist on type 'SSHSessionManager'.
-src/hooks/useSSHSession.ts(227,25): error TS2339: Property 'sendInterrupt' does not exist on type 'SSHSessionManager'.
-src/hooks/useSSHSession.ts(232,25): error TS2339: Property 'disconnect' does not exist on type 'SSHSessionManager'.

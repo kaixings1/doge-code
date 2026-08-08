@@ -1,1 +1,0 @@
-src/commands/loop/engine.ts(112,67): error TS2561: Object literal may only specify known properties, but 'maxIterations' does not exist in type '{ type: "iteration_start"; iteration: number; }'. Did you mean to write 'iteration'?

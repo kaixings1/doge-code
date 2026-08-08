@@ -1,7 +1,0 @@
-src/components/messages/SystemAPIErrorMessage.tsx(31,21): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
-src/components/messages/SystemAPIErrorMessage.tsx(32,18): error TS2365: Operator '<' cannot be applied to types 'unknown' and 'number'.
-src/components/messages/SystemAPIErrorMessage.tsx(36,7): error TS2365: Operator '>' cannot be applied to types 'unknown' and 'number'.
-src/components/messages/SystemAPIErrorMessage.tsx(38,5): error TS2322: Type 'unknown' is not assignable to type 'number'.
-src/components/messages/SystemAPIErrorMessage.tsx(41,16): error TS2365: Operator '>=' cannot be applied to types 'number' and 'unknown'.
-src/components/messages/SystemAPIErrorMessage.tsx(52,54): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
-src/components/messages/SystemAPIErrorMessage.tsx(53,36): error TS2345: Argument of type 'string' is not assignable to parameter of type 'APIError<number, Headers, Object>'.

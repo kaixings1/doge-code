@@ -1,6 +1,0 @@
-src/services/api/client.ts(42,17): error TS2339: Property 'oauthConfig' does not exist on type 'GlobalConfig'.
-src/services/api/client.ts(123,11): error TS2322: Type '{ logger: { warn: (...args: any[]) => boolean; error: (...args: any[]) => boolean; info: (...args: any[]) => boolean; debug: (...args: any[]) => boolean; }; skipAuth: true; awsRegion: string; fetch: Fetch; ... 4 more ...; fetchOptions: ClientOptions["fetchOptions"]; }' is not assignable to type 'Omit<ClientOptions, "authToken" | "apiKey"> & { apiKey?: string; awsSecretKey?: string; awsAccessKey?: string; awsRegion?: string; awsSessionToken?: string; skipAuth?: boolean; providerChainResolver?: () => Promise<...>; } & SecretOnly'.
-src/services/api/client.ts(153,9): error TS2322: Type 'string' is not assignable to type 'never'.
-src/services/api/client.ts(243,14): error TS2304: Cannot find name 'VertexGoogleAuth'.
-src/services/api/client.ts(402,47): error TS2304: Cannot find name 'randomUUID'.
-src/services/api/client.ts(410,47): error TS2304: Cannot find name 'randomUUID'.

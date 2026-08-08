@@ -1,1 +1,0 @@
-src/commands/bridge-sessions/index.ts(10,15): error TS2322: Type 'Promise<LocalJSXCommandModule | LocalCommandModule | { call: (_onDone: (message?: string) => void, _context: unknown, _args: string) => ReactNode; }>' is not assignable to type 'Promise<LocalJSXCommandModule>'.

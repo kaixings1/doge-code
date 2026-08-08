@@ -1,1 +1,0 @@
-src/commands/focus/index.ts(9,15): error TS2322: Type 'Promise<typeof import("D:/doge-code/src/commands/focus/focus")>' is not assignable to type 'Promise<LocalCommandModule>'.

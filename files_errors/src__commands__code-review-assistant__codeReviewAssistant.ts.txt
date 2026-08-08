@@ -1,3 +1,0 @@
-src/commands/code-review-assistant/codeReviewAssistant.ts(175,46): error TS2339: Property 'execute' does not exist on type 'Tools'.
-src/commands/code-review-assistant/codeReviewAssistant.ts(231,21): error TS2339: Property 'filePath' does not exist on type 'object'.
-src/commands/code-review-assistant/codeReviewAssistant.ts(232,21): error TS2339: Property 'content' does not exist on type 'object'.

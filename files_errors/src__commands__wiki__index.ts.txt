@@ -1,4 +1,0 @@
-src/commands/wiki/index.ts(820,73): error TS2345: Argument of type '{}' is not assignable to parameter of type 'LocalJSXCommandContext'.
-src/commands/wiki/index.ts(821,55): error TS2345: Argument of type '{}' is not assignable to parameter of type 'LocalJSXCommandContext'.
-src/commands/wiki/index.ts(822,67): error TS2345: Argument of type '{}' is not assignable to parameter of type 'LocalJSXCommandContext'.
-src/commands/wiki/index.ts(1030,66): error TS2339: Property 'call' does not exist on type 'Command'.

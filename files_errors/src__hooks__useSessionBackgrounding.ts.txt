@@ -1,4 +1,0 @@
-src/hooks/useSessionBackgrounding.ts(84,47): error TS2339: Property 'type' does not exist on type 'unknown'.
-src/hooks/useSessionBackgrounding.ts(93,43): error TS2339: Property 'messages' does not exist on type 'unknown'.
-src/hooks/useSessionBackgrounding.ts(99,26): error TS2339: Property 'status' does not exist on type 'unknown'.
-src/hooks/useSessionBackgrounding.ts(101,52): error TS2339: Property 'abortController' does not exist on type 'unknown'.

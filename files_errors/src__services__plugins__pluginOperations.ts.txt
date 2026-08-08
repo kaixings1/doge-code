@@ -1,8 +1,0 @@
-src/services/plugins/pluginOperations.ts(382,20): error TS2339: Property 'reason' does not exist on type 'InstallCoreResult'.
-src/services/plugins/pluginOperations.ts(386,40): error TS2339: Property 'pluginName' does not exist on type 'InstallCoreResult'.
-src/services/plugins/pluginOperations.ts(391,57): error TS2339: Property 'message' does not exist on type 'InstallCoreResult'.
-src/services/plugins/pluginOperations.ts(396,49): error TS2339: Property 'resolution' does not exist on type 'InstallCoreResult'.
-src/services/plugins/pluginOperations.ts(401,38): error TS2339: Property 'pluginName' does not exist on type 'InstallCoreResult'.
-src/services/plugins/pluginOperations.ts(406,38): error TS2339: Property 'pluginName' does not exist on type 'InstallCoreResult'.
-src/services/plugins/pluginOperations.ts(406,72): error TS2339: Property 'blockedDependency' does not exist on type 'InstallCoreResult'.
-src/services/plugins/pluginOperations.ts(413,84): error TS2339: Property 'depNote' does not exist on type 'InstallCoreResult'.

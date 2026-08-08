@@ -1,1 +1,0 @@
-src/commands/torch.ts(6,21): error TS2339: Property 'appState' does not exist on type 'LocalJSXCommandContext'.

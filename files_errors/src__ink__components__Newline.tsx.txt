@@ -1,2 +1,0 @@
-src/ink/components/Newline.tsx(31,10): error TS2339: Property 'ink-text' does not exist on type 'JSX.IntrinsicElements'.
-src/ink/components/Newline.tsx(31,24): error TS2339: Property 'ink-text' does not exist on type 'JSX.IntrinsicElements'.

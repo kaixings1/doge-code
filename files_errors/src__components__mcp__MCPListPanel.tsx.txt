@@ -1,3 +1,0 @@
-src/components/mcp/MCPListPanel.tsx(81,28): error TS2345: Argument of type 'unknown' is not assignable to parameter of type '"user" | "project" | "local" | "managed" | "dynamic" | "enterprise" | "claudeai"'.
-src/components/mcp/MCPListPanel.tsx(83,18): error TS2345: Argument of type 'unknown' is not assignable to parameter of type '"user" | "project" | "local" | "managed" | "dynamic" | "enterprise" | "claudeai"'.
-src/components/mcp/MCPListPanel.tsx(89,40): error TS2339: Property 'localeCompare' does not exist on type 'unknown'.

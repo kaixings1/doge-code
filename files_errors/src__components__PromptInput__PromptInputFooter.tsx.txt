@@ -1,5 +1,0 @@
-src/components/PromptInput/PromptInputFooter.tsx(118,72): error TS2365: Operator '<' cannot be applied to types 'unknown' and 'number'.
-src/components/PromptInput/PromptInputFooter.tsx(183,5): error TS2322: Type 'unknown' is not assignable to type 'boolean'.
-src/components/PromptInput/PromptInputFooter.tsx(184,5): error TS2322: Type 'unknown' is not assignable to type 'boolean'.
-src/components/PromptInput/PromptInputFooter.tsx(185,5): error TS2322: Type 'unknown' is not assignable to type 'boolean'.
-src/components/PromptInput/PromptInputFooter.tsx(189,20): error TS2367: This comparison appears to be unintentional because the types '"远程控制失败" | "远程控制重新连接中" | "远程控制活跃" | "远程控制连接中…"' and '"远程控制正在重新连接"' have no overlap.

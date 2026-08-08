@@ -1,6 +1,0 @@
-src/components/messageActions.tsx(52,10): error TS2678: Type '"collapsed_read_search"' is not comparable to type '"progress" | "user" | "assistant" | "system" | "tool_use_summary" | "attachment" | "hook_result" | "tombstone" | "grouped_tool_use"'.
-src/components/messageActions.tsx(136,7): error TS2322: Type 'unknown' is not assignable to type 'string'.
-src/components/messageActions.tsx(424,26): error TS2339: Property 'map' does not exist on type 'unknown'.
-src/components/messageActions.tsx(425,10): error TS2678: Type '"collapsed_read_search"' is not comparable to type '"progress" | "user" | "assistant" | "system" | "tool_use_summary" | "attachment" | "hook_result" | "tombstone" | "grouped_tool_use"'.
-src/components/messageActions.tsx(426,18): error TS2339: Property 'messages' does not exist on type 'never'.
-src/components/messageActions.tsx(428,29): error TS2322: Type 'unknown' is not assignable to type 'string'.

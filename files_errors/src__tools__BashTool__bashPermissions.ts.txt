@@ -1,2 +1,0 @@
-src/tools/BashTool/bashPermissions.ts(1797,21): error TS2339: Property 'reason' does not exist on type 'SemanticCheckResult'.
-src/tools/BashTool/bashPermissions.ts(1828,46): error TS2339: Property 'error' does not exist on type 'ShellParseResult'.

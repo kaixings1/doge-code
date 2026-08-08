@@ -1,3 +1,0 @@
-src/commands/complete/index.ts(351,14): error TS2322: Type '(args: string) => Promise<{ type: "text"; value: string; } | { type: "json"; value: string; }>' is not assignable to type 'LocalCommandCall'.
-src/commands/complete/index.ts(412,3): error TS2353: Object literal may only specify known properties, and 'arguments' does not exist in type 'CommandBase & LocalCommand'.
-src/commands/complete/index.ts(445,66): error TS2339: Property 'call' does not exist on type 'Command'.

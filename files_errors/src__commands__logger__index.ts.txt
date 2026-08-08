@@ -1,1 +1,0 @@
-src/commands/logger/index.ts(7,15): error TS2322: Type 'Promise<typeof import("D:/doge-code/src/commands/logger/logger")>' is not assignable to type 'Promise<LocalCommandModule>'.

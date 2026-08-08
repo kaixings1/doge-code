@@ -1,2 +1,0 @@
-src/components/WorkflowMultiselectDialog.tsx(20,3): error TS2322: Type 'string' is not assignable to type 'Workflow'.
-src/components/WorkflowMultiselectDialog.tsx(23,3): error TS2322: Type 'string' is not assignable to type 'Workflow'.

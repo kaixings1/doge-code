@@ -1,2 +1,0 @@
-src/utils/plugins/mcpbHandler.ts(2,3): error TS2724: '"@anthropic-ai/mcpb"' has no exported member named 'McpbManifest'. Did you mean 'McpbManifestAny'?
-src/utils/plugins/mcpbHandler.ts(3,3): error TS2305: Module '"@anthropic-ai/mcpb"' has no exported member 'McpbUserConfigurationOption'.

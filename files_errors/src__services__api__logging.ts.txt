@@ -1,4 +1,0 @@
-src/services/api/logging.ts(695,5): error TS2740: Type 'NonNullableUsage' is missing the following properties from type 'BetaUsage': cache_creation, inference_geo, iterations, output_tokens_details, and 3 more.
-src/services/api/logging.ts(740,14): error TS2339: Property 'filter' does not exist on type 'AssistantMessageContent'.
-src/services/api/logging.ts(751,16): error TS2339: Property 'filter' does not exist on type 'AssistantMessageContent'.
-src/services/api/logging.ts(759,25): error TS2339: Property 'some' does not exist on type 'AssistantMessageContent'.

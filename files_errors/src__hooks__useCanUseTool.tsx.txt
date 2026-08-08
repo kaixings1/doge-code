@@ -1,6 +1,0 @@
-src/hooks/useCanUseTool.tsx(130,35): error TS2339: Property 'command' does not exist on type 'void | { command?: string; }'.
-src/hooks/useCanUseTool.tsx(137,34): error TS2339: Property 'type' does not exist on type 'unknown'.
-src/hooks/useCanUseTool.tsx(137,66): error TS2339: Property 'result' does not exist on type 'unknown'.
-src/hooks/useCanUseTool.tsx(137,95): error TS2339: Property 'result' does not exist on type 'unknown'.
-src/hooks/useCanUseTool.tsx(139,52): error TS2339: Property 'result' does not exist on type 'unknown'.
-src/hooks/useCanUseTool.tsx(153,72): error TS2339: Property 'result' does not exist on type 'unknown'.

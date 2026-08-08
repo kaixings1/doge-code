@@ -1,1 +1,0 @@
-src/commands/block-mode/index.ts(9,15): error TS2322: Type 'Promise<typeof import("D:/doge-code/src/commands/block-mode/block-mode")>' is not assignable to type 'Promise<LocalCommandModule>'.

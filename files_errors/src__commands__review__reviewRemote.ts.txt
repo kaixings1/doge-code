@@ -1,1 +1,0 @@
-src/commands/review/reviewRemote.ts(139,34): error TS2339: Property 'errors' does not exist on type 'RemoteAgentPreconditionResult'.

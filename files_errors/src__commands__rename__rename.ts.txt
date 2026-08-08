@@ -1,1 +1,0 @@
-src/commands/rename/rename.ts(69,11): error TS2322: Type 'string | void' is not assignable to type 'string'.

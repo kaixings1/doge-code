@@ -1,1 +1,0 @@
-src/commands/terminal/index.ts(109,66): error TS2339: Property 'call' does not exist on type 'Command'.

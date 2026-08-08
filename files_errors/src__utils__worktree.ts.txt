@@ -1,1 +1,0 @@
-src/utils/worktree.ts(1296,64): error TS2339: Property 'baseBranch' does not exist on type 'WorktreeCreateResult'.

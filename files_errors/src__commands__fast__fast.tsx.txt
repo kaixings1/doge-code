@@ -1,4 +1,0 @@
-src/commands/fast/fast.tsx(75,21): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'boolean'.
-src/commands/fast/fast.tsx(77,9): error TS2322: Type 'unknown' is not assignable to type 'number | boolean'.
-src/commands/fast/fast.tsx(81,44): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'boolean'.
-src/commands/fast/fast.tsx(82,58): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.

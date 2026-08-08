@@ -1,1 +1,0 @@
-src/commands/context/context.tsx(23,7): error TS2339: Property 'projectView' does not exist on type 'typeof import("D:/doge-code/src/services/contextCollapse/operations")'.
