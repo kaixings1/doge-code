@@ -48,6 +48,7 @@ import { getCanonicalName } from './utils/model/model.js'
 import { calculateUSDCost } from './utils/modelCost.js'
 import { getCostDatabase } from './utils/cost-database.js'
 export {
+  getTotalCostUSD,
   getTotalCostUSD as getTotalCost,
   getTotalDuration,
   getTotalAPIDuration,

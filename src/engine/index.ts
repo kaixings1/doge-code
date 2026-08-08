@@ -52,6 +52,13 @@ export interface EngineOptions {
 }
 
 /**
+ * 配置热加载边界（吸收自 deer-flow reload_boundary）：
+ * - STARTUP_ONLY: tools / provider / model 需要进程重启
+ * - PER_RUN: maxOutputTokens / autoFixLoop / gitContext 可每次请求重新读取
+ * 实现层通过 getAppConfig() + mtime 缓存实现按需刷新
+ */
+
+/**
  * 引擎级权限请求信息，对齐 OpenCode (Go) 的 PermissionRequest。
  * UI 层通过 grantPermission/denyPermission 响应。
  */

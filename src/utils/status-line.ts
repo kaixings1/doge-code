@@ -124,7 +124,7 @@ if (doge_api_json) {
   segments.push('\u{1F4DC} ' + configName);
 }
 
-// 会话 ID（全量显示）
+// 会话 ID
 if (session_id) {
   segments.push('\u{1F517} ' + session_id);
 }

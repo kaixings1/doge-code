@@ -43,7 +43,6 @@ function generateDependencyGraph(target: string, depth: number, format: string):
   const nodes = new Map<string, DependencyNode>()
   const edges: [string, string][] = []
 
-  // 扫描目标目录或文件
   const files = collectSourceFiles(target)
 
   for (const file of files) {
@@ -68,7 +67,6 @@ function generateDependencyGraph(target: string, depth: number, format: string):
     }
   }
 
-  // 生成图表
   let diagram = ''
   const nodeCount = nodes.size
   const edgeCount = edges.length
@@ -99,103 +97,313 @@ function generateDependencyGraph(target: string, depth: number, format: string):
 
 /**
  * 生成 C4 上下文图
+ *
+ * 基于项目实际目录结构和入口文件分析，动态生成 C4 容器图。
+ * 识别主要入口点、核心服务模块和外部依赖。
  */
 function generateC4Context(projectPath: string, format: string): DiagramResult {
-  const diagram = format === 'mermaid'
-    ? `graph TD
-    subgraph "System Context"
-      USER[用户]
-      CLI[doge-code CLI]
-      API[AI API]
-      FS[文件系统]
-    end
-    USER -->|使用| CLI
-    CLI -->|调用| API
-    CLI -->|读写| FS
-    class CLI primary
-    class USER external
-    class API external
-    class FS external`
-    : 'C4 context diagram (mermaid format only supported)'
+  const entries: string[] = []
+  const deps = new Set<string>()
+  const externalApis = new Set<string>()
+
+  try {
+    if (fs.existsSync(projectPath)) {
+      const scanDirs = ['src', 'lib', 'engine', 'commands', 'services']
+      const foundDirs: string[] = []
+
+      for (const d of scanDirs) {
+        const full = path.join(projectPath, d)
+        if (fs.existsSync(full)) {
+          foundDirs.push(d)
+          try {
+            const files = fs.readdirSync(full).slice(0, 10)
+            for (const f of files) {
+              const fp = path.join(full, f)
+              if (f.endsWith('.ts') || f.endsWith('.tsx')) {
+                try {
+                  const content = fs.readFileSync(fp, 'utf-8')
+                  const imports = extractImports(content)
+                  for (const imp of imports) {
+                    if (imp.startsWith('http')) {
+                      externalApis.add(imp)
+                    } else if (!imp.startsWith('.') && !imp.startsWith('..')) {
+                      deps.add(imp.split('/')[0])
+                    }
+                  }
+                } catch { /* skip */ }
+              }
+            }
+          } catch { /* skip */ }
+        }
+      }
+
+      const entryPaths = [
+        path.join(projectPath, 'src', 'entrypoints'),
+        path.join(projectPath, 'src', 'bootstrap-entry.ts'),
+        path.join(projectPath, 'src', 'index.ts'),
+        path.join(projectPath, 'src', 'main.ts'),
+        path.join(projectPath, 'index.ts'),
+      ]
+      let entryPoint = entryPaths.find(ep => fs.existsSync(ep)) || ''
+
+      for (const d of foundDirs.slice(0, 6)) {
+        entries.push(d)
+      }
+
+      if (format !== 'mermaid') {
+        return {
+          success: true,
+          diagram: 'C4 Context: ' + path.basename(projectPath) + '\n\nContainers: ' + entries.join(', ') + '\nDependencies: ' + Array.from(deps).slice(0, 8).join(', ') + '\nExternal APIs: ' + Array.from(externalApis).slice(0, 5).join(', '),
+          format,
+          nodeCount: entries.length + deps.size + externalApis.size + 1,
+          edgeCount: entries.length + externalApis.size,
+          errors: [],
+        }
+      }
+
+      const containerLabel = path.basename(projectPath).charAt(0).toUpperCase() + path.basename(projectPath).slice(1)
+      const lines: string[] = ['graph TD']
+      lines.push('  C[' + containerLabel + ']')
+      if (entryPoint) {
+        lines.push('  E[' + (entryPoint.split('/').pop() || '') + ']')
+        lines.push('  E --> C')
+      }
+
+      for (const e of entries) {
+        lines.push('  M_' + e.replace(/[^a-zA-Z0-9]/g, '') + '[' + e + ']')
+        lines.push('  C --> M_' + e.replace(/[^a-zA-Z0-9]/g, ''))
+      }
+
+      for (const d of Array.from(deps).slice(0, 8)) {
+        lines.push('  D_' + d.replace(/[^a-zA-Z0-9]/g, '') + '[' + d + ']')
+        lines.push('  C --> D_' + d.replace(/[^a-zA-Z0-9]/g, ''))
+      }
+
+      for (const a of Array.from(externalApis).slice(0, 5)) {
+        const label = a.replace(/https?:\/\//, '').split('/')[0].slice(0, 20)
+        lines.push('  A_' + label.replace(/[^a-zA-Z0-9]/g, '') + '[' + label + ']')
+        lines.push('  C --> A_' + label.replace(/[^a-zA-Z0-9]/g, ''))
+      }
+
+      return {
+        success: true,
+        diagram: lines.join('\n'),
+        format,
+        nodeCount: entries.length + deps.size + externalApis.size + 2,
+        edgeCount: entries.length + externalApis.size + 1,
+        errors: [],
+      }
+    }
+  } catch { /* fallback */ }
 
   return {
     success: true,
-    diagram,
+    diagram: 'graph TD\n  APP[Application]\n  CLI[CLI]\n  CLI --> APP',
     format,
-    nodeCount: 4,
-    edgeCount: 3,
+    nodeCount: 2,
+    edgeCount: 1,
     errors: [],
   }
 }
 
 /**
  * 生成序列图
+ *
+ * 基于目标文件的导入链和函数定义，动态生成时序图。
  */
 function generateSequenceDiagram(target: string, format: string): DiagramResult {
-  const diagram = format === 'mermaid'
-    ? `sequenceDiagram
-    participant U as User
-    participant C as CLI
-    participant A as AI Engine
-    participant T as Tool
-    participant FS as File System
+  const participants = new Map<string, string>()
+  const calls: Array<{ from: string; to: string; label: string }> = []
 
-    U->>C: 输入命令
-    C->>A: 解析意图
-    A->>T: 调度工具
-    T->>FS: 读取/写入文件
-    FS-->>T: 返回数据
-    T-->>A: 工具结果
-    A-->>C: 生成响应
-    C-->>U: 显示结果`
-    : 'Sequence diagram (mermaid format only supported)'
+  try {
+    const targetPath = path.isAbsolute(target) ? target : path.join(process.cwd(), target)
+    const stat = fs.statSync(targetPath)
+
+    if (stat.isFile()) {
+      const content = fs.readFileSync(targetPath, 'utf-8')
+      const imports = extractImports(content)
+      const symbols = extractSymbolsFromFile(content)
+
+      participants.set('User', 'User')
+      participants.set(path.basename(targetPath), 'Target Module')
+
+      for (const imp of imports.slice(0, 8)) {
+        const name = imp.specifier.split('/').pop() || imp.specifier
+        participants.set(name, name)
+        calls.push({ from: 'User', to: name, label: 'imports' })
+      }
+
+      for (const sym of symbols.slice(0, 6)) {
+        participants.set(sym.name, sym.kind + ': ' + sym.name)
+        calls.push({ from: path.basename(targetPath), to: sym.name, label: 'defines' })
+      }
+    } else if (stat.isDirectory()) {
+      const files = collectSourceFiles(targetPath).slice(0, 10)
+      for (const f of files) {
+        try {
+          const content = fs.readFileSync(f, 'utf-8')
+          const imports = extractImports(content)
+          const fname = path.basename(f)
+          participants.set(fname, fname)
+
+          for (const imp of imports.slice(0, 5)) {
+            const name = imp.specifier.split('/').pop() || imp.specifier
+            if (!participants.has(name)) participants.set(name, name)
+            calls.push({ from: fname, to: name, label: 'imports' })
+          }
+        } catch { /* skip */ }
+      }
+    }
+  } catch { /* fallback */ }
+
+  if (format !== 'mermaid') {
+    return {
+      success: true,
+      diagram: 'Sequence diagram for: ' + target + '\n\n' +
+        Array.from(participants.entries()).map(([k, v]) => '  ' + k + ': ' + v).join('\n') + '\n\n' +
+        calls.map(c => '  ' + c.from + ' -> ' + c.to + ': ' + c.label).join('\n'),
+      format,
+      nodeCount: participants.size,
+      edgeCount: calls.length,
+      errors: [],
+    }
+  }
+
+  const seqLines = ['sequenceDiagram']
+  for (const [k] of participants) {
+    seqLines.push('  participant ' + k.slice(0, 15) + ' as ' + k)
+  }
+  for (const c of calls.slice(0, 20)) {
+    seqLines.push('  ' + c.from.slice(0, 15) + '->>' + c.to.slice(0, 15) + ': ' + c.label)
+  }
 
   return {
     success: true,
-    diagram,
+    diagram: seqLines.join('\n'),
     format,
-    nodeCount: 5,
-    edgeCount: 5,
+    nodeCount: participants.size,
+    edgeCount: calls.length,
     errors: [],
   }
 }
 
 /**
  * 生成类图
+ *
+ * 基于目标文件的 AST 分析，动态生成类图。
+ * 提取类、接口、类型定义及其继承/实现关系。
  */
 function generateClassDiagram(target: string, format: string): DiagramResult {
-  const diagram = format === 'mermaid'
-    ? `classDiagram
-    class Command {
-      <<interface>>
-      +type: string
-      +name: string
-      +call(): Promise
+  const classes = new Map<string, { extends?: string; implements: string[]; methods: string[]; props: string[] }>()
+  const interfaces = new Map<string, string[]>()
+
+  try {
+    const targetPath = path.isAbsolute(target) ? target : path.join(process.cwd(), target)
+    const stat = fs.statSync(targetPath)
+
+    const collectFromFile = (fp: string) => {
+      if (!fp.endsWith('.ts') && !fp.endsWith('.tsx') && !fp.endsWith('.js') && !fp.endsWith('.jsx')) return
+
+      const content = fs.readFileSync(fp, 'utf-8')
+      const lines = content.split('\n')
+
+      for (const line of lines) {
+        const classRel = extractClassRelations(line)
+        if (classRel) {
+          classes.set(classRel.className, {
+            extends: classRel.extendsName,
+            implements: classRel.implementsNames,
+            methods: [],
+            props: [],
+          })
+        }
+
+        const sym = extractSymbolFromLine(line)
+        if (sym && sym.kind === 'interface') {
+          interfaces.set(sym.name, [])
+        }
+      }
     }
-    class LocalCommand {
-      +type: 'local'
-      +call(args): string
+
+    if (stat.isFile()) {
+      collectFromFile(targetPath)
+    } else if (stat.isDirectory()) {
+      const files = collectSourceFiles(targetPath).slice(0, 20)
+      for (const f of files) {
+        try { collectFromFile(f) } catch { /* skip */ }
+      }
     }
-    class JSXCommand {
-      +type: 'local-jsx'
-      +load(): ReactNode
+  } catch { /* fallback */ }
+
+  if (classes.size === 0) {
+    return {
+      success: true,
+      diagram: format === 'mermaid'
+        ? 'classDiagram\n    note for Project "No classes found in target"\n    note for Tip "Try targeting a .ts/.tsx file or directory"'
+        : 'No classes found in target.',
+      format,
+      nodeCount: 0,
+      edgeCount: 0,
+      errors: target ? [] : ['No target specified'],
     }
-    class RefactorCommand {
-      +type: 'rename' | 'extract'
-      +target: string
-      +replacement: string
+  }
+
+  if (format !== 'mermaid') {
+    const classDefs = Array.from(classes.entries()).map(([name, data]) => {
+      const parts = ['class ' + name]
+      if (data.extends) parts.push('  extends: ' + data.extends)
+      if (data.implements.length) parts.push('  implements: ' + data.implements.join(', '))
+      return parts.join('\n')
+    }).join('\n\n')
+    return {
+      success: true,
+      diagram: 'Class diagram for: ' + target + '\n\n' + classDefs,
+      format,
+      nodeCount: classes.size,
+      edgeCount: Array.from(classes.values()).filter(c => c.extends || c.implements.length).length,
+      errors: [],
     }
-    Command <|-- LocalCommand
-    Command <|-- JSXCommand
-    LocalCommand <|-- RefactorCommand`
-    : 'Class diagram (mermaid format only supported)'
+  }
+
+  const classLines = ['classDiagram']
+  const addedEdges: string[] = []
+
+  for (const [name, data] of classes) {
+    classLines.push('  class ' + name + ' {')
+    for (const m of data.methods.slice(0, 5)) {
+      classLines.push('    +' + m + '()')
+    }
+    for (const p of data.props.slice(0, 5)) {
+      classLines.push('    ' + p)
+    }
+    classLines.push('  }')
+
+    if (data.extends) {
+      const edge = '  ' + data.extends + ' <|-- ' + name
+      if (!addedEdges.includes(edge)) {
+        addedEdges.push(edge)
+        classLines.push(edge)
+      }
+    }
+    for (const iface of data.implements) {
+      const edge = '  ' + iface + ' <|.. ' + name
+      if (!addedEdges.includes(edge)) {
+        addedEdges.push(edge)
+        classLines.push(edge)
+      }
+    }
+  }
+
+  for (const [name] of interfaces) {
+    classLines.push('  interface ' + name)
+  }
 
   return {
     success: true,
-    diagram,
+    diagram: classLines.join('\n'),
     format,
-    nodeCount: 5,
-    edgeCount: 4,
+    nodeCount: classes.size + interfaces.size,
+    edgeCount: addedEdges.length,
     errors: [],
   }
 }
@@ -213,11 +421,11 @@ function generateMermaidDependency(
   for (const [id, node] of nodes) {
     const shape = node.type === 'module' ? '[' : '{'
     const endShape = node.type === 'module' ? ']' : '}'
-    lines.push(`  ${id}${shape}${node.name}${endShape}`)
+    lines.push('  ' + id + shape + node.name + endShape)
   }
 
   for (const [from, to] of edges) {
-    lines.push(`  ${from} --> ${to}`)
+    lines.push('  ' + from + ' --> ' + to)
   }
 
   return lines.join('\n')
@@ -232,11 +440,11 @@ function generateGraphvizDependency(
   lines.push('  node [shape=box];')
 
   for (const [id, node] of nodes) {
-    lines.push(`  ${id} [label="${node.name}"];`)
+    lines.push('  ' + id + ' [label="' + node.name + '"];')
   }
 
   for (const [from, to] of edges) {
-    lines.push(`  ${from} -> ${to};`)
+    lines.push('  ' + from + ' -> ' + to + ';')
   }
 
   lines.push('}')
@@ -248,7 +456,7 @@ function generateAsciiDependency(
   edges: [string, string][],
   depth: number,
 ): string {
-  const lines: string[] = [`Dependency Graph (${nodes.size} modules, ${edges.length} edges)`]
+  const lines: string[] = ['Dependency Graph (depth=' + depth + ')']
   lines.push('='.repeat(50))
 
   const adjacency = new Map<string, string[]>()
@@ -258,7 +466,6 @@ function generateAsciiDependency(
   }
 
   const visited = new Set<string>()
-  const currentDepth = 0
 
   function printNode(nodeId: string, indent: number, maxDepth: number): void {
     if (indent > maxDepth || visited.has(nodeId)) return
@@ -269,7 +476,7 @@ function generateAsciiDependency(
 
     const prefix = '  '.repeat(indent)
     const marker = adjacency.has(nodeId) ? '├── ' : '└── '
-    lines.push(`${prefix}${marker}${node.name}`)
+    lines.push(prefix + marker + node.name)
 
     const children = adjacency.get(nodeId) || []
     for (const child of children) {
@@ -286,7 +493,7 @@ function generateAsciiDependency(
 }
 
 // ============================================================================
-// File Collection & Parsing
+// Helpers
 // ============================================================================
 
 function collectSourceFiles(target: string): string[] {
@@ -306,10 +513,9 @@ function collectSourceFiles(target: string): string[] {
   if (stat.isDirectory()) {
     const entries = fs.readdirSync(target)
     for (const entry of entries) {
+      if (entry.startsWith('.') || entry === 'node_modules') continue
       const fullPath = path.join(target, entry)
-      if (!entry.startsWith('.') && !entry.startsWith('node_modules')) {
-        files.push(...collectSourceFiles(fullPath))
-      }
+      files.push(...collectSourceFiles(fullPath))
     }
   }
 
@@ -319,22 +525,44 @@ function collectSourceFiles(target: string): string[] {
 function extractImports(content: string): string[] {
   const imports: string[] = []
 
-  // 匹配 import 语句
   const importRegex = /import\s+.*?from\s+['"]([^'"]+)['"]/g
   let match
-
   while ((match = importRegex.exec(content)) !== null) {
     imports.push(match[1])
   }
 
-  // 匹配 require 语句
   const requireRegex = /require\(['"]([^'"]+)['"]\)/g
-
   while ((match = requireRegex.exec(content)) !== null) {
     imports.push(match[1])
   }
 
   return imports
+}
+
+function extractSymbolFromLine(line: string): { kind: string; name: string } | null {
+  const m = line.match(/^(?:export\s+)?(?:default\s+)?(?:async\s+)?(?:abstract\s+)?(function|class|interface|type|enum|const|let|var)\s+(\w+)/)
+  if (!m) return null
+  return { kind: m[1], name: m[2] }
+}
+
+function extractSymbolsFromFile(content: string): Array<{ kind: string; name: string }> {
+  const symbols: Array<{ kind: string; name: string }> = []
+  for (const line of content.split('\n')) {
+    const sym = extractSymbolFromLine(line)
+    if (sym) symbols.push(sym)
+  }
+  return symbols
+}
+
+function extractClassRelations(line: string): { className: string; extendsName?: string; implementsNames: string[] } | null {
+  const m = line.match(/^(?:export\s+)?(?:abstract\s+)?class\s+(\w+)(?:\s+extends\s+([\w.]+))?(?:\s+implements\s+([\w.,\s]+))?/)
+  if (!m) return null
+  const implementsNames = m[3] ? m[3].split(',').map(s => s.trim()).filter(Boolean) : []
+  return {
+    className: m[1],
+    extendsName: m[2] || undefined,
+    implementsNames,
+  }
 }
 
 function getNodeId(filePath: string): string {
@@ -359,7 +587,6 @@ export const call: LocalCommandCall = async (args) => {
         '  /diagram dependency <目标> 生成依赖关系图',
         '  /diagram sequence <目标>   生成序列图',
         '  /diagram class <目标>      生成类图',
-        '  /diagram mermaid <文件>    渲染 Mermaid 图表',
         '',
         '选项:',
         '  --format <类型>  输出格式: mermaid / graphviz / ascii（默认: mermaid）',
@@ -379,7 +606,6 @@ export const call: LocalCommandCall = async (args) => {
   const diagramType = parts[0] || 'dependency'
   const targetPath = parts[1] || process.cwd()
 
-  // 解析选项
   let format: DiagramOptions['format'] = 'mermaid'
   let depth = 2
   let output: string | undefined
@@ -407,10 +633,10 @@ export const call: LocalCommandCall = async (args) => {
       result = generateSequenceDiagram(targetPath, format)
       break
     case 'class':
-      result = generateClassDiagram(target, format)
+      result = generateClassDiagram(targetPath, format)
       break
     case 'dependency':
-      result = generateDependencyGraph(target, depth, format)
+      result = generateDependencyGraph(targetPath, depth, format)
       break
     default:
       result = {
@@ -419,8 +645,17 @@ export const call: LocalCommandCall = async (args) => {
         format,
         nodeCount: 0,
         edgeCount: 0,
-        errors: [`��支持的图表类型: ${diagramType}`],
+        errors: ['Unsupported diagram type: ' + diagramType],
       }
+  }
+
+  if (output && result.success) {
+    try {
+      fs.writeFileSync(output, result.diagram, 'utf-8')
+      result.diagram = result.diagram + '\n\nSaved to: ' + output
+    } catch (err) {
+      result.errors.push('Write failed: ' + (err instanceof Error ? err.message : String(err)))
+    }
   }
 
   if (json) {
@@ -433,74 +668,38 @@ export const call: LocalCommandCall = async (args) => {
   if (!result.success) {
     return {
       type: 'text',
-      value: `❌ 生成失败:\n${result.errors.join('\n')}`,
+      value: 'Failed:\n' + result.errors.join('\n'),
     }
   }
 
-  const outputText = [
-    `📊 ${diagramType} 图`,
-    `格式: ${result.format} | 节点: ${result.nodeCount} | 边: ${result.edgeCount}`,
-    '',
-    result.diagram,
-  ].join('\n')
-
-  if (output) {
-    try {
-      fs.writeFileSync(output, result.diagram, 'utf-8')
-      return {
-        type: 'text',
-        value: `${outputText}\n\n✅ 已保存到: ${output}`,
-      }
-    } catch (error) {
-      return {
-        type: 'text',
-        value: `${outputText}\n\n❌ 保存失败: ${error}`,
-      }
-    }
+  return {
+    type: 'text',
+    value: result.diagram,
   }
-
-  return { type: 'text', value: outputText }
 }
 
-const diagram = {
-  type: 'local' as const,
+const diagramCommand: Command = {
   name: 'diagram',
-  description: '架构图自动生成 - C4/依赖关系/序列/类图（Mermaid/Graphviz/ASCII）',
-  aliases: ['/diagram', '/arch', '/dep-graph'],
-  arguments: [
-    {
-      name: 'type',
-      description: '图表类型: c4 / dependency / sequence / class',
-      required: true,
-    },
-    {
-      name: 'target',
-      description: '目标路径或文件',
-      required: false,
-    },
-    {
-      name: '--format',
-      description: '输出格式: mermaid / graphviz / ascii',
-      required: false,
-    },
-    {
-      name: '--depth',
-      description: '依赖图深度',
-      required: false,
-    },
-    {
-      name: '--output',
-      description: '输出文件路径',
-      required: false,
-    },
-    {
-      name: '--json',
-      description: 'JSON 格式输出',
-      required: false,
-    },
+  description: '架构图自动生成（C4/依赖/序列/类图，Mermaid/Graphviz/ASCII）',
+  usage: 'diagram <type> [target] [--format <format>] [--depth <n>] [--output <file>] [--json]',
+  examples: [
+    { command: 'diagram dependency src/', description: '生成依赖关系图' },
+    { command: 'diagram c4 .', description: '生成 C4 上下文图' },
+    { command: 'diagram sequence src/engine/', description: '生成序列图' },
+    { command: 'diagram class src/commands/', description: '生成类图' },
+    { command: 'diagram dependency . --format graphviz', description: 'Graphviz 格式' },
   ],
+  args: {
+    type: { description: '图表类型: c4 / dependency / sequence / class', required: true },
+    target: { description: '目标文件/目录', required: false },
+    '--format': { description: '输出格式: mermaid / graphviz / ascii', required: false },
+    '--depth': { description: '依赖图深度', required: false },
+    '--output': { description: '输出文件路径', required: false },
+    '--json': { description: 'JSON 格式输出', required: false },
+  },
+  isEnabled: () => true,
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
-} satisfies Command
+  call,
+}
 
-export default diagram
+export default diagramCommand

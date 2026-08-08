@@ -23,6 +23,7 @@ import { Notifications } from './Notifications.js';
 import { PromptInputFooterLeftSide } from './PromptInputFooterLeftSide.js';
 import { PromptInputFooterSuggestions, type SuggestionItem } from './PromptInputFooterSuggestions.js';
 import { PromptInputHelpMenu } from './PromptInputHelpMenu.js';
+import DogeFooterInfo from './DogeFooterInfo.js';
 
 type Props = {
   apiKeyStatus: VerificationStatus;
@@ -147,6 +148,7 @@ function PromptInputFooter({
           {isFullscreen ? null : <Notifications apiKeyStatus={apiKeyStatus} autoUpdaterResult={autoUpdaterResult} debug={debug} isAutoUpdating={isAutoUpdating} verbose={verbose} messages={messages} onAutoUpdaterResult={onAutoUpdaterResult} onChangeIsUpdating={onChangeIsUpdating} ideSelection={ideSelection} mcpClients={mcpClients} isInputWrapped={isInputWrapped} isNarrow={isNarrow} />}
           {false && isUndercover() && <Text dimColor>隐身模式</Text>}
           <BridgeStatusIndicator bridgeSelected={bridgeSelected} />
+          <DogeFooterInfo />
         </Box>
       </Box>
       {false && <CoordinatorTaskPanel />}

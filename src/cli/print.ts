@@ -3972,7 +3972,7 @@ function runHeadlessStreaming(
         )
 
         // 同时检查历史重复（来自文件）和运行时重复（此会话）
-        if (existsInSession || receivedMessageUuids.has(message.uuid)) {
+        if (existsInSession || receivedMessageUuids.has(message.uuid as UUID)) {
           logForDebugging(`跳过重复的用户消息: ${message.uuid}`)
           // 如果启用了重放模式，为重复消息发送确认
           if (options.replayUserMessages) {
@@ -3999,16 +3999,19 @@ function runHeadlessStreaming(
         }
 
         // 跟踪此 UUID 以防止运行时重复
-        trackReceivedMessageUuid(message.uuid)
+        trackReceivedMessageUuid(message.uuid as UUID)
       }
 
       enqueue({
         mode: 'prompt' as const,
         // file_attachments 通过 protobuf 包罗万象字段从 Web 编辑器传递。
         // 当不存在 'file_attachments' 键时，相同引用不执行任何操作。
-        value: await resolveAndPrepend(message, message.message.content),
-        uuid: message.uuid,
-        priority: message.priority,
+        value: await resolveAndPrepend(
+          message,
+          (message.message as { content?: unknown }).content as PromptValue,
+        ),
+        uuid: message.uuid as UUID,
+        priority: message.priority as QueuedCommand['priority'],
       })
       // 增加提示计数以进行归因跟踪并保存快照
       // 快照持久化 promptCount，使其在压缩后依然存在
@@ -5131,7 +5134,7 @@ export async function handleOrphanedPermissionResponse({
 }): Promise<boolean> {
   if (
     message.response.subtype === 'success' &&
-    typeof message.response.response?.toolUseID === 'string'
+    typeof (message.response.response as PermissionResult)?.toolUseID === 'string'
   ) {
     const permissionResult = message.response.response as PermissionResult
     const { toolUseID } = permissionResult
