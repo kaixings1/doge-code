@@ -52,7 +52,7 @@ export class SummaryStrategy implements CompactStrategy {
   private async generateSummaryWithLLM(messages: InternalMessage[]): Promise<string> {
     if (!this._llmClient) return this.generateSummaryFallback(messages);
 
-    const summarizePrompt = "Provide a detailed but concise summary of our conversation above. Focus on information that would be helpful for continuing the conversation, including what we did, what we're doing, which files we're working on, and what we're going to do next.";
+    const summarizePrompt = "Create a comprehensive summary of this conversation that captures all essential information needed to continue the work seamlessly. Structure your response to preserve technical accuracy and context continuity.\n\nYour summary should include:\n\n1. **Conversation Overview**: Describe the main topic and progression of the discussion.\n2. **Active Development**: Detail what was being implemented, modified, or debugged most recently. Include specific technical approaches.\n3. **Technical Stack**: List all relevant technologies, frameworks, libraries, coding patterns, and architectural decisions discussed.\n4. **File Operations**: Document all files that were created, modified, or referenced, including their purposes and key changes. Include important code snippets and their locations.\n5. **Solutions & Troubleshooting**: Summarize problems encountered and how they were resolved, including any debugging steps or workarounds.\n6. **Outstanding Work**: Clearly identify any incomplete tasks, pending implementations, or next steps that were discussed.\n\nFocus on technical precision and include specific identifiers (file paths, function names, class names, etc.) that would be essential for continuation. Write in third person and maintain an objective, technical tone.";
 
     const contextMsgs: InternalMessage[] = [
       ...messages,
@@ -183,26 +183,26 @@ export class AutoCompactor {
     return result;
   }
 
-  /** 修复压缩后孤立的 tool 消息（CoreCoder _safe_split 模式） */
+  /** 修复压缩后孤立的 tool 消息（吸收自 Continue conversationCompaction + CoreCoder _safe_split） */
   private _repairOrphanedToolMessages(messages: InternalMessage[]): void {
-    // 找到所有 tool_use 块对应的 tool_call_id
-    const toolCallIds = new Set<string>();
+    // 收集当前消息中所有有效的 tool_call_id
+    const validToolCallIds = new Set<string>();
     for (const m of messages) {
       if (m.role === 'assistant' && typeof m.content === 'object') {
         for (const block of m.content as Array<Record<string, unknown>>) {
           if (block.type === 'tool_use' && typeof block.id === 'string') {
-            toolCallIds.add(block.id);
+            validToolCallIds.add(block.id);
           }
         }
       }
     }
-    // 移除没有对应 tool_call 的孤立 tool 消息
-    for (let i = messages.length - 1; i >= 0; i--) {
-      const m = messages[i];
+    // 将 orphaned tool 消息替换为 "Tool cancelled" 占位（Continue 模式）
+    // 而非直接删除——保留消息结构完整性，让模型知道该调用被取消
+    for (const m of messages) {
       if (m.role === 'tool') {
         const tcId = (m as { tool_call_id?: string }).tool_call_id;
-        if (tcId && !toolCallIds.has(tcId)) {
-          messages.splice(i, 1);
+        if (tcId && !validToolCallIds.has(tcId)) {
+          (m as { content: string }).content = 'Tool cancelled';
         }
       }
     }

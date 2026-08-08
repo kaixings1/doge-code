@@ -310,10 +310,12 @@ export class OpenHandsStrategy extends BaseLoopStrategy {
    * OpenHands 风格的验证评估
    *
    * 基于实际执行结果判定，而非阶段状态：
-   * 1. 检查最后一个执行任务的结果
-   * 2. 验证是否创建了文件（output 中的 📁 标记）
-   * 3. 验证成功标准是否满足
-   * 4. 失败则继续迭代（AI 重新执行改进）
+   * 1. 检测连续失败停滞（达到阈值则停止）
+   * 2. 仍有待执行任务（pending/running）→ 继续执行，不判定结果
+   * 3. 所有任务已执行 → 聚合所有已完成任务的输出（而非仅最后一个任务）
+   * 4. 验证是否创建了文件（output 中的 📁 标记）
+   * 5. 验证成功标准是否满足（针对聚合输出）
+   * 6. 失败则继续迭代（AI 重新执行改进）
    */
   evaluate(goal: LoopGoal, subTasks: SubTask[]): { achieved: boolean; reason: string } {
     // 检测连续无进展（多次失败或未创建文件）
@@ -330,26 +332,24 @@ export class OpenHandsStrategy extends BaseLoopStrategy {
       this.verifierState.stagnationCount = 0
     }
 
-    // 取最后一个执行任务
-    const lastTask = subTasks[subTasks.length - 1]
-
-    if (!lastTask) {
+    if (subTasks.length === 0) {
       return { achieved: false, reason: '尚未生成执行任务' }
     }
 
-    if (lastTask.status === 'running' || lastTask.status === 'pending') {
-      return { achieved: false, reason: '任务执行中，等待完成' }
-    }
-
-    if (lastTask.status === 'failed') {
+    // 仍有待执行任务（pending/running）→ 继续执行，暂不判定
+    const completedCount = subTasks.filter(t => t.status === 'completed').length
+    const pendingCount = subTasks.filter(t => t.status === 'pending' || t.status === 'running').length
+    if (pendingCount > 0) {
       return {
         achieved: false,
-        reason: `执行失败：${lastTask.error ?? '未知错误'}。重新执行目标（第 ${subTasks.length} 次尝试）`,
+        reason: `任务执行中，等待完成（已完成 ${completedCount}/${subTasks.length}）`,
       }
     }
 
-    // 任务已完成，检查实际产物
-    const output = lastTask.result || ''
+    // 所有任务已执行完毕 → 聚合所有已完成任务的输出（避免只检查最后一个任务
+    // 而漏掉实现类任务的产出，导致目标已达成却误判未达标而空转）
+    const completedTasks = subTasks.filter(t => t.status === 'completed')
+    const output = completedTasks.map(t => t.result ?? '').join('\n')
 
     // 检查是否创建了文件（输出含明确的文件创建标记，避免误判"未创建文件"）
     const filePatterns = [

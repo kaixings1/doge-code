@@ -91,6 +91,8 @@ export function getCoordinatorUserContext(
         .sort()
         .join(', ')
 
+  // SubagentConfig 三层解析（吸收自 deer-flow）：builtins → custom_agents → per-agent overrides
+  // model: 'inherit' 时子代理复用父模型，由外部实现层处理
   let content = `通过 ${AGENT_TOOL_NAME} 工具派生的 Worker 可以访问以下工具：${workerTools}`
 
   if (mcpClients.length > 0) {

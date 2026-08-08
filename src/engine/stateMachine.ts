@@ -3,6 +3,10 @@
  *
  * 状态：idle → responding → needs_user → should_continue → done/crashed/aborted_by_user
  * 转换规则见 §3.2 / §3.4 转换守卫。
+ *
+ * ThreadState reducer 模式（吸收自 deer-flow）：复杂字段绑定专属 reducer，
+ * 在状态合并时执行语义化操作（去重、clear、上限截断），避免裸对象合并导致的冲突。
+ * 适用于 sandbox / artifacts / delegations / summary_text 等多写字段。
  */
 export type QueryState =
   | "idle"

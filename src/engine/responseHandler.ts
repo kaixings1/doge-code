@@ -22,6 +22,19 @@ export interface ProcessedResponse {
   needsUserInput: boolean;
 }
 
+/** 自适应输出截断配置（吸收自 codegraph 自适应预算） */
+export interface TruncationConfig {
+  /** 最大输出字符数 */
+  maxOutputChars: number;
+  /** 超过限制时的截断提示 */
+  truncationMarker: string;
+}
+
+const DEFAULT_TRUNCATION: TruncationConfig = {
+  maxOutputChars: 20000,
+  truncationMarker: '...[truncated, output budget exceeded]',
+};
+
 export interface APIEvent {
   type: string;
   [k: string]: unknown;
@@ -116,7 +129,7 @@ export class ResponseHandler {
       }
     }
 
-    return {
+    const result: ProcessedResponse = {
       content: fullContent,
       toolCalls,
       stopReason: stopReason ?? "end_turn",
@@ -124,6 +137,11 @@ export class ResponseHandler {
       usage: usage ?? { inputTokens: 0, outputTokens: 0 },
       needsUserInput: this.checkNeedsUserInput(fullContent, toolCalls),
     };
+
+    // 自适应输出截断（吸收自 codegraph 输出预算）
+    result.content = this.truncateContent(result.content) as ProcessedResponse['content'];
+
+    return result;
   }
 
   private aggregateContent(
@@ -141,5 +159,14 @@ export class ResponseHandler {
       return /\b(请问|是否|确认|继续|要吗|吗\?)\b/.test(content);
     }
     return false;
+  }
+
+  /** 自适应输出截断（吸收自 codegraph 输出预算）：超过阈值时保留开头并标记截断 */
+  truncateContent(content: unknown, config?: Partial<TruncationConfig>): unknown {
+    const { maxOutputChars, truncationMarker } = { ...DEFAULT_TRUNCATION, ...config };
+    if (typeof content === 'string' && content.length > maxOutputChars) {
+      return content.slice(0, maxOutputChars) + truncationMarker;
+    }
+    return content;
   }
 }
