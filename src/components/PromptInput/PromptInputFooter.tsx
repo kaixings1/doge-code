@@ -23,7 +23,6 @@ import { Notifications } from './Notifications.js';
 import { PromptInputFooterLeftSide } from './PromptInputFooterLeftSide.js';
 import { PromptInputFooterSuggestions, type SuggestionItem } from './PromptInputFooterSuggestions.js';
 import { PromptInputHelpMenu } from './PromptInputHelpMenu.js';
-import DogeFooterInfo from './DogeFooterInfo.js';
 
 type Props = {
   apiKeyStatus: VerificationStatus;

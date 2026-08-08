@@ -5,6 +5,10 @@ import { isEnvTruthy } from '../../utils/envUtils.js'
 import { CLAUDE_CODE_GUIDE_AGENT } from './built-in/claudeCodeGuideAgent.js'
 import { EXPLORE_AGENT } from './built-in/exploreAgent.js'
 import { GENERAL_PURPOSE_AGENT } from './built-in/generalPurposeAgent.js'
+import { MANUS_AGENT } from './built-in/manusAgent.js'
+import { SWE_AGENT } from './built-in/sweAgent.js'
+import { BROWSER_AGENT } from './built-in/browserAgent.js'
+import { SANDBOX_AGENT } from './built-in/sandboxAgent.js'
 import { PLAN_AGENT } from './built-in/planAgent.js'
 import { STATUSLINE_SETUP_AGENT } from './built-in/statuslineSetup.js'
 import { VERIFICATION_AGENT } from './built-in/verificationAgent.js'
@@ -41,8 +45,12 @@ export function getBuiltInAgents(): AgentDefinition[] {
   }
 
   const agents: AgentDefinition[] = [
+    MANUS_AGENT,
     GENERAL_PURPOSE_AGENT,
     STATUSLINE_SETUP_AGENT,
+    SWE_AGENT,
+    BROWSER_AGENT,
+    SANDBOX_AGENT,
   ]
 
   if (areExplorePlanAgentsEnabled()) {
