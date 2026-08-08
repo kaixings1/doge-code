@@ -74,7 +74,7 @@ class FeishuApiClient {
    */
   async sendCard(receiveId: string, card: FeishuCard): Promise<string> {
     const client = this.ensureClient()
-    const result = await client.im.message.create({
+    const result: any = await client.im.message.create({
       params: { receive_id_type: 'chat_id' },
       data: {
         receive_id: receiveId,
@@ -82,7 +82,7 @@ class FeishuApiClient {
         content: JSON.stringify(card),
       },
     })
-    return (result.data?.message_id as string | undefined) ?? ''
+    return result?.data?.message_id ?? ''
   }
 
   /**
@@ -92,7 +92,7 @@ class FeishuApiClient {
     const client = this.ensureClient()
     await client.im.message.update({
       path: { message_id: messageId },
-      data: { content: JSON.stringify(card) },
+      data: { msg_type: 'interactive', content: JSON.stringify(card) },
     })
   }
 
@@ -116,13 +116,13 @@ class FeishuApiClient {
   async uploadImage(buffer: Buffer): Promise<string | null> {
     const client = this.ensureClient()
     try {
-      const result = await client.im.image.create({
+      const result: any = await client.im.image.create({
         data: {
           image_type: 'message',
           image: buffer,
         },
       })
-      return (result.data?.image_key as string | undefined) ?? null
+      return result?.data?.image_key ?? null
     } catch {
       return null
     }
@@ -134,14 +134,14 @@ class FeishuApiClient {
   async uploadFile(buffer: Buffer, fileName: string, fileType: string): Promise<string | null> {
     const client = this.ensureClient()
     try {
-      const result = await client.im.file.create({
+      const result: any = await client.im.file.create({
         data: {
-          file_type: fileType,
+          file_type: fileType as any,
           file_name: fileName,
           file: buffer,
         },
       })
-      return (result.data?.file_key as string | undefined) ?? null
+      return result?.data?.file_key ?? null
     } catch {
       return null
     }
@@ -154,13 +154,13 @@ class FeishuApiClient {
    */
   async createCardEntity(card: Record<string, unknown>): Promise<string> {
     const client = this.ensureClient()
-    const result = await (client as any).cardkit.v1.card.create({
+    const result: any = await (client as any).cardkit.v1.card.create({
       data: {
         type: 'card_json',
         data: JSON.stringify(card),
       },
     })
-    return (result.data?.card_id as string | undefined) ?? ''
+    return result?.data?.card_id ?? ''
   }
 
   /**
@@ -172,7 +172,7 @@ class FeishuApiClient {
       type: 'card',
       data: { card_id: cardId },
     })
-    const result = await client.im.message.create({
+    const result: any = await client.im.message.create({
       params: { receive_id_type: 'chat_id' },
       data: {
         receive_id: chatId,
@@ -180,7 +180,7 @@ class FeishuApiClient {
         content,
       },
     })
-    return (result.data?.message_id as string | undefined) ?? ''
+    return result?.data?.message_id ?? ''
   }
 
   /**
