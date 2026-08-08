@@ -31,6 +31,55 @@ bun test src/__tests__/e2e
 
 运行单个测试：`bun test <test-file-name>.test.ts`
 
+## Windows / MSYS2 环境配置
+
+本项目使用 MSYS2 bash（Git Bash）作为 Shell，且自定义了 `find` / `grep` / `rg` 命令包装器（`.tools/` 目录）。
+
+### 首次 clone 后必须执行的步骤
+
+**1. 将 `.tools` 加入系统 PATH**
+
+确保 `D:\doge-code\.tools\` 在 PATH 中排在 `C:\Windows\System32` 之前，否则 `find` / `grep` 会被系统原生命令覆盖。
+
+**2. 在 `~/.bashrc` 中设置环境变量和 alias**
+
+```bash
+# MSYS2 路径转换保护
+export MSYS_NO_PATHCONV=1
+export MSYS2_ARG_CONV_EXCL=*
+export MSYS2_ENV_CONV_EXCL=/*/
+
+# 使用 cygpath 转换路径，避免 Node.js 把 D:\doge-code 错误解析为 D:\d\doge-code
+_TOOLS_DIR=$(cygpath -w /d/doge-code/.tools)
+alias grep="node \"\$_TOOLS_DIR/search.cjs\""
+alias rg="node \"\$_TOOLS_DIR/search.cjs\""
+alias findstr="node \"\$_TOOLS_DIR/search.cjs\""
+alias find="node \"\$_TOOLS_DIR/find.cjs\""
+```
+
+> `cygpath -w /d/doge-code/.tools` 将 MSYS2 路径 `/d/doge-code/.tools` 正确转换为 Windows 路径 `D:\doge-code\.tools`，避免 MSYS2 的 `/d/` → `D:` 转换被 Node.js 二次处理时出错（`\d` 被当作转义序列，导致 `D:\d\doge-code`）。
+
+**3. 重新加载配置**
+
+```bash
+source ~/.bashrc
+```
+
+### 验证配置
+
+```bash
+find . -maxdepth 2 -name "*.ts" -type f | head -5
+grep -r "TODO" src/ --include="*.ts" -l | head -5
+```
+
+如果输出正常文件列表（而非 `MODULE_NOT_FOUND` 错误），说明配置成功。
+
+### 技术细节
+
+- `.tools/find.cjs` 和 `.tools/grep.cjs` 通过 `spawn('rg', ...)` 委托给 ripgrep
+- `.tools/find.cmd` / `grep.cmd` 是 Windows cmd 包装器，设置 `MSYS_NO_PATHCONV=1` 防止 MSYS2 路径转换
+- 原始 `rg.exe` 位于 `/f/bin/rg`（通过 PATH 查找），不在 `.tools/` 目录中
+
 ## 核心架构结构
 
 ```
