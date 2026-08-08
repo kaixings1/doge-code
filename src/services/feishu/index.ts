@@ -71,7 +71,8 @@ export class FeishuBridge {
     }
 
     if (msg.type === 'user' || msg.type === 'assistant') {
-      const text = typeof msg.message?.content === 'string' ? msg.message.content : ''
+      const msgAny = msg as any
+      const text = typeof msgAny.message?.content === 'string' ? msgAny.message.content : ''
       if (text) {
         const session = this.sessions.get(target.chatId)
         if (session) {
