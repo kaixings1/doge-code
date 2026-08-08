@@ -1,5 +1,5 @@
 ---
-name:  架构师
+name: 无障碍架构师
 description: 无障碍架构师，确保WCAG可访问性标准
 model: sonnet
 tools: ["Read", "Write", "Edit", "Grep", "Glob"]

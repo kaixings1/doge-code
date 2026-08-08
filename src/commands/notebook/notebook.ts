@@ -22,7 +22,7 @@ export function handleCreate(title: string, content?: string, tags?: string): No
   const note = createNote(input)
   return {
     success: true,
-    message: '笔记已创建: ' + note.title + ' (' + note.id.slice(0, 8) + '...)',
+    message: '笔记已创建: ' + note.title + ' (' + note.id + ')',
     data: note,
   }
 }
@@ -147,7 +147,7 @@ export function formatPaginated(paginated: PaginatedResult<Note>): string {
     const ds = (d.getMonth() + 1) + '/' + d.getDate()
     const tags = note.tags.length > 0 ? ' [' + note.tags.join(', ') + ']' : ''
     const pin = note.isPinned ? '📌 ' : ''
-    lines.push('  ' + pin + note.title + ' (' + ds + ')' + tags + ' ID:' + note.id.slice(0, 8))
+    lines.push('  ' + pin + note.title + ' (' + ds + ')' + tags + ' ID:' + note.id)
   }
   lines.push('')
   lines.push('第 ' + paginated.page + '/' + paginated.totalPages + ' 页 (共 ' + paginated.total + ' 条)')

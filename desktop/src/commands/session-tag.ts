@@ -121,7 +121,7 @@ async function resolveSessionTitle(c: Candidate): Promise<SessionDisplayInfo> {
     if (info) {
       return {
         sessionId: c.sessionId,
-        title: info.customTitle || info.summary || info.firstPrompt || c.sessionId.slice(0, 8),
+        title: info.customTitle || info.summary || info.firstPrompt || c.sessionId,
         projectPath: c.projectPath,
         lastModified: c.mtime,
       }
@@ -129,7 +129,7 @@ async function resolveSessionTitle(c: Candidate): Promise<SessionDisplayInfo> {
   }
   return {
     sessionId: c.sessionId,
-    title: c.sessionId.slice(0, 8),
+    title: c.sessionId,
     projectPath: c.projectPath,
     lastModified: c.mtime,
   }
@@ -211,7 +211,7 @@ function formatSessionLine(
   })
   const projectLabel = info.projectPath ? `[${info.projectPath}] ` : ''
   const tagLabel = showTags && tags.length > 0 ? ` 🏷 ${tags.join(', ')}` : ''
-  return `  ${projectLabel}${info.title}\n    ID: ${info.sessionId.slice(0, 8)} | ${date}${tagLabel}`
+  return `  ${projectLabel}${info.title}\n    ID: ${info.sessionId} | ${date}${tagLabel}`
 }
 
 // ---------------------------------------------------------------------------
@@ -285,9 +285,9 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
         if (c) {
           const info = await resolveSessionTitle(c)
           lines.push(`    ${info.title}`)
-          lines.push(`    ID: ${id.slice(0, 8)} | [${info.projectPath ?? 'unknown'}]`)
+          lines.push(`    ID: ${id} | [${info.projectPath ?? 'unknown'}]`)
         } else {
-          lines.push(`    ID: ${id.slice(0, 8)} (会话文件不存在)`)
+          lines.push(`    ID: ${id} (会话文件不存在)`)
         }
       }
       lines.push('')
@@ -321,7 +321,7 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
         const info = await resolveSessionTitle(c)
         lines.push(formatSessionLine(info, store[id]!))
       } else {
-        lines.push(`  ID: ${id.slice(0, 8)} (会话文件不存在)`)
+        lines.push(`  ID: ${id} (会话文件不存在)`)
       }
       lines.push('')
     }
@@ -387,7 +387,7 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
     if (tags.includes(action.tag)) {
       return {
         type: 'text',
-        value: `会话 ${matchedId.slice(0, 8)} 已有标签 "${action.tag}"。`,
+        value: `会话 ${matchedId} 已有标签 "${action.tag}"。`,
       }
     }
     store[matchedId] = [...tags, action.tag]
@@ -395,11 +395,11 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
 
     const c = allCandidates.find(c => c.sessionId === matchedId)
     const info = c ? await resolveSessionTitle(c) : null
-    const title = info?.title ?? matchedId.slice(0, 8)
+    const title = info?.title ?? matchedId
 
     return {
       type: 'text',
-      value: `已为 "${title}" (${matchedId.slice(0, 8)}) 添加标签 "${action.tag}"。\n当前标签: ${store[matchedId]!.join(', ')}`,
+      value: `已为 "${title}" (${matchedId}) 添加标签 "${action.tag}"。\n当前标签: ${store[matchedId]!.join(', ')}`,
     }
   }
 
@@ -408,7 +408,7 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
   if (!tags.includes(action.tag)) {
     return {
       type: 'text',
-      value: `会话 ${matchedId.slice(0, 8)} 没有标签 "${action.tag}"。`,
+      value: `会话 ${matchedId} 没有标签 "${action.tag}"。`,
     }
   }
   const newTags = tags.filter(t => t !== action.tag)
@@ -421,13 +421,13 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
 
   const c = allCandidates.find(c => c.sessionId === matchedId)
   const info = c ? await resolveSessionTitle(c) : null
-  const title = info?.title ?? matchedId.slice(0, 8)
+  const title = info?.title ?? matchedId
 
   return {
     type: 'text',
     value: newTags.length > 0
-      ? `已从 "${title}" (${matchedId.slice(0, 8)}) 移除标签 "${action.tag}"。\n剩余标签: ${newTags.join(', ')}`
-      : `已从 "${title}" (${matchedId.slice(0, 8)}) 移除标签 "${action.tag}"。\n该会话已无标签。`,
+      ? `已从 "${title}" (${matchedId}) 移除标签 "${action.tag}"。\n剩余标签: ${newTags.join(', ')}`
+      : `已从 "${title}" (${matchedId}) 移除标签 "${action.tag}"。\n该会话已无标签。`,
   }
 }
 

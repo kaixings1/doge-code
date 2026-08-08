@@ -1009,7 +1009,7 @@ export const call: LocalCommandCall = async (args) => {
 
     const lines: string[] = [`📋 已保存搜索 (${searches.length} 个):`]
     for (const search of searches) {
-      lines.push(`  [${search.id.slice(0, 8)}] ${search.name} - "${search.query}"`)
+      lines.push(`  [${search.id}] ${search.name} - "${search.query}"`)
     }
     return { type: 'text', value: lines.join('\n') }
   }

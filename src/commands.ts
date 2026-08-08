@@ -49,6 +49,7 @@ import blockMode from './commands/block-mode/index.ts'
 import repoMap from './commands/repo-map/index.tsx'
 import ctx_viz from './commands/ctx_viz/index.tsx'
 import doctor from './commands/doctor/index.ts'
+import dogeConfig from './commands/doge-config/index.ts'
 import mcpConfig from './commands/mcp-config/index.ts'
 import memory from './commands/memory/index.ts'
 import help from './commands/help/index.ts'
@@ -454,6 +455,7 @@ const COMMANDS = memoize((): Command[] => [
   cmd,
   desktop,
   glossary,
+  dogeConfig,
   mcpConfig,
   context,
   contextNonInteractive,
@@ -970,6 +972,7 @@ export const REMOTE_SAFE_COMMANDS: Set<Command> = new Set([
   copy, // 复制最后一条消息
   glossary, // 查看项目术语表
   mcpConfig, // 管理项目级 MCP 服务器配置
+  dogeConfig, // 管理 doge 配置（API 地址、密钥、模型等）
   btw, // 快速备注
   feedback, // 发送反馈
   plan, // 计划模式切换

@@ -54,7 +54,7 @@ function tuc(): ToolUseContext {
   return currentToolUseContext!;
 }
 function formatLockHeld(holder: string): string {
-  return `电脑控制正被另一个 Claude 会话使用 (${holder.slice(0, 8)}…)。请等待该会话完成或在那里运行 /exit。`;
+  return `电脑控制正被另一个 Claude 会话使用 (${holder})。请等待该会话完成或在那里运行 /exit。`;
 }
 export function buildSessionContext(): ComputerUseSessionContext {
   return {

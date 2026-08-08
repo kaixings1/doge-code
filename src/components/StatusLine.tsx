@@ -4,7 +4,7 @@ import { memo, useCallback, useEffect, useRef } from 'react';
 import { logEvent } from '../services/analytics/index.js';
 import { useAppState, useSetAppState } from '../state/AppState.js';
 import type { PermissionMode } from '../utils/permissions/PermissionMode.js';
-import { getIsRemoteMode, getKairosActive, getMainThreadAgentType, getOriginalCwd, getSdkBetas, getSessionId } from '../bootstrap/state.js';
+import { getIsRemoteMode, getKairosActive, getMainThreadAgentType, getOriginalCwd, getSdkBetas, getSessionEpoch, getSessionId } from '../bootstrap/state.js';
 import { DEFAULT_OUTPUT_STYLE_NAME } from '../constants/outputStyles.js';
 import { useNotifications } from '../context/notifications.js';
 import { getTotalAPIDuration, getTotalCost, getTotalDuration, getTotalInputTokens, getTotalLinesAdded, getTotalLinesRemoved, getTotalOutputTokens } from '../cost-tracker.js';
@@ -27,7 +27,8 @@ import { formatDuration } from '../utils/format.js';
 import { getCurrentSessionTitle } from '../utils/sessionStorage.js';
 import { doesMostRecentAssistantMessageExceed200k, getCurrentUsage } from '../utils/tokens.js';
 import { getCurrentWorktreeSession } from '../utils/worktree.js';
-import { readCustomApiStorage } from '../utils/customApiStorage.js'; 
+import { readCustomApiStorage } from '../utils/customApiStorage.js';
+import { formatUpdateMessage, getCachedUpdateInfo } from '../utils/updateChecker.js';
 import { isVimModeEnabled } from './PromptInput/utils.js';
 
 // DOGE: 全局会话开始时间（可在 /clear 时重置）
@@ -161,6 +162,10 @@ function buildStatusLineCommandInput(permissionMode: PermissionMode, exceeds200k
     doge_api_json: process.env.DOGE_API_JSON || '',
     // DOGE: 会话 ID
     session_id: sessionId,
+    // DOGE: Epoch 计数（压缩轮次）
+    epoch: getSessionEpoch(),
+    // DOGE: 更新通知
+    update_notification: formatUpdateMessage(getCachedUpdateInfo()),
   };
 }
 type Props = {

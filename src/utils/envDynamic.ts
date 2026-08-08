@@ -64,41 +64,33 @@ let jetBrainsIDECache: string | null | undefined
 async function detectJetBrainsIDEFromParentProcessAsync(): Promise<
   string | null
 > {
-  console.error('[TRACE] detectJetBrainsIDE: ENTRY, platform=' + process.platform)
-  const cacheVal = jetBrainsIDECache
-  if (cacheVal !== undefined) {
-    console.error('[TRACE] detectJetBrainsIDE: cache hit=' + String(cacheVal))
-    return cacheVal
+  if (jetBrainsIDECache !== undefined) {
+    return jetBrainsIDECache
   }
 
   if (process.platform === 'darwin') {
-    console.error('[TRACE] detectJetBrainsIDE: macOS, returning null')
     jetBrainsIDECache = null
     return null // macOS uses bundle ID detection which is already handled
   }
 
   try {
-    console.error('[TRACE] detectJetBrainsIDE: about to call getAncestorCommandsAsync(pid=' + process.pid + ')')
     // Get ancestor commands in a single call (avoids sync bash in loop)
     const commands = await getAncestorCommandsAsync(process.pid, 10)
-    console.error('[TRACE] detectJetBrainsIDE: getAncestorCommandsAsync returned ' + commands.length + ' commands')
 
     for (const command of commands) {
       const lowerCommand = command.toLowerCase()
       // Check for specific JetBrains IDEs in the command line
       for (const ide of JETBRAINS_IDES) {
         if (lowerCommand.includes(ide)) {
-          console.error('[TRACE] detectJetBrainsIDE: found IDE=' + ide)
           jetBrainsIDECache = ide
           return ide
         }
       }
     }
-  } catch (err) {
-    console.error('[TRACE] detectJetBrainsIDE: CATCH ' + (err instanceof Error ? err.message : String(err)))
+  } catch {
+    // Silently fail - this is a best-effort detection
   }
 
-  console.error('[TRACE] detectJetBrainsIDE: no IDE found, returning null')
   jetBrainsIDECache = null
   return null
 }
@@ -142,17 +134,19 @@ export function getTerminalWithJetBrainsDetection(): string | null {
  * After this resolves, getTerminalWithJetBrainsDetection() will return accurate results.
  */
 export async function initJetBrainsDetection(): Promise<void> {
-  require('fs').writeFileSync('d:/trace_jb_entry.txt', 'ENTRY at ' + Date.now() + '\n')
-  console.error('[TRACE] initJetBrainsDetection: ENTRY, TERMINAL_EMULATOR=' + (process.env.TERMINAL_EMULATOR ?? '(not set)'))
   if (process.env.TERMINAL_EMULATOR === 'JetBrains-JediTerm') {
-    require('fs').writeFileSync('d:/trace_jb_before_await.txt', 'BEFORE_AWAIT at ' + Date.now() + '\n')
-    console.error('[TRACE] initJetBrainsDetection: JetBrains-JediTerm detected, calling detectJetBrainsIDEFromParentProcessAsync')
-    await detectJetBrainsIDEFromParentProcessAsync()
-    require('fs').writeFileSync('d:/trace_jb_after_await.txt', 'AFTER_AWAIT at ' + Date.now() + '\n')
-    console.error('[TRACE] initJetBrainsDetection: detectJetBrainsIDEFromParentProcessAsync RETURNED')
+    // Use a timeout to prevent the parent process detection from hanging
+    // the event loop if the PowerShell subprocess stalls (e.g. WMI issues).
+    const timeoutMs = 5000
+    try {
+      await Promise.race([
+        detectJetBrainsIDEFromParentProcessAsync(),
+        new Promise<null>(resolve => setTimeout(() => resolve(null), timeoutMs)),
+      ])
+    } catch {
+      // Silently fail - this is a best-effort detection
+    }
   }
-  require('fs').writeFileSync('d:/trace_jb_returning.txt', 'RETURNING at ' + Date.now() + '\n')
-  console.error('[TRACE] initJetBrainsDetection: RETURNING')
 }
 
 // envDynamic exports env properties plus dynamic overrides.

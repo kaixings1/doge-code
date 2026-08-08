@@ -21,6 +21,8 @@ interface InputData {
   duration?: { total_str?: string };
   doge_api_json?: string;
   session_id?: string;
+  epoch?: number;
+  update_notification?: string;
 }
 
 const rawInput = readFileSync(0, 'utf-8');
@@ -29,7 +31,7 @@ try {
 } catch {}
 
 const input: InputData = JSON.parse(rawInput);
-const { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration, doge_api_json, session_id } = input;
+const { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration, doge_api_json, session_id, epoch, update_notification } = input;
 
 const segments: string[] = [];
 
@@ -121,6 +123,16 @@ if (doge_api_json) {
 // 会话 ID（全量显示）
 if (session_id) {
   segments.push('\u{1F517} ' + session_id);
+}
+
+// Epoch（压缩轮次计数）
+if (typeof epoch === 'number' && epoch > 0) {
+  segments.push('\u{1F504} Epoch ' + epoch);
+}
+
+// 更新通知
+if (update_notification) {
+  segments.push('\u{1F4E2} ' + update_notification);
 }
 
 console.log(segments.join('  '));

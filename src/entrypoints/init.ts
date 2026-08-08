@@ -24,6 +24,9 @@ import { setupGracefulShutdown } from '../utils/gracefulShutdown.js'
 import { enableConfigs, recordFirstStartTime } from '../utils/config.js'
 import { logForDebugging } from '../utils/debug.js'
 import { detectCurrentRepository } from '../utils/detectRepository.js'
+import { initJetBrainsDetection } from '../utils/envDynamic.js'
+import { isEnvTruthy } from '../utils/envUtils.js'
+import { gracefulShutdownSync } from '../utils/gracefulShutdown.js'
 import { ConfigParseError, errorMessage } from '../utils/errors.js'
 import {
   applyConfigEnvironmentVariables,
@@ -49,94 +52,56 @@ import { initSentry } from '../utils/sentry.js'
 let telemetryInitialized = false
 
 export const init = memoize(async (): Promise<void> => {
-  const initStartTime = Date.now()
-  console.error('[TRACE] init.ts: init() START')
   profileCheckpoint('init_function_start')
-  const log = (msg: string) => {
-    const t = Date.now();
-    require('fs').writeFileSync('d:/init_debug.log', `[${t - initStartTime}ms] ${msg} at ${t}\n`, { flag: 'a' });
-  };
-  //log('init STARTED');
 
   // 验证配置是否有效并启用配置系统
   try {
     const configsStart = Date.now()
     enableConfigs()
-    console.error('[TRACE] init.ts: enableConfigs() DONE')
-    //log('enableConfigs DONE')
     profileCheckpoint('init_configs_enabled')
 
     // 在信任对话框之前仅应用安全的环境变量
     // 完整的环境变量在建立信任后应用
     const envVarsStart = Date.now()
-    //log('applySafeConfigEnvironmentVariables START')
     applySafeConfigEnvironmentVariables()
-    console.error('[TRACE] init.ts: applySafeConfigEnvironmentVariables() DONE')
-    //log('applySafeConfigEnvironmentVariables DONE')
 
     // 尽早将 settings.json 中的 NODE_EXTRA_CA_CERTS 应用到 process.env，
     // 在任何 TLS 连接之前。Bun 在启动时通过 BoringSSL 缓存 TLS 证书存储，
     // 因此这必须在第一次 TLS 握手之前完成。
-    //log('applyExtraCACertsFromConfig START')
     applyExtraCACertsFromConfig()
-    console.error('[TRACE] init.ts: applyExtraCACertsFromConfig() DONE')
-    //log('applyExtraCACertsFromConfig DONE')
 
     // 初始化 Sentry（如果配置了 SENTRY_DSN）— 必须在 proxy/CA 配置之后，
     // 这样 Sentry 的网络请求会使用正确的代理和 CA 证书。
-    //log('initSentry START')
     initSentry()
-    console.error('[TRACE] init.ts: initSentry() DONE')
-    //log('initSentry DONE')
 
-    require('fs').writeFileSync('d:/init_debug.log', `applySafeConfigEnvironmentVariables done at ${Date.now()}\n`, { flag: 'a' });
-    console.error('[TRACE] init.ts: init() after applySafeConfigEnvironmentVariables')
     profileCheckpoint('init_safe_env_vars_applied')
 
     // 确保退出时刷新所有内容
-    //log('setupGracefulShutdown START')
     setupGracefulShutdown()
-    console.error('[TRACE] init.ts: init() after setupGracefulShutdown')
-    //log('setupGracefulShutdown DONE')
     profileCheckpoint('init_after_graceful_shutdown')
 
     // 初始化第一方事件日志记录（没有安全问题，但推迟到启动后以避免
     // 在启动时加载 OpenTelemetry sdk-logs）。growthbook.js 此时已在
     // 模块缓存中（firstPartyEventLogger 导入了它），因此第二次动态导入不会增加加载成本。
-    console.error('[TRACE] init.ts: init() about to Promise.all for analytics')
     void Promise.all([
       import('../services/analytics/firstPartyEventLogger.js'),
       import('../services/analytics/growthbook.js'),
     ]).then(([fp, gb]) => {
       fp.initialize1PEventLogging()
-      // 如果 tengu_1p_event_batch_config 在会话中期更改，则重建日志记录器提供者。
-      // 更改检测（isEqual）在处理程序内部，因此未更改的刷新是无操作的。
       gb.onGrowthBookRefresh(() => {
         void fp.reinitialize1PEventLoggingIfConfigChanged()
       })
     })
-    console.error('[TRACE] init.ts: init() after Promise.all for analytics (fire and forget)')
-    //profileCheckpoint('init_after_1p_event_logging')
 
     // 如果 OAuth 账户信息尚未缓存在配置中，则填充它。这是必需的，因为通过
     // VSCode 扩展登录时 OAuth 账户信息可能不会被填充。
-    console.error('[TRACE] init.ts: init() about to populateOAuthAccountInfoIfNeeded')
     void populateOAuthAccountInfoIfNeeded()
-    console.error('[TRACE] init.ts: init() after populateOAuthAccountInfoIfNeeded')
-    //profileCheckpoint('init_after_oauth_populate')
 
     // 异步初始化 JetBrains IDE 检测（为后续同步访问填充缓存）
-    console.error('[TRACE] init.ts: init() about to initJetBrainsDetection')
-    require('fs').writeFileSync('d:/trace_before_jb.txt', 'BEFORE initJetBrainsDetection at ' + Date.now() + '\n')
     void initJetBrainsDetection()
-    require('fs').writeFileSync('d:/trace_after_jb.txt', 'AFTER initJetBrainsDetection at ' + Date.now() + '\n')
-    console.error('[TRACE] init.ts: init() after initJetBrainsDetection')
-    //profileCheckpoint('init_after_jetbrains_detection')
 
     // 异步检测 GitHub 仓库（为 gitDiff PR 链接填充缓存）
-    console.error('[TRACE] init.ts: init() about to detectCurrentRepository')
     void detectCurrentRepository()
-    console.error('[TRACE] init.ts: init() after detectCurrentRepository')
 
     // 尽早初始化加载 promise，以便其他系统（如插件钩子）
     // 可以等待远程设置加载。该 promise 包含超时，以防止
@@ -147,42 +112,20 @@ export const init = memoize(async (): Promise<void> => {
     if (isPolicyLimitsEligible()) {
       initializePolicyLimitsLoadingPromise()
     }
-    //profileCheckpoint('init_after_remote_settings_check')
 
     // 记录首次启动时间
     recordFirstStartTime()
 
     // 配置全局 mTLS 设置
-    const mtlsStart = Date.now()
-    //log('configureGlobalMTLS START')
     configureGlobalMTLS()
-    console.error('[TRACE] init.ts: init() after configureGlobalMTLS')
-    //log('configureGlobalMTLS DONE')
 
     // 配置全局 HTTP 代理器（proxy 和/或 mTLS）
-    const proxyStart = Date.now()
-    //log('configureGlobalAgents START')
     configureGlobalAgents()
-    console.error('[TRACE] init.ts: init() after configureGlobalAgents')
-    //log('configureGlobalAgents DONE')
-    //logForDebugging('[init] configureGlobalAgents complete')
-    //profileCheckpoint('init_network_configured')
 
-    // 预连接到 Anthropic API — 将 TCP+TLS 握手（约 100-200ms）
-    // 与 API 请求前约 100ms 的操作处理器工作重叠。在 CA 证书 + 代理配置之后，
-    // 以便预热连接使用正确的传输。即发即弃；对于代理/mTLS/unix/云提供商
-    // 会跳过，因为 SDK 的调度器不会重用全局连接池。
-    //log('preconnectAnthropicApi START')
-    console.error('[TRACE] init.ts: init() about to preconnectAnthropicApi')
+    // 预连接到 Anthropic API
     preconnectAnthropicApi()
-    console.error('[TRACE] init.ts: init() after preconnectAnthropicApi')
-    //log('preconnectAnthropicApi DONE')
 
-    // CCR upstreamproxy：启动本地 CONNECT 中继，以便代理子进程
-    // 可以通过凭据注入访问组织配置的上游。受 CLAUDE_CODE_REMOTE + GrowthBook
-    // 门控；任何错误时故障开放。延迟导入，以便非 CCR 启动不承担模块加载成本。
-    // getUpstreamProxyEnv 函数注册到 subprocessEnv.ts 中，以便子进程生成可以
-    // 注入代理变量，而无需静态导入 upstreamproxy 模块。
+    // CCR upstreamproxy
     if (isEnvTruthy(process.env.CLAUDE_CODE_REMOTE)) {
       try {
         const { initUpstreamProxy, getUpstreamProxyEnv } = await import(
@@ -194,22 +137,17 @@ export const init = memoize(async (): Promise<void> => {
         registerUpstreamProxyEnvFn(getUpstreamProxyEnv)
         await initUpstreamProxy()
       } catch (err) {
-        logForDebugging(
-          `[init] upstreamproxy init failed: ${err instanceof Error ? err.message : String(err)}; continuing without proxy`,
-          { level: 'warn' },
-        )
       }
+    } else {
     }
 
     // 如果相关则设置 git-bash
     setShellIfWindows()
 
-    // 注册 LSP 管理器清理（初始化在 main.tsx 中处理 --plugin-dir 后进行）
+    // 注册 LSP 管理器清理
     registerCleanup(shutdownLspServerManager)
 
-    // gh-32730：由子代理（或没有显式 TeamDelete 的主代理）创建的团队
-    // 会永远留在磁盘上。为本会话创建的所有团队注册清理。
-    // 延迟导入：swarm 代码在功能门控后面，大多数会话从不创建团队。
+    // 注册团队清理
     registerCleanup(async () => {
       const { cleanupSessionTeams } = await import(
         '../utils/swarm/teamHelpers.js'
@@ -219,12 +157,11 @@ export const init = memoize(async (): Promise<void> => {
 
     // 如果启用则初始化暂存目录
     if (isScratchpadEnabled()) {
-      const scratchpadStart = Date.now()
       await ensureScratchpadDir()
+    } else {
     }
 
     //profileCheckpoint('init_function_end')
-    //require('fs').writeFileSync('d:/init_debug.log', `init() COMPLETED at ${Date.now()}\n`, { flag: 'a' });
   } catch (error) {
     if (error instanceof ConfigParseError) {
       // 当无法安全渲染时跳过交互式 Ink 对话框。

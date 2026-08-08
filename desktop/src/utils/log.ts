@@ -51,7 +51,7 @@ export function getLogDisplayTitle(
     // For autonomous sessions without other context, show a meaningful label
     (isAutonomousPrompt ? '自主会话' : undefined) ||
     // Fall back to truncated session ID for lite logs with no metadata
-    (log.sessionId ? log.sessionId.slice(0, 8) : '') ||
+    (log.sessionId ? log.sessionId : '') ||
     ''
   // Strip display-unfriendly tags (like <ide_opened_file>) for cleaner titles
   return stripDisplayTags(title).trim()

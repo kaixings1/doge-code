@@ -1,5 +1,6 @@
 import { feature } from 'bun:bundle'
 import type { BetaUsage as Usage } from '@anthropic-ai/sdk/resources/beta/messages/messages.mjs'
+import type { AssistantMessageContent } from '../types/message.js'
 import type {
   ContentBlock,
   ContentBlockParam,
@@ -387,6 +388,7 @@ function baseCreateAssistantMessage({
   isVirtual?: true
   usage?: Usage
 }): AssistantMessage {
+  const typedUsage = usage as any
   return {
     type: 'assistant',
     uuid: randomUUID(),
@@ -399,17 +401,17 @@ function baseCreateAssistantMessage({
       stop_reason: 'stop_sequence',
       stop_sequence: '',
       type: 'message',
-      usage,
+      typedUsage,
       content,
       context_management: null,
     },
     requestId: undefined,
     apiError,
-    error,
+    error: error as any,
     errorDetails,
     isApiErrorMessage,
     isVirtual,
-  }
+  } as AssistantMessage
 }
 
 export function createAssistantMessage({
@@ -456,7 +458,7 @@ export function createAssistantAPIErrorMessage({
     ],
     isApiErrorMessage: true,
     apiError,
-    error,
+    error: error as any,
     errorDetails,
   })
 }
@@ -757,14 +759,12 @@ export function normalizeMessages(messages: Message[]): NormalizedMessage[] {
         const assistantContent = message.message.content as AssistantMessageContent
         const contentBlocks = Array.isArray(assistantContent)
           ? assistantContent
-          : [assistantContent].filter(
-              (c): c is ContentBlock =>
-                typeof c === 'object' && c !== null && 'type' in c,
-            )
+          : [assistantContent].filter((c) =>
+                typeof c === 'object' && c != null && c !== undefined && 'type' in c)
         isNewChain = isNewChain || contentBlocks.length > 1
         return contentBlocks.map((_, index) => {
           const uuid = isNewChain
-            ? deriveUUID(message.uuid, index)
+            ? deriveUUID(message.uuid as UUID, index) as string
             : message.uuid
           return {
             type: 'assistant' as const,
@@ -792,7 +792,7 @@ export function normalizeMessages(messages: Message[]): NormalizedMessage[] {
         return [message]
       case 'user': {
         if (typeof message.message.content === 'string') {
-          const uuid = isNewChain ? deriveUUID(message.uuid, 0) : message.uuid
+          const uuid = isNewChain ? deriveUUID(message.uuid as UUID, 0) as string : message.uuid
           return [
             {
               ...message,
@@ -819,14 +819,14 @@ export function normalizeMessages(messages: Message[]): NormalizedMessage[] {
               content: [_] as ContentBlockParam[],
               toolUseResult: message.toolUseResult,
               mcpMeta: message.mcpMeta,
-              isMeta: message.isMeta,
-              isVisibleInTranscriptOnly: message.isVisibleInTranscriptOnly,
-              isVirtual: message.isVirtual,
+              isMeta: message.isMeta === true ? message.isMeta : undefined,
+              isVisibleInTranscriptOnly: message.isVisibleInTranscriptOnly === true ? message.isVisibleInTranscriptOnly : undefined,
+              isVirtual: message.isVirtual === true ? message.isVirtual : undefined,
               timestamp: message.timestamp,
               imagePasteIds: imageId !== undefined ? [imageId] : undefined,
               origin: message.origin,
             }),
-            uuid: isNewChain ? deriveUUID(message.uuid, index) : message.uuid,
+            uuid: isNewChain ? deriveUUID(message.uuid as UUID, index) : message.uuid,
           } as NormalizedMessage
         })
       }
@@ -1065,11 +1065,11 @@ function getInProgressHookCount(
 ): number {
   return count(
     messages,
-    _ =>
-      _.type === 'progress' &&
-      _.data.type === 'hook_progress' &&
-      _.data.hookEvent === hookEvent &&
-      _.parentToolUseID === toolUseID,
+    (_: any) =>
+      (_.type as string) === 'progress' &&
+      (_.data as any).type === 'hook_progress' &&
+      (_.data as any).hookEvent === hookEvent &&
+      (_.parentToolUseID as string) === toolUseID,
   )
 }
 
@@ -1082,10 +1082,10 @@ function getResolvedHookCount(
   const uniqueHookNames = new Set(
     messages
       .filter(
-        (_): _ is AttachmentMessage<HookAttachmentWithName> =>
+        (_): _ is AttachmentMessage =>
           isHookAttachmentMessage(_) &&
-          _.attachment.toolUseID === toolUseID &&
-          _.attachment.hookEvent === hookEvent,
+          (_.attachment as any).toolUseID === toolUseID &&
+          (_.attachment as any).hookEvent === hookEvent,
       )
       .map(_ => _.attachment.hookName),
   )
@@ -1140,10 +1140,10 @@ export function getSiblingToolUseIDs(
   const unnormalizedMessage = messages.find(
     (_): _ is AssistantMessage =>
       _.type === 'assistant' &&
-      _.message.content.some(_ => _.type === 'tool_use' && _.id === toolUseID),
+      Array.isArray(_.message.content) && _.message.content.some(_ => _.type === 'tool_use' && _.id === toolUseID),
   )
   if (!unnormalizedMessage) {
-    return new Set()
+    return new Set<string>()
   }
 
   const messageID = unnormalizedMessage.message.id
@@ -1154,7 +1154,7 @@ export function getSiblingToolUseIDs(
 
   return new Set(
     siblingMessages.flatMap(_ =>
-      _.message.content.filter(_ => _.type === 'tool_use').map(_ => _.id),
+      (Array.isArray(_.message.content) ? _.message.content.filter(_ => _.type === 'tool_use').map(_ => _.id) : []),
     ),
   )
 }
@@ -1230,7 +1230,7 @@ export function buildMessageLookups(
   for (const msg of normalizedMessages) {
     if (msg.type === 'progress') {
       // 构建进度消息查找表
-      const toolUseID = msg.parentToolUseID
+      const toolUseID = (msg.parentToolUseID as unknown as string)
       const existing = progressMessagesByToolUseID.get(toolUseID)
       if (existing) {
         existing.push(msg)
@@ -1239,8 +1239,8 @@ export function buildMessageLookups(
       }
 
       // 统计进行中的钩子
-      if (msg.data.type === 'hook_progress') {
-        const hookEvent = msg.data.hookEvent
+      if ((msg.data as any).type === 'hook_progress') {
+        const hookEvent = (msg.data as any).hookEvent
         let byHookEvent = inProgressHookCounts.get(toolUseID)
         if (!byHookEvent) {
           byHookEvent = new Map()
@@ -1477,7 +1477,7 @@ export function getToolUseIDs(
   return new Set(
     normalizedMessages
       .filter(
-        (_): _ is NormalizedAssistantMessage<BetaToolUseBlock> =>
+        (_): _ is NormalizedAssistantMessage =>
           _.type === 'assistant' &&
           Array.isArray(_.message.content) &&
           _.message.content[0]?.type === 'tool_use',
@@ -1754,7 +1754,7 @@ export function stripToolReferenceBlocksFromUserMessage(
 export function stripCallerFieldFromAssistantMessage(
   message: AssistantMessage,
 ): AssistantMessage {
-  const hasCallerField = message.message.content.some(
+  const hasCallerField = Array.isArray(message.message.content) && message.message.content.some(
     block =>
       block.type === 'tool_use' && 'caller' in block && block.caller !== null,
   )
@@ -1767,7 +1767,7 @@ export function stripCallerFieldFromAssistantMessage(
     ...message,
     message: {
       ...message.message,
-      content: message.message.content.map(block => {
+      content: Array.isArray(message.message.content) ? message.message.content.map(block => {
         if (block.type !== 'tool_use') {
           return block
         }
@@ -1778,7 +1778,7 @@ export function stripCallerFieldFromAssistantMessage(
           name: block.name,
           input: block.input,
         }
-      }),
+      }) : message.message.content,
     },
   }
 }
@@ -2081,7 +2081,7 @@ export function normalizeMessagesForAPI(
           // local_command 系统消息需要作为用户消息包含进来，
           // 以便模型在后续轮次中能引用之前的命令输出
           const userMsg = createUserMessage({
-            content: message.content,
+            content: message.content as string | ContentBlockParam[],
             uuid: message.uuid,
             timestamp: message.timestamp,
           })
@@ -2204,7 +2204,7 @@ export function normalizeMessagesForAPI(
             ...message,
             message: {
               ...message.message,
-              content: message.message.content.map(block => {
+              content: Array.isArray(message.message.content) ? message.message.content.map(block => {
                 if (block.type === 'tool_use') {
                   const tool = tools.find(t => toolMatchesName(t, block.name))
                   const normalizedInput = tool
@@ -2234,7 +2234,8 @@ export function normalizeMessagesForAPI(
                   }
                 }
                 return block
-              }),
+              })
+            : message.message.content,
             },
           }
 
@@ -2544,7 +2545,7 @@ function smooshIntoToolResult(
   // 这是常见情况（Bash/Read 结果中的钩子提醒），与旧版合并输出形状匹配。
   if (allText && (existing === undefined || typeof existing === 'string')) {
     const joined = [
-      (existing ?? '').trim(),
+      (existing as string | undefined ?? '').trim(),
       ...blocks.map(b => (b as TextBlockParam).text.trim()),
     ]
       .filter(Boolean)
@@ -2755,18 +2756,18 @@ export function getToolUseID(message: NormalizedMessage): string | null {
       return message.message.content[0].id
     case 'user':
       if (message.sourceToolUseID) {
-        return message.sourceToolUseID
+        return message.sourceToolUseID as unknown as string
       }
 
-      if (message.message.content[0]?.type !== 'tool_result') {
+      if ((message.message.content[0] as any)?.type !== 'tool_result') {
         return null
       }
-      return message.message.content[0].tool_use_id
+      return (message.message.content[0] as any).tool_use_id
     case 'progress':
-      return message.toolUseID
+      return message.toolUseID as unknown as string
     case 'system':
       return message.subtype === 'informational'
-        ? (message.toolUseID ?? null)
+        ? (message.toolUseID as unknown as string ?? null)
         : null
   }
 }
@@ -2935,7 +2936,7 @@ export function handleMessageFromStream(
   ) {
     // 处理墓碑消息——移除目标消息而非添加
     if (message.type === 'tombstone') {
-      onTombstone?.(message.message)
+      onTombstone?.((message as any).message)
       return
     }
     // 工具使用摘要消息仅用于 SDK，流处理中忽略它们
@@ -2944,8 +2945,10 @@ export function handleMessageFromStream(
     }
     // 捕获完整的思考块，用于在记录模式下实时显示
     if (message.type === 'assistant') {
-      const thinkingBlock = message.message.content.find(
-        block => block.type === 'thinking',
+      const msgContent = (message.message as any).content
+      const thinkingBlock = (msgContent as ContentBlock[])
+        .find(
+          block => (block as any).type === 'thinking',
       )
       if (thinkingBlock && thinkingBlock.type === 'thinking') {
         onStreamingThinking?.(() => ({
@@ -2959,7 +2962,7 @@ export function handleMessageFromStream(
     // 从 deferredMessages 切换到 messages，使流式文本到最终消息的转换
     // 具有原子性（无间隔、无重复）。
     onStreamingText?.(() => null)
-    onMessage(message)
+    onMessage(message as any)
     return
   }
 
@@ -2968,29 +2971,29 @@ export function handleMessageFromStream(
     return
   }
 
-  if (message.event.type === 'message_start') {
+  if ((message.event as any).type === 'message_start') {
     if (message.ttftMs != null) {
-      onApiMetrics?.({ ttftMs: message.ttftMs })
+      onApiMetrics?.({ ttftMs: message.ttftMs as number })
     }
   }
 
-  if (message.event.type === 'message_stop') {
+  if ((message.event as any).type === 'message_stop') {
     onSetStreamMode('tool-use')
     onStreamingToolUses(() => [])
     return
   }
 
-  switch (message.event.type) {
+  switch ((message.event as any).type) {
     case 'content_block_start':
       onStreamingText?.(() => null)
       if (
         feature('CONNECTOR_TEXT') &&
-        isConnectorTextBlock(message.event.content_block)
+        isConnectorTextBlock((message.event as any).content_block)
       ) {
         onSetStreamMode('responding')
         return
       }
-      switch (message.event.content_block.type) {
+      switch ((message.event as any).content_block.type) {
         case 'thinking':
         case 'redacted_thinking':
           onSetStreamMode('thinking')
@@ -3000,8 +3003,8 @@ export function handleMessageFromStream(
           return
         case 'tool_use': {
           onSetStreamMode('tool-input')
-          const contentBlock = message.event.content_block
-          const index = message.event.index
+          const contentBlock = (message.event as any).content_block
+          const index = (message.event as any).index
           onStreamingToolUses(_ => [
             ..._,
             {
@@ -3028,16 +3031,16 @@ export function handleMessageFromStream(
       }
       return
     case 'content_block_delta':
-      switch (message.event.delta.type) {
+      switch ((message.event as any).delta.type) {
         case 'text_delta': {
-          const deltaText = message.event.delta.text
+          const deltaText = (message.event as any).delta.text
           onUpdateLength(deltaText)
           onStreamingText?.(text => (text ?? '') + deltaText)
           return
         }
         case 'input_json_delta': {
-          const delta = message.event.delta.partial_json
-          const index = message.event.index
+          const delta = (message.event as any).delta.partial_json
+          const index = (message.event as any).index
           onUpdateLength(delta)
           onStreamingToolUses(_ => {
             const element = _.find(_ => _.index === index)
@@ -3055,7 +3058,7 @@ export function handleMessageFromStream(
           return
         }
         case 'thinking_delta':
-          onUpdateLength(message.event.delta.thinking)
+          onUpdateLength((message.event as any).delta.thinking)
           return
         case 'signature_delta':
           // 签名是加密认证字符串，而非模型输出。
@@ -4518,12 +4521,7 @@ export function createCompactBoundaryMessage(
     timestamp: new Date().toISOString(),
     uuid: randomUUID(),
     level: 'info',
-    compactMetadata: {
-      trigger,
-      preTokens,
-      userContext,
-      messagesSummarized,
-    },
+    compactMetadata: { trigger, preTokens, userContext, messagesSummarized } as any,
     ...(lastPreCompactMessageUuid && {
       logicalParentUuid: lastPreCompactMessageUuid,
     }),
@@ -4568,8 +4566,8 @@ export function createSystemAPIErrorMessage(
     type: 'system',
     subtype: 'api_error',
     level: 'error',
-    cause: error.cause instanceof Error ? error.cause : undefined,
-    error,
+    cause: error.cause instanceof Error ? error.cause as any : undefined,
+    error: error as any,
     retryInMs,
     retryAttempt,
     maxRetries,
@@ -4623,10 +4621,10 @@ export function getMessagesAfterCompactBoundary<
   const sliced = boundaryIndex === -1 ? messages : messages.slice(boundaryIndex)
   if (!options?.includeSnipped && feature('HISTORY_SNIP')) {
      
-    const { projectSnippedView } =
+    const { projectSnippedMessages } =
       require('../services/compact/snipProjection.js') as typeof import('../services/compact/snipProjection.js')
      
-    return projectSnippedView(sliced as Message[]) as T[]
+    return projectSnippedMessages(sliced as Message[]) as T[]
   }
   return sliced
 }
@@ -5195,7 +5193,7 @@ export function ensureToolResultPairing(
     // 使用块没有匹配的 *_tool_result，API 会拒绝，例如报错
     // "advisor tool use without corresponding advisor_tool_result"。
     const seenToolUseIds = new Set<string>()
-    const finalContent = msg.message.content.filter(block => {
+    const finalContent = Array.isArray(msg.message.content) ? msg.message.content.filter(block => {
       if (block.type === 'tool_use') {
         if (allSeenToolUseIds.has(block.id)) {
           repaired = true
@@ -5219,6 +5217,7 @@ export function ensureToolResultPairing(
       }
       return true
     })
+      : msg.message.content
 
     const assistantContentChanged =
       finalContent.length !== msg.message.content.length
@@ -5412,14 +5411,16 @@ export function ensureToolResultPairing(
     // 捕获诊断信息以帮助识别根本原因
     const messageTypes = messages.map((m, idx) => {
       if (m.type === 'assistant') {
-        const toolUses = m.message.content
-          .filter(b => b.type === 'tool_use')
-          .map(b => (b as ToolUseBlock | ToolUseBlockParam).id)
-        const serverToolUses = m.message.content
-          .filter(
-            b => b.type === 'server_tool_use' || b.type === 'mcp_tool_use',
-          )
-          .map(b => (b as { id: string }).id)
+        const toolUses = Array.isArray(m.message.content)
+          ? m.message.content.filter(b => b.type === 'tool_use')
+              .map(b => (b as ToolUseBlock | ToolUseBlockParam).id)
+          : []
+        const serverToolUses = Array.isArray(m.message.content)
+          ? m.message.content.filter(
+              b => b.type === 'server_tool_use' || b.type === 'mcp_tool_use',
+            )
+              .map(b => (b as { id: string }).id)
+          : []
         const parts = [
           `id=${m.message.id}`,
           `tool_uses=[${toolUses.join(',')}]`,
@@ -5484,7 +5485,7 @@ export function stripAdvisorBlocks(
   const result = messages.map(msg => {
     if (msg.type !== 'assistant') return msg
     const content = msg.message.content
-    const filtered = content.filter(b => !isAdvisorBlock(b))
+    const filtered = Array.isArray(content) ? content.filter(b => !isAdvisorBlock(b)) : []
     if (filtered.length === content.length) return msg
     changed = true
     if (

@@ -7,6 +7,13 @@ import {
   logEvent,
 } from './services/analytics/index.js'
 import { getCwd } from './utils/cwd.js'
+import { isBareMode, isEnvTruthy } from './utils/envUtils.js'
+import { envDynamic } from './utils/envDynamic.js'
+import { env } from './utils/env.js'
+import { errorMessage } from './utils/errors.js'
+import { getIsGit, findCanonicalGitRoot, findGitRoot } from './utils/git.js'
+import { captureHooksConfigSnapshot, updateHooksConfigSnapshot } from './utils/hooks/hooksConfigSnapshot.js'
+import { initializeFileChangedWatcher } from './utils/hooks/fileChangedWatcher.js'
 import { checkForReleaseNotes } from './utils/releaseNotes.js'
 import { setCwd } from './utils/Shell.js'
 import { initSinks } from './utils/sinks.js'
@@ -54,24 +61,25 @@ export async function setup(
   worktreePRNumber?: number,
   messagingSocketPath?: string,
 ): Promise<void> {
-  require('fs').writeFileSync('d:/init_debug.log', `setup() ENTER at ${Date.now()}\n`, { flag: 'a' });
 
   // Check for Node.js version < 18
   const nodeVersion = process.version.match(/^v(\d+)\./)?.[1]
   if (!nodeVersion || parseInt(nodeVersion) < 18) {
     // biome-ignore lint/suspicious/noConsole:: intentional console output
-    console.error(
-      chalk.bold.red(
-        '错误：Claude Code 需要 Node.js 18 或更高版本',
-      ),
-    )
+    //console.error(chalk.bold.red('错误：Claude Code 需要 Node.js 18 或更高版本',),)
     process.exit(1)
   }
 
+  //console.error('[TRACE-STUP] step3 before switchSession');
   // Set custom session ID if provided
   if (customSessionId) {
     switchSession(asSessionId(customSessionId))
   }
+  //console.error('[TRACE-STUP] step4 after switchSession');
+  //console.error('[TRACE-STUP] A1 bareEnv=' + process.env.CLAUDE_CODE_SIMPLE + ' hasMsg=' + String(Boolean(messagingSocketPath)));
+  //console.error('[TRACE-STUP] A2a before isBareMode call');
+  const barrier = isBareMode();
+  //console.error('[TRACE-STUP] A2b after isBareMode, isBare=' + barrier);
 
   // --bare / SIMPLE: skip UDS messaging server and teammate snapshot.
   // Scripted calls don't receive injected messages and don't use swarm teammates.
@@ -82,8 +90,13 @@ export async function setup(
     // --messaging-socket-path is passed. Awaited so the server is bound
     // and $CLAUDE_CODE_MESSAGING_SOCKET is exported before any hook
     // (SessionStart in particular) can spawn and snapshot process.env.
+    //console.error('[TRACE-STUP] UDS-feature=' + (process.env.CLAUDE_CODE_FEATURE_UDS_INBOX === '1' ? 'TRUE' : 'FALSE'));
+    //console.error('[TRACE-STUP] step5 before isBareMode');
+    //console.error('[TRACE-STUP] UDS flag=' + process.env.CLAUDE_CODE_FEATURE_UDS_INBOX + ' bare=' + isBareMode());
     if (feature('UDS_INBOX')) {
+      //console.error('[TRACE-STUP] UDS TRUE branch');
       const m = await import('./utils/udsMessaging.js')
+      //console.error('[TRACE-STUP] uds imported hasStart=' + ('startUdsMessaging' in m) + ' hasDefault=' + ('getDefaultUdsSocketPath' in m));
       await m.startUdsMessaging(
         messagingSocketPath ?? m.getDefaultUdsSocketPath(),
         { isExplicit: messagingSocketPath !== undefined },
@@ -102,6 +115,7 @@ export async function setup(
   // Terminal backup restoration — interactive only. Print mode doesn't
   // interact with terminal settings; the next interactive session will
   // detect and restore any interrupted setup.
+  //console.error('[TRACE-STUP] 进入终端备份恢复块 nonInteractive=' + getIsNonInteractiveSession());
   if (!getIsNonInteractiveSession()) {
     // iTerm2 backup check only when swarms enabled
     if (isAgentSwarmsEnabled()) {
@@ -115,17 +129,15 @@ export async function setup(
         )
       } else if (restoredIterm2Backup.status === 'failed') {
         // biome-ignore lint/suspicious/noConsole:: intentional console output
-        console.error(
-          chalk.red(
-            `恢复 iTerm2 设置失败。请手动恢复原始设置：defaults import com.googlecode.iterm2 ${restoredIterm2Backup.backupPath}。`,
-          ),
-        )
+        //console.error(chalk.red(`恢复 iTerm2 设置失败。请手动恢复原始设置：defaults import com.googlecode.iterm2 ${restoredIterm2Backup.backupPath}。`,),)
       }
     }
 
     // Check and restore Terminal.app backup if setup was interrupted
+    //console.error('[TRACE-STUP] before checkAndRestoreTerminalBackup');
     try {
       const restoredTerminalBackup = await checkAndRestoreTerminalBackup()
+      //console.error('[TRACE-STUP] after checkAndRestoreTerminalBackup');
       if (restoredTerminalBackup.status === 'restored') {
         // biome-ignore lint/suspicious/noConsole:: intentional console output
         console.log(
@@ -135,11 +147,7 @@ export async function setup(
         )
       } else if (restoredTerminalBackup.status === 'failed') {
         // biome-ignore lint/suspicious/noConsole:: intentional console output
-        console.error(
-          chalk.red(
-            `恢复 Terminal.app 设置失败。请手动恢复原始设置：defaults import com.apple.Terminal ${restoredTerminalBackup.backupPath}。`,
-          ),
-        )
+        console.error(chalk.red(`恢复 Terminal.app 设置失败。请手动恢复原始设置：defaults import com.apple.Terminal ${restoredTerminalBackup.backupPath}。`,),)
       }
     } catch (error) {
       // Log but don't crash if Terminal.app backup restoration fails
@@ -148,15 +156,21 @@ export async function setup(
   }
 
   // IMPORTANT: setCwd() must be called before any other code that depends on the cwd
+  //process.stdout.write('[SB] pre setCwd at ' + Date.now() + '\n');
   setCwd(cwd)
+  //process.stdout.write('[SB] post setCwd at ' + Date.now() + '\n');
 
   // Capture hooks configuration snapshot to avoid hidden hook modifications.
   // IMPORTANT: Must be called AFTER setCwd() so hooks are loaded from the correct directory
   const hooksStart = Date.now()
+  //process.stdout.write('[SB] pre captureHooks at ' + Date.now() + '\n');
   captureHooksConfigSnapshot()
+  //process.stdout.write('[SB] post captureHooks(' + (Date.now() - hooksStart) + 'ms) at ' + Date.now() + '\n');
 
   // Initialize FileChanged hook watcher — sync, reads hook config snapshot
+  //process.stdout.write('[SB] pre initFileWatcher at ' + Date.now() + '\n');
   initializeFileChangedWatcher(cwd)
+  //process.stdout.write('[SB] post initFileWatcher at ' + Date.now() + '\n');
 
   // Handle worktree creation if requested
   // IMPORTANT: this must be called befiore getCommands(), otherwise /eject won't be available.
@@ -246,11 +260,7 @@ export async function setup(
         )
       } else {
         // biome-ignore lint/suspicious/noConsole:: intentional console output
-        console.error(
-          chalk.yellow(
-            `警告：创建 tmux 会话失败：${tmuxResult.error}`,
-          ),
-        )
+        console.error(chalk.yellow(`警告：创建 tmux 会话失败：${tmuxResult.error}`,),)
       }
     }
 
@@ -285,7 +295,9 @@ export async function setup(
        
     }
   }
+  //console.error('[TRACE-STUP] before lockCurrentVersion');
   void lockCurrentVersion() // Lock current version to prevent deletion by other processes
+  //console.error('[TRACE-STUP] after lockCurrentVersion 调用');
 
   profileCheckpoint('setup_before_prefetch')
   // Pre-fetch promises - only items needed before render
@@ -367,12 +379,15 @@ export async function setup(
   // Pre-fetch data for Logo v2 - await to ensure it's ready before logo renders.
   // --bare / SIMPLE: skip — release notes are interactive-UI display data,
   // and getRecentActivity() reads up to 10 session JSONL files.
+  //console.error('[TRACE-STUP] before checkForReleaseNotes');
   if (!isBareMode()) {
     const { hasReleaseNotes } = await checkForReleaseNotes(
       getGlobalConfig().lastReleaseNotesSeen,
     )
+    //console.error('[TRACE-STUP] after checkForReleaseNotes hasNotes=' + hasReleaseNotes);
     if (hasReleaseNotes) {
       await getRecentActivity()
+      //console.error('[TRACE-STUP] after getRecentActivity');
     }
   }
 
@@ -391,9 +406,7 @@ export async function setup(
       !isEnvTruthy(process.env.CLAUDE_CODE_BUBBLEWRAP)
     ) {
       // biome-ignore lint/suspicious/noConsole:: intentional console output
-      console.error(
-        `出于安全原因，--dangerously-skip-permissions（或 --dsp）不能与 root/sudo 权限一起使用`,
-      )
+      console.error(`出于安全原因，--dangerously-skip-permissions（或 --dsp）不能与 root/sudo 权限一起使用`,)
       process.exit(1)
     }
 
@@ -417,9 +430,7 @@ export async function setup(
       const isSandboxed = isDocker || isBubblewrap || isSandbox
       if (!isSandboxed || hasInternet) {
         // biome-ignore lint/suspicious/noConsole:: intentional console output
-        console.error(
-          `--dangerously-skip-permissions（或 --dsp）只能在没有互联网访问权限的 Docker/沙箱容器中使用，但得到 Docker: ${isDocker}, Bubblewrap: ${isBubblewrap}, IS_SANDBOX: ${isSandbox}, hasInternet: ${hasInternet}`,
-        )
+        //console.error(`--dangerously-skip-permissions（或 --dsp）只能在没有互联网访问权限的 Docker/沙箱容器中使用，但得到 Docker: ${isDocker}, Bubblewrap: ${isBubblewrap}, IS_SANDBOX: ${isSandbox}, hasInternet: ${hasInternet}`,)
         process.exit(1)
       }
     }
@@ -431,6 +442,7 @@ export async function setup(
 
   // Log tengu_exit event from the last session?
   const projectConfig = getCurrentProjectConfig()
+  //console.error('[TRACE-STUP] before tengu_exit logEvent');
   if (
     projectConfig.lastCost !== undefined &&
     projectConfig.lastDuration !== undefined

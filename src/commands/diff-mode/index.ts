@@ -563,7 +563,7 @@ function renderComments(comments: DiffComment[], file?: string): string {
   const lines: string[] = [`📋 评论 (${filtered.length} 条):`]
   for (const c of filtered) {
     const status = c.resolved ? '✅' : '💬'
-    lines.push(`  ${status} [${c.id.slice(0, 8)}] ${c.file}:${c.line}`)
+    lines.push(`  ${status} [${c.id}] ${c.file}:${c.line}`)
     lines.push(`     ${c.author}: ${c.content}`)
     if (c.replies.length > 0) {
       for (const reply of c.replies) {

@@ -1200,7 +1200,7 @@ export const call: LocalCommandCall = async (args) => {
 
     const lines: string[] = [`📋 代码片段 (${snippets.length} 个):`]
     for (const sn of snippets) {
-      lines.push(`  [${sn.id.slice(0, 8)}] ${sn.prefix} - ${sn.description} (${sn.useCount}次使用)`)
+      lines.push(`  [${sn.id}] ${sn.prefix} - ${sn.description} (${sn.useCount}次使用)`)
     }
     return { type: 'text', value: lines.join('\n') }
   }

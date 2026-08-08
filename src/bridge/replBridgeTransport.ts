@@ -78,16 +78,17 @@ export type ReplBridgeTransport = {
 export function createV1ReplTransport(
   hybrid: HybridTransport,
 ): ReplBridgeTransport {
+  const h = hybrid as any
   return {
     write: msg => hybrid.write(msg),
     writeBatch: msgs => hybrid.writeBatch(msgs),
     close: () => hybrid.close(),
-    isConnectedStatus: () => hybrid.isConnectedStatus(),
-    getStateLabel: () => hybrid.getStateLabel(),
-    setOnData: cb => hybrid.setOnData(cb),
-    setOnClose: cb => hybrid.setOnClose(cb),
-    setOnConnect: cb => hybrid.setOnConnect(cb),
-    connect: () => void hybrid.connect(),
+    isConnectedStatus: () => h.isConnectedStatus(),
+    getStateLabel: () => h.getStateLabel(),
+    setOnData: cb => h.setOnData(cb),
+    setOnClose: cb => h.setOnClose(cb),
+    setOnConnect: cb => h.setOnConnect(cb),
+    connect: () => void h.connect(),
     // v1 Session-Ingress WS doesn't use SSE sequence numbers; replay
     // semantics are different. Always return 0 so the seq-num carryover
     // logic in replBridge is a no-op for v1.

@@ -16,7 +16,9 @@ let initialHooksConfig: HooksSettings | null = null
  * Otherwise, returns merged hooks from all sources (backwards compatible).
  */
 function getHooksFromAllowedSources(): HooksSettings {
+  //console.error('[DIAG-HOOK] getHooksFromAllowedSources start at ' + Date.now());
   const policySettings = settingsModule.getSettingsForSource('policySettings')
+  //console.error('[DIAG-HOOK] after getSettingsForSource(policySettings) at ' + Date.now());
 
   // If managed settings disables all hooks, return empty
   if (policySettings?.disableAllHooks === true) {

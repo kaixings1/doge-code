@@ -107,17 +107,23 @@ export function execFileNoThrowWithCwd(
 ): Promise<{ stdout: string; stderr: string; code: number; error?: string }> {
   return new Promise(resolve => {
     // Use execa for cross-platform .bat/.cmd compatibility on Windows
-    execa(file, args, {
-      maxBuffer,
-      signal: abortSignal,
-      timeout: finalTimeout,
-      cwd: finalCwd,
-      env: finalEnv,
-      shell,
-      stdin: finalStdin,
-      input: finalInput,
-      reject: false, // Don't throw on non-zero exit codes
-    })
+    // execa >= v10 renamed the `signal` option to `cancelSignal`.
+    // Passing `signal` to a modern execa throws a TypeError, so map it.
+    // The try/catch guards against sync option-validation errors thrown by
+    // execa, which would otherwise escape the Promise and register as an
+    // unhandled rejection that can hang the process.
+    try {
+      execa(file, args, {
+        maxBuffer,
+        cancelSignal: abortSignal,
+        timeout: finalTimeout,
+        cwd: finalCwd,
+        env: finalEnv,
+        shell,
+        stdin: finalStdin,
+        input: finalInput,
+        reject: false, // Don't throw on non-zero exit codes
+      })
       .then(result => {
         if (result.failed) {
           if (finalPreserveOutput) {
@@ -146,5 +152,11 @@ export function execFileNoThrowWithCwd(
         logError(error)
         void resolve({ stdout: '', stderr: '', code: 1 })
       })
+    } catch (error) {
+      // execa threw synchronously before returning a promise, e.g. option
+      // validation errors. Resolve instead of leaking an unhandled rejection.
+      logError(error as Error)
+      void resolve({ stdout: '', stderr: '', code: 1 })
+    }
   })
 }

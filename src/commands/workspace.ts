@@ -909,7 +909,7 @@ function handleList(store: WorkspaceStore) {
     const date = formatRelativeTime(w.savedAt)
     const tagStr = w.tags.length > 0 ? ` [${w.tags.join(', ')}]` : ''
     const priorityIcon = w.priority === 'high' ? '🔴' : w.priority === 'low' ? '🔵' : '⚪'
-    lines.push(`  [${w.id.slice(0, 8)}] ${priorityIcon} ${w.name}`)
+    lines.push(`  [${w.id}] ${priorityIcon} ${w.name}`)
     lines.push(`    ${w.project}/${w.branch}${tagStr} | ${w.files.length}文件 | ${date}`)
     if (w.summary) lines.push(`    ${truncate(w.summary, 50)}`)
   }
@@ -934,7 +934,7 @@ function handleSearch(store: WorkspaceStore, query: string) {
 
   const lines: string[] = [`🔍 搜索结果 (${results.length} 个):`]
   for (const w of results) {
-    lines.push(`  [${w.id.slice(0, 8)}] ${w.name} (${w.category}) ${w.tags.join(', ')}`)
+    lines.push(`  [${w.id}] ${w.name} (${w.category}) ${w.tags.join(', ')}`)
   }
   return { type: 'text', value: lines.join('\n') }
 }
@@ -953,7 +953,7 @@ function handleFilter(store: WorkspaceStore, args: string[]) {
 
   const lines: string[] = [`📋 筛选结果 (${results.length} 个):`]
   for (const w of results) {
-    lines.push(`  [${w.id.slice(0, 8)}] ${w.name} | ${w.category} | ${w.branch} | ${w.files.length}文件`)
+    lines.push(`  [${w.id}] ${w.name} | ${w.category} | ${w.branch} | ${w.files.length}文件`)
   }
   return { type: 'text', value: lines.join('\n') }
 }
@@ -1077,7 +1077,7 @@ function listTemplates(store: WorkspaceStore): string {
 
   const lines: string[] = [`📋 工作区模板 (${store.templates.length} 个):`]
   for (const t of store.templates) {
-    lines.push(`  [${t.id.slice(0, 8)}] ${t.name} - ${t.description}`)
+    lines.push(`  [${t.id}] ${t.name} - ${t.description}`)
   }
   return lines.join('\n')
 }

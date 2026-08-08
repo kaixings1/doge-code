@@ -29,7 +29,8 @@ export function extractInboundMessageFields(
     }
   | undefined {
   if (msg.type !== 'user') return undefined
-  const content = msg.message?.content
+  const msgMessage = msg.message as { content?: string | Array<ContentBlockParam> } | undefined
+  const content = msgMessage?.content
   if (!content) return undefined
   if (Array.isArray(content) && content.length === 0) return undefined
 

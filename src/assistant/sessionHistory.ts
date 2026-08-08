@@ -149,7 +149,7 @@ export async function listAssistantSessions(): Promise<AssistantSession[]> {
         if (!sessionMap.has(event.session_id)) {
           sessionMap.set(event.session_id, {
             id: event.session_id,
-            title: event.data?.title || `会话 ${event.session_id.slice(0, 8)}`,
+            title: event.data?.title || `会话 ${event.session_id}`,
             createdAt: event.timestamp || new Date().toISOString(),
             status: event.type === 'session_end' ? 'ended' : 'active',
             messageCount: 0
