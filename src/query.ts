@@ -207,22 +207,12 @@ export async function* query(
   | ToolUseSummaryMessage,
   Terminal
 > {
-  let terminal: Terminal;
-  try {
-	    logForDebugging("QUERY START");
-	    // ... 原有代码
   const consumedCommandUuids: string[] = []
-  terminal = yield* queryLoop(params, consumedCommandUuids)
+  const terminal = yield* queryLoop(params, consumedCommandUuids)
   for (const uuid of consumedCommandUuids) {
     notifyCommandLifecycle(uuid, 'completed')
   }
-    } catch (err) {
-        logForDebugging("QUERY FATAL ERROR:", err);
-        throw err;
-    }
-    logForDebugging("🔥🔥🔥 QUERY FUNCTION CALLED 🔥🔥🔥");
-    logForDebugging('[DEBUG] query() called');
-  return terminal!
+  return terminal
 }
 
 // [REFACTOR] 状态构造辅助函数，消除 6 处重复赋值
