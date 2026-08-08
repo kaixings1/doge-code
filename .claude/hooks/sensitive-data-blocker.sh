@@ -25,14 +25,14 @@ if [ -z "$COMMAND" ]; then
 fi
 
 # Only check commands that interact with MongoDB
-if ! echo "$COMMAND" | grep -qE 'mongosh|mongo '; then
+if ! echo "$COMMAND" | command grep -qE 'mongosh|mongo '; then
     exit 0
 fi
 
 # Case-insensitive check for sensitive field names in the query
 SENSITIVE_PATTERN='\b(TIN|Tin|TaxId|TaxIdentificationNumber|EIN|SSN|SocialSecurityNumber|Social|EncryptedTin|EncryptedSSN|EncryptedTaxId|BankAccountNumber|AccountNumber|RoutingNumber)\b'
 
-if echo "$COMMAND" | grep -qE "$SENSITIVE_PATTERN"; then
+if echo "$COMMAND" | command grep -qE "$SENSITIVE_PATTERN"; then
     echo "BLOCKED: Database query references a sensitive PII field (TIN, SSN, bank account, etc.)"
     echo "These fields contain encrypted sensitive data that must never be queried or displayed."
     echo "Use explicit inclusion projections with only non-sensitive fields."

@@ -22,22 +22,22 @@ fi
 EXT="${FILE_PATH##*.}"
 
 # Only suggest for source files, not tests or configs
-if echo "$FILE_PATH" | grep -qE '(Test|test|spec|__tests__)'; then
+if echo "$FILE_PATH" | command grep -qE '(Test|test|spec|__tests__)'; then
     exit 0
 fi
 
 case "$EXT" in
     cs)
-        if echo "$FILE_PATH" | grep -q "Glasswing"; then
+        if echo "$FILE_PATH" | command grep -q "Glasswing"; then
             echo "Run: dotnet test src/Glasswing.Tests/ --filter \"$(basename ${FILE_PATH%.cs})\""
-        elif echo "$FILE_PATH" | grep -q "Monarch"; then
+        elif echo "$FILE_PATH" | command grep -q "Monarch"; then
             echo "Run: dotnet test src/Monarch.Tests/ --filter \"$(basename ${FILE_PATH%.cs})\""
         fi
         ;;
     ts|tsx)
-        if echo "$FILE_PATH" | grep -q "glasswing-client"; then
+        if echo "$FILE_PATH" | command grep -q "glasswing-client"; then
             echo "Run: cd src/glasswing-client && npx vitest run --reporter=verbose"
-        elif echo "$FILE_PATH" | grep -q "monarch-client"; then
+        elif echo "$FILE_PATH" | command grep -q "monarch-client"; then
             echo "Run: cd src/monarch-client && npx vitest run --reporter=verbose"
         fi
         ;;

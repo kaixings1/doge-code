@@ -5,7 +5,7 @@
  * 支持：文本消息、卡片消息、图片/文件上传。
  */
 
-import { Client as LarkClient } from '@larksuiteoapi/node-sdk'
+import { Client } from '@larksuiteoapi/node-sdk'
 
 export interface FeishuApiConfig {
   appId: string
@@ -32,10 +32,10 @@ export interface FeishuCard {
 }
 
 class FeishuApiClient {
-  private client: LarkClient | null = null
+  private client: Client | null = null
   private config: FeishuApiConfig | null = null
 
-  private ensureClient(): LarkClient {
+  private ensureClient(): Client {
     if (!this.client) {
       throw new Error('FeishuApiClient 未初始化，请先调用 init()')
     }
@@ -44,7 +44,7 @@ class FeishuApiClient {
 
   init(config: FeishuApiConfig): void {
     this.config = config
-    this.client = new LarkClient({
+    this.client = new Client({
       appId: config.appId,
       appSecret: config.appSecret,
     })
@@ -116,8 +116,13 @@ class FeishuApiClient {
   async uploadImage(imagePath: string): Promise<string | null> {
     const client = this.ensureClient()
     try {
-      const result = await client.im.uploadImage.create({
-        data: { image_type: 'message', image: imagePath },
+      const fs = await import('node:fs/promises')
+      const buffer = await fs.readFile(imagePath)
+      const result = await client.im.image.create({
+        data: {
+          image_type: 'message',
+          image: Buffer.from(buffer).toString('base64'),
+        },
       })
       return result.data?.image_key ?? null
     } catch {
@@ -128,7 +133,7 @@ class FeishuApiClient {
   /**
    * 发送 Markdown 卡片（简化版，用于 Claude 输出）
    */
-  createMarkdownCard(title: string, markdown: string, color: FeishuCard['header']['template'] = 'blue'): FeishuCard {
+  createMarkdownCard(title: string, markdown: string, color: string = 'blue'): FeishuCard {
     return {
       header: {
         title: { tag: 'plain_text', content: title },

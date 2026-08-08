@@ -71,6 +71,7 @@ import type { BridgeState, ReplBridgeHandle } from './replBridge.js'
 import { initBridgeCore } from './replBridge.js'
 import { setCseShimGate } from './sessionIdCompat.js'
 import type { BridgeWorkerType } from './types.js'
+import { startFeishuBridge } from './feishuBridge.js'
 
 export type InitBridgeOptions = {
   onInboundMessage?: (msg: SDKMessage) => void | Promise<void>
@@ -494,7 +495,7 @@ export async function initReplBridge(
   // 6. 委派。BridgeCoreHandle 是 ReplBridgeHandle 的结构超集
   //（增加了 REPL 调用者不使用的 writeSdkMessages），
   // 因此不需要适配器 — 只需在返回时使用更窄的类型。
-  return initBridgeCore({
+  const bridgeHandle = initBridgeCore({
     dir: getOriginalCwd(),
     machineName: hostname(),
     branch,
@@ -549,6 +550,8 @@ export async function initReplBridge(
     onStateChange,
     perpetual,
   })
+
+  return bridgeHandle
 }
 
 const TITLE_MAX_LEN = 50

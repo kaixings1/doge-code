@@ -50,7 +50,7 @@ SENSITIVE_PATTERNS=(
 )
 
 for PATTERN in "${SENSITIVE_PATTERNS[@]}"; do
-    if echo "$OUTPUT" | grep -qE "$PATTERN"; then
+    if echo "$OUTPUT" | command grep -qE "$PATTERN"; then
         echo "BLOCKED: Output contains sensitive PII fields (TIN, SSN, bank account, etc.)"
         echo "The output includes documents or data with sensitive fields."
         echo "For database queries: use an explicit inclusion projection listing only non-sensitive fields."

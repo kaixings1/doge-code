@@ -7,7 +7,8 @@
  * - 签名验证
  */
 
-import type { FeishuInboundMessage, FeishuUserInfo } from './feishuMessageAdapter.js'
+import { createServer, type Server, type IncomingMessage, type ServerResponse } from 'http'
+import type { FeishuInboundMessage } from './feishuMessageAdapter.js'
 import { extractFeishuText, isMentioningBot, stripMention } from './feishuMessageAdapter.js'
 import { parseFeishuMessage } from './feishuCommandMapper.js'
 
@@ -16,13 +17,9 @@ import { parseFeishuMessage } from './feishuCommandMapper.js'
 export type FeishuEventHandler = (msg: FeishuInboundMessage) => Promise<void>
 
 export interface FeishuWebhookOptions {
-  /** 事件处理器 */
   onMessage: FeishuEventHandler
-  /** Webhook 监听端口 */
   port?: number
-  /** 飞书应用凭证（用于签名验证） */
   appSecret?: string
-  /** 启动回调 */
   onStart?: (port: number) => void
 }
 
@@ -38,9 +35,6 @@ export interface FeishuChallengeResponse {
   challenge: string
 }
 
-/**
- * 验证 URL 时生成 Challenge 响应
- */
 export function createChallengeResponse(req: FeishuChallengeRequest): FeishuChallengeResponse {
   return { challenge: req.challenge }
 }
@@ -64,7 +58,7 @@ export interface FeishuEventCallback {
 // ─── Webhook 服务器 ───
 
 export class FeishuWebhookServer {
-  private server: ReturnType<typeof Bun.serve> | null = null
+  private server: Server | null = null
   private onMessage: FeishuEventHandler
   private port: number
   private appSecret: string | undefined
@@ -78,86 +72,81 @@ export class FeishuWebhookServer {
   start(): void {
     if (this.server) return
 
-    this.server = Bun.serve({
-      port: this.port,
-      fetch: (req) => this.handleRequest(req),
+    this.server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
+      const url = new URL(req.url || '/', `http://localhost:${this.port}`)
+
+      // URL 验证
+      if (url.pathname === '/feishu/webhook' && req.method === 'GET') {
+        const params = url.searchParams
+        res.writeHead(200, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify(createChallengeResponse({
+          challenge: params.get('challenge') || '',
+          token: params.get('token') || '',
+          type: params.get('type') || 'url_verification',
+        })))
+        return
+      }
+
+      // 事件回调
+      if (url.pathname === '/feishu/webhook' && req.method === 'POST') {
+        try {
+          const chunks: Buffer[] = []
+          for await (const chunk of req) chunks.push(chunk)
+          const body = JSON.parse(Buffer.concat(chunks).toString()) as FeishuEventCallback
+
+          if (body.header.event_type === 'url_verification') {
+            res.writeHead(200, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify(createChallengeResponse({
+              challenge: body.event.challenge || '',
+              token: body.header.token,
+              type: 'url_verification',
+            })))
+            return
+          }
+
+          if (body.header.event_type === 'im.message.receive_v1') {
+            if (body.event.sender.sender_type === 'app') {
+              res.writeHead(200)
+              res.end('ok')
+              return
+            }
+
+            if (body.event.message.chat_type === 'group' && !isMentioningBot(body.event.message)) {
+              res.writeHead(200)
+              res.end('ok')
+              return
+            }
+
+            await this.onMessage(body.event)
+          }
+
+          res.writeHead(200)
+          res.end('ok')
+        } catch (err) {
+          console.error('[feishu] Webhook 处理错误:', err)
+          res.writeHead(500)
+          res.end('error')
+        }
+        return
+      }
+
+      res.writeHead(404)
+      res.end('Not Found')
     })
 
-    console.log(`[feishu] Webhook 服务器已启动，端口: ${this.port}`)
+    this.server.listen(this.port, () => {
+      console.log(`[feishu] Webhook 服务器已启动，端口: ${this.port}`)
+    })
   }
 
   stop(): void {
     if (this.server) {
-      this.server.stop()
+      this.server.close()
       this.server = null
     }
   }
 
   get url(): string {
     return `http://localhost:${this.port}/feishu/webhook`
-  }
-
-  private async handleRequest(req: Request): Promise<Response> {
-    const url = new URL(req.url)
-
-    // URL 验证（飞书配置事件订阅时调用）
-    if (url.pathname === '/feishu/webhook' && req.method === 'GET') {
-      const params = url.searchParams
-      return new Response(
-        JSON.stringify(createChallengeResponse({
-          challenge: params.get('challenge') ?? '',
-          token: params.get('token') ?? '',
-          type: params.get('type') ?? 'url_verification',
-        })),
-        {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' },
-        },
-      )
-    }
-
-    // 事件回调
-    if (url.pathname === '/feishu/webhook' && req.method === 'POST') {
-      try {
-        const body = await req.json() as FeishuEventCallback
-
-        // 处理 URL 验证事件
-        if (body.header.event_type === 'url_verification') {
-          return new Response(
-            JSON.stringify(createChallengeResponse({
-              challenge: body.event.challenge ?? '',
-              token: body.header.token,
-              type: 'url_verification',
-            })),
-            {
-              status: 200,
-              headers: { 'Content-Type': 'application/json' },
-            },
-          )
-        }
-
-        // 处理消息接收事件
-        if (body.header.event_type === 'im.message.receive_v1') {
-          // 忽略机器人自己发的消息
-          if (body.event.sender.sender_type === 'app') {
-            return new Response('ok', { status: 200 })
-          }
-
-          // 群聊需要 @机器人 才响应
-          if (body.event.message.chat_type === 'group' && !isMentioningBot(body.event.message)) {
-            return new Response('ok', { status: 200 })
-          }
-
-          await this.onMessage(body.event)
-        }
-
-        return new Response('ok', { status: 200 })
-      } catch (err) {
-        console.error('[feishu] Webhook 处理错误:', err)
-        return new Response('error', { status: 500 })
-      }
-    }
-
-    return new Response('Not Found', { status: 404 })
   }
 }

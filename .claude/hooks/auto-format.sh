@@ -25,7 +25,7 @@ EXT="${FILE_PATH##*.}"
 case "$EXT" in
     cs)
         # .NET files — run dotnet format on the file (quiet, no restore)
-        PROJECT_DIR=$(echo "$FILE_PATH" | grep -oE '.*/src/[^/]+/')
+        PROJECT_DIR=$(echo "$FILE_PATH" | command grep -oE '.*/src/[^/]+/')
         if [ -n "$PROJECT_DIR" ] && [ -f "${PROJECT_DIR}*.csproj" ] 2>/dev/null; then
             dotnet format "$PROJECT_DIR" --include "$FILE_PATH" --no-restore --verbosity quiet 2>/dev/null
         fi
