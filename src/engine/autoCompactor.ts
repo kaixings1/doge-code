@@ -173,11 +173,39 @@ export class AutoCompactor {
   ): Promise<InternalMessage[]> {
     const strategy = this.strategies.get(this.defaultStrategy);
     if (!strategy) return messages;
-    return strategy.compact(messages, {
+    const result = await strategy.compact(messages, {
       preserveRecentCount: options.preserveRecentCount ?? 10,
       preserveSystemMessages: options.preserveSystemMessages ?? true,
       preserveToolResults: options.preserveToolResults ?? true,
     });
+    // 压缩后确保 orphaned tool 消息不与其父 assistant 消息分离
+    this._repairOrphanedToolMessages(result);
+    return result;
+  }
+
+  /** 修复压缩后孤立的 tool 消息（CoreCoder _safe_split 模式） */
+  private _repairOrphanedToolMessages(messages: InternalMessage[]): void {
+    // 找到所有 tool_use 块对应的 tool_call_id
+    const toolCallIds = new Set<string>();
+    for (const m of messages) {
+      if (m.role === 'assistant' && typeof m.content === 'object') {
+        for (const block of m.content as Array<Record<string, unknown>>) {
+          if (block.type === 'tool_use' && typeof block.id === 'string') {
+            toolCallIds.add(block.id);
+          }
+        }
+      }
+    }
+    // 移除没有对应 tool_call 的孤立 tool 消息
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const m = messages[i];
+      if (m.role === 'tool') {
+        const tcId = (m as { tool_call_id?: string }).tool_call_id;
+        if (tcId && !toolCallIds.has(tcId)) {
+          messages.splice(i, 1);
+        }
+      }
+    }
   }
 
   /** 便捷方法：返回被压缩掉的消息数量 */

@@ -87,6 +87,7 @@ const AgentJsonSchema = lazySchema(() =>
     mcpServers: z.array(AgentMcpServerSpecSchema()).optional(),
     hooks: HooksSchema().optional(),
     maxTurns: z.number().int().positive().optional(),
+    terminalToolNames: z.array(z.string()).optional(),
     skills: z.array(z.string()).optional(),
     initialPrompt: z.string().optional(),
     memory: z.enum(['user', 'project', 'local']).optional(),
@@ -116,6 +117,7 @@ export type BaseAgentDefinition = {
   effort?: EffortValue
   permissionMode?: PermissionMode
   maxTurns?: number // 停止前的最大代理轮次
+  terminalToolNames?: string[] // 触发代理主动终止的工具名称列表（类似 OpenManus 的 special_tool_names）
   filename?: string // 原始文件名（不含 .md 扩展名，用于用户/项目/受管代理）
   baseDir?: string
   criticalSystemReminder_EXPERIMENTAL?: string // 每轮用户交互时重新注入的短消息
@@ -487,6 +489,9 @@ export function parseAgentFromJson(
         : {}),
       ...(parsed.hooks ? { hooks: parsed.hooks } : {}),
       ...(parsed.maxTurns !== undefined ? { maxTurns: parsed.maxTurns } : {}),
+      ...(parsed.terminalToolNames && parsed.terminalToolNames.length > 0
+        ? { terminalToolNames: parsed.terminalToolNames }
+        : {}),
       ...(parsed.skills && parsed.skills.length > 0
         ? { skills: parsed.skills }
         : {}),
@@ -643,6 +648,12 @@ export function parseAgentFromMarkdown(
       )
     }
 
+    // 从 frontmatter 解析 terminalToolNames（类似 OpenManus 的 special_tool_names）
+    const terminalToolNamesRaw = frontmatter['terminalToolNames']
+    const terminalToolNames = Array.isArray(terminalToolNamesRaw)
+      ? terminalToolNamesRaw.filter((t): t is string => typeof t === 'string')
+      : undefined
+
     // 提取文件名（不含扩展名）
     const filename = basename(filePath, '.md')
 
@@ -731,6 +742,7 @@ export function parseAgentFromMarkdown(
         ? { permissionMode: permissionModeRaw as PermissionMode }
         : {}),
       ...(maxTurns !== undefined ? { maxTurns } : {}),
+      ...(terminalToolNames !== undefined ? { terminalToolNames } : {}),
       ...(background ? { background } : {}),
       ...(memory ? { memory } : {}),
       ...(isolation ? { isolation } : {}),

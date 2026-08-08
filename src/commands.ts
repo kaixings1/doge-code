@@ -36,6 +36,7 @@ import cmd from './commands/cmd/index.ts'
 import glossary from './commands/glossary/index.ts'
 import desktop from './commands/desktop/index.ts'
 import diagnose from './commands/diagnose.ts'
+import eco from './commands/eco/index.ts'
 import commitPushPr from './commands/commit-push-pr.ts'
 import compact from './commands/compact/index.ts'
 import config from './commands/config/index.ts'
@@ -469,6 +470,7 @@ const COMMANDS = memoize((): Command[] => [
   blockMode,
   repoMap,
   diagnose,
+  eco,
   doctor,
   effort,
   exit,

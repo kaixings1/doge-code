@@ -23,6 +23,10 @@ interface InputData {
   session_id?: string;
   epoch?: number;
   update_notification?: string;
+  // OpenCode 特性吸收: Plan/Build 模式状态
+  is_in_plan_mode?: boolean;
+  // OpenCode 特性吸收: Eco 压缩模式状态
+  eco_enabled?: boolean;
 }
 
 const rawInput = readFileSync(0, 'utf-8');
@@ -31,7 +35,7 @@ try {
 } catch {}
 
 const input: InputData = JSON.parse(rawInput);
-const { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration, doge_api_json, session_id, epoch, update_notification } = input;
+const { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration, doge_api_json, session_id, epoch, update_notification, is_in_plan_mode, eco_enabled }: InputData = input;
 
 const segments: string[] = [];
 
@@ -135,24 +139,34 @@ if (update_notification) {
   segments.push('\u{1F4E2} ' + update_notification);
 }
 
-console.log(segments.join('  '));
+// OpenCode 特性吸收: Plan 模式指示器
+if (is_in_plan_mode) {
+  segments.push('\u{1F4CB} PLAN');
+}
+
+// Phase 1 特性吸收: Eco 压缩模式指示器
+if (eco_enabled) {
+  segments.push('\u{1F50D} ECO');
+}
+
+console.log(segments.join('\n'));
 
 // 辅助函数
 function fmtNum(n: unknown): string {
-  n = Number(n);
-  if (!isFinite(n)) return '0';
-  n = Math.round(n);
-  if (n >= 100_000_000) return (n / 100_000_000).toFixed(3) + '\u4EBF';
-  if (n >= 10_000_000) return (n / 10_000_000).toFixed(3) + '\u5343\u4E07';
-  if (n >= 10_000) return (n / 10_000).toFixed(3) + '\u4E07';
-  if (n >= 1_000) return (n / 1_000).toFixed(1) + 'k';
-  return String(n);
+  const num = Number(n);
+  if (!isFinite(num)) return '0';
+  const rounded = Math.round(num);
+  if (rounded >= 100_000_000) return (rounded / 100_000_000).toFixed(3) + '\u4EBF';
+  if (rounded >= 10_000_000) return (rounded / 10_000_000).toFixed(3) + '\u5343\u4E07';
+  if (rounded >= 10_000) return (rounded / 10_000).toFixed(3) + '\u4E07';
+  if (rounded >= 1_000) return (rounded / 1_000).toFixed(1) + 'k';
+  return String(rounded);
 }
 
 function fmtTraffic(bytes: unknown): string {
-  bytes = Number(bytes);
-  if (!isFinite(bytes) || bytes < 0) return '0KB';
-  if (bytes >= 1_073_741_824) return (bytes / 1_073_741_824).toFixed(3) + 'GB';
-  if (bytes >= 1_048_576) return (bytes / 1_048_576).toFixed(3) + 'MB';
-  return (bytes / 1_024).toFixed(3) + 'KB';
+  const num = Number(bytes);
+  if (!isFinite(num) || num < 0) return '0KB';
+  if (num >= 1_073_741_824) return (num / 1_073_741_824).toFixed(3) + 'GB';
+  if (num >= 1_048_576) return (num / 1_048_576).toFixed(3) + 'MB';
+  return (num / 1_024).toFixed(3) + 'KB';
 }

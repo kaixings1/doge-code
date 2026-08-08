@@ -12,7 +12,7 @@ try {
 \`, { flag: "a" });
 } catch {}
 var input = JSON.parse(rawInput);
-var { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration, doge_api_json, session_id, epoch, update_notification } = input;
+var { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration, doge_api_json, session_id, epoch, update_notification, is_in_plan_mode, eco_enabled } = input;
 var segments = [];
 if (workspace?.current_dir) {
   let dir = workspace.current_dir;
@@ -86,30 +86,37 @@ if (typeof epoch === "number" && epoch > 0) {
 if (update_notification) {
   segments.push("\uD83D\uDCE2 " + update_notification);
 }
-console.log(segments.join("  "));
+if (is_in_plan_mode) {
+  segments.push("\uD83D\uDCCB PLAN");
+}
+if (eco_enabled) {
+  segments.push("\uD83D\uDD0D ECO");
+}
+console.log(segments.join(\`
+\`));
 function fmtNum(n) {
-  n = Number(n);
-  if (!isFinite(n))
+  const num = Number(n);
+  if (!isFinite(num))
     return "0";
-  n = Math.round(n);
-  if (n >= 1e8)
-    return (n / 1e8).toFixed(3) + "亿";
-  if (n >= 1e7)
-    return (n / 1e7).toFixed(3) + "千万";
-  if (n >= 1e4)
-    return (n / 1e4).toFixed(3) + "万";
-  if (n >= 1000)
-    return (n / 1000).toFixed(1) + "k";
-  return String(n);
+  const rounded = Math.round(num);
+  if (rounded >= 1e8)
+    return (rounded / 1e8).toFixed(3) + "亿";
+  if (rounded >= 1e7)
+    return (rounded / 1e7).toFixed(3) + "千万";
+  if (rounded >= 1e4)
+    return (rounded / 1e4).toFixed(3) + "万";
+  if (rounded >= 1000)
+    return (rounded / 1000).toFixed(1) + "k";
+  return String(rounded);
 }
 function fmtTraffic(bytes) {
-  bytes = Number(bytes);
-  if (!isFinite(bytes) || bytes < 0)
+  const num = Number(bytes);
+  if (!isFinite(num) || num < 0)
     return "0KB";
-  if (bytes >= 1073741824)
-    return (bytes / 1073741824).toFixed(3) + "GB";
-  if (bytes >= 1048576)
-    return (bytes / 1048576).toFixed(3) + "MB";
-  return (bytes / 1024).toFixed(3) + "KB";
+  if (num >= 1073741824)
+    return (num / 1073741824).toFixed(3) + "GB";
+  if (num >= 1048576)
+    return (num / 1048576).toFixed(3) + "MB";
+  return (num / 1024).toFixed(3) + "KB";
 }
 `;
