@@ -30,31 +30,31 @@ BLOCKED=false
 REASON=""
 
 # MongoDB connection strings with credentials
-if echo "$CONTENT" | grep -qE 'mongodb\+srv://[^$\{]+:[^$\{]+@'; then
+if echo "$CONTENT" | command grep -qE 'mongodb\+srv://[^$\{]+:[^$\{]+@'; then
     BLOCKED=true
     REASON="Hardcoded MongoDB connection string with credentials"
 fi
 
 # AWS keys
-if echo "$CONTENT" | grep -qE 'AKIA[0-9A-Z]{16}'; then
+if echo "$CONTENT" | command grep -qE 'AKIA[0-9A-Z]{16}'; then
     BLOCKED=true
     REASON="AWS access key detected"
 fi
 
 # Stripe secret keys (not env var references)
-if echo "$CONTENT" | grep -qE 'sk_live_[a-zA-Z0-9]{20,}'; then
+if echo "$CONTENT" | command grep -qE 'sk_live_[a-zA-Z0-9]{20,}'; then
     BLOCKED=true
     REASON="Stripe live secret key detected"
 fi
 
 # Private keys
-if echo "$CONTENT" | grep -qE 'BEGIN (RSA |EC |DSA )?PRIVATE KEY'; then
+if echo "$CONTENT" | command grep -qE 'BEGIN (RSA |EC |DSA )?PRIVATE KEY'; then
     BLOCKED=true
     REASON="Private key detected"
 fi
 
 # Generic password assignments (but not placeholder patterns)
-if echo "$CONTENT" | grep -qiE '"(password|secret|apikey|api_key|token)"\s*:\s*"[^$\{\}][^"]{8,}"' | grep -vqE 'Admin123!|Test123|placeholder|your-.*-here|xxx'; then
+if echo "$CONTENT" | command grep -qiE '"(password|secret|apikey|api_key|token)"\s*:\s*"[^$\{\}][^"]{8,}"' | command grep -vqE 'Admin123!|Test123|placeholder|your-.*-here|xxx'; then
     BLOCKED=true
     REASON="Possible hardcoded credential"
 fi

@@ -26,7 +26,7 @@ BLOCKED_FILES=(
 )
 
 for blocked in "${BLOCKED_FILES[@]}"; do
-    if echo "$FILE_PATH" | grep -q "$blocked"; then
+    if echo "$FILE_PATH" | command grep -q "$blocked"; then
         echo "BLOCKED: Cannot modify production/staging config: $blocked"
         echo "If you need to change production settings, do it in Azure App Configuration or Key Vault."
         exit 2
@@ -44,7 +44,7 @@ WARN_FILES=(
 )
 
 for warn in "${WARN_FILES[@]}"; do
-    if echo "$FILE_PATH" | grep -q "$warn"; then
+    if echo "$FILE_PATH" | command grep -q "$warn"; then
         echo "WARNING: Modifying critical file: $warn — make sure this change is intentional."
     fi
 done
