@@ -26,11 +26,11 @@ export function isFeishuBridgeMode(): boolean {
 }
 
 /** Feishu app credentials. */
-export function getFeishuAppId(): string | void 0 {
+export function getFeishuAppId(): string | void {
   return process.env.FEISHU_APP_ID
 }
 
-export function getFeishuAppSecret(): string | void 0 {
+export function getFeishuAppSecret(): string | void {
   return process.env.FEISHU_APP_SECRET
 }
 
@@ -40,7 +40,7 @@ export function getFeishuWebhookPort(): number {
 }
 
 /** Feishu webhook URL (for configuring in open platform). */
-export function getFeishuWebhookUrl(): string | void 0 {
+export function getFeishuWebhookUrl(): string | void {
   return process.env.FEISHU_WEBHOOK_URL
 }
 
