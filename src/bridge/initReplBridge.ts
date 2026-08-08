@@ -495,7 +495,7 @@ export async function initReplBridge(
   // 6. 委派。BridgeCoreHandle 是 ReplBridgeHandle 的结构超集
   //（增加了 REPL 调用者不使用的 writeSdkMessages），
   // 因此不需要适配器 — 只需在返回时使用更窄的类型。
-  const bridgeHandle = initBridgeCore({
+  const bridgeHandle = await initBridgeCore({
     dir: getOriginalCwd(),
     machineName: hostname(),
     branch,
@@ -550,6 +550,15 @@ export async function initReplBridge(
     onStateChange,
     perpetual,
   })
+
+  // 7. 启动飞书桥接（如果已启用）。仅在 Bridge 核心成功连接后启动。
+  if (bridgeHandle) {
+    try {
+      await startFeishuBridge(bridgeHandle)
+    } catch (err) {
+      logForDebugging(`[bridge:repl] 飞书桥接启动失败: ${err}`, { level: 'error' })
+    }
+  }
 
   return bridgeHandle
 }
