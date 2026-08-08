@@ -64,6 +64,7 @@ import login from './commands/login/index.ts'
 import logout from './commands/logout/index.ts'
 import installGitHubApp from './commands/install-github-app/index.ts'
 import installSlackApp from './commands/install-slack-app/index.ts'
+import installFeishuApp from './commands/install-feishu-app/index.ts'
 import breakCache from './commands/break-cache/index.ts'
 import mcp from './commands/mcp/index.ts'
 import mobile from './commands/mobile/index.ts'
@@ -491,6 +492,7 @@ const COMMANDS = memoize((): Command[] => [
   keybindings,
   installGitHubApp,
   installSlackApp,
+  installFeishuApp,
   mcp,
   memory,
   mobile,

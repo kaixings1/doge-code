@@ -4,7 +4,7 @@ import {
   getDynamicConfig_CACHED_MAY_BE_STALE,
   getFeatureValue_CACHED_MAY_BE_STALE,
 } from '../services/analytics/growthbook.js'
-import { isLocalBridgeMode } from './bridgeConfig.js'
+import { isLocalBridgeMode, isFeishuBridgeMode, getFeishuAppId, getFeishuAppSecret } from './bridgeConfig.js'
 
 // 命名空间导入会打破 bridgeEnabled → auth → config → bridgeEnable
 // 循环 — authModule.foo 是一个实时绑定，所以当下面的辅助函数
@@ -196,4 +196,12 @@ export function isCcrMirrorEnabled(): boolean {
     ? isEnvTruthy(process.env.CLAUDE_CODE_CCR_MIRROR) ||
         getFeatureValue_CACHED_MAY_BE_STALE('tengu_ccr_mirror', false)
     : false
+}
+
+/**
+ * Feishu bridge 检测：FEISHU_BRIDGE=1 且有 App ID/Secret。
+ */
+export function isFeishuBridgeEnabled(): boolean {
+  if (isLocalBridgeMode()) return true
+  return isFeishuBridgeMode() && Boolean(getFeishuAppId()) && Boolean(getFeishuAppSecret())
 }
