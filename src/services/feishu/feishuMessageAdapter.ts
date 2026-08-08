@@ -9,10 +9,11 @@
  */
 export interface FeishuInboundMessage {
   event_id: string
-  event_type: 'im.message.receive_v1'
+  event_type: 'im.message.receive_v1' | 'url_verification'
   tenant_key: string
   tenant_access_token?: string
-  message: {
+  challenge?: string
+  message?: {
     message_id: string
     root_id?: string
     parent_id?: string
@@ -20,10 +21,10 @@ export interface FeishuInboundMessage {
     chat_id: string
     chat_type: 'p2p' | 'group'
     message_type: string
-    content: string // JSON 字符串
+    content: string
     mentions?: Array<{ id?: string; name?: string }>
   }
-  sender: {
+  sender?: {
     sender_id: {
       open_id?: string
       user_id?: string

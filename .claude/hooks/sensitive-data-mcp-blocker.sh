@@ -29,7 +29,7 @@ fi
 # Case-insensitive check for sensitive field names anywhere in the tool input
 SENSITIVE_PATTERN='\b(TIN|Tin|TaxId|TaxIdentificationNumber|EIN|SSN|SocialSecurityNumber|Social|EncryptedTin|EncryptedSSN|EncryptedTaxId|BankAccountNumber|AccountNumber|RoutingNumber)\b'
 
-if echo "$TOOL_INPUT" | grep -qE "$SENSITIVE_PATTERN"; then
+if echo "$TOOL_INPUT" | command grep -qE "$SENSITIVE_PATTERN"; then
     echo "BLOCKED: MCP database query references a sensitive PII field (TIN, SSN, bank account, etc.)"
     echo "These fields contain encrypted sensitive data that must never be queried or displayed."
     echo "Use explicit inclusion projections with only non-sensitive fields."
