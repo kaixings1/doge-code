@@ -277,7 +277,7 @@ async function searchSessions(opts: SearchOptions): Promise<SearchMatch[]> {
     const info = parseSessionInfoFromLite(candidate.sessionId, lite, candidate.projectPath)
     if (!info) continue
 
-    const title = info.customTitle || info.summary || info.firstPrompt || candidate.sessionId.slice(0, 8)
+    const title = info.customTitle || info.summary || info.firstPrompt || candidate.sessionId
 
     // Metadata-level matching (no need to scan full file)
     if (keywordLower === '') {
@@ -439,7 +439,7 @@ function formatResults(matches: SearchMatch[], opts: SearchOptions): string {
       : `${(m.fileSize / 1024).toFixed(0)}KB`
 
     lines.push(`  ${projectLabel}${m.title}`)
-    lines.push(`    ID: ${m.sessionId.slice(0, 8)} | ${date} | ${sizeLabel} | 匹配: ${formatMatchType(m.matchType)}`)
+    lines.push(`    ID: ${m.sessionId} | ${date} | ${sizeLabel} | 匹配: ${formatMatchType(m.matchType)}`)
     if (m.matchSnippet) {
       lines.push(`    "${m.matchSnippet.slice(0, 120)}"`)
     }

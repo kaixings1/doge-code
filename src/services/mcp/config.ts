@@ -1114,18 +1114,13 @@ export async function getClaudeCodeMcpConfigs(
   // 加载插件 MCP 服务器
   const pluginMcpServers: Record<string, ScopedMcpServerConfig> = {}
 
-  require('fs').writeFileSync('d:/init_debug.log', `BEFORE loadAllPluginsCacheOnly at ${Date.now()}\n`, { flag: 'a' });
   const pluginResult = await loadAllPluginsCacheOnly()
-  require('fs').writeFileSync('d:/init_debug.log', `AFTER loadAllPluginsCacheOnly at ${Date.now()}\n`, { flag: 'a' });
-  require('fs').writeFileSync('d:/init_debug.log', `STUB_MARKER_TS_DEF_ABC123 at ${Date.now()}\n`, { flag: 'a' });
-  require('fs').writeFileSync('d:/init_debug.log', `AFTER-loadAll plugins=${pluginResult.enabled.length} errors=${pluginResult.errors.length} at ${Date.now()}\n`, { flag: 'a' });
 
   // 收集服务器加载期间特定于 MCP 的错误
   const mcpErrors: PluginError[] = []
 
   // 记录任何插件加载错误——生产中切勿静默失败
   if (pluginResult.errors.length > 0) {
-    require('fs').writeFileSync('d:/init_debug.log', `error-loop START len=${pluginResult.errors.length} at ${Date.now()}\n`, { flag: 'a' });
     for (const error of pluginResult.errors) {
       // 仅当确实与 MCP 相关时才记录为 MCP 错误
       // 否则仅记录为调试信息，因为插件可能没有 MCP 服务器
@@ -1147,19 +1142,14 @@ export async function getClaudeCodeMcpConfigs(
       }
     }
   }
-  require('fs').writeFileSync('d:/init_debug.log', `error-loop END at ${Date.now()}\n`, { flag: 'a' });
 
   // 并行处理已启用插件的 MCP 服务器
-  require('fs').writeFileSync('d:/init_debug.log', `BEFORE getPluginMcpServers map (${pluginResult.enabled.length} enabled) at ${Date.now()}\n`, { flag: 'a' });
   const pluginServerResults = await Promise.all(
     pluginResult.enabled.map(async (plugin) => {
-      require('fs').writeFileSync('d:/init_debug.log', `  getPluginMcpServers ENTER ${plugin.name} at ${Date.now()}\n`, { flag: 'a' });
       const r = await getPluginMcpServers(plugin, mcpErrors);
-      require('fs').writeFileSync('d:/init_debug.log', `  getPluginMcpServers EXIT ${plugin.name} at ${Date.now()}\n`, { flag: 'a' });
       return r;
     }),
   )
-  require('fs').writeFileSync('d:/init_debug.log', `AFTER getPluginMcpServers map at ${Date.now()}\n`, { flag: 'a' });
   for (const servers of pluginServerResults) {
     if (servers) {
       Object.assign(pluginMcpServers, servers)

@@ -830,7 +830,7 @@ function formatTranscriptForFacets(log: LogOption): string {
   const lines: string[] = []
   const meta = logToSessionMeta(log)
 
-  lines.push(`会话: ${meta.session_id.slice(0, 8)}`)
+  lines.push(`会话: ${meta.session_id}`)
   lines.push(`日期: ${meta.start_time}`)
   lines.push(`项目: ${meta.project_path}`)
   lines.push(`持续时间: ${meta.duration_minutes} 分钟`)
@@ -925,7 +925,7 @@ async function formatTranscriptWithSummarization(
   // 将会话头部与摘要合并
   const meta = logToSessionMeta(log)
   const header = [
-    `会话: ${meta.session_id.slice(0, 8)}`,
+    `会话: ${meta.session_id}`,
     `日期: ${meta.start_time}`,
     `项目: ${meta.project_path}`,
     `持续时间: ${meta.duration_minutes} 分钟`,
@@ -1283,7 +1283,7 @@ function aggregateData(
 
     if (result.session_summaries.length < 50) {
       result.session_summaries.push({
-        id: session.session_id.slice(0, 8),
+        id: session.session_id,
         date: session.start_time.split('T')[0] || '',
         summary: session.summary || session.first_prompt.slice(0, 100),
         goal: sessionFacets?.underlying_goal,

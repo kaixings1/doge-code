@@ -15,7 +15,6 @@ const GIT_ROOT_NOT_FOUND = Symbol('git-root-not-found')
 const findGitRootImpl = memoizeWithLRU(
   (startPath: string): string | typeof GIT_ROOT_NOT_FOUND => {
     const startTime = Date.now()
-    console.error(`[TRACE] findGitRootImpl: START path=${startPath}`)
 
     let current = resolve(startPath)
     const root = current.substring(0, current.indexOf(sep) + 1) || sep
@@ -24,14 +23,12 @@ const findGitRootImpl = memoizeWithLRU(
     while (current !== root) {
       statCount++
       if (statCount <= 5 || statCount % 10 === 0) {
-        console.error(`[TRACE] findGitRootImpl: checking ${current} (stat #${statCount})`)
       }
       try {
         const gitPath = join(current, '.git')
         const stat = statSync(gitPath)
         // .git can be a directory (regular repo) or file (worktree/submodule)
         if (stat.isDirectory() || stat.isFile()) {
-          console.error(`[TRACE] findGitRootImpl: FOUND .git at ${current}`)
           return current.normalize('NFC')
         }
       } catch {

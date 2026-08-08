@@ -13,7 +13,7 @@ import type {
   ReferralEligibilityResponse,
 } from '../services/oauth/types.js'
 import { getCwd } from '../utils/cwd.js'
-import { getErrnoCode } from './errors.js'
+import { getErrnoCode, ConfigParseError } from './errors.js'
 import { getFsImplementation } from './fsOperations.js'
 import { findCanonicalGitRoot } from './git.js'
 import { normalizePathForConfigKey } from './path.js'
@@ -26,9 +26,14 @@ import { safeParseJSON } from './json.js'
 import { stripBOM } from './jsonRead.js'
 import { jsonParse, jsonStringify } from './slowOperations.js'
 import { writeFileSyncAndFlush_DEPRECATED } from './file.js'
-import { isEnvTruthy } from './envUtils.js'
+import { getClaudeConfigHomeDir, isEnvTruthy } from './envUtils.js'
+import { getEssentialTrafficOnlyReason } from './privacyLevel.js'
+import { getManagedFilePath } from './settings/managedPath.js'
 
 import type { EDITOR_MODES, NOTIFICATION_CHANNELS } from './configConstants.js'
+
+// 防止 logEvent → getGlobalConfig → getConfig 在配置损坏时无限递归的重入标志
+let insideGetConfig = false
 
 export type NotificationChannel = (typeof NOTIFICATION_CHANNELS)[number]
 

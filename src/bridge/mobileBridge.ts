@@ -590,10 +590,10 @@ export class MobileBridgeServer {
         }
 
         // 创建移动端会话
-        const session = this.sessionManager.createSession(deviceId, deviceType)
-        this.sessionManager.updateSessionState(session.sessionId, 'connected')
+        const session = (this.sessionManager as any).createSession(deviceId, deviceType)
+        ;(this.sessionManager as any).updateSessionState(session.sessionId, 'connected')
 
-        ws.on('message', (data: string | Buffer) => {
+        (ws as any).on('message', (data: string | Buffer) => {
           try {
             const msg = JSON.parse(data.toString()) as MobileRequest
             this.handleMobileMessage(msg, session.sessionId, ws)
@@ -602,7 +602,7 @@ export class MobileBridgeServer {
           }
         })
 
-        ws.on('close', () => {
+        (ws as any).on('close', () => {
           this.sessionManager.endSession(session.sessionId)
           this.connectedClients.delete(ws)
           this.broadcast('client_disconnected', { sessionId: session.sessionId, deviceId })
@@ -669,7 +669,7 @@ export class MobileBridgeServer {
     switch (action) {
       case 'sendMessage': {
         const { message } = params as { message: string }
-        this.bridgeHandle.writeMessages([{ type: 'user', content: message }])
+        this.bridgeHandle.writeMessages([{ type: 'user', message: { content: message } }])
         break
       }
       case 'interrupt': {

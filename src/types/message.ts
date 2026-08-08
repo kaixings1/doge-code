@@ -237,3 +237,18 @@ export type Message =
   | TombstoneMessage
   | GroupedToolUseMessage
 
+export type MCPRemoteServer = {
+  id: string
+  name: string
+  transport: 'stdio' | 'sse' | 'http'
+  command?: string
+  args?: string[]
+  url?: string
+  headers?: Record<string, string>
+  env?: Record<string, string>
+}
+
+export type MCPRemoteServerConfig = {
+  mcpServers: Record<string, MCPRemoteServer>
+}
+

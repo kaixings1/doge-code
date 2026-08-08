@@ -1,5 +1,5 @@
 import { feature } from 'bun:bundle'
-import { mergeWith } from '../../vendor/lodash.js'
+import { clone, mergeWith } from '../../vendor/lodash.js'
 import { dirname, join, resolve } from 'path'
 import { z } from 'zod/v4'
 import {
@@ -38,7 +38,9 @@ import {
   type ValidationError,
 } from './validation.js'
 import { getClaudeConfigHomeDir, isEnvTruthy } from '../envUtils.js'
-import { getErrnoCode } from '../errors.js'
+import { getErrnoCode, isENOENT } from '../errors.js'
+import { getPlatform } from '../platform.js'
+import { addFileGlobRuleToGitignore } from '../git/gitignore.js'
 import { getFsImplementation, safeResolvePath } from '../fsOperations.js'
 import { safeParseJSON } from '../json.js'
 import { writeFileSyncAndFlush_DEPRECATED } from '../file.js'
@@ -647,14 +649,17 @@ function loadSettingsFromDisk(): SettingsWithErrors {
   }
 
   const startTime = Date.now()
-  profileCheckpoint('loadSettingsFromDisk_start')
+  //profileCheckpoint('loadSettingsFromDisk_start')
 
   isLoadingSettings = true
+  //console.error('[DIAG-SETT] loadSettingsFromDisk start at ' + Date.now());
   try {
     // 从插件设置开始作为最低优先级的基础
     // 所有基于文件的源（用户、项目、本地、标志、策略）都会覆盖这些设置
     // 插件设置仅包含允许列表中的键（例如 agent），这些是有效的 SettingsJson 字段
+    //console.error('[DIAG-SETT] before getPluginSettingsBase at ' + Date.now());
     const pluginSettings = getPluginSettingsBase()
+    //console.error('[DIAG-SETT] after getPluginSettingsBase at ' + Date.now());
     let mergedSettings: SettingsJson = {}
     if (pluginSettings) {
       mergedSettings = mergeWith(
@@ -669,6 +674,7 @@ function loadSettingsFromDisk(): SettingsWithErrors {
 
     // 按优先级顺序深度合并每个源的设置
     for (const source of getEnabledSettingSources()) {
+      //console.error('[DIAG-SETT] source loop start: ' + source + ' at ' + Date.now());
       // policySettings："第一个源胜出" — 使用具有内容的最高优先级源
       // 优先级：远程 > HKLM/plist > managed-settings.json > HKCU
       if (source === 'policySettings') {
@@ -743,7 +749,9 @@ function loadSettingsFromDisk(): SettingsWithErrors {
         if (!seenFiles.has(resolvedPath)) {
           seenFiles.add(resolvedPath)
 
+          //console.error('[DIAG-SETT] before parse ' + source + ' path=' + filePath + ' at ' + Date.now());
           const { settings, errors } = parseSettingsFile(filePath)
+          //console.error('[DIAG-SETT] after parse ' + source + ' at ' + Date.now());
 
           // 添加唯一错误（去重）
           for (const error of errors) {
@@ -852,7 +860,7 @@ export function getSettingsWithErrors(): SettingsWithErrors {
 
   // 从磁盘加载并缓存结果
   const result = loadSettingsFromDisk()
-  profileCheckpoint('loadSettingsFromDisk_end')
+  //profileCheckpoint('loadSettingsFromDisk_end')
   setSessionSettingsCache(result)
   return result
 }

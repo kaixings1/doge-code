@@ -32,6 +32,7 @@
   ],
   "exclude": [
     "src/**/*.mjs",
-    "src/desktop-electron/renderer/components/MonacoEditorPanel.tsx"
+    "src/desktop-electron/renderer/components/MonacoEditorPanel.tsx",
+    ".tools/**/*"
   ]
 }

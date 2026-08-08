@@ -3112,7 +3112,7 @@ if (options.continue) {
   setUserMsgOptIn(true);
   setIsRemoteMode(true);
   const remoteSessionConfig = createRemoteSessionConfig(targetSessionId, getAccessToken, apiCreds.orgUUID, /* hasInitialPrompt */false, /* viewerOnly */true);
-  const infoMessage = createSystemMessage(`已附加到助手会话 ${targetSessionId.slice(0, 8)}…`, 'info');
+  const infoMessage = createSystemMessage(`已附加到助手会话 ${targetSessionId}…`, 'info');
   const assistantInitialState: AppState = {
 	...initialState,
 	isBriefOnly: true,

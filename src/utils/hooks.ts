@@ -9,6 +9,12 @@ import { existsSync, mkdirSync, writeFileSync } from 'fs'
 import { homedir } from 'os'
 import { fileURLToPath } from 'url'
 import { pathExists } from './file.js'
+import { firstLineOf } from './stringUtils.js'
+import {
+  getLegacyToolNames,
+  normalizeLegacyToolName,
+  permissionRuleValueFromString,
+} from './permissions/permissionRuleParser.js'
 
 // DOGE: 内联状态栏脚本内容，避免 Bun bundle 时被截断
 const DOGE_STATUS_LINE_SCRIPT = `#!/usr/bin/env node
@@ -103,8 +109,7 @@ if (doge_api_json) {
   segments.push("\\u{1F4DC} " + configName);
 }
 if (session_id) {
-  var sid = session_id.length > 8 ? session_id.slice(0, 8) + "\\u2026" : session_id;
-  segments.push("\\u{1F517} " + sid);
+  segments.push("\\u{1F517} " + session_id);
 }
 console.log(segments.join("  "));
 `;

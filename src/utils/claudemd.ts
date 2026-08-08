@@ -55,6 +55,7 @@ import {
 } from './config.js'
 import { logForDebugging } from './debug.js'
 import { getFsImplementation, safeResolvePath } from './fsOperations.js'
+import { parseFrontmatter, splitPathInFrontmatter } from './frontmatterParser.js'
 import { findCanonicalGitRoot, findGitRoot } from './git.js'
 import {
   executeInstructionsLoadedHooks,
@@ -63,6 +64,10 @@ import {
   type InstructionsMemoryType,
 } from './hooks.js'
 import type { MemoryType } from './memory/types.js'
+import { normalizePathForComparison } from './file.js'
+import { cacheKeys } from './fileStateCache.js'
+import { getErrnoCode } from './errors.js'
+import { getClaudeConfigHomeDir, isEnvTruthy } from './envUtils.js'
 import { expandPath } from './path.js'
 import { pathInWorkingPath } from './permissions/filesystem.js'
 import { isSettingSourceEnabled } from './settings/constants.js'
