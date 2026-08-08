@@ -100,6 +100,55 @@ export class EditBlockCoder implements Coder {
     return { applied, failed };
   }
 
+  /** 获取编辑应用的 diff 预览（CoreCoder 模式：成功时返回 diff，失败时返回原因） */
+  async getEditDiff(
+    edits: EditBlock[],
+    rootDir: string,
+  ): Promise<Array<{ path: string; diff: string; applied: boolean; reason?: string }>> {
+    const diffs: Array<{ path: string; diff: string; applied: boolean; reason?: string }> = [];
+    const fs = await import('fs/promises');
+    const path = await import('path');
+
+    for (const edit of edits) {
+      const fullPath = path.isAbsolute(edit.path)
+        ? edit.path
+        : path.join(rootDir, edit.path);
+      try {
+        const content = await fs.readFile(fullPath, 'utf-8');
+        const result = this.replaceContent(content, edit.original, edit.updated);
+        if (result !== null) {
+          // 生成统一 diff
+          const originalLines = content.split('\n');
+          const updatedLines = result.split('\n');
+          const diff = this.generateUnifiedDiff(edit.path, originalLines, updatedLines);
+          diffs.push({ path: edit.path, diff, applied: true });
+        } else {
+          diffs.push({ path: edit.path, diff: '', applied: false, reason: 'SEARCH block did not match' });
+        }
+      } catch {
+        diffs.push({ path: edit.path, diff: '', applied: false, reason: 'File not found or unreadable' });
+      }
+    }
+    return diffs;
+  }
+
+  private generateUnifiedDiff(filePath: string, original: string[], updated: string[]): string {
+    const lines: string[] = [`--- ${filePath}`, `+++ ${filePath}`];
+    let i = 0, j = 0;
+    while (i < original.length || j < updated.length) {
+      const oLine = original[i];
+      const uLine = updated[j];
+      if (i < original.length && j < updated.length && oLine === uLine) {
+        lines.push(` ${oLine}`);
+        i++; j++;
+      } else {
+        if (i < original.length) { lines.push(`-${oLine}`); i++; }
+        if (j < updated.length) { lines.push(`+${uLine}`); j++; }
+      }
+    }
+    return lines.join('\n');
+  }
+
   // ------------------------------------------------------------------
   // 私有方法
   // ------------------------------------------------------------------

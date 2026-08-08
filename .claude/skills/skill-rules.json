@@ -1,0 +1,63 @@
+{
+  "version": "1.0.0",
+  "description": "doge-code 技能自动激活规则",
+  "activationThreshold": 3,
+  "skills": [
+    {
+      "name": "feishu",
+      "description": "飞书集成：消息、卡片、webhook、桥接",
+      "keywords": ["飞书", "feishu", "lark", "webhook", "卡片", "card", "bridge"],
+      "intentPatterns": ["发消息", "发送卡片", "飞书机器人", "飞书集成"],
+      "enabled": true
+    },
+    {
+      "name": "skill",
+      "description": "技能系统：创建/打包/分发/激活",
+      "keywords": ["skill", "技能", "skillify", "skill-bundle", "skill-create"],
+      "intentPatterns": ["创建技能", "打包技能", "技能开发", "写一个 skill"],
+      "enabled": true
+    },
+    {
+      "name": "dev-docs",
+      "description": "开发文档：三件套（plan/context/tasks）",
+      "keywords": ["dev-docs", "开发文档", "三件套", "plan.md", "context.md", "tasks.md"],
+      "intentPatterns": ["创建开发文档", "更新 dev docs", "记录进度", "session progress"],
+      "enabled": true
+    },
+    {
+      "name": "code-review",
+      "description": "代码审查：PR 审查、本地审查、代码质量",
+      "keywords": ["code-review", "审查", "review", "pr 审查", "本地审查", "audit"],
+      "intentPatterns": ["审查代码", "review pr", "代码质量", "审查这个 pr"],
+      "enabled": true
+    },
+    {
+      "name": "git-workflow",
+      "description": "Git 工作流：提交、分支、PR、合并",
+      "keywords": ["git", "提交", "commit", "分支", "branch", "pr", "pull request", "merge"],
+      "intentPatterns": ["提交代码", "创建 pr", "合并分支", "git 操作"],
+      "enabled": true
+    },
+    {
+      "name": "testing",
+      "description": "测试系统：单元测试、集成测试、覆盖率",
+      "keywords": ["test", "测试", "unit test", "integration test", "coverage", "覆盖率"],
+      "intentPatterns": ["写测试", "运行测试", "测试覆盖", "e2e 测试"],
+      "enabled": true
+    },
+    {
+      "name": "bugfix",
+      "description": "Bug 修复：调试、错误分析、快速修复",
+      "keywords": ["bug", "错误", "fix", "修复", "debug", "调试", "报错", "crash"],
+      "intentPatterns": ["修 bug", "修复错误", "调试问题", "为什么报错"],
+      "enabled": true
+    },
+    {
+      "name": "refactoring",
+      "description": "重构：代码简化、性能优化、架构改进",
+      "keywords": ["refactor", "重构", "优化", "简化", "性能", "performance"],
+      "intentPatterns": ["重构代码", "优化性能", "简化逻辑", "清理代码"],
+      "enabled": true
+    }
+  ]
+}

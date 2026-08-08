@@ -21,6 +21,7 @@ import { detectCodeIndexingFromCommand } from '../../utils/codeIndexing.js';
 import { isEnvTruthy } from '../../utils/envUtils.js';
 import { isENOENT, ShellError } from '../../utils/errors.js';
 import { detectFileEncoding, detectLineEndings, getFileModificationTime, writeTextContent } from '../../utils/file.js';
+import { ecoCompress, isEcoEnabled } from '../../engine/ecoFilter.js';
 import { fileHistoryEnabled, fileHistoryTrackEdit } from '../../utils/fileHistory.js';
 import { truncate } from '../../utils/format.js';
 import { getFsImplementation } from '../../utils/fsOperations.js';
@@ -1241,6 +1242,26 @@ export const BashTool = buildTool({
         backgroundInfo = `命令已被用户手动转入后台，ID: ${backgroundTaskId}。输出正在写入: ${outputPath}`;
       } else {
         backgroundInfo = `命令正在后台运行，ID: ${backgroundTaskId}。输出正在写入: ${outputPath}`;
+      }
+    }
+    // Eco 压缩：在返回给模型前压缩 Bash 输出
+    if (isEcoEnabled()) {
+      const rawContent = [processedStdout, errorMessage, backgroundInfo].filter(Boolean).join('\n')
+      const teePath = persistedOutputPath
+      const { compressed, truncated } = ecoCompress(rawContent, !!errorMessage, teePath)
+      if (truncated) {
+        return {
+          tool_use_id: toolUseID,
+          type: 'tool_result',
+          content: compressed + '\n[Eco: 输出已截断，完整内容已保存到 tee 文件]',
+          is_error: interrupted,
+        }
+      }
+      return {
+        tool_use_id: toolUseID,
+        type: 'tool_result',
+        content: compressed,
+        is_error: interrupted,
       }
     }
     return {
