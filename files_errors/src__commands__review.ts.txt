@@ -1,4 +1,0 @@
-src/commands/review.ts(263,4): error TS1064: The return type of an async function or method must be the global Promise<T> type. Did you mean to write 'Promise<string>'?
-src/commands/review.ts(446,13): error TS2339: Property 'updateProgress' does not exist on type 'LocalJSXCommandContext'.
-src/commands/review.ts(465,13): error TS2339: Property 'updateProgress' does not exist on type 'LocalJSXCommandContext'.
-src/commands/review.ts(473,13): error TS2339: Property 'updateProgress' does not exist on type 'LocalJSXCommandContext'.

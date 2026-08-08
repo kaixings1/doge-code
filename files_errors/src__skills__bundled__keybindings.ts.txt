@@ -1,3 +1,0 @@
-src/skills/bundled/keybindings.ts(39,25): error TS2538: Type 'ParsedBinding' cannot be used as an index type.
-src/skills/bundled/keybindings.ts(40,22): error TS2538: Type 'ParsedBinding' cannot be used as an index type.
-src/skills/bundled/keybindings.ts(42,20): error TS2538: Type 'ParsedBinding' cannot be used as an index type.

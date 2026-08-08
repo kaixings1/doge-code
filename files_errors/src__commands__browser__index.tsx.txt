@@ -1,4 +1,0 @@
-src/commands/browser/index.tsx(71,38): error TS2339: Property 'source' does not exist on type '{ type: string; source: { type: string; data: string; media_type: string; }; text?: undefined; } | { type: string; text: string; source?: undefined; } | { type: string; text: any; }'.
-src/commands/browser/index.tsx(72,39): error TS2339: Property 'source' does not exist on type '{ type: string; source: { type: string; data: string; media_type: string; }; text?: undefined; } | { type: string; text: string; source?: undefined; } | { type: string; text: any; }'.
-src/commands/browser/index.tsx(138,73): error TS2339: Property 'alt' does not exist on type 'Key'.
-src/commands/browser/index.tsx(291,3): error TS2353: Object literal may only specify known properties, and 'supportsNonInteractive' does not exist in type 'CommandBase & LocalJSXCommand'.

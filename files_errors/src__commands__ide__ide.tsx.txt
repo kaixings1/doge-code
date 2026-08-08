@@ -1,6 +1,0 @@
-src/commands/ide/ide.tsx(540,33): error TS2339: Property 'type' does not exist on type 'unknown'.
-src/commands/ide/ide.tsx(541,19): error TS2339: Property 'type' does not exist on type 'unknown'.
-src/commands/ide/ide.tsx(543,26): error TS2339: Property 'type' does not exist on type 'unknown'.
-src/commands/ide/ide.tsx(567,34): error TS2339: Property 'type' does not exist on type 'unknown'.
-src/commands/ide/ide.tsx(569,19): error TS2339: Property 'client' does not exist on type 'unknown'.
-src/commands/ide/ide.tsx(570,48): error TS2339: Property 'config' does not exist on type 'unknown'.

@@ -1,1 +1,0 @@
-src/tools/BashTool/sedValidation.ts(406,49): error TS2339: Property 'error' does not exist on type 'ShellParseResult'.

@@ -1,4 +1,0 @@
-src/components/PromptInput/PromptInputFooterSuggestions.tsx(40,5): error TS2339: Property 'item' does not exist on type '{}'.
-src/components/PromptInput/PromptInputFooterSuggestions.tsx(41,5): error TS2339: Property 'maxColumnWidth' does not exist on type '{}'.
-src/components/PromptInput/PromptInputFooterSuggestions.tsx(42,5): error TS2339: Property 'isSelected' does not exist on type '{}'.
-src/components/PromptInput/PromptInputFooterSuggestions.tsx(251,57): error TS2322: Type '{ key: any; item: any; maxColumnWidth: any; isSelected: boolean; }' is not assignable to type 'IntrinsicAttributes & object'.

@@ -1,1 +1,0 @@
-src/commands/code-review-assistant/index.ts(8,3): error TS2353: Object literal may only specify known properties, and 'arguments' does not exist in type 'CommandBase & LocalJSXCommand'.

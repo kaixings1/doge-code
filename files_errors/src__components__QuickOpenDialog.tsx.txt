@@ -1,1 +1,0 @@
-src/components/QuickOpenDialog.tsx(34,3): error TS2554: Expected 2 arguments, but got 1.

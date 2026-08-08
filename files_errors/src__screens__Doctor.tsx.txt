@@ -1,7 +1,0 @@
-src/screens/Doctor.tsx(171,11): error TS2339: Property 'activeAgents' does not exist on type '{}'.
-src/screens/Doctor.tsx(172,11): error TS2339: Property 'allAgents' does not exist on type '{}'.
-src/screens/Doctor.tsx(173,11): error TS2339: Property 'failedFiles' does not exist on type '{}'.
-src/screens/Doctor.tsx(189,24): error TS2322: Type 'Promise<unknown>' is not assignable to type 'Promise<{ readonly mode: InternalPermissionMode; readonly additionalWorkingDirectories: { readonly clear: () => void; readonly delete: (key: string) => boolean; readonly forEach: (callbackfn: (value: AdditionalWorkingDirectory, key: string, map: Map<...>) => void, thisArg?: any) => void; ... 10 more ...; readonly [S...'.
-src/screens/Doctor.tsx(458,25): error TS2339: Property 'length' does not exist on type 'unknown'.
-src/screens/Doctor.tsx(458,147): error TS2339: Property 'length' does not exist on type 'unknown'.
-src/screens/Doctor.tsx(458,183): error TS2339: Property 'map' does not exist on type 'unknown'.

@@ -1,1 +1,0 @@
-src/commands/file-search/index.ts(149,66): error TS2339: Property 'call' does not exist on type 'Command'.

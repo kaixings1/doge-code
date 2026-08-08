@@ -1,2 +1,0 @@
-src/commands/code-health/index.ts(76,17): error TS2304: Cannot find name 'dirname'.
-src/commands/code-health/index.ts(600,66): error TS2339: Property 'call' does not exist on type 'Command'.

@@ -1,4 +1,0 @@
-src/query/stopHooks.ts(114,8): error TS2339: Property 'classifyAndWriteState' does not exist on type 'typeof import("D:/doge-code/src/jobs/classifier")'.
-src/query/stopHooks.ts(195,11): error TS2322: Type 'unknown' is not assignable to type 'string'.
-src/query/stopHooks.ts(359,15): error TS2322: Type 'unknown' is not assignable to type 'string'.
-src/query/stopHooks.ts(401,13): error TS2322: Type 'unknown' is not assignable to type 'string'.

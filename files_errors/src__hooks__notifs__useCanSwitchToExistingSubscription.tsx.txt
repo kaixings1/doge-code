@@ -1,3 +1,0 @@
-src/hooks/notifs/useCanSwitchToExistingSubscription.tsx(14,26): error TS2345: Argument of type '() => Promise<{ key: string; jsx: Element; priority: string; }>' is not assignable to parameter of type '() => Result | Promise<Result>'.
-src/hooks/notifs/useCanSwitchToExistingSubscription.tsx(52,23): error TS2339: Property 'has_claude_max' does not exist on type 'unknown'.
-src/hooks/notifs/useCanSwitchToExistingSubscription.tsx(55,23): error TS2339: Property 'has_claude_pro' does not exist on type 'unknown'.

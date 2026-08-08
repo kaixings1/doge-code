@@ -1,2 +1,0 @@
-src/components/DevBar.tsx(9,10): error TS2367: This comparison appears to be unintentional because the types '"production"' and '"development"' have no overlap.
-src/components/DevBar.tsx(9,44): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.

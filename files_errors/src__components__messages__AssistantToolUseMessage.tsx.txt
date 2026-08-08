@@ -1,2 +1,0 @@
-src/components/messages/AssistantToolUseMessage.tsx(122,56): error TS2339: Property 'toolUseId' does not exist on type 'unknown'.
-src/components/messages/AssistantToolUseMessage.tsx(340,126): error TS2339: Property 'type' does not exist on type 'unknown'.

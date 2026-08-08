@@ -1,2 +1,0 @@
-src/components/Settings/Status.tsx(121,7): error TS2322: Type 'unknown' is not assignable to type 'string'.
-src/components/Settings/Status.tsx(122,7): error TS2739: Type '{}' is missing the following properties from type '{ clients: MCPServerConnection[]; tools: Tool[]; commands: Command[]; resources: Record<string, ServerResource[]>; pluginReconnectKey: number; }': clients, tools, commands, resources, pluginReconnectKey

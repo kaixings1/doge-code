@@ -1,2 +1,0 @@
-src/keybindings/template.ts(23,3): error TS2322: Type '{ context: string; bindings: Record<string, string>; }[]' is not assignable to type 'KeybindingBlock[]'.
-src/keybindings/template.ts(28,11): error TS2322: Type 'ParsedBinding' is not assignable to type 'string'.

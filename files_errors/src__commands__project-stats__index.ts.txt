@@ -1,1 +1,0 @@
-src/commands/project-stats/index.ts(154,66): error TS2339: Property 'call' does not exist on type 'Command'.

@@ -1,2 +1,0 @@
-src/skills/loadSkillsDir.ts(812,23): error TS2339: Property 'cache' does not exist on type '(cwd: string) => Promise<Command[]>'.
-src/skills/loadSkillsDir.ts(813,30): error TS2339: Property 'cache' does not exist on type '(subdir: any, cwd: string) => Promise<MarkdownFile[]>'.

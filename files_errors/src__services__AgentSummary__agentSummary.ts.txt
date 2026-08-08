@@ -1,1 +1,0 @@
-src/services/AgentSummary/agentSummary.ts(133,47): error TS2339: Property 'find' does not exist on type 'AssistantMessageContent'.

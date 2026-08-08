@@ -1,3 +1,0 @@
-src/services/bridgeSessions/sessionManager.ts(154,66): error TS2322: Type '"local"' is not assignable to type 'TerminalBackend'.
-src/services/bridgeSessions/sessionManager.ts(178,5): error TS2322: Type 'TerminalBackend' is not assignable to type '"screen" | "local" | "tmux"'.
-src/services/bridgeSessions/sessionManager.ts(190,7): error TS2367: This comparison appears to be unintentional because the types 'TerminalBackend' and '"local"' have no overlap.

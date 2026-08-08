@@ -1,1 +1,0 @@
-src/components/teams/TeamStatus.tsx(23,50): error TS2339: Property 'teammates' does not exist on type 'unknown'.

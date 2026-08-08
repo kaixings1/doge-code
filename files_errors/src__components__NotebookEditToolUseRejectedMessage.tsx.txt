@@ -1,1 +1,0 @@
-src/components/NotebookEditToolUseRejectedMessage.tsx(73,95): error TS2322: Type '{ code: any; filePath: string; dim: boolean; }' is not assignable to type 'IntrinsicAttributes & object'.

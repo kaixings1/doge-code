@@ -1,1 +1,0 @@
-src/services/lsp/LSPClient.ts(370,36): error TS2769: No overload matches this call.

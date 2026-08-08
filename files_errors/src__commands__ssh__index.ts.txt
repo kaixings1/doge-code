@@ -1,1 +1,0 @@
-src/commands/ssh/index.ts(137,66): error TS2339: Property 'call' does not exist on type 'Command'.

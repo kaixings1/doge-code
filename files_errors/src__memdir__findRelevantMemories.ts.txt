@@ -1,1 +1,0 @@
-src/memdir/findRelevantMemories.ts(65,13): error TS2339: Property 'logMemoryRecallShape' does not exist on type 'typeof import("D:/doge-code/src/memdir/memoryShapeTelemetry")'.

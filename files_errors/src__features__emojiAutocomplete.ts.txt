@@ -1,3 +1,0 @@
-src/features/emojiAutocomplete.ts(213,3): error TS1117: An object literal cannot have multiple properties with the same name.
-src/features/emojiAutocomplete.ts(228,3): error TS1117: An object literal cannot have multiple properties with the same name.
-src/features/emojiAutocomplete.ts(234,3): error TS1117: An object literal cannot have multiple properties with the same name.

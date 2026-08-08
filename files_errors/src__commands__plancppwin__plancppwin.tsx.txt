@@ -1,3 +1,0 @@
-src/commands/plancppwin/plancppwin.tsx(2484,12): error TS2304: Cannot find name 'totalChecked'.
-src/commands/plancppwin/plancppwin.tsx(2530,33): error TS2304: Cannot find name 'totalChecked'.
-src/commands/plancppwin/plancppwin.tsx(2535,39): error TS2304: Cannot find name 'totalChecked'.

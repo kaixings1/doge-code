@@ -1,1 +1,0 @@
-src/Tool.ts(322,17): error TS2339: Property 'type' does not exist on type 'unknown'.

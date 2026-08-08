@@ -1,1 +1,0 @@
-src/services/toolUseSummary/toolUseSummaryGenerator.ts(84,8): error TS2339: Property 'filter' does not exist on type 'AssistantMessageContent'.

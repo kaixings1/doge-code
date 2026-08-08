@@ -1,2 +1,0 @@
-src/utils/textHighlighting.ts(131,38): error TS2339: Property 'value' does not exist on type 'ControlCode | Char'.
-src/utils/textHighlighting.ts(138,35): error TS2339: Property 'value' does not exist on type 'ControlCode | Char'.

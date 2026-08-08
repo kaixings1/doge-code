@@ -1,1 +1,0 @@
-src/tools/TaskStopTool/UI.tsx(28,7): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.

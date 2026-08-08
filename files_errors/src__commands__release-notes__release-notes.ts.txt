@@ -1,3 +1,0 @@
-src/commands/release-notes/release-notes.ts(739,59): error TS2345: Argument of type '"none" | "patch" | "major" | "minor"' is not assignable to parameter of type '"patch" | "major" | "minor"'.
-src/commands/release-notes/release-notes.ts(1235,3): error TS2353: Object literal may only specify known properties, and 'arguments' does not exist in type 'CommandBase & LocalCommand'.
-src/commands/release-notes/release-notes.ts(1253,66): error TS2339: Property 'call' does not exist on type 'Command'.

@@ -1,4 +1,0 @@
-src/services/mcp/useManageMCPConnections.ts(30,7): error TS2339: Property 'clearSkillIndexCache' does not exist on type 'typeof import("D:/doge-code/src/services/skillSearch/localSearch")'.
-src/services/mcp/useManageMCPConnections.ts(685,50): error TS2554: Expected 0 arguments, but got 1.
-src/services/mcp/useManageMCPConnections.ts(723,46): error TS2339: Property 'cache' does not exist on type '() => Promise<any[]>'.
-src/services/mcp/useManageMCPConnections.ts(729,50): error TS2554: Expected 0 arguments, but got 1.

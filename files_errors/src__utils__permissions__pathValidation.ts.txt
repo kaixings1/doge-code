@@ -1,2 +1,0 @@
-src/utils/permissions/pathValidation.ts(191,31): error TS2339: Property 'message' does not exist on type '{ safe: true; } | { safe: false; message: string; classifierApprovable: boolean; }'.
-src/utils/permissions/pathValidation.ts(192,45): error TS2339: Property 'classifierApprovable' does not exist on type '{ safe: true; } | { safe: false; message: string; classifierApprovable: boolean; }'.

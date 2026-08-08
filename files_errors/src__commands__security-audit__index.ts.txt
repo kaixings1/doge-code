@@ -1,1 +1,0 @@
-src/commands/security-audit/index.ts(235,24): error TS2339: Property 'cwd' does not exist on type 'LocalJSXCommandContext'.

@@ -1,1 +1,0 @@
-src/components/App.tsx(26,19): error TS4113: This member cannot have an 'override' modifier because it is not declared in the base class 'Component<{ children: ReactNode; }, BootstrapBoundaryState, any>'.

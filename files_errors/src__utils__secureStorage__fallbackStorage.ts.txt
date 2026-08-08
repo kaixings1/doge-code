@@ -1,8 +1,0 @@
-src/utils/secureStorage/fallbackStorage.ts(12,22): error TS2339: Property 'name' does not exist on type 'SecureStorage'.
-src/utils/secureStorage/fallbackStorage.ts(12,45): error TS2339: Property 'name' does not exist on type 'SecureStorage'.
-src/utils/secureStorage/fallbackStorage.ts(38,21): error TS2554: Expected 1 arguments, but got 0.
-src/utils/secureStorage/fallbackStorage.ts(53,19): error TS2554: Expected 1 arguments, but got 0.
-src/utils/secureStorage/fallbackStorage.ts(63,5): error TS2322: Type '() => boolean' is not assignable to type '(key: string) => Promise<void>'.
-src/utils/secureStorage/fallbackStorage.ts(64,38): error TS2554: Expected 1 arguments, but got 0.
-src/utils/secureStorage/fallbackStorage.ts(65,42): error TS2554: Expected 1 arguments, but got 0.
-src/utils/secureStorage/fallbackStorage.ts(67,7): error TS2322: Type 'Promise<void>' is not assignable to type 'boolean'.

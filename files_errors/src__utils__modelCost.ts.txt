@@ -1,1 +1,0 @@
-src/utils/modelCost.ts(360,7): error TS2552: Cannot find name 'DEFAULT_UNKNOWN_MODEL_COST'. Did you mean 'DEFAULT_UNKNOWN_OPENAI_COST'?

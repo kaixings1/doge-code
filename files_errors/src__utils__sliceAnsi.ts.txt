@@ -1,3 +1,0 @@
-src/utils/sliceAnsi.ts(46,41): error TS2339: Property 'fullWidth' does not exist on type 'ControlCode | Char'.
-src/utils/sliceAnsi.ts(46,75): error TS2339: Property 'value' does not exist on type 'ControlCode | Char'.
-src/utils/sliceAnsi.ts(80,25): error TS2339: Property 'value' does not exist on type 'ControlCode | Char'.

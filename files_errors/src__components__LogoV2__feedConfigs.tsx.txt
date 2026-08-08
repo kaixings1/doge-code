@@ -1,3 +1,0 @@
-src/components/LogoV2/feedConfigs.tsx(36,9): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
-src/components/LogoV2/feedConfigs.tsx(51,5): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
-src/components/LogoV2/feedConfigs.tsx(57,7): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.

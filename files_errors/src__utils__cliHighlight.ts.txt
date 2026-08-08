@@ -1,2 +1,0 @@
-src/utils/cliHighlight.ts(21,54): error TS2694: Namespace '"highlight.js"' has no exported member 'getLanguage'.
-src/utils/cliHighlight.ts(28,37): error TS2339: Property 'getLanguage' does not exist on type 'typeof import("highlight.js")'.

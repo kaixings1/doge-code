@@ -1,7 +1,0 @@
-src/utils/notebook.ts(10,3): error TS2724: '"../types/notebook.js"' has no exported member named 'NotebookCellOutput'. Did you mean 'NotebookCell'?
-src/utils/notebook.ts(11,3): error TS2724: '"../types/notebook.js"' has no exported member named 'NotebookCellSource'. Did you mean 'NotebookCell'?
-src/utils/notebook.ts(12,3): error TS2305: Module '"../types/notebook.js"' has no exported member 'NotebookCellSourceOutput'.
-src/utils/notebook.ts(13,3): error TS2305: Module '"../types/notebook.js"' has no exported member 'NotebookContent'.
-src/utils/notebook.ts(14,3): error TS2305: Module '"../types/notebook.js"' has no exported member 'NotebookOutputImage'.
-src/utils/notebook.ts(102,50): error TS2339: Property 'length' does not exist on type 'unknown'.
-src/utils/notebook.ts(103,34): error TS2339: Property 'map' does not exist on type 'unknown'.

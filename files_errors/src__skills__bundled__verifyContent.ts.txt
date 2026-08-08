@@ -1,3 +1,0 @@
-src/skills/bundled/verifyContent.ts(4,19): error TS2307: Cannot find module './verify/examples/cli.md' or its corresponding type declarations.
-src/skills/bundled/verifyContent.ts(5,22): error TS2307: Cannot find module './verify/examples/server.md' or its corresponding type declarations.
-src/skills/bundled/verifyContent.ts(6,21): error TS2307: Cannot find module './verify/SKILL.md' or its corresponding type declarations.

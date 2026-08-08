@@ -1,3 +1,0 @@
-src/utils/model/model.ts(179,7): error TS2304: Cannot find name 'getAntModelOverrideConfig'.
-src/utils/model/model.ts(405,22): error TS2304: Cannot find name 'resolveAntModel'.
-src/utils/model/model.ts(488,22): error TS2304: Cannot find name 'resolveAntModel'.

@@ -1,3 +1,0 @@
-src/services/PromptSuggestion/promptSuggestion.ts(342,43): error TS2339: Property 'find' does not exist on type 'AssistantMessageContent'.
-src/services/PromptSuggestion/promptSuggestion.ts(346,30): error TS2322: Type 'unknown' is not assignable to type 'string'.
-src/services/PromptSuggestion/promptSuggestion.ts(351,30): error TS2322: Type 'unknown' is not assignable to type 'string'.

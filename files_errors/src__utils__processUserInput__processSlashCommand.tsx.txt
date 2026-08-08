@@ -1,4 +1,0 @@
-src/utils/processUserInput/processSlashCommand.tsx(276,7): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
-src/utils/processUserInput/processSlashCommand.tsx(576,11): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
-src/utils/processUserInput/processSlashCommand.tsx(644,9): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
-src/utils/processUserInput/processSlashCommand.tsx(852,17): error TS2322: Type 'Message[]' is not assignable to type '(AttachmentMessage | UserMessage | AssistantMessage | SystemMessage | ProgressMessage)[]'.
