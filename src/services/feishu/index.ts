@@ -16,10 +16,11 @@
 
 import type { MobileRequest, MobileResponse } from '../../bridge/mobileProtocol.js'
 import type { ReplBridgeHandle } from '../../bridge/replBridge.js'
+import type { SDKMessage } from '../../entrypoints/agentSdkTypes.js'
 import { feishuApi } from './feishuApiClient.js'
 import { extractFeishuText, isMentioningBot, stripMention } from './feishuMessageAdapter.js'
 import { parseFeishuMessage, toMobileRequest, toPromptRequest } from './feishuCommandMapper.js'
-import { FeishuWebhookServer } from './feishuWebhook.js'
+import { FeishuWebhookServer, type FeishuEventCallback } from './feishuWebhook.js'
 import { logForDebugging } from '../../utils/debug.js'
 
 // ─── 类型 ───
@@ -40,6 +41,7 @@ export interface FeishuBridgeOptions {
   webhookUrl?: string
   bridgeHandle: ReplBridgeHandle | null
   onResponse?: (response: MobileResponse) => Promise<void>
+  onInboundMessage?: (msg: SDKMessage) => void | Promise<void>
 }
 
 // ─── 主类 ───
@@ -52,6 +54,37 @@ export class FeishuBridge {
 
   constructor(options: FeishuBridgeOptions) {
     this.options = options
+  }
+
+  /** 处理 Bridge 传回的 SDK 消息（用户消息结果、权限请求等）。 */
+  async handleSdkMessage(msg: SDKMessage): Promise<void> {
+    // 找到对应的 chat session
+    const chatId = Object.fromEntries(
+      Array.from(this.sessions.entries()).filter(([, s]) => s.sessionId === msg.session_id)
+    )
+    const target = Object.values(chatId)[0]
+    if (!target) return
+
+    if (msg.type === 'result') {
+      // 工具执行结果 — 不显示给用户（已完成卡片已由工具回调处理）
+      return
+    }
+
+    if (msg.type === 'user' || msg.type === 'assistant') {
+      const text = typeof msg.message?.content === 'string' ? msg.message.content : ''
+      if (text) {
+        const session = this.sessions.get(target.chatId)
+        if (session) {
+          await this.handleBridgeResponse(session.sessionId, {
+            type: msg.type === 'assistant' ? 'result' : 'event',
+            requestId: msg.uuid ?? '',
+            data: text,
+            success: true,
+            timestamp: Date.now(),
+          })
+        }
+      }
+    }
   }
 
   async init(): Promise<void> {
