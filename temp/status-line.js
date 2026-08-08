@@ -11,7 +11,7 @@ try {
 `, { flag: "a" });
 } catch {}
 var input = JSON.parse(rawInput);
-var { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration, doge_api_json, session_id } = input;
+var { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration, doge_api_json, session_id, epoch, update_notification } = input;
 var segments = [];
 if (workspace?.current_dir) {
   let dir = workspace.current_dir;
@@ -78,6 +78,12 @@ if (doge_api_json) {
 }
 if (session_id) {
   segments.push("\uD83D\uDD17 " + session_id);
+}
+if (typeof epoch === "number" && epoch > 0) {
+  segments.push("\uD83D\uDD04 Epoch " + epoch);
+}
+if (update_notification) {
+  segments.push("\uD83D\uDCE2 " + update_notification);
 }
 console.log(segments.join("  "));
 function fmtNum(n) {

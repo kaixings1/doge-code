@@ -886,7 +886,6 @@ export async function initializeToolPermissionContext({
   overlyBroadBashPermissions: DangerousPermissionInfo[]
 }> {
   // 解析 CLI 传入的逗号分隔的允许/禁止工具列表
-  // 规范化旧版工具名称（例如 'Task' → 'Agent'），
   // 确保 stripDangerousPermissionsForAutoMode 中的内存规则移除匹配正确。
   const parsedAllowedToolsCli = parseToolListFromCLI(allowedToolsCli).map(
     rule => permissionRuleValueToString(permissionRuleValueFromString(rule)),
@@ -992,10 +991,6 @@ export async function initializeToolPermissionContext({
     ...addDirs,
   ]
   // 并行化 fs 验证；串行应用更新（累积上下文）。
-  // validateDirectoryForWorkspace 只读取 permissionContext 来检查目录
-  // 是否已被覆盖——并行化的行为差异是无害的
-  // （两个重叠的 --add-dir 都会成功，而不是其中一个被标记为
-  // alreadyInWorkingDirectory，后者本就会被静默跳过）。
   const validationResults = await Promise.all(
     allAdditionalDirectories.map(dir =>
       validateDirectoryForWorkspace(dir, toolPermissionContext),

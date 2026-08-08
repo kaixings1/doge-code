@@ -70,7 +70,8 @@
     "files": [
       "dist/**/*",
       "package.json",
-      "node_modules/zod/**/*"
+      "node_modules/zod/**/*",
+      ".tools/**/*"
     ],
     "extraResources": [
       {

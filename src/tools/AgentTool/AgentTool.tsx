@@ -261,7 +261,7 @@ export const AgentTool = buildTool({
       }
     } catch { /* module not available */ }
 
- 用于权限模式和代理过滤
+  // 用于权限模式和代理过滤
     const appState = toolUseContext.getAppState();
     const permissionMode = appState.toolPermissionContext.mode;
     // 进程内协作者获得空操作 setAppState；setAppStateForTasks

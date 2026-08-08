@@ -1,4 +1,5 @@
-import { APIError } from '@anthropic-ai/sdk'
+import { APIError, APIConnectionError } from '@anthropic-ai/sdk'
+import { sleep } from '../../utils/sleep.js'
 // 引入调试日志工具（实际写入文件或控制台，取决于项目配置）
 import { logForDebugging } from "../../utils/debug.js"
 import type {
@@ -431,6 +432,10 @@ export async function* createAnthropicStreamFromOpenAI(input: {
   const toolIdxMap = new Map<number, number>()               // 上游 tool_calls index -> Anthropic index
   const toolState = new Map<number, { id: string; name: string; arguments: string }>()
 
+  // 冒号结尾检测：服务器可能在冒号后 premature [DONE]，等待 20 秒确认
+  let colonDeadline: number | null = null
+  const COLON_GRACE_MS = 20000
+
   /**
    * 关闭当前活动的文本块（如有）
    */
@@ -480,6 +485,21 @@ export async function* createAnthropicStreamFromOpenAI(input: {
         if (!data || data === '[DONE]') {
           if (data === '[DONE]')
           {
+            // 如果有冒号等待计时器，先等待确认期
+            if (colonDeadline !== null) {
+              const waitMs = Math.max(0, colonDeadline - Date.now())
+              logForDebugging(`[openaiCompat] 收到 [DONE] 但有冒号等待计时器，等待 ${waitMs}ms 确认`, { level: 'debug' })
+              await sleep(waitMs)
+              colonDeadline = null
+              // 等待期间如果有新数据到达，会被 while(true) 循环继续读取
+              // 如果 20 秒内无新数据，说明服务器确实 premature [DONE]
+              // 此时抛出 APIConnectionError，让外层 withRetry 触发重试
+              logForDebugging(`[openaiCompat] 冒号等待期结束，无新数据到达，抛出通讯中断错误`, { level: 'debug' })
+              throw new APIConnectionError({
+                message: '[openaiCompat] 服务器 premature [DONE]（冒号结尾后 20 秒无新数据），将自动重试继续工作',
+                cause: new Error('premature_done'),
+              })
+            }
             await closeActiveBlock()
             for (const ai of toolIdxMap.values()) {
               yield { type: 'content_block_stop', index: ai } as BetaRawMessageStreamEvent
@@ -685,6 +705,14 @@ export async function* createAnthropicStreamFromOpenAI(input: {
         if (delta?.content) {
           const text = delta.content as string
           //logForDebugging(`[openaiCompat] 文本增量, 长度=${text.length}`, { level: 'debug' })
+          // 检测冒号结尾：可能是服务器 premature [DONE] 的信号
+          if (text.endsWith(':') || text.endsWith('：')) {
+            colonDeadline = Date.now() + COLON_GRACE_MS
+            logForDebugging(`[openaiCompat] 检测到冒号结尾，启动 ${COLON_GRACE_MS}ms 等待期`, { level: 'debug' })
+          } else if (text.endsWith('\n')) {
+            // 收到换行后取消冒号等待（说明文本继续）
+            colonDeadline = null
+          }
           if (activeBlockType !== 'text') {
             yield* closeActiveBlock()
             activeBlockIndex = nextContentIndex++

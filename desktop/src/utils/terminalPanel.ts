@@ -32,7 +32,7 @@ const TMUX_SESSION = 'panel'
 export function getTerminalPanelSocket(): string {
   // Use first 8 chars of session UUID for uniqueness while keeping name short
   const sessionId = getSessionId()
-  return `claude-panel-${sessionId.slice(0, 8)}`
+  return `claude-panel-${sessionId}`
 }
 
 let instance: TerminalPanel | undefined

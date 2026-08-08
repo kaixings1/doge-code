@@ -130,7 +130,7 @@ async function listSessions(): Promise<ReturnType<typeof call>> {
       const status = session.isEmpty ? '⚪' : '🟢';
       const sizeKB = (session.size / 1024).toFixed(1);
       const date = new Date(session.timestamp).toLocaleDateString('zh-CN');
-      lines.push(`${status} ${session.id.slice(0, 8)} - ${session.name}`);
+      lines.push(`${status} ${session.id} - ${session.name}`);
       lines.push(`   消息: ${session.messageCount} | 大小: ${sizeKB}KB | 时间: ${date}`);
     }
 
@@ -290,7 +290,7 @@ async function searchSessions(keyword: string): Promise<ReturnType<typeof call>>
 
     const lines = [`🔍 搜索结果 (${results.length} 个匹配)`, ''];
     for (const result of results.slice(0, 10)) {
-      lines.push(`📁 ${result.id.slice(0, 8)} - ${result.name}`);
+      lines.push(`📁 ${result.id} - ${result.name}`);
       lines.push(`   ${result.match}`);
     }
 
@@ -355,7 +355,7 @@ async function findEmptySessions(): Promise<ReturnType<typeof call>> {
     const lines = ['⚪ 空会话列表', ''];
     for (const session of emptySessions.slice(0, 15)) {
       const date = session.mtime.toLocaleDateString('zh-CN');
-      lines.push(`${session.id.slice(0, 8)} - ${session.name}`);
+      lines.push(`${session.id} - ${session.name}`);
       lines.push(`   大小: ${session.size} 字节 | 修改时间: ${date}`);
     }
 

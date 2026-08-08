@@ -1,6 +1,8 @@
+//console.error(`[TRACE ${Date.now()}] cli.tsx START (before static imports)`);
 import { feature } from 'bun:bundle'
 import '../generated/macro.js';
 import '../generated/status-line-embedded.js';
+//console.error(`[TRACE ${Date.now()}] cli.tsx AFTER static imports`);
 
 // Bugfix for corepack auto-pinning，它会将 yarnpkg 添加到用户的 package.json 中
 // eslint-disable-next-line custom-rules/no-top-level-side-effects
@@ -33,6 +35,7 @@ if (feature('ABLATION_BASELINE') || process.env['CLAUDE_CODE_FEATURE_ABLATION_BA
  * --version 的快速路径在此文件之外没有导入。
  */
 async function main(): Promise<void> {
+  //console.error(`[TRACE ${Date.now()}] main() START`);
   const args = process.argv.slice(2);
 
   // --version/-v 的快速路径：无需加载模块
@@ -50,11 +53,15 @@ async function main(): Promise<void> {
     return;
   }
 
-  // 对于所有其他路径，加载启动分析器
+  // === CLI_IMPORT_TRACE: start ===
+  //console.error(`[TRACE ${Date.now()}] BEFORE_IMPORT startupProfiler`);
+  const t_start = Date.now();
   const {
     profileCheckpoint
   } = await import('../utils/startupProfiler.js');
   profileCheckpoint('cli_entry');
+  //console.error(`[TRACE ${Date.now()}] AFTER_IMPORT startupProfiler (${Date.now() - t_start}ms)`);
+  // === CLI_IMPORT_TRACE: end ===
 
   // --dump-system-prompt 的快速路径：输出渲染后的系统提示并退出。
   // 用于提示敏感性评估，以提取特定提交处的系统提示。
@@ -309,18 +316,25 @@ async function main(): Promise<void> {
   }
 
   // 未检测到特殊标志，加载并运行完整 CLI
-  console.error('[TRACE] cli.tsx: about to import earlyInput and main.js');
+  //console.error(`[TRACE ${Date.now()}] BEFORE_IMPORT earlyInput`);
+  const t_early = Date.now();
   const {
     startCapturingEarlyInput
   } = await import('../utils/earlyInput.js');
   startCapturingEarlyInput();
-  console.error('[TRACE] cli.tsx: earlyInput loaded, about to import main.js');
+  //console.error(`[TRACE ${Date.now()}] AFTER_IMPORT earlyInput (${Date.now() - t_early}ms)`);
+
   profileCheckpoint('cli_before_main_import');
+  //console.error(`[TRACE ${Date.now()}] BEFORE_IMPORT main.js`);
+  const t_main = Date.now();
   const {
     main: cliMain
   } = await import('../main.js');
   profileCheckpoint('cli_after_main_import');
+  //console.error(`[TRACE ${Date.now()}] AFTER_IMPORT main.js (${Date.now() - t_main}ms)`);
+  //console.error(`[TRACE ${Date.now()}] BEFORE cliMain()`);
   await cliMain();
+  //console.error(`[TRACE ${Date.now()}] AFTER cliMain()`);
   profileCheckpoint('cli_after_main_complete');
 }
 

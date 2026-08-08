@@ -44,7 +44,7 @@ export const call: LocalCommandCall = async (args) => {
     notes.sort((a, b) => { if (a.pinned && !b.pinned) return -1; if (!a.pinned && b.pinned) return 1; return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime() })
     const lines = ['Notes (' + notes.length + '):', '==============', '']
     notes.slice(0, 20).forEach(n => {
-      lines.push((n.pinned ? '📌 ' : '   ') + n.id.slice(0, 8) + ' [' + n.priority + '] ' + n.title + (n.tags.length > 0 ? ' (' + n.tags.join(', ') + ')' : ''))
+      lines.push((n.pinned ? '📌 ' : '   ') + n.id + ' [' + n.priority + '] ' + n.title + (n.tags.length > 0 ? ' (' + n.tags.join(', ') + ')' : ''))
     })
     return { type: 'text', value: lines.join('\n') }
   }
@@ -78,7 +78,7 @@ export const call: LocalCommandCall = async (args) => {
     const results = notes.filter(n => n.title.toLowerCase().includes(query) || n.content.toLowerCase().includes(query) || n.tags.some(t => t.toLowerCase().includes(query)))
     if (results.length === 0) return { type: 'text', value: 'No results for: ' + query }
     const lines = ['Search Results (' + results.length + '):', '====================', '']
-    results.forEach(n => lines.push(n.id.slice(0, 8) + ' - ' + n.title))
+    results.forEach(n => lines.push(n.id + ' - ' + n.title))
     return { type: 'text', value: lines.join('\n') }
   }
 

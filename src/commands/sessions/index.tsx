@@ -827,7 +827,7 @@ function listSessionsText(store: SessionStore): string {
   for (const s of sessions) {
     const tagStr = s.tags.length > 0 ? ` [${s.tags.join(', ')}]` : ''
     const date = new Date(s.createdAt).toLocaleDateString('zh-CN')
-    lines.push(`  [${s.id.slice(0, 8)}] ${s.name}`)
+    lines.push(`  [${s.id}] ${s.name}`)
     lines.push(`    分类: ${s.category}${tagStr} | 消息: ${s.messageCount} | 创建: ${date}`)
     if (s.notes) lines.push(`    备注: ${truncate(s.notes, 40)}`)
   }
@@ -873,7 +873,7 @@ function handleSearch(store: SessionStore, query: string) {
 
   const lines: string[] = [`🔍 搜索结果 (${results.length} 个):`]
   for (const s of results) {
-    lines.push(`  [${s.id.slice(0, 8)}] ${s.name} (${s.category}) ${s.tags.join(', ')}`)
+    lines.push(`  [${s.id}] ${s.name} (${s.category}) ${s.tags.join(', ')}`)
   }
   return { type: 'text', value: lines.join('\n') }
 }
@@ -891,7 +891,7 @@ function handleFilter(store: SessionStore, args: string[]) {
 
   const lines: string[] = [`📋 筛选结果 (${results.length} 个):`]
   for (const s of results) {
-    lines.push(`  [${s.id.slice(0, 8)}] ${s.name} | ${s.category} | ${s.tags.join(', ') || '无标签'} | ${s.messageCount}条消息`)
+    lines.push(`  [${s.id}] ${s.name} | ${s.category} | ${s.tags.join(', ') || '无标签'} | ${s.messageCount}条消息`)
   }
   return { type: 'text', value: lines.join('\n') }
 }
@@ -968,7 +968,7 @@ function listArchivedSessions(store: SessionStore): string {
 
   const lines: string[] = [`📋 已归档会话 (${archived.length} 个):`]
   for (const s of archived) {
-    lines.push(`  [${s.id.slice(0, 8)}] ${s.name} | ${s.category} | 归档于 ${formatRelativeTime(s.lastActiveAt)}`)
+    lines.push(`  [${s.id}] ${s.name} | ${s.category} | 归档于 ${formatRelativeTime(s.lastActiveAt)}`)
   }
   return lines.join('\n')
 }
@@ -1001,7 +1001,7 @@ function listTemplates(store: SessionStore): string {
 
   const lines: string[] = [`📋 会话模板 (${store.templates.length} 个):`]
   for (const t of store.templates) {
-    lines.push(`  [${t.id.slice(0, 8)}] ${t.name} - ${t.description}`)
+    lines.push(`  [${t.id}] ${t.name} - ${t.description}`)
   }
   return lines.join('\n')
 }

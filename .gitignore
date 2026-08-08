@@ -154,6 +154,8 @@ w.js
 ws.js
 w.py*
 _script_b64.txt*
+0
+nul
 
 # .claude/skills/ 汉化辅助脚本
 .claude/skills/_*.cjs

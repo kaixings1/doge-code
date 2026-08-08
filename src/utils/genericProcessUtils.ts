@@ -116,7 +116,6 @@ export async function getAncestorCommandsAsync(
   pid: string | number,
   maxDepth = 10,
 ): Promise<string[]> {
-  console.error('[TRACE] getAncestorCommandsAsync: ENTRY, pid=' + pid + ', platform=' + process.platform)
   if (process.platform === 'win32') {
     // For Windows, use a PowerShell script that walks the process tree and collects commands
     const script = `
@@ -132,13 +131,11 @@ export async function getAncestorCommandsAsync(
       $commands -join [char]0
     `.trim()
 
-    console.error('[TRACE] getAncestorCommandsAsync: about to exec powershell')
     const result = await execFileNoThrowWithCwd(
       'powershell.exe',
       ['-NoProfile', '-Command', script],
       { timeout: 3000 },
     )
-    console.error('[TRACE] getAncestorCommandsAsync: powershell returned, code=' + result.code + ', stdout_len=' + (result.stdout?.length ?? 0))
     if (result.code !== 0 || !result.stdout?.trim()) {
       return []
     }
