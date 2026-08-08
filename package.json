@@ -66,6 +66,7 @@
     "@chris1807/claude-kit": "^2.1.2",
     "@commander-js/extra-typings": "*",
     "@growthbook/growthbook": "^1.6.5",
+    "@larksuiteoapi/node-sdk": "^1.72.0",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@monaco-editor/react": "^4.7.0",
     "@opentelemetry/api": "*",
