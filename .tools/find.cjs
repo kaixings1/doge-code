@@ -1,7 +1,7 @@
 const { spawn } = require('child_process');
 const path = require('path');
 
-const rgPath = path.join(__dirname, 'rg.exe');
+const rgPath = 'rg';
 const args = process.argv.slice(2);
 
 // Convert common find patterns to ripgrep equivalents
@@ -15,10 +15,8 @@ while (i < args.length) {
     rgArgs.push('--glob', pattern);
   } else if (a === '-type' && args[i + 1]) {
     const t = args[++i];
-    if (t === 'f') rgArgs.push('--type', 'f');
-    else if (t === 'd') rgArgs.push('--type', 'd');
-    else if (t === 'l') rgArgs.push('--type', 'l');
-    else rgArgs.push('--type', t);
+    // rg 不支持裸的 --type f/d/l，直接跳过（rg --files 已只返回文件）
+    if (t !== 'f' && t !== 'd' && t !== 'l') rgArgs.push('--type', t);
   } else if (a === '-not' || a === '!') {
     i++;
   } else if (a === '-maxdepth' && args[i + 1]) {
