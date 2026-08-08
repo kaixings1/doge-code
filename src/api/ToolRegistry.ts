@@ -58,13 +58,25 @@ export interface ToolResult {
 }
 
 /**
+ * 工具组：将相关工具分组为集合（吸收 OpenManus ToolCollection 模式）
+ * Agent 可按需加载整个工具组
+ */
+export interface ToolGroup {
+  name: string
+  description: string
+  toolNames: string[]
+}
+
+/**
  * 工具注册表类
  * 提供工具注册、参数验证、权限检查、调用统计、错误分类
+ * 吸收 OpenManus ToolCollection：支持工具组（registerToolGroup / getToolGroup）
  */
 export class ToolRegistry {
   private tools = new Map<string, ITool>();
   private stats = new Map<string, { calls: number; failures: number; totalDurationMs: number; avgDurationMs: number }>();
   private permissionCache = new Map<string, boolean>();
+  private toolGroups = new Map<string, ToolGroup>()
 
   constructor(private maxTimeoutMs: number = 60000) {}
 
@@ -110,6 +122,29 @@ export class ToolRegistry {
 
   getAll(): ITool[] {
     return Array.from(this.tools.values());
+  }
+
+  registerToolGroup(group: ToolGroup): void {
+    for (const toolName of group.toolNames) {
+      if (!this.tools.has(toolName)) {
+        throw new Error(`ToolGroup '${group.name}': tool '${toolName}' is not registered`);
+      }
+    }
+    this.toolGroups.set(group.name, group);
+  }
+
+  getToolGroup(name: string): ToolGroup | undefined {
+    return this.toolGroups.get(name);
+  }
+
+  getGroupTools(name: string): ITool[] {
+    const group = this.toolGroups.get(name);
+    if (!group) return [];
+    return group.toolNames.map(n => this.tools.get(n)).filter((t): t is ITool => t !== null);
+  }
+
+  listToolGroups(): ToolGroup[] {
+    return Array.from(this.toolGroups.values());
   }
 
   /**

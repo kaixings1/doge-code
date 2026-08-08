@@ -11,7 +11,7 @@ import { QueryStateMachine } from "./stateMachine.ts";
 import { TokenBudgetManager } from "./tokenBudgetManager.ts";
 import { MessageNormalizer, type InternalMessage } from "./messageNormalizer.ts";
 import { RequestBuilder } from "./requestBuilder.ts";
-import { ResponseHandler } from "./responseHandler.ts";
+import { ResponseHandler, type ProcessedResponse } from "./responseHandler.ts";
 import { ToolScheduler } from "./toolScheduler.ts";
 import { ErrorClassifier } from "./errors/classifier.ts";
 import { AutoCompactor } from "./autoCompactor.ts";
@@ -35,13 +35,16 @@ export type AgentEvent =
   | { type: 'request_sent'; model: string }
   | { type: 'response_chunk'; content: string }
   | { type: 'tool_call_start'; toolUseId: string; toolName: string; input: Record<string, unknown> }
-  | { type: 'tool_call_end'; toolUseId: string; success: boolean; output?: string; error?: string }
+  | { type: 'post_tool_use'; toolUseId: string; toolName: string; success: boolean; output?: string; error?: string }
   | { type: 'tool_result'; toolUseId: string; content: string; isError: boolean }
   | { type: 'iteration_end'; iteration: number; hasToolCalls: boolean }
   | { type: 'done'; result: QueryResult }
   | { type: 'error'; error: string; stack?: string }
   | { type: 'aborted' }
   | { type: 'permission_request'; id: string; toolName: string; input: Record<string, unknown>; description?: string }
+  | { type: 'needs_user'; prompt?: string }
+  | { type: 'should_continue' }
+  | { type: 'pre_tool_use'; toolUseId: string; toolName: string; input: Record<string, unknown> }
 
 export interface MessageLoopDeps {
   stateMachine: QueryStateMachine;
@@ -188,7 +191,7 @@ export class MessageLoop {
   }
 
   /** 将助手回复写入 conversation，并决定是否继续（吸收自 CoreCoder agent.py） */
-  private _recordAssistantResponse(processed: { content?: string; toolCalls: Array<{ id: string; name: string; input: Record<string, unknown> }>; stopReason?: string; needsUserInput?: boolean }): boolean {
+  private _recordAssistantResponse(processed: ProcessedResponse): boolean {
     if (processed.content && processed.toolCalls.length === 0) {
       this.deps.conversation.messages.push({
         role: 'assistant',
@@ -209,7 +212,7 @@ export class MessageLoop {
     }
 
     if (processed.needsUserInput) {
-      this.deps.onEvent({ type: 'needs_user', prompt: processed.content });
+      this.deps.onEvent({ type: 'needs_user', prompt: processed.content as string });
       return true;
     }
     if (processed.stopReason === 'end_turn') return false;
@@ -309,16 +312,27 @@ export class MessageLoop {
         });
       }
 
+      // 发射 hook 事件：pre_tool_use（吸收自 Cline hooks.ts beforeTool）
+      for (const tc of validCalls) {
+        this.deps.onEvent({
+          type: 'pre_tool_use',
+          toolUseId: tc.id,
+          toolName: tc.name,
+          input: tc.input as Record<string, unknown>,
+        });
+      }
+
       // 执行有效调用
       const results = await this.deps.toolScheduler.execute(validCalls);
 
       engineLog('TOOL_RESULTS', JSON.stringify(results, null, 2).slice(0, 10000));
 
-      // 发射工具调用结束事件
+      // 发射 hook 事件：post_tool_use（吸收自 Cline hooks.ts afterTool）
       for (const r of results) {
         this.deps.onEvent({
-          type: 'tool_call_end',
+          type: 'post_tool_use',
           toolUseId: r.toolUseId,
+          toolName: validCalls.find(tc => tc.id === r.toolUseId)?.name ?? '',
           success: r.success,
           output: typeof r.output === 'string' ? r.output : JSON.stringify(r.output ?? ''),
           error: r.error,

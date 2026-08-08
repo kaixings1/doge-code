@@ -366,7 +366,20 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
       }
     }
 
-    const finalEvaluation = await strategy.evaluate(goal, state.subTasks)
+    let finalEvaluation = await strategy.evaluate(goal, state.subTasks)
+
+    // 循环结束后：若仍有任务未执行（通常是迭代次数耗尽），给出准确原因，
+    // 避免误导性的"任务执行中"（此时循环已结束，只是没机会执行剩余任务）
+    const unfinishedCount = state.subTasks.filter(
+      t => t.status === 'pending' || t.status === 'running',
+    ).length
+    if (!finalEvaluation.achieved && unfinishedCount > 0) {
+      finalEvaluation = {
+        achieved: false,
+        reason: `迭代次数已用尽（${state.iteration}/${state.maxIterations}），仍有 ${unfinishedCount} 个任务未执行。可增大 --max-iterations 或 --parallel 后重试`,
+      }
+    }
+
     const duration = Date.now() - state.startTime
 
     // ─── B3/B4 清理：停止进度汇报器，快照按结果处置 ───
