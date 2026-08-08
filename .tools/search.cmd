@@ -1,2 +1,5 @@
 @echo off
-node "%~dp0search.js" %*
+setlocal
+set MSYS_NO_PATHCONV=1
+node "%~dp0search.cjs" %*
+endlocal
