@@ -133,11 +133,17 @@ export class MessageLoop {
           await this.deps.stateMachine.transition("responding");
         }
       } catch (error) {
+        // Ctrl+C 中断回填：防止 assistant 的 tool_calls 缺少匹配的 tool 回复
+        if (error instanceof Error && error.message === 'INTERRUPT') {
+          this._backfillPendingToolCalls();
+          this.deps.onEvent({ type: 'aborted' });
+          break;
+        }
         const errMsg = error instanceof Error ? error.message : String(error);
         const errStack = error instanceof Error ? error.stack : '';
-        const ts = new Date().toLocaleTimeString('zh-CN', { hour12: false })
-        console.error(`[${ts}] [ENGINE] runIteration error: ${errMsg}`);
-        console.error(`[${ts}] [ENGINE] stack: ${errStack}`);
+        const ts2 = new Date().toLocaleTimeString('zh-CN', { hour12: false })
+        console.error(`[${ts2}] [ENGINE] runIteration error: ${errMsg}`);
+        console.error(`[${ts2}] [ENGINE] stack: ${errStack}`);
         this.deps.onEvent({ type: 'error', error: errMsg, stack: errStack });
         if (this.deps.stateMachine.isTerminal()) break;
         await this.deps.stateMachine.transition("crashed", { error: ErrorClassifier.classify(error) });
@@ -156,6 +162,65 @@ export class MessageLoop {
     return result;
   }
 
+  /** Ctrl+C 中断时，为未收到 tool reply 的 tool_call 补全占位回复（CoreCoder 模式） */
+  private _backfillPendingToolCalls(): void {
+    const lastAssistant = [...this.deps.conversation.messages].reverse().find(m => m.role === 'assistant');
+    if (!lastAssistant || typeof lastAssistant.content !== 'object') return;
+    const blocks = lastAssistant.content as Array<Record<string, unknown>>;
+    const toolCallIds = blocks.filter(b => b.type === 'tool_use').map(b => b.id as string);
+    if (toolCallIds.length === 0) return;
+
+    const answered = new Set(
+      this.deps.conversation.messages
+        .filter(m => m.role === 'tool')
+        .map(m => (m as { tool_call_id?: string }).tool_call_id as string)
+    );
+    for (const id of toolCallIds) {
+      if (!answered.has(id)) {
+        this.deps.conversation.messages.push({
+          role: 'tool',
+          tool_call_id: id,
+          content: '[interrupted]',
+        } as InternalMessage);
+      }
+    }
+    console.log('[ENGINE] Backfilled interrupted tool calls to preserve message history integrity');
+  }
+
+  /** 将助手回复写入 conversation，并决定是否继续（吸收自 CoreCoder agent.py） */
+  private _recordAssistantResponse(processed: { content?: string; toolCalls: Array<{ id: string; name: string; input: Record<string, unknown> }>; stopReason?: string; needsUserInput?: boolean }): boolean {
+    if (processed.content && processed.toolCalls.length === 0) {
+      this.deps.conversation.messages.push({
+        role: 'assistant',
+        content: processed.content,
+      } as InternalMessage);
+    } else if (processed.toolCalls.length > 0) {
+      const blocks: Array<Record<string, unknown>> = [];
+      if (typeof processed.content === 'string' && processed.content) {
+        blocks.push({ type: 'text', text: processed.content });
+      }
+      for (const tc of processed.toolCalls) {
+        blocks.push({ type: 'tool_use', id: tc.id, name: tc.name, input: tc.input });
+      }
+      this.deps.conversation.messages.push({
+        role: 'assistant',
+        content: blocks,
+      } as InternalMessage);
+    }
+
+    if (processed.needsUserInput) {
+      this.deps.onEvent({ type: 'needs_user', prompt: processed.content });
+      return true;
+    }
+    if (processed.stopReason === 'end_turn') return false;
+    if (processed.stopReason === 'max_tokens') {
+      this.deps.onEvent({ type: 'should_continue' });
+      return true;
+    }
+    return false;
+  }
+
+  /** 执行单个迭代：构建请求 → 获取响应 → 处理工具调用 */
   private async runIteration(): Promise<boolean> {
     const budget = this.deps.tokenBudget.checkBudget(this.deps.conversation.messages);
     if (budget.shouldReject) throw new Error(`Token limit exceeded: ${budget.percentage * 100}%`);
@@ -191,26 +256,16 @@ export class MessageLoop {
 
     engineLog('RESP', JSON.stringify(processed, null, 2).slice(0, 10000));
 
-    // 将助手回复写入 conversation，使下游能获取完整消息列表
-    if (processed.content && processed.toolCalls.length === 0) {
-      this.deps.conversation.messages.push({
-        role: "assistant",
-        content: processed.content,
-      } as InternalMessage);
-    } else if (processed.toolCalls.length > 0) {
-      // 工具调用：推送含 tool_use 块的 assistant 消息，确保下一轮模型能看到完整历史
-      const blocks: Array<Record<string, unknown>> = [];
-      if (typeof processed.content === "string" && processed.content) {
-        blocks.push({ type: "text", text: processed.content });
-      }
-      for (const tc of processed.toolCalls) {
-        blocks.push({ type: "tool_use", id: tc.id, name: tc.name, input: tc.input });
-      }
-      this.deps.conversation.messages.push({
-        role: "assistant",
-        content: blocks,
-      } as InternalMessage);
+    // 将助手回复写入 conversation 并决定是否继续（吸收自 CoreCoder agent.py）
+    const shouldContinue = this._recordAssistantResponse(processed);
+    if (!shouldContinue) {
+      return false;
     }
+    this.deps.conversation.messages.push({
+      role: "system",
+      content: "Continuing to next iteration.",
+    } as InternalMessage);
+
     // 不在此处重置 consecutiveToolFailures——仅在工具成功执行后重置
     // 防止 AI 交替发送空文本回复和无效工具调用来绕过失败计数器
 

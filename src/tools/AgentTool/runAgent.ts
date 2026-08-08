@@ -806,6 +806,23 @@ export async function* runAgent({
         continue
       }
 
+      // 检查是否为终止工具调用（类似 OpenManus 的 special_tool_names）
+      if (
+        agentDefinition.terminalToolNames &&
+        message.type === 'assistant'
+      ) {
+        const assistantMsg = message as { message: { content?: Array<{ type: string; name?: string }> } }
+        const toolBlocks = assistantMsg.message?.content?.filter(
+          (block): block is { type: string; name?: string } => block.type === 'tool_use'
+        )
+        if (toolBlocks?.some(block => agentDefinition.terminalToolNames!.includes(block.name))) {
+          logForDebugging(
+            `[Agent: ${agentDefinition.agentType}] Terminal tool called, stopping agent`
+          )
+          break
+        }
+      }
+
       if (isRecordableMessage(message)) {
         // 仅记录带有正确父级的新消息（每条消息 O(1)）
         await recordSidechainTranscript(

@@ -128,6 +128,7 @@ export const getSystemContext = memoize(
         : {}),
       ...glossary,
       sessionEpoch: `当前对话 epoch: ${getSessionEpoch()}（每次压缩后递增）`,
+      planningAwareness: `项目架构定义在 PLANNING.md，任务追踪在 TASK.md。开始新任务前先读取两者。`,
     }
   },
 )

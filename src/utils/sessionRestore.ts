@@ -28,7 +28,7 @@ import type {
   ContextCollapseSnapshotEntry,
   PersistedWorktreeSession,
 } from '../types/logs.js'
-import type { Message } from '../types/message.js'
+import type { Message, AssistantMessageContent } from '../types/message.js'
 import { renameRecordingForSession } from './asciicast.js'
 import { clearMemoryFileCaches } from './claudemd.js'
 import {
@@ -79,10 +79,13 @@ function extractTodosFromTranscript(messages: Message[]): TodoList {
   for (let i = messages.length - 1; i >= 0; i--) {
     const msg = messages[i]
     if (msg?.type !== 'assistant') continue
-    const toolUse = msg.message.content.find(
-      block => block.type === 'tool_use' && block.name === TODO_WRITE_TOOL_NAME,
+    const content = msg.message.content
+    const blocks: AssistantMessageContent = typeof content === 'string' ? [] : content
+    const toolUse = blocks.find(
+      (block): block is { type: 'tool_use'; name: string; input?: unknown } =>
+        block.type === 'tool_use' && block.name === TODO_WRITE_TOOL_NAME,
     )
-    if (!toolUse || toolUse.type !== 'tool_use') continue
+    if (!toolUse) continue
     const input = toolUse.input
     if (input === null || typeof input !== 'object') return []
     const parsed = TodoListSchema().safeParse(
@@ -129,10 +132,7 @@ export function restoreSessionStateFromLog(
      
     ;(
       require('../services/contextCollapse/persist.js') as typeof import('../services/contextCollapse/persist.js')
-    ).restoreFromEntries(
-      result.contextCollapseCommits ?? [],
-      result.contextCollapseSnapshot,
-    )
+    ).restoreFromEntries()
      
   }
 
@@ -495,14 +495,9 @@ export async function processResumedConversation(
   // --continue/--resume goes through here instead. Called unconditionally
   // — see the restoreSessionStateFromLog callsite above for why.
   if (feature('CONTEXT_COLLAPSE')) {
-     
     ;(
       require('../services/contextCollapse/persist.js') as typeof import('../services/contextCollapse/persist.js')
-    ).restoreFromEntries(
-      result.contextCollapseCommits ?? [],
-      result.contextCollapseSnapshot,
-    )
-     
+    ).restoreFromEntries()
   }
 
   // Restore agent setting from resumed session
@@ -551,4 +546,108 @@ export async function processResumedConversation(
       agentDefinitions: refreshedAgentDefs,
     },
   }
+}
+
+// ===== OpenCode 特性吸收: 会话快照 (Session Snapshot) =====
+
+/**
+ * 会话快照 — 对齐 OpenCode session snapshot 机制。
+ * 在关键节点（退出计划模式、切换模型、终止 agent）自动持久化，
+ * 用于恢复时快速重建会话状态，无需重放整份 transcript。
+ */
+export interface SessionSnapshot {
+  version: 1
+  sessionId: string
+  timestamp: number
+  cwd: string
+  model: string
+  permissionMode: string
+  agentType?: string
+  worktreeSession?: { worktreePath: string; worktreeName: string; originalCwd: string } | null
+  todos?: Array<{ content: string; status: string; activeForm: string }>
+  messagesCount: number
+  tokenUsage?: { input: number; output: number }
+}
+
+/**
+ * 从当前 AppState 创建会话快照。
+ * 轻量操作，不读取 transcript 文件。
+ *
+ * 注意：AppState 是 DeepImmutable，cwd/model/worktree 等状态需通过
+ * 外部 getter 函数获取，避免直接访问不存在的属性。
+ */
+export function createSessionSnapshot(
+  sessionId: string,
+  getAppState: () => AppState,
+): SessionSnapshot {
+  const state = getAppState()
+  const rawModel = state.mainLoopModelForSession ?? state.mainLoopModel
+  const modelStr = typeof rawModel === 'string' ? rawModel : rawModel ?? ''
+  const worktree = getCurrentWorktreeSession()
+
+  return {
+    version: 1,
+    sessionId,
+    timestamp: Date.now(),
+    cwd: getCwd(),
+    model: modelStr,
+    permissionMode: state.toolPermissionContext.mode ?? 'default',
+    agentType: state.agent,
+    worktreeSession: worktree
+      ? {
+          worktreePath: worktree.worktreePath,
+          worktreeName: worktree.worktreeName,
+          originalCwd: worktree.originalCwd,
+        }
+      : null,
+    todos: Object.values(state.todos).flat(),
+    messagesCount: 0,
+  }
+}
+
+/**
+ * 从快照恢复关键状态。
+ * 不重建完整消息历史 — 用于快速恢复 UI 状态。
+ *
+ * 注意：AppState 中无直接的 model/cwd 字段，通过 bootstrap/worktree
+ * 模块设置，再配合 setAppState 更新 agent 和 permission mode。
+ */
+export function restoreSessionFromSnapshot(
+  snapshot: SessionSnapshot,
+  setAppState: (f: (prev: AppState) => AppState) => void,
+): void {
+  // 恢复 cwd（process.chdir + bootstrap state）
+  if (snapshot.cwd) {
+    try { process.chdir(snapshot.cwd) } catch { /* noop */ }
+    setCwd(snapshot.cwd)
+    setOriginalCwd(snapshot.cwd)
+  }
+
+  // 恢复模型
+  if (snapshot.model) {
+    const parsed = parseUserSpecifiedModel(snapshot.model)
+    setMainLoopModelOverride(parsed)
+  }
+
+  // 恢复 worktree session
+  if (snapshot.worktreeSession) {
+    restoreWorktreeSession({
+      worktreePath: snapshot.worktreeSession.worktreePath,
+      worktreeName: snapshot.worktreeSession.worktreeName,
+      originalCwd: snapshot.worktreeSession.originalCwd,
+      sessionId: getSessionId(),
+    })
+  }
+
+  // 恢复 agent 和 permission mode（通过 AppState）
+  setAppState(prev => ({
+    ...prev,
+    ...(snapshot.agentType && { agent: snapshot.agentType }),
+    ...(snapshot.permissionMode && {
+      toolPermissionContext: {
+        ...prev.toolPermissionContext,
+        mode: snapshot.permissionMode as typeof prev.toolPermissionContext.mode,
+      },
+    }),
+  }))
 }

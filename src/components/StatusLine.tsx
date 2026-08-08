@@ -28,6 +28,7 @@ import { getCurrentSessionTitle } from '../utils/sessionStorage.js';
 import { doesMostRecentAssistantMessageExceed200k, getCurrentUsage } from '../utils/tokens.js';
 import { getCurrentWorktreeSession } from '../utils/worktree.js';
 import { readCustomApiStorage } from '../utils/customApiStorage.js';
+import { isEcoEnabled } from '../engine/ecoFilter.js';
 import { formatUpdateMessage, getCachedUpdateInfo } from '../utils/updateChecker.js';
 import { isVimModeEnabled } from './PromptInput/utils.js';
 
@@ -131,6 +132,14 @@ function buildStatusLineCommandInput(permissionMode: PermissionMode, exceeds200k
       agent: {
         name: agentType
       }
+    }),
+    // OpenCode 特性吸收: Plan/Build 模式状态指示器
+    ...(permissionMode === 'plan' && {
+      is_in_plan_mode: true
+    }),
+    // Phase 1 特性吸收: Eco 压缩模式指示器
+    ...(isEcoEnabled() && {
+      eco_enabled: true
     }),
     ...(getIsRemoteMode() && {
       remote: {
@@ -371,11 +380,13 @@ function StatusLineInner({
   // a row from ScrollBox and shifts content. Reserve the row while loading
   // (same trick as PromptInputFooterLeftSide).
 	return (
-		<Box paddingX={paddingX} gap={2}>
+		<Box paddingX={paddingX} gap={0} flexDirection="column">
 			{statusLineText ? (
-				<Text dimColor wrap="truncate">
-					<Ansi>{statusLineText}</Ansi>
-				</Text>
+				statusLineText.split('\n').map((line, i) => (
+					<Text key={i} dimColor wrap="truncate">
+						<Ansi>{line}</Ansi>
+					</Text>
+				))
 			) : null}
 		</Box>
 	);

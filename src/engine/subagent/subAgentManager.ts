@@ -1,3 +1,7 @@
+import { predefinedAgents, type SubAgentConfig } from "./config.ts";
+import { createAgentWorktree, removeAgentWorktree } from "../../utils/worktree.js";
+import { getCwd } from "../../utils/cwd.js";
+
 /**
  * SubAgent 事件类型，对齐 OpenCode AgentEvent。
  */
@@ -12,6 +16,26 @@ export type SubAgentEvent =
 
 export interface SubAgentManagerDeps {
   onEvent?: (event: SubAgentEvent) => void;
+}
+
+export interface SubAgentInstance {
+  id: string;
+  agentName: string;
+  engine: { query: (input: string) => Promise<{ messages: { content?: string }[]; tokenUsage: unknown }>; abort: () => Promise<void> };
+  startTime: Date;
+  status: "running" | "completed" | "failed" | "terminated";
+  /** OpenCode: Agent 级 git worktree 隔离路径 */
+  worktreePath?: string;
+  worktreeBranch?: string;
+}
+
+export interface ExecuteSubAgentParams {
+  id: string;
+  agentName: string;
+  input: string;
+  context?: string;
+  maxTokens?: number;
+  parentModel?: string;
 }
 
 export class SubAgentManager {
@@ -58,6 +82,21 @@ export class SubAgentManager {
     this.instances.set(params.id, instance);
     this.deps.onEvent?.({ type: 'start', agentName: params.agentName, instanceId: params.id });
 
+    // OpenCode: 为 build 模式 Agent 创建隔离 worktree
+    let worktreePath: string | undefined;
+    let worktreeBranch: string | undefined;
+    if (config.mode === 'build' || config.accessParentContext === false) {
+      try {
+        const wt = await createAgentWorktree('agent-' + params.agentName + '-' + params.id.slice(0, 8));
+        worktreePath = wt.worktreePath;
+        worktreeBranch = wt.worktreeBranch;
+        instance.worktreePath = worktreePath;
+        instance.worktreeBranch = worktreeBranch;
+      } catch (_err) {
+        // worktree 创建失败回退到共享文件系统
+      }
+    }
+
     try {
       const result = await instance.engine.query(params.input);
       instance.status = "completed";
@@ -87,6 +126,10 @@ export class SubAgentManager {
       });
       return { success: false, error: e instanceof Error ? e.message : String(e), duration };
     } finally {
+      // OpenCode: build 模式 Agent 完成后自动清理 worktree
+      if (worktreePath && config.mode === 'build') {
+        try { await removeAgentWorktree(worktreePath); } catch { /* noop */ }
+      }
       this.instances.delete(params.id);
       this.activeAgents--;
     }

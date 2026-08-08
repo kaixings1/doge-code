@@ -15,20 +15,20 @@ export type PresetEndpoint = {
 
 // 本地网络预设（原有 14 个，保持兼容）
 export const LOCAL_PRESETS: PresetEndpoint[] = [
-  { label: 'Local Proxy (8080)', provider: 'openai', baseURL: 'http://127.0.0.1:8080/v1/chat/completions', defaultModel: 'claude-3-haiku', apiKeyRequired: false },
-  { label: 'Local Anthropic (8080)', provider: 'anthropic', baseURL: 'http://127.0.0.1:8080/', defaultModel: 'claude-3-haiku', apiKeyRequired: false },
-  { label: 'Ollama (11434)', provider: 'openai', baseURL: 'http://127.0.0.1:11434/v1/chat/completions', defaultModel: 'qwen3.5:0.8b', apiKeyRequired: false },
-  { label: 'LMStudio Server (1234)', provider: 'openai', baseURL: 'http://127.0.0.1:1234/v1/chat/completions', defaultModel: 'claude-3-haiku', apiKeyRequired: false },
-  { label: 'LMStudio Anthropic (1234)', provider: 'anthropic', baseURL: 'http://127.0.0.1:1234/', defaultModel: 'claude-3-haiku', apiKeyRequired: false },
-  { label: 'CC Switch (15721)', provider: 'openai', baseURL: 'http://127.0.0.1:15721/v1/chat/completions', defaultModel: 'qwen9b', apiKeyRequired: false },
-  { label: 'ModelScope', provider: 'openai', baseURL: 'https://api-inference.modelscope.cn/v1/chat/completions', defaultModel: 'Qwen/Qwen3.5-397B-A17B', apiKeyRequired: true },
-  { label: 'NVIDIA NIM', provider: 'openai', baseURL: 'https://integrate.api.nvidia.com/v1/chat/completions', defaultModel: 'deepseek-ai/deepseek-v4-pro', apiKeyRequired: true },
-  { label: 'Zhipu (BigModel)', provider: 'openai', baseURL: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', defaultModel: 'GLM-4.7-Flash', apiKeyRequired: true },
-  { label: 'DeepSeek API', provider: 'openai', baseURL: 'https://api.deepseek.com/chat/completions', defaultModel: 'deepseek-chat', apiKeyRequired: true },
-  { label: 'DeepSeek Anthropic', provider: 'anthropic', baseURL: 'https://api.deepseek.com/Anthropic', defaultModel: 'deepseek-chat', apiKeyRequired: true },
-  { label: 'Volcengine Ark', provider: 'openai', baseURL: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions', defaultModel: 'ep-202...', apiKeyRequired: true },
-  { label: 'ZenMux', provider: 'openai', baseURL: 'https://zenmux.ai/api/v1/chat/completions', defaultModel: 'deepseek/deepseek-v4-flash-free', apiKeyRequired: true },
-  { label: 'OpenRouter', provider: 'openai', baseURL: 'https://openrouter.ai/api/v1/chat/completions', defaultModel: 'tencent/hy3-preview:free', apiKeyRequired: true },
+  { label: 'Local Proxy (8080)', provider: 'openai', baseURL: 'http://127.0.0.1:8080/v1/chat/completions', defaultModel: 'claude-3-haiku', apiKeyRequired: false, group: 'Local' },
+  { label: 'Local Anthropic (8080)', provider: 'anthropic', baseURL: 'http://127.0.0.1:8080/', defaultModel: 'claude-3-haiku', apiKeyRequired: false, group: 'Local' },
+  { label: 'Ollama (11434)', provider: 'openai', baseURL: 'http://127.0.0.1:11434/v1/chat/completions', defaultModel: 'qwen3.5:0.8b', apiKeyRequired: false, group: 'Local' },
+  { label: 'LMStudio Server (1234)', provider: 'openai', baseURL: 'http://127.0.0.1:1234/v1/chat/completions', defaultModel: 'claude-3-haiku', apiKeyRequired: false, group: 'Local' },
+  { label: 'LMStudio Anthropic (1234)', provider: 'anthropic', baseURL: 'http://127.0.0.1:1234/', defaultModel: 'claude-3-haiku', apiKeyRequired: false, group: 'Local' },
+  { label: 'CC Switch (15721)', provider: 'openai', baseURL: 'http://127.0.0.1:15721/v1/chat/completions', defaultModel: 'qwen9b', apiKeyRequired: false, group: 'Local' },
+  { label: 'ModelScope', provider: 'openai', baseURL: 'https://api-inference.modelscope.cn/v1/chat/completions', defaultModel: 'Qwen/Qwen3.5-397B-A17B', apiKeyRequired: true, group: 'Chinese AI', docs: 'MODELSCOPE_API_KEY' },
+  { label: 'NVIDIA NIM', provider: 'openai', baseURL: 'https://integrate.api.nvidia.com/v1/chat/completions', defaultModel: 'deepseek-ai/deepseek-v4-pro', apiKeyRequired: true, group: 'GPU Cloud', docs: 'NVIDIA_API_KEY' },
+  { label: 'Zhipu (BigModel)', provider: 'openai', baseURL: 'https://open.bigmodel.cn/api/paas/v4/chat/completions', defaultModel: 'GLM-4.7-Flash', apiKeyRequired: true, group: 'Chinese AI', docs: 'QIANFAN_API_KEY' },
+  { label: 'DeepSeek API', provider: 'openai', baseURL: 'https://api.deepseek.com/chat/completions', defaultModel: 'deepseek-chat', apiKeyRequired: true, group: 'Chinese AI', docs: 'DEEPSEEK_API_KEY' },
+  { label: 'DeepSeek Anthropic', provider: 'anthropic', baseURL: 'https://api.deepseek.com/Anthropic', defaultModel: 'deepseek-chat', apiKeyRequired: true, group: 'Chinese AI', docs: 'DEEPSEEK_API_KEY' },
+  { label: 'Volcengine Ark', provider: 'openai', baseURL: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions', defaultModel: 'ep-202...', apiKeyRequired: true, group: 'Chinese AI', docs: 'VOLC_API_KEY' },
+  { label: 'ZenMux', provider: 'openai', baseURL: 'https://zenmux.ai/api/v1/chat/completions', defaultModel: 'deepseek/deepseek-v4-flash-free', apiKeyRequired: true, group: 'Gateway', docs: 'ZENMUX_API_KEY' },
+  { label: 'OpenRouter', provider: 'openai', baseURL: 'https://openrouter.ai/api/v1/chat/completions', defaultModel: 'tencent/hy3-preview:free', apiKeyRequired: true, group: 'Gateway', docs: 'OPENROUTER_API_KEY' },
 ];
 
 // OpenClaw 云端/本地 API 预设
