@@ -20,6 +20,30 @@ export function getLocalBridgeUrl(): string {
   return process.env.CLAUDE_CODE_LOCAL_BRIDGE_URL ?? 'http://localhost:5678'
 }
 
+/** Feishu bridge mode: when FEISHU_BRIDGE=1, enable feishu integration. */
+export function isFeishuBridgeMode(): boolean {
+  return process.env.FEISHU_BRIDGE === '1'
+}
+
+/** Feishu app credentials. */
+export function getFeishuAppId(): string | void 0 {
+  return process.env.FEISHU_APP_ID
+}
+
+export function getFeishuAppSecret(): string | void 0 {
+  return process.env.FEISHU_APP_SECRET
+}
+
+/** Feishu webhook port. */
+export function getFeishuWebhookPort(): number {
+  return parseInt(process.env.FEISHU_WEBHOOK_PORT ?? '9901', 10)
+}
+
+/** Feishu webhook URL (for configuring in open platform). */
+export function getFeishuWebhookUrl(): string | void 0 {
+  return process.env.FEISHU_WEBHOOK_URL
+}
+
 /** Ant-only dev override: CLAUDE_BRIDGE_OAUTH_TOKEN, else void 0. */
 export function getBridgeTokenOverride(): string | void {
   if (isLocalBridgeMode()) return 'local-bridge-token'
