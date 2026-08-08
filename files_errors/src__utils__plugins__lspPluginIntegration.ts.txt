@@ -1,1 +1,0 @@
-src/utils/plugins/lspPluginIntegration.ts(5,3): error TS2305: Module '"../../services/lsp/types.js"' has no exported member 'LspServerConfig'.

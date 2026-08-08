@@ -1,2 +1,0 @@
-src/components/ResumeTask.tsx(170,24): error TS2304: Cannot find name 'session_0'.
-src/components/ResumeTask.tsx(170,49): error TS2304: Cannot find name 'session_0'.

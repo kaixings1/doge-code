@@ -1,2 +1,0 @@
-src/utils/computerUse/executor.ts(67,3): error TS4104: The type 'readonly [number, number]' is 'readonly' and cannot be assigned to the mutable type '[number, number]'.
-src/utils/computerUse/executor.ts(67,40): error TS2554: Expected 2 arguments, but got 3.

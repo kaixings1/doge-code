@@ -1,1 +1,0 @@
-src/services/analytics/firstPartyEventLoggingExporter.ts(676,28): error TS2352: Conversion of type 'string | number | boolean | AnyValueMap | Uint8Array<ArrayBufferLike> | AnyValueArray' to type 'EventMetadata' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.

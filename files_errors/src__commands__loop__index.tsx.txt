@@ -1,5 +1,0 @@
-src/commands/loop/index.tsx(11,31): error TS2305: Module '"../../ink.js"' has no exported member 'useAppState'.
-src/commands/loop/index.tsx(287,14): error TS2322: Type '(onDone: LocalJSXCommandOnDone, context: ToolUseContext & { canUseTool?: CanUseToolFn; setMessages: (updater: (prev: Message[]) => Message[]) => void; ... 4 more ...; resume?: (sessionId: `${string}-${string}-${string}-${string}-${string}`, log: LogOption, entrypoint: ResumeEntrypoint) => Promise<...>; }, args: stri...' is not assignable to type 'LocalJSXCommandCall'.
-src/commands/loop/index.tsx(336,17): error TS2304: Cannot find name 'effectiveStrategy'.
-src/commands/loop/index.tsx(346,17): error TS2304: Cannot find name 'effectiveStrategy'.
-src/commands/loop/index.tsx(462,3): error TS2353: Object literal may only specify known properties, and 'arguments' does not exist in type 'CommandBase & LocalJSXCommand'.

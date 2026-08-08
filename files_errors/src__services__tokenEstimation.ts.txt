@@ -1,1 +1,0 @@
-src/services/tokenEstimation.ts(415,48): error TS2345: Argument of type 'string | (TextBlockParam | ImageBlockParam | DocumentBlockParam | SearchResultBlockParam | ToolReferenceBlockParam)[]' is not assignable to parameter of type 'string | ContentBlockParam[] | ContentBlock[]'.

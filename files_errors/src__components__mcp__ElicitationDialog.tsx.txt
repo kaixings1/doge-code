@@ -1,2 +1,0 @@
-src/components/mcp/ElicitationDialog.tsx(256,3): error TS2554: Expected 2 arguments, but got 1.
-src/components/mcp/ElicitationDialog.tsx(1008,3): error TS2554: Expected 2 arguments, but got 1.

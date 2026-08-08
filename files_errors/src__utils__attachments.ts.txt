@@ -1,7 +1,0 @@
-src/utils/attachments.ts(88,15): error TS2305: Module '"../services/skillSearch/signals.js"' has no exported member 'DiscoverySignal'.
-src/utils/attachments.ts(812,45): error TS2339: Property 'getTurnZeroSkillDiscovery' does not exist on type 'typeof import("D:/doge-code/src/services/skillSearch/prefetch")'.
-src/utils/attachments.ts(1003,3): error TS2322: Type 'unknown[]' is not assignable to type 'Attachment[]'.
-src/utils/attachments.ts(2779,28): error TS2339: Property 'slice' does not exist on type 'never'.
-src/utils/attachments.ts(2779,40): error TS2339: Property 'indexOf' does not exist on type 'never'.
-src/utils/attachments.ts(3967,11): error TS2339: Property 'isSnipRuntimeEnabled' does not exist on type 'typeof import("D:/doge-code/src/services/compact/snipCompact")'.
-src/utils/attachments.ts(3967,33): error TS2339: Property 'shouldNudgeForSnips' does not exist on type 'typeof import("D:/doge-code/src/services/compact/snipCompact")'.

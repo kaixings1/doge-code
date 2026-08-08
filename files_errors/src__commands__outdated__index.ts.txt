@@ -1,3 +1,0 @@
-src/commands/outdated/index.ts(126,5): error TS2578: Unused '@ts-expect-error' directive.
-src/commands/outdated/index.ts(134,5): error TS2578: Unused '@ts-expect-error' directive.
-src/commands/outdated/index.ts(231,66): error TS2339: Property 'call' does not exist on type 'Command'.

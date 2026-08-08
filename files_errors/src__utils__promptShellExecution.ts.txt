@@ -1,1 +1,0 @@
-src/utils/promptShellExecution.ts(70,9): error TS2322: Type 'BuiltTool<AnyToolDef> | PromptShellTool' is not assignable to type 'PromptShellTool'.

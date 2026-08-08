@@ -1,6 +1,0 @@
-src/keybindings/validate.ts(351,29): error TS2367: This comparison appears to be unintentional because the types 'string' and 'ParsedBinding' have no overlap.
-src/keybindings/validate.ts(358,11): error TS2322: Type 'string | ParsedBinding' is not assignable to type 'string'.
-src/keybindings/validate.ts(363,37): error TS2345: Argument of type '"null" | ParsedBinding' is not assignable to parameter of type 'string'.
-src/keybindings/validate.ts(380,46): error TS2339: Property 'chord' does not exist on type 'ParsedBinding'.
-src/keybindings/validate.ts(391,28): error TS2339: Property 'context' does not exist on type 'ParsedBinding'.
-src/keybindings/validate.ts(414,9): error TS2322: Type 'ParsedBinding' is not assignable to type 'string'.

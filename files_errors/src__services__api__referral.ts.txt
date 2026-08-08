@@ -1,6 +1,0 @@
-src/services/api/referral.ts(14,3): error TS2305: Module '"../oauth/types.js"' has no exported member 'ReferralCampaign'.
-src/services/api/referral.ts(122,5): error TS2322: Type 'unknown' is not assignable to type 'boolean'.
-src/services/api/referral.ts(140,35): error TS2538: Type 'unknown' cannot be used as an index type.
-src/services/api/referral.ts(141,18): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
-src/services/api/referral.ts(155,3): error TS2322: Type 'unknown' is not assignable to type 'ReferrerRewardInfo'.
-src/services/api/referral.ts(167,3): error TS2322: Type 'unknown' is not assignable to type 'number'.

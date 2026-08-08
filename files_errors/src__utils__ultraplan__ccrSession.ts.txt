@@ -1,2 +1,0 @@
-src/utils/ultraplan/ccrSession.ts(104,39): error TS2339: Property 'content' does not exist on type 'unknown'.
-src/utils/ultraplan/ccrSession.ts(112,35): error TS2339: Property 'content' does not exist on type 'unknown'.

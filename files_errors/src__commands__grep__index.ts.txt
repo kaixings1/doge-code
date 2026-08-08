@@ -1,3 +1,0 @@
-src/commands/grep/index.ts(128,5): error TS2578: Unused '@ts-expect-error' directive.
-src/commands/grep/index.ts(136,5): error TS2578: Unused '@ts-expect-error' directive.
-src/commands/grep/index.ts(208,66): error TS2339: Property 'call' does not exist on type 'Command'.

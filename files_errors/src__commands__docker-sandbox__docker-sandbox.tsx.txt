@@ -1,4 +1,0 @@
-src/commands/docker-sandbox/docker-sandbox.tsx(19,14): error TS2322: Type '(_onDone: LocalJSXCommandOnDone, _context: ToolUseContext & { canUseTool?: CanUseToolFn; setMessages: (updater: (prev: Message[]) => Message[]) => void; ... 4 more ...; resume?: (sessionId: `${string}-${string}-${string}-${string}-${string}`, log: LogOption, entrypoint: ResumeEntrypoint) => Promise<...>; }, args: st...' is not assignable to type 'LocalJSXCommandCall'.
-src/commands/docker-sandbox/docker-sandbox.tsx(47,39): error TS2304: Cannot find name 'getDockerSandboxManager'.
-src/commands/docker-sandbox/docker-sandbox.tsx(141,30): error TS2367: This comparison appears to be unintentional because the types '"config" | "start" | "shell" | "logs" | "exec"' and '"status"' have no overlap.
-src/commands/docker-sandbox/docker-sandbox.tsx(168,16): error TS2367: This comparison appears to be unintentional because the types '"shell" | "exec"' and '"logs"' have no overlap.

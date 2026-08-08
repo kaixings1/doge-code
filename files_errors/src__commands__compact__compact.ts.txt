@@ -1,2 +1,0 @@
-src/commands/compact/compact.ts(145,26): error TS2339: Property 'isReactiveOnlyMode' does not exist on type 'typeof import("D:/doge-code/src/services/compact/reactiveCompact")'.
-src/commands/compact/compact.ts(233,36): error TS2339: Property 'reactiveCompactOnPromptTooLong' does not exist on type 'typeof import("D:/doge-code/src/services/compact/reactiveCompact")'.

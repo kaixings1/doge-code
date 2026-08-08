@@ -1,5 +1,0 @@
-src/components/MessageSelector.tsx(77,34): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'FileHistoryState'.
-src/components/MessageSelector.tsx(121,9): error TS2367: This comparison appears to be unintentional because the types '"external"' and '"ant"' have no overlap.
-src/components/MessageSelector.tsx(173,53): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'FileHistoryState'.
-src/components/MessageSelector.tsx(294,52): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'FileHistoryState'.
-src/components/MessageSelector.tsx(296,86): error TS2345: Argument of type 'string' is not assignable to parameter of type '`${string}-${string}-${string}-${string}-${string}`'.

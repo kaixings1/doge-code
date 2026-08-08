@@ -1,7 +1,0 @@
-src/components/StructuredDiff.tsx(98,5): error TS2339: Property 'patch' does not exist on type '{}'.
-src/components/StructuredDiff.tsx(99,5): error TS2339: Property 'dim' does not exist on type '{}'.
-src/components/StructuredDiff.tsx(100,5): error TS2339: Property 'filePath' does not exist on type '{}'.
-src/components/StructuredDiff.tsx(101,5): error TS2339: Property 'firstLine' does not exist on type '{}'.
-src/components/StructuredDiff.tsx(102,5): error TS2339: Property 'fileContent' does not exist on type '{}'.
-src/components/StructuredDiff.tsx(103,5): error TS2339: Property 'width' does not exist on type '{}'.
-src/components/StructuredDiff.tsx(104,5): error TS2339: Property 'skipHighlighting' does not exist on type '{}'.

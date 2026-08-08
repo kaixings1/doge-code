@@ -1,4 +1,0 @@
-src/tools/FileReadTool/FileReadTool.ts(891,39): error TS2339: Property 'error' does not exist on type 'PDFResult<PDFExtractPagesResult>'.
-src/tools/FileReadTool/FileReadTool.ts(962,36): error TS2339: Property 'error' does not exist on type 'PDFResult<PDFExtractPagesResult>'.
-src/tools/FileReadTool/FileReadTool.ts(978,34): error TS2339: Property 'error' does not exist on type 'PDFResult<{ type: "pdf"; file: { filePath: string; base64: string; originalSize: number; }; }>'.
-src/tools/FileReadTool/FileReadTool.ts(1153,38): error TS2349: This expression is not callable.

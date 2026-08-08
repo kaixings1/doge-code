@@ -1,2 +1,0 @@
-src/assistant/AssistantSessionChooser.ts(60,36): error TS2345: Argument of type 'string' is not assignable to parameter of type 'SetStateAction<"active" | "ended" | "all">'.
-src/assistant/AssistantSessionChooser.ts(60,45): error TS2339: Property 'value' does not exist on type 'EventTarget'.

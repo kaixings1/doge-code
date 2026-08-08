@@ -1,5 +1,0 @@
-src/ink/render-to-screen.ts(74,5): error TS2578: Unused '@ts-expect-error' directive.
-src/ink/render-to-screen.ts(90,3): error TS2578: Unused '@ts-expect-error' directive.
-src/ink/render-to-screen.ts(92,3): error TS2578: Unused '@ts-expect-error' directive.
-src/ink/render-to-screen.ts(125,3): error TS2578: Unused '@ts-expect-error' directive.
-src/ink/render-to-screen.ts(127,3): error TS2578: Unused '@ts-expect-error' directive.

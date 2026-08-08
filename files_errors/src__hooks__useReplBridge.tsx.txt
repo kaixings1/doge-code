@@ -1,8 +1,0 @@
-src/hooks/useReplBridge.tsx(136,13): error TS2322: Type 'unknown' is not assignable to type 'string'.
-src/hooks/useReplBridge.tsx(194,25): error TS2322: Type '{ type: "user"; message: { role: "user"; content: Record<string, unknown>[]; }; session_id: string; parent_tool_use_id: any; uuid: `${string}-${string}-${string}-${string}-${string}`; }' is not assignable to type 'string | ContentBlockParam[]'.
-src/hooks/useReplBridge.tsx(199,25): error TS2339: Property 'sanitizeInboundWebhookContent' does not exist on type 'typeof import("D:/doge-code/src/bridge/webhookSanitizer")'.
-src/hooks/useReplBridge.tsx(300,57): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
-src/hooks/useReplBridge.tsx(302,44): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
-src/hooks/useReplBridge.tsx(310,11): error TS2322: Type 'unknown' is not assignable to type 'boolean'.
-src/hooks/useReplBridge.tsx(358,11): error TS2322: Type 'unknown' is not assignable to type 'string'.
-src/hooks/useReplBridge.tsx(395,250): error TS2304: Cannot find name 'permission_suggestions'.

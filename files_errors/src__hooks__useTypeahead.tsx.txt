@@ -1,6 +1,0 @@
-src/hooks/useTypeahead.tsx(462,73): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Record<string, ServerResource[]>'.
-src/hooks/useTypeahead.tsx(1134,75): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Record<string, ServerResource[]>'.
-src/hooks/useTypeahead.tsx(1324,47): error TS2339: Property 'text' does not exist on type 'unknown'.
-src/hooks/useTypeahead.tsx(1325,50): error TS2339: Property 'shownAt' does not exist on type 'unknown'.
-src/hooks/useTypeahead.tsx(1342,47): error TS2339: Property 'text' does not exist on type 'unknown'.
-src/hooks/useTypeahead.tsx(1343,50): error TS2339: Property 'shownAt' does not exist on type 'unknown'.

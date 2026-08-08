@@ -1,4 +1,0 @@
-src/commands/assistant/sessionHistory.ts(2,32): error TS2307: Cannot find module '../constants/oauth.js' or its corresponding type declarations.
-src/commands/assistant/sessionHistory.ts(3,33): error TS2307: Cannot find module '../entrypoints/agentSdkTypes.js' or its corresponding type declarations.
-src/commands/assistant/sessionHistory.ts(4,33): error TS2307: Cannot find module '../utils/debug.js' or its corresponding type declarations.
-src/commands/assistant/sessionHistory.ts(5,52): error TS2307: Cannot find module '../utils/teleport/api.js' or its corresponding type declarations.

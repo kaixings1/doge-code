@@ -1,1 +1,0 @@
-src/components/messages/UserToolResultMessage/UserToolSuccessMessage.tsx(73,5): error TS2322: Type 'unknown' is not assignable to type 'boolean'.

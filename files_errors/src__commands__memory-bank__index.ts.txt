@@ -1,1 +1,0 @@
-src/commands/memory-bank/index.ts(877,14): error TS2322: Type '(args: string) => Promise<string>' is not assignable to type 'LocalCommandCall'.

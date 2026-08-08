@@ -1,1 +1,0 @@
-src/commands/websocket/index.ts(8,15): error TS2322: Type 'Promise<typeof import("D:/doge-code/src/commands/websocket/websocket")>' is not assignable to type 'Promise<LocalCommandModule>'.

@@ -1,2 +1,0 @@
-src/commands/rag/index.ts(5,14): error TS2322: Type '(args: LocalJSXCommandOnDone) => Promise<{ type: string; value: string; }>' is not assignable to type 'LocalJSXCommandCall'.
-src/commands/rag/index.ts(6,22): error TS2339: Property 'trim' does not exist on type 'LocalJSXCommandOnDone'.

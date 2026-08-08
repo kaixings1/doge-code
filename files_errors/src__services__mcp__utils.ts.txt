@@ -1,3 +1,0 @@
-src/services/mcp/utils.ts(45,12): error TS2339: Property '_originalName' does not exist on type 'Tool'.
-src/services/mcp/utils.ts(254,10): error TS2339: Property '_originalName' does not exist on type 'Tool'.
-src/services/mcp/utils.ts(561,39): error TS2339: Property 'localeCompare' does not exist on type 'unknown'.

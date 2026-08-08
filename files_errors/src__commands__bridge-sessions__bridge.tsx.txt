@@ -1,5 +1,0 @@
-src/commands/bridge-sessions/bridge.tsx(106,61): error TS2345: Argument of type '"screen" | "local" | "tmux"' is not assignable to parameter of type 'TerminalBackend'.
-src/commands/bridge-sessions/bridge.tsx(110,59): error TS2345: Argument of type '"screen" | "local" | "tmux"' is not assignable to parameter of type 'TerminalBackend'.
-src/commands/bridge-sessions/bridge.tsx(423,53): error TS2345: Argument of type '"screen" | "local" | "tmux"' is not assignable to parameter of type 'TerminalBackend'.
-src/commands/bridge-sessions/bridge.tsx(457,45): error TS2345: Argument of type '"screen" | "local" | "tmux"' is not assignable to parameter of type 'TerminalBackend'.
-src/commands/bridge-sessions/bridge.tsx(543,45): error TS2345: Argument of type '"screen" | "local" | "tmux"' is not assignable to parameter of type 'TerminalBackend'.

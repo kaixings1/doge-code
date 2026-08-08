@@ -1,1 +1,0 @@
-src/utils/secureStorage/plainTextStorage.ts(70,3): error TS2322: Type '() => boolean' is not assignable to type '(key: string) => Promise<void>'.

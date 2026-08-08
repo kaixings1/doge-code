@@ -1,2 +1,0 @@
-src/commands/auto-commit/index.ts(210,5): error TS2578: Unused '@ts-expect-error' directive.
-src/commands/auto-commit/index.ts(238,130): error TS2339: Property 'call' does not exist on type 'Command'.

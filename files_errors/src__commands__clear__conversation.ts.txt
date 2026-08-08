@@ -1,2 +1,0 @@
-src/commands/clear/conversation.ts(154,37): error TS2339: Property 'abort' does not exist on type 'unknown'.
-src/commands/clear/conversation.ts(157,20): error TS2349: This expression is not callable.

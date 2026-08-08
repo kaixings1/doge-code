@@ -1,1 +1,0 @@
-src/components/skills/SkillsMenu.tsx(85,13): error TS2339: Property 'sort' does not exist on type 'unknown'.

@@ -1,2 +1,0 @@
-src/bridge/localBridge.ts(183,37): error TS2345: Argument of type 'ProtocolMessage' is not assignable to parameter of type 'Record<string, unknown>'.
-src/bridge/localBridge.ts(189,35): error TS2345: Argument of type 'ProtocolMessage' is not assignable to parameter of type 'Record<string, unknown>'.

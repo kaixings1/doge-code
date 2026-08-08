@@ -1,1 +1,0 @@
-src/components/wizard/index.ts(4,3): error TS2305: Module '"./types.js"' has no exported member 'WizardStepComponent'.

@@ -1,1 +1,0 @@
-src/components/PromptInput/Notifications.tsx(179,84): error TS2739: Type '{}' is missing the following properties from type '{ current: Notification; queue: Notification[]; }': current, queue

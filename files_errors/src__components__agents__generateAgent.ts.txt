@@ -1,1 +1,0 @@
-src/components/agents/generateAgent.ts(167,47): error TS2339: Property 'filter' does not exist on type 'AssistantMessageContent'.

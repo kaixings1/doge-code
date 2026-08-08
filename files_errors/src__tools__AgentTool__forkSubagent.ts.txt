@@ -1,1 +1,0 @@
-src/tools/AgentTool/forkSubagent.ts(114,58): error TS2339: Property 'filter' does not exist on type 'AssistantMessageContent'.

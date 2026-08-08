@@ -1,5 +1,0 @@
-src/hooks/usePromptSuggestion.ts(31,5): error TS2339: Property 'text' does not exist on type '{}'.
-src/hooks/usePromptSuggestion.ts(32,5): error TS2339: Property 'promptId' does not exist on type '{}'.
-src/hooks/usePromptSuggestion.ts(33,5): error TS2339: Property 'shownAt' does not exist on type '{}'.
-src/hooks/usePromptSuggestion.ts(34,5): error TS2339: Property 'acceptedAt' does not exist on type '{}'.
-src/hooks/usePromptSuggestion.ts(35,5): error TS2339: Property 'generationRequestId' does not exist on type '{}'.

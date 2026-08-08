@@ -1,2 +1,0 @@
-src/commands/cost/index.ts(26,3): error TS2353: Object literal may only specify known properties, and 'arguments' does not exist in type 'CommandBase & LocalCommand'.
-src/commands/cost/index.ts(48,66): error TS2339: Property 'call' does not exist on type 'Command'.

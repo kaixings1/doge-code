@@ -1,1 +1,0 @@
-src/bridge/bridgeMessaging.ts(240,85): error TS2448: Block-scoped variable 'uuid' used before its declaration.

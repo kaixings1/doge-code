@@ -1,1 +1,0 @@
-src/utils/analyzeContext.ts(901,5): error TS2345: Argument of type '{ [key: string]: unknown; content: string | ContentBlockParam[]; }[]' is not assignable to parameter of type 'BetaMessageParam[]'.

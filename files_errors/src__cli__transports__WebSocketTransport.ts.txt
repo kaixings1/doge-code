@@ -1,9 +1,0 @@
-src/cli/transports/WebSocketTransport.ts(79,13): error TS2416: Property 'onData' in type 'WebSocketTransport' is not assignable to the same property in base type 'Transport'.
-src/cli/transports/WebSocketTransport.ts(838,111): error TS2341: Property 'size' is private and only accessible within class 'CircularBuffer<T>'.
-src/cli/transports/WebSocketTransport.ts(838,111): error TS2349: This expression is not callable.
-src/cli/transports/WebSocketTransport.ts(867,17): error TS2339: Property 'subtype' does not exist on type 'unknown'.
-src/cli/transports/WebSocketTransport.ts(867,54): error TS2339: Property 'tool_name' does not exist on type 'unknown'.
-src/cli/transports/WebSocketTransport.ts(868,34): error TS2339: Property 'subtype' does not exist on type 'unknown'.
-src/cli/transports/WebSocketTransport.ts(871,15): error TS2339: Property 'subtype' does not exist on type '{}'.
-src/cli/transports/WebSocketTransport.ts(871,24): error TS2339: Property 'request_id' does not exist on type '{}'.
-src/cli/transports/WebSocketTransport.ts(967,11): error TS2300: Duplicate identifier 'onPong'.

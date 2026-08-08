@@ -1,1 +1,0 @@
-src/commands/loop/strategies/openhands.ts(318,3): error TS2416: Property 'evaluate' in type 'OpenHandsStrategy' is not assignable to the same property in base type 'BaseLoopStrategy'.

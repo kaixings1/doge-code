@@ -1,4 +1,0 @@
-src/tools/WebFetchTool/utils.ts(1828,27): error TS2345: Argument of type 'AxiosHeaderValue' is not assignable to parameter of type 'string'.
-src/tools/WebFetchTool/utils.ts(1830,58): error TS2345: Argument of type 'AxiosHeaderValue' is not assignable to parameter of type 'string'.
-src/tools/WebFetchTool/utils.ts(1842,19): error TS2339: Property 'includes' does not exist on type 'AxiosHeaderValue'.
-src/tools/WebFetchTool/utils.ts(1861,5): error TS2322: Type 'AxiosHeaderValue' is not assignable to type 'string'.

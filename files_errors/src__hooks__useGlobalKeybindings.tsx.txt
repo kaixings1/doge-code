@@ -1,2 +1,0 @@
-src/hooks/useGlobalKeybindings.tsx(61,63): error TS2345: Argument of type '{ [taskId: string]: TaskState; }' is not assignable to parameter of type 'Record<string, TaskStateBase>'.
-src/hooks/useGlobalKeybindings.tsx(257,33): error TS2345: Argument of type '() => true' is not assignable to parameter of type '() => false | void | Promise<void>'.

@@ -1,1 +1,0 @@
-src/commands/mcp-discovery/index.ts(14,3): error TS2353: Object literal may only specify known properties, and 'call' does not exist in type 'CommandBase & LocalCommand'.

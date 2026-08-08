@@ -1,3 +1,0 @@
-src/commands/notebook/notebook.ts(1,155): error TS2724: '"../../services/notebook/database.js"' has no exported member named 'CreateNoteInput'. Did you mean 'createNote'?
-src/commands/notebook/notebook.ts(1,177): error TS2724: '"../../services/notebook/database.js"' has no exported member named 'UpdateNoteInput'. Did you mean 'updateNote'?
-src/commands/notebook/notebook.ts(1,199): error TS2459: Module '"../../services/notebook/database.js"' declares 'SearchParams' locally, but it is not exported.

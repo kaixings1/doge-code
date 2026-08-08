@@ -1,4 +1,0 @@
-src/commands/clear/tool-call-executor.ts(15,22): error TS2307: Cannot find module '../../../tools/bash/index.js' or its corresponding type declarations.
-src/commands/clear/tool-call-executor.ts(231,11): error TS2353: Object literal may only specify known properties, and 'env' does not exist in type 'ExecOptions'.
-src/commands/clear/tool-call-executor.ts(491,18): error TS2554: Expected 0 arguments, but got 1.
-src/commands/clear/tool-call-executor.ts(494,20): error TS2554: Expected 0 arguments, but got 1.

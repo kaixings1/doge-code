@@ -1,1 +1,0 @@
-src/entrypoints/mcp.ts(146,50): error TS2339: Property 'message' does not exist on type 'ValidationResult'.

@@ -1,2 +1,0 @@
-src/utils/settings/validateEditTool.ts(39,71): error TS2339: Property 'error' does not exist on type '{ isValid: true; } | { isValid: false; error: string; fullSchema: string; }'.
-src/utils/settings/validateEditTool.ts(39,106): error TS2339: Property 'fullSchema' does not exist on type '{ isValid: true; } | { isValid: false; error: string; fullSchema: string; }'.

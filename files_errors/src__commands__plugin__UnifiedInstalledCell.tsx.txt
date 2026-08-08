@@ -1,1 +1,0 @@
-src/commands/plugin/UnifiedInstalledCell.tsx(6,15): error TS2724: '"./unifiedTypes.js"' has no exported member named 'UnifiedInstalledItem'. Did you mean 'UnifiedInstalledPlugin'?

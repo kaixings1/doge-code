@@ -1,8 +1,0 @@
-src/tools/SkillTool/SkillTool.ts(246,52): error TS2339: Property 'some' does not exist on type 'ContentBlockParam[] | AssistantMessageContent'.
-src/tools/SkillTool/SkillTool.ts(379,40): error TS2339: Property 'stripCanonicalPrefix' does not exist on type '{ isSkillSearchEnabled(): boolean; logSkillSearchTelemetry(): void; loadRemoteSkill(): Promise<any>; getRemoteSkillState(): any; }'.
-src/tools/SkillTool/SkillTool.ts(383,42): error TS2339: Property 'getDiscoveredRemoteSkill' does not exist on type '{ isSkillSearchEnabled(): boolean; logSkillSearchTelemetry(): void; loadRemoteSkill(): Promise<any>; getRemoteSkillState(): any; }'.
-src/tools/SkillTool/SkillTool.ts(514,40): error TS2339: Property 'stripCanonicalPrefix' does not exist on type '{ isSkillSearchEnabled(): boolean; logSkillSearchTelemetry(): void; loadRemoteSkill(): Promise<any>; getRemoteSkillState(): any; }'.
-src/tools/SkillTool/SkillTool.ts(639,40): error TS2339: Property 'stripCanonicalPrefix' does not exist on type '{ isSkillSearchEnabled(): boolean; logSkillSearchTelemetry(): void; loadRemoteSkill(): Promise<any>; getRemoteSkillState(): any; }'.
-src/tools/SkillTool/SkillTool.ts(1003,11): error TS2339: Property 'getDiscoveredRemoteSkill' does not exist on type '{ isSkillSearchEnabled(): boolean; logSkillSearchTelemetry(): void; loadRemoteSkill(): Promise<any>; getRemoteSkillState(): any; }'.
-src/tools/SkillTool/SkillTool.ts(1003,54): error TS2339: Property 'logRemoteSkillLoaded' does not exist on type '{ isSkillSearchEnabled(): boolean; logSkillSearchTelemetry(): void; loadRemoteSkill(): Promise<any>; getRemoteSkillState(): any; }'.
-src/tools/SkillTool/SkillTool.ts(1018,40): error TS2554: Expected 0 arguments, but got 2.

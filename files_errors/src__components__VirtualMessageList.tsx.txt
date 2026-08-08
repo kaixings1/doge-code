@@ -1,1 +1,0 @@
-src/components/VirtualMessageList.tsx(348,7): error TS2322: Type '"progress" | "user" | "assistant" | "system" | "tool_use_summary" | "attachment" | "hook_result" | "tombstone" | "grouped_tool_use"' is not assignable to type '"user" | "assistant" | "system" | "attachment" | "grouped_tool_use" | "collapsed_read_search"'.

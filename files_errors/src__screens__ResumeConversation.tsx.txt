@@ -1,4 +1,0 @@
-src/screens/ResumeConversation.tsx(184,58): error TS2339: Property 'command' does not exist on type '{ isCrossProject: true; isSameRepoWorktree: true; projectPath: string; } | { isCrossProject: true; isSameRepoWorktree: false; command: string; projectPath: string; }'.
-src/screens/ResumeConversation.tsx(186,50): error TS2339: Property 'command' does not exist on type '{ isCrossProject: true; isSameRepoWorktree: true; projectPath: string; } | { isCrossProject: true; isSameRepoWorktree: false; command: string; projectPath: string; }'.
-src/screens/ResumeConversation.tsx(230,85): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'AgentDefinitionsResult'.
-src/screens/ResumeConversation.tsx(267,139): error TS2554: Expected 0 arguments, but got 2.

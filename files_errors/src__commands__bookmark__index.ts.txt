@@ -1,1 +1,0 @@
-src/commands/bookmark/index.ts(138,66): error TS2339: Property 'call' does not exist on type 'Command'.

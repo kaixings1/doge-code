@@ -1,1 +1,0 @@
-src/generated/macro.ts(4,12): error TS2339: Property 'MACRO' does not exist on type 'typeof globalThis'.

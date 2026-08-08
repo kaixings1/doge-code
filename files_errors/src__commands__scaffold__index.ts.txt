@@ -1,1 +1,0 @@
-src/commands/scaffold/index.ts(395,24): error TS2339: Property 'cwd' does not exist on type 'LocalJSXCommandContext'.

@@ -1,3 +1,0 @@
-src/commands/refactor/index.ts(130,14): error TS2322: Type '(args: string) => Promise<string>' is not assignable to type 'LocalCommandCall'.
-src/commands/refactor/index.ts(173,3): error TS2353: Object literal may only specify known properties, and 'arguments' does not exist in type 'CommandBase & LocalCommand'.
-src/commands/refactor/index.ts(211,66): error TS2339: Property 'call' does not exist on type 'Command'.

@@ -1,4 +1,0 @@
-src/commands/security/index.ts(390,167): error TS2345: Argument of type '{ scanDuration: number; filesScanned: number; score: number; grade: string; riskLevel: string; }' is not assignable to parameter of type 'ScanResult'.
-src/commands/security/index.ts(424,42): error TS2741: Property 'total' is missing in type '{ bySeverity: { critical: number; high: number; medium: number; low: number; info: number; }; byType: Record<string, number>; byFile: Record<string, number>; }' but required in type '{ total: number; bySeverity: Record<string, number>; byType: Record<string, number>; byFile: Record<string, number>; }'.
-src/commands/security/index.ts(425,145): error TS2551: Property 'catch' does not exist on type 'string'. Did you mean 'match'?
-src/commands/security/index.ts(434,66): error TS2339: Property 'call' does not exist on type 'Command'.
