@@ -1,7 +1,7 @@
 const { spawn } = require('child_process');
 const path = require('path');
 
-const rgPath = path.join(__dirname, 'rg.exe');
+const rgPath = 'rg';
 const args = process.argv.slice(2);
 
 // Delegate all args directly to ripgrep.
