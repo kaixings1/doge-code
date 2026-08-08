@@ -52,6 +52,7 @@ import {
 } from '../../types/connectorText.js'
 import type {
   AssistantMessage,
+  AssistantMessageContent,
   Message,
   StreamEvent,
   SystemAPIErrorMessage,
@@ -75,8 +76,10 @@ import {
   getModelMaxOutputTokens,
   getSonnet1mExpTreatmentEnabled,
 } from '../../utils/context.js'
-import { resolveAppliedEffort, resolveAutoEffort } from '../../utils/effort.js'
+import { EffortValue, modelSupportsEffort, resolveAppliedEffort, resolveAutoEffort } from '../../utils/effort.js'
+import type { CacheEditsBlock, PinnedCacheEdits } from '../compact/cachedMicrocompact.js'
 import { isEnvTruthy } from '../../utils/envUtils.js'
+import { isFastModeAvailable, isFastModeCooldown, isFastModeEnabled, isFastModeSupportedByModel } from '../../utils/fastMode.js'
 import { errorMessage } from '../../utils/errors.js'
 import { computeFingerprintFromMessages } from '../../utils/fingerprint.js'
 import { captureAPIRequest, logError } from '../../utils/log.js'
@@ -109,7 +112,6 @@ import {
 } from '../claudeAiLimits.js'
 import { getAPIContextManagement } from '../compact/apiMicrocompact.js'
 
- 
 const autoModeStateModule = feature('TRANSCRIPT_CLASSIFIER')
   ? (require('../../utils/permissions/autoModeState.js') as typeof import('../../utils/permissions/autoModeState.js'))
   : null
@@ -196,6 +198,8 @@ import {
   extractDiscoveredToolNames,
   isDeferredToolsDeltaEnabled,
   isToolSearchEnabled,
+  filterToolsForMessage,
+  isSimpleConversationMessage,
 } from '../../utils/toolSearch.js'
 import { API_MAX_MEDIA_PER_REQUEST } from '../../constants/apiLimits.js'
 import { ADVISOR_BETA_HEADER } from '../../constants/betas.js'
@@ -448,7 +452,7 @@ function configureEffortParams(
     betas.push(EFFORT_BETA_HEADER)
   } else if (typeof effortValue === 'string') {
     // 按原样发送字符串 effort 等级
-    outputConfig.effort = effortValue
+    outputConfig.effort = effortValue as unknown as "high" | "medium" | "low" | "max" | "xhigh"
     betas.push(EFFORT_BETA_HEADER)
   } else if (process.env.USER_TYPE === 'ant') {
     // 数值 effort 覆盖 - 仅限蚂蚁内部（使用 anthropic_internal）
@@ -725,7 +729,7 @@ export async function queryModelWithoutStreaming({
     )
   })) {
     if (message.type === 'assistant') {
-      assistantMessage = message
+      assistantMessage = message as AssistantMessage
     }
   }
   if (!assistantMessage) {
@@ -910,7 +914,7 @@ function getPreviousRequestIdFromMessages(
   for (let i = messages.length - 1; i >= 0; i--) {
     const msg = messages[i]!
     if (msg.type === 'assistant' && msg.requestId) {
-      return msg.requestId
+      return msg.requestId as string
     }
   }
   return undefined
@@ -943,7 +947,7 @@ export function stripExcessMediaItems(
       if (isMedia(block)) toRemove++
       if (isToolResult(block) && Array.isArray(block.content)) {
         for (const nested of block.content) {
-          if (isMedia(nested)) toRemove++
+          if (isMedia(nested as BetaContentBlockParam)) toRemove++
         }
       }
     }
@@ -965,8 +969,8 @@ export function stripExcessMediaItems(
           !Array.isArray(block.content)
         )
           return block
-        const filtered = block.content.filter(n => {
-          if (toRemove > 0 && isMedia(n)) {
+        const filtered = block.content.filter((n): boolean => {
+          if (toRemove > 0 && isMedia(n as BetaContentBlockParam)) {
             toRemove--
             return false
           }
@@ -1012,11 +1016,15 @@ async function* queryModel(
   // - 启动时从文件读取
   // - 用户切换预设时刷新（通过 _dogeConfigChanged 标志）
   // - 定期检测 api.json 文件修改时间，感知其他进程的变更
-  if ((queryModel as any)._cachedConfig === void 0 || (process as any)._dogeConfigChanged || checkProjectConfigChanged()) {
-    ;(queryModel as any)._cachedConfig = readCustomApiStorage()
-    ;(process as any)._dogeConfigChanged = false
+  if ((queryModel as unknown as Record<string, unknown>)._cachedConfig === void 0 || (process as unknown as Record<string, unknown>)._dogeConfigChanged || checkProjectConfigChanged()) {
+    ;(queryModel as unknown as Record<string, unknown>)._cachedConfig = readCustomApiStorage()
+    ;(process as unknown as Record<string, unknown>)._dogeConfigChanged = false
   }
-  const cachedConfig = (queryModel as any)._cachedConfig
+  const cachedConfig = (
+    queryModel as unknown as {
+      _cachedConfig?: { baseURL?: string; apiKey?: string; model?: string; provider?: string }
+    }
+  )._cachedConfig
 
   // 将缓存配置同步到环境变量，确保 API 客户端每次请求都使用最新配置。
   // 覆盖时机：配置不为空，且与当前环境变量存在实质差异。
@@ -1182,9 +1190,59 @@ async function* queryModel(
       return discoveredToolNames.has(tool.name)
     })
   } else {
-    filteredTools = tools.filter(
-      t => !toolMatchesName(t, TOOL_SEARCH_TOOL_NAME),
-    )
+    // Even without tool search enabled, apply message-based tool filtering
+    // to reduce token overhead for simple conversations (e.g., "hi", "hello").
+    // This prevents sending all 60+ tool definitions when they aren't needed.
+    // See: filterToolsForMessage in utils/toolSearch.ts for keyword-based filtering.
+    let lastUserMessage = ''
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].type === 'user') {
+        const msgContent = (messages[i].message as any)?.content
+        const content =
+          typeof msgContent === 'string'
+            ? msgContent
+            : Array.isArray(msgContent)
+              ? msgContent.map((b: any) => b.text ?? '').join(' ')
+              : ''
+        lastUserMessage = content
+        break
+      }
+    }
+
+    if (isSimpleConversationMessage(lastUserMessage)) {
+      // For simple conversations, use only message-filtered tools.
+      // Always include tools already used in conversation history so the model
+      // can continue using them without needing rediscovery.
+      const previouslyUsedToolNames = new Set<string>()
+      for (const msg of messages) {
+        if (msg.type === 'assistant') {
+          const content = msg.message?.content
+          if (Array.isArray(content)) {
+            for (const block of content) {
+              if (
+                typeof block === 'object' &&
+                block !== null &&
+                block.type === 'tool_use' &&
+                'name' in block &&
+                typeof block.name === 'string'
+              ) {
+                previouslyUsedToolNames.add(block.name)
+              }
+            }
+          }
+        }
+      }
+      const baseFiltered = filterToolsForMessage(tools, lastUserMessage)
+      const baseFilteredNames = new Set(baseFiltered.map(t => t.name))
+      // Union: message-filtered tools + previously used tools
+      filteredTools = tools.filter(
+        t => baseFilteredNames.has(t.name) || previouslyUsedToolNames.has(t.name),
+      )
+    } else {
+      filteredTools = tools.filter(
+        t => !toolMatchesName(t, TOOL_SEARCH_TOOL_NAME),
+      )
+    }
   }
 
   // 如果启用了工具搜索，添加工具搜索 beta 头 - defer_loading 被接受所必需
@@ -1216,7 +1274,7 @@ async function* queryModel(
     cachedMCEnabled = featureEnabled && modelSupported
     const config = getCachedMCConfig()
     logForDebugging(
-      `Cached MC gate: enabled=${featureEnabled} modelSupported=${modelSupported} model=${options.model} supportedModels=${jsonStringify(config.supportedModels)}`,
+      `Cached MC gate: enabled=${featureEnabled} modelSupported=${modelSupported} model=${options.model} supportedModels=${jsonStringify((config as Record<string, unknown>).supportedModels)}`,
     )
   }
 
@@ -1476,7 +1534,7 @@ async function* queryModel(
   if (effort === void 0) {
     const lastMsg = getLastUserMessageText(messages)
     if (lastMsg) {
-      effort = resolveAutoEffort(lastMsg)
+      effort = resolveAutoEffort(lastMsg) as EffortValue
     }
   }
 
@@ -1712,8 +1770,8 @@ async function* queryModel(
         enablePromptCaching,
         options.querySource,
         useCachedMC,
-        consumedCacheEdits,
-        consumedPinnedEdits,
+        consumedCacheEdits as unknown as CachedMCEditsBlock,
+        consumedPinnedEdits as unknown as CachedMCPinnedEdits[] ,
         options.skipCacheWrite,
       ),
       system,
@@ -1799,7 +1857,6 @@ async function* queryModel(
 		logForDebugging(`[request] ANTHROPIC_BASE_URL=${process.env.ANTHROPIC_BASE_URL}`, { level: 'debug' });
 		logForDebugging(`[request] CLAUDE_CODE_COMPATIBLE_API_PROVIDER=${process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER}`, { level: 'debug' });
 
-
 	// 防止在无端点配置时发出真实请求
 if (process.env.ANTHROPIC_BASE_URL === 'http://0.0.0.0:1' || !process.env.DOGE_API_KEY) {
   return (async function* () {
@@ -1812,7 +1869,7 @@ if (process.env.ANTHROPIC_BASE_URL === 'http://0.0.0.0:1' || !process.env.DOGE_A
         usage: { input_tokens: 0, output_tokens: 0 }
       }
     }
-  })() as any;
+  })() as unknown as AsyncGenerator<unknown>;
 }
 
     const generator = withRetry(
@@ -1867,7 +1924,6 @@ async (anthropic, attempt, context) => {
 		//const hasURL = stored.baseURL || process.env.ANTHROPIC_BASE_URL;
 		//const compatProvider = process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER || 'openai';
 		
-
 		/*if (hasURL) {
 		  process.stderr.write(`\n[FIX] compatProvider=openai, baseURL=${process.env.ANTHROPIC_BASE_URL}, apiKey=${process.env.DOGE_API_KEY ? '***' : 'missing'}, model=${process.env.ANTHROPIC_MODEL || 'missing'}\n\n`);
 		} else {
@@ -2203,7 +2259,7 @@ async (anthropic, attempt, context) => {
                 })
                 throw new Error('内容块不是 connector_text 块')
               }
-              contentBlock.connector_text += delta.connector_text
+              ;(contentBlock as any).connector_text += (delta as any).connector_text
             } else {
               switch (delta.type) {
                 case 'citations_delta':
@@ -2224,7 +2280,7 @@ async (anthropic, attempt, context) => {
                     })
                     throw new Error('内容块不是 input_json 块')
                   }
-				   appendTokenText(delta.partial_json); 
+				   appendTokenText((delta as any).partial_json as string); 
                   if (typeof contentBlock.input !== 'string') {
                     logEvent('tengu_streaming_error', {
                       error_type:
@@ -2271,7 +2327,7 @@ async (anthropic, attempt, context) => {
                     throw new Error('内容块不是思考块')
                   }
                   contentBlock.signature = delta.signature
-				  appendTokenText(delta.thinking); 
+				  appendTokenText((delta as { thinking?: string }).thinking ?? ''); 
                   break
                 case 'thinking_delta':
                   if (contentBlock.type !== 'thinking') {
@@ -2285,8 +2341,8 @@ async (anthropic, attempt, context) => {
                     })
                     throw new Error('内容块不是思考块')
                   }
-                  contentBlock.thinking += delta.thinking
-				  appendTokenText(delta.thinking); 
+                  ;(contentBlock as any).thinking += (delta as any).thinking
+				  appendTokenText((delta as any).thinking); 
                   break
               }
             }
@@ -2320,12 +2376,12 @@ async (anthropic, attempt, context) => {
             }
             const m: AssistantMessage = {
               message: {
-                ...partialMessage,
+                ...(partialMessage as unknown as Message),
                 content: normalizeContentFromAPI(
                   [contentBlock] as BetaContentBlock[],
                   tools,
                   options.agentId,
-                ),
+                ) as AssistantMessageContent,
               },
               requestId: streamRequestId ?? undefined,
               type: 'assistant',
@@ -2369,10 +2425,10 @@ async (anthropic, attempt, context) => {
             }
 
             // 更新成本
-            const costUSDForPart = calculateUSDCost(resolvedModel, usage)
+            const costUSDForPart = calculateUSDCost(resolvedModel, usage as unknown as BetaUsage)
             costUSD += addToTotalSessionCost(
               costUSDForPart,
-              usage,
+              usage as unknown as BetaUsage,
               options.model,
             )
 
@@ -2493,7 +2549,6 @@ async (anthropic, attempt, context) => {
         })
 //这里是自己加的
 
-
         // 检查是否有工具调用 - 如果有工具调用，则继续等待而不是抛出错误
         const hasToolCall = newMessages.some(msg => {
           if (msg.message?.content && Array.isArray(msg.message.content)) {
@@ -2510,9 +2565,6 @@ async (anthropic, attempt, context) => {
         throw new Error('流结束但未收到任何事件')
         }
 //------------自己加的	
-	
-	
-	
 	
       }
 
@@ -2715,12 +2767,12 @@ async (anthropic, attempt, context) => {
 
       const m: AssistantMessage = {
         message: {
-          ...result,
+          ...(result as unknown as Message),
           content: normalizeContentFromAPI(
             result.content,
             tools,
             options.agentId,
-          ),
+          ) as AssistantMessageContent,
         },
         requestId: streamRequestId ?? undefined,
         type: 'assistant',
@@ -2803,7 +2855,7 @@ async (anthropic, attempt, context) => {
 
         const m: AssistantMessage = {
           message: {
-            ...result,
+            ...(result as unknown as Message),
             content: normalizeContentFromAPI(
               result.content,
               tools,
@@ -2952,12 +3004,12 @@ async (anthropic, attempt, context) => {
       const fallbackUsage = fallbackMessage.message.usage
       // 防止来自非标准 API 响应的 undefined usage
       if (fallbackUsage) {
-        usage = updateUsage(EMPTY_USAGE, fallbackUsage)
-        stopReason = fallbackMessage.message.stop_reason
-        const fallbackCost = calculateUSDCost(resolvedModel, fallbackUsage)
+        usage = updateUsage(EMPTY_USAGE, fallbackUsage as unknown as BetaMessageDeltaUsage)
+        stopReason = fallbackMessage.message.stop_reason as BetaStopReason as BetaStopReason
+        const fallbackCost = calculateUSDCost(resolvedModel, fallbackUsage as unknown as BetaUsage)
         costUSD += addToTotalSessionCost(
           fallbackCost,
-          fallbackUsage,
+          fallbackUsage as unknown as BetaUsage,
           options.model,
         )
         // DOGE: 持久化 token 累计到 api.json（非流式回退路径）
@@ -2967,7 +3019,7 @@ async (anthropic, attempt, context) => {
         addPresetTokens(fallbackUsage.input_tokens, fallbackUsage.output_tokens, jsonSentBytes, jsonReceivedBytes)
       } else {
         usage = EMPTY_USAGE
-        stopReason = fallbackMessage.message.stop_reason
+        stopReason = fallbackMessage.message.stop_reason as BetaStopReason as BetaStopReason
       }
     }
   }
@@ -3112,7 +3164,7 @@ export function updateUsage(
         }
       : {}),
     inference_geo: usage.inference_geo,
-    iterations: partUsage.iterations ?? usage.iterations,
+    iterations: (partUsage.iterations as unknown as number | undefined) ?? usage.iterations,
     speed: (partUsage as BetaUsage).speed ?? usage.speed,
   }
 }
@@ -3271,7 +3323,7 @@ export function addCacheBreakpoints(
           }
           insertBlockAfterToolResults(msg.content, dedupedNewEdits)
           // 固定，以便该块在未来的调用中在相同位置重新发送
-          pinCacheEdits(i, newCacheEdits)
+          pinCacheEdits(i, newCacheEdits as unknown as CacheEditsBlock)
 
           logForDebugging(
             `在消息[${i}]中添加了 cache_edits 块，包含 ${dedupedNewEdits.edits.length} 个删除: ${dedupedNewEdits.edits.map(e => e.cache_reference).join(', ')}`,
