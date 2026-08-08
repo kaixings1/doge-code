@@ -12,6 +12,7 @@
  * - FEISHU_WEBHOOK_URL       公网 Webhook URL（可选）
  */
 
+import type { SDKMessage } from '../entrypoints/agentSdkTypes.js'
 import type { ReplBridgeHandle } from './replBridge.js'
 import type { MobileRequest, MobileResponse } from './mobileProtocol.js'
 import { FeishuBridge, setFeishuBridge, getFeishuBridge } from '../services/feishu/index.js'
@@ -47,6 +48,9 @@ export async function startFeishuBridge(bridgeHandle: ReplBridgeHandle | null): 
       appSecret,
       port: getFeishuWebhookPort(),
       bridgeHandle,
+      onInboundMessage: (msg: SDKMessage) => {
+        feishuBridgeInstance?.handleSdkMessage(msg)
+      },
     })
 
     await feishuBridgeInstance.init()

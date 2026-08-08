@@ -82,10 +82,11 @@ export class MemoryToolHandler {
   private create(params: MemoryParams): MemoryResult {
     const inputPath = params.path;
     if (!inputPath) return { error: "缺少 path" };
+    if (!params.file_text) return { error: "file_text 不能为空" };
     try {
       const fullPath = this.validatePath(inputPath);
       fs.mkdirSync(path.dirname(fullPath), { recursive: true });
-      fs.writeFileSync(fullPath, params.file_text || "", "utf-8");
+      fs.writeFileSync(fullPath, params.file_text, "utf-8");
       return { success: "已创建: " + inputPath };
     } catch (e: any) {
       return { error: "无法创建: " + e.message };
@@ -95,13 +96,14 @@ export class MemoryToolHandler {
   private strReplace(params: MemoryParams): MemoryResult {
     const inputPath = params.path;
     if (!inputPath || params.old_str === undefined) return { error: "缺少参数" };
+    if (params.new_str === undefined || params.new_str === "") return { error: "new_str 不能为空" };
     try {
       const fullPath = this.validatePath(inputPath);
       const content = fs.readFileSync(fullPath, "utf-8");
       const count = content.split(params.old_str).length - 1;
       if (count === 0) return { error: "未找到" };
       if (count > 1) return { error: "重复出现" };
-      fs.writeFileSync(fullPath, content.replace(params.old_str, params.new_str || ""), "utf-8");
+      fs.writeFileSync(fullPath, content.replace(params.old_str, params.new_str), "utf-8");
       return { success: "已替换" };
     } catch (e: any) {
       return { error: "替换失败: " + e.message };

@@ -2,7 +2,7 @@
  * feishuApiClient.ts — 飞书 API 客户端
  *
  * 基于 @larksuiteoapi/node-sdk 封装飞书消息发送能力。
- * 支持：文本消息、卡片消息、图片/文件上传。
+ * 支持：文本消息、卡片消息、图片/文件上传、CardKit 流式卡片 API。
  */
 
 import { Client } from '@larksuiteoapi/node-sdk'
@@ -70,7 +70,7 @@ class FeishuApiClient {
   }
 
   /**
-   * 发送卡片消息（支持流式更新）
+   * 发送卡片消息
    */
   async sendCard(receiveId: string, card: FeishuCard): Promise<string> {
     const client = this.ensureClient()
@@ -82,7 +82,7 @@ class FeishuApiClient {
         content: JSON.stringify(card),
       },
     })
-    return result.data?.message_id ?? ''
+    return (result.data?.message_id as string | undefined) ?? ''
   }
 
   /**
@@ -111,24 +111,120 @@ class FeishuApiClient {
   }
 
   /**
-   * 上传图片
+   * 上传图片 buffer，返回 image_key
    */
-  async uploadImage(imagePath: string): Promise<string | null> {
+  async uploadImage(buffer: Buffer): Promise<string | null> {
     const client = this.ensureClient()
     try {
-      const fs = await import('node:fs/promises')
-      const buffer = await fs.readFile(imagePath)
       const result = await client.im.image.create({
         data: {
           image_type: 'message',
-          image: Buffer.from(buffer).toString('base64'),
+          image: buffer,
         },
       })
-      return result.data?.image_key ?? null
+      return (result.data?.image_key as string | undefined) ?? null
     } catch {
       return null
     }
   }
+
+  /**
+   * 上传文件，返回 file_key
+   */
+  async uploadFile(buffer: Buffer, fileName: string, fileType: string): Promise<string | null> {
+    const client = this.ensureClient()
+    try {
+      const result = await client.im.file.create({
+        data: {
+          file_type: fileType,
+          file_name: fileName,
+          file: buffer,
+        },
+      })
+      return (result.data?.file_key as string | undefined) ?? null
+    } catch {
+      return null
+    }
+  }
+
+  // ─── CardKit API ───────────────────────────────────────────────────
+
+  /**
+   * 创建 CardKit 卡片实体，返回 card_id。
+   */
+  async createCardEntity(card: Record<string, unknown>): Promise<string> {
+    const client = this.ensureClient()
+    const result = await (client as any).cardkit.v1.card.create({
+      data: {
+        type: 'card_json',
+        data: JSON.stringify(card),
+      },
+    })
+    return (result.data?.card_id as string | undefined) ?? ''
+  }
+
+  /**
+   * 把 CardKit 卡片通过 IM 消息挂到聊天窗，返回 message_id。
+   */
+  async sendCardAsMessage(chatId: string, cardId: string, replyToMessageId?: string): Promise<string> {
+    const client = this.ensureClient()
+    const content = JSON.stringify({
+      type: 'card',
+      data: { card_id: cardId },
+    })
+    const result = await client.im.message.create({
+      params: { receive_id_type: 'chat_id' },
+      data: {
+        receive_id: chatId,
+        msg_type: 'interactive',
+        content,
+      },
+    })
+    return (result.data?.message_id as string | undefined) ?? ''
+  }
+
+  /**
+   * 流式更新指定 element 的内容。
+   */
+  async streamCardContent(cardId: string, elementId: string, content: string, sequence: number): Promise<number> {
+    const client = this.ensureClient()
+    await (client as any).cardkit.v1.cardElement.content({
+      data: { content, sequence },
+      path: { card_id: cardId, element_id: elementId },
+    })
+    return sequence + 1
+  }
+
+  /**
+   * 开/关卡片流式模式。
+   */
+  async setCardStreamingMode(cardId: string, streamingMode: boolean, sequence: number): Promise<number> {
+    const client = this.ensureClient()
+    await (client as any).cardkit.v1.card.settings({
+      data: {
+        settings: JSON.stringify({ streaming_mode: streamingMode }),
+        sequence,
+      },
+      path: { card_id: cardId },
+    })
+    return sequence + 1
+  }
+
+  /**
+   * 全量替换卡片为新的 JSON。
+   */
+  async updateCardKitCard(cardId: string, card: Record<string, unknown>, sequence: number): Promise<void> {
+    const client = this.ensureClient()
+    await (client as any).cardkit.v1.card.update({
+      data: {
+        card: { type: 'card_json', data: JSON.stringify(card) },
+        sequence,
+      },
+      path: { card_id: cardId },
+    })
+  }
+
+  // ─── Helpers ──────────────────────────────────────────────────────
 
   /**
    * 发送 Markdown 卡片（简化版，用于 Claude 输出）
@@ -155,7 +251,7 @@ class FeishuApiClient {
         template: 'grey',
       },
       elements: [
-        { tag: 'markdown', content: '⏳ 正在处理...' },
+        { tag: 'markdown', content: '正在处理...' },
       ],
     }
   }

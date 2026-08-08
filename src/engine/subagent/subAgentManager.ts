@@ -1,25 +1,17 @@
 /**
- * engine/subagent/subAgentManager.ts — 子代理管理器（文档 02 §10.2）
- *
- * 创建隔离的查询引擎实例、并发控制、聚合结果、终止代理。
+ * SubAgent 事件类型，对齐 OpenCode AgentEvent。
  */
-import { predefinedAgents, type SubAgentConfig } from "./config.ts";
+export type SubAgentEvent =
+  | { type: 'start'; agentName: string; instanceId: string }
+  | { type: 'iteration'; agentName: string; instanceId: string; iteration: number }
+  | { type: 'tool_call'; agentName: string; instanceId: string; toolName: string; input: Record<string, unknown> }
+  | { type: 'tool_result'; agentName: string; instanceId: string; toolName: string; isError: boolean }
+  | { type: 'complete'; agentName: string; instanceId: string; output: string; duration: number }
+  | { type: 'fail'; agentName: string; instanceId: string; error: string; duration: number }
+  | { type: 'abort'; agentName: string; instanceId: string }
 
-export interface SubAgentInstance {
-  id: string;
-  agentName: string;
-  engine: { query: (input: string) => Promise<{ messages: { content?: string }[]; tokenUsage: unknown }>; abort: () => Promise<void> };
-  startTime: Date;
-  status: "running" | "completed" | "failed" | "terminated";
-}
-
-export interface ExecuteSubAgentParams {
-  id: string;
-  agentName: string;
-  input: string;
-  context?: string;
-  maxTokens?: number;
-  parentModel?: string;
+export interface SubAgentManagerDeps {
+  onEvent?: (event: SubAgentEvent) => void;
 }
 
 export class SubAgentManager {
@@ -27,9 +19,15 @@ export class SubAgentManager {
   private instances = new Map<string, SubAgentInstance>();
   private maxConcurrentAgents = 5;
   private activeAgents = 0;
+  private deps: SubAgentManagerDeps = {};
 
-  constructor() {
+  constructor(deps?: SubAgentManagerDeps) {
+    this.deps = deps ?? {};
     for (const [name, cfg] of Object.entries(predefinedAgents)) this.registry.set(name, cfg);
+  }
+
+  setDeps(deps: SubAgentManagerDeps): void {
+    this.deps = deps;
   }
 
   register(config: SubAgentConfig): void {
@@ -58,21 +56,39 @@ export class SubAgentManager {
       status: "running",
     };
     this.instances.set(params.id, instance);
+    this.deps.onEvent?.({ type: 'start', agentName: params.agentName, instanceId: params.id });
+
     try {
       const result = await instance.engine.query(params.input);
       instance.status = "completed";
+      const duration = Date.now() - startTime.getTime();
+      this.deps.onEvent?.({
+        type: 'complete',
+        agentName: params.agentName,
+        instanceId: params.id,
+        output: result.messages[result.messages.length - 1]?.content ?? "",
+        duration,
+      });
       return {
         success: true,
         output: result.messages[result.messages.length - 1]?.content ?? "",
         tokenUsage: result.tokenUsage,
-        duration: Date.now() - startTime.getTime(),
+        duration,
       };
     } catch (e) {
       instance.status = "failed";
-      return { success: false, error: e instanceof Error ? e.message : String(e), duration: Date.now() - startTime.getTime() };
+      const duration = Date.now() - startTime.getTime();
+      this.deps.onEvent?.({
+        type: 'fail',
+        agentName: params.agentName,
+        instanceId: params.id,
+        error: e instanceof Error ? e.message : String(e),
+        duration,
+      });
+      return { success: false, error: e instanceof Error ? e.message : String(e), duration };
     } finally {
-      this.activeAgents--;
       this.instances.delete(params.id);
+      this.activeAgents--;
     }
   }
 
@@ -115,6 +131,7 @@ export class SubAgentManager {
     const instance = this.instances.get(instanceId);
     if (instance) {
       instance.status = "terminated";
+      this.deps.onEvent?.({ type: 'abort', agentName: instance.agentName, instanceId });
       await instance.engine.abort();
       this.instances.delete(instanceId);
       this.activeAgents--;
