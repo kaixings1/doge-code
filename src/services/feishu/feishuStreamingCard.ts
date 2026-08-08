@@ -308,7 +308,7 @@ export class StreamingCard {
               data: { content: JSON.stringify(buildRenderedCard(finalText)) },
             }),
           )
-        } catch { /* ignore */ }
+        } catch (patchErr) { /* ignore */ }
       }
     } finally {
       this.phase = 'completed'
@@ -347,7 +347,7 @@ export class StreamingCard {
           }),
         )
       }
-    } catch { /* ignore */ }
+    } catch (abortErr) { /* ignore */ }
     this.flushController.complete()
   }
 
