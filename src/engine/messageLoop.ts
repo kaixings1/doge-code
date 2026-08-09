@@ -16,6 +16,7 @@ import { ToolScheduler } from "./toolScheduler.ts";
 import { ErrorClassifier } from "./errors/classifier.ts";
 import { AutoCompactor } from "./autoCompactor.ts";
 import { AutoFixLoop, type AutoFixLoopConfig } from "./autoFixLoop.ts";
+import { cleanupHistoryBase64, applyPhase2Degradation, DEFAULT_IMAGE_BUDGET_CONFIG, type ImageBudgetConfig } from "./imageBudgetGuard.ts";
 import { GitContextInjector, type GitContextConfig } from "./gitContext.ts";
 
 export interface QueryResult {
@@ -69,6 +70,8 @@ export interface MessageLoopDeps {
   autoFixLoop?: AutoFixLoopConfig;
   /** Git 上下文感知：编辑文件时自动获取 git blame + log 帮助理解代码意图（吸收自 Aider） */
   gitContext?: GitContextConfig;
+  /** 图片预算守卫配置（吸收自 zhikuncode TokenBudgetGuard）：请求前清理历史图片 Base64 + 梯度降级 */
+  imageBudget?: Partial<ImageBudgetConfig>;
 }
 
 export class MessageLoop {
@@ -234,6 +237,20 @@ export class MessageLoop {
       const removed = before - this.deps.conversation.messages.length;
       if (removed > 0) {
         engineLog('COMPACT', `Compacted ${removed} messages due to budget limit`);
+      }
+    }
+
+    // 图片预算守卫（吸收自 zhikuncode TokenBudgetGuard）：请求前清理历史图片 Base64 + 梯度降级
+    const imageBudgetCfg = { ...DEFAULT_IMAGE_BUDGET_CONFIG, ...this.deps.imageBudget };
+    const phase1 = cleanupHistoryBase64(this.deps.conversation.messages, imageBudgetCfg.historyBase64TokenThreshold);
+    const phase2 = applyPhase2Degradation(phase1.messages, imageBudgetCfg);
+    if (phase1.clearedCount > 0 || phase2.degraded.length > 0) {
+      this.deps.conversation.messages = phase2.messages;
+      if (phase1.clearedCount > 0) {
+        engineLog('IMAGE-BUDGET', `Cleared ${phase1.clearedCount} oversized image refs from history`);
+      }
+      if (phase2.degraded.length > 0) {
+        engineLog('IMAGE-BUDGET', `Degraded ${phase2.degraded.length} images: ${phase2.degraded.join('; ')}`);
       }
     }
 

@@ -31,6 +31,9 @@ declare module 'vitest' {
       toBe(expected: T): void
       toEqual(expected: T): void
       toStrictEqual(expected: T): void
+      toBeNull(): void
+      toBeDefined(): void
+      toBeUndefined(): void
       toContain(expected: T extends readonly any[] ? T[number] : T): void
       toHaveLength(expected: number): void
       toThrow(expected?: unknown): void

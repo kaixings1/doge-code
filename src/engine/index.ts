@@ -49,6 +49,8 @@ export interface EngineOptions {
   };
   /** Git 上下文感知配置（吸收自 Aider）：编辑文件时自动获取 git blame + log */
   gitContext?: GitContextConfig;
+  /** 图片预算守卫配置（吸收自 zhikuncode TokenBudgetGuard）：请求前清理历史图片 Base64 + 梯度降级 */
+  imageBudget?: Partial<import("./imageBudgetGuard.ts").ImageBudgetConfig>;
 }
 
 /**
@@ -198,6 +200,7 @@ export class QueryEngine {
         },
       },
       gitContext: opts.gitContext,
+      imageBudget: opts.imageBudget,
     };
     this.messageLoop = new MessageLoop(deps);
 

@@ -2444,7 +2444,7 @@ async (anthropic, attempt, context) => {
               // 保守估算：JSON 请求体中文本约占 60%，每字符约 0.25 token
               effectiveInputTokens = Math.round(jsonSentBytes * 0.6 * 0.25);
             }
-            addPresetTokens(effectiveInputTokens, usage.output_tokens, jsonSentBytes, jsonReceivedBytes)
+            addPresetTokens(effectiveInputTokens, usage.output_tokens, jsonSentBytes, jsonReceivedBytes, usage.cache_read_input_tokens ?? 0, usage.cache_creation_input_tokens ?? 0)
 
             const refusalMessage = getErrorMessageIfRefusal(
               part.delta.stop_reason,
@@ -3016,7 +3016,7 @@ async (anthropic, attempt, context) => {
         if (jsonReceivedBytes === 0) {
           try { jsonReceivedBytes = getLastResponseBytes() } catch {}
         }
-        addPresetTokens(fallbackUsage.input_tokens, fallbackUsage.output_tokens, jsonSentBytes, jsonReceivedBytes)
+        addPresetTokens(fallbackUsage.input_tokens, fallbackUsage.output_tokens, jsonSentBytes, jsonReceivedBytes, fallbackUsage.cache_read_input_tokens ?? 0, fallbackUsage.cache_creation_input_tokens ?? 0)
       } else {
         usage = EMPTY_USAGE
         stopReason = fallbackMessage.message.stop_reason as BetaStopReason as BetaStopReason

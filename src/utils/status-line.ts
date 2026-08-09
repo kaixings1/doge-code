@@ -16,6 +16,8 @@ interface InputData {
     received?: number;
     jsonSentBytes?: number;
     jsonReceivedBytes?: number;
+    cacheRead?: number;
+    cacheCreation?: number;
   };
   api_key?: string;
   duration?: { total_str?: string };
@@ -90,6 +92,20 @@ if (totalSent === 0 && totalReceived === 0 && context_window) {
 const sentLabel = '\u25B4';
 const recvLabel = '\u25BE';
 segments.push(sentLabel + ' ' + fmtNum(totalSent) + '  ' + recvLabel + ' ' + fmtNum(totalReceived));
+
+// 缓存命中（读/写 + 命中率）
+let cacheRead = 0;
+let cacheCreation = 0;
+if (preset_tokens) {
+  cacheRead = typeof preset_tokens.cacheRead === 'number' ? preset_tokens.cacheRead : 0;
+  cacheCreation = typeof preset_tokens.cacheCreation === 'number' ? preset_tokens.cacheCreation : 0;
+}
+if (cacheRead > 0 || cacheCreation > 0) {
+  const hitRate = cacheRead + totalSent > 0
+    ? Math.round((cacheRead / (cacheRead + totalSent)) * 1000) / 10
+    : 0;
+  segments.push('\u26A1 ' + fmtNum(cacheRead) + '\u8BFB ' + fmtNum(cacheCreation) + '\u5199 \u547D\u4E2D' + hitRate + '%');
+}
 
 // JSON 流量
 segments.push('\u{1F4E4} ' + fmtTraffic(jsonSentBytes) + ' \u2194 \u{1F4E5} ' + fmtTraffic(jsonReceivedBytes));

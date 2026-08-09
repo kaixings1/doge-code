@@ -43,6 +43,8 @@ export const call: LocalCommandCall = async () => {
             currentSessionTotal: 0,
             jsonSentBytes: 0,
             jsonReceivedBytes: 0,
+            cacheRead: 0,
+            cacheCreation: 0,
           }
 
           fs.writeFileSync(projectConfigPath, JSON.stringify(data, null, 2), 'utf-8')
