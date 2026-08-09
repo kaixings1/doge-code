@@ -77,12 +77,18 @@ _无_
   - 测试：530 passed
 - [x] 7.4 图片预算守卫 — TokenBudgetGuard Phase1/Phase2 保护
   - 新建 engine/imageBudgetGuard.ts：cleanupHistoryBase64 + applyPhase2Degradation + checkImageBudget
-  - 测试：530 passed
+  - 增强：支持结构化图片块（{type:image, source:{type:base64}} 内联字符串两种格式
+  - 接线��messageLoop.runIteration 请求构建前清理历史图片（cleanupHistoryBase64 + applyPhase2Degradation）
+  - 测试：13 个新测试（imageBudgetGuard.test.ts）
 - [ ] 7.5 OperationAnalyzer 模式 — 跳过（YAGNI：PermissionManager 已正常工作，升级为三阶段分析器属于过度工程）
 - [ ] 7.6 浏览器语义快照 — 跳过（YAGNI：doge-code 是纯 CLI/终端工具，无浏览器运行时）
+- [x] 7.7 智能视觉模型路由 — VisionModelRouter（2026-08-09）
+  - 新建 utils/model/visionModelRouter.ts：isVisionCapableModel 能力判定（正/负模式表）+ resolveVisionModel（当前模型支持→null；否则同 provider Claude 兜底）+ hasImagesInMessages（包装/裸消息格式）
+  - 接线：query.ts callModel 前检测图片 + 路由模型（单次请求级别，不改会话级模型）
+  - 测试：14 个新测试（visionModelRouter.test.ts）
 
-**总计（含 Phase 7 + 8）**: +1-2h，累计 65-80 小时
-- [x] 全部 566 tests passed（44 个测试文件）✓
+**总计（含 Phase 7 + 8）**: +2-3h，累计 67-83 小时
+- [x] 全部 599 tests passed（48 个测试文件）✓
 
 ## 参考文档
 
