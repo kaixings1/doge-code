@@ -1,0 +1,566 @@
+$ vitest run
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mD:/doge-code[39m
+
+ [32m✓[39m src/__tests__/tools/ToolRegistryImpl.test.ts[2m > [22mToolRegistry 真实实现（D4 DI）[2m > [22m注册与获取[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistryImpl.test.ts[2m > [22mToolRegistry 真实实现（D4 DI）[2m > [22m非法工具注册抛错（缺 name/description/parameters）[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistryImpl.test.ts[2m > [22mToolRegistry 真实实现（D4 DI）[2m > [22m重复注册抛错[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistryImpl.test.ts[2m > [22mToolRegistry 真实实现（D4 DI）[2m > [22m未解析依赖注册抛错[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistryImpl.test.ts[2m > [22mToolRegistry 真实实现（D4 DI）[2m > [22mexecute 必填参数校验[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistryImpl.test.ts[2m > [22mToolRegistry 真实实现（D4 DI）[2m > [22mexecute 类型/枚举/范围校验[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistryImpl.test.ts[2m > [22mToolRegistry 真实实现（D4 DI）[2m > [22m默认值填充[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistryImpl.test.ts[2m > [22mToolRegistry 真实实现（D4 DI）[2m > [22m权限检查（deny 拒绝 / allow 放行）[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistryImpl.test.ts[2m > [22mToolRegistry 真实实现（D4 DI）[2m > [22mexecute 超时[32m 51[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistryImpl.test.ts[2m > [22mToolRegistry 真实实现（D4 DI）[2m > [22m工具不存在返回 not_found[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistryImpl.test.ts[2m > [22mToolRegistry 真实实现（D4 DI）[2m > [22mcompose 组合工具（依赖注入执行）[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistryImpl.test.ts[2m > [22mToolRegistry 真实实现（D4 DI）[2m > [22mcompose 缺失依赖抛错[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistryImpl.test.ts[2m > [22mToolRegistry 真实实现（D4 DI）[2m > [22mtopoSort 按依赖顺序排序[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistryImpl.test.ts[2m > [22mToolRegistry 真实实现（D4 DI）[2m > [22mtopoSort 循环依赖抛错[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistryImpl.test.ts[2m > [22mToolRegistry 真实实现（D4 DI）[2m > [22m依赖深度 / 叶子工具 / 依赖完整性[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistryImpl.test.ts[2m > [22mToolRegistry 真实实现（D4 DI）[2m > [22mgetDependencies 解析注入依赖工具[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistryImpl.test.ts[2m > [22mToolRegistry 真实实现（D4 DI）[2m > [22m统计信息（调用次数/失败/时长）[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistryImpl.test.ts[2m > [22mToolRegistry 真实实现（D4 DI）[2m > [22munregister 注销工具[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 注册管理[2m > [22m注册工具后可获取[32m 4[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 注册管理[2m > [22m重复注册抛错[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 注册管理[2m > [22m缺少 name 抛错[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 注册管理[2m > [22m缺少 description 抛错[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 注册管理[2m > [22m非 object 参数 schema 抛错[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 注册管理[2m > [22m注销后不可获取[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 依赖注入[2m > [22m注册时自动解析依赖（依赖已注册）[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 依赖注入[2m > [22m未解析依赖在注册时抛错[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 依赖注入[2m > [22mgetDependencies 返回已注册依赖[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 依赖注入[2m > [22mcheckDependencies 列出依赖被移除后的未解析项[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 组合工具[2m > [22mcompose 组合依赖工具执行[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 组合工具[2m > [22mcompose 缺依赖抛错[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 拓扑排序[2m > [22mtopoSort 依赖在前[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 拓扑排序[2m > [22m循环依赖抛错并列出节点[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 拓扑排序[2m > [22mgetDependencyDepth 计算依赖深度[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 拓扑排序[2m > [22mlistLeafTools 列出无依赖工具[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 参数验证[2m > [22m必填参数缺失返回 validation 错误[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 参数验证[2m > [22m类型不匹配返回 validation 错误[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 参数验证[2m > [22m枚举值不合法返回 validation 错误[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 参数验证[2m > [22m数值范围校验[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 参数验证[2m > [22m默认值自动填充[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 权限检查[2m > [22mdeny:ToolName 拒绝执行[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 权限检查[2m > [22mdeny:* 拒绝全部[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 权限检查[2m > [22mallow:ToolName 允许执行（无 deny）[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 权限检查[2m > [22mdeny:* 优先于 allow:ToolName（deny 优先策略）[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 权限检查[2m > [22m无权限列表默认放行[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 超时与统计[2m > [22m超时返回 timeout 错误[32m 51[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 超时与统计[2m > [22mgetStats 统计调用数与失败数[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 超时与统计[2m > [22m失败调用计入 failures[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 超时与统计[2m > [22m执行异常归类为 execution[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ToolRegistry.test.ts[2m > [22mToolRegistry 超时与统计[2m > [22m工具不存在返回 not_found[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/pair.test.ts[2m > [22mpair review mode[2m > [22mdetects console.log[32m 7[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/pair.test.ts[2m > [22mpair review mode[2m > [22mdetects long lines[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/pair.test.ts[2m > [22mpair review mode[2m > [22mdetects == instead of ===[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/pair.test.ts[2m > [22mpair review mode[2m > [22mclean code gets review output[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/pair.test.ts[2m > [22mpair coauthor mode[2m > [22msuggests exports for code without export[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/pair.test.ts[2m > [22mpair coauthor mode[2m > [22msuggests types for untyped code[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/pair.test.ts[2m > [22mpair debug mode[2m > [22mdetects forEach + push[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/pair.test.ts[2m > [22mpair debug mode[2m > [22mproduces debug analysis output[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/errors.test.ts[2m > [22merrors scanForErrors[2m > [22mscan 应检测目录中的错误模式[32m 121[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/errors.test.ts[2m > [22merrors call subcommands[2m > [22mlist 无错误时应返回 OK[32m 4[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/errors.test.ts[2m > [22merrors call subcommands[2m > [22mscan 后 list 应显示错误[32m 8[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/errors.test.ts[2m > [22merrors call subcommands[2m > [22mresolve <id> 应标记为已解决[32m 6[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/errors.test.ts[2m > [22merrors call subcommands[2m > [22mresolve-all 应标记所有为已解决[32m 6[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/errors.test.ts[2m > [22merrors call subcommands[2m > [22mstats 应显示统计信息[32m 6[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/errors.test.ts[2m > [22merrors call subcommands[2m > [22mpatterns 应列出内置模式[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/errors.test.ts[2m > [22merrors call subcommands[2m > [22mclear 应清空错误日志[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/errors.test.ts[2m > [22merrors call subcommands[2m > [22mattempt-fix 不存在的 id 应返回 Not found[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/errors.test.ts[2m > [22merrors call subcommands[2m > [22mexport 应导出错误到文件[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/backfill-sessions.test.ts[2m > [22mbackfill-sessions call[2m > [22mhelp should show usage[32m 113[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/backfill-sessions.test.ts[2m > [22mbackfill-sessions call[2m > [22mempty command shows help[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/backfill-sessions.test.ts[2m > [22mbackfill-sessions call[2m > [22mlist with no sessions returns empty[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/backfill-sessions.test.ts[2m > [22mbackfill-sessions call[2m > [22mstats with no sessions shows stats[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/backfill-sessions.test.ts[2m > [22mbackfill-sessions call[2m > [22munknown command returns error[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/backfill-sessions.test.ts[2m > [22mbackfill-sessions with data[2m > [22mlist shows sessions[32m 28[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/backfill-sessions.test.ts[2m > [22mbackfill-sessions with data[2m > [22mstats shows count 2[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/backfill-sessions.test.ts[2m > [22mbackfill-sessions with data[2m > [22mfind-empty lists empty sessions[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/backfill-sessions.test.ts[2m > [22mbackfill-sessions with data[2m > [22msearch matches session name[32m 4[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/command-workflow.test.ts[2m > [22mWorkflow: refactor + extractImports[2m > [22m应能从真实项目文件提取 import 并识别重构目标[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/command-workflow.test.ts[2m > [22mWorkflow: refactor + extractImports[2m > [22m应识别外部依赖和内部依赖[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/command-workflow.test.ts[2m > [22mWorkflow: diagram + collectSourceFiles[2m > [22m应能扫描项目目录并生成依赖图数据[32m 22[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/command-workflow.test.ts[2m > [22mWorkflow: complete + git[2m > [22m应能检测当前 Git 仓库并提供分支补全[32m 54[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/command-workflow.test.ts[2m > [22mWorkflow: complete + git[2m > [22m应能列出 Git 远程仓库[32m 63[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/command-workflow.test.ts[2m > [22mWorkflow: memory search + stats[2m > [22m搜索空关键词应返回提示信息[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/command-workflow.test.ts[2m > [22mWorkflow: memory search + stats[2m > [22m统计逻辑应正确聚合[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/command-workflow.test.ts[2m > [22mWorkflow: api-test + cost[2m > [22m应能记录 API 调用并追踪成本[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ListPeersTool.test.ts[2m > [22mListPeersTool[2m > [22mlist 无 peers 时返回提示[32m 115[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ListPeersTool.test.ts[2m > [22mListPeersTool[2m > [22madd 添加 peer 后 list 能列出[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ListPeersTool.test.ts[2m > [22mListPeersTool[2m > [22madd 缺 host 时返回错误[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ListPeersTool.test.ts[2m > [22mListPeersTool[2m > [22mremove 删除 peer[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ListPeersTool.test.ts[2m > [22mListPeersTool[2m > [22mremove 不存在的 peer 返回未找到[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ListPeersTool.test.ts[2m > [22mListPeersTool[2m > [22mdiscover 收到 UDP 响应后合并到注册表[32m 72[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/collab.test.ts[2m > [22mcollab call[2m > [22mhelp should show usage[32m 103[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/collab.test.ts[2m > [22mcollab call[2m > [22mempty command shows help[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/collab.test.ts[2m > [22mcollab call[2m > [22mcreate makes a room[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/collab.test.ts[2m > [22mcollab call[2m > [22mjoin adds participant[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/collab.test.ts[2m > [22mcollab call[2m > [22mjoin nonexistent room returns error[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/collab.test.ts[2m > [22mcollab call[2m > [22mleave returns success[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/collab.test.ts[2m > [22mcollab call[2m > [22mleave nonexistent room returns error[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/collab.test.ts[2m > [22mcollab call[2m > [22mlist with no rooms[32m 4[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/collab.test.ts[2m > [22mcollab call[2m > [22mlist shows rooms[32m 4[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/collab.test.ts[2m > [22mcollab call[2m > [22minfo shows room details[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/collab.test.ts[2m > [22mcollab call[2m > [22minfo nonexistent room returns error[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/collab.test.ts[2m > [22mcollab call[2m > [22minsert adds text to document[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/collab.test.ts[2m > [22mcollab call[2m > [22minsert to nonexistent room returns error[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/collab.test.ts[2m > [22mcollab call[2m > [22mdelete removes text from document[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/collab.test.ts[2m > [22mcollab call[2m > [22msync shows version info[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/collab.test.ts[2m > [22mcollab call[2m > [22msync nonexistent room returns error[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/collab.test.ts[2m > [22mcollab call[2m > [22mcomment adds a comment[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/collab.test.ts[2m > [22mcollab call[2m > [22mcomments lists comments[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/collab.test.ts[2m > [22mcollab call[2m > [22mcomments with no comments shows empty[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/collab.test.ts[2m > [22mcollab call[2m > [22munknown command returns error[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/SessionManager.test.ts[2m > [22mSessionManager[2m > [22m会话 CRUD[2m > [22m应该创建会话并设为活动[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/SessionManager.test.ts[2m > [22mSessionManager[2m > [22m会话 CRUD[2m > [22m应该加载和删除会话[32m 4[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/SessionManager.test.ts[2m > [22mSessionManager[2m > [22m会话 CRUD[2m > [22m应该支持消息管理[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/SessionManager.test.ts[2m > [22mSessionManager[2m > [22m持久化[2m > [22m新实例应该从磁盘加载会话[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/SessionManager.test.ts[2m > [22mSessionManager[2m > [22m持久化[2m > [22m损坏的会话文件应该被忽略[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/SessionManager.test.ts[2m > [22mSessionManager[2m > [22m搜索与统计[2m > [22m应该按标题/标签搜索会话[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/SessionManager.test.ts[2m > [22mSessionManager[2m > [22m搜索与统计[2m > [22mgetHealth 应该统计状态[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/SessionManager.test.ts[2m > [22mSessionManager[2m > [22m标签管理[2m > [22m应该添加/移除标签[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/SessionManager.test.ts[2m > [22mSessionManager[2m > [22m标签管理[2m > [22mgetTagCloud 应该按计数排序[32m 6[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/SessionManager.test.ts[2m > [22mSessionManager[2m > [22m标签管理[2m > [22mgetTree 应该按首个标签分组[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/SessionManager.test.ts[2m > [22mSessionManager[2m > [22m清理与归档[2m > [22mcleanupStale 应该清理过期会话[32m 7[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/SessionManager.test.ts[2m > [22mSessionManager[2m > [22m清理与归档[2m > [22mcleanupStale onlyArchived 只清理已归档[32m 4[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/SessionManager.test.ts[2m > [22mSessionManager[2m > [22m导出/导入[2m > [22m应该导出并重新导入会话[32m 7[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/SessionManager.test.ts[2m > [22mSessionManager[2m > [22m导出/导入[2m > [22m无效会话数据应该抛错[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/upExtract.test.ts[2m > [22mextractUpSection[2m > [22m提取 # claude up 节到下一个标题[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/upExtract.test.ts[2m > [22mextractUpSection[2m > [22m支持 ### 级别标题[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/upExtract.test.ts[2m > [22mextractUpSection[2m > [22m没有 claude up 节返回 null[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/upExtract.test.ts[2m > [22mextractUpSection[2m > [22m节末尾（文件末尾）也正确[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/upExtract.test.ts[2m > [22mextractCommands[2m > [22m提取 bash 代码块内的命令[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/upExtract.test.ts[2m > [22mextractCommands[2m > [22m提取普通指令行（含 $ 前缀）[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/upExtract.test.ts[2m > [22mextractCommands[2m > [22m空节返回空数组[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/upExtract.test.ts[2m > [22mextractCommands[2m > [22m支持 shell/sh 代码块语言标记[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/upExtract.test.ts[2m > [22mfindClaudeMd[2m > [22m在当前目录找到 CLAUDE.md[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/upExtract.test.ts[2m > [22mfindClaudeMd[2m > [22m优先 CLAUDE.local.md[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/upExtract.test.ts[2m > [22mfindClaudeMd[2m > [22m向父目录查找[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/upExtract.test.ts[2m > [22mfindClaudeMd[2m > [22m找不到返回 null[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/SubscribePRTool.test.ts[2m > [22mSubscribePRTool Webhook (D2 实时推送)[2m > [22m启动后状态为 running[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/SubscribePRTool.test.ts[2m > [22mSubscribePRTool Webhook (D2 实时推送)[2m > [22m接收 pull_request 事件并记录（无订阅时不写文件）[32m 32[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/SubscribePRTool.test.ts[2m > [22mSubscribePRTool Webhook (D2 实时推送)[2m > [22mmerged PR 状态显示为 merged[32m 4[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/SubscribePRTool.test.ts[2m > [22mSubscribePRTool Webhook (D2 实时推送)[2m > [22m忽略非 pull_request 事件[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/SubscribePRTool.test.ts[2m > [22mSubscribePRTool Webhook (D2 实时推送)[2m > [22mwebhook-events 支持 limit 参数[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/SubscribePRTool.test.ts[2m > [22mSubscribePRTool Webhook (D2 实时推送)[2m > [22m非法 JSON 返回 400[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/SubscribePRTool.test.ts[2m > [22mSubscribePRTool Webhook (D2 实时推送)[2m > [22m新实例未启动时状态为 stopped[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/SubscribePRTool.test.ts[2m > [22mSubscribePRTool Webhook (D2 实时推送)[2m > [22m重复启动返回 already running[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/SubscribePRTool.test.ts[2m > [22mSubscribePRTool Webhook (D2 实时推送)[2m > [22m未启动的实例 stop 返回 not running[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/memoryStore.test.ts[2m > [22mMemoryStore 基本读写[2m > [22mset/get 指定层[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/memoryStore.test.ts[2m > [22mMemoryStore 基本读写[2m > [22mget 优先级：global > project > session[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/memoryStore.test.ts[2m > [22mMemoryStore 基本读写[2m > [22m自动分层：路径内容 → project[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/memoryStore.test.ts[2m > [22mMemoryStore 基本读写[2m > [22m自动分层：偏好 → global[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/memoryStore.test.ts[2m > [22mMemoryStore 基本读写[2m > [22mhas / delete[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/memoryStore.test.ts[2m > [22mMemoryStore 检索[2m > [22msearch 跨层关键词匹配[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/memoryStore.test.ts[2m > [22mMemoryStore 检索[2m > [22msearch 支持 tags 过滤[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/memoryStore.test.ts[2m > [22mMemoryStore 检索[2m > [22msearch levels 过滤[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/memoryStore.test.ts[2m > [22mMemoryStore 检索[2m > [22mbyTag 按标签检索[32m 6[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/memoryStore.test.ts[2m > [22mMemoryStore 持久化[2m > [22mproject/global 层落盘并可重载[32m 6[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/memoryStore.test.ts[2m > [22mMemoryStore 持久化[2m > [22msession 层不持久化[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/memoryStore.test.ts[2m > [22mMemoryStore 统计与清空[2m > [22mstats 统计各层数量[32m 6[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/memoryStore.test.ts[2m > [22mMemoryStore 统计与清空[2m > [22mclear 单层与全清[32m 7[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/utils.test.ts[2m > [22mgetModelProvider[2m > [22m识别 anthropic 模型[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/utils.test.ts[2m > [22mgetModelProvider[2m > [22m识别 openai 兼容模型[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/utils.test.ts[2m > [22mgetModelProvider[2m > [22m未知模型返回 custom[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/utils.test.ts[2m > [22mcalculateModelCost[2m > [22m计算 claude-opus-4-6 费用（$15/$75 每百万 token）[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/utils.test.ts[2m > [22mcalculateModelCost[2m > [22m计算 gpt-4o 费用（$2.5/$10 每百万 token）[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/utils.test.ts[2m > [22mcalculateModelCost[2m > [22m未知模型使用默认费率[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/utils.test.ts[2m > [22mcalculateModelCost[2m > [22m零 token 零费用[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/utils.test.ts[2m > [22mwithRetry[2m > [22m首次成功不重试[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/utils.test.ts[2m > [22mwithRetry[2m > [22m失败后重试直到成功[32m 6[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/utils.test.ts[2m > [22mwithRetry[2m > [22m超过重试次数抛出最后错误[32m 8[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/utils.test.ts[2m > [22mmapWithConcurrency[2m > [22m并发执行并保持顺序[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/utils.test.ts[2m > [22mmapWithConcurrency[2m > [22m并发数大于任务数时正常[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/utils.test.ts[2m > [22mwithTimeout[2m > [22m在超时前完成[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/utils.test.ts[2m > [22mwithTimeout[2m > [22m超时抛出错误[32m 13[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/utils.test.ts[2m > [22mcheckPermission[2m > [22m拒绝危险操作[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/utils.test.ts[2m > [22mcheckPermission[2m > [22m允许常规操作[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/utils.test.ts[2m > [22mserialize/deserialize[2m > [22m往返一致[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/utils.test.ts[2m > [22mserialize/deserialize[2m > [22m序列化为 JSON 字符串[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/utils.test.ts[2m > [22mcreateTelemetryEvent[2m > [22m创建事件带名称/属性/时间戳[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/utils.test.ts[2m > [22mcreateTelemetryEvent[2m > [22m无属性时 properties 为空[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ConfigManager.test.ts[2m > [22mConfigManager[2m > [22mget/set[2m > [22m应该设置和获取配置（点号路径）[32m 4[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ConfigManager.test.ts[2m > [22mConfigManager[2m > [22mget/set[2m > [22mget 未设置时返回默认值[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ConfigManager.test.ts[2m > [22mConfigManager[2m > [22mget/set[2m > [22mdelete 移除配置[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ConfigManager.test.ts[2m > [22mConfigManager[2m > [22mget/set[2m > [22mgetAll 返回配置副本[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ConfigManager.test.ts[2m > [22mConfigManager[2m > [22m环境变量回退[2m > [22m应该从环境变量回退读取（字符串/数字/布尔）[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ConfigManager.test.ts[2m > [22mConfigManager[2m > [22m环境变量回退[2m > [22mhas 应检测环境变量[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ConfigManager.test.ts[2m > [22mConfigManager[2m > [22mwatchers[2m > [22mwatch 应该在 set 时触发（含父路径）[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ConfigManager.test.ts[2m > [22mConfigManager[2m > [22mwatchers[2m > [22m取消订阅后不再触发[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ConfigManager.test.ts[2m > [22mConfigManager[2m > [22mschema 验证[2m > [22mvalidate 应检测类型/必填/枚举错误[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ConfigManager.test.ts[2m > [22mConfigManager[2m > [22mschema 验证[2m > [22mvalidate 通过时返回 valid[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ConfigManager.test.ts[2m > [22mConfigManager[2m > [22mschema 验证[2m > [22m自定义 validate 函数[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ConfigManager.test.ts[2m > [22mConfigManager[2m > [22m默认值与深合并[2m > [22msetDefaults 填充缺失项但不覆盖已有值[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ConfigManager.test.ts[2m > [22mConfigManager[2m > [22m快照与迁移[2m > [22msnapshot/restore 往返[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ConfigManager.test.ts[2m > [22mConfigManager[2m > [22m快照与迁移[2m > [22mmigrate 按版本迁移[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ConfigManager.test.ts[2m > [22mConfigManager[2m > [22m持久化[2m > [22mload/save 到文件[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ConfigManager.test.ts[2m > [22mConfigManager[2m > [22m持久化[2m > [22mload 不存在的文件使用默认值[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ConfigManager.test.ts[2m > [22mConfigManager[2m > [22m持久化[2m > [22mmerge 深合并外部配置[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ConfigManager.test.ts[2m > [22mConfigManager[2m > [22m持久化[2m > [22mreset 重置为默认值[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ListPeersTool.test.ts[2m > [22mListPeersTool[2m > [22mdiscover 无响应时提示未发现[32m 47[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ListPeersTool.test.ts[2m > [22mListPeersTool[2m > [22mping 无响应时返回超时[32m 33[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ListPeersTool.test.ts[2m > [22mListPeersTool[2m > [22mping 收到响应时返回耗时[32m 8[2mms[22m[39m
+ [32m✓[39m src/__tests__/tools/ListPeersTool.test.ts[2m > [22mListPeersTool[2m > [22mping 缺 host 时返回错误[32m 1[2mms[22m[39m
+2026-08-09T02:03:02.567Z [INFO] test
+2026-08-09T02:03:02.568Z [WARN] test
+2026-08-09T02:03:02.567Z [ERROR] test
+ [32m✓[39m src/__tests__/api/serverLog.test.ts[2m > [22mcreateServerLogger[2m > [22m写文件时包含时间戳和级别[32m 5[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/serverLog.test.ts[2m > [22mcreateServerLogger[2m > [22m级别过滤：低于阈值的级别不写入[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/serverLog.test.ts[2m > [22mcreateServerLogger[2m > [22mraw 写入原始行[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/serverLog.test.ts[2m > [22mcreateServerLogger[2m > [22mconsole 输出模式不抛错[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/CommandRegistry.test.ts[2m > [22mCommandRegistry[2m > [22m注册[2m > [22m应该注册命令[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/CommandRegistry.test.ts[2m > [22mCommandRegistry[2m > [22m注册[2m > [22m应该注册别名（支持 / 前缀）[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/CommandRegistry.test.ts[2m > [22mCommandRegistry[2m > [22m注册[2m > [22m重复注册应该抛错[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/CommandRegistry.test.ts[2m > [22mCommandRegistry[2m > [22m注册[2m > [22m缺少名称/描述应该抛错[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/CommandRegistry.test.ts[2m > [22mCommandRegistry[2m > [22m注册[2m > [22m别名冲突应该抛错[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/CommandRegistry.test.ts[2m > [22mCommandRegistry[2m > [22m注册[2m > [22m取消注册应该移除命令和别名[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/CommandRegistry.test.ts[2m > [22mCommandRegistry[2m > [22m智能解析[2m > [22m应该解析位置参数[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/CommandRegistry.test.ts[2m > [22mCommandRegistry[2m > [22m智能解析[2m > [22m应该支持带引号的参数[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/CommandRegistry.test.ts[2m > [22mCommandRegistry[2m > [22m智能解析[2m > [22m应该支持 --key=value 长选项并自动类型转换[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/CommandRegistry.test.ts[2m > [22mCommandRegistry[2m > [22m智能解析[2m > [22m应该支持 -k value 短选项[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/CommandRegistry.test.ts[2m > [22mCommandRegistry[2m > [22m智能解析[2m > [22m负数应该作为位置参数而非选项[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/CommandRegistry.test.ts[2m > [22mCommandRegistry[2m > [22m执行[2m > [22m应该执行命令并记录历史[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/CommandRegistry.test.ts[2m > [22mCommandRegistry[2m > [22m执行[2m > [22m未找到命令返回错误[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/CommandRegistry.test.ts[2m > [22mCommandRegistry[2m > [22m执行[2m > [22m参数验证失败返回错误码 2[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/CommandRegistry.test.ts[2m > [22mCommandRegistry[2m > [22m执行[2m > [22m缺少必填参数返回错误[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/CommandRegistry.test.ts[2m > [22mCommandRegistry[2m > [22m模糊搜索[2m > [22m名称前缀匹配优先[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/CommandRegistry.test.ts[2m > [22mCommandRegistry[2m > [22m模糊搜索[2m > [22m空查询返回所有命令[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/CommandRegistry.test.ts[2m > [22mCommandRegistry[2m > [22m分组与统计[2m > [22mgroupByCategory 按分类分组[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/CommandRegistry.test.ts[2m > [22mCommandRegistry[2m > [22m分组与统计[2m > [22mgetUsageStats 按使用频率排序[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/CommandRegistry.test.ts[2m > [22mCommandRegistry[2m > [22m历史记录[2m > [22m历史记录有上限[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/CommandRegistry.test.ts[2m > [22mCommandRegistry[2m > [22m历史记录[2m > [22mclearHistory 清空历史[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/knowledgeGraph.test.ts[2m > [22m提取函数[2m > [22mextractSymbolFromLine 识别函数/类/接口[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/knowledgeGraph.test.ts[2m > [22m提取函数[2m > [22mextractImports 解析 import/require[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/knowledgeGraph.test.ts[2m > [22m提取函数[2m > [22mextractClassRelations 解析继承/实现[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/knowledgeGraph.test.ts[2m > [22m提取函数[2m > [22mresolveImportSpecifier 规范化相对路径[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/knowledgeGraph.test.ts[2m > [22mbuildKnowledgeGraph[2m > [22m构建文件与符号节点[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/knowledgeGraph.test.ts[2m > [22mbuildKnowledgeGraph[2m > [22mdefines 边：文件定义符号[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/knowledgeGraph.test.ts[2m > [22mbuildKnowledgeGraph[2m > [22mimports 边：跨文件依赖[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/knowledgeGraph.test.ts[2m > [22mbuildKnowledgeGraph[2m > [22mgetDependents 反向依赖[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/knowledgeGraph.test.ts[2m > [22mbuildKnowledgeGraph[2m > [22mextends 边：类继承[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/knowledgeGraph.test.ts[2m > [22mbuildKnowledgeGraph[2m > [22mcalls 边：函数调用[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/knowledgeGraph.test.ts[2m > [22mbuildKnowledgeGraph[2m > [22mfindPath 找到可达路径[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/knowledgeGraph.test.ts[2m > [22mbuildKnowledgeGraph[2m > [22mfindSymbols 按名查找[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/knowledgeGraph.test.ts[2m > [22mbuildKnowledgeGraph[2m > [22mgetRelatedNodes 出边+入边[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/knowledgeGraph.test.ts[2m > [22mbuildKnowledgeGraph[2m > [22mgetGraphStats 统计[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/knowledgeGraph.test.ts[2m > [22mbuildKnowledgeGraph[2m > [22m不存在路径的 findPath 返回 null[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/knowledgeGraph.test.ts[2m > [22mgetFileSymbols[2m > [22m列出文件内全部符号[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m中文词语（2-6字）+ 冒号 → 绿色（success）[32m 3[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m半角冒号同样标绿[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22mlabel 前是标点时也标绿（前缀保留无色）[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m超过 6 字且无独立词语的句子不被标成 label[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m"继续/需要/是否" 等确认询问词 → 琥珀色（warning）[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m扩充的询问词（请问/可不可以/没问题/是不是/可否）→ 琥珀色[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m强调词（注意/警告/务必）→ 红色（error）[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m百分比/时间数值（含"周"）→ 蓝色（suggestion）[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m英文 label（Summary:/Step 1:）→ 绿色[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m英文 label 保守规则：URL/端口/单字母/时间不误标 label[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m裸数字/版本号不标色[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22mlabel 优先于确认词/强调词，不嵌套着色[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m普通英文文本不加色[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m着色的纯文本与原文本一致（不影响宽度计算）[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22mURL（https://...）→ 蓝色[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22mURL 尾部标点（，、。.）不吞进蓝色[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m文件路径（含 / 或简单文件名）→ 紫色[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m文件路径保守规则：Node.js/React.js/example.com/1.2.3/npm 不误标[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22mURL 优先于文件路径：URL 内的路径段不标紫[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22mURL 里的端口/冒号不误标 label，整串保持蓝色[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m日期（ISO 与中文年月日）→ 蓝色[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m日期保守规则：版本号 1.2.3、"2026 年"（带空格）不误标[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m箭头符号（→ => ->）→ 蓝色[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m负面结果词（中文）→ 红色[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m负面结果词（英文 failed/error/bug）→ 红色，且  防子串[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m负面词歧义控制：解决问题/问问题（中性）不标，"错误：" 走 label 绿[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m"有问题/出现问题/存在问题" 标红，单独"问题"不标[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m数量疑问词"多少"（多少个/多少钱/多少时间）→ 蓝色[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m数量疑问词保守：差不多/多少有点 不误标（无独立"多少"语义）[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m警示 label（重要提示/注意/警告/危险/紧急）→ 红色加粗[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m警示 label 覆盖注意/警告/紧急，正文警示词不加重[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-beautify.test.ts[2m > [22mmarkdown 正文美化（label / 确认词 / 强调词 / 数值）[2m > [22m普通 label（摘要/错误/步骤）不受警示规则影响，保持绿色[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mformatCost[2m > [22m零值应显示为 $0.0000[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mformatCost[2m > [22m小于 0.5 的值应保留 4 位小数[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mformatCost[2m > [22m大于 0.5 的值应保留 2 位小数[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mformatCost[2m > [22m应正确处理边界值 0.5[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mformatCost[2m > [22m大数值应正确格式化[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mrenderBar[2m > [22m0% 应全为空[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mrenderBar[2m > [22m100% 应全为实心[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mrenderBar[2m > [22m50% 应一半实心[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mrenderBar[2m > [22m应正确处理超出范围的百分比[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mrenderBar[2m > [22m应支持自定义宽度[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mformatTimestamp[2m > [22m应正确格式化时间戳[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mformatTimestamp[2m > [22m应正确处理零时间戳[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mcomplete 参数解析[2m > [22m空参数应返回默认值[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mcomplete 参数解析[2m > [22m应解析 --query 参数[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mcomplete 参数解析[2m > [22m应解析 --context 参数[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mcomplete 参数解析[2m > [22m应解析 --limit 参数[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mcomplete 参数解析[2m > [22m应解析 --cwd 参数[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mcomplete 参数解析[2m > [22m应同时解析多个参数[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mcompleteFiles 过滤逻辑[2m > [22m空前缀应返回所有非隐藏条目[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mcompleteFiles 过滤逻辑[2m > [22m应以小写匹配（大小写不敏感）[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mcompleteFiles 过滤逻辑[2m > [22m应以 / 结尾的目录项正确识别[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mcompleteFiles 过滤逻辑[2m > [22m应隐藏隐藏文件（除非前缀以点开头）[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mcompleteFiles 过滤逻辑[2m > [22m前缀以点开头时应显示隐藏文件[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mcompleteFiles 过滤逻辑[2m > [22m无匹配应返回空数组[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mcompleteAISuggestions 逻辑[2m > [22m短查询（< 2 字符）应返回空[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mcompleteAISuggestions 逻辑[2m > [22mgit 查询应返回匹配建议[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mcompleteAISuggestions 逻辑[2m > [22mgit diff 查询应返回两项[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mcompleteAISuggestions 逻辑[2m > [22m非 git/npm/docker 查询应返回空[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mcompleteAISuggestions 逻辑[2m > [22mnpm 查询应返回匹配建议[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/complete.test.ts[2m > [22mcomplete 纯函数[2m > [22mcompleteAISuggestions 逻辑[2m > [22m应受 limit 限制[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory parseSubcommand[2m > [22m空字符串应返回 null[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory parseSubcommand[2m > [22m单个子命令应正确解析[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory parseSubcommand[2m > [22m子命令带参数应正确拆分[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory parseSubcommand[2m > [22mstats 子命令应正确解析[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory parseSubcommand[2m > [22mexport 子命令应正确解析[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory parseSubcommand[2m > [22m应去除首尾空白[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory formatBytes[2m > [22m0 字节应返回 "0 B"[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory formatBytes[2m > [22m小于 1KB 应返回 B[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory formatBytes[2m > [22m1KB 应返回 1 KB[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory formatBytes[2m > [22m1MB 应返回 1 MB[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory formatBytes[2m > [22m1GB 应返回 1 GB[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory formatBytes[2m > [22m应正确计算混合大小[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory formatTimestamp[2m > [22m应正确格式化时间戳[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory formatTimestamp[2m > [22m应正确处理零时间戳[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory formatTimestamp[2m > [22m应正确填充个位数[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory getTypeLabel[2m > [22m应映射已知类型[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory getTypeLabel[2m > [22m未知类型应返回原值[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory getTypeLabel[2m > [22m空字符串应返回原值[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory search 分组逻辑[2m > [22m应将匹配按文件分组[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory search 分组逻辑[2m > [22m空匹配数组应返回空分组[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory export 参数验证[2m > [22m空路径应返回用法提示[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory export 参数验证[2m > [22m空白路径应返回用法提示[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memory.test.ts[2m > [22mmemory export 参数验证[2m > [22m有效路径不应触发空值检查[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDoc.test.ts[2m > [22mapi-doc parseParams[2m > [22m应该解析普通参数[32m 4[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDoc.test.ts[2m > [22mapi-doc parseParams[2m > [22m应该解析可选参数 b?: number[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDoc.test.ts[2m > [22mapi-doc parseParams[2m > [22m应该解析 rest 参数 ...rest: any[][32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDoc.test.ts[2m > [22mapi-doc parseParams[2m > [22m应该解析带默认值的参数 name: string = "x"[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDoc.test.ts[2m > [22mapi-doc parseParams[2m > [22m应该忽略泛型嵌套逗号[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDoc.test.ts[2m > [22mapi-doc parseParams[2m > [22m空字符串返回空数组[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDoc.test.ts[2m > [22mapi-doc extractFunctionSignatures[2m > [22m应该提取函数声明[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDoc.test.ts[2m > [22mapi-doc extractFunctionSignatures[2m > [22m应该提取箭头函数（含 async/export）[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDoc.test.ts[2m > [22mapi-doc extractFunctionSignatures[2m > [22m应该提取类方法[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDoc.test.ts[2m > [22mapi-doc extractFunctionSignatures[2m > [22m空内容返回空数组[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDoc.test.ts[2m > [22mapi-doc extractRoutesAdvanced[2m > [22m应该提取 Next.js App Router 处理器[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDoc.test.ts[2m > [22mapi-doc extractRoutesAdvanced[2m > [22m应该提取装饰器路由 @Get("/users")[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDoc.test.ts[2m > [22mapi-doc extractRoutesAdvanced[2m > [22m应该提取链式路由 app.route("/orders").get(...)[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDoc.test.ts[2m > [22mapi-doc extractRoutes[2m > [22m应该提取 express 风格路由[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDoc.test.ts[2m > [22mapi-doc extractTypesAST[2m > [22m应该提取 interface 成员与可选标记[32m 16[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDoc.test.ts[2m > [22mapi-doc extractTypesAST[2m > [22m应该提取 type 别名泛型参数与对象成员[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDoc.test.ts[2m > [22mapi-doc extractTypesAST[2m > [22m应该提取 enum 成员[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDoc.test.ts[2m > [22mapi-doc extractTypesAST[2m > [22m应该提取 class 继承与成员[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDoc.test.ts[2m > [22mapi-doc 文档生成[2m > [22mgenerateSignaturesMarkdown 应该生成带行号和返回类型的文档[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDoc.test.ts[2m > [22mapi-doc 文档生成[2m > [22mgenerateMarkdown 应该按路径分组[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/flow-hook.test.ts[2m > [22m集成: Flow + Hook 系统[2m > [22mPlanningFlow[2m > [22m应创建计划并按步骤执行[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/flow-hook.test.ts[2m > [22m集成: Flow + Hook 系统[2m > [22mPlanningFlow[2m > [22m应支持自定义步骤[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/flow-hook.test.ts[2m > [22m集成: Flow + Hook 系统[2m > [22mPlanningFlow[2m > [22m应返回计划文本摘要[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/flow-hook.test.ts[2m > [22m集成: Flow + Hook 系统[2m > [22mPlanningFlow[2m > [22m应标记步骤为完成/阻塞[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/flow-hook.test.ts[2m > [22m集成: Flow + Hook 系统[2m > [22mHookManager[2m > [22m应注册并触发 PreToolUse 钩子[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/flow-hook.test.ts[2m > [22m集成: Flow + Hook 系统[2m > [22mHookManager[2m > [22m应阻止被 deny 的工具执行[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/flow-hook.test.ts[2m > [22m集成: Flow + Hook 系统[2m > [22mHookManager[2m > [22m应支持通配符匹配所有工具[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/flow-hook.test.ts[2m > [22m集成: Flow + Hook 系统[2m > [22mHookManager[2m > [22m应支持注销钩子[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/flow-hook.test.ts[2m > [22m集成: Flow + Hook 系统[2m > [22mHookManager[2m > [22m钩子异常不应影响主流程[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/flow-hook.test.ts[2m > [22m集成: Flow + Hook 系统[2m > [22m内置 Hook 处理器[2m > [22mSecretDetection 应检测密钥泄漏[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/flow-hook.test.ts[2m > [22m集成: Flow + Hook 系统[2m > [22m内置 Hook 处理器[2m > [22mSecretDetection 应放行正常内容[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/flow-hook.test.ts[2m > [22m集成: Flow + Hook 系统[2m > [22m内置 Hook 处理器[2m > [22mAuditLog 应记录工具执行[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/flow-hook.test.ts[2m > [22m集成: Flow + Hook 系统[2m > [22m内置 Hook 处理器[2m > [22mSessionStart 应执行初始化[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/flow-hook.test.ts[2m > [22m集成: Flow + Hook 系统[2m > [22m内置 Hook 处理器[2m > [22mSessionStart 异常应被捕获[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/flow-hook.test.ts[2m > [22m集成: Flow + Hook 系统[2m > [22mFlow + Hook 协同[2m > [22mFlow 执行期间可同时触发 Hook 事件[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/flow-hook.test.ts[2m > [22m集成: Flow + Hook 系统[2m > [22mFlow + Hook 协同[2m > [22mHook 可在 Flow 步骤间传递上下文[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/cost.test.ts[2m > [22mcost-tracker 纯函数[2m > [22mformatCost[2m > [22m零值应显示为 $0.0000[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/cost.test.ts[2m > [22mcost-tracker 纯函数[2m > [22mformatCost[2m > [22m小于 0.5 的值应保留 4 位小数[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/cost.test.ts[2m > [22mcost-tracker 纯函数[2m > [22mformatCost[2m > [22m大于 0.5 的值应保留 2 位小数[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/cost.test.ts[2m > [22mcost-tracker 纯函数[2m > [22mformatCost[2m > [22m应正确处理边界值 0.5[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/cost.test.ts[2m > [22mcost-tracker 纯函数[2m > [22mformatCost[2m > [22m大数值应正确格式化[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/cost.test.ts[2m > [22mcost-tracker 纯函数[2m > [22mrenderBar[2m > [22m0% 应全为空[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/cost.test.ts[2m > [22mcost-tracker 纯函数[2m > [22mrenderBar[2m > [22m100% 应全为实心[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/cost.test.ts[2m > [22mcost-tracker 纯函数[2m > [22mrenderBar[2m > [22m50% 应约一半实心[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/cost.test.ts[2m > [22mcost-tracker 纯函数[2m > [22mrenderBar[2m > [22m应正确处理超出范围的百分比[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/cost.test.ts[2m > [22mcost-tracker 纯函数[2m > [22mrenderBar[2m > [22m应支持自定义宽度[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/cost.test.ts[2m > [22mcost-tracker 纯函数[2m > [22mformatTimestamp[2m > [22m应正确格式化时间戳[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/cost.test.ts[2m > [22mcost 命令参数解析[2m > [22m空参数应返回空对象[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/cost.test.ts[2m > [22mcost 命令参数解析[2m > [22m应解析 byModel 标志[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/cost.test.ts[2m > [22mcost 命令参数解析[2m > [22m应解析 byType 标志[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/cost.test.ts[2m > [22mcost 命令参数解析[2m > [22m应解析 trend 参数[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/cost.test.ts[2m > [22mcost 命令参数解析[2m > [22m应解析 export 参数[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/cost.test.ts[2m > [22mcost 命令参数解析[2m > [22m应同时解析多个参数[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/healthScore.test.ts[2m > [22mhealth-score collectSourceFiles[2m > [22m应过滤非源文件[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/healthScore.test.ts[2m > [22mhealth-score collectSourceFiles[2m > [22m应跳过隐藏文件和 node_modules 目录[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/healthScore.test.ts[2m > [22mhealth-score collectSourceFiles[2m > [22m空数组应返回空数组[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/healthScore.test.ts[2m > [22mhealth-score extractImports[2m > [22m应提取 import 语句[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/healthScore.test.ts[2m > [22mhealth-score extractImports[2m > [22m应提取所有 import 语句[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/healthScore.test.ts[2m > [22mhealth-score extractImports[2m > [22m空内容应返回空数组[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/healthScore.test.ts[2m > [22mhealth-score analyzeComplexity[2m > [22m短函数应得高分[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/healthScore.test.ts[2m > [22mhealth-score analyzeComplexity[2m > [22m深层嵌套应扣分[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/healthScore.test.ts[2m > [22mhealth-score analyzeCodeSmells[2m > [22m应检测 eval[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/healthScore.test.ts[2m > [22mhealth-score analyzeCodeSmells[2m > [22m应检测硬编码密码[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/healthScore.test.ts[2m > [22mhealth-score analyzeCodeSmells[2m > [22m应检测空 catch[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/healthScore.test.ts[2m > [22mhealth-score analyzeCodeSmells[2m > [22m干净代码应得高分[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/healthScore.test.ts[2m > [22mhealth-score calculateGrade[2m > [22m90+ 应为 A[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/healthScore.test.ts[2m > [22mhealth-score calculateGrade[2m > [22m80-89 应为 B[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/healthScore.test.ts[2m > [22mhealth-score calculateGrade[2m > [22m70-79 应为 C[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/healthScore.test.ts[2m > [22mhealth-score calculateGrade[2m > [22m60-69 应为 D[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/healthScore.test.ts[2m > [22mhealth-score calculateGrade[2m > [22m<60 应为 F[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/refactor.test.ts[2m > [22mrefactor parseArgs[2m > [22m空字符串应返回默认值[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/refactor.test.ts[2m > [22mrefactor parseArgs[2m > [22m应解析 type 和 target[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/refactor.test.ts[2m > [22mrefactor parseArgs[2m > [22m应解析 --file 选项[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/refactor.test.ts[2m > [22mrefactor parseArgs[2m > [22m应解析 --dry-run 选项[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/refactor.test.ts[2m > [22mrefactor parseArgs[2m > [22m应解析 --json 选项[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/refactor.test.ts[2m > [22mrefactor parseArgs[2m > [22m应解析 --help 选项[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/refactor.test.ts[2m > [22mrefactor parseArgs[2m > [22mhelp 子命令应触发 help[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/refactor.test.ts[2m > [22mrefactor parseArgs[2m > [22mextract 类型应解析[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/refactor.test.ts[2m > [22mrefactor parseArgs[2m > [22mtype-fix 类型应解析[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/refactor.test.ts[2m > [22mrefactor renderHelp[2m > [22m应包含帮助标题[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/refactor.test.ts[2m > [22mrefactor renderHelp[2m > [22m应包含用法说明[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/refactor.test.ts[2m > [22mrefactor renderHelp[2m > [22m应包含类型列表[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/refactor.test.ts[2m > [22mrefactor renderHelp[2m > [22m应包含选项说明[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/refactor.test.ts[2m > [22mrefactor renderHelp[2m > [22m应包含示例[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/refactor.test.ts[2m > [22mrefactor formatRefactorResult[2m > [22m应显示摘要[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/refactor.test.ts[2m > [22mrefactor formatRefactorResult[2m > [22m应显示错误信息[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/refactor.test.ts[2m > [22mrefactor formatRefactorResult[2m > [22m应显示变更详情（detailed=true）[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/refactor.test.ts[2m > [22mrefactor formatRefactorResult[2m > [22m应在 changes 超过 20 时截断[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/refactor.test.ts[2m > [22mrefactor formatRefactorResult[2m > [22mdetailed=false 时应隐藏变更详情[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/planner.test.ts[2m > [22mdecomposeToDag[2m > [22m简单目标分解为 3 阶段链（understand→implement→verify）[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/planner.test.ts[2m > [22mdecomposeToDag[2m > [22m复杂目标（含测试/文档）分解为完整闭环[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/planner.test.ts[2m > [22mdecomposeToDag[2m > [22m显式提供 subTasks 时规范化（不重复分解）[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/planner.test.ts[2m > [22mnormalizeSubtasks[2m > [22m补齐缺失 id 并剔除不存在的依赖[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/planner.test.ts[2m > [22mnormalizeSubtasks[2m > [22m断开依赖环[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/planner.test.ts[2m > [22mtopoSort[2m > [22m正常 DAG 返回拓扑顺序[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/planner.test.ts[2m > [22mtopoSort[2m > [22m有环时返回 null[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/planner.test.ts[2m > [22mgetReadyTasks[2m > [22m只返回依赖已满足的 pending 任务[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/planner.test.ts[2m > [22mgetReadyTasks[2m > [22m按优先级降序排列并截取 limit[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/planner.test.ts[2m > [22mgetReadyTasks[2m > [22mcompleted 的依赖使下游任务可执行[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/planner.test.ts[2m > [22mhasCycle[2m > [22m无环返回 false[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/planner.test.ts[2m > [22mhasCycle[2m > [22m直接环返回 true[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/planner.test.ts[2m > [22mhasCycle[2m > [22m间接环返回 true[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/planner.test.ts[2m > [22mformatPlan[2m > [22m输出包含任务描述与依赖标注[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/progress.test.ts[2m > [22mbuildProgressSummary[2m > [22m包含迭代/任务/耗时信息[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/progress.test.ts[2m > [22mbuildProgressSummary[2m > [22m空当前任务时不显示当前[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/progress.test.ts[2m > [22mshouldAskUser[2m > [22m迭代不足时不触发[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/progress.test.ts[2m > [22mshouldAskUser[2m > [22m连续无进展且存在失败时触发[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/progress.test.ts[2m > [22mshouldAskUser[2m > [22m有进展时不触发[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/progress.test.ts[2m > [22mshouldAskUser[2m > [22m过半仍未达标且存在失败时触发[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/progress.test.ts[2m > [22mshouldAskUser[2m > [22m预算使用超过 80% 时触发[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/progress.test.ts[2m > [22mbuildAskQuestion[2m > [22m包含目标/进度/选项提示[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/progress.test.ts[2m > [22msummarizeSubtasks[2m > [22m统计各状态数量[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/loop/progress.test.ts[2m > [22mcreateProgressReporter[2m > [22m定时汇报并正确停止[32m 4[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiTest.test.ts[2m > [22mapi-test validateJsonSchema[2m > [22m应该验证基础类型[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiTest.test.ts[2m > [22mapi-test validateJsonSchema[2m > [22m应该验证 integer 类型（整数 vs 浮点）[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiTest.test.ts[2m > [22mapi-test validateJsonSchema[2m > [22m应该验证 null 类型[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiTest.test.ts[2m > [22mapi-test validateJsonSchema[2m > [22m应该验证必填属性[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiTest.test.ts[2m > [22mapi-test validateJsonSchema[2m > [22m应该递归验证属性[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiTest.test.ts[2m > [22mapi-test validateJsonSchema[2m > [22m应该验证数组项[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiTest.test.ts[2m > [22mapi-test validateJsonSchema[2m > [22m无 schema 时返回 null[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiTest.test.ts[2m > [22mapi-test evaluateAssertion[2m > [22m应该支持 status 比较运算[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiTest.test.ts[2m > [22mapi-test evaluateAssertion[2m > [22m应该支持 body contains[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiTest.test.ts[2m > [22mapi-test evaluateAssertion[2m > [22m应该支持 body ~ 正则[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiTest.test.ts[2m > [22mapi-test evaluateAssertion[2m > [22m未知断言默认通过[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiTest.test.ts[2m > [22mapi-test resolveEnvVars[2m > [22m应该替换环境变量占位符[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiTest.test.ts[2m > [22mapi-test resolveEnvVars[2m > [22m未定义的环境变量保持原样[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiTest.test.ts[2m > [22mapi-test resolveEnvVars[2m > [22m无占位符时原样返回[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiTest.test.ts[2m > [22mapi-test resolveEnvVars[2m > [22m小写/非法的变量名不替换[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiTest.test.ts[2m > [22mapi-test formatResponse[2m > [22m应该格式化状态、时长与正文[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiTest.test.ts[2m > [22mapi-test formatResponse[2m > [22m应该截断超长正文并标注字节数[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/semanticSearch.test.ts[2m > [22mtokenize[2m > [22m提取英文词与驼峰拆分[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/semanticSearch.test.ts[2m > [22mtokenize[2m > [22m过滤 stop words[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/semanticSearch.test.ts[2m > [22mtokenize[2m > [22m中文 unigram + bigram[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/semanticSearch.test.ts[2m > [22manalyzeQuery[2m > [22m提取关键词与目标符号[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/semanticSearch.test.ts[2m > [22manalyzeQuery[2m > [22m识别驼峰符号名[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/semanticSearch.test.ts[2m > [22mindexContent / buildIndex[2m > [22m分块与符号提取[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/semanticSearch.test.ts[2m > [22mindexContent / buildIndex[2m > [22mbuildIndex 计算 docFreq 与 avgChunkLen[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/semanticSearch.test.ts[2m > [22msearchIndex[2m > [22m英文关键词命中内容[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/semanticSearch.test.ts[2m > [22msearchIndex[2m > [22m中文查询命中[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/semanticSearch.test.ts[2m > [22msearchIndex[2m > [22m符号名命中 UserService[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/semanticSearch.test.ts[2m > [22msearchIndex[2m > [22mfileTypes 过滤[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/semanticSearch.test.ts[2m > [22msearchIndex[2m > [22m结果按分数降序[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/semanticSearch.test.ts[2m > [22msearchSymbolsInIndex[2m > [22m完全匹配优先[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/engine/semanticSearch.test.ts[2m > [22msearchSymbolsInIndex[2m > [22m前缀与包含匹配[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/example.test.ts[2m > [22m示例测试套件[2m > [22m基础数学运算[32m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/example.test.ts[2m > [22m示例测试套件[2m > [22m字符串操作[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/example.test.ts[2m > [22m示例测试套件[2m > [22m数组操作[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memorySearch.test.ts[2m > [22mmemory search 纯逻辑[2m > [22m空查询应返回空结果[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memorySearch.test.ts[2m > [22mmemory search 纯逻辑[2m > [22m大小写不敏感匹配[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memorySearch.test.ts[2m > [22mmemory search 纯逻辑[2m > [22m多文件匹配[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memorySearch.test.ts[2m > [22mmemory search 纯逻辑[2m > [22m无匹配[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memorySearch.test.ts[2m > [22mmemory search 纯逻辑[2m > [22m中文匹配[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memorySearch.test.ts[2m > [22mmemory search 纯逻辑[2m > [22m同一行多次出现只匹配一次[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memorySearch.test.ts[2m > [22mmemory stats 纯逻辑[2m > [22m应正确计算总文件数和总大小[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/memorySearch.test.ts[2m > [22mmemory stats 纯逻辑[2m > [22m应正确按类型分组[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/state/AppStore.test.ts[2m > [22mAppStore[2m > [22m初始化[2m > [22m应该创建初始状态[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/state/AppStore.test.ts[2m > [22mAppStore[2m > [22m初始化[2m > [22m应该使用默认值[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/state/AppStore.test.ts[2m > [22mAppStore[2m > [22m状态更新[2m > [22m应该更新状态[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/state/AppStore.test.ts[2m > [22mAppStore[2m > [22m状态更新[2m > [22m应该支持函数式更新[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/state/AppStore.test.ts[2m > [22mAppStore[2m > [22m订阅[2m > [22m应该通知订阅者[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/state/AppStore.test.ts[2m > [22mAppStore[2m > [22m订阅[2m > [22m应该支持取消订阅[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/compactState.test.ts[2m > [22mmarkPostCompaction[2m > [22m执行注册的回调并清空队列[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/compactState.test.ts[2m > [22mmarkPostCompaction[2m > [22monPostCompaction 返回取消注册函数[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/compactState.test.ts[2m > [22mmarkPostCompaction[2m > [22m回调抛错不中断其他回调[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/compactState.test.ts[2m > [22mmarkPostCompaction[2m > [22m无回调时安全调用[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/mobileProtocol.test.ts[2m > [22mmobileProtocol 命令历史[2m > [22mrecordCommand 记录并 getCommandHistory 返回[32m 4[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/mobileProtocol.test.ts[2m > [22mmobileProtocol 命令历史[2m > [22mgetHistory handler 返回历史[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/mobileProtocol.test.ts[2m > [22mmobileProtocol 命令历史[2m > [22mgetHistory limit 过滤[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/mobileProtocol.test.ts[2m > [22mmobileProtocol 命令历史[2m > [22m历史上限 100 条[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/mobileProtocol.test.ts[2m > [22mmobileProtocol 命令历史[2m > [22mclearCommandHistory 清空历史[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/mobileProtocol.test.ts[2m > [22mmobileProtocol 命令历史[2m > [22msendMessage handler 可调用[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ccshareResume.test.ts[2m > [22mparseCcshareId[2m > [22m从 URL 路径提取 ID[32m 2[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ccshareResume.test.ts[2m > [22mparseCcshareId[2m > [22m裸 ID 原样返回[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ccshareResume.test.ts[2m > [22mparseCcshareId[2m > [22m从查询参数提取 ID[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ccshareResume.test.ts[2m > [22mparseCcshareId[2m > [22mccshare: 前缀形式[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ccshareResume.test.ts[2m > [22mparseCcshareId[2m > [22m空输入返回 null[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/ccshareResume.test.ts[2m > [22mparseCcshareId[2m > [22m过短的 ID 返回 null[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDebug.test.ts[2m > [22mapi-debug generateId[2m > [22m应返回字符串[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDebug.test.ts[2m > [22mapi-debug generateId[2m > [22m应以 req_ 开头[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDebug.test.ts[2m > [22mapi-debug generateId[2m > [22m每次调用应生成不同 ID[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDebug.test.ts[2m > [22mapi-debug isValidUrl[2m > [22m应接受 https URL[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDebug.test.ts[2m > [22mapi-debug isValidUrl[2m > [22m应接受 http URL[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDebug.test.ts[2m > [22mapi-debug isValidUrl[2m > [22m应拒绝 ftp URL[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDebug.test.ts[2m > [22mapi-debug isValidUrl[2m > [22m应拒绝空字符串[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDebug.test.ts[2m > [22mapi-debug isValidUrl[2m > [22m应拒绝无效 URL[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDebug.test.ts[2m > [22mapi-debug isValidUrl[2m > [22m应拒绝 file:// URL[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDebug.test.ts[2m > [22mapi-debug buildRequestRecord[2m > [22m默认应返回 GET 请求[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDebug.test.ts[2m > [22mapi-debug buildRequestRecord[2m > [22m应支持自定义覆盖[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDebug.test.ts[2m > [22mapi-debug buildRequestRecord[2m > [22m应包含时间戳[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDebug.test.ts[2m > [22mapi-debug buildRequestRecord[2m > [22m应包含默认请求头[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/commands/apiDebug.test.ts[2m > [22mapi-debug buildRequestRecord[2m > [22m应计算响应大小[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/parseConnectUrl.test.ts[2m > [22mparseConnectUrl[2m > [22m解析 cc:// URL（带 token）[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/parseConnectUrl.test.ts[2m > [22mparseConnectUrl[2m > [22m解析 cc:// URL 带路径[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/parseConnectUrl.test.ts[2m > [22mparseConnectUrl[2m > [22m解析 cc+unix:// URL[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/parseConnectUrl.test.ts[2m > [22mparseConnectUrl[2m > [22m解析 http(s) URL[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/parseConnectUrl.test.ts[2m > [22mparseConnectUrl[2m > [22m无 token 时返回空字符串[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/api/parseConnectUrl.test.ts[2m > [22mparseConnectUrl[2m > [22m无法识别的输入原样返回[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/query/QueryEngine.test.ts[2m > [22mQueryEngine[2m > [22m初始化[2m > [22m接口类型应该正确定义[32m 3[2mms[22m[39m
+ [32m✓[39m src/__tests__/query/QueryEngine.test.ts[2m > [22mQueryEngine[2m > [22m查询执行[2m > [22m应该成功执行查询[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/query/QueryEngine.test.ts[2m > [22mQueryEngine[2m > [22m状态管理[2m > [22m应该返回有效状态[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/query/QueryEngine.test.ts[2m > [22mQueryEngine[2m > [22mToken 管理[2m > [22m应该返回 token 使用量[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/performance/benchmark.test.ts[2m > [22m性能测试[2m > [22m查询性能[2m > [22m接口应该存在[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/performance/benchmark.test.ts[2m > [22m性能测试[2m > [22m查询性能[2m > [22m应该支持基本接口调用[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/performance/benchmark.test.ts[2m > [22m性能测试[2m > [22m工具调用性能[2m > [22m接口应该存在[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/api.test.ts[2m > [22mAPI 函数集成测试[2m > [22mqueryModelWithoutStreaming[2m > [22m应该是可调用的函数[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/api.test.ts[2m > [22mAPI 函数集成测试[2m > [22mqueryWithModel[2m > [22m应该是可调用的函数[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/toolSearchFilter.test.ts[2m > [22misSimpleConversationMessage[2m > [22mshould detect simple greetings[32m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/toolSearchFilter.test.ts[2m > [22misSimpleConversationMessage[2m > [22mshould detect small talk[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/toolSearchFilter.test.ts[2m > [22misSimpleConversationMessage[2m > [22mshould NOT detect code-related messages as simple[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/toolSearchFilter.test.ts[2m > [22misSimpleConversationMessage[2m > [22mshould detect simple Chinese greetings[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/toolSearchFilter.test.ts[2m > [22misSimpleConversationMessage[2m > [22mshould NOT detect Chinese code-related messages as simple[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/toolSearchFilter.test.ts[2m > [22mfilterToolsForMessage[2m > [22mshould return only always-on tools for simple greetings[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/toolSearchFilter.test.ts[2m > [22mfilterToolsForMessage[2m > [22mshould include keyword-matched tools[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/toolSearchFilter.test.ts[2m > [22mfilterToolsForMessage[2m > [22mshould include grep tool for English search keywords[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/toolSearchFilter.test.ts[2m > [22mfilterToolsForMessage[2m > [22mshould include tools for Chinese keywords[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/toolSearchFilter.test.ts[2m > [22mfilterToolsForMessage[2m > [22mshould always include MCP tools[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/toolSearchFilter.test.ts[2m > [22mfilterToolsForMessage[2m > [22mshould cache results for same message[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/toolSearchFilter.test.ts[2m > [22mfilterToolsForMessage[2m > [22mshould not cache results for different toolsets[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-render.test.ts[2m > [22mmarkdown 渲染美化（表格表头 / 列表序号）[2m > [22m表格表头加粗[32m 12[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-render.test.ts[2m > [22mmarkdown 渲染美化（表格表头 / 列表序号）[2m > [22m无序列表序号（-）→ 蓝色[32m 3[2mms[22m[39m
+ [32m✓[39m tests/unit/markdown-render.test.ts[2m > [22mmarkdown 渲染美化（表格表头 / 列表序号）[2m > [22m有序列表序号（1. 2.）→ 蓝色[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/mcp.test.ts[2m > [22mMCP 服务[2m > [22mTransport[2m > [22m应该创建 transport pair[32m 1[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/mcp.test.ts[2m > [22mMCP 服务[2m > [22m工具过滤[2m > [22m应该识别 MCP 工具[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/mcp.test.ts[2m > [22mMCP 服务[2m > [22m工具过滤[2m > [22m应该按服务器过滤工具[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/mcp.test.ts[2m > [22mMCP 服务[2m > [22mURL 验证[2m > [22m应该识别官方 MCP URL[32m 0[2mms[22m[39m
+ [32m✓[39m src/__tests__/integration/mcp.test.ts[2m > [22mMCP 服务[2m > [22m配置哈希[2m > [22m应该生成一致哈希[32m 1[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m43 passed[39m[22m[90m (43)[39m
+[2m      Tests [22m [1m[32m552 passed[39m[22m[90m (552)[39m
+[2m   Start at [22m 10:03:01
+[2m   Duration [22m 12.60s[2m (transform 12.05s, setup 4.01s, collect 50.30s, tests 1.64s, environment 11ms, prepare 6.30s)[22m
+
+JSON report written to D:/doge-code/coverage/test-results.json

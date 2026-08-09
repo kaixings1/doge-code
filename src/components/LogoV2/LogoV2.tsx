@@ -347,11 +347,11 @@ export function LogoV2() {
   } | null>(null);
 
   const welcomeMessage_0 = layoutCacheRef.current?.welcomeMessage_0 ?? formatWelcomeMessage(username);
-  const modelLine = layoutCacheRef.current?.modelLine ?? (!process.env.IS_DEMO && config.oauthAccount?.organizationName ? `${modelDisplayName} · ${billingType} · ${config.oauthAccount.organizationName}` : `${modelDisplayName} · ${billingType}${process.env.ANTHROPIC_BASE_URL ? ` · ${process.env.ANTHROPIC_BASE_URL}` : ''}`);
+  const modelLine = layoutCacheRef.current?.modelLine ?? (!process.env.IS_DEMO && config.oauthAccount?.organizationName ? `\u{1F916} ${modelDisplayName} · ${billingType} · ${config.oauthAccount.organizationName}` : `\u{1F916} ${modelDisplayName} · ${billingType}${process.env.ANTHROPIC_BASE_URL ? ` · ${process.env.ANTHROPIC_BASE_URL}` : ''}`);
   const hideCwd = process.env.CLAUDE_CODE_HIDE_CWD ? true : false
   const cwdAvailableWidth_0 = agentName ? LEFT_PANEL_MAX_WIDTH - 1 - stringWidth(agentName) - 3 : LEFT_PANEL_MAX_WIDTH;
   const truncatedCwd_0 = truncatePath(cwd, Math.max(cwdAvailableWidth_0, 10));
-  const cwdLine = layoutCacheRef.current?.cwdLine ?? (hideCwd ? '' : (agentName ? `@${agentName} · ${truncatedCwd_0}` : truncatedCwd_0));
+  const cwdLine = layoutCacheRef.current?.cwdLine ?? (hideCwd ? '' : (agentName ? `\u{1F4C1} @${agentName} · ${truncatedCwd_0}` : `\u{1F4C1} ${truncatedCwd_0}`));
   const optimalLeftWidth = calculateOptimalLeftWidth(welcomeMessage_0, cwdLine, modelLine);
   const {
     leftWidth,

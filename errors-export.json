@@ -1,0 +1,15 @@
+[
+  {
+    "id": "err-msl82jac-0-j2sd",
+    "type": "warning",
+    "file": "C:\\Windows\\Temp\\doge-errors-test\\cmd-test\\sample.ts",
+    "line": 1,
+    "message": "console.log statement",
+    "timestamp": "2026-08-09T03:07:40.452Z",
+    "resolved": false,
+    "fixAttempted": false,
+    "fixSuccess": false,
+    "source": "scan",
+    "suggestedFix": "// TODO: remove or replace with logger\nconsole.log('test')"
+  }
+]
