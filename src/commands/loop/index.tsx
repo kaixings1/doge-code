@@ -203,6 +203,11 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
             progressState.phase = 'planning'
             onDone(formatStatusLine(progressState), { display: 'system' })
             break
+          case 'decomposition':
+            // 任务分解完成，进入执行阶段
+            progressState.phase = 'executing'
+            onDone(formatStatusLine(progressState), { display: 'system' })
+            break
           case 'iteration_start':
             progressState.phase = 'executing'
             progressState.currentIteration = event.iteration as number

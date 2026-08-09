@@ -36,21 +36,20 @@ export async function launchElectronApp(): Promise<{ app: ElectronApplication; p
     timeout: 30000,
   })
 
-  mainPage = await electronApp.firstWindow()
+  // 监听新窗口事件，跳过 DevTools
+  const pagePromise = electronApp.waitForEvent('page').then(async (p) => {
+    // 跳过 DevTools 窗口
+    while (p.url().startsWith('devtools://')) {
+      p = await electronApp.waitForEvent('page')
+    }
+    return p
+  })
+
+  mainPage = await pagePromise
   await mainPage.waitForLoadState('domcontentloaded')
 
-  // 等待应用加载完成 — 检查 root 内有内容且 textarea 可用
-  await mainPage.waitForFunction(
-    () => {
-      const root = document.getElementById('root')
-      if (!root || root.children.length === 0) return false
-      return document.querySelector('textarea') !== null
-    },
-    { timeout: 15000 }
-  ).catch(() => {
-    // 容错：使用备选等待
-    return mainPage!.waitForTimeout(5000)
-  })
+  // 等待应用加载完成 — 使用简单超时等待
+  await mainPage.waitForTimeout(3000)
 
   return { app: electronApp, page: mainPage }
 }
