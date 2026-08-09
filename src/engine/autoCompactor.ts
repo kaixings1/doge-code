@@ -1,9 +1,52 @@
+import type { InternalMessage } from "./messageNormalizer.ts";
+
 /**
  * engine/autoCompactor.ts — 自动压缩器（文档 02 §8.1）
  *
  * 策略：summary / truncate / selective（策略模式，对应文档 01 §7.2）。
+ *
+ * ContextCascade 级联系统（吸收自 zhikuncode ContextCascade）：
+ *   Level 0: Snip           ← 单条工具结果超预算时，截断中间保留首尾
+ *   Level 1: MicroCompact   ← 对旧的可压缩工具结果替换为 "[cleared]"
+ *   Level 2: AutoCompact    ← token 率 > 阈值时，三区划分 + LLM 摘要
+ *   Level 3: CollapseDrain  ← 紧急情况下激进压缩 (contextWindow*0.5 目标)
+ *   Level 4: ReactiveCompact← API 返回 413 时，仅保留 1 轮 + 极度压缩
+ *
+ * 执行顺序：Level 0-1 每次 API 调用前无条件执行（代价极低）
+ *           Level 2 基于 buffer-based 阈值触发
+ *           Level 3-4 仅在错误恢复路径触发
  */
-import type { InternalMessage } from "./messageNormalizer.ts";
+
+// ============ Cascade 级别定义 ============
+
+export type CascadeLevel =
+  | { level: 0; name: "Snip" }
+  | { level: 1; name: "MicroCompact" }
+  | { level: 2; name: "AutoCompact" }
+  | { level: 3; name: "CollapseDrain" }
+  | { level: 4; name: "ReactiveCompact" };
+
+export interface CascadeState {
+  /** 当前达到的最高级别 */
+  highestLevel: number;
+  /** 本次级联压缩的消息数 */
+  messagesRemoved: number;
+  /** 是否发生熔断（连续失败超过阈值） */
+  tripped: boolean;
+}
+
+export interface CascadeResult {
+  messages: InternalMessage[];
+  changed: boolean;
+  state: CascadeState;
+}
+
+// ============ 配置常量 ============
+
+const DEFAULT_MAX_CONSECUTIVE_FAILURES = 3;
+const MICRO_COMPACT_PROTECTED_TAIL = 10;
+const COLLAPSE_DRAIN_TARGET_RATIO = 0.5;
+const REACTIVE_COMPACT_RECENT_TURNS = 1;
 
 export interface CompactOptions {
   preserveRecentCount: number;
@@ -219,4 +262,183 @@ export class AutoCompactor {
   async compactPlaceholder(): Promise<void> {
     // 由外部持有 conversation 引用时替换真实消息
   }
+}
+
+// ============ ContextCascade 级联服务 ============
+
+/**
+ * Level 0: Snip — 单条工具结果超预算时，截断中间保留首尾。
+ * 吸收自 zhikuncode SnipService。
+ */
+export function snipMessages(messages: InternalMessage[]): InternalMessage[] {
+  const MAX_TOOL_RESULT_CHARS = 8000;
+  const KEEP_HEAD = 2000;
+  const KEEP_TAIL = 2000;
+
+  return messages.map((msg) => {
+    if (msg.role !== "tool") return msg;
+    const content = typeof msg.content === "string" ? msg.content : String(msg.content);
+    if (content.length <= MAX_TOOL_RESULT_CHARS) return msg;
+
+    const truncated =
+      content.slice(0, KEEP_HEAD) +
+      `\n...[snip: ${content.length - KEEP_HEAD - KEEP_TAIL} chars omitted]...\n` +
+      content.slice(-KEEP_TAIL);
+
+    return { ...msg, content: truncated };
+  });
+}
+
+/**
+ * Level 1: MicroCompact — 对旧的可压缩工具结果替换为 "[cleared]"。
+ * 吸收自 zhikuncode MicroCompactService。
+ */
+export function microCompact(messages: InternalMessage[], protectedTail = MICRO_COMPACT_PROTECTED_TAIL): InternalMessage[] {
+  const toolResultSet = new Set<string>();
+  const tailStart = Math.max(0, messages.length - protectedTail);
+
+  for (let i = 0; i < tailStart; i++) {
+    const msg = messages[i];
+    if (msg.role === "tool") {
+      const content = typeof msg.content === "string" ? msg.content : String(msg.content);
+      if (content.length > 500 && !content.includes("[cleared]")) {
+        toolResultSet.add(content);
+      }
+    }
+  }
+
+  if (toolResultSet.size === 0) return messages;
+
+  const contentToCleared = new Map(toolResultSet.map((c) => [c, `[cleared] ${c.length} chars`]));
+
+  return messages.map((msg) => {
+    if (msg.role !== "tool") return msg;
+    const content = typeof msg.content === "string" ? msg.content : String(msg.content);
+    const cleared = contentToCleared.get(content);
+    if (cleared) return { ...msg, content: cleared };
+    return msg;
+  });
+}
+
+/**
+ * Level 2: AutoCompact — token 率 > 阈值时，三区划分 + LLM 摘要。
+ * 包装现有 SummaryStrategy / AutoCompactor 逻辑。
+ */
+export async function autoCompactCascade(
+  messages: InternalMessage[],
+  compactFn: (messages: InternalMessage[], preserveRecentCount?: number) => Promise<InternalMessage[]>,
+  preserveRecentCount = 10,
+): Promise<InternalMessage[]> {
+  return compactFn(messages, preserveRecentCount);
+}
+
+/**
+ * Level 3: CollapseDrain — 紧急情况下激进压缩。
+ * 目标：保留上下文窗口的 50%（zhikuncode: contextWindow * 0.5）。
+ * 吸收自 zhikuncode CompactService CollapseDrain 模式。
+ */
+export function collapseDrain(messages: InternalMessage[]): InternalMessage[] {
+  const system = messages.filter((m) => m.role === "system");
+  const recent = messages.filter((m) => m.role === "tool" || m.role === "assistant" || m.role === "user");
+
+  const recentLimit = Math.max(3, Math.floor(recent.length * COLLAPSE_DRAIN_TARGET_RATIO));
+  const kept = recent.slice(-recentLimit);
+
+  return [...system, ...kept];
+}
+
+/**
+ * Level 4: ReactiveCompact — API 返回 413 时，仅保留 1 轮 + 极度压缩。
+ * 吸收自 zhikuncode CompactService ReactiveCompact 模式。
+ */
+export function reactiveCompact(messages: InternalMessage[]): InternalMessage[] {
+  const system = messages.filter((m) => m.role === "system");
+  const userMessages = messages.filter((m) => m.role === "user");
+  const recentUser = userMessages.slice(-REACTIVE_COMPACT_RECENT_TURNS);
+  const recentAssistant = messages.filter((m) => m.role === "assistant").slice(-2);
+
+  return [...system, ...recentUser, ...recentAssistant];
+}
+
+/**
+ * 执行完整 ContextCascade 级联（五层级联）。
+ *
+ * 执行顺序：
+ *   Level 0 (Snip) → Level 1 (MicroCompact) → Level 2 (AutoCompact)
+ *   → [错误恢复时] Level 3 (CollapseDrain) → Level 4 (ReactiveCompact)
+ *
+ * @param messages - 当前会话消息
+ * @param opts - 选项
+ * @param opts.maxLevel - 最大执行级别（默认 2，错误恢复时传入 4）
+ * @param opts.compactFn - Level 2 的 LLM 摘要函数
+ * @param opts.consecutiveFailures - 连续失败次数（用于熔断）
+ * @returns CascadeResult
+ */
+export async function executeCascade(
+  messages: InternalMessage[],
+  opts: {
+    maxLevel?: number;
+    compactFn?: (msgs: InternalMessage[], preserveRecentCount?: number) => Promise<InternalMessage[]>;
+    consecutiveFailures?: number;
+  } = {},
+): Promise<CascadeResult> {
+  const maxLevel = opts.maxLevel ?? 2;
+  const consecutiveFailures = opts.consecutiveFailures ?? 0;
+  const tripped = consecutiveFailures >= DEFAULT_MAX_CONSECUTIVE_FAILURES;
+
+  let current = messages;
+  let highestLevel = 0;
+  let totalRemoved = 0;
+
+  // Level 0: Snip（无条件执行，代价极低）
+  if (current.length > 0) {
+    const before = current.length;
+    current = snipMessages(current);
+    highestLevel = 0;
+    totalRemoved += before - current.length;
+  }
+
+  // Level 1: MicroCompact（无条件执行，代价极低）
+  if (current.length > 0) {
+    const before = current.length;
+    current = microCompact(current);
+    highestLevel = 1;
+    totalRemoved += before - current.length;
+  }
+
+  // Level 2: AutoCompact（buffer-based 阈值触发）
+  if (maxLevel >= 2 && current.length > 20 && !tripped) {
+    const before = current.length;
+    current = await autoCompactCascade(current, opts.compactFn ?? (async (m) => m));
+    highestLevel = 2;
+    totalRemoved += before - current.length;
+  }
+
+  // Level 3: CollapseDrain（紧急恢复）
+  if (maxLevel >= 3 && !tripped) {
+    const before = current.length;
+    current = collapseDrain(current);
+    highestLevel = 3;
+    totalRemoved += before - current.length;
+  }
+
+  // Level 4: ReactiveCompact（413 恢复）
+  if (maxLevel >= 4) {
+    const before = current.length;
+    current = reactiveCompact(current);
+    highestLevel = 4;
+    totalRemoved += before - current.length;
+  }
+
+  const state: CascadeState = {
+    highestLevel,
+    messagesRemoved: totalRemoved,
+    tripped,
+  };
+
+  return {
+    messages: current,
+    changed: totalRemoved > 0,
+    state,
+  };
 }

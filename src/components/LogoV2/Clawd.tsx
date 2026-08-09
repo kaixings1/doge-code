@@ -216,7 +216,9 @@ export function Clawd({ pose = 'default' }: Props) {
         <Text key={idx}>{renderLine(line, idx, rows.length)}</Text>
       ))}
       <Text dimColor={true}>{sessionId}</Text>
-      {statusLineText && <Text dimColor={true}>{statusLineText}</Text>}
+      {statusLineText && statusLineText.split('\n').map((line, i) => (
+        <Text key={i} dimColor={true}>{line}</Text>
+      ))}
       <Text dimColor={true}>启动时间: {startupTime}</Text>
     </Box>
   );

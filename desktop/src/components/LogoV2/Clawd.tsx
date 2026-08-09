@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Box, Text } from '../../ink.js';
+import { useAppState } from '../../state/AppState.js';
 
 export type ClawdPose = 'default' | 'blink' | 'heart' | 'angry' | 'sleep' | 'arms-up' | 'look-left' | 'look-right';
 
@@ -201,10 +202,14 @@ function renderLine(line: string, rowIdx: number, totalRows: number): React.Reac
 // 纯静态组件（不再有自动动画）
 export function Clawd({ pose = 'default' }: Props) {
   const rows = GRAPHICS[pose];
+  const statusLineText = useAppState(s => s.statusLineText);
   return (
     <Box flexDirection="column" alignItems="center">
       {rows.map((line, idx) => (
         <Text key={idx}>{renderLine(line, idx, rows.length)}</Text>
+      ))}
+      {statusLineText && statusLineText.split('\n').map((line, i) => (
+        <Text key={i} dimColor={true}>{line}</Text>
       ))}
     </Box>
   );
