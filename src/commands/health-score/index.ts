@@ -1,7 +1,7 @@
 import type { Command } from '../../commands.js'
 import type { LocalCommandCall } from '../../types/command.js'
 import { readFile, readdir, stat, access } from 'fs/promises'
-import { join, resolve, extname } from 'path'
+import * as path from 'path'
 
 async function exists(p: string): Promise<boolean> {
   try { await access(p); return true } catch { return false }
