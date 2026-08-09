@@ -198,112 +198,56 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           }
         : void 0,
       onProgress: (event: { type: string; [k: string]: unknown }) => {
+        // 仅在对话模式下记录进度，避免多次调用 onDone 导致 Promise 提前 resolve
         switch (event.type) {
           case 'loop_start':
             progressState.phase = 'planning'
-            onDone(formatStatusLine(progressState), { display: 'system' })
             break
           case 'decomposition':
-            // 任务分解完成，进入执行阶段
             progressState.phase = 'executing'
-            onDone(formatStatusLine(progressState), { display: 'system' })
             break
           case 'iteration_start':
             progressState.phase = 'executing'
             progressState.currentIteration = event.iteration as number
             progressState.maxIterations = (event.maxIterations as number) ?? parsed.maxIterations
             progressState.fileCount = fileCount
-            onDone(formatStatusLine(progressState), { display: 'system' })
             break
           case 'task_start':
             progressState.currentTask = (event.description as string) ?? ''
-            onDone(formatStatusLine(progressState), { display: 'system' })
             break
           case 'task_end': {
-            // 从执行输出中提取创建的文件（支持 📁 / 📄 / • 多种格式）
             const output = (event.output as string) ?? ''
             const newFiles = new Set<string>()
-
-            // 提取 "• file/path" 格式（来自 📁 创建了 N 个文件: 的列表）
             const bulletMatches = output.match(/^\s*(?:•|·|-)\s*([\w./-]+(?:\.[\w]+)?)\s*$/gm) || []
             for (const m of bulletMatches) {
               const fp = m.replace(/^\s*(?:•|·|-)\s*/, '').trim()
               if (fp && /[\w./-]+\.[\w]+/.test(fp)) newFiles.add(fp)
             }
-
-            // 提取 "📄 file/path" 格式
             const markdownMatches = output.match(/📄\s*([^\s]+)/g) || []
             for (const m of markdownMatches) {
               const fp = m.replace('📄 ', '').trim()
               if (fp && /[\w./-]+\.[\w]+/.test(fp)) newFiles.add(fp)
             }
-
-            // 提取 "📁 创建了 N 个文件:" 之后的所有 • 条目
-            const blockMatch = output.match(/📁\s*创建了.*?(?:\n([\s\S]*?))?(?=\n\n|\n📄|\Z)/i)
-            if (blockMatch && blockMatch[1]) {
-              const lines = blockMatch[1].match(/^\s*•\s*([\w./-]+(?:\.[\w]+)?)/gm) || []
-              for (const m of lines) {
-                const fp = m.replace(/^\s*•\s*/, '').trim()
-                if (fp && /[\w./-]+\.[\w]+/.test(fp)) newFiles.add(fp)
-              }
-            }
-
             if (newFiles.size > 0) {
-              newFiles.forEach(fp => {
-                createdFiles.push(fp)
-                fileCount++
-              })
+              newFiles.forEach(fp => { createdFiles.push(fp); fileCount++ })
               progressState.fileCount = fileCount
             }
-            onDone(formatStatusLine(progressState), { display: 'system' })
             break
           }
           case 'task_failed':
             progressState.phase = 'error'
             progressState.currentTask = `失败: ${event.error?.toString().slice(0, 30)}`
-            onDone(formatStatusLine(progressState), { display: 'system' })
             break
           case 'evaluation':
             if (event.achieved) {
               progressState.phase = 'verifying'
-              onDone(formatStatusLine(progressState), { display: 'system' })
             }
             break
-          case 'loop_end':
-            progressState.phase = 'done'
-            progressState.fileCount = fileCount
-            onDone(formatStatusLine(progressState), { display: 'user' })
-            break
-          case 'plan':
-            // B1 任务计划（DAG）
-            onDone(formatPlan(event.subTasks as SubTask[]), { display: 'system' })
-            break
-          case 'snapshot': {
-            // B3 安全快照
-            const actionText =
-              event.action === 'create' ? '已创建快照' :
-              event.action === 'restore' ? '已回滚快照' :
-              event.action === 'cleanup' ? '已清理快照' : '跳过快照'
-            onDone(`📸 [快照] ${actionText} (${event.snapshotId})`, { display: 'system' })
-            break
-          }
           case 'repair':
-            // B2 自动修复
             progressState.currentTask = `🔧 自动修复 (第 ${event.attempt} 次)`
-            onDone(formatStatusLine(progressState), { display: 'system' })
             break
           case 'progress':
-            // B4 定期进度汇报 — 刷新状态行（确保 UI 不死锁）
             progressState.fileCount = fileCount
-            onDone(formatStatusLine(progressState), { display: 'system' })
-            break
-          case 'ask':
-            // B4 关键节点询问（等待用户决策）
-            onDone(`\n${event.question as string}`, { display: 'system' })
-            break
-          case 'error':
-            progressState.phase = 'error'
-            onDone(formatStatusLine(progressState), { display: 'system' })
             break
         }
       },
