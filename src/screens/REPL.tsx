@@ -25,14 +25,10 @@ import * as React from 'react';
 import { useEffect, useMemo, useRef, useState, useCallback, useDeferredValue, useLayoutEffect, type RefObject } from 'react';
 import { launchUltraplan } from '../commands/ultraplan.js';
 
-// 编译产物丢失的符号——条件编译死代码（feature('ULTRAPLAN') / buddy observer），
+// 编译产物丢失的符号——条件编译死代码（feature('ULTRAPLAN')），
 // 仅在对应 feature 启用时执行，此处声明以通过类型检查。
 declare const UltraplanChoiceDialog: React.ComponentType<any>
 declare const UltraplanLaunchDialog: React.ComponentType<any>
-declare function fireCompanionObserver(
-  messages: unknown,
-  callback: (reaction: string) => void,
-): Promise<unknown>
 import { useNotifications } from '../context/notifications.js';
 import { sendNotification } from '../services/notifier.js';
 import { startPreventSleep, stopPreventSleep } from '../services/preventSleep.js';
@@ -2726,11 +2722,15 @@ export function REPL({
     })) {
       onQueryEvent(event);
     }
-    if (true) {
-      void fireCompanionObserver(messagesRef.current, reaction => setAppState(prev => prev.companionReaction === reaction ? prev : {
+    if (feature('BUDDY') && typeof (globalThis as Record<string, unknown>).fireCompanionObserver === 'function') {
+      const _fireCompanionObserver = (globalThis as Record<string, unknown>).fireCompanionObserver as (
+        messages: unknown,
+        callback: (reaction: string) => void,
+      ) => Promise<unknown>
+      void _fireCompanionObserver(messagesRef.current, reaction => setAppState(prev => prev.companionReaction === reaction ? prev : {
         ...prev,
         companionReaction: reaction
-      }));
+      }))
     }
     queryCheckpoint('query_end');
 
