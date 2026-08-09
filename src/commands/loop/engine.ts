@@ -174,7 +174,19 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
   const heartbeat = setInterval(() => {
     const elapsed = Date.now() - state.startTime
     const elapsedStr = elapsed < 1000 ? `${elapsed}ms` : `${Math.round(elapsed / 1000)}s`
-    emit({ type: 'progress', summary: `⏱ [心跳] 循环运行中 | 迭代 ${state.iteration}/${state.maxIterations} | 已用 ${elapsedStr}`, iteration: state.iteration, completed: 0, failed: 0, elapsedMs: elapsed })
+    const completed = state.subTasks.filter(t => t.status === 'completed').length
+    const failed = state.subTasks.filter(t => t.status === 'failed').length
+    const currentTask = state.subTasks.find(t => t.status === 'running')
+    emit({
+      type: 'progress',
+      summary: currentTask
+        ? `⏱ [心跳] 执行中: ${currentTask.description.slice(0, 40)}... | 迭代 ${state.iteration}/${state.maxIterations} | 已用 ${elapsedStr}`
+        : `⏱ [心跳] 循环运行中 | 迭代 ${state.iteration}/${state.maxIterations} | 已用 ${elapsedStr} | 进度: ${completed}/${state.subTasks.length} 完成`,
+      iteration: state.iteration,
+      completed,
+      failed,
+      elapsedMs: elapsed,
+    })
   }, 1000)
   if (heartbeat && typeof heartbeat === 'object' && 'unref' in heartbeat) {
     ;(heartbeat as setInterval & { unref?: () => void }).unref?.()

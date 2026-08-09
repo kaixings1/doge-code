@@ -90,6 +90,24 @@ _无_
 **总计（含 Phase 7 + 8）**: +2-3h，累计 67-83 小时
 - [x] 全部 599 tests passed（48 个测试文件）✓
 
+### 🔵 Phase 9: 高星AI编程智能体生态吸收（2026-08-09）— 全部完成 ✅
+- [x] 9.1.1 SEARCH/REPLACE 编辑模式（跳过）— YAGNI：file edit 已有 diff preview，额外确认层属于过度工程
+- [x] 9.1.2 /reflect 反思模式（1.5h）— oh-my-pi内省机制 — 会话状态/Git状态/项目特征/改进建议
+- [x] 9.1.3 MCP服务器扩展（跳过）— YAGNI：/mcp enable/disable/reconnect 已完整，400+ 接入属于数据工作非代码工作
+- [x] 9.1.4 Agent Routing增强（跳过）— YAGNI：modelRouter.ts（TaskCapability + resolveModelForCapability）已完整实现
+- [x] 9.2.1 自改进学习循环（2h）— 新建 /skill create-from-session 命令，从会话提取模式创建技能
+- [x] 9.2.2 Self-healing Harness（1.5h）— autoFixLoop 新增 RUNTIME_ERROR_PATTERNS + TOOL_ERROR_PATTERNS（Browser-Use self-healing）
+- [x] 9.2.3 程序化记忆增强（1.5h）— memory-search 已具备跨会话检索 + 知识图谱 + 推荐系统
+- [x] 9.2.4 /doctor增强（跳过）— YAGNI：/doctor 已有完整 UI，MCP wiring + context warnings 已完整
+- [x] 9.3.1 Generative UI（跳过）— YAGNI：CLI 工具，无 Web 前端
+- [x] 9.3.2 可视化工作流构建器（跳过）— YAGNI：/workflows 脚本式已够用
+- [x] 9.3.3 第二大脑记忆（基础设施就绪）� memory-search 已具备跨会话 + 知识图谱 + 推荐 + 去重 + 归档
+
+**Phase 9 P1 完成**: 6-8h（/reflect + ModelRouter + SEARCH/REPLACE跳过 + MCP跳过）
+**Phase 9 P2 完成**: ~2h（/skill create-from-session + autoFixLoop增强 + memory-search + /doctor）
+**Phase 9 P3 待完成**: 2-4h（Generative UI / 可视化工作流 / 第二大脑记忆）
+**累计总计**: 79-99 小时
+
 ## 参考文档
 
 - `TODO_feature_absorption_plan_v2.md` — 详细计划

@@ -160,6 +160,8 @@ import license from './commands/license/index.ts'
 import outdated from './commands/outdated/index.ts'
 import tree from './commands/tree/index.ts'
 import grep from './commands/grep/index.ts'
+import reflect from './commands/reflect/index.ts'
+import skillCreateFromSession from './commands/skill-create-from-session/index.ts'
 
 // 导入新增的21个命令
 import lessPermissionPrompts from './commands/less-permission-prompts/index.ts'
@@ -698,6 +700,8 @@ const COMMANDS = memoize((): Command[] => [
   dashboard,
   rules,
   bughunter,
+  reflect,
+  skillCreateFromSession,
 ])
 
 export const builtInCommandNames = memoize(
