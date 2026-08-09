@@ -400,6 +400,11 @@ function createShortcutCommand(strategyName: LoopStrategyName, aliases: string[]
             progressState.phase = 'planning'
             onDone(formatStatusLine(progressState), { display: 'system' })
             break
+          case 'decomposition':
+            // 任务分解完成，进入执行阶段
+            progressState.phase = 'executing'
+            onDone(formatStatusLine(progressState), { display: 'system' })
+            break
           case 'iteration_start':
             progressState.phase = 'executing'
             progressState.currentIteration = event.iteration as number
@@ -412,12 +417,22 @@ function createShortcutCommand(strategyName: LoopStrategyName, aliases: string[]
             onDone(formatStatusLine(progressState), { display: 'system' })
             break
           case 'task_end': {
-            const fileMatches = (event.output as string ?? '').match(/📄\s*(.+?)(?:\s|$)/g)
-            if (fileMatches) {
-              fileCount += fileMatches.length
-              for (const m of fileMatches) {
-                createdFiles.push(m.replace('📄 ', '').trim())
-              }
+            const output = (event.output as string) ?? ''
+            const newFiles = new Set<string>()
+            // Extract bullet-format files (• file/path)
+            const bulletMatches = output.match(/^\s*(?:•|·|-)\s*([\w./-]+(?:\.[\w]+)?)\s*$/gm) || []
+            for (const m of bulletMatches) {
+              const fp = m.replace(/^\s*(?:•|·|-)\s*/, '').trim()
+              if (fp && /[\w./-]+\.[\w]+/.test(fp)) newFiles.add(fp)
+            }
+            // Extract 📄 format files
+            const markdownMatches = output.match(/📄\s*([^\s]+)/g) || []
+            for (const m of markdownMatches) {
+              const fp = m.replace('📄 ', '').trim()
+              if (fp && /[\w./-]+\.[\w]+/.test(fp)) newFiles.add(fp)
+            }
+            if (newFiles.size > 0) {
+              newFiles.forEach(fp => { createdFiles.push(fp); fileCount++ })
               progressState.fileCount = fileCount
             }
             onDone(formatStatusLine(progressState), { display: 'system' })
