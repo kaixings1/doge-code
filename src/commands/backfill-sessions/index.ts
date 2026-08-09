@@ -4,7 +4,8 @@ import fs from 'fs';
 import path from 'path';
 import { getCachedDirEntries } from '../../utils/dirCache.js';
 
-const SESSION_DIR = path.join(process.env.HOME || process.env.USERPROFILE || '.', '.doge', 'sessions');
+const getSessionDir = (): string =>
+  path.join(process.env.HOME || process.env.USERPROFILE || '.', '.doge', 'sessions')
 
 interface SessionInfo {
   id: string;
@@ -86,17 +87,17 @@ const call: LocalCommandCall = async (args: string) => {
 
 async function listSessions(): Promise<ReturnType<typeof call>> {
   try {
-    if (!fs.existsSync(SESSION_DIR)) {
+    if (!fs.existsSync(getSessionDir())) {
       return {
         type: 'text' as const,
         value: '会话目录不存在。'
       };
     }
 
-    const files = getCachedDirEntries(SESSION_DIR)
+    const files = getCachedDirEntries(getSessionDir())
       ?.filter(f => f.endsWith('.json')) ?? []
-      .sort((a, b) => fs.statSync(path.join(SESSION_DIR, b)).mtime.getTime() -
-                     fs.statSync(path.join(SESSION_DIR, a)).mtime.getTime());
+      .sort((a, b) => fs.statSync(path.join(getSessionDir(), b)).mtime.getTime() -
+                     fs.statSync(path.join(getSessionDir(), a)).mtime.getTime());
 
     if (files.length === 0) {
       return {
@@ -107,7 +108,7 @@ async function listSessions(): Promise<ReturnType<typeof call>> {
 
     const sessions: SessionInfo[] = [];
     for (const file of files.slice(0, 20)) {
-      const filePath = path.join(SESSION_DIR, file);
+      const filePath = path.join(getSessionDir(), file);
       try {
         const content = fs.readFileSync(filePath, 'utf-8');
         const data = JSON.parse(content);
@@ -153,21 +154,21 @@ async function listSessions(): Promise<ReturnType<typeof call>> {
 
 async function showStats(): Promise<ReturnType<typeof call>> {
   try {
-    if (!fs.existsSync(SESSION_DIR)) {
+    if (!fs.existsSync(getSessionDir())) {
       return {
         type: 'text' as const,
         value: '会话目录不存在。'
       };
     }
 
-    const files = getCachedDirEntries(SESSION_DIR)?.filter(f => f.endsWith('.json')) ?? [];
+    const files = getCachedDirEntries(getSessionDir())?.filter(f => f.endsWith('.json')) ?? [];
     let totalSize = 0;
     let totalMessages = 0;
     let emptyCount = 0;
     const sessionsByDate: Record<string, number> = {};
 
     for (const file of files) {
-      const filePath = path.join(SESSION_DIR, file);
+      const filePath = path.join(getSessionDir(), file);
       try {
         const stats = fs.statSync(filePath);
         totalSize += stats.size;
@@ -236,18 +237,18 @@ async function searchSessions(keyword: string): Promise<ReturnType<typeof call>>
       };
     }
 
-    if (!fs.existsSync(SESSION_DIR)) {
+    if (!fs.existsSync(getSessionDir())) {
       return {
         type: 'text' as const,
         value: '会话目录不存在。'
       };
     }
 
-    const files = getCachedDirEntries(SESSION_DIR)?.filter(f => f.endsWith('.json')) ?? [];
+    const files = getCachedDirEntries(getSessionDir())?.filter(f => f.endsWith('.json')) ?? [];
     const results: Array<{id: string, name: string, match: string}> = [];
 
     for (const file of files.slice(0, 50)) {
-      const filePath = path.join(SESSION_DIR, file);
+      const filePath = path.join(getSessionDir(), file);
       try {
         const content = fs.readFileSync(filePath, 'utf-8');
         const data = JSON.parse(content);
@@ -315,18 +316,18 @@ async function searchSessions(keyword: string): Promise<ReturnType<typeof call>>
 
 async function findEmptySessions(): Promise<ReturnType<typeof call>> {
   try {
-    if (!fs.existsSync(SESSION_DIR)) {
+    if (!fs.existsSync(getSessionDir())) {
       return {
         type: 'text' as const,
         value: '会话目录不存在。'
       };
     }
 
-    const files = getCachedDirEntries(SESSION_DIR)?.filter(f => f.endsWith('.json')) ?? [];
+    const files = getCachedDirEntries(getSessionDir())?.filter(f => f.endsWith('.json')) ?? [];
     const emptySessions: Array<{id: string, name: string, size: number, mtime: Date}> = [];
 
     for (const file of files) {
-      const filePath = path.join(SESSION_DIR, file);
+      const filePath = path.join(getSessionDir(), file);
       try {
         const content = fs.readFileSync(filePath, 'utf-8');
         const data = JSON.parse(content);
@@ -380,19 +381,19 @@ async function findEmptySessions(): Promise<ReturnType<typeof call>> {
 
 async function cleanupSessions(): Promise<ReturnType<typeof call>> {
   try {
-    if (!fs.existsSync(SESSION_DIR)) {
+    if (!fs.existsSync(getSessionDir())) {
       return {
         type: 'text' as const,
         value: '会话目录不存在。'
       };
     }
 
-    const files = getCachedDirEntries(SESSION_DIR)?.filter(f => f.endsWith('.json')) ?? [];
+    const files = getCachedDirEntries(getSessionDir())?.filter(f => f.endsWith('.json')) ?? [];
     let deletedCount = 0;
     let errorCount = 0;
 
     for (const file of files) {
-      const filePath = path.join(SESSION_DIR, file);
+      const filePath = path.join(getSessionDir(), file);
       try {
         const content = fs.readFileSync(filePath, 'utf-8');
         const data = JSON.parse(content);
@@ -448,12 +449,12 @@ async function restoreSession(sessionId: string): Promise<ReturnType<typeof call
     }
 
     const sessionFile = sessionId.endsWith('.json') ? sessionId : `${sessionId}.json`;
-    const filePath = path.join(SESSION_DIR, sessionFile);
+    const filePath = path.join(getSessionDir(), sessionFile);
 
     if (!fs.existsSync(filePath)) {
       // 尝试匹配部分ID
-      const files = fs.existsSync(SESSION_DIR) ?
-        (getCachedDirEntries(SESSION_DIR)?.filter(f => f.endsWith('.json') && f.includes(sessionId)) ?? []) : [];
+      const files = fs.existsSync(getSessionDir()) ?
+        (getCachedDirEntries(getSessionDir())?.filter(f => f.endsWith('.json') && f.includes(sessionId)) ?? []) : [];
 
       if (files.length === 0) {
         return {
