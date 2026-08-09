@@ -1,5 +1,6 @@
 import type { Command } from '../../commands.js'
 import type { LocalCommandCall } from '../../types/command.js'
+import { readFileSync } from 'fs'
 
 // ============================================================================
 // Types
@@ -506,7 +507,7 @@ export const call: LocalCommandCall = async (args) => {
   let code = ''
   if (filePath) {
     try {
-      code = await Bun.file(filePath).text()
+      code = readFileSync(filePath, 'utf-8')
     } catch {
       return {
         type: 'text',

@@ -3,15 +3,19 @@ import { writeFileSync, rmSync, existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
 import { call } from '../../commands/pair/index.js'
 
-const TMP_DIR = 'C:\\Windows\\Temp\\doge-pair-test'
+const TMP_DIR = join(process.cwd(), '.tmp', 'doge-pair-test')
 
 beforeEach(() => {
-  if (existsSync(TMP_DIR)) rmSync(TMP_DIR, { recursive: true, force: true })
+  if (existsSync(TMP_DIR)) {
+    try { rmSync(TMP_DIR, { recursive: true, force: true }) } catch { /* ignore */ }
+  }
   mkdirSync(TMP_DIR, { recursive: true })
 })
 
 afterEach(() => {
-  if (existsSync(TMP_DIR)) rmSync(TMP_DIR, { recursive: true, force: true })
+  if (existsSync(TMP_DIR)) {
+    try { rmSync(TMP_DIR, { recursive: true, force: true }) } catch { /* ignore */ }
+  }
 })
 
 function createTmpFile(name: string, content: string): string {
