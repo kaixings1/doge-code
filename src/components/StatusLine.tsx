@@ -84,6 +84,8 @@ function buildStatusLineCommandInput(permissionMode: PermissionMode, exceeds200k
     currentSessionTotal: dogeConfig.tokens.currentSessionTotal,
     jsonSentBytes: dogeConfig.tokens.jsonSentBytes,
     jsonReceivedBytes: dogeConfig.tokens.jsonReceivedBytes,
+    cacheRead: dogeConfig.tokens.cacheRead,
+    cacheCreation: dogeConfig.tokens.cacheCreation,
   } : undefined;
 
   return {

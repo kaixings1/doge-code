@@ -5,6 +5,11 @@
 - `wshobson/agents` (37k★, 804 代理) ✅  
 - `VoltAgent/awesome-claude-code-subagents` (22k★) ✅
 - `jnMetaCode/agency-agents-zh` (15k★, 266 中文代理) ✅
+- `Anthropic-Cybersecurity-Skills` — 159 个安全技能（157 空目录无内容，忽略）✅ 2026-08-09
+- `TrailOfBits/garak` plugins — 39 个插件整目录 → `.claude/plugins/` ✅ 2026-08-09
+- `alirezarezvani/claude-skills` 部分 — .NET 35 技能 + 6 agents → `skills_backup/` + `agents/` ✅ 2026-08-09
+- `Jeffallan/awesome-claude-skills` — 66 技能整目录（含 references）→ `skills_backup/` ✅ 2026-08-09
+- `scientific-skill-library` — 139 技能整目录 → `skills_backup/` ✅ 2026-08-09
 
 ## 🔴 高优先级（待下载）
 1. `VoltAgent/awesome-agent-skills` (26k★) — 1000+ 代理技能
