@@ -247,7 +247,7 @@ export class AutoFixLoop {
    */
   maybeRun(
     results: Array<{ toolUseId: string; success: boolean; output?: unknown; error?: string }>,
-  ): Array<{ role: 'tool'; toolUseId: string; content: string }> {
+  ): Array<{ role: 'user'; content: string }> {
     if (!this.config.enabled) return []
     if (this.currentIteration >= this.config.maxIterations) return []
 
@@ -274,7 +274,7 @@ export class AutoFixLoop {
     }
 
     this.currentIteration++
-    const injectedMessages: Array<{ role: 'tool'; toolUseId: string; content: string }> = []
+    const injectedMessages: Array<{ role: 'user'; content: string }> = []
 
     this.config.onEvent?.({ type: 'autofix_start', editedFiles })
 
@@ -285,8 +285,7 @@ export class AutoFixLoop {
         hasErrors: true,
       })
       injectedMessages.push({
-        role: 'tool',
-        toolUseId: `autofix_validation_${this.currentIteration}`,
+        role: 'user',
         content: `[Auto-Fix Loop] 验证发现问题（轮次 ${this.currentIteration}/${this.config.maxIterations}）:\n${allErrors.slice(0, 10).map(e => e.message).join('\n')}\n\n请修复以上错误。`,
       })
     } else {
@@ -303,6 +302,8 @@ export class AutoFixLoop {
   /** 重置轮次计数（新任务开始时调用） */
   reset(): void {
     this.currentIteration = 0
+    this.firstRoundErrorFiles.clear()
+    this.firstRoundErrorCodes.clear()
   }
 
   /** 从所有工具输出中提取被编辑的文件路径 */
