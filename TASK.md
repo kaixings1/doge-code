@@ -51,6 +51,13 @@ _无_
 
 **总计**: 41-58 小时
 
+### 🟢 Phase 6: ROADMAP 中长期项（桌面端）
+- [x] 第一跳：智能上下文工作流（1-2 天）— useWorkflowMode + usePreAnalysis + App.tsx 自动面板切换
+- [x] 第二跳：预测性 AI 助手（3-5 天）— usePreAnalysis 静态分析 + streamProcessor preAnalysis 注入
+- [x] 第三跳：操作快照 + 一键回滚（5-7 天）— toolExecutor takeBeforeSnapshot/rollbackTool + OperationHistory 组件
+
+**总计（含 Phase 6）**: 56-67 小时
+
 ## 参考文档
 
 - `TODO_feature_absorption_plan_v2.md` — 详细计划
