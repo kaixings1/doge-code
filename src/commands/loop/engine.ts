@@ -148,7 +148,12 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
 
     // 如果检查点没有恢复任务，则进行初始分解（B1 任务规划器：DAG 带依赖）
     if (state.subTasks.length === 0) {
-      state.subTasks = decomposeToDag(goal)
+      // handlesOwnExecution 策略（如 AutoGPT）有自己的图管理，优先使用策略的 decompose()
+      if (strategy.handlesOwnExecution?.()) {
+        state.subTasks = strategy.decompose(goal)
+      } else {
+        state.subTasks = decomposeToDag(goal)
+      }
       emit({ type: 'decomposition', subTasks: state.subTasks })
       emit({ type: 'plan', subTasks: state.subTasks, hasCycle: hasCycle(state.subTasks) })
     }
