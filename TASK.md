@@ -38,19 +38,16 @@ _无_
 - [x] 3.3 减少 TODO/FIXME（2-3h）— 审计结果：src/ 中 0 个 TODO/FIXME ✓
 
 ### 🟢 Phase 4: 性能优化
-- [x] 4.1 消除重复扫描（1-2h）— 创建 scanCache.ts + 应用到 3 个命令 ✓
-  - complete/index.ts — 文件路径补全缓存
-  - backfill-sessions/index.ts — 会话目录扫描缓存（6 次 → 1 次）
-  - diagram/index.ts — 项目目录扫描缓存
-- [x] 4.2 异步 I/O（2-3h）— CLI 命令为单次执行模型，同步 I/O 无并发压力，skip
-- [x] 4.3 正则优化（1h）— 审计结果：batch-han 循环中 RegExp 为翻译必要行为，无需优化 ✓
+- [x] 4.1 消除重复扫描（1-2h）— scanDirectory 单次遍历返回 issues + filesScanned ✓
+- [x] 4.2 异步 I/O（2-3h）— health-score 改为 async fs/promises（readFile/readdir/statAsync）✓
+- [x] 4.3 正则优化（1h）— 移除 long-function/god-method 低效正则，保留 detectLongFunctions 精确检测 ✓
 
 ### 🔵 Phase 5: 新特性吸收
+- [x] 5.4 上下文感知搜索（2-3h）— memory-search 的 semanticSearch 已支持同义词扩展
+- [x] 5.5 智能错误修复（2-3h）— errors 命令增加 suggestFix() + applyFixToFile()，支持 var→const/console.log 注释/eval 替代等 ✓
 - [ ] 5.1 实时协作编辑（5-6h）
 - [ ] 5.2 智能代码解释（3-4h）
 - [ ] 5.3 自动化重构建议（3-4h）
-- [ ] 5.4 上下文感知搜索（2-3h）
-- [ ] 5.5 智能错误修复（2-3h）
 
 **总计**: 41-58 小时
 
