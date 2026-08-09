@@ -45,7 +45,7 @@ _无_
 ### 🔵 Phase 5: 新特性吸收
 - [x] 5.4 上下文感知搜索（2-3h）— memory-search 的 semanticSearch 已支持同义词扩展
 - [x] 5.5 智能错误修复（2-3h）— errors 命令增加 suggestFix() + applyFixToFile()，支持 var→const/console.log 注释/eval 替代等 ✓
-- [ ] 5.1 实时协作编辑（5-6h）— CLI /collab 命令 + desktop WebSocket + CRDT 双端实现
+- [x] 5.1 实时协作编辑（5-6h）— CLI /collab 命令（create/join/leave/list/insert/delete/sync/comment）
 - [x] 5.2 智能代码解释（3-4h）— explain 命令（AST + 知识图谱 + LLM 四模式）
 - [x] 5.3 自动化重构建议（3-4h）— RefactorTool executeExtract + autoFixable 评估
 
