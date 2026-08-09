@@ -43,7 +43,7 @@ export class QueryStateMachine {
     this.transitions.set("should_continue", ["responding", "done", "aborted_by_user", "crashed"]);
     this.transitions.set("done", ["responding", "aborted_by_user"]);
     this.transitions.set("crashed", ["responding", "aborted_by_user"]);
-    this.transitions.set("aborted_by_user", ["responding"]);
+    this.transitions.set("aborted_by_user", ["responding", "aborted_by_user"]);
   }
 
   private setupGuards(): void {

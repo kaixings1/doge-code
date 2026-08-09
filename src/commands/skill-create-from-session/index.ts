@@ -250,3 +250,18 @@ export const call: LocalCommandCall = async (args, _context): Promise<LocalComma
     value: resultLines.join('\n'),
   }
 }
+
+const skillCreateFromSession: Command = {
+  type: 'local',
+  name: 'skill-create-from-session',
+  description: '从当前会话中提取可重复的工作流，创建为可复用技能',
+  aliases: ['skill-from-session'],
+  isEnabled: () => {
+    const { getIsNonInteractiveSession } = require('../../bootstrap/state.js')
+    return !getIsNonInteractiveSession()
+  },
+  supportsNonInteractive: true,
+  load: () => Promise.resolve({ call }),
+}
+
+export default skillCreateFromSession

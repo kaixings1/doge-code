@@ -129,10 +129,9 @@ export class ResponseHandler {
   private aggregateContent(
     chunks: { type: string; text?: string }[],
   ): string {
-    return chunks
-      .filter((c) => c.type === "text" && c.text != null)
-      .map((c) => c.text as string)
-      .join("");
+    const textChunks = chunks.filter((c) => c.type === "text" && c.text != null)
+    console.log(`[RESP-HANDLER] aggregateContent: totalChunks=${chunks.length} textChunks=${textChunks.length} totalLen=${textChunks.reduce((s, c) => s + (c.text?.length || 0), 0)}`)
+    return textChunks.map((c) => c.text as string).join("")
   }
 
   private checkNeedsUserInput(content: unknown, toolCalls: ToolCall[]): boolean {

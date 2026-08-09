@@ -180,19 +180,23 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
     }
 
     // ─── 单行覆盖渲染：只保留一条进度消息 ───
-    // 每次更新时替换最后一条 system 消息，确保始终只有一条进度。
+    // system 消息经 normalizeMessages 后 uuid 不变，用固定 uuid 精确替换
+    const PROGRESS_UUID = `loop-progress-${Date.now()}`
     const pushProgress = (text: string) => {
       if (!context.setMessages) return
       context.setMessages(prev => {
-        // 找最后一条 system 消息，替换它；找不到就追加
-        const lastSystemIdx = [...prev].reverse().findIndex(m => m.type === 'system')
-        if (lastSystemIdx >= 0) {
-          const idx = prev.length - 1 - lastSystemIdx
-          const next = [...prev]
-          next[idx] = { ...next[idx], content: text, date: new Date().toISOString() }
-          return next
+        // 查找是否已有进度消息
+        const existing = prev.find(m => m.type === 'system' && m.uuid === PROGRESS_UUID)
+        if (existing) {
+          // 替换已有进度消息的内容
+          return prev.map(m =>
+            m.type === 'system' && m.uuid === PROGRESS_UUID
+              ? { ...m, content: text, date: new Date().toISOString() }
+              : m
+          )
         }
-        return [...prev, { type: 'system' as const, content: text, date: new Date().toISOString() }]
+        // 追加新的进度消息
+        return [...prev, { type: 'system' as const, content: text, date: new Date().toISOString(), uuid: PROGRESS_UUID }]
       })
     }
 

@@ -1,0 +1,12 @@
+# 审计配置
+scan:
+  extensions: [".py", ".js", ".sh", ".md"]
+  exclude_dirs: [".git", "__pycache__", "node_modules"]
+  
+tools:
+  - path: "./tools"
+    type: "cli"
+    
+output:
+  format: ["markdown", "json"]
+  path: "./output/audit_report"

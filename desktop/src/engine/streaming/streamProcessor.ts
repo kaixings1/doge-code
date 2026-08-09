@@ -161,6 +161,13 @@ export class StreamProcessor {
     if (eventType === 'content_block_start' || eventType === 'content_block_stop' || eventType === 'message_delta' || eventType === 'message_start') {
       spLog(`[STREAM-PROC] event type=${eventType}`, JSON.stringify(event).slice(0, 400))
     }
+    if (eventType === 'message_start') {
+      console.log(`[STREAM-PROC] === NEW MESSAGE START ===`)
+    }
+    if (eventType === 'message_stop') {
+      const totalTextLen = this.buffer.filter(c => c.type === 'text').reduce((s, c) => s + (c.text?.length || 0), 0)
+      console.log(`[STREAM-PROC] === MESSAGE STOP === bufferChunks=${this.buffer.length} totalTextLen=${totalTextLen}`)
+    }
     switch (eventType) {
       case "message_start":
         this.buffer = []
@@ -208,6 +215,7 @@ export class StreamProcessor {
     if (delta.type === "text_delta") {
       const chunk = { type: "text", text: delta.text, index: event.index }
       this.buffer.push(chunk)
+      console.log(`[STREAM-PROC] text_delta idx=${event.index} len=${delta.text.length} text="${delta.text.slice(0, 50)}"`)
       return { type: "content_block_delta", chunk }
     }
     if (delta.type === "input_json_delta") {
