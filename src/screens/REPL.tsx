@@ -783,7 +783,7 @@ export function REPL({
 
   // 开始后台插件安装
 
-  // 安全：此代码保证仅在用户确认“信任此文件夹”对话框后运行。信任对话框在 cli.tsx（约第 387 行）中显示，在 REPL 组件渲染之前。该对话框会阻止执行，直到用户接受，然后才挂载 REPL 组件并运行此效果。
+  // 安全：此代码保证仅在用户确认”信任此文件夹”对话框后运行。信任对话框在 cli.tsx（约第 387 行）中显示，在 REPL 组件渲染之前。该对话框会阻止执行，直到用户接受，然后才挂载 REPL 组件并运行此效果。
   // 这确保来自仓库和用户设置的插件安装仅在用户明确同意信任当前工作目录后发生。
   useEffect(() => {
     if (isRemoteSession) return;
@@ -4793,6 +4793,8 @@ export function REPL({
             </Box>} />
       </MCPConnectionManager>
     </KeybindingSetup>;
+  logForDebugging('[REPL:DEBUG] REPL render complete, about to return JSX')
+  logForDebugging('[REPL:DEBUG] REPL render complete, about to return JSX')
   const stabilizedReturn = <ReplRuntimeBoundary>{mainReturn}</ReplRuntimeBoundary>;
   if (isFullscreenEnvEnabled()) {
     return <AlternateScreen mouseTracking={isMouseTrackingEnabled()}>
