@@ -198,22 +198,26 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           }
         : void 0,
       onProgress: (event: { type: string; [k: string]: unknown }) => {
-        // 仅在对话模式下记录进度，避免多次调用 onDone 导致 Promise 提前 resolve
+        // 关键事件实时通知用户，其他事件静默更新 state
         switch (event.type) {
           case 'loop_start':
             progressState.phase = 'planning'
+            onDone(formatStatusLine(progressState), { display: 'system' })
             break
           case 'decomposition':
             progressState.phase = 'executing'
+            onDone(formatStatusLine(progressState), { display: 'system' })
             break
           case 'iteration_start':
             progressState.phase = 'executing'
             progressState.currentIteration = event.iteration as number
             progressState.maxIterations = (event.maxIterations as number) ?? parsed.maxIterations
             progressState.fileCount = fileCount
+            onDone(formatStatusLine(progressState), { display: 'system' })
             break
           case 'task_start':
             progressState.currentTask = (event.description as string) ?? ''
+            onDone(formatStatusLine(progressState), { display: 'system' })
             break
           case 'task_end': {
             const output = (event.output as string) ?? ''
@@ -232,22 +236,50 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
               newFiles.forEach(fp => { createdFiles.push(fp); fileCount++ })
               progressState.fileCount = fileCount
             }
+            onDone(formatStatusLine(progressState), { display: 'system' })
             break
           }
           case 'task_failed':
             progressState.phase = 'error'
             progressState.currentTask = `失败: ${event.error?.toString().slice(0, 30)}`
+            onDone(formatStatusLine(progressState), { display: 'system' })
             break
           case 'evaluation':
             if (event.achieved) {
               progressState.phase = 'verifying'
+              onDone(formatStatusLine(progressState), { display: 'system' })
             }
             break
+          case 'loop_end':
+            progressState.phase = 'done'
+            progressState.fileCount = fileCount
+            onDone(formatStatusLine(progressState), { display: 'user' })
+            break
+          case 'plan':
+            onDone(formatPlan(event.subTasks as SubTask[]), { display: 'system' })
+            break
+          case 'snapshot': {
+            const actionText =
+              event.action === 'create' ? '已创建快照' :
+              event.action === 'restore' ? '已回滚快照' :
+              event.action === 'cleanup' ? '已清理快照' : '跳过快照'
+            onDone(`📸 [快照] ${actionText} (${event.snapshotId})`, { display: 'system' })
+            break
+          }
           case 'repair':
             progressState.currentTask = `🔧 自动修复 (第 ${event.attempt} 次)`
+            onDone(formatStatusLine(progressState), { display: 'system' })
             break
           case 'progress':
             progressState.fileCount = fileCount
+            onDone(formatStatusLine(progressState), { display: 'system' })
+            break
+          case 'ask':
+            onDone(`\n${event.question as string}`, { display: 'system' })
+            break
+          case 'error':
+            progressState.phase = 'error'
+            onDone(formatStatusLine(progressState), { display: 'system' })
             break
         }
       },
@@ -267,22 +299,6 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       ),
       formatSubTaskSummary(result.subTasks),
     ]
-
-    if (createdFiles.length > 0) {
-      const uniqueFiles = [...new Set(createdFiles)]
-      lines.push('')
-      lines.push(`📁 创建了 ${uniqueFiles.length} 个文件:`)
-      for (const f of uniqueFiles.slice(0, 20)) { lines.push(`   • ${f}`) }
-      if (uniqueFiles.length > 20) { lines.push(`   ... 还有 ${uniqueFiles.length - 20} 个文件`) }
-    }
-
-    lines.push('')
-    lines.push('子任务:')
-    result.subTasks.forEach((t, i) => {
-      const icon = t.status === 'completed' ? '✅' : t.status === 'failed' ? '❌' : '⏳'
-      const resultLen = t.result?.length ?? 0
-      lines.push(`  ${i + 1}. ${icon} ${t.description}${resultLen > 0 ? ` (${resultLen}字符)` : ''}`)
-    })
 
     onDone(lines.join('\n'))
     return null
