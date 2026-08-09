@@ -30,6 +30,7 @@ import { getStartupPerfLogPath, isDetailedProfilingEnabled } from '../../utils/s
 import { EmergencyTip } from './EmergencyTip.js';
 import { VoiceModeNotice } from './VoiceModeNotice.js';
 import { KirakiraNotice } from './KirakiraNotice.js';
+import { StatusInfoPanel } from './StatusInfoPanel.js';
 import { feature } from 'bun:bundle';
 
 // Conditional require so ChannelsNotice.tsx tree-shakes when both flags are
@@ -418,13 +419,16 @@ export function LogoV2() {
   } else {
     t21 = $[52];
   }
-  const t22 = <Box flexDirection="column" alignItems="center">{t20}{t21}</Box>;
+  const t22 = <Box flexDirection="column" alignItems="center" gap={1}>{t20}{t21}</Box>;
+  // 水平模式：左侧只放 ASCII 艺术 + 欢迎语，右侧放状态信息
   let t23;
-  if ($[56] !== leftWidth || $[57] !== t18 || $[58] !== t22) {
-    t23 = <Box flexDirection="column" width={leftWidth} justifyContent="space-between" alignItems="center" minHeight={10}>{t18}{t19}{t22}</Box>;
+  if ($[56] !== leftWidth || $[57] !== t18 || $[58] !== layoutMode) {
+    t23 = layoutMode === "horizontal"
+      ? <Box flexDirection="column" width={leftWidth} justifyContent="flex-start" alignItems="center">{t19}</Box>
+      : <Box flexDirection="column" width={leftWidth} justifyContent="flex-start" alignItems="center" gap={1}>{t18}{t19}{t22}</Box>;
     $[56] = leftWidth;
     $[57] = t18;
-    $[58] = t22;
+    $[58] = layoutMode;
     $[59] = t23;
   } else {
     t23 = $[59];
@@ -437,8 +441,12 @@ export function LogoV2() {
   } else {
     t24 = $[61];
   }
-  const t25 = layoutMode === "horizontal" && <FeedColumn feeds={rightFeeds} maxWidth={rightWidth} />;
-  const t25_0 = layoutMode === "horizontal" && <Box flexDirection="column" width={rightColumnWidth} minHeight={10} justifyContent={fullUpdateNotice ? "space-between" : "flex-start"}>{t25}{fullUpdateNotice && <Box flexDirection="column" width={rightColumnWidth}><Divider color="claude" width={rightColumnWidth} /><Text color="warning">✦ {fullUpdateNotice}</Text></Box>}</Box>;
+  const t25 = layoutMode === "horizontal"
+    ? <StatusInfoPanel maxWidth={rightColumnWidth} />
+    : <FeedColumn feeds={rightFeeds} maxWidth={rightWidth} />;
+  const t25_0 = layoutMode === "horizontal"
+    ? <Box flexDirection="column" width={rightColumnWidth} minHeight={10} justifyContent="flex-start">{t25}</Box>
+    : <Box flexDirection="column" width={rightColumnWidth} minHeight={10} justifyContent={fullUpdateNotice ? "space-between" : "flex-start"}>{t25}{fullUpdateNotice && <Box flexDirection="column" width={rightColumnWidth}><Divider color="claude" width={rightColumnWidth} /><Text color="warning">✦ {fullUpdateNotice}</Text></Box>}</Box>;
   let t26;
   if ($[62] !== T2 || $[63] !== t15 || $[64] !== t23 || $[65] !== t24 || $[66] !== t25_0) {
     t26 = <T2 flexDirection={t15} paddingX={t16} gap={t17}>{t23}{t24}{t25_0}</T2>;
