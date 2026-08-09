@@ -404,7 +404,7 @@ const DEFAULT_CATEGORIES = [
 
 async function scanFile(filePath: string, categories: string[] = []): Promise<CategoryIssues> {
   const absPath = resolve(filePath)
-  if (!existsSync(absPath)) {
+  if (!(await exists(absPath))) {
     return {
       security: [],
       complexity: [],

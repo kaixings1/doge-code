@@ -19,6 +19,7 @@ interface ErrorEntry {
   fixAttempted: boolean
   fixSuccess: boolean
   source: 'scan' | 'linter' | 'test' | 'manual'
+  suggestedFix?: string
 }
 
 interface ErrorPattern {
@@ -98,11 +99,12 @@ function scanForErrors(dir: string, patterns?: ErrorPattern[]): ErrorEntry[] {
                 try {
                   const re = new RegExp(pattern.pattern)
                   if (re.test(line.trim())) {
+                    const fix = suggestFix(pattern, lines[i])
                     errors.push({
                       id: 'err-' + Date.now().toString(36) + '-' + i + '-' + Math.random().toString(36).slice(2, 6),
                       type: pattern.type, file: fp, line: i + 1, message: pattern.message,
                       timestamp: new Date().toISOString(), resolved: false,
-                      fixAttempted: false, fixSuccess: false, source: 'scan',
+                      fixAttempted: false, fixSuccess: false, source: 'scan', suggestedFix: fix,
                     })
                   }
                 } catch { /* ignore bad regex */ }
@@ -118,6 +120,64 @@ function scanForErrors(dir: string, patterns?: ErrorPattern[]): ErrorEntry[] {
   return errors
 }
 
+function suggestFix(pattern: ErrorPattern, line: string): string {
+  const trimmed = line.trim()
+  if (pattern.pattern === 'console.log' || pattern.pattern === 'console\\.(log|debug|info|warn|error)') {
+    return `// TODO: remove or replace with logger\n${trimmed}`
+  }
+  if (pattern.pattern === ': any') {
+    return trimmed.replace(/: any/, ': unknown') + ' // replace any with specific type'
+  }
+  if (pattern.pattern === 'as any') {
+    return trimmed.replace(/as any/, 'as unknown as <type>') + ' // add proper type guard'
+  }
+  if (pattern.pattern === 'catch.*{ }') {
+    return trimmed.replace(/catch\s*\([^)]*\)\s*\{\s*\}/, 'catch (err) { console.error(err); }')
+  }
+  if (pattern.pattern === 'eval(') {
+    return trimmed.replace(/eval\s*\(/, 'JSON.parse(') + ' // or use a safe parser'
+  }
+  if (pattern.pattern === 'innerHTML') {
+    return trimmed.replace(/innerHTML\s*=/, 'textContent =') + ' // prevent XSS'
+  }
+  if (pattern.pattern === 'var\\s+') {
+    return trimmed.replace(/var/, 'const') + ' // use const instead of var'
+  }
+  if (pattern.pattern === '\\.forEach\\(.*push\\(') {
+    return '// Consider using .map() or .filter() instead of forEach + push'
+  }
+  if (pattern.pattern === 'JSON\\.parse\\(JSON\\.stringify\\(') {
+    return trimmed.replace(/JSON\.parse\(JSON\.stringify\(/, 'structuredClone(') + ') // use structuredClone for deep clone'
+  }
+  return pattern.fix
+}
+
+function applyFixToFile(filePath: string, lineNumber: number, suggestedFix: string): { success: boolean; message: string } {
+  try {
+    const content = readFileSync(filePath, 'utf-8')
+    const lines = content.split('\n')
+    const idx = lineNumber - 1
+    if (idx < 0 || idx >= lines.length) {
+      return { success: false, message: 'Line number out of range' }
+    }
+    const original = lines[idx]
+    // Only auto-fix safe patterns: var → const, console.log comment, etc.
+    const trimmed = original.trim()
+    if (/^\s*var\s+/.test(trimmed)) {
+      lines[idx] = original.replace(/var/, 'const')
+    } else if (/console\.(log|debug|info)\(/.test(trimmed)) {
+      lines[idx] = '// [auto-removed] ' + trimmed
+    } else {
+      // For other patterns, insert suggestion as comment above the line
+      lines[idx] = '// [suggested fix] ' + suggestedFix + '\n' + original
+    }
+    writeFileSync(filePath, lines.join('\n'), 'utf-8')
+    return { success: true, message: `Applied fix at line ${lineNumber}` }
+  } catch (err) {
+    return { success: false, message: err instanceof Error ? err.message : String(err) }
+  }
+}
+
 export const call: LocalCommandCall = async (args) => {
   const s = (args ?? '').trim()
   const parts = s.split(/\s+/)
@@ -130,7 +190,9 @@ export const call: LocalCommandCall = async (args) => {
     const lines = ['Error Log (' + unresolved.length + ' unresolved):', '================================', '']
     unresolved.slice(0, 20).forEach(e => {
       const icon = e.type === 'syntax' ? '[SYN]' : e.type === 'runtime' ? '[RUN]' : e.type === 'logic' ? '[LOG]' : e.type === 'security' ? '[SEC]' : e.type === 'performance' ? '[PRF]' : '[WRN]'
-      lines.push(icon + ' ' + e.file + ':' + e.line + ' - ' + e.message + ' (' + e.source + ')')
+      lines.push(icon + ' ' + e.file + ':' + e.line + ' - ' + e.message)
+      if (e.suggestedFix) lines.push('     → Fix: ' + e.suggestedFix)
+      lines.push('     (' + e.source + ' | id: ' + e.id.slice(0, 12) + ')')
     })
     if (unresolved.length > 20) lines.push('... and ' + (unresolved.length - 20) + ' more')
     return { type: 'text', value: lines.join('\n') }
@@ -169,11 +231,16 @@ export const call: LocalCommandCall = async (args) => {
     if (!id) return { type: 'text', value: 'Usage: /errors attempt-fix <id>' }
     const err = errors.find(e => e.id === id || e.id.startsWith(id))
     if (!err) return { type: 'text', value: 'Not found: ' + id }
+    const result = applyFixToFile(err.file, err.line, err.suggestedFix || err.message)
     err.fixAttempted = true
-    err.fixSuccess = true
-    err.resolved = true
+    if (result.success) {
+      err.fixSuccess = true
+      err.resolved = true
+      saveErrors(errors)
+      return { type: 'text', value: '[OK] Auto-fixed: ' + err.message + '\n' + result.message }
+    }
     saveErrors(errors)
-    return { type: 'text', value: '[OK] Auto-fixed: ' + err.message }
+    return { type: 'text', value: '[WARN] Fix suggested but not applied: ' + err.message + '\nSuggestion: ' + (err.suggestedFix || 'N/A') + '\nReason: ' + result.message }
   }
 
   if (cmd === 'clear') {
