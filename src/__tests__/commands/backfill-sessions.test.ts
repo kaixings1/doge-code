@@ -1,13 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { existsSync, mkdirSync, rmSync, writeFileSync } from 'fs'
+import { existsSync, mkdirSync, rmSync, writeFileSync, readdirSync } from 'fs'
 import { join } from 'path'
-
-const mockCache = new Map<string, string[]>()
-vi.mock('../../utils/dirCache.js', () => ({
-  getCachedDirEntries: (dir: string) => mockCache.get(dir),
-  setCachedDirEntries: (dir: string, entries: string[]) => mockCache.set(dir, entries),
-  clearDirCache: () => mockCache.clear(),
-}))
+import { getCachedDirEntries, setCachedDirEntries, clearDirCache } from '../../utils/dirCache.js'
 
 const TMP_DIR = join(process.cwd(), '.tmp', 'doge-backfill-test')
 const SESSION_DIR = join(TMP_DIR, '.doge', 'sessions')
@@ -15,7 +9,7 @@ const SESSION_DIR = join(TMP_DIR, '.doge', 'sessions')
 let call: (args: string) => Promise<{ type: string; value: string }>
 
 beforeEach(async () => {
-  mockCache.clear()
+  clearDirCache()
   if (existsSync(TMP_DIR)) rmSync(TMP_DIR, { recursive: true, force: true })
   mkdirSync(SESSION_DIR, { recursive: true })
   process.env.HOME = TMP_DIR
@@ -37,8 +31,7 @@ afterEach(() => {
 
 function setSessionCache() {
   if (existsSync(SESSION_DIR)) {
-    const { readdirSync } = require('fs')
-    mockCache.set(SESSION_DIR, readdirSync(SESSION_DIR))
+    setCachedDirEntries(SESSION_DIR, readdirSync(SESSION_DIR))
   }
 }
 

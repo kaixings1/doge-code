@@ -39,12 +39,9 @@ const { model, workspace, context_window, cost, base_url, preset_tokens, api_key
 
 const segments: string[] = [];
 
-// 当前目录（缩写）
+// 当前目录（完整路径）
 if (workspace?.current_dir) {
-  let dir = workspace.current_dir;
-  const parts = dir.replace(/\\/g, '/').split('/').filter(Boolean);
-  const last = parts[parts.length - 1] || '';
-  segments.push('\u{1F4C1} ' + (last.length > 12 ? last.slice(0, 10) + '\u2026' : last));
+  segments.push('\u{1F4C1} ' + workspace.current_dir);
 }
 
 // 模型
