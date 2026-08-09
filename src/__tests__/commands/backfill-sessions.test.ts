@@ -36,8 +36,7 @@ afterEach(() => {
 function setSessionCache() {
   if (existsSync(SESSION_DIR)) {
     const entries = require('fs').readdirSync(SESSION_DIR)
-    const { setCachedDirEntries } = require('../../utils/dirCache.js')
-    setCachedDirEntries(SESSION_DIR, entries)
+    mockCache.set(SESSION_DIR, entries)
   }
 }
 
