@@ -328,7 +328,7 @@ export function computeSliceStart(collapsed: ReadonlyArray<{
   // Refresh anchor from whatever lives at the current start — heals a
   // stale uuid after fallback and captures a new one after advancement.
   const msgAtStart = collapsed[start];
-  if (msgAtStart && (anchor?.uuid !== msgAtStart.uuid || anchor.idx !== start)) {
+  if (msgAtStart && (anchor?.uuid !== msgAtStart.uuid || anchor?.idx !== start)) {
     anchorRef.current = {
       uuid: msgAtStart.uuid,
       idx: start
