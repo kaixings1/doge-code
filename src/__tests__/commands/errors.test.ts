@@ -54,6 +54,7 @@ describe('errors call subcommands', () => {
   })
 
   it('list 无错误时应返回 OK', async () => {
+    await call('clear')
     const result = await call('list')
     expect(result.value).toContain('No unresolved')
   })
