@@ -331,7 +331,7 @@ function generateFKRelationships(dbPath: string): string {
 }
 
 /** 数据库统计信息 */
-async function generateStats(dbPath: string): Promise<string> {
+function generateStats(dbPath: string): string {
   try {
     const { Database } = require('bun:sqlite')
     const db = new Database(dbPath)
@@ -353,8 +353,7 @@ async function generateStats(dbPath: string): Promise<string> {
     // 获取数据库文件大小
     let fileSize = 0
     try {
-      const f = Bun.file(dbPath)
-      fileSize = (await f.size()) || 0
+      fileSize = Bun.file(dbPath).size
     } catch { /* ignore */ }
 
     const sizeStr = fileSize > 1024 * 1024
