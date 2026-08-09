@@ -179,6 +179,57 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       phase: 'idle',
     }
 
+    // ─── 单行覆盖渲染：维护一条进度消息，后续更新替换同一条 ───
+    const LOOP_PROGRESS_TAG = '__LOOP_PROGRESS__'
+    let progressMsgId: string | null = null
+    const pushProgress = (text: string) => {
+      if (!context.setMessages) return
+      const now = new Date().toISOString()
+      context.setMessages(prev => {
+        // 第一次发送：发送带 tag 的新消息
+        if (!progressMsgId) {
+          const msg = { type: 'system' as const, content: text, date: now, [LOOP_PROGRESS_TAG]: true }
+          progressMsgId = msg.uuid
+          return [...prev, msg]
+        }
+        // 后续：替换带 tag 的最后一条消息
+        return prev.map(m =>
+          m.type === 'system' && (m as Record<string, unknown>)[LOOP_PROGRESS_TAG]
+            ? { ...m, content: text, date: now }
+            : m
+        )
+      })
+    }
+
+    // ─── 自动 checkpoint： SIGINT 时保存进度 ───
+    const checkpointPath = parsed.checkpoint ?? void 0
+    const saveCheckpointNow = async () => {
+      if (!checkpointPath) return
+      try {
+        const { saveCheckpoint } = await import('./engine.js')
+        await saveCheckpoint(checkpointPath, {
+          strategy: strategy.name,
+          goal: goal.description,
+          subTasks: [],
+          iteration: progressState.currentIteration,
+          maxIterations: parsed.maxIterations,
+          savedAt: new Date().toISOString(),
+          createdFiles,
+        })
+        pushProgress(`⏸️ 用户中断 — 进度已保存到 ${checkpointPath}`)
+      } catch { /* ignore */ }
+    }
+
+    // 监听 SIGINT（Ctrl+C）
+    if (checkpointPath) {
+      try {
+        process.on('SIGINT', async () => {
+          await saveCheckpointNow()
+          process.exit(130)
+        })
+      } catch { /* ignore */ }
+    }
+
     const result = await executeLoop({
       strategy: strategy.name,
       goal,
@@ -186,7 +237,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       parallel: parsed.parallel,
       budgetMs: parsed.budget > 0 ? parsed.budget : void 0,
       verifyMode: parsed.verify !== 'none' ? parsed.verify as never : void 0,
-      checkpoint: parsed.checkpoint ?? void 0,
+      checkpoint: checkpointPath,
       report: parsed.report ?? void 0,
       snapshot: parsed.snapshot,
       autoRepair: parsed.autoRepair,
@@ -198,28 +249,25 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           }
         : void 0,
       onProgress: (event: { type: string; [k: string]: unknown }) => {
-        // 对话模式下直接通过 setMessages 追加进度（绕过队列，队列在 queryGuard 活跃时被阻塞）
-        const appendSystemMessage = (text: string) => {
-          context.appendSystemMessage?.({ type: 'system', content: text, date: new Date().toISOString() })
-        }
         switch (event.type) {
           case 'loop_start':
             progressState.phase = 'planning'
+            pushProgress(formatStatusLine(progressState))
             break
           case 'decomposition':
             progressState.phase = 'executing'
-            appendSystemMessage(formatStatusLine(progressState))
+            pushProgress(formatStatusLine(progressState))
             break
           case 'iteration_start':
             progressState.phase = 'executing'
             progressState.currentIteration = event.iteration as number
             progressState.maxIterations = (event.maxIterations as number) ?? parsed.maxIterations
             progressState.fileCount = fileCount
-            appendSystemMessage(formatStatusLine(progressState))
+            pushProgress(formatStatusLine(progressState))
             break
           case 'task_start':
             progressState.currentTask = (event.description as string) ?? ''
-            appendSystemMessage(formatStatusLine(progressState))
+            pushProgress(formatStatusLine(progressState))
             break
           case 'task_end': {
             const output = (event.output as string) ?? ''
@@ -238,31 +286,36 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
               newFiles.forEach(fp => { createdFiles.push(fp); fileCount++ })
               progressState.fileCount = fileCount
             }
-            appendSystemMessage(formatStatusLine(progressState))
+            pushProgress(formatStatusLine(progressState))
             break
           }
           case 'task_failed':
             progressState.phase = 'error'
             progressState.currentTask = `失败: ${event.error?.toString().slice(0, 30)}`
-            appendSystemMessage(formatStatusLine(progressState))
+            pushProgress(formatStatusLine(progressState))
             break
           case 'evaluation':
             if (event.achieved) {
               progressState.phase = 'verifying'
-              appendSystemMessage(formatStatusLine(progressState))
+              pushProgress(formatStatusLine(progressState))
             }
             break
           case 'repair':
             progressState.currentTask = `🔧 自动修复 (第 ${event.attempt} 次)`
-            appendSystemMessage(formatStatusLine(progressState))
+            pushProgress(formatStatusLine(progressState))
             break
           case 'progress':
             progressState.fileCount = fileCount
-            appendSystemMessage(formatStatusLine(progressState))
+            pushProgress(formatStatusLine(progressState))
             break
         }
       },
     })
+
+    // 清理 SIGINT 监听
+    if (sigintHandler) {
+      try { process.off('SIGINT', sigintHandler) } catch { /* ignore */ }
+    }
 
     if (parsed.json) {
       onDone(JSON.stringify(result, null, 2))
