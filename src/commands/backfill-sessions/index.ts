@@ -2,6 +2,7 @@
 import type { Command, LocalCommandCall } from '../../types/command.js';
 import fs from 'fs';
 import path from 'path';
+import { getCachedDirEntries } from '../../utils/dirCache.js';
 
 const SESSION_DIR = path.join(process.env.HOME || process.env.USERPROFILE || '.', '.doge', 'sessions');
 
@@ -92,8 +93,8 @@ async function listSessions(): Promise<ReturnType<typeof call>> {
       };
     }
 
-    const files = fs.readdirSync(SESSION_DIR)
-      .filter(f => f.endsWith('.json'))
+    const files = getCachedDirEntries(SESSION_DIR)
+      ?.filter(f => f.endsWith('.json')) ?? []
       .sort((a, b) => fs.statSync(path.join(SESSION_DIR, b)).mtime.getTime() -
                      fs.statSync(path.join(SESSION_DIR, a)).mtime.getTime());
 
@@ -159,7 +160,7 @@ async function showStats(): Promise<ReturnType<typeof call>> {
       };
     }
 
-    const files = fs.readdirSync(SESSION_DIR).filter(f => f.endsWith('.json'));
+    const files = getCachedDirEntries(SESSION_DIR)?.filter(f => f.endsWith('.json')) ?? [];
     let totalSize = 0;
     let totalMessages = 0;
     let emptyCount = 0;
@@ -242,7 +243,7 @@ async function searchSessions(keyword: string): Promise<ReturnType<typeof call>>
       };
     }
 
-    const files = fs.readdirSync(SESSION_DIR).filter(f => f.endsWith('.json'));
+    const files = getCachedDirEntries(SESSION_DIR)?.filter(f => f.endsWith('.json')) ?? [];
     const results: Array<{id: string, name: string, match: string}> = [];
 
     for (const file of files.slice(0, 50)) {
@@ -321,7 +322,7 @@ async function findEmptySessions(): Promise<ReturnType<typeof call>> {
       };
     }
 
-    const files = fs.readdirSync(SESSION_DIR).filter(f => f.endsWith('.json'));
+    const files = getCachedDirEntries(SESSION_DIR)?.filter(f => f.endsWith('.json')) ?? [];
     const emptySessions: Array<{id: string, name: string, size: number, mtime: Date}> = [];
 
     for (const file of files) {
@@ -386,7 +387,7 @@ async function cleanupSessions(): Promise<ReturnType<typeof call>> {
       };
     }
 
-    const files = fs.readdirSync(SESSION_DIR).filter(f => f.endsWith('.json'));
+    const files = getCachedDirEntries(SESSION_DIR)?.filter(f => f.endsWith('.json')) ?? [];
     let deletedCount = 0;
     let errorCount = 0;
 
@@ -452,7 +453,7 @@ async function restoreSession(sessionId: string): Promise<ReturnType<typeof call
     if (!fs.existsSync(filePath)) {
       // 尝试匹配部分ID
       const files = fs.existsSync(SESSION_DIR) ?
-        fs.readdirSync(SESSION_DIR).filter(f => f.endsWith('.json') && f.includes(sessionId)) : [];
+        (getCachedDirEntries(SESSION_DIR)?.filter(f => f.endsWith('.json') && f.includes(sessionId)) ?? []) : [];
 
       if (files.length === 0) {
         return {

@@ -147,7 +147,6 @@ function PromptInputFooter({
           {isFullscreen ? null : <Notifications apiKeyStatus={apiKeyStatus} autoUpdaterResult={autoUpdaterResult} debug={debug} isAutoUpdating={isAutoUpdating} verbose={verbose} messages={messages} onAutoUpdaterResult={onAutoUpdaterResult} onChangeIsUpdating={onChangeIsUpdating} ideSelection={ideSelection} mcpClients={mcpClients} isInputWrapped={isInputWrapped} isNarrow={isNarrow} />}
           {false && isUndercover() && <Text dimColor>隐身模式</Text>}
           <BridgeStatusIndicator bridgeSelected={bridgeSelected} />
-          <DogeFooterInfo />
         </Box>
       </Box>
       {false && <CoordinatorTaskPanel />}

@@ -65,12 +65,12 @@ export async function call(args: string, context: any): Promise<string> {
   }
 
   if (command === 'stats' && parts[1]) {
-    return generateStats(parts[1])
+    return await generateStats(parts[1])
   }
 
   if (command === 'export' && parts[1] && parts[2]) {
     const format = parts[3] || 'json'
-    return exportTableData(parts[1], parts[2], format)
+    return await exportTableData(parts[1], parts[2], format)
   }
 
   return `未知命令: ${command}\n\n使用 /database 查看帮助`
@@ -331,7 +331,7 @@ function generateFKRelationships(dbPath: string): string {
 }
 
 /** 数据库统计信息 */
-function generateStats(dbPath: string): string {
+async function generateStats(dbPath: string): Promise<string> {
   try {
     const { Database } = require('bun:sqlite')
     const db = new Database(dbPath)
@@ -351,11 +351,10 @@ function generateStats(dbPath: string): string {
     }
 
     // 获取数据库文件大小
-    const fs = require('fs')
     let fileSize = 0
     try {
-      const stat = fs.statSync(dbPath)
-      fileSize = stat.size
+      const f = Bun.file(dbPath)
+      fileSize = (await f.size()) || 0
     } catch { /* ignore */ }
 
     const sizeStr = fileSize > 1024 * 1024
@@ -386,7 +385,7 @@ function generateStats(dbPath: string): string {
 }
 
 /** 导出表数据 */
-function exportTableData(dbPath: string, tableName: string, format: string): string {
+async function exportTableData(dbPath: string, tableName: string, format: string): Promise<string> {
   try {
     const { Database } = require('bun:sqlite')
     const db = new Database(dbPath)
@@ -396,7 +395,6 @@ function exportTableData(dbPath: string, tableName: string, format: string): str
       return `表 ${tableName} 为空`
     }
 
-    const fs = require('fs')
     const columns = Object.keys(rows[0])
     const ext = format.toLowerCase() === 'csv' ? 'csv' : 'json'
     const exportPath = `${tableName}_export.${ext}`
@@ -407,9 +405,9 @@ function exportTableData(dbPath: string, tableName: string, format: string): str
         const v = String(r[c] ?? '')
         return v.includes(',') ? `"${v}"` : v
       }).join(','))
-      fs.writeFileSync(exportPath, [header, ...data].join('\n'), 'utf-8')
+      await Bun.write(exportPath, [header, ...data].join('\n'))
     } else {
-      fs.writeFileSync(exportPath, JSON.stringify(rows, null, 2), 'utf-8')
+      await Bun.write(exportPath, JSON.stringify(rows, null, 2))
     }
 
     return `✅ 已导出 ${rows.length} 行数据到 ${exportPath}`

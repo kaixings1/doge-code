@@ -1,7 +1,9 @@
 import type { Command } from '../../commands.js'
 import type { LocalCommandCall } from '../../types/command.js'
-import * as fs from 'fs'
+import { readdir, stat, writeFile } from 'fs/promises'
+import { access } from 'fs'
 import * as path from 'path'
+import { getCachedDirEntries, setCachedDirEntries } from '../../utils/dirCache.js'
 
 // ============================================================================
 // Types
@@ -32,6 +34,10 @@ interface DiagramResult {
   errors: string[]
 }
 
+async function existsAsync(p: string): Promise<boolean> {
+  try { await access(p); return true } catch { return false }
+}
+
 // ============================================================================
 // Diagram Generators
 // ============================================================================
@@ -39,15 +45,15 @@ interface DiagramResult {
 /**
  * 从文件/目录生成依赖关系图
  */
-function generateDependencyGraph(target: string, depth: number, format: string): DiagramResult {
+async function generateDependencyGraph(target: string, depth: number, format: string): Promise<DiagramResult> {
   const nodes = new Map<string, DependencyNode>()
   const edges: [string, string][] = []
 
-  const files = collectSourceFiles(target)
+  const files = await collectSourceFiles(target)
 
   for (const file of files) {
     try {
-      const content = fs.readFileSync(file, 'utf-8')
+      const content = await Bun.file(file).text()
       const imports = extractImports(content)
 
       const nodeId = getNodeId(file)
@@ -96,32 +102,31 @@ function generateDependencyGraph(target: string, depth: number, format: string):
 }
 
 /**
- * 生成 C4 上下文图
- *
- * 基于项目实际目录结构和入口文件分析，动态生成 C4 容器图。
- * 识别主要入口点、核心服务模块和外部依赖。
+ * 生成 C4 上下文图（动态分析）
  */
-function generateC4Context(projectPath: string, format: string): DiagramResult {
+async function generateC4Context(projectPath: string, format: string): Promise<DiagramResult> {
   const entries: string[] = []
   const deps = new Set<string>()
   const externalApis = new Set<string>()
 
   try {
-    if (fs.existsSync(projectPath)) {
+    if (await existsAsync(projectPath)) {
       const scanDirs = ['src', 'lib', 'engine', 'commands', 'services']
       const foundDirs: string[] = []
 
       for (const d of scanDirs) {
         const full = path.join(projectPath, d)
-        if (fs.existsSync(full)) {
+        if (await existsAsync(full)) {
           foundDirs.push(d)
           try {
-            const files = fs.readdirSync(full).slice(0, 10)
-            for (const f of files) {
+            const dirFiles = getCachedDirEntries(full) ?? await readdir(full)
+            if (!getCachedDirEntries(full)) setCachedDirEntries(full, dirFiles)
+            const sliced = dirFiles.slice(0, 10)
+            for (const f of sliced) {
               const fp = path.join(full, f)
               if (f.endsWith('.ts') || f.endsWith('.tsx')) {
                 try {
-                  const content = fs.readFileSync(fp, 'utf-8')
+                  const content = await Bun.file(fp).text()
                   const imports = extractImports(content)
                   for (const imp of imports) {
                     if (imp.startsWith('http')) {
@@ -144,7 +149,10 @@ function generateC4Context(projectPath: string, format: string): DiagramResult {
         path.join(projectPath, 'src', 'main.ts'),
         path.join(projectPath, 'index.ts'),
       ]
-      let entryPoint = entryPaths.find(ep => fs.existsSync(ep)) || ''
+      let entryPoint = ''
+      for (const ep of entryPaths) {
+        if (await existsAsync(ep)) { entryPoint = ep; break }
+      }
 
       for (const d of foundDirs.slice(0, 6)) {
         entries.push(d)
@@ -207,20 +215,18 @@ function generateC4Context(projectPath: string, format: string): DiagramResult {
 }
 
 /**
- * 生成序列图
- *
- * 基于目标文件的导入链和函数定义，动态生成时序图。
+ * 生成序列图（异步）
  */
-function generateSequenceDiagram(target: string, format: string): DiagramResult {
+async function generateSequenceDiagram(target: string, format: string): Promise<DiagramResult> {
   const participants = new Map<string, string>()
   const calls: Array<{ from: string; to: string; label: string }> = []
 
   try {
     const targetPath = path.isAbsolute(target) ? target : path.join(process.cwd(), target)
-    const stat = fs.statSync(targetPath)
+    const st = await stat(targetPath)
 
-    if (stat.isFile()) {
-      const content = fs.readFileSync(targetPath, 'utf-8')
+    if (st.isFile()) {
+      const content = await Bun.file(targetPath).text()
       const imports = extractImports(content)
       const symbols = extractSymbolsFromFile(content)
 
@@ -228,7 +234,7 @@ function generateSequenceDiagram(target: string, format: string): DiagramResult 
       participants.set(path.basename(targetPath), 'Target Module')
 
       for (const imp of imports.slice(0, 8)) {
-        const name = imp.specifier.split('/').pop() || imp.specifier
+        const name = imp.split('/').pop() || imp
         participants.set(name, name)
         calls.push({ from: 'User', to: name, label: 'imports' })
       }
@@ -237,17 +243,17 @@ function generateSequenceDiagram(target: string, format: string): DiagramResult 
         participants.set(sym.name, sym.kind + ': ' + sym.name)
         calls.push({ from: path.basename(targetPath), to: sym.name, label: 'defines' })
       }
-    } else if (stat.isDirectory()) {
-      const files = collectSourceFiles(targetPath).slice(0, 10)
+    } else if (st.isDirectory()) {
+      const files = (await collectSourceFiles(targetPath)).slice(0, 10)
       for (const f of files) {
         try {
-          const content = fs.readFileSync(f, 'utf-8')
+          const content = await Bun.file(f).text()
           const imports = extractImports(content)
           const fname = path.basename(f)
           participants.set(fname, fname)
 
           for (const imp of imports.slice(0, 5)) {
-            const name = imp.specifier.split('/').pop() || imp.specifier
+            const name = imp.split('/').pop() || imp
             if (!participants.has(name)) participants.set(name, name)
             calls.push({ from: fname, to: name, label: 'imports' })
           }
@@ -288,23 +294,20 @@ function generateSequenceDiagram(target: string, format: string): DiagramResult 
 }
 
 /**
- * 生成类图
- *
- * 基于目标文件的 AST 分析，动态生成类图。
- * 提取类、接口、类型定义及其继承/实现关系。
+ * 生成类图（异步）
  */
-function generateClassDiagram(target: string, format: string): DiagramResult {
+async function generateClassDiagram(target: string, format: string): Promise<DiagramResult> {
   const classes = new Map<string, { extends?: string; implements: string[]; methods: string[]; props: string[] }>()
   const interfaces = new Map<string, string[]>()
 
   try {
     const targetPath = path.isAbsolute(target) ? target : path.join(process.cwd(), target)
-    const stat = fs.statSync(targetPath)
+    const st = await stat(targetPath)
 
-    const collectFromFile = (fp: string) => {
+    const collectFromFile = async (fp: string) => {
       if (!fp.endsWith('.ts') && !fp.endsWith('.tsx') && !fp.endsWith('.js') && !fp.endsWith('.jsx')) return
 
-      const content = fs.readFileSync(fp, 'utf-8')
+      const content = await Bun.file(fp).text()
       const lines = content.split('\n')
 
       for (const line of lines) {
@@ -325,12 +328,12 @@ function generateClassDiagram(target: string, format: string): DiagramResult {
       }
     }
 
-    if (stat.isFile()) {
-      collectFromFile(targetPath)
-    } else if (stat.isDirectory()) {
-      const files = collectSourceFiles(targetPath).slice(0, 20)
+    if (st.isFile()) {
+      await collectFromFile(targetPath)
+    } else if (st.isDirectory()) {
+      const files = (await collectSourceFiles(targetPath)).slice(0, 20)
       for (const f of files) {
-        try { collectFromFile(f) } catch { /* skip */ }
+        try { await collectFromFile(f) } catch { /* skip */ }
       }
     }
   } catch { /* fallback */ }
@@ -409,7 +412,7 @@ function generateClassDiagram(target: string, format: string): DiagramResult {
 }
 
 // ============================================================================
-// Mermaid/Graphviz Generators
+// Mermaid/Graphviz/ASCII Generators
 // ============================================================================
 
 function generateMermaidDependency(
@@ -496,26 +499,27 @@ function generateAsciiDependency(
 // Helpers
 // ============================================================================
 
-function collectSourceFiles(target: string): string[] {
+async function collectSourceFiles(target: string): Promise<string[]> {
   const files: string[] = []
 
-  if (!fs.existsSync(target)) return files
+  if (!(await existsAsync(target))) return files
 
-  const stat = fs.statSync(target)
+  const st = await stat(target)
 
-  if (stat.isFile()) {
+  if (st.isFile()) {
     if (target.endsWith('.ts') || target.endsWith('.tsx') || target.endsWith('.js') || target.endsWith('.jsx')) {
       files.push(target)
     }
     return files
   }
 
-  if (stat.isDirectory()) {
-    const entries = fs.readdirSync(target)
+  if (st.isDirectory()) {
+    const entries = getCachedDirEntries(target) ?? await readdir(target)
+    if (!getCachedDirEntries(target)) setCachedDirEntries(target, entries)
     for (const entry of entries) {
       if (entry.startsWith('.') || entry === 'node_modules') continue
       const fullPath = path.join(target, entry)
-      files.push(...collectSourceFiles(fullPath))
+      files.push(...await collectSourceFiles(fullPath))
     }
   }
 
@@ -627,16 +631,16 @@ export const call: LocalCommandCall = async (args) => {
 
   switch (diagramType) {
     case 'c4':
-      result = generateC4Context(targetPath, format)
+      result = await generateC4Context(targetPath, format)
       break
     case 'sequence':
-      result = generateSequenceDiagram(targetPath, format)
+      result = await generateSequenceDiagram(targetPath, format)
       break
     case 'class':
-      result = generateClassDiagram(targetPath, format)
+      result = await generateClassDiagram(targetPath, format)
       break
     case 'dependency':
-      result = generateDependencyGraph(targetPath, depth, format)
+      result = await generateDependencyGraph(targetPath, depth, format)
       break
     default:
       result = {
@@ -651,7 +655,7 @@ export const call: LocalCommandCall = async (args) => {
 
   if (output && result.success) {
     try {
-      fs.writeFileSync(output, result.diagram, 'utf-8')
+      await writeFile(output, result.diagram, 'utf-8')
       result.diagram = result.diagram + '\n\nSaved to: ' + output
     } catch (err) {
       result.errors.push('Write failed: ' + (err instanceof Error ? err.message : String(err)))

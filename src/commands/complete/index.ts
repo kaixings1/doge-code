@@ -1,8 +1,9 @@
 import type { Command } from '../../commands.js'
 import type { LocalCommandCall } from '../../types/command.js'
 import { execSync } from 'child_process'
-import { existsSync, readdirSync, statSync, readFileSync } from 'fs'
+import { existsSync, statSync, readFileSync } from 'fs'
 import { join, resolve, extname } from 'path'
+import { getCachedDirEntries, setCachedDirEntries } from '../../utils/dirCache.js'
 
 // ============================================================================
 // Types
@@ -151,7 +152,11 @@ function completeFiles(query: string, cwd: string, limit: number): CompleteItem[
   if (!existsSync(targetDir)) return results
 
   try {
-    const entries = readdirSync(targetDir)
+    let entries = getCachedDirEntries(targetDir)
+    if (!entries) {
+      entries = readdirSync(targetDir)
+      setCachedDirEntries(targetDir, entries)
+    }
     for (const entry of entries) {
       if (entry.startsWith('.') && !prefix.startsWith('.')) continue
       if (!entry.toLowerCase().startsWith(prefix.toLowerCase())) continue
