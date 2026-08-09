@@ -318,26 +318,10 @@ export class OpenHandsStrategy extends BaseLoopStrategy {
    * 6. 失败则继续迭代（AI 重新执行改进）
    */
   evaluate(goal: LoopGoal, subTasks: SubTask[]): { achieved: boolean; reason: string } {
-    // 检测连续无进展（多次失败或未创建文件）
     const failedCount = subTasks.filter(t => t.status === 'failed').length
-    if (failedCount >= this.verifierState.maxStagnation) {
-      this.verifierState.stagnationCount++
-      if (this.verifierState.stagnationCount >= this.verifierState.maxStagnation) {
-        return {
-          achieved: false,
-          reason: `连续 ${this.verifierState.maxStagnation} 次执行未成功创建文件，停止迭代`,
-        }
-      }
-    } else {
-      this.verifierState.stagnationCount = 0
-    }
-
-    if (subTasks.length === 0) {
-      return { achieved: false, reason: '尚未生成执行任务' }
-    }
+    const completedCount = subTasks.filter(t => t.status === 'completed').length
 
     // 仍有待执行任务（pending/running）→ 继续执行，暂不判定
-    const completedCount = subTasks.filter(t => t.status === 'completed').length
     const pendingCount = subTasks.filter(t => t.status === 'pending' || t.status === 'running').length
     if (pendingCount > 0) {
       return {
@@ -346,12 +330,11 @@ export class OpenHandsStrategy extends BaseLoopStrategy {
       }
     }
 
-    // 所有任务已执行完毕 → 聚合所有已完成任务的输出（避免只检查最后一个任务
-    // 而漏掉实现类任务的产出，导致目标已达成却误判未达标而空转）
+    // 所有任务已执行完毕 → 聚合所有已完成任务的输出
     const completedTasks = subTasks.filter(t => t.status === 'completed')
     const output = completedTasks.map(t => t.result ?? '').join('\n')
 
-    // 检查是否创建了文件（输出含明确的文件创建标记，避免误判"未创建文件"）
+    // 检查是否创建了文件（输出含明确的文件创建标记）
     const filePatterns = [
       /📁\s*创建了\s*\d+\s*个文件/i,
       /created\s+\d+\s*files?/i,
@@ -360,34 +343,51 @@ export class OpenHandsStrategy extends BaseLoopStrategy {
     ]
     const hasFiles = filePatterns.some(p => p.test(output))
 
-    // 检查成功标准
+    // 完成且创建了文件 → 成功
+    if (hasFiles) {
+      this.verifierState.stagnationCount = 0
+      return { achieved: true, reason: `执行成功：检测到文件已创建（${completedCount} 个任务完成）` }
+    }
+
+    // 停滞检测：完成但未创建文件
+    if (completedCount > 0 && !hasFiles) {
+      this.verifierState.stagnationCount++
+      if (this.verifierState.stagnationCount >= this.verifierState.maxStagnation) {
+        return { achieved: false, reason: `连续 ${this.verifierState.stagnationCount} 次未创建文件，停止迭代` }
+      }
+      return { achieved: false, reason: `执行完成但未检测到文件创建（第 ${this.verifierState.stagnationCount}/${this.verifierState.maxStagnation} 次）` }
+    }
+
+    // 检查成功标准（仅当没有明确文件标记时）
     if (goal.successCriteria && goal.successCriteria.length > 0) {
       const criteriaMet = goal.successCriteria.filter(c =>
         output.toLowerCase().includes(c.toLowerCase())
       ).length
 
-      if (criteriaMet === goal.successCriteria.length && hasFiles) {
+      if (criteriaMet === goal.successCriteria.length) {
         return {
           achieved: true,
-          reason: `执行成功：成功标准全部满足（${criteriaMet}/${goal.successCriteria.length}），文件已创建`,
+          reason: `执行成功：成功标准全部满足（${criteriaMet}/${goal.successCriteria.length}）`,
         }
       }
       return {
         achieved: false,
-        reason: `执行完成但未完全达标：成功标准满足 ${criteriaMet}/${goal.successCriteria.length}${hasFiles ? '' : '，且未检测到创建文件'}。继续迭代改进`,
+        reason: `执行完成但未完全达标：成功标准满足 ${criteriaMet}/${goal.successCriteria.length}。继续迭代改进`,
       }
     }
 
-    if (hasFiles) {
-      return {
-        achieved: true,
-        reason: `执行成功：检测到文件已创建（第 ${subTasks.length} 次尝试）`,
+    // 没有任何完成的任务 → 失败计数增加停滞
+    if (completedCount === 0 && failedCount > 0) {
+      this.verifierState.stagnationCount++
+      if (this.verifierState.stagnationCount >= this.verifierState.maxStagnation) {
+        return { achieved: false, reason: `连续 ${this.verifierState.stagnationCount} 次全部任务失败，停止迭代` }
       }
+      return { achieved: false, reason: `所有任务失败（第 ${this.verifierState.stagnationCount}/${this.verifierState.maxStagnation} 次）` }
     }
 
     return {
       achieved: false,
-      reason: `执行完成但未检测到文件创建。请确认已用 bash 命令实际创建文件，继续迭代（第 ${subTasks.length} 次尝试）`,
+      reason: `执行完成但未检测到文件创建。请确认已用 bash 命令实际创建文件，继续迭代`,
     }
   }
 
