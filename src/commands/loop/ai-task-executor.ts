@@ -70,6 +70,20 @@ function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
+/**
+ * 从任务描述中推断文件名（兜底用）
+ */
+function inferFileName(description: string): string {
+  const lower = description.toLowerCase()
+  if (lower.includes('html') || lower.includes('hello world')) return 'hello.html'
+  if (lower.includes('js') || lower.includes('javascript')) return 'index.js'
+  if (lower.includes('ts') || lower.includes('typescript')) return 'index.ts'
+  if (lower.includes('css') || lower.includes('样式')) return 'style.css'
+  if (lower.includes('json') || lower.includes('配置')) return 'config.json'
+  if (lower.includes('md') || lower.includes('readme') || lower.includes('文档')) return 'README.md'
+  return 'output.txt'
+}
+
 // ─── 主执行器 ───
 
 export function createAITaskExecutor(context: ToolUseContext, options: ExecutorOptions = {}) {
@@ -326,7 +340,9 @@ ${taskDescription}
 
     try {
       // ─── 第一次 AI 调用 ───
-      const executionPrompt = `你是一个 DevOps 工程师。请完成以下任务，必须执行真实的 bash 命令来创建文件。
+      const executionPrompt = `你是一个 DevOps 工程师。请完成以下任务，必须输出可执行的 bash 命令来创建文件。
+
+⚠️ 重要：你必须只输出 bash 命令，用 \`\`\`bash 代码块包裹。不要输出文字描述、计划或分析。只有 bash 命令会被执行。
 
 ## 任务
 ${task.description}
@@ -334,13 +350,7 @@ ${task.description}
 ## 上下文
 ${prompt}
 
-## ⚠️ 严格要求
-1. 你必须输出可执行的 bash 命令来创建文件
-2. 所有命令用 \`\`\`bash 代码块包裹
-3. 使用 echo/cat 创建文件内容
-4. 不要只输出文字描述！
-
-## 期望输出格式
+## 输出格式（必须遵守）
 \`\`\`bash
 mkdir -p 目录路径
 echo '文件内容' > 文件路径
@@ -350,7 +360,7 @@ cat << 'EOF' > 文件路径
 EOF
 \`\`\`
 
-现在开始执行:`
+现在立即输出 bash 命令:`
 
       outputLines.push(`🤖 [AI] 调用 API (model: ${model})`)
 
@@ -467,16 +477,30 @@ echo '内容' > 文件路径
           }
         }
       } else if (aiOutput.length > 0) {
-        // 有 AI 输出但没有 bash 命令，写入报告文件
-        outputLines.push(`⚠️  最终无 bash 命令，写入报告文件`)
-        try {
-          const reportPath = `loop-report-${task.id}.md`
-          await writeFile(reportPath, `# ${task.description}\n\n${aiOutput}`, 'utf-8')
-          createdFiles.push(reportPath)
-          sessionCreatedFiles.push(reportPath)
-          outputLines.push(`  📄 ${reportPath} (${aiOutput.length} 字符)`)
-        } catch (writeErr) {
-          outputLines.push(`  ✗ 写入失败: ${writeErr instanceof Error ? writeErr.message : String(writeErr)}`)
+        // AI 返回了文本但没有 bash 命令 → 兜底：用简单 bash 命令创建文件
+        outputLines.push(`⚠️  AI 未返回 bash 命令，生成兜底文件...`)
+
+        // 从任务描述中推断文件名
+        const inferredName = inferFileName(task.description)
+        const fallbackPath = `output-${Date.now()}-${inferredName}`
+
+        // 尝试从 AI 输出中提取可保存的内容
+        const contentToSave = aiOutput.length > 0 ? aiOutput : `// ${task.description}\n// AI 未能生成具体内容\n`
+
+        const fallbackCmd = `cat << 'EOF' > ${fallbackPath}
+${contentToSave}
+EOF`
+
+        outputLines.push(`  > 兜底命令: ${fallbackCmd.slice(0, 100)}...`)
+        const fallbackResult = executeCommand(fallbackCmd, taskTimeout)
+        commandsExecuted++
+
+        if (fallbackResult.success) {
+          createdFiles.push(fallbackPath)
+          sessionCreatedFiles.push(fallbackPath)
+          outputLines.push(`  ✓ 兜底文件已创建: ${fallbackPath}`)
+        } else {
+          outputLines.push(`  ✗ 兜底创建失败: ${fallbackResult.error}`)
         }
       } else {
         // AI 返回为空
