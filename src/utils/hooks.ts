@@ -29,10 +29,7 @@ var input = JSON.parse(rawInput);
 var { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration, doge_api_json, session_id } = input;
 var segments = [];
 if (workspace && workspace.current_dir) {
-  var dir = workspace.current_dir;
-  var parts = dir.replace(/\\\\/g, "/").split("/").filter(Boolean);
-  var last = parts[parts.length - 1] || "";
-  segments.push("\\u{1F4C1} " + (last.length > 12 ? last.slice(0, 10) + "\\u2026" : last));
+  segments.push("\\u{1F4C1} " + workspace.current_dir);
 }
 var modelName = model ? (model.display_name || model.id) : "";
 if (modelName) {
