@@ -76,20 +76,20 @@ async function checkAPIHealth(): Promise<boolean> {
 
   try {
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 3000)
+    const healthTimeout = setTimeout(() => controller.abort(), 5000)
     try {
       const response = await fetch(baseURL.replace('/chat/completions', '/models'), {
         method: 'GET',
         headers: { 'Authorization': `Bearer ${apiKey}` },
         signal: controller.signal,
       })
-      clearTimeout(timeoutId)
+      clearTimeout(healthTimeout)
       apiHealthCheckCache = { ok: response.ok, checkedAt: Date.now() }
-      return !response.ok  // 不健康时返回 true (需要降级)
+      return !response.ok
     } catch {
-      clearTimeout(timeoutId)
+      clearTimeout(healthTimeout)
       apiHealthCheckCache = { ok: false, checkedAt: Date.now() }
-      return true  // API 不可达 → 需要降级
+      return true
     }
   } catch {
     apiHealthCheckCache = { ok: false, checkedAt: Date.now() }

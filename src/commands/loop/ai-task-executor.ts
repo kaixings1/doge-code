@@ -82,7 +82,7 @@ export function createAITaskExecutor(context: ToolUseContext, options: ExecutorO
 
   const apiKey = process.env.DOGE_API_KEY || process.env.ANTHROPIC_API_KEY || ''
   const baseURL = process.env.ANTHROPIC_BASE_URL || 'https://api.longcat.chat/openai/v1/chat/completions'
-  const model = context.options.mainLoopModel || process.env.ANTHROPIC_MODEL || 'LongCat-2.0'
+  const model = context.options.mainLoopModel || process.env.ANTHROPIC_MODEL || 'step-3.7-flash'
 
   // 追踪创建的文件，用于清理
   const sessionCreatedFiles: string[] = []
