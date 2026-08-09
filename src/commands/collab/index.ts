@@ -73,16 +73,18 @@ function renderHelp(): string {
 // Storage
 // ============================================================================
 
-const COLLAB_DIR = join(homedir(), '.doge', 'collab')
+function getCollabDir(): string {
+  return join(process.env.HOME || process.env.USERPROFILE || '.', '.doge', 'collab')
+}
 
 function ensureCollabDir(): void {
-  if (!existsSync(COLLAB_DIR)) {
-    mkdirSync(COLLAB_DIR, { recursive: true })
+  if (!existsSync(getCollabDir())) {
+    mkdirSync(getCollabDir(), { recursive: true })
   }
 }
 
 function roomFile(roomId: string): string {
-  return join(COLLAB_DIR, `${roomId}.json`)
+  return join(getCollabDir(), `${roomId}.json`)
 }
 
 function loadRoom(roomId: string): {
@@ -109,12 +111,12 @@ function saveRoom(room: Record<string, unknown>): void {
 
 function listRooms(): Array<{ id: string; name: string; hostId: string; participantCount: number }> {
   try {
-    const entries = readdirSync(COLLAB_DIR)
+    const entries = readdirSync(getCollabDir())
     const rooms: Array<{ id: string; name: string; hostId: string; participantCount: number }> = []
     for (const entry of entries) {
       if (!entry.endsWith('.json')) continue
       try {
-        const raw = readFileSync(join(COLLAB_DIR, entry), 'utf-8')
+        const raw = readFileSync(join(getCollabDir(), entry), 'utf-8')
         const room = JSON.parse(raw)
         rooms.push({
           id: room.id,
