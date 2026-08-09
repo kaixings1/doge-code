@@ -109,7 +109,7 @@ export function CondensedLogo() {
   }
   let t7;
   if ($[11] !== shouldSplit || $[12] !== truncatedBilling || $[13] !== truncatedModel) {
-    t7 = shouldSplit ? <><Text dimColor={true}>\u{1F916} {truncatedModel}</Text><Text dimColor={true}>{truncatedBilling}</Text></> : <Text dimColor={true}>\u{1F916} {truncatedModel} · {truncatedBilling}</Text>;
+    t7 = shouldSplit ? <><Text dimColor={true}>🤖 {truncatedModel}</Text><Text dimColor={true}>{truncatedBilling}</Text></> : <Text dimColor={true}>🤖 {truncatedModel} · {truncatedBilling}</Text>;
     $[11] = shouldSplit;
     $[12] = truncatedBilling;
     $[13] = truncatedModel;
