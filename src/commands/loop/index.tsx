@@ -342,7 +342,9 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
   }
 
   try {
-    const strategy = getStrategy(parsed.strategy)
+    // 自动选择策略：当 --auto 或用户未显式指定策略（默认 openhands）时
+    const strategyName = parsed.auto ? autoSelectStrategy(parsed.goal) : parsed.strategy
+    const strategy = getStrategy(strategyName)
     const goal: LoopGoal = {
       description: parsed.tools ? `${parsed.goal}\n\n可用工具提示: ${parsed.tools}` : parsed.goal,
       successCriteria: parsed.criteria.length > 0 ? parsed.criteria : undefined,
@@ -402,20 +404,35 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
             onDone(formatStatusLine(progressState), { display: 'system' })
             break
           case 'task_end': {
-            // 从执行输出中提取创建的文件（支持 📁 创建了 N 个文件 + • file 格式，以及 📄 格式）
+            // 从执行输出中提取创建的文件（支持 📁 / 📄 / • 多种格式）
             const output = (event.output as string) ?? ''
-            const fileMatches = output.match(/^\s*(?:•|·|-)\s*(.+)$/gm) || []
-            const fileMatches2 = output.match(/📄\s*(.+?)(?:\s|$)/g) || []
-            if (fileMatches.length > 0 || fileMatches2.length > 0) {
-              const newFiles = new Set<string>()
-              for (const m of fileMatches) {
-                const fp = m.replace(/^\s*(?:•|·|-)\s*/, '').trim()
+            const newFiles = new Set<string>()
+
+            // 提取 "• file/path" 格式（来自 📁 创建了 N 个文件: 的列表）
+            const bulletMatches = output.match(/^\s*(?:•|·|-)\s*([\w./-]+(?:\.[\w]+)?)\s*$/gm) || []
+            for (const m of bulletMatches) {
+              const fp = m.replace(/^\s*(?:•|·|-)\s*/, '').trim()
+              if (fp && /[\w./-]+\.[\w]+/.test(fp)) newFiles.add(fp)
+            }
+
+            // 提取 "📄 file/path" 格式
+            const markdownMatches = output.match(/📄\s*([^\s]+)/g) || []
+            for (const m of markdownMatches) {
+              const fp = m.replace('📄 ', '').trim()
+              if (fp && /[\w./-]+\.[\w]+/.test(fp)) newFiles.add(fp)
+            }
+
+            // 提取 "📁 创建了 N 个文件:" 之后的所有 • 条目
+            const blockMatch = output.match(/📁\s*创建了.*?(?:\n([\s\S]*?))?(?=\n\n|\n📄|\Z)/i)
+            if (blockMatch && blockMatch[1]) {
+              const lines = blockMatch[1].match(/^\s*•\s*([\w./-]+(?:\.[\w]+)?)/gm) || []
+              for (const m of lines) {
+                const fp = m.replace(/^\s*•\s*/, '').trim()
                 if (fp && /[\w./-]+\.[\w]+/.test(fp)) newFiles.add(fp)
               }
-              for (const m of fileMatches2) {
-                const fp = m.replace('📄 ', '').trim()
-                if (fp) newFiles.add(fp)
-              }
+            }
+
+            if (newFiles.size > 0) {
               newFiles.forEach(fp => {
                 createdFiles.push(fp)
                 fileCount++
