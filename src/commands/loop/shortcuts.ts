@@ -112,7 +112,12 @@ export function parseLoopArgs(args: string): {
     } else if (part === '--checkpoint' && i + 1 < parts.length) {
       result.checkpoint = parts[++i]
     } else if (part === '--strategy' && i + 1 < parts.length) {
-      result.strategy = parts[++i] as LoopStrategyName
+      const rawStrategy = parts[++i]
+      if (rawStrategy === 'auto') {
+        result.auto = true
+      } else {
+        result.strategy = rawStrategy as LoopStrategyName
+      }
     } else if (part === '--max-iterations' && i + 1 < parts.length) {
       result.maxIterations = parseInt(parts[++i], 10) || 20
     } else if (part === '--criteria' && i + 1 < parts.length) {
