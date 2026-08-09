@@ -1,7 +1,11 @@
 import type { Command } from '../../commands.js'
 import type { LocalCommandCall } from '../../types/command.js'
-import { readFileSync, readdirSync, existsSync, statSync } from 'fs'
+import { readFile, readdir, stat, access } from 'fs/promises'
 import { join, resolve, extname } from 'path'
+
+async function exists(p: string): Promise<boolean> {
+  try { await access(p); return true } catch { return false }
+}
 
 // ============================================================================
 // Types
@@ -155,25 +159,11 @@ const COMPLEXITY_RULES: Record<string, ComplexityRule> = {
     suggestion: '提取嵌套逻辑为独立函数，使用提前返回',
     category: 'complexity',
   },
-  'long-function': {
-    pattern: /(?:function\s+\w+|const\s+\w+\s*=\s*(?:async\s+)?(?:\([^)]*\)|[a-zA-Z_$][a-zA-Z0-9_$]*)\s*=>)[\s\S]*?^}/m,
-    severity: 'minor',
-    message: '检测到可能的超长函数（>50 行）',
-    suggestion: '将函数拆分为更小的单一职责函数',
-    category: 'complexity',
-  },
   'magic-number': {
     pattern: /\b(?!0\b)(?!1\b)(?!2\b)(?!10\b)(?!100\b)(?!1000\b)\d{2,}\b/,
     severity: 'minor',
     message: '魔法数字',
     suggestion: '提取为具名常量',
-    category: 'complexity',
-  },
-  'god-method': {
-    pattern: /^(?:function\s+\w+|const\s+\w+\s*=\s*(?:async\s+)?(?:\([^)]*\)|[a-zA-Z_$][a-zA-Z0-9_$]*)\s*=>)[\s\S]{0,100}(?:function\s+\w+|const\s+\w+\s*=\s*(?:async\s+)?(?:\([^)]*\)|[a-zA-Z_$][a-zA-Z0-9_$]*)\s*=>)/m,
-    severity: 'info',
-    message: '文件中定义多个函数（可能职责过多）',
-    suggestion: '考虑按职责拆分到不同模块',
     category: 'complexity',
   },
 }
@@ -372,9 +362,6 @@ function collectIssuesFromFile(
     if (!rules) continue
 
     for (const [ruleName, rule] of Object.entries(rules)) {
-      // Skip long-function rule - handled by detectLongFunctions
-      if (ruleName === 'long-function') continue
-
       let count = 0
       lines.forEach((line, index) => {
         if (count >= ISSUE_LIMIT_PER_FILE) return
@@ -415,7 +402,7 @@ const DEFAULT_CATEGORIES = [
   'dependencies',
 ]
 
-function scanFile(filePath: string, categories: string[] = []): CategoryIssues {
+async function scanFile(filePath: string, categories: string[] = []): Promise<CategoryIssues> {
   const absPath = resolve(filePath)
   if (!existsSync(absPath)) {
     return {
@@ -428,7 +415,7 @@ function scanFile(filePath: string, categories: string[] = []): CategoryIssues {
   }
 
   try {
-    const content = readFileSync(absPath, 'utf-8')
+    const content = await readFile(absPath, 'utf-8')
     const cats = categories.length > 0 ? categories : DEFAULT_CATEGORIES
     return collectIssuesFromFile(filePath, content, cats)
   } catch {
@@ -442,7 +429,12 @@ function scanFile(filePath: string, categories: string[] = []): CategoryIssues {
   }
 }
 
-function scanDirectory(dir: string, categories: string[] = []): CategoryIssues {
+interface ScanResult {
+  issues: CategoryIssues
+  filesScanned: number
+}
+
+async function scanDirectory(dir: string, categories: string[] = []): Promise<ScanResult> {
   const absDir = resolve(dir)
   const result: CategoryIssues = {
     security: [],
@@ -452,45 +444,52 @@ function scanDirectory(dir: string, categories: string[] = []): CategoryIssues {
     dependencies: [],
   }
 
-  if (!existsSync(absDir)) return result
+  if (!(await exists(absDir))) {
+    return { issues: result, filesScanned: 0 }
+  }
 
   const cats = categories.length > 0 ? categories : DEFAULT_CATEGORIES
+  let filesScanned = 0
 
-  const walk = (currentDir: string) => {
+  const walk = async (currentDir: string) => {
+    let entries: string[]
     try {
-      const entries = readdirSync(currentDir)
+      entries = await readdir(currentDir)
+    } catch {
+      return
+    }
 
-      for (const entry of entries) {
-        if (entry.startsWith('.') || entry === 'node_modules' || entry === 'dist' || entry === 'build') {
-          continue
-        }
+    for (const entry of entries) {
+      if (entry.startsWith('.') || entry === 'node_modules' || entry === 'dist' || entry === 'build') {
+        continue
+      }
 
-        const fullPath = join(currentDir, entry)
-        try {
-          const stat = statSync(fullPath)
-          if (stat.isDirectory()) {
-            walk(fullPath)
-          } else if (stat.isFile() && CODE_EXTENSIONS.includes(extname(entry))) {
-            const relativePath = fullPath.replace(absDir + '/', '')
-            const fileIssues = scanFile(relativePath, cats)
-            for (const cat of cats) {
-              const key = cat as keyof CategoryIssues
-              if (fileIssues[key]) {
-                result[key].push(...fileIssues[key])
-              }
-            }
+      const fullPath = join(currentDir, entry)
+      let fileStat: { isDirectory(): boolean; isFile(): boolean }
+      try {
+        fileStat = await stat(fullPath)
+      } catch {
+        continue
+      }
+
+      if (fileStat.isDirectory()) {
+        await walk(fullPath)
+      } else if (fileStat.isFile() && CODE_EXTENSIONS.includes(extname(entry))) {
+        filesScanned++
+        const relativePath = fullPath.replace(absDir + path.sep, '')
+        const fileIssues = await scanFile(relativePath, cats)
+        for (const cat of cats) {
+          const key = cat as keyof CategoryIssues
+          if (fileIssues[key]) {
+            result[key].push(...fileIssues[key])
           }
-        } catch {
-          // 忽略单个文件/目录的错误
         }
       }
-    } catch {
-      // 忽略目录读取错误
     }
   }
 
-  walk(absDir)
-  return result
+  await walk(absDir)
+  return { issues: result, filesScanned }
 }
 
 // ============================================================================
@@ -727,7 +726,7 @@ export const call: LocalCommandCall = async (args, context) => {
 
   // Scan single file
   if (fileMatch) {
-    const issues = scanFile(fileMatch[1])
+    const issues = await scanFile(fileMatch[1])
     const score = computeHealthScore(issues)
     if (format === 'json') {
       return { type: 'json', value: formatJsonReport(issues, score, 1) }
@@ -735,37 +734,9 @@ export const call: LocalCommandCall = async (args, context) => {
     return { type: 'text', value: formatTextReport(issues, score, detailed, 1) }
   }
 
-  // Scan directory
+  // Scan directory (single pass, returns issues + file count)
   const scanPath = scanMatch?.[1] ?? '.'
-  const issues = scanDirectory(scanPath)
-
-  // Count scanned files
-  let filesScanned = 0
-  const absDir = resolve(scanPath)
-  const countFiles = (dir: string) => {
-    try {
-      const entries = readdirSync(dir)
-      for (const entry of entries) {
-        if (entry.startsWith('.') || entry === 'node_modules' || entry === 'dist' || entry === 'build') {
-          continue
-        }
-        const fullPath = join(dir, entry)
-        try {
-          const stat = statSync(fullPath)
-          if (stat.isDirectory()) {
-            countFiles(fullPath)
-          } else if (stat.isFile() && CODE_EXTENSIONS.includes(extname(entry))) {
-            filesScanned++
-          }
-        } catch {
-          // ignore
-        }
-      }
-    } catch {
-      // ignore
-    }
-  }
-  countFiles(absDir)
+  const { issues, filesScanned } = await scanDirectory(scanPath)
 
   const score = computeHealthScore(issues)
 
