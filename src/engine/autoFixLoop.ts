@@ -1,10 +1,12 @@
 /**
- * engine/autoFixLoop.ts — 自动修复循环（吸收自 Aider）
+ * engine/autoFixLoop.ts — 自动修复循环（吸收自 Aider + Browser-Use）
  *
  * 在 FileEditTool/FileWriteTool 成功执行后，自动 lint → test → fix。
  * 检测工具输出中的错误模式，将错误注入对话让 agent 自动修复。
  *
- * 来源项目：Aider (https://aider.chat) 的 --auto-lint + --auto-test 机制
+ * 来源项目：
+ *   - Aider (https://aider.chat) 的 --auto-lint + --auto-test 机制
+ *   - Browser-Use (https://github.com/browser-use/browser-use) 的 self-healing harness
  */
 
 export interface AutoFixLoopConfig {
@@ -55,6 +57,35 @@ const TEST_ERROR_PATTERNS = [
   /expected.*received/,
 ]
 
+/** 运行时错误模式（吸收自 Browser-Use self-healing harness） */
+const RUNTIME_ERROR_PATTERNS = [
+  /TypeError:\s*.+/,
+  /ReferenceError:\s*.+/,
+  /RangeError:\s*.+/,
+  /SyntaxError:\s*.+/,
+  /ENOENT:\s*no\s+such\s+file/i,
+  /EACCES:\s*permission\s+denied/i,
+  /EPERM:\s*operation\s+not\s+permitted/i,
+  /NetworkError:\s*.+/,
+  /TimeoutError:\s*.+/,
+  /ECONNREFUSED/i,
+  /ETIMEDOUT/i,
+  /Cannot\s+read\s+properties?\s+of\s+null/i,
+  /Cannot\s+read\s+properties?\s+of\s+undefined/i,
+  /is\s+not\s+a\s+function/i,
+  /is\s+not\s+defined/i,
+]
+
+/** 工具执行错误模式 */
+const TOOL_ERROR_PATTERNS = [
+  /tool\s+execution\s+failed/i,
+  /permission\s+denied/i,
+  /file\s+not\s+found/i,
+  /command\s+timeout/i,
+  /execution\s+error/i,
+  /tool\s+error/i,
+]
+
 // ============ 结构化错误解析器（吸收自 zhikuncode SelfCorrectionLoop） ============
 
 export interface CompileError {
@@ -86,7 +117,7 @@ export interface CorrectionInstruction {
  */
 export class CompileErrorParser {
   private static readonly PATTERNS = [
-    // TypeScript/JavaScript: error TS1234: message (file, line, char)
+    // TypeScript/JavaScript: error TS1234: me�ssage (file, line, char)
     /^(.+?)\((\d+)(?:,(\d+))?\):\s*(?:error\s+(TS\d+):\s*(.+))$/m,
     // Standard compiler: file:line:column: error: message
     /^(.+?):(\d+)(?::(\d+))?:\s*error:\s*(.+)$/m,
@@ -198,13 +229,11 @@ export class AutoFixLoop {
   }
 
   /**
-   * shouldAbort — 中止检查（吸收自 zhikuncode SelfCorrectionLoop）。
+   * shouldAbort — 中止检查（吸��自 zhikuncode SelfCorrectionLoop）。
    *
    * 检查是否应提前中止修复循环：
    * 1. 当前轮次涉及的文件与首轮完全不同（说明修复引入了新问题）
    * 2. 当前轮次出现的错误类型与首轮完全不同（说明修复方向错误）
-   *
-   * SWE-bench 模式下阈值更宽松（允许更多探索）。
    */
   shouldAbort(
     currentErrors: Array<{ type: 'lint' | 'test'; message: string }>,
@@ -222,7 +251,6 @@ export class AutoFixLoop {
     // 检查是否引入了全新的错误文件
     const newFiles = editedFiles.filter(f => !this.firstRoundErrorFiles.has(f))
     if (newFiles.length > 0 && currentErrors.length > 0) {
-      // 新文件 + 仍有错误 = 可能引入了新问题
       const newFileErrorRatio = newFiles.length / Math.max(1, editedFiles.length)
       if (newFileErrorRatio > 0.5) {
         this.config.onEvent?.({ type: 'autofix_skip', reason: `检测到 ${newFiles.length} 个新错误文件，中止修复` })
@@ -328,7 +356,7 @@ export class AutoFixLoop {
     return files
   }
 
-  /** 从工具输出中检测 lint/test 错误 */
+  /** 从工具输出中检测 lint/test/运行时/工具错误 */
   private detectErrors(results: Array<{ toolUseId: string; success: boolean; output?: unknown; error?: string }>): Array<{ type: 'lint' | 'test'; message: string }> {
     const found: Array<{ type: 'lint' | 'test'; message: string }> = []
     const seen = new Set<string>()
@@ -364,6 +392,36 @@ export class AutoFixLoop {
           if (!seen.has(key)) {
             seen.add(key)
             found.push({ type: 'test', message: line })
+          }
+        }
+      }
+
+      // 扫描运行时错误模式（Browser-Use self-healing）
+      for (const pattern of RUNTIME_ERROR_PATTERNS) {
+        const matches = combined.matchAll(pattern)
+        for (const m of matches) {
+          const start = Math.max(0, m.index! - 30)
+          const end = Math.min(combined.length, m.index! + 200)
+          const line = combined.substring(start, end).trim()
+          const key = line.substring(0, 60)
+          if (!seen.has(key)) {
+            seen.add(key)
+            found.push({ type: 'lint', message: line })
+          }
+        }
+      }
+
+      // 扫描工具执行错误模式
+      for (const pattern of TOOL_ERROR_PATTERNS) {
+        const matches = combined.matchAll(pattern)
+        for (const m of matches) {
+          const start = Math.max(0, m.index! - 30)
+          const end = Math.min(combined.length, m.index! + 200)
+          const line = combined.substring(start, end).trim()
+          const key = line.substring(0, 60)
+          if (!seen.has(key)) {
+            seen.add(key)
+            found.push({ type: 'lint', message: line })
           }
         }
       }
