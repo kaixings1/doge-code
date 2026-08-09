@@ -77,13 +77,7 @@ if (doge_api_json) {
   } catch {}
   segments.push("\uD83D\uDCDC " + configName);
 }
-if (input.version) {
-  segments.push("Claude Code v" + input.version);
-}
-if (input.workspace?.current_dir) {
-  segments.push(input.workspace.current_dir);
-}
-console.log(segments.join("\n"));
+console.log(segments.join("  "));
 function fmtNum(n) {
   n = Number(n);
   if (!isFinite(n))

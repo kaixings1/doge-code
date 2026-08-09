@@ -23,6 +23,7 @@ import addModel from './commands/add-model/index.ts'
 import removeModel from './commands/remove-model/index.ts'
 import autofixPr from './commands/autofix-pr/index.tsx'
 import backfillSessions from './commands/backfill-sessions/index.ts'
+import collab from './commands/collab/index.ts'
 import btw from './commands/btw/index.ts'
 import goodClaude from './commands/good-claude/index.ts'
 import issue from './commands/issue/index.tsx'
@@ -510,6 +511,7 @@ const COMMANDS = memoize((): Command[] => [
   rename,
   refactor,
   explain,
+  collab,
   resume,
   session,
   sessions,
