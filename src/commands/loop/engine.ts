@@ -170,6 +170,16 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
     progressReporter.start()
   }
 
+  // ─── 强制心跳: 每 1 秒发送进度事件，确保 UI 不死锁 ───
+  const heartbeat = setInterval(() => {
+    const elapsed = Date.now() - state.startTime
+    const elapsedStr = elapsed < 1000 ? `${elapsed}ms` : `${Math.round(elapsed / 1000)}s`
+    emit({ type: 'progress', summary: `⏱ [心跳] 循环运行中 | 迭代 ${state.iteration}/${state.maxIterations} | 已用 ${elapsedStr}`, iteration: state.iteration, completed: 0, failed: 0, elapsedMs: elapsed })
+  }, 1000)
+  if (heartbeat && typeof heartbeat === 'object' && 'unref' in heartbeat) {
+    ;(heartbeat as setInterval & { unref?: () => void }).unref?.()
+  }
+
   // ─── 检查点恢复 ───
   if (options.checkpoint) {
     try {
@@ -381,22 +391,79 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
           evaluation = await strategy.evaluate(goal, state.subTasks)
           emit({ type: 'evaluation', achieved: evaluation.achieved, reason: evaluation.reason })
         } else if (currentTasks.length > 0 && strategy.handlesOwnExecution?.()) {
-          // 策略自行处理执行（如 AutoGPT 通过 evaluate() 内部执行）
-          // emit task_start 标记任务进入执行
-          for (const task of currentTasks) {
+          // 策略自行处理执行（如 AutoGPT）
+          // FIX: 不直接调用 strategy.evaluate() 避免卡死，
+          // 而是使用标准 taskExecutor 执行任务，绕过图引擎
+          const parallelLimit = Math.max(1, options.parallel || 1)
+          const tasksToRun = currentTasks.slice(0, parallelLimit)
+
+          for (const task of tasksToRun) {
+            task.status = 'running'
             emit({ type: 'task_start', taskId: task.id, description: task.description })
           }
-          // evaluate() 内部会调用 executeGraphNodes() 执行任务并更新 subTasks 状态
-          evaluation = await strategy.evaluate(goal, state.subTasks)
-          emit({ type: 'evaluation', achieved: evaluation.achieved, reason: evaluation.reason })
 
-          // 更新任务状态：evaluate 后仍为 running 的任务→completed（已执行完毕）
-          for (const task of currentTasks) {
-            if (task.status === 'running') {
-              task.status = 'completed'
-              emit({ type: 'task_end', taskId: task.id, success: true, output: task.result ?? '' })
+          const systemPrompt = strategy.getSystemPrompt(goal)
+          const executor = async (task: SubTask) => {
+            const taskPrompt = buildTaskPrompt(goal, task, state)
+            let result: { success: boolean; output: string; error?: string }
+
+            if (options.taskExecutor && !await checkAPIHealth()) {
+              try {
+                result = await options.taskExecutor(taskPrompt, systemPrompt, task)
+              } catch {
+                result = await executeTaskWithStrategy(task, taskPrompt, systemPrompt)
+              }
+            } else {
+              result = await executeTaskWithStrategy(task, taskPrompt, systemPrompt)
+            }
+
+            if (result.success && options.verifyMode && options.verifyMode !== 'none') {
+              const verifyResult = await runVerification(options.verifyMode, result.output)
+              if (!verifyResult.passed) {
+                result = { ...result, success: false, error: `验证失败: ${verifyResult.reason}` }
+              }
+            }
+
+            task.status = result.success ? 'completed' : 'failed'
+            task.result = result.output
+            task.error = result.error
+
+            if (!result.success && options.autoRepair !== false) {
+              const maxRepairs = options.maxRepairAttempts ?? 2
+              const attempt = (task.attempts ?? 0) + 1
+              if (attempt <= maxRepairs) {
+                const repairId = `${task.id}-repair-${attempt}`
+                state.subTasks.push({
+                  id: repairId,
+                  description: `🔧 修复: ${task.description.slice(0, 50)}（第 ${attempt} 次）`,
+                  status: 'pending',
+                  dependencies: task.dependencies,
+                  priority: (task.priority ?? 0) + 5,
+                  verify: task.verify,
+                  attempts: attempt,
+                })
+                emit({ type: 'repair', taskId: task.id, attempt, error: result.error ?? 'Unknown error' })
+              }
+            }
+
+            extractCreatedFiles(result.output).forEach(f => {
+              if (!createdFiles.includes(f)) createdFiles.push(f)
+            })
+
+            return { task, result }
+          }
+
+          const results = await Promise.all(tasksToRun.map(t => executor(t)))
+          for (const { task, result } of results) {
+            if (result.success) {
+              emit({ type: 'task_end', taskId: task.id, success: true, output: result.output })
+            } else {
+              emit({ type: 'task_failed', taskId: task.id, error: result.error ?? 'Unknown error' })
             }
           }
+
+          evaluation = await strategy.evaluate(goal, state.subTasks)
+          emit({ type: 'evaluation', achieved: evaluation.achieved, reason: evaluation.reason })
 
           // handlesOwnExecution 分支不进入共用后处理，提前完成检查点/询问
           if (evaluation.achieved) {
@@ -570,8 +637,9 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
 
     const duration = Date.now() - state.startTime
 
-    // ─── B3/B4 清理：停止进度汇报器，快照按结果处置 ───
+    // ─── B3/B4 清理：停止进度汇报器、心跳，快照按结果处置 ───
     if (progressReporter) progressReporter.stop()
+    clearInterval(heartbeat)
     if (snapshot) {
       if (finalEvaluation.achieved) {
         await cleanupSnapshot(snapshot)
@@ -616,6 +684,7 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : String(error)
     if (progressReporter) progressReporter.stop()
+    clearInterval(heartbeat)
     emit({ type: 'error', error: errMsg })
     emit({ type: 'loop_end', success: false, iterations: state.iteration, duration: Date.now() - state.startTime, reason: errMsg })
 
