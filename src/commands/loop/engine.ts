@@ -188,8 +188,8 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
       elapsedMs: elapsed,
     })
   }, 1000)
-  if (heartbeat && typeof heartbeat === 'object' && 'unref' in heartbeat) {
-    ;(heartbeat as setInterval & { unref?: () => void }).unref?.()
+  if (typeof heartbeat === 'object' && heartbeat !== null && 'unref' in heartbeat) {
+    ;(heartbeat as { unref?: () => void }).unref?.()
   }
 
   // ─── 检查点恢复 ───
