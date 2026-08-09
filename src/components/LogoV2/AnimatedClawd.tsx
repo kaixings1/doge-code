@@ -46,7 +46,8 @@ const IDLE_LOOP: readonly Frame[] = [
 
 const FRAME_MS = 60;
 const incrementFrame = (i: number) => i + 1;
-const CLAWD_HEIGHT = 7; // 与 Clawd 组件图形高度一致
+// ponytail: 固定高度已移除——Clawd 实际高度约 19 行（含 sessionId），
+// 固定 7 行会导致底部被裁剪且 bounceOffset 的 marginTop 在容器内无效
 
 export function AnimatedClawd() {
   const $ = _c(8);
@@ -64,7 +65,7 @@ export function AnimatedClawd() {
 
   let t1;
   if ($[2] !== bounceOffset || $[3] !== t0) {
-    t1 = <Box marginTop={bounceOffset} flexShrink={0}>{t0}</Box>;
+    t1 = <Box flexShrink={0}>{t0}</Box>;
     $[2] = bounceOffset;
     $[3] = t0;
     $[4] = t1;
@@ -75,7 +76,7 @@ export function AnimatedClawd() {
   let t2;
   if ($[5] !== onClick || $[6] !== t1) {
     t2 = (
-      <Box height={CLAWD_HEIGHT} flexDirection="column" onClick={onClick}>
+      <Box flexDirection="column" onClick={onClick}>
         {t1}
       </Box>
     );

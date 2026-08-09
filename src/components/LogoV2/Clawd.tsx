@@ -1,9 +1,5 @@
 import * as React from 'react';
 import { Box, Text } from '../../ink.js';
-import { getSessionId } from '../../bootstrap/state.js';
-import { getSessionElapsed } from '../../components/StatusLine.js';
-import { useAppState } from '../../state/AppState.js';
-import { formatDuration } from '../../utils/format.js';
 
 export type ClawdPose = 'default' | 'blink' | 'heart' | 'angry' | 'sleep' | 'arms-up' | 'look-left' | 'look-right';
 
@@ -203,23 +199,15 @@ function renderLine(line: string, rowIdx: number, totalRows: number): React.Reac
 }
 
 // 纯静态组件（不再有自动动画）
+// sessionId 和启动时间由右侧 StatusInfoPanel 显示，此处不再重复渲染
 export function Clawd({ pose = 'default' }: Props) {
   const rows = GRAPHICS[pose];
-  const sessionId = getSessionId();
-  const sessionElapsed = getSessionElapsed();
-  const statusLineText = useAppState(s => s.statusLineText);
-  const startupTime = formatDuration(sessionElapsed, { mostSignificantOnly: false });
 
   return (
     <Box flexDirection="column" alignItems="center">
       {rows.map((line, idx) => (
         <Text key={idx}>{renderLine(line, idx, rows.length)}</Text>
       ))}
-      <Text dimColor={true}>{sessionId}</Text>
-      {statusLineText && statusLineText.split('\n').map((line, i) => (
-        <Text key={i} dimColor={true}>{line}</Text>
-      ))}
-      <Text dimColor={true}>启动时间: {startupTime}</Text>
     </Box>
   );
 }

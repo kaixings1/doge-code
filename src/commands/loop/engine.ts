@@ -178,10 +178,13 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
         const readyTasks = getReadyTasks(state.subTasks, Math.max(1, options.parallel || 1))
         const currentTasks = readyTasks.length > 0 ? readyTasks : (pendingTasks.length > 0 ? pendingTasks : runningTasks)
 
+        // evaluation 在共用后处理中使用，需在分支前声明
+        let evaluation: { achieved: boolean; reason: string }
+
         if (currentTasks.length === 0) {
-          const evaluation = await strategy.evaluate(goal, state.subTasks)
+          evaluation = await strategy.evaluate(goal, state.subTasks)
+          emit({ type: 'evaluation', achieved: evaluation.achieved, reason: evaluation.reason })
           if (evaluation.achieved) {
-            emit({ type: 'evaluation', achieved: true, reason: evaluation.reason })
             break
           }
           // 未达标 → 生成新的执行任务，继续迭代改进（按 id 去重追加）
@@ -191,9 +194,31 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
           if (freshTasks.length > 0) {
             state.subTasks.push(...freshTasks)
           } else {
-            // 没有新任务可追加 → 停止
-            emit({ type: 'evaluation', achieved: false, reason: evaluation.reason })
-            break
+            // 没有新任务可追加 → 检测是否所有任务都已完成
+            // 若所有任务已完成/失败，无法再推进，停止循环
+            const unfinishedCount = state.subTasks.filter(
+              t => t.status === 'pending' || t.status === 'running',
+            ).length
+            if (unfinishedCount === 0) {
+              break
+            }
+            // 若仍有 pending 任务但无法就绪（依赖阻塞），强制标记为失败以避免死循
+            const blockedTasks = state.subTasks.filter(t => {
+              if (t.status !== 'pending') return false
+              const unmetDeps = t.dependencies?.filter(d => {
+                const dep = state.subTasks.find(x => x.id === d)
+                return !dep || dep.status !== 'completed'
+              }) ?? []
+              return unmetDeps.length > 0
+            })
+            if (blockedTasks.length > 0) {
+              for (const bt of blockedTasks) {
+                bt.status = 'failed'
+                bt.error = '依赖无法满足，任务被阻塞'
+              }
+              emit({ type: 'error', error: `检测到 ${blockedTasks.length} 个阻塞任务，强制标记为失败` })
+              break
+            }
           }
         } else if (currentTasks.length > 0 && !strategy.handlesOwnExecution?.()) {
           // ─── 执行任务（支持并行）───
@@ -277,15 +302,104 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
               emit({ type: 'task_failed', taskId: task.id, error: result.error ?? 'Unknown error' })
             }
           }
+
+          // 执行完任务后评估是否达标
+          evaluation = await strategy.evaluate(goal, state.subTasks)
+          emit({ type: 'evaluation', achieved: evaluation.achieved, reason: evaluation.reason })
         } else if (currentTasks.length > 0 && strategy.handlesOwnExecution?.()) {
-          // 策略自行处理执行
+          // 策略自行处理执行（如 AutoGPT 通过 evaluate() 内部执行）
+          // emit task_start 标记任务进入执行
           for (const task of currentTasks) {
             emit({ type: 'task_start', taskId: task.id, description: task.description })
           }
-        }
+          // evaluate() 内部会调用 executeGraphNodes() 执行任务并更新 subTasks 状态
+          evaluation = await strategy.evaluate(goal, state.subTasks)
+          emit({ type: 'evaluation', achieved: evaluation.achieved, reason: evaluation.reason })
 
-        const evaluation = await strategy.evaluate(goal, state.subTasks)
-        emit({ type: 'evaluation', achieved: evaluation.achieved, reason: evaluation.reason })
+          // 更新任务状态：evaluate 后仍为 running 的任务→completed（已执行完毕）
+          for (const task of currentTasks) {
+            if (task.status === 'running') {
+              task.status = 'completed'
+              emit({ type: 'task_end', taskId: task.id, success: true, output: task.result ?? '' })
+            }
+          }
+
+          // handlesOwnExecution 分支不进入共用后处理，提前完成检查点/询问
+          if (evaluation.achieved) {
+            emit({ type: 'iteration_end', iteration: state.iteration, result: evaluation.reason })
+            break
+          }
+
+          // 保存检查点
+          if (options.checkpoint && state.iteration % 2 === 0) {
+            await saveCheckpoint(options.checkpoint, {
+              strategy: options.strategy,
+              goal: goal.description,
+              subTasks: state.subTasks,
+              iteration: state.iteration,
+              maxIterations: state.maxIterations,
+              savedAt: new Date().toISOString(),
+              createdFiles,
+            })
+          }
+
+          // 记录本轮完成增量
+          const completedNow = state.subTasks.filter(t => t.status === 'completed').length
+          const completedDelta = completedNow - state.lastCompletedCount
+          state.lastCompletedCount = completedNow
+          state.history.push({ iteration: state.iteration, event: 'iteration_complete', details: evaluation.reason, completedDelta })
+
+          // B4 询问用户
+          if (options.askUser) {
+            const s = summarizeSubtasks(state.subTasks)
+            const shouldAsk = shouldAskUser(
+              state.history.map(h => ({ iteration: h.iteration, event: h.event, completedDelta: h.completedDelta })),
+              {
+                iteration: state.iteration,
+                maxIterations: state.maxIterations,
+                totalTasks: s.total,
+                completed: s.completed,
+                failed: s.failed,
+                elapsedMs: Date.now() - state.startTime,
+                budgetMs: options.budgetMs,
+                consecutiveStagnantRounds: options.stagnantThreshold,
+              },
+            )
+            if (shouldAsk) {
+              const question = buildAskQuestion(goal.description, {
+                iteration: state.iteration,
+                maxIterations: state.maxIterations,
+                completed: s.completed,
+                failed: s.failed,
+                currentTask: s.currentTask,
+              })
+              const choices = ['继续执行', '回滚并停止', '中止']
+              emit({ type: 'ask', question, options: choices })
+              try {
+                const choice = await options.askUser(question, choices)
+                if (choice.includes('回滚')) {
+                  if (snapshot) {
+                    await restoreSnapshot(process.cwd(), snapshot)
+                    emit({ type: 'snapshot', action: 'restore', snapshotId: snapshot.id })
+                  }
+                  emit({ type: 'warn', message: '用户选择回滚并停止' })
+                  break
+                }
+                if (choice.includes('中止')) {
+                  emit({ type: 'warn', message: '用户选择中止' })
+                  break
+                }
+              } catch {
+                emit({ type: 'warn', message: '询问用户失败，继续执行' })
+              }
+            }
+          }
+          continue  // 跳过下方共用代码
+        } else {
+          // 保底：无任务可执行，评估当前状态
+          evaluation = await strategy.evaluate(goal, state.subTasks)
+          emit({ type: 'evaluation', achieved: evaluation.achieved, reason: evaluation.reason })
+        }
 
         // 保存检查点（每 2 轮保存一次）
         if (options.checkpoint && state.iteration % 2 === 0) {
