@@ -1,5 +1,6 @@
 import { c as _c } from "react/compiler-runtime";
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Text } from '../../ink.js';
 import { useAppState } from '../../state/AppState.js';
 import { getSessionId } from '../../bootstrap/state.js';
@@ -14,7 +15,7 @@ import { renderModelSetting } from '../../utils/model/model.js';
 import { getGlobalConfig } from '../../utils/config.js';
 import { getLogoDisplayData, formatModelAndBilling, truncatePath } from '../../utils/logoV2Utils.js';
 import { stringWidth } from '../../ink/stringWidth.js';
-import { getTotalCost } from '../../cost-tracker.js';
+import { getTotalCost, getTotalCacheReadInputTokens, getTotalCacheCreationInputTokens, getTotalInputTokens } from '../../cost-tracker.js';
 
 function maskApiKey(key: string | undefined): string {
   if (!key || key.length <= 8) return key || '';
@@ -30,12 +31,31 @@ export function formatBytes(bytes: number): string {
 }
 
 export function StatusInfoPanel({ maxWidth }: { maxWidth: number }) {
-  const $ = _c(41);
+  const $ = _c(48);
   const agent = useAppState(_temp);
   const effortValue = useAppState(_temp2);
   const model = useMainLoopModel();
   const sessionId = getSessionId();
   const sessionElapsed = getSessionElapsed();
+
+  // 自刷新：监听 __RSTK_REFRESH_TS__ 信号 + 1s 轮询 api.json tokens 变化，
+  // 让 tokens/cost/缓存 数字在 /rstk 后或 API 调用后更新（Logo 启动横幅不会自动重渲染）
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    let lastRstkTs = (globalThis as any).__RSTK_REFRESH_TS__ as number;
+    let lastSent = readCustomApiStorage().tokens?.sent;
+    const interval = setInterval(() => {
+      const g = globalThis as any;
+      const currentTs = g.__RSTK_REFRESH_TS__ as number;
+      const currentSent = readCustomApiStorage().tokens?.sent;
+      if (currentTs !== lastRstkTs || currentSent !== lastSent) {
+        lastRstkTs = currentTs;
+        lastSent = currentSent;
+        setTick(t => t + 1);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const { version, cwd, billingType, agentName: agentNameFromSettings } = getLogoDisplayData();
   const agentName = agent ?? agentNameFromSettings;
@@ -131,56 +151,75 @@ export function StatusInfoPanel({ maxWidth }: { maxWidth: number }) {
   const totalCost = getTotalCost();
   let t7b;
   if ($[17] !== totalCost) {
-    t7b = totalCost > 0 ? <Text dimColor={true}>💰 ¥{(totalCost * 7.2).toFixed(4)}</Text> : null;
+    // 与状态栏一致：cost 为 0 也显示（¥0.0000），不做 > 0 过滤
+    t7b = <Text dimColor={true}>💰 ¥{(totalCost * 7.2).toFixed(4)}</Text>;
     $[17] = totalCost;
     $[18] = t7b;
   } else {
     t7b = $[18];
   }
 
-  let t8;
-  if ($[19] !== configPath) {
-    t8 = configPath ? <Text dimColor={true}>📜 {configPath}</Text> : null;
-    $[19] = configPath;
-    $[20] = t8;
+  const cacheRead = getTotalCacheReadInputTokens();
+  const cacheCreation = getTotalCacheCreationInputTokens();
+  const cacheInput = getTotalInputTokens();
+  let t7c;
+  if ($[19] !== cacheRead || $[20] !== cacheCreation || $[21] !== cacheInput) {
+    const readStr = cacheRead >= 1e8 ? (cacheRead / 1e8).toFixed(3) + '亿' : cacheRead >= 1e4 ? (cacheRead / 1e4).toFixed(1) + '万' : String(cacheRead);
+    const writeStr = cacheCreation >= 1e8 ? (cacheCreation / 1e8).toFixed(3) + '亿' : cacheCreation >= 1e4 ? (cacheCreation / 1e4).toFixed(1) + '万' : String(cacheCreation);
+    // 命中率 = 缓存读取 / (未命中输入 + 缓存读取) × 100%
+    const hitRate = cacheRead + cacheInput > 0 ? Math.round((cacheRead / (cacheRead + cacheInput)) * 1000) / 10 : 0;
+    t7c = <Text dimColor={true}>⚡ 缓存 读{readStr} 写{writeStr} 命中{hitRate}%</Text>;
+    $[19] = cacheRead;
+    $[20] = cacheCreation;
+    $[21] = cacheInput;
+    $[22] = t7c;
   } else {
-    t8 = $[20];
+    t7c = $[22];
+  }
+
+  let t8;
+  if ($[23] !== configPath) {
+    t8 = configPath ? <Text dimColor={true}>📜 {configPath}</Text> : null;
+    $[23] = configPath;
+    $[24] = t8;
+  } else {
+    t8 = $[24];
   }
 
   let t9;
-  if ($[21] !== sessionId) {
+  if ($[25] !== sessionId) {
     t9 = <Text dimColor={true}>🔗 {sessionId}</Text>;
-    $[21] = sessionId;
-    $[22] = t9;
+    $[25] = sessionId;
+    $[26] = t9;
   } else {
-    t9 = $[22];
+    t9 = $[26];
   }
 
   let t10;
-  if ($[23] !== startupTime) {
+  if ($[27] !== startupTime) {
     t10 = <Text dimColor={true}>启动时间: {startupTime}</Text>;
-    $[23] = startupTime;
-    $[24] = t10;
+    $[27] = startupTime;
+    $[28] = t10;
   } else {
-    t10 = $[24];
+    t10 = $[28];
   }
 
   let t11;
-  if ($[25] !== configPath) {
+  if ($[29] !== configPath) {
     t11 = <Text dimColor={true}>配置: {configPath}</Text>;
-    $[25] = configPath;
-    $[26] = t11;
+    $[29] = configPath;
+    $[30] = t11;
   } else {
-    t11 = $[26];
+    t11 = $[30];
   }
 
   let lines;
-  if ($[27] !== t0 || $[28] !== t1 || $[29] !== t2 || $[30] !== t3 || $[31] !== t4 || $[32] !== t5 || $[33] !== t6 || $[34] !== t7 || $[35] !== t7b || $[36] !== t8 || $[37] !== t9 || $[38] !== t10 || $[39] !== t11) {
-    lines = <>{t0}{t1}{t2}{t3}{t4}{t5}{t6}{t7}{t7b}{t8}{t9}{t10}{t11}</>;
-    $[27] = t0; $[28] = t1; $[29] = t2; $[30] = t3; $[31] = t4; $[32] = t5; $[33] = t6; $[34] = t7; $[35] = t7b; $[36] = t8; $[37] = t9; $[38] = t10; $[39] = t11;
-    $[40] = lines;
+  if ($[31] !== t0 || $[32] !== t1 || $[33] !== t2 || $[34] !== t3 || $[35] !== t4 || $[36] !== t5 || $[37] !== t6 || $[38] !== t7 || $[39] !== t7b || $[40] !== t7c || $[41] !== t8 || $[42] !== t9 || $[43] !== t10 || $[44] !== t11) {
+    lines = <>{t0}{t1}{t2}{t3}{t4}{t5}{t6}{t7}{t7b}{t7c}{t8}{t9}{t10}{t11}</>;
+    $[31] = t0; $[32] = t1; $[33] = t2; $[34] = t3; $[35] = t4; $[36] = t5; $[37] = t6; $[38] = t7; $[39] = t7b; $[40] = t7c; $[41] = t8; $[42] = t9; $[43] = t10; $[44] = t11;
+    $[45] = lines;
   } else {
-    lines = $[40];
+    lines = $[45];
   }
 
   return (

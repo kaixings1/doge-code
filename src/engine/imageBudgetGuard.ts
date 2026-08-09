@@ -2,8 +2,12 @@
  * engine/imageBudgetGuard.ts — 图片预算守卫（吸收自 zhikuncode TokenBudgetGuard + ImageRefInjector）
  *
  * 两阶段预算保护：
- *   Phase 1: 清理历史 Base64 — 在 API 调用前清除消息中的内联 Base64 图片
+ *   Phase 1: 清理历史 Base64 — 在 API 调用前清除消息中的图片引用
  *   Phase 2: 梯度降级 — 当预算超限时：缩略图 → 文本替换 → 移除
+ *
+ * 同时识别两种图片表示：
+ *   - 结构化图片块：content 数组中的 { type: 'image', source: { type: 'base64', data } }
+ *   - 内联字符串：content 字符串中的 data:image/...;base64,xxx
  *
  * 依赖现有 readImageWithTokenBudget 和 maybeResizeAndDownsampleImageBlock。
  */
@@ -41,10 +45,75 @@ export interface BudgetCheckResult {
   action: "none" | "phase1_cleanup" | "phase2_degrade" | "reject"
 }
 
+// ============ 图片提取辅助 ============
+
+interface Base64ImageRef {
+  /** 消息索引 */
+  msgIndex: number
+  /** 结构化块在 content 数组中的索引；内联字符串时为 null */
+  blockIndex: number | null
+  /** base64 数据 */
+  data: string
+  /** 解码后近似字节数 */
+  bytes: number
+}
+
+const INLINE_BASE64_RE = /data:image\/[^;]+;base64,([A-Za-z0-9+/=]+)/g
+
+function isBase64ImageBlock(
+  block: unknown,
+): block is { type: 'image'; source: { type: 'base64'; data: string } } {
+  if (typeof block !== 'object' || block === null) return false
+  const b = block as Record<string, unknown>
+  if (b.type !== 'image') return false
+  if (typeof b.source !== 'object' || b.source === null) return false
+  const source = b.source as Record<string, unknown>
+  return source.type === 'base64' && typeof source.data === 'string'
+}
+
+/** 从消息中提取所有 base64 图片引用（结构化块 + 内联字符串两种格式）。 */
+function extractBase64Images(messages: InternalMessage[]): Base64ImageRef[] {
+  const refs: Base64ImageRef[] = []
+
+  for (let msgIndex = 0; msgIndex < messages.length; msgIndex++) {
+    const content = messages[msgIndex]!.content
+
+    if (Array.isArray(content)) {
+      content.forEach((block, blockIndex) => {
+        if (isBase64ImageBlock(block)) {
+          refs.push({
+            msgIndex,
+            blockIndex,
+            data: block.source.data,
+            bytes: Math.ceil((block.source.data.length * 3) / 4),
+          })
+        }
+      })
+      continue
+    }
+
+    if (typeof content === 'string') {
+      INLINE_BASE64_RE.lastIndex = 0
+      let match: RegExpExecArray | null
+      while ((match = INLINE_BASE64_RE.exec(content)) !== null) {
+        const data = match[1]!
+        refs.push({
+          msgIndex,
+          blockIndex: null,
+          data,
+          bytes: Math.ceil((data.length * 3) / 4),
+        })
+      }
+    }
+  }
+
+  return refs
+}
+
 // ============ Phase 1: 历史 Base64 清理 ============
 
 /**
- * 扫描消息历史，清理过大的内联 Base64 图片引用。
+ * 扫描消息历史，清理过大的 Base64 图片引用（结构化块 + 内联字符串）。
  * 吸收自 zhikuncode TokenBudgetGuard Phase1。
  */
 export function cleanupHistoryBase64(
@@ -53,22 +122,40 @@ export function cleanupHistoryBase64(
 ): { messages: InternalMessage[]; clearedCount: number } {
   let clearedCount = 0
 
-  const cleaned = messages.map((msg) => {
-    const content = typeof msg.content === "string" ? msg.content : null
-    if (!content) return msg
+  const cleaned = messages.map((msg, msgIndex) => {
+    const content = msg.content
 
-    // 检测 Base64 数据 URL
-    const base64Match = content.match(/data:image\/[^;]+;base64,[A-Za-z0-9+/=]{100,}/)
-    if (!base64Match) return msg
+    // ── 结构化图片块：将超阈值的 image 块替换为文本占位 ──
+    if (Array.isArray(content)) {
+      let changed = false
+      const newBlocks = content.map(block => {
+        if (!isBase64ImageBlock(block)) return block
+        if (block.source.data.length < threshold) return block
+        changed = true
+        clearedCount++
+        return {
+          type: 'text' as const,
+          text: `[图片已外部化: ${(block.source.data.length / 1024).toFixed(0)}KB]`,
+        }
+      })
+      return changed ? { ...msg, content: newBlocks } : msg
+    }
 
-    const base64Length = base64Match[0].length
-    if (base64Length < threshold) return msg
+    // ── 内联字符串：替换超阈值的 data URL ──
+    if (typeof content === 'string') {
+      const inlineRe = /data:image\/[^;]+;base64,[A-Za-z0-9+/=]{100,}/
+      const match = content.match(inlineRe)
+      if (!match) return msg
 
-    // 替换为轻量引用标记
-    const replacement = `[图片已外部化: ${(base64Length / 1024).toFixed(0)}KB]`
-    const newContent = content.replace(base64Match[0], replacement)
-    clearedCount++
-    return { ...msg, content: newContent }
+      const base64Length = match[0].length
+      if (base64Length < threshold) return msg
+
+      const replacement = `[图片已外部化: ${(base64Length / 1024).toFixed(0)}KB]`
+      clearedCount++
+      return { ...msg, content: content.replace(match[0], replacement) }
+    }
+
+    return msg
   })
 
   return { messages: cleaned, clearedCount }
@@ -113,7 +200,7 @@ export function degradeImageIfNeeded(
 }
 
 /**
- * 对消息列表执行 Phase 2 梯度降级。
+ * 对消息列表执行 Phase 2 梯度降级（结构化块 + 内联字符串）。
  * 返回降级后的消息列表和采取的行动。
  */
 export function applyPhase2Degradation(
@@ -122,54 +209,81 @@ export function applyPhase2Degradation(
 ): { messages: InternalMessage[]; degraded: string[] } {
   const degraded: string[] = []
 
-  // 计算当前总图片大小
-  let totalBytes = 0
-  const imageSizes: { msgIndex: number; bytes: number }[] = []
-
-  messages.forEach((msg, idx) => {
-    const content = typeof msg.content === "string" ? msg.content : null
-    if (!content) return
-
-    const base64Match = content.match(/data:image\/[^;]+;base64,([A-Za-z0-9+/=]+)/)
-    if (base64Match) {
-      const bytes = Math.ceil(base64Match[1].length * 3 / 4)
-      imageSizes.push({ msgIndex: idx, bytes })
-      totalBytes += bytes
-    }
-  })
+  // 收集所有图片引用并按消息索引排序（从旧到新）
+  const refs = extractBase64Images(messages)
+  const totalBytes = refs.reduce((sum, r) => sum + r.bytes, 0)
 
   if (totalBytes <= config.maxTotalImageBytes) {
     return { messages, degraded }
   }
 
-  // 从最新到最旧执行降级
-  const degradedIndices = new Set<number>()
-  for (let i = imageSizes.length - 1; i >= 0; i--) {
-    const { msgIndex, bytes } = imageSizes[i]
-    if (totalBytes <= config.maxTotalImageBytes * 0.8) break
+  // 从最新到最旧执行降级。用 `${msgIndex}:${blockIndex ?? 'inline'}:${data前12位}` 作为
+  // 稳定标识（Set 引用相等无法命中重建对象，须用字符串键）。
+  const degradedKeys = new Set<string>()
+  const keyOf = (r: Base64ImageRef): string =>
+    `${r.msgIndex}:${r.blockIndex ?? 'inline'}:${r.data.slice(0, 12)}`
 
-    const decision = degradeImageIfNeeded(bytes, totalBytes - bytes, config)
+  let runningTotal = totalBytes
+  for (let i = refs.length - 1; i >= 0; i--) {
+    const ref = refs[i]!
+    if (runningTotal <= config.maxTotalImageBytes * 0.8) break
+
+    const decision = degradeImageIfNeeded(ref.bytes, runningTotal - ref.bytes, config)
     if (decision.action === "resize") {
-      // 标记为需要缩略图（实际缩略图由调用方处理）
-      degraded.push(`消息[${msgIndex}]: 建议缩略图 (${(bytes / 1024).toFixed(0)}KB)`)
-      degradedIndices.add(msgIndex)
-      totalBytes -= bytes * 0.7 // 估计缩略图大小
+      degraded.push(`消息[${ref.msgIndex}]: 建议缩略图 (${(ref.bytes / 1024).toFixed(0)}KB)`)
+      degradedKeys.add(keyOf(ref))
+      runningTotal -= ref.bytes * 0.7 // 估计缩略图大小
     } else if (decision.action === "text_only") {
-      degraded.push(`消息[${msgIndex}]: 替换为文本描述`)
-      degradedIndices.add(msgIndex)
-      totalBytes -= bytes
+      degraded.push(`消息[${ref.msgIndex}]: 替换为文本描述`)
+      degradedKeys.add(keyOf(ref))
+      runningTotal -= ref.bytes
     } else if (decision.action === "remove") {
-      degraded.push(`消息[${msgIndex}]: 移除图片 (${(bytes / 1024).toFixed(0)}KB)`)
-      degradedIndices.add(msgIndex)
-      totalBytes -= bytes
+      degraded.push(`消息[${ref.msgIndex}]: 移除图片 (${(ref.bytes / 1024).toFixed(0)}KB)`)
+      degradedKeys.add(keyOf(ref))
+      runningTotal -= ref.bytes
     }
   }
 
-  const cleaned = messages.map((msg, idx) => {
-    if (degradedIndices.has(idx)) {
-      const content = typeof msg.content === "string" ? msg.content : String(msg.content)
-      return { ...msg, content: `[图片预算保护: ${content.slice(0, 50)}...]` }
+  if (degradedKeys.size === 0) return { messages, degraded }
+
+  // 按消息索引分组，逐条替换
+  const cleaned = messages.map((msg, msgIndex) => {
+    const content = msg.content
+
+    // 结构化块：将降级的 image 块替换为文本占位
+    if (Array.isArray(content)) {
+      let changed = false
+      const newBlocks = content.map((block, blockIndex) => {
+        if (!isBase64ImageBlock(block)) return block
+        const isTarget = degradedKeys.has(
+          `${msgIndex}:${blockIndex}:${block.source.data.slice(0, 12)}`,
+        )
+        if (!isTarget) return block
+        changed = true
+        return {
+          type: 'text' as const,
+          text: `[图片预算保护: ${(block.source.data.length / 1024).toFixed(0)}KB]`,
+        }
+      })
+      return changed ? { ...msg, content: newBlocks } : msg
     }
+
+    // 内联字符串：将降级的 data URL 替换为文本占位
+    if (typeof content === 'string') {
+      const inlineRefs = refs.filter(r => r.msgIndex === msgIndex && r.blockIndex === null)
+      const targets = inlineRefs.filter(r => degradedKeys.has(keyOf(r)))
+      if (targets.length === 0) return msg
+
+      let newContent = content
+      for (const ref of targets) {
+        newContent = newContent.replace(
+          new RegExp(`data:image/[^;]+;base64,${ref.data.slice(0, 8)}[A-Za-z0-9+/=]*`),
+          `[图片预算保护: ${(ref.bytes / 1024).toFixed(0)}KB]`,
+        )
+      }
+      return newContent === content ? msg : { ...msg, content: newContent }
+    }
+
     return msg
   })
 
@@ -195,17 +309,9 @@ export function checkImageBudget(
   const phase2Result = applyPhase2Degradation(phase1Result.messages, cfg)
 
   // 计算剩余预算
-  let totalImageBytes = 0
-  let imageCount = 0
-  for (const msg of phase2Result.messages) {
-    const content = typeof msg.content === "string" ? msg.content : null
-    if (!content) continue
-    const base64Match = content.match(/data:image\/[^;]+;base64,([A-Za-z0-9+/=]+)/)
-    if (base64Match) {
-      totalImageBytes += Math.ceil(base64Match[1].length * 3 / 4)
-      imageCount++
-    }
-  }
+  const remainingRefs = extractBase64Images(phase2Result.messages)
+  const totalImageBytes = remainingRefs.reduce((sum, r) => sum + r.bytes, 0)
+  const imageCount = remainingRefs.length
 
   const withinBudget = totalImageBytes <= cfg.maxTotalImageBytes && imageCount <= cfg.maxConcurrentImages
 

@@ -81,6 +81,7 @@ import {
   getRuntimeMainLoopModel,
   renderModelName,
 } from './utils/model/model.js'
+import { resolveVisionModel, hasImagesInMessages } from './utils/model/visionModelRouter.js'
 import {
   doesMostRecentAssistantMessageExceed200k,
   finalContextTokensFromLastResponse,
@@ -571,6 +572,19 @@ async function* queryLoop(
         })
         return { reason: 'blocking_limit' }
       }
+    }
+
+    // 智能视觉模型路由（吸收自 zhikuncode VisionModelRouter）：
+    // 消息含图片但当前模型不支持图片时，为本次请求切换到视觉模型。
+    // 单次请求级别行为，不修改会话级模型选择。
+    const visionRoutedModel = hasImagesInMessages(messagesForQuery)
+      ? resolveVisionModel(currentModel)
+      : null
+    if (visionRoutedModel && visionRoutedModel !== currentModel) {
+      logForDebugging(
+        `[VISION-ROUTE] ${currentModel} -> ${visionRoutedModel} (消息含图片但模型不支持视觉输入)`,
+      )
+      currentModel = visionRoutedModel
     }
 
     let attemptWithFallback = true

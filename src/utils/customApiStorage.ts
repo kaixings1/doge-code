@@ -16,6 +16,10 @@ export type PresetTokenData = {
   jsonSentBytes?: number
   /** JSON 响应体字节数（接收端统计） */
   jsonReceivedBytes?: number
+  /** 累计缓存读取（命中）token 数 */
+  cacheRead?: number
+  /** 累计缓存写入（创建）token 数 */
+  cacheCreation?: number
 }
 
 export type CustomApiStorageData = {
@@ -316,6 +320,8 @@ export function addPresetTokens(
   newReceived: number,
   jsonSentBytes?: number,
   jsonReceivedBytes?: number,
+  newCacheRead?: number,
+  newCacheCreation?: number,
 ): void {
   try {
     const p = getProjectConfigPath()
@@ -341,6 +347,8 @@ export function addPresetTokens(
       currentSessionTotal: 0,
       jsonSentBytes: 0,
       jsonReceivedBytes: 0,
+      cacheRead: 0,
+      cacheCreation: 0,
     }
     t.sent = Math.round((t.sent || 0) + newSent)
     t.received = Math.round((t.received || 0) + newReceived)
@@ -350,6 +358,12 @@ export function addPresetTokens(
     }
     if (typeof jsonReceivedBytes === 'number') {
       t.jsonReceivedBytes = Math.round((t.jsonReceivedBytes || 0) + jsonReceivedBytes)
+    }
+    if (typeof newCacheRead === 'number') {
+      t.cacheRead = Math.round((t.cacheRead || 0) + newCacheRead)
+    }
+    if (typeof newCacheCreation === 'number') {
+      t.cacheCreation = Math.round((t.cacheCreation || 0) + newCacheCreation)
     }
     preset.tokens = t
 
