@@ -56,6 +56,14 @@ _无_
 - [x] 第二跳：预测性 AI 助手（3-5 天）— usePreAnalysis 静态分析 + streamProcessor preAnalysis 注入
 - [x] 第三跳：操作快照 + 一键回滚（5-7 天）— toolExecutor takeBeforeSnapshot/rollbackTool + OperationHistory 组件
 
+### 🔵 Phase 8: Issue 命令增强（2026-08-09）
+- [x] 8.1 将 `src/commands/issue/index.tsx` 从手动输入标题的 React UI 存根重写为本地命令
+  - 新增 `/issue fetch <url>` — 读取 GitHub Issue 详情（标题/内容/标签/评论）
+  - 新增 `/issue list [owner/repo]` — 列出仓库 Open Issues（默认当前仓库）
+  - 新增 `/issue fix <url>` — fetch Issue → 调用 loop 引擎 + SWE-agent 策略自动修复
+  - 复用已有组件：executeLoop (engine.ts) + createAITaskExecutor (ai-task-executor.ts) + ghFetch (commit-push-pr.ts 模式)
+  - 测试：566 passed（44 测试文件）✓
+
 ### 🔵 Phase 7: zhikuncode 深度特性吸收（2026-08-09）
 - [x] 7.1 ContextCascade 五层级联压缩 — Snip/MicroCompact/AutoCompact/CollapseDrain/ReactiveCompact
   - 扩展 autoCompactor.ts，新增 executeCascade/snipMessages/microCompact/collapseDrain/reactiveCompact
@@ -73,8 +81,8 @@ _无_
 - [ ] 7.5 OperationAnalyzer 模式 — 跳过（YAGNI：PermissionManager 已正常工作，升级为三阶段分析器属于过度工程）
 - [ ] 7.6 浏览器语义快照 — 跳过（YAGNI：doge-code 是纯 CLI/终端工具，无浏览器运行时）
 
-**总计（含 Phase 7）**: +8-11h，累计 64-78 小时
-- [x] 全部 552 tests passed（43 个测试文件）✓
+**总计（含 Phase 7 + 8）**: +1-2h，累计 65-80 小时
+- [x] 全部 566 tests passed（44 个测试文件）✓
 
 ## 参考文档
 
