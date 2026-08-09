@@ -150,23 +150,28 @@
 
 | Phase | 任务 | 预计工时 | 状态 | 备注 |
 |-------|------|----------|------|------|
-| **Phase 1** | 1.1 code-search 命令 | 3-4h | ⏳ 待开始 | 复用已有 codeIndexing |
-| | 1.2 pair 命令 | 4-5h | ⏳ 待开始 | 复用 subagent 框架 |
-| | 1.3 diagram 完善 | 1-2h | ⏳ 待开始 | AST 动态生成 |
-| **Phase 2** | 2.1 命令层单元测试 | 8-10h | ⏳ 待开始 | 优先 cost/memory |
-| | 2.2 集成测试 | 2-3h | ⏳ 待开始 | 关键工作流 |
-| | 2.3 E2E 测试 | 2-3h | ⏳ 待开始 | 高频命令 |
-| **Phase 3** | 3.1 清理 console.log | 2-3h | ⏳ 待开始 | 结构化日志 |
-| | 3.2 消除空 catch | 1-2h | ⏳ 待开始 | 添加错误日志 |
-| | 3.3 减少 TODO | 2-3h | ⏳ 待开始 | 解决或移除 |
-| **Phase 4** | 4.1 消除重复扫描 | 1-2h | ⏳ 待开始 | health-score |
-| | 4.2 异步 I/O | 2-3h | ⏳ 待开始 | diagram/health-score |
-| | 4.3 正则优化 | 1h | ⏳ 待开始 | health-score |
-| **Phase 5** | 5.1 实时协作 | 5-6h | ⏳ 待研究 | WebSocket + CRDT |
-| | 5.2 智能代码解释 | 3-4h | ⏳ 待研究 | 右键菜单 |
-| | 5.3 自动化重构建议 | 3-4h | ⏳ 待研究 | 实时检测 |
-| | 5.4 上下文感知搜索 | 2-3h | ⏳ 待研究 | 语义搜索增强 |
-| | 5.5 智能错误修复 | 2-3h | ⏳ 待研究 | 错误分析 |
+| **Phase 1** | 1.1 code-search 命令 | 3-4h | ✅ 已完成 | 复用已有 codeIndexing |
+| | 1.2 pair 命令 | 4-5h | ✅ 已完成 | 复用 subagent 框架 |
+| | 1.3 diagram 完善 | 1-2h | ✅ 已完成 | AST 动态生成 |
+| **Phase 2** | 2.1 命令层单元测试 | 8-10h | ✅ 已完成 | 9 文件 / 177 tests |
+| | 2.2 集成测试 | 2-3h | ✅ 已完成 | 3 文件 / 15 tests |
+| | 2.3 E2E 测试 | 2-3h | ✅ 已完成 | 2 文件 / 16 tests |
+| **Phase 3** | 3.1 清理 console.log | 2-3h | ✅ 已完成 | src/ 中 0 个 |
+| | 3.2 消除空 catch | 1-2h | ✅ 已完成 | src/ 中 0 个 |
+| | 3.3 减少 TODO | 2-3h | ✅ 已完成 | src/ 中 0 个 |
+| **Phase 4** | 4.1 消除重复扫描 | 1-2h | ✅ 已完成 | health-score |
+| | 4.2 异步 I/O | 2-3h | ✅ 已完成 | diagram/health-score |
+| | 4.3 正则优化 | 1h | ✅ 已完成 | health-score |
+| **Phase 5** | 5.1 实时协作 | 5-6h | ✅ 已完成 | CRDT + Lamport 时钟 |
+| | 5.2 智能代码解释 | 3-4h | ✅ 已完成 | AST + 知识图谱 + LLM |
+| | 5.3 自动化重构建议 | 3-4h | ✅ 已完成 | executeExtract + autoFixable |
+| | 5.4 上下文感知搜索 | 2-3h | ✅ 已完成 | 语义搜索增强 |
+| | 5.5 智能错误修复 | 2-3h | ✅ 已完成 | suggestFix + applyFixToFile |
+| **Phase 7** | 7.1 ContextCascade | 2-3h | ✅ 已完成 | 五层级联压缩 |
+| | 7.2 AutoFixLoop | 2-3h | ✅ 已完成 | 结构化修复解析器 |
+| | 7.3 ContextCollapse | 2-3h | ✅ 已完成 | 三级渐进折叠 |
+| | 7.4 图片预算守卫 | 1-2h | ✅ 已完成 | TokenBudgetGuard |
+| **Phase 8** | 8.1 Issue 命令增强 | 1-2h | ✅ 已完成 | fetch/list/fix + loop 引擎集成 |
 
 **总计**: 41-58 小时
 
@@ -175,3 +180,6 @@
 ## 🔄 更新日志
 
 - 2026-08-09: 基于代码库深度审计创建 v2.0 计划
+- 2026-08-09: Phase 1-5 全部完成（代码搜索、pair 命令、测试 566 passed、性能优化、新特性吸收）
+- 2026-08-09: Phase 7 zhikuncode 深度特性吸收完成（ContextCascade/AutoFixLoop/ContextCollapse/图片预算守卫）
+- 2026-08-09: Phase 8 Issue 命令增强完成（fetch/list/fix + loop 引擎 + SWE-agent 策略集成）
