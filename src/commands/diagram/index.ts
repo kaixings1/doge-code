@@ -1,7 +1,6 @@
 import type { Command } from '../../commands.js'
 import type { LocalCommandCall } from '../../types/command.js'
-import { readdir, stat, writeFile } from 'fs/promises'
-import { access } from 'fs'
+import { readdir, stat, writeFile, access } from 'fs/promises'
 import * as path from 'path'
 import { getCachedDirEntries, setCachedDirEntries } from '../../utils/dirCache.js'
 
@@ -35,7 +34,12 @@ interface DiagramResult {
 }
 
 async function existsAsync(p: string): Promise<boolean> {
-  try { await access(p); return true } catch { return false }
+  try {
+    await stat(p)
+    return true
+  } catch {
+    return false
+  }
 }
 
 // ============================================================================

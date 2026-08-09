@@ -1,7 +1,7 @@
 import type { Command } from '../../commands.js'
 import type { LocalCommandCall } from '../../types/command.js'
 import { readFile, readdir, stat, access } from 'fs/promises'
-import * as path from 'path'
+import { join, resolve, extname, sep } from 'path'
 
 async function exists(p: string): Promise<boolean> {
   try { await access(p); return true } catch { return false }
@@ -476,7 +476,7 @@ async function scanDirectory(dir: string, categories: string[] = []): Promise<Sc
         await walk(fullPath)
       } else if (fileStat.isFile() && CODE_EXTENSIONS.includes(extname(entry))) {
         filesScanned++
-        const relativePath = fullPath.replace(absDir + path.sep, '')
+        const relativePath = fullPath.replace(absDir + sep, '')
         const fileIssues = await scanFile(relativePath, cats)
         for (const cat of cats) {
           const key = cat as keyof CategoryIssues

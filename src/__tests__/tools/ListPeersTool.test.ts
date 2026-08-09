@@ -4,12 +4,11 @@ import * as os from 'os'
 import * as path from 'path'
 import { EventEmitter } from 'events'
 
-// vi.hoisted 共享状态（mock 工厂 hoisting 后可访问）
-const mockState = vi.hoisted(() => {
-  const socketEmitters = new Map<string, EventEmitter>()
-  const sentMessages: Array<{ msg: string; port: number; host: string }> = []
-  return { socketEmitters, sentMessages }
-})
+// 共享状态（vitest v3 移除 vi.hoisted，改用 module-level 变量）
+const mockState = {
+  socketEmitters: new Map<string, EventEmitter>(),
+  sentMessages: [] as Array<{ msg: string; port: number; host: string }>,
+}
 
 vi.mock('dgram', () => {
   return {

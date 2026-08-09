@@ -186,6 +186,7 @@ describe('集成: Flow + Hook 系统', () => {
 
     it('钩子异常不应影响主流程', async () => {
       const manager = getHookManager();
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       manager.register({
         eventType: 'PreToolUse',
         handler: async (): Promise<HookResult> => {
@@ -200,6 +201,7 @@ describe('集成: Flow + Hook 系统', () => {
         toolName: 'Bash',
         input: {},
       });
+      errorSpy.mockRestore();
       expect(result.allow).toBe(true);
     });
   });
