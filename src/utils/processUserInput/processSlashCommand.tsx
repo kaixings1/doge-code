@@ -697,7 +697,7 @@ async function getMessagesForSlashCommand(commandName: string, args: string, set
       case 'local-jsx':
         {
           return new Promise<SlashCommandResult>(resolve => {
-            let doneWasCalled = false;
+            let promiseResolved = false;
             const onDone = (result?: string, options?: {
               display?: CommandResultDisplay;
               shouldQuery?: boolean;
@@ -705,53 +705,51 @@ async function getMessagesForSlashCommand(commandName: string, args: string, set
               nextInput?: string;
               submitNextInput?: boolean;
             }) => {
-              if (doneWasCalled) return;
-              doneWasCalled = true;
-              // If display is 'skip', don't add any messages to the conversation
-              if (options?.display === 'skip') {
+              if (!promiseResolved) {
+                // First call: resolve the Promise (original behavior)
+                promiseResolved = true;
+                if (options?.display === 'skip') {
+                  void resolve({
+                    messages: [],
+                    shouldQuery: false,
+                    command,
+                    nextInput: options?.nextInput,
+                    submitNextInput: options?.submitNextInput
+                  });
+                  return;
+                }
+                const metaMessages = (options?.metaMessages ?? []).map((content: string) => createUserMessage({
+                  content,
+                  isMeta: true
+                }));
+                const skipTranscript = isFullscreenEnvEnabled() && typeof result === 'string' && result.endsWith(' dismissed');
                 void resolve({
-                  messages: [],
-                  shouldQuery: false,
+                  messages: options?.display === 'system' ? skipTranscript ? metaMessages : [createCommandInputMessage(formatCommandInput(command, args)), createCommandInputMessage(`<local-command-stdout>${result}</local-command-stdout>`), ...metaMessages] : [createUserMessage({
+                    content: prepareUserContent({
+                      inputString: formatCommandInput(command, args),
+                      precedingInputBlocks
+                    })
+                  }), result ? createUserMessage({
+                    content: `<local-command-stdout>${result}</local-command-stdout>`
+                  }) : createUserMessage({
+                    content: `<local-command-stdout>${NO_CONTENT_MESSAGE}</local-command-stdout>`
+                  }), ...metaMessages],
+                  shouldQuery: options?.shouldQuery ?? false,
                   command,
                   nextInput: options?.nextInput,
                   submitNextInput: options?.submitNextInput
                 });
-                return;
+              } else if (result && options?.display !== 'skip') {
+                // Subsequent calls: enqueue as pending notification for real-time updates
+                const message = options?.display === 'system'
+                  ? result
+                  : `<local-command-stdout>${result}</local-command-stdout>`;
+                enqueuePendingNotification({
+                  value: message,
+                  mode: 'task-notification',
+                  priority: 'next',
+                });
               }
-
-              // Meta messages are model-visible but hidden from the user
-              const metaMessages = (options?.metaMessages ?? []).map((content: string) => createUserMessage({
-                content,
-                isMeta: true
-              }));
-
-              // In fullscreen the command just showed as a centered modal
-              // pane — the transient notification is enough feedback. The
-              // "❯ /config" + "⎿ dismissed" transcript entries are
-              // type:system subtype:local_command (user-visible but NOT sent
-              // to the model), so skipping them doesn't affect model context.
-              // Outside fullscreen keep them so scrollback shows what ran.
-              // Only skip "<Name> dismissed" modal-close notifications —
-              // commands that early-exit before showing a modal (/ultraplan
-              // usage, /rename, /proactive) use display:system for actual
-              // output that must reach the transcript.
-              const skipTranscript = isFullscreenEnvEnabled() && typeof result === 'string' && result.endsWith(' dismissed');
-              void resolve({
-                messages: options?.display === 'system' ? skipTranscript ? metaMessages : [createCommandInputMessage(formatCommandInput(command, args)), createCommandInputMessage(`<local-command-stdout>${result}</local-command-stdout>`), ...metaMessages] : [createUserMessage({
-                  content: prepareUserContent({
-                    inputString: formatCommandInput(command, args),
-                    precedingInputBlocks
-                  })
-                }), result ? createUserMessage({
-                  content: `<local-command-stdout>${result}</local-command-stdout>`
-                }) : createUserMessage({
-                  content: `<local-command-stdout>${NO_CONTENT_MESSAGE}</local-command-stdout>`
-                }), ...metaMessages],
-                shouldQuery: options?.shouldQuery ?? false,
-                command,
-                nextInput: options?.nextInput,
-                submitNextInput: options?.submitNextInput
-              });
             };
             void command.load().then(mod => {
               if (typeof mod.call !== 'function') {
@@ -778,7 +776,7 @@ async function getMessagesForSlashCommand(commandName: string, args: string, set
               // its setToolJSX({clearLocalJSX: true}) before we get here.
               // Setting isLocalJSXCommand after clear leaves it stuck true,
               // blocking useQueueProcessor and TextInput focus.
-              if (doneWasCalled) return;
+              if (promiseResolved) return;
               setToolJSX({
                 jsx,
                 shouldHidePromptInput: true,
@@ -791,8 +789,8 @@ async function getMessagesForSlashCommand(commandName: string, args: string, set
               // Promise hangs forever, leaving queryGuard stuck in
               // 'dispatching' and deadlocking the queue processor.
               logError(e);
-              if (doneWasCalled) return;
-              doneWasCalled = true;
+              if (promiseResolved) return;
+              promiseResolved = true;
               setToolJSX({
                 jsx: null,
                 shouldHidePromptInput: false,

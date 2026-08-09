@@ -198,23 +198,28 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           }
         : void 0,
       onProgress: (event: { type: string; [k: string]: unknown }) => {
-        // 对话模式下静默更新进度状态，避免中间 onDone 被 doneWasCalled 守卫拦截
-        // 最终结果在 executeLoop() 返回后统一发送
+        // 对话模式下直接通过 setMessages 追加进度（绕过队列，队列在 queryGuard 活跃时被阻塞）
+        const appendSystemMessage = (text: string) => {
+          context.appendSystemMessage?.({ type: 'system', content: text, date: new Date().toISOString() })
+        }
         switch (event.type) {
           case 'loop_start':
             progressState.phase = 'planning'
             break
           case 'decomposition':
             progressState.phase = 'executing'
+            appendSystemMessage(formatStatusLine(progressState))
             break
           case 'iteration_start':
             progressState.phase = 'executing'
             progressState.currentIteration = event.iteration as number
             progressState.maxIterations = (event.maxIterations as number) ?? parsed.maxIterations
             progressState.fileCount = fileCount
+            appendSystemMessage(formatStatusLine(progressState))
             break
           case 'task_start':
             progressState.currentTask = (event.description as string) ?? ''
+            appendSystemMessage(formatStatusLine(progressState))
             break
           case 'task_end': {
             const output = (event.output as string) ?? ''
@@ -233,22 +238,27 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
               newFiles.forEach(fp => { createdFiles.push(fp); fileCount++ })
               progressState.fileCount = fileCount
             }
+            appendSystemMessage(formatStatusLine(progressState))
             break
           }
           case 'task_failed':
             progressState.phase = 'error'
             progressState.currentTask = `失败: ${event.error?.toString().slice(0, 30)}`
+            appendSystemMessage(formatStatusLine(progressState))
             break
           case 'evaluation':
             if (event.achieved) {
               progressState.phase = 'verifying'
+              appendSystemMessage(formatStatusLine(progressState))
             }
             break
           case 'repair':
             progressState.currentTask = `🔧 自动修复 (第 ${event.attempt} 次)`
+            appendSystemMessage(formatStatusLine(progressState))
             break
           case 'progress':
             progressState.fileCount = fileCount
+            appendSystemMessage(formatStatusLine(progressState))
             break
         }
       },
