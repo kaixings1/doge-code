@@ -14,10 +14,7 @@ var input = JSON.parse(rawInput);
 var { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration, doge_api_json, session_id, epoch, update_notification, is_in_plan_mode, eco_enabled } = input;
 var segments = [];
 if (workspace?.current_dir) {
-  let dir = workspace.current_dir;
-  const parts = dir.replace(/\\/g, "/").split("/").filter(Boolean);
-  const last = parts[parts.length - 1] || "";
-  segments.push("\uD83D\uDCC1 " + (last.length > 12 ? last.slice(0, 10) + "…" : last));
+  segments.push("\uD83D\uDCC1 " + workspace.current_dir);
 }
 var modelName = model ? model.display_name || model.id : "";
 if (modelName) {
