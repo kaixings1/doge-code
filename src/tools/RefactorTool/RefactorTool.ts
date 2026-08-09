@@ -17,6 +17,7 @@
 import type { LocalJSXCommandContext } from '../../types/command.js'
 import { readFileSync, writeFileSync, existsSync } from 'fs'
 import { resolve, extname } from 'path'
+import ts from 'typescript'
 
 // ============================================================================
 // Types
@@ -168,12 +169,11 @@ function executeRename(
 
 function executeExtract(
   filePath: string,
-  _startLine: number,
-  _endLine: number,
-  _functionName: string,
+  startLine: number,
+  endLine: number,
+  functionName: string,
   dryRun: boolean,
 ): RefactorResult {
-  // 提取函数需要 AST 支持，这里提供框架
   if (!existsSync(filePath)) {
     return {
       success: false,
@@ -183,19 +183,61 @@ function executeExtract(
     }
   }
 
-  // TODO: 实现 AST-based 函数提取
-  return {
-    success: true,
-    changes: [],
-    errors: [],
-    summary: '⚠️  函数提取需要 AST 支持，目前仅支持变量重命名',
+  try {
+    const content = readFileSync(filePath, 'utf-8')
+    const sourceFile = ts.createSourceFile(filePath, content, ts.ScriptTarget.Latest, true)
+    const lines = content.split('\n')
+
+    if (startLine < 1 || endLine > lines.length || startLine > endLine) {
+      return { success: false, changes: [], errors: ['无效的行范围'], summary: '❌ 行范围无效' }
+    }
+
+    const blockLines = lines.slice(startLine - 1, endLine)
+    const blockText = blockLines.join('\n')
+    const indent = getIndent(blockLines[0])
+
+    const newFunction = `${indent}function ${functionName}() {\n${indent}${blockText}\n${indent}}`
+    const changes: RefactorChange[] = [{
+      file: filePath,
+      line: startLine,
+      original: blockText.trim().substring(0, 80),
+      modified: `${functionName}()`,
+      type: 'extract',
+    }]
+
+    if (!dryRun) {
+      const replaced = [...lines]
+      replaced.splice(startLine - 1, endLine - startLine + 1, `${indent}${functionName}()`)
+      writeFileSync(filePath, replaced.join('\n'), 'utf-8')
+    }
+
+    return {
+      success: true,
+      changes,
+      errors: [],
+      summary: dryRun
+        ? `📋 预览: 将提取行 ${startLine}-${endLine} 为函数 ${functionName}()`
+        : `✅ 已提取行 ${startLine}-${endLine} 为函数 ${functionName}()`,
+    }
+  } catch (error) {
+    return {
+      success: false,
+      changes: [],
+      errors: [error instanceof Error ? error.message : String(error)],
+      summary: `❌ 函数提取失败: ${error instanceof Error ? error.message : '未知错误'}`,
+    }
   }
+}
+
+function getIndent(line: string): string {
+  const match = line.match(/^(\s*)/)
+  return match ? match[1] : ''
 }
 
 function executeTypeFix(
   filePath: string,
-  _typeName: string,
-  _replacement: string,
+  typeName: string,
+  replacement: string,
   dryRun: boolean,
 ): RefactorResult {
   if (!existsSync(filePath)) {
@@ -207,13 +249,72 @@ function executeTypeFix(
     }
   }
 
-  // TODO: 实现类型修复
-  return {
-    success: true,
-    changes: [],
-    errors: [],
-    summary: '⚠️  类型修复需要 TypeScript compiler API，目前仅支持变量重命名',
+  try {
+    const content = readFileSync(filePath, 'utf-8')
+    const sourceFile = ts.createSourceFile(filePath, content, ts.ScriptTarget.Latest, true)
+    const lines = content.split('\n')
+    const changes: RefactorChange[] = []
+
+    function visit(node: ts.Node) {
+      if (ts.isTypeReferenceNode(node)) {
+        const typeNameNode = node.typeName
+        if (ts.isIdentifier(typeNameNode) && typeNameNode.text === typeName) {
+          const line = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile)).line + 1
+          const originalLine = lines[line - 1]
+          const modifiedLine = originalLine.replace(new RegExp(`\\b${escapeRegex(typeName)}\\b`), replacement)
+          if (modifiedLine !== originalLine) {
+            changes.push({
+              file: filePath,
+              line,
+              original: originalLine.trim().substring(0, 80),
+              modified: modifiedLine.trim().substring(0, 80),
+              type: 'type-fix',
+            })
+          }
+        }
+      }
+      ts.forEachChild(node, visit)
+    }
+
+    visit(sourceFile)
+
+    if (changes.length === 0) {
+      return {
+        success: true,
+        changes: [],
+        errors: [],
+        summary: `✅ 未找到类型引用: ${typeName}`,
+      }
+    }
+
+    if (!dryRun) {
+      let modified = content
+      for (const c of changes) {
+        modified = modified.replace(new RegExp(`\\b${escapeRegex(typeName)}\\b`), replacement)
+      }
+      writeFileSync(filePath, modified, 'utf-8')
+    }
+
+    return {
+      success: true,
+      changes,
+      errors: [],
+      summary: dryRun
+        ? `📋 预览: 将修复 ${changes.length} 处类型 ${typeName} → ${replacement}`
+        : `✅ 已修复 ${changes.length} 处类型 ${typeName} → ${replacement}`,
+    }
+  } catch (error) {
+    return {
+      success: false,
+      changes: [],
+      errors: [error instanceof Error ? error.message : String(error)],
+      summary: `❌ 类型修复失败: ${error instanceof Error ? error.message : '未知错误'}`,
+    }
   }
+}
+
+function escapeRegex(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
 // ============================================================================

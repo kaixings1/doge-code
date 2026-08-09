@@ -1,4 +1,4 @@
-﻿import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from 'fs'
 import { join } from 'path'
 
@@ -26,8 +26,13 @@ afterEach(() => {
 describe('errors scanForErrors', () => {
   const scanDir = join(TMP_DIR, 'scan-src')
 
-  beforeEach(() => { mkdirSync(scanDir, { recursive: true }) })
-  afterEach(() => { if (existsSync(scanDir)) rmSync(scanDir, { recursive: true, force: true }) })
+  beforeEach(() => {
+    mkdirSync(scanDir, { recursive: true })
+  })
+
+  afterEach(() => {
+    if (existsSync(scanDir)) rmSync(scanDir, { recursive: true, force: true })
+  })
 
   it('scan 应检测目录中的错误模式', async () => {
     writeFileSync(join(scanDir, 'bad.ts'), "console.log('debug')\neval('code')\nvar old = true\n", 'utf-8')
@@ -40,8 +45,13 @@ describe('errors scanForErrors', () => {
 describe('errors call subcommands', () => {
   const scanDir = join(TMP_DIR, 'cmd-test')
 
-  beforeEach(() => { mkdirSync(scanDir, { recursive: true }) })
-  afterEach(() => { if (existsSync(scanDir)) rmSync(scanDir, { recursive: true, force: true }) })
+  beforeEach(() => {
+    mkdirSync(scanDir, { recursive: true })
+  })
+
+  afterEach(() => {
+    if (existsSync(scanDir)) rmSync(scanDir, { recursive: true, force: true })
+  })
 
   it('list 无错误时应返回 OK', async () => {
     const result = await call('list')

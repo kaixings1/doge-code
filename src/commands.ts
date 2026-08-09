@@ -96,6 +96,7 @@ import insights from './commands/insights/index.ts'
 import team from './commands/team/index.ts'
 import game from './commands/game/index.ts'
 import refactor from './commands/refactor.ts'
+import explain from './commands/explain/index.ts'
 import autocomplete from './commands/autocomplete/index.ts'
 import terminalComplete from './commands/complete/index.ts'
 import testGen from './commands/test-gen.ts'
@@ -508,6 +509,7 @@ const COMMANDS = memoize((): Command[] => [
   reloadPlugins,
   rename,
   refactor,
+  explain,
   resume,
   session,
   sessions,
