@@ -44,7 +44,7 @@ const LINT_ERROR_PATTERNS = [
 
 /** 常见 test 错误模式 */
 const TEST_ERROR_PATTERNS = [
-  /FAIL\s+\S+\.test\./,
+  /FAIL\s+\S+\.test/,
   /AssertionError/,
   /expect\(.*\)\.(to|not)/,
   /✗\s*FAIL/,
@@ -133,13 +133,15 @@ export class CompileErrorParser {
 export class TestFailureParser {
   private static readonly FAILURE_PATTERNS = [
     // Jest/Vitest: FAIL path/to/file.test.ts
-    /^FAIL\s+(.+\.(?:test|spec)\.(?:ts|tsx|js|jsx|py))/m,
+    /^FAIL\s+(.+\.(?:test|spec)\.(?:ts|tsx|js|jsx|py))/gm,
+    // Generic FAIL with any filename
+    /^FAIL\s+(\S+)/gm,
     // pytest: FAILED path/to/file.py::TestClass::test_method
-    /^FAILED\s+(.+?)(?:::(.+?))?\s*$/m,
+    /^FAILED\s+(.+?)(?:::(.+?))?\s*$/gm,
     // Standard: ✗ FAIL filename
-    /^✗\s*FAIL\s+(.+)/m,
+    /^✗\s*FAIL\s+(.+)/gm,
     // JUnit XML-ish: tests failed: filename:line
-    /tests?\s*failed[:\s]+(.+?)(?::(\d+))?/i,
+    /tests?\s*failed[:\s]+(.+?)(?::(\d+))?/gi,
   ]
 
   /** 检测输出中是否包含测试失败 */
