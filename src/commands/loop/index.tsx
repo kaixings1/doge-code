@@ -179,25 +179,20 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       phase: 'idle',
     }
 
-    // ─── 单行覆盖渲染：维护一条进度消息，后续更新替换同一条 ───
-    const LOOP_PROGRESS_TAG = '__LOOP_PROGRESS__'
-    let progressMsgId: string | null = null
+    // ─── 单行覆盖渲染：只保留一条进度消息 ───
+    // 每次更新时替换最后一条 system 消息，确保始终只有一条进度。
     const pushProgress = (text: string) => {
       if (!context.setMessages) return
-      const now = new Date().toISOString()
       context.setMessages(prev => {
-        // 第一次发送：发送带 tag 的新消息
-        if (!progressMsgId) {
-          const msg = { type: 'system' as const, content: text, date: now, [LOOP_PROGRESS_TAG]: true }
-          progressMsgId = msg.uuid
-          return [...prev, msg]
+        // 找最后一条 system 消息，替换它；找不到就追加
+        const lastSystemIdx = [...prev].reverse().findIndex(m => m.type === 'system')
+        if (lastSystemIdx >= 0) {
+          const idx = prev.length - 1 - lastSystemIdx
+          const next = [...prev]
+          next[idx] = { ...next[idx], content: text, date: new Date().toISOString() }
+          return next
         }
-        // 后续：替换带 tag 的最后一条消息
-        return prev.map(m =>
-          m.type === 'system' && (m as Record<string, unknown>)[LOOP_PROGRESS_TAG]
-            ? { ...m, content: text, date: now }
-            : m
-        )
+        return [...prev, { type: 'system' as const, content: text, date: new Date().toISOString() }]
       })
     }
 
@@ -220,12 +215,12 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       } catch { /* ignore */ }
     }
 
-    // 监听 SIGINT（Ctrl+C）
+    // 监听 SIGINT（Ctrl+C）：指定 --checkpoint 时自动保存进度
+    // 注意：不调用 process.exit()，让 REPL 全局 SIGINT 处理接管
     if (checkpointPath) {
       try {
         process.on('SIGINT', async () => {
           await saveCheckpointNow()
-          process.exit(130)
         })
       } catch { /* ignore */ }
     }
@@ -311,11 +306,6 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
         }
       },
     })
-
-    // 清理 SIGINT 监听
-    if (sigintHandler) {
-      try { process.off('SIGINT', sigintHandler) } catch { /* ignore */ }
-    }
 
     if (parsed.json) {
       onDone(JSON.stringify(result, null, 2))
