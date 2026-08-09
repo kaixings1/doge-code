@@ -7,6 +7,9 @@
 import { _electron as electron, test as base, type ElectronApplication, type Page } from '@playwright/test'
 import * as path from 'path'
 import * as fs from 'fs'
+import { fileURLToPath } from 'node:url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 let electronApp: ElectronApplication | null = null
 let mainPage: Page | null = null

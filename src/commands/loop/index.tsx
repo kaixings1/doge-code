@@ -14,9 +14,7 @@ import type { LocalJSXCommandCall, LocalJSXCommandContext } from '../../types/co
 import type { LoopGoal, LoopStrategyName, SubTask } from './types.js'
 import { getStrategy, getStrategyInfo, getAvailableStrategies } from './strategies/index.js'
 import { isValidStrategy } from './engine.js'
-import type { TaskExecutor } from './types.js'
-import { createAITaskExecutor, type ExecutorOptions } from './ai-task-executor.js'
-import type { ToolUseContext } from '../../Tool.js'
+import { createAITaskExecutor } from './ai-task-executor.js'
 import { formatStatusLine, formatFinalReport, formatSubTaskSummary, type ProgressState } from './progress-ui.js'
 import { parseLoopArgs, autoSelectStrategy } from './shortcuts.js'
 import { formatPlan } from './planner.js'
@@ -158,7 +156,13 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       maxIterations: parsed.maxIterations,
     }
 
-    const taskExecutor = await createTaskExecutor(context)
+    const taskExecutor = createAITaskExecutor(context, {
+      maxRetries: parsed.retries,
+      taskTimeout: parsed.timeout,
+      apiTimeout: 30000,
+      autoCleanup: parsed.cleanup,
+      outputPath: parsed.outputPath ?? undefined,
+    })
 
     const { executeLoop } = await import('./engine.js')
 
