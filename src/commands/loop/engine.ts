@@ -54,6 +54,50 @@ export interface LoopEngineOptions extends LoopOptions {
 }
 
 /**
+ * 检查 LLM API 可达性
+ * 不可达时返回 true，触发降级到本地 execSync 模式
+ */
+let apiHealthCheckCache: { ok: boolean; checkedAt: number } | null = null
+const API_HEALTH_CACHE_MS = 5000
+
+async function checkAPIHealth(): Promise<boolean> {
+  // 5s 缓存避免频繁请求
+  if (apiHealthCheckCache && Date.now() - apiHealthCheckCache.checkedAt < API_HEALTH_CACHE_MS) {
+    return !apiHealthCheckCache.ok
+  }
+
+  const apiKey = process.env.DOGE_API_KEY || process.env.ANTHROPIC_API_KEY || ''
+  const baseURL = process.env.ANTHROPIC_BASE_URL || 'https://api.longcat.chat/openai/v1/chat/completions'
+
+  if (!apiKey) {
+    apiHealthCheckCache = { ok: false, checkedAt: Date.now() }
+    return true
+  }
+
+  try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 3000)
+    try {
+      const response = await fetch(baseURL.replace('/chat/completions', '/models'), {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${apiKey}` },
+        signal: controller.signal,
+      })
+      clearTimeout(timeoutId)
+      apiHealthCheckCache = { ok: response.ok, checkedAt: Date.now() }
+      return !response.ok  // 不健康时返回 true (需要降级)
+    } catch {
+      clearTimeout(timeoutId)
+      apiHealthCheckCache = { ok: false, checkedAt: Date.now() }
+      return true  // API 不可达 → 需要降级
+    }
+  } catch {
+    apiHealthCheckCache = { ok: false, checkedAt: Date.now() }
+    return true
+  }
+}
+
+/**
  * 执行目标导向循环
  */
 export async function executeLoop(options: LoopEngineOptions): Promise<LoopResult> {
@@ -243,7 +287,32 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
             let result: { success: boolean; output: string; error?: string }
 
             if (options.taskExecutor) {
-              result = await options.taskExecutor(taskPrompt, systemPrompt, task)
+              // API 健康检查 — 不可达时降级到本地 execSync
+              const useLocalFallback = await checkAPIHealth()
+              if (useLocalFallback) {
+                emit({ type: 'warn', message: 'LLM API 不可达，使用本地命令执行模式' })
+                result = await executeTaskWithStrategy(task, taskPrompt, systemPrompt)
+              } else {
+                try {
+                  // 30s 超时保护 — 无法获取结果时自动降级
+                  const controller = new AbortController()
+                  const timeoutId = setTimeout(() => controller.abort(), 30000)
+                  try {
+                    result = await Promise.race([
+                      options.taskExecutor(taskPrompt, systemPrompt, task),
+                      new Promise<{ success: boolean; output: string; error?: string }>((_, reject) =>
+                        setTimeout(() => reject(new Error('API timeout')), 30000)
+                      ),
+                    ])
+                  } catch {
+                    clearTimeout(timeoutId)
+                    result = await executeTaskWithStrategy(task, taskPrompt, systemPrompt)
+                  }
+                  clearTimeout(timeoutId)
+                } catch {
+                  result = await executeTaskWithStrategy(task, taskPrompt, systemPrompt)
+                }
+              }
             } else {
               result = await executeTaskWithStrategy(task, taskPrompt, systemPrompt)
             }

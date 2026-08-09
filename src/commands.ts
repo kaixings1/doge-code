@@ -45,6 +45,7 @@ import { context, contextNonInteractive } from './commands/context/index.ts'
 import cost from './commands/cost/index.ts'
 import diff from './commands/diff/index.ts'
 import codeSearch from './commands/code-search/index.tsx'
+import sweFix from './commands/swe-fix/index.ts'
 import diffMode from './commands/diff-mode/index.ts'
 import diffReview from './commands/diff-review/index.ts'
 import blockMode from './commands/block-mode/index.ts'
@@ -450,6 +451,7 @@ const COMMANDS = memoize((): Command[] => [
   commit,
   commitPushPr,
   codeSearch,
+  sweFix,
   chrome,
   clear,
   color,
