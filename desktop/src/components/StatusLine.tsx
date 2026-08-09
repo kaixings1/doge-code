@@ -363,13 +363,14 @@ function StatusLineInner({
   // flexShrink:0 so a 0→1 row change when the command finishes steals
   // a row from ScrollBox and shifts content. Reserve the row while loading
   // (same trick as PromptInputFooterLeftSide).
+	const lines = statusLineText ? statusLineText.split('\n') : [];
 	return (
-		<Box paddingX={paddingX} gap={2}>
-			{statusLineText ? (
-				<Text dimColor wrap="truncate">
-					<Ansi>{statusLineText}</Ansi>
+		<Box paddingX={paddingX} flexDirection="column" gap={0}>
+			{lines.map((line, i) => (
+				<Text key={i} dimColor wrap="truncate">
+					<Ansi>{line}</Ansi>
 				</Text>
-			) : null}
+			))}
 		</Box>
 	);
 }
