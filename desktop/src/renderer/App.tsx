@@ -219,6 +219,7 @@ export function App(): JSX.Element {
   const [currentStreaming, setCurrentStreaming] = useState('')
   const currentStreamingRef = useRef('')
   const streamingActiveRef = useRef(false) // result 处理完成后锁定，阻止延迟 chunk 污染
+  const lastChunkTextRef = useRef('') // 上一次收到的 chunk 文本，用于精确去重
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loaded, setLoaded] = useState(false)
@@ -1020,18 +1021,21 @@ export function App(): JSX.Element {
       unsubs.push(window.dogeAPI.onChunk((chunk) => {
         if (!chunk || !chunk.text) return
         if (!streamingActiveRef.current) return
-        const now = Date.now()
-        // 去重：同一文本在 600ms 内重复到达视为重复发送，忽略
-        const dup = recentChunks.some(c => c.text === chunk.text && now - c.time < 600)
-        if (dup) {
-          console.log(`[DIAG] onChunk DUP ignored: "${chunk.text}" streamLen=${currentStreamingRef.current.length}`)
+        const text = chunk.text
+        // 防御1：精确匹配——如果此 chunk 文本与上一次追加的完全相同，直接丢弃
+        if (text === lastChunkTextRef.current) {
+          console.log(`[DIAG] onChunk EXACT-DUP ignored: "${text.slice(0, 50)}"`)
           return
         }
-        recentChunks.push({ text: chunk.text, time: now })
-        if (recentChunks.length > 20) recentChunks.shift()
-        console.log(`[DIAG] onChunk: "${chunk.text}" streamLen=${currentStreamingRef.current.length}`)
+        // 防御2：前缀去重——如果当前已累积的流式文本以新 chunk 为前缀，说明是重复发送的完整内容
+        const currentLen = currentStreamingRef.current.length
+        if (text.length > 0 && currentLen > 0 && currentStreamingRef.current.startsWith(text)) {
+          console.log(`[DIAG] onChunk PREFIX-DUP ignored: chunkLen=${text.length} streamLen=${currentLen}`)
+          return
+        }
+        lastChunkTextRef.current = text
         setCurrentStreaming((p) => {
-          const next = p + chunk.text
+          const next = p + text
           currentStreamingRef.current = next
           return next
         })
@@ -1179,9 +1183,6 @@ export function App(): JSX.Element {
 
   useEffect(() => {
     if (!loaded) return
-    // 自动测试默认禁用：仅当 localStorage 显式设置 doge-auto-test=1 时才自动运行，
-    // 避免启动后 5 条测试命令连续发送导致界面看起来像死循环
-    if (localStorage.getItem('doge-auto-test') !== '1') return
 
     const TEST_CMDS = [
       '使用 dir 命令列出当前工作目录的文件和文件夹',

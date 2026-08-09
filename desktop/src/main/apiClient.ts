@@ -425,24 +425,27 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
                         blockIndex++
                       }
 
-                      // 文本增量 —— 累积到同一个 block，防止 API 发送完整累积文本导致重复
+                      // 文本增量 —— 防止 API 发送完整累积文本导致重复
                       if (delta && delta.content != null) {
                         const text = delta.content as string
                         if (text !== '') {
                           if (!textBuffer) {
                             textBuffer = text
+                            console.log(`[APICLIENT-DELTA] FIRST textLen=${text.length} blockIdx=${blockIndex} text="${text.slice(0, 60)}"`)
                             yield { type: 'content_block_start', index: blockIndex, content_block: { type: 'text', text: '' } }
                             yield { type: 'content_block_delta', index: blockIndex, delta: { type: 'text_delta', text } }
                           } else {
-                            // 防止 API 发送完整累积文本导致重复
                             const prevBuffer = textBuffer
-                            textBuffer += text
-                            if (text.startsWith(prevBuffer)) {
-                              // API 发送了包含已累积内容的完整文本，只 yield 新增部分
+                            if (text === prevBuffer) {
+                              console.log(`[APICLIENT-DELTA] DUP SKIP textLen=${text.length} blockIdx=${blockIndex}`)
+                            } else if (text.startsWith(prevBuffer)) {
+                              textBuffer = text
                               const deltaText = text.slice(prevBuffer.length)
+                              console.log(`[APICLIENT-DELTA] PREFIX deltaLen=${deltaText.length} totalLen=${textBuffer.length} blockIdx=${blockIndex}`)
                               if (deltaText) yield { type: 'content_block_delta', index: blockIndex, delta: { type: 'text_delta', text: deltaText } }
                             } else {
-                              // text 已是增量，直接 yield
+                              textBuffer = text
+                              console.log(`[APICLIENT-DELTA] NEW textLen=${text.length} blockIdx=${blockIndex} text="${text.slice(0, 60)}"`)
                               yield { type: 'content_block_delta', index: blockIndex, delta: { type: 'text_delta', text } }
                             }
                           }

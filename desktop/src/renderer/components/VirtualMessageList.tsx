@@ -772,13 +772,17 @@ function MessageItem({
     if (ref.current) {
       measureMessage(message.id, ref.current.getBoundingClientRect().height)
     }
-  })
-
-  useEffect(() => {
-    if (ref.current) {
-      measureMessage(message.id, ref.current.getBoundingClientRect().height)
-    }
   }, [message.content, measureMessage])
+
+  // 消息挂载后若高度未测量，延迟再测一次
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (ref.current) {
+        measureMessage(message.id, ref.current.getBoundingClientRect().height)
+      }
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [message.id, measureMessage])
 
   if (message.role === 'error') {
     return (

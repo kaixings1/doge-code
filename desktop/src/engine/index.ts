@@ -299,6 +299,7 @@ export class QueryEngine {
 
   async abort(): Promise<void> {
     this.abortController.abort()
+    if (this.stateMachine.state === "aborted_by_user") return
     await this.stateMachine.transition("aborted_by_user");
   }
 

@@ -6,18 +6,7 @@
  * 运行方式: npx playwright@1.62.0 test e2e/app.test.ts
  */
 
-import { test as baseTest, expect } from '@playwright/test'
-import { launchElectronApp, closeElectronApp } from './electron-app.js'
-
-const test = baseTest.extend<{
-  app: { app: any; page: any }
-}>({
-  app: async ({}, use) => {
-    const result = await launchElectronApp()
-    await use(result)
-    await closeElectronApp()
-  },
-})
+import { test, expect } from './electron-app.js'
 
 test('应用启动 — 标题包含 Doge', async ({ app: { page } }) => {
   const title = await page.title()
