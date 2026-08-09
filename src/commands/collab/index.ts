@@ -19,8 +19,9 @@
 
 import type { Command } from '../../commands.js'
 import type { LocalCommandCall } from '../../types/command.js'
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync } from 'fs'
 import { join } from 'path'
+import { homedir } from 'os'
 
 // ============================================================================
 // Help Text
@@ -72,7 +73,7 @@ function renderHelp(): string {
 // Storage
 // ============================================================================
 
-const COLLAB_DIR = join(process.cwd(), '.doge', 'collab')
+const COLLAB_DIR = join(homedir(), '.doge', 'collab')
 
 function ensureCollabDir(): void {
   if (!existsSync(COLLAB_DIR)) {
@@ -108,12 +109,12 @@ function saveRoom(room: Record<string, unknown>): void {
 
 function listRooms(): Array<{ id: string; name: string; hostId: string; participantCount: number }> {
   try {
-    const entries = require('fs').readdirSync(COLLAB_DIR)
+    const entries = readdirSync(COLLAB_DIR)
     const rooms: Array<{ id: string; name: string; hostId: string; participantCount: number }> = []
     for (const entry of entries) {
       if (!entry.endsWith('.json')) continue
       try {
-        const raw = require('fs').readFileSync(join(COLLAB_DIR, entry), 'utf-8')
+        const raw = readFileSync(join(COLLAB_DIR, entry), 'utf-8')
         const room = JSON.parse(raw)
         rooms.push({
           id: room.id,
