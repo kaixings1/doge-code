@@ -444,6 +444,11 @@ function createShortcutCommand(strategyName: LoopStrategyName, aliases: string[]
             progressState.phase = 'error'
             onDone(formatStatusLine(progressState), { display: 'system' })
             break
+          case 'progress':
+            // B4 定期进度汇报 — 刷新状态行（确保 UI 不死锁）
+            progressState.fileCount = fileCount
+            onDone(formatStatusLine(progressState), { display: 'system' })
+            break
         }
       }
 

@@ -15,8 +15,8 @@ import type { LoopGoal, LoopStrategyName, SubTask } from './types.js'
 import { getStrategy, getStrategyInfo, getAvailableStrategies } from './strategies/index.js'
 import { isValidStrategy } from './engine.js'
 import type { TaskExecutor } from './types.js'
-import { execSync } from 'child_process'
-import { mkdir, writeFile } from 'fs/promises'
+import { createAITaskExecutor, type ExecutorOptions } from './ai-task-executor.js'
+import type { ToolUseContext } from '../../Tool.js'
 import { formatStatusLine, formatFinalReport, formatSubTaskSummary, type ProgressState } from './progress-ui.js'
 import { parseLoopArgs, autoSelectStrategy } from './shortcuts.js'
 import { formatPlan } from './planner.js'
@@ -111,199 +111,6 @@ function renderInteractivePrompt(): string {
 查看帮助: /loop --help
 查看示例: /loop --examples`
 }
-async function createTaskExecutor(
-  context: LocalJSXCommandContext,
-): Promise<TaskExecutor> {
-  const apiKey = process.env.DOGE_API_KEY || process.env.ANTHROPIC_API_KEY || ''
-  const baseURL = process.env.ANTHROPIC_BASE_URL || 'https://api.longcat.chat/openai/v1/chat/completions'
-  const model = context.options.mainLoopModel || process.env.ANTHROPIC_MODEL || 'LongCat-2.0'
-
-  return async (prompt: string, systemPrompt: string, task: SubTask) => {
-    const outputLines: string[] = []
-    const createdFiles: string[] = []
-    let commandsExecuted = 0
-
-    try {
-      const fullPrompt = `你是一个专业的工程师。请完成以下任务，必须执行真实的 bash 命令来创建文件。
-
-## 任务
-${task.description}
-
-## 执行指南
-${prompt}
-
-## 关键要求（必须遵守）
-1. 所有产出必须写入文件！不要只输出文本描述！
-2. 用 bash 命令创建文件：
-   - 简单文件：echo "内容" > 路径
-   - 多行文件：cat << 'EOF' > 路径
-内容
-EOF
-3. 配置文件（YAML/JSON/JS 等）必须写入对应路径
-4. 每个步骤都要用 bash 命令创建，用代码块包裹
-5. 如果命令失败，分析原因并重试
-6. 最后列出所有创建的文件
-
-## 期望输出格式
-\`\`\`bash
-mkdir -p 目录
-echo '内容' > 文件路径
-\`\`\`
-
-现在开始执行:`
-
-      outputLines.push(`🤖 [AI] 调用 API (model: ${model})`)
-
-      // 带超时的 fetch — 防止 API 不可达/挂起时循环永久卡死
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 30_000)
-
-      let response: Response
-      try {
-        response = await fetch(baseURL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`,
-          },
-          body: JSON.stringify({
-            model,
-            messages: [
-              { role: 'system', content: '你是一个工程师。请执行真实的 bash 命令来创建文件。' },
-              { role: 'user', content: fullPrompt },
-            ],
-            max_tokens: 4000,
-            stream: false,
-          }),
-          signal: controller.signal,
-        })
-      } finally {
-        clearTimeout(timeoutId)
-      }
-
-      if (!response.ok) {
-        const errorText = await response.text()
-        return { success: false, output: outputLines.join('\n'), error: `API HTTP ${response.status}: ${errorText.slice(0, 200)}` }
-      }
-
-      const data = await response.json() as {
-        choices?: Array<{ message?: { content?: string; reasoning_content?: string } }>
-        error?: { message?: string }
-      }
-
-      if (data.error) {
-        return { success: false, output: outputLines.join('\n'), error: `API 错误: ${data.error.message || 'unknown'}` }
-      }
-
-      // Save raw API response for debugging
-      try {
-        await writeFile(`loop-api-response-${task.id}.json`, JSON.stringify(data, null, 2), 'utf-8')
-      } catch { /* ignore */ }
-
-      const aiOutput = data.choices?.[0]?.message?.content || data.choices?.[0]?.message?.reasoning_content || ''
-      outputLines.push(`🤖 [AI] 返回 (${aiOutput.length} 字符)`)
-
-      // Parse bash commands
-      const bashBlocks = aiOutput.match(/```(?:bash|sh|shell|yaml|json|yml)?\s*([\s\S]*?)```/g) || []
-      let commands: string[] = []
-      for (const block of bashBlocks) {
-        const content = block.replace(/```(?:bash|sh|shell|yaml|json|yml)?\s*/, '').replace(/```\s*$/, '').trim()
-        if (content.includes('<<')) {
-          commands.push(content)
-        } else {
-          for (const line of content.split('\n')) {
-            const trimmed = line.trim()
-            if (trimmed && !trimmed.startsWith('#') && !trimmed.startsWith('//')) {
-              commands.push(trimmed)
-            }
-          }
-        }
-      }
-
-      // If no bash commands found, make a second AI call to convert
-      if (commands.length === 0 && aiOutput.length > 0) {
-        outputLines.push(`⚠️  无 bash 命令，进行第二次 AI 转换...`)
-        const conversionPrompt = `请将下面的计划转换为可执行的 bash 命令：\n\n---\n\n${aiOutput}\n\n---\n\n要求：只输出 bash 命令，用代码块包裹。\n\n输出格式：\n\`\`\`bash\nmkdir -p 目录\necho '内容' > 文件路径\n\`\`\``
-        try {
-          const controller2 = new AbortController()
-          const timeoutId2 = setTimeout(() => controller2.abort(), 30_000)
-          let secondResponse: Response
-          try {
-            secondResponse = await fetch(baseURL, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-              body: JSON.stringify({ model, messages: [{ role: 'system', content: 'bash 专家' }, { role: 'user', content: conversionPrompt }], max_tokens: 4000, stream: false }),
-              signal: controller2.signal,
-            })
-          } finally {
-            clearTimeout(timeoutId2)
-          }
-          if (secondResponse.ok) {
-            const secondData = await secondResponse.json() as { choices?: Array<{ message?: { content?: string } }> }
-            const secondOutput = secondData.choices?.[0]?.message?.content || ''
-            const secondBlocks = secondOutput.match(/```(?:bash|sh|shell|yaml|json|yml)?\s*([\s\S]*?)```/g) || []
-            for (const block of secondBlocks) {
-              const c = block.replace(/```(?:bash|sh|shell|yaml|json|yml)?\s*/, '').replace(/```\s*$/, '').trim()
-              if (c.includes('<<')) { commands.push(c) }
-              else { for (const line of c.split('\n')) { const t = line.trim(); if (t && !t.startsWith('#') && !t.startsWith('//')) commands.push(t) } }
-            }
-            outputLines.push(`🤖 [AI] 第二次调用 (${secondOutput.length} 字符, ${commands.length} 个命令)`)
-          }
-        } catch (secondErr) {
-          outputLines.push(`✗ 第二次调用失败`)
-        }
-      }
-
-      // Execute bash commands
-      if (commands.length > 0) {
-        outputLines.push(`⚡ [执行] ${commands.length} 个命令:`)
-        for (const cmd of commands) {
-          outputLines.push(`  > ${cmd.slice(0, 100)}${cmd.length > 100 ? '...' : ''}`)
-          try {
-            const isWin = process.platform === 'win32'
-            const shellPath = isWin ? 'C:\\Program Files\\Git\\bin\\bash.exe' : null
-            const result = execSync(cmd, { cwd: process.cwd(), encoding: 'utf-8', timeout: 60000, shell: shellPath, stdio: ['pipe', 'pipe', 'pipe'] })
-            outputLines.push(`    ✓ (${result.length} 字符)`)
-            commandsExecuted++
-            const fileMatch = cmd.match(/>\s*([^\s&|]+)/g)
-            if (fileMatch) { for (const m of fileMatch) { const fp = m.replace(/^>\s*/, '').trim(); if (fp && !fp.startsWith('/dev/')) createdFiles.push(fp) } }
-          } catch (execErr: unknown) {
-            const err = execErr as { stdout?: string; stderr?: string; status?: number }
-            outputLines.push(`    ✗ (${err.status ?? '?'})`)
-          }
-        }
-      } else if (aiOutput.length > 0) {
-        outputLines.push(`⚠️  无 bash 命令，写入报告文件`)
-        try {
-          const reportPath = `loop-report-${task.id}.md`
-          await writeFile(reportPath, `# ${task.description}
-
-${aiOutput}`, 'utf-8')
-          createdFiles.push(reportPath)
-          outputLines.push(`  📄 ${reportPath}`)
-        } catch (writeErr) {
-          outputLines.push(`  ✗ 写入失败`)
-        }
-      } else {
-        outputLines.push(`❌ AI 返回为空`)
-        return { success: false, output: outputLines.join('\n'), error: 'AI 返回了空内容' }
-      }
-
-      const uniqueFiles = [...new Set(createdFiles)]
-      if (uniqueFiles.length > 0) {
-        outputLines.push(`
-📁 创建了 ${uniqueFiles.length} 个文件:`)
-        for (const f of uniqueFiles) { outputLines.push(`   • ${f}`) }
-      }
-
-      return { success: true, output: outputLines.join('\n').slice(0, 8000) }
-    } catch (error) {
-      outputLines.push(`💥 [异常] ${error instanceof Error ? error.message : String(error)}`)
-      return { success: false, output: outputLines.join('\n'), error: error instanceof Error ? error.message : String(error) }
-    }
-  }
-}
-
 // ============================================================================
 // 主命令实现
 // ============================================================================
@@ -477,8 +284,9 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
             onDone(formatStatusLine(progressState), { display: 'system' })
             break
           case 'progress':
-            // B4 定期进度汇报
-            onDone(event.summary as string, { display: 'system' })
+            // B4 定期进度汇报 — 刷新状态行（确保 UI 不死锁）
+            progressState.fileCount = fileCount
+            onDone(formatStatusLine(progressState), { display: 'system' })
             break
           case 'ask':
             // B4 关键节点询问（等待用户决策）

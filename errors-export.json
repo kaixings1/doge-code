@@ -1,11 +1,11 @@
 [
   {
-    "id": "err-msln6n4k-0-ylbb",
+    "id": "err-mslq3f1j-0-ubwq",
     "type": "warning",
     "file": "C:\\Windows\\Temp\\doge-errors-test\\cmd-test\\sample.ts",
     "line": 1,
     "message": "console.log statement",
-    "timestamp": "2026-08-09T10:10:46.292Z",
+    "timestamp": "2026-08-09T11:32:14.695Z",
     "resolved": false,
     "fixAttempted": false,
     "fixSuccess": false,
