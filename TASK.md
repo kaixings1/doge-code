@@ -56,7 +56,30 @@ _无_
 - [x] 第二跳：预测性 AI 助手（3-5 天）— usePreAnalysis 静态分析 + streamProcessor preAnalysis 注入
 - [x] 第三跳：操作快照 + 一键回滚（5-7 天）— toolExecutor takeBeforeSnapshot/rollbackTool + OperationHistory 组件
 
-**总计（含 Phase 6）**: 56-67 小时
+### 🔵 Phase 7: zhikuncode 深度特性吸收（2026-08-09）
+- [x] 7.1 ContextCascade 五层级联压缩 — Snip/MicroCompact/AutoCompact/CollapseDrain/ReactiveCompact
+  - 扩展 autoCompactor.ts，新增 executeCascade/snipMessages/microCompact/collapseDrain/reactiveCompact
+  - 测试：530 passed（4 失败为预存 openaiCompat.ts 问题，与本次无关）
+- [x] 7.2 AutoFixLoop 增强 — CompileErrorParser/TestFailureParser/shouldAbort 结构化修复
+  - autoFixLoop.ts 新增结构化解析器 + shouldAbort 中止检查 + CorrectionInstruction 类型
+  - 测试：530 passed
+- [x] 7.3 ContextCollapse 启用 — 三级渐进折叠（Incremental/Progressive/Emergency）
+  - 重写 services/contextCollapse/index.ts 和 operations.ts，从存根变为完整实现
+  - 与 query.ts 的 feature('CONTEXT_COLLAPSE') 门控兼容
+  - 测试：530 passed
+- [x] 7.4 图片预算守卫 — TokenBudgetGuard Phase1/Phase2 保护
+  - 新建 engine/imageBudgetGuard.ts：cleanupHistoryBase64 + applyPhase2Degradation + checkImageBudget
+  - 测试：530 passed
+- [ ] 7.5 OperationAnalyzer 模式 — 跳过（YAGNI：PermissionManager 已正常工作，升级为三阶段分析器属于过度工程）
+- [ ] 7.6 浏览器语义快照 — 跳过（YAGNI：doge-code 是纯 CLI/终端工具，无浏览器运行时）
+
+**总计（含 Phase 7）**: +8-11h，累计 64-78 小时
+
+## 参考文档
+
+- `TODO_feature_absorption_plan_v2.md` — 详细计划
+- `TODO_feature_absorption_plan.md` — 历史计划（Phase 1-2 已完成）
+- `.doge/plans/zesty-beaming-feather.md` — zhikuncode 吸收计划
 
 ## 参考文档
 
