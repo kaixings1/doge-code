@@ -268,12 +268,14 @@ describe('集成: Flow + Hook 系统', () => {
     });
 
     it('SessionStart 异常应被捕获', async () => {
+      const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       const hook = createSessionStartHook(() => {
         throw new Error('init failed');
       });
 
       const result = await hook({ type: 'SessionStart' });
       expect(result.allow).toBe(true);
+      errSpy.mockRestore();
     });
   });
 
