@@ -705,6 +705,7 @@ async function getMessagesForSlashCommand(commandName: string, args: string, set
               nextInput?: string;
               submitNextInput?: boolean;
             }) => {
+              if (doneWasCalled) return;
               doneWasCalled = true;
               // If display is 'skip', don't add any messages to the conversation
               if (options?.display === 'skip') {
