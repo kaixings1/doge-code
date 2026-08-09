@@ -109,7 +109,7 @@ export function CondensedLogo() {
   }
   let t7;
   if ($[11] !== shouldSplit || $[12] !== truncatedBilling || $[13] !== truncatedModel) {
-    t7 = shouldSplit ? <><Text dimColor={true}>{truncatedModel}</Text><Text dimColor={true}>{truncatedBilling}</Text></> : <Text dimColor={true}>{truncatedModel} · {truncatedBilling}</Text>;
+    t7 = shouldSplit ? <><Text dimColor={true}>\u{1F916} {truncatedModel}</Text><Text dimColor={true}>{truncatedBilling}</Text></> : <Text dimColor={true}>\u{1F916} {truncatedModel} · {truncatedBilling}</Text>;
     $[11] = shouldSplit;
     $[12] = truncatedBilling;
     $[13] = truncatedModel;
@@ -118,7 +118,7 @@ export function CondensedLogo() {
     t7 = $[14];
   }
   const hideCwd = process.env.CLAUDE_CODE_HIDE_CWD ? true : false
-  const t8 = hideCwd ? '' : (agentName ? `@${agentName} · ${truncatedCwd}` : truncatedCwd);
+  const t8 = hideCwd ? '' : (agentName ? `\u{1F4C1} @${agentName} · ${truncatedCwd}` : `\u{1F4C1} ${truncatedCwd}`);
   let t9;
   if ($[15] !== t8) {
     t9 = <Text dimColor={true}>{t8}</Text>;
