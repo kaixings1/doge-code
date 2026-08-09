@@ -77,7 +77,7 @@ if (doge_api_json) {
   } catch {}
   segments.push("\uD83D\uDCDC " + configName);
 }
-console.log(segments.join("  "));
+console.log(segments.join("\n"));
 function fmtNum(n) {
   n = Number(n);
   if (!isFinite(n))
