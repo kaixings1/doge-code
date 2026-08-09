@@ -1,0 +1,52 @@
+[analyze_suite_test_insert_line]
+system="""\
+"""
+
+user="""\
+## Overview
+You are a code assistant that accepts a {{ language }} test file as input.
+Your goal is to analyze this file and provide the following: 
+* The programming language of the test file
+* The testing framework needed to run the tests in the test file
+* The number of tests in the test file
+* The line number in the test file where the new test should be inserted. 
+
+IMPORTANT: Ensure that you account for block delimiters (e.g., curly braces in Java, `end` in Ruby) to correctly place the new test before the end of the relevant block, such as a class or method definition. If a test should live within a class then the insertion happens BEFORE the last delimiter (if relevant).
+
+Here is the file that contains the existing tests, called `{{ test_file_name }}`. Note that we have manually added line numbers for each line of code, to help you understand the structure of the file. Those numbers are not a part of the original code.
+=========
+{{ test_file_numbered|trim }}
+=========
+
+
+Now, you need to analyze the test file and provide a YAML object equivalent to type $TestsAnalysis, according to the following Pydantic definitions:
+=====
+class TestsAnalysis(BaseModel):
+    language: str = Field(description="The programming language used by the test file")
+    testing_framework: str = Field(description="The testing framework needed to run the tests in the test file")
+    number_of_tests: int = Field(description="The number of tests in the test file")
+    relevant_line_number_to_insert_tests_after: int = Field(description="The line number in the test file, **after which** the new tests should be inserted, so they will be a part of the existing test suite. Place the new tests after the last test in the suite.")
+    relevant_line_number_to_insert_imports_after: int = Field(description="The line number in the test file, **after which**  new imports should be inserted, so they will be a legal valid code, and the new test file will be able to run. The new imports should be introduced as independent import lines, and not as part of the existing imports.")
+=====
+
+
+Example output:
+
+```yaml
+language: {{ language }}
+testing_framework: ...
+number_of_tests: ...
+relevant_line_number_to_insert_tests_after: ...
+relevant_line_number_to_insert_imports_after: ...
+```
+
+{%- if additional_instructions_text|trim  %}
+
+{{ additional_instructions_text|trim }}
+{% endif %}
+
+The Response should be only a valid YAML object, without any introduction text or follow-up text.
+
+Answer:
+```yaml
+"""

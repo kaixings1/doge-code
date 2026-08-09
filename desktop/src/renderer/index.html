@@ -16,6 +16,6 @@
       // 渲染进程没有 Node 的 process 全局对象，注入最小 polyfill 兜底
       window.process = window.process || { env: {} };
     </script>
-    <script src="./index.js"></script>
+    <script type="module" src="./index.js"></script>
   </body>
 </html>

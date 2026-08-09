@@ -1,0 +1,4 @@
+output/*
+*.log
+*.tmp
+.DS_Store

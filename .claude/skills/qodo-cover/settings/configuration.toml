@@ -1,0 +1,38 @@
+[default]
+model = "gpt-4o-2024-11-20"
+model_full_repo = "bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0"
+desired_coverage = 70
+desired_coverage_full_repo = 100
+max_iterations = 3
+max_test_files_allowed_to_analyze = 20
+api_base = "http://localhost:11434"
+max_run_time_sec = 30
+max_tests_per_run = 4
+allowed_initial_test_analysis_attempts = 3
+model_retries = 3
+run_tests_multiple_times = 1
+branch = "main"
+project_language = "python"
+coverage_type = "cobertura"
+log_file_path = "run.log"
+log_db_path = "cover_agent_unit_test_runs.db"
+report_filepath = "test_results.html"
+
+responses_folder = "stored_responses"
+
+cover_agent_host_folder = "dist/cover-agent"
+cover_agent_container_folder = "/usr/local/bin/cover-agent"
+
+docker_hash_display_length = 12
+record_replay_hash_display_length = 12
+
+fuzzy_lookup_threshold = 95
+fuzzy_lookup_prefix_length = 1000
+fuzzy_lookup_best_ratio = 0
+
+[include_files]
+limit_tokens = true
+max_tokens = 20000
+
+[tests]
+max_allowed_runtime_seconds = 30

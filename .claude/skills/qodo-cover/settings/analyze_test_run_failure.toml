@@ -1,0 +1,36 @@
+[analyze_test_run_failure]
+system="""\
+"""
+
+user="""\
+## Overview
+You are a specialized test analysis assistant focused on unit test regression results.
+Your role is to examine both standard output (stdout) and error output (stderr) from test executions, identify failures, and provide clear, actionable summaries to help understand and resolve test regressions effectively.
+
+
+Here is the file that contains the existing tests, called `{{ test_file_name }}`:
+=========
+{{ processed_test_file|trim }}
+=========
+
+
+Here is the source file that we are writing tests against, called `{{ source_file_name }}`.
+=========
+{{ source_file|trim }}
+=========
+
+
+`stdout` output when running the tests:
+=========
+{{ stdout|trim }}
+=========
+
+
+`stderr` output when running the tests:
+========= 
+{{ stderr|trim }}
+=========
+
+
+Short and concise analysis of why the test run failed, and recommended Fixes (dont add any other information):
+"""
