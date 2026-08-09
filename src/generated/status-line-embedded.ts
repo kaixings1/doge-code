@@ -55,6 +55,16 @@ if (totalSent === 0 && totalReceived === 0 && context_window) {
 var sentLabel = "▴";
 var recvLabel = "▾";
 segments.push(sentLabel + " " + fmtNum(totalSent) + "  " + recvLabel + " " + fmtNum(totalReceived));
+var cacheRead = 0;
+var cacheCreation = 0;
+if (preset_tokens) {
+  cacheRead = typeof preset_tokens.cacheRead === "number" ? preset_tokens.cacheRead : 0;
+  cacheCreation = typeof preset_tokens.cacheCreation === "number" ? preset_tokens.cacheCreation : 0;
+}
+if (cacheRead > 0 || cacheCreation > 0) {
+  const hitRate = cacheRead + totalSent > 0 ? Math.round(cacheRead / (cacheRead + totalSent) * 1000) / 10 : 0;
+  segments.push("⚡ " + fmtNum(cacheRead) + "读 " + fmtNum(cacheCreation) + "写 命中" + hitRate + "%");
+}
 segments.push("\uD83D\uDCE4 " + fmtTraffic(jsonSentBytes) + " ↔ \uD83D\uDCE5 " + fmtTraffic(jsonReceivedBytes));
 if (cost && typeof cost.total_cost_usd === "number" && isFinite(cost.total_cost_usd)) {
   const cny = (cost.total_cost_usd * 7.2).toFixed(4);
