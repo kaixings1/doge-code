@@ -180,24 +180,25 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
     }
 
     // ─── 单行覆盖渲染：只保留一条进度消息 ───
-    // system 消息经 normalizeMessages 后 uuid 不变，用固定 uuid 精确替换
+    // 用 messagesRef 追踪最新消息列表，避免 React 批处理下函数式更新器拿到 stale prev
     const PROGRESS_UUID = `loop-progress-${Date.now()}`
+    const messagesRef = { current: context.messages ?? [] }
     const pushProgress = (text: string) => {
       if (!context.setMessages) return
-      context.setMessages(prev => {
-        // 查找是否已有进度消息
-        const existing = prev.find(m => m.type === 'system' && m.uuid === PROGRESS_UUID)
-        if (existing) {
-          // 替换已有进度消息的内容
-          return prev.map(m =>
-            m.type === 'system' && m.uuid === PROGRESS_UUID
-              ? { ...m, content: text, date: new Date().toISOString() }
-              : m
-          )
-        }
-        // 追加新的进度消息
-        return [...prev, { type: 'system' as const, content: text, date: new Date().toISOString(), uuid: PROGRESS_UUID }]
-      })
+      const prev = messagesRef.current
+      const existing = prev.find(m => m.type === 'system' && m.uuid === PROGRESS_UUID)
+      let next: typeof prev
+      if (existing) {
+        next = prev.map(m =>
+          m.type === 'system' && m.uuid === PROGRESS_UUID
+            ? { ...m, content: text, date: new Date().toISOString() }
+            : m
+        )
+      } else {
+        next = [...prev, { type: 'system' as const, content: text, date: new Date().toISOString(), uuid: PROGRESS_UUID }]
+      }
+      messagesRef.current = next
+      context.setMessages(next)
     }
 
     // ─── 自动 checkpoint： SIGINT 时保存进度 ───
