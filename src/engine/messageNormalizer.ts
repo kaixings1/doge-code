@@ -14,11 +14,72 @@ export interface InternalMessage {
 
 export type APIMessage = { role: string; content: unknown; [k: string]: unknown };
 
+/** 消息角色交替校验结果（吸收自 aider ensure_alternating_roles） */
+export interface RoleValidationResult {
+  valid: boolean
+  /** 修复后的消息列表（仅当 valid=false 时有意义） */
+  fixed: InternalMessage[]
+  /** 问题描述 */
+  issues: string[]
+}
+
 export class MessageNormalizer {
+  /**
+   * validateRoles — 确保消息序列中 user/assistant/tool 角色交替出现。
+   *
+   * 吸收自 aider 的 ensure_alternating_roles() 和 sanity_check_messages()。
+   * 当检测到连续相同角色时，自动合并内容到前一条消息。
+   */
+  static validateRoles(messages: InternalMessage[]): RoleValidationResult {
+    const issues: string[] = []
+    const fixed: InternalMessage[] = []
+    let lastRole: InternalRole | null = null
+
+    for (let i = 0; i < messages.length; i++) {
+      const msg = messages[i]
+      const role = msg.role
+
+      // 跳过 system（system 消息不参与交替检查）
+      if (role === 'system') {
+        fixed.push(msg)
+        continue
+      }
+
+      // 检查连续相同角色
+      if (lastRole === role) {
+        issues.push(`连续 ${role} 消息（索引 ${i - 1} -> ${i}）`)
+        // 合并到前一条消息
+        if (fixed.length > 0) {
+          const prev = fixed[fixed.length - 1]
+          if (typeof prev.content === 'string' && typeof msg.content === 'string') {
+            prev.content = `${prev.content}\n${msg.content}`
+          } else if (Array.isArray(prev.content) && Array.isArray(msg.content)) {
+            prev.content = [...prev.content, ...msg.content]
+          }
+        }
+      } else {
+        fixed.push({ ...msg })
+      }
+
+      lastRole = role
+    }
+
+    return {
+      valid: issues.length === 0,
+      fixed,
+      issues,
+    }
+  }
+
   normalize(messages: InternalMessage[], provider: "anthropic" | "openai" | "google" | "azure" | "bedrock" | "vertexai" | "copilot" | "groq" | "openrouter" | "local" | "xai"): APIMessage[] {
+    const validation = MessageNormalizer.validateRoles(messages)
+    if (!validation.valid) {
+      console.warn('[MessageNormalizer] 检测到连续相同角色消息，已自动合并:', validation.issues.join('; '))
+    }
+    const sourceMessages = validation.valid ? messages : validation.fixed
     return provider === "anthropic"
-      ? this.normalizeForAnthropic(messages)
-      : this.normalizeForOpenAI(messages);
+      ? this.normalizeForAnthropic(sourceMessages)
+      : this.normalizeForOpenAI(sourceMessages);
   }
 
   private normalizeForAnthropic(messages: InternalMessage[]): APIMessage[] {

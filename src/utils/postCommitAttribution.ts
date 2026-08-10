@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
-import { logForDebugging } from '../debug.js'
+import { logForDebugging } from './debug.js'
 
 /**
  * Install a `prepare-commit-msg` hook in a git worktree so that commit messages

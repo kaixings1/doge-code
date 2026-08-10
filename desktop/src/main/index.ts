@@ -273,7 +273,11 @@ Use tools when needed. If a tool call fails or returns empty, try a different ap
       if (chunk.type === 'text' && chunk.text && mainWindow) {
         const text = chunk.text
         if (text === lastSentChunkText) {
-          console.log(`[MAIN-IPC] DUP SKIP: "${text.slice(0, 50)}"`)
+          console.log(`[MAIN-IPC] EXACT-DUP SKIP: "${text.slice(0, 50)}"`)
+          return
+        }
+        if (lastSentChunkText.length > 0 && lastSentChunkText.startsWith(text)) {
+          console.log(`[MAIN-IPC] PREFIX-DUP SKIP: "${text.slice(0, 50)}" prevLen=${lastSentChunkText.length}`)
           return
         }
         lastSentChunkText = text
@@ -429,6 +433,7 @@ let sendMessageCallCount = 0
 ipcMain.handle('doge:send-message', async (_event, content: string, preAnalysis?: Array<{ type: string; message: string; line?: number }>) => {
   sendMessageCallCount++
   console.log(`[MAIN-IPC] doge:send-message called #${sendMessageCallCount} content="${content.slice(0, 80)}"`)
+  console.trace(`[MAIN-IPC] call stack for #${sendMessageCallCount}`)
   let currentEngine: QueryEngine
   try {
     currentEngine = getEngine()

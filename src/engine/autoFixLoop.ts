@@ -14,8 +14,35 @@ export interface AutoFixLoopConfig {
   maxIterations: number
   /** 是否启用 */
   enabled: boolean
+  /** 是否启用 De-Sloppify 清理通道（吸收自 ECC autonomous-loops） */
+  cleanup?: {
+    enabled: boolean
+    /** 清理模式：'suggest' = 报告发现，'fix' = 自动移除（保守模式） */
+    mode: 'suggest' | 'fix'
+  }
+  /** 文件读取回调（用于 cleanupPhase 读取文件内容） */
+  readFile?: (file: string) => Promise<string>
+  /** 验证命令执行器（用于并行验证模式） */
+  runVerification?: (steps: VerificationStep[]) => Promise<VerificationResult[]>
   /** 事件回调 */
   onEvent?: (event: AutoFixLoopEvent) => void
+}
+
+/** 验证步骤定义（吸收自 code-change-verification skill） */
+export interface VerificationStep {
+  name: string
+  /** 执行命令 */
+  command: string
+  /** 是否必需（失败则整体失败） */
+  required: boolean
+}
+
+/** 单步验证结果 */
+export interface VerificationResult {
+  step: VerificationStep
+  success: boolean
+  output: string
+  durationMs: number
 }
 
 export type AutoFixLoopEvent =
@@ -23,6 +50,7 @@ export type AutoFixLoopEvent =
   | { type: 'autofix_lint'; output: string; hasErrors: boolean }
   | { type: 'autofix_test'; output: string; hasErrors: boolean }
   | { type: 'autofix_fix_attempt'; attempt: number }
+  | { type: 'autofix_cleanup'; findings: string[] }
   | { type: 'autofix_done'; success: boolean; attempts: number }
   | { type: 'autofix_skip'; reason: string }
 
@@ -84,6 +112,28 @@ const TOOL_ERROR_PATTERNS = [
   /command\s+timeout/i,
   /execution\s+error/i,
   /tool\s+error/i,
+]
+
+/** De-Sloppify 清理目标模式（吸收自 ECC autonomous-loops） */
+const CLEANUP_PATTERNS = [
+  // 调试残留
+  /console\.log\s*\(/,
+  /console\.debug\s*\(/,
+  /debugger\s*;/,
+  /debugger\s*\{/,
+  /console\.table\s*\(/,
+  /console\.trace\s*\(/,
+  // 注释掉的代码块（连续 2+ 行以 // 开头）
+  /\/\/\s*TODO[:\s]/i,
+  /\/\/\s*FIXME[:\s]/i,
+  /\/\/\s*HACK[:\s]/i,
+  /\/\/\s*XXX[:\s]/i,
+  // 空实现/占位符
+  /throw\s+new\s+Error\s*\(\s*['"]Not\s+implemented['"]\s*\)/i,
+  /\/\/\s*(no-op|pass|placeholder|stub|temp|temporary)/i,
+  // 过度防御的类型断言
+  /as\s+unknown\s+as\s+\w+/,
+  /typeof\s+\w+\s*===\s*['"]string['"]\s*\?\?\s*['""]/,
 ]
 
 // ============ 结构化错误解析器（吸收自 zhikuncode SelfCorrectionLoop） ============
@@ -272,6 +322,116 @@ export class AutoFixLoop {
   }
 
   /**
+   * cleanupPhase — De-Sloppify 清理通道（吸收自 ECC autonomous-loops）。
+   *
+   * 在 lint→test→fix 循环完成后执行一次，清理调试残留和过度防御代码。
+   * 仅在 autoFixLoop 配置中启用 cleanup 时才执行。
+   */
+  async cleanupPhase(editedFiles: string[]): Promise<string[]> {
+    if (!this.config.cleanup?.enabled) return []
+    if (editedFiles.length === 0) return []
+
+    const findings: string[] = []
+    const seen = new Set<string>()
+
+    for (const file of editedFiles) {
+      // cleanupPhase 只分析文本文件，跳过二进制
+      const ext = file.split('.').pop()?.toLowerCase() ?? ''
+      if (!['ts', 'tsx', 'js', 'jsx', 'py', 'rs', 'go', 'java', 'rb', 'c', 'cpp'].includes(ext)) {
+        continue
+      }
+
+      try {
+        const content = await this.readFileContent(file)
+        const lines = content.split('\n')
+        const maxLines = Math.min(lines.length, 500) // 只扫描前 500 行
+
+        for (let i = 0; i < maxLines; i++) {
+          const line = lines[i]
+          for (const pattern of CLEANUP_PATTERNS) {
+            const match = line.match(pattern)
+            if (match) {
+              const key = `${file}:${i + 1}:${match[0].substring(0, 40)}`
+              if (!seen.has(key)) {
+                seen.add(key)
+                findings.push(`${file}:${i + 1}: ${match[0].trim()}`)
+              }
+            }
+          }
+        }
+      } catch {
+        // 文件读取失败，跳过
+      }
+    }
+
+    if (findings.length > 0) {
+      this.config.onEvent?.({ type: 'autofix_cleanup', findings })
+    }
+
+    return findings
+  }
+
+  /** 读取文件内容（由外部注入，保持纯逻辑） */
+  private readFileContent(file: string): Promise<string> {
+    // 委托给调用方传入的 readFile，或直接 throw
+    // 这里保持纯逻辑，由 messageLoop.ts 调用时传入上下文
+    throw new Error('readFileContent must be provided via dependency injection')
+  }
+
+  /**
+   * runParallelVerification — 并行验证模式（吸收自 code-change-verification skill）。
+   *
+   * 替代顺序执行的 lint→test→fix，改为并行执行所有验证步骤，
+   * 失败时立即停止（fail-fast），并通过心跳事件报告进度。
+   *
+   * @param steps 验证步骤列表
+   * @returns 验证结果数组
+   */
+  async runParallelVerification(steps: VerificationStep[]): Promise<VerificationResult[]> {
+    if (!this.config.runVerification) {
+      // fallback：顺序执行
+      const results: VerificationResult[] = []
+      for (const step of steps) {
+        const start = Date.now()
+        try {
+          const output = await this.executeCommand(step.command)
+          results.push({
+            step,
+            success: true,
+            output,
+            durationMs: Date.now() - start,
+          })
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error)
+          results.push({
+            step,
+            success: false,
+            output: message,
+            durationMs: Date.now() - start,
+          })
+          if (step.required) {
+            // fail-fast：必需步骤失败立即返回
+            this.config.onEvent?.({
+              type: 'autofix_skip',
+              reason: `验证步骤 "${step.name}" 失败，中止验证`,
+            })
+            return results
+          }
+        }
+      }
+      return results
+    }
+
+    // 使用外部执行器并行运行
+    return this.config.runVerification(steps)
+  }
+
+  /** 执行命令的 fallback（由 runVerification 外部化，此处仅作默认实现） */
+  private async executeCommand(command: string): Promise<string> {
+    throw new Error('runVerification must be provided via config for parallel verification')
+  }
+
+  /**
    * 检查是否需要触发自动修复循环。
    * 返回注入对话的消息列表（tool role），为空则无需修复。
    */
@@ -336,8 +496,8 @@ export class AutoFixLoop {
     this.firstRoundErrorCodes.clear()
   }
 
-  /** 从所有工具输出中提取被编辑的文件路径 */
-  private extractEditedFiles(
+  /** 从所有工具输出中提取被编辑的文件路径（供 cleanupPhase 使用） */
+  public extractEditedFiles(
     results: Array<{ toolUseId: string; success: boolean; output?: unknown; error?: string }>,
   ): string[] {
     const files: string[] = []

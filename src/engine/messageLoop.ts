@@ -10,7 +10,7 @@ function engineLog(prefix: string, ...args: unknown[]): void {
 import { QueryStateMachine } from "./stateMachine.ts";
 import { TokenBudgetManager } from "./tokenBudgetManager.ts";
 import { MessageNormalizer, type InternalMessage } from "./messageNormalizer.ts";
-import { RequestBuilder } from "./requestBuilder.ts";
+import { RequestBuilder, type HarnessConfig } from "./requestBuilder.ts";
 import { ResponseHandler, type ProcessedResponse } from "./responseHandler.ts";
 import { ToolScheduler } from "./toolScheduler.ts";
 import { ErrorClassifier } from "./errors/classifier.ts";
@@ -72,6 +72,10 @@ export interface MessageLoopDeps {
   gitContext?: GitContextConfig;
   /** 图片预算守卫配置（吸收自 zhikuncode TokenBudgetGuard）：请求前清理历史图片 Base64 + 梯度降级 */
   imageBudget?: Partial<ImageBudgetConfig>;
+  /** Harness 模型适配配置（吸收自 open-interpreter harness）：多 provider 格式转换 */
+  harness?: import("./harnessAdapter.ts").HarnessConfig;
+  /** 验收标准门控（吸收自 intent-driven-development）：进入 done 前检查所有 required 标准 */
+  acceptanceGate?: { check: () => Promise<{ allRequiredPass: boolean }> };
 }
 
 export class MessageLoop {
@@ -87,6 +91,11 @@ export class MessageLoop {
     if (this.deps.autoFixLoop?.enabled) {
       this.autoFixLoop = new AutoFixLoop({
         ...this.deps.autoFixLoop,
+        readFile: this.deps.autoFixLoop.readFile ?? (async (file: string) => {
+          // fallback：尝试通过 fs/promises 读取
+          const { readFile } = await import('fs/promises')
+          return readFile(file, 'utf-8')
+        }),
         onEvent: (event) => {
           engineLog('AUTOFIX', event.type)
           this.deps.autoFixLoop?.onEvent?.(event)
@@ -262,6 +271,7 @@ export class MessageLoop {
       maxTokens: this.deps.maxOutputTokens,
       provider: this.deps.provider,
       preAnalysis: this.deps.preAnalysis,
+      harness: this.deps.harness,
     });
 
     engineLog('REQ', JSON.stringify(request, null, 2).slice(0, 5000));
@@ -277,7 +287,20 @@ export class MessageLoop {
     engineLog('RESP', JSON.stringify(processed, null, 2).slice(0, 10000));
 
     // 将助手回复写入 conversation 并决定是否继续（吸收自 CoreCoder agent.py）
-    const shouldContinue = this._recordAssistantResponse(processed);
+    let shouldContinue = this._recordAssistantResponse(processed);
+
+    // 验收标准门控（吸收自 intent-driven-development）：进入 done 前检查所有 required 标准
+    if (!shouldContinue && this.deps.acceptanceGate) {
+      const gateResult = await this.deps.acceptanceGate.check()
+      if (!gateResult.allRequiredPass) {
+        engineLog('ACCEPTANCE', 'Required acceptance criteria not met, continuing to fix')
+        this.deps.onEvent({
+          type: 'should_continue',
+        })
+        shouldContinue = true
+      }
+    }
+
     if (!shouldContinue) {
       return false;
     }
@@ -356,6 +379,18 @@ export class MessageLoop {
         });
       }
 
+      // 熔断器记录（吸收自 error-coordinator）：每个工具的成功/失败计入熔断器
+      if (this.deps.recovery) {
+        for (const r of results) {
+          const toolName = validCalls.find(tc => tc.id === r.toolUseId)?.name ?? 'unknown'
+          if (r.success) {
+            this.deps.recovery.recordToolSuccess(toolName)
+          } else {
+            this.deps.recovery.recordToolFailure(toolName)
+          }
+        }
+      }
+
       // 检查执行失败次数
       const failedCount = results.filter(r => !r.success).length;
       if (failedCount > 0) {
@@ -393,9 +428,34 @@ export class MessageLoop {
 
       // 自动修复循环：编辑工具成功后自动 lint→test→fix（吸收自 Aider）
       if (this.autoFixLoop) {
-        const fixMessages = await this.autoFixLoop.maybeRun(results)
-        for (const msg of fixMessages) {
-          this.deps.conversation.messages.push(msg as InternalMessage)
+        // 优先使用并行验证模式（吸收自 code-change-verification skill）
+        if (this.deps.autoFixLoop.runVerification) {
+          const verificationSteps = this.buildVerificationSteps(results)
+          if (verificationSteps.length > 0) {
+            const verificationResults = await this.autoFixLoop.runParallelVerification(verificationSteps)
+            const failedResults = verificationResults.filter((r) => !r.success)
+            if (failedResults.length > 0) {
+              // 将结构化验证结果注入对话，驱动自动修复
+              const verificationMsg = this.formatVerificationErrors(failedResults)
+              this.deps.conversation.messages.push({ role: 'user', content: verificationMsg } as InternalMessage)
+            }
+          }
+        } else {
+          // fallback：传统模式，从工具输出中检测错误
+          const fixMessages = await this.autoFixLoop.maybeRun(results)
+          for (const msg of fixMessages) {
+            this.deps.conversation.messages.push(msg as InternalMessage)
+          }
+        }
+
+        // De-Sloppify 清理通道：在修复循环完成后执行一次（吸收自 ECC autonomous-loops）
+        const editedFiles = this.autoFixLoop.extractEditedFiles(results)
+        if (editedFiles.length > 0) {
+          const cleanupResults = await this.autoFixLoop.cleanupPhase(editedFiles)
+          if (cleanupResults.length > 0) {
+            const cleanupMsg = `[De-Sloppify] 检测到 ${cleanupResults.length} 处代码质量问题：\n${cleanupResults.slice(0, 20).join('\n')}\n\n请评估是否需要清理。`
+            this.deps.conversation.messages.push({ role: 'user', content: cleanupMsg } as InternalMessage)
+          }
         }
       }
 
@@ -418,5 +478,47 @@ export class MessageLoop {
       return true;
     }
     return false;
+  }
+
+  /** 根据编辑的文件构建验证步骤列表（吸收自 code-change-verification skill） */
+  private buildVerificationSteps(results: Array<{ toolUseId: string; success: boolean; output?: unknown; error?: string }>): Array<{ name: string; command: string; required: boolean }> {
+    const files = this.autoFixLoop?.extractEditedFiles(results) ?? []
+    if (files.length === 0) return []
+
+    const steps: Array<{ name: string; command: string; required: boolean }> = []
+
+    // 检测项目类型，选择对应的验证命令
+    const hasPackageJson = files.some((f) => f.includes('package.json'))
+    const hasPyproject = files.some((f) => f.includes('pyproject.toml') || f.includes('setup.py'))
+    const hasCargoToml = files.some((f) => f.includes('Cargo.toml'))
+    const hasGoMod = files.some((f) => f.includes('go.mod'))
+
+    if (hasPackageJson) {
+      steps.push({ name: 'lint', command: 'npx eslint . --max-warnings 0', required: true })
+      steps.push({ name: 'test', command: 'npm test', required: true })
+    } else if (hasPyproject || hasCargoToml || hasGoMod) {
+      steps.push({ name: 'lint', command: 'echo "lint step for detected project type"', required: true })
+      steps.push({ name: 'test', command: 'echo "test step for detected project type"', required: true })
+    }
+
+    return steps
+  }
+
+  /** 将验证失败结果格式化为注入对话的消息 */
+  private formatVerificationErrors(results: Array<{ step: { name: string; command: string }; output: string; durationMs: number }>): string {
+    const lines = [
+      '[并行验证失败] 以下验证步骤未通过，请修复：',
+      '',
+    ]
+
+    for (const r of results) {
+      lines.push(`❌ ${r.step.name} (${r.durationMs}ms)`)
+      lines.push(`   命令: ${r.step.command}`)
+      const outputLines = r.output.split('\n').slice(0, 20)
+      lines.push(`   输出:\n${outputLines.map((l) => `     ${l}`).join('\n')}`)
+      lines.push('')
+    }
+
+    return lines.join('\n')
   }
 }

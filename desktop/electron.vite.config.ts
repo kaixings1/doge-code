@@ -333,9 +333,33 @@ function hardenBridgeSshImportPlugin() {
 }
 
 
+// 补丁：root CLI 的 src/utils/attributionHooks.ts 导入 ../debug.js，
+// 但 debug.ts 实际在 src/utils/debug.ts（同目录），jsToTsResolver 找不到。
+// 此插件在构建期将 ../debug.js 重定向到 ./debug.js。
+function attributionDebugShimPlugin() {
+  return {
+    name: 'attribution-debug-shim',
+    enforce: 'pre',
+    resolveId(source, importer) {
+      // 匹配所有 ../debug.js 导入（source 可能是 '../debug.js' 或绝对路径结尾）
+      if (!source.endsWith('debug.js') || source.includes('node_modules')) return null
+      // 仅在 importer 路径包含 attributionHooks 时介入
+      if (!importer || !importer.replace(/\\/g, '/').includes('attributionHooks')) return null
+      const dir = path.dirname(importer)
+      // ../debug.js 在 src/utils/ 下实际应指向同目录的 debug.ts
+      const target = path.join(dir, 'debug.ts')
+      if (fs.existsSync(target)) {
+        console.log(`[attribution-debug-shim] 重定向 ${source} -> ${target}`)
+        return { id: target }
+      }
+      return null
+    },
+  }
+}
+
 export default defineConfig({
   main: {
-    plugins: [externalizeDepsPlugin(), jsToTsResolver(), markdownTextPlugin(), dedupTopLevelSymbolPlugin(), hardenCliLazyRequirePlugin(), hardenCliRegexPlugin(), hardenBridgeSshImportPlugin(), optionalDepsShimPlugin()],
+    plugins: [externalizeDepsPlugin(), jsToTsResolver(), attributionDebugShimPlugin(), markdownTextPlugin(), dedupTopLevelSymbolPlugin(), hardenCliLazyRequirePlugin(), hardenCliRegexPlugin(), hardenBridgeSshImportPlugin(), optionalDepsShimPlugin()],
     ssr: {
       external: ['electron', 'electron-store', 'node-pty', 'turndown', '@mixmark-io/domino', 'he', 'highlight.js', 'cli-highlight', 'node-forge', 'better-sqlite3', 'zod', 'zod/v4'],
     },

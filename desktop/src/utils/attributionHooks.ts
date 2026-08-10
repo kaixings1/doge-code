@@ -1,1 +1,1 @@
-export { registerAttributionHooks, clearAttributionCaches, sweepFileContentCache } from '../../src/utils/attributionHooks.js'
+export { registerAttributionHooks, clearAttributionCaches, sweepFileContentCache } from '../../../src/utils/attributionHooks.js'
