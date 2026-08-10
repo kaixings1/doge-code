@@ -268,9 +268,17 @@ Use tools when needed. If a tool call fails or returns empty, try a different ap
     engineApi = createEngineApi(engine)
 
     // 将 StreamProcessor 的 chunk 回调连接到 notifyChunk
+    let lastSentChunkText = ''
     engineApi.setChunkCallback((chunk: { type: string; text?: string }) => {
       if (chunk.type === 'text' && chunk.text && mainWindow) {
-        mainWindow.webContents.send('doge:chunk', { text: chunk.text })
+        const text = chunk.text
+        if (text === lastSentChunkText) {
+          console.log(`[MAIN-IPC] DUP SKIP: "${text.slice(0, 50)}"`)
+          return
+        }
+        lastSentChunkText = text
+        console.log(`[MAIN-IPC] SEND: len=${text.length} text="${text.slice(0, 50)}"`)
+        mainWindow.webContents.send('doge:chunk', { text })
       }
     })
 
@@ -415,7 +423,12 @@ ipcMain.handle('doge:request-microphone-permission', async () => {
 })
 
 // 发送消息（使用 QueryEngine）
+// 追踪 send-message 调用次数，检测重复调用
+let sendMessageCallCount = 0
+
 ipcMain.handle('doge:send-message', async (_event, content: string, preAnalysis?: Array<{ type: string; message: string; line?: number }>) => {
+  sendMessageCallCount++
+  console.log(`[MAIN-IPC] doge:send-message called #${sendMessageCallCount} content="${content.slice(0, 80)}"`)
   let currentEngine: QueryEngine
   try {
     currentEngine = getEngine()
