@@ -39,6 +39,10 @@ import desktop from './commands/desktop/index.ts'
 import diagnose from './commands/diagnose.ts'
 import eco from './commands/eco/index.ts'
 import commitPushPr from './commands/commit-push-pr.ts'
+import ship from './commands/ship/index.ts'
+import shipCiReviewLoop from './commands/ship/ship-ci-review-loop.ts'
+import auto from './commands/auto/index.ts'
+import evolve from './commands/evolve/index.ts'
 import compact from './commands/compact/index.ts'
 import config from './commands/config/index.ts'
 import { context, contextNonInteractive } from './commands/context/index.ts'
@@ -703,6 +707,9 @@ const COMMANDS = memoize((): Command[] => [
   bughunter,
   reflect,
   skillCreateFromSession,
+  ship,
+  auto,
+  evolve,
 ])
 
 export const builtInCommandNames = memoize(

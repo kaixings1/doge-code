@@ -120,3 +120,88 @@ export class QueryStateMachine {
     this.stateHistory = [];
   }
 }
+
+/**
+ * AcceptanceGate — 验收标准门控（吸收自 intent-driven-development）
+ *
+ * 在状态转换到 "done" 前，检查所有 required 验收标准是否通过。
+ * 每个标准包含可验证的检查逻辑，失败则阻止进入 done 状态。
+ */
+export interface AcceptanceCriterion {
+  id: string
+  description: string
+  priority: 'required' | 'optional'
+  /** 验证方法：返回 true 表示通过 */
+  verify: () => boolean | Promise<boolean>
+}
+
+export interface AcceptanceGateResult {
+  allRequiredPass: boolean
+  results: Array<{ id: string; passed: boolean; description: string }>
+}
+
+export class AcceptanceGate {
+  private criteria: AcceptanceCriterion[] = []
+
+  add(criterion: AcceptanceCriterion): void {
+    this.criteria.push(criterion)
+  }
+
+  addMany(criteria: AcceptanceCriterion[]): void {
+    this.criteria.push(...criteria)
+  }
+
+  clear(): void {
+    this.criteria = []
+  }
+
+  get count(): number {
+    return this.criteria.length
+  }
+
+  /**
+   * check — 执行所有验收标准的验证。
+   * 返回详细结果，allRequiredPass 为 true 时方可进入 done 状态。
+   */
+  async check(): Promise<AcceptanceGateResult> {
+    const results = await Promise.all(
+      this.criteria.map(async (c) => ({
+        id: c.id,
+        passed: await c.verify(),
+        description: c.description,
+      })),
+    )
+
+    const requiredResults = results.filter((r) => {
+      const criterion = this.criteria.find((c) => c.id === r.id)
+      return criterion?.priority === 'required'
+    })
+
+    return {
+      allRequiredPass: requiredResults.every((r) => r.passed),
+      results,
+    }
+  }
+
+  /**
+   * getSummary — 获取人类可读的验收摘要。
+   */
+  getSummary(result: AcceptanceGateResult): string {
+    const lines = [
+      `验收检查: ${result.results.filter((r) => r.passed).length}/${result.results.length} 通过`,
+      '',
+    ]
+
+    for (const r of result.results) {
+      const status = r.passed ? '✅' : '❌'
+      lines.push(`  ${status} ${r.id}: ${r.description}`)
+    }
+
+    if (!result.allRequiredPass) {
+      lines.push('')
+      lines.push('⚠️ 存在未通过的必需验收标准，无法完成任务。')
+    }
+
+    return lines.join('\n')
+  }
+}

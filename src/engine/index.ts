@@ -18,6 +18,8 @@ import { ErrorRecovery } from "./errors/recovery.ts";
 import { SubAgentManager } from "./subagent/subAgentManager.ts";
 import { AutoFixLoop } from "./autoFixLoop.ts";
 import { GitContextInjector, type GitContextConfig } from "./gitContext.ts";
+import { HarnessRouter, type HarnessConfig, type HarnessAdapter } from "./harnessAdapter.ts";
+import { createSandboxedExecutor, type SandboxConfig, type SandboxPolicy, getDefaultSandboxPolicy } from "./sandbox/index.ts";
 // 导入工具注册表（复用 src/tools.ts 中 buildTool() 构建的完整工具实例）
 import { getAllBaseTools } from "../tools.js";
 import { type Tools, type ToolInfo } from "../Tool.js";
@@ -51,6 +53,14 @@ export interface EngineOptions {
   gitContext?: GitContextConfig;
   /** 图片预算守卫配置（吸收自 zhikuncode TokenBudgetGuard）：请求前清理历史图片 Base64 + 梯度降级 */
   imageBudget?: Partial<import("./imageBudgetGuard.ts").ImageBudgetConfig>;
+  /** 熔断器配置（吸收自 error-coordinator）：错误率跟踪 + 自动熔断 + 降级 */
+  circuitBreaker?: Partial<import("./errors/circuitBreaker.ts").CircuitBreakerConfig>;
+  /** Harness 模型适配配置（吸收自 open-interpreter harness）：多 provider 格式转换 */
+  harness?: HarnessConfig;
+  /** 沙箱执行配置（吸收自 open-interpreter sandboxing）：工具执行安全策略 */
+  sandbox?: Partial<SandboxConfig>;
+  /** 验收标准门控（吸收自 intent-driven-development）：进入 done 前检查 */
+  acceptanceCriteria?: import("./stateMachine.ts").AcceptanceCriterion[];
 }
 
 /**
@@ -139,7 +149,7 @@ export class QueryEngine {
         return false;
       },
     };
-    const executor: ToolExecutor = {
+    const rawExecutor: ToolExecutor = {
       async execute(tool, input, _o) {
         const r = await tool.execute(input);
         if (typeof r.content === "string") return r.content;
@@ -152,10 +162,19 @@ export class QueryEngine {
         return String(r.content ?? "");
       },
     };
+
+    // 沙箱执行器包装链：createSandboxedExecutor 包装原始 executor（吸收自 open-interpreter sandboxing）
+    const sandboxPolicy = opts.sandbox?.policy ?? getDefaultSandboxPolicy()
+    const sandboxConfig: SandboxConfig = {
+      enabled: opts.sandbox?.enabled ?? false,
+      policy: sandboxPolicy,
+      onDeny: opts.sandbox?.onDeny ?? 'warn',
+    }
+    const executor: ToolExecutor = createSandboxedExecutor(rawExecutor, sandboxConfig)
     const registry = opts.tools ?? this.buildRegistry();
     const toolScheduler = new ToolScheduler(registry, permissionManager, executor);
 
-    this.recovery = new ErrorRecovery(this.stateMachine, this.retryHandler, this.autoCompactor);
+    this.recovery = new ErrorRecovery(this.stateMachine, this.retryHandler, this.autoCompactor, opts.circuitBreaker);
     this.conversation = this._conversation;
     this._preAnalysis = opts.preAnalysis;
     const autoFixLoopConfig = opts.autoFixLoop;
@@ -171,6 +190,13 @@ export class QueryEngine {
       description: t.description,
       input_schema: t.parameters,
     }));
+
+    const acceptanceGate = opts.acceptanceCriteria
+      ? new (await import("./stateMachine.ts")).AcceptanceGate()
+      : null
+    if (acceptanceGate && opts.acceptanceCriteria) {
+      acceptanceGate.addMany(opts.acceptanceCriteria)
+    }
 
     const deps: MessageLoopDeps = {
       stateMachine: this.stateMachine,
@@ -201,6 +227,8 @@ export class QueryEngine {
       },
       gitContext: opts.gitContext,
       imageBudget: opts.imageBudget,
+      harness: opts.harness,
+      acceptanceGate,
     };
     this.messageLoop = new MessageLoop(deps);
 
@@ -365,6 +393,8 @@ export * from "./messageNormalizer.ts";
 export * from "./requestBuilder.ts";
 export * from "./responseHandler.ts";
 export * from "./toolScheduler.ts";
+export * from "./harnessAdapter.ts";
+export * from "./sandbox/index.ts";
 export * from "./tokenBudgetManager.ts";
 export * from "./autoCompactor.ts";
 export * from "./errors/index.ts";

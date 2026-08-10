@@ -115,6 +115,9 @@ export class MessageLoop {
   }
 
   async run(userMessage: string): Promise<QueryResult> {
+    const requestId = `req-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
+    console.log(`[LOOP] run START requestId=${requestId} msgLen=${userMessage.length}`)
+    this.deps.onEvent({ type: 'iteration_start', iteration: 0 });
     // 新任务开始时重置自动修复循环和 git 上下文
     this.resetAutoFixLoop()
     this.resetGitContext()

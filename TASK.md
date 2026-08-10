@@ -108,13 +108,78 @@ _无_
 **Phase 9 P3 待完成**: 2-4h（Generative UI / 可视化工作流 / 第二大脑记忆）
 **累计总计**: 79-99 小时
 
+### 🔵 Phase 10: open-interpreter 架构吸收（2026-08-10）
+- [x] 10.1 Harness 模型适配层 — 多 provider API 格式标准化
+  - 新建 engine/harnessAdapter.ts：Anthropic/OpenAI/Google/Azure/Bedrock 适配器 + HarnessRouter
+  - 接线：requestBuilder.ts 构建请求后通过 adapter.adaptRequest 转换
+  - 消息角色映射：OpenAI tool → Anthropic tool_result（tool_use_id）
+- [x] 10.2 沙箱执行框架 — 可插拔工具执行安全策略
+  - 新建 engine/sandbox/index.ts：SandboxPolicy 接口 + NoOp/CommandAllowlist/WindowsRestrictedToken 策略
+  - 接线：QueryEngine 构造函数中 executor 通过 createSandboxedExecutor 包装
+  - 平台默认：Windows 用 CommandAllowlistPolicy，其他用 NoOpSandboxPolicy
+- [x] 10.3 AcceptanceGate 集成到消息循环
+  - stateMachine.ts 已有 AcceptanceGate 类（之前阶段实现）
+  - messageLoop.ts 接入：助手回复不继续时，检查 acceptanceGate，未通过则继续修复
+  - EngineOptions 新增 acceptanceCriteria 配置项
+- [x] 10.4 harness + sandbox 导出到 engine/index.ts
+  - 新增导出：`export * from "./harnessAdapter.ts"` 和 `export * from "./sandbox/index.ts"`
+
+**Phase 10 完成**: ~3h，编译验证通过（7367 modules → doge.exe）✓
+**Phase 11 进行中**: 使用说明文档化 + 实际测试 + 剩余 .claude/agents/ 吸收分析
+
+### 🔵 Phase 11: 使用说明完善与验证（2026-08-10）
+- [x] 11.1 使用说明文档化 — 新增 20.7-20.29 共 23 个章节
+- [x] 11.2 实际测试验证 — 引擎测试 82/82 passed ✓
+- [x] 11.3 分析剩余 .claude/agents/ 高价值项 — 筛选出 error-coordinator 熔断器 + 毒丸检测为最高优先级
+
+### 🔵 Phase 12: error-coordinator 熔断器集成（2026-08-10）
+- [x] 12.1 CircuitBreaker 熔断器实现 — 新建 engine/errors/circuitBreaker.ts
+  - 三态切换：closed → open → half-open → closed
+  - 滑动窗口统计（窗口大小、错误率、连续失败次数）
+  - 最小请求数保护（冷启动不误触发）
+  - 每实体独立计数（工具名/Agent 名）
+  - 自动冷却期恢复
+- [x] 12.2 ErrorRecovery 接入熔断器 — recovery.ts 增强
+  - recover() 增加 entityKey 参数，执行前先过熔断器
+  - 新增 recordToolFailure/recordToolSuccess/isCircuitOpen/getCircuitState/resetCircuit 方法
+  - recover() 结果携带 circuitBreakerState
+- [x] 12.3 messageLoop 接线 — 工具执行后记录成功/失败到熔断器
+- [x] 12.4 QueryEngine 配置暴露 — EngineOptions 新增 circuitBreaker 配置项
+- [x] 12.5 单元测试 — 12 tests passed（closed/open/half-open/reset/独立实体/窗口清理）
+
+**Phase 12 完成**: ~2h，编译验证通过（7367 modules → doge.exe）✓
+
+### 🔵 Phase 13: 命令模板吸收 — auto + ship + evolve 系列（2026-08-10）
+- [x] 13.1 智能命令路由器 — 新建 src/commands/auto/index.ts + 16 tests ✓
+  - 关键词匹配 + 优先级权重（P0-P4）
+  - ROUTING_RULES 规则表（8 条规则）
+  - FALLBACK_RULE 兜底路由
+  - selectCommand() 纯函数可测试
+- [x] 13.2 ship CI/Review 监控循环 — 新建 src/commands/ship/ship-ci-review-loop.ts + 6 tests ✓
+  - 强制等待 3 分钟让 auto-reviewers 评论
+  - 循环检查 CI 状态 + PR 评论
+  - 评论分类（code_fix_required / style_suggestion / question / false_positive / nit）
+  - 配置：MAX_ITERATIONS=10, INITIAL_WAIT=180s, ITERATION_WAIT=30s
+- [x] 13.3 ship 主命令 — 新建 src/commands/ship/index.ts
+  - Phase 1-3: Pre-flight + Commit + Create PR
+  - Phase 4: 调用 ship-ci-review-loop
+  - Phase 6: Merge PR（gh CLI）
+  - Phase 11: Cleanup worktrees
+  - Phase 12: 完成报告
+- [x] 13.4 注册到 commands.ts — auto + ship + evolve 导入 + COMMANDS() 数组 ✓
+- [x] 13.5 ship 子模块测试 — ship-ci-review-loop 6 tests passed ✓
+- [x] 13.6 evolve 命令 — 直觉进化系统 + 12 tests ✓
+  - 自包含基线命令注册表（48 个命令）
+  - 三阶段聚类引擎：序列聚类 → 工作流缺口 → 重复检测
+  - 三种进化候选：command / skill / agent
+  - 三种深度模式：--quick / --standard / --deep
+  - --generate 模式：生成建议文件（不写入磁盘）
+  - 置信度分级：🟢 >=80% / 🟡 60-79% / 🔴 <60%
+
+**Phase 13 完成**: ~4h，34 tests passed（auto 16 + ship-ci-review-loop 6 + evolve 12）✓
+
 ## 参考文档
 
 - `TODO_feature_absorption_plan_v2.md` — 详细计划
 - `TODO_feature_absorption_plan.md` — 历史计划（Phase 1-2 已完成）
 - `.doge/plans/zesty-beaming-feather.md` — zhikuncode 吸收计划
-
-## 参考文档
-
-- `TODO_feature_absorption_plan_v2.md` — 详细计划
-- `TODO_feature_absorption_plan.md` — 历史计划（Phase 1-2 已完成）

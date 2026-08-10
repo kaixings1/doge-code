@@ -189,9 +189,6 @@ function highlightCode(code: string, lang: string, isDark = true, fontSize?: num
 }
 
 // ─── 主组件 ───
-// 模块级防重：防止 StrictMode / 组件重挂载导致 IPC 订阅重复（重复订阅会使 chunk 重复累积）
-let chunkSubInstalled = false
-let stateSubInstalled = false
 // 渲染计数（检测无限重渲染）：模块级，不被组件重挂载重置
 let __renderCount = 0
 let __mountCount = 0
@@ -1008,43 +1005,33 @@ export function App(): JSX.Element {
 
   useEffect(() => {
     const unsubs: Array<() => void> = []
-    // 模块级防重：防止 StrictMode / 组件重挂载导致 IPC 订阅重复，
-    // 重复订阅会使同一 doge:chunk 被多次追加到 currentStreaming，造成文本重复累积
-    if (!stateSubInstalled) {
-      stateSubInstalled = true
-      unsubs.push(window.dogeAPI.onStateChange((s) => { stateRef.current = s; setState(s as QueryState) }))
-    }
-    if (!chunkSubInstalled) {
-      chunkSubInstalled = true
-      // 最近收到的 chunk（文本+时间戳），用于去重
-      const recentChunks: Array<{ text: string; time: number }> = []
-      unsubs.push(window.dogeAPI.onChunk((chunk) => {
-        if (!chunk || !chunk.text) return
-        if (!streamingActiveRef.current) return
-        const text = chunk.text
-        // 防御1：精确匹配——如果此 chunk 文本与上一次追加的完全相同，直接丢弃
-        if (text === lastChunkTextRef.current) {
-          console.log(`[DIAG] onChunk EXACT-DUP ignored: "${text.slice(0, 50)}"`)
-          return
-        }
-        // 防御2：前缀去重——如果当前已累积的流式文本以新 chunk 为前缀，说明是重复发送的完整内容
-        const currentLen = currentStreamingRef.current.length
-        if (text.length > 0 && currentLen > 0 && currentStreamingRef.current.startsWith(text)) {
-          console.log(`[DIAG] onChunk PREFIX-DUP ignored: chunkLen=${text.length} streamLen=${currentLen}`)
-          return
-        }
-        lastChunkTextRef.current = text
-        setCurrentStreaming((p) => {
-          const next = p + text
-          currentStreamingRef.current = next
-          return next
-        })
-      }))
-    }
+    // preload 层已保证 IPC 监听器单例（cleanup 正确移除监听器），
+    // 此处每次挂载正常订阅即可，StrictMode 下注册→卸载→重新注册最终恰好 1 个监听器
+    unsubs.push(window.dogeAPI.onStateChange((s) => { stateRef.current = s; setState(s as QueryState) }))
+    unsubs.push(window.dogeAPI.onChunk((chunk) => {
+      if (!chunk || !chunk.text) return
+      if (!streamingActiveRef.current) return
+      const text = chunk.text
+      // 防御1：精确匹配——如果此 chunk 文本与上一次追加的完全相同，直接丢弃
+      if (text === lastChunkTextRef.current) {
+        console.log(`[DIAG] onChunk EXACT-DUP ignored: "${text.slice(0, 50)}"`)
+        return
+      }
+      // 防御2：前缀重复检查——如果已累积文本以新 chunk 开头，
+      // 说明新 chunk 是已呈现内容的累积式重发，追加会导致前缀重复
+      if (text.length > 0 && currentStreamingRef.current.length > 0 && currentStreamingRef.current.startsWith(text)) {
+        console.log(`[DIAG] onChunk PREFIX-DUP ignored: chunk="${text.slice(0, 50)}" streamLen=${currentStreamingRef.current.length}`)
+        return
+      }
+      lastChunkTextRef.current = text
+      setCurrentStreaming((p) => {
+        const next = p + text
+        currentStreamingRef.current = next
+        return next
+      })
+    }))
     return () => {
       unsubs.forEach(u => u())
-      chunkSubInstalled = false
-      stateSubInstalled = false
     }
   }, [])
 
@@ -1177,157 +1164,6 @@ export function App(): JSX.Element {
     }
   }, [loaded, tabs.length, currentSessionId])
 
-  // ─── 自动测试命令序列（启动后自动执行，在 UI 中显示结果） ───
-  // 使用 ref 追踪命令索引，避免依赖 currentSessionId 导致的循环重触发
-  const autoTestCmdIndexRef = useRef(0)
-
-  useEffect(() => {
-    if (!loaded) return
-
-    const TEST_CMDS = [
-      '使用 dir 命令列出当前工作目录的文件和文件夹',
-      '使用 ls 命令列出当前目录内容',
-      '使用 pwd 命令显示当前工作目录路径',
-      '使用 echo 命令输出 "Doge Code Desktop 自动测试完成"',
-      '请帮我查看项目根目录下的 src/main/index.ts 文件内容，使用 cat 命令读取',
-    ]
-
-    let cancelled = false
-    autoTestCmdIndexRef.current = 0
-
-    async function sendNext(): Promise<void> {
-      if (cancelled || autoTestCmdIndexRef.current >= TEST_CMDS.length) return
-      const idx = autoTestCmdIndexRef.current++
-      const cmd = TEST_CMDS[idx]
-      const cmdNumber = idx + 1
-      tsLog('AUTO-TEST', `[${cmdNumber}/${TEST_CMDS.length}] 发送: ${cmd}`)
-
-      // 标记系统提示
-      const sysMsg: Message = {
-        id: `auto-sys-${Date.now()}`,
-        role: 'system',
-        content: `[自动测试 ${cmdNumber}/${TEST_CMDS.length}] 执行命令: ${cmd}`,
-      }
-      const appendMsg = (msg: Message) => {
-        setMessages(prev => { const next = [...prev, msg]; persistActiveTabMessages(next); return next })
-      }
-      appendMsg(sysMsg)
-
-      // 每 5 条命令才新建会话，避免引擎重建导致状态丢失
-      if (idx > 0 && idx % 5 === 0) {
-        await window.dogeAPI.newSession()
-        setCurrentSessionId(null)
-      }
-
-      try {
-        streamingActiveRef.current = true
-        const result = await window.dogeAPI.sendMessage(cmd)
-        streamingActiveRef.current = false
-        setCurrentStreaming(''); currentStreamingRef.current = ''
-        if (result?.error) {
-          const errMsgEl: Message = {
-            id: `auto-err-${Date.now()}`,
-            role: 'error',
-            content: `[自动测试错误] ${result.error}`,
-          }
-          appendMsg(errMsgEl)
-        } else {
-          const finalContent = result?.content || currentStreamingRef.current
-          if (finalContent) {
-            const asstMsg: Message = {
-              id: `auto-asst-${Date.now()}`,
-              role: 'assistant',
-              content: finalContent,
-            }
-            appendMsg(asstMsg)
-          } else if (result?.toolOutput) {
-            // IPC handler returned tool output directly (non-streaming mode)
-            const toolContent = result.toolOutput
-            try {
-              const parsed = JSON.parse(toolContent)
-              if (typeof parsed.output === 'string') {
-                const ec = parsed.exitCode
-                const suffix = (ec === 0 || ec === null) ? '' : `[exit code: ${ec}]\n`
-                appendMsg({ id: `auto-asst-${Date.now()}`, role: 'assistant', content: suffix + parsed.output.replace(/\u001b\[[0-9;]*m/g, '') })
-              } else if (typeof parsed.error === 'string') {
-                appendMsg({ id: `auto-err-${Date.now()}`, role: 'error', content: `工具执行失败: ${parsed.error}` })
-              } else {
-                appendMsg({ id: `auto-asst-${Date.now()}`, role: 'assistant', content: '(命令已执行)' })
-              }
-            } catch {
-              if (toolContent.includes('failed') || toolContent.includes('error') || toolContent.includes('Error')) {
-                appendMsg({ id: `auto-err-${Date.now()}`, role: 'error', content: `工具执行失败: ${toolContent.slice(0, 300)}` })
-              } else {
-                appendMsg({ id: `auto-asst-${Date.now()}`, role: 'assistant', content: toolContent.slice(0, 2000) })
-              }
-            }
-          } else {
-            // 文本内容为空：工具调用结果可能在历史消息中
-            // 工具结果消息 role 为 'tool'，content 为 JSON 或错误字符串
-            try {
-              const history = await window.dogeAPI.getHistory()
-              const allMsgs = history.messages || []
-
-              // 优先查找 tool 角色消息（包含成功或失败的工具执行结果）
-              const toolMsgs = allMsgs.filter(m => m.role === 'tool' && typeof m.content === 'string')
-              if (toolMsgs.length > 0) {
-                const lastTool = toolMsgs[toolMsgs.length - 1].content
-                try {
-                  const parsed = JSON.parse(lastTool)
-                  if (typeof parsed.output === 'string') {
-                    const ec = parsed.exitCode
-                    const suffix = (ec === 0 || ec === null) ? '' : `[exit code: ${ec}]\n`
-                    appendMsg({ id: `auto-asst-${Date.now()}`, role: 'assistant', content: suffix + parsed.output.replace(/\u001b\[[0-9;]*m/g, '') })
-                  } else if (typeof parsed.error === 'string') {
-                    appendMsg({ id: `auto-err-${Date.now()}`, role: 'error', content: `工具执行失败: ${parsed.error}` })
-                  } else {
-                    appendMsg({ id: `auto-asst-${Date.now()}`, role: 'assistant', content: '(命令已执行)' })
-                  }
-                } catch {
-                  // tool content 不是 JSON（可能是纯错误字符串）
-                  if (lastTool.includes('failed') || lastTool.includes('error') || lastTool.includes('Error')) {
-                    appendMsg({ id: `auto-err-${Date.now()}`, role: 'error', content: `工具执行失败: ${lastTool.slice(0, 300)}` })
-                  } else {
-                    appendMsg({ id: `auto-asst-${Date.now()}`, role: 'assistant', content: lastTool.slice(0, 2000) })
-                  }
-                }
-              } else if (allMsgs.length > 0) {
-                appendMsg({ id: `auto-asst-${Date.now()}`, role: 'assistant', content: '(命令已执行，无文本输出)' })
-              }
-            } catch { /* ignore */ }
-          }
-        }
-      } catch (e) {
-        const errMsg = e instanceof Error ? e.message : '发送失败'
-        tsLog('AUTO-TEST', '发送失败:', errMsg)
-        const errMsgEl: Message = {
-          id: `auto-err-${Date.now()}`,
-          role: 'error',
-          content: `[自动测试错误] ${errMsg}`,
-        }
-        appendMsg(errMsgEl)
-      }
-
-      // 等待响应完成（state 回到 idle 或 crashed）
-      await new Promise<void>(resolve => {
-        const check = setInterval(() => {
-          if (cancelled || stateRef.current === 'idle' || stateRef.current === 'crashed') { clearInterval(check); resolve() }
-        }, 300)
-        setTimeout(() => { clearInterval(check); resolve() }, 90000)
-      })
-
-      // 间隔 2s 再发下一条
-      if (!cancelled && autoTestCmdIndexRef.current < TEST_CMDS.length) {
-        await new Promise(r => setTimeout(r, 2000))
-        await sendNext()
-      }
-    }
-
-    // 延迟 3s 启动（等 UI 完全就绪）
-    const startTimer = setTimeout(() => sendNext(), 3000)
-    return () => { cancelled = true; clearTimeout(startTimer) }
-  }, [loaded])
-
   const handleLoadSession = useCallback(async (sessionId: string) => {
     const result = await window.dogeAPI.loadSession(sessionId)
     if (result.success) {
@@ -1420,10 +1256,17 @@ export function App(): JSX.Element {
     return () => window.removeEventListener('keydown', onKey)
   }, [showCommandPalette, showSettings])
 
+  // 诊断：handleSend 调用计数
+  const handleSendCallCountRef = useRef(0)
   const handleSend = useCallback(async (): Promise<void> => {
+    handleSendCallCountRef.current++
+    const callNum = handleSendCallCountRef.current
     const text = input.trim()
-    tsLog('RENDERER', 'handleSend called, text:', text, 'state:', state)
-    if (!text || state === 'responding' || isSending) return
+    tsLog('RENDERER', `handleSend called #${callNum}, text:`, text, 'state:', state)
+    if (!text || state === 'responding' || isSending) {
+      tsLog('RENDERER', `handleSend #${callNum} EARLY RETURN: text=${!!text} state=${state} isSending=${isSending}`)
+      return
+    }
     if (!isOnline) { showToast('网络已断开，无法发送消息', 'error'); return }
     setInput(''); setError(null); setCurrentStreaming(''); currentStreamingRef.current = ''; setIsSending(true)
     streamingActiveRef.current = true // 打开请求级锁，允许 chunk 进入 currentStreaming

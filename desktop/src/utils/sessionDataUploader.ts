@@ -1,1 +1,1 @@
-export { createSessionTurnUploader } from '../../src/utils/sessionDataUploader.js'
+export { createSessionTurnUploader } from '../../../src/utils/sessionDataUploader.js'

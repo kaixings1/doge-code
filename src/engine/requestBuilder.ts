@@ -4,6 +4,7 @@
  * 组装系统提示词、规范化消息、工具定义、模型参数，输出 Anthropic/OpenAI 请求。
  */
 import { MessageNormalizer, type InternalMessage } from "./messageNormalizer.ts";
+import { HarnessRouter, type HarnessConfig, type HarnessAdapter } from "./harnessAdapter.ts";
 
 export interface ToolDefinition {
   name: string;
@@ -22,6 +23,8 @@ export interface RequestParams {
   stream?: boolean;
   /** 预测性 AI 助手：当前文件的静态分析建议 */
   preAnalysis?: Array<{ type: string; message: string; line?: number }>;
+  /** Harness 适配配置（吸收自 open-interpreter harness 系统） */
+  harness?: HarnessConfig
 }
 
 export interface APIRequest {
@@ -60,6 +63,8 @@ export interface ModelConfig {
 
 export class RequestBuilder {
   private normalizer = new MessageNormalizer();
+  /** Harness 路由器（吸收自 open-interpreter harness 系统） */
+  private harnessRouter = new HarnessRouter();
 
   async build(params: RequestParams): Promise<APIRequest> {
     const provider = params.provider ?? "openai";
@@ -82,21 +87,32 @@ export class RequestBuilder {
       stream: params.stream ?? true,
     };
 
+    // 构建基础请求
+    let request: APIRequest
     if (provider === "anthropic") {
-      return {
+      request = {
         provider,
         system: systemPrompt,
         messages,
         tools: params.tools,
         ...modelParams,
       };
+    } else {
+      request = {
+        provider,
+        messages: [{ role: "system", content: systemPrompt }, ...messages],
+        tools: this.convertToolsForOpenAI(params.tools),
+        ...modelParams,
+      };
     }
-    return {
-      provider,
-      messages: [{ role: "system", content: systemPrompt }, ...messages],
-      tools: this.convertToolsForOpenAI(params.tools),
-      ...modelParams,
-    };
+
+    // Harness 适配：通过 provider-specific adapter 转换请求格式（吸收自 open-interpreter）
+    if (params.harness) {
+      const adapter = this.harnessRouter.getAdapter(params.harness)
+      request = adapter.adaptRequest(request)
+    }
+
+    return request
   }
 
   private convertToolsForOpenAI(tools: ToolDefinition[]): unknown {

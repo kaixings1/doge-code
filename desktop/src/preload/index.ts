@@ -241,6 +241,15 @@ interface DogeAPIValue {
   getToolOperations: () => Promise<Array<{ toolUseId: string; toolName: string; timestamp: number; files: string[]; hasSnapshot: boolean; rolledBack: boolean }>>
 }
 
+// 单例回调引用 + handler 引用：cleanup 时移除 IPC 监听器并重置，
+// 保证 StrictMode/HMR 重挂载时恰好只存在一个活跃监听器（不会累积导致 chunk 重复触发）
+let chunkCallbackRef: ((chunk: { text: string }) => void) | null = null
+let chunkHandler: ((_event: Electron.IpcRendererEvent, chunk: { text: string }) => void) | null = null
+let stateCallbackRef: ((state: string) => void) | null = null
+let stateHandler: ((_event: Electron.IpcRendererEvent, state: string) => void) | null = null
+let autoSendCallbackRef: ((text: string) => void) | null = null
+let autoSendHandler: ((_event: Electron.IpcRendererEvent, text: string) => void) | null = null
+
 const dogeAPI: DogeAPIValue = {
   readConfig: (filePath: string) => ipcRenderer.invoke('read-config', filePath),
   writeConfig: (filePath: string, data: unknown) => ipcRenderer.invoke('write-config', filePath, data),
@@ -273,19 +282,52 @@ const dogeAPI: DogeAPIValue = {
   gitBranchMerge: (cwd: string, sourceBranch: string, targetBranch: string) => ipcRenderer.invoke('doge:git-branch-merge', cwd, sourceBranch, targetBranch),
   gitLogGraph: (cwd: string, maxCount?: number) => ipcRenderer.invoke('doge:git-log-graph', cwd, maxCount),
   onChunk: (callback: (chunk: { text: string }) => void) => {
-    const handler = (_event: Electron.IpcRendererEvent, chunk: { text: string }) => callback(chunk)
-    ipcRenderer.on('doge:chunk', handler)
-    return () => ipcRenderer.removeListener('doge:chunk', handler)
+    chunkCallbackRef = callback
+    if (!chunkHandler) {
+      chunkHandler = (_event: Electron.IpcRendererEvent, chunk: { text: string }) => {
+        if (chunkCallbackRef) chunkCallbackRef(chunk)
+      }
+      ipcRenderer.on('doge:chunk', chunkHandler)
+    }
+    return () => {
+      if (chunkHandler) {
+        ipcRenderer.removeListener('doge:chunk', chunkHandler)
+        chunkHandler = null
+      }
+      chunkCallbackRef = null
+    }
   },
   onStateChange: (callback: (state: string) => void) => {
-    const handler = (_event: Electron.IpcRendererEvent, state: string) => callback(state)
-    ipcRenderer.on('doge:state-change', handler)
-    return () => ipcRenderer.removeListener('doge:state-change', handler)
+    stateCallbackRef = callback
+    if (!stateHandler) {
+      stateHandler = (_event: Electron.IpcRendererEvent, state: string) => {
+        if (stateCallbackRef) stateCallbackRef(state)
+      }
+      ipcRenderer.on('doge:state-change', stateHandler)
+    }
+    return () => {
+      if (stateHandler) {
+        ipcRenderer.removeListener('doge:state-change', stateHandler)
+        stateHandler = null
+      }
+      stateCallbackRef = null
+    }
   },
   onAutoSend: (callback: (text: string) => void) => {
-    const handler = (_event: Electron.IpcRendererEvent, text: string) => callback(text)
-    ipcRenderer.on('doge:auto-send', handler)
-    return () => ipcRenderer.removeListener('doge:auto-send', handler)
+    autoSendCallbackRef = callback
+    if (!autoSendHandler) {
+      autoSendHandler = (_event: Electron.IpcRendererEvent, text: string) => {
+        if (autoSendCallbackRef) autoSendCallbackRef(text)
+      }
+      ipcRenderer.on('doge:auto-send', autoSendHandler)
+    }
+    return () => {
+      if (autoSendHandler) {
+        ipcRenderer.removeListener('doge:auto-send', autoSendHandler)
+        autoSendHandler = null
+      }
+      autoSendCallbackRef = null
+    }
   },
   getModelInfo: () => ipcRenderer.invoke('doge:get-model-info'),
   getTokenUsage: () => ipcRenderer.invoke('doge:get-token-usage'),

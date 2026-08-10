@@ -541,6 +541,7 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
         if (messageStarted) {
           yield { type: 'message_stop' }
         }
+        console.log(`[STREAM-ID] ${streamId} END`)
       }
       return stream()
     },

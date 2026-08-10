@@ -1,6 +1,6 @@
 import { writeFileSync } from 'fs'
 import { join } from 'path'
-import { logForDebugging } from '../debug.js'
+import { logForDebugging } from './debug.js'
 
 /**
  * In-memory cache for per-file attribution content, keyed by absolute path.
