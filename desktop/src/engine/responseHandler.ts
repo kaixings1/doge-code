@@ -32,6 +32,8 @@ export class ResponseHandler {
   onChunk?: (chunk: { type: string; text?: string }) => void;
 
   async handle(stream: AsyncIterable<APIEvent>): Promise<ProcessedResponse> {
+    const reqId = `rh-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
+    console.log(`[RESP-HANDLER] handle START reqId=${reqId}`)
     const chunks: { type: string; text?: string; id?: string; name?: string; input?: Record<string, unknown> }[] = [];
     const toolCalls: ToolCall[] = [];
     let stopReason: string | null = null;
@@ -116,6 +118,7 @@ export class ResponseHandler {
       }
     }
 
+    console.log(`[RESP-HANDLER] handle END reqId=${reqId} contentLen=${fullContent.length} toolCalls=${toolCalls.length} chunks=${chunks.length}`)
     return {
       content: fullContent,
       toolCalls,

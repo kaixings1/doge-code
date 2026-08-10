@@ -1,0 +1,3 @@
+{
+  "output": "```bash\nmkdir -p \"D:\\doge-code\\123\"\nnode --check \"D:\\doge-code\\123\\server.js\"\nnetstat -ano | findstr :3000 | awk '{print $NF}' | xargs -r taskkill /F /PID >/dev/null 2>&1\nbun test \"D:\\doge-code\\123\\server.test.js\"\n```"
+}

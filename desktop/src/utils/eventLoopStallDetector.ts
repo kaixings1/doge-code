@@ -1,1 +1,1 @@
-export { startEventLoopStallDetector } from '../../src/utils/eventLoopStallDetector.js'
+export { startEventLoopStallDetector } from '../../../src/utils/eventLoopStallDetector.js'

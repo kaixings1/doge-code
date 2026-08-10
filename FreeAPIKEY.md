@@ -29,6 +29,7 @@
 | 5 | **awesome-free-services** | ` insightful-com/awesome-free-services` | ⭐ 数千 | 免费在线服务汇总（含 API） |
 | 6 | **public-api-repo** | `shmuhammad/public-api-repo` | — | 公开 API 仓库 |
 | 7 | **APIS** | `public-apis/APIS` | — | API 列表数据库 |
+| 8 | **awesome-freellm-apis** | `open-free-llm-api/awesome-freellm-apis` | ⭐1519 | 424+ 免费 LLM API 目录，30+ 提供商，每日更新，含 Claude Code/Codex/Cursor 配置模板 |
 
 ---
 
@@ -107,14 +108,92 @@ free OpenAI key
 
 ## 七、各大服务官方免费额度
 
-| 服务 | 免费额度 | 获取方式 |
-|------|---------|---------|
-| **OpenAI** | $5 免费额度 | https://platform.openai.com |
-| **Anthropic (Claude)** | $5 免费额度 | https://console.anthropic.com |
-| **Google AI (Gemini)** | 免费 tier | https://ai.google.dev |
-| **Groq** | 免费无限额度（限速） | https://groq.com |
-| **Cohere** | 免费试用额度 | https://cohere.com |
-| **Mistral AI** | 免费 tier | https://mistral.ai |
-| **Hugging Face** | 免费 API 调用 | https://huggingface.co |
-| **GitHub API** | 5000 次/小时 | 无需 KEY（低配额） |
-| **DeepSeek** | 免费额度 | https://platform.deepseek.com |
+> 数据来源：[open-free-llm-api/awesome-freellm-apis](https://github.com/open-free-llm-api/awesome-freellm-apis)（每日更新，424+ 模型）
+
+### 7.1 无需信用卡的永久免费层
+
+| 服务 | 免费模型数 | 上下文 | 速率限制 | 注册链接 |
+|------|-----------|--------|---------|---------|
+| **GitHub Models** | 16 | 1M | 见官方 | https://github.com/marketplace/models |
+| **Google Gemini** | 15 | 1M | 15 RPM / 1500 RPD | https://aistudio.google.com/app/apikey |
+| **Cloudflare Workers AI** | 39 | 10M | 10K req/day | https://dash.cloudflare.com/profile/api-tokens |
+| **LLM7.io** | 15 | 1M | 30 RPM (120 with token) | https://token.llm7.io |
+| **NVIDIA NIM** | 123 | 1M | 40 RPM | https://build.nvidia.com/settings/api-keys (需手机验证) |
+| **Groq** | 12 | 262K | 30 RPM / 14,400 RPD | https://console.groq.com/keys |
+| **Mistral AI** | 12 | 256K | 见官方 | https://console.mistral.ai/api-keys |
+| **Cohere** | 12 | 436K | 20 RPM | https://dashboard.cohere.com/api-keys |
+| **Kilo Code** | 12 | 1M | ~200 req/hr | https://kilo.ai |
+| **Cerebras** | 8 | 131K | 5 RPM / 30K TPM | https://cloud.cerebras.ai/ |
+| **HuggingFace** | 7 | 131K | Credit-metered | https://huggingface.co/settings/tokens |
+| **Z AI (智谱)** | 4 | 200K | 1 concurrent | https://open.bigmodel.cn/usercenter/apikeys |
+
+### 7.2 需注册但无信用卡
+
+| 服务 | 免费模型数 | 上下文 | 注册链接 |
+|------|-----------|--------|---------|
+| **ModelScope (阿里)** | 55 | 1M | https://modelscope.cn/my/myaccesstoken |
+| **OpenRouter** | 22 | 1M | https://openrouter.ai/workspaces/default/keys |
+| **阿里云百炼** | 5 | 1M | https://bailian.console.alibabacloud.com |
+| **DeepSeek** | 2 | 128K | https://platform.deepseek.com/api_keys |
+| **SiliconFlow (硅基流动)** | 3 | 131K | https://cloud.siliconflow.cn/account/ak |
+| **Ollama Cloud** | 9 | 1M | https://ollama.com/settings/keys |
+| **OpenCode Zen** | 9 | 1M | https://opencode.ai/auth |
+| **Aion Labs** | 7 | 131K | https://www.aionlabs.ai |
+| **Agnes AI** | 5 | 256K | https://platform.agnes-ai.com/settings/apiKeys |
+| **SambaNova** | 4 | 128K | https://cloud.sambanova.ai/apis |
+| **xAI (Grok)** | 3 | 2M | https://console.x.ai |
+| **AI21 Labs** | 2 | 256K | https://studio.ai21.com/account/api-key |
+| **Chutes.ai** | 2 | 131K | https://chutes.ai/ |
+| **Glhf.chat** | 2 | 131K | https://glhf.chat/ |
+| **Nscale** | 2 | 128K | https://console.nscale.com/ |
+| **Nebius** | 1 | 128K | https://studio.nebius.com/settings/api-keys |
+
+### 7.3 Claude Code 免费后端配置模板
+
+```bash
+# Groq（最快，无需信用卡）
+export ANTHROPIC_BASE_URL="https://api.groq/openai/v1"
+export ANTHROPIC_AUTH_TOKEN="gsk_your_key"
+# 推荐模型: llama-3.3-70b-versatile, qwen-3-32b
+
+# SiliconFlow（国内延迟最低）
+export ANTHROPIC_BASE_URL="https://api.siliconflow.cn/v1"
+export ANTHROPIC_AUTH_TOKEN="sk_your_key"
+# 推荐模型: Qwen/Qwen3-Coder-480B-A35B-Instruct
+
+# 智谱 AI
+export ANTHROPIC_BASE_URL="https://open.bigmodel.cn/api/paas/v4"
+export ANTHROPIC_AUTH_TOKEN="your_zhipu_key"
+# 推荐模型: glm-4.7, glm-4.5
+
+# NVIDIA NIM（无日 token 上限）
+export ANTHROPIC_BASE_URL="https://integrate.api.nvidia.com/v1"
+export ANTHROPIC_AUTH_TOKEN="nvapi_your_key"
+# 推荐模型: meta/llama-3.3-70b-instruct, deepseek-ai/deepseek-r1
+
+# OpenRouter（35+ 免费模型，一个 KEY）
+export ANTHROPIC_BASE_URL="https://openrouter.ai/api/v1"
+export ANTHROPIC_AUTH_TOKEN="sk-or-v1_your_key"
+# 推荐模型: openai/gpt-oss-120b:free, google/gemini-2.5-flash:free
+```
+
+### 7.4 Codex CLI 免费后端配置模板
+
+```bash
+# Groq
+export OPENAI_BASE_URL="https://api.groq.com/openai/v1"
+export OPENAI_API_KEY="gsk_your_key"
+
+# SiliconFlow
+export OPENAI_BASE_URL="https://api.siliconflow.cn/v1"
+export OPENAI_API_KEY="sk_your_key"
+
+# OpenRouter
+export OPENAI_BASE_URL="https://openrouter.ai/api/v1"
+export OPENAI_API_KEY="sk-or-v1_your_key"
+
+# Cerebras
+export OPENAI_BASE_URL="https://api.cerebras.ai/v1"
+export OPENAI_API_KEY="your_cerebras_key"
+# 推荐模型: llama3.1-70b
+```
