@@ -198,7 +198,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
         next = [...prev, { type: 'system' as const, content: text, date: new Date().toISOString(), uuid: PROGRESS_UUID }]
       }
       messagesRef.current = next
-      context.setMessages(next)
+      context.setMessages(() => next)
     }
 
     // ─── 自动 checkpoint： SIGINT 时保存进度 ───
