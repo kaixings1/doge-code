@@ -900,7 +900,7 @@ function extractCreatedFiles(output: string): string[] {
   return [...new Set(files)]
 }
 
-async function saveCheckpoint(filePath: string, state: CheckpointState): Promise<void> {
+export async function saveCheckpoint(filePath: string, state: CheckpointState): Promise<void> {
   const resolved = path.resolve(filePath)
   await mkdir(path.dirname(resolved), { recursive: true })
   await writeFile(resolved, JSON.stringify(state, null, 2), 'utf-8')
