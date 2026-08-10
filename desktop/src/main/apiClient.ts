@@ -319,7 +319,10 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
       }
       console.log(`[MAIN] API response: ${response.status}, content-type: ${response.headers.get('content-type')}`)
 
+      const streamId = `stream-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
+      console.log(`[STREAM-ID] ${streamId} created`)
       async function* stream(): AsyncGenerator<Record<string, unknown>> {
+        console.log(`[STREAM-ID] ${streamId} START consuming`)
         // 非流式兜底：Electron fetch 可能不暴露 response.body
         if (!response!.body) {
           const fullText = await response!.text()
