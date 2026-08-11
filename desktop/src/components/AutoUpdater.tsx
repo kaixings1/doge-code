@@ -45,6 +45,10 @@ export function AutoUpdater({
   // progress.
   const isUpdatingRef = useRef(isUpdating);
   isUpdatingRef.current = isUpdating;
+  const onChangeIsUpdatingRef = useRef(onChangeIsUpdating);
+  onChangeIsUpdatingRef.current = onChangeIsUpdating;
+  const onAutoUpdaterResultRef = useRef(onAutoUpdaterResult);
+  onAutoUpdaterResultRef.current = onAutoUpdaterResult;
   const checkForUpdates = React.useCallback(async () => {
     if (isUpdatingRef.current) {
       return;
@@ -80,7 +84,7 @@ export function AutoUpdater({
     // Check if update needed and perform update
     if (!isDisabled && currentVersion && latestVersion && !gte(currentVersion, latestVersion) && !shouldSkipVersion(latestVersion)) {
       const startTime = Date.now();
-      onChangeIsUpdating(true);
+      onChangeIsUpdatingRef.current(true);
 
       // Remove native installer symlink since we're using JS-based updates
       // But only if user hasn't migrated to native installation
@@ -96,7 +100,7 @@ export function AutoUpdater({
       // Skip update for development builds
       if (installationType === 'development') {
         logForDebugging('AutoUpdater: 无法自动更新开发版本');
-        onChangeIsUpdating(false);
+        onChangeIsUpdatingRef.current(false);
         return;
       }
 
@@ -116,7 +120,7 @@ export function AutoUpdater({
       } else if (installationType === 'native') {
         // This shouldn't happen - native should use NativeAutoUpdater
         logForDebugging('AutoUpdater: Unexpected native installation in non-native updater');
-        onChangeIsUpdating(false);
+        onChangeIsUpdatingRef.current(false);
         return;
       } else {
         // Fallback to config-based detection for unknown types
@@ -129,7 +133,7 @@ export function AutoUpdater({
           installStatus = await installGlobalPackage();
         }
       }
-      onChangeIsUpdating(false);
+      onChangeIsUpdatingRef.current(false);
       if (installStatus === 'success') {
         logEvent('tengu_auto_updater_success', {
           fromVersion: currentVersion as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
@@ -148,17 +152,17 @@ export function AutoUpdater({
           installationType: installationType as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
         });
       }
-      onAutoUpdaterResult({
+      onAutoUpdaterResultRef.current({
         version: latestVersion,
         status: installStatus
       });
     }
-    // isUpdating intentionally omitted from deps; we read isUpdatingRef
-    // instead so the guard is always current without changing callback
-    // identity (which would re-trigger the initial-check useEffect below).
+    // All mutable values read via refs (isUpdatingRef, onChangeIsUpdatingRef,
+    // onAutoUpdaterResultRef) — empty deps gives stable identity, preventing
+    // useInterval reset and initial-check useEffect re-fire loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // biome-ignore lint/correctness/useExhaustiveDependencies: isUpdating read via ref
-  }, [onAutoUpdaterResult]);
+    // biome-ignore lint/correctness/useExhaustiveDependencies: stable refs instead
+  }, []);
 
   // Initial check
   useEffect(() => {
