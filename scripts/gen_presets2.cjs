@@ -1,1 +1,0 @@
-const fs2=require(/fs/);const local=[{"label":"test","provider":"openai","baseURL":"http://test.com","defaultModel":"test","apiKeyRequired":false}];fs2.writeFileSync(/D:/doge-code/scripts/test.json/,JSON.stringify(local));console.log(/done/);
