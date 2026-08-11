@@ -102,7 +102,7 @@ describe('reflect command', () => {
 
   it('should handle non-git directory gracefully', async () => {
     const { getIsGit } = await import('../../utils/git.js')
-    vi.mocked(getIsGit).mockResolvedValueOnce(false)
+    ;(getIsGit as any).mockResolvedValueOnce(false)
 
     const mockContext = {
       getAppState: () => ({

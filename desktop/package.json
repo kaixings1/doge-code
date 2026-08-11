@@ -43,7 +43,8 @@
     "react-dom": "^19.2.8",
     "supports-color": "^11.0.0",
     "supports-hyperlinks": "^4.5.0",
-    "unicorn-magic": "^0.4.0"
+    "unicorn-magic": "^0.4.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.0",

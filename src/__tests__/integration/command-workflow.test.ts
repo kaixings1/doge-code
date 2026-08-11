@@ -91,8 +91,11 @@ describe('Workflow: diagram + collectSourceFiles', () => {
       }
     }
 
-    // 递归收集 .ts/.tsx 文件
-    const collectTsFiles = (dir: string): string[] => {
+    // 递归收集 .ts/.tsx 文件（防循环引用）
+    const collectTsFiles = (dir: string, visited = new Set<string>()): string[] => {
+      const absDir = path.resolve(dir)
+      if (visited.has(absDir)) return []
+      visited.add(absDir)
       const files: string[] = []
       const entries = fs.readdirSync(dir)
       for (const entry of entries) {
@@ -100,7 +103,7 @@ describe('Workflow: diagram + collectSourceFiles', () => {
         const fullPath = path.join(dir, entry)
         const stat = fs.statSync(fullPath)
         if (stat.isDirectory()) {
-          files.push(...collectTsFiles(fullPath))
+          files.push(...collectTsFiles(fullPath, visited))
         } else if (entry.endsWith('.ts') || entry.endsWith('.tsx')) {
           files.push(fullPath)
         }
