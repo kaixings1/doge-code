@@ -247,3 +247,4 @@ _tsc_errors.txt
 _tsc_current_errors.txt
 loop-api-response-*.json
 loop-report-*.md
+errors-export.json
