@@ -136,6 +136,7 @@ _cmd_script.txt
 _hz_final.cjs
 _patch2.cjs
 _test*.md
+_test*.txt
 _test_cmd.js
 _tmp_test.txt
 _write.cjs
