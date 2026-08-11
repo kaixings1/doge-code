@@ -45,7 +45,6 @@ node_modules/
 .claude-integrations/
 .firecrawl/
 
-
 # Lock Files
 bun.lock
 package-lock.json
@@ -59,6 +58,7 @@ package-lock.json
 *.env
 debug.log
 debug.txt
+debug*.txt
 config.json
 eng.txt
 eng1.txt
@@ -85,6 +85,8 @@ src/**/*.js.map
 # OS Files
 .DS_Store
 latest/
+nul
+
 # =========================
 # Claude Code
 # =========================
@@ -110,6 +112,7 @@ cookbooks/
 
 # Third-party mirrored repos (cloned from GitHub, not part of this repo)
 .github/
+
 # Temp scripts
 .tmp-*.py
 
@@ -155,7 +158,6 @@ ws.js
 w.py*
 _script_b64.txt*
 0
-nul
 
 # .claude/skills/ 汉化辅助脚本
 .claude/skills/_*.cjs
@@ -186,9 +188,8 @@ nul
 .claude/skills/test.txt
 .claude/skills/_fp_option_content.json
 .github/
-# =========================
-# 废弃技能（自己试验过认为没用）
-# =========================
+
+# 废弃技能
 /.useless/
 
 # src/ 汉化临时文件
@@ -203,9 +204,7 @@ src/commands/updateskills/index.js
 src/commands/updateskills/updateskills.js
 updateskills.exe
 
-
 # Debug scripts & temp files (desktop development)
-debug*.txt
 process-check.txt
 build-log.txt
 ts-errors.txt
@@ -248,3 +247,6 @@ _tsc_current_errors.txt
 loop-api-response-*.json
 loop-report-*.md
 errors-export.json
+
+# 独立项目/临时目录
+123/
