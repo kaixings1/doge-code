@@ -26,3 +26,15 @@ This slash command is a Git commit helper that:
 - "📝 docs: update API documentation with new endpoints"
 
 The command aims to improve code quality, commit clarity, and developer workflow by providing structured commit guidance.
+
+## Commit Message Rules (from aider)
+
+When generating commit messages:
+
+1. Review the diffs carefully before composing the message.
+2. Use Conventional Commits format: `<type>: <description>`
+3. Valid types: `fix`, `feat`, `build`, `chore`, `ci`, `docs`, `style`, `refactor`, `perf`, `test`
+4. Write in **imperative mood**: "add feature" NOT "added feature" or "adding feature"
+5. Keep the message under **72 characters**
+6. Reply **only** with the one-line commit message — no explanations, no extra text, no line breaks
+7. Match the language of the diff/context when possible

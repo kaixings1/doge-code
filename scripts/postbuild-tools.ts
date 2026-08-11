@@ -6,7 +6,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const projectRoot = join(__dirname, '..')
 const outfile = process.env.CLAUDE_CODE_BUILD_OUTFILE?.trim() || join(projectRoot, 'doge.exe')
 const outdir = dirname(outfile)
-const toolsSrc = join(projectRoot, '.tools')
+const toolsSrc = join(projectRoot, '.doge', 'tools')
 const toolsDst = join(outdir, '.tools')
 
 if (!existsSync(toolsSrc)) {
