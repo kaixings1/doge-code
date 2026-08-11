@@ -55,6 +55,7 @@ package-lock.json
 *.ps1
 
 # Temporary Files
+temp/
 *.env
 debug.log
 debug.txt
