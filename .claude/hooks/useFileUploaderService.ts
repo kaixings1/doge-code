@@ -1,0 +1,509 @@
+import { useSendNotification } from "@app/hooks/useNotification";
+import { clientFetch } from "@app/lib/egress/client";
+import type { FileUploadedRequestResponseBody } from "@app/lib/resources/file_resource";
+import { concurrentExecutor } from "@app/lib/utils/async_utils";
+import logger from "@app/logger/logger";
+import type { FileUploadRequestResponseBody } from "@app/types/api/files/upload_metadata";
+import { isAPIErrorResponse } from "@app/types/error";
+import type {
+  FileUseCase,
+  FileUseCaseMetadata,
+  SupportedFileContentType,
+} from "@app/types/files";
+import {
+  contentTypeFromFileName,
+  DEFAULT_FILE_CONTENT_TYPE,
+  ensureFileSizeByFormatCategory,
+  fileSizeToHumanReadable,
+  getFileFormatCategory,
+  isSupportedFileContentType,
+  resolveFileContentType,
+  resolveMaxFileSizes,
+} from "@app/types/files";
+import type { Result } from "@app/types/shared/result";
+import { Err, Ok } from "@app/types/shared/result";
+import type { LightWorkspaceType } from "@app/types/user";
+import type { ChangeEvent } from "react";
+import { useCallback, useMemo, useState } from "react";
+
+export interface FileBlob {
+  contentType: SupportedFileContentType;
+  file: File;
+  filename: string;
+  id: string;
+  fileId: string | null;
+  isUploading: boolean;
+  sourceUrl?: string;
+  size: number;
+  publicUrl?: string;
+  iconName?: string;
+  provider?: string;
+  /** Scoped mount path from upload (same as `GCSMountEntryBase.path`). */
+  path?: string | null;
+}
+export type FileBlobWithFileId = FileBlob & { fileId: string };
+
+class FileBlobUploadError extends Error {
+  constructor(
+    readonly file: File,
+    msg?: string
+  ) {
+    super(msg);
+  }
+}
+
+export function useFileUploaderService({
+  hasSandboxTools,
+  owner,
+  useCase,
+  useCaseMetadata,
+}: {
+  hasSandboxTools: boolean;
+  owner: LightWorkspaceType;
+  useCase: FileUseCase;
+  useCaseMetadata?: FileUseCaseMetadata;
+}) {
+  const [fileBlobs, setFileBlobs] = useState<FileBlob[]>([]);
+  const [numFilesProcessing, setNumFilesProcessing] = useState(0);
+
+  const isProcessingFiles = numFilesProcessing > 0;
+
+  const sendNotification = useSendNotification();
+
+  const sizeResolverOpts = useMemo(
+    () => ({
+      hasSandboxTools,
+      useCase,
+    }),
+    [hasSandboxTools, useCase]
+  );
+
+  const maxFileSizes = useMemo(
+    () => resolveMaxFileSizes(sizeResolverOpts),
+    [sizeResolverOpts]
+  );
+
+  const resolveSelectedFileContentType = useCallback((file: File): string => {
+    const resolvedContentType = resolveFileContentType(file.type, file.name);
+    if (isSupportedFileContentType(resolvedContentType)) {
+      return resolvedContentType;
+    }
+
+    return (
+      contentTypeFromFileName(file.name) ??
+      (resolvedContentType || DEFAULT_FILE_CONTENT_TYPE)
+    );
+  }, []);
+
+  const findAvailableTitle = useCallback(
+    (baseTitle: string, ext: string, existingTitles: string[]) => {
+      let count = 1;
+      let title = `${baseTitle}.${ext}`;
+      while (existingTitles.includes(title)) {
+        title = `${baseTitle}-${count++}.${ext}`;
+      }
+      existingTitles.push(title);
+      return title;
+    },
+    []
+  );
+
+  const processSelectedFiles = useCallback(
+    (selectedFiles: File[]): Result<FileBlob, FileBlobUploadError>[] => {
+      const getRenamedFile = (file: File, fileType: string): File => {
+        let currentFile = file;
+        while (fileBlobs.some((f) => f.id === currentFile.name)) {
+          const [base, ext] = currentFile.name.split(/\.(?=[^.]+$)/);
+          const name = findAvailableTitle(base, ext, [
+            ...fileBlobs.map((f) => f.filename),
+          ]);
+          if (name !== currentFile.name) {
+            currentFile = new File([currentFile], name, { type: fileType });
+          }
+        }
+        return currentFile;
+      };
+
+      return selectedFiles.reduce<Result<FileBlob, FileBlobUploadError>[]>(
+        (acc, file) => {
+          const fileType = resolveSelectedFileContentType(file);
+
+          // File objects are immutable - we can't modify their properties directly.
+          // When we need to change the name or type, we must create a new File object.
+          const renamedFile = getRenamedFile(file, fileType);
+
+          if (!isSupportedFileContentType(fileType)) {
+            acc.push(
+              new Err(
+                new FileBlobUploadError(
+                  renamedFile,
+                  `File "${renamedFile.name}" is not supported (${fileType}).`
+                )
+              )
+            );
+            return acc;
+          }
+
+          acc.push(new Ok(createFileBlob(renamedFile, fileType)));
+          return acc;
+        },
+        []
+      );
+    },
+    [fileBlobs, findAvailableTitle, resolveSelectedFileContentType]
+  );
+
+  const uploadFiles = useCallback(
+    async (
+      newFileBlobs: FileBlob[],
+      options?: { useCaseMetadata?: FileUseCaseMetadata }
+    ): Promise<Result<FileBlob, FileBlobUploadError>[]> => {
+      const effectiveUseCaseMetadata =
+        options?.useCaseMetadata ?? useCaseMetadata;
+      // Browsers have a limit on the number of concurrent network operations.
+      // We have a limit of the allowed time to upload the content of a file once the file object has been created.
+      // If we start a large number of uploads at the same time and the network is somewhat slow, it's possible that we'll
+      // have created the file objects long before the upload of the content finishes.
+      return concurrentExecutor(
+        newFileBlobs,
+        async (fileBlob) => {
+          // Get upload URL from server.
+          let uploadResponse;
+          try {
+            uploadResponse = await clientFetch(`/api/w/${owner.sId}/files`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                contentType: fileBlob.contentType,
+                fileName: fileBlob.filename,
+                fileSize: fileBlob.size,
+                useCase,
+                useCaseMetadata: effectiveUseCaseMetadata,
+              }),
+            });
+          } catch (err) {
+            logger.error({ err }, "Error uploading files");
+
+            return new Err(
+              new FileBlobUploadError(
+                fileBlob.file,
+                err instanceof Error ? err.message : undefined
+              )
+            );
+          }
+
+          if (!uploadResponse.ok) {
+            try {
+              const res = await uploadResponse.json();
+
+              return new Err(
+                new FileBlobUploadError(
+                  fileBlob.file,
+                  isAPIErrorResponse(res) ? res.error.message : undefined
+                )
+              );
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              // biome-ignore lint/correctness/noUnusedVariables: ignored using `--suppress`
+            } catch (err) {
+              return new Err(new FileBlobUploadError(fileBlob.file));
+            }
+          }
+
+          const { file } =
+            (await uploadResponse.json()) as FileUploadRequestResponseBody;
+
+          const formData = new FormData();
+          formData.append("file", fileBlob.file);
+
+          // Upload a file to the obtained URL.
+          let uploadResult;
+          try {
+            uploadResult = await clientFetch(file.uploadUrl, {
+              method: "POST",
+              body: formData,
+            });
+          } catch (err) {
+            logger.error({ err }, "Error uploading files");
+
+            return new Err(
+              new FileBlobUploadError(
+                fileBlob.file,
+                err instanceof Error ? err.message : undefined
+              )
+            );
+          }
+
+          if (!uploadResult.ok) {
+            const { error } = await uploadResult.json();
+            return new Err(
+              new FileBlobUploadError(
+                fileBlob.file,
+                error?.message ?? "An unknown error happened."
+              )
+            );
+          }
+
+          const { file: fileUploaded } =
+            (await uploadResult.json()) as FileUploadedRequestResponseBody;
+
+          return new Ok({
+            ...fileBlob,
+            fileId: file.sId,
+            isUploading: false,
+            sourceUrl: fileUploaded.downloadUrl,
+            publicUrl: file.publicUrl,
+            path: fileUploaded.path,
+          });
+        },
+        { concurrency: 4 }
+      );
+    },
+    [owner.sId, useCase, useCaseMetadata]
+  );
+
+  const processResults = useCallback(
+    (
+      results: Result<FileBlob, FileBlobUploadError>[],
+      previewMode: boolean = false
+    ) => {
+      const successfulBlobs: FileBlob[] = [];
+      const erroredBlobs: FileBlobUploadError[] = [];
+
+      results.forEach((result) => {
+        if (result.isErr()) {
+          erroredBlobs.push(result.error);
+          const maybeTruncatedFilename =
+            result.error.file.name.length > 50
+              ? result.error.file.name.slice(0, 47) + "..."
+              : result.error.file.name;
+          sendNotification({
+            type: "error",
+            title: `Failed to upload file${previewMode ? " preview" : ""}`,
+            description: result.error.message
+              ? `${result.error.message} (${maybeTruncatedFilename})`
+              : `Error uploading ${maybeTruncatedFilename}`,
+          });
+        } else {
+          successfulBlobs.push(result.value);
+        }
+      });
+
+      if (erroredBlobs.length > 0) {
+        setFileBlobs((prevFiles) =>
+          prevFiles.filter(
+            (f) => !erroredBlobs.some((e) => e.file.name === f.id)
+          )
+        );
+      }
+
+      if (successfulBlobs.length > 0) {
+        setFileBlobs((prevFiles) => {
+          const fileBlobMap = new Map(prevFiles.map((blob) => [blob.id, blob]));
+          successfulBlobs.forEach((blob) => {
+            fileBlobMap.set(blob.id, blob);
+          });
+          return Array.from(fileBlobMap.values());
+        });
+      }
+
+      return successfulBlobs;
+    },
+    [sendNotification]
+  );
+
+  const handleFilesUpload = useCallback(
+    async (
+      files: File[],
+      options?: { useCaseMetadata?: FileUseCaseMetadata }
+    ) => {
+      setNumFilesProcessing((prev) => prev + files.length);
+
+      const oversizedFiles = files
+        .map((file) => {
+          const contentType = resolveSelectedFileContentType(file);
+          const category = getFileFormatCategory(contentType) ?? "data";
+          return { category, file };
+        })
+        .filter(({ category, file }) => {
+          return !ensureFileSizeByFormatCategory(
+            category,
+            file.size,
+            sizeResolverOpts
+          );
+        });
+
+      for (const { category, file } of oversizedFiles) {
+        sendNotification({
+          type: "error",
+          title: "File too large.",
+          description: `File "${file.name}" (${fileSizeToHumanReadable(file.size)}) exceeds the ${category} limit of ${fileSizeToHumanReadable(maxFileSizes[category])}. Please upload a smaller file.`,
+        });
+      }
+
+      if (oversizedFiles.length > 0) {
+        setNumFilesProcessing((prev) => prev - files.length);
+        return;
+      }
+
+      const previewResults = processSelectedFiles(files);
+      const newFileBlobs = processResults(previewResults, true);
+
+      const uploadResults = await uploadFiles(newFileBlobs, options);
+      const finalFileBlobs = processResults(uploadResults);
+
+      setNumFilesProcessing((prev) => prev - files.length);
+
+      return finalFileBlobs;
+    },
+    [
+      maxFileSizes,
+      processResults,
+      processSelectedFiles,
+      resolveSelectedFileContentType,
+      sendNotification,
+      sizeResolverOpts,
+      uploadFiles,
+    ]
+  );
+
+  const handleFileChange = useCallback(
+    async (e: ChangeEvent) => {
+      const selectedFiles = Array.from(
+        (e?.target as HTMLInputElement).files ?? []
+      );
+
+      return handleFilesUpload(selectedFiles);
+    },
+    [handleFilesUpload]
+  );
+
+  const removeFile = useCallback(
+    (fileId: string) => {
+      setFileBlobs((prevFiles) => {
+        const fileBlob = prevFiles.find((f) => f.id === fileId);
+
+        if (!fileBlob) {
+          return prevFiles;
+        }
+
+        // Delete from server if file has been uploaded
+        if (fileBlob.fileId) {
+          void clientFetch(`/api/w/${owner.sId}/files/${fileBlob.fileId}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+        }
+
+        const filtered = prevFiles.filter((f) => f.id !== fileBlob.id);
+
+        const allFilesReady = filtered.every((f) => !f.isUploading);
+        if (allFilesReady && isProcessingFiles) {
+          setNumFilesProcessing(0);
+        }
+
+        return filtered;
+      });
+    },
+    [owner.sId, isProcessingFiles]
+  );
+
+  const resetUpload = useCallback(() => {
+    setFileBlobs([]);
+  }, []);
+
+  const fileBlobHasFileId = useCallback(
+    (fileBlob: FileBlob): fileBlob is FileBlobWithFileId => {
+      return fileBlob.fileId !== null;
+    },
+    []
+  );
+
+  const getFileBlobs: () => FileBlobWithFileId[] = useCallback(() => {
+    return fileBlobs.filter(fileBlobHasFileId);
+  }, [fileBlobs, fileBlobHasFileId]);
+
+  const getFileBlob = useCallback(
+    (blobId: string | null | undefined) => {
+      if (!blobId) {
+        return undefined;
+      }
+      return getFileBlobs().find((blob) => blob.id === blobId);
+    },
+    [getFileBlobs]
+  );
+
+  const addUploadedFile = useCallback(
+    (fileData: {
+      fileId: string;
+      filename: string;
+      contentType: SupportedFileContentType;
+      size: number;
+      id?: string;
+      sourceUrl?: string;
+      iconName?: string;
+      provider?: string;
+    }) => {
+      const blob: FileBlob = {
+        contentType: fileData.contentType,
+        file: new File([], fileData.filename, { type: fileData.contentType }),
+        filename: fileData.filename,
+        id: fileData.id ?? fileData.fileId,
+        fileId: fileData.fileId,
+        isUploading: false,
+        size: fileData.size,
+        sourceUrl: fileData.sourceUrl,
+        iconName: fileData.iconName,
+        provider: fileData.provider,
+      };
+
+      setFileBlobs((prevFiles) => [...prevFiles, blob]);
+    },
+    []
+  );
+
+  const result = useMemo(() => {
+    return {
+      addUploadedFile,
+      fileBlobs,
+      getFileBlob,
+      getFileBlobs,
+      handleFileChange,
+      handleFilesUpload,
+      isProcessingFiles,
+      removeFile,
+      resetUpload,
+    };
+  }, [
+    addUploadedFile,
+    fileBlobs,
+    getFileBlob,
+    getFileBlobs,
+    handleFileChange,
+    handleFilesUpload,
+    isProcessingFiles,
+    removeFile,
+    resetUpload,
+  ]);
+
+  return result;
+}
+
+export type FileUploaderService = ReturnType<typeof useFileUploaderService>;
+
+const createFileBlob = (
+  file: File,
+  contentType: SupportedFileContentType
+): FileBlob => ({
+  contentType,
+  file,
+  filename: file.name,
+  id: file.name,
+  // Will be set once the file has been uploaded.
+  fileId: null,
+  isUploading: true,
+  size: file.size,
+});

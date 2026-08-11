@@ -1,11 +1,11 @@
 [
   {
-    "id": "err-msn7q8qt-0-v41d",
+    "id": "err-msodndw2-0-ggkx",
     "type": "warning",
     "file": "C:\\Windows\\Temp\\doge-errors-test\\cmd-test\\sample.ts",
     "line": 1,
     "message": "console.log statement",
-    "timestamp": "2026-08-10T12:33:39.269Z",
+    "timestamp": "2026-08-11T08:07:09.842Z",
     "resolved": false,
     "fixAttempted": false,
     "fixSuccess": false,

@@ -1,0 +1,113 @@
+import { useAppRouter } from "@app/lib/platform";
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+type ParamValue = {
+  value: string | undefined;
+  setParam: (newValue: string | undefined) => void;
+};
+
+type UseQueryParamsResult<T extends string[]> = {
+  [K in T[number]]: ParamValue;
+} & {
+  setParams: (updates: Partial<Record<T[number], string | undefined>>) => void;
+};
+
+export function useQueryParams<T extends string[]>(
+  paramNames: T
+): UseQueryParamsResult<T> {
+  const router = useAppRouter();
+  const [values, setValues] = useState<Record<string, string | undefined>>({});
+
+  useEffect(() => {
+    if (router.isReady) {
+      const newValues = paramNames.reduce<Record<string, string | undefined>>(
+        (acc, name) => {
+          const value = router.query[name];
+          acc[name] = typeof value === "string" ? value : undefined;
+          return acc;
+        },
+        {}
+      );
+
+      if (JSON.stringify(newValues) !== JSON.stringify(values)) {
+        setValues(newValues);
+      }
+    }
+  }, [router.isReady, paramNames, router.query, values]);
+
+  const setParams = useCallback(
+    (updates: Partial<Record<T[number], string | undefined>>) => {
+      const initialQuery = { ...router.query };
+
+      const [updatedQuery, hasChanges] = Object.entries(updates).reduce<
+        [Record<string, string | undefined | string[]>, boolean]
+      >(
+        ([currentQuery, changed], [paramName, newValue]) => {
+          // Skip if not in our param list
+          if (!paramNames.includes(paramName)) {
+            return [currentQuery, changed];
+          }
+
+          const currentValue = currentQuery[paramName];
+
+          // Skip if value hasn't changed
+          if (currentValue === newValue) {
+            return [currentQuery, changed];
+          }
+
+          if (typeof newValue === "string") {
+            // Add or update param with string value
+            return [{ ...currentQuery, [paramName]: newValue }, true];
+          } else {
+            // Remove param when value is undefined
+
+            const { [paramName]: _, ...restQuery } = currentQuery;
+            return [restQuery, true];
+          }
+        },
+        [initialQuery, false]
+      );
+
+      if (hasChanges) {
+        // Preserve the hash when updating query params
+        const hash = window.location.hash;
+        void router
+          .push({ pathname: router.pathname, query: updatedQuery }, undefined, {
+            shallow: true,
+          })
+          .then(() => {
+            // Restore hash after router.push (Next.js doesn't preserve it)
+            if (hash && window.location.hash !== hash) {
+              window.history.replaceState(
+                null,
+                "",
+                `${window.location.pathname}${window.location.search}${hash}`
+              );
+            }
+          });
+      }
+    },
+    [router, paramNames]
+  );
+
+  const getters = useMemo(() => {
+    return paramNames.reduce(
+      (acc, paramName) => {
+        acc[paramName as T[number]] = {
+          value: values[paramName],
+          setParam: (newValue: string | undefined) =>
+            setParams({
+              [paramName]: newValue,
+            } as Partial<Record<T[number], string | undefined>>),
+        };
+        return acc;
+      },
+      {} as Record<T[number], ParamValue>
+    );
+  }, [paramNames, values, setParams]);
+
+  return {
+    ...getters,
+    setParams,
+  };
+}

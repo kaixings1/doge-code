@@ -1,0 +1,145 @@
+import { normalizeTasksOwnerFilterFromPersistedBlob } from "@app/components/assistant/conversation/space/conversations/project_tasks/projectTasksListScope";
+import { useCallback, useMemo, useState } from "react";
+import { z } from "zod";
+
+const SCOPED_UI_PREFERENCES_KEY_PREFIX = "scopedUIPreferences";
+
+const SYSTEM_POD_TABS = [
+  "conversations",
+  "tasks",
+  "files",
+  "connected_data",
+  "settings",
+] as const;
+
+const scopedUIPreferencesSchemaByScope = {
+  podUi: z.object({
+    tab: z.union([z.enum(SYSTEM_POD_TABS), z.string().regex(/^frame:.+/)]),
+    conversationsFilter: z.enum(["all", "group", "with_me"]),
+    // Default false so older persisted blobs without this field still parse.
+    hideTriggeredConversations: z.boolean().default(false),
+    tasksOwnerFilter: z
+      .unknown()
+      .transform(normalizeTasksOwnerFilterFromPersistedBlob),
+  }),
+  podPinnedBanner: z.object({
+    collapsed: z.boolean().default(false),
+  }),
+};
+
+export type PodPinnedBannerScopedPreferences = z.infer<
+  (typeof scopedUIPreferencesSchemaByScope)["podPinnedBanner"]
+>;
+
+export type PodUiScopedPreferences = z.infer<
+  (typeof scopedUIPreferencesSchemaByScope)["podUi"]
+>;
+
+type ScopedUIPreferencesScope = keyof typeof scopedUIPreferencesSchemaByScope;
+type ScopeSchema<TScope extends ScopedUIPreferencesScope> =
+  (typeof scopedUIPreferencesSchemaByScope)[TScope];
+type ScopeValue<TScope extends ScopedUIPreferencesScope> =
+  ScopeSchema<TScope>["_output"];
+
+interface UseScopedUIPreferencesOptions<
+  TScope extends ScopedUIPreferencesScope,
+> {
+  scope: TScope;
+  /** When null/undefined/empty, preferences are not read or written (avoids a shared `"null"` key). */
+  resourceId: string | null | undefined;
+  defaultValue: ScopeValue<TScope>;
+}
+
+interface ScopedUIPreferencesState<TScope extends ScopedUIPreferencesScope> {
+  value: ScopeValue<TScope>;
+  setValue: (value: ScopeValue<TScope>) => void;
+  resetValue: () => void;
+}
+
+function readPersistedValue(storageKey: string): unknown {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    const rawValue = localStorage.getItem(storageKey);
+    if (!rawValue) {
+      return null;
+    }
+
+    return JSON.parse(rawValue);
+  } catch {
+    // Corrupted or unavailable localStorage — start fresh.
+    return null;
+  }
+}
+
+function writePersistedValue(storageKey: string, value: unknown) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(value));
+  } catch {
+    // localStorage may be full or unavailable — silently ignore.
+  }
+}
+
+export function useScopedPodUiPreferences<
+  TScope extends ScopedUIPreferencesScope,
+>({
+  scope,
+  resourceId,
+  defaultValue,
+}: UseScopedUIPreferencesOptions<TScope>): ScopedUIPreferencesState<TScope> {
+  const schema = scopedUIPreferencesSchemaByScope[scope];
+  const storageKey = useMemo(() => {
+    if (resourceId === null || resourceId === undefined || resourceId === "") {
+      return null;
+    }
+    return `${SCOPED_UI_PREFERENCES_KEY_PREFIX}:${scope}:${resourceId}`;
+  }, [resourceId, scope]);
+
+  const readValue = (): ScopeValue<TScope> => {
+    if (!storageKey) {
+      return defaultValue;
+    }
+    const candidateValue = readPersistedValue(storageKey);
+    const parsedValue = schema.safeParse(candidateValue);
+    return parsedValue.success ? parsedValue.data : defaultValue;
+  };
+
+  const [value, setValueState] = useState<ScopeValue<TScope>>(() =>
+    readValue()
+  );
+  const [seenStorageKey, setSeenStorageKey] = useState(storageKey);
+
+  if (seenStorageKey !== storageKey) {
+    setSeenStorageKey(storageKey);
+    setValueState(readValue());
+  }
+
+  const setValue = useCallback(
+    (newValue: ScopeValue<TScope>) => {
+      setValueState(newValue);
+      if (storageKey) {
+        writePersistedValue(storageKey, newValue);
+      }
+    },
+    [storageKey]
+  );
+
+  const resetValue = useCallback(() => {
+    setValueState(defaultValue);
+    if (storageKey) {
+      writePersistedValue(storageKey, defaultValue);
+    }
+  }, [defaultValue, storageKey]);
+
+  return {
+    value,
+    setValue,
+    resetValue,
+  };
+}

@@ -1,0 +1,62 @@
+[project]
+name = "plugin-eval"
+version = "0.1.0"
+description = "Three-layer quality evaluation framework for Claude Code plugins"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.13.4",
+    "typer>=0.26.8",
+    "rich>=15.0.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+llm = [
+    "claude-agent-sdk>=0.2.116",
+]
+api = [
+    "anthropic>=0.116.0",
+]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "pytest-cov>=6.0",
+    "ruff>=0.15.21",
+    "ty>=0.0.59",
+]
+
+[project.scripts]
+plugin-eval = "plugin_eval.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/plugin_eval"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "B", "I", "UP", "SIM"]
+ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.ty.environment]
+# Make `tools.adapters.*` importable when ty runs from plugins/plugin-eval/.
+# The repo-root layout puts the adapter framework outside this package.
+extra-paths = ["../.."]
+
+[tool.ty.rules]
+possibly-unresolved-reference = "error"
+possibly-missing-attribute = "error"
+possibly-missing-import = "error"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
