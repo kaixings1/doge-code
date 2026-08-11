@@ -1687,6 +1687,28 @@ const generalSearchProviders: Provider[] = [
     }
   },
   {
+    name: 'GitHub 仓库搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&per_page=8`
+        const j = await fetchJson(url, signal)
+        if (!j.items || !Array.isArray(j.items)) return []
+        return j.items.slice(0, 8).map((it: any) => ({
+          title: `${it.full_name} ★ ${it.stargazers_count}`,
+          url: it.html_url,
+          snippet: it.description || '',
+          source: 'github',
+        }))
+      } catch (e: any) {
+        if (e.message?.includes('403')) {
+          return [{ title: 'GitHub API 限流（60次/小时），请稍后再试', url: '', snippet: '', source: 'github' }]
+        }
+        return []
+      }
+    }
+  },
+  {
     name: '离线通用搜索',
     offline: true,
     fetch: async (q) => [{ title: `"${q}" 的搜索结果（离线模式，建议联网获取实时数据）`, url: '', snippet: '当前为离线模式，请检查网络连接', source: 'general' }]
@@ -2239,7 +2261,7 @@ export type { WebSearchProgress }
 // ============================================================
 export const WebSearchTool = buildTool({
   name: WEB_SEARCH_TOOL_NAME,
-  searchHint: '零配置万能搜索Hub：天气、翻译、股票、古诗、算命、电影……240+技能，含招投标增强',
+  searchHint: '零配置万能搜索Hub：天气、翻译、股票、古诗、算命、电影、GitHub搜索……240+技能，含招投标增强',
   maxResultSizeChars: 100_000,
   shouldDefer: true,
 
