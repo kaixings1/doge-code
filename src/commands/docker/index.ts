@@ -214,9 +214,9 @@ export const call: LocalJSXCommandCall = async (args) => {
       const key = p[1]; const value = p.slice(2).join(' ')
       if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
       if (key in config) { (config as any)[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
-      return { type: 'text', value: `❌ Unknown config: ${key}` }
+      return { type: 'text', value: `❌ 未知配置项：${key}` }
     }
-    else { r = `Unknown: ${c}` }
+    else { r = `❌ 未知命令：${c}` }
 
     return { type: 'text', value: r || '(no output)' }
 

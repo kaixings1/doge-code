@@ -150,7 +150,7 @@ export const call: LocalCommandCall = async (args) => {
     return { type: 'text', value: lines.join('\n') }
   }
 
-  return { type: 'text', value: 'Unknown: ' + cmd }
+  return { type: 'text', value: '❌ 未知命令：' + cmd }
 }
 
 const imports: Command = {

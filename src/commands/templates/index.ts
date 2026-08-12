@@ -78,17 +78,17 @@ export const call: LocalCommandCall = async (args) => {
         lines.push('')
       }
     }
-    lines.push('Usage: /templates use <name> [directory]')
+    lines.push('💡 用法：/templates use <名称> [目录]')
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'use' || cmd === 'create') {
     const name = parts[1]
     const dir = parts[2] || '.'
-    if (!name) return { type: 'text', value: 'Usage: /templates use <name> [directory]' }
+    if (!name) return { type: 'text', value: '📖 用法：/templates use <名称> [目录]' }
 
     const template = TEMPLATES.find(t => t.name === name)
-    if (!template) return { type: 'text', value: 'Template not found: ' + name + '\nUse /templates list to see available templates.' }
+    if (!template) return { type: 'text', value: '❌ 模板未找到：' + name + '\n💡 使用 /templates list 查看可用模板' }
 
     try {
       if (!existsSync(dir)) mkdirSync(dir, { recursive: true })
@@ -109,7 +109,7 @@ export const call: LocalCommandCall = async (args) => {
       return {
         type: 'text',
         value: [
-          '[OK] Created project from template: ' + template.name,
+          '✅ 已从模板创建项目：' + template.name,
           '',
           'Files created:',
           ...template.files.map(f => '  - ' + f.path),
@@ -121,18 +121,18 @@ export const call: LocalCommandCall = async (args) => {
         ].join('\n'),
       }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] Failed: ' + (err instanceof Error ? err.message : String(err)) }
+      return { type: 'text', value: '❌ 创建失败：' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
   if (cmd === 'search') {
     const query = parts.slice(1).join(' ').toLowerCase()
-    if (!query) return { type: 'text', value: 'Usage: /templates search <query>' }
+    if (!query) return { type: 'text', value: '📖 用法：/templates search <关键词>' }
     const results = TEMPLATES.filter(t =>
       t.name.includes(query) || t.description.toLowerCase().includes(query) || t.category.includes(query)
     )
-    if (results.length === 0) return { type: 'text', value: 'No templates found for: ' + query }
-    const lines = ['Search Results:', '================', '']
+    if (results.length === 0) return { type: 'text', value: 'ℹ️ 未找到匹配模板：' + query }
+    const lines = ['📋 搜索结果：', '════════════', '']
     results.forEach(t => lines.push(t.name + ' - ' + t.description + ' [' + t.category + ']'))
     return { type: 'text', value: lines.join('\n') }
   }
