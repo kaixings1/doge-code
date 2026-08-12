@@ -118,7 +118,7 @@ const brief = {
             ]
 
         onDone(
-          newState ? '已启用仅简要模式' : '已禁用仅简要模式',
+          newState ? '已启用仅简要模式' : '🚫 已禁用仅简要模式',
           { display: 'system', metaMessages },
         )
         return null

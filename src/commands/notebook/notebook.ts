@@ -100,7 +100,7 @@ export function handleSearch(query: string, tag?: string, page?: number): Notebo
   const params: SearchParams = { page, query, tag }
   const result = searchNotes(params)
   if (result.items.length === 0) {
-    return { success: true, message: '未找到匹配的笔记' }
+    return { success: true, message: '❌ 未找到匹配的笔记' }
   }
   return {
     success: true,

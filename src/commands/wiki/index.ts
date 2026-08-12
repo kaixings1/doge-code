@@ -424,7 +424,7 @@ function fullTextSearch(keyword: string): string {
   }
   scanDir(root)
 
-  if (results.length === 0) return '未找到匹配内容'
+  if (results.length === 0) return '❌ 未找到匹配内容'
 
   const grouped = new Map<string, typeof results>()
   results.forEach(r => {
@@ -595,7 +595,7 @@ export const call: LocalCommandCall = async (args) => {
       value: [
         '📚 Wiki 文档生成',
         '',
-        '用法:',
+        '📖 📖 用法: ',
         '  /wiki generate [路径]     生成项目 Wiki',
         '  /wiki readme             生成 README.md',
         '  /wiki api                生成 API 文档',
@@ -807,7 +807,7 @@ export const call: LocalCommandCall = async (args) => {
       type: 'text',
       value: results.length > 0
         ? `🔍 搜索结果 (${results.length}):\n\n${results.slice(0, 20).join('\n')}`
-        : '未找到匹配内容',
+        : '❌ 未找到匹配内容',
     }
   }
 

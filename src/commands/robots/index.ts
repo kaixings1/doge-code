@@ -71,7 +71,7 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const config = loadConfig()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['robots.txt Manager (Advanced)', '', 'Usage:', '  /robots <template>              Generate (default/strict/permissive/ecommerce/blog/app)', '  /robots list                    List templates', '  /robots view                    View current robots.txt', '  /robots custom <rules>          Add custom rules', '  /robots set-url <url>           Set base URL', '  /robots set-sitemap <url>       Set sitemap URL', '  /robots set-delay <n>           Set crawl delay', '  /robots config                  Show config', '  /robots validate                Validation tips', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['robots.txt Manager (Advanced)', '', '📖 📖 Usage: ', '  /robots <template>              Generate (default/strict/permissive/ecommerce/blog/app)', '  /robots list                    List templates', '  /robots view                    View current robots.txt', '  /robots custom <rules>          Add custom rules', '  /robots set-url <url>           Set base URL', '  /robots set-sitemap <url>       Set sitemap URL', '  /robots set-delay <n>           Set crawl delay', '  /robots config                  Show config', '  /robots validate                Validation tips', ''].join('\n') }
 
   if (cmd === 'list') {
     const lines = ['Templates:', '══════════', '']

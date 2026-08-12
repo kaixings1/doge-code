@@ -33,7 +33,7 @@ export const call: LocalCommandCall = async (args) => {
   const parts = s.split(/\s+/)
   const cmd = parts[0]?.toLowerCase() || 'help'
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Test Coverage', '', 'Usage:', '  /tc run [framework]             Run tests with coverage', '  /tc report                      Show coverage report', '  /tc show [file]                 Show file coverage', '  /tc missing                     Show uncovered files', '  /tc trend                       Coverage trend over time', '  /tc badge                       Generate coverage badge', '  /tc html                       Open HTML report', '  /tc json                        Export coverage JSON', '  /tc threshold <n>              Set minimum threshold', '  /tc compare <branch>            Compare with branch', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Test Coverage', '', '📖 📖 Usage: ', '  /tc run [framework]             Run tests with coverage', '  /tc report                      Show coverage report', '  /tc show [file]                 Show file coverage', '  /tc missing                     Show uncovered files', '  /tc trend                       Coverage trend over time', '  /tc badge                       Generate coverage badge', '  /tc html                       Open HTML report', '  /tc json                        Export coverage JSON', '  /tc threshold <n>              Set minimum threshold', '  /tc compare <branch>            Compare with branch', ''].join('\n') }
 
   if (cmd === 'run') {
     const framework = parts[1] || 'auto'

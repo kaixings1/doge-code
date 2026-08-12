@@ -43,7 +43,7 @@ export const call: LocalCommandCall = async (args) => {
   const parts = s.split(/\s+/)
   const cmd = parts[0]?.toLowerCase() || 'help'
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Import Map', '', 'Usage:', '  /import-map                     Show import map', '  /import-map dot                  Graphviz DOT format', '  /import-map mermaid              Mermaid format', '  /import-map circular             Detect circular imports', '  /import-map orphans              Find unreferenced modules', '  /import-map external             External dependencies', '  /import-map depth <module>       Import depth tree', '  /import-map stats                Import statistics', '  /import-map save <file>          Save map', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Import Map', '', '📖 📖 Usage: ', '  /import-map                     Show import map', '  /import-map dot                  Graphviz DOT format', '  /import-map mermaid              Mermaid format', '  /import-map circular             Detect circular imports', '  /import-map orphans              Find unreferenced modules', '  /import-map external             External dependencies', '  /import-map depth <module>       Import depth tree', '  /import-map stats                Import statistics', '  /import-map save <file>          Save map', ''].join('\n') }
 
   const importMap = buildImportMap('.')
 

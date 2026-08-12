@@ -365,12 +365,12 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
         value: [
           '🐛 /issue — GitHub Issue 管理',
           '',
-          '用法:',
+          '📖 📖 用法: ',
           '  /issue fetch <url>        读取 Issue 详情',
           '  /issue list [owner/repo]  列出 Open Issues',
           '  /issue fix <url>          自动修复 Issue（调用 loop 引擎）',
           '',
-          '示例:',
+          '💡 💡 示例: ',
           '  /issue fetch https://github.com/owner/repo/issues/123',
           '  /issue list owner/repo',
           '  /issue fix https://github.com/owner/repo/issues/123',
@@ -386,7 +386,7 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
         value: [
           '🐛 /issue — GitHub Issue 管理',
           '',
-          '用法:',
+          '📖 📖 用法: ',
           '  /issue fetch <url>        读取 Issue 详情',
           '  /issue list [owner/repo]  列出 Open Issues',
           '  /issue fix <url>          自动修复 Issue（调用 loop 引擎）',

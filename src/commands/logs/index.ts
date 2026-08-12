@@ -46,7 +46,7 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'help' || cmd === '') {
     return { type: 'text', value: [
-      'Log Viewer', '', 'Usage:',
+      'Log Viewer', '', '📖 📖 Usage: ',
       '  /logs find                  Find log files in project',
       '  /logs tail <file> [N]       Tail last N lines (default 50)',
       '  /logs follow <file>         Follow log in real-time (tail -f)',

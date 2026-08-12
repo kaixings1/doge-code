@@ -10,7 +10,7 @@ const call = async (args: string) => {
       value: [
         '⚙️ 模拟限制模式',
         '',
-        '用法:',
+        '📖 📖 用法: ',
         ' /mock-limits enable — 启用模拟限制',
         ' /mock-limits disable — 禁用模拟限制',
         ' /mock-limits set <tokens> — 设置模拟 token 限额',
