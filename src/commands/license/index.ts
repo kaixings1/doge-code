@@ -176,7 +176,7 @@ function saveHistory(record: LicenseRecord) {
 
 function run(cmd: string, timeout = 30000): { ok: boolean; output: string } {
   try { return { ok: true, output: execSync(cmd, { encoding: 'utf-8', timeout, stdio: ['pipe', 'pipe', 'ignore'] }).trim() } }
-  catch (e: any) { return { ok: false, output: e.message || 'Failed' } }
+  catch (e: any) { return { ok: false, output: e.message || '失败' } }
 }
 
 function getDependencyLicenses(): LicenseInfo[] {
@@ -220,12 +220,12 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const config = loadConfig()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['License Manager (Advanced)', '', '📖 Usage: ', '  /license                        Check project license', '  /license list                   List dependency licenses', '  /license check                  Check compatibility', '  /license audit                  Audit for restricted licenses', '  /license report                 Full report', '  /license generate <type>        Generate LICENSE file', '  /license templates              Available license templates', '  /license allow <license>        Add to allowed list', '  /license restrict <license>     Add to restricted list', '  /license history                Audit history', '  /license config                 Show/edit config', '  /license set <key> <val>        Set config value', '  /license spdx                   SPDX identifiers', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['📜 许可证管理（高级）', '', '📖 用法：', '  /license                        检查项目许可证', '  /license list                   列出依赖许可证', '  /license check                  检查兼容性', '  /license audit                  审计限制许可证', '  /license report                 完整报告', '  /license generate <类型>        生成 LICENSE 文件', '  /license templates              可用许可证模板', '  /license allow <许可证>         加入白名单', '  /license restrict <许可证>      加入限制列表', '  /license history                审计历史', '  /license config                 查看/编辑配置', '  /license set <键> <值>          设置配置', '  /license spdx                   SPDX 标识符', ''].join('\n') }
 
   if (cmd === 'templates') {
-    const lines = ['Available Templates:', '═══════════════════', '']
+    const lines = ['📋 可用模板：', '═══════════════════', '']
     Object.keys(LICENSE_TEMPLATES).forEach(t => lines.push(`  ${t}`))
-    lines.push('', 'Generate with: /license generate <type>')
+    lines.push('', '💡 使用：/license generate <类型>')
     return { type: 'text', value: lines.join('\n') }
   }
 
@@ -234,25 +234,25 @@ export const call: LocalCommandCall = async (args) => {
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     // @ts-expect-error dynamic
     if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
-    return { type: 'text', value: `❌ Unknown: ${key}` }
+    return { type: 'text', value: `❌ 未知配置项：${key}` }
   }
 
   if (cmd === 'set') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
-    if (!key || !value) return { type: 'text', value: 'Usage: /license set <key> <value>' }
+    if (!key || !value) return { type: 'text', value: '📖 用法：/license set <键> <值>' }
     // @ts-expect-error dynamic
     if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
-    return { type: 'text', value: `❌ Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
+    return { type: 'text', value: `❌ 未知键：${key}。可用键：${Object.keys(config).join(', ')}` }
   }
 
   if (cmd === 'allow') {
-    const lic = parts[1]; if (!lic) return { type: 'text', value: 'Usage: /license allow <license>' }
+    const lic = parts[1]; if (!lic) return { type: 'text', value: '📖 用法：/license allow <许可证>' }
     config.allowedLicenses.push(lic); saveConfig(config)
     return { type: 'text', value: `✅ [OK] Allowed: ${lic}` }
   }
 
   if (cmd === 'restrict') {
-    const lic = parts[1]; if (!lic) return { type: 'text', value: 'Usage: /license restrict <license>' }
+    const lic = parts[1]; if (!lic) return { type: 'text', value: '📖 用法：/license restrict <许可证>' }
     config.restrictedLicenses.push(lic); saveConfig(config)
     return { type: 'text', value: `✅ [OK] Restricted: ${lic}` }
   }
@@ -260,7 +260,7 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'generate') {
     const type = (parts[1] || config.defaultLicense).toLowerCase()
     const template = LICENSE_TEMPLATES[type]
-    if (!template) return { type: 'text', value: `❌ Unknown template: ${type}\nAvailable: ${Object.keys(LICENSE_TEMPLATES).join(', ')}` }
+    if (!template) return { type: 'text', value: `❌ 未知模板：${type}\n可用模板：${Object.keys(LICENSE_TEMPLATES).join(', ')}` }
     const content = template(config.projectName, config.year)
     writeFileSync('LICENSE', content, 'utf-8')
     return { type: 'text', value: `✅ [OK] Generated LICENSE (${type})\nAuthor: ${config.author}\nYear: ${config.year}\n\n${content.slice(0, 200)}...` }
@@ -268,16 +268,16 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'list') {
     const deps = getDependencyLicenses()
-    if (deps.length === 0) return { type: 'text', value: 'No dependency data. Install license-checker: npm install -g license-checker' }
-    const lines = ['Dependency Licenses (' + deps.length + '):', '═══════════════════════════', '']
+    if (deps.length === 0) return { type: 'text', value: 'ℹ️ 无依赖数据。请安装 license-checker：npm install -g license-checker' }
+    const lines = ['📋 依赖许可证（' + deps.length + '）：', '═══════════════════════════', '']
     deps.slice(0, 30).forEach(d => lines.push(`  ${d.name}@${d.version} - ${d.license}`))
-    if (deps.length > 30) lines.push(`... ${deps.length - 30} more (run /license report for full list)`)
+    if (deps.length > 30) lines.push(`... 还有 ${deps.length - 30} 个（运行 /license report 查看完整列表）`)
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'check' || cmd === 'audit') {
     const deps = getDependencyLicenses()
-    if (deps.length === 0) return { type: 'text', value: 'No dependency data. Install license-checker: npm install -g license-checker' }
+    if (deps.length === 0) return { type: 'text', value: 'ℹ️ 无依赖数据。请安装 license-checker：npm install -g license-checker' }
     let allowed = 0, restricted = 0, unknown = 0
     const restrictedList: string[] = []
     const unknownList: string[] = []
@@ -289,13 +289,13 @@ export const call: LocalCommandCall = async (args) => {
     })
     const passed = restricted === 0
     saveHistory({ date: new Date().toISOString(), total: deps.length, compatible: allowed, restricted, missing: unknown, status: passed ? 'PASS' : 'FAIL' })
-    const lines = ['License Audit:', '══════════════', '', `Total: ${deps.length}`, `✅ Allowed: ${allowed}`, `🚫 Restricted: ${restricted}`, `❓ Unknown: ${unknown}`, '', 'Restricted:', ...(restrictedList.length ? restrictedList : ['  (none)']), '', 'Unknown:', ...(unknownList.length ? unknownList.slice(0, 10) : ['  (none)']), '', `Result: ${passed ? '[PASS] No restricted licenses' : '[FAIL] Restricted licenses found'}`, '', 'Project: ' + detectProjectLicense()]
+    const lines = ['📜 许可证审计：', '══════════════', '', `总计：${deps.length}`, `✅ 允许：${allowed}`, `🚫 限制：${restricted}`, `❓ 未知：${unknown}`, '', '限制许可证：', ...(restrictedList.length ? restrictedList : ['  （无）']), '', '未知许可证：', ...(unknownList.length ? unknownList.slice(0, 10) : ['  （无）']), '', `结果：${passed ? '✅ 通过：无限制许可证' : '❌ 失败：发现限制许可证'}`, '', '项目：' + detectProjectLicense()]
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'report') {
     const deps = getDependencyLicenses()
-    const lines = ['License Report:', '═══════════════', '', 'Project: ' + detectProjectLicense(), 'Total deps: ' + deps.length, '', 'Licenses in use:']
+    const lines = ['📊 许可证报告：', '═══════════════', '', '项目：' + detectProjectLicense(), '依赖总数：' + deps.length, '', '使用的许可证：']
     const byLicense: Record<string, number> = {}
     deps.forEach(d => { byLicense[d.license] = (byLicense[d.license] || 0) + 1 })
     Object.entries(byLicense).sort((a: any, b: any) => b[1] - a[1]).forEach(([lic, count]) => lines.push(`  ${lic}: ${count}`))
@@ -304,15 +304,15 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'history') {
     const history = loadHistory()
-    if (history.length === 0) return { type: 'text', value: 'No audit history. Run /license check first.' }
-    const lines = ['Audit History:', '══════════════', '']
-    history.slice(-10).forEach(h => lines.push(`${h.date.slice(0, 19)} | ${h.status} | ${h.total} deps | ${h.restricted} restricted | ${h.missing} unknown`))
+    if (history.length === 0) return { type: 'text', value: 'ℹ️ 暂无审计历史。请先运行 /license check。' }
+    const lines = ['📅 审计历史：', '══════════════', '']
+    history.slice(-10).forEach(h => lines.push(`${h.date.slice(0, 19)} | ${h.status} | ${h.total} 依赖 | ${h.restricted} 限制 | ${h.missing} 未知`))
     return { type: 'text', value: lines.join('\n') }
   }
 
-  if (cmd === 'spdx') return { type: 'text', value: 'SPDX License List: https://spdx.org/licenses/\n\nCommon: MIT, Apache-2.0, GPL-3.0, BSD-3-Clause, ISC, Unlicense, MPL-2.0, LGPL-3.0' }
+  if (cmd === 'spdx') return { type: 'text', value: '📄 SPDX 许可证列表：https://spdx.org/licenses/\n\n常用：MIT, Apache-2.0, GPL-3.0, BSD-3-Clause, ISC, Unlicense, MPL-2.0, LGPL-3.0' }
 
-  return { type: 'text', value: 'Project License:\n════════════════\n' + detectProjectLicense() + '\n\nRun /license check for dependency audit' }
+  return { type: 'text', value: '📜 项目许可证：\n════════════════\n' + detectProjectLicense() + '\n\n💡 运行 /license check 进行依赖审计' }
 }
 
 const license: Command = {
