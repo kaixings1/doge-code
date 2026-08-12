@@ -16,7 +16,7 @@ const inputSchema = lazySchema(() =>
 const outputSchema = lazySchema(() =>
   z.object({
     data: z.record(z.unknown()).optional().describe('查询结果数据'),
-    errors: z.array(z.record(z.unknown())).optional().describe('❌ 错误: GraphQL 错误列表'),
+    errors: z.array(z.record(z.unknown())).optional().describe(' 错误: GraphQL 错误列表'),
     status: z.number().describe('HTTP 状态码'),
     durationMs: z.number().optional().describe('请求耗时（毫秒）'),
   }),

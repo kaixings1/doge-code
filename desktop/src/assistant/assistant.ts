@@ -48,11 +48,11 @@ const call: Command['call'] = async (args, context) => {
     return {
       type: 'text',
       value: `助手模式状态:\n\n` +
-        `启用状态: ${isEnabled ? '✅ 已启用' : '❌ 未启用'}\n` +
-        `强制模式: ${isForced ? '✅ 是' : '否'}\n` +
-        `系统提示: ${promptAddendum ? '✅ 已配置' : '❌ 未配置'}\n\n` +
-        `GrowthBook 门控 (tengu_kairos): ${isEnabled ? '✅ 通过' : '❌ 未通过'}\n` +
-        `信任状态: ${isEnabled ? '✅ 已接受' : '❌ 未接受'}`
+        `启用状态: ${isEnabled ? ' 已启用' : ' 未启用'}\n` +
+        `强制模式: ${isForced ? ' 是' : '否'}\n` +
+        `系统提示: ${promptAddendum ? ' 已配置' : ' 未配置'}\n\n` +
+        `GrowthBook 门控 (tengu_kairos): ${isEnabled ? ' 通过' : ' 未通过'}\n` +
+        `信任状态: ${isEnabled ? ' 已接受' : ' 未接受'}`
     }
   }
 

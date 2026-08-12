@@ -138,7 +138,7 @@ export async function initUpstreamProxy(opts?: {
     // 仅在监听器启动后才取消链接：如果 CA 下载或 listen()
     // 失败，supervisor 重启可以用磁盘上的令牌重试。
     await unlink(tokenPath).catch(() => {
-      logForDebugging('❌ 错误: [upstreamproxy] 令牌文件取消链接失败', {
+      logForDebugging(' 错误: [upstreamproxy] 令牌文件取消链接失败', {
         level: 'warn',
       })
     })

@@ -1,0 +1,16 @@
+# 展示配置 ⚙️
+display:
+  theme: "default"
+  emoji_enabled: true
+  positions:
+    - "header"
+    - "content"
+    - "footer"
+  
+validation:
+  require_emoji: true
+  check_positions: true
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(levelname)s - %(message)s"

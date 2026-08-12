@@ -193,7 +193,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
 		if (status.watching.length === 0) {
 			return { type: 'jsx', render: () => '当前没有监听任何目录。使用 /file-watcher watch <目录> 开始监听。' }
 		}
-		return { type: 'jsx'⏳ , render: () => `正在监听 ${status.watching.length} 个目录:\n` + status.watching.map(d => `- ${d}`).join('\n') }
+		return { type: 'jsx' , render: () => `正在监听 ${status.watching.length} 个目录:\n` + status.watching.map(d => `- ${d}`).join('\n') }
 	}
 
 	if (command === 'events') {
@@ -214,7 +214,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
 		const stats = fileWatcher.getStatus()
 		const typeStats = fileWatcher.getStatsByType()
 		const typeInfo = Object.entries(typeStats).map(([k, v]) => `${k}: ${v}`).join('\n')
-		return { type: 'jsx'⏳ , render: () => `📊 事件统计:\n- 正在监听: ${stats.watching.length} 个目录\n- 总事件数: ${stats.eventCount}\n- 最大保留: ${stats.maxEvents}\n\n事件类型分布:\n${typeInfo || '暂无数据'}` }
+		return { type: 'jsx' , render: () => `📊 事件统计:\n- 正在监听: ${stats.watching.length} 个目录\n- 总事件数: ${stats.eventCount}\n- 最大保留: ${stats.maxEvents}\n\n事件类型分布:\n${typeInfo || '暂无数据'}` }
 	}
 
 	return { type: 'jsx', render: () => '文件监听器状态：未运行。使用 /file-watcher help 查看帮助。' }

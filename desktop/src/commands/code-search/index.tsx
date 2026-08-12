@@ -308,13 +308,13 @@ const codeSearchUI: LocalJSXCommandCall = (_onDone, _context, args) => {
       {/* 标题栏 */}
       <Box borderStyle="round" borderColor="blue" paddingX={1} marginBottom={1}>
         <Text bold color="blue">
-          🔍 增强代码搜索 (Code Search)
+           增强代码搜索 (Code Search)
         </Text>
         {indexStats && (
           <Text dimColor> | 索引: {indexStats.files} 文件, {indexStats.symbols} 符号</Text>
         )}
         {rgAvailable === false && (
-          <Text color="yellow"> | ⚠ ripgrep 不可用</Text>
+          <Text color="yellow"> |  ripgrep 不可用</Text>
         )}
       </Box>
 
@@ -369,7 +369,7 @@ const codeSearchUI: LocalJSXCommandCall = (_onDone, _context, args) => {
       {/* 错误信息 */}
       {error && (
         <Box borderStyle="round" borderColor="red" paddingX={1} marginBottom={1}>
-          <Text color="red">❌ {error}</Text>
+          <Text color="red"> {error}</Text>
         </Box>
       )}
 

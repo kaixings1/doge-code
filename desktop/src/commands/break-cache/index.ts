@@ -28,7 +28,7 @@ const call: LocalCommandCall = async (args: string) => {
     return {
       type: 'text' as const,
       value: [
-        '🗑️ 缓存管理工具',
+        '🗑 缓存管理工具',
         '',
         '用法:',
         ' /break-cache status - 查看缓存状态',
@@ -384,7 +384,7 @@ async function showCacheStats(): Promise<ReturnType<typeof call>> {
       }
     }
 
-    lines.push('\n🗂️ 按类型分布:');
+    lines.push('\n🗂 按类型分布:');
     const sortedTypes = Object.entries(stats.byType)
       .sort((a, b) => b[1].size - a[1].size);
 
@@ -448,7 +448,7 @@ async function clearAllCache(): Promise<ReturnType<typeof call>> {
     if (deletedCount === 0) {
       lines.push('\n💡 没有找到需要清理的缓存文件。');
     } else {
-      lines.push('\n✅ 所有缓存已清除，应用可能需要重启以生效。');
+      lines.push('\n 所有缓存已清除，应用可能需要重启以生效。');
     }
 
     return {
@@ -517,7 +517,7 @@ async function clearCacheByType(cacheType: string): Promise<ReturnType<typeof ca
     if (deletedCount === 0) {
       lines.push('\n💡 没有找到该类型的缓存文件。');
     } else {
-      lines.push('\n✅ 清理完成。');
+      lines.push('\n 清理完成。');
     }
 
     return {
@@ -576,7 +576,7 @@ async function dryRunClear(): Promise<ReturnType<typeof call>> {
     }
 
     // 模拟删除：只统计不实际删除
-    const lines = ['🔍 模拟清理操作', ''];
+    const lines = [' 模拟清理操作', ''];
     lines.push(`将删除文件数: ${stats.totalFiles}`);
     lines.push(`将释放空间: ${formatSize(stats.totalSize)}`);
 
@@ -715,7 +715,7 @@ async function optimizeCache(): Promise<ReturnType<typeof call>> {
     return {
       type: 'text' as const,
       value: [
-        '⚡ 缓存优化',
+        ' 缓存优化',
         '',
         '缓存优化功能需要集成到主应用中。',
         '',

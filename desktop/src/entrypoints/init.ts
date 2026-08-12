@@ -278,7 +278,7 @@ export function initializeTelemetryAfterTrust(): void {
     void waitForRemoteManagedSettingsToLoad()
       .then(async () => {
         logForDebugging(
-          '⏳ [第三方遥测] 远程管理设置已加载，正在初始化遥测',
+          ' [第三方遥测] 远程管理设置已加载，正在初始化遥测',
         )
         // 重新应用环境变量以在初始化遥测之前获取远程设置。
         applyConfigEnvironmentVariables()

@@ -531,10 +531,10 @@ function computeHealthScore(issues: CategoryIssues): HealthScore {
 
 function formatIssue(issue: HealthIssue, index: number, showSuggestion: boolean): string {
   const severityIcon = {
-    critical: '🔴',
+    critical: '',
     major: '🟡',
     minor: '🔵',
-    info: 'ℹ️',
+    info: 'ℹ',
   }[issue.severity] || '•'
 
   let text = `  ${severityIcon} [${index + 1}] ${issue.file}:${issue.line} - ${issue.message}`
@@ -592,14 +592,14 @@ function formatTextReport(
   lines.push('')
 
   if (totalIssues === 0) {
-    lines.push('✅ 未发现问题，代码质量良好！')
+    lines.push(' 未发现问题，代码质量良好！')
     return lines.join('\n')
   }
 
   // Detailed Issues
   if (detailed) {
     const categories = [
-      { name: '🔴 安全问题', items: issues.security },
+      { name: ' 安全问题', items: issues.security },
       { name: '🟡 复杂度问题', items: issues.complexity },
       { name: '🔵 可维护性问题', items: issues.maintainability },
       { name: '🟠 错误处理问题', items: issues.errorHandling },
@@ -687,7 +687,7 @@ function renderHelp(): string {
     '  --file <路径>       扫描单个文件',
     '  --detailed          显示详细问题列表（默认只显示摘要）',
     '  --format <格式>     输出格式: text (默认) / json',
-    '📖 用法:   --help              显示帮助',
+    ' 用法:   --help              显示帮助',
     '',
     '示例:',
     '  /health-score',
@@ -698,7 +698,7 @@ function renderHelp(): string {
     '  • 安全性: SQL 注入、XSS、命令注入、硬编码密钥等',
     '  • 复杂度: 深度嵌套、魔法数字、超长函数等',
     '  • 可维护性: TODO 注释、console.log、空 catch 等',
-    '❌ 错误:   • 错误处理: 类型安全、异步一致性等',
+    ' 错误:   • 错误处理: 类型安全、异步一致性等',
     '  • 依赖健康: 不安全的 API 使用等',
     '',
     '评分等级: A (90+) | B (80+) | C (70+) | D (60+) | F (<60)',

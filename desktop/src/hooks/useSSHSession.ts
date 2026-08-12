@@ -189,7 +189,7 @@ export function useSSHSession({
 
         let msg = connected
           ? '远程会话已结束。'
-          : '❌ 错误: SSH 会话在连接前失败。'
+          : ' 错误: SSH 会话在连接前失败。'
         // Surface remote stderr if it looks like an error (pre-connect always,
         // post-connect only on nonzero exit — normal --verbose noise otherwise).
         if (stderr && (!connected || exitCode !== 0)) {

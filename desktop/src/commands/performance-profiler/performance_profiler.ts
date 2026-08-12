@@ -351,7 +351,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       return {
         type: 'jsx',
         render: () => [
-          '⚡ 高级性能分析器 v2.0',
+          ' 高级性能分析器 v2.0',
           '==============================',
           '',
           '核心功能:',
@@ -417,7 +417,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
             '📅 趋势分析:',
             ` 24小时平均: ${analysis.trends.dailyAverage.toFixed(1)} ms`,
             ` 周趋势: ${analysis.trends.weeklyTrend === 'improving' ? '📈 改善中' :
-                     analysis.trends.weeklyTrend === 'worsening' ? '📉 变差中' : '➡️ 稳定'}`,
+                     analysis.trends.weeklyTrend === 'worsening' ? '📉 变差中' : '➡ 稳定'}`,
             ` 高峰时段: ${analysis.trends.peakHours.join(', ')}`,
             ''
           ];
@@ -425,7 +425,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           // 按类别统计
           const categoryStats = Object.entries(analysis.summary.measurementsByCategory);
           if (categoryStats.length > 0) {
-            lines.push('🏷️ 按类别统计:');
+            lines.push('🏷 按类别统计:');
             categoryStats.forEach(([category, count]) => {
               lines.push(` • ${category}: ${count} 次调用`);
             });
@@ -434,9 +434,9 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
 
           // 瓶颈分析
           if (analysis.bottlenecks.length > 0) {
-            lines.push('⚠️ 性能瓶颈 (前5个):');
+            lines.push(' 性能瓶颈 (前5个):');
             analysis.bottlenecks.slice(0, 5).forEach((bottleneck, index) => {
-              const impactIcon = bottleneck.impact === 'high' ? '🔴' :
+              const impactIcon = bottleneck.impact === 'high' ? '' :
                                 bottleneck.impact === 'medium' ? '🟠' : '🟡';
               lines.push(` ${index + 1}. ${impactIcon} ${bottleneck.name}`);
               lines.push(`    类别: ${bottleneck.category}, 平均: ${bottleneck.duration.toFixed(1)}ms`);
@@ -477,7 +477,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
         return {
           type: 'jsx',
           render: () => [
-            '❌ 记录失败',
+            ' 记录失败',
             '',
             `持续时间必须是正数，收到: ${parts[2]}`,
             '',
@@ -497,7 +497,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       return {
         type: 'jsx',
         render: () => [
-          '✅ 性能指标已记录',
+          ' 性能指标已记录',
           '',
           `名称: ${name}`,
           `耗时: ${duration} ms`,
@@ -510,7 +510,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           ' • 支持最多1000条记录自动清理',
           ' • 使用 summary 命令查看分析结果',
           '',
-          '🔍 常见性能指标:',
+          ' 常见性能指标:',
           ' • API调用: 100-500ms 正常，>1000ms 需要优化',
           ' • 数据库查询: 10-100ms 正常，>200ms 需要优化',
           ' • 文件操作: 1-50ms 正常，>100ms 需要优化',
@@ -548,7 +548,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
             ' /performance-profiler measure "data-export" 1200 export',
             ' /performance-profiler measure "image-process" 350 media',
             '',
-            '🔍 分析说明:',
+            ' 分析说明:',
             ' • 记录后可使用此命令查看最慢调用',
             ' • 识别性能瓶颈和优化机会',
             ' • 跟踪优化效果'
@@ -569,7 +569,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
 
           slowestCalls.forEach((call, index) => {
             const date = new Date(call.timestamp).toLocaleString('zh-CN');
-            const durationColor = call.duration > 1000 ? '🔴' :
+            const durationColor = call.duration > 1000 ? '' :
                                  call.duration > 500 ? '🟠' :
                                  call.duration > 100 ? '🟡' : '🟢';
 
@@ -593,7 +593,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
 
           lines.push('💡 优化建议:');
           if (slowestCalls[0].duration > 1000) {
-            lines.push(' 1. 🔴 秒级响应需要立即优化');
+            lines.push(' 1.  秒级响应需要立即优化');
           }
           if (slowestCalls.filter(c => c.duration > 500).length > 3) {
             lines.push(' 2. 🟠 多个半秒级调用需要关注');
@@ -614,7 +614,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
         return {
           type: 'jsx',
           render: () => [
-            '🔍 性能瓶颈分析',
+            ' 性能瓶颈分析',
             '===============',
             '',
             '未识别到明显的性能瓶颈。',
@@ -645,7 +645,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
         type: 'jsx',
         render: () => {
           const lines = [
-            '⚠️ 性能瓶颈分析',
+            ' 性能瓶颈分析',
             '===============',
             '',
             `识别到 ${analysis.bottlenecks.length} 个性能瓶颈:`,
@@ -658,7 +658,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           const lowImpact = analysis.bottlenecks.filter(b => b.impact === 'low');
 
           if (highImpact.length > 0) {
-            lines.push('🔴 高影响瓶颈 (需要立即处理):');
+            lines.push(' 高影响瓶颈 (需要立即处理):');
             highImpact.forEach((bottleneck, index) => {
               lines.push(` ${index + 1}. ${bottleneck.name}`);
               lines.push(`    平均: ${bottleneck.duration.toFixed(1)}ms, 次数: ${bottleneck.frequency}`);
@@ -726,7 +726,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
             ' • 用户重要操作时记录',
             ' • 性能测试时详细记录',
             '',
-            '🔍 趋势分析价值:',
+            ' 趋势分析价值:',
             ' • 识别性能退化趋势',
             ' • 评估优化措施效果',
             ' • 预测未来性能需求',
@@ -756,7 +756,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
             if (trend.count > 0) {
               const trendIcon = trend.avgDuration < 100 ? '🟢' :
                                trend.avgDuration < 300 ? '🟡' :
-                               trend.avgDuration < 1000 ? '🟠' : '🔴';
+                               trend.avgDuration < 1000 ? '🟠' : '';
               const barLength = Math.min(20, Math.round(trend.avgDuration / 50));
               const bar = '█'.repeat(barLength) + '░'.repeat(20 - barLength);
 
@@ -783,11 +783,11 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
             if (changePercent < -10) {
               lines.push(' • 状态: 📈 显著改善');
             } else if (changePercent < -5) {
-              lines.push(' • 状态: ↗️ 有所改善');
+              lines.push(' • 状态: ↗ 有所改善');
             } else if (changePercent < 5) {
-              lines.push(' • 状态: ➡️ 基本稳定');
+              lines.push(' • 状态: ➡ 基本稳定');
             } else if (changePercent < 10) {
-              lines.push(' • 状态: ↘️ 有所退化');
+              lines.push(' • 状态: ↘ 有所退化');
             } else {
               lines.push(' • 状态: 📉 显著退化');
             }
@@ -813,7 +813,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
         return {
           type: 'jsx',
           render: () => [
-            '🏷️ 按类别性能分析',
+            '🏷 按类别性能分析',
             '=================',
             '',
             '暂无分类性能数据。',
@@ -845,7 +845,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
         type: 'jsx',
         render: () => {
           const lines = [
-            '🏷️ 按类别性能分析',
+            '🏷 按类别性能分析',
             '=================',
             '',
             `共 ${categoryStats.length} 个类别:`,
@@ -854,7 +854,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
 
           categoryStats.forEach((stat, index) => {
             const percentage = (stat.count / categoryStats.reduce((sum, s) => sum + s.count, 0) * 100).toFixed(1);
-            const durationColor = stat.avgDuration > 1000 ? '🔴' :
+            const durationColor = stat.avgDuration > 1000 ? '' :
                                  stat.avgDuration > 500 ? '🟠' :
                                  stat.avgDuration > 100 ? '🟡' : '🟢';
 
@@ -906,7 +906,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           '',
           '所有历史性能记录已被删除。',
           '',
-          '⚠️ 注意:',
+          ' 注意:',
           ' • 此操作不可撤销',
           ' • 所有历史趋势数据将丢失',
           ' • 需要重新记录性能指标',
@@ -921,7 +921,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           ' 使用 measure 命令记录新的性能指标:',
           ' /performance-profiler measure "操作名称" 耗时 类别',
           '',
-          '🔍 数据存储位置:',
+          ' 数据存储位置:',
           ` ${profiler['dataFile']}`,
           '',
           '🔄 建议操作:',
@@ -967,7 +967,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
 
           // 类别分布
           if (Object.keys(analysis.summary.measurementsByCategory).length > 0) {
-            lines.push('🏷️ 类别分布:');
+            lines.push('🏷 类别分布:');
             Object.entries(analysis.summary.measurementsByCategory).forEach(([category, count]) => {
               const percentage = (count / analysis.summary.totalMeasurements * 100).toFixed(1);
               lines.push(` • ${category}: ${count} (${percentage}%)`);
@@ -977,7 +977,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
 
           // 关键瓶颈
           if (analysis.bottlenecks.length > 0) {
-            lines.push('⚠️ 关键瓶颈 (前3个):');
+            lines.push(' 关键瓶颈 (前3个):');
             analysis.bottlenecks.slice(0, 3).forEach((bottleneck, index) => {
               lines.push(` ${index + 1}. ${bottleneck.name}`);
               lines.push(`    类别: ${bottleneck.category}`);
@@ -1020,7 +1020,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       return {
         type: 'jsx',
         render: () => [
-          '👁️ 实时性能监控',
+          '👁 实时性能监控',
           '===============',
           '',
           '实时监控模式可以持续跟踪应用性能。',
@@ -1038,9 +1038,9 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           ' • 低频: 系统指标每小时汇总',
           '',
           '🔔 警报类型:',
-          ' 🔴 紧急: 性能严重下降或服务中断',
-          '⚠️ 注意:  🟠 警告: 性能持续下降趋势',
-          '❌ 错误:  🟡 提醒: 单次异常或阈值接近',
+          '  紧急: 性能严重下降或服务中断',
+          ' 注意:  🟠 警告: 性能持续下降趋势',
+          ' 错误:  🟡 提醒: 单次异常或阈值接近',
           ' 🟢 正常: 性能在预期范围内',
           '',
           '📈 监控指标:',
@@ -1071,7 +1071,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           ' 4. 部署监控代理或集成',
           ' 5. 验证监控功能',
           '',
-          '🔍 监控工具推荐:',
+          ' 监控工具推荐:',
           ' • Prometheus + Grafana',
           ' • New Relic',
           ' • Datadog',
@@ -1091,7 +1091,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
     return {
       type: 'jsx',
       render: () => [
-        '❌ 性能分析出错',
+        ' 性能分析出错',
         '',
         `错误: ${error instanceof Error ? error.message : String(error)}`,
         '',
@@ -1099,7 +1099,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
         ' 1. 检查命令语法是否正确',
         ' 2. 确认数据文件权限',
         ' 3. 检查磁盘空间',
-        '❌ 错误:  4. 查看详细错误日志',
+        ' 错误:  4. 查看详细错误日志',
         '',
         '🔧 技术支持:',
         '💡 提示:  如果问题持续存在，请提供:',

@@ -676,7 +676,7 @@ export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
     if (options.schemaFile) {
       const valid = await validateSchema(responseBody, options.schemaFile)
       if (!valid) {
-        resultElements.push(React.createElement('div', { key: res.url, style: { color: 'red' } }, `❌ ${res.url}: Schema 验证失败`))
+        resultElements.push(React.createElement('div', { key: res.url, style: { color: 'red' } }, ` ${res.url}: Schema 验证失败`))
         allSuccess = false
         continue
       }
@@ -692,7 +692,7 @@ export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
         outputPath = `${base}_${urlHash}${ext}`
       }
       await saveOutput({ ...res, duration: res.duration, status: res.response?.status, statusText: res.response?.statusText, headers: res.response?.headers }, outputPath, options.outputFormat, responseBody)
-      resultElements.push(React.createElement('div', { key: res.url }, `✅ ${res.url} -> 已保存至 ${outputPath}`))
+      resultElements.push(React.createElement('div', { key: res.url }, ` ${res.url} -> 已保存至 ${outputPath}`))
     } else {
       const elem = renderResult({ ...res, method: effectiveMethod, sentHeaders: baseRequestOpts.headers, status: res.response?.status, statusText: res.response?.statusText, headers: res.response?.headers }, options, responseBody)
       resultElements.push(React.createElement('div', { key: res.url }, elem))

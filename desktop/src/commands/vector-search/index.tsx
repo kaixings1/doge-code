@@ -184,7 +184,7 @@ const vectorSearchUI: LocalJSXCommandCall = (_onDone, _context, args) => {
       {/* 标题栏 */}
       <Box borderStyle="round" borderColor="blue" paddingX={1} marginBottom={1}>
         <Text bold color="blue">
-          🔍 向量搜索 (SQLite FTS5 + BM25)
+           向量搜索 (SQLite FTS5 + BM25)
         </Text>
         {stats && (
           <Text dimColor> | 索引: {stats.filesIndexed} 文件, {stats.symbolsIndexed} 符号</Text>
@@ -220,7 +220,7 @@ const vectorSearchUI: LocalJSXCommandCall = (_onDone, _context, args) => {
       {/* 错误信息 */}
       {error && (
         <Box borderStyle="round" borderColor="red" paddingX={1} marginBottom={1}>
-          <Text color="red">❌ {error}</Text>
+          <Text color="red"> {error}</Text>
         </Box>
       )}
 

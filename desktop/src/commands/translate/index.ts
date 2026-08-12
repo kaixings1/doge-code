@@ -83,12 +83,12 @@ function translateFile(filePath: string, to: string): string {
   const absPath = resolve(filePath)
 
   if (!existsSync(absPath)) {
-    return `❌ 文件不存在: ${absPath}`
+    return ` 文件不存在: ${absPath}`
   }
 
   const ext = extname(absPath)
   if (!CODE_EXTENSIONS.includes(ext)) {
-    return `❌ 不支持的文件类型: ${ext}
+    return ` 不支持的文件类型: ${ext}
 
 支持的类型: ${CODE_EXTENSIONS.join(', ')}`
   }
@@ -124,7 +124,7 @@ function translateFile(filePath: string, to: string): string {
 ${translated.split('\n').slice(0, 20).map((line, i) => `${(i + 1).toString().padStart(3, ' ')}: ${line}`).join('\n')}
 ${translated.split('\n').length > 20 ? '\n... 更多内容请查看原文件' : ''}`
   } catch (err) {
-    return `❌ 读取文件失败: ${err instanceof Error ? err.message : String(err)}`
+    return ` 读取文件失败: ${err instanceof Error ? err.message : String(err)}`
   }
 }
 
@@ -132,7 +132,7 @@ function batchTranslate(dir: string, to: string): string {
   const absDir = resolve(dir)
 
   if (!existsSync(absDir)) {
-    return `❌ 目录不存在: ${absDir}`
+    return ` 目录不存在: ${absDir}`
   }
 
   try {
@@ -160,7 +160,7 @@ ${files.length > 10 ? `\n... 还有 ${files.length - 10} 个文件` : ''}
 
 💡 提示: 使用 --file 翻译单个文件`
   } catch (err) {
-    return `❌ 扫描目录失败: ${err instanceof Error ? err.message : String(err)}`
+    return ` 扫描目录失败: ${err instanceof Error ? err.message : String(err)}`
   }
 }
 
@@ -179,7 +179,7 @@ export const call: LocalCommandCall = async (args, context) => {
     if (!fileMatch) {
       return {
         type: 'text',
-        value: `❌ **参数错误**
+        value: ` **参数错误**
 
 🔧 **正确用法**: \`/translate --file <文件路径> --to <语言>\``
       }
@@ -193,7 +193,7 @@ export const call: LocalCommandCall = async (args, context) => {
     if (!batchMatch) {
       return {
         type: 'text',
-        value: `❌ **参数错误**
+        value: ` **参数错误**
 
 🔧 **正确用法**: \`/translate --batch <目录> --to <语言>\``
       }

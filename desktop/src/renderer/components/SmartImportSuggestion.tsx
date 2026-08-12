@@ -26,7 +26,7 @@ interface SmartImportSuggestionProps {
 }
 
 const confidenceConfig: Record<string, { icon: string; color: string; label: string }> = {
-  high: { icon: '✅', color: '#81C784', label: '高' },
+  high: { icon: '', color: '#81C784', label: '高' },
   medium: { icon: '🔵', color: '#4FC3F7', label: '中' },
   low: { icon: '⚪', color: '#B0BEC5', label: '低' },
 }

@@ -795,7 +795,7 @@ function ElicitationFormDialog({
         const hasValue = value_3 !== undefined && (!Array.isArray(value_3) || value_3.length > 0);
         const error_0 = validationErrors[name_1];
 
-        // Checkbox: spinner → ⚠ error → ✔ set → * required → space
+        // Checkbox: spinner →  error →  set → * required → space
         const isResolving = resolvingFields.has(name_1);
         const checkbox = isResolving ? <ResolvingSpinner /> : error_0 ? <Text color="error">{figures.warning}</Text> : hasValue ? <Text color="success" dimColor={!isActive}>
                 {figures.tick}

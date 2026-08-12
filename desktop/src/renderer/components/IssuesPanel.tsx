@@ -21,7 +21,7 @@ interface Issue {
   createdAt: number
 }
 
-const SEVERITY_LABELS: Record<string, string> = { critical: '🔴 严重', high: '🟠 高', medium: '🟡 中', low: '🟢 低' }
+const SEVERITY_LABELS: Record<string, string> = { critical: ' 严重', high: '🟠 高', medium: '🟡 中', low: '🟢 低' }
 const STATUS_LABELS: Record<string, string> = { open: '待处理', in_progress: '处理中', closed: '已关闭' }
 
 export function IssuesPanel({ theme, roomId }: { theme: ThemeColors; roomId: string }): JSX.Element {
@@ -77,7 +77,7 @@ export function IssuesPanel({ theme, roomId }: { theme: ThemeColors; roomId: str
           <input value={newTitle} onChange={e => setNewTitle(e.target.value)} placeholder="问题标题" style={{ padding: '3px 5px', background: c.inputBg, border: `1px solid ${c.border}`, borderRadius: '2px', color: c.text, fontSize: '9px', outline: 'none' }} />
           <textarea value={newDesc} onChange={e => setNewDesc(e.target.value)} placeholder="描述（可选）" rows={2} style={{ padding: '3px 5px', background: c.inputBg, border: `1px solid ${c.border}`, borderRadius: '2px', color: c.text, fontSize: '9px', outline: 'none', resize: 'vertical' }} />
           <select value={newSeverity} onChange={e => setNewSeverity(e.target.value)} style={{ padding: '2px 4px', background: c.inputBg, border: `1px solid ${c.border}`, borderRadius: '2px', color: c.text, fontSize: '9px' }}>
-            <option value="critical">🔴 严重</option>
+            <option value="critical"> 严重</option>
             <option value="high">🟠 高</option>
             <option value="medium">🟡 中</option>
             <option value="low">🟢 低</option>

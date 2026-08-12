@@ -35,14 +35,14 @@
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### ❌ WRONG: Expecting claude-flow to execute tasks
+###  WRONG: Expecting claude-flow to execute tasks
 ```bash
 npx claude-flow swarm start --objective "Build API"
 # WRONG: Waiting for claude-flow to build the API
 # Claude-flow does NOT execute code!
 ```
 
-### ✅ CORRECT: Codex executes, claude-flow tracks
+###  CORRECT: Codex executes, claude-flow tracks
 ```bash
 # 1. Tell claude-flow what you're doing (optional coordination)
 npx claude-flow swarm init --topology hierarchical --max-agents 1
@@ -71,12 +71,12 @@ npx claude-flow memory store --key "api-created" --value "src/api.ts" --namespac
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│  ❌ WRONG: Call claude-flow → STOP → Wait for results                   │
-│  ✅ RIGHT: Call claude-flow → IMMEDIATELY continue → YOU do the work    │
+│   WRONG: Call claude-flow → STOP → Wait for results                   │
+│   RIGHT: Call claude-flow → IMMEDIATELY continue → YOU do the work    │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
-### ❌ WRONG Pattern (Stopping)
+###  WRONG Pattern (Stopping)
 ```bash
 npx claude-flow swarm init --topology hierarchical
 npx claude-flow agent spawn --type coder --name worker-1
@@ -85,7 +85,7 @@ npx claude-flow swarm start --objective "Build hello world"
 # Nothing will happen! Claude-flow doesn't execute code!
 ```
 
-### ✅ CORRECT Pattern (Continue Immediately)
+###  CORRECT Pattern (Continue Immediately)
 ```bash
 # Step 1: Coordination (optional)
 npx claude-flow swarm init --topology hierarchical
@@ -141,7 +141,7 @@ npx claude-flow memory store --key "hello-result" --value "printed Hello World" 
 
 ---
 
-## ⚡ QUICK COMMANDS (NO DISCOVERY NEEDED)
+##  QUICK COMMANDS (NO DISCOVERY NEEDED)
 
 ### Spawn N-Agent Swarm (Copy-Paste Ready)
 
@@ -216,15 +216,15 @@ npx claude-flow swarm start --objective "Your task here" --strategy development
 ```bash
 npx claude-flow swarm init --topology mesh --max-agents 5
 npx claude-flow agent spawn --type coder --name hello-main
-# ⚠️ DON'T STOP HERE - CONTINUE IMMEDIATELY TO STEP 2
+#  DON'T STOP HERE - CONTINUE IMMEDIATELY TO STEP 2
 ```
 
 **Step 2: YOU (Codex) execute the task** (THIS IS THE REAL WORK)
 ```bash
-# ✅ YOU create the file
+#  YOU create the file
 echo 'console.log("Hello World from Swarm!");' > /tmp/hello-swarm.js
 
-# ✅ YOU execute it
+#  YOU execute it
 node /tmp/hello-swarm.js
 # Output: Hello World from Swarm!
 ```
@@ -242,7 +242,7 @@ for i in 1 2 3 4 5; do
   npx claude-flow agent spawn --type coder --name "worker-$i"
 done
 
-# ⚠️ NOW YOU DO THE ACTUAL CONCURRENT WORK:
+#  NOW YOU DO THE ACTUAL CONCURRENT WORK:
 for i in 1 2 3 4 5; do
   (echo "Worker $i: Hello World!" && sleep 0.$i) &
 done
@@ -436,7 +436,7 @@ npx claude-flow mcp start
 
 ---
 
-## ⚙️ CONFIGURATION
+## ⚙ CONFIGURATION
 
 ### Default Swarm Config
 - Topology: `hierarchical`

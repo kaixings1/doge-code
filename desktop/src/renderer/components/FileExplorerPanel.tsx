@@ -20,16 +20,16 @@ interface FileExplorerPanelProps {
 }
 
 const FILE_ICONS: Record<string, string> = {
-  '.ts': '📘', '.tsx': '⚛️', '.js': '📜', '.jsx': '⚛️',
+  '.ts': '📘', '.tsx': '⚛', '.js': '📜', '.jsx': '⚛',
   '.json': '📋', '.md': '📝', '.py': '🐍', '.go': '🔷',
   '.rs': '🦀', '.java': '☕', '.css': '🎨', '.html': '🌐',
-  '.yml': '⚙️', '.yaml': '⚙️', '.toml': '⚙️', '.gitignore': '🙈',
-  '.env': '🔑', '.svg': '🖼️', '.png': '🖼️', '.jpg': '🖼️',
+  '.yml': '⚙', '.yaml': '⚙', '.toml': '⚙', '.gitignore': '🙈',
+  '.env': '🔑', '.svg': '🖼', '.png': '🖼', '.jpg': '🖼',
 }
 
 const FOLDER_ICONS: Record<string, string> = {
   'node_modules': '📦', 'src': '📁', 'dist': '📦', 'build': '🔨',
-  'desktop': '🖥️', 'src/renderer': '🖥️', 'src/commands': '⚡',
+  'desktop': '🖥', 'src/renderer': '🖥', 'src/commands': '',
   'tests': '🧪', '.git': '🔀',
 }
 
@@ -469,10 +469,10 @@ function ContextMenu({
         {!node.isDirectory && (
           <MenuItem label="📂 打开" onClick={() => { onClose; onClose() }} theme={c} />
         )}
-        <MenuItem label="✏️ 重命名" onClick={() => { onRename(); onClose() }} theme={c} />
+        <MenuItem label="✏ 重命名" onClick={() => { onRename(); onClose() }} theme={c} />
         <MenuItem label="📋 复制路径" onClick={() => { onCopyPath(); onClose() }} theme={c} />
         <div style={{ borderTop: `1px solid ${c.borderSubtle || c.border}`, margin: '2px 0' }} />
-        <MenuItem label="🗑️ 删除" onClick={() => { onDelete(); onClose() }} theme={c} danger />
+        <MenuItem label="🗑 删除" onClick={() => { onDelete(); onClose() }} theme={c} danger />
       </div>
     </>
   )

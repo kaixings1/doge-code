@@ -96,17 +96,17 @@ export function GitMergePanel({ cwd, theme, onClose, onResolved }: GitMergePanel
       const strategy = currentResolution.strategy === 'base' ? 'manual' : currentResolution.strategy
       const result = await window.dogeAPI.gitMergeResolve(cwd, currentConflict.file, resolvedContent, strategy as 'ours' | 'theirs' | 'manual')
       if (result.success) {
-        setMessage(`✅ ${currentConflict.file} 已解决`)
+        setMessage(` ${currentConflict.file} 已解决`)
         // 刷新状态
         await refreshStatus()
         if (status && status.conflicts.length <= 1) {
           onResolved?.()
         }
       } else {
-        setMessage(`❌ 解决失败: ${result.error}`)
+        setMessage(` 解决失败: ${result.error}`)
       }
     } catch (e) {
-      setMessage(`❌ 错误: ${e instanceof Error ? e.message : '未知错误'}`)
+      setMessage(` 错误: ${e instanceof Error ? e.message : '未知错误'}`)
     } finally { setResolving(false) }
   }, [currentConflict, currentResolution, cwd, refreshStatus, status, onResolved])
 
@@ -119,7 +119,7 @@ export function GitMergePanel({ cwd, theme, onClose, onResolved }: GitMergePanel
         setMessage('⏹ 合并已中止')
         onResolved?.()
       } else {
-        setMessage(`❌ 中止失败: ${result.error}`)
+        setMessage(` 中止失败: ${result.error}`)
       }
     } catch { /* ignore */ } finally { setResolving(false) }
   }, [cwd, onResolved])
@@ -184,7 +184,7 @@ export function GitMergePanel({ cwd, theme, onClose, onResolved }: GitMergePanel
     return (
       <div style={{ ...containerStyle, padding: '12px' }}>
         <div style={{ color: c.textMuted, textAlign: 'center', padding: '16px' }}>
-          {status?.error ? `⚠️ ${status.error}` : '✅ 当前无合并冲突'}
+          {status?.error ? ` ${status.error}` : ' 当前无合并冲突'}
         </div>
         {onClose && (
           <div style={{ textAlign: 'center' }}>
@@ -204,12 +204,12 @@ export function GitMergePanel({ cwd, theme, onClose, onResolved }: GitMergePanel
           <span style={{ fontSize: '10px', color: c.textMuted }}>{status.message}</span>
         </div>
         <div style={{ display: 'flex', gap: '8px', fontSize: '10px' }}>
-          <span style={{ color: '#FF6B6B' }}>🔴 {unresolvedCount} 未解决</span>
-          <span style={{ color: '#81C784' }}>✅ {resolvedCount} 已解决</span>
+          <span style={{ color: '#FF6B6B' }}> {unresolvedCount} 未解决</span>
+          <span style={{ color: '#81C784' }}> {resolvedCount} 已解决</span>
           <span style={{ color: c.textMuted }}>📄 {totalConflicts} 总计</span>
         </div>
         {message && (
-          <div style={{ marginTop: '4px', padding: '4px 8px', borderRadius: '3px', background: message.startsWith('✅') ? '#81C78422' : '#ef535022', color: message.startsWith('✅') ? '#81C784' : '#FF6B6B', fontSize: '10px' }}>
+          <div style={{ marginTop: '4px', padding: '4px 8px', borderRadius: '3px', background: message.startsWith('') ? '#81C78422' : '#ef535022', color: message.startsWith('') ? '#81C784' : '#FF6B6B', fontSize: '10px' }}>
             {message}
           </div>
         )}
@@ -236,7 +236,7 @@ export function GitMergePanel({ cwd, theme, onClose, onResolved }: GitMergePanel
                 fontWeight: isActive ? 600 : 400,
               }}
             >
-              {isResolved ? '✅' : <span style={{ color: severityColors[severity] }}>●</span>} {conflict.file.split(/[/\\]/).pop()}
+              {isResolved ? '' : <span style={{ color: severityColors[severity] }}>●</span>} {conflict.file.split(/[/\\]/).pop()}
             </button>
           )
         })}
@@ -318,7 +318,7 @@ export function GitMergePanel({ cwd, theme, onClose, onResolved }: GitMergePanel
       {/* 手动编辑模式 */}
       {currentConflict && currentResolution?.strategy === 'manual' && (
         <div style={cardStyle}>
-          <div style={{ fontWeight: 600, marginBottom: '6px', fontSize: '11px' }}>✏️ 手动编辑: {currentConflict.file}</div>
+          <div style={{ fontWeight: 600, marginBottom: '6px', fontSize: '11px' }}>✏ 手动编辑: {currentConflict.file}</div>
           <textarea
             defaultValue={currentResolution.manualContent || [currentConflict.ours, currentConflict.base, currentConflict.theirs].filter(Boolean).join('\n')}
             onChange={(e) => setResolution(currentFile, 'manual', e.target.value)}
@@ -350,7 +350,7 @@ export function GitMergePanel({ cwd, theme, onClose, onResolved }: GitMergePanel
       {currentConflict && currentResolution && currentResolution.strategy !== 'manual' && (
         <div style={cardStyle}>
           <div style={{ fontWeight: 600, marginBottom: '6px', fontSize: '11px', color: '#81C784' }}>
-            ✅ 已选择: {currentResolution.strategy === 'ours' ? 'Ours' : currentResolution.strategy === 'theirs' ? 'Theirs' : 'Base'}
+             已选择: {currentResolution.strategy === 'ours' ? 'Ours' : currentResolution.strategy === 'theirs' ? 'Theirs' : 'Base'}
           </div>
           <pre style={{
             padding: '6px', fontSize: '9px', fontFamily: 'monospace', background: c.bgPanel,
@@ -374,7 +374,7 @@ export function GitMergePanel({ cwd, theme, onClose, onResolved }: GitMergePanel
       {unresolvedCount === 0 && resolvedCount > 0 && (
         <div style={{ textAlign: 'center', padding: '8px' }}>
           <button onClick={handleResolve} disabled={resolving} style={{ ...primaryButtonStyle, padding: '6px 20px', opacity: resolving ? 0.5 : 1 }}>
-            {resolving ? '处理中...' : '✅ 提交合并'}
+            {resolving ? '处理中...' : ' 提交合并'}
           </button>
           <button onClick={handleAbort} disabled={resolving} style={{ ...buttonStyle, marginLeft: '8px', color: '#ef5350' }}>
             ⏹ 中止合并

@@ -63,8 +63,8 @@ export function ToolProgressBar({
   const displayProgress = progress !== undefined ? progress : animatedProgress
 
   const statusConfig = {
-    pending: { color: '#888', icon: '⏳', label: '等待中' },
-    running: { color: '#4ECB71', icon: '⚙️', label: '执行中' },
+    pending: { color: '#888', icon: '', label: '等待中' },
+    running: { color: '#4ECB71', icon: '⚙', label: '执行中' },
     success: { color: '#4ECB71', icon: '✓', label: '完成' },
     error: { color: '#FF6B6B', icon: '✗', label: '失败' },
   }

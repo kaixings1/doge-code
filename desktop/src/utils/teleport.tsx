@@ -175,7 +175,7 @@ export async function validateGitState(): Promise<void> {
   });
   if (!isClean) {
     logEvent('tengu_teleport_error_git_not_clean', {});
-    const error = new TeleportOperationError('Git 工作目录不干净。请在使用 --teleport 前提交或暂存更改。', chalk.red('❌ 错误: Git 工作目录不干净。请在使用 --teleport 前提交或暂存更改。\n'));
+    const error = new TeleportOperationError('Git 工作目录不干净。请在使用 --teleport 前提交或暂存更改。', chalk.red(' 错误: Git 工作目录不干净。请在使用 --teleport 前提交或暂存更改。\n'));
     throw error;
   }
 }
@@ -481,7 +481,7 @@ export async function teleportResumeCodeSession(sessionId: string, onProgress?: 
           throw new TeleportOperationError(`You must run claude --teleport ${sessionId} from a checkout of ${sessionDisplay}.\nThis repo is ${currentDisplay}.`, chalk.red(`You must run claude --teleport ${sessionId} from a checkout of ${chalk.bold(sessionDisplay)}.\nThis repo is ${chalk.bold(currentDisplay)}.\n`));
         }
       case 'error':
-        throw new TeleportOperationError(repoValidation.errorMessage || '无法验证会话仓库'❌ 错误: , chalk.red(`错误：${repoValidation.errorMessage || '无法验证会话仓库'}\n`));
+        throw new TeleportOperationError(repoValidation.errorMessage || '无法验证会话仓库', chalk.red(`错误：${repoValidation.errorMessage || '无法验证会话仓库'}\n`));
       default:
         {
           const _exhaustive: never = repoValidation.status;

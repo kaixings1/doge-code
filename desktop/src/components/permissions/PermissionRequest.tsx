@@ -137,7 +137,7 @@ function getNotificationMessage(toolUseConfirm: ToolUseConfirm): string {
     return 'Claude 需要你批准一个审查工件';
   }
   if (!toolName || toolName.trim() === '') {
-    return '⚠️ 注意: Claude Code 需要你的注意';
+    return ' 注意: Claude Code 需要你的注意';
   }
   return `Claude 需要你的许可才能使用 ${toolName}`;
 }

@@ -197,7 +197,7 @@ export class SessionResultHandler {
 
   private formatError(result: SessionResult): string {
     if (this.config.formatAsMarkdown) {
-      return `## ❌ 执行失败\n\n**工具:** ${result.tool}\n**错误:** ${result.error}\n\n**参数:**\n\`\`\`json\n${JSON.stringify(result.parameters, null, 2)}\n\`\`\`\n`
+      return `##  执行失败\n\n**工具:** ${result.tool}\n**错误:** ${result.error}\n\n**参数:**\n\`\`\`json\n${JSON.stringify(result.parameters, null, 2)}\n\`\`\`\n`
     } else {
       return `执行失败\n工具: ${result.tool}\n错误: ${result.error}\n参数: ${JSON.stringify(result.parameters, null, 2)}\n`
     }

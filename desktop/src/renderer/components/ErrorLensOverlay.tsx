@@ -11,9 +11,9 @@ import type { ThemeColors } from '../theme.js'
 import type { DiagnosticItem, DiagnosticLevel } from '../hooks/useErrorLens.js'
 
 const LEVEL_LABEL: Record<DiagnosticLevel, string> = {
-  error: '🔴 Error',
+  error: ' Error',
   warning: '🟡 Warning',
-  info: 'ℹ️ Info',
+  info: 'ℹ Info',
 }
 
 const LEVEL_COLOR: Record<DiagnosticLevel, string> = {
@@ -58,7 +58,7 @@ export function ErrorLensOverlay({
           background: c.bgAlt,
         }}
       >
-        <span style={{ fontWeight: 600, fontSize: '11px' }}>🔍 Error Lens</span>
+        <span style={{ fontWeight: 600, fontSize: '11px' }}> Error Lens</span>
         <span style={{ color: c.textFaint, fontSize: '10px' }}>
           {items.length} 项诊断
         </span>

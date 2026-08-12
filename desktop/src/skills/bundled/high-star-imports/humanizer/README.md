@@ -161,7 +161,7 @@ The skill also includes a final "obviously AI generated" audit pass and a second
 >
 > - 💡 **Speed:** Code generation is significantly faster, reducing friction and empowering developers.
 > - 🚀 **Quality:** Output quality has been enhanced through improved training, contributing to higher standards.
-> - ✅ **Adoption:** Usage continues to grow, reflecting broader industry trends.
+> -  **Adoption:** Usage continues to grow, reflecting broader industry trends.
 >
 > While specific details are limited based on available information, it could potentially be argued that these tools might have some positive effect. Despite challenges typical of emerging technologies—including hallucinations, bias, and accountability—the ecosystem continues to thrive. In order to fully realize this potential, teams must align with best practices.
 >

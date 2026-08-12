@@ -125,7 +125,7 @@ function executeRename(
       success: false,
       changes: [],
       errors: [`文件不存在: ${filePath}`],
-      summary: '❌ 文件不存在',
+      summary: ' 文件不存在',
     }
   }
 
@@ -139,7 +139,7 @@ function executeRename(
         success: true,
         changes: [],
         errors: [],
-        summary: `✅ 未找到需要重命名的标识符: ${target}`,
+        summary: ` 未找到需要重命名的标识符: ${target}`,
       }
     }
 
@@ -154,14 +154,14 @@ function executeRename(
       errors: [],
       summary: dryRun
         ? `📋 预览: 将重命名 ${changes.length} 处 "${target}" → "${replacement}"`
-        : `✅ 已重命名 ${changes.length} 处 "${target}" → "${replacement}"`,
+        : ` 已重命名 ${changes.length} 处 "${target}" → "${replacement}"`,
     }
   } catch (error) {
     return {
       success: false,
       changes: [],
       errors: [error instanceof Error ? error.message : String(error)],
-      summary: `❌ 重构失败: ${error instanceof Error ? error.message : '未知错误'}`,
+      summary: ` 重构失败: ${error instanceof Error ? error.message : '未知错误'}`,
     }
   }
 }
@@ -179,7 +179,7 @@ function executeExtract(
       success: false,
       changes: [],
       errors: [`文件不存在: ${filePath}`],
-      summary: '❌ 文件不存在',
+      summary: ' 文件不存在',
     }
   }
 
@@ -188,7 +188,7 @@ function executeExtract(
     success: true,
     changes: [],
     errors: [],
-    summary: '⚠️  函数提取需要 AST 支持，目前仅支持变量重命名',
+    summary: '  函数提取需要 AST 支持，目前仅支持变量重命名',
   }
 }
 
@@ -203,7 +203,7 @@ function executeTypeFix(
       success: false,
       changes: [],
       errors: [`文件不存在: ${filePath}`],
-      summary: '❌ 文件不存在',
+      summary: ' 文件不存在',
     }
   }
 
@@ -212,7 +212,7 @@ function executeTypeFix(
     success: true,
     changes: [],
     errors: [],
-    summary: '⚠️  类型修复需要 TypeScript compiler API，目前仅支持变量重命名',
+    summary: '  类型修复需要 TypeScript compiler API，目前仅支持变量重命名',
   }
 }
 
@@ -228,7 +228,7 @@ export function runRefactor(options: RefactorOptions): RefactorResult {
           success: false,
           changes: [],
           errors: ['rename 需要 target 和 replacement 参数'],
-          summary: '❌ 参数缺失',
+          summary: ' 参数缺失',
         }
       }
       return executeRename(
@@ -260,7 +260,7 @@ export function runRefactor(options: RefactorOptions): RefactorResult {
         success: false,
         changes: [],
         errors: [`不支持的重构类型: ${options.type}`],
-        summary: '❌ 不支持的重构类型',
+        summary: ' 不支持的重构类型',
       }
   }
 }

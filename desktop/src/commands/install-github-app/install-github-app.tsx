@@ -174,7 +174,7 @@ function InstallGitHubApp(props: {
           ...prev_3,
           step: 'error',
           error: errorMessage,
-          errorReason: '❌ 错误: GitHub Actions 设置失败',
+          errorReason: ' 错误: GitHub Actions 设置失败',
           errorInstructions: []
         }));
       }

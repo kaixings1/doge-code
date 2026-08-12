@@ -80,7 +80,7 @@ Point `/understand-knowledge` at a [Karpathy-pattern LLM wiki](https://gist.gith
       <p>Auto-generated walkthroughs of the architecture, ordered by dependency. Learn the codebase in the right order.</p>
     </td>
     <td width="50%" valign="top">
-      <h3>🔍 Fuzzy & Semantic Search</h3>
+      <h3> Fuzzy & Semantic Search</h3>
       <p>Find anything by name or by meaning. Search "which parts handle auth?" and get relevant results across the graph.</p>
     </td>
   </tr>
@@ -96,7 +96,7 @@ Point `/understand-knowledge` at a [Karpathy-pattern LLM wiki](https://gist.gith
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <h3>🏗️ Layer Visualization</h3>
+      <h3>🏗 Layer Visualization</h3>
       <p>Automatic grouping by architectural layer — API, Service, Data, UI, Utility — with color-coded legend.</p>
     </td>
     <td width="50%" valign="top">
@@ -253,23 +253,23 @@ For personal skills (available across all projects), run the `install.sh` above 
 
 | Platform | Status | Install Method |
 |----------|--------|----------------|
-| Claude Code | ✅ Native | Plugin marketplace |
-| Cursor | ✅ Supported | Auto-discovery |
-| VS Code + GitHub Copilot | ✅ Supported | Auto-discovery |
-| Copilot CLI | ✅ Supported | Plugin install |
-| Codex | ✅ Supported | `install.sh codex` |
-| OpenCode | ✅ Supported | `install.sh opencode` |
-| OpenClaw | ✅ Supported | `install.sh openclaw` |
-| Antigravity | ✅ Supported | `install.sh antigravity` |
-| Gemini CLI | ✅ Supported | `install.sh gemini` |
-| Pi Agent | ✅ Supported | `install.sh pi` |
-| Vibe CLI | ✅ Supported | `install.sh vibe` |
-| Hermes | ✅ Supported | `install.sh hermes` |
-| Cline | ✅ Supported | `install.sh cline` |
-| KIMI CLI | ✅ Supported | `install.sh kimi` |
-| Trae | ✅ Supported | `install.sh trae` |
-| Nanobot | ✅ Supported | `install.sh nanobot` |
-| Kiro CLI / IDE | ✅ Supported | `install.sh kiro` |
+| Claude Code |  Native | Plugin marketplace |
+| Cursor |  Supported | Auto-discovery |
+| VS Code + GitHub Copilot |  Supported | Auto-discovery |
+| Copilot CLI |  Supported | Plugin install |
+| Codex |  Supported | `install.sh codex` |
+| OpenCode |  Supported | `install.sh opencode` |
+| OpenClaw |  Supported | `install.sh openclaw` |
+| Antigravity |  Supported | `install.sh antigravity` |
+| Gemini CLI |  Supported | `install.sh gemini` |
+| Pi Agent |  Supported | `install.sh pi` |
+| Vibe CLI |  Supported | `install.sh vibe` |
+| Hermes |  Supported | `install.sh hermes` |
+| Cline |  Supported | `install.sh cline` |
+| KIMI CLI |  Supported | `install.sh kimi` |
+| Trae |  Supported | `install.sh trae` |
+| Nanobot |  Supported | `install.sh nanobot` |
+| Kiro CLI / IDE |  Supported | `install.sh kiro` |
 
 
 ---

@@ -69,7 +69,7 @@ const SEVERITY_LABELS: Record<Severity, string> = {
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
-  performance: '⚡ 性能',
+  performance: ' 性能',
   refactor: '🔧 重构',
   maintainability: '📐 可维护性',
   security: '🔒 安全',

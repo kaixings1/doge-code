@@ -9,7 +9,7 @@ type Props = {
    *
    * - `success`: Green checkmark (✓)
    * - `error`: Red cross (✗)
-   * - `warning`: Yellow warning symbol (⚠)
+   * - `warning`: Yellow warning symbol ()
    * - `info`: Blue info symbol (ℹ)
    * - `pending`: Dimmed circle (○)
    * - `loading`: Dimmed ellipsis (…)

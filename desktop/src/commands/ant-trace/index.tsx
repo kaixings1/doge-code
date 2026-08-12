@@ -144,7 +144,7 @@ export const call: LocalJSXCommandCall = async () => {
   const currentEntry = writeResult.success ? writeResult.entry : null
   return (
     <Box flexDirection="column" padding={1}>
-      <Text bold>🔍 ANT 追踪面板</Text>
+      <Text bold> ANT 追踪面板</Text>
       {/* 当前会话追踪记录 */}
       <Box marginTop={1} flexDirection="column">
         <Text bold>📌 本次追踪记录</Text>
@@ -180,7 +180,7 @@ export const call: LocalJSXCommandCall = async () => {
       {/* 最近 5 条追踪记录（如果存在） */}
       {stats.recentEntries.length > 0 && (
         <Box marginTop={1} flexDirection="column">
-          <Text bold>⏱️ 最近追踪记录（最新5条）</Text>
+          <Text bold>⏱ 最近追踪记录（最新5条）</Text>
           {stats.recentEntries.map((entry, idx) => (
             <Box key={idx} marginTop={0} flexDirection="column">
               <Text dimColor>

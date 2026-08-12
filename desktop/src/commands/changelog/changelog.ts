@@ -10,7 +10,7 @@ export async function call(onDone: LocalJSXCommandOnDone) {
 - 错误修复和可靠性改进
 - 新增 EndConversation 工具：Claude 可以在用户滥用或尝试越狱时结束会话
 - 新增子代理深度嵌套支持（默认深度 3）
-- 新增 emoji 短代码自动补全（:heart: → ❤️）
+- 新增 emoji 短代码自动补全（:heart: → ）
 - 新增并发子代理数量上限（默认 20）
 - 新增工作流大小指南设置
 - 新增嵌套子代理转发支持

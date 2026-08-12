@@ -12,7 +12,7 @@ export interface NotebookResult {
 
 export function handleCreate(title: string, content?: string, tags?: string): NotebookResult {
   if (!title || !title.trim()) {
-    return { success: false, message: '❌ 错误: 标题不能为空' }
+    return { success: false, message: ' 错误: 标题不能为空' }
   }
   const input: CreateNoteInput = {
     title: title.trim(),
@@ -41,18 +41,18 @@ export function handleList(page?: number, limit?: number): NotebookResult {
 
 export function handleView(id: string): NotebookResult {
   if (!id) {
-    return { success: false, message: '❌ 错误: 请提供笔记 ID' }
+    return { success: false, message: ' 错误: 请提供笔记 ID' }
   }
   const note = getNote(id)
   if (!note) {
-    return { success: false, message: '❌ 错误: 未找到 ID 为 "' + id + '" 的笔记' }
+    return { success: false, message: ' 错误: 未找到 ID 为 "' + id + '" 的笔记' }
   }
   return { success: true, message: '# ' + note.title, data: note }
 }
 
 export function handleEdit(id: string, title?: string, content?: string, tags?: string, isPinned?: boolean): NotebookResult {
   if (!id) {
-    return { success: false, message: '❌ 错误: 请提供笔记 ID' }
+    return { success: false, message: ' 错误: 请提供笔记 ID' }
   }
   const input: UpdateNoteInput = {}
   if (title != null) input.title = title.trim()
@@ -61,18 +61,18 @@ export function handleEdit(id: string, title?: string, content?: string, tags?: 
   if (isPinned != null) input.isPinned = isPinned
   const note = updateNote(id, input)
   if (!note) {
-    return { success: false, message: '❌ 错误: 未找到 ID 为 "' + id + '" 的笔记' }
+    return { success: false, message: ' 错误: 未找到 ID 为 "' + id + '" 的笔记' }
   }
   return { success: true, message: '笔记已更新: ' + note.title, data: note }
 }
 
 export function handleDelete(id: string): NotebookResult {
   if (!id) {
-    return { success: false, message: '❌ 错误: 请提供笔记 ID' }
+    return { success: false, message: ' 错误: 请提供笔记 ID' }
   }
   const note = getNote(id)
   if (!note) {
-    return { success: false, message: '❌ 错误: 未找到 ID 为 "' + id + '" 的笔记' }
+    return { success: false, message: ' 错误: 未找到 ID 为 "' + id + '" 的笔记' }
   }
   deleteNote(id)
   return { success: true, message: '笔记已删除: ' + note.title, data: note }
@@ -80,11 +80,11 @@ export function handleDelete(id: string): NotebookResult {
 
 export function handlePin(id: string): NotebookResult {
   if (!id) {
-    return { success: false, message: '❌ 错误: 请提供笔记 ID' }
+    return { success: false, message: ' 错误: 请提供笔记 ID' }
   }
   const note = togglePinNote(id)
   if (!note) {
-    return { success: false, message: '❌ 错误: 未找到 ID 为 "' + id + '" 的笔记' }
+    return { success: false, message: ' 错误: 未找到 ID 为 "' + id + '" 的笔记' }
   }
   return {
     success: true,
@@ -95,7 +95,7 @@ export function handlePin(id: string): NotebookResult {
 
 export function handleSearch(query: string, tag?: string, page?: number): NotebookResult {
   if (!query && !tag) {
-    return { success: false, message: '❌ 错误: 请提供搜索关键词或标签' }
+    return { success: false, message: ' 错误: 请提供搜索关键词或标签' }
   }
   const params: SearchParams = { page, query, tag }
   const result = searchNotes(params)
@@ -119,11 +119,11 @@ export function handleTags(): NotebookResult {
 
 export function handleExport(id: string): NotebookResult {
   if (!id) {
-    return { success: false, message: '❌ 错误: 请提供笔记 ID' }
+    return { success: false, message: ' 错误: 请提供笔记 ID' }
   }
   const note = getNote(id)
   if (!note) {
-    return { success: false, message: '❌ 错误: 未找到 ID 为 "' + id + '" 的笔记' }
+    return { success: false, message: ' 错误: 未找到 ID 为 "' + id + '" 的笔记' }
   }
   const md = exportNoteToMarkdown(note)
   return { success: true, message: '笔记已导出:\n\n' + md, data: note }

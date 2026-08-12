@@ -195,7 +195,7 @@ export function getCompletions(options: AutocompleteOptions): CompletionItem[] {
 
 function renderHelp(): string {
   return [
-    '⚡ 智能终端补全',
+    ' 智能终端补全',
     '',
     '提供上下文感知的命令行补全建议。',
     '',
@@ -207,7 +207,7 @@ function renderHelp(): string {
     '  --context <类型>    上下文类型: command / flag / file / directory / shell',
     '  --cwd <路径>        工作目录（用于文件补全）',
     '  --json              JSON 格式输出',
-    '📖 用法:   --help              显示帮助',
+    ' 用法:   --help              显示帮助',
     '',
     '💡 示例:',
     '  /autocomplete --query /code',
@@ -252,10 +252,10 @@ export const call: LocalCommandCall = async (args) => {
   }
 
   if (completions.length === 0) {
-    return { type: 'text', value: '🔍 无补全建议' }
+    return { type: 'text', value: ' 无补全建议' }
   }
 
-  const lines: string[] = ['⚡ 补全建议:']
+  const lines: string[] = [' 补全建议:']
   completions.forEach((c, i) => {
     const icon = {
       command: '>',

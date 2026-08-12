@@ -43,8 +43,8 @@ function renderHelp(): string {
   lines.push('  --max-iterations <n>  最大迭代次数（默认: 20）')
   lines.push('  --criteria <标准>     成功标准（可多次指定）')
   lines.push('  --json                JSON 格式输出结果')
-  lines.push('📖 用法:   --examples            显示详细示例')
-  lines.push('📖 用法:   --help                显示此帮助')
+  lines.push(' 用法:   --examples            显示详细示例')
+  lines.push(' 用法:   --help                显示此帮助')
   lines.push('')
   lines.push('快捷方式:')
   for (const s of strategies) {
@@ -77,7 +77,7 @@ function renderExamples(): string {
     '',
     '示例 4: OpenHands 工程代理',
     '  /loop "实现用户认证，所有测试必须通过" --strategy openhands --criteria "测试通过"',
-    '❌ 错误:   工作流程: plan → execute → verify → 失败则重新计划',
+    ' 错误:   工作流程: plan → execute → verify → 失败则重新计划',
     '',
     '示例 5: SWE-agent Bug 修复',
     '  /loop "修复登录页面 TypeError" --strategy swe-agent',
@@ -97,7 +97,7 @@ function renderInteractivePrompt(): string {
     '请描述你的目标（或选择下面的示例）：',
     '',
     '  1. 重构代码模块，提高可维护性',
-    '❌ 错误:   2. 修复所有 TypeScript 类型错误',
+    ' 错误:   2. 修复所有 TypeScript 类型错误',
     '  3. 实现一个新功能模块',
     '  4. 优化性能并验证改进',
     '  5. 代码审查并修复发现的问题',
@@ -257,7 +257,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
   try {
     parsed = parseArgs(s)
   } catch (err) {
-    onDone(`❌ 参数错误: ${err instanceof Error ? err.message : String(err)}\n\n用 /loop --help 查看帮助`)
+    onDone(` 参数错误: ${err instanceof Error ? err.message : String(err)}\n\n用 /loop --help 查看帮助`)
     return
   }
 
@@ -305,7 +305,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       return
     }
 
-    const statusIcon = result.success ? '✅' : '⏸️'
+    const statusIcon = result.success ? '' : '⏸'
     const lines: string[] = [
       `${statusIcon} 循环执行完成`,
       '',
@@ -317,7 +317,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
     ]
 
     result.subTasks.forEach((t, i) => {
-      const icon = t.status === 'completed' ? '✅' : t.status === 'failed' ? '❌' : '⏳'
+      const icon = t.status === 'completed' ? '' : t.status === 'failed' ? '' : ''
       lines.push(`  ${i + 1}. ${icon} ${t.description}`)
     })
 
@@ -327,7 +327,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
     onDone(lines.join('\n'))
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
-    onDone(`❌ 循环执行失败: ${message}`)
+    onDone(` 循环执行失败: ${message}`)
   }
 }
 

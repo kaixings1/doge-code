@@ -60,18 +60,18 @@ export const call: LocalJSXCommandCall = async (onDone, _context, _args) => {
     <Box flexDirection="column" padding={1}>
       <Text bold>🐛 Bug 猎人</Text>
       {status === 'idle' && <Box marginTop={1}><Text>按 Enter 开始扫描代码库...</Text></Box>}
-      {status === 'scanning' && <Box marginTop={1}><Text color="yellow">🔍 正在扫描中...</Text></Box>}
+      {status === 'scanning' && <Box marginTop={1}><Text color="yellow"> 正在扫描中...</Text></Box>}
         {status === 'done' && (
         <Box marginTop={1} flexDirection="column">
           {findings.length === 0 ? <Text color="green">✓ 未发现明显 bug！</Text> : (
             <>
               <Text color="yellow">发现 {findings.length} 个潜在问题</Text>
-              <Box marginTop={1}><Text color="red">🔴 严重: {highCount}</Text><Text color="yellow" marginLeft={1}>🟡 中等: {mediumCount}</Text><Text color="blue" marginLeft={1}>🔵 轻微: {lowCount}</Text></Box>
+              <Box marginTop={1}><Text color="red"> 严重: {highCount}</Text><Text color="yellow" marginLeft={1}>🟡 中等: {mediumCount}</Text><Text color="blue" marginLeft={1}>🔵 轻微: {lowCount}</Text></Box>
             <Box marginTop={1} flexDirection="column">
                 {findings.slice(0, 10).map((bug, i) => (
                   <Box key={i} marginTop={1}>
                     <Text color={bug.severity === 'high' ? 'red' : bug.severity === 'medium' ? 'yellow' : 'blue'}>
-                      {bug.severity === 'high' ? '🔴' : bug.severity === 'medium' ? '🟡' : '🔵'} {bug.file}:{bug.line}
+                      {bug.severity === 'high' ? '' : bug.severity === 'medium' ? '🟡' : '🔵'} {bug.file}:{bug.line}
                     </Text>
                     <Text marginLeft={1} dimColor>{bug.message}</Text>
                     {bug.suggestion && <Text marginLeft={2} dimColor>💡 {bug.suggestion}</Text>}

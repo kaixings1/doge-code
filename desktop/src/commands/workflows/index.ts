@@ -1,7 +1,7 @@
 import type { Command, LocalJSXCommandContext, LocalCommandResult } from '../../commands.js'
 import { feature } from 'bun:bundle'
 
-const HELP_TEXT = `🏗️ Workflow 命令
+const HELP_TEXT = `🏗 Workflow 命令
 
 **用法**: /workflows <子命令> [参数]
 
@@ -40,7 +40,7 @@ const workflows = {
       if (!validModes.includes(mode)) {
         return {
           type: 'text',
-          value: `❌ 未知子命令: ${mode}\n\n${HELP_TEXT}`
+          value: ` 未知子命令: ${mode}\n\n${HELP_TEXT}`
         }
       }
 
@@ -71,7 +71,7 @@ const workflows = {
       } catch (e) {
         return {
           type: 'text',
-          value: `❌ 工作流操作失败: ${e instanceof Error ? e.message : String(e)}`
+          value: ` 工作流操作失败: ${e instanceof Error ? e.message : String(e)}`
         }
       }
     }

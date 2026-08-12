@@ -31,8 +31,8 @@ function formatDuration(ms: number): string {
 // 测试工具函数：状态配置
 function getStatusConfig(status: ProgressStatus) {
   const configs = {
-    pending: { color: '#888', icon: '⏳', label: '等待中' },
-    running: { color: '#4ECB71', icon: '⚙️', label: '执行中' },
+    pending: { color: '#888', icon: '', label: '等待中' },
+    running: { color: '#4ECB71', icon: '⚙', label: '执行中' },
     success: { color: '#4ECB71', icon: '✓', label: '完成' },
     error: { color: '#FF6B6B', icon: '✗', label: '失败' },
   }
@@ -62,14 +62,14 @@ describe('ToolProgressBar', () => {
   describe('getStatusConfig', () => {
     it('应返回 pending 状态配置', () => {
       const config = getStatusConfig('pending')
-      expect(config.icon).toBe('⏳')
+      expect(config.icon).toBe('')
       expect(config.label).toBe('等待中')
       expect(config.color).toBe('#888')
     })
 
     it('应返回 running 状态配置', () => {
       const config = getStatusConfig('running')
-      expect(config.icon).toBe('⚙️')
+      expect(config.icon).toBe('⚙')
       expect(config.label).toBe('执行中')
       expect(config.color).toBe('#4ECB71')
     })

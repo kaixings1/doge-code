@@ -61,10 +61,10 @@ function formatTaskList(tasks: any[], showAll: boolean = false): string {
   }
 
   const statusIcons: Record<string, string> = {
-    pending: '⏳',
+    pending: '',
     'in-progress': '🚧',
-    done: '✅',
-    cancelled: '❌'
+    done: '',
+    cancelled: ''
   }
 
   const priorityIcons: Record<string, string> = {
@@ -78,7 +78,7 @@ function formatTaskList(tasks: any[], showAll: boolean = false): string {
   const displayTasks = showAll ? tasks : tasks.filter((t: any) => t.status !== 'done')
 
   const taskList = displayTasks.map((t: any) => {
-    const icon = statusIcons[t.status] || '⏳'
+    const icon = statusIcons[t.status] || ''
     const pIcon = priorityIcons[t.priority] || '📝'
     const tags = t.tags?.length ? t.tags.map((tag: string) => `#${tag}`).join(' ') : ''
     return `${icon} ${pIcon} **${t.title}** (\`${t.id}\`)${tags ? ` ${tags}` : ''}`
@@ -147,14 +147,14 @@ export const call: LocalCommandCall = async (args) => {
     }
 
     const statusIcons: Record<string, string> = {
-      pending: '⏳',
+      pending: '',
       'in-progress': '🚧',
-      done: '✅',
-      cancelled: '❌'
+      done: '',
+      cancelled: ''
     }
 
     const taskList = recentTasks.map((t: any) => {
-      const icon = statusIcons[t.status] || '⏳'
+      const icon = statusIcons[t.status] || ''
       return `${icon} **${t.title}** (\`${t.id}\`)`
     }).join('\n')
 
@@ -201,7 +201,7 @@ ${taskList}${tasks.length > 5 ? `\n... 还有 ${tasks.length - 5} 个任务` : '
     if (!keyword) {
       return {
         type: 'text',
-        value: `❌ **参数错误**
+        value: ` **参数错误**
 
 🔧 **正确用法**: \`/todo search <关键词>\`
 
@@ -218,27 +218,27 @@ ${taskList}${tasks.length > 5 ? `\n... 还有 ${tasks.length - 5} 个任务` : '
     if (matched.length === 0) {
       return {
         type: 'text',
-        value: `🔍 **搜索结果**
+        value: ` **搜索结果**
 
 未找到匹配 "\`${keyword}\`" 的任务`
       }
     }
 
     const statusIcons: Record<string, string> = {
-      pending: '⏳',
+      pending: '',
       'in-progress': '🚧',
-      done: '✅',
-      cancelled: '❌'
+      done: '',
+      cancelled: ''
     }
 
     const taskList = matched.map((t: any) => {
-      const icon = statusIcons[t.status] || '⏳'
+      const icon = statusIcons[t.status] || ''
       return `${icon} **${t.title}** (\`${t.id}\`)`
     }).join('\n')
 
     return {
       type: 'text',
-      value: `🔍 **搜索结果** (${matched.length} 个匹配)
+      value: ` **搜索结果** (${matched.length} 个匹配)
 
 ${taskList}`
     }
@@ -311,7 +311,7 @@ ${taskList}`
 
     return {
       type: 'text',
-      value: `✅ **任务已创建** ${priorityEmoji[priority] || '📝'}
+      value: ` **任务已创建** ${priorityEmoji[priority] || '📝'}
 
 📋 **任务详情**:
 • 标题: ${task.title}
@@ -333,7 +333,7 @@ ${taskList}`
     if (!id) {
       return {
         type: 'text',
-        value: `❌ **参数错误**
+        value: ` **参数错误**
 
 🔧 **正确用法**: \`/todo done <任务ID>\`
 
@@ -344,14 +344,14 @@ ${taskList}`
     if (t) {
       return {
         type: 'text',
-        value: `✅ **任务完成**
+        value: ` **任务完成**
 
 🎉 **${t.title}** 已标记为完成！`
       }
     }
     return {
       type: 'text',
-      value: `❌ **任务未找到**
+      value: ` **任务未找到**
 
 找不到 ID 为 \`${id}\` 的任务。
 
@@ -365,7 +365,7 @@ ${taskList}`
     if (!id) {
       return {
         type: 'text',
-        value: `❌ **参数错误**
+        value: ` **参数错误**
 
 🔧 **正确用法**: \`/todo delete <任务ID>\``
       }
@@ -374,14 +374,14 @@ ${taskList}`
     if (ok) {
       return {
         type: 'text',
-        value: `🗑️ **任务已删除**
+        value: `🗑 **任务已删除**
 
-✅ 任务 \`${id}\` 已成功删除。`
+ 任务 \`${id}\` 已成功删除。`
       }
     }
     return {
       type: 'text',
-      value: `❌ **任务未找到**
+      value: ` **任务未找到**
 
 找不到 ID 为 \`${id}\` 的任务。`
     }
@@ -393,7 +393,7 @@ ${taskList}`
     if (!id) {
       return {
         type: 'text',
-        value: `❌ **参数错误**
+        value: ` **参数错误**
 
 🔧 **正确用法**: \`/todo pause <任务ID>\``
       }
@@ -402,17 +402,17 @@ ${taskList}`
     if (!t) {
       return {
         type: 'text',
-        value: `❌ **任务未找到**
+        value: ` **任务未找到**
 
 找不到 ID 为 \`${id}\` 的任务。`
       }
     }
     if ((t as Record<string, unknown>).error) {
-      return { type: 'text', value: `❌ ${(t as Record<string, unknown>).error}` }
+      return { type: 'text', value: ` ${(t as Record<string, unknown>).error}` }
     }
     return {
       type: 'text',
-      value: `⏸️ **任务已暂停**
+      value: `⏸ **任务已暂停**
 
 • **标题**: ${t.title}
 • **ID**: \`${t.id}\`
@@ -426,7 +426,7 @@ ${taskList}`
     if (!id) {
       return {
         type: 'text',
-        value: `❌ **参数错误**
+        value: ` **参数错误**
 
 🔧 **正确用法**: \`/todo resume <任务ID>\``
       }
@@ -435,17 +435,17 @@ ${taskList}`
     if (!t) {
       return {
         type: 'text',
-        value: `❌ **任务未找到**
+        value: ` **任务未找到**
 
 找不到 ID 为 \`${id}\` 的任务。`
       }
     }
     if ((t as Record<string, unknown>).error) {
-      return { type: 'text', value: `❌ ${(t as Record<string, unknown>).error}` }
+      return { type: 'text', value: ` ${(t as Record<string, unknown>).error}` }
     }
     return {
       type: 'text',
-      value: `▶️ **任务已恢复**
+      value: `▶ **任务已恢复**
 
 • **标题**: ${t.title}
 • **ID**: \`${t.id}\``
@@ -458,7 +458,7 @@ ${taskList}`
     if (!id) {
       return {
         type: 'text',
-        value: `❌ **参数错误**
+        value: ` **参数错误**
 
 🔧 **正确用法**: \`/todo cancel <任务ID>\``
       }
@@ -467,17 +467,17 @@ ${taskList}`
     if (!t) {
       return {
         type: 'text',
-        value: `❌ **任务未找到**
+        value: ` **任务未找到**
 
 找不到 ID 为 \`${id}\` 的任务。`
       }
     }
     if ((t as Record<string, unknown>).error) {
-      return { type: 'text', value: `❌ ${(t as Record<string, unknown>).error}` }
+      return { type: 'text', value: ` ${(t as Record<string, unknown>).error}` }
     }
     return {
       type: 'text',
-      value: `❌ **任务已取消**
+      value: ` **任务已取消**
 
 • **标题**: ${t.title}
 • **ID**: \`${t.id}\``
@@ -490,7 +490,7 @@ ${taskList}`
     if (!id) {
       return {
         type: 'text',
-        value: `❌ **参数错误**
+        value: ` **参数错误**
 
 🔧 **正确用法**: \`/todo start <任务ID>\``
       }
@@ -499,7 +499,7 @@ ${taskList}`
     if (!t) {
       return {
         type: 'text',
-        value: `❌ **任务未找到**
+        value: ` **任务未找到**
 
 找不到 ID 为 \`${id}\` 的任务。`
       }
@@ -521,7 +521,7 @@ ${taskList}`
     if (!parentId || !subTitle) {
       return {
         type: 'text',
-        value: `❌ **参数错误**
+        value: ` **参数错误**
 
 🔧 **正确用法**: \`/todo subtask <父任务ID> <子任务标题>\`
 
@@ -532,7 +532,7 @@ ${taskList}`
     if (!child) {
       return {
         type: 'text',
-        value: `❌ **父任务未找到**
+        value: ` **父任务未找到**
 
 找不到 ID 为 \`${parentId}\` 的任务。`
       }
@@ -553,7 +553,7 @@ ${taskList}`
     if (!id) {
       return {
         type: 'text',
-        value: `❌ **参数错误**
+        value: ` **参数错误**
 
 🔧 **正确用法**: \`/todo info <任务ID>\``
       }
@@ -563,7 +563,7 @@ ${taskList}`
     if (!t) {
       return {
         type: 'text',
-        value: `❌ **任务未找到**
+        value: ` **任务未找到**
 
 找不到 ID 为 \`${id}\` 的任务。`
       }
@@ -592,7 +592,7 @@ ${taskList}`
     if (t.subTasks?.length) {
       detail += `\n\n📂 **子任务** (${t.subTasks.length} 个)`
       for (const st of t.subTasks) {
-        const statusIcon = st.status === 'done' ? '✅' : '⏳'
+        const statusIcon = st.status === 'done' ? '' : ''
         detail += `\n  • ${statusIcon} ${st.title} (\`${st.id}\`)`
       }
     }

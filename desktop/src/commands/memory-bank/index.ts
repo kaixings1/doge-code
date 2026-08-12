@@ -50,7 +50,7 @@ const TYPE_LABELS: Record<MemoryType, string> = {
 /** Emoji icons for memory types */
 const TYPE_ICONS: Record<MemoryType, string> = {
   context: '📦',
-  decision: '🏗️',
+  decision: '🏗',
   learning: '💡',
   reference: '📚',
 }

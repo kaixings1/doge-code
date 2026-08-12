@@ -28,7 +28,7 @@ export const call: LocalJSXCommandCall = async (args) => {
     }
     return { type: 'text', value: result }
   } catch (err) {
-    return { type: 'text', value: '❌ 错误: ' + err.message }
+    return { type: 'text', value: ' 错误: ' + err.message }
   }
 }
 

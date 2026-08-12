@@ -15,7 +15,7 @@ export const call: LocalJSXCommandCall = async (args) => {
     try {
       const files = fs.readdirSync(dir).filter(f => /\.(png|jpg|jpeg|gif|svg|webp|bmp|ico)$/i.test(f))
       r = files.map(f => path.join(dir, f)).join('\n') || '(无图片)'
-    } catch (e: any) { r = '❌ 错误: ' + e.message }
+    } catch (e: any) { r = ' 错误: ' + e.message }
   } else if (c === 'info') {
     if (!file || !fs.existsSync(file)) return { type: 'text', value: '文件不存在: ' + (file || '') }
     const stat = fs.statSync(file)

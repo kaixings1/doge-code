@@ -145,19 +145,19 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const config = loadConfig()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Duplicate Code Detector (Advanced)', '', '📖 Usage: ', '  /duplicate                      Find duplicates', '  /duplicate list                 List duplicate blocks', '  /duplicate files                Files with duplicates', '  /duplicate ratio                Duplication ratio', '  /duplicate config               Show/edit config', '  /duplicate set <key> <val>      Set config value', '  /duplicate history              Scan history', '  /duplicate export [file]        Export report', '  /duplicate tips                 Fix strategies', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['🔍 重复代码检测器', '', '📖 用法：', '  /duplicate                      查找重复代码', '  /duplicate list                 列出重复代码块', '  /duplicate files                包含重复代码的文件', '  /duplicate ratio                 重复率', '  /duplicate config                查看/编辑配置', '  /duplicate set <键> <值>         设置配置值', '  /duplicate history               扫描历史', '  /duplicate export [文件]         导出报告', '  /duplicate tips                  修复策略', ''].join('\n') }
 
   if (cmd === 'config') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     // @ts-expect-error dynamic
     if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
-    return { type: 'text', value: `❌ Unknown: ${key}` }
+    return { type: 'text', value: `❌ 未知配置：${key}` }
   }
 
   if (cmd === 'set') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
-    if (!key || !value) return { type: 'text', value: 'Usage: /duplicate set <key> <value>' }
+    if (!key || !value) return { type: 'text', value: '📖 用法：/duplicate set <键> <值>' }
     // @ts-expect-error dynamic
     if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
     return { type: 'text', value: `❌ Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
@@ -165,8 +165,8 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'history') {
     const history = loadHistory()
-    if (history.length === 0) return { type: 'text', value: 'No scan history. Run /duplicate first.' }
-    const lines = ['Scan History:', '══════════════', '']
+    if (history.length === 0) return { type: 'text', value: 'ℹ️ 无扫描历史。请先运行 /duplicate。' }
+    const lines = ['📅 扫描历史：', '══════════════', '']
     history.slice(-10).forEach(h => lines.push(`${h.date.slice(0, 19)} | ${h.totalBlocks} blocks | ${h.filesWithDuplicates} files | ${h.estimatedDuplication}% duplication`))
     return { type: 'text', value: lines.join('\n') }
   }
@@ -218,12 +218,12 @@ export const call: LocalCommandCall = async (args) => {
     return { type: 'text', value: `✅ [OK] Exported: ${file}` }
   }
 
-  return { type: 'text', value: 'Unknown: ' + cmd }
+  return { type: 'text', value: '❌ 未知命令：' + cmd }
 }
 
 const duplicate: Command = {
   type: 'local', name: 'duplicate',
-  description: 'Duplicate - list/files/ratio/config/history/export/tips',
+  description: '重复代码检测 - 列表/文件/比例/配置/历史/导出/建议',
   aliases: ['/duplicate', '/dup'],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

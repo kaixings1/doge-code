@@ -606,7 +606,7 @@ export async function runHeadless(
       return
     }
     process.stderr.write(
-      `\n⚠ 沙盒已禁用：${sandboxUnavailableReason}\n` +
+      `\n 沙盒已禁用：${sandboxUnavailableReason}\n` +
         `  命令将在没有沙盒的情况下运行。网络和文件系统限制将不会强制执行。\n\n`,
     )
   } else if (SandboxManager.isSandboxingEnabled()) {
@@ -615,7 +615,7 @@ export async function runHeadless(
     try {
       await SandboxManager.initialize(structuredIO.createSandboxAskCallback())
     } catch (err) {
-      process.stderr.write(`\n❌ 沙盒错误：${errorMessage(err)}\n`)
+      process.stderr.write(`\n 沙盒错误：${errorMessage(err)}\n`)
       gracefulShutdownSync(1, 'other')
       return
     }
@@ -776,7 +776,7 @@ export async function runHeadless(
 
   if (options.outputFormat === 'stream-json' && !options.verbose) {
     process.stderr.write(
-      '❌ 错误: 使用 --print 时，--output-format=stream-json 需要配合 --verbose 使用\n',
+      ' 错误: 使用 --print 时，--output-format=stream-json 需要配合 --verbose 使用\n',
     )
     gracefulShutdownSync(1)
     return
@@ -3411,7 +3411,7 @@ function runHeadlessStreaming(
                     message,
                     error instanceof Error
                       ? error.message
-                      : '❌ 错误: OAuth 认证失败',
+                      : ' 错误: OAuth 认证失败',
                   )
                 }
               } else {
@@ -4934,7 +4934,7 @@ async function loadInitialMessages(
       )
       if (!parsedSessionId) {
         let errorMessage =
-          '❌ 错误: 使用 --print 时，--resume 需要提供有效的会话 ID。用法：claude -p --resume <session-id>'
+          ' 错误: 使用 --print 时，--resume 需要提供有效的会话 ID。用法：claude -p --resume <session-id>'
         if (typeof options.resume === 'string') {
           errorMessage += `。会话 ID 必须是 UUID 格式（例如：550e8400-e29b-41d4-a716-446655440000）。提供的值 "${options.resume}" 不是有效的 UUID`
         }

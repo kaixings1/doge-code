@@ -191,28 +191,28 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const config = loadConfig()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Dead Code Finder (Advanced)', '', '📖 Usage: ', '  /dead-code                      Find dead code (static + tools)', '  /dead-code static               Static analysis only', '  /dead-code tools                External tools (ts-prune/depcheck)', '  /dead-code exports              Unused exports', '  /dead-code imports              Unused imports/dependencies', '  /dead-code functions            Unused functions', '  /dead-code classes              Unused classes', '  /dead-code files                Files with dead code', '  /dead-code stats                Statistics', '  /dead-code history              Scan history', '  /dead-code config               Show/edit config', '  /dead-code set <key> <val>      Set config value', '  /dead-code export [file]        Export report', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['🔍 死代码检测器', '', '📖 用法：', '  /dead-code                      查找死代码（静态+工具）', '  /dead-code static               仅静态分析', '  /dead-code tools                外部工具（ts-prune/depcheck）', '  /dead-code exports              未使用的导出', '  /dead-code imports              未使用的导入/依赖', '  /dead-code functions            未使用的函数', '  /dead-code classes              未使用的类', '  /dead-code files                包含死代码的文件', '  /dead-code stats                统计信息', '  /dead-code history              扫描历史', '  /dead-code config               查看/编辑配置', '  /dead-code set &lt;键&gt; &lt;值&gt;     设置配置值', '  /dead-code export [文件]        导出报告', ''].join('\n') }
 
   if (cmd === 'config') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     // @ts-expect-error dynamic
     if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
-    return { type: 'text', value: `❌ Unknown: ${key}` }
+    return { type: 'text', value: `❌ 未知配置：${key}` }
   }
 
   if (cmd === 'set') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
-    if (!key || !value) return { type: 'text', value: 'Usage: /dead-code set <key> <value>' }
+    if (!key || !value) return { type: 'text', value: '📖 用法：/dead-code set <键> <值>' }
     // @ts-expect-error dynamic
     if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
-    return { type: 'text', value: `❌ Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
+    return { type: 'text', value: `❌ 未知键：${key}。可用键：${Object.keys(config).join(', ')}` }
   }
 
   if (cmd === 'history') {
     const history = loadHistory()
-    if (history.length === 0) return { type: 'text', value: 'No scan history. Run /dead-code first.' }
-    const lines = ['Scan History:', '══════════════', '']
+    if (history.length === 0) return { type: 'text', value: 'ℹ️ 暂无扫描历史。请先运行 /dead-code。' }
+    const lines = ['📅 扫描历史：', '══════════════', '']
     history.slice(-10).forEach(h => lines.push(`${h.date.slice(0, 19)} | ${h.total} items | ${h.files} files | tools: ${h.toolsUsed.join(', ')}`))
     return { type: 'text', value: lines.join('\n') }
   }
@@ -223,7 +223,8 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'static' || cmd === 'tools') {
     if (items.length === 0) return { type: 'text', value: `✅ [OK] No dead code detected via ${cmd} analysis` }
-    const lines = [`Dead Code (${cmd}, ${items.length}):`, '══════════════════════', '']
+    const labels: Record<string, string> = { static: '静态分析', tools: '外部工具' }
+    const lines = [`🔍 死代码（${labels[cmd] || cmd}，${items.length}）：`, '══════════════════════', '']
     items.slice(0, 30).forEach((i, idx) => lines.push(`${idx + 1}. [${i.kind}] ${i.name} (${i.file}:${i.line})`))
     return { type: 'text', value: lines.join('\n') }
   }
@@ -232,8 +233,9 @@ export const call: LocalCommandCall = async (args) => {
     const kindMap: Record<string, DeadItem['kind'][]> = { exports: ['export', 'function', 'class'], imports: ['import'], functions: ['function'], classes: ['class'] }
     const kinds = kindMap[cmd] || []
     const filtered = items.filter(i => kinds.includes(i.kind))
-    if (filtered.length === 0) return { type: 'text', value: `✅ [OK] No unused ${cmd} found` }
-    const lines = [`Unused ${cmd} (${filtered.length}):`, '════════════════════', '']
+    if (filtered.length === 0) return { type: 'text', value: `✅ 未发现未使用的${cmd}` }
+    const labels: Record<string, string> = { exports: '导出', imports: '导入', functions: '函数', classes: '类' }
+    const lines = [`🔍 未使用的${labels[cmd] || cmd}（${filtered.length}）：`, '════════════════════════', '']
     filtered.slice(0, 30).forEach((i, idx) => lines.push(`${idx + 1}. ${i.name} (${i.file}:${i.line})`))
     return { type: 'text', value: lines.join('\n') }
   }
@@ -241,8 +243,8 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'files') {
     const byFile: Record<string, number> = {}
     items.forEach(i => { byFile[i.file] = (byFile[i.file] || 0) + 1 })
-    if (Object.keys(byFile).length === 0) return { type: 'text', value: '[OK] No dead code' }
-    const lines = ['Files with dead code (' + Object.keys(byFile).length + '):', '══════════════════════════', '']
+    if (Object.keys(byFile).length === 0) return { type: 'text', value: '✅ 未发现死代码' }
+    const lines = ['📁 包含死代码的文件（' + Object.keys(byFile).length + '）：', '══════════════════════════', '']
     Object.entries(byFile).sort((a: any, b: any) => b[1] - a[1]).forEach(([file, count]) => lines.push(`  ${file}: ${count}`))
     return { type: 'text', value: lines.join('\n') }
   }
@@ -251,7 +253,7 @@ export const call: LocalCommandCall = async (args) => {
     const byKind: Record<string, number> = {}
     items.forEach(i => { byKind[i.kind] = (byKind[i.kind] || 0) + 1 })
     const byFile = new Set(items.map(i => i.file))
-    const lines = ['Dead Code Statistics:', '════════════════════', '', `Total: ${items.length}`, `Files affected: ${byFile.size}`, '', 'By kind:']
+    const lines = ['📊 死代码统计：', '════════════════════', '', '总计：' + items.length, '影响文件数：' + byFile.size, '', '按类型：']
     Object.entries(byKind).sort((a: any, b: any) => b[1] - a[1]).forEach(([k, c]) => lines.push(`  ${k}: ${c}`))
     return { type: 'text', value: lines.join('\n') }
   }
@@ -259,12 +261,12 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'export') {
     const file = parts[1] || 'dead-code-report.json'
     writeFileSync(file, JSON.stringify(items, null, 2), 'utf-8')
-    return { type: 'text', value: `✅ [OK] Exported: ${file}` }
+    return { type: 'text', value: `✅ 已导出：${file}` }
   }
 
   if (items.length === 0) {
     saveHistory({ date: new Date().toISOString(), total: 0, byKind: {}, files: 0, toolsUsed: ['static', 'tools'] })
-    return { type: 'text', value: '[OK] No dead code detected!\nMethods used: static analysis + external tools' }
+    return { type: 'text', value: '✅ 未检测到死代码！\n使用的方法：静态分析 + 外部工具' }
   }
 
   saveHistory({ date: new Date().toISOString(), total: items.length, byKind: {}, files: new Set(items.map(i => i.file)).size, toolsUsed: ['static', 'tools'] })
@@ -276,14 +278,14 @@ export const call: LocalCommandCall = async (args) => {
     lines.push(`   📍 ${i.file}:${i.line}`)
     lines.push(`   ℹ️  ${i.reason}`)
   })
-  if (items.length > 30) lines.push(`... ${items.length - 30} more`)
-  lines.push('', 'Fix suggestions:', '  • Delete unused exports', '  • Remove unused dependencies', '  • Consider tree-shaking friendly patterns')
+  if (items.length > 30) lines.push(`... 还有 ${items.length - 30} 个`)
+  lines.push('', '💡 修复建议：', '  • 删除未使用的导出', '  • 移除未使用的依赖', '  • 考虑使用 tree-shaking 友好模式')
   return { type: 'text', value: lines.join('\n') }
 }
 
 const deadCode: Command = {
   type: 'local', name: 'dead-code',
-  description: 'Dead code - static/tools/exports/imports/functions/classes/stats/history/export',
+  description: '死代码检测 - 静态/工具/导出/导入/函数/类/统计/历史/导出',
   aliases: ['/dead-code', '/dead', '/unused'],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

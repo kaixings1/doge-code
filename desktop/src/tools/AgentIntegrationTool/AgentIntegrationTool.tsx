@@ -38,23 +38,23 @@ export const AgentIntegrationTool: Tool = {
         case 'list':
           return listAllAgents()
         case 'listByCategory':
-          if (!category) return { type: 'text', value: '❌ 缺少 category 参数' }
+          if (!category) return { type: 'text', value: ' 缺少 category 参数' }
           return listAgentsByCategory(category)
         case 'get':
-          if (!agentType) return { type: 'text', value: '❌ 缺少 agentType 参数' }
+          if (!agentType) return { type: 'text', value: ' 缺少 agentType 参数' }
           return getAgentInfo(agentType)
         case 'spawn':
-          if (!agentType) return { type: 'text', value: '❌ 缺少 agentType 参数' }
-          if (!task) return { type: 'text', value: '❌ 缺少 task 参数' }
+          if (!agentType) return { type: 'text', value: ' 缺少 agentType 参数' }
+          if (!task) return { type: 'text', value: ' 缺少 task 参数' }
           return spawnAgent(agentType, task, ctx)
         case 'search':
-          if (!query) return { type: 'text', value: '❌ 缺少 query 参数' }
+          if (!query) return { type: 'text', value: ' 缺少 query 参数' }
           return searchAgents(query)
         default:
-          return { type: 'text', value: `❌ 未知操作: ${action}` }
+          return { type: 'text', value: ` 未知操作: ${action}` }
       }
     } catch (err) {
-      return { type: 'text', value: `❌ AgentIntegration 错误: ${err instanceof Error ? err.message : String(err)}` }
+      return { type: 'text', value: ` AgentIntegration 错误: ${err instanceof Error ? err.message : String(err)}` }
     }
   },
 }
@@ -78,7 +78,7 @@ function listAllAgents() {
 function listAgentsByCategory(category: string) {
   const agents = getAgentsByCategory(category as any)
   if (agents.length === 0) {
-    return { type: 'text', value: `❌ 分类 "${category}" 下没有代理` }
+    return { type: 'text', value: ` 分类 "${category}" 下没有代理` }
   }
 
   const lines: string[] = [`# 📂 ${CATEGORY_NAMES[category as keyof typeof CATEGORY_NAMES]} 类代理\n`]
@@ -95,7 +95,7 @@ function listAgentsByCategory(category: string) {
 function getAgentInfo(agentType: string) {
   const agent = getAgentCapability(agentType)
   if (!agent) {
-    return { type: 'text', value: `❌ 代理类型 "${agentType}" 不存在` }
+    return { type: 'text', value: ` 代理类型 "${agentType}" 不存在` }
   }
 
   const lines: string[] = [
@@ -116,7 +116,7 @@ function getAgentInfo(agentType: string) {
 function spawnAgent(agentType: string, task: string, ctx: ToolUseContext) {
   const agent = getAgentCapability(agentType)
   if (!agent) {
-    return { type: 'text', value: `❌ 代理类型 "${agentType}" 不存在` }
+    return { type: 'text', value: ` 代理类型 "${agentType}" 不存在` }
   }
 
   // 构建代理启动信息
@@ -150,10 +150,10 @@ function searchAgents(query: string) {
   )
 
   if (results.length === 0) {
-    return { type: 'text', value: `❌ 没有找到匹配 "${query}" 的代理` }
+    return { type: 'text', value: ` 没有找到匹配 "${query}" 的代理` }
   }
 
-  const lines: string[] = [`# 🔍 搜索 "${query}" 的结果\n`]
+  const lines: string[] = [`#  搜索 "${query}" 的结果\n`]
   lines.push(`找到 ${results.length} 个匹配的代理：\n`)
 
   for (const agent of results) {

@@ -779,7 +779,7 @@ function runLocalTestGeneration(targetPath: string, fw: FrameworkDetection): str
 
   // Validate target is a file
   if (!existsSync(targetFile)) {
-    return `❌ 文件不存在: ${targetPath}`
+    return ` 文件不存在: ${targetPath}`
   }
   const stat = statSync(targetFile)
   if (stat.isDirectory()) {
@@ -790,7 +790,7 @@ function runLocalTestGeneration(targetPath: string, fw: FrameworkDetection): str
 
   // Validate file extension matches framework
   if (!isExtensionCompatible(fileExt, fw.framework)) {
-    return `❌ 文件扩展名 ${fileExt} 与检测到的框架 ${fw.framework} 不兼容\n` +
+    return ` 文件扩展名 ${fileExt} 与检测到的框架 ${fw.framework} 不兼容\n` +
            `   请使用 --framework 指定正确的框架`
   }
 
@@ -800,18 +800,18 @@ function runLocalTestGeneration(targetPath: string, fw: FrameworkDetection): str
     sourceCode = readFileSync(targetFile, 'utf-8')
   } catch (err: unknown) {
     const errMsg = err instanceof Error ? err.message : String(err)
-    return `❌ 无法读取文件: ${errMsg}`
+    return ` 无法读取文件: ${errMsg}`
   }
 
   if (!sourceCode.trim()) {
-    return `❌ 文件为空: ${targetPath}`
+    return ` 文件为空: ${targetPath}`
   }
 
   // Parse exports
   const exports = parseExports(sourceCode, fileExt)
 
   if (exports.length === 0) {
-    lines.push(`⚠️ 未检测到导出项: ${targetPath}`)
+    lines.push(` 未检测到导出项: ${targetPath}`)
     lines.push(`   可能原因: 无 export/pub/def 声明，或使用了不支持的语法模式`)
     lines.push(``)
     lines.push(`回退到 AI prompt 模式...`)
@@ -828,7 +828,7 @@ function runLocalTestGeneration(targetPath: string, fw: FrameworkDetection): str
 
   // Write test file
   lines.push(`📁 目标文件: ${targetFile}`)
-  lines.push(`🔍 框架: ${fw.framework}`)
+  lines.push(` 框架: ${fw.framework}`)
   lines.push(`📋 检测到导出项:`)
   for (const exp of exports) {
     const kindLabel = exp.kind === 'async' ? 'async fn' : exp.kind
@@ -838,7 +838,7 @@ function runLocalTestGeneration(targetPath: string, fw: FrameworkDetection): str
   lines.push(`📝 生成测试文件: ${testFilePath}`)
 
   const writeResult = writeTestFile(testFilePath, testContent)
-  lines.push(`   ${writeResult.success ? '✅' : '⚠️'} ${writeResult.message}`)
+  lines.push(`   ${writeResult.success ? '' : ''} ${writeResult.message}`)
 
   if (!writeResult.success && writeResult.message.includes('已存在')) {
     lines.push(``)
@@ -887,9 +887,9 @@ function runLocalTestGeneration(targetPath: string, fw: FrameworkDetection): str
   lines.push(``)
   lines.push(`---`)
   if (result.success) {
-    lines.push(`✅ 测试生成完成: ${result.passes} passed, ${result.failures} failed`)
+    lines.push(` 测试生成完成: ${result.passes} passed, ${result.failures} failed`)
   } else {
-    lines.push(`⚠️ 测试仍有失败: ${result.passes} passed, ${result.failures} failed`)
+    lines.push(` 测试仍有失败: ${result.passes} passed, ${result.failures} failed`)
     lines.push(`   请查看上方输出手动修复，或运行 /test-gen ${targetPath} --run 查看详情`)
   }
 
@@ -925,12 +925,12 @@ function handleDirectoryTarget(dirPath: string, fw: FrameworkDetection): string 
   scanDir(absDir)
 
   if (sourceFiles.length === 0) {
-    return `⚠️ 目录中未找到可测试的源文件: ${dirPath}`
+    return ` 目录中未找到可测试的源文件: ${dirPath}`
   }
 
   const lines: string[] = []
   lines.push(`📂 目录模式: 发现 ${sourceFiles.length} 个源文件`)
-  lines.push(`🔍 框架: ${fw.framework}`)
+  lines.push(` 框架: ${fw.framework}`)
   lines.push(``)
 
   let generated = 0
@@ -993,7 +993,7 @@ function isExtensionCompatible(fileExt: string, framework: string): boolean {
 
 function formatTestResult(result: TestResult): string {
   const lines: string[] = []
-  const status = result.success ? '✅ 通过' : '❌ 失败'
+  const status = result.success ? ' 通过' : ' 失败'
   lines.push(`   ${status} | ${result.passes} passed, ${result.failures} failed | ${result.duration}ms`)
   // Show first few lines of output for context
   const outputLines = result.output.split('\n').filter(l => l.trim())
@@ -1151,7 +1151,7 @@ function renderHelp(): string {
     '  --framework <name>  强制指定框架: vitest / jest / pytest / go / cargo',
     '  --detailed          显示详细测试输出',
     '  --json              JSON 格式输出',
-    '📖 用法:   --help              显示帮助',
+    ' 用法:   --help              显示帮助',
     '',
     '示例:',
     '  /test-gen src/utils/helper.ts     为指定文件生成测试并运行',
@@ -1170,7 +1170,7 @@ function renderHelp(): string {
     '  2. 解析目标文件的导出项（函数、类、常量）',
     '  3. 根据模板生成测试文件到同目录',
     '  4. 运行测试验证',
-    '❌ 错误:   5. 失败时尝试自动修复（最多 2 轮）',
+    ' 错误:   5. 失败时尝试自动修复（最多 2 轮）',
   ].join('\n')
 }
 
@@ -1258,7 +1258,7 @@ export const call: LocalCommandCall = async (args) => {
       const fw = detectFramework(target)
       const fwInfo = fw.framework !== 'unknown'
         ? `\n\n📊 检测到框架: ${fw.framework}\n   测试命令: ${fw.testCommand}\n   项目根目录: ${fw.projectRoot}`
-        : '\n\n⚠️ 未检测到测试框架'
+        : '\n\n 未检测到测试框架'
       return { type: 'text', value: renderHelp() + fwInfo }
     } catch {
       return { type: 'text', value: renderHelp() }
@@ -1279,7 +1279,7 @@ export const call: LocalCommandCall = async (args) => {
   try {
     fw = detectFramework(target)
   } catch {
-    return { type: 'text', value: `❌ 无法访问路径: ${target}` }
+    return { type: 'text', value: ` 无法访问路径: ${target}` }
   }
 
   if (frameworkOverride) {
@@ -1311,7 +1311,7 @@ export const call: LocalCommandCall = async (args) => {
       }
     }
 
-    const status = result.success ? '✅ 测试通过' : '❌ 测试失败'
+    const status = result.success ? ' 测试通过' : ' 测试失败'
     const summary = `${status} | ${result.passes} passed, ${result.failures} failed | ${result.duration}ms`
     const output = detailed ? `\n\n${result.output}` : ''
     return { type: 'text', value: summary + output }

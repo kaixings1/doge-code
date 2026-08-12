@@ -24,7 +24,7 @@ function renderHelp(): string {
     '  --file <路径>       指定文件（rename/type-fix 必需）',
     '  --dry-run           预览变更，不实际修改',
     '  --json              JSON 格式输出',
-    '📖 用法:   --help              显示帮助',
+    ' 用法:   --help              显示帮助',
     '',
     '示例:',
     '  /refactor rename oldName newName --file src/app.ts',
@@ -101,7 +101,7 @@ function formatRefactorResult(result: RefactorResult, detailed: boolean): string
   lines.push('')
 
   if (result.errors.length > 0) {
-    lines.push('❌ 错误:')
+    lines.push(' 错误:')
     result.errors.forEach(err => {
       lines.push(`  ${err}`)
     })

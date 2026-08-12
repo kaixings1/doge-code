@@ -255,7 +255,7 @@ function buildFinalOutput(subTasks: SubTask[], evaluation: { achieved: boolean; 
   const lines: string[] = []
   lines.push(`# 循环执行结果`)
   lines.push('')
-  lines.push(`状态: ${evaluation.achieved ? '✅ 成功' : '❌ 未完成'}`)
+  lines.push(`状态: ${evaluation.achieved ? ' 成功' : ' 未完成'}`)
   lines.push(`原因: ${evaluation.reason}`)
   lines.push('')
   lines.push('## 子任务执行详情')

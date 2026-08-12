@@ -13,7 +13,7 @@ export const call: LocalCommandCall = async (args, context) => {
 
 创建任务并自动让 AI 执行（无需守在终端前）。
 
-📖 **用法**
+ **用法**
 ┌────────────────────────────────────────────────────────┐
 │ /task <任务描述>        创建任务并自动开始执行           │
 │ /task-create list       查看/管理所有任务               │

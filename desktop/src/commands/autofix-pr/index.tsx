@@ -30,7 +30,7 @@ export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
         setPrNumber(prev => prev.slice(0, -1))
       }
     }
-  })  // ✅ 补全闭合括号
+  })  //  补全闭合括号
 
   return (
     <Box flexDirection="column" padding={1}>

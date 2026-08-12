@@ -52,30 +52,30 @@ export const call: LocalCommandCall = async (args) => {
   const parts = s.split(/\s+/)
   const cmd = parts[0]?.toLowerCase() || 'help'
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Database Migration', '', '📖 Usage: ', '  /db-migrate status                 Show migration status', '  /db-migrate pending               Show pending migrations', '  /db-migrate up                    Apply all pending', '  /db-migrate down [N]              Rollback N migrations', '  /db-migrate create <name>         Create new migration', '  /db-migrate apply <name>          Apply specific migration', '  /db-migrate rollback <name>       Rollback specific migration', '  /db-migrate verify                Verify migration integrity', '  /db-migrate seed                  Run seed data', '  /db-migrate reset                 Reset all migrations', '  /db-migrate config                Show/edit config', '  /db-migrate history               Migration history', '  /db-migrate generate <sql>        Generate from SQL', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['🗄️ 数据库迁移', '', '📖 用法：', '  /db-migrate status                 查看迁移状态', '  /db-migrate pending                 查看待执行迁移', '  /db-migrate up                      执行所有待执行迁移', '  /db-migrate down [N]                回滚 N 个迁移', '  /db-migrate create &lt;名称&gt;          创建新迁移', '  /db-migrate apply &lt;名称&gt;         执行指定迁移', '  /db-migrate rollback &lt;名称&gt;      回滚指定迁移', '  /db-migrate verify                  验证迁移完整性', '  /db-migrate seed                    运行种子数据', '  /db-migrate reset                   重置所有迁移', '  /db-migrate config                  查看/编辑配置', '  /db-migrate history                 迁移历史', '  /db-migrate generate &lt;sql&gt;       从 SQL 生成', ''].join('\n') }
 
   const config = loadConfig()
   const migrations = loadMigrations()
 
   if (cmd === 'status') {
     const applied = migrations.filter(m => m.applied).length
-    return { type: 'text', value: ['Migration Status:', '=================', '', 'Adapter: ' + config.adapter, 'Connection: ' + config.connection, 'Total: ' + migrations.length, 'Applied: ' + applied, 'Pending: ' + (migrations.length - applied), 'Directory: ' + config.migrationsDir].join('\n') }
+    return { type: 'text', value: ['📊 迁移状态：', '═════════════', '', '适配器：' + config.adapter, '连接：' + config.connection, '总计：' + migrations.length, '已应用：' + applied, '待执行：' + (migrations.length - applied), '目录：' + config.migrationsDir].join('\n') }
   }
 
   if (cmd === 'pending') {
     const pending = migrations.filter(m => !m.applied)
-    if (pending.length === 0) return { type: 'text', value: '[OK] No pending migrations' }
-    const lines = ['Pending Migrations:', '=====================', '']
+    if (pending.length === 0) return { type: 'text', value: '✅ 无待执行迁移' }
+    const lines = ['⏳ 待执行迁移：', '═══════════════════', '']
     pending.forEach(m => lines.push('  ' + m.id + ' - ' + m.name))
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'up' || cmd === 'migrate') {
     const pending = migrations.filter(m => !m.applied)
-    if (pending.length === 0) return { type: 'text', value: '[OK] No pending migrations' }
-    const lines = ['Applying ' + pending.length + ' migrations:', '']
+    if (pending.length === 0) return { type: 'text', value: '✅ 无待执行迁移' }
+    const lines = ['✅ 正在执行 ' + pending.length + ' 个迁移：', '']
     pending.forEach(m => {
-      lines.push('[OK] Applied: ' + m.id + ' (' + m.name + ')')
+      lines.push('✅ 已执行：' + m.id + '（' + m.name + '）')
       m.applied = true
       m.appliedAt = new Date().toISOString()
     })
@@ -85,11 +85,11 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'down' || cmd === 'rollback') {
     const n = parseInt(parts[1]) || 1
     const applied = migrations.filter(m => m.applied)
-    if (applied.length === 0) return { type: 'text', value: 'No migrations to rollback' }
+    if (applied.length === 0) return { type: 'text', value: 'ℹ️ 无可回滚迁移' }
     const toRollback = applied.slice(-n)
-    const lines = ['Rolling back ' + toRollback.length + ' migrations:', '']
+    const lines = ['🔄 正在回滚 ' + toRollback.length + ' 个迁移：', '']
     toRollback.forEach(m => {
-      lines.push('[OK] Rolled back: ' + m.id + ' (' + m.name + ')')
+      lines.push('✅ 已回滚：' + m.id + '（' + m.name + '）')
       m.applied = false
     })
     return { type: 'text', value: lines.join('\n') }
@@ -102,79 +102,79 @@ export const call: LocalCommandCall = async (args) => {
     const content = '-- Migration: ' + name + '\n-- Created: ' + new Date().toISOString() + '\n\n-- UP\n-- Add your forward migration SQL here\n\n-- DOWN\n-- Add your rollback SQL here\n'
     if (!existsSync(MIGRATIONS_DIR)) mkdirSync(MIGRATIONS_DIR, { recursive: true })
     writeFileSync(join(MIGRATIONS_DIR, filename), content, 'utf-8')
-    return { type: 'text', value: '[OK] Created: ' + MIGRATIONS_DIR + '/' + filename }
+    return { type: 'text', value: '✅ 已创建：' + MIGRATIONS_DIR + '/' + filename }
   }
 
   if (cmd === 'apply') {
     const name = parts.slice(1).join(' ')
     const migration = migrations.find(m => m.id.includes(name) || m.name.includes(name))
-    if (!migration) return { type: 'text', value: 'Migration not found: ' + name }
-    if (migration.applied) return { type: 'text', value: 'Already applied: ' + migration.id }
+    if (!migration) return { type: 'text', value: '❌ 未找到迁移：' + name }
+    if (migration.applied) return { type: 'text', value: '⚠️ 已执行过：' + migration.id }
     migration.applied = true
     migration.appliedAt = new Date().toISOString()
-    return { type: 'text', value: '[OK] Applied: ' + migration.id }
+    return { type: 'text', value: '✅ 已执行：' + migration.id }
   }
 
   if (cmd === 'rollback') {
     const name = parts.slice(1).join(' ')
     const migration = migrations.find(m => m.id.includes(name) || m.name.includes(name))
-    if (!migration) return { type: 'text', value: 'Migration not found: ' + name }
+    if (!migration) return { type: 'text', value: '❌ 未找到迁移：' + name }
     migration.applied = false
     migration.appliedAt = undefined
-    return { type: 'text', value: '[OK] Rolled back: ' + migration.id }
+    return { type: 'text', value: '✅ 已回滚：' + migration.id }
   }
 
   if (cmd === 'verify') {
-    const lines = ['Migration Verification:', '=======================', '']
+    const lines = ['🔍 迁移验证：', '═══════════════', '']
     let issues = 0
     migrations.forEach(m => {
-      if (!m.up) { lines.push('[WARN] ' + m.id + ': no UP migration'); issues++ }
-      if (!m.down) { lines.push('[WARN] ' + m.id + ': no DOWN migration'); issues++ }
+      if (!m.up) { lines.push('⚠️ ' + m.id + '：缺少 UP 迁移'); issues++ }
+      if (!m.down) { lines.push('⚠️ ' + m.id + '：缺少 DOWN 迁移'); issues++ }
     })
-    if (issues === 0) lines.push('[OK] All migrations valid')
-    else lines.push('Issues: ' + issues)
+    if (issues === 0) lines.push('✅ 所有迁移有效')
+    else lines.push('问题数：' + issues)
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'seed') {
-    return { type: 'text', value: 'Run seed files from migrations/seeds/ directory' }
+    return { type: 'text', value: '📂 在 migrations/seeds/ 目录中运行种子数据文件' }
   }
 
   if (cmd === 'reset') {
     migrations.forEach(m => { m.applied = false; m.appliedAt = undefined })
-    return { type: 'text', value: '[OK] Reset all migrations' }
+    return { type: 'text', value: '✅ 已重置所有迁移' }
   }
 
   if (cmd === 'config') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: '[OK] ' + key + ' = ' + value } }
-    return { type: 'text', value: 'Unknown config: ' + key + '. Keys: adapter, connection, migrationsDir, tableName' }
+    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: '✅ ' + key + ' = ' + value } }
+    return { type: 'text', value: '❌ 未知配置：' + key + '。可用键：adapter, connection, migrationsDir, tableName' }
   }
 
   if (cmd === 'history') {
-    const lines = ['Migration History:', '==================', '']
-    migrations.filter(m => m.applied).forEach(m => lines.push(m.id + ' - applied ' + (m.appliedAt || 'unknown')))
-    return { type: 'text', value: lines.join('\n') || 'No migration history' }
+    const lines = ['📅 迁移历史：', '═════════════', '']
+    migrations.filter(m => m.applied).forEach(m => lines.push(m.id + ' - 已应用 ' + (m.appliedAt || '未知')))
+    return { type: 'text', value: lines.join('\n') || 'ℹ️ 暂无迁移历史' }
   }
 
   if (cmd === 'generate') {
     const sql = parts.slice(1).join(' ')
-    if (!sql) return { type: 'text', value: 'Usage: /db-migrate generate <sql>' }
+    if (!sql) return { type: 'text', value: '📖 用法：/db-migrate generate &lt;SQL语句&gt;' }
     const timestamp = Date.now()
     const filename = timestamp + '_generated.sql'
     if (!existsSync(MIGRATIONS_DIR)) mkdirSync(MIGRATIONS_DIR, { recursive: true })
     writeFileSync(join(MIGRATIONS_DIR, filename), '-- UP\n' + sql + '\n\n-- DOWN\n-- Add rollback SQL\n', 'utf-8')
-    return { type: 'text', value: '[OK] Generated: ' + MIGRATIONS_DIR + '/' + filename }
+    return { type: 'text', value: '✅ 已生成：' + MIGRATIONS_DIR + '/' + filename }
   }
 
-  return { type: 'text', value: 'Unknown: ' + cmd }
+  return { type: 'text', value: '❌ 未知命令：' + cmd }
 }
 
 const dbMigrate: Command = {
   type: 'local', name: 'db-migrate',
-  description: 'DB migrations - status/up/down/create/apply/rollback/verify/reset/history/generate',
+  description: '数据库迁移 - 状态/执行/回滚/创建/应用/验证/重置/历史/生成',
   aliases: '/db-migrate, /migrate, /dbm'.split(','),
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

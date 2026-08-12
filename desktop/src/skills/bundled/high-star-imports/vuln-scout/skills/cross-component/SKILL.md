@@ -53,9 +53,9 @@ grep -E "127\.0\.0\.1:|localhost:" docker-compose.yml supervisord.conf
 
 | Service | Port | Exposed | Language | Entry Points |
 |---------|------|---------|----------|--------------|
-| frontend | 1337 | ✅ External | Next.js | / |
-| backend | 3000 | ❌ Internal | Flask | /api/* |
-| redis | 6379 | ❌ Internal | - | - |
+| frontend | 1337 |  External | Next.js | / |
+| backend | 3000 |  Internal | Flask | /api/* |
+| redis | 6379 |  Internal | - | - |
 
 ## Network Diagram
 

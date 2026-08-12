@@ -154,14 +154,14 @@ function generateMonitorDashboard(systemInfo: ReturnType<typeof getSystemInfo>) 
   systemInfo.cpuUsage.forEach((usage, i) => {
     dashboard += `  Core ${i.toString().padStart(2)}: [${cpuBar(usage)}] ${usage}%\n`
   })
-  dashboard += `\n⏱️  运行时间：${systemInfo.uptime}\n`
+  dashboard += `\n⏱  运行时间：${systemInfo.uptime}\n`
   dashboard += `💡 提示：运行 /tui monitor --watch 可进入动态监控模式（需终端支持）`
   return dashboard
 }
 
 // 终端诊断
 function runDoctor(): string[] {
-  const results: string[] = ['🔍 TUI 环境诊断报告', '']
+  const results: string[] = [' TUI 环境诊断报告', '']
   // 颜色支持
   const colorDepth = process.env.COLORTERM || (process.env.TERM === 'xterm-256color' ? '256' : '16')
   results.push(`✓ 颜色深度：${colorDepth} (${parseInt(colorDepth) >= 256 ? '真彩色支持' : '基础支持'})`)
@@ -170,7 +170,7 @@ function runDoctor(): string[] {
   results.push(`${fullscreen ? '✓' : '✗'} 全屏 alternate screen：${fullscreen ? '可用' : '不可用（需设置 CLAUDE_CODE_NO_FLICKER=1）'}`)
   // 鼠标支持（检测环境变量或终端类型）
   const mouseSupport = process.env.TERM_PROGRAM?.includes('Apple_Terminal') || process.env.TERM?.includes('xterm') || process.env.TERM?.includes('tmux')
-  results.push(`${mouseSupport ? '✓' : '⚠️'} 鼠标支持：${mouseSupport ? '已检测到' : '未知（尝试启用）'}`)
+  results.push(`${mouseSupport ? '✓' : ''} 鼠标支持：${mouseSupport ? '已检测到' : '未知（尝试启用）'}`)
   // 字体兼容
   results.push(`✓ 当前字体：${tuiConfig.fontFamily}`)
   // 配置状态
@@ -286,7 +286,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
               updateConfig({ fontSize: size })
               resultMsg = `字体大小已更改为：${size}px`
             } else {
-              resultMsg = '❌ 错误: 字体大小须在 8-24 之间'
+              resultMsg = ' 错误: 字体大小须在 8-24 之间'
             }
             break
           case 'rows':
@@ -295,7 +295,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
               updateConfig({ rows })
               resultMsg = `行数已更改为：${rows}`
             } else {
-              resultMsg = '❌ 错误: 行数须在 20-200'
+              resultMsg = ' 错误: 行数须在 20-200'
             }
             break
           case 'cols':
@@ -304,7 +304,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
               updateConfig({ cols })
               resultMsg = `列数已更改为：${cols}`
             } else {
-              resultMsg = '❌ 错误: 列数须在 20-200'
+              resultMsg = ' 错误: 列数须在 20-200'
             }
             break
           case 'cursor':
@@ -312,7 +312,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
               updateConfig({ cursor: value })
               resultMsg = `光标样式已更改为：${value}`
             } else {
-              resultMsg = '❌ 错误: 光标样式须为 block, underline 或 bar'
+              resultMsg = ' 错误: 光标样式须为 block, underline 或 bar'
             }
             break
           case 'blink':
@@ -320,7 +320,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
               updateConfig({ blink: value === 'true' })
               resultMsg = `光标闪烁已${value === 'true' ? '启用' : '禁用'}`
             } else {
-              resultMsg = '❌ 错误: blink 须为 true 或 false'
+              resultMsg = ' 错误: blink 须为 true 或 false'
             }
             break
           case 'layout':
@@ -328,7 +328,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
               updateConfig({ layout: value })
               resultMsg = `布局模式已更改为：${value}`
             } else {
-              resultMsg = '❌ 错误: layout 须为 compact 或 full'
+              resultMsg = ' 错误: layout 须为 compact 或 full'
             }
             break
           default:
@@ -379,17 +379,17 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       const sessionName = parts[2]
       if (subcmd === 'save' && sessionName) {
         if (saveSession(sessionName)) {
-          onDone(`✅ 会话已保存：${sessionName}`, { display: 'system' })
+          onDone(` 会话已保存：${sessionName}`, { display: 'system' })
         } else {
-          onDone(`❌ 保存失败，请检查权限`, { display: 'system' })
+          onDone(` 保存失败，请检查权限`, { display: 'system' })
         }
       } else if (subcmd === 'load' && sessionName) {
         const saved = loadSession(sessionName)
         if (saved) {
           updateConfig(saved)
-          onDone(`✅ 已加载会话：${sessionName}\n当前配置：主题=${tuiConfig.theme}, ${tuiConfig.cols}x${tuiConfig.rows}`, { display: 'system' })
+          onDone(` 已加载会话：${sessionName}\n当前配置：主题=${tuiConfig.theme}, ${tuiConfig.cols}x${tuiConfig.rows}`, { display: 'system' })
         } else {
-          onDone(`❌ 会话不存在：${sessionName}`, { display: 'system' })
+          onDone(` 会话不存在：${sessionName}`, { display: 'system' })
         }
       } else if (subcmd === 'list') {
         const sessions = listSessions()
@@ -414,7 +414,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
     // shortcuts 快捷键帮助（新增）────────────────────
     case 'shortcuts': {
       onDone(systemMessage([
-        '⌨️ TUI 常用快捷键',
+        '⌨ TUI 常用快捷键',
         '',
         'Ctrl+C   – 中断当前任务',
         'Ctrl+L   – 清屏',
@@ -456,7 +456,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
     // help 帮助面板────────────────────────────────
     case 'help':
       onDone(systemMessage([
-        '📖 /tui 命令参考',
+        ' /tui 命令参考',
         '',
         '  /tui start             启用 TUI 模式',
         '  /tui stop              禁用 TUI 模式',
@@ -469,7 +469,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
         '  /tui shortcuts         快捷键列表',
         '  /tui sysinfo           详细系统信息面板',
         '  /tui clear             清屏',
-        '📖 用法:   /tui help              显示本帮助',
+        ' 用法:   /tui help              显示本帮助',
         '',
         '💡 提示：主题预设包含 catppuccin-mocha, dracula, gruvbox-dark, nord 等',
       ]), { display: 'system' })
@@ -483,7 +483,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
         '',
       ]
       if (isUnknown) {
-        lines.push(`⚠️ 未知命令：${operation}`, '输入 /tui help 查看帮助', '')
+        lines.push(` 未知命令：${operation}`, '输入 /tui help 查看帮助', '')
       }
       lines.push(`  状态：${tuiConfig.active ? (isFullscreen ? '全屏运行中' : '运行中') : '已停止'}`)
       lines.push(`  主题：${tuiConfig.theme}${tuiConfig.userThemeOverride ? ' 🔒' : ''}`)

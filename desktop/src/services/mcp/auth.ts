@@ -773,7 +773,7 @@ async function performMCPXaaAuth(
           clearIdpIdToken(idp.issuer)
           logMCPDebug(
             serverName,
-            '❌ 错误: XAA: 令牌交换失败后已清除缓存的 id_token',
+            ' 错误: XAA: 令牌交换失败后已清除缓存的 id_token',
           )
         }
       } else if (

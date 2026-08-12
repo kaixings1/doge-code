@@ -855,7 +855,7 @@ export function getProjectMcpConfigsFromCwd(): {
   // .mcp.json 文件不存在是预期情况，但格式错误的文件应报告错误
   if (!config) {
     const nonMissingErrors = errors.filter(
-      e => !e.message.startsWith('❌ 错误: ❌ 错误: ❌ 错误: MCP 配置文件未找到'),
+      e => !e.message.startsWith(' 错误:  错误:  错误: MCP 配置文件未找到'),
     )
     if (nonMissingErrors.length > 0) {
       logForDebugging(
@@ -927,7 +927,7 @@ export function getMcpConfigsByScope(
         // 父目录中缺少 .mcp.json 是预期情况，但格式错误的文件应报告错误
         if (!config) {
           const nonMissingErrors = errors.filter(
-            e => !e.message.startsWith('❌ 错误: ❌ 错误: ❌ 错误: MCP 配置文件未找到'),
+            e => !e.message.startsWith(' 错误:  错误:  错误: MCP 配置文件未找到'),
           )
           if (nonMissingErrors.length > 0) {
             logForDebugging(
@@ -1000,7 +1000,7 @@ export function getMcpConfigsByScope(
       // 缺少企业配置文件是预期情况，但格式错误的文件应报告错误
       if (!config) {
         const nonMissingErrors = errors.filter(
-          e => !e.message.startsWith('❌ 错误: ❌ 错误: ❌ 错误: MCP 配置文件未找到'),
+          e => !e.message.startsWith(' 错误:  错误:  错误: MCP 配置文件未找到'),
         )
         if (nonMissingErrors.length > 0) {
           logForDebugging(
@@ -1416,7 +1416,7 @@ export function parseMcpConfigFromFilePath(params: {
           {
             file: filePath,
             path: '',
-            message: `❌ 错误: ❌ 错误: ❌ 错误: MCP 配置文件未找到: ${filePath}`,
+            message: ` 错误:  错误:  错误: MCP 配置文件未找到: ${filePath}`,
             suggestion: '检查文件路径是否正确',
             mcpErrorMetadata: {
               scope,

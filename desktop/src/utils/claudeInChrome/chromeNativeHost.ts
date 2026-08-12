@@ -168,13 +168,13 @@ class ChromeNativeHost {
 
     await new Promise<void>((resolve, reject) => {
       this.server!.listen(this.socketPath!, () => {
-        log('⏳ Socket 服务器正在监听连接')
+        log(' Socket 服务器正在监听连接')
         this.running = true
         resolve()
       })
 
       this.server!.on('error', err => {
-        log('❌ 错误: Socket 服务器错误：', err)
+        log(' 错误: Socket 服务器错误：', err)
         reject(err)
       })
     })

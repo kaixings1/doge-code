@@ -116,7 +116,7 @@ const BASE_QUESTION = '您想通过定时远程代理执行什么操作？'
  */
 function formatSetupNotes(notes: string[]): string {
   const items = notes.map(n => `- ${n}`).join('\n')
-  return `⚠ 提醒：\n${items}`
+  return ` 提醒：\n${items}`
 }
 
 async function getCurrentRepoHttpsUrl(): Promise<string | null> {

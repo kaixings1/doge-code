@@ -159,7 +159,7 @@ export function CodeFormatter({ theme, config, currentFilePath, cwd, onFormat, o
             background: status === 'formatting' ? '#E5C07B33' : status === 'success' ? c.accentDim : status === 'error' ? `${c.errorText}20` : c.bgPanel,
             color: status === 'formatting' ? '#E5C07B' : status === 'success' ? c.accent : status === 'error' ? c.errorText : c.textMuted,
           }}>
-            {status === 'formatting' ? '⏳ 格式化中...' : status === 'success' ? '✓ 完成' : status === 'error' ? '✗ 失败' : displayTool}
+            {status === 'formatting' ? ' 格式化中...' : status === 'success' ? '✓ 完成' : status === 'error' ? '✗ 失败' : displayTool}
           </span>
         </div>
         {configFileFound && (

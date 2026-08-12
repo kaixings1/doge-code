@@ -103,7 +103,7 @@ const CATEGORY_LABELS: Record<FindingCategory, string> = {
 
 const CATEGORY_ICONS: Record<FindingCategory, string> = {
   security: '🔒',
-  performance: '⚡',
+  performance: '',
   quality: '✨',
   refactor: '🔧',
   style: '🎨',

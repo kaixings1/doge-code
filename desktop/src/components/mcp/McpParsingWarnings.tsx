@@ -113,7 +113,7 @@ function McpConfigErrorSection(t0) {
 }
 function _temp2(warning, i_0) {
   const serverName_0 = warning.mcpErrorMetadata?.serverName;
-  return <Box key={`warning-${i_0}`}><Text><Text dimColor={true}>└ </Text><Text color="warning">⚠️ 注意: [警告]</Text><Text dimColor={true}>{" "}{serverName_0 && `[${serverName_0}] `}{warning.path && warning.path !== "" ? `${warning.path}: ` : ""}{warning.message}</Text></Text></Box>;
+  return <Box key={`warning-${i_0}`}><Text><Text dimColor={true}>└ </Text><Text color="warning"> 注意: [警告]</Text><Text dimColor={true}>{" "}{serverName_0 && `[${serverName_0}] `}{warning.path && warning.path !== "" ? `${warning.path}: ` : ""}{warning.message}</Text></Text></Box>;
 }
 function _temp(error, i) {
   const serverName = error.mcpErrorMetadata?.serverName;

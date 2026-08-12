@@ -7,7 +7,7 @@ import * as path from 'path'
 import { spawn } from 'child_process'
 import { fileURLToPath } from 'url'
 //process.env.CLAUDE_CODE_SIMPLE=1
-// 🔴 清除 PATH 中的 MSYS2/Git bash 目录，防止 cmd.exe 子进程调用 MSYS2 的 grep/find 等程序触发 fork 卡死
+//  清除 PATH 中的 MSYS2/Git bash 目录，防止 cmd.exe 子进程调用 MSYS2 的 grep/find 等程序触发 fork 卡死
 process.env.PATH = process.env.PATH?.split(';').filter(p => !/msys2/i.test(p) && !/git\\bin/i.test(p) && !/git\\usr\\bin/i.test(p) && !/^F:\\bin$/i.test(p)).join(';')
 // Shell 配置：保留 bash，通过 shim 拦截有问题的工具（grep/find/rg）
 // 将 .tools/ 加入 PATH 前端，确保安全 shim 优先于 MSYS2 工具

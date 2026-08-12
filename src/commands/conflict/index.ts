@@ -73,37 +73,37 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'help' || cmd === '') {
     return { type: 'text', value: [
-      'Merge Conflict Resolver', '', '📖 Usage: ',
-      '  /conflict list                List all conflicts',
-      '  /conflict show <file>         Show conflict details',
-      '  /conflict ours <file>         Resolve with ours',
-      '  /conflict theirs <file>       Resolve with theirs',
-      '  /conflict both <file>         Keep both sides',
-      '  /conflict resolve-all <s>     Resolve all (ours/theirs/both)',
-      '  /conflict status             Git merge status',
-      '  /conflict abort              Abort merge',
-      '  /conflict continue           Continue merge after resolution',
+      '🔀 合并冲突解决器', '', '📖 用法：',
+      '  /conflict list               列出所有冲突',
+      '  /conflict show <文件>        查看冲突详情',
+      '  /conflict ours <文件>        使用我们的版本',
+      '  /conflict theirs <文件>      使用对方的版本',
+      '  /conflict both <文件>        保留两边',
+      '  /conflict resolve-all <策略>  全部解决 (ours/theirs/both)',
+      '  /conflict status             Git 合并状态',
+      '  /conflict abort              中止合并',
+      '  /conflict continue           继续合并',
     ].join('\n') }
   }
 
   if (cmd === 'list' || cmd === 'status') {
     const conflicts = findConflicts()
-    if (conflicts.length === 0) return { type: 'text', value: '[OK] No merge conflicts found!' }
-    const lines = ['Merge Conflicts (' + conflicts.length + '):', '====================', '']
-    conflicts.forEach(c => lines.push(c.file + ' (lines ' + c.lineStart + '-' + c.lineEnd + ', ' + c.ours.length + ' vs ' + c.theirs.length + ' lines)'))
+    if (conflicts.length === 0) return { type: 'text', value: '✅ 未发现合并冲突' }
+    const lines = ['🔀 合并冲突（' + conflicts.length + '）：', '══════════════════', '']
+    conflicts.forEach(c => lines.push(c.file + ' (行 ' + c.lineStart + '-' + c.lineEnd + ', ' + c.ours.length + ' vs ' + c.theirs.length + ' 行)'))
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'show') {
     const file = parts[1]
-    if (!file) return { type: 'text', value: 'Usage: /conflict show <file>' }
+    if (!file) return { type: 'text', value: '📖 用法：/conflict show <文件>' }
     const conflicts = findConflicts().filter(c => c.file === file || c.file.endsWith(file))
-    if (conflicts.length === 0) return { type: 'text', value: 'No conflicts in: ' + file }
-    const lines = ['Conflicts in ' + file + ':', '====================', '']
+    if (conflicts.length === 0) return { type: 'text', value: '⚠️ ' + file + ' 中无冲突' }
+    const lines = ['📋 ' + file + ' 中的冲突：', '════════════════════════', '']
     conflicts.forEach((c, i) => {
-      lines.push('Conflict #' + (i + 1) + ' (lines ' + c.lineStart + '-' + c.lineEnd + '):')
-      lines.push('--- OURS ---'); c.ours.forEach(l => lines.push('  + ' + l))
-      lines.push('--- THEIRS ---'); c.theirs.forEach(l => lines.push('  - ' + l))
+      lines.push('冲突 #' + (i + 1) + ' (行 ' + c.lineStart + '-' + c.lineEnd + ')：')
+      lines.push('--- 我们的版本 ---'); c.ours.forEach(l => lines.push('  + ' + l))
+      lines.push('--- 对方版本 ---'); c.theirs.forEach(l => lines.push('  - ' + l))
       lines.push('')
     })
     return { type: 'text', value: lines.join('\n') }
@@ -111,36 +111,36 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'ours' || cmd === 'theirs' || cmd === 'both') {
     const file = parts[1]
-    if (!file) return { type: 'text', value: 'Usage: /conflict ' + cmd + ' <file>' }
+    if (!file) return { type: 'text', value: '📖 用法：/conflict ' + cmd + ' <文件>' }
     const resolved = resolveConflict(file, cmd as 'ours' | 'theirs' | 'both')
-    return { type: 'text', value: '[OK] Resolved ' + resolved + ' conflicts in ' + file + ' using: ' + cmd }
+    return { type: 'text', value: '✅ 已解决 ' + resolved + ' 个冲突（策略：' + cmd + '）' }
   }
 
   if (cmd === 'resolve-all') {
     const strategy = (parts[1] as 'ours' | 'theirs' | 'both') || 'ours'
     const conflicts = findConflicts()
-    if (conflicts.length === 0) return { type: 'text', value: '[OK] No conflicts to resolve' }
+    if (conflicts.length === 0) return { type: 'text', value: '✅ 无冲突需要解决' }
     let total = 0
     conflicts.forEach(c => { total += resolveConflict(c.file, strategy) })
-    return { type: 'text', value: '[OK] Resolved ' + total + ' conflicts using: ' + strategy }
+    return { type: 'text', value: '✅ 已解决 ' + total + ' 个冲突（策略：' + strategy + '）' }
   }
 
   if (cmd === 'abort') {
-    try { execSync('git merge --abort', { stdio: 'ignore' }); return { type: 'text', value: '[OK] Merge aborted' } }
-    catch { return { type: 'text', value: '[ERROR] Abort failed' } }
+    try { execSync('git merge --abort', { stdio: 'ignore' }); return { type: 'text', value: '✅ 合并已中止' } }
+    catch { return { type: 'text', value: '❌ 中止失败' } }
   }
 
   if (cmd === 'continue') {
-    try { execSync('git commit --no-edit', { stdio: 'ignore' }); return { type: 'text', value: '[OK] Merge continued' } }
-    catch { return { type: 'text', value: '[ERROR] Continue failed' } }
+    try { execSync('git commit --no-edit', { stdio: 'ignore' }); return { type: 'text', value: '✅ 合并继续' } }
+    catch { return { type: 'text', value: '❌ 继续失败' } }
   }
 
-  return { type: 'text', value: 'Unknown: ' + cmd }
+  return { type: 'text', value: '❌ 未知命令：' + cmd }
 }
 
 const conflict: Command = {
   type: 'local', name: 'conflict',
-  description: 'Merge conflicts - list/show/resolve (ours/theirs/both)/abort/continue',
+  description: '合并冲突 - 列出/显示/解决(ours/theirs/both)/中止/继续',
   aliases: ['/conflict', '/merge'], supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }

@@ -94,10 +94,10 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
         setLspStatus(`LSP: ${result.serverName || langId} 已连接`)
         setTimeout(() => setLspStatus(''), 3000)
       } else {
-        setLspStatus(`❌ 错误: LSP 启动失败: ${result?.error || ''}`)
+        setLspStatus(` 错误: LSP 启动失败: ${result?.error || ''}`)
       }
     } catch {
-      setLspStatus('❌ 错误: LSP 启动失败')
+      setLspStatus(' 错误: LSP 启动失败')
     }
   }, [])
 
@@ -508,7 +508,7 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
         <button onClick={toggleColumnSelect} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: columnSelectMode ? c.accentDim : 'transparent', color: c.text, cursor: 'pointer', fontSize: '9px' }} title="列选择模式 (Alt+Shift+拖拽)">▦ 列选</button>
         <button onClick={() => setShowOutline(p => !p)} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: showOutline ? c.accentDim : 'transparent', color: c.text, cursor: 'pointer', fontSize: '9px' }} title="切换符号大纲 (Ctrl+Shift+O)">📑 大纲</button>
         <button onClick={() => setShowCallChain(p => !p)} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: showCallChain ? c.accentDim : 'transparent', color: c.text, cursor: 'pointer', fontSize: '9px' }} title="调用链分析 (Ctrl+Shift+C)">🔗 调用链</button>
-        <button onClick={toggleTypeHint} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: showTypeHint ? c.accentDim : 'transparent', color: c.text, cursor: 'pointer', fontSize: '9px' }} title="切换类型推导提示 (Ctrl+Shift+T)">🔍 类型</button>
+        <button onClick={toggleTypeHint} style={{ padding: '3px 8px', border: `1px solid ${c.border}`, borderRadius: '3px', background: showTypeHint ? c.accentDim : 'transparent', color: c.text, cursor: 'pointer', fontSize: '9px' }} title="切换类型推导提示 (Ctrl+Shift+T)"> 类型</button>
       </div>
 
       {/* 标签页栏 */}
@@ -1031,7 +1031,7 @@ function MonacoEditor({
   useEffect(() => {
     import('@monaco-editor/react').then(mod => {
       setEditorComponent(() => mod.default)
-    }).catch(() => setLoadError('❌ 错误: Monaco Editor 加载失败'))
+    }).catch(() => setLoadError(' 错误: Monaco Editor 加载失败'))
   }, [])
 
   if (loadError) {

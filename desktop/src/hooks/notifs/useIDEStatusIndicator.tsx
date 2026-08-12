@@ -146,7 +146,7 @@ export function useIDEStatusIndicator(t0) {
       }
       addNotification({
         key: "ide-status-install-error",
-        text: "❌ 错误: IDE 扩展安装失败（查看 /status 获取信息）",
+        text: " 错误: IDE 扩展安装失败（查看 /status 获取信息）",
         color: "error",
         priority: "medium"
       });

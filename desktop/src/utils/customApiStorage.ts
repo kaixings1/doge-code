@@ -176,23 +176,23 @@ export function readCustomApiStorage(presetName?: string): CustomApiStorageData 
   
   if (activeName) {
     if (project.presets[activeName]) {
-      //logForDebugging('[readCustomApiStorage] ✅ using project preset: ' + activeName, { level: 'debug' });
+      //logForDebugging('[readCustomApiStorage]  using project preset: ' + activeName, { level: 'debug' });
       return { ...project.presets[activeName] };
     }
     const global = readGlobalStorage();
     if (global.presets[activeName]) {
-      //logForDebugging('[readCustomApiStorage] ✅ using global preset: ' + activeName, { level: 'debug' });
+      //logForDebugging('[readCustomApiStorage]  using global preset: ' + activeName, { level: 'debug' });
       return { ...global.presets[activeName] };
     }
   }
 
   const envConfig = loadConfigFromEnv(activeName);
   if (envConfig.baseURL || envConfig.apiKey) {
-    //logForDebugging('[readCustomApiStorage] ⚠️ using env fallback', { level: 'debug' });
+    //logForDebugging('[readCustomApiStorage]  using env fallback', { level: 'debug' });
     return { provider: 'openai', baseURL: envConfig.baseURL, apiKey: envConfig.apiKey, model: envConfig.model };
   }
 
-  //logForDebugging('[readCustomApiStorage] ❌ returning empty', { level: 'debug' });
+  //logForDebugging('[readCustomApiStorage]  returning empty', { level: 'debug' });
   return {};
 }
 /**

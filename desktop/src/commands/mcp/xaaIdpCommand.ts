@@ -81,14 +81,14 @@ export function registerMcpXaaIdpCommand(mcp: Command): void {
         callbackPort !== undefined &&
         (!Number.isInteger(callbackPort) || callbackPort <= 0)
       ) {
-        return cliError('❌ 错误: --callback-port 必须是正整数')
+        return cliError(' 错误: --callback-port 必须是正整数')
       }
       const secret = options.clientSecret
         ? process.env.MCP_XAA_IDP_CLIENT_SECRET
         : undefined
       if (options.clientSecret && !secret) {
         return cliError(
-          '❌ 错误: --client-secret 需要设置 MCP_XAA_IDP_CLIENT_SECRET 环境变量',
+          ' 错误: --client-secret 需要设置 MCP_XAA_IDP_CLIENT_SECRET 环境变量',
         )
       }
 

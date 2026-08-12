@@ -33,7 +33,7 @@ export const call: LocalCommandCall = async (args) => {
 /task-create done <ID>        - 标记完成
 /task-create delete <ID>      - 删除任务
 
-📖 **全部命令**
+ **全部命令**
 ┌─────────────────────┬──────────────────────────────────┐
 │ 命令                │ 说明                             │
 ├─────────────────────┼──────────────────────────────────┤
@@ -57,10 +57,10 @@ export const call: LocalCommandCall = async (args) => {
     }
     // 状态图标映射
     const statusIcons = {
-      pending: '⏳',
+      pending: '',
       'in-progress': '🚧',
-      done: '✅',
-      cancelled: '❌'
+      done: '',
+      cancelled: ''
     }
 
     // 优先级图标映射
@@ -72,7 +72,7 @@ export const call: LocalCommandCall = async (args) => {
     }
 
     const taskList = tasks.map((t) => {
-      const statusIcon = statusIcons[t.status] || '⏳'
+      const statusIcon = statusIcons[t.status] || ''
       const priorityIcon = priorityIcons[t.priority] || '📝'
       const createdAt = new Date(t.createdAt).toLocaleString('zh-CN', {
         month: '2-digit',
@@ -94,7 +94,7 @@ export const call: LocalCommandCall = async (args) => {
 
 ${taskList}
 
-📖 **全部命令**
+ **全部命令**
 ┌─────────────────────┬──────────────────────────────────┐
 │ 命令                │ 说明                             │
 ├─────────────────────┼──────────────────────────────────┤
@@ -117,7 +117,7 @@ ${taskList}
     if (!id) {
       return {
         type: 'text',
-        value: `❌ **参数错误**
+        value: ` **参数错误**
 
 🔧 **正确用法**
 \`/task-create done <任务ID>\`
@@ -132,7 +132,7 @@ ${taskList}
     if (t) {
       return {
         type: 'text',
-        value: `✅ **任务完成**
+        value: ` **任务完成**
 
 🎉 **${t.title}** 已标记为完成！
 
@@ -155,7 +155,7 @@ ${taskList}
     } else {
       return {
         type: 'text',
-        value: `❌ **任务未找到**
+        value: ` **任务未找到**
 
 找不到ID为 \`${id}\` 的任务。
 
@@ -172,7 +172,7 @@ ${taskList}
     if (!id) {
       return {
         type: 'text',
-        value: `❌ **参数错误**
+        value: ` **参数错误**
 
 🔧 **正确用法**
 \`/task-create delete <任务ID>\`
@@ -182,16 +182,16 @@ ${taskList}
 \`/task-create delete task_1234567890\`
 \`/task-create rm task_1234567890\`
 
-⚠️ **警告**: 删除操作不可撤销！`
+ **警告**: 删除操作不可撤销！`
       }
     }
     const ok = await deleteTask(sid, id)
     if (ok) {
       return {
         type: 'text',
-        value: `🗑️ **任务已删除**
+        value: `🗑 **任务已删除**
 
-✅ 任务 \`${id}\` 已成功删除。
+ 任务 \`${id}\` 已成功删除。
 
 🔗 **后续操作**
 • 查看剩余任务: \`/task-create list\`
@@ -202,7 +202,7 @@ ${taskList}
     } else {
       return {
         type: 'text',
-        value: `❌ **任务未找到**
+        value: ` **任务未找到**
 
 找不到ID为 \`${id}\` 的任务。
 
@@ -219,21 +219,21 @@ ${taskList}
     if (!id) {
       return {
         type: 'text',
-        value: `❌ **参数错误**
+        value: ` **参数错误**
 🔧 **正确用法**: \`/task-create pause <任务ID>\`
 📋 **示例**: \`/task-create pause task_1234567890\``
       }
     }
     const t = await pauseTask(sid, id)
     if (!t) {
-      return { type: 'text', value: `❌ 找不到ID为 \`${id}\` 的任务。` }
+      return { type: 'text', value: ` 找不到ID为 \`${id}\` 的任务。` }
     }
     if (t.error) {
-      return { type: 'text', value: `❌ ${t.error}` }
+      return { type: 'text', value: ` ${t.error}` }
     }
     return {
       type: 'text',
-      value: `⏸️ **任务已暂停**
+      value: `⏸ **任务已暂停**
 • **标题**: ${t.title}
 • **ID**: \`${t.id}\`
 • 使用 \`/task-create resume ${t.id}\` 恢复执行`
@@ -245,21 +245,21 @@ ${taskList}
     if (!id) {
       return {
         type: 'text',
-        value: `❌ **参数错误**
+        value: ` **参数错误**
 🔧 **正确用法**: \`/task-create resume <任务ID>\`
 📋 **示例**: \`/task-create resume task_1234567890\``
       }
     }
     const t = await resumeTask(sid, id)
     if (!t) {
-      return { type: 'text', value: `❌ 找不到ID为 \`${id}\` 的任务。` }
+      return { type: 'text', value: ` 找不到ID为 \`${id}\` 的任务。` }
     }
     if (t.error) {
-      return { type: 'text', value: `❌ ${t.error}` }
+      return { type: 'text', value: ` ${t.error}` }
     }
     return {
       type: 'text',
-      value: `▶️ **任务已恢复执行**
+      value: `▶ **任务已恢复执行**
 • **标题**: ${t.title}
 • **ID**: \`${t.id}\`
 • 使用 \`/task-create list\` 查看最新状态`
@@ -271,21 +271,21 @@ ${taskList}
     if (!id) {
       return {
         type: 'text',
-        value: `❌ **参数错误**
+        value: ` **参数错误**
 🔧 **正确用法**: \`/task-create cancel <任务ID>\`
 📋 **示例**: \`/task-create cancel task_1234567890\``
       }
     }
     const t = await cancelTask(sid, id)
     if (!t) {
-      return { type: 'text', value: `❌ 找不到ID为 \`${id}\` 的任务。` }
+      return { type: 'text', value: ` 找不到ID为 \`${id}\` 的任务。` }
     }
     if (t.error) {
-      return { type: 'text', value: `❌ ${t.error}` }
+      return { type: 'text', value: ` ${t.error}` }
     }
     return {
       type: 'text',
-      value: `❌ **任务已取消**
+      value: ` **任务已取消**
 • **标题**: ${t.title}
 • **ID**: \`${t.id}\``
     }
@@ -297,14 +297,14 @@ ${taskList}
     if (!parentId || !subTitle) {
       return {
         type: 'text',
-        value: `❌ **参数错误**
+        value: ` **参数错误**
 🔧 **正确用法**: \`/task-create subtask <父任务ID> <子任务标题>\`
 📋 **示例**: \`/task-create subtask task_1234567890 "前端页面"\``
       }
     }
     const child = await addSubTask(sid, parentId, { title: subTitle })
     if (!child) {
-      return { type: 'text', value: `❌ 找不到父任务 \`${parentId}\`` }
+      return { type: 'text', value: ` 找不到父任务 \`${parentId}\`` }
     }
     return {
       type: 'text',
@@ -321,7 +321,7 @@ ${taskList}
     if (!id) {
       return {
         type: 'text',
-        value: `❌ **参数错误**
+        value: ` **参数错误**
 🔧 **正确用法**: \`/task-create info <任务ID>\`
 📋 **示例**: \`/task-create info task_1234567890\``
       }
@@ -329,7 +329,7 @@ ${taskList}
     const tasks = await listTasks(sid)
     const t = tasks.find((x: any) => x.id === id)
     if (!t) {
-      return { type: 'text', value: `❌ 找不到ID为 \`${id}\` 的任务。` }
+      return { type: 'text', value: ` 找不到ID为 \`${id}\` 的任务。` }
     }
 
     const createdAt = new Date(t.createdAt).toLocaleString('zh-CN')
@@ -359,7 +359,7 @@ ${taskList}
     if (t.subTasks?.length) {
       detail += `\n\n📂 **子任务** (${t.subTasks.length}个)`
       for (const st of t.subTasks) {
-        detail += `\n  • ${st.status === 'done' ? '✅' : '⏳'} **${st.title}** (\`${st.id}\`)`
+        detail += `\n  • ${st.status === 'done' ? '' : ''} **${st.title}** (\`${st.id}\`)`
       }
     }
 
@@ -371,14 +371,14 @@ ${taskList}
     if (!id) {
       return {
         type: 'text',
-        value: `❌ **参数错误**
+        value: ` **参数错误**
 🔧 **正确用法**: \`/task-create start <任务ID>\`
 📋 **示例**: \`/task-create start task_1234567890\``
       }
     }
     const t = await startTaskExecution(sid, id)
     if (!t) {
-      return { type: 'text', value: `❌ 找不到ID为 \`${id}\` 的任务。` }
+      return { type: 'text', value: ` 找不到ID为 \`${id}\` 的任务。` }
     }
     return {
       type: 'text',
@@ -397,7 +397,7 @@ ${taskList}
         type: 'text',
         value: `🧹 **清理已完成任务**
 
-✅ 已成功清理 **${n}** 个已完成的任务。
+ 已成功清理 **${n}** 个已完成的任务。
 
 📊 **清理统计**
 • 清理任务数: ${n}
@@ -449,14 +449,14 @@ ${taskList}
 
   // 状态图标映射
   const statusIcons = {
-    pending: '⏳',
+    pending: '',
     'in-progress': '🚧',
-    done: '✅',
-    cancelled: '❌'
+    done: '',
+    cancelled: ''
   }
 
   const icon = priorityIcons[priority] || '📝'
-  const statusIcon = statusIcons[task.status] || '⏳'
+  const statusIcon = statusIcons[task.status] || ''
   const createdAt = new Date(task.createdAt).toLocaleString('zh-CN', {
     year: 'numeric',
     month: '2-digit',

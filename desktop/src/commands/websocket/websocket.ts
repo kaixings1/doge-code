@@ -29,7 +29,7 @@ export async function call(args: string, context: any): Promise<string> {
     if (wsConnection && wsConnection.readyState === WebSocket.OPEN) {
       return `## websocket
 
-⚠ 已连接到 ${wsConnection.url}
+ 已连接到 ${wsConnection.url}
 
 > 请先断开现有连接`
     }
@@ -51,7 +51,7 @@ export async function call(args: string, context: any): Promise<string> {
       } else {
         return `## websocket
 
-⚠ WebSocket不可用
+ WebSocket不可用
 - 原因: 当前环境不支持WebSocket API
 - 建议: 在浏览器环境中使用
 
@@ -75,7 +75,7 @@ export async function call(args: string, context: any): Promise<string> {
     if (!wsConnection || wsConnection.readyState !== WebSocket.OPEN) {
       return `## websocket
 
-⚠ 未连接到WebSocket服务器
+ 未连接到WebSocket服务器
 
 > 请先使用 /websocket connect <URL> 建立连接`
     }
@@ -121,7 +121,7 @@ export async function call(args: string, context: any): Promise<string> {
     
     return `## websocket
 
-⚠ 未连接到任何WebSocket服务器
+ 未连接到任何WebSocket服务器
 
 > 无需断开`
   }

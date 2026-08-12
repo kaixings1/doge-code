@@ -12,7 +12,7 @@ export const call: LocalJSXCommandCall = async () => {
 
   return (
     <Box flexDirection="column" padding={1}>
-      <Text bold>⚡ 性能监控</Text>
+      <Text bold> 性能监控</Text>
       <Box marginTop={1} flexDirection="column">
         <Text>响应时间: {perfInfo.responseTime}</Text>
         <Text>Token 速率: {perfInfo.tokenRate}</Text>

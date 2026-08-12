@@ -30,7 +30,7 @@ const call = async (args: string) => {
   return {
     type: 'text' as const,
     value: [
-      '✅ 感谢你的正面反馈！',
+      ' 感谢你的正面反馈！',
       '',
       `反馈内容: "${feedback}"`,
       '',

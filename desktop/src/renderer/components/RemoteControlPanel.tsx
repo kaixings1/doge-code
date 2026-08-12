@@ -499,7 +499,7 @@ export function RemoteControlPanel({ theme }: { theme: ThemeColors; cwd?: string
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 6px', background: stats.running ? '#81C78422' : c.codeBg, borderRadius: '3px' }}>
         <div>
           <span style={{ color: stats.running ? '#81C784' : c.textMuted }}>
-            {stats.running ? '🟢' : '🔴'} 信令服务器
+            {stats.running ? '🟢' : ''} 信令服务器
           </span>
           {stats.running && <span style={{ color: c.textFaint, fontSize: '9px', marginLeft: '6px' }}>端口 {stats.port} · {stats.peers} 对端 · {stats.sessions} 会话</span>}
         </div>
@@ -523,7 +523,7 @@ export function RemoteControlPanel({ theme }: { theme: ThemeColors; cwd?: string
 
           <div style={{ display: 'flex', gap: '4px' }}>
             <button onClick={startHost} style={{ flex: 1, padding: '6px', border: 'none', borderRadius: '3px', background: '#45B7D1', color: '#fff', cursor: 'pointer', fontSize: '10px', fontWeight: 600 }}>
-              🖥️ 共享屏幕 (Host)
+              🖥 共享屏幕 (Host)
             </button>
             <button onClick={startController} style={{ flex: 1, padding: '6px', border: 'none', borderRadius: '3px', background: '#9C27B0', color: '#fff', cursor: 'pointer', fontSize: '10px', fontWeight: 600 }}>
               🎮 远程控制 (Controller)
@@ -569,7 +569,7 @@ export function RemoteControlPanel({ theme }: { theme: ThemeColors; cwd?: string
       {/* Host 状态提示 */}
       {role === 'host' && state === 'connected' && (
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '20px' }}>
-          <div style={{ fontSize: '24px' }}>🖥️</div>
+          <div style={{ fontSize: '24px' }}>🖥</div>
           <div style={{ color: c.textMuted, fontSize: '10px', textAlign: 'center' }}>
             屏幕共享已激活<br />
             控制端可通过 P2P 连接远程控制本机

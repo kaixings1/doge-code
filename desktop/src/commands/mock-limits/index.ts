@@ -8,7 +8,7 @@ const call = async (args: string) => {
     return {
       type: 'text' as const,
       value: [
-        '⚙️ 模拟限制模式',
+        '⚙ 模拟限制模式',
         '',
         '用法:',
         ' /mock-limits enable — 启用模拟限制',
@@ -40,7 +40,7 @@ const call = async (args: string) => {
   }
 
   if (action === 'disable') {
-    return { type: 'text' as const, value: '🔴 模拟限制模式已禁用，恢复正常 API 调用。' }
+    return { type: 'text' as const, value: ' 模拟限制模式已禁用，恢复正常 API 调用。' }
   }
 
   if (action === 'status' || action === 'st') {
@@ -59,7 +59,7 @@ const call = async (args: string) => {
 
   return {
     type: 'text' as const,
-    value: '📖 用法: ⚙️ 未知操作。使用 /mock-limits help 查看帮助。',
+    value: ' 用法: ⚙ 未知操作。使用 /mock-limits help 查看帮助。',
   }
 }
 

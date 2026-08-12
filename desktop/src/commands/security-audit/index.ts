@@ -8,7 +8,7 @@ import { join, resolve, extname } from 'path'
  * 静态代码分析，检测常见安全漏洞
  */
 
-const HELP_TEXT = `🛡️ **Security Audit 命令** - 安全审计工具
+const HELP_TEXT = `🛡 **Security Audit 命令** - 安全审计工具
 
 **用法**: /security-audit [选项]
 
@@ -143,7 +143,7 @@ function formatReport(issues: SecurityIssue[], format: string): string {
   }
 
   if (issues.length === 0) {
-    return `✅ **安全审计通过**
+    return ` **安全审计通过**
 
 未检测到安全问题！`
   }
@@ -152,7 +152,7 @@ function formatReport(issues: SecurityIssue[], format: string): string {
   const mediumIssues = issues.filter(i => i.severity === 'medium')
   const lowIssues = issues.filter(i => i.severity === 'low')
 
-  let report = `🛡️ **安全审计报告**
+  let report = `🛡 **安全审计报告**
 
 📊 统计:
 • 总计: ${issues.length} 个问题
@@ -163,7 +163,7 @@ function formatReport(issues: SecurityIssue[], format: string): string {
 `
 
   if (highIssues.length > 0) {
-    report += `🔴 **高危问题**\n`
+    report += ` **高危问题**\n`
     for (const issue of highIssues.slice(0, 10)) {
       report += `• ${issue.file}:${issue.line} - ${issue.message}\n`
       report += `  代码: ${issue.code}\n`

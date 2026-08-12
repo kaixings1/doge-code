@@ -300,11 +300,11 @@ function getBuiltInTemplates(): WikiTemplate[] {
   return [
     {
       name: 'api-doc',
-      content: '📖 用法: # API: {{name}}\n\n## 概述\n\n{{description}}\n\n## 接口列表\n\n### `{{method}} {{path}}`\n\n**请求参数:**\n\n| 参数 | 类型 | 必填 | 说明 |\n|------|------|------|------|\n| param1 | string | 是 | 描述 |\n\n**响应示例:**\n\n```json\n{\n  "code": 0,\n  "data"❌ 错误: : {}\n}\n```\n\n## 错误码\n\n| 错误码 | 说明 |\n|--------|------|\n| 0 | 成功 |\n| 1001 | 参数错误 |\n',
+      content: ' 用法: # API: {{name}}\n\n## 概述\n\n{{description}}\n\n## 接口列表\n\n### `{{method}} {{path}}`\n\n**请求参数:**\n\n| 参数 | 类型 | 必填 | 说明 |\n|------|------|------|------|\n| param1 | string | 是 | 描述 |\n\n**响应示例:**\n\n```json\n{\n  "code": 0,\n  "data" 错误: : {}\n}\n```\n\n## 错误码\n\n| 错误码 | 说明 |\n|--------|------|\n| 0 | 成功 |\n| 1001 | 参数错误 |\n',
     },
     {
       name: 'module-doc',
-      content: '📖 用法: # 模块: {{name}}\n\n## 概述\n\n{{description}}\n\n## 文件结构\n\n```\n{{structure}}\n```\n\n## 核心函数\n\n- `function1()` - 描述\n- `function2()` - 描述\n\n## 依赖\n\n- 依赖模块1\n- 依赖模块2\n\n## 使用示例\n\n```typescript\nimport { {{name}} } from \'./{{name}}\'\n```\n',
+      content: ' 用法: # 模块: {{name}}\n\n## 概述\n\n{{description}}\n\n## 文件结构\n\n```\n{{structure}}\n```\n\n## 核心函数\n\n- `function1()` - 描述\n- `function2()` - 描述\n\n## 依赖\n\n- 依赖模块1\n- 依赖模块2\n\n## 使用示例\n\n```typescript\nimport { {{name}} } from \'./{{name}}\'\n```\n',
     },
     {
       name: 'adr',
@@ -312,7 +312,7 @@ function getBuiltInTemplates(): WikiTemplate[] {
     },
     {
       name: 'changelog-entry',
-      content: '# 版本 {{version}} - {{date}}\n\n## ✨ 新功能\n\n- \n\n## 🐛 修复\n\n- \n\n## 🔧 改进\n\n- \n\n## ⚠️ 破坏性变更\n\n- \n',
+      content: '# 版本 {{version}} - {{date}}\n\n## ✨ 新功能\n\n- \n\n## 🐛 修复\n\n- \n\n## 🔧 改进\n\n- \n\n##  破坏性变更\n\n- \n',
     },
   ]
 }
@@ -432,7 +432,7 @@ function fullTextSearch(keyword: string): string {
     grouped.get(r.file)!.push(r)
   })
 
-  const output: string[] = [`🔍 搜索结果: "${keyword}"`, `找到 ${results.length} 条匹配，分布于 ${grouped.size} 个文件`, '']
+  const output: string[] = [` 搜索结果: "${keyword}"`, `找到 ${results.length} 条匹配，分布于 ${grouped.size} 个文件`, '']
   grouped.forEach((matches, file) => {
     output.push(`📄 ${file} (${matches.length} 条)`)
     matches.slice(0, 5).forEach(m => {
@@ -450,13 +450,13 @@ function diffDocs(file1: string, file2: string): string {
   const fp1 = resolve(root, file1)
   const fp2 = resolve(root, file2)
 
-  if (!existsSync(fp1)) return `❌ 文件不存在: ${file1}`
-  if (!existsSync(fp2)) return `❌ 文件不存在: ${file2}`
+  if (!existsSync(fp1)) return ` 文件不存在: ${file1}`
+  if (!existsSync(fp2)) return ` 文件不存在: ${file2}`
 
   let content1 = ''
   let content2 = ''
-  try { content1 = readFileSync(fp1, 'utf-8') } catch { return `❌ 无法读取: ${file1}` }
-  try { content2 = readFileSync(fp2, 'utf-8') } catch { return `❌ 无法读取: ${file2}` }
+  try { content1 = readFileSync(fp1, 'utf-8') } catch { return ` 无法读取: ${file1}` }
+  try { content2 = readFileSync(fp2, 'utf-8') } catch { return ` 无法读取: ${file2}` }
 
   const lines1 = content1.split('\n')
   const lines2 = content2.split('\n')
@@ -488,8 +488,8 @@ function diffGitVersions(filePath: string): string {
   const root = getProjectRoot()
   const fullPath = resolve(root, filePath)
 
-  if (!existsSync(fullPath)) return `❌ 文件不存在: ${filePath}`
-  if (!existsSync(join(root, '.git'))) return '❌ 当前目录不是 git 仓库'
+  if (!existsSync(fullPath)) return ` 文件不存在: ${filePath}`
+  if (!existsSync(join(root, '.git'))) return ' 当前目录不是 git 仓库'
 
   try {
     const log = execSync(`git log --oneline -5 -- "${filePath}"`, {
@@ -497,10 +497,10 @@ function diffGitVersions(filePath: string): string {
       stdio: ['pipe', 'pipe', 'ignore'],
       cwd: root,
     })
-    if (!log.trim()) return `❌ 文件没有 git 历史: ${filePath}`
+    if (!log.trim()) return ` 文件没有 git 历史: ${filePath}`
 
     const commits = log.trim().split('\n').map(l => l.split(' ')[0]).filter(Boolean)
-    if (commits.length < 2) return `❌ 文件只有一个提交历史，无法比较`
+    if (commits.length < 2) return ` 文件只有一个提交历史，无法比较`
 
     const latest = commits[0]
     const previous = commits[1]
@@ -519,7 +519,7 @@ function diffGitVersions(filePath: string): string {
     ].join('\n')
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : String(e)
-    return `❌ 无法获取 git 差异: ${msg}`
+    return ` 无法获取 git 差异: ${msg}`
   }
 }
 
@@ -527,7 +527,7 @@ function diffGitVersions(filePath: string): string {
 function cleanOrphanDocs(): string {
   const root = getProjectRoot()
   const wikiDir = join(root, WIKI_DIR)
-  if (!existsSync(wikiDir)) return '❌ .wiki/ 目录不存在'
+  if (!existsSync(wikiDir)) return ' .wiki/ 目录不存在'
 
   const removed: string[] = []
   const scanDir = (dir: string) => {
@@ -559,7 +559,7 @@ function cleanOrphanDocs(): string {
   }
   scanDir(wikiDir)
 
-  if (removed.length === 0) return '✅ 没有发现孤立文档'
+  if (removed.length === 0) return ' 没有发现孤立文档'
 
   return [
     `🧹 清理完成，移除 ${removed.length} 个孤立文档:`,
@@ -622,7 +622,7 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'architecture') {
     const tree = generateProjectTree(root, '', 2)
     const lines = [
-      '# 🏗️ 项目架构',
+      '# 🏗 项目架构',
       '',
       `**语言:** ${language}`,
       `**框架:** ${framework}`,
@@ -658,7 +658,7 @@ export const call: LocalCommandCall = async (args) => {
   }
 
   if (cmd === 'api') {
-    const lines: string[] = ['# 📖 API 文档', '']
+    const lines: string[] = ['#  API 文档', '']
     const scanDir = (dir: string) => {
       try {
         const entries = readdirSync(dir, { withFileTypes: true })
@@ -698,7 +698,7 @@ export const call: LocalCommandCall = async (args) => {
       log.split('\n').forEach(l => { if (l.trim()) lines.push(`- ${l}`) })
       return { type: 'text', value: lines.join('\n') }
     } catch {
-      return { type: 'text', value: '❌ 无法读取 git log' }
+      return { type: 'text', value: ' 无法读取 git log' }
     }
   }
 
@@ -806,7 +806,7 @@ export const call: LocalCommandCall = async (args) => {
     return {
       type: 'text',
       value: results.length > 0
-        ? `🔍 搜索结果 (${results.length}):\n\n${results.slice(0, 20).join('\n')}`
+        ? ` 搜索结果 (${results.length}):\n\n${results.slice(0, 20).join('\n')}`
         : '未找到匹配内容',
     }
   }
@@ -826,9 +826,9 @@ export const call: LocalCommandCall = async (args) => {
         writeFileSync(join(wikiDir, file.name), file.content, 'utf-8')
       }
 
-      return { type: 'text', value: `✅ Wiki 已导出到 ${WIKI_DIR}/ 目录\n${files.map(f => `  - ${f.name}`).join('\n')}` }
+      return { type: 'text', value: ` Wiki 已导出到 ${WIKI_DIR}/ 目录\n${files.map(f => `  - ${f.name}`).join('\n')}` }
     } catch {
-      return { type: 'text', value: '❌ 导出失败' }
+      return { type: 'text', value: ' 导出失败' }
     }
   }
 
@@ -865,7 +865,7 @@ export const call: LocalCommandCall = async (args) => {
     return {
       type: 'text',
       value: [
-        `✅ 链接已创建: ${from} → ${to}`,
+        ` 链接已创建: ${from} → ${to}`,
         '',
         `当前共 ${links.length} 条链接:`,
         ...links.map(l => `  ${l.from} → ${l.to}`),
@@ -888,12 +888,12 @@ export const call: LocalCommandCall = async (args) => {
       return { type: 'text', value: renderMarkdown(content) }
     }
     const fp = resolve(root, filePath)
-    if (!existsSync(fp)) return { type: 'text', value: `❌ 文件不存在: ${filePath}` }
+    if (!existsSync(fp)) return { type: 'text', value: ` 文件不存在: ${filePath}` }
     try {
       const content = readFileSync(fp, 'utf-8')
       return { type: 'text', value: renderMarkdown(content) }
     } catch {
-      return { type: 'text', value: `❌ 无法读取: ${filePath}` }
+      return { type: 'text', value: ` 无法读取: ${filePath}` }
     }
   }
 
@@ -915,7 +915,7 @@ export const call: LocalCommandCall = async (args) => {
     return {
       type: 'text',
       value: [
-        '👁️ 文件监视已启动 (30秒)',
+        '👁 文件监视已启动 (30秒)',
         '',
         '监视项目文件变化，自动更新文档索引...',
         `监视目录: ${root}`,
@@ -982,16 +982,16 @@ export const call: LocalCommandCall = async (args) => {
         if (!existsSync(wikiDir)) mkdirSync(wikiDir, { recursive: true })
         const newFileName = `${templateName}-${Date.now()}.md`
         writeFileSync(join(wikiDir, newFileName), content, 'utf-8')
-        return { type: 'text', value: `✅ 从自定义模板创建: ${newFileName}` }
+        return { type: 'text', value: ` 从自定义模板创建: ${newFileName}` }
       }
-      return { type: 'text', value: `❌ 模板不存在: ${templateName}\n使用 /wiki template 查看可用模板` }
+      return { type: 'text', value: ` 模板不存在: ${templateName}\n使用 /wiki template 查看可用模板` }
     }
 
     const wikiDir = join(root, WIKI_DIR)
     if (!existsSync(wikiDir)) mkdirSync(wikiDir, { recursive: true })
     const newFileName = `${templateName}-${Date.now()}.md`
     writeFileSync(join(wikiDir, newFileName), tpl.content, 'utf-8')
-    return { type: 'text', value: `✅ 从模板 "${templateName}" 创建: ${newFileName}` }
+    return { type: 'text', value: ` 从模板 "${templateName}" 创建: ${newFileName}` }
   }
 
   // ── 新命令: index ──────────────────────────────────────────

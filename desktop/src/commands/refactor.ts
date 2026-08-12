@@ -267,7 +267,7 @@ ${modeGuide}
 function runAutoAnalyze(target: string): string {
   const absPath = resolve(target)
   if (!existsSync(absPath)) {
-    return `❌ 路径不存在: ${target}`
+    return ` 路径不存在: ${target}`
   }
 
   const stat = statSync(absPath)
@@ -303,9 +303,9 @@ function runAutoAnalyze(target: string): string {
     })
 
     if (allIssues.length > 0) {
-      lines.push('🔴 优先重构项 (Top 15):')
+      lines.push(' 优先重构项 (Top 15):')
       allIssues.slice(0, 15).forEach((issue, i) => {
-        const icon = issue.severity === 'high' ? '🔴' : issue.severity === 'medium' ? '🟡' : '🔵'
+        const icon = issue.severity === 'high' ? '' : issue.severity === 'medium' ? '🟡' : '🔵'
         lines.push(`  ${icon} ${i + 1}. [${issue.type}] ${issue.message}`)
         lines.push(`     ${issue.suggestion}`)
       })
@@ -317,14 +317,14 @@ function runAutoAnalyze(target: string): string {
     lines.push('📁 最需要重构的文件 (Top 10):')
     sorted.slice(0, 10).forEach((m, i) => {
       const score = Math.max(0, 100 - m.complexity * 2 - m.issues.length * 5)
-      const icon = score >= 80 ? '🟢' : score >= 60 ? '🟡' : '🔴'
+      const icon = score >= 80 ? '🟢' : score >= 60 ? '🟡' : ''
       lines.push(`  ${icon} ${i + 1}. ${m.file} (${m.lines}行, 复杂度:${m.complexity}, 问题:${m.issues.length}, 评分:${score})`)
     })
 
     return lines.join('\n')
   } else {
     const m = analyzeCodeFile(absPath)
-    if (!m) return '❌ 无法分析文件'
+    if (!m) return ' 无法分析文件'
 
     const lines = [
       '📊 文件重构分析',
@@ -343,21 +343,21 @@ function runAutoAnalyze(target: string): string {
     if (m.functions.length > 0) {
       lines.push('📋 函数列表:')
       m.functions.forEach(f => {
-        const lenWarning = f.length > 50 ? ' ⚠️过长' : ''
+        const lenWarning = f.length > 50 ? ' 过长' : ''
         lines.push(`  • ${f.name}() - 行${f.line}, ${f.length}行, ${f.params.length}参数${lenWarning}`)
       })
       lines.push('')
     }
 
     if (m.issues.length > 0) {
-      lines.push('🔴 重构建议:')
+      lines.push(' 重构建议:')
       m.issues.forEach((issue, i) => {
-        const icon = issue.severity === 'high' ? '🔴' : issue.severity === 'medium' ? '🟡' : '🔵'
+        const icon = issue.severity === 'high' ? '' : issue.severity === 'medium' ? '🟡' : '🔵'
         lines.push(`  ${icon} ${i + 1}. ${issue.message}`)
         lines.push(`     → ${issue.suggestion}`)
       })
     } else {
-      lines.push('✅ 未发现需要重构的问题')
+      lines.push(' 未发现需要重构的问题')
     }
 
     return lines.join('\n')

@@ -274,20 +274,20 @@ function calculateScore(issues: ReviewIssue[]): ReviewStats {
 }
 
 function formatTextReport(issues: ReviewIssue[], stats: ReviewStats): string {
-  const lines = ['Code Review Report', '═══════════════════', '', `Score: ${stats.score}/100 (${stats.grade})`, `Tech Debt: ${stats.techDebt}`, `Total Issues: ${stats.total}`, '', 'By Severity:', `  🔴 Critical: ${stats.bySeverity.critical}`, `  🟠 High: ${stats.bySeverity.high}`, `  🟡 Medium: ${stats.bySeverity.medium}`, `  🔵 Low: ${stats.bySeverity.low}`, `  ℹ️  Info: ${stats.bySeverity.info}`, '', 'By Type:']
+  const lines = ['📊 代码审查报告', '═══════════════════', '', `评分：${stats.score}/100（${stats.grade}）`, `技术债：${stats.techDebt}`, `问题总数：${stats.total}`, '', '按严重程度：', `  🔴 严重：${stats.bySeverity.critical}`, `  🟠 高：${stats.bySeverity.high}`, `  🟡 中：${stats.bySeverity.medium}`, `  🔵 低：${stats.bySeverity.low}`, `  ℹ️  信息：${stats.bySeverity.info}`, '', '按类型：']
   Object.entries(stats.byType).sort((a: any, b: any) => b[1] - a[1]).forEach(([t, c]) => lines.push(`  ${t}: ${c}`))
-  lines.push('', 'Top Issues:', '────────────')
+  lines.push('', '主要问题：', '────────────')
   issues.filter(i => i.severity === 'critical' || i.severity === 'high').slice(0, 20).forEach((issue, idx) => {
     const icon = issue.severity === 'critical' ? '🔴' : '🟠'
     lines.push(`${icon} ${idx + 1}. [${issue.file}:${issue.line}] ${issue.message}`)
     lines.push(`   → ${issue.suggestion} (${issue.effort})`)
   })
-  if (issues.length > 20) lines.push(`\n... ${issues.length - 20} more issues`)
+  if (issues.length > 20) lines.push(`\n... 还有 ${issues.length - 20} 个问题`)
   return lines.join('\n')
 }
 
 function formatMarkdownReport(issues: ReviewIssue[], stats: ReviewStats): string {
-  const lines = [`# Code Review Report`, '', `**Score: ${stats.score}/100 (${stats.grade})**`, '', `| Metric | Value |`, `|-------|-------|`, `| Total Issues | ${stats.total} |`, `| Critical | ${stats.bySeverity.critical} |`, `| High | ${stats.bySeverity.high} |`, `| Medium | ${stats.bySeverity.medium} |`, `| Low | ${stats.bySeverity.low} |`, `| Tech Debt | ${stats.techDebt} |`, '', '## Issues by Severity', '']
+  const lines = [`# 代码审查报告`, '', `**评分：${stats.score}/100（${stats.grade}）**`, '', `| 指标 | 值 |`, `|-------|-------|`, `| 问题总数 | ${stats.total} |`, `| 严重 | ${stats.bySeverity.critical} |`, `| 高 | ${stats.bySeverity.high} |`, `| 中 | ${stats.bySeverity.medium} |`, `| 低 | ${stats.bySeverity.low} |`, `| 技术债 | ${stats.techDebt} |`, '', '## 按严重程度分类', '']
   const grouped: Record<string, ReviewIssue[]> = {}
   issues.forEach(i => { if (!grouped[i.severity]) grouped[i.severity] = []; grouped[i.severity].push(i) })
   for (const sev of ['critical', 'high', 'medium', 'low', 'info']) {
@@ -361,12 +361,12 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const config = loadConfig()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Code Review (Deep)', '', '📖 Usage: ', '  /code-review                    Full project review', '  /code-review file <path>        Review single file', '  /code-review branch <name>      Review branch diff', '  /code-review commit <sha>       Review specific commit', '  /code-review range <a>..<b>     Review commit range', '  /code-review staged            Review staged changes', '  /code-review unstaged          Review unstaged changes', '  /code-review fix                Auto-fix issues', '  /code-review baseline           Save as baseline', '  /code-review compare            Compare with baseline', '  /code-review history            Review history', '  /code-review trends             Issue trends', '  /code-review config            View/edit config', '  /code-review enable <rule>      Enable rule', '  /code-review disable <rule>     Disable rule', '  /code-review add-rule           Add custom rule', '  /code-review rules              List all rules', '  /code-review export [fmt]       Export report (md/html/json)', '  /code-review lint               Run linters', '  /code-review stats              Statistics', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['🔍 深度代码审查', '', '📖 用法：', '  /code-review                    完整项目审查', '  /code-review file &lt;路径&gt;       审查单个文件', '  /code-review branch &lt;分支&gt;     审查分支差异', '  /code-review commit &lt;sha&gt;      审查指定提交', '  /code-review range &lt;a&gt;..&lt;b&gt;    审查提交范围', '  /code-review staged            审查已暂存变更', '  /code-review unstaged          审查未暂存变更', '  /code-review fix               自动修复问题', '  /code-review baseline          保存为基准', '  /code-review compare           与基准对比', '  /code-review history           审查历史', '  /code-review trends            问题趋势', '  /code-review config            查看/编辑配置', '  /code-review enable &lt;规则&gt;    启用规则', '  /code-review disable &lt;规则&gt;   禁用规则', '  /code-review add-rule          添加自定义规则', '  /code-review rules             列出所有规则', '  /code-review export [格式]      导出报告（md/html/json）', '  /code-review lint              运行代码检查', '  /code-review stats             统计信息', ''].join('\n') }
 
   if (cmd === 'rules') {
-    const lines = ['Review Rules:', '==============', '']
+    const lines = ['📋 审查规则：', '═══════════', '']
     for (const [rule, enabled] of Object.entries(config.rules)) {
-      lines.push(`  ${enabled ? '[ON]' : '[OFF]'} ${rule}`)
+      lines.push(`  ${enabled ? '✅ 开启' : '❌ 关闭'} ${rule}`)
     }
     return { type: 'text', value: lines.join('\n') }
   }
@@ -375,32 +375,32 @@ export const call: LocalCommandCall = async (args) => {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     if (key in config.rules) { config.rules[key as keyof typeof config.rules] = value === 'true'; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
-    return { type: 'text', value: `❌ Unknown config: ${key}` }
+    return { type: 'text', value: `❌ 未知配置：${key}` }
   }
 
   if (cmd === 'enable' || cmd === 'disable') {
     const rule = parts[1]
-    if (!rule || !(rule in config.rules)) return { type: 'text', value: `❌ Unknown rule: ${rule}` }
+    if (!rule || !(rule in config.rules)) return { type: 'text', value: `❌ 未知规则：${rule}` }
     config.rules[rule as keyof typeof config.rules] = cmd === 'enable'
     saveConfig(config)
     return { type: 'text', value: `✅ [OK] ${rule} ${cmd}d` }
   }
 
   if (cmd === 'add-rule') {
-    return { type: 'text', value: 'Add custom rule to config.json:\n{ "pattern": "regex", "message": "msg", "severity": "high", "type": "security" }' }
+    return { type: 'text', value: '📝 在 config.json 中添加自定义规则：\n{ "pattern": "正则", "message": "提示信息", "severity": "high", "type": "security" }' }
   }
 
   if (cmd === 'history') {
     const history = loadHistory()
-    if (history.length === 0) return { type: 'text', value: 'No review history' }
-    const lines = ['Review History:', '================', '']
+    if (history.length === 0) return { type: 'text', value: 'ℹ️ 暂无审查历史' }
+    const lines = ['📅 审查历史：', '═══════════', '']
     history.slice(-15).forEach(h => lines.push(`${h.date.slice(0, 19)} | Score: ${h.score}/100 (${h.grade}) | Issues: ${h.issuesFound} | Files: ${h.filesReviewed} | ${h.duration}ms`))
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'trends') {
     const history = loadHistory()
-    if (history.length < 2) return { type: 'text', value: 'Need at least 2 reviews for trends' }
+    if (history.length < 2) return { type: 'text', value: '⚠️ 趋势分析至少需要 2 次审查记录' }
     const lines = ['Issue Trends:', '==============', '']
     history.slice(-14).forEach(h => {
       const bar = '#'.repeat(Math.min(h.issuesFound, 40))
@@ -418,8 +418,8 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'compare') {
     const issues = scanDirectory('.', config)
     const comparison = compareWithBaseline(issues)
-    const lines = ['Baseline Comparison:', '====================', '', `New Issues: ${comparison.newIssues.length}`, `Fixed: ${comparison.fixed}`, `Unchanged: ${comparison.unchanged}`]
-    if (comparison.newIssues.length > 0) { lines.push('', 'New Issues:'); comparison.newIssues.slice(0, 10).forEach(i => lines.push(`  [${i.file}:${i.line}] ${i.message}`)) }
+    const lines = ['📊 基准对比：', '═══════════════', '', `新增问题：${comparison.newIssues.length}`, `已修复：${comparison.fixed}`, `未变更：${comparison.unchanged}`]
+    if (comparison.newIssues.length > 0) { lines.push('', '新增问题：'); comparison.newIssues.slice(0, 10).forEach(i => lines.push(`  [${i.file}:${i.line}] ${i.message}`)) }
     return { type: 'text', value: lines.join('\n') }
   }
 
@@ -438,7 +438,7 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'lint') {
     const results = runIntegrations(config)
-    return { type: 'text', value: results.join('\n\n') || 'No linters configured' }
+    return { type: 'text', value: results.join('\n\n') || 'ℹ️ 未配置代码检查工具' }
   }
 
   if (cmd === 'stats') {
@@ -452,11 +452,11 @@ export const call: LocalCommandCall = async (args) => {
       const flag = cmd === 'staged' ? '--cached' : ''
       const output = execSync(`git diff ${flag} --name-only`, { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
       const files = output.split('\n').filter(Boolean)
-      if (files.length === 0) return { type: 'text', value: `ℹ️ No ${cmd} changes` }
+      if (files.length === 0) return { type: 'text', value: `ℹ️ 无${cmd === 'staged' ? '暂存' : '未暂存'}变更` }
       const issues = files.flatMap(f => scanFile(f, config))
       const stats = calculateScore(issues)
       return { type: 'text', value: `📊 Review (${cmd}):\nFiles: ${files.length}\n${formatTextReport(issues, stats)}` }
-    } catch { return { type: 'text', value: 'Git error' } }
+    } catch { return { type: 'text', value: '❌ Git 错误' } }
   }
 
   if (cmd === 'branch') {
@@ -490,7 +490,7 @@ export const call: LocalCommandCall = async (args) => {
 
 const codeReview: Command = {
   type: 'local', name: 'code-review',
-  description: 'Deep code review - file/branch/commit/fix/baseline/history/trends/config',
+  description: '深度代码审查 - 文件/分支/提交/修复/基准/历史/趋势/配置',
   aliases: ['/code-review', '/review', '/cr'],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

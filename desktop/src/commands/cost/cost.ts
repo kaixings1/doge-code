@@ -311,7 +311,7 @@ function exportCostData(filePath: string): string {
   const json = JSON.stringify(exportPayload, null, 2)
   writeFileSync(filePath, json, 'utf-8')
 
-  return `✅ 成本数据已导出到 ${filePath}\n   共 ${entries.length} 条记录 (${json.length} 字节)`
+  return ` 成本数据已导出到 ${filePath}\n   共 ${entries.length} 条记录 (${json.length} 字节)`
 }
 
 // ============================================================================

@@ -6,7 +6,7 @@ import type { LocalCommandCall } from '../../types/command.js'
  * 提供简单的代码片段和系统性能测试
  */
 
-const HELP_TEXT = `⚡ **Benchmark 命令** - 性能基准测试工具
+const HELP_TEXT = ` **Benchmark 命令** - 性能基准测试工具
 
 **用法**: /benchmark [run|suite|cpu|memory|compare|help]
 
@@ -148,7 +148,7 @@ export const call: LocalCommandCall = async (args) => {
       if (!code) {
         return {
           type: 'text',
-          value: `❌ **参数错误**
+          value: ` **参数错误**
 
 🔧 **正确用法**: \`/benchmark run <JavaScript代码>\`
 
@@ -168,7 +168,7 @@ export const call: LocalCommandCall = async (args) => {
       } catch (err) {
         return {
           type: 'text',
-          value: `❌ **代码执行失败**
+          value: ` **代码执行失败**
 
 错误: ${err instanceof Error ? err.message : String(err)}`
         }
@@ -183,7 +183,7 @@ export const call: LocalCommandCall = async (args) => {
       if (!code1 || !code2) {
         return {
           type: 'text',
-          value: `❌ **参数错误**
+          value: ` **参数错误**
 
 🔧 **正确用法**: \`/benchmark compare <代码1> code2 <代码2>\`
 
@@ -198,7 +198,7 @@ export const call: LocalCommandCall = async (args) => {
 
         return {
           type: 'text',
-          value: `⚖️ **性能对比**
+          value: `⚖ **性能对比**
 
 | 代码 | 单次耗时 |
 |------|----------|
@@ -210,7 +210,7 @@ export const call: LocalCommandCall = async (args) => {
       } catch (err) {
         return {
           type: 'text',
-          value: `❌ **对比失败**
+          value: ` **对比失败**
 
 错误: ${err instanceof Error ? err.message : String(err)}`
         }
@@ -219,12 +219,12 @@ export const call: LocalCommandCall = async (args) => {
 
     return {
       type: 'text',
-      value: `❌ **未知命令**: \`${command}\`\n\n${HELP_TEXT}`
+      value: ` **未知命令**: \`${command}\`\n\n${HELP_TEXT}`
     }
   } catch (err) {
     return {
       type: 'text',
-      value: `❌ **执行出错**
+      value: ` **执行出错**
 
 ${err instanceof Error ? err.message : String(err)}`
     }

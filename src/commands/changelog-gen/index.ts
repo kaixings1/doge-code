@@ -33,7 +33,7 @@ function generateChangelog(commits: CommitEntry[], format: 'markdown' | 'json' |
   const lines = ['# Changelog', '']
   const grouped: Record<string, CommitEntry[]> = {}
   commits.forEach(c => { const t = c.type || 'other'; if (!grouped[t]) grouped[t] = []; grouped[t].push(c) })
-  const typeLabels: Record<string, string> = { feat: 'Features', fix: 'Bug Fixes', docs: 'Documentation', style: 'Styles', refactor: 'Refactoring', perf: 'Performance', test: 'Tests', build: 'Build', ci: 'CI', chore: 'Chores', revert: 'Reverts' }
+  const typeLabels: Record<string, string> = { feat: '新功能', fix: 'Bug 修复', docs: '文档', style: '样式', refactor: '重构', perf: '性能', test: '测试', build: '构建', ci: 'CI', chore: '杂项', revert: '回滚' }
   for (const [type, items] of Object.entries(grouped)) {
     lines.push('## ' + (typeLabels[type] || type))
     items.forEach(c => lines.push('- ' + (c.scope ? '**' + c.scope + ':** ' : '') + c.message + ' (' + c.hash + ')'))
@@ -47,18 +47,18 @@ export const call: LocalCommandCall = async (args) => {
   const parts = s.split(/\s+/)
   const cmd = parts[0]?.toLowerCase() || 'help'
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Changelog Generator', '', '📖 Usage: ', '  /changelog-gen [format]         Generate changelog (md/json/html)', '  /changelog-gen since <tag>      Generate since tag', '  ​​/changelog-gen preview          Preview without saving', '  /changelog-gen save [file]       Save to file', '  /changelog-gen unreleased        Show unreleased changes', '  /changelog-gen stats             Commit statistics', '  /changelog-gen types             Show commit type distribution', '  /changelog-gen authors           Changes per author', '  /changelog-gen diff <t1> <t2]    Changes between tags', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['📝 变更日志生成器', '', '📖 用法：', '  /changelog-gen [格式]        生成变更日志（md/json/html）', '  /changelog-gen since <标签>   自标签起生成', '  /changelog-gen preview         预览不保存', '  /changelog-gen save [文件]     保存到文件', '  /changelog-gen unreleased       显示未发布变更', '  /changelog-gen stats            提交统计', '  /changelog-gen types            提交类型分布', '  /changelog-gen authors          按作者查看变更', '  /changelog-gen diff <标签1> <标签2>  标签间变更', ''].join('\n') }
 
   if (cmd === 'preview' || cmd === '') {
     const commits = parseCommits()
-    if (commits.length === 0) return { type: 'text', value: 'No commits found' }
+    if (commits.length === 0) return { type: 'text', value: 'ℹ️ 未找到提交记录' }
     return { type: 'text', value: generateChangelog(commits, 'markdown') }
   }
 
   if (cmd === 'since') {
     const tag = parts[1] || ''
     const commits = parseCommits(tag)
-    if (commits.length === 0) return { type: 'text', value: 'No commits since ' + tag }
+    if (commits.length === 0) return { type: 'text', value: 'ℹ️ 自 ' + tag + ' 以来无提交记录' }
     return { type: 'text', value: generateChangelog(commits, 'markdown') }
   }
 
@@ -66,14 +66,14 @@ export const call: LocalCommandCall = async (args) => {
     const file = parts[1] || 'CHANGELOG.md'
     const format = (parts[2] as 'markdown' | 'json' | 'html') || 'markdown'
     const commits = parseCommits()
-    if (commits.length === 0) return { type: 'text', value: 'No commits found' }
+    if (commits.length === 0) return { type: 'text', value: 'ℹ️ 未找到提交记录' }
     writeFileSync(file, generateChangelog(commits, format), 'utf-8')
-    return { type: 'text', value: '[OK] Saved to ' + file }
+    return { type: 'text', value: '✅ 已保存到 ' + file }
   }
 
   if (cmd === 'json' || cmd === 'html' || cmd === 'md') {
     const commits = parseCommits()
-    if (commits.length === 0) return { type: 'text', value: 'No commits found' }
+    if (commits.length === 0) return { type: 'text', value: 'ℹ️ 未找到提交记录' }
     return { type: 'text', value: generateChangelog(commits, cmd as any) }
   }
 
@@ -81,17 +81,17 @@ export const call: LocalCommandCall = async (args) => {
     try {
       const lastTag = execSync('git describe --tags --abbrev=0 2>/dev/null || echo ""', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim()
       const commits = parseCommits(lastTag || undefined)
-      if (commits.length === 0) return { type: 'text', value: 'No unreleased changes since ' + lastTag }
-      return { type: 'text', value: '# Unreleased Changes\n\n' + generateChangelog(commits, 'markdown') }
-    } catch { return { type: 'text', value: 'No tags found' } }
+      if (commits.length === 0) return { type: 'text', value: 'ℹ️ 自 ' + lastTag + ' 以来无未发布变更' }
+      return { type: 'text', value: '# 未发布变更\n\n' + generateChangelog(commits, 'markdown') }
+    } catch { return { type: 'text', value: '❌ 未找到标签' } }
   }
 
   if (cmd === 'stats') {
     const commits = parseCommits()
-    if (commits.length === 0) return { type: 'text', value: 'No commits found' }
+    if (commits.length === 0) return { type: 'text', value: 'ℹ️ 未找到提交记录' }
     const byType: Record<string, number> = {}
     commits.forEach(c => { byType[c.type] = (byType[c.type] || 0) + 1 })
-    const lines = ['Commit Statistics:', '===================', '', 'Total: ' + commits.length, '']
+    const lines = ['📊 提交统计', '═══════════', '', '总计：' + commits.length, '']
     Object.entries(byType).sort((a: any, b: any) => b[1] - a[1]).forEach(([t, c]) => lines.push('  ' + t + ': ' + c))
     return { type: 'text', value: lines.join('\n') }
   }
@@ -100,8 +100,8 @@ export const call: LocalCommandCall = async (args) => {
     const commits = parseCommits()
     const byType: Record<string, number> = {}
     commits.forEach(c => { byType[c.type] = (byType[c.type] || 0) + 1 })
-    const lines = ['Type Distribution:', '===================', '']
-    Object.entries(byType).sort((a: any, b: any) => b[1] - a[1]).forEach(([t, c]) => lines.push('  ' + t + ': ' + c + ' (' + Math.round(c / commits.length * 100) + '%)'))
+    const lines = ['📊 类型分布', '═══════════', '']
+    Object.entries(byType).sort((a: any, b: any) => b[1] - a[1]).forEach(([t, c]) => lines.push('  ' + t + ': ' + c + '（' + Math.round(c / commits.length * 100) + '%）'))
     return { type: 'text', value: lines.join('\n') }
   }
 
@@ -109,7 +109,7 @@ export const call: LocalCommandCall = async (args) => {
     const commits = parseCommits()
     const byAuthor: Record<string, number> = {}
     commits.forEach(c => { byAuthor[c.author] = (byAuthor[c.author] || 0) + 1 })
-    const lines = ['Changes per Author:', '====================', '']
+    const lines = ['📊 作者变更统计', '═══════════════', '']
     Object.entries(byAuthor).sort((a: any, b: any) => b[1] - a[1]).forEach(([a, c]) => lines.push('  ' + a + ': ' + c))
     return { type: 'text', value: lines.join('\n') }
   }
@@ -119,16 +119,16 @@ export const call: LocalCommandCall = async (args) => {
     const t2 = parts[2] || 'HEAD'
     try {
       const output = execSync('git log --oneline ' + t1 + '..' + t2, { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
-      return { type: 'text', value: 'Changes ' + t1 + ' -> ' + t2 + ':\n' + output }
-    } catch { return { type: 'text', value: '[ERROR] Diff failed' } }
+      return { type: 'text', value: '📝 ' + t1 + ' → ' + t2 + ' 的变更：\n' + output }
+    } catch { return { type: 'text', value: '❌ Diff 失败' } }
   }
 
-  return { type: 'text', value: 'Unknown: ' + cmd }
+  return { type: 'text', value: '❌ 未知命令：' + cmd }
 }
 
 const changelogGen: Command = {
   type: 'local', name: 'changelog-gen',
-  description: 'Changelog - generate/since/preview/save/json/html/unreleased/stats/types',
+  description: '变更日志 - 生成/历史/预览/保存/统计/类型/作者',
   aliases: '/changelog-gen, /clg, /cl'.split(','),
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

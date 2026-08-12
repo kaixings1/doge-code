@@ -178,18 +178,18 @@ const runningAgents = new Map<string, AbortController>();
  */
 export function getTaskStatusText(task: any): string {
   const statusMap: Record<string, string> = {
-    pending: '⏳ 待处理',
+    pending: ' 待处理',
     'in-progress': '🚧 执行中',
-    done: '✅ 已完成',
-    cancelled: '❌ 已取消',
+    done: ' 已完成',
+    cancelled: ' 已取消',
   };
   const execMap: Record<string, string> = {
     not_started: '未开始',
     planning: '制定计划中',
     executing: '执行中',
     completed: '已完成',
-    failed: '❌ 失败',
-    paused: '⏸️ 已暂停',
+    failed: ' 失败',
+    paused: '⏸ 已暂停',
     cancelled: '已取消',
   };
   const base = statusMap[task.status] || task.status;

@@ -201,12 +201,12 @@ function noteResult(r: any, onDone: LocalJSXCommandOnDone) {
   if (r.success) {
     onDone(r.message)
   } else {
-    onDone('❌ 错误: ' + r.message)
+    onDone(' 错误: ' + r.message)
   }
 }
 
 function formatResult(r: any): string {
-  if (!r.success) return '❌ 错误: ' + r.message
+  if (!r.success) return ' 错误: ' + r.message
   if (r.data && Array.isArray(r.data)) return formatTagList(r.data)
   if (r.data && 'items' in r.data) return formatPaginated(r.data)
   if (r.data && 'id' in r.data) return formatSingleNote(r.data)

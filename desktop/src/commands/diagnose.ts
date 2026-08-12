@@ -239,7 +239,7 @@ function runDiagnostics(): DiagnosticResult {
 
 function formatTextReport(result: DiagnosticResult): string {
   const lines: string[] = []
-  lines.push('🔍 系统诊断报告')
+  lines.push(' 系统诊断报告')
   lines.push('')
 
   // Group by category
@@ -252,7 +252,7 @@ function formatTextReport(result: DiagnosticResult): string {
   for (const [category, items] of categories) {
     lines.push(`  ${category}:`)
     for (const item of items) {
-      const icon = item.status === 'pass' ? '✅' : item.status === 'warn' ? '⚠️' : '❌'
+      const icon = item.status === 'pass' ? '' : item.status === 'warn' ? '' : ''
       lines.push(`    ${icon} ${item.name}: ${item.message}`)
       if (item.suggestion) {
         lines.push(`       \x1b[33m→ ${item.suggestion}\x1b[0m`)
@@ -267,13 +267,13 @@ function formatTextReport(result: DiagnosticResult): string {
 
   if (result.failed > 0) {
     lines.push('')
-    lines.push('❌ 有严重问题需要修复后再继续使用。')
+    lines.push(' 有严重问题需要修复后再继续使用。')
   } else if (result.warned > 0) {
     lines.push('')
-    lines.push('⚠️ 有警告项，建议处理但不影响基本使用。')
+    lines.push(' 有警告项，建议处理但不影响基本使用。')
   } else {
     lines.push('')
-    lines.push('✅ 所有检查项均通过，环境健康！')
+    lines.push(' 所有检查项均通过，环境健康！')
   }
 
   return lines.join('\n')
@@ -285,7 +285,7 @@ function formatTextReport(result: DiagnosticResult): string {
 
 function renderHelp(): string {
   return [
-    '🔍 系统诊断',
+    ' 系统诊断',
     '',
     '检测环境问题、配置错误、性能瓶颈。',
     '',
@@ -294,7 +294,7 @@ function renderHelp(): string {
     '',
     '选项:',
     '  --json              JSON 格式输出',
-    '📖 用法:   --help              显示帮助',
+    ' 用法:   --help              显示帮助',
     '',
     '检查项:',
     '  • Git: git 安装、仓库状态',

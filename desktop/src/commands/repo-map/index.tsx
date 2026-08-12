@@ -143,7 +143,7 @@ export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
   if (error) {
     return (
       <Box flexDirection="column" padding={1}>
-        <Text color="red">❌ 扫描失败: {error}</Text>
+        <Text color="red"> 扫描失败: {error}</Text>
       </Box>
     )
   }

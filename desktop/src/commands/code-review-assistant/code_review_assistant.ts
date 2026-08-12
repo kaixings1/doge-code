@@ -398,7 +398,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       return {
         type: 'jsx',
         render: () => [
-          '🔍 高级代码审查助手 v2.0',
+          ' 高级代码审查助手 v2.0',
           '═══════════════════════════════════════',
           '',
           '核心功能:',
@@ -425,7 +425,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           '',
           '🔧 检测范围:',
           ' • 安全漏洞 (eval、XSS、硬编码密钥等)',
-          '❌ 错误:  • 代码质量 (TODO、调试代码、空异常处理等)',
+          ' 错误:  • 代码质量 (TODO、调试代码、空异常处理等)',
           ' • 最佳实践 (const、async/await、魔法字符串等)',
           ' • 性能问题 (内存泄漏、不必要的操作等)',
           ' • 可维护性 (长函数、复杂条件、过长注释等)',
@@ -454,7 +454,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           ' • 长字符串/魔法数字 - 建议提取常量',
           ' • Promise链 - 建议使用async/await',
           '',
-          '⚡ 性能模式:',
+          ' 性能模式:',
           ' • setInterval - 可能内存泄漏',
           ' • 不必要的JSON操作 - 性能浪费',
           '',
@@ -475,7 +475,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       if (!analysis) {
         return {
           type: 'jsx',
-          render: () => `❌ 文件分析失败: ${filePath}\n请确认文件路径正确且有读取权限。`,
+          render: () => ` 文件分析失败: ${filePath}\n请确认文件路径正确且有读取权限。`,
         }
       }
 
@@ -490,7 +490,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
         `质量分数: ${analysis.score}/100`,
         '',
         '📊 问题统计:',
-        ` 🔴 严重: ${analysis.summary.critical}`,
+        `  严重: ${analysis.summary.critical}`,
         ` 🟠 高风险: ${analysis.summary.high}`,
         ` 🟡 中风险: ${analysis.summary.medium}`,
         ` 🟢 低风险: ${analysis.summary.low}`,
@@ -501,9 +501,9 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
 
       // 质量评估
       lines.push('📈 质量评估:')
-      if (analysis.score >= 90) lines.push(' ✅ 优秀 - 代码质量非常好')
+      if (analysis.score >= 90) lines.push('  优秀 - 代码质量非常好')
       else if (analysis.score >= 70) lines.push(' 👍 良好 - 代码质量不错')
-      else if (analysis.score >= 50) lines.push(' ⚠️ 一般 - 需要改进')
+      else if (analysis.score >= 50) lines.push('  一般 - 需要改进')
       else lines.push(' 🚨 较差 - 需要重点优化')
       lines.push('')
 
@@ -544,7 +544,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       const analysis = reviewer.analyzeProject(scanPath)
 
       const lines = [
-        '🔍 项目代码审查报告',
+        ' 项目代码审查报告',
         '═══════════════════════════════════════',
         '',
         `扫描目录: ${scanPath}`,
@@ -562,7 +562,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       if (Object.keys(analysis.issuesBySeverity).length > 0) {
         lines.push('📋 问题严重程度:')
         const sev = analysis.issuesBySeverity
-        if (sev.critical) lines.push(` 🔴 严重: ${sev.critical}`)
+        if (sev.critical) lines.push(`  严重: ${sev.critical}`)
         if (sev.high) lines.push(` 🟠 高风险: ${sev.high}`)
         if (sev.medium) lines.push(` 🟡 中风险: ${sev.medium}`)
         if (sev.low) lines.push(` 🟢 低风险: ${sev.low}`)
@@ -576,7 +576,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           security: '🔒 安全',
           quality: '📊 质量',
           'best-practice': '🏆 最佳实践',
-          performance: '⚡ 性能',
+          performance: ' 性能',
           maintainability: '🔧 可维护性',
         }
         for (const [type, count] of Object.entries(analysis.issuesByType)) {
@@ -588,7 +588,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       if (analysis.topIssues.length > 0) {
         lines.push('🚨 最严重的问题:')
         analysis.topIssues.slice(0, 10).forEach((issue, i) => {
-          const icon = issue.severity === 'critical' ? '🔴' : issue.severity === 'high' ? '🟠' : '🟡'
+          const icon = issue.severity === 'critical' ? '' : issue.severity === 'high' ? '🟠' : '🟡'
           lines.push(` ${icon} ${i + 1}. [${issue.type}] ${issue.message}`)
           if (issue.suggestion) lines.push(`   建议: ${issue.suggestion}`)
         })
@@ -613,7 +613,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       if (!analysis) {
         return {
           type: 'jsx',
-          render: () => `❌ 文件分析失败: ${filePath}\n请确认文件路径正确。`,
+          render: () => ` 文件分析失败: ${filePath}\n请确认文件路径正确。`,
         }
       }
 
@@ -625,7 +625,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
         `文件: ${analysis.fileName}`,
         `路径: ${analysis.filePath}`,
         `行数: ${analysis.lineCount}`,
-        `安全评分: ${analysis.summary.critical === 0 && analysis.summary.high === 0 ? '✅ 良好' : '⚠️ 需关注'}`,
+        `安全评分: ${analysis.summary.critical === 0 && analysis.summary.high === 0 ? ' 良好' : ' 需关注'}`,
         '',
       ]
 
@@ -633,18 +633,18 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
         lines.push(`发现 ${securityIssues.length} 个安全问题:`)
         lines.push('')
         securityIssues.forEach((issue, i) => {
-          const icon = issue.severity === 'critical' ? '🔴' : issue.severity === 'high' ? '🟠' : '🟡'
+          const icon = issue.severity === 'critical' ? '' : issue.severity === 'high' ? '🟠' : '🟡'
           lines.push(`${icon} [${i + 1}] 第${issue.line}行: ${issue.message}`)
           if (issue.codeSnippet) lines.push(`    代码: ${issue.codeSnippet}`)
           if (issue.suggestion) lines.push(`    建议: ${issue.suggestion}`)
           lines.push('')
         })
       } else {
-        lines.push('✅ 未发现安全漏洞！')
+        lines.push(' 未发现安全漏洞！')
         lines.push('')
       }
 
-      lines.push('🛡️ 安全最佳实践:')
+      lines.push('🛡 安全最佳实践:')
       lines.push(' • 永远不要信任用户输入')
       lines.push(' • 使用参数化查询/预处理语句')
       lines.push(' • 实施输入验证和清理')
@@ -676,7 +676,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       if (Object.keys(analysis.issuesBySeverity).length > 0) {
         lines.push('📋 问题严重程度分布:')
         const sev = analysis.issuesBySeverity
-        if (sev.critical) lines.push(` 🔴 严重: ${sev.critical}`)
+        if (sev.critical) lines.push(`  严重: ${sev.critical}`)
         if (sev.high) lines.push(` 🟠 高风险: ${sev.high}`)
         if (sev.medium) lines.push(` 🟡 中风险: ${sev.medium}`)
         if (sev.low) lines.push(` 🟢 低风险: ${sev.low}`)
@@ -690,7 +690,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           security: '🔒 安全',
           quality: '📊 质量',
           'best-practice': '🏆 最佳实践',
-          performance: '⚡ 性能',
+          performance: ' 性能',
           maintainability: '🔧 可维护性',
         }
         for (const [type, count] of Object.entries(analysis.issuesByType)) {
@@ -702,7 +702,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       if (analysis.topIssues.length > 0) {
         lines.push('🚨 最严重的问题 (Top 10):')
         analysis.topIssues.slice(0, 10).forEach((issue, i) => {
-          const icon = issue.severity === 'critical' ? '🔴' : issue.severity === 'high' ? '🟠' : '🟡'
+          const icon = issue.severity === 'critical' ? '' : issue.severity === 'high' ? '🟠' : '🟡'
           lines.push(` ${icon} ${i + 1}. ${issue.message}`)
         })
         lines.push('')
@@ -742,7 +742,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       if (Object.keys(analysis.issuesBySeverity).length > 0) {
         lines.push('📋 严重程度统计:')
         const sev = analysis.issuesBySeverity
-        if (sev.critical) lines.push(` 🔴 严重: ${sev.critical}`)
+        if (sev.critical) lines.push(`  严重: ${sev.critical}`)
         if (sev.high) lines.push(` 🟠 高风险: ${sev.high}`)
         if (sev.medium) lines.push(` 🟡 中风险: ${sev.medium}`)
         if (sev.low) lines.push(` 🟢 低风险: ${sev.low}`)
@@ -785,15 +785,15 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       if (fixableIssues.length > 0) {
         lines.push('🚨 优先修复列表:')
         fixableIssues.slice(0, 10).forEach((issue, i) => {
-          const icon = issue.severity === 'critical' ? '🔴' : '🟠'
+          const icon = issue.severity === 'critical' ? '' : '🟠'
           lines.push(`${icon} ${i + 1}. ${issue.message}`)
           if (issue.suggestion) lines.push(`   修复: ${issue.suggestion}`)
         })
         lines.push('')
       }
 
-      lines.push('🛠️ 修复优先级:')
-      lines.push(' 1. 🔴 立即修复所有严重安全问题')
+      lines.push('🛠 修复优先级:')
+      lines.push(' 1.  立即修复所有严重安全问题')
       lines.push(' 2. 🟠 尽快修复高风险问题')
       lines.push(' 3. 🟡 计划修复中等风险问题')
       lines.push(' 4. 🟢 有空时修复低风险问题')
@@ -821,7 +821,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           recommendations: analysis.recommendations,
         }, null, 2)
         writeFileSync(exportPath, json, 'utf-8')
-        return { type: 'jsx', render: () => `✅ 报告已导出为 JSON: ${exportPath}` }
+        return { type: 'jsx', render: () => ` 报告已导出为 JSON: ${exportPath}` }
       }
 
       // 默认 Markdown 格式
@@ -848,7 +848,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       const sev = analysis.issuesBySeverity
       lines.push(`| 严重程度 | 数量 |`)
       lines.push(`|----------|------|`)
-      if (sev.critical) lines.push(`| 🔴 严重 | ${sev.critical} |`)
+      if (sev.critical) lines.push(`|  严重 | ${sev.critical} |`)
       if (sev.high) lines.push(`| 🟠 高风险 | ${sev.high} |`)
       if (sev.medium) lines.push(`| 🟡 中风险 | ${sev.medium} |`)
       if (sev.low) lines.push(`| 🟢 低风险 | ${sev.low} |`)
@@ -870,7 +870,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
         lines.push('## 🚨 最严重的问题')
         lines.push('')
         analysis.topIssues.forEach((issue, i) => {
-          const icon = issue.severity === 'critical' ? '🔴' : issue.severity === 'high' ? '🟠' : '🟡'
+          const icon = issue.severity === 'critical' ? '' : issue.severity === 'high' ? '🟠' : '🟡'
           lines.push(`${icon} **${i + 1}.** ${issue.message}`)
           if (issue.suggestion) lines.push(`   - 建议: ${issue.suggestion}`)
         })
@@ -885,7 +885,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       }
 
       writeFileSync(exportPath, lines.join('\n'), 'utf-8')
-      return { type: 'jsx', render: () => `✅ 报告已导出为 Markdown: ${exportPath}` }
+      return { type: 'jsx', render: () => ` 报告已导出为 Markdown: ${exportPath}` }
     }
 
     return {
@@ -895,7 +895,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
   } catch (error) {
     return {
       type: 'jsx',
-      render: () => `❌ 代码审查出错: ${error instanceof Error ? error.message : String(error)}`,
+      render: () => ` 代码审查出错: ${error instanceof Error ? error.message : String(error)}`,
     }
   }
 }

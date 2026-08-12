@@ -694,7 +694,7 @@ export const FileReadTool = buildTool({
           // 确定适当的警告消息
           content =
             data.file.totalLines === 0
-              ? '⚠️ 注意: <system-reminder>警告：文件存在但其内容为空。</system-reminder>'
+              ? ' 注意: <system-reminder>警告：文件存在但其内容为空。</system-reminder>'
               : `<system-reminder>警告：文件存在但其行数少于提供的偏移量（${data.file.startLine}）。该文件共有 ${data.file.totalLines} 行。</system-reminder>`
         }
 

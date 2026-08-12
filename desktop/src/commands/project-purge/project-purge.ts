@@ -21,7 +21,7 @@ export async function call(onDone: LocalJSXCommandOnDone, args: string) {
 - \`--yes\` 或 \`--y\` - 无确认直接删除
 - \`--interactive\` 或 \`--i\` - 交互式确认
 
-⚠️ 此操作不可撤销！
+ 此操作不可撤销！
 
 确定要继续吗？请输入 \`--yes\` 确认。`, { display: 'system' })
 }

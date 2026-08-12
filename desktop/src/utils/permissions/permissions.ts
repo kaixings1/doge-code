@@ -462,7 +462,7 @@ async function runPermissionRequestHooksForHeadlessAgent(
   } catch (error) {
     // 如果钩子失败，则回退到自动拒绝而不是崩溃
     logError(
-      new Error('❌ 错误: PermissionRequest 钩子在无头代理中失败', {
+      new Error(' 错误: PermissionRequest 钩子在无头代理中失败', {
         cause: toError(error),
       }),
     )

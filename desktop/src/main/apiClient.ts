@@ -294,7 +294,7 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
         response = await fetch(url, { method: 'POST', headers, body: retryBody })
         if (response.ok) break
         const text = await response.text().catch(() => '')
-        lastError = `❌ 错误: API 请求失败 (${response.status}): ${text || response.statusText}`
+        lastError = ` 错误: API 请求失败 (${response.status}): ${text || response.statusText}`
         if (response.status === 429) {
           const waitMs = Math.min((attempt + 1) * 5000, 60000)
           console.warn(`[MAIN] 429 速率限制，等待 ${waitMs}ms 后重试 (${attempt + 1}/5)...`)
@@ -315,7 +315,7 @@ export function createDesktopApiClient(config: DesktopApiConfig) {
         }
       }
       if (!response || !response.ok) {
-        throw new Error(lastError || '❌ 错误: API 请求失败')
+        throw new Error(lastError || ' 错误: API 请求失败')
       }
       console.log(`[MAIN] API response: ${response.status}, content-type: ${response.headers.get('content-type')}`)
 

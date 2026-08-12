@@ -95,7 +95,7 @@ if (args.includes('--help')) {
   console.log('用法: claude [选项] [提示]')
   console.log('')
   console.log('已恢复的基本命令:')
-  console.log('📖 用法:   --help       显示此帮助')
+  console.log(' 用法:   --help       显示此帮助')
   console.log('  --version    显示版本')
   console.log('')
   console.log('不带这些标志运行时，交互式 REPL 启动将路由到 src/main.tsx。')

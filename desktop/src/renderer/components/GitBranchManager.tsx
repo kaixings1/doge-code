@@ -70,12 +70,12 @@ export function GitBranchManager({ cwd, theme, onClose, onBranchChanged }: GitBr
     try {
       const result = await window.dogeAPI.gitBranchCreate(cwd, newBranchName.trim(), checkoutAfterCreate)
       if (result.success) {
-        setActionMessage(`✅ 分支 "${newBranchName}" 已创建`)
+        setActionMessage(` 分支 "${newBranchName}" 已创建`)
         setNewBranchName('')
         await refresh()
         onBranchChanged?.()
       } else {
-        setActionMessage(`❌ 创建失败: ${result.error}`)
+        setActionMessage(` 创建失败: ${result.error}`)
       }
     } catch { /* ignore */ } finally { setActionLoading(false) }
   }, [cwd, newBranchName, checkoutAfterCreate, refresh, onBranchChanged])
@@ -86,11 +86,11 @@ export function GitBranchManager({ cwd, theme, onClose, onBranchChanged }: GitBr
     try {
       const result = await window.dogeAPI.gitBranchSwitch(cwd, branchName)
       if (result.success) {
-        setActionMessage(`✅ 已切换到 "${branchName}"`)
+        setActionMessage(` 已切换到 "${branchName}"`)
         await refresh()
         onBranchChanged?.()
       } else {
-        setActionMessage(`❌ 切换失败: ${result.error}`)
+        setActionMessage(` 切换失败: ${result.error}`)
       }
     } catch { /* ignore */ } finally { setActionLoading(false) }
   }, [cwd, refresh, onBranchChanged])
@@ -102,11 +102,11 @@ export function GitBranchManager({ cwd, theme, onClose, onBranchChanged }: GitBr
     try {
       const result = await window.dogeAPI.gitBranchDelete(cwd, branchName, force)
       if (result.success) {
-        setActionMessage(`✅ 分支 "${branchName}" 已删除`)
+        setActionMessage(` 分支 "${branchName}" 已删除`)
         await refresh()
         onBranchChanged?.()
       } else {
-        setActionMessage(`❌ 删除失败: ${result.error}`)
+        setActionMessage(` 删除失败: ${result.error}`)
       }
     } catch { /* ignore */ } finally { setActionLoading(false) }
   }, [cwd, refresh, onBranchChanged])
@@ -122,13 +122,13 @@ export function GitBranchManager({ cwd, theme, onClose, onBranchChanged }: GitBr
     try {
       const { execSync } = await import('node:child_process')
       execSync(`git branch -m "${oldName}" "${renameName.trim()}"`, { cwd, encoding: 'utf-8' })
-      setActionMessage(`✅ 分支 "${oldName}" 已重命名为 "${renameName.trim()}"`)
+      setActionMessage(` 分支 "${oldName}" 已重命名为 "${renameName.trim()}"`)
       setRenameTarget(null)
       setRenameName('')
       await refresh()
       onBranchChanged?.()
     } catch (e) {
-      setActionMessage(`❌ 重命名失败: ${e instanceof Error ? e.message : '未知错误'}`)
+      setActionMessage(` 重命名失败: ${e instanceof Error ? e.message : '未知错误'}`)
     } finally { setActionLoading(false) }
   }, [cwd, renameName, refresh, onBranchChanged])
 
@@ -139,11 +139,11 @@ export function GitBranchManager({ cwd, theme, onClose, onBranchChanged }: GitBr
     try {
       const result = await window.dogeAPI.gitBranchMerge(cwd, mergeSource, mergeTarget)
       if (result.success) {
-        setActionMessage(`✅ 已合并 "${mergeSource}" 到 "${mergeTarget}"`)
+        setActionMessage(` 已合并 "${mergeSource}" 到 "${mergeTarget}"`)
         await refresh()
         onBranchChanged?.()
       } else {
-        setActionMessage(`❌ 合并失败: ${result.error}`)
+        setActionMessage(` 合并失败: ${result.error}`)
       }
     } catch { /* ignore */ } finally { setActionLoading(false) }
   }, [cwd, mergeSource, mergeTarget, refresh, onBranchChanged])
@@ -219,8 +219,8 @@ export function GitBranchManager({ cwd, theme, onClose, onBranchChanged }: GitBr
       {actionMessage && (
         <div style={{
           padding: '4px 8px', borderRadius: '3px', fontSize: '10px',
-          background: actionMessage.startsWith('✅') ? '#81C78422' : '#ef535022',
-          color: actionMessage.startsWith('✅') ? '#81C784' : '#FF6B6B',
+          background: actionMessage.startsWith('') ? '#81C78422' : '#ef535022',
+          color: actionMessage.startsWith('') ? '#81C784' : '#FF6B6B',
         }}>
           {actionMessage}
         </div>

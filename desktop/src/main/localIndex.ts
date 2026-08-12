@@ -185,7 +185,7 @@ export class CodeIndexer {
       }
       console.log(`[INDEX] 加载持久化索引: ${this.files.size} 文件, ${this.totalChunks} chunks`)
     } catch (e) {
-      console.warn('❌ 错误: [INDEX] 加载索引失败，将重建:', e)
+      console.warn(' 错误: [INDEX] 加载索引失败，将重建:', e)
       this.files.clear()
     }
   }
@@ -204,7 +204,7 @@ export class CodeIndexer {
       }
       fs.writeFileSync(this.indexFile, JSON.stringify(payload), 'utf-8')
     } catch (e) {
-      console.warn('❌ 错误: [INDEX] 保存索引失败:', e)
+      console.warn(' 错误: [INDEX] 保存索引失败:', e)
     }
   }
 

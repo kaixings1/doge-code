@@ -446,7 +446,7 @@ const guessNumberProviders: Provider[] = [
     offline: true,
     fetch: async () => {
       const answer = rand(1000, 9999)
-      return [{ title: `我已想好一个四位数（无重复数字），请开始猜（回复数字）`, url: ''📖 用法: , snippet: `答案：${answer}（示例，实际游戏时隐藏）`, source: 'guess-number' }]
+      return [{ title: `我已想好一个四位数（无重复数字），请开始猜（回复数字）`, url: '', snippet: `答案：${answer}（示例，实际游戏时隐藏）`, source: 'guess-number' }]
     }
   }
 ]
@@ -1904,7 +1904,7 @@ const biddingProviders: Provider[] = [
       }))
       // 按类别分组显示
       results.unshift({
-        title: `🔍 已收录 ${coreBiddingSites.length} 个招投标平台（国家级+央企+省属国企）`,
+        title: ` 已收录 ${coreBiddingSites.length} 个招投标平台（国家级+央企+省属国企）`,
         url: '',
         snippet: '包含：中国招标投标公共服务平台、中国政府采购网、全国公共资源交易平台、各央企采购平台等',
         source: 'bidding-sites'
@@ -2402,7 +2402,7 @@ export const WebSearchTool = buildTool({
 export const clearCache = () => globalCache.clear()
 
 if (import.meta.main) {
-  console.log('🔍 万能搜索 Hub 自检 (240+ 技能已注册)')
+  console.log(' 万能搜索 Hub 自检 (240+ 技能已注册)')
   console.log('  已启用技能数量：', allSkills.length)
   console.log(`  📌 已收录 ${coreBiddingSites.length} 个招投标平台`)
 }

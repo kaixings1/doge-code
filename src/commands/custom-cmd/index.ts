@@ -48,9 +48,9 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'list' || cmd === 'ls' || cmd === '') {
     const commands = loadCommands()
     if (commands.length === 0) {
-      return { type: 'text', value: 'No custom commands. Use /custom-cmd create <name> to create one.' }
+      return { type: 'text', value: 'ℹ️ 暂无自定义命令。使用 /custom-cmd create <名称> 创建一个。' }
     }
-    const lines = ['Custom Commands:', '==================', '']
+    const lines = ['📋 自定义命令列表：', '═══════════════════', '']
     commands.forEach(c => {
       lines.push('/' + c.name + ' - ' + c.description + ' [' + c.version + ']')
     })
@@ -59,12 +59,12 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'create') {
     const name = parts[1]
-    if (!name) return { type: 'text', value: 'Usage: /custom-cmd create <name>' }
-    const description = parts.slice(2).join(' ') || 'Custom command'
+    if (!name) return { type: 'text', value: '📖 用法：/custom-cmd create <名称>' }
+    const description = parts.slice(2).join(' ') || '自定义命令'
     const newCmd: CustomCommand = {
       name,
       description,
-      template: '## Task\n' + description + '\n\nExecute the task described above.',
+      template: '## 任务\n' + description + '\n\n执行上述描述的任务。',
       aliases: [],
       author: 'user',
       version: '1.0.0',
@@ -72,63 +72,62 @@ export const call: LocalCommandCall = async (args) => {
       enabled: true,
     }
     saveCommand(newCmd)
-    return { type: 'text', value: '[OK] Created /' + name + '\nEdit: ' + join(CONFIG_DIR, name + '.json') }
+    return { type: 'text', value: '✅ 已创建：/' + name + '\n编辑：' + join(CONFIG_DIR, name + '.json') }
   }
 
   if (cmd === 'delete') {
     const name = parts[1]
-    if (!name) return { type: 'text', value: 'Usage: /custom-cmd delete <name>' }
+    if (!name) return { type: 'text', value: '📖 用法：/custom-cmd delete <名称>' }
     try {
       const fs = require('fs')
       fs.unlinkSync(join(CONFIG_DIR, name + '.json'))
-      return { type: 'text', value: '[OK] Deleted /' + name }
+      return { type: 'text', value: '✅ 已删除：/' + name }
     } catch {
-      return { type: 'text', value: '[ERROR] Not found: ' + name }
+      return { type: 'text', value: '❌ 未找到：' + name }
     }
   }
 
   if (cmd === 'show') {
     const name = parts[1]
-    if (!name) return { type: 'text', value: 'Usage: /custom-cmd show <name>' }
+    if (!name) return { type: 'text', value: '📖 用法：/custom-cmd show <名称>' }
     const commands = loadCommands()
     const found = commands.find(c => c.name === name)
-    if (!found) return { type: 'text', value: 'Not found: ' + name }
+    if (!found) return { type: 'text', value: '❌ 未找到：' + name }
     return { type: 'text', value: JSON.stringify(found, null, 2) }
   }
 
   if (cmd === 'enable' || cmd === 'disable') {
     const name = parts[1]
-    if (!name) return { type: 'text', value: 'Usage: /custom-cmd ' + cmd + ' <name>' }
+    if (!name) return { type: 'text', value: '📖 用法：/custom-cmd ' + cmd + ' <名称>' }
     const commands = loadCommands()
     const found = commands.find(c => c.name === name)
-    if (!found) return { type: 'text', value: 'Not found: ' + name }
+    if (!found) return { type: 'text', value: '❌ 未找到：' + name }
     found.enabled = cmd === 'enable'
     saveCommand(found)
-    return { type: 'text', value: '[OK] ' + cmd + 'd /' + name }
+    return { type: 'text', value: '✅ 已' + (cmd === 'enable' ? '启用' : '禁用') + '：/' + name }
   }
 
   if (cmd === 'help') {
     return { type: 'text', value: [
-      'Custom Commands',
-      '',
-      '📖 Usage: ',
-      '  /custom-cmd list               List all custom commands',
-      '  /custom-cmd create <name>      Create a new custom command',
-      '  /custom-cmd delete <name>      Delete a custom command',
-      '  /custom-cmd show <name>        Show command details',
-      '  /custom-cmd enable <name>      Enable a command',
-      '  /custom-cmd disable <name>     Disable a command',
-      '  /custom-cmd help               Show this help',
+      '📋 自定义命令', '',
+      '📖 用法：',
+      '  /custom-cmd list               列出所有自定义命令',
+      '  /custom-cmd create <名称>      创建自定义命令',
+      '  /custom-cmd delete <名称>      删除自定义命令',
+      '  /custom-cmd show <名称>        查看命令详情',
+      '  /custom-cmd enable <名称>      启用命令',
+      '  /custom-cmd disable <名称>     禁用命令',
+      '  /custom-cmd help               显示此帮助',
     ].join('\n') }
   }
 
-  return { type: 'text', value: 'Unknown: ' + cmd }
+  return { type: 'text', value: '❌ 未知命令：' + cmd }
 }
 
 const customCmd: Command = {
   type: 'local',
   name: 'custom-cmd',
-  description: 'Manage custom slash commands',
+  description: '管理自定义斜杠命令',
   aliases: ['/custom-cmd', '/cc'],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

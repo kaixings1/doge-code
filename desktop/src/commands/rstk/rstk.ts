@@ -51,7 +51,7 @@ export const call: LocalCommandCall = async () => {
         }
       }
     } catch (e) {
-      logForDebugging('❌ 错误: [rstk] 读取 api.json 失败: ' + e, { level: 'error' })
+      logForDebugging(' 错误: [rstk] 读取 api.json 失败: ' + e, { level: 'error' })
     }
   }
 
@@ -60,7 +60,7 @@ export const call: LocalCommandCall = async () => {
     resetCostState()
     memoryResetDone = true
   } catch (e) {
-    logForDebugging('❌ 错误: [rstk] 重置内存状态失败: ' + e, { level: 'error' })
+    logForDebugging(' 错误: [rstk] 重置内存状态失败: ' + e, { level: 'error' })
   }
 
   // 3. 触发状态栏刷新信号
@@ -72,8 +72,8 @@ export const call: LocalCommandCall = async () => {
   if (memoryResetDone) parts.push('内存 token 计数')
 
   const message = parts.length > 0
-    ? '✅ Token 统计数据已重置：' + parts.join('、')
-    : '⚠️ 未找到活跃预设的 token 数据，已重置内存统计'
+    ? ' Token 统计数据已重置：' + parts.join('、')
+    : ' 未找到活跃预设的 token 数据，已重置内存统计'
 
   return { type: 'text', value: message }
 }

@@ -1,0 +1,9 @@
+user_facing_interfaces:
+  - name: content_display
+    path: /api/user/content/show
+    method: GET
+    description: 面向用户的内容展示统一接口，所有用户可见内容均通过该接口输出
+  - name: key_status_query
+    path: /api/user/key/status
+    method: GET
+    description: 面向用户的密钥状态查询接口（脱敏后返回）

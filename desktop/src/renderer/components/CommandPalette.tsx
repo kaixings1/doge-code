@@ -120,7 +120,7 @@ export function CommandPalette({ cwd, onClose, mode, setMode, commandHistory = [
               flex: 1, padding: '4px', border: 'none', borderRadius: '3px', cursor: 'pointer', fontSize: '10px',
               background: mode === 'commands' ? theme.border : 'transparent', color: mode === 'commands' ? theme.text : theme.textMuted
             }}
-          >⚡ 命令</button>
+          > 命令</button>
         </div>
         <div style={{ padding: '12px 16px', borderBottom: `1px solid ${theme.border}` }}>
           <input

@@ -81,7 +81,7 @@ export const call: LocalJSXCommandCall = async () => {
   const ctx = getRealContextInfo()
 
   const statusColor = ctx.status === 'critical' ? 'red' : ctx.status === 'warning' ? 'yellow' : 'green'
-  const statusText = ctx.status === 'critical' ? '⚠️ 接近限制' : ctx.status === 'warning' ? '⚡ 使用较高' : '✓ 正常'
+  const statusText = ctx.status === 'critical' ? ' 接近限制' : ctx.status === 'warning' ? ' 使用较高' : '✓ 正常'
   // 辅助函数：格式化数值，若为 0 且对应的配置/来源可能缺失则显示“未知”
   const formatTokenUsed = () => {
     if (ctx.tokensUsed === 0 && ctx.maxTokens === 0) return '未知'

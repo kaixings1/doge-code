@@ -182,7 +182,7 @@ export function VersionComparePanel({ cwd, theme, selectedCommitSha, onCompareCo
   return (
     <div style={containerStyle}>
       <div style={headerStyle}>
-        <span>🔍 版本对比</span>
+        <span> 版本对比</span>
         {onClose && (
           <button onClick={onClose} style={{ ...buttonStyle, color: c.textMuted }}>✕ 关闭</button>
         )}

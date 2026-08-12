@@ -171,7 +171,7 @@ function ApplyEffortAndClose(t0) {
 export async function call(onDone: LocalJSXCommandOnDone, _context: unknown, args?: string): Promise<React.ReactNode> {
   args = args?.trim() || '';
   if (COMMON_HELP_ARGS.includes(args)) {
-    onDone('📖 用法: /effort [low|medium|high|max|auto]\n\n努力程度等级：\n- low：快速、直接的实现\n- medium：平衡的方式，包含标准测试\n- high：全面的实现，包含广泛测试\n- max：最大能力，最深度的推理（仅限 Opus 4.6）\n- auto：使用模型的默认努力程度');
+    onDone(' 用法: /effort [low|medium|high|max|auto]\n\n努力程度等级：\n- low：快速、直接的实现\n- medium：平衡的方式，包含标准测试\n- high：全面的实现，包含广泛测试\n- max：最大能力，最深度的推理（仅限 Opus 4.6）\n- auto：使用模型的默认努力程度');
     return;
   }
   if (!args || args === 'current' || args === 'status') {

@@ -98,7 +98,7 @@ async function createWorkflowFile(
     })
 
     const helpText =
-      '📖 用法: \n\n需要帮助？常见问题：\n' +
+      ' 用法: \n\n需要帮助？常见问题：\n' +
       '· 权限被拒绝 → 运行：gh auth refresh -h github.com -s repo,workflow\n' +
       '· 未授权 → 确保你对仓库有管理员权限\n' +
       '· 手动设置 → 访问：https://github.com/anthropics/claude-code-action'

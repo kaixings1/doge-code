@@ -26,7 +26,7 @@ export async function call(args: string, context: any): Promise<string> {
   const exists2 = existsSync(path2)
 
   if (!exists1 || !exists2) {
-    result += `⚠ 路径不存在:\n`
+    result += ` 路径不存在:\n`
     if (!exists1) result += `- ${path1} (不存在)\n`
     if (!exists2) result += `- ${path2} (不存在)\n`
     return result
@@ -49,7 +49,7 @@ export async function call(args: string, context: any): Promise<string> {
       if (content1 === content2) {
         result += '✓ 文件内容完全相同\n'
       } else {
-        result += '⚠ 文件内容不同\n'
+        result += ' 文件内容不同\n'
         const lines1 = content1.split('\n')
         const lines2 = content2.split('\n')
         const maxLines = Math.max(lines1.length, lines2.length)
@@ -71,7 +71,7 @@ export async function call(args: string, context: any): Promise<string> {
         }
       }
     } catch (error) {
-      result += `⚠ 读取文件时出错: ${error}\n`
+      result += ` 读取文件时出错: ${error}\n`
     }
   }
 

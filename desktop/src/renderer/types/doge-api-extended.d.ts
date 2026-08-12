@@ -4,7 +4,7 @@
  * 此文件是 Window.dogeAPI 的唯一类型声明来源。
  * 所有后续合并时添加的 AI 相关 IPC 方法都在此声明。
  *
- * ⚠️ 注意：其他文件不应再声明 declare global { interface Window { ... } }
+ *  注意：其他文件不应再声明 declare global { interface Window { ... } }
  * 如需添加新 API，请在本文件中扩展 ExtendedDogeAPI 接口。
  */
 

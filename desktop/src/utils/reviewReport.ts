@@ -126,13 +126,13 @@ export function formatReviewReport(
   const { showContext = false, contextLines = 3, maxFiles = 20 } = options
 
   // 摘要
-  lines.push('🔍 代码审查报告')
+  lines.push(' 代码审查报告')
   lines.push('─'.repeat(50))
   lines.push(`  文件数: ${report.summary.filesAffected}`)
   lines.push(`  错误: ${report.summary.errorCount}  |  警告: ${report.summary.warningCount}  |  信息: ${report.summary.infoCount}`)
   lines.push(`  总计: ${report.summary.totalComments} 条评论`)
   lines.push(
-    `  结果: ${report.summary.passed ? '✅ 通过' : '❌ 未通过（存在错误级别问题）'}`,
+    `  结果: ${report.summary.passed ? ' 通过' : ' 未通过（存在错误级别问题）'}`,
   )
   lines.push('')
 
@@ -140,26 +140,26 @@ export function formatReviewReport(
   const { errors, warnings, info: infoComments } = report.comments
 
   if (errors.length > 0) {
-    lines.push('❌ 错误:')
+    lines.push(' 错误:')
     formatComments(lines, errors, 'error', showContext, contextLines)
     lines.push('')
   }
 
   if (warnings.length > 0) {
-    lines.push('⚠️  警告:')
+    lines.push('  警告:')
     formatComments(lines, warnings, 'warning', showContext, contextLines)
     lines.push('')
   }
 
   if (infoComments.length > 0) {
-    lines.push('ℹ️  建议:')
+    lines.push('ℹ  建议:')
     formatComments(lines, infoComments, 'info', showContext, contextLines)
     lines.push('')
   }
 
   // 未映射警告
   if (report.unmappedWarnings.length > 0) {
-    lines.push('⚠️  行号映射警告:')
+    lines.push('  行号映射警告:')
     report.unmappedWarnings.forEach(w => {
       lines.push(`  ${w}`)
     })
@@ -222,7 +222,7 @@ export function summarizeReport(report: ReviewReport): string {
   const { summary } = report
 
   if (summary.totalComments === 0) {
-    return '✅ 未发现问题'
+    return ' 未发现问题'
   }
 
   const parts: string[] = []
@@ -231,13 +231,13 @@ export function summarizeReport(report: ReviewReport): string {
   )
 
   if (summary.errorCount > 0) {
-    parts.push(`❌ ${summary.errorCount} 个错误需要修复`)
+    parts.push(` ${summary.errorCount} 个错误需要修复`)
   }
   if (summary.warningCount > 0) {
-    parts.push(`⚠️  ${summary.warningCount} 个警告建议处理`)
+    parts.push(`  ${summary.warningCount} 个警告建议处理`)
   }
   if (summary.infoCount > 0) {
-    parts.push(`ℹ️  ${summary.infoCount} 个改进建议`)
+    parts.push(`ℹ  ${summary.infoCount} 个改进建议`)
   }
 
   return parts.join('\n')

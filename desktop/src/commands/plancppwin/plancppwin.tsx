@@ -1009,7 +1009,7 @@ const GROUPS: CategoryGroup[] = [
           { id: 2, label: '控制台' },
           { id: 3, label: '调试器(OutputDebugString)' },
           { id: 4, label: '远程日志服务器' },
-          { id: 5, label: '❌ 错误: Sentry错误收集' },
+          { id: 5, label: ' 错误: Sentry错误收集' },
           { id: 6, label: '组合(文件+控制台)' },
         ],
       },
@@ -1796,16 +1796,16 @@ const GROUPS: CategoryGroup[] = [
       },
     ],
   },
-  // ── ❌ 错误: AA. 错误处理 ──
+  // ──  错误: AA. 错误处理 ──
   {
     id: 'aa',
-    title: '❌ 错误: AA. 错误处理',
+    title: ' 错误: AA. 错误处理',
     categories: [
       {
         id: 'aa1-paradigm',
-        title: '❌ 错误: AA1.错误处理范式',
+        title: ' 错误: AA1.错误处理范式',
         items: [
-          { id: 1, label: '❌ 错误: C++异常(try/catch)' },
+          { id: 1, label: ' 错误: C++异常(try/catch)' },
           { id: 2, label: '错误码(std::error_code)' },
           { id: 3, label: 'std::expected(函数式)' },
           { id: 4, label: '混合模式' },
@@ -1814,7 +1814,7 @@ const GROUPS: CategoryGroup[] = [
       },
       {
         id: 'aa2-safety',
-        title: '❌ 错误: AA2.异常安全',
+        title: ' 错误: AA2.异常安全',
         items: [
           { id: 1, label: '基本保证' },
           { id: 2, label: '强保证(原子回滚)' },
@@ -1824,7 +1824,7 @@ const GROUPS: CategoryGroup[] = [
       },
       {
         id: 'aa3-errgen',
-        title: '❌ 错误: AA3.错误码生成',
+        title: ' 错误: AA3.错误码生成',
         items: [
           { id: 1, label: '需要生成错误码头文件' },
           { id: 2, label: '不需要' },
