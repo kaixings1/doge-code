@@ -158,7 +158,7 @@ export const call: LocalCommandCall = async (args) => {
 
 const release: Command = {
   type: 'local', name: 'release',
-  description: 'Release - bump/version/notes/changelog/tag/create/publish',
+  description: '🚀 发布管理 - 版本提升/说明/变更日志/标签/创建/发布',
   aliases: ['/release', '/rel'], supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }

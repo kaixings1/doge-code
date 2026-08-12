@@ -62,7 +62,7 @@ export const call: LocalCommandCall = async (args) => {
       else if (framework === 'go-test') output = execSync('go test ./... -v 2>&1', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'], timeout: 120000 })
       else if (framework === 'cargo') output = execSync('cargo test 2>&1', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'], timeout: 120000 })
       else output = execSync('npm test 2>&1', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'], timeout: 120000 })
-      return { type: 'text', value: output.slice(0, 3000) }
+      return { type: 'text', value: '🧪 测试输出：\n' + output.slice(0, 3000) }
     } catch (err) {
       return { type: 'text', value: '❌ ' + (err instanceof Error ? err.message : String(err)) }
     }
@@ -132,7 +132,7 @@ export const call: LocalCommandCall = async (args) => {
   }
 
   if (cmd === 'last') {
-    return { type: 'text', value: '运行 /test-run 查看最新结果' }
+    return { type: 'text', value: '💡 运行 /test-run 查看最新测试结果' }
   }
 
   if (cmd === 'failed') {
@@ -147,7 +147,7 @@ export const call: LocalCommandCall = async (args) => {
 
 const testRun: Command = {
   type: 'local', name: 'test-run',
-  description: 'Test runner - run/watch/coverage/debug/snapshot/time/framework',
+  description: '🧪 测试运行器 - 运行/监视/覆盖率/调试/快照/耗时/框架',
   aliases: ['/test-run', '/test', '/t'], supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }

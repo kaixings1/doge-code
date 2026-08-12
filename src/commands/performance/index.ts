@@ -183,7 +183,7 @@ export const call: LocalCommandCall = async (args) => {
 
     if (cmd === 'file') {
       const file = parts[1]
-      if (!file) return { type: 'text', value: 'Usage: /performance file <path>' }
+      if (!file) return { type: 'text', value: '用法：/performance file <路径>' }
       if (!existsSync(file)) return { type: 'text', value: `❌ File not found: ${file}` }
       const m = analyzeFile(file)
       if (!m) return { type: 'text', value: `⚠️ Cannot analyze: ${file} (unsupported format or binary file)` }
@@ -243,7 +243,7 @@ export const call: LocalCommandCall = async (args) => {
         const baseline = JSON.parse(readFileSync(BASELINE_FILE, 'utf-8'))
         const newFiles = files.filter(f => !baseline.some((b: FileMetrics) => b.file === f.file))
         const removed = baseline.filter((b: FileMetrics) => !files.some(f => f.file === b.file))
-        return { type: 'text', value: `✅ New files: ${newFiles.length}\nRemoved: ${removed.length}\nCurrent: ${files.length}` }
+        return { type: 'text', value: `✅ 新文件：${newFiles.length}\n已移除：${removed.length}\n当前文件数：${files.length}` }
       } catch { return { type: 'text', value: '[ERROR] Corrupted baseline' } }
     }
 

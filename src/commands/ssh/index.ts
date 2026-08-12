@@ -47,7 +47,7 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'list' || cmd === 'ls') {
     if (hosts.length === 0) return { type: 'text', value: '📋 无已保存主机。使用 /ssh add 添加一个。' }
-    const lines = ['SSH 主机：', '===========', '']
+    const lines = ['🔒 SSH 主机列表：', '═══════════════', '']
     hosts.forEach(h => lines.push(h.name + ' - ' + h.user + '@' + h.host + ':' + h.port + (h.description ? '（' + h.description + '）' : '')))
     return { type: 'text', value: lines.join('\n') }
   }
@@ -131,7 +131,7 @@ export const call: LocalCommandCall = async (args) => {
 
 const ssh: Command = {
   type: 'local', name: 'ssh',
-  description: 'SSH manager - list/add/connect/exec/copy/keys/test/logs',
+  description: '🔒 SSH 管理器 - 列出/添加/连接/执行/复制/密钥/测试/日志',
   aliases: '/ssh, /remote'.split(','),
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

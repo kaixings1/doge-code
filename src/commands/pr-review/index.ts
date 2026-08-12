@@ -45,7 +45,7 @@ export const call: LocalCommandCall = async (args) => {
       lines.forEach(l => { if (l.startsWith('diff --git')) files.add(l.split(' b/')[1] || '') })
       return { type: 'text', value: '📊 PR #' + prNumber + ' 差异：\n变更文件数：' + files.size + '\n' + diff.slice(0, 3000) }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
+      return { type: 'text', value: '❌ [错误] ' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
@@ -66,7 +66,7 @@ export const call: LocalCommandCall = async (args) => {
       })
       return { type: 'text', value: issues.length > 0 ? '潜在问题（' + issues.length + '）：\n' + issues.join('\n') : '✅ 未发现明显问题' }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
+      return { type: 'text', value: '❌ [错误] ' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
@@ -82,7 +82,7 @@ export const call: LocalCommandCall = async (args) => {
         '', '描述：', info.body?.slice(0, 500) || '无描述',
       ].join('\n') }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
+      return { type: 'text', value: '❌ [错误] ' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
@@ -124,7 +124,7 @@ export const call: LocalCommandCall = async (args) => {
       execSync('gh pr comment ' + prNumber + ' --body "' + comment + '"', { stdio: 'ignore' })
       return { type: 'text', value: '✅ 已添加评论到 PR #' + prNumber }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
+      return { type: 'text', value: '❌ [错误] ' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
@@ -133,7 +133,7 @@ export const call: LocalCommandCall = async (args) => {
       execSync('gh pr review ' + prNumber + ' --approve', { stdio: 'ignore' })
       return { type: 'text', value: '✅ 已批准 PR #' + prNumber }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
+      return { type: 'text', value: '❌ [错误] ' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
