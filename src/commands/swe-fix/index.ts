@@ -47,12 +47,12 @@ function renderHelp(): string {
   return [
     '# SWE-Fix — 测试驱动修复（吸收自 Agentless）',
     '',
-    'SWE-bench 风格定位→修复闭环：测试失败 → 定位 → 修复 → 验证。',
+    '❌ 错误: SWE-bench 风格定位→修复闭环：测试失败 → 定位 → 修复 → 验证。',
     '',
     '## 用法',
     '```',
     '/swe-fix <issue描述>   运行测试并生成定位+修复 prompt',
-    '/swe-fix --test-only    只运行测试并解析失败信息',
+    '❌ 错误: /swe-fix --test-only    只运行测试并解析失败信息',
     '/swe-fix --localize     生成文件级定位 prompt',
     '/swe-fix --repair       生成修复 prompt（带行号上下文）',
     '/swe-fix --structure    展示仓库结构',
@@ -71,7 +71,7 @@ function renderHelp(): string {
     '## 选项',
     '| 选项 | 说明 |',
     '|------|------|',
-    '| `--test-only` | 只运行测试，输出失败解析 |',
+    '❌ 错误: | `--test-only` | 只运行测试，输出失败解析 |',
     '| `--localize` | 文件级定位 prompt |',
     '| `--repair` | 修复 prompt（含带行号代码） |',
     '| `--structure` | 仓库结构概览 |',
@@ -197,7 +197,7 @@ export const call: LocalCommandCall = async (args): Promise<LocalCommandResult> 
   if (raw === '--localize' || raw.startsWith('--localize ')) {
     const problem = raw.replace(/^--localize\s*/, '')
     if (!problem) {
-      return { type: 'text', value: '用法: /swe-fix --localize "<issue 描述>" 或先运行 /swe-fix 获取失败信息' }
+      return { type: 'text', value: '用法: /swe-fix --localize "<issue 描述>"❌ 错误:  或先运行 /swe-fix 获取失败信息' }
     }
     const structure = buildRepoStructure(projectRoot)
     return { type: 'text', value: buildFileLocalizePrompt(problem, structure) }

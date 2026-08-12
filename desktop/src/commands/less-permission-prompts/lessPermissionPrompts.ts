@@ -240,7 +240,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       ' • risks - 查看风险评估',
       ' • intercept - 测试权限拦截',
       ' • test-all - 测试所有工具权限',
-      ' • help - 查看完整帮助',
+      '📖 用法:  • help - 查看完整帮助',
     ].join('\n')
   };
 };

@@ -207,7 +207,7 @@ function renderHelp(): string {
     '  --context <类型>    上下文类型: command / flag / file / directory / shell',
     '  --cwd <路径>        工作目录（用于文件补全）',
     '  --json              JSON 格式输出',
-    '  --help              显示帮助',
+    '📖 用法:   --help              显示帮助',
     '',
     '示��:',
     '  /autocomplete --query /code',

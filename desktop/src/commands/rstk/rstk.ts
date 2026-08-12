@@ -51,7 +51,7 @@ export const call: LocalCommandCall = async () => {
         }
       }
     } catch (e) {
-      logForDebugging('[rstk] 读取 api.json 失败: ' + e, { level: 'error' })
+      logForDebugging('❌ 错误: [rstk] 读取 api.json 失败: ' + e, { level: 'error' })
     }
   }
 
@@ -60,7 +60,7 @@ export const call: LocalCommandCall = async () => {
     resetCostState()
     memoryResetDone = true
   } catch (e) {
-    logForDebugging('[rstk] 重置内存状态失败: ' + e, { level: 'error' })
+    logForDebugging('❌ 错误: [rstk] 重置内存状态失败: ' + e, { level: 'error' })
   }
 
   // 3. 触发状态栏刷新信号

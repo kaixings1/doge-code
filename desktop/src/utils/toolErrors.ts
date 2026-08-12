@@ -133,7 +133,7 @@ export function formatZodValidationError(
   }
 
   if (errorParts.length > 0) {
-    errorContent = `${toolName} 因以下 ${errorParts.length > 1 ? '问题' : '问题'} 而失败：\n${errorParts.join('\n')}`
+    errorContent = `${toolName} 因以下 ${errorParts.length > 1 ? '问题' : '问题'❌ 错误: } 而失败：\n${errorParts.join('\n')}`
   }
 
   return errorContent

@@ -672,7 +672,7 @@ function renderHelp(): string {
     '',
     'CI/CD 集成:',
     '  --ci-mode               CI 模式（发现严重问题则退出码非零）',
-    '  --fail-on <级别>        发现指定级别问题时失败',
+    '❌ 错误:   --fail-on <级别>        发现指定级别问题时失败',
     '  --junit <文件>         导出 JUnit XML 格式',
     '',
     '示例:',
@@ -779,11 +779,11 @@ function generateFix(finding: BugFinding, lineContent: string): string {
     case 'console-log':
       return '' // 移除 console.log
     case 'ts-ignore':
-      return lineContent.replace('@ts-ignore', '// TODO: 修复类型错误')
+      return lineContent.replace('@ts-ignore', '❌ 错误: // TODO: 修复类型错误')
     case 'debugger':
       return '' // 移除 debugger
     case 'empty-catch':
-      return lineContent.replace('{}', '{\n    // TODO: 处理错误\n    console.error(error);\n  }')
+      return lineContent.replace('{}', '❌ 错误: {\n    // TODO: 处理错误\n    console.error(error);\n  }')
     case 'missing-error-handling':
       return lineContent.replace(/await\s+(\w+)/, 'try {\n    await $1;\n  } catch (error) {\n    console.error(error);\n  }')
     default:

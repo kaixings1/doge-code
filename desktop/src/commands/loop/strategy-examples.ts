@@ -163,9 +163,9 @@ export const strategyExamples: StrategyExamples = {
       complexity: '简单',
       command: '/loop-crew "为 src/auth.js 编写单元测试" --criteria "覆盖率 > 90%" --criteria "包含边界条件" --criteria "包含异常场景"',
       strategy: 'crew（多 Agent 协作）',
-      result: 'developer 分析源码 → tester 编写正常/边界/异常用例 → reviewer 审查覆盖率',
+      result: '❌ 错误: developer 分析源码 → tester 编写正常/边界/异常用例 → reviewer 审查覆盖率',
       parameters: ['--criteria 定义覆盖率要求', '--max-iterations 10'],
-      outcome: 'auth.test.js，包含 20+ 个测试用例，覆盖正常流程和异常分支',
+      outcome: '❌ 错误: auth.test.js，包含 20+ 个测试用例，覆盖正常流程和异常分支',
     },
     {
       title: '自动生成 API 文档',
@@ -308,7 +308,7 @@ export const strategyExamples: StrategyExamples = {
       strategy: 'autogpt（图执行引擎）',
       result: '逐行解析日志 → 聚合统计 → 异常检测算法 → 生成 ECharts 可视化 HTML',
       parameters: ['--criteria "支持按小时聚合" --criteria "识别异常 IP"'],
-      outcome: 'report.html，包含请求趋势图、错误率饼图、异常 IP 列表',
+      outcome: '❌ 错误: report.html，包含请求趋势图、错误率饼图、异常 IP 列表',
     },
     {
       title: '自动化测试套件生成',
@@ -358,7 +358,7 @@ export const strategyExamples: StrategyExamples = {
       strategy: 'autogpt（图执行引擎）',
       result: '生成 collector.js + alerter.js + dashboard.json → 集成企业微信/钉钉告警',
       parameters: ['--criteria "支持多主机监控" --criteria "支持告警升级"'],
-      outcome: '7x24 小时系统监控，异常 5 秒内告警，支持自动重启故障服务',
+      outcome: '❌ 错误: 7x24 小时系统监控，异常 5 秒内告警，支持自动重启故障服务',
     },
     {
       title: '全栈项目脚手架',
@@ -544,7 +544,7 @@ export const strategyExamples: StrategyExamples = {
       strategy: 'swe-agent（Bug 修复专用）',
       result: '定位：price 字段类型不一致 → 分析：API 返回和数据库存储格式不同 → 修复：统一用 Number() 转换',
       parameters: ['--criteria "price 始终为数字类型" --criteria "支持字符串输入"'],
-      outcome: 'price 字段类型统一，计算精度提升，前端展示不再出错',
+      outcome: '❌ 错误: price 字段类型统一，计算精度提升，前端展示不再出错',
     },
     {
       title: '修复内存泄漏问题',

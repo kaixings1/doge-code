@@ -382,7 +382,7 @@ function ThinkbackMenu(t0) {
   return t7;
 }
 const EDIT_PROMPT = '使用 Skill 工具调用 mode=edit 的 "thinkback" 技能来修改我现有的 Claude Code 年度回顾动画。询问我想更改什么。动画准备就绪后，告诉用户再次运行 /think-back 来播放。';
-const FIX_PROMPT = '使用 Skill 工具调用 mode=fix 的 "thinkback" 技能来修复我现有 Claude Code 年度回顾动画中的验证或渲染错误。运行验证器，识别错误并修复它们。动画准备就绪后，告诉用户再次运行 /think-back 来播放。';
+const FIX_PROMPT = '使用 Skill 工具调用 mode=fix 的 "thinkback"❌ 错误:  技能来修复我现有 Claude Code 年度回顾动画中的验证或渲染错误。运行验证器，识别错误并修复它们。动画准备就绪后，告诉用户再次运行 /think-back 来播放。';
 const REGENERATE_PROMPT = '使用 Skill 工具调用 mode=regenerate 的 "thinkback" 技能从头开始创建全新的 Claude Code 年度回顾动画。删除现有动画并重新开始。动画准备就绪后，告诉用户再次运行 /think-back 来播放。';
 function ThinkbackFlow(t0) {
   const $ = _c(27);

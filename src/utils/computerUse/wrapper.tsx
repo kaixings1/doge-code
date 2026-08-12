@@ -219,7 +219,7 @@ export function buildSessionContext(): ComputerUseSessionContext {
           tuc().abortController.abort();
         });
         tuc().sendOSNotification?.({
-          message: escRegistered ? 'Claude 正在使用你的电脑 · 按 Esc 停止' : 'Claude 正在使用你的电脑 · 按 Ctrl+C 停止',
+          message: escRegistered ? '⏳ Claude 正在使用你的电脑 · 按 Esc 停止' : '⏳ Claude 正在使用你的电脑 · 按 Ctrl+C 停止',
           notificationType: 'computer_use_enter'
         });
       }

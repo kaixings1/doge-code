@@ -294,7 +294,7 @@ function renderHelp(): string {
     '',
     '选项:',
     '  --json              JSON 格式输出',
-    '  --help              显示帮助',
+    '📖 用法:   --help              显示帮助',
     '',
     '检查项:',
     '  • Git: git 安装、仓库状态',

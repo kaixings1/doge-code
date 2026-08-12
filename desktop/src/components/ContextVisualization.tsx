@@ -48,7 +48,7 @@ function CollapseStatus() {
         const summary = parts.length > 0 ? parts.join(", ") : h.totalSpawns > 0 ? `${h.totalSpawns} ${plural(h.totalSpawns, "触发")}, 尚无待处理内容` : "等待首次触发";
         let line2 = null;
         if (h.totalErrors > 0) {
-          line2 = <Text color="warning">折叠错误：{h.totalErrors}/{h.totalSpawns} 次生成失败{h.lastError ? ` (最后：${h.lastError.slice(0, 60)})` : ""}</Text>;
+          line2 = <Text color="warning"❌ 错误: >折叠错误：{h.totalErrors}/{h.totalSpawns} 次生成失败{h.lastError ? ` (最后：${h.lastError.slice(0, 60)})` : ""}</Text>;
         } else {
           if (h.emptySpawnWarningEmitted) {
             line2 = <Text color="warning">折叠空闲：{h.totalEmptySpawns} 次连续空运行</Text>;

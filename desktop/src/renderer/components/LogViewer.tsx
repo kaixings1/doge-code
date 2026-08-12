@@ -53,7 +53,7 @@ function generateMockLogs(count: number): LogEntry[] {
     'tool-executor': ['BashTool 执行完成', 'FileReadTool 读取成功', '工具执行超时', '工具执行失败'],
     ipc: ['IPC 消息发送', 'IPC 消息接收', '通道建立', '连接断开'],
     fs: ['文件读取成功', '文件写入完成', '目录遍历', '文件不存在'],
-    network: ['HTTP 请求完成', 'WebSocket 连接', '网络超时', 'DNS 解析失败'],
+    network: ['HTTP 请求完成', 'WebSocket 连接', '网络超时', '❌ 错误: DNS 解析失败'],
     git: ['Git 状态刷新', '文件暂存成功', '提交完成', '分支切换'],
   }
 

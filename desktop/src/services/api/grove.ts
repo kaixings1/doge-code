@@ -181,7 +181,7 @@ export async function isQualifiedForGrove(): Promise<boolean> {
   // Cache exists but is stale - return cached value and refresh in background
   if (now - cachedEntry.timestamp > GROVE_CACHE_EXPIRATION_MS) {
     logForDebugging(
-      'Grove: 缓存已过期，正在返回缓存数据并在后台刷新',
+      '⏳ Grove: 缓存已过期，正在返回缓存数据并在后台刷新',
     )
     void fetchAndStoreGroveConfig(accountId)
     return cachedEntry.grove_enabled

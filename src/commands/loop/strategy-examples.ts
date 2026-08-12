@@ -273,9 +273,9 @@ export const strategyExamples: StrategyExamples = {
       complexity: '简单',
       command: '/loop-crew "为 src/auth.js 编写单元测试" --criteria "覆盖率 > 90%" --criteria "包含边界条件" --criteria "包含异常场景"',
       strategy: 'crew（多 Agent 协作）',
-      result: 'developer 分析源码 → tester 编写正常/边界/异常用例 → reviewer 审查覆盖率',
+      result: '❌ 错误: developer 分析源码 → tester 编写正常/边界/异常用例 → reviewer 审查覆盖率',
       parameters: ['--criteria 定义覆盖率要求', '--max-iterations 10'],
-      outcome: 'auth.test.js，包含 20+ 个测试用例，覆盖正常流程和异常分支',
+      outcome: '❌ 错误: auth.test.js，包含 20+ 个测试用例，覆盖正常流程和异常分支',
     },
     {
       title: '自动生成 API 文档',
@@ -528,7 +528,7 @@ export const strategyExamples: StrategyExamples = {
       strategy: 'autogpt（图执行引擎）',
       result: '逐行解析日志 → 聚合统计 → 异常检测算法 → 生成 ECharts 可视化 HTML',
       parameters: ['--criteria "支持按小时聚合" --criteria "识别异常 IP"'],
-      outcome: 'report.html，包含请求趋势图、错误率饼图、异常 IP 列表',
+      outcome: '❌ 错误: report.html，包含请求趋势图、错误率饼图、异常 IP 列表',
     },
     {
       title: '自动化测试套件生成',
@@ -578,7 +578,7 @@ export const strategyExamples: StrategyExamples = {
       strategy: 'autogpt（图执行引擎）',
       result: '生成 collector.js + alerter.js + dashboard.json → 集成企业微信/钉钉告警',
       parameters: ['--criteria "支持多主机监控" --criteria "支持告警升级"'],
-      outcome: '7x24 小时系统监控，异常 5 秒内告警，支持自动重启故障服务',
+      outcome: '❌ 错误: 7x24 小时系统监控，异常 5 秒内告警，支持自动重启故障服务',
     },
     {
       title: '全栈项目脚手架',
@@ -667,7 +667,7 @@ export const strategyExamples: StrategyExamples = {
       command: '/loop-autogpt "构建图像批处理系统：批量压缩、水印、格式转换、AI 抠图、EXIF 处理" --criteria "批量压缩" --criteria "AI 抠图" --max-concurrency 10',
       strategy: 'autogpt（图执行引擎）',
       result: '分解 → 设计图像处理流水线 → 并行实现各处理模块 → 批量执行 → 验证质量',
-      parameters: ['--max-concurrency 10 充分利用多核并行处理 10 万张图片', '--retry-delay 2000 失败任务 2 秒后重试'],
+      parameters: ['--max-concurrency 10 充分利用多核并行处理 10 万张图片', '❌ 错误: --retry-delay 2000 失败任务 2 秒后重试'],
       outcome: '10 万张图片批量处理，支持压缩、水印、AI 抠图等操作',
     },
     {
@@ -687,7 +687,7 @@ export const strategyExamples: StrategyExamples = {
       command: '/loop-autogpt "构建 DevOps 部署流水线" --criteria "代码检查" --criteria "自动化测试" --criteria "自动部署" --max-iterations 15',
       strategy: 'autogpt（图执行引擎）',
       result: '分解 → 设计流水线阶段 → 并行实现各阶段 → 集成测试 → 验证全流程',
-      parameters: ['--max-iterations 15 控制流水线复杂度', '--retry-delay 3000 部署失败 3 秒后重试'],
+      parameters: ['--max-iterations 15 控制流水线复杂度', '❌ 错误: --retry-delay 3000 部署失败 3 秒后重试'],
       outcome: '完整的 CI/CD 流水线，代码提交后自动检查→测试→构建→部署',
     },
     {
@@ -697,7 +697,7 @@ export const strategyExamples: StrategyExamples = {
       command: '/loop-autogpt "构建财务报表自动化系统：多源数据采集、报表生成、合规检查、审计追踪" --criteria "数据采集" --criteria "报表生成" --criteria "合规检查" --max-concurrency 5',
       strategy: 'autogpt（图执行引擎）',
       result: '分解 → 设计数据采集和报表生成流程 → 并行实现各模块 → 集成测试',
-      parameters: ['--max-concurrency 5 并行采集多个数据源', '--retry-delay 3000 采集失败 3 秒后重试'],
+      parameters: ['--max-concurrency 5 并行采集多个数据源', '❌ 错误: --retry-delay 3000 采集失败 3 秒后重试'],
       outcome: '财务报表自动生成，支持多源数据接入和合规检查',
     },
     {
@@ -707,7 +707,7 @@ export const strategyExamples: StrategyExamples = {
       command: '/loop-autogpt "构建电商价格监控系统：竞品价格抓取、价格分析、异常预警、趋势预测" --criteria "价格抓取" --criteria "异常预警" --criteria "趋势预测" --max-concurrency 10',
       strategy: 'autogpt（图执行引擎）',
       result: '分解 → 设计抓取和分析流程 → 并行实现各模块 → 集成测试',
-      parameters: ['--max-concurrency 10 并行抓取多个电商平台', '--retry-delay 5000 抓取失败 5 秒后重试'],
+      parameters: ['--max-concurrency 10 并行抓取多个电商平台', '❌ 错误: --retry-delay 5000 抓取失败 5 秒后重试'],
       outcome: '实时监控竞品价格变动，自动预警异常价格波动',
     },
     {
@@ -717,7 +717,7 @@ export const strategyExamples: StrategyExamples = {
       command: '/loop-autogpt "构建社交媒体舆情分析平台：内容抓取、情感分析、影响力评估、热点发现" --criteria "内容抓取" --criteria "情感分析" --criteria "影响力评估" --max-concurrency 8',
       strategy: 'autogpt（图执行引擎）',
       result: '分解 → 设计抓取和分析流程 → 并行实现各模块 → 集成测试',
-      parameters: ['--max-concurrency 8 并行抓取多个社交平台', '--retry-delay 3000 抓取失败 3 秒后重试'],
+      parameters: ['--max-concurrency 8 并行抓取多个社交平台', '❌ 错误: --retry-delay 3000 抓取失败 3 秒后重试'],
       outcome: '实时分析社交媒体舆情，自动发现热点和评估影响力',
     },
   ],
@@ -984,7 +984,7 @@ export const strategyExamples: StrategyExamples = {
       strategy: 'swe-agent（Bug 修复专用）',
       result: '定位：price 字段类型不一致 → 分析：API 返回和数据库存储格式不同 → 修复：统一用 Number() 转换',
       parameters: ['--criteria "price 始终为数字类型" --criteria "支持字符串输入"'],
-      outcome: 'price 字段类型统一，计算精度提升，前端展示不再出错',
+      outcome: '❌ 错误: price 字段类型统一，计算精度提升，前端展示不再出错',
     },
     {
       title: '修复内存泄漏问题',

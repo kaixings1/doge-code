@@ -171,7 +171,7 @@ function renderHelp(): string {
     '  save [摘要]          保存当前工作上下文',
     '  load                 恢复最近保存的工作上下文',
     '  list                 列出所有保存的工作上下文',
-    '  --help               显示帮助',
+    '📖 用法:   --help               显示帮助',
     '',
     '示例:',
     '  /workspace save "重构用户模块中"',

@@ -31,7 +31,7 @@ function MCPToggle(t0) {
       const clients = mcpClients.filter(_temp2);
       const toToggle = target === "all" ? clients.filter(c_0 => isEnabling ? c_0.type === "disabled" : c_0.type !== "disabled") : clients.filter(c_1 => c_1.name === target);
       if (toToggle.length === 0) {
-        onComplete(target === "all" ? `所有 MCP 服务器已${isEnabling ? "启用" : "禁用"}` : `未找到 MCP 服务器"${target}"`);
+        onComplete(target === "all" ? `所有 MCP 服务器已${isEnabling ? "启用" : "禁用"❌ 错误: }` : `未找到 MCP 服务器"${target}"`);
         return;
       }
       for (const s_0 of toToggle) {

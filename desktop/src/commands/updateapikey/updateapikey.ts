@@ -727,7 +727,7 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
       }
     }
 
-    output += '\n用法:\n'
+    output += '📖 用法: \n用法:\n'
     output += '  /updateapikey           - 查看当前状态\n'
     output += '  /updateapikey all      - 从 GitHub 拉取最新 Key，更新 free5~free36\n'
     output += '  /updateapikey free5    - 仅更新指定编号的配置文件\n'

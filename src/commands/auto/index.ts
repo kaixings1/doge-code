@@ -41,7 +41,7 @@ const ROUTING_RULES: Rule[] = [
   // P0 - 阻塞性问题，必须立即处理
   {
     priority: 0,
-    keywords: ['构建失败', 'build fail', 'build 失败', 'build', '类型错误', 'type error', '编译错误', 'compile error', 'tsc 报错', 'npm run build', '编译不通过'],
+    keywords: ['构建失败', 'build fail', '❌ 错误: build 失败', 'build', '类型错误', 'type error', '编译错误', 'compile error', 'tsc 报错', 'npm run build', '编译不通过'],
     command: 'build-fix',
     description: '项目无法编译、TypeScript 类型检查失败、构建流程中断',
   },
@@ -236,7 +236,7 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
         '',
         '| 优先级 | 关键词 | 命令 |',
         '|--------|--------|------|',
-        '| P0 | 构建失败、类型错误、编译错误 | build-fix |',
+        '❌ 错误: | P0 | 构建失败、类型错误、编译错误 | build-fix |',
         '| P1 | e2e、端到端、浏览器测试 | test |',
         '| P1 | 覆盖率、coverage | test-coverage |',
         '| P1 | tdd、测试驱动、单元测试 | plan |',

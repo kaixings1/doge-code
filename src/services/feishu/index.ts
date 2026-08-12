@@ -217,7 +217,7 @@ export class FeishuBridge {
 
     const truncated = text.slice(0, 3500)
     const card = feishuApi.createResultCard(
-      success ? 'Claude Code' : 'Claude Code (错误)',
+      success ? 'Claude Code' : '❌ 错误: Claude Code (错误)',
       truncated,
       !success,
     )

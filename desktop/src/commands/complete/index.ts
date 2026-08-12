@@ -325,7 +325,7 @@ function renderHelp(): string {
     '  --cwd <路径>        工作目录',
     '  --limit <数量>      返回数量（默认 20）',
     '  --json              JSON 格式输出',
-    '  --help              显示帮助',
+    '📖 用法:   --help              显示帮助',
     '',
     '示例:',
     '  /complete --query src/',

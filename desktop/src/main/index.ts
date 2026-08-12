@@ -92,7 +92,7 @@ void codeIndexer.rebuild().then(() => {
   codeIndexer.watch()
   tsLog('INDEX', `本地索引就绪: ${codeIndexer.getStats().fileCount} 文件`)
 }).catch(err => {
-  console.warn('[INDEX] 启动重建失败:', err)
+  console.warn('❌ 错误: [INDEX] 启动重建失败:', err)
 })
 
 /**
@@ -156,7 +156,7 @@ function findApiConfig(): string {
       }
     } catch { /* 继续下一个候选起点 */ }
   }
-  cfgDbg('  所有候选路径均未找到 .doge/lc2.json 或 api.json, 回退默认')
+  cfgDbg('❌ 错误:   所有候选路径均未找到 .doge/lc2.json 或 api.json, 回退默认')
   return CONFIG_PATH_DEFAULT
 }
 
@@ -193,7 +193,7 @@ function loadConfig(): { provider: string; apiKey: string; model: string; baseUr
       workingDir,
     }
   } catch (e) {
-    tsLog('CONFIG', 'loadConfig: 读取配置失败 -', e instanceof Error ? e.message : String(e))
+    tsLog('CONFIG', '❌ 错误: loadConfig: 读取配置失败 -', e instanceof Error ? e.message : String(e))
     return { provider: 'openai', apiKey: '', model: 'gpt-4o', baseUrl: 'https://api.openai.com/v1', workingDir: projectRoot }
   }
 }
@@ -2155,7 +2155,7 @@ ipcMain.handle('doge:execute-command', async (_event, commandName: string, args:
               })
               return { success: true, output: `已配置 MCP 服务器 (${Object.keys(servers).length}):\n${lines.join('\n')}` }
             }
-            return { success: true, output: 'MCP 配置未找到。使用 /mcp add <name> <command> 添加。' }
+            return { success: true, output: '❌ 错误: MCP 配置未找到。使用 /mcp add <name> <command> 添加。' }
           }
 
           if (action === 'add') {
@@ -2510,7 +2510,7 @@ ipcMain.handle('doge:plugin-install', (_event, sourceDir: string, pluginName: st
         return { success: false, error: `清单验证失败: ${manifestCheck.errors.join('; ')}` }
       }
     } catch {
-      return { success: false, error: 'manifest.json 解析失败' }
+      return { success: false, error: '❌ 错误: ❌ 错误: manifest.json 解析失败' }
     }
   }
 
@@ -2582,7 +2582,7 @@ ipcMain.handle('doge:plugin-security-audit', (_event, pluginName: string) => {
             manifestErrors = mf.errors
             manifestWarnings = mf.warnings
           } catch {
-            manifestErrors = ['manifest.json 解析失败']
+            manifestErrors = ['❌ 错误: ❌ 错误: manifest.json 解析失败']
           }
         }
 

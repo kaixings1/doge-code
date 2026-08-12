@@ -2467,11 +2467,11 @@ export async function bridgeMain(args: string[]): Promise<void> {
 
   const controller = new AbortController()
   const onSigint = (): void => {
-    logForDebugging('[bridge:shutdown] 收到 SIGINT，正在关闭')
+    logForDebugging('⏳ [bridge:shutdown] 收到 SIGINT，正在关闭')
     controller.abort()
   }
   const onSigterm = (): void => {
-    logForDebugging('[bridge:shutdown] 收到 SIGTERM，正在关闭')
+    logForDebugging('⏳ [bridge:shutdown] 收到 SIGTERM，正在关闭')
     controller.abort()
   }
   process.on('SIGINT', onSigint)

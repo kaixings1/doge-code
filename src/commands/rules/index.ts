@@ -290,7 +290,7 @@ function renderHelp(): string {
     '  rm <内容|行号>      同 remove',
     '  init                创建初始规则文件',
     '  clear               清空项目规则',
-    '  --help              显示帮助',
+    '📖 用法:   --help              显示帮助',
     '',
     '规则文件位置:',
     `  全局: ~/.doge/dogerules`,

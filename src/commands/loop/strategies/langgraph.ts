@@ -338,7 +338,7 @@ ${goal.successCriteria?.map((c, i) => `${i + 1}. ${c}`).join('\n') || '所有子
     await this.initGraph(goal)
 
     if (!this.compiled) {
-      throw new Error('LangGraph 编译失败')
+      throw new Error('❌ 错误: LangGraph 编译失败')
     }
 
     // 初始化状态

@@ -1453,7 +1453,7 @@ const INSIGHT_SECTIONS: InsightSection[] = [
 请仅返回一个有效的 JSON 对象：
 {
   "improvements": [
-    {"title": "产品/工具改进", "detail": "3-4句话描述改进建议", "evidence": "3-4句话引用具体会话示例"}
+    {"title": "产品/工具改进", "detail": "3-4句话描述改进建议", "evidence": "📖 用法: 3-4句话引用具体会话示例"}
   ]
 }
 
@@ -1467,7 +1467,7 @@ const INSIGHT_SECTIONS: InsightSection[] = [
 请仅返回一个有效的 JSON 对象：
 {
   "improvements": [
-    {"title": "模型行为变更", "detail": "3-4句话描述模型应如何调整行为", "evidence": "3-4句话引用具体示例"}
+    {"title": "模型行为变更", "detail": "3-4句话描述模型应如何调整行为", "evidence": "📖 用法: 3-4句话引用具体示例"}
   ]
 }
 
@@ -2597,7 +2597,7 @@ const funEndingHtml = funEnding?.headline
       </div>
       <div class="chart-card">
         <div class="chart-title">工具错误类型</div>
-        ${Object.keys(data.tool_error_categories).length > 0 ? generateBarChart(data.tool_error_categories, '#dc2626') : '<p class="empty">无工具错误</p>'}
+        ${Object.keys(data.tool_error_categories).length > 0 ? generateBarChart(data.tool_error_categories, '#dc2626') : '<p class="empty"❌ 错误: >无工具错误</p>'}
       </div>
     </div>
 

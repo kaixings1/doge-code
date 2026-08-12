@@ -238,7 +238,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
             renderBar(c.usageRatio) + ' ' + (c.usageRatio * 100).toFixed(1) + '%\n' +
             '进程: ' + c.processMemory.toFixed(1) + 'MB (峰值 ' + report.history.peak.toFixed(1) + 'MB)\n' +
             '趋势: ' + (report.trend === 'growing' ? '增长' : report.trend === 'shrinking' ? '下降' : '稳定') + '\n' +
-            (report.anomalies.length > 0 ? '\n异常:\n' + report.anomalies.map(a => ' ' + a).join('\n') : '') +
+            (report.anomalies.length > 0 ? '❌ 错误: \n异常:\n' + report.anomalies.map(a => ' ' + a).join('\n') : '') +
             (report.recommendations.length > 0 ? '\n建议:\n' + report.recommendations.map((r, i) => ' ' + (i+1) + '. ' + r).join('\n') : '');
         },
       };
@@ -344,7 +344,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       return { type: 'jsx', render: () => '数据已清除' };
     }
 
-    return { type: 'jsx', render: () => '未知命令: ' + command + ', 使用 help 查看帮助' };
+    return { type: 'jsx', render: () => '未知命令: ' + command + '📖 用法: , 使用 help 查看帮助' };
   } catch (error) {
     return { type: 'jsx', render: () => '出错: ' + (error instanceof Error ? error.message : String(error)) };
   }

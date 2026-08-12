@@ -963,7 +963,7 @@ async function run(): Promise<CommanderCommand> {
     // 实际过滤在 debug.ts 中通过解析 process.argv 处理
 // The actual filtering is handled in debug.ts by parsing process.argv
     return true;
-  }).addOption(new Option('--debug-to-stderr', '启用调试模式（输出到 stderr）').argParser(Boolean).hideHelp()).option('--debug-file <path>', '将调试日志写入指定文件路径（隐式启用调试模式）', () => true).option('--verbose', '覆盖配置文件中的详细模式设置', () => true).option('-p, --print', '打印响应并退出（适用于管道）。注意：使用 -p 模式运行 Claude 时会跳过工作区信任对话框。仅在您信任的目录中使用此标志。', () => true).option('--bare', '最小模式：跳过钩子、LSP、插件同步、归属、自动内存、后台预取、钥匙串读取以及 CLAUDE.md 自动发现。设置 CLAUDE_CODE_SIMPLE=1。Anthropic 认证严格使用 DOGE_API_KEY 或通过 --settings 的 apiKeyHelper（从不读取 OAuth 和钥匙串）。第三方提供商（Bedrock/Vertex/Foundry）使用自己的凭据。技能仍然通过 /skill-name 解析。通过以下方式显式提供上下文：--system-prompt[-file]、--append-system-prompt[-file]、--add-dir（CLAUDE.md 目录）、--mcp-config、--settings、--agents、--plugin-dir。', () => true).addOption(new Option('--init', '运行 init 触发器的 Setup 钩子，然后继续').hideHelp()).addOption(new Option('--init-only', '运行 Setup 和 SessionStart:startup 钩子，然后退出').hideHelp()).addOption(new Option('--maintenance', '运行 maintenance 触发器的 Setup 钩子，然后继续').hideHelp()).addOption(new Option('--output-format <format>', '输出格式（仅适用于 --print）："text"（默认）、"json"（单个结果）或 "stream-json"（实时流式输出）').choices(['text', 'json', 'stream-json'])).addOption(new Option('--json-schema <schema>', '用于结构化输出验证的 JSON Schema。' + '💡 示例: {"type":"object","properties":{"name":{"type":"string"}},"required":["name"]}').argParser(String)).option('--include-hook-events', '在输出流中包含所有钩子生命周期事件（仅适用于 --output-format=stream-json）', () => true).option('--include-partial-messages', '在消息到达时包含部分消息块（仅适用于 --print 和 --output-format=stream-json）', () => true).addOption(new Option('--input-format <format>', '输入格式（仅适用于 --print）："text"（默认）或 "stream-json"（实时流式输入）').choices(['text', 'stream-json'])).option('--mcp-debug', '[已弃用。请改用 --debug] 启用 MCP 调试模式（显示 MCP 服务器错误）', () => true).addOption(new Option('--dangerously-skip-permissions', '绕过所有权限检查。仅推荐用于没有互联网访问的沙箱环境。'))
+  }).addOption(new Option('--debug-to-stderr', '启用调试模式（输出到 stderr）').argParser(Boolean).hideHelp()).option('--debug-file <path>', '将调试日志写入指定文件路径（隐式启用调试模式）', () => true).option('--verbose', '覆盖配置文件中的详细模式设置', () => true).option('-p, --print', '打印响应并退出（适用于管道）。注意：使用 -p 模式运行 Claude 时会跳过工作区信任对话框。仅在您信任的目录中使用此标志。', () => true).option('--bare', '最小模式：跳过钩子、LSP、插件同步、归属、自动内存、后台预取、钥匙串读取以及 CLAUDE.md 自动发现。设置 CLAUDE_CODE_SIMPLE=1。Anthropic 认证严格使用 DOGE_API_KEY 或通过 --settings 的 apiKeyHelper（从不读取 OAuth 和钥匙串）。第三方提供商（Bedrock/Vertex/Foundry）使用自己的凭据。技能仍然通过 /skill-name 解析。通过以下方式显式提供上下文：--system-prompt[-file]、--append-system-prompt[-file]、--add-dir（CLAUDE.md 目录）、--mcp-config、--settings、--agents、--plugin-dir。', () => true).addOption(new Option('--init', '运行 init 触发器的 Setup 钩子，然后继续').hideHelp()).addOption(new Option('--init-only', '运行 Setup 和 SessionStart:startup 钩子，然后退出').hideHelp()).addOption(new Option('--maintenance', '运行 maintenance 触发器的 Setup 钩子，然后继续').hideHelp()).addOption(new Option('--output-format <format>', '输出格式（仅适用于 --print）："text"（默认）、"json"（单个结果）或 "stream-json"（实时流式输出）').choices(['text', 'json', 'stream-json'])).addOption(new Option('--json-schema <schema>', '用于结构化输出验证的 JSON Schema。' + '💡 示例: {"type":"object","properties":{"name":{"type":"string"}},"required":["name"]}').argParser(String)).option('--include-hook-events', '在输出流中包含所有钩子生命周期事件（仅适用于 --output-format=stream-json）', () => true).option('--include-partial-messages', '在消息到达时包含部分消息块（仅适用于 --print 和 --output-format=stream-json）', () => true).addOption(new Option('--input-format <format>', '输入格式（仅适用于 --print）："text"（默认）或 "stream-json"（实时流式输入）').choices(['text', 'stream-json'])).option('--mcp-debug', '❌ 错误: [已弃用。请改用 --debug] 启用 MCP 调试模式（显示 MCP 服务器错误）', () => true).addOption(new Option('--dangerously-skip-permissions', '绕过所有权限检查。仅推荐用于没有互联网访问的沙箱环境。'))
   // 注意：commander 不支持两个长选项互相作为别名（,--dsp 不生效），
   // 因此单独定义 --dsp 选项，在 action handler 中与 --dangerously-skip-permissions 合并。
   .addOption(new Option('--dsp', '--dangerously-skip-permissions 的别名。绕过所有权限检查。仅推荐用于没有互联网访问的沙箱环境。').hideHelp())
@@ -3337,7 +3337,7 @@ if (options.continue) {
 			}
 		  }
 		} else if (repoValidation.status === 'error') {
-		  throw new TeleportOperationError(repoValidation.errorMessage || '验证会话失败', chalk.red(`错误：${repoValidation.errorMessage || '验证会话失败'}\n`));
+		  throw new TeleportOperationError(repoValidation.errorMessage || '验证会话失败'❌ 错误: , chalk.red(`错误：${repoValidation.errorMessage || '验证会话失败'}\n`));
 		}
 		await validateGitState();
 
@@ -4160,7 +4160,7 @@ if ("external" === 'ant') {
 // claude rollback（仅 ant）
 // 回滚到之前的版本
 if ("external" === 'ant') {
-  program.command('rollback [target]').description('[仅 ANT] 回滚到之前的版本\n\n示例：\n  claude rollback                                    从当前版本回退 1 个版本\n  claude rollback 3                                  从当前版本回退 3 个版本\n  claude rollback 2.0.73-dev.20251217.t190658        回滚到特定版本').option('-l, --list', '列出最近发布的版本及其时间').option('--dry-run', '仅显示将要安装的内容而不实际安装').option('--safe', '回滚到服务器固定的安全版本（由值班人员在事故期间设置）').action(async (target?: string, options?: {
+  program.command('rollback [target]').description('📖 用法: [仅 ANT] 回滚到之前的版本\n\n示例：\n  claude rollback                                    从当前版本回退 1 个版本\n  claude rollback 3                                  从当前版本回退 3 个版本\n  claude rollback 2.0.73-dev.20251217.t190658        回滚到特定版本').option('-l, --list', '列出最近发布的版本及其时间').option('--dry-run', '仅显示将要安装的内容而不实际安装').option('--safe', '回滚到服务器固定的安全版本（由值班人员在事故期间设置）').action(async (target?: string, options?: {
 	list?: boolean;
 	dryRun?: boolean;
 	safe?: boolean;
@@ -4198,7 +4198,7 @@ if ("external" === 'ant') {
   });
 
   // claude error
-  program.command('error').description('[仅 ANT] 查看错误日志。可选择提供数字（0、-1、-2 等）以显示特定日志。').argument('[number]', '一个数字（0、1、2 等）用于显示特定日志', parseInt).action(async (number: number | undefined) => {
+  program.command('error').description('❌ 错误: [仅 ANT] 查看错误日志。可选择提供数字（0、-1、-2 等）以显示特定日志。').argument('[number]', '一个数字（0、1、2 等）用于显示特定日志', parseInt).action(async (number: number | undefined) => {
 	const {
 	  errorHandler
 	} = await import('./cli/handlers/ant.js');

@@ -67,7 +67,7 @@ export async function detectPythonPackageManager(): Promise<PythonPackageManager
     return 'pip'
   }
 
-  logForDebugging('[it2Setup] 未找到 Python 包管理器')
+  logForDebugging('❌ 错误: [it2Setup] 未找到 Python 包管理器')
   return null
 }
 
@@ -150,7 +150,7 @@ export async function installIt2(
  * @returns Result indicating success or the specific failure reason
  */
 export async function verifyIt2Setup(): Promise<It2VerifyResult> {
-  logForDebugging('[it2Setup] 正在验证 it2 设置...')
+  logForDebugging('⏳ [it2Setup] 正在验证 it2 设置...')
 
   // 首先检查 it2 是否已安装
   const installed = await isIt2CliAvailable()

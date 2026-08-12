@@ -59,7 +59,7 @@ const call = async (args: string) => {
 
   return {
     type: 'text' as const,
-    value: '⚙️ 未知操作。使用 /mock-limits help 查看帮助。',
+    value: '📖 用法: ⚙️ 未知操作。使用 /mock-limits help 查看帮助。',
   }
 }
 

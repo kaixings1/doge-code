@@ -1467,7 +1467,7 @@ export const connectToServer = memoize(
                       // 进程仍然存在，SIGINT 失败，尝试 SIGTERM
                       logMCPDebug(
                         name,
-                        'SIGINT 失败，正在向 MCP 服务器进程发送 SIGTERM',
+                        '❌ 错误: SIGINT 失败，正在向 MCP 服务器进程发送 SIGTERM',
                       )
                       try {
                         process.kill(childPid, 'SIGTERM')
@@ -1498,7 +1498,7 @@ export const connectToServer = memoize(
                         // 进程仍然存在，SIGTERM 失败，使用 SIGKILL 强制终止
                         logMCPDebug(
                           name,
-                          'SIGTERM 失败，正在向 MCP 服务器进程发送 SIGKILL',
+                          '❌ 错误: SIGTERM 失败，正在向 MCP 服务器进程发送 SIGKILL',
                         )
                         try {
                           process.kill(childPid, 'SIGKILL')
@@ -3104,7 +3104,7 @@ async function callMCPTool({
       logMCPError(name, errorDetails)
       throw new McpToolCallError_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS(
         errorDetails,
-        'MCP 工具返回错误',
+        '❌ 错误: MCP 工具返回错误',
         '_meta' in result && result._meta ? { _meta: result._meta } : undefined,
       )
     }

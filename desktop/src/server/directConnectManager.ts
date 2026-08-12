@@ -118,7 +118,7 @@ export class DirectConnectSessionManager {
     })
 
     this.ws.addEventListener('error', () => {
-      this.callbacks.onError?.(new Error('WebSocket 连接错误'))
+      this.callbacks.onError?.(new Error('❌ 错误: WebSocket 连接错误'))
     })
   }
 

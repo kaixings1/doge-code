@@ -153,7 +153,7 @@ export function initializeLspServerManager(): void {
   // Skip if already initialized or currently initializing
   if (lspManagerInstance !== undefined && initializationState !== 'failed') {
     logForDebugging(
-      '[LSP MANAGER] 已初始化或正在初始化，跳过',
+      '⏳ [LSP MANAGER] 已初始化或正在初始化，跳过',
     )
     return
   }

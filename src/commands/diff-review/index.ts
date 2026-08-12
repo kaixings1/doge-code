@@ -642,7 +642,7 @@ function cmdReview(filePath: string | undefined, staged: boolean, json: boolean)
 
 function cmdStage(filePath: string | undefined, json: boolean): string {
   if (!filePath) {
-    return colorize('  用法: /diff-review stage <文件>', ANSI.red)
+    return colorize('📖 用法:   用法: /diff-review stage <文件>', ANSI.red)
   }
 
   // Check if file has changes
@@ -679,7 +679,7 @@ function cmdCompare(
   json: boolean,
 ): string {
   if (!file1 || !file2) {
-    return colorize('  用法: /diff-review compare <文件1> <文件2>', ANSI.red)
+    return colorize('📖 用法:   用法: /diff-review compare <文件1> <文件2>', ANSI.red)
   }
 
   const result = compareFiles(file1, file2)

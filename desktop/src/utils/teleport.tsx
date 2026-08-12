@@ -481,7 +481,7 @@ export async function teleportResumeCodeSession(sessionId: string, onProgress?: 
           throw new TeleportOperationError(`You must run claude --teleport ${sessionId} from a checkout of ${sessionDisplay}.\nThis repo is ${currentDisplay}.`, chalk.red(`You must run claude --teleport ${sessionId} from a checkout of ${chalk.bold(sessionDisplay)}.\nThis repo is ${chalk.bold(currentDisplay)}.\n`));
         }
       case 'error':
-        throw new TeleportOperationError(repoValidation.errorMessage || '无法验证会话仓库', chalk.red(`错误：${repoValidation.errorMessage || '无法验证会话仓库'}\n`));
+        throw new TeleportOperationError(repoValidation.errorMessage || '无法验证会话仓库'❌ 错误: , chalk.red(`错误：${repoValidation.errorMessage || '无法验证会话仓库'}\n`));
       default:
         {
           const _exhaustive: never = repoValidation.status;

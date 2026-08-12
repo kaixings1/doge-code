@@ -216,7 +216,7 @@ export const AGENT_CAPABILITIES: Record<string, AgentCapability> = {
   'api-documentation': {
     type: 'api-documentation',
     name: 'API 文档专家',
-    description: 'OpenAPI/Swagger 规范、API 参考文档和示例代码',
+    description: '📖 用法: OpenAPI/Swagger 规范、API 参考文档和示例代码',
     icon: '📚',
     category: 'documentation',
     systemPrompt: '你是一名 API 文档专家，精通 OpenAPI/Swagger 规范、API 参考文档编写、SDK 文档和示例代码生成。',

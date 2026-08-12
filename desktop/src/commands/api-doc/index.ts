@@ -28,7 +28,7 @@ export const call: LocalCommandCall = async (args) => {
         currentComment = ''
       }
     }
-    r = '# API 文档: ' + path.basename(file) + '\n\n' + (apis.join('\n') || '(未找到API)')
+    r = '# API 文档: ' + path.basename(file) + '\n\n' + (apis.join('\n') || '❌ 错误: (未找到API)')
   } else if (c === 'scan') {
     const dir = p[1] || '.'
     if (!fs.existsSync(dir)) return { type: 'text', value: '目录不存在: ' + dir }

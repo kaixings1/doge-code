@@ -890,7 +890,7 @@ function autoFixBuild(targetPath: string) {
           skipped.push('未检测到 TypeScript 依赖，跳过 tsconfig.json 创建')
         }
       } catch (err) {
-        failed.push(`package.json 解析失败: ${err instanceof Error ? err.message : String(err)}`)
+        failed.push(`❌ 错误: package.json 解析失败: ${err instanceof Error ? err.message : String(err)}`)
       }
     } else if (fs.existsSync(tsconfigPath)) {
       fixed.push('tsconfig.json 已存在')
@@ -1017,7 +1017,7 @@ function diagnoseBuild(targetPath: string) {
       if (deps.length > 50) issues.push(`依赖数量过多（${deps.length}个），可能影响构建速度`)
       if (deps.includes('webpack') && deps.includes('vite')) issues.push('同时存在 webpack 和 vite，可能造成冲突')
     } catch {
-      issues.push('package.json 解析失败')
+      issues.push('❌ 错误: package.json 解析失败')
     }
   }
 

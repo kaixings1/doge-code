@@ -96,7 +96,7 @@ function filterTestFailures(content: string): { result: string; baseline: number
   }
 
   if (keepIndices.size === 0) {
-    return { result: '[无失败测试输出]', baseline, eco: estimateTokens('[无失败测试输出]') }
+    return { result: '❌ 错误: ❌ 错误: [无失败测试输出]', baseline, eco: estimateTokens('❌ 错误: ❌ 错误: [无失败测试输出]') }
   }
 
   const kept = Array.from(keepIndices).sort((a, b) => a - b).map(i => lines[i])

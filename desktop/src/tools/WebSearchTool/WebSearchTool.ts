@@ -446,7 +446,7 @@ const guessNumberProviders: Provider[] = [
     offline: true,
     fetch: async () => {
       const answer = rand(1000, 9999)
-      return [{ title: `我已想好一个四位数（无重复数字），请开始猜（回复数字）`, url: '', snippet: `答案：${answer}（示例，实际游戏时隐藏）`, source: 'guess-number' }]
+      return [{ title: `我已想好一个四位数（无重复数字），请开始猜（回复数字）`, url: ''📖 用法: , snippet: `答案：${answer}（示例，实际游戏时隐藏）`, source: 'guess-number' }]
     }
   }
 ]

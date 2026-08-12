@@ -43,7 +43,7 @@ const call = async (args: string): Promise<{ type: string; value: string }> => {
     return {
       type: 'text',
       value: newState
-        ? 'Eco 模式已开启：Bash 输出将在发送给模型前压缩（测试失败保留，噪音 stripping，长输出截断）。原始输出保存到 session tee 文件。使用 /eco off 关闭。'
+        ? '❌ 错误: Eco 模式已开启：Bash 输出将在发送给模型前压缩（测试失败保留，噪音 stripping，长输出截断）。原始输出保存到 session tee 文件。使用 /eco off 关闭。'
         : 'Eco 模式已关闭：Bash 输出将原样发送给模型。',
     }
   }

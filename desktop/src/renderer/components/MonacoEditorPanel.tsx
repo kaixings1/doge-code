@@ -94,10 +94,10 @@ export function MonacoEditorPanel({ cwd, theme, themeName, onClose }: { cwd: str
         setLspStatus(`LSP: ${result.serverName || langId} 已连接`)
         setTimeout(() => setLspStatus(''), 3000)
       } else {
-        setLspStatus(`LSP 启动失败: ${result?.error || ''}`)
+        setLspStatus(`❌ 错误: LSP 启动失败: ${result?.error || ''}`)
       }
     } catch {
-      setLspStatus('LSP 启动失败')
+      setLspStatus('❌ 错误: LSP 启动失败')
     }
   }, [])
 
@@ -1031,7 +1031,7 @@ function MonacoEditor({
   useEffect(() => {
     import('@monaco-editor/react').then(mod => {
       setEditorComponent(() => mod.default)
-    }).catch(() => setLoadError('Monaco Editor 加载失败'))
+    }).catch(() => setLoadError('❌ 错误: Monaco Editor 加载失败'))
   }, [])
 
   if (loadError) {

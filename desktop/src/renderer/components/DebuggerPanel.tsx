@@ -111,7 +111,7 @@ export function DebuggerPanel({ cwd, theme, onClose, onNavigateTo, onBreakpoints
     if (typeof api?.onDebugPaused === 'function') {
       unsubPausedRef.current = api.onDebugPaused((info: { sessionId: string; file: string; line: number; functionName: string; reason: string }) => {
         setPausedAt({ file: info.file, line: info.line, functionName: info.functionName || '(anonymous)', reason: info.reason })
-        // 自�切到调用栈 tab
+        // 自动切换到调用栈 tab
         setActiveTab('stack')
         // 自动跳转到暂停位置
         if (info.file && onNavigateTo) onNavigateTo(info.file, info.line)

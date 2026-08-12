@@ -243,7 +243,7 @@ export function buildExplainPrompt(ctx: ExplainContext): string {
   if (ctx.targetSymbols.length > 0) {
     parts.push(`3. ${ctx.targetSymbols.join(', ')} 的具体作用`)
   }
-  parts.push('4. 可能的边界情况或需要注意的地方')
+  parts.push('⚠️ 注意: 4. 可能的边界情况或需要注意的地方')
   parts.push('')
   parts.push('请保持简洁，控制在 200 字以内。')
 

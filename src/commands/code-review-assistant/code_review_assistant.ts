@@ -425,7 +425,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           '',
           '🔧 检测范围:',
           ' • 安全漏洞 (eval、XSS、硬编码密钥等)',
-          ' • 代码质量 (TODO、调试代码、空异常处理等)',
+          '❌ 错误:  • 代码质量 (TODO、调试代码、空异常处理等)',
           ' • 最佳实践 (const、async/await、魔法字符串等)',
           ' • 性能问题 (内存泄漏、不必要的操作等)',
           ' • 可维护性 (长函数、复杂条件、过长注释等)',

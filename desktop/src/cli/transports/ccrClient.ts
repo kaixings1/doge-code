@@ -674,7 +674,7 @@ export class CCRClient {
    * 当前实例 — 立即退出。
    */
   private handleEpochMismatch(): never {
-    logForDebugging('CCRClient: Epoch 不匹配 (409)，正在关闭', {
+    logForDebugging('⏳ CCRClient: Epoch 不匹配 (409)，正在关闭', {
       level: 'error',
     })
     logForDiagnosticsNoPII('error', 'cli_worker_epoch_mismatch')

@@ -524,7 +524,7 @@ function renderHelp(): string {
     '  screen volume-up    放量上涨',
     '  screen oversold     超跌反弹',
     '  screen custom       自定义筛选',
-    '  screen help         筛选帮助',
+    '📖 用法:   screen help         筛选帮助',
     '',
     '图表:',
     '  chart <代码> line            折线图',

@@ -1151,7 +1151,7 @@ function renderHelp(): string {
     '  --framework <name>  强制指定框架: vitest / jest / pytest / go / cargo',
     '  --detailed          显示详细测试输出',
     '  --json              JSON 格式输出',
-    '  --help              显示帮助',
+    '📖 用法:   --help              显示帮助',
     '',
     '💡 示例: ',
     '  /test-gen src/utils/helper.ts     为指定文件生成测试并运行',
@@ -1170,7 +1170,7 @@ function renderHelp(): string {
     '  2. 解析目标文件的导出项（函数、类、常量）',
     '  3. 根据模板生成测试文件到同目录',
     '  4. 运行测试验证',
-    '  5. 失败时尝试自动修复（最多 2 轮）',
+    '❌ 错误:   5. 失败时尝试自动修复（最多 2 轮）',
   ].join('\n')
 }
 
