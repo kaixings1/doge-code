@@ -232,12 +232,12 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'list') {
     const lines = ['📦 可用模块:', '════════', '']
     MODULES.forEach(m => lines.push(`  ${m.name}: ${m.description}`))
-    lines.push('', 'Usage: /htaccess security caching compression')
+    lines.push('', '💡 用法：/htaccess security caching compression')
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'view') {
-    if (!existsSync('.htaccess')) return { type: 'text', value: 'No .htaccess found. Generate with /htaccess <module>' }
+    if (!existsSync('.htaccess')) return { type: 'text', value: 'ℹ️ 未找到 .htaccess。使用 /htaccess <模块> 生成' }
     return { type: 'text', value: '当前 .htaccess:\n═══════════════════\n' + readFileSync('.htaccess', 'utf-8') }
   }
 

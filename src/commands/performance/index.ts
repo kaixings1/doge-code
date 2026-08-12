@@ -184,9 +184,9 @@ export const call: LocalCommandCall = async (args) => {
     if (cmd === 'file') {
       const file = parts[1]
       if (!file) return { type: 'text', value: '用法：/performance file <路径>' }
-      if (!existsSync(file)) return { type: 'text', value: `❌ File not found: ${file}` }
+      if (!existsSync(file)) return { type: 'text', value: `❌ 文件未找到：${file}` }
       const m = analyzeFile(file)
-      if (!m) return { type: 'text', value: `⚠️ Cannot analyze: ${file} (unsupported format or binary file)` }
+      if (!m) return { type: 'text', value: `⚠️ 无法分析：${file}（不支持的格式或二进制文件）` }
       const lines = [`📄 文件：${file}`, `行数：${m.lines}`, `函数数：${m.functions.length}`, `平均复杂度：${m.avgComplexity}`, `最大复杂度：${m.maxComplexity}`, '', '函数：']
       for (const f of m.functions) {
         const warn = f.complexity > 10 ? ' [!]' : f.length > 50 ? ' [LONG]' : ''

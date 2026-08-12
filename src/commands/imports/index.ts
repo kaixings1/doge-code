@@ -141,11 +141,11 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'find') {
     const module = s[1]
-    if (!module) return { type: 'text', value: 'Usage: /imports find <module>' }
+    if (!module) return { type: 'text', value: '📖 用法：/imports find <模块名>' }
     const imports = analyzeImports('.')
     const found = imports.filter(i => i.module.includes(module))
-    if (found.length === 0) return { type: 'text', value: 'No imports of: ' + module }
-    const lines = ['Imports of "' + module + '" (' + found.length + '):', '================================', '']
+    if (found.length === 0) return { type: 'text', value: 'ℹ️ 未找到该模块的导入：' + module }
+    const lines = ['📋 模块 "' + module + '" 的导入（' + found.length + '）：', '═══════════════════════════════════', '']
     found.forEach(f => lines.push(f.file + ':' + f.line))
     return { type: 'text', value: lines.join('\n') }
   }

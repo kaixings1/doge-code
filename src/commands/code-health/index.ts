@@ -88,7 +88,7 @@ function safeExec(cmd: string, timeout = EXEC_TIMEOUT): { ok: boolean; output: s
     const code = err?.status ?? null
     const stderr = err?.stderr ? String(err.stderr).trim() : ''
     const stdout = err?.stdout ? String(err.stdout).trim() : ''
-    const message = err?.message || 'Unknown error'
+    const message = err?.message || '未知错误'
     // Truncate long output
     const output = (stderr || stdout || message).slice(0, 500)
     return { ok: false, output, code }

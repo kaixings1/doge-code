@@ -763,7 +763,7 @@ export const call: LocalCommandCall = async (args) => {
       return { type: 'text', value: '[OK] All rules reset to defaults.' }
     }
 
-    return { type: 'text', value: '[ERROR] Usage: /proactive rules [enable|disable|reset] [rule-key]' }
+    return { type: 'text', value: '❌ 用法：/proactive rules [enable|disable|reset] [规则键]' }
   }
 
   // ===================== SCHEDULE =====================
