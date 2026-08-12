@@ -183,13 +183,13 @@ export const call: LocalCommandCall = async (args) => {
   const parts = s.split(/\s+/)
   const cmd = parts[0]?.toLowerCase() || 'help'
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['API Test', '', '📖 Usage: ', '  /api-test run <name>             Run a saved test', '  /api-test run-all               Run all tests', '  /api-test add                   Add a new test', '  /api-test list                  List saved tests', '  /api-test delete <name>         Delete a test', '  /api-test quick <url>           Quick GET request', '  /api-test post <url> <body>     Quick POST request', '  /api-test history               Test run history', '  /api-test export                Export results', '  /api-test collection <file>     Import collection', '  /api-test compare <a> <b>       Compare responses', '  /api-test status <url>          Check endpoint status', '  /api-test bench <url> [N]       Benchmark endpoint', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['📖 API 测试', '', '📖 用法：', '  /api-test run <name>             运行已保存的测试', '  /api-test run-all               运行全部测试', '  /api-test add                   添加新测试', '  /api-test list                  列出已保存测试', '  /api-test delete <name>         删除测试', '  /api-test quick <url>           快速 GET 请求', '  /api-test post <url> <body>     快速 POST 请求', '  /api-test history               测试运行历史', '  /api-test export                导出结果', '  /api-test collection <file>     导入集合', '  /api-test compare <a> <b>       对比响应', '  /api-test status <url>          检查端点状态', '  /api-test bench <url> [N]       基准测试端点', ''].join('\n') }
 
   if (cmd === 'run') {
     const name = parts.slice(1).join(' ')
     const tests = loadTests()
     const test = tests.find(t => t.name.toLowerCase().includes(name.toLowerCase()))
-    if (!test) return { type: 'text', value: 'Test not found: ' + name }
+    if (!test) return { type: 'text', value: '❌ 未找到测试：' + name }
     try {
       const res = await httpRequestResolved(test.method, test.url, test.headers, test.body, 30000)
       // 支持自定义断言（tests 中可添加 assertions 数组）+ 响应 Schema 验证
@@ -204,62 +204,62 @@ export const call: LocalCommandCall = async (args) => {
         // 追加 schema 验证结果
         if (responseSchema) {
           let schemaErr: string | null = null
-          try { schemaErr = validateJsonSchema(JSON.parse(res.body), responseSchema) } catch { schemaErr = 'response is not valid JSON' }
-          if (schemaErr) { passed = false; details += '\n  ❌ schema: ' + schemaErr }
-          else details += '\n  ✅ schema matches'
+          try { schemaErr = validateJsonSchema(JSON.parse(res.body), responseSchema) } catch { schemaErr = '❌ 响应不是有效的 JSON' }
+          if (schemaErr) { passed = false; details += '\n  ❌ Schema：' + schemaErr }
+          else details += '\n  ✅ Schema 匹配'
         }
       } else if (responseSchema) {
         let schemaErr: string | null = null
-        try { schemaErr = validateJsonSchema(JSON.parse(res.body), responseSchema) } catch { schemaErr = 'response is not valid JSON' }
+        try { schemaErr = validateJsonSchema(JSON.parse(res.body), responseSchema) } catch { schemaErr = '❌ 响应不是有效的 JSON' }
         passed = res.status === test.expectedStatus && !schemaErr
-        details = '  expected: ' + test.expectedStatus + ', got: ' + res.status + (schemaErr ? '\n  ❌ schema: ' + schemaErr : '')
+        details = '  ℹ️ 期望：' + test.expectedStatus + '，实际：' + res.status + (schemaErr ? '\n  ❌ Schema：' + schemaErr : '')
       } else {
         passed = res.status === test.expectedStatus
-        details = '  expected: ' + test.expectedStatus + ', got: ' + res.status
+        details = '  ℹ️ 期望：' + test.expectedStatus + '，实际：' + res.status
       }
       recordHistory(test.name, passed ? 'pass' : 'fail', res.durationMs)
       // 失败时显示响应体摘要（前 500 字符）
       let responseSummary = ''
       if (!passed) {
         const preview = res.body.length > 500 ? res.body.slice(0, 500) + '... (' + res.body.length + ' bytes)' : res.body
-        responseSummary = '\n\n📄 Response Preview:\n' + (preview || '(empty response)')
+        responseSummary = '\n\n📄 响应预览：\n' + (preview || '(empty response)')
       }
-      return { type: 'text', value: (passed ? '[PASS]' : '[FAIL]') + ' ' + test.name + '\n' + details + '\nDuration: ' + res.durationMs + 'ms' + responseSummary }
+      return { type: 'text', value: (passed ? '✅ 通过' : '❌ 失败') + ' ' + test.name + '\n' + details + '\n⏱️ 耗时：' + res.durationMs + 'ms' + responseSummary }
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err)
-      return { type: 'text', value: '[ERROR] ' + msg }
+      return { type: 'text', value: '❌ 错误：' + msg }
     }
   }
 
   if (cmd === 'run-all') {
     const tests = loadTests()
-    if (tests.length === 0) return { type: 'text', value: 'No tests saved. Use /api-test add to create one.' }
-    const lines = ['Running ' + tests.length + ' tests...', '']
+    if (tests.length === 0) return { type: 'text', value: 'ℹ️ 暂无已保存测试。请使用 /api-test add 创建一个。' }
+    const lines = ['🚀 正在运行 ' + tests.length + ' 个测试...', '']
     let passed = 0
     for (const t of tests) {
       try {
         const res = await httpRequest(t.method, t.url, t.headers, t.body, 15000)
-        if (res.status === t.expectedStatus) { passed++; lines.push('[PASS] ' + t.name) }
-        else lines.push('[FAIL] ' + t.name + ' (expected ' + t.expectedStatus + ', got ' + res.status + ')')
+        if (res.status === t.expectedStatus) { passed++; lines.push('✅ [通过] ' + t.name) }
+        else lines.push('❌ [失败] ' + t.name + '（期望 ' + t.expectedStatus + '，实际 ' + res.status + '）')
         recordHistory(t.name, res.status === t.expectedStatus ? 'pass' : 'fail', res.durationMs)
       } catch (err) {
-        lines.push('[ERROR] ' + t.name + ': ' + (err instanceof Error ? err.message : 'timeout'))
+        lines.push('❌ [错误] ' + t.name + '：' + (err instanceof Error ? err.message : 'timeout'))
         recordHistory(t.name, 'error', 0)
       }
     }
-    lines.push('', 'Results: ' + passed + '/' + tests.length + ' passed')
+    lines.push('', '📊 结果：' + passed + '/' + tests.length + ' 通过')
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'add') {
-    return { type: 'text', value: 'To add a test, create JSON in ' + API_TESTS_DIR + ':\n{\n  "id": "test-1",\n  "name": "Get Users",\n  "method": "GET",\n  "url": "https://api.example.com/users",\n  "headers": {"Authorization": "Bearer token"},\n  "body": "",\n  "expectedStatus": 200,\n  "tags": ["users"]\n}' }
+    return { type: 'text', value: '💡 要添加测试，请在 ' + API_TESTS_DIR + ' 中创建 JSON 文件：\n{\n  "id": "test-1",\n  "name": "获取用户",\n  "method": "GET",\n  "url": "https://api.example.com/users",\n  "headers": {"Authorization": "Bearer token"},\n  "body": "",\n  "expectedStatus": 200,\n  "tags": ["users"]\n}' }
   }
 
   if (cmd === 'list') {
     const tests = loadTests()
-    if (tests.length === 0) return { type: 'text', value: 'No saved tests' }
-    const lines = ['Saved API Tests:', '==================', '']
-    tests.forEach(t => lines.push(t.method + ' ' + t.url + ' -> ' + t.expectedStatus + ' (' + t.name + ')'))
+    if (tests.length === 0) return { type: 'text', value: 'ℹ️ 暂无已保存测试' }
+    const lines = ['📋 已保存的 API 测试：', '==================', '']
+    tests.forEach(t => lines.push(t.method + ' ' + t.url + ' -> ' + t.expectedStatus + '（' + t.name + '）'))
     return { type: 'text', value: lines.join('\n') }
   }
 
@@ -267,66 +267,66 @@ export const call: LocalCommandCall = async (args) => {
     const name = parts.slice(1).join(' ')
     const tests = loadTests()
     const test = tests.find(t => t.name.toLowerCase().includes(name.toLowerCase()))
-    if (!test) return { type: 'text', value: 'Not found: ' + name }
-    try { require('fs').unlinkSync(join(API_TESTS_DIR, test.id + '.json')); return { type: 'text', value: '[OK] Deleted: ' + test.name } }
-    catch { return { type: 'text', value: '[ERROR] Delete failed' } }
+    if (!test) return { type: 'text', value: '❌ 未找到：' + name }
+    try { require('fs').unlinkSync(join(API_TESTS_DIR, test.id + '.json')); return { type: 'text', value: '✅ 已删除：' + test.name } }
+    catch { return { type: 'text', value: '❌ 删除失败' } }
   }
 
   if (cmd === 'quick') {
     const url = parts[1]
-    if (!url) return { type: 'text', value: 'Usage: /api-test quick <url>' }
+    if (!url) return { type: 'text', value: '📖 用法：/api-test quick <url>' }
     try {
       const res = await httpRequestResolved('GET', url)
       return { type: 'text', value: formatResponse(res) }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
+      return { type: 'text', value: '❌ 错误：' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
   if (cmd === 'post') {
     const url = parts[1]; const body = parts.slice(2).join(' ')
-    if (!url) return { type: 'text', value: 'Usage: /api-test post <url> <body>' }
+    if (!url) return { type: 'text', value: '📖 用法：/api-test post <url> <body>' }
     try {
       const res = await httpRequest('POST', url, {}, body)
       return { type: 'text', value: formatResponse(res) }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
+      return { type: 'text', value: '❌ 错误：' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
   if (cmd === 'history') {
     const historyFile = join(API_TESTS_DIR, 'history.json')
-    if (!existsSync(historyFile)) return { type: 'text', value: 'No test history. Run tests first.' }
+    if (!existsSync(historyFile)) return { type: 'text', value: 'ℹ️ 暂无测试历史。请先运行测试。' }
     try {
       const history = JSON.parse(readFileSync(historyFile, 'utf-8')) as Array<{ name: string; status: string; duration: number; timestamp: string }>
-      const lines = ['Test History:', '==================', '']
-      history.slice(-20).reverse().forEach((h: any) => lines.push(`[${h.status}] ${h.name} (${h.duration}ms) - ${h.timestamp}`))
+      const lines = ['📅 测试历史：', '==================', '']
+      history.slice(-20).reverse().forEach((h: any) => lines.push(`[${h.status}] ${h.name}（${h.duration}ms）- ${h.timestamp}`))
       return { type: 'text', value: lines.join('\n') }
-    } catch { return { type: 'text', value: 'Error reading history file' } }
+    } catch { return { type: 'text', value: '❌ 读取历史文件出错' } }
   }
 
   if (cmd === 'export') {
     const tests = loadTests()
-    if (tests.length === 0) return { type: 'text', value: 'No tests to export.' }
+    if (tests.length === 0) return { type: 'text', value: 'ℹ️ 没有可导出的测试。' }
     const exportPath = join(process.cwd(), 'api-tests-export.json')
     writeFileSync(exportPath, JSON.stringify(tests, null, 2), 'utf-8')
-    return { type: 'text', value: 'Exported ' + tests.length + ' tests to ' + exportPath }
+    return { type: 'text', value: '✅ 已将 ' + tests.length + ' 个测试导出到 ' + exportPath }
   }
 
   if (cmd === 'collection') {
     const file = parts[1]
-    if (!file || !existsSync(file)) return { type: 'text', value: 'File not found: ' + file }
+    if (!file || !existsSync(file)) return { type: 'text', value: '❌ 未找到文件：' + file }
     try {
       const content = readFileSync(file, 'utf-8')
       const collection = JSON.parse(content)
       const items = collection?.item || collection?.requests || collection?.items || (Array.isArray(collection) ? collection : [collection])
-      if (!Array.isArray(items)) return { type: 'text', value: 'Unable to parse collection format from ' + file }
+      if (!Array.isArray(items)) return { type: 'text', value: '❌ 无法从 ' + file + ' 解析集合格式' }
       let imported = 0
       items.forEach((item: any) => {
         const req = item.request || item
         const test: APITest = {
           id: 'test-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
-          name: item.name || req.method || 'unnamed',
+          name: item.name || req.method || '未命名',
           method: (req.method || 'GET').toUpperCase(),
           url: req.url?.raw || req.url || '',
           headers: (req.header || []).reduce((acc: any, h: any) => { acc[h.key || h.name] = h.value; return acc }, {}),
@@ -336,51 +336,51 @@ export const call: LocalCommandCall = async (args) => {
         }
         if (test.url) { saveTest(test); imported++ }
       })
-      return { type: 'text', value: 'Imported ' + imported + ' tests from ' + file }
-    } catch { return { type: 'text', value: 'Error parsing collection from ' + file } }
+      return { type: 'text', value: '✅ 已从 ' + file + ' 导入 ' + imported + ' 个测试' }
+    } catch { return { type: 'text', value: '❌ 解析集合文件出错：' + file } }
   }
 
   if (cmd === 'compare') {
     const a = parts[1]; const b = parts[2]
-    if (!a || !b) return { type: 'text', value: 'Usage: /api-test compare <name1> <name2>' }
+    if (!a || !b) return { type: 'text', value: '📖 用法：/api-test compare <name1> <name2>' }
     const tests = loadTests()
     const testA = tests.find(t => t.name.toLowerCase().includes(a.toLowerCase()))
     const testB = tests.find(t => t.name.toLowerCase().includes(b.toLowerCase()))
-    if (!testA) return { type: 'text', value: 'Test not found: ' + a }
-    if (!testB) return { type: 'text', value: 'Test not found: ' + b }
+    if (!testA) return { type: 'text', value: '❌ 未找到测试：' + a }
+    if (!testB) return { type: 'text', value: '❌ 未找到测试：' + b }
     try {
       const [resA, resB] = await Promise.all([
         httpRequest(testA.method, testA.url, testA.headers, testA.body),
         httpRequest(testB.method, testB.url, testB.headers, testB.body),
       ])
-      const lines = ['Comparing: ' + testA.name + ' vs ' + testB.name, '', '']
-      lines.push('Test A: ' + testA.name + ' -> ' + resA.status + ' (' + resA.durationMs + 'ms)')
-      lines.push('Test B: ' + testB.name + ' -> ' + resB.status + ' (' + resB.durationMs + 'ms)')
+      const lines = ['🔍 对比：' + testA.name + ' vs ' + testB.name, '', '']
+      lines.push('🧪 测试 A：' + testA.name + ' -> ' + resA.status + '（' + resA.durationMs + 'ms）')
+      lines.push('🧪 测试 B：' + testB.name + ' -> ' + resB.status + '（' + resB.durationMs + 'ms）')
       lines.push('')
-      lines.push(resA.status === resB.status ? '✅ Same status code' : '❌ Different status codes')
-      if (resA.body === resB.body) lines.push('✅ Identical response bodies')
-      else lines.push('⚠️ Different response bodies')
+      lines.push(resA.status === resB.status ? '✅ 状态码相同' : '❌ 状态码不同')
+      if (resA.body === resB.body) lines.push('✅ 响应体完全一致')
+      else lines.push('⚠️ 响应体不同')
       return { type: 'text', value: lines.join('\n') }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
+      return { type: 'text', value: '❌ 错误：' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
   if (cmd === 'status') {
     const url = parts[1]
-    if (!url) return { type: 'text', value: 'Usage: /api-test status <url>' }
+    if (!url) return { type: 'text', value: '📖 用法：/api-test status <url>' }
     try {
       const res = await httpRequest('GET', url, {}, undefined, 10000)
-      return { type: 'text', value: 'Status: ' + res.status + ' (' + res.durationMs + 'ms)' + (res.ok ? ' ✅' : ' ❌') }
+      return { type: 'text', value: 'ℹ️ 状态：' + res.status + '（' + res.durationMs + 'ms）' + (res.ok ? ' ✅' : ' ❌') }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] Cannot reach endpoint: ' + (err instanceof Error ? err.message : 'timeout') }
+      return { type: 'text', value: '❌ 无法访问端点：' + (err instanceof Error ? err.message : 'timeout') }
     }
   }
 
   if (cmd === 'bench') {
     const url = parts[1]; const n = parseInt(parts[2]) || 10
-    if (!url) return { type: 'text', value: 'Usage: /api-test bench <url> [count]' }
-    const lines = ['Benchmarking ' + url + ' (' + n + ' requests):', '']
+    if (!url) return { type: 'text', value: '📖 用法：/api-test bench <url> [count]' }
+    const lines = ['📈 正在基准测试 ' + url + '（' + n + ' 次请求）：', '']
     const times: number[] = []
     let success = 0
     for (let i = 0; i < n; i++) {
@@ -391,24 +391,24 @@ export const call: LocalCommandCall = async (args) => {
       } catch { times.push(-1) }
     }
     const valid = times.filter(t => t >= 0)
-    if (valid.length === 0) return { type: 'text', value: 'All requests failed' }
+    if (valid.length === 0) return { type: 'text', value: '❌ 所有请求均失败' }
     const avg = Math.round(valid.reduce((s, t) => s + t, 0) / valid.length)
     const min = Math.min(...valid)
     const max = Math.max(...valid)
-    lines.push('Average: ' + avg + 'ms')
-    lines.push('Min: ' + min + 'ms')
-    lines.push('Max: ' + max + 'ms')
-    lines.push('Success: ' + success + '/' + n)
-    lines.push('Requests/sec: ' + (success / (avg / 1000)).toFixed(1))
+    lines.push('📊 平均：' + avg + 'ms')
+    lines.push('📊 最小：' + min + 'ms')
+    lines.push('📊 最大：' + max + 'ms')
+    lines.push('📊 成功：' + success + '/' + n)
+    lines.push('📊 每秒请求数：' + (success / (avg / 1000)).toFixed(1))
     return { type: 'text', value: lines.join('\n') }
   }
 
-  return { type: 'text', value: 'Unknown: ' + cmd }
+  return { type: 'text', value: '❌ 未知命令：' + cmd }
 }
 
 const apiTest: Command = {
   type: 'local', name: 'api-test',
-  description: 'API testing - run/run-all/add/list/quick/post/bench/status/history/compare',
+  description: 'API 测试 - 运行/批量运行/添加/列表/快速请求/历史/导出/集合导入/对比/状态/基准测试',
   aliases: '/api-test, /api, /curl, /test'.split(','),
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call }),

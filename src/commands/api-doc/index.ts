@@ -143,14 +143,14 @@ export function extractFunctionSignatures(content: string): FunctionSignature[] 
 /** 生成函数签名 Markdown 文档 */
 export function generateSignaturesMarkdown(file: string, sigs: FunctionSignature[]): string {
   if (sigs.length === 0) return ''
-  const lines = ['## Function Signatures', '']
+  const lines = ['## 📝 函数签名', '']
   sigs.forEach(s => {
     const params = s.params.map(p => `\`${p.name}${p.optional ? '?' : ''}: ${p.type}\``).join(', ')
     const flags = [s.isExport ? 'export' : '', s.isAsync ? 'async' : ''].filter(Boolean).join(' ')
     lines.push(`### ${flags ? flags + ' ' : ''}${s.name}(${params})`)
-    lines.push(`- **返回类型:** \`${s.returnType}\``)
-    lines.push(`- **行号:** ${s.line}`)
-    if (s.params.length === 0) lines.push('- **参数:** 无')
+    lines.push(`- **🔙 返回类型:** \`${s.returnType}\``)
+    lines.push(`- **📍 行号:** ${s.line}`)
+    if (s.params.length === 0) lines.push('- **📥 参数:** 无')
     lines.push('')
   })
   return lines.join('\n')
@@ -335,7 +335,7 @@ export function extractTypesAST(content: string): TypeDeclInfo[] {
 /** 生成类型声明的 Markdown 文档 */
 export function generateTypesMarkdown(file: string, types: TypeDeclInfo[]): string {
   if (types.length === 0) return ''
-  const lines = ['## Type Declarations', '']
+  const lines = ['## 🏷️ 类型声明', '']
   for (const t of types) {
     const typeParams = t.typeParams.length > 0 ? '<' + t.typeParams.join(', ') + '>' : ''
     const extendsStr = t.extends.length > 0 ? ' extends ' + t.extends.join(', ') : ''
@@ -416,7 +416,7 @@ export function generateMarkdown(title: string, endpoints: APIEndpoint[]): strin
     items.forEach(e => {
       lines.push('### ' + (e.method ? e.method + ' ' : '') + e.path)
       if (e.description) lines.push(e.description)
-      if (e.params.length > 0) lines.push('**Parameters:** ' + e.params.join(', '))
+      if (e.params.length > 0) lines.push('**📥 参数:** ' + e.params.join(', '))
       lines.push('')
     })
   }
@@ -440,25 +440,25 @@ export const call: LocalCommandCall = async (args) => {
   const p = args.trim().split(/\s+/)
   const c = p[0] || ''
   if (!c) return { type: 'text', value: [
-    'API Documentation Generator', '', '📖 Usage: ',
-    '  /api-doc gen <file> [format]     Generate docs (md/html/json)',
-    '  /api-doc scan <dir>              Scan directory for APIs',
-    '  /api-doc routes <file>           Extract routes',
-    '  /api-doc jsdoc <file>            Extract JSDoc comments',
-    '  /api-doc openapi <file>          Parse OpenAPI spec',
-    '  /api-doc sigs <file>             Extract function signatures (params/return types)',
-    '  /api-doc classes <file>          Extract classes',
-    '  /api-doc interfaces <file>       Extract interfaces',
-    '  /api-doc types <file>            Extract type aliases (AST)',
-    '  /api-doc exports <file>          List all exports',
-    '  /api-doc all [dir]               Full project documentation',
+    '📖 API 文档生成器', '', '📖 用法：',
+    '  /api-doc gen <文件> [格式]    生成文档 (md/html/json)',
+    '  /api-doc scan <目录>             扫描目录中的 API',
+    '  /api-doc routes <文件>          提取路由',
+    '  /api-doc jsdoc <文件>           提取 JSDoc 注释',
+    '  /api-doc openapi <文件>         解析 OpenAPI 规范',
+    '  /api-doc sigs <文件>            提取函数签名（参数/返回类型）',
+    '  /api-doc classes <文件>         提取类',
+    '  /api-doc interfaces <文件>      提取接口',
+    '  /api-doc types <文件>           提取类型别名 (AST)',
+    '  /api-doc exports <文件>         列出所有导出',
+    '  /api-doc all [目录]              完整项目文档',
   ].join('\n') }
 
   let r = ''
 
   if (c === 'gen') {
     const file = p[1]; const format = p[2] || 'md'
-    if (!file || !existsSync(file)) return { type: 'text', value: 'File not found: ' + (file || '') }
+    if (!file || !existsSync(file)) return { type: 'text', value: '❌ 未找到文件：' + (file || '') }
     const content = readFileSync(file, 'utf-8')
     const endpoints = [...extractJSdocs(content), ...extractRoutes(content, 'express'), ...extractRoutesAdvanced(content)]
     const title = basename(file, extname(file))
@@ -487,21 +487,21 @@ export const call: LocalCommandCall = async (args) => {
 
   else if (c === 'sigs') {
     const file = p[1]
-    if (!file || !existsSync(file)) return { type: 'text', value: 'File not found: ' + (file || '') }
+    if (!file || !existsSync(file)) return { type: 'text', value: '❌ 未找到文件：' + (file || '') }
     const sigs = extractFunctionSignatures(readFileSync(file, 'utf-8'))
-    r = generateSignaturesMarkdown(file, sigs) || 'No function signatures found in ' + file
+    r = generateSignaturesMarkdown(file, sigs) || '💡 在 ' + file + ' 中未找到函数签名'
   }
 
   else if (c === 'types') {
     const file = p[1]
-    if (!file || !existsSync(file)) return { type: 'text', value: 'File not found: ' + (file || '') }
+    if (!file || !existsSync(file)) return { type: 'text', value: '❌ 未找到文件：' + (file || '') }
     const types = extractTypesAST(readFileSync(file, 'utf-8'))
-    r = generateTypesMarkdown(file, types) || 'No type declarations found in ' + file
+    r = generateTypesMarkdown(file, types) || '💡 在 ' + file + ' 中未找到类型声明'
   }
 
   else if (c === 'scan') {
     const dir = p[1] || '.'
-    if (!existsSync(dir)) return { type: 'text', value: 'Directory not found: ' + dir }
+    if (!existsSync(dir)) return { type: 'text', value: '❌ 未找到目录：' + dir }
     const allEndpoints: APIEndpoint[] = []
     const scan = (d: string) => {
       try {
@@ -520,31 +520,31 @@ export const call: LocalCommandCall = async (args) => {
       } catch { /* ignore */ }
     }
     scan(dir)
-    const lines = ['API Scan Results:', '==================', '', 'Found ' + allEndpoints.length + ' endpoints:', '']
+    const lines = ['📊 API 扫描结果:', '==================', '', '✅ 共找到 ' + allEndpoints.length + ' 个端点:', '']
     allEndpoints.forEach(e => lines.push((e.method || 'FUNC') + ' ' + e.path + ' (' + e.file + ':' + e.line + ')'))
-    r = lines.join('\n')
+    r = lines.join('\n') || 'ℹ️ 无输出'
   }
 
   else if (c === 'routes') {
     const file = p[1]
-    if (!file || !existsSync(file)) return { type: 'text', value: 'File not found: ' + (file || '') }
+    if (!file || !existsSync(file)) return { type: 'text', value: '❌ 未找到文件：' + (file || '') }
     const routes = extractRoutes(readFileSync(file, 'utf-8'), 'express')
-    r = 'Routes in ' + file + ':\n' + routes.map(r => r.method + ' ' + r.path).join('\n')
+    r = '📋 ' + file + ' 中的路由:\n' + routes.map(r => r.method + ' ' + r.path).join('\n')
   }
 
   else if (c === 'jsdoc') {
     const file = p[1]
-    if (!file || !existsSync(file)) return { type: 'text', value: 'File not found: ' + (file || '') }
+    if (!file || !existsSync(file)) return { type: 'text', value: '❌ 未找到文件：' + (file || '') }
     const jsdocs = extractJSdocs(readFileSync(file, 'utf-8'))
-    r = 'JSDoc in ' + file + ':\n' + jsdocs.map(j => '## ' + j.name + '\n' + j.description).join('\n\n')
+    r = '📝 ' + file + ' 中的 JSDoc:\n' + jsdocs.map(j => '## ' + j.name + '\n' + j.description).join('\n\n')
   }
 
   else if (c === 'openapi') {
     const file = p[1]
-    if (!file || !existsSync(file)) return { type: 'text', value: 'File not found: ' + (file || '') }
+    if (!file || !existsSync(file)) return { type: 'text', value: '❌ 未找到文件：' + (file || '') }
     try {
       const spec = JSON.parse(readFileSync(file, 'utf-8')) as OpenAPIInfo
-      const lines = ['OpenAPI: ' + spec.info?.title + ' v' + spec.info?.version, 'Paths:', '']
+      const lines = ['📖 OpenAPI: ' + spec.info?.title + ' v' + spec.info?.version, '📂 路径:', '']
       if (spec.paths) {
         for (const [path, methods] of Object.entries(spec.paths)) {
           for (const [method, info] of Object.entries(methods)) {
@@ -552,27 +552,27 @@ export const call: LocalCommandCall = async (args) => {
           }
         }
       }
-      r = lines.join('\n')
-    } catch { r = 'Invalid JSON: ' + file }
+      r = lines.join('\n') || 'ℹ️ 无输出'
+    } catch { r = '❌ JSON 格式无效：' + file }
   }
 
   else if (c === 'classes' || c === 'interfaces') {
     const file = p[1]
-    if (!file || !existsSync(file)) return { type: 'text', value: 'File not found: ' + (file || '') }
+    if (!file || !existsSync(file)) return { type: 'text', value: '❌ 未找到文件：' + (file || '') }
     const content = readFileSync(file, 'utf-8')
     const regex = c === 'classes' ? /class\s+(\w+)/g : /interface\s+(\w+)/g
     const names: string[] = []
     let match
     while ((match = regex.exec(content)) !== null) names.push(match[1])
-    r = c.charAt(0).toUpperCase() + c.slice(1) + ' in ' + file + ':\n' + (names.join('\n') || '(none)')
+    r = (c === 'classes' ? '📦' : '🔗') + ' ' + file + ' 中的 ' + (c === 'classes' ? '类' : '接口') + ':\n' + (names.join('\n') || '💡 无')
   }
 
   else if (c === 'exports') {
     const file = p[1]
-    if (!file || !existsSync(file)) return { type: 'text', value: 'File not found: ' + (file || '') }
+    if (!file || !existsSync(file)) return { type: 'text', value: '❌ 未找到文件：' + (file || '') }
     const content = readFileSync(file, 'utf-8')
     const exports = content.match(/export\s+(?:async\s+)?(?:function|const|class|interface|type|default)\s+(\w+)/g) || []
-    r = 'Exports from ' + file + ':\n' + exports.map(e => '  ' + e.replace('export ', '')).join('\n')
+    r = '📦 ' + file + ' 中的导出:\n' + exports.map(e => '  ' + e.replace('export ', '')).join('\n')
   }
 
   else if (c === 'all') {
@@ -595,12 +595,12 @@ export const call: LocalCommandCall = async (args) => {
       } catch { /* ignore */ }
     }
     scan(dir)
-    r = generateMarkdown('API Documentation', allEndpoints)
+    r = generateMarkdown('📖 API 文档', allEndpoints)
   }
 
-  else { r = 'Unknown: ' + c }
+  else { r = '❌ 未知命令：' + c }
 
-  return { type: 'text', value: r || '(no output)' }
+  return { type: 'text', value: r || 'ℹ️ 无输出' }
 }
 
 const cmd = { type: 'local' as const, name: 'api-doc', description: 'API docs - gen/scan/routes/jsdoc/openapi/classes/interfaces/types/exports/all + html/md/json', argumentHint: '<gen|scan|routes|jsdoc|openapi|classes|interfaces|types|exports|all> [file|dir]', isEnabled: () => true, supportsNonInteractive: true, load: () => Promise.resolve({ call }) } satisfies Command

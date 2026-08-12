@@ -39,35 +39,35 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'help' || cmd === '') {
     return { type: 'text', value: [
-      'Git Blame', '', '📖 Usage: ',
-      '  /blame <file>                 Show blame for file',
-      '  /blame <file> <start> <end>   Show blame for line range',
-      '  /blame authors <file>         Author statistics',
-      '  /blame heat <file>            Author heatmap',
-      '  /blame recent <file>          Show recent changes',
+      '📝 Git Blame', '', '📖 用法：',
+      '  /blame <文件>               查看文件 blame',
+      '  /blame <文件> <起> <止>     查看行范围 blame',
+      '  /blame authors <文件>       作者统计',
+      '  /blame heat <文件>          作者热力图',
+      '  /blame recent <文件>        最近修改',
     ].join('\n') }
   }
 
   if (cmd === 'authors') {
     const file = parts[1]
-    if (!file || !existsSync(file)) return { type: 'text', value: 'File not found: ' + (file || '') }
+    if (!file || !existsSync(file)) return { type: 'text', value: '❌ 未找到文件：' + (file || '') }
     const lines = blameFile(file)
-    if (lines.length === 0) return { type: 'text', value: 'No blame data' }
+    if (lines.length === 0) return { type: 'text', value: '⚠️ 无 blame 数据' }
     const authors: Record<string, number> = {}
     lines.forEach(l => { authors[l.author] = (authors[l.author] || 0) + 1 })
     const sorted = Object.entries(authors).sort((a: any, b: any) => b[1] - a[1])
-    const result = ['Author Stats: ' + file, '================', '']
-    sorted.forEach(([a, c]) => result.push(a + ': ' + c + ' lines (' + Math.round(c / lines.length * 100) + '%)'))
+    const result = ['📊 作者统计：' + file, '══════════════', '']
+    sorted.forEach(([a, c]) => result.push(a + ': ' + c + ' 行 (' + Math.round(c / lines.length * 100) + '%)'))
     return { type: 'text', value: result.join('\n') }
   }
 
   if (cmd === 'heat') {
     const file = parts[1]
-    if (!file || !existsSync(file)) return { type: 'text', value: 'File not found: ' + (file || '') }
+    if (!file || !existsSync(file)) return { type: 'text', value: '❌ 未找到文件：' + (file || '') }
     const lines = blameFile(file)
-    if (lines.length === 0) return { type: 'text', value: 'No blame data' }
+    if (lines.length === 0) return { type: 'text', value: '⚠️ 无 blame 数据' }
     const authors = new Set(lines.map(l => l.author))
-    const result = ['Author Heatmap: ' + file, '================', '']
+    const result = ['🔥 作者热力图：' + file, '═════════════════', '']
     authors.forEach(a => {
       const count = lines.filter(l => l.author === a).length
       const bar = '#'.repeat(Math.min(count, 40))
@@ -78,28 +78,28 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'recent') {
     const file = parts[1]
-    if (!file || !existsSync(file)) return { type: 'text', value: 'File not found: ' + (file || '') }
+    if (!file || !existsSync(file)) return { type: 'text', value: '❌ 未找到文件：' + (file || '') }
     const lines = blameFile(file).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    const result = ['Recent Changes: ' + file, '================', '']
+    const result = ['🕐 最近修改：' + file, '════════════════', '']
     lines.slice(0, 15).forEach(l => result.push(l.date + ' ' + l.author.slice(0, 15) + ' - ' + l.text.slice(0, 50)))
     return { type: 'text', value: result.join('\n') }
   }
 
   // Default: show blame
   const file = cmd
-  if (!file || !existsSync(file)) return { type: 'text', value: 'File not found: ' + (file || '') }
+  if (!file || !existsSync(file)) return { type: 'text', value: '❌ 未找到文件：' + (file || '') }
   const startLine = parseInt(parts[1]) || 1
   const endLine = parseInt(parts[2]) || startLine + 30
   const lines = blameFile(file).filter(l => l.line >= startLine && l.line <= endLine)
-  if (lines.length === 0) return { type: 'text', value: 'No blame data for ' + file }
-  const result = ['Blame: ' + file + ' (lines ' + startLine + '-' + endLine + ')', '================', '']
+  if (lines.length === 0) return { type: 'text', value: '⚠️ 无 blame 数据：' + file }
+  const result = ['📝 Blame: ' + file + ' (行 ' + startLine + '-' + endLine + ')', '══════════════════', '']
   lines.forEach(l => result.push(l.line.toString().padStart(4) + ' ' + l.hash + ' ' + l.author.slice(0, 12).padEnd(14) + ' ' + l.text.slice(0, 50)))
   return { type: 'text', value: result.join('\n') }
 }
 
 const blame: Command = {
   type: 'local', name: 'blame',
-  description: 'Git blame - file blame, author stats, heatmap, recent changes',
+  description: 'Git Blame - 文件/作者统计/热力图/最近修改',
   aliases: ['/blame', '/bl'], supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
