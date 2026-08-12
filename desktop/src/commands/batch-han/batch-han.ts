@@ -2834,7 +2834,7 @@ function processFile(
     }
     return false
   } catch (err) {
-    appendLog(logFile, '❌ 错误: ✗ 失败: ' + path.basename(filePath) + ' - ' + (err instanceof Error ? err.message : String(err)))
+    appendLog(logFile, ' 错误: ✗ 失败: ' + path.basename(filePath) + ' - ' + (err instanceof Error ? err.message : String(err)))
     return false
   }
 }
@@ -2906,7 +2906,7 @@ function createBatches(
         currentBatch = []
         currentTokens = 0
       }
-      appendLog(logFile, '⚠️ 文件过大（' + info.tokenCount + ' tokens）: ' + path.basename(info.path) + '，单独处理')
+      appendLog(logFile, ' 文件过大（' + info.tokenCount + ' tokens）: ' + path.basename(info.path) + '，单独处理')
       batches.push([info])
       continue
     }
@@ -2938,7 +2938,7 @@ function isRunning(pidFile: string): boolean {
 }
 
 function showHelp(): string {
-  return `📖 batch-han 使用说明
+  return ` batch-han 使用说明
 
 用法:
   /batch-han                   扫描 <src> 目录下的 .ts/.tsx/.md 文件进行汉化
@@ -2981,7 +2981,7 @@ function showHelp(): string {
 export const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult> => {
   const parts = args.trim().split(/\s+/).filter(Boolean)
 
-  // ❗ 空参数 → 显示帮助
+  //  空参数 → 显示帮助
   if (parts.length === 0) {
     return { type: 'text', value: showHelp() }
   }
@@ -2999,17 +2999,17 @@ export const call: LocalCommandCall = async (args: string): Promise<LocalCommand
       const tail = lines.slice(-20).join('\n')
       return {
         type: 'text',
-        value: (running ? '🟢 正在运行中\n' : '🔴 未在运行\n')
+        value: (running ? '🟢 正在运行中\n' : ' 未在运行\n')
           + '--- 最近日志（末 20 行） ---\n'
           + tail
           + '\n---\n查看完整日志: type ' + logFile + '\n清空日志: del ' + logFile,
       }
     } catch {
-      return { type: 'text', value: (running ? '🟢 正在运行中' : '🔴 未在运行') + '（无日志）' }
+      return { type: 'text', value: (running ? '🟢 正在运行中' : ' 未在运行') + '（无日志）' }
     }
   }
 
-  // ❗ 帮助模式
+  //  帮助模式
   if (parts[0] === '--help' || parts[0] === '-h') {
     return { type: 'text', value: showHelp() }
   }
@@ -3059,7 +3059,7 @@ export const call: LocalCommandCall = async (args: string): Promise<LocalCommand
         i++
       }
     } else if (!parts[i].startsWith('-')) {
-      // ❗ 兼容中文"汉化"前缀：去掉开头的中文"汉化"文字
+      //  兼容中文"汉化"前缀：去掉开头的中文"汉化"文字
       let cleaned = parts[i]
       cleaned = cleaned.replace(/^[一-龥]+/, '')
       targetDir = cleaned
@@ -3072,7 +3072,7 @@ export const call: LocalCommandCall = async (args: string): Promise<LocalCommand
   const pidFile = path.join(absTargetDir, PID_FILE)
 
   if (!fs.existsSync(absTargetDir)) {
-    return { type: 'text', value: '❌ 错误: 未找到目录：' + absTargetDir + '\n' + showHelp() }
+    return { type: 'text', value: ' 错误: 未找到目录：' + absTargetDir + '\n' + showHelp() }
   }
 
   // 回滚模式
@@ -3082,7 +3082,7 @@ export const call: LocalCommandCall = async (args: string): Promise<LocalCommand
 
   // 检查是否已有实例在运行（仅在非预览/报告模式时检查）
   if (!dryRun && !reportMode && isRunning(pidFile)) {
-    return { type: 'text', value: '⚠️ 已有 batch-han 实例在运行（PID: ' + fs.readFileSync(pidFile, 'utf-8').trim() + '）\n使用 /batch-han --status 查看进度\n等待完成后重试，或手动删除 ' + pidFile }
+    return { type: 'text', value: ' 已有 batch-han 实例在运行（PID: ' + fs.readFileSync(pidFile, 'utf-8').trim() + '）\n使用 /batch-han --status 查看进度\n等待完成后重试，或手动删除 ' + pidFile }
   }
 
   // 写入 PID（非预览/报告模式）
@@ -3094,7 +3094,7 @@ export const call: LocalCommandCall = async (args: string): Promise<LocalCommand
     fs.writeFileSync(logFile, '')
   }
 
-  const modeDesc = reverse ? ' 🔄 逆向' : dryRun ? ' 🔍 预览' : reportMode ? ' 📊 报告' : ''
+  const modeDesc = reverse ? ' 🔄 逆向' : dryRun ? '  预览' : reportMode ? ' 📊 报告' : ''
   if (!reportMode) {
     appendLog(logFile, '🚀 batch-han 启动，PID=' + process.pid + '，目标目录=' + absTargetDir + '，并发数=' + concurrency + modeDesc)
   }
@@ -3109,9 +3109,9 @@ export const call: LocalCommandCall = async (args: string): Promise<LocalCommand
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
     if (!reportMode) {
-      appendLog(logFile, '❌ 执行失败: ' + msg)
+      appendLog(logFile, ' 执行失败: ' + msg)
     }
-    return { type: 'text', value: '❌ batch-han 失败: ' + msg + '\n查看日志: type ' + logFile }
+    return { type: 'text', value: ' batch-han 失败: ' + msg + '\n查看日志: type ' + logFile }
   }
 }
 

@@ -35,10 +35,10 @@ export const CodeQualityTool: Tool = {
     const resolvedPath = path.resolve(targetPath)
 
     if (!fs.existsSync(resolvedPath)) {
-      return { type: 'text', value: `❌ 路径不存在: ${resolvedPath}` }
+      return { type: 'text', value: ` 路径不存在: ${resolvedPath}` }
     }
 
-    const lines: string[] = ['# 🔍 代码质量分析报告\n']
+    const lines: string[] = ['#  代码质量分析报告\n']
 
     try {
       const isDir = fs.statSync(resolvedPath).isDirectory()
@@ -56,10 +56,10 @@ export const CodeQualityTool: Tool = {
         case 'smells':
           return detectCodeSmells(resolvedPath, isDir)
         default:
-          return { type: 'text', value: `❌ 未知操作: ${action}` }
+          return { type: 'text', value: ` 未知操作: ${action}` }
       }
     } catch (err) {
-      return { type: 'text', value: `❌ 分析失败: ${err instanceof Error ? err.message : String(err)}` }
+      return { type: 'text', value: ` 分析失败: ${err instanceof Error ? err.message : String(err)}` }
     }
   },
 }
@@ -127,18 +127,18 @@ function analyzeCodeQuality(targetPath: string, isDir: boolean) {
   // 质量评估
   lines.push(`## 🎯 质量评估`)
   const commentNum = parseFloat(commentRatio)
-  if (commentNum < 5) lines.push(`- ⚠️ 注释率偏低（${commentRatio}%），建议增加注释`)
-  else if (commentNum > 30) lines.push(`- ⚠️ 注释率偏高（${commentRatio}%），可能有过时注释`)
-  else lines.push(`- ✅ 注释率适中（${commentRatio}%）`)
+  if (commentNum < 5) lines.push(`-  注释率偏低（${commentRatio}%），建议增加注释`)
+  else if (commentNum > 30) lines.push(`-  注释率偏高（${commentRatio}%），可能有过时注释`)
+  else lines.push(`-  注释率适中（${commentRatio}%）`)
 
-  if (avgLinesPerFile > 300) lines.push(`- ⚠️ 平均文件行数过多（${avgLinesPerFile}），建议拆分大文件`)
-  else lines.push(`- ✅ 平均文件行数合理（${avgLinesPerFile}）`)
+  if (avgLinesPerFile > 300) lines.push(`-  平均文件行数过多（${avgLinesPerFile}），建议拆分大文件`)
+  else lines.push(`-  平均文件行数合理（${avgLinesPerFile}）`)
 
   return { type: 'text', value: lines.join('\n') }
 }
 
 function reviewCode(targetPath: string, isDir: boolean) {
-  const lines: string[] = ['# 👁️ 代码审查报告\n']
+  const lines: string[] = ['# 👁 代码审查报告\n']
 
   const issues: string[] = []
   let filesChecked = 0
@@ -208,9 +208,9 @@ function reviewCode(targetPath: string, isDir: boolean) {
   lines.push('')
 
   if (issues.length === 0) {
-    lines.push('## ✅ 未发现明显问题')
+    lines.push('##  未发现明显问题')
   } else {
-    lines.push(`## ⚠️ 发现的问题（前20条）`)
+    lines.push(`##  发现的问题（前20条）`)
     issues.slice(0, 20).forEach(issue => lines.push(`- ${issue}`))
     if (issues.length > 20) {
       lines.push(`\n... 还有 ${issues.length - 20} 个问题未显示`)
@@ -274,7 +274,7 @@ function analyzeComplexity(targetPath: string, isDir: boolean) {
   lines.push('|------|--------|------|------|')
 
   for (const fc of fileComplexities.slice(0, 15)) {
-    const risk = fc.complexity > 20 ? '🔴 高' : fc.complexity > 10 ? '🟡 中' : '🟢 低'
+    const risk = fc.complexity > 20 ? ' 高' : fc.complexity > 10 ? '🟡 中' : '🟢 低'
     lines.push(`| ${path.basename(fc.file)} | ${fc.complexity} | ${fc.lines} | ${risk} |`)
   }
 
@@ -336,9 +336,9 @@ function detectDuplication(targetPath: string, isDir: boolean) {
   lines.push('')
 
   if (duplicates.length === 0) {
-    lines.push('## ✅ 未发现明显重复代码')
+    lines.push('##  未发现明显重复代码')
   } else {
-    lines.push(`## ⚠️ 重复代码（前5组）`)
+    lines.push(`##  重复代码（前5组）`)
     duplicates.slice(0, 5).forEach(([block], idx) => {
       lines.push(`\n### 重复块 ${idx + 1}`)
       lines.push('```')
@@ -407,7 +407,7 @@ function detectCodeSmells(targetPath: string, isDir: boolean) {
   lines.push('')
 
   if (smells.length === 0) {
-    lines.push('## ✅ 未发现代码异味')
+    lines.push('##  未发现代码异味')
   } else {
     // 按类型分组
     const byType = new Map<string, number>()
@@ -416,7 +416,7 @@ function detectCodeSmells(targetPath: string, isDir: boolean) {
     lines.push('## 📊 异味分布')
     byType.forEach((count, type) => lines.push(`- ${type}: ${count} 个`))
 
-    lines.push('\n## ⚠️ 详细列表（前15条）')
+    lines.push('\n##  详细列表（前15条）')
     smells.slice(0, 15).forEach(s => {
       lines.push(`- [${s.type}] ${path.basename(s.file)}:${s.line} — ${s.detail}`)
     })
@@ -450,7 +450,7 @@ export const SecurityScanTool: Tool = {
     const resolvedPath = path.resolve(targetPath)
 
     if (!fs.existsSync(resolvedPath)) {
-      return { type: 'text', value: `❌ 路径不存在: ${resolvedPath}` }
+      return { type: 'text', value: ` 路径不存在: ${resolvedPath}` }
     }
 
     switch (action) {
@@ -465,13 +465,13 @@ export const SecurityScanTool: Tool = {
       case 'config':
         return scanConfig(resolvedPath)
       default:
-        return { type: 'text', value: `❌ 未知操作: ${action}` }
+        return { type: 'text', value: ` 未知操作: ${action}` }
     }
   },
 }
 
 function scanHeaders(targetPath: string) {
-  const lines: string[] = ['# 🛡️ HTTP 安全头检查\n']
+  const lines: string[] = ['# 🛡 HTTP 安全头检查\n']
 
   // 需要检查的安全头列表（含说明和推荐值）
   const requiredHeaders = [
@@ -562,7 +562,7 @@ function scanHeaders(targetPath: string) {
   lines.push('')
 
   if (found.has('helmet')) {
-    lines.push('## ✅ Helmet 中间件')
+    lines.push('##  Helmet 中间件')
     lines.push('- 已检测到 helmet 库，它会自动设置多种安全响应头（推荐使用）')
     lines.push('')
   }
@@ -570,21 +570,21 @@ function scanHeaders(targetPath: string) {
   if (found.size > 0) {
     lines.push('## 📊 已找到的配置')
     found.forEach((value, name) => {
-      if (name !== 'helmet') lines.push(`- ✅ **${name}**: ${value}`)
+      if (name !== 'helmet') lines.push(`-  **${name}**: ${value}`)
     })
     lines.push('')
   }
 
   if (missing.length > 0) {
-    lines.push('## ⚠️ 缺失的安全头')
+    lines.push('##  缺失的安全头')
     requiredHeaders
       .filter(h => missing.includes(h.name))
       .forEach(h => {
-        lines.push(`- 🔴 **${h.name}** [${h.risk}风险] — ${h.desc}`)
+        lines.push(`-  **${h.name}** [${h.risk}风险] — ${h.desc}`)
         lines.push(`  - 建议: ${h.example}`)
       })
   } else {
-    lines.push('## ✅ 所有安全头均已配置')
+    lines.push('##  所有安全头均已配置')
   }
 
   return { type: 'text', value: lines.join('\n') }
@@ -602,12 +602,12 @@ function scanSecurity(targetPath: string) {
       const trimmed = line.trim()
       // 检测硬编码密钥
       if (/(password|secret|api_key|apikey|token)\s*[:=]\s*['"][^'"]{8,}['"]/i.test(trimmed)) {
-        issues.push({ severity: '🔴 高', type: '硬编码密钥', detail: `${path.basename(filePath)}:${idx + 1}` })
+        issues.push({ severity: ' 高', type: '硬编码密钥', detail: `${path.basename(filePath)}:${idx + 1}` })
       }
       // 检测 SQL 注入风险
       if (/(query|sql)\s*\+/.test(trimmed) || /`.*\$\{.*\}.*`/.test(trimmed)) {
         if (trimmed.includes('SELECT') || trimmed.includes('INSERT') || trimmed.includes('UPDATE')) {
-          issues.push({ severity: '🔴 高', type: 'SQL注入风险', detail: `${path.basename(filePath)}:${idx + 1}` })
+          issues.push({ severity: ' 高', type: 'SQL注入风险', detail: `${path.basename(filePath)}:${idx + 1}` })
         }
       }
       // 检测 XSS 风险
@@ -616,7 +616,7 @@ function scanSecurity(targetPath: string) {
       }
       // 检测 eval 使用
       if (/\beval\s*\(/.test(trimmed)) {
-        issues.push({ severity: '🔴 高', type: 'eval使用', detail: `${path.basename(filePath)}:${idx + 1}` })
+        issues.push({ severity: ' 高', type: 'eval使用', detail: `${path.basename(filePath)}:${idx + 1}` })
       }
       // 检测不安全的随机数
       if (/Math\.random\(\)/.test(trimmed)) {
@@ -650,18 +650,18 @@ function scanSecurity(targetPath: string) {
   lines.push(`- 发现问题: ${issues.length} 个`)
   lines.push('')
 
-  const high = issues.filter(i => i.severity.includes('🔴')).length
+  const high = issues.filter(i => i.severity.includes('')).length
   const medium = issues.filter(i => i.severity.includes('🟡')).length
   const low = issues.filter(i => i.severity.includes('🟢')).length
 
   lines.push(`## 📊 严重程度分布`)
-  lines.push(`- 🔴 高危: ${high}`)
+  lines.push(`-  高危: ${high}`)
   lines.push(`- 🟡 中危: ${medium}`)
   lines.push(`- 🟢 低危: ${low}`)
   lines.push('')
 
   if (issues.length > 0) {
-    lines.push('## ⚠️ 问题列表')
+    lines.push('##  问题列表')
     issues.slice(0, 20).forEach(i => {
       lines.push(`- ${i.severity} [${i.type}] ${i.detail}`)
     })
@@ -715,9 +715,9 @@ function scanSecrets(targetPath: string) {
   lines.push('')
 
   if (findings.length === 0) {
-    lines.push('## ✅ 未发现硬编码密钥')
+    lines.push('##  未发现硬编码密钥')
   } else {
-    lines.push('## ⚠️ 发现的问题')
+    lines.push('##  发现的问题')
     findings.forEach(f => lines.push(`- ${f}`))
   }
 
@@ -729,7 +729,7 @@ function scanDependencies(targetPath: string) {
 
   const packageJsonPath = path.join(targetPath, 'package.json')
   if (!fs.existsSync(packageJsonPath)) {
-    return { type: 'text', value: '❌ 未找到 package.json' }
+    return { type: 'text', value: ' 未找到 package.json' }
   }
 
   try {
@@ -754,7 +754,7 @@ function scanDependencies(targetPath: string) {
     })
 
     if (problematic.length > 0) {
-      lines.push('## ⚠️ 版本问题')
+      lines.push('##  版本问题')
       problematic.forEach(p => lines.push(`- ${p}`))
     }
 
@@ -762,17 +762,17 @@ function scanDependencies(targetPath: string) {
     const hasLock = fs.existsSync(path.join(targetPath, 'package-lock.json')) ||
                     fs.existsSync(path.join(targetPath, 'bun.lock'))
     lines.push('')
-    lines.push(hasLock ? '✅ 存在 lock 文件' : '⚠️ 未找到 lock 文件')
+    lines.push(hasLock ? ' 存在 lock 文件' : ' 未找到 lock 文件')
 
   } catch (err) {
-    return { type: 'text', value: `❌ 解析失败: ${err instanceof Error ? err.message : String(err)}` }
+    return { type: 'text', value: ` 解析失败: ${err instanceof Error ? err.message : String(err)}` }
   }
 
   return { type: 'text', value: lines.join('\n') }
 }
 
 function scanConfig(targetPath: string) {
-  const lines: string[] = ['# ⚙️ 安全配置检查\n']
+  const lines: string[] = ['# ⚙ 安全配置检查\n']
 
   const issues: string[] = []
 
@@ -797,9 +797,9 @@ function scanConfig(targetPath: string) {
   lines.push('')
 
   if (issues.length === 0) {
-    lines.push('## ✅ 配置安全')
+    lines.push('##  配置安全')
   } else {
-    lines.push('## ⚠️ 问题列表')
+    lines.push('##  问题列表')
     issues.forEach(i => lines.push(`- ${i}`))
   }
 
@@ -839,7 +839,7 @@ export const BuildFixTool: Tool = {
       case 'deps':
         return fixDeps(resolvedPath)
       default:
-        return { type: 'text', value: `❌ 未知操作: ${action}` }
+        return { type: 'text', value: ` 未知操作: ${action}` }
     }
   },
 }
@@ -890,7 +890,7 @@ function autoFixBuild(targetPath: string) {
           skipped.push('未检测到 TypeScript 依赖，跳过 tsconfig.json 创建')
         }
       } catch (err) {
-        failed.push(`❌ 错误: package.json 解析失败: ${err instanceof Error ? err.message : String(err)}`)
+        failed.push(` 错误: package.json 解析失败: ${err instanceof Error ? err.message : String(err)}`)
       }
     } else if (fs.existsSync(tsconfigPath)) {
       fixed.push('tsconfig.json 已存在')
@@ -964,20 +964,20 @@ function autoFixBuild(targetPath: string) {
   }
 
   lines.push('## 📋 修复结果')
-  lines.push(`- ✅ 已处理: ${fixed.length}`)
-  lines.push(`- ⚠️ 待处理: ${failed.length}`)
+  lines.push(`-  已处理: ${fixed.length}`)
+  lines.push(`-  待处理: ${failed.length}`)
   lines.push(`- 💡 建议: ${skipped.length}`)
   lines.push('')
 
   if (fixed.length > 0) {
-    lines.push('## ✅ 已处理')
-    fixed.forEach(f => lines.push(`- ✅ ${f}`))
+    lines.push('##  已处理')
+    fixed.forEach(f => lines.push(`-  ${f}`))
     lines.push('')
   }
 
   if (failed.length > 0) {
-    lines.push('## ⚠️ 需要手动处理')
-    failed.forEach(f => lines.push(`- ⚠️ ${f}`))
+    lines.push('##  需要手动处理')
+    failed.forEach(f => lines.push(`-  ${f}`))
     lines.push('')
   }
 
@@ -1017,7 +1017,7 @@ function diagnoseBuild(targetPath: string) {
       if (deps.length > 50) issues.push(`依赖数量过多（${deps.length}个），可能影响构建速度`)
       if (deps.includes('webpack') && deps.includes('vite')) issues.push('同时存在 webpack 和 vite，可能造成冲突')
     } catch {
-      issues.push('❌ 错误: package.json 解析失败')
+      issues.push(' 错误: package.json 解析失败')
     }
   }
 
@@ -1048,7 +1048,7 @@ function diagnoseBuild(targetPath: string) {
   lines.push('')
 
   if (issues.length > 0) {
-    lines.push('## ⚠️ 发现的问题')
+    lines.push('##  发现的问题')
     issues.forEach(i => lines.push(`- ${i}`))
     lines.push('')
   }
@@ -1072,10 +1072,10 @@ function cleanBuild(targetPath: string) {
     if (fs.existsSync(fullPath)) {
       try {
         fs.rmSync(fullPath, { recursive: true, force: true })
-        lines.push(`✅ 已清理: ${dir}`)
+        lines.push(` 已清理: ${dir}`)
         cleaned++
       } catch (err) {
-        lines.push(`❌ 清理失败: ${dir} — ${err instanceof Error ? err.message : String(err)}`)
+        lines.push(` 清理失败: ${dir} — ${err instanceof Error ? err.message : String(err)}`)
       }
     }
   }
@@ -1093,7 +1093,7 @@ function fixDeps(targetPath: string) {
   const nodeModulesPath = path.join(targetPath, 'node_modules')
 
   if (!fs.existsSync(packageJsonPath)) {
-    return { type: 'text', value: '❌ 未找到 package.json' }
+    return { type: 'text', value: ' 未找到 package.json' }
   }
 
   const issues: string[] = []
@@ -1124,10 +1124,10 @@ function fixDeps(targetPath: string) {
   }
 
   if (issues.length > 0) {
-    lines.push('## ⚠️ 问题')
+    lines.push('##  问题')
     issues.forEach(i => lines.push(`- ${i}`))
   } else {
-    lines.push('## ✅ 依赖状态正常')
+    lines.push('##  依赖状态正常')
   }
 
   return { type: 'text', value: lines.join('\n') }
@@ -1166,7 +1166,7 @@ export const ArchitectureTool: Tool = {
       case 'techstack':
         return analyzeTechStack(resolvedPath)
       default:
-        return { type: 'text', value: `❌ 未知操作: ${action}` }
+        return { type: 'text', value: ` 未知操作: ${action}` }
     }
   },
 }
@@ -1263,7 +1263,7 @@ function analyzeModuleDeps(targetPath: string) {
   // 高出度模块 = 依赖很多模块（可能过度耦合）
   const topOut = Array.from(outDegree.entries()).sort((a, b) => b[1] - a[1]).slice(0, 10)
   if (topOut.length > 0) {
-    lines.push('## ⚠️ 高耦合模块（依赖最多）')
+    lines.push('##  高耦合模块（依赖最多）')
     topOut.forEach(([file, count]) => {
       lines.push(`- ${file} — 依赖 ${count} 个模块`)
     })
@@ -1277,7 +1277,7 @@ function analyzeModuleDeps(targetPath: string) {
     return deps.size === 0 && !allReferenced.has(f)
   })
   if (isolated.length > 0) {
-    lines.push(`## 🔍 孤立模块（${isolated.length} 个，无依赖也无被依赖）`)
+    lines.push(`##  孤立模块（${isolated.length} 个，无依赖也无被依赖）`)
     isolated.slice(0, 10).forEach(f => lines.push(`- ${f}`))
     lines.push('')
   }
@@ -1318,9 +1318,9 @@ function analyzeModuleDeps(targetPath: string) {
   }
 
   if (cycles.length === 0) {
-    lines.push('- ✅ 未发现循环依赖')
+    lines.push('-  未发现循环依赖')
   } else {
-    lines.push(`- ⚠️ 发现 ${cycles.length} 个循环依赖：`)
+    lines.push(`-  发现 ${cycles.length} 个循环依赖：`)
     cycles.slice(0, 5).forEach((cycle, idx) => {
       lines.push(`  ${idx + 1}. ${cycle.join(' → ')}`)
     })
@@ -1330,7 +1330,7 @@ function analyzeModuleDeps(targetPath: string) {
 }
 
 function analyzeArchitecture(targetPath: string) {
-  const lines: string[] = ['# 🏗️ 项目架构分析\n']
+  const lines: string[] = ['# 🏗 项目架构分析\n']
 
   // 分析目录结构
   const dirTree = new Map<string, number>()
@@ -1437,7 +1437,7 @@ function analyzeTechStack(targetPath: string) {
 
   const pkgPath = path.join(targetPath, 'package.json')
   if (!fs.existsSync(pkgPath)) {
-    return { type: 'text', value: '❌ 未找到 package.json' }
+    return { type: 'text', value: ' 未找到 package.json' }
   }
 
   const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))

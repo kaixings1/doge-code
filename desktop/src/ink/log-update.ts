@@ -733,7 +733,7 @@ function moveCursorTo(screen: VirtualScreen, targetX: number, targetY: number) {
  * 1. Newer emoji (Unicode 12.0+) missing from terminal wcwidth tables.
  * 2. Text-by-default emoji + VS16 (U+FE0F): the base codepoint is width 1
  *    in wcwidth, but VS16 triggers emoji presentation making it width 2.
- *    Examples: ⚔️ (U+2694), ☠️ (U+2620), ❤️ (U+2764).
+ *    Examples: ⚔ (U+2694), ☠ (U+2620),  (U+2764).
  */
 function needsWidthCompensation(char: string): boolean {
   const cp = char.codePointAt(0)

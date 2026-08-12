@@ -138,7 +138,7 @@ export class LocalBridgeClient {
       this.ws.onerror = () => {
         clearTimeout(timeout)
         if (!this.connected) {
-          this.onStateChange?.('failed', '❌ 错误: WebSocket 错误')
+          this.onStateChange?.('failed', ' 错误: WebSocket 错误')
           resolve(false)
         }
       }

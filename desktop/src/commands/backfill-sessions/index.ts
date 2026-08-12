@@ -288,7 +288,7 @@ async function searchSessions(keyword: string): Promise<ReturnType<typeof call>>
       };
     }
 
-    const lines = [`🔍 搜索结果 (${results.length} 个匹配)`, ''];
+    const lines = [` 搜索结果 (${results.length} 个匹配)`, ''];
     for (const result of results.slice(0, 10)) {
       lines.push(`📁 ${result.id} - ${result.name}`);
       lines.push(`   ${result.match}`);
@@ -422,7 +422,7 @@ async function cleanupSessions(): Promise<ReturnType<typeof call>> {
     if (deletedCount === 0) {
       lines.push('\n💡 没有找到需要清理的会话。');
     } else {
-      lines.push('\n✅ 清理完成，释放了存储空间。');
+      lines.push('\n 清理完成，释放了存储空间。');
     }
 
     return {
@@ -493,7 +493,7 @@ async function restoreSession(sessionId: string): Promise<ReturnType<typeof call
     return {
       type: 'text' as const,
       value: [
-        '✅ 会话信息',
+        ' 会话信息',
         '',
         `会话ID: ${sessionId}`,
         `会话名称: ${data.name || '未命名'}`,

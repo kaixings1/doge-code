@@ -66,7 +66,7 @@ const EXPLAIN_COMMAND_TOOL = {
         type: 'string',
         enum: ['LOW', 'MEDIUM', 'HIGH'],
         description:
-          '⚠️ 注意: LOW（安全的开发工作流）、MEDIUM（可恢复的更改）、HIGH（危险/不可逆）',
+          ' 注意: LOW（安全的开发工作流）、MEDIUM（可恢复的更改）、HIGH（危险/不可逆）',
       },
     },
     required: ['explanation', 'reasoning', 'risk', 'riskLevel'],

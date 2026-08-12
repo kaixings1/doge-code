@@ -444,7 +444,7 @@ export function createGitHubIssueUrl(feedbackId: string, title: string, descript
 async function generateTitle(description: string, abortSignal: AbortSignal): Promise<string> {
   try {
     const response = await queryHaiku({
-      systemPrompt: asSystemPrompt(['根据此 Claude Code 的错误报告，生成一个简洁的技术性 Issue 标题（最多 80 字符），用于公开的 GitHub Issue。', 'Claude Code 是一个基于 Anthropic API 的智能编码 CLI 工具。', '标题应满足：', '- 以 [Bug] 或 [Feature Request] 开头作为标题的第一个部分', '- 简洁、具体且能描述实际问题', '- 使用适合软件问题的技术术语', '❌ 错误: - 对于错误信息，提取关键错误（例如“缺少 Tool Result Block”而非完整信息）', '- 直接明了，便于开发者理解问题', '- 如果无法确定明确的问题，请使用“Bug Report: [简要描述]”', '❌ 错误: - 任何 LLM API 错误均来自 Anthropic API，而非其他模型提供商', '您的回答将直接用作 GitHub Issue 的标题，因此不应包含任何其他评论或解释', '好的标题示例：“[Bug] Auto-Compact 触发过早”、“[Bug] Anthropic API 错误：缺少 Tool Result Block”、“[Bug] 错误：Opus 模型名称无效”']),
+      systemPrompt: asSystemPrompt(['根据此 Claude Code 的错误报告，生成一个简洁的技术性 Issue 标题（最多 80 字符），用于公开的 GitHub Issue。', 'Claude Code 是一个基于 Anthropic API 的智能编码 CLI 工具。', '标题应满足：', '- 以 [Bug] 或 [Feature Request] 开头作为标题的第一个部分', '- 简洁、具体且能描述实际问题', '- 使用适合软件问题的技术术语', ' 错误: - 对于错误信息，提取关键错误（例如“缺少 Tool Result Block”而非完整信息）', '- 直接明了，便于开发者理解问题', '- 如果无法确定明确的问题，请使用“Bug Report: [简要描述]”', ' 错误: - 任何 LLM API 错误均来自 Anthropic API，而非其他模型提供商', '您的回答将直接用作 GitHub Issue 的标题，因此不应包含任何其他评论或解释', '好的标题示例：“[Bug] Auto-Compact 触发过早”、“[Bug] Anthropic API 错误：缺少 Tool Result Block”、“[Bug] 错误：Opus 模型名称无效”']),
       userPrompt: description,
       signal: abortSignal,
       options: {

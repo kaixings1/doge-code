@@ -64,10 +64,10 @@ const LANGUAGE_COLORS: Record<string, string> = {
 }
 
 const FILE_ICONS: Record<string, string> = {
-  ts: '📘', tsx: '⚛️', js: '📜', jsx: '⚛️', py: '🐍', rs: '🦀', go: '🔵',
-  java: '☕', c: '🔧', cpp: '⚙️', cs: '💜', rb: '💎', php: '🐘', swift: '🍎',
+  ts: '📘', tsx: '⚛', js: '📜', jsx: '⚛', py: '🐍', rs: '🦀', go: '🔵',
+  java: '☕', c: '🔧', cpp: '⚙', cs: '💜', rb: '💎', php: '🐘', swift: '🍎',
   json: '📋', yaml: '📄', yml: '📄', md: '📝', css: '🎨', html: '🌐',
-  vue: '💚', sh: '💻', sql: '🗄️', dockerfile: '🐳', gitignore: '🙈',
+  vue: '💚', sh: '💻', sql: '🗄', dockerfile: '🐳', gitignore: '🙈',
   env: '🔐', lock: '🔒', txt: '📄',
 }
 
@@ -243,7 +243,7 @@ export function ProjectStructurePlanner({ cwd, theme, onClose }: ProjectStructur
     a.download = `project-structure-${Date.now()}.md`
     a.click()
     URL.revokeObjectURL(url)
-    setMessage('✅ 报告已导出')
+    setMessage(' 报告已导出')
   }, [stats, files])
 
   // 渲染目录树节点
@@ -493,7 +493,7 @@ export function ProjectStructurePlanner({ cwd, theme, onClose }: ProjectStructur
       )}
 
       {message && (
-        <div style={{ padding: '4px 8px', borderRadius: '3px', fontSize: '10px', background: message.startsWith('✅') ? '#81C78422' : '#ef535022', color: message.startsWith('✅') ? '#81C784' : '#FF6B6B' }}>
+        <div style={{ padding: '4px 8px', borderRadius: '3px', fontSize: '10px', background: message.startsWith('') ? '#81C78422' : '#ef535022', color: message.startsWith('') ? '#81C784' : '#FF6B6B' }}>
           {message}
         </div>
       )}

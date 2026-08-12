@@ -19,12 +19,12 @@ function getFileIcon(name: string, isDirectory: boolean): string {
   if (isDirectory) return '📁'
   const ext = name.split('.').pop()?.toLowerCase() || ''
   const iconMap: Record<string, string> = {
-    ts: '📘', tsx: '⚛️', js: '📜', jsx: '⚛️',
+    ts: '📘', tsx: '⚛', js: '📜', jsx: '⚛',
     json: '📋', md: '📝', css: '🎨', html: '🌐',
     py: '🐍', rs: '🦀', go: '🔵', java: '☕',
-    png: '🖼️', jpg: '🖼️', gif: '🖼️', svg: '🎨',
-    gitignore: '🔀', env: '🔐', yaml: '⚙️', yml: '⚙️',
-    toml: '⚙️', lock: '🔒', sh: '💻', bat: '💻',
+    png: '🖼', jpg: '🖼', gif: '🖼', svg: '🎨',
+    gitignore: '🔀', env: '🔐', yaml: '⚙', yml: '⚙',
+    toml: '⚙', lock: '🔒', sh: '💻', bat: '💻',
   }
   return iconMap[ext] || '📄'
 }
@@ -376,7 +376,7 @@ export function FileTree({ cwd, onPreviewFile }: FileTreeProps) {
         <input
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          placeholder={searchMode === 'name' ? '🔍 搜索文件...' : '🔍 搜索文件内容...'}
+          placeholder={searchMode === 'name' ? ' 搜索文件...' : ' 搜索文件内容...'}
           style={{
             width: '100%', backgroundColor: theme.bgPanel, border: `1px solid ${theme.border}`, borderRadius: '3px',
             padding: '3px 6px', color: '#F5F5F5', fontSize: '11px', outline: 'none'
@@ -429,16 +429,16 @@ export function FileTree({ cwd, onPreviewFile }: FileTreeProps) {
                 📋 复制路径
               </div>
               <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: '#888' }} onClick={renameNode}>
-                ✏️ 重命名
+                ✏ 重命名
               </div>
               <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: theme.errorText }} onClick={deleteNode}>
-                🗑️ 删除文件夹
+                🗑 删除文件夹
               </div>
             </>
           ) : (
             <>
               <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: theme.text }} onClick={() => { onPreviewFile?.(contextMenu.node.path); setContextMenu(null) }}>
-                👁️ 预览文件
+                👁 预览文件
               </div>
               <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: theme.text }} onClick={copyContent}>
                 📝 复制内容
@@ -451,11 +451,11 @@ export function FileTree({ cwd, onPreviewFile }: FileTreeProps) {
                 📋 复制路径
               </div>
               <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: theme.textMuted }} onClick={renameNode}>
-                ✏️ 重命名
+                ✏ 重命名
               </div>
               <div style={{ borderTop: '1px solid #333' }} />
               <div style={{ padding: '6px 16px', cursor: 'pointer', fontSize: '12px', color: '#FF6B6B' }} onClick={deleteNode}>
-                🗑️ 删除文件
+                🗑 删除文件
               </div>
             </>
           )}

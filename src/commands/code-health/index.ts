@@ -365,37 +365,37 @@ function formatTextReport(metrics: HealthMetrics[], issues: HealthIssue[], score
   for (const issue of issues) bySev[issue.severity] = (bySev[issue.severity] || 0) + 1
 
   const lines = [
-    'Code Health Dashboard',
+    '📊 代码健康仪表板',
     '═════════════════════',
     '',
-    `Overall Score: ${score}/100 (${grade})`,
+    `综合评分：${score}/100（${grade}）`,
     '',
-    'Category Scores:',
-    `  🧠 Complexity: ${categoryScores.complexity || 0}/100`,
-    `  📏 Size: ${categoryScores.size || 0}/100`,
-    `  📖 Documentation: ${categoryScores.documentation || 0}/100`,
-    `  🧪 Testing: ${categoryScores.testing || 0}/100`,
-    `  🔄 Duplication: ${categoryScores.duplication || 0}/100`,
-    `  💀 Dead Code: ${categoryScores.deadCode || 0}/100`,
-    `  🎨 Style: ${categoryScores.style || 0}/100`,
-    `  🔒 Security: ${categoryScores.security || 0}/100`,
+    '分类评分：',
+    `  🧠 复杂度：${categoryScores.complexity || 0}/100`,
+    `  📏 文件大小：${categoryScores.size || 0}/100`,
+    `  📖 文档：${categoryScores.documentation || 0}/100`,
+    `  🧪 测试：${categoryScores.testing || 0}/100`,
+    `  🔄 重复代码：${categoryScores.duplication || 0}/100`,
+    `  💀 死代码：${categoryScores.deadCode || 0}/100`,
+    `  🎨 风格：${categoryScores.style || 0}/100`,
+    `  🔒 安全：${categoryScores.security || 0}/100`,
     '',
-    'Summary:',
-    `  Files: ${metrics.length}`,
-    `  Total Lines: ${totalLines}`,
-    `  Functions: ${totalFuncs}`,
-    `  Avg Complexity: ${avgComp}`,
-    `  Max Complexity: ${maxComp}`,
-    `  Issues: ${issues.length}`,
+    '摘要：',
+    `  文件数：${metrics.length}`,
+    `  总行数：${totalLines}`,
+    `  函数数：${totalFuncs}`,
+    `  平均复杂度：${avgComp}`,
+    `  最大复杂度：${maxComp}`,
+    `  问题数：${issues.length}`,
     '',
-    'Issues by Severity:',
-    `  🔴 Critical: ${bySev.critical}`,
-    `  🟠 High: ${bySev.high}`,
-    `  🟡 Medium: ${bySev.medium}`,
-    `  🔵 Low: ${bySev.low}`,
-    `  ℹ️  Info: ${bySev.info}`,
+    '问题严重程度：',
+    `  🔴 严重：${bySev.critical}`,
+    `  🟠 高：${bySev.high}`,
+    `  🟡 中：${bySev.medium}`,
+    `  🔵 低：${bySev.low}`,
+    `  ℹ️  信息：${bySev.info}`,
     '',
-    'Top Issues:',
+    '主要问题：',
   ]
   const sorted = [...issues].sort((a, b) => {
     const sevOrder: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3, info: 4 }
@@ -410,17 +410,18 @@ function formatTextReport(metrics: HealthMetrics[], issues: HealthIssue[], score
 }
 
 function formatMarkdownReport(metrics: HealthMetrics[], issues: HealthIssue[], score: number, grade: string, categoryScores: Record<string, number>): string {
-  const lines = ['# Code Health Report', '', `**Score: ${score}/100 (${grade})**`, '', '## Category Scores', '', '| Category | Score |', '|----------|-------|']
+  const lines = ['# 代码健康报告', '', `**评分：${score}/100（${grade}）**`, '', '## 分类评分', '', '| 分类 | 评分 |', '|----------|-------|']
   for (const [cat, val] of Object.entries(categoryScores)) lines.push(`| ${cat} | ${val}/100 |`)
-  lines.push('', '## Issues', '')
+  lines.push('', '## 问题列表', '')
   const grouped: Record<string, HealthIssue[]> = {}
   for (const issue of issues) {
     if (!grouped[issue.severity]) grouped[issue.severity] = []
     grouped[issue.severity].push(issue)
   }
+  const sevLabels: Record<string, string> = { critical: '严重', high: '高', medium: '中', low: '低' }
   for (const sev of ['critical', 'high', 'medium', 'low'] as const) {
     if (grouped[sev]?.length) {
-      lines.push(`### ${sev.charAt(0).toUpperCase() + sev.slice(1)} (${grouped[sev].length})`)
+      lines.push(`### ${sevLabels[sev]}（${grouped[sev].length}）`)
       for (const issue of grouped[sev].slice(0, 10)) {
         lines.push(`- [${issue.file}:${issue.line}] ${issue.message} → ${issue.suggestion}`)
       }
@@ -438,31 +439,31 @@ export const call: LocalCommandCall = async (args) => {
 
   try {
     if (cmd === 'help' || cmd === '') return { type: 'text', value: [
-      'Code Health (Deep)', '', '📖 Usage: ',
-      '  /code-health                    Full health report',
-      '  /code-health file <path>        Single file analysis',
-      '  /code-health complexity         Complexity analysis',
-      '  /code-health size               Size analysis',
-      '  /code-health documentation      Documentation analysis',
-      '  /code-health testing            Testing analysis',
-      '  /code-health duplication        Duplication analysis',
-      '  /code-health style              Style analysis',
-      '  /code-health security           Security analysis',
-      '  /code-health trend              Health trend over time',
-      '  /code-health history            History of scans',
-      '  /code-health baseline           Save current as baseline',
-      '  /code-health compare            Compare with baseline',
-      '  /code-health config             View/edit configuration',
-      '  /code-health rules              List all rules on/off',
-      '  /code-health enable <rule>      Enable a rule',
-      '  /code-health disable <rule>     Disable a rule',
-      '  /code-health export [fmt]       Export (md/json/html)',
+      '📊 代码健康检查（深度）', '', '📖 用法：',
+      '  /code-health                    完整健康报告',
+      '  /code-health file &lt;路径&gt;       单文件分析',
+      '  /code-health complexity         复杂度分析',
+      '  /code-health size               文件大小分析',
+      '  /code-health documentation      文档分析',
+      '  /code-health testing            测试分析',
+      '  /code-health duplication        重复代码分析',
+      '  /code-health style              代码风格分析',
+      '  /code-health security           安全分析',
+      '  /code-health trend              健康趋势',
+      '  /code-health history            扫描历史',
+      '  /code-health baseline           保存为基准',
+      '  /code-health compare            与基准对比',
+      '  /code-health config             查看/编辑配置',
+      '  /code-health rules              列出所有规则',
+      '  /code-health enable &lt;规则&gt;   启用规则',
+      '  /code-health disable &lt;规则&gt;  禁用规则',
+      '  /code-health export [格式]       导出报告（md/json/html）',
     ].join('\n') }
 
     if (cmd === 'rules') {
-      const lines = ['Health Rules:', '═════════════', '']
+      const lines = ['📋 健康规则：', '═════════════', '']
       for (const [rule, enabled] of Object.entries(config.rules)) {
-        lines.push(`  ${enabled ? '[ON]' : '[OFF]'} ${rule}`)
+        lines.push(`  ${enabled ? '✅ 开启' : '❌ 关闭'} ${rule}`)
       }
       return { type: 'text', value: lines.join('\n') }
     }
@@ -475,13 +476,13 @@ export const call: LocalCommandCall = async (args) => {
         saveConfig(config)
         return { type: 'text', value: `✅ [OK] ${key} = ${value}` }
       }
-      return { type: 'text', value: `❌ Unknown config key: ${key}. Available: ${Object.keys(config.rules).join(', ')}` }
+      return { type: 'text', value: `❌ 未知配置键：${key}。可用：${Object.keys(config.rules).join(', ')}` }
     }
 
     if (cmd === 'enable' || cmd === 'disable') {
       const rule = parts[1]
-      if (!rule) return { type: 'text', value: 'Usage: /code-health enable|disable <rule>\nAvailable: ' + Object.keys(config.rules).join(', ') }
-      if (!(rule in config.rules)) return { type: 'text', value: `❌ Unknown rule: ${rule}\nAvailable: ${Object.keys(config.rules).join(', ')}` }
+      if (!rule) return { type: 'text', value: '📖 用法：/code-health enable|disable &lt;规则&gt;\n可用：' + Object.keys(config.rules).join(', ') }
+      if (!(rule in config.rules)) return { type: 'text', value: `❌ 未知规则：${rule}\n可用：${Object.keys(config.rules).join(', ')}` }
       config.rules[rule as keyof typeof config.rules] = cmd === 'enable'
       saveConfig(config)
       return { type: 'text', value: `✅ [OK] ${rule} ${cmd}d` }
@@ -489,19 +490,19 @@ export const call: LocalCommandCall = async (args) => {
 
     if (cmd === 'history') {
       const history = loadHistory()
-      if (history.length === 0) return { type: 'text', value: 'No history yet. Run /code-health to create one.' }
-      const lines = ['Health History:', '═════════════', '']
+      if (history.length === 0) return { type: 'text', value: 'ℹ️ 暂无历史记录。请先运行 /code-health 创建。' }
+      const lines = ['📅 健康历史：', '═════════════', '']
       for (const h of history.slice(-14)) {
         const bar = '█'.repeat(Math.round(h.score / 10)) + '░'.repeat(10 - Math.round(h.score / 10))
-        lines.push(`  ${h.date.slice(0, 10)} [${bar}] ${h.score}/100 (${h.grade}) - ${h.issuesFound} issues`)
+        lines.push(`  ${h.date.slice(0, 10)} [${bar}] ${h.score}/100（${h.grade}）- ${h.issuesFound} 个问题`)
       }
       return { type: 'text', value: lines.join('\n') }
     }
 
     if (cmd === 'trend') {
       const history = loadHistory()
-      if (history.length < 2) return { type: 'text', value: 'Need at least 2 scans for trends. Run /code-health multiple times.' }
-      const lines = ['Health Trend:', '═════════════', '']
+      if (history.length < 2) return { type: 'text', value: '⚠️ 趋势分析至少需要 2 次扫描记录。请多次运行 /code-health。' }
+      const lines = ['📈 健康趋势：', '═════════════', '']
       for (const h of history.slice(-14)) {
         const bar = '█'.repeat(Math.round(h.score / 10))
         lines.push(`  ${h.date.slice(0, 10)} ${bar} ${h.score}`)
@@ -512,22 +513,22 @@ export const call: LocalCommandCall = async (args) => {
     if (cmd === 'baseline') {
       const { metrics, issues } = analyzeProject('.', config)
       if (!safeWriteFile(BASELINE_FILE, JSON.stringify({ metrics, issues }, null, 2))) {
-        return { type: 'text', value: '[ERROR] Cannot write baseline file. Check disk space and permissions.' }
+        return { type: 'text', value: '❌ 无法写入基准文件。检查磁盘空间和权限。' }
       }
-      return { type: 'text', value: `✅ [OK] Baseline saved (${issues.length} issues, ${metrics.length} files)` }
+      return { type: 'text', value: `✅ 基准已保存（${issues.length} 个问题，${metrics.length} 个文件）` }
     }
 
     if (cmd === 'compare') {
-      if (!existsSync(BASELINE_FILE)) return { type: 'text', value: 'No baseline found. Run /code-health baseline first.' }
+      if (!existsSync(BASELINE_FILE)) return { type: 'text', value: '❌ 未找到基准。请先运行 /code-health baseline。' }
       const { issues } = analyzeProject('.', config)
       try {
         const baseline = JSON.parse(readFileSync(BASELINE_FILE, 'utf-8'))
-        if (!baseline.issues) return { type: 'text', value: '[ERROR] Corrupted baseline file. Re-run /code-health baseline.' }
+        if (!baseline.issues) return { type: 'text', value: '❌ 基准文件已损坏。请重新运行 /code-health baseline。' }
         const baselineKeys = new Set(baseline.issues.map((i: HealthIssue) => `${i.file}:${i.line}:${i.message}`))
         const currentKeys = new Set(issues.map(i => `${i.file}:${i.line}:${i.message}`))
         const newIssues = issues.filter(i => !baselineKeys.has(`${i.file}:${i.line}:${i.message}`))
         const fixed = baseline.issues.filter((i: HealthIssue) => !currentKeys.has(`${i.file}:${i.line}:${i.message}`))
-        return { type: 'text', value: `📊 Baseline Comparison:\n  New Issues: ${newIssues.length}\n  Fixed: ${fixed.length}\n  Current: ${issues.length}\n\n${newIssues.length > 0 ? 'New issues:\n' + newIssues.slice(0, 10).map(i => `  [${i.file}:${i.line}] ${i.message}`).join('\n') : '✨ No new issues since baseline!'}` }
+        return { type: 'text', value: `📊 基准对比：\n  新增问题：${newIssues.length}\n  已修复：${fixed.length}\n  当前总数：${issues.length}\n\n${newIssues.length > 0 ? '新增问题：\n' + newIssues.slice(0, 10).map(i => `  [${i.file}:${i.line}] ${i.message}`).join('\n') : '✅ 自基准后无新增问题！'}` }
       } catch {
         return { type: 'text', value: '[ERROR] Corrupted baseline file. Re-run /code-health baseline.' }
       }
@@ -535,47 +536,48 @@ export const call: LocalCommandCall = async (args) => {
 
     if (cmd === 'file') {
       const file = parts[1]
-      if (!file) return { type: 'text', value: 'Usage: /code-health file <path>' }
+      if (!file) return { type: 'text', value: '📖 用法：/code-health file &lt;路径&gt;' }
       const resolvedPath = safePath(file)
-      if (!existsSync(resolvedPath)) return { type: 'text', value: `❌ File not found: ${resolvedPath}` }
+      if (!existsSync(resolvedPath)) return { type: 'text', value: `❌ 文件未找到：${resolvedPath}` }
       const stat = safeStat(resolvedPath)
-      if (!stat || !stat.isFile) return { type: 'text', value: `⚠️ Not a file: ${resolvedPath}` }
+      if (!stat || !stat.isFile) return { type: 'text', value: `⚠️ 不是文件：${resolvedPath}` }
       const { metrics, issues } = analyzeFile(resolvedPath, config)
       return { type: 'text', value: [
-        `File: ${resolvedPath}`,
-        `Lines: ${metrics.lines} (code: ${metrics.codeLines}, comment: ${metrics.commentLines}, blank: ${metrics.blankLines})`,
-        `Functions: ${metrics.functions}`,
-        `Complexity: avg ${metrics.avgComplexity} / max ${metrics.maxComplexity}`,
-        `Comment Ratio: ${metrics.commentRatio}%`,
-        `Issues: ${issues.length}`,
+        `📁 文件：${resolvedPath}`,
+        `📏 行数：${metrics.lines}（代码：${metrics.codeLines}，注释：${metrics.commentLines}，空行：${metrics.blankLines}）`,
+        `🔧 函数数：${metrics.functions}`,
+        `🧠 复杂度：平均 ${metrics.avgComplexity} / 最大 ${metrics.maxComplexity}`,
+        `📖 注释率：${metrics.commentRatio}%`,
+        `⚠️ 问题数：${issues.length}`,
         '',
-        ...issues.slice(0, 15).map((i, idx) => `${idx + 1}. [${i.severity.toUpperCase()}] Line ${i.line}: ${i.message}`),
-        issues.length > 15 ? `... ${issues.length - 15} more` : '',
+        ...issues.slice(0, 15).map((i, idx) => `${idx + 1}. [${i.severity.toUpperCase()}] 行 ${i.line}: ${i.message}`),
+        issues.length > 15 ? `... 还有 ${issues.length - 15} 个` : '',
       ].filter(Boolean).join('\n') }
     }
 
     if (['complexity', 'size', 'documentation', 'testing', 'duplication', 'style', 'security'].includes(cmd)) {
       const { metrics, issues } = analyzeProject('.', config)
       const filtered = issues.filter(i => i.category === cmd)
-      if (filtered.length === 0) return { type: 'text', value: `✅ [OK] No ${cmd} issues found!` }
+      if (filtered.length === 0) return { type: 'text', value: `✅ 未发现${cmd}相关问题` }
+      const labels: Record<string, string> = { complexity: '复杂度', size: '文件大小', documentation: '文档', testing: '测试', duplication: '重复代码', style: '代码风格', security: '安全' }
       return { type: 'text', value: [
-        `${cmd.charAt(0).toUpperCase() + cmd.slice(1)} Issues (${filtered.length}):`,
+        `📋 ${labels[cmd] || cmd}问题（${filtered.length}）：`,
         '═══════════════════════════════════',
         '',
         ...filtered.slice(0, 20).map((i, idx) => `${idx + 1}. [${i.file}:${i.line}] ${i.message}`),
-        filtered.length > 20 ? `... ${filtered.length - 20} more` : '',
+        filtered.length > 20 ? `... 还有 ${filtered.length - 20} 个` : '',
       ].filter(Boolean).join('\n') }
     }
 
     if (cmd === 'export') {
       const fmt = parts[1] || 'md'
-      if (!['md', 'json', 'markdown', 'html'].includes(fmt)) return { type: 'text', value: `❌ Unsupported format: ${fmt}. Use: md, json, html` }
+      if (!['md', 'json', 'markdown', 'html'].includes(fmt)) return { type: 'text', value: `❌ 不支持的格式：${fmt}。可用：md, json, html` }
       const { metrics, issues } = analyzeProject('.', config)
       const { score, grade, categoryScores } = calculateHealthScore(metrics, issues, config)
       const filename = `health-report.${fmt === 'markdown' || fmt === 'md' ? 'md' : fmt}`
       const content = fmt === 'json' ? JSON.stringify({ score, grade, categoryScores, metrics, issues }, null, 2) : formatMarkdownReport(metrics, issues, score, grade, categoryScores)
-      if (!safeWriteFile(filename, content)) return { type: 'text', value: `❌ [ERROR] Cannot write ${filename}` }
-      return { type: 'text', value: `✅ [OK] Exported: ${filename}` }
+      if (!safeWriteFile(filename, content)) return { type: 'text', value: `❌ 无法写入文件：${filename}` }
+      return { type: 'text', value: `✅ 已导出：${filename}` }
     }
 
     // Default: full report
@@ -588,13 +590,13 @@ export const call: LocalCommandCall = async (args) => {
 
   } catch (err) {
     const errorMsg = formatError(err)
-    return { type: 'text', value: `❌ [ERROR] Unexpected error: ${errorMsg}\n\nPlease report this issue.` }
+    return { type: 'text', value: `❌ [ERROR] 未预期的错误：${errorMsg}\n\n请报告此问题。` }
   }
 }
 
 const codeHealth: Command = {
   type: 'local', name: 'code-health',
-  description: 'Code health - file/complexity/size/docs/testing/duplication/style/security/history/baseline',
+  description: '代码健康检查 - 文件/复杂度/大小/文档/测试/重复/风格/安全/历史/基准',
   aliases: ['/code-health', '/ch', '/health'],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

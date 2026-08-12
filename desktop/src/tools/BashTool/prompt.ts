@@ -344,7 +344,7 @@ function getSimpleSandboxSection(): string {
             '文件/网络操作的“操作不允许”错误',
             '对允许目录外特定路径的访问被拒绝',
             '与非白名单主机的网络连接失败',
-            '❌ 错误: Unix 套接字连接错误',
+            ' 错误: Unix 套接字连接错误',
           ],
           '当您看到沙箱导致失败的证据时：',
           [
@@ -396,7 +396,7 @@ export function getSimplePrompt(): string {
     `写入文件：使用 ${FILE_WRITE_TOOL_NAME}（而非 echo >/cat <<EOF）`,
     ...(env.platform === 'win32'
       ? [
-          `🔴 Windows MSYS2 禁令：禁止用此工具执行 python3 -c "..."、node -e "..."、powershell -Command "..." 等内联脚本创建文件。MSYS2 bash 会破坏 "、[、]、&、(、)、'、\\ 等字符，导致内联代码不可靠。创建脚本文件必须使用 ${FILE_WRITE_TOOL_NAME}。`,
+          ` Windows MSYS2 禁令：禁止用此工具执行 python3 -c "..."、node -e "..."、powershell -Command "..." 等内联脚本创建文件。MSYS2 bash 会破坏 "、[、]、&、(、)、'、\\ 等字符，导致内联代码不可靠。创建脚本文件必须使用 ${FILE_WRITE_TOOL_NAME}。`,
         ]
       : []),
     '通信：直接输出文本（而非 echo/printf）',

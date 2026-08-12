@@ -197,7 +197,7 @@ export const dockerSandboxUI: LocalJSXCommandCall = (_onDone, _context, args) =>
       return <Text dimColor>正在检查 Docker...</Text>
     }
     if (!dockerAvailable) {
-      return <Text color="red">❌ Docker 不可用: {dockerError}</Text>
+      return <Text color="red"> Docker 不可用: {dockerError}</Text>
     }
     return <Text color="green">✓ Docker 可用</Text>
   }
@@ -211,7 +211,7 @@ export const dockerSandboxUI: LocalJSXCommandCall = (_onDone, _context, args) =>
         <Box>
           <Text bold>状态: </Text>
           <Text color={containerStatus.running ? 'green' : 'gray'}>
-            {containerStatus.running ? '🟢 运行中' : '🔴 已停止'}
+            {containerStatus.running ? '🟢 运行中' : ' 已停止'}
           </Text>
         </Box>
         {containerStatus.containerId && (
@@ -249,7 +249,7 @@ export const dockerSandboxUI: LocalJSXCommandCall = (_onDone, _context, args) =>
 
           {error && (
             <Box borderStyle="round" borderColor="red" paddingX={1} marginBottom={1}>
-              <Text color="red">❌ {error}</Text>
+              <Text color="red"> {error}</Text>
             </Box>
           )}
 
@@ -293,7 +293,7 @@ export const dockerSandboxUI: LocalJSXCommandCall = (_onDone, _context, args) =>
         </Box>
         <Box>
           <Text dimColor>网络模式: </Text>
-          <Text>{config.networkMode === 'none' ? '🔒 隔离' : config.networkMode === 'host' ? '⚠ 主机' : '🌐 桥接'}</Text>
+          <Text>{config.networkMode === 'none' ? '🔒 隔离' : config.networkMode === 'host' ? ' 主机' : '🌐 桥接'}</Text>
         </Box>
         <Box>
           <Text dimColor>内存限制: </Text>
@@ -356,7 +356,7 @@ export const dockerSandboxUI: LocalJSXCommandCall = (_onDone, _context, args) =>
       </Box>
       {error && (
         <Box borderStyle="round" borderColor="red" paddingX={1} marginBottom={1}>
-          <Text color="red">❌ {error}</Text>
+          <Text color="red"> {error}</Text>
         </Box>
       )}
       {success && (

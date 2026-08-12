@@ -290,7 +290,7 @@ function generateServerConfig(rec: McpServerRecommendation): string {
  */
 export function generateDiscoveryReport(result: DiscoveryResult): string {
   const lines: string[] = [
-    '🔍 MCP Server 发现与推荐',
+    ' MCP Server 发现与推荐',
     '',
     `项目类型: ${result.projectType || '通用'}`,
     `检测到的文件: ${result.detectedFiles.length > 0 ? result.detectedFiles.join(', ') : '无'}`,

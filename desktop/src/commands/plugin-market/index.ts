@@ -182,7 +182,7 @@ export const call: LocalCommandCall = async (args) => {
     default:
       return {
         type: 'text',
-        value: `❌ 未知操作: ${action}\n\n使用 /plugin-market --help 查看可用命令`,
+        value: ` 未知操作: ${action}\n\n使用 /plugin-market --help 查看可用命令`,
       }
   }
 }
@@ -211,7 +211,7 @@ function handleList(tagsArg: string | undefined, installed: Set<string>): { type
     `共 ${plugins.length} 个插件`,
     '',
     ...plugins.map(p => {
-      const status = p.installed ? '✅' : '  '
+      const status = p.installed ? '' : '  '
       return `${status} ${p.name} v${p.version}\n      ${p.description}\n      ⬇ ${formatNumber(p.downloads)} | ⭐ ${p.rating} | 🏷 ${p.tags.slice(0, 3).join(', ')}`
     }),
     '',
@@ -226,7 +226,7 @@ function handleSearch(keyword: string, installed: Set<string>): { type: string; 
   if (!keyword) {
     return {
       type: 'text',
-      value: '❌ 请提供搜索关键词\n\n用法: /plugin-market search <关键词>',
+      value: ' 请提供搜索关键词\n\n用法: /plugin-market search <关键词>',
     }
   }
 
@@ -241,11 +241,11 @@ function handleSearch(keyword: string, installed: Set<string>): { type: string; 
   results.sort((a, b) => b.rating - a.rating)
 
   const lines: string[] = [
-    `🔍 搜索结果: "${keyword}"`,
+    ` 搜索结果: "${keyword}"`,
     `找到 ${results.length} 个插件`,
     '',
     ...results.map(p => {
-      const status = p.installed ? '✅' : '  '
+      const status = p.installed ? '' : '  '
       return `${status} ${p.name} v${p.version}\n      ${p.description}\n      ⭐ ${p.rating} | 🏷 ${p.tags.slice(0, 3).join(', ')}`
     }),
   ]
@@ -257,7 +257,7 @@ function handleInfo(pluginId: string | undefined, installed: Set<string>): { typ
   if (!pluginId) {
     return {
       type: 'text',
-      value: '❌ 请提供插件 ID\n\n用法: /plugin-market info <插件ID>',
+      value: ' 请提供插件 ID\n\n用法: /plugin-market info <插件ID>',
     }
   }
 
@@ -266,7 +266,7 @@ function handleInfo(pluginId: string | undefined, installed: Set<string>): { typ
   if (!plugin) {
     return {
       type: 'text',
-      value: `❌ 未找到插件: ${pluginId}\n\n使用 /plugin-market list 查看所有可用插件`,
+      value: ` 未找到插件: ${pluginId}\n\n使用 /plugin-market list 查看所有可用插件`,
     }
   }
 
@@ -278,7 +278,7 @@ function handleInfo(pluginId: string | undefined, installed: Set<string>): { typ
     `作者: ${plugin.author}`,
     `下载量: ${formatNumber(plugin.downloads)}`,
     `评分: ⭐ ${plugin.rating}/5`,
-    `状态: ${isInstalled ? '✅ 已安装' : '⬜ 未安装'}`,
+    `状态: ${isInstalled ? ' 已安装' : '⬜ 未安装'}`,
     '',
     '📝 描述:',
     plugin.description,
@@ -300,7 +300,7 @@ function handleInstall(pluginId: string | undefined, installed: Set<string>): { 
   if (!pluginId) {
     return {
       type: 'text',
-      value: '❌ 请提供插件 ID\n\n用法: /plugin-market install <插件ID>',
+      value: ' 请提供插件 ID\n\n用法: /plugin-market install <插件ID>',
     }
   }
 
@@ -309,14 +309,14 @@ function handleInstall(pluginId: string | undefined, installed: Set<string>): { 
   if (!plugin) {
     return {
       type: 'text',
-      value: `❌ 未找到插件: ${pluginId}\n\n使用 /plugin-market list 查看所有可用插件`,
+      value: ` 未找到插件: ${pluginId}\n\n使用 /plugin-market list 查看所有可用插件`,
     }
   }
 
   if (installed.has(plugin.id)) {
     return {
       type: 'text',
-      value: `⚠️ 插件已安装: ${plugin.name} v${plugin.version}\n\n使用 /plugin-market uninstall ${plugin.id} 卸载`,
+      value: ` 插件已安装: ${plugin.name} v${plugin.version}\n\n使用 /plugin-market uninstall ${plugin.id} 卸载`,
     }
   }
 
@@ -351,7 +351,7 @@ function handleInstall(pluginId: string | undefined, installed: Set<string>): { 
   return {
     type: 'text',
     value: [
-      `✅ 插件安装成功: ${plugin.name} v${plugin.version}`,
+      ` 插件安装成功: ${plugin.name} v${plugin.version}`,
       '',
       '📁 安装路径:',
       `  ${pluginDir}`,
@@ -367,14 +367,14 @@ function handleUninstall(pluginId: string | undefined, installed: Set<string>): 
   if (!pluginId) {
     return {
       type: 'text',
-      value: '❌ 请提供插件 ID\n\n用法: /plugin-market uninstall <插件ID>',
+      value: ' 请提供插件 ID\n\n用法: /plugin-market uninstall <插件ID>',
     }
   }
 
   if (!installed.has(pluginId)) {
     return {
       type: 'text',
-      value: `⚠️ 插件未安装: ${pluginId}\n\n使用 /plugin-market installed 查看已安装插件`,
+      value: ` 插件未安装: ${pluginId}\n\n使用 /plugin-market installed 查看已安装插件`,
     }
   }
 
@@ -392,7 +392,7 @@ function handleUninstall(pluginId: string | undefined, installed: Set<string>): 
 
   return {
     type: 'text',
-    value: `✅ 插件已卸载: ${pluginId}`,
+    value: ` 插件已卸载: ${pluginId}`,
   }
 }
 
@@ -407,7 +407,7 @@ function handleInstalled(installed: Set<string>): { type: string; value: string 
   }
 
   const lines: string[] = [
-    '✅ 已安装插件',
+    ' 已安装插件',
     `共 ${installedPlugins.length} 个`,
     '',
     ...installedPlugins.map(p =>
@@ -424,7 +424,7 @@ function handleRate(pluginId: string | undefined, ratingStr: string | undefined,
   if (!pluginId || !ratingStr) {
     return {
       type: 'text',
-      value: '❌ 请提供插件 ID 和评分\n\n用法: /plugin-market rate <插件ID> <1-5>',
+      value: ' 请提供插件 ID 和评分\n\n用法: /plugin-market rate <插件ID> <1-5>',
     }
   }
 
@@ -432,7 +432,7 @@ function handleRate(pluginId: string | undefined, ratingStr: string | undefined,
   if (isNaN(rating) || rating < 1 || rating > 5) {
     return {
       type: 'text',
-      value: '❌ 评分必须是 1-5 的整数\n\n用法: /plugin-market rate <插件ID> <1-5>',
+      value: ' 评分必须是 1-5 的整数\n\n用法: /plugin-market rate <插件ID> <1-5>',
     }
   }
 
@@ -440,7 +440,7 @@ function handleRate(pluginId: string | undefined, ratingStr: string | undefined,
   if (!plugin) {
     return {
       type: 'text',
-      value: `❌ 未找到插件: ${pluginId}`,
+      value: ` 未找到插件: ${pluginId}`,
     }
   }
 

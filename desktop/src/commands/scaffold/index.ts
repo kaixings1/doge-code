@@ -8,7 +8,7 @@ import { join, resolve } from 'path'
  * 快速创建常见项目结构
  */
 
-const HELP_TEXT = `🏗️ **Scaffold 命令** - 项目脚手架工具
+const HELP_TEXT = `🏗 **Scaffold 命令** - 项目脚手架工具
 
 **用法**: /scaffold <类型> [项目名] [选项]
 
@@ -36,7 +36,7 @@ function createNodeProject(name: string, cwd: string): string {
   const targetDir = join(cwd, name)
 
   if (existsSync(targetDir)) {
-    return `❌ 目录已存在: ${targetDir}`
+    return ` 目录已存在: ${targetDir}`
   }
 
   mkdirSync(targetDir, { recursive: true })
@@ -93,7 +93,7 @@ bun run build
 \`\`\`
 `)
 
-  return `✅ **Node.js 项目已创建**
+  return ` **Node.js 项目已创建**
 
 📁 项目结构:
 • \`${name}/\`
@@ -110,7 +110,7 @@ function createReactProject(name: string, cwd: string): string {
   const targetDir = join(cwd, name)
 
   if (existsSync(targetDir)) {
-    return `❌ 目录已存在: ${targetDir}`
+    return ` 目录已存在: ${targetDir}`
   }
 
   mkdirSync(targetDir, { recursive: true })
@@ -207,7 +207,7 @@ export default function App() {
 </html>
 `)
 
-  return `✅ **React 项目已创建**
+  return ` **React 项目已创建**
 
 📁 项目结构:
 • \`${name}/\`
@@ -228,7 +228,7 @@ function createNextProject(name: string, cwd: string): string {
   const targetDir = join(cwd, name)
 
   if (existsSync(targetDir)) {
-    return `❌ 目录已存在: ${targetDir}`
+    return ` 目录已存在: ${targetDir}`
   }
 
   mkdirSync(targetDir, { recursive: true })
@@ -317,7 +317,7 @@ export default function RootLayout({
   font-family: system-ui, sans-serif;
 }`)
 
-  return `✅ **Next.js 项目已创建**
+  return ` **Next.js 项目已创建**
 
 📁 项目结构:
 • \`${name}/\`
@@ -337,7 +337,7 @@ function createBunProject(name: string, cwd: string): string {
   const targetDir = join(cwd, name)
 
   if (existsSync(targetDir)) {
-    return `❌ 目录已存在: ${targetDir}`
+    return ` 目录已存在: ${targetDir}`
   }
 
   mkdirSync(targetDir, { recursive: true })
@@ -376,7 +376,7 @@ function createBunProject(name: string, cwd: string): string {
     },
   }, null, 2))
 
-  return `✅ **Bun 项目已创建**
+  return ` **Bun 项目已创建**
 
 📁 项目结构:
 • \`${name}/\`
@@ -403,7 +403,7 @@ export const call: LocalCommandCall = async (args, context) => {
   if (!projectTypes.includes(command)) {
     return {
       type: 'text',
-      value: `❌ **未知项目类型**: \`${command}\`
+      value: ` **未知项目类型**: \`${command}\`
 
 ${HELP_TEXT}`
     }
@@ -449,7 +449,7 @@ ${HELP_TEXT}`
   } catch (err) {
     return {
       type: 'text',
-      value: `❌ **创建失败**
+      value: ` **创建失败**
 
 ${err instanceof Error ? err.message : String(err)}`
     }

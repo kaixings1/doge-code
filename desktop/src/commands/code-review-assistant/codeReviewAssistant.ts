@@ -27,7 +27,7 @@ ${HOOK_MARKER}
 # Auto-installed by /code-review-assistant --watch
 # Runs AI code review on staged changes before commit
 
-echo "🔍 Running AI code review on staged changes..."
+echo " Running AI code review on staged changes..."
 
 # Get staged files
 STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM 2>/dev/null)
@@ -39,7 +39,7 @@ fi
 echo "Files to be committed:"
 echo "$STAGED_FILES" | sed 's/^/  - /'
 echo ""
-echo "⚠️  Consider running /code-review-assistant --mode security before committing."
+echo "  Consider running /code-review-assistant --mode security before committing."
 echo ""
 
 # Allow commit to proceed (warning only)
@@ -55,7 +55,7 @@ function installHook(): string {
     if (fs.existsSync(hookPath)) {
       const content = fs.readFileSync(hookPath, 'utf-8')
       if (content.includes(HOOK_MARKER)) {
-        return '✅ Code review hook already installed.'
+        return ' Code review hook already installed.'
       }
       // Backup existing hook
       fs.writeFileSync(hookPath + '.backup', content, 'utf-8')
@@ -64,9 +64,9 @@ function installHook(): string {
     fs.writeFileSync(hookPath, HOOK_SCRIPT, 'utf-8')
     // Make executable
     try { fs.chmodSync(hookPath, 0o755) } catch { /* Windows ignores chmod */ }
-    return '✅ Code review hook installed to .git/hooks/pre-commit\n   (Existing hook backed up to pre-commit.backup)'
+    return ' Code review hook installed to .git/hooks/pre-commit\n   (Existing hook backed up to pre-commit.backup)'
   } catch (err) {
-    return `❌ Failed to install hook: ${err instanceof Error ? err.message : String(err)}`
+    return ` Failed to install hook: ${err instanceof Error ? err.message : String(err)}`
   }
 }
 
@@ -76,12 +76,12 @@ function uninstallHook(): string {
   try {
     const fs = require('fs')
     if (!fs.existsSync(hookPath)) {
-      return '⚠️ No pre-commit hook found.'
+      return ' No pre-commit hook found.'
     }
 
     const content = fs.readFileSync(hookPath, 'utf-8')
     if (!content.includes(HOOK_MARKER)) {
-      return '⚠️ Pre-commit hook was not installed by doge. Leaving it unchanged.'
+      return ' Pre-commit hook was not installed by doge. Leaving it unchanged.'
     }
 
     // Restore backup if exists
@@ -89,13 +89,13 @@ function uninstallHook(): string {
     if (fs.existsSync(backupPath)) {
       fs.writeFileSync(hookPath, fs.readFileSync(backupPath, 'utf-8'), 'utf-8')
       fs.unlinkSync(backupPath)
-      return '✅ Hook removed. Original hook restored.'
+      return ' Hook removed. Original hook restored.'
     } else {
       fs.unlinkSync(hookPath)
-      return '✅ Hook removed.'
+      return ' Hook removed.'
     }
   } catch (err) {
-    return `❌ Failed to uninstall hook: ${err instanceof Error ? err.message : String(err)}`
+    return ` Failed to uninstall hook: ${err instanceof Error ? err.message : String(err)}`
   }
 }
 
@@ -105,7 +105,7 @@ function uninstallHook(): string {
 
 function renderHelp(): string {
   return [
-    '🔍 智能代码审查助手',
+    ' 智能代码审查助手',
     '',
     '基于 AI 的代码变更审查，自动检测安全漏洞、代码质量和最佳实践问题。',
     '',
@@ -310,13 +310,13 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
     // 获取 git diff
     const diffText = await getGitDiff()
     if (!diffText.trim()) {
-      return '✅ 没有需要审查的代码变更（工作目录干净）。'
+      return ' 没有需要审查的代码变更（工作目录干净）。'
     }
 
     // 解析 diff
     const parsedDiff = parseDiff(diffText)
     if (parsedDiff.fileCount === 0) {
-      return '✅ 未检测到有意义的代码变更。'
+      return ' 未检测到有意义的代码变更。'
     }
 
     // 构建审查 prompt
@@ -369,6 +369,6 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
     return `${summary}\n\n${detail}`
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
-    return `❌ 代码审查失败: ${message}`
+    return ` 代码审查失败: ${message}`
   }
 }

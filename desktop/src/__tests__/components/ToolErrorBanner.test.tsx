@@ -32,15 +32,15 @@ function classifyError(err: string): ToolErrorCategory {
     return { label: '文件错误', color: '#EF5350', icon: '📁', suggestion: '请确认文件路径是否正确' }
   }
   if (/syntax|parse|invalid|typeerror|referenceerror|unexpected|malformed/.test(lower)) {
-    return { label: '输入错误', color: '#AB47BC', icon: '⚠️', suggestion: '请检查输入参数格式是否正确' }
+    return { label: '输入错误', color: '#AB47BC', icon: '', suggestion: '请检查输入参数格式是否正确' }
   }
   if (/rate.?limit|throttl|429|too many requests/.test(lower)) {
-    return { label: '限流错误', color: '#FFA726', icon: '⏱️', suggestion: '请求过于频繁，请稍后重试' }
+    return { label: '限流错误', color: '#FFA726', icon: '⏱', suggestion: '请求过于频繁，请稍后重试' }
   }
   if (/memory|heap|out of memory|cannot allocate/.test(lower)) {
     return { label: '内存错误', color: '#EF5350', icon: '💾', suggestion: '内存不足，请关闭部分标签页后重试' }
   }
-  return { label: '执行错误', color: '#FF6B6B', icon: '❌', suggestion: '工具执行过程中发生未知错误' }
+  return { label: '执行错误', color: '#FF6B6B', icon: '', suggestion: '工具执行过程中发生未知错误' }
 }
 
 describe('ToolErrorBanner', () => {
@@ -94,7 +94,7 @@ describe('ToolErrorBanner', () => {
     it('应正确分类输入错误 - syntax error', () => {
       const result = classifyError('SyntaxError: Unexpected token')
       expect(result.label).toBe('输入错误')
-      expect(result.icon).toBe('⚠️')
+      expect(result.icon).toBe('')
       expect(result.color).toBe('#AB47BC')
     })
 
@@ -106,7 +106,7 @@ describe('ToolErrorBanner', () => {
     it('应正确分类限流错误 - rate limit', () => {
       const result = classifyError('Rate limit exceeded: too many requests')
       expect(result.label).toBe('限流错误')
-      expect(result.icon).toBe('⏱️')
+      expect(result.icon).toBe('⏱')
     })
 
     it('应正确分类限流错误 - 429', () => {
@@ -128,7 +128,7 @@ describe('ToolErrorBanner', () => {
     it('应将未知错误分类为执行错误', () => {
       const result = classifyError('Something went wrong')
       expect(result.label).toBe('执行错误')
-      expect(result.icon).toBe('❌')
+      expect(result.icon).toBe('')
       expect(result.color).toBe('#FF6B6B')
     })
   })

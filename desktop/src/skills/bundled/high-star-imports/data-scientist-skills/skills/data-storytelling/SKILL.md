@@ -26,8 +26,8 @@ Transform analytical findings into compelling narratives that drive action. Uses
 ### Step 3: Design Supporting Visuals
 - One chart per slide — one message per chart
 - Title each chart with the insight, not the metric name
-  - ❌ "Monthly Revenue by Region"
-  - ✅ "APAC revenue grew 40% while NA stagnated"
+  -  "Monthly Revenue by Region"
+  -  "APAC revenue grew 40% while NA stagnated"
 - Remove everything that doesn't support the message
 - Use annotations to guide the reader's eye
 

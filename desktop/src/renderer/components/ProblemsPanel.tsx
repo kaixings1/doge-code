@@ -13,9 +13,9 @@ import type { ThemeColors } from '../theme.js'
 import type { ProblemItem, ProblemLevel } from '../hooks/useProblems.js'
 
 const LEVEL_LABEL: Record<ProblemLevel, string> = {
-  error: '🔴 Error',
+  error: ' Error',
   warning: '🟡 Warning',
-  info: 'ℹ️ Info',
+  info: 'ℹ Info',
 }
 
 const LEVEL_COLOR: Record<ProblemLevel, string> = {
@@ -81,7 +81,7 @@ export function ProblemsPanel({
           background: c.bgAlt,
         }}
       >
-        <span style={{ fontWeight: 600, fontSize: '11px' }}>⚠️ Problems</span>
+        <span style={{ fontWeight: 600, fontSize: '11px' }}> Problems</span>
         <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
           <span style={{ color: c.textFaint, fontSize: '10px' }}>
             {filteredProblems.length}/{problems.length}

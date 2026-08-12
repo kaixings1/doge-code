@@ -345,13 +345,13 @@ export function getAllBaseTools(): Tools {
 		for (let i = 0; i < _tools.length; i++) {
 			const t = _tools[i];
 			if (t === null) {
-				console.error(`❌ _tools[${i}] is null`);
+				console.error(` _tools[${i}] is null`);
 			} else if (t === undefined) {
-				console.error(`❌ _tools[${i}] is undefined`);
+				console.error(` _tools[${i}] is undefined`);
 			} else if (typeof t !== 'object') {
-				console.error(`❌ _tools[${i}] is primitive:`, typeof t, t);
+				console.error(` _tools[${i}] is primitive:`, typeof t, t);
 			} else if (typeof t.prompt !== 'function') {
-				console.error(`❌ MISSING prompt():`, t.name || '(no name)', 'at index', i);
+				console.error(` MISSING prompt():`, t.name || '(no name)', 'at index', i);
 			}
 			//else
 				//console.error(`${i}prompt():`,t, t.name );

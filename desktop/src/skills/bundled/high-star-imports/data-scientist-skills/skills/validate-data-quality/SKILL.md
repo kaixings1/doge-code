@@ -29,7 +29,7 @@ Produce a comprehensive data quality scorecard that measures your dataset across
 
 ### Step 3: Generate Scorecard
 - Score each dimension 0-100% per column and overall
-- Color-code: 🟢 >90%, 🟡 70-90%, 🔴 <70%
+- Color-code: 🟢 >90%, 🟡 70-90%,  <70%
 - Rank issues by severity and business impact
 - Produce a visual summary dashboard
 

@@ -454,7 +454,7 @@ export function validateBindings(
  * 格式化警告以供用户查看。
  */
 export function formatWarning(warning: KeybindingWarning): string {
-  const icon = warning.severity === 'error' ? '✗' : '⚠'
+  const icon = warning.severity === 'error' ? '✗' : ''
   let msg = `${icon} Keybinding ${warning.severity}: ${warning.message}`
 
   if (warning.suggestion) {

@@ -626,7 +626,7 @@ export const initializeGrowthBook = memoize(
         if (!currentAuth.error) {
           if (process.env.USER_TYPE === 'ant') {
             logForDebugging(
-              '⏳ GrowthBook: 客户端创建后认证已可用，正在重新初始化',
+              ' GrowthBook: 客户端创建后认证已可用，正在重新初始化',
             )
           }
           // Use resetGrowthBook to properly destroy old client and stop periodic refresh

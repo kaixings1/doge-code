@@ -60,11 +60,11 @@ const STEP_TYPE_CONFIG: Record<WorkflowStep['type'], { icon: string; color: stri
 }
 
 const STEP_STATUS_CONFIG: Record<WorkflowRunResult['stepResults'][0]['status'], { icon: string; color: string; label: string }> = {
-  pending: { icon: '⏳', color: '#B0BEC5', label: '等待中' },
-  running: { icon: '⏱️', color: '#FFB74D', label: '执行中' },
-  completed: { icon: '✅', color: '#81C784', label: '已完成' },
-  failed: { icon: '❌', color: '#FF6B6B', label: '失败' },
-  skipped: { icon: '⏭️', color: '#B0BEC5', label: '已跳过' },
+  pending: { icon: '', color: '#B0BEC5', label: '等待中' },
+  running: { icon: '⏱', color: '#FFB74D', label: '执行中' },
+  completed: { icon: '', color: '#81C784', label: '已完成' },
+  failed: { icon: '', color: '#FF6B6B', label: '失败' },
+  skipped: { icon: '⏭', color: '#B0BEC5', label: '已跳过' },
 }
 
 export function WorkflowPanel({
@@ -93,7 +93,7 @@ export function WorkflowPanel({
   // 新建工作流表单
   const [newName, setNewName] = useState('')
   const [newDesc, setNewDesc] = useState('')
-  const [newIcon, setNewIcon] = useState('⚡')
+  const [newIcon, setNewIcon] = useState('')
   const [newTrigger, setNewTrigger] = useState<'manual' | 'file-save' | 'timer'>('manual')
   const [triggerFilePattern, setTriggerFilePattern] = useState('*')
   const [triggerInterval, setTriggerInterval] = useState(60)
@@ -315,7 +315,7 @@ export function WorkflowPanel({
               const workflowData: Omit<WorkflowDefinition, 'id' | 'createdAt'> = {
                 name: newName.trim(),
                 description: newDesc.trim() || '',
-                icon: newIcon || '⚡',
+                icon: newIcon || '',
                 steps: [],
                 trigger: newTrigger,
                 isTemplate: false,
@@ -350,7 +350,7 @@ export function WorkflowPanel({
             <div key={wf.id} style={cardStyle}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span>{wf.icon || '⚡'}</span>
+                  <span>{wf.icon || ''}</span>
                   <span style={{ fontWeight: 600, fontSize: '13px' }}>{wf.name}</span>
                 </div>
                 <div style={{ display: 'flex', gap: '4px' }}>
@@ -366,14 +366,14 @@ export function WorkflowPanel({
                     style={{ ...buttonStyle, padding: '3px 8px', fontSize: '10px' }}
                     title="编辑"
                   >
-                    ✏️
+                    ✏
                   </button>
                   <button
                     onClick={() => onDelete(wf.id)}
                     style={{ ...buttonStyle, padding: '3px 8px', fontSize: '10px', color: '#ef5350' }}
                     title="删除"
                   >
-                    🗑️
+                    🗑
                   </button>
                 </div>
               </div>
@@ -516,7 +516,7 @@ export function WorkflowPanel({
               onCreateWorkflow({
                 name: editingWorkflow.name,
                 description: editingWorkflow.description || undefined,
-                icon: editingWorkflow.icon || '⚡',
+                icon: editingWorkflow.icon || '',
                 steps: editingWorkflow.steps,
                 trigger: editingWorkflow.trigger,
                 isTemplate: false,
@@ -569,7 +569,7 @@ export function WorkflowPanel({
           return (
             <div key={run.workflowId + run.startedAt} style={{ ...cardStyle, marginBottom: '6px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                <span>{wf?.icon || '⚡'}</span>
+                <span>{wf?.icon || ''}</span>
                 <span style={{ fontWeight: 600, fontSize: '12px' }}>{wf?.name || '未知工作流'}</span>
                 <span style={{ ...badgeStyle(statusConfig.color), marginLeft: 'auto' }}>
                   {statusConfig.icon} {run.status}
@@ -634,7 +634,7 @@ export function WorkflowPanel({
       {/* 头部 */}
       <div style={headerStyle}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontWeight: 600, fontSize: '14px' }}>⚡ 工作流自动化</span>
+          <span style={{ fontWeight: 600, fontSize: '14px' }}> 工作流自动化</span>
           <span style={{ color: c.textMuted, fontSize: '11px' }}>可视化编排 AI 任务</span>
         </div>
         <button onClick={onClose} style={{ background: 'none', border: 'none', color: c.textFaint, cursor: 'pointer', fontSize: '16px', lineHeight: 1 }}>✕</button>
@@ -666,7 +666,7 @@ export function WorkflowPanel({
       {currentRun && (
         <div style={{ padding: '8px 12px', borderTop: `1px solid ${c.border}`, background: c.bgAlt, display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ fontSize: '12px' }}>
-            ⏱️ 执行中: {workflows.find(w => w.id === currentRun.workflowId)?.name || '未知'}
+            ⏱ 执行中: {workflows.find(w => w.id === currentRun.workflowId)?.name || '未知'}
           </span>
           <span style={{ fontSize: '11px', color: c.textMuted }}>
             步骤 {currentRun.stepResults.filter(s => s.status === 'completed').length}/{currentRun.stepResults.length}

@@ -77,7 +77,7 @@ export function getTeammateModeFromSnapshot(): TeammateMode {
     // This indicates an initialization bug - capture should happen in setup()
     logError(
       new Error(
-        '❌ 错误: getTeammateModeFromSnapshot 在捕获前被调用 - 这表明存在初始化错误',
+        ' 错误: getTeammateModeFromSnapshot 在捕获前被调用 - 这表明存在初始化错误',
       ),
     )
     captureTeammateModeSnapshot()

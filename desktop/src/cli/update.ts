@@ -250,7 +250,7 @@ export async function update() {
       }
       await gracefulShutdown(0)
     } catch (error) {
-      process.stderr.write('❌ 错误: 安装原生更新失败\n')
+      process.stderr.write(' 错误: 安装原生更新失败\n')
       process.stderr.write(String(error) + '\n')
       process.stderr.write('请尝试运行 "claude doctor" 进行诊断\n')
       await gracefulShutdown(1)
@@ -264,7 +264,7 @@ export async function update() {
     await removeInstalledSymlink()
   }
 
-  logForDebugging('⏳ update: 正在检查 npm 注册表的最新版本')
+  logForDebugging(' update: 正在检查 npm 注册表的最新版本')
   logForDebugging(`update: Package URL: ${MACRO.PACKAGE_URL}`)
   const npmTag = channel === 'stable' ? 'stable' : 'latest'
   const npmCommand = `npm view ${MACRO.PACKAGE_URL}@${npmTag} version`
@@ -380,7 +380,7 @@ export async function update() {
       break
     case 'no_permissions':
       process.stderr.write(
-        '❌ 错误: 权限不足，无法安装更新\n',
+        ' 错误: 权限不足，无法安装更新\n',
       )
       if (useLocalUpdate) {
         process.stderr.write('尝试手动更新：\n')
@@ -396,7 +396,7 @@ export async function update() {
       await gracefulShutdown(1)
       break
     case 'install_failed':
-      process.stderr.write('❌ 错误: 安装更新失败\n')
+      process.stderr.write(' 错误: 安装更新失败\n')
       if (useLocalUpdate) {
         process.stderr.write('尝试手动更新：\n')
         process.stderr.write(
@@ -411,7 +411,7 @@ export async function update() {
       break
     case 'in_progress':
       process.stderr.write(
-        '❌ 错误: 另一个实例正在执行更新\n',
+        ' 错误: 另一个实例正在执行更新\n',
       )
       process.stderr.write('请稍后重试\n')
       await gracefulShutdown(1)

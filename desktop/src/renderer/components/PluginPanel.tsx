@@ -253,7 +253,7 @@ export function PluginPanel({ theme, onClose }: PluginPanelProps): JSX.Element {
                   cursor: 'pointer', fontSize: '11px', fontWeight: 600,
                 }}
               >
-                ⚡ 运行时
+                 运行时
               </button>
             </div>
           </div>
@@ -577,13 +577,13 @@ function RuntimeView({ theme }: RuntimeViewProps): JSX.Element {
       const api = window.dogeAPI as Record<string, any>
       const res = await api?.pluginExport?.(name)
       if (res?.success) {
-        setExportMsg(`✅ 已导出: ${res.path} (${res.fileCount} 文件)`)
+        setExportMsg(` 已导出: ${res.path} (${res.fileCount} 文件)`)
         refresh()
       } else {
-        setExportMsg(`❌ ${res?.error || '导出失败'}`)
+        setExportMsg(` ${res?.error || '导出失败'}`)
       }
     } catch (e) {
-      setExportMsg(`❌ ${e instanceof Error ? e.message : '导出失败'}`)
+      setExportMsg(` ${e instanceof Error ? e.message : '导出失败'}`)
     }
   }, [refresh])
 
@@ -592,14 +592,14 @@ function RuntimeView({ theme }: RuntimeViewProps): JSX.Element {
       const api = window.dogeAPI as Record<string, any>
       const res = await api?.pluginImport?.(exportName)
       if (res?.success) {
-        setExportMsg(`✅ 已导入插件: ${res.pluginName}`)
+        setExportMsg(` 已导入插件: ${res.pluginName}`)
         setShowExports(false)
         refresh()
       } else {
-        setExportMsg(`❌ ${res?.error || '导入失败'}`)
+        setExportMsg(` ${res?.error || '导入失败'}`)
       }
     } catch (e) {
-      setExportMsg(`❌ ${e instanceof Error ? e.message : '导入失败'}`)
+      setExportMsg(` ${e instanceof Error ? e.message : '导入失败'}`)
     }
   }, [refresh])
 
@@ -741,7 +741,7 @@ function RuntimeView({ theme }: RuntimeViewProps): JSX.Element {
                   {p.name} {!p.enabled && '(加载失败)'}
                 </span>
                 <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                  <span style={{ fontSize: '9px', color: c.textFaint }}>⚡{p.commandCount} 命令 · 🔗{p.hookCount} hooks</span>
+                  <span style={{ fontSize: '9px', color: c.textFaint }}>{p.commandCount} 命令 · 🔗{p.hookCount} hooks</span>
                   <button onClick={() => handleExport(p.name)} title="导出为 .dogeplugin 包" style={{
                     padding: '1px 6px', border: `1px solid ${c.border}`, borderRadius: '2px',
                     background: 'transparent', color: c.textMuted, cursor: 'pointer', fontSize: '9px',
@@ -761,7 +761,7 @@ function RuntimeView({ theme }: RuntimeViewProps): JSX.Element {
               {p.errors.length > 0 && (
                 <div style={{ marginTop: '4px' }}>
                   {p.errors.map((err, i) => (
-                    <div key={i} style={{ fontSize: '9px', color: c.errorText }}>⚠ {err}</div>
+                    <div key={i} style={{ fontSize: '9px', color: c.errorText }}> {err}</div>
                   ))}
                 </div>
               )}

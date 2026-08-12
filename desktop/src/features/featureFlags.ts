@@ -13,7 +13,7 @@ export interface NewFeatureSettings {
   sandboxFilesystemDisabled: boolean
 
   // 2.1.217 — Emoji 自动补全
-  /** 启用 emoji 短代码自动补全 (:heart: → ❤️) */
+  /** 启用 emoji 短代码自动补全 (:heart: → ) */
   emojiCompletionEnabled: boolean
 
   // 2.1.219 — 工作流大小指南

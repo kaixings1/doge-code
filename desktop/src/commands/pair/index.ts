@@ -61,7 +61,7 @@ function runReviewMode(code: string, round: number): PairResult {
   const deep = runDeepAnalysis(code)
 
   const output = [
-    `## 🔍 审查结果 (第 ${round} 轮)`,
+    `##  审查结果 (第 ${round} 轮)`,
     '',
     `**文件**: ${code.split('\n').length} 行`,
     `**问题数**: ${suggestions.length}`,
@@ -69,14 +69,14 @@ function runReviewMode(code: string, round: number): PairResult {
     '### 📊 六维评分',
     `| 维度 | 评分 | 状态 |`,
     `|------|------|------|`,
-    `| 类型安全 | ${deep.typeSafety.score}/100 | ${deep.typeSafety.score >= 80 ? '✅' : deep.typeSafety.score >= 60 ? '⚠️' : '🔴'} |`,
-    `| 错误处理 | ${deep.errorHandling.score}/100 | ${deep.errorHandling.score >= 80 ? '✅' : deep.errorHandling.score >= 60 ? '⚠️' : '🔴'} |`,
-    `| 性能 | ${deep.performance.score}/100 | ${deep.performance.score >= 80 ? '✅' : deep.performance.score >= 60 ? '⚠️' : '🔴'} |`,
-    `| 可读性 | ${deep.readability.score}/100 | ${deep.readability.score >= 80 ? '✅' : deep.readability.score >= 60 ? '⚠️' : '🔴'} |`,
-    `| 可测试性 | ${deep.testability.score}/100 | ${deep.testability.score >= 80 ? '✅' : deep.testability.score >= 60 ? '⚠️' : '🔴'} |`,
-    `| 安全性 | ${deep.security.score}/100 | ${deep.security.score >= 80 ? '✅' : deep.security.score >= 60 ? '⚠️' : '🔴'} |`,
+    `| 类型安全 | ${deep.typeSafety.score}/100 | ${deep.typeSafety.score >= 80 ? '' : deep.typeSafety.score >= 60 ? '' : ''} |`,
+    `| 错误处理 | ${deep.errorHandling.score}/100 | ${deep.errorHandling.score >= 80 ? '' : deep.errorHandling.score >= 60 ? '' : ''} |`,
+    `| 性能 | ${deep.performance.score}/100 | ${deep.performance.score >= 80 ? '' : deep.performance.score >= 60 ? '' : ''} |`,
+    `| 可读性 | ${deep.readability.score}/100 | ${deep.readability.score >= 80 ? '' : deep.readability.score >= 60 ? '' : ''} |`,
+    `| 可测试性 | ${deep.testability.score}/100 | ${deep.testability.score >= 80 ? '' : deep.testability.score >= 60 ? '' : ''} |`,
+    `| 安全性 | ${deep.security.score}/100 | ${deep.security.score >= 80 ? '' : deep.security.score >= 60 ? '' : ''} |`,
     '',
-    suggestions.length > 0 ? '### 发现的问题\n' : '### ✅ 未发现明显问题\n',
+    suggestions.length > 0 ? '### 发现的问题\n' : '###  未发现明显问题\n',
     ...suggestions.map(s => `- ${s}`),
     fixes.length > 0 ? '\n### 自动修复建议\n' + fixes.map(f => `- ${f}`).join('\n') : '',
   ].join('\n')
@@ -124,10 +124,10 @@ function runCoauthorMode(code: string, round: number): PairResult {
     '### 代码分析',
     `- 函数数量: ${functionCount}`,
     `- 类数量: ${classCount}`,
-    `- 有类型注解: ${hasTypes ? '✅' : '❌'}`,
-    `- 有错误处理: ${hasErrorHandling ? '✅' : '❌'}`,
-    `- 有注释: ${hasComments ? '✅' : '❌'}`,
-    `- 有测试: ${hasTests ? '✅' : '❌'}`,
+    `- 有类型注解: ${hasTypes ? '' : ''}`,
+    `- 有错误处理: ${hasErrorHandling ? '' : ''}`,
+    `- 有注释: ${hasComments ? '' : ''}`,
+    `- 有测试: ${hasTests ? '' : ''}`,
     '',
     '### 增强建议',
     ...suggestions.map(s => `- ${s}`),
@@ -184,7 +184,7 @@ function runDebugMode(code: string, round: number): PairResult {
     '### 潜在问题',
     suggestions.length > 0
       ? suggestions.map(s => `- ${s}`).join('\n')
-      : '- ✅ 未发现明显的运行时问题',
+      : '-  未发现明显的运行时问题',
     '',
     fixes.length > 0 ? '### 修复建议\n' + fixes.map(f => `- ${f}`).join('\n') : '',
     '',
@@ -350,10 +350,10 @@ function runDeepMode(code: string, round: number): PairResult {
     '',
     '| 维度 | 评分 | 问题数 |',
     '|------|------|--------|',
-    `| 🛡️ 类型安全 | ${deep.typeSafety.score} | ${deep.typeSafety.issues.length} |`,
+    `| 🛡 类型安全 | ${deep.typeSafety.score} | ${deep.typeSafety.issues.length} |`,
     `| 🔧 错误处理 | ${deep.errorHandling.score} | ${deep.errorHandling.issues.length} |`,
-    `| ⚡ 性能 | ${deep.performance.score} | ${deep.performance.issues.length} |`,
-    `| 📖 可读性 | ${deep.readability.score} | ${deep.readability.issues.length} |`,
+    `|  性能 | ${deep.performance.score} | ${deep.performance.issues.length} |`,
+    `|  可读性 | ${deep.readability.score} | ${deep.readability.issues.length} |`,
     `| 🧪 可测试性 | ${deep.testability.score} | ${deep.testability.issues.length} |`,
     `| 🔒 安全性 | ${deep.security.score} | ${deep.security.issues.length} |`,
     '',
@@ -361,10 +361,10 @@ function runDeepMode(code: string, round: number): PairResult {
 
   // 按维度输出详细问题
   const dimensions = [
-    { name: '🛡️ 类型安全', data: deep.typeSafety },
+    { name: '🛡 类型安全', data: deep.typeSafety },
     { name: '🔧 错误处理', data: deep.errorHandling },
-    { name: '⚡ 性能', data: deep.performance },
-    { name: '📖 可读性', data: deep.readability },
+    { name: ' 性能', data: deep.performance },
+    { name: ' 可读性', data: deep.readability },
     { name: '🧪 可测试性', data: deep.testability },
     { name: '🔒 安全性', data: deep.security },
   ]
@@ -378,7 +378,7 @@ function runDeepMode(code: string, round: number): PairResult {
   }
 
   // 架构建议
-  lines.push('### 🏗️ 架构建议')
+  lines.push('### 🏗 架构建议')
   if (avgScore >= 80) {
     lines.push('- 代码质量良好，保持当前实践')
     lines.push('- 考虑添加更多边界测试')
@@ -510,7 +510,7 @@ export const call: LocalCommandCall = async (args) => {
     } catch {
       return {
         type: 'text',
-        value: `❌ 无法读取文件: ${filePath}\n\n请确保文件路径正确且可访问。`,
+        value: ` 无法读取文件: ${filePath}\n\n请确保文件路径正确且可访问。`,
       }
     }
   } else {
@@ -577,7 +577,7 @@ async function fetchData(url) {
     `轮数: ${rounds}/${rounds}`,
     `建议数: ${allSuggestions.length}`,
     `可修复: ${allFixes.length}`,
-    autoFix ? '自动修复: ✅ 已启用' : '自动修复: ❌ 未启用',
+    autoFix ? '自动修复:  已启用' : '自动修复:  未启用',
     '',
     ...allResults,
     '',

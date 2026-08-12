@@ -28,10 +28,10 @@ export const call: LocalCommandCall = async (args) => {
   const parts = s.split(/\s+/)
   const cmd = parts[0]?.toLowerCase() || 'help'
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Environment Diff', '', '📖 Usage: ', '  /env-diff                        Compare all env files', '  /env-diff <file1> <file2>       Compare two files', '  /env-diff missing               Show missing vars', '  /env-diff extra                 Show extra vars', '  /env-diff shared                Show shared vars', '  /env-diff template              Generate .env.template', '  /env-diff validate              Validate required vars', '  /env-diff sync <from> <to>      Sync vars between files', '  /env-diff export                Export as shell script', '  /env-diff import <file>         Import from file', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['🔍 环境变量对比', '', '📖 用法：', '  /env-diff                        比较所有环境文件', '  /env-diff <文件1> <文件2>       比较两个文件', '  /env-diff missing               显示缺失变量', '  /env-diff extra                 显示多余变量', '  /env-diff shared                显示共享变量', '  /env-diff template              生成 .env.template', '  /env-diff validate              验证必需变量', '  /env-diff sync <源> <目标>      同步变量', '  /env-diff export                导出为 shell 脚本', '  /env-diff import <文件>         从文件导入', ''].join('\n') }
 
   const envFiles = getEnvFiles()
-  if (envFiles.length === 0) return { type: 'text', value: 'No .env files found' }
+  if (envFiles.length === 0) return { type: 'text', value: 'ℹ️ 未找到 .env 文件' }
 
   if (cmd === 'missing' || cmd === 'diff') {
     if (parts.length >= 3) {
@@ -40,20 +40,20 @@ export const call: LocalCommandCall = async (args) => {
       const keys1 = new Set(vars1.map(v => v.key)); const keys2 = new Set(vars2.map(v => v.key))
       const missing = [...keys1].filter(k => !keys2.has(k))
       const extra = [...keys2].filter(k => !keys1.has(k))
-      const lines = ['Diff: ' + file1 + ' vs ' + file2, '====================', '', 'Missing in ' + file2 + ' (' + missing.length + '):']
+      const lines = ['🔍 对比：' + file1 + ' vs ' + file2, '═════════════════════', '', '❌ ' + file2 + ' 中缺失（' + missing.length + '）：']
       missing.forEach(k => lines.push('  - ' + k))
-      lines.push('', 'Extra in ' + file2 + ' (' + extra.length + '):')
+      lines.push('', '➕ ' + file2 + ' 中多余（' + extra.length + '）：')
       extra.forEach(k => lines.push('  + ' + k))
       return { type: 'text', value: lines.join('\n') }
     }
     const allVars: EnvVar[] = []
     envFiles.forEach(f => allVars.push(...parseEnvFile(f)))
     const allKeys = [...new Set(allVars.map(v => v.key))]
-    const lines = ['Env File Comparison:', '=====================', '', 'Files: ' + envFiles.join(', '), '']
+    const lines = ['📋 环境文件对比', '═══════════════', '', '📁 文件：' + envFiles.join(', '), '']
     allKeys.forEach(key => {
       const inFiles = envFiles.filter(f => parseEnvFile(f).some(v => v.key === key))
-      const status = inFiles.length === envFiles.length ? '[OK]' : '[PARTIAL]'
-      lines.push(status + ' ' + key + ' (' + inFiles.length + '/' + envFiles.length + ')')
+      const status = inFiles.length === envFiles.length ? '✅' : '⚠️'
+      lines.push(status + ' ' + key + '（' + inFiles.length + '/' + envFiles.length + '）')
     })
     return { type: 'text', value: lines.join('\n') }
   }
@@ -65,8 +65,8 @@ export const call: LocalCommandCall = async (args) => {
     envFiles.filter(f => f !== '.env').forEach(f => allVars.push(...parseEnvFile(f)))
     const allKeys = new Set(allVars.map(v => v.key))
     const missing = [...baseKeys].filter(k => !allKeys.has(k))
-    if (missing.length === 0) return { type: 'text', value: '[OK] No missing vars' }
-    return { type: 'text', value: 'Missing vars (' + missing.length + '):\n' + missing.join('\n') }
+    if (missing.length === 0) return { type: 'text', value: '✅ 无缺失变量' }
+    return { type: 'text', value: '❌ 缺失变量（' + missing.length + '）：\n' + missing.join('\n') }
   }
 
   if (cmd === 'extra') {
@@ -75,8 +75,8 @@ export const call: LocalCommandCall = async (args) => {
     const allVars: EnvVar[] = []
     envFiles.filter(f => f !== '.env').forEach(f => allVars.push(...parseEnvFile(f)))
     const extra = [...new Set(allVars.map(v => v.key))].filter(k => !baseKeys.has(k))
-    if (extra.length === 0) return { type: 'text', value: '[OK] No extra vars' }
-    return { type: 'text', value: 'Extra vars (' + extra.length + '):\n' + extra.join('\n') }
+    if (extra.length === 0) return { type: 'text', value: '✅ 无多余变量' }
+    return { type: 'text', value: '⚠️ 多余变量（' + extra.length + '）：\n' + extra.join('\n') }
   }
 
   if (cmd === 'shared') {
@@ -85,39 +85,39 @@ export const call: LocalCommandCall = async (args) => {
     const keyCounts: Record<string, string[]> = {}
     allVars.forEach(v => { if (!keyCounts[v.key]) keyCounts[v.key] = []; keyCounts[v.key].push(v.source) })
     const shared = Object.entries(keyCounts).filter(([_, files]) => new Set(files).size > 1)
-    if (shared.length === 0) return { type: 'text', value: 'No shared vars' }
-    const lines = ['Shared Vars:', '=============', '']
+    if (shared.length === 0) return { type: 'text', value: 'ℹ️ 无共享变量' }
+    const lines = ['📋 共享变量', '═══════════', '']
     shared.forEach(([k, files]) => lines.push(k + ': ' + [...new Set(files)].join(', ')))
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'template') {
     const vars = parseEnvFile('.env')
-    if (vars.length === 0) return { type: 'text', value: 'No .env file found' }
-    const lines = ['# Environment Template', '# Copy to .env.local and fill in values', '']
+    if (vars.length === 0) return { type: 'text', value: '❌ 未找到 .env 文件' }
+    const lines = ['# 环境变量模板', '# 复制到 .env.local 并填入值', '']
     vars.forEach(v => lines.push(v.key + '='))
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'validate') {
     const required = parts.slice(1)
-    if (required.length === 0) return { type: 'text', value: 'Usage: /env-diff validate <key1> [key2] ...' }
+    if (required.length === 0) return { type: 'text', value: '📖 用法：/env-diff validate <键名1> [键名2] ...' }
     const env = parseEnvFile('.env')
     const envKeys = new Set(env.map(v => v.key))
-    const lines = ['Validation:', '============', '']
-    required.forEach(k => lines.push((envKeys.has(k) ? '[OK]' : '[MISSING]') + ' ' + k))
+    const lines = ['🔍 验证结果', '═══════════', '']
+    required.forEach(k => lines.push((envKeys.has(k) ? '✅' : '⚠️') + ' ' + k))
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'sync') {
     const from = parts[1]; const to = parts[2]
-    if (!from || !to) return { type: 'text', value: 'Usage: /env-diff sync <from> <to>' }
+    if (!from || !to) return { type: 'text', value: '📖 用法：/env-diff sync <源> <目标>' }
     const fromVars = parseEnvFile(from)
     const toVars = parseEnvFile(to)
     const toKeys = new Set(toVars.map(v => v.key))
     const missing = fromVars.filter(v => !toKeys.has(v.key))
-    if (missing.length === 0) return { type: 'text', value: '[OK] All vars synced' }
-    return { type: 'text', value: 'Missing in ' + to + ' (' + missing.length + '):\n' + missing.map(v => v.key).join('\n') }
+    if (missing.length === 0) return { type: 'text', value: '✅ 所有变量已同步' }
+    return { type: 'text', value: '❌ ' + to + ' 中缺失（' + missing.length + '）：\n' + missing.map(v => v.key).join('\n') }
   }
 
   if (cmd === 'export') {
@@ -128,17 +128,17 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'import') {
     const file = parts[1]
-    if (!file || !existsSync(file)) return { type: 'text', value: 'File not found: ' + file }
+    if (!file || !existsSync(file)) return { type: 'text', value: '❌ 文件未找到：' + file }
     const vars = parseEnvFile(file)
-    return { type: 'text', value: 'Imported ' + vars.length + ' vars from ' + file }
+    return { type: 'text', value: '✅ 已从 ' + file + ' 导入 ' + vars.length + ' 个变量' }
   }
 
-  return { type: 'text', value: 'Unknown: ' + cmd }
+  return { type: 'text', value: '❌ 未知命令：' + cmd }
 }
 
 const envDiff: Command = {
   type: 'local', name: 'env-diff',
-  description: 'Env diff - compare/missing/extra/shared/template/validate/sync/export/import',
+  description: '环境变量对比 - 比较/缺失/多余/共享/模板/验证/同步/导出/导入',
   aliases: '/env-diff, /envd, /env-compare'.split(','),
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

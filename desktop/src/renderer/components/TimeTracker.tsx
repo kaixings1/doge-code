@@ -105,7 +105,7 @@ export function TimeTracker() {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', fontSize: '12px' }}>
       {/* 标题栏 */}
       <div style={{ padding: '8px 12px', borderBottom: `1px solid ${c.borderSubtle}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontWeight: 600, color: c.text }}>⏱️ 时间追踪</span>
+        <span style={{ fontWeight: 600, color: c.text }}>⏱ 时间追踪</span>
         <span style={{ color: c.textFaint, fontSize: '11px' }}>
           {isRunning ? `进行中: ${formatDuration(elapsedSeconds)}` : '就绪'}
         </span>

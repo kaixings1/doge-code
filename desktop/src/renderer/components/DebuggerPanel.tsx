@@ -179,9 +179,9 @@ export function DebuggerPanel({ cwd, theme, onClose, onNavigateTo, onBreakpoints
       try {
         const res = await api?.debugEvaluate?.({ sessionId: activeSessionId, expression: expr })
         if (res?.success) results[expr] = res.result || 'nil'
-        else results[expr] = `⚠ ${res?.error || '求值失败'}`
+        else results[expr] = ` ${res?.error || '求值失败'}`
       } catch {
-        results[expr] = '⚠ 求值失败'
+        results[expr] = ' 求值失败'
       }
     }))
     setWatchResults(results)
@@ -288,7 +288,7 @@ export function DebuggerPanel({ cwd, theme, onClose, onNavigateTo, onBreakpoints
         } catch { fail++ }
       }
       if (fail > 0) setError(`方案已加载：${ok} 个断点已应用，${fail} 个失败（文件可能已不存在）`)
-      else setError(`✅ 方案已加载并应用 ${ok} 个断点`)
+      else setError(` 方案已加载并应用 ${ok} 个断点`)
       refreshBreakpoints()
     }
   }, [activeSessionId, onBreakpointsChange, refreshBreakpoints])
@@ -306,7 +306,7 @@ export function DebuggerPanel({ cwd, theme, onClose, onNavigateTo, onBreakpoints
       const api = window.dogeAPI as Record<string, any>
       const res = await api?.debugSchemeExport?.({ name, breakpoints: breakpoints.map(b => ({ file: b.file, line: b.line, condition: b.condition })) })
       if (res?.success) {
-        setError(`✅ 方案已导出: ${res.path}`)
+        setError(` 方案已导出: ${res.path}`)
         refreshFileSchemes()
       } else {
         setError(res?.error || '导出失败')
@@ -333,7 +333,7 @@ export function DebuggerPanel({ cwd, theme, onClose, onNavigateTo, onBreakpoints
       const api = window.dogeAPI as Record<string, any>
       const res = await api?.debugSnapshotSave?.({ sessionId: activeSessionId, name, watchExpressions })
       if (res?.success) {
-        setError(`✅ 会话快照已保存: ${res.path}`)
+        setError(` 会话快照已保存: ${res.path}`)
         refreshSnapshots()
         setShowSnapshotSave(false)
         setSnapshotName('')
@@ -387,7 +387,7 @@ export function DebuggerPanel({ cwd, theme, onClose, onNavigateTo, onBreakpoints
               if (r?.success) ok++
             } catch { /* ignore */ }
           }
-          setError(`✅ 快照「${res.name || fileName}」已恢复：${bps.length} 个断点，${ok} 个已应用`)
+          setError(` 快照「${res.name || fileName}」已恢复：${bps.length} 个断点，${ok} 个已应用`)
           setActiveTab('sessions')
         } else {
           setError(startRes?.error || '会话启动失败')
@@ -408,7 +408,7 @@ export function DebuggerPanel({ cwd, theme, onClose, onNavigateTo, onBreakpoints
       if (res?.success && res.breakpoints) {
         setBreakpoints(res.breakpoints)
         onBreakpointsChange?.(res.breakpoints)
-        setError(`✅ 已从文件导入方案「${res.name || fileName}」(${res.breakpoints.length} 个断点)`)
+        setError(` 已从文件导入方案「${res.name || fileName}」(${res.breakpoints.length} 个断点)`)
         if (activeSessionId && res.breakpoints.length > 0) {
           let ok = 0
           for (const bp of res.breakpoints) {
@@ -419,7 +419,7 @@ export function DebuggerPanel({ cwd, theme, onClose, onNavigateTo, onBreakpoints
               if (r?.success) ok++
             } catch { /* ignore */ }
           }
-          setError(`✅ 已导入 ${res.breakpoints.length} 个断点，${ok} 个已应用到当前会话`)
+          setError(` 已导入 ${res.breakpoints.length} 个断点，${ok} 个已应用到当前会话`)
           refreshBreakpoints()
         }
         setShowFileSchemes(false)
@@ -523,7 +523,7 @@ export function DebuggerPanel({ cwd, theme, onClose, onNavigateTo, onBreakpoints
                 style={{ padding: '0 2px', border: 'none', background: 'transparent', color: c.accent, cursor: 'pointer', fontSize: '8px', flexShrink: 0 }}
                 title={isExpanded ? '收起' : '展开查看对象属性'}
               >
-                {loading ? '⏳' : isExpanded ? '▼' : '▶'}
+                {loading ? '' : isExpanded ? '▼' : '▶'}
               </button>
             ) : (
               <span style={{ width: '12px', flexShrink: 0 }} />

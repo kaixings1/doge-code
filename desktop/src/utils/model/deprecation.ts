@@ -97,5 +97,5 @@ export function getModelDeprecationWarning(
     return null
   }
 
-  return `⚠ ${info.modelName} 将于 ${info.retirementDate} 退役。请考虑切换到更新的模型。`
+  return ` ${info.modelName} 将于 ${info.retirementDate} 退役。请考虑切换到更新的模型。`
 }

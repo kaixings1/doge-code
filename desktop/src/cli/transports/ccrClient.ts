@@ -152,7 +152,7 @@ export function accumulateStreamEvents(
         break
       }
       case 'content_block_delta': {
-        // ✅ 修改点1：同时允许 text_delta 和 thinking_delta 通过
+        //  修改点1：同时允许 text_delta 和 thinking_delta 通过
         if (
           msg.event.delta.type !== 'text_delta' &&
           msg.event.delta.type !== 'thinking_delta'
@@ -167,7 +167,7 @@ export function accumulateStreamEvents(
           break
         }
         const chunks = (blocks[msg.event.index] ??= [])
-        // ✅ 修改点2：从 delta 中提取正确的文本字段
+        //  修改点2：从 delta 中提取正确的文本字段
         // 对于 thinking_delta，提取 thinking 字段；对于 text_delta，提取 text 字段
         const text =
           msg.event.delta.type === 'thinking_delta'
@@ -674,7 +674,7 @@ export class CCRClient {
    * 当前实例 — 立即退出。
    */
   private handleEpochMismatch(): never {
-    logForDebugging('⏳ CCRClient: Epoch 不匹配 (409)，正在关闭', {
+    logForDebugging(' CCRClient: Epoch 不匹配 (409)，正在关闭', {
       level: 'error',
     })
     logForDiagnosticsNoPII('error', 'cli_worker_epoch_mismatch')

@@ -195,10 +195,10 @@ SpinnerAnimationRow.animate()
 
 | Metric | Value | Status |
 |--------|-------|-------|
-| Cyclomatic Complexity (render) | 3 | ✅ Low (<5) |
-| Cyclomatic Complexity (animate) | 7 | ⚠️ Medium (5-10) |
-| Nesting Depth | 4 | ⚠️ Medium (>3) |
-| Lines of Code | 142 | ℹ️ Appropriate |
+| Cyclomatic Complexity (render) | 3 |  Low (<5) |
+| Cyclomatic Complexity (animate) | 7 |  Medium (5-10) |
+| Nesting Depth | 4 |  Medium (>3) |
+| Lines of Code | 142 | ℹ Appropriate |
 
 ### Potential Issues
 
@@ -1425,10 +1425,10 @@ SpinnerAnimationRow.animate()
 
 | Metric | Value | Status |
 |--------|-------|-------|
-| Cyclomatic Complexity (render) | 3 | ✅ Low (<5) |
-| Cyclomatic Complexity (animate) | 7 | ⚠️ Medium (5-10) |
-| Nesting Depth | 4 | ⚠️ Medium (>3) |
-| Lines of Code | 142 | ℹ️ Appropriate |
+| Cyclomatic Complexity (render) | 3 |  Low (<5) |
+| Cyclomatic Complexity (animate) | 7 |  Medium (5-10) |
+| Nesting Depth | 4 |  Medium (>3) |
+| Lines of Code | 142 | ℹ Appropriate |
 
 ### Potential Issues
 
@@ -1960,15 +1960,15 @@ private jsonifyContext(context: string): string {
 ### 典型使用场景
 
 - 📊 **"帮我分析一下项目的架构"** → 依赖关系图 + 组件结构
-- 🔍 **"找出所有使用了某个接口的模块"** → 导入追踪
-- ⚠️ **"代码质量评估报告"** → 复杂度指标 + 异味检测  
+-  **"找出所有使用了某个接口的模块"** → 导入追踪
+-  **"代码质量评估报告"** → 复杂度指标 + 异味检测  
 - 🎯 **"这个函数是怎么调用的？"** → 调用链分析
 
 ### 输出特点
 
-- ✅ **详细准确** - 完整的类型信息、调用关系
-- ✅ **可视化强** - Mermaid 图表、Call Graph 渲染
-- ✅ **可操作** - 具体问题 + 改进建议
-- ✅ **格式灵活** - Markdown（可读）+ JSON（机器解析）
+-  **详细准确** - 完整的类型信息、调用关系
+-  **可视化强** - Mermaid 图表、Call Graph 渲染
+-  **可操作** - 具体问题 + 改进建议
+-  **格式灵活** - Markdown（可读）+ JSON（机器解析）
 
 ---

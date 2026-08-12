@@ -2244,7 +2244,7 @@ export function REPL({
     // If sandboxing is enabled (setting.sandbox is defined, initialise the manager)
     SandboxManager.initialize(sandboxAskCallback).catch(err => {
       // Initialization/validation failed - display error and exit
-      process.stderr.write(`\n❌ Sandbox Error: ${errorMessage(err)}\n`);
+      process.stderr.write(`\n Sandbox Error: ${errorMessage(err)}\n`);
       gracefulShutdownSync(1, 'other');
     });
   }
@@ -3806,7 +3806,7 @@ export function REPL({
       // 使用 ref 获取当前对话框状态，避免过时闭包
       focusedInputDialogRef.current === undefined && idleTimeSinceResponse >= getGlobalConfig().messageIdleNotifThresholdMs) {
         void sendNotification({
-          message: '⏳ Claude 正在等待您的输入',
+          message: ' Claude 正在等待您的输入',
           notificationType: 'idle_prompt'
         }, terminal);
       }

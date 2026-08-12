@@ -1,7 +1,7 @@
 export async function call(args: string, context: any): Promise<string> {
   if (!args || args.trim() === '') {
     return [
-      '🗄️ 数据库工具',
+      '🗄 数据库工具',
       '',
       '用法:',
       '  /database schema <db>           查看 Schema（表结构 + 索引 + 关系）',
@@ -225,7 +225,7 @@ function previewTableData(dbPath: string, tableName: string): string {
 
     return lines.join('\n')
   } catch (error) {
-    return `❌ 预览失败: ${error}`
+    return ` 预览失败: ${error}`
   }
 }
 
@@ -255,10 +255,10 @@ function executeQuery(dbPath: string, sql: string): string {
       return lines.join('\n')
     } else {
       const result = db.run(sql)
-      return `## ✅ 执行成功\n\n影响行数: ${result?.changes ?? 0}`
+      return `##  执行成功\n\n影响行数: ${result?.changes ?? 0}`
     }
   } catch (error) {
-    return `❌ 查询失败: ${error}`
+    return ` 查询失败: ${error}`
   }
 }
 
@@ -286,7 +286,7 @@ function generateIndexes(dbPath: string): string {
 
     return lines.join('\n')
   } catch (error) {
-    return `❌ 索引查询失败: ${error}`
+    return ` 索引查询失败: ${error}`
   }
 }
 
@@ -326,7 +326,7 @@ function generateFKRelationships(dbPath: string): string {
 
     return lines.join('\n')
   } catch (error) {
-    return `❌ 外键查询失败: ${error}`
+    return ` 外键查询失败: ${error}`
   }
 }
 
@@ -381,7 +381,7 @@ function generateStats(dbPath: string): string {
       }),
     ].join('\n')
   } catch (error) {
-    return `❌ 统计失败: ${error}`
+    return ` 统计失败: ${error}`
   }
 }
 
@@ -412,8 +412,8 @@ function exportTableData(dbPath: string, tableName: string, format: string): str
       fs.writeFileSync(exportPath, JSON.stringify(rows, null, 2), 'utf-8')
     }
 
-    return `✅ 已导出 ${rows.length} 行数据到 ${exportPath}`
+    return ` 已导出 ${rows.length} 行数据到 ${exportPath}`
   } catch (error) {
-    return `❌ 导出失败: ${error}`
+    return ` 导出失败: ${error}`
   }
 }

@@ -982,7 +982,7 @@ function PromptInput({
     setSuggestionsStateRaw(prev => typeof updater === 'function' ? updater(prev) : updater);
   }, []);
   const onSubmit = useCallback(async (inputParam: string, isSubmittingSlashCommand = false) => {
-    // Emoji shortcode replacement (e.g. :heart: → ❤️) — 更新日志 2.1.217
+    // Emoji shortcode replacement (e.g. :heart: → ) — 更新日志 2.1.217
     try {
       const { getEmojiAutocompleter } = require('../../features/emojiAutocomplete.js') as typeof import('../../features/emojiAutocomplete.js')
       inputParam = getEmojiAutocompleter().replaceShortcodes(inputParam)

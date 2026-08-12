@@ -127,7 +127,7 @@ function renderHelp(): string {
     '  --staged           查看已暂存的变更（git diff --staged）',
     '  --file <路径>      查看特定文件的变更',
     '  --commits <n>      查看最近 n 次提交的变更（默认 1）',
-    '📖 用法:   --help             显示帮助',
+    ' 用法:   --help             显示帮助',
     '',
     '示例:',
     '  /diff-mode',
@@ -175,19 +175,19 @@ export const call: LocalCommandCall = async (args) => {
       if (err.stdout) {
         diffText = err.stdout
       } else {
-        return { type: 'text', value: `❌ 无法获取 diff: ${err instanceof Error ? err.message : String(err)}` }
+        return { type: 'text', value: ` 无法获取 diff: ${err instanceof Error ? err.message : String(err)}` }
       }
     }
 
     if (!diffText.trim()) {
-      return { type: 'text', value: '✅ 没有检测到代码变更（工作目录干净）。' }
+      return { type: 'text', value: ' 没有检测到代码变更（工作目录干净）。' }
     }
 
     const sideBySide = parseUnifiedDiff(diffText)
     return { type: 'text', value: sideBySide }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
-    return { type: 'text', value: `❌ Diff 失败: ${message}` }
+    return { type: 'text', value: ` Diff 失败: ${message}` }
   }
 }
 
