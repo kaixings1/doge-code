@@ -61,7 +61,7 @@ export const call: LocalCommandCall = async (args) => {
           if (l.includes('TODO') || l.includes('FIXME')) issues.push('第 ' + (i + 1) + ' 行：TODO/FIXME 标记')
           if (l.includes('eval(')) issues.push('第 ' + (i + 1) + ' 行：使用 eval()（安全风险）')
           if (l.includes('innerHTML')) issues.push('第 ' + (i + 1) + ' 行：使用 innerHTML（XSS 风险）')
-          if (l.trim().length > 120) issues.push('Line ' + (i + 1) + ': long line (' + l.trim().length + ' chars)')
+          if (l.trim().length > 120) issues.push('第 ' + (i + 1) + ' 行：行长 (' + l.trim().length + ' 字符)')
         }
       })
       return { type: 'text', value: issues.length > 0 ? '潜在问题（' + issues.length + '）：\n' + issues.join('\n') : '✅ 未发现明显问题' }
@@ -92,11 +92,11 @@ export const call: LocalCommandCall = async (args) => {
       '================================',
       '',
       '代码质量：',
-      '  [ ] No console.log statements',
-      '  [ ] No any types without justification',
-      '  [ ] No TODO/FIXME markers',
-      '  [ ] Lines under 120 characters',
-      '  [ ] Functions under 50 lines',
+      '  [ ] 无 console.log 语句',
+      '  [ ] any 类型需有合理理由',
+      '  [ ] 无 TODO/FIXME 标记',
+      '  [ ] 行长度不超过 120 字符',
+      '  [ ] 函数长度不超过 50 行',
       '',
       '安全：',
       '  [ ] 不使用 eval() 或类似函数',

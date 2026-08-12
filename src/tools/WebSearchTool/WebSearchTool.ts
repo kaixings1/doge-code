@@ -1668,6 +1668,248 @@ const generalSearchProviders: Provider[] = [
     }
   },
   {
+    name: 'Google 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.google.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Google 搜索：${q}`, url, snippet: '点击链接在 Google 中查看搜索结果', source: 'google' }]
+    }
+  },
+  {
+    name: 'Bing 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.bing.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Bing 搜索：${q}`, url, snippet: '点击链接在 Bing 中查看搜索结果', source: 'bing' }]
+    }
+  },
+  {
+    name: '百度搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.baidu.com/s?wd=${encodeURIComponent(q)}`
+      return [{ title: `百度搜索：${q}`, url, snippet: '点击链接在百度中查看搜索结果', source: 'baidu' }]
+    }
+  },
+  {
+    name: 'Bing 国际搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.bing.com/search?q=${encodeURIComponent(q)}&setlang=en`
+      return [{ title: `Bing 搜索：${q}`, url, snippet: '点击链接在 Bing（国际版）中查看搜索结果', source: 'bing-intl' }]
+    }
+  },
+  {
+    name: 'DuckDuckGo 网页搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://duckduckgo.com/?q=${encodeURIComponent(q)}`
+      return [{ title: `DuckDuckGo 搜索：${q}`, url, snippet: '点击链接在 DuckDuckGo 中查看搜索结果', source: 'ddg-web' }]
+    }
+  },
+  {
+    name: 'Stack Overflow 搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://api.stackexchange.com/2.3/search/advanced?order=desc&sort=votes&q=${encodeURIComponent(q)}&site=stackoverflow&pagesize=8`
+        const j = await fetchJson(url, signal)
+        if (!j.items || !Array.isArray(j.items)) return []
+        return j.items.slice(0, 8).map((it: any) => ({
+          title: it.title || 'Stack Overflow 问题',
+          url: it.link || '',
+          snippet: (it.tags || []).slice(0, 5).join(', ') + (it.is_answered ? ' [已解决]' : ''),
+          source: 'stackoverflow'
+        }))
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'NPM 包搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://registry.npmjs.org/-/v1/search?text=${encodeURIComponent(q)}&size=8`
+        const j = await fetchJson(url, signal)
+        if (!j.objects || !Array.isArray(j.objects)) return []
+        return j.objects.slice(0, 8).map((it: any) => ({
+          title: `${it.package?.name || 'unknown'} (v${it.package?.version || '?'})`,
+          url: `https://www.npmjs.com/package/${it.package?.name || ''}`,
+          snippet: (it.package?.description || '').slice(0, 120),
+          source: 'npm'
+        }))
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'PyPI 包搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://pypi.org/pypi/${encodeURIComponent(q)}/json`
+        const j = await fetchJson(url, signal)
+        return [{
+          title: `${j.info?.name || q} (v${j.info?.version || '?'})`,
+          url: j.info?.package_url || `https://pypi.org/project/${encodeURIComponent(q)}`,
+          snippet: (j.info?.summary || j.info?.description || '').slice(0, 160),
+          source: 'pypi'
+        }]
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'Docker Hub 搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://hub.docker.com/v2/search/repositories/?query=${encodeURIComponent(q)}&page_size=8`
+        const j = await fetchJson(url, signal)
+        if (!j.results || !Array.isArray(j.results)) return []
+        return j.results.slice(0, 8).map((it: any) => ({
+          title: `${it.name || 'unknown'}:${it.tag || 'latest'}`,
+          url: `https://hub.docker.com/r/${it.name || ''}`,
+          snippet: (it.description || '').slice(0, 100),
+          source: 'docker'
+        }))
+      } catch { return [] }
+    }
+  },
+  {
+    name: '维基百科搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://zh.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(q)}`
+        const j = await fetchJson(url, signal)
+        if (j.title) {
+          return [{
+            title: j.title,
+            url: j.content_urls?.desktop?.page || `https://zh.wikipedia.org/wiki/${encodeURIComponent(q)}`,
+            snippet: (j.extract || '').slice(0, 200),
+            source: 'wikipedia'
+          }]
+        }
+        return []
+      } catch { return [] }
+    }
+  },
+  {
+    name: '知乎搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.zhihu.com/search?type=content&q=${encodeURIComponent(q)}`
+      return [{ title: `知乎搜索：${q}`, url, snippet: '点击链接在知乎中查看搜索结果', source: 'zhihu' }]
+    }
+  },
+  {
+    name: 'CSDN 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://so.csdn.net/so/search?q=${encodeURIComponent(q)}`
+      return [{ title: `CSDN 搜索：${q}`, url, snippet: '点击链接在 CSDN 中查看搜索结果', source: 'csdn' }]
+    }
+  },
+  {
+    name: '掘金搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://juejin.cn/search?query=${encodeURIComponent(q)}`
+      return [{ title: `掘金搜索：${q}`, url, snippet: '点击链接在掘金中查看搜索结果', source: 'juejin' }]
+    }
+  },
+  {
+    name: 'GitHub Topics',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://api.github.com/search/topics?q=${encodeURIComponent(q)}&per_page=8`
+        const j = await fetchJson(url, signal)
+        if (!j.items || !Array.isArray(j.items)) return []
+        return j.items.slice(0, 8).map((it: any) => ({
+          title: `Topic: ${it.name}`,
+          url: `https://github.com/topics/${it.name}`,
+          snippet: (it.description || 'GitHub 热门话题').slice(0, 100),
+          source: 'github-topics'
+        }))
+      } catch (e: any) {
+        if (e.message?.includes('403')) {
+          return [{ title: 'GitHub API 限流（60次/小时），请稍后再试', url: '', snippet: '', source: 'github-topics' }]
+        }
+        return []
+      }
+    }
+  },
+  {
+    name: 'GitHub Gist',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://api.github.com/search/gists?q=${encodeURIComponent(q)}&per_page=8`
+        const j = await fetchJson(url, signal)
+        if (!j.items || !Array.isArray(j.items)) return []
+        return j.items.slice(0, 8).map((it: any) => ({
+          title: `Gist: ${it.description || 'Untitled'}`,
+          url: it.html_url,
+          snippet: `by ${it.owner?.login || 'unknown'} | ${it.comments || 0} 条评论`,
+          source: 'github-gist'
+        }))
+      } catch (e: any) {
+        if (e.message?.includes('403')) {
+          return [{ title: 'GitHub API 限流（60次/小时），请稍后再试', url: '', snippet: '', source: 'github-gist' }]
+        }
+        return []
+      }
+    }
+  },
+  {
+    name: 'YouTube 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`
+      return [{ title: `YouTube 搜索：${q}`, url, snippet: '点击链接在 YouTube 中查看视频搜索结果', source: 'youtube' }]
+    }
+  },
+  {
+    name: 'NPM Trends',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://npmtrends.com/${encodeURIComponent(q)}`
+      return [{ title: `NPM 趋势：${q}`, url, snippet: '查看 NPM 包的下载趋势和 popularity 对比', source: 'npm-trends' }]
+    }
+  },
+  {
+    name: 'Package Phobia',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://packagephobia.com/result?p=${encodeURIComponent(q)}`
+      return [{ title: `安装大小：${q}`, url, snippet: '查看 npm 包的安装大小和依赖数量', source: 'packagephobia' }]
+    }
+  },
+  {
+    name: 'DevDocs 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://devdocs.io/#q=${encodeURIComponent(q)}`
+      return [{ title: `DevDocs 搜索：${q}`, url, snippet: '在 DevDocs 中搜索技术文档（支持多语言多框架）', source: 'devdocs' }]
+    }
+  },
+  {
+    name: 'MDN 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://developer.mozilla.org/zh-CN/search?q=${encodeURIComponent(q)}`
+      return [{ title: `MDN 搜索：${q}`, url, snippet: '在 MDN Web Docs 中搜索前端技术文档', source: 'mdn' }]
+    }
+  },
+  {
+    name: 'ChatGPT',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://chat.openai.com/?q=${encodeURIComponent(q)}`
+      return [{ title: `ChatGPT 搜索：${q}`, url, snippet: '在 ChatGPT 中搜索（需登录）', source: 'chatgpt' }]
+    }
+  },
+  {
     name: '韩小韩API搜索',
     offline: false,
     fetch: async (q, signal) => {
@@ -1709,7 +1951,2053 @@ const generalSearchProviders: Provider[] = [
     }
   },
   {
-    name: '离线通用搜索',
+    name: 'Hacker News 搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://hn.algolia.com/api/v1/search?query=${encodeURIComponent(q)}&tags=story&hitsPerPage=8`
+        const j = await fetchJson(url, signal)
+        if (!j.hits || !Array.isArray(j.hits)) return []
+        return j.hits.slice(0, 8).map((it: any) => ({
+          title: it.title || 'Hacker News 帖子',
+          url: it.url || `https://news.ycombinator.com/item?id=${it.objectID}`,
+          snippet: `👍 ${it.points || 0} | 💬 ${it.num_comments || 0} | ${(it.author || 'unknown')}`,
+          source: 'hackernews'
+        }))
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'Reddit 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.reddit.com/search/?q=${encodeURIComponent(q)}`
+      return [{ title: `Reddit 搜索：${q}`, url, snippet: '点击链接在 Reddit 中查看搜索结果', source: 'reddit' }]
+    }
+  },
+  {
+    name: 'Product Hunt 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.producthunt.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Product Hunt 搜索：${q}`, url, snippet: '发现新产品和工具', source: 'producthunt' }]
+    }
+  },
+  {
+    name: '阿里云搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.aliyun.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `阿里云搜索：${q}`, url, snippet: '点击链接在阿里云中查看搜索结果', source: 'aliyun' }]
+    }
+  },
+  {
+    name: '微信搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://weixin.sogou.com/weixin?type=2&query=${encodeURIComponent(q)}`
+      return [{ title: `微信搜索：${q}`, url, snippet: '搜索微信公众号文章', source: 'wechat' }]
+    }
+  },
+  {
+    name: '微博搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://s.weibo.com/weibo?q=${encodeURIComponent(q)}`
+      return [{ title: `微博搜索：${q}`, url, snippet: '点击链接在微博中查看搜索结果', source: 'weibo' }]
+    }
+  },
+  {
+    name: '小红书搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.xiaohongshu.com/search_result?keyword=${encodeURIComponent(q)}`
+      return [{ title: `小红书搜索：${q}`, url, snippet: '点击链接在小红书中查看搜索结果', source: 'xiaohongshu' }]
+    }
+  },
+  {
+    name: 'crates.io 搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://crates.io/api/v1/crates?q=${encodeURIComponent(q)}&per_page=8`
+        const j = await fetchJson(url, signal)
+        if (!j.crates || !Array.isArray(j.crates)) return []
+        return j.crates.slice(0, 8).map((it: any) => ({
+          title: `${it.name} (v${it.newest_version})`,
+          url: `https://crates.io/crates/${it.name}`,
+          snippet: (it.description || 'Rust 包').slice(0, 120),
+          source: 'crates'
+        }))
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'RubyGems 搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://rubygems.org/api/v1/search.json?query=${encodeURIComponent(q)}`
+        const j = await fetchJson(url, signal)
+        if (!Array.isArray(j)) return []
+        return j.slice(0, 8).map((it: any) => ({
+          title: `${it.name} (v${it.version || '?'})`,
+          url: `https://rubygems.org/gems/${it.name}`,
+          snippet: (it.description || 'Ruby gem').slice(0, 120),
+          source: 'rubygems'
+        }))
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'Packagist 搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://packagist.org/search.json?q=${encodeURIComponent(q)}`
+        const j = await fetchJson(url, signal)
+        if (!j.results || !Array.isArray(j.results)) return []
+        return j.results.slice(0, 8).map((it: any) => ({
+          title: `${it.name} (v${it.version || '?'})`,
+          url: `https://packagist.org/packages/${it.name}`,
+          snippet: (it.description || 'PHP 包').slice(0, 120),
+          source: 'packagist'
+        }))
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'Go Modules 搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://proxy.golang.org/search?q=${encodeURIComponent(q)}`
+        const j = await fetchJson(url, signal)
+        if (!j.Results || !Array.isArray(j.Results)) return []
+        return j.Results.slice(0, 8).map((it: any) => ({
+          title: `${it.Path} (v${it.Version || '?'})`,
+          url: `https://pkg.go.dev/${it.Path}`,
+          snippet: (it.Summary || 'Go 模块').slice(0, 120),
+          source: 'gomodules'
+        }))
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'NuGet 搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://api.nuget.org/v3/query?q=${encodeURIComponent(q)}&take=8`
+        const j = await fetchJson(url, signal)
+        if (!j.data || !Array.isArray(j.data)) return []
+        return j.data.slice(0, 8).map((it: any) => ({
+          title: `${it.id} (v${it.version || '?'})`,
+          url: it.normalizedVersion ? `https://www.nuget.org/packages/${it.id}/${it.normalizedVersion}` : `https://www.nuget.org/packages/${it.id}`,
+          snippet: (it.description || '.NET 包').slice(0, 120),
+          source: 'nuget'
+        }))
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'Maven 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://search.maven.org/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Maven 搜索：${q}`, url, snippet: '搜索 Java Maven 中央仓库', source: 'maven' }]
+    }
+  },
+  {
+    name: 'DocSearch / Algolia 文档搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://docsearch.algolia.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `文档搜索：${q}`, url, snippet: '在 Algolia DocSearch 中搜索技术文档', source: 'docsearch' }]
+    }
+  },
+  {
+    name: 'LibGen 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://libgen.is/search.php?req=${encodeURIComponent(q)}`
+      return [{ title: `LibGen 搜索：${q}`, url, snippet: '搜索电子书和学术文献', source: 'libgen' }]
+    }
+  },
+  {
+    name: 'Crossref 学术搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://api.crossref.org/works?query=${encodeURIComponent(q)}&rows=8`
+        const j = await fetchJson(url, signal)
+        if (!j.message?.items || !Array.isArray(j.message.items)) return []
+        return j.message.items.slice(0, 8).map((it: any) => ({
+          title: it.title?.[0] || '学术论文',
+          url: it.URL || `https://doi.org/${it.DOI}`,
+          snippet: [(it.author || [])?.slice(0, 3).map((a: any) => a.given + ' ' + a.family).join(', '), it['container-title']?.[0], it.published?.['date-parts']?.[0]?.slice(0, 3).join('-')].filter(Boolean).join(' | '),
+          source: 'crossref'
+        }))
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'arXiv 搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://export.arxiv.org/api/query?search_query=${encodeURIComponent(q)}&start=0&max_results=8`
+        const txt = await fetch(url, { signal }).then(r => r.text())
+        const entries = txt.match(/<entry>[\s\S]*?<\/entry>/g) || []
+        return entries.slice(0, 8).map((entry: string) => {
+          const title = (entry.match(/<title>([\s\S]*?)<\/title>/) || [])[1]?.trim() || 'arXiv 论文'
+          const link = (entry.match(/<id>(.*?)<\/id>/) || [])[1]?.trim() || ''
+          const summary = (entry.match(/<summary>([\s\S]*?)<\/summary>/) || [])[1]?.trim()?.slice(0, 120) || ''
+          return { title, url: link, snippet: summary, source: 'arxiv' }
+        })
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'Semantic Scholar 搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://api.semanticscholar.org/graph/v1/paper/search?query=${encodeURIComponent(q)}&fields=title,year,authors,venue&limit=8`
+        const j = await fetchJson(url, signal)
+        if (!j.data || !Array.isArray(j.data)) return []
+        return j.data.slice(0, 8).map((it: any) => ({
+          title: it.title || '学术论文',
+          url: it.url || `https://www.semanticscholar.org/paper/${it.paperId}`,
+          snippet: [it.year, it.authors?.slice(0, 3).map((a: any) => a.name).join(', '), it.venue].filter(Boolean).join(' | '),
+          source: 'semanticscholar'
+        }))
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'OpenAlex 学术搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://api.openalex.org/works?search=${encodeURIComponent(q)}&per-page=8`
+        const j = await fetchJson(url, signal)
+        if (!j.results || !Array.isArray(j.results)) return []
+        return j.results.slice(0, 8).map((it: any) => ({
+          title: it.title || '学术论文',
+          url: it.doi ? `https://doi.org/${it.doi}` : (it.id || ''),
+          snippet: [(it.authorships || [])?.slice(0, 3).map((a: any) => a.author?.display_name).filter(Boolean).join(', '), it.publication_year, it.host_venue?.name].filter(Boolean).join(' | '),
+          source: 'openalex'
+        }))
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'Hacker News 中文',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://hn.algolia.com/api/v1/search?query=${encodeURIComponent(q)}&tags=story&hitsPerPage=8`
+        const j = await fetchJson(url, signal)
+        if (!j.hits || !Array.isArray(j.hits)) return []
+        return j.hits.slice(0, 8).map((it: any) => ({
+          title: (it.title || 'HN 帖子') + ' [HN]',
+          url: it.url || `https://news.ycombinator.com/item?id=${it.objectID}`,
+          snippet: `👍 ${it.points || 0} | 💬 ${it.num_comments || 0}`,
+          source: 'hackernews'
+        }))
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'DuckDuckGo 热榜',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://duckduckgo.com/trending?q=${encodeURIComponent(q)}`
+      return [{ title: `DuckDuckGo 热榜：${q}`, url, snippet: '查看 DuckDuckGo  trending 搜索热榜', source: 'ddg-trending' }]
+    }
+  },
+  {
+    name: 'Wikipedia 英文',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(q)}`
+        const j = await fetchJson(url, signal)
+        if (j.title) {
+          return [{
+            title: j.title + ' [EN]',
+            url: j.content_urls?.desktop?.page || `https://en.wikipedia.org/wiki/${encodeURIComponent(q)}`,
+            snippet: (j.extract || '').slice(0, 200),
+            source: 'wikipedia-en'
+          }]
+        }
+        return []
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'GitHub Trending',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://github.com/trending?q=${encodeURIComponent(q)}`
+      return [{ title: `GitHub Trending：${q}`, url, snippet: '查看 GitHub 热门仓库趋势', source: 'github-trending' }]
+    }
+  },
+  {
+    name: 'GitHub Trending 语言',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://github.com/trending/${encodeURIComponent(q)}`
+      return [{ title: `GitHub Trending（${q}）：`, url, snippet: '查看 ' + q + ' 语言的热门仓库趋势', source: 'github-trending-lang' }]
+    }
+  },
+  {
+    name: '搜狗微信搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://weixin.sogou.com/weixin?type=1&query=${encodeURIComponent(q)}`
+      return [{ title: `搜狗微信搜索：${q}`, url, snippet: '搜索微信公众号', source: 'sogou-wechat' }]
+    }
+  },
+  {
+    name: '必应国际版',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.bing.com/search?q=${encodeURIComponent(q)}&cc=us&setlang=en`
+      return [{ title: `Bing 搜索（国际版）：${q}`, url, snippet: '点击链接在 Bing 国际版中查看搜索结果', source: 'bing-intl' }]
+    }
+  },
+  {
+    name: 'Yandex 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://yandex.com/search/?text=${encodeURIComponent(q)}`
+      return [{ title: `Yandex 搜索：${q}`, url, snippet: '点击链接在 Yandex 中查看搜索结果', source: 'yandex' }]
+    }
+  },
+  {
+    name: 'Quora 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.quora.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Quora 搜索：${q}`, url, snippet: '点击链接在 Quora 中查看搜索结果', source: 'quora' }]
+    }
+  },
+  {
+    name: 'Medium 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://medium.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Medium 搜索：${q}`, url, snippet: '搜索 Medium 技术文章', source: 'medium' }]
+    }
+  },
+  {
+    name: 'Stack Exchange 全站',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://api.stackexchange.com/2.3/search/advanced?order=desc&sort=votes&q=${encodeURIComponent(q)}&site=stackoverflow&pagesize=8`
+        const j = await fetchJson(url, signal)
+        if (!j.items || !Array.isArray(j.items)) return []
+        return j.items.slice(0, 8).map((it: any) => ({
+          title: it.title || 'Stack Exchange 问题',
+          url: it.link || '',
+          snippet: (it.tags || []).slice(0, 5).join(', ') + (it.is_answered ? ' [已解决]' : ''),
+          source: 'stackexchange'
+        }))
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'GitHub Code 搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://api.github.com/search/code?q=${encodeURIComponent(q)}&per_page=8`
+        const j = await fetchJson(url, signal)
+        if (!j.items || !Array.isArray(j.items)) return []
+        return j.items.slice(0, 8).map((it: any) => ({
+          title: `${it.name} @ ${it.repository?.full_name || 'unknown'}`,
+          url: it.html_url,
+          snippet: `📄 ${it.path || ''}`,
+          source: 'github-code'
+        }))
+      } catch (e: any) {
+        if (e.message?.includes('403')) {
+          return [{ title: 'GitHub API 限流（60次/小时），请稍后再试', url: '', snippet: '', source: 'github-code' }]
+        }
+        return []
+      }
+    }
+  },
+  {
+    name: 'Google Scholar 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://scholar.google.com/scholar?q=${encodeURIComponent(q)}`
+      return [{ title: `Google Scholar 搜索：${q}`, url, snippet: '搜索学术文献（需访问 Google）', source: 'google-scholar' }]
+    }
+  },
+  {
+    name: 'Kaggle 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.kaggle.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Kaggle 搜索：${q}`, url, snippet: '搜索 Kaggle 数据集和竞赛', source: 'kaggle' }]
+    }
+  },
+  {
+    name: 'AI 模型搜索（HuggingFace）',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://huggingface.co/api/models?search=${encodeURIComponent(q)}&limit=8`
+        const j = await fetchJson(url, signal)
+        if (!Array.isArray(j)) return []
+        return j.slice(0, 8).map((it: any) => ({
+          title: `${it.id} (${it.pipeline_tag || 'model'})`,
+          url: `https://huggingface.co/${it.id}`,
+          snippet: `⬇ ${it.downloads || 0} | 👍 ${it.likes || 0}`,
+          source: 'huggingface'
+        }))
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'Claude 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://claude.ai/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Claude 搜索：${q}`, url, snippet: '在 Claude 中搜索（需登录）', source: 'claude' }]
+    }
+  },
+  {
+    name: 'Gemini 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://gemini.google.com/app?q=${encodeURIComponent(q)}`
+      return [{ title: `Gemini 搜索：${q}`, url, snippet: '在 Google Gemini 中搜索（需登录）', source: 'gemini' }]
+    }
+  },
+  {
+    name: 'Perplexity 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://perplexity.ai/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Perplexity 搜索：${q}`, url, snippet: 'AI 驱动搜索（需登录）', source: 'perplexity' }]
+    }
+  },
+  {
+    name: 'Exa AI 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://exa.ai/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Exa AI 搜索：${q}`, url, snippet: 'AI 语义搜索引擎', source: 'exa' }]
+    }
+  },
+  {
+    name: 'SearxNG 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://search.sapti.me/search?q=${encodeURIComponent(q)}`
+      return [{ title: `SearxNG 搜索：${q}`, url, snippet: '元搜索引擎，聚合多源结果', source: 'searxng' }]
+    }
+  },
+  {
+    name: 'Brave 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://search.brave.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Brave 搜索：${q}`, url, snippet: '隐私优先搜索引擎', source: 'brave' }]
+    }
+  },
+  {
+    name: 'Ecosia 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.ecosia.org/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Ecosia 搜索：${q}`, url, snippet: '环保搜索引擎，收益用于植树', source: 'ecosia' }]
+    }
+  },
+  {
+    name: 'Startpage 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.startpage.com/do/dsearch?query=${encodeURIComponent(q)}`
+      return [{ title: `Startpage 搜索：${q}`, url, snippet: '匿名搜索引擎，保护隐私', source: 'startpage' }]
+    }
+  },
+  {
+    name: 'Kagi 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://kagi.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Kagi 搜索：${q}`, url, snippet: '高质量无广告搜索引擎（付费）', source: 'kagi' }]
+    }
+  },
+  {
+    name: 'Presearch 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://presearch.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Presearch 搜索：${q}`, url, snippet: '去中心化搜索引擎', source: 'presearch' }]
+    }
+  },
+  {
+    name: 'Swisscows 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://swisscows.com/en/web?query=${encodeURIComponent(q)}`
+      return [{ title: `Swisscows 搜索：${q}`, url, snippet: '瑞士隐私搜索引擎', source: 'swisscows' }]
+    }
+  },
+  {
+    name: 'WolframAlpha 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.wolframalpha.com/input?i=${encodeURIComponent(q)}`
+      return [{ title: `WolframAlpha 搜索：${q}`, url, snippet: '计算知识引擎，数学/科学/工程查询', source: 'wolframalpha' }]
+    }
+  },
+  {
+    name: 'WolframAlpha 中文',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.wolframalpha.com/input?i=${encodeURIComponent(q)}&language=zh`
+      return [{ title: `WolframAlpha（中文）：${q}`, url, snippet: '计算知识引擎，中文查询', source: 'wolframalpha-zh' }]
+    }
+  },
+  {
+    name: 'StackBlitz 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://stackblitz.com/search?query=${encodeURIComponent(q)}`
+      return [{ title: `StackBlitz 搜索：${q}`, url, snippet: '搜索在线 IDE 项目和模板', source: 'stackblitz' }]
+    }
+  },
+  {
+    name: 'CodePen 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://codepen.io/search/pens?q=${encodeURIComponent(q)}`
+      return [{ title: `CodePen 搜索：${q}`, url, snippet: '搜索前端代码片段和演示', source: 'codepen' }]
+    }
+  },
+  {
+    name: 'JSFiddle 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://jsfiddle.net/search/?q=${encodeURIComponent(q)}`
+      return [{ title: `JSFiddle 搜索：${q}`, url, snippet: '搜索 JS 代码片段', source: 'jsfiddle' }]
+    }
+  },
+  {
+    name: 'LeetCode 搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://leetcode-api-pied.vercel.app/problems?query=${encodeURIComponent(q)}`
+        const j = await fetchJson(url, signal)
+        if (j && Array.isArray(j)) {
+          return j.slice(0, 8).map((it: any) => ({
+            title: `${it.title || it.name || 'LeetCode 题目'} (${it.difficulty || ''})`,
+            url: `https://leetcode.com/problems/${it.slug || it.titleSlug || q}/`,
+            snippet: (it.description || '').slice(0, 100),
+            source: 'leetcode'
+          }))
+        }
+        return []
+      } catch { return [] }
+    }
+  },
+  {
+    name: '牛客网搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.nowcoder.com/search?type=question&query=${encodeURIComponent(q)}`
+      return [{ title: `牛客网搜索：${q}`, url, snippet: '搜索笔试/面试题', source: 'nowcoder' }]
+    }
+  },
+  {
+    name: '掘金热门',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://juejin.cn/search?query=${encodeURIComponent(q)}&type=hot`
+      return [{ title: `掘金热门：${q}`, url, snippet: '搜索掘金热门文章', source: 'juejin-hot' }]
+    }
+  },
+  {
+    name: 'SegmentFault 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://segmentfault.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `SegmentFault 搜索：${q}`, url, snippet: '搜索 SegmentFault 技术问答', source: 'segmentfault' }]
+    }
+  },
+  {
+    name: '开源中国搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.oschina.net/search?scope=blog&q=${encodeURIComponent(q)}`
+      return [{ title: `开源中国搜索：${q}`, url, snippet: '搜索开源中国博客/项目', source: 'oschina' }]
+    }
+  },
+  {
+    name: 'Gitee 搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://gitee.com/api/v5/search/repositories?q=${encodeURIComponent(q)}&per_page=8`
+        const j = await fetchJson(url, signal)
+        if (!Array.isArray(j)) return []
+        return j.slice(0, 8).map((it: any) => ({
+          title: `${it.full_name || it.name} (⭐ ${it.stargazers_count || 0})`,
+          url: it.html_url || `https://gitee.com/${it.name}`,
+          snippet: (it.description || 'Gitee 仓库').slice(0, 100),
+          source: 'gitee'
+        }))
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'Gitee GVP 搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://gitee.com/api/v5/search/repositories?q=${encodeURIComponent(q)}&per_page=8&sort=stars`
+        const j = await fetchJson(url, signal)
+        if (!Array.isArray(j)) return []
+        return j.slice(0, 8).map((it: any) => ({
+          title: `GVP: ${it.full_name || it.name}`,
+          url: it.html_url || `https://gitee.com/${it.name}`,
+          snippet: (it.description || 'Gitee GVP 项目').slice(0, 100),
+          source: 'gitee-gvp'
+        }))
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'GitCode 搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://gitcode.com/api/v5/search/repositories?q=${encodeURIComponent(q)}&per_page=8`
+        const j = await fetchJson(url, signal)
+        if (!Array.isArray(j)) return []
+        return j.slice(0, 8).map((it: any) => ({
+          title: `${it.full_name || it.name}`,
+          url: it.html_url || `https://gitcode.com/${it.name}`,
+          snippet: (it.description || 'GitCode 仓库').slice(0, 100),
+          source: 'gitcode'
+        }))
+      } catch { return [] }
+    }
+  },
+  {
+    name: '极狐GitLab搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://jihulab.com/api/v4/projects?search=${encodeURIComponent(q)}&per_page=8`
+        const j = await fetchJson(url, signal)
+        if (!Array.isArray(j)) return []
+        return j.slice(0, 8).map((it: any) => ({
+          title: `${it.path_with_namespace || it.name}`,
+          url: it.web_url || `https://jihulab.com/${it.path}`,
+          snippet: (it.description || '极狐GitLab 项目').slice(0, 100),
+          source: 'jihulab'
+        }))
+      } catch { return [] }
+    }
+  },
+  {
+    name: '腾讯云搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://cloud.tencent.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `腾讯云搜索：${q}`, url, snippet: '搜索腾讯云文档/市场/博客', source: 'tencent-cloud' }]
+    }
+  },
+  {
+    name: '华为云搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.huaweicloud.com/search?searchKey=${encodeURIComponent(q)}`
+      return [{ title: `华为云搜索：${q}`, url, snippet: '搜索华为云文档/产品/博客', source: 'huaweicloud' }]
+    }
+  },
+  {
+    name: '微信开发者社区',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://developers.weixin.qq.com/search?keyword=${encodeURIComponent(q)}`
+      return [{ title: `微信开发者社区：${q}`, url, snippet: '搜索微信开放文档和社区', source: 'wechat-devs' }]
+    }
+  },
+  {
+    name: '阿里云开发者社区',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://developer.aliyun.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `阿里云开发者社区：${q}`, url, snippet: '搜索阿里云开发者文章', source: 'aliyun-devs' }]
+    }
+  },
+  {
+    name: '腾讯云开发者社区',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://cloud.tencent.com/developer/services/search?keyword=${encodeURIComponent(q)}`
+      return [{ title: `腾讯云开发者社区：${q}`, url, snippet: '搜索腾讯云开发者文章', source: 'tencent-devs' }]
+    }
+  },
+  {
+    name: 'Dev.to 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://dev.to/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Dev.to 搜索：${q}`, url, snippet: '搜索 Dev.to 开发者博客', source: 'devto' }]
+    }
+  },
+  {
+    name: 'Hashnode 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://hashnode.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Hashnode 搜索：${q}`, url, snippet: '搜索 Hashnode 开发者博客', source: 'hashnode' }]
+    }
+  },
+  {
+    name: '稀土掘金AI搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://juejin.cn/search?query=${encodeURIComponent(q)}&type=ai`
+      return [{ title: `掘金AI搜索：${q}`, url, snippet: '掘金 AI 搜索', source: 'juejin-ai' }]
+    }
+  },
+  {
+    name: 'StackBlitz 热门',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://stackblitz.com/search?query=${encodeURIComponent(q)}&sort=popularity`
+      return [{ title: `StackBlitz 热门：${q}`, url, snippet: '搜索 StackBlitz 热门项目', source: 'stackblitz-hot' }]
+    }
+  },
+  {
+    name: 'CodePen 热门',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://codepen.io/search/pens?q=${encodeURIComponent(q)}&order=popularity`
+      return [{ title: `CodePen 热门：${q}`, url, snippet: '搜索 CodePen 热门作品', source: 'codepen-hot' }]
+    }
+  },
+  {
+    name: 'Glitch 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://glitch.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Glitch 搜索：${q}`, url, snippet: '搜索 Glitch 在线项目', source: 'glitch' }]
+    }
+  },
+  {
+    name: 'Replit 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://replit.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Replit 搜索：${q}`, url, snippet: '搜索 Replit 在线项目', source: 'replit' }]
+    }
+  },
+  {
+    name: 'Notion 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.notion.so/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Notion 搜索：${q}`, url, snippet: '搜索 Notion 模板和页面', source: 'notion' }]
+    }
+  },
+  {
+    name: '语雀搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.yuque.com/search?type=doc&q=${encodeURIComponent(q)}`
+      return [{ title: `语雀搜索：${q}`, url, snippet: '搜索语雀知识库', source: 'yuque' }]
+    }
+  },
+  {
+    name: '飞书文档搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.feishu.cn/search?q=${encodeURIComponent(q)}`
+      return [{ title: `飞书搜索：${q}`, url, snippet: '搜索飞书文档和知识库', source: 'feishu' }]
+    }
+  },
+  {
+    name: '腾讯文档搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://docs.qq.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `腾讯文档搜索：${q}`, url, snippet: '搜索腾讯文档', source: 'tencent-docs' }]
+    }
+  },
+  {
+    name: '金山文档搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.kdocs.cn/search?q=${encodeURIComponent(q)}`
+      return [{ title: `金山文档搜索：${q}`, url, snippet: '搜索金山文档', source: 'kingsoft-docs' }]
+    }
+  },
+  {
+    name: '百度学术搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://xueshu.baidu.com/s?wd=${encodeURIComponent(q)}`
+      return [{ title: `百度学术：${q}`, url, snippet: '搜索中文学术文献', source: 'baidu-xueshu' }]
+    }
+  },
+  {
+    name: '中国知网搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://kns.cnki.net/kns8/search?classid=YSTT4HG0&kw=${encodeURIComponent(q)}`
+      return [{ title: `知网搜索：${q}`, url, snippet: '搜索中国知网学术文献', source: 'cnki' }]
+    }
+  },
+  {
+    name: '万方数据搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.wanfangdata.com.cn/search/searchList.do?beetlansyId=${encodeURIComponent(q)}`
+      return [{ title: `万方数据：${q}`, url, snippet: '搜索万方学术文献', source: 'wanfang' }]
+    }
+  },
+  {
+    name: '人民网搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `http://search.people.com.cn/search?q=${encodeURIComponent(q)}`
+      return [{ title: `人民网搜索：${q}`, url, snippet: '搜索人民网新闻', source: 'people' }]
+    }
+  },
+  {
+    name: '新华网搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `http://www.xinhuanet.com/search?sKwd=${encodeURIComponent(q)}`
+      return [{ title: `新华网搜索：${q}`, url, snippet: '搜索新华网新闻', source: 'xinhua' }]
+    }
+  },
+  {
+    name: '澎湃新闻搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.thepaper.cn/searchResult?searchWord=${encodeURIComponent(q)}`
+      return [{ title: `澎湃新闻搜索：${q}`, url, snippet: '搜索澎湃新闻', source: 'thepaper' }]
+    }
+  },
+  {
+    name: '36氪搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://36kr.com/search/articles/${encodeURIComponent(q)}`
+      return [{ title: `36氪搜索：${q}`, url, snippet: '搜索 36氪 创投科技新闻', source: '36kr' }]
+    }
+  },
+  {
+    name: '虎嗅搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.huxiu.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `虎嗅搜索：${q}`, url, snippet: '搜索虎嗅商业科技资讯', source: 'huxiu' }]
+    }
+  },
+  {
+    name: 'IT之家搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.ithome.com/search/${encodeURIComponent(q)}`
+      return [{ title: `IT之家搜索：${q}`, url, snippet: '搜索 IT 之家科技资讯', source: 'ithome' }]
+    }
+  },
+  {
+    name: '少数派搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://sspai.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `少数派搜索：${q}`, url, snippet: '搜索少数派数字生活文章', source: 'sspai' }]
+    }
+  },
+  {
+    name: 'V2EX 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.v2ex.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `V2EX 搜索：${q}`, url, snippet: '搜索 V2EX 社区讨论', source: 'v2ex' }]
+    }
+  },
+  {
+    name: 'NGA 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://bbs.nga.cn/search.php?&q=${encodeURIComponent(q)}`
+      return [{ title: `NGA 搜索：${q}`, url, snippet: '搜索 NGA 玩家社区', source: 'nga' }]
+    }
+  },
+  {
+    name: '豆瓣搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.douban.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `豆瓣搜索：${q}`, url, snippet: '搜索豆瓣读书/电影/音乐', source: 'douban' }]
+    }
+  },
+  {
+    name: '哔哩哔哩搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://search.bilibili.com/all?keyword=${encodeURIComponent(q)}`
+      return [{ title: `B站搜索：${q}`, url, snippet: '搜索哔哩哔哩视频', source: 'bilibili' }]
+    }
+  },
+  {
+    name: '抖音搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.douyin.com/search/${encodeURIComponent(q)}`
+      return [{ title: `抖音搜索：${q}`, url, snippet: '搜索抖音短视频', source: 'douyin' }]
+    }
+  },
+  {
+    name: '快手搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.kuaishou.com/search/video?searchKey=${encodeURIComponent(q)}`
+      return [{ title: `快手搜索：${q}`, url, snippet: '搜索快手短视频', source: 'kuaishou' }]
+    }
+  },
+  {
+    name: 'AcFun 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.acfun.cn/search?query=${encodeURIComponent(q)}`
+      return [{ title: `AcFun 搜索：${q}`, url, snippet: '搜索 AcFun 视频', source: 'acfun' }]
+    }
+  },
+  {
+    name: '网易云音乐搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://music.163.com/#/search/m/?s=${encodeURIComponent(q)}`
+      return [{ title: `网易云音乐搜索：${q}`, url, snippet: '搜索网易云音乐', source: '163music' }]
+    }
+  },
+  {
+    name: 'QQ 音乐搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://y.qq.com/n/ryqq/search?w=${encodeURIComponent(q)}`
+      return [{ title: `QQ音乐搜索：${q}`, url, snippet: '搜索 QQ 音乐', source: 'qqmusic' }]
+    }
+  },
+  {
+    name: '酷狗音乐搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.kugou.com/yy/html/search.html#searchType=song&searchWord=${encodeURIComponent(q)}`
+      return [{ title: `酷狗音乐搜索：${q}`, url, snippet: '搜索酷狗音乐', source: 'kugou' }]
+    }
+  },
+  {
+    name: '猫眼电影搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://m.maoyan.com/ajax/search?kw=${encodeURIComponent(q)}`
+        const j = await fetchJson(url, signal)
+        if (j.movies?.list) {
+          return j.movies.list.slice(0, 8).map((it: any) => ({
+            title: it.nm || '电影',
+            url: `https://www.maoyan.com/films/${it.id}`,
+            snippet: (it.star || '').slice(0, 80),
+            source: 'maoyan'
+          }))
+        }
+        return []
+      } catch { return [] }
+    }
+  },
+  {
+    name: '豆瓣电影搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://search.douban.com/movie/subject_search?search_text=${encodeURIComponent(q)}`
+      return [{ title: `豆瓣电影：${q}`, url, snippet: '搜索豆瓣电影', source: 'douban-movie' }]
+    }
+  },
+  {
+    name: '豆瓣读书搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://search.douban.com/book/subject_search?search_text=${encodeURIComponent(q)}`
+      return [{ title: `豆瓣读书：${q}`, url, snippet: '搜索豆瓣读书', source: 'douban-book' }]
+    }
+  },
+  {
+    name: 'Runoob 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.runoob.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Runoob 搜索：${q}`, url, snippet: '搜索菜鸟教程', source: 'runoob' }]
+    }
+  },
+  {
+    name: 'W3Schools 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.w3schools.com/search/search.aspx?q=${encodeURIComponent(q)}`
+      return [{ title: `W3Schools 搜索：${q}`, url, snippet: '搜索 W3Schools 教程', source: 'w3schools' }]
+    }
+  },
+  {
+    name: 'GeeksforGeeks 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.geeksforgeeks.org/search/?q=${encodeURIComponent(q)}`
+      return [{ title: `GeeksforGeeks 搜索：${q}`, url, snippet: '搜索 GeeksforGeeks 算法/面试题', source: 'gfg' }]
+    }
+  },
+  {
+    name: '掘金小册搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://juejin.cn/books?q=${encodeURIComponent(q)}`
+      return [{ title: `掘金小册：${q}`, url, snippet: '搜索掘金小册', source: 'juejin-books' }]
+    }
+  },
+  {
+    name: 'HelloGitHub 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://github.com/521xueweihan/HelloGitHub/search?q=${encodeURIComponent(q)}`
+      return [{ title: `HelloGitHub 搜索：${q}`, url, snippet: '搜索 HelloGitHub 有趣项目', source: 'hellogithub' }]
+    }
+  },
+  {
+    name: 'OSINT 框架搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://github.com/search?q=${encodeURIComponent(q)}&type=repositories&s=stars&o=desc`
+      return [{ title: `OSINT/工具搜索：${q}`, url, snippet: '搜索 GitHub 高星工具项目', source: 'osint' }]
+    }
+  },
+  {
+    name: 'Awesome 列表搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://github.com/search?q=${encodeURIComponent(q)}&type=repositories&s=stars&o=desc&l=markdown`
+      return [{ title: `Awesome 列表搜索：${q}`, url, snippet: '搜索 GitHub Awesome 列表', source: 'awesome-lists' }]
+    }
+  },
+  {
+    name: 'CTF Wiki 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://ctf-wiki.org/search?q=${encodeURIComponent(q)}`
+      return [{ title: `CTF Wiki 搜索：${q}`, url, snippet: '搜索 CTF 知识库', source: 'ctf-wiki' }]
+    }
+  },
+  {
+    name: 'HuggingFace 模型搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://huggingface.co/models?search=${encodeURIComponent(q)}`
+      return [{ title: `HuggingFace 模型：${q}`, url, snippet: '搜索 HuggingFace 模型', source: 'huggingface-models' }]
+    }
+  },
+  {
+    name: 'HuggingFace 数据集搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://huggingface.co/datasets?search=${encodeURIComponent(q)}`
+      return [{ title: `HuggingFace 数据集：${q}`, url, snippet: '搜索 HuggingFace 数据集', source: 'huggingface-datasets' }]
+    }
+  },
+  {
+    name: 'Kaggle 数据集搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.kaggle.com/search?q=${encodeURIComponent(q)}&type=datasets`
+      return [{ title: `Kaggle 数据集：${q}`, url, snippet: '搜索 Kaggle 数据集', source: 'kaggle-datasets' }]
+    }
+  },
+  {
+    name: 'UCI 数据集搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://archive.ics.uci.edu/datasets?search=${encodeURIComponent(q)}`
+      return [{ title: `UCI 数据集：${q}`, url, snippet: '搜索 UCI 机器学习数据集', source: 'uci' }]
+    }
+  },
+  {
+    name: 'Papers With Code 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://paperswithcode.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Papers With Code：${q}`, url, snippet: '搜索论文+代码实现', source: 'paperswithcode' }]
+    }
+  },
+  {
+    name: 'Overleaf 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.overleaf.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Overleaf 搜索：${q}`, url, snippet: '搜索 Overleaf LaTeX 模板', source: 'overleaf' }]
+    }
+  },
+  {
+    name: 'CTAN 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://ctan.org/search?query=${encodeURIComponent(q)}`
+      return [{ title: `CTAN 搜索：${q}`, url, snippet: '搜索 TeX/LaTeX 包', source: 'ctan' }]
+    }
+  },
+  {
+    name: 'Python 文档搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://docs.python.org/3/search.html?q=${encodeURIComponent(q)}`
+      return [{ title: `Python 文档：${q}`, url, snippet: '搜索 Python 官方文档', source: 'python-docs' }]
+    }
+  },
+  {
+    name: 'Go 文档搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://pkg.go.dev/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Go 文档：${q}`, url, snippet: '搜索 Go 标准库文档', source: 'go-docs' }]
+    }
+  },
+  {
+    name: 'Rust 文档搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://docs.rs/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Rust 文档：${q}`, url, snippet: '搜索 Rust crate 文档', source: 'rust-docs' }]
+    }
+  },
+  {
+    name: 'Java 文档搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://docs.oracle.com/en/java/javase/search/?q=${encodeURIComponent(q)}`
+      return [{ title: `Java 文档：${q}`, url, snippet: '搜索 Java 官方文档', source: 'java-docs' }]
+    }
+  },
+  {
+    name: 'Docker 文档搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://docs.docker.com/search/?q=${encodeURIComponent(q)}`
+      return [{ title: `Docker 文档：${q}`, url, snippet: '搜索 Docker 官方文档', source: 'docker-docs' }]
+    }
+  },
+  {
+    name: 'Kubernetes 文档搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://kubernetes.io/search/?q=${encodeURIComponent(q)}`
+      return [{ title: `Kubernetes 文档：${q}`, url, snippet: '搜索 K8s 官方文档', source: 'k8s-docs' }]
+    }
+  },
+  {
+    name: 'AWS 文档搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://docs.aws.amazon.com/search/doc-search.html?searchQuery=${encodeURIComponent(q)}`
+      return [{ title: `AWS 文档：${q}`, url, snippet: '搜索 AWS 官方文档', source: 'aws-docs' }]
+    }
+  },
+  {
+    name: 'Azure 文档搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://learn.microsoft.com/en-us/search/?terms=${encodeURIComponent(q)}`
+      return [{ title: `Azure 文档：${q}`, url, snippet: '搜索 Microsoft/Azure 文档', source: 'azure-docs' }]
+    }
+  },
+  {
+    name: 'Git 文档搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://git-scm.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Git 文档：${q}`, url, snippet: '搜索 Git 官方文档', source: 'git-docs' }]
+    }
+  },
+  {
+    name: 'Linux 手册搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://man7.org/linux/man-pages/search.html?q=${encodeURIComponent(q)}`
+      return [{ title: `Linux man 手册：${q}`, url, snippet: '搜索 Linux man 手册', source: 'linux-man' }]
+    }
+  },
+  {
+    name: 'SuperUser 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://superuser.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `SuperUser 搜索：${q}`, url, snippet: '搜索 SuperUser 系统管理问答', source: 'superuser' }]
+    }
+  },
+  {
+    name: 'Ask Ubuntu 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://askubuntu.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Ask Ubuntu：${q}`, url, snippet: '搜索 Ask Ubuntu 问答', source: 'askubuntu' }]
+    }
+  },
+  {
+    name: 'Server Fault 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://serverfault.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Server Fault：${q}`, url, snippet: '搜索服务器管理问答', source: 'serverfault' }]
+    }
+  },
+  {
+    name: 'Database Administrators 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://dba.stackexchange.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `DBA StackExchange：${q}`, url, snippet: '搜索数据库管理问答', source: 'dba-se' }]
+    }
+  },
+  {
+    name: 'MathOverflow 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://mathoverflow.net/search?q=${encodeURIComponent(q)}`
+      return [{ title: `MathOverflow：${q}`, url, snippet: '搜索数学研究问答', source: 'mathoverflow' }]
+    }
+  },
+  {
+    name: 'Physics StackExchange 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://physics.stackexchange.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Physics SE：${q}`, url, snippet: '搜索物理学术问答', source: 'physics-se' }]
+    }
+  },
+  {
+    name: 'Cross Validated 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://stats.stackexchange.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Cross Validated：${q}`, url, snippet: '搜索统计学问答', source: 'stats-se' }]
+    }
+  },
+  {
+    name: 'BitBucket 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://bitbucket.org/search?q=${encodeURIComponent(q)}`
+      return [{ title: `BitBucket 搜索：${q}`, url, snippet: '搜索 BitBucket 仓库', source: 'bitbucket' }]
+    }
+  },
+  {
+    name: 'GitLab 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://gitlab.com/search?search=${encodeURIComponent(q)}`
+      return [{ title: `GitLab 搜索：${q}`, url, snippet: '搜索 GitLab 仓库', source: 'gitlab' }]
+    }
+  },
+  {
+    name: 'SourceForge 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://sourceforge.net/directory/?q=${encodeURIComponent(q)}`
+      return [{ title: `SourceForge 搜索：${q}`, url, snippet: '搜索 SourceForge 开源项目', source: 'sourceforge' }]
+    }
+  },
+  {
+    name: 'LibHunt 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://java.libhunt.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `LibHunt 搜索：${q}`, url, snippet: '搜索 LibHunt 开源库推荐', source: 'libhunt' }]
+    }
+  },
+  {
+    name: 'StackShare 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://stackshare.io/search?q=${encodeURIComponent(q)}`
+      return [{ title: `StackShare 搜索：${q}`, url, snippet: '搜索技术栈对比和推荐', source: 'stackshare' }]
+    }
+  },
+  {
+    name: 'AlternativeTo 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://alternativeto.net/browse/search/?q=${encodeURIComponent(q)}`
+      return [{ title: `AlternativeTo：${q}`, url, snippet: '搜索软件替代方案', source: 'alternativeto' }]
+    }
+  },
+  {
+    name: 'BuiltWith 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://builtwith.com/${encodeURIComponent(q)}`
+      return [{ title: `BuiltWith：${q}`, url, snippet: '查看网站技术栈分析', source: 'builtwith' }]
+    }
+  },
+  {
+    name: 'Wappalyzer 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://wappalyzer.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Wappalyzer：${q}`, url, snippet: '分析网站技术栈', source: 'wappalyzer' }]
+    }
+  },
+  {
+    name: 'Shodan 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.shodan.io/search?query=${encodeURIComponent(q)}`
+      return [{ title: `Shodan：${q}`, url, snippet: '搜索互联网设备（IoT/服务器）', source: 'shodan' }]
+    }
+  },
+  {
+    name: 'Censys 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://search.censys.io/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Censys：${q}`, url, snippet: '搜索互联网资产和证书', source: 'censys' }]
+    }
+  },
+  {
+    name: 'ZoomEye 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.zoomeye.org/searchResult?q=${encodeURIComponent(q)}`
+      return [{ title: `ZoomEye：${q}`, url, snippet: '搜索网络空间资产（中国）', source: 'zoomeye' }]
+    }
+  },
+  {
+    name: 'Fofa 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://fofa.info/searchPage?q=${encodeURIComponent(q)}`
+      return [{ title: `Fofa：${q}`, url, snippet: '搜索网络资产（需登录）', source: 'fofa' }]
+    }
+  },
+  {
+    name: 'Hunter.io 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://hunter.io/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Hunter.io：${q}`, url, snippet: '搜索企业邮箱域名', source: 'hunter' }]
+    }
+  },
+  {
+    name: 'Wayback Machine 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://web.archive.org/web/*/${encodeURIComponent(q)}`
+      return [{ title: `Wayback Machine：${q}`, url, snippet: '查看网站历史快照', source: 'wayback' }]
+    }
+  },
+  {
+    name: 'Common Crawl 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://index.commoncrawl.org/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Common Crawl：${q}`, url, snippet: '搜索全网网页历史存档', source: 'commoncrawl' }]
+    }
+  },
+  {
+    name: 'OpenStreetMap 搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=8`
+        const j = await fetchJson(url, signal)
+        if (!Array.isArray(j)) return []
+        return j.slice(0, 8).map((it: any) => ({
+          title: `${it.display_name}`,
+          url: `https://www.openstreetmap.org/?mlat=${it.lat}&mlon=${it.lon}`,
+          snippet: `📍 ${it.type} | ${it.lat}, ${it.lon}`,
+          source: 'osm'
+        }))
+      } catch { return [] }
+    }
+  },
+  {
+    name: '高德地图搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.amap.com/search?query=${encodeURIComponent(q)}`
+      return [{ title: `高德地图：${q}`, url, snippet: '搜索高德地图地点', source: 'amap' }]
+    }
+  },
+  {
+    name: '百度地图搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://map.baidu.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `百度地图：${q}`, url, snippet: '搜索百度地图地点', source: 'baidu-map' }]
+    }
+  },
+  {
+    name: 'Google 地图搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`
+      return [{ title: `Google 地图：${q}`, url, snippet: '搜索 Google Maps', source: 'google-maps' }]
+    }
+  },
+  {
+    name: '天气搜索（OpenWeather）',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(q)}&appid=demo&units=metric`
+        const j = await fetchJson(url, signal)
+        if (j.name) {
+          return [{
+            title: `${j.name}：${j.weather?.[0]?.description || '未知'}，${j.main?.temp || '?'}℃`,
+            url: `https://openweathermap.org/city/${j.id}`,
+            snippet: `💧 ${j.main?.humidity || '?'}% | 🌬 ${j.wind?.speed || '?'} m/s`,
+            source: 'openweather'
+          }]
+        }
+        return []
+      } catch { return [] }
+    }
+  },
+  {
+    name: '汇率查询',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://api.exchangerate-api.com/v4/latest/${encodeURIComponent(q.toUpperCase())}`
+        const j = await fetchJson(url, signal)
+        if (j.rates) {
+          const lines = Object.entries(j.rates).slice(0, 8).map(([k, v]) => `${k}: ${v}`).join('\n')
+          return [{ title: `${j.base || q.toUpperCase()} 汇率`, url: `https://www.xe.com/currencyconverter/convert/?Amount=1&from=${j.base || q.toUpperCase()}&to=USD`, snippet: lines, source: 'exchangerate' }]
+        }
+        return []
+      } catch { return [] }
+    }
+  },
+  {
+    name: '股票搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(q)}`
+        const j = await fetchJson(url, signal)
+        const meta = j?.chart?.result?.[0]?.meta
+        if (meta) {
+          return [{
+            title: `${meta.symbol || q} 股票`,
+            url: `https://finance.yahoo.com/quote/${meta.symbol || q}`,
+            snippet: `价格：${meta.regularMarketPrice || '?'} | 货币：${meta.currency || 'USD'}`,
+            source: 'yahoo-finance'
+          }]
+        }
+        return []
+      } catch { return [] }
+    }
+  },
+  {
+    name: '加密货币搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://api.coingecko.com/api/v3/search?query=${encodeURIComponent(q)}`
+        const j = await fetchJson(url, signal)
+        if (j.coins && Array.isArray(j.coins)) {
+          return j.coins.slice(0, 8).map((it: any) => ({
+            title: `${it.name} (${it.symbol?.toUpperCase()})`,
+            url: it.id ? `https://www.coingecko.com/en/coins/${it.id}` : '',
+            snippet: `排名：#${it.rank || '?'} | 市值：$${(it.market_cap_rank || '?')}`,
+            source: 'coingecko-search'
+          }))
+        }
+        return []
+      } catch { return [] }
+    }
+  },
+  {
+    name: '实时汇率（ exchangerate ）',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://api.exchangerate-api.com/v4/latest/USD`
+        const j = await fetchJson(url, signal)
+        if (j.rates) {
+          const lines = Object.entries(j.rates).slice(0, 10).map(([k, v]) => `${k}: ${v}`).join(' | ')
+          return [{ title: 'USD 实时汇率', url: 'https://www.xe.com', snippet: lines, source: 'exchangerate-usd' }]
+        }
+        return []
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'IP 地址查询',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://ipinfo.io/${encodeURIComponent(q)}/json`
+        const j = await fetchJson(url, signal)
+        if (j.ip || j.city) {
+          return [{
+            title: `IP 查询：${j.ip || q}`,
+            url: `https://ipinfo.io/${q}`,
+            snippet: [j.country_name, j.region, j.city, j.org].filter(Boolean).join(' | '),
+            source: 'ipinfo'
+          }]
+        }
+        return []
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'Whois 查询',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://who.is/whois/${encodeURIComponent(q)}`
+      return [{ title: `Whois：${q}`, url, snippet: '查询域名注册信息', source: 'whois' }]
+    }
+  },
+  {
+    name: 'SSL 证书查询',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.sslshopper.com/ssl-checker.html#hostname=${encodeURIComponent(q)}`
+      return [{ title: `SSL 检查：${q}`, url, snippet: '检查网站 SSL 证书', source: 'ssl-checker' }]
+    }
+  },
+  {
+    name: 'Ping 查询',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.dotcom-tools.com/ping-test/${encodeURIComponent(q)}`
+      return [{ title: `Ping 测试：${q}`, url, snippet: '测试网站延迟和连通性', source: 'ping-test' }]
+    }
+  },
+  {
+    name: 'Website Speed Test',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://gtmetrix.com/results/${encodeURIComponent(q)}`
+      return [{ title: `速度测试：${q}`, url, snippet: '测试网站加载速度', source: 'gtmetrix' }]
+    }
+  },
+  {
+    name: 'Google PageSpeed',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://pagespeed.web.dev/analysis?url=${encodeURIComponent(q)}`
+      return [{ title: `PageSpeed：${q}`, url, snippet: 'Google 页面速度分析', source: 'pagespeed' }]
+    }
+  },
+  {
+    name: 'WebPageTest 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.webpagetest.org/results?q=${encodeURIComponent(q)}`
+      return [{ title: `WebPageTest：${q}`, url, snippet: '多地点网站性能测试', source: 'webpagetest' }]
+    }
+  },
+  {
+    name: 'DNS 查询',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://dns.google/resolve?name=${encodeURIComponent(q)}`
+      return [{ title: `DNS 查询：${q}`, url, snippet: 'Google DNS 查询', source: 'dns-google' }]
+    }
+  },
+  {
+    name: 'DNS 历史记录',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://securitytrails.com/domain/${encodeURIComponent(q)}/dns`
+      return [{ title: `DNS 历史：${q}`, url, snippet: '查看域名 DNS 历史记录', source: 'dns-history' }]
+    }
+  },
+  {
+    name: 'ThreatFox 搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://threatfox.abuse.ch/api/v1/?query=search_ioc&search_term=${encodeURIComponent(q)}`
+        const j = await fetchJson(url, signal)
+        if (j.data && Array.isArray(j.data)) {
+          return j.data.slice(0, 8).map((it: any) => ({
+            title: `ThreatFox: ${it.ioc || 'IOC'}`,
+            url: `https://threatfox.abuse.ch/ioc/${it.id || ''}`,
+            snippet: `🔒 ${it.threat_type || 'unknown'} | ${it.confidence || '?'}% 置信度`,
+            source: 'threatfox'
+          }))
+        }
+        return []
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'VirusTotal 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.virustotal.com/gui/search/${encodeURIComponent(q)}`
+      return [{ title: `VirusTotal：${q}`, url, snippet: '搜索文件/URL/域名恶意扫描结果', source: 'virustotal' }]
+    }
+  },
+  {
+    name: 'URLScan.io 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://urlscan.io/search/#${encodeURIComponent(q)}`
+      return [{ title: `URLScan.io：${q}`, url, snippet: '搜索 URL 扫描结果', source: 'urlscan' }]
+    }
+  },
+  {
+    name: 'Hybrid Analysis 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.hybrid-analysis.com/search?query=${encodeURIComponent(q)}`
+      return [{ title: `Hybrid Analysis：${q}`, url, snippet: '恶意软件样本分析搜索', source: 'hybrid-analysis' }]
+    }
+  },
+  {
+    name: 'AnyRun 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://any.run/search?q=${encodeURIComponent(q)}`
+      return [{ title: `AnyRun：${q}`, url, snippet: '在线沙箱恶意软件分析', source: 'anyrun' }]
+    }
+  },
+  {
+    name: 'MITRE ATT&CK 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://attack.mitre.org/search?q=${encodeURIComponent(q)}`
+      return [{ title: `MITRE ATT&CK：${q}`, url, snippet: '搜索威胁战术/技术/程序', source: 'mitre-attack' }]
+    }
+  },
+  {
+    name: 'CVE 搜索',
+    offline: false,
+    fetch: async (q, signal) => {
+      try {
+        const url = `https://cve.circl.lu/api/search/${encodeURIComponent(q)}`
+        const j = await fetchJson(url, signal)
+        if (j && Array.isArray(j)) {
+          return j.slice(0, 8).map((it: any) => ({
+            title: `CVE-${it.id || q}`,
+            url: `https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-${it.id || q}`,
+            snippet: (it.summary || 'CVE 漏洞信息').slice(0, 100),
+            source: 'cve'
+          }))
+        }
+        return []
+      } catch { return [] }
+    }
+  },
+  {
+    name: 'NVD 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://nvd.nist.gov/vuln/search/results?query=${encodeURIComponent(q)}`
+      return [{ title: `NVD：${q}`, url, snippet: '搜索 NVD 漏洞数据库', source: 'nvd' }]
+    }
+  },
+  {
+    name: 'Exploit-DB 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.exploit-db.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Exploit-DB：${q}`, url, snippet: '搜索漏洞利用代码', source: 'exploit-db' }]
+    }
+  },
+  {
+    name: 'Snyk 漏洞搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://security.snyk.io/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Snyk：${q}`, url, snippet: '搜索开源漏洞数据库', source: 'snyk' }]
+    }
+  },
+  {
+    name: 'CISA 告警搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.cisa.gov/search?search=${encodeURIComponent(q)}`
+      return [{ title: `CISA：${q}`, url, snippet: '搜索美国网络安全和基础设施安全局告警', source: 'cisa' }]
+    }
+  },
+  {
+    name: 'XSS 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.google.com/search?q=${encodeURIComponent(q)}+xss+payload`
+      return [{ title: `XSS 搜索：${q}`, url, snippet: '搜索 XSS 攻击向量', source: 'xss-search' }]
+    }
+  },
+  {
+    name: 'Bugcrowd 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.bugcrowd.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Bugcrowd：${q}`, url, snippet: '搜索 Bugcrowd 漏洞赏金项目', source: 'bugcrowd' }]
+    }
+  },
+  {
+    name: 'HackerOne 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.hackerone.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `HackerOne：${q}`, url, snippet: '搜索 HackerOne 漏洞赏金项目', source: 'hackerone' }]
+    }
+  },
+  {
+    name: 'Intigriti 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.intigriti.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Intigriti：${q}`, url, snippet: '搜索 Intigriti 漏洞赏金项目', source: 'intigriti' }]
+    }
+  },
+  {
+    name: 'YesWeHack 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.yeswehack.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `YesWeHack：${q}`, url, snippet: '搜索 YesWeHack 漏洞赏金项目', source: 'yeswehack' }]
+    }
+  },
+  {
+    name: 'Open Bug Bounty 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.openbugbounty.org/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Open Bug Bounty：${q}`, url, snippet: '搜索公开漏洞赏金项目', source: 'openbugbounty' }]
+    }
+  },
+  {
+    name: 'OpenSSF 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://openssf.org/search?q=${encodeURIComponent(q)}`
+      return [{ title: `OpenSSF：${q}`, url, snippet: '搜索开源安全基金会资源', source: 'openssf' }]
+    }
+  },
+  {
+    name: 'OWASP 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://owasp.org/search/?q=${encodeURIComponent(q)}`
+      return [{ title: `OWASP：${q}`, url, snippet: '搜索 OWASP 安全指南和项目', source: 'owasp' }]
+    }
+  },
+  {
+    name: 'NIST 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://csrc.nist.gov/search?q=${encodeURIComponent(q)}`
+      return [{ title: `NIST：${q}`, url, snippet: '搜索 NIST 网络安全资源', source: 'nist' }]
+    }
+  },
+  {
+    name: 'CWE 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://cwe.mitre.org/search/search.html?q=${encodeURIComponent(q)}`
+      return [{ title: `CWE：${q}`, url, snippet: '搜索通用弱点枚举', source: 'cwe' }]
+    }
+  },
+  {
+    name: 'CAPEC 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://capec.mitre.org/search?q=${encodeURIComponent(q)}`
+      return [{ title: `CAPEC：${q}`, url, snippet: '搜索攻击模式知识库', source: 'capec' }]
+    }
+  },
+  {
+    name: 'ISO 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.iso.org/search?q=${encodeURIComponent(q)}`
+      return [{ title: `ISO：${q}`, url, snippet: '搜索 ISO 国际标准', source: 'iso' }]
+    }
+  },
+  {
+    name: 'IETF 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.ietf.org/search/search.html?q=${encodeURIComponent(q)}`
+      return [{ title: `IETF RFC：${q}`, url, snippet: '搜索互联网工程任务组 RFC 文档', source: 'ietf' }]
+    }
+  },
+  {
+    name: 'RFC 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.rfc-editor.org/search/?q=${encodeURIComponent(q)}`
+      return [{ title: `RFC 搜索：${q}`, url, snippet: '搜索 RFC 文档', source: 'rfc' }]
+    }
+  },
+  {
+    name: 'W3C 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.w3.org/search/search.php?q=${encodeURIComponent(q)}`
+      return [{ title: `W3C 搜索：${q}`, url, snippet: '搜索 W3C Web 标准', source: 'w3c' }]
+    }
+  },
+  {
+    name: 'ECMA 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.ecma-international.org/search/?q=${encodeURIComponent(q)}`
+      return [{ title: `ECMA：${q}`, url, snippet: '搜索 ECMA 标准（JavaScript 等）', source: 'ecma' }]
+    }
+  },
+  {
+    name: 'RFC 搜索（datatracker）',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://datatracker.ietf.org/search/?q=${encodeURIComponent(q)}`
+      return [{ title: `IETF Datatracker：${q}`, url, snippet: '搜索 IETF 工作组和 RFC', source: 'ietf-datatracker' }]
+    }
+  },
+  {
+    name: 'Jina AI 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://s.jina.ai/${encodeURIComponent(q)}`
+      return [{ title: `Jina AI 搜索：${q}`, url, snippet: 'AI 摘要搜索', source: 'jina-ai' }]
+    }
+  },
+  {
+    name: 'Perplexity 备用',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.perplexity.ai/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Perplexity AI 搜索：${q}`, url, snippet: 'AI 驱动搜索引擎', source: 'perplexity-alt' }]
+    }
+  },
+  {
+    name: 'Phind 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.phind.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Phind 搜索：${q}`, url, snippet: '面向开发者的 AI 搜索引擎', source: 'phind' }]
+    }
+  },
+  {
+    name: 'Komuto 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://komuto.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Komuto 搜索：${q}`, url, snippet: '元搜索引擎', source: 'komuto' }]
+    }
+  },
+  {
+    name: 'Mojeek 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.mojeek.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Mojeek 搜索：${q}`, url, snippet: '独立搜索引擎', source: 'mojeek' }]
+    }
+  },
+  {
+    name: 'Startpage 备用',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.startpage.com/do/dsearch?query=${encodeURIComponent(q)}`
+      return [{ title: `Startpage（匿名）：${q}`, url, snippet: '匿名搜索引擎', source: 'startpage-alt' }]
+    }
+  },
+  {
+    name: 'Qwant 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.qwant.com/?q=${encodeURIComponent(q)}`
+      return [{ title: `Qwant 搜索：${q}`, url, snippet: '欧洲隐私搜索引擎', source: 'qwant' }]
+    }
+  },
+  {
+    name: 'Neeva 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://neeva.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Neeva 搜索：${q}`, url, snippet: '无广告搜索引擎', source: 'neeva' }]
+    }
+  },
+  {
+    name: 'Neeva 备用',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.neeva.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Neeva（备用）：${q}`, url, snippet: '无广告搜索引擎（备用域名）', source: 'neeva-alt' }]
+    }
+  },
+  {
+    name: 'Gibiru 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://gibiru.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Gibiru 搜索：${q}`, url, snippet: '隐私搜索引擎', source: 'gibiru' }]
+    }
+  },
+  {
+    name: 'MetaGer 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://metager.org/meta/meta.ger3?eingabe=${encodeURIComponent(q)}`
+      return [{ title: `MetaGer 搜索：${q}`, url, snippet: '德国元搜索引擎', source: 'metager' }]
+    }
+  },
+  {
+    name: 'Oscobo 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://oscobo.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Oscobo 搜索：${q}`, url, snippet: '英国隐私搜索引擎', source: 'oscobo' }]
+    }
+  },
+  {
+    name: 'Otalo 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://otalo.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Otalo 搜索：${q}`, url, snippet: '元搜索引擎', source: 'otalo' }]
+    }
+  },
+  {
+    name: 'Yippy 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://yippy.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Yippy 搜索：${q}`, url, snippet: '企业级元搜索引擎', source: 'yippy' }]
+    }
+  },
+  {
+    name: 'Yippy 备用',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://yippy.ai/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Yippy AI 搜索：${q}`, url, snippet: 'AI 增强元搜索引擎', source: 'yippy-ai' }]
+    }
+  },
+  {
+    name: 'Entireweb 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.entireweb.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Entireweb 搜索：${q}`, url, snippet: '独立搜索引擎', source: 'entireweb' }]
+    }
+  },
+  {
+    name: 'GigaBlast 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://gigablast.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `GigaBlast 搜索：${q}`, url, snippet: '开源搜索引擎', source: 'gigablast' }]
+    }
+  },
+  {
+    name: 'Boardreader 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://boardreader.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Boardreader：${q}`, url, snippet: '搜索论坛和社区讨论', source: 'boardreader' }]
+    }
+  },
+  {
+    name: 'Boardreader 备用',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.boardreader.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Boardreader（备用）：${q}`, url, snippet: '搜索论坛和社区讨论（备用域名）', source: 'boardreader-alt' }]
+    }
+  },
+  {
+    name: 'SlideShare 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.slideshare.net/search/slideshow?q=${encodeURIComponent(q)}`
+      return [{ title: `SlideShare：${q}`, url, snippet: '搜索演示文稿和幻灯片', source: 'slideshare' }]
+    }
+  },
+  {
+    name: 'Scribd 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.scribd.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Scribd：${q}`, url, snippet: '搜索文档和电子书', source: 'scribd' }]
+    }
+  },
+  {
+    name: ' academia.edu 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.academia.edu/search?q=${encodeURIComponent(q)}`
+      return [{ title: `academia.edu：${q}`, url, snippet: '搜索学术论文', source: 'academia' }]
+    }
+  },
+  {
+    name: 'ResearchGate 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.researchgate.net/search?q=${encodeURIComponent(q)}`
+      return [{ title: `ResearchGate：${q}`, url, snippet: '搜索 ResearchGate 学术论文', source: 'researchgate' }]
+    }
+  },
+  {
+    name: 'Mendeley 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.mendeley.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Mendeley：${q}`, url, snippet: '搜索 Mendeley 参考文献', source: 'mendeley' }]
+    }
+  },
+  {
+    name: 'Zotero 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.zotero.org/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Zotero：${q}`, url, snippet: '搜索 Zotero 文献库', source: 'zotero' }]
+    }
+  },
+  {
+    name: 'Google Patents 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://patents.google.com/?q=${encodeURIComponent(q)}`
+      return [{ title: `Google 专利：${q}`, url, snippet: '搜索 Google 专利数据库', source: 'google-patents' }]
+    }
+  },
+  {
+    name: 'USPTO 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.uspto.gov/search?search=${encodeURIComponent(q)}`
+      return [{ title: `USPTO：${q}`, url, snippet: '搜索美国专利商标局', source: 'uspto' }]
+    }
+  },
+  {
+    name: 'WIPO 搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.wipo.int/search?q=${encodeURIComponent(q)}`
+      return [{ title: `WIPO 专利：${q}`, url, snippet: '搜索世界知识产权组织专利', source: 'wipo' }`
     offline: true,
     fetch: async (q) => [{ title: `"${q}" 的搜索结果（离线模式，建议联网获取实时数据）`, url: '', snippet: '当前为离线模式，请检查网络连接', source: 'general' }]
   }
