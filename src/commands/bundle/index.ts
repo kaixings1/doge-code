@@ -113,36 +113,36 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const config = loadConfig()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Bundle Analyzer (Advanced)', '', '📖 Usage: ', '  /bundle                        Analyze bundle', '  /bundle size                   Size breakdown', '  /bundle largest [N]            Largest files', '  /bundle types                  Breakdown by type', '  /bundle history                Bundle size history', '  /bundle trend                  Size trends', '  /bundle optimize               Optimization tips', '  /bundle analyze               Deep analysis with source maps', '  /bundle config                 Show/edit config', '  /bundle set <key> <val>        Set config value', '  /bundle export [file]          Export analysis', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['📦 Bundle 分析器 (高级)', '', '📖 用法: ', '  /bundle                        分析打包文件', '  /bundle size                   体积明细', '  /bundle largest [N]            最大文件', '  /bundle types                  按类型统计', '  /bundle history                打包体积历史', '  /bundle trend                  体积趋势', '  /bundle optimize               优化建议', '  /bundle analyze                深度分析含 source map', '  /bundle config                 查看/编辑配置', '  /bundle set <key> <val>        设置配置项', '  /bundle export [file]          导出分析结果', ''].join('\n') }
 
   if (cmd === 'config') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     // @ts-expect-error dynamic
     if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
-    return { type: 'text', value: `❌ Unknown: ${key}` }
+    return { type: 'text', value: `❌ 未知配置项: ${key}` }
   }
 
   if (cmd === 'set') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
-    if (!key || !value) return { type: 'text', value: 'Usage: /bundle set <key> <value>' }
+    if (!key || !value) return { type: 'text', value: '📖 用法: /bundle set <配置项> <值>' }
     // @ts-expect-error dynamic
     if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
-    return { type: 'text', value: `❌ Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
+    return { type: 'text', value: `❌ 未知配置项: ${key}。可用配置项: ${Object.keys(config).join(', ')}` }
   }
 
   if (cmd === 'history') {
     const history = loadHistory()
-    if (history.length === 0) return { type: 'text', value: 'No bundle history. Run /bundle first.' }
-    const lines = ['Bundle History:', '═══════════════', '']
+    if (history.length === 0) return { type: 'text', value: '⚠️ 暂无打包历史记录，请先执行 /bundle 进行分析。' }
+    const lines = ['📊 打包历史记录:', '═══════════════', '']
     history.slice(-10).forEach(h => lines.push(`${h.date.slice(0, 19)} | ${h.grade} | ${formatSize(h.totalSize)} (${formatSize(h.gzipSize)} gzip) | ${h.fileCount} files`))
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'trend') {
     const history = loadHistory()
-    if (history.length < 2) return { type: 'text', value: 'Need at least 2 analyses for trends' }
-    const lines = ['Bundle Size Trend:', '══════════════════', '']
+    if (history.length < 2) return { type: 'text', value: '⚠️ 趋势分析至少需要 2 次分析记录。' }
+    const lines = ['📈 打包体积趋势:', '══════════════════', '']
     history.slice(-14).forEach(h => {
       const bar = '█'.repeat(Math.min(Math.round(h.totalSize / 50 / 1024), 40))
       lines.push(`${h.date.slice(0, 10)} ${bar} ${formatSize(h.totalSize)}`)
@@ -153,7 +153,7 @@ export const call: LocalCommandCall = async (args) => {
   const files = collectBundleFiles(config)
 
   if (cmd === 'size' || cmd === '') {
-    if (files.length === 0) return { type: 'text', value: 'No bundle found. Build first (npm run build), dirs checked: ' + config.dirs.join(', ') }
+    if (files.length === 0) return { type: 'text', value: '❌ 未找到打包产物，请先执行构建（npm run build）。已检查目录: ' + config.dirs.join(', ') }
     const totalSize = files.reduce((s, f) => s + f.size, 0)
     const gzipTotal = files.reduce((s, f) => s + f.gzipSize, 0)
     const jsTotal = files.filter(f => f.type === 'js').reduce((s, f) => s + f.size, 0)
@@ -161,13 +161,13 @@ export const call: LocalCommandCall = async (args) => {
     const grade = gradeBundle(jsTotal)
     saveHistory({ date: new Date().toISOString(), totalSize, gzipSize: gzipTotal, fileCount: files.length, largest: files[0]?.path || '', grade })
     const lines = [
-      'Bundle Analysis:', '═════════════════', '',
-      `Grade: ${grade}`,
-      `Total: ${formatSize(totalSize)} (${formatSize(gzipTotal)} gzip)`,
-      `JS: ${formatSize(jsTotal)} | CSS: ${formatSize(cssTotal)}`,
-      `Files: ${files.length}`,
+      '📊 打包分析:', '═════════════════', '',
+      `📈 评分: ${grade}`,
+      `📦 总体积: ${formatSize(totalSize)} (gzip: ${formatSize(gzipTotal)})`,
+      `📝 JS: ${formatSize(jsTotal)} | CSS: ${formatSize(cssTotal)}`,
+      `📁 文件数: ${files.length}`,
       '',
-      'Largest Files:',
+      '🔝 最大文件:',
     ]
     files.slice(0, 15).forEach((f, i) => {
       const bar = '█'.repeat(Math.min(Math.round((f.size / (files[0]?.size || 1)) * 30), 30))
@@ -178,18 +178,18 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'largest') {
     const n = parseInt(parts[1]) || 20
-    if (files.length === 0) return { type: 'text', value: 'No bundle found' }
-    const lines = ['Largest Files (' + Math.min(n, files.length) + '):', '══════════════════════', '']
+    if (files.length === 0) return { type: 'text', value: '❌ 未找到打包产物' }
+    const lines = ['🔝 最大文件 (共 ' + Math.min(n, files.length) + ' 个):', '══════════════════════', '']
     files.slice(0, n).forEach((f, i) => {
       const flag = f.size > config.criticalSize ? ' 🔴' : f.size > config.warnSize ? ' 🟠' : ''
       lines.push(`  ${i + 1}. ${formatSize(f.size).padEnd(9)} ${f.type}${flag} ${f.path}`)
     })
-    lines.push('', `Warn: >${formatSize(config.warnSize)}  Critical: >${formatSize(config.criticalSize)}`)
+    lines.push('', `⚠️ 警告阈值: >${formatSize(config.warnSize)}  危险阈值: >${formatSize(config.criticalSize)}`)
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'types') {
-    if (files.length === 0) return { type: 'text', value: 'No bundle found' }
+    if (files.length === 0) return { type: 'text', value: '❌ 未找到打包产物' }
     const byType: Record<string, { size: number; gzip: number; count: number }> = {}
     files.forEach(f => {
       if (!byType[f.type]) byType[f.type] = { size: 0, gzip: 0, count: 0 }
@@ -197,7 +197,7 @@ export const call: LocalCommandCall = async (args) => {
       byType[f.type].gzip += f.gzipSize
       byType[f.type].count++
     })
-    const lines = ['Bundle by Type:', '═══════════════', '']
+    const lines = ['📊 按类型统计:', '═══════════════', '']
     for (const [type, data] of Object.entries(byType).sort((a: any, b: any) => b[1].size - a[1].size)) {
       const pct = Math.round((data.size / files.reduce((s, f) => s + f.size, 0)) * 100)
       lines.push(`  ${type}: ${formatSize(data.size)} (${formatSize(data.gzip)} gzip) - ${data.count} files - ${pct}%`)
@@ -207,29 +207,29 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'optimize') {
     const jsTotal = files.filter(f => f.type === 'js').reduce((s, f) => s + f.size, 0)
-    const lines = ['Optimization Tips:', '══════════════════', '', `Current JS bundle: ${formatSize(jsTotal)}`, '']
+    const lines = ['💡 优化建议:', '══════════════════', '', `📦 当前 JS 打包体积: ${formatSize(jsTotal)}`, '']
     const tips: Array<[string, string]> = [
-      ['Code splitting', 'Split large chunks by route or vendor. Use dynamic import()'],
-      ['Tree shaking', 'Use ES6 imports, set sideEffects: false in package.json'],
-      ['Compression', 'Enable gzip (saves ~70%) or brotli (saves ~80%)'],
-      ['Image optimization', 'Convert to WebP/AVIF, lazy load, use responsive sizes'],
-      ['Remove duplicates', 'Check for duplicate dependencies with /duplicate'],
-      ['Minify', 'Use terser/esbuild/swc for minification'],
-      ['Caching', 'Add content hash to filenames for long-term caching'],
-      ['Preload', 'Preload critical CSS/fonts, defer non-critical JS'],
-      ['PurgeCSS', 'Remove unused CSS with PurgeCSS/Tailwind'],
-      ['Source maps', 'Generate source maps only in development'],
+      ['代码分割', '按路由或厂商拆分大块代码，使用动态 import()'],
+      ['Tree Shaking', '使用 ES6 导入，在 package.json 中设置 sideEffects: false'],
+      ['压缩', '启用 gzip（节省约 70%）或 brotli（节省约 80%）'],
+      ['图片优化', '转换为 WebP/AVIF，懒加载，使用响应式图片尺寸'],
+      ['去重', '使用 /duplicate 检查重复依赖'],
+      ['压缩混淆', '使用 terser/esbuild/swc 进行代码压缩'],
+      ['缓存', '在文件名中添加内容哈希以实现长期缓存'],
+      ['预加载', '预加载关键 CSS/字体，延迟非关键 JS'],
+      ['PurgeCSS', '使用 PurgeCSS/Tailwind 移除未使用的 CSS'],
+      ['Source Map', '仅在开发环境生成 source map'],
     ]
     tips.forEach(([title, desc]) => lines.push(`  • ${title}: ${desc}`))
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'analyze') {
-    if (files.length === 0) return { type: 'text', value: 'No bundle found' }
+    if (files.length === 0) return { type: 'text', value: '❌ 未找到打包产物' }
     try {
-      const output = execSync('npx source-map-explorer ' + files.filter(f => f.type === 'js').slice(0, 5).map(f => `"${f.path}"`).join(' ') + ' 2>/dev/null || echo "Install source-map-explorer for deep analysis"', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'], timeout: 30000 })
+      const output = execSync('npx source-map-explorer ' + files.filter(f => f.type === 'js').slice(0, 5).map(f => `"${f.path}"`).join(' ') + ' 2>/dev/null || echo "请安装 source-map-explorer 进行深度分析"', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'], timeout: 30000 })
       return { type: 'text', value: output.slice(0, 1500) }
-    } catch { return { type: 'text', value: 'Deep analysis: npm install -D source-map-explorer' } }
+    } catch { return { type: 'text', value: '🔍 深度分析: 请执行 npm install -D source-map-explorer' } }
   }
 
   if (cmd === 'export') {
@@ -238,12 +238,12 @@ export const call: LocalCommandCall = async (args) => {
     return { type: 'text', value: `✅ [OK] Exported: ${file}` }
   }
 
-  return { type: 'text', value: 'Unknown: ' + cmd }
+  return { type: 'text', value: '❌ 未知命令: ' + cmd }
 }
 
 const bundle: Command = {
   type: 'local', name: 'bundle',
-  description: 'Bundle - size/largest/types/analyze/optimize/history/trend/config/export',
+  description: '📦 Bundle - 体积/最大文件/类型/分析/优化/历史/趋势/配置/导出',
   aliases: ['/bundle', '/bun'],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

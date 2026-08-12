@@ -78,10 +78,10 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'files') {
     const name = parts.slice(1).join(' ')
-    if (!name) return { type: 'text', value: 'Usage: /contributors files <name>' }
+    if (!name) return { type: 'text', value: '📖 用法：/contributors files <名称>' }
     const c = contributors.find(c => c.name.toLowerCase().includes(name.toLowerCase()))
-    if (!c) return { type: 'text', value: 'Contributor not found: ' + name }
-    const lines = ['Files touched by ' + c.name + ':', '================================', '']
+    if (!c) return { type: 'text', value: '❌ 未找到贡献者：' + name }
+    const lines = ['📁 ' + c.name + ' 修改的文件：', '══════════════════════════════', '']
     Array.from(c.files).slice(0, 30).forEach(f => lines.push('  ' + f))
     return { type: 'text', value: lines.join('\n') }
   }
@@ -103,25 +103,25 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'email') {
     const email = parts.slice(1).join(' ')
-    if (!email) return { type: 'text', value: 'Usage: /contributors email <email>' }
+    if (!email) return { type: 'text', value: '📖 用法：/contributors email <邮箱>' }
     const c = contributors.find(c => c.email.toLowerCase().includes(email.toLowerCase()))
-    if (!c) return { type: 'text', value: 'Not found: ' + email }
-    return { type: 'text', value: ['Contributor: ' + c.name, 'Email: ' + c.email, 'Commits: ' + c.commits, 'Additions: ' + c.additions, 'Deletions: ' + c.deletions, 'Files: ' + c.files.size, 'Last: ' + c.lastCommit].join('\n') }
+    if (!c) return { type: 'text', value: '❌ 未找到：' + email }
+    return { type: 'text', value: ['👤 贡献者：' + c.name, '📧 邮箱：' + c.email, '📊 提交数：' + c.commits, '➕ 新增：' + c.additions, '➖ 删除：' + c.deletions, '📁 文件数：' + c.files.size, '🕐 最近：' + c.lastCommit].join('\n') }
   }
 
   if (cmd === 'all') {
-    if (contributors.length === 0) return { type: 'text', value: 'No contributors found' }
-    const lines = ['All Contributors (' + contributors.length + '):', '================================', '']
+    if (contributors.length === 0) return { type: 'text', value: '⚠️ 未找到贡献者' }
+    const lines = ['📋 所有贡献者（' + contributors.length + '）：', '════════════════════════', '']
     contributors.forEach(c => lines.push(c.name + ' <' + c.email + '> - ' + c.commits + ' commits'))
     return { type: 'text', value: lines.join('\n') }
   }
 
-  return { type: 'text', value: 'Unknown: ' + cmd }
+  return { type: 'text', value: '❌ 未知命令：' + cmd }
 }
 
 const contributors: Command = {
   type: 'local', name: 'contributors',
-  description: 'Contributor analysis - list/graph/files/trend/email/all',
+  description: '贡献者分析 - 列表/图表/文件/趋势/邮箱/全部',
   aliases: '/contributors, /contrib, /authors'.split(','),
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
