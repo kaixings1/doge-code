@@ -201,45 +201,45 @@ export const call: LocalCommandCall = async (args) => {
   const parts = s.split(/\s+/)
   const cmd = parts[0]?.toLowerCase() || 'help'
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Git Graph (Advanced)', '', '📖 Usage: ', '  /git-graph                      Commit graph + stats', '  /git-graph log [N]              Show last N commits', '  /git-graph branches             List branches', '  /git-graph authors              Show author stats', '  /git-graph timeline             Commit timeline', '  /git-graph search <query>       Search commits', '  /git-graph stats                Repository statistics', '  /git-graph hotfiles             Most changed files', '  /git-graph churn                Code churn analysis', '  /git-graph activity             Activity heatmap', '  /git-graph streaks              Contribution streaks', '  /git-graph export [fmt]         Export (md/json/dot)', '  /git-graph insights             AI-powered insights', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['📊 Git 图表（高级）', '', '📖 用法：', '  /git-graph                      提交图表 + 统计', '  /git-graph log [N]              显示最近 N 次提交', '  /git-graph branches             列出分支', '  /git-graph authors              作者统计', '  /git-graph timeline              提交时间线', '  /git-graph search <查询>        搜索提交', '  /git-graph stats                仓库统计', '  /git-graph hotfiles             最常变更文件', '  /git-graph churn                代码波动分析', '  /git-graph activity             活跃度热力图', '  /git-graph streaks              连续提交 streaks', '  /git-graph export [格式]        导出 (md/json/dot)', '  /git-graph insights             AI 洞察', ''].join('\n') }
 
   if (cmd === 'stats') {
     const stats = calculateStats()
-    return { type: 'text', value: ['Repository Statistics:', '======================', '', 'Commits: ' + stats.totalCommits, 'Authors: ' + stats.totalAuthors, 'Branches: ' + stats.totalBranches, 'Tags: ' + stats.totalTags, 'Active Days: ' + stats.activeDays, 'First: ' + stats.firstCommit, 'Last: ' + stats.lastCommit, 'Busiest Day: ' + stats.busiestDay, 'Most Productive Hour: ' + stats.mostProductiveHour + ':00', 'Avg Commits/Day: ' + stats.avgCommitsPerDay, 'Longest Streak: ' + stats.longestStreak + ' days', 'Current Streak: ' + stats.currentStreak + ' days', 'Code Churn: +' + stats.codeChurn.added + '/-' + stats.codeChurn.deleted, '', 'Hot Files:', ...stats.hotFiles.slice(0, 10).map(f => '  ' + f.file + ' (' + f.changes + ' changes)')].join('\n') }
+    return { type: 'text', value: ['📊 仓库统计', '════════════════', '', '提交数：' + stats.totalCommits, '作者数：' + stats.totalAuthors, '分支数：' + stats.totalBranches, '标签数：' + stats.totalTags, '活跃天数：' + stats.activeDays, '首次提交：' + stats.firstCommit, '最近提交：' + stats.lastCommit, '最忙日期：' + stats.busiestDay, '最高效时段：' + stats.mostProductiveHour + ':00', '日均提交：' + stats.avgCommitsPerDay, '最长连续：' + stats.longestStreak + ' 天', '当前连续：' + stats.currentStreak + ' 天', '代码波动：+' + stats.codeChurn.added + '/-' + stats.codeChurn.deleted, '', '🔥 热门文件：', ...stats.hotFiles.slice(0, 10).map(f => '  ' + f.file + '（' + f.changes + ' 次变更）')].join('\n') }
   }
 
   if (cmd === 'hotfiles' || cmd === 'churn') {
     const stats = calculateStats()
-    const lines = ['Hot Files (Most Changed):', '==========================', '']
-    stats.hotFiles.forEach((f, i) => lines.push(`${i + 1}. ${f.file} (${f.changes} changes)`))
+    const lines = ['🔥 热门文件（最常变更）：', '═══════════════════════════', '']
+    stats.hotFiles.forEach((f, i) => lines.push(`${i + 1}. ${f.file}（${f.changes} 次变更）`))
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'activity') {
     const output = run('git log --pretty=format:"%ad" --date=short --all 2>/dev/null')
-    if (!output) return { type: 'text', value: 'No commits' }
+    if (!output) return { type: 'text', value: 'ℹ️ 无提交记录' }
     const dayCount: Record<string, number> = {}
     output.split('\n').filter(Boolean).forEach(d => { dayCount[d] = (dayCount[d] || 0) + 1 })
     const sorted = Object.entries(dayCount).sort((a: any, b: any) => b[1] - a[1]).slice(0, 20)
-    return { type: 'text', value: 'Activity (Last 20 Active Days):' + '\n\n' + formatASCIIChart(sorted.map(([label, value]) => ({ label, value }))) }
+    return { type: 'text', value: '📈 活跃度（最近 20 天）：\n\n' + formatASCIIChart(sorted.map(([label, value]) => ({ label, value }))) }
   }
 
   if (cmd === 'streaks') {
     const stats = calculateStats()
-    return { type: 'text', value: ['Contribution Streaks:', '=====================', '', 'Longest Streak: ' + stats.longestStreak + ' days', 'Current Streak: ' + stats.currentStreak + ' days', '', 'Tips to improve:', '  - Commit at least once a day', '  - Use meaningful commit messages', '  - Keep commits small and focused'].join('\n') }
+    return { type: 'text', value: ['🔥 连续提交记录', '════════════════', '', '最长连续：' + stats.longestStreak + ' 天', '当前连续：' + stats.currentStreak + ' 天', '', '💡 改善建议：', '  - 每天至少提交一次', '  - 使用有意义的提交信息', '  - 保持提交小而专注'].join('\n') }
   }
 
   if (cmd === 'insights') {
     const stats = calculateStats()
-    const insights: string[] = ['Git Insights:', '==============', '']
-    if (stats.avgCommitsPerDay < 1) insights.push('• Low commit frequency. Try to commit at least once per day.')
-    if (stats.longestStreak > 7) insights.push('• Great streak! Keep up the consistent work.')
-    if (stats.totalAuthors === 1) insights.push('• Solo project. Consider collaborating with others.')
-    if (stats.totalAuthors > 10) insights.push('• Large team! Ensure clear branch strategy.')
-    if (stats.hotFiles.length > 0 && stats.hotFiles[0].changes > 50) insights.push(`• File "${stats.hotFiles[0].file}" changes frequently. Consider refactoring.`)
-    if (stats.codeChurn.deleted > stats.codeChurn.added * 0.5) insights.push('• High deletion rate. Good cleanup or potential instability.')
-    if (stats.mostProductiveHour >= 22 || stats.mostProductiveHour <= 5) insights.push('• Late night commits detected. Watch for burnout!')
-    insights.push('', 'Suggestions:', '• Use conventional commits (feat:, fix:, docs:)', '• Keep pull requests small', '• Write meaningful commit messages', '• Delete merged branches regularly')
+    const insights: string[] = ['💡 Git 洞察', '═══════════════', '']
+    if (stats.avgCommitsPerDay < 1) insights.push('• 提交频率较低。建议每天至少提交一次。')
+    if (stats.longestStreak > 7) insights.push('• 太棒了！继续保持一致的提交习惯。')
+    if (stats.totalAuthors === 1) insights.push('• 单人项目。考虑邀请他人协作。')
+    if (stats.totalAuthors > 10) insights.push('• 大型团队！确保有清晰的分支策略。')
+    if (stats.hotFiles.length > 0 && stats.hotFiles[0].changes > 50) insights.push(`• 文件 "${stats.hotFiles[0].file}" 频繁变更。考虑重构。`)
+    if (stats.codeChurn.deleted > stats.codeChurn.added * 0.5) insights.push('• 删除率较高。良好的清理或潜在的不稳定性。')
+    if (stats.mostProductiveHour >= 22 || stats.mostProductiveHour <= 5) insights.push('• 深夜提交。注意休息，避免倦怠！')
+    insights.push('', '📋 建议：', '• 使用约定式提交 (feat:, fix:, docs:)', '• 保持 PR 小而专注', '• 编写有意义的提交信息', '• 定期删除已合并的分支')
     return { type: 'text', value: insights.join('\n') }
   }
 
@@ -247,21 +247,21 @@ export const call: LocalCommandCall = async (args) => {
     const stats = calculateStats()
     const fmt = parts[1] || 'md'
     const filename = `git-stats.${fmt === 'markdown' ? 'md' : fmt}`
-    const content = fmt === 'json' ? JSON.stringify(stats, null, 2) : '# Git Stats\n\nCommits: ' + stats.totalCommits + '\nAuthors: ' + stats.totalAuthors
+    const content = fmt === 'json' ? JSON.stringify(stats, null, 2) : '# Git 统计\n\n提交数：' + stats.totalCommits + '\n作者数：' + stats.totalAuthors
     writeFileSync(filename, content, 'utf-8')
-    return { type: 'text', value: '[OK] Exported: ' + filename }
+    return { type: 'text', value: '✅ 已导出：' + filename }
   }
 
   // Default: full graph + stats
   const stats = calculateStats()
   const commits = getCommits('HEAD', 20)
-  const lines = ['Git Graph & Stats', '═════════════════', '', `Score: ${stats.totalCommits} commits by ${stats.totalAuthors} authors`, '', 'Recent Commits:', ...commits.slice(0, 10).map(c => `${c.shortHash} ${c.date} ${c.author} - ${c.message.slice(0, 50)}`), '', 'Hot Files:', ...stats.hotFiles.slice(0, 5).map(f => `  ${f.file} (${f.changes})`)]
+  const lines = ['📊 Git 图表与统计', '═══════════════════════', '', `📈 评分：${stats.totalCommits} 次提交，${stats.totalAuthors} 位作者`, '', '📅 最近提交：', ...commits.slice(0, 10).map(c => `${c.shortHash} ${c.date} ${c.author} - ${c.message.slice(0, 50)}`), '', '🔥 热门文件：', ...stats.hotFiles.slice(0, 5).map(f => `  ${f.file}（${f.changes} 次）`)]
   return { type: 'text', value: lines.join('\n') }
 }
 
 const gitGraph: Command = {
   type: 'local', name: 'git-graph',
-  description: 'Git graph - stats/authors/timeline/hotfiles/churn/activity/streaks/insights',
+  description: '📊 Git 图表 - 统计/作者/时间线/热门文件/波动/活跃度/连续提交/洞察',
   aliases: ['/git-graph', '/gg', '/gitlog'],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

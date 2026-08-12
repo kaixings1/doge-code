@@ -72,18 +72,18 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const info = getProjectInfo()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['README Generator', '', '📖 Usage: ', '  /readme                         Generate README', '  /readme preview                Preview only', '  /readme save [file]            Save to file', '  /readme template <name>        Use template', '  /readme sections               Available sections', '  /readme badges                 Generate badges', '  /readme toc                    Generate TOC', '  /readme update                 Update existing', '  /readme check                  Check completeness', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['📄 README 生成器', '', '📖 用法：', '  /readme                        生成 README', '  /readme preview               仅预览', '  /readme save [文件]           保存到文件', '  /readme template <名称>       使用模板', '  /readme sections              可用章节', '  /readme badges                生成徽章', '  /readme toc                   生成目录', '  /readme update                更新现有', '  /readme check                 检查完整性', ''].join('\n') }
 
   if (cmd === 'preview' || cmd === '') return { type: 'text', value: generateReadme(info) }
 
   if (cmd === 'save') {
     const file = parts[1] || 'README.md'
     writeFileSync(file, generateReadme(info), 'utf-8')
-    return { type: 'text', value: '[OK] Saved: ' + file }
+    return { type: 'text', value: '✅ 已保存：' + file }
   }
 
-  if (cmd === 'template') return { type: 'text', value: 'Available templates: default, minimal, full, library, api' }
-  if (cmd === 'sections') return { type: 'text', value: 'Available sections:\n  - Title & Description\n  - Tech Stack\n  - Getting Started\n  - Project Structure\n  - Scripts\n  - API Reference\n  - Contributing\n  - License' }
+  if (cmd === 'template') return { type: 'text', value: '可用模板：default（默认）、minimal（精简）、full（完整）、library（库）、api' }
+  if (cmd === 'sections') return { type: 'text', value: '可用章节：\n  - 标题与描述\n  - 技术栈\n  - 快速开始\n  - 项目结构\n  - 脚本\n  - API 参考\n  - 贡献指南\n  - 许可证' }
 
   if (cmd === 'badges') {
     const shields = 'https://shields.io'
@@ -95,27 +95,27 @@ export const call: LocalCommandCall = async (args) => {
     if (existsSync('README.md')) {
       const content = readFileSync('README.md', 'utf-8')
       const headings = content.match(/^#{1,3}\s+.+$/gm) || []
-      return { type: 'text', value: 'Table of Contents:\n' + headings.map(h => '- ' + h.replace(/^#+\s+/, '')).join('\n') }
+      return { type: 'text', value: '目录：\n' + headings.map(h => '- ' + h.replace(/^#+\s+/, '')).join('\n') }
     }
-    return { type: 'text', value: 'No README.md found' }
+    return { type: 'text', value: '未找到 README.md' }
   }
 
   if (cmd === 'update') {
-    if (existsSync('README.md')) return { type: 'text', value: '[OK] README.md exists. Use /readme preview to regenerate.' }
-    return { type: 'text', value: 'No README.md found. Use /readme save to create.' }
+    if (existsSync('README.md')) return { type: 'text', value: '✅ README.md 存在。使用 /readme preview 重新生成。' }
+    return { type: 'text', value: '未找到 README.md。使用 /readme save 创建。' }
   }
 
   if (cmd === 'check') {
     const exists = existsSync('README.md')
-    return { type: 'text', value: 'README.md: ' + (exists ? '[OK] exists' : '[MISSING] not found') + '\n' + (exists ? 'Lines: ' + readFileSync('README.md', 'utf-8').split('\n').length : 'Create with /readme save') }
+    return { type: 'text', value: 'README.md：' + (exists ? '✅ 已存在' : '❌ 未找到') + '\n' + (exists ? '行数：' + readFileSync('README.md', 'utf-8').split('\n').length : '使用 /readme save 创建') }
   }
 
-  return { type: 'text', value: 'Unknown: ' + cmd }
+  return { type: 'text', value: '❓ 未知命令：' + cmd }
 }
 
 const readme: Command = {
   type: 'local', name: 'readme',
-  description: 'README - generate/preview/save/badges/toc/check/update/sections',
+  description: '📄 README - 生成/预览/保存/徽章/目录/检查/更新/章节',
   aliases: '/readme, /rm'.split(','),
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

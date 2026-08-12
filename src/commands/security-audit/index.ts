@@ -8,25 +8,25 @@ import { join, resolve, extname } from 'path'
  * 静态代码分析，检测常见安全漏洞
  */
 
-const HELP_TEXT = `🛡️ **Security Audit 命令** - 安全审计工具
+const HELP_TEXT = `🛡️ **安全审计命令** - 静态安全审计工具
 
-**用法**: /security-audit [选项]
+**用法**：/security-audit [选项]
 
-**选项**:
+**选项**：
   --scan <路径>    - 扫描目录中的代码
   --file <路径>    - 扫描单个文件
-  --rule <规则>    - 指定检查规则 (sql-injection, xss, cmd-injection, hardcode-secrets, dangerous-api)
-  --format <格式>  - 输出格式 (text/json)
+  --rule <规则>    - 指定检查规则（sql-injection, xss, cmd-injection, hardcode-secrets, dangerous-api）
+  --format <格式>  - 输出格式（text/json）
   --fix          - 自动修复可修复的问题
   --help         - 显示帮助
 
-**支持的文件类型**: .ts, .tsx, .js, .jsx, .py, .go, .java, .php
+**支持的文件类型**：.ts, .tsx, .js, .jsx, .py, .go, .java, .php
 
-**示例**:
-  /security-audit --scan ./src           # 扫描整个 src 目录
-  /security-audit --file app.js           # 扫描单个文件
+**示例**：
+  /security-audit --scan ./src            # 扫描整个 src 目录
+  /security-audit --file app.js            # 扫描单个文件
   /security-audit --scan . --rule xss      # 只检查 XSS 漏洞
-  /security-audit --scan . --fix         # 自动修复`
+  /security-audit --scan . --fix          # 自动修复`
 
 // 安全规则模式
 const SECURITY_RULES: Record<string, { pattern: RegExp; severity: 'high' | 'medium' | 'low'; message: string }> = {

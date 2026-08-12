@@ -429,14 +429,14 @@ export const call: LocalCommandCall = async (args) => {
     saveIssues(merged)
 
     if (filtered.length === 0) {
-      return { type: 'text', value: '[OK] No new issues found! Code looks clean.' }
+      return { type: 'text', value: '✅ 未发现新问题！代码看起来很干净。' }
     }
 
     const lines = [
-      'Proactive Suggestions',
+      '💡 主动建议',
       '=====================',
       '',
-      'Found ' + filtered.length + ' new suggestions (total open: ' + merged.filter(i => i.status === 'open').length + '):',
+      '发现 ' + filtered.length + ' 条新建议（未解决总数：' + merged.filter(i => i.status === 'open').length + '）：',
       '',
     ]
 
@@ -465,15 +465,15 @@ export const call: LocalCommandCall = async (args) => {
     const key = parts[1]
     const value = parts.slice(2).join(' ')
     if (!key || !value) {
-      return { type: 'text', value: JSON.stringify(config, null, 2) }
+      return { type: 'text', value: '📋 当前配置：\n' + JSON.stringify(config, null, 2) }
     }
     try {
       // @ts-expect-error dynamic key
       config[key] = value === 'true' ? true : value === 'false' ? false : value
       saveConfig(config)
-      return { type: 'text', value: '[OK] ' + key + ' = ' + config[key] }
+      return { type: 'text', value: '✅ ' + key + ' = ' + config[key] }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] ' + err }
+      return { type: 'text', value: '❌ 错误：' + err }
     }
   }
 
@@ -516,12 +516,12 @@ export const call: LocalCommandCall = async (args) => {
   // ===================== WATCH =====================
   if (cmd === 'watch') {
     if (activeWatcher) {
-      return { type: 'text', value: '[OK] Watch is already active.' }
+      return { type: 'text', value: '✅ 监听已处于活动状态。' }
     }
     const target = parts[1] || '.'
     const watchDir = resolve(target)
     if (!existsSync(watchDir)) {
-      return { type: 'text', value: '[ERROR] Directory not found: ' + watchDir }
+      return { type: 'text', value: '❌ 目录未找到：' + watchDir }
     }
 
     // Do an initial scan
@@ -555,15 +555,10 @@ export const call: LocalCommandCall = async (args) => {
         }, 500)
       })
     } catch (err) {
-      return { type: 'text', value: '[ERROR] Failed to start watcher: ' + err }
+      return { type: 'text', value: '❌ 启动监听失败：' + err }
     }
 
-    const lines = [
-      '[OK] Watching for changes in: ' + watchDir,
-      'Initial scan found ' + filtered.length + ' issues.',
-      'Press Ctrl+C to stop watching.',
-    ]
-    return { type: 'text', value: lines.join('\n') }
+      return { type: 'text', value: '✅ 已启动监听：' + watchDir + '\n初始扫描发现 ' + filtered.length + ' 个问题。\n按 Ctrl+C 停止监听。' }
   }
 
   // ===================== STOP WATCH =====================
@@ -571,9 +566,9 @@ export const call: LocalCommandCall = async (args) => {
     if (activeWatcher) {
       activeWatcher.close()
       activeWatcher = null
-      return { type: 'text', value: '[OK] File watcher stopped.' }
+      return { type: 'text', value: '✅ 文件监听已停止。' }
     }
-    return { type: 'text', value: '[INFO] No active watcher.' }
+    return { type: 'text', value: 'ℹ️ 无活动监听。' }
   }
 
   // ===================== FIX-ALL =====================
@@ -581,7 +576,7 @@ export const call: LocalCommandCall = async (args) => {
     const issues = loadIssues()
     const fixable = issues.filter(i => i.status === 'open' && i.autoFixable)
     if (fixable.length === 0) {
-      return { type: 'text', value: '[OK] No auto-fixable issues found.' }
+      return { type: 'text', value: '✅ 没有可自动修复的问题。' }
     }
 
     let fixed = 0
@@ -596,10 +591,10 @@ export const call: LocalCommandCall = async (args) => {
     recordTrend(0, fixed, 0)
 
     const lines = [
-      '[OK] Auto-fix complete',
-      '  Attempted: ' + fixable.length,
-      '  Fixed:    ' + fixed,
-      '  Failed:   ' + (fixable.length - fixed),
+      '✅ 自动修复完成',
+      '  尝试：' + fixable.length,
+      '  成功：' + fixed,
+      '  失败：' + (fixable.length - fixed),
     ]
     return { type: 'text', value: lines.join('\n') }
   }
@@ -607,28 +602,28 @@ export const call: LocalCommandCall = async (args) => {
   // ===================== FIX <id> =====================
   if (cmd === 'fix') {
     const id = parts[1]
-    if (!id) return { type: 'text', value: '[ERROR] Usage: /proactive fix <id>' }
+    if (!id) return { type: 'text', value: '📖 用法：/proactive fix <id>' }
 
     const issues = loadIssues()
     const issue = issues.find(i => i.id === id)
-    if (!issue) return { type: 'text', value: '[ERROR] Issue not found: ' + id }
-    if (issue.status !== 'open') return { type: 'text', value: '[ERROR] Issue is already ' + issue.status + ': ' + id }
-    if (!issue.autoFixable) return { type: 'text', value: '[ERROR] Issue is not auto-fixable: ' + id }
+    if (!issue) return { type: 'text', value: '❌ 问题未找到：' + id }
+    if (issue.status !== 'open') return { type: 'text', value: '❌ 问题已是 ' + issue.status + ' 状态：' + id }
+    if (!issue.autoFixable) return { type: 'text', value: '❌ 问题不可自动修复：' + id }
 
     if (attemptAutoFix(issue)) {
       issue.status = 'fixed'
       issue.fixedAt = new Date().toISOString()
       saveIssues(issues)
       recordTrend(0, 1, 0)
-      return { type: 'text', value: '[OK] Fixed ' + id + ' in ' + issue.file + ':' + issue.line }
+      return { type: 'text', value: '✅ 已修复 ' + id + '（' + issue.file + ':' + issue.line + '）' }
     }
-    return { type: 'text', value: '[ERROR] Failed to fix ' + id + '. Try manual fix.' }
+    return { type: 'text', value: '❌ 修复失败：' + id + '。请手动修复。' }
   }
 
   // ===================== IGNORE <id> =====================
   if (cmd === 'ignore') {
     const id = parts[1]
-    if (!id) return { type: 'text', value: '[ERROR] Usage: /proactive ignore <id>' }
+    if (!id) return { type: 'text', value: '📖 用法：/proactive ignore <id>' }
 
     const issues = loadIssues()
     const issue = issues.find(i => i.id === id)
@@ -646,7 +641,7 @@ export const call: LocalCommandCall = async (args) => {
     const pattern = parts.slice(1).join(' ')
     if (!pattern) {
       // List current patterns
-      const lines = ['Ignore Patterns:', '================']
+      const lines = ['🚫 忽略规则：', '================']
       if (config.ignorePatterns.length === 0) {
         lines.push('  (none)')
       } else {
@@ -660,9 +655,9 @@ export const call: LocalCommandCall = async (args) => {
       if (!isNaN(idx) && idx >= 0 && idx < config.ignorePatterns.length) {
         const removed = config.ignorePatterns.splice(idx, 1)[0]
         saveConfig(config)
-        return { type: 'text', value: '[OK] Removed ignore pattern: ' + removed }
+        return { type: 'text', value: '✅ 已移除忽略规则：' + removed }
       }
-      return { type: 'text', value: '[ERROR] Invalid index.' }
+      return { type: 'text', value: '❌ 索引无效。' }
     }
 
     config.ignorePatterns.push(pattern)
@@ -687,9 +682,9 @@ export const call: LocalCommandCall = async (args) => {
     fs.writeFileSync(resolve(output), content, 'utf-8')
 
     const lines = [
-      '[OK] Report generated: ' + resolve(output),
-      '  Format:  ' + format,
-      '  Issues:  ' + issues.filter(i => i.status === 'open').length + ' open / ' + issues.length + ' total',
+      '✅ 报告已生成：' + resolve(output),
+      '  格式：' + format,
+      '  问题数：' + issues.filter(i => i.status === 'open').length + ' 个未解决 / ' + issues.length + ' 个总计',
     ]
     return { type: 'text', value: lines.join('\n') }
   }
@@ -698,14 +693,14 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'trend') {
     const trend = loadTrend()
     if (trend.length === 0) {
-      return { type: 'text', value: '[INFO] No trend data yet. Run scans to collect data.' }
+      return { type: 'text', value: 'ℹ️ 暂无趋势数据。请先运行扫描。' }
     }
 
     const days = Math.min(parseInt(parts[1], 10) || 14, 90)
     const recent = trend.slice(-days)
 
     const lines = [
-      'Proactive Trend (last ' + recent.length + ' days)',
+      '📈 主动建议趋势（最近 ' + recent.length + ' 天）',
       '==========================================',
       '',
     ]
@@ -723,7 +718,7 @@ export const call: LocalCommandCall = async (args) => {
     })
 
     lines.push('')
-    lines.push('Summary: +' + totalAdded + ' added, -' + totalFixed + ' fixed, ~' + totalIgnored + ' ignored')
+    lines.push('📊 摘要：+' + totalAdded + ' 新增，-' + totalFixed + ' 已修复，~' + totalIgnored + ' 已忽略')
 
     return { type: 'text', value: lines.join('\n') }
   }
@@ -733,21 +728,21 @@ export const call: LocalCommandCall = async (args) => {
     const sub = parts[1]
     if (!sub) {
       const lines = [
-        'Detection Rules',
+        '🔍 检测规则',
         '===============',
         '',
       ]
       const ruleDescriptions: Record<string, string> = {
-        'perf-foreach-push': 'Detect forEach + push patterns (performance)',
-        'perf-json-clone': 'Detect JSON.parse(JSON.stringify()) deep clone (performance)',
-        'sec-eval': 'Detect eval() usage (security)',
-        'sec-innerHTML': 'Detect innerHTML usage (security)',
-        'maintain-deep-nesting': 'Detect deep nesting > 5 levels (maintainability)',
-        'bug-await-outside-async': 'Detect await outside async (bug)',
-        'style-line-length': 'Detect lines > 120 chars (style)',
+        'perf-foreach-push': '检测 forEach + push 模式（性能）',
+        'perf-json-clone': '检测 JSON.parse(JSON.stringify()) 深拷贝（性能）',
+        'sec-eval': '检测 eval() 使用（安全）',
+        'sec-innerHTML': '检测 innerHTML 使用（安全）',
+        'maintain-deep-nesting': '检测深度嵌套超过 5 层（可维护性）',
+        'bug-await-outside-async': '检测非 async 函数中使用 await（bug）',
+        'style-line-length': '检测行长度超过 120 字符（风格）',
       }
       for (const [key, enabled] of Object.entries(config.rules)) {
-        const status = enabled ? '[ON] ' : '[OFF]'
+        const status = enabled ? '✅ 开启' : '⛔ 关闭'
         lines.push('  ' + status + ' ' + key + '  (' + (ruleDescriptions[key] || '') + ')')
       }
       return { type: 'text', value: lines.join('\n') }
@@ -755,11 +750,11 @@ export const call: LocalCommandCall = async (args) => {
 
     if (sub === 'enable' || sub === 'disable') {
       const ruleKey = parts[2]
-      if (!ruleKey) return { type: 'text', value: '[ERROR] Usage: /proactive rules enable|disable <rule-key>' }
-      if (!(ruleKey in config.rules)) return { type: 'text', value: '[ERROR] Unknown rule: ' + ruleKey }
+      if (!ruleKey) return { type: 'text', value: '📖 用法：/proactive rules enable|disable <规则键>' }
+      if (!(ruleKey in config.rules)) return { type: 'text', value: '❌ 未知规则：' + ruleKey }
       config.rules[ruleKey] = sub === 'enable'
       saveConfig(config)
-      return { type: 'text', value: '[OK] Rule ' + ruleKey + ' ' + sub + 'd' }
+      return { type: 'text', value: '✅ 规则 ' + ruleKey + ' 已' + (sub === 'enable' ? '启用' : '禁用') }
     }
 
     if (sub === 'reset') {
@@ -776,18 +771,18 @@ export const call: LocalCommandCall = async (args) => {
     const sub = parts[1]
     if (!sub || sub === 'status') {
       const status = config.scheduleInterval > 0 ? 'Every ' + config.scheduleInterval + ' minutes' : 'Disabled'
-      return { type: 'text', value: 'Schedule: ' + status + '\nUsage: /proactive schedule <minutes|off>' }
+      return { type: 'text', value: '⏳ 定时任务：' + status + '\n用法：/proactive schedule <分钟数|off>' }
     }
 
     if (sub === 'off' || sub === 'disable' || sub === '0') {
       config.scheduleInterval = 0
       saveConfig(config)
-      return { type: 'text', value: '[OK] Scheduled scanning disabled.' }
+      return { type: 'text', value: '✅ 已禁用定时扫描。' }
     }
 
     const minutes = parseInt(sub, 10)
     if (isNaN(minutes) || minutes <= 0) {
-      return { type: 'text', value: '[ERROR] Invalid interval. Use a positive number of minutes.' }
+      return { type: 'text', value: '❌ 间隔无效。请使用正整数（分钟）。' }
     }
 
     config.scheduleInterval = minutes
@@ -817,7 +812,7 @@ export const call: LocalCommandCall = async (args) => {
     // Don't keep process alive just for this
     if (typeof intervalId === 'object' && intervalId.unref) intervalId.unref()
 
-    return { type: 'text', value: '[OK] Scheduled scanning every ' + minutes + ' minutes.' }
+    return { type: 'text', value: '✅ 已设置定时扫描：每 ' + minutes + ' 分钟' }
   }
 
   // ===================== EXPORT =====================
@@ -927,13 +922,13 @@ export const call: LocalCommandCall = async (args) => {
     ].join('\n') }
   }
 
-  return { type: 'text', value: 'Unknown: ' + cmd + '\nRun /proactive help for usage.' }
+  return { type: 'text', value: '❓ 未知命令：' + cmd + '\n请运行 /proactive help 查看用法。' }
 }
 
 const proactive: Command = {
   type: 'local',
   name: 'proactive',
-  description: 'Proactive code suggestions - scan for issues and improvements',
+  description: '💡 主动建议 - 扫描问题与改进/自动修复/忽略规则/趋势报告',
   aliases: ['/proactive', '/suggest'],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
