@@ -1137,7 +1137,7 @@ function validateObfuscatedFlags(context: ValidationContext): PermissionResult {
   if (baseCommand === 'echo' && !hasShellOperators) {
     return {
       behavior: 'passthrough',
-      message: 'echo 命令是安全的且不包含危险标志',
+      message: '⚠️ 注意: echo 命令是安全的且不包含危险标志',
     }
   }
 

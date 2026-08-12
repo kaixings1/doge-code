@@ -285,7 +285,7 @@ export function GitMergePanel({ cwd, theme, onClose, onResolved }: GitMergePanel
             </div>
           </div>
 
-          {/* 解决按� */}
+          {/* 操作按钮 */}
           <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
             <button
               onClick={() => setResolution(currentFile, 'ours')}

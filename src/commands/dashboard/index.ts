@@ -167,7 +167,7 @@ function renderHelp(): string {
     '  status                显示状态和统计',
     '  export                导出数据到 JSON 文件',
     '  reset                 重置统计数据',
-    '  --help                显示帮助',
+    '📖 用法:   --help                显示帮助',
     '',
     '💡 示例: ',
     '  /dashboard             启动仪表盘',

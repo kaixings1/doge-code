@@ -3806,7 +3806,7 @@ export function REPL({
       // 使用 ref 获取当前对话框状态，避免过时闭包
       focusedInputDialogRef.current === undefined && idleTimeSinceResponse >= getGlobalConfig().messageIdleNotifThresholdMs) {
         void sendNotification({
-          message: 'Claude 正在等待您的输入',
+          message: '⏳ Claude 正在等待您的输入',
           notificationType: 'idle_prompt'
         }, terminal);
       }

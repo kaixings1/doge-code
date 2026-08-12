@@ -300,11 +300,11 @@ function getBuiltInTemplates(): WikiTemplate[] {
   return [
     {
       name: 'api-doc',
-      content: '# API: {{name}}\n\n## 概述\n\n{{description}}\n\n## 接口列表\n\n### `{{method}} {{path}}`\n\n**请求参数:**\n\n| 参数 | 类型 | 必填 | 说明 |\n|------|------|------|------|\n| param1 | string | 是 | 描述 |\n\n**响应示例:**\n\n```json\n{\n  "code": 0,\n  "data": {}\n}\n```\n\n## 错误码\n\n| 错误码 | 说明 |\n|--------|------|\n| 0 | 成功 |\n| 1001 | 参数错误 |\n',
+      content: '📖 用法: # API: {{name}}\n\n## 概述\n\n{{description}}\n\n## 接口列表\n\n### `{{method}} {{path}}`\n\n**请求参数:**\n\n| 参数 | 类型 | 必填 | 说明 |\n|------|------|------|------|\n| param1 | string | 是 | 描述 |\n\n**响应示例:**\n\n```json\n{\n  "code": 0,\n  "data"❌ 错误: : {}\n}\n```\n\n## 错误码\n\n| 错误码 | 说明 |\n|--------|------|\n| 0 | 成功 |\n| 1001 | 参数错误 |\n',
     },
     {
       name: 'module-doc',
-      content: '# 模块: {{name}}\n\n## 概述\n\n{{description}}\n\n## 文件结构\n\n```\n{{structure}}\n```\n\n## 核心函数\n\n- `function1()` - 描述\n- `function2()` - 描述\n\n## 依赖\n\n- 依赖模块1\n- 依赖模块2\n\n## 使用示例\n\n```typescript\nimport { {{name}} } from \'./{{name}}\'\n```\n',
+      content: '📖 用法: # 模块: {{name}}\n\n## 概述\n\n{{description}}\n\n## 文件结构\n\n```\n{{structure}}\n```\n\n## 核心函数\n\n- `function1()` - 描述\n- `function2()` - 描述\n\n## 依赖\n\n- 依赖模块1\n- 依赖模块2\n\n## 使用示例\n\n```typescript\nimport { {{name}} } from \'./{{name}}\'\n```\n',
     },
     {
       name: 'adr',

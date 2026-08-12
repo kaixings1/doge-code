@@ -51,7 +51,7 @@ function renderHelp(): string {
     '| `--mode <模式>` | overview / detailed / architecture / security |',
     '| `--depth <1-3>` | 解释深度 |',
     '| `--line <行号>` | 聚焦特定行 |',
-    '| `--help` | 显示帮助 |',
+    '📖 用法: | `--help` | 显示帮助 |',
     '',
     '## 示例',
     '',

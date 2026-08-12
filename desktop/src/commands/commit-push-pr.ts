@@ -458,11 +458,11 @@ const localCall: LocalCommandCall = async (args, context) => {
         // 增强错误信息
         let errorHint = ''
         if (ghStderr?.includes('401')) {
-          errorHint = '\n认证失败，请运行 `gh auth login` 重新登录。'
+          errorHint = '❌ 错误: \n认证失败，请运行 `gh auth login` 重新登录。'
         } else if (ghStderr?.includes('base branch')) {
-          errorHint = '\n目标分支不存在或权限不足，请确认 --base 参数。'
+          errorHint = '💡 提示: \n目标分支不存在或权限不足，请确认 --base 参数。'
         }
-        prOutput = `⚠ ${existingPr.exists ? '更新' : '创建'} PR 失败：${ghStderr || ghStdout || '未知错误'}${errorHint}\n`
+        prOutput = `⚠ ${existingPr.exists ? '更新' : '创建'❌ 错误: } PR 失败：${ghStderr || ghStdout || '未知错误'}${errorHint}\n`
       }
     }
 

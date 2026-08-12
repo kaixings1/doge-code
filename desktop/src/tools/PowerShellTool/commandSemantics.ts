@@ -87,7 +87,7 @@ const COMMAND_SEMANTICS: Map<string, CommandSemantic> = new Map([
           : exitCode >= 1 && exitCode < 8
             ? exitCode & 1
               ? '文件复制成功'
-              : 'Robocopy 已完成（无错误）'
+              : '❌ 错误: Robocopy 已完成（无错误）'
             : undefined,
     }),
   ],

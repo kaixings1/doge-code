@@ -111,7 +111,7 @@ function renderCodeBlock(code: string, lang: string, colors: {
   return '<div style="position:relative;margin:6px 0" data-code="' + escaped + '"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">' + langLabel + '<button onclick="navigator.clipboard.writeText(this.closest(\'div\').parentElement.getAttribute(\'data-code\')).catch(()=>{})" style="background:' + border + ';border:1px solid ' + border + ';color:' + langColor + ';padding:1px 8px;border-radius:3px;cursor:pointer;font-size:10px">复制</button></div><pre style="background:' + bg + ';border:1px solid ' + border + ';border-radius:4px;padding:10px;overflow-x:auto;font-size:12px;line-height:1.5;margin:0"><code>' + highlighted + '</code></pre></div>'
 }
 
-// ─── 主渲染函数 ───�
+// ─── 主渲染函数 ───
 function renderMarkdown(text: string, colors: {
   text: string; bg: string; border: string; textMuted: string; accent: string
 }): string {
@@ -158,7 +158,7 @@ function renderMarkdown(text: string, colors: {
 function smartRender(content: string, colors: {
   string: string; keyword: string; number: string; comment: string; property: string; text: string; bg: string; border: string; textMuted: string; accent: string
 }): string {
-  // 尝试将整个内容作为 JSON 格式��
+  // 尝试将整个内容作为 JSON 格式进行格式化
   const formatted = tryFormatJson(content)
   if (formatted !== null) {
     return renderCodeBlock(formatted, 'json', colors, colors.bg, colors.border, colors.textMuted)

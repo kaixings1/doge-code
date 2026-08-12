@@ -269,7 +269,7 @@ export function parseToolCall(input: string): ToolCall | null {
   try {
     const jsonStr = input.replace(/^tool_json\s*/, '').trim()
     if (!jsonStr.startsWith('{')) {
-      console.error('[ToolExecutor] 工具调用格式错误：找不到 JSON 对象')
+      console.error('❌ 错误: [ToolExecutor] 工具调用格式错误：找不到 JSON 对象')
       return null
     }
 
@@ -290,7 +290,7 @@ export function parseToolCall(input: string): ToolCall | null {
       parameters: data.parameters,
     }
   } catch (error: any) {
-    console.error('[ToolExecutor] 解析工具调用失败:', error.message)
+    console.error('❌ 错误: [ToolExecutor] 解析工具调用失败:', error.message)
     return null
   }
 }
@@ -373,7 +373,7 @@ export async function handleToolCalls(inputs: string[]): Promise<string[]> {
       const result = await handleToolCall(input)
       results.push(result)
     } catch (error: any) {
-      console.error('[ToolExecutor] 批量处理单条失败:', error.message)
+      console.error('❌ 错误: [ToolExecutor] 批量处理单条失败:', error.message)
       const failResult: ToolResult = {
         success: false,
         tool: 'unknown',

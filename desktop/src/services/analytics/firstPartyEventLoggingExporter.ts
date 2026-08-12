@@ -281,7 +281,7 @@ export class FirstPartyEventLoggingExporter implements LogRecordExporter {
     if (this.isShutdown) {
       if (process.env.USER_TYPE === 'ant') {
         logForDebugging(
-          '1P 事件日志导出失败: 导出器已关闭',
+          '❌ 错误: 1P 事件日志导出失败: 导出器已关闭',
         )
       }
       resultCallback({
@@ -599,7 +599,7 @@ export class FirstPartyEventLoggingExporter implements LogRecordExporter {
       ) {
         if (process.env.USER_TYPE === 'ant') {
           logForDebugging(
-            '1P 事件日志: 401 认证错误，正在尝试不携带认证重试',
+            '❌ 错误: 1P 事件日志: 401 认证错误，正在尝试不携带认证重试',
           )
         }
         const response = await axios.post(this.endpoint, payload, {

@@ -174,7 +174,7 @@ export function getCachedRemainingPasses(): number | null {
 export async function fetchAndStorePassesEligibility(): Promise<ReferralEligibilityResponse | null> {
   // Return existing promise if fetch is already in progress
   if (fetchInProgress) {
-    logForDebugging('Passes: 复用进行中的资格检查请求')
+    logForDebugging('⏳ Passes: 复用进行中的资格检查请求')
     return fetchInProgress
   }
 
@@ -255,7 +255,7 @@ export async function getCachedOrFetchPassesEligibility(): Promise<ReferralEligi
   // Cache exists but is stale - return stale cache and trigger background refresh
   if (now - cachedEntry.timestamp > CACHE_EXPIRATION_MS) {
     logForDebugging(
-      'Passes: 缓存已过期，正在返回缓存数据并在后台刷新',
+      '⏳ Passes: 缓存已过期，正在返回缓存数据并在后台刷新',
     )
     void fetchAndStorePassesEligibility() // Background refresh
     const { timestamp, ...response } = cachedEntry

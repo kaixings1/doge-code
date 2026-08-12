@@ -94,8 +94,8 @@ export const strategyManuals: Record<string, StrategyManual> = {
       '|  条件跳转规则：                                           |',
       '|  - verify 成功 + 目标达成 → END                          |',
       '|  - verify 成功 + 目标未达成 → plan（继续下一轮）          |',
-      '|  - verify 失败 + 重试 < 3  → plan（重新计划）             |',
-      '|  - verify 失败 + 重试 >= 3 → END（放弃）                  |',
+      '❌ 错误: |  - verify 失败 + 重试 < 3  → plan（重新计划）             |',
+      '❌ 错误: |  - verify 失败 + 重试 >= 3 → END（放弃）                  |',
       '+-----------------------------------------------------------+',
     ].join('\n'),
     executionFlow: [
@@ -312,7 +312,7 @@ export const strategyManuals: Record<string, StrategyManual> = {
         command: '/loop-crew "审查 src/utils.js 中的潜在 bug 并修复"',
         flow: [
           'Manager → 分配审查任务给 Reviewer',
-          'Reviewer → 发现 3 个潜在 bug（空指针、类型错误、边界条件）',
+          '❌ 错误: Reviewer → 发现 3 个潜在 bug（空指针、类型错误、边界条件）',
           'Developer → 修复 3 个 bug',
           'Tester → 编写复现测试确认修复',
           'Reviewer → 确认修复通过',
@@ -484,7 +484,7 @@ export const strategyManuals: Record<string, StrategyManual> = {
       '2. 依赖分析：识别任务间的依赖关系，构建 DAG',
       '3. 拓扑排序：确定执行顺序，无依赖的任务优先',
       '4. 并行执行：同时执行所有无依赖的任务',
-      '5. 智能重试：失败任务按指数退避策略重试',
+      '❌ 错误: 5. 智能重试：失败任务按指数退避策略重试',
       '6. 结果聚合：所有子任务完成后合并结果',
       '7. 输出交付：生成最终交付物',
     ],
@@ -519,7 +519,7 @@ export const strategyManuals: Record<string, StrategyManual> = {
           '并行 → 解析和统计可同时进行',
           '聚合 → 合并统计结果生成 HTML',
         ],
-        output: 'report.html，包含趋势图、错误率饼图、异常 IP 列表',
+        output: '❌ 错误: report.html，包含趋势图、错误率饼图、异常 IP 列表',
         tips: ['--criteria "支持按小时聚合" 定义时间粒度', '--criteria "识别异常 IP" 定义检测目标'],
       },
       {
@@ -675,7 +675,7 @@ export const strategyManuals: Record<string, StrategyManual> = {
       '4. Verifier 验证执行结果是否满足成功标准',
       '5a. 验证通过 → 检查是否达到最终目标 → 是则完成',
       '5b. 验证通过 → 检查是否达到最终目标 → 否则返回步骤 1',
-      '5c. 验证失败 → 分析失败原因 → 调整计划 → 返回步骤 2',
+      '❌ 错误: 5c. 验证失败 → 分析失败原因 → 调整计划 → 返回步骤 2',
     ],
     parameters: [
       { name: '--strategy', type: 'string', default: 'openhands', description: '固定为 openhands，指定使用工程代理循环' },
@@ -867,13 +867,13 @@ export const strategyManuals: Record<string, StrategyManual> = {
       '+-----------------------------------------------------------+',
     ].join('\n'),
     executionFlow: [
-      '1. Localize：解析错误日志和堆栈追踪，定位问题文件和行号',
+      '❌ 错误: 1. Localize：解析错误日志和堆栈追踪，定位问题文件和行号',
       '2. Analyze：分析问题代码，确定根本原因',
       '3. Patch：生成最小化修复补丁',
       '4. Verify：运行测试确认修复有效',
       '5a. 测试通过 → 检查是否有回归 → 无回归则完成',
       '5b. 测试通过 → 检查是否有回归 → 有回归则返回步骤 2',
-      '5c. 测试失败 → 分析失败原因 → 返回步骤 2',
+      '❌ 错误: 5c. 测试失败 → 分析失败原因 → 返回步骤 2',
     ],
     parameters: [
       { name: '--strategy', type: 'string', default: 'swe-agent', description: '固定为 swe-agent，指定使用 Bug 修复引擎' },
