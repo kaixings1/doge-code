@@ -17,7 +17,7 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'help' || cmd === '') {
     return { type: 'text', value: [
-      'PR Review', '', 'Usage:',
+      'PR Review', '', '📖 📖 Usage: ',
       '  /pr-review <PR number>           Review a GitHub PR',
       '  /pr-review diff <PR number>      Show PR diff summary',
       '  /pr-review approve <PR number>    Approve PR with review',

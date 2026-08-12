@@ -52,7 +52,7 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = s[0]?.toLowerCase() || 'help'
 
   if (cmd === 'help' || cmd === '') return { type: 'text', value: [
-    'Import Manager', '', 'Usage:',
+    'Import Manager', '', '📖 📖 Usage: ',
     '  /imports analyze [path]          Analyze all imports',
     '  /imports unused [path]           Find unused imports',
     '  /imports organize [file]         Organize imports in file',

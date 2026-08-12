@@ -111,7 +111,7 @@ export const call: LocalCommandCall = async (args) => {
     return { type: 'text', value: [
       'Custom Commands',
       '',
-      'Usage:',
+      '📖 📖 Usage: ',
       '  /custom-cmd list               List all custom commands',
       '  /custom-cmd create <name>      Create a new custom command',
       '  /custom-cmd delete <name>      Delete a custom command',

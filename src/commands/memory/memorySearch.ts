@@ -190,7 +190,7 @@ async function statsMemory(): Promise<LocalCommandResult> {
     if (stats.totalFiles === 0) {
       return {
         type: 'text',
-        value: '未找到任何记忆文件。\n\n记忆文件位置：\n  - 用户级：~/.doge/CLAUDE.md\n  - 项目级：项目根目录下的 CLAUDE.md\n  - 规则级：.claude/rules/*.md',
+        value: '❌ 未找到任何记忆文件。\n\n记忆文件位置：\n  - 用户级：~/.doge/CLAUDE.md\n  - 项目级：项目根目录下的 CLAUDE.md\n  - 规则级：.claude/rules/*.md',
       }
     }
 

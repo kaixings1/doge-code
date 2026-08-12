@@ -11,7 +11,7 @@ const call = async (args: string) => {
       value: [
         '🤖 Agents Platform — 多代理编排平台',
         '',
-        '用法:',
+        '📖 📖 用法: ',
         ' /agents-platform list — 列出所有代理',
         ' /agents-platform create — 创建新代理',
         ' /agents-platform status — 查看代理状态',
@@ -23,7 +23,7 @@ const call = async (args: string) => {
         '• 代理间通信与状态共享',
         '• 可视化执行管线',
         '',
-        '示例:',
+        '💡 💡 示例: ',
         ' /agents-platform orchestrate "研究架构 -> 编写代码 -> 运行测试"',
       ].join('\n'),
     }

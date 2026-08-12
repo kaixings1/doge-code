@@ -313,7 +313,7 @@ export const call: LocalCommandCall = async (args) => {
   }
 
   return { type: 'text', value: [
-    'Error Monitor', '', 'Usage:',
+    'Error Monitor', '', '📖 📖 Usage: ',
     '  /errors list               List unresolved errors', '  /errors scan [path]        Scan for errors',
     '  /errors resolve <id>       Mark as resolved', '  /errors attempt-fix <id>   Auto-fix error',
     '  /errors resolve-all        Resolve all', '  /errors stats              Show statistics',

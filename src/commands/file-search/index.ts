@@ -47,7 +47,7 @@ export const call: LocalCommandCall = async (args) => {
   const parts = s.split(/\s+/)
   const cmd = parts[0]?.toLowerCase() || 'help'
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['File Search', '', 'Usage:', '  /file-search <pattern>           Search in all files', '  /file-search <pattern> <file>    Search in specific file', '  /file-search <pattern> --ext .ts  Search in .ts files', '  /file-search <pattern> -C 2     Show 2 lines context', '  /file-search count <pattern>     Count matches', '  /file-search files <pattern>     List files with matches', '  /file-search replace <pat> <rep> Preview replace', '  /file-search grep <pattern>      Use grep (faster)', '  /file-search ripgrep <pattern>   Use ripgrep (fastest)', '  /file-search stats               Search statistics', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['File Search', '', '📖 📖 Usage: ', '  /file-search <pattern>           Search in all files', '  /file-search <pattern> <file>    Search in specific file', '  /file-search <pattern> --ext .ts  Search in .ts files', '  /file-search <pattern> -C 2     Show 2 lines context', '  /file-search count <pattern>     Count matches', '  /file-search files <pattern>     List files with matches', '  /file-search replace <pat> <rep> Preview replace', '  /file-search grep <pattern>      Use grep (faster)', '  /file-search ripgrep <pattern>   Use ripgrep (fastest)', '  /file-search stats               Search statistics', ''].join('\n') }
 
   if (cmd === 'count') {
     const pattern = parts[1]

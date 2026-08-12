@@ -438,7 +438,7 @@ export const call: LocalCommandCall = async (args) => {
 
   try {
     if (cmd === 'help' || cmd === '') return { type: 'text', value: [
-      'Code Health (Deep)', '', 'Usage:',
+      'Code Health (Deep)', '', '📖 📖 Usage: ',
       '  /code-health                    Full health report',
       '  /code-health file <path>        Single file analysis',
       '  /code-health complexity         Complexity analysis',

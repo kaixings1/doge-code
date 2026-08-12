@@ -179,7 +179,7 @@ export const call: LocalCommandCall = async (args) => {
     return { type: 'text', value: [
       'Dependency Management',
       '',
-      'Usage:',
+      '📖 📖 Usage: ',
       '  /deps status             Show dependency count',
       '  /deps outdated           Check for outdated packages',
       '  /deps update <pkg>       Update a package',

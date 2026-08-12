@@ -37,7 +37,7 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'list'
   let notes = loadNotes()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Quick Notes', '', 'Usage:', '  /notes                          List all notes', '  /notes add <title>              Add note', '  /notes show <id>                Show note', '  /notes edit <id>                Edit note', '  /notes delete <id>              Delete note', '  /notes search <query>           Search notes', '  /notes tags                     List tags', '  /notes pin <id>                 Pin/unpin note', '  /notes export                   Export all', '  /notes import <file>            Import notes', '  /notes clear                   Delete all', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Quick Notes', '', '📖 📖 Usage: ', '  /notes                          List all notes', '  /notes add <title>              Add note', '  /notes show <id>                Show note', '  /notes edit <id>                Edit note', '  /notes delete <id>              Delete note', '  /notes search <query>           Search notes', '  /notes tags                     List tags', '  /notes pin <id>                 Pin/unpin note', '  /notes export                   Export all', '  /notes import <file>            Import notes', '  /notes clear                   Delete all', ''].join('\n') }
 
   if (cmd === 'list' || cmd === 'ls' || cmd === '') {
     if (notes.length === 0) return { type: 'text', value: 'No notes. Use /notes add <title> to create one.' }

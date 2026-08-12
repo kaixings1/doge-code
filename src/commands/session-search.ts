@@ -409,7 +409,7 @@ function formatResults(matches: SearchMatch[], opts: SearchOptions): string {
   if (matches.length === 0) {
     if (opts.keyword === '') {
       return [
-        '未找到任何会话。',
+        '❌ 未找到任何会话。',
         '',
         `会话存储目录: ${join(getClaudeConfigHomeDir(), 'projects')}`,
         '使用 /session-search <关键词> 搜索会话内容。',
@@ -477,7 +477,7 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
         '  --project NAME            按项目名称过滤',
         '  --limit N                 最大结果数（默认 20）',
         '',
-        '示例:',
+        '💡 💡 示例: ',
         '  /session-search "error handling"',
         '  /session-search bug --date 2026-08-01 --limit 10',
         '  /session-search "API" --project my-app',

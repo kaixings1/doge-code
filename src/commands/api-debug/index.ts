@@ -192,7 +192,7 @@ export const call: LocalCommandCall = async (args) => {
       value: [
         '🌐 REST API Debug Client',
         '',
-        '用法:',
+        '📖 📖 用法: ',
         '  /api-debug <METHOD> <URL> [BODY]    发送请求',
         '  /api-debug history                  查看请求历史',
         '  /api-debug clear                    清除历史',
@@ -202,7 +202,7 @@ export const call: LocalCommandCall = async (args) => {
         '  --timeout MS         超时时间（毫秒，默认 30000）',
         '  --no-body           不显示响应体',
         '',
-        '示例:',
+        '💡 💡 示例: ',
         '  /api-debug GET https://api.example.com/users',
         '  /api-debug POST https://api.example.com/users {"name":"test"}',
         '  /api-debug GET https://api.example.com/users --header Authorization=Bearer TOKEN',

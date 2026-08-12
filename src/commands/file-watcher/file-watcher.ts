@@ -55,7 +55,7 @@ export const call: LocalCommandCall = async (args, _context) => {
       resultText = '已启动文件监视器:\n' + JSON.stringify(newWatcher, null, 2)
       break
     case 'stop':
-      resultText = '已停止文件监视器: ' + (path || 'N/A')
+      resultText = '⏹️ 已停止文件监视器: ' + (path || 'N/A')
       break
     case 'list':
       resultText = '文件监视器列表:\n\n' +

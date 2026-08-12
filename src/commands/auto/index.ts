@@ -198,7 +198,7 @@ function formatResult(input: string, result: MatchResult): string {
 
   if (result.alternatives.length > 0) {
     lines.push('')
-    lines.push('💡 备选命令:')
+    lines.push('⌨️ ⌨️ 💡 备选命令: ')
     for (const alt of result.alternatives) {
       lines.push(`   /${alt.command} — ${alt.description}`)
     }
