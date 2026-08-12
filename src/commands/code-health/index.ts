@@ -530,7 +530,7 @@ export const call: LocalCommandCall = async (args) => {
         const fixed = baseline.issues.filter((i: HealthIssue) => !currentKeys.has(`${i.file}:${i.line}:${i.message}`))
         return { type: 'text', value: `📊 基准对比：\n  新增问题：${newIssues.length}\n  已修复：${fixed.length}\n  当前总数：${issues.length}\n\n${newIssues.length > 0 ? '新增问题：\n' + newIssues.slice(0, 10).map(i => `  [${i.file}:${i.line}] ${i.message}`).join('\n') : '✅ 自基准后无新增问题！'}` }
       } catch {
-        return { type: 'text', value: '[ERROR] Corrupted baseline file. Re-run /code-health baseline.' }
+        return { type: 'text', value: '❌ 基准文件已损坏。请重新运行 /code-health baseline。' }
       }
     }
 
@@ -590,7 +590,7 @@ export const call: LocalCommandCall = async (args) => {
 
   } catch (err) {
     const errorMsg = formatError(err)
-    return { type: 'text', value: `❌ [ERROR] 未预期的错误：${errorMsg}\n\n请报告此问题。` }
+    return { type: 'text', value: `❌ [错误] 未预期的错误：${errorMsg}\n\n请报告此问题。` }
   }
 }
 

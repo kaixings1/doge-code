@@ -227,7 +227,7 @@ export const call: LocalCommandCall = async (args) => {
       const files = analyzeProject('.')
       const loopFuncs = files.flatMap(f => f.functions.filter(fn => fn.hasLoop).map(fn => ({ ...fn, file: f.file })))
       const nested = loopFuncs.filter(f => f.depth > 3)
-      return { type: 'text', value: `📊 Loop Analysis:\nTotal with loops: ${loopFuncs.length}\nDeep nesting (>3): ${nested.length}\n\n${nested.slice(0, 10).map(f => `${f.name}() in ${f.file}:${f.line} (depth: ${f.depth})`).join('\n') || 'No deeply nested loops'}` }
+      return { type: 'text', value: `📊 循环分析：\n循环函数总数：${loopFuncs.length}\n深度嵌套（>3层）：${nested.length}\n\n${nested.slice(0, 10).map(f => `${f.name}() 位于 ${f.file}:${f.line}（深度：${f.depth}）`).join('\n') || '✅ 无深度嵌套循环'}` }
     }
 
     if (cmd === 'baseline') {
@@ -244,7 +244,7 @@ export const call: LocalCommandCall = async (args) => {
         const newFiles = files.filter(f => !baseline.some((b: FileMetrics) => b.file === f.file))
         const removed = baseline.filter((b: FileMetrics) => !files.some(f => f.file === b.file))
         return { type: 'text', value: `✅ 新文件：${newFiles.length}\n已移除：${removed.length}\n当前文件数：${files.length}` }
-      } catch { return { type: 'text', value: '[ERROR] Corrupted baseline' } }
+      } catch { return { type: 'text', value: '❌ 基准数据已损坏' } }
     }
 
     if (cmd === 'history') {

@@ -509,7 +509,7 @@ export const call: LocalCommandCall = async (args) => {
       saveConfig(config)
       return { type: 'text', value: '[OK] Proactive ' + cmd + 'd' }
     } catch {
-      return { type: 'text', value: '[ERROR] Failed to save config' }
+      return { type: 'text', value: '❌ 保存配置失败' }
     }
   }
 
@@ -627,7 +627,7 @@ export const call: LocalCommandCall = async (args) => {
 
     const issues = loadIssues()
     const issue = issues.find(i => i.id === id)
-    if (!issue) return { type: 'text', value: '[ERROR] Issue not found: ' + id }
+    if (!issue) return { type: 'text', value: '❌ 未找到问题：' + id }
     if (issue.status === 'ignored') return { type: 'text', value: '[INFO] Already ignored: ' + id }
 
     issue.status = 'ignored'
@@ -855,7 +855,7 @@ export const call: LocalCommandCall = async (args) => {
     const filtered = statusFilter === 'all' ? issues : issues.filter(i => i.status === statusFilter)
 
     if (filtered.length === 0) {
-      return { type: 'text', value: '[OK] No ' + statusFilter + ' issues.' }
+      return { type: 'text', value: '✅ 无' + statusFilter + '问题' }
     }
 
     const lines = [

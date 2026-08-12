@@ -122,7 +122,7 @@ export const call: LocalCommandCall = async (args) => {
   }
 
   if (cmd === 'validate') {
-    return { type: 'text', value: ['Validation:', '════════════', '', '1. Google Search Console: https://search.google.com/search-console/robots-testing-tool', '2. TechnicalSEO: https://technicalseo.com/tools/robots-txt/', '3. Requirements:', '   - Must be at domain root: /robots.txt', '   - Max 500 KB (Google)', '   - Max 50 crawl rules per user-agent', '   - Use absolute URLs for Sitemap', '', 'Current: ' + (existsSync('robots.txt') ? 'robots.txt exists' : 'NO robots.txt')].join('\n') }
+    return { type: 'text', value: ['✅ 验证提示：', '════════════', '', '1. Google Search Console: https://search.google.com/search-console/robots-testing-tool', '2. TechnicalSEO: https://technicalseo.com/tools/robots-txt/', '3. 要求：', '   - 必须放在域名根目录：/robots.txt', '   - 最大 500 KB（Google）', '   - 每个 user-agent 最多 50 条爬取规则', '   - Sitemap 使用绝对 URL', '', '当前状态：' + (existsSync('robots.txt') ? 'robots.txt 已存在' : 'robots.txt 不存在')].join('\n') }
   }
 
   if (cmd === 'view' || cmd === '') return { type: 'text', value: 'robots.txt ' + (existsSync('robots.txt') ? 'exists' : 'missing') }

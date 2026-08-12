@@ -19,7 +19,7 @@ const mcpDiscovery = {
       return { type: 'text' as const, value: report }
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err)
-      return { type: 'text' as const, value: 'Error: ' + msg }
+      return { type: 'text' as const, value: '❌ 错误：' + msg }
     }
   },
 } satisfies Command
