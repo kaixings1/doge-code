@@ -361,7 +361,7 @@ export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin(), jsToTsResolver(), attributionDebugShimPlugin(), markdownTextPlugin(), dedupTopLevelSymbolPlugin(), hardenCliLazyRequirePlugin(), hardenCliRegexPlugin(), hardenBridgeSshImportPlugin(), optionalDepsShimPlugin()],
     ssr: {
-      external: ['electron', 'electron-store', 'node-pty', 'turndown', '@mixmark-io/domino', 'he', 'highlight.js', 'cli-highlight', 'node-forge', 'better-sqlite3', 'zod', 'zod/v4'],
+      external: ['electron', 'electron-store', 'node-pty', 'turndown', '@mixmark-io/domino', 'he', 'highlight.js', 'cli-highlight', 'node-forge', 'better-sqlite3', 'zod', 'zod/v4', 'audio-capture-napi', 'image-processor-napi', 'modifiers-napi', 'url-handler-napi', 'color-diff-napi'],
     },
     build: {
       outDir: 'dist/main',
@@ -374,7 +374,7 @@ export default defineConfig({
       rollupOptions: {
         input: { index: './src/main/entrypoint.ts' },
         output: { format: 'es', entryFileNames: '[name].mjs' },
-        external: ['electron', 'electron-store', 'node-pty', 'turndown', '@mixmark-io/domino', 'he', 'highlight.js', 'cli-highlight', 'node-forge', 'better-sqlite3', 'zod', 'zod/v4'],
+        external: ['electron', 'electron-store', 'node-pty', 'turndown', '@mixmark-io/domino', 'he', 'highlight.js', 'cli-highlight', 'node-forge', 'better-sqlite3', 'zod', 'zod/v4', 'audio-capture-napi', 'image-processor-napi', 'modifiers-napi', 'url-handler-napi', 'color-diff-napi'],
       },
     },
     resolve: {

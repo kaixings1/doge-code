@@ -106,7 +106,7 @@ export class ListPeersTool implements Tool {
         try {
           socket.send(discoveryMsg, 0, discoveryMsg.length, port, broadcastAddr)
         } catch { /* */ }
-        // 也尝试向本地 IP ��送
+        // 也尝试向本地 IP 发送
         try {
           socket.send(discoveryMsg, 0, discoveryMsg.length, port, localIP)
         } catch { /* ignore */ }
