@@ -164,7 +164,7 @@ export function progressiveCollapse(messages: InternalMessage[]): { messages: In
 
 /**
  * Stage 3: 紧急折叠 — 当上下文达到 95% 阈值时触发。
- * 仅保��最近 1 轮用户消息 + 最近 1 轮助手消息。
+ * 仅保留最近 1 轮用户消息 + 最近 1 轮助手消息。
  */
 export function emergencyCollapse(messages: InternalMessage[]): { messages: InternalMessage[]; committed: number } {
   const system = messages.filter((m) => m.role === "system")
