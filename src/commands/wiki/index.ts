@@ -857,7 +857,7 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'link') {
     const linkParts = target.split(/\s+/)
     if (linkParts.length < 2) {
-      return { type: 'text', value: '用法: /wiki link <from> <to>\n示例: /wiki link architecture.md api.md' }
+      return { type: 'text', value: '📖 用法：/wiki link <源> <目标>\n示例：/wiki link architecture.md api.md' }
     }
     const [from, to] = linkParts
     addLink(from, to)
@@ -884,7 +884,7 @@ export const call: LocalCommandCall = async (args) => {
         const fp = resolve(root, c)
         if (existsSync(fp)) { content = readFileSync(fp, 'utf-8'); break }
       }
-      if (!content) return { type: 'text', value: '用法: /wiki render <文件路径>\n渲染 Markdown 为终端格式' }
+      if (!content) return { type: 'text', value: '📖 用法：/wiki render <文件路径>\n渲染 Markdown 为终端格式' }
       return { type: 'text', value: renderMarkdown(content) }
     }
     const fp = resolve(root, filePath)
