@@ -62,7 +62,7 @@ export function SandboxDependenciesTab(t0) {
     let t7;
     let t8;
     if ($[14] !== rgMissing) {
-      t7 = <Text>ripgrep (rg)：{" "}{rgMissing ? <Text color="error"❌ 错误: >未找到</Text> : <Text color="success">已找到</Text>}</Text>;
+      t7 = <Text>ripgrep (rg)：{" "}{rgMissing ? <><Text color="error">❌ 错误: </Text>未找到</> : <Text color="success">已找到</Text>}</Text>;
       t8 = rgMissing && <Text dimColor={true}>{"  "}· {rgInstallHint}</Text>;
       $[14] = rgMissing;
       $[15] = t7;
