@@ -71,23 +71,23 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const config = loadConfig()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['robots.txt Manager (Advanced)', '', '📖 Usage: ', '  /robots <template>              Generate (default/strict/permissive/ecommerce/blog/app)', '  /robots list                    List templates', '  /robots view                    View current robots.txt', '  /robots custom <rules>          Add custom rules', '  /robots set-url <url>           Set base URL', '  /robots set-sitemap <url>       Set sitemap URL', '  /robots set-delay <n>           Set crawl delay', '  /robots config                  Show config', '  /robots validate                Validation tips', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['🤖 robots.txt 管理器（高级）', '', '📖 用法：', '  /robots <模板>              生成（默认/严格/宽松/电商/博客/应用）', '  /robots list                列出模板', '  /robots view                查看当前 robots.txt', '  /robots custom <规则>       添加自定义规则', '  /robots set-url <url>       设置基础 URL', '  /robots set-sitemap <url>   设置站点地图 URL', '  /robots set-delay <秒数>    设置爬取延迟', '  /robots config              查看配置', '  /robots validate            验证提示', ''].join('\n') }
 
   if (cmd === 'list') {
-    const lines = ['Templates:', '══════════', '']
+    const lines = ['📋 可用模板：', '══════════', '']
     TEMPLATES.forEach(t => lines.push(`  ${t.name}: ${t.description}`))
-    lines.push('', 'Usage: /robots <template>')
+    lines.push('', '💡 使用：/robots <模板名>')
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'view') {
-    if (!existsSync('robots.txt')) return { type: 'text', value: 'No robots.txt found. Generate with /robots <template>' }
+    if (!existsSync('robots.txt')) return { type: 'text', value: 'ℹ️ 未找到 robots.txt。使用 /robots <模板> 生成' }
     return { type: 'text', value: 'Current robots.txt:\n═══════════════════\n' + readFileSync('robots.txt', 'utf-8') }
   }
 
   if (cmd === 'set-url') {
     const url = parts[1]
-    if (!url) return { type: 'text', value: 'Usage: /robots set-url <url>' }
+    if (!url) return { type: 'text', value: '📖 用法：/robots set-url <url>' }
     config.baseUrl = url
     saveConfig(config)
     return { type: 'text', value: `✅ [OK] Base URL: ${url}` }
@@ -95,7 +95,7 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'set-sitemap') {
     const url = parts[1]
-    if (!url) return { type: 'text', value: 'Usage: /robots set-sitemap <url>' }
+    if (!url) return { type: 'text', value: '📖 用法：/robots set-sitemap <url>' }
     config.sitemapUrl = url
     saveConfig(config)
     return { type: 'text', value: `✅ [OK] Sitemap: ${url}` }
@@ -103,7 +103,7 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'set-delay') {
     const n = parseInt(parts[1])
-    if (isNaN(n) || n < 0) return { type: 'text', value: 'Usage: /robots set-delay <seconds>' }
+    if (isNaN(n) || n < 0) return { type: 'text', value: '📖 用法：/robots set-delay <秒数>' }
     config.crawlDelay = n
     saveConfig(config)
     return { type: 'text', value: `✅ [OK] Crawl delay: ${n}s` }
@@ -111,7 +111,7 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'custom') {
     const rules = parts.slice(1).join(' ')
-    if (!rules) return { type: 'text', value: 'Usage: /robots custom <rule lines>' }
+    if (!rules) return { type: 'text', value: '📖 用法：/robots custom <规则行>' }
     config.customRules.push(rules)
     saveConfig(config)
     return { type: 'text', value: `✅ [OK] Custom rule added: ${rules}` }
