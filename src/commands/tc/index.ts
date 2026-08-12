@@ -107,7 +107,7 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'compare') {
     const branch = parts[1] || 'main'
-    return { type: 'text', value: 'Compare coverage between current and ' + branch + ': Run /tc run on both branches and diff.' }
+    return { type: 'text', value: '📊 对比当前与 ' + branch + '：在两个分支上分别运行 /tc run 后对比差异。' }
   }
 
   return { type: 'text', value: 'Unknown: ' + cmd }
