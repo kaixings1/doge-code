@@ -149,24 +149,24 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'status' || cmd === '') {
     const status = getGitStatus()
     return { type: 'text', value: [
-      'Auto-Commit Status', '====================',
-      '', 'Status: ' + (config.enabled ? 'Enabled' : 'Disabled'),
-      'Style: ' + config.style, 'Interval: ' + config.interval + 's',
-      'IncludeUntracked: ' + (config.includeUntracked ? 'Yes' : 'No'),
-      'MaxFiles: ' + config.maxFiles, 'Conventional: ' + (config.conventionalCommits ? 'Yes' : 'No'),
-      'SignOff: ' + (config.signOff ? 'Yes' : 'No'),
-      '', 'Pending: ' + status.modified.length + ' modified, ' + status.untracked.length + ' untracked, ' + status.staged.length + ' staged',
+      '📊 自动提交状态', '====================',
+      '', '状态：' + (config.enabled ? '✅ 已启用' : '❌ 已禁用'),
+      '风格：' + config.style, '间隔：' + config.interval + 's',
+      '包含未跟踪：' + (config.includeUntracked ? '是' : '否'),
+      '最大文件数：' + config.maxFiles, '约定式提交：' + (config.conventionalCommits ? '是' : '否'),
+      '签名确认：' + (config.signOff ? '是' : '否'),
+      '', '待处理：' + status.modified.length + ' 个修改，' + status.untracked.length + ' 个未跟踪，' + status.staged.length + ' 个已暂存',
     ].join('\n') }
   }
 
-  if (cmd === 'enable') { config.enabled = true; saveConfig(config); return { type: 'text', value: '[OK] Auto-commit enabled' } }
-  if (cmd === 'disable') { config.enabled = false; saveConfig(config); return { type: 'text', value: '[OK] Auto-commit disabled' } }
+  if (cmd === 'enable') { config.enabled = true; saveConfig(config); return { type: 'text', value: '✅ 自动提交已启用' } }
+  if (cmd === 'disable') { config.enabled = false; saveConfig(config); return { type: 'text', value: '❌ 自动提交已禁用' } }
 
   if (cmd === 'commit') {
     const status = getGitStatus()
     const files = config.includeUntracked ? [...status.modified, ...status.untracked, ...status.staged] : [...status.modified, ...status.staged]
-    if (files.length === 0) return { type: 'text', value: 'No files to commit' }
-    if (files.length > config.maxFiles) return { type: 'text', value: '[WARN] Too many files (' + files.length + ' > ' + config.maxFiles + '). Please commit manually.' }
+    if (files.length === 0) return { type: 'text', value: 'ℹ️ 没有可提交的文件' }
+    if (files.length > config.maxFiles) return { type: 'text', value: '⚠️ 文件过多（' + files.length + ' > ' + config.maxFiles + '）。请手动提交。' }
 
     try {
       const diff = execSync('git diff --stat', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
@@ -175,33 +175,33 @@ export const call: LocalCommandCall = async (args) => {
 
       execSync('git add ' + files.map(f => '"' + f + '"').join(' '), { stdio: 'ignore' })
       execSync('git commit -m "' + message + '"', { stdio: 'ignore' })
-      return { type: 'text', value: '[OK] Committed: ' + message + '\nFiles: ' + files.length + '\n' + diff.trim() }
+      return { type: 'text', value: '✅ 已提交：' + message + '\n文件数：' + files.length + '\n' + diff.trim() }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
+      return { type: 'text', value: '❌ ' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
   if (cmd === 'amend') {
     try {
       execSync('git commit --amend --no-edit', { stdio: 'ignore' })
-      return { type: 'text', value: '[OK] Amended last commit' }
+      return { type: 'text', value: '✅ 已修改最后一次提交' }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
+      return { type: 'text', value: '❌ ' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
   if (cmd === 'history' || cmd === 'log') {
     const count = parseInt(parts[1]) || 20
     const history = getCommitHistory(count)
-    if (history.length === 0) return { type: 'text', value: 'No commit history' }
-    const lines = ['Commit History:', '================', '']
+    if (history.length === 0) return { type: 'text', value: 'ℹ️ 无提交历史' }
+    const lines = ['📊 提交历史', '================', '']
     history.forEach(h => lines.push(h.hash + ' ' + h.message + ' (' + h.date + ')'))
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'undo') {
-    try { execSync('git reset --soft HEAD~1', { stdio: 'ignore' }); return { type: 'text', value: '[OK] Undid last commit (files preserved)' } }
-    catch { return { type: 'text', value: '[ERROR] Undo failed' } }
+    try { execSync('git reset --soft HEAD~1', { stdio: 'ignore' }); return { type: 'text', value: '✅ 已撤销最后一次提交（文件已保留）' } }
+    catch { return { type: 'text', value: '❌ 撤销失败' } }
   }
 
   if (cmd === 'config') {
@@ -210,27 +210,27 @@ export const call: LocalCommandCall = async (args) => {
     // @ts-expect-error dynamic
     config[key] = value === 'true' ? true : value === 'false' ? false : value
     saveConfig(config)
-    return { type: 'text', value: '[OK] ' + key + ' = ' + config[key] }
+    return { type: 'text', value: '✅ ' + key + ' = ' + config[key] }
   }
 
   if (cmd === 'message' || cmd === 'preview') {
     const status = getGitStatus()
     const files = [...status.modified, ...status.staged]
     const diff = execSync('git diff --stat', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
-    return { type: 'text', value: 'Preview commit message:\n' + generateCommitMessage(files, diff) }
+    return { type: 'text', value: '💡 提交消息预览：\n' + generateCommitMessage(files, diff) }
   }
 
   if (cmd === 'help') {
     return { type: 'text', value: [
-      'Auto-Commit', '', '📖 Usage: ',
-      '  /auto-commit status          View status', '  /auto-commit enable/disable  Toggle',
-      '  /auto-commit commit          Manual smart commit', '  /auto-commit amend           Amend last commit',
-      '  /auto-commit history [N]     View commit history', '  /auto-commit undo             Undo last commit',
-      '  /auto-commit config          View/edit config', '  /auto-commit message/preview  Preview message',
+      '📖 自动提交命令', '', '📖 用法：',
+      '  /auto-commit status          查看状态', '  /auto-commit enable/disable  启用/禁用',
+      '  /auto-commit commit          手动智能提交', '  /auto-commit amend           修改最后一次提交',
+      '  /auto-commit history [N]     查看提交历史', '  /auto-commit undo            撤销最后一次提交',
+      '  /auto-commit config          查看/编辑配置', '  /auto-commit message/preview 预览提交消息',
     ].join('\n') }
   }
 
-  return { type: 'text', value: 'Unknown: ' + cmd }
+  return { type: 'text', value: '❓ 未知命令：' + cmd }
 }
 
 const autoCommit: Command = {
