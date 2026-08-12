@@ -186,15 +186,15 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'list' || cmd === 'ls' || cmd === '') {
     const unresolved = errors.filter(e => !e.resolved)
-    if (unresolved.length === 0) return { type: 'text', value: '[OK] No unresolved errors!' }
-    const lines = ['Error Log (' + unresolved.length + ' unresolved):', '================================', '']
+    if (unresolved.length === 0) return { type: 'text', value: '✅ 无未解决问题！' }
+    const lines = ['⚠️ 错误日志（' + unresolved.length + ' 个未解决）：', '═══════════════════════════════════', '']
     unresolved.slice(0, 20).forEach(e => {
-      const icon = e.type === 'syntax' ? '[SYN]' : e.type === 'runtime' ? '[RUN]' : e.type === 'logic' ? '[LOG]' : e.type === 'security' ? '[SEC]' : e.type === 'performance' ? '[PRF]' : '[WRN]'
+      const icon = e.type === 'syntax' ? '🔤' : e.type === 'runtime' ? '⚡' : e.type === 'logic' ? '🧠' : e.type === 'security' ? '🔒' : e.type === 'performance' ? '⚡' : '⚠️'
       lines.push(icon + ' ' + e.file + ':' + e.line + ' - ' + e.message)
-      if (e.suggestedFix) lines.push('     → Fix: ' + e.suggestedFix)
+      if (e.suggestedFix) lines.push('     → 💡 修复：' + e.suggestedFix)
       lines.push('     (' + e.source + ' | id: ' + e.id.slice(0, 12) + ')')
     })
-    if (unresolved.length > 20) lines.push('... and ' + (unresolved.length - 20) + ' more')
+    if (unresolved.length > 20) lines.push('... 还有 ' + (unresolved.length - 20) + ' 个')
     return { type: 'text', value: lines.join('\n') }
   }
 
@@ -207,45 +207,45 @@ export const call: LocalCommandCall = async (args) => {
       if (!merged.some(e => e.file === f.file && e.line === f.line && e.message === f.message)) merged.push(f)
     })
     saveErrors(merged)
-    return { type: 'text', value: '[OK] Scanned: found ' + found.length + ' issues (total: ' + merged.filter(e => !e.resolved).length + ' unresolved)' }
+    return { type: 'text', value: '✅ 扫描完成：发现 ' + found.length + ' 个问题（未解决：' + merged.filter(e => !e.resolved).length + '）' }
   }
 
   if (cmd === 'resolve' || cmd === 'fix') {
     const id = parts[1]
-    if (!id) return { type: 'text', value: 'Usage: /errors resolve <id>' }
+    if (!id) return { type: 'text', value: '📖 用法：/errors resolve <id>' }
     const err = errors.find(e => e.id === id || e.id.startsWith(id))
-    if (!err) return { type: 'text', value: 'Not found: ' + id }
+    if (!err) return { type: 'text', value: '❌ 未找到：' + id }
     err.resolved = true
     saveErrors(errors)
-    return { type: 'text', value: '[OK] Resolved: ' + err.message }
+    return { type: 'text', value: '✅ 已解决：' + err.message }
   }
 
   if (cmd === 'resolve-all') {
     errors.forEach(e => { e.resolved = true })
     saveErrors(errors)
-    return { type: 'text', value: '[OK] All errors marked as resolved' }
+    return { type: 'text', value: '✅ 已标记所有错误为已解决' }
   }
 
   if (cmd === 'attempt-fix') {
     const id = parts[1]
-    if (!id) return { type: 'text', value: 'Usage: /errors attempt-fix <id>' }
+    if (!id) return { type: 'text', value: '📖 用法：/errors attempt-fix <id>' }
     const err = errors.find(e => e.id === id || e.id.startsWith(id))
-    if (!err) return { type: 'text', value: 'Not found: ' + id }
+    if (!err) return { type: 'text', value: '❌ 未找到：' + id }
     const result = applyFixToFile(err.file, err.line, err.suggestedFix || err.message)
     err.fixAttempted = true
     if (result.success) {
       err.fixSuccess = true
       err.resolved = true
       saveErrors(errors)
-      return { type: 'text', value: '[OK] Auto-fixed: ' + err.message + '\n' + result.message }
+      return { type: 'text', value: '✅ 自动修复：' + err.message + '\n' + result.message }
     }
     saveErrors(errors)
-    return { type: 'text', value: '[WARN] Fix suggested but not applied: ' + err.message + '\nSuggestion: ' + (err.suggestedFix || 'N/A') + '\nReason: ' + result.message }
+    return { type: 'text', value: '⚠️ 建议修复但未应用：' + err.message + '\n建议：' + (err.suggestedFix || 'N/A') + '\n原因：' + result.message }
   }
 
   if (cmd === 'clear') {
     saveErrors([])
-    return { type: 'text', value: '[OK] Error log cleared' }
+    return { type: 'text', value: '✅ 错误日志已清空' }
   }
 
   if (cmd === 'stats') {
@@ -253,18 +253,18 @@ export const call: LocalCommandCall = async (args) => {
     const byType: Record<string, number> = {}
     const bySource: Record<string, number> = {}
     unresolved.forEach(e => { byType[e.type] = (byType[e.type] || 0) + 1; bySource[e.source] = (bySource[e.source] || 0) + 1 })
-    const lines = ['Error Statistics:', '=================', '', 'Total unresolved: ' + unresolved.length, '', 'By Type:']
+    const lines = ['📊 错误统计：', '════════════════', '', '未解决总数：' + unresolved.length, '', '按类型：']
     Object.entries(byType).forEach(([t, c]) => lines.push('  ' + t + ': ' + c))
-    lines.push('', 'By Source:')
+    lines.push('', '按来源：')
     Object.entries(bySource).forEach(([s, c]) => lines.push('  ' + s + ': ' + c))
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'patterns') {
     const patterns = loadPatterns()
-    const lines = ['Error Patterns:', '================', '']
+    const lines = ['📋 错误模式：', '════════════════', '']
     patterns.forEach(p => {
-      lines.push((p.enabled ? '[ON]' : '[OFF]') + ' /' + p.pattern + '/ -> ' + p.message)
+      lines.push((p.enabled ? '✅' : '❌') + ' /' + p.pattern + '/ → ' + p.message)
     })
     return { type: 'text', value: lines.join('\n') }
   }
@@ -272,60 +272,60 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'pattern') {
     const action = parts[1]
     const pattern = parts.slice(2).join(' ')
-    if (!action || !pattern) return { type: 'text', value: 'Usage: /errors pattern <enable|disable|add|remove> <pattern>' }
+    if (!action || !pattern) return { type: 'text', value: '📖 用法：/errors pattern <enable|disable|add|remove> <模式>' }
     const patterns = loadPatterns()
     if (action === 'enable' || action === 'disable') {
       const p = patterns.find(p => p.pattern === pattern)
       if (p) { p.enabled = action === 'enable'; savePatterns(patterns) }
-      return { type: 'text', value: '[OK] Pattern ' + action + 'd' }
+      return { type: 'text', value: '✅ 模式已' + (action === 'enable' ? '启用' : '禁用') }
     }
     if (action === 'add') {
-      patterns.push({ pattern, type: 'warning', message: 'Custom pattern', fix: 'Fix manually', enabled: true })
+      patterns.push({ pattern, type: 'warning', message: '自定义模式', fix: '手动修复', enabled: true })
       savePatterns(patterns)
-      return { type: 'text', value: '[OK] Pattern added' }
+      return { type: 'text', value: '✅ 模式已添加' }
     }
     if (action === 'remove') {
       const filtered = patterns.filter(p => p.pattern !== pattern)
       savePatterns(filtered)
-      return { type: 'text', value: '[OK] Pattern removed' }
+      return { type: 'text', value: '✅ 模式已移除' }
     }
-    return { type: 'text', value: 'Unknown action: ' + action }
+    return { type: 'text', value: '❌ 未知操作：' + action }
   }
 
   if (cmd === 'export') {
     const unresolved = errors.filter(e => !e.resolved)
     const exportPath = 'errors-export.json'
     writeFileSync(exportPath, JSON.stringify(unresolved, null, 2), 'utf-8')
-    return { type: 'text', value: '[OK] Exported ' + unresolved.length + ' errors to ' + exportPath }
+    return { type: 'text', value: '✅ 已导出 ' + unresolved.length + ' 个错误到 ' + exportPath }
   }
 
   if (cmd === 'import') {
     const file = parts[1]
-    if (!file) return { type: 'text', value: 'Usage: /errors import <file>' }
+    if (!file) return { type: 'text', value: '📖 用法：/errors import <文件>' }
     try {
       const imported = JSON.parse(readFileSync(file, 'utf-8'))
       const merged = [...errors, ...imported]
       saveErrors(merged)
-      return { type: 'text', value: '[OK] Imported ' + imported.length + ' errors' }
+      return { type: 'text', value: '✅ 已导入 ' + imported.length + ' 个错误' }
     } catch {
-      return { type: 'text', value: '[ERROR] Import failed' }
+      return { type: 'text', value: '❌ 导入失败' }
     }
   }
 
   return { type: 'text', value: [
-    'Error Monitor', '', '📖 Usage: ',
-    '  /errors list               List unresolved errors', '  /errors scan [path]        Scan for errors',
-    '  /errors resolve <id>       Mark as resolved', '  /errors attempt-fix <id>   Auto-fix error',
-    '  /errors resolve-all        Resolve all', '  /errors stats              Show statistics',
-    '  /errors patterns           List patterns', '  /errors pattern <action>   Manage patterns',
-    '  /errors export             Export errors', '  /errors import <file>      Import errors',
-    '  /errors clear              Clear error log',
+    '⚠️ 错误监控', '', '📖 用法：',
+    '  /errors list              列出未解决问题', '  /errors scan [路径]       扫描错误',
+    '  /errors resolve <id>      标记为已解决', '  /errors attempt-fix <id>  自动修复',
+    '  /errors resolve-all       全部解决', '  /errors stats             统计信息',
+    '  /errors patterns          列出模式', '  /errors pattern <操作>    管理模式',
+    '  /errors export            导出错误', '  /errors import <文件>     导入错误',
+    '  /errors clear             清空日志',
   ].join('\n') }
 }
 
 const errorsCmd: Command = {
   type: 'local', name: 'errors',
-  description: 'Error monitoring - scan, track, auto-fix, patterns, export',
+  description: '⚠️ 错误监控 - 扫描/追踪/自动修复/模式/导出',
   aliases: ['/errors', '/err'], supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
