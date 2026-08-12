@@ -5,7 +5,7 @@ import * as path from 'path'
 import { homedir } from 'os'
 
 // ============================================================================
-// REST API Debug Client
+// REST API 调试客户端
 // ============================================================================
 
 interface RequestRecord {
@@ -24,7 +24,7 @@ interface RequestRecord {
 }
 
 // ============================================================================
-// History Management
+// 历史记录管理
 // ============================================================================
 
 const HISTORY_DIR = path.join(homedir(), '.doge', 'api-debug')
@@ -65,7 +65,7 @@ function addToHistory(record: Omit<RequestRecord, 'id' | 'timestamp'>): RequestR
 }
 
 // ============================================================================
-// HTTP Client
+// HTTP 客户端
 // ============================================================================
 
 async function executeRequest(
@@ -111,7 +111,7 @@ async function executeRequest(
 }
 
 // ============================================================================
-// Formatting
+// 格式化输出
 // ============================================================================
 
 function formatRequestRecord(record: RequestRecord, showBody: boolean = true): string {
@@ -332,7 +332,7 @@ function clearHistory(): LocalCommandResult {
 }
 
 // ============================================================================
-// Command Definition
+// 命令定义
 // ============================================================================
 
 const apiDebug = {

@@ -66,24 +66,24 @@ export const call: LocalCommandCall = async (args) => {
   const parts = s.split(/\s+/)
   const cmd = parts[0]?.toLowerCase() || 'help'
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Dependency Graph', '', '📖 Usage: ', '  /graph                          Show project graph', '  /graph mermaid                  Mermaid format', '  /graph dot                      Graphviz DOT format', '  /graph html                     HTML visualization', '  /graph save <file>              Save graph', '  /graph stats                    Graph statistics', '  /graph circular                 Detect circular deps', '  /graph orphans                  Find orphaned modules', '  /graph tree                     Tree view', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['📊 依赖关系图', '', '📖 用法: ', '  /graph                          显示项目依赖图', '  /graph mermaid                   Mermaid 格式', '  /graph dot                       Graphviz DOT 格式', '  /graph html                      HTML 可视化', '  /graph save <文件>               保存图表', '  /graph stats                     图表统计', '  /graph circular                  检测循环依赖', '  /graph orphans                   查找孤立模块', '  /graph tree                      树形视图', ''].join('\n') }
 
   const graph = buildDependencyGraph('.')
 
-  if (cmd === 'stats') return { type: 'text', value: ['Graph Statistics:', '==================', '', 'Nodes: ' + graph.nodes.length, 'Edges: ' + graph.edges.length, '', 'By Type:', '  Modules: ' + graph.nodes.filter(n => n.type === 'module').length, '  Classes: ' + graph.nodes.filter(n => n.type === 'class').length, '  Functions: ' + graph.nodes.filter(n => n.type === 'function').length].join('\n') }
+  if (cmd === 'stats') return { type: 'text', value: ['📊 图表统计:', '==================', '', '节点数: ' + graph.nodes.length, '边数: ' + graph.edges.length, '', '按类型:', '  模块: ' + graph.nodes.filter(n => n.type === 'module').length, '  类: ' + graph.nodes.filter(n => n.type === 'class').length, '  函数: ' + graph.nodes.filter(n => n.type === 'function').length].join('\n') }
 
-  if (cmd === 'circular') return { type: 'text', value: 'Circular dependency detection: Use madge --circular .' }
+  if (cmd === 'circular') return { type: 'text', value: '循环依赖检测: 使用 madge --circular .' }
   if (cmd === 'orphans') {
     const imported = new Set(graph.edges.map(e => e.to))
     const orphans = graph.nodes.filter(n => n.type === 'module' && !imported.has(n.name) && !n.name.includes('index'))
-    if (orphans.length === 0) return { type: 'text', value: '[OK] No orphaned modules' }
-    const lines = ['Orphaned Modules (' + orphans.length + '):', '========================', '']
+    if (orphans.length === 0) return { type: 'text', value: '✅ 没有孤立模块' }
+    const lines = ['孤立模块 (' + orphans.length + '):', '========================', '']
     orphans.forEach(o => lines.push('  ' + o.file))
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'tree') {
-    const lines = ['Module Tree:', '============', '']
+    const lines = ['📁 模块树:', '============', '']
     const modules = graph.nodes.filter(n => n.type === 'module').slice(0, 20)
     modules.forEach(m => lines.push('  ' + m.file + ' (' + graph.edges.filter(e => e.from === m.id).length + ' imports)'))
     return { type: 'text', value: lines.join('\n') }
@@ -92,35 +92,35 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'mermaid') {
     const mermaid = generateMermaid(graph)
     writeFileSync('dependency-graph.mmd', mermaid, 'utf-8')
-    return { type: 'text', value: mermaid + '\n\n[Saved to dependency-graph.mmd]' }
+    return { type: 'text', value: mermaid + '\n\n✅ 已保存到 dependency-graph.mmd' }
   }
 
   if (cmd === 'dot') {
     const dot = generateDot(graph)
     writeFileSync('dependency-graph.dot', dot, 'utf-8')
-    return { type: 'text', value: dot + '\n\n[Saved to dependency-graph.dot]\nRender: dot -Tpng dependency-graph.dot -o graph.png' }
+    return { type: 'text', value: dot + '\n\n✅ 已保存到 dependency-graph.dot\n渲染命令: dot -Tpng dependency-graph.dot -o graph.png' }
   }
 
   if (cmd === 'html') {
     const mermaid = generateMermaid(graph)
     const html = '<html><head><script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script></head><body><div class="mermaid">' + mermaid + '</div><script>mermaid.initialize();</script></body></html>'
     writeFileSync('dependency-graph.html', html, 'utf-8')
-    return { type: 'text', value: '[OK] Saved to dependency-graph.html' }
+    return { type: 'text', value: '✅ 已保存到 dependency-graph.html' }
   }
 
   if (cmd === 'save') {
     const file = parts[1] || 'dependency-graph.mmd'
     writeFileSync(file, generateMermaid(graph), 'utf-8')
-    return { type: 'text', value: '[OK] Saved to ' + file }
+    return { type: 'text', value: '✅ 已保存到 ' + file }
   }
 
-  // Default: show summary
-  return { type: 'text', value: ['Dependency Graph:', '=================', '', 'Modules: ' + graph.nodes.filter(n => n.type === 'module').length, 'Classes: ' + graph.nodes.filter(n => n.type === 'class').length, 'Imports: ' + graph.edges.length, '', 'Use /graph mermaid, /graph dot, /graph html for visualization'].join('\n') }
+  // 默认: 显示摘要
+  return { type: 'text', value: ['📊 依赖关系图:', '=================', '', '模块: ' + graph.nodes.filter(n => n.type === 'module').length, '类: ' + graph.nodes.filter(n => n.type === 'class').length, '导入: ' + graph.edges.length, '', '使用 /graph mermaid, /graph dot, /graph html 进行可视化'].join('\n') }
 }
 
 const graph: Command = {
   type: 'local', name: 'graph',
-  description: 'Dependency graph - mermaid/dot/html/stats/circular/orphans/tree/save',
+  description: '依赖关系图 - mermaid/dot/html/stats/circular/orphans/tree/save',
   aliases: '/graph, /deps-graph, /dg'.split(','),
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

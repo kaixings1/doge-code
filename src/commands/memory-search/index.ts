@@ -1,6 +1,6 @@
 // ============================================================================
-// Memory Search Command - Enhanced Version
-// 跨会话记忆搜索：高级过滤/搜索历史/语义搜索/知识图谱/导出/分析/聚类/推荐/去重
+// 跨会话记忆搜索命令 - 增强版
+// 高级过滤/搜索历史/语义搜索/知识图谱/导出/分析/聚类/推荐/去重
 // ============================================================================
 
 import type { Command } from '../../commands.js'
@@ -9,7 +9,7 @@ import { existsSync, readdirSync, readFileSync, writeFileSync, mkdirSync, statSy
 import { join, resolve, basename, extname } from 'path'
 
 // ============================================================================
-// Types & Interfaces
+// 类型与接口
 // ============================================================================
 
 interface MemoryMatch {
@@ -91,7 +91,7 @@ interface ExportConfig {
 }
 
 // ============================================================================
-// Constants
+// 常量定义
 // ============================================================================
 
 const MEMORY_DIR = join(process.cwd(), '.doge', 'memory-search')
@@ -115,7 +115,7 @@ const DEFAULT_FILTERS: SearchFilters = {
 }
 
 // ============================================================================
-// File Discovery
+// 文件发现
 // ============================================================================
 
 function findMemoryFiles(dir: string, depth = 5, filters: SearchFilters = DEFAULT_FILTERS): string[] {
@@ -177,7 +177,7 @@ function getAllMemoryFiles(filters: SearchFilters = DEFAULT_FILTERS): string[] {
 }
 
 // ============================================================================
-// Search Engine
+// 搜索引擎
 // ============================================================================
 
 function searchInFile(filePath: string, filters: SearchFilters): MemoryMatch[] {
@@ -302,7 +302,7 @@ function searchAll(filters: SearchFilters): MemoryMatch[] {
 }
 
 // ============================================================================
-// History Management
+// 历史记录管理
 // ============================================================================
 
 function loadHistory(): SearchHistory {
@@ -343,7 +343,7 @@ function addSearchToHistory(query: string, results: number, duration: number): v
 }
 
 // ============================================================================
-// Saved Searches
+// 已保存搜索
 // ============================================================================
 
 function loadSavedSearches(): SavedSearch[] {
@@ -390,7 +390,7 @@ function deleteSavedSearch(id: string): boolean {
 }
 
 // ============================================================================
-// Statistics
+// 统计信息
 // ============================================================================
 
 function calculateStats(): SearchStats {
@@ -423,7 +423,7 @@ function calculateStats(): SearchStats {
 }
 
 // ============================================================================
-// Knowledge Graph
+// 知识图谱
 // ============================================================================
 
 function buildKnowledgeGraph(matches: MemoryMatch[]): KnowledgeGraph {
@@ -483,7 +483,7 @@ function renderKnowledgeGraph(graph: KnowledgeGraph): string {
 }
 
 // ============================================================================
-// Output Formatters
+// 输出格式化器
 // ============================================================================
 
 function formatTextReport(matches: MemoryMatch[], query: string, duration: number): string {
@@ -558,7 +558,7 @@ function formatCSVReport(matches: MemoryMatch[]): string {
 }
 
 // ============================================================================
-// Export
+// 导出功能
 // ============================================================================
 
 function exportResults(matches: MemoryMatch[], query: string, config: ExportConfig): string {
@@ -590,7 +590,7 @@ function exportResults(matches: MemoryMatch[], query: string, config: ExportConf
 }
 
 // ============================================================================
-// Semantic Search - 语义搜索
+// 语义搜索
 // ============================================================================
 
 function getRelatedKeywords(query: string): string[] {
@@ -714,7 +714,7 @@ function renderClusters(clusters: Cluster[]): string {
 }
 
 // ============================================================================
-// Memory Statistics Dashboard - 记忆统计面板
+// 记忆统计面板
 // ============================================================================
 
 function renderStatsDashboard(stats: SearchStats, files: string[]): string {
@@ -761,7 +761,7 @@ function renderStatsDashboard(stats: SearchStats, files: string[]): string {
 }
 
 // ============================================================================
-// Memory Recommendations - 记忆推荐
+// 记忆推荐
 // ============================================================================
 
 function getRecommendations(): string[] {
@@ -828,7 +828,7 @@ function renderRecommendations(): string {
 }
 
 // ============================================================================
-// Memory Deduplication - 记忆去重
+// 记忆去重
 // ============================================================================
 
 interface DuplicateGroup {
@@ -884,7 +884,7 @@ function renderDuplicates(duplicates: DuplicateGroup[]): string {
 }
 
 // ============================================================================
-// Memory Archive - 记忆归档
+// 记忆归档
 // ============================================================================
 
 function archiveOldMemories(daysOld = 30): string {
@@ -912,7 +912,7 @@ function archiveOldMemories(daysOld = 30): string {
 }
 
 // ============================================================================
-// Help Text
+// 帮助文本
 // ============================================================================
 
 function renderHelp(): string {
@@ -966,7 +966,7 @@ function renderHelp(): string {
 }
 
 // ============================================================================
-// Command
+// 命令定义
 // ============================================================================
 
 export const call: LocalCommandCall = async (args) => {

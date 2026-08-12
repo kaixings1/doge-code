@@ -43,8 +43,8 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'help' || cmd === '') return { type: 'text', value: ['终端管理器', '', '📖 用法：', '  /terminal open [shell]          打开终端', '  /terminal split                 分屏', '  /terminal tab                   新建标签页', '  /terminal kill <id>            结束会话', '  /terminal list                 列出会话', '  /terminal send <id> <cmd>      发送命令', '  /terminal cd <path>            切换目录', '  /terminal shell                 当前 Shell', '  /terminal terms                 可用终端列表', '  /terminal shortcuts             键盘快捷键', '  /terminal history               命令历史', '  /terminal size <行> <列>        设置终端大小', ''].join('\n') }
 
-  if (cmd === 'shell') return { type: 'text', value: '当前 Shell：' + detectShell() }
-  if (cmd === 'terms') return { type: 'text', value: '可用终端：\n' + detectTerminals().join('\n') }
+  if (cmd === 'shell') return { type: 'text', value: '💻 当前 Shell：' + detectShell() }
+  if (cmd === 'terms') return { type: 'text', value: '📋 可用终端：\n' + detectTerminals().join('\n') }
 
   if (cmd === 'open') {
     const shell = parts[1] || detectShell()
@@ -52,7 +52,7 @@ export const call: LocalCommandCall = async (args) => {
       if (process.platform === 'win32') execSync('start ' + shell, { stdio: 'ignore' })
       else execSync('x-terminal-emulator -e ' + shell + ' 2>/dev/null || open -a Terminal .', { stdio: 'ignore' })
       return { type: 'text', value: '✅ 已打开：' + shell }
-    } catch { return { type: 'text', value: '无法打开终端，请使用系统快捷键。' } }
+    } catch { return { type: 'text', value: '❌ 无法打开终端，请使用系统快捷键。' } }
   }
 
   if (cmd === 'split') return { type: 'text', value: '💡 分屏：使用 tmux split-window 或终端快捷键 (Ctrl+Shift+T)' }
@@ -103,7 +103,7 @@ export const call: LocalCommandCall = async (args) => {
 
 const terminal: Command = {
   type: 'local', name: 'terminal',
-  description: 'Terminal manager - open/split/tab/kill/send/shortcuts/history/size',
+  description: '🖥️ 终端管理器 - open/split/tab/kill/send/shortcuts/history/size',
   aliases: '/terminal, /term, /t'.split(','),
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
