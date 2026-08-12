@@ -98,38 +98,38 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const config = loadConfig()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['File Watcher (Advanced)', '', '📖 Usage: ', '  /watch snapshot                 Take a snapshot of files', '  /watch check                    Check for changes since snapshot', '  /watch scan                     Scan for changes (git status)', '  /watch status                   Watcher status', '  /watch logs                     View change logs', '  /watch clear                    Clear logs', '  /watch config                   Show/edit config', '  /watch set <key> <val>          Set config value', '  /watch add-path <path>          Add watch path', '  /watch set-action <cmd>         Set auto-action', '', 'Note: For real-time watching, use: watch -n 2 /watch check', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['👁️ 文件监视器（高级）', '', '📖 用法：', '  /watch snapshot                 创建文件快照', '  /watch check                    检查快照后变更', '  /watch scan                     扫描变更（git status）', '  /watch status                   监视器状态', '  /watch logs                     查看变更日志', '  /watch clear                    清空日志', '  /watch config                   查看/编辑配置', '  /watch set <键> <值>            设置配置', '  /watch add-path <路径>          添加监视路径', '  /watch set-action <命令>        设置自动操作', '', '💡 实时监视：watch -n 2 /watch check', ''].join('\n') }
 
   if (cmd === 'config') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
-    return { type: 'text', value: `❌ Unknown: ${key}` }
+    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ ${key} = ${value}` } }
+    return { type: 'text', value: `❌ 未知键：${key}` }
   }
 
   if (cmd === 'set') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
-    if (!key || !value) return { type: 'text', value: 'Usage: /watch set <key> <value>' }
+    if (!key || !value) return { type: 'text', value: '📖 用法：/watch set <键> <值>' }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value === 'true' ? true : value === 'false' ? false : value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
-    return { type: 'text', value: `❌ Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
+    if (key in config) { config[key] = value === 'true' ? true : value === 'false' ? false : value; saveConfig(config); return { type: 'text', value: `✅ ${key} = ${value}` } }
+    return { type: 'text', value: `❌ 未知键：${key}。可用键：${Object.keys(config).join(', ')}` }
   }
 
   if (cmd === 'add-path') {
     const path = parts[1]
-    if (!path || !existsSync(path)) return { type: 'text', value: 'Path not found: ' + path }
+    if (!path || !existsSync(path)) return { type: 'text', value: '❌ 路径未找到：' + path }
     if (!config.paths.includes(path)) config.paths.push(path)
     saveConfig(config)
-    return { type: 'text', value: `✅ [OK] Watching: ${path}\nCurrent paths: ${config.paths.join(', ')}` }
+    return { type: 'text', value: `✅ 正在监视：${path}\n当前路径：${config.paths.join(', ')}` }
   }
 
   if (cmd === 'set-action') {
     const action = parts.slice(1).join(' ')
-    if (!action) return { type: 'text', value: 'Usage: /watch set-action <command>' }
+    if (!action) return { type: 'text', value: '📖 用法：/watch set-action <命令>' }
     config.action = action
     saveConfig(config)
-    return { type: 'text', value: `✅ [OK] Action set: ${action}` }
+    return { type: 'text', value: `✅ 自动操作已设置：${action}` }
   }
 
   if (cmd === 'snapshot') {
@@ -139,77 +139,77 @@ export const call: LocalCommandCall = async (args) => {
       const data = Object.fromEntries(snapshot)
       writeFileSync(join(CONFIG_DIR, 'snapshot.json'), JSON.stringify(data, null, 2), 'utf-8')
     } catch { /* ignore */ }
-    return { type: 'text', value: `✅ [OK] Snapshot saved (${snapshot.size} files)\nWatching: ${config.paths.join(', ')}\nExtensions: ${config.extensions.join(', ')}` }
+    return { type: 'text', value: `✅ 快照已保存（${snapshot.size} 个文件）\n监视路径：${config.paths.join(', ')}\n扩展名：${config.extensions.join(', ')}` }
   }
 
   if (cmd === 'check' || cmd === '') {
     try {
       const snapshotFile = join(CONFIG_DIR, 'snapshot.json')
-      if (!existsSync(snapshotFile)) return { type: 'text', value: 'No snapshot found. Run /watch snapshot first.' }
+      if (!existsSync(snapshotFile)) return { type: 'text', value: 'ℹ️ 未找到快照。请先运行 /watch snapshot' }
       const before = new Map(Object.entries(JSON.parse(readFileSync(snapshotFile, 'utf-8'))))
       const after = collectSnapshot(config)
       const events = compareSnapshots(before, after, config)
       // Update snapshot
       writeFileSync(snapshotFile, JSON.stringify(Object.fromEntries(after), null, 2), 'utf-8')
 
-      if (events.length === 0) return { type: 'text', value: '[OK] No changes detected' }
+      if (events.length === 0) return { type: 'text', value: '✅ 未检测到变更' }
 
-      const lines = ['Changes Detected (' + events.length + '):', '══════════════════════', '']
+      const lines = ['🔍 检测到变更（' + events.length + '）：', '══════════════════════', '']
       events.forEach(e => {
         const icon = e.event === 'create' ? '➕' : e.event === 'delete' ? '➖' : '✏️'
-        lines.push(`${icon} ${e.event.toUpperCase()} ${e.file} (${e.size} bytes)`)
+        lines.push(`${icon} ${e.file}（${e.size} 字节）`)
         log(`${e.event}: ${e.file}`)
       })
-      lines.push('', 'View history: /watch logs')
+      lines.push('', '查看历史：/watch logs')
 
       // Run auto-action
       if (config.action) {
-        lines.push('', `Running action: ${config.action}`)
+        lines.push('', `🔧 执行操作：${config.action}`)
         try {
           const output = execSync(config.action, { encoding: 'utf-8', timeout: 60000, stdio: ['pipe', 'pipe', 'ignore'] }).trim()
-          lines.push('✅ ' + (output.slice(0, 200) || 'Action completed'))
+          lines.push('✅ ' + (output.slice(0, 200) || '操作完成'))
           log('action: ' + config.action)
         } catch (e: any) {
-          lines.push('❌ Action failed: ' + (e.message || '').slice(0, 200))
+          lines.push('❌ 操作失败：' + (e.message || '').slice(0, 200))
         }
       }
       return { type: 'text', value: lines.join('\n') }
-    } catch { return { type: 'text', value: '[ERROR] Check failed' } }
+    } catch { return { type: 'text', value: '❌ 检查失败' } }
   }
 
   if (cmd === 'scan') {
     try {
       const output = execSync('git status --porcelain 2>/dev/null || echo ""', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
-      if (!output.trim()) return { type: 'text', value: '[OK] No uncommitted changes' }
+      if (!output.trim()) return { type: 'text', value: '✅ 无未提交变更' }
       const lines = output.split('\n').filter(Boolean)
-      return { type: 'text', value: `📊 Git Changes (${lines.length}):\n${lines.slice(0, 30).join('\n')}` }
-    } catch { return { type: 'text', value: 'Not a git repository' } }
+      return { type: 'text', value: `📊 Git 变更（${lines.length}）：\n${lines.slice(0, 30).join('\n')}` }
+    } catch { return { type: 'text', value: '❌ 非 Git 仓库' } }
   }
 
   if (cmd === 'status') {
     const snapshot = collectSnapshot(config)
-    return { type: 'text', value: `📊 Watcher Status:\nPaths: ${config.paths.join(', ')}\nFiles tracked: ${snapshot.size}\nExtensions: ${config.extensions.join(', ')}\nEvents: ${config.events.join(', ')}\nAction: ${config.action || '(none)'}\nInterval: ${config.interval}ms` }
+    return { type: 'text', value: `📊 监视器状态：\n路径：${config.paths.join(', ')}\n文件数：${snapshot.size}\n扩展名：${config.extensions.join(', ')}\n事件：${config.events.join(', ')}\n操作：${config.action || '无'}\n间隔：${config.interval}ms` }
   }
 
   if (cmd === 'logs') {
     try {
-      if (!existsSync(LOG_FILE)) return { type: 'text', value: 'No logs yet' }
+      if (!existsSync(LOG_FILE)) return { type: 'text', value: 'ℹ️ 暂无日志' }
       const lines = readFileSync(LOG_FILE, 'utf-8').split('\n').filter(Boolean).slice(-30)
-      return { type: 'text', value: 'Watch Logs:\n' + lines.join('\n') }
-    } catch { return { type: 'text', value: 'No logs' } }
+      return { type: 'text', value: '📋 监视日志：\n' + lines.join('\n') }
+    } catch { return { type: 'text', value: 'ℹ️ 无日志' } }
   }
 
   if (cmd === 'clear') {
     try { if (existsSync(LOG_FILE)) writeFileSync(LOG_FILE, '', 'utf-8') } catch { /* ignore */ }
-    return { type: 'text', value: '[OK] Logs cleared' }
+    return { type: 'text', value: '✅ 日志已清空' }
   }
 
-  return { type: 'text', value: 'Unknown: ' + cmd }
+  return { type: 'text', value: '❓ 未知命令：' + cmd }
 }
 
 const watch: Command = {
   type: 'local', name: 'watch',
-  description: 'Watch - snapshot/check/scan/status/logs/clear/config/set-action',
+  description: '👁️ 文件监视 - 快照/检查/扫描/状态/日志/清空/配置/自动操作',
   aliases: ['/watch', '/w'],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

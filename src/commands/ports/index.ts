@@ -38,11 +38,11 @@ function killProcessOnPort(port: number): string {
       const pid = parts[parts.length - 1]
       if (pid && pid !== '0') {
         execSync('taskkill /F /PID ' + pid, { stdio: 'ignore' })
-        return '[OK] Killed PID ' + pid + ' on port ' + port
+        return '✅ 已终止端口 ' + port + ' 上的进程（PID：' + pid + '）'
       }
     }
-    return 'No process found on port ' + port
-  } catch { return '[ERROR] Failed to kill process on port ' + port }
+    return '端口 ' + port + ' 上未找到进程'
+  } catch { return '❌ 终止端口 ' + port + ' 上的进程失败' }
 }
 
 function isPortAvailable(port: number): boolean {
@@ -59,8 +59,8 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'list' || cmd === 'ls' || cmd === '') {
     const ports = getUsedPorts()
-    if (ports.length === 0) return { type: 'text', value: 'No active ports found (or netstat not available)' }
-    const lines = ['Active Ports:', '==============', '']
+    if (ports.length === 0) return { type: 'text', value: '📋 未发现活跃端口（或 netstat 不可用）' }
+    const lines = ['🔌 活跃端口：', '==============', '']
     const seen = new Set<number>()
     ports.forEach(p => {
       if (!seen.has(p.port)) {
@@ -73,13 +73,13 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'check') {
     const port = parseInt(parts[1])
-    if (isNaN(port)) return { type: 'text', value: 'Usage: /ports check <port>' }
-    return { type: 'text', value: isPortAvailable(port) ? '[OK] Port ' + port + ' is available' : '[BUSY] Port ' + port + ' is in use' }
+    if (isNaN(port)) return { type: 'text', value: '📖 用法：/ports check <端口号>' }
+    return { type: 'text', value: isPortAvailable(port) ? '✅ 端口 ' + port + ' 可用' : '🔴 端口 ' + port + ' 正在使用' }
   }
 
   if (cmd === 'kill') {
     const port = parseInt(parts[1])
-    if (isNaN(port)) return { type: 'text', value: 'Usage: /ports kill <port>' }
+    if (isNaN(port)) return { type: 'text', value: '📖 用法：/ports kill <端口号>' }
     return { type: 'text', value: killProcessOnPort(port) }
   }
 
@@ -91,45 +91,45 @@ export const call: LocalCommandCall = async (args) => {
       if (isPortAvailable(p)) available.push(p)
       if (available.length >= 10) break
     }
-    return { type: 'text', value: 'Available ports (' + start + '-' + end + '):\n' + available.join(', ') }
+    return { type: 'text', value: '🔍 可用端口（' + start + '-' + end + '）：\n' + available.join(', ') }
   }
 
   if (cmd === 'process') {
     const port = parseInt(parts[1])
-    if (isNaN(port)) return { type: 'text', value: 'Usage: /ports process <port>' }
+    if (isNaN(port)) return { type: 'text', value: '📖 用法：/ports process <端口号>' }
     try {
       const output = execSync('netstat -ano | findstr :' + port, { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
-      return { type: 'text', value: output || 'No process on port ' + port }
-    } catch { return { type: 'text', value: 'No process on port ' + port } }
+      return { type: 'text', value: output || '端口 ' + port + ' 上无进程' }
+    } catch { return { type: 'text', value: '端口 ' + port + ' 上无进程' } }
   }
 
   if (cmd === 'common') {
     const commonPorts = [80, 443, 3000, 3001, 5000, 8000, 8080, 8888, 9000, 9090, 5432, 3306, 27017, 6379, 11211]
-    const lines = ['Common Ports:', '==============', '']
+    const lines = ['🔌 常用端口：', '==============', '']
     commonPorts.forEach(p => {
-      lines.push('  ' + p + ': ' + (isPortAvailable(p) ? '[AVAIL]' : '[USED]'))
+      lines.push('  ' + p + '：' + (isPortAvailable(p) ? '✅ 可用' : '🔴 使用中'))
     })
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'monitor') {
     const port = parseInt(parts[1])
-    if (isNaN(port)) return { type: 'text', value: 'Usage: /ports monitor <port>' }
-    return { type: 'text', value: 'Monitoring port ' + port + '... (checks every 5s)\nUse /ports check ' + port + ' for current status' }
+    if (isNaN(port)) return { type: 'text', value: '📖 用法：/ports monitor <端口号>' }
+    return { type: 'text', value: '👁️ 正在监控端口 ' + port + '...（每 5 秒检查一次）\n使用 /ports check ' + port + ' 查看当前状态' }
   }
 
   return { type: 'text', value: [
-    'Port Manager', '', '📖 Usage: ',
-    '  /ports list               List all active ports', '  /ports check <port>       Check if port is available',
-    '  /ports kill <port>        Kill process on port', '  /ports find [start] [end] Find available ports',
-    '  /ports process <port>     Show process using port', '  /ports common             Check common dev ports',
-    '  /ports monitor <port>     Monitor port status',
+    '🔌 端口管理器', '', '📖 用法：',
+    '  /ports list               列出所有活跃端口', '  /ports check <端口号>     检查端口是否可用',
+    '  /ports kill <端口号>      终止端口上的进程', '  /ports find [起始] [结束]  查找可用端口',
+    '  /ports process <端口号>   查看使用端口的进程', '  /ports common            检查常用开发端口',
+    '  /ports monitor <端口号>   监控端口状态',
   ].join('\n') }
 }
 
 const ports: Command = {
   type: 'local', name: 'ports',
-  description: 'Port management - list/check/kill/find/monitor',
+  description: '🔌 端口管理 - 列出/检查/终止/查找/监控',
   aliases: ['/ports', '/port'], supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }

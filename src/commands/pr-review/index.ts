@@ -17,15 +17,15 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'help' || cmd === '') {
     return { type: 'text', value: [
-      'PR Review', '', '📖 Usage: ',
-      '  /pr-review <PR number>           Review a GitHub PR',
-      '  /pr-review diff <PR number>      Show PR diff summary',
-      '  /pr-review approve <PR number>    Approve PR with review',
-      '  /pr-review comment <PR> <text>   Add comment to PR',
-      '  /pr-review checklist <PR>         Generate review checklist',
-      '  /pr-review issues <PR>            Find potential issues in PR',
-      '  /pr-review summary <PR>           AI-generated PR summary',
-      '  /pr-review config                 Configure review settings',
+      '🔍 PR 审查', '', '📖 用法：',
+      '  /pr-review <PR 编号>          审查 GitHub PR',
+      '  /pr-review diff <PR 编号>     显示 PR 差异摘要',
+      '  /pr-review approve <PR 编号>   审批 PR',
+      '  /pr-review comment <PR> <文本>  添加评论',
+      '  /pr-review checklist <PR>        生成审查清单',
+      '  /pr-review issues <PR>           查找潜在问题',
+      '  /pr-review summary <PR>          AI 生成的 PR 摘要',
+      '  /pr-review config                配置审查设置',
     ].join('\n') }
   }
 
@@ -35,7 +35,7 @@ export const call: LocalCommandCall = async (args) => {
   }
 
   const prNumber = parts[1]
-  if (!prNumber) return { type: 'text', value: 'Usage: /pr-review <PR number> [action]' }
+  if (!prNumber) return { type: 'text', value: '📖 用法：/pr-review <PR 编号> [操作]' }
 
   if (cmd === 'diff') {
     try {
@@ -43,7 +43,7 @@ export const call: LocalCommandCall = async (args) => {
       const lines = diff.split('\n')
       const files = new Set<string>()
       lines.forEach(l => { if (l.startsWith('diff --git')) files.add(l.split(' b/')[1] || '') })
-      return { type: 'text', value: 'PR #' + prNumber + ' Diff:\nFiles changed: ' + files.size + '\n' + diff.slice(0, 3000) }
+      return { type: 'text', value: '📊 PR #' + prNumber + ' 差异：\n变更文件数：' + files.size + '\n' + diff.slice(0, 3000) }
     } catch (err) {
       return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
     }
@@ -56,15 +56,15 @@ export const call: LocalCommandCall = async (args) => {
       const lines = diff.split('\n')
       lines.forEach((l, i) => {
         if (l.startsWith('+')) {
-          if (l.includes('console.log')) issues.push('Line ' + (i + 1) + ': console.log in new code')
-          if (l.includes('any ') || l.includes(': any')) issues.push('Line ' + (i + 1) + ': any type usage')
-          if (l.includes('TODO') || l.includes('FIXME')) issues.push('Line ' + (i + 1) + ': TODO/FIXME marker')
-          if (l.includes('eval(')) issues.push('Line ' + (i + 1) + ': eval() usage (security)')
-          if (l.includes('innerHTML')) issues.push('Line ' + (i + 1) + ': innerHTML (XSS risk)')
+          if (l.includes('console.log')) issues.push('第 ' + (i + 1) + ' 行：新代码中的 console.log')
+          if (l.includes('any ') || l.includes(': any')) issues.push('第 ' + (i + 1) + ' 行：使用 any 类型')
+          if (l.includes('TODO') || l.includes('FIXME')) issues.push('第 ' + (i + 1) + ' 行：TODO/FIXME 标记')
+          if (l.includes('eval(')) issues.push('第 ' + (i + 1) + ' 行：使用 eval()（安全风险）')
+          if (l.includes('innerHTML')) issues.push('第 ' + (i + 1) + ' 行：使用 innerHTML（XSS 风险）')
           if (l.trim().length > 120) issues.push('Line ' + (i + 1) + ': long line (' + l.trim().length + ' chars)')
         }
       })
-      return { type: 'text', value: issues.length > 0 ? 'Potential Issues (' + issues.length + '):\n' + issues.join('\n') : '[OK] No obvious issues found' }
+      return { type: 'text', value: issues.length > 0 ? '潜在问题（' + issues.length + '）：\n' + issues.join('\n') : '✅ 未发现明显问题' }
     } catch (err) {
       return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
     }
@@ -75,11 +75,11 @@ export const call: LocalCommandCall = async (args) => {
       const prInfo = execSync('gh pr view ' + prNumber + ' --json title,body,author,additions,deletions,changedFiles,files', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
       const info = JSON.parse(prInfo)
       return { type: 'text', value: [
-        'PR #' + prNumber + ' Summary',
+        '📊 PR #' + prNumber + ' 摘要',
         '==================',
-        'Title: ' + info.title, 'Author: ' + info.author.login,
-        'Changes: +' + info.additions + '/-' + info.deletions + ' (' + info.changedFiles + ' files)',
-        '', 'Description:', info.body?.slice(0, 500) || 'No description',
+        '标题：' + info.title, '作者：' + info.author.login,
+        '变更：+' + info.additions + '/-' + info.deletions + '（' + info.changedFiles + ' 个文件）',
+        '', '描述：', info.body?.slice(0, 500) || '无描述',
       ].join('\n') }
     } catch (err) {
       return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
@@ -88,41 +88,41 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'checklist') {
     const checklist = [
-      'PR Review Checklist for #' + prNumber,
+      '📋 PR #' + prNumber + ' 审查清单',
       '================================',
       '',
-      'Code Quality:',
+      '代码质量：',
       '  [ ] No console.log statements',
       '  [ ] No any types without justification',
       '  [ ] No TODO/FIXME markers',
       '  [ ] Lines under 120 characters',
       '  [ ] Functions under 50 lines',
       '',
-      'Security:',
-      '  [ ] No eval() or similar',
-      '  [ ] No innerHTML without sanitization',
-      '  [ ] No hardcoded secrets',
-      '  [ ] Input validation present',
+      '安全：',
+      '  [ ] 不使用 eval() 或类似函数',
+      '  [ ] innerHTML 需经过过滤',
+      '  [ ] 无硬编码密钥',
+      '  [ ] 存在输入验证',
       '',
-      'Testing:',
-      '  [ ] Tests added for new features',
-      '  [ ] Tests pass locally',
-      '  [ ] Edge cases covered',
+      '测试：',
+      '  [ ] 为新功能添加测试',
+      '  [ ] 本地测试通过',
+      '  [ ] 覆盖边界情况',
       '',
-      'Documentation:',
-      '  [ ] README updated if needed',
-      '  [ ] API changes documented',
-      '  [ ] Complex logic commented',
+      '文档：',
+      '  [ ] 需要时更新 README',
+      '  [ ] 记录 API 变更',
+      '  [ ] 复杂逻辑已注释',
     ]
     return { type: 'text', value: checklist.join('\n') }
   }
 
   if (cmd === 'comment') {
     const comment = parts.slice(2).join(' ')
-    if (!comment) return { type: 'text', value: 'Usage: /pr-review comment <PR> <text>' }
+    if (!comment) return { type: 'text', value: '📖 用法：/pr-review comment <PR> <评论内容>' }
     try {
       execSync('gh pr comment ' + prNumber + ' --body "' + comment + '"', { stdio: 'ignore' })
-      return { type: 'text', value: '[OK] Comment added to PR #' + prNumber }
+      return { type: 'text', value: '✅ 已添加评论到 PR #' + prNumber }
     } catch (err) {
       return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
     }
@@ -131,7 +131,7 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'approve') {
     try {
       execSync('gh pr review ' + prNumber + ' --approve', { stdio: 'ignore' })
-      return { type: 'text', value: '[OK] PR #' + prNumber + ' approved' }
+      return { type: 'text', value: '✅ 已批准 PR #' + prNumber }
     } catch (err) {
       return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
     }
@@ -147,12 +147,12 @@ export const call: LocalCommandCall = async (args) => {
     const fileList = Array.from(files).slice(0, 20)
 
     const review = [
-      'PR #' + prNumber + ' Review',
+      '🔍 PR #' + prNumber + ' 审查',
       '==================',
-      'Title: ' + info.title, 'Changes: +' + info.additions + '/-' + info.deletions + ' (' + info.changedFiles + ' files)',
-      '', 'Files changed:',
+      '标题：' + info.title, '变更：+' + info.additions + '/-' + info.deletions + '（' + info.changedFiles + ' 个文件）',
+      '', '变更文件：',
       ...fileList.map(f => '  - ' + f),
-      '', 'Review notes generated. Use /pr-review issues ' + prNumber + ' for detailed analysis.',
+      '', '审查笔记已生成。使用 /pr-review issues ' + prNumber + ' 查看详细分析。',
     ]
     return { type: 'text', value: review.join('\n') }
   } catch (err) {
@@ -162,7 +162,7 @@ export const call: LocalCommandCall = async (args) => {
 
 const prReview: Command = {
   type: 'local', name: 'pr-review',
-  description: 'GitHub PR review - summary, issues, checklist, approve, comment',
+  description: '🔍 GitHub PR 审查 - 摘要/问题/清单/批准/评论',
   aliases: ['/pr-review', '/pr'], supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }

@@ -118,7 +118,7 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const config = loadConfig()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Outdated Dependencies (Advanced)', '', '📖 Usage: ', '  /outdated                       Check outdated deps', '  /outdated major                 Major updates', '  /outdated minor                 Minor updates', '  /outdated patch                 Patch updates', '  /outdated security              Security vulnerabilities', '  /outdated update <pkg>          Update specific package', '  /outdated update-safe           Update safe (patch/minor)', '  /outdated update-all            Update all to latest', '  /outdated stats                 Statistics', '  /outdated history               Check history', '  /outdated config                Show/edit config', '  /outdated set <key> <val>       Set config value', '  /outdated export [file]         Export report', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['📦 过期依赖检查（高级）', '', '📖 用法：', '  /outdated                       检查过期依赖', '  /outdated major                 大版本更新', '  /outdated minor                 小版本更新', '  /outdated patch                 补丁更新', '  /outdated security              安全漏洞', '  /outdated update <包名>         更新指定包', '  /outdated update-safe           安全更新（仅补丁/小版本）', '  /outdated update-all            全部更新到最新', '  /outdated stats                 统计', '  /outdated history               查看历史', '  /outdated config                查看/编辑配置', '  /outdated set <键> <值>         设置配置', '  /outdated export [文件]         导出报告', ''].join('\n') }
 
   if (cmd === 'config') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
@@ -130,24 +130,24 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'set') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
-    if (!key || !value) return { type: 'text', value: 'Usage: /outdated set <key> <value>' }
+    if (!key || !value) return { type: 'text', value: '📖 用法：/outdated set <键> <值>' }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
-    return { type: 'text', value: `❌ Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
+    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ ${key} = ${value}` } }
+    return { type: 'text', value: `❌ 未知键：${key}。可用键：${Object.keys(config).join(', ')}` }
   }
 
   if (cmd === 'history') {
     const history = loadHistory()
-    if (history.length === 0) return { type: 'text', value: 'No check history. Run /outdated first.' }
-    const lines = ['Check History:', '═══════════════', '']
-    history.slice(-10).forEach(h => lines.push(`${h.date.slice(0, 19)} | ${h.status} | ${h.outdated} outdated | ${h.major} major | ${h.security} security`))
+    if (history.length === 0) return { type: 'text', value: '📋 暂无检查历史。请先运行 /outdated。' }
+    const lines = ['📅 检查历史：', '═══════════════', '']
+    history.slice(-10).forEach(h => lines.push(`${h.date.slice(0, 19)} | ${h.status} | ${h.outdated} 个过期 | ${h.major} 个大版本 | ${h.security} 个安全问题`))
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'security') {
     const issues = getSecurityIssues()
-    if (issues.length === 0) return { type: 'text', value: '[OK] No security vulnerabilities found!' }
-    const lines = ['Security Vulnerabilities (' + issues.length + '):', '═══════════════════════════════', '']
+    if (issues.length === 0) return { type: 'text', value: '✅ 未发现安全漏洞！' }
+    const lines = ['🔒 安全漏洞（' + issues.length + '）：', '═══════════════════════════════', '']
     issues.forEach((i, idx) => {
       const icon = i.severity === 'critical' ? '🔴' : i.severity === 'high' ? '🟠' : '🟡'
       lines.push(`${icon} ${idx + 1}. ${i.name} (${i.severity}, ${i.fixAvailable})`)
@@ -159,8 +159,9 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'major' || cmd === 'minor' || cmd === 'patch') {
     const deps = getOutdatedDeps(config)
     const filtered = deps.filter(d => d.updateType === cmd)
-    if (filtered.length === 0) return { type: 'text', value: `✅ [OK] No ${cmd} updates available` }
-    const lines = [`${cmd.charAt(0).toUpperCase() + cmd.slice(1)} Updates (${filtered.length}):`, '══════════════════════', '']
+    if (filtered.length === 0) return { type: 'text', value: `✅ 没有可用的 ${cmd} 更新` }
+    const title = cmd === 'major' ? '大版本' : cmd === 'minor' ? '小版本' : '补丁'
+    const lines = [`📦 ${title}更新（${filtered.length}）：`, '══════════════════════', '']
     filtered.slice(0, 30).forEach((d, i) => {
       const warn = cmd === 'major' ? ' ⚠️ breaking' : ''
       lines.push(`  ${i + 1}. ${d.name}: ${d.current} → ${d.latest}${warn}`)
@@ -171,17 +172,17 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'update' || cmd === 'update-safe' || cmd === 'update-all') {
     if (cmd === 'update') {
       const pkg = parts[1]
-      if (!pkg) return { type: 'text', value: 'Usage: /outdated update <package>' }
+      if (!pkg) return { type: 'text', value: '📖 用法：/outdated update <包名>' }
       const result = run(`npm install ${pkg}@latest 2>&1`)
-      return { type: 'text', value: result.ok ? `[OK] Updated: ${pkg}` : '[ERROR] ' + result.output.slice(0, 200) }
+      return { type: 'text', value: result.ok ? `✅ 已更新：${pkg}` : '❌ 错误：' + result.output.slice(0, 200) }
     }
     const deps = getOutdatedDeps(config)
-    if (deps.length === 0) return { type: 'text', value: '[OK] All dependencies up to date' }
+    if (deps.length === 0) return { type: 'text', value: '✅ 所有依赖均为最新' }
     const target = cmd === 'update-safe' ? deps.filter(d => d.updateType !== 'major') : deps
-    if (target.length === 0) return { type: 'text', value: 'No safe updates (only major updates available)' }
+    if (target.length === 0) return { type: 'text', value: '📋 没有安全更新（只有大版本更新可用）' }
     const pkgs = target.map(d => d.name + '@' + d.latest).join(' ')
     const result = run(`npm install ${pkgs} 2>&1`)
-    return { type: 'text', value: result.ok ? `[OK] Updated ${target.length} packages:\n${target.slice(0, 15).map(d => `  ${d.name}: ${d.current} → ${d.latest}`).join('\n')}` : '[ERROR] ' + result.output.slice(0, 300) }
+    return { type: 'text', value: result.ok ? '✅ 已更新 ' + target.length + ' 个包：\n' + target.slice(0, 15).map(d => '  ' + d.name + '：' + d.current + ' → ' + d.latest).join('\n') : '❌ 错误：' + result.output.slice(0, 300) }
   }
 
   if (cmd === 'stats') {
@@ -190,9 +191,9 @@ export const call: LocalCommandCall = async (args) => {
     const outdated = deps.filter(d => d.status !== 'ok')
     outdated.forEach(d => { byType[d.updateType]++ })
     const security = getSecurityIssues().length
-    const lines = ['Dependency Statistics:', '══════════════════════', '', `Total deps: ${deps.length}`, `Up to date: ${deps.length - outdated.length}`, `Outdated: ${outdated.length}`, '', 'By type:']
-    Object.entries(byType).forEach(([t, c]) => lines.push(`  ${t}: ${c}`))
-    lines.push(`Security issues: ${security}`)
+    const lines = ['📊 依赖统计：', '══════════════════════', '', `总依赖数：${deps.length}`, `已是最新：${deps.length - outdated.length}`, `已过期：${outdated.length}`, '', '按类型：']
+    Object.entries(byType).forEach(([t, c]) => lines.push(`  ${t}：${c}`))
+    lines.push('安全问题：' + security)
     return { type: 'text', value: lines.join('\n') }
   }
 
@@ -201,7 +202,7 @@ export const call: LocalCommandCall = async (args) => {
     const security = getSecurityIssues()
     const file = parts[1] || 'outdated-report.json'
     writeFileSync(file, JSON.stringify({ deps, security, date: new Date().toISOString() }, null, 2), 'utf-8')
-    return { type: 'text', value: `✅ [OK] Exported: ${file}` }
+    return { type: 'text', value: `✅ 已导出：${file}` }
   }
 
   const deps = getOutdatedDeps(config)
@@ -210,22 +211,22 @@ export const call: LocalCommandCall = async (args) => {
   const major = outdated.filter(d => d.updateType === 'major').length
   saveHistory({ date: new Date().toISOString(), total: deps.length, outdated: outdated.length, major, security: security.length, status: outdated.length === 0 ? 'UP-TO-DATE' : 'OUTDATED' })
 
-  if (outdated.length === 0) return { type: 'text', value: `✅ [OK] All ${deps.length} dependencies up to date!` }
+  if (outdated.length === 0) return { type: 'text', value: `✅ ${deps.length} 个依赖均已是最新！` }
 
-  const lines = ['Outdated Dependencies (' + outdated.length + '/' + deps.length + '):', '══════════════════════════════', '']
+  const lines = ['📦 过期依赖（' + outdated.length + '/' + deps.length + '）：', '══════════════════════════════', '']
   outdated.slice(0, 25).forEach((d, i) => {
     const icon = d.updateType === 'major' ? '🔴' : d.updateType === 'minor' ? '🟡' : '🔵'
     lines.push(`  ${icon} ${i + 1}. ${d.name}: ${d.current} → ${d.latest} (${d.updateType})`)
   })
   if (outdated.length > 25) lines.push(`... ${outdated.length - 25} more`)
-  if (security.length > 0) lines.push('', `🔒 ${security.length} security issues (run /outdated security)`)
-  lines.push('', 'Actions:', '  /outdated update-safe - update patch+minor only', '  /outdated update-all  - update everything to latest', '  /outdated update <pkg> - update specific package')
+  if (security.length > 0) lines.push('', `🔒 ${security.length} 个安全问题（运行 /outdated security 查看）`)
+  lines.push('', '操作：', '  /outdated update-safe - 仅更新补丁和小版本', '  /outdated update-all  - 全部更新到最新', '  /outdated update <包名> - 更新指定包')
   return { type: 'text', value: lines.join('\n') }
 }
 
 const outdated: Command = {
   type: 'local', name: 'outdated',
-  description: 'Outdated - major/minor/patch/security/update-safe/update-all/stats/history',
+  description: '📦 过期依赖 - 大版本/小版本/补丁/安全/安全更新/全部更新/统计/历史',
   aliases: ['/outdated', '/old', '/update'],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

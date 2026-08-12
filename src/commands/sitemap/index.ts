@@ -103,75 +103,75 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const config = loadConfig()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Sitemap Generator (Advanced)', '', '📖 Usage: ', '  /sitemap                        Generate sitemap.xml', '  /sitemap scan                   Scan and list pages', '  /sitemap robots                 Generate robots.txt', '  /sitemap preview                Preview XML output', '  /sitemap validate               Validation tips', '  /sitemap submit                 Submit to search engines', '  /sitemap config                 Show/edit config', '  /sitemap set <key> <val>        Set config value', '  /sitemap base-url <url>         Set base URL', '  /sitemap freq <value>           Set change frequency', '  /sitemap priority <n>           Set priority (0-1)', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['🗺️ 站点地图生成器（高级）', '', '📖 用法：', '  /sitemap                        生成 sitemap.xml', '  /sitemap scan                   扫描并列出页面', '  /sitemap robots                 生成 robots.txt', '  /sitemap preview                预览 XML 输出', '  /sitemap validate               验证提示', '  /sitemap submit                 提交到搜索引擎', '  /sitemap config                 显示/编辑配置', '  /sitemap set <key> <val>        设置配置值', '  /sitemap base-url <url>         设置基础 URL', '  /sitemap freq <value>           设置更新频率', '  /sitemap priority <n>           设置优先级（0-1）', ''].join('\n') }
 
   if (cmd === 'config') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     // @ts-expect-error dynamic
     if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
-    return { type: 'text', value: `❌ Unknown: ${key}` }
+    return { type: 'text', value: `❌ 未知：${key}` }
   }
 
   if (cmd === 'set') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
-    if (!key || !value) return { type: 'text', value: 'Usage: /sitemap set <key> <value>' }
+    if (!key || !value) return { type: 'text', value: '📖 用法：/sitemap set <key> <value>' }
     // @ts-expect-error dynamic
     if (key in config) { config[key] = value === 'true' ? true : value === 'false' ? false : value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
-    return { type: 'text', value: `❌ Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
+    return { type: 'text', value: `❌ 未知键：${key}。可用键：${Object.keys(config).join(', ')}` }
   }
 
   if (cmd === 'base-url') {
     const url = parts[1]
-    if (!url) return { type: 'text', value: 'Usage: /sitemap base-url <url>' }
+    if (!url) return { type: 'text', value: '📖 用法：/sitemap base-url <url>' }
     config.baseUrl = url
     saveConfig(config)
-    return { type: 'text', value: `✅ [OK] Base URL: ${url}` }
+    return { type: 'text', value: `✅ [OK] 基础 URL：${url}` }
   }
 
   if (cmd === 'freq') {
     const freq = parts[1] as SitemapConfig['changeFreq']
     const valid = ['always', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'never']
-    if (!valid.includes(freq)) return { type: 'text', value: 'Valid: ' + valid.join(', ') }
+    if (!valid.includes(freq)) return { type: 'text', value: '有效值：' + valid.join(', ') }
     config.changeFreq = freq
     saveConfig(config)
-    return { type: 'text', value: `✅ [OK] Change frequency: ${freq}` }
+    return { type: 'text', value: `✅ [OK] 更新频率：${freq}` }
   }
 
   if (cmd === 'priority') {
     const val = parseFloat(parts[1])
-    if (isNaN(val) || val < 0 || val > 1) return { type: 'text', value: 'Priority must be between 0 and 1' }
+    if (isNaN(val) || val < 0 || val > 1) return { type: 'text', value: '优先级必须在 0 到 1 之间' }
     config.priority = val
     saveConfig(config)
-    return { type: 'text', value: `✅ [OK] Priority: ${val}` }
+    return { type: 'text', value: `✅ [OK] 优先级：${val}` }
   }
 
   const pages = scanPages(config)
 
   if (cmd === 'scan') {
-    if (pages.length === 0) return { type: 'text', value: 'No pages found. Check config extensions: ' + config.extensions.join(', ') }
-    const lines = ['Pages Found (' + pages.length + '):', '═══════════════════', '']
-    pages.slice(0, 30).forEach((p, i) => lines.push(`  ${i + 1}. ${config.baseUrl}${p.loc} (${p.lastmod || 'no date'})`))
-    if (pages.length > 30) lines.push(`... ${pages.length - 30} more`)
+    if (pages.length === 0) return { type: 'text', value: '未找到页面。检查配置扩展名：' + config.extensions.join(', ') }
+    const lines = ['找到页面（' + pages.length + '）：', '═══════════════════', '']
+    pages.slice(0, 30).forEach((p, i) => lines.push(`  ${i + 1}. ${config.baseUrl}${p.loc} (${p.lastmod || '无日期'})`))
+    if (pages.length > 30) lines.push(`... 还有 ${pages.length - 30} 个`)
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'preview') {
-    if (pages.length === 0) return { type: 'text', value: 'No pages found' }
+    if (pages.length === 0) return { type: 'text', value: '未找到页面' }
     return { type: 'text', value: generateSitemapXml(pages, config.baseUrl).slice(0, 2000) + '\n\n...' }
   }
 
   if (cmd === 'robots') {
     const content = generateRobotsTxt(config.baseUrl)
     writeFileSync('robots.txt', content, 'utf-8')
-    return { type: 'text', value: '[OK] Generated robots.txt\n\n' + content }
+    return { type: 'text', value: '✅ 已生成 robots.txt\n\n' + content }
   }
 
-  if (cmd === 'validate') return { type: 'text', value: ['Validation:', '════════════', '', '1. XML well-formed: https://validator.w3.org/feed/', '2. Google Search Console: https://search.google.com/search-console/sitemaps', '3. Sitemap limits:', '   - Max 50,000 URLs per sitemap', '   - Max 50 MB uncompressed', '   - URLs must be absolute', '', 'Current: ' + pages.length + ' URLs', 'Limit: ' + config.maxUrls].join('\n') }
+  if (cmd === 'validate') return { type: 'text', value: ['🔍 验证：', '════════════', '', '1. XML 格式正确：https://validator.w3.org/feed/', '2. Google Search Console：https://search.google.com/search-console/sitemaps', '3. 站点地图限制：', '   - 每个 sitemap 最多 50,000 个 URL', '   - 未压缩最大 50 MB', '   - URL 必须是绝对路径', '', '当前：' + pages.length + ' 个 URL', '限制：' + config.maxUrls].join('\n') }
 
-  if (cmd === 'submit') return { type: 'text', value: ['Submit Sitemap:', '═══════════════', '', 'Google: https://search.google.com/search-console', '  → Sitemaps → Add: ' + config.baseUrl + '/sitemap.xml', '', 'Bing: https://www.bing.com/webmasters', '  → Sitemaps → Submit', '', 'Yandex: https://webmaster.yandex.com/', '  → Indexing → Sitemap files'].join('\n') }
+  if (cmd === 'submit') return { type: 'text', value: ['📤 提交站点地图：', '═══════════════', '', 'Google：https://search.google.com/search-console', '  → Sitemaps → 添加：' + config.baseUrl + '/sitemap.xml', '', 'Bing：https://www.bing.com/webmasters', '  → Sitemaps → 提交', '', 'Yandex：https://webmaster.yandex.com/', '  → Indexing → Sitemap files'].join('\n') }
 
-  if (pages.length === 0) return { type: 'text', value: 'No pages found. Run /sitemap scan to debug.' }
+  if (pages.length === 0) return { type: 'text', value: '未找到页面。运行 /sitemap scan 进行调试。' }
   const xml = generateSitemapXml(pages, config.baseUrl)
   writeFileSync(config.outputFile, xml, 'utf-8')
   return { type: 'text', value: `✅ [OK] Generated ${config.outputFile}\nPages: ${pages.length}\nBase URL: ${config.baseUrl}\nOutput: ${config.outputFile}\n\nVerify at: ${config.baseUrl}/sitemap.xml` }

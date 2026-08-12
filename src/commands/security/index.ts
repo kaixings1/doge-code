@@ -331,10 +331,10 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const config = loadConfig()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Security Scanner (Deep)', '', '📖 Usage: ', '  /security                        Full security scan', '  /security file <path>            Scan single file', '  /security secrets               Secrets only', '  /security vulns                 Vulnerabilities only', '  /security config                Configuration issues', '  /security deps                  Dependencies', '  /security owasp                 OWASP Top 10', '  /security cwe                   CWE Top 25', '  /security npm-audit             npm audit', '  /security pip-audit             pip audit', '  /security sast                  Run SAST tools', '  /security baseline              Save baseline', '  /security compare               Compare with baseline', '  /security history               Scan history', '  /security config                View/edit config', '  /security enable <rule>         Enable rule', '  /security disable <rule>        Disable rule', '  /security add-pattern           Add custom pattern', '  /security rules                 List rules', '  /security export [fmt]          Export (text/json/sarif)', '  /security fix                   Auto-fix', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['🔒 安全扫描器（深度）', '', '📖 用法：', '  /security                        全量安全扫描', '  /security file <path>            扫描单个文件', '  /security secrets                仅密钥', '  /security vulns                  仅漏洞', '  /security config                 配置问题', '  /security deps                   依赖项', '  /security owasp                  OWASP Top 10', '  /security cwe                    CWE Top 25', '  /security npm-audit              npm audit', '  /security pip-audit              pip audit', '  /security sast                  运行 SAST 工具', '  /security baseline              保存基线', '  /security compare               与基线对比', '  /security history               扫描历史', '  /security config                查看/编辑配置', '  /security enable <rule>         启用规则', '  /security disable <rule>        禁用规则', '  /security add-pattern           添加自定义模式', '  /security rules                 列出规则', '  /security export [fmt]          导出（text/json/sarif）', '  /security fix                   自动修复', ''].join('\n') }
 
   if (cmd === 'rules') {
-    const lines = ['Security Rules:', '================', '']
+    const lines = ['🔒 安全规则：', '================', '']
     for (const [rule, enabled] of Object.entries(config.rules)) {
       lines.push(`  ${enabled ? '[ON]' : '[OFF]'} ${rule}`)
     }
@@ -345,31 +345,31 @@ export const call: LocalCommandCall = async (args) => {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     if (key in config.rules) { config.rules[key as keyof typeof config.rules] = value === 'true'; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
-    return { type: 'text', value: `❌ Unknown: ${key}` }
+    return { type: 'text', value: `❌ 未知：${key}` }
   }
 
   if (cmd === 'enable' || cmd === 'disable') {
-    const rule = parts[1]; if (!rule || !(rule in config.rules)) return { type: 'text', value: `❌ Unknown: ${rule}` }
-    config.rules[rule as keyof typeof config.rules] = cmd === 'enable'; saveConfig(config); return { type: 'text', value: `✅ [OK] ${rule} ${cmd}d` }
+    const rule = parts[1]; if (!rule || !(rule in config.rules)) return { type: 'text', value: `❌ 未知：${rule}` }
+    config.rules[rule as keyof typeof config.rules] = cmd === 'enable'; saveConfig(config); return { type: 'text', value: `✅ [OK] ${rule} 已${cmd === 'enable' ? '启用' : '禁用'}` }
   }
 
   if (cmd === 'add-pattern') {
-    return { type: 'text', value: 'Add to config.json customPatterns: [{ "pattern": "regex", "name": "Name", "severity": "high" }]' }
+    return { type: 'text', value: '💡 添加到 config.json 的 customPatterns：[{ "pattern": "regex", "name": "名称", "severity": "high" }]' }
   }
 
   if (cmd === 'history') {
     try {
       const history = JSON.parse(readFileSync(SCAN_HISTORY, 'utf-8'))
-      const lines = ['Scan History:', '==============', '']
-      history.slice(-10).forEach((h: any) => lines.push(`${h.date.slice(0, 19)} | Score: ${h.score}/100 (${h.grade}) | ${h.findings} findings | ${h.files} files`))
+      const lines = ['📅 扫描历史：', '==============', '']
+      history.slice(-10).forEach((h: any) => lines.push(`${h.date.slice(0, 19)} | 得分：${h.score}/100（${h.grade}）| ${h.findings} 个问题 | ${h.files} 个文件`))
       return { type: 'text', value: lines.join('\n') }
-    } catch { return { type: 'text', value: 'No history' } }
+    } catch { return { type: 'text', value: '📋 无历史记录' } }
   }
 
   if (cmd === 'baseline') {
     const findings = scanDirectory('.', config)
     writeFileSync(BASELINE_FILE, JSON.stringify(findings, null, 2), 'utf-8')
-    return { type: 'text', value: `✅ [OK] Baseline saved (${findings.length} findings)` }
+    return { type: 'text', value: `✅ [OK] 基线已保存（${findings.length} 个问题）` }
   }
 
   if (cmd === 'compare') {
@@ -378,8 +378,8 @@ export const call: LocalCommandCall = async (args) => {
       const baseline = JSON.parse(readFileSync(BASELINE_FILE, 'utf-8'))
       const newFindings = findings.filter(f => !baseline.some((b: SecurityFinding) => b.file === f.file && b.line === f.line && b.title === f.title))
       const fixed = baseline.filter((b: SecurityFinding) => !findings.some(f => f.file === b.file && f.line === b.line && f.title === b.title))
-      return { type: 'text', value: `🔍 Baseline Comparison:\nNew: ${newFindings.length}\nFixed: ${fixed.length}\nTotal: ${findings.length}` }
-    } catch { return { type: 'text', value: 'No baseline. Run /security baseline first.' } }
+      return { type: 'text', value: `🔍 基线对比：\n新增：${newFindings.length}\n已修复：${fixed.length}\n总计：${findings.length}` }
+    } catch { return { type: 'text', value: '❌ 无基线。请先运行 /security baseline。' } }
   }
 
   if (cmd === 'export') {
@@ -389,29 +389,29 @@ export const call: LocalCommandCall = async (args) => {
     const filename = `security-scan.${format === 'sarif' ? 'sarif' : format}`
     const content = format === 'sarif' ? formatSarifReport(findings) : format === 'json' ? JSON.stringify({ result, findings }, null, 2) : formatTextReport(findings, { ...result, scanDuration: 0, filesScanned: Object.keys({}).length })
     writeFileSync(filename, content, 'utf-8')
-    return { type: 'text', value: `✅ [OK] Exported: ${filename}` }
+    return { type: 'text', value: `✅ [OK] 已导出：${filename}` }
   }
 
   if (cmd === 'npm-audit') {
     try { return { type: 'text', value: execSync('npm audit 2>&1 | head -50', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'], timeout: 30000 }) } }
-    catch { return { type: 'text', value: '[ERROR] npm audit failed' } }
+    catch { return { type: 'text', value: '❌ npm audit 失败' } }
   }
 
   if (cmd === 'pip-audit') {
     try { return { type: 'text', value: execSync('pip-audit 2>&1 | head -50', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'], timeout: 30000 }) } }
-    catch { return { type: 'text', value: '[ERROR] pip-audit not available' } }
+    catch { return { type: 'text', value: '❌ pip-audit 不可用' } }
   }
 
   if (cmd === 'sast') {
-    return { type: 'text', value: ['SAST Tools:', '===========', '', 'Semgrep: npx semgrep --config=auto .', 'CodeQL: codeql database create && codeql database analyze', 'SonarQube: sonar-scanner', 'Bandit (Python): bandit -r .', 'Gosec (Go): gosec ./...', 'Brakeman (Rails): brakeman'].join('\n') }
+    return { type: 'text', value: ['🔍 SAST 工具：', '===========', '', 'Semgrep：npx semgrep --config=auto .', 'CodeQL：codeql database create && codeql database analyze', 'SonarQube：sonar-scanner', 'Bandit（Python）：bandit -r .', 'Gosec（Go）：gosec ./...', 'Brakeman（Rails）：brakeman'].join('\n') }
   }
 
   if (cmd === 'owasp') {
-    return { type: 'text', value: ['OWASP Top 10 2021:', '==================', '', 'A01: Broken Access Control', 'A02: Cryptographic Failures', 'A03: Injection', 'A04: Insecure Design', 'A05: Security Misconfiguration', 'A06: Vulnerable Components', 'A07: Auth Failures', 'A08: Software Integrity Failures', 'A09: Logging Failures', 'A10: Server-Side Request Forgery'].join('\n') }
+    return { type: 'text', value: ['🛡️ OWASP Top 10 2021：', '==================', '', 'A01：失效的访问控制', 'A02：加密失败', 'A03：注入', 'A04：不安全设计', 'A05：安全配置错误', 'A06：易受攻击的组件', 'A07：身份验证失败', 'A08：软件和数据完整性故障', 'A09：安全日志和监控失败', 'A10：服务器端请求伪造'].join('\n') }
   }
 
   if (cmd === 'cwe') {
-    return { type: 'text', value: ['CWE Top 25:', '============', '', 'CWE-79: XSS', 'CWE-798: Hard-coded Credentials', 'CWE-89: SQL Injection', 'CWE-22: Path Traversal', 'CWE-78: OS Command Injection', 'CWE-502: Deserialization', 'CWE-352: CSRF', 'CWE-416: Use After Free', 'CWE-862: Missing Authorization'].join('\n') }
+    return { type: 'text', value: ['📋 CWE Top 25：', '============', '', 'CWE-79：XSS', 'CWE-798：硬编码凭证', 'CWE-89：SQL 注入', 'CWE-22：路径遍历', 'CWE-78：OS 命令注入', 'CWE-502：反序列化', 'CWE-352：CSRF', 'CWE-416：释放后重用', 'CWE-862：缺少授权'].join('\n') }
   }
 
   // Default: full scan

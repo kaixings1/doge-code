@@ -166,19 +166,19 @@ export const call: LocalCommandCall = async (args) => {
 
   try {
     if (cmd === 'help' || cmd === '') return { type: 'text', value: [
-      'Performance Profiler', '', '📖 Usage: ',
-      '  /performance                    Full analysis',
-      '  /performance file <path>        Analyze single file',
-      '  /performance functions          List top 20 functions by complexity',
-      '  /performance hotspots           Performance hotspots',
-      '  /performance complexity         Complexity analysis',
-      '  /performance size               Size analysis by file',
-      '  /performance async              Async pattern analysis',
-      '  /performance loops              Loop analysis',
-      '  /performance baseline           Save current as baseline',
-      '  /performance compare            Compare with baseline',
-      '  /performance history            Scan history',
-      '  /performance export [file]      Export report (md/json)',
+      '📈 性能分析器', '', '📖 用法：',
+      '  /performance                    完整分析',
+      '  /performance file <路径>         分析单个文件',
+      '  /performance functions          列出复杂度前 20 的函数',
+      '  /performance hotspots           性能热点',
+      '  /performance complexity         复杂度分析',
+      '  /performance size               按文件大小分析',
+      '  /performance async              异步模式分析',
+      '  /performance loops              循环分析',
+      '  /performance baseline           保存为基准',
+      '  /performance compare            与基准对比',
+      '  /performance history            扫描历史',
+      '  /performance export [文件]       导出报告（md/json）',
     ].join('\n') }
 
     if (cmd === 'file') {
@@ -187,7 +187,7 @@ export const call: LocalCommandCall = async (args) => {
       if (!existsSync(file)) return { type: 'text', value: `❌ File not found: ${file}` }
       const m = analyzeFile(file)
       if (!m) return { type: 'text', value: `⚠️ Cannot analyze: ${file} (unsupported format or binary file)` }
-      const lines = [`File: ${file}`, `Lines: ${m.lines}`, `Functions: ${m.functions.length}`, `Avg Complexity: ${m.avgComplexity}`, `Max Complexity: ${m.maxComplexity}`, '', 'Functions:']
+      const lines = [`📄 文件：${file}`, `行数：${m.lines}`, `函数数：${m.functions.length}`, `平均复杂度：${m.avgComplexity}`, `最大复杂度：${m.maxComplexity}`, '', '函数：']
       for (const f of m.functions) {
         const warn = f.complexity > 10 ? ' [!]' : f.length > 50 ? ' [LONG]' : ''
         lines.push(`  ${f.name}() - line ${f.line}, ${f.length} lines, complexity ${f.complexity}, depth ${f.depth}${warn}`)
@@ -199,28 +199,28 @@ export const call: LocalCommandCall = async (args) => {
       const files = analyzeProject('.')
       const allFuncs = files.flatMap(f => f.functions.map(fn => ({ ...fn, file: f.file })))
       const sorted = allFuncs.sort((a, b) => b.complexity - a.complexity).slice(0, 20)
-      if (sorted.length === 0) return { type: 'text', value: 'No functions found' }
-      return { type: 'text', value: 'Top 20 Functions by Complexity:\n' + sorted.map((f, i) => `${i + 1}. ${f.name}() in ${f.file}:${f.line} (complexity: ${f.complexity}, ${f.length} lines, depth: ${f.depth})`).join('\n') }
+      if (sorted.length === 0) return { type: 'text', value: '未找到函数' }
+      return { type: 'text', value: '📊 复杂度前 20 的函数：\n' + sorted.map((f, i) => `${i + 1}. ${f.name}() 位于 ${f.file}:${f.line}（复杂度：${f.complexity}，${f.length} 行，深度：${f.depth}）`).join('\n') }
     }
 
     if (cmd === 'hotspots') {
       const files = analyzeProject('.')
       const hotspots = files.filter(f => f.avgComplexity > 10 || f.maxComplexity > 20).sort((a, b) => b.avgComplexity - a.avgComplexity).slice(0, 15)
-      if (hotspots.length === 0) return { type: 'text', value: '[OK] No hotspots!' }
-      return { type: 'text', value: 'Performance Hotspots:\n' + hotspots.map(f => `  ${f.file} (avg: ${f.avgComplexity}, max: ${f.maxComplexity}, ${f.functions.length} funcs)`).join('\n') }
+      if (hotspots.length === 0) return { type: 'text', value: '✅ 没有性能热点！' }
+      return { type: 'text', value: '🔥 性能热点：\n' + hotspots.map(f => `  ${f.file}（平均：${f.avgComplexity}，最大：${f.maxComplexity}，${f.functions.length} 个函数）`).join('\n') }
     }
 
     if (cmd === 'size') {
       const files = analyzeProject('.').sort((a, b) => b.lines - a.lines).slice(0, 20)
-      if (files.length === 0) return { type: 'text', value: 'No files analyzed' }
-      return { type: 'text', value: 'Largest Files:\n' + files.map(f => `  ${f.file}: ${f.lines} lines, ${f.functions.length} functions`).join('\n') }
+      if (files.length === 0) return { type: 'text', value: '未分析任何文件' }
+      return { type: 'text', value: '📦 最大文件：\n' + files.map(f => `  ${f.file}：${f.lines} 行，${f.functions.length} 个函数`).join('\n') }
     }
 
     if (cmd === 'async') {
       const files = analyzeProject('.')
       const asyncFuncs = files.flatMap(f => f.functions.filter(fn => fn.async).map(fn => ({ ...fn, file: f.file })))
       const noAwait = asyncFuncs.filter(f => !f.hasAwait)
-      return { type: 'text', value: [`Async Analysis:`, `Total async: ${asyncFuncs.length}`, `Without await: ${noAwait.length}`, '', ...(noAwait.length > 0 ? ['Async without await:', ...noAwait.slice(0, 10).map(f => `  ${f.name}() in ${f.file}:${f.line}`)] : ['All async functions properly use await']), ...(asyncFuncs.length > 0 ? ['', 'By file:', ...groupBy(asyncFuncs, 'file').map(([file, funcs]) => `  ${file}: ${funcs.length} async functions`)] : [])].join('\n') }
+      return { type: 'text', value: ['🔍 异步分析：', '异步函数总数：' + asyncFuncs.length, '未使用 await：' + noAwait.length, '', ...(noAwait.length > 0 ? ['未使用 await 的异步函数：', ...noAwait.slice(0, 10).map(f => `  ${f.name}() 位于 ${f.file}:${f.line}`)] : ['所有异步函数都正确使用了 await']), ...(asyncFuncs.length > 0 ? ['', '按文件：', ...groupBy(asyncFuncs, 'file').map(([file, funcs]) => `  ${file}：${funcs.length} 个异步函数`)] : [])].join('\n') }
     }
 
     if (cmd === 'loops') {
@@ -232,12 +232,12 @@ export const call: LocalCommandCall = async (args) => {
 
     if (cmd === 'baseline') {
       const files = analyzeProject('.')
-      if (!safeWriteFile(BASELINE_FILE, JSON.stringify(files, null, 2))) return { type: 'text', value: '[ERROR] Cannot write baseline' }
-      return { type: 'text', value: `✅ [OK] Baseline saved (${files.length} files)` }
+      if (!safeWriteFile(BASELINE_FILE, JSON.stringify(files, null, 2))) return { type: 'text', value: '❌ 无法写入基准' }
+      return { type: 'text', value: `✅ 基准已保存（${files.length} 个文件）` }
     }
 
     if (cmd === 'compare') {
-      if (!existsSync(BASELINE_FILE)) return { type: 'text', value: 'No baseline. Run /performance baseline first.' }
+      if (!existsSync(BASELINE_FILE)) return { type: 'text', value: '❌ 无基准数据。请先运行 /performance baseline。' }
       try {
         const files = analyzeProject('.')
         const baseline = JSON.parse(readFileSync(BASELINE_FILE, 'utf-8'))
@@ -249,10 +249,10 @@ export const call: LocalCommandCall = async (args) => {
 
     if (cmd === 'history') {
       try {
-        if (!existsSync(HISTORY_FILE)) return { type: 'text', value: 'No history' }
+        if (!existsSync(HISTORY_FILE)) return { type: 'text', value: '无历史记录' }
         const history = JSON.parse(readFileSync(HISTORY_FILE, 'utf-8'))
-        return { type: 'text', value: 'History:\n' + history.slice(-10).map((h: any) => `${h.date.slice(0, 19)} | Score: ${h.score} | Issues: ${h.issues}`).join('\n') }
-      } catch { return { type: 'text', value: 'No history' } }
+        return { type: 'text', value: '📅 历史记录：\n' + history.slice(-10).map((h: any) => `${h.date.slice(0, 19)} | 分数：${h.score} | 问题数：${h.issues}`).join('\n') }
+      } catch { return { type: 'text', value: '无历史记录' } }
     }
 
     if (cmd === 'export') {
@@ -260,9 +260,9 @@ export const call: LocalCommandCall = async (args) => {
       const issues = generateIssues(files)
       const { score, grade } = calculateScore(files, issues)
       const file = parts[1] || 'performance-report.md'
-      const content = '# Performance Report\n\nScore: ' + score + '/100 (' + grade + ')\n\nIssues: ' + issues.length + '\n\n' + issues.map(i => '- [' + i.file + ':' + i.line + '] ' + i.title + ': ' + i.suggestion).join('\n')
-      if (!safeWriteFile(file, content)) return { type: 'text', value: `❌ [ERROR] Cannot write ${file}` }
-      return { type: 'text', value: `✅ [OK] Exported: ${file}` }
+      const content = '# 性能报告\n\n分数：' + score + '/100（' + grade + '）\n\n问题数：' + issues.length + '\n\n' + issues.map(i => '- [' + i.file + ':' + i.line + '] ' + i.title + '：' + i.suggestion).join('\n')
+      if (!safeWriteFile(file, content)) return { type: 'text', value: `❌ 无法写入 ${file}` }
+      return { type: 'text', value: `✅ 已导出：${file}` }
     }
 
     const files = analyzeProject('.')
@@ -273,11 +273,11 @@ export const call: LocalCommandCall = async (args) => {
     const maxComp = files.length > 0 ? Math.max(...files.map(f => f.maxComplexity)) : 0
 
     const report = [
-      'Performance Report', '═════════════════', '',
-      `Score: ${score}/100 (${grade})`, '',
-      'Summary:', `  Files: ${files.length}`, `  Lines: ${files.reduce((s, f) => s + f.lines, 0)}`, `  Functions: ${totalFuncs}`,
-      `  Avg Complexity: ${avgComp}`, `  Max Complexity: ${maxComp}`, `  Issues: ${issues.length}`, '',
-      'Issues:',
+      '📈 性能报告', '═════════════════', '',
+      `分数：${score}/100（${grade}）`, '',
+      '摘要：', `  文件数：${files.length}`, `  总行数：${files.reduce((s, f) => s + f.lines, 0)}`, `  函数数：${totalFuncs}`,
+      `  平均复杂度：${avgComp}`, `  最大复杂度：${maxComp}`, `  问题数：${issues.length}`, '',
+      '问题：',
     ]
     for (const issue of issues.filter(i => ['high', 'critical'].includes(i.severity)).slice(0, 15)) {
       const icon = issue.severity === 'critical' ? '🔴' : '🟠'
@@ -303,7 +303,7 @@ function groupBy<T>(items: T[], key: keyof T): [string, T[]][] {
 
 const performance: Command = {
   type: 'local', name: 'performance',
-  description: 'Performance profiler - file/functions/hotspots/complexity/size/async/baseline',
+  description: '📈 性能分析 - 文件/函数/热点/复杂度/大小/异步/基准',
   aliases: ['/performance', '/perf'],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

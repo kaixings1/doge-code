@@ -44,22 +44,22 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'help' || cmd === '') {
     return { type: 'text', value: [
-      'Release Manager', '', '📖 Usage: ',
-      '  /release current               Show current version',
-      '  /release bump <type>          Bump version (major/minor/patch)',
-      '  /release notes                Generate release notes',
-      '  /release changelog            Generate changelog from commits',
-      '  /release tag                  Create git tag',
-      '  /release create               Full release (bump + notes + tag + push)',
-      '  /release list                 List all tags',
-      '  /release delete <tag>         Delete a tag',
-      '  /release compare <t1> <t2>    Compare two versions',
-      '  /release publish              Publish to npm + GitHub release',
+      '🚀 发布管理器', '', '📖 用法：',
+      '  /release current               显示当前版本',
+      '  /release bump <type>           升级版本（major/minor/patch）',
+      '  /release notes                 生成发布说明',
+      '  /release changelog             从提交生成变更日志',
+      '  /release tag                   创建 git 标签',
+      '  /release create                完整发布（升级+说明+标签+推送）',
+      '  /release list                  列出所有标签',
+      '  /release delete <tag>          删除标签',
+      '  /release compare <t1> <t2>     比较两个版本',
+      '  /release publish               发布到 npm + GitHub release',
     ].join('\n') }
   }
 
   if (cmd === 'current') {
-    return { type: 'text', value: 'Current version: ' + getCurrentVersion() }
+    return { type: 'text', value: '📌 当前版本：' + getCurrentVersion() }
   }
 
   if (cmd === 'bump') {
@@ -71,16 +71,16 @@ export const call: LocalCommandCall = async (args) => {
         const pkg = JSON.parse(readFileSync('package.json', 'utf-8'))
         pkg.version = next
         writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
-        return { type: 'text', value: '[OK] Bumped: ' + current + ' -> ' + next }
-      } catch { return { type: 'text', value: '[ERROR] Cannot update package.json' } }
+        return { type: 'text', value: '✅ 已升级版本：' + current + ' -> ' + next }
+      } catch { return { type: 'text', value: '❌ 无法更新 package.json' } }
     }
-    return { type: 'text', value: 'New version: ' + next }
+    return { type: 'text', value: '📌 新版本：' + next }
   }
 
   if (cmd === 'notes') {
     const commits = getCommitsSinceLastTag()
-    if (commits.length === 0) return { type: 'text', value: 'No commits since last tag' }
-    const lines = ['Release Notes:', '===============']
+    if (commits.length === 0) return { type: 'text', value: '📋 自上次标签以来无提交' }
+    const lines = ['📝 发布说明：', '===============']
     commits.forEach(c => lines.push('- ' + c))
     return { type: 'text', value: lines.join('\n') }
   }
@@ -88,72 +88,72 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'changelog') {
     try {
       const output = execSync('git log --pretty=format:"%h %s (%ad)" --date=short -30', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
-      return { type: 'text', value: 'Changelog:\n' + output }
-    } catch { return { type: 'text', value: '[ERROR] Cannot generate changelog' } }
+      return { type: 'text', value: '📋 变更日志：\n' + output }
+    } catch { return { type: 'text', value: '❌ 无法生成变更日志' } }
   }
 
   if (cmd === 'tag') {
     const version = getCurrentVersion()
     try {
       execSync('git tag -a v' + version + ' -m "Release v' + version + '"', { stdio: 'ignore' })
-      return { type: 'text', value: '[OK] Created tag: v' + version }
-    } catch { return { type: 'text', value: '[ERROR] Tag creation failed' } }
+      return { type: 'text', value: '✅ 已创建标签：v' + version }
+    } catch { return { type: 'text', value: '❌ 标签创建失败' } }
   }
 
   if (cmd === 'create') {
     const type = (parts[1] as 'major' | 'minor' | 'patch') || 'patch'
     const current = getCurrentVersion()
     const next = bumpVersion(current, type)
-    const lines = ['Release v' + next, '============', '']
+    const lines = ['🚀 发布 v' + next, '============', '']
     if (existsSync('package.json')) {
       try {
         const pkg = JSON.parse(readFileSync('package.json', 'utf-8'))
         pkg.version = next
         writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
-        lines.push('[OK] Bumped: ' + current + ' -> ' + next)
-      } catch { lines.push('[ERROR] Cannot update package.json') }
+        lines.push('✅ 已升级版本：' + current + ' -> ' + next)
+      } catch { lines.push('❌ 无法更新 package.json') }
     }
     try {
       execSync('git add -A && git commit -m "chore: release v' + next + '"', { stdio: 'ignore' })
       execSync('git tag -a v' + next + ' -m "Release v' + next + '"', { stdio: 'ignore' })
-      lines.push('[OK] Created tag: v' + next)
-    } catch { lines.push('[ERROR] Git operations failed') }
+      lines.push('✅ 已创建标签：v' + next)
+    } catch { lines.push('❌ Git 操作失败') }
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'list') {
     try {
       const tags = execSync('git tag --sort=-version:refname', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
-      return { type: 'text', value: 'Tags:\n' + tags }
-    } catch { return { type: 'text', value: 'No tags found' } }
+      return { type: 'text', value: '🏷️ 标签：\n' + tags }
+    } catch { return { type: 'text', value: '📋 无标签' } }
   }
 
   if (cmd === 'delete') {
     const tag = parts[1]
-    if (!tag) return { type: 'text', value: 'Usage: /release delete <tag>' }
-    try { execSync('git tag -d ' + tag, { stdio: 'ignore' }); return { type: 'text', value: '[OK] Deleted tag: ' + tag } }
-    catch { return { type: 'text', value: '[ERROR] Delete failed' } }
+    if (!tag) return { type: 'text', value: '📖 用法：/release delete <tag>' }
+    try { execSync('git tag -d ' + tag, { stdio: 'ignore' }); return { type: 'text', value: '✅ 已删除标签：' + tag } }
+    catch { return { type: 'text', value: '❌ 删除失败' } }
   }
 
   if (cmd === 'compare') {
     const t1 = parts[1]; const t2 = parts[2]
-    if (!t1 || !t2) return { type: 'text', value: 'Usage: /release compare <tag1> <tag2>' }
+    if (!t1 || !t2) return { type: 'text', value: '📖 用法：/release compare <tag1> <tag2>' }
     try {
       const diff = execSync('git log --oneline ' + t1 + '..' + t2, { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
-      return { type: 'text', value: 'Commits between ' + t1 + ' and ' + t2 + ':\n' + diff }
-    } catch { return { type: 'text', value: '[ERROR] Compare failed' } }
+      return { type: 'text', value: '📊 ' + t1 + ' 和 ' + t2 + ' 之间的提交：\n' + diff }
+    } catch { return { type: 'text', value: '❌ 比较失败' } }
   }
 
   if (cmd === 'publish') {
     try {
       execSync('npm publish 2>&1', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'], timeout: 60000 })
-      return { type: 'text', value: '[OK] Published to npm' }
+      return { type: 'text', value: '✅ 已发布到 npm' }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] Publish failed: ' + (err instanceof Error ? err.message : String(err)) }
+      return { type: 'text', value: '❌ 发布失败：' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
-  return { type: 'text', value: 'Unknown: ' + cmd }
+  return { type: 'text', value: '❓ 未知命令：' + cmd }
 }
 
 const release: Command = {

@@ -152,48 +152,48 @@ function scanFile(file: string, config: ReviewConfig): ReviewIssue[] {
       const lineNum = i + 1
 
       if (config.rules['max-line-length'] && t.length > 120) {
-        issues.push({ file, line: lineNum, type: 'style', severity: 'low', message: `Line too long (${t.length} chars)`, suggestion: 'Break into multiple lines or extract to variable', rule: 'max-line-length', effort: 'trivial', category: 'Readability' })
+        issues.push({ file, line: lineNum, type: 'style', severity: 'low', message: `行过长 (${t.length} 字符)`, suggestion: '拆分为多行或提取为变量', rule: 'max-line-length', effort: 'trivial', category: '可读性' })
       }
 
       if (config.rules['no-console-log'] && /\bconsole\.(log|debug|warn|info|trace)\s*\(/.test(t)) {
-        issues.push({ file, line: lineNum, type: 'bug', severity: 'medium', message: 'console statement in production code', suggestion: 'Use structured logger (pino, winston) or remove', rule: 'no-console-log', effort: 'trivial', category: 'Best Practices' })
+        issues.push({ file, line: lineNum, type: 'bug', severity: 'medium', message: '生产代码中包含 console 语句', suggestion: '使用结构化日志工具（pino、winston）或移除', rule: 'no-console-log', effort: 'trivial', category: '最佳实践' })
       }
 
       if (config.rules['no-any-type'] && /:\s*\bany\b(?!\s*[=,)\]])/.test(t)) {
-        issues.push({ file, line: lineNum, type: 'maintainability', severity: 'medium', message: 'Usage of any type', suggestion: 'Define specific interface/type or use unknown', rule: 'no-any-type', effort: 'medium', category: 'Type Safety' })
+        issues.push({ file, line: lineNum, type: 'maintainability', severity: 'medium', message: '使用了 any 类型', suggestion: '定义具体接口/类型或使用 unknown', rule: 'no-any-type', effort: 'medium', category: '类型安全' })
       }
 
       if (config.rules['no-eval'] && /\beval\s*\(/.test(t)) {
-        issues.push({ file, line: lineNum, type: 'security', severity: 'critical', message: 'eval() can execute arbitrary code', suggestion: 'Use JSON.parse() or Function constructor with validation', rule: 'no-eval', effort: 'hard', category: 'Security' })
+        issues.push({ file, line: lineNum, type: 'security', severity: 'critical', message: 'eval() 可执行任意代码', suggestion: '使用 JSON.parse() 或带验证的 Function 构造函数', rule: 'no-eval', effort: 'hard', category: '安全' })
       }
 
       if (config.rules['no-innerHTML'] && /\.innerHTML\s*=/.test(t)) {
-        issues.push({ file, line: lineNum, type: 'security', severity: 'high', message: 'innerHTML assignment can cause XSS', suggestion: 'Use textContent or framework-safe rendering', rule: 'no-innerHTML', effort: 'easy', category: 'Security' })
+        issues.push({ file, line: lineNum, type: 'security', severity: 'high', message: 'innerHTML 赋值可能导致 XSS', suggestion: '使用 textContent 或框架安全渲染', rule: 'no-innerHTML', effort: 'easy', category: '安全' })
       }
 
       if (config.rules['no-empty-catch'] && /catch\s*\([^)]*\)\s*\{\s*\}/.test(t)) {
-        issues.push({ file, line: lineNum, type: 'bug', severity: 'high', message: 'Empty catch block (silent failure)', suggestion: 'Log the error, rethrow, or handle gracefully', rule: 'no-empty-catch', effort: 'easy', category: 'Reliability' })
+        issues.push({ file, line: lineNum, type: 'bug', severity: 'high', message: '空的 catch 块（静默失败）', suggestion: '记录错误、重新抛出或优雅处理', rule: 'no-empty-catch', effort: 'easy', category: '可靠性' })
       }
 
       if (config.rules['no-var-usage'] && /\bvar\s+\w+/.test(t)) {
-        issues.push({ file, line: lineNum, type: 'style', severity: 'low', message: 'Usage of var instead of let/const', suggestion: 'Use const for constants, let for variables', rule: 'no-var-usage', effort: 'trivial', category: 'Best Practices' })
+        issues.push({ file, line: lineNum, type: 'style', severity: 'low', message: '使用 var 而非 let/const', suggestion: '常量用 const，变量用 let', rule: 'no-var-usage', effort: 'trivial', category: '最佳实践' })
       }
 
       if (config.rules['no-magic-numbers'] && /\b(?!0\b)(?!1\b)(?!2\b)(?!10\b)(?!100\b)(?!1000\b)(?!256\b)(?!1024\b)\d{2,}\b(?!\s*[;,)\]])/.test(t)) {
-        issues.push({ file, line: lineNum, type: 'maintainability', severity: 'low', message: 'Magic number detected', suggestion: 'Extract to named constant', rule: 'no-magic-numbers', effort: 'easy', category: 'Readability' })
+        issues.push({ file, line: lineNum, type: 'maintainability', severity: 'low', message: '发现魔术数字', suggestion: '提取为具名常量', rule: 'no-magic-numbers', effort: 'easy', category: '可读性' })
       }
 
       if (config.rules['no-todo-fixme'] && /\/\/\s*(TODO|FIXME|HACK|XXX|WORKAROUND)\b/i.test(t)) {
-        issues.push({ file, line: lineNum, type: 'maintainability', severity: 'low', message: 'Unfinished code marker', suggestion: 'Complete the task or create a tracked issue', rule: 'no-todo-fixme', effort: 'medium', category: 'Maintainability' })
+        issues.push({ file, line: lineNum, type: 'maintainability', severity: 'low', message: '未完成的代码标记', suggestion: '完成任务或创建跟踪 issue', rule: 'no-todo-fixme', effort: 'medium', category: '可维护性' })
       }
 
       if (config.rules['no-floating-promises'] && /\b(?:await\s+)?\w+\.(then|catch|finally)\s*\(/.test(t) && !t.includes('await') && !t.includes('return')) {
-        issues.push({ file, line: lineNum, type: 'bug', severity: 'high', message: 'Floating promise (not awaited or returned)', suggestion: 'Add await or return, or handle with void operator', rule: 'no-floating-promises', effort: 'easy', category: 'Reliability' })
+        issues.push({ file, line: lineNum, type: 'bug', severity: 'high', message: '悬空 Promise（未 await 或 return）', suggestion: '添加 await 或 return，或用 void 运算符处理', rule: 'no-floating-promises', effort: 'easy', category: '可靠性' })
       }
 
       for (const secret of SECRET_PATTERNS) {
         if (secret.pattern.test(t)) {
-          issues.push({ file, line: lineNum, type: 'security', severity: secret.severity, message: secret.name + ' detected in source code', suggestion: 'Move to environment variables or secure vault', rule: 'no-hardcoded-secrets', effort: 'easy', category: 'Security' })
+          issues.push({ file, line: lineNum, type: 'security', severity: secret.severity, message: secret.name + ' 在源代码中', suggestion: '移至环境变量或安全保管库', rule: 'no-hardcoded-secrets', effort: 'easy', category: '安全' })
           break
         }
       }
@@ -201,7 +201,7 @@ function scanFile(file: string, config: ReviewConfig): ReviewIssue[] {
       const funcMatch = line.match(/(?:export\s+)?(?:async\s+)?(?:function|const)\s+(\w+)/)
       if (funcMatch) {
         if (funcStart >= 0 && (lineNum - funcStart) > 50) {
-          issues.push({ file, line: funcStart, type: 'maintainability', severity: (lineNum - funcStart) > 100 ? 'high' : 'medium', message: `Function "${funcName}" too long (${lineNum - funcStart} lines)`, suggestion: 'Extract smaller functions with single responsibility', rule: 'max-function-length', effort: 'hard', category: 'Maintainability' })
+          issues.push({ file, line: funcStart, type: 'maintainability', severity: (lineNum - funcStart) > 100 ? 'high' : 'medium', message: `函数 "${funcName}" 过长 (${lineNum - funcStart} 行)`, suggestion: '拆分为职责单一的小函数', rule: 'max-function-length', effort: 'hard', category: '可维护性' })
         }
         funcStart = lineNum
         funcName = funcMatch[1]
@@ -213,7 +213,7 @@ function scanFile(file: string, config: ReviewConfig): ReviewIssue[] {
         braceDepth += (line.match(/\{/g) || []).length - (line.match(/\}/g) || []).length
         if (braceDepth > maxNesting) maxNesting = braceDepth
         if (braceDepth > 5) {
-          issues.push({ file, line: lineNum, type: 'maintainability', severity: 'medium', message: `Deep nesting (depth: ${braceDepth})`, suggestion: 'Extract nested logic into separate functions', rule: 'max-nesting-depth', effort: 'medium', category: 'Readability' })
+          issues.push({ file, line: lineNum, type: 'maintainability', severity: 'medium', message: `深度嵌套 (深度: ${braceDepth})`, suggestion: '将嵌套逻辑提取为独立函数', rule: 'max-nesting-depth', effort: 'medium', category: '可读性' })
         }
       }
 
@@ -221,7 +221,7 @@ function scanFile(file: string, config: ReviewConfig): ReviewIssue[] {
     })
 
     if (lines.length > 500) {
-      issues.push({ file, line: 1, type: 'maintainability', severity: lines.length > 1000 ? 'high' : 'medium', message: `File too long (${lines.length} lines)`, suggestion: 'Split into smaller modules', rule: 'max-file-length', effort: 'hard', category: 'Maintainability' })
+      issues.push({ file, line: 1, type: 'maintainability', severity: lines.length > 1000 ? 'high' : 'medium', message: `文件过长 (${lines.length} 行)`, suggestion: '拆分为更小的模块', rule: 'max-file-length', effort: 'hard', category: '可维护性' })
     }
   } catch { /* ignore */ }
   return issues.slice(0, config.maxIssuesPerFile)
@@ -269,7 +269,7 @@ function calculateScore(issues: ReviewIssue[]): ReviewStats {
   score = Math.max(0, Math.min(100, score))
   const grade = score >= 90 ? 'A' : score >= 80 ? 'B' : score >= 70 ? 'C' : score >= 60 ? 'D' : 'F'
   const debtMinutes = bySeverity.critical * 120 + bySeverity.high * 60 + bySeverity.medium * 30 + bySeverity.low * 10
-  const debtStr = debtMinutes > 120 ? `${Math.round(debtMinutes / 60)} hours` : `${debtMinutes} minutes`
+  const debtStr = debtMinutes > 120 ? `${Math.round(debtMinutes / 60)} 小时` : `${debtMinutes} 分钟`
   return { total: issues.length, bySeverity, byType, byFile, score, grade, techDebt: debtStr }
 }
 
@@ -361,7 +361,7 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const config = loadConfig()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['🔍 深度代码审查', '', '📖 用法：', '  /code-review                    完整项目审查', '  /code-review file &lt;路径&gt;       审查单个文件', '  /code-review branch &lt;分支&gt;     审查分支差异', '  /code-review commit &lt;sha&gt;      审查指定提交', '  /code-review range &lt;a&gt;..&lt;b&gt;    审查提交范围', '  /code-review staged            审查已暂存变更', '  /code-review unstaged          审查未暂存变更', '  /code-review fix               自动修复问题', '  /code-review baseline          保存为基准', '  /code-review compare           与基准对比', '  /code-review history           审查历史', '  /code-review trends            问题趋势', '  /code-review config            查看/编辑配置', '  /code-review enable &lt;规则&gt;    启用规则', '  /code-review disable &lt;规则&gt;   禁用规则', '  /code-review add-rule          添加自定义规则', '  /code-review rules             列出所有规则', '  /code-review export [格式]      导出报告（md/html/json）', '  /code-review lint              运行代码检查', '  /code-review stats             统计信息', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['🔍 深度代码审查', '', '📖 用法：', '  /code-review                    完整项目审查', '  /code-review file <路径>       审查单个文件', '  /code-review branch <分支>     审查分支差异', '  /code-review commit <sha>      审查指定提交', '  /code-review range <a>..<b>    审查提交范围', '  /code-review staged            审查已暂存变更', '  /code-review unstaged          审查未暂存变更', '  /code-review fix               自动修复问题', '  /code-review baseline          保存为基准', '  /code-review compare           与基准对比', '  /code-review history           审查历史', '  /code-review trends            问题趋势', '  /code-review config            查看/编辑配置', '  /code-review enable <规则>    启用规则', '  /code-review disable <规则>   禁用规则', '  /code-review add-rule          添加自定义规则', '  /code-review rules             列出所有规则', '  /code-review export [格式]      导出报告（md/html/json）', '  /code-review lint              运行代码检查', '  /code-review stats             统计信息', ''].join('\n') }
 
   if (cmd === 'rules') {
     const lines = ['📋 审查规则：', '═══════════', '']
@@ -383,7 +383,7 @@ export const call: LocalCommandCall = async (args) => {
     if (!rule || !(rule in config.rules)) return { type: 'text', value: `❌ 未知规则：${rule}` }
     config.rules[rule as keyof typeof config.rules] = cmd === 'enable'
     saveConfig(config)
-    return { type: 'text', value: `✅ [OK] ${rule} ${cmd}d` }
+    return { type: 'text', value: `✅ [OK] ${rule} ${cmd === 'enable' ? '已启用' : '已禁用'}` }
   }
 
   if (cmd === 'add-rule') {
@@ -394,14 +394,14 @@ export const call: LocalCommandCall = async (args) => {
     const history = loadHistory()
     if (history.length === 0) return { type: 'text', value: 'ℹ️ 暂无审查历史' }
     const lines = ['📅 审查历史：', '═══════════', '']
-    history.slice(-15).forEach(h => lines.push(`${h.date.slice(0, 19)} | Score: ${h.score}/100 (${h.grade}) | Issues: ${h.issuesFound} | Files: ${h.filesReviewed} | ${h.duration}ms`))
+    history.slice(-15).forEach(h => lines.push(`${h.date.slice(0, 19)} | 评分: ${h.score}/100 (${h.grade}) | 问题: ${h.issuesFound} | 文件: ${h.filesReviewed} | ${h.duration}ms`))
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'trends') {
     const history = loadHistory()
     if (history.length < 2) return { type: 'text', value: '⚠️ 趋势分析至少需要 2 次审查记录' }
-    const lines = ['Issue Trends:', '==============', '']
+    const lines = ['📈 问题趋势：', '═══════════', '']
     history.slice(-14).forEach(h => {
       const bar = '#'.repeat(Math.min(h.issuesFound, 40))
       lines.push(`${h.date.slice(0, 10)} ${bar} (${h.issuesFound})`)
@@ -412,7 +412,7 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'baseline') {
     const issues = scanDirectory('.', config)
     writeFileSync(BASELINE_FILE, JSON.stringify(issues, null, 2), 'utf-8')
-    return { type: 'text', value: `✅ [OK] Baseline saved (${issues.length} issues)` }
+    return { type: 'text', value: `✅ [OK] 基准已保存（${issues.length} 个问题）` }
   }
 
   if (cmd === 'compare') {
@@ -433,7 +433,7 @@ export const call: LocalCommandCall = async (args) => {
     else if (format === 'html') content = formatHtmlReport(issues, stats)
     else content = formatMarkdownReport(issues, stats)
     writeFileSync(filename, content, 'utf-8')
-    return { type: 'text', value: `✅ [OK] Exported: ${filename}` }
+    return { type: 'text', value: `✅ [OK] 已导出：${filename}` }
   }
 
   if (cmd === 'lint') {
@@ -455,7 +455,7 @@ export const call: LocalCommandCall = async (args) => {
       if (files.length === 0) return { type: 'text', value: `ℹ️ 无${cmd === 'staged' ? '暂存' : '未暂存'}变更` }
       const issues = files.flatMap(f => scanFile(f, config))
       const stats = calculateScore(issues)
-      return { type: 'text', value: `📊 Review (${cmd}):\nFiles: ${files.length}\n${formatTextReport(issues, stats)}` }
+      return { type: 'text', value: `📊 审查 (${cmd === 'staged' ? '已暂存' : '未暂存'}):\n文件数: ${files.length}\n${formatTextReport(issues, stats)}` }
     } catch { return { type: 'text', value: '❌ Git 错误' } }
   }
 
@@ -464,16 +464,16 @@ export const call: LocalCommandCall = async (args) => {
     try {
       const output = execSync(`git diff ${branch}...HEAD --name-only`, { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
       const files = output.split('\n').filter(Boolean)
-      if (files.length === 0) return { type: 'text', value: `ℹ️ No changes vs ${branch}` }
+      if (files.length === 0) return { type: 'text', value: `ℹ️ 与 ${branch} 相比无变更` }
       const issues = files.flatMap(f => scanFile(f, config))
       const stats = calculateScore(issues)
-      return { type: 'text', value: `📊 Review (vs ${branch}):\nFiles: ${files.length}\n${formatTextReport(issues, stats)}` }
-    } catch { return { type: 'text', value: `❌ Git error: ${branch}` } }
+      return { type: 'text', value: `📊 审查 (vs ${branch}):\n文件数: ${files.length}\n${formatTextReport(issues, stats)}` }
+    } catch { return { type: 'text', value: `❌ Git 错误: ${branch}` } }
   }
 
   if (cmd === 'file') {
     const file = parts[1]
-    if (!file || !existsSync(file)) return { type: 'text', value: `❌ File not found: ${file || ''}` }
+    if (!file || !existsSync(file)) return { type: 'text', value: `❌ 文件未找到：${file || ''}` }
     const issues = scanFile(file, config)
     const stats = calculateScore(issues)
     return { type: 'text', value: formatTextReport(issues, stats) }
@@ -490,7 +490,7 @@ export const call: LocalCommandCall = async (args) => {
 
 const codeReview: Command = {
   type: 'local', name: 'code-review',
-  description: '深度代码审查 - 文件/分支/提交/修复/基准/历史/趋势/配置',
+  description: '🔍 深度代码审查 - 文件/分支/提交/修复/基准/历史/趋势/配置',
   aliases: ['/code-review', '/review', '/cr'],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

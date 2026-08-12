@@ -120,29 +120,29 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const config = loadConfig()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Advanced Grep', '', '📖 Usage: ', '  /grep <pattern>                  Search with default config', '  /grep -i <pattern>               Case insensitive (default on)', '  /grep -s <pattern>               Case sensitive', '  /grep -C <N> <pattern>           Show N context lines', '  /grep -l <pattern>               Files only', '  /grep -c <pattern>               Count per file', '  /grep -r <pattern>               Use regex pattern', '  /grep --ext <exts> <pattern>     Filter by extensions', '  /grep config                     Show/edit config', '  /grep set <key> <val>            Set config value', '  /grep history                    Search history', '  /grep stats                      Search statistics', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['🔍 高级搜索', '', '📖 用法：', '  /grep <模式>                     搜索（默认配置）', '  /grep -i <模式>                  不区分大小写（默认开启）', '  /grep -s <模式>                  区分大小写', '  /grep -C <N> <模式>              显示 N 行上下文', '  /grep -l <模式>                  仅显示文件', '  /grep -c <模式>                  每个文件统计', '  /grep -r <模式>                  使用正则', '  /grep --ext <扩展名> <模式>       按扩展名过滤', '  /grep config                     查看/编辑配置', '  /grep set <键> <值>              设置配置', '  /grep history                    搜索历史', '  /grep stats                      搜索统计', ''].join('\n') }
 
   if (cmd === 'config') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     // @ts-expect-error dynamic
     if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
-    return { type: 'text', value: `❌ Unknown: ${key}` }
+    return { type: 'text', value: `❌ 未知键：${key}` }
   }
 
   if (cmd === 'set') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
-    if (!key || !value) return { type: 'text', value: 'Usage: /grep set <key> <value>' }
+    if (!key || !value) return { type: 'text', value: '📖 用法：/grep set <键> <值>' }
     // @ts-expect-error dynamic
     if (key in config) { config[key] = value === 'true' ? true : value === 'false' ? false : value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
-    return { type: 'text', value: `❌ Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
+    return { type: 'text', value: `❌ 未知键：${key}。可用键：${Object.keys(config).join(', ')}` }
   }
 
   if (cmd === 'history') {
     const history = loadHistory()
-    if (history.length === 0) return { type: 'text', value: 'No search history' }
-    const lines = ['Search History:', '═══════════════', '']
-    history.slice(-10).forEach(h => lines.push(`${h.date.slice(0, 19)} | "${h.pattern}" | ${h.results} results | ${h.duration}ms`))
+    if (history.length === 0) return { type: 'text', value: 'ℹ️ 暂无搜索历史' }
+    const lines = ['📅 搜索历史：', '═══════════════', '']
+    history.slice(-10).forEach(h => lines.push(`${h.date.slice(0, 19)} | "${h.pattern}" | ${h.results} 条结果 | ${h.duration}ms`))
     return { type: 'text', value: lines.join('\n') }
   }
 
@@ -150,7 +150,7 @@ export const call: LocalCommandCall = async (args) => {
     const history = loadHistory()
     const totalSearches = history.length
     const totalResults = history.reduce((sum, h) => sum + h.results, 0)
-    return { type: 'text', value: `🔍 Search Stats:\nTotal searches: ${totalSearches}\nTotal results: ${totalResults}\nAvg results/search: ${totalSearches ? Math.round(totalResults / totalSearches) : 0}\nRecent pattern: ${history[history.length - 1]?.pattern || 'none'}` }
+    return { type: 'text', value: `📊 搜索统计：\n总搜索次数：${totalSearches}\n总结果数：${totalResults}\n平均结果/搜索：${totalSearches ? Math.round(totalResults / totalSearches) : 0}\n最近搜索词：${history[history.length - 1]?.pattern || '无'}` }
   }
 
   // Parse flags
@@ -169,7 +169,7 @@ export const call: LocalCommandCall = async (args) => {
   if (extIdx >= 0 && flagParts[extIdx + 1]) options.includeExts = flagParts[extIdx + 1].split(/[,\s]+/)
 
   const pattern = restParts.join(' ')
-  if (!pattern) return { type: 'text', value: 'Usage: /grep <pattern> [flags]\nFlags: -i, -s, -C <N>, -l, -c, -r, --ext <exts>' }
+  if (!pattern) return { type: 'text', value: '📖 用法：/grep <搜索词> [标志]\n标志：-i, -s, -C <N>, -l, -c, -r, --ext <扩展名>' }
 
   const regex = options.regex ? new RegExp(pattern, options.caseInsensitive ? 'gi' : 'g') : new RegExp(escapeRegex(pattern), options.caseInsensitive ? 'gi' : 'g')
   const start = Date.now()
@@ -181,28 +181,28 @@ export const call: LocalCommandCall = async (args) => {
   if (options.count) {
     const byFile: Record<string, number> = {}
     results.forEach(r => { byFile[r.file] = (byFile[r.file] || 0) + 1 })
-    return { type: 'text', value: Object.entries(byFile).map(([f, c]) => `${f}: ${c}`).join('\n') || 'No matches' }
+    return { type: 'text', value: Object.entries(byFile).map(([f, c]) => `${f}: ${c}`).join('\n') || 'ℹ️ 无匹配结果' }
   }
 
   if (options.filesOnly) {
     const files = [...new Set(results.map(r => r.file))]
-    return { type: 'text', value: files.length > 0 ? files.join('\n') : 'No matches' }
+    return { type: 'text', value: files.length > 0 ? files.join('\n') : 'ℹ️ 无匹配结果' }
   }
 
-  if (results.length === 0) return { type: 'text', value: 'No matches found for: ' + pattern }
+  if (results.length === 0) return { type: 'text', value: 'ℹ️ 未找到匹配结果：' + pattern }
 
-  const lines = [`Search: "${pattern}" (${results.length} matches in ${new Set(results.map(r => r.file)).size} files, ${duration}ms)`, '═══════════════════════════════════════', '']
+  const lines = [`🔍 搜索："${pattern}"（${results.length} 条结果，${new Set(results.map(r => r.file)).size} 个文件，${duration}ms）`, '═══════════════════════════════════════', '']
   results.slice(0, 30).forEach(r => {
     lines.push(`${r.file}:${r.line} - ${r.text}`)
     r.contextLines.forEach(c => lines.push(`  ${c}`))
   })
-  if (results.length > 30) lines.push(`... ${results.length - 30} more (run with -l for files only)`)
+  if (results.length > 30) lines.push(`... 还有 ${results.length - 30} 条（使用 -l 仅显示文件）`)
   return { type: 'text', value: lines.join('\n') }
 }
 
 const grep: Command = {
   type: 'local', name: 'grep',
-  description: 'Grep - search/context/regex/count/files-only/config/history/stats',
+  description: '🔍 搜索 - 搜索/上下文/正则/统计/仅文件/配置/历史',
   aliases: ['/grep', '/g', '/rg'],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

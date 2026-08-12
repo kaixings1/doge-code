@@ -65,12 +65,12 @@ export const call: LocalCommandCall = async (args) => {
   const parts = s.split(/\s+/)
   const cmd = parts[0]?.toLowerCase() || 'all'
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Project Stats', '', '📖 Usage: ', '  /project-stats all               Full stats report', '  /project-stats files            File count by language', '  /project-stats lines            Line count by language', '  /project-stats git              Git stats', '  /project-stats contributors     Top contributors', '  /project-stats activity         Recent activity', '  /project-stats size             Disk usage', '  /project-stats health           Health score', '  /project-stats export           Export as JSON', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['📊 项目统计', '', '📖 用法：', '  /project-stats all               完整统计报告', '  /project-stats files            按语言统计文件数', '  /project-stats lines            按语言统计行数', '  /project-stats git              Git 统计', '  /project-stats contributors     主要贡献者', '  /project-stats activity         最近活动', '  /project-stats size             磁盘使用', '  /project-stats health           健康分数', '  /project-stats export           导出为 JSON', ''].join('\n') }
 
   const stats = getProjectStats()
 
   if (cmd === 'all' || cmd === 'report') {
-    const lines = ['Project Statistics', '==================', '', 'Files: ' + (stats.files || 0), 'Lines: ' + (stats.lines || 0), 'Code Lines: ' + (stats.codeLines || 0), 'Comment Lines: ' + (stats.commentLines || 0), 'Blank Lines: ' + (stats.blankLines || 0), '', 'Languages:']
+    const lines = ['📊 项目统计', '==================', '', '文件数：' + (stats.files || 0), '总行数：' + (stats.lines || 0), '代码行：' + (stats.codeLines || 0), '注释行：' + (stats.commentLines || 0), '空行：' + (stats.blankLines || 0), '', '语言分布：']
     for (const [lang, data] of Object.entries(stats.languages || {}).sort((a: any, b: any) => b[1].lines - a[1].lines)) {
       lines.push('  ' + lang + ': ' + data.files + ' files, ' + data.lines + ' lines (' + data.percentage + '%)')
     }
@@ -80,13 +80,13 @@ export const call: LocalCommandCall = async (args) => {
       const tags = execSync('git tag | wc -l 2>/dev/null || echo 0', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim()
       const contrib = execSync('git shortlog -sn --all | wc -l 2>/dev/null || echo 0', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim()
       const firstCommit = execSync('git log --reverse --pretty=format:"%ai" | head -1 2>/dev/null || echo "unknown"', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim()
-      lines.push('', 'Git:', '  Commits: ' + commits, '  Branches: ' + branches, '  Tags: ' + tags, '  Contributors: ' + contrib, '  First Commit: ' + firstCommit)
+      lines.push('', 'Git：', '  提交数：' + commits, '  分支数：' + branches, '  标签数：' + tags, '  贡献者：' + contrib, '  首次提交：' + firstCommit)
     } catch { /* ignore */ }
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'files') {
-    const lines = ['Files by Language:', '===================', '']
+    const lines = ['📁 按语言统计文件数：', '===================', '']
     for (const [lang, data] of Object.entries(stats.languages || {}).sort((a: any, b: any) => b[1].files - a[1].files)) {
       lines.push(lang + ': ' + data.files)
     }
@@ -94,7 +94,7 @@ export const call: LocalCommandCall = async (args) => {
   }
 
   if (cmd === 'lines') {
-    const lines = ['Lines by Language:', '===================', '']
+    const lines = ['📏 按语言统计行数：', '===================', '']
     for (const [lang, data] of Object.entries(stats.languages || {}).sort((a: any, b: any) => b[1].lines - a[1].lines)) {
       lines.push(lang + ': ' + data.lines + ' (' + data.percentage + '%)')
     }
@@ -106,49 +106,49 @@ export const call: LocalCommandCall = async (args) => {
       const commits = execSync('git rev-list --count HEAD 2>/dev/null || echo 0', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim()
       const branches = execSync('git branch | wc -l', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim()
       const tags = execSync('git tag | wc -l', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim()
-      return { type: 'text', value: 'Git Stats:\n  Commits: ' + commits + '\n  Branches: ' + branches + '\n  Tags: ' + tags }
-    } catch { return { type: 'text', value: 'Not a git repository' } }
+      return { type: 'text', value: '📊 Git 统计：\n  提交数：' + commits + '\n  分支数：' + branches + '\n  标签数：' + tags }
+    } catch { return { type: 'text', value: '❌ 不是 Git 仓库' } }
   }
 
   if (cmd === 'contributors') {
     try {
       const output = execSync('git shortlog -sn --all | head -15', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
-      return { type: 'text', value: 'Top Contributors:\n' + output }
-    } catch { return { type: 'text', value: '[ERROR]' } }
+      return { type: 'text', value: '👥 主要贡献者：\n' + output }
+    } catch { return { type: 'text', value: '❌ 错误' } }
   }
 
   if (cmd === 'activity') {
     try {
       const output = execSync('git log --oneline -15', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
-      return { type: 'text', value: 'Recent Activity:\n' + output }
-    } catch { return { type: 'text', value: '[ERROR]' } }
+      return { type: 'text', value: '📅 最近活动：\n' + output }
+    } catch { return { type: 'text', value: '❌ 错误' } }
   }
 
   if (cmd === 'size') {
     try {
       const du = execSync('du -sh . 2>/dev/null', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim()
       const gitSize = execSync('du -sh .git 2>/dev/null', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim()
-      return { type: 'text', value: 'Disk Usage:\n  Total: ' + du + '\n  Git: ' + gitSize }
-    } catch { return { type: 'text', value: '[ERROR]' } }
+      return { type: 'text', value: '💾 磁盘使用：\n  总计：' + du + '\n  Git：' + gitSize }
+    } catch { return { type: 'text', value: '❌ 错误' } }
   }
 
   if (cmd === 'health') {
     const totalLines = stats.lines || 0
     const commentRatio = totalLines > 0 ? ((stats.commentLines || 0) / totalLines * 100).toFixed(1) : '0'
     const grade = parseFloat(commentRatio) > 15 ? 'A' : parseFloat(commentRatio) > 10 ? 'B' : parseFloat(commentRatio) > 5 ? 'C' : 'D'
-    return { type: 'text', value: ['Health Score: ' + grade, '', 'Comment Ratio: ' + commentRatio + '%', 'Files: ' + (stats.files || 0), 'Lines: ' + totalLines].join('\n') }
+    return { type: 'text', value: ['🏥 健康分数：' + grade, '', '注释率：' + commentRatio + '%', '文件数：' + (stats.files || 0), '总行数：' + totalLines].join('\n') }
   }
 
   if (cmd === 'export') {
     return { type: 'text', value: JSON.stringify(stats, null, 2) }
   }
 
-  return { type: 'text', value: 'Unknown: ' + cmd }
+  return { type: 'text', value: '❓ 未知命令：' + cmd }
 }
 
 const projectStats: Command = {
   type: 'local', name: 'project-stats',
-  description: 'Project stats - all/files/lines/git/contributors/activity/size/health/export',
+  description: '📊 项目统计 - 全部/文件/行数/git/贡献者/活动/大小/健康/导出',
   aliases: '/project-stats, /ps, /stats'.split(','),
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
