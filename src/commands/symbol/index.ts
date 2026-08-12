@@ -140,7 +140,7 @@ export const call: LocalCommandCall = async (args) => {
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     // @ts-expect-error dynamic
     if (key in config) { config[key] = value === 'true' ? true : value === 'false' ? false : value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${config[key]}` } }
-    return { type: 'text', value: `❌ Unknown: ${key}` }
+    return { type: 'text', value: `❌ 未知配置项：${key}` }
   }
 
   if (cmd === 'set') {
@@ -275,7 +275,7 @@ export const call: LocalCommandCall = async (args) => {
 
 const symbol: Command = {
   type: 'local', name: 'symbol',
-  description: 'Symbol ops - find/def/rename/preview/extract/inline/usages/graph/backups/restore',
+  description: '🔍 符号导航（高级） - 查找/定义/重命名/预览/提取/内联/用法/图谱/备份/恢复',
   aliases: ['/symbol', '/sym', '/sr'],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

@@ -68,14 +68,14 @@ export const call: LocalCommandCall = async (args) => {
     try {
       const output = execSync('go tool cover -func=coverage.out 2>/dev/null || cat coverage/lcov-report/index.html 2>/dev/null | grep -o "[0-9]*%" | head -5', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
       return { type: 'text', value: output || 'ℹ️ 未找到覆盖率数据' }
-    } catch { return { type: 'text', value: 'No coverage data. Run /tc run first.' } }
+    } catch { return { type: 'text', value: 'ℹ️ 未找到覆盖率数据，请先运行 /tc run' } }
   }
 
   if (cmd === 'missing') {
     try {
       const output = execSync('npx jest --coverage --coverageReporters=text 2>&1 | grep -A 50 "Uncovered" || echo "Run /tc run first"', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
       return { type: 'text', value: output }
-    } catch { return { type: 'text', value: 'No coverage data. Run /tc run first.' } }
+    } catch { return { type: 'text', value: 'ℹ️ 未找到覆盖率数据，请先运行 /tc run' } }
   }
 
   if (cmd === 'trend') {

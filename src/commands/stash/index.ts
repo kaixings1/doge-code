@@ -204,7 +204,7 @@ export const call: LocalCommandCall = async (args) => {
 
 const stash: Command = {
   type: 'local', name: 'stash',
-  description: 'Git stash - save/pop/apply/show/files/branch/drop/note/rename/compare',
+  description: '🗂️ Git 暂存管理 - 保存/弹出/应用/查看/文件/分支/删除/备注/重命名/比较',
   aliases: ['/stash', '/st'], supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
