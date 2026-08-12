@@ -85,7 +85,7 @@ async function commitCurrentWork(message: string): Promise<{ committed: boolean;
   try {
     const { code: statusCode } = await execFileNoThrow(gitExe(), ['status', '--porcelain'], { preserveOutputOnError: false })
     if (statusCode !== 0) {
-      return { committed: false, error: 'git status failed' }
+      return { committed: false, error: 'git status 检查失败' }
     }
 
     // Stage all changes (excluding .env files)
