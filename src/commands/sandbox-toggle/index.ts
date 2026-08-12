@@ -11,7 +11,7 @@ const command = {
     const isLocked = SandboxManager.areSandboxSettingsLockedByPolicy()
     const hasDeps = SandboxManager.checkDependencies().errors.length === 0
 
-    // 如果缺少依赖项则显示警告图标，否则显示启用/禁用状态
+    // 如果缺少依赖项则显示警告图标，否则显示启用或禁用状态
     let icon: string
     if (!hasDeps) {
       icon = figures.warning
@@ -35,7 +35,7 @@ const command = {
 
     return `${icon} ${statusText}（按回车键配置）`
   },
-  argumentHint: '排除"命令模式"',
+  argumentHint: '配置沙盒行为',
   get isHidden() {
     return (
       !SandboxManager.isSupportedPlatform() ||

@@ -20,7 +20,7 @@ const call = async (args: string): Promise<{ type: string; value: string }> => {
   if (arg === 'status' || arg === 'stats') {
     const stats = getEcoStats()
     const state = isEcoEnabled() ? 'on' : 'off'
-    const lines = [`Eco mode: ${state}`]
+    const lines = [`生态模式: ${state}`]
     if (stats.commands > 0) {
       lines.push(
         `  压缩 ${stats.commands} 次 Bash 输出: ` +
@@ -43,8 +43,8 @@ const call = async (args: string): Promise<{ type: string; value: string }> => {
     return {
       type: 'text',
       value: newState
-        ? '❌ 错误: Eco 模式已开启：Bash 输出将在发送给模型前压缩（测试失败保留，噪音 stripping，长输出截断）。原始输出保存到 session tee 文件。使用 /eco off 关闭。'
-        : 'Eco 模式已关闭：Bash 输出将原样发送给模型。',
+        ? '❌ 错误: 生态模式已开启：Bash 输出将在发送给模型前压缩（测试失败保留，噪音过滤，长输出截断）。原始输出保存到会话输出文件。使用 /eco off 关闭。'
+        : '生态模式已关闭：Bash 输出将原样发送给模型。',
     }
   }
 
@@ -52,21 +52,21 @@ const call = async (args: string): Promise<{ type: string; value: string }> => {
     setEcoEnabled(sessionId, true)
     return {
       type: 'text',
-      value: 'Eco 模式已开启：Bash 输出将在发送给模型前压缩。使用 /eco status 查看节省统计。',
+      value: '生态模式已开启：Bash 输出将在发送给模型前压缩。使用 /eco status 查看节省统计。',
     }
   }
 
   if (arg === 'off' || arg === 'disable' || arg === 'false' || arg === '0') {
     setEcoEnabled(sessionId, false)
-    return { type: 'text', value: 'Eco 模式已关闭。' }
+    return { type: 'text', value: '生态模式已关闭。' }
   }
 
   return {
     type: 'text',
     value:
       '用法: /eco [on|off|status]\n\n' +
-      '压缩 Bash 输出以减少 token 消耗（测试失败保留，噪音 stripping，长输出截断）。' +
-      '原始输出保存到 session tee 文件。',
+      '压缩 Bash 输出以减少 token 消耗（测试失败保留，噪音过滤，长输出截断）。' +
+      '原始输出保存到会话输出文件。',
   }
 }
 

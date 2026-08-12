@@ -1,5 +1,5 @@
 // ============================================================================
-// Diff Mode Command - Enhanced Version
+// Diff Mode 命令 - 增强版
 // 并排差异视图：内联diff/三向合并/词级高亮/评论/过滤/书签/历史/导出
 // ============================================================================
 
@@ -10,7 +10,7 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync, readdirSync, statSy
 import { join, basename, resolve } from 'path'
 
 // ============================================================================
-// Types & Interfaces
+// 类型与接口
 // ============================================================================
 
 interface DiffOptions {
@@ -103,7 +103,7 @@ interface WordDiffResult {
 }
 
 // ============================================================================
-// Constants
+// 常量定义
 // ============================================================================
 
 const DIFF_DIR = join(process.cwd(), '.doge', 'diff-mode')
@@ -123,7 +123,7 @@ const DEFAULT_OPTIONS: DiffOptions = {
 }
 
 // ============================================================================
-// Git Helpers
+// Git 辅助函数
 // ============================================================================
 
 function getDiff(options: DiffOptions): string {
@@ -189,7 +189,7 @@ function getBranchDiff(branchA: string, branchB: string): string {
 }
 
 // ============================================================================
-// Diff Parsers
+// Diff 解析器
 // ============================================================================
 
 interface DiffHunk {
@@ -684,7 +684,7 @@ function renderHistory(): string {
 }
 
 // ============================================================================
-// Export
+// 导出功能
 // ============================================================================
 
 function exportDiff(diffText: string, format: 'txt' | 'html' | 'json' | 'md', options: DiffOptions): string {
@@ -833,7 +833,7 @@ function renderHelp(): string {
 }
 
 // ============================================================================
-// Diff Syntax Highlighting - 差异语法高亮
+// 差异语法高亮
 // ============================================================================
 
 const SYNTAX_PATTERNS: Record<string, Array<{ pattern: RegExp; color: string }>> = {
@@ -960,7 +960,7 @@ function renderBlameDiff(parsed: ParsedDiff[]): string {
       for (const line of hunk.lines) {
         if (line.type === 'add' && line.newNum) {
           const blame = getBlameInfo(diff.file, line.newNum)
-          const shortBlame = blame.split(' ')[0]?.slice(0, 7) || 'unknown'
+          const shortBlame = blame.split(' ')[0]?.slice(0, 7) || '未知'
           if (line.type === 'add') {
             output.push(`\x1b[32m+ [${shortBlame}] ${line.text}\x1b[0m`)
           }
@@ -977,11 +977,11 @@ function renderBlameDiff(parsed: ParsedDiff[]): string {
 }
 
 // ============================================================================
-// Patch Generation - 补丁生成
+// 补丁生成
 // ============================================================================
 
 function generatePatch(parsed: ParsedDiff[]): string {
-  const lines: string[] = ['# Generated Patch File', `# Date: ${new Date().toISOString()}`, '']
+  const lines: string[] = ['# 生成的补丁文件', `# 日期: ${new Date().toISOString()}`, '']
 
   for (const diff of parsed) {
     lines.push(`--- a/${diff.oldFile}`)

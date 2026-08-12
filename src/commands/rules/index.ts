@@ -280,7 +280,7 @@ function renderHelp(): string {
     '📖 用法: ',
     '  /rules [子命令] [参数]',
     '',
-    '⌨️ ⌨️ 子命令: ',
+    '⌨️ 子命令：',
     '  list                列出所有规则（默认）',
     '  show                显示规则详情',
     '  add <内容>          添加规则到项目规则文件',
@@ -314,7 +314,7 @@ function renderHelp(): string {
 const command = {
   type: 'local' as const,
   name: 'rules',
-  description: '持久化规则管理 - 管理跨会话的 AI 交互指令',
+  description: '📋 持久化规则管理 - 管理跨会话的 AI 交互指令',
   aliases: ['/rules', '/rule', '/dogerules'],
   arguments: [
     { name: 'list', description: '列出所有规则', required: false },

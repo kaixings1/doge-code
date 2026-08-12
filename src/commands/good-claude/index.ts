@@ -1,4 +1,4 @@
-// Good Claude - send positive feedback to improve the AI
+// 正面反馈 - 发送反馈帮助改进 AI
 import type { Command } from '../../commands.js'
 import { getIsNonInteractiveSession } from '../../bootstrap/state.js'
 

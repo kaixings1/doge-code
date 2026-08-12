@@ -5,7 +5,7 @@ import * as path from 'path'
 import { getCachedDirEntries, setCachedDirEntries } from '../../utils/dirCache.js'
 
 // ============================================================================
-// Types
+// 类型定义
 // ============================================================================
 
 interface DiagramOptions {
@@ -43,7 +43,7 @@ async function existsAsync(p: string): Promise<boolean> {
 }
 
 // ============================================================================
-// Diagram Generators
+// 图表生成器
 // ============================================================================
 
 /**

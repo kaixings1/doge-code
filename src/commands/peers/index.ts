@@ -12,14 +12,14 @@ import { writeToMailbox } from '../../utils/teammateMailbox.js'
 import { generateRequestId } from '../../utils/agentId.js'
 import { TEAM_LEAD_NAME } from '../../utils/swarm/constants.js'
 
-const HELP = `用法: /peers <子命令> [参数]
+const HELP = `📖 用法: /peers <子命令> [参数]
 
 子命令:
   list              列出团队成员
   status            查看自己的会话详情
   send <队友名> <消息>  向队友发送消息
 
-示例:
+💡 示例:
   /peers list
   /peers status
   /peers send teammate1 "请检查这个 PR"`
@@ -53,7 +53,7 @@ const peers = {
         if (!teamName) {
           return {
             type: 'text',
-            value: '未在团队上下文中。\n\n使用 /team 创建团队，或设置 CLAUDE_CODE_TEAM_NAME 环境变量。',
+            value: 'ℹ️ 未在团队上下文中。\n\n请使用 /team 创建团队，或设置 CLAUDE_CODE_TEAM_NAME 环境变量。',
           }
         }
 
@@ -69,9 +69,9 @@ const peers = {
               ? teamFile.members.find(m => m.agentId === myId)
               : null
             const lines: string[] = [
-              `团队: ${teamName}`,
-              `我的身份: ${myName}${isTeamLead(appState.teamContext) ? ' (团队负责人)' : ''}`,
-              `成员数: ${teamFile.members.length}`,
+              `👥 团队: ${teamName}`,
+              `🪪 我的身份: ${myName}${isTeamLead(appState.teamContext) ? ' (团队负责人)' : ''}`,
+              `👤 成员数: ${teamFile.members.length}`,
               '',
             ]
             if (myMember) {
@@ -85,7 +85,7 @@ const peers = {
             if (rest.length < 2) {
               return {
                 type: 'text',
-                value: '用法: /peers send <队友名> <消息>\n\n向指定队友发送消息。',
+                value: '📖 用法: /peers send <队友名> <消息>\n\n向指定队友发送消息。',
               }
             }
             const recipientName = rest[0]
@@ -94,7 +94,7 @@ const peers = {
             if (!teamFile.members.some(m => m.name === recipientName)) {
               return {
                 type: 'text',
-                value: `ℹ️ 队友 "${recipientName}" 不在团队 "${teamName}" 中。\n\n使用 /peers list 查看可用队友。`,
+                value: `ℹ️ 队友 "${recipientName}" 不在团队 "${teamName}" 中。\n\n请使用 /peers list 查看可用队友。`,
               }
             }
 
@@ -121,7 +121,7 @@ const peers = {
           case 'list':
           default: {
             const lines: string[] = [
-              `团队成员 (${teamFile.members.length}):`,
+              `📋 团队成员 (${teamFile.members.length}):`,
               '',
             ]
             for (const member of teamFile.members) {
@@ -130,12 +130,12 @@ const peers = {
               const role = member.name === 'team-lead' ? ' [负责人]' : ''
               lines.push(`  ${member.name}${role}${marker}`)
               lines.push(
-                `    面板: ${member.tmuxPaneId || 'N/A'} | 后端: ${member.backendType || 'N/A'}`,
+                `    📟 面板: ${member.tmuxPaneId || 'N/A'} | 🖥️ 后端: ${member.backendType || 'N/A'}`,
               )
             }
             lines.push('')
-            lines.push('使用 /peers send <队友名> <消息> 向队友发送消息')
-            lines.push('使用 /peers status 查看自己的会话详情')
+            lines.push('💬 使用 /peers send <队友名> <消息> 向队友发送消息')
+            lines.push('📊 使用 /peers status 查看自己的会话详情')
 
             return { type: 'text', value: lines.join('\n') }
           }

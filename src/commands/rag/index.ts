@@ -7,7 +7,7 @@ export const call: LocalJSXCommandCall = async (args) => {
   const subcmd = parts[0] || ''
 
   if (!subcmd) {
-    return { type: 'text', value: '用法: /rag help' }
+    return { type: 'text', value: '📖 用法: /rag help' }
   }
 
   try {
@@ -17,14 +17,14 @@ export const call: LocalJSXCommandCall = async (args) => {
       result = await ragApi.indexFolder(folder)
     } else if (subcmd === 'query') {
       const q = parts.slice(1).join(' ')
-      if (!q) return { type: 'text', value: '用法: /rag query <text>' }
+      if (!q) return { type: 'text', value: '📖 用法: /rag query <文本>' }
       result = await ragApi.query(q)
     } else if (subcmd === 'list') {
       result = await ragApi.listIndexed()
     } else if (subcmd === 'clear') {
       result = await ragApi.clearIndex()
     } else {
-      result = '用法: /rag <add|query|list|clear> [args]'
+      result = '📖 用法: /rag <add|query|list|clear> [参数]'
     }
     return { type: 'text', value: result }
   } catch (err) {

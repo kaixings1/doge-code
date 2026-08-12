@@ -10,7 +10,7 @@ function run(cmd: string): string {
 export const call: LocalJSXCommandCall = async (args) => {
   const p = args.trim().split(/\s+/)
   const c = p[0] || ''
-  if (!c) return { type: 'text', value: '/k8s pods | pods\n/k8s deploy | deployments\n/k8s svc | services\n/k8s get <type> | get resources\n/k8s describe <t> <n> | describe\n/k8s logs <pod> | logs' }
+  if (!c) return { type: 'text', value: '📖 用法:\n/k8s pods | 查看 Pod\n/k8s deploy | 查看部署\n/k8s svc | 查看服务\n/k8s get <类型> | 获取资源\n/k8s describe <类型> <名称> | 描述资源\n/k8s logs <Pod> | 查看日志' }
   let r = ''
   if (c === 'pods') { r = run('kubectl get pods') }
   else if (c === 'deploy') { r = run('kubectl get deployments') }

@@ -1,4 +1,4 @@
-// OAuth refresh - refresh OAuth tokens for API authentication
+// OAuth 令牌刷新 - 刷新 OAuth 令牌以进行 API 认证
 import type { Command } from '../../commands.js'
 import fs from 'fs'
 import path from 'path'

@@ -24,7 +24,7 @@ function renderHelp(): string {
     '  --file <路径>       指定文件（rename/type-fix 必需）',
     '  --dry-run           预览变更，不实际修改',
     '  --json              JSON 格式输出',
-    '📖 用法:   --help              显示帮助',
+    '  --help              显示帮助',
     '',
     '💡 示例: ',
     '  /refactor rename oldName newName --file src/app.ts',
@@ -168,7 +168,7 @@ export const call: LocalCommandCall = async (args) => {
 const refactor = {
   type: 'local' as const,
   name: 'refactor',
-  description: '智能代码重构 - AI 驱动的安全重构（变量重命名/提取函数/类型修复）',
+  description: '🔧 智能代码重构 - AI 驱动的安全重构（变量重命名/提取函数/类型修复）',
   aliases: ['/refactor', '/rename', '/extract'],
   arguments: [
     {
