@@ -166,13 +166,13 @@ export const call: LocalJSXCommandCall = async (args) => {
       const containers = parseContainers(p.includes('-a'))
       return { type: 'text', value: containers.length > 0 ? '📋 容器列表：\n' + containers.map(c => `  ${c.id} ${c.name}（${c.image}）- ${c.status}`).join('\n') : 'ℹ️ 未找到容器' }
     }
-    if (c === 'logs') { const id = p[1]; if (!id) return { type: 'text', value: '📖 Usage: /docker logs <container-id>' }; const n = parseInt(p[2]) || 50; r = safeExec(`docker logs --tail ${n} ${id} 2>&1`, 10000).output }
-    else if (c === 'exec') { const id = p[1]; const cmd = p.slice(2).join(' '); if (!id || !cmd) return { type: 'text', value: '📖 Usage: /docker exec <id> <command>' }; r = safeExec(`docker exec ${id} ${cmd}`, 30000).output }
-    else if (['start', 'stop', 'restart', 'rm'].includes(c)) { const id = p[1]; if (!id) return { type: 'text', value: `📖 Usage: /docker ${c} <container-id>` }; r = safeExec(`docker ${c} ${id}`, 30000).output }
-    else if (c === 'rmi') { const id = p[1]; if (!id) return { type: 'text', value: '📖 Usage: /docker rmi <image-id>' }; r = safeExec(`docker rmi ${id}`, 30000).output }
+    if (c === 'logs') { const id = p[1]; if (!id) return { type: 'text', value: '📖 用法：/docker logs <容器ID>' }; const n = parseInt(p[2]) || 50; r = safeExec(`docker logs --tail ${n} ${id} 2>&1`, 10000).output }
+    else if (c === 'exec') { const id = p[1]; const cmd = p.slice(2).join(' '); if (!id || !cmd) return { type: 'text', value: '📖 用法：/docker exec <id> <命令>' }; r = safeExec(`docker exec ${id} ${cmd}`, 30000).output }
+    else if (['start', 'stop', 'restart', 'rm'].includes(c)) { const id = p[1]; if (!id) return { type: 'text', value: `📖 用法：/docker ${c} <容器ID>` }; r = safeExec(`docker ${c} ${id}`, 30000).output }
+    else if (c === 'rmi') { const id = p[1]; if (!id) return { type: 'text', value: '📖 用法：/docker rmi <镜像ID>' }; r = safeExec(`docker rmi ${id}`, 30000).output }
     else if (c === 'build') { const tag = p[1] || 'app'; r = safeExec(`docker build -t ${tag} . 2>&1`, 120000).output }
-    else if (c === 'pull') { const img = p[1]; if (!img) return { type: 'text', value: '📖 Usage: /docker pull <image>' }; r = safeExec(`docker pull ${img}`, 120000).output }
-    else if (c === 'push') { const img = p[1]; if (!img) return { type: 'text', value: '📖 Usage: /docker pull <image>' }; r = safeExec(`docker push ${img}`, 120000).output }
+    else if (c === 'pull') { const img = p[1]; if (!img) return { type: 'text', value: '📖 用法：/docker pull <镜像>' }; r = safeExec(`docker pull ${img}`, 120000).output }
+    else if (c === 'push') { const img = p[1]; if (!img) return { type: 'text', value: '📖 用法：/docker push <镜像>' }; r = safeExec(`docker push ${img}`, 120000).output }
     else if (c === 'run') { r = safeExec(`docker run -d ${p.slice(1).join(' ')}`, 15000).output }
     else if (c === 'prune') { r = safeExec('docker system prune -f 2>&1', 30000).output }
     else if (c === 'stats') { r = safeExec('docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}"', 10000).output }

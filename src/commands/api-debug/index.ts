@@ -274,7 +274,7 @@ export const call: LocalCommandCall = async (args) => {
   } catch (error) {
     return {
       type: 'text',
-      value: `❌ 请求失败: ${error instanceof Error ? error.message : 'Unknown error'}\n\nURL: ${url}\nMethod: ${method}`,
+      value: `❌ 请求失败: ${error instanceof Error ? error.message : '未知错误'}\n\nURL: ${url}\nMethod: ${method}`,
     }
   }
 }
