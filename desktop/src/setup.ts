@@ -74,7 +74,7 @@ export async function setup(
     // biome-ignore lint/suspicious/noConsole:: intentional console output
     console.error(
       chalk.bold.red(
-        '错误：Claude Code 需要 Node.js 18 或更高版本',
+        '❌ 错误: Claude Code 需要 Node.js 18 或更高版本',
       ),
     )
     process.exit(1)

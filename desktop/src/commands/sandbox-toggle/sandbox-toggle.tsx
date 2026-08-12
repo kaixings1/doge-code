@@ -13,7 +13,7 @@ export async function call(onDone: (result?: string) => void, _context: unknown,
   const platform = getPlatform();
   if (!SandboxManager.isSupportedPlatform()) {
     // WSL1 用户会看到此消息，因为 isSupportedPlatform 对 WSL1 返回 false
-    const errorMessage = platform === 'wsl' ? '错误：沙盒需要 WSL2。WSL1 不受支持。' : '错误：沙盒目前仅支持 macOS、Linux 和 WSL2。';
+    const errorMessage = platform === 'wsl' ? '❌ 错误: 沙盒需要 WSL2。WSL1 不受支持。' : '❌ 错误: 沙盒目前仅支持 macOS、Linux 和 WSL2。';
     const message = color('error', themeName)(errorMessage);
     onDone(message);
     return null;
@@ -31,7 +31,7 @@ export async function call(onDone: (result?: string) => void, _context: unknown,
 
   // 检查沙盒设置是否被更高优先级的设置锁定
   if (SandboxManager.areSandboxSettingsLockedByPolicy()) {
-    const message = color('error', themeName)('错误：沙盒设置已被更高优先级的配置覆盖，无法在本地更改。');
+    const message = color('error', themeName)('❌ 错误: 沙盒设置已被更高优先级的配置覆盖，无法在本地更改。');
     onDone(message);
     return null;
   }
@@ -52,7 +52,7 @@ export async function call(onDone: (result?: string) => void, _context: unknown,
       // 处理 exclude 子命令
       const commandPattern = trimmedArgs.slice('exclude '.length).trim();
       if (!commandPattern) {
-        const message = color('error', themeName)('错误：请提供要排除的命令模式（例如，/sandbox exclude "npm run test:*"）');
+        const message = color('error', themeName)('❌ 错误: 请提供要排除的命令模式（例如，/sandbox exclude "npm run test:*"）');
         onDone(message);
         return null;
       }

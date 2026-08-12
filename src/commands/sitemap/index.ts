@@ -103,7 +103,7 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const config = loadConfig()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Sitemap Generator (Advanced)', '', '📖 📖 Usage: ', '  /sitemap                        Generate sitemap.xml', '  /sitemap scan                   Scan and list pages', '  /sitemap robots                 Generate robots.txt', '  /sitemap preview                Preview XML output', '  /sitemap validate               Validation tips', '  /sitemap submit                 Submit to search engines', '  /sitemap config                 Show/edit config', '  /sitemap set <key> <val>        Set config value', '  /sitemap base-url <url>         Set base URL', '  /sitemap freq <value>           Set change frequency', '  /sitemap priority <n>           Set priority (0-1)', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Sitemap Generator (Advanced)', '', '📖 Usage: ', '  /sitemap                        Generate sitemap.xml', '  /sitemap scan                   Scan and list pages', '  /sitemap robots                 Generate robots.txt', '  /sitemap preview                Preview XML output', '  /sitemap validate               Validation tips', '  /sitemap submit                 Submit to search engines', '  /sitemap config                 Show/edit config', '  /sitemap set <key> <val>        Set config value', '  /sitemap base-url <url>         Set base URL', '  /sitemap freq <value>           Set change frequency', '  /sitemap priority <n>           Set priority (0-1)', ''].join('\n') }
 
   if (cmd === 'config') {
     const key = parts[1]; const value = parts.slice(2).join(' ')

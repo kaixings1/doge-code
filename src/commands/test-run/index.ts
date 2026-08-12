@@ -31,7 +31,7 @@ export const call: LocalCommandCall = async (args) => {
   const framework = detectTestFramework()
 
   if (cmd === 'help' || cmd === '') return { type: 'text', value: [
-    'Test Runner', '', '📖 📖 Usage: ',
+    'Test Runner', '', '📖 Usage: ',
     '  /test-run                       Run all tests',
     '  /test-run file <path>           Run specific test file',
     '  /test-run watch                 Watch mode',

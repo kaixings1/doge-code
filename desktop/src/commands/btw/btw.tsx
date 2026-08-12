@@ -228,7 +228,7 @@ async function buildCacheSafeParams(context: ProcessUserInputContext): Promise<C
 export async function call(onDone: LocalJSXCommandOnDone, context: ProcessUserInputContext, args: string): Promise<React.ReactNode> {
   const question = args?.trim();
   if (!question) {
-    onDone('用法：/btw <你的问题>', {
+    onDone('📖 用法: /btw <你的问题>', {
       display: 'system'
     });
     return null;

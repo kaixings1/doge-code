@@ -46,7 +46,7 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const snippets = [...BUILT_IN_SNIPPETS, ...loadSnippets()]
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Snippet Manager', '', '📖 📖 Usage: ', '  /snippets list                 List all snippets', '  /snippets search <query>       Search snippets', '  /snippets use <name>           Use snippet', '  /snippets add                  Add new snippet', '  /snippets edit <name>          Edit snippet', '  /snippets delete <name>        Delete snippet', '  /snippets copy <name>          Copy to clipboard', '  /snippets tags                 List tags', '  /snippets recent               Recently used', '  /snippets languages            List languages', '  /snippets init                 Initialize built-in snippets', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Snippet Manager', '', '📖 Usage: ', '  /snippets list                 List all snippets', '  /snippets search <query>       Search snippets', '  /snippets use <name>           Use snippet', '  /snippets add                  Add new snippet', '  /snippets edit <name>          Edit snippet', '  /snippets delete <name>        Delete snippet', '  /snippets copy <name>          Copy to clipboard', '  /snippets tags                 List tags', '  /snippets recent               Recently used', '  /snippets languages            List languages', '  /snippets init                 Initialize built-in snippets', ''].join('\n') }
 
   if (cmd === 'list' || cmd === 'ls') {
     if (snippets.length === 0) return { type: 'text', value: 'No snippets. Run /snippets init to create built-in snippets.' }

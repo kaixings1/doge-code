@@ -56,7 +56,7 @@ async function searchMemory(
   if (!query.trim()) {
     return {
       type: 'text',
-      value: '用法：/memory search <关键词>\n示例：/memory search TypeScript 编码规范',
+      value: '📖 用法: /memory search <关键词>\n示例：/memory search TypeScript 编码规范',
     }
   }
 
@@ -253,7 +253,7 @@ async function exportMemory(
   if (!outputPath.trim()) {
     return {
       type: 'text',
-      value: '用法：/memory export <输出文件路径>\n示例：/memory export ./memories-backup.json',
+      value: '📖 用法: /memory export <输出文件路径>\n示例：/memory export ./memories-backup.json',
     }
   }
 
@@ -361,13 +361,13 @@ export const call = async (
         value: [
           '记忆管理工具',
           '',
-          '用法：',
+          '📖 用法: ',
           '  /memory              打开记忆文件编辑器（原有功能）',
           '  /memory search <关键词>   跨会话搜索记忆内容',
           '  /memory stats             显示记忆统计信息',
           '  /memory export <文件路径> 导出所有记忆到 JSON 文件',
           '',
-          '示例：',
+          '💡 示例: ',
           '  /memory search TypeScript',
           '  /memory stats',
           '  /memory export ./my-memories.json',

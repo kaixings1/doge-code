@@ -113,7 +113,7 @@ export const call: LocalCommandCall = async (args) => {
 
   try {
     if (cmd === 'help' || cmd === '') return { type: 'text', value: [
-      'Deploy Manager', '', '📖 📖 Usage: ',
+      'Deploy Manager', '', '📖 Usage: ',
       '  /deploy <env>                   Deploy to environment',
       '  /deploy now [env]               Quick deploy to default env',
       '  /deploy list                    List environments',

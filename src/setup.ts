@@ -66,7 +66,7 @@ export async function setup(
   const nodeVersion = process.version.match(/^v(\d+)\./)?.[1]
   if (!nodeVersion || parseInt(nodeVersion) < 18) {
     // biome-ignore lint/suspicious/noConsole:: intentional console output
-    //console.error(chalk.bold.red('错误：Claude Code 需要 Node.js 18 或更高版本',),)
+    //console.error(chalk.bold.red('❌ 错误: Claude Code 需要 Node.js 18 或更高版本',),)
     process.exit(1)
   }
 

@@ -66,7 +66,7 @@ export const call: LocalCommandCall = async (args) => {
   const parts = s.split(/\s+/)
   const cmd = parts[0]?.toLowerCase() || 'help'
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Dependency Graph', '', '📖 📖 Usage: ', '  /graph                          Show project graph', '  /graph mermaid                  Mermaid format', '  /graph dot                      Graphviz DOT format', '  /graph html                     HTML visualization', '  /graph save <file>              Save graph', '  /graph stats                    Graph statistics', '  /graph circular                 Detect circular deps', '  /graph orphans                  Find orphaned modules', '  /graph tree                     Tree view', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Dependency Graph', '', '📖 Usage: ', '  /graph                          Show project graph', '  /graph mermaid                  Mermaid format', '  /graph dot                      Graphviz DOT format', '  /graph html                     HTML visualization', '  /graph save <file>              Save graph', '  /graph stats                    Graph statistics', '  /graph circular                 Detect circular deps', '  /graph orphans                  Find orphaned modules', '  /graph tree                     Tree view', ''].join('\n') }
 
   const graph = buildDependencyGraph('.')
 

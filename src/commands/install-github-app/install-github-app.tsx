@@ -308,7 +308,7 @@ function InstallGitHubApp(props: {
           repoWarnings.push({
             title: 'GitHub URL 格式无效',
             message: '仓库 URL 格式似乎无效。',
-            instructions: ['使用格式：owner/repo 或 https://github.com/owner/repo', '示例：anthropics/claude-cli']
+            instructions: ['使用格式：owner/repo 或 https://github.com/owner/repo', '💡 示例: anthropics/claude-cli']
           });
         } else {
           repoName_1 = match[1]?.replace(/\.git$/, '') || '';
@@ -318,7 +318,7 @@ function InstallGitHubApp(props: {
         repoWarnings.push({
           title: '仓库格式警告',
           message: '仓库格式应为 "owner/repo"',
-          instructions: ['使用格式：owner/repo', '示例：anthropics/claude-cli']
+          instructions: ['使用格式：owner/repo', '💡 示例: anthropics/claude-cli']
         });
       }
       const permissionCheck = await checkRepositoryPermissions(repoName_1);

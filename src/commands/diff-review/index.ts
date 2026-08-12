@@ -695,7 +695,7 @@ function renderHelp(): string {
   return [
     colorize('  🔍 Diff Review - 交互式代码审查', ANSI.bold),
     '',
-    '📖 📖   用法: ',
+    '📖   用法: ',
     '    /diff-review <子命令> [选项]',
     '',
     '⌨️ ⌨️   子命令: ',
@@ -711,7 +711,7 @@ function renderHelp(): string {
     colorize('    --all', ANSI.dim) + '    批量操作（接受/暂存所有 hunk）',
     colorize('    --staged', ANSI.dim) + ' 查看已暂存的变更',
     '',
-    '💡 💡   示例: ',
+    '💡   示例: ',
     '    /diff-review review src/index.ts',
     '    /diff-review stage src/index.ts',
     '    /diff-review compare src/old.ts src/new.ts',

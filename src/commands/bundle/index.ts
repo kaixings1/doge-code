@@ -113,7 +113,7 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const config = loadConfig()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Bundle Analyzer (Advanced)', '', '📖 📖 Usage: ', '  /bundle                        Analyze bundle', '  /bundle size                   Size breakdown', '  /bundle largest [N]            Largest files', '  /bundle types                  Breakdown by type', '  /bundle history                Bundle size history', '  /bundle trend                  Size trends', '  /bundle optimize               Optimization tips', '  /bundle analyze               Deep analysis with source maps', '  /bundle config                 Show/edit config', '  /bundle set <key> <val>        Set config value', '  /bundle export [file]          Export analysis', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Bundle Analyzer (Advanced)', '', '📖 Usage: ', '  /bundle                        Analyze bundle', '  /bundle size                   Size breakdown', '  /bundle largest [N]            Largest files', '  /bundle types                  Breakdown by type', '  /bundle history                Bundle size history', '  /bundle trend                  Size trends', '  /bundle optimize               Optimization tips', '  /bundle analyze               Deep analysis with source maps', '  /bundle config                 Show/edit config', '  /bundle set <key> <val>        Set config value', '  /bundle export [file]          Export analysis', ''].join('\n') }
 
   if (cmd === 'config') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
