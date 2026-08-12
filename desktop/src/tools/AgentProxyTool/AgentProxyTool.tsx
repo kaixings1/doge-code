@@ -98,11 +98,11 @@ export const AgentProxyTool: Tool = {
     try {
       switch (action) {
         case 'execute': {
-          if (!handlerName) return { type: 'text', value: '❌ 缺少 handlerName 参数' }
+          if (!handlerName) return { type: 'text', value: ' 缺少 handlerName 参数' }
           const result = await globalProxy.execute(handlerName, data || {}, metadata || {})
           return formatResult('执行结果', [
             `Handler: ${handlerName}`,
-            `状态: ${result.success ? '✅ 成功' : '❌ 失败'}`,
+            `状态: ${result.success ? ' 成功' : ' 失败'}`,
             `代码: ${result.code}`,
             result.error ? `错误: ${result.error}` : '',
             result.duration !== undefined ? `耗时: ${result.duration}ms` : '',
@@ -115,7 +115,7 @@ export const AgentProxyTool: Tool = {
         }
 
         case 'register': {
-          if (!handlerDef || !handlerDef.name) return { type: 'text', value: '❌ 缺少 handlerDef 定义' }
+          if (!handlerDef || !handlerDef.name) return { type: 'text', value: ' 缺少 handlerDef 定义' }
           try {
             globalProxy.register(
               {
@@ -138,16 +138,16 @@ export const AgentProxyTool: Tool = {
               },
               { overwrite: true },
             )
-            return { type: 'text', value: `✅ Handler '${handlerDef.name}' 已成功注册` }
+            return { type: 'text', value: ` Handler '${handlerDef.name}' 已成功注册` }
           } catch (err) {
-            return { type: 'text', value: `❌ 注册失败: ${err instanceof Error ? err.message : String(err)}` }
+            return { type: 'text', value: ` 注册失败: ${err instanceof Error ? err.message : String(err)}` }
           }
         }
 
         case 'unregister': {
-          if (!handlerName) return { type: 'text', value: '❌ 缺少 handlerName 参数' }
+          if (!handlerName) return { type: 'text', value: ' 缺少 handlerName 参数' }
           const removed = globalProxy.registry.unregister(handlerName)
-          return { type: 'text', value: removed ? `✅ Handler '${handlerName}' 已注销` : `❌ Handler '${handlerName}' 不存在` }
+          return { type: 'text', value: removed ? ` Handler '${handlerName}' 已注销` : ` Handler '${handlerName}' 不存在` }
         }
 
         case 'list': {
@@ -165,7 +165,7 @@ export const AgentProxyTool: Tool = {
         }
 
         case 'chain': {
-          if (!workflow || workflow.length === 0) return { type: 'text', value: '❌ 缺少 workflow 定义' }
+          if (!workflow || workflow.length === 0) return { type: 'text', value: ' 缺少 workflow 定义' }
 
           const chain = globalProxy.createChain()
           for (const step of workflow) {
@@ -228,7 +228,7 @@ export const AgentProxyTool: Tool = {
           })) || []
 
           const intercepted = globalProxy.intercept(mockResult, rules)
-          const lines: string[] = ['# 🛡️ 响应拦截结果\n']
+          const lines: string[] = ['# 🛡 响应拦截结果\n']
           lines.push('原始响应经过拦截处理：')
           lines.push('')
           lines.push('### 拦截前')
@@ -274,10 +274,10 @@ export const AgentProxyTool: Tool = {
         }
 
         default:
-          return { type: 'text', value: `❌ 未知操作: ${action}` }
+          return { type: 'text', value: ` 未知操作: ${action}` }
       }
     } catch (err) {
-      return { type: 'text', value: `❌ AgentProxy 错误: ${err instanceof Error ? err.message : String(err)}` }
+      return { type: 'text', value: ` AgentProxy 错误: ${err instanceof Error ? err.message : String(err)}` }
     }
   },
 }
@@ -297,7 +297,7 @@ function formatChainResults(results: any[]) {
   for (let i = 0; i < results.length; i++) {
     const r = results[i]
     lines.push(`## 步骤 ${i + 1}: ${r.handlerName || '未知'}`)
-    lines.push(`- 状态: ${r.success ? '✅ 成功' : '❌ 失败'}`)
+    lines.push(`- 状态: ${r.success ? ' 成功' : ' 失败'}`)
     lines.push(`- 代码: ${r.code}`)
     if (r.error) lines.push(`- 错误: ${r.error}`)
     if (r.duration !== undefined) lines.push(`- 耗时: ${r.duration}ms`)

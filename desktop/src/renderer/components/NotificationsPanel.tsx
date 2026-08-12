@@ -19,7 +19,7 @@ interface Notification {
   read: boolean
 }
 
-const TYPE_ICONS: Record<string, string> = { comment: '💬', mention: '📢', issue: '🔴', permission: '🔐' }
+const TYPE_ICONS: Record<string, string> = { comment: '💬', mention: '📢', issue: '', permission: '🔐' }
 const TYPE_LABELS: Record<string, string> = { comment: '评论', mention: '提及', issue: '问题', permission: '权限' }
 
 export function NotificationsPanel({ theme, roomId }: { theme: ThemeColors; roomId: string }): JSX.Element {

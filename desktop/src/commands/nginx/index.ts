@@ -5,13 +5,13 @@ import fs from 'fs'
 
 function run(cmd: string): string {
   try { return execSync(cmd, { encoding: 'utf-8', timeout: 10000 }).trim() }
-  catch (e: any) { return '❌ 错误: ' + e.message }
+  catch (e: any) { return ' 错误: ' + e.message }
 }
 
 export const call: LocalJSXCommandCall = async (args) => {
   const p = args.trim().split(/\s+/)
   const c = p[0] || ''
-  if (!c) return { type: 'text', value: '❌ 错误: /nginx status | Nginx 状态\n/nginx start | 启动\n/nginx stop | 停止\n/nginx reload | 重载配置\n/nginx test | 测试配置\n/nginx sites | 列出站点\n/nginx logs | 错误日志\n/nginx config <file> | 显示配置' }
+  if (!c) return { type: 'text', value: ' 错误: /nginx status | Nginx 状态\n/nginx start | 启动\n/nginx stop | 停止\n/nginx reload | 重载配置\n/nginx test | 测试配置\n/nginx sites | 列出站点\n/nginx logs | 错误日志\n/nginx config <file> | 显示配置' }
 
   let r = ''
   if (c === 'status') { r = run('nginx -t 2>&1; echo ---; netstat -ano | findstr :80 || ss -tlnp | grep 80') }

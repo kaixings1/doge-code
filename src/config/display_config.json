@@ -1,0 +1,11 @@
+{
+  "enable_emoji": true,
+  "emoji_map": {
+    "success": "✅",
+    "error": "❌",
+    "warning": "⚠️",
+    "info": "ℹ️",
+    "prompt": "👉",
+    "loading": "🔄"
+  }
+}

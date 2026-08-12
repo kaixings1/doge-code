@@ -103,21 +103,21 @@ function getSlowWarning(deltaMs: number, name: string): string {
   }
 
   if (deltaMs > 1000) {
-    return ` ⚠️  VERY SLOW`
+    return `   VERY SLOW`
   }
   if (deltaMs > 100) {
-    return ` ⚠️  SLOW`
+    return `   SLOW`
   }
 
   // Specific warnings for known bottlenecks
   if (name.includes('git_status') && deltaMs > 50) {
-    return ' ⚠️  git status'
+    return '   git status'
   }
   if (name.includes('tool_schema') && deltaMs > 50) {
-    return ' ⚠️  tool schemas'
+    return '   tool schemas'
   }
   if (name.includes('client_creation') && deltaMs > 50) {
-    return ' ⚠️  client creation'
+    return '   client creation'
   }
 
   return ''

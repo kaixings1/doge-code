@@ -197,7 +197,7 @@ export function QuickOpenDialog(t0) {
   }
   let t13;
   if ($[21] !== preview || $[22] !== previewWidth || $[23] !== query) {
-    t13 = p_7 => preview ? <><Text dimColor={true}>{truncatePathMiddle(p_7, previewWidth)}{preview.path !== p_7 ? "⏳  \xB7 加载中..." : ""}</Text>{preview.content.split("\n").map((line, i_1) => <Text key={i_1}>{highlightMatch(truncateToWidth(line, previewWidth), query)}</Text>)}</> : <LoadingState message={"加载中\u2026"} dimColor={true} />;
+    t13 = p_7 => preview ? <><Text dimColor={true}>{truncatePathMiddle(p_7, previewWidth)}{preview.path !== p_7 ? "  \xB7 加载中..." : ""}</Text>{preview.content.split("\n").map((line, i_1) => <Text key={i_1}>{highlightMatch(truncateToWidth(line, previewWidth), query)}</Text>)}</> : <LoadingState message={"加载中\u2026"} dimColor={true} />;
     $[21] = preview;
     $[22] = previewWidth;
     $[23] = query;

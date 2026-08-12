@@ -447,7 +447,7 @@ export function DatabaseBrowser({ theme, onClose }: DatabaseBrowserProps) {
           {viewMode === 'connect' && !isConnected && (
             <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ textAlign: 'center', color: c.textMuted }}>
-                <div style={{ fontSize: '48px', marginBottom: '16px' }}>🗄️</div>
+                <div style={{ fontSize: '48px', marginBottom: '16px' }}>🗄</div>
                 <div style={{ fontSize: '14px', marginBottom: '8px' }}>未连接到数据库</div>
                 <div style={{ fontSize: '11px' }}>请在左侧创建或选择连接</div>
                 {connectionError && (

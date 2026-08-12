@@ -253,7 +253,7 @@ function renderSnippetDetail(s: Snippet): string {
     lines.push(`│ 📝 ${s.description}`)
   }
   lines.push(`│ 🔤 语言: ${s.language}`)
-  lines.push(`│ 🏷️  标签: ${s.tags.join(', ') || '(无)'}`)
+  lines.push(`│ 🏷  标签: ${s.tags.join(', ') || '(无)'}`)
   lines.push(`│ 📊 使用次数: ${s.useCount}`)
   lines.push(`│ 🕐 创建: ${formatDate(s.createdAt)}`)
   lines.push(`│ 🕐 更新: ${formatDate(s.updatedAt)}`)
@@ -290,7 +290,7 @@ function renderTagsIndex(snippets: Snippet[]): string {
   const sortedTags = [...tagMap.keys()].sort()
   for (const tag of sortedTags) {
     const names = tagMap.get(tag)!
-    lines.push(`  🏷️  ${tag} (${names.length})`)
+    lines.push(`  🏷  ${tag} (${names.length})`)
     for (const name of names) {
       lines.push(`     • ${name}`)
     }
@@ -308,13 +308,13 @@ function handleSave(args: string): { type: 'text'; value: string } {
   const parts = parseArgs(args)
   const name = parts.positional[0]
   if (!name) {
-    return { type: 'text', value: '❌ 用法: /snippet save <名称> [--code "..."] [--lang <lang>] [--tags "a,b,c"] [--desc "..."] [--file <path>]' }
+    return { type: 'text', value: ' 用法: /snippet save <名称> [--code "..."] [--lang <lang>] [--tags "a,b,c"] [--desc "..."] [--file <path>]' }
   }
 
   // Check if name already exists
   const existing = loadSnippet(name)
   if (existing && !parts.flags.force) {
-    return { type: 'text', value: `⚠️ 片段 "${name}" 已存在。使用 --force 覆盖，或先用 /snippet delete ${name} 删除。` }
+    return { type: 'text', value: ` 片段 "${name}" 已存在。使用 --force 覆盖，或先用 /snippet delete ${name} 删除。` }
   }
 
   // Get code content
@@ -324,18 +324,18 @@ function handleSave(args: string): { type: 'text'; value: string } {
   } else if (parts.flags.file) {
     const filePath = parts.flags.file
     if (!existsSync(filePath)) {
-      return { type: 'text', value: `❌ 文件不存在: ${filePath}` }
+      return { type: 'text', value: ` 文件不存在: ${filePath}` }
     }
     try {
       code = readFileSync(filePath, 'utf-8')
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : String(err)
-      return { type: 'text', value: `❌ 读取文件失败: ${errMsg}` }
+      return { type: 'text', value: ` 读取文件失败: ${errMsg}` }
     }
   }
 
   if (!code) {
-    return { type: 'text', value: '❌ 请通过 --code "代码内容" 或 --file <文件路径> 提供代码' }
+    return { type: 'text', value: ' 请通过 --code "代码内容" 或 --file <文件路径> 提供代码' }
   }
 
   const language = parts.flags.lang || detectLanguage(code, parts.flags.file)
@@ -359,11 +359,11 @@ function handleSave(args: string): { type: 'text'; value: string } {
 
   const result = saveSnippet(snippet)
   if (!result.success) {
-    return { type: 'text', value: `❌ 保存失败: ${result.message}` }
+    return { type: 'text', value: ` 保存失败: ${result.message}` }
   }
 
   const action = existing ? '更新' : '保存'
-  return { type: 'text', value: `✅ 已${action}片段: ${name} (${language}, ${code.split('\n').length} 行)` }
+  return { type: 'text', value: ` 已${action}片段: ${name} (${language}, ${code.split('\n').length} 行)` }
 }
 
 function handleList(args: string, allSnippets: Snippet[], json: boolean): { type: 'text'; value: string } {
@@ -394,10 +394,10 @@ function handleList(args: string, allSnippets: Snippet[], json: boolean): { type
   lines.push(renderTable(filtered))
 
   if (query) {
-    lines.push(`  🔍 搜索: "${query}"`)
+    lines.push(`   搜索: "${query}"`)
   }
   if (tagFilter) {
-    lines.push(`  🏷️  标签过滤: ${tagFilter}`)
+    lines.push(`  🏷  标签过滤: ${tagFilter}`)
   }
 
   return { type: 'text', value: lines.join('\n') }
@@ -406,12 +406,12 @@ function handleList(args: string, allSnippets: Snippet[], json: boolean): { type
 function handleGet(args: string, json: boolean): { type: 'text'; value: string } {
   const name = args.trim()
   if (!name) {
-    return { type: 'text', value: '❌ 用法: /snippet get <名称>' }
+    return { type: 'text', value: ' 用法: /snippet get <名称>' }
   }
 
   const snippet = loadSnippet(name)
   if (!snippet) {
-    return { type: 'text', value: `❌ 片段不存在: ${name}` }
+    return { type: 'text', value: ` 片段不存在: ${name}` }
   }
 
   if (json) {
@@ -424,12 +424,12 @@ function handleGet(args: string, json: boolean): { type: 'text'; value: string }
 function handleUse(args: string, allSnippets: Snippet[]): { type: 'text'; value: string } {
   const name = args.trim()
   if (!name) {
-    return { type: 'text', value: '❌ 用法: /snippet use <名称>' }
+    return { type: 'text', value: ' 用法: /snippet use <名称>' }
   }
 
   const snippet = loadSnippet(name)
   if (!snippet) {
-    return { type: 'text', value: `❌ 片段不存在: ${name}` }
+    return { type: 'text', value: ` 片段不存在: ${name}` }
   }
 
   // Increment use count
@@ -455,15 +455,15 @@ function handleUse(args: string, allSnippets: Snippet[]): { type: 'text'; value:
 function handleDelete(args: string): { type: 'text'; value: string } {
   const name = args.trim()
   if (!name) {
-    return { type: 'text', value: '❌ 用法: /snippet delete <名称>' }
+    return { type: 'text', value: ' 用法: /snippet delete <名称>' }
   }
 
   const result = deleteSnippet(name)
   if (!result.success) {
-    return { type: 'text', value: `❌ ${result.message}` }
+    return { type: 'text', value: ` ${result.message}` }
   }
 
-  return { type: 'text', value: `✅ 已删除片段: ${name}` }
+  return { type: 'text', value: ` 已删除片段: ${name}` }
 }
 
 function handleExport(args: string): { type: 'text'; value: string } {
@@ -472,12 +472,12 @@ function handleExport(args: string): { type: 'text'; value: string } {
   const outputPath = parts.positional[1] || parts.flags.output || parts.flags.out
 
   if (!name) {
-    return { type: 'text', value: '❌ 用法: /snippet export <名称> [<输出路径>]' }
+    return { type: 'text', value: ' 用法: /snippet export <名称> [<输出路径>]' }
   }
 
   const snippet = loadSnippet(name)
   if (!snippet) {
-    return { type: 'text', value: `❌ 片段不存在: ${name}` }
+    return { type: 'text', value: ` 片段不存在: ${name}` }
   }
 
   // Determine output path
@@ -508,10 +508,10 @@ function handleExport(args: string): { type: 'text'; value: string } {
 
   try {
     writeFileSync(targetPath, snippet.code, 'utf-8')
-    return { type: 'text', value: `✅ 已导出片段 "${name}" 到: ${targetPath}` }
+    return { type: 'text', value: ` 已导出片段 "${name}" 到: ${targetPath}` }
   } catch (err: unknown) {
     const errMsg = err instanceof Error ? err.message : String(err)
-    return { type: 'text', value: `❌ 导出失败: ${errMsg}` }
+    return { type: 'text', value: ` 导出失败: ${errMsg}` }
   }
 }
 
@@ -520,11 +520,11 @@ function handleImport(args: string): { type: 'text'; value: string } {
   const filePath = parts.positional[0] || parts.flags.file
 
   if (!filePath) {
-    return { type: 'text', value: '❌ 用法: /snippet import <文件路径> [--name <名称>] [--tags "a,b,c"] [--desc "描述"]' }
+    return { type: 'text', value: ' 用法: /snippet import <文件路径> [--name <名称>] [--tags "a,b,c"] [--desc "描述"]' }
   }
 
   if (!existsSync(filePath)) {
-    return { type: 'text', value: `❌ 文件不存在: ${filePath}` }
+    return { type: 'text', value: ` 文件不存在: ${filePath}` }
   }
 
   let code: string
@@ -532,7 +532,7 @@ function handleImport(args: string): { type: 'text'; value: string } {
     code = readFileSync(filePath, 'utf-8')
   } catch (err: unknown) {
     const errMsg = err instanceof Error ? err.message : String(err)
-    return { type: 'text', value: `❌ 读取文件失败: ${errMsg}` }
+    return { type: 'text', value: ` 读取文件失败: ${errMsg}` }
   }
 
   // Determine name: explicit flag > filename without ext > filename
@@ -541,7 +541,7 @@ function handleImport(args: string): { type: 'text'; value: string } {
 
   const existing = loadSnippet(name)
   if (existing && !parts.flags.force) {
-    return { type: 'text', value: `⚠️ 片段 "${name}" 已存在。使用 --force 覆盖，或先用 /snippet delete ${name} 删除。` }
+    return { type: 'text', value: ` 片段 "${name}" 已存在。使用 --force 覆盖，或先用 /snippet delete ${name} 删除。` }
   }
 
   const language = parts.flags.lang || detectLanguage(code, filePath)
@@ -565,11 +565,11 @@ function handleImport(args: string): { type: 'text'; value: string } {
 
   const result = saveSnippet(snippet)
   if (!result.success) {
-    return { type: 'text', value: `❌ 导入失败: ${result.message}` }
+    return { type: 'text', value: ` 导入失败: ${result.message}` }
   }
 
   const action = existing ? '更新' : '导入'
-  return { type: 'text', value: `✅ 已${action}片段: ${name} (${language}, ${code.split('\n').length} 行)` }
+  return { type: 'text', value: ` 已${action}片段: ${name} (${language}, ${code.split('\n').length} 行)` }
 }
 
 function handleTags(allSnippets: Snippet[], json: boolean): { type: 'text'; value: string } {
@@ -599,7 +599,7 @@ function handleTags(allSnippets: Snippet[], json: boolean): { type: 'text'; valu
   }
 
   const lines: string[] = []
-  lines.push(`🏷️  标签索引 (${allSnippets.length} 个片段)`)
+  lines.push(`🏷  标签索引 (${allSnippets.length} 个片段)`)
   lines.push('')
   lines.push(renderTagsIndex(allSnippets))
   return { type: 'text', value: lines.join('\n') }
@@ -612,11 +612,11 @@ function handleTags(allSnippets: Snippet[], json: boolean): { type: 'text'; valu
 function handleInsert(args: string): { type: 'text'; value: string } {
   const name = args.trim()
   if (!name) {
-    return { type: 'text', value: '❌ 用法: /snippet insert <名称>' }
+    return { type: 'text', value: ' 用法: /snippet insert <名称>' }
   }
   const snippet = loadSnippet(name)
   if (!snippet) {
-    return { type: 'text', value: `❌ 片段不存在: ${name}` }
+    return { type: 'text', value: ` 片段不存在: ${name}` }
   }
   snippet.useCount++
   snippet.lastUsed = new Date().toISOString()
@@ -662,11 +662,11 @@ function handleInsert(args: string): { type: 'text'; value: string } {
 function handleCopy(args: string): { type: 'text'; value: string } {
   const name = args.trim()
   if (!name) {
-    return { type: 'text', value: '❌ 用法: /snippet copy <名称>' }
+    return { type: 'text', value: ' 用法: /snippet copy <名称>' }
   }
   const snippet = loadSnippet(name)
   if (!snippet) {
-    return { type: 'text', value: `❌ 片段不存在: ${name}` }
+    return { type: 'text', value: ` 片段不存在: ${name}` }
   }
   snippet.useCount++
   snippet.lastUsed = new Date().toISOString()
@@ -690,9 +690,9 @@ function handleCopy(args: string): { type: 'text'; value: string } {
     }
   }
   if (clipboardOk) {
-    return { type: 'text', value: `✅ 已将片段 "${name}" 复制到剪贴板 (${snippet.code.length} 字符, ${snippet.code.split('\n').length} 行)` }
+    return { type: 'text', value: ` 已将片段 "${name}" 复制到剪贴板 (${snippet.code.length} 字符, ${snippet.code.split('\n').length} 行)` }
   }
-  return { type: 'text', value: `⚠️ 剪贴板不可用。片段内容已写入: ${tmpPath}` }
+  return { type: 'text', value: ` 剪贴板不可用。片段内容已写入: ${tmpPath}` }
 }
 
 // ============================================================================
@@ -702,11 +702,11 @@ function handleCopy(args: string): { type: 'text'; value: string } {
 function handleEdit(args: string): { type: 'text'; value: string } {
   const name = args.trim()
   if (!name) {
-    return { type: 'text', value: '❌ 用法: /snippet edit <名称>' }
+    return { type: 'text', value: ' 用法: /snippet edit <名称>' }
   }
   const snippet = loadSnippet(name)
   if (!snippet) {
-    return { type: 'text', value: `❌ 片段不存在: ${name}` }
+    return { type: 'text', value: ` 片段不存在: ${name}` }
   }
   const tmpDir = join(homedir(), '.doge', 'temp')
   if (!existsSync(tmpDir)) {
@@ -731,9 +731,9 @@ function handleEdit(args: string): { type: 'text'; value: string } {
     snippet.code = updatedCode
     snippet.updatedAt = new Date().toISOString()
     saveSnippet(snippet)
-    return { type: 'text', value: `✅ 片段 "${name}" 已更新 (${updatedCode.split('\n').length} 行)` }
+    return { type: 'text', value: ` 片段 "${name}" 已更新 (${updatedCode.split('\n').length} 行)` }
   }
-  return { type: 'text', value: `ℹ️ 片段 "${name}" 未做修改` }
+  return { type: 'text', value: `ℹ 片段 "${name}" 未做修改` }
 }
 
 // ============================================================================
@@ -745,26 +745,26 @@ function handleRename(args: string): { type: 'text'; value: string } {
   const oldName = parts.positional[0]
   const newName = parts.positional[1]
   if (!oldName || !newName) {
-    return { type: 'text', value: '❌ 用法: /snippet rename <旧名> <新名>' }
+    return { type: 'text', value: ' 用法: /snippet rename <旧名> <新名>' }
   }
   const snippet = loadSnippet(oldName)
   if (!snippet) {
-    return { type: 'text', value: `❌ 片段不存在: ${oldName}` }
+    return { type: 'text', value: ` 片段不存在: ${oldName}` }
   }
   if (loadSnippet(newName)) {
-    return { type: 'text', value: `⚠️ 目标名称 "${newName}" 已存在。请选择其他名称。` }
+    return { type: 'text', value: ` 目标名称 "${newName}" 已存在。请选择其他名称。` }
   }
   const updated: Snippet = { ...snippet, name: newName, updatedAt: new Date().toISOString() }
   const saveResult = saveSnippet(updated)
   if (!saveResult.success) {
-    return { type: 'text', value: `❌ 重命名失败: ${saveResult.message}` }
+    return { type: 'text', value: ` 重命名失败: ${saveResult.message}` }
   }
   try {
     unlinkSync(getSnippetPath(oldName))
   } catch {
     // ignore cleanup failure
   }
-  return { type: 'text', value: `✅ 已将片段 "${oldName}" 重命名为 "${newName}"` }
+  return { type: 'text', value: ` 已将片段 "${oldName}" 重命名为 "${newName}"` }
 }
 
 // ============================================================================
@@ -776,14 +776,14 @@ function handleDuplicate(args: string): { type: 'text'; value: string } {
   const name = parts.positional[0]
   const newName = parts.positional[1]
   if (!name || !newName) {
-    return { type: 'text', value: '❌ 用法: /snippet duplicate <名称> <新名>' }
+    return { type: 'text', value: ' 用法: /snippet duplicate <名称> <新名>' }
   }
   const snippet = loadSnippet(name)
   if (!snippet) {
-    return { type: 'text', value: `❌ 片段不存在: ${name}` }
+    return { type: 'text', value: ` 片段不存在: ${name}` }
   }
   if (loadSnippet(newName)) {
-    return { type: 'text', value: `⚠️ 目标名称 "${newName}" 已存在。请选择其他名称。` }
+    return { type: 'text', value: ` 目标名称 "${newName}" 已存在。请选择其他名称。` }
   }
   const now = new Date().toISOString()
   const duplicate: Snippet = {
@@ -797,9 +797,9 @@ function handleDuplicate(args: string): { type: 'text'; value: string } {
   }
   const result = saveSnippet(duplicate)
   if (!result.success) {
-    return { type: 'text', value: `❌ 复制失败: ${result.message}` }
+    return { type: 'text', value: ` 复制失败: ${result.message}` }
   }
-  return { type: 'text', value: `✅ 已将片段 "${name}" 复制为 "${newName}"` }
+  return { type: 'text', value: ` 已将片段 "${name}" 复制为 "${newName}"` }
 }
 
 // ============================================================================
@@ -821,13 +821,13 @@ function handleFavorite(args: string): { type: 'text'; value: string } {
   }
   const snippet = loadSnippet(name)
   if (!snippet) {
-    return { type: 'text', value: `❌ 片段不存在: ${name}` }
+    return { type: 'text', value: ` 片段不存在: ${name}` }
   }
   snippet.favorite = !snippet.favorite
   snippet.updatedAt = new Date().toISOString()
   const result = saveSnippet(snippet)
   if (!result.success) {
-    return { type: 'text', value: `❌ 操作失败: ${result.message}` }
+    return { type: 'text', value: ` 操作失败: ${result.message}` }
   }
   if (snippet.favorite) {
     return { type: 'text', value: `⭐ 已收藏片段: ${name}` }
@@ -988,10 +988,10 @@ function handleSync(args: string): { type: 'text'; value: string } {
   const targetPath = outputPath.endsWith(ext) ? outputPath : outputPath + ext
   try {
     writeFileSync(targetPath, content, 'utf-8')
-    return { type: 'text', value: `✅ 已导出 ${all.length} 个片段到: ${targetPath} (${format} 格式)` }
+    return { type: 'text', value: ` 已导出 ${all.length} 个片段到: ${targetPath} (${format} 格式)` }
   } catch (err: unknown) {
     const errMsg = err instanceof Error ? err.message : String(err)
-    return { type: 'text', value: `❌ 导出失败: ${errMsg}` }
+    return { type: 'text', value: ` 导出失败: ${errMsg}` }
   }
 }
 
@@ -1003,16 +1003,16 @@ async function handleImportUrl(args: string): Promise<{ type: 'text'; value: str
   const parts = parseArgs(args)
   const url = parts.positional[0] || parts.flags.url
   if (!url) {
-    return { type: 'text', value: '❌ 用法: /snippet import-url <URL> [--name <名称>] [--tags "a,b,c"] [--desc "描述"]' }
+    return { type: 'text', value: ' 用法: /snippet import-url <URL> [--name <名称>] [--tags "a,b,c"] [--desc "描述"]' }
   }
   let parsedUrl: URL
   try {
     parsedUrl = new URL(url)
   } catch {
-    return { type: 'text', value: `❌ 无效的 URL: ${url}` }
+    return { type: 'text', value: ` 无效的 URL: ${url}` }
   }
   if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
-    return { type: 'text', value: '❌ 仅支持 HTTP/HTTPS 协议' }
+    return { type: 'text', value: ' 仅支持 HTTP/HTTPS 协议' }
   }
   let rawContent: string
   try {
@@ -1021,15 +1021,15 @@ async function handleImportUrl(args: string): Promise<{ type: 'text'; value: str
       signal: AbortSignal.timeout(15000),
     })
     if (!response.ok) {
-      return { type: 'text', value: `❌ 请求失败: HTTP ${response.status} ${response.statusText}` }
+      return { type: 'text', value: ` 请求失败: HTTP ${response.status} ${response.statusText}` }
     }
     rawContent = await response.text()
   } catch (err: unknown) {
     const errMsg = err instanceof Error ? err.message : String(err)
-    return { type: 'text', value: `❌ 获取失败: ${errMsg}` }
+    return { type: 'text', value: ` 获取失败: ${errMsg}` }
   }
   if (!rawContent.trim()) {
-    return { type: 'text', value: '❌ 获取到的内容为空' }
+    return { type: 'text', value: ' 获取到的内容为空' }
   }
   let code: string | undefined
   let detectedName: string | undefined
@@ -1058,7 +1058,7 @@ async function handleImportUrl(args: string): Promise<{ type: 'text'; value: str
       const parsed = JSON.parse(rawContent) as { snippets: SnippetImportData[] }
       const items = parsed.snippets
       if (!Array.isArray(items) || items.length === 0) {
-        return { type: 'text', value: '❌ 导入数据中没有片段' }
+        return { type: 'text', value: ' 导入数据中没有片段' }
       }
       let imported = 0
       let skipped = 0
@@ -1094,10 +1094,10 @@ async function handleImportUrl(args: string): Promise<{ type: 'text'; value: str
         if (r.success) imported++
         else skipped++
       }
-      return { type: 'text', value: `✅ 批量导入完成: ${imported} 个已导入, ${skipped} 个已跳过` }
+      return { type: 'text', value: ` 批量导入完成: ${imported} 个已导入, ${skipped} 个已跳过` }
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : String(err)
-      return { type: 'text', value: `❌ 批量导入解析失败: ${errMsg}` }
+      return { type: 'text', value: ` 批量导入解析失败: ${errMsg}` }
     }
   }
   if (!code) {
@@ -1107,7 +1107,7 @@ async function handleImportUrl(args: string): Promise<{ type: 'text'; value: str
   const finalName = parts.flags.name || detectedName || urlName || 'imported'
   const existing = loadSnippet(finalName)
   if (existing && !parts.flags.force) {
-    return { type: 'text', value: `⚠️ 片段 "${finalName}" 已存在。使用 --force 覆盖。` }
+    return { type: 'text', value: ` 片段 "${finalName}" 已存在。使用 --force 覆盖。` }
   }
   const finalLanguage = parts.flags.lang || language || detectLanguage(code)
   const tagsStr = parts.flags.tags || ''
@@ -1128,10 +1128,10 @@ async function handleImportUrl(args: string): Promise<{ type: 'text'; value: str
   }
   const r = saveSnippet(snip)
   if (!r.success) {
-    return { type: 'text', value: `❌ 导入失败: ${r.message}` }
+    return { type: 'text', value: ` 导入失败: ${r.message}` }
   }
   const action = existing ? '更新' : '导入'
-  return { type: 'text', value: `✅ 已${action}片段: ${finalName} (${finalLanguage}, ${code.split('\n').length} 行)` }
+  return { type: 'text', value: ` 已${action}片段: ${finalName} (${finalLanguage}, ${code.split('\n').length} 行)` }
 }
 
 // ============================================================================
@@ -1311,7 +1311,7 @@ export const call: LocalCommandCall = async (args) => {
       if (!subcmd) {
         return { type: 'text', value: renderHelp() }
       }
-      return { type: 'text', value: `❌ 未知子命令: ${subcmd}\n\n${renderHelp()}` }
+      return { type: 'text', value: ` 未知子命令: ${subcmd}\n\n${renderHelp()}` }
   }
 }
 

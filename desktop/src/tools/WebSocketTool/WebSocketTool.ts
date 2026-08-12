@@ -175,7 +175,7 @@ export const WebSocketTool = buildTool({
               data: {
                 connected: false,
                 connectionId: connId,
-                message: '❌ 错误: WebSocket 连接失败',
+                message: ' 错误: WebSocket 连接失败',
               } as Output,
             })
           }

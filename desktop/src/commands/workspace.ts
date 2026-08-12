@@ -75,16 +75,16 @@ function saveWorkspace(summary: string): string {
     }
 
     writeFileSync(WORKSPACE_FILE, JSON.stringify(snapshot, null, 2), 'utf-8')
-    return `✅ 工作上下文已保存到 .doge/workspaces/current.json\n   项目: ${name}\n   分支: ${branch}\n   文件: ${files.length} 个变更`
+    return ` 工作上下文已保存到 .doge/workspaces/current.json\n   项目: ${name}\n   分支: ${branch}\n   文件: ${files.length} 个变更`
   } catch (err) {
-    return `❌ 保存失败: ${err instanceof Error ? err.message : String(err)}`
+    return ` 保存失败: ${err instanceof Error ? err.message : String(err)}`
   }
 }
 
 function loadWorkspace(): string {
   try {
     if (!existsSync(WORKSPACE_FILE)) {
-      return '⚠️ 没有找到保存的工作上下文。先运行 /workspace save 保存一个。'
+      return ' 没有找到保存的工作上下文。先运行 /workspace save 保存一个。'
     }
 
     const snapshot: WorkspaceSnapshot = JSON.parse(readFileSync(WORKSPACE_FILE, 'utf-8'))
@@ -105,7 +105,7 @@ function loadWorkspace(): string {
     lines.push('')
     lines.push('🔄 当前状态对比:')
     lines.push(`   当前分支: ${currentBranch}`)
-    lines.push(`   分支是否相同: ${currentBranch === snapshot.branch ? '✅ 是' : '❌ 否'}`)
+    lines.push(`   分支是否相同: ${currentBranch === snapshot.branch ? ' 是' : ' 否'}`)
 
     // Check if files still exist
     const existingFiles = snapshot.files.filter(f => existsSync(f))
@@ -115,12 +115,12 @@ function loadWorkspace(): string {
     try {
       const currentStatus = execSync('git status --porcelain', { encoding: 'utf-8', timeout: 5000 }).trim()
       const hasChanges = currentStatus.length > 0
-      lines.push(`   当前有未提交变更: ${hasChanges ? '⚠️ 是' : '✅ 否'}`)
+      lines.push(`   当前有未提交变更: ${hasChanges ? ' 是' : ' 否'}`)
     } catch { /* ignore */ }
 
     return lines.join('\n')
   } catch (err) {
-    return `❌ 加载失败: ${err instanceof Error ? err.message : String(err)}`
+    return ` 加载失败: ${err instanceof Error ? err.message : String(err)}`
   }
 }
 
@@ -150,7 +150,7 @@ function listWorkspaces(): string {
 
     return lines.join('\n')
   } catch {
-    return '⚠️ 没有保存的工作上下文。'
+    return ' 没有保存的工作上下文。'
   }
 }
 
@@ -171,7 +171,7 @@ function renderHelp(): string {
     '  save [摘要]          保存当前工作上下文',
     '  load                 恢复最近保存的工作上下文',
     '  list                 列出所有保存的工作上下文',
-    '📖 用法:   --help               显示帮助',
+    ' 用法:   --help               显示帮助',
     '',
     '示例:',
     '  /workspace save "重构用户模块中"',
@@ -205,7 +205,7 @@ export const call: LocalCommandCall = async (args) => {
     case 'list':
       return { type: 'text', value: listWorkspaces() }
     default:
-      return { type: 'text', value: `❌ 未知操作: ${action}\n\n${renderHelp()}` }
+      return { type: 'text', value: ` 未知操作: ${action}\n\n${renderHelp()}` }
   }
 }
 

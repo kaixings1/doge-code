@@ -28,7 +28,7 @@ export type AutoFixLoopEvent =
 const LINT_ERROR_PATTERNS = [
   /error TS\d+:/i,
   /error:\s*.*/,
-  /✖\s*\d+\s*problem/,
+  /\s*\d+\s*problem/,
   /found\s*\d+\s*error/,
   /lint\s*error/i,
   /type\s*error/i,

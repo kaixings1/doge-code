@@ -201,7 +201,7 @@ export function App(): JSX.Element {
   }
   if (__renderCount > 500 && !__renderWarned) {
     __renderWarned = true
-    console.error(`[DIAG] ⚠ 疑似无限重渲染！renderCount=${__renderCount}`)
+    console.error(`[DIAG]  疑似无限重渲染！renderCount=${__renderCount}`)
   }
   const [config, setConfig] = useState<DesktopConfig>({ provider: 'openai', apiKey: '', model: 'gpt-4o', workingDir: '' })
   const workingDir = config.workingDir || '/'
@@ -213,6 +213,7 @@ export function App(): JSX.Element {
   const [state, setState] = useState<QueryState>('idle')
   const stateRef = useRef('idle')
   const [isSending, setIsSending] = useState(false)
+  const isSendingRef = useRef(false) // 同步锁，避免 stale closure 导致 double-sending
   const [currentStreaming, setCurrentStreaming] = useState('')
   const currentStreamingRef = useRef('')
   const streamingActiveRef = useRef(false) // result 处理完成后锁定，阻止延迟 chunk 污染
@@ -1152,8 +1153,12 @@ export function App(): JSX.Element {
   const historyRef = useRef<Message[]>([])
   useEffect(() => { historyRef.current = messages }, [messages])
 
+  // 防止 loaded/tabs 变化时无条件重写 messages（竞态条件：用户已在 loaded=true 前发送消息，
+  // 但 historyRef 仍持有旧快照，此 effect 会把已更新的 messages 覆盖回旧值，导致界面重复追加）
+  const initializedRef = useRef(false)
   useEffect(() => {
-    if (tabs.length === 0 && loaded) {
+    if (tabs.length === 0 && loaded && !initializedRef.current) {
+      initializedRef.current = true
       const sid = currentSessionId || ''
       tabIdCounter.current = 1
       const initialMsgs = historyRef.current
@@ -1262,13 +1267,13 @@ export function App(): JSX.Element {
     handleSendCallCountRef.current++
     const callNum = handleSendCallCountRef.current
     const text = input.trim()
-    tsLog('RENDERER', `handleSend called #${callNum}, text:`, text, 'state:', state)
-    if (!text || state === 'responding' || isSending) {
-      tsLog('RENDERER', `handleSend #${callNum} EARLY RETURN: text=${!!text} state=${state} isSending=${isSending}`)
+    tsLog('RENDERER', `handleSend called #${callNum}, text:`, text, 'state:', state, 'isSending:', isSendingRef.current)
+    if (!text || stateRef.current === 'responding' || isSendingRef.current) {
+      tsLog('RENDERER', `handleSend #${callNum} EARLY RETURN: text=${!!text} state=${stateRef.current} isSending=${isSendingRef.current}`)
       return
     }
     if (!isOnline) { showToast('网络已断开，无法发送消息', 'error'); return }
-    setInput(''); setError(null); setCurrentStreaming(''); currentStreamingRef.current = ''; setIsSending(true)
+    setInput(''); setError(null); setCurrentStreaming(''); currentStreamingRef.current = ''; setIsSending(true); isSendingRef.current = true
     streamingActiveRef.current = true // 打开请求级锁，允许 chunk 进入 currentStreaming
 
     const appendMsg = (msg: Message) => {
@@ -1312,14 +1317,14 @@ export function App(): JSX.Element {
         persistActiveTabMessages([])
       }
       cmdHistory.addCommand(text)
-      setState('idle'); setIsSending(false)
+      setState('idle'); setIsSending(false); isSendingRef.current = false; stateRef.current = 'idle'
       return
     }
 
     const userMsg: Message = { id: `msg-${Date.now()}`, role: 'user', content: text }
     appendMsg(userMsg)
     setHasResponded(false)
-    setState('responding')
+    setState('responding'); stateRef.current = 'responding'
 
     // 构建发送载荷：纯文本或包含图片的 JSON
     let result: { success?: boolean; content?: string; error?: string } | null = null
@@ -1347,7 +1352,7 @@ export function App(): JSX.Element {
       setCurrentStreaming(''); currentStreamingRef.current = ''
       setPendingImages([])
       appendMsg({ id: `msg-${Date.now() + 1}`, role: 'error', content: errMsg })
-      setState('idle'); setIsSending(false)
+      setState('idle'); setIsSending(false); isSendingRef.current = false; stateRef.current = 'idle'
       return
     }
 
@@ -1358,6 +1363,7 @@ export function App(): JSX.Element {
       setCurrentStreaming(''); currentStreamingRef.current = ''
       setPendingImages([])
       appendMsg({ id: `msg-${Date.now() + 1}`, role: 'error', content: result.error! })
+      setState('idle'); setIsSending(false); isSendingRef.current = false; stateRef.current = 'idle'
       if (!document.hasFocus()) window.dogeAPI.notify('Doge Code', `错误: ${result.error.slice(0, 100)}`).catch(() => {})
     } else {
       // result.content 是 messageLoop 返回的完整回复（aggregateContent 的权威结果，不会重复）
@@ -1387,10 +1393,10 @@ export function App(): JSX.Element {
       }
     }
     setHasResponded(true)
-    setState('idle'); setIsSending(false)
+    setState('idle'); setIsSending(false); isSendingRef.current = false; stateRef.current = 'idle'
   }, [input, state, persistActiveTabMessages, isOnline, showToast, autoSpeak, pendingImages])
 
-  const handleAbort = useCallback(async () => { await window.dogeAPI.abort(); setCurrentStreaming(''); setIsSending(false) }, [])
+  const handleAbort = useCallback(async () => { await window.dogeAPI.abort(); setCurrentStreaming(''); setIsSending(false); isSendingRef.current = false; stateRef.current = 'idle' }, [])
 
   // ─── 操作历史（回滚） ───
   const loadOperations = useCallback(async () => {
@@ -1685,7 +1691,7 @@ export function App(): JSX.Element {
           { text: '/review', display: '/review — 审查' },
           { text: '/diff', display: '/diff — Diff' },
           { text: '/status', display: '/status — 状态' },
-          { text: '/help', display: '📖 用法: /help — 帮助' },
+          { text: '/help', display: ' 用法: /help — 帮助' },
           { text: '/plan', display: '/plan — 计划模式' },
           { text: '/config', display: '/config — 配置' },
           { text: '/model', display: '/model — 模型' },
@@ -2037,7 +2043,7 @@ export function App(): JSX.Element {
                 </span>
               )}
               <span style={{ color: isOnline ? c.accent : c.errorText, fontSize: '10px' }}>
-                {isOnline ? '🟢' : '🔴 离线'}
+                {isOnline ? '🟢' : ' 离线'}
               </span>
             </div>
             <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
@@ -2166,7 +2172,7 @@ export function App(): JSX.Element {
                 flexShrink: 0
               }}
             >
-              {autoSpeak ? '🗣️' : '🔕'}
+              {autoSpeak ? '🗣' : '🔕'}
             </button>
             {interimTranscript && (
               <div style={{ fontSize: '10px', color: c.textMuted, fontStyle: 'italic', marginBottom: '4px', padding: '0 2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -2246,7 +2252,7 @@ export function App(): JSX.Element {
                   {([
                     { label: '🗑 关闭', fn: () => closePreviewTab(tabContextMenu.tabId) },
                     { label: '✂ 关闭其他', fn: () => closeOtherTabs(tabContextMenu.tabId) },
-                    { label: '✖ 关闭全部', fn: () => closeAllTabs() },
+                    { label: ' 关闭全部', fn: () => closeAllTabs() },
                     { label: '📋 复制路径', fn: () => { const t = previewTabs.find(x => x.id === tabContextMenu.tabId); if (t) navigator.clipboard.writeText(t.path) } },
                   ] as Array<{ label: string; fn: () => void }>).map(item => (
                     <div
@@ -2265,7 +2271,7 @@ export function App(): JSX.Element {
                 <div style={{ borderBottom: `1px solid ${c.border}`, padding: '4px 12px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', overflow: 'hidden' }}>
-                      <span style={{ fontSize: '11px', color: c.textMuted, whiteSpace: 'nowrap' }}>{isEditing ? '✏️ 编辑中' : '👁️'} {activePreviewFile.path.split('/').pop()}</span>
+                      <span style={{ fontSize: '11px', color: c.textMuted, whiteSpace: 'nowrap' }}>{isEditing ? '✏ 编辑中' : '👁'} {activePreviewFile.path.split('/').pop()}</span>
                     </div>
                     <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
                       {isEditing ? (
@@ -2276,7 +2282,7 @@ export function App(): JSX.Element {
                       ) : (
                         <>
                           <span style={{ cursor: 'pointer', color: c.textMuted, fontSize: '11px' }} onClick={handleOpenTerminal} title="在终端中打开">💻</span>
-                          <span style={{ cursor: 'pointer', color: c.accent, fontSize: '11px' }} onClick={handleStartEdit}>✏️ 编辑</span>
+                          <span style={{ cursor: 'pointer', color: c.accent, fontSize: '11px' }} onClick={handleStartEdit}>✏ 编辑</span>
                           <span style={{ cursor: 'pointer', color: c.textMuted, fontSize: '11px' }} onClick={handleCopyContent}>📝 复制内容</span>
                           <span style={{ cursor: 'pointer', color: c.textMuted, fontSize: '11px' }} onClick={handleRevealInExplorer}>📂 所在位置</span>
                           <span style={{ cursor: 'pointer', color: c.textFaint, fontSize: '11px' }} onClick={() => { navigator.clipboard.writeText(activePreviewFile.path); showToast('路径已复制', 'success') }}>📋</span>
@@ -2399,15 +2405,15 @@ export function App(): JSX.Element {
           <div style={{ ...styles.panelHeader, borderTop: `1px solid ${c.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span>🔧 工具</span>
             <div style={{ display: 'flex', gap: '6px' }}>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showDbPanel ? c.accent : c.textMuted }} onClick={() => setShowDbPanel(p => !p)}>🗄️ DB</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showDbPanel ? c.accent : c.textMuted }} onClick={() => setShowDbPanel(p => !p)}>🗄 DB</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showApiTestPanel ? c.accent : c.textMuted }} onClick={() => setShowApiTestPanel(p => !p)}>🔌 API</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showSnippetPanel ? c.accent : c.textMuted }} onClick={() => setShowSnippetPanel(p => !p)}>✂️ 片段</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showSnippetPanel ? c.accent : c.textMuted }} onClick={() => setShowSnippetPanel(p => !p)}>✂ 片段</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showLspPanel ? c.accent : c.textMuted }} onClick={() => setShowLspPanel(p => !p)}>🧠 LSP</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showReferencesPanel ? c.accent : c.textMuted }} onClick={() => { setShowReferencesPanel(p => !p) }}>📎 引用</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showCallChain ? c.accent : c.textMuted }} onClick={() => { setShowCallChain(p => !p) }}>🔗 调用链</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showFileExplorer ? c.accent : c.textMuted }} onClick={() => { setShowFileExplorer(p => !p) }}>📁 文件</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showProblemsPanel ? c.accent : c.textMuted }} onClick={() => { setShowProblemsPanel(p => !p) }}>⚠️ 问题</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showErrorLens ? c.accent : c.textMuted }} onClick={() => { setShowErrorLens(p => !p) }}>🔍 错误</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showProblemsPanel ? c.accent : c.textMuted }} onClick={() => { setShowProblemsPanel(p => !p) }}> 问题</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showErrorLens ? c.accent : c.textMuted }} onClick={() => { setShowErrorLens(p => !p) }}> 错误</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showOutputPanel ? c.accent : c.textMuted }} onClick={() => { setShowOutputPanel(p => !p) }}>📟 输出</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showFindReplace ? c.accent : c.textMuted }} onClick={() => { setShowFindReplace(p => !p) }}>🔎 替换</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showSymbolOutline ? c.accent : c.textMuted }} onClick={() => { setShowSymbolOutline(p => !p) }}>📑 大纲</span>
@@ -2417,13 +2423,13 @@ export function App(): JSX.Element {
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showGitBranch ? c.accent : c.textMuted }} onClick={() => { setShowGitBranch(p => !p) }}>🌿 分支</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showTestRunner ? c.accent : c.textMuted }} onClick={() => { setShowTestRunner(p => !p) }}>🧪 测试</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showLogViewer ? c.accent : c.textMuted }} onClick={() => { setShowLogViewer(p => !p) }}>📋 日志</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showSemanticSearch ? c.accent : c.textMuted }} onClick={() => setShowSemanticSearch(p => !p)}>🔍 搜索</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showSemanticSearch ? c.accent : c.textMuted }} onClick={() => setShowSemanticSearch(p => !p)}> 搜索</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showDebuggerPanel ? c.accent : c.textMuted }} onClick={() => setShowDebuggerPanel(p => !p)}>🪲 调试器</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showCollabPanel ? c.accent : c.textMuted }} onClick={() => setShowCollabPanel(p => !p)}>🤝 协作</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showMonacoPanel ? c.accent : c.textMuted }} onClick={() => setShowMonacoPanel(p => !p)}>🖥️ 编辑器</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showSecurityAudit ? c.accent : c.textMuted }} onClick={() => setShowSecurityAudit(p => !p)}>🛡️ 安全</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showPerformanceRefactor ? c.accent : c.textMuted }} onClick={() => setShowPerformanceRefactor(p => !p)}>⚡ 重构</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showWorkflowPanel ? c.accent : c.textMuted }} onClick={() => setShowWorkflowPanel(p => !p)}>⚙️ 工作流</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showMonacoPanel ? c.accent : c.textMuted }} onClick={() => setShowMonacoPanel(p => !p)}>🖥 编辑器</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showSecurityAudit ? c.accent : c.textMuted }} onClick={() => setShowSecurityAudit(p => !p)}>🛡 安全</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showPerformanceRefactor ? c.accent : c.textMuted }} onClick={() => setShowPerformanceRefactor(p => !p)}> 重构</span>
+              <span style={{ cursor: 'pointer', fontSize: '10px', color: showWorkflowPanel ? c.accent : c.textMuted }} onClick={() => setShowWorkflowPanel(p => !p)}>⚙ 工作流</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: showOperationHistory ? c.accent : c.textMuted }} onClick={() => { setShowOperationHistory(p => !p); if (!showOperationHistory) { loadOperations() } }}>📜 历史</span>
               <span style={{ cursor: 'pointer', fontSize: '10px', color: c.accent }} onClick={() => { setShowMcpPanel(p => !p); if (!showMcpPanel) { refreshMcpServers(); refreshAgents() } }}>{showMcpPanel ? '收起 MCP' : 'MCP 管理'}</span>
             </div>
@@ -2516,7 +2522,7 @@ export function App(): JSX.Element {
           <div style={{ position: 'fixed', inset: 0, zIndex: 9998, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowTimeTracker(false)}>
             <div style={{ background: theme.surface, border: `1px solid ${theme.border}`, borderRadius: '8px', width: '70%', maxWidth: '700px', height: '70%', maxHeight: '550px', display: 'flex', flexDirection: 'column' }} onClick={e => e.stopPropagation()}>
               <div style={{ padding: '10px 16px', borderBottom: `1px solid ${theme.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontWeight: 600, color: theme.text }}>⏱️ 时间追踪</span>
+                <span style={{ fontWeight: 600, color: theme.text }}>⏱ 时间追踪</span>
                 <span style={{ cursor: 'pointer', color: theme.textFaint }} onClick={() => setShowTimeTracker(false)}>✕</span>
               </div>
               <div style={{ flex: 1, overflow: 'hidden' }}>
@@ -2569,7 +2575,7 @@ export function App(): JSX.Element {
         {showSnippetPanel && activePreviewFile && (
           <div style={{ position: 'fixed', top: 60, right: 300, width: 380, height: '65%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
             <div style={{ padding: '8px 12px', borderBottom: `1px solid ${c.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontWeight: 600, color: c.text }}>✂️ 代码片段</span>
+              <span style={{ fontWeight: 600, color: c.text }}>✂ 代码片段</span>
               <span style={{ cursor: 'pointer', color: c.textFaint, fontSize: '12px' }} onClick={() => setShowSnippetPanel(false)}>✕</span>
             </div>
             <SnippetPanel

@@ -233,7 +233,7 @@ export function ReferencesPanel({
 
         {error && (
           <div style={{ ...emptyStyle, color: '#ef5350', fontStyle: 'normal' }}>
-            ⚠️ {error}
+             {error}
           </div>
         )}
 

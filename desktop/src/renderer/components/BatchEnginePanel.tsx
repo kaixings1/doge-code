@@ -233,7 +233,7 @@ export function BatchEnginePanel({ theme }: { theme: ThemeColors }): JSX.Element
             <div key={r.fileId} style={{ display: 'flex', justifyContent: 'space-between', padding: '2px 4px', fontSize: '9px' }}>
               <span style={{ color: c.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '60%' }}>{r.fileName}</span>
               <span style={{ color: r.status === 'completed' ? '#81C784' : r.status === 'failed' ? '#FF6B6B' : c.textMuted }}>
-                {r.status === 'completed' ? '✅' : r.status === 'failed' ? '❌' : '⏭️'}
+                {r.status === 'completed' ? '' : r.status === 'failed' ? '' : '⏭'}
                 {r.error ? ` ${r.error}` : ''}
               </span>
             </div>

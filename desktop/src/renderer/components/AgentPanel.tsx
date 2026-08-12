@@ -748,7 +748,7 @@ function OrchestrationView({ theme, onOrchestrated }: OrchestrationViewProps): J
                   {wf.name}
                 </div>
                 <div style={{ fontSize: '9px', color: c.textFaint, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {wf.mode === 'discuss' ? '🗣 讨论' : '⚡ 并行'} · {wf.roleIds.length} 角色 · {wf.maxRounds || 3} 轮
+                  {wf.mode === 'discuss' ? '🗣 讨论' : ' 并行'} · {wf.roleIds.length} 角色 · {wf.maxRounds || 3} 轮
                 </div>
               </div>
               <button
@@ -777,7 +777,7 @@ function OrchestrationView({ theme, onOrchestrated }: OrchestrationViewProps): J
           }}
           title="各 Agent 独立并行分析"
         >
-          ⚡ 并行
+           并行
         </button>
         <button
           onClick={() => setDiscussMode(true)}
@@ -819,7 +819,7 @@ function OrchestrationView({ theme, onOrchestrated }: OrchestrationViewProps): J
             fontSize: '11px', fontWeight: 600, opacity: running ? 0.6 : 1,
           }}
         >
-          {running ? '⏳ 编排中...' : discussMode ? '🗣 发起讨论编排' : '⚔ 发起并行编排'}
+          {running ? ' 编排中...' : discussMode ? '🗣 发起讨论编排' : '⚔ 发起并行编排'}
         </button>
         {running && (
           <button
@@ -840,7 +840,7 @@ function OrchestrationView({ theme, onOrchestrated }: OrchestrationViewProps): J
           padding: '6px 8px', background: c.codeBg, borderRadius: '3px', fontSize: '10px', color: c.text,
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span>{progress.status === 'running' ? '🔄 并行执行中' : '✅ 编排结束'}</span>
+            <span>{progress.status === 'running' ? '🔄 并行执行中' : ' 编排结束'}</span>
             <span style={{ color: c.textFaint }}>{progress.completedCount}/{progress.totalCount}</span>
           </div>
           {progress.runningRoles.length > 0 && (
@@ -991,7 +991,7 @@ function OrchestrationView({ theme, onOrchestrated }: OrchestrationViewProps): J
           padding: '5px 8px', background: 'rgba(16,185,129,0.1)', color: '#10b981',
           borderRadius: '3px', fontSize: '9px', wordBreak: 'break-all',
         }}>
-          ✅ 报告已导出: {exportPath}
+           报告已导出: {exportPath}
           <span style={{ marginLeft: '8px', cursor: 'pointer' }} onClick={() => setExportPath(null)}>✕</span>
         </div>
       )}
@@ -1059,7 +1059,7 @@ function OrchestrationView({ theme, onOrchestrated }: OrchestrationViewProps): J
 
           {consensus.consensusPoints.length > 0 && (
             <div style={{ marginBottom: '6px' }}>
-              <div style={{ fontSize: '9px', color: '#10b981', marginBottom: '2px' }}>✅ 共识点（多个 Agent 一致）</div>
+              <div style={{ fontSize: '9px', color: '#10b981', marginBottom: '2px' }}> 共识点（多个 Agent 一致）</div>
               {consensus.consensusPoints.map((p, i) => (
                 <div key={`c-${i}`} style={{ padding: '3px 4px', borderLeft: `2px solid #10b981`, background: c.codeBg, borderRadius: '2px', marginBottom: '2px' }}>
                   <div style={{ fontSize: '9px', color: c.text }}>{p.text}</div>
@@ -1071,7 +1071,7 @@ function OrchestrationView({ theme, onOrchestrated }: OrchestrationViewProps): J
 
           {consensus.divergencePoints.length > 0 && (
             <div>
-              <div style={{ fontSize: '9px', color: '#f59e0b', marginBottom: '2px' }}>⚡ 分歧点（单 Agent 独有观点）</div>
+              <div style={{ fontSize: '9px', color: '#f59e0b', marginBottom: '2px' }}> 分歧点（单 Agent 独有观点）</div>
               {consensus.divergencePoints.map((p, i) => (
                 <div key={`d-${i}`} style={{ padding: '3px 4px', borderLeft: `2px solid #f59e0b`, background: c.codeBg, borderRadius: '2px', marginBottom: '2px' }}>
                   <div style={{ fontSize: '9px', color: c.text }}>{p.text}</div>

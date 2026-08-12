@@ -11,7 +11,7 @@ const EMOJI_REGEX = emojiRegex()
  * Get the display width of a string as it would appear in a terminal.
  *
  * This is a more accurate alternative to the string-width package that correctly handles
- * characters like ⚠ (U+26A0) which string-width incorrectly reports as width 2.
+ * characters like  (U+26A0) which string-width incorrectly reports as width 2.
  *
  * The implementation uses eastAsianWidth directly with ambiguousAsWide: false,
  * which correctly treats ambiguous-width characters as narrow (width 1) as

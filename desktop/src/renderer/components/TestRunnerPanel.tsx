@@ -189,11 +189,11 @@ export function TestRunnerPanel({ cwd, theme, onClose }: TestRunnerPanelProps): 
         setSuites(parsedSuites)
         setSummary({ total, passed, failed, skipped, duration })
       } else {
-        setMessage(`❌ 测试执行失败: ${result.error || '未知错误'} (exit code: ${result.exitCode})`)
+        setMessage(` 测试执行失败: ${result.error || '未知错误'} (exit code: ${result.exitCode})`)
         setOutput(result.error ? [String(result.error)] : ['测试执行失败'])
       }
     } catch (e) {
-      setMessage(`❌ 运行失败: ${e instanceof Error ? e.message : '未知错误'}`)
+      setMessage(` 运行失败: ${e instanceof Error ? e.message : '未知错误'}`)
     } finally { setRunning(false) }
   }, [framework, cwd, running])
 
@@ -364,7 +364,7 @@ export function TestRunnerPanel({ cwd, theme, onClose }: TestRunnerPanelProps): 
       {/* 失败详情 */}
       {suites.some(s => s.results.some(r => r.status === 'fail')) && (
         <div style={cardStyle}>
-          <div style={{ fontWeight: 600, marginBottom: '6px', fontSize: '12px', color: '#FF6B6B' }}>❌ 失败详情</div>
+          <div style={{ fontWeight: 600, marginBottom: '6px', fontSize: '12px', color: '#FF6B6B' }}> 失败详情</div>
           {suites.map((suite, idx) =>
             suite.results.filter(r => r.status === 'fail').map(result => (
               <div key={`${idx}-${result.id}`} style={{
@@ -430,8 +430,8 @@ export function TestRunnerPanel({ cwd, theme, onClose }: TestRunnerPanelProps): 
           padding: '4px 8px',
           borderRadius: '3px',
           fontSize: '10px',
-          background: message.startsWith('✅') ? '#81C78422' : '#ef535022',
-          color: message.startsWith('✅') ? '#81C784' : '#FF6B6B',
+          background: message.startsWith('') ? '#81C78422' : '#ef535022',
+          color: message.startsWith('') ? '#81C784' : '#FF6B6B',
         }}>
           {message}
         </div>

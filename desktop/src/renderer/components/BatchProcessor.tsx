@@ -31,11 +31,11 @@ interface BatchProcessorProps {
 }
 
 const FILE_STATUS_CONFIG: Record<BatchFileItem['status'], { icon: string; color: string; label: string }> = {
-  pending: { icon: '⏳', color: '#B0BEC5', label: '等待中' },
-  running: { icon: '⏱️', color: '#FFB74D', label: '执行中' },
-  completed: { icon: '✅', color: '#81C784', label: '已完成' },
-  failed: { icon: '❌', color: '#FF6B6B', label: '失败' },
-  skipped: { icon: '⏭️', color: '#B0BEC5', label: '已跳过' },
+  pending: { icon: '', color: '#B0BEC5', label: '等待中' },
+  running: { icon: '⏱', color: '#FFB74D', label: '执行中' },
+  completed: { icon: '', color: '#81C784', label: '已完成' },
+  failed: { icon: '', color: '#FF6B6B', label: '失败' },
+  skipped: { icon: '⏭', color: '#B0BEC5', label: '已跳过' },
 }
 
 export function BatchProcessor({
@@ -183,7 +183,7 @@ export function BatchProcessor({
           >
             <option value="">-- 请选择工作流 --</option>
             {customWorkflows.map(wf => (
-              <option key={wf.id} value={wf.id}>{wf.icon || '⚡'} {wf.name} ({wf.steps.length} 步)</option>
+              <option key={wf.id} value={wf.id}>{wf.icon || ''} {wf.name} ({wf.steps.length} 步)</option>
             ))}
           </select>
           {customWorkflows.length === 0 && (
@@ -215,7 +215,7 @@ export function BatchProcessor({
             disabled={!selectedWorkflowId || isRunning || !fileInput.trim()}
             style={{ ...primaryButtonStyle, flex: 1, opacity: (!selectedWorkflowId || isRunning || !fileInput.trim()) ? 0.5 : 1 }}
           >
-            {isRunning ? '⏱️ 执行中...' : '▶ 批量执行'}
+            {isRunning ? '⏱ 执行中...' : '▶ 批量执行'}
           </button>
           {allActiveBatches.length > 0 && (
             <button
@@ -238,9 +238,9 @@ export function BatchProcessor({
               <div style={progressFillStyle} />
             </div>
             <div style={{ display: 'flex', gap: '8px', marginTop: '4px', fontSize: '10px' }}>
-              <span style={{ color: '#81C784' }}>✅ {completedFiles} 完成</span>
-              <span style={{ color: '#FF6B6B' }}>❌ {failedFiles} 失败</span>
-              <span style={{ color: c.textMuted }}>⏳ {totalFiles - completedFiles - failedFiles} 待处理</span>
+              <span style={{ color: '#81C784' }}> {completedFiles} 完成</span>
+              <span style={{ color: '#FF6B6B' }}> {failedFiles} 失败</span>
+              <span style={{ color: c.textMuted }}> {totalFiles - completedFiles - failedFiles} 待处理</span>
             </div>
           </div>
         )}
@@ -258,7 +258,7 @@ export function BatchProcessor({
               <div key={batch.id} style={{ marginBottom: '8px', padding: '6px 8px', border: `1px solid ${c.border}`, borderRadius: '4px', background: c.bgPanel }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
                   <span style={{ fontWeight: 600, fontSize: '12px' }}>
-                    {wf?.icon || '⚡'} {batch.name}
+                    {wf?.icon || ''} {batch.name}
                   </span>
                   <button
                     onClick={() => handleCancel(batch.id)}
@@ -273,7 +273,7 @@ export function BatchProcessor({
                 {/* 当前正在执行的文件 */}
                 {batch.files.filter(f => f.status === 'running').map(item => (
                   <div key={item.id} style={{ ...fileItemStyle('running'), marginBottom: '2px' }}>
-                    <span>⏱️</span>
+                    <span>⏱</span>
                     <span style={{ fontFamily: 'monospace', flex: 1 }}>{item.fileName || item.filePath}</span>
                     <span style={{ color: '#FFB74D', fontSize: '10px' }}>执行中...</span>
                   </div>
@@ -281,14 +281,14 @@ export function BatchProcessor({
                 {/* 已完成 */}
                 {batch.files.filter(f => f.status === 'completed').slice(0, 5).map(item => (
                   <div key={item.id} style={fileItemStyle('completed')}>
-                    <span>✅</span>
+                    <span></span>
                     <span style={{ fontFamily: 'monospace', flex: 1 }}>{item.fileName || item.filePath}</span>
                   </div>
                 ))}
                 {/* 失败 */}
                 {batch.files.filter(f => f.status === 'failed').slice(0, 5).map(item => (
                   <div key={item.id} style={fileItemStyle('failed')}>
-                    <span>❌</span>
+                    <span></span>
                     <span style={{ fontFamily: 'monospace', flex: 1 }}>{item.fileName || item.filePath}</span>
                     <span style={{ color: '#FF6B6B', fontSize: '10px' }}>{item.error}</span>
                   </div>
@@ -317,7 +317,7 @@ export function BatchProcessor({
               <div key={batch.id} style={{ marginBottom: '6px', padding: '6px 8px', border: `1px solid ${c.border}`, borderRadius: '4px', background: c.bgPanel }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
                   <span style={{ fontWeight: 600, fontSize: '12px' }}>
-                    {wf?.icon || '⚡'} {batch.name}
+                    {wf?.icon || ''} {batch.name}
                   </span>
                   <span style={{ ...badgeStyle(statusColor), marginLeft: 'auto' }}>
                     {batch.status}
@@ -326,7 +326,7 @@ export function BatchProcessor({
                 <div style={{ fontSize: '10px', color: c.textMuted }}>
                   {new Date(batch.startedAt).toLocaleString()}
                   {' — '}
-                  ✅ {batch.completedCount} / ❌ {batch.failedCount} / 📄 {batch.files.length} 文件
+                   {batch.completedCount} /  {batch.failedCount} / 📄 {batch.files.length} 文件
                 </div>
               </div>
             )

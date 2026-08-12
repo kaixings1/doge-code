@@ -94,7 +94,7 @@ export function registerDiagnosingBugsSkill(): void {
     name: 'diagnosing-bugs',
     description: '硬 Bug 和性能回退的系统化诊断循环。包含构建反馈回路、重现最小化、假设检验、修复和回归测试的完整流程。',
     whenToUse: '当用户说 "diagnose"/"debug this"，或报告某些东西崩溃/抛出异常/失败/缓慢时使用。',
-    argumentHint: '❌ 错误: <要诊断的问题描述或错误信息>',
+    argumentHint: ' 错误: <要诊断的问题描述或错误信息>',
     userInvocable: true,
     getPromptForCommand(args) {
       let prompt = BUG_DIAGNOSE_PROMPT

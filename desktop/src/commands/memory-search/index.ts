@@ -101,10 +101,10 @@ function searchGlobalMemories(keyword: string): MemoryMatch[] {
 
 function formatTextReport(matches: MemoryMatch[], keyword: string): string {
   if (matches.length === 0) {
-    return `🔍 未找到包含 "${keyword}" 的记忆。`
+    return ` 未找到包含 "${keyword}" 的记忆。`
   }
 
-  const lines: string[] = [`🔍 记忆搜索: "${keyword}"`, `   找到 ${matches.length} 个匹配`, '']
+  const lines: string[] = [` 记忆搜索: "${keyword}"`, `   找到 ${matches.length} 个匹配`, '']
 
   // Group by file
   const byFile = new Map<string, MemoryMatch[]>()
@@ -129,7 +129,7 @@ function formatTextReport(matches: MemoryMatch[], keyword: string): string {
 
 function renderHelp(): string {
   return [
-    '🔍 跨会话记忆搜索',
+    ' 跨会话记忆搜索',
     '',
     '搜索所有 CLAUDE.md 文件中的内容。',
     '',
@@ -139,7 +139,7 @@ function renderHelp(): string {
     '选项:',
     '  --json              JSON 格式输出',
     '  --export <file>     导出所有记忆到 JSON 文件',
-    '📖 用法:   --help              显示帮助',
+    ' 用法:   --help              显示帮助',
     '',
     '示例:',
     '  /memory-search "API设计"',
@@ -176,9 +176,9 @@ export const call: LocalCommandCall = async (args) => {
     try {
       const fs = require('fs')
       fs.writeFileSync(exportMatch[1], JSON.stringify(allMemories, null, 2), 'utf-8')
-      return { type: 'text', value: `✅ 已导出 ${allMemories.length} 个记忆文件到 ${exportMatch[1]}` }
+      return { type: 'text', value: ` 已导出 ${allMemories.length} 个记忆文件到 ${exportMatch[1]}` }
     } catch (err) {
-      return { type: 'text', value: `❌ 导出失败: ${err instanceof Error ? err.message : String(err)}` }
+      return { type: 'text', value: ` 导出失败: ${err instanceof Error ? err.message : String(err)}` }
     }
   }
 
@@ -187,7 +187,7 @@ export const call: LocalCommandCall = async (args) => {
   const json = s.includes('--json')
 
   if (!keyword) {
-    return { type: 'text', value: '❌ 请提供搜索关键词。\n\n' + renderHelp() }
+    return { type: 'text', value: ' 请提供搜索关键词。\n\n' + renderHelp() }
   }
 
   const matches = searchGlobalMemories(keyword)

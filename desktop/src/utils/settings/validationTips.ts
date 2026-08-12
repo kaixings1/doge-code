@@ -69,7 +69,7 @@ const TIP_MATCHERS: TipMatcher[] = [
       ctx.expected === 'array',
     tip: {
       suggestion:
-        '权限规则必须是数组。格式：["Tool(specifier)"📖 用法: ]。示例：["Bash(npm run build)", "Edit(docs/**)", "Read(~/.zshrc)"]。使用 * 作为通配符。',
+        '权限规则必须是数组。格式：["Tool(specifier)" 用法: ]。示例：["Bash(npm run build)", "Edit(docs/**)", "Read(~/.zshrc)"]。使用 * 作为通配符。',
     },
   },
   {

@@ -32,7 +32,7 @@ export function handleEmptyContentResponse(
 
     // 向用户显示警告信息
     const emptyContentWarning = createSystemMessage(
-      `⚠️ 模型返回了空内容（停止原因: ${finishReason}）。这可能是模型暂时错误、内容被过滤或其他问题。`,
+      ` 模型返回了空内容（停止原因: ${finishReason}）。这可能是模型暂时错误、内容被过滤或其他问题。`,
       'warning'
     )
 

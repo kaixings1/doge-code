@@ -462,7 +462,7 @@ function generateFreeTierPresets(): string {
     output += `    备注: ${preset.note}\n\n`
   }
 
-  output += `✅ 已生成 ${FREE_TIER_PRESETS.length} 个预设配置\n`
+  output += ` 已生成 ${FREE_TIER_PRESETS.length} 个预设配置\n`
   output += `💡 使用方式:\n`
   output += `   1. 访问注册链接获取 API Key\n`
   output += `   2. 编辑 .doge/${FREE_TIER_PRESETS[0].id}.json 等文件填入 Key\n`
@@ -559,7 +559,7 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
     const keys = await fetchLatestKeys()
     if (keys.length === 0) {
       log('ERROR', '全量更新失败：获取 Key 为空')
-      return { type: 'text', value: `${timeStamp} ❌ 无法从 GitHub 获取最新 Key。\n\n` +
+      return { type: 'text', value: `${timeStamp}  无法从 GitHub 获取最新 Key。\n\n` +
         `可能原因:\n` +
         `  1. 原仓库 alistaitsacle/free-llm-api-keys 已被 GitHub 封禁\n` +
         `  2. 你的网络环境无法访问 GitHub (DNS 被劫持)\n` +
@@ -571,7 +571,7 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
         `📋 详情请查看 updateapikey.log` }
     }
 
-    let output = `✅ 从 GitHub 获取到 ${keys.length} 个免费 Key，开始逐串行测试可用性...\n`
+    let output = ` 从 GitHub 获取到 ${keys.length} 个免费 Key，开始逐串行测试可用性...\n`
     output += `   端点池: ${OPENAI_ENDPOINTS.length} 个 (429/403 自动轮换) | 间隔: ${SERIAL_DELAY_MS}ms\n\n`
     pushProgress(output)
 
@@ -595,7 +595,7 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
       }
 
       // 先输出正在测试的提示
-      pushProgress(`  ${filename} ← ${displayName} ... ⏳`)
+      pushProgress(`  ${filename} ← ${displayName} ... `)
 
       const testResult = await testKey(entry)
 
@@ -610,22 +610,22 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
         }
         writeConfig(filename, config)
         log('INFO', `写入配置文件`, { filename, model: entry.model, budget: entry.budget, baseURL: usedEndpoint, keyPreview: entry.key.substring(0, 12) + '...' })
-        output += `  ${filename} ← ${displayName} ... ✅ ${testResult.message}\n`
+        output += `  ${filename} ← ${displayName} ...  ${testResult.message}\n`
         passed++
         updated++
-        pushProgress(`  ${filename} ← ${displayName} ... ✅ ${testResult.message}`, true)
+        pushProgress(`  ${filename} ← ${displayName} ...  ${testResult.message}`, true)
       } else {
-        output += `  ${filename} ← ${displayName} ... ❌ ${testResult.message}\n`
+        output += `  ${filename} ← ${displayName} ...  ${testResult.message}\n`
         failed++
         log('INFO', `跳过写入`, { filename, reason: testResult.message })
-        pushProgress(`  ${filename} ← ${displayName} ... ❌ ${testResult.message}`, true)
+        pushProgress(`  ${filename} ← ${displayName} ...  ${testResult.message}`, true)
       }
     }
 
-    output += `\n📊 测试结果: ✅ ${passed} 个可用 | ❌ ${failed} 个不可用`
-    output += `\n✅ 已更新 ${updated} 个配置文件（仅写入测试通过的 Key）`
+    output += `\n📊 测试结果:  ${passed} 个可用 |  ${failed} 个不可用`
+    output += `\n 已更新 ${updated} 个配置文件（仅写入测试通过的 Key）`
     if (updated === 0) {
-      output += '\n⚠️ 所有 Key 均不可用，可能是代理服务器或 GitHub 源有问题'
+      output += '\n 所有 Key 均不可用，可能是代理服务器或 GitHub 源有问题'
     }
     output += `\n💡 现在可以使用 d.bat free${startIdx}~free${startIdx + updated - 1} 启动`
     log('INFO', '全量更新完成', { total: maxFiles, passed, failed, updated })
@@ -636,7 +636,7 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
     // 更新单个文件
     const idx = parseInt(cmd.replace(/\D/g, ''))
     if (idx < 5) {
-      return { type: 'text', value: `${timeStamp} ❌ free${idx} 是注册方案，本命令仅支持更新 free5 及以上配置文件。` }
+      return { type: 'text', value: `${timeStamp}  free${idx} 是注册方案，本命令仅支持更新 free5 及以上配置文件。` }
     }
     log('INFO', `开始更新单个配置文件`, { filename: `free${idx}.json` })
 
@@ -644,7 +644,7 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
     const keys = await fetchLatestKeys()
     if (keys.length === 0) {
       log('ERROR', `free${idx} 更新失败：获取 Key 为空`)
-      return { type: 'text', value: `${timeStamp} ❌ 无法从 GitHub 获取最新 Key。\n\n` +
+      return { type: 'text', value: `${timeStamp}  无法从 GitHub 获取最新 Key。\n\n` +
         `可能原因:\n` +
         `  1. 原仓库 alistaitsacle/free-llm-api-keys 已被 GitHub 封禁\n` +
         `  2. 你的网络环境无法访问 GitHub (DNS 被劫持)\n` +
@@ -660,7 +660,7 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
     const localIdx = idx - 5
     if (localIdx < 0 || localIdx >= keys.length) {
       log('WARN', `free${idx} 超出范围`, { localIdx, keyCount: keys.length })
-      return { type: 'text', value: `${timeStamp} ❌ free${idx} 超出范围，目前可用免费 Key 范围 free5~free${keys.length + 4}` }
+      return { type: 'text', value: `${timeStamp}  free${idx} 超出范围，目前可用免费 Key 范围 free5~free${keys.length + 4}` }
     }
 
     const entry = keys[localIdx]
@@ -669,11 +669,11 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
     const displayName = modelChineseName(entry.model)
 
     // 先输出正在测试的提示
-    pushProgress(`📡 正在测试 ${displayName} ... ⏳`)
+    pushProgress(`📡 正在测试 ${displayName} ... `)
 
     // 先测试可用性
     const testResult = await testKey(entry)
-    let output = `📡 测试 ${displayName} ... ${testResult.ok ? '✅' : '❌'} ${testResult.message}\n`
+    let output = `📡 测试 ${displayName} ... ${testResult.ok ? '' : ''} ${testResult.message}\n`
 
     if (testResult.ok) {
       // 测试通过才写入
@@ -685,11 +685,11 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
       }
       writeConfig(filename, config)
       log('INFO', `配置文件已更新`, { filename, model: entry.model, budget: entry.budget, keyPreview: entry.key.substring(0, 12) + '...' })
-      output += `\n✅ free${idx}.json 已更新\n  模型: ${displayName}\n  预算: ${entry.budget}\n  过期: ${entry.expires}\n  端点: ${isAnthropic ? BASE_ANTHROPIC : BASE_OPENAI}\n\n💡 使用 d.bat free${idx} 启动`
-      pushProgress(`📡 测试 ${displayName} ... ✅ ${testResult.message}`, true)
+      output += `\n free${idx}.json 已更新\n  模型: ${displayName}\n  预算: ${entry.budget}\n  过期: ${entry.expires}\n  端点: ${isAnthropic ? BASE_ANTHROPIC : BASE_OPENAI}\n\n💡 使用 d.bat free${idx} 启动`
+      pushProgress(`📡 测试 ${displayName} ...  ${testResult.message}`, true)
     } else {
-      output += `\n❌ free${idx}.json 跳过更新（Key 不可用）\n  原因: ${testResult.message}`
-      pushProgress(`📡 测试 ${displayName} ... ❌ ${testResult.message}`, true)
+      output += `\n free${idx}.json 跳过更新（Key 不可用）\n  原因: ${testResult.message}`
+      pushProgress(`📡 测试 ${displayName} ...  ${testResult.message}`, true)
     }
 
     return { type: 'text', value: timeStamp + '\n' + output }
@@ -727,7 +727,7 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
       }
     }
 
-    output += '📖 用法: \n用法:\n'
+    output += ' 用法: \n用法:\n'
     output += '  /updateapikey           - 查看当前状态\n'
     output += '  /updateapikey all      - 从 GitHub 拉取最新 Key，更新 free5~free36\n'
     output += '  /updateapikey free5    - 仅更新指定编号的配置文件\n'

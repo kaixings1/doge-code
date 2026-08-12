@@ -419,7 +419,7 @@ export const call: LocalCommandCall = async (args) => {
         format,
         nodeCount: 0,
         edgeCount: 0,
-        errors: [`❌ 不支持的图表类型: ${diagramType}`],
+        errors: [` 不支持的图表类型: ${diagramType}`],
       }
   }
 
@@ -433,7 +433,7 @@ export const call: LocalCommandCall = async (args) => {
   if (!result.success) {
     return {
       type: 'text',
-      value: `❌ 生成失败:\n${result.errors.join('\n')}`,
+      value: ` 生成失败:\n${result.errors.join('\n')}`,
     }
   }
 
@@ -449,12 +449,12 @@ export const call: LocalCommandCall = async (args) => {
       fs.writeFileSync(output, result.diagram, 'utf-8')
       return {
         type: 'text',
-        value: `${outputText}\n\n✅ 已保存到: ${output}`,
+        value: `${outputText}\n\n 已保存到: ${output}`,
       }
     } catch (error) {
       return {
         type: 'text',
-        value: `${outputText}\n\n❌ 保存失败: ${error}`,
+        value: `${outputText}\n\n 保存失败: ${error}`,
       }
     }
   }

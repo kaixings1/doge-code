@@ -69,7 +69,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       if (risk) {
         if (risk.level === 'critical' || risk.level === 'high') highRiskCount++;
         if (risk.level === 'medium') mediumRiskCount++;
-        const icon = risk.level === 'critical' ? '🔴' : risk.level === 'high' ? '🟠' : risk.level === 'medium' ? '🟡' : '🟢';
+        const icon = risk.level === 'critical' ? '' : risk.level === 'high' ? '🟠' : risk.level === 'medium' ? '🟡' : '🟢';
         return `${icon} ${tool} (${risk.level})`;
       }
       return `⚪ ${tool} (未知风险)`;
@@ -81,7 +81,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
         '📊 高级权限分析报告',
         '====================',
         '',
-        `🛠️ 工具使用统计:`,
+        `🛠 工具使用统计:`,
         ` • 使用工具数: ${toolList.length}`,
         ` • 高风险工具: ${highRiskCount}`,
         ` • 中风险工具: ${mediumRiskCount}`,
@@ -105,21 +105,21 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
     return {
       type: 'jsx',
       render: () => [
-        '⚠️ 工具风险评估报告',
+        ' 工具风险评估报告',
         '===================',
         '',
         `📊 风险分布:`,
-        ` • 🔴 严重风险: ${criticalTools.length}个工具`,
+        ` •  严重风险: ${criticalTools.length}个工具`,
         ` • 🟠 高风险: ${highTools.length}个工具`,
         ` • 🟡 中风险: ${mediumTools.length}个工具`,
         '',
-        `🔴 严重风险工具:`,
+        ` 严重风险工具:`,
         ...criticalTools.map(([name, risk]) => ` • ${name}: ${risk.score}/100 - ${risk.reasons.join(', ')}`),
         '',
         `🟠 高风险工具:`,
         ...highTools.map(([name, risk]) => ` • ${name}: ${risk.score}/100 - ${risk.reasons.join(', ')}`),
         '',
-        `🛡️ 安全建议:`,
+        `🛡 安全建议:`,
         ` • 为严重风险工具设置审批流程`,
         ` • 将高频使用的高风险工具加入白名单`,
         ` • 定期审查中风险工具的使用记录`,
@@ -160,13 +160,13 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
     return {
       type: 'jsx',
       render: () => [
-        '🛡️ 权限拦截测试',
+        '🛡 权限拦截测试',
         '==============',
         '',
         `🔧 测试工具: ${toolName}`,
         `📊 风险等级: ${risk.level.toUpperCase()}`,
         `📈 风险分数: ${risk.score}/100`,
-        `✅ 是否允许: ${allowed ? '是' : '否'}`,
+        ` 是否允许: ${allowed ? '是' : '否'}`,
         `📝 原因: ${reason}`,
         '',
         `📋 风险原因:`,
@@ -214,7 +214,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
         ` • 拦截使用: ${blocked.length}个`,
         ` • 通过率: ${((allowed.length / results.length) * 100).toFixed(1)}%`,
         '',
-        `✅ 允许使用的工具:`,
+        ` 允许使用的工具:`,
         ...allowed.slice(0, 5).map(r => ` • ${r.tool} (${r.riskLevel})`),
         allowed.length > 5 ? ` • ...还有 ${allowed.length - 5} 个工具` : '',
         '',
@@ -240,7 +240,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       ' • risks - 查看风险评估',
       ' • intercept - 测试权限拦截',
       ' • test-all - 测试所有工具权限',
-      '📖 用法:  • help - 查看完整帮助',
+      ' 用法:  • help - 查看完整帮助',
     ].join('\n')
   };
 };

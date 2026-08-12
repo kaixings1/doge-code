@@ -681,7 +681,7 @@ export function getAssistantMessageFromError(
         error: 'invalid_request',
       })
     } else {
-      const baseMessage = '❌ 错误: API 错误：400 工具使用并发问题。'
+      const baseMessage = ' 错误: API 错误：400 工具使用并发问题。'
       const rewindInstruction = getIsNonInteractiveSession()
         ? ''
         : ' 运行 /rewind 恢复对话。'

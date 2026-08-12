@@ -229,7 +229,7 @@ export const call: LocalCommandCall = async (args) => {
   if (!url) {
     return {
       type: 'text',
-      value: '❌ 请提供 URL\n\n用法: /api-debug <METHOD> <URL> [BODY]\n示例: /api-debug GET https://api.example.com/users',
+      value: ' 请提供 URL\n\n用法: /api-debug <METHOD> <URL> [BODY]\n示例: /api-debug GET https://api.example.com/users',
     }
   }
 
@@ -274,7 +274,7 @@ export const call: LocalCommandCall = async (args) => {
   } catch (error) {
     return {
       type: 'text',
-      value: `❌ 请求失败: ${error instanceof Error ? error.message : 'Unknown error'}\n\nURL: ${url}\nMethod: ${method}`,
+      value: ` 请求失败: ${error instanceof Error ? error.message : 'Unknown error'}\n\nURL: ${url}\nMethod: ${method}`,
     }
   }
 }
@@ -297,7 +297,7 @@ function showHistory(): { type: string; value: string } {
 
   const recent = history.slice(-10).reverse()
   recent.forEach((record, i) => {
-    const statusIcon = record.status < 400 ? '✅' : '❌'
+    const statusIcon = record.status < 400 ? '' : ''
     const date = new Date(record.timestamp).toLocaleString('zh-CN', {
       month: 'short',
       day: 'numeric',
@@ -321,12 +321,12 @@ function clearHistory(): { type: string; value: string } {
     }
     return {
       type: 'text',
-      value: '✅ 请求历史已清除',
+      value: ' 请求历史已清除',
     }
   } catch {
     return {
       type: 'text',
-      value: '❌ 清除历史失败',
+      value: ' 清除历史失败',
     }
   }
 }

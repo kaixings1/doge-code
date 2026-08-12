@@ -125,7 +125,7 @@ class PlanStep {
   toString(): string {
     const statusMark = this.status === 'verified' ? '[通过]'
       : this.status === 'executed' ? '[执行]'
-      : this.status === 'failed' ? '❌ 错误: ❌ 错误: ❌ 错误: [失败]'
+      : this.status === 'failed' ? ' 错误:  错误:  错误: [失败]'
       : '[待办]'
     return `${this.index}. ${statusMark} ${this.action}`
   }
@@ -424,7 +424,7 @@ export class OpenHandsStrategy extends BaseLoopStrategy {
       ? `\n\n## 当前计划（v${this.plannerState.currentPlanVersion}，${this.planSteps.length} 步）\n${this.planSteps.map((s) => {
           const statusMark = s.status === 'verified' ? '[通过]'
             : s.status === 'executed' ? '[执行]'
-            : s.status === 'failed' ? '❌ 错误: ❌ 错误: ❌ 错误: [失败]'
+            : s.status === 'failed' ? ' 错误:  错误:  错误: [失败]'
             : '[待办]'
           return `  ${s.index}. ${statusMark} ${s.action}\n     预期: ${s.expectedOutcome}${s.executionResult ? `\n     实际: ${s.executionResult.slice(0, 100)}` : ''}${s.verificationResult ? `\n     验证: ${s.verificationResult.slice(0, 80)}` : ''}`
         }).join('\n')}`
@@ -884,7 +884,7 @@ Planner.plan() → Executor.execute() → Verifier.verify()
     for (const step of this.planSteps) {
       const statusMark = step.status === 'verified' ? '[通过]'
         : step.status === 'executed' ? '[执行]'
-        : step.status === 'failed' ? '❌ 错误: ❌ 错误: ❌ 错误: [失败]'
+        : step.status === 'failed' ? ' 错误:  错误:  错误: [失败]'
         : '[待办]'
       lines.push(`${step.index}. ${statusMark} ${step.action}`)
       lines.push(`   预期输出: ${step.expectedOutcome}`)

@@ -77,7 +77,7 @@ export function ToolPanel({ cwd, theme }: ToolPanelProps): React.JSX.Element {
       {pendingConfirm && (
         <div style={{ position: 'absolute', inset: 0, zIndex: 100, background: `${c.bg}99`, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px' }}>
           <div style={{ background: c.surface, border: `1px solid ${c.errorBorder}`, borderRadius: '6px', padding: '16px', maxWidth: '420px', width: '90%', boxShadow: `0 8px 32px ${c.errorBorder}40` }}>
-            <div style={{ fontSize: '13px', fontWeight: 600, color: c.errorText, marginBottom: '8px' }}>⚠ 工具执行确认</div>
+            <div style={{ fontSize: '13px', fontWeight: 600, color: c.errorText, marginBottom: '8px' }}> 工具执行确认</div>
             <div style={{ fontSize: '12px', color: c.text, marginBottom: '6px' }}>
               工具 <code style={{ background: c.bgPanel, padding: '1px 6px', borderRadius: '3px', color: c.accent }}>{pendingConfirm.tool}</code> 可能修改系统状态。
             </div>

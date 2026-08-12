@@ -33,7 +33,7 @@ export const DataAnalysisTool: Tool = {
     const resolvedPath = path.resolve(targetPath)
 
     if (!fs.existsSync(resolvedPath)) {
-      return { type: 'text', value: `❌ 文件不存在: ${resolvedPath}` }
+      return { type: 'text', value: ` 文件不存在: ${resolvedPath}` }
     }
 
     try {
@@ -67,10 +67,10 @@ export const DataAnalysisTool: Tool = {
         case 'trends':
           return trendsAnalysis(content, format)
         default:
-          return { type: 'text', value: `❌ 未知操作: ${action}` }
+          return { type: 'text', value: ` 未知操作: ${action}` }
       }
     } catch (err) {
-      return { type: 'text', value: `❌ 分析失败: ${err instanceof Error ? err.message : String(err)}` }
+      return { type: 'text', value: ` 分析失败: ${err instanceof Error ? err.message : String(err)}` }
     }
   },
 }
@@ -115,7 +115,7 @@ function visualizeData(content: string, format: string) {
               suggestions.push(`  - 🍩 饼图 — 展示 ${field} 的占比分布（${unique} 个唯一值）`)
               suggestions.push(`  - 📊 水平柱状图 — 对比 ${field} 各类别数量`)
               if (values.length > 100) {
-                suggestions.push(`  - ☁️ 词云 — 高频 ${field} 值可视化`)
+                suggestions.push(`  - ☁ 词云 — 高频 ${field} 值可视化`)
               }
             }
           }
@@ -133,13 +133,13 @@ function visualizeData(content: string, format: string) {
         suggestions.push('- 单值数据，建议直接展示数字（KPI 卡片）')
       }
     } catch {
-      return { type: 'text', value: '❌ JSON 解析失败，无法生成可视化建议' }
+      return { type: 'text', value: ' JSON 解析失败，无法生成可视化建议' }
     }
   } else if (format === 'csv' || format === 'tsv') {
     const delimiter = format === 'csv' ? ',' : '\t'
     const rows = content.split('\n').filter(r => r.trim())
     if (rows.length < 2) {
-      return { type: 'text', value: '❌ 数据行数不足，无法生成可视化建议' }
+      return { type: 'text', value: ' 数据行数不足，无法生成可视化建议' }
     }
     const headers = rows[0].split(delimiter)
     lines.push(`## 📋 数据结构`)
@@ -174,7 +174,7 @@ function visualizeData(content: string, format: string) {
   suggestions.forEach(s => lines.push(`- ${s}`))
 
   lines.push('')
-  lines.push('## 🛠️ 推荐工具')
+  lines.push('## 🛠 推荐工具')
   lines.push('- 前端图表: ECharts / Chart.js / Recharts')
   lines.push('- 数据分析: Python Matplotlib / Plotly')
   lines.push('- 快速可视化: 在线工具（Datawrapper / Flourish）')
@@ -210,7 +210,7 @@ function statsAnalysis(content: string, format: string) {
         })
       }
     } catch {
-      return { type: 'text', value: '❌ JSON 解析失败' }
+      return { type: 'text', value: ' JSON 解析失败' }
     }
   } else if (format === 'csv' || format === 'tsv') {
     const delimiter = format === 'csv' ? ',' : '\t'
@@ -228,7 +228,7 @@ function statsAnalysis(content: string, format: string) {
   }
 
   if (numericValues.length < 2) {
-    return { type: 'text', value: '❌ 数值数据不足（至少需要2个数值），无法进行统计分析' }
+    return { type: 'text', value: ' 数值数据不足（至少需要2个数值），无法进行统计分析' }
   }
 
   const sorted = [...numericValues].sort((a, b) => a - b)
@@ -304,7 +304,7 @@ function statsAnalysis(content: string, format: string) {
   const outliers = sorted.filter(v => v < lowerBound || v > upperBound)
   if (outliers.length > 0) {
     lines.push('')
-    lines.push(`## ⚠️ 离群值检测（${outliers.length} 个）`)
+    lines.push(`##  离群值检测（${outliers.length} 个）`)
     lines.push(`- 范围: [${lowerBound.toFixed(2)}, ${upperBound.toFixed(2)}]`)
     lines.push(`- 离群值: ${outliers.slice(0, 10).join(', ')}${outliers.length > 10 ? '...' : ''}`)
   }
@@ -356,13 +356,13 @@ function trendsAnalysis(content: string, format: string) {
         data.forEach((v: number, idx: number) => points.push({ time: `#${idx + 1}`, value: v }))
       }
     } catch {
-      return { type: 'text', value: '❌ JSON 解析失败' }
+      return { type: 'text', value: ' JSON 解析失败' }
     }
   } else if (format === 'csv' || format === 'tsv') {
     const delimiter = format === 'csv' ? ',' : '\t'
     const rows = content.split('\n').filter(r => r.trim())
     if (rows.length < 2) {
-      return { type: 'text', value: '❌ 数据行数不足，无法进行趋势分析' }
+      return { type: 'text', value: ' 数据行数不足，无法进行趋势分析' }
     }
     const headers = rows[0].split(delimiter).map(h => h.trim())
     const timeIdx = headers.findIndex(h => /time|date|day|month|year|日期|时间/i.test(h))
@@ -389,7 +389,7 @@ function trendsAnalysis(content: string, format: string) {
   }
 
   if (points.length < 3) {
-    return { type: 'text', value: `❌ 有效数据点不足（${points.length}/3），无法进行趋势分析。\n\n请提供包含时间+数值的序列数据，例如：\n- CSV: 日期,销量\n2024-01-01,100\n2024-01-02,120` }
+    return { type: 'text', value: ` 有效数据点不足（${points.length}/3），无法进行趋势分析。\n\n请提供包含时间+数值的序列数据，例如：\n- CSV: 日期,销量\n2024-01-01,100\n2024-01-02,120` }
   }
 
   const values = points.map(p => p.value)
@@ -431,7 +431,7 @@ function trendsAnalysis(content: string, format: string) {
   } else if (slope < 0) {
     trend = '🟡 缓慢下降（相关性中等）'
   } else {
-    trend = '➡️ 平稳'
+    trend = '➡ 平稳'
   }
 
   lines.push(`## 📋 数据规模`)
@@ -477,7 +477,7 @@ function trendsAnalysis(content: string, format: string) {
     lines.push(`- 未来第${i}点: ${next.toFixed(2)}`)
   }
   lines.push('')
-  lines.push('⚠️ 注：此预测基于线性回归的简单外推，未考虑季节性/周期性因素，仅供参考。')
+  lines.push(' 注：此预测基于线性回归的简单外推，未考虑季节性/周期性因素，仅供参考。')
 
   return { type: 'text', value: lines.join('\n') }
 }
@@ -518,14 +518,14 @@ function analyzeJson(content: string, lines: string[]) {
 
     return { type: 'text', value: lines.join('\n') }
   } catch (err) {
-    return { type: 'text', value: `❌ JSON 解析失败: ${err instanceof Error ? err.message : String(err)}` }
+    return { type: 'text', value: ` JSON 解析失败: ${err instanceof Error ? err.message : String(err)}` }
   }
 }
 
 function analyzeDelimited(content: string, lines: string[], delimiter: string) {
   const rows = content.split('\n').filter(row => row.trim())
   if (rows.length === 0) {
-    return { type: 'text', value: '❌ 文件为空' }
+    return { type: 'text', value: ' 文件为空' }
   }
 
   const headers = rows[0].split(delimiter)
@@ -597,7 +597,7 @@ export const PerformanceProfiler: Tool = {
     const resolvedPath = path.resolve(targetPath)
 
     if (!fs.existsSync(resolvedPath)) {
-      return { type: 'text', value: `❌ 路径不存在: ${resolvedPath}` }
+      return { type: 'text', value: ` 路径不存在: ${resolvedPath}` }
     }
 
     // 根据 action 选择不同的分析侧重
@@ -611,7 +611,7 @@ export const PerformanceProfiler: Tool = {
       case 'memory':
         return memoryAnalysis(resolvedPath)
       default:
-        return { type: 'text', value: `❌ 未知操作: ${action}` }
+        return { type: 'text', value: ` 未知操作: ${action}` }
     }
   },
 }
@@ -621,7 +621,7 @@ export const PerformanceProfiler: Tool = {
 // ============================================================================
 
 function profilePerformance(targetPath: string) {
-  const lines: string[] = ['# ⚡ 性能综合分析报告\n']
+  const lines: string[] = ['#  性能综合分析报告\n']
   const issues: Array<{ severity: string; type: string; detail: string }> = []
 
   function checkFile(filePath: string) {
@@ -636,7 +636,7 @@ function profilePerformance(targetPath: string) {
         issues.push({ severity: '🟡', type: '循环中访问length', detail: `${path.basename(filePath)}:${idx + 1}` })
       }
       if (/\bwhile\s*\(true\)/.test(trimmed)) {
-        issues.push({ severity: '🔴', type: '死循环风险', detail: `${path.basename(filePath)}:${idx + 1}` })
+        issues.push({ severity: '', type: '死循环风险', detail: `${path.basename(filePath)}:${idx + 1}` })
       }
       if (/\bJSON\.parse\s*\(/.test(trimmed) && !trimmed.includes('try')) {
         issues.push({ severity: '🟡', type: 'JSON.parse无try-catch', detail: `${path.basename(filePath)}:${idx + 1}` })
@@ -663,21 +663,21 @@ function profilePerformance(targetPath: string) {
   lines.push(`- 发现问题: ${issues.length} 个`)
   lines.push('')
 
-  const high = issues.filter(i => i.severity === '🔴').length
+  const high = issues.filter(i => i.severity === '').length
   const medium = issues.filter(i => i.severity === '🟡').length
   const low = issues.filter(i => i.severity === '🟢').length
 
   lines.push(`## 📊 严重程度`)
-  lines.push(`- 🔴 高危: ${high}`)
+  lines.push(`-  高危: ${high}`)
   lines.push(`- 🟡 中危: ${medium}`)
   lines.push(`- 🟢 低危: ${low}`)
   lines.push('')
 
   if (issues.length > 0) {
-    lines.push('## ⚠️ 问题列表（前20条）')
+    lines.push('##  问题列表（前20条）')
     issues.slice(0, 20).forEach(i => lines.push(`- ${i.severity} [${i.type}] ${i.detail}`))
   } else {
-    lines.push('## ✅ 未发现明显性能问题')
+    lines.push('##  未发现明显性能问题')
   }
 
   return { type: 'text', value: lines.join('\n') }
@@ -704,7 +704,7 @@ function benchmarkAnalysis(targetPath: string) {
         const forCount = (surrounding.match(/\bfor\b/g) || []).length
         if (forCount >= 2) {
           issues.push({
-            severity: '🔴',
+            severity: '',
             type: '多重嵌套循环',
             detail: `${path.basename(filePath)}:${idx + 1}`,
             estimate: forCount === 2 ? 'O(n²) 复杂度' : 'O(n³) 复杂度',
@@ -761,22 +761,22 @@ function benchmarkAnalysis(targetPath: string) {
   lines.push(`- 发现性能热点: ${issues.length} 个`)
   lines.push('')
 
-  const high = issues.filter(i => i.severity === '🔴').length
+  const high = issues.filter(i => i.severity === '').length
   const medium = issues.filter(i => i.severity === '🟡').length
 
   lines.push('')
   lines.push(`## 📊 复杂度分布`)
-  lines.push(`- 🔴 O(n²)/O(n³) 热点: ${high} 个`)
+  lines.push(`-  O(n²)/O(n³) 热点: ${high} 个`)
   lines.push(`- 🟡 可优化点: ${medium} 个`)
   lines.push('')
 
   if (issues.length > 0) {
-    lines.push('## ⚠️ 性能热点列表（前20条）')
+    lines.push('##  性能热点列表（前20条）')
     issues.slice(0, 20).forEach(i => {
       lines.push(`- ${i.severity} [${i.type}] ${i.detail} — ${i.estimate}`)
     })
   } else {
-    lines.push('## ✅ 未发现明显的算法复杂度问题')
+    lines.push('##  未发现明显的算法复杂度问题')
   }
 
   return { type: 'text', value: lines.join('\n') }
@@ -800,7 +800,7 @@ function bottlenecksAnalysis(targetPath: string) {
       // 同步文件操作
       if (/fs\.(readFileSync|writeFileSync|readdirSync|statSync|existsSync)/.test(trimmed)) {
         issues.push({
-          severity: '🔴',
+          severity: '',
           type: '同步文件操作',
           detail: `${path.basename(filePath)}:${idx + 1}`,
           advice: '会阻塞事件循环，建议改用异步 API（fs.promises）',
@@ -810,7 +810,7 @@ function bottlenecksAnalysis(targetPath: string) {
       // 同步 HTTP 请求
       if (/https?\.[a-zA-Z]+Sync|XMLHttpRequest/.test(trimmed) && /sync/i.test(trimmed)) {
         issues.push({
-          severity: '🔴',
+          severity: '',
           type: '同步网络请求',
           detail: `${path.basename(filePath)}:${idx + 1}`,
           advice: '同步网络请求会完全阻塞 UI，必须改为异步',
@@ -845,7 +845,7 @@ function bottlenecksAnalysis(targetPath: string) {
       // execSync / spawnSync 同步子进程
       if (/execSync|spawnSync|execFileSync/.test(trimmed)) {
         issues.push({
-          severity: '🔴',
+          severity: '',
           type: '同步子进程调用',
           detail: `${path.basename(filePath)}:${idx + 1}`,
           advice: '阻塞直到子进程完成，建议改用异步 spawn/exec',
@@ -861,23 +861,23 @@ function bottlenecksAnalysis(targetPath: string) {
   lines.push(`- 发现瓶颈: ${issues.length} 个`)
   lines.push('')
 
-  const high = issues.filter(i => i.severity === '🔴').length
+  const high = issues.filter(i => i.severity === '').length
   const medium = issues.filter(i => i.severity === '🟡').length
 
   lines.push('')
   lines.push(`## 📊 瓶颈分布`)
-  lines.push(`- 🔴 严重阻塞: ${high} 个`)
+  lines.push(`-  严重阻塞: ${high} 个`)
   lines.push(`- 🟡 中等风险: ${medium} 个`)
   lines.push('')
 
   if (issues.length > 0) {
-    lines.push('## ⚠️ 瓶颈列表（前20条）')
+    lines.push('##  瓶颈列表（前20条）')
     issues.slice(0, 20).forEach(i => {
       lines.push(`- ${i.severity} [${i.type}] ${i.detail}`)
       lines.push(`  💡 ${i.advice}`)
     })
   } else {
-    lines.push('## ✅ 未发现明显性能瓶颈')
+    lines.push('##  未发现明显性能瓶颈')
   }
 
   return { type: 'text', value: lines.join('\n') }
@@ -983,13 +983,13 @@ function memoryAnalysis(targetPath: string) {
   lines.push('')
 
   if (issues.length > 0) {
-    lines.push('## ⚠️ 内存问题列表（前20条）')
+    lines.push('##  内存问题列表（前20条）')
     issues.slice(0, 20).forEach(i => {
       lines.push(`- ${i.severity} [${i.type}] ${i.detail}`)
       lines.push(`  💡 ${i.advice}`)
     })
   } else {
-    lines.push('## ✅ 未发现明显内存问题')
+    lines.push('##  未发现明显内存问题')
   }
 
   return { type: 'text', value: lines.join('\n') }
@@ -1051,7 +1051,7 @@ export const GitWorkflowTool: Tool = {
     const gitDir = path.join(resolvedPath, '.git')
 
     if (!fs.existsSync(gitDir)) {
-      return { type: 'text', value: `❌ 不是 Git 仓库: ${resolvedPath}` }
+      return { type: 'text', value: ` 不是 Git 仓库: ${resolvedPath}` }
     }
 
     const lines: string[] = ['# 🔀 Git 工作流报告\n']
@@ -1073,7 +1073,7 @@ export const GitWorkflowTool: Tool = {
             lines.push('## 📁 更改文件')
             files.forEach(f => lines.push(`- ${f}`))
           } else {
-            lines.push('## ✅ 工作区干净')
+            lines.push('##  工作区干净')
           }
 
           // 检查远程同步
@@ -1132,7 +1132,7 @@ export const GitWorkflowTool: Tool = {
             lines.push(`## 📦 暂存列表`)
             stash.split('\n').filter(Boolean).forEach(s => lines.push(`- ${s}`))
           } else {
-            lines.push('## ✅ 暂存区为空')
+            lines.push('##  暂存区为空')
           }
           break
         }
@@ -1145,7 +1145,7 @@ export const GitWorkflowTool: Tool = {
             lines.push(diff)
             lines.push('```')
           } else {
-            lines.push('## ✅ 无未提交更改')
+            lines.push('##  无未提交更改')
           }
           break
         }
@@ -1153,7 +1153,7 @@ export const GitWorkflowTool: Tool = {
 
       return { type: 'text', value: lines.join('\n') }
     } catch (err) {
-      return { type: 'text', value: `❌ Git 操作失败: ${err instanceof Error ? err.message : String(err)}` }
+      return { type: 'text', value: ` Git 操作失败: ${err instanceof Error ? err.message : String(err)}` }
     }
   },
 }
@@ -1183,7 +1183,7 @@ export const DependencyAnalyzer: Tool = {
     const pkgPath = path.join(resolvedPath, 'package.json')
 
     if (!fs.existsSync(pkgPath)) {
-      return { type: 'text', value: `❌ 未找到 package.json: ${pkgPath}` }
+      return { type: 'text', value: ` 未找到 package.json: ${pkgPath}` }
     }
 
     const lines: string[] = ['# 📦 依赖分析报告\n']
@@ -1230,13 +1230,13 @@ export const DependencyAnalyzer: Tool = {
             }
 
             if (outdated.length > 0) {
-              lines.push('## ⚠️ 版本不一致')
+              lines.push('##  版本不一致')
               outdated.forEach(o => lines.push(`- ${o}`))
             } else {
-              lines.push('## ✅ 版本一致')
+              lines.push('##  版本一致')
             }
           } catch {
-            lines.push('⚠️ 无法解析 package-lock.json')
+            lines.push(' 无法解析 package-lock.json')
           }
         }
         break
@@ -1265,16 +1265,16 @@ export const DependencyAnalyzer: Tool = {
         }
 
         if (issues.length > 0) {
-          lines.push('## ⚠️ 发现的问题')
+          lines.push('##  发现的问题')
           issues.forEach(i => lines.push(`- ${i}`))
         } else {
-          lines.push('## ✅ 未发现明显安全问题')
+          lines.push('##  未发现明显安全问题')
         }
         break
       }
 
       case 'graph': {
-        lines.push('## 🕸️ 依赖图描述')
+        lines.push('## 🕸 依赖图描述')
         lines.push('')
         lines.push('```mermaid')
         lines.push('graph TD')
@@ -1321,7 +1321,7 @@ export const TestGenerator: Tool = {
     const resolvedPath = path.resolve(targetPath)
 
     if (!fs.existsSync(resolvedPath)) {
-      return { type: 'text', value: `❌ 路径不存在: ${resolvedPath}` }
+      return { type: 'text', value: ` 路径不存在: ${resolvedPath}` }
     }
 
     switch (action) {
@@ -1332,7 +1332,7 @@ export const TestGenerator: Tool = {
       case 'missing':
         return findMissingTests(resolvedPath)
       default:
-        return { type: 'text', value: `❌ 未知操作: ${action}` }
+        return { type: 'text', value: ` 未知操作: ${action}` }
     }
   },
 }
@@ -1461,17 +1461,17 @@ function analyzeCoverage(targetPath: string) {
 
   // 覆盖率评级
   const cov = parseFloat(fileCoverage)
-  lines.push(`## 🏷️ 覆盖率评级`)
+  lines.push(`## 🏷 覆盖率评级`)
   if (cov >= 80) lines.push('- 🟢 优秀（≥80%），测试覆盖良好')
   else if (cov >= 50) lines.push('- 🟡 良好（50-80%），建议补充关键路径测试')
   else if (cov >= 20) lines.push('- 🟠 一般（20-50%），测试覆盖不足')
-  else lines.push('- 🔴 偏低（<20%），急需补充测试')
+  else lines.push('-  偏低（<20%），急需补充测试')
   lines.push('')
 
   // 未覆盖的文件列表
   const uncoveredFiles = sourceFiles.filter(sf => !fileHasTest.has(sf.path))
   if (uncoveredFiles.length > 0) {
-    lines.push(`## ⚠️ 未覆盖的文件（${uncoveredFiles.length} 个，前15个）`)
+    lines.push(`##  未覆盖的文件（${uncoveredFiles.length} 个，前15个）`)
     uncoveredFiles.slice(0, 15).forEach(sf => {
       const funcNames = sf.functions.slice(0, 5).join(', ')
       lines.push(`- ${path.relative(targetPath, sf.path)}${funcNames ? ` [函数: ${funcNames}]` : ''}`)
@@ -1557,9 +1557,9 @@ function suggestTests(targetPath: string, isDir: boolean) {
   lines.push('')
 
   if (suggestions.length === 0) {
-    lines.push('## ✅ 未发现需要测试的代码')
+    lines.push('##  未发现需要测试的代码')
   } else {
-    lines.push('## ⚠️ 建议列表（前20条）')
+    lines.push('##  建议列表（前20条）')
     suggestions.slice(0, 20).forEach(s => {
       lines.push(`- [${s.type}] ${s.file} — ${s.suggestion}`)
     })
@@ -1569,7 +1569,7 @@ function suggestTests(targetPath: string, isDir: boolean) {
 }
 
 function findMissingTests(targetPath: string) {
-  const lines: string[] = ['# 🔍 缺少测试的文件\n']
+  const lines: string[] = ['#  缺少测试的文件\n']
   const sourceFiles: string[] = []
   const testFiles = new Set<string>()
 
@@ -1604,7 +1604,7 @@ function findMissingTests(targetPath: string) {
   lines.push('')
 
   if (missing.length > 0) {
-    lines.push('## ⚠️ 缺少测试的文件（前20个）')
+    lines.push('##  缺少测试的文件（前20个）')
     missing.slice(0, 20).forEach(f => lines.push(`- ${path.relative(targetPath, f)}`))
   }
 
@@ -1634,7 +1634,7 @@ export const APIAnalyzer: Tool = {
     const resolvedPath = path.resolve(targetPath)
 
     if (!fs.existsSync(resolvedPath)) {
-      return { type: 'text', value: `❌ 路径不存在: ${resolvedPath}` }
+      return { type: 'text', value: ` 路径不存在: ${resolvedPath}` }
     }
 
     // 根据 action 执行不同分析
@@ -1646,7 +1646,7 @@ export const APIAnalyzer: Tool = {
       case 'types':
         return analyzeApiTypes(resolvedPath)
       default:
-        return { type: 'text', value: `❌ 未知操作: ${action}` }
+        return { type: 'text', value: ` 未知操作: ${action}` }
     }
   },
 }
@@ -1718,7 +1718,7 @@ function collectEndpoints(targetPath: string): ApiEndpoint[] {
 // ============================================================================
 
 function analyzeRoutes(targetPath: string) {
-  const lines: string[] = ['# 🗺️ 路由定义分析\n']
+  const lines: string[] = ['# 🗺 路由定义分析\n']
 
   // 收集路由挂载（app.use('/api', router) 等）
   interface RouteMount { prefix: string; router: string; file: string; line: number }
@@ -1803,7 +1803,7 @@ function analyzeRoutes(targetPath: string) {
       if (eps.length > 15) lines.push(`- ... 还有 ${eps.length - 15} 个`)
     })
   } else {
-    lines.push('## ⚠️ 未发现路由定义')
+    lines.push('##  未发现路由定义')
   }
 
   return { type: 'text', value: lines.join('\n') }
@@ -1821,7 +1821,7 @@ function analyzeEndpoints(targetPath: string) {
   lines.push('')
 
   if (endpoints.length === 0) {
-    lines.push('## ✅ 未发现 API 端点')
+    lines.push('##  未发现 API 端点')
     return { type: 'text', value: lines.join('\n') }
   }
 
@@ -1842,7 +1842,7 @@ function analyzeEndpoints(targetPath: string) {
   endpoints.forEach(ep => {
     byStyle.set(ep.style, (byStyle.get(ep.style) || 0) + 1)
   })
-  lines.push('## 🏗️ 定义方式')
+  lines.push('## 🏗 定义方式')
   byStyle.forEach((count, style) => lines.push(`- ${style}: ${count} 个`))
   lines.push('')
 
@@ -1987,13 +1987,13 @@ function analyzeApiTypes(targetPath: string) {
     // 最复杂类型（字段最多）
     const topComplex = [...types].sort((a, b) => b.fields.length - a.fields.length).slice(0, 5)
     if (topComplex.length > 0) {
-      lines.push('## 🏋️ 最复杂类型（字段最多）')
+      lines.push('## 🏋 最复杂类型（字段最多）')
       topComplex.forEach(t => {
         lines.push(`- **${t.name}**: ${t.fields.length} 个字段 (${t.file}:${t.line})`)
       })
     }
   } else {
-    lines.push('## ⚠️ 未发现 TypeScript 类型定义')
+    lines.push('##  未发现 TypeScript 类型定义')
   }
 
   return { type: 'text', value: lines.join('\n') }

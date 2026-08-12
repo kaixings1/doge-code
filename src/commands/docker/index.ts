@@ -203,12 +203,12 @@ export const call: LocalJSXCommandCall = async (args) => {
     }
     else if (c === 'scan') {
       const image = p[1]
-      if (!image) return { type: 'text', value: 'Usage: /docker scan <image>' }
+      if (!image) return { type: 'text', value: '📖 用法：/docker scan <镜像>' }
       const r1 = safeExec(`docker scout cves ${image} 2>&1`, 120000)
       if (r1.ok) return { type: 'text', value: r1.output.slice(0, 2000) }
       const r2 = safeExec(`trivy image ${image} 2>&1`, 120000)
       if (r2.ok) return { type: 'text', value: r2.output.slice(0, 2000) }
-      return { type: 'text', value: 'Install docker scout or trivy for image scanning\n  docker scout: docker scout install\n  trivy: npm install -g trivy' }
+      return { type: 'text', value: '💡 安装 docker scout 或 trivy 进行镜像扫描：\n  docker scout：docker scout install\n  trivy：npm install -g trivy' }
     }
     else if (c === 'config') {
       const key = p[1]; const value = p.slice(2).join(' ')

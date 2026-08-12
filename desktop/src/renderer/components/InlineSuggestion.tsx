@@ -34,8 +34,8 @@ interface InlineSuggestionProps {
 }
 
 const severityConfig = {
-  info: { icon: 'ℹ️', color: '#4FC3F7' },
-  warning: { icon: '⚠️', color: '#FFB74D' },
+  info: { icon: 'ℹ', color: '#4FC3F7' },
+  warning: { icon: '', color: '#FFB74D' },
   suggestion: { icon: '💡', color: '#81C784' },
 }
 
@@ -61,7 +61,7 @@ export function InlineSuggestion({ suggestions, onDismiss, onDismissAll, theme }
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
         <span style={{ fontWeight: 600, color: theme.accent }}>
-          🔍 智能建议 ({suggestions.length})
+           智能建议 ({suggestions.length})
         </span>
         <span
           style={{ cursor: 'pointer', color: theme.textFaint, fontSize: '10px' }}

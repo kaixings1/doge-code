@@ -207,7 +207,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       return {
         type: 'jsx',
         render: () => [
-          '❌ 未找到 package.json',
+          ' 未找到 package.json',
           '',
           `当前目录: ${projectPath}`,
           '',
@@ -242,7 +242,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           ` • 大型依赖(>100KB): ${analysis.largeDeps.length}`,
           ` • 过时依赖: ${analysis.outdated.length}`,
           '',
-          '🏷️ 主要分类:',
+          '🏷 主要分类:',
           ...Object.entries(
             analysis.production
               .concat(analysis.development)
@@ -294,7 +294,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
             '📦 大型依赖分析',
             '===============',
             '',
-            '✅ 没有发现大型依赖 (>100KB)',
+            ' 没有发现大型依赖 (>100KB)',
             '',
             '💡 提示: 大型依赖可能增加包大小和启动时间'
           ].join('\n')
@@ -333,7 +333,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
         return {
           type: 'jsx',
           render: () => [
-            '✅ 过时依赖检查',
+            ' 过时依赖检查',
             '',
             '未发现过时依赖（版本为 * 或 latest）。',
             '',
@@ -345,7 +345,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       return {
         type: 'jsx',
         render: () => [
-          '⚠️ 过时依赖检查',
+          ' 过时依赖检查',
           '===============',
           '',
           `发现 ${analysis.outdated.length} 个潜在过时依赖:`,
@@ -406,13 +406,13 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           '',
           `📊 健康分数: ${score}/100`,
           '',
-          score >= 80 ? '✅ 依赖状态良好' :
-          score >= 60 ? '⚠️ 依赖状态一般' : '🚨 依赖状态需要改善',
+          score >= 80 ? ' 依赖状态良好' :
+          score >= 60 ? ' 依赖状态一般' : '🚨 依赖状态需要改善',
           '',
           '📋 评分因素:',
-          ` • 大型依赖比例: ${(largeRatio * 100).toFixed(0)}% ${largeRatio > 0.1 ? '⚠️' : '✅'}`,
-          ` • 过时依赖比例: ${(outdatedRatio * 100).toFixed(0)}% ${outdatedRatio > 0.05 ? '⚠️' : '✅'}`,
-          ` • 总依赖数: ${analysis.total} ${analysis.total > 50 ? '⚠️' : '✅'}`,
+          ` • 大型依赖比例: ${(largeRatio * 100).toFixed(0)}% ${largeRatio > 0.1 ? '' : ''}`,
+          ` • 过时依赖比例: ${(outdatedRatio * 100).toFixed(0)}% ${outdatedRatio > 0.05 ? '' : ''}`,
+          ` • 总依赖数: ${analysis.total} ${analysis.total > 50 ? '' : ''}`,
           '',
           '💡 建议:',
           score < 80 ? ' 1. 减少大型依赖数量' : ' 1. 继续保持良好状态',
@@ -436,7 +436,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           ),
           analysis.production.length > 15 ? ' ... 更多依赖' : '',
           '',
-          '⚠️ 注意: 完整的依赖树需要解析 node_modules',
+          ' 注意: 完整的依赖树需要解析 node_modules',
           '',
           '💡 提示: 使用以下命令查看完整树:',
           ' bun pm ls --depth 2',
@@ -454,12 +454,12 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           '🔒 依赖安全审计',
           '===============',
           '',
-          '🛡️ 安全检查:',
+          '🛡 安全检查:',
           ...analysis.production.slice(0, 20).map(d => {
             // 简单的安全检查建议
             const safeList = ['react', 'vue', 'lodash', 'axios', 'next']
             const isLikelySafe = safeList.some(s => d.name.toLowerCase().includes(s))
-            return ` ${isLikelySafe ? '✅' : '🔍'} ${d.name}@${d.version}`
+            return ` ${isLikelySafe ? '' : ''} ${d.name}@${d.version}`
           }),
           '',
           '💡 建议运行:',
@@ -490,7 +490,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           ` • 大型依赖: ${analysis.largeDeps.length}`,
           ` • 过时依赖: ${analysis.outdated.length}`,
           '',
-          '🏷️ 分类分布:',
+          '🏷 分类分布:',
           ...Object.entries(
             analysis.production
               .concat(analysis.development)
@@ -514,7 +514,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
     return {
       type: 'jsx',
       render: () => [
-        '❌ 依赖分析出错',
+        ' 依赖分析出错',
         '',
         `错误: ${error instanceof Error ? error.message : String(error)}`,
         '',

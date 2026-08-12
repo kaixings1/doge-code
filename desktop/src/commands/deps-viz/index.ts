@@ -71,7 +71,7 @@ ${target ? `分析以下模块/文件的依赖关系：\n\`${target}\`` : '分�
    services -> core, utils
    components -> core, services
 
-   🔍 关键发现
+    关键发现
    - 核心模块: core（被 12 个文件引用）
    - 循环依赖: services <-> components（建议重构）
    - 孤立文件: legacy/migrate.ts（未被引用）

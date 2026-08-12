@@ -362,14 +362,14 @@ function HealthScoreReport({ cwd }: { cwd: string }) {
   if (scanning) {
     return (
       <Box flexDirection="column">
-        <Text color="#ffd700">🔍 正在扫描项目健康状况...</Text>
+        <Text color="#ffd700"> 正在扫描项目健康状况...</Text>
         <Text dimColor>分析中，请稍候...</Text>
       </Box>
     )
   }
 
   if (!report) {
-    return <Text color="#ff6b35">❌ 扫描失败</Text>
+    return <Text color="#ff6b35"> 扫描失败</Text>
   }
 
   const scoreColor = report.overallScore >= 80 ? '#00cc66' : report.overallScore >= 60 ? '#ffd700' : '#ff6b35'
@@ -414,12 +414,12 @@ function HealthScoreReport({ cwd }: { cwd: string }) {
         </Text>
         {report.dimensions[selectedDim].issues.slice(0, 8).map((issue, i) => (
           <Text key={i} color={severityColor(issue.severity)}>
-            {'  '}{issue.severity === 'critical' ? '🔴' : issue.severity === 'high' ? '🟠' : issue.severity === 'medium' ? '🟡' : '🔵'}{' '}
+            {'  '}{issue.severity === 'critical' ? '' : issue.severity === 'high' ? '🟠' : issue.severity === 'medium' ? '🟡' : '🔵'}{' '}
             {issue.file ? `${issue.file}:${issue.line} - ` : ''}{issue.message}
           </Text>
         ))}
         {report.dimensions[selectedDim].issues.length === 0 && (
-          <Text color="#00cc66">  ✅ 该维度未发现问题</Text>
+          <Text color="#00cc66">   该维度未发现问题</Text>
         )}
       </Box>
 

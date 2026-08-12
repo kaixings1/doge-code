@@ -86,13 +86,13 @@ export function registerMcpAddCommand(mcp: Command): void {
       // If no name is provided, error
       if (!name) {
         cliError(
-          '❌ 错误: 需要提供服务器名称。\n' +
-            '📖 用法: claude mcp add <名称> <命令> [参数...]',
+          ' 错误: 需要提供服务器名称。\n' +
+            ' 用法: claude mcp add <名称> <命令> [参数...]',
         )
       } else if (!actualCommand) {
         cliError(
-          '❌ 错误: 提供服务器名称时，必须指定命令。\n' +
-            '📖 用法: claude mcp add <名称> <命令> [参数...]',
+          ' 错误: 提供服务器名称时，必须指定命令。\n' +
+            ' 用法: claude mcp add <名称> <命令> [参数...]',
         )
       }
 
@@ -103,7 +103,7 @@ export function registerMcpAddCommand(mcp: Command): void {
         // XAA fail-fast: validate at add-time, not auth-time.
         if (options.xaa && !isXaaEnabled()) {
           cliError(
-            '❌ 错误: --xaa 需要在你的环境中设置 CLAUDE_CODE_ENABLE_XAA=1',
+            ' 错误: --xaa 需要在你的环境中设置 CLAUDE_CODE_ENABLE_XAA=1',
           )
         }
         const xaa = Boolean(options.xaa)
@@ -146,7 +146,7 @@ export function registerMcpAddCommand(mcp: Command): void {
 
         if (transport === 'sse') {
           if (!actualCommand) {
-            cliError('❌ 错误: SSE 传输需要提供 URL。')
+            cliError(' 错误: SSE 传输需要提供 URL。')
           }
 
           const headers = options.header
@@ -192,7 +192,7 @@ export function registerMcpAddCommand(mcp: Command): void {
           }
         } else if (transport === 'http') {
           if (!actualCommand) {
-            cliError('❌ 错误: HTTP 传输需要提供 URL。')
+            cliError(' 错误: HTTP 传输需要提供 URL。')
           }
 
           const headers = options.header

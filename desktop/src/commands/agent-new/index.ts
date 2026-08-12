@@ -345,15 +345,15 @@ async function handleCreate(args: string): Promise<string> {
   const name = args.trim()
 
   if (!name) {
-    return `❌ 请指定 Agent 名称\n\n用法: /agent-new create <名称>\n示例: /agent-new create my-reviewer`
+    return ` 请指定 Agent 名称\n\n用法: /agent-new create <名称>\n示例: /agent-new create my-reviewer`
   }
 
   if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
-    return `❌ 名称只能包含字母、数字、连字符和下划线: "${name}"`
+    return ` 名称只能包含字母、数字、连字符和下划线: "${name}"`
   }
 
   if (loadAgent(name)) {
-    return `❌ Agent "${name}" 已存在\n\n使用 \`/agent-new edit ${name}\` 编辑，或先 \`/agent-new delete ${name}\` 删除`
+    return ` Agent "${name}" 已存在\n\n使用 \`/agent-new edit ${name}\` 编辑，或先 \`/agent-new delete ${name}\` 删除`
   }
 
   const lines: string[] = []
@@ -394,7 +394,7 @@ async function handleCreate(args: string): Promise<string> {
     lines.push(``)
     lines.push(formatAgentCard(config))
     lines.push(``)
-    lines.push(`✅ Agent "${name}" 已创建: ${getAgentPath(name)}`)
+    lines.push(` Agent "${name}" 已创建: ${getAgentPath(name)}`)
     lines.push(`💡 使用 \`/agent-new edit ${name}\` 自定义配置`)
     return lines.join('\n')
   }
@@ -425,7 +425,7 @@ async function handleCreate(args: string): Promise<string> {
     lines.push(``)
     lines.push(formatAgentCard(config))
     lines.push(``)
-    lines.push(`✅ Agent "${name}" 已创建: ${getAgentPath(name)}`)
+    lines.push(` Agent "${name}" 已创建: ${getAgentPath(name)}`)
     return lines.join('\n')
   }
 
@@ -461,7 +461,7 @@ async function handleCreate(args: string): Promise<string> {
   lines.push(``)
   lines.push(formatAgentCard(config))
   lines.push(``)
-  lines.push(`✅ Agent "${name}" 已创建: ${getAgentPath(name)}`)
+  lines.push(` Agent "${name}" 已创建: ${getAgentPath(name)}`)
   return lines.join('\n')
 }
 
@@ -500,17 +500,17 @@ function handleEdit(args: string): string {
   const name = args.trim()
 
   if (!name) {
-    return `❌ 请指定要编辑的 Agent 名称\n\n用法: /agent-new edit <名称>`
+    return ` 请指定要编辑的 Agent 名称\n\n用法: /agent-new edit <名称>`
   }
 
   const agent = loadAgent(name)
   if (!agent) {
-    return `❌ Agent "${name}" 不存在\n\n💡 查看列表: /agent-new list`
+    return ` Agent "${name}" 不存在\n\n💡 查看列表: /agent-new list`
   }
 
   // Edit specific field
   const lines: string[] = []
-  lines.push(`✏️ 编辑 Agent: ${name}`)
+  lines.push(`✏ 编辑 Agent: ${name}`)
   lines.push(``)
   lines.push(`当前配置:`)
   lines.push(formatAgentCard(agent))
@@ -529,19 +529,19 @@ function handleDelete(args: string): string {
   const name = args.trim()
 
   if (!name) {
-    return `❌ 请指定要删除的 Agent 名称\n\n用法: /agent-new delete <名称>`
+    return ` 请指定要删除的 Agent 名称\n\n用法: /agent-new delete <名称>`
   }
 
   const agent = loadAgent(name)
   if (!agent) {
-    return `❌ Agent "${name}" 不存在`
+    return ` Agent "${name}" 不存在`
   }
 
   const success = deleteAgent(name)
   if (success) {
-    return `🗑️ Agent "${name}" 已删除\n\n📋 已删除配置:\n   名称: ${agent.name}\n   描述: ${agent.description}\n   文件: ${getAgentPath(name)}`
+    return `🗑 Agent "${name}" 已删除\n\n📋 已删除配置:\n   名称: ${agent.name}\n   描述: ${agent.description}\n   文件: ${getAgentPath(name)}`
   }
-  return `❌ 删除失败: ${name}`
+  return ` 删除失败: ${name}`
 }
 
 function handleUse(args: string): string {
@@ -550,12 +550,12 @@ function handleUse(args: string): string {
   const task = parts.slice(1).join(' ')
 
   if (!name) {
-    return `❌ 请指定要使用的 Agent 名称\n\n用法: /agent-new use <名称> [任务描述]`
+    return ` 请指定要使用的 Agent 名称\n\n用法: /agent-new use <名称> [任务描述]`
   }
 
   const agent = loadAgent(name)
   if (!agent) {
-    return `❌ Agent "${name}" 不存在\n\n💡 查看列表: /agent-new list`
+    return ` Agent "${name}" 不存在\n\n💡 查看列表: /agent-new list`
   }
 
   const lines: string[] = []
@@ -581,7 +581,7 @@ function handleUse(args: string): string {
   lines.push(`   ${prompt.slice(0, 200)}${prompt.length > 200 ? '...' : ''}`)
   lines.push(``)
   lines.push(`🤖 模型: ${agent.model}`)
-  lines.push(`🌡️ 温度: ${agent.temperature}`)
+  lines.push(`🌡 温度: ${agent.temperature}`)
   lines.push(`🔧 工具: ${agent.tools.join(', ')}`)
   lines.push(``)
   lines.push(`💡 提示: 此 Agent 的配置已准备好，模型将使用以上系统提示词执行任务`)
@@ -594,12 +594,12 @@ function handleExport(args: string): string {
   const name = args.trim()
 
   if (!name) {
-    return `❌ 请指定要导出的 Agent 名称\n\n用法: /agent-new export <名称>`
+    return ` 请指定要导出的 Agent 名称\n\n用法: /agent-new export <名称>`
   }
 
   const agent = loadAgent(name)
   if (!agent) {
-    return `❌ Agent "${name}" 不存在`
+    return ` Agent "${name}" 不存在`
   }
 
   const exportJson = JSON.stringify(agent, null, 2)
@@ -620,7 +620,7 @@ function handleExport(args: string): string {
       `💡 导入: /agent-new import ${exportPath}`,
     ].join('\n')
   } catch (err) {
-    return `❌ 导出失败: ${err instanceof Error ? err.message : String(err)}`
+    return ` 导出失败: ${err instanceof Error ? err.message : String(err)}`
   }
 }
 
@@ -628,13 +628,13 @@ function handleImport(args: string): string {
   const filePath = args.trim()
 
   if (!filePath) {
-    return `❌ 请指定要导入的文件路径\n\n用法: /agent-new import <文件路径>`
+    return ` 请指定要导入的文件路径\n\n用法: /agent-new import <文件路径>`
   }
 
   const absPath = resolve(process.cwd(), filePath)
 
   if (!existsSync(absPath)) {
-    return `❌ 文件不存在: ${absPath}`
+    return ` 文件不存在: ${absPath}`
   }
 
   let imported: AgentConfig
@@ -642,17 +642,17 @@ function handleImport(args: string): string {
     const content = readFileSync(absPath, 'utf-8')
     imported = JSON.parse(content) as AgentConfig
   } catch (err) {
-    return `❌ 解析失败: ${err instanceof Error ? err.message : String(err)}`
+    return ` 解析失败: ${err instanceof Error ? err.message : String(err)}`
   }
 
   // Validate required fields
   if (!imported.name || !imported.systemPrompt) {
-    return `❌ 无效的 Agent 配置: 缺少必填字段 (name, systemPrompt)`
+    return ` 无效的 Agent 配置: 缺少必填字段 (name, systemPrompt)`
   }
 
   // Check if already exists
   if (loadAgent(imported.name)) {
-    return `⚠️ Agent "${imported.name}" 已存在\n\n使用 \`/agent-new delete ${imported.name}\` 先删除，或重命名后导入`
+    return ` Agent "${imported.name}" 已存在\n\n使用 \`/agent-new delete ${imported.name}\` 先删除，或重命名后导入`
   }
 
   // Ensure tools is an array
@@ -684,7 +684,7 @@ function handleTemplates(): string {
   for (const [key, template] of Object.entries(BUILTIN_TEMPLATES)) {
     lines.push(`  ┌─ ${template.name} ─────────────────────────────`)
     lines.push(`  │ ${template.description}`)
-    lines.push(`  │ 🤖 模型: ${template.model} | 🌡️ 温度: ${template.temperature}`)
+    lines.push(`  │ 🤖 模型: ${template.model} | 🌡 温度: ${template.temperature}`)
     lines.push(`  │ 🔧 工具: ${template.tools.join(', ')}`)
     lines.push(`  │ 📐 变量: ${Object.keys(template.variables).map(v => `{${v}}`).join(', ') || '无'}`)
     lines.push(`  └─────────────────────────────────────────────────`)
@@ -711,7 +711,7 @@ function formatAgentCard(agent: AgentConfig): string {
     lines.push(`  │ 📋 模板: ${agent.template}`)
   }
   lines.push(`  │ 🤖 模型: ${agent.model}`)
-  lines.push(`  │ 🌡️ 温度: ${agent.temperature} | 📊 最大Token: ${agent.maxTokens}`)
+  lines.push(`  │ 🌡 温度: ${agent.temperature} | 📊 最大Token: ${agent.maxTokens}`)
   lines.push(`  │ 🔧 工具: ${agent.tools.join(', ') || '无'}`)
   const varKeys = Object.keys(agent.variables)
   if (varKeys.length > 0) {

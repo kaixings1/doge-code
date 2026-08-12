@@ -54,12 +54,12 @@ export async function call(onDone: LocalJSXCommandOnDone, context: LocalJSXComma
     if (remember) {
       try {
         persistPermissionUpdate(permissionUpdate);
-        message = `✅ ${chalk.bold(path)} 添加为工作目录并保存到本地设置`;
+        message = ` ${chalk.bold(path)} 添加为工作目录并保存到本地设置`;
       } catch (error) {
-        message = `❌ ${chalk.bold(path)} 添加为工作目录。保存失败：${error instanceof Error ? error.message : '未知错误'}`;
+        message = ` ${chalk.bold(path)} 添加为工作目录。保存失败：${error instanceof Error ? error.message : '未知错误'}`;
       }
     } else {
-      message = `✅ ${chalk.bold(path)} 添加为本次会话的工作目录`;
+      message = ` ${chalk.bold(path)} 添加为本次会话的工作目录`;
     }
     const messageWithHint = `${message} ${chalk.dim('· /permissions 管理')}`;
     // 同步调用 onDone，完成命令

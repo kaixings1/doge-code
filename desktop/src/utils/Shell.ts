@@ -147,7 +147,7 @@ export async function findSuitableShell(): Promise<string> {
 
   const isWindows = process.platform === 'win32'
 
-  // 🔴 Windows 默认行为：除非用户显式指定 bash/zsh，否则使用 cmd.exe
+  //  Windows 默认行为：除非用户显式指定 bash/zsh，否则使用 cmd.exe
   // MSYS2/Git Bash 在多行内联代码（python3 -c、node -e 等）中会破坏
   // "、[、]、&、(、)、'、\ 等字符，导致所有文件创建操作不可靠。
   if (isWindows) {
@@ -310,7 +310,7 @@ export async function exec(
   shellType: ShellType,
   options?: ExecOptions,
 ): Promise<ShellCommand> {
-  // 🔴 Windows 安全保护：禁止 bashProvider 被调用（MSYS2 破坏内联代码）
+  //  Windows 安全保护：禁止 bashProvider 被调用（MSYS2 破坏内联代码）
   // 除非用户显式通过 CLAUDE_CODE_SHELL=xxx 或 CLAUDE_CODE_SHELL_WANT_BASH=1 授权
   // BashTool.tsx 中的命令归一化层会检查此逻辑的镜像版本，以确保方向正确。
   if (process.platform === 'win32' && !process.env.CLAUDE_CODE_SHELL_WANT_BASH) {

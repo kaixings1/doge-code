@@ -150,7 +150,7 @@ async function runLocalCodeAnalysis(diff: string): Promise<string[]> {
       for (const line of addedLines) {
         // 安全：eval/Function 动态执行
         if (/eval\s*\(|new\s+Function\s*\(/i.test(line)) {
-          issues.push('🔴 安全: 使用 eval 或动态 Function 构造，存在代码注入风险')
+          issues.push(' 安全: 使用 eval 或动态 Function 构造，存在代码注入风险')
         }
         // 安全：innerHTML/dangerouslySetInnerHTML
         if (/\.innerHTML\s*=|dangerouslySetInnerHTML/i.test(line)) {
@@ -162,7 +162,7 @@ async function runLocalCodeAnalysis(diff: string): Promise<string[]> {
         }
         // 安全：SQL 注入
         if (/db\.(query|execute|run)\s*\(.*\$\{|\+.*['"]/.test(line)) {
-          issues.push('🔴 安全: 检测到可能的 SQL 注入，请使用参数化查询')
+          issues.push(' 安全: 检测到可能的 SQL 注入，请使用参数化查询')
         }
         // 质量：硬编码数字
         if (/return\s+\d+|const\s+\w+\s*=\s*\d{4,}/.test(line)) {
@@ -170,7 +170,7 @@ async function runLocalCodeAnalysis(diff: string): Promise<string[]> {
         }
         // 安全：命令注入
         if (/child_process|exec\s*\(|execSync\s*\(|spawn\s*\(.*\$\{/.test(line)) {
-          issues.push('🔴 安全: 检测到命令执行，注意防范命令注入')
+          issues.push(' 安全: 检测到命令执行，注意防范命令注入')
         }
       }
     }
@@ -179,10 +179,10 @@ async function runLocalCodeAnalysis(diff: string): Promise<string[]> {
       const addedLines = diff.split('\n').filter(l => l.startsWith('+') && !l.startsWith('+++'))
       for (const line of addedLines) {
         if (/eval\s*\(|exec\s*\(/i.test(line)) {
-          issues.push('🔴 安全: 使用 eval/exec 动态执行代码，存在注入风险')
+          issues.push(' 安全: 使用 eval/exec 动态执行代码，存在注入风险')
         }
         if (/os\.system\s*\(|subprocess\.(call|Popen)\s*\(.*shell\s*=\s*True/i.test(line)) {
-          issues.push('🔴 安全: 检测到 shell=True 的子进程调用，注意命令注入')
+          issues.push(' 安全: 检测到 shell=True 的子进程调用，注意命令注入')
         }
         if (/pickle\.loads?/i.test(line)) {
           issues.push('🟡 安全: 使用 pickle 反序列化不可信数据存在风险')
@@ -244,17 +244,17 @@ function checkTypeSafety(diff: string): string[] {
   // 检查 @ts-ignore
   const tsIgnores = (allText.match(/@ts-ignore|@ts-expect-error/g) || []).length
   if (tsIgnores > 0) {
-    issues.push('🔴 类型安全: 使用了 ' + tsIgnores + ' 处 @ts-ignore/@ts-expect-error，应修复底层类型问题')
+    issues.push(' 类型安全: 使用了 ' + tsIgnores + ' 处 @ts-ignore/@ts-expect-error，应修复底层类型问题')
   }
 
   return issues
 }
 
 const LANGUAGE_CHECK_ICONS: Record<string, string> = {
-  'TypeScript': '🔷', 'TypeScript/React': '⚛️', 'JavaScript': '🟨', 'JavaScript/React': '⚛️',
+  'TypeScript': '🔷', 'TypeScript/React': '⚛', 'JavaScript': '🟨', 'JavaScript/React': '⚛',
   'Python': '🐍', 'Rust': '🦀', 'Go': '🔵', 'Java': '☕', 'Kotlin': '🏭',
-  'C': '⚙️', 'C++': '⚙️', 'C#': '💠', 'Ruby': '💎',
-  'PHP': '🐘', 'Swift': '🍎', 'SQL': '🗄️', 'Shell': '🐚',
+  'C': '⚙', 'C++': '⚙', 'C#': '💠', 'Ruby': '💎',
+  'PHP': '🐘', 'Swift': '🍎', 'SQL': '🗄', 'Shell': '🐚',
 }
 
 async function generateReviewReport(
@@ -315,14 +315,14 @@ ${prDetails.body || '*无描述*'}
   checks.push({
     name: '测试覆盖',
     passed: hasTestChanges,
-    message: hasTestChanges ? '✅ 包含测试变更' : '⚠️ 未检测到测试文件变更，建议添加测试',
+    message: hasTestChanges ? ' 包含测试变更' : ' 未检测到测试文件变更，建议添加测试',
   });
   // 检查是否有文档变更
   const hasDocChanges = diff.includes('.md') || diff.includes('docs/');
   checks.push({
     name: '文档更新',
     passed: hasDocChanges,
-    message: hasDocChanges ? '✅ 包含文档更新' : 'ℹ️ 未检测到文档变更',
+    message: hasDocChanges ? ' 包含文档更新' : 'ℹ 未检测到文档变更',
   });
   // 检查 TODO/FIXME
   const todoMatch = diff.match(/\/\/\s*TODO|#\s*TODO|\/\*\s*TODO|FIXME/i);
@@ -330,7 +330,7 @@ ${prDetails.body || '*无描述*'}
     checks.push({
       name: '待办事项',
       passed: false,
-      message: '⚠️ 代码中包含 TODO/FIXME 注释，请在合并前处理',
+      message: ' 代码中包含 TODO/FIXME 注释，请在合并前处理',
     });
   }
   // 检查 console.log/debugger
@@ -339,7 +339,7 @@ ${prDetails.body || '*无描述*'}
     checks.push({
       name: '调试代码',
       passed: false,
-      message: '⚠️ 包含调试语句 (console.log/debugger/print)，请在生产代码中移除',
+      message: ' 包含调试语句 (console.log/debugger/print)，请在生产代码中移除',
     });
   }
   // 检查敏感信息
@@ -348,7 +348,7 @@ ${prDetails.body || '*无描述*'}
     checks.push({
       name: '敏感信息',
       passed: false,
-      message: '🔴 检测到硬编码的凭据（密码/密钥/令牌），禁止提交到仓库！',
+      message: ' 检测到硬编码的凭据（密码/密钥/令牌），禁止提交到仓库！',
     });
   }
   // 检查大文件变更
@@ -356,7 +356,7 @@ ${prDetails.body || '*无描述*'}
     checks.push({
       name: 'PR 大小',
       passed: false,
-      message: '⚠️ 变更较大（+' + stats.additions + ' 行），建议拆分为多个小 PR',
+      message: ' 变更较大（+' + stats.additions + ' 行），建议拆分为多个小 PR',
     });
   }
   // 检查是否有二进制文件
@@ -365,7 +365,7 @@ ${prDetails.body || '*无描述*'}
     checks.push({
       name: '二进制文件',
       passed: false,
-      message: '⚠️ 包含 ' + binaryFiles.length + ' 个二进制文件变更（' + binaryFiles.join(', ') + '），确认是否需要',
+      message: ' 包含 ' + binaryFiles.length + ' 个二进制文件变更（' + binaryFiles.join(', ') + '），确认是否需要',
     });
   }
 
@@ -385,7 +385,7 @@ ${prDetails.body || '*无描述*'}
       report += '- ' + issue + '\n';
     }
   } else {
-    report += '✅ 未检测到常见安全问题或代码异味\n';
+    report += ' 未检测到常见安全问题或代码异味\n';
   }
 
   // 类型安全分析

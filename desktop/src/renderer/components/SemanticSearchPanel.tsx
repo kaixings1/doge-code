@@ -242,7 +242,7 @@ export function SemanticSearchPanel({ cwd, theme, onSelectResult }: SemanticSear
                     color: copied ? '#10b981' : c.accent, cursor: 'pointer', fontSize: '9px',
                   }}
                 >
-                  {copied ? '✅ 已复制' : '📋 复制'}
+                  {copied ? ' 已复制' : '📋 复制'}
                 </button>
               </>
             )}

@@ -123,7 +123,7 @@ export async function execPromptHook(
             hookName,
             toolUseID: effectiveToolUseID,
             hookEvent,
-            stderr: '❌ 错误: JSON 验证失败',
+            stderr: ' 错误: JSON 验证失败',
             stdout: fullResponse,
             exitCode: 1,
           }),

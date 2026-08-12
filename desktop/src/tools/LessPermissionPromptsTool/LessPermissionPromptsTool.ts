@@ -167,13 +167,13 @@ export const LessPermissionPromptsTool = buildTool({
     let recommendations = `分析了 ${totalScanned} 次工具调用，发现 ${patterns.length} 种调用模式。\n`
     recommendations += `生成了 ${totalRules} 条规则 (${safeRules.length} 安全, ${moderateRules.length} 中等, ${riskyRules.length} 高风险)\n\n`
     if (riskyRules.length > 0) {
-      recommendations += '⚠️ 高风险操作建议保留确认提示:\n'
+      recommendations += ' 高风险操作建议保留确认提示:\n'
       for (const rule of riskyRules.slice(0, 5)) {
         recommendations += `  - ${rule}\n`
       }
     }
     if (safeRules.length > 0) {
-      recommendations += '\n✅ 可安全自动化的操作:\n'
+      recommendations += '\n 可安全自动化的操作:\n'
       for (const rule of safeRules.slice(0, 10)) {
         recommendations += `  - ${rule}\n`
       }

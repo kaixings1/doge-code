@@ -136,7 +136,7 @@ export const call: CostHistoryCall = async (_, parsed) => {
   if (parsed.clear) {
     const db = getCostDatabase()
     db.clearAll()
-    return { type: 'text', value: '✅ 成本历史记录已清空' }
+    return { type: 'text', value: ' 成本历史记录已清空' }
   }
 
   // JSON 输出

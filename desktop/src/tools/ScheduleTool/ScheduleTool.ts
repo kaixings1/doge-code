@@ -123,7 +123,7 @@ export const ScheduleTool = buildTool({
         return {
           data: {
             success: removed,
-            message: removed ? `计划任务 "${task}"❌ 错误:  已取消` : `未找到计划任务 "${task}"`,
+            message: removed ? `计划任务 "${task}" 错误:  已取消` : `未找到计划任务 "${task}"`,
           } as Output,
         }
       }

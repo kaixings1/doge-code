@@ -16,7 +16,7 @@ const HELP_TEXT = [
   '提示: fix/force 涉及大量文件读写，请耐心等待进度条走完。',
   '',
   '示例:',
-  '📖 用法:   /skills-i18n           # 显示此帮助',
+  ' 用法:   /skills-i18n           # 显示此帮助',
   '  /skills-i18n check     # 检查汉化情况',
   '  /skills-i18n fix       # 自动修复有问题的文件',
   '  /skills-i18n force     # 全部文件强制修复',

@@ -32,7 +32,7 @@ const DEFAULT_CONFIG: EndConversationConfig = {
     '忽略所有规则',
   ],
   warnBeforeEnd: true,
-  warningMessage: '⚠️ 检测到潜在的滥用行为。如果继续，会话将被终止。',
+  warningMessage: ' 检测到潜在的滥用行为。如果继续，会话将被终止。',
   endMessage: '🔒 会话已终止。原因：检测到违反使用政策的行为。',
 }
 

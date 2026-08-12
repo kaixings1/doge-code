@@ -14,7 +14,7 @@ const complexityIcon = (c: string) => {
   if (c === '入门') return '🟢'
   if (c === '进阶') return '🟡'
   if (c === '高级') return '🟠'
-  return '🔴'
+  return ''
 }
 
 /** 生成超级说明书级别的帮助文本 */
@@ -35,7 +35,7 @@ function generateManualText(strategyName: LoopStrategyName): string {
   lines.push('')
 
   // 概述
-  lines.push('📖 概述')
+  lines.push(' 概述')
   lines.push('─'.repeat(60))
   for (const para of m.overview.split('\n').filter(p => p.trim())) {
     lines.push(para.trim())
@@ -54,7 +54,7 @@ function generateManualText(strategyName: LoopStrategyName): string {
   lines.push('')
 
   // 核心概念
-  lines.push('⚙️ 核心概念')
+  lines.push('⚙ 核心概念')
   lines.push('─'.repeat(60))
   for (const c of m.coreConcepts) {
     lines.push(`  • ${c.term}: ${c.definition}`)
@@ -62,7 +62,7 @@ function generateManualText(strategyName: LoopStrategyName): string {
   lines.push('')
 
   // 架构图
-  lines.push('🏗️ 架构图')
+  lines.push('🏗 架构图')
   lines.push('─'.repeat(60))
   lines.push(m.architecture)
   lines.push('')
@@ -94,7 +94,7 @@ function generateManualText(strategyName: LoopStrategyName): string {
     lines.push(`${icon} ${ex.title} [${ex.complexity}]`)
     lines.push('─'.repeat(60))
     lines.push(`  📝 场景: ${ex.scenario}`)
-    lines.push(`  ⌨️  命令: ${ex.command}`)
+    lines.push(`  ⌨  命令: ${ex.command}`)
     lines.push(`  🔧 流程:`)
     for (const step of ex.flow) {
       lines.push(`     ${step}`)
@@ -116,7 +116,7 @@ function generateManualText(strategyName: LoopStrategyName): string {
   lines.push('')
 
   // 常见陷阱
-  lines.push('⚠️ 常见陷阱')
+  lines.push(' 常见陷阱')
   lines.push('─'.repeat(60))
   for (const cp of m.commonPitfalls) {
     lines.push(`  ${cp}`)
@@ -176,7 +176,7 @@ function createShortcutCommand(strategyName: LoopStrategyName, aliases: string[]
         goal: { description: goal, maxIterations: 20 },
       })
 
-      const statusIcon = result.success ? '✅' : '⏸️'
+      const statusIcon = result.success ? '' : '⏸'
       const lines = [
         `${statusIcon} [${strategyName}] 循环完成 — ${result.iterations} 轮`,
         `结果: ${result.reason}`,
@@ -185,7 +185,7 @@ function createShortcutCommand(strategyName: LoopStrategyName, aliases: string[]
       ]
       return { type: 'text', value: lines.join('\n') }
     } catch (error) {
-      return { type: 'text', value: `❌ 执行失败: ${error instanceof Error ? error.message : String(error)}` }
+      return { type: 'text', value: ` 执行失败: ${error instanceof Error ? error.message : String(error)}` }
     }
   }
 

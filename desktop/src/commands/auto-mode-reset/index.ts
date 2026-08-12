@@ -31,7 +31,7 @@ const autoModeReset = {
     const config = autoModeMgr.getConfig()
     return {
       type: 'text' as const,
-      value: '✅ 自动模式配置已重置为默认值\n' +
+      value: ' 自动模式配置已重置为默认值\n' +
         `  dangerousRm: ${config.dangerousRm}\n` +
         `  backgroundAmpersand: ${config.backgroundAmpersand}\n` +
         `  suspiciousWindowsPaths: ${config.suspiciousWindowsPaths}`,

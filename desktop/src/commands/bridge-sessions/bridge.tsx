@@ -537,7 +537,7 @@ function BridgeManager({ onDone }: BridgeManagerProps) {
       <Box flexDirection="column" padding={1}>
         <Box marginBottom={1}>
           <Text bold color="cyan">
-            🖥️ 终端 - {currentSession.name}
+            🖥 终端 - {currentSession.name}
           </Text>
           <Text dimColor> | {currentPane?.title}</Text>
           <Text dimColor> [{getBackendLabel(currentSession.backend)}]</Text>
