@@ -138,14 +138,14 @@ export const call: LocalCommandCall = async (args) => {
   }
 
   return { type: 'text', value: [
-    'Project Templates',
+    '📦 项目模板',
     '',
-    '📖 Usage: ',
-    '  /templates list             List all templates',
-    '  /templates use <name> [dir] Create project from template',
-    '  /templates search <query>   Search templates',
+    '📖 用法：',
+    '  /templates list             列出所有模板',
+    '  /templates use <名称> [目录] 从模板创建项目',
+    '  /templates search <关键词>   搜索模板',
     '',
-    'Categories: frontend, backend, fullstack, cli, library, mobile',
+    '分类：前端, 后端, 全栈, CLI, 库, 移动端',
   ].join('\n') }
 }
 
