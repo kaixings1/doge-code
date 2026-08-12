@@ -100,12 +100,12 @@ const call: LocalCommandCall = async (args: string) => {
 
     return {
       type: 'text' as const,
-      value: `未知命令: ${action}\n使用 /break-cache help 查看帮助。`
+      value: `❌ 未知命令: ${action}\n使用 /break-cache help 查看帮助。`
     };
   } catch (error) {
     return {
       type: 'text' as const,
-      value: `执行命令时出错: ${error instanceof Error ? error.message : String(error)}`
+      value: `❌ 执行命令时出错: ${error instanceof Error ? error.message : String(error)}`
     };
   }
 };
@@ -257,7 +257,7 @@ async function showCacheStatus(): Promise<ReturnType<typeof call>> {
   } catch (error) {
     return {
       type: 'text' as const,
-      value: `获取缓存状态时出错: ${error instanceof Error ? error.message : String(error)}`
+      value: `❌ 获取缓存状态时出错: ${error instanceof Error ? error.message : String(error)}`
     };
   }
 }
@@ -314,7 +314,7 @@ async function listCacheFiles(): Promise<ReturnType<typeof call>> {
   } catch (error) {
     return {
       type: 'text' as const,
-      value: `列出缓存文件时出错: ${error instanceof Error ? error.message : String(error)}`
+      value: `❌ 列出缓存文件时出错: ${error instanceof Error ? error.message : String(error)}`
     };
   }
 }
@@ -413,7 +413,7 @@ async function showCacheStats(): Promise<ReturnType<typeof call>> {
   } catch (error) {
     return {
       type: 'text' as const,
-      value: `获取缓存统计时出错: ${error instanceof Error ? error.message : String(error)}`
+      value: `❌ 获取缓存统计时出错: ${error instanceof Error ? error.message : String(error)}`
     };
   }
 }
@@ -458,7 +458,7 @@ async function clearAllCache(): Promise<ReturnType<typeof call>> {
   } catch (error) {
     return {
       type: 'text' as const,
-      value: `清理缓存时出错: ${error instanceof Error ? error.message : String(error)}`
+      value: `❌ 清理缓存时出错: ${error instanceof Error ? error.message : String(error)}`
     };
   }
 }
@@ -470,7 +470,7 @@ async function clearCacheByType(cacheType: string): Promise<ReturnType<typeof ca
     if (!validTypes.includes(cacheType) && cacheType !== 'all') {
       return {
         type: 'text' as const,
-        value: `无效的缓存类型: ${cacheType}\n有效类型: ${validTypes.join(', ')}`
+        value: `❌ 无效的缓存类型: ${cacheType}\n有效类型: ${validTypes.join(', ')}`
       };
     }
 
@@ -527,7 +527,7 @@ async function clearCacheByType(cacheType: string): Promise<ReturnType<typeof ca
   } catch (error) {
     return {
       type: 'text' as const,
-      value: `清理缓存类型时出错: ${error instanceof Error ? error.message : String(error)}`
+      value: `❌ 清理缓存类型时出错: ${error instanceof Error ? error.message : String(error)}`
     };
   }
 }
@@ -558,7 +558,7 @@ async function rebuildCache(): Promise<ReturnType<typeof call>> {
   } catch (error) {
     return {
       type: 'text' as const,
-      value: `重建缓存时出错: ${error instanceof Error ? error.message : String(error)}`
+      value: `❌ 重建缓存时出错: ${error instanceof Error ? error.message : String(error)}`
     };
   }
 }
@@ -598,7 +598,7 @@ async function dryRunClear(): Promise<ReturnType<typeof call>> {
   } catch (error) {
     return {
       type: 'text' as const,
-      value: `模拟清理时出错: ${error instanceof Error ? error.message : String(error)}`
+      value: `❌ 模拟清理时出错: ${error instanceof Error ? error.message : String(error)}`
     };
   }
 }
@@ -697,7 +697,7 @@ async function analyzeCache(): Promise<ReturnType<typeof call>> {
   } catch (error) {
     return {
       type: 'text' as const,
-      value: `分析缓存时出错: ${error instanceof Error ? error.message : String(error)}`
+      value: `❌ 分析缓存时出错: ${error instanceof Error ? error.message : String(error)}`
     };
   }
 }
@@ -735,7 +735,7 @@ async function optimizeCache(): Promise<ReturnType<typeof call>> {
   } catch (error) {
     return {
       type: 'text' as const,
-      value: `优化缓存时出错: ${error instanceof Error ? error.message : String(error)}`
+      value: `❌ 优化缓存时出错: ${error instanceof Error ? error.message : String(error)}`
     };
   }
 }

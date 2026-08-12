@@ -75,12 +75,12 @@ const call: LocalCommandCall = async (args: string) => {
 
     return {
       type: 'text' as const,
-      value: `未知命令: ${action}\n使用 /backfill-sessions help 查看帮助。`
+      value: `❌ 未知命令: ${action}\n使用 /backfill-sessions help 查看帮助。`
     };
   } catch (error) {
     return {
       type: 'text' as const,
-      value: `执行命令时出错: ${error instanceof Error ? error.message : String(error)}`
+      value: `❌ 执行命令时出错: ${error instanceof Error ? error.message : String(error)}`
     };
   }
 };
@@ -147,7 +147,7 @@ async function listSessions(): Promise<ReturnType<typeof call>> {
   } catch (error) {
     return {
       type: 'text' as const,
-      value: `列出会话时出错: ${error instanceof Error ? error.message : String(error)}`
+      value: `❌ 列出会话时出错: ${error instanceof Error ? error.message : String(error)}`
     };
   }
 }
@@ -223,7 +223,7 @@ async function showStats(): Promise<ReturnType<typeof call>> {
   } catch (error) {
     return {
       type: 'text' as const,
-      value: `获取统计信息时出错: ${error instanceof Error ? error.message : String(error)}`
+      value: `❌ 获取统计信息时出错: ${error instanceof Error ? error.message : String(error)}`
     };
   }
 }
@@ -286,7 +286,7 @@ async function searchSessions(keyword: string): Promise<ReturnType<typeof call>>
     if (results.length === 0) {
       return {
         type: 'text' as const,
-        value: `未找到包含 "${keyword}" 的会话。`
+        value: `❌ 未找到包含 "${keyword}" 的会话。`
       };
     }
 
@@ -309,7 +309,7 @@ async function searchSessions(keyword: string): Promise<ReturnType<typeof call>>
   } catch (error) {
     return {
       type: 'text' as const,
-      value: `搜索会话时出错: ${error instanceof Error ? error.message : String(error)}`
+      value: `❌ 搜索会话时出错: ${error instanceof Error ? error.message : String(error)}`
     };
   }
 }
@@ -374,7 +374,7 @@ async function findEmptySessions(): Promise<ReturnType<typeof call>> {
   } catch (error) {
     return {
       type: 'text' as const,
-      value: `查找空会话时出错: ${error instanceof Error ? error.message : String(error)}`
+      value: `❌ 查找空会话时出错: ${error instanceof Error ? error.message : String(error)}`
     };
   }
 }
@@ -434,7 +434,7 @@ async function cleanupSessions(): Promise<ReturnType<typeof call>> {
   } catch (error) {
     return {
       type: 'text' as const,
-      value: `清理会话时出错: ${error instanceof Error ? error.message : String(error)}`
+      value: `❌ 清理会话时出错: ${error instanceof Error ? error.message : String(error)}`
     };
   }
 }
@@ -459,7 +459,7 @@ async function restoreSession(sessionId: string): Promise<ReturnType<typeof call
       if (files.length === 0) {
         return {
           type: 'text' as const,
-          value: `未找到会话 "${sessionId}"。`
+          value: `❌ 未找到会话 "${sessionId}"。`
         };
       }
 
@@ -481,7 +481,7 @@ async function restoreSession(sessionId: string): Promise<ReturnType<typeof call
 
       return {
         type: 'text' as const,
-        value: `找到会话: ${files[0].replace('.json', '')}\n使用完整ID进行恢复。`
+        value: `ℹ️ 找到会话: ${files[0].replace('.json', '')}\n使用完整ID进行恢复。`
       };
     }
 
@@ -510,7 +510,7 @@ async function restoreSession(sessionId: string): Promise<ReturnType<typeof call
   } catch (error) {
     return {
       type: 'text' as const,
-      value: `恢复会话时出错: ${error instanceof Error ? error.message : String(error)}`
+      value: `❌ 恢复会话时出错: ${error instanceof Error ? error.message : String(error)}`
     };
   }
 }
@@ -537,7 +537,7 @@ async function backupCurrentSession(): Promise<ReturnType<typeof call>> {
   } catch (error) {
     return {
       type: 'text' as const,
-      value: `备份会话时出错: ${error instanceof Error ? error.message : String(error)}`
+      value: `❌ 备份会话时出错: ${error instanceof Error ? error.message : String(error)}`
     };
   }
 }

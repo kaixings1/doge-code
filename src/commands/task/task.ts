@@ -55,7 +55,7 @@ export const call: LocalCommandCall = async (args, context) => {
 
   // 将任务作为 prompt 加入命令队列，主循环 drainCommandQueue 会取出并让 AI 回复
   enqueue({
-    value: `请执行以下任务：${args}\n\n要求：\n1. 直接开始工作，完成后给出总结\n2. 不需要问我确认，直接做\n3. 完成后输出结果`,
+    value: `👉 请执行以下任务：${args}\n\n要求：\n1. 直接开始工作，完成后给出总结\n2. 不需要问我确认，直接做\n3. 完成后输出结果`,
     mode: 'prompt',
     priority: 'next',
   } as QueuedCommand);

@@ -90,7 +90,7 @@ export const call: LocalCommandCall = async () => {
       : '\n手动安装 SoX 以进行音频录制。'
     return {
       type: 'text' as const,
-      value: `未找到音频录制工具。${hint}`,
+      value: `❌ 未找到音频录制工具。${hint}`,
     }
   }
 
@@ -107,7 +107,7 @@ export const call: LocalCommandCall = async () => {
     }
     return {
       type: 'text' as const,
-      value: `麦克风访问被拒绝。要启用它，请前往 ${guidance}，然后再次运行 /voice。`,
+      value: `❌ 麦克风访问被拒绝。要启用它，请前往 ${guidance}，然后再次运行 /voice。`,
     }
   }
 
@@ -145,6 +145,6 @@ export const call: LocalCommandCall = async () => {
   }
   return {
     type: 'text' as const,
-    value: `语音模式已启用。按住 ${key} 键录制。${langNote}`,
+    value: `✅ 语音模式已启用。按住 ${key} 键录制。${langNote}`,
   }
 }

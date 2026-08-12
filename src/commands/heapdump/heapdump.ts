@@ -6,12 +6,12 @@ export async function call(): Promise<{ type: 'text'; value: string }> {
   if (!result.success) {
     return {
       type: 'text',
-      value: `创建堆转储失败: ${result.error}`,
+      value: `❌ 创建堆转储失败: ${result.error}`,
     }
   }
 
   return {
     type: 'text',
-    value: `${result.heapPath}\n${result.diagPath}`,
+    value: `📁 ${result.heapPath}\n${result.diagPath}`,
   }
 }

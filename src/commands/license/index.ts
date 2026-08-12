@@ -233,37 +233,37 @@ export const call: LocalCommandCall = async (args) => {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${value}` } }
-    return { type: 'text', value: `Unknown: ${key}` }
+    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ Unknown: ${key}` }
   }
 
   if (cmd === 'set') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: 'Usage: /license set <key> <value>' }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${value}` } }
-    return { type: 'text', value: `Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
+    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
   }
 
   if (cmd === 'allow') {
     const lic = parts[1]; if (!lic) return { type: 'text', value: 'Usage: /license allow <license>' }
     config.allowedLicenses.push(lic); saveConfig(config)
-    return { type: 'text', value: `[OK] Allowed: ${lic}` }
+    return { type: 'text', value: `✅ [OK] Allowed: ${lic}` }
   }
 
   if (cmd === 'restrict') {
     const lic = parts[1]; if (!lic) return { type: 'text', value: 'Usage: /license restrict <license>' }
     config.restrictedLicenses.push(lic); saveConfig(config)
-    return { type: 'text', value: `[OK] Restricted: ${lic}` }
+    return { type: 'text', value: `✅ [OK] Restricted: ${lic}` }
   }
 
   if (cmd === 'generate') {
     const type = (parts[1] || config.defaultLicense).toLowerCase()
     const template = LICENSE_TEMPLATES[type]
-    if (!template) return { type: 'text', value: `Unknown template: ${type}\nAvailable: ${Object.keys(LICENSE_TEMPLATES).join(', ')}` }
+    if (!template) return { type: 'text', value: `❌ Unknown template: ${type}\nAvailable: ${Object.keys(LICENSE_TEMPLATES).join(', ')}` }
     const content = template(config.projectName, config.year)
     writeFileSync('LICENSE', content, 'utf-8')
-    return { type: 'text', value: `[OK] Generated LICENSE (${type})\nAuthor: ${config.author}\nYear: ${config.year}\n\n${content.slice(0, 200)}...` }
+    return { type: 'text', value: `✅ [OK] Generated LICENSE (${type})\nAuthor: ${config.author}\nYear: ${config.year}\n\n${content.slice(0, 200)}...` }
   }
 
   if (cmd === 'list') {

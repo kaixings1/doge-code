@@ -109,16 +109,16 @@ export const call: LocalCommandCall = async (args) => {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${value}` } }
-    return { type: 'text', value: `Unknown: ${key}` }
+    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ Unknown: ${key}` }
   }
 
   if (cmd === 'set') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: 'Usage: /sitemap set <key> <value>' }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value === 'true' ? true : value === 'false' ? false : value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${value}` } }
-    return { type: 'text', value: `Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
+    if (key in config) { config[key] = value === 'true' ? true : value === 'false' ? false : value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
   }
 
   if (cmd === 'base-url') {
@@ -126,7 +126,7 @@ export const call: LocalCommandCall = async (args) => {
     if (!url) return { type: 'text', value: 'Usage: /sitemap base-url <url>' }
     config.baseUrl = url
     saveConfig(config)
-    return { type: 'text', value: `[OK] Base URL: ${url}` }
+    return { type: 'text', value: `✅ [OK] Base URL: ${url}` }
   }
 
   if (cmd === 'freq') {
@@ -135,7 +135,7 @@ export const call: LocalCommandCall = async (args) => {
     if (!valid.includes(freq)) return { type: 'text', value: 'Valid: ' + valid.join(', ') }
     config.changeFreq = freq
     saveConfig(config)
-    return { type: 'text', value: `[OK] Change frequency: ${freq}` }
+    return { type: 'text', value: `✅ [OK] Change frequency: ${freq}` }
   }
 
   if (cmd === 'priority') {
@@ -143,7 +143,7 @@ export const call: LocalCommandCall = async (args) => {
     if (isNaN(val) || val < 0 || val > 1) return { type: 'text', value: 'Priority must be between 0 and 1' }
     config.priority = val
     saveConfig(config)
-    return { type: 'text', value: `[OK] Priority: ${val}` }
+    return { type: 'text', value: `✅ [OK] Priority: ${val}` }
   }
 
   const pages = scanPages(config)
@@ -174,7 +174,7 @@ export const call: LocalCommandCall = async (args) => {
   if (pages.length === 0) return { type: 'text', value: 'No pages found. Run /sitemap scan to debug.' }
   const xml = generateSitemapXml(pages, config.baseUrl)
   writeFileSync(config.outputFile, xml, 'utf-8')
-  return { type: 'text', value: `[OK] Generated ${config.outputFile}\nPages: ${pages.length}\nBase URL: ${config.baseUrl}\nOutput: ${config.outputFile}\n\nVerify at: ${config.baseUrl}/sitemap.xml` }
+  return { type: 'text', value: `✅ [OK] Generated ${config.outputFile}\nPages: ${pages.length}\nBase URL: ${config.baseUrl}\nOutput: ${config.outputFile}\n\nVerify at: ${config.baseUrl}/sitemap.xml` }
 }
 
 const sitemap: Command = {

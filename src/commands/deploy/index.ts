@@ -152,7 +152,7 @@ export const call: LocalCommandCall = async (args) => {
     if (cmd === 'env') {
       const name = parts[1] || config.defaultEnv
       const env = config.environments[name]
-      if (!env) return { type: 'text', value: `Unknown environment: ${name}\nAvailable: ${Object.keys(config.environments).join(', ')}` }
+      if (!env) return { type: 'text', value: `❌ Unknown environment: ${name}\nAvailable: ${Object.keys(config.environments).join(', ')}` }
       const lines = [`Environment: ${name}`, `Target: ${env.target}`, `URL: ${env.url || '(not set)'}`, `Build: ${env.buildCommand}`, `Health: ${env.healthCheck}`, `Timeout: ${env.timeout}ms`, `Auto-rollback: ${env.autoRollback}`, '', 'Env Vars:']
       for (const [k, v] of Object.entries(env.env)) lines.push(`  ${k}=${v}`)
       return { type: 'text', value: lines.join('\n') }
@@ -162,35 +162,35 @@ export const call: LocalCommandCall = async (args) => {
       const envName = parts[1]; const key = parts[2]; const value = parts.slice(3).join(' ')
       if (!envName || !key || !value) return { type: 'text', value: 'Usage: /deploy env-set <env> <key> <value>' }
       const env = config.environments[envName]
-      if (!env) return { type: 'text', value: `Unknown environment: ${envName}` }
+      if (!env) return { type: 'text', value: `❌ Unknown environment: ${envName}` }
       env.env[key] = value; saveConfig(config)
-      return { type: 'text', value: `[OK] ${envName}.${key} = ${value}` }
+      return { type: 'text', value: `✅ [OK] ${envName}.${key} = ${value}` }
     }
 
     if (cmd === 'add-env') {
       const name = parts[1]; const target = parts[2] as DeployEnvironment['target']
       if (!name || !target) return { type: 'text', value: 'Usage: /deploy add-env <name> <target>\nTargets: vercel, netlify, docker, pm2, ssh, custom' }
-      if (!['vercel', 'netlify', 'docker', 'pm2', 'ssh', 'custom'].includes(target)) return { type: 'text', value: `Invalid target: ${target}\nValid: vercel, netlify, docker, pm2, ssh, custom` }
-      if (config.environments[name]) return { type: 'text', value: `Environment already exists: ${name}` }
+      if (!['vercel', 'netlify', 'docker', 'pm2', 'ssh', 'custom'].includes(target)) return { type: 'text', value: `❌ Invalid target: ${target}\nValid: vercel, netlify, docker, pm2, ssh, custom` }
+      if (config.environments[name]) return { type: 'text', value: `⚠️ Environment already exists: ${name}` }
       config.environments[name] = { name, target, url: '', env: {}, buildCommand: 'npm run build', preDeploy: [], postDeploy: [], healthCheck: '/health', timeout: 60000, autoRollback: true }
       saveConfig(config)
-      return { type: 'text', value: `[OK] Added environment: ${name} (${target})` }
+      return { type: 'text', value: `✅ [OK] Added environment: ${name} (${target})` }
     }
 
     if (cmd === 'remove-env') {
       const name = parts[1]
       if (!name) return { type: 'text', value: 'Usage: /deploy remove-env <name>' }
-      if (!config.environments[name]) return { type: 'text', value: `Unknown environment: ${name}` }
+      if (!config.environments[name]) return { type: 'text', value: `❌ Unknown environment: ${name}` }
       if (name === config.defaultEnv) return { type: 'text', value: 'Cannot remove default environment. Set another default first.' }
       delete config.environments[name]; saveConfig(config)
-      return { type: 'text', value: `[OK] Removed: ${name}` }
+      return { type: 'text', value: `✅ [OK] Removed: ${name}` }
     }
 
     if (cmd === 'set-default') {
       const name = parts[1]
       if (!name || !config.environments[name]) return { type: 'text', value: 'Usage: /deploy set-default <name>' }
       config.defaultEnv = name; saveConfig(config)
-      return { type: 'text', value: `[OK] Default environment: ${name}` }
+      return { type: 'text', value: `✅ [OK] Default environment: ${name}` }
     }
 
     if (cmd === 'check') {
@@ -219,7 +219,7 @@ export const call: LocalCommandCall = async (args) => {
       const url = parts[1] || config.environments[config.defaultEnv]?.url
       if (!url) return { type: 'text', value: 'No URL configured. Use /deploy health <url>' }
       const result = healthCheck(url, '/health')
-      return { type: 'text', value: `Health Check: ${url}\nStatus: ${result.status} (${result.duration}ms)\n${result.ok ? '✅ Service healthy' : '❌ Service unhealthy'}` }
+      return { type: 'text', value: `✅ Health Check: ${url}\nStatus: ${result.status} (${result.duration}ms)\n${result.ok ? '✅ Service healthy' : '❌ Service unhealthy'}` }
     }
 
     if (cmd === 'ssh') {
@@ -245,7 +245,7 @@ export const call: LocalCommandCall = async (args) => {
       const sub = parts[1] || 'ps'
       const commands: Record<string, string> = { build: 'docker build -t app . 2>&1', up: 'docker compose up -d --build 2>&1', down: 'docker compose down 2>&1', logs: 'docker compose logs --tail=50 2>&1', ps: 'docker compose ps 2>&1' }
       const command = commands[sub]
-      if (!command) return { type: 'text', value: `Unknown docker subcommand: ${sub}\nAvailable: ${Object.keys(commands).join(', ')}` }
+      if (!command) return { type: 'text', value: `❌ Unknown docker subcommand: ${sub}\nAvailable: ${Object.keys(commands).join(', ')}` }
       const result = safeExec(command, 120000)
       return { type: 'text', value: result.ok ? result.output : `[ERROR] ${result.output}` }
     }
@@ -264,7 +264,7 @@ export const call: LocalCommandCall = async (args) => {
     if (cmd === 'rollback') {
       const envName = parts[1] || config.defaultEnv
       const env = config.environments[envName]
-      if (!env) return { type: 'text', value: `Unknown environment: ${envName}` }
+      if (!env) return { type: 'text', value: `❌ Unknown environment: ${envName}` }
       let result: { ok: boolean; output: string }
       if (env.target === 'vercel') result = safeExec('vercel rollback 2>&1', 30000)
       else if (env.target === 'docker') result = safeExec('docker compose down && git checkout HEAD~1 -- . && docker compose up -d --build 2>&1', 120000)
@@ -277,7 +277,7 @@ export const call: LocalCommandCall = async (args) => {
     // Default: deploy to environment
     const envName = cmd === 'now' ? (parts[1] || config.defaultEnv) : cmd
     const env = config.environments[envName]
-    if (!env) return { type: 'text', value: `Unknown environment: ${envName}\nAvailable: ${Object.keys(config.environments).join(', ')}` }
+    if (!env) return { type: 'text', value: `❌ Unknown environment: ${envName}\nAvailable: ${Object.keys(config.environments).join(', ')}` }
 
     const lines = [`Deploying to ${envName} (${env.target})`, `Commit: ${getCurrentCommit()}`]
     const startTime = Date.now()
@@ -323,7 +323,7 @@ export const call: LocalCommandCall = async (args) => {
     return { type: 'text', value: lines.join('\n') }
 
   } catch (err) {
-    return { type: 'text', value: `[ERROR] Unexpected error: ${formatError(err)}` }
+    return { type: 'text', value: `❌ [ERROR] Unexpected error: ${formatError(err)}` }
   }
 }
 

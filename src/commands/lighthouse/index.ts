@@ -125,27 +125,27 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'budget') {
     const cat = parts[1]; const val = parseInt(parts[2])
     if (!cat || isNaN(val)) return { type: 'text', value: 'Usage: /lighthouse budget <category> <score>\nCategories: performance, accessibility, bestPractices, seo, pwa' }
-    if (!(cat in config.budgets)) return { type: 'text', value: `Unknown category: ${cat}` }
+    if (!(cat in config.budgets)) return { type: 'text', value: `❌ Unknown category: ${cat}` }
     // @ts-expect-error dynamic
     config.budgets[cat] = val
     saveConfig(config)
-    return { type: 'text', value: `[OK] ${cat} budget: ${val}` }
+    return { type: 'text', value: `✅ [OK] ${cat} budget: ${val}` }
   }
 
   if (cmd === 'config') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${value}` } }
-    return { type: 'text', value: `Unknown: ${key}` }
+    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ Unknown: ${key}` }
   }
 
   if (cmd === 'set') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: 'Usage: /lighthouse set <key> <value>' }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${value}` } }
-    return { type: 'text', value: `Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
+    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
   }
 
   if (cmd === 'history') {

@@ -64,12 +64,12 @@ const call: LocalCommandCall = async args => {
     case 'close': {
       const code = Number(a)
       if (!Number.isFinite(code)) {
-        return { type: 'text', value: `close: 需要提供数字代码\n${USAGE}` }
+        return { type: 'text', value: `❌ close: 需要提供数字代码\n${USAGE}` }
       }
       h.fireClose(code)
       return {
         type: 'text',
-        value: `已触发 transport close(${code})。请观察 debug.log 中的 [bridge:repl] 恢复。`,
+        value: `✅ 已触发 transport close(${code})。请观察 debug.log 中的 [bridge:repl] 恢复。`,
       }
     }
 
@@ -92,7 +92,7 @@ const call: LocalCommandCall = async args => {
       if (!Number.isFinite(status)) {
         return {
           type: 'text',
-          value: `poll: 需要 'transient' 或状态码\n${USAGE}`,
+          value: `❌ poll: 需要 'transient' 或状态码\n${USAGE}`,
         }
       }
       // 默认使用服务器实际返回的 404 错误信息（BQ 验证），
@@ -109,7 +109,7 @@ const call: LocalCommandCall = async args => {
       h.wakePollLoop()
       return {
         type: 'text',
-        value: `下一次轮询将抛出 BridgeFatalError(${status}, ${errorType})。已唤醒轮询循环。`,
+        value: `⏳ 下一次轮询将抛出 BridgeFatalError(${status}, ${errorType})。已唤醒轮询循环。`,
       }
     }
 
@@ -137,7 +137,7 @@ const call: LocalCommandCall = async args => {
       })
       return {
         type: 'text',
-        value: `接下来 ${n} 次 registerBridgeEnvironment 调用将瞬态失败。通过 close/reconnect 触发。`,
+        value: `⏳ 接下来 ${n} 次 registerBridgeEnvironment 调用将瞬态失败。通过 close/reconnect 触发。`,
       }
     }
 
@@ -167,7 +167,7 @@ const call: LocalCommandCall = async args => {
       })
       return {
         type: 'text',
-        value: `下一次心跳将返回 ${status}。请观察 onHeartbeatFatal → 工作状态拆卸。`,
+        value: `⏳ 下一次心跳将返回 ${status}。请观察 onHeartbeatFatal → 工作状态拆卸。`,
       }
     }
 
@@ -175,7 +175,7 @@ const call: LocalCommandCall = async args => {
       h.forceReconnect()
       return {
         type: 'text',
-        value: '已调用 reconnectEnvironmentWithSession()。请观察 debug.log。',
+        value: '✅ 已调用 reconnectEnvironmentWithSession()。请观察 debug.log。',
       }
     }
 

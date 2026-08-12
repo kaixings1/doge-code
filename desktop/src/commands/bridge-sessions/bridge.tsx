@@ -360,7 +360,7 @@ function BridgeManager({ onDone }: BridgeManagerProps) {
               setStatus(`SSH 隧道已建立: ${user}@${host}:${port} -> 本地端口 ${result.port}`)
               refreshSessions()
             } else {
-              setStatus(`SSH 隧道失�: ${result.error}`)
+              setStatus(`SSH 隧道失败: ${result.error}`)
             }
           })
         }

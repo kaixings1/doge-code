@@ -184,9 +184,9 @@ export const call: LocalCommandCall = async (args) => {
     if (cmd === 'file') {
       const file = parts[1]
       if (!file) return { type: 'text', value: 'Usage: /performance file <path>' }
-      if (!existsSync(file)) return { type: 'text', value: `File not found: ${file}` }
+      if (!existsSync(file)) return { type: 'text', value: `❌ File not found: ${file}` }
       const m = analyzeFile(file)
-      if (!m) return { type: 'text', value: `Cannot analyze: ${file} (unsupported format or binary file)` }
+      if (!m) return { type: 'text', value: `⚠️ Cannot analyze: ${file} (unsupported format or binary file)` }
       const lines = [`File: ${file}`, `Lines: ${m.lines}`, `Functions: ${m.functions.length}`, `Avg Complexity: ${m.avgComplexity}`, `Max Complexity: ${m.maxComplexity}`, '', 'Functions:']
       for (const f of m.functions) {
         const warn = f.complexity > 10 ? ' [!]' : f.length > 50 ? ' [LONG]' : ''
@@ -227,13 +227,13 @@ export const call: LocalCommandCall = async (args) => {
       const files = analyzeProject('.')
       const loopFuncs = files.flatMap(f => f.functions.filter(fn => fn.hasLoop).map(fn => ({ ...fn, file: f.file })))
       const nested = loopFuncs.filter(f => f.depth > 3)
-      return { type: 'text', value: `Loop Analysis:\nTotal with loops: ${loopFuncs.length}\nDeep nesting (>3): ${nested.length}\n\n${nested.slice(0, 10).map(f => `${f.name}() in ${f.file}:${f.line} (depth: ${f.depth})`).join('\n') || 'No deeply nested loops'}` }
+      return { type: 'text', value: `📊 Loop Analysis:\nTotal with loops: ${loopFuncs.length}\nDeep nesting (>3): ${nested.length}\n\n${nested.slice(0, 10).map(f => `${f.name}() in ${f.file}:${f.line} (depth: ${f.depth})`).join('\n') || 'No deeply nested loops'}` }
     }
 
     if (cmd === 'baseline') {
       const files = analyzeProject('.')
       if (!safeWriteFile(BASELINE_FILE, JSON.stringify(files, null, 2))) return { type: 'text', value: '[ERROR] Cannot write baseline' }
-      return { type: 'text', value: `[OK] Baseline saved (${files.length} files)` }
+      return { type: 'text', value: `✅ [OK] Baseline saved (${files.length} files)` }
     }
 
     if (cmd === 'compare') {
@@ -243,7 +243,7 @@ export const call: LocalCommandCall = async (args) => {
         const baseline = JSON.parse(readFileSync(BASELINE_FILE, 'utf-8'))
         const newFiles = files.filter(f => !baseline.some((b: FileMetrics) => b.file === f.file))
         const removed = baseline.filter((b: FileMetrics) => !files.some(f => f.file === b.file))
-        return { type: 'text', value: `New files: ${newFiles.length}\nRemoved: ${removed.length}\nCurrent: ${files.length}` }
+        return { type: 'text', value: `✅ New files: ${newFiles.length}\nRemoved: ${removed.length}\nCurrent: ${files.length}` }
       } catch { return { type: 'text', value: '[ERROR] Corrupted baseline' } }
     }
 
@@ -261,8 +261,8 @@ export const call: LocalCommandCall = async (args) => {
       const { score, grade } = calculateScore(files, issues)
       const file = parts[1] || 'performance-report.md'
       const content = '# Performance Report\n\nScore: ' + score + '/100 (' + grade + ')\n\nIssues: ' + issues.length + '\n\n' + issues.map(i => '- [' + i.file + ':' + i.line + '] ' + i.title + ': ' + i.suggestion).join('\n')
-      if (!safeWriteFile(file, content)) return { type: 'text', value: `[ERROR] Cannot write ${file}` }
-      return { type: 'text', value: `[OK] Exported: ${file}` }
+      if (!safeWriteFile(file, content)) return { type: 'text', value: `❌ [ERROR] Cannot write ${file}` }
+      return { type: 'text', value: `✅ [OK] Exported: ${file}` }
     }
 
     const files = analyzeProject('.')
@@ -287,7 +287,7 @@ export const call: LocalCommandCall = async (args) => {
     return { type: 'text', value: report.join('\n') }
 
   } catch (err) {
-    return { type: 'text', value: `[ERROR] Unexpected error: ${formatError(err)}` }
+    return { type: 'text', value: `❌ [ERROR] Unexpected error: ${formatError(err)}` }
   }
 }
 

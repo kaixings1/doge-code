@@ -448,7 +448,7 @@ const reviewCall: LocalCommandCall = async (args, context) => {
     if (prs.length === 0) {
       return {
         type: 'text',
-        value: '没有找到开放的 PR。\n\n使用 /review <编号> 审查特定 PR。',
+        value: '⚠️ 没有找到开放的 PR。\n\n使用 /review <编号> 审查特定 PR。',
       };
     }
     let listMessage = '找到以下开放 PR：\n\n';
@@ -467,7 +467,7 @@ const reviewCall: LocalCommandCall = async (args, context) => {
     if (!prDetails) {
       return {
         type: 'text',
-        value: `无法获取 PR #${prNumber} 详情。\n\n请确认：\n- PR 编号正确\n- 已安装 gh CLI 并认证 (gh auth status)\n- 有权限访问该仓库`,
+        value: `❌ 无法获取 PR #${prNumber} 详情。\n\n请确认：\n- PR 编号正确\n- 已安装 gh CLI 并认证 (gh auth status)\n- 有权限访问该仓库`,
       };
     }
     context.updateProgress?.(`获取 PR #${prNumber} diff...`);
@@ -475,7 +475,7 @@ const reviewCall: LocalCommandCall = async (args, context) => {
     if (!diff) {
       return {
         type: 'text',
-        value: `无法获取 PR #${prNumber} 的 diff。\n\nPR 可能为空或无变更。`,
+        value: `❌ 无法获取 PR #${prNumber} 的 diff。\n\nPR 可能为空或无变更。`,
       };
     }
     const report = generateReviewReport(prDetails, diff);
@@ -487,7 +487,7 @@ const reviewCall: LocalCommandCall = async (args, context) => {
     const errorMsg = error instanceof Error ? error.message : String(error);
     return {
       type: 'text',
-      value: `审查失败：${errorMsg}\n\n请确保已安装 gh CLI 并运行 gh auth login 认证。`,
+      value: `❌ 审查失败：${errorMsg}\n\n请确保已安装 gh CLI 并运行 gh auth login 认证。`,
     };
   }
 };

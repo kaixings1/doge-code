@@ -126,16 +126,16 @@ export const call: LocalCommandCall = async (args) => {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${value}` } }
-    return { type: 'text', value: `Unknown: ${key}` }
+    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ Unknown: ${key}` }
   }
 
   if (cmd === 'set') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: 'Usage: /grep set <key> <value>' }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value === 'true' ? true : value === 'false' ? false : value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${value}` } }
-    return { type: 'text', value: `Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
+    if (key in config) { config[key] = value === 'true' ? true : value === 'false' ? false : value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
   }
 
   if (cmd === 'history') {
@@ -150,7 +150,7 @@ export const call: LocalCommandCall = async (args) => {
     const history = loadHistory()
     const totalSearches = history.length
     const totalResults = history.reduce((sum, h) => sum + h.results, 0)
-    return { type: 'text', value: `Search Stats:\nTotal searches: ${totalSearches}\nTotal results: ${totalResults}\nAvg results/search: ${totalSearches ? Math.round(totalResults / totalSearches) : 0}\nRecent pattern: ${history[history.length - 1]?.pattern || 'none'}` }
+    return { type: 'text', value: `🔍 Search Stats:\nTotal searches: ${totalSearches}\nTotal results: ${totalResults}\nAvg results/search: ${totalSearches ? Math.round(totalResults / totalSearches) : 0}\nRecent pattern: ${history[history.length - 1]?.pattern || 'none'}` }
   }
 
   // Parse flags

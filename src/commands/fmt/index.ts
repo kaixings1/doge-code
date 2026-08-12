@@ -166,16 +166,16 @@ export const call: LocalCommandCall = async (args) => {
     const key = s[1]; const value = s.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${value}` } }
-    return { type: 'text', value: `Unknown: ${key}` }
+    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ Unknown: ${key}` }
   }
 
   if (cmd === 'set') {
     const key = s[1]; const value = s.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: 'Usage: /fmt set <key> <value>' }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value === 'true' ? true : value === 'false' ? false : value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${config[key]}` } }
-    return { type: 'text', value: `Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
+    if (key in config) { config[key] = value === 'true' ? true : value === 'false' ? false : value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${config[key]}` } }
+    return { type: 'text', value: `❌ Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
   }
 
   if (cmd === 'exclude') {
@@ -183,7 +183,7 @@ export const call: LocalCommandCall = async (args) => {
     if (!pattern) return { type: 'text', value: 'Usage: /fmt exclude <pattern>\nCurrent: ' + config.excludePatterns.join(', ') }
     config.excludePatterns.push(pattern)
     saveConfig(config)
-    return { type: 'text', value: `[OK] Excluding: ${pattern}` }
+    return { type: 'text', value: `✅ [OK] Excluding: ${pattern}` }
   }
 
   if (cmd === 'generate-config') {
@@ -196,7 +196,7 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'install') {
     const name = s[1] || config.defaultFormatter
     const fmt = config.formatters[name] || Object.values(config.formatters).find(f => f.name.toLowerCase() === name.toLowerCase())
-    if (!fmt) return { type: 'text', value: `Unknown formatter: ${name}` }
+    if (!fmt) return { type: 'text', value: `❌ Unknown formatter: ${name}` }
     const result = runFormatter(fmt.installCommand, fmt, config)
     return { type: 'text', value: result.ok ? '[OK] Installed: ' + fmt.name : '[ERROR] ' + result.output }
   }
@@ -204,9 +204,9 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'check') {
     const file = s[1]
     if (file) {
-      if (!existsSync(file)) return { type: 'text', value: `File not found: ${file}` }
+      if (!existsSync(file)) return { type: 'text', value: `❌ File not found: ${file}` }
       const formatter = detectFormatter(file, config)
-      if (!formatter) return { type: 'text', value: `No formatter for: ${file}` }
+      if (!formatter) return { type: 'text', value: `⚠️ No formatter for: ${file}` }
       const result = checkFile(file, formatter, config)
       return { type: 'text', value: result.ok ? `[OK] ${file} is properly formatted (${formatter.name})` : `[NEEDS FIX] ${file}` }
     }
@@ -221,15 +221,15 @@ export const call: LocalCommandCall = async (args) => {
         if (!checkFile(f, formatter, config).ok) needsFix++
       }
     })
-    return { type: 'text', value: `Check Results:\nFiles scanned: ${files.length}\nNeeds fix: ${needsFix}\nProperly formatted: ${files.length - needsFix}\n\n${needsFix > 0 ? 'Run /fmt fix to fix all' : '[OK] All files properly formatted!'}` }
+    return { type: 'text', value: `✅ Check Results:\nFiles scanned: ${files.length}\nNeeds fix: ${needsFix}\nProperly formatted: ${files.length - needsFix}\n\n${needsFix > 0 ? 'Run /fmt fix to fix all' : '[OK] All files properly formatted!'}` }
   }
 
   if (cmd === 'fix') {
     const file = s[1]
     if (file) {
-      if (!existsSync(file)) return { type: 'text', value: `File not found: ${file}` }
+      if (!existsSync(file)) return { type: 'text', value: `❌ File not found: ${file}` }
       const formatter = detectFormatter(file, config)
-      if (!formatter) return { type: 'text', value: `No formatter for: ${file}` }
+      if (!formatter) return { type: 'text', value: `⚠️ No formatter for: ${file}` }
       const result = formatFile(file, formatter, config)
       return { type: 'text', value: result.ok ? `[OK] Formatted: ${file} (${formatter.name})` : `[ERROR] ${result.output}` }
     }
@@ -247,7 +247,7 @@ export const call: LocalCommandCall = async (args) => {
       }
     })
     saveHistory({ date: new Date().toISOString(), operation: 'fix', filesChecked: files.length, filesFixed: fixed, filesNeedingFix: failed, byExtension: byExt, duration: 0 })
-    return { type: 'text', value: `Format Results:\nFiles formatted: ${fixed}\nFailed: ${failed}\n\nBy Extension:\n${Object.entries(byExt).map(([ext, count]) => `  ${ext}: ${count}`).join('\n')}` }
+    return { type: 'text', value: `❌ Format Results:\nFiles formatted: ${fixed}\nFailed: ${failed}\n\nBy Extension:\n${Object.entries(byExt).map(([ext, count]) => `  ${ext}: ${count}`).join('\n')}` }
   }
 
   if (cmd === 'all') {
@@ -266,7 +266,7 @@ export const call: LocalCommandCall = async (args) => {
     })
     const duration = Date.now() - start
     saveHistory({ date: new Date().toISOString(), operation: 'all', filesChecked: files.length, filesFixed: fixed, filesNeedingFix: failed, byExtension: byExt, duration })
-    return { type: 'text', value: `Format All:\nFiles: ${files.length}\nFormatted: ${fixed}\nFailed: ${failed}\nDuration: ${duration}ms\n\nBy Extension:\n${Object.entries(byExt).map(([ext, count]) => `  ${ext}: ${count}`).join('\n')}` }
+    return { type: 'text', value: `❌ Format All:\nFiles: ${files.length}\nFormatted: ${fixed}\nFailed: ${failed}\nDuration: ${duration}ms\n\nBy Extension:\n${Object.entries(byExt).map(([ext, count]) => `  ${ext}: ${count}`).join('\n')}` }
   }
 
   if (cmd === 'diff') {
@@ -275,21 +275,21 @@ export const call: LocalCommandCall = async (args) => {
     try {
       const original = readFileSync(file, 'utf-8')
       const formatter = detectFormatter(file, config)
-      if (!formatter) return { type: 'text', value: `No formatter for: ${file}` }
+      if (!formatter) return { type: 'text', value: `⚠️ No formatter for: ${file}` }
       const tmpFile = file + '.fmt-tmp'
       writeFileSync(tmpFile, original, 'utf-8')
       formatFile(tmpFile, formatter, config)
       const formatted = readFileSync(tmpFile, 'utf-8')
       const fs = require('fs')
       fs.unlinkSync(tmpFile)
-      if (original === formatted) return { type: 'text', value: `[OK] No formatting changes needed: ${file}` }
+      if (original === formatted) return { type: 'text', value: `✅ [OK] No formatting changes needed: ${file}` }
       const origLines = original.split('\n')
       const fmtLines = formatted.split('\n')
       const diffLines: string[] = []
       for (let i = 0; i < Math.max(origLines.length, fmtLines.length); i++) {
         if (origLines[i] !== fmtLines[i]) diffLines.push(`  - ${origLines[i] || ''}\n  + ${fmtLines[i] || ''}`)
       }
-      return { type: 'text', value: `Diff for ${file}:\n${diffLines.slice(0, 20).join('\n')}\n${diffLines.length > 20 ? `... ${diffLines.length - 20} more lines` : ''}` }
+      return { type: 'text', value: `📊 Diff for ${file}:\n${diffLines.slice(0, 20).join('\n')}\n${diffLines.length > 20 ? `... ${diffLines.length - 20} more lines` : ''}` }
     } catch (e) { return { type: 'text', value: '[ERROR] ' + (e instanceof Error ? e.message : String(e)) } }
   }
 
@@ -298,7 +298,7 @@ export const call: LocalCommandCall = async (args) => {
     const byExt: Record<string, number> = {}
     files.forEach(f => { const e = extname(f); byExt[e] = (byExt[e] || 0) + 1 })
     const totalSize = files.reduce((sum, f) => { try { return sum + statSync(f).size } catch { return sum } }, 0)
-    return { type: 'text', value: `Format Stats:\nFormattable files: ${files.length}\nTotal size: ${(totalSize / 1024).toFixed(0)} KB\n\nBy Extension:\n${Object.entries(byExt).sort((a: any, b: any) => b[1] - a[1]).map(([ext, count]) => `  ${ext}: ${count}`).join('\n')}` }
+    return { type: 'text', value: `📊 Format Stats:\nFormattable files: ${files.length}\nTotal size: ${(totalSize / 1024).toFixed(0)} KB\n\nBy Extension:\n${Object.entries(byExt).sort((a: any, b: any) => b[1] - a[1]).map(([ext, count]) => `  ${ext}: ${count}`).join('\n')}` }
   }
 
   if (cmd === 'history') {

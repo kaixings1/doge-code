@@ -374,16 +374,16 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'config') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
-    if (key in config.rules) { config.rules[key as keyof typeof config.rules] = value === 'true'; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${value}` } }
-    return { type: 'text', value: `Unknown config: ${key}` }
+    if (key in config.rules) { config.rules[key as keyof typeof config.rules] = value === 'true'; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ Unknown config: ${key}` }
   }
 
   if (cmd === 'enable' || cmd === 'disable') {
     const rule = parts[1]
-    if (!rule || !(rule in config.rules)) return { type: 'text', value: `Unknown rule: ${rule}` }
+    if (!rule || !(rule in config.rules)) return { type: 'text', value: `❌ Unknown rule: ${rule}` }
     config.rules[rule as keyof typeof config.rules] = cmd === 'enable'
     saveConfig(config)
-    return { type: 'text', value: `[OK] ${rule} ${cmd}d` }
+    return { type: 'text', value: `✅ [OK] ${rule} ${cmd}d` }
   }
 
   if (cmd === 'add-rule') {
@@ -412,7 +412,7 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'baseline') {
     const issues = scanDirectory('.', config)
     writeFileSync(BASELINE_FILE, JSON.stringify(issues, null, 2), 'utf-8')
-    return { type: 'text', value: `[OK] Baseline saved (${issues.length} issues)` }
+    return { type: 'text', value: `✅ [OK] Baseline saved (${issues.length} issues)` }
   }
 
   if (cmd === 'compare') {
@@ -433,7 +433,7 @@ export const call: LocalCommandCall = async (args) => {
     else if (format === 'html') content = formatHtmlReport(issues, stats)
     else content = formatMarkdownReport(issues, stats)
     writeFileSync(filename, content, 'utf-8')
-    return { type: 'text', value: `[OK] Exported: ${filename}` }
+    return { type: 'text', value: `✅ [OK] Exported: ${filename}` }
   }
 
   if (cmd === 'lint') {
@@ -452,10 +452,10 @@ export const call: LocalCommandCall = async (args) => {
       const flag = cmd === 'staged' ? '--cached' : ''
       const output = execSync(`git diff ${flag} --name-only`, { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
       const files = output.split('\n').filter(Boolean)
-      if (files.length === 0) return { type: 'text', value: `No ${cmd} changes` }
+      if (files.length === 0) return { type: 'text', value: `ℹ️ No ${cmd} changes` }
       const issues = files.flatMap(f => scanFile(f, config))
       const stats = calculateScore(issues)
-      return { type: 'text', value: `Review (${cmd}):\nFiles: ${files.length}\n${formatTextReport(issues, stats)}` }
+      return { type: 'text', value: `📊 Review (${cmd}):\nFiles: ${files.length}\n${formatTextReport(issues, stats)}` }
     } catch { return { type: 'text', value: 'Git error' } }
   }
 
@@ -464,16 +464,16 @@ export const call: LocalCommandCall = async (args) => {
     try {
       const output = execSync(`git diff ${branch}...HEAD --name-only`, { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
       const files = output.split('\n').filter(Boolean)
-      if (files.length === 0) return { type: 'text', value: `No changes vs ${branch}` }
+      if (files.length === 0) return { type: 'text', value: `ℹ️ No changes vs ${branch}` }
       const issues = files.flatMap(f => scanFile(f, config))
       const stats = calculateScore(issues)
-      return { type: 'text', value: `Review (vs ${branch}):\nFiles: ${files.length}\n${formatTextReport(issues, stats)}` }
-    } catch { return { type: 'text', value: `Git error: ${branch}` } }
+      return { type: 'text', value: `📊 Review (vs ${branch}):\nFiles: ${files.length}\n${formatTextReport(issues, stats)}` }
+    } catch { return { type: 'text', value: `❌ Git error: ${branch}` } }
   }
 
   if (cmd === 'file') {
     const file = parts[1]
-    if (!file || !existsSync(file)) return { type: 'text', value: `File not found: ${file || ''}` }
+    if (!file || !existsSync(file)) return { type: 'text', value: `❌ File not found: ${file || ''}` }
     const issues = scanFile(file, config)
     const stats = calculateScore(issues)
     return { type: 'text', value: formatTextReport(issues, stats) }

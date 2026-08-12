@@ -84,7 +84,7 @@ async function issueFetch(args: string): Promise<LocalCommandResult> {
 
   const parsed = parseGitHubIssueUrl(url)
   if (!parsed) {
-    return { type: 'text', value: `无法解析 GitHub Issue URL: ${url}\n期望格式: https://github.com/owner/repo/issues/123` }
+    return { type: 'text', value: `❌ 无法解析 GitHub Issue URL: ${url}\n期望格式: https://github.com/owner/repo/issues/123` }
   }
 
   try {
@@ -118,7 +118,7 @@ async function issueFetch(args: string): Promise<LocalCommandResult> {
 
     return { type: 'text', value: result.join('\n') }
   } catch (err) {
-    return { type: 'text', value: `获取 Issue 失败: ${err instanceof Error ? err.message : String(err)}` }
+    return { type: 'text', value: `❌ 获取 Issue 失败: ${err instanceof Error ? err.message : String(err)}` }
   }
 }
 
@@ -132,7 +132,7 @@ async function issueList(args: string): Promise<LocalCommandResult> {
     const issues = await ghFetch<any[]>(`/repos/${repo}/issues?state=open&per_page=20&sort=created&direction=desc`)
 
     if (issues.length === 0) {
-      return { type: 'text', value: `${repo} 暂无 Open Issues` }
+      return { type: 'text', value: `ℹ️ ${repo} 暂无 Open Issues` }
     }
 
     const lines = [
@@ -150,7 +150,7 @@ async function issueList(args: string): Promise<LocalCommandResult> {
     lines.push('', '💡 使用 /issue fetch <url> 查看详情，/issue fix <url> 自动修复')
     return { type: 'text', value: lines.join('\n') }
   } catch (err) {
-    return { type: 'text', value: `获取 Issue 列表失败: ${err instanceof Error ? err.message : String(err)}` }
+    return { type: 'text', value: `❌ 获取 Issue 列表失败: ${err instanceof Error ? err.message : String(err)}` }
   }
 }
 
@@ -277,7 +277,7 @@ async function issueFix(args: string): Promise<LocalCommandResult> {
 
   const parsed = parseGitHubIssueUrl(url)
   if (!parsed) {
-    return { type: 'text', value: `无法解析 GitHub Issue URL: ${url}\n期望格式: https://github.com/owner/repo/issues/123` }
+    return { type: 'text', value: `❌ 无法解析 GitHub Issue URL: ${url}\n期望格式: https://github.com/owner/repo/issues/123` }
   }
 
   // 检查 API key
@@ -338,7 +338,7 @@ async function issueFix(args: string): Promise<LocalCommandResult> {
 
     return { type: 'text', value: resultLines.join('\n') }
   } catch (err) {
-    return { type: 'text', value: `修复 Issue 失败: ${err instanceof Error ? err.message : String(err)}` }
+    return { type: 'text', value: `❌ 修复 Issue 失败: ${err instanceof Error ? err.message : String(err)}` }
   }
 }
 
