@@ -98,7 +98,7 @@ export function validateAgent(
   } else if (systemPrompt.length < 20) {
     errors.push('系统提示词太短（至少 20 个字符）')
   } else if (systemPrompt.length > 10000) {
-    warnings.push('系统提示词非常长（超�?10,000 个字符）')
+    warnings.push('系统提示词非常长（超过 10,000 个字符）')
   }
 
   return {

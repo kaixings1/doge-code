@@ -419,7 +419,7 @@ export const call: LocalCommandCall = async (args) => {
         format,
         nodeCount: 0,
         edgeCount: 0,
-        errors: [`��支持的图表类型: ${diagramType}`],
+        errors: [`❌ 不支持的图表类型: ${diagramType}`],
       }
   }
 

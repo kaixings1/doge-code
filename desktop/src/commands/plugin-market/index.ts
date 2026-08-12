@@ -145,7 +145,7 @@ export const call: LocalCommandCall = async (args) => {
         '  /plugin-market install <插件ID>           安装插件',
         '  /plugin-market uninstall <插件ID>         卸载插件',
         '  /plugin-market installed                  查看已安装插件',
-        '  /plugin-market rate <插件ID> <1-5>        �评分插件',
+        '  /plugin-market rate <插件ID> <1-5>        ⭐ 评分插件',
         '',
         '示例:',
         '  /plugin-market list --tags typescript,docker',
@@ -226,7 +226,7 @@ function handleSearch(keyword: string, installed: Set<string>): { type: string; 
   if (!keyword) {
     return {
       type: 'text',
-      value: '� 请提供搜索关键词\n\n用法: /plugin-market search <关键词>',
+      value: '❌ 请提供搜索关键词\n\n用法: /plugin-market search <关键词>',
     }
   }
 
