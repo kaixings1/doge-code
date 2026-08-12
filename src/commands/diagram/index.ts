@@ -346,8 +346,8 @@ async function generateClassDiagram(target: string, format: string): Promise<Dia
     return {
       success: true,
       diagram: format === 'mermaid'
-        ? 'classDiagram\n    note for Project "No classes found in target"\n    note for Tip "Try targeting a .ts/.tsx file or directory"'
-        : 'No classes found in target.',
+        ? 'classDiagram\n    note for Project "未找到目标类"\n    note for Tip "尝试指定 .ts/.tsx 文件或目录"'
+        : '未在目标中找到类。',
       format,
       nodeCount: 0,
       edgeCount: 0,
@@ -653,7 +653,7 @@ export const call: LocalCommandCall = async (args) => {
         format,
         nodeCount: 0,
         edgeCount: 0,
-        errors: ['Unsupported diagram type: ' + diagramType],
+        errors: ['不支持的图表类型：' + diagramType],
       }
   }
 
@@ -676,7 +676,7 @@ export const call: LocalCommandCall = async (args) => {
   if (!result.success) {
     return {
       type: 'text',
-      value: 'Failed:\n' + result.errors.join('\n'),
+      value: '❌ 失败：\n' + result.errors.join('\n'),
     }
   }
 
