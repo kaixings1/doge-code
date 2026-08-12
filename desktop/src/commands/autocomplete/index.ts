@@ -209,7 +209,7 @@ function renderHelp(): string {
     '  --json              JSON 格式输出',
     '📖 用法:   --help              显示帮助',
     '',
-    '示��:',
+    '💡 示例:',
     '  /autocomplete --query /code',
     '  /autocomplete --query -- --context flag',
     '  /autocomplete --query src/ --context file',
