@@ -208,7 +208,7 @@ function analyzeFile(file: string, config: HealthConfig): { metrics: HealthMetri
         if (/\b(if|else|for|while|switch|catch|&&|\?|match)\b/.test(t)) funcComplexity++
         if (braceCount > config.thresholds.maxNestingDepth && config.rules['max-nesting-depth']) {
           deeplyNested++
-          issues.push({ file, line: lineNum, category: 'complexity', severity: 'medium', message: `Deep nesting (depth: ${braceCount})`, suggestion: 'Extract nested logic into separate functions', rule: 'max-nesting-depth', effort: 'medium' })
+          issues.push({ file, line: lineNum, category: 'complexity', severity: 'medium', message: `深度嵌套（深度：${braceCount}）`, suggestion: '将嵌套逻辑提取为独立函数', rule: 'max-nesting-depth', effort: 'medium' })
           issueCount++
         }
         if (braceCount === 0 && lines[i].includes('}') && funcStart !== lineNum) {
@@ -216,12 +216,12 @@ function analyzeFile(file: string, config: HealthConfig): { metrics: HealthMetri
           totalComplexity += funcComplexity
           if (funcComplexity > maxComplexity) maxComplexity = funcComplexity
           if (funcComplexity > config.thresholds.maxComplexity && config.rules['max-complexity']) {
-            issues.push({ file, line: funcStart, category: 'complexity', severity: funcComplexity > 20 ? 'critical' : 'high', message: `High complexity: ${funcName} (${funcComplexity})`, suggestion: 'Simplify logic, extract helper functions', rule: 'max-complexity', effort: 'hard' })
+            issues.push({ file, line: funcStart, category: 'complexity', severity: funcComplexity > 20 ? 'critical' : 'high', message: `复杂度较高：${funcName}（${funcComplexity}）`, suggestion: '简化逻辑，提取辅助函数', rule: 'max-complexity', effort: 'hard' })
             issueCount++
           }
           if (lineNum - funcStart > config.thresholds.maxLinesPerFunction && config.rules['max-function-length']) {
             longFunctions++
-            issues.push({ file, line: funcStart, category: 'size', severity: lineNum - funcStart > 100 ? 'high' : 'medium', message: `Long function: ${funcName} (${lineNum - funcStart} lines)`, suggestion: 'Extract smaller functions with single responsibility', rule: 'max-function-length', effort: 'hard' })
+            issues.push({ file, line: funcStart, category: 'size', severity: lineNum - funcStart > 100 ? 'high' : 'medium', message: `函数过长：${funcName}（${lineNum - funcStart} 行）`, suggestion: '拆分为职责单一的小函数', rule: 'max-function-length', effort: 'hard' })
             issueCount++
           }
           funcStart = -1
@@ -230,33 +230,33 @@ function analyzeFile(file: string, config: HealthConfig): { metrics: HealthMetri
 
       // File length check (once)
       if (lineNum === 1 && lines.length > config.thresholds.maxLinesPerFile && config.rules['max-file-length']) {
-        issues.push({ file, line: 1, category: 'size', severity: lines.length > 1000 ? 'high' : 'medium', message: `File too long (${lines.length} lines)`, suggestion: 'Split into smaller modules', rule: 'max-file-length', effort: 'hard' })
+        issues.push({ file, line: 1, category: 'size', severity: lines.length > 1000 ? 'high' : 'medium', message: `文件过长（${lines.length} 行）`, suggestion: '拆分为更小的模块', rule: 'max-file-length', effort: 'hard' })
         issueCount++
       }
 
       // Style checks with rule guards
       if (config.rules['no-console-log'] && /\bconsole\.(log|debug)\s*\(/.test(t)) {
-        issues.push({ file, line: lineNum, category: 'style', severity: 'low', message: 'console.log statement in production code', suggestion: 'Use structured logger or remove', rule: 'no-console-log', effort: 'trivial' })
+        issues.push({ file, line: lineNum, category: 'style', severity: 'low', message: '生产代码中包含 console 语句', suggestion: '使用结构化日志工具或移除', rule: 'no-console-log', effort: 'trivial' })
         issueCount++
       }
       if (config.rules['no-any-type'] && /:\s*\bany\b(?!\s*[=,)\]])/.test(t)) {
-        issues.push({ file, line: lineNum, category: 'style', severity: 'medium', message: 'Usage of `any` type', suggestion: 'Define a specific interface or use `unknown`', rule: 'no-any-type', effort: 'medium' })
+        issues.push({ file, line: lineNum, category: 'style', severity: 'medium', message: '使用了 any 类型', suggestion: '定义具体接口或使用 unknown', rule: 'no-any-type', effort: 'medium' })
         issueCount++
       }
       if (config.rules['no-var'] && /\bvar\s+\w+/.test(t)) {
-        issues.push({ file, line: lineNum, category: 'style', severity: 'low', message: 'Usage of `var`', suggestion: 'Use `const` or `let`', rule: 'no-var', effort: 'trivial' })
+        issues.push({ file, line: lineNum, category: 'style', severity: 'low', message: '使用了 var', suggestion: '使用 const 或 let', rule: 'no-var', effort: 'trivial' })
         issueCount++
       }
       if (config.rules['no-eval'] && /\beval\s*\(/.test(t)) {
-        issues.push({ file, line: lineNum, category: 'security', severity: 'critical', message: 'eval() can execute arbitrary code', suggestion: 'Use JSON.parse() or new Function() with validation', rule: 'no-eval', effort: 'hard' })
+        issues.push({ file, line: lineNum, category: 'security', severity: 'critical', message: 'eval() 可执行任意代码', suggestion: '使用 JSON.parse() 或带验证的 Function', rule: 'no-eval', effort: 'hard' })
         issueCount++
       }
       if (config.rules['no-innerHTML'] && /\.innerHTML\s*=/.test(t)) {
-        issues.push({ file, line: lineNum, category: 'security', severity: 'high', message: 'innerHTML assignment (XSS vulnerable)', suggestion: 'Use textContent or framework-safe rendering', rule: 'no-innerHTML', effort: 'easy' })
+        issues.push({ file, line: lineNum, category: 'security', severity: 'high', message: 'innerHTML 赋值（XSS 风险）', suggestion: '使用 textContent 或框架安全渲染', rule: 'no-innerHTML', effort: 'easy' })
         issueCount++
       }
       if (config.rules['no-empty-catch'] && /catch\s*\([^)]*\)\s*\{\s*\}/.test(t)) {
-        issues.push({ file, line: lineNum, category: 'style', severity: 'high', message: 'Empty catch block (silent failure)', suggestion: 'Log the error or rethrow', rule: 'no-empty-catch', effort: 'easy' })
+        issues.push({ file, line: lineNum, category: 'style', severity: 'high', message: '空的 catch 块（静默失败）', suggestion: '记录错误或重新抛出', rule: 'no-empty-catch', effort: 'easy' })
         issueCount++
       }
       if (config.rules['no-magic-numbers'] && /\b(?!0\b)(?!1\b)(?!2\b)(?!10\b)(?!100\b)\d{2,}\b(?!\s*[;,)\]])/.test(t)) {

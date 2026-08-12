@@ -222,7 +222,7 @@ export const call: LocalCommandCall = async (args) => {
   const items = [...staticItems, ...toolItems]
 
   if (cmd === 'static' || cmd === 'tools') {
-    if (items.length === 0) return { type: 'text', value: `✅ [OK] No dead code detected via ${cmd} analysis` }
+    if (items.length === 0) return { type: 'text', value: `✅ ${labels[cmd] || cmd}分析未检测到死代码` }
     const labels: Record<string, string> = { static: '静态分析', tools: '外部工具' }
     const lines = [`🔍 死代码（${labels[cmd] || cmd}，${items.length}）：`, '══════════════════════', '']
     items.slice(0, 30).forEach((i, idx) => lines.push(`${idx + 1}. [${i.kind}] ${i.name} (${i.file}:${i.line})`))

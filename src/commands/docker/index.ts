@@ -137,34 +137,34 @@ export const call: LocalJSXCommandCall = async (args) => {
 
   try {
     if (!c) return { type: 'text', value: [
-      'Docker Manager', '', '📖 Usage: ',
-      '  /docker ps [-a]                 List containers',
-      '  /docker logs <id> [N]           View container logs',
-      '  /docker exec <id> <cmd>         Execute in container',
-      '  /docker start|stop|restart <id>  Container lifecycle',
-      '  /docker rm <id>                 Remove container',
-      '  /docker rmi <id>                Remove image',
-      '  /docker build [tag]             Build image',
-      '  /docker pull|push <image>       Pull/push image',
-      '  /docker scan <image>            Security scan image',
-      '  /docker stats                   Live resource usage',
-      '  /docker networks                List networks',
-      '  /docker volumes                 List volumes',
-      '  /docker prune                   Clean unused resources',
-      '', 'Compose:',
-      '  /docker compose up|down|ps|logs|build|pull|restart [args]',
-      '', 'Generation:',
-      '  /docker generate <lang>         Generate Dockerfile',
-      '  /docker compose-init            Generate compose.yml',
-      '', 'Config:',
-      '  /docker config                  View/edit config',
-      '  /docker health                  Health check all containers',
+      '🐳 Docker 管理', '', '📖 用法：',
+      '  /docker ps [-a]                 列出容器',
+      '  /docker logs <id> [N]           查看容器日志',
+      '  /docker exec <id> <命令>        在容器中执行命令',
+      '  /docker start|stop|restart <id> 容器生命周期',
+      '  /docker rm <id>                 删除容器',
+      '  /docker rmi <id>                删除镜像',
+      '  /docker build [标签]            构建镜像',
+      '  /docker pull|push <镜像>        拉取/推送镜像',
+      '  /docker scan <镜像>             安全扫描镜像',
+      '  /docker stats                   实时资源使用',
+      '  /docker networks                列出网络',
+      '  /docker volumes                 列出卷',
+      '  /docker prune                   清理未使用资源',
+      '', 'Compose：',
+      '  /docker compose up|down|ps|logs|build|pull|restart [参数]',
+      '', '生成：',
+      '  /docker generate <语言>         生成 Dockerfile',
+      '  /docker compose-init            生成 compose.yml',
+      '', '配置：',
+      '  /docker config                  查看/编辑配置',
+      '  /docker health                  健康检查所有容器',
     ].join('\n') }
 
     let r = ''
     if (c === 'ps') {
       const containers = parseContainers(p.includes('-a'))
-      return { type: 'text', value: containers.length > 0 ? 'Containers:\n' + containers.map(c => `  ${c.id} ${c.name} (${c.image}) - ${c.status}`).join('\n') : 'No containers found' }
+      return { type: 'text', value: containers.length > 0 ? '📋 容器列表：\n' + containers.map(c => `  ${c.id} ${c.name}（${c.image}）- ${c.status}`).join('\n') : 'ℹ️ 未找到容器' }
     }
     if (c === 'logs') { const id = p[1]; if (!id) return { type: 'text', value: '📖 Usage: /docker logs <container-id>' }; const n = parseInt(p[2]) || 50; r = safeExec(`docker logs --tail ${n} ${id} 2>&1`, 10000).output }
     else if (c === 'exec') { const id = p[1]; const cmd = p.slice(2).join(' '); if (!id || !cmd) return { type: 'text', value: '📖 Usage: /docker exec <id> <command>' }; r = safeExec(`docker exec ${id} ${cmd}`, 30000).output }
@@ -180,14 +180,14 @@ export const call: LocalJSXCommandCall = async (args) => {
     else if (c === 'volumes') { r = safeExec('docker volume ls', 10000).output }
     else if (c === 'health') {
       const containers = parseContainers(true)
-      return { type: 'text', value: containers.length > 0 ? 'Container Health:\n' + containers.map(c => `  ${c.status.includes('Up') ? '✅' : '❌'} ${c.name} - ${c.status}`).join('\n') : 'No containers' }
+      return { type: 'text', value: containers.length > 0 ? '🏥 容器健康：\n' + containers.map(c => `  ${c.status.includes('Up') ? '✅' : '❌'} ${c.name} - ${c.status}`).join('\n') : 'ℹ️ 无容器' }
     }
     else if (c === 'compose') {
       const sub = p[1] || 'ps'
       const rest = p.slice(2).join(' ')
       const cmds: Record<string, string> = { up: `docker compose up -d ${rest} 2>&1`, down: `docker compose down ${rest} 2>&1`, ps: 'docker compose ps', logs: `docker compose logs --tail=30 ${rest}`, build: `docker compose build ${rest} 2>&1`, pull: `docker compose pull ${rest} 2>&1`, restart: `docker compose restart ${rest} 2>&1` }
       const cmd = cmds[sub]
-      if (!cmd) return { type: 'text', value: `❌ Unknown compose subcommand: ${sub}\nAvailable: ${Object.keys(cmds).join(', ')}` }
+      if (!cmd) return { type: 'text', value: `❌ 未知 compose 子命令：${sub}\n可用：${Object.keys(cmds).join(', ')}` }
       r = safeExec(cmd, 120000).output
     }
     else if (c === 'generate') {

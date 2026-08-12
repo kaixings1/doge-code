@@ -138,7 +138,7 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const config = loadConfig()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Directory Tree (Advanced)', '', '📖 Usage: ', '  /tree [path]                    Show tree', '  /tree depth <N>                  Set max depth', '  /tree sizes                      Show file sizes', '  /tree no-icons                   Hide icons', '  /tree files-only                Files only', '  /tree dirs-only                 Directories only', '  /tree hidden                    Include hidden files', '  /tree git                       Git tracked only', '  /tree sort-size                 Sort by size', '  /tree export <file>             Export to file', '  /tree config                    Show config', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['📁 目录树（高级）', '', '📖 用法：', '  /tree [path]                    显示目录树', '  /tree depth <N>                 设置最大深度', '  /tree sizes                     显示文件大小', '  /tree no-icons                  隐藏图标', '  /tree files-only                仅文件', '  /tree dirs-only                 仅目录', '  /tree hidden                    包含隐藏文件', '  /tree git                       仅 Git 跟踪', '  /tree sort-size                 按大小排序', '  /tree export <file>             导出到文件', '  /tree config                    显示配置', ''].join('\n') }
 
   if (cmd === 'config') {
     return { type: 'text', value: JSON.stringify(config, null, 2) }
@@ -146,7 +146,7 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'depth') {
     const n = parseInt(parts[1])
-    if (isNaN(n)) return { type: 'text', value: 'Usage: /tree depth <N>' }
+    if (isNaN(n)) return { type: 'text', value: '📖 用法：/tree depth <N>' }
     config.maxDepth = n
     saveConfig(config)
     return { type: 'text', value: `✅ [OK] Max depth: ${n}` }
@@ -162,7 +162,7 @@ export const call: LocalCommandCall = async (args) => {
   if (parts.includes('sort-size')) options.sortBySize = true
 
   const target = parts.find(p => !['help', 'depth', 'sizes', 'no-icons', 'files-only', 'dirs-only', 'hidden', 'git', 'sort-size', 'export', 'config'].includes(p) && p !== cmd) || '.'
-  if (!existsSync(target)) return { type: 'text', value: 'Path not found: ' + target }
+  if (!existsSync(target)) return { type: 'text', value: '❌ 路径未找到：' + target }
 
   const gitTracked = options.gitTrackedOnly ? getGitTrackedFiles() : undefined
   const lines = generateTree(target, options, '', 0, gitTracked)
@@ -181,7 +181,7 @@ export const call: LocalCommandCall = async (args) => {
 
 const tree: Command = {
   type: 'local', name: 'tree',
-  description: 'Tree - depth/sizes/icons/files/dirs/hidden/git/sort-size/export/config',
+  description: '📁 目录树 - 深度/大小/图标/文件/目录/隐藏/Git/排序/导出/配置',
   aliases: ['/tree', '/t'],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

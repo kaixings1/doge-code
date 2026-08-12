@@ -70,13 +70,13 @@ export const call: LocalCommandCall = async (args) => {
   const notes = loadNotes()
 
   if (cmd === 'list' || cmd === 'ls' || cmd === '') {
-    if (stashes.length === 0) return { type: 'text', value: 'No stashes. Use /stash save [message] to create one.' }
-    const lines = ['Git Stashes:', '=============', '']
+    if (stashes.length === 0) return { type: 'text', value: '📋 无暂存记录。使用 /stash save [消息] 创建一个。' }
+    const lines = ['Git 暂存：', '=============', '']
     stashes.forEach(st => {
       const stats = getStashStats(st.index)
       const note = notes['{' + st.index + '}'] ? ' [' + notes['{' + st.index + '}'] + ']' : ''
       lines.push(st.name + ' [' + st.branch + '] ' + st.message + note)
-      lines.push('  Files: ' + stats.files + ' (+' + stats.insertions + '/-' + stats.deletions + ')')
+      lines.push('  文件：' + stats.files + ' (+' + stats.insertions + '/-' + stats.deletions + ')')
     })
     return { type: 'text', value: lines.join('\n') }
   }
@@ -86,49 +86,49 @@ export const call: LocalCommandCall = async (args) => {
     try {
       const flags = parts.includes('-u') || parts.includes('--include-untracked') ? ' --include-untracked' : ''
       execSync('git stash push' + flags + ' -m "' + message + '"', { stdio: 'ignore' })
-      return { type: 'text', value: '[OK] Stashed: ' + message }
+      return { type: 'text', value: '✅ 已暂存：' + message }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
+      return { type: 'text', value: '❌ ' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
   if (cmd === 'pop' || cmd === 'apply') {
     const idx = parseInt(parts[1] || '0')
-    if (isNaN(idx)) return { type: 'text', value: 'Usage: /stash pop [index]' }
+    if (isNaN(idx)) return { type: 'text', value: '📖 用法：/stash pop [index]' }
     try {
       const action = cmd === 'pop' ? 'pop' : 'apply'
       execSync('git stash ' + action + ' stash@\{' + idx + '\}', { stdio: 'ignore' })
-      return { type: 'text', value: '[OK] Stash ' + action + 'ed: {' + idx + '}' }
+      return { type: 'text', value: '✅ 已' + (action === 'pop' ? '弹出' : '应用') + '暂存：{' + idx + '}' }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
+      return { type: 'text', value: '❌ ' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
   if (cmd === 'show' || cmd === 'view') {
     const idx = parseInt(parts[1] || '0')
-    if (isNaN(idx)) return { type: 'text', value: 'Usage: /stash show [index]' }
+    if (isNaN(idx)) return { type: 'text', value: '📖 用法：/stash show [index]' }
     try {
       const stats = getStashStats(idx)
       const files = getStashFiles(idx)
       const diff = execSync('git diff stash@\{' + idx + '\}', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
       const lines = [
-        'Stash {' + idx + '}:', 'Files: ' + stats.files + ' (+' + stats.insertions + '/-' + stats.deletions + ')', '',
-        'Changed files:',
+        '暂存 {' + idx + '}：', '文件：' + stats.files + ' (+' + stats.insertions + '/-' + stats.deletions + ')', '',
+        '变更文件：',
       ]
       files.forEach(f => lines.push('  - ' + f))
-      lines.push('', 'Diff:', diff.slice(0, 3000))
+      lines.push('', '差异：', diff.slice(0, 3000))
       return { type: 'text', value: lines.join('\n') }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
+      return { type: 'text', value: '❌ ' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
   if (cmd === 'files') {
     const idx = parseInt(parts[1] || '0')
-    if (isNaN(idx)) return { type: 'text', value: 'Usage: /stash files [index]' }
+    if (isNaN(idx)) return { type: 'text', value: '📖 用法：/stash files [index]' }
     const files = getStashFiles(idx)
-    if (files.length === 0) return { type: 'text', value: 'No files in stash {' + idx + '}' }
-    const lines = ['Files in stash {' + idx + '}:', '========================', '']
+    if (files.length === 0) return { type: 'text', value: '暂存 {' + idx + '} 中没有文件' }
+    const lines = ['暂存 {' + idx + '} 中的文件：', '========================', '']
     files.forEach(f => lines.push('  - ' + f))
     return { type: 'text', value: lines.join('\n') }
   }
@@ -136,69 +136,69 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'branch') {
     const idx = parseInt(parts[1] || '0')
     const branchName = parts[2] || 'stash-branch-' + idx
-    if (isNaN(idx)) return { type: 'text', value: 'Usage: /stash branch [index] [branch-name]' }
+    if (isNaN(idx)) return { type: 'text', value: '📖 用法：/stash branch [index] [branch-name]' }
     try {
       execSync('git stash branch ' + branchName + ' stash@\{' + idx + '\}', { stdio: 'ignore' })
-      return { type: 'text', value: '[OK] Created branch ' + branchName + ' from stash {' + idx + '}' }
+      return { type: 'text', value: '✅ 已从暂存 {' + idx + '} 创建分支：' + branchName }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
+      return { type: 'text', value: '❌ ' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
   if (cmd === 'drop') {
     const idx = parseInt(parts[1] || '0')
-    if (isNaN(idx)) return { type: 'text', value: 'Usage: /stash drop [index]' }
-    try { execSync('git stash drop stash@\{' + idx + '\}', { stdio: 'ignore' }); return { type: 'text', value: '[OK] Dropped stash {' + idx + '}' } }
-    catch (err) { return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) } }
+    if (isNaN(idx)) return { type: 'text', value: '📖 用法：/stash drop [index]' }
+    try { execSync('git stash drop stash@\{' + idx + '\}', { stdio: 'ignore' }); return { type: 'text', value: '✅ 已删除暂存：{' + idx + '}' } }
+    catch (err) { return { type: 'text', value: '❌ ' + (err instanceof Error ? err.message : String(err)) } }
   }
 
   if (cmd === 'clear') {
-    try { execSync('git stash clear', { stdio: 'ignore' }); return { type: 'text', value: '[OK] All stashes cleared' } }
-    catch { return { type: 'text', value: '[ERROR] Clear failed' } }
+    try { execSync('git stash clear', { stdio: 'ignore' }); return { type: 'text', value: '✅ 已清除所有暂存' } }
+    catch { return { type: 'text', value: '❌ 清除失败' } }
   }
 
   if (cmd === 'note') {
     const idx = parseInt(parts[1] || '0')
     const note = parts.slice(2).join(' ')
-    if (isNaN(idx) || !note) return { type: 'text', value: 'Usage: /stash note <index> <note>' }
+    if (isNaN(idx) || !note) return { type: 'text', value: '📖 用法：/stash note <index> <note>' }
     notes['{' + idx + '}'] = note
     saveNotes(notes)
-    return { type: 'text', value: '[OK] Note added to stash {' + idx + '}' }
+    return { type: 'text', value: '✅ 已添加备注到暂存 {' + idx + '}' }
   }
 
   if (cmd === 'rename') {
     const idx = parseInt(parts[1] || '0')
     const newName = parts.slice(2).join(' ')
-    if (isNaN(idx) || !newName) return { type: 'text', value: 'Usage: /stash rename <index> <new-message>' }
+    if (isNaN(idx) || !newName) return { type: 'text', value: '📖 用法：/stash rename <index> <new-message>' }
     try {
       execSync('git stash drop stash@\{' + idx + '\}', { stdio: 'ignore' })
       execSync('git stash push -m "' + newName + '"', { stdio: 'ignore' })
-      return { type: 'text', value: '[OK] Renamed and re-saved as: ' + newName }
+      return { type: 'text', value: '✅ 已重命名并重新保存为：' + newName }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
+      return { type: 'text', value: '❌ ' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
   if (cmd === 'compare') {
     const idx1 = parseInt(parts[1] || '0')
     const idx2 = parseInt(parts[2] || '1')
-    if (isNaN(idx1) || isNaN(idx2)) return { type: 'text', value: 'Usage: /stash compare <idx1> <idx2>' }
+    if (isNaN(idx1) || isNaN(idx2)) return { type: 'text', value: '📖 用法：/stash compare <idx1> <idx2>' }
     try {
       const diff = execSync('git diff stash@\{' + idx1 + '\}..stash@\{' + idx2 + '\}', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
-      return { type: 'text', value: 'Diff between stash {' + idx1 + '} and {' + idx2 + '}:\n' + diff.slice(0, 2000) }
+      return { type: 'text', value: '暂存 {' + idx1 + '} 和 {' + idx2 + '} 之间的差异：\n' + diff.slice(0, 2000) }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
+      return { type: 'text', value: '❌ ' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
   return { type: 'text', value: [
-    'Git Stash Manager', '', '📖 Usage: ',
-    '  /stash list              List all stashes with stats', '  /stash save [message]    Create new stash',
-    '  /stash pop [index]       Pop stash (removes)', '  /stash apply [index]     Apply stash (keeps)',
-    '  /stash show [index]      View full diff', '  /stash files [index]     List changed files',
-    '  /stash branch [idx] [name] Create branch from stash', '  /stash drop [index]      Delete a stash',
-    '  /stash clear             Delete all stashes', '  /stash note <idx> <text> Add note',
-    '  /stash rename <idx> <msg> Rename stash', '  /stash compare <i> <j>   Compare two stashes',
+    '🗂️ Git 暂存管理器', '', '📖 用法：',
+    '  /stash list              列出所有暂存（含统计）', '  /stash save [消息]       创建新暂存',
+    '  /stash pop [index]       弹出暂存（删除）', '  /stash apply [index]     应用暂存（保留）',
+    '  /stash show [index]      查看完整差异', '  /stash files [index]     列出变更文件',
+    '  /stash branch [idx] [name] 从暂存创建分支', '  /stash drop [index]      删除暂存',
+    '  /stash clear             删除所有暂存', '  /stash note <idx> <text> 添加备注',
+    '  /stash rename <idx> <msg> 重命名暂存', '  /stash compare <i> <j>   比较两个暂存',
   ].join('\n') }
 }
 

@@ -160,7 +160,7 @@ export const call: LocalCommandCall = async (args) => {
     if (!key || !value) return { type: 'text', value: '📖 用法：/duplicate set <键> <值>' }
     // @ts-expect-error dynamic
     if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
-    return { type: 'text', value: `❌ Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
+    return { type: 'text', value: `❌ 未知键：${key}。可用键：${Object.keys(config).join(', ')}` }
   }
 
   if (cmd === 'history') {
@@ -172,17 +172,17 @@ export const call: LocalCommandCall = async (args) => {
   }
 
   if (cmd === 'tips') {
-    return { type: 'text', value: ['Fix Strategies:', '════════════════', '', '1. Extract shared logic to utility functions', '2. Create base classes for similar classes', '3. Use composition over duplication', '4. Extract shared React components', '5. Use mixins/decorators for cross-cutting concerns', '6. Move constants to a shared constants file', '7. Use DRY with templates/generics'].join('\n') }
+    return { type: 'text', value: ['💡 修复策略：', '════════════════', '', '1. 将共享逻辑提取为工具函数', '2. 为相似类创建基类', '3. 使用组合而非复制', '4. 提取共享组件', '5. 使用混入/装饰器处理横切关注点', '6. 将常量移至共享常量文件', '7. 使用模板/泛型遵循 DRY 原则'].join('\n') }
   }
 
   const files = collectFiles(config)
   const blocks = findDuplicates(files, config)
 
   if (cmd === 'files') {
-    if (blocks.length === 0) return { type: 'text', value: '[OK] No duplicates found' }
+    if (blocks.length === 0) return { type: 'text', value: '✅ 未找到重复代码' }
     const byFile: Record<string, number> = {}
     blocks.forEach(b => { byFile[b.file1] = (byFile[b.file1] || 0) + 1; byFile[b.file2] = (byFile[b.file2] || 0) + 1 })
-    const lines = ['Files with duplicates (' + Object.keys(byFile).length + '):', '═══════════════════════════', '']
+    const lines = ['📁 包含重复代码的文件（' + Object.keys(byFile).length + '）：', '═══════════════════════════', '']
     Object.entries(byFile).sort((a: any, b: any) => b[1] - a[1]).forEach(([file, count]) => lines.push(`  ${file}: ${count}`))
     return { type: 'text', value: lines.join('\n') }
   }
@@ -193,29 +193,29 @@ export const call: LocalCommandCall = async (args) => {
     const totalFiles = files.length
     const ratio = Math.round((dupLines / (totalFiles * 50 + 1)) * 100)
     const grade = ratio < 3 ? 'A' : ratio < 5 ? 'B' : ratio < 10 ? 'C' : 'D'
-    return { type: 'text', value: `✅ Duplication Ratio:\nBlocks: ${blocks.length}\nFiles scanned: ${totalFiles}\nEstimated ratio: ${ratio}%\nGrade: ${grade}\n\n${ratio < 3 ? '[OK] Low duplication' : ratio < 5 ? '[INFO] Acceptable' : '[WARN] Consider refactoring'}` }
+    return { type: 'text', value: `📊 重复率：\n重复块：${blocks.length}\n扫描文件：${totalFiles}\n估计重复率：${ratio}%\n评级：${grade}\n\n${ratio < 3 ? '✅ 重复率低' : ratio < 5 ? 'ℹ️ 可接受' : '⚠️ 建议重构'}` }
   }
 
   if (cmd === 'list' || cmd === '') {
     if (blocks.length === 0) {
       saveHistory({ date: new Date().toISOString(), totalBlocks: 0, filesWithDuplicates: 0, estimatedDuplication: 0, status: 'CLEAN' })
-      return { type: 'text', value: '[OK] No duplicate code found!' }
+      return { type: 'text', value: '✅ 未找到重复代码！' }
     }
     saveHistory({ date: new Date().toISOString(), totalBlocks: blocks.length, filesWithDuplicates: new Set(blocks.flatMap(b => [b.file1, b.file2])).size, estimatedDuplication: Math.round(blocks.reduce((s, b) => s + b.length, 0) / (files.length || 1)), status: 'DUPLICATES' })
-    const lines = ['Duplicate Blocks (' + blocks.length + '):', '══════════════════════════', '']
+    const lines = ['🔁 重复代码块（' + blocks.length + '）：', '══════════════════════════', '']
     blocks.slice(0, 30).forEach((b, i) => {
       lines.push(`  ${i + 1}. ${b.file1}:${b.line1} ↔ ${b.file2}:${b.line2}`)
-      lines.push(`     similarity: ${b.similarity}%, lines: ${b.length}`)
+      lines.push(`     相似度：${b.similarity}%，行数：${b.length}`)
       lines.push(`     ${b.content.split('\n')[0].slice(0, 60)}`)
     })
-    lines.push('', 'Actions:', '  /duplicate files - files involved', '  /duplicate ratio - duplication percentage', '  /duplicate tips  - fix strategies')
+    lines.push('', '操作：', '  /duplicate files - 涉及的文件', '  /duplicate ratio - 重复百分比', '  /duplicate tips  - 修复策略')
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'export') {
     const file = parts[1] || 'duplicates-report.json'
     writeFileSync(file, JSON.stringify({ config, blocks, scanned: files.length }, null, 2), 'utf-8')
-    return { type: 'text', value: `✅ [OK] Exported: ${file}` }
+    return { type: 'text', value: `✅ [OK] 已导出：${file}` }
   }
 
   return { type: 'text', value: '❌ 未知命令：' + cmd }
