@@ -3586,7 +3586,7 @@ const generalSearchProviders: Provider[] = [
     name: 'MITRE ATT&CK 搜索',
     offline: false,
     fetch: async (q) => {
-      const url = `https://attack.mitre.org/search?q=${encodeURIComponent(q)}`
+      const url = `https://attack.mitre.org/search/search.html?q=${encodeURIComponent(q)}`
       return [{ title: `MITRE ATT&CK：${q}`, url, snippet: '搜索威胁战术/技术/程序', source: 'mitre-attack' }]
     }
   },
@@ -3629,7 +3629,7 @@ const generalSearchProviders: Provider[] = [
     name: 'Snyk 漏洞搜索',
     offline: false,
     fetch: async (q) => {
-      const url = `https://security.snyk.io/search?q=${encodeURIComponent(q)}`
+      const url = `https://security.snyk.io/search?query=${encodeURIComponent(q)}`
       return [{ title: `Snyk：${q}`, url, snippet: '搜索开源漏洞数据库', source: 'snyk' }]
     }
   },
@@ -3661,8 +3661,8 @@ const generalSearchProviders: Provider[] = [
     name: 'HackerOne 搜索',
     offline: false,
     fetch: async (q) => {
-      const url = `https://www.hackerone.com/search?q=${encodeURIComponent(q)}`
-      return [{ title: `HackerOne：${q}`, url, snippet: '搜索 HackerOne 漏洞赏金项目', source: 'hackerone' }]
+      const url = `https://hackerone.com/programs/search?query=${encodeURIComponent(q)}`
+      return [{ title: `HackerOne：${q}`, url, snippet: '搜索 HackerOne 漏洞赏金项目（国内可能超时）', source: 'hackerone' }]
     }
   },
   {

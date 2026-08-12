@@ -15,8 +15,8 @@ export const verifiedAliveProviders = [
     return [{ title: `360搜索：${q}`, url, snippet: '点击链接在360搜索中查看结果', source: '360' }]
   }},
   { name: '神马搜索', offline: false, fetch: async (q) => {
-    const url = `https://quark.sm.cn/search?q=${encodeURIComponent(q)}`
-    return [{ title: `神马搜索：${q}`, url, snippet: '点击链接在神马搜索中查看结果', source: 'sm' }]
+    const url = `https://so.quark.com/s?q=${encodeURIComponent(q)}`
+    return [{ title: `神马搜索：${q}`, url, snippet: '点击链接在神马搜索中查看结果（URL待验证）', source: 'sm' }]
   }},
   { name: '头条搜索', offline: false, fetch: async (q) => {
     const url = `https://so.toutiao.com/search?keyword=${encodeURIComponent(q)}`
@@ -240,8 +240,8 @@ export const verifiedAliveProviders = [
     return [{ title: `Shodan搜索：${q}`, url, snippet: '搜索互联网设备和服务', source: 'shodan' }]
   }},
   { name: 'Censys搜索', offline: false, fetch: async (q) => {
-    const url = `https://censys.io/search?q=${encodeURIComponent(q)}`
-    return [{ title: `Censys搜索：${q}`, url, snippet: '搜索互联网资产和证书', source: 'censys' }]
+    const url = `https://search.censys.io/search?q=${encodeURIComponent(q)}`
+    return [{ title: `Censys搜索：${q}`, url, snippet: '搜索互联网资产和证书（国内可能超时）', source: 'censys' }]
   }},
   { name: '网易云音乐搜索', offline: false, fetch: async (q) => {
     const url = `https://music.163.com/#/search/m/?s=${encodeURIComponent(q)}`
@@ -326,8 +326,8 @@ export const verifiedAliveProviders = [
     return [{ title: `Bugcrowd：${q}`, url, snippet: '搜索漏洞赏金项目', source: 'bugcrowd' }]
   }},
   { name: 'HackerOne赏金', offline: false, fetch: async (q) => {
-    const url = `https://www.hackerone.com/search?q=${encodeURIComponent(q)}`
-    return [{ title: `HackerOne：${q}`, url, snippet: '搜索漏洞赏金项目', source: 'hackerone' }]
+    const url = `https://hackerone.com/programs/search?query=${encodeURIComponent(q)}`
+    return [{ title: `HackerOne：${q}`, url, snippet: '搜索漏洞赏金项目（国内可能超时）', source: 'hackerone' }]
   }},
   { name: 'OpenSSF', offline: false, fetch: async (q) => {
     const url = `https://openssf.org/search?q=${encodeURIComponent(q)}`
@@ -612,8 +612,8 @@ export const verifiedAliveProviders = [
     } catch { return [] }
   }},
   { name: 'V2EX搜索', offline: false, fetch: async (q) => {
-    const url = `https://s.v2ex.com/search?q=${encodeURIComponent(q)}`
-    return [{ title: `V2EX搜索：${q}`, url, snippet: '搜索V2EX社区帖子', source: 'v2ex' }]
+    const url = `https://www.v2ex.com/search?q=${encodeURIComponent(q)}`
+    return [{ title: `V2EX搜索：${q}`, url, snippet: '搜索V2EX社区帖子（国内可能超时）', source: 'v2ex' }]
   }},
   { name: 'NGA搜索', offline: false, fetch: async (q) => {
     const url = `https://bbs.nga.cn/search.php?q=${encodeURIComponent(q)}`
@@ -653,11 +653,11 @@ export const verifiedAliveProviders = [
     } catch { return [] }
   }},
   { name: 'MITRE ATT&CK', offline: false, fetch: async (q) => {
-    const url = `https://attack.mitre.org/search/?search=${encodeURIComponent(q)}`
+    const url = `https://attack.mitre.org/search/search.html?q=${encodeURIComponent(q)}`
     return [{ title: `MITRE ATT&CK：${q}`, url, snippet: '搜索威胁矩阵攻击技术', source: 'mitre-attack' }]
   }},
   { name: 'Snyk漏洞搜索', offline: false, fetch: async (q) => {
-    const url = `https://snyk.io/search?q=${encodeURIComponent(q)}`
+    const url = `https://snyk.io/search?query=${encodeURIComponent(q)}`
     return [{ title: `Snyk：${q}`, url, snippet: '搜索开源漏洞和依赖问题', source: 'snyk' }]
   }},
   { name: 'Exploit-DB搜索', offline: false, fetch: async (q) => {
