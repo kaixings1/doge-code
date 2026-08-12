@@ -214,7 +214,7 @@ export function PluginPanel({ theme, onClose }: PluginPanelProps): JSX.Element {
         width: '640px', maxHeight: '580px', background: c.surface, border: `1px solid ${c.border}`,
         borderRadius: '8px', boxShadow: `0 8px 32px ${c.bg}80`, display: 'flex', flexDirection: 'column',
       }} onClick={e => e.stopPropagation()}>
-        {/* 头部 + 标签�切换 */}
+        {/* 头部 + 标签页切换 */}
         <div style={{
           padding: '12px 16px', borderBottom: `1px solid ${c.border}`,
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -284,7 +284,7 @@ export function PluginPanel({ theme, onClose }: PluginPanelProps): JSX.Element {
           </div>
         )}
 
-        {/* ─��─ 已安装标签页 ─── */}
+        {/* ─── 已安装标签页 ─── */}
         {/* 运行时标签页（JS 插件沙箱执行 + hooks + 热加载） */}
         {tab === 'runtime' && <RuntimeView theme={c} />}
 

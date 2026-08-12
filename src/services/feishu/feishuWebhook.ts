@@ -123,7 +123,7 @@ export class FeishuWebhookServer {
           res.writeHead(200)
           res.end('ok')
         } catch (err) {
-          console.error('[feishu] Webhook 处理错误:', err)
+          console.error('❌ 错误: [feishu] Webhook 处理错误:', err)
           res.writeHead(500)
           res.end('error')
         }

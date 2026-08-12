@@ -127,7 +127,7 @@ function renderHelp(): string {
     '  --staged           查看已暂存的变更（git diff --staged）',
     '  --file <路径>      查看特定文件的变更',
     '  --commits <n>      查看最近 n 次提交的变更（默认 1）',
-    '  --help             显示帮助',
+    '📖 用法:   --help             显示帮助',
     '',
     '示例:',
     '  /diff-mode',

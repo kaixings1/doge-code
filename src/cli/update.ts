@@ -264,7 +264,7 @@ export async function update() {
     await removeInstalledSymlink()
   }
 
-  logForDebugging('update: 正在检查 npm 注册表的最新版本')
+  logForDebugging('⏳ update: 正在检查 npm 注册表的最新版本')
   logForDebugging(`update: Package URL: ${MACRO.PACKAGE_URL}`)
   const npmTag = channel === 'stable' ? 'stable' : 'latest'
   const npmCommand = `npm view ${MACRO.PACKAGE_URL}@${npmTag} version`

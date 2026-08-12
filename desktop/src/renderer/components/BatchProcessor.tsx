@@ -183,7 +183,7 @@ export function BatchProcessor({
           >
             <option value="">-- 请选择工作流 --</option>
             {customWorkflows.map(wf => (
-              <option key={wf.id} value={wf.id}>{wf.icon || '⚡'} {wf.name} ({wf.steps.length} 步�)</option>
+              <option key={wf.id} value={wf.id}>{wf.icon || '⚡'} {wf.name} ({wf.steps.length} 步)</option>
             ))}
           </select>
           {customWorkflows.length === 0 && (

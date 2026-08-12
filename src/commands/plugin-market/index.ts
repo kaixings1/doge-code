@@ -226,7 +226,7 @@ function handleSearch(keyword: string, installed: Set<string>): { type: string; 
   if (!keyword) {
     return {
       type: 'text',
-      value: '⭐ 请提供搜索关键词\n\n用法: /plugin-market search <关键词>',
+      value: '📖 用法: ⭐ 请提供搜索关键词\n\n用法: /plugin-market search <关键词>',
     }
   }
 

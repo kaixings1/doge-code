@@ -1685,7 +1685,7 @@ export function App(): JSX.Element {
           { text: '/review', display: '/review — 审查' },
           { text: '/diff', display: '/diff — Diff' },
           { text: '/status', display: '/status — 状态' },
-          { text: '/help', display: '/help — 帮助' },
+          { text: '/help', display: '📖 用法: /help — 帮助' },
           { text: '/plan', display: '/plan — 计划模式' },
           { text: '/config', display: '/config — 配置' },
           { text: '/model', display: '/model — 模型' },

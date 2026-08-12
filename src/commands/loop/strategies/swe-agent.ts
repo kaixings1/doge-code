@@ -585,7 +585,7 @@ export class SWEAgentStrategy extends BaseLoopStrategy {
       },
       {
         id: 'swe-verify',
-        description: '[verify] 验证：运行测试验证修复是否成功。检查：测试是否全部通过、是否引入新失败、修复是否完整。如果失败返回步骤 2 重新分析。',
+        description: '❌ 错误: [verify] 验证：运行测试验证修复是否成功。检查：测试是否全部通过、是否引入新失败、修复是否完整。如果失败返回步骤 2 重新分析。',
         status: 'pending',
         assignedTo: 'verify',
       },
@@ -1291,7 +1291,7 @@ ${costInfo}
       `估计 token 数: ${cs.estimatedTokens.toLocaleString()} / ${cs.maxContextTokens.toLocaleString()}`,
       `观察截断阈值: ${this.maxObservationLength} 字符`,
       '',
-      `状态: ${cs.estimatedTokens > cs.maxContextTokens ? '[警告] 上下文接近上限' : '[正常] 上下文充足'}`,
+      `状态: ${cs.estimatedTokens > cs.maxContextTokens ? '⚠️ 注意: [警告] 上下文接近上限' : '[正常] 上下文充足'}`,
     ].join('\n')
   }
 

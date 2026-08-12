@@ -507,7 +507,7 @@ export class MessageLoop {
   /** 将验证失败结果格式化为注入对话的消息 */
   private formatVerificationErrors(results: Array<{ step: { name: string; command: string }; output: string; durationMs: number }>): string {
     const lines = [
-      '[并行验证失败] 以下验证步骤未通过，请修复：',
+      '❌ 错误: [并行验证失败] 以下验证步骤未通过，请修复：',
       '',
     ]
 

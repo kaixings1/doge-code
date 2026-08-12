@@ -469,7 +469,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
         '  /tui shortcuts         快捷键列表',
         '  /tui sysinfo           详细系统信息面板',
         '  /tui clear             清屏',
-        '  /tui help              显示本帮助',
+        '📖 用法:   /tui help              显示本帮助',
         '',
         '💡 提示：主题预设包含 catppuccin-mocha, dracula, gruvbox-dark, nord 等',
       ]), { display: 'system' })

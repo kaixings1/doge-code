@@ -2834,7 +2834,7 @@ function processFile(
     }
     return false
   } catch (err) {
-    appendLog(logFile, '✗ 失败: ' + path.basename(filePath) + ' - ' + (err instanceof Error ? err.message : String(err)))
+    appendLog(logFile, '❌ 错误: ✗ 失败: ' + path.basename(filePath) + ' - ' + (err instanceof Error ? err.message : String(err)))
     return false
   }
 }

@@ -451,7 +451,7 @@ export class SSETransport implements Transport {
 
     // 流已结束 — 除非正在关闭，否则重新连接
     if (this.state !== 'closing' && this.state !== 'closed') {
-      logForDebugging('SSETransport: 流已结束，正在重新连接')
+      logForDebugging('⏳ SSETransport: 流已结束，正在重新连接')
       this.handleConnectionError()
     }
   }
@@ -602,7 +602,7 @@ export class SSETransport implements Transport {
    */
   private readonly onLivenessTimeout = (): void => {
     this.livenessTimer = null
-    logForDebugging('SSETransport: 活跃性超时，正在重新连接', {
+    logForDebugging('⏳ SSETransport: 活跃性超时，正在重新连接', {
       level: 'error',
     })
     this.abortController?.abort()

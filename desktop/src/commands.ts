@@ -644,7 +644,7 @@ async function getSkills(cwd: string): Promise<{
   } catch (err) {
     // 这不应该发生，因为我们在 Promise 级别捕获了错误，但防御一下
     logError(toError(err))
-    logForDebugging('getSkills 中发生意外错误，返回空数组')
+    logForDebugging('❌ 错误: getSkills 中发生意外错误，返回空数组')
     return {
       skillDirCommands: [],
       pluginSkills: [],

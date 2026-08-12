@@ -139,7 +139,7 @@ function renderHelp(): string {
     '选项:',
     '  --json              JSON 格式输出',
     '  --export <file>     导出所有记忆到 JSON 文件',
-    '  --help              显示帮助',
+    '📖 用法:   --help              显示帮助',
     '',
     '示例:',
     '  /memory-search "API设计"',

@@ -174,7 +174,7 @@ import {
 } from './toolSearch.js'
 
 const MEMORY_CORRECTION_HINT =
-  "\n\n注意：用户的下一条消息可能包含更正或偏好说明。请仔细留意——如果他们解释了之前哪里出错，或者希望你的工作方式有所调整，请考虑将其保存到记忆中，以便后续会话使用。"
+  "❌ 错误: \n\n注意：用户的下一条消息可能包含更正或偏好说明。请仔细留意——如果他们解释了之前哪里出错，或者希望你的工作方式有所调整，请考虑将其保存到记忆中，以便后续会话使用。"
 
 const TOOL_REFERENCE_TURN_BOUNDARY = '工具已加载。'
 
@@ -242,7 +242,7 @@ export const NO_RESPONSE_REQUESTED = '未请求响应。'
 // 导出以便 HFI 提交时可以拒绝任何包含它的负载 —— 占位符在结构上满足了配对要求，
 // 但内容是伪造的，若提交将污染训练数据。
 export const SYNTHETIC_TOOL_RESULT_PLACEHOLDER =
-  '[工具结果因内部错误缺失]'
+  '❌ 错误: [工具结果因内部错误缺失]'
 
 // UI 用于检测分类器拒绝并简洁渲染的前缀
 const AUTO_MODE_REJECTION_PREFIX =

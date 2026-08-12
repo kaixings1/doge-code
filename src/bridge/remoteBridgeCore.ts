@@ -331,7 +331,7 @@ export async function initEnvLessBridgeCore(
         // both fetch, the first rebuild gets a stale epoch and 409s).
         if (authRecoveryInFlight || tornDown) {
           logForDebugging(
-            '[remote-bridge] 恢复已在进行中，跳过主动刷新',
+            '⏳ [remote-bridge] 恢复已在进行中，跳过主动刷新',
           )
           return
         }
@@ -538,7 +538,7 @@ export async function initEnvLessBridgeCore(
       const oauthToken = getAccessToken() ?? stale
       if (!oauthToken || tornDown) {
         if (!tornDown) {
-          onStateChange?.('failed', 'JWT 刷新失败: 无 OAuth 令牌')
+          onStateChange?.('failed', '❌ 错误: JWT 刷新失败: 无 OAuth 令牌')
         }
         return
       }
@@ -556,7 +556,7 @@ export async function initEnvLessBridgeCore(
       )
       if (!fresh || tornDown) {
         if (!tornDown) {
-          onStateChange?.('failed', 'JWT 刷新失败 (401)')
+          onStateChange?.('failed', '❌ 错误: JWT 刷新失败 (401)')
         }
         return
       }

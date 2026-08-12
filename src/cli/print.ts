@@ -3394,7 +3394,7 @@ function runHeadlessStreaming(
                     message,
                     error instanceof Error
                       ? error.message
-                      : 'OAuth 认证失败',
+                      : '❌ 错误: OAuth 认证失败',
                   )
                 }
               } else {

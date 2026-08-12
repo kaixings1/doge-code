@@ -247,7 +247,7 @@ export function GitBranchManager({ cwd, theme, onClose, onBranchChanged }: GitBr
         </label>
       </div>
 
-      {/* 合并分� */}
+      {/* 合并分支 */}
       <div style={cardStyle}>
         <div style={{ fontWeight: 600, marginBottom: '6px', fontSize: '12px' }}>🔀 合并分支</div>
         <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
