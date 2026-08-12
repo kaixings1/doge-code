@@ -218,7 +218,7 @@ export const call: LocalJSXCommandCall = async (args) => {
     }
     else { r = `❌ 未知命令：${c}` }
 
-    return { type: 'text', value: r || '(no output)' }
+    return { type: 'text', value: r || '（无输出）' }
 
   } catch (err) {
     return { type: 'text', value: `❌ [ERROR] ${formatError(err)}` }
