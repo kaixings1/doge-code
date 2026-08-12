@@ -128,7 +128,7 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'view' || cmd === '') return { type: 'text', value: 'robots.txt ' + (existsSync('robots.txt') ? 'exists' : 'missing') }
 
   const template = TEMPLATES.find(t => t.name === cmd)
-  if (!template) return { type: 'text', value: `❌ Unknown template: ${cmd}\nAvailable: ${TEMPLATES.map(t => t.name).join(', ')}` }
+  if (!template) return { type: 'text', value: `❌ 未知模板：${cmd}\n可用模板：${TEMPLATES.map(t => t.name).join(', ')}` }
 
   // Generate
   let content = template.generate(config)
