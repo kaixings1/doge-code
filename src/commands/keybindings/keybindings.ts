@@ -41,7 +41,7 @@ export async function call(): Promise<{ type: 'text'; value: string }> {
   if (result.error) {
     return {
       type: 'text',
-      value: `${fileExists ? '已在编辑器中打开' : '已创建'} ${keybindingsPath}。无法在编辑器中打开：${result.error}`,
+      value: `${fileExists ? '已在编辑器中打开' : '✅ 已创建'} ${keybindingsPath}。无法在编辑器中打开：${result.error}`,
     }
   }
   return {

@@ -145,7 +145,7 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const config = loadConfig()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Duplicate Code Detector (Advanced)', '', 'Usage:', '  /duplicate                      Find duplicates', '  /duplicate list                 List duplicate blocks', '  /duplicate files                Files with duplicates', '  /duplicate ratio                Duplication ratio', '  /duplicate config               Show/edit config', '  /duplicate set <key> <val>      Set config value', '  /duplicate history              Scan history', '  /duplicate export [file]        Export report', '  /duplicate tips                 Fix strategies', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Duplicate Code Detector (Advanced)', '', '📖 📖 Usage: ', '  /duplicate                      Find duplicates', '  /duplicate list                 List duplicate blocks', '  /duplicate files                Files with duplicates', '  /duplicate ratio                Duplication ratio', '  /duplicate config               Show/edit config', '  /duplicate set <key> <val>      Set config value', '  /duplicate history              Scan history', '  /duplicate export [file]        Export report', '  /duplicate tips                 Fix strategies', ''].join('\n') }
 
   if (cmd === 'config') {
     const key = parts[1]; const value = parts.slice(2).join(' ')

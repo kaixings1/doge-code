@@ -179,7 +179,7 @@ export const call: LocalCommandCall = async (args) => {
   }
 
   return { type: 'text', value: [
-    'Background Tasks', '', 'Usage:',
+    'Background Tasks', '', '📖 📖 Usage: ',
     '  /bg list              List all tasks', '  /bg run <command>     Run command in background',
     '  /bg status <task-id>  Show task details', '  /bg tail <task-id>    Show recent output',
     '  /bg watch <task-id>   Watch task output', '  /bg logs              Show all task logs',

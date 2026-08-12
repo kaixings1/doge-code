@@ -3,7 +3,7 @@ export async function call(args: string, context: any): Promise<string> {
     return [
       '🗄️ 数据库工具',
       '',
-      '用法:',
+      '📖 📖 用法: ',
       '  /database schema <db>           查看 Schema（表结构 + 索引 + 关系）',
       '  /database tables <db>           列出所有表和行数',
       '  /database er <db>               生成 ER 图（Mermaid 格式）',
@@ -19,7 +19,7 @@ export async function call(args: string, context: any): Promise<string> {
       '  • PostgreSQL (postgresql://user:pass@host/db)',
       '  • MySQL (mysql://user:pass@host/db)',
       '',
-      '示例:',
+      '💡 💡 示例: ',
       '  /database schema mydb.sqlite',
       '  /database er mydb.sqlite',
       '  /database preview mydb.sqlite users',

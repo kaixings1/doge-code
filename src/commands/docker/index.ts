@@ -137,7 +137,7 @@ export const call: LocalJSXCommandCall = async (args) => {
 
   try {
     if (!c) return { type: 'text', value: [
-      'Docker Manager', '', 'Usage:',
+      'Docker Manager', '', '📖 📖 Usage: ',
       '  /docker ps [-a]                 List containers',
       '  /docker logs <id> [N]           View container logs',
       '  /docker exec <id> <cmd>         Execute in container',

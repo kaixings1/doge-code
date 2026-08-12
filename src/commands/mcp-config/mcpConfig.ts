@@ -179,7 +179,7 @@ function getHelpText(): string {
   return [
     '🔌 MCP 服务器配置管理',
     '',
-    '用法:',
+    '📖 📖 用法: ',
     '  /mcp-config list                  - 列出所有 MCP 服务器',
     '  /mcp-config add <name> <cmd> [args...] - 添加 stdio 服务器',
     '  /mcp-config add <name> <url> --transport sse - 添加 SSE 服务器',

@@ -440,7 +440,7 @@ export const call: LocalCommandCall = async (args) => {
   const p = args.trim().split(/\s+/)
   const c = p[0] || ''
   if (!c) return { type: 'text', value: [
-    'API Documentation Generator', '', 'Usage:',
+    'API Documentation Generator', '', '📖 📖 Usage: ',
     '  /api-doc gen <file> [format]     Generate docs (md/html/json)',
     '  /api-doc scan <dir>              Scan directory for APIs',
     '  /api-doc routes <file>           Extract routes',

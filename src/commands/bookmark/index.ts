@@ -119,7 +119,7 @@ export const call: LocalCommandCall = async (args) => {
   return { type: 'text', value: [
     'Code Bookmarks',
     '',
-    'Usage:',
+    '📖 📖 Usage: ',
     '  /bookmark list             List all bookmarks',
     '  /bookmark add <file:line>  Add bookmark at location',
     '  /bookmark delete <id>      Delete a bookmark',

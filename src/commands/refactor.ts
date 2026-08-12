@@ -417,7 +417,7 @@ const command = {
         value: [
           '🔧 智能代码重构',
           '',
-          '用法:',
+          '📖 📖 用法: ',
           '  /refactor analyze [路径]     自动分析代码质量，生成重构建议',
           '  /refactor batch [路径]       批量分析项目，统计可重构项',
           '  /refactor extract <文件> <函数>  提取函数/类到新文件',
@@ -428,7 +428,7 @@ const command = {
           '',
           '支持语言: TypeScript, JavaScript, Python, Go, Java, Rust',
           '',
-          '示例:',
+          '💡 💡 示例: ',
           '  /refactor analyze src/',
           '  /refactor analyze src/utils/helper.ts',
           '  /refactor batch .',

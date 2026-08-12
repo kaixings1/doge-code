@@ -44,7 +44,7 @@ export const call: LocalCommandCall = async (args) => {
   const parts = s.split(/\s+/)
   const cmd = parts[0]?.toLowerCase() || 'help'
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Documentation Generator', '', 'Usage:', '  /docs generate [format]        Generate docs (md/html)', '  /docs api                       API documentation', '  /docs readme                    Generate README', '  /docs classes                   Class documentation', '  /docs functions                 Function documentation', '  /docs exports                   Export documentation', '  /docs search <query>            Search in docs', '  /docs watch                     Watch for changes', '  /docs serve                     Serve docs locally', '  /docs export <file>             Export to file', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Documentation Generator', '', '📖 📖 Usage: ', '  /docs generate [format]        Generate docs (md/html)', '  /docs api                       API documentation', '  /docs readme                    Generate README', '  /docs classes                   Class documentation', '  /docs functions                 Function documentation', '  /docs exports                   Export documentation', '  /docs search <query>            Search in docs', '  /docs watch                     Watch for changes', '  /docs serve                     Serve docs locally', '  /docs export <file>             Export to file', ''].join('\n') }
 
   if (cmd === 'generate' || cmd === 'gen') {
     const format = parts[1] || 'md'

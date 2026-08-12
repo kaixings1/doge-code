@@ -416,7 +416,7 @@ chars = "\\u001B\\r"`;
     configPath = configPaths[0] ?? null;
   }
   if (!configPath) {
-    throw new Error('未找到 Alacritty 的有效配置路径')
+    throw new Error('❌ 未找到 Alacritty 的有效配置路径')
   }
   try {
     if (configExists) {

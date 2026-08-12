@@ -344,7 +344,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       return { type: 'jsx', render: () => '数据已清除' };
     }
 
-    return { type: 'jsx', render: () => '未知命令: ' + command + ', 使用 help 查看帮助' };
+    return { type: 'jsx', render: () => '⌨️ ⌨️ 未知命令: ' + command + ', 使用 help 查看帮助' };
   } catch (error) {
     return { type: 'jsx', render: () => '出错: ' + (error instanceof Error ? error.message : String(error)) };
   }

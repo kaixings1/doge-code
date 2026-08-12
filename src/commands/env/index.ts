@@ -143,7 +143,7 @@ export const call: LocalCommandCall = async (args) => {
   }
 
   return { type: 'text', value: [
-    'Environment Variables', '', 'Usage:',
+    'Environment Variables', '', '📖 📖 Usage: ',
     '  /env list               List all env vars from .env files',
     '  /env get <key>          Get variable value',
     '  /env set <key> <val>    Set variable in .env.local',

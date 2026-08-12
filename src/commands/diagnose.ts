@@ -395,7 +395,7 @@ async function checkProjectStructure(): Promise<DiagnosticItem[]> {
     const lockFile = lockFiles.find(f => existsSync(f))!
     items.push({ name: 'Lock 文件', category: CATEGORIES.DEPENDENCIES, status: 'pass', message: `存在 (${lockFile})` })
   } else {
-    items.push({ name: 'Lock 文件', category: CATEGORIES.DEPENDENCIES, status: 'warn', message: '未找到 lock 文件', suggestion: '提交 lock 文件以确保依赖版本一致' })
+    items.push({ name: 'Lock 文件', category: CATEGORIES.DEPENDENCIES, status: 'warn', message: '❌ 未找到 lock 文件', suggestion: '提交 lock 文件以确保依赖版本一致' })
   }
 
   return items
@@ -450,7 +450,7 @@ async function checkApiKeys(): Promise<DiagnosticItem[]> {
   }
 
   if (!hasLocalConfig && !hasAnyKey) {
-    items.push({ name: '本地配置', category: CATEGORIES.AUTH, status: 'info', message: '未找到本地配置文件' })
+    items.push({ name: '本地配置', category: CATEGORIES.AUTH, status: 'info', message: '❌ 未找到本地配置文件' })
   }
 
   return items
@@ -768,7 +768,7 @@ async function analyzeLogs(): Promise<DiagnosticItem[]> {
   }
 
   if (!hasLogs) {
-    items.push({ name: '日志分析', category: CATEGORIES.LOGS, status: 'info', message: '未找到日志目录' })
+    items.push({ name: '日志分析', category: CATEGORIES.LOGS, status: 'info', message: '❌ 未找到日志目录' })
   }
 
   return items
@@ -1072,7 +1072,7 @@ function renderHelp(): string {
     '',
     '检测环境问题、配置错误、性能瓶颈、安全隐患。',
     '',
-    '用法:',
+    '📖 📖 用法: ',
     '  /diagnose [选项]',
     '',
     '选项:',
@@ -1098,7 +1098,7 @@ function renderHelp(): string {
     '  性能: 启动时间, 磁盘I/O',
     '  配置: TypeScript, npm scripts',
     '',
-    '示例:',
+    '💡 💡 示例: ',
     '  /diagnose                         完整诊断',
     '  /diagnose --quick                 快速诊断',
     '  /diagnose --categories 环境,系统   只检查环境和系统',

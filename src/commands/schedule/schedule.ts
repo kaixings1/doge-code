@@ -15,7 +15,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
 				'📅 定时任务管理器',
 				'',
 				'管理和执行定时任务，支持 cron 表达式。',
-				'用法:',
+				'📖 📖 用法: ',
 				' /schedule — 查看任务列表',
 				' /schedule add <name> <cron> <command> — 添加任务',
 				' /schedule list — 列出所有任务',

@@ -65,7 +65,7 @@ export const call: LocalCommandCall = async (args) => {
   const parts = s.split(/\s+/)
   const cmd = parts[0]?.toLowerCase() || 'all'
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Project Stats', '', 'Usage:', '  /project-stats all               Full stats report', '  /project-stats files            File count by language', '  /project-stats lines            Line count by language', '  /project-stats git              Git stats', '  /project-stats contributors     Top contributors', '  /project-stats activity         Recent activity', '  /project-stats size             Disk usage', '  /project-stats health           Health score', '  /project-stats export           Export as JSON', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Project Stats', '', '📖 📖 Usage: ', '  /project-stats all               Full stats report', '  /project-stats files            File count by language', '  /project-stats lines            Line count by language', '  /project-stats git              Git stats', '  /project-stats contributors     Top contributors', '  /project-stats activity         Recent activity', '  /project-stats size             Disk usage', '  /project-stats health           Health score', '  /project-stats export           Export as JSON', ''].join('\n') }
 
   const stats = getProjectStats()
 

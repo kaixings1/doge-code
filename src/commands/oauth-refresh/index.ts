@@ -13,7 +13,7 @@ const call = async () => {
         value: [
           '🔑 OAuth 令牌刷新',
           '',
-          '未找到配置文件。请先使用 /login 登录。',
+          '❌ 未找到配置文件。请先使用 /login 登录。',
         ].join('\n'),
       }
     }

@@ -43,7 +43,7 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const hosts = loadHosts()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['SSH Manager', '', 'Usage:', '  /ssh list                    List saved hosts', '  /ssh add                     Add new host', '  /ssh remove <name>           Remove host', '  /ssh connect <name>          Connect to host', '  /ssh exec <name> <cmd>       Execute command', '  /ssh copy <name> <src> <dst> Copy files via scp', '  /ssh config                  Edit ssh config', '  /ssh keys                    List SSH keys', '  /ssh test <name>             Test connection', '  /ssh logs                    Connection logs', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['SSH Manager', '', '📖 📖 Usage: ', '  /ssh list                    List saved hosts', '  /ssh add                     Add new host', '  /ssh remove <name>           Remove host', '  /ssh connect <name>          Connect to host', '  /ssh exec <name> <cmd>       Execute command', '  /ssh copy <name> <src> <dst> Copy files via scp', '  /ssh config                  Edit ssh config', '  /ssh keys                    List SSH keys', '  /ssh test <name>             Test connection', '  /ssh logs                    Connection logs', ''].join('\n') }
 
   if (cmd === 'list' || cmd === 'ls') {
     if (hosts.length === 0) return { type: 'text', value: 'No saved hosts. Use /ssh add to add one.' }

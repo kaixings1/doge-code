@@ -11,7 +11,7 @@ const call = async (args: string) => {
       value: [
         '🐛 工具调用调试',
         '',
-        '用法:',
+        '📖 📖 用法: ',
         ' /debug-tool-call status — 查看当前调试状态',
         ' /debug-tool-call enable — 启用详细日志',
         ' /debug-tool-call disable — 关闭调试模式',

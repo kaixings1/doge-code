@@ -465,7 +465,7 @@ export const call: LocalCommandCall = async (args) => {
       value: [
         '🤝 AI 结对编程',
         '',
-        '用法:',
+        '📖 📖 用法: ',
         '  /pair                          启动默认交互模式',
         '  /pair <文件路径>               分析指定文件',
         '  /pair <文件路径> <模式>        使用指定模式分析',
@@ -481,7 +481,7 @@ export const call: LocalCommandCall = async (args) => {
         '  --auto-fix   自动应用可修复的问题',
         '  --focus <关键词>  聚焦特定方面（types/safety/performance）',
         '',
-        '示例:',
+        '💡 💡 示例: ',
         '  /pair src/index.ts',
         '  /pair src/utils.ts coauthor --rounds 3',
         '  /pair src/api.ts debug --focus types',
