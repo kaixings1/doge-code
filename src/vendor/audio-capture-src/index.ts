@@ -12,7 +12,7 @@ type AudioCaptureNapi = {
   isPlaying(): boolean
   // TCC microphone authorization status (macOS only):
   // 0 = notDetermined, 1 = restricted, 2 = denied, 3 = authorized.
-  // Linux: always returns 3 (authorized) ?no system-level microphone permission API.
+  // Linux: always returns 3 (authorized) — no system-level microphone permission API.
   // Windows: returns 3 (authorized) if registry key absent or allowed,
   //          2 (denied) if microphone access is explicitly denied.
   microphoneAuthorizationStatus?(): number
@@ -34,10 +34,10 @@ function loadModule(): AudioCaptureNapi | null {
   }
 
   // Candidate 1: native-embed path (bun compile). AUDIO_CAPTURE_NODE_PATH is
-  // defined at build time in build-with-plugins.ts for native builds only ?the
+  // defined at build time in build-with-plugins.ts for native builds only — the
   // define resolves it to the static literal "../../audio-capture.node" so bun
   // compile can rewrite it to /$bunfs/root/audio-capture.node. MUST stay a
-  // direct require(env var) ?bun cannot analyze require(variable) from a loop.
+  // direct require(env var) — bun cannot analyze require(variable) from a loop.
   if (process.env.AUDIO_CAPTURE_NODE_PATH) {
     try {
        
@@ -51,7 +51,7 @@ function loadModule(): AudioCaptureNapi | null {
   }
 
   // Candidates 2/3: npm-install and dev/source layouts. Dynamic require is
-  // fine here ?in bundled output (node --target build) require() resolves at
+  // fine here — in bundled output (node --target build) require() resolves at
   // runtime relative to cli.js at the package root; in dev it resolves
   // relative to this file (vendor/audio-capture-src/index.ts).
   const platformDir = `${process.arch}-${platform}`

@@ -367,7 +367,7 @@ When executing task with `tdd="true"`:
 
 **4. REFACTOR (if needed):** Clean up, run tests (MUST still pass), commit only if changes: `refactor({phase}-{plan}): clean up [feature]`
 
-**Error handling:** RED doesn't fail ��� investigate. GREEN doesn't pass → debug/iterate. REFACTOR breaks → undo.
+**Error handling:** RED doesn't fail — investigate. GREEN doesn't pass → debug/iterate. REFACTOR breaks → undo.
 
 ## Plan-Level TDD Gate Enforcement (type: tdd plans)
 

@@ -372,7 +372,7 @@ export const call: LocalCommandCall = async (args, _context) => {
     default:
       return {
         type: 'text',
-        value: `未知命令: ${action}\n\n使用 /collab help 查看可用命令。`,
+        value: `❌ 未知命令: ${action}\n\n使用 /collab help 查看可用命令。`,
       }
   }
 }

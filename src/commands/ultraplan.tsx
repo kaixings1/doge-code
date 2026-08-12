@@ -150,7 +150,7 @@ function startDetachedPoll(taskId: string, sessionId: string, url: string, getAp
         reject_count: e instanceof UltraplanPollError ? e.rejectCount : undefined
       });
       enqueuePendingNotification({
-        value: `Ultraplan 失败: ${errorMessage(e)}\n\n会话: ${url}`,
+        value: `❌ Ultraplan 失败: ${errorMessage(e)}\n\n会话: ${url}`,
         mode: 'task-notification'
       });
       // Error path owns cleanup; teleport path defers to the dialog; remote
@@ -213,7 +213,7 @@ export async function stopUltraplan(taskId: string, sessionId: string, setAppSta
   } : prev);
   const url = getRemoteSessionUrl(sessionId, process.env.SESSION_INGRESS_URL);
   enqueuePendingNotification({
-    value: `Ultraplan 已停止。\n\n会话: ${url}`,
+    value: `✅ Ultraplan 已停止。\n\n会话: ${url}`,
     mode: 'task-notification'
   });
   enqueuePendingNotification({
@@ -321,7 +321,7 @@ async function launchDetached(opts: {
       });
       const reasons = eligibility.errors.map(formatPreconditionError).join('\n');
       enqueuePendingNotification({
-        value: `ultraplan: 无法启动远程会话——\n${reasons}`,
+        value: `❌ ultraplan: 无法启动远程会话——\n${reasons}`,
         mode: 'task-notification'
       });
       return;
@@ -345,7 +345,7 @@ async function launchDetached(opts: {
         reason: (bundleFailMsg ? 'bundle_fail' : 'teleport_null') as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
       });
       enqueuePendingNotification({
-        value: `ultraplan: 会话创建失败${bundleFailMsg ? ` — ${bundleFailMsg}` : ''}。查看 --debug 了解详情。`,
+        value: `❌ ultraplan: 会话创建失败${bundleFailMsg ? ` — ${bundleFailMsg}` : ''}。查看 --debug 了解详情。`,
         mode: 'task-notification'
       });
       return;
@@ -387,7 +387,7 @@ async function launchDetached(opts: {
       reason: 'unexpected_error' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
     });
     enqueuePendingNotification({
-      value: `ultraplan: 意外错误 — ${errorMessage(e)}`,
+      value: `❌ ultraplan: 意外错误 — ${errorMessage(e)}`,
       mode: 'task-notification'
     });
     if (sessionId) {

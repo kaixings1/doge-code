@@ -197,16 +197,16 @@ export const call: LocalCommandCall = async (args) => {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${value}` } }
-    return { type: 'text', value: `Unknown: ${key}` }
+    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ Unknown: ${key}` }
   }
 
   if (cmd === 'set') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: 'Usage: /dead-code set <key> <value>' }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${value}` } }
-    return { type: 'text', value: `Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
+    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
   }
 
   if (cmd === 'history') {
@@ -222,7 +222,7 @@ export const call: LocalCommandCall = async (args) => {
   const items = [...staticItems, ...toolItems]
 
   if (cmd === 'static' || cmd === 'tools') {
-    if (items.length === 0) return { type: 'text', value: `[OK] No dead code detected via ${cmd} analysis` }
+    if (items.length === 0) return { type: 'text', value: `✅ [OK] No dead code detected via ${cmd} analysis` }
     const lines = [`Dead Code (${cmd}, ${items.length}):`, '══════════════════════', '']
     items.slice(0, 30).forEach((i, idx) => lines.push(`${idx + 1}. [${i.kind}] ${i.name} (${i.file}:${i.line})`))
     return { type: 'text', value: lines.join('\n') }
@@ -232,7 +232,7 @@ export const call: LocalCommandCall = async (args) => {
     const kindMap: Record<string, DeadItem['kind'][]> = { exports: ['export', 'function', 'class'], imports: ['import'], functions: ['function'], classes: ['class'] }
     const kinds = kindMap[cmd] || []
     const filtered = items.filter(i => kinds.includes(i.kind))
-    if (filtered.length === 0) return { type: 'text', value: `[OK] No unused ${cmd} found` }
+    if (filtered.length === 0) return { type: 'text', value: `✅ [OK] No unused ${cmd} found` }
     const lines = [`Unused ${cmd} (${filtered.length}):`, '════════════════════', '']
     filtered.slice(0, 30).forEach((i, idx) => lines.push(`${idx + 1}. ${i.name} (${i.file}:${i.line})`))
     return { type: 'text', value: lines.join('\n') }
@@ -259,7 +259,7 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'export') {
     const file = parts[1] || 'dead-code-report.json'
     writeFileSync(file, JSON.stringify(items, null, 2), 'utf-8')
-    return { type: 'text', value: `[OK] Exported: ${file}` }
+    return { type: 'text', value: `✅ [OK] Exported: ${file}` }
   }
 
   if (items.length === 0) {

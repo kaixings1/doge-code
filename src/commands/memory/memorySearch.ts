@@ -95,7 +95,7 @@ async function searchMemory(
     if (matches.length === 0) {
       return {
         type: 'text',
-        value: `未找到包含 "${query}" 的记忆条目。\n\n搜索范围：${files.length} 个记忆文件\n提示：尝试使用更短的关键词或检查拼写。`,
+        value: `❌ 未找到包含 "${query}" 的记忆条目。\n\n搜索范围：${files.length} 个记忆文件\n提示：尝试使用更短的关键词或检查拼写。`,
       }
     }
 
@@ -127,7 +127,7 @@ async function searchMemory(
     logError(error)
     return {
       type: 'text',
-      value: `搜索失败：${error}`,
+      value: `❌ 搜索失败：${error}`,
     }
   }
 }
@@ -238,7 +238,7 @@ async function statsMemory(): Promise<LocalCommandResult> {
     logError(error)
     return {
       type: 'text',
-      value: `获取统计失败：${error}`,
+      value: `❌ 获取统计失败：${error}`,
     }
   }
 }
@@ -278,13 +278,13 @@ async function exportMemory(
 
     return {
       type: 'text',
-      value: `已导出 ${files.length} 个记忆文件到：${outputPath}\n导出时间：${exportData.exportedAt}`,
+      value: `✅ 已导出 ${files.length} 个记忆文件到：${outputPath}\n导出时间：${exportData.exportedAt}`,
     }
   } catch (error) {
     logError(error)
     return {
       type: 'text',
-      value: `导出失败：${error}`,
+      value: `❌ 导出失败：${error}`,
     }
   }
 }

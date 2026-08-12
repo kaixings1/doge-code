@@ -34,7 +34,7 @@ const call = async () => {
       ].join('\n'),
     }
   } catch (err: any) {
-    return { type: 'text' as const, value: `刷新令牌时出错: ${err.message || err}` }
+    return { type: 'text' as const, value: `❌ 刷新令牌时出错: ${err.message || err}` }
   }
 }
 

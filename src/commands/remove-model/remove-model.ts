@@ -16,7 +16,7 @@ export const call: LocalCommandCall = async (args, _context) => {
   if (!savedModels.includes(targetModel)) {
     return {
       type: 'text',
-      value: `在保存的列表中未找到模型：${targetModel}`,
+      value: `❌ 在保存的列表中未找到模型：${targetModel}`,
     }
   }
 
@@ -50,6 +50,6 @@ export const call: LocalCommandCall = async (args, _context) => {
 
   return {
     type: 'text',
-    value: `已移除自定义模型: ${targetModel}`,
+    value: `✅ 已移除自定义模型: ${targetModel}`,
   }
 }

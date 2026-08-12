@@ -1,6 +1,2 @@
-[install.scopes]
-electron = ""
-electron-builder = ""
-
-[exports]
-"bun:bundle" = "./src/utils/bun-bundle-polyfill.ts"
+[test]
+exclude = ["**/tmp_*"]

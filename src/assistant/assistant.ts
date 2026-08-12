@@ -22,7 +22,7 @@ const call: LocalCommandCall = async (args, context) => {
     
     return {
       type: 'text',
-      value: `助手模式: ${isEnabled ? '已启用' : '未启用'}${
+      value: `🔧 助手模式: ${isEnabled ? '✅ 已启用' : '❌ 未启用'}${
         isForced ? ' (强制)' : ''
       }\n\n使用 /assistant help 查看更多信息`
     }
@@ -31,7 +31,7 @@ const call: LocalCommandCall = async (args, context) => {
   if (arg === 'help' || arg === 'h') {
     return {
       type: 'text',
-      value: `助手模式命令:\n\n` +
+      value: `📖 助手模式命令:\n\n` +
         `/assistant - 查看当前状态\n` +
         `/assistant help - 显示此帮助信息\n` +
         `/assistant on - 启用助手模式（如果可用）\n` +
@@ -48,7 +48,7 @@ const call: LocalCommandCall = async (args, context) => {
     
     return {
       type: 'text',
-      value: `助手模式状态:\n\n` +
+      value: `📊 助手模式状态:\n\n` +
         `启用状态: ${isEnabled ? '✅ 已启用' : '❌ 未启用'}\n` +
         `强制模式: ${isForced ? '✅ 是' : '否'}\n` +
         `系统提示: ${promptAddendum ? '✅ 已配置' : '❌ 未配置'}\n\n` +
@@ -65,13 +65,13 @@ const call: LocalCommandCall = async (args, context) => {
     if (isEnabled) {
       return {
         type: 'text',
-        value: '助手模式已经启用。'
+        value: '✅ 助手模式已经启用。'
       }
     }
     
     return {
       type: 'text',
-      value: `无法启用助手模式。\n\n` +
+      value: `❌ 无法启用助手模式。\n\n` +
         `助手模式需要满足以下条件:\n` +
         `1. GrowthBook 门控 (tengu_kairos) 启用\n` +
         `2. 已接受信任对话框\n` +
@@ -84,7 +84,7 @@ const call: LocalCommandCall = async (args, context) => {
     // 助手模式通常由系统控制，用户不能直接禁用
     return {
       type: 'text',
-      value: `助手模式由系统控制，不能通过命令禁用。\n\n` +
+      value: `⚠️ 助手模式由系统控制，不能通过命令禁用。\n\n` +
         `要禁用助手模式，请:\n` +
         `1. 移除 --assistant 启动标志\n` +
         `2. 在设置中关闭相关选项\n` +
@@ -95,7 +95,7 @@ const call: LocalCommandCall = async (args, context) => {
   // 未知命令
   return {
     type: 'text',
-    value: `未知的助手命令: ${arg}\n\n` +
+    value: `❌ 未知的助手命令: ${arg}\n\n` +
       `使用 /assistant help 查看可用命令。`
   }
 }

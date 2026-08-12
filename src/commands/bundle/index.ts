@@ -119,16 +119,16 @@ export const call: LocalCommandCall = async (args) => {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${value}` } }
-    return { type: 'text', value: `Unknown: ${key}` }
+    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ Unknown: ${key}` }
   }
 
   if (cmd === 'set') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: 'Usage: /bundle set <key> <value>' }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${value}` } }
-    return { type: 'text', value: `Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
+    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
   }
 
   if (cmd === 'history') {
@@ -235,7 +235,7 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'export') {
     const file = parts[1] || 'bundle-report.json'
     writeFileSync(file, JSON.stringify(files, null, 2), 'utf-8')
-    return { type: 'text', value: `[OK] Exported: ${file}` }
+    return { type: 'text', value: `✅ [OK] Exported: ${file}` }
   }
 
   return { type: 'text', value: 'Unknown: ' + cmd }

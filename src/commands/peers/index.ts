@@ -59,7 +59,7 @@ const peers = {
 
         const teamFile = await readTeamFileAsync(teamName)
         if (!teamFile) {
-          return { type: 'text', value: `团队 "${teamName}" 不存在。` }
+          return { type: 'text', value: `❌ 团队 "${teamName}" 不存在。` }
         }
 
         switch (subcommand) {
@@ -94,7 +94,7 @@ const peers = {
             if (!teamFile.members.some(m => m.name === recipientName)) {
               return {
                 type: 'text',
-                value: `队友 "${recipientName}" 不在团队 "${teamName}" 中。\n\n使用 /peers list 查看可用队友。`,
+                value: `ℹ️ 队友 "${recipientName}" 不在团队 "${teamName}" 中。\n\n使用 /peers list 查看可用队友。`,
               }
             }
 
@@ -108,12 +108,12 @@ const peers = {
 
               return {
                 type: 'text',
-                value: `消息已发送到 @${recipientName}:\n  "${message.slice(0, 100)}${message.length > 100 ? '…' : ''}"`,
+                value: `✅ 消息已发送到 @${recipientName}:\n  "${message.slice(0, 100)}${message.length > 100 ? '…' : ''}"`,
               }
             } catch (e) {
               return {
                 type: 'text',
-                value: `发送失败: ${e instanceof Error ? e.message : String(e)}`,
+                value: `❌ 发送失败: ${e instanceof Error ? e.message : String(e)}`,
               }
             }
           }

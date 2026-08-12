@@ -151,16 +151,16 @@ export const call: LocalCommandCall = async (args) => {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${value}` } }
-    return { type: 'text', value: `Unknown: ${key}` }
+    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ Unknown: ${key}` }
   }
 
   if (cmd === 'set') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: 'Usage: /duplicate set <key> <value>' }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${value}` } }
-    return { type: 'text', value: `Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
+    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
   }
 
   if (cmd === 'history') {
@@ -193,7 +193,7 @@ export const call: LocalCommandCall = async (args) => {
     const totalFiles = files.length
     const ratio = Math.round((dupLines / (totalFiles * 50 + 1)) * 100)
     const grade = ratio < 3 ? 'A' : ratio < 5 ? 'B' : ratio < 10 ? 'C' : 'D'
-    return { type: 'text', value: `Duplication Ratio:\nBlocks: ${blocks.length}\nFiles scanned: ${totalFiles}\nEstimated ratio: ${ratio}%\nGrade: ${grade}\n\n${ratio < 3 ? '[OK] Low duplication' : ratio < 5 ? '[INFO] Acceptable' : '[WARN] Consider refactoring'}` }
+    return { type: 'text', value: `✅ Duplication Ratio:\nBlocks: ${blocks.length}\nFiles scanned: ${totalFiles}\nEstimated ratio: ${ratio}%\nGrade: ${grade}\n\n${ratio < 3 ? '[OK] Low duplication' : ratio < 5 ? '[INFO] Acceptable' : '[WARN] Consider refactoring'}` }
   }
 
   if (cmd === 'list' || cmd === '') {
@@ -215,7 +215,7 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'export') {
     const file = parts[1] || 'duplicates-report.json'
     writeFileSync(file, JSON.stringify({ config, blocks, scanned: files.length }, null, 2), 'utf-8')
-    return { type: 'text', value: `[OK] Exported: ${file}` }
+    return { type: 'text', value: `✅ [OK] Exported: ${file}` }
   }
 
   return { type: 'text', value: 'Unknown: ' + cmd }

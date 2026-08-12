@@ -306,7 +306,7 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
     if (matchedIds.length === 0) {
       return {
         type: 'text',
-        value: `未找到带标签 "${action.tag}" 的会话。`,
+        value: `⚠️ 未找到带标签 "${action.tag}" 的会话。`,
       }
     }
 
@@ -359,7 +359,7 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
     } else if (matches.length > 1) {
       return {
         type: 'text',
-        value: `前缀 "${sessionId}" 匹配到 ${matches.length} 个会话，请提供更长的 ID。`,
+        value: `⚠️ 前缀 "${sessionId}" 匹配到 ${matches.length} 个会话，请提供更长的 ID。`,
       }
     } else {
       // 在 store 中也查找前缀匹配
@@ -369,7 +369,7 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
       } else if (storeMatches.length > 1) {
         return {
           type: 'text',
-          value: `前缀 "${sessionId}" 匹配到 ${storeMatches.length} 个已标记会话，请提供更长的 ID。`,
+          value: `⚠️ 前缀 "${sessionId}" 匹配到 ${storeMatches.length} 个已标记会话，请提供更长的 ID。`,
         }
       }
     }
@@ -378,7 +378,7 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
   if (!matchedId) {
     return {
       type: 'text',
-      value: `未找到会话 ID "${sessionId}"。运行 /session-search 查看可用会话。`,
+      value: `⚠️ 未找到会话 ID "${sessionId}"。运行 /session-search 查看可用会话。`,
     }
   }
 
@@ -387,7 +387,7 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
     if (tags.includes(action.tag)) {
       return {
         type: 'text',
-        value: `会话 ${matchedId} 已有标签 "${action.tag}"。`,
+        value: `⚠️ 会话 ${matchedId} 已有标签 "${action.tag}"。`,
       }
     }
     store[matchedId] = [...tags, action.tag]
@@ -399,7 +399,7 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
 
     return {
       type: 'text',
-      value: `已为 "${title}" (${matchedId}) 添加标签 "${action.tag}"。\n当前标签: ${store[matchedId]!.join(', ')}`,
+      value: `✅ 已为 "${title}" (${matchedId}) 添加标签 "${action.tag}"。\n当前标签: ${store[matchedId]!.join(', ')}`,
     }
   }
 
@@ -408,7 +408,7 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
   if (!tags.includes(action.tag)) {
     return {
       type: 'text',
-      value: `会话 ${matchedId} 没有标签 "${action.tag}"。`,
+      value: `⚠️ 会话 ${matchedId} 没有标签 "${action.tag}"。`,
     }
   }
   const newTags = tags.filter(t => t !== action.tag)

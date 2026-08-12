@@ -376,7 +376,7 @@ export const call: LocalCommandCall = async (args) => {
         value = generateFullReport()
       }
 
-      return { type: 'text', value: `[ANT-ONLY]\n${value}` }
+      return { type: 'text', value: `ℹ️ [ANT-ONLY]\n${value}` }
     }
 
     // Non-ant subscribers see subscription info

@@ -220,7 +220,7 @@ export const call: LocalCommandCall = async (args, _context): Promise<LocalComma
   } catch (error) {
     return {
       type: 'text',
-      value: `创建技能失败：${error}`,
+      value: `❌ 创建技能失败：${error}`,
     }
   }
 

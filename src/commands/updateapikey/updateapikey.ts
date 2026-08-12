@@ -559,7 +559,7 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
     const keys = await fetchLatestKeys()
     if (keys.length === 0) {
       log('ERROR', '全量更新失败：获取 Key 为空')
-      return { type: 'text', value: `${timeStamp} ❌ 无法从 GitHub 获取最新 Key。\n\n` +
+      return { type: 'text', value: `❌ ${timeStamp} ❌ 无法从 GitHub 获取最新 Key。\n\n` +
         `可能原因:\n` +
         `  1. 原仓库 alistaitsacle/free-llm-api-keys 已被 GitHub 封禁\n` +
         `  2. 你的网络环境无法访问 GitHub (DNS 被劫持)\n` +
@@ -644,7 +644,7 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
     const keys = await fetchLatestKeys()
     if (keys.length === 0) {
       log('ERROR', `free${idx} 更新失败：获取 Key 为空`)
-      return { type: 'text', value: `${timeStamp} ❌ 无法从 GitHub 获取最新 Key。\n\n` +
+      return { type: 'text', value: `❌ ${timeStamp} ❌ 无法从 GitHub 获取最新 Key。\n\n` +
         `可能原因:\n` +
         `  1. 原仓库 alistaitsacle/free-llm-api-keys 已被 GitHub 封禁\n` +
         `  2. 你的网络环境无法访问 GitHub (DNS 被劫持)\n` +
@@ -660,7 +660,7 @@ export const call: LocalCommandCall = async (args: string, context): Promise<Loc
     const localIdx = idx - 5
     if (localIdx < 0 || localIdx >= keys.length) {
       log('WARN', `free${idx} 超出范围`, { localIdx, keyCount: keys.length })
-      return { type: 'text', value: `${timeStamp} ❌ free${idx} 超出范围，目前可用免费 Key 范围 free5~free${keys.length + 4}` }
+      return { type: 'text', value: `ℹ️ ${timeStamp} ❌ free${idx} 超出范围，目前可用免费 Key 范围 free5~free${keys.length + 4}` }
     }
 
     const entry = keys[localIdx]

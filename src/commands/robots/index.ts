@@ -90,7 +90,7 @@ export const call: LocalCommandCall = async (args) => {
     if (!url) return { type: 'text', value: 'Usage: /robots set-url <url>' }
     config.baseUrl = url
     saveConfig(config)
-    return { type: 'text', value: `[OK] Base URL: ${url}` }
+    return { type: 'text', value: `✅ [OK] Base URL: ${url}` }
   }
 
   if (cmd === 'set-sitemap') {
@@ -98,7 +98,7 @@ export const call: LocalCommandCall = async (args) => {
     if (!url) return { type: 'text', value: 'Usage: /robots set-sitemap <url>' }
     config.sitemapUrl = url
     saveConfig(config)
-    return { type: 'text', value: `[OK] Sitemap: ${url}` }
+    return { type: 'text', value: `✅ [OK] Sitemap: ${url}` }
   }
 
   if (cmd === 'set-delay') {
@@ -106,7 +106,7 @@ export const call: LocalCommandCall = async (args) => {
     if (isNaN(n) || n < 0) return { type: 'text', value: 'Usage: /robots set-delay <seconds>' }
     config.crawlDelay = n
     saveConfig(config)
-    return { type: 'text', value: `[OK] Crawl delay: ${n}s` }
+    return { type: 'text', value: `✅ [OK] Crawl delay: ${n}s` }
   }
 
   if (cmd === 'custom') {
@@ -114,7 +114,7 @@ export const call: LocalCommandCall = async (args) => {
     if (!rules) return { type: 'text', value: 'Usage: /robots custom <rule lines>' }
     config.customRules.push(rules)
     saveConfig(config)
-    return { type: 'text', value: `[OK] Custom rule added: ${rules}` }
+    return { type: 'text', value: `✅ [OK] Custom rule added: ${rules}` }
   }
 
   if (cmd === 'config') {
@@ -128,7 +128,7 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'view' || cmd === '') return { type: 'text', value: 'robots.txt ' + (existsSync('robots.txt') ? 'exists' : 'missing') }
 
   const template = TEMPLATES.find(t => t.name === cmd)
-  if (!template) return { type: 'text', value: `Unknown template: ${cmd}\nAvailable: ${TEMPLATES.map(t => t.name).join(', ')}` }
+  if (!template) return { type: 'text', value: `❌ Unknown template: ${cmd}\nAvailable: ${TEMPLATES.map(t => t.name).join(', ')}` }
 
   // Generate
   let content = template.generate(config)
@@ -136,7 +136,7 @@ export const call: LocalCommandCall = async (args) => {
     content += '\n\n# Custom rules\n' + config.customRules.join('\n')
   }
   writeFileSync('robots.txt', content, 'utf-8')
-  return { type: 'text', value: `[OK] Generated robots.txt (${template.name})\n\n${content}` }
+  return { type: 'text', value: `✅ [OK] Generated robots.txt (${template.name})\n\n${content}` }
 }
 
 const robots: Command = {

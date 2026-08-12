@@ -1524,7 +1524,7 @@ async function run(): Promise<CommanderCommand> {
         logForDebugging(`[Claude in Chrome] 错误: ${error}`);
         logError(error);
         // biome-ignore lint/suspicious/noConsole:: 有意的控制台输出
-        console.error(`错误：无法使用 Claude in Chrome 运行。`);
+        console.error(`❌ 错误：无法使用 Claude in Chrome 运行。`);
         process.exit(1);
       }
     } else if (autoEnableClaudeInChrome) {
@@ -1749,12 +1749,12 @@ async function run(): Promise<CommanderCommand> {
 		// console.warn(chalk.yellow('isBareMode??'));
     if (inputFormat && inputFormat !== 'text' && inputFormat !== 'stream-json') {
       // biome-ignore lint/suspicious/noConsole:: 有意的控制台输出
-      console.error(`错误：输入格式 "${inputFormat}" 无效。`);
+      console.error(`❌ 错误：输入格式 "${inputFormat}" 无效。`);
       process.exit(1);
     }
     if (inputFormat === 'stream-json' && outputFormat !== 'stream-json') {
       // biome-ignore lint/suspicious/noConsole:: 有意的控制台输出
-      console.error(`错误：--input-format=stream-json 需要配合 output-format=stream-json 使用。`);
+      console.error(`❌ 错误：--input-format=stream-json 需要配合 output-format=stream-json 使用。`);
       process.exit(1);
     }
 // console.warn(chalk.yellow('inputFormat??'));
@@ -1762,7 +1762,7 @@ async function run(): Promise<CommanderCommand> {
     if (sdkUrl) {
       if (inputFormat !== 'stream-json' || outputFormat !== 'stream-json') {
         // biome-ignore lint/suspicious/noConsole:: 有意的控制台输出
-        console.error(`错误：--sdk-url 需要同时使用 --input-format=stream-json 和 --output-format=stream-json。`);
+        console.error(`❌ 错误：--sdk-url 需要同时使用 --input-format=stream-json 和 --output-format=stream-json。`);
         process.exit(1);
       }
     }
@@ -1771,7 +1771,7 @@ async function run(): Promise<CommanderCommand> {
     if (options.replayUserMessages) {
       if (inputFormat !== 'stream-json' || outputFormat !== 'stream-json') {
         // biome-ignore lint/suspicious/noConsole:: 有意的控制台输出
-        console.error(`错误：--replay-user-messages 需要同时使用 --input-format=stream-json 和 --output-format=stream-json。`);
+        console.error(`❌ 错误：--replay-user-messages 需要同时使用 --input-format=stream-json 和 --output-format=stream-json。`);
         process.exit(1);
       }
     }
@@ -3865,7 +3865,7 @@ if (feature('DIRECT_CONNECT')) {
 	  connectConfig = session.config;
 	} catch (err) {
 	  // biome-ignore lint/suspicious/noConsole: intentional error output
-	  console.error(err instanceof DirectConnectError ? err.message : String(err));
+	  console.error(`❌ 错误: ${err instanceof DirectConnectError ? err.message : String(err)}`);
 	  process.exit(1);
 	}
 	const {

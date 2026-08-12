@@ -61,7 +61,7 @@ const fork = {
 
           return {
             type: 'text',
-            value: `分支子代理已启动: ${prompt}`,
+            value: `✅ 分支子代理已启动: ${prompt}`,
           }
         } catch (e) {
           const msg = e instanceof Error ? e.message : String(e)
@@ -73,7 +73,7 @@ const fork = {
           }
           return {
             type: 'text',
-            value: `分支子代理启动失败: ${msg}`,
+            value: `❌ 分支子代理启动失败: ${msg}`,
           }
         }
       },

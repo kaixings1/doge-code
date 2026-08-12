@@ -166,13 +166,13 @@ export const call: LocalJSXCommandCall = async (args) => {
       const containers = parseContainers(p.includes('-a'))
       return { type: 'text', value: containers.length > 0 ? 'Containers:\n' + containers.map(c => `  ${c.id} ${c.name} (${c.image}) - ${c.status}`).join('\n') : 'No containers found' }
     }
-    if (c === 'logs') { const id = p[1]; if (!id) return { type: 'text', value: 'Usage: /docker logs <container-id>' }; const n = parseInt(p[2]) || 50; r = safeExec(`docker logs --tail ${n} ${id} 2>&1`, 10000).output }
-    else if (c === 'exec') { const id = p[1]; const cmd = p.slice(2).join(' '); if (!id || !cmd) return { type: 'text', value: 'Usage: /docker exec <id> <command>' }; r = safeExec(`docker exec ${id} ${cmd}`, 30000).output }
-    else if (['start', 'stop', 'restart', 'rm'].includes(c)) { const id = p[1]; if (!id) return { type: 'text', value: `Usage: /docker ${c} <container-id>` }; r = safeExec(`docker ${c} ${id}`, 30000).output }
-    else if (c === 'rmi') { const id = p[1]; if (!id) return { type: 'text', value: 'Usage: /docker rmi <image-id>' }; r = safeExec(`docker rmi ${id}`, 30000).output }
+    if (c === 'logs') { const id = p[1]; if (!id) return { type: 'text', value: '📖 Usage: /docker logs <container-id>' }; const n = parseInt(p[2]) || 50; r = safeExec(`docker logs --tail ${n} ${id} 2>&1`, 10000).output }
+    else if (c === 'exec') { const id = p[1]; const cmd = p.slice(2).join(' '); if (!id || !cmd) return { type: 'text', value: '📖 Usage: /docker exec <id> <command>' }; r = safeExec(`docker exec ${id} ${cmd}`, 30000).output }
+    else if (['start', 'stop', 'restart', 'rm'].includes(c)) { const id = p[1]; if (!id) return { type: 'text', value: `📖 Usage: /docker ${c} <container-id>` }; r = safeExec(`docker ${c} ${id}`, 30000).output }
+    else if (c === 'rmi') { const id = p[1]; if (!id) return { type: 'text', value: '📖 Usage: /docker rmi <image-id>' }; r = safeExec(`docker rmi ${id}`, 30000).output }
     else if (c === 'build') { const tag = p[1] || 'app'; r = safeExec(`docker build -t ${tag} . 2>&1`, 120000).output }
-    else if (c === 'pull') { const img = p[1]; if (!img) return { type: 'text', value: 'Usage: /docker pull <image>' }; r = safeExec(`docker pull ${img}`, 120000).output }
-    else if (c === 'push') { const img = p[1]; if (!img) return { type: 'text', value: 'Usage: /docker push <image>' }; r = safeExec(`docker push ${img}`, 120000).output }
+    else if (c === 'pull') { const img = p[1]; if (!img) return { type: 'text', value: '📖 Usage: /docker pull <image>' }; r = safeExec(`docker pull ${img}`, 120000).output }
+    else if (c === 'push') { const img = p[1]; if (!img) return { type: 'text', value: '📖 Usage: /docker pull <image>' }; r = safeExec(`docker push ${img}`, 120000).output }
     else if (c === 'run') { r = safeExec(`docker run -d ${p.slice(1).join(' ')}`, 15000).output }
     else if (c === 'prune') { r = safeExec('docker system prune -f 2>&1', 30000).output }
     else if (c === 'stats') { r = safeExec('docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}"', 10000).output }
@@ -187,19 +187,19 @@ export const call: LocalJSXCommandCall = async (args) => {
       const rest = p.slice(2).join(' ')
       const cmds: Record<string, string> = { up: `docker compose up -d ${rest} 2>&1`, down: `docker compose down ${rest} 2>&1`, ps: 'docker compose ps', logs: `docker compose logs --tail=30 ${rest}`, build: `docker compose build ${rest} 2>&1`, pull: `docker compose pull ${rest} 2>&1`, restart: `docker compose restart ${rest} 2>&1` }
       const cmd = cmds[sub]
-      if (!cmd) return { type: 'text', value: `Unknown compose subcommand: ${sub}\nAvailable: ${Object.keys(cmds).join(', ')}` }
+      if (!cmd) return { type: 'text', value: `❌ Unknown compose subcommand: ${sub}\nAvailable: ${Object.keys(cmds).join(', ')}` }
       r = safeExec(cmd, 120000).output
     }
     else if (c === 'generate') {
       const lang = p[1] || 'node'
       const dockerfile = generateDockerfile(lang, { port: parseInt(p[2]) || 3000 })
       safeWriteFile('Dockerfile', dockerfile)
-      return { type: 'text', value: `[OK] Generated Dockerfile for ${lang}\n\n${dockerfile}` }
+      return { type: 'text', value: `✅ [OK] Generated Dockerfile for ${lang}\n\n${dockerfile}` }
     }
     else if (c === 'compose-init') {
       const compose = `version: '3.8'\n\nservices:\n  app:\n    image: node:20-alpine\n    ports:\n      - "3000:3000"\n    environment:\n      NODE_ENV: production\n    restart: unless-stopped\n    healthcheck:\n      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]\n      interval: 30s\n      timeout: 3s\n      retries: 3\n\n  db:\n    image: postgres:16-alpine\n    ports:\n      - "5432:5432"\n    environment:\n      POSTGRES_DB: app\n      POSTGRES_PASSWORD: secret\n    restart: unless-stopped\n    volumes:\n      - pgdata:/var/lib/postgresql/data\n\nvolumes:\n  pgdata:\n`
       safeWriteFile('docker-compose.yml', compose)
-      return { type: 'text', value: `[OK] Generated docker-compose.yml\n\n${compose}` }
+      return { type: 'text', value: `✅ [OK] Generated docker-compose.yml\n\n${compose}` }
     }
     else if (c === 'scan') {
       const image = p[1]
@@ -213,15 +213,15 @@ export const call: LocalJSXCommandCall = async (args) => {
     else if (c === 'config') {
       const key = p[1]; const value = p.slice(2).join(' ')
       if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
-      if (key in config) { (config as any)[key] = value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${value}` } }
-      return { type: 'text', value: `Unknown config: ${key}` }
+      if (key in config) { (config as any)[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
+      return { type: 'text', value: `❌ Unknown config: ${key}` }
     }
     else { r = `Unknown: ${c}` }
 
     return { type: 'text', value: r || '(no output)' }
 
   } catch (err) {
-    return { type: 'text', value: `[ERROR] ${formatError(err)}` }
+    return { type: 'text', value: `❌ [ERROR] ${formatError(err)}` }
   }
 }
 

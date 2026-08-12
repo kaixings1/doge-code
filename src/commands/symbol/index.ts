@@ -139,23 +139,23 @@ export const call: LocalCommandCall = async (args) => {
     const key = s[1]; const value = s.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value === 'true' ? true : value === 'false' ? false : value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${config[key]}` } }
-    return { type: 'text', value: `Unknown: ${key}` }
+    if (key in config) { config[key] = value === 'true' ? true : value === 'false' ? false : value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${config[key]}` } }
+    return { type: 'text', value: `❌ Unknown: ${key}` }
   }
 
   if (cmd === 'set') {
     const key = s[1]; const value = s.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: 'Usage: /symbol set <key> <value>' }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value === 'true' ? true : value === 'false' ? false : value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${config[key]}` } }
-    return { type: 'text', value: `Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
+    if (key in config) { config[key] = value === 'true' ? true : value === 'false' ? false : value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${config[key]}` } }
+    return { type: 'text', value: `❌ Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
   }
 
   if (cmd === 'def' || cmd === 'definition') {
     const sym = s[1]; if (!sym) return { type: 'text', value: 'Usage: /symbol def <name>' }
     const refs = findSymbol(sym, '.', config)
     const def = getDefinition(refs)
-    if (!def) return { type: 'text', value: `No definition found for: ${sym}` }
+    if (!def) return { type: 'text', value: `⚠️ No definition found for: ${sym}` }
     return { type: 'text', value: ['Definition: ' + sym, '════════════════', '', `${def.file}:${def.line}`, '', def.text.slice(0, 120), '', 'Usage count: ' + refs.filter(r => r.kind === 'reference').length].join('\n') }
   }
 
@@ -206,7 +206,7 @@ export const call: LocalCommandCall = async (args) => {
       changed += result.changed
       backups.push(...result.backups)
     })
-    return { type: 'text', value: `[OK] Renamed ${oldName} → ${newName}\nFiles changed: ${changed}\nRefs replaced: ${refs.length}\nBackups: ${backups.length} (in ${BACKUP_DIR})` }
+    return { type: 'text', value: `✅ [OK] Renamed ${oldName} → ${newName}\nFiles changed: ${changed}\nRefs replaced: ${refs.length}\nBackups: ${backups.length} (in ${BACKUP_DIR})` }
   }
 
   if (cmd === 'extract') {
@@ -216,7 +216,7 @@ export const call: LocalCommandCall = async (args) => {
       if (!existsSync(file)) return { type: 'text', value: 'File not found: ' + file }
       const content = readFileSync(file, 'utf-8')
       const lines = content.split('\n')
-      if (start < 1 || end > lines.length) return { type: 'text', value: `Line range ${start}-${end} out of bounds (file has ${lines.length} lines)` }
+      if (start < 1 || end > lines.length) return { type: 'text', value: `❌ Line range ${start}-${end} out of bounds (file has ${lines.length} lines)` }
       const extracted = lines.slice(start - 1, end).join('\n')
       const indent = lines[start - 1].match(/^\s*/)?.[0] || ''
       return { type: 'text', value: ['Extracted lines ' + start + '-' + end + ' from ' + file + ':', '═════════════════════════════════', '', extracted, '', 'Suggested new function:', '──────────────────────', 'function extractedFunction(params) {', extracted.split('\n').map(l => '  ' + l.trim()).join('\n'), '}'].join('\n') }
@@ -229,11 +229,11 @@ export const call: LocalCommandCall = async (args) => {
     const name = s[1]; if (!name) return { type: 'text', value: 'Usage: /symbol inline <name>' }
     const refs = findSymbol(name, '.', config)
     const def = getDefinition(refs)
-    if (!def) return { type: 'text', value: `No definition found for: ${name}` }
+    if (!def) return { type: 'text', value: `⚠️ No definition found for: ${name}` }
     const defMatch = def.text.match(/(?:const|let|var)\s+\w+\s*=\s*(.+)$/)
-    if (!defMatch) return { type: 'text', value: `Cannot inline: ${name} (not a simple variable assignment)` }
+    if (!defMatch) return { type: 'text', value: `⚠️ Cannot inline: ${name} (not a simple variable assignment)` }
     const value = defMatch[1].replace(/;\s*$/, '')
-    return { type: 'text', value: `Inline suggestion for "${name}":\n\nDefinition: ${def.text}\nValue: ${value}\nUsages: ${refs.filter(r => r.kind === 'reference').length}\n\nReplace usages of ${name} with: ${value}` }
+    return { type: 'text', value: `💡 Inline suggestion for "${name}":\n\nDefinition: ${def.text}\nValue: ${value}\nUsages: ${refs.filter(r => r.kind === 'reference').length}\n\nReplace usages of ${name} with: ${value}` }
   }
 
   if (cmd === 'graph') {
@@ -266,7 +266,7 @@ export const call: LocalCommandCall = async (args) => {
       const backupPath = join(BACKUP_DIR, file)
       const originalName = file.replace(/-(rename)-\d+\.bak$/, '').replace(/_/g, '.')
       copyFileSync(backupPath, originalName)
-      return { type: 'text', value: `[OK] Restored: ${originalName} from ${file}` }
+      return { type: 'text', value: `✅ [OK] Restored: ${originalName} from ${file}` }
     } catch (err) { return { type: 'text', value: '[ERROR] Restore failed: ' + (err instanceof Error ? err.message : String(err)) } }
   }
 

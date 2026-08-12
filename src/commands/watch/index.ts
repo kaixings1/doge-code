@@ -104,16 +104,16 @@ export const call: LocalCommandCall = async (args) => {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${value}` } }
-    return { type: 'text', value: `Unknown: ${key}` }
+    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ Unknown: ${key}` }
   }
 
   if (cmd === 'set') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: 'Usage: /watch set <key> <value>' }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value === 'true' ? true : value === 'false' ? false : value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${value}` } }
-    return { type: 'text', value: `Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
+    if (key in config) { config[key] = value === 'true' ? true : value === 'false' ? false : value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
   }
 
   if (cmd === 'add-path') {
@@ -121,7 +121,7 @@ export const call: LocalCommandCall = async (args) => {
     if (!path || !existsSync(path)) return { type: 'text', value: 'Path not found: ' + path }
     if (!config.paths.includes(path)) config.paths.push(path)
     saveConfig(config)
-    return { type: 'text', value: `[OK] Watching: ${path}\nCurrent paths: ${config.paths.join(', ')}` }
+    return { type: 'text', value: `✅ [OK] Watching: ${path}\nCurrent paths: ${config.paths.join(', ')}` }
   }
 
   if (cmd === 'set-action') {
@@ -129,7 +129,7 @@ export const call: LocalCommandCall = async (args) => {
     if (!action) return { type: 'text', value: 'Usage: /watch set-action <command>' }
     config.action = action
     saveConfig(config)
-    return { type: 'text', value: `[OK] Action set: ${action}` }
+    return { type: 'text', value: `✅ [OK] Action set: ${action}` }
   }
 
   if (cmd === 'snapshot') {
@@ -139,7 +139,7 @@ export const call: LocalCommandCall = async (args) => {
       const data = Object.fromEntries(snapshot)
       writeFileSync(join(CONFIG_DIR, 'snapshot.json'), JSON.stringify(data, null, 2), 'utf-8')
     } catch { /* ignore */ }
-    return { type: 'text', value: `[OK] Snapshot saved (${snapshot.size} files)\nWatching: ${config.paths.join(', ')}\nExtensions: ${config.extensions.join(', ')}` }
+    return { type: 'text', value: `✅ [OK] Snapshot saved (${snapshot.size} files)\nWatching: ${config.paths.join(', ')}\nExtensions: ${config.extensions.join(', ')}` }
   }
 
   if (cmd === 'check' || cmd === '') {
@@ -182,13 +182,13 @@ export const call: LocalCommandCall = async (args) => {
       const output = execSync('git status --porcelain 2>/dev/null || echo ""', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
       if (!output.trim()) return { type: 'text', value: '[OK] No uncommitted changes' }
       const lines = output.split('\n').filter(Boolean)
-      return { type: 'text', value: `Git Changes (${lines.length}):\n${lines.slice(0, 30).join('\n')}` }
+      return { type: 'text', value: `📊 Git Changes (${lines.length}):\n${lines.slice(0, 30).join('\n')}` }
     } catch { return { type: 'text', value: 'Not a git repository' } }
   }
 
   if (cmd === 'status') {
     const snapshot = collectSnapshot(config)
-    return { type: 'text', value: `Watcher Status:\nPaths: ${config.paths.join(', ')}\nFiles tracked: ${snapshot.size}\nExtensions: ${config.extensions.join(', ')}\nEvents: ${config.events.join(', ')}\nAction: ${config.action || '(none)'}\nInterval: ${config.interval}ms` }
+    return { type: 'text', value: `📊 Watcher Status:\nPaths: ${config.paths.join(', ')}\nFiles tracked: ${snapshot.size}\nExtensions: ${config.extensions.join(', ')}\nEvents: ${config.events.join(', ')}\nAction: ${config.action || '(none)'}\nInterval: ${config.interval}ms` }
   }
 
   if (cmd === 'logs') {
