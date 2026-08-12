@@ -23,6 +23,7 @@ import { lazySchema } from '../../utils/lazySchema.js'
 import { logError } from '../../utils/log.js'
 import { jsonStringify } from '../../utils/slowOperations.js'
 import { getLocalISODate, getLocalMonthYear } from '../../constants/common.js'
+import { verifiedAliveProviders } from './verified_providers.js'
 import {
   getToolUseSummary,
   renderToolResultMessage,
@@ -3997,7 +3998,11 @@ const generalSearchProviders: Provider[] = [
     offline: false,
     fetch: async (q) => {
       const url = `https://www.wipo.int/search?q=${encodeURIComponent(q)}`
-      return [{ title: `WIPO 专利：${q}`, url, snippet: '搜索世界知识产权组织专利', source: 'wipo' }`
+      return [{ title: `WIPO 专利：${q}`, url, snippet: '搜索世界知识产权组织专利', source: 'wipo' }]
+    }
+  },
+  {
+    name: '离线模式',
     offline: true,
     fetch: async (q) => [{ title: `"${q}" 的搜索结果（离线模式，建议联网获取实时数据）`, url: '', snippet: '当前为离线模式，请检查网络连接', source: 'general' }]
   }
@@ -4426,7 +4431,7 @@ const allSkills: SkillDef[] = [
   { id: 'weather', name: '天气', keywords: ['天气','气温','下雨','台风','多云','晴','雨','雪','空气质量'], providers: weatherProviders },
   { id: 'news', name: '新闻', keywords: ['新闻','头条','最新','科技','财经','体育','娱乐','今日要闻'], providers: newsProviders },
   { id: 'joke', name: '笑话', keywords: ['笑话','段子','搞笑','幽默'], providers: jokeProviders },
-  { id: 'general-search', name: '通用网页搜索', keywords: [], providers: generalSearchProviders },
+  { id: 'general-search', name: '通用网页搜索', keywords: [], providers: [...generalSearchProviders, ...verifiedAliveProviders] },
   { id: 'bidding', name: '招标信息', keywords: ['招标', '中标', '采购公告', '设备招标', '招标项目', '政府采购', '公共资源交易', '央企采购', '国网招标', '中石化招标', '中国政府采购网', '中国招标投标公共服务平台'], providers: biddingProviders }
 ]
 
@@ -4549,7 +4554,7 @@ export type { WebSearchProgress }
 // ============================================================
 export const WebSearchTool = buildTool({
   name: WEB_SEARCH_TOOL_NAME,
-  searchHint: '零配置万能搜索Hub：天气、翻译、股票、古诗、算命、电影、GitHub搜索……240+技能，含招投标增强',
+  searchHint: '零配置万能搜索Hub：天气、翻译、股票、古诗、算命、电影、GitHub搜索……280+技能，含招投标增强',
   maxResultSizeChars: 100_000,
   shouldDefer: true,
 
