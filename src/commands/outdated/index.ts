@@ -125,7 +125,7 @@ export const call: LocalCommandCall = async (args) => {
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     // @ts-expect-error dynamic
     if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
-    return { type: 'text', value: `❌ Unknown: ${key}` }
+    return { type: 'text', value: `❌ 未知配置项：${key}` }
   }
 
   if (cmd === 'set') {
@@ -152,7 +152,7 @@ export const call: LocalCommandCall = async (args) => {
       const icon = i.severity === 'critical' ? '🔴' : i.severity === 'high' ? '🟠' : '🟡'
       lines.push(`${icon} ${idx + 1}. ${i.name} (${i.severity}, ${i.fixAvailable})`)
     })
-    lines.push('', 'Fix: npm audit fix (or /outdated update-all)')
+    lines.push('', '💡 修复建议：运行 npm audit fix 或 /outdated update-all')
     return { type: 'text', value: lines.join('\n') }
   }
 
@@ -174,7 +174,7 @@ export const call: LocalCommandCall = async (args) => {
       const pkg = parts[1]
       if (!pkg) return { type: 'text', value: '📖 用法：/outdated update <包名>' }
       const result = run(`npm install ${pkg}@latest 2>&1`)
-      return { type: 'text', value: result.ok ? `✅ 已更新：${pkg}` : '❌ 错误：' + result.output.slice(0, 200) }
+      return { type: 'text', value: result.ok ? `✅ 已更新：${pkg}` : '❌ 更新失败：' + result.output.slice(0, 200) }
     }
     const deps = getOutdatedDeps(config)
     if (deps.length === 0) return { type: 'text', value: '✅ 所有依赖均为最新' }
@@ -182,7 +182,7 @@ export const call: LocalCommandCall = async (args) => {
     if (target.length === 0) return { type: 'text', value: '📋 没有安全更新（只有大版本更新可用）' }
     const pkgs = target.map(d => d.name + '@' + d.latest).join(' ')
     const result = run(`npm install ${pkgs} 2>&1`)
-    return { type: 'text', value: result.ok ? '✅ 已更新 ' + target.length + ' 个包：\n' + target.slice(0, 15).map(d => '  ' + d.name + '：' + d.current + ' → ' + d.latest).join('\n') : '❌ 错误：' + result.output.slice(0, 300) }
+    return { type: 'text', value: result.ok ? '✅ 已更新 ' + target.length + ' 个包：\n' + target.slice(0, 15).map(d => '  ' + d.name + '：' + d.current + ' → ' + d.latest).join('\n') : '❌ 更新失败：' + result.output.slice(0, 300) }
   }
 
   if (cmd === 'stats') {
