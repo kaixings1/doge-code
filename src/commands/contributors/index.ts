@@ -53,12 +53,12 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'list'
   const contributors = getContributors()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Contributor Analysis', '', '📖 Usage: ', '  /contributors list [N]           Show top N contributors', '  /contributors graph             ASCII graph of commits per contributor', '  /contributors files <name>      Show files touched by contributor', '  /contributors trend             Commit activity over time', '  /contributors email <email>     Show contributor details', '  /contributors all               List all commits per contributor', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['👥 贡献者分析', '', '📖 用法：', '  /contributors list [N]          显示前 N 位贡献者', '  /contributors graph             提交数 ASCII 图表', '  /contributors files <名称>      查看贡献者修改的文件', '  /contributors trend             提交活动趋势', '  /contributors email <邮箱>      查看贡献者详情', '  /contributors all               列出所有贡献者及提交', ''].join('\n') }
 
   if (cmd === 'list' || cmd === 'ls') {
     const n = parseInt(parts[1]) || 15
-    if (contributors.length === 0) return { type: 'text', value: 'No contributors found' }
-    const lines = ['Top Contributors:', '==================', '']
+    if (contributors.length === 0) return { type: 'text', value: 'ℹ️ 未找到贡献者' }
+    const lines = ['📋 贡献者排行：', '════════════════', '']
     contributors.slice(0, n).forEach((c, i) => {
       lines.push((i + 1) + '. ' + c.name + ' - ' + c.commits + ' commits (+' + c.additions + '/-' + c.deletions + ', ' + c.files.size + ' files)')
     })
@@ -66,9 +66,9 @@ export const call: LocalCommandCall = async (args) => {
   }
 
   if (cmd === 'graph') {
-    if (contributors.length === 0) return { type: 'text', value: 'No contributors found' }
+    if (contributors.length === 0) return { type: 'text', value: 'ℹ️ 未找到贡献者' }
     const max = contributors[0]?.commits || 1
-    const lines = ['Commits per Contributor:', '========================', '']
+    const lines = ['📊 每贡献者提交数：', '═════════════════════', '']
     contributors.slice(0, 15).forEach(c => {
       const barLen = Math.round((c.commits / max) * 30)
       lines.push(c.name.slice(0, 20).padEnd(22) + '█'.repeat(barLen) + ' ' + c.commits)
@@ -89,7 +89,7 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'trend') {
     try {
       const output = execSync('git log --pretty=format:"%ad" --date=short --all | sort | uniq -c | sort -k2', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
-      const lines = ['Commit Activity:', '=================', '']
+      const lines = ['📈 提交活动趋势：', '══════════════════', '']
       output.split('\n').filter(Boolean).slice(-20).forEach(l => {
         const match = l.trim().match(/^(\d+)\s+(.+)$/)
         if (match) {
@@ -98,7 +98,7 @@ export const call: LocalCommandCall = async (args) => {
         }
       })
       return { type: 'text', value: lines.join('\n') }
-    } catch { return { type: 'text', value: '[ERROR] Trend failed' } }
+    } catch { return { type: 'text', value: '❌ 趋势分析失败' } }
   }
 
   if (cmd === 'email') {

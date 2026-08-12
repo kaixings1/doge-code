@@ -54,49 +54,49 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'status' || cmd === '' || cmd === 'list') {
     if (!existsSync('package.json')) {
-      return { type: 'text', value: 'No package.json found' }
+      return { type: 'text', value: 'ℹ️ 未找到 package.json' }
     }
     try {
       const pkg = JSON.parse(readFileSync('package.json', 'utf-8'))
       const deps = Object.keys(pkg.dependencies || {}).length
       const devDeps = Object.keys(pkg.devDependencies || {}).length
       const lines = [
-        'Dependencies',
-        '=============',
+        '📦 依赖管理',
+        '═══════════',
         '',
-        'Package Manager: ' + pm,
-        'Dependencies: ' + deps,
-        'Dev Dependencies: ' + devDeps,
-        'Total: ' + (deps + devDeps),
+        '📋 包管理器：' + pm,
+        '📌 依赖：' + deps,
+        '🔧 开发依赖：' + devDeps,
+        '📊 总计：' + (deps + devDeps),
       ]
       return { type: 'text', value: lines.join('\n') }
     } catch {
-      return { type: 'text', value: '[ERROR] Cannot read package.json' }
+      return { type: 'text', value: '❌ 无法读取 package.json' }
     }
   }
 
   if (cmd === 'outdated' || cmd === 'check') {
     const outdated = getOutdatedDeps()
     if (outdated.length === 0) {
-      return { type: 'text', value: '[OK] All dependencies are up to date!' }
+      return { type: 'text', value: '✅ 所有依赖均为最新版本！' }
     }
     const lines = [
-      'Outdated Dependencies',
-      '=====================',
+      '📦 过期依赖',
+      '════════════',
       '',
-      '| Package | Current | Latest | Type |',
-      '|---------|---------|--------|------|',
+      '| 包名 | 当前版本 | 最新版本 | 类型 |',
+      '|------|---------|--------|------|',
     ]
     outdated.forEach(d => {
       lines.push('| ' + d.name + ' | ' + d.current + ' | ' + d.latest + ' | ' + d.type + ' |')
     })
-    lines.push('', 'Use /deps update <package> to update individually')
+    lines.push('', '💡 使用 /deps update <包名> 逐个更新')
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'update') {
     const pkgName = parts[1]
-    if (!pkgName) return { type: 'text', value: 'Usage: /deps update <package>' }
+    if (!pkgName) return { type: 'text', value: '📖 用法：/deps update <包名>' }
     try {
       const installCmd = pm === 'bun' ? 'bun add' : pm === 'yarn' ? 'yarn add' : pm === 'pnpm' ? 'pnpm add' : 'npm install'
       const output = execSync(installCmd + ' ' + pkgName + ' 2>&1', {
@@ -104,9 +104,9 @@ export const call: LocalCommandCall = async (args) => {
         stdio: ['pipe', 'pipe', 'pipe'],
         timeout: 60000,
       })
-      return { type: 'text', value: '[OK] Updated ' + pkgName + '\n' + output.slice(0, 500) }
+      return { type: 'text', value: '✅ 已更新 ' + pkgName + '\n' + output.slice(0, 500) }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] Update failed: ' + (err instanceof Error ? err.message : String(err)) }
+      return { type: 'text', value: '❌ 更新失败：' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
@@ -120,13 +120,13 @@ export const call: LocalCommandCall = async (args) => {
         const data = JSON.parse(output)
         const vulnCount = data.metadata?.vulnerabilities?.total || 0
         if (vulnCount === 0) {
-          return { type: 'text', value: '[OK] No vulnerabilities found!' }
+          return { type: 'text', value: '✅ 未发现安全漏洞！' }
         }
         const lines = [
-          'Security Audit',
-          '===============',
+          '🔒 安全审计',
+          '════════════',
           '',
-          'Vulnerabilities: ' + vulnCount,
+          '漏洞数：' + vulnCount,
           '',
         ]
         const vulns = data.vulnerabilities || {}
@@ -135,15 +135,15 @@ export const call: LocalCommandCall = async (args) => {
         }
         return { type: 'text', value: lines.join('\n') }
       }
-      return { type: 'text', value: '[OK] No vulnerabilities found!' }
+      return { type: 'text', value: '✅ 未发现安全漏洞！' }
     } catch {
-      return { type: 'text', value: '[ERROR] Audit failed' }
+      return { type: 'text', value: '❌ 审计失败' }
     }
   }
 
   if (cmd === 'add') {
     const pkgName = parts[1]
-    if (!pkgName) return { type: 'text', value: 'Usage: /deps add <package>' }
+    if (!pkgName) return { type: 'text', value: '📖 用法：/deps add <包名>' }
     const isDev = parts.includes('--dev') || parts.includes('-D')
     try {
       const installCmd = pm === 'bun' ? 'bun add' : pm === 'yarn' ? 'yarn add' : pm === 'pnpm' ? 'pnpm add' : 'npm install'
@@ -153,15 +153,15 @@ export const call: LocalCommandCall = async (args) => {
         stdio: ['pipe', 'pipe', 'pipe'],
         timeout: 60000,
       })
-      return { type: 'text', value: '[OK] Added ' + pkgName + '\n' + output.slice(0, 500) }
+      return { type: 'text', value: '✅ 已添加 ' + pkgName + '\n' + output.slice(0, 500) }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] Add failed: ' + (err instanceof Error ? err.message : String(err)) }
+      return { type: 'text', value: '❌ 添加失败：' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
   if (cmd === 'remove') {
     const pkgName = parts[1]
-    if (!pkgName) return { type: 'text', value: 'Usage: /deps remove <package>' }
+    if (!pkgName) return { type: 'text', value: '📖 用法：/deps remove <包名>' }
     try {
       const uninstallCmd = pm === 'bun' ? 'bun remove' : pm === 'yarn' ? 'yarn remove' : pm === 'pnpm' ? 'pnpm remove' : 'npm uninstall'
       const output = execSync(uninstallCmd + ' ' + pkgName + ' 2>&1', {
@@ -169,35 +169,35 @@ export const call: LocalCommandCall = async (args) => {
         stdio: ['pipe', 'pipe', 'pipe'],
         timeout: 60000,
       })
-      return { type: 'text', value: '[OK] Removed ' + pkgName + '\n' + output.slice(0, 500) }
+      return { type: 'text', value: '✅ 已移除 ' + pkgName + '\n' + output.slice(0, 500) }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] Remove failed: ' + (err instanceof Error ? err.message : String(err)) }
+      return { type: 'text', value: '❌ 移除失败：' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
   if (cmd === 'help') {
     return { type: 'text', value: [
-      'Dependency Management',
+      '📦 依赖管理',
       '',
-      '📖 Usage: ',
-      '  /deps status             Show dependency count',
-      '  /deps outdated           Check for outdated packages',
-      '  /deps update <pkg>       Update a package',
-      '  /deps add <pkg> [--dev]  Add a new package',
-      '  /deps remove <pkg>       Remove a package',
-      '  /deps audit              Security audit',
+      '📖 用法：',
+      '  /deps status             查看依赖数量',
+      '  /deps outdated           检查过期依赖',
+      '  /deps update <包名>       更新包',
+      '  /deps add <包名> [--dev]  添加新包',
+      '  /deps remove <包名>       移除包',
+      '  /deps audit              安全审计',
       '',
-      'Auto-detects: npm/yarn/pnpm/bun',
+      '自动检测：npm/yarn/pnpm/bun',
     ].join('\n') }
   }
 
-  return { type: 'text', value: 'Unknown: ' + cmd }
+  return { type: 'text', value: '❌ 未知命令：' + cmd }
 }
 
 const deps: Command = {
   type: 'local',
   name: 'deps',
-  description: 'Dependency management - status/outdated/update/add/remove/audit',
+  description: '📦 依赖管理 - 状态/过期/更新/添加/移除/审计',
   aliases: ['/deps', '/dep', '/packages'],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
