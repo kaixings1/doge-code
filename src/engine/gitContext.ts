@@ -90,7 +90,7 @@ export class GitContextInjector {
     return messages
   }
 
-  /** 提取文件路��列表 */
+  /** 提取文件路径列表 */
   extractFiles(
     results: Array<{ toolUseId: string; success: boolean; output?: unknown }>,
   ): string[] {

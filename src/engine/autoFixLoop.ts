@@ -167,7 +167,7 @@ export interface CorrectionInstruction {
  */
 export class CompileErrorParser {
   private static readonly PATTERNS = [
-    // TypeScript/JavaScript: error TS1234: me�ssage (file, line, char)
+    // TypeScript/JavaScript: error TS1234: message (file, line, char)
     /^(.+?)\((\d+)(?:,(\d+))?\):\s*(?:error\s+(TS\d+):\s*(.+))$/m,
     // Standard compiler: file:line:column: error: message
     /^(.+?):(\d+)(?::(\d+))?:\s*error:\s*(.+)$/m,
@@ -279,7 +279,7 @@ export class AutoFixLoop {
   }
 
   /**
-   * shouldAbort — 中止检查（吸��自 zhikuncode SelfCorrectionLoop）。
+   * shouldAbort — 中止检查（吸收自 zhikuncode SelfCorrectionLoop）。
    *
    * 检查是否应提前中止修复循环：
    * 1. 当前轮次涉及的文件与首轮完全不同（说明修复引入了新问题）
