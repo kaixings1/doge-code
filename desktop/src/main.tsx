@@ -432,7 +432,7 @@ function loadSettingsFromFlag(settingsFile: string): void {
       // 是 JSON 字符串 - 验证并创建临时文件
       const parsedJson = safeParseJSON(trimmedSettings);
       if (!parsedJson) {
-        process.stderr.write(chalk.red('错误：提供给 --settings 的 JSON 无效\n'));
+        process.stderr.write(chalk.red('❌ 错误: 提供给 --settings 的 JSON 无效\n'));
         process.exit(1);
       }
 
@@ -761,7 +761,7 @@ export async function main() {
 
       // v1 中 SSH 不支持无头 (-p) 模式 —— 提前拒绝，以免标志导致静默本地执行。
       if (rest.includes('-p') || rest.includes('--print')) {
-        process.stderr.write('错误：claude ssh 不支持无头 (-p/--print) 模式\n');
+        process.stderr.write('❌ 错误: claude ssh 不支持无头 (-p/--print) 模式\n');
         gracefulShutdownSync(1);
         return;
       }
@@ -963,7 +963,7 @@ async function run(): Promise<CommanderCommand> {
     // 实际过滤在 debug.ts 中通过解析 process.argv 处理
 // The actual filtering is handled in debug.ts by parsing process.argv
     return true;
-  }).addOption(new Option('--debug-to-stderr', '启用调试模式（输出到 stderr）').argParser(Boolean).hideHelp()).option('--debug-file <path>', '将调试日志写入指定文件路径（隐式启用调试模式）', () => true).option('--verbose', '覆盖配置文件中的详细模式设置', () => true).option('-p, --print', '打印响应并退出（适用于管道）。注意：使用 -p 模式运行 Claude 时会跳过工作区信任对话框。仅在您信任的目录中使用此标志。', () => true).option('--bare', '最小模式：跳过钩子、LSP、插件同步、归属、自动内存、后台预取、钥匙串读取以及 CLAUDE.md 自动发现。设置 CLAUDE_CODE_SIMPLE=1。Anthropic 认证严格使用 DOGE_API_KEY 或通过 --settings 的 apiKeyHelper（从不读取 OAuth 和钥匙串）。第三方提供商（Bedrock/Vertex/Foundry）使用自己的凭据。技能仍然通过 /skill-name 解析。通过以下方式显式提供上下文：--system-prompt[-file]、--append-system-prompt[-file]、--add-dir（CLAUDE.md 目录）、--mcp-config、--settings、--agents、--plugin-dir。', () => true).addOption(new Option('--init', '运行 init 触发器的 Setup 钩子，然后继续').hideHelp()).addOption(new Option('--init-only', '运行 Setup 和 SessionStart:startup 钩子，然后退出').hideHelp()).addOption(new Option('--maintenance', '运行 maintenance 触发器的 Setup 钩子，然后继续').hideHelp()).addOption(new Option('--output-format <format>', '输出格式（仅适用于 --print）："text"（默认）、"json"（单个结果）或 "stream-json"（实时流式输出）').choices(['text', 'json', 'stream-json'])).addOption(new Option('--json-schema <schema>', '用于结构化输出验证的 JSON Schema。' + '示例：{"type":"object","properties":{"name":{"type":"string"}},"required":["name"]}').argParser(String)).option('--include-hook-events', '在输出流中包含所有钩子生命周期事件（仅适用于 --output-format=stream-json）', () => true).option('--include-partial-messages', '在消息到达时包含部分消息块（仅适用于 --print 和 --output-format=stream-json）', () => true).addOption(new Option('--input-format <format>', '输入格式（仅适用于 --print）："text"（默认）或 "stream-json"（实时流式输入）').choices(['text', 'stream-json'])).option('--mcp-debug', '[已弃用。请改用 --debug] 启用 MCP 调试模式（显示 MCP 服务器错误）', () => true).addOption(new Option('--dangerously-skip-permissions', '绕过所有权限检查。仅推荐用于没有互联网访问的沙箱环境。'))
+  }).addOption(new Option('--debug-to-stderr', '启用调试模式（输出到 stderr）').argParser(Boolean).hideHelp()).option('--debug-file <path>', '将调试日志写入指定文件路径（隐式启用调试模式）', () => true).option('--verbose', '覆盖配置文件中的详细模式设置', () => true).option('-p, --print', '打印响应并退出（适用于管道）。注意：使用 -p 模式运行 Claude 时会跳过工作区信任对话框。仅在您信任的目录中使用此标志。', () => true).option('--bare', '最小模式：跳过钩子、LSP、插件同步、归属、自动内存、后台预取、钥匙串读取以及 CLAUDE.md 自动发现。设置 CLAUDE_CODE_SIMPLE=1。Anthropic 认证严格使用 DOGE_API_KEY 或通过 --settings 的 apiKeyHelper（从不读取 OAuth 和钥匙串）。第三方提供商（Bedrock/Vertex/Foundry）使用自己的凭据。技能仍然通过 /skill-name 解析。通过以下方式显式提供上下文：--system-prompt[-file]、--append-system-prompt[-file]、--add-dir（CLAUDE.md 目录）、--mcp-config、--settings、--agents、--plugin-dir。', () => true).addOption(new Option('--init', '运行 init 触发器的 Setup 钩子，然后继续').hideHelp()).addOption(new Option('--init-only', '运行 Setup 和 SessionStart:startup 钩子，然后退出').hideHelp()).addOption(new Option('--maintenance', '运行 maintenance 触发器的 Setup 钩子，然后继续').hideHelp()).addOption(new Option('--output-format <format>', '输出格式（仅适用于 --print）："text"（默认）、"json"（单个结果）或 "stream-json"（实时流式输出）').choices(['text', 'json', 'stream-json'])).addOption(new Option('--json-schema <schema>', '用于结构化输出验证的 JSON Schema。' + '💡 示例: {"type":"object","properties":{"name":{"type":"string"}},"required":["name"]}').argParser(String)).option('--include-hook-events', '在输出流中包含所有钩子生命周期事件（仅适用于 --output-format=stream-json）', () => true).option('--include-partial-messages', '在消息到达时包含部分消息块（仅适用于 --print 和 --output-format=stream-json）', () => true).addOption(new Option('--input-format <format>', '输入格式（仅适用于 --print）："text"（默认）或 "stream-json"（实时流式输入）').choices(['text', 'stream-json'])).option('--mcp-debug', '[已弃用。请改用 --debug] 启用 MCP 调试模式（显示 MCP 服务器错误）', () => true).addOption(new Option('--dangerously-skip-permissions', '绕过所有权限检查。仅推荐用于没有互联网访问的沙箱环境。'))
   // 注意：commander 不支持两个长选项互相作为别名（,--dsp 不生效），
   // 因此单独定义 --dsp 选项，在 action handler 中与 --dangerously-skip-permissions 合并。
   .addOption(new Option('--dsp', '--dangerously-skip-permissions 的别名。绕过所有权限检查。仅推荐用于没有互联网访问的沙箱环境。').hideHelp())
@@ -1155,11 +1155,11 @@ async function run(): Promise<CommanderCommand> {
     // 验证 tmux 选项
     if (tmuxEnabled) {
       if (!worktreeEnabled) {
-        process.stderr.write(chalk.red('错误：--tmux 需要配合 --worktree 使用\n'));
+        process.stderr.write(chalk.red('❌ 错误: --tmux 需要配合 --worktree 使用\n'));
         process.exit(1);
       }
       if (getPlatform() === 'windows') {
-        process.stderr.write(chalk.red('错误：--tmux 不支持 Windows\n'));
+        process.stderr.write(chalk.red('❌ 错误: --tmux 不支持 Windows\n'));
         process.exit(1);
       }
       if (!(await isTmuxAvailable())) {
@@ -1181,7 +1181,7 @@ async function run(): Promise<CommanderCommand> {
       const hasAnyTeammateOpt = teammateOpts.agentId || teammateOpts.agentName || teammateOpts.teamName;
       const hasAllRequiredTeammateOpts = teammateOpts.agentId && teammateOpts.agentName && teammateOpts.teamName;
       if (hasAnyTeammateOpt && !hasAllRequiredTeammateOpts) {
-        process.stderr.write(chalk.red('错误：--agent-id、--agent-name 和 --team-name 必须一起提供\n'));
+        process.stderr.write(chalk.red('❌ 错误: --agent-id、--agent-name 和 --team-name 必须一起提供\n'));
         process.exit(1);
       }
 
@@ -1263,7 +1263,7 @@ async function run(): Promise<CommanderCommand> {
       // 检查冲突的标志
       // 当同时提供 --fork-session 时，--session-id 可以与 --continue 或 --resume 一起使用（为分叉会话指定自定义 ID）
       if ((options.continue || options.resume) && !options.forkSession) {
-        process.stderr.write(chalk.red('错误：--session-id 只能在配合 --continue 或 --resume 使用时与 --fork-session 一起指定。\n'));
+        process.stderr.write(chalk.red('❌ 错误: --session-id 只能在配合 --continue 或 --resume 使用时与 --fork-session 一起指定。\n'));
         process.exit(1);
       }
 
@@ -1271,7 +1271,7 @@ async function run(): Promise<CommanderCommand> {
       if (!sdkUrl) {
         const validatedSessionId = validateUuid(sessionId);
         if (!validatedSessionId) {
-          process.stderr.write(chalk.red('错误：会话 ID 无效。必须是有效的 UUID。\n'));
+          process.stderr.write(chalk.red('❌ 错误: 会话 ID 无效。必须是有效的 UUID。\n'));
           process.exit(1);
         }
 
@@ -1291,7 +1291,7 @@ async function run(): Promise<CommanderCommand> {
       // 获取会话入口令牌（由 EnvManager 通过 CLAUDE_CODE_SESSION_ACCESS_TOKEN 提供）
       const sessionToken = getSessionIngressAuthToken();
       if (!sessionToken) {
-        process.stderr.write(chalk.red('错误：下载文件需要会话令牌。必须设置 CLAUDE_CODE_SESSION_ACCESS_TOKEN。\n'));
+        process.stderr.write(chalk.red('❌ 错误: 下载文件需要会话令牌。必须设置 CLAUDE_CODE_SESSION_ACCESS_TOKEN。\n'));
         process.exit(1);
       }
 
@@ -1317,7 +1317,7 @@ async function run(): Promise<CommanderCommand> {
 		// console.warn(chalk.yellow('从状态获取??'));
     // 验证备用模型是否与主模型不同
     if (fallbackModel && options.model && fallbackModel === options.model) {
-      process.stderr.write(chalk.red('错误：备用模型不能与主模型相同。请为 --fallback-model 指定不同的模型。\n'));
+      process.stderr.write(chalk.red('❌ 错误: 备用模型不能与主模型相同。请为 --fallback-model 指定不同的模型。\n'));
       process.exit(1);
     }
 
@@ -1325,7 +1325,7 @@ async function run(): Promise<CommanderCommand> {
     let systemPrompt = options.systemPrompt;
     if (options.systemPromptFile) {
       if (options.systemPrompt) {
-        process.stderr.write(chalk.red('错误：不能同时使用 --system-prompt 和 --system-prompt-file。请仅使用其中一个。\n'));
+        process.stderr.write(chalk.red('❌ 错误: 不能同时使用 --system-prompt 和 --system-prompt-file。请仅使用其中一个。\n'));
         process.exit(1);
       }
       try {
@@ -1346,7 +1346,7 @@ async function run(): Promise<CommanderCommand> {
     let appendSystemPrompt = options.appendSystemPrompt;
     if (options.appendSystemPromptFile) {
       if (options.appendSystemPrompt) {
-        process.stderr.write(chalk.red('错误：不能同时使用 --append-system-prompt 和 --append-system-prompt-file。请仅使用其中一个。\n'));
+        process.stderr.write(chalk.red('❌ 错误: 不能同时使用 --append-system-prompt 和 --append-system-prompt-file。请仅使用其中一个。\n'));
         process.exit(1);
       }
       try {
@@ -3198,7 +3198,7 @@ if (options.continue) {
 	// 检查 TUI 模式是否启用 - 描述仅在 TUI 模式下可选
 	const isRemoteTuiEnabled = getFeatureValue_CACHED_MAY_BE_STALE('tengu_remote_backend', false);
 	if (!isRemoteTuiEnabled && !hasInitialPrompt) {
-	  return await exitWithError(root, '错误：--remote 需要提供描述信息。\n用法：claude --remote "您的任务描述"', () => gracefulShutdown(1));
+	  return await exitWithError(root, '❌ 错误: --remote 需要提供描述信息。\n用法：claude --remote "您的任务描述"', () => gracefulShutdown(1));
 	}
 	logEvent('tengu_remote_create_session', {
 	  has_initial_prompt: String(hasInitialPrompt) as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
@@ -3211,7 +3211,7 @@ if (options.continue) {
 	  logEvent('tengu_remote_create_session_error', {
 		error: 'unable_to_create_session' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
 	  });
-	  return await exitWithError(root, '错误：无法创建远程会话', () => gracefulShutdown(1));
+	  return await exitWithError(root, '❌ 错误: 无法创建远程会话', () => gracefulShutdown(1));
 	}
 	logEvent('tengu_remote_create_session_success', {
 	  session_id: createdSession.id as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
@@ -3829,7 +3829,7 @@ if (feature('SSH_REMOTE')) {
   program.command('ssh <host> [dir]').description('通过 SSH 在远程主机上运行 Claude Code。部署二进制文件并' + '将 API 认证隧道传回本地机器 — 无需远程设置。').option('--permission-mode <mode>', '远程会话的权限模式').option('--dangerously-skip-permissions', '跳过远程所有权限提示（危险）').option('--local', '端到端测试模式 — 在本地生成子 CLI（跳过 ssh/部署）。' + '测试认证代理和 unix-socket 管道，无需远程主机。').action(async () => {
 	// main() 中的 argv 重写应在 commander 运行前消耗 `ssh <host>`。
 	// 到达此处意味着缺少主机或重写谓词不匹配。
-	process.stderr.write('用法：claude ssh <user@host | ssh-config-alias> [目录]\n\n' + '在远程 Linux 主机上运行 Claude Code。您无需在远程主机上\n' + '安装任何东西或运行 `claude auth login` — 二进制文件会通过\n' + 'SSH 部署，API 身份验证会隧道传回本地机器。\n');
+	process.stderr.write('📖 用法: claude ssh <user@host | ssh-config-alias> [目录]\n\n' + '在远程 Linux 主机上运行 Claude Code。您无需在远程主机上\n' + '安装任何东西或运行 `claude auth login` — 二进制文件会通过\n' + 'SSH 部署，API 身份验证会隧道传回本地机器。\n');
 	process.exit(1);
   });
 }
@@ -4118,7 +4118,7 @@ if (feature('KAIROS')) {
 	// 上面的 argv 重写应在 commander 运行前消耗 `assistant [id]`。
 	// 到达此处意味着根标志先出现（例如 `--debug assistant`）
 	// 且位置 0 谓词不匹配。像 ssh 存根一样打印用法。
-	process.stderr.write('用法：claude assistant [sessionId]\n\n' + '将 REPL 作为查看器客户端附加到运行中的桥接会话。\n' + '省略 sessionId 以发现并从可用会话中选择。\n');
+	process.stderr.write('📖 用法: claude assistant [sessionId]\n\n' + '将 REPL 作为查看器客户端附加到运行中的桥接会话。\n' + '省略 sessionId 以发现并从可用会话中选择。\n');
 	process.exit(1);
   });
 }

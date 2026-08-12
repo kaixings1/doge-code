@@ -192,7 +192,7 @@ export const call: LocalCommandCall = async (args) => {
   }
 
   return { type: 'text', value: [
-    'Git Stash Manager', '', '📖 📖 Usage: ',
+    'Git Stash Manager', '', '📖 Usage: ',
     '  /stash list              List all stashes with stats', '  /stash save [message]    Create new stash',
     '  /stash pop [index]       Pop stash (removes)', '  /stash apply [index]     Apply stash (keeps)',
     '  /stash show [index]      View full diff', '  /stash files [index]     List changed files',

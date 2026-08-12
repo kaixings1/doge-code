@@ -1047,7 +1047,7 @@ export const SettingsSchema = lazySchema(() =>
           '要排除加载的 CLAUDE.md 文件的 glob 模式或绝对路径。' +
             '使用 picomatch 将模式与绝对文件路径匹配。' +
             '仅适用于用户、项目和本地记忆类型（托管/策略文件无法排除）。' +
-            '示例："/home/user/monorepo/CLAUDE.md"、"**/code/CLAUDE.md"、"**/some-dir/.claude/rules/**"',
+            '💡 示例: "/home/user/monorepo/CLAUDE.md"、"**/code/CLAUDE.md"、"**/some-dir/.claude/rules/**"',
         ),
       pluginTrustMessage: z
         .string()

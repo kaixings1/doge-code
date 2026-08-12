@@ -222,7 +222,7 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'help') {
     return { type: 'text', value: [
-      'Auto-Commit', '', '📖 📖 Usage: ',
+      'Auto-Commit', '', '📖 Usage: ',
       '  /auto-commit status          View status', '  /auto-commit enable/disable  Toggle',
       '  /auto-commit commit          Manual smart commit', '  /auto-commit amend           Amend last commit',
       '  /auto-commit history [N]     View commit history', '  /auto-commit undo             Undo last commit',

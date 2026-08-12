@@ -54,7 +54,7 @@ export default function NotebookView({ noteId, onBack, onDeleted }: NotebookView
 
   const handleSave = () => {
     if (!editTitle.trim()) {
-      setMessage('错误: 标题不能为空')
+      setMessage('❌ 错误: 标题不能为空')
       return
     }
 

@@ -116,7 +116,7 @@ function getHelpText(): string {
   return [
     '⚙️ doge 配置管理',
     '',
-    '📖 📖 用法: ',
+    '📖 用法: ',
     '  /doge-config list                  - 列出所有配置',
     '  /doge-config get <key>             - 查看单个配置',
     '  /doge-config set <key> <value>     - 设置配置值',

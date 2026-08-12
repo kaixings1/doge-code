@@ -138,7 +138,7 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const config = loadConfig()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Directory Tree (Advanced)', '', '📖 📖 Usage: ', '  /tree [path]                    Show tree', '  /tree depth <N>                  Set max depth', '  /tree sizes                      Show file sizes', '  /tree no-icons                   Hide icons', '  /tree files-only                Files only', '  /tree dirs-only                 Directories only', '  /tree hidden                    Include hidden files', '  /tree git                       Git tracked only', '  /tree sort-size                 Sort by size', '  /tree export <file>             Export to file', '  /tree config                    Show config', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Directory Tree (Advanced)', '', '📖 Usage: ', '  /tree [path]                    Show tree', '  /tree depth <N>                  Set max depth', '  /tree sizes                      Show file sizes', '  /tree no-icons                   Hide icons', '  /tree files-only                Files only', '  /tree dirs-only                 Directories only', '  /tree hidden                    Include hidden files', '  /tree git                       Git tracked only', '  /tree sort-size                 Sort by size', '  /tree export <file>             Export to file', '  /tree config                    Show config', ''].join('\n') }
 
   if (cmd === 'config') {
     return { type: 'text', value: JSON.stringify(config, null, 2) }

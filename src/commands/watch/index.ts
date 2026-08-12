@@ -98,7 +98,7 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const config = loadConfig()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['File Watcher (Advanced)', '', '📖 📖 Usage: ', '  /watch snapshot                 Take a snapshot of files', '  /watch check                    Check for changes since snapshot', '  /watch scan                     Scan for changes (git status)', '  /watch status                   Watcher status', '  /watch logs                     View change logs', '  /watch clear                    Clear logs', '  /watch config                   Show/edit config', '  /watch set <key> <val>          Set config value', '  /watch add-path <path>          Add watch path', '  /watch set-action <cmd>         Set auto-action', '', 'Note: For real-time watching, use: watch -n 2 /watch check', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['File Watcher (Advanced)', '', '📖 Usage: ', '  /watch snapshot                 Take a snapshot of files', '  /watch check                    Check for changes since snapshot', '  /watch scan                     Scan for changes (git status)', '  /watch status                   Watcher status', '  /watch logs                     View change logs', '  /watch clear                    Clear logs', '  /watch config                   Show/edit config', '  /watch set <key> <val>          Set config value', '  /watch add-path <path>          Add watch path', '  /watch set-action <cmd>         Set auto-action', '', 'Note: For real-time watching, use: watch -n 2 /watch check', ''].join('\n') }
 
   if (cmd === 'config') {
     const key = parts[1]; const value = parts.slice(2).join(' ')

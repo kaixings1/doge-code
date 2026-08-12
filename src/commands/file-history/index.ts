@@ -40,7 +40,7 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'help' || cmd === '') {
     return { type: 'text', value: [
-      'File History', '', '📖 📖 Usage: ',
+      'File History', '', '📖 Usage: ',
       '  /file-history <file>          Show file change history',
       '  /file-history diff <file>     Show diff between versions',
       '  /file-history restore <file>  Restore to previous version',

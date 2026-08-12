@@ -595,7 +595,7 @@ export const call: LocalCommandCall = async (args) => {
       value: [
         '📚 Wiki 文档生成',
         '',
-        '📖 📖 用法: ',
+        '📖 用法: ',
         '  /wiki generate [路径]     生成项目 Wiki',
         '  /wiki readme             生成 README.md',
         '  /wiki api                生成 API 文档',

@@ -1185,7 +1185,7 @@ export async function execIntoTmuxWorktree(args: string[]): Promise<{
   if (process.platform === 'win32') {
     return {
       handled: false,
-      error: '错误：Windows 不支持 --tmux 模式',
+      error: '❌ 错误: Windows 不支持 --tmux 模式',
     }
   }
 
@@ -1276,7 +1276,7 @@ export async function execIntoTmuxWorktree(args: string[]): Promise<{
     if (!repoRoot) {
       return {
         handled: false,
-        error: '错误：--worktree 需要在 git 仓库中运行',
+        error: '❌ 错误: --worktree 需要在 git 仓库中运行',
       }
     }
 

@@ -122,7 +122,7 @@ export async function authLogin({
 }): Promise<void> {
   if (useConsole && claudeai) {
     process.stderr.write(
-      '错误：--console 和 --claudeai 不能同时使用。\n',
+      '❌ 错误: --console 和 --claudeai 不能同时使用。\n',
     )
     process.exit(1)
   }

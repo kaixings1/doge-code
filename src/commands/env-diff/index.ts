@@ -28,7 +28,7 @@ export const call: LocalCommandCall = async (args) => {
   const parts = s.split(/\s+/)
   const cmd = parts[0]?.toLowerCase() || 'help'
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Environment Diff', '', '📖 📖 Usage: ', '  /env-diff                        Compare all env files', '  /env-diff <file1> <file2>       Compare two files', '  /env-diff missing               Show missing vars', '  /env-diff extra                 Show extra vars', '  /env-diff shared                Show shared vars', '  /env-diff template              Generate .env.template', '  /env-diff validate              Validate required vars', '  /env-diff sync <from> <to>      Sync vars between files', '  /env-diff export                Export as shell script', '  /env-diff import <file>         Import from file', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Environment Diff', '', '📖 Usage: ', '  /env-diff                        Compare all env files', '  /env-diff <file1> <file2>       Compare two files', '  /env-diff missing               Show missing vars', '  /env-diff extra                 Show extra vars', '  /env-diff shared                Show shared vars', '  /env-diff template              Generate .env.template', '  /env-diff validate              Validate required vars', '  /env-diff sync <from> <to>      Sync vars between files', '  /env-diff export                Export as shell script', '  /env-diff import <file>         Import from file', ''].join('\n') }
 
   const envFiles = getEnvFiles()
   if (envFiles.length === 0) return { type: 'text', value: 'No .env files found' }

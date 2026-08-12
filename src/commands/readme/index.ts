@@ -72,7 +72,7 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const info = getProjectInfo()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['README Generator', '', '📖 📖 Usage: ', '  /readme                         Generate README', '  /readme preview                Preview only', '  /readme save [file]            Save to file', '  /readme template <name>        Use template', '  /readme sections               Available sections', '  /readme badges                 Generate badges', '  /readme toc                    Generate TOC', '  /readme update                 Update existing', '  /readme check                  Check completeness', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['README Generator', '', '📖 Usage: ', '  /readme                         Generate README', '  /readme preview                Preview only', '  /readme save [file]            Save to file', '  /readme template <name>        Use template', '  /readme sections               Available sections', '  /readme badges                 Generate badges', '  /readme toc                    Generate TOC', '  /readme update                 Update existing', '  /readme check                  Check completeness', ''].join('\n') }
 
   if (cmd === 'preview' || cmd === '') return { type: 'text', value: generateReadme(info) }
 

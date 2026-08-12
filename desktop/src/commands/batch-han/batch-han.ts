@@ -3072,7 +3072,7 @@ export const call: LocalCommandCall = async (args: string): Promise<LocalCommand
   const pidFile = path.join(absTargetDir, PID_FILE)
 
   if (!fs.existsSync(absTargetDir)) {
-    return { type: 'text', value: '错误：未找到目录：' + absTargetDir + '\n' + showHelp() }
+    return { type: 'text', value: '❌ 错误: 未找到目录：' + absTargetDir + '\n' + showHelp() }
   }
 
   // 回滚模式

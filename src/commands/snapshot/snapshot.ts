@@ -213,7 +213,7 @@ const call: LocalCommandCall = async (args, context) => {
         value: [
           '📸 会话快照管理',
           '',
-          '📖 📖 用法: ',
+          '📖 用法: ',
           '  /snapshot create <name>      - 创建当前会话快照',
           '  /snapshot restore <name>     - 恢复快照',
           '  /snapshot list               - 列出所有快照',

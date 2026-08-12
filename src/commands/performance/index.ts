@@ -166,7 +166,7 @@ export const call: LocalCommandCall = async (args) => {
 
   try {
     if (cmd === 'help' || cmd === '') return { type: 'text', value: [
-      'Performance Profiler', '', '📖 📖 Usage: ',
+      'Performance Profiler', '', '📖 Usage: ',
       '  /performance                    Full analysis',
       '  /performance file <path>        Analyze single file',
       '  /performance functions          List top 20 functions by complexity',

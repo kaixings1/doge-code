@@ -4,7 +4,7 @@ import { execSync } from 'child_process'
 
 function run(cmd: string): string {
   try { return execSync(cmd, { encoding: 'utf-8', timeout: 10000 }).trim() }
-  catch (e: any) { return '错误: ' + e.message }
+  catch (e: any) { return '❌ 错误: ' + e.message }
 }
 
 export const call: LocalJSXCommandCall = async (args) => {

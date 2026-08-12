@@ -47,7 +47,7 @@ export const call: LocalCommandCall = async (args) => {
   const parts = s.split(/\s+/)
   const cmd = parts[0]?.toLowerCase() || 'help'
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Changelog Generator', '', '📖 📖 Usage: ', '  /changelog-gen [format]         Generate changelog (md/json/html)', '  /changelog-gen since <tag>      Generate since tag', '  ​​/changelog-gen preview          Preview without saving', '  /changelog-gen save [file]       Save to file', '  /changelog-gen unreleased        Show unreleased changes', '  /changelog-gen stats             Commit statistics', '  /changelog-gen types             Show commit type distribution', '  /changelog-gen authors           Changes per author', '  /changelog-gen diff <t1> <t2]    Changes between tags', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Changelog Generator', '', '📖 Usage: ', '  /changelog-gen [format]         Generate changelog (md/json/html)', '  /changelog-gen since <tag>      Generate since tag', '  ​​/changelog-gen preview          Preview without saving', '  /changelog-gen save [file]       Save to file', '  /changelog-gen unreleased        Show unreleased changes', '  /changelog-gen stats             Commit statistics', '  /changelog-gen types             Show commit type distribution', '  /changelog-gen authors           Changes per author', '  /changelog-gen diff <t1> <t2]    Changes between tags', ''].join('\n') }
 
   if (cmd === 'preview' || cmd === '') {
     const commits = parseCommits()

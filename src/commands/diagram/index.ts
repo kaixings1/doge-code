@@ -590,7 +590,7 @@ export const call: LocalCommandCall = async (args) => {
       value: [
         '📊 架构图自动生成',
         '',
-        '📖 📖 用法: ',
+        '📖 用法: ',
         '  /diagram c4 [目录]         生成 C4 上下文图',
         '  /diagram dependency <目标> 生成依赖关系图',
         '  /diagram sequence <目标>   生成序列图',
@@ -602,7 +602,7 @@ export const call: LocalCommandCall = async (args) => {
         '  --output <文件>  输出到文件',
         '  --json           JSON 格式输出',
         '',
-        '💡 💡 示例: ',
+        '💡 示例: ',
         '  /diagram dependency src/ --format mermaid',
         '  /diagram c4 --format mermaid',
         '  /diagram dependency src/ --format graphviz --output deps.dot',

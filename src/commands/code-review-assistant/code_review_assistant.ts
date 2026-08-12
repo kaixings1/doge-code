@@ -417,7 +417,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           ' patterns          - 查看检测模式',
           ' stats             - 查看统计信息（真实数据）',
           '',
-          '💡 💡 📝 用法示例: ',
+          '💡 📝 用法示例: ',
           ' /code-review-assistant check src/utils/helper.ts',
           ' /code-review-assistant scan src',
           ' /code-review-assistant security src/api/auth.ts',

@@ -119,7 +119,7 @@ export const call: LocalCommandCall = async (args) => {
   }
 
   return { type: 'text', value: [
-    'Port Manager', '', '📖 📖 Usage: ',
+    'Port Manager', '', '📖 Usage: ',
     '  /ports list               List all active ports', '  /ports check <port>       Check if port is available',
     '  /ports kill <port>        Kill process on port', '  /ports find [start] [end] Find available ports',
     '  /ports process <port>     Show process using port', '  /ports common             Check common dev ports',

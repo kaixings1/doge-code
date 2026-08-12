@@ -11,7 +11,7 @@ const call = async (args: string) => {
       value: [
         '🔗 分享会话',
         '',
-        '📖 📖 用法: ',
+        '📖 用法: ',
         ' /share — 分享当前会话',
         ' /share link — 生成分享链接',
         ' /share team — 分享到团队频道',

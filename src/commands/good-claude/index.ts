@@ -13,7 +13,7 @@ const call = async (args: string) => {
         '',
         '你的正面反馈能帮助 Claude 变得更好！',
         '',
-        '📖 📖 用法: ',
+        '📖 用法: ',
         ' /good-claude <反馈内容>',
         ' 例如: /good-claude 今天的代码建议很实用',
         '',

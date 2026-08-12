@@ -140,7 +140,7 @@ export const call: LocalCommandCall = async (args) => {
   return { type: 'text', value: [
     'Project Templates',
     '',
-    '📖 📖 Usage: ',
+    '📖 Usage: ',
     '  /templates list             List all templates',
     '  /templates use <name> [dir] Create project from template',
     '  /templates search <query>   Search templates',

@@ -138,7 +138,7 @@ export const call: LocalCommandCall = async (args) => {
       value: [
         '🔌 插件市场 / 技能发现',
         '',
-        '📖 📖 用法: ',
+        '📖 用法: ',
         '  /plugin-market list [--tags tag1,tag2]   浏览可用插件',
         '  /plugin-market search <关键词>            搜索插件',
         '  /plugin-market info <插件ID>              查看插件详情',
@@ -147,7 +147,7 @@ export const call: LocalCommandCall = async (args) => {
         '  /plugin-market installed                  查看已安装插件',
         '  /plugin-market rate <插件ID> <1-5>        ⭐ 评分插件',
         '',
-        '💡 💡 示例: ',
+        '💡 示例: ',
         '  /plugin-market list --tags typescript,docker',
         '  /plugin-market search api testing',
         '  /plugin-market install typescript-helper',

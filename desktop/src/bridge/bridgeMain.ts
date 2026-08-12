@@ -1969,7 +1969,7 @@ export async function bridgeMain(args: string[]): Promise<void> {
     ]).catch(() => {})
     // biome-ignore lint/suspicious/noConsole: 有意为之的错误输出
     console.error(
-      '错误：你的账户尚未启用多会话远程控制功能。',
+      '❌ 错误: 你的账户尚未启用多会话远程控制功能。',
     )
     // eslint-disable-next-line custom-rules/no-process-exit
     process.exit(1)
@@ -2082,7 +2082,7 @@ export async function bridgeMain(args: string[]): Promise<void> {
   ) {
     // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
     console.error(
-      '错误：远程控制基础 URL 使用 HTTP。仅允许 HTTPS 或 localhost HTTP。',
+      '❌ 错误: 远程控制基础 URL 使用 HTTP。仅允许 HTTPS 或 localhost HTTP。',
     )
     // eslint-disable-next-line custom-rules/no-process-exit
     process.exit(1)

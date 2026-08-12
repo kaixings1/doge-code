@@ -30,7 +30,7 @@ const call: LocalCommandCall = async (args: string) => {
       value: [
         '🗑️ 缓存管理工具',
         '',
-        '📖 📖 用法: ',
+        '📖 用法: ',
         ' /break-cache status - 查看缓存状态',
         ' /break-cache list - 列出所有缓存文件',
         ' /break-cache stats - 显示详细统计',
@@ -49,7 +49,7 @@ const call: LocalCommandCall = async (args: string) => {
         ' tool - 工具缓存',
         ' all - 所有缓存',
         '',
-        '💡 💡 示例: ',
+        '💡 示例: ',
         ' /break-cache status',
         ' /break-cache clear prompt',
         ' /break-cache dry-run'
