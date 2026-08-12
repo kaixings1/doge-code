@@ -286,7 +286,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
               updateConfig({ fontSize: size })
               resultMsg = `字体大小已更改为：${size}px`
             } else {
-              resultMsg = '错误：字体大小须在 8-24 之间'
+              resultMsg = '❌ 错误: 字体大小须在 8-24 之间'
             }
             break
           case 'rows':
@@ -295,7 +295,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
               updateConfig({ rows })
               resultMsg = `行数已更改为：${rows}`
             } else {
-              resultMsg = '错误：行数须在 20-200'
+              resultMsg = '❌ 错误: 行数须在 20-200'
             }
             break
           case 'cols':
@@ -304,7 +304,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
               updateConfig({ cols })
               resultMsg = `列数已更改为：${cols}`
             } else {
-              resultMsg = '错误：列数须在 20-200'
+              resultMsg = '❌ 错误: 列数须在 20-200'
             }
             break
           case 'cursor':
@@ -312,7 +312,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
               updateConfig({ cursor: value })
               resultMsg = `光标样式已更改为：${value}`
             } else {
-              resultMsg = '错误：光标样式须为 block, underline 或 bar'
+              resultMsg = '❌ 错误: 光标样式须为 block, underline 或 bar'
             }
             break
           case 'blink':
@@ -320,7 +320,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
               updateConfig({ blink: value === 'true' })
               resultMsg = `光标闪烁已${value === 'true' ? '启用' : '禁用'}`
             } else {
-              resultMsg = '错误：blink 须为 true 或 false'
+              resultMsg = '❌ 错误: blink 须为 true 或 false'
             }
             break
           case 'layout':
@@ -328,7 +328,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
               updateConfig({ layout: value })
               resultMsg = `布局模式已更改为：${value}`
             } else {
-              resultMsg = '错误：layout 须为 compact 或 full'
+              resultMsg = '❌ 错误: layout 须为 compact 或 full'
             }
             break
           default:

@@ -118,7 +118,7 @@ export const ReviewArtifactTool = buildTool({
         '',
         `**错误：** 路径不存在：${path}`,
         '',
-        '用法：`review_artifact` 需要 `path` 参数指向文件或目录。',
+        '📖 用法: `review_artifact` 需要 `path` 参数指向文件或目录。',
       ].join('\n')
       return {
         data: {

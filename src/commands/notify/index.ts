@@ -153,7 +153,7 @@ export const call: LocalCommandCall = async (args) => {
   }
 
   return { type: 'text', value: [
-    'Notification System', '', '📖 📖 Usage: ',
+    'Notification System', '', '📖 Usage: ',
     '  /notify list               List rules', '  /notify add <event> [msg]  Add rule',
     '  /notify test [event]       Test notification', '  /notify enable/disable <id> Toggle',
     '  /notify delete <id>        Delete rule', '  /notify log                View history',

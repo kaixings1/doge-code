@@ -44,7 +44,7 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'help' || cmd === '') {
     return { type: 'text', value: [
-      'Release Manager', '', '📖 📖 Usage: ',
+      'Release Manager', '', '📖 Usage: ',
       '  /release current               Show current version',
       '  /release bump <type>          Bump version (major/minor/patch)',
       '  /release notes                Generate release notes',

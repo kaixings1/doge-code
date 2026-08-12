@@ -166,7 +166,7 @@ export function registerSkillBundleCommand(): void {
 
       if (action === 'show') {
         const name = parts[1]
-        if (!name) return [{ type: 'text', text: '用法：/skill-bundle show <name>' }]
+        if (!name) return [{ type: 'text', text: '📖 用法: /skill-bundle show <name>' }]
         const bundle = await getBundle(name)
         if (!bundle) return [{ type: 'text', text: 'Bundle "' + name + '" 未找到。' }]
         const msg = await buildBundleMessage(bundle)
@@ -175,14 +175,14 @@ export function registerSkillBundleCommand(): void {
 
       if (action === 'delete') {
         const name = parts[1]
-        if (!name) return [{ type: 'text', text: '用法：/skill-bundle delete <name>' }]
+        if (!name) return [{ type: 'text', text: '📖 用法: /skill-bundle delete <name>' }]
         const ok = await deleteBundle(name)
         return [{ type: 'text', text: ok ? '已删除 bundle "' + name + '"。' : 'Bundle "' + name + '" 未找到。' }]
       }
 
       if (action === 'create') {
         const name = parts[1]
-        if (!name) return [{ type: 'text', text: '用法：/skill-bundle create <name>\n然后使用 /skill-bundle edit 添加技能。' }]
+        if (!name) return [{ type: 'text', text: '📖 用法: /skill-bundle create <name>\n然后使用 /skill-bundle edit 添加技能。' }]
         const existing = await getBundle(name)
         if (existing) return [{ type: 'text', text: 'Bundle "' + name + '" 已存在。首先使用 /skill-bundle delete 删除它以替换。' }]
         await saveBundle({
@@ -195,7 +195,7 @@ export function registerSkillBundleCommand(): void {
 
       return [{
         type: 'text',
-        text: '用法：\n  /skill-bundle list              — 列出 bundles\n  /skill-bundle show <name>      — 显示 bundle\n  /skill-bundle create <name>    — 创建 bundle\n  /skill-bundle delete <name>    — 删除 bundle\n\n要编辑 bundle，直接在以下位置修改 JSON 文件：\n' + bundlesDir(),
+        text: '📖 用法: \n  /skill-bundle list              — 列出 bundles\n  /skill-bundle show <name>      — 显示 bundle\n  /skill-bundle create <name>    — 创建 bundle\n  /skill-bundle delete <name>    — 删除 bundle\n\n要编辑 bundle，直接在以下位置修改 JSON 文件：\n' + bundlesDir(),
       }]
     },
   })

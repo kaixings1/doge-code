@@ -25,7 +25,7 @@ const call: LocalCommandCall = async (args: string) => {
       value: [
         '💾 会话回填工具',
         '',
-        '📖 📖 用法: ',
+        '📖 用法: ',
         ' /backfill-sessions list - 列出所有会话',
         ' /backfill-sessions stats - 显示统计信息',
         ' /backfill-sessions search <keyword> - 搜索会话',
@@ -34,7 +34,7 @@ const call: LocalCommandCall = async (args: string) => {
         ' /backfill-sessions restore <id> - 恢复指定会话',
         ' /backfill-sessions backup - 备份当前会话',
         '',
-        '💡 💡 示例: ',
+        '💡 示例: ',
         ' /backfill-sessions list',
         ' /backfill-sessions search "error"',
         ' /backfill-sessions restore 123456'

@@ -53,7 +53,7 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'list'
   const contributors = getContributors()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Contributor Analysis', '', '📖 📖 Usage: ', '  /contributors list [N]           Show top N contributors', '  /contributors graph             ASCII graph of commits per contributor', '  /contributors files <name>      Show files touched by contributor', '  /contributors trend             Commit activity over time', '  /contributors email <email>     Show contributor details', '  /contributors all               List all commits per contributor', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Contributor Analysis', '', '📖 Usage: ', '  /contributors list [N]           Show top N contributors', '  /contributors graph             ASCII graph of commits per contributor', '  /contributors files <name>      Show files touched by contributor', '  /contributors trend             Commit activity over time', '  /contributors email <email>     Show contributor details', '  /contributors all               List all commits per contributor', ''].join('\n') }
 
   if (cmd === 'list' || cmd === 'ls') {
     const n = parseInt(parts[1]) || 15

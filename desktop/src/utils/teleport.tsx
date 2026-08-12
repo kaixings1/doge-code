@@ -175,7 +175,7 @@ export async function validateGitState(): Promise<void> {
   });
   if (!isClean) {
     logEvent('tengu_teleport_error_git_not_clean', {});
-    const error = new TeleportOperationError('Git 工作目录不干净。请在使用 --teleport 前提交或暂存更改。', chalk.red('错误：Git 工作目录不干净。请在使用 --teleport 前提交或暂存更改。\n'));
+    const error = new TeleportOperationError('Git 工作目录不干净。请在使用 --teleport 前提交或暂存更改。', chalk.red('❌ 错误: Git 工作目录不干净。请在使用 --teleport 前提交或暂存更改。\n'));
     throw error;
   }
 }

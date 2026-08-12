@@ -73,7 +73,7 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'help' || cmd === '') {
     return { type: 'text', value: [
-      'Merge Conflict Resolver', '', '📖 📖 Usage: ',
+      'Merge Conflict Resolver', '', '📖 Usage: ',
       '  /conflict list                List all conflicts',
       '  /conflict show <file>         Show conflict details',
       '  /conflict ours <file>         Resolve with ours',

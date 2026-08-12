@@ -237,7 +237,7 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
         '',
         '会话 ID 可以使用前 8 位缩写（与 /session-search 一致）',
         '',
-        '💡 💡 示例: ',
+        '💡 示例: ',
         '  /session-tag --add bugfix --session abc12345',
         '  /session-tag --remove bugfix --session abc12345',
         '  /session-tag --list',
@@ -334,7 +334,7 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
     return {
       type: 'text',
       value: [
-        '错误：--add 和 --remove 需要 --session <会话ID> 参数。',
+        '❌ 错误: --add 和 --remove 需要 --session <会话ID> 参数。',
         '',
         '运行 /session-search 查看会话 ID。',
         '会话 ID 可以使用前 8 位缩写。',

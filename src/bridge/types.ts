@@ -7,7 +7,7 @@ export const BRIDGE_LOGIN_INSTRUCTION =
 
 /** Full error printed when `claude remote-control` is run without auth. */
 export const BRIDGE_LOGIN_ERROR =
-  '错误：使用远程控制前必须先登录。\n\n' +
+  '❌ 错误: 使用远程控制前必须先登录。\n\n' +
   BRIDGE_LOGIN_INSTRUCTION
 
 /** Shown when the user disconnects Remote Control (via /remote-control or ultraplan launch). */

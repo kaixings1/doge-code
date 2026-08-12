@@ -44,7 +44,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
         ' intercept - 测试权限拦截',
         ' test-all - 测试所有工具权限',
         '',
-        '💡 💡 📝 用法示例: ',
+        '💡 📝 用法示例: ',
         ' /less-permission-prompts analyze',
         ' /less-permission-prompts risks',
         ' /less-permission-prompts intercept BashTool',

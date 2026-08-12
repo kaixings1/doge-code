@@ -39,7 +39,7 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'help' || cmd === '') {
     return { type: 'text', value: [
-      'Git Blame', '', '📖 📖 Usage: ',
+      'Git Blame', '', '📖 Usage: ',
       '  /blame <file>                 Show blame for file',
       '  /blame <file> <start> <end>   Show blame for line range',
       '  /blame authors <file>         Author statistics',

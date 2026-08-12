@@ -7,7 +7,7 @@ function runPy(code: string): string {
   try {
     const r = execSync('python -c "' + code.replace(/"/g, '\\"') + '"', { encoding: 'utf-8', timeout: 15000 }).trim()
     return r || '(空)'
-  } catch (e: any) { return '错误: ' + e.message }
+  } catch (e: any) { return '❌ 错误: ' + e.message }
 }
 
 export const call: LocalJSXCommandCall = async (args) => {

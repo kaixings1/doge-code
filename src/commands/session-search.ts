@@ -477,7 +477,7 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
         '  --project NAME            按项目名称过滤',
         '  --limit N                 最大结果数（默认 20）',
         '',
-        '💡 💡 示例: ',
+        '💡 示例: ',
         '  /session-search "error handling"',
         '  /session-search bug --date 2026-08-01 --limit 10',
         '  /session-search "API" --project my-app',

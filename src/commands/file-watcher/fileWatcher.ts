@@ -161,7 +161,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
 		return { type: 'jsx', render: () => [
 			'📂 文件监听器', '',
 			'监控指定目录的文件变化，实时检测编辑和保存操作。', '',
-			'📖 📖 用法: ',
+			'📖 用法: ',
 			' /file-watcher              — 查看当前监听状态',
 			' /file-watcher watch <dir>  — 开始监听目录',
 			' /file-watcher unwatch      — 停止所有监听',

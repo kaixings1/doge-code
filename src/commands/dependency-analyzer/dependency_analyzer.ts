@@ -192,7 +192,7 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
           ' health     - 依赖健康评分',
           ' report     - 生成完整报告',
           '',
-          '💡 💡 示例: ',
+          '💡 示例: ',
           ' /dependency-analyzer overview',
           ' /dependency-analyzer large',
           ' /dependency-analyzer audit',
