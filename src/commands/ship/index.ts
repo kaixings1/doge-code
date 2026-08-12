@@ -53,7 +53,7 @@ async function preflightChecks(): Promise<{ ok: boolean; error?: string; platfor
   const mainBranch = await getDefaultBranch()
 
   if (currentBranch === mainBranch) {
-    return { ok: false, error: `Cannot ship from ${mainBranch}, must be on feature branch` }
+    return { ok: false, error: `无法从 ${mainBranch} 分支部署，必须切换到功能分支` }
   }
 
   return { ok: true, platform: 'github', currentBranch, mainBranch }
@@ -126,7 +126,7 @@ async function createPR(title: string, body: string, base: string): Promise<{ ur
     ], { preserveOutputOnError: false })
 
     if (code !== 0) {
-      return { error: `PR creation failed: ${stdout}` }
+      return { error: `PR 创建失败: ${stdout}` }
     }
 
     // Extract PR number from URL
@@ -149,7 +149,7 @@ async function mergePR(prNumber: number, strategy: string = 'squash'): Promise<{
     ], { preserveOutputOnError: false })
 
     if (mergeableCode !== 0) {
-      return { merged: false, error: 'PR not mergeable' }
+      return { merged: false, error: 'PR 无法合并' }
     }
 
     // Merge
@@ -160,7 +160,7 @@ async function mergePR(prNumber: number, strategy: string = 'squash'): Promise<{
     ], { preserveOutputOnError: false })
 
     if (mergeCode !== 0) {
-      return { merged: false, error: 'PR merge failed' }
+      return { merged: false, error: 'PR 合并失败' }
     }
 
     // Get merge SHA
@@ -358,7 +358,7 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
   lines.push(`**PR**: #${prResult.number} | **状态**: Merged`)
   lines.push(`**耗时**: ${duration}s`)
   lines.push('')
-  lines.push('✅ Successfully shipped!')
+  lines.push('✅ 部署成功！')
 
   return { type: 'text', value: lines.join('\n') }
 }
@@ -370,7 +370,7 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
 const ship: Command = {
   type: 'local',
   name: 'ship',
-  description: '完整部署工作流: commit → PR → CI → review → merge → deploy',
+  description: '🚀 完整部署工作流: commit → PR → CI → review → merge → deploy',
   aliases: ['deploy-full', 'ship-it'],
   arguments: [
     {

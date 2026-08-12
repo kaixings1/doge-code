@@ -34,7 +34,7 @@ interface PluginMarketIndex {
 const KNOWN_PLUGINS: PluginEntry[] = [
   {
     id: 'typescript-helper',
-    name: 'TypeScript Helper',
+    name: 'TypeScript 助手',
     description: '增强 TypeScript 开发体验：类型检查、重构辅助、文档生成',
     author: 'doge-community',
     version: '1.2.0',
@@ -46,7 +46,7 @@ const KNOWN_PLUGINS: PluginEntry[] = [
   },
   {
     id: 'docker-workflow',
-    name: 'Docker Workflow',
+    name: 'Docker 工作流',
     description: 'Docker 开发工作流增强：容器管理、镜像优化、多阶段构建模板',
     author: 'doge-community',
     version: '0.9.1',
@@ -58,7 +58,7 @@ const KNOWN_PLUGINS: PluginEntry[] = [
   },
   {
     id: 'git-flow-enhanced',
-    name: 'Git Flow Enhanced',
+    name: 'Git 流程增强',
     description: '增强 Git 工作流：分支策略自动化、PR 模板、变更日志生成',
     author: 'doge-community',
     version: '2.0.3',
@@ -70,7 +70,7 @@ const KNOWN_PLUGINS: PluginEntry[] = [
   },
   {
     id: 'api-tester',
-    name: 'API Tester Pro',
+    name: 'API 测试专业版',
     description: '高级 API 测试：自动化测试套件、性能基准、契约验证',
     author: 'doge-community',
     version: '1.5.0',
@@ -81,7 +81,7 @@ const KNOWN_PLUGINS: PluginEntry[] = [
   },
   {
     id: 'code-formatter',
-    name: 'Universal Code Formatter',
+    name: '通用代码格式化器',
     description: '统一代码格式化：支持 30+ 语言、团队规范配置、CI 集成',
     author: 'doge-community',
     version: '3.1.2',
@@ -93,7 +93,7 @@ const KNOWN_PLUGINS: PluginEntry[] = [
 ]
 
 // ============================================================================
-// Installed Plugins Cache
+// 已安装插件缓存
 // ============================================================================
 
 const INSTALLED_PLUGINS_FILE = path.join(homedir(), '.doge', 'plugins', 'installed.json')
@@ -126,7 +126,7 @@ function saveInstalledPlugins(installed: Set<string>): void {
 }
 
 // ============================================================================
-// Command
+// 命令处理
 // ============================================================================
 
 export const call: LocalCommandCall = async (args) => {
@@ -136,7 +136,7 @@ export const call: LocalCommandCall = async (args) => {
     return {
       type: 'text',
       value: [
-        '🔌 插件市场 / 技能发现',
+        '📦 插件市场 / 技能发现',
         '',
         '📖 用法: ',
         '  /plugin-market list [--tags tag1,tag2]   浏览可用插件',
@@ -153,7 +153,7 @@ export const call: LocalCommandCall = async (args) => {
         '  /plugin-market install typescript-helper',
         '  /plugin-market rate code-formatter 5',
         '',
-        '提示: 插件安装到 ~/.doge/plugins/ 目录',
+        '💡 提示: 插件安装到 ~/.doge/plugins/ 目录',
       ].join('\n'),
     }
   }
@@ -188,7 +188,7 @@ export const call: LocalCommandCall = async (args) => {
 }
 
 // ============================================================================
-// Handlers
+// 处理函数
 // ============================================================================
 
 function handleList(tagsArg: string | undefined, installed: Set<string>): { type: string; value: string } {
@@ -266,7 +266,7 @@ function handleInfo(pluginId: string | undefined, installed: Set<string>): { typ
   if (!plugin) {
     return {
       type: 'text',
-      value: `❌ 未找到插件: ${pluginId}\n\n使用 /plugin-market list 查看所有可用插件`,
+      value: `❌ 未找到插件: ${pluginId}\n\n请使用 /plugin-market list 查看所有可用插件`,
     }
   }
 
@@ -309,14 +309,14 @@ function handleInstall(pluginId: string | undefined, installed: Set<string>): { 
   if (!plugin) {
     return {
       type: 'text',
-      value: `❌ 未找到插件: ${pluginId}\n\n使用 /plugin-market list 查看所有可用插件`,
+      value: `❌ 未找到插件: ${pluginId}\n\n请使用 /plugin-market list 查看所有可用插件`,
     }
   }
 
   if (installed.has(plugin.id)) {
     return {
       type: 'text',
-      value: `⚠️ 插件已安装: ${plugin.name} v${plugin.version}\n\n使用 /plugin-market uninstall ${plugin.id} 卸载`,
+      value: `⚠️ 插件已安装: ${plugin.name} v${plugin.version}\n\n请使用 /plugin-market uninstall ${plugin.id} 卸载`,
     }
   }
 
@@ -374,7 +374,7 @@ function handleUninstall(pluginId: string | undefined, installed: Set<string>): 
   if (!installed.has(pluginId)) {
     return {
       type: 'text',
-      value: `⚠️ 插件未安装: ${pluginId}\n\n使用 /plugin-market installed 查看已安装插件`,
+      value: `⚠️ 插件未安装: ${pluginId}\n\n请使用 /plugin-market installed 查看已安装插件`,
     }
   }
 
@@ -402,7 +402,7 @@ function handleInstalled(installed: Set<string>): { type: string; value: string 
   if (installedPlugins.length === 0) {
     return {
       type: 'text',
-      value: '📭 暂无已安装的插件\n\n使用 /plugin-market list 浏览可用插件',
+      value: '📭 暂无已安装的插件\n\n请使用 /plugin-market list 浏览可用插件',
     }
   }
 
@@ -451,7 +451,7 @@ function handleRate(pluginId: string | undefined, ratingStr: string | undefined,
 }
 
 // ============================================================================
-// Command Definition
+// 命令定义
 // ============================================================================
 
 const pluginMarket = {
@@ -483,7 +483,7 @@ const pluginMarket = {
 export default pluginMarket
 
 // ============================================================================
-// Utility
+// 工具函数
 // ============================================================================
 
 function formatNumber(num: number): string {

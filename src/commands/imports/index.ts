@@ -52,26 +52,26 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = s[0]?.toLowerCase() || 'help'
 
   if (cmd === 'help' || cmd === '') return { type: 'text', value: [
-    'Import Manager', '', '📖 Usage: ',
-    '  /imports analyze [path]          Analyze all imports',
-    '  /imports unused [path]           Find unused imports',
-    '  /imports organize [file]         Organize imports in file',
-    '  /imports sort [file]             Sort imports alphabetically',
-    '  /imports remove-unused [file]    Remove unused imports',
-    '  /imports convert [file]          Convert require to import',
-    '  /imports stats [path]            Import statistics',
-    '  /imports circular [path]         Detect circular dependencies',
-    '  /imports graph [path]            Generate import graph',
-    '  /imports find <module>           Find imports of module',
+    '📦 导入管理器', '', '📖 用法: ',
+    '  /imports analyze [路径]          分析所有导入',
+    '  /imports unused [路径]           查找未使用的导入',
+    '  /imports organize [文件]         整理文件中的导入',
+    '  /imports sort [文件]             按字母排序导入',
+    '  /imports remove-unused [文件]    移除未使用的导入',
+    '  /imports convert [文件]          转换 require 为 import',
+    '  /imports stats [路径]            导入统计',
+    '  /imports circular [路径]         检测循环依赖',
+    '  /imports graph [路径]            生成导入图',
+    '  /imports find <模块>             查找模块导入',
   ].join('\n') }
 
   if (cmd === 'analyze' || cmd === 'stats') {
     const target = s[1] || '.'
     const imports = analyzeImports(target)
-    if (imports.length === 0) return { type: 'text', value: 'No imports found' }
+    if (imports.length === 0) return { type: 'text', value: '没有找到导入' }
     const modules: Record<string, number> = {}
     imports.forEach(i => { modules[i.module] = (modules[i.module] || 0) + 1 })
-    const lines = ['Import Analysis:', '=================', '', 'Total imports: ' + imports.length, 'Unique modules: ' + Object.keys(modules).length, '', 'Top modules:']
+    const lines = ['📊 导入分析:', '=================', '', '导入总数: ' + imports.length, '唯一模块: ' + Object.keys(modules).length, '', '热门模块:']
     Object.entries(modules).sort((a: any, b: any) => b[1] - a[1]).slice(0, 15).forEach(([m, c]) => lines.push('  ' + m + ': ' + c))
     return { type: 'text', value: lines.join('\n') }
   }
@@ -92,15 +92,15 @@ export const call: LocalCommandCall = async (args) => {
         if (unusedNames.length > 0) unused.push({ ...imp, named: unusedNames })
       } catch { /* ignore */ }
     })
-    if (unused.length === 0) return { type: 'text', value: '[OK] No unused imports found!' }
-    const lines = ['Unused Imports (' + unused.length + '):', '====================', '']
+    if (unused.length === 0) return { type: 'text', value: '✅ 没有找到未使用的导入' }
+    const lines = ['🗑️ 未使用的导入 (' + unused.length + '):', '====================', '']
     unused.slice(0, 20).forEach(u => lines.push(u.file + ':' + u.line + ' - ' + u.named.join(', ') + ' from ' + u.module))
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'organize' || cmd === 'sort') {
     const file = s[1]
-    if (!file) return { type: 'text', value: 'Usage: /imports organize <file>' }
+    if (!file) return { type: 'text', value: '用法: /imports organize <文件>' }
     try {
       const content = readFileSync(file, 'utf-8')
       const lines = content.split('\n')
@@ -109,26 +109,26 @@ export const call: LocalCommandCall = async (args) => {
       lines.forEach(l => { if (/^(?:import|export)\s+/.test(l.trim())) imports.push(l); else other.push(l) })
       imports.sort((a, b) => a.localeCompare(b))
       const organized = [...imports, '', ...other]
-      return { type: 'text', value: 'Organized ' + imports.length + ' imports in ' + file + ':\n' + organized.join('\n').slice(0, 2000) }
+      return { type: 'text', value: '已整理 ' + imports.length + ' 个导入于 ' + file + ':\n' + organized.join('\n').slice(0, 2000) }
     } catch (err) {
-      return { type: 'text', value: '[ERROR] ' + (err instanceof Error ? err.message : String(err)) }
+      return { type: 'text', value: '❌ 错误: ' + (err instanceof Error ? err.message : String(err)) }
     }
   }
 
   if (cmd === 'remove-unused') {
     const file = s[1]
-    if (!file) return { type: 'text', value: 'Usage: /imports remove-unused <file>' }
-    return { type: 'text', value: 'Use /imports unused to find unused imports first, then remove manually or use a linter.' }
+    if (!file) return { type: 'text', value: '用法: /imports remove-unused <文件>' }
+    return { type: 'text', value: '请先使用 /imports unused 查找未使用的导入，然后手动移除或使用代码检查工具。' }
   }
 
   if (cmd === 'convert') {
     const file = s[1]
-    if (!file) return { type: 'text', value: 'Usage: /imports convert <file>' }
+    if (!file) return { type: 'text', value: '用法: /imports convert <文件>' }
     try {
       const content = readFileSync(file, 'utf-8')
       const converted = content.replace(/const\s+(\w+)\s*=\s*require\s*\(\s*['"]([^'"]+)['"]\s*\)/g, "import $1 from '$2'")
       return { type: 'text', value: 'Converted:\n' + converted.slice(0, 2000) }
-    } catch { return { type: 'text', value: '[ERROR] Cannot read file' } }
+    } catch { return { type: 'text', value: '❌ 错误: 无法读取文件' } }
   }
 
   if (cmd === 'circular') {

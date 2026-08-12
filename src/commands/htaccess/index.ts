@@ -38,7 +38,7 @@ const DEFAULT_CONFIG: HtaccessConfig = {
 
 const MODULES: Module[] = [
   {
-    name: 'security', description: 'Security headers + protect sensitive files',
+    name: 'security', description: '安全头部 + 保护敏感文件',
     generate: (c) => `# Security Headers
 <IfModule mod_headers.c>
   Header set X-Content-Type-Options "nosniff"
@@ -63,7 +63,7 @@ Options -Indexes
 RedirectMatch 404 /\\.(git|env|htaccess|ssh|idea|vscode)(/.*)?$`,
   },
   {
-    name: 'spa', description: 'SPA routing (React/Vue/Angular)',
+    name: 'spa', description: 'SPA 路由（React/Vue/Angular）',
     generate: (c) => `# SPA Routing
 <IfModule mod_rewrite.c>
   RewriteEngine On
@@ -88,7 +88,7 @@ RewriteRule ^ index.html [L]
 </IfModule>`,
   },
   {
-    name: 'caching', description: 'Browser caching by file type',
+    name: 'caching', description: '按文件类型设置浏览器缓存',
     generate: (c) => `# Browser Caching
 <IfModule mod_expires.c>
   ExpiresActive On
@@ -112,7 +112,7 @@ RewriteRule ^ index.html [L]
 </IfModule>`,
   },
   {
-    name: 'compression', description: 'gzip/brotli compression',
+    name: 'compression', description: 'gzip/brotli 压缩',
     generate: (c) => `${c.gzip ? `# Gzip Compression
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json application/xml image/svg+xml
@@ -130,7 +130,7 @@ AddType application/javascript .js
 AddType text/css .css`,
   },
   {
-    name: 'redirect', description: 'Domain redirects',
+    name: 'redirect', description: '域名重定向',
     generate: (c) => `# Redirects
 <IfModule mod_rewrite.c>
   RewriteEngine On
@@ -150,7 +150,7 @@ RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
 </IfModule>`,
   },
   {
-    name: 'performance', description: 'ETags, connection keep-alive, server push',
+    name: 'performance', description: 'ETag、连接保持、服务器推送',
     generate: (c) => `# Performance
 # Disable ETags (use Last-Modified + Cache-Control instead)
 <IfModule mod_headers.c>
@@ -171,7 +171,7 @@ ${c.http2 ? `<IfModule mod_http2.c>
 </IfModule>` : '# HTTP/2 disabled'}`,
   },
   {
-    name: 'api', description: 'REST API - CORS, JSON, OPTIONS',
+    name: 'api', description: 'REST API - CORS、JSON、OPTIONS',
     generate: (c) => `# REST API
 # CORS headers
 <IfModule mod_headers.c>
@@ -190,7 +190,7 @@ RewriteRule ^(.*)$ $1 [R=200,L]
 AddType application/json .json`,
   },
   {
-    name: 'maintenance', description: 'Maintenance mode with IP whitelist',
+    name: 'maintenance', description: '维护模式（带 IP 白名单）',
     generate: (c) => `# Maintenance Mode
 RewriteEngine On
 RewriteCond %{REQUEST_URI} !/maintenance\\.html$
@@ -227,10 +227,10 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const config = loadConfig()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['htaccess Manager (Advanced)', '', '📖 Usage: ', '  /htaccess <module> [modules...]  Generate (combine multiple)', '  /htaccess list                   List modules', '  /htaccess view                   View current .htaccess', '  /htaccess backup                 Backup current', '  /htaccess restore <file>        Restore backup', '  /htaccess config                Show config', '  /htaccess set-domain <domain>   Set domain', '  /htaccess https <on|off>        Toggle HTTPS redirect', '  /htaccess www <none|to-www|to-non-www>  WWW redirect', '  /htaccess gzip <on|off>         Toggle gzip', '  /htaccess custom <rules>        Add custom rules', '', 'Modules: ' + MODULES.map(m => m.name).join(', '), ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['📁 htaccess 管理器（高级）', '', '📖 用法: ', '  /htaccess <模块> [多个模块...]  生成（可组合多个）', '  /htaccess list                   列出所有模块', '  /htaccess view                   查看当前 .htaccess', '  /htaccess backup                 备份当前配置', '  /htaccess restore <文件>         恢复备份', '  /htaccess config                 显示配置', '  /htaccess set-domain <域名>      设置域名', '  /htaccess https <on|off>         切换 HTTPS 重定向', '  /htaccess www <none|to-www|to-non-www>  WWW 重定向', '  /htaccess gzip <on|off>          切换 gzip 压缩', '  /htaccess custom <规则>          添加自定义规则', '', '可用模块: ' + MODULES.map(m => m.name).join(', '), ''].join('\n') }
 
   if (cmd === 'list') {
-    const lines = ['Modules:', '════════', '']
+    const lines = ['📦 可用模块:', '════════', '']
     MODULES.forEach(m => lines.push(`  ${m.name}: ${m.description}`))
     lines.push('', 'Usage: /htaccess security caching compression')
     return { type: 'text', value: lines.join('\n') }
@@ -238,69 +238,69 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'view') {
     if (!existsSync('.htaccess')) return { type: 'text', value: 'No .htaccess found. Generate with /htaccess <module>' }
-    return { type: 'text', value: 'Current .htaccess:\n═══════════════════\n' + readFileSync('.htaccess', 'utf-8') }
+    return { type: 'text', value: '当前 .htaccess:\n═══════════════════\n' + readFileSync('.htaccess', 'utf-8') }
   }
 
   if (cmd === 'backup') {
     const path = backupExisting()
-    return path ? `[OK] Backed up: ${path}` : 'No .htaccess to backup'
+    return path ? `✅ [成功] 已备份: ${path}` : '没有可备份的 .htaccess 文件'
   }
 
   if (cmd === 'restore') {
     const file = parts[1]
-    if (!file || !existsSync(join(BACKUP_DIR, file))) return { type: 'text', value: 'Usage: /htaccess restore <backup-file>' }
+    if (!file || !existsSync(join(BACKUP_DIR, file))) return { type: 'text', value: '用法: /htaccess restore <备份文件>' }
     copyFileSync(join(BACKUP_DIR, file), '.htaccess')
-    return { type: 'text', value: `✅ [OK] Restored: ${file}` }
+    return { type: 'text', value: `✅ [成功] 已恢复: ${file}` }
   }
 
   if (cmd === 'config') return { type: 'text', value: JSON.stringify(config, null, 2) }
 
   if (cmd === 'set-domain') {
     const domain = parts[1]
-    if (!domain) return { type: 'text', value: 'Usage: /htaccess set-domain <domain>' }
+    if (!domain) return { type: 'text', value: '用法: /htaccess set-domain <域名>' }
     config.domain = domain
     saveConfig(config)
-    return { type: 'text', value: `✅ [OK] Domain: ${domain}` }
+    return { type: 'text', value: `✅ [成功] 域名: ${domain}` }
   }
 
   if (cmd === 'https') {
     const val = parts[1]
-    if (!['on', 'off'].includes(val)) return { type: 'text', value: 'Usage: /htaccess https on|off' }
+    if (!['on', 'off'].includes(val)) return { type: 'text', value: '用法: /htaccess https on|off' }
     config.https = val === 'on'
     saveConfig(config)
-    return { type: 'text', value: `✅ [OK] HTTPS redirect: ${val}` }
+    return { type: 'text', value: `✅ [成功] HTTPS 重定向: ${val}` }
   }
 
   if (cmd === 'www') {
     const val = parts[1]
-    if (!['none', 'to-www', 'to-non-www'].includes(val)) return { type: 'text', value: 'Usage: /htaccess www none|to-www|to-non-www' }
+    if (!['none', 'to-www', 'to-non-www'].includes(val)) return { type: 'text', value: '用法: /htaccess www none|to-www|to-non-www' }
     config.wwwRedirect = val as HtaccessConfig['wwwRedirect']
     saveConfig(config)
-    return { type: 'text', value: `✅ [OK] WWW redirect: ${val}` }
+    return { type: 'text', value: `✅ [成功] WWW 重定向: ${val}` }
   }
 
   if (cmd === 'gzip') {
     const val = parts[1]
-    if (!['on', 'off'].includes(val)) return { type: 'text', value: 'Usage: /htaccess gzip on|off' }
+    if (!['on', 'off'].includes(val)) return { type: 'text', value: '用法: /htaccess gzip on|off' }
     config.gzip = val === 'on'
     saveConfig(config)
-    return { type: 'text', value: `✅ [OK] Gzip: ${val}` }
+    return { type: 'text', value: `✅ [成功] Gzip 压缩: ${val}` }
   }
 
   if (cmd === 'custom') {
     const rules = parts.slice(1).join(' ')
-    if (!rules) return { type: 'text', value: 'Usage: /htaccess custom <apache rules>' }
+    if (!rules) return { type: 'text', value: '用法: /htaccess custom <Apache 规则>' }
     config.customRules.push(rules)
     saveConfig(config)
-    return { type: 'text', value: `✅ [OK] Custom rule added` }
+    return { type: 'text', value: `✅ [成功] 已添加自定义规则` }
   }
 
   // Generate from modules
   const moduleNames = parts.filter(p => p !== cmd)
-  if (moduleNames.length === 0) return { type: 'text', value: 'Usage: /htaccess <module> [more modules]\nModules: ' + MODULES.map(m => m.name).join(', ') }
+  if (moduleNames.length === 0) return { type: 'text', value: '用法: /htaccess <模块> [更多模块]\n可用模块: ' + MODULES.map(m => m.name).join(', ') }
 
   const selected = moduleNames.map(n => MODULES.find(m => m.name === n)).filter(Boolean) as Module[]
-  if (selected.length === 0) return { type: 'text', value: `❌ Unknown modules: ${moduleNames.join(', ')}\nAvailable: ${MODULES.map(m => m.name).join(', ')}` }
+  if (selected.length === 0) return { type: 'text', value: `❌ 未知模块: ${moduleNames.join(', ')}\n可用模块: ${MODULES.map(m => m.name).join(', ')}` }
 
   const backup = backupExisting()
   const header = ['# Generated by doge-code htaccess', '# Date: ' + new Date().toISOString(), '# Modules: ' + selected.map(m => m.name).join(', '), '# ⚠️ DO NOT EDIT THIS SECTION', '']
@@ -312,7 +312,7 @@ export const call: LocalCommandCall = async (args) => {
 
 const htaccess: Command = {
   type: 'local', name: 'htaccess',
-  description: 'htaccess - security/spa/caching/compression/redirect/performance/api/maintenance',
+  description: 'htaccess 管理器 - 安全/SPA/缓存/压缩/重定向/性能/API/维护模式',
   aliases: ['/htaccess', '/hta'],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

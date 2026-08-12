@@ -43,7 +43,7 @@ export const call: LocalCommandCall = async (args) => {
   const parts = s.split(/\s+/)
   const cmd = parts[0]?.toLowerCase() || 'help'
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Import Map', '', '📖 Usage: ', '  /import-map                     Show import map', '  /import-map dot                  Graphviz DOT format', '  /import-map mermaid              Mermaid format', '  /import-map circular             Detect circular imports', '  /import-map orphans              Find unreferenced modules', '  /import-map external             External dependencies', '  /import-map depth <module>       Import depth tree', '  /import-map stats                Import statistics', '  /import-map save <file>          Save map', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['📦 导入映射图', '', '📖 用法: ', '  /import-map                       显示导入映射图', '  /import-map dot                    Graphviz DOT 格式', '  /import-map mermaid                Mermaid 格式', '  /import-map circular               检测循环导入', '  /import-map orphans                查找孤立模块', '  /import-map external               外部依赖', '  /import-map depth <模块>           导入深度树', '  /import-map stats                  导入统计', '  /import-map save <文件>            保存映射图', ''].join('\n') }
 
   const importMap = buildImportMap('.')
 
@@ -52,7 +52,7 @@ export const call: LocalCommandCall = async (args) => {
     const external = importMap.filter(n => n.module.startsWith('.') === false).length
     const internal = total - external
     const circular = importMap.filter(n => n.imports.some(i => importMap.some(m => m.module === i && m.imports.includes(n.module)))).length
-    return { type: 'text', value: ['Import Statistics:', '==================', '', 'Total modules: ' + total, 'Internal: ' + internal, 'External: ' + external, 'Potential circular: ' + circular].join('\n') }
+    return { type: 'text', value: ['📊 导入统计:', '==================', '', '模块总数: ' + total, '内部模块: ' + internal, '外部模块: ' + external, '可能的循环: ' + circular].join('\n') }
   }
 
   if (cmd === 'circular') {
@@ -66,20 +66,20 @@ export const call: LocalCommandCall = async (args) => {
         }
       })
     })
-    if (circular.length === 0) return { type: 'text', value: '[OK] No circular imports' }
-    return { type: 'text', value: 'Circular Imports (' + circular.length + '):\n' + circular.join('\n') }
+    if (circular.length === 0) return { type: 'text', value: '✅ 没有循环导入' }
+    return { type: 'text', value: '🔄 循环导入 (' + circular.length + '):\n' + circular.join('\n') }
   }
 
   if (cmd === 'orphans') {
     const orphans = importMap.filter(n => n.importedBy.length === 0 && n.module.startsWith('.'))
-    if (orphans.length === 0) return { type: 'text', value: '[OK] No orphaned modules' }
-    return { type: 'text', value: 'Orphaned Modules (' + orphans.length + '):\n' + orphans.map(o => o.module).join('\n') }
+    if (orphans.length === 0) return { type: 'text', value: '✅ 没有孤立模块' }
+    return { type: 'text', value: '📭 孤立模块 (' + orphans.length + '):\n' + orphans.map(o => o.module).join('\n') }
   }
 
   if (cmd === 'external') {
     const external = importMap.filter(n => !n.module.startsWith('.'))
-    if (external.length === 0) return { type: 'text', value: 'No external dependencies' }
-    return { type: 'text', value: 'External Dependencies (' + external.length + '):\n' + external.map(e => e.module + ' (' + e.importedBy.length + ' users)').join('\n') }
+    if (external.length === 0) return { type: 'text', value: '没有外部依赖' }
+    return { type: 'text', value: '📦 外部依赖 (' + external.length + '):\n' + external.map(e => e.module + ' (' + e.importedBy.length + ' 个使用者)').join('\n') }
   }
 
   if (cmd === 'dot') {
@@ -97,27 +97,27 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'depth') {
     const target = parts[1]
-    if (!target) return { type: 'text', value: 'Usage: /import-map depth <module>' }
+    if (!target) return { type: 'text', value: '用法: /import-map depth <模块>' }
     const node = importMap.find(n => n.module.includes(target))
-    if (!node) return { type: 'text', value: 'Module not found: ' + target }
-    return { type: 'text', value: 'Import Depth: ' + target + '\nImported by: ' + node.importedBy.length + ' modules\nImports: ' + node.imports.length + ' modules' }
+    if (!node) return { type: 'text', value: '未找到模块: ' + target }
+    return { type: 'text', value: '导入深度: ' + target + '\n被导入: ' + node.importedBy.length + ' 个模块\n导入: ' + node.imports.length + ' 个模块' }
   }
 
   if (cmd === 'save') {
     const file = parts[1] || 'import-map.json'
     require('fs').writeFileSync(file, JSON.stringify(importMap, null, 2), 'utf-8')
-    return { type: 'text', value: '[OK] Saved to ' + file }
+    return { type: 'text', value: '✅ 已保存到 ' + file }
   }
 
   // Default: show top imported modules
-  const lines = ['Import Map (' + importMap.length + ' modules):', '========================', '']
+  const lines = ['📦 导入映射图 (' + importMap.length + ' 个模块):', '========================', '']
   importMap.slice(0, 20).forEach(n => lines.push(n.module + ' (imported by ' + n.importedBy.length + ', imports ' + n.imports.length + ')'))
   return { type: 'text', value: lines.join('\n') }
 }
 
 const importMap: Command = {
   type: 'local', name: 'import-map',
-  description: 'Import map - stats/circular/orphans/external/dot/mermaid/depth/save',
+  description: '导入映射图 - stats/circular/orphans/external/dot/mermaid/depth/save',
   aliases: '/import-map, /im, /imports'.split(','),
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

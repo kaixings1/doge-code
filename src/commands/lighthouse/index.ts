@@ -111,12 +111,12 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'help'
   const config = loadConfig()
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['Lighthouse Auditor (Advanced)', '', '📖 Usage: ', '  /lighthouse <url>                Audit URL', '  /lighthouse run [url]            Run audit (default localhost:3000)', '  /lighthouse report [url]         Generate HTML report', '  /lighthouse budget <cat> <n>     Set budget (e.g. perf 80)', '  /lighthouse budgets              Show current budgets', '  /lighthouse history              Audit history', '  /lighthouse trend                Score trends', '  /lighthouse compare <u1> <u2>    Compare two URLs', '  /lighthouse categories           Score categories', '  /lighthouse config               Show/edit config', '  /lighthouse set <key> <val>      Set config value', '  /lighthouse export [url]         Export results JSON', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['🏮 Lighthouse 网站质量审计工具（高级）', '', '📖 用法: ', '  /lighthouse <url>                审计 URL', '  /lighthouse run [url]            运行审计（默认 localhost:3000）', '  /lighthouse report [url]         生成 HTML 报告', '  /lighthouse budget <类别> <n>    设置预算（例如 perf 80）', '  /lighthouse budgets              显示当前预算', '  /lighthouse history              审计历史', '  /lighthouse trend                分数趋势', '  /lighthouse compare <u1> <u2>    对比两个 URL', '  /lighthouse categories           评分类别', '  /lighthouse config               显示/编辑配置', '  /lighthouse set <key> <val>      设置配置值', '  /lighthouse export [url]         导出结果 JSON', ''].join('\n') }
 
-  if (cmd === 'categories') return { type: 'text', value: ['Lighthouse Categories:', '══════════════════════', '', 'Performance:    Load speed, render blocking, images, JS execution', 'Accessibility:  ARIA, contrast, labels, semantics, keyboard nav', 'Best Practices: HTTPS, HTTP/2, no errors, CSP, security', 'SEO:            Meta tags, mobile-friendliness, crawlable', 'PWA:            Service worker, manifest, offline, installable', '', 'Grades: A(90+) B(80+) C(70+) D(50+) F(<50)'].join('\n') }
+  if (cmd === 'categories') return { type: 'text', value: ['📊 Lighthouse 评分类别:', '══════════════════════', '', '性能:          加载速度、渲染阻塞、图片、JS 执行', '无障碍:         ARIA、对比度、标签、语义、键盘导航', '最佳实践:       HTTPS、HTTP/2、无错误、CSP、安全', 'SEO:            元标签、移动友好、可抓取', 'PWA:            服务工作线程、清单、离线、可安装', '', '等级: A(90+) B(80+) C(70+) D(50+) F(<50)'].join('\n') }
 
   if (cmd === 'budgets') {
-    const lines = ['Current Budgets:', '════════════════', '']
+    const lines = ['📊 当前预算:', '════════════════', '']
     for (const [cat, budget] of Object.entries(config.budgets)) lines.push(`  ${cat}: ${budget}`)
     lines.push('', 'Set with: /lighthouse budget <category> <score>', 'Fail on budget: ' + config.failOnBudget)
     return { type: 'text', value: lines.join('\n') }
@@ -124,42 +124,42 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'budget') {
     const cat = parts[1]; const val = parseInt(parts[2])
-    if (!cat || isNaN(val)) return { type: 'text', value: 'Usage: /lighthouse budget <category> <score>\nCategories: performance, accessibility, bestPractices, seo, pwa' }
-    if (!(cat in config.budgets)) return { type: 'text', value: `❌ Unknown category: ${cat}` }
+    if (!cat || isNaN(val)) return { type: 'text', value: '用法: /lighthouse budget <类别> <分数>\n类别: performance, accessibility, bestPractices, seo, pwa' }
+    if (!(cat in config.budgets)) return { type: 'text', value: `❌ 未知类别: ${cat}` }
     // @ts-expect-error dynamic
     config.budgets[cat] = val
     saveConfig(config)
-    return { type: 'text', value: `✅ [OK] ${cat} budget: ${val}` }
+    return { type: 'text', value: `✅ [成功] ${cat} 预算: ${val}` }
   }
 
   if (cmd === 'config') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
-    if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
+    if (!key || !value) return { type: 'text', value: '当前配置:\n' + JSON.stringify(config, null, 2) }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
-    return { type: 'text', value: `❌ Unknown: ${key}` }
+    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [成功] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ 未知配置项: ${key}` }
   }
 
   if (cmd === 'set') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
-    if (!key || !value) return { type: 'text', value: 'Usage: /lighthouse set <key> <value>' }
+    if (!key || !value) return { type: 'text', value: '用法: /lighthouse set <配置项> <值>' }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
-    return { type: 'text', value: `❌ Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
+    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [成功] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ 未知配置项: ${key}。可用项: ${Object.keys(config).join(', ')}` }
   }
 
   if (cmd === 'history') {
     const history = loadHistory()
-    if (history.length === 0) return { type: 'text', value: 'No audit history. Run /lighthouse <url> first.' }
-    const lines = ['Audit History:', '══════════════', '']
+    if (history.length === 0) return { type: 'text', value: '没有审计历史。请先运行 /lighthouse <url>。' }
+    const lines = ['📜 审计历史:', '══════════════', '']
     history.slice(-10).forEach(h => lines.push(`${h.date.slice(0, 19)} | ${h.url} | ${h.grade} | Perf:${h.scores.performance} Acc:${h.scores.accessibility} SEO:${h.scores.seo}`))
     return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'trend') {
     const history = loadHistory()
-    if (history.length < 2) return { type: 'text', value: 'Need at least 2 audits for trends' }
-    const lines = ['Performance Trend:', '═════════════════', '']
+    if (history.length < 2) return { type: 'text', value: '至少需要 2 次审计记录才能显示趋势' }
+    const lines = ['📈 性能趋势:', '═════════════════', '']
     history.slice(-14).forEach(h => {
       const bar = '█'.repeat(Math.round(h.scores.performance / 5))
       lines.push(`${h.date.slice(0, 10)} ${bar} ${h.scores.performance}`)
@@ -169,8 +169,8 @@ export const call: LocalCommandCall = async (args) => {
 
   if (cmd === 'compare') {
     const u1 = parts[1]; const u2 = parts[2]
-    if (!u1 || !u2) return { type: 'text', value: 'Usage: /lighthouse compare <url1> <url2>' }
-    const lines = ['Comparing URLs:', '═══════════════', '']
+    if (!u1 || !u2) return { type: 'text', value: '用法: /lighthouse compare <url1> <url2>' }
+    const lines = ['🔗 对比 URL:', '═══════════════', '']
     const r1 = runAudit(u1, config)
     const r2 = runAudit(u2, config)
     const s1 = parseScores(r1.output)
@@ -186,23 +186,23 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'report') {
     const url = parts[1] || config.defaultUrl
     const result = runAudit(url, config, 'html')
-    if (!result.ok) return { type: 'text', value: '[ERROR] Audit failed: ' + result.output.slice(0, 200) }
+    if (!result.ok) return { type: 'text', value: '❌ 审计失败: ' + result.output.slice(0, 200) }
     const match = result.output.match(/Output written to:\s*(.+)/i) || result.output.match(/(lighthouse[^"]*\.html)/i)
-    return { type: 'text', value: match ? '[OK] Report: ' + match[1] : '[OK] HTML report generated' }
+    return { type: 'text', value: match ? '✅ 报告: ' + match[1] : '✅ HTML 报告已生成' }
   }
 
   if (cmd === 'export') {
     const url = parts[1] || config.defaultUrl
     const result = runAudit(url, config, 'json')
-    if (!result.ok) return { type: 'text', value: '[ERROR] Audit failed: ' + result.output.slice(0, 200) }
+    if (!result.ok) return { type: 'text', value: '❌ 审计失败: ' + result.output.slice(0, 200) }
     const scores = parseScores(result.output)
     writeFileSync('lighthouse-results.json', JSON.stringify({ url, scores, date: new Date().toISOString() }, null, 2), 'utf-8')
-    return { type: 'text', value: '[OK] Exported: lighthouse-results.json' }
+    return { type: 'text', value: '✅ 已导出: lighthouse-results.json' }
   }
 
   const url = cmd === 'run' ? (parts[1] || config.defaultUrl) : cmd
   const result = runAudit(url, config)
-  if (!result.ok) return { type: 'text', value: '[ERROR] Audit failed: ' + result.output.slice(0, 300) + '\n\nInstall: npm install -g lighthouse' }
+  if (!result.ok) return { type: 'text', value: '❌ 审计失败: ' + result.output.slice(0, 300) + '\n\n请安装: npm install -g lighthouse' }
 
   const scores = parseScores(result.output)
   const passed = scores.performance >= config.budgets.performance && scores.accessibility >= config.budgets.accessibility && scores.bestPractices >= config.budgets.bestPractices && scores.seo >= config.budgets.seo
@@ -224,11 +224,11 @@ export const call: LocalCommandCall = async (args) => {
     `  🔍 SEO:          ${scores.seo}/100 ${'█'.repeat(Math.round(scores.seo / 5))}${'░'.repeat(20 - Math.round(scores.seo / 5))}`,
     `  📱 PWA:          ${scores.pwa}/100`,
     '',
-    `Result: ${passed ? '[PASS] Meets budgets' : '[FAIL] Below budgets'}${config.failOnBudget ? '' : ' (budget enforcement off)'}`,
+    `结果: ${passed ? '✅ [通过] 满足预算' : '❌ [失败] 低于预算'}${config.failOnBudget ? '' : '（预算检查已关闭）'}`,
     '',
     'Recommendations:',
   ]
-  generateRecommendations(scores, config).forEach(r => lines.push('  • ' + r))
+  generateRecommendations(scores, config).forEach(r => lines.push('  💡 ' + r))
   return { type: 'text', value: lines.join('\n') }
 }
 

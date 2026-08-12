@@ -1,9 +1,9 @@
 /**
- * Cost command — 显示当前会话成本信息。
+ * 成本命令 — 显示当前会话成本信息。
  *
  * 用法:
  *   /cost                   — 显示总费用（向后兼容）
- *   /cost --by-model        — 按模型维度显示费用 breakdown
+ *   /cost --by-model        — 按模型维度显示费用明细
  *   /cost --by-type         — 按 token 类型显示费用分布
  *   /cost --trend [N]       — 显示最近 N 次 API 调用的费用趋势（默认 10）
  *   /cost --export <file>   — 导出成本数据为 JSON 文件
@@ -26,7 +26,7 @@ const cost = {
   arguments: [
     {
       name: '--by-model',
-      description: '按模型维度显示费用 breakdown',
+      description: '按模型维度显示费用明细',
       required: false,
     },
     {
