@@ -124,16 +124,16 @@ export const call: LocalCommandCall = async (args) => {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${value}` } }
-    return { type: 'text', value: `Unknown: ${key}` }
+    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ Unknown: ${key}` }
   }
 
   if (cmd === 'set') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: 'Usage: /outdated set <key> <value>' }
     // @ts-expect-error dynamic
-    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${value}` } }
-    return { type: 'text', value: `Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
+    if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ Unknown key: ${key}. Keys: ${Object.keys(config).join(', ')}` }
   }
 
   if (cmd === 'history') {
@@ -159,7 +159,7 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'major' || cmd === 'minor' || cmd === 'patch') {
     const deps = getOutdatedDeps(config)
     const filtered = deps.filter(d => d.updateType === cmd)
-    if (filtered.length === 0) return { type: 'text', value: `[OK] No ${cmd} updates available` }
+    if (filtered.length === 0) return { type: 'text', value: `✅ [OK] No ${cmd} updates available` }
     const lines = [`${cmd.charAt(0).toUpperCase() + cmd.slice(1)} Updates (${filtered.length}):`, '══════════════════════', '']
     filtered.slice(0, 30).forEach((d, i) => {
       const warn = cmd === 'major' ? ' ⚠️ breaking' : ''
@@ -201,7 +201,7 @@ export const call: LocalCommandCall = async (args) => {
     const security = getSecurityIssues()
     const file = parts[1] || 'outdated-report.json'
     writeFileSync(file, JSON.stringify({ deps, security, date: new Date().toISOString() }, null, 2), 'utf-8')
-    return { type: 'text', value: `[OK] Exported: ${file}` }
+    return { type: 'text', value: `✅ [OK] Exported: ${file}` }
   }
 
   const deps = getOutdatedDeps(config)
@@ -210,7 +210,7 @@ export const call: LocalCommandCall = async (args) => {
   const major = outdated.filter(d => d.updateType === 'major').length
   saveHistory({ date: new Date().toISOString(), total: deps.length, outdated: outdated.length, major, security: security.length, status: outdated.length === 0 ? 'UP-TO-DATE' : 'OUTDATED' })
 
-  if (outdated.length === 0) return { type: 'text', value: `[OK] All ${deps.length} dependencies up to date!` }
+  if (outdated.length === 0) return { type: 'text', value: `✅ [OK] All ${deps.length} dependencies up to date!` }
 
   const lines = ['Outdated Dependencies (' + outdated.length + '/' + deps.length + '):', '══════════════════════════════', '']
   outdated.slice(0, 25).forEach((d, i) => {

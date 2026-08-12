@@ -30,6 +30,6 @@ export const call: LocalCommandCall = async (args, _context) => {
 
   return {
     type: 'text',
-    value: `已添加自定义模型: ${nextModel}`,
+    value: `✅ 已添加自定义模型: ${nextModel}`,
   }
 }

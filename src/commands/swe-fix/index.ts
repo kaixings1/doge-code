@@ -148,7 +148,7 @@ export const call: LocalCommandCall = async (args): Promise<LocalCommandResult> 
     const passing = isTestPassing(output)
     return {
       type: 'text',
-      value: `# 验证结果: ${passing ? '✅ 通过' : '❌ 失败'}\n\n${output.slice(0, 4000)}`,
+      value: `❌ # 验证结果: ${passing ? '✅ 通过' : '❌ 失败'}\n\n${output.slice(0, 4000)}`,
     }
   }
 

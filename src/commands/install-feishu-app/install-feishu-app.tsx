@@ -82,7 +82,7 @@ export async function call(): Promise<LocalCommandResult> {
 
     return {
       type: 'text',
-      value: `飞书应用配置完成。设置环境变量后重启 Claude Code 即可启用。`,
+      value: `✅ 飞书应用配置完成。设置环境变量后重启 Claude Code 即可启用。`,
     }
   } finally {
     rl.close()

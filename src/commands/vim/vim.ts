@@ -29,7 +29,7 @@ export const call: LocalCommandCall = async () => {
 
   return {
     type: 'text',
-    value: `编辑模式已设置为 ${newMode}。${
+    value: `ℹ️ 编辑模式已设置为 ${newMode}。${
       newMode === 'vim'
         ? '使用 Escape 键在插入模式和正常模式之间切换。'
         : '使用标准（readline）键盘绑定。'

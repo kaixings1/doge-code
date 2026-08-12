@@ -473,18 +473,18 @@ export const call: LocalCommandCall = async (args) => {
       if (key in config.rules) {
         config.rules[key as keyof typeof config.rules] = value === 'true'
         saveConfig(config)
-        return { type: 'text', value: `[OK] ${key} = ${value}` }
+        return { type: 'text', value: `✅ [OK] ${key} = ${value}` }
       }
-      return { type: 'text', value: `Unknown config key: ${key}. Available: ${Object.keys(config.rules).join(', ')}` }
+      return { type: 'text', value: `❌ Unknown config key: ${key}. Available: ${Object.keys(config.rules).join(', ')}` }
     }
 
     if (cmd === 'enable' || cmd === 'disable') {
       const rule = parts[1]
       if (!rule) return { type: 'text', value: 'Usage: /code-health enable|disable <rule>\nAvailable: ' + Object.keys(config.rules).join(', ') }
-      if (!(rule in config.rules)) return { type: 'text', value: `Unknown rule: ${rule}\nAvailable: ${Object.keys(config.rules).join(', ')}` }
+      if (!(rule in config.rules)) return { type: 'text', value: `❌ Unknown rule: ${rule}\nAvailable: ${Object.keys(config.rules).join(', ')}` }
       config.rules[rule as keyof typeof config.rules] = cmd === 'enable'
       saveConfig(config)
-      return { type: 'text', value: `[OK] ${rule} ${cmd}d` }
+      return { type: 'text', value: `✅ [OK] ${rule} ${cmd}d` }
     }
 
     if (cmd === 'history') {
@@ -514,7 +514,7 @@ export const call: LocalCommandCall = async (args) => {
       if (!safeWriteFile(BASELINE_FILE, JSON.stringify({ metrics, issues }, null, 2))) {
         return { type: 'text', value: '[ERROR] Cannot write baseline file. Check disk space and permissions.' }
       }
-      return { type: 'text', value: `[OK] Baseline saved (${issues.length} issues, ${metrics.length} files)` }
+      return { type: 'text', value: `✅ [OK] Baseline saved (${issues.length} issues, ${metrics.length} files)` }
     }
 
     if (cmd === 'compare') {
@@ -527,7 +527,7 @@ export const call: LocalCommandCall = async (args) => {
         const currentKeys = new Set(issues.map(i => `${i.file}:${i.line}:${i.message}`))
         const newIssues = issues.filter(i => !baselineKeys.has(`${i.file}:${i.line}:${i.message}`))
         const fixed = baseline.issues.filter((i: HealthIssue) => !currentKeys.has(`${i.file}:${i.line}:${i.message}`))
-        return { type: 'text', value: `Baseline Comparison:\n  New Issues: ${newIssues.length}\n  Fixed: ${fixed.length}\n  Current: ${issues.length}\n\n${newIssues.length > 0 ? 'New issues:\n' + newIssues.slice(0, 10).map(i => `  [${i.file}:${i.line}] ${i.message}`).join('\n') : '✨ No new issues since baseline!'}` }
+        return { type: 'text', value: `📊 Baseline Comparison:\n  New Issues: ${newIssues.length}\n  Fixed: ${fixed.length}\n  Current: ${issues.length}\n\n${newIssues.length > 0 ? 'New issues:\n' + newIssues.slice(0, 10).map(i => `  [${i.file}:${i.line}] ${i.message}`).join('\n') : '✨ No new issues since baseline!'}` }
       } catch {
         return { type: 'text', value: '[ERROR] Corrupted baseline file. Re-run /code-health baseline.' }
       }
@@ -537,9 +537,9 @@ export const call: LocalCommandCall = async (args) => {
       const file = parts[1]
       if (!file) return { type: 'text', value: 'Usage: /code-health file <path>' }
       const resolvedPath = safePath(file)
-      if (!existsSync(resolvedPath)) return { type: 'text', value: `File not found: ${resolvedPath}` }
+      if (!existsSync(resolvedPath)) return { type: 'text', value: `❌ File not found: ${resolvedPath}` }
       const stat = safeStat(resolvedPath)
-      if (!stat || !stat.isFile) return { type: 'text', value: `Not a file: ${resolvedPath}` }
+      if (!stat || !stat.isFile) return { type: 'text', value: `⚠️ Not a file: ${resolvedPath}` }
       const { metrics, issues } = analyzeFile(resolvedPath, config)
       return { type: 'text', value: [
         `File: ${resolvedPath}`,
@@ -557,7 +557,7 @@ export const call: LocalCommandCall = async (args) => {
     if (['complexity', 'size', 'documentation', 'testing', 'duplication', 'style', 'security'].includes(cmd)) {
       const { metrics, issues } = analyzeProject('.', config)
       const filtered = issues.filter(i => i.category === cmd)
-      if (filtered.length === 0) return { type: 'text', value: `[OK] No ${cmd} issues found!` }
+      if (filtered.length === 0) return { type: 'text', value: `✅ [OK] No ${cmd} issues found!` }
       return { type: 'text', value: [
         `${cmd.charAt(0).toUpperCase() + cmd.slice(1)} Issues (${filtered.length}):`,
         '═══════════════════════════════════',
@@ -569,13 +569,13 @@ export const call: LocalCommandCall = async (args) => {
 
     if (cmd === 'export') {
       const fmt = parts[1] || 'md'
-      if (!['md', 'json', 'markdown', 'html'].includes(fmt)) return { type: 'text', value: `Unsupported format: ${fmt}. Use: md, json, html` }
+      if (!['md', 'json', 'markdown', 'html'].includes(fmt)) return { type: 'text', value: `❌ Unsupported format: ${fmt}. Use: md, json, html` }
       const { metrics, issues } = analyzeProject('.', config)
       const { score, grade, categoryScores } = calculateHealthScore(metrics, issues, config)
       const filename = `health-report.${fmt === 'markdown' || fmt === 'md' ? 'md' : fmt}`
       const content = fmt === 'json' ? JSON.stringify({ score, grade, categoryScores, metrics, issues }, null, 2) : formatMarkdownReport(metrics, issues, score, grade, categoryScores)
-      if (!safeWriteFile(filename, content)) return { type: 'text', value: `[ERROR] Cannot write ${filename}` }
-      return { type: 'text', value: `[OK] Exported: ${filename}` }
+      if (!safeWriteFile(filename, content)) return { type: 'text', value: `❌ [ERROR] Cannot write ${filename}` }
+      return { type: 'text', value: `✅ [OK] Exported: ${filename}` }
     }
 
     // Default: full report
@@ -588,7 +588,7 @@ export const call: LocalCommandCall = async (args) => {
 
   } catch (err) {
     const errorMsg = formatError(err)
-    return { type: 'text', value: `[ERROR] Unexpected error: ${errorMsg}\n\nPlease report this issue.` }
+    return { type: 'text', value: `❌ [ERROR] Unexpected error: ${errorMsg}\n\nPlease report this issue.` }
   }
 }
 

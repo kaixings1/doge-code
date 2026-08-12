@@ -3363,7 +3363,7 @@ if (options.continue) {
 			}
 		  }
 		} else if (repoValidation.status === 'error') {
-		  throw new TeleportOperationError(repoValidation.errorMessage || '验证会话失败'❌ 错误: , chalk.red(`错误：${repoValidation.errorMessage || '验证会话失败'}\n`));
+		  throw new TeleportOperationError(repoValidation.errorMessage || '验证会话失败 ❌ 错误:' , chalk.red(`错误：${repoValidation.errorMessage || '验证会话失败'}\n`));
 		}
 		await validateGitState();
 

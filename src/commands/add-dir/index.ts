@@ -13,7 +13,7 @@ const addDir = {
     // 触发 DirectoryAdded hook（更新日志 2.1.219）
     const hook = getDirectoryAddedHook()
     hook.fire({ path, sessionId: `session-${Date.now()}`, source: 'add-dir', timestamp: Date.now() })
-    return { type: 'text' as const, value: `已触发 DirectoryAdded hook: ${path}` }
+    return { type: 'text' as const, value: `✅ 已触发 DirectoryAdded hook: ${path}` }
   },
 } satisfies Command
 

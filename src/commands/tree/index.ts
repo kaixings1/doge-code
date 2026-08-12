@@ -149,7 +149,7 @@ export const call: LocalCommandCall = async (args) => {
     if (isNaN(n)) return { type: 'text', value: 'Usage: /tree depth <N>' }
     config.maxDepth = n
     saveConfig(config)
-    return { type: 'text', value: `[OK] Max depth: ${n}` }
+    return { type: 'text', value: `✅ [OK] Max depth: ${n}` }
   }
 
   const options: TreeConfig = { ...config }
@@ -171,7 +171,7 @@ export const call: LocalCommandCall = async (args) => {
     const file = parts[1] || 'tree.txt'
     const content = basename(target) + '/\n' + lines.join('\n')
     writeFileSync(file, content, 'utf-8')
-    return { type: 'text', value: `[OK] Exported: ${file}` }
+    return { type: 'text', value: `✅ [OK] Exported: ${file}` }
   }
 
   const header = basename(target) + '/'

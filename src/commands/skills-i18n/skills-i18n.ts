@@ -50,6 +50,6 @@ export const call: LocalCommandCall = async (args, _context) => {
     return { type: 'text', value: output || '执行完成，无输出' }
   } catch (err: any) {
     const msg = err.stdout || err.stderr || err.message || String(err)
-    return { type: 'text', value: `执行出错:\n${msg.slice(0, 2000)}` }
+    return { type: 'text', value: `👉 执行出错:\n${msg.slice(0, 2000)}` }
   }
 }

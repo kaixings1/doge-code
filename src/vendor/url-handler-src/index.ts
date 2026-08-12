@@ -47,7 +47,7 @@ function loadModule(): UrlHandlerNapi | null {
  * the event loop for up to `timeoutMs` milliseconds.
  *
  * Returns the URL string if one was received, or null.
- * Only functional on macOS ?returns null on other platforms.
+ * Only functional on macOS — returns null on other platforms.
  */
 export function waitForUrlEvent(timeoutMs: number): string | null {
   const mod = loadModule()

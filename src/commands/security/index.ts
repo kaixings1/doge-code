@@ -344,13 +344,13 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'config') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
-    if (key in config.rules) { config.rules[key as keyof typeof config.rules] = value === 'true'; saveConfig(config); return { type: 'text', value: `[OK] ${key} = ${value}` } }
-    return { type: 'text', value: `Unknown: ${key}` }
+    if (key in config.rules) { config.rules[key as keyof typeof config.rules] = value === 'true'; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
+    return { type: 'text', value: `❌ Unknown: ${key}` }
   }
 
   if (cmd === 'enable' || cmd === 'disable') {
-    const rule = parts[1]; if (!rule || !(rule in config.rules)) return { type: 'text', value: `Unknown: ${rule}` }
-    config.rules[rule as keyof typeof config.rules] = cmd === 'enable'; saveConfig(config); return { type: 'text', value: `[OK] ${rule} ${cmd}d` }
+    const rule = parts[1]; if (!rule || !(rule in config.rules)) return { type: 'text', value: `❌ Unknown: ${rule}` }
+    config.rules[rule as keyof typeof config.rules] = cmd === 'enable'; saveConfig(config); return { type: 'text', value: `✅ [OK] ${rule} ${cmd}d` }
   }
 
   if (cmd === 'add-pattern') {
@@ -369,7 +369,7 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'baseline') {
     const findings = scanDirectory('.', config)
     writeFileSync(BASELINE_FILE, JSON.stringify(findings, null, 2), 'utf-8')
-    return { type: 'text', value: `[OK] Baseline saved (${findings.length} findings)` }
+    return { type: 'text', value: `✅ [OK] Baseline saved (${findings.length} findings)` }
   }
 
   if (cmd === 'compare') {
@@ -378,7 +378,7 @@ export const call: LocalCommandCall = async (args) => {
       const baseline = JSON.parse(readFileSync(BASELINE_FILE, 'utf-8'))
       const newFindings = findings.filter(f => !baseline.some((b: SecurityFinding) => b.file === f.file && b.line === f.line && b.title === f.title))
       const fixed = baseline.filter((b: SecurityFinding) => !findings.some(f => f.file === b.file && f.line === b.line && f.title === b.title))
-      return { type: 'text', value: `Baseline Comparison:\nNew: ${newFindings.length}\nFixed: ${fixed.length}\nTotal: ${findings.length}` }
+      return { type: 'text', value: `🔍 Baseline Comparison:\nNew: ${newFindings.length}\nFixed: ${fixed.length}\nTotal: ${findings.length}` }
     } catch { return { type: 'text', value: 'No baseline. Run /security baseline first.' } }
   }
 
@@ -389,7 +389,7 @@ export const call: LocalCommandCall = async (args) => {
     const filename = `security-scan.${format === 'sarif' ? 'sarif' : format}`
     const content = format === 'sarif' ? formatSarifReport(findings) : format === 'json' ? JSON.stringify({ result, findings }, null, 2) : formatTextReport(findings, { ...result, scanDuration: 0, filesScanned: Object.keys({}).length })
     writeFileSync(filename, content, 'utf-8')
-    return { type: 'text', value: `[OK] Exported: ${filename}` }
+    return { type: 'text', value: `✅ [OK] Exported: ${filename}` }
   }
 
   if (cmd === 'npm-audit') {

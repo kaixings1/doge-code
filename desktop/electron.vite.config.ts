@@ -313,8 +313,8 @@ function hardenBridgeSshImportPlugin() {
           })
         }
       }
-      // 清理该文件源码中的非法 Unicode 替换符（U+FFFD �）：它们通常是损坏的
-      // 缩进/空白字符，Bun 能容忍但 esbuild 会报 "Unexpected �"。
+      // 清理该文件源码中的非法 Unicode 替换符（U+FFFD ?）：它们通常是损坏的
+      // 缩进/空白字符，Bun 能容忍但 esbuild 会报 "Unexpected ?"。
       if (code.includes('\uFFFD')) {
         code = code.split('\uFFFD').join(' ')
       }

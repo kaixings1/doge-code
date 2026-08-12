@@ -297,7 +297,7 @@ const localCall: LocalCommandCall = async (args, context) => {
     if (currentBranch === baseBranch && !parsed.force) {
       return {
         type: 'text',
-        value: `当前在 ${baseBranch} 分支上。\n建议先创建功能分支。使用 --force 强制在当前分支操作。`,
+        value: `❌ 当前在 ${baseBranch} 分支上。\n建议先创建功能分支。使用 --force 强制在当前分支操作。`,
       }
     }
 
@@ -312,7 +312,7 @@ const localCall: LocalCommandCall = async (args, context) => {
         { preserveOutputOnError: false }
       )
       if (checkoutCode !== 0) {
-        return { type: 'text', value: `创建分支失败：\n${checkoutStderr || '未知错误'}` }
+        return { type: 'text', value: `❌ 创建分支失败：\n${checkoutStderr || '未知错误'}` }
       }
     }
 
@@ -330,7 +330,7 @@ const localCall: LocalCommandCall = async (args, context) => {
         { preserveOutputOnError: false }
       )
       if (addCode !== 0) {
-        return { type: 'text', value: `暂存更改失败：\n${addStderr || '未知错误'}` }
+        return { type: 'text', value: `❌ 暂存更改失败：\n${addStderr || '未知错误'}` }
       }
 
       const commitMessage =
@@ -342,7 +342,7 @@ const localCall: LocalCommandCall = async (args, context) => {
         { preserveOutputOnError: false }
       )
       if (commitCode !== 0) {
-        return { type: 'text', value: `提交失败：\n${commitStderr || '未知错误'}` }
+        return { type: 'text', value: `❌ 提交失败：\n${commitStderr || '未知错误'}` }
       }
     } else {
       const { stdout: commitCount } = await execFileNoThrow(
@@ -351,7 +351,7 @@ const localCall: LocalCommandCall = async (args, context) => {
         { preserveOutputOnError: false }
       )
       if (parseInt(commitCount.trim(), 10) === 0) {
-        return { type: 'text', value: '没有要提交的更改。使用 /status 查看当前状态。' }
+        return { type: 'text', value: '⚠️ 没有要提交的更改。使用 /status 查看当前状态。' }
       }
     }
 
@@ -372,7 +372,7 @@ const localCall: LocalCommandCall = async (args, context) => {
           : ''
         return {
           type: 'text',
-          value: `推送失败：\n${pushStderr || pushStdout || '未知错误'}${conflictHint}\n\n手动推送：git push -u origin ${targetBranch}`,
+          value: `❌ 推送失败：\n${pushStderr || pushStdout || '未知错误'}${conflictHint}\n\n手动推送：git push -u origin ${targetBranch}`,
         }
       }
       pushOutput = '✓ 已推送到远程\n'
@@ -480,7 +480,7 @@ const localCall: LocalCommandCall = async (args, context) => {
     return { type: 'text', value: resultMessage }
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error)
-    return { type: 'text', value: `执行失败：${errorMsg}` }
+    return { type: 'text', value: `❌ 执行失败：${errorMsg}` }
   }
 }
 
