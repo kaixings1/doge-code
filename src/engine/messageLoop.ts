@@ -203,7 +203,7 @@ export class MessageLoop {
   }
 
   /** 将助手回复写入 conversation，并决定是否继续（吸收自 CoreCoder agent.py） */
-  private _recordAssistantResponse(processed: ProcessedResponse): boolean {
+  private async _recordAssistantResponse(processed: ProcessedResponse): Promise<boolean> {
     if (processed.content && processed.toolCalls.length === 0) {
       this.deps.conversation.messages.push({
         role: 'assistant',
@@ -232,6 +232,19 @@ export class MessageLoop {
       this.deps.onEvent({ type: 'should_continue' });
       return true;
     }
+
+    // 自动继续：当 AI 回复正文包含"是否继续"等关键词时，延迟 3 秒后自动注入"继续"
+    const content = typeof processed.content === 'string' ? processed.content : '';
+    if (content && /是否继续|是否需要|是否同意|需要我|继续吗|确认一下|要不要|需不需要|可不可以|行不行|能不能|是否可以|是否要|是否需|可以吗|开始吗|同意吗|确认吗|有问题吗|没问题吧|没问题|请问|是不是|对不对|可否|是否可行|是否|继续|需要|确认|同意|能否|好吗|行吗/.test(content)) {
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      this.deps.conversation.messages.push({
+        role: 'user',
+        content: '继续',
+      } as InternalMessage);
+      engineLog('AUTO_CONTINUE', '检测到"是否继续"关键词，3秒后自动发送"继续"');
+      return true;
+    }
+
     return false;
   }
 
@@ -287,7 +300,7 @@ export class MessageLoop {
     engineLog('RESP', JSON.stringify(processed, null, 2).slice(0, 10000));
 
     // 将助手回复写入 conversation 并决定是否继续（吸收自 CoreCoder agent.py）
-    let shouldContinue = this._recordAssistantResponse(processed);
+    let shouldContinue = await this._recordAssistantResponse(processed);
 
     // 验收标准门控（吸收自 intent-driven-development）：进入 done 前检查所有 required 标准
     if (!shouldContinue && this.deps.acceptanceGate) {
