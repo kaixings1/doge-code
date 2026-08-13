@@ -1752,7 +1752,7 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
     case 'error': {
       let t1;
       if ($[44] !== oauthStatus.message) {
-        t1 = <Text color="error">OAuth 错误：{oauthStatus.message}</Text>;
+        t1 = <Text color="error">✗ OAuth 错误：{oauthStatus.message}</Text>;
         $[44] = oauthStatus.message;
         $[45] = t1;
       } else {

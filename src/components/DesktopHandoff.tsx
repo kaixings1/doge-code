@@ -110,7 +110,7 @@ export function DesktopHandoff(t0) {
   if (state === "error") {
     let t4;
     if ($[7] !== error) {
-      t4 = <Text color="error">错误：{error}</Text>;
+      t4 = <Text color="error">✗ 错误：{error}</Text>;
       $[7] = error;
       $[8] = t4;
     } else {

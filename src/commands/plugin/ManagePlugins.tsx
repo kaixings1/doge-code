@@ -1925,7 +1925,7 @@ export function ManagePlugins({
     return (
       <Box flexDirection="column">
         <Text bold color="warning">
-          {selectedPlugin.plugin.name} 在 .claude/settings.json 中已启用（与您的团队共享）
+          ⚠ {selectedPlugin.plugin.name} 在 .claude/settings.json 中已启用（与您的团队共享）
         </Text>
         <Box marginTop={1} flexDirection="column">
           <Text>仅为您在 .claude/settings.local.json 中禁用它？</Text>
@@ -2008,7 +2008,7 @@ export function ManagePlugins({
       filteredPluginErrors.length === 0 ? null : (
         <Box flexDirection="column" marginBottom={1}>
           <Text bold color="error">
-            {filteredPluginErrors.length} {plural(filteredPluginErrors.length, '错误')}：
+            ✗ {filteredPluginErrors.length} {plural(filteredPluginErrors.length, '错误')}：
           </Text>
           {filteredPluginErrors.map((error, i) => {
             const guidance = getErrorGuidance(error);

@@ -78,7 +78,7 @@ export function TeleportStash({
   if (error) {
     return <Box flexDirection="column" padding={1}>
         <Text bold color="error">
-          错误: {error}
+          ✗ 错误: {error}
         </Text>
         <Box marginTop={1}>
           <Text dimColor>按 </Text>

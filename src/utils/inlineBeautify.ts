@@ -57,6 +57,11 @@ const DATE_RE = new RegExp(`(?:${DATE_PATTERN})`)
 const ARROW_PATTERN = '→|⇒|->|=>'
 const ARROW_RE = new RegExp(`(?:${ARROW_PATTERN})`)
 
+// ── 正面结果词（没有问题）→ 绿色（success）──
+// 优先级高于负面词，确保 "没有问题" 整体标绿，不与 "有问题" 的红色交叉。
+const POSITIVE_WORDS = '没有问题'
+const POSITIVE_RE = new RegExp(`(?:${POSITIVE_WORDS})`)
+
 // ── 负面结果词（失败/错误/问题 等）→ 红色 ──
 // 长词排前面避免拆词。歧义控制：
 //   - "问题" 单独不标（"解决问题""问问题" 是中性），只标 "有问题/出现问题/存在问题"；
@@ -104,16 +109,18 @@ const FILE_PATH_RE = new RegExp(`(?:${FILE_PATH_PATTERN})`)
 //   组9   = 英文 label 文字
 //   组10  = 日期（蓝色）
 //   组11  = 箭头符号（蓝色）
-//   组12  = 负面结果词（红色）
-//   组13  = 英文负面结果词（红色）
-//   组14  = 数量疑问词（多少，蓝色）
+//   组12  = 正面结果词（绿色，如"没有问题"）
+//   组13  = 负面结果词（红色）
+//   组14  = 英文负面结果词（红色）
+//   组15  = 数量疑问词（多少，蓝色）
 // 中文 label 分支在前，同一位置优先按 "词语+冒号" 整体标绿。
+// 正面词（如"没有问题"）在负面词之前，避免 "有问题" 先命中导致交叉着色。
 // URL 分支在文件路径之前，避免 URL 的路径段被当文件路径标紫。
 // 文件路径分支自带一个捕获组（完整路径），因此不再额外包括号。
 // 注意：外层不能包捕获组，否则无论匹配哪个分支组1 都有值，
 // 会让所有匹配都误走 label 的绿色分支。
 const INLINE_BEAUTIFY_RE = new RegExp(
-  `${CJK_LABEL_RE.source}|(${CONFIRM_WORDS})|(${EMPHASIS_WORDS})|(${NUMBER_PATTERN})|${URL_RE.source}|${FILE_PATH_PATTERN}|${EN_LABEL_PATTERN}|(${DATE_PATTERN})|(${ARROW_PATTERN})|(${NEGATIVE_WORDS})|(${NEGATIVE_EN})|(${QUANTITY_PATTERN})`,
+  `${CJK_LABEL_RE.source}|(${CONFIRM_WORDS})|(${EMPHASIS_WORDS})|(${NUMBER_PATTERN})|${URL_RE.source}|${FILE_PATH_PATTERN}|${EN_LABEL_PATTERN}|(${DATE_PATTERN})|(${ARROW_PATTERN})|(${POSITIVE_WORDS})|(${NEGATIVE_WORDS})|(${NEGATIVE_EN})|(${QUANTITY_PATTERN})`,
   'g',
 )
 
@@ -144,6 +151,7 @@ export function beautifyInlineText(text: string, theme: ThemeName): string {
     !FILE_PATH_RE.test(text) &&
     !DATE_RE.test(text) &&
     !ARROW_RE.test(text) &&
+    !POSITIVE_RE.test(text) &&
     !NEGATIVE_RE.test(text) &&
     !NEGATIVE_EN_RE.test(text) &&
     !QUANTITY_RE.test(text)
@@ -155,9 +163,10 @@ export function beautifyInlineText(text: string, theme: ThemeName): string {
   const red = color('error', theme)
   const blue = color('suggestion', theme)
   const purple = color('merged', theme)
+  INLINE_BEAUTIFY_RE.lastIndex = 0
   return text.replace(
     INLINE_BEAUTIFY_RE,
-    (m, prefix, label, confirm, emphasis, number, url, filePath, enPrefix, enLabel, date, arrow, negative, negativeEn, quantity) => {
+    (m, prefix, label, confirm, emphasis, number, url, filePath, enPrefix, enLabel, date, arrow, positive, negative, negativeEn, quantity) => {
       if (label) {
         const p = prefix || ''
         const labelText = m.slice(p.length)
@@ -181,6 +190,7 @@ export function beautifyInlineText(text: string, theme: ThemeName): string {
       }
       if (date) return blue(date)
       if (arrow) return blue(arrow)
+      if (positive) return green(positive)
       if (negative) return red(negative)
       if (negativeEn) return red(negativeEn)
       if (quantity) return blue(quantity)

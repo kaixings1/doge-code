@@ -252,7 +252,7 @@ function ThinkbackInstaller({
   }, [onReady, onError]);
   if (state.phase === 'error') {
     return <Box flexDirection="column">
-        <Text color="error">错误: {state.message}</Text>
+        <Text color="error">✗ 错误: {state.message}</Text>
       </Box>;
   }
   if (state.phase === 'ready') {
@@ -488,7 +488,7 @@ function ThinkbackFlow(t0) {
   if (installError) {
     let t8;
     if ($[14] !== installError) {
-      t8 = <Text color="error">错误: {installError}</Text>;
+      t8 = <Text color="error">✗ 错误: {installError}</Text>;
       $[14] = installError;
       $[15] = t8;
     } else {

@@ -443,7 +443,7 @@ function TranscriptSearchBar({
       <Text inverse>{cursorChar}</Text>
       {off < query.length && <Text>{query.slice(off + 1)}</Text>}
       <Box flexGrow={1} />
-      {indexStatus === 'building' ? <Text dimColor>正在索引… </Text> : indexStatus ? <Text dimColor>已在 {indexStatus.ms}ms 内索引 </Text> : count === 0 && query ? <Text color="error">无匹配结果 </Text> : count > 0 ?
+      {indexStatus === 'building' ? <Text dimColor>正在索引… </Text> : indexStatus ? <Text dimColor>已在 {indexStatus.ms}ms 内索引 </Text> : count === 0 && query ? <Text color="error">✗ 无匹配结果 </Text> : count > 0 ?
     // 引擎计数（对 extractSearchText 的 indexOf）。可能与渲染计数有偏差，用于幽灵/幻影消息 — 徽章是大致位置提示。scanElement 给出精确的每条消息位置，但计数所有消息会增加成本，约为 1-3ms × 匹配消息数。
     <Text dimColor>
           {current}/{count}
@@ -532,7 +532,7 @@ class ReplRuntimeBoundary extends React.Component<{
       return this.props.children;
     }
     return <Box flexDirection="column" paddingX={1} paddingY={1}>
-        <Text color="warning">REPL 已进入恢复回退模式。</Text>
+        <Text color="warning">⚠ REPL 已进入恢复回退模式。</Text>
         <Text dimColor>{this.state.error.message || String(this.state.error)}</Text>
         <Text dimColor>The main screen subtree failed during startup. This session stays open so missing modules can be restored incrementally.</Text>
       </Box>;
@@ -2248,7 +2248,7 @@ export function REPL({
     addNotification({
       key: 'sandbox-unavailable',
       jsx: <>
-          <Text color="warning">沙盒已禁用</Text>
+          <Text color="warning">⚠ 沙盒已禁用</Text>
           <Text dimColor> · /sandbox</Text>
         </>,
       priority: 'medium'
@@ -3504,7 +3504,7 @@ export function REPL({
           addNotification({
             key: `resume-agent-failed-${task.id}`,
             jsx: <Text color="error">
-                  恢复代理失败：{errorMessage(err)}
+                  ✗ 恢复代理失败：{errorMessage(err)}
                 </Text>,
             priority: 'low'
           });

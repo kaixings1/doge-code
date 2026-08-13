@@ -428,7 +428,7 @@ export const call: LocalCommandCall = async (args) => {
 
 const security: Command = {
   type: 'local', name: 'security',
-  description: 'Security scan - secrets/vulns/deps/owasp/npm-audit/baseline/history/sarif',
+  description: '🔒 安全扫描 - 密钥/漏洞/依赖/OWASP/npm-audit/基准/历史/SARIF',
   aliases: ['/security', '/sec', '/scan'],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

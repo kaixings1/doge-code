@@ -77,8 +77,8 @@ function FileWriteToolCreatedMessage(t0) {
   let t4;
   if ($[7] !== t1 || $[8] !== t3) {
     t4 = t1 === 0
-      ? <Box flexDirection="row"><Text color="error">写入</Text> <Text bold={true}>{t1}</Text><Text color="error">行到</Text> {t3}</Box>
-      : <Box flexDirection="row"><Text color="success">写入</Text> <Text bold={true}>{t1}</Text> <Text color="success">行到</Text> {t3}</Box>;
+      ? <Box flexDirection="row"><Text color="error">✗ 写入</Text> <Text bold={true}>{t1}</Text><Text color="error">行到</Text> {t3}</Box>
+      : <Box flexDirection="row"><Text color="success">✓ 写入</Text> <Text bold={true}>{t1}</Text> <Text color="success">行到</Text> {t3}</Box>;
     $[7] = t1;
     $[8] = t3;
     $[9] = t4;
@@ -356,7 +356,7 @@ export function renderToolUseErrorMessage(result: ToolResultBlockParam['content'
 }): React.ReactNode {
   if (!verbose && typeof result === 'string' && extractTag(result, 'tool_use_error')) {
     return <MessageResponse>
-        <Text color="error">写入文件时出错</Text>
+        <Text color="error">✗ 写入文件时出错</Text>
       </MessageResponse>;
   }
   return <FallbackToolUseErrorMessage result={result} verbose={verbose} />;

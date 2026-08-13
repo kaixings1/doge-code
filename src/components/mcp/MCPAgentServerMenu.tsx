@@ -162,7 +162,7 @@ export function MCPAgentServerMenu({
       </Box>
 
       {error && <Box>
-          <Text color="error">错误：{error}</Text>
+          <Text color="error">✗ 错误：{error}</Text>
         </Box>}
 
       <Box>

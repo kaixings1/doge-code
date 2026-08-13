@@ -332,7 +332,7 @@ export function Doctor(t0) {
   }
   let t20;
   if ($[34] !== diagnostic.multipleInstallations) {
-    t20 = diagnostic.multipleInstallations.length > 1 && <><Text /><Text color="warning">警告：发现多个安装</Text>{diagnostic.multipleInstallations.map(_temp1)}</>;
+    t20 = diagnostic.multipleInstallations.length > 1 && <><Text /><Text color="warning">⚠ 警告：发现多个安装</Text>{diagnostic.multipleInstallations.map(_temp1)}</>;
     $[34] = diagnostic.multipleInstallations;
     $[35] = t20;
   } else {
@@ -447,7 +447,7 @@ export function Doctor(t0) {
   }
   let t36;
   if ($[67] !== agentInfo) {
-    t36 = agentInfo?.failedFiles && agentInfo.failedFiles.length > 0 && <Box flexDirection="column"><Text bold={true} color="error">智能体解析错误</Text><Text color="error">└ 解析 {agentInfo.failedFiles.length} 个智能体文件失败：</Text>{agentInfo.failedFiles.map(_temp13)}</Box>;
+    t36 = agentInfo?.failedFiles && agentInfo.failedFiles.length > 0 && <Box flexDirection="column"><Text bold={true} color="error">✗ 智能体解析错误</Text><Text color="error">└ 解析 {agentInfo.failedFiles.length} 个智能体文件失败：</Text>{agentInfo.failedFiles.map(_temp13)}</Box>;
     $[67] = agentInfo;
     $[68] = t36;
   } else {
@@ -455,7 +455,7 @@ export function Doctor(t0) {
   }
   let t37;
   if ($[69] !== pluginsErrors) {
-    t37 = pluginsErrors.length > 0 && <Box flexDirection="column"><Text bold={true} color="error">插件错误</Text><Text color="error">└ {pluginsErrors.length} 个插件错误：</Text>{pluginsErrors.map(_temp14)}</Box>;
+    t37 = pluginsErrors.length > 0 && <Box flexDirection="column"><Text bold={true} color="error">✗ 插件错误</Text><Text color="error">└ {pluginsErrors.length} 个插件错误：</Text>{pluginsErrors.map(_temp14)}</Box>;
     $[69] = pluginsErrors;
     $[70] = t37;
   } else {
@@ -525,7 +525,7 @@ function _temp11(validation, i_1) {
   return <Text key={i_1}>└ {validation.name}:{" "}<Text color={validation.status === "capped" ? "warning" : "error"}>{validation.message}</Text></Text>;
 }
 function _temp10(warning, i_0) {
-  return <Box key={i_0} flexDirection="column"><Text color="warning">警告：{warning.issue}</Text><Text>修复：{warning.fix}</Text></Box>;
+  return <Box key={i_0} flexDirection="column"><Text color="warning">⚠ 警告：{warning.issue}</Text><Text>修复：{warning.fix}</Text></Box>;
 }
 function _temp1(install, i) {
   return <Text key={i}>└ {install.type} 位于 {install.path}</Text>;

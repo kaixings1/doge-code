@@ -43,9 +43,9 @@ function SearchResultSummary(t0) {
   let t3;
   if ($[5] !== count || $[6] !== t2) {
     if (count === 0) {
-      t3 = <Text color="error">找到 {t1}{t2}</Text>;
+      t3 = <Text color="error">✗ 找到 {t1}{t2}</Text>;
     } else {
-      t3 = <><Text color="success">找到</Text> {t1}<Text color="success">{t2}</Text></>;
+      t3 = <><Text color="success">✓ 找到</Text> {t1}<Text color="success">{t2}</Text></>;
     }
     $[5] = count;
     $[6] = t2;
@@ -157,11 +157,11 @@ export function renderToolUseErrorMessage(result: ToolResultBlockParam['content'
     const errorMessage = extractTag(result, 'tool_use_error');
     if (errorMessage?.includes(FILE_NOT_FOUND_CWD_NOTE)) {
       return <MessageResponse>
-          <Text color="error">文件未找到</Text>
+          <Text color="error">✗ 文件未找到</Text>
         </MessageResponse>;
     }
     return <MessageResponse>
-        <Text color="error">搜索文件时出错</Text>
+        <Text color="error">✗ 搜索文件时出错</Text>
       </MessageResponse>;
   }
   return <FallbackToolUseErrorMessage result={result} verbose={verbose} />;

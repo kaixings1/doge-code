@@ -151,7 +151,7 @@ export function InProcessTeammateDetailDialog(t0) {
   const title = t10;
   let t11;
   if ($[24] !== teammate.status) {
-    t11 = teammate.status !== "running" && <Text color={teammate.status === "completed" ? "success" : teammate.status === "killed" ? "warning" : "error"}>{teammate.status === "completed" ? "已完成" : teammate.status === "failed" ? "失败" : "已停止"}{" \xB7 "}</Text>;
+    t11 = teammate.status !== "running" && <Text color={teammate.status === "completed" ? "success" : teammate.status === "killed" ? "warning" : "error"}>{teammate.status === "completed" ? "✓ 已完成" : teammate.status === "failed" ? "✗ 失败" : "⏹ 已停止"}{" \xB7 "}</Text>;
     $[24] = teammate.status;
     $[25] = t11;
   } else {
@@ -231,7 +231,7 @@ export function InProcessTeammateDetailDialog(t0) {
   }
   let t20;
   if ($[49] !== teammate.error || $[50] !== teammate.status) {
-    t20 = teammate.status === "failed" && teammate.error && <Box flexDirection="column" marginTop={1}><Text bold={true} color="error">错误</Text><Text color="error" wrap="wrap">{teammate.error}</Text></Box>;
+    t20 = teammate.status === "failed" && teammate.error && <Box flexDirection="column" marginTop={1}><Text bold={true} color="error">✗ 错误</Text><Text color="error" wrap="wrap">{teammate.error}</Text></Box>;
     $[49] = teammate.error;
     $[50] = teammate.status;
     $[51] = t20;

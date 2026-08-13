@@ -31,27 +31,27 @@ const DEFAULT_CONFIG: RobotsConfig = {
 
 const TEMPLATES: RobotsTemplate[] = [
   {
-    name: 'default', description: 'Standard - allow all, block private paths',
+    name: 'default', description: '标准模板 - 允许所有，拦截私有路径',
     generate: (c) => ['User-agent: *', 'Allow: /', 'Disallow: /api/', 'Disallow: /admin/', 'Disallow: /private/', 'Disallow: /tmp/', '', `Crawl-delay: ${c.crawlDelay}`, c.sitemapUrl ? '' : '', c.sitemapUrl ? 'Sitemap: ' + c.sitemapUrl : ''].filter(l => l !== '').join('\n'),
   },
   {
-    name: 'strict', description: 'Block all crawlers',
+    name: 'strict', description: '严格模式 - 拦截所有爬虫',
     generate: () => 'User-agent: *\nDisallow: /',
   },
   {
-    name: 'permissive', description: 'Allow all with minimal rules',
+    name: 'permissive', description: '宽松模式 - 允许所有，最少规则',
     generate: (c) => ['User-agent: *', 'Allow: /', '', `Crawl-delay: ${c.crawlDelay}`, c.sitemapUrl ? 'Sitemap: ' + c.sitemapUrl : ''].filter(l => l !== '').join('\n'),
   },
   {
-    name: 'ecommerce', description: 'E-commerce - block cart/checkout/account',
+    name: 'ecommerce', description: '电商网站 - 拦截购物车/结算/账户',
     generate: (c) => ['User-agent: *', 'Allow: /', 'Disallow: /cart/', 'Disallow: /checkout/', 'Disallow: /account/', 'Disallow: /api/', 'Disallow: /admin/', 'Disallow: /search?', 'Disallow: /*?sort=', 'Disallow: /*?filter=', '', 'User-agent: GPTBot', 'Disallow: /', '', c.sitemapUrl ? 'Sitemap: ' + c.sitemapUrl : ''].filter(l => l !== '').join('\n'),
   },
   {
-    name: 'blog', description: 'Blog - block wp-admin/includes',
+    name: 'blog', description: '博客 - 拦截 wp-admin/includes',
     generate: (c) => ['User-agent: *', 'Allow: /', 'Disallow: /wp-admin/', 'Disallow: /wp-includes/', 'Disallow: /trackback/', 'Disallow: /comments/', 'Disallow: /author/', 'Disallow: /tag/', 'Disallow: /category/?', '', 'User-agent: Googlebot', 'Allow: /', '', 'User-agent: Bingbot', 'Allow: /', '', c.sitemapUrl ? 'Sitemap: ' + c.sitemapUrl : ''].filter(l => l !== '').join('\n'),
   },
   {
-    name: 'app', description: 'Mobile app - block non-app crawlers',
+    name: 'app', description: '移动应用 - 拦截非应用爬虫',
     generate: (c) => ['User-agent: *', 'Disallow: /', '', 'User-agent: Googlebot', 'Allow: /', '', 'User-agent: bingbot', 'Allow: /', '', 'User-agent: Applebot', 'Allow: /', '', c.sitemapUrl ? 'Sitemap: ' + c.sitemapUrl : ''].filter(l => l !== '').join('\n'),
   },
 ]

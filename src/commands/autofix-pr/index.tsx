@@ -141,17 +141,17 @@ export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
 
   if (subcmd === 'help' || !subcmd) {
     onDone([
-      'Auto Fix PR (Advanced)', '', 'Usage:',
-      '  /autofix-pr analyze <PR>       Analyze PR for issues',
-      '  /autofix-pr fix <PR>           Apply safe auto-fixes',
-      '  /autofix-pr report <PR>        Generate detailed report',
-      '  /autofix-pr approve <PR>       Approve PR',
-      '  /autofix-pr meta <PR>          Show PR metadata',
-      '  /autofix-pr checklist <PR>     Review checklist',
-      '  /autofix-pr comment <PR>       Post review comment',
-      '  /autofix-pr summary <PR>       AI summary of PR',
-      '  /autofix-pr history            Show fix history',
-      '  /autofix-pr status <PR>        PR status check',
+      '🔧 PR 自动修复（高级）', '', '📖 用法：',
+      '  /autofix-pr analyze <PR>       分析 PR 问题',
+      '  /autofix-pr fix <PR>           应用安全自动修复',
+      '  /autofix-pr report <PR>        生成详细报告',
+      '  /autofix-pr approve <PR>       批准 PR',
+      '  /autofix-pr meta <PR>          显示 PR 元数据',
+      '  /autofix-pr checklist <PR>     审查清单',
+      '  /autofix-pr comment <PR>       发表审查评论',
+      '  /autofix-pr summary <PR>       AI 总结 PR',
+      '  /autofix-pr history            查看修复历史',
+      '  /autofix-pr status <PR>        PR 状态检查',
     ].join('\n'))
     return null
   }
@@ -159,27 +159,27 @@ export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
   if (subcmd === 'history') {
     try {
       const history: FixHistory[] = JSON.parse(readFileSync(HISTORY_FILE, 'utf-8'))
-      if (history.length === 0) { onDone('No fix history'); return null }
-      onDone('Fix History:\n' + history.slice(-10).map(h => `  ${h.date.slice(0, 19)} | PR #${h.pr} | ${h.issuesFound} found | ${h.issuesFixed} fixed | ${h.status}`).join('\n'))
+      if (history.length === 0) { onDone('📋 没有修复历史'); return null }
+      onDone('📅 修复历史：\n' + history.slice(-10).map(h => `  ${h.date.slice(0, 19)} | PR #${h.pr} | 发现 ${h.issuesFound} | 修复 ${h.issuesFixed} | ${h.status}`).join('\n'))
       return null
-    } catch { onDone('No fix history'); return null }
+    } catch { onDone('📋 没有修复历史'); return null }
   }
 
   const prNumber = parts[1]
-  if (!prNumber) { onDone('Usage: /autofix-pr <analyze|fix|report|approve|meta|checklist|comment|summary|status> <PR>'); return null }
+  if (!prNumber) { onDone('📖 用法：/autofix-pr <analyze|fix|report|approve|meta|checklist|comment|summary|status> <PR>'); return null }
 
   const meta = getPRMeta(prNumber)
 
   if (subcmd === 'meta') {
-    if (!meta) { onDone('[ERROR] Cannot fetch PR metadata. Is gh CLI installed and authenticated?'); return null }
-    onDone(['PR #' + meta.number + ' Metadata:', '====================', '', 'Title: ' + meta.title, 'Author: ' + meta.author, 'State: ' + meta.state, 'Base → Head: ' + meta.base + ' → ' + meta.head, 'Changes: +' + meta.additions + '/-' + meta.deletions + ' in ' + meta.changedFiles + ' files'].join('\n'))
+    if (!meta) { onDone('❌ [错误] 无法获取 PR 元数据。请确认 gh CLI 已安装并已登录？'); return null }
+    onDone(['PR #' + meta.number + ' 元数据：', '====================', '', '标题：' + meta.title, '作者：' + meta.author, '状态：' + meta.state, '基分支 → 头分支：' + meta.base + ' → ' + meta.head, '变更：+' + meta.additions + '/-' + meta.deletions + ' 在 ' + meta.changedFiles + ' 个文件中'].join('\n'))
     return null
   }
 
   if (subcmd === 'status') {
-    if (!meta) { onDone('[ERROR] Cannot fetch PR status'); return null }
+    if (!meta) { onDone('❌ [错误] 无法获取 PR 状态'); return null }
     const checks = run(`gh pr checks ${prNumber} 2>&1`)
-    onDone(['PR #' + prNumber + ' Status:', '=================', '', 'State: ' + meta.state, '', 'Checks:', checks.output || '  (no checks found)'].join('\n'))
+    onDone(['PR #' + prNumber + ' 状态：', '=================', '', '状态：' + meta.state, '', '检查：', checks.output || '  (未找到检查)'].join('\n'))
     return null
   }
 

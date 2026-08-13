@@ -265,7 +265,7 @@ function Install({
       {state.type === 'error' && <Box flexDirection="column" gap={1}>
           <Box>
             <StatusIcon status="error" withSpace />
-            <Text color="error">安装失败</Text>
+            <Text color="error">✗ 安装失败</Text>
           </Box>
           <Text color="error">{state.message}</Text>
           <Box marginTop={1}>

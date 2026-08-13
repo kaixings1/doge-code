@@ -128,7 +128,7 @@ export function MCPReconnect(t0) {
     }
     let t5;
     if ($[15] !== serverName) {
-      t5 = <Text color="error">重新连接到 {serverName} 失败</Text>;
+      t5 = <Text color="error">✗ 重新连接到 {serverName} 失败</Text>;
       $[15] = serverName;
       $[16] = t5;
     } else {

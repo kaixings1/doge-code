@@ -19,7 +19,7 @@ class EventStream extends EventEmitter {
                 const data = JSON.parse(readFileSync(this.storageFile, 'utf-8'))
                 this.history = data.history || []
             } catch (e) {
-                console.error('Failed to load events:', e)
+                console.error('加载事件失败：', e)
             }
         }
     }
@@ -35,7 +35,7 @@ class EventStream extends EventEmitter {
                 savedAt: new Date().toISOString()
             }, null, 2))
         } catch (e) {
-            console.error('Failed to save events:', e)
+            console.error('保存事件失败：', e)
         }
     }
 

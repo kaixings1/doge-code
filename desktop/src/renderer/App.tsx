@@ -3,12 +3,6 @@
  */
 
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
-
-// ─── 日志辅助 ───
-function tsLog(tag: string, ...args: unknown[]): void {
-  const t = new Date().toLocaleTimeString('zh-CN', { hour12: false })
-  console.log(`[${t}] [${tag}]`, ...args)
-}
 import { createRoot } from 'react-dom/client'
 import { StrictMode } from 'react'
 import type { DesktopConfig } from '../desktop/types'
@@ -18,7 +12,6 @@ import { GitChanges, type GitFile } from './components/GitChanges.js'
 import { GitDiff } from './components/GitDiff.js'
 import { ToolPanel } from './components/ToolPanel.js'
 import { CommandPalette } from './components/CommandPalette.js'
-import { ReferencesPanel } from './components/ReferencesPanel.js'
 import { HighlightedDiff } from './components/HighlightedDiff.js'
 import { ToolErrorBanner } from './components/ToolErrorBanner.js'
 import { ToolProgressBar } from './components/ToolProgressBar.js'
@@ -26,66 +19,25 @@ import { ToolResultRenderer } from './components/MarkdownRenderer.js'
 import { VirtualMessageList } from './components/VirtualMessageList.js'
 import TerminalPanel from './TerminalPanel.js'
 import { AgentPanel } from './components/AgentPanel.js'
-import { OperationHistory, type OperationEntry } from './components/OperationHistory.js'
 import { PluginPanel } from './components/PluginPanel.js'
-import { DatabaseBrowser } from './components/DatabaseBrowser.js'
-import { ApiTestPanel } from './components/ApiTestPanel.js'
-import { SnippetPanel } from './components/SnippetPanel.js'
-import { LspPanel } from './components/LspPanel.js'
 import { KanbanBoard } from './components/KanbanBoard.js'
 import { TimeTracker } from './components/TimeTracker.js'
 import { ProgressReport } from './components/ProgressReport.js'
-import { useFileTree } from './hooks/useFileTree.js'
-import { useProblems } from './hooks/useProblems.js'
-import { useErrorLens } from './hooks/useErrorLens.js'
-import { useColorPicker } from './hooks/useColorPicker.js'
-import { useFindReplace } from './hooks/useFindReplace.js'
-import { useOutputChannel } from './hooks/useOutputChannel.js'
-import { useTerminal } from './hooks/useTerminal.js'
-import { useBreadcrumb } from './hooks/useBreadcrumb.js'
-import { useSymbolOutline } from './hooks/useSymbolOutline.js'
 import { useTimeTracker } from './hooks/useTimeTracker.js'
 import { useGitStats } from './hooks/useGitStats.js'
-import { useWorkflowMode } from './hooks/useWorkflowMode.js'
-import { useLsp } from './hooks/useLsp.js'
-import { usePreAnalysis } from './hooks/usePreAnalysis.js'
-import { useSmartImport } from './hooks/useSmartImport.js'
-import { InlineSuggestion } from './components/InlineSuggestion.js'
-import { SmartImportSuggestion } from './components/SmartImportSuggestion.js'
 import { getStyles, getEffectiveTheme, THEMES, type ThemeName, type ThemeColors } from './theme.js'
 import { AdvancedCodeEditor } from './components/AdvancedCodeEditor.js'
 import { SemanticSearchPanel } from './components/SemanticSearchPanel.js'
 import { AICodeReviewPanel } from './components/AICodeReviewPanel.js'
 import { OutlinePanel } from './components/OutlinePanel.js'
-import { DebuggerPanel } from './components/DebuggerPanel.js'
-import { CollaborationPanel } from './components/CollaborationPanel.js'
-import { MonacoEditorPanel } from './components/MonacoEditorPanel.js'
-import { SecurityAuditPanel } from './components/SecurityAuditPanel.js'
-import { PerformanceRefactorPanel } from './components/PerformanceRefactorPanel.js'
-import { WorkflowPanel } from './components/WorkflowPanel.js'
-import { CallChainPanel } from './components/CallChainPanel.js'
-import { FileExplorerPanel } from './components/FileExplorerPanel.js'
-import { ProblemsPanel } from './components/ProblemsPanel.js'
-import { ErrorLensOverlay } from './components/ErrorLensOverlay.js'
-import { OutputPanel } from './components/OutputPanel.js'
-import { FindReplacePanel } from './components/FindReplacePanel.js'
-import { SymbolOutlinePanel } from './components/SymbolOutlinePanel.js'
-import { ColorPickerDialog } from './components/ColorPickerDialog.js'
-import { ProjectStructurePlanner } from './components/ProjectStructurePlanner.js'
-import { GitMergePanel } from './components/GitMergePanel.js'
-import { GitBranchManager } from './components/GitBranchManager.js'
-import { TestRunnerPanel } from './components/TestRunnerPanel.js'
-import { LogViewer } from './components/LogViewer.js'
-import { useWorkflowAutomation } from './hooks/useWorkflowAutomation.js'
-import { useCallChain } from './hooks/useCallChain.js'
 import { parseMessageContent, InlineToolUseBlock, renderMarkdown } from './shared.js'
 import type { Message, ContentBlock, ToolUseBlock } from './shared.js'
 import { useDesktopVimInput, type VimMode } from '../hooks/useDesktopVimInput.js'
 import { useCommandHistory } from './hooks/useCommandHistory.js'
 import { useTabManager } from './hooks/useTabManager.js'
 
-/** 包装 TerminalPanel，注入 window.dogeAPI + 命令历史 */
-function TerminalPanelWrapper({ cwd, onClose, cmdHistory }: { cwd: string; onClose: () => void; cmdHistory: ReturnType<typeof useCommandHistory> }) {
+/** 包装 TerminalPanel，注入 window.dogeAPI */
+function TerminalPanelWrapper({ cwd, onClose }: { cwd: string; onClose: () => void }) {
   return (
     <div style={{ position: 'relative' }}>
       <button
@@ -96,7 +48,7 @@ function TerminalPanelWrapper({ cwd, onClose, cmdHistory }: { cwd: string; onClo
         }}
         title="关闭终端"
       >✕</button>
-      <TerminalPanel cwd={cwd} dogeAPI={window.dogeAPI as any} cmdHistory={cmdHistory} />
+      <TerminalPanel cwd={cwd} dogeAPI={window.dogeAPI as any} />
     </div>
   )
 }
@@ -135,173 +87,76 @@ function getSyntaxColors(isDark: boolean): SyntaxColors {
 }
 
 // ─── 轻量语法高亮（主题感知） ───
-function highlightCode(code: string, lang: string, isDark = true, fontSize?: number): string {
+function highlightCode(code: string, lang: string, isDark = true): string {
   const c = getSyntaxColors(isDark)
-  const fs = fontSize ? `font-size:${fontSize}px;` : ''
   let result = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
   if (['typescript', 'ts', 'javascript', 'js'].includes(lang)) {
-    result = result.replace(/(?:"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g, '<span style="color:' + c.string + '">$1</span>')
-    result = result.replace(/\b(const|let|var|function|return|if|else|for|while|class|import|export|from|async|await|try|catch|throw|new|this|typeof|instanceof|interface|type|extends|implements|static|get|set|yield|of|in|switch|case|break|default|void|null|undefined|true|false)\b/g, '<span style="color:' + c.keyword + '">$1</span>')
-    result = result.replace(/\b(\d+\.?\d*)\b/g, '<span style="color:' + c.number + '">$1</span>')
-    result = result.replace(/(\/\/[^\n]*)/g, '<span style="color:' + c.comment + '">$1</span>')
-    result = result.replace(/(\/\*[\s\S]*?\*\/)/g, '<span style="color:' + c.comment + '">$1</span>')
+    result = result.replace(/(?:"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g, '<span style="color:#CE9178">$1</span>')
+    result = result.replace(/\b(const|let|var|function|return|if|else|for|while|class|import|export|from|async|await|try|catch|throw|new|this|typeof|instanceof|interface|type|extends|implements|static|get|set|yield|of|in|switch|case|break|default|void|null|undefined|true|false)\b/g, '<span style="color:#569CD6">$1</span>')
+    result = result.replace(/\b(\d+\.?\d*)\b/g, '<span style="color:#B5CEA8">$1</span>')
+    result = result.replace(/(\/\/[^\n]*)/g, '<span style="color:#6A9955">$1</span>')
+    result = result.replace(/(\/\*[\s\S]*?\*\/)/g, '<span style="color:#6A9955">$1</span>')
   } else if (lang === 'json') {
-    result = result.replace(/("(?:[^"\\]|\\.)*")\s*:/g, '<span style="color:' + c.property + '">$1</span>:')
-    result = result.replace(/:\s*("(?:[^"\\]|\\.)*")/g, ': <span style="color:' + c.string + '">$1</span>')
-    result = result.replace(/:\s*(\d+\.?\d*)/g, ': <span style="color:' + c.number + '">$1</span>')
-    result = result.replace(/:\s*(true|false|null)/g, ': <span style="color:' + c.keyword + '">$1</span>')
+    result = result.replace(/("(?:[^"\\]|\\.)*")\s*:/g, '<span style="color:#9CDCFE">$1</span>:')
+    result = result.replace(/:\s*("(?:[^"\\]|\\.)*")/g, ': <span style="color:#CE9178">$1</span>')
+    result = result.replace(/:\s*(\d+\.?\d*)/g, ': <span style="color:#B5CEA8">$1</span>')
+    result = result.replace(/:\s*(true|false|null)/g, ': <span style="color:#569CD6">$1</span>')
   } else if (['css', 'scss'].includes(lang)) {
-    result = result.replace(/\.([\w-]+)/g, '.<span style="color:' + c.property + '">$1</span>')
-    result = result.replace(/([\w-]+)\s*:/g, '<span style="color:' + c.property + '">$1</span>:')
-    result = result.replace(/(#[0-9a-fA-F]{3,8})\b/g, '<span style="color:' + c.string + '">$1</span>')
-    result = result.replace(/\b(\d+\.?\d*(?:px|em|rem|%|vh|vw|s|ms)?)\b/g, '<span style="color:' + c.number + '">$1</span>')
+    result = result.replace(/\.([\w-]+)/g, '.<span style="color:#9CDCFE">$1</span>')
+    result = result.replace(/([\w-]+)\s*:/g, '<span style="color:#9CDCFE">$1</span>:')
+    result = result.replace(/(#[0-9a-fA-F]{3,8})\b/g, '<span style="color:#CE9178">$1</span>')
+    result = result.replace(/\b(\d+\.?\d*(?:px|em|rem|%|vh|vw|s|ms)?)\b/g, '<span style="color:#B5CEA8">$1</span>')
   } else if (lang === 'html') {
-    result = result.replace(/(&lt;\/?)([\w-]+)/g, '$1<span style="color:' + c.keyword + '">$2</span>')
-    result = result.replace(/([\w-]+)=/g, '<span style="color:' + c.property + '">$1</span>=')
-    result = result.replace(/="([^"]*)"/g, '=<span style="color:' + c.string + '">"$1"</span>')
+    result = result.replace(/(&lt;\/?)([\w-]+)/g, '$1<span style="color:#569CD6">$2</span>')
+    result = result.replace(/([\w-]+)=/g, '<span style="color:#9CDCFE">$1</span>=')
+    result = result.replace(/="([^"]*)"/g, '=<span style="color:#CE9178">"$1"</span>')
   } else if (lang === 'python' || lang === 'py') {
-    result = result.replace(/(?:"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*'|"""[\s\S]*?"""|'''[\s\S]*?''')/g, '<span style="color:' + c.string + '">$1</span>')
-    result = result.replace(/\b(def|class|return|if|elif|else|for|while|import|from|as|try|except|with|yield|lambda|pass|break|continue|and|or|not|in|is|True|False|None|self|async|await)\b/g, '<span style="color:' + c.keyword + '">$1</span>')
-    result = result.replace(/#[^\n]*/g, '<span style="color:' + c.comment + '">$&</span>')
-    result = result.replace(/\b(\d+\.?\d*)\b/g, '<span style="color:' + c.number + '">$1</span>')
+    result = result.replace(/(?:"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*'|"""[\s\S]*?"""|'''[\s\S]*?''')/g, '<span style="color:#CE9178">$1</span>')
+    result = result.replace(/\b(def|class|return|if|elif|else|for|while|import|from|as|try|except|with|yield|lambda|pass|break|continue|and|or|not|in|is|True|False|None|self|async|await)\b/g, '<span style="color:#569CD6">$1</span>')
+    result = result.replace(/#[^\n]*/g, '<span style="color:#6A9955">$&</span>')
+    result = result.replace(/\b(\d+\.?\d*)\b/g, '<span style="color:#B5CEA8">$1</span>')
   } else if (['bash', 'sh', 'shell'].includes(lang)) {
-    result = result.replace(/(#.*)$/gm, '<span style="color:' + c.comment + '">$1</span>')
-    result = result.replace(/\b(echo|cd|ls|rm|cp|mv|mkdir|cat|grep|find|sed|awk|git|npm|bun|node|export|source|sudo|chmod|chown|pwd|touch|head|tail|wc|sort|uniq|diff|tar|zip|curl|wget)\b/g, '<span style="color:' + c.keyword + '">$1</span>')
+    result = result.replace(/(#.*)$/gm, '<span style="color:#6A9955">$1</span>')
+    result = result.replace(/\b(echo|cd|ls|rm|cp|mv|mkdir|cat|grep|find|sed|awk|git|npm|bun|node|export|source|sudo|chmod|chown|pwd|touch|head|tail|wc|sort|uniq|diff|tar|zip|curl|wget)\b/g, '<span style="color:#569CD6">$1</span>')
   } else if (lang === 'sql') {
-    result = result.replace(/\b(SELECT|FROM|WHERE|AND|OR|INSERT|UPDATE|DELETE|CREATE|DROP|ALTER|TABLE|INDEX|JOIN|ON|GROUP|BY|ORDER|HAVING|LIMIT|OFFSET|AS|IN|NOT|NULL|IS|LIKE|BETWEEN|EXISTS|CASE|WHEN|THEN|ELSE|END|UNION|ALL|DISTINCT|COUNT|SUM|AVG|MAX|MIN|INTO|VALUES|SET|PRIMARY|KEY|FOREIGN|REFERENCES|CONSTRAINT|DEFAULT|CHECK|VIEW)\b/gi, '<span style="color:' + c.keyword + '">$1</span>')
+    result = result.replace(/\b(SELECT|FROM|WHERE|AND|OR|INSERT|UPDATE|DELETE|CREATE|DROP|ALTER|TABLE|INDEX|JOIN|ON|GROUP|BY|ORDER|HAVING|LIMIT|OFFSET|AS|IN|NOT|NULL|IS|LIKE|BETWEEN|EXISTS|CASE|WHEN|THEN|ELSE|END|UNION|ALL|DISTINCT|COUNT|SUM|AVG|MAX|MIN|INTO|VALUES|SET|PRIMARY|KEY|FOREIGN|REFERENCES|CONSTRAINT|DEFAULT|CHECK|VIEW)\b/gi, '<span style="color:#569CD6">$1</span>')
   } else if (['yaml', 'yml'].includes(lang)) {
-    result = result.replace(/^(\s*)([\w-]+)(\s*:)/gm, '$1<span style="color:' + c.property + '">$2</span>$3')
-    result = result.replace(/:\s*("(?:[^"\\]|\\.)*")/g, ': <span style="color:' + c.string + '">$1</span>')
-    result = result.replace(/:\s*(\d+\.?\d*)/g, ': <span style="color:' + c.number + '">$1</span>')
-    result = result.replace(/(#[^\n]*)/g, '<span style="color:' + c.comment + '">$1</span>')
+    result = result.replace(/^(\s*)([\w-]+)(\s*:)/gm, '$1<span style="color:#9CDCFE">$2</span>$3')
+    result = result.replace(/:\s*("(?:[^"\\]|\\.)*")/g, ': <span style="color:#CE9178">$1</span>')
+    result = result.replace(/:\s*(\d+\.?\d*)/g, ': <span style="color:#B5CEA8">$1</span>')
+    result = result.replace(/(#[^\n]*)/g, '<span style="color:#6A9955">$1</span>')
   } else if (['markdown', 'md'].includes(lang)) {
-    result = result.replace(/^(#{1,6}\s.+)$/gm, '<span style="color:' + c.keyword + '">$1</span>')
-    result = result.replace(/(\*\*[^*]+\*\*|__[^_]+__)/g, '<span style="color:' + c.string + '">$1</span>')
-    result = result.replace(/(`[^`]+`)/g, '<span style="color:' + c.string + '">$1</span>')
+    result = result.replace(/^(#{1,6}\s.+)$/gm, '<span style="color:#569CD6">$1</span>')
+    result = result.replace(/(\*\*[^*]+\*\*|__[^_]+__)/g, '<span style="color:#CE9178">$1</span>')
+    result = result.replace(/(`[^`]+`)/g, '<span style="color:#CE9178">$1</span>')
   } else if (['rust', 'rs'].includes(lang)) {
-    result = result.replace(/\b(fn|let|mut|pub|struct|enum|impl|trait|use|mod|where|for|in|if|else|match|return|loop|while|break|continue|move|async|await|unsafe|dyn|type|const|static|ref|self|super|crate|true|false|Some|None|Ok|Err|Result|Option|Vec|String|Box|Rc|Arc)\b/g, '<span style="color:' + c.keyword + '">$1</span>')
-    result = result.replace(/("(?:[^"\\]|\\.)*")/g, '<span style="color:' + c.string + '">$1</span>')
-    result = result.replace(/\/\/[^\n]*/g, '<span style="color:' + c.comment + '">$&</span>')
+    result = result.replace(/\b(fn|let|mut|pub|struct|enum|impl|trait|use|mod|where|for|in|if|else|match|return|loop|while|break|continue|move|async|await|unsafe|dyn|type|const|static|ref|self|super|crate|true|false|Some|None|Ok|Err|Result|Option|Vec|String|Box|Rc|Arc)\b/g, '<span style="color:#569CD6">$1</span>')
+    result = result.replace(/("(?:[^"\\]|\\.)*")/g, '<span style="color:#CE9178">$1</span>')
+    result = result.replace(/\/\/[^\n]*/g, '<span style="color:#6A9955">$&</span>')
   }
 
   return result
 }
 
 // ─── 主组件 ───
-// 渲染计数（检测无限重渲染）：模块级，不被组件重挂载重置
-let __renderCount = 0
-let __mountCount = 0
-let __renderWarned = false
-
 export function App(): JSX.Element {
-  __renderCount++
-  if (__renderCount % 50 === 0) {
-    console.log(`[DIAG] renderCount=${__renderCount} mountCount=${__mountCount} messages=${/* 渲染期引用 */ 0}`)
-  }
-  if (__renderCount > 500 && !__renderWarned) {
-    __renderWarned = true
-    console.error(`[DIAG]  疑似无限重渲染！renderCount=${__renderCount}`)
-  }
   const [config, setConfig] = useState<DesktopConfig>({ provider: 'openai', apiKey: '', model: 'gpt-4o', workingDir: '' })
-  const workingDir = config.workingDir || '/'
   const [messages, setMessages] = useState<Message[]>([])
-  const messagesRef = useRef(messages)
-  useEffect(() => { messagesRef.current = messages }, [messages])
   const [input, setInput] = useState('')
   const [pendingImages, setPendingImages] = useState<Array<{ id: string; url: string; name: string }>>([])
   const [state, setState] = useState<QueryState>('idle')
-  const stateRef = useRef('idle')
-  const [isSending, setIsSending] = useState(false)
-  const isSendingRef = useRef(false) // 同步锁，避免 stale closure 导致 double-sending
   const [currentStreaming, setCurrentStreaming] = useState('')
   const currentStreamingRef = useRef('')
-  const streamingActiveRef = useRef(false) // result 处理完成后锁定，阻止延迟 chunk 污染
-  const lastChunkTextRef = useRef('') // 上一次收到的 chunk 文本，用于精确去重
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loaded, setLoaded] = useState(false)
-  // ─── 挂载/卸载诊断 ───
-  useEffect(() => {
-    __mountCount++
-    console.log(`[DIAG] App mounted #${__mountCount}`)
-    return () => console.log(`[DIAG] App unmounted #${__mountCount}`)
-  }, [])
   const [selectedGitFile, setSelectedGitFile] = useState<string | null>(null)
   const [commitMessage, setCommitMessage] = useState('')
   const [isCommitting, setIsCommitting] = useState(false)
   const [previewTabs, setPreviewTabs] = useState<Array<{ id: string; path: string; content: string; size?: number }>>([])
   const [activePreviewTabId, setActivePreviewTabId] = useState<string | null>(null)
-  const [tabContextMenu, setTabContextMenu] = useState<{ x: number; y: number; tabId: string } | null>(null)
   const activePreviewFile = previewTabs.find(t => t.id === activePreviewTabId) || null
-
-  // 关闭指定标签（若关闭的是活跃标签则激活相邻标签）
-  const closePreviewTab = useCallback((tabId: string) => {
-    setPreviewTabs(prev => {
-      const idx = prev.findIndex(t => t.id === tabId)
-      if (idx === -1) return prev
-      const next = prev.filter(t => t.id !== tabId)
-      if (activePreviewTabId === tabId) {
-        const neighbor = next[idx - 1] || next[idx] || null
-        setActivePreviewTabId(neighbor?.id || null)
-      }
-      return next
-    })
-  }, [activePreviewTabId])
-
-  // 关闭其他标签
-  const closeOtherTabs = useCallback((tabId: string) => {
-    setPreviewTabs(prev => prev.filter(t => t.id === tabId))
-    setActivePreviewTabId(tabId)
-  }, [])
-
-  // 关闭全部标签
-  const closeAllTabs = useCallback(() => {
-    setPreviewTabs([])
-    setActivePreviewTabId(null)
-  }, [])
-
-  // 拖拽排序：记录拖拽源索引
-  const [dragTabIndex, setDragTabIndex] = useState<number | null>(null)
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
-
-  // 拖放：把 dragTabIndex 位置的标签移动到 dropIndex
-  const handleTabDrop = useCallback((dropIndex: number) => {
-    if (dragTabIndex === null || dragTabIndex === dropIndex) {
-      setDragTabIndex(null)
-      setDragOverIndex(null)
-      return
-    }
-    setPreviewTabs(prev => {
-      const next = [...prev]
-      const [moved] = next.splice(dragTabIndex, 1)
-      next.splice(dropIndex, 0, moved)
-      return next
-    })
-    setDragTabIndex(null)
-    setDragOverIndex(null)
-  }, [dragTabIndex])
-
-  // 全局点击关闭右键菜单
-  useEffect(() => {
-    if (!tabContextMenu) return
-    const close = () => setTabContextMenu(null)
-    window.addEventListener('click', close)
-    window.addEventListener('blur', close)
-    window.addEventListener('contextmenu', close, { capture: true })
-    return () => {
-      window.removeEventListener('click', close)
-      window.removeEventListener('blur', close)
-      window.removeEventListener('contextmenu', close, { capture: true })
-    }
-  }, [tabContextMenu])
-
-  // ─── 面板依赖 Hooks ───
-  const fileTreeHook = useFileTree(workingDir)
-  const problemsHook = useProblems()
-  const errorLensHook = useErrorLens(activePreviewFile?.path || '')
-  const colorPickerHook = useColorPicker()
-
   const [previewLoading, setPreviewLoading] = useState(false)
   const [previewError, setPreviewError] = useState<string | null>(null)
   const [isEditing, setIsEditing] = useState(false)
@@ -314,9 +169,7 @@ export function App(): JSX.Element {
   const [msgSearchQuery, setMsgSearchQuery] = useState('')
   const [msgSearchMatches, setMsgSearchMatches] = useState<number[]>([])
   const [executingToolIds, setExecutingToolIds] = useState<Set<string>>(new Set())
-  const executedToolIdsRef = useRef<Set<string>>(new Set())
   const [toolProgress, setToolProgress] = useState<{ toolName: string; status: 'pending' | 'running' | 'success' | 'error'; progress?: number; duration?: number } | null>(null)
-  const [hasResponded, setHasResponded] = useState(false)
   // commandHistory 使用 Hook 管理（替代内联状态）
   const [commandHistory] = useState<Array<{ cmd: string; time: number }>>([])
   const [showCommandPalette, setShowCommandPalette] = useState(false)
@@ -348,10 +201,6 @@ export function App(): JSX.Element {
   const [mcpServers, setMcpServers] = useState<Array<{ name: string; command: string; args: string[]; transport: string }>>([])
   const [mcpLoading, setMcpLoading] = useState(false)
   const [showMcpPanel, setShowMcpPanel] = useState(false)
-  const [showDbPanel, setShowDbPanel] = useState(false)
-  const [showApiTestPanel, setShowApiTestPanel] = useState(false)
-  const [showSnippetPanel, setShowSnippetPanel] = useState(false)
-  const [showLspPanel, setShowLspPanel] = useState(false)
   const [mcpNewName, setMcpNewName] = useState('')
   const [mcpNewCommand, setMcpNewCommand] = useState('')
   const [mcpNewArgs, setMcpNewArgs] = useState('')
@@ -363,137 +212,14 @@ export function App(): JSX.Element {
   const [showAgentPanel, setShowAgentPanel] = useState(false)
   const [showPluginPanel, setShowPluginPanel] = useState(false)
   const [showSemanticSearch, setShowSemanticSearch] = useState(false)
-  const [showDebuggerPanel, setShowDebuggerPanel] = useState(false)
-  const [showCollabPanel, setShowCollabPanel] = useState(false)
-  const [showMonacoPanel, setShowMonacoPanel] = useState(false)
   const [showAIOutline, setShowAIOutline] = useState(false)
   const [showCodeReview, setShowCodeReview] = useState(false)
-  const [showSecurityAudit, setShowSecurityAudit] = useState(false)
-  const [showPerformanceRefactor, setShowPerformanceRefactor] = useState(false)
-  const [showWorkflowPanel, setShowWorkflowPanel] = useState(false)
-  const [showReferencesPanel, setShowReferencesPanel] = useState(false)
-  const [selectedFile, setSelectedFile] = useState<string | null>(null)
-  const [debugBreakpoints, setDebugBreakpoints] = useState<Map<string, number[]>>(new Map())
-  const [debugPaused, setDebugPaused] = useState<{ file: string; line: number } | null>(null)
-  const [debugSessionId, setDebugSessionId] = useState<string | null>(null)
   const [activeReviewFile, setActiveReviewFile] = useState<string | null>(null)
   const [showKanban, setShowKanban] = useState(false)
   const [showTimeTracker, setShowTimeTracker] = useState(false)
   const [showProgressReport, setShowProgressReport] = useState(false)
-  const [showCallChain, setShowCallChain] = useState(false)
-  const [showFileExplorer, setShowFileExplorer] = useState(false)
-  const [showProblemsPanel, setShowProblemsPanel] = useState(false)
-  const [showErrorLens, setShowErrorLens] = useState(false)
-  const [showOutputPanel, setShowOutputPanel] = useState(false)
-  const [showFindReplace, setShowFindReplace] = useState(false)
-  const [showSymbolOutline, setShowSymbolOutline] = useState(false)
-  const [showColorPicker, setShowColorPicker] = useState(false)
-  const [showProjectStructure, setShowProjectStructure] = useState(false)
-  const [showGitMerge, setShowGitMerge] = useState(false)
-  const [showGitBranch, setShowGitBranch] = useState(false)
-  const [showTestRunner, setShowTestRunner] = useState(false)
-  const [showOperationHistory, setShowOperationHistory] = useState(false)
-  const [operations, setOperations] = useState<OperationEntry[]>([])
-  const [showLogViewer, setShowLogViewer] = useState(false)
   const [cursorOffset, setCursorOffset] = useState(0)
   const [vimEnabled, setVimEnabled] = useState(false)
-
-  // ─── 工作区会话持久化（重启恢复标签页/面板状态） ───
-  const WORKSPACE_STATE_KEY = 'doge-workspace-state'
-  const workspaceSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const saveWorkspaceState = useCallback(() => {
-    if (workspaceSaveTimerRef.current) clearTimeout(workspaceSaveTimerRef.current)
-    workspaceSaveTimerRef.current = setTimeout(() => {
-      try {
-        const state = {
-          tabPaths: previewTabs.map(t => t.path),
-          activeTabPath: previewTabs.find(t => t.id === activePreviewTabId)?.path || null,
-          terminalVisible,
-          panels: {
-            agent: showAgentPanel, debugger: showDebuggerPanel, plugin: showPluginPanel,
-            semanticSearch: showSemanticSearch, codeReview: showCodeReview, securityAudit: showSecurityAudit,
-            performanceRefactor: showPerformanceRefactor, workflow: showWorkflowPanel, lsp: showLspPanel,
-            output: showOutputPanel, problems: showProblemsPanel, findReplace: showFindReplace,
-            references: showReferencesPanel, callChain: showCallChain, kanban: showKanban,
-            timeTracker: showTimeTracker, testRunner: showTestRunner, db: showDbPanel,
-            apiTest: showApiTestPanel, snippet: showSnippetPanel, monaco: showMonacoPanel,
-          },
-          savedAt: Date.now(),
-        }
-        localStorage.setItem(WORKSPACE_STATE_KEY, JSON.stringify(state))
-      } catch { /* ignore */ }
-    }, 500)
-  }, [previewTabs, activePreviewTabId, terminalVisible, showAgentPanel, showDebuggerPanel, showPluginPanel, showSemanticSearch, showCodeReview, showSecurityAudit, showPerformanceRefactor, showWorkflowPanel, showLspPanel, showOutputPanel, showProblemsPanel, showFindReplace, showReferencesPanel, showCallChain, showKanban, showTimeTracker, showTestRunner, showDbPanel, showApiTestPanel, showSnippetPanel, showMonacoPanel])
-
-  useEffect(() => { saveWorkspaceState() })
-
-  // 启动时恢复工作区（读取标签内容 + 恢复面板开关）
-  useEffect(() => {
-    let cancelled = false
-    try {
-      const raw = localStorage.getItem(WORKSPACE_STATE_KEY)
-      if (!raw) return
-      const state = JSON.parse(raw)
-      const panelKeys = Object.keys(state.panels || {})
-      if (panelKeys.length === 0 && !Array.isArray(state.tabPaths)) return
-
-      const applyPanel = (key: string, setter: (v: boolean) => void): void => {
-        if (state.panels && typeof state.panels[key] === 'boolean' && state.panels[key]) setter(true)
-      }
-      applyPanel('agent', setShowAgentPanel)
-      applyPanel('debugger', setShowDebuggerPanel)
-      applyPanel('plugin', setShowPluginPanel)
-      applyPanel('semanticSearch', setShowSemanticSearch)
-      applyPanel('codeReview', setShowCodeReview)
-      applyPanel('securityAudit', setShowSecurityAudit)
-      applyPanel('performanceRefactor', setShowPerformanceRefactor)
-      applyPanel('workflow', setShowWorkflowPanel)
-      applyPanel('lsp', setShowLspPanel)
-      applyPanel('output', setShowOutputPanel)
-      applyPanel('problems', setShowProblemsPanel)
-      applyPanel('findReplace', setShowFindReplace)
-      applyPanel('references', setShowReferencesPanel)
-      applyPanel('callChain', setShowCallChain)
-      applyPanel('kanban', setShowKanban)
-      applyPanel('timeTracker', setShowTimeTracker)
-      applyPanel('testRunner', setShowTestRunner)
-      applyPanel('db', setShowDbPanel)
-      applyPanel('apiTest', setShowApiTestPanel)
-      applyPanel('snippet', setShowSnippetPanel)
-      applyPanel('monaco', setShowMonacoPanel)
-      if (state.terminalVisible) setTerminalVisible(true)
-
-      // 恢复标签页：批量读取内容
-      const paths = Array.isArray(state.tabPaths) ? state.tabPaths.filter((p: unknown): p is string => typeof p === 'string') : []
-      const activePath = typeof state.activeTabPath === 'string' ? state.activeTabPath : null
-      if (paths.length > 0) {
-        void (async () => {
-          const restored: Array<{ id: string; path: string; content: string; size?: number }> = []
-          for (const p of paths) {
-            if (cancelled) return
-            try {
-              const result = await window.dogeAPI.readFile(p)
-              if (result.success) {
-                previewTabCounter.current += 1
-                restored.push({ id: `preview-${previewTabCounter.current}-${Date.now()}`, path: p, content: result.content || '', size: result.size })
-              }
-            } catch { /* ignore */ }
-          }
-          if (cancelled) return
-          if (restored.length > 0) {
-            setPreviewTabs(restored)
-            const active = restored.find(t => t.path === activePath) || restored[0]
-            setActivePreviewTabId(active.id)
-          }
-        })()
-      }
-    } catch { /* ignore */ }
-    return () => { cancelled = true }
-    // 只在挂载时执行一次
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   const previewTabCounter = useRef(0)
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -527,119 +253,10 @@ export function App(): JSX.Element {
   // ─── Tab 管理 Hook ───
   const tabMgr = useTabManager()
 
-  // ─── Agent 编排层 Hook ───
-  const [gitChangesCount, setGitChangesCount] = useState(0)
-  const [dismissedSuggestions, setDismissedSuggestions] = useState<Set<string>>(new Set())
-  const [dismissedSmartImports, setDismissedSmartImports] = useState<Set<string>>(new Set())
-
-  // ─── LSP Hook ───
-  const lsp = useLsp()
-
-  // ─── 预测性 AI 助手：静态分析 Hook ───
-  const preAnalysis = usePreAnalysis(
-    activePreviewFile?.content || '',
-    { extension: activePreviewFile?.path?.split('.').pop() || '', enabled: !!activePreviewFile }
-  )
-  const todoCount = preAnalysis.filter(s => s.type === 'todo').length
-  const workflowMode = useWorkflowMode(selectedFile, gitChangesCount, showDebuggerPanel, todoCount)
-
-  // ─── AI 工作流自动化 Hook ───
-  const wf = useWorkflowAutomation(selectedFile || '')
-
-  // ─── 调用链分析 Hook ───
-  const callChain = useCallChain({
-    content: activePreviewFile?.content || '',
-    filePath: activePreviewFile?.path || '',
-    fetchReferences: lsp.references,
-    fetchDefinition: lsp.definition,
-    enabled: !!activePreviewFile,
-  })
-
-  // ─── 智能导入建议 Hook ───
-  const smartImports = useSmartImport({
-    content: activePreviewFile?.content || '',
-    filePath: activePreviewFile?.path || '',
-    enabled: !!activePreviewFile,
-  })
-
-  // ─── 工作流模式面板自动联动 ───
-  useEffect(() => {
-    if (workflowMode.locked) return
-    const m = workflowMode.mode
-    switch (m) {
-      case 'edit':
-        // 编码模式: 打开 Monaco 编辑器 + LSP 面板, 显示终端
-        setShowMonacoPanel(true)
-        setShowLspPanel(!!activePreviewFile)
-        setTerminalVisible(true)
-        setShowDebuggerPanel(false)
-        setShowCodeReview(false)
-        setShowSecurityAudit(false)
-        setShowPerformanceRefactor(false)
-        setShowDbPanel(false)
-        setShowApiTestPanel(false)
-        break
-      case 'review':
-        // 审查模式: 打开代码审查 + LSP 面板
-        setShowCodeReview(true)
-        setShowLspPanel(!!activePreviewFile)
-        setShowMonacoPanel(false)
-        setShowDebuggerPanel(false)
-        setTerminalVisible(false)
-        setShowSecurityAudit(false)
-        setShowPerformanceRefactor(false)
-        break
-      case 'debug':
-        // 调试模式: 打开调试器 + 终端
-        setShowDebuggerPanel(true)
-        setTerminalVisible(true)
-        setShowMonacoPanel(false)
-        setShowCodeReview(false)
-        setShowLspPanel(false)
-        setShowSecurityAudit(false)
-        setShowPerformanceRefactor(false)
-        break
-      case 'project':
-        // 项目管理模式: 打开 Kanban + TimeTracker
-        setShowKanban(true)
-        setShowTimeTracker(true)
-        setShowMonacoPanel(false)
-        setShowCodeReview(false)
-        setShowDebuggerPanel(false)
-        setShowLspPanel(false)
-        setShowSecurityAudit(false)
-        setShowPerformanceRefactor(false)
-        break
-      case 'chat':
-      default:
-        // 对话模式: 关闭所有专业面板, 保持终端状态
-        setShowMonacoPanel(false)
-        setShowCodeReview(false)
-        setShowDebuggerPanel(false)
-        setShowLspPanel(false)
-        setShowSecurityAudit(false)
-        setShowPerformanceRefactor(false)
-        setShowKanban(false)
-        setShowTimeTracker(false)
-        break
-    }
-  }, [workflowMode.mode, workflowMode.locked, activePreviewFile])
-
   const effectiveTheme = getEffectiveTheme(themeSettings.theme as ThemeName | 'auto')
-  const styles = getStyles(effectiveTheme, themeSettings.fontSize)
+  const styles = getStyles(effectiveTheme)
   const theme = THEMES[effectiveTheme]
   const c = theme
-
-  // ─── Ctrl+滚轮缩放 ───
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    if (e.ctrlKey || e.metaKey) {
-      e.preventDefault()
-      setThemeSettings(prev => ({
-        ...prev,
-        fontSize: Math.min(24, Math.max(8, prev.fontSize + (e.deltaY < 0 ? 1 : -1)))
-      }))
-    }
-  }, [])
 
   // 切换到指定 tab
   const switchTab = useCallback((tabId: string) => {
@@ -836,33 +453,6 @@ export function App(): JSX.Element {
     if (activePreviewFile) { setEditContent(activePreviewFile.content); setIsEditing(true) }
   }, [activePreviewFile])
 
-  // 监听调试器暂停事件 → 记录暂停位置（预览区高亮）
-  useEffect(() => {
-    const api = window.dogeAPI as Record<string, any>
-    if (typeof api?.onDebugPaused === 'function') {
-      const unsub = api.onDebugPaused((info: { file: string; line: number }) => {
-        setDebugPaused({ file: info.file, line: info.line })
-      })
-      return () => { unsub() }
-    }
-    return () => {}
-  }, [])
-
-  // 行号点击：切换断点（需活跃调试会话）
-  const handleToggleBreakpoint = useCallback(async (filePath: string, line: number) => {
-    if (!debugSessionId) return
-    const normPath = filePath.replace(/\\/g, '/')
-    const existing = (debugBreakpoints.get(normPath) || []).includes(line)
-    try {
-      const api = window.dogeAPI as Record<string, any>
-      if (existing) {
-        await api?.debugRemoveBreakpoint?.({ sessionId: debugSessionId, file: filePath, line })
-      } else {
-        await api?.debugSetBreakpoint?.({ sessionId: debugSessionId, file: filePath, line })
-      }
-    } catch { /* ignore */ }
-  }, [debugSessionId, debugBreakpoints])
-
   const runSearch = useCallback(() => {
     if (!activePreviewFile || !searchQuery) { setSearchResults([]); setCurrentResultIndex(-1); return }
     const content = activePreviewFile.content
@@ -951,53 +541,40 @@ export function App(): JSX.Element {
     } catch { showToast('打开终端失败', 'error') }
   }, [activePreviewFile, showToast])
 
-  // textarea 高度
-  const [inputHeight, setInputHeight] = useState(44)
+  // textarea 自动高度
   useEffect(() => {
     const el = inputRef.current
     if (!el) return
-    requestAnimationFrame(() => {
-      const h = Math.min(200, Math.max(44, el.scrollHeight))
-      setInputHeight(h)
-    })
+    el.style.height = 'auto'
+    el.style.height = Math.min(200, Math.max(44, el.scrollHeight)) + 'px'
   }, [input])
 
-  // 仅在消息列表变化时滚动（不用 smooth 动画，避免流式 chunk 频繁触发导致界面跳动）
-  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'auto' }) }, [messages])
+  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages, currentStreaming])
 
   // 初始化配置
   useEffect(() => {
     async function load(): Promise<void> {
       try {
-        // 主进程 loadConfig（findApiConfig 会向上一级查找 .doge/api.json，portable/unpacked 均可靠）
         const apiConfig = await window.dogeAPI.getConfig()
         const cwd = await window.dogeAPI.getCwd()
-        let provider = 'openai', apiKeyStr = '', model = 'gpt-4o'
+        const apiKeyData = await window.dogeAPI.readConfig(`${cwd}/.doge/api.json`) as
+          | { activePreset?: string; presets?: Record<string, { provider?: string; apiKey?: string; model?: string }> }
+          | null
 
-        // 优先使用主进程已解析的 apiKey（避免用 cwd 拼路径——portable 运行时 cwd 在 %TEMP% 解压目录，找不到配置）
-        if (apiConfig.apiKey) {
-          provider = apiConfig.provider || 'openai'
-          apiKeyStr = apiConfig.apiKey
-          model = apiConfig.model || 'gpt-4o'
-        } else {
-          // 主进程无 apiKey 时，回退到按 cwd 读取 .doge/api.json（开发模式等场景）
-          const apiKeyData = await window.dogeAPI.readConfig(`${cwd}/.doge/api.json`) as
-            | { activePreset?: string; presets?: Record<string, { provider?: string; apiKey?: string; model?: string }> }
-            | null
-          if (apiKeyData) {
-            const presetName = apiKeyData.activePreset
-            const preset = presetName && apiKeyData.presets?.[presetName] ? apiKeyData.presets[presetName] : apiKeyData.presets?.default || {}
-            provider = preset.provider || 'openai'
-            apiKeyStr = preset.apiKey || ''
-            model = preset.model || 'gpt-4o'
-          }
+        let provider = 'openai', apiKeyStr = '', model = 'gpt-4o'
+        if (apiKeyData) {
+          const presetName = apiKeyData.activePreset
+          const preset = presetName && apiKeyData.presets?.[presetName] ? apiKeyData.presets[presetName] : apiKeyData.presets?.default || {}
+          provider = preset.provider || 'openai'
+          apiKeyStr = preset.apiKey || ''
+          model = preset.model || 'gpt-4o'
         }
 
         setConfig({ provider, apiKey: apiKeyStr, model, workingDir: apiConfig.workingDir || cwd })
 
         const history = await window.dogeAPI.getHistory()
         if (history.messages?.length) {
-          setMessages(history.messages.map((m, i) => ({ id: `history-${i}`, role: m.role as Message['role'], content: typeof m.content === 'string' ? m.content : '' })))
+          setMessages(history.messages.map((m, i) => ({ id: `history-${i}`, role: m.role as Message['role'], content: m.content })))
         }
       } catch { /* ignore */ } finally { setLoaded(true) }
     }
@@ -1005,74 +582,17 @@ export function App(): JSX.Element {
   }, [])
 
   useEffect(() => {
-    const unsubs: Array<() => void> = []
-    // preload 层已保证 IPC 监听器单例（cleanup 正确移除监听器），
-    // 此处每次挂载正常订阅即可，StrictMode 下注册→卸载→重新注册最终恰好 1 个监听器
-    unsubs.push(window.dogeAPI.onStateChange((s) => { stateRef.current = s; setState(s as QueryState) }))
-    unsubs.push(window.dogeAPI.onChunk((chunk) => {
-      if (!chunk || !chunk.text) return
-      if (!streamingActiveRef.current) return
-      const text = chunk.text
-      // 防御1：精确匹配——如果此 chunk 文本与上一次追加的完全相同，直接丢弃
-      if (text === lastChunkTextRef.current) {
-        console.log(`[DIAG] onChunk EXACT-DUP ignored: "${text.slice(0, 50)}"`)
-        return
-      }
-      // 防御2：前缀重复检查——如果已累积文本以新 chunk 开头，
-      // 说明新 chunk 是已呈现内容的累积式重发，追加会导致前缀重复
-      if (text.length > 0 && currentStreamingRef.current.length > 0 && currentStreamingRef.current.startsWith(text)) {
-        console.log(`[DIAG] onChunk PREFIX-DUP ignored: chunk="${text.slice(0, 50)}" streamLen=${currentStreamingRef.current.length}`)
-        return
-      }
-      lastChunkTextRef.current = text
+    const unsub1 = window.dogeAPI.onStateChange((s) => setState(s as QueryState))
+    const unsub2 = window.dogeAPI.onChunk((chunk) => {
+      console.log('[RENDERER] onChunk received:', chunk.text?.slice(0, 50))
       setCurrentStreaming((p) => {
-        const next = p + text
+        const next = p + chunk.text
         currentStreamingRef.current = next
         return next
       })
-    }))
-    return () => {
-      unsubs.forEach(u => u())
-    }
+    })
+    return () => { unsub1(); unsub2() }
   }, [])
-
-  // 自动执行工具调用：流式传输停止后，检测并执行 assistant 消息中的 tool_use block
-  // 策略：宁可提取不完整执行报错，让模型根据错误反馈自我修正
-  useEffect(() => {
-    if (currentStreaming) return // 仍在流式传输中
-    const msgs = messagesRef.current
-    if (!msgs || msgs.length === 0) return
-    // 找最新的 assistant 消息
-    const lastAssistant = [...msgs].reverse().find(m => m.role === 'assistant')
-    if (!lastAssistant?.content) return
-    const content = lastAssistant.content
-    // 快速检测：内容中是否有 <function 标签
-    if (!content.includes('<function')) return
-    // 用完整解析器提取 tool_use block
-    const blocks: ContentBlock[] = parseMessageContent(content)
-    let executed = false
-    for (const block of blocks) {
-      if (block.type === 'tool_use' && !executedToolIdsRef.current.has(block.id)) {
-        executedToolIdsRef.current.add(block.id)
-        executed = true
-        // 异步执行，不阻塞
-        Promise.resolve()
-          .then(() => window.dogeAPI.executeTool({
-            name: block.name,
-            input: typeof block.input === 'string' ? JSON.parse(block.input) : block.input,
-          }))
-          .then(result => {
-            if (result.error) {
-              showToast(`工具 ${block.name} 执行失败: ${result.error.slice(0, 100)}`, 'error')
-            }
-          })
-          .catch(() => { showToast(`工具 ${block.name} 调用失败`, 'error') })
-      }
-    }
-    if (executed) {
-      tsLog('AUTO-EXEC', `auto-executed ${executedToolIdsRef.current.size} tool blocks from latest message`)
-    }
-  }, [currentStreaming, messages])
 
   // 自动发送测试消息（用于调试）- 必须在 handleSend 之后
   const autoSendRef = useRef<() => void>(() => {})
@@ -1081,7 +601,7 @@ export function App(): JSX.Element {
   })
   useEffect(() => {
     const unsub = window.dogeAPI.onAutoSend((text) => {
-      tsLog('RENDERER', 'auto-send received:', text)
+      console.log('[RENDERER] auto-send received:', text)
       setInput(text)
       setTimeout(() => {
         autoSendRef.current()
@@ -1153,12 +673,8 @@ export function App(): JSX.Element {
   const historyRef = useRef<Message[]>([])
   useEffect(() => { historyRef.current = messages }, [messages])
 
-  // 防止 loaded/tabs 变化时无条件重写 messages（竞态条件：用户已在 loaded=true 前发送消息，
-  // 但 historyRef 仍持有旧快照，此 effect 会把已更新的 messages 覆盖回旧值，导致界面重复追加）
-  const initializedRef = useRef(false)
   useEffect(() => {
-    if (tabs.length === 0 && loaded && !initializedRef.current) {
-      initializedRef.current = true
+    if (tabs.length === 0 && loaded) {
       const sid = currentSessionId || ''
       tabIdCounter.current = 1
       const initialMsgs = historyRef.current
@@ -1174,7 +690,7 @@ export function App(): JSX.Element {
     if (result.success) {
       const history = await window.dogeAPI.getHistory()
       const loadedMessages = history.messages?.length
-        ? history.messages.map((m, i) => ({ id: `history-${i}`, role: m.role as Message['role'], content: typeof m.content === 'string' ? m.content : '' }))
+        ? history.messages.map((m, i) => ({ id: `history-${i}`, role: m.role as Message['role'], content: m.content }))
         : []
       setMessages(loadedMessages)
       setCurrentSessionId(sessionId)
@@ -1186,19 +702,9 @@ export function App(): JSX.Element {
 
   const handleDeleteSession = useCallback(async (sessionId: string) => {
     const result = await window.dogeAPI.deleteSession(sessionId)
-    if (result.success) {
-      setSessions(p => p.filter(s => s.id !== sessionId))
-      // 如果删除的是当前会话，清空消息和会话 ID，使 UI 与引擎状态同步
-      if (currentSessionId === sessionId) {
-        setMessages([])
-        setCurrentSessionId(null)
-        setCurrentStreaming('')
-        persistActiveTabMessages([])
-      }
-      showToast('会话已删除', 'success')
-    }
+    if (result.success) { setSessions(p => p.filter(s => s.id !== sessionId)); showToast('会话已删除', 'success') }
     else { alert(result.error || '删除失败') }
-  }, [showToast, currentSessionId, persistActiveTabMessages])
+  }, [showToast])
 
   const handleSaveConfig = useCallback(async () => {
     setSavingConfig(true)
@@ -1261,31 +767,15 @@ export function App(): JSX.Element {
     return () => window.removeEventListener('keydown', onKey)
   }, [showCommandPalette, showSettings])
 
-  // 诊断：handleSend 调用计数
-  const handleSendCallCountRef = useRef(0)
   const handleSend = useCallback(async (): Promise<void> => {
-    handleSendCallCountRef.current++
-    const callNum = handleSendCallCountRef.current
     const text = input.trim()
-    tsLog('RENDERER', `handleSend called #${callNum}, text:`, text, 'state:', state, 'isSending:', isSendingRef.current)
-    if (!text || stateRef.current === 'responding' || isSendingRef.current) {
-      tsLog('RENDERER', `handleSend #${callNum} EARLY RETURN: text=${!!text} state=${stateRef.current} isSending=${isSendingRef.current}`)
-      return
-    }
+    console.log('[RENDERER] handleSend called, text:', text, 'state:', state)
+    if (!text || state === 'responding') return
     if (!isOnline) { showToast('网络已断开，无法发送消息', 'error'); return }
-    setInput(''); setError(null); setCurrentStreaming(''); currentStreamingRef.current = ''; setIsSending(true); isSendingRef.current = true
-    streamingActiveRef.current = true // 打开请求级锁，允许 chunk 进入 currentStreaming
+    setInput(''); setError(null); setCurrentStreaming(''); currentStreamingRef.current = ''
 
     const appendMsg = (msg: Message) => {
-      setMessages(prev => {
-        const next = [...prev, msg]
-        // 诊断：检查重复消息（同 id 或同 role+content 出现多次）
-        const dupCount = next.filter(m => m.role === msg.role && m.content === msg.content).length
-        const ids = new Set(next.map(m => m.id))
-        console.log(`[DIAG-MSG] append role=${msg.role} len=${next.length} dupInState=${dupCount} uniqueIds=${ids.size}`)
-        persistActiveTabMessages(next)
-        return next
-      })
+      setMessages(prev => { const next = [...prev, msg]; persistActiveTabMessages(next); return next })
     }
 
     if (text.startsWith('/')) {
@@ -1308,79 +798,50 @@ export function App(): JSX.Element {
       }
       const assistantMsg: Message = { id: `msg-${Date.now() + 1}`, role: 'assistant', content: result.success ? (result.output || '(无输出)') : `错误: ${result.error}` }
       appendMsg(assistantMsg)
-      // /clear 成功后同步清除界面上的历史消息
-      if (result.success && cmdName === '/clear') {
-        setMessages([])
-        setCurrentSessionId(null)
-        setCurrentStreaming('')
-        currentStreamingRef.current = ''
-        persistActiveTabMessages([])
-      }
       cmdHistory.addCommand(text)
-      setState('idle'); setIsSending(false); isSendingRef.current = false; stateRef.current = 'idle'
+      setState('idle')
       return
     }
 
     const userMsg: Message = { id: `msg-${Date.now()}`, role: 'user', content: text }
     appendMsg(userMsg)
-    setHasResponded(false)
-    setState('responding'); stateRef.current = 'responding'
+    setState('responding')
 
     // 构建发送载荷：纯文本或包含图片的 JSON
     let result: { success?: boolean; content?: string; error?: string } | null = null
     try {
-      tsLog('RENDERER', 'calling window.dogeAPI.sendMessage, text:', text)
+      console.log('[RENDERER] calling window.dogeAPI.sendMessage, text:', text)
       if (pendingImages.length > 0) {
         // 多模态消息：文本 + 图片 base64
         const payload = {
           text,
           images: pendingImages.map(img => ({ type: 'image', url: img.url })),
         }
-        result = await window.dogeAPI.sendMessage(JSON.stringify(payload), preAnalysis)
+        result = await window.dogeAPI.sendMessage(JSON.stringify(payload))
         setPendingImages([])
       } else {
         // 纯文本消息
-        result = await window.dogeAPI.sendMessage(text, preAnalysis)
+        result = await window.dogeAPI.sendMessage(text)
       }
-      console.log(`[DIAG] sendMessage returned: resultTextLen=${(result?.content || '').length} error=${result?.error ? 'Y' : 'N'} streamedLen=${currentStreamingRef.current.length}`)
-      tsLog('RENDERER', 'sendMessage returned, result:', JSON.stringify(result))
+      console.log('[RENDERER] sendMessage returned, result:', JSON.stringify(result))
     } catch (e) {
       const errMsg = e instanceof Error ? e.message : '发送失败'
-      tsLog('RENDERER', 'sendMessage threw error:', errMsg)
-      // 异常路径也要清理流式状态，防止重复的 currentStreaming 残留导致界面一直显示重复文本
-      streamingActiveRef.current = false
-      setCurrentStreaming(''); currentStreamingRef.current = ''
-      setPendingImages([])
+      console.log('[RENDERER] sendMessage threw error:', errMsg)
       appendMsg({ id: `msg-${Date.now() + 1}`, role: 'error', content: errMsg })
-      setState('idle'); setIsSending(false); isSendingRef.current = false; stateRef.current = 'idle'
+      setState('idle')
       return
     }
 
     if (result?.error) {
-      tsLog('RENDERER', 'result has error:', result.error)
-      // 错误路径同样清理流式状态
-      streamingActiveRef.current = false
-      setCurrentStreaming(''); currentStreamingRef.current = ''
-      setPendingImages([])
+      console.log('[RENDERER] result has error:', result.error)
       appendMsg({ id: `msg-${Date.now() + 1}`, role: 'error', content: result.error! })
-      setState('idle'); setIsSending(false); isSendingRef.current = false; stateRef.current = 'idle'
       if (!document.hasFocus()) window.dogeAPI.notify('Doge Code', `错误: ${result.error.slice(0, 100)}`).catch(() => {})
     } else {
-      // result.content 是 messageLoop 返回的完整回复（aggregateContent 的权威结果，不会重复）
-      // 流式文本 currentStreamingRef.current 可能因 chunk 重复订阅/发送而重复累积，
-      // 因此**始终优先使用 resultText**，只有当 resultText 为空时才回退到流式文本。
-      const resultText = result?.content || ''
-      const streamedText = currentStreamingRef.current
-      let finalContent = resultText
-      if (!finalContent && streamedText) {
-        finalContent = streamedText
-      }
-      console.log(`[DIAG] finalContent: resultTextLen=${resultText.length} streamedLen=${streamedText.length} finalLen=${finalContent.length}`)
-
+      // 优先使用 result.content，否则使用流式累积的 currentStreaming
+      const finalContent = result?.content || currentStreamingRef.current
+      console.log('[RENDERER] result.content:', result?.content?.slice(0, 100), '| currentStreamingRef:', currentStreamingRef.current.slice(0, 100))
       if (finalContent) {
-        tsLog('RENDERER', 'appending assistant message, length:', finalContent.length)
-        streamingActiveRef.current = false // 锁定：此后延迟到达的 chunk 全部丢弃
-        setCurrentStreaming(''); currentStreamingRef.current = ''
+        console.log('[RENDERER] appending assistant message, length:', finalContent.length)
         appendMsg({ id: `msg-${Date.now() + 1}`, role: 'assistant', content: finalContent })
         if (!document.hasFocus()) window.dogeAPI.notify('Doge Code', `回复完成: ${finalContent.slice(0, 80)}`).catch(() => {})
         // 自动朗读（用户开启时）
@@ -1388,48 +849,15 @@ export function App(): JSX.Element {
           setTimeout(() => speakText(finalContent), 200)
         }
       } else {
-        tsLog('RENDERER', 'finalContent is empty, no message appended')
-        setCurrentStreaming(''); currentStreamingRef.current = ''
+        console.log('[RENDERER] finalContent is empty, no message appended')
       }
     }
-    setHasResponded(true)
-    setState('idle'); setIsSending(false); isSendingRef.current = false; stateRef.current = 'idle'
+    setCurrentStreaming(''); currentStreamingRef.current = ''
+    setState('idle')
   }, [input, state, persistActiveTabMessages, isOnline, showToast, autoSpeak, pendingImages])
 
-  const handleAbort = useCallback(async () => { await window.dogeAPI.abort(); setCurrentStreaming(''); setIsSending(false); isSendingRef.current = false; stateRef.current = 'idle' }, [])
-
-  // ─── 操作历史（回滚） ───
-  const loadOperations = useCallback(async () => {
-    try {
-      const ops = await window.dogeAPI.getToolOperations?.()
-      if (Array.isArray(ops)) setOperations(ops)
-    } catch { /* 忽略 */ }
-  }, [])
-
-  const handleRollback = useCallback(async (toolUseId: string): Promise<{ success: boolean; restored: string[]; error?: string }> => {
-    try {
-      const res = await window.dogeAPI.rollbackTool(toolUseId)
-      if (res.success) {
-        showToast(`已回滚 ${res.restored.length} 个文件`, 'success')
-        setOperations(prev => prev.map(op => op.toolUseId === toolUseId ? { ...op, rolledBack: true } : op))
-      } else {
-        showToast(`回滚失败: ${res.error}`, 'error')
-      }
-      return res
-    } catch (e) {
-      const errorMsg = e instanceof Error ? e.message : '未知错误'
-      showToast(`回滚失败: ${errorMsg}`, 'error')
-      return { success: false, restored: [], error: errorMsg }
-    }
-  }, [showToast])
-
-  const handleClear = useCallback(async () => {
-    await window.dogeAPI.clearHistory()
-    setMessages([])
-    setCurrentSessionId(null)
-    persistActiveTabMessages([])
-    setCurrentStreaming('')
-  }, [persistActiveTabMessages])
+  const handleAbort = useCallback(async () => { await window.dogeAPI.abort(); setCurrentStreaming('') }, [])
+  const handleClear = useCallback(async () => { await window.dogeAPI.clearHistory(); setMessages([]); persistActiveTabMessages([]); setCurrentStreaming('') }, [persistActiveTabMessages])
 
   // ─── 语音输出（浏览器 SpeechSynthesis API） ───
   const speakText = useCallback((text: string) => {
@@ -1438,19 +866,9 @@ export function App(): JSX.Element {
     const utter = new SpeechSynthesisUtterance(text)
     utter.lang = 'zh-CN'
     utter.rate = 1.0
-    // 语音列表可能是异步加载的，如果当前没有中文语音则等待
     const voices = window.speechSynthesis.getVoices()
-    let zhVoice = voices.find((v: SpeechSynthesisVoice) => v.lang.startsWith('zh'))
-    if (!zhVoice && voices.length === 0) {
-      // 语音列表尚未加载，等待后重试
-      window.speechSynthesis.onvoiceschanged = () => {
-        const vs = window.speechSynthesis.getVoices()
-        const v = vs.find((vv: SpeechSynthesisVoice) => vv.lang.startsWith('zh'))
-        if (v) utter.voice = v
-      }
-    } else if (zhVoice) {
-      utter.voice = zhVoice
-    }
+    const zhVoice = voices.find((v: SpeechSynthesisVoice) => v.lang.startsWith('zh'))
+    if (zhVoice) utter.voice = zhVoice
     utter.onstart = () => setIsSpeaking(true)
     utter.onend = () => setIsSpeaking(false)
     utter.onerror = () => setIsSpeaking(false)
@@ -1521,7 +939,7 @@ export function App(): JSX.Element {
   useEffect(() => { historyIndexRef.current = -1 }, [messages])
 
   const navigateHistory = (direction: 'up' | 'down') => {
-    const userMessages = messages.filter(m => m.role === 'user').map(m => typeof m.content === 'string' ? m.content : '').reverse()
+    const userMessages = messages.filter(m => m.role === 'user').map(m => m.content).reverse()
     if (userMessages.length === 0) return
     const current = historyIndexRef.current
     if (direction === 'up') {
@@ -1570,23 +988,12 @@ export function App(): JSX.Element {
     setPendingImages(prev => prev.filter(img => img.id !== id))
   }, [])
 
-  const toggleVoiceInput = useCallback(async () => {
+  const toggleVoiceInput = useCallback(() => {
     if (isRecording) {
       recognitionRef.current?.stop()
       setIsRecording(false)
       setInterimTranscript('')
       return
-    }
-
-    // 请求麦克风权限（Electron 需要通过 IPC 桥接确认）
-    try {
-      const permResult = await window.dogeAPI.requestMicrophonePermission()
-      if (!permResult.granted) {
-        showToast('麦克风权限被拒绝，请在系统设置中允许访问', 'error')
-        return
-      }
-    } catch {
-      // 非 Electron 环境（如浏览器直接访问），继续尝试
     }
 
     const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
@@ -1637,13 +1044,7 @@ export function App(): JSX.Element {
     }
 
     recognitionRef.current = recognition
-
-    try {
-      recognition.start()
-    } catch (e) {
-      showToast(`语音识别启动失败: ${e instanceof Error ? e.message : '未知错误'}`, 'error')
-      setIsRecording(false)
-    }
+    recognition.start()
   }, [isRecording, showToast])
 
   // 同步光标位置到 Vim hook
@@ -1691,7 +1092,7 @@ export function App(): JSX.Element {
           { text: '/review', display: '/review — 审查' },
           { text: '/diff', display: '/diff — Diff' },
           { text: '/status', display: '/status — 状态' },
-          { text: '/help', display: ' 用法: /help — 帮助' },
+          { text: '/help', display: '/help — 帮助' },
           { text: '/plan', display: '/plan — 计划模式' },
           { text: '/config', display: '/config — 配置' },
           { text: '/model', display: '/model — 模型' },
@@ -1764,21 +1165,21 @@ export function App(): JSX.Element {
   // 派生值
   const displayMessages = messages
   const msgSearchQueryLower = msgSearchQuery.toLowerCase()
-  const safeContent = (c: unknown) => typeof c === 'string' ? c : ''
   const filteredDisplayMessages = msgSearchQuery
-    ? displayMessages.map((m, i) => ({ ...m, _origIndex: i, _match: safeContent(m.content).toLowerCase().includes(msgSearchQueryLower) }))
+    ? displayMessages.map((m, i) => ({ ...m, _origIndex: i, _match: m.content.toLowerCase().includes(msgSearchQueryLower) }))
     : displayMessages.map((m, i) => ({ ...m, _origIndex: i, _match: true }))
 
   // 消息搜索过滤（必须在所有 hook 之后、if (!loaded) 之前）
   useEffect(() => {
     if (!msgSearchQuery) { setMsgSearchMatches([]); return }
     const matches: number[] = []
-    displayMessages.forEach((m, i) => { if (safeContent(m.content).toLowerCase().includes(msgSearchQueryLower)) matches.push(i) })
+    displayMessages.forEach((m, i) => { if (m.content.toLowerCase().includes(msgSearchQueryLower)) matches.push(i) })
     setMsgSearchMatches(matches)
   }, [msgSearchQuery, displayMessages, msgSearchQueryLower])
 
   if (!loaded) return <div style={{ ...styles.loadingOverlay }}>加载中...</div>
   const isProcessing = state === 'responding'
+  const workingDir = config.workingDir || '/'
 
   // 主题感知颜色辅助
   const _tp = theme.bgPanel
@@ -1787,7 +1188,7 @@ export function App(): JSX.Element {
 
   return (
     <ThemeContext.Provider value={{ name: effectiveTheme, colors: theme, styles }}>
-      <div style={styles.container} onWheel={handleWheel}>
+      <div style={styles.container}>
         {toast && (
           <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', padding: '8px 20px', borderRadius: '6px', background: toast.type === 'error' ? theme.errorBg : `${theme.accent}22`, color: toast.type === 'error' ? theme.errorText : theme.accent, fontSize: '12px', fontWeight: 600, zIndex: 1000, boxShadow: `0 4px 12px ${theme.bg}80`, transition: 'opacity 0.3s' }}>
             {toast.text}
@@ -1953,7 +1354,7 @@ export function App(): JSX.Element {
               <div style={{ padding: '16px', color: c.textFaint, fontSize: '12px' }}>开始新对话</div>
             ) : (
               (() => {
-                const turns: Array<{ userMsg: Message; assistantMsg: Message | null; isSystem?: boolean }> = []
+                const turns: Array<{ userMsg: Message; assistantMsg: Message | null }> = []
                 let i = 0
                 while (i < displayMessages.length) {
                   if (displayMessages[i].role === 'user') {
@@ -1963,49 +1364,31 @@ export function App(): JSX.Element {
                   } else if (displayMessages[i].role === 'assistant') {
                     turns.push({ userMsg: { id: '', role: 'user' as const, content: '(系统)' }, assistantMsg: displayMessages[i] })
                     i++
-                  } else if (displayMessages[i].role === 'system' || displayMessages[i].role === 'error') {
-                    turns.push({ userMsg: displayMessages[i], assistantMsg: null, isSystem: true })
-                    i++
                   } else { i++ }
                 }
                 if (turns.length === 0 && currentStreaming) {
                   const lastUser = [...displayMessages].reverse().find(m => m.role === 'user')
                   if (lastUser) turns.push({ userMsg: lastUser, assistantMsg: null })
                 }
-                return turns.map((turn, idx) => {
-                  const isSystem = turn.isSystem
-                  return (
-                    <div key={idx} style={{
-                      padding: '6px 12px',
-                      borderBottom: `1px solid ${c.borderSubtle}`,
-                      background: isSystem ? 'rgba(255,255,255,0.03)' : 'transparent',
-                    }}>
-                      {isSystem ? (
-                        <div style={{ fontSize: '11px', color: turn.userMsg.role === 'error' ? '#FF6B6B' : c.textFaint, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: '1.5', fontFamily: 'monospace' }}>
-                          {turn.userMsg.content}
-                        </div>
-                      ) : (
-                        <>
-                          <div style={{ fontSize: '12px', color: c.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: '1.4' }}>
-                            <span style={{ color: c.accent, marginRight: '4px' }}>❯</span>
-                            {turn.userMsg.content || '(空消息)'}
-                          </div>
-                          {turn.assistantMsg && (
-                            <div style={{ fontSize: '10px', color: c.textFaint, marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingLeft: '12px' }}>
-                              {turn.assistantMsg.content.slice(0, 60)}
-                            </div>
-                          )}
-                        </>
-                      )}
+                return turns.map((turn, idx) => (
+                  <div key={idx} style={{ padding: '6px 12px', borderBottom: `1px solid ${c.borderSubtle}`, cursor: 'pointer' }}>
+                    <div style={{ fontSize: '12px', color: c.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: '1.4' }}>
+                      <span style={{ color: c.accent, marginRight: '4px' }}>❯</span>
+                      {turn.userMsg.content || '(空消息)'}
                     </div>
-                  )
-                })
+                    {turn.assistantMsg && (
+                      <div style={{ fontSize: '10px', color: c.textFaint, marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingLeft: '12px' }}>
+                        {turn.assistantMsg.content.slice(0, 60)}
+                      </div>
+                    )}
+                  </div>
+                ))
               })()
             )}
           </div>
           <div style={styles.statusBar}>
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <span style={{ color: isProcessing ? c.accent : hasResponded ? '#4ECB71' : c.textMuted }}>{isProcessing ? '● 回复中' : hasResponded ? '● 就绪' : '○ 就绪'}</span>
+              <span style={{ color: isProcessing ? c.accent : c.textMuted }}>{isProcessing ? '● 回复中' : '○ 就绪'}</span>
               {modelInfo && (<span style={{ color: c.textFaint }}>{modelInfo.provider}/{modelInfo.model}</span>)}
               {tokenUsage && tokenUsage.totalTokens > 0 && (
                 <>
@@ -2030,20 +1413,8 @@ export function App(): JSX.Element {
                   {vim.mode === 'NORMAL' ? 'ⓥ NORMAL' : 'ⓘ INSERT'}
                 </span>
               )}
-              <span
-                style={{ cursor: 'pointer', fontSize: '10px', color: workflowMode.locked ? c.accent : c.textFaint }}
-                title={workflowMode.locked ? '点击解锁自动模式' : '点击锁定当前模式'}
-                onClick={() => workflowMode.setLocked(!workflowMode.locked)}
-              >
-                {workflowMode.locked ? '🔒' : '🔓'} {workflowMode.mode}
-              </span>
-              {workflowMode.reason && !workflowMode.locked && (
-                <span style={{ color: c.textFaint, fontSize: '9px', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={workflowMode.reason}>
-                  {workflowMode.reason}
-                </span>
-              )}
               <span style={{ color: isOnline ? c.accent : c.errorText, fontSize: '10px' }}>
-                {isOnline ? '🟢' : ' 离线'}
+                {isOnline ? '🟢' : '🔴 离线'}
               </span>
             </div>
             <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
@@ -2075,26 +1446,6 @@ export function App(): JSX.Element {
               {msgSearchQuery && (<span style={{ color: c.textFaint, fontSize: '10px', whiteSpace: 'nowrap' }}>{msgSearchMatches.length} 条匹配</span>)}
             </div>
           )}
-          <InlineSuggestion
-            suggestions={preAnalysis.filter(s => !dismissedSuggestions.has(s.id))}
-            onDismiss={(id) => setDismissedSuggestions(prev => new Set(prev).add(id))}
-            onDismissAll={() => setDismissedSuggestions(new Set(preAnalysis.map(s => s.id)))}
-            theme={{
-              accent: theme.accent, text: theme.text, textFaint: theme.textFaint, textMuted: theme.textMuted,
-              bgPanel: theme.bgPanel, border: theme.border, surface: theme.surface,
-              errorText: theme.errorText, successText: theme.accent, warningText: '#FFB74D',
-            }}
-          />
-          <SmartImportSuggestion
-            suggestions={smartImports.filter(s => !dismissedSmartImports.has(s.id))}
-            onDismiss={(id) => setDismissedSmartImports(prev => new Set(prev).add(id))}
-            onDismissAll={() => setDismissedSmartImports(new Set(smartImports.map(s => s.id)))}
-            theme={{
-              accent: theme.accent, text: theme.text, textFaint: theme.textFaint, textMuted: theme.textMuted,
-              bgPanel: theme.bgPanel, border: theme.border, surface: theme.surface,
-              errorText: theme.errorText, successText: theme.accent, warningText: '#FFB74D',
-            }}
-          />
           <VirtualMessageList
             messages={messages}
             currentStreaming={currentStreaming}
@@ -2127,8 +1478,9 @@ export function App(): JSX.Element {
                 onDrop={(e) => { const path = e.dataTransfer.getData('text/plain'); if (path) { e.preventDefault(); setInput(prev => prev ? prev + ' ' + path : path) } }}
                 onDragOver={(e) => e.preventDefault()}
                 placeholder={isProcessing ? '按 Enter 中断... (Shift+Enter 换行)' : '输入消息... (Enter 发送, Shift+Enter 换行, ↑↓ 历史导航)'}
-                style={{ ...styles.inputBox, height: `${inputHeight}px`, maxHeight: '200px', resize: 'none', overflowY: 'auto', lineHeight: '1.5', fontFamily: 'inherit', fontSize: `${themeSettings.fontSize}px` }}
+                style={{ ...styles.inputBox, minHeight: '44px', maxHeight: '200px', resize: 'none', overflowY: 'auto', lineHeight: '1.5', fontFamily: 'inherit', fontSize: `${themeSettings.fontSize}px` }}
                 disabled={!config.apiKey}
+                autoFocus
                 rows={1}
               />
             </form>
@@ -2172,7 +1524,7 @@ export function App(): JSX.Element {
                 flexShrink: 0
               }}
             >
-              {autoSpeak ? '🗣' : '🔕'}
+              {autoSpeak ? '🗣️' : '🔕'}
             </button>
             {interimTranscript && (
               <div style={{ fontSize: '10px', color: c.textMuted, fontStyle: 'italic', marginBottom: '4px', padding: '0 2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -2201,77 +1553,28 @@ export function App(): JSX.Element {
           </div>
 
           {terminalVisible && (
-            <TerminalPanelWrapper cwd={workingDir} onClose={() => setTerminalVisible(false)} cmdHistory={cmdHistory} />
+            <TerminalPanelWrapper cwd={workingDir} onClose={() => setTerminalVisible(false)} />
           )}
 
           {previewTabs.length > 0 && (
             <>
               <div style={{ borderTop: `1px solid ${c.border}`, borderBottom: `1px solid ${c.border}`, display: 'flex', background: c.bgAlt, overflowX: 'auto' }}>
-                {previewTabs.map((tab, tabIdx) => (
+                {previewTabs.map(tab => (
                   <div
                     key={tab.id}
-                    draggable
-                    onDragStart={(e) => { setDragTabIndex(tabIdx); setDragOverIndex(tabIdx); e.dataTransfer.effectAllowed = 'move' }}
-                    onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); if (dragOverIndex !== tabIdx) setDragOverIndex(tabIdx) }}
-                    onDrop={(e) => { e.preventDefault(); e.stopPropagation(); handleTabDrop(tabIdx) }}
-                    onDragEnd={() => { setDragTabIndex(null); setDragOverIndex(null) }}
-                    style={{
-                      padding: '4px 8px', fontSize: '10px', cursor: 'pointer', whiteSpace: 'nowrap',
-                      borderRight: `1px solid ${c.borderSubtle}`, display: 'flex', alignItems: 'center', gap: '4px',
-                      background: tab.id === activePreviewTabId ? c.surface : (dragOverIndex === tabIdx && dragTabIndex !== null ? c.accentDim : 'transparent'),
-                      color: tab.id === activePreviewTabId ? c.text : c.textMuted,
-                      opacity: dragTabIndex === tabIdx ? 0.4 : 1,
-                      borderLeft: dragOverIndex === tabIdx && dragTabIndex !== null && dragTabIndex !== tabIdx ? `2px solid ${c.accent}` : '2px solid transparent',
-                      outline: 'none',
-                    }}
+                    style={{ padding: '4px 8px', fontSize: '10px', cursor: 'pointer', whiteSpace: 'nowrap', borderRight: `1px solid ${c.borderSubtle}`, display: 'flex', alignItems: 'center', gap: '4px', background: tab.id === activePreviewTabId ? c.surface : 'transparent', color: tab.id === activePreviewTabId ? c.text : c.textMuted }}
                     onClick={() => { setActivePreviewTabId(tab.id); setIsEditing(false); setEditContent('') }}
-                    onAuxClick={(e) => { if (e.button === 1) { e.preventDefault(); closePreviewTab(tab.id) } }}
-                    onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); setTabContextMenu({ x: e.clientX, y: e.clientY, tabId: tab.id }) }}
-                    title={tab.path}
                   >
                     <span>{tab.path.split('/').pop()}</span>
-                    <span style={{ color: c.textFaint, fontSize: '9px', cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); closePreviewTab(tab.id) }}>✕</span>
+                    <span style={{ color: c.textFaint, fontSize: '9px', cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); setPreviewTabs(prev => prev.filter(t => t.id !== tab.id)); if (activePreviewTabId === tab.id) setActivePreviewTabId(previewTabs.find(t => t.id !== tab.id)?.id || null) }}>✕</span>
                   </div>
                 ))}
-                {previewTabs.length > 1 && (
-                  <div
-                    onClick={closeAllTabs}
-                    title="关闭全部标签"
-                    style={{ padding: '4px 8px', fontSize: '10px', cursor: 'pointer', whiteSpace: 'nowrap', color: c.textFaint, borderRight: `1px solid ${c.borderSubtle}` }}
-                  >
-                    ✕✕
-                  </div>
-                )}
               </div>
-              {tabContextMenu && (
-                <div style={{
-                  position: 'fixed', left: tabContextMenu.x, top: tabContextMenu.y, zIndex: 10000,
-                  background: c.surface, border: `1px solid ${c.border}`, borderRadius: '4px',
-                  boxShadow: `0 4px 16px ${c.bg}80`, padding: '3px 0', minWidth: '130px', fontSize: '10px',
-                }} onClick={e => e.stopPropagation()}>
-                  {([
-                    { label: '🗑 关闭', fn: () => closePreviewTab(tabContextMenu.tabId) },
-                    { label: '✂ 关闭其他', fn: () => closeOtherTabs(tabContextMenu.tabId) },
-                    { label: ' 关闭全部', fn: () => closeAllTabs() },
-                    { label: '📋 复制路径', fn: () => { const t = previewTabs.find(x => x.id === tabContextMenu.tabId); if (t) navigator.clipboard.writeText(t.path) } },
-                  ] as Array<{ label: string; fn: () => void }>).map(item => (
-                    <div
-                      key={item.label}
-                      onClick={() => { item.fn(); setTabContextMenu(null) }}
-                      style={{ padding: '4px 12px', cursor: 'pointer', color: c.text }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.background = c.accentDim }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.background = 'transparent' }}
-                    >
-                      {item.label}
-                    </div>
-                  ))}
-                </div>
-              )}
               {activePreviewFile ? (
                 <div style={{ borderBottom: `1px solid ${c.border}`, padding: '4px 12px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', overflow: 'hidden' }}>
-                      <span style={{ fontSize: '11px', color: c.textMuted, whiteSpace: 'nowrap' }}>{isEditing ? '✏ 编辑中' : '👁'} {activePreviewFile.path.split('/').pop()}</span>
+                      <span style={{ fontSize: '11px', color: c.textMuted, whiteSpace: 'nowrap' }}>{isEditing ? '✏️ 编辑中' : '👁️'} {activePreviewFile.path.split('/').pop()}</span>
                     </div>
                     <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
                       {isEditing ? (
@@ -2282,7 +1585,7 @@ export function App(): JSX.Element {
                       ) : (
                         <>
                           <span style={{ cursor: 'pointer', color: c.textMuted, fontSize: '11px' }} onClick={handleOpenTerminal} title="在终端中打开">💻</span>
-                          <span style={{ cursor: 'pointer', color: c.accent, fontSize: '11px' }} onClick={handleStartEdit}>✏ 编辑</span>
+                          <span style={{ cursor: 'pointer', color: c.accent, fontSize: '11px' }} onClick={handleStartEdit}>✏️ 编辑</span>
                           <span style={{ cursor: 'pointer', color: c.textMuted, fontSize: '11px' }} onClick={handleCopyContent}>📝 复制内容</span>
                           <span style={{ cursor: 'pointer', color: c.textMuted, fontSize: '11px' }} onClick={handleRevealInExplorer}>📂 所在位置</span>
                           <span style={{ cursor: 'pointer', color: c.textFaint, fontSize: '11px' }} onClick={() => { navigator.clipboard.writeText(activePreviewFile.path); showToast('路径已复制', 'success') }}>📋</span>
@@ -2307,10 +1610,10 @@ export function App(): JSX.Element {
               )}
               {activePreviewFile && (
                 <div style={{ flex: 1, overflowY: 'auto', padding: '8px', borderBottom: `1px solid ${c.border}`, maxHeight: '50%' }}>
-                  {previewLoading && <div style={{ color: c.textMuted, fontSize: `${themeSettings.fontSize}px`, textAlign: 'center' }}>加载中...</div>}
-                  {previewError && <div style={{ color: c.errorText, fontSize: `${themeSettings.fontSize}px` }}>{previewError}</div>}
+                  {previewLoading && <div style={{ color: c.textMuted, fontSize: '11px', textAlign: 'center' }}>加载中...</div>}
+                  {previewError && <div style={{ color: c.errorText, fontSize: '11px' }}>{previewError}</div>}
                   <div>
-                    <div style={{ fontSize: `${Math.max(8, themeSettings.fontSize - 3)}px`, color: c.textMuted, marginBottom: '6px', display: 'flex', justifyContent: 'space-between' }}>
+                    <div style={{ fontSize: '10px', color: c.textMuted, marginBottom: '6px', display: 'flex', justifyContent: 'space-between' }}>
                       <span>{activePreviewFile.path}</span>
                       <span>{activePreviewFile.size != null ? `${(activePreviewFile.size / 1024).toFixed(1)} KB` : ''} {activePreviewFile.content ? `${activePreviewFile.content.split('\n').length} 行` : ''}</span>
                     </div>
@@ -2318,7 +1621,7 @@ export function App(): JSX.Element {
                       <textarea
                         value={editContent}
                         onChange={(e) => setEditContent(e.target.value)}
-                        style={{ width: '100%', minHeight: '200px', background: c.bgAlt, border: `1px solid ${c.accent}`, borderRadius: '4px', padding: '8px', color: c.text, fontSize: `${themeSettings.fontSize}px`, fontFamily: 'Consolas, Monaco, monospace', lineHeight: '1.5', resize: 'vertical', outline: 'none', whiteSpace: 'pre', overflowWrap: 'normal', overflowX: 'auto' }}
+                        style={{ width: '100%', minHeight: '200px', background: c.bgAlt, border: `1px solid ${c.accent}`, borderRadius: '4px', padding: '8px', color: c.text, fontSize: '11px', fontFamily: 'Consolas, Monaco, monospace', lineHeight: '1.5', resize: 'vertical', outline: 'none', whiteSpace: 'pre', overflowWrap: 'normal', overflowX: 'auto' }}
                         onKeyDown={(e) => { if (e.key === 's' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); handleSaveEdit() } }}
                       />
                     ) : (
@@ -2327,41 +1630,21 @@ export function App(): JSX.Element {
                         const langMap: Record<string, string> = { ts: 'typescript', tsx: 'typescript', js: 'javascript', jsx: 'javascript', py: 'python', rb: 'ruby', sh: 'bash', yml: 'yaml', md: 'markdown', rs: 'rust', cpp: 'cpp', c: 'c', go: 'go', java: 'java', php: 'php', xml: 'html', json: 'json', css: 'css', scss: 'css', html: 'html', sql: 'sql', bash: 'bash', yaml: 'yaml', markdown: 'markdown', typescript: 'typescript', javascript: 'javascript', python: 'python', rust: 'rust', ruby: 'ruby' }
                         const codeExts = ['ts','tsx','js','jsx','py','css','html','json','md','bash','sh','yaml','yml','sql','rust','go','java','c','cpp','php','ruby','rs','toml','ini','env','conf','xml','svg','tex','r','swift','kt','kts','scala','hs','lua','vim','dockerfile','makefile','gitignore']
                         const detectedLang = langMap[ext] || (codeExts.includes(ext) ? ext : '')
-                        const highlighted = detectedLang ? highlightCode(activePreviewFile.content || '', detectedLang, effectiveTheme !== 'light', themeSettings.fontSize) : null
+                        const highlighted = detectedLang ? highlightCode(activePreviewFile.content || '', detectedLang) : null
                         if (highlighted !== null) {
                           const codeLines = activePreviewFile.content.split('\n')
                           const lineNums = codeLines.map((_, i) => i + 1).join('\n')
                           return (
-                            <pre style={{ display: 'flex', background: c.codeBg, border: `1px solid ${c.border}`, borderRadius: '4px', fontSize: `${themeSettings.fontSize}px`, lineHeight: '1.5', overflowX: 'auto', maxHeight: '300px', margin: 0 }}>
+                            <pre style={{ display: 'flex', background: c.codeBg, border: `1px solid ${c.border}`, borderRadius: '4px', fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', maxHeight: '300px', overflowY: 'auto', margin: 0 }}>
                               <div style={{ color: c.textFaint, textAlign: 'right', paddingRight: '8px', userSelect: 'none', minWidth: '36px', borderRight: `1px solid ${c.borderSubtle}`, flexShrink: 0 }}>
-                                {lineNums.split('\n').map((n, i) => {
-                                  const lineNo = i + 1
-                                  const normPath = activePreviewFile.path.replace(/\\/g, '/')
-                                  const isBp = (debugBreakpoints.get(normPath) || []).includes(lineNo)
-                                  const isPaused = debugPaused && debugPaused.file.replace(/\\/g, '/') === normPath && debugPaused.line === lineNo
-                                  return (
-                                    <div
-                                      key={i}
-                                      onClick={() => handleToggleBreakpoint(activePreviewFile.path, lineNo)}
-                                      title={debugSessionId ? (isBp ? '点击删除断点' : '点击设置断点') : '启动调试会话后可点击设置断点'}
-                                      style={{
-                                        height: '1.5em', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '4px',
-                                        background: isPaused ? 'rgba(245,158,11,0.25)' : isBp ? 'rgba(239,68,68,0.15)' : 'transparent',
-                                        cursor: debugSessionId ? 'pointer' : 'default',
-                                      }}
-                                    >
-                                      {isBp && <span style={{ color: '#ef4444', fontSize: '9px', flexShrink: 0 }}>●</span>}
-                                      <span style={{ color: isPaused ? '#f59e0b' : c.textFaint, fontWeight: isPaused ? 700 : 400 }}>{n}</span>
-                                    </div>
-                                  )
-                                })}
+                                {lineNums.split('\n').map((n, i) => (<div key={i} style={{ height: '1.5em' }}>{n}</div>))}
                               </div>
                               <div style={{ flex: 1, overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all', padding: '0 8px', color: c.text }} dangerouslySetInnerHTML={{ __html: highlighted }} />
                             </pre>
                           )
                         }
                         return (
-                          <pre style={{ background: c.codeBg, border: `1px solid ${c.border}`, borderRadius: '4px', padding: '8px', fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all', color: c.text, margin: 0, maxHeight: '300px' }}>
+                          <pre style={{ background: c.codeBg, border: `1px solid ${c.border}`, borderRadius: '4px', padding: '8px', fontSize: '11px', lineHeight: '1.5', overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all', color: c.text, margin: 0, maxHeight: '300px', overflowY: 'auto' }}>
                             {activePreviewFile.content || '(空文件)'}
                           </pre>
                         )
@@ -2375,7 +1658,7 @@ export function App(): JSX.Element {
 
           <div style={{ ...styles.panelHeader, borderTop: `1px solid ${c.border}` }}>🔄 Git 变更</div>
           <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0' }}>
-            <GitChanges cwd={workingDir} onSelectFile={(path) => { setSelectedGitFile(path); setCommitMessage('') }} onChangesCount={setGitChangesCount} theme={theme} />
+            <GitChanges cwd={workingDir} onSelectFile={(path) => { setSelectedGitFile(path); setCommitMessage('') }} theme={theme} />
             {selectedGitFile && (
               <div style={{ borderTop: `1px solid ${c.border}` }}>
                 <div style={{ padding: '4px 12px', fontSize: '11px', color: c.textMuted, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -2404,35 +1687,7 @@ export function App(): JSX.Element {
           </div>
           <div style={{ ...styles.panelHeader, borderTop: `1px solid ${c.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span>🔧 工具</span>
-            <div style={{ display: 'flex', gap: '6px' }}>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showDbPanel ? c.accent : c.textMuted }} onClick={() => setShowDbPanel(p => !p)}>🗄 DB</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showApiTestPanel ? c.accent : c.textMuted }} onClick={() => setShowApiTestPanel(p => !p)}>🔌 API</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showSnippetPanel ? c.accent : c.textMuted }} onClick={() => setShowSnippetPanel(p => !p)}>✂ 片段</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showLspPanel ? c.accent : c.textMuted }} onClick={() => setShowLspPanel(p => !p)}>🧠 LSP</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showReferencesPanel ? c.accent : c.textMuted }} onClick={() => { setShowReferencesPanel(p => !p) }}>📎 引用</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showCallChain ? c.accent : c.textMuted }} onClick={() => { setShowCallChain(p => !p) }}>🔗 调用链</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showFileExplorer ? c.accent : c.textMuted }} onClick={() => { setShowFileExplorer(p => !p) }}>📁 文件</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showProblemsPanel ? c.accent : c.textMuted }} onClick={() => { setShowProblemsPanel(p => !p) }}> 问题</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showErrorLens ? c.accent : c.textMuted }} onClick={() => { setShowErrorLens(p => !p) }}> 错误</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showOutputPanel ? c.accent : c.textMuted }} onClick={() => { setShowOutputPanel(p => !p) }}>📟 输出</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showFindReplace ? c.accent : c.textMuted }} onClick={() => { setShowFindReplace(p => !p) }}>🔎 替换</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showSymbolOutline ? c.accent : c.textMuted }} onClick={() => { setShowSymbolOutline(p => !p) }}>📑 大纲</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showColorPicker ? c.accent : c.textMuted }} onClick={() => { setShowColorPicker(p => !p) }}>🎨 颜色</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showProjectStructure ? c.accent : c.textMuted }} onClick={() => { setShowProjectStructure(p => !p) }}>📊 结构</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showGitMerge ? c.accent : c.textMuted }} onClick={() => { setShowGitMerge(p => !p) }}>🔀 合并</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showGitBranch ? c.accent : c.textMuted }} onClick={() => { setShowGitBranch(p => !p) }}>🌿 分支</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showTestRunner ? c.accent : c.textMuted }} onClick={() => { setShowTestRunner(p => !p) }}>🧪 测试</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showLogViewer ? c.accent : c.textMuted }} onClick={() => { setShowLogViewer(p => !p) }}>📋 日志</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showSemanticSearch ? c.accent : c.textMuted }} onClick={() => setShowSemanticSearch(p => !p)}> 搜索</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showDebuggerPanel ? c.accent : c.textMuted }} onClick={() => setShowDebuggerPanel(p => !p)}>🪲 调试器</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showCollabPanel ? c.accent : c.textMuted }} onClick={() => setShowCollabPanel(p => !p)}>🤝 协作</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showMonacoPanel ? c.accent : c.textMuted }} onClick={() => setShowMonacoPanel(p => !p)}>🖥 编辑器</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showSecurityAudit ? c.accent : c.textMuted }} onClick={() => setShowSecurityAudit(p => !p)}>🛡 安全</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showPerformanceRefactor ? c.accent : c.textMuted }} onClick={() => setShowPerformanceRefactor(p => !p)}> 重构</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showWorkflowPanel ? c.accent : c.textMuted }} onClick={() => setShowWorkflowPanel(p => !p)}>⚙ 工作流</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: showOperationHistory ? c.accent : c.textMuted }} onClick={() => { setShowOperationHistory(p => !p); if (!showOperationHistory) { loadOperations() } }}>📜 历史</span>
-              <span style={{ cursor: 'pointer', fontSize: '10px', color: c.accent }} onClick={() => { setShowMcpPanel(p => !p); if (!showMcpPanel) { refreshMcpServers(); refreshAgents() } }}>{showMcpPanel ? '收起 MCP' : 'MCP 管理'}</span>
-            </div>
+            <span style={{ cursor: 'pointer', fontSize: '10px', color: c.accent }} onClick={() => { setShowMcpPanel(p => !p); if (!showMcpPanel) { refreshMcpServers(); refreshAgents() } }}>{showMcpPanel ? '收起 MCP' : 'MCP 管理'}</span>
           </div>
           <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0' }}>
             <ToolPanel cwd={workingDir} theme={THEMES[effectiveTheme]} />
@@ -2522,7 +1777,7 @@ export function App(): JSX.Element {
           <div style={{ position: 'fixed', inset: 0, zIndex: 9998, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowTimeTracker(false)}>
             <div style={{ background: theme.surface, border: `1px solid ${theme.border}`, borderRadius: '8px', width: '70%', maxWidth: '700px', height: '70%', maxHeight: '550px', display: 'flex', flexDirection: 'column' }} onClick={e => e.stopPropagation()}>
               <div style={{ padding: '10px 16px', borderBottom: `1px solid ${theme.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontWeight: 600, color: theme.text }}>⏱ 时间追踪</span>
+                <span style={{ fontWeight: 600, color: theme.text }}>⏱️ 时间追踪</span>
                 <span style={{ cursor: 'pointer', color: theme.textFaint }} onClick={() => setShowTimeTracker(false)}>✕</span>
               </div>
               <div style={{ flex: 1, overflow: 'hidden' }}>
@@ -2562,197 +1817,6 @@ export function App(): JSX.Element {
         {showCommandPalette && <CommandPalette cwd={workingDir} onClose={() => setShowCommandPalette(false)} mode={paletteMode} setMode={setPaletteMode} commandHistory={cmdHistory.commandHistory} theme={theme} />}
         {showAgentPanel && <AgentPanel cwd={workingDir} theme={theme} onClose={() => setShowAgentPanel(false)} />}
         {showPluginPanel && <PluginPanel theme={theme} onClose={() => setShowPluginPanel(false)} />}
-        {showDbPanel && (
-          <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9997 }}>
-            <DatabaseBrowser theme={theme} onClose={() => setShowDbPanel(false)} />
-          </div>
-        )}
-        {showApiTestPanel && (
-          <div style={{ position: 'fixed', top: 60, right: 300, width: 450, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
-            <ApiTestPanel theme={theme} onClose={() => setShowApiTestPanel(false)} />
-          </div>
-        )}
-        {showSnippetPanel && activePreviewFile && (
-          <div style={{ position: 'fixed', top: 60, right: 300, width: 380, height: '65%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ padding: '8px 12px', borderBottom: `1px solid ${c.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontWeight: 600, color: c.text }}>✂ 代码片段</span>
-              <span style={{ cursor: 'pointer', color: c.textFaint, fontSize: '12px' }} onClick={() => setShowSnippetPanel(false)}>✕</span>
-            </div>
-            <SnippetPanel
-              theme={theme}
-              currentFile={activePreviewFile.path}
-              onInsert={(code: string) => {
-                if (isEditing) {
-                  setEditContent(prev => prev + '\n' + code)
-                } else {
-                  setInput(prev => prev + code)
-                }
-              }}
-            />
-          </div>
-        )}
-        {showLspPanel && activePreviewFile && (
-          <div style={{ position: 'fixed', top: 60, right: 300, width: 420, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
-            <LspPanel
-              filePath={activePreviewFile.path}
-              content={activePreviewFile.content || ''}
-              cursorLine={0}
-              cursorColumn={0}
-              theme={theme}
-              onClose={() => setShowLspPanel(false)}
-              onGoToDefinition={(filePath, line) => { handlePreviewFile(filePath); setShowLspPanel(false) }}
-            />
-          </div>
-        )}
-        {showReferencesPanel && activePreviewFile && (
-          <ReferencesPanel
-            filePath={activePreviewFile.path}
-            cursorLine={0}
-            cursorColumn={0}
-            theme={theme}
-            onClose={() => setShowReferencesPanel(false)}
-            onGoToDefinition={(filePath, line) => { handlePreviewFile(filePath) }}
-            referencesQuery={(filePath, line, character) => lsp.references(filePath, line, character)}
-          />
-        )}
-        {showCallChain && activePreviewFile && (
-          <CallChainPanel
-            result={callChain}
-            filePath={activePreviewFile.path}
-            theme={theme}
-            onClose={() => setShowCallChain(false)}
-            onGoToDefinition={(filePath, line) => { handlePreviewFile(filePath) }}
-          />
-        )}
-        {showFileExplorer && activePreviewFile && (
-          <div style={{ position: 'fixed', top: 60, right: 20, width: 340, height: '65%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
-            <FileExplorerPanel fileTree={fileTreeHook} theme={theme} onClose={() => setShowFileExplorer(false)} onOpenFile={(path) => { handlePreviewFile(path); setShowFileExplorer(false) }} />
-          </div>
-        )}
-        {showProblemsPanel && (
-          <div style={{ position: 'fixed', top: 60, right: 20, width: 420, height: '65%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
-            <ProblemsPanel
-              problems={problemsHook.problems}
-              filteredProblems={problemsHook.filteredProblems}
-              filterLevels={problemsHook.filterLevels}
-              onToggleFilterLevel={problemsHook.toggleFilterLevel}
-              filterFiles={problemsHook.filterFiles}
-              onToggleFilterFile={problemsHook.toggleFilterFile}
-              onClear={problemsHook.clear}
-              theme={theme}
-              onNavigate={(filePath) => { handlePreviewFile(filePath); setShowProblemsPanel(false) }}
-            />
-          </div>
-        )}
-        {showErrorLens && (
-          <div style={{ position: 'fixed', top: 60, right: 20, width: 480, height: '65%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
-            <ErrorLensOverlay items={errorLensHook.items} theme={theme} onNavigate={(filePath, line) => { handlePreviewFile(filePath); setShowErrorLens(false) }} />
-          </div>
-        )}
-        {showOutputPanel && (
-          <OutputPanel theme={theme} onClose={() => setShowOutputPanel(false)} />
-        )}
-        {showFindReplace && activePreviewFile && (
-          <div style={{ position: 'fixed', top: 52, right: 20, width: 520, maxWidth: 'calc(100% - 40px)', zIndex: 9999, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '6px', boxShadow: '0 8px 24px rgba(0,0,0,0.45)', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', fontSize: '12px', color: c.text }}>
-            <FindReplacePanel theme={theme} onClose={() => setShowFindReplace(false)} text={activePreviewFile.content || ''} onReplace={(nextText) => { setPreviewTabs(prev => prev.map(t => t.id === activePreviewFile.id ? { ...t, content: nextText } : t)) }} />
-          </div>
-        )}
-        {showSymbolOutline && activePreviewFile && (
-          <div style={{ position: 'fixed', top: 60, right: 20, width: 320, height: '65%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
-            <SymbolOutlinePanel filePath={activePreviewFile.path} theme={theme} onSymbolClick={(filePath, line) => { handlePreviewFile(filePath) }} />
-          </div>
-        )}
-        {showColorPicker && activePreviewFile && (
-          <ColorPickerDialog color={colorPickerHook.selectedColor || { value: '', displayValue: '', type: 'hex', startOffset: 0, endOffset: 0 }} theme={theme} onClose={() => setShowColorPicker(false)} onChange={(color) => { colorPickerHook.handlePickerChange(color) }} />
-        )}
-        {showProjectStructure && activePreviewFile && (
-          <div style={{ position: 'fixed', top: 60, right: 20, width: 480, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
-            <ProjectStructurePlanner cwd={workingDir} theme={theme} onClose={() => setShowProjectStructure(false)} />
-          </div>
-        )}
-        {showGitMerge && (
-          <div style={{ position: 'fixed', top: 60, right: 20, width: 520, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
-            <GitMergePanel cwd={workingDir} theme={theme} onClose={() => setShowGitMerge(false)} onResolved={() => { setShowGitMerge(false); showToast('合并冲突已解决', 'success') }} />
-          </div>
-        )}
-        {showGitBranch && (
-          <div style={{ position: 'fixed', top: 60, right: 20, width: 420, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
-            <GitBranchManager cwd={workingDir} theme={theme} onClose={() => setShowGitBranch(false)} onBranchChanged={() => { showToast('分支已更新', 'success') }} />
-          </div>
-        )}
-        {showTestRunner && (
-          <div style={{ position: 'fixed', top: 60, right: 20, width: 520, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
-            <TestRunnerPanel cwd={workingDir} theme={theme} onClose={() => setShowTestRunner(false)} />
-          </div>
-        )}
-        {showLogViewer && (
-          <div style={{ position: 'fixed', top: 60, right: 20, width: 520, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
-            <LogViewer cwd={workingDir} theme={theme} onClose={() => setShowLogViewer(false)} />
-          </div>
-        )}
-        {showDebuggerPanel && (
-          <div style={{ position: 'fixed', top: 60, right: 20, width: 520, height: '75%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
-            <DebuggerPanel cwd={workingDir} theme={theme} onClose={() => setShowDebuggerPanel(false)} onNavigateTo={(filePath) => { handlePreviewFile(filePath) }} onBreakpointsChange={(bps) => {
-              const map = new Map<string, number[]>()
-              for (const bp of bps) {
-                const key = bp.file.replace(/\\/g, '/')
-                const arr = map.get(key) || []
-                arr.push(bp.line)
-                map.set(key, arr)
-              }
-              setDebugBreakpoints(map)
-            }} onActiveSessionChange={(sid) => setDebugSessionId(sid)} />
-          </div>
-        )}
-        {showCollabPanel && (
-          <div style={{ position: 'fixed', top: 60, right: 20, width: 480, height: '75%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
-            <CollaborationPanel cwd={workingDir} theme={theme} onClose={() => setShowCollabPanel(false)} />
-          </div>
-        )}
-        {showMonacoPanel && (
-          <div style={{ position: 'fixed', top: 60, right: 20, width: 680, height: '75%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
-            <MonacoEditorPanel cwd={workingDir} theme={theme} themeName={effectiveTheme} onClose={() => setShowMonacoPanel(false)} />
-          </div>
-        )}
-        {showSecurityAudit && (
-          <div style={{ position: 'fixed', top: 60, right: 20, width: 520, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
-            <SecurityAuditPanel cwd={workingDir} theme={theme} scanPath={selectedFile || workingDir} onNavigateTo={(filePath, lineNumber) => { setSelectedFile(filePath); setShowSecurityAudit(false); /* 可扩展：滚动到对应行 */ }} />
-          </div>
-        )}
-        {showPerformanceRefactor && (
-          <div style={{ position: 'fixed', top: 60, right: 20, width: 520, height: '70%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
-            <PerformanceRefactorPanel cwd={workingDir} theme={theme} scanPath={selectedFile || workingDir} onNavigateTo={(filePath, lineNumber) => { setSelectedFile(filePath); setShowPerformanceRefactor(false); }} />
-          </div>
-        )}
-        {showWorkflowPanel && (
-          <WorkflowPanel
-            workflows={wf.workflows}
-            history={wf.history}
-            currentRun={wf.currentRun}
-            batchJobs={wf.batchJobs}
-            batchHistory={wf.batchHistory}
-            filePath={selectedFile || ''}
-            theme={theme}
-            onClose={() => setShowWorkflowPanel(false)}
-            onCreateWorkflow={wf.createWorkflow}
-            onCreateFromTemplate={wf.createFromTemplate}
-            onExecute={(id, ctx) => wf.executeWorkflow(id, ctx)}
-            onCancel={wf.cancelRun}
-            onExecuteBatch={(workflowId, files) => wf.executeBatch(workflowId, files)}
-            onCancelBatch={(batchId) => wf.cancelBatch(batchId)}
-            onDelete={wf.deleteWorkflow}
-          />
-        )}
-        {showOperationHistory && (
-          <div style={{ position: 'fixed', top: 60, right: 20, width: 480, height: '75%', zIndex: 9990, background: c.bgPanel, border: `1px solid ${c.border}`, borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
-            <OperationHistory
-              operations={operations}
-              onRollback={handleRollback}
-              onClear={() => setOperations([])}
-              theme={theme}
-            />
-          </div>
-        )}
         {showShortcuts && (
           <div style={{ position: 'fixed', inset: 0, zIndex: 9998, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setShowShortcuts(false)}>
             <div style={{ background: c.surface, border: `1px solid ${c.border}`, borderRadius: '8px', padding: '20px', minWidth: '360px', maxWidth: '480px', boxShadow: `0 8px 32px ${c.bg}80` }} onClick={(e) => e.stopPropagation()}>

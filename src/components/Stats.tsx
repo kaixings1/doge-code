@@ -249,7 +249,7 @@ function StatsContent(t0: {
   if (allTimeResult.type === "error") {
     let t7;
     if ($[13] !== allTimeResult.message) {
-      t7 = <Box marginTop={1}><Text color="error">加载统计数据失败：{allTimeResult.message}</Text></Box>;
+      t7 = <Box marginTop={1}><Text color="error">✗ 加载统计数据失败：{allTimeResult.message}</Text></Box>;
       $[13] = allTimeResult.message;
       $[14] = t7;
     } else {

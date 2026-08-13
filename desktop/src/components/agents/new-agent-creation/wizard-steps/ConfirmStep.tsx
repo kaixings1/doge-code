@@ -241,8 +241,8 @@ export function ConfirmStep(t0) {
     } else {
       t15 = $[59];
     }
-    t16 = validation.warnings.length > 0 && <Box marginTop={1} flexDirection="column"><Text color="warning">警告：</Text>{validation.warnings.map(_temp2)}</Box>;
-    t17 = validation.errors.length > 0 && <Box marginTop={1} flexDirection="column"><Text color="error">错误：</Text>{validation.errors.map(_temp3)}</Box>;
+    t16 = validation.warnings.length > 0 && <Box marginTop={1} flexDirection="column"><Text color="warning">⚠ 警告：</Text>{validation.warnings.map(_temp2)}</Box>;
+    t17 = validation.errors.length > 0 && <Box marginTop={1} flexDirection="column"><Text color="error">✗ 错误：</Text>{validation.errors.map(_temp3)}</Box>;
     $[4] = agent;
     $[5] = existingAgents;
     $[6] = handleKeyDown;

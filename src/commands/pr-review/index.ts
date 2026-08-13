@@ -2,12 +2,36 @@ import type { Command } from '../../commands.js'
 import type { LocalCommandCall } from '../../types/command.js'
 import { execSync } from 'child_process'
 import { readFileSync, writeFileSync, existsSync } from 'fs'
+import { join } from 'path'
+import { parseYaml } from '../../utils/yaml.js'
 
 interface PRReviewConfig {
   autoApprove: boolean
   requireTests: boolean
   maxFiles: number
   focusAreas: string[]
+}
+
+interface ComplianceRule {
+  title: string
+  objective: string
+  success_criteria: string
+  failure_criteria: string
+}
+
+interface ComplianceChecklist {
+  pr_compliances: ComplianceRule[]
+}
+
+// ============================================================================
+// Compliance checklist loader（吸收自 pr-agent config/）
+// ============================================================================
+
+function loadComplianceChecklist(): ComplianceChecklist | null {
+  const file = join(import.meta.dirname, 'compliance', 'pr-compliance-checklist.yaml')
+  if (!existsSync(file)) return null
+  const raw = readFileSync(file, 'utf-8')
+  return parseYaml(raw) as ComplianceChecklist
 }
 
 export const call: LocalCommandCall = async (args) => {
@@ -87,34 +111,21 @@ export const call: LocalCommandCall = async (args) => {
   }
 
   if (cmd === 'checklist') {
-    const checklist = [
+    const checklistData = loadComplianceChecklist()
+    if (!checklistData || !checklistData.pr_compliances) {
+      return { type: 'text', value: '❌ 无法加载合规清单配置文件' }
+    }
+    const lines: string[] = [
       '📋 PR #' + prNumber + ' 审查清单',
       '================================',
       '',
-      '代码质量：',
-      '  [ ] 无 console.log 语句',
-      '  [ ] any 类型需有合理理由',
-      '  [ ] 无 TODO/FIXME 标记',
-      '  [ ] 行长度不超过 120 字符',
-      '  [ ] 函数长度不超过 50 行',
-      '',
-      '安全：',
-      '  [ ] 不使用 eval() 或类似函数',
-      '  [ ] innerHTML 需经过过滤',
-      '  [ ] 无硬编码密钥',
-      '  [ ] 存在输入验证',
-      '',
-      '测试：',
-      '  [ ] 为新功能添加测试',
-      '  [ ] 本地测试通过',
-      '  [ ] 覆盖边界情况',
-      '',
-      '文档：',
-      '  [ ] 需要时更新 README',
-      '  [ ] 记录 API 变更',
-      '  [ ] 复杂逻辑已注释',
     ]
-    return { type: 'text', value: checklist.join('\n') }
+    for (const rule of checklistData.pr_compliances) {
+      lines.push(rule.title + '：')
+      lines.push('  [ ] ' + rule.objective)
+      lines.push('')
+    }
+    return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'comment') {

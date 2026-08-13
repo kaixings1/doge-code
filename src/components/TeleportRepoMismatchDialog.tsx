@@ -73,7 +73,7 @@ export function TeleportRepoMismatchDialog(t0) {
   const options = t2;
   let t3;
   if ($[8] !== availablePaths.length || $[9] !== errorMessage || $[10] !== handleChange || $[11] !== options || $[12] !== targetRepo || $[13] !== validating) {
-    t3 = availablePaths.length > 0 ? <><Box flexDirection="column" gap={1}>{errorMessage && <Text color="error">{errorMessage}</Text>}<Text>在 <Text bold={true}>{targetRepo}</Text> 中打开 Claude Code:</Text></Box>{validating ? <Box><Spinner /><Text> 正在验证仓库…</Text></Box> : <Select options={options} onChange={value_0 => void handleChange(value_0)} />}</> : <Box flexDirection="column" gap={1}>{errorMessage && <Text color="error">{errorMessage}</Text>}<Text dimColor={true}>从 {targetRepo} 的检出目录运行 claude --teleport</Text></Box>;
+    t3 = availablePaths.length > 0 ? <><Box flexDirection="column" gap={1}>{errorMessage && <Text color="error">✗ {errorMessage}</Text>}<Text>在 <Text bold={true}>{targetRepo}</Text> 中打开 Claude Code:</Text></Box>{validating ? <Box><Spinner /><Text> 正在验证仓库…</Text></Box> : <Select options={options} onChange={value_0 => void handleChange(value_0)} />}</> : <Box flexDirection="column" gap={1}>{errorMessage && <Text color="error">✗ {errorMessage}</Text>}<Text dimColor={true}>从 {targetRepo} 的检出目录运行 claude --teleport</Text></Box>;
     $[8] = availablePaths.length;
     $[9] = errorMessage;
     $[10] = handleChange;

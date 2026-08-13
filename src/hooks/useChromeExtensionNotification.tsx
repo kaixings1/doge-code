@@ -24,7 +24,7 @@ async function _temp() {
   if (true && !isClaudeAISubscriber()) {
     return {
       key: "chrome-requires-subscription",
-      jsx: <Text color="error">Chrome 中的 Claude 需要 claude.ai 订阅</Text>,
+      jsx: <Text color="error">✗ Chrome 中的 Claude 需要 claude.ai 订阅</Text>,
       priority: "immediate",
       timeoutMs: 5000
     };
@@ -33,7 +33,7 @@ async function _temp() {
   if (!installed && !isRunningOnHomespace()) {
     return {
       key: "chrome-extension-not-detected",
-      jsx: <Text color="warning">未检测到 Chrome 扩展 · https://claude.ai/chrome 安装</Text>,
+      jsx: <Text color="warning">⚠ 未检测到 Chrome 扩展 · https://claude.ai/chrome 安装</Text>,
       priority: "immediate",
       timeoutMs: 3000
     };

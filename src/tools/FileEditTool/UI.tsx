@@ -149,7 +149,7 @@ export function renderToolUseErrorMessage(result: ToolResultBlockParam['content'
     }
     if (errorMessage?.includes(FILE_NOT_FOUND_CWD_NOTE)) {
       return <MessageResponse>
-          <Text color="error">未找到指定的文件</Text>
+          <Text color="error">✗ 未找到指定的文件</Text>
         </MessageResponse>;
     }
     // Handle "no changes to make" error specifically
@@ -160,7 +160,7 @@ export function renderToolUseErrorMessage(result: ToolResultBlockParam['content'
     }
     // Show the actual error message for better debugging (first line only)
     return <MessageResponse>
-        <Text color="error">编辑文件时发生错误：{errorMessage?.split('\n')[0]}</Text>
+        <Text color="error">✗ 编辑文件时发生错误：{errorMessage?.split('\n')[0]}</Text>
       </MessageResponse>;
   }
   return <FallbackToolUseErrorMessage result={result} verbose={verbose} />;

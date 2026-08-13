@@ -113,7 +113,7 @@ export function AsyncAgentDetailDialog(t0) {
   const title = t8;
   let t9;
   if ($[14] !== agent.status) {
-    t9 = agent.status !== "running" && <Text color={getTaskStatusColor(agent.status)}>{getTaskStatusIcon(agent.status)}{" "}{agent.status === "completed" ? "已完成" : agent.status === "failed" ? "失败" : "已停止"}{" \xB7 "}</Text>;
+    t9 = agent.status !== "running" && <Text color={getTaskStatusColor(agent.status)}>{getTaskStatusIcon(agent.status)}{" "}{agent.status === "completed" ? "✓ 已完成" : agent.status === "failed" ? "✗ 失败" : "⏹ 已停止"}{" \xB7 "}</Text>;
     $[14] = agent.status;
     $[15] = t9;
   } else {
@@ -186,7 +186,7 @@ export function AsyncAgentDetailDialog(t0) {
   }
   let t17;
   if ($[38] !== agent.error || $[39] !== agent.status) {
-    t17 = agent.status === "failed" && agent.error && <Box flexDirection="column" marginTop={1}><Text bold={true} color="error">错误</Text><Text color="error" wrap="wrap">{agent.error}</Text></Box>;
+    t17 = agent.status === "failed" && agent.error && <Box flexDirection="column" marginTop={1}><Text bold={true} color="error">✗ 错误</Text><Text color="error" wrap="wrap">{agent.error}</Text></Box>;
     $[38] = agent.error;
     $[39] = agent.status;
     $[40] = t17;

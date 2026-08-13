@@ -15,7 +15,7 @@ export function renderToolUseMessage(input: Partial<Input>): React.ReactNode {
 export function renderToolResultMessage(content: Output): React.ReactNode {
   if (!content.success) {
     return <MessageResponse>
-        <Text color="error">失败：{content.error}</Text>
+        <Text color="error">✗ 失败：{content.error}</Text>
       </MessageResponse>;
   }
   if (content.operation === 'get') {

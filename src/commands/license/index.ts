@@ -186,7 +186,7 @@ function getDependencyLicenses(): LicenseInfo[] {
     const data = JSON.parse(result.output)
     return Object.entries(data).map(([name, info]: [string, any]) => ({
       name: name.replace(/@.*?\//, '').replace(/@\d+.*$/, ''),
-      license: info.licenses || 'Unknown',
+      license: info.licenses || '未知',
       version: info.version || '',
       repository: info.repository || '',
       publisher: info.publisher || '',

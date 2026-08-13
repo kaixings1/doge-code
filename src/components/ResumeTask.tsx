@@ -130,7 +130,7 @@ export function ResumeTask({
   if (loadErrorType) {
     return <Box flexDirection="column" padding={1}>
         <Text bold color="error">
-          加载 Claude Code 会话失败
+          ✗ 加载 Claude Code 会话失败
         </Text>
 
         {renderErrorSpecificGuidance(loadErrorType)}

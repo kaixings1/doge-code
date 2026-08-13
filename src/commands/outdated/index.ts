@@ -66,7 +66,7 @@ function saveHistory(record: OutdatedRecord) {
 
 function run(cmd: string, timeout = 60000): { ok: boolean; output: string } {
   try { return { ok: true, output: execSync(cmd, { encoding: 'utf-8', timeout, stdio: ['pipe', 'pipe', 'ignore'] }).trim() } }
-  catch (e: any) { return { ok: false, output: e.message || 'Failed' } }
+  catch (e: any) { return { ok: false, output: e.message || '执行失败' } }
 }
 
 function classifyUpdate(current: string, latest: string): 'major' | 'minor' | 'patch' {

@@ -225,7 +225,7 @@ export function It2SetupPrompt(t0) {
         value: "cancel",
         description: "暂时跳过队友生成"
       });
-      return <Box flexDirection="column" gap={1}><Text color="error">安装失败</Text>{error && <Text dimColor={true}>{error}</Text>}<Text dimColor={true}>你可以尝试手动安装：{" "}{packageManager === "uvx" ? "uv tool install it2" : packageManager === "pipx" ? "pipx install it2" : "pip install --user it2"}</Text><Box marginTop={1}><Select options={options_0} onChange={value_0 => {
+      return <Box flexDirection="column" gap={1}><Text color="error">✗ 安装失败</Text>{error && <Text dimColor={true}>{error}</Text>}<Text dimColor={true}>你可以尝试手动安装：{" "}{packageManager === "uvx" ? "uv tool install it2" : packageManager === "pipx" ? "pipx install it2" : "pip install --user it2"}</Text><Box marginTop={1}><Select options={options_0} onChange={value_0 => {
             bb89: switch (value_0) {
               case "retry":
                 {
@@ -272,7 +272,7 @@ export function It2SetupPrompt(t0) {
         value: "cancel",
         description: "暂时跳过队友生成"
       });
-      return <Box flexDirection="column" gap={1}><Text color="error">验证失败</Text>{error && <Text dimColor={true}>{error}</Text>}<Text>请确保：</Text><Box flexDirection="column" paddingLeft={2}><Text>· 已在 iTerm2 偏好设置中启用 Python API</Text><Text>· 启用后可能需要重启 iTerm2</Text></Box><Box marginTop={1}><Select options={options_1} onChange={value_1 => {
+      return <Box flexDirection="column" gap={1}><Text color="error">✗ 验证失败</Text>{error && <Text dimColor={true}>{error}</Text>}<Text>请确保：</Text><Box flexDirection="column" paddingLeft={2}><Text>· 已在 iTerm2 偏好设置中启用 Python API</Text><Text>· 启用后可能需要重启 iTerm2</Text></Box><Box marginTop={1}><Select options={options_1} onChange={value_1 => {
             bb115: switch (value_1) {
               case "retry":
                 {

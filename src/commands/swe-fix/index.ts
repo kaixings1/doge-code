@@ -38,6 +38,21 @@ import {
 } from '../../engine/testDrivenFix/localize.js'
 import { formatRepoStructure } from '../../engine/testDrivenFix/localize.js'
 import { readProjectFiles } from '../../engine/testDrivenFix/repoStructure.js'
+import { parseYaml } from '../../utils/yaml.js'
+import { readFileSync, existsSync } from 'fs'
+import { join } from 'path'
+import type { StrategyTemplate } from '../../engine/testDrivenFix/types.js'
+
+// ============================================================================
+// Strategy template loader（吸收自 SWE-agent config/）
+// ============================================================================
+
+function loadStrategy(name: string): StrategyTemplate | null {
+  const file = join(import.meta.dirname, 'agent-strategies', name + '.yaml')
+  if (!existsSync(file)) return null
+  const raw = readFileSync(file, 'utf-8')
+  return parseYaml(raw) as StrategyTemplate
+}
 
 // ============================================================================
 // Help
@@ -78,6 +93,7 @@ function renderHelp(): string {
     '| `--apply` | 应用 edit_file 补丁 |',
     '| `--verify` | 运行测试验证 |',
     '| `--max-iter <n>` | 最大迭代轮数（默认 3） |',
+    '| `--strategy <name>` | 使用 SWE-agent 策略模板（default / default-backticks / bash-only / coding-challenge） |',
   ].join('\n')
 }
 
@@ -95,6 +111,16 @@ export const call: LocalCommandCall = async (args): Promise<LocalCommandResult> 
 
   const testCommand = detectTestCommand(projectRoot)
   const testCmdLabel = testCommand || '未检测到测试框架'
+
+  // --strategy：加载 SWE-agent 策略模板
+  let strategy: StrategyTemplate | null = null
+  const strategyMatch = raw.match(/--strategy\s+(\S+)/)
+  if (strategyMatch) {
+    strategy = loadStrategy(strategyMatch[1])
+    if (!strategy) {
+      return { type: 'text', value: '❌ 未找到策略模板: ' + strategyMatch[1] + '\n可用: default, default-backticks, bash-only, coding-challenge' }
+    }
+  }
 
   // --structure：展示仓库结构
   if (raw === '--structure') {
@@ -200,7 +226,12 @@ export const call: LocalCommandCall = async (args): Promise<LocalCommandResult> 
       return { type: 'text', value: '用法: /swe-fix --localize "<issue 描述>"❌ 错误:  或先运行 /swe-fix 获取失败信息' }
     }
     const structure = buildRepoStructure(projectRoot)
-    return { type: 'text', value: buildFileLocalizePrompt(problem, structure) }
+    return {
+      type: 'text',
+      value: strategy
+        ? buildFileLocalizePrompt(problem, structure, 200, strategy)
+        : buildFileLocalizePrompt(problem, structure, 200),
+    }
   }
 
   // --repair：修复 prompt（含带行号上下文）
@@ -215,11 +246,15 @@ export const call: LocalCommandCall = async (args): Promise<LocalCommandResult> 
     return {
       type: 'text',
       value: [
-        buildCodeLocalizePrompt(problem, fileContents),
+        strategy
+          ? buildCodeLocalizePrompt(problem, fileContents, 300, strategy)
+          : buildCodeLocalizePrompt(problem, fileContents, 300),
         '',
         '---',
         '',
-        buildRepairPrompt(problem, fileContents, new Map(), true),
+        strategy
+          ? buildRepairPrompt(problem, fileContents, new Map(), true, strategy)
+          : buildRepairPrompt(problem, fileContents, new Map(), true),
       ].join('\n'),
     }
   }
@@ -229,7 +264,9 @@ export const call: LocalCommandCall = async (args): Promise<LocalCommandResult> 
     ? raw.slice(1, -1)
     : raw
 
-  const result = await runFixLoop(problem, { projectRoot })
+  const fixLoopConfig: Record<string, unknown> = { projectRoot }
+  if (strategy) fixLoopConfig.strategyTemplate = strategy
+  const result = await runFixLoop(problem, fixLoopConfig)
   const stages = result.stages.map((s) => `## ${s.name}\n${s.output.slice(0, 2000)}`).join('\n\n')
   const verify = result.verify
 

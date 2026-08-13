@@ -320,7 +320,7 @@ export function MessageSelector({
         </Text>
 
         {error && <>
-            <Text color="error">错误：{error}</Text>
+            <Text color="error">✗ 错误：{error}</Text>
           </>}
         {!hasMessagesToSelect && <>
             <Text>暂无可回退的内容。</Text>

@@ -119,7 +119,7 @@ export function ThinkingToggle(t0) {
   }
   let t9;
   if ($[15] !== confirmationPending || $[16] !== currentValue || $[17] !== handleSelectChange || $[18] !== onCancel) {
-    t9 = <Box flexDirection="column">{t8}{confirmationPending !== null ? <Box flexDirection="column" marginBottom={1} gap={1}><Text color="warning">在对话中途更改思考模式会增加延迟并可能降低质量。为获得最佳效果，请在会话开始时设置。</Text><Text color="warning">是否继续？</Text></Box> : <Box flexDirection="column" marginBottom={1}><Select defaultValue={currentValue ? "true" : "false"} defaultFocusValue={currentValue ? "true" : "false"} options={options} onChange={handleSelectChange} onCancel={onCancel ?? _temp} visibleOptionCount={2} /></Box>}</Box>;
+    t9 = <Box flexDirection="column">{t8}{confirmationPending !== null ? <Box flexDirection="column" marginBottom={1} gap={1}><Text color="warning">⚠ 在对话中途更改思考模式会增加延迟并可能降低质量。为获得最佳效果，请在会话开始时设置。</Text><Text color="warning">是否继续？</Text></Box> : <Box flexDirection="column" marginBottom={1}><Select defaultValue={currentValue ? "true" : "false"} defaultFocusValue={currentValue ? "true" : "false"} options={options} onChange={handleSelectChange} onCancel={onCancel ?? _temp} visibleOptionCount={2} /></Box>}</Box>;
     $[15] = confirmationPending;
     $[16] = currentValue;
     $[17] = handleSelectChange;

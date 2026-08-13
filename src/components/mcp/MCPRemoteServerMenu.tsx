@@ -574,7 +574,7 @@ export function MCPRemoteServerMenu({
         </Box>
 
         {error && <Box marginTop={1}>
-            <Text color="error">错误：{error}</Text>
+            <Text color="error">✗ 错误：{error}</Text>
           </Box>}
 
         {menuOptions.length > 0 && <Box marginTop={1}>

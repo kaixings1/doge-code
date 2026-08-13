@@ -16,7 +16,7 @@ interface DogeAPIValue {
   executeTool: (call: { name: string; input: any }) => Promise<{ toolUseId: string; success: boolean; output?: any; error?: string }>
   getCommands: () => Promise<Array<{ name: string; description: string; category: string }>>
   executeCommand: (name: string, args: string[]) => Promise<{ success: boolean; output?: string; error?: string }>
-  sendMessage: (content: string, preAnalysis?: Array<{ type: string; message: string; line?: number }>) => Promise<{ success: boolean; content?: string; toolOutput?: string; error?: string }>
+  sendMessage: (content: string) => Promise<{ success: boolean; content?: string; error?: string }>
   getState: () => Promise<string>
   abort: () => Promise<boolean>
   getHistory: () => Promise<{ messages: Array<{ role: string; content: string }> }>
@@ -27,15 +27,6 @@ interface DogeAPIValue {
   gitUnstage: (cwd: string, filePath: string) => Promise<{ success: boolean; error?: string }>
   gitDiscard: (cwd: string, filePath: string) => Promise<{ success: boolean; error?: string }>
   gitCommit: (cwd: string, message: string) => Promise<{ success: boolean; error?: string }>
-  gitMergeStatus: (cwd: string) => Promise<{ inMerge: boolean; conflicts: Array<{ file: string; base: string; ours: string; theirs: string }>; message: string; error?: string }>
-  gitMergeResolve: (cwd: string, filePath: string, resolvedContent: string, strategy: 'ours' | 'theirs' | 'manual') => Promise<{ success: boolean; error?: string }>
-  gitAbortMerge: (cwd: string) => Promise<{ success: boolean; error?: string }>
-  gitBranchList: (cwd: string) => Promise<{ local: Array<{ name: string; commit: string; date: string; isCurrent: boolean; isRemote: boolean }>; remote: Array<{ name: string; commit: string; date: string; isCurrent: boolean; isRemote: boolean }>; current: string; error?: string }>
-  gitBranchCreate: (cwd: string, branchName: string, checkout: boolean) => Promise<{ success: boolean; error?: string }>
-  gitBranchSwitch: (cwd: string, branchName: string) => Promise<{ success: boolean; error?: string }>
-  gitBranchDelete: (cwd: string, branchName: string, force: boolean) => Promise<{ success: boolean; error?: string }>
-  gitBranchMerge: (cwd: string, sourceBranch: string, targetBranch: string) => Promise<{ success: boolean; output?: string; error?: string }>
-  gitLogGraph: (cwd: string, maxCount?: number) => Promise<{ success: boolean; graph?: string; error?: string }>
   getTheme: () => Promise<{ theme: string; fontSize: number; fontFamily: string; sidebarWidth: number; rightPanelWidth: number }>
   setTheme: (settings: Record<string, unknown>) => Promise<{ success: boolean }>
   getModelInfo: () => Promise<{ provider: string; model: string; baseUrl: string; hasApiKey: boolean }>
@@ -90,165 +81,12 @@ interface DogeAPIValue {
   pluginEnable: (pluginName: string, enabled: boolean) => Promise<{ success: boolean; error?: string }>
   pluginInstall: (sourceDir: string, pluginName: string) => Promise<{ success: boolean; error?: string }>
   pluginUninstall: (pluginName: string) => Promise<{ success: boolean; error?: string }>
-  pluginGetCommand: (pluginName: string, commandName: string) => Promise<{ content: string | null; error?: string; warnings?: string[] }>
-  marketplaceList: () => Promise<Array<{ name: string; source: string; plugins: Array<{ name: string; description?: string; version?: string; source: string; repo?: string; installed: boolean }> }>>
-  marketplaceInstall: (pluginName: string, repo: string) => Promise<{ success: boolean; error?: string }>
+  pluginGetCommand: (pluginName: string, commandName: string) => Promise<{ content: string | null }>
   aiComplete: (input: { filePath: string; code: string; line: number; column: number }) => Promise<{ success: boolean; completions: Array<{ insertText: string; endLine?: number; endColumn?: number; documentation?: string }> }>
   formatCode: (params: { code: string; language: string; tool: string; cwd: string; range?: { start: number; end: number } }) => Promise<{ success: boolean; output?: string; error?: string }>
   apiTestSend: (request: { url: string; method: string; headers: Record<string, string>; body?: string; bodyType: string }) => Promise<{ success: boolean; status: number; statusText: string; responseHeaders: Record<string, string>; body: string; error?: string }>
   getGitStats: (cwd: string) => Promise<{ commits: Array<{ hash: string; date: string; author: string; message: string; additions: number; deletions: number }> }>
-  gitShow: (cwd: string, sha: string) => Promise<{ success: boolean; sha: string; author: string; date: string; message: string; stats: Array<{ file: string; additions: number; deletions: number }>; error?: string }>
-  gitDiff: (cwd: string, shaA: string, shaB: string, filePath?: string) => Promise<{ success: boolean; stats: Array<{ file: string; additions: number; deletions: number; changeType: string }>; error?: string }>
-  lspStart: (languageId: string) => Promise<{ success: boolean; error?: string; serverName?: string }>
-  lspStop: (languageId: string) => Promise<{ success: boolean; error?: string }>
-  lspStopAll: () => Promise<{ success: boolean; error?: string }>
-  lspCompletion: (filePath: string, line: number, character: number) => Promise<{ success: boolean; items?: Array<{ label: string; insertText: string; kind?: number; detail?: string; documentation?: string }>; error?: string }>
-  lspDefinition: (filePath: string, line: number, character: number) => Promise<{ success: boolean; locations?: Array<{ uri: string; range: { start: { line: number; character: number }; end: { line: number; character: number } } }>; error?: string }>
-  lspHover: (filePath: string, line: number, character: number) => Promise<{ success: boolean; result?: { contents?: unknown }; error?: string }>
-  lspReferences: (filePath: string, line: number, character: number) => Promise<{ success: boolean; locations?: Array<{ uri: string; range: { start: { line: number; character: number }; end: { line: number; character: number } } }>; error?: string }>
-  lspDocumentSymbol: (filePath: string) => Promise<{ success: boolean; symbols?: Array<{ name: string; kind: number; range: { start: { line: number; character: number }; end: { line: number; character: number } } }>; error?: string }>
-  codeReview: (params: { filePath: string; cwd: string }) => Promise<{ success: boolean; result?: { score: { overall: number; security: number; performance: number; maintainability: number; testability: number }; findings: Array<{ id: string; category: string; severity: string; title: string; description: string; filePath: string; lineNumber: number; column?: number; suggestedFix?: string; originalCode?: string }>; duration?: number }; error?: string }>
-  applyFix: (params: { filePath: string; lineNumber: number; column: number; fixedCode: string; originalCode?: string }) => Promise<{ success: boolean; error?: string }>
-  getOutline: (params: { filePath: string; cwd: string }) => Promise<{ success: boolean; symbols?: Array<{ id: string; name: string; kind: string; range: { startLine: number; startColumn: number; endLine: number; endColumn: number }; children?: Array<unknown> }>; error?: string }>
-  semanticSearch: (params: { query: string; cwd: string; maxResults?: number; fileTypes?: string[]; directories?: string[] }) => Promise<{ success: boolean; results?: Array<{ filePath: string; lineNumber: number; column: number; content: string; score: number; context?: string }>; error?: string }>
-  indexSymbolSearch: (params: { query: string; maxResults?: number }) => Promise<{ success: boolean; results?: Array<{ filePath: string; name: string; kind: string; line: number; score: number }>; error?: string }>
-  debugStart: (params: { cwd: string; script: string; args?: string[] }) => Promise<{ success: boolean; sessionId?: string; pid?: number; error?: string }>
-  debugStop: (sessionId: string) => Promise<{ success: boolean; error?: string }>
-  debugListSessions: () => Promise<{ success: boolean; sessions?: Array<{ id: string; pid: number; isRunning: boolean; isPaused: boolean; breakpointCount: number }> }>
-  debugSetBreakpoint: (params: { sessionId: string; file: string; line: number; condition?: string }) => Promise<{ success: boolean; message?: string; error?: string }>
-  debugRemoveBreakpoint: (params: { sessionId: string; file: string; line: number }) => Promise<{ success: boolean; error?: string }>
-  debugListBreakpoints: (sessionId: string) => Promise<{ success: boolean; breakpoints?: Array<{ file: string; line: number }> }>
-  debugContinue: (sessionId: string) => Promise<{ success: boolean; error?: string }>
-  debugPause: (sessionId: string) => Promise<{ success: boolean; error?: string }>
-  debugStepOver: (sessionId: string) => Promise<{ success: boolean; error?: string }>
-  debugStepInto: (sessionId: string) => Promise<{ success: boolean; error?: string }>
-  debugStepOut: (sessionId: string) => Promise<{ success: boolean; error?: string }>
-  debugGetCallstack: (sessionId: string) => Promise<{ success: boolean; callStack?: Array<{ name: string; file: string; line: number; column: number }> }>
-  debugGetVariables: (sessionId: string) => Promise<{ success: boolean; variables?: Record<string, string>; variableObjects?: Record<string, { objectId: string; type: string; description?: string }> }>
-  debugEvaluate: (params: { sessionId: string; expression: string }) => Promise<{ success: boolean; result?: string; type?: string; error?: string }>
-  debugGetObjectProps: (params: { sessionId: string; objectId: string }) => Promise<{ success: boolean; properties?: Array<{ name: string; type: string; value?: string; objectId?: string; isExpandable: boolean }>; error?: string }>
-  debugSchemeExport: (params: { name: string; breakpoints: Array<{ file: string; line: number; condition?: string }> }) => Promise<{ success: boolean; path?: string; error?: string }>
-  debugSchemeList: () => Promise<{ success: boolean; schemes?: Array<{ file: string; name: string; breakpointCount: number; exportedAt: string }>; error?: string }>
-  debugSchemeImport: (fileName: string) => Promise<{ success: boolean; name?: string; breakpoints?: Array<{ file: string; line: number; condition?: string }>; error?: string }>
-  debugSnapshotSave: (params: { sessionId: string; name?: string; watchExpressions?: string[] }) => Promise<{ success: boolean; path?: string; error?: string }>
-  debugSnapshotList: () => Promise<{ success: boolean; snapshots?: Array<{ file: string; name: string; script: string; breakpointCount: number; watchCount: number; savedAt: string }>; error?: string }>
-  debugSnapshotRestore: (fileName: string) => Promise<{ success: boolean; name?: string; script?: string; args?: string[]; breakpoints?: Array<{ file: string; line: number; condition?: string }>; watchExpressions?: string[]; error?: string }>
-  lspWorkspaceSymbol: (query: string) => Promise<{ success: boolean; symbols?: Array<{ name: string; kind: number; location: { uri: string; range: { start: { line: number; character: number }; end: { line: number; character: number } } } }>; error?: string }>
-  lspDocumentHighlight: (filePath: string, line: number, character: number) => Promise<{ success: boolean; highlights?: Array<{ range: { start: { line: number; character: number }; end: { line: number; character: number } }; kind: number }>; error?: string }>
-  lspConnectedServers: () => Promise<{ success: boolean; servers?: string[]; error?: string }>
-  onLspDiagnostic: (callback: (uri: string, diagnostics: Array<{ range: { start: { line: number; character: number }; end: { line: number; character: number } }; severity: number; message: string; source?: string; code?: string | number }>) => void) => () => void
-
-  // ── 安全审计 ──
-  securityAudit: (params: { scanPath: string; rules?: string[]; scanType?: 'file' | 'directory' }) => Promise<{ success: boolean; issues?: Array<{ id: string; file: string; line: number; rule: string; severity: string; message: string; code: string }>; stats?: { total: number; high: number; medium: number; low: number }; error?: string }>
-  securityRules: () => Promise<{ success: boolean; rules?: Array<{ id: string; severity: string; message: string }>; error?: string }>
-
-  // ── 协作功能 ──
-  collabCreateRoom: (params: { name: string; cwd: string }) => Promise<{ success: boolean; roomId?: string; hostId?: string; error?: string }>
-  collabJoinRoom: (roomId: string) => Promise<{ success: boolean; roomId?: string; userId?: string; participants?: Array<{ id: string; name: string; color: string }>; comments?: Array<unknown>; error?: string }>
-  collabLeaveRoom: (params: { roomId: string; userId: string }) => Promise<{ success: boolean; error?: string }>
-  collabListRooms: () => Promise<{ success: boolean; rooms?: Array<{ id: string; name: string; hostId: string; participantCount: number; commentCount: number }> }>
-  collabGetParticipants: (roomId: string) => Promise<{ success: boolean; participants?: Array<{ id: string; name: string; color: string; cursorLine?: number; cursorCol?: number; file?: string }> }>
-  collabUpdateCursor: (params: { roomId: string; userId: string; file: string; line: number; col: number }) => Promise<{ success: boolean }>
-  collabAddComment: (params: { roomId: string; file: string; line: number; author: string; text: string }) => Promise<{ success: boolean; comment?: { id: string; file: string; line: number; author: string; text: string; resolved: boolean; createdAt: number }; error?: string }>
-  collabResolveComment: (params: { roomId: string; commentId: string }) => Promise<{ success: boolean }>
-  collabGetComments: (params: { roomId: string; file?: string }) => Promise<{ success: boolean; comments?: Array<{ id: string; file: string; line: number; author: string; text: string; resolved: boolean; createdAt: number }> }>
-  collabApplyEdit: (params: { roomId: string; userId: string; file: string; operation: { type: 'insert' | 'delete'; position: number; text?: string; length?: number } }) => Promise<{ success: boolean; version?: number; operationId?: string; error?: string }>
-
-  // ── CRDT 文档同步 ──
-  collabSyncDocument: (params: { roomId: string; file?: string }) => Promise<{ success: boolean; snapshot?: { content: string; version: number; lamportClock: number }; operations?: Array<unknown>; error?: string }>
-  collabJoinSync: (params: { roomId: string; userId: string }) => Promise<{ success: boolean; snapshot?: { content: string; version: number; lamportClock: number }; operations?: Array<unknown>; document?: string; error?: string }>
-  collabApplyRemoteOp: (params: { roomId: string; userId: string; operation: { type: 'insert' | 'delete'; position: number; text?: string; length?: number; lamport: number; parentVersion: number } }) => Promise<{ success: boolean; version?: number; snapshot?: { content: string; version: number; lamportClock: number }; error?: string }>
-  onCollabRemoteEdit: (callback: (edit: { roomId: string; userId: string; operation: { type: 'insert' | 'delete'; position: number; text?: string; length?: number }; version: number; file: string }) => void) => () => void
-
-  // ── 批量处理 ──
-  batchStart: (params: { workflowId: string; workflowName: string; files: Array<{ filePath: string; fileName?: string }>; config?: Partial<{ concurrency: number; timeout: number; retryCount: number; dryRun: boolean }> }) => Promise<{ success: boolean; batchId?: string; totalFiles?: number; error?: string }>
-  batchCancel: (batchId: string) => Promise<{ success: boolean; error?: string }>
-  batchStatus: (batchId: string) => Promise<{ success: boolean; job?: Record<string, unknown>; error?: string }>
-  batchList: () => Promise<{ success: boolean; jobs?: Array<Record<string, unknown>>; error?: string }>
-  batchScanFiles: (params: { dirPath: string; extensions?: string[]; maxFiles?: number }) => Promise<{ success: boolean; files?: string[]; error?: string }>
-  batchCleanup: (batchId: string) => Promise<{ success: boolean; error?: string }>
-  onBatchProgress: (callback: (progress: { batchId: string; fileId: string; fileName: string; status: string; progress: number; totalFiles: number; completedFiles: number; failedFiles: number; error?: string; output?: string }) => void) => () => void
-  onBatchComplete: (callback: (event: { batchId: string; name: string; status: string; completedCount: number; failedCount: number; totalFiles: number; durationMs: number }) => void) => () => void
-
-  // ── 插件安全 ──
-  pluginSecurityAudit: (pluginName: string) => Promise<{ valid: boolean; errors: string[]; warnings: string[] }>
-
-  // ── 插件运行时（JS 沙箱执行 + hooks + 热加载） ──
-  pluginRuntimeLoadAll: () => Promise<{ success: boolean; count?: number; plugins?: Array<Record<string, unknown>>; error?: string }>
-  pluginRuntimeLoad: (pluginDir: string) => Promise<{ success: boolean; plugin?: Record<string, unknown>; error?: string }>
-  pluginRuntimeList: () => Promise<{ success: boolean; plugins?: Array<Record<string, unknown>>; commands?: string[] }>
-  pluginRuntimeInvoke: (fullName: string, ...args: unknown[]) => Promise<{ success: boolean; result?: unknown; error?: string }>
-  pluginRuntimeReload: (pluginName: string) => Promise<{ success: boolean; plugin?: Record<string, unknown>; error?: string }>
-  pluginRuntimeUnload: (pluginName: string) => Promise<{ success: boolean; error?: string }>
-  pluginRuntimeWatch: (pluginName: string) => Promise<{ success: boolean; error?: string }>
-  pluginRuntimeUnwatch: (pluginName: string) => Promise<{ success: boolean; error?: string }>
-  pluginRuntimeEmit: (event: string, data: unknown) => Promise<{ success: boolean }>
-  pluginScaffold: (pluginName: string) => Promise<{ success: boolean; path?: string; entry?: string; commands?: string[]; error?: string }>
-  pluginExport: (pluginName: string) => Promise<{ success: boolean; path?: string; fileCount?: number; size?: number; error?: string }>
-  pluginListExports: () => Promise<{ success: boolean; exports?: Array<{ name: string; path: string; size: number; modifiedAt: number }>; error?: string }>
-  pluginImport: (exportName: string) => Promise<{ success: boolean; pluginName?: string; path?: string; error?: string }>
-
-  // ── 本地代码索引 ──
-  indexStatus: () => Promise<{ success: boolean; stats?: { fileCount: number; chunkCount: number; indexSize: number; lastIndexedAt: number; totalTokens: number }; error?: string }>
-  indexRebuild: (force?: boolean) => Promise<{ success: boolean; stats?: { fileCount: number; chunkCount: number; indexSize: number; lastIndexedAt: number; totalTokens: number }; error?: string }>
-
-  // ── 多 Agent 编排 ──
-  agentListRoles: () => Promise<{ success: boolean; roles?: Array<{ id: string; name: string; description?: string; systemPrompt: string; model?: string }>; error?: string }>
-  agentOrchestrate: (params: { task: string; roles: Array<{ id: string; name: string; description?: string; systemPrompt: string; model?: string }>; defaultModel: string; maxTokens?: number; timeoutMs?: number; mode?: 'parallel' | 'discuss'; maxRounds?: number }) => Promise<{ success: boolean; result?: Record<string, unknown>; error?: string }>
-  agentCancel: (orchestrationId: string) => Promise<{ success: boolean; error?: string }>
-  onAgentProgress: (callback: (progress: { orchestrationId: string; completedCount: number; totalCount: number; runningRoles: string[]; status: string }) => void) => () => void
-
-  // ── Agent 编排工作流 ──
-  agentWorkflowSave: (wf: { id?: string; name: string; description?: string; task: string; mode: 'parallel' | 'discuss'; maxRounds?: number; roleIds: string[]; createdAt?: number }) => Promise<{ success: boolean; workflow?: Record<string, unknown>; error?: string }>
-  agentWorkflowList: () => Promise<{ success: boolean; workflows?: Array<Record<string, unknown>>; error?: string }>
-  agentWorkflowDelete: (workflowId: string) => Promise<{ success: boolean; error?: string }>
-  agentExportReport: (params: { task: string; mode: string; roundsUsed?: number; outputs: Array<{ name: string; roleId: string; content: string; status: string; durationMs: number; error?: string }> }) => Promise<{ success: boolean; path?: string; error?: string }>
-
-  // ── 调试器暂停事件 ──
-  onDebugPaused: (callback: (info: { sessionId: string; pid: number; reason: string; file: string; line: number; functionName: string; stackDepth: number }) => void) => () => void
-
-  // ── 远程协助 ──
-  remoteOffer: (params: { sessionId: string; callerId: string; calleeId: string; offer: RTCSessionDescriptionInit }) => Promise<{ success: boolean; error?: string }>
-  remoteAnswer: (params: { sessionId: string; answer: RTCSessionDescriptionInit }) => Promise<{ success: boolean; error?: string }>
-  remoteIceCandidate: (params: { sessionId: string; candidate: RTCIceCandidateInit }) => Promise<{ success: boolean }>
-  remoteGetSignal: (sessionId: string) => Promise<{ success: boolean; signal?: { offer?: RTCSessionDescriptionInit; answer?: RTCSessionDescriptionInit; iceCandidates?: RTCIceCandidateInit[] } | null }>
-  remoteClose: (sessionId: string) => Promise<{ success: boolean }>
-
-  // ── 远程信令服务器管理 ──
-  remoteSignalingStatus: () => Promise<{ success: boolean; running: boolean; port: number; peers: number; sessions: number }>
-  remoteSignalingStart: () => Promise<{ success: boolean; port?: number; message?: string; error?: string }>
-  remoteSignalingStop: () => Promise<{ success: boolean; error?: string }>
-  remoteSignalingRestart: () => Promise<{ success: boolean; port?: number; error?: string }>
-  onRemoteSignal: (callback: (msg: { type: string; timestamp: number; sessionId: string; payload: Record<string, unknown> }) => void) => () => void
-
-  // ── 测试运行器 ──
-  testRun: (cwd: string, testCommand: string) => Promise<{ success: boolean; output?: string; error?: string; exitCode?: number }>
-  testList: (cwd: string) => Promise<{ framework: string; tests: string[] }>
-  detectFramework: (cwd: string) => Promise<{ success: boolean; framework?: string; configFile?: string; testCommand?: string; coverageCommand?: string; error?: string }>
-
-  // ── 日志查看器 ──
-  getLogs: (params?: { level?: string; limit?: number; offset?: number }) => Promise<{ logs: Array<{ id: string; timestamp: string; level: string; source: string; message: string }>; total: number }>
-  logStreamStart: (options?: { level?: string }) => Promise<{ success: boolean }>
-  logStreamStop: () => Promise<{ success: boolean }>
-  onLogEntry: (callback: (entry: { level: string; timestamp: string; message: string }) => void) => () => void
-
-  // ── 诊断数据 ──
-  getAllDiagnostics: () => Promise<{ success: boolean; diagnostics: Array<{ uri: string; diagnostics: Array<{ range: { start: { line: number; character: number }; end: { line: number; character: number } }; severity: number; message: string; source?: string; code?: string | number }> }> }>
-
-  // ── 语音权限 ──
-  requestMicrophonePermission: () => Promise<{ granted: boolean }>
-  rollbackTool: (toolUseId: string) => Promise<{ success: boolean; restored: string[]; error?: string }>
-  getToolOperations: () => Promise<Array<{ toolUseId: string; toolName: string; timestamp: number; files: string[]; hasSnapshot: boolean; rolledBack: boolean }>>
 }
-
-// 单例回调引用 + handler 引用：cleanup 时移除 IPC 监听器并重置，
-// 保证 StrictMode/HMR 重挂载时恰好只存在一个活跃监听器（不会累积导致 chunk 重复触发）
-let chunkCallbackRef: ((chunk: { text: string }) => void) | null = null
-let chunkHandler: ((_event: Electron.IpcRendererEvent, chunk: { text: string }) => void) | null = null
-let stateCallbackRef: ((state: string) => void) | null = null
-let stateHandler: ((_event: Electron.IpcRendererEvent, state: string) => void) | null = null
-let autoSendCallbackRef: ((text: string) => void) | null = null
-let autoSendHandler: ((_event: Electron.IpcRendererEvent, text: string) => void) | null = null
 
 const dogeAPI: DogeAPIValue = {
   readConfig: (filePath: string) => ipcRenderer.invoke('read-config', filePath),
@@ -261,7 +99,7 @@ const dogeAPI: DogeAPIValue = {
   executeTool: (call: { name: string; input: Record<string, unknown> }) => ipcRenderer.invoke('doge:execute-tool', call),
   getCommands: () => ipcRenderer.invoke('doge:get-commands'),
   executeCommand: (name: string, args: string[]) => ipcRenderer.invoke('doge:execute-command', name, args),
-  sendMessage: (content: string, preAnalysis?: Array<{ type: string; message: string; line?: number }>) => ipcRenderer.invoke('doge:send-message', content, preAnalysis),
+  sendMessage: (content: string) => ipcRenderer.invoke('doge:send-message', content),
   getState: () => ipcRenderer.invoke('doge:get-state'),
   abort: () => ipcRenderer.invoke('doge:abort'),
   getHistory: () => ipcRenderer.invoke('doge:get-history'),
@@ -272,62 +110,20 @@ const dogeAPI: DogeAPIValue = {
   gitUnstage: (cwd: string, filePath: string) => ipcRenderer.invoke('doge:git-unstage', cwd, filePath),
   gitDiscard: (cwd: string, filePath: string) => ipcRenderer.invoke('doge:git-discard', cwd, filePath),
   gitCommit: (cwd: string, message: string) => ipcRenderer.invoke('doge:git-commit', cwd, message),
-  gitMergeStatus: (cwd: string) => ipcRenderer.invoke('doge:git-merge-status', cwd),
-  gitMergeResolve: (cwd: string, filePath: string, resolvedContent: string, strategy: 'ours' | 'theirs' | 'manual') => ipcRenderer.invoke('doge:git-merge-resolve', cwd, filePath, resolvedContent, strategy),
-  gitAbortMerge: (cwd: string) => ipcRenderer.invoke('doge:git-abort-merge', cwd),
-  gitBranchList: (cwd: string) => ipcRenderer.invoke('doge:git-branch-list', cwd),
-  gitBranchCreate: (cwd: string, branchName: string, checkout: boolean) => ipcRenderer.invoke('doge:git-branch-create', cwd, branchName, checkout),
-  gitBranchSwitch: (cwd: string, branchName: string) => ipcRenderer.invoke('doge:git-branch-switch', cwd, branchName),
-  gitBranchDelete: (cwd: string, branchName: string, force: boolean) => ipcRenderer.invoke('doge:git-branch-delete', cwd, branchName, force),
-  gitBranchMerge: (cwd: string, sourceBranch: string, targetBranch: string) => ipcRenderer.invoke('doge:git-branch-merge', cwd, sourceBranch, targetBranch),
-  gitLogGraph: (cwd: string, maxCount?: number) => ipcRenderer.invoke('doge:git-log-graph', cwd, maxCount),
   onChunk: (callback: (chunk: { text: string }) => void) => {
-    chunkCallbackRef = callback
-    if (!chunkHandler) {
-      chunkHandler = (_event: Electron.IpcRendererEvent, chunk: { text: string }) => {
-        if (chunkCallbackRef) chunkCallbackRef(chunk)
-      }
-      ipcRenderer.on('doge:chunk', chunkHandler)
-    }
-    return () => {
-      if (chunkHandler) {
-        ipcRenderer.removeListener('doge:chunk', chunkHandler)
-        chunkHandler = null
-      }
-      chunkCallbackRef = null
-    }
+    const handler = (_event: Electron.IpcRendererEvent, chunk: { text: string }) => callback(chunk)
+    ipcRenderer.on('doge:chunk', handler)
+    return () => ipcRenderer.removeListener('doge:chunk', handler)
   },
   onStateChange: (callback: (state: string) => void) => {
-    stateCallbackRef = callback
-    if (!stateHandler) {
-      stateHandler = (_event: Electron.IpcRendererEvent, state: string) => {
-        if (stateCallbackRef) stateCallbackRef(state)
-      }
-      ipcRenderer.on('doge:state-change', stateHandler)
-    }
-    return () => {
-      if (stateHandler) {
-        ipcRenderer.removeListener('doge:state-change', stateHandler)
-        stateHandler = null
-      }
-      stateCallbackRef = null
-    }
+    const handler = (_event: Electron.IpcRendererEvent, state: string) => callback(state)
+    ipcRenderer.on('doge:state-change', handler)
+    return () => ipcRenderer.removeListener('doge:state-change', handler)
   },
   onAutoSend: (callback: (text: string) => void) => {
-    autoSendCallbackRef = callback
-    if (!autoSendHandler) {
-      autoSendHandler = (_event: Electron.IpcRendererEvent, text: string) => {
-        if (autoSendCallbackRef) autoSendCallbackRef(text)
-      }
-      ipcRenderer.on('doge:auto-send', autoSendHandler)
-    }
-    return () => {
-      if (autoSendHandler) {
-        ipcRenderer.removeListener('doge:auto-send', autoSendHandler)
-        autoSendHandler = null
-      }
-      autoSendCallbackRef = null
-    }
+    const handler = (_event: Electron.IpcRendererEvent, text: string) => callback(text)
+    ipcRenderer.on('doge:auto-send', handler)
+    return () => ipcRenderer.removeListener('doge:auto-send', handler)
   },
   getModelInfo: () => ipcRenderer.invoke('doge:get-model-info'),
   getTokenUsage: () => ipcRenderer.invoke('doge:get-token-usage'),
@@ -388,9 +184,7 @@ const dogeAPI: DogeAPIValue = {
   pluginEnable: (pluginName: string, enabled: boolean) => ipcRenderer.invoke('doge:plugin-enable', pluginName, enabled),
   pluginInstall: (sourceDir: string, pluginName: string) => ipcRenderer.invoke('doge:plugin-install', sourceDir, pluginName),
   pluginUninstall: (pluginName: string) => ipcRenderer.invoke('doge:plugin-uninstall', pluginName),
-  pluginGetCommand: (pluginName: string, commandName: string) => ipcRenderer.invoke('doge:plugin-get-command', pluginName, commandName) as unknown as Promise<{ content: string | null; error?: string; warnings?: string[] }>,
-  marketplaceList: () => ipcRenderer.invoke('doge:marketplace-list'),
-  marketplaceInstall: (pluginName: string, repo: string) => ipcRenderer.invoke('doge:marketplace-install', pluginName, repo),
+  pluginGetCommand: (pluginName: string, commandName: string) => ipcRenderer.invoke('doge:plugin-get-command', pluginName, commandName),
   // 以下为占位 API（主进程 IPC handler 未实现，调用时返回失败）
   aiComplete: (input: { filePath: string; code: string; line: number; column: number }) => ipcRenderer.invoke('doge:ai-complete', input),
   formatCode: async (params) => {
@@ -403,174 +197,6 @@ const dogeAPI: DogeAPIValue = {
   },
   apiTestSend: (request: { url: string; method: string; headers: Record<string, string>; body?: string; bodyType: string }) => ipcRenderer.invoke('doge:api-test-send', request),
   getGitStats: async () => ({ commits: [] }),
-  gitShow: (cwd: string, sha: string) => ipcRenderer.invoke('doge:git-show', cwd, sha),
-  gitDiff: (cwd: string, shaA: string, shaB: string, filePath?: string) => ipcRenderer.invoke('doge:git-diff', cwd, shaA, shaB, filePath),
-  lspStart: (languageId: string) => ipcRenderer.invoke('doge:lsp-start', languageId),
-  lspStop: (languageId: string) => ipcRenderer.invoke('doge:lsp-stop', languageId),
-  lspStopAll: () => ipcRenderer.invoke('doge:lsp-stop-all'),
-  lspCompletion: (filePath: string, line: number, character: number) => ipcRenderer.invoke('doge:lsp-completion', filePath, line, character),
-  lspDefinition: (filePath: string, line: number, character: number) => ipcRenderer.invoke('doge:lsp-definition', filePath, line, character),
-  lspHover: (filePath: string, line: number, character: number) => ipcRenderer.invoke('doge:lsp-hover', filePath, line, character),
-  lspReferences: (filePath: string, line: number, character: number) => ipcRenderer.invoke('doge:lsp-references', filePath, line, character),
-  lspDocumentSymbol: (filePath: string) => ipcRenderer.invoke('doge:lsp-document-symbol', filePath),
-  lspWorkspaceSymbol: (query: string) => ipcRenderer.invoke('doge:lsp-workspace-symbol', query),
-  lspDocumentHighlight: (filePath: string, line: number, character: number) => ipcRenderer.invoke('doge:lsp-document-highlight', filePath, line, character),
-  lspConnectedServers: () => ipcRenderer.invoke('doge:lsp-connected-servers'),
-  onLspDiagnostic: (callback: (uri: string, diagnostics: Array<{ range: { start: { line: number; character: number }; end: { line: number; character: number } }; severity: number; message: string; source?: string; code?: string | number }>) => void) => {
-    const handler = (_event: Electron.IpcRendererEvent, uri: string, diagnostics: unknown) => callback(uri, diagnostics as Array<{ range: { start: { line: number; character: number }; end: { line: number; character: number } }; severity: number; message: string; source?: string; code?: string | number }>)
-    ipcRenderer.on('doge:lsp-diagnostic', handler)
-    return () => ipcRenderer.removeListener('doge:lsp-diagnostic', handler)
-  },
-  codeReview: (params: { filePath: string; cwd: string }) => ipcRenderer.invoke('doge:code-review', params),
-  applyFix: (params: { filePath: string; lineNumber: number; column: number; fixedCode: string; originalCode?: string }) => ipcRenderer.invoke('doge:apply-fix', params),
-  securityAudit: (params: { scanPath: string; rules?: string[]; scanType?: 'file' | 'directory' }) => ipcRenderer.invoke('doge:security-audit', params),
-  securityRules: () => ipcRenderer.invoke('doge:security-rules'),
-  getOutline: (params: { filePath: string; cwd: string }) => ipcRenderer.invoke('doge:get-outline', params),
-  semanticSearch: (params: { query: string; cwd: string; maxResults?: number; fileTypes?: string[]; directories?: string[] }) => ipcRenderer.invoke('doge:semantic-search', params),
-  indexSymbolSearch: (params: { query: string; maxResults?: number }) => ipcRenderer.invoke('doge:index-symbol-search', params),
-  debugStart: (params: { cwd: string; script: string; args?: string[] }) => ipcRenderer.invoke('doge:debug-start', params),
-  debugStop: (sessionId: string) => ipcRenderer.invoke('doge:debug-stop', sessionId),
-  debugListSessions: () => ipcRenderer.invoke('doge:debug-list-sessions'),
-  debugSetBreakpoint: (params: { sessionId: string; file: string; line: number; condition?: string }) => ipcRenderer.invoke('doge:debug-set-breakpoint', params),
-  debugRemoveBreakpoint: (params: { sessionId: string; file: string; line: number }) => ipcRenderer.invoke('doge:debug-remove-breakpoint', params),
-  debugListBreakpoints: (sessionId: string) => ipcRenderer.invoke('doge:debug-list-breakpoints', sessionId),
-  debugContinue: (sessionId: string) => ipcRenderer.invoke('doge:debug-continue', sessionId),
-  debugPause: (sessionId: string) => ipcRenderer.invoke('doge:debug-pause', sessionId),
-  debugStepOver: (sessionId: string) => ipcRenderer.invoke('doge:debug-step-over', sessionId),
-  debugStepInto: (sessionId: string) => ipcRenderer.invoke('doge:debug-step-into', sessionId),
-  debugStepOut: (sessionId: string) => ipcRenderer.invoke('doge:debug-step-out', sessionId),
-  debugGetCallstack: (sessionId: string) => ipcRenderer.invoke('doge:debug-get-callstack', sessionId),
-  debugGetVariables: (sessionId: string) => ipcRenderer.invoke('doge:debug-get-variables', sessionId),
-  debugEvaluate: (params: { sessionId: string; expression: string }) => ipcRenderer.invoke('doge:debug-evaluate', params),
-  debugGetObjectProps: (params: { sessionId: string; objectId: string }) => ipcRenderer.invoke('doge:debug-get-object-props', params),
-  debugSchemeExport: (params: { name: string; breakpoints: Array<{ file: string; line: number; condition?: string }> }) => ipcRenderer.invoke('doge:debug-scheme-export', params),
-  debugSchemeList: () => ipcRenderer.invoke('doge:debug-scheme-list'),
-  debugSchemeImport: (fileName: string) => ipcRenderer.invoke('doge:debug-scheme-import', fileName),
-  debugSnapshotSave: (params: { sessionId: string; name?: string; watchExpressions?: string[] }) => ipcRenderer.invoke('doge:debug-snapshot-save', params),
-  debugSnapshotList: () => ipcRenderer.invoke('doge:debug-snapshot-list'),
-  debugSnapshotRestore: (fileName: string) => ipcRenderer.invoke('doge:debug-snapshot-restore', fileName),
-
-  // ── 协作功能 ──
-  collabCreateRoom: (params: { name: string; cwd: string }) => ipcRenderer.invoke('doge:collab-create-room', params),
-  collabJoinRoom: (roomId: string) => ipcRenderer.invoke('doge:collab-join-room', roomId),
-  collabLeaveRoom: (params: { roomId: string; userId: string }) => ipcRenderer.invoke('doge:collab-leave-room', params),
-  collabListRooms: () => ipcRenderer.invoke('doge:collab-list-rooms'),
-  collabGetParticipants: (roomId: string) => ipcRenderer.invoke('doge:collab-get-participants', roomId),
-  collabUpdateCursor: (params: { roomId: string; userId: string; file: string; line: number; col: number }) => ipcRenderer.invoke('doge:collab-update-cursor', params),
-  collabAddComment: (params: { roomId: string; file: string; line: number; author: string; text: string }) => ipcRenderer.invoke('doge:collab-add-comment', params),
-  collabResolveComment: (params: { roomId: string; commentId: string }) => ipcRenderer.invoke('doge:collab-resolve-comment', params),
-  collabGetComments: (params: { roomId: string; file?: string }) => ipcRenderer.invoke('doge:collab-get-comments', params),
-  collabApplyEdit: (params: { roomId: string; userId: string; file: string; operation: { type: 'insert' | 'delete'; position: number; text?: string; length?: number } }) => ipcRenderer.invoke('doge:collab-apply-edit', params),
-
-  // ── CRDT 文档同步 ──
-  collabSyncDocument: (params: { roomId: string; file?: string }) => ipcRenderer.invoke('doge:collab-sync-document', params),
-  collabJoinSync: (params: { roomId: string; userId: string }) => ipcRenderer.invoke('doge:collab-join-sync', params),
-  collabApplyRemoteOp: (params: { roomId: string; userId: string; operation: { type: 'insert' | 'delete'; position: number; text?: string; length?: number; lamport: number; parentVersion: number } }) => ipcRenderer.invoke('doge:collab-apply-remote-op', params),
-  onCollabRemoteEdit: (callback: (edit: { roomId: string; userId: string; operation: { type: 'insert' | 'delete'; position: number; text?: string; length?: number }; version: number; file: string }) => void) => {
-    const handler = (_event: Electron.IpcRendererEvent, edit: { roomId: string; userId: string; operation: { type: 'insert' | 'delete'; position: number; text?: string; length?: number }; version: number; file: string }) => callback(edit)
-    ipcRenderer.on('doge:collab-remote-edit', handler)
-    return () => ipcRenderer.removeListener('doge:collab-remote-edit', handler)
-  },
-
-  // ── 批量处理 ──
-  batchStart: (params: { workflowId: string; workflowName: string; files: Array<{ filePath: string; fileName?: string }>; config?: Partial<{ concurrency: number; timeout: number; retryCount: number; dryRun: boolean }> }) => ipcRenderer.invoke('doge:batch-start', params),
-  batchCancel: (batchId: string) => ipcRenderer.invoke('doge:batch-cancel', batchId),
-  batchStatus: (batchId: string) => ipcRenderer.invoke('doge:batch-status', batchId),
-  batchList: () => ipcRenderer.invoke('doge:batch-list'),
-  batchScanFiles: (params: { dirPath: string; extensions?: string[]; maxFiles?: number }) => ipcRenderer.invoke('doge:batch-scan-files', params),
-  batchCleanup: (batchId: string) => ipcRenderer.invoke('doge:batch-cleanup', batchId),
-  onBatchProgress: (callback: (progress: { batchId: string; fileId: string; fileName: string; status: string; progress: number; totalFiles: number; completedFiles: number; failedFiles: number; error?: string; output?: string }) => void) => {
-    const handler = (_event: Electron.IpcRendererEvent, progress: { batchId: string; fileId: string; fileName: string; status: string; progress: number; totalFiles: number; completedFiles: number; failedFiles: number; error?: string; output?: string }) => callback(progress)
-    ipcRenderer.on('doge:batch-progress', handler)
-    return () => ipcRenderer.removeListener('doge:batch-progress', handler)
-  },
-  onBatchComplete: (callback: (event: { batchId: string; name: string; status: string; completedCount: number; failedCount: number; totalFiles: number; durationMs: number }) => void) => {
-    const handler = (_event: Electron.IpcRendererEvent, event: { batchId: string; name: string; status: string; completedCount: number; failedCount: number; totalFiles: number; durationMs: number }) => callback(event)
-    ipcRenderer.on('doge:batch-complete', handler)
-    return () => ipcRenderer.removeListener('doge:batch-complete', handler)
-  },
-
-  // ── 插件安全 ──
-  pluginSecurityAudit: (pluginName: string) => ipcRenderer.invoke('doge:plugin-security-audit', pluginName),
-
-  // ── 插件运行时（JS 沙箱执行 + hooks + 热加载） ──
-  pluginRuntimeLoadAll: () => ipcRenderer.invoke('doge:plugin-runtime-load-all'),
-  pluginRuntimeLoad: (pluginDir: string) => ipcRenderer.invoke('doge:plugin-runtime-load', pluginDir),
-  pluginRuntimeList: () => ipcRenderer.invoke('doge:plugin-runtime-list'),
-  pluginRuntimeInvoke: (fullName: string, ...args: unknown[]) => ipcRenderer.invoke('doge:plugin-runtime-invoke', fullName, ...args),
-  pluginRuntimeReload: (pluginName: string) => ipcRenderer.invoke('doge:plugin-runtime-reload', pluginName),
-  pluginRuntimeUnload: (pluginName: string) => ipcRenderer.invoke('doge:plugin-runtime-unload', pluginName),
-  pluginRuntimeWatch: (pluginName: string) => ipcRenderer.invoke('doge:plugin-runtime-watch', pluginName),
-  pluginRuntimeUnwatch: (pluginName: string) => ipcRenderer.invoke('doge:plugin-runtime-unwatch', pluginName),
-  pluginRuntimeEmit: (event: string, data: unknown) => ipcRenderer.invoke('doge:plugin-runtime-emit', event, data),
-  pluginScaffold: (pluginName: string) => ipcRenderer.invoke('doge:plugin-scaffold', pluginName),
-  pluginExport: (pluginName: string) => ipcRenderer.invoke('doge:plugin-export', pluginName),
-  pluginListExports: () => ipcRenderer.invoke('doge:plugin-list-exports'),
-  pluginImport: (exportName: string) => ipcRenderer.invoke('doge:plugin-import', exportName),
-
-  // ── 本地代码索引 ──
-  indexStatus: () => ipcRenderer.invoke('doge:index-status'),
-  indexRebuild: (force?: boolean) => ipcRenderer.invoke('doge:index-rebuild', force),
-
-  // ── 多 Agent 编排 ──
-  agentListRoles: () => ipcRenderer.invoke('doge:agent-list-roles'),
-  agentOrchestrate: (params: { task: string; roles: Array<{ id: string; name: string; description?: string; systemPrompt: string; model?: string }>; defaultModel: string; maxTokens?: number; timeoutMs?: number }) => ipcRenderer.invoke('doge:agent-orchestrate', params),
-  agentCancel: (orchestrationId: string) => ipcRenderer.invoke('doge:agent-cancel', orchestrationId),
-  onAgentProgress: (callback: (progress: { orchestrationId: string; completedCount: number; totalCount: number; runningRoles: string[]; status: string }) => void) => {
-    const handler = (_event: Electron.IpcRendererEvent, progress: { orchestrationId: string; completedCount: number; totalCount: number; runningRoles: string[]; status: string }) => callback(progress)
-    ipcRenderer.on('doge:agent-progress', handler)
-    return () => ipcRenderer.removeListener('doge:agent-progress', handler)
-  },
-
-  // ── Agent 编排工作流 ──
-  agentWorkflowSave: (wf: { id?: string; name: string; description?: string; task: string; mode: 'parallel' | 'discuss'; maxRounds?: number; roleIds: string[]; createdAt?: number }) => ipcRenderer.invoke('doge:agent-workflow-save', wf),
-  agentWorkflowList: () => ipcRenderer.invoke('doge:agent-workflow-list'),
-  agentWorkflowDelete: (workflowId: string) => ipcRenderer.invoke('doge:agent-workflow-delete', workflowId),
-  agentExportReport: (params: { task: string; mode: string; roundsUsed?: number; outputs: Array<{ name: string; roleId: string; content: string; status: string; durationMs: number; error?: string }> }) => ipcRenderer.invoke('doge:agent-export-report', params),
-
-  // ── 调试器暂停事件 ──
-  onDebugPaused: (callback: (info: { sessionId: string; pid: number; reason: string; file: string; line: number; functionName: string; stackDepth: number }) => void) => {
-    const handler = (_event: Electron.IpcRendererEvent, info: { sessionId: string; pid: number; reason: string; file: string; line: number; functionName: string; stackDepth: number }) => callback(info)
-    ipcRenderer.on('doge:debug-paused', handler)
-    return () => ipcRenderer.removeListener('doge:debug-paused', handler)
-  },
-
-  // ── 远程协助 ──
-  remoteOffer: (params: { sessionId: string; callerId: string; calleeId: string; offer: RTCSessionDescriptionInit }) => ipcRenderer.invoke('doge:remote-offer', params),
-  remoteAnswer: (params: { sessionId: string; answer: RTCSessionDescriptionInit }) => ipcRenderer.invoke('doge:remote-answer', params),
-  remoteIceCandidate: (params: { sessionId: string; candidate: RTCIceCandidateInit }) => ipcRenderer.invoke('doge:remote-ice-candidate', params),
-  remoteGetSignal: (sessionId: string) => ipcRenderer.invoke('doge:remote-get-signal', sessionId),
-  remoteClose: (sessionId: string) => ipcRenderer.invoke('doge:remote-close', sessionId),
-
-  // ── 远程信令服务器管理 ──
-  remoteSignalingStatus: () => ipcRenderer.invoke('doge:remote-signaling-status'),
-  remoteSignalingStart: () => ipcRenderer.invoke('doge:remote-signaling-start'),
-  remoteSignalingStop: () => ipcRenderer.invoke('doge:remote-signaling-stop'),
-  remoteSignalingRestart: () => ipcRenderer.invoke('doge:remote-signaling-restart'),
-  onRemoteSignal: (callback: (msg: { type: string; timestamp: number; sessionId: string; payload: Record<string, unknown> }) => void) => {
-    const handler = (_event: Electron.IpcRendererEvent, msg: { type: string; timestamp: number; sessionId: string; payload: Record<string, unknown> }) => callback(msg)
-    ipcRenderer.on('doge:remote-signal', handler)
-    return () => ipcRenderer.removeListener('doge:remote-signal', handler)
-  },
-  requestMicrophonePermission: () => ipcRenderer.invoke('doge:request-microphone-permission'),
-
-  // ── 测试运行器 ──
-  testRun: (cwd: string, testCommand: string) => ipcRenderer.invoke('doge:test-run', cwd, testCommand),
-  testList: (cwd: string) => ipcRenderer.invoke('doge:test-list', cwd),
-  detectFramework: (cwd: string) => ipcRenderer.invoke('doge:detect-framework', cwd),
-
-  // ── 日志查看器 ──
-  getLogs: (params?: { level?: string; limit?: number; offset?: number }) => ipcRenderer.invoke('doge:get-logs', params),
-  logStreamStart: (options?: { level?: string }) => ipcRenderer.invoke('doge:log-stream-start', options),
-  logStreamStop: () => ipcRenderer.invoke('doge:log-stream-stop'),
-  onLogEntry: (callback: (entry: { level: string; timestamp: string; message: string }) => void) => {
-    const handler = (_event: Electron.IpcRendererEvent, entry: { level: string; timestamp: string; message: string }) => callback(entry)
-    ipcRenderer.on('doge:log-entry', handler)
-    return () => ipcRenderer.removeListener('doge:log-entry', handler)
-  },
-  getAllDiagnostics: () => ipcRenderer.invoke('doge:get-all-diagnostics'),
-  rollbackTool: (toolUseId: string) => ipcRenderer.invoke('doge:rollback-tool', toolUseId),
-  getToolOperations: () => ipcRenderer.invoke('doge:get-tool-operations'),
 }
 
 contextBridge.exposeInMainWorld('dogeAPI', dogeAPI)

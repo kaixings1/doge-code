@@ -64,7 +64,7 @@ export function useLspInitializationNotification() {
       const displayName = source.startsWith("plugin:") ? source.split(":")[1] ?? source : source;
       addNotification({
         key: `lsp-error-${source}`,
-        jsx: <><Text color="error">{displayName} 的 LSP 失败</Text><Text dimColor={true}> · 查看 /plugin 获取详情</Text></>,
+        jsx: <><Text color="error">✗ {displayName} 的 LSP 失败</Text><Text dimColor={true}> · 查看 /plugin 获取详情</Text></>,
         priority: "medium",
         timeoutMs: 8000
       });

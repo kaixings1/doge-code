@@ -128,7 +128,7 @@ export function renderToolResultMessage(output: Output): React.ReactNode {
         } = output.file;
         return <MessageResponse height={1}>
           <Text>
-            <Text color="success">读取</Text>{' '}
+            <Text color="success">✓ 读取</Text>{' '}
             <Text bold>{numLines}</Text>{' '}
             <Text color="success">{numLines === 1 ? '行' : '行'}</Text>
           </Text>
@@ -152,12 +152,12 @@ export function renderToolUseErrorMessage(result: ToolResultBlockParam['content'
     // check the raw string directly for the cwd note marker.
     if (result.includes(FILE_NOT_FOUND_CWD_NOTE)) {
       return <MessageResponse>
-          <Text color="error">文件未找到</Text>
+          <Text color="error">✗ 文件未找到</Text>
         </MessageResponse>;
     }
     if (extractTag(result, 'tool_use_error')) {
       return <MessageResponse>
-          <Text color="error">读取文件时出错</Text>
+          <Text color="error">✗ 读取文件时出错</Text>
         </MessageResponse>;
     }
   }

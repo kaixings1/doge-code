@@ -122,7 +122,7 @@ export function TeleportResumeWrapper(t0) {
   if (error && !onError) {
     let t8;
     if ($[15] === Symbol.for("react.memo_cache_sentinel")) {
-      t8 = <Text bold={true} color="error">恢复会话失败</Text>;
+      t8 = <Text bold={true} color="error">✗ 恢复会话失败</Text>;
       $[15] = t8;
     } else {
       t8 = $[15];
