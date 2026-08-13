@@ -689,7 +689,7 @@ export function BrowseMarketplace({
 
         {/* Error message */}
         {installError && <Box marginBottom={1}>
-            <Text color="error">错误: {installError}</Text>
+            <Text color="error">✗ 错误: {installError}</Text>
           </Box>}
 
         {/* Menu options */}

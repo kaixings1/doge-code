@@ -188,7 +188,7 @@ export function RemoteSessionProgress(t0) {
   if (session.status === "completed") {
     let t1;
     if ($[2] === Symbol.for("react.memo_cache_sentinel")) {
-      t1 = <Text bold={true} color="success" dimColor={true}>已完成</Text>;
+      t1 = <Text bold={true} color="success" dimColor={true}>✓ 已完成</Text>;
       $[2] = t1;
     } else {
       t1 = $[2];
@@ -198,7 +198,7 @@ export function RemoteSessionProgress(t0) {
   if (session.status === "failed") {
     let t1;
     if ($[3] === Symbol.for("react.memo_cache_sentinel")) {
-      t1 = <Text bold={true} color="错误" dimColor={true}>错误</Text>;
+      t1 = <Text bold={true} color="错误" dimColor={true}>✗ 错误</Text>;
       $[3] = t1;
     } else {
       t1 = $[3];

@@ -90,7 +90,7 @@ export function usePluginInstallationStatus() {
       logForDebugging(`为 ${totalFailed} 个失败安装添加通知`);
       addNotification({
         key: "plugin-install-failed",
-        jsx: <><Text color="error">{totalFailed} {plural(totalFailed, "插件")}安装失败</Text><Text dimColor={true}> · /plugin 获取详情</Text></>,
+        jsx: <><Text color="error">✗ {totalFailed} {plural(totalFailed, "插件")}安装失败</Text><Text dimColor={true}> · /plugin 获取详情</Text></>,
         priority: "medium"
       });
     };

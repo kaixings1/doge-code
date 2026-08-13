@@ -21,6 +21,7 @@ import type {
   FixLoopResult,
   PatchResult,
   RepoStructure,
+  StrategyTemplate,
   TestFailure,
 } from './types.js'
 import {
@@ -60,6 +61,8 @@ export interface FixLoopConfig {
   lintCommand?: string
   /** 排除目录 */
   excludeDirs?: string[]
+  /** SWE-agent 策略模板（可选，覆盖默认 prompt） */
+  strategyTemplate?: StrategyTemplate
 }
 
 // ============================================================================
@@ -237,6 +240,7 @@ export async function runFixLoop(
   const maxIterations = config.maxIterations ?? 3
   const maxFiles = config.maxFiles ?? 200
   const contextWindow = config.contextWindow ?? 10
+  const strategyTemplate = config.strategyTemplate
   const verifyWithTest = config.verifyWithTest ?? true
   const testCommand = config.testCommand ?? detectTestCommand(projectRoot)
   const lintCommand = config.lintCommand
@@ -280,18 +284,24 @@ export async function runFixLoop(
     result.iterations = iter + 1
 
     // 3a. 文件级定位 prompt
-    const fileLocalizePrompt = buildFileLocalizePrompt(problemStatement, structure, maxFiles)
+    const fileLocalizePrompt = strategyTemplate
+      ? buildFileLocalizePrompt(problemStatement, structure, maxFiles, strategyTemplate)
+      : buildFileLocalizePrompt(problemStatement, structure, maxFiles)
     addStage(`file-localize-${iter + 1}`, fileLocalizePrompt)
 
     // 3b. 位置定位 prompt（依赖文件级结果，这里用全部文件生成代码定位 prompt）
     const allFiles = Object.keys(structure.symbols)
     const candidateFiles = allFiles.slice(0, Math.min(10, allFiles.length))
     const fileContents = readProjectFiles(projectRoot, candidateFiles)
-    const codeLocalizePrompt = buildCodeLocalizePrompt(problemStatement, fileContents)
+    const codeLocalizePrompt = strategyTemplate
+      ? buildCodeLocalizePrompt(problemStatement, fileContents, 300, strategyTemplate)
+      : buildCodeLocalizePrompt(problemStatement, fileContents, 300)
     addStage(`code-localize-${iter + 1}`, codeLocalizePrompt)
 
     // 3c. 修复 prompt（含带行号上下文）
-    const repairPrompt = buildRepairPrompt(problemStatement, fileContents, new Map())
+    const repairPrompt = strategyTemplate
+      ? buildRepairPrompt(problemStatement, fileContents, new Map(), false, strategyTemplate)
+      : buildRepairPrompt(problemStatement, fileContents, new Map())
     addStage(`repair-${iter + 1}`, repairPrompt)
 
     // 3d. 用户/外部 LLM 生成 edit_file 命令后，通过 applyEditCommandsOutput 应用

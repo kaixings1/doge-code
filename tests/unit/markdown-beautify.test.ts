@@ -248,6 +248,13 @@ describe('markdown 正文美化（label / 确认词 / 强调词 / 数值）', ()
     expect(beautifyInlineText('做问题排查', theme)).toBe('做问题排查');
   });
 
+  it('"没有问题" 标绿，不与"有问题"的红色交叉', () => {
+    const out = beautifyInlineText('验证没有问题，方案有问题', theme);
+    expect(out).toContain(`${GREEN}没有问题${RESET}`);
+    expect(out).toContain(`${RED}有问题${RESET}`);
+    expect(stripAnsi(out)).toBe('验证没有问题，方案有问题');
+  });
+
   it('数量疑问词"多少"（多少个/多少钱/多少时间）→ 蓝色', () => {
     const out = beautifyInlineText('需要多少个文件？一共多少钱？还要多少时间？', theme);
     expect(out).toContain(`${BLUE}多少${RESET}`);

@@ -127,7 +127,7 @@ export const call: LocalCommandCall = async (args) => {
     try {
       const content = readFileSync(file, 'utf-8')
       const converted = content.replace(/const\s+(\w+)\s*=\s*require\s*\(\s*['"]([^'"]+)['"]\s*\)/g, "import $1 from '$2'")
-      return { type: 'text', value: 'Converted:\n' + converted.slice(0, 2000) }
+      return { type: 'text', value: '转换结果：\n' + converted.slice(0, 2000) }
     } catch { return { type: 'text', value: '❌ 错误: 无法读取文件' } }
   }
 

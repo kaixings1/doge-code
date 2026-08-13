@@ -2,7 +2,12 @@
  * engine/subagent/config.ts — 子代理配置（文档 02 §10.3）
  *
  * 对齐 OpenCode agent 配置格式，支持更丰富的 Agent 元数据。
+ * 吸收自 Deep Agents AGENTS.md：Markdown frontmatter 驱动 Agent 定义。
  */
+
+import { readFileSync } from 'fs'
+import { parseYaml } from '../../utils/yaml.js'
+
 export interface SubAgentConfig {
   name: string;
   description: string;
@@ -81,4 +86,80 @@ export const predefinedAgents: Record<string, SubAgentConfig> = {
     allowedTools: ["file_read"],
     maxTokens: 4000,
   },
+  // 吸收自 developer/smol_dev (SMOL_DEV_SYSTEM_PROMPT)
+  "ai-developer": {
+    name: "ai-developer",
+    description: "Top-tier AI 开发者：根据用户意图生成完整代码，不留任何 todo",
+    systemPrompt:
+      "You are a top tier AI developer who is trying to write a program that will generate code for the user based on their intent.\n" +
+      "Do not leave any todos, fully implement every feature requested.\n\n" +
+      "When writing code, add comments to explain what you intend to do and why it aligns with the program plan and specific instructions from the original prompt.",
+    model: "claude-3-5-sonnet-20241022",
+    allowedTools: ["file_read", "file_write", "bash", "grep", "glob"],
+    maxTokens: 8000,
+    mode: "build",
+  },
 };
+
+// ============================================================================
+// Markdown Agent Definition Loader（吸收自 Deep Agents AGENTS.md frontmatter）
+// ============================================================================
+
+/**
+ * 从 Markdown 文件加载 Agent 定义。
+ *
+ * 格式：
+ *   ---
+ *   name: agent-name
+ *   description: 描述
+ *   model: claude-3-5-sonnet-20241022
+ *   allowedTools: [file_read, grep, glob]
+ *   mode: explore
+ *   ---
+ *
+ *   Markdown 正文作为 systemPrompt。
+ */
+export function loadAgentFromMarkdown(filePath: string): SubAgentConfig | null {
+  try {
+    const raw = readFileSync(filePath, 'utf-8')
+    const match = raw.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/)
+    if (!match) return null
+
+    const frontmatter = parseYaml(match[1]) as Record<string, unknown>
+    const body = match[2].trim()
+
+    if (!frontmatter.name) return null
+
+    const cfg: SubAgentConfig = {
+      name: String(frontmatter.name),
+      description: frontmatter.description ? String(frontmatter.description) : '',
+    }
+
+    if (body) cfg.systemPrompt = body
+    if (frontmatter.model) cfg.model = String(frontmatter.model)
+    if (frontmatter.maxTokens) cfg.maxTokens = Number(frontmatter.maxTokens)
+    if (frontmatter.allowedTools) {
+      cfg.allowedTools = Array.isArray(frontmatter.allowedTools)
+        ? frontmatter.allowedTools as string[]
+        : String(frontmatter.allowedTools).split(',').map((s) => s.trim())
+    }
+    if (frontmatter.maxIterations) cfg.maxIterations = Number(frontmatter.maxIterations)
+    if (frontmatter.timeout) cfg.timeout = Number(frontmatter.timeout)
+    if (frontmatter.accessParentContext) {
+      cfg.accessParentContext = String(frontmatter.accessParentContext) === 'true'
+    }
+    if (frontmatter.toolPermission) {
+      cfg.toolPermission = frontmatter.toolPermission as SubAgentConfig['toolPermission']
+    }
+    if (frontmatter.canSpawnSubagents) {
+      cfg.canSpawnSubagents = String(frontmatter.canSpawnSubagents) === 'true'
+    }
+    if (frontmatter.mode) {
+      cfg.mode = frontmatter.mode as SubAgentConfig['mode']
+    }
+
+    return cfg
+  } catch {
+    return null
+  }
+}

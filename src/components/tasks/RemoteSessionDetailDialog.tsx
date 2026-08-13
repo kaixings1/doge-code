@@ -893,7 +893,7 @@ export function RemoteSessionDetailDialog({
 
         {/* Teleport error message */}
         {teleportError && <Box marginTop={1}>
-            <Text color="error">传送失败：{teleportError}</Text>
+            <Text color="error">✗ 传送失败：{teleportError}</Text>
           </Box>}
 
         {/* Teleporting status */}

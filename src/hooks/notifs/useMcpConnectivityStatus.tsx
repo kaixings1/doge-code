@@ -36,28 +36,28 @@ export function useMcpConnectivityStatus(t0) {
       if (failedLocalClients.length > 0) {
         addNotification({
           key: "mcp-failed",
-          jsx: <><Text color="error">{failedLocalClients.length} 个 MCP{" "}{failedLocalClients.length === 1 ? "服务器" : "服务器"}失败</Text><Text dimColor={true}> · /mcp</Text></>,
+          jsx: <><Text color="error">✗ {failedLocalClients.length} 个 MCP{" "}{failedLocalClients.length === 1 ? "服务器" : "服务器"}失败</Text><Text dimColor={true}> · /mcp</Text></>,
           priority: "medium"
         });
       }
       if (failedClaudeAiClients.length > 0) {
         addNotification({
           key: "mcp-claudeai-failed",
-          jsx: <><Text color="error">{failedClaudeAiClients.length} 个 claude.ai{" "}{failedClaudeAiClients.length === 1 ? "连接器" : "连接器"}{" "}不可用</Text><Text dimColor={true}> · /mcp</Text></>,
+          jsx: <><Text color="error">✗ {failedClaudeAiClients.length} 个 claude.ai{" "}{failedClaudeAiClients.length === 1 ? "连接器" : "连接器"}{" "}不可用</Text><Text dimColor={true}> · /mcp</Text></>,
           priority: "medium"
         });
       }
       if (needsAuthLocalServers.length > 0) {
         addNotification({
           key: "mcp-needs-auth",
-          jsx: <><Text color="warning">{needsAuthLocalServers.length} 个 MCP{" "}{needsAuthLocalServers.length === 1 ? "服务器需要" : "服务器需要"}{" "}认证</Text><Text dimColor={true}> · /mcp</Text></>,
+          jsx: <><Text color="warning">⚠ {needsAuthLocalServers.length} 个 MCP{" "}{needsAuthLocalServers.length === 1 ? "服务器需要" : "服务器需要"}{" "}认证</Text><Text dimColor={true}> · /mcp</Text></>,
           priority: "medium"
         });
       }
       if (needsAuthClaudeAiServers.length > 0) {
         addNotification({
           key: "mcp-claudeai-needs-auth",
-          jsx: <><Text color="warning">{needsAuthClaudeAiServers.length} 个 claude.ai{" "}{needsAuthClaudeAiServers.length === 1 ? "连接器需要" : "连接器需要"}{" "}认证</Text><Text dimColor={true}> · /mcp</Text></>,
+          jsx: <><Text color="warning">⚠ {needsAuthClaudeAiServers.length} 个 claude.ai{" "}{needsAuthClaudeAiServers.length === 1 ? "连接器需要" : "连接器需要"}{" "}认证</Text><Text dimColor={true}> · /mcp</Text></>,
           priority: "medium"
         });
       }

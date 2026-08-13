@@ -59,7 +59,7 @@ export function usePluginAutoupdateNotification() {
       const displayNames = pluginNames.length <= 2 ? pluginNames.join(" 和 ") : `${pluginNames.length} 个插件`;
       addNotification({
         key: "plugin-autoupdate-restart",
-        jsx: <><Text color="success">{pluginNames.length === 1 ? "插件" : "插件"}已更新：{" "}{displayNames}</Text><Text dimColor={true}> · 运行 /reload-plugins 以应用</Text></>,
+        jsx: <><Text color="success">✓ {pluginNames.length === 1 ? "插件" : "插件"}已更新：{" "}{displayNames}</Text><Text dimColor={true}> · 运行 /reload-plugins 以应用</Text></>,
         priority: "low",
         timeoutMs: 10000
       });

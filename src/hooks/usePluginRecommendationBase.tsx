@@ -96,7 +96,7 @@ export async function installPluginAndNotify(pluginId: string, pluginName: strin
     logError(error);
     addNotification({
       key: `${keyPrefix}-install-failed`,
-      jsx: <Text color="error">安装 {pluginName} 失败</Text>,
+      jsx: <Text color="error">✗ 安装 {pluginName} 失败</Text>,
       priority: 'immediate',
       timeoutMs: 5000
     });

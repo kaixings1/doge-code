@@ -19,7 +19,7 @@ async function _temp() {
     logForDebugging("显示市场配置保存失败通知");
     notifs.push({
       key: "marketplace-config-save-failed",
-      jsx: <Text color="error">保存市场重试信息失败 · 检查 ~/.claude.json 权限</Text>,
+      jsx: <Text color="error">✗ 保存市场重试信息失败 · 检查 ~/.claude.json 权限</Text>,
       priority: "immediate",
       timeoutMs: 10000
     });
@@ -37,7 +37,7 @@ async function _temp() {
       logForDebugging("显示市场安装失败通知");
       notifs.push({
         key: "marketplace-install-failed",
-        jsx: <Text color="warning">安装 Anthropic 市场失败 · 将在下次启动时重试</Text>,
+        jsx: <Text color="warning">⚠ 安装 Anthropic 市场失败 · 将在下次启动时重试</Text>,
         priority: "immediate",
         timeoutMs: 8000
       });

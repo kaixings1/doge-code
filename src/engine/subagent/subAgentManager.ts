@@ -1,6 +1,7 @@
-import { predefinedAgents, type SubAgentConfig } from "./config.ts";
+import { predefinedAgents, loadAgentFromMarkdown, type SubAgentConfig } from "./config.ts";
 import { createAgentWorktree, removeAgentWorktree } from "../../utils/worktree.js";
-import { getCwd } from "../../utils/cwd.js";
+import { readdirSync, statSync } from "fs";
+import { fileURLToPath } from "url";
 
 /**
  * SubAgent 事件类型，对齐 OpenCode AgentEvent。
@@ -48,6 +49,26 @@ export class SubAgentManager {
   constructor(deps?: SubAgentManagerDeps) {
     this.deps = deps ?? {};
     for (const [name, cfg] of Object.entries(predefinedAgents)) this.registry.set(name, cfg);
+    this.loadPatternAgents();
+  }
+
+  /** 从 patterns/ 目录加载 Markdown Agent 定义（吸收自 Deep Agents AGENTS.md） */
+  private loadPatternAgents(): void {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = __filename.substring(0, __filename.lastIndexOf('/'));
+    const patternsDir = __dirname + '/patterns';
+    try {
+      const entries = readdirSync(patternsDir);
+      for (const entry of entries) {
+        if (!entry.endsWith('.md')) continue;
+        const fullPath = patternsDir + '/' + entry;
+        if (!statSync(fullPath).isFile()) continue;
+        const agent = loadAgentFromMarkdown(fullPath);
+        if (agent) this.registry.set(agent.name, agent);
+      }
+    } catch {
+      // patterns/ 目录不存在或不可读，静默跳过
+    }
   }
 
   setDeps(deps: SubAgentManagerDeps): void {

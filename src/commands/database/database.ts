@@ -84,10 +84,10 @@ function generateSchemaInfo(dbPath: string): string {
     const tables = db.query("SELECT name FROM sqlite_master WHERE type='table'").all() as { name: string }[]
 
     if (tables.length === 0) {
-      return `## Database Schema\n\nNo tables found in ${dbPath}`
+      return `## 数据库Schema\n\n在 ${dbPath} 中未找到表`
     }
 
-    const lines: string[] = [`## Database Schema: ${dbPath}`, '', `### Tables (${tables.length})`, '']
+    const lines: string[] = [`## 数据库Schema：${dbPath}`, '', `### 表 (${tables.length})`, '']
 
     for (const table of tables) {
       const count = db.query(`SELECT COUNT(*) as count FROM "${table.name}"`).get() as { count: number }
@@ -104,7 +104,7 @@ function generateSchemaInfo(dbPath: string): string {
 
     return lines.join('\n')
   } catch (error) {
-    return `## Error\n\nFailed to read schema from ${dbPath}: ${error}`
+    return `## ❌ 错误\n\n读取 ${dbPath} 的 schema 失败：${error}`
   }
 }
 
@@ -119,7 +119,7 @@ function generateERDiagram(dbPath: string): string {
 
     const tables = db.query("SELECT name FROM sqlite_master WHERE type='table'").all() as { name: string }[]
 
-    let mermaid = 'erDiagram\n'
+    let mermaid = '```mermaid\nerDiagram\n'
 
     for (const table of tables) {
       const columns = db.query(`PRAGMA table_info("${table.name}")`).all() as any[]
@@ -183,7 +183,7 @@ function generateERDiagram(dbPath: string): string {
 
     return `## ER Diagram\n\n\`\`\`mermaid\n${mermaid}\`\`\``
   } catch (error) {
-    return `## Error\n\nFailed to generate ER diagram: ${error}`
+    return `## ❌ 错误\n\n生成 ER 图失败：${error}`
   }
 }
 
