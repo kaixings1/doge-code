@@ -9,8 +9,23 @@
  * 所有函数为纯函数（只生成 prompt），LLM 交互由调用方负责。
  */
 
-import type { RepoStructure } from './types.js'
+import type { RepoStructure, StrategyTemplate } from './types.js'
 import { wrapContentWithLines } from './repoStructure.js'
+
+// ============================================================================
+// Strategy template helpers
+// ============================================================================
+
+function applyStrategy(
+  base: string,
+  strategy: StrategyTemplate | null,
+  field: 'system_template' | 'instance_template' | 'next_step_template',
+): string {
+  if (strategy && strategy[field]) {
+    return strategy[field]!
+  }
+  return base
+}
 
 // ============================================================================
 // 仓库结构文本
@@ -55,8 +70,12 @@ export function buildFileLocalizePrompt(
   problemStatement: string,
   structure: RepoStructure,
   maxFiles = 200,
+  strategyTemplate?: StrategyTemplate,
 ): string {
-  return `Please look through the following GitHub problem description and Repository structure and provide a list of files that one would need to edit to fix the problem.
+  const systemHint = strategyTemplate?.system_template
+    ? `<!-- System hint (from strategy): ${strategyTemplate.system_template.slice(0, 120)}... -->\n\n`
+    : ''
+  return `${systemHint}Please look through the following GitHub problem description and Repository structure and provide a list of files that one would need to edit to fix the problem.
 
 ### GitHub Problem Description ###
 ${problemStatement}
@@ -122,6 +141,7 @@ export function buildCodeLocalizePrompt(
   problemStatement: string,
   fileContents: Record<string, string>,
   maxContentPerFile = 300,
+  strategyTemplate?: StrategyTemplate,
 ): string {
   const fileParts: string[] = []
   for (const [file, content] of Object.entries(fileContents)) {
@@ -180,6 +200,7 @@ export function buildRepairPrompt(
   fileContents: Record<string, string>,
   contextIntervals: Map<string, Array<[number, number]>> = new Map(),
   useCoT = false,
+  strategyTemplate?: StrategyTemplate,
 ): string {
   const fileParts: string[] = []
   for (const [file, content] of Object.entries(fileContents)) {

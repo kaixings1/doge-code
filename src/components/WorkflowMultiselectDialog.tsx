@@ -102,7 +102,7 @@ export function WorkflowMultiselectDialog(t0) {
   }
   let t7;
   if ($[9] !== showError) {
-    t7 = showError && <Box><Text color="error">您必须选择至少一个工作流才能继续</Text></Box>;
+    t7 = showError && <Box><Text color="error">✗ 您必须选择至少一个工作流才能继续</Text></Box>;
     $[9] = showError;
     $[10] = t7;
   } else {

@@ -66,7 +66,7 @@ export const call: LocalCommandCall = async (args) => {
   const cmd = parts[0]?.toLowerCase() || 'list'
 
   if (cmd === 'list' || cmd === 'ls' || cmd === '') {
-    const lines = ['Project Templates:', '==================', '']
+    const lines = ['📦 项目模板：', '══════════', '']
     const categories = ['frontend', 'backend', 'fullstack', 'cli', 'library', 'mobile']
     for (const cat of categories) {
       const templates = TEMPLATES.filter(t => t.category === cat)
@@ -152,7 +152,7 @@ export const call: LocalCommandCall = async (args) => {
 const templates: Command = {
   type: 'local',
   name: 'templates',
-  description: 'Project templates - scaffold new projects from templates',
+  description: '📦 项目模板 - 从模板创建新项目',
   aliases: ['/templates', '/tmpl', '/scaffold'],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),

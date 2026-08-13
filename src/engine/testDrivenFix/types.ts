@@ -98,3 +98,10 @@ export interface FixLoopResult {
   /** 迭代次数 */
   iterations: number
 }
+
+/** SWE-agent 策略模板（从 YAML 加载） */
+export interface StrategyTemplate {
+  system_template?: string
+  instance_template?: string
+  next_step_template?: string
+}

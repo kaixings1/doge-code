@@ -70,8 +70,8 @@ export function renderToolUseProgressMessage(progressMessages: ProgressMessage<W
       return <MessageResponse>
           <Text dimColor={data.resultCount === 0}>
             {data.resultCount === 0
-              ? <Text color="error">找到 {data.resultCount} 个结果（搜索词：{data.query}）</Text>
-              : <><Text color="success">找到</Text> <Text bold>{data.resultCount}</Text> <Text color="success">个结果</Text>（搜索词：{data.query}）</>}
+              ? <Text color="error">✗ 找到 {data.resultCount} 个结果（搜索词：{data.query}）</Text>
+              : <><Text color="success">✓ 找到</Text> <Text bold>{data.resultCount}</Text> <Text color="success">个结果</Text>（搜索词：{data.query}）</>}
           </Text>
         </MessageResponse>;
     default:

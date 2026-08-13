@@ -25,7 +25,7 @@ function safeExec(cmd: string, timeout = EXEC_TIMEOUT): { ok: boolean; output: s
     const output = execSync(cmd, { encoding: 'utf-8', timeout, stdio: ['pipe', 'pipe', 'ignore'], maxBuffer: 10 * 1024 * 1024 })
     return { ok: true, output: output.trim() }
   } catch (err: any) {
-    const msg = err?.stderr ? String(err.stderr).trim() : err?.stdout ? String(err.stdout).trim() : err?.message || 'Unknown error'
+    const msg = err?.stderr ? String(err.stderr).trim() : err?.stdout ? String(err.stdout).trim() : err?.message || '未知错误'
     return { ok: false, output: msg.slice(0, 500) }
   }
 }

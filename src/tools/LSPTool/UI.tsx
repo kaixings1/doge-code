@@ -82,7 +82,7 @@ function LSPResultSummary(t0) {
   const countLabel = resultCount === 1 ? labelConfig.singular : labelConfig.plural;
   let t2;
   if ($[2] !== countLabel || $[3] !== labelConfig.special || $[4] !== operation || $[5] !== resultCount) {
-    t2 = operation === "hover" && resultCount > 0 && labelConfig.special ? <Text>悬停信息 {labelConfig.special}</Text> : resultCount === 0 ? <Text color="error">找到 <Text bold={true}>{resultCount} </Text>{countLabel}</Text> : <><Text color="success">找到</Text> <Text bold={true}>{resultCount} </Text><Text color="success">{countLabel}</Text></>;
+    t2 = operation === "hover" && resultCount > 0 && labelConfig.special ? <Text>悬停信息 {labelConfig.special}</Text> : resultCount === 0 ? <Text color="error">✗ 找到 <Text bold={true}>{resultCount} </Text>{countLabel}</Text> : <><Text color="success">✓ 找到</Text> <Text bold={true}>{resultCount} </Text><Text color="success">{countLabel}</Text></>;
     $[2] = countLabel;
     $[3] = labelConfig.special;
     $[4] = operation;
@@ -204,7 +204,7 @@ export function renderToolUseErrorMessage(result: ToolResultBlockParam['content'
 }): React.ReactNode {
   if (!verbose && typeof result === 'string' && extractTag(result, 'tool_use_error')) {
     return <MessageResponse>
-        <Text color="error">LSP 操作失败</Text>
+        <Text color="error">✗ LSP 操作失败</Text>
       </MessageResponse>;
   }
   return <FallbackToolUseErrorMessage result={result} verbose={verbose} />;

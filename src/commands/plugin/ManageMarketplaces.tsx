@@ -568,7 +568,7 @@ export function ManageMarketplaces({
     const pluginCount = selectedMarketplace.installedPlugins?.length || 0;
     return <Box flexDirection="column">
         <Text bold color="warning">
-          确认移除市场 <Text italic>{selectedMarketplace.name}</Text>？
+          ⚠ 确认移除市场 <Text italic>{selectedMarketplace.name}</Text>？
         </Text>
         <Box flexDirection="column">
           {pluginCount > 0 && <Box marginTop={1}>

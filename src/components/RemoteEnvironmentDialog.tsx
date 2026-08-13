@@ -128,7 +128,7 @@ export function RemoteEnvironmentDialog(t0) {
   if (error) {
     let t5;
     if ($[9] !== error) {
-      t5 = <Text color="error">错误：{error}</Text>;
+      t5 = <Text color="error">✗ 错误：{error}</Text>;
       $[9] = error;
       $[10] = t5;
     } else {

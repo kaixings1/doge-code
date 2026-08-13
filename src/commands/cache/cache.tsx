@@ -66,23 +66,23 @@ export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
 
   if (operation === 'status' || operation === '') {
     if (!existsSync(DOGEDIR_CACHE)) {
-      onDone('No .doge directory found. Cache is empty.')
+      onDone('❌ 未找到 .doge 目录。缓存为空。')
       return null
     }
     const caches = findCaches(DOGEDIR_CACHE)
     if (caches.length === 0) {
-      onDone('No caches found.')
+      onDone('ℹ️ 未找到缓存。')
       return null
     }
-    const lines = ['Cache Status:', '==============', '']
+    const lines = ['📊 缓存状态：', '═══════════', '']
     let totalSize = 0
     let totalEntries = 0
     caches.forEach(c => {
       totalSize += c.size
       totalEntries += c.entries
-      lines.push(c.name + ': ' + (c.size / 1024).toFixed(1) + ' KB, ' + c.entries + ' entries')
+      lines.push(c.name + ': ' + (c.size / 1024).toFixed(1) + ' KB, ' + c.entries + ' 个文件')
     })
-    lines.push('', 'Total: ' + (totalSize / 1024).toFixed(1) + ' KB, ' + totalEntries + ' entries')
+    lines.push('', '合计：' + (totalSize / 1024).toFixed(1) + ' KB, ' + totalEntries + ' 个文件')
     onDone(lines.join('\n'))
     return null
   }
@@ -90,37 +90,37 @@ export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
   if (operation === 'clear') {
     const cacheName = target
     if (cacheName === 'all') {
-      onDone('Clear all caches? This will delete all .doge data. Use specific cache name or "all --force".')
+      onDone('⚠️ 确定要清除所有缓存？这将删除所有 .doge 数据。请使用��体缓存名或 "all --force"。')
       return null
     }
     const cachePath = join(DOGEDIR_CACHE, cacheName)
     if (!existsSync(cachePath)) {
-      onDone('Cache not found: ' + cacheName)
+      onDone('❌ 未找到缓存：' + cacheName)
       return null
     }
     try {
       execSync('rm -rf "' + cachePath + '"', { stdio: 'ignore' })
-      onDone('[OK] Cleared cache: ' + cacheName)
+      onDone('✅ 已清除缓存：' + cacheName)
     } catch {
-      onDone('[ERROR] Failed to clear: ' + cacheName)
+      onDone('❌ 清除失败：' + cacheName)
     }
     return null
   }
 
   if (operation === 'analyze' || operation === 'stats') {
     const caches = findCaches(DOGEDIR_CACHE)
-    const lines = ['Cache Analysis:', '================', '']
+    const lines = ['📊 缓存分析：', '════════════', '']
     caches.sort((a, b) => b.size - a.size).forEach(c => {
       const sizeKB = (c.size / 1024).toFixed(1)
       const lastMod = c.lastModified.slice(0, 19)
-      lines.push(c.name + ': ' + sizeKB + ' KB (' + c.entries + ' files, modified: ' + lastMod + ')')
+      lines.push(c.name + ': ' + sizeKB + ' KB (' + c.entries + ' 个文件, 修改时间: ' + lastMod + ')')
     })
     onDone(lines.join('\n'))
     return null
   }
 
   if (operation === 'clean') {
-    onDone('Cleaning empty cache directories...')
+    onDone('🧹 正在清理空缓存目录...')
     let cleaned = 0
     const dirs = readdirSync(DOGEDIR_CACHE, { withFileTypes: true }).filter(d => d.isDirectory())
     for (const dir of dirs) {
@@ -130,16 +130,16 @@ export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
         try { execSync('rm -rf "' + path + '"', { stdio: 'ignore' }); cleaned++ } catch { /* ignore */ }
       }
     }
-    onDone('[OK] Cleaned ' + cleaned + ' empty directories')
+    onDone('✅ 已清理 ' + cleaned + ' 个空目录')
     return null
   }
 
   onDone([
-    'Cache Manager', '', 'Usage:',
-    '  /cache status              Show cache status',
-    '  /cache analyze             Analyze cache sizes',
-    '  /cache clear <name>        Clear specific cache',
-    '  /cache clean               Remove empty cache dirs',
+    '🗄️ 缓存管理器', '', '📖 用法：',
+    '  /cache status              显示缓存状态',
+    '  /cache analyze             分析缓存大小',
+    '  /cache clear <name>        清除指定缓存',
+    '  /cache clean               删除空缓存目录',
   ].join('\n'))
   return null
 }

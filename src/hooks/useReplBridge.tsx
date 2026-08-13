@@ -68,7 +68,7 @@ export function useReplBridge(messages: Message[], setMessages: (action: React.S
       addNotification({
         key: 'bridge-failed',
         jsx: <>
-            <Text color="error">远程控制失败</Text>
+            <Text color="error">✗ 远程控制失败</Text>
             {detail && <Text dimColor> 路 {detail}</Text>}
           </>,
         priority: 'immediate'

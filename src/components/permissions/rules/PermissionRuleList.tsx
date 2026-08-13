@@ -188,7 +188,7 @@ function RuleDetails(t0) {
   }
   let t9;
   if ($[25] !== t8) {
-    t9 = <Text bold={true} color="error">删除 {t8} 工具？</Text>;
+    t9 = <Text bold={true} color="error">✗ 删除 {t8} 工具？</Text>;
     $[25] = t8;
     $[26] = t9;
   } else {

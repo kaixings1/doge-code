@@ -445,7 +445,7 @@ function TaskOutputResultDisplay(t0) {
         }
         let t6;
         if ($[18] !== task.error) {
-          t6 = task.error && <Box flexDirection="column" marginTop={1}><Text color="error" bold={true}>错误:</Text><Box paddingLeft={2}><Text color="error">{task.error}</Text></Box></Box>;
+          t6 = task.error && <Box flexDirection="column" marginTop={1}><Text color="error" bold={true}>✗ 错误:</Text><Box paddingLeft={2}><Text color="error">{task.error}</Text></Box></Box>;
           $[18] = task.error;
           $[19] = t6;
         } else {

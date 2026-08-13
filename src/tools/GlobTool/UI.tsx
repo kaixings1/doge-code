@@ -39,11 +39,11 @@ export function renderToolUseErrorMessage(result: ToolResultBlockParam['content'
     const errorMessage = extractTag(result, 'tool_use_error');
     if (errorMessage?.includes(FILE_NOT_FOUND_CWD_NOTE)) {
       return <MessageResponse>
-          <Text color="error">文件未找到</Text>
+          <Text color="error">✗ 文件未找到</Text>
         </MessageResponse>;
     }
     return <MessageResponse>
-        <Text color="error">搜索文件时出错</Text>
+        <Text color="error">✗ 搜索文件时出错</Text>
       </MessageResponse>;
   }
   return <FallbackToolUseErrorMessage result={result} verbose={verbose} />;

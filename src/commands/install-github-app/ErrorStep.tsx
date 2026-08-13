@@ -23,7 +23,7 @@ export function ErrorStep(t0) {
   }
   let t2;
   if ($[1] !== error) {
-    t2 = <Text color="error">错误: {error}</Text>;
+    t2 = <Text color="error">✗ 错误: {error}</Text>;
     $[1] = error;
     $[2] = t2;
   } else {

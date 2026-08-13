@@ -66,7 +66,7 @@ function installHook(): string {
     try { fs.chmodSync(hookPath, 0o755) } catch { /* Windows ignores chmod */ }
     return '✅ Code review hook installed to .git/hooks/pre-commit\n   (Existing hook backed up to pre-commit.backup)'
   } catch (err) {
-    return `❌ Failed to install hook: ${err instanceof Error ? err.message : String(err)}`
+    return `❌ 安装 hook 失败：${err instanceof Error ? err.message : String(err)}`
   }
 }
 
@@ -95,7 +95,7 @@ function uninstallHook(): string {
       return '✅ Hook removed.'
     }
   } catch (err) {
-    return `❌ Failed to uninstall hook: ${err instanceof Error ? err.message : String(err)}`
+    return `❌ 卸载 hook 失败：${err instanceof Error ? err.message : String(err)}`
   }
 }
 
