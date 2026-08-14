@@ -178,6 +178,26 @@ _无_
 
 **Phase 13 完成**: ~4h，34 tests passed（auto 16 + ship-ci-review-loop 6 + evolve 12）✓
 
+### 🔵 Phase 14: 安全模块接入沙箱（2026-08-14）
+- [x] 14.1 testDrivenFix — 已完成（swe-fix 命令 + engine/testDrivenFix/ 完整闭环）
+- [x] 14.2 Flow 编排 — 已完成（engine/flow/ BaseFlow + FlowFactory + PlanningFlow）
+- [x] 14.3 安全模块接入沙箱（2-3h）
+  - engine/sandbox/index.ts 新增 PathGuardPolicy + CommandFilterPolicy
+  - 支持多策略叠加（Array<SandboxPolicy>）
+  - createDefaultSandboxConfig() 工厂函数 + getDefaultSandboxPolicy
+  - QueryEngine 通过 createSandboxedExecutor 包装 executor
+  - 测试：24 tests passed（src/__tests__/engine/sandbox.test.ts）
+
+### 🔵 Phase 15: Hook 系统接入引擎（2026-08-14）
+- [x] 15.3 HookManager 接入 messageLoop.ts
+  - MessageLoopDeps 新增 hookManager 字段
+  - PreToolUse：遍历每个工具调用 → hook.trigger() → 阻止的被过滤出 allowedCalls
+  - PostToolUse：执行后 → hook.trigger() 通知（失败类型自动路由）
+  - QueryEngine 通过 EngineOptions.hookManager 传入（默认 new HookManager()）
+  - HookEvent 新增 toolUseId 字段
+  - hookManager.ts trigger 修复：异步 hook 用 Promise.resolve 包装避免 TS 类型错误
+  - 测试：24 tests passed（src/__tests__/engine/hooks.test.ts）
+
 ## 参考文档
 
 - `TODO_feature_absorption_plan_v2.md` — 详细计划

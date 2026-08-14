@@ -19,7 +19,8 @@ import { SubAgentManager } from "./subagent/subAgentManager.ts";
 import { AutoFixLoop } from "./autoFixLoop.ts";
 import { GitContextInjector, type GitContextConfig } from "./gitContext.ts";
 import { HarnessRouter, type HarnessConfig, type HarnessAdapter } from "./harnessAdapter.ts";
-import { createSandboxedExecutor, type SandboxConfig, type SandboxPolicy, getDefaultSandboxPolicy } from "./sandbox/index.ts";
+import { createSandboxedExecutor, type SandboxConfig, type SandboxPolicy, getDefaultSandboxPolicy, createDefaultSandboxConfig } from "./sandbox/index.ts";
+import { HookManager } from "./hooks/hookManager.js";
 // 导入工具注册表（复用 src/tools.ts 中 buildTool() 构建的完整工具实例）
 import { getAllBaseTools } from "../tools.js";
 import { type Tools, type ToolInfo } from "../Tool.js";
@@ -61,6 +62,8 @@ export interface EngineOptions {
   sandbox?: Partial<SandboxConfig>;
   /** 验收标准门控（吸收自 intent-driven-development）：进入 done 前检查 */
   acceptanceCriteria?: import("./stateMachine.ts").AcceptanceCriterion[];
+  /** Hook 管理器（吸收自 ECC hooks）：注册 PreToolUse/PostToolUse 拦截器 */
+  hookManager?: HookManager;
 }
 
 /**
@@ -164,12 +167,13 @@ export class QueryEngine {
     };
 
     // 沙箱执行器包装链：createSandboxedExecutor 包装原始 executor（吸收自 open-interpreter sandboxing）
-    const sandboxPolicy = opts.sandbox?.policy ?? getDefaultSandboxPolicy()
-    const sandboxConfig: SandboxConfig = {
-      enabled: opts.sandbox?.enabled ?? false,
-      policy: sandboxPolicy,
-      onDeny: opts.sandbox?.onDeny ?? 'warn',
-    }
+    const sandboxConfig: SandboxConfig = opts.sandbox
+      ? {
+          enabled: opts.sandbox.enabled ?? true,
+          policy: opts.sandbox.policy ?? getDefaultSandboxPolicy(),
+          onDeny: opts.sandbox.onDeny ?? 'warn',
+        }
+      : createDefaultSandboxConfig(false)
     const executor: ToolExecutor = createSandboxedExecutor(rawExecutor, sandboxConfig)
     const registry = opts.tools ?? this.buildRegistry();
     const toolScheduler = new ToolScheduler(registry, permissionManager, executor);
@@ -229,6 +233,7 @@ export class QueryEngine {
       imageBudget: opts.imageBudget,
       harness: opts.harness,
       acceptanceGate,
+      hookManager: opts.hookManager,
     };
     this.messageLoop = new MessageLoop(deps);
 
