@@ -103,6 +103,7 @@ import {
   asSystemPrompt,
   type SystemPrompt,
 } from '../../utils/systemPromptType.js'
+import { getSessionCompressor } from '../../utils/absorb.js'
 import { tokenCountFromLastAPIResponse } from '../../utils/tokens.js'
 import { getDynamicConfig_BLOCKS_ON_INIT } from '../analytics/growthbook.js'
 import {
@@ -1763,10 +1764,32 @@ async function* queryModel(
 
     lastRequestBetas = betasParams
 
+    // 吸收式压缩：消除连续粘贴重复 + 工具定义跨位置重复
+    // 复用 compressor 实例以利用会话缓存；超长块直接跳过避免阻塞
+    const MAX_ABSORB = 500_000
+    const compressor = getSessionCompressor()
+    const compressedSystem = system.map(block => ({
+      ...block,
+      text: block.text.length > MAX_ABSORB ? block.text : compressor.finalize(block.text),
+    }))
+    const compressedMessages = messagesForAPI.map(msg => {
+      if (msg.type === 'user' && typeof msg.message.content === 'string') {
+        const content = msg.message.content
+        return {
+          ...msg,
+          message: {
+            ...msg.message,
+            content: content.length > MAX_ABSORB ? content : compressor.finalize(content),
+          },
+        }
+      }
+      return msg
+    })
+
     return {
       model: normalizeModelStringForAPI(options.model),
       messages: addCacheBreakpoints(
-        messagesForAPI,
+        compressedMessages,
         enablePromptCaching,
         options.querySource,
         useCachedMC,
@@ -1774,7 +1797,7 @@ async function* queryModel(
         consumedPinnedEdits as unknown as CachedMCPinnedEdits[] ,
         options.skipCacheWrite,
       ),
-      system,
+      system: compressedSystem,
       tools: allTools,
       tool_choice: options.toolChoice,
       ...(useBetas && { betas: betasParams }),

@@ -18,6 +18,7 @@ import { AutoCompactor } from "./autoCompactor.ts";
 import { AutoFixLoop, type AutoFixLoopConfig } from "./autoFixLoop.ts";
 import { cleanupHistoryBase64, applyPhase2Degradation, DEFAULT_IMAGE_BUDGET_CONFIG, type ImageBudgetConfig } from "./imageBudgetGuard.ts";
 import { GitContextInjector, type GitContextConfig } from "./gitContext.ts";
+import { HookManager, type HookEvent } from "./hooks/hookManager.js";
 
 export interface QueryResult {
   state: string;
@@ -76,6 +77,8 @@ export interface MessageLoopDeps {
   harness?: import("./harnessAdapter.ts").HarnessConfig;
   /** 验收标准门控（吸收自 intent-driven-development）：进入 done 前检查所有 required 标准 */
   acceptanceGate?: { check: () => Promise<{ allRequiredPass: boolean }> };
+  /** Hook 管理器（吸收自 ECC hooks）：PreToolUse/PostToolUse 拦截 */
+  hookManager?: HookManager;
 }
 
 export class MessageLoop {
@@ -106,11 +109,14 @@ export class MessageLoop {
     if (this.deps.gitContext?.enabled) {
       this.gitContext = new GitContextInjector(this.deps.gitContext)
     }
+    // 初始化 Hook 管理器（吸收自 ECC hooks）：支持外部注册 PreToolUse/PostToolUse 拦截器
+    this.hookManager = this.deps.hookManager ?? new HookManager()
   }
 
   private consecutiveToolFailures = 0;
   private autoFixLoop: AutoFixLoop | null = null;
   private gitContext: GitContextInjector | null = null;
+  private hookManager: HookManager;
 
   /** 重置自动修复循环计数器（新任务开始时调用） */
   resetAutoFixLoop(): void {
@@ -365,27 +371,67 @@ export class MessageLoop {
         });
       }
 
-      // 发射 hook 事件：pre_tool_use（吸收自 Cline hooks.ts beforeTool）
+      // Hook 拦截 + 事件发射：pre_tool_use（吸收自 ECC hooks beforeTool）
+      const allowedCalls: typeof validCalls = []
       for (const tc of validCalls) {
+        const hookEvent: HookEvent = {
+          type: 'PreToolUse',
+          toolName: tc.name,
+          input: tc.input as Record<string, unknown>,
+          toolUseId: tc.id,
+        }
+        const hookResult = await this.hookManager.trigger(hookEvent)
+
+        // 同时发射 onEvent（保留现有 UI 层事件通道）
         this.deps.onEvent({
           type: 'pre_tool_use',
           toolUseId: tc.id,
           toolName: tc.name,
           input: tc.input as Record<string, unknown>,
-        });
+        })
+
+        if (!hookResult.allow) {
+          engineLog('HOOK', `PreToolUse 拦截: ${tc.name} — ${hookResult.reason}`)
+          continue
+        }
+        allowedCalls.push(tc)
       }
 
-      // 执行有效调用
-      const results = await this.deps.toolScheduler.execute(validCalls);
+      // 全部被 hook 拦截时让 AI 直接回答
+      if (allowedCalls.length === 0) {
+        this.deps.conversation.messages.push({
+          role: 'system',
+          content: '所有工具调用被安全策略拦截，请直接回答用户问题。',
+        } as InternalMessage);
+        await this.deps.stateMachine.transition('should_continue')
+        return true
+      }
+
+      // 执行有效调用（已被 hook 过滤）
+      const results = await this.deps.toolScheduler.execute(allowedCalls);
 
       engineLog('TOOL_RESULTS', JSON.stringify(results, null, 2).slice(0, 10000));
 
-      // 发射 hook 事件：post_tool_use（吸收自 Cline hooks.ts afterTool）
+      // 发射 hook 事件 + HookManager 触发：post_tool_use（吸收自 ECC hooks afterTool）
       for (const r of results) {
+        const toolName = allowedCalls.find(tc => tc.id === r.toolUseId)?.name ?? ''
+
+        // HookManager 拦截
+        const postHookEvent: HookEvent = {
+          type: 'PostToolUse',
+          toolName,
+          output: typeof r.output === 'string' ? r.output : JSON.stringify(r.output ?? ''),
+          success: r.success,
+          error: r.error,
+          toolUseId: r.toolUseId,
+        }
+        await this.hookManager.trigger(postHookEvent)
+
+        // 同时发射 onEvent（保留现有 UI 层事件通道）
         this.deps.onEvent({
           type: 'post_tool_use',
           toolUseId: r.toolUseId,
-          toolName: validCalls.find(tc => tc.id === r.toolUseId)?.name ?? '',
+          toolName,
           success: r.success,
           output: typeof r.output === 'string' ? r.output : JSON.stringify(r.output ?? ''),
           error: r.error,
