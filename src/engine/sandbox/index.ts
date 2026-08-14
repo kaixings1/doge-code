@@ -10,10 +10,13 @@
  * - 最小侵入：通过 ToolExecutor 包装器接入，不改变现有工具签名
  * - 平台适配：根据 process.platform 自动选择沙箱策略
  * - 可插拔：SandboxPolicy 接口允许自定义检查逻辑
+ * - 多策略叠加：多个策略串联检查，任一拒绝则拒绝
  * - 默认安全：未配置沙箱时行为与之前完全一致
  */
 
 import type { ToolExecutor } from "./toolScheduler.ts"
+import { PathGuard } from "../../security/PathGuard.js"
+import { CommandFilter } from "../../security/CommandFilter.js"
 
 // ============ 类型定义 ============
 
@@ -31,8 +34,8 @@ export interface SandboxPolicy {
 export interface SandboxConfig {
   /** 是否启用沙箱 */
   enabled: boolean
-  /** 沙箱策略 */
-  policy: SandboxPolicy
+  /** 沙箱策略（支持多策略叠加） */
+  policy: SandboxPolicy | SandboxPolicy[]
   /** 拒绝时的行为：'error' = 抛出错误, 'skip' = 跳过执行, 'warn' = 警告后执行 */
   onDeny: 'error' | 'skip' | 'warn'
 }
@@ -101,6 +104,94 @@ export class CommandAllowlistPolicy implements SandboxPolicy {
 }
 
 /**
+ * PathGuardPolicy — 路径安全策略（吸收自 security/PathGuard）。
+ *
+ * 保护文件系统操作，防止路径遍历和访问敏感目录。
+ * 适用于 Read/Edit/Write 等文件操作工具。
+ */
+export class PathGuardPolicy implements SandboxPolicy {
+  name = 'path-guard'
+  private guard: PathGuard
+
+  constructor(opts?: {
+    rootDir?: string
+    allowedDirs?: string[]
+    blockedDirs?: string[]
+    allowedExtensions?: string[]
+    blockedExtensions?: string[]
+    maxSymlinkDepth?: number
+  }) {
+    this.guard = new PathGuard({
+      rootDir: opts?.rootDir ?? process.cwd(),
+      allowedDirs: opts?.allowedDirs ?? [],
+      blockedDirs: opts?.blockedDirs ?? [
+        '.git',
+        'node_modules',
+        '.env',
+        '.ssh',
+        '.aws',
+        '.doge',
+      ],
+      allowedExtensions: opts?.allowedExtensions ?? [],
+      blockedExtensions: opts?.blockedExtensions ?? ['.exe', '.bat', '.cmd', '.ps1'],
+      maxSymlinkDepth: opts?.maxSymlinkDepth ?? 5,
+    })
+  }
+
+  allowCommand(toolName: string, input: Record<string, unknown>): boolean {
+    // 只检查文件操作类工具
+    const fileTools = new Set(['Read', 'Write', 'Edit', 'MultiFileEdit', 'Glob', 'Grep'])
+    if (!fileTools.has(toolName)) {
+      return true
+    }
+
+    // 提取路径参数
+    const path = typeof input.path === 'string' ? input.path
+      : typeof input.file_path === 'string' ? input.file_path
+      : typeof input.file === 'string' ? input.file
+      : null
+
+    if (!path) {
+      return true // 无路径参数，放行（由工具自身校验）
+    }
+
+    const result = this.guard.validate(path)
+    return result.allowed
+  }
+}
+
+/**
+ * CommandFilterPolicy — 危险命令过滤策略（吸收自 security/CommandFilter）。
+ *
+ * 检测并拦截高危命令（数据销毁、权限提升、网络攻击等）。
+ * 适用于 Bash 工具的命令注入防护。
+ */
+export class CommandFilterPolicy implements SandboxPolicy {
+  name = 'command-filter'
+  private filter: CommandFilter
+
+  constructor() {
+    this.filter = new CommandFilter()
+  }
+
+  allowCommand(toolName: string, input: Record<string, unknown>): boolean {
+    // 只检查 Bash 工具
+    if (toolName !== 'Bash') {
+      return true
+    }
+
+    const command = typeof input.command === 'string' ? input.command : ''
+    if (!command) {
+      return true
+    }
+
+    const result = this.filter.check(command)
+    // 允许 low 严重性通过（仅记录），阻断 medium/high/critical
+    return result.allowed
+  }
+}
+
+/**
  * WindowsRestrictedTokenPolicy — Windows 受限令牌策略（占位）。
  *
  * 对齐 open-interpreter windows-sandbox-rs 的 Restricted Token 模式：
@@ -148,6 +239,7 @@ export class WindowsRestrictedTokenPolicy implements SandboxPolicy {
  * createSandboxedExecutor — 创建带沙箱检查的 ToolExecutor 包装器。
  *
  * 包装原始 executor，在执行前增加沙箱策略检查。
+ * 支持多策略叠加：任一策略拒绝则拒绝。
  * 不通过检查时根据 onDeny 配置处理。
  */
 export function createSandboxedExecutor(
@@ -158,37 +250,49 @@ export function createSandboxedExecutor(
     return executor
   }
 
+  // 统一为数组，支持多策略叠加
+  const policies: SandboxPolicy[] = Array.isArray(config.policy)
+    ? config.policy
+    : [config.policy]
+
   return {
     async execute(tool, input, options) {
-      const allowed = await config.policy.allowCommand(tool.name, input)
+      // 串联所有策略检查
+      for (const policy of policies) {
+        const allowed = await policy.allowCommand(tool.name, input)
 
-      if (!allowed) {
-        const reason = `沙箱策略 "${config.policy.name}" 拒绝了工具 "${tool.name}" 的执行请求`
+        if (!allowed) {
+          const reason = `沙箱策略 "${policy.name}" 拒绝了工具 "${tool.name}" 的执行请求`
 
-        switch (config.onDeny) {
-          case 'error':
-            throw new Error(reason)
-          case 'skip':
-            return `[沙箱拦截] ${reason}`
-          case 'warn':
-            console.warn(`[沙箱警告] ${reason}`)
-            // 警告后继续执行
-            break
+          switch (config.onDeny) {
+            case 'error':
+              throw new Error(reason)
+            case 'skip':
+              return `[沙箱拦截] ${reason}`
+            case 'warn':
+              console.warn(`[沙箱警告] ${reason}`)
+              // 警告后继续执行
+              break
+          }
         }
       }
 
-      // 准备阶段
-      if (config.policy.prepare) {
-        await config.policy.prepare()
+      // 准备阶段（所有策略）
+      for (const policy of policies) {
+        if (policy.prepare) {
+          await policy.prepare()
+        }
       }
 
       try {
         // 执行原始逻辑
         return await executor.execute(tool, input, options)
       } finally {
-        // 清理阶段
-        if (config.policy.cleanup) {
-          await config.policy.cleanup()
+        // 清理阶段（所有策略）
+        for (const policy of policies) {
+          if (policy.cleanup) {
+            await policy.cleanup()
+          }
         }
       }
     },
@@ -200,12 +304,37 @@ export function createSandboxedExecutor(
 /**
  * getDefaultSandboxPolicy — 根据平台返回默认沙箱策略。
  *
- * - Windows: CommandAllowlistPolicy（保守白名单）
+ * - Windows: CommandAllowlistPolicy + PathGuardPolicy + CommandFilterPolicy
  * - macOS/Linux: NoOpSandboxPolicy（后续可接入 bubblewrap/seatbelt）
  */
 export function getDefaultSandboxPolicy(): SandboxPolicy {
   if (process.platform === 'win32') {
-    return new WindowsRestrictedTokenPolicy()
+    return new CommandAllowlistPolicy({
+      allowedTools: ['Bash', 'Read', 'Edit', 'Write', 'Glob', 'Grep'],
+    })
   }
   return new NoOpSandboxPolicy()
+}
+
+/**
+ * createDefaultSandboxConfig — 创建默认沙箱配置（含安全策略）。
+ *
+ * 适用于 QueryEngine 默认配置，提供基础安全防护。
+ */
+export function createDefaultSandboxConfig(enabled = true): SandboxConfig {
+  if (!enabled) {
+    return { enabled: false, policy: new NoOpSandboxPolicy(), onDeny: 'warn' }
+  }
+
+  return {
+    enabled: true,
+    policy: [
+      new CommandAllowlistPolicy({
+        allowedTools: ['Bash', 'Read', 'Edit', 'Write', 'Glob', 'Grep'],
+      }),
+      new PathGuardPolicy(),
+      new CommandFilterPolicy(),
+    ],
+    onDeny: 'warn',
+  }
 }

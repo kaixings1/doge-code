@@ -64,6 +64,8 @@ export interface HookEvent {
   sessionId?: string;
   /** 原始事件数据 */
   raw?: Record<string, unknown>;
+  /** 工具调用 ID */
+  toolUseId?: string;
 }
 
 /**
@@ -144,7 +146,7 @@ export class HookManager {
     for (const hook of matched) {
       try {
         const result = hook.async
-          ? await this._withTimeout(hook.handler(event), hook.timeoutMs!)
+          ? await this._withTimeout(Promise.resolve(hook.handler(event)), hook.timeoutMs!)
           : await hook.handler(event);
 
         if (result && result.allow === false) {
