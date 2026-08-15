@@ -117,6 +117,7 @@ export class MessageLoop {
   private autoFixLoop: AutoFixLoop | null = null;
   private gitContext: GitContextInjector | null = null;
   private hookManager: HookManager;
+  private lastToolCalls: Array<{ name: string }> = [];
 
   /** 重置自动修复循环计数器（新任务开始时调用） */
   resetAutoFixLoop(): void {
@@ -132,6 +133,7 @@ export class MessageLoop {
     // 新任务开始时重置自动修复循环和 git 上下文
     this.resetAutoFixLoop()
     this.resetGitContext()
+    this.lastToolCalls = []
     this.deps.conversation.messages.push({ role: "user", content: userMessage } as InternalMessage);
     await this.deps.stateMachine.transition("responding", { message: userMessage });
     this.consecutiveToolFailures = 0;
@@ -210,6 +212,8 @@ export class MessageLoop {
 
   /** 将助手回复写入 conversation，并决定是否继续（吸收自 CoreCoder agent.py） */
   private async _recordAssistantResponse(processed: ProcessedResponse): Promise<boolean> {
+    const hadReadOrSearch = this.lastToolCalls.some(tc => tc.name === 'read' || tc.name === 'search' || tc.name === 'glob' || tc.name === 'grep')
+
     if (processed.content && processed.toolCalls.length === 0) {
       this.deps.conversation.messages.push({
         role: 'assistant',
@@ -227,19 +231,24 @@ export class MessageLoop {
         role: 'assistant',
         content: blocks,
       } as InternalMessage);
+      // 有工具调用 → 必须继续执行工具（ponytail: 最短路径，不加额外判断）
+      return true;
     }
 
     if (processed.needsUserInput) {
       this.deps.onEvent({ type: 'needs_user', prompt: processed.content as string });
       return true;
     }
-    if (processed.stopReason === 'end_turn') return false;
-    if (processed.stopReason === 'max_tokens') {
-      this.deps.onEvent({ type: 'should_continue' });
+
+    // 自动继续优先于 stopReason 检查：即使 AI 标记 end_turn，只要满足条件就继续
+    // 1. 上一步调用了 read/search/glob/grep，且 AI 返回了无工具调用的纯文本回复
+    //    ponytail: 重置 lastToolCalls 避免无限循环（每次只自动继续一次）
+    if (hadReadOrSearch && processed.toolCalls.length === 0) {
+      engineLog('AUTO_CONTINUE', '检测到 read/search 后提前终止，自动继续');
+      this.lastToolCalls = [];
       return true;
     }
-
-    // 自动继续：当 AI 回复正文包含"是否继续"等关键词时，延迟 3 秒后自动注入"继续"
+    // 2. AI 回复正文包含"是否继续"等关键词
     const content = typeof processed.content === 'string' ? processed.content : '';
     if (content && /是否继续|是否需要|是否同意|需要我|继续吗|确认一下|要不要|需不需要|可不可以|行不行|能不能|是否可以|是否要|是否需|可以吗|开始吗|同意吗|确认吗|有问题吗|没问题吧|没问题|请问|是不是|对不对|可否|是否可行|是否|继续|需要|确认|同意|能否|好吗|行吗/.test(content)) {
       await new Promise(resolve => setTimeout(resolve, 3000));
@@ -248,6 +257,12 @@ export class MessageLoop {
         content: '继续',
       } as InternalMessage);
       engineLog('AUTO_CONTINUE', '检测到"是否继续"关键词，3秒后自动发送"继续"');
+      return true;
+    }
+
+    if (processed.stopReason === 'end_turn') return false;
+    if (processed.stopReason === 'max_tokens') {
+      this.deps.onEvent({ type: 'should_continue' });
       return true;
     }
 
@@ -410,6 +425,9 @@ export class MessageLoop {
       // 执行有效调用（已被 hook 过滤）
       const results = await this.deps.toolScheduler.execute(allowedCalls);
 
+      // 追踪上一步工具调用，供 _recordAssistantResponse 检测 read/search 后提前终止
+      this.lastToolCalls = validCalls.map(tc => ({ name: tc.name }))
+
       engineLog('TOOL_RESULTS', JSON.stringify(results, null, 2).slice(0, 10000));
 
       // 发射 hook 事件 + HookManager 触发：post_tool_use（吸收自 ECC hooks afterTool）
@@ -531,12 +549,15 @@ export class MessageLoop {
       return true;
     }
 
-    if (processed.stopReason === "end_turn") return false;
-    if (processed.stopReason === "max_tokens") {
-      await this.deps.stateMachine.transition("should_continue");
-      return true;
+    // 自动继续已在 _recordAssistantResponse 中处理，此处不再覆盖
+    if (!shouldContinue) {
+      if (processed.stopReason === "end_turn") return false;
+      if (processed.stopReason === "max_tokens") {
+        await this.deps.stateMachine.transition("should_continue");
+        return true;
+      }
     }
-    return false;
+    return shouldContinue;
   }
 
   /** 根据编辑的文件构建验证步骤列表（吸收自 code-change-verification skill） */
