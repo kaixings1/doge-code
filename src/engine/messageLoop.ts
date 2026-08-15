@@ -235,12 +235,8 @@ export class MessageLoop {
       return true;
     }
 
-    if (processed.needsUserInput) {
-      this.deps.onEvent({ type: 'needs_user', prompt: processed.content as string });
-      return true;
-    }
-
-    // 自动继续优先于 stopReason 检查：即使 AI 标记 end_turn，只要满足条件就继续
+    // 自动继续优先于 stopReason 检查和 needsUserInput：
+    // 如果满足自动继续条件，直接注入"继续"并继续循环，跳过用户确认流程
     // 1. 上一步调用了 read/search/glob/grep，且 AI 返回了无工具调用的纯文本回复
     //    ponytail: 重置 lastToolCalls 避免无限循环（每次只自动继续一次）
     if (hadReadOrSearch && processed.toolCalls.length === 0) {
@@ -257,6 +253,11 @@ export class MessageLoop {
         content: '继续',
       } as InternalMessage);
       engineLog('AUTO_CONTINUE', '检测到"是否继续"关键词，3秒后自动发送"继续"');
+      return true;
+    }
+
+    if (processed.needsUserInput) {
+      this.deps.onEvent({ type: 'needs_user', prompt: processed.content as string });
       return true;
     }
 
