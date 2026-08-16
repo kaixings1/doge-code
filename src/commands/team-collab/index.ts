@@ -11,6 +11,8 @@
 
 import type { Command } from '../../commands.js'
 import type { LocalCommandCall, LocalCommandResult } from '../../types/command.js'
+import { execSync } from 'child_process'
+import { existsSync, readFileSync } from 'fs'
 
 // ---------------------------------------------------------------------------
 // LLM 调用封装（复用项目已有 AI 基础设施）
@@ -97,6 +99,94 @@ async function getOrchestrator() {
 }
 
 // ---------------------------------------------------------------------------
+// Self-Check 质量门控（轻量集成，避免循环依赖）
+// ---------------------------------------------------------------------------
+
+interface QualityGateResult {
+  passed: boolean
+  stage: string
+  checks: Array<{ name: string; passed: boolean; output?: string }>
+}
+
+function detectProjectCommands(): Record<string, string> {
+  if (existsSync('package.json')) {
+    const hasTypeScript = existsSync('tsconfig.json')
+    return {
+      lint: 'npx eslint . --ext .ts,.tsx,.js,.jsx --max-warnings 0 --max-diagnostics=100 2>&1 || echo "LINT_FAILED"',
+      typeCheck: hasTypeScript ? 'npx tsc --noEmit 2>&1 || echo "TYPE_FAILED"' : 'echo "NO_TS"',
+      build: 'npm run build 2>&1 || echo "BUILD_FAILED"',
+    }
+  }
+
+  if (existsSync('pyproject.toml') || existsSync('requirements.txt')) {
+    return {
+      lint: 'python -m pylint **/*.py 2>&1 || echo "LINT_FAILED"',
+      typeCheck: 'python -m mypy . 2>&1 || echo "TYPE_FAILED"',
+      build: 'python setup.py build 2>&1 || echo "BUILD_FAILED"',
+    }
+  }
+
+  if (existsSync('Cargo.toml')) {
+    return {
+      lint: 'cargo clippy --all-targets -- -D warnings 2>&1 || echo "LINT_FAILED"',
+      typeCheck: 'cargo check 2>&1 || echo "TYPE_FAILED"',
+      build: 'cargo build --verbose 2>&1 || echo "BUILD_FAILED"',
+    }
+  }
+
+  if (existsSync('go.mod')) {
+    return {
+      lint: 'golangci-lint run 2>&1 || go vet ./... 2>&1 || echo "LINT_FAILED"',
+      typeCheck: 'go vet ./... 2>&1 || echo "TYPE_FAILED"',
+      build: 'go build ./... 2>&1 || echo "BUILD_FAILED"',
+    }
+  }
+
+  return {}
+}
+
+function runQualityGate(stage: string): QualityGateResult {
+  const commands = detectProjectCommands()
+  const checks: Array<{ name: string; passed: boolean; output?: string }> = []
+
+  const checksToRun = stage === 'implement' || stage === 'verify'
+    ? ['lint', 'typeCheck', 'build']
+    : ['lint']
+
+  for (const checkName of checksToRun) {
+    const cmd = commands[checkName]
+    if (!cmd) continue
+
+    try {
+      const output = execSync(cmd, {
+        encoding: 'utf-8',
+        stdio: ['pipe', 'pipe', 'pipe'],
+        timeout: 30000,
+        cwd: process.cwd(),
+      }).trim()
+
+      const failed = output.includes('_FAILED') || output.includes('error') || output.includes('Error')
+      checks.push({
+        name: checkName,
+        passed: !failed,
+        output: output.slice(0, 500),
+      })
+    } catch (error) {
+      const err = error as { stdout?: string; stderr?: string }
+      const output = (err.stdout || err.stderr || 'Command failed').slice(0, 500)
+      checks.push({
+        name: checkName,
+        passed: false,
+        output,
+      })
+    }
+  }
+
+  const passed = checks.every(c => c.passed)
+  return { passed, stage, checks }
+}
+
+// ---------------------------------------------------------------------------
 // Command
 // ---------------------------------------------------------------------------
 
@@ -120,7 +210,11 @@ const call: LocalCommandCall = async (args, _context): Promise<LocalCommandResul
 模式说明：
 - pipeline: PM → Architect → TeamLeader → Engineer → QA → TeamLeader（严格顺序）
 - discuss: 角色间自由讨论，直到达成共识或达到最大轮数
-- parallel: 调研阶段并行扇出，后续串行执行`,
+- parallel: 调研阶段并行扇出，后续串行执行
+
+质量门控：
+- 流水线执行后自动运行轻量 self-check（lint/type-check/build）
+- 结果附加到执行详情末尾`,
     }
   }
 
@@ -168,6 +262,38 @@ const call: LocalCommandCall = async (args, _context): Promise<LocalCommandResul
     // 执行
     const result = await orchestrator.run(taskDescription)
 
+    // 质量门控：流水线/并行模式执行后运行轻量 self-check
+    let gateLines: string[] = []
+    if (mode === 'pipeline' || mode === 'parallel') {
+      try {
+        const gate = runQualityGate('implement')
+        gateLines = [
+          '',
+          '### 🔒 阶段质量门控',
+          '',
+          `**阶段**: implement/verify`,
+          `**结果**: ${gate.passed ? '✅ 通过' : '❌ 未通过'}`,
+          '',
+        ]
+
+        for (const check of gate.checks) {
+          const icon = check.passed ? '✅' : '❌'
+          gateLines.push(`- ${icon} **${check.name}**: ${check.passed ? '通过' : '失败'}`)
+          if (!check.passed && check.output) {
+            const preview = check.output.split('\n').slice(0, 5).join('\n')
+            gateLines.push(`  \`\`\`\n${preview}\n\`\`\``)
+          }
+        }
+
+        if (!gate.passed) {
+          gateLines.push('')
+          gateLines.push('⚠️ 质量门控未通过，建议修复问题后重新运行 /team-collab')
+        }
+      } catch (e) {
+        gateLines = ['', '### 🔒 阶段质量门控', '', `⚠️ 质量门控执行失败: ${e instanceof Error ? e.message : String(e)}`]
+      }
+    }
+
     // 格式化输出
     const lines = [
       `## 🏭 多角色协作${mode === 'discuss' ? '讨论' : mode === 'parallel' ? '并行' : '流水线'}执行结果`,
@@ -179,6 +305,8 @@ const call: LocalCommandCall = async (args, _context): Promise<LocalCommandResul
       `**质量评分**: ${result.qualityScore}/100`,
       `**总耗时**: ${(result.totalDuration / 1000).toFixed(1)}s`,
       `**总迭代**: ${result.totalIterations}`,
+      '',
+      ...gateLines,
       '',
     ]
 
