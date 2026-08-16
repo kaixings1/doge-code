@@ -244,9 +244,9 @@ ${task.error ? `- 错误: ${task.error.slice(0, 100)}` : ''}`,
       if (task.finalResult) lines.push(`**结果**: ${task.finalResult.slice(0, 300)}`);
       lines.push('');
       if (task.checkpoints.length > 0) {
-        lines.push('### 执行轨迹');
+        lines.push('### 最近步骤');
         for (const cp of task.checkpoints.slice(-5)) {
-          lines.push(`[${cp.step}] ${cp.action}: ${cp.result.slice(0, 100)}`);
+          lines.push(`- [${cp.step}] ${cp.action}: ${cp.result.slice(0, 100)}`);
         }
       }
       return { type: 'text', value: lines.join('\n') };
