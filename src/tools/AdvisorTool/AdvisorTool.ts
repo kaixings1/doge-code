@@ -34,7 +34,7 @@ interface AnalysisResult {
   largeFiles: { path: string; lines: number }[]
 }
 
-async function analyzeCodebase(path?: string): Promise<AnalysisResult> {
+export async function analyzeCodebase(path?: string): Promise<AnalysisResult> {
   const result: AnalysisResult = {
     filesAnalyzed: 0,
     totalLines: 0,
@@ -139,7 +139,7 @@ async function analyzeCodebase(path?: string): Promise<AnalysisResult> {
   return result
 }
 
-function generateAdvice(focus: string, analysis: AnalysisResult): { advice: string; suggestions: string[]; confidence: number } {
+export function generateAdvice(focus: string, analysis: AnalysisResult): { advice: string; suggestions: string[]; confidence: number } {
   const suggestions: string[] = []
   let confidence = 0.85
 

@@ -84,7 +84,7 @@ async function ghJson<T>(args: string[]): Promise<T> {
 // CI 状态查询
 // ============================================================================
 
-async function getCIStatus(prNumber: number): Promise<'pass' | 'fail' | 'pending' | 'unknown'> {
+export async function getCIStatus(prNumber: number): Promise<'pass' | 'fail' | 'pending' | 'unknown'> {
   try {
     const data = await ghJson<any[]>([
       'pr', 'checks', String(prNumber), '--json', 'state,conclusion,status', '--jq', '.[]',
@@ -497,4 +497,4 @@ function log(verbose: boolean, message: string): void {
   }
 }
 
-export { categorizeComment }
+export { categorizeComment, getPRFeedback }

@@ -15,8 +15,54 @@ const noopLogger: ServerLoggerLike = {
   debug: () => {},
 }
 
+const SECURITY_HEADERS: Record<string, string> = {
+  'x-content-type-options': 'nosniff',
+  'x-frame-options': 'DENY',
+  'x-xss-protection': '1; mode=block',
+  'strict-transport-security': 'max-age=31536000; includeSubDomains',
+  'cache-control': 'no-store',
+}
+
+// Rate limiter: key → { count, firstSeen }
+interface RateLimitEntry {
+  count: number
+  firstSeen: number
+}
+const rateLimitMap = new Map<string, RateLimitEntry>()
+const RATE_LIMIT_WINDOW_MS = 60_000
+const RATE_LIMIT_MAX = 120
+
+// Per-session ownership: sessionId → secret
+const sessionSecretMap = new Map<string, string>()
+
+function generateSessionSecret(): string {
+  return Array.from(crypto.getRandomValues(new Uint8Array(32)))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('')
+}
+
+function validateSessionOwner(req: IncomingMessage, sessionId: string): boolean {
+  const secret = req.headers['x-session-key']
+  if (!secret || typeof secret !== 'string') return false
+  return sessionSecretMap.get(sessionId) === secret
+}
+
+function checkRateLimit(key: string): boolean {
+  const now = Date.now()
+  const entry = rateLimitMap.get(key)
+  if (!entry || now - entry.firstSeen > RATE_LIMIT_WINDOW_MS) {
+    rateLimitMap.set(key, { count: 1, firstSeen: now })
+    return true
+  }
+  entry.count++
+  return entry.count <= RATE_LIMIT_MAX
+}
+
 function sendJson(res: ServerResponse, status: number, body: unknown): void {
-  res.writeHead(status, { 'content-type': 'application/json; charset=utf-8' })
+  res.writeHead(status, {
+    'content-type': 'application/json; charset=utf-8',
+    ...SECURITY_HEADERS,
+  })
   res.end(JSON.stringify(body))
 }
 
@@ -69,12 +115,27 @@ export function startServer(
 
       // GET /health
       if (req.method === 'GET' && pathname === '/health') {
-        sendJson(res, 200, { status: 'ok', pid: process.pid, version: MACRO.VERSION })
+        sendJson(res, 200, { status: 'ok', version: MACRO.VERSION })
+        return
+      }
+
+      // Rate limit check (applies to all authenticated requests except /health)
+      const rateKey = `ip:${req.socket.remoteAddress || 'unknown'}`
+      if (!checkRateLimit(rateKey)) {
+        sendJson(res, 429, { error: 'Too many requests. Please retry later.' })
         return
       }
 
       // POST /sessions
       if (req.method === 'POST' && pathname === '/sessions') {
+        if (config.maxSessions && sessionManager?.listSessions) {
+          const currentCount = sessionManager.listSessions().length
+          if (currentCount >= config.maxSessions) {
+            sendJson(res, 429, { error: `Max sessions (${config.maxSessions}) reached. Destroy a session first.` })
+            return
+          }
+        }
+
         const body = await readBody(req)
         let parsed: any = {}
         try { parsed = JSON.parse(body) } catch { /* 空 body */ }
@@ -85,10 +146,14 @@ export function startServer(
         try {
           const session = await sessionManager.createSession({
             cwd: parsed.cwd || config.workspace || process.cwd(),
-            dangerouslySkipPermissions: parsed.dangerously_skip_permissions,
+            // dangerously_skip_permissions 由服务端配置决定，不接受客户端传入
+            dangerouslySkipPermissions: false,
           })
+          const sessionSecret = generateSessionSecret()
+          sessionSecretMap.set(session.id, sessionSecret)
           sendJson(res, 201, {
             session_id: session.id,
+            session_key: sessionSecret,
             ws_url: `ws://${config.host}:${config.port}/ws/${session.id}`,
             work_dir: session.workDir,
           })
@@ -110,9 +175,16 @@ export function startServer(
       if (sessionMatch) {
         const [, id, sub] = sessionMatch
 
+        // Ownership check: all session operations require session_key
+        if (!validateSessionOwner(req, id)) {
+          sendJson(res, 403, { error: 'Forbidden: invalid or missing session key' })
+          return
+        }
+
         // DELETE /session/:id
         if (req.method === 'DELETE' && !sub) {
           await sessionManager?.destroySession?.(id)
+          sessionSecretMap.delete(id)
           sendJson(res, 200, { ok: true, session_id: id })
           return
         }

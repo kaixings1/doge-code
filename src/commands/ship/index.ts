@@ -15,7 +15,7 @@
 import type { Command, LocalCommandCall, LocalCommandResult } from '../types/command.js'
 import { execFileNoThrow } from '../../utils/execFileNoThrow.js'
 import { gitExe } from '../../utils/git.js'
-import { runCIMonitorLoop } from './ship-ci-review-loop.js'
+import { runCIMonitorLoop, getCIStatus, getPRFeedback } from './ship-ci-review-loop.js'
 
 // ============================================================================
 // Types
@@ -203,7 +203,68 @@ const call: LocalCommandCall = async (args: string): Promise<LocalCommandResult>
   const trimmed = (args ?? '').trim()
   const startTime = Date.now()
 
-  // Parse options
+  // --- Subcommands: pr-review / ci-status ---
+
+  // /ship pr-review <pr-number> — 自动审查 PR
+  if (trimmed.startsWith('pr-review')) {
+    const parts = trimmed.split(/\s+/).filter(Boolean)
+    const prNum = parts.length > 1 ? parseInt(parts[1]!, 10) : NaN
+    if (Number.isNaN(prNum) || prNum <= 0) {
+      return { type: 'text', value: '用法: /ship pr-review <pr-number>\n示例: /ship pr-review 42' }
+    }
+
+    const lines: string[] = []
+    lines.push(`🔍 PR #${prNum} 审查中...`)
+    lines.push('')
+
+    const feedback = await getPRFeedback(prNum)
+    lines.push(`未解决 threads: ${feedback.unresolvedThreads}`)
+    lines.push(`Changes requested: ${feedback.changesRequested ? '是' : '否'}`)
+    lines.push('')
+
+    if (feedback.comments.length > 0) {
+      lines.push('## 评论分类')
+      for (const cat of feedback.categories) {
+        const label = cat === 'code_fix_required' ? '🔴 需修复' :
+                      cat === 'style_suggestion' ? '🟡 样式建议' :
+                      cat === 'question' ? '🔵 问题' :
+                      cat === 'false_positive' ? '🟢 误报' :
+                      cat === 'nit' ? '⚪ 小问题' :
+                      cat === 'approved' ? '✅ 批准' : '❓ 其他'
+        lines.push(`- ${label}: ${cat}`)
+      }
+      lines.push('')
+      lines.push('## 评论详情')
+      for (const c of feedback.comments) {
+        lines.push(`- **${c.author}**: ${c.body.slice(0, 200)}`)
+      }
+    } else {
+      lines.push('✅ 无未解决评论')
+    }
+
+    return { type: 'text', value: lines.join('\n') }
+  }
+
+  // /ship ci-status [pr-number] — 监控 CI 状态
+  if (trimmed.startsWith('ci-status')) {
+    const parts = trimmed.split(/\s+/).filter(Boolean)
+    const prNum = parts.length > 1 ? parseInt(parts[1]!, 10) : NaN
+    if (Number.isNaN(prNum) || prNum <= 0) {
+      return { type: 'text', value: '用法: /ship ci-status <pr-number>\n示例: /ship ci-status 42' }
+    }
+
+    const status = await getCIStatus(prNum)
+    const statusLabel = status === 'pass' ? '✅ 通过' :
+                        status === 'fail' ? '❌ 失败' :
+                        status === 'pending' ? '⏳ 进行中' : '❓ 未知'
+
+    return {
+      type: 'text',
+      value: `PR #${prNum} CI 状态: ${statusLabel}\n\n使用 /ship 执行完整 CI/Review 监控循环`,
+    }
+  }
+
+  // --- Full ship workflow (default) ---
   const strategy = trimmed.includes('--strategy merge') ? 'merge' :
                    trimmed.includes('--strategy rebase') ? 'rebase' : 'squash'
   const dryRun = trimmed.includes('--dry-run')
@@ -372,23 +433,7 @@ const ship: Command = {
   name: 'ship',
   description: '🚀 完整部署工作流: commit → PR → CI → review → merge → deploy',
   aliases: ['deploy-full', 'ship-it'],
-  arguments: [
-    {
-      name: '--strategy',
-      description: '合并策略: squash (默认) | merge | rebase',
-      required: false,
-    },
-    {
-      name: '--skip-tests',
-      description: '跳过测试验证（危险）',
-      required: false,
-    },
-    {
-      name: '--dry-run',
-      description: '仅显示计划，不执行',
-      required: false,
-    },
-  ],
+  argumentHint: '[pr-review <pr> | ci-status <pr> | [--strategy <s>] [--dry-run]]',
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call }),
 }
