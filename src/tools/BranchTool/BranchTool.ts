@@ -5,8 +5,8 @@ import { exec } from '../../utils/Shell.js'
 
 const inputSchema = lazySchema(() =>
   z.object({
-    action: z.enum(['create', 'switch', 'list', 'delete']).describe('分支操作'),
-    name: z.string().optional().describe('分支名称'),
+    action: z.enum(['create', 'switch', 'list', 'delete', 'status']).describe('分支操作：create=创建, switch=切换, list=列出, delete=删除, status=仓库状态'),
+    name: z.string().optional().describe('分支名称（create/switch/delete 需要）'),
   }),
 )
 
@@ -16,6 +16,13 @@ const outputSchema = lazySchema(() =>
     branch: z.string().optional().describe('当前分支'),
     branches: z.array(z.string()).optional().describe('分支列表'),
     message: z.string().optional().describe('结果消息'),
+    status: z.object({
+      branch: z.string().optional(),
+      dirty: z.boolean().optional(),
+      files_changed: z.number().optional(),
+      additions: z.number().optional(),
+      deletions: z.number().optional(),
+    }).optional().describe('仓库状态信息（action=status 时返回）'),
   }),
 )
 
@@ -112,6 +119,44 @@ export const BranchTool = buildTool({
             data: {
               success: result.code === 0,
               message: result.code === 0 ? `分支 ${name} 已删除` : `删除失败: ${result.stderr}`,
+            } as Output,
+          }
+        }
+        case 'status': {
+          const branchResult = await runGit(['branch', '--show-current'])
+          const currentBranch = branchResult.stdout.trim() || null
+          const statusResult = await runGit(['status', '--porcelain'])
+          const statusLines = statusResult.stdout.trim().split('\n').filter(Boolean)
+          const dirty = statusLines.length > 0
+          let additions = 0
+          let deletions = 0
+          for (const line of statusLines) {
+            const parts = line.slice(2).trim()
+            if (parts.startsWith('+')) additions++
+            if (parts.startsWith('-')) deletions++
+          }
+          return {
+            data: {
+              success: true,
+              branch: currentBranch,
+              status: {
+                branch: currentBranch,
+                dirty,
+                files_changed: statusLines.length,
+                additions,
+                deletions,
+              },
+              message: currentBranch
+                ? `当前分支: ${currentBranch}，${statusLines.length} 个文件有变更`
+                : `非 Git 仓库或未初始化`,
+            } as Output,
+          }
+        }
+        default: {
+          return {
+            data: {
+              success: false,
+              message: `未知操作: ${action}`,
             } as Output,
           }
         }

@@ -120,14 +120,15 @@ class TasksV2Store {
     )
     this.#tasks = current
 
-    const hasIncomplete = current.some(t => t.status !== 'completed')
+    const hasActiveWork = current.some(t => t.status === 'in_progress')
 
-    if (hasIncomplete || current.length === 0) {
-      // Has unresolved tasks (open/in_progress) or empty — reset hide state
+    if (hasActiveWork || current.length === 0) {
+      // Has tasks actively being worked on, or empty — reset hide state
       this.#hidden = current.length === 0
       this.#clearHideTimer()
     } else if (this.#hideTimer === null && !this.#hidden) {
-      // All tasks just became completed — schedule clear
+      // No active work and no empty list: all tasks are either completed
+      // or stuck in pending (abandoned). Schedule hide + reset.
       this.#hideTimer = setTimeout(
         this.#onHideTimerFired.bind(this, taskListId),
         HIDE_DELAY_MS,
@@ -145,7 +146,7 @@ class TasksV2Store {
       clearTimeout(this.#pollTimer)
       this.#pollTimer = null
     }
-    if (hasIncomplete) {
+    if (hasActiveWork) {
       this.#pollTimer = setTimeout(this.#debouncedFetch, FALLBACK_POLL_MS)
       this.#pollTimer.unref()
     }

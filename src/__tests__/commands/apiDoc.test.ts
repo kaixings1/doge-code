@@ -212,8 +212,8 @@ describe('api-doc 文档生成', () => {
       { name: 'foo', params: [{ name: 'a', type: 'string' }], returnType: 'number', isAsync: false, isExport: true, line: 5 },
     ])
     expect(md).toContain('foo(`a: string`)')
-    expect(md).toContain('**返回类型:** `number`')
-    expect(md).toContain('**行号:** 5')
+    expect(md).toContain('**🔙 返回类型:** `number`')
+    expect(md).toContain('**📍 行号:** 5')
   })
 
   it('generateMarkdown 应该按路径分组', () => {

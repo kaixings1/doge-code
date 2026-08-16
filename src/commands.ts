@@ -97,6 +97,7 @@ import copyPage from './commands/copy-page/index.ts'
 import documentationIndex from './commands/documentation-index/index.ts'
 import powerup from './commands/powerup/index.ts'
 import teamOnboarding from './commands/team-onboarding/index.ts'
+import teamCollab from './commands/team-collab/index.js'
 import projectPurge from './commands/project-purge/index.ts'
 import insights from './commands/insights/index.ts'
 import team from './commands/team/index.ts'
@@ -494,6 +495,7 @@ const COMMANDS = memoize((): Command[] => [
   tui,
   powerup,
   teamOnboarding,
+  teamCollab,
   projectPurge,
   insights,
   team,

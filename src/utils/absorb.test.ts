@@ -1,52 +1,41 @@
-import { absorb, absorbLines, absorbText, getSessionCompressor } from './absorb.ts'
+import { describe, it, expect } from 'vitest'
+import { absorb, absorbLines, getSessionCompressor } from './absorb.ts'
 
-let pass = 0
-let fail = 0
+describe('absorb', () => {
+  it('重复段落应吸收为一段', () => {
+    expect(absorb('hello world\n\nhello world\n\nhello world')).toBe('hello world')
+  })
 
-function assert(name: string, actual: string, expected: string) {
-  if (actual === expected) {
-    console.log('  [PASS] ' + name)
-    pass++
-  } else {
-    console.log('  [FAIL] ' + name)
-    fail++
-  }
-}
+  it('重复代码块应吸收为一个', () => {
+    expect(absorb('function foo() {}\n\nfunction foo() {}\n\nfunction foo() {}')).toBe('function foo() {}')
+  })
 
-console.log('=== absorb 测试 ===')
+  it('非重复内容应保留', () => {
+    expect(absorb('foo\n\nbar\n\nbaz')).toBe('foo\n\nbar\n\nbaz')
+  })
 
-assert('重复段落', absorb('hello world\n\nhello world\n\nhello world'), 'hello world')
-assert('重复代码块', absorb('function foo() {}\n\nfunction foo() {}\n\nfunction foo() {}'), 'function foo() {}')
-assert('保留非重复', absorb('foo\n\nbar\n\nbaz'), 'foo\n\nbar\n\nbaz')
-assert('空字符串', absorb(''), '')
-assert('行级吸收', absorbLines('line1\nline1\nline1\nline2\nline2\nline2', 3), 'line1\nline1\nline2\nline2')
+  it('空字符串应返回空', () => {
+    expect(absorb('')).toBe('')
+  })
+})
 
-// SessionCompressor 缓存
-{
-  const compressor = getSessionCompressor()
-  const text = 'tool definition with parameters'
-  const result = compressor.feed(text)
-  if (result.length < text.length) {
-    console.log('  [PASS] SessionCompressor 缓存')
-    pass++
-  } else {
-    console.log('  [FAIL] SessionCompressor 缓存')
-    fail++
-  }
-}
+describe('absorbLines', () => {
+  it('应进行行级吸收', () => {
+    expect(absorbLines('line1\nline1\nline1\nline2\nline2\nline2', 3)).toBe('line1\nline1\nline2\nline2')
+  })
+})
 
-// 超长文本跳过
-{
-  const longText = 'x'.repeat(600_000)
-  const result = absorb(longText)
-  if (result === longText) {
-    console.log('  [PASS] 超长文本跳过(600KB)')
-    pass++
-  } else {
-    console.log('  [FAIL] 超长文本跳过')
-    fail++
-  }
-}
+describe('SessionCompressor', () => {
+  it('连续重复应被压缩', () => {
+    const compressor = getSessionCompressor()
+    const text = 'tool definition with parameters\n\ntool definition with parameters\n\ntool definition with parameters\n\ntool definition with parameters'
+    const result = compressor.feed(text)
+    expect(result.length).toBeLessThan(text.length)
+  })
 
-console.log('\n结果: ' + pass + ' passed, ' + fail + ' failed')
-if (fail > 0) process.exit(1)
+  it('超长文本应跳过', () => {
+    const longText = 'x'.repeat(600_000)
+    const result = absorb(longText)
+    expect(result).toBe(longText)
+  })
+})

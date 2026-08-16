@@ -12,6 +12,13 @@ import { SANDBOX_AGENT } from './built-in/sandboxAgent.js'
 import { PLAN_AGENT } from './built-in/planAgent.js'
 import { STATUSLINE_SETUP_AGENT } from './built-in/statuslineSetup.js'
 import { VERIFICATION_AGENT } from './built-in/verificationAgent.js'
+import { TEAM_LEADER_AGENT } from './built-in/teamLeaderAgent.js'
+import { PM_AGENT } from './built-in/pmAgent.js'
+import { ENGINEER_AGENT } from './built-in/engineerAgent.js'
+import { ARCHITECT_AGENT } from './built-in/architectAgent.js'
+import { QA_AGENT } from './built-in/qaAgent.js'
+import { CODE_REVIEWER_AGENT } from './built-in/codeReviewerAgent.js'
+import { RESEARCHER_AGENT } from './built-in/researcherAgent.js'
 import type { AgentDefinition } from './loadAgentsDir.js'
 
 export function areExplorePlanAgentsEnabled(): boolean {
@@ -51,6 +58,13 @@ export function getBuiltInAgents(): AgentDefinition[] {
     SWE_AGENT,
     BROWSER_AGENT,
     SANDBOX_AGENT,
+    TEAM_LEADER_AGENT,
+    PM_AGENT,
+    ARCHITECT_AGENT,
+    ENGINEER_AGENT,
+    QA_AGENT,
+    CODE_REVIEWER_AGENT,
+    RESEARCHER_AGENT,
   ]
 
   if (areExplorePlanAgentsEnabled()) {

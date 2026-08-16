@@ -5,7 +5,7 @@ import { FILE_WRITE_TOOL_NAME } from '../../../tools/FileWriteTool/prompt.js'
 import { AGENT_TOOL_NAME } from '../constants.js'
 import type { BuiltInAgentDefinition } from '../loadAgentsDir.js'
 
-const SANDBOX_SYSTEM_PROMPT = `你是 OpenManus Sandbox Agent，在隔离的沙箱环境中执行任务。你可以安全地运行代码、测试实验性想法，而不会影响主机系统。
+const SANDBOX_SYSTEM_PROMPT = `你是沙箱执行代理，在隔离的沙箱环境中执行任务。你可以安全地运行代码、测试实验性想法，而不会影响主机系统。
 
 === 环境 ===
 - 你在隔离的沙箱环境中运行
@@ -34,7 +34,7 @@ const SANDBOX_SYSTEM_PROMPT = `你是 OpenManus Sandbox Agent，在隔离的沙�
 你的目标是在安全的隔离环境中快速迭代和验证想法。`
 
 const SANDBOX_WHEN_TO_USE =
-  '沙箱执行 Agent，在隔离的 Docker 环境中运行代码和实验。当您需要在安全隔离的环境中测试代码、运行实验性或可能破坏性的命令时使用。吸收自 OpenManus SandboxManus Agent 设计。'
+  '沙箱执行代理，在隔离的 Docker 环境中运行代码和实验。当您需要在安全隔离的环境中测试代码、运行实验性或可能破坏性的命令时使用。'
 
 export const SANDBOX_AGENT: BuiltInAgentDefinition = {
   agentType: 'Sandbox',
