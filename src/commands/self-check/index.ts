@@ -43,7 +43,7 @@ import { join } from 'path'
 // ==================== 类型定义 ====================
 
 type ProjectType = 'node' | 'python' | 'rust' | 'go' | 'java' | 'unknown'
-type CheckMode = 'full' | 'lint' | 'test' | 'type-check' | 'build' | 'security' | 'audit' | 'coverage' | 'changed' | 'ci'
+type CheckMode = 'full' | 'lint' | 'test' | 'type-check' | 'build' | 'security' | 'audit' | 'coverage' | 'changed' | 'diff' | 'ci'
 type OutputFormat = 'markdown' | 'json'
 
 interface CheckOptions {
@@ -54,6 +54,7 @@ interface CheckOptions {
   failOnWarning: boolean
   format: OutputFormat
   commands: CheckCommands
+  autoFix: boolean
 }
 
 interface CheckCommands {
@@ -627,6 +628,146 @@ function filterCommandsByChangedFiles(commands: CheckCommands, changedFiles: str
   return commands
 }
 
+// ==================== Auto-Fix：LLM 自动修复 ====================
+
+interface CallAIOptions {
+  apiKey: string
+  baseURL: string
+  model: string
+  apiTimeout: number
+}
+
+async function callAI(
+  systemPrompt: string,
+  userPrompt: string,
+  opts: CallAIOptions,
+): Promise<string> {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), opts.apiTimeout)
+
+  try {
+    const response = await fetch(opts.baseURL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${opts.apiKey}`,
+      },
+      body: JSON.stringify({
+        model: opts.model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt },
+        ],
+        max_tokens: 8000,
+        stream: false,
+      }),
+      signal: controller.signal,
+    })
+
+    clearTimeout(timeoutId)
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`API ${response.status}: ${errorText.slice(0, 200)}`)
+    }
+
+    const data = (await response.json()) as {
+      choices?: Array<{ message?: { content?: string } }>
+      error?: { message?: string }
+    }
+
+    if (data.error) {
+      throw new Error(`API 错误: ${data.error.message || 'unknown'}`)
+    }
+
+    return data.choices?.[0]?.message?.content || ''
+  } catch (error) {
+    clearTimeout(timeoutId)
+    throw error
+  }
+}
+
+function resolveLLMConfig(): CallAIOptions {
+  const apiKey = process.env.DOGE_API_KEY || process.env.ANTHROPIC_API_KEY || ''
+  const baseURL =
+    process.env.ANTHROPIC_BASE_URL || 'https://api.longcat.chat/openai/v1/chat/completions'
+  const model = process.env.ANTHROPIC_MODEL || process.env.DOGE_MODEL || 'step-3.7-flash'
+  const apiTimeout = Number(process.env.DOGE_API_TIMEOUT || 60000)
+
+  return { apiKey, baseURL, model, apiTimeout }
+}
+
+function generateAutoFixPrompt(errors: RawError[], projectType: string, commands: CheckCommands): string {
+  const errorSummary = errors.slice(0, 10).map(e =>
+    `- [${e.type}] ${e.file}${e.line ? ':' + e.line : ''} ${e.code || ''} — ${e.message.slice(0, 150)}`
+  ).join('\n')
+
+  const commandHints = `
+可用修复命令：
+- lint: ${commands.lint}
+- test: ${commands.test}
+- type-check: ${commands.typeCheck}
+- build: ${commands.build}
+`.trim()
+
+  return `你是一个代码修复专家。项目类型: ${projectType}。
+
+检测到以下错误，请生成最小化、精准的修复 patch：
+
+${errorSummary}
+
+${commandHints}
+
+要求：
+1. 只修复错误，不要重构无关代码
+2. 优先使用项目已有模式（如已有 Prettier 配置则不要改格式）
+3. 返回标准 unified diff 格式的 patch
+4. 如果无法确定修复方案，返回说明而不是猜测
+5. 每个文件单独一个 patch block
+
+返回格式：
+\`\`\`diff
+--- a/path/to/file
++++ b/path/to/file
+@@ -line,count +line,count @@
+...diff content...
+\`\`\`
+`
+}
+
+function applyAutoFixPrompt(patch: string): { applied: boolean; files: string[]; error?: string } {
+  try {
+    // 检测是否为标准 unified diff
+    const hasDiffHeader = patch.includes('--- a/') || patch.includes('--- ') || patch.includes('+++ b/')
+    if (!hasDiffHeader) {
+      return { applied: false, files: [], error: '输出不是标准 unified diff 格式' }
+    }
+
+    const fileRegex = /\+\+\+\s+b\/(.+)/g
+    const files: string[] = []
+    let match
+
+    while ((match = fileRegex.exec(patch)) !== null) {
+      const file = match[1].trim()
+      if (file && !files.includes(file)) {
+        files.push(file)
+      }
+    }
+
+    if (files.length === 0) {
+      return { applied: false, files: [], error: '未检测到任何目标文件' }
+    }
+
+    return { applied: true, files, patch }
+  } catch (e) {
+    return {
+      applied: false,
+      files: [],
+      error: e instanceof Error ? e.message : String(e),
+    }
+  }
+}
+
 // ==================== 主循环 ====================
 
 async function runSelfCheck(args: string): Promise<LocalCommandResult> {
@@ -698,6 +839,7 @@ function getHelpText(): string {
 /self-check --max-iterations 5    # 最大修复轮数（默认 3）
 /self-check --threshold 80        # 覆盖率阈值（默认 80%）
 /self-check --format json         # JSON 格式报告
+/self-check --auto-fix          # 调用 LLM 自动生成修复 patch
 /self-check --fail-on-warning     # 警告也视为失败
 \`\`\`
 
@@ -738,8 +880,9 @@ function parseArgs(args: string): CheckOptions {
   let coverageThreshold = 80
   let failOnWarning = false
   let format: OutputFormat = 'markdown'
+  let autoFix = false
 
-  const validModes: CheckMode[] = ['lint', 'test', 'type-check', 'build', 'security', 'audit', 'coverage', 'changed', 'ci']
+  const validModes: CheckMode[] = ['lint', 'test', 'type-check', 'build', 'security', 'audit', 'coverage', 'changed', 'diff', 'ci']
   if (validModes.includes(parts[0] as CheckMode)) {
     mode = parts[0] as CheckMode
   }
@@ -760,6 +903,9 @@ function parseArgs(args: string): CheckOptions {
     if (parts[i] === '--fail-on-warning') {
       failOnWarning = true
     }
+    if (parts[i] === '--auto-fix') {
+      autoFix = true
+    }
   }
 
   return {
@@ -769,6 +915,7 @@ function parseArgs(args: string): CheckOptions {
     coverageThreshold,
     failOnWarning,
     format,
+    autoFix,
     commands: {
       lint: '',
       test: '',
@@ -967,6 +1114,46 @@ async function executeSelfCheck(options: CheckOptions): Promise<CheckResult> {
           coveragePercent,
         }
       }
+    }
+  }
+
+  // ==================== Auto-Fix 模式 ====================
+  if (options.autoFix && !result.success && result.rawErrors.length > 0) {
+    const llm = resolveLLMConfig()
+
+    if (llm.apiKey) {
+      try {
+        const prompt = generateAutoFixPrompt(result.rawErrors, options.projectType, options.commands)
+        const patch = await callAI(
+          '你是一个代码修复专家。只返回 unified diff patch，不要其他内容。',
+          prompt,
+          llm,
+        )
+
+        const { applied, files, error } = applyAutoFixPrompt(patch)
+
+        if (applied) {
+          // 将 patch 保存到临时文件
+          const patchFile = join(process.cwd(), '.doge', 'tasks', 'auto-fix.patch')
+          if (!existsSync(join(process.cwd(), '.doge', 'tasks'))) {
+            mkdirSync(join(process.cwd(), '.doge', 'tasks'), { recursive: true })
+          }
+          writeFileSync(patchFile, patch)
+
+          allFixes.push(`[Auto-Fix] 已生成 patch，覆盖 ${files.length} 个文件: ${files.join(', ')}`)
+          allFixes.push(`[Auto-Fix] Patch 已保存到: ${patchFile}`)
+          allFixes.push(`[Auto-Fix] 请手动审查并应用: git apply ${patchFile}`)
+
+          // 注意：自动应用 patch 风险较高，这里只生成 patch 供审查
+          // 用户可自行决定是否应用
+        } else {
+          allFixes.push(`[Auto-Fix] 生成失败: ${error}`)
+        }
+      } catch (e) {
+        allFixes.push(`[Auto-Fix] LLM 调用失败: ${e instanceof Error ? e.message : String(e)}`)
+      }
+    } else {
+      allFixes.push('[Auto-Fix] 未配置 API 密钥，跳过自动修复。设置 DOGE_API_KEY 或 ANTHROPIC_API_KEY 环境变量。')
     }
   }
 
