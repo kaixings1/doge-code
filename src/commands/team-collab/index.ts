@@ -262,31 +262,33 @@ const call: LocalCommandCall = async (args, _context): Promise<LocalCommandResul
     // 执行
     const result = await orchestrator.run(taskDescription)
 
-    // 质量门控：流水线/并行模式执行后运行轻量 self-check
+    // 质量门控：流水线/并行模式执行后运行 implement + verify 两阶段检查
     let gateLines: string[] = []
     if (mode === 'pipeline' || mode === 'parallel') {
       try {
-        const gate = runQualityGate('implement')
-        gateLines = [
-          '',
-          '### 🔒 阶段质量门控',
-          '',
-          `**阶段**: implement/verify`,
-          `**结果**: ${gate.passed ? '✅ 通过' : '❌ 未通过'}`,
-          '',
-        ]
+        const gates = [
+          runQualityGate('implement'),
+          runQualityGate('verify'),
+        ] as QualityGateResult[]
 
-        for (const check of gate.checks) {
-          const icon = check.passed ? '✅' : '❌'
-          gateLines.push(`- ${icon} **${check.name}**: ${check.passed ? '通过' : '失败'}`)
-          if (!check.passed && check.output) {
-            const preview = check.output.split('\n').slice(0, 5).join('\n')
-            gateLines.push(`  \`\`\`\n${preview}\n\`\`\``)
+        gateLines = ['', '### 🔒 阶段质量门控', '']
+
+        for (const gate of gates) {
+          gateLines.push(`**${gate.stage}**: ${gate.passed ? '✅ 通过' : '❌ 未通过'}`)
+
+          for (const check of gate.checks) {
+            const icon = check.passed ? '✅' : '❌'
+            gateLines.push(`- ${icon} **${check.name}**: ${check.passed ? '通过' : '失败'}`)
+            if (!check.passed && check.output) {
+              const preview = check.output.split('\n').slice(0, 5).join('\n')
+              gateLines.push(`  \`\`\`\n${preview}\n\`\`\``)
+            }
           }
+          gateLines.push('')
         }
 
-        if (!gate.passed) {
-          gateLines.push('')
+        const allPassed = gates.every(g => g.passed)
+        if (!allPassed) {
           gateLines.push('⚠️ 质量门控未通过，建议修复问题后重新运行 /team-collab')
         }
       } catch (e) {

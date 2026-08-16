@@ -43,7 +43,7 @@ import { join } from 'path'
 // ==================== 类型定义 ====================
 
 type ProjectType = 'node' | 'python' | 'rust' | 'go' | 'java' | 'unknown'
-type CheckMode = 'full' | 'lint' | 'test' | 'type-check' | 'build' | 'security' | 'audit' | 'coverage' | 'changed' | 'diff' | 'ci'
+type CheckMode = 'full' | 'lint' | 'test' | 'type-check' | 'build' | 'security' | 'audit' | 'coverage' | 'changed' | 'diff' | 'perf' | 'ci'
 type OutputFormat = 'markdown' | 'json'
 
 interface CheckOptions {
@@ -55,6 +55,7 @@ interface CheckOptions {
   format: OutputFormat
   commands: CheckCommands
   autoFix: boolean
+  applyFix: boolean
 }
 
 interface CheckCommands {
@@ -628,6 +629,98 @@ function filterCommandsByChangedFiles(commands: CheckCommands, changedFiles: str
   return commands
 }
 
+// ==================== 性能分析（perf 模式） ====================
+
+function runPerfCheck(): { success: boolean; output: string } {
+  try {
+    const MAX_FILE_SIZE = 10 * 1024 * 1024
+    const MAX_SCAN_FILES = 3000
+    const BINARY_EXTS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.ico', '.svg', '.woff', '.woff2', '.ttf', '.eot', '.mp3', '.mp4', '.pdf', '.zip', '.gz', '.exe', '.dll'])
+
+    function analyzeFile(file: string): { file: string; lines: number; functions: number; avgComplexity: number; maxComplexity: number } | null {
+      try {
+        const content = readFileSync(file, 'utf-8')
+        if (content.includes('\u0000')) return null
+        const ext = extname(file).toLowerCase()
+        if (!['.ts', '.tsx', '.js', '.jsx', '.py', '.go', '.java', '.rs', '.c', '.cpp'].includes(ext)) return null
+        const lines = content.split(/\r?\n/)
+        const functions: { complexity: number }[] = []
+        let inFunc = false, braceCount = 0, funcComplexity = 0
+        for (const line of lines) {
+          const t = line.trim()
+          if (t.length === 0 || t.startsWith('//') || t.startsWith('#')) continue
+          if (/\b(function|def|class)\s+\w+/.test(t)) { inFunc = true; funcComplexity = 1 }
+          if (inFunc) {
+            braceCount += (t.match(/\{/g) || []).length - (t.match(/\}/g) || []).length
+            if (/\b(if|else|for|while|switch|catch|match)\b/.test(t)) funcComplexity++
+            if (braceCount === 0 && t.includes('}')) { functions.push({ complexity: funcComplexity }); inFunc = false }
+          }
+        }
+        const complexities = functions.map(f => f.complexity)
+        const avg = complexities.length > 0 ? Math.round(complexities.reduce((a, b) => a + b, 0) / complexities.length) : 0
+        return { file, lines: lines.length, functions: functions.length, avgComplexity: avg, maxComplexity: complexities.length > 0 ? Math.max(...complexities) : 0 }
+      } catch { return null }
+    }
+
+    const results: { file: string; lines: number; functions: number; avgComplexity: number; maxComplexity: number }[] = []
+    let count = 0
+    const scan = (dir: string) => {
+      if (count >= MAX_SCAN_FILES) return
+      for (const entry of readdirSync(dir, { withFileTypes: true })) {
+        if (count >= MAX_SCAN_FILES) break
+        if (entry.name.startsWith('.') || entry.name === 'node_modules' || entry.name === 'dist') continue
+        const fp = join(dir, entry.name)
+        if (entry.isDirectory()) { scan(fp); continue }
+        if (BINARY_EXTS.has(extname(fp).toLowerCase())) continue
+        const m = analyzeFile(fp)
+        if (m) { results.push(m); count++ }
+      }
+    }
+    scan(process.cwd())
+
+    const issues: { file: string; severity: string; title: string; suggestion: string }[] = []
+    for (const f of results) {
+      if (f.lines > 500) issues.push({ file: f.file, severity: f.lines > 1000 ? 'high' : 'medium', title: 'File too large', suggestion: 'Split into smaller modules' })
+      if (f.avgComplexity > 10) issues.push({ file: f.file, severity: 'medium', title: 'High avg complexity', suggestion: 'Refactor complex functions' })
+      for (const fn of f.functions) { if (fn > 50) issues.push({ file: f.file, severity: 'medium', title: 'Long function', suggestion: 'Extract smaller functions' }) }
+    }
+
+    const score = Math.max(0, 100 - issues.filter(i => i.severity === 'high').length * 8 - issues.filter(i => i.severity === 'medium').length * 4)
+
+    const lines = [
+      '📈 性能分析报告', '═════════════════', '',
+      `分数：${score}/100`, '',
+      `文件数：${results.length}`,
+      `问题数：${issues.length}`, '',
+    ]
+    if (issues.length > 0) {
+      lines.push('问题：')
+      for (const issue of issues.slice(0, 15)) {
+        lines.push(`- ${issue.file}: ${issue.title} → ${issue.suggestion}`)
+      }
+    }
+    return { success: issues.filter(i => i.severity === 'high').length === 0, output: lines.join('\n') }
+  } catch (e) {
+    return { success: false, output: '❌ 性能分析失败: ' + formatError(e) }
+  }
+}
+
+// ==================== 历史记录查看 ====================
+
+function getCheckHistory(): string {
+  try {
+    const historyFile = join(process.cwd(), '.doge', 'tasks', 'self-check-history.json')
+    if (!existsSync(historyFile)) return '无历史记录'
+    const raw = readFileSync(historyFile, 'utf-8')
+    const history = JSON.parse(raw)
+    if (!Array.isArray(history) || history.length === 0) return '无历史记录'
+    const entries = history.slice(-10).reverse()
+    return entries.map((h: any) => `${h.timestamp?.slice(0, 19) || '-'} | ${h.success ? '✅' : '❌'} | ${h.mode} | ${h.iterations}轮 | ${(h.duration / 1000).toFixed(1)}s`).join('\n')
+  } catch {
+    return '无历史记录'
+  }
+}
+
 // ==================== Auto-Fix：LLM 自动修复 ====================
 
 interface CallAIOptions {
@@ -790,6 +883,22 @@ async function runSelfCheck(args: string): Promise<LocalCommandResult> {
     }
   }
 
+  // perf 和 history 子命令直接走专用逻辑
+  if (options.mode === 'perf') {
+    const perfResult = runPerfCheck()
+    return {
+      type: 'text',
+      value: perfResult.output + '\n\n' + (perfResult.success ? '✅ 性能检查通过' : '❌ 发现性能问题，建议优化'),
+    }
+  }
+
+  if (options.mode === 'history') {
+    return {
+      type: 'text',
+      value: '📅 自检历史记录（最近 10 次）：\n\n' + getCheckHistory(),
+    }
+  }
+
   let filteredCommands = commands
   if (options.mode === 'changed') {
     const changedFiles = getChangedFiles()
@@ -801,6 +910,17 @@ async function runSelfCheck(args: string): Promise<LocalCommandResult> {
     }
     filteredCommands = filterCommandsByChangedFiles(commands, changedFiles)
     options.commands = filteredCommands
+  } else if (options.mode === 'diff') {
+    const changedFiles = getChangedFiles()
+    if (changedFiles.length === 0) {
+      return {
+        type: 'text',
+        value: '✅ 没有检测到代码变更，无需检查。\n\n使用 `/self-check` 运行完整检查。',
+      }
+    }
+    filteredCommands = filterCommandsByChangedFiles(commands, changedFiles)
+    options.commands = filteredCommands
+    options.mode = 'changed'
   } else {
     options.commands = commands
   }
@@ -833,13 +953,17 @@ function getHelpText(): string {
 /self-check audit                 # 依赖审计（检查过期依赖）
 /self-check coverage              # 测试覆盖率检查
 /self-check changed               # 只检查 Git 变更的文件
+/self-check diff                  # 增量 diff 检查（只检查本次变更引入的问题）
 /self-check ci                    # 模拟 CI 环境运行所有检查
+/self-check perf                  # 性能分析（文件大小/复杂度/热点）
+/self-check history               # 查看历史自检记录
 
 # 高级选项
 /self-check --max-iterations 5    # 最大修复轮数（默认 3）
 /self-check --threshold 80        # 覆盖率阈值（默认 80%）
 /self-check --format json         # JSON 格式报告
 /self-check --auto-fix          # 调用 LLM 自动生成修复 patch
+/self-check --apply-fix          # 自动应用生成的 patch（需配合 --auto-fix）
 /self-check --fail-on-warning     # 警告也视为失败
 \`\`\`
 
@@ -881,8 +1005,9 @@ function parseArgs(args: string): CheckOptions {
   let failOnWarning = false
   let format: OutputFormat = 'markdown'
   let autoFix = false
+  let applyFix = false
 
-  const validModes: CheckMode[] = ['lint', 'test', 'type-check', 'build', 'security', 'audit', 'coverage', 'changed', 'diff', 'ci']
+  const validModes: CheckMode[] = ['lint', 'test', 'type-check', 'build', 'security', 'audit', 'coverage', 'changed', 'diff', 'perf', 'ci']
   if (validModes.includes(parts[0] as CheckMode)) {
     mode = parts[0] as CheckMode
   }
@@ -906,6 +1031,9 @@ function parseArgs(args: string): CheckOptions {
     if (parts[i] === '--auto-fix') {
       autoFix = true
     }
+    if (parts[i] === '--apply-fix') {
+      applyFix = true
+    }
   }
 
   return {
@@ -916,6 +1044,7 @@ function parseArgs(args: string): CheckOptions {
     failOnWarning,
     format,
     autoFix,
+    applyFix,
     commands: {
       lint: '',
       test: '',
@@ -1047,9 +1176,17 @@ async function executeSelfCheck(options: CheckOptions): Promise<CheckResult> {
           command = options.commands.lint
           errorType = 'lint'
           break
+        case 'diff':
+          command = options.commands.lint
+          errorType = 'lint'
+          break
+        case 'perf':
+          command = options.commands.lint
+          errorType = 'lint'
+          break
       }
 
-      if (options.mode !== 'coverage' && command) {
+      if (options.mode !== 'coverage' && options.mode !== 'perf' && command) {
         const result = runCommand(command)
         if (!result.success) {
           const errors = options.mode === 'security'
@@ -1117,6 +1254,23 @@ async function executeSelfCheck(options: CheckOptions): Promise<CheckResult> {
     }
   }
 
+  const result: CheckResult = {
+    success: false,
+    iterations: options.maxIterations,
+    lintPassed,
+    testPassed,
+    typeCheckPassed,
+    buildPassed,
+    securityPassed,
+    auditPassed,
+    coveragePassed,
+    errors: [...new Set(allRawErrors.map(e => e.message))],
+    fixes: [...new Set(allFixes)],
+    rawErrors: allRawErrors,
+    duration: Date.now() - startTime,
+    coveragePercent,
+  }
+
   // ==================== Auto-Fix 模式 ====================
   if (options.autoFix && !result.success && result.rawErrors.length > 0) {
     const llm = resolveLLMConfig()
@@ -1133,46 +1287,37 @@ async function executeSelfCheck(options: CheckOptions): Promise<CheckResult> {
         const { applied, files, error } = applyAutoFixPrompt(patch)
 
         if (applied) {
-          // 将 patch 保存到临时文件
           const patchFile = join(process.cwd(), '.doge', 'tasks', 'auto-fix.patch')
           if (!existsSync(join(process.cwd(), '.doge', 'tasks'))) {
             mkdirSync(join(process.cwd(), '.doge', 'tasks'), { recursive: true })
           }
           writeFileSync(patchFile, patch)
 
-          allFixes.push(`[Auto-Fix] 已生成 patch，覆盖 ${files.length} 个文件: ${files.join(', ')}`)
-          allFixes.push(`[Auto-Fix] Patch 已保存到: ${patchFile}`)
-          allFixes.push(`[Auto-Fix] 请手动审查并应用: git apply ${patchFile}`)
+          result.fixes.push(`[Auto-Fix] 已生成 patch，覆盖 ${files.length} 个文件: ${files.join(', ')}`)
+          result.fixes.push(`[Auto-Fix] Patch 已保存到: ${patchFile}`)
 
-          // 注意：自动应用 patch 风险较高，这里只生成 patch 供审查
-          // 用户可自行决定是否应用
+          if (options.applyFix) {
+            try {
+              execSync(`git apply "${patchFile}"`, { cwd: process.cwd(), stdio: ['pipe', 'pipe', 'pipe'], timeout: 30000 })
+              result.fixes.push(`[Auto-Fix] 已自动应用: git apply ${patchFile}`)
+            } catch (e) {
+              result.fixes.push(`[Auto-Fix] 自动应用失败: ${e instanceof Error ? e.message : String(e)}，请手动运行 git apply ${patchFile}`)
+            }
+          } else {
+            result.fixes.push(`[Auto-Fix] 请审查后手动应用: git apply ${patchFile}`)
+          }
         } else {
-          allFixes.push(`[Auto-Fix] 生成失败: ${error}`)
+          result.fixes.push(`[Auto-Fix] 生成失败: ${error}`)
         }
       } catch (e) {
-        allFixes.push(`[Auto-Fix] LLM 调用失败: ${e instanceof Error ? e.message : String(e)}`)
+        result.fixes.push(`[Auto-Fix] LLM 调用失败: ${e instanceof Error ? e.message : String(e)}`)
       }
     } else {
-      allFixes.push('[Auto-Fix] 未配置 API 密钥，跳过自动修复。设置 DOGE_API_KEY 或 ANTHROPIC_API_KEY 环境变量。')
+      result.fixes.push('[Auto-Fix] 未配置 API 密钥，跳过自动修复。设置 DOGE_API_KEY 或 ANTHROPIC_API_KEY 环境变量。')
     }
   }
 
-  return {
-    success: false,
-    iterations: options.maxIterations,
-    lintPassed,
-    testPassed,
-    typeCheckPassed,
-    buildPassed,
-    securityPassed,
-    auditPassed,
-    coveragePassed,
-    errors: [...new Set(allRawErrors.map(e => e.message))],
-    fixes: [...new Set(allFixes)],
-    rawErrors: allRawErrors,
-    duration: Date.now() - startTime,
-    coveragePercent,
-  }
+  return result
 }
 
 // ==================== 报告生成 ====================
@@ -1360,6 +1505,7 @@ function getModeLabel(mode: CheckMode): string {
     'audit': '依赖审计',
     'coverage': '覆盖率检查',
     'changed': '变更文件检查',
+    'diff': '增量 Diff 检查',
     'ci': 'CI 模拟',
   }
   return labels[mode]

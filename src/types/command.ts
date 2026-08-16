@@ -82,7 +82,7 @@ export type PromptCommand = {
  */
 export type LocalCommandCall = (
   args: string,
-  context: LocalJSXCommandContext,
+  context?: LocalJSXCommandContext,
 ) => Promise<LocalCommandResult>
 
 /**
