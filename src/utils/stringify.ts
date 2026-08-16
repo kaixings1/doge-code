@@ -1,7 +1,7 @@
 /**
  * 通用工具函数
  * 吸收自 langchain_core/utils/strings.py, iter.py, env.py
- * 以及 OpenManus app/utils/files_utils.py
+ * 以及 OpenManus, agno, MetaGPT
  *
  * - stringifyValue / stringifyDict: 任意值转字符串
  * - commaList: 数组转逗号分隔字符串
@@ -11,6 +11,14 @@
  * - cleanPath: 路径清理
  * - envVarIsSet: 环境变量真值检查
  * - getFromDictOrEnv: 从 dict 或环境变量获取值
+ * - isValidUUID: UUID 格式校验
+ * - urlSafeString: 字符串转为 URL 安全格式
+ * - hashStringSha256: SHA-256 哈希
+ * - extractJsonObjects: 从文本提取 JSON 对象
+ * - parseDatetimeUtc: 解析时间戳为 UTC
+ * - toEpochS: 各种时间表示转 epoch 秒
+ * - nowEpochS: 当前 epoch 秒
+ * - isEmpty: 判断值是否为空
  */
 
 // ==================== 值序列化 ====================
@@ -67,6 +75,26 @@ export function envVarIsSet(envVar: string): boolean {
   return val !== undefined && !FALSY_ENV_VALUES.has(val)
 }
 
+/**
+ * 递归清理数据结构中所有字符串的 NUL 字节。
+ */
+export function sanitizePostgresStrings(data: unknown): unknown {
+  if (typeof data === 'string') {
+    return sanitizeForPostgres(data)
+  }
+  if (Array.isArray(data)) {
+    return data.map(item => sanitizePostgresStrings(item))
+  }
+  if (data !== null && typeof data === 'object') {
+    const result: Record<string, unknown> = {}
+    for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
+      result[key] = sanitizePostgresStrings(value)
+    }
+    return result
+  }
+  return data
+}
+
 // ==================== 迭代分批 ====================
 
 /**
@@ -93,58 +121,31 @@ export function* batchIterate<T>(size: number | null, iterable: Iterable<T>): It
 
 // ==================== 文件路径工具 ====================
 
-/**
- * 应排除的文件名集合。
- */
 const EXCLUDED_FILES = new Set([
-  '.DS_Store',
-  '.gitignore',
-  'package-lock.json',
-  'postcss.config.js',
-  'postcss.config.mjs',
-  'jsconfig.json',
-  'components.json',
-  'tsconfig.tsbuildinfo',
-  'tsconfig.json',
+  '.DS_Store', '.gitignore', 'package-lock.json',
+  'postcss.config.js', 'postcss.config.mjs', 'jsconfig.json',
+  'components.json', 'tsconfig.tsbuildinfo', 'tsconfig.json',
 ])
 
-/**
- * 应排除的目录名集合。
- */
 const EXCLUDED_DIRS = new Set([
-  'node_modules',
-  '.next',
-  'dist',
-  'build',
-  '.git',
+  'node_modules', '.next', 'dist', 'build', '.git',
 ])
 
-/**
- * 应排除的文件扩展名集合。
- */
 const EXCLUDED_EXT = new Set([
-  '.ico',
-  '.svg',
-  '.png',
-  '.jpg',
-  '.jpeg',
-  '.gif',
-  '.bmp',
-  '.tiff',
-  '.webp',
-  '.db',
-  '.sql',
+  '.ico', '.svg', '.png', '.jpg', '.jpeg', '.gif',
+  '.bmp', '.tiff', '.webp', '.db', '.sql',
 ])
 
 /**
- * 判断文件是否应被排除（基��文件名、所在目录或扩展名）。
+ * 判断文件是否应被排除（基于文件名、所在目录或扩展名）。
  */
 export function shouldExcludeFile(relPath: string): boolean {
   const parts = relPath.split(/[\\/]/)
   const filename = parts[parts.length - 1] || ''
   if (EXCLUDED_FILES.has(filename)) return true
 
-  const dirPath = relPath.slice(0, relPath.lastIndexOf(/[\\/]/))
+  const lastSep = Math.max(relPath.lastIndexOf('/'), relPath.lastIndexOf('\\'))
+  const dirPath = lastSep >= 0 ? relPath.slice(0, lastSep) : ''
   for (const excluded of EXCLUDED_DIRS) {
     if (dirPath.includes(excluded)) return true
   }
@@ -160,16 +161,13 @@ export function shouldExcludeFile(relPath: string): boolean {
  */
 export function cleanPath(path: string, workspacePath = '/workspace'): string {
   let result = path.replace(/^\/+/, '')
-
   const wsNoSlash = workspacePath.replace(/^\/+/, '')
   if (result.startsWith(wsNoSlash)) {
     result = result.slice(wsNoSlash.length)
   }
-
   if (result.startsWith('workspace/')) {
     result = result.slice(9)
   }
-
   return result.replace(/^\/+/, '')
 }
 
@@ -186,20 +184,149 @@ export function getFromDictOrEnv(
   defaultVal: string | undefined = undefined,
 ): string {
   const keys = Array.isArray(key) ? key : [key]
-
   for (const k of keys) {
     const v = data[k]
     if (v !== undefined && v !== null && String(v) !== '') {
       return String(v)
     }
   }
-
   const envVal = process.env[envKey]
   if (envVal !== undefined) return envVal
   if (defaultVal !== undefined) return defaultVal
-
   const keyStr = Array.isArray(key) ? key[0] : key
   throw new Error(
     `Did not find ${keyStr}, please add an environment variable \`${envKey}\` which contains it, or pass \`${keyStr}\` as a named parameter.`,
   )
+}
+
+// ==================== UUID 与标识符 ====================
+
+/**
+ * 检查字符串是否为合法的 UUID 格式。
+ */
+export function isValidUUID(uuidStr: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(uuidStr)
+}
+
+/**
+ * 将字符串转为 URL 安全格式（小写、连字符分隔、去除特殊字符）。
+ */
+export function urlSafeString(input: string): string {
+  let result = input.replace(/ /g, '-')
+  result = result.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase()
+  result = result.replace(/_/g, '-')
+  result = result.replace(/[^\w\-.]/g, '')
+  result = result.replace(/-+/g, '-')
+  return result
+}
+
+/**
+ * 计算字符串的 SHA-256 哈希十六进制值。
+ */
+export function hashStringSha256(input: string): string {
+  const nodeCrypto = require('crypto')
+  return nodeCrypto.createHash('sha256').update(input, 'utf8').digest('hex')
+}
+
+// ==================== JSON 提取 ====================
+
+/**
+ * 从文本中提取顶层 JSON 对象字符串列表（追踪花括号深度，不依赖正则）。
+ */
+export function extractJsonObjects(text: string): string[] {
+  const objects: string[] = []
+  let braceDepth = 0
+  let startIdx: number | null = null
+  let inString = false
+  let escape = false
+
+  for (let idx = 0; idx < text.length; idx++) {
+    const ch = text[idx]
+    if (inString) {
+      if (escape) {
+        escape = false
+      } else if (ch === '\\') {
+        escape = true
+      } else if (ch === '"') {
+        inString = false
+      }
+      continue
+    }
+    if (ch === '"') {
+      inString = true
+      continue
+    }
+    if (ch === '{' && braceDepth === 0) {
+      startIdx = idx
+    }
+    if (ch === '{') {
+      braceDepth++
+    } else if (ch === '}') {
+      braceDepth--
+      if (braceDepth === 0 && startIdx !== null) {
+        objects.push(text.slice(startIdx, idx + 1))
+        startIdx = null
+      }
+    }
+  }
+  return objects
+}
+
+// ==================== 时间工具 ====================
+
+/**
+ * 将各种时间表示归一化为 epoch 秒（UTC）。
+ */
+export function toEpochS(value: Date | string | number): number {
+  if (typeof value === 'number') {
+    return Math.floor(value)
+  }
+  if (value instanceof Date) {
+    return Math.floor(value.getTime() / 1000)
+  }
+  const s = (value as string).trim()
+  if (s.endsWith('Z')) {
+    return Math.floor(new Date(s).getTime() / 1000)
+  }
+  return Math.floor(new Date(s + 'Z').getTime() / 1000)
+}
+
+/**
+ * 获取当前 UTC 时间的 epoch 秒。
+ */
+export function nowEpochS(): number {
+  return Math.floor(Date.now() / 1000)
+}
+
+/**
+ * 将 ISO 8601 字符串解析为 UTC 时间。
+ */
+export function parseDatetimeUtc(value: string | Date): Date {
+  let s: string
+  if (value instanceof Date) {
+    const d = value
+    return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(),
+      d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds()))
+  }
+  s = (value as string).trim()
+  let isoStr = s
+  if (s.endsWith('Z')) {
+    isoStr = s.slice(0, -1) + '+00:00'
+  }
+  const dt = new Date(isoStr)
+  return new Date(Date.UTC(dt.getUTCFullYear(), dt.getUTCMonth(), dt.getUTCDate(),
+    dt.getUTCHours(), dt.getUTCMinutes(), dt.getUTCSeconds()))
+}
+
+// ==================== 通用检查 ====================
+
+/**
+ * 判断值是否为 null、空字符串或空集合。
+ */
+export function isEmpty(val: unknown): boolean {
+  if (val === null || val === undefined) return true
+  if (typeof val === 'string' && val.length === 0) return true
+  if (Array.isArray(val) && val.length === 0) return true
+  if (typeof val === 'object' && Object.keys(val as object).length === 0) return true
+  return false
 }

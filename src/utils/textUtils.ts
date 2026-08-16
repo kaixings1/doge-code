@@ -104,11 +104,11 @@ export function decodeUnicodeEscape(text: string): string {
  */
 export function splitParagraph(paragraph: string, sep = '.,', count = 2): string[] {
   for (const s of sep) {
-    const sentences = splitTextWithEnds(paragraph, s)
+    const sentences = Array.from(splitTextWithEnds(paragraph, s))
     if (sentences.length <= 1) continue
     return splitByCount(sentences, count).map(parts => parts.join(''))
   }
-  return splitByCount(splitToChars(paragraph), count).map(parts => parts.join(''))
+  return splitByCount(Array.from(splitToChars(paragraph)), count).map(parts => parts.join(''))
 }
 
 function splitByCount<T>(items: T[], count: number): T[][] {
