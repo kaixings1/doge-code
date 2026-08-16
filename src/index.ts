@@ -131,4 +131,6 @@ Usage:
   bun run src/index.ts run [processorPath]  - Start processing
   bun run src/index.ts status               - Show queue status
   bun run src/index.ts enqueue <json>       - Add task to queue
-   
+    `)
+    break;
+  }
