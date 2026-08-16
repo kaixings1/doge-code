@@ -41,6 +41,7 @@ import eco from './commands/eco/index.ts'
 import commitPushPr from './commands/commit-push-pr.ts'
 import ship from './commands/ship/index.ts'
 import shipCiReviewLoop from './commands/ship/ship-ci-review-loop.ts'
+import asktime from './commands/asktime/asktime.ts'
 import auto from './commands/auto/index.ts'
 import evolve from './commands/evolve/index.ts'
 import compact from './commands/compact/index.ts'
@@ -58,6 +59,7 @@ import ctx_viz from './commands/ctx_viz/index.tsx'
 import doctor from './commands/doctor/index.ts'
 import dogeConfig from './commands/doge-config/index.ts'
 import mcpConfig from './commands/mcp-config/index.ts'
+import mcpDiscovery from './commands/mcp-discovery/index.ts'
 import memory from './commands/memory/index.ts'
 import help from './commands/help/index.ts'
 import ide from './commands/ide/index.ts'
@@ -146,8 +148,10 @@ import dbMigrate from './commands/db-migrate/index.ts'
 import codeReview from './commands/code-review/index.ts'
 import projectStats from './commands/project-stats/index.ts'
 import envDiff from './commands/env-diff/index.ts'
+import autoModeReset from './commands/auto-mode-reset/index.ts'
 import backupFull from './commands/backup-full/index.ts'
 import ssh from './commands/ssh/index.ts'
+import healthScore from './commands/health-score/index.ts'
 import notes from './commands/notes/index.ts'
 import terminal from './commands/terminal/index.ts'
 import watch from './commands/watch/index.ts'
@@ -179,6 +183,10 @@ import compare from './commands/compare/index.ts'
 import graphQL from './commands/graphql/index.ts'
 import http from './commands/http/index.ts'
 import costHistory from './commands/cost-history/index.ts'
+import replay from './commands/replay/index.ts'
+import pruneSessions from './commands/prune-sessions/index.ts'
+import tokens from './commands/tokens/index.ts'
+import recall from './commands/recall/index.ts'
 import database from './commands/database/index.ts'
 import deps from './commands/deps-viz/index.ts'
 import shell from './commands/shell/index.ts'
@@ -452,6 +460,7 @@ const COMMANDS = memoize((): Command[] => [
   addModel,
   removeModel,
   advisor,
+  recall,
   autocomplete,
   terminalComplete,
   agents,
@@ -477,6 +486,9 @@ const COMMANDS = memoize((): Command[] => [
   ctx_viz,
   cost,
   costHistory,
+  replay,
+  pruneSessions,
+  tokens,
   diff,
   diffMode,
   diffReview,
@@ -501,6 +513,7 @@ const COMMANDS = memoize((): Command[] => [
   insights,
   team,
   game,
+  healthScore,
   heapDump,
   help,
   ide,
@@ -510,6 +523,7 @@ const COMMANDS = memoize((): Command[] => [
   installSlackApp,
   installFeishuApp,
   mcp,
+  mcpDiscovery,
   memory,
   mobile,
   mobileConnect,
@@ -592,6 +606,7 @@ const COMMANDS = memoize((): Command[] => [
   tasks,
   testGen,
   snippet,
+  autoModeReset,
   autoCommit,
   wiki,
   customCmd,
@@ -713,6 +728,7 @@ const COMMANDS = memoize((): Command[] => [
   skillCreateFromSession,
   ship,
   auto,
+  asktime,
   evolve,
 ])
 
