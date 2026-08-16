@@ -1,7 +1,7 @@
 /**
  * 通用工具函数
  * 吸收自 langchain_core/utils/strings.py, iter.py, env.py
- * 以及 OpenManus, agno, MetaGPT
+ * 以及 OpenManus, agno, MetaGPT, Graphiti
  *
  * - stringifyValue / stringifyDict: 任意值转字符串
  * - commaList: 数组转逗号分隔字符串
@@ -18,8 +18,12 @@
  * - parseDatetimeUtc: 解析时间戳为 UTC
  * - toEpochS: 各种时间表示转 epoch 秒
  * - nowEpochS: 当前 epoch 秒
+ * - ensureUtc: 确保 datetime 为 UTC
+ * - convertDatetimesToStrings: 递归 Date 转 ISO 字符串
  * - isEmpty: 判断值是否为空
  */
+
+import { createHash } from 'crypto'
 
 // ==================== 值序列化 ====================
 
@@ -224,8 +228,7 @@ export function urlSafeString(input: string): string {
  * 计算字符串的 SHA-256 哈希十六进制值。
  */
 export function hashStringSha256(input: string): string {
-  const nodeCrypto = require('crypto')
-  return nodeCrypto.createHash('sha256').update(input, 'utf8').digest('hex')
+  return createHash('sha256').update(input, 'utf8').digest('hex')
 }
 
 // ==================== JSON 提取 ====================
@@ -272,6 +275,116 @@ export function extractJsonObjects(text: string): string[] {
   return objects
 }
 
+/**
+ * 清洗 LLM 输出中的 JSON 内容：移除代码块标记、控制字符、Markdown 格式。
+ * 吸收自 agno (agno/utils/string.py)
+ */
+export function cleanJsonContent(content: string): string {
+  // Handle code blocks
+  if (content.includes('```json')) {
+    content = content.split('```json').pop()?.trim() ?? content
+    const parts = content.split('```')
+    if (parts.length > 1) {
+      parts.pop()
+      content = parts.join('```')
+    }
+  } else if (content.includes('```')) {
+    const parts = content.split('```')
+    if (parts.length > 1) {
+      content = parts[1].trim()
+    }
+  }
+
+  // Replace markdown formatting like *"name"* or `"name"` with "name"
+  content = content.replace(/[*`#]?"([A-Za-z0-9_]+)"[*`#]?/g, '"$1"')
+
+  // Handle newlines and control characters
+  content = content.replace(/\n/g, ' ').replace(/\r/g, '')
+  content = content.replace(/[\x00-\x1F\x7F]/g, '')
+
+  // Escape quotes only in values, not keys
+  content = content.replace(
+    /"([^"]+)"\s*:\s*"(.*?)"(?=\s*(?:,|\}))/g,
+    (match, key, value) => {
+      const escapedValue = value.replace(/"/g, '\\"')
+      return `"${key}": "${escapedValue}"`
+    },
+  )
+
+  return content
+}
+
+/**
+ * 解析可能不完整的 JSON 字符串（缺失闭合花括号/方括号、字符串未闭合）。
+ * 吸收自 langchain_core/utils/json.py
+ */
+export function parsePartialJson(s: string): unknown {
+  // First try direct parse
+  try {
+    return JSON.parse(s)
+  } catch {
+    // continue with repair
+  }
+
+  const stack: string[] = []
+  let inString = false
+  let escaped = false
+  const result: string[] = []
+
+  for (const char of s) {
+    if (inString) {
+      if (escaped) {
+        escaped = false
+      } else if (char === '\\') {
+        escaped = true
+      } else if (char === '"') {
+        inString = false
+      }
+    } else {
+      if (char === '"') {
+        inString = true
+      } else if (char === '{') {
+        stack.push('}')
+      } else if (char === '[') {
+        stack.push(']')
+      } else if (char === '}' || char === ']') {
+        if (stack.length > 0 && stack[stack.length - 1] === char) {
+          stack.pop()
+        }
+      }
+    }
+    result.push(char)
+  }
+
+  // Close unclosed string
+  if (inString) {
+    if (escaped) result.pop()
+    result.push('"')
+  }
+
+  // Append closing brackets in reverse order
+  const closing = stack.reverse().join('')
+
+  // Try with all closings, then progressively remove chars
+  const attempts = [
+    result.join('') + closing,
+  ]
+
+  for (let i = result.length - 1; i >= 0; i--) {
+    attempts.push(result.slice(0, i).join('') + closing)
+  }
+
+  for (const attempt of attempts) {
+    try {
+      return JSON.parse(attempt)
+    } catch {
+      // try next
+    }
+  }
+
+  throw new Error('Unable to parse partial JSON')
+}
+
 // ==================== 时间工具 ====================
 
 /**
@@ -316,6 +429,38 @@ export function parseDatetimeUtc(value: string | Date): Date {
   const dt = new Date(isoStr)
   return new Date(Date.UTC(dt.getUTCFullYear(), dt.getUTCMonth(), dt.getUTCDate(),
     dt.getUTCHours(), dt.getUTCMinutes(), dt.getUTCSeconds()))
+}
+
+/**
+ * 确保 datetime 为 UTC 时区。
+ * - null 输入返回 null
+ * - 无效 Date 原样返回
+ * JavaScript Date 内部始终存 UTC 时间戳，直接返回即可。
+ */
+export function ensureUtc(dt: Date | null | undefined): Date | null {
+  if (dt === null || dt === undefined) return null
+  if (Number.isNaN(dt.getTime())) return dt
+  return dt
+}
+
+/**
+ * 递归将对象中的 Date 转为 ISO 8601 字符串。
+ */
+export function convertDatetimesToStrings(data: unknown): unknown {
+  if (data instanceof Date) {
+    return data.toISOString()
+  }
+  if (Array.isArray(data)) {
+    return data.map(item => convertDatetimesToStrings(item))
+  }
+  if (data !== null && typeof data === 'object') {
+    const result: Record<string, unknown> = {}
+    for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
+      result[key] = convertDatetimesToStrings(value)
+    }
+    return result
+  }
+  return data
 }
 
 // ==================== 通用检查 ====================

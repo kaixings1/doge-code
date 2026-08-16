@@ -1,10 +1,12 @@
 /**
  * 文本处理工具函数
- * 吸收自 MetaGPT (metagpt/utils/common.py)
+ * 吸收自 MetaGPT (metagpt/utils/common.py) 和 Graphiti (graphiti_core/utils/text_utils.py)
  *
  * - addAffix / removeAffix: 花括号/URL 编码封装与解封
  * - removeComments: 移除代码注释（仅 # 行注释）
  * - parseJsonCodeBlock: 从 Markdown 文本中提取 JSON 代码块
+ * - truncateAtSentence: 按句子边界智能截断文本
+ * - concatenateEpisodes: 拼接剧集内容
  */
 
 // ==================== 花括号/URL 编码 ====================
@@ -140,4 +142,56 @@ function* splitTextWithEnds(text: string, sep = '.'): Generator<string, void, un
 
 function splitToChars(s: string): string[] {
   return Array.from(s)
+}
+
+// ==================== 句子截断与剧集拼接 ====================
+
+/**
+ * 按句子边界智能截断文本。
+ * 尝试在 max_chars 前最近的句号/感叹号/问号后截断，
+ * 如果找不到句子边界则直接按字符数截断。
+ *
+ * @param text - 要截断的文本
+ * @param maxChars - 最大字符数
+ * @returns 截断后的文本
+ */
+export function truncateAtSentence(text: string, maxChars: number): string {
+  if (!text || text.length <= maxChars) return text
+
+  const truncated = text.slice(0, maxChars)
+  const sentencePattern = /[.!?](?:\s|$)/g
+  const matches: RegExpExecArray[] = []
+  let m: RegExpExecArray | null
+  while ((m = sentencePattern.exec(truncated)) !== null) {
+    matches.push(m)
+  }
+
+  if (matches.length > 0) {
+    const lastMatch = matches[matches.length - 1]
+    return text.slice(0, lastMatch.index + lastMatch[0].length).trim()
+  }
+
+  return truncated.trim()
+}
+
+/**
+ * 拼接剧集内容，每个剧集前加 [Episode N] 头。
+ * 单个剧集直接返回内容，多个剧集用双换行分隔。
+ *
+ * @param episodes - 剧集列表，每项有 content 和可选 valid_at 时间戳
+ * @returns 拼接后的文本
+ */
+export function concatenateEpisodes(
+  episodes: { content: string; valid_at?: string }[],
+): string {
+  if (episodes.length === 1) {
+    return episodes[0].content
+  }
+  const parts: string[] = []
+  for (let i = 0; i < episodes.length; i++) {
+    const ep = episodes[i]
+    const timestamp = ep.valid_at ?? 'unknown'
+    parts.push(`[Episode ${i}] (timestamp: ${timestamp})\n${ep.content}`)
+  }
+  return parts.join('\n\n')
 }
