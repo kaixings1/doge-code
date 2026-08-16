@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest'
 import * as fs from 'fs'
 import * as path from 'path'
 import { EventEmitter } from 'events'
@@ -33,16 +33,31 @@ describe('ListPeersTool', () => {
   let tmpDir: string
   let tool: ListPeersTool
 
+  beforeAll(() => {
+    // 创建一次 tmpDir，整个 describe 块共享
+    tmpDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'peers-test-'))
+  })
+
   beforeEach(() => {
     mockState.sentMessages.length = 0
     socketInstance = null
-    tmpDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'peers-test-'))
+    // 清理 tmpDir 中上次测试留下的数据
+    try {
+      const files = fs.readdirSync(tmpDir).filter(f => f.endsWith('.json'))
+      for (const f of files) fs.unlinkSync(path.join(tmpDir, f))
+    } catch { /* ignore */ }
     tool = new ListPeersTool()
-    ;(tool as any).peersDir = () => tmpDir
+    ;(tool as any)._peersDirOverride = tmpDir
+    // 清理真实 .doge/peers 目录，防止全量套件中其他测试污染
+    const realPeersDir = path.join(process.cwd(), '.doge', 'peers')
+    try { if (fs.existsSync(realPeersDir)) fs.rmSync(realPeersDir, { recursive: true, force: true }) } catch {}
+  })
+
+  afterAll(() => {
+    try { fs.rmSync(tmpDir, { recursive: true, force: true }) } catch {}
   })
 
   afterEach(() => {
-    try { fs.rmSync(tmpDir, { recursive: true, force: true }) } catch {}
     vi.restoreAllMocks()
   })
 
@@ -56,6 +71,7 @@ describe('ListPeersTool', () => {
     const addResult = await tool.execute({ action: 'add', host: '192.168.1.50', name: 'dev-box', port: 45678 }, {})
     expect(addResult.content[0].text).toContain('Added peer: dev-box')
 
+    // 同实例、同 tmpDir，add 写入后 list 应可见
     const listResult = await tool.execute({ action: 'list' }, {})
     expect(listResult.content[0].text).toContain('dev-box')
     expect(listResult.content[0].text).toContain('192.168.1.50')

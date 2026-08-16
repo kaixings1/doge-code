@@ -225,53 +225,75 @@ export async function readJSONLFile<T>(filePath: string): Promise<T[]> {
   return parseJSONL<T>(buf.subarray(0, totalRead))
 }
 
+// ==================== JSON 文件读写 ====================
+
+/**
+ * 自定义 JSON 编码器，支持 Date 对象序列化为 ISO 字符串。
+ */
+class CustomJSONEncoder extends JSON {
+  static encode(obj: unknown, space = 0): string {
+    return JSON.stringify(obj, CustomJSONEncoder.replacer, space)
+  }
+
+  private static replacer(_key: string, value: unknown): unknown {
+    if (value instanceof Date) {
+      return value.toISOString()
+    }
+    return value
+  }
+}
+
+/**
+ * 读取 JSON 文件。
+ * @returns 解析后的对象，文件不存在或解析失败返回 null
+ */
+export function readJsonFile(filePath: string): unknown {
+  if (!existsSync(filePath)) return null
+  try {
+    const content = readFileSync(filePath, 'utf8')
+    return JSON.parse(content)
+  } catch {
+    return null
+  }
+}
+
+/**
+ * 写入 JSON 文件（原子化写入）。
+ * @param filePath 目标文件路径
+ * @param data 要序列化的数据
+ * @param space 缩进空格数，默认 4
+ */
+export function writeJsonFile(filePath: string, data: unknown, space = 4): void {
+  const dir = dirname(filePath)
+  if (!existsSync(dir)) {
+    mkdirSync(dir, { recursive: true })
+  }
+  const json = CustomJSONEncoder.encode(data, space)
+  writeFileSync(filePath, json, 'utf8')
+}
+
 export function addItemToJSONCArray(content: string, newItem: unknown): string {
   try {
-    // If the content is empty or whitespace, create a new JSON file
     if (!content || content.trim() === '') {
-      return jsonStringify([newItem], null, 4)
+      return JSON.stringify([newItem], null, 4)
     }
-
-    // Strip BOM before parsing - PowerShell 5.x adds BOM to UTF-8 files
     const cleanContent = stripBOM(content)
-
-    // Parse the content to check if it's valid JSON
     const parsedContent = parseJsonc(cleanContent)
-
-    // If the parsed content is a valid array, modify it
     if (Array.isArray(parsedContent)) {
-      // Get the length of the array
       const arrayLength = parsedContent.length
-
-      // Determine if we are dealing with an empty array
       const isEmpty = arrayLength === 0
-
-      // If it's an empty array we want to add at index 0, otherwise append to the end
       const insertPath = isEmpty ? [0] : [arrayLength]
-
-      // Generate edits - we're using isArrayInsertion to add a new item without overwriting existing ones
       const edits = modify(cleanContent, insertPath, newItem, {
         formattingOptions: { insertSpaces: true, tabSize: 4 },
         isArrayInsertion: true,
       })
-
-      // If edits could not be generated, fall back to manual JSON string manipulation
       if (!edits || edits.length === 0) {
-        const copy = [...parsedContent, newItem]
-        return jsonStringify(copy, null, 4)
+        return JSON.stringify([...parsedContent, newItem], null, 4)
       }
-
-      // Apply the edits to preserve comments (use cleanContent without BOM)
       return applyEdits(cleanContent, edits)
     }
-    // If it's not an array at all, create a new array with the item
-    else {
-      // If the content exists but is not an array, we'll replace it completely
-      return jsonStringify([newItem], null, 4)
-    }
-  } catch (e) {
-    // If parsing fails for any reason, log the error and fallback to creating a new JSON array
-    logError(e)
-    return jsonStringify([newItem], null, 4)
+    return JSON.stringify([newItem], null, 4)
+  } catch {
+    return JSON.stringify([newItem], null, 4)
   }
 }

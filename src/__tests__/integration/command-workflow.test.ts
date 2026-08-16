@@ -91,22 +91,25 @@ describe('Workflow: diagram + collectSourceFiles', () => {
       }
     }
 
-    // 递归收集 .ts/.tsx 文件（防循环引用）
+    // 递归收集 .ts/.tsx 文件（使用 realpath 防止符号链接导致无限递归）
     const collectTsFiles = (dir: string, visited = new Set<string>()): string[] => {
-      const absDir = path.resolve(dir)
-      if (visited.has(absDir)) return []
-      visited.add(absDir)
+      let realDir: string
+      try { realDir = fs.realpathSync(dir) } catch { realDir = path.resolve(dir) }
+      if (visited.has(realDir)) return []
+      visited.add(realDir)
       const files: string[] = []
       const entries = fs.readdirSync(dir)
       for (const entry of entries) {
         if (entry.startsWith('.') || entry === 'node_modules') continue
         const fullPath = path.join(dir, entry)
-        const stat = fs.statSync(fullPath)
-        if (stat.isDirectory()) {
-          files.push(...collectTsFiles(fullPath, visited))
-        } else if (entry.endsWith('.ts') || entry.endsWith('.tsx')) {
-          files.push(fullPath)
-        }
+        try {
+          const stat = fs.lstatSync(fullPath)
+          if (stat.isDirectory()) {
+            files.push(...collectTsFiles(fullPath, visited))
+          } else if (stat.isFile() && (entry.endsWith('.ts') || entry.endsWith('.tsx'))) {
+            files.push(fullPath)
+          }
+        } catch { /* skip unreadable entries */ }
       }
       return files
     }

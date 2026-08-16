@@ -1,3 +1,3 @@
 {
-  "output": "```bash\n# 查看当前目录结构，了解已有文件\nfind . -type f -name \"*.py\" -o -name \"*.js\" -o -name \"*.ts\" -o -name \"*.json\" | grep -v node_modules | grep -v .git | head -30\n\n# 查看src目录下的核心文件\nls -la src/\nls -la src/config/\nls -la src/utils/ 2>/dev/null || echo \"utils目录不存在\"\n\n# 检查display_config.json内容\ncat src/config/display_config.json 2>/dev/null || echo \"display_config.json不存在\"\n\n# 查找所有Python文件，看看有没有交互逻辑\nfind . -type f -name \"*.py\" | grep -v __pycache__ | grep -v .git\n\n# 查看是否有测试目录\nls -la tests/ 2>/dev/null || ls -la test/ 2>/dev/null || echo \"无测试目录\"\n\n# 查找用户交互相关的文件（包含emoji或用户展示逻辑）\ngrep -r \"emoji\\|用户\\|交互\\|展示\" --include=\"*.py\" --include=\"*.js\" --include=\"*.ts\" --include=\"*.json\" . 2>/dev/null | grep -v node_modules | grep -v .git | head -20\n```"
+  "output": "```bash\nls -la biz_project/\nfind biz_project -type f -name \"*.ts\" -o -name \"*.js\" | head -20\n```"
 }

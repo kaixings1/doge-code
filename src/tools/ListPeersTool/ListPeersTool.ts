@@ -31,7 +31,10 @@ export class ListPeersTool implements Tool {
   }
   validate = () => ({ valid: true })
 
+  private _peersDirOverride: string | null = null
+
   private peersDir(): string {
+    if (this._peersDirOverride) return this._peersDirOverride
     return join(process.cwd(), '.doge', 'peers')
   }
 
