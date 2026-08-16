@@ -1,15 +1,14 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { BranchTool } from '../../tools/BranchTool/BranchTool.js'
 
-const mockExec = vi.fn(() =>
-  Promise.resolve({
-    stdout: 'main\n',
-    stderr: '',
-    code: 0,
-  })
-)
 vi.mock('../../utils/Shell.js', () => ({
-  exec: mockExec,
+  exec: vi.fn(() =>
+    Promise.resolve({
+      stdout: 'main\n',
+      stderr: '',
+      code: 0,
+    })
+  ),
 }))
 
 describe('BranchTool', () => {
