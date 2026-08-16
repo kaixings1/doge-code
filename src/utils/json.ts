@@ -230,17 +230,11 @@ export async function readJSONLFile<T>(filePath: string): Promise<T[]> {
 /**
  * 自定义 JSON 编码器，支持 Date 对象序列化为 ISO 字符串。
  */
-class CustomJSONEncoder extends JSON {
-  static encode(obj: unknown, space = 0): string {
-    return JSON.stringify(obj, CustomJSONEncoder.replacer, space)
+function customJSONReplacer(_key: string, value: unknown): unknown {
+  if (value instanceof Date) {
+    return value.toISOString()
   }
-
-  private static replacer(_key: string, value: unknown): unknown {
-    if (value instanceof Date) {
-      return value.toISOString()
-    }
-    return value
-  }
+  return value
 }
 
 /**
@@ -268,7 +262,7 @@ export function writeJsonFile(filePath: string, data: unknown, space = 4): void 
   if (!existsSync(dir)) {
     mkdirSync(dir, { recursive: true })
   }
-  const json = CustomJSONEncoder.encode(data, space)
+  const json = JSON.stringify(data, customJSONReplacer, space)
   writeFileSync(filePath, json, 'utf8')
 }
 
