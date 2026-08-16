@@ -21,6 +21,8 @@ import { GitContextInjector, type GitContextConfig } from "./gitContext.ts";
 import { HarnessRouter, type HarnessConfig, type HarnessAdapter } from "./harnessAdapter.ts";
 import { createSandboxedExecutor, type SandboxConfig, type SandboxPolicy, getDefaultSandboxPolicy, createDefaultSandboxConfig } from "./sandbox/index.ts";
 import { HookManager } from "./hooks/hookManager.js";
+// 导入 ToolRegistry 桥接器（吸收 OpenManus 精华：统一工具注册/发现/执行）
+import { buildToolRegistry } from '../tools/ToolCollectionTool/buildRegistry.js';
 // 导入工具注册表（复用 src/tools.ts 中 buildTool() 构建的完整工具实例）
 import { getAllBaseTools } from "../tools.js";
 import { type Tools, type ToolInfo } from "../Tool.js";
@@ -94,6 +96,8 @@ export class QueryEngine {
   readonly retryHandler = new RetryHandler();
   readonly subAgentManager = new SubAgentManager();
   readonly recovery: ErrorRecovery;
+  /** 统一工具注册表（吸收 OpenManus 精华） */
+  readonly toolRegistry: ReturnType<typeof buildToolRegistry>;
   private _preAnalysis: Array<{ type: string; message: string; line?: number }>;
   readonly conversation: Conversation;
   private abortController: AbortController = new AbortController();
@@ -179,6 +183,8 @@ export class QueryEngine {
     const toolScheduler = new ToolScheduler(registry, permissionManager, executor);
 
     this.recovery = new ErrorRecovery(this.stateMachine, this.retryHandler, this.autoCompactor, opts.circuitBreaker);
+    // 初始化统一工具注册表（吸收 OpenManus 精华）
+    this.toolRegistry = buildToolRegistry(registry);
     this.conversation = this._conversation;
     this._preAnalysis = opts.preAnalysis;
     const autoFixLoopConfig = opts.autoFixLoop;
@@ -336,6 +342,19 @@ export class QueryEngine {
         role: 'assistant' as const,
         content: endConvManager.getWarningMessage(),
       })
+    }
+    return this.messageLoop.run(userMessage);
+  }
+
+  /**
+   * 在循环结束后继续发送消息并重启迭代。
+   * 如果状态机处于终止状态（done/crashed/aborted），先 reset 再继续。
+   * 供��部在对话意外终止时主动续命使用。
+   */
+  async sendMessage(userMessage: string): Promise<QueryResult> {
+    if (this.stateMachine.isTerminal()) {
+      this.stateMachine.reset();
+      this._conversation.messages = [];
     }
     return this.messageLoop.run(userMessage);
   }

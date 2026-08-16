@@ -292,14 +292,26 @@ async function initializeCache(): Promise<void> {
         cacheSettings.cacheKey,
       );
       if (!cacheSettings.disableCache && value) {
-        const parsed: [string, CacheEntry][] = JSON.parse(value);
-        if (parsed && Array.isArray(parsed)) {
-          parsed.forEach(([key, data]) => {
+        const parsed = JSON.parse(value) as unknown;
+        if (Array.isArray(parsed)) {
+          for (const entry of parsed) {
+            if (
+              typeof entry !== "object" ||
+              entry === null ||
+              typeof (entry as Record<string, unknown>)[0] !== "string"
+            ) continue;
+            const [key, data] = entry as [string, Record<string, unknown>];
+            const version = typeof data.version === "string" ? data.version : "";
+            const staleAt =
+              typeof data.staleAt === "string" ? new Date(data.staleAt) : new Date();
+            if (Number.isNaN(staleAt.getTime())) continue;
             cache.set(key, {
-              ...data,
-              staleAt: new Date(data.staleAt),
+              data: (data.data ?? {}) as FeatureApiResponse,
+              sse: data.sse === true,
+              version,
+              staleAt,
             });
-          });
+          }
         }
         cleanupCache();
       }

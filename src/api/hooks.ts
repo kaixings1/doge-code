@@ -3,6 +3,7 @@ import type { QueryEngine } from './QueryEngine.js';
 import type { ToolRegistry, ToolResult } from './ToolRegistry.js';
 import type { ISession } from './SessionManager.js';
 import { SessionManager } from './SessionManager.js';
+import { getSafeLocalStorage } from '../utils/storage.js';
 
 // 尝试加载 React（如果可用）
 // React 类型声明为宽松对象，允许泛型调用
@@ -287,7 +288,7 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T)
   if (React?.useState && React?.useEffect) {
     const [storedValue, setStoredValue] = React.useState<T>(() => {
       try {
-        const item = window.localStorage.getItem(key);
+        const item = getSafeLocalStorage()?.getItem(key);
         return item ? JSON.parse(item) : initialValue;
       } catch { return initialValue; }
     });
@@ -304,7 +305,8 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T)
 
     const setValue = (value: T) => {
       setStoredValue(value);
-      try { window.localStorage.setItem(key, JSON.stringify(value)); } catch { /* ignore */ }
+      const s = getSafeLocalStorage();
+      if (s) { try { s.setItem(key, JSON.stringify(value)); } catch { /* ignore */ } }
     };
 
     return [storedValue, setValue];
@@ -312,16 +314,15 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T)
 
   // 非 React 版本
   let storedValue: T = initialValue;
-  try {
-    const item = typeof window !== 'undefined' ? window.localStorage.getItem(key) : null;
-    storedValue = item ? JSON.parse(item) : initialValue;
-  } catch { storedValue = initialValue; }
+  const nonReactItem = getSafeLocalStorage()?.getItem(key);
+  if (nonReactItem) {
+    try { storedValue = JSON.parse(nonReactItem); } catch { storedValue = initialValue; }
+  }
 
   const setValue = (value: T) => {
     storedValue = value;
-    try {
-      if (typeof window !== 'undefined') window.localStorage.setItem(key, JSON.stringify(value));
-    } catch { /* ignore */ }
+    const s = getSafeLocalStorage();
+    if (s) { try { s.setItem(key, JSON.stringify(value)); } catch { /* ignore */ } }
   };
 
   return [storedValue, setValue];

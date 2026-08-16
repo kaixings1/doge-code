@@ -52,5 +52,16 @@ export function getPrompt(): string {
 - 创建任务时使用清晰、具体的主题来描述预期结果
 - 创建任务后，如有需要，可使用 TaskUpdate 设置依赖关系（blocks/blockedBy）
 ${teammateTips}- 首先查看 TaskList 以避免创建重复任务
+
+## 必须：完成任务后标记为已完成
+
+**这是强制性的，不是可选的。** 每个任务都存储在 ~/.doge/tasks/ 目录下的 JSON 文件中。如果你完成任务后不调用 TaskUpdate 将状态改为 "completed"，该任务将永久保持在 "pending" 状态并持续显示在 UI 中，直到会话结束。不会自动消失，不会超时清理。
+
+**工作流：**
+1. 开始工作前：调用 TaskUpdate 将任务设为 "in_progress"
+2. 完成工作后：立即调用 TaskUpdate 将任务设为 "completed"
+3. 标记完成后：调用 TaskList 查找下一个任务
+
+如果你创建了任务但没有在完成工作后将其标记为 completed，这是一个 bug，会影响用户体验。
 `
 }

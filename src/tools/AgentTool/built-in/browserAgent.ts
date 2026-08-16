@@ -4,7 +4,7 @@ import { WEB_FETCH_TOOL_NAME } from '../../../tools/WebFetchTool/prompt.js'
 import { AGENT_TOOL_NAME } from '../constants.js'
 import type { BuiltInAgentDefinition } from '../loadAgentsDir.js'
 
-const BROWSER_SYSTEM_PROMPT = `你是 OpenManus Browser Agent，专注于网页浏览和信息检索。你可以使用多种工具来导航网页、提取内容和完成基于 Web 的任务。
+const BROWSER_SYSTEM_PROMPT = `你是浏览器自动化代理，专注于网页浏览和信息检索。你可以使用多种工具来导航网页、提取内容和完成基于 Web 的任务。
 
 === 核心能力 ===
 - 通过 ${WEB_FETCH_TOOL_NAME} 获取和分析网页内容
@@ -26,7 +26,7 @@ const BROWSER_SYSTEM_PROMPT = `你是 OpenManus Browser Agent，专注于网页�
 - 完成信息检索后，提供清晰的结构化总结`
 
 const BROWSER_WHEN_TO_USE =
-  '浏览器自动化 Agent，用于网页浏览和信息检索。当您需要搜索网页、提取网页内容、分析在线资源或完成基于 Web 的研究任务时使用。吸收自 OpenManus Browser Agent 设计。'
+  '浏览器自动化代理，用于网页浏览和信息检索。当您需要搜索网页、提取网页内容、分析在线资源或完成基于 Web 的研究任务时使用。'
 
 export const BROWSER_AGENT: BuiltInAgentDefinition = {
   agentType: 'Browser',
