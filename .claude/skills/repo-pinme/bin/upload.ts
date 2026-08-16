@@ -1,0 +1,560 @@
+import path from 'path';
+import chalk from 'chalk';
+import inquirer from 'inquirer';
+import figlet from 'figlet';
+import fs from 'fs';
+import {
+  checkDomainAvailable,
+  bindPinmeDomain,
+  bindDnsDomainV4,
+  getWalletBalance,
+} from './utils/pinmeApi';
+import { getAuthConfig } from './utils/webLogin';
+import { APP_CONFIG, getWalletRechargeUrl } from './utils/config';
+import {
+  isDnsDomain,
+  normalizeDomain,
+  validateDnsDomain,
+} from './utils/domainValidator';
+import { printCliError, printRechargeUrl } from './utils/cliError';
+import { resolveUploadUrls, uploadPath } from './services/uploadService';
+import { printHighlightedUrl } from './utils/urlDisplay';
+import tracker, {
+  getPathKind,
+  getTrackErrorReason,
+} from './utils/tracker';
+import {
+  TRACK_EVENTS,
+  TRACK_PAGES,
+  resolveTrackAction,
+} from './utils/trackerEvents';
+
+import { checkNodeVersion } from './utils/checkNodeVersion';
+checkNodeVersion();
+
+// create a synchronous path check function
+function checkPathSync(inputPath: string): string | null {
+  try {
+    // convert to absolute path
+    const absolutePath = path.resolve(inputPath);
+
+    // check if the path exists
+    if (fs.existsSync(absolutePath)) {
+      return absolutePath;
+    }
+    return null;
+  } catch (error: any) {
+    console.error(chalk.red(`error checking path: ${error.message}`));
+    return null;
+  }
+}
+
+interface UploadOptions {
+  [key: string]: any;
+}
+
+async function printUploadUrls(
+  result: {
+    contentHash: string;
+    shortUrl?: string;
+    pinmeUrl?: string;
+    dnsUrl?: string;
+  },
+  projectName?: string,
+): Promise<void> {
+  const { publicUrl, managementUrl } = await resolveUploadUrls(
+    result.contentHash,
+    {
+      dnsUrl: result.dnsUrl,
+      pinmeUrl: result.pinmeUrl,
+      shortUrl: result.shortUrl,
+    },
+    projectName,
+  );
+
+  printHighlightedUrl('URL', publicUrl, 'primary');
+  printHighlightedUrl('Management URL', managementUrl, 'management');
+}
+
+function readProjectNameFromConfig(configPath: string): string | undefined {
+  try {
+    const config = fs.readFileSync(configPath, 'utf-8');
+    const match = config.match(/project_name\s*=\s*"([^"]+)"/);
+    return match?.[1]?.trim() || undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function findPinmeConfig(startPath: string): string | undefined {
+  try {
+    let current = fs.statSync(startPath).isDirectory()
+      ? startPath
+      : path.dirname(startPath);
+
+    while (true) {
+      const configPath = path.join(current, 'pinme.toml');
+      if (fs.existsSync(configPath)) {
+        return configPath;
+      }
+
+      const parent = path.dirname(current);
+      if (parent === current) {
+        return undefined;
+      }
+      current = parent;
+    }
+  } catch {
+    return undefined;
+  }
+}
+
+function shouldInferProjectNameFromUploadPath(targetPath: string): boolean {
+  try {
+    return (
+      fs.statSync(targetPath).isDirectory() &&
+      path.basename(targetPath) === 'dist'
+    );
+  } catch {
+    return false;
+  }
+}
+
+function resolveUploadProjectName(targetPath: string): string | undefined {
+  if (APP_CONFIG.pinmeProjectName) {
+    return APP_CONFIG.pinmeProjectName;
+  }
+
+  if (!shouldInferProjectNameFromUploadPath(targetPath)) {
+    return undefined;
+  }
+
+  const configPaths = [
+    findPinmeConfig(targetPath),
+    findPinmeConfig(process.cwd()),
+  ].filter(
+    (value, index, values): value is string =>
+      Boolean(value) && values.indexOf(value) === index,
+  );
+
+  for (const configPath of configPaths) {
+    const projectName = readProjectNameFromConfig(configPath);
+    if (projectName) {
+      return projectName;
+    }
+  }
+
+  return undefined;
+}
+
+function getDomainFromArgs(): string | null {
+  const args = process.argv.slice(2);
+  const dIdx = args.findIndex((a) => a === '--domain' || a === '-d');
+  if (dIdx >= 0 && args[dIdx + 1] && !args[dIdx + 1].startsWith('-')) {
+    return String(args[dIdx + 1]).trim();
+  }
+  return null;
+}
+
+function getDnsFromArgs(): boolean {
+  const args = process.argv.slice(2);
+  return args.includes('--dns') || args.includes('-D');
+}
+
+async function checkWalletBalanceStatus(authConfig: {
+  address: string;
+  token: string;
+}): Promise<boolean> {
+  console.log(chalk.blue('Checking wallet balance...'));
+  try {
+    const balanceResult = await getWalletBalance(
+      authConfig.address,
+      authConfig.token,
+    );
+    const balance = Number(balanceResult.data?.wallet_balance_usd ?? 0);
+    if (!Number.isFinite(balance) || balance <= 0) {
+      return false;
+    }
+    console.log(
+      chalk.green(`Wallet balance available: $${balance.toFixed(2)}`),
+    );
+    return true;
+  } catch (e: any) {
+    if (e.message === 'Token expired' || e?.name === 'CliError') {
+      throw e;
+    }
+    console.log(chalk.yellow('Failed to check wallet balance, continuing...'));
+    return true;
+  }
+}
+
+async function bindDomain(
+  domain: string,
+  contentHash: string,
+  isDns: boolean,
+  authConfig: { address: string; token: string },
+): Promise<boolean> {
+  const displayDomain = normalizeDomain(domain);
+  const domainType = isDns ? 'dns' : 'pinme_subdomain';
+
+  if (isDns) {
+    // DNS domain binding
+    console.log(chalk.blue('Binding DNS domain...'));
+    const dnsResult = await bindDnsDomainV4(
+      displayDomain,
+      contentHash,
+      authConfig.address,
+      authConfig.token,
+    );
+    if (dnsResult.code !== 200) {
+      void tracker.trackEvent(TRACK_EVENTS.domainBindFailed, TRACK_PAGES.domain, {
+        a: resolveTrackAction(TRACK_EVENTS.domainBindFailed),
+        domain_type: domainType,
+        domain_name: displayDomain,
+        bind_source: 'upload',
+        reason: dnsResult.msg || 'dns_bind_failed',
+      });
+      console.log(chalk.red(`DNS binding failed: ${dnsResult.msg}`));
+      return false;
+    }
+    void tracker.trackEvent(TRACK_EVENTS.domainBindSuccess, TRACK_PAGES.domain, {
+      a: resolveTrackAction(TRACK_EVENTS.domainBindSuccess),
+      domain_type: domainType,
+      domain_name: displayDomain,
+      bind_source: 'upload',
+    });
+    console.log(chalk.green(`DNS bind success: ${displayDomain}`));
+    console.log(chalk.white(`Visit: https://${displayDomain}`));
+    console.log(
+      chalk.cyan(
+        '\n📚 DNS Setup Guide: https://pinme.eth.limo/#/docs?id=custom-domain',
+      ),
+    );
+  } else {
+    // Pinme subdomain binding
+    console.log(chalk.blue('Binding Pinme subdomain...'));
+    const ok = await bindPinmeDomain(displayDomain, contentHash);
+    if (!ok) {
+      void tracker.trackEvent(TRACK_EVENTS.domainBindFailed, TRACK_PAGES.domain, {
+        a: resolveTrackAction(TRACK_EVENTS.domainBindFailed),
+        domain_type: domainType,
+        domain_name: displayDomain,
+        bind_source: 'upload',
+        reason: 'pinme_bind_failed',
+      });
+      console.log(chalk.red('Binding failed. Please try again later.'));
+      return false;
+    }
+    void tracker.trackEvent(TRACK_EVENTS.domainBindSuccess, TRACK_PAGES.domain, {
+      a: resolveTrackAction(TRACK_EVENTS.domainBindSuccess),
+      domain_type: domainType,
+      domain_name: displayDomain,
+      bind_source: 'upload',
+    });
+    console.log(chalk.green(`Bind success: ${displayDomain}`));
+    const rootDomain = await (await import('./utils/pinmeApi')).getRootDomain();
+    console.log(chalk.white(`Visit: https://${displayDomain}.${rootDomain}`));
+  }
+  return true;
+}
+
+export default async (options?: UploadOptions): Promise<void> => {
+  try {
+    console.log(
+      figlet.textSync('PINME', {
+        font: 'Standard',
+        horizontalLayout: 'default',
+        verticalLayout: 'default',
+        width: 180,
+        whitespaceBreak: true,
+      }),
+    );
+
+    const authConfig = getAuthConfig();
+    if (!authConfig) {
+      console.log(chalk.red('Please login first. Run: pinme login'));
+      return;
+    }
+
+    // Check if domain/dns options are provided
+    const domainArg = getDomainFromArgs();
+    const dnsArg = getDnsFromArgs();
+
+    // if the parameter is passed, upload directly, pinme upload /path/to/dir
+    const argPath = process.argv[3];
+
+    if (argPath && !argPath.startsWith('-')) {
+      // use the synchronous path check function
+      const absolutePath = checkPathSync(argPath);
+      if (!absolutePath) {
+        console.log(chalk.red(`path ${argPath} does not exist`));
+        return;
+      }
+      const pathKind = getPathKind(absolutePath);
+      const projectName = resolveUploadProjectName(absolutePath);
+      if (projectName) {
+        console.log(chalk.gray(`Project: ${projectName}`));
+      }
+
+      // Auto-detect domain type
+      const isDns = dnsArg || (domainArg ? isDnsDomain(domainArg) : false);
+      const displayDomain = domainArg
+        ?.replace(/^https?:\/\//, '')
+        .replace(/\/$/, '');
+
+      // Validate DNS domain format
+      if (isDns && domainArg) {
+        const validation = validateDnsDomain(domainArg);
+        if (!validation.valid) {
+          console.log(chalk.red(validation.message!));
+          return;
+        }
+      }
+
+      // Domain binding now uses wallet balance instead of VIP.
+      if (domainArg) {
+        try {
+          const hasWalletBalance = await checkWalletBalanceStatus(authConfig);
+          if (!hasWalletBalance) {
+            console.log(
+              chalk.red(
+                'Insufficient wallet balance. Please recharge your wallet first.',
+              ),
+            );
+            printRechargeUrl(getWalletRechargeUrl());
+            return;
+          }
+        } catch (e: any) {
+          if (e.message === 'Token expired') {
+            return;
+          }
+          throw e;
+        }
+      }
+
+      // optional: pre-check domain availability before upload
+      if (domainArg) {
+        try {
+          const check = await checkDomainAvailable(displayDomain!);
+          if (!check.is_valid) {
+            console.log(
+              chalk.red(
+                `Domain not available: ${check.error || 'unknown reason'}`,
+              ),
+            );
+            return;
+          }
+          console.log(chalk.green(`Domain available: ${displayDomain}`));
+        } catch (e: any) {
+          if (e.message === 'Token expired') {
+            return;
+          }
+          throw e;
+        }
+      }
+
+      console.log(chalk.blue(`uploading ${absolutePath} to ipfs...`));
+      let result;
+      try {
+        result = await uploadPath(absolutePath, {
+          action: 'upload',
+          projectName,
+          uid: authConfig?.address,
+        });
+      } catch (error: any) {
+        void tracker.trackEvent(TRACK_EVENTS.uploadFailed, TRACK_PAGES.upload, {
+          a: resolveTrackAction(TRACK_EVENTS.uploadFailed),
+          path_kind: pathKind,
+          has_domain: Boolean(domainArg),
+          reason: getTrackErrorReason(error),
+        });
+        printCliError(error, 'Upload failed.');
+        process.exit(1);
+      }
+
+      if (!result) {
+        void tracker.trackEvent(TRACK_EVENTS.uploadFailed, TRACK_PAGES.upload, {
+          a: resolveTrackAction(TRACK_EVENTS.uploadFailed),
+          path_kind: pathKind,
+          has_domain: Boolean(domainArg),
+          reason: 'no_result_returned',
+        });
+        console.error(chalk.red('Upload failed: no result returned'));
+        process.exit(1);
+      }
+
+      void tracker.trackEvent(TRACK_EVENTS.uploadSuccess, TRACK_PAGES.upload, {
+        a: resolveTrackAction(TRACK_EVENTS.uploadSuccess),
+        path_kind: pathKind,
+        has_domain: Boolean(domainArg),
+        project_name: projectName,
+      });
+
+      console.log(
+        chalk.cyan(figlet.textSync('Successful', { horizontalLayout: 'full' })),
+      );
+      await printUploadUrls(result, projectName);
+
+      // optional: bind domain after upload
+      if (domainArg) {
+        console.log(
+          chalk.blue(
+            `Binding domain: ${displayDomain} with CID: ${result.contentHash}`,
+          ),
+        );
+        try {
+          await bindDomain(domainArg, result.contentHash, isDns, authConfig);
+        } catch (e: any) {
+          if (e.message === 'Token expired') {
+            process.exit(1);
+          }
+          throw e;
+        }
+      }
+      console.log(chalk.green('\n🎉 upload successful, program exit'));
+      process.exit(0);
+    }
+
+    // No path argument provided, use interactive mode
+    const answer = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'path',
+        message: 'path to upload: ',
+      },
+    ]);
+
+    if (answer.path) {
+      // use the synchronous path check function
+      const absolutePath = checkPathSync(answer.path);
+      if (!absolutePath) {
+        console.log(chalk.red(`path ${answer.path} does not exist`));
+        return;
+      }
+      const pathKind = getPathKind(absolutePath);
+      const projectName = resolveUploadProjectName(absolutePath);
+      if (projectName) {
+        console.log(chalk.gray(`Project: ${projectName}`));
+      }
+
+      // Auto-detect domain type
+      const isDns = dnsArg || (domainArg ? isDnsDomain(domainArg) : false);
+      const displayDomain = domainArg
+        ?.replace(/^https?:\/\//, '')
+        .replace(/\/$/, '');
+
+      // Validate DNS domain format
+      if (isDns && domainArg) {
+        const validation = validateDnsDomain(domainArg);
+        if (!validation.valid) {
+          console.log(chalk.red(validation.message!));
+          return;
+        }
+      }
+
+      // Domain binding now uses wallet balance instead of VIP.
+      if (domainArg) {
+        try {
+          const hasWalletBalance = await checkWalletBalanceStatus(authConfig);
+          if (!hasWalletBalance) {
+            console.log(
+              chalk.red(
+                'Insufficient wallet balance. Please recharge your wallet first.',
+              ),
+            );
+            printRechargeUrl(getWalletRechargeUrl());
+            return;
+          }
+        } catch (e: any) {
+          if (e.message === 'Token expired') {
+            return;
+          }
+          throw e;
+        }
+      }
+
+      // optional: interactive flow may also parse --domain, reuse the same arg parsing
+      if (domainArg) {
+        try {
+          const check = await checkDomainAvailable(displayDomain!);
+          if (!check.is_valid) {
+            console.log(
+              chalk.red(
+                `Domain not available: ${check.error || 'unknown reason'}`,
+              ),
+            );
+            return;
+          }
+          console.log(chalk.green(`Domain available: ${displayDomain}`));
+        } catch (e: any) {
+          if (e.message === 'Token expired') {
+            return;
+          }
+          throw e;
+        }
+      }
+
+      console.log(chalk.blue(`uploading ${absolutePath} to ipfs...`));
+      let result;
+      try {
+        result = await uploadPath(absolutePath, {
+          action: 'upload',
+          projectName,
+          uid: authConfig?.address,
+        });
+      } catch (error: any) {
+        void tracker.trackEvent(TRACK_EVENTS.uploadFailed, TRACK_PAGES.upload, {
+          a: resolveTrackAction(TRACK_EVENTS.uploadFailed),
+          path_kind: pathKind,
+          has_domain: Boolean(domainArg),
+          reason: getTrackErrorReason(error),
+        });
+        printCliError(error, 'Upload failed.');
+        process.exit(1);
+      }
+
+      if (!result) {
+        void tracker.trackEvent(TRACK_EVENTS.uploadFailed, TRACK_PAGES.upload, {
+          a: resolveTrackAction(TRACK_EVENTS.uploadFailed),
+          path_kind: pathKind,
+          has_domain: Boolean(domainArg),
+          reason: 'no_result_returned',
+        });
+        console.error(chalk.red('Upload failed: no result returned'));
+        process.exit(1);
+      }
+
+      void tracker.trackEvent(TRACK_EVENTS.uploadSuccess, TRACK_PAGES.upload, {
+        a: resolveTrackAction(TRACK_EVENTS.uploadSuccess),
+        path_kind: pathKind,
+        has_domain: Boolean(domainArg),
+        project_name: projectName,
+      });
+
+      console.log(
+        chalk.cyan(figlet.textSync('Successful', { horizontalLayout: 'full' })),
+      );
+      await printUploadUrls(result, projectName);
+      if (domainArg) {
+        console.log(
+          chalk.blue(
+            `Binding domain: ${displayDomain} with CID: ${result.contentHash}`,
+          ),
+        );
+
+        try {
+          await bindDomain(domainArg, result.contentHash, isDns, authConfig);
+        } catch (e: any) {
+          if (e.message === 'Token expired') {
+            process.exit(1);
+          }
+          throw e;
+        }
+      }
+      console.log(chalk.green('\n🎉 upload successful, program exit'));
+      process.exit(0);
+    }
+  } catch (error: any) {
+    printCliError(error, 'Upload failed.');
+  }
+};
