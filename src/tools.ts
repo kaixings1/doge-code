@@ -58,12 +58,22 @@ import { EffortTool } from './tools/EffortTool/EffortTool.js'
 import { ThemeTool } from './tools/ThemeTool/ThemeTool.js'
 import { TodoWriteTool } from './tools/TodoWriteTool/TodoWriteTool.js'
 import { AdvisorTool } from './tools/AdvisorTool/AdvisorTool.js'
+import { ActionSamplerTool } from './tools/ActionSamplerTool/ActionSamplerTool.js'
+import { ToolCollectionTool } from './tools/ToolCollectionTool/ToolCollectionTool.js'
+import { SandboxTool } from './tools/SandboxTool/SandboxTool.js'
+import { ProjectScaffolderTool } from './tools/ProjectScaffolderTool/ProjectScaffolderTool.js'
+import { PythonInterpreterTool } from './tools/PythonInterpreterTool/PythonInterpreterTool.js'
+import { FlowTool } from './tools/FlowTool/FlowTool.js'
+import { StateMachineTool } from './tools/StateMachineTool/StateMachineTool.js'
+import { AgentDevelopmentTool } from './tools/AgentDevelopmentTool/AgentDevelopmentTool.js'
+import { LLMRouterTool } from './tools/LLMRouterTool/LLMRouterTool.js'
 import { VimVisualModeTool } from './tools/VimVisualModeTool/VimVisualModeTool.js'
 import { TerminalPanelTool } from './tools/TerminalPanelTool/TerminalPanelTool.js'
 import { ContextCollapseTool } from './tools/ContextCollapseTool/ContextCollapseTool.js'
 import { TaskCreateTool } from './tools/TaskCreateTool/TaskCreateTool.js'
 import { PlanModeTool } from './tools/PlanModeTool/PlanModeTool.js'
 import { BranchTool } from './tools/BranchTool/BranchTool.js'
+import { GitTool } from './tools/GitTool/GitTool.js'
 import { CompareTool } from './tools/CompareTool/CompareTool.js'
 import { GraphqlTool } from './tools/GraphqlTool/GraphqlTool.js'
 import { HttpTool } from './tools/HttpTool/HttpTool.js'
@@ -322,6 +332,16 @@ export function getAllBaseTools(): Tools {
     _tools.push(ContextCollapseTool);
     _tools.push(PlanModeTool);
     _tools.push(BranchTool);
+    _tools.push(GitTool);
+    _tools.push(ActionSamplerTool);
+    _tools.push(ToolCollectionTool);
+    _tools.push(SandboxTool);
+    _tools.push(ProjectScaffolderTool);
+    _tools.push(PythonInterpreterTool);
+    _tools.push(FlowTool);
+    _tools.push(StateMachineTool);
+    _tools.push(AgentDevelopmentTool);
+    _tools.push(LLMRouterTool);
     _tools.push(CompareTool);
     _tools.push(GraphqlTool);
     _tools.push(HttpTool);
@@ -463,6 +483,7 @@ ContextCollapseTool,
 //SnipTool, 
 PlanModeTool,
 BranchTool,
+GitTool,
 CompareTool,
 GraphqlTool,
 HttpTool,

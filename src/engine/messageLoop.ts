@@ -423,17 +423,29 @@ export class MessageLoop {
         return true
       }
 
-      // 执行有效调用（已被 hook 过滤）
-      const results = await this.deps.toolScheduler.execute(allowedCalls);
+      // 拦截 action_sampler 调用：执行采样并替换原始工具调用（吸收 SWE-agent 精华）
+      const actionSamplerCalls = allowedCalls.filter(tc => tc.name === 'action_sampler')
+      const regularCalls = allowedCalls.filter(tc => tc.name !== 'action_sampler')
+
+      let finalCalls: typeof allowedCalls
+      if (actionSamplerCalls.length > 0) {
+        const resolvedCalls = await this.resolveActionSamplerCalls(actionSamplerCalls, regularCalls)
+        finalCalls = resolvedCalls.length > 0 ? resolvedCalls : allowedCalls
+      } else {
+        finalCalls = allowedCalls
+      }
+
+      // 执行有效调用（已被 hook 过滤 + action_sampler 已解析）
+      const results = await this.deps.toolScheduler.execute(finalCalls);
 
       // 追踪上一步工具调用，供 _recordAssistantResponse 检测 read/search 后提前终止
-      this.lastToolCalls = validCalls.map(tc => ({ name: tc.name }))
+      this.lastToolCalls = finalCalls.map(tc => ({ name: tc.name }))
 
       engineLog('TOOL_RESULTS', JSON.stringify(results, null, 2).slice(0, 10000));
 
       // 发射 hook 事件 + HookManager 触发：post_tool_use（吸收自 ECC hooks afterTool）
       for (const r of results) {
-        const toolName = allowedCalls.find(tc => tc.id === r.toolUseId)?.name ?? ''
+        const toolName = finalCalls.find(tc => tc.id === r.toolUseId)?.name ?? ''
 
         // HookManager 拦截
         const postHookEvent: HookEvent = {
@@ -460,7 +472,7 @@ export class MessageLoop {
       // 熔断器记录（吸收自 error-coordinator）：每个工具的成功/失败计入熔断器
       if (this.deps.recovery) {
         for (const r of results) {
-          const toolName = validCalls.find(tc => tc.id === r.toolUseId)?.name ?? 'unknown'
+          const toolName = finalCalls.find(tc => tc.id === r.toolUseId)?.name ?? 'unknown'
           if (r.success) {
             this.deps.recovery.recordToolSuccess(toolName)
           } else {
@@ -602,4 +614,52 @@ export class MessageLoop {
 
     return lines.join('\n')
   }
+
+  private async resolveActionSamplerCalls(
+    samplerCalls: Array<{ id: string; name: string; input: Record<string, unknown> }>,
+    fallbackCalls: Array<{ id: string; name: string; input: Record<string, unknown> }>,
+  ): Promise<Array<{ id: string; name: string; input: Record<string, unknown> }>> {
+    const resolved: Array<{ id: string; name: string; input: Record<string, unknown> }> = []
+    for (const call of samplerCalls) {
+      try {
+        const input = call.input as Record<string, unknown>
+        const actions = input.actions as Array<{ id: string; name: string; confidence?: number }> | undefined
+        if (!actions || actions.length === 0) continue
+        const strategy = (input.strategy as string | undefined) || 'greedy'
+        const available = actions.filter(function(a: { name: string }) { return a.name !== 'action_sampler' })
+        if (available.length === 0) continue
+        const sorted = [...available].sort(function(a, b) { return (b.confidence ?? 0.5) - (a.confidence ?? 0.5) })
+        let selected: typeof available
+        switch (strategy) {
+          case 'top_k': {
+            const k = (input.top_k as number | undefined) ?? 3
+            selected = sorted.slice(0, Math.min(k, sorted.length))
+            break
+          }
+          case 'epsilon_greedy': {
+            const eps = (input.epsilon as number | undefined) ?? 0.1
+            selected = (Date.now() % 100) < eps * 100 && sorted.length > 1
+              ? [sorted[Math.floor(Math.random() * sorted.length)]]
+              : sorted.slice(0, 1)
+            break
+          }
+          case 'weighted': {
+            const k = (input.top_k as number | undefined) ?? 3
+            selected = sorted.slice(0, Math.min(k, sorted.length))
+            break
+          }
+          default:
+            selected = sorted.slice(0, 1)
+        }
+        for (const action of selected) {
+          const toolInput = (input as Record<string, unknown>).tool_input
+          resolved.push({ id: action.id + '_s', name: action.name, input: toolInput ?? {} })
+        }
+      } catch (err) {
+        engineLog('ACTION_SAMPLER', 'resolve error')
+      }
+    }
+    return resolved.length > 0 ? resolved : fallbackCalls
+  }
+
 }
