@@ -17,7 +17,7 @@
  *   /self-check --max-iterations 5        设置最大修复轮数（默认 3）
  *   /self-check --format json             输出 JSON 格式报告
  *   /self-check --threshold 80            设置覆盖率阈值（默认 80）
- *   /self-check --fail-on warning         警告也视为失败
+ *   /self-check --fail-on-warning         警告也视为失败
  *
  * 工作流程：
  *   1. 检测项目类型，选择对应的检查工具
@@ -36,9 +36,9 @@
 
 import type { Command } from '../../commands.js'
 import type { LocalCommandCall, LocalCommandResult } from '../../types/command.js'
-import { execSync, spawn } from 'child_process'
-import { existsSync, readFileSync, statSync, mkdirSync, writeFileSync } from 'fs'
-import { join, dirname } from 'path'
+import { execSync } from 'child_process'
+import { existsSync, readFileSync, mkdirSync, writeFileSync } from 'fs'
+import { join } from 'path'
 
 // ==================== 类型定义 ====================
 
@@ -287,23 +287,14 @@ function runCommandParallel(commands: string[]): Map<string, CommandResult> {
  */
 class CompileErrorParser {
   private static readonly PATTERNS = [
-    // TypeScript: src/file.ts(10,5): error TS2322: message
     /^(.+?)\((\d+)(?:,(\d+))?\):\s*(?:error\s+(TS\d+):\s*(.+))$/m,
-    // Standard compiler: file:line:column: error: message
     /^(.+?):(\d+)(?::(\d+))?:\s*error:\s*(.+)$/m,
-    // Python: File "file", line N: message
     /^File\s+"(.+?)",\s*line\s+(\d+)(?:,\s*in\s+(.+?))?:\s*(.+)$/m,
-    // Generic: filename:line: message
     /^(.+\.(?:ts|tsx|js|jsx|py|rs|go|java|rb|c|cpp|h)):(\d+):\s*(.+)$/m,
-    // Rust: error[E0xxx]: message (file:line:col)
     /^error\[([E]\d+)\]:\s*(.+)\s+\((.+):(\d+):(\d+)\)$/m,
-    // Go: file.go:line:column: message
     /^(.+\.go):(\d+):(\d+):\s*(.+)$/m,
-    // ESLint: file:line:col: error/warning message
     /^(.+):(\d+):(\d+):\s*(error|warning):\s*(.+)$/m,
-    // Biome: file:line:col: error/warning message
     /^(.+):(\d+):(\d+):\s*(error|warn):\s*(.+)$/m,
-    // Generic warning
     /^(.+):(\d+):\s*warning[:\s]+(.+)$/m,
   ]
 
@@ -321,7 +312,6 @@ class CompileErrorParser {
           let code = match[4] || null
           let message = match[5] || match[4] || match[2] || line.trim()
 
-          // Rust pattern special handling
           if (match[0].startsWith('error[')) {
             code = match[1]
             message = match[2]
@@ -330,7 +320,6 @@ class CompileErrorParser {
             col = parseInt(match[5], 10)
           }
 
-          // Clean up file path
           file = file.replace(/^.*?(\w[:\\]?.*)/, '$1')
 
           const severity = /warning|warn/i.test(code || message) ? 'warning' : 'error'
@@ -399,7 +388,6 @@ class TestFailureParser {
       }
     }
 
-    // Also parse AssertionError messages
     const assertionMatches = output.matchAll(/AssertionError[:\s]*(.+?)(?:\n|$)/gi)
     for (const m of assertionMatches) {
       if (!errors.some(e => e.message.includes(m[1]?.slice(0, 50) || ''))) {
@@ -479,7 +467,6 @@ function analyzeAllErrors(output: string, mode: CheckMode, projectType: string):
     allErrors.push(...SecurityVulnerabilityParser.parse(output))
   }
 
-  // Deduplicate
   const seen = new Set<string>()
   return allErrors.filter(e => {
     const key = `${e.file}:${e.line}:${e.message.slice(0, 50)}`
@@ -495,7 +482,6 @@ function generateFixSuggestions(errors: RawError[], projectType: string): string
   for (const error of errors.slice(0, 10)) {
     const msg = error.message.toLowerCase()
 
-    // TypeScript/类型错误
     if (error.code?.startsWith('TS') || error.type === 'type') {
       if (/type\s+mismatch|type\s+'.+'\s+is\s+not\s+assignable/i.test(msg)) {
         suggestions.push(`类型不匹配 [${error.file}${error.line ? ':' + error.line : ''}]: 检查类型定义，确保赋值兼容`)
@@ -512,7 +498,6 @@ function generateFixSuggestions(errors: RawError[], projectType: string): string
       }
     }
 
-    // ESLint/Biome 规范错误
     if (error.type === 'lint') {
       if (/no-unused-vars|unused/i.test(error.message)) {
         suggestions.push(`未使用变量 [${error.file}]: 删除未使用的变量或添加 _ 前缀`)
@@ -531,7 +516,6 @@ function generateFixSuggestions(errors: RawError[], projectType: string): string
       }
     }
 
-    // 测试失败
     if (error.type === 'test') {
       if (/assertionerror|expected.*received/i.test(msg)) {
         suggestions.push(`断言失败 [${error.file}]: 检查测试期望值与实际值`)
@@ -544,12 +528,10 @@ function generateFixSuggestions(errors: RawError[], projectType: string): string
       }
     }
 
-    // 构建错误
     if (error.type === 'build') {
       suggestions.push(`构建错误 [${error.file}]: ${error.message.slice(0, 100)}`)
     }
 
-    // 安全漏洞
     if (error.type === 'security') {
       if (/critical/i.test(error.severity)) {
         suggestions.push(`严重安全漏洞 [${error.file}]: ${error.message.slice(0, 100)} — 立即修复`)
@@ -570,7 +552,6 @@ function generateAutoFixCommand(errors: RawError[], projectType: string): string
   const criticalErrors = errors.filter(e => e.severity === 'error' || e.type === 'security')
   if (criticalErrors.length === 0) return null
 
-  // Generate an AI-driven fix prompt
   const errorSummary = criticalErrors.slice(0, 5).map(e =>
     `- ${e.file}${e.line ? ':' + e.line : ''}: ${e.code || e.type} — ${e.message.slice(0, 100)}`
   ).join('\n')
@@ -581,19 +562,15 @@ function generateAutoFixCommand(errors: RawError[], projectType: string): string
 // ==================== 覆盖率提取 ====================
 
 function extractCoveragePercent(output: string): number | null {
-  // Istanbul/NYC: "All files: 85.3%"
   const istanbulMatch = output.match(/All files[:\s]+(\d+\.?\d*)/i)
   if (istanbulMatch) return parseFloat(istanbulMatch[1])
 
-  // Vitest: "Coverage: 85.3%"
   const vitestMatch = output.match(/coverage[:\s]+(\d+\.?\d*)/i)
   if (vitestMatch) return parseFloat(vitestMatch[1])
 
-  // Jacoco: "Total.*?(\d+\.?\d*)%"
   const jacocoMatch = output.match(/total[^%]*?(\d+\.?\d*)\s*%/i)
   if (jacocoMatch) return parseFloat(jacocoMatch[1])
 
-  // Generic: "XXXX%"
   const genericMatch = output.match(/(\d+\.?\d*)\s*%/)
   if (genericMatch) return parseFloat(genericMatch[1])
 
@@ -638,7 +615,6 @@ function filterCommandsByChangedFiles(commands: CheckCommands, changedFiles: str
     if (lang) languages.add(lang)
   }
 
-  // If mixed languages, run all; otherwise filter
   if (languages.size <= 1) {
     const lang = languages.values().next().value
     if (lang === 'node') return commands
@@ -656,7 +632,6 @@ function filterCommandsByChangedFiles(commands: CheckCommands, changedFiles: str
 async function runSelfCheck(args: string): Promise<LocalCommandResult> {
   const trimmed = args.trim()
 
-  // 显示帮助
   if (!trimmed) {
     return {
       type: 'text',
@@ -664,10 +639,7 @@ async function runSelfCheck(args: string): Promise<LocalCommandResult> {
     }
   }
 
-  // 解析参数
   const options = parseArgs(trimmed)
-
-  // 检测项目类型
   const { type, commands } = detectProjectType()
 
   if (type === 'unknown') {
@@ -677,7 +649,6 @@ async function runSelfCheck(args: string): Promise<LocalCommandResult> {
     }
   }
 
-  // 如果只检查变更文件，过滤命令
   let filteredCommands = commands
   if (options.mode === 'changed') {
     const changedFiles = getChangedFiles()
@@ -694,16 +665,10 @@ async function runSelfCheck(args: string): Promise<LocalCommandResult> {
   }
   options.projectType = type
 
-  // 执行自检
   const result = await executeSelfCheck(options)
-
-  // 生成报告
   const report = generateReport(options, result)
-
-  // 保存历史记录
   saveHistory(report)
 
-  // 格式化输出
   return formatOutput(options, result, report)
 }
 
@@ -729,7 +694,7 @@ function getHelpText(): string {
 /self-check changed               # 只检查 Git 变更的文件
 /self-check ci                    # 模拟 CI 环境运行所有检查
 
-# 高��选项
+# 高级选项
 /self-check --max-iterations 5    # 最大修复轮数（默认 3）
 /self-check --threshold 80        # 覆盖率阈值（默认 80%）
 /self-check --format json         # JSON 格式报告
@@ -774,18 +739,16 @@ function parseArgs(args: string): CheckOptions {
   let failOnWarning = false
   let format: OutputFormat = 'markdown'
 
-  // Mode detection
   const validModes: CheckMode[] = ['lint', 'test', 'type-check', 'build', 'security', 'audit', 'coverage', 'changed', 'ci']
   if (validModes.includes(parts[0] as CheckMode)) {
     mode = parts[0] as CheckMode
   }
 
-  // Parse flags
   for (let i = 0; i < parts.length; i++) {
     if (parts[i] === '--max-iterations' && parts[i + 1]) {
       maxIterations = parseInt(parts[i + 1], 10)
       if (isNaN(maxIterations) || maxIterations < 1) maxIterations = 3
-      if (maxIterations > 10) maxIterations = 10 // Cap at 10
+      if (maxIterations > 10) maxIterations = 10
     }
     if (parts[i] === '--threshold' && parts[i + 1]) {
       coverageThreshold = parseInt(parts[i + 1], 10)
@@ -836,7 +799,6 @@ async function executeSelfCheck(options: CheckOptions): Promise<CheckResult> {
   for (let iteration = 1; iteration <= options.maxIterations; iteration++) {
     const iterationErrors: RawError[] = []
 
-    // 并行执行所有检查
     if (options.mode === 'full' || options.mode === 'ci') {
       const results = runCommandParallel([
         options.commands.lint,
@@ -895,7 +857,6 @@ async function executeSelfCheck(options: CheckOptions): Promise<CheckResult> {
 
       allRawErrors.push(...iterationErrors)
     } else {
-      // 单项检查模式
       let command = ''
       let errorType: RawError['type'] = 'lint'
 
@@ -960,12 +921,10 @@ async function executeSelfCheck(options: CheckOptions): Promise<CheckResult> {
       }
     }
 
-    // 生成修复建议
     if (iterationErrors.length > 0) {
       const newFixes = generateFixSuggestions(iterationErrors, options.projectType)
       allFixes.push(...newFixes)
 
-      // 检查是否全部通过
       const allPassed = lintPassed && testPassed && typeCheckPassed &&
                         buildPassed && securityPassed && auditPassed && coveragePassed
 
@@ -988,7 +947,6 @@ async function executeSelfCheck(options: CheckOptions): Promise<CheckResult> {
         }
       }
     } else {
-      // No errors in this iteration
       const allPassed = lintPassed && testPassed && typeCheckPassed &&
                         buildPassed && securityPassed && auditPassed && coveragePassed
       if (allPassed) {
@@ -1010,8 +968,6 @@ async function executeSelfCheck(options: CheckOptions): Promise<CheckResult> {
         }
       }
     }
-
-    // 继续下一轮
   }
 
   return {
@@ -1077,7 +1033,6 @@ function saveHistory(report: CheckReport): void {
 
     history.push(report)
 
-    // Keep last 50 entries
     if (history.length > 50) {
       history = history.slice(-50)
     }
@@ -1109,7 +1064,6 @@ function formatOutput(options: CheckOptions, result: CheckResult, report: CheckR
     '',
   ]
 
-  // Results table
   if (options.mode === 'full' || options.mode === 'ci') {
     lines.push('### 检查结果')
     lines.push('')
@@ -1127,7 +1081,6 @@ function formatOutput(options: CheckOptions, result: CheckResult, report: CheckR
     }
     lines.push('')
   } else {
-    // Single mode results
     if (options.mode === 'full' || options.mode === 'lint') {
       lines.push(`**Lint**: ${result.lintPassed ? '✅ 通过' : '❌ 失败'}`)
     }
@@ -1154,12 +1107,10 @@ function formatOutput(options: CheckOptions, result: CheckResult, report: CheckR
     lines.push('')
   }
 
-  // Errors
   if (result.rawErrors.length > 0) {
     lines.push('### 错误详情')
     lines.push('')
 
-    // Group by file
     const byFile = new Map<string, RawError[]>()
     for (const err of result.rawErrors) {
       const key = err.file || 'unknown'
@@ -1181,7 +1132,6 @@ function formatOutput(options: CheckOptions, result: CheckResult, report: CheckR
     }
   }
 
-  // Fix suggestions
   if (result.fixes.length > 0) {
     lines.push('### 修复建议')
     lines.push('')
@@ -1195,7 +1145,6 @@ function formatOutput(options: CheckOptions, result: CheckResult, report: CheckR
     lines.push('💡 **下一步**: 根据上述建议修改代码，然后重新运行 /self-check')
   }
 
-  // Success message
   if (result.success) {
     lines.push('', '🎉 所有检查通过！代码质量良好。')
     if (result.coveragePercent !== undefined) {
@@ -1205,7 +1154,6 @@ function formatOutput(options: CheckOptions, result: CheckResult, report: CheckR
     lines.push('', '⚠️ 部分检查未通过，请根据上述建议修复后重试。')
   }
 
-  // History hint
   lines.push('', '📝 历史记录已保存到 `.doge/tasks/self-check-history.json`')
 
   return {
