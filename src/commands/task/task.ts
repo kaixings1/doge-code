@@ -9,19 +9,34 @@ import type { QueuedCommand } from '../../types/textInputTypes.js';
 // Background Task Engine — checkpoint-based execution with resume support
 // ---------------------------------------------------------------------------
 
-const CHECKPOINT_FILE = () => {
-  const sessionId = getSessionIdSync();
-  return require('path').join(require('os').homedir(), '.doge', 'tasks', `bg-${sessionId}.json`);
-};
+let _sessionId: string | null = null
 
-function getSessionIdSync(): string {
-  try {
-    const { getSessionId } = require('../../bootstrap/state.js');
-    return getSessionId();
-  } catch {
-    return 'default';
+function resolveSessionId(): string {
+  if (!_sessionId) {
+    try {
+      _sessionId = getSessionId()
+    } catch {
+      _sessionId = 'default'
+    }
   }
+  return _sessionId
 }
+
+const STEP_TIMEOUT_MS = 5 * 60 * 1000 // 每步默认 5 分钟超时
+
+function formatDuration(createdAt: string, updatedAt: string): string {
+  const start = new Date(createdAt).getTime()
+  const end = new Date(updatedAt).getTime()
+  const diff = Math.max(0, end - start)
+  const minutes = Math.floor(diff / 60000)
+  const seconds = Math.floor((diff % 60000) / 1000)
+  if (minutes > 0) return `${minutes}分${seconds}秒`
+  return `${seconds}秒`
+}
+
+const CHECKPOINT_FILE = () => {
+  return require('path').join(require('os').homedir(), '.doge', 'tasks', `bg-${resolveSessionId()}.json`);
+};
 
 interface BackgroundTask {
   id: string;
@@ -79,15 +94,35 @@ function createBgTask(description: string): BackgroundTask {
 // ---------------------------------------------------------------------------
 
 export const call: LocalCommandCall = async (args, context) => {
+  resolveSessionId()
   const trimmed = args?.trim() || '';
 
-  // Subcommands
-  if (trimmed.startsWith('list') || trimmed.startsWith('status') || trimmed.startsWith('resume') || trimmed.startsWith('cancel') || trimmed.startsWith('result')) {
-    return handleSubcommand(trimmed);
-  }
-
-  // Default: create and execute task
+  // 1. 优先检查 running 任务（自动恢复）— 仅在无参数时触发
   if (trimmed === '') {
+    const existing = loadBgTask();
+    if (existing && existing.status === 'running') {
+      const resumePrompt = buildResumePrompt(existing);
+      enqueue({
+        value: resumePrompt,
+        mode: 'prompt',
+        priority: 'next',
+      } as QueuedCommand);
+
+      return {
+        type: 'text',
+        value: `## 🔄 自动恢复后台任务
+
+检测到未完成的任务，已自动续跑：
+
+- **任务**: ${existing.description}
+- **当前步**: ${existing.currentStep}/${existing.totalSteps || '?'}
+- **Checkpoints**: ${existing.checkpoints.length}
+
+> AI 已自动继续执行，可随时关闭程序，下次启动时 /task 会恢复进度。`,
+      };
+    }
+
+    // 无任务时显示帮助
     return {
       type: 'text',
       value: `📝 **Background Task Engine** (/task)
@@ -111,31 +146,14 @@ export const call: LocalCommandCall = async (args, context) => {
     };
   }
 
-  // Check if there's a running task — auto-resume
-  const existing = loadBgTask();
-  if (existing && existing.status === 'running') {
-    const resumePrompt = buildResumePrompt(existing);
-    enqueue({
-      value: resumePrompt,
-      mode: 'prompt',
-      priority: 'next',
-    } as QueuedCommand);
-
-    return {
-      type: 'text',
-      value: `## 🔄 自动恢复后台任务
-
-检测到未完成的任务，已自动续跑：
-
-- **任务**: ${existing.description}
-- **当前步**: ${existing.currentStep}/${existing.totalSteps || '?'}
-- **Checkpoints**: ${existing.checkpoints.length}
-
-> AI 已自动继续执行，可随时关闭程序，下次启动时 /task 会恢复进度。`,
-    };
+  // 2. 子命令路由
+  const knownSubcommands = ['list', 'status', 'resume', 'cancel', 'result']
+  const firstWord = trimmed.split(/\s+/)[0]!
+  if (knownSubcommands.includes(firstWord)) {
+    return handleSubcommand(trimmed);
   }
 
-  // Create new background task
+  // 3. 创建新任务
   const task = createBgTask(trimmed);
   const sessionId = getSessionId();
   const now = new Date().toLocaleString('zh-CN', {
@@ -226,9 +244,9 @@ ${task.error ? `- 错误: ${task.error.slice(0, 100)}` : ''}`,
       if (task.finalResult) lines.push(`**结果**: ${task.finalResult.slice(0, 300)}`);
       lines.push('');
       if (task.checkpoints.length > 0) {
-        lines.push('### 最近步骤');
+        lines.push('### 执行轨迹');
         for (const cp of task.checkpoints.slice(-5)) {
-          lines.push(`- [${cp.step}] ${cp.action}: ${cp.result.slice(0, 100)}`);
+          lines.push(`[${cp.step}] ${cp.action}: ${cp.result.slice(0, 100)}`);
         }
       }
       return { type: 'text', value: lines.join('\n') };
@@ -282,7 +300,7 @@ ${task.error ? `- 错误: ${task.error.slice(0, 100)}` : ''}`,
         `**任务**: ${task.description}`,
         `**ID**: ${task.id}`,
         `**总步数**: ${task.currentStep}`,
-        `**耗时**: ${task.createdAt} → ${task.updatedAt}`,
+        `**耗时**: ${formatDuration(task.createdAt, task.updatedAt)} (${task.createdAt} → ${task.updatedAt})`,
         '',
         '### 执行结果',
         task.finalResult || '(无结果)',
@@ -290,7 +308,7 @@ ${task.error ? `- 错误: ${task.error.slice(0, 100)}` : ''}`,
         '### 执行轨迹',
       ];
       for (const cp of task.checkpoints) {
-        lines.push(`**[${cp.step}]** ${cp.action}`);
+        lines.push(`[${cp.step}] ${cp.action}`);
         if (cp.filesModified?.length) {
           lines.push(`  📄 ${cp.filesModified.join(', ')}`);
         }
@@ -317,6 +335,7 @@ function buildExecutionPrompt(task: BackgroundTask): string {
 3. 遇到无法继续的错误输出: [FAILED] 错误原因
 4. 每步检查进度，不要跳过关键分析
 5. 文件修改使用 Read/Edit/Write 工具
+6. 每步超时 ${Math.floor(STEP_TIMEOUT_MS / 60000)} 分钟，超时未完成应输出 [FAILED] timeout
 
 开始执行第一步。`;
 }

@@ -205,6 +205,7 @@ if (process.env.USER_TYPE === 'ant') {
 import securityReview from './commands/security-review.ts'
 import bughunter from './commands/bughunter/index.tsx'
 import dashboard from './commands/dashboard/index.ts'
+import selfCheck from './commands/self-check/index.ts'
 import rules from './commands/rules/index.ts'
 import terminalSetup from './commands/terminalSetup/index.ts'
 import usage from './commands/usage/index.ts'
@@ -705,6 +706,7 @@ const COMMANDS = memoize((): Command[] => [
     ? INTERNAL_ONLY_COMMANDS
     : []),
   dashboard,
+  selfCheck,
   rules,
   bughunter,
   reflect,
