@@ -7,6 +7,8 @@ import {
   removeAffix,
   removeComments,
   parseJsonCodeBlock,
+  decodeUnicodeEscape,
+  splitParagraph,
 } from './textUtils.js'
 
 let pass = 0, fail = 0
@@ -55,6 +57,26 @@ check('hash in string', removeComments(code2), 's = "hello # not a comment"')
 console.log('\n[分支6] 空行清理')
 const code3 = 'x = 1\n\n# comment\ny = 2\n\n'
 check('empty lines removed', removeComments(code3), 'x = 1\ny = 2')
+
+// ==================== decodeUnicodeEscape ====================
+console.log('\n\n== decodeUnicodeEscape ==')
+
+console.log('\n[分支10] Unicode 解码')
+check('unicode decode', decodeUnicodeEscape('hello\\u4e16\\u754c'), 'hello世界')
+check('no escape', decodeUnicodeEscape('plain text'), 'plain text')
+check('empty', decodeUnicodeEscape(''), '')
+
+// ==================== splitParagraph ====================
+console.log('\n\n== splitParagraph ==')
+
+console.log('\n[分支11] 按句号分割')
+const sp1 = splitParagraph('First sentence. Second sentence. Third.', '.,', 2)
+check('split by dot', sp1.length, 2)
+
+console.log('\n[分支12] 无分隔符时均分')
+const sp2 = splitParagraph('abcdefghij', '', 3)
+check('split by count', sp2.length, 3)
+check('even split', sp2[0].length + sp2[1].length + sp2[2].length, 10)
 
 // ==================== parseJsonCodeBlock ====================
 console.log('\n\n== parseJsonCodeBlock ==')
