@@ -1,0 +1,10 @@
+node_modules
+/bin
+/src
+.github
+.gitignore
+.prettierrc
+rollup.config.js
+tsconfig.json
+*.log
+.env

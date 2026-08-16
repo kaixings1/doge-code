@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.nowork-studio/notfair",
+  "title": "NotFair-GoogleAds",
+  "description": "Google Ads MCP - analyze performance, manage keywords, bids, and campaigns.",
+  "websiteUrl": "https://notfair.co",
+  "repository": {
+    "url": "https://github.com/nowork-studio/notfair",
+    "source": "github"
+  },
+  "version": "0.4.0",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://notfair.co/api/mcp/google_ads"
+    }
+  ]
+}

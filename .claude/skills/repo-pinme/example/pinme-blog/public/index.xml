@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>PINME Blog</title>
+    <link>./</link>
+    <description>Recent content on PINME Blog</description>
+    <generator>Hugo -- 0.146.7</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 24 Apr 2025 18:23:16 +0800</lastBuildDate>
+    <atom:link href="./index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Ecommerce Intro</title>
+      <link>./posts/ecommerce-intro/</link>
+      <pubDate>Thu, 24 Apr 2025 18:23:16 +0800</pubDate>
+      <guid>./posts/ecommerce-intro/</guid>
+      <description>&lt;h1 id=&#34;hello-world&#34;&gt;Hello World&lt;/h1&gt;</description>
+    </item>
+  </channel>
+</rss>
