@@ -67,14 +67,26 @@ export class TeamRunner {
 
     this.emit({ type: 'task_submitted', taskId: task.id, description })
 
-    // 创建 StepExecutor：将编排器包装为每步执行器
+    // 创建 StepExecutor：将编排器包装为每步执行器，每阶段保存 checkpoint
     const stepExecutor: StepExecutor = async (currentTask, step) => {
-      // 第 0 步：启动编排器
+      // 第 0 步：启动编排器并逐阶段记录 checkpoint
       if (step === 0) {
         this.emit({ type: 'orchestrator_started', mode: this.orchestrator['config'].mode })
 
         try {
           const result = await this.orchestrator.run(description)
+
+          // 每阶段 checkpoint：将 roleResults 映射为详细 checkpoints
+          for (const roleResult of result.roleResults) {
+            currentTask.checkpoints.push({
+              step: currentTask.checkpoints.length,
+              timestamp: new Date().toISOString(),
+              action: `${roleResult.role} (${roleResult.stage})`,
+              result: roleResult.output.slice(0, 500),
+              filesModified: roleResult.artifacts || [],
+            })
+          }
+          currentTask.totalSteps = Math.max(currentTask.totalSteps, result.roleResults.length)
 
           if (result.success) {
             this.emit({ type: 'orchestrator_completed', result })

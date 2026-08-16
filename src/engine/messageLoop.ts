@@ -79,6 +79,8 @@ export interface MessageLoopDeps {
   acceptanceGate?: { check: () => Promise<{ allRequiredPass: boolean }> };
   /** Hook 管理器（吸收自 ECC hooks）：PreToolUse/PostToolUse 拦截 */
   hookManager?: HookManager;
+  /** 多角色编排器：拦截 orchestrator_run 工具调用并执行编排 */
+  orchestrator?: import('../orchestrator/index.js').Orchestrator;
 }
 
 export class MessageLoop {
@@ -435,10 +437,38 @@ export class MessageLoop {
         finalCalls = allowedCalls
       }
 
-      // 执行有效调用（已被 hook 过滤 + action_sampler 已解析）
-      const results = await this.deps.toolScheduler.execute(finalCalls);
+      // 拦截 orchestrator_run 调用：直接执行多角色编排器
+      const orchestratorCalls = finalCalls.filter(tc => tc.name === 'orchestrator_run')
+      const nonOrchestratorCalls = finalCalls.filter(tc => tc.name !== 'orchestrator_run')
 
-      // 追踪上一步工具调用，供 _recordAssistantResponse 检测 read/search 后提前终止
+      let orchestrationResults: Array<{ toolUseId: string; output: string; success: boolean }> = []
+      if (orchestratorCalls.length > 0 && this.deps.orchestrator) {
+        for (const oc of orchestratorCalls) {
+          const taskDesc = (oc.input as Record<string, unknown>)?.task as string || '未命名任务'
+          const mode = (oc.input as Record<string, unknown>)?.mode as 'pipeline' | 'parallel' | 'discuss' || 'pipeline'
+          try {
+            this.deps.orchestrator['config'] = { ...this.deps.orchestrator['config'], mode }
+            const result = await this.deps.orchestrator.run(taskDesc)
+            const summary = `[Orchestrator] ${mode} 模式完成\n任务: ${taskDesc}\n状态: ${result.success ? '成功' : '失败'}\n阶段: ${result.finalStage}\n质量: ${result.qualityScore}/100\n耗时: ${(result.totalDuration / 1000).toFixed(1)}s\n\n${result.summary}`
+            orchestrationResults.push({ toolUseId: oc.id, output: summary, success: result.success })
+            engineLog('ORCHESTRATOR', `${mode} completed: ${taskDesc.slice(0, 50)}`)
+          } catch (err: any) {
+            const errMsg = err.message || String(err)
+            orchestrationResults.push({ toolUseId: oc.id, output: `编排失败: ${errMsg}`, success: false })
+            engineLog('ORCHESTRATOR', `Failed: ${errMsg}`)
+          }
+        }
+      }
+
+      const regularResults = nonOrchestratorCalls.length > 0
+        ? await this.deps.toolScheduler.execute(nonOrchestratorCalls)
+        : []
+
+      const results = [
+        ...orchestrationResults.map(r => ({ toolUseId: r.toolUseId, output: r.output, success: r.success, error: r.success ? '' : r.output })),
+        ...regularResults,
+      ]
+
       this.lastToolCalls = finalCalls.map(tc => ({ name: tc.name }))
 
       engineLog('TOOL_RESULTS', JSON.stringify(results, null, 2).slice(0, 10000));
