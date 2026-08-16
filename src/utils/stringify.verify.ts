@@ -23,6 +23,7 @@ import {
   ensureUtc,
   convertDatetimesToStrings,
   cleanJsonContent,
+  parsePartialJson,
   isEmpty,
 } from './stringify.js'
 
@@ -216,6 +217,21 @@ check('markdown bold key', cleanJsonContent('*"name"*: "test"'), '"name": "test"
 check('newlines removed', cleanJsonContent('{"a":"line1\nline2"}'), '{"a": "line1 line2"}')
 check('nul removed', cleanJsonContent('{"a":"x\x00y"}'), '{"a": "xy"}')
 check('escaped quotes in value', cleanJsonContent('{"msg":"say \"hi\" now"}'), '{"msg": "say \\"hi\\" now"}')
+
+// ==================== parsePartialJson ====================
+console.log('\n\n========== parsePartialJson 分支 ==========')
+
+console.log('\n[分支8] 完整 JSON 直接解析')
+check('valid json', JSON.stringify(parsePartialJson('{"a":1}')), '{"a":1}')
+
+console.log('\n[分支9] 缺失闭合括号')
+check('missing close', JSON.stringify(parsePartialJson('{"a":1')), '{"a":1}')
+
+console.log('\n[分支10] 缺失数组闭合')
+check('missing array close', JSON.stringify(parsePartialJson('{"items":[1,2,3')), '{"items":[1,2,3]}')
+
+console.log('\n[分支11] 字符串未闭合')
+check('unclosed string', JSON.stringify(parsePartialJson('{"msg":"hello')), '{"msg":"hello"}')
 
 // ==================== SUMMARY ====================
 console.log(`\n\n━━━ stringify.ts 闭环结果: ${pass} pass, ${fail} fail ━━━`)
