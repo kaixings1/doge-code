@@ -5,21 +5,24 @@
  */
 
 export { EndConversationManager, getEndConversationManager, resetEndConversationManager } from './endConversation.js'
-export { EmojiAutocompleter, EmojiConfig, EMOJI_MAP, getEmojiAutocompleter } from './emojiAutocomplete.js'
+export type { EndConversationConfig } from './endConversation.js'
+export { EmojiAutocompleter, EMOJI_MAP, getEmojiAutocompleter } from './emojiAutocomplete.js'
+export type { EmojiConfig } from './emojiAutocomplete.js'
 export {
-  NewFeatureSettings,
   DEFAULT_SETTINGS,
   validateSettings,
   getSettingsFromEnv,
   SubAgentManager,
   getSubAgentManager,
 } from './featureFlags.js'
+export type { NewFeatureSettings } from './featureFlags.js'
 export { MCPAutoBackgroundManager, getMCPAutoBackgroundManager } from './mcpAutoBackground.js'
-export { DirectoryAddedHook, DirectoryAddedEvent, DirectoryAddedHandler, getDirectoryAddedHook } from './directoryAddedHook.js'
+export type { MCPAutoBackgroundConfig } from './mcpAutoBackground.js'
+export { DirectoryAddedHook, getDirectoryAddedHook } from './directoryAddedHook.js'
+export type { DirectoryAddedEvent, DirectoryAddedHandler } from './directoryAddedHook.js'
 export {
   ForwardSubagentTextManager,
   getForwardSubagentTextManager,
-  ParentSettingsBehavior,
   resolveParentSettings,
   PluginUrlManager,
   getPluginUrlManager,
@@ -32,3 +35,4 @@ export {
   MCPErrorReporter,
   getMCPErrorReporter,
 } from './additionalFeatures.js'
+export type { ParentSettingsBehavior, ForwardSubagentTextConfig, PluginUrlConfig, CodeReviewBackgroundConfig, ForkConfig, AutoModeConfig, MCPErrorReport } from './additionalFeatures.js'
