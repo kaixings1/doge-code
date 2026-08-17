@@ -413,7 +413,7 @@ const terminalComplete = {
   type: 'local' as const,
   name: 'complete',
   description: '智能终端补全 - 上下文感知的命令行补全（Warp/Fig 风格）',
-  aliases: ['/complete', '/ctx-complete', '/tab'],
+  aliases: ['/complete', '/ctx-complete'],
   arguments: [
     {
       name: '--query',

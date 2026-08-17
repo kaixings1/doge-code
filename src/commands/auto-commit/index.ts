@@ -235,7 +235,7 @@ export const call: LocalCommandCall = async (args) => {
 
 const autoCommit: Command = {
   type: 'local', name: 'auto-commit', description: 'Smart auto-commit - AI generates commit messages, supports conventional commits',
-  aliases: ['/auto-commit', '/ac'], supportsNonInteractive: true, load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  aliases: ['/auto-commit', '/acm'], supportsNonInteractive: true, load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
 
 export default autoCommit

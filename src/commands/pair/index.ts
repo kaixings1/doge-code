@@ -596,7 +596,7 @@ const pair = {
   type: 'local' as const,
   name: 'pair',
   description: 'AI 结对编程 - review/coauthor/debug 三种模式',
-  aliases: ['/pair', '/pair-programming', '/review'],
+  aliases: ['/pair', '/pair-programming'],
   arguments: [
     {
       name: 'file',

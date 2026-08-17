@@ -1181,7 +1181,7 @@ const command = {
   type: 'local' as const,
   name: 'diagnose',
   description: '系统诊断 - 环境/性能/安全/日志/网络/配置全面检查',
-  aliases: ['/diagnose', '/diag', '/check'],
+  aliases: ['/diagnose', '/diag'],
   arguments: [
     { name: '--json', description: 'JSON 格式输出', required: false },
     { name: '--html', description: 'HTML 格式输出', required: false },

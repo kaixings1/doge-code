@@ -4,7 +4,7 @@ const code_review_assistant = {
   type: 'local-jsx',
   name: 'code-review-assistant',
   description: '智能代码审查助手（AI 审查 git diff）',
-  aliases: ['/code-review-assistant', '/code-review', '/cr'],
+  aliases: ['/code-review-assistant', '/cra'],
   arguments: [
     {
       name: '--mode',
