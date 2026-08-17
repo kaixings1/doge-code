@@ -30,28 +30,19 @@ afterEach(() => {
 
 // ===========================================================================
 // Mock：Orchestrator 模块
-// 必须在导入 team-collab 之前注册 mock
+// 使用单一顶层 vi.mock + 可配置工厂（vitest 3.x 不支持 doMock/doUnmock）
 // ===========================================================================
 
 const orchestratorInstances: any[] = []
 const orchestratorRunCalls: any[] = []
 
-vi.mock('../../engine/orchestrator/index.js', () => {
-  const actual = vi.importActual('../../engine/orchestrator/index.js')
-  return {
-    ...actual,
-    // 动态导出被 mock，但类型保留
-  }
-})
+// 可变状态：每个测试通过 setMockResult / setMockError 切换
+let mockShouldFail = false
+let mockErrorMsg = ''
+let mockResultOverrides: Record<string, unknown> = {}
 
-// 由于动态 import 的复杂性，我们使用更直接的方式：
-// 在测试执行期间，通过 vi.hoisted 或直接 mock 动态 import
-// 这里使用 vi.mock 配合 vi.fn 创建假的 Orchestrator 类
-
-const mockOrchestratorClass = vi.fn()
-
-function makeMockResult(overrides: Record<string, unknown> = {}): any {
-  return {
+function defaultMockResult(): any {
+  const base = {
     success: true,
     finalStage: 'done',
     roleResults: [
@@ -125,9 +116,25 @@ function makeMockResult(overrides: Record<string, unknown> = {}): any {
     totalIterations: 9,
     summary: '✅ 成功 | 最终阶段: done\n质量评分: 88/100\n总耗时: 15.3s\n总迭代: 9\n\n阶段执行结果:\n  ✅ researcher (research)\n  ✅ pm (analyze)\n  ✅ architect (design)\n  ✅ team_leader (plan)\n  ✅ engineer (implement)\n  ✅ qa (verify)\n  ✅ team_leader (review)\n\n产出文件:\n  - src/auth.ts\n  - src/auth.test.ts',
     artifacts: ['src/auth.ts', 'src/auth.test.ts'],
-    ...overrides,
   }
+  return { ...base, ...mockResultOverrides }
 }
+
+vi.mock('../../engine/orchestrator/index.js', () => {
+  class MockOrchestrator {
+    constructor(_config: any, _deps: any) {
+      orchestratorInstances.push({ config: _config, deps: _deps })
+    }
+    async run(task: string) {
+      orchestratorRunCalls.push({ task })
+      if (mockShouldFail) {
+        throw new Error(mockErrorMsg || '模拟的编排器错误')
+      }
+      return defaultMockResult()
+    }
+  }
+  return { Orchestrator: MockOrchestrator }
+})
 
 // ===========================================================================
 // 导入被测试模块（在 mock 注册之后）
@@ -139,9 +146,14 @@ import teamCollabModule from '../../commands/team-collab/index.js'
 // 辅助函数
 // ===========================================================================
 
+let cachedCallFn: ((args: string, context: any) => Promise<any>) | null = null
+
 async function getCallFn() {
-  const mod = await teamCollabModule.load()
-  return mod.call
+  if (!cachedCallFn) {
+    const mod = await teamCollabModule.load()
+    cachedCallFn = mod.call
+  }
+  return cachedCallFn
 }
 
 /**
@@ -164,31 +176,29 @@ function setupLLM() {
 }
 
 /**
- * 动态拦截 orchestrator 的 import 并注入 mock
+ * 配置 mock Orchestrator 的返回值
  */
-async function mockOrchestrator(resultOverrides: Record<string, unknown> = {}) {
-  const mockResult = makeMockResult(resultOverrides)
-
-  // 使用 vi.mock 来覆盖动态 import
-  // 关键：必须在模块导入前设置
-  vi.doMock('../../engine/orchestrator/index.js', () => {
-    class MockOrchestrator {
-      constructor(_config: any, _deps: any) {
-        orchestratorInstances.push({ config: _config, deps: _deps })
-      }
-      async run(task: string) {
-        orchestratorRunCalls.push({ task })
-        return mockResult
-      }
-    }
-    return { Orchestrator: MockOrchestrator }
-  })
+function setMockResult(overrides: Record<string, unknown> = {}) {
+  mockResultOverrides = overrides
+  mockShouldFail = false
+  mockErrorMsg = ''
 }
 
+/**
+ * 配置 mock Orchestrator 抛出异常
+ */
+function setMockError(error: string) {
+  mockShouldFail = true
+  mockErrorMsg = error
+}
+
+/**
+ * 清空调用记录，重置 mock 状态
+ */
 function clearOrchestratorMocks() {
   orchestratorInstances.length = 0
   orchestratorRunCalls.length = 0
-  vi.doUnmock('../../engine/orchestrator/index.js')
+  setMockResult()
 }
 
 // ===========================================================================
@@ -239,16 +249,15 @@ describe('team-collab 命令', () => {
       expect(result.value).toContain('ANTHROPIC_API_KEY')
     })
 
-    it('仅设置 ANTHROPIC_API_KEY 时不应返回 key 错误', async () => {
+    it('设置 ANTHROPIC_API_KEY 时同样通过 key 检查', async () => {
       process.env.ANTHROPIC_API_KEY = 'sk-test-key'
 
       const call = await getCallFn()
-      // 这会走到 orchestrator 路径，但由于没有 mock orchestrator，
-      // 预期会因 import 失败而走到 catch
-      const result = await call('实现用户认证', {})
+      const result = await call('', {})
 
-      // 不应包含"需要配置 API 密钥"
+      // 有 key 时不应返回 key 错误，而是帮助文本
       expect(result.value).not.toContain('需要配置 API 密钥')
+      expect(result.value).toContain('多角色协作')
     })
   })
 
@@ -258,7 +267,7 @@ describe('team-collab 命令', () => {
   describe('pipeline 模式（默认）', () => {
     it('无前缀时默认使用 pipeline 模式', async () => {
       clearOrchestratorMocks()
-      await mockOrchestrator()
+      setMockResult()
 
       setupLLM()
 
@@ -277,7 +286,7 @@ describe('team-collab 命令', () => {
 
     it('显式 pipeline 前缀也使用 pipeline 模式', async () => {
       clearOrchestratorMocks()
-      await mockOrchestrator()
+      setMockResult()
 
       setupLLM()
 
@@ -296,7 +305,7 @@ describe('team-collab 命令', () => {
   describe('discuss 模式', () => {
     it('discuss 前缀触发讨论模式', async () => {
       clearOrchestratorMocks()
-      await mockOrchestrator()
+      setMockResult()
 
       setupLLM()
 
@@ -312,7 +321,7 @@ describe('team-collab 命令', () => {
 
     it('discuss 模式输出包含各阶段角色结果', async () => {
       clearOrchestratorMocks()
-      await mockOrchestrator()
+      setMockResult()
 
       setupLLM()
 
@@ -334,7 +343,7 @@ describe('team-collab 命令', () => {
   describe('parallel 模式', () => {
     it('parallel 前缀触发并行模式', async () => {
       clearOrchestratorMocks()
-      await mockOrchestrator()
+      setMockResult()
 
       setupLLM()
 
@@ -355,7 +364,7 @@ describe('team-collab 命令', () => {
   describe('输出格式', () => {
     it('输出包含任务描述', async () => {
       clearOrchestratorMocks()
-      await mockOrchestrator()
+      setMockResult()
 
       setupLLM()
 
@@ -367,7 +376,7 @@ describe('team-collab 命令', () => {
 
     it('输出包含模式信息', async () => {
       clearOrchestratorMocks()
-      await mockOrchestrator()
+      setMockResult()
 
       setupLLM()
 
@@ -380,7 +389,7 @@ describe('team-collab 命令', () => {
 
     it('输出包含执行状态', async () => {
       clearOrchestratorMocks()
-      await mockOrchestrator()
+      setMockResult()
 
       setupLLM()
 
@@ -393,7 +402,7 @@ describe('team-collab 命令', () => {
 
     it('输出包含最终阶段', async () => {
       clearOrchestratorMocks()
-      await mockOrchestrator()
+      setMockResult()
 
       setupLLM()
 
@@ -406,7 +415,7 @@ describe('team-collab 命令', () => {
 
     it('输出包含质量评分', async () => {
       clearOrchestratorMocks()
-      await mockOrchestrator()
+      setMockResult()
 
       setupLLM()
 
@@ -419,7 +428,7 @@ describe('team-collab 命令', () => {
 
     it('输出包含总耗时', async () => {
       clearOrchestratorMocks()
-      await mockOrchestrator()
+      setMockResult()
 
       setupLLM()
 
@@ -432,7 +441,7 @@ describe('team-collab 命令', () => {
 
     it('输出包含总迭代次数', async () => {
       clearOrchestratorMocks()
-      await mockOrchestrator()
+      setMockResult()
 
       setupLLM()
 
@@ -444,7 +453,7 @@ describe('team-collab 命令', () => {
 
     it('输出包含各阶段执行详情', async () => {
       clearOrchestratorMocks()
-      await mockOrchestrator()
+      setMockResult()
 
       setupLLM()
 
@@ -462,7 +471,7 @@ describe('team-collab 命令', () => {
 
     it('输出包含产出文件列表', async () => {
       clearOrchestratorMocks()
-      await mockOrchestrator()
+      setMockResult()
 
       setupLLM()
 
@@ -476,7 +485,7 @@ describe('team-collab 命令', () => {
 
     it('输出包含合并输出和摘要', async () => {
       clearOrchestratorMocks()
-      await mockOrchestrator()
+      setMockResult()
 
       setupLLM()
 
@@ -503,7 +512,7 @@ describe('team-collab 命令', () => {
 
     it('任务描述前后的空格被正确裁剪', async () => {
       clearOrchestratorMocks()
-      await mockOrchestrator()
+      setMockResult()
 
       setupLLM()
 
@@ -516,7 +525,7 @@ describe('team-collab 命令', () => {
 
     it('pipeline 前缀后空格被正确处理', async () => {
       clearOrchestratorMocks()
-      await mockOrchestrator()
+      setMockResult()
 
       setupLLM()
 
@@ -553,22 +562,12 @@ describe('team-collab 命令', () => {
     it('orchestrator 抛出异常时返回错误信息', async () => {
       clearOrchestratorMocks()
 
-      // mock orchestrator 抛出异常
-      vi.doMock('../../engine/orchestrator/index.js', () => {
-        class FailingOrchestrator {
-          constructor() {}
-          async run() {
-            throw new Error('模拟的编排器错误')
-          }
-        }
-        return { Orchestrator: FailingOrchestrator }
-      })
+      // 通过可变状态让 mock Orchestrator 抛出异常
+      setMockError('模拟的编排器错误')
 
       setupLLM()
 
-      // 需要重新导入模块以获取新的 mock
-      const mod = await import('../../commands/team-collab/index.js')
-      const call = await (await mod.default.load()).call
+      const call = await getCallFn()
       const result = await call('测试任务', {})
 
       expect(result.type).toBe('text')

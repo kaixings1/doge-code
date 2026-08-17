@@ -1521,7 +1521,7 @@ const selfCheck = {
   type: 'local',
   name: 'self-check',
   description: '🔍 自检命令 - 改完代码后自动验证，不对就继续改（lint/test/type-check/build/security/audit/coverage）',
-  aliases: ['/self-check', '/check', '/verify'],
+  aliases: ['/self-check', '/verify'],
   load: () => Promise.resolve({ call }),
 } satisfies Command
 

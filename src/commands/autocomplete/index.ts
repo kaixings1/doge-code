@@ -1300,7 +1300,7 @@ const autocomplete = {
   type: 'local' as const,
   name: 'autocomplete',
   description: '智能终端补全 - 上下文感知/片段/模糊匹配/历史/统计/多语言/Git/NPM/SSH/Docker',
-  aliases: ['/complete', '/tab', '/ac'],
+  aliases: ['/ac', '/tab'],
   arguments: [
     { name: '--query', description: '补全查询', required: false },
     { name: '--context', description: '上下文类型', required: false },

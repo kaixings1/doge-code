@@ -1361,7 +1361,7 @@ const sessions: Command = {
   type: 'local-jsx' as const,
   name: 'sessions',
   description: '多会话管理 - 创建/切换/搜索/标签/导出/分析/归档/备份/合并',
-  aliases: ['session', '/sessions', '/sess'],
+  aliases: ['/sessions', '/sess'],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call }),
 }

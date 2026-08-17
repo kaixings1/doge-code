@@ -182,7 +182,7 @@ export const call: LocalCommandCall = async (args) => {
 const tree: Command = {
   type: 'local', name: 'tree',
   description: '📁 目录树 - 深度/大小/图标/文件/目录/隐藏/Git/排序/导出/配置',
-  aliases: ['/tree', '/t'],
+  aliases: ['/tree'],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }

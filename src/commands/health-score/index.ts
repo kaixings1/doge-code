@@ -755,7 +755,7 @@ const healthScore = {
   type: 'local' as const,
   name: 'health-score',
   description: '代码健康度评分 - 多维度评估代码质量（安全/复杂度/可维护性/错误处理/依赖）',
-  aliases: ['/health-score', '/health', '/code-health', '/code-quality'],
+  aliases: ['/health-score', '/code-quality'],
   arguments: [
     {
       name: '--scan',

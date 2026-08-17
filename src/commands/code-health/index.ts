@@ -597,7 +597,7 @@ export const call: LocalCommandCall = async (args) => {
 const codeHealth: Command = {
   type: 'local', name: 'code-health',
   description: '代码健康检查 - 文件/复杂度/大小/文档/测试/重复/风格/安全/历史/基准',
-  aliases: ['/code-health', '/ch', '/health'],
+  aliases: ['/code-health', '/ch'],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 }
