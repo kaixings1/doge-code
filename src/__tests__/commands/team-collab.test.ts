@@ -8,10 +8,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
 // ===========================================================================
-// Mock：全局 fetch（callAI 依赖）
+// Mock：全局 fetch + execSync（callAI 和 runQualityGate 依赖）
 // ===========================================================================
 
 const fetchMock = vi.fn()
+const execSyncMock = vi.fn()
 
 beforeEach(() => {
   fetchMock.mockReset()
@@ -22,6 +23,11 @@ beforeEach(() => {
     }),
   })
   ;(globalThis as any).fetch = fetchMock
+
+  // mock execSync 避免 runQualityGate 执行真实 lint/build 命令
+  execSyncMock.mockReturnValue('')
+  ;(globalThis as any).execSync = execSyncMock
+
   // 删除相关环境变量以确保干净的测试状态
   delete process.env.DOGE_API_KEY
   delete process.env.ANTHROPIC_API_KEY
@@ -33,6 +39,7 @@ beforeEach(() => {
 
 afterEach(() => {
   fetchMock.mockReset()
+  execSyncMock.mockReset()
 })
 
 // ===========================================================================
@@ -144,6 +151,15 @@ vi.mock('../../engine/orchestrator/index.js', () => {
 })
 
 // ===========================================================================
+// Mock：child_process（runQualityGate 依赖 execSync）
+// 必须在导入 team-collab 之前注册
+// ===========================================================================
+
+vi.mock('child_process', () => ({
+  execSync: vi.fn(() => ''),
+}))
+
+// ===========================================================================
 // 导入被测试模块（在 mock 注册之后）
 // ===========================================================================
 
@@ -153,14 +169,9 @@ import teamCollabModule from '../../commands/team-collab/index.js'
 // 辅助函数
 // ===========================================================================
 
-let cachedCallFn: ((args: string, context: any) => Promise<any>) | null = null
-
 async function getCallFn() {
-  if (!cachedCallFn) {
-    const mod = await teamCollabModule.load()
-    cachedCallFn = mod.call
-  }
-  return cachedCallFn
+  const mod = await teamCollabModule.load()
+  return mod.call
 }
 
 /**
