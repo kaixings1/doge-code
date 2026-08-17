@@ -504,6 +504,63 @@ class TokenBucket {
   }
 }
 
+/**
+ * 12. 循环链（Loop Chaining）— 多循环串联执行
+ */
+async function runChainingLoop(chains: Array<{ name: string; pattern: LoopPattern; tasks: string[]; options?: Record<string, any> }>, config: LoopConfig, loopId: string): Promise<LocalCommandResult> {
+  const chainResults: any[] = []
+  let chainLoopId = loopId
+
+  for (let i = 0; i < chains.length; i++) {
+    const chain = chains[i]
+    const subLoopId = `${chainLoopId}-chain-${i + 1}`
+    const chainConfig = { ...config }
+
+    // 应用链级选项覆盖
+    if (chain.options) {
+      if (chain.options.maxIterations) chainConfig.maxIterations = chain.options.maxIterations
+      if (chain.options.budgetTokens) chainConfig.budgetTokens = chain.options.budgetTokens
+      if (chain.options.rateLimitMs) chainConfig.rateLimitMs = chain.options.rateLimitMs
+    }
+
+    const result = await executeLoop(chain.pattern, chain.tasks, chainConfig, subLoopId)
+    chainResults.push({ chain: chain.name, pattern: chain.pattern, loopId: subLoopId, result })
+
+    // 如果任何链失败，停止后续链
+    if (result.type === 'text' && result.value.includes('失败')) {
+      chainResults.push({ chain: chains.slice(i + 1).map(c => c.name), skipped: true })
+      break
+    }
+  }
+
+  const summary = chainResults.map(r => {
+    if (r.skipped) return `- ${r.chain.join(' → ')}: ⏭️ 跳过（前序失败）`
+    return `- ${r.chain} (${r.pattern}): ✅ [${r.loopId}]`
+  }).join('\n')
+
+  return text(`循环链完成\n链数量: ${chains.length}\n成功: ${chainResults.filter(r => !r.skipped).length}\n子循环 ID:\n${summary}`)
+}
+
+async function executeLoop(pattern: LoopPattern, tasks: string[], config: LoopConfig, loopId: string): Promise<LocalCommandResult> {
+  switch (pattern) {
+    case 'sequential': return runSequentialLoop(tasks, config, loopId)
+    case 'parallel': return runParallelLoop(tasks, config, loopId)
+    case 'pipeline': return runPipelineLoop(tasks.map(t => ({ name: t, task: t })), config, loopId)
+    case 'fanout': return runFanOutLoop(tasks, config, loopId)
+    case 'event-driven': return runEventDrivenLoop(tasks[0] || 'file-change', tasks[1] || 'lint', config, loopId)
+    case 'state-machine': return runStateMachineLoop(tasks[0] || 'IDLE', {
+      IDLE: { action: 'start', nextState: 'RUNNING' },
+      RUNNING: { action: 'process', nextState: 'VALIDATING' },
+      VALIDATING: { action: 'validate', nextState: 'COMPLETED' },
+    }, config, loopId)
+    case 'consensus': return runConsensusLoop(tasks[0] || 'Review code', config, loopId)
+    case 'self-healing': return runSelfHealingLoop(tasks[0] || 'start-server', config, loopId)
+    case 'rate-limited': return runRateLimitedLoop(tasks, config, loopId)
+    case 'priority': return runPriorityLoop(tasks.map((t, i) => ({ priority: i, task: t })), config, loopId)
+    default: return text(`未知循环模式: ${pattern}`)
+  }
+}
+
 // ============================================================================
 // 核心执行函数
 // ============================================================================
@@ -572,7 +629,7 @@ function saveCheckpoint(checkpoint: LoopCheckpoint, config: LoopConfig): void {
   writeFileSync(filePath, JSON.stringify(checkpoint, null, 2))
 }
 
-function addToDeadLetterQueue(task: DeadLetterTask, config: LoopConfig): void {
+function addToDeadLetterQueue(task: DeadLetterTask, config: LoopConfig = DEFAULT_CONFIG): void {
   ensureDir(config.deadLetterQueueDir)
   const filePath = join(config.deadLetterQueueDir, `${task.taskId}.json`)
   writeFileSync(filePath, JSON.stringify(task, null, 2))
@@ -632,6 +689,7 @@ const call: LocalCommandCall = async (args, _context): Promise<LocalCommandResul
   /loop-v2 pipeline "lint" "test" "build" "deploy"
   /loop-v2 fanout "dir-a" "dir-b" "dir-c"
   /loop-v2 self-healing "start-server"
+  /loop-v2 chaining "lint" "test" "build"
 
 检查点存储：${DEFAULT_CONFIG.checkpointDir}
 死信队列：${DEFAULT_CONFIG.deadLetterQueueDir}
@@ -709,6 +767,23 @@ const call: LocalCommandCall = async (args, _context): Promise<LocalCommandResul
           loopId
         )
         break
+      case 'chaining': {
+        // 解析链式任务：每个任务用逗号分隔不同链，链内用冒号分隔 pattern:tasks
+        const chainDefs: Array<{ name: string; pattern: LoopPattern; tasks: string[] }> = []
+        for (const raw of tasks) {
+          if (raw.includes(':')) {
+            const [chainPattern, ...chainTasks] = raw.split(':')
+            chainDefs.push({ name: chainTasks.join(':'), pattern: chainPattern as LoopPattern, tasks: chainTasks.map(t => t.trim()).filter(Boolean) })
+          } else {
+            chainDefs.push({ name: raw, pattern: 'sequential', tasks: [raw] })
+          }
+        }
+        if (chainDefs.length === 0) {
+          chainDefs.push({ name: 'default', pattern: 'sequential', tasks: [] })
+        }
+        result = await runChainingLoop(chainDefs, config, loopId)
+        break
+      }
       default:
         result = text(`未知循环模式: ${pattern}\n运行 /loop-v2 help 查看所有模式`)
     }

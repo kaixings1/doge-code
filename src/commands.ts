@@ -154,6 +154,9 @@ import ssh from './commands/ssh/index.ts'
 import healthScore from './commands/health-score/index.ts'
 import health from './commands/health/index.ts'
 import loopV2 from './commands/loop-v2/index.ts'
+import loopDashboard from './commands/loop-dashboard/index.ts'
+import loopStartV2 from './commands/loop-start-v2/index.ts'
+import loopStatusV2 from './commands/loop-status-v2/index.ts'
 import notes from './commands/notes/index.ts'
 import terminal from './commands/terminal/index.ts'
 import watch from './commands/watch/index.ts'
@@ -718,6 +721,10 @@ const COMMANDS = memoize((): Command[] => [
   snapshot,
   loopCommand,
   ...loopShortcuts,
+  loopV2,
+  loopStartV2,
+  loopStatusV2,
+  loopDashboard,
   bridgeSessions,
   memoryBank,
   ...(process.env.USER_TYPE === 'ant' && !process.env.IS_DEMO
