@@ -15,6 +15,13 @@ const fetchMock = vi.fn()
 
 beforeEach(() => {
   fetchMock.mockReset()
+  fetchMock.mockResolvedValue({
+    ok: true,
+    json: async () => ({
+      choices: [{ message: { content: '模拟的 LLM 响应' } }],
+    }),
+  })
+  ;(globalThis as any).fetch = fetchMock
   // 删除相关环境变量以确保干净的测试状态
   delete process.env.DOGE_API_KEY
   delete process.env.ANTHROPIC_API_KEY
