@@ -1030,35 +1030,9 @@ function writeThroughGlobalConfigCache(config: GlobalConfig): void {
   lastReadFileStats = null
 }
 
-// 父设置行为 (更新日志 2.1.133)
-export type ParentSettingsBehavior = 'inherit' | 'override' | 'merge'
-
-export function resolveParentSettings(
-  parent: Record<string, unknown>,
-  child: Record<string, unknown>,
-  behavior: ParentSettingsBehavior = 'inherit'
-): Record<string, unknown> {
-  switch (behavior) {
-    case 'inherit': return { ...parent, ...child }
-    case 'override': return { ...child }
-    case 'merge': return deepMergeSettings(parent, child)
-    default: return { ...parent, ...child }
-  }
-}
-
-function deepMergeSettings(target: Record<string, unknown>, source: Record<string, unknown>): Record<string, unknown> {
-  const result = { ...target }
-  for (const key of Object.keys(source)) {
-    const tv = result[key]
-    const sv = source[key]
-    if (sv && typeof sv === 'object' && !Array.isArray(sv) && tv && typeof tv === 'object' && !Array.isArray(tv)) {
-      result[key] = deepMergeSettings(tv as Record<string, unknown>, sv as Record<string, unknown>)
-    } else {
-      result[key] = sv
-    }
-  }
-  return result
-}
+// 父设置行为：从 additionalFeatures 导入（单一来源）
+import type { ParentSettingsBehavior } from '../features/additionalFeatures.js'
+import { resolveParentSettings } from '../features/additionalFeatures.js'
 
 export function getGlobalConfig(): GlobalConfig {
   if (process.env.NODE_ENV === 'test') {
