@@ -9,7 +9,7 @@ import * as mod from './../../commands/htaccess/index'
 
 describe('htaccess', () => {
   describe('htaccess', () => {
-      it('should be defined', () => { expect(mod.htaccess).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.htaccess).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

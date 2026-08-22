@@ -9,7 +9,7 @@ import * as mod from './../../commands/license/index'
 
 describe('license', () => {
   describe('license', () => {
-      it('should be defined', () => { expect(mod.license).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.license).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

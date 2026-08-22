@@ -9,7 +9,7 @@ import * as mod from './../../commands/blame/index'
 
 describe('blame', () => {
   describe('blame', () => {
-      it('should be defined', () => { expect(mod.blame).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.blame).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

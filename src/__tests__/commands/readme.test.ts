@@ -9,7 +9,7 @@ import * as mod from './../../commands/readme/index'
 
 describe('readme', () => {
   describe('readme', () => {
-      it('should be defined', () => { expect(mod.readme).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.readme).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

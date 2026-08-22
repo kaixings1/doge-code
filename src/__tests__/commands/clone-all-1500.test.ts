@@ -9,7 +9,7 @@ import * as mod from './../../commands/clone-all-1500/index'
 
 describe('clone-all-1500', () => {
   describe('cloneAll', () => {
-      it('should be defined', () => { expect(mod.cloneAll).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.cloneAll).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

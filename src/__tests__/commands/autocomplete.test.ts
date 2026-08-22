@@ -15,7 +15,7 @@ import * as mod from './../../commands/autocomplete/index'
 
 describe('autocomplete', () => {
   describe('autocomplete', () => {
-      it('should be defined', () => { expect(mod.autocomplete).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.autocomplete).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

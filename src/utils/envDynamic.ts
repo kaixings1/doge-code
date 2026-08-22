@@ -106,7 +106,7 @@ export async function getTerminalWithJetBrainsDetectionAsync(): Promise<
       return specificIDE || 'pycharm'
     }
   }
-  return env.terminal
+  return env ? env.terminal : null
 }
 
 // Synchronous version that returns cached result or falls back to env.terminal
@@ -125,7 +125,7 @@ export function getTerminalWithJetBrainsDetection(): string | null {
       return 'pycharm'
     }
   }
-  return env.terminal
+  return env ? env.terminal : null
 }
 
 /**

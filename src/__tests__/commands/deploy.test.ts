@@ -9,7 +9,7 @@ import * as mod from './../../commands/deploy/index'
 
 describe('deploy', () => {
   describe('deploy', () => {
-      it('should be defined', () => { expect(mod.deploy).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.deploy).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

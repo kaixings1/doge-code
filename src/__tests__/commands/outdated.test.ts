@@ -9,7 +9,7 @@ import * as mod from './../../commands/outdated/index'
 
 describe('outdated', () => {
   describe('outdated', () => {
-      it('should be defined', () => { expect(mod.outdated).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.outdated).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

@@ -9,7 +9,7 @@ import * as mod from './../../commands/db-migrate/index'
 
 describe('db-migrate', () => {
   describe('dbMigrate', () => {
-      it('should be defined', () => { expect(mod.dbMigrate).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.dbMigrate).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

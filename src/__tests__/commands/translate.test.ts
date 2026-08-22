@@ -9,7 +9,7 @@ import * as mod from './../../commands/translate/index'
 
 describe('translate', () => {
   describe('translate', () => {
-      it('should be defined', () => { expect(mod.translate).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.translate).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

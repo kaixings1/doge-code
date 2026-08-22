@@ -9,7 +9,7 @@ import * as mod from './../../commands/custom-cmd/index'
 
 describe('custom-cmd', () => {
   describe('customCmd', () => {
-      it('should be defined', () => { expect(mod.customCmd).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.customCmd).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

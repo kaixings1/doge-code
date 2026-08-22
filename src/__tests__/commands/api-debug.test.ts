@@ -14,7 +14,7 @@ import * as mod from './../../commands/api-debug/index'
 
 describe('api-debug', () => {
   describe('apiDebug', () => {
-      it('should be defined', () => { expect(mod.apiDebug).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.apiDebug).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

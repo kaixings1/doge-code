@@ -9,7 +9,7 @@ import * as mod from './../../commands/lighthouse/index'
 
 describe('lighthouse', () => {
   describe('lighthouse', () => {
-      it('should be defined', () => { expect(mod.lighthouse).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.lighthouse).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

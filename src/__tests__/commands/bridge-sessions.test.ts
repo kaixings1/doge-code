@@ -8,7 +8,7 @@ import * as mod from './../../commands/bridge-sessions/index'
 
 describe('bridge-sessions', () => {
   describe('bridgeSessions', () => {
-      it('should be defined', () => { expect(mod.bridgeSessions).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.bridgeSessions).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

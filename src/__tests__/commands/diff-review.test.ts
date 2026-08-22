@@ -3,7 +3,7 @@ import * as mod from './../../commands/diff-review/index'
 
 describe('diff-review', () => {
   describe('diffReview', () => {
-      it('should be defined', () => { expect(mod.diffReview).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.diffReview).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

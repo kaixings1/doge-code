@@ -3,7 +3,7 @@ import * as mod from './../../commands/prompt-diff/index'
 
 describe('prompt-diff', () => {
   describe('promptDiff', () => {
-      it('should be defined', () => { expect(mod.promptDiff).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.promptDiff).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

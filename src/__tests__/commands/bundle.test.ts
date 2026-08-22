@@ -9,7 +9,7 @@ import * as mod from './../../commands/bundle/index'
 
 describe('bundle', () => {
   describe('bundle', () => {
-      it('should be defined', () => { expect(mod.bundle).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.bundle).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

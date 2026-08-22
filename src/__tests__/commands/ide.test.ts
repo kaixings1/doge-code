@@ -3,7 +3,7 @@ import * as mod from './../../commands/ide/index'
 
 describe('ide', () => {
   describe('ide', () => {
-      it('should be defined', () => { expect(mod.ide).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.ide).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

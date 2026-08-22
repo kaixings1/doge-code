@@ -9,7 +9,7 @@ import * as mod from './../../commands/memory-search/index'
 
 describe('memory-search', () => {
   describe('memorySearch', () => {
-      it('should be defined', () => { expect(mod.memorySearch).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.memorySearch).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

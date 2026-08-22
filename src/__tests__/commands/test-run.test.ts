@@ -9,7 +9,7 @@ import * as mod from './../../commands/test-run/index'
 
 describe('test-run', () => {
   describe('testRun', () => {
-      it('should be defined', () => { expect(mod.testRun).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.testRun).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

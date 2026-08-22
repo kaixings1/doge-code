@@ -15,7 +15,7 @@ import * as mod from './../../commands/pr-review/index'
 
 describe('pr-review', () => {
   describe('prReview', () => {
-      it('should be defined', () => { expect(mod.prReview).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.prReview).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

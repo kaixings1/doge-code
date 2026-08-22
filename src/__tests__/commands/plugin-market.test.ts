@@ -9,7 +9,7 @@ import * as mod from './../../commands/plugin-market/index'
 
 describe('plugin-market', () => {
   describe('pluginMarket', () => {
-      it('should be defined', () => { expect(mod.pluginMarket).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.pluginMarket).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

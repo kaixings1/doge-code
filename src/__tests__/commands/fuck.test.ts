@@ -3,7 +3,7 @@ import * as mod from './../../commands/fuck/index'
 
 describe('fuck', () => {
   describe('fuck', () => {
-      it('should be defined', () => { expect(mod.fuck).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.fuck).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

@@ -9,7 +9,7 @@ import * as mod from './../../commands/background/index'
 
 describe('background', () => {
   describe('background', () => {
-      it('should be defined', () => { expect(mod.background).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.background).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

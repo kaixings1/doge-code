@@ -9,7 +9,7 @@ import * as mod from './../../commands/grep/index'
 
 describe('grep', () => {
   describe('grep', () => {
-      it('should be defined', () => { expect(mod.grep).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.grep).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

@@ -9,7 +9,7 @@ import * as mod from './../../commands/stash/index'
 
 describe('stash', () => {
   describe('stash', () => {
-      it('should be defined', () => { expect(mod.stash).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.stash).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

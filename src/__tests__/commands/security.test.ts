@@ -9,7 +9,7 @@ import * as mod from './../../commands/security/index'
 
 describe('security', () => {
   describe('security', () => {
-      it('should be defined', () => { expect(mod.security).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.security).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })
