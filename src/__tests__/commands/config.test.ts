@@ -3,7 +3,7 @@ import * as mod from './../../commands/config/index'
 
 describe('config', () => {
   describe('config', () => {
-      it('should be defined', () => { expect(mod.config).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.config).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

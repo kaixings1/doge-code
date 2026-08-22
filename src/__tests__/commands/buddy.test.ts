@@ -3,7 +3,7 @@ import * as mod from './../../commands/buddy/index'
 
 describe('buddy', () => {
   describe('buddy', () => {
-      it('should be defined', () => { expect(mod.buddy).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.buddy).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })
