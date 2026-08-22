@@ -1,0 +1,9 @@
+import { describe, it, expect, vi } from 'vitest'
+import * as mod from './../../commands/status/index'
+
+describe('status', () => {
+  describe('status', () => {
+      it('should be defined', () => { expect(mod.status).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.status).not.toBe(void 0) })
+  })
+})

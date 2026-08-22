@@ -8,6 +8,9 @@ function run(cmd: string): string {
 }
 
 export const call: LocalJSXCommandCall = async (args) => {
+  if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
+    return { output: `k8s — Kubernetes 集群管理：pods/deploy/svc/get/describe/logs\n用法: /k8s`.trim(), truncated: false }
+  }
   const p = args.trim().split(/\s+/)
   const c = p[0] || ''
   if (!c) return { type: 'text', value: '📖 用法:\n/k8s pods | 查看 Pod\n/k8s deploy | 查看部署\n/k8s svc | 查看服务\n/k8s get <类型> | 获取资源\n/k8s describe <类型> <名称> | 描述资源\n/k8s logs <Pod> | 查看日志' }

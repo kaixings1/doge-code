@@ -19,6 +19,9 @@ function getBrowserTool(): WebBrowserTool {
 }
 
 export const call: LocalJSXCommandCall = async (_onDone, context, _args) => {
+  if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
+    return { output: `browser — Interactive web browser (navigate URLs, take screenshots, interact with pages)\n用法: /browser`.trim(), truncated: false }
+  }
   const [, setRefresh] = React.useState(0)
   const [mode, setMode] = React.useState<Mode>('navigate')
   const [url, setUrl] = React.useState('')

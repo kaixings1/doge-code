@@ -9,6 +9,9 @@ function run(cmd: string): string {
 }
 
 export const call: LocalJSXCommandCall = async (args) => {
+  if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
+    return { output: `nginx — Nginx 管理：status/start/stop/reload/test/sites/logs/config\n用法: /nginx`.trim(), truncated: false }
+  }
   const p = args.trim().split(/\s+/)
   const c = p[0] || ''
   if (!c) return { type: 'text', value: '❌ 错误: /nginx status | Nginx 状态\n/nginx start | 启动\n/nginx stop | 停止\n/nginx reload | 重载配置\n/nginx test | 测试配置\n/nginx sites | 列出站点\n/nginx logs | 错误日志\n/nginx config <file> | 显示配置' }

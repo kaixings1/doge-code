@@ -14,6 +14,9 @@ import { validateModel } from '../utils/model/validateModel.js'
 import { updateSettingsForSource } from '../utils/settings/settings.js'
 
 const call: LocalCommandCall = async (args, context) => {
+  if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
+    return { output: `advisor — 配置 advisor 模型\n用法: /advisor`.trim(), truncated: false }
+  }
   const arg = args.trim().toLowerCase()
   const baseModel = parseUserSpecifiedModel(
     context.getAppState().mainLoopModel ?? getDefaultMainLoopModelSetting(),

@@ -98,7 +98,7 @@ const DEFAULT_CONFIG: ReviewConfig = {
 }
 
 const SECRET_PATTERNS: Array<{ pattern: RegExp; name: string; severity: ReviewIssue['severity'] }> = [
-  { pattern: /(api[_-]?key|apikey|secret|password|token|auth)\s*[:=]\s*['"][^'"]{8,}['"]/i, name: 'Hardcoded API key', severity: 'critical' },
+  { pattern: /(api[_-]?key|apikey|secret|password|token|auth)\s*[:=]\s*['"][^'"]{8,}['"]/i, name: 'code-review', severity: 'critical' },
   { pattern: /AWS_ACCESS_KEY_ID\s*[:=]\s*['"]?[A-Z0-9]{20}/, name: 'AWS Access Key', severity: 'critical' },
   { pattern: /AWS_SECRET_ACCESS_KEY\s*[:=]\s*['"]?[A-Za-z0-9/+=]{40}/, name: 'AWS Secret Key', severity: 'critical' },
   { pattern: /gh[pousr]_[A-Za-z0-9_]{36,}/, name: 'GitHub Personal Token', severity: 'critical' },

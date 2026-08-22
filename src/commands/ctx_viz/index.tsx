@@ -65,6 +65,9 @@ function getRealContextInfo() {
 // 3. React 组件（包含所有原有 UI 元素，无虚拟数据，缺失字段显示“未知”）
 // ============================================================================
 export const call: LocalJSXCommandCall = async () => {
+  if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
+    return { output: `ctx_viz — 显示上下文使用情况（Token、消息数、工具调用、会话时长）\n用法: /ctx_viz`.trim(), truncated: false }
+  }
   const [refreshKey, setRefreshKey] = React.useState(0)
   // 自动刷新（每 5 秒）
   React.useEffect(() => {

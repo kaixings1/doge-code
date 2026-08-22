@@ -362,7 +362,7 @@ function runDeepMode(code: string, round: number): PairResult {
 
   // 按维度输出详细问题
   const dimensions = [
-    { name: '🛡️ 类型安全', data: deep.typeSafety },
+    { name: 'pair', data: deep.typeSafety },
     { name: '🔧 错误处理', data: deep.errorHandling },
     { name: '⚡ 性能', data: deep.performance },
     { name: '📖 可读性', data: deep.readability },

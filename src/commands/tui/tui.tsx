@@ -1,5 +1,5 @@
 import * as React from 'react'
-import type { LocalJSXCommandCall } from '../../types/command.js'
+import type { Command, LocalJSXCommandCall } from '../../types/command.js'
 import { isFullscreenEnvEnabled } from '../../utils/fullscreen.js'
 import os from 'os'
 import fs from 'fs'
@@ -507,5 +507,6 @@ export default {
   name: 'tui',
   type: 'local-jsx',
   description: '全屏终端界面（闪烁免模式），支持主题/监控/会话/诊断',
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
   call: call
 }

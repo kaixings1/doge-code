@@ -101,7 +101,7 @@ export const call: LocalCommandCall = async (args) => {
     const launchConfig = {
       version: '0.2.0',
       configurations: [
-        { name: 'Debug Current File', type: framework === 'python' ? 'debugpy' : 'node', request: 'launch', program: '${file}', console: 'integratedTerminal' },
+        { name: 'debug', type: framework === 'python' ? 'debugpy' : 'node', request: 'launch', program: '${file}', console: 'integratedTerminal' },
         { name: 'Attach', type: framework === 'python' ? 'debugpy' : 'node', request: 'attach', connect: { host: 'localhost', port: 9229 } },
       ]
     }

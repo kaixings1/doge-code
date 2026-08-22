@@ -8,6 +8,9 @@ function run(cmd: string): string {
 }
 
 export const call: LocalJSXCommandCall = async (args) => {
+  if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
+    return { output: `redis — Redis 缓存操作：get/set/del/keys/ping/info/flush\n用法: /redis`.trim(), truncated: false }
+  }
   const p = args.trim().split(/\s+/)
   const c = p[0] || ''
   if (!c) return { type: 'text', value: '📖 用法:\n/redis get <key> | 获取值\n/redis set <key> <value> | 设置值\n/redis del <key> | 删�键\n/redis keys <pattern> | 搜索键\n/redis ping | 测试连接\n/redis info | 服务器信息\n/redis flush | 清空数据库' }

@@ -1,0 +1,9 @@
+import { describe, it, expect, vi } from 'vitest'
+import * as mod from './../../commands/export/index'
+
+describe('export', () => {
+  describe('exportCommand', () => {
+      it('should be defined', () => { expect(mod.exportCommand).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.exportCommand).not.toBe(void 0) })
+  })
+})

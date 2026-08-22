@@ -4,6 +4,9 @@ import fs from 'fs'
 import path from 'path'
 
 export const call: LocalJSXCommandCall = async (args) => {
+  if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
+    return { output: `image — 图片信息查看与管理：info/ls/convert\n用法: /image`.trim(), truncated: false }
+  }
   const p = args.trim().split(/\s+/)
   const c = p[0] || ''
   if (!c) return { type: 'text', value: '/image info <file> | 图片基本信息\n/image resize <file> <w> <h> | 调整大小\n/image convert <file> <format> | 格式转换\n/image ls <dir> | 列出图片文件' }

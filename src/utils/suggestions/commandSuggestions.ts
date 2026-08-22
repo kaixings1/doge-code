@@ -7,6 +7,7 @@ import {
 } from '../../commands.js'
 import type { SuggestionItem } from '../../components/PromptInput/PromptInputFooterSuggestions.js'
 import { getSkillUsageScore } from './skillUsageTracking.js'
+import { getCommandTrigger } from '../slashCommandParsing.js'
 
 // Treat these characters as word separators for command search
 const SEPARATORS = /[:_-]/g
@@ -96,10 +97,10 @@ function isCommandMetadata(metadata: unknown): metadata is Command {
 /**
  * Represents a slash command found mid-input (not at the start)
  */
-export type MidInputSlashCommand = {
-  token: string // e.g., "/com"
-  startPos: number // Position of "/"
-  partialCommand: string // e.g., "com"
+export type MidInputCommand = {
+  token: string // e.g., "/com" or ">sk"
+  startPos: number // Position of "/" or ">"
+  partialCommand: string // e.g., "com" or "sk"
 }
 
 /**
@@ -114,41 +115,36 @@ export type MidInputSlashCommand = {
 export function findMidInputSlashCommand(
   input: string,
   cursorOffset: number,
-): MidInputSlashCommand | null {
-  // If input starts with "/", this is start-of-input case (handled elsewhere)
-  if (input.startsWith('/')) {
+): MidInputCommand | null {
+  // If input starts with any command trigger, this is start-of-input case (handled elsewhere)
+  const triggers = ['/', '>', '<', '@', '#', '&', '|', '$', '=', '^', '%']
+  if (triggers.some((t) => input.startsWith(t))) {
     return null
   }
 
-  // Look backwards from cursor to find a "/" preceded by whitespace
+  // Look backwards from cursor to find a trigger preceded by whitespace
   const beforeCursor = input.slice(0, cursorOffset)
 
-  // Find the last "/" in the text before cursor
-  // Pattern: whitespace followed by "/" then optional alphanumeric/dash characters.
-  // Lookbehind (?<=\s) is avoided — it defeats YARR JIT in JSC, and the
-  // interpreter scans O(n) even with the $ anchor. Capture the whitespace
-  // instead and offset match.index by 1.
-  const match = beforeCursor.match(/\s\/([a-zA-Z0-9_:-]*)$/)
+  // Match whitespace followed by any trigger then optional command characters
+  const match = beforeCursor.match(/\s[\/\>\<\@\#\&\|\$\=\^\%]([a-zA-Z0-9_:-]*)$/)
   if (!match || match.index === undefined) {
     return null
   }
 
-  // Get the full token (may extend past cursor)
-  const slashPos = match.index + 1
-  const textAfterSlash = input.slice(slashPos + 1)
+  const prefixPos = match.index + 1
+  const textAfterPrefix = input.slice(prefixPos + 1)
 
   // Extract the command portion (until whitespace or end)
-  const commandMatch = textAfterSlash.match(/^[a-zA-Z0-9_:-]*/)
+  const commandMatch = textAfterPrefix.match(/^[a-zA-Z0-9_:-]*/)
   const fullCommand = commandMatch ? commandMatch[0] : ''
 
-  // If cursor is past the command (after a space), don't show ghost text
-  if (cursorOffset > slashPos + 1 + fullCommand.length) {
+  if (cursorOffset > prefixPos + 1 + fullCommand.length) {
     return null
   }
 
   return {
-    token: '/' + fullCommand,
-    startPos: slashPos,
+    token: match[0][0] + fullCommand,
+    startPos: prefixPos,
     partialCommand: fullCommand,
   }
 }
@@ -195,10 +191,11 @@ export function getBestCommandMatch(
 }
 
 /**
- * Checks if input is a command (starts with slash)
+ * Checks if input is a command (starts with any command trigger)
  */
 export function isCommandInput(input: string): boolean {
-  return input.startsWith('/')
+  const trimmed = input.trim()
+  return getCommandTrigger(trimmed) !== ''
 }
 
 /**
@@ -206,11 +203,14 @@ export function isCommandInput(input: string): boolean {
  * A command with just a trailing space is considered to have no arguments
  */
 export function hasCommandArgs(input: string): boolean {
-  if (!isCommandInput(input)) return false
+  const trimmed = input.trim()
+  const trigger = getCommandTrigger(trimmed)
+  if (trigger === '') return false
 
-  if (!input.includes(' ')) return false
+  const withoutPrefix = trimmed.slice(1)
+  if (!withoutPrefix.includes(' ')) return false
 
-  if (input.endsWith(' ')) return false
+  if (withoutPrefix.endsWith(' ')) return false
 
   return true
 }
@@ -218,8 +218,8 @@ export function hasCommandArgs(input: string): boolean {
 /**
  * Formats a command with proper notation
  */
-export function formatCommand(command: string): string {
-  return `/${command} `
+export function formatCommand(command: string, trigger: string = '/'): string {
+  return `${trigger}${command} `
 }
 
 /**
@@ -265,6 +265,7 @@ function findMatchedAlias(
 function createCommandSuggestionItem(
   cmd: Command,
   matchedAlias?: string,
+  trigger: string = '/',
 ): SuggestionItem {
   const commandName = getCommandName(cmd)
   // Only show the alias if the user typed it
@@ -279,7 +280,7 @@ function createCommandSuggestionItem(
 
   return {
     id: getCommandId(cmd),
-    displayText: `/${commandName}${aliasText}`,
+    displayText: `${trigger}${commandName}${aliasText}`,
     tag: isWorkflow ? 'workflow' : undefined,
     description: fullDescription,
     metadata: cmd,
@@ -293,8 +294,10 @@ export function generateCommandSuggestions(
   input: string,
   commands: Command[],
 ): SuggestionItem[] {
-  // Only process command input
-  if (!isCommandInput(input)) {
+  const trigger = getCommandTrigger(input)
+
+  // Only process command input (starts with a command trigger)
+  if (trigger === '') {
     return []
   }
 
@@ -305,10 +308,19 @@ export function generateCommandSuggestions(
 
   const query = input.slice(1).toLowerCase().trim()
 
-  // When just typing '/' without additional text
+  // When just typing a trigger without additional text
   if (query === '') {
     const visibleCommands = commands.filter(cmd => !cmd.isHidden)
 
+    // > < @ # & | $ = ^ % 只展示 prompt/skill 类命令
+    if (['>', '<', '@', '#', '&', '|', '$', '=', '^', '%'].includes(trigger)) {
+      const skillCommands = visibleCommands.filter(cmd => cmd.type === 'prompt')
+      return skillCommands
+        .sort((a, b) => getCommandName(a).localeCompare(getCommandName(b)))
+        .map(cmd => createCommandSuggestionItem(cmd, undefined, trigger))
+    }
+
+    // / 展示全部命令，并保留"最近使用"置顶
     // Find recently used skills (only prompt commands have usage tracking)
     const recentlyUsed: Command[] = []
     const commandsWithScores = visibleCommands
@@ -522,8 +534,9 @@ export function applyCommandSuggestion(
     commandObj = suggestion.metadata
   }
 
+  const trigger = getCommandTrigger(commandObj ? getCommandName(commandObj) : commandName) || '/'
   // Format the command input with trailing space
-  const newInput = formatCommand(commandName)
+  const newInput = formatCommand(commandName, trigger)
   onInputChange(newInput)
   setCursorOffset(newInput.length)
 
@@ -544,17 +557,17 @@ function cleanWord(word: string) {
 }
 
 /**
- * Find all /command patterns in text for highlighting.
+ * Find all command patterns (e.g. /cmd, >cmd, @agent, #tag, &task, |pipe, $calc, =var, ^filter, %diff)
  * Returns array of {start, end} positions.
- * Requires whitespace or start-of-string before the slash to avoid
+ * Requires whitespace or start-of-string before the prefix to avoid
  * matching paths like /usr/bin.
  */
 export function findSlashCommandPositions(
   text: string,
 ): Array<{ start: number; end: number }> {
   const positions: Array<{ start: number; end: number }> = []
-  // Match /command patterns preceded by whitespace or start-of-string
-  const regex = /(^|[\s])(\/[a-zA-Z][a-zA-Z0-9:\-_]*)/g
+  // Match command patterns preceded by whitespace or start-of-string
+  const regex = /(^|[\s])([\/\>\<\@\#\&\|\$\=\^\%][a-zA-Z][a-zA-Z0-9:\-_]*)/g
   let match: RegExpExecArray | null = null
   while ((match = regex.exec(text)) !== null) {
     const precedingChar = match[1] ?? ''

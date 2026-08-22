@@ -1,0 +1,20 @@
+vi.mock('fs', () => ({
+  existsSync: vi.fn(() => false), readFileSync: vi.fn(() => ''),
+  writeFileSync: vi.fn(), mkdirSync: vi.fn(),
+  statSync: vi.fn(() => ({ isFile: () => true, isDirectory: () => false, size: 0 })),
+  readdirSync: vi.fn(() => []),
+}))
+
+vi.mock('axios', () => ({
+  default: { get: vi.fn(), post: vi.fn() },
+  get: vi.fn(), post: vi.fn(),
+}))
+import { describe, it, expect, vi } from 'vitest'
+import * as mod from './../../commands/self-check/index'
+
+describe('self-check', () => {
+  describe('selfCheck', () => {
+      it('should be defined', () => { expect(mod.selfCheck).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.selfCheck).not.toBe(void 0) })
+  })
+})

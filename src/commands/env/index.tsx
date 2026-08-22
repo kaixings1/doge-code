@@ -4,8 +4,11 @@ import { Box, Text } from '../../ink.js'
 import * as React from 'react'
 
 export const call: LocalJSXCommandCall = async () => {
+  if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
+    return { output: `env — 显示环境变量\n用法: /env`.trim(), truncated: false }
+  }
   const envVars = [
-    { name: 'ANTHROPIC_BASE_URL', value: process.env.ANTHROPIC_BASE_URL || '（未设置）' },
+    { name: 'env', value: process.env.ANTHROPIC_BASE_URL || '（未设置）' },
     { name: 'ANTHROPIC_MODEL', value: process.env.ANTHROPIC_MODEL || '（未设置）' },
     { name: 'DOGE_API_KEY', value: process.env.DOGE_API_KEY ? '***（已设置）***' : '（未设置）' },
     { name: 'CLAUDE_CODE_SESSION_ID', value: process.env.CLAUDE_CODE_SESSION_ID || '（未设置）' },
