@@ -9,7 +9,7 @@ import * as mod from './../../commands/duplicate/index'
 
 describe('duplicate', () => {
   describe('duplicate', () => {
-      it('should be defined', () => { expect(mod.duplicate).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.duplicate).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

@@ -9,7 +9,7 @@ import * as mod from './../../commands/graph/index'
 
 describe('graph', () => {
   describe('graph', () => {
-      it('should be defined', () => { expect(mod.graph).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.graph).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

@@ -9,7 +9,7 @@ import * as mod from './../../commands/bookmark/index'
 
 describe('bookmark', () => {
   describe('bookmark', () => {
-      it('should be defined', () => { expect(mod.bookmark).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.bookmark).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })
