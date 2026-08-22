@@ -16,7 +16,8 @@ beforeEach(async () => {
   mkdirSync(TMP_DIR, { recursive: true })
   mkdirSync(DOGE_DIR, { recursive: true })
   const mod = await import('../../commands/errors/index.js')
-  call = mod.call
+  const loaded = await mod.default.load()
+  call = loaded.call
 })
 
 afterEach(() => {

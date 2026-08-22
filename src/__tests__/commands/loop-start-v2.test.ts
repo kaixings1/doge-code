@@ -9,7 +9,7 @@ import * as mod from './../../commands/loop-start-v2/index'
 
 describe('loop-start-v2', () => {
   describe('loopStartV2', () => {
-      it('should be defined', () => { expect(mod.loopStartV2).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.loopStartV2).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

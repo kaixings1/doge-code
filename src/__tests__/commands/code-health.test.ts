@@ -15,7 +15,7 @@ import * as mod from './../../commands/code-health/index'
 
 describe('code-health', () => {
   describe('codeHealth', () => {
-      it('should be defined', () => { expect(mod.codeHealth).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.codeHealth).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

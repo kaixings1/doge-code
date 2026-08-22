@@ -9,7 +9,7 @@ import * as mod from './../../commands/security-audit/index'
 
 describe('security-audit', () => {
   describe('securityAudit', () => {
-      it('should be defined', () => { expect(mod.securityAudit).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.securityAudit).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

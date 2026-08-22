@@ -3,7 +3,7 @@ import * as mod from './../../commands/rstk/index'
 
 describe('rstk', () => {
   describe('rstk', () => {
-      it('should be defined', () => { expect(mod.rstk).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.rstk).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

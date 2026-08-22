@@ -3,7 +3,7 @@ import * as mod from './../../commands/resume/index'
 
 describe('resume', () => {
   describe('resume', () => {
-      it('should be defined', () => { expect(mod.resume).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.resume).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

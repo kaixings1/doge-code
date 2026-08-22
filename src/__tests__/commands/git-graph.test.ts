@@ -9,7 +9,7 @@ import * as mod from './../../commands/git-graph/index'
 
 describe('git-graph', () => {
   describe('gitGraph', () => {
-      it('should be defined', () => { expect(mod.gitGraph).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.gitGraph).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

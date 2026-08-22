@@ -1,12 +1,20 @@
-vi.mock('react', () => ({
-  createContext: (val: any) => ({ Provider: ({ children }: any) => children, _value: val }),
-  useState: (init: any) => [init, () => {}],
-  useCallback: (fn: any) => fn,
-  useEffect: () => {},
-  useRef: (init: any) => ({ current: init }),
-  useMemo: (fn: any) => fn(),
-  useReducer: (r: any, i: any) => [i, () => {}],
-}))
+vi.mock('react', () => {
+  const React = {
+    createContext: (val: any) => ({ Provider: ({ children }: any) => children, _value: val }),
+    useState: (init: any) => [init, () => {}],
+    useCallback: (fn: any) => fn,
+    useEffect: () => {},
+    useRef: (init: any) => ({ current: init }),
+    useMemo: (fn: any) => fn(),
+    useReducer: (r: any, i: any) => [i, () => {}],
+    PureComponent: class { setState() {} },
+    memo: (fn: any) => fn,
+    Children: { toArray: (x: any) => x },
+    isValidElement: (x: any) => false,
+    createElement: (type: any, props: any, ...children: any[]) => ({ type, props, children }),
+  }
+  return { default: React, ...React }
+})
 
 vi.spyOn(console, 'log').mockImplementation(() => {})
 
@@ -19,13 +27,15 @@ vi.mock('fs', () => ({
   writeFileSync: vi.fn(), mkdirSync: vi.fn(),
   statSync: vi.fn(() => ({ isFile: () => true, isDirectory: () => false, size: 0 })),
   readdirSync: vi.fn(() => []),
+  realpathSync: vi.fn((p: string) => p),
+  constants: { O_NOFOLLOW: 0, O_WRONLY: 1, O_APPEND: 1024, O_CREAT: 64, O_EXCL: 128 },
 }))
 import { describe, it, expect, vi } from 'vitest'
 import * as mod from './../../commands/bughunter/index'
 
 describe('bughunter', () => {
   describe('bughunter', () => {
-      it('should be defined', () => { expect(mod.bughunter).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.bughunter).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

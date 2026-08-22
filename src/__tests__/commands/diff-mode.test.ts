@@ -9,7 +9,7 @@ import * as mod from './../../commands/diff-mode/index'
 
 describe('diff-mode', () => {
   describe('diffMode', () => {
-      it('should be defined', () => { expect(mod.diffMode).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.diffMode).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

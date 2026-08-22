@@ -3,7 +3,7 @@ import * as mod from './../../commands/thinkback/index'
 
 describe('thinkback', () => {
   describe('thinkback', () => {
-      it('should be defined', () => { expect(mod.thinkback).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.thinkback).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

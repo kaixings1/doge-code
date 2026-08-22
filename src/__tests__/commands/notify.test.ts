@@ -9,7 +9,7 @@ import * as mod from './../../commands/notify/index'
 
 describe('notify', () => {
   describe('notify', () => {
-      it('should be defined', () => { expect(mod.notify).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.notify).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

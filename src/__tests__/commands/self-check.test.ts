@@ -14,7 +14,7 @@ import * as mod from './../../commands/self-check/index'
 
 describe('self-check', () => {
   describe('selfCheck', () => {
-      it('should be defined', () => { expect(mod.selfCheck).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.selfCheck).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

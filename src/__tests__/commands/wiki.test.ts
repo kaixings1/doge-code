@@ -9,7 +9,7 @@ import * as mod from './../../commands/wiki/index'
 
 describe('wiki', () => {
   describe('wiki', () => {
-      it('should be defined', () => { expect(mod.wiki).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.wiki).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

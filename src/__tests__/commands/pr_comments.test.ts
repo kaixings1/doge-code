@@ -3,7 +3,7 @@ import * as mod from './../../commands/pr_comments/index'
 
 describe('pr_comments', () => {
   describe('createMovedToPluginCommand', () => {
-      it('should be defined', () => { expect(mod.createMovedToPluginCommand).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.createMovedToPluginCommand).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

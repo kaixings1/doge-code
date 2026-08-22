@@ -9,7 +9,7 @@ import * as mod from './../../commands/file-history/index'
 
 describe('file-history', () => {
   describe('fileHistory', () => {
-      it('should be defined', () => { expect(mod.fileHistory).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.fileHistory).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

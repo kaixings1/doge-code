@@ -3,7 +3,7 @@ import * as mod from './../../commands/glossary/index'
 
 describe('glossary', () => {
   describe('glossary', () => {
-      it('should be defined', () => { expect(mod.glossary).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.glossary).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

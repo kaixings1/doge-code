@@ -9,7 +9,7 @@ import * as mod from './../../commands/ssh/index'
 
 describe('ssh', () => {
   describe('ssh', () => {
-      it('should be defined', () => { expect(mod.ssh).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.ssh).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

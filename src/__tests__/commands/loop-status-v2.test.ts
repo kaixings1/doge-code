@@ -9,7 +9,7 @@ import * as mod from './../../commands/loop-status-v2/index'
 
 describe('loop-status-v2', () => {
   describe('loopStatusV2', () => {
-      it('should be defined', () => { expect(mod.loopStatusV2).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.loopStatusV2).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

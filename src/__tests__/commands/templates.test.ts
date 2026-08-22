@@ -17,7 +17,7 @@ import * as mod from './../../commands/templates/index'
 
 describe('templates', () => {
   describe('templates', () => {
-      it('should be defined', () => { expect(mod.templates).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.templates).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

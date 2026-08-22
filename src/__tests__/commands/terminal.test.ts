@@ -9,7 +9,7 @@ import * as mod from './../../commands/terminal/index'
 
 describe('terminal', () => {
   describe('terminal', () => {
-      it('should be defined', () => { expect(mod.terminal).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.terminal).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

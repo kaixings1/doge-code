@@ -15,7 +15,7 @@ import * as mod from './../../commands/loop-v2/index'
 
 describe('loop-v2', () => {
   describe('loopV2', () => {
-      it('should be defined', () => { expect(mod.loopV2).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.loopV2).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })

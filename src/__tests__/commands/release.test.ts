@@ -9,7 +9,7 @@ import * as mod from './../../commands/release/index'
 
 describe('release', () => {
   describe('release', () => {
-      it('should be defined', () => { expect(mod.release).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.release).not.toBe(void 0) })
+      it('should be defined', () => { expect(mod.default).toBeDefined() })
+      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 })
