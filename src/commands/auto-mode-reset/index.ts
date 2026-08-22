@@ -1,5 +1,32 @@
-import type { Command } from '../../commands.js'
+import type { Command, LocalCommandModule } from '../../commands.js'
 import { getAutoModeManager } from '../../features/index.js'
+
+const call = async (args: string) => {
+  const autoModeMgr = getAutoModeManager()
+  const skipConfirm = args.includes('--yes') || args.includes('-y')
+
+  if (!skipConfirm) {
+    return {
+      type: 'text' as const,
+      value: '确定要重置自动模式配置吗？\n' +
+        '这将恢复以下设置为默认值:\n' +
+        '  - dangerousRm: true\n' +
+        '  - backgroundAmpersand: true\n' +
+        '  - suspiciousWindowsPaths: true\n\n' +
+        '使用 /auto-mode-reset --yes 确认重置。',
+    }
+  }
+
+  autoModeMgr.reset()
+  const config = autoModeMgr.getConfig()
+  return {
+    type: 'text' as const,
+    value: '✅ 自动模式配置已重置为默认值\n' +
+      `  dangerousRm: ${config.dangerousRm}\n` +
+      `  backgroundAmpersand: ${config.backgroundAmpersand}\n` +
+      `  suspiciousWindowsPaths: ${config.suspiciousWindowsPaths}`,
+  }
+}
 
 const autoModeReset = {
   type: 'local' as const,
@@ -11,32 +38,7 @@ const autoModeReset = {
   get isHidden() {
     return false
   },
-  async call(args: string) {
-    const autoModeMgr = getAutoModeManager()
-    const skipConfirm = args.includes('--yes') || args.includes('-y')
-
-    if (!skipConfirm) {
-      return {
-        type: 'text' as const,
-        value: '确定要重置自动模式配置吗？\n' +
-          '这将恢复以下设置为默认值:\n' +
-          '  - dangerousRm: true\n' +
-          '  - backgroundAmpersand: true\n' +
-          '  - suspiciousWindowsPaths: true\n\n' +
-          '使用 /auto-mode-reset --yes 确认重置。',
-      }
-    }
-
-    autoModeMgr.reset()
-    const config = autoModeMgr.getConfig()
-    return {
-      type: 'text' as const,
-      value: '✅ 自动模式配置已重置为默认值\n' +
-        `  dangerousRm: ${config.dangerousRm}\n` +
-        `  backgroundAmpersand: ${config.backgroundAmpersand}\n` +
-        `  suspiciousWindowsPaths: ${config.suspiciousWindowsPaths}`,
-    }
-  },
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 } satisfies Command
 
 export default autoModeReset

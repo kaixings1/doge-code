@@ -598,7 +598,7 @@ function formatTextReport(
   // Detailed Issues
   if (detailed) {
     const categories = [
-      { name: '🔴 安全问题', items: issues.security },
+      { name: 'health-score', items: issues.security },
       { name: '🟡 复杂度问题', items: issues.complexity },
       { name: '🔵 可维护性问题', items: issues.maintainability },
       { name: '🟠 错误处理问题', items: issues.errorHandling },

@@ -14,6 +14,9 @@ const eco = {
 } satisfies Command
 
 const call = async (args: string): Promise<{ type: string; value: string }> => {
+  if ((args || '').trim() === 'help' || (args || '').trim() === '--help') {
+    return { type: 'text', value: 'eco — Bash 输出压缩模式：减少 token 消耗（on/off/status）\n用法: /eco <on|off|status>'.trim() }
+  }
   const arg = (args || '').trim().toLowerCase()
   const sessionId = getSessionId()
 

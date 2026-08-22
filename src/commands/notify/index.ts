@@ -63,6 +63,9 @@ function addLog(ruleId: string, event: string, message: string) {
 }
 
 export const call: LocalCommandCall = async (args) => {
+  if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
+    return { output: `notify — 🔔 通知 - 规则/事件/历史/Webhook\n用法: /notify`.trim(), truncated: false }
+  }
   const s = (args ?? '').trim()
   const parts = s.split(/\s+/)
   const cmd = parts[0]?.toLowerCase() || 'list'

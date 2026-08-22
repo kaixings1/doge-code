@@ -1,11 +1,12 @@
 import type { LocalCommandCall } from '../../types/command.js'
+import mcpConfigModule from './mcpConfig.js'
 
 const call: LocalCommandCall = async (args) => {
-  const query = args.trim()
-  if (!query) {
-    return { output: '用法: /mcp-config <list|add|remove> [args...]', truncated: false }
+  const trimmed = (args || '').trim()
+  if (!trimmed || trimmed === 'help' || trimmed === '--help' || trimmed === '-h') {
+    return mcpConfigModule.call('help')
   }
-  return { output: `/mcp-config ${query} — 功能开发中`, truncated: false }
+  return mcpConfigModule.call(trimmed)
 }
 
 export default call

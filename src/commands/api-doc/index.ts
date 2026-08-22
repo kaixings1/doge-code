@@ -235,7 +235,7 @@ function membersOfInterface(node: ts.InterfaceDeclaration, source: ts.SourceFile
       const returnType = typeNodeText(member.type ?? null, source)
       members.push({ name: nameText, type: '(' + params + ') => ' + returnType, optional: !!member.questionToken, kind: 'method' })
     } else if (ts.isIndexSignatureDeclaration(member)) {
-      members.push({ name: '[index]', type: typeNodeText(member.type ?? null, source), optional: false, kind: 'index' })
+      members.push({ name: 'api-doc', type: typeNodeText(member.type ?? null, source), optional: false, kind: 'index' })
     }
   }
   return members
@@ -437,6 +437,9 @@ ${endpoints.map(e => `<div class="endpoint"><span class="method ${e.method.toLow
 }
 
 export const call: LocalCommandCall = async (args) => {
+  if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
+    return { output: `api-doc — Next.js App Router handler\n用法: /api-doc`.trim(), truncated: false }
+  }
   const p = args.trim().split(/\s+/)
   const c = p[0] || ''
   if (!c) return { type: 'text', value: [

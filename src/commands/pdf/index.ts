@@ -3,6 +3,9 @@ import type { LocalJSXCommandCall } from '../../types/command.js'
 import fs from 'fs'
 
 export const call: LocalJSXCommandCall = async (args) => {
+  if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
+    return { output: `pdf — PDF 文件读取与信息查看：read/info\n用法: /pdf`.trim(), truncated: false }
+  }
   const p = args.trim().split(/\s+/)
   const c = p[0] || ''
   if (!c) return { type: 'text', value: '📖 用法:\n/pdf read <文件> | 读取 PDF 文本内容\n/pdf info <文件> | PDF 基本信息\n/pdf images <文件> | 提取图片信息' }

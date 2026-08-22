@@ -1,3 +1,0 @@
-{
-  "output": "```bash\n# 查看项目根目录和业务模块目录结构，确认构建相关配置文件\nls -la\nls -la biz_project/\n\n# 查看项目构建配置（优先查根目录，其次查业务模块目录）\ncat package.json 2>/dev/null || cat biz_project/package.json 2>/dev/null\n\n# 运行类型检查\nbun run typecheck 2>&1 || npx tsc --noEmit 2>&1 || echo \"类型检查执行完成\"\n\n# 执行项目构建\nbun run build 2>&1 || npm run build 2>&1 || echo \"构建执行完成\"\n\n# 运行单元测试\nbun test 2>&1 || npm test 2>&1 || echo \"测试执行完成\"\n```"
-}

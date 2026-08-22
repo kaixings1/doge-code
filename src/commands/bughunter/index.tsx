@@ -157,7 +157,7 @@ const DEFAULT_CONFIG: ScanConfig = {
 
 function getDefaultPatterns(): ScanPattern[] {
   return [
-    { id: 'ts-any', name: 'any 类型', pattern: '\\bany\\b', severity: 'medium', category: 'type', message: '使用了 any 类型，建议指定具体类型', suggestion: '使用具体的类型替代 any', enabled: true },
+    { id: 'ts-any', name: 'bughunter', pattern: '\\bany\\b', severity: 'medium', category: 'type', message: '使用了 any 类型，建议指定具体类型', suggestion: '使用具体的类型替代 any', enabled: true },
     { id: 'ts-ignore', name: '@ts-ignore', pattern: '@ts-ignore', severity: 'high', category: 'type', message: '使用了 @ts-ignore 忽略类型错误', suggestion: '修复类型错误而不是忽略', enabled: true },
     { id: 'console-log', name: 'console.log', pattern: 'console\\.log', severity: 'low', category: 'style', message: '遗留的 console.log', suggestion: '移除或使用日志库', enabled: true },
     { id: 'console-debug', name: 'console.debug', pattern: 'console\\.(debug|trace|info|warn|error)', severity: 'info', category: 'style', message: '使用了 console 调试方法', suggestion: '考虑使用专业日志库', enabled: true },

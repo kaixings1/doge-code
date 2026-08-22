@@ -1,4 +1,4 @@
-import type { LocalCommandCall } from '../../types/command.js'
+import type { Command, LocalCommandCall } from '../../types/command.js'
 import React from 'react'
 export const call: LocalCommandCall = async (args, _context) => {
   const parts = args.trim().split(/\s+/)
@@ -91,5 +91,5 @@ export default {
   name: 'file-watcher',
   type: 'local',
   description: '文件系统监视器管理',
-  call: call
-}
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+} satisfies Command

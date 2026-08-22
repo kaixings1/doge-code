@@ -1,4 +1,4 @@
-import type { LocalCommandCall } from '../../types/command.js'
+import type { Command, LocalCommandCall } from '../../types/command.js'
 import { getSessionId } from '../../bootstrap/state.js'
 import {
   createTask,
@@ -490,5 +490,6 @@ export default {
   name: 'task-create',
   type: 'local',
   description: '创建/管理持久化任务 list|done|delete|clear-done',
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
   call: call,
 }

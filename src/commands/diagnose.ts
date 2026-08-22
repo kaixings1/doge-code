@@ -119,7 +119,7 @@ async function checkGit(): Promise<DiagnosticItem[]> {
   try {
     const version = execSync('git --version', { encoding: 'utf-8', timeout: 5000 }).trim()
     items.push({
-      name: 'Git 安装',
+      name: 'diagnose',
       category: CATEGORIES.ENVIRONMENT,
       status: 'pass',
       message: version,

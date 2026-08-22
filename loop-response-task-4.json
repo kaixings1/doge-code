@@ -1,3 +1,0 @@
-{
-  "output": "```bash\nls -la biz_project/\nfind biz_project -type f -name \"*.ts\" -o -name \"*.js\" | head -20\n```"
-}

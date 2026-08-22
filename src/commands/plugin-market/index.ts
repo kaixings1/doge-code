@@ -34,7 +34,7 @@ interface PluginMarketIndex {
 const KNOWN_PLUGINS: PluginEntry[] = [
   {
     id: 'typescript-helper',
-    name: 'TypeScript 助手',
+    name: 'plugin-market',
     description: '增强 TypeScript 开发体验：类型检查、重构辅助、文档生成',
     author: 'doge-community',
     version: '1.2.0',

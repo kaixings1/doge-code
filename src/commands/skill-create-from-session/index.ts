@@ -81,7 +81,7 @@ function analyzeSessionPatterns(messages: string[]): SessionPattern {
 
   // 提取重复出现的工具调用模式
   const toolPatterns = [
-    { pattern: /Read\(([^)]+)\)/g, name: '读取文件' },
+    { pattern: /Read\(([^)]+)\)/g, name: 'skill-create-from-session' },
     { pattern: /Edit\(([^)]+)\)/g, name: '编辑文件' },
     { pattern: /Bash\(([^)]+)\)/g, name: '执行命令' },
     { pattern: /Grep\(([^)]+)\)/g, name: '搜索代码' },

@@ -366,85 +366,88 @@ function runAutoAnalyze(target: string): string {
 
 // ─── 命令注册 ───────────────────────────────────────────────
 
+const call = async (args: string) => {
+  const s = (args || '').trim()
+  const parts = s.split(/\s+/)
+  const subcmd = parts[0]?.toLowerCase() || ''
+
+  // 自动分析模式
+  if (subcmd === 'analyze' || subcmd === 'analysis') {
+    const target = parts.slice(1).join(' ') || '.'
+    return { type: 'text' as const, value: runAutoAnalyze(target) }
+  }
+
+  // 批量重构模式
+  if (subcmd === 'batch') {
+    const target = parts.slice(1).join(' ') || '.'
+    const metrics = analyzeProjectMetrics(resolve(target))
+    const autoFixable = metrics.flatMap(m => m.issues.filter(i => i.autoFixable))
+    return {
+      type: 'text' as const,
+      value: [
+        '📊 批量重构分析',
+        '═══════════════════════════════════════',
+        '',
+        `扫描文件: ${metrics.length}`,
+        `可自动修复: ${autoFixable.length}`,
+        `需手动重构: ${metrics.reduce((s, m) => s + m.issues.length, 0) - autoFixable.length}`,
+        '',
+        '💡 使用以下命令进行具体重构:',
+        '  /refactor extract <文件> <函数名>  - 提取函数',
+        '  /refactor rename <旧名> <新名>     - 重命名符号',
+        '  /refactor extract-file <文件>      - 拆分大文件',
+        '  /refactor optimize <文件>          - 性能优化',
+        '',
+        '或直接描述需求:',
+        '  /refactor 把 src/utils.ts 中的 validate 函数提取出来',
+      ].join('\n'),
+    }
+  }
+
+  // 帮助
+  if (subcmd === 'help' || subcmd === '') {
+    return {
+      type: 'text' as const,
+      value: [
+        '🔧 智能代码重构',
+        '',
+        '📖 用法: ',
+        '  /refactor analyze [路径]     自动分析代码质量，生成重构建议',
+        '  /refactor batch [路径]       批量分析项目，统计可重构项',
+        '  /refactor extract <文件> <函数>  提取函数/类到新文件',
+        '  /refactor rename <旧名> <新名>   重命名符号并更新引用',
+        '  /refactor extract-file <文件>    拆分大文件为多个模块',
+        '  /refactor optimize <文件>        性能优化分析',
+        '  /refactor <自由描述>            自定义重构需求',
+        '',
+        '支持语言: TypeScript, JavaScript, Python, Go, Java, Rust',
+        '',
+        '💡 示例: ',
+        '  /refactor analyze src/',
+        '  /refactor analyze src/utils/helper.ts',
+        '  /refactor batch .',
+        '  /refactor extract src/app.ts validateInput',
+        '  /refactor rename oldName newName',
+        '  /refactor 把循环改成函数式写法',
+      ].join('\n'),
+    }
+  }
+
+  // 其他模式：使用 prompt 引导 AI 进行重构
+  return {
+    type: 'text' as const,
+    value: getPromptContent(s),
+  }
+}
+
 const command = {
   type: 'local',
   name: 'refactor',
   description: '智能代码重构：自动分析 + 提取/重命名/拆分/性能优化',
   aliases: ['/refactor', '/ref'],
   supportsNonInteractive: true,
-  async call(args: string) {
-    const s = (args || '').trim()
-    const parts = s.split(/\s+/)
-    const subcmd = parts[0]?.toLowerCase() || ''
-
-    // 自动分析模式
-    if (subcmd === 'analyze' || subcmd === 'analysis') {
-      const target = parts.slice(1).join(' ') || '.'
-      return { type: 'text' as const, value: runAutoAnalyze(target) }
-    }
-
-    // 批量重构模式
-    if (subcmd === 'batch') {
-      const target = parts.slice(1).join(' ') || '.'
-      const metrics = analyzeProjectMetrics(resolve(target))
-      const autoFixable = metrics.flatMap(m => m.issues.filter(i => i.autoFixable))
-      return {
-        type: 'text' as const,
-        value: [
-          '📊 批量重构分析',
-          '═══════════════════════════════════════',
-          '',
-          `扫描文件: ${metrics.length}`,
-          `可自动修复: ${autoFixable.length}`,
-          `需手动重构: ${metrics.reduce((s, m) => s + m.issues.length, 0) - autoFixable.length}`,
-          '',
-          '💡 使用以下命令进行具体重构:',
-          '  /refactor extract <文件> <函数名>  - 提取函数',
-          '  /refactor rename <旧名> <新名>     - 重命名符号',
-          '  /refactor extract-file <文件>      - 拆分大文件',
-          '  /refactor optimize <文件>          - 性能优化',
-          '',
-          '或直接描述需求:',
-          '  /refactor 把 src/utils.ts 中的 validate 函数提取出来',
-        ].join('\n'),
-      }
-    }
-
-    // 帮助
-    if (subcmd === 'help' || subcmd === '') {
-      return {
-        type: 'text' as const,
-        value: [
-          '🔧 智能代码重构',
-          '',
-          '📖 用法: ',
-          '  /refactor analyze [路径]     自动分析代码质量，生成重构建议',
-          '  /refactor batch [路径]       批量分析项目，统计可重构项',
-          '  /refactor extract <文件> <函数>  提取函数/类到新文件',
-          '  /refactor rename <旧名> <新名>   重命名符号并更新引用',
-          '  /refactor extract-file <文件>    拆分大文件为多个模块',
-          '  /refactor optimize <文件>        性能优化分析',
-          '  /refactor <自由描述>            自定义重构需求',
-          '',
-          '支持语言: TypeScript, JavaScript, Python, Go, Java, Rust',
-          '',
-          '💡 示例: ',
-          '  /refactor analyze src/',
-          '  /refactor analyze src/utils/helper.ts',
-          '  /refactor batch .',
-          '  /refactor extract src/app.ts validateInput',
-          '  /refactor rename oldName newName',
-          '  /refactor 把循环改成函数式写法',
-        ].join('\n'),
-      }
-    }
-
-    // 其他模式：使用 prompt 引导 AI 进行重构
-    return {
-      type: 'text' as const,
-      value: getPromptContent(s),
-    }
-  },
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  call,
 } satisfies Command
 
 export default command

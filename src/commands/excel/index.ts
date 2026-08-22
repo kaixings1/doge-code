@@ -11,6 +11,9 @@ function runPy(code: string): string {
 }
 
 export const call: LocalJSXCommandCall = async (args) => {
+  if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
+    return { output: `excel — Excel 文件读取与转换：read/info/sheets/csv\n用法: /excel`.trim(), truncated: false }
+  }
   const p = args.trim().split(/\s+/)
   const c = p[0] || ''
   if (!c) return { type: 'text', value: '/excel read <file> | 读取 Excel\n/excel info <file> | 基本信息\n/excel csv <file> | 转为 CSV\n/excel sheets <file> | 列出工作表' }

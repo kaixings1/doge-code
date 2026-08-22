@@ -1,0 +1,148 @@
+{
+  "tools": [
+    {
+      "name": "docker",
+      "description": "Docker 容器管理命令",
+      "commands": ["docker run", "docker build", "docker ps", "docker compose"],
+      "type": "container"
+    },
+    {
+      "name": "kubernetes",
+      "description": "K8s 部署和管理",
+      "commands": ["kubectl get pods", "kubectl apply -f", "kubectl describe"],
+      "type": "container"
+    },
+    {
+      "name": "terraform",
+      "description": "IaC 基础设施即代码",
+      "commands": ["terraform plan", "terraform apply", "terraform destroy"],
+      "type": "iac"
+    },
+    {
+      "name": "aws-cli",
+      "description": "AWS 命令行工具",
+      "commands": ["aws s3 ls", "aws ec2 describe-instances", "aws cloudformation list"],
+      "type": "cloud"
+    },
+    {
+      "name": "gcloud",
+      "description": "Google Cloud CLI",
+      "commands": ["gcloud compute instances list", "gcloud container clusters list"],
+      "type": "cloud"
+    },
+    {
+      "name": "nginx",
+      "description": "Web 服务器配置与调试",
+      "commands": ["nginx -t", "nginx -s reload", "nginx -s stop"],
+      "type": "web"
+    },
+    {
+      "name": "redis-cli",
+      "description": "Redis 命令行工具",
+      "commands": ["redis-cli ping", "redis-cli info", "redis-cli keys"],
+      "type": "database"
+    },
+    {
+      "name": "postgres-cli",
+      "description": "PostgreSQL 命令行工具",
+      "commands": ["psql -U", "psql -c 'SELECT ...'", "psql --version"],
+      "type": "database"
+    },
+    {
+      "name": "elasticsearch",
+      "description": "Elasticsearch 索引管理",
+      "commands": ["curl -X GET localhost:9200/_cat/indices", "curl -X POST localhost:9200/_bulk"],
+      "type": "database"
+    },
+    {
+      "name": "prometheus",
+      "description": "监控指标采集",
+      "commands": [],
+      "type": "monitoring"
+    },
+    {
+      "name": "grafana",
+      "description": "可视化",
+      "commands": [],
+      "type": "monitoring"
+    },
+    {
+      "name": "loki",
+      "description": "日志聚合",
+      "commands": [],
+      "type": "monitoring"
+    },
+    {
+      "name": "datadog",
+      "description": "APM 监控",
+      "commands": [],
+      "type": "monitoring"
+    },
+    {
+      "name": "kubebuilder",
+      "description": "K8s 项目生成",
+      "commands": [],
+      "type": "k8s-tooling"
+    },
+    {
+      "name": "helm",
+      "description": "K8s 包管理器",
+      "commands": ["helm install", "helm upgrade", "helm list"],
+      "type": "k8s-tooling"
+    },
+    {
+      "name": "istioctl",
+      "description": "K8s 服务网格",
+      "commands": [],
+      "type": "k8s-tooling"
+    },
+    {
+      "name": "argocd",
+      "description": "GitOps 部署",
+      "commands": [],
+      "type": "k8s-tooling"
+    },
+    {
+      "name": "jenkins",
+      "description": "CI/CD 服务器",
+      "commands": [],
+      "type": "ci-cd"
+    },
+    {
+      "name": "gitlab-ci",
+      "description": "GitLab CI/CD",
+      "commands": [],
+      "type": "ci-cd"
+    },
+    {
+      "name": "tcpdump",
+      "description": "抓包分析",
+      "commands": [],
+      "type": "network"
+    },
+    {
+      "name": "nmap",
+      "description": "网络扫描",
+      "commands": [],
+      "type": "network"
+    },
+    {
+      "name": "curl",
+      "description": "HTTP 请求",
+      "commands": ["curl -X GET", "curl -X POST"],
+      "type": "network"
+    },
+    {
+      "name": "wget",
+      "description": "HTTP 下载",
+      "commands": ["wget URL"],
+      "type": "network"
+    },
+    {
+      "name": "postman",
+      "description": "API 测试",
+      "commands": [],
+      "type": "network"
+    }
+  ]
+}

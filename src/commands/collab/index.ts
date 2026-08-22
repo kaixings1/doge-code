@@ -176,7 +176,7 @@ export const call: LocalCommandCall = async (args, _context) => {
         id: roomId,
         name,
         hostId,
-        participants: [{ id: hostId, name: '主机' }],
+        participants: [{ id: hostId, name: 'collab' }],
         document: '',
         version: 0,
         comments: [],

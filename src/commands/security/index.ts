@@ -92,7 +92,7 @@ const DEFAULT_CONFIG: SecurityConfig = {
 }
 
 const SECRET_PATTERNS: Array<{ pattern: RegExp; name: string; cwe: string; severity: SecurityFinding['severity']; category: string }> = [
-  { pattern: /(api[_-]?key|apikey)\s*[:=]\s*['"][^'"]{16,}['"]/i, name: 'API Key', cwe: 'CWE-798', severity: 'critical', category: 'Credentials' },
+  { pattern: /(api[_-]?key|apikey)\s*[:=]\s*['"][^'"]{16,}['"]/i, name: 'security', cwe: 'CWE-798', severity: 'critical', category: 'Credentials' },
   { pattern: /(secret|password|passwd|pwd)\s*[:=]\s*['"][^'"]{8,}['"]/i, name: 'Password', cwe: 'CWE-798', severity: 'critical', category: 'Credentials' },
   { pattern: /(access_)?token\s*[:=]\s*['"][^'"]{16,}['"]/i, name: 'Access Token', cwe: 'CWE-798', severity: 'critical', category: 'Credentials' },
   { pattern: /AWS_ACCESS_KEY_ID\s*[:=]\s*['"]?[A-Z0-9]{20}/, name: 'AWS Access Key', cwe: 'CWE-798', severity: 'critical', category: 'Cloud' },

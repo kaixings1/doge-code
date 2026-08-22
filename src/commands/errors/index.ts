@@ -179,6 +179,9 @@ function applyFixToFile(filePath: string, lineNumber: number, suggestedFix: stri
 }
 
 export const call: LocalCommandCall = async (args) => {
+  if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
+    return { output: `errors — ⚠️ 错误监控 - 扫描/追踪/自动修复/模式/导出\n用法: /errors`.trim(), truncated: false }
+  }
   const s = (args ?? '').trim()
   const parts = s.split(/\s+/)
   const cmd = parts[0]?.toLowerCase() || 'list'

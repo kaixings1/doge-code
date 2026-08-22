@@ -3,6 +3,9 @@ import type { Command } from '../../commands.js'
 import { getIsNonInteractiveSession } from '../../bootstrap/state.js'
 
 const call = async (_args: string, context: any) => {
+  if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
+    return { output: `summary — 总结当前会话内容和关键决策\n用法: /summary`.trim(), truncated: false }
+  }
   const { messages } = context || {}
   if (!messages || messages.length === 0) {
     return {

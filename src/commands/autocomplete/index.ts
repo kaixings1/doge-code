@@ -373,7 +373,7 @@ function getDefaultSnippets(): SnippetDefinition[] {
   return [
     {
       id: 'snippet-if',
-      name: 'if 语句',
+      name: 'autocomplete',
       prefix: 'if',
       body: ['if (condition) {', '  // TODO: implement', '}'],
       description: '创建 if 条件语句',

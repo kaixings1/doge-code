@@ -41,7 +41,7 @@ interface FmtHistory {
 
 const DEFAULT_CONFIG: FmtConfig = {
   formatters: {
-    prettier: { name: 'Prettier', command: 'prettier', extensions: ['.ts', '.tsx', '.js', '.jsx', '.json', '.css', '.scss', '.html', '.md', '.yml', '.yaml', '.graphql'], installCommand: 'npm install -D prettier' },
+    prettier: { name: 'fmt', command: 'prettier', extensions: ['.ts', '.tsx', '.js', '.jsx', '.json', '.css', '.scss', '.html', '.md', '.yml', '.yaml', '.graphql'], installCommand: 'npm install -D prettier' },
     black: { name: 'Black', command: 'black', extensions: ['.py'], installCommand: 'pip install black' },
     gofmt: { name: 'gofmt', command: 'gofmt', extensions: ['.go'], installCommand: 'Install Go toolchain' },
     rustfmt: { name: 'Rustfmt', command: 'rustfmt', extensions: ['.rs'], installCommand: 'rustup component add rustfmt' },

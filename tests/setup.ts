@@ -16,6 +16,15 @@ for (const key of Object.keys(process.env)) {
   }
 }
 
+// Ensure config guard (config.ts:1415) recognizes test environment
+process.env.NODE_ENV = 'test'
+
+// Prevent envDynamic.ts from crashing in test environment
+// (terminal detection reads process.env which may not have TERMINAL_EMULATOR)
+try {
+  process.env.TERMINAL_EMULATOR = ''
+} catch { /* env vars may be read-only in some environments */ }
+
 import { existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { register } from 'node:module';

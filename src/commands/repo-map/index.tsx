@@ -35,6 +35,9 @@ const KIND_ICONS: Record<string, string> = {
 }
 
 export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
+  if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
+    return { output: `repo-map — 显示代码库结构映射（符号提取 + PageRank 排序，类似 Aider）\n用法: /repo-map`.trim(), truncated: false }
+  }
   const [refreshKey, setRefreshKey] = React.useState(0)
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)

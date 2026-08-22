@@ -1,4 +1,4 @@
-import type { LocalCommandCall } from '../../types/command.js'
+import type { Command, LocalCommandCall } from '../../types/command.js'
 import React from 'react'
 export const call: LocalCommandCall = async (args, _context) => {
   const parts = args.trim().split(/\s+/)
@@ -214,5 +214,6 @@ export default {
   name: 'mcp-tool-search',
   type: 'local',
   description: '搜索和管理 MCP 工具',
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
   call: call
 }

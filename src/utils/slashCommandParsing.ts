@@ -38,9 +38,42 @@ function findLastChineseWordIndex(words: string[]): number {
 }
 
 /**
- * Parses a slash command input string into its component parts
+ * Returns the command trigger character for an input string, or empty string if not a command.
  *
- * @param input - The raw input string (should start with '/')
+ * Trigger mapping:
+ *   /  -> built-in slash command  (e.g. /commit, /review-pr)
+ *   >  -> skill/prompt command     (e.g. >plan, >langgraph)
+ *   <  -> skill/prompt command     (alternative prefix for >)
+ *   @  -> agent spawn              (e.g. @debug, @review, @arch)
+ *   #  -> tag/filter command       (e.g. #todo, #fixme, #security)
+ *   &  -> background task          (e.g. & analyze, & build)
+ *   |  -> pipe command             (e.g. | grep error, | files)
+ *   $  -> quick calc/env           (e.g. $ 2+2, $ env)
+ *   =  -> variable assignment      (e.g. = base_url=xxx)
+ *   ^  -> result filter            (e.g. ^ grep error)
+ *   %  -> diff comparison          (e.g. % main, % src/a.ts src/b.ts)
+ */
+export function getCommandTrigger(input: string): '/' | '>' | '<' | '@' | '#' | '&' | '|' | '$' | '=' | '^' | '%' | '' {
+  const trimmed = input.trim()
+  if (trimmed.startsWith('/')) return '/'
+  if (trimmed.startsWith('>')) return '>'
+  if (trimmed.startsWith('<')) return '<'
+  if (trimmed.startsWith('@')) return '@'
+  if (trimmed.startsWith('#')) return '#'
+  if (trimmed.startsWith('&')) return '&'
+  if (trimmed.startsWith('|')) return '|'
+  if (trimmed.startsWith('$')) return '$'
+  if (trimmed.startsWith('=')) return '='
+  if (trimmed.startsWith('^')) return '^'
+  if (trimmed.startsWith('%')) return '%'
+  return ''
+}
+
+/**
+ * Parses a slash command input string into its component parts.
+ * Supports / > < @ # & | $ = ^ % 等所有触发符前缀。
+ *
+ * @param input - The raw input string (should start with a trigger character)
  * @returns Parsed command name, args, and MCP flag, or null if invalid
  *
  * @example
@@ -48,24 +81,27 @@ function findLastChineseWordIndex(words: string[]): number {
  * // => { commandName: 'search', args: 'foo bar', isMcp: false }
  *
  * @example
- * parseSlashCommand('/mcp:tool (MCP) arg1 arg2')
- * // => { commandName: 'mcp:tool (MCP)', args: 'arg1 arg2', isMcp: true }
+ * parseSlashCommand('@debug 登录接口报错')
+ * // => { commandName: 'debug', args: '登录接口报错', isMcp: false }
  *
  * @example
- * parseSlashCommand('/Windows C++ 项目生成器 D:/proj')
- * // => { commandName: 'Windows', args: 'C++ 项目 生成器 D:/proj', isMcp: false }
+ * parseSlashCommand('| grep error')
+ * // => { commandName: 'grep', args: 'error', isMcp: false }
+ *
+ * @example
+ * parseSlashCommand('$ 2+2')
+ * // => { commandName: '2+2', args: '', isMcp: false }
  */
 export function parseSlashCommand(input: string): ParsedSlashCommand | null {
   const trimmedInput = input.trim()
-
-  // Check if input starts with '/'
-  if (!trimmedInput.startsWith('/')) {
+  const trigger = getCommandTrigger(trimmedInput)
+  if (trigger === '') {
     return null
   }
 
-  // Remove the leading '/' and split by spaces
-  const withoutSlash = trimmedInput.slice(1)
-  const words = withoutSlash.split(' ')
+  // Remove the leading trigger character and split by spaces
+  const withoutPrefix = trimmedInput.slice(1)
+  const words = withoutPrefix.split(' ')
 
   if (!words[0]) {
     return null
@@ -75,12 +111,7 @@ export function parseSlashCommand(input: string): ParsedSlashCommand | null {
   let isMcp = false
   let argsStartIndex: number
 
-  // [OLD] 原逻辑：检测任何词含中文就进入中文模式，导致 /task 路径含中文 被吞命令名
-  // const lastChineseIdx = findLastChineseWordIndex(words)
-  // if (lastChineseIdx >= 0) { ... }
-  // 当前统一使用首词解析模式，中文技能名由上层模糊搜索处理
-
-  // 传统英文命令解析逻辑
+  // 统一使用首词解析模式，中文技能名由上层模糊搜索处理
   commandName = words[0]
   argsStartIndex = 1
 

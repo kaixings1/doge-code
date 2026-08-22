@@ -1,4 +1,4 @@
-import type { LocalJSXCommandCall } from '../../types/command.js'
+import type { Command, LocalJSXCommandCall } from '../../types/command.js'
 import React from 'react'
 import { URL } from 'url'
 import * as http from 'http'
@@ -715,5 +715,6 @@ export default {
   name: 'http',
   type: 'local-jsx',
   description: 'HTTP 客户端 - 支持重试、代理、表单、认证、并发、速率限制等',
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
   call: call
 }

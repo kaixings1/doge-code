@@ -1,6 +1,18 @@
 import type { Command } from '../../commands.js'
 import { discoverMcpServers, generateDiscoveryReport } from '../../services/mcpDiscovery.js'
 
+const call = (args: string) => {
+  const targetPath = args.trim() || process.cwd()
+  try {
+    const result = discoverMcpServers(void 0, targetPath)
+    const report = generateDiscoveryReport(result)
+    return { type: 'text' as const, value: report }
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
+    return { type: 'text' as const, value: '❌ 错误：' + msg }
+  }
+}
+
 const mcpDiscovery = {
   type: 'local' as const,
   name: 'mcp-discovery',
@@ -11,17 +23,7 @@ const mcpDiscovery = {
   get isHidden() {
     return false
   },
-  call(args: string) {
-    const targetPath = args.trim() || process.cwd()
-    try {
-      const result = discoverMcpServers(void 0, targetPath)
-      const report = generateDiscoveryReport(result)
-      return { type: 'text' as const, value: report }
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err)
-      return { type: 'text' as const, value: '❌ 错误：' + msg }
-    }
-  },
+  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
 } satisfies Command
 
 export default mcpDiscovery

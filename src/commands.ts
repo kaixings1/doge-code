@@ -325,10 +325,11 @@ import sandboxToggle from './commands/sandbox-toggle/index.ts'
 import dockerSandboxCommand from './commands/docker-sandbox/index.ts'
 import chrome from './commands/chrome/index.ts'
 import stickers from './commands/stickers/index.ts'
-import advisor from './commands/advisor.ts'
+import advisor from './commands/advisor/index.ts'
 import tui from './commands/tui/index.ts'
 import batchHan from './commands/batch-han/index.ts'
 import updateApiKey from './commands/updateapikey/index.ts'
+import cloneAll from './commands/clone-all-1500/index.ts'
 
 import apiDebug from './commands/api-debug/index.ts'
 import pluginMarket from './commands/plugin-market/index.ts'
@@ -712,6 +713,7 @@ const COMMANDS = memoize((): Command[] => [
   securityAudit,
   agentNew,
   updateskills,
+  cloneAll,
   diagramCmd,
   apiDebug,
   pluginMarket,
