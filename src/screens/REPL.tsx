@@ -4353,7 +4353,7 @@ export function REPL({
   const viewedAgentTask = viewedTeammateTask ?? (viewedTask && isLocalAgentTask(viewedTask) ? viewedTask : undefined);
 
   // 当流式文本显示时绕过 useDeferredValue，以便 Messages 在与流式文本清除相同的帧中渲染最终消息。当未加载时也绕过 — deferredMessages 仅在流式传输期间重要（保持输入响应）；在响应结束后，立即显示消息可防止微调器消失但答案尚未出现的抖动间隙。只有 reducedMotion 用户在加载期间保留延迟路径。
-  const usesSyncMessages = true;
+  const usesSyncMessages = showStreamingText || !isLoading;
   // 当查看代理时，永远不要回退到领导者 — 在引导/流填充之前为空。关闭 see-leader-type-agent 脚枪。
   const displayedMessages = viewedAgentTask ? viewedAgentTask.messages ?? [] : usesSyncMessages ? messages : deferredMessages;
   // 显示占位符，直到真实的用户消息出现在 displayedMessages 中。userInputOnProcessing 在整个响应期间保持设置（在 resetLoadingState 中清除）；此长度检查在 displayedMessages 增长超过在提交时捕获的基线后隐藏它。
