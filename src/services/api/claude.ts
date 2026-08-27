@@ -202,6 +202,11 @@ import {
   filterToolsForMessage,
   isSimpleConversationMessage,
 } from '../../utils/toolSearch.js'
+import {
+  composeToolsForTurn,
+  isDynamicToolComposerEnabled,
+  type DynamicToolComposerOptions,
+} from '../../utils/dynamicToolComposer.js'
 import { API_MAX_MEDIA_PER_REQUEST } from '../../constants/apiLimits.js'
 import { ADVISOR_BETA_HEADER } from '../../constants/betas.js'
 import {
@@ -1233,12 +1238,21 @@ async function* queryModel(
         }
       }
     }
-    const baseFiltered = filterToolsForMessage(tools, lastUserMessage)
-    const baseFilteredNames = new Set(baseFiltered.map(t => t.name))
-    // Union: message-filtered tools + previously used tools
-    filteredTools = tools.filter(
-      t => baseFilteredNames.has(t.name) || previouslyUsedToolNames.has(t.name),
-    )
+    // DynamicToolComposer: 基于对话历史动态拼装工具列表
+    // 当启用时，额外提取最近 N 轮对话中的模型响应信号，动态追加工具
+    if (isDynamicToolComposerEnabled()) {
+      filteredTools = composeToolsForTurn(tools, messages, {
+        historyWindow: 3,
+        enabled: true,
+      })
+    } else {
+      // 原有逻辑：用户消息过滤 + 历史已用工具并集
+      const baseFiltered = filterToolsForMessage(tools, lastUserMessage)
+      const baseFilteredNames = new Set(baseFiltered.map(t => t.name))
+      filteredTools = tools.filter(
+        t => baseFilteredNames.has(t.name) || previouslyUsedToolNames.has(t.name),
+      )
+    }
   }
 
   // 如果启用了工具搜索，添加工具搜索 beta 头 - defer_loading 被接受所必需

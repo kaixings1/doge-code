@@ -790,7 +790,7 @@ export const ALWAYS_ON_TOOLS = new Set([
  * is included in the request even if the conversation is otherwise simple.
  */
 // bilingual keyword → tool mapping (both English and Chinese)
-const TOOL_KEYWORD_MAP: Array<{ keywords: string[]; toolNames: string[] }> = [
+export const TOOL_KEYWORD_MAP: Array<{ keywords: string[]; toolNames: string[] }> = [
   { keywords: ['read', 'cat', 'head', 'tail', 'view', 'open', 'show', 'look at', 'file', '读取', '打开', '查看', '显示'], toolNames: ['FileReadTool'] },
   { keywords: ['edit', 'modify', 'change', 'update', 'replace', 'sed', 'awk', '修改', '编辑', '更改', '更新'], toolNames: ['FileEditTool', 'MultiFileEditTool'] },
   { keywords: ['write', 'create', 'make', 'new file', 'generate', 'output', 'save', 'dump', 'echo', '写入', '创建', '生成', '保存', '新建文件'], toolNames: ['FileWriteTool'] },

@@ -134,6 +134,19 @@ async function collectFiles(cwd: string, opts: Options): Promise<{ path: string;
   const files: { path: string; content: string; tokens: number }[] = []
   const seen = new Set<string>()
 
+  const MAX_FILES = 500
+  const MAX_TOTAL_CHARS = 5_000_000
+
+  // 预先一次性收集所有候选文件（避免对每个 pattern 重复遍历）
+  const allFiles = new Set<string>()
+  for await (const fullPath of walkDir(cwd)) {
+    const rel = fullPath.replace(cwd, '').replace(/^[/\\]/, '')
+    // 跳过超出 cwd 边界的路径
+    if (rel.startsWith('..')) continue
+    if (shouldIgnore(rel, opts.ignores)) continue
+    allFiles.add(fullPath)
+  }
+
   const globPatterns = opts.includes.map(p => {
     if (p.startsWith('.')) return p
     if (!p.includes('*')) return p + '/**/*'
@@ -142,17 +155,18 @@ async function collectFiles(cwd: string, opts: Options): Promise<{ path: string;
 
   const matches = new Set<string>()
   for (const pattern of globPatterns) {
-    for await (const fullPath of walkDir(cwd)) {
+    for (const fullPath of allFiles) {
       const rel = fullPath.replace(cwd, '').replace(/^[/\\]/, '')
-      if (shouldIgnore(rel, opts.ignores)) continue
-      if (!matchesGlob(rel, pattern)) continue
-      matches.add(fullPath)
+      if (matchesGlob(rel, pattern)) matches.add(fullPath)
     }
   }
 
+  let totalChars = 0
   for (const filePath of matches) {
     if (seen.has(filePath)) continue
     seen.add(filePath)
+    if (files.length >= MAX_FILES) break
+    if (totalChars >= MAX_TOTAL_CHARS) break
 
     try {
       const content = await readFile(filePath, 'utf-8')
@@ -160,6 +174,7 @@ async function collectFiles(cwd: string, opts: Options): Promise<{ path: string;
       if (opts.compress || opts.removeComments || opts.removeEmptyLines) {
         processed = compressContent(content, opts.removeComments, opts.removeEmptyLines)
       }
+      totalChars += processed.length
       const tokens = estimateTokens(processed)
       files.push({ path: filePath, content: processed, tokens })
     } catch {
@@ -183,6 +198,9 @@ async function* walkDir(dir: string): AsyncGenerator<string> {
     try {
       const s = await stat(entry.path)
       if (s.isDirectory()) {
+        // 跳过被忽略的目录，避免递归进入 node_modules 等
+        const relName = entry.path.replace(dir + '/', '')
+        if (DEFAULT_IGNORES.has(relName)) continue
         yield* walkDir(entry.path)
       } else {
         yield entry.path
