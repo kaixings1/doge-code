@@ -17,7 +17,7 @@
 import { readFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 
-const SKILL_RULES_PATH = join(process.cwd(), '.claude', 'skills', 'skill-rules.json')
+const SKILL_RULES_PATH = join(process.cwd(), '.claude', 'hooks', 'skill-rules.json')
 const MAX_KEYWORD_SCORE = 3
 const MAX_INTENT_SCORE = 2
 const ACTIVATION_THRESHOLD = 3

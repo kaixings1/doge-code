@@ -14,7 +14,7 @@ beforeEach(async () => {
   mkdirSync(SESSION_DIR, { recursive: true })
   process.env.HOME = TMP_DIR
   process.env.USERPROFILE = TMP_DIR
-  const mod = await import('../../commands/backfill-sessions/index.js')
+  const mod = await import('../../commands/backfill-sessions/index.ts')
   call = async (args: string) => {
     const m = await mod.default.load()
     return m.call(args)

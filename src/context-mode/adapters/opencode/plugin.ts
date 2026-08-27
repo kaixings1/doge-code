@@ -32,6 +32,7 @@ import { buildResumeSnapshot } from "../../session/snapshot.js";
 import type { SessionEvent } from "../../types.js";
 import { AdapterPlatformType, OpenCodeAdapter } from "./index.js";
 import { PLATFORM_ENV_VARS } from "../detect.js";
+import { z } from "zod/v4";
 import { zod3ShapeToV4 } from "./zod3tov4.js";
 
 // ── Types ─────────────────────────────────────────────────
@@ -423,8 +424,13 @@ async function createContextModePlugin(ctx: PluginContext) {
       // Both KiloCode and recent OpenCode bundle Zod v4 in-host; v3 schemas
       // crash with `n._zod.def` undefined. Gate widened from kilo-only (#632)
       // because every consumer of this file is an OpenCode-family host.
-      const argsForHost = zod3ShapeToV4(shape as Record<string, unknown>);
+      const convertedShape = zod3ShapeToV4(shape as Record<string, unknown>);
+      const argsForHost = z.object(convertedShape);
 
+      // Wrap the converted shape in z.object() so the result carries the
+      // internal `_zod` property that OpenCode/KiloCode expect. Without this,
+      // the host accesses `args._zod.def` and crashes because the plain object
+      // returned by zod3ShapeToV4 has no such property.
       tools[registered.name] = {
         description: String(config.description ?? ""),
         args: argsForHost,
@@ -436,20 +442,16 @@ async function createContextModePlugin(ctx: PluginContext) {
           // as the MCP SDK (server/mcp.js safeParseAsync at line 174). This
           // applies z.preprocess() coercions, populates .default() values,
           // and produces the validation error the handler expects (#621).
-          let parsedArgs: Record<string, unknown> = args ?? {};
-          if (typeof inputSchema?.parse === "function") {
-            try {
-              parsedArgs = inputSchema.parse(args ?? {}) as Record<string, unknown>;
-            } catch (err) {
-              // Surface validation failures with a clear, actionable message
-              // (mirrors MCP SDK error format) instead of a downstream
-              // "x.map is not a function" crash.
-              const message = err instanceof Error ? err.message : String(err);
-              throw new Error(
-                `Invalid arguments for ${registered.name}: ${message}`,
-              );
-            }
+          const parsed = argsForHost.safeParse(args ?? {});
+          if (!parsed.success) {
+            const message = parsed.error.issues
+              .map((e: { message?: string }) => e.message ?? String(e))
+              .join("; ");
+            throw new Error(
+              `Invalid arguments for ${registered.name}: ${message}`,
+            );
           }
+          const parsedArgs = parsed.data as Record<string, unknown>;
 
           const result = await mod.withProjectDirOverride({ projectDir: project, sessionId: toolCtx.sessionID }, async () =>
             registered.handler(parsedArgs),

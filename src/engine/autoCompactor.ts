@@ -52,6 +52,8 @@ export interface CompactOptions {
   preserveRecentCount: number;
   preserveSystemMessages: boolean;
   preserveToolResults?: boolean;
+  /** 吸收自 Hermes Agent 程序化记忆：摘要时注入相关记忆上下文 */
+  memoryContext?: string[]
 }
 
 export interface CompactStrategy {
@@ -80,9 +82,14 @@ export class SummaryStrategy implements CompactStrategy {
     const old = nonSys.slice(0, -options.preserveRecentCount);
     if (old.length === 0) return [...system, ...recent];
 
-    // 有 LLM client 时生成真实摘要，否则回退到占位摘要
+    // 吸收自 Hermes Agent 程序化记忆：注入相关记忆上下文到摘要 prompt
+    const memoryContext = options.memoryContext?.length
+      ? `\n\n[相关记忆]\n${options.memoryContext.join('\n')}`
+      : ''
+
+    // 有 LLM client 时生成真��摘要，否则回退到占位摘要
     const summary = this._llmClient
-      ? await this.generateSummaryWithLLM(old)
+      ? await this.generateSummaryWithLLM(old, memoryContext)
       : await this.generateSummaryFallback(old);
 
     return [...system, { role: "system", content: `[会话摘要]\n${summary}` }, ...recent];
@@ -92,10 +99,10 @@ export class SummaryStrategy implements CompactStrategy {
    * 通过 LLM 生成摘要（对齐 OpenCode Summarize prompt）。
    * 将旧消息 + 摘要 prompt 发给模型，提取摘要内容。
    */
-  private async generateSummaryWithLLM(messages: InternalMessage[]): Promise<string> {
+  private async generateSummaryWithLLM(messages: InternalMessage[], memoryContext = ''): Promise<string> {
     if (!this._llmClient) return this.generateSummaryFallback(messages);
 
-    const summarizePrompt = "Create a comprehensive summary of this conversation that captures all essential information needed to continue the work seamlessly. Structure your response to preserve technical accuracy and context continuity.\n\nYour summary should include:\n\n1. **Conversation Overview**: Describe the main topic and progression of the discussion.\n2. **Active Development**: Detail what was being implemented, modified, or debugged most recently. Include specific technical approaches.\n3. **Technical Stack**: List all relevant technologies, frameworks, libraries, coding patterns, and architectural decisions discussed.\n4. **File Operations**: Document all files that were created, modified, or referenced, including their purposes and key changes. Include important code snippets and their locations.\n5. **Solutions & Troubleshooting**: Summarize problems encountered and how they were resolved, including any debugging steps or workarounds.\n6. **Outstanding Work**: Clearly identify any incomplete tasks, pending implementations, or next steps that were discussed.\n\nFocus on technical precision and include specific identifiers (file paths, function names, class names, etc.) that would be essential for continuation. Write in third person and maintain an objective, technical tone.";
+    const summarizePrompt = "Create a comprehensive summary of this conversation that captures all essential information needed to continue the work seamlessly. Structure your response to preserve technical accuracy and context continuity.\n\nYour summary should include:\n\n1. **Conversation Overview**: Describe the main topic and progression of the discussion.\n2. **Active Development**: Detail what was being implemented, modified, or debugged most recently. Include specific technical approaches.\n3. **Technical Stack**: List all relevant technologies, frameworks, libraries, coding patterns, and architectural decisions discussed.\n4. **File Operations**: Document all files that were created, modified, or referenced, including their purposes and key changes. Include important code snippets and their locations.\n5. **Solutions & Troubleshooting**: Summarize problems encountered and how they were resolved, including any debugging steps or workarounds.\n6. **Outstanding Work**: Clearly identify any incomplete tasks, pending implementations, or next steps that were discussed.\n\nFocus on technical precision and include specific identifiers (file paths, function names, class names, etc.) that would be essential for continuation. Write in third person and maintain an objective, technical tone." + memoryContext;
 
     const contextMsgs: InternalMessage[] = [
       ...messages,

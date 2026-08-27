@@ -177,6 +177,28 @@ export const lspToolInputSchema = lazySchema(() => {
       .describe('字符偏移量（从 1 开始，与编辑器显示一致）'),
   })
 
+  /**
+   * List Diagnostics operation
+   * Queries the LSP diagnostic registry for available diagnostics.
+   * Optionally filter by filePath. Does not require line/character.
+   */
+  const listDiagnosticsSchema = z.strictObject({
+    operation: z.literal('listDiagnostics'),
+    filePath: z.string().describe('要查询诊断的文件路径（可选，留空则返回所有文件）'),
+    line: z
+      .number()
+      .int()
+      .positive()
+      .optional()
+      .describe('行号（可选）'),
+    character: z
+      .number()
+      .int()
+      .positive()
+      .optional()
+      .describe('字符偏移量（可选）'),
+  })
+
   return z.discriminatedUnion('operation', [
     goToDefinitionSchema,
     findReferencesSchema,
@@ -187,6 +209,7 @@ export const lspToolInputSchema = lazySchema(() => {
     prepareCallHierarchySchema,
     incomingCallsSchema,
     outgoingCallsSchema,
+    listDiagnosticsSchema,
   ])
 })
 
@@ -211,5 +234,6 @@ export function isValidLSPOperation(
     'prepareCallHierarchy',
     'incomingCalls',
     'outgoingCalls',
+    'listDiagnostics',
   ].includes(operation)
 }

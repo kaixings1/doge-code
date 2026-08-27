@@ -12,6 +12,7 @@ export const DESCRIPTION = `与语言服务器协议 (LSP) 服务器交互，获
 - prepareCallHierarchy：获取指定位置的调用层次项（函数/方法）
 - incomingCalls：查找调用指定位置函数/方法的所有函数/方法
 - outgoingCalls：查找被指定位置函数/方法调用的所有函数/方法
+- listDiagnostics：列出 LSP 诊断信息（错误、警告、提示），可指定文件过滤
 
 所有操作都需要：
 - filePath：要操作的文件路径

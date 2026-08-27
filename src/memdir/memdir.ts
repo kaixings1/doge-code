@@ -27,6 +27,7 @@ import {
   MEMORY_FRONTMATTER_EXAMPLE,
   TRUSTING_RECALL_SECTION,
   TYPES_SECTION_INDIVIDUAL,
+	TYPES_SECTION_CONCISE,
   WHAT_NOT_TO_SAVE_SECTION,
   WHEN_TO_ACCESS_SECTION,
 } from './memoryTypes.js'
@@ -195,7 +196,61 @@ export function buildMemoryLines(
   memoryDir: string,
   extraGuidelines?: string[],
   skipIndex = false,
+  concise = false,
 ): string[] {
+	logForDebugging('buildMemoryLines0')
+  if (concise) {
+    const lines: string[] = [
+      `# ${displayName}`,
+      '',
+      `基于文件的持久记忆系统：\`${memoryDir}\`。${DIR_EXISTS_GUIDANCE}`,
+      '',
+      '你应该随着时间的推移建立这个记忆系统，以便未来的对话能够全面了解用户是谁、他们希望如何与你协作、要避免或重复哪些行为，以及你为用户所做工作的背景信息。',
+      '',
+      '如果用户明确要求你记住某些内容，请立即将其保存为最合适的类型。如果他们要求你忘记某些内容，请找到并删除相关条目。',
+      '',
+      ...TYPES_SECTION_CONCISE,
+      '',
+      '## 不应保存到记忆的内容',
+      '',
+      '- 代码模式、约定、架构、文件路径或项目结构 — 这些可通过读取当前项目状态获得。',
+      '- Git 历史、最近更改或谁改了什么 — git log / git blame 是权威来源。',
+      '- 调试解决方案或修复配方 — 修复在代码中；提交消息有上下文。',
+      '- 已在 CLAUDE.md 文件中记录的任何内容。',
+      '- 临时任务详情：进行中的工作、临时状态、当前对话上下文。',
+      '',
+      '即使用户明确要求保存，这些排除也适用。如果要求保存 PR 列表或活动摘要，请问其中什么是*令人惊讶*或*不明显*的 — 那才是值得保留的部分。',
+      '',
+    ]
+		logForDebugging('buildMemoryLines00')
+    if (!skipIndex) {
+      lines.push(
+        '',
+        '## 索引',
+        `在 \`${ENTRYPOINT_NAME}\` 中添加简短指针条目（一行，<150 字符）。不要直接编辑主题文件。`,
+      )
+    }
+    lines.push('', ...whenToAccessConcise, '')
+    lines.push('', ...trustingRecallConcise, '')
+    lines.push('', ...(extraGuidelines ?? []), '')
+    logForDebugging('buildMemoryLines1')
+		return lines
+  }
+
+  const whenToAccessConcise = [
+    '## 何时访问记忆',
+    '- 当记忆看起来相关时，或者用户提到了之前对话中的工作。',
+    '- 当用户明确要求你检查、召回或记住时，你必须访问记忆。',
+    '- 如果用户说*忽略*或*不要使用*记忆：就像 MEMORY.md 是空的一样继续。不要应用记住的事实、引用、对比或提及记忆内容。',
+    '- 记忆记录可能随时间变得陈旧。在回答之前通过阅读文件或资源的当前状态来验证记忆是否仍然正确。',
+  ]
+
+  const trustingRecallConcise = [
+    '## 在从记忆中推荐之前',
+    '命名了具体函�、文件或标志的记忆是一个声明，表示它在*记忆写入时*存在。它可能已被重命名、删除或从未合并。在推荐它之前检查文件是否存在、用 grep 搜索函数或标志。',
+    '总结仓库状态的记忆是冻结在时间中的。如果用户询问*最近*或*当前*状态，请优先使用 git log 或阅读代码。',
+  ]
+
   const howToSave = skipIndex
     ? [
         '## 如何保存记忆',
@@ -253,9 +308,9 @@ export function buildMemoryLines(
     ...(extraGuidelines ?? []),
     '',
   ]
-
+logForDebugging('buildMemoryLines10')
   lines.push(...buildSearchingPastContextSection(memoryDir))
-
+logForDebugging('buildMemoryLines20')
   return lines
 }
 
@@ -267,8 +322,9 @@ export function buildMemoryPrompt(params: {
   displayName: string
   memoryDir: string
   extraGuidelines?: string[]
+  concise?: boolean
 }): string {
-  const { displayName, memoryDir, extraGuidelines } = params
+  const { displayName, memoryDir, extraGuidelines, concise } = params
   const fs = getFsImplementation()
   const entrypoint = memoryDir + ENTRYPOINT_NAME
 
@@ -284,7 +340,7 @@ export function buildMemoryPrompt(params: {
     // 尚无记忆文件
   }
 
-  const lines = buildMemoryLines(displayName, memoryDir, extraGuidelines)
+  const lines = buildMemoryLines(displayName, memoryDir, extraGuidelines, false, concise)
 
   if (entrypointContent.trim()) {
     const t = truncateEntrypointContent(entrypointContent)
@@ -408,14 +464,14 @@ export function buildSearchingPastContextSection(autoMemDir: string): string[] {
  *
  * 当 auto memory 禁用时返回 null。
  */
-export async function loadMemoryPrompt(): Promise<string | null> {
+export async function loadMemoryPrompt(concise = false): Promise<string | null> {
   const autoEnabled = isAutoMemoryEnabled()
 
   const skipIndex = getFeatureValue_CACHED_MAY_BE_STALE(
     'tengu_moth_copse',
     false,
   )
-
+	logForDebugging('loadMemoryPrompt1')
   // KAIROS 每日日志模式优先于 TEAMMEM：仅追加的日志范式
   // 与 team 同步不兼容（team 同步期望一个双方都读写的共享 MEMORY.md）。
   // 这里对 `autoEnabled` 进行门控意味着 !autoEnabled 情况会落入
@@ -425,6 +481,7 @@ export async function loadMemoryPrompt(): Promise<string | null> {
       memory_type:
         'auto' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
     })
+		logForDebugging('loadMemoryPrompt2')
     return buildAssistantDailyLogPrompt(skipIndex)
   }
 
@@ -435,7 +492,7 @@ export async function loadMemoryPrompt(): Promise<string | null> {
     coworkExtraGuidelines && coworkExtraGuidelines.trim().length > 0
       ? [coworkExtraGuidelines]
       : undefined
-
+	logForDebugging('loadMemoryPrompt3')
   if (feature('TEAMMEM')) {
     if (teamMemPaths!.isTeamMemoryEnabled()) {
       const autoDir = getAutoMemPath()
@@ -455,10 +512,13 @@ export async function loadMemoryPrompt(): Promise<string | null> {
         memory_type:
           'team' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
       })
-      return teamMemPrompts!.buildCombinedMemoryPrompt(
-        extraGuidelines,
-        skipIndex,
-      )
+				logForDebugging('loadMemoryPrompt4')
+			const combined = teamMemPrompts!.buildCombinedMemoryPrompt(
+				extraGuidelines,
+				skipIndex,
+				concise,
+			)
+			return Array.isArray(combined) ? combined.join('\n') : combined
     }
   }
 
@@ -471,11 +531,13 @@ export async function loadMemoryPrompt(): Promise<string | null> {
       memory_type:
         'auto' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
     })
+			logForDebugging('loadMemoryPrompt5')
     return buildMemoryLines(
       'auto memory',
       autoDir,
       extraGuidelines,
       skipIndex,
+      concise,
     ).join('\n')
   }
 
@@ -493,5 +555,6 @@ export async function loadMemoryPrompt(): Promise<string | null> {
   if (getFeatureValue_CACHED_MAY_BE_STALE('tengu_herring_clock', false)) {
     logEvent('tengu_team_memdir_disabled', {})
   }
+		logForDebugging('loadMemoryPrompt6')
   return null
 }

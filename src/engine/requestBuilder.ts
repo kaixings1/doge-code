@@ -25,11 +25,14 @@ export interface RequestParams {
   preAnalysis?: Array<{ type: string; message: string; line?: number }>;
   /** Harness 适配配置（吸收自 open-interpreter harness 系统） */
   harness?: HarnessConfig
+  /** 模型标识符（吸收自 Reasonix prefix-cache）：用于路由和缓存键的稳定 ID，区别于 display model 名称 */
+  modelId?: string
 }
 
 export interface APIRequest {
   provider: "anthropic" | "openai" | "google" | "azure" | "bedrock" | "vertexai" | "copilot" | "groq" | "openrouter" | "local" | "xai";
-  system?: string;
+  /** 系统提示词（string 或带 cache_control 的对象数组，吸收自 Reasonix prefix-cache） */
+  system?: string | Array<{ type: 'text'; text: string; cache_control?: { type: string } }>;
   messages: { role: string; content: unknown }[];
   tools?: unknown;
   model: string;
@@ -90,9 +93,17 @@ export class RequestBuilder {
     // 构建基础请求
     let request: APIRequest
     if (provider === "anthropic") {
+      // Prefix-cache 稳定性（吸收自 Reasonix）：在 system prompt 末尾添加 cache_control 断点
+      // 确保 system prompt 的前缀被缓存，减少重复 token 成本
+      const systemWithCacheControl = systemPrompt.length > 100
+        ? [
+            { type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } },
+          ]
+        : systemPrompt
+
       request = {
         provider,
-        system: systemPrompt,
+        system: systemWithCacheControl,
         messages,
         tools: params.tools,
         ...modelParams,

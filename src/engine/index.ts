@@ -21,6 +21,8 @@ import { GitContextInjector, type GitContextConfig } from "./gitContext.ts";
 import { HarnessRouter, type HarnessConfig, type HarnessAdapter } from "./harnessAdapter.ts";
 import { createSandboxedExecutor, type SandboxConfig, type SandboxPolicy, getDefaultSandboxPolicy, createDefaultSandboxConfig } from "./sandbox/index.ts";
 import { HookManager } from "./hooks/hookManager.js";
+// 导入确定性编辑锚点（吸收自 oh-my-pi Hash-anchored edits）
+import { verifyEditAnchor } from '../utils/fileHash.js';
 // 导入 ToolRegistry 桥接器（吸收 OpenManus 精华：统一工具注册/发现/执行）
 import { buildToolRegistry } from '../tools/ToolCollectionTool/buildRegistry.js';
 // 导入工具注册表（复用 src/tools.ts 中 buildTool() 构建的完整工具实例）
@@ -170,6 +172,36 @@ export class QueryEngine {
       },
     };
 
+    // Self-healing 执行器包装链（吸收自 Browser-Use self-healing harness）
+    const selfHealingExecutor: ToolExecutor = {
+      async execute(tool, input, _o) {
+        const MAX_RETRIES = 2
+        const RETRYABLE = /stale|concurrent|modified|changed|race|enoent/i
+        let lastError = ''
+
+        for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+          try {
+            return await rawExecutor.execute(tool, input, _o)
+          } catch (e) {
+            const msg = e instanceof Error ? e.message : String(e)
+            lastError = msg
+            if (attempt < MAX_RETRIES && RETRYABLE.test(msg)) {
+              const fp = (input as any)?.file_path as string
+              if (fp) {
+                const os = (input as any)?.old_string as string
+                if (os && !verifyEditAnchor(fp, os)) {
+                  throw new Error(`编辑锚点失效（文件已被外部修改）：${fp}`)
+                }
+              }
+              continue
+            }
+            throw e
+          }
+        }
+        throw new Error(`Self-healing 重试耗尽（${MAX_RETRIES} 次）：${lastError}`)
+      },
+    }
+
     // 沙箱执行器包装链：createSandboxedExecutor 包装原始 executor（吸收自 open-interpreter sandboxing）
     const sandboxConfig: SandboxConfig = opts.sandbox
       ? {
@@ -178,11 +210,14 @@ export class QueryEngine {
           onDeny: opts.sandbox.onDeny ?? 'warn',
         }
       : createDefaultSandboxConfig(false)
-    const executor: ToolExecutor = createSandboxedExecutor(rawExecutor, sandboxConfig)
+    // 链式包装：rawExecutor → self-healing → sandbox
+    const sandboxExecutor = createSandboxedExecutor(selfHealingExecutor, sandboxConfig)
+    const executor: ToolExecutor = sandboxExecutor
     const registry = opts.tools ?? this.buildRegistry();
-    const toolScheduler = new ToolScheduler(registry, permissionManager, executor);
 
+    // 先创建 ErrorRecovery，以便注入到 ToolScheduler 的熔断器集成
     this.recovery = new ErrorRecovery(this.stateMachine, this.retryHandler, this.autoCompactor, opts.circuitBreaker);
+    const toolScheduler = new ToolScheduler(registry, permissionManager, executor, this.recovery);
     // 初始化统一工具注册表（吸收 OpenManus 精华）
     this.toolRegistry = buildToolRegistry(registry);
     this.conversation = this._conversation;
@@ -384,6 +419,41 @@ export class QueryEngine {
 
   getState(): string {
     return this.stateMachine.state;
+  }
+
+  /** Human-in-the-loop：暂停引擎执行，等待用户干预后恢复（吸收自 CrewAI Human-in-the-loop） */
+  pause(reason?: string): void {
+    this.messageLoop.pause(reason)
+  }
+
+  /** Human-in-the-loop：从暂停恢复执行 */
+  resume(input?: string): void {
+    this.messageLoop.resume(input)
+  }
+
+  /** 检查引擎是否处于暂停状态 */
+  isPaused(): boolean {
+    return this.messageLoop.isPaused()
+  }
+
+  /** 检查指定工具的熔断器是否打开（吸收自 error-coordinator 熔断器模式） */
+  isCircuitOpen(toolName: string): boolean {
+    return this.recovery.isCircuitOpen(toolName)
+  }
+
+  /** 获取指定工具的熔断器状态 */
+  getCircuitState(toolName: string) {
+    return this.recovery.getCircuitState(toolName)
+  }
+
+  /** 重置指定工具的熔断器 */
+  resetCircuit(toolName: string): void {
+    this.recovery.resetCircuit(toolName)
+  }
+
+  /** 重置所有熔断器 */
+  resetAllCircuits(): void {
+    this.recovery.resetAllCircuits()
   }
 
   getTools(): ToolDefinition[] {

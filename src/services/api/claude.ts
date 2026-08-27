@@ -1210,40 +1210,35 @@ async function* queryModel(
       }
     }
 
-    if (isSimpleConversationMessage(lastUserMessage)) {
-      // For simple conversations, use only message-filtered tools.
-      // Always include tools already used in conversation history so the model
-      // can continue using them without needing rediscovery.
-      const previouslyUsedToolNames = new Set<string>()
-      for (const msg of messages) {
-        if (msg.type === 'assistant') {
-          const content = msg.message?.content
-          if (Array.isArray(content)) {
-            for (const block of content) {
-              if (
-                typeof block === 'object' &&
-                block !== null &&
-                block.type === 'tool_use' &&
-                'name' in block &&
-                typeof block.name === 'string'
-              ) {
-                previouslyUsedToolNames.add(block.name)
-              }
+    // Apply message-based tool filtering for all conversations.
+    // This reduces token overhead by only including tools relevant to the
+    // user's message content, rather than sending all 60+ tool definitions.
+    // See: filterToolsForMessage in utils/toolSearch.ts for keyword-based filtering.
+    const previouslyUsedToolNames = new Set<string>()
+    for (const msg of messages) {
+      if (msg.type === 'assistant') {
+        const content = msg.message?.content
+        if (Array.isArray(content)) {
+          for (const block of content) {
+            if (
+              typeof block === 'object' &&
+              block !== null &&
+              block.type === 'tool_use' &&
+              'name' in block &&
+              typeof block.name === 'string'
+            ) {
+              previouslyUsedToolNames.add(block.name)
             }
           }
         }
       }
-      const baseFiltered = filterToolsForMessage(tools, lastUserMessage)
-      const baseFilteredNames = new Set(baseFiltered.map(t => t.name))
-      // Union: message-filtered tools + previously used tools
-      filteredTools = tools.filter(
-        t => baseFilteredNames.has(t.name) || previouslyUsedToolNames.has(t.name),
-      )
-    } else {
-      filteredTools = tools.filter(
-        t => !toolMatchesName(t, TOOL_SEARCH_TOOL_NAME),
-      )
     }
+    const baseFiltered = filterToolsForMessage(tools, lastUserMessage)
+    const baseFilteredNames = new Set(baseFiltered.map(t => t.name))
+    // Union: message-filtered tools + previously used tools
+    filteredTools = tools.filter(
+      t => baseFilteredNames.has(t.name) || previouslyUsedToolNames.has(t.name),
+    )
   }
 
   // 如果启用了工具搜索，添加工具搜索 beta 头 - defer_loading 被接受所必需
@@ -1973,13 +1968,11 @@ async (anthropic, attempt, context) => {
           }
           const retryNonce = Date.now().toString() + "." + attempt.toString() + "." + Math.random().toString(36).slice(2, 8)
           logForDebugging("[claude] 原始 baseURL: " + baseURL, { level: "debug" });
-          // Strip /v1/chat/completions if already present to avoid double path
-          const cleanBaseURL = baseURL.replace(/\/v1\/(chat\/completions|messages)\/?$/, '')
-          logForDebugging("[claude] 清理后 cleanBaseURL: " + cleanBaseURL, { level: "debug" });
+          // OpenAI 兼容模式：baseURL 是完整请求地址，直接原样传递
           const reader = await createOpenAICompatStream(
             {
               apiKey: process.env.DOGE_API_KEY || '',
-              baseURL: baseURL,  //process.env.ANTHROPIC_BASE_URL || '',
+              baseURL: baseURL,
               headers: clientRequestId
                 ? { [CLIENT_REQUEST_ID_HEADER]: clientRequestId }
                 : void 0,
@@ -3469,6 +3462,11 @@ export async function queryHaiku({
         options: {
           ...options,
           model: getSmallFastModel(),
+          // 修复：Haiku 标题生成/辅助请求必须使用交互式会话模式，
+          // 避免 getCLISyspromptPrefix 注入非交互式精简前缀，
+          // 也避免主查询的非交互式分支影响 system prompt 组装。
+          isNonInteractiveSession: false,
+          hasAppendSystemPrompt: false,
           enablePromptCaching: options.enablePromptCaching ?? false,
           outputFormat,
           async getToolPermissionContext() {

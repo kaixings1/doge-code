@@ -51,8 +51,10 @@ export async function resolveSystemPromptSections(
         return cache.get(s.name) ?? null
       }
       const value = await s.compute()
-      setSystemPromptSectionCacheEntry(s.name, value)
-      return value
+			const normalizedValue =
+			Array.isArray(value) ? value.join('\n') : value == null ? null : value
+		setSystemPromptSectionCacheEntry(s.name, normalizedValue)
+		return normalizedValue
     }),
   )
 }

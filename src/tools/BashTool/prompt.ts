@@ -33,6 +33,9 @@ export function getMaxTimeoutMs(): number {
   return getMaxBashTimeoutMs()
 }
 
+const NO_PS_CMD_INSTRUCTION =
+  '绝不要使用 PowerShell 语法（Get-ChildItem、Where-Object、Select-Object 等）或 Windows CMD 命令（dir、type、del）。仅使用 Unix/bash 命令（ls、grep、cat、find 等）。'
+
 function getShellToolDescription(): string {
   const shell = process.env.CLAUDE_CODE_SHELL || process.env.SHELL || ''
   const shim = shell.toLowerCase()
@@ -43,7 +46,7 @@ function getShellToolDescription(): string {
     return [
       "工作目录在命令之间保持不变，但 shell 状态不会保留。Shell 环境从用户的配置文件（bash 或 zsh）初始化。",
       '',
-      '关键：此工具始终使用 bash/zsh shell——绝不要使用 PowerShell 语法（Get-ChildItem、Where-Object、Select-Object 等）或 Windows CMD 命令（dir、type、del）。仅使用 Unix/bash 命令（ls、grep、cat、find 等）。',
+      `关键：此工具始终使用 bash/zsh shell——${NO_PS_CMD_INSTRUCTION}`,
       '',
       '关键：尽管此工具使用 bash，但底层文件系统是原生操作系统文件系统。对于临时文件，请使用 /tmp 目录。',
     ].join('\n')
@@ -54,7 +57,7 @@ function getShellToolDescription(): string {
     return [
       "工作目录在命令之间保持不变，但 shell 状态不会保留。Shell 环境从用户的配置文件（bash 或 zsh）初始化。",
       '',
-      '关键：此工具运行于 MSYS2/Git Bash 环境下的 bash/zsh shell。请使用 Unix/bash 命令（ls、grep、cat、find 等）。绝不要使用 PowerShell 语法（Get-ChildItem、Where-Object、Select-Object 等）或 Windows CMD 命令（dir、type、del）。',
+      `关键：此工具运行于 MSYS2/Git Bash 环境下的 bash/zsh shell。${NO_PS_CMD_INSTRUCTION}`,
       '',
       '关键：底层文件系统是 Windows 原生文件系统。请使用 Windows 路径（例如 D:/doge-code/file.txt 或 "D:\\doge-code\\file.txt"），而不是像 /tmp、/dev、/etc 这样的 Linux 路径。bash 环境在 Git Bash/MSYS2 下运行，它会转换路径——但您应始终使用实际的 Windows 路径。对于临时文件，不要使用 /tmp——请使用当前工作目录或等效的 %TEMP%。',
     ].join('\n')

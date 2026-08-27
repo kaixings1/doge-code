@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2D Physics Playground</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #1a1a2e; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+
+#toolbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(22, 33, 62, 0.95); padding: 8px 16px;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  border-bottom: 1px solid #0f3460;
+}
+
+.tool-group {
+  display: flex; gap: 4px; align-items: center;
+  padding: 0 8px;
+  border-right: 1px solid #0f3460;
+}
+.tool-group:last-child { border-right: none; }
+
+.tool-label {
+  font-size: 11px; color: #888; text-transform: uppercase;
+  letter-spacing: 0.5px; margin-right: 4px;
+}
+
+.tool-btn {
+  background: #16213e; border: 1px solid #0f3460; color: #e0e0e0;
+  padding: 6px 12px; border-radius: 4px; cursor: pointer;
+  font-size: 13px; transition: all 0.15s;
+}
+.tool-btn:hover { background: #0f3460; border-color: #533483; }
+.tool-btn.active { background: #533483; border-color: #e94560; color: #fff; }
+.tool-btn.danger { background: #3a1525; border-color: #e94560; }
+.tool-btn.danger:hover { background: #e94560; color: #fff; }
+
+#canvas { display: block; }
+
+#info-panel {
+  position: fixed; bottom: 10px; left: 10px;
+  background: rgba(22, 33, 62, 0.9); padding: 8px 12px;
+  border-radius: 4px; font-size: 12px; color: #888;
+  border: 1px solid #0f3460; z-index: 100;
+  max-width: 400px;
+}
+#info-panel span { color: #e0e0e0; }
+
+.help-hint {
+  position: fixed; bottom: 10px; right: 10px;
+  background: rgba(22, 33, 62, 0.9); padding: 8px 12px;
+  border-radius: 4px; font-size: 11px; color: #666;
+  border: 1px solid #0f3460; z-index: 100;
+}
+</style>
+</head>
+<body>
+
+<div id="toolbar">
+  <div class="tool-group">
+    <span class="tool-label">形状</span>
+    <button class="tool-btn active" data-tool="select">🖱️ 选择</button>
+    <button class="tool-btn" data-tool="box">⬜ 方块</button>
+    <button class="tool-btn" data-tool="circle">⭕ 圆形</button>
+    <button class="tool-btn" data-tool="triangle">🔺 三角</button>
+  </div>
+  <div class="tool-group">
+    <span class="tool-label">约束</span>
+    <button class="tool-btn" data-tool="spring">〰️ 弹簧</button>
+    <button class="tool-btn" data-tool="pin">📌 固定点</button>
+  </div>
+  <div class="tool-group">
+    <span class="tool-label">显示</span>
+    <button class="tool-btn" id="btn-show-vectors">向量: 开</button>
+    <button class="tool-btn" id="btn-show-labels">标签: 开</button>
+    <button class="tool-btn" id="btn-pause">⏸️ 暂停</button>
+  </div>
+  <div class="tool-group">
+    <button class="tool-btn danger" id="btn-clear">🗑️ 清空</button>
+  </div>
+</div>
+
+<div id="info-panel">
+  物体: <span id="body-count">0</span> |
+  约束: <span id="constraint-count">0</span> |
+  工具: <span id="current-tool">选择</span> |
+  点击拖拽移动物体 | 约束: 依次点击两个物体
+</div>
+
+<div class="help-hint">
+  拖拽移动物体 | 弹簧工具: 点击两个物体创建约束 | 固定点: 点击物体然后点击地面
+</div>
+
+<canvas id="canvas"></canvas>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+<script>
+// ===== Physics Engine Setup =====
+const { Engine, Render, Runner, Bodies, Body, Composite, Constraint, Mouse, MouseConstraint, Events, Vector, Common } = Matter;
+
+const canvas = document.getElementById('canvas');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const engine = Engine.create({
+  gravity: { x: 0, y: 1, scale: 0.001 }
+});
+
+const ctx = canvas.getContext('2d');
+
+// ===== State =====
+let currentTool = 'select';
+let showVectors = true;
+let showLabels = true;
+let isPaused = false;
+let springAnchor = null; // first body clicked for spring
+let pinTarget = null;    // body to pin
+
+const bodyColors = ['#e94560', '#0f3460', '#533483', '#16213e', '#00b4d8', '#f77f00'];
+let colorIndex = 0;
+
+// ===== Create Ground & Walls =====
+const ground = Bodies.rectangle(canvas.width / 2, canvas.height - 15, canvas.width, 30, {
+  isStatic: true, label: 'ground', friction: 0.8, restitution: 0.3
+});
+const wallL = Bodies.rectangle(-15, canvas.height / 2, 30, canvas.height, {
+  isStatic: true, label: 'wall'
+});
+const wallR = Bodies.rectangle(canvas.width + 15, canvas.height / 2, 30, canvas.height, {
+  isStatic: true, label: 'wall'
+});
+const ceiling = Bodies.rectangle(canvas.width / 2, -15, canvas.width, 30, {
+  isStatic: true, label: 'ceiling'
+});
+
+Composite.add(engine.world, [ground, wallL, wallR, ceiling]);
+
+// ===== Mouse Interaction =====
+const mouse = Mouse.create(canvas);
+const mouseConstraint = MouseConstraint.create(engine, {
+  mouse: mouse,
+  constraint: { stiffness: 0.2, render: { visible: false } }
+});
+Composite.add(engine.world, mouseConstraint);
+
+// Fix mouse pixel ratio
+mouse.pixelRatio = window.devicePixelRatio || 1;
+
+// ===== Helper: get next color =====
+function nextColor() {
+  const c = bodyColors[colorIndex % bodyColors.length];
+  colorIndex++;
+  return c;
+}
+
+// ===== Create Shapes =====
+function createBox(x, y) {
+  const size = 40 + Math.random() * 30;
+  const color = nextColor();
+  const body = Bodies.rectangle(x, y, size, size, {
+    friction: 0.6, restitution: 0.4, density: 0.002,
+    render: { fillStyle: color },
+    label: 'box'
+  });
+  body.customColor = color;
+  body.customLabel = '方块';
+  Composite.add(engine.world, body);
+  return body;
+}
+
+function createCircle(x, y) {
+  const radius = 20 + Math.random() * 20;
+  const color = nextColor();
+  const body = Bodies.circle(x, y, radius, {
+    friction: 0.4, restitution: 0.6, density: 0.002,
+    render: { fillStyle: color },
+    label: 'circle'
+  });
+  body.customColor = color;
+  body.customLabel = '圆形';
+  Composite.add(engine.world, body);
+  return body;
+}
+
+function createTriangle(x, y) {
+  const size = 35 + Math.random() * 15;
+  const color = nextColor();
+  const body = Bodies.polygon(x, y, 3, size, {
+    friction: 0.5, restitution: 0.3, density: 0.002,
+    render: { fillStyle: color },
+    label: 'triangle'
+  });
+  body.customColor = color;
+  body.customLabel = '三角';
+  Composite.add(engine.world, body);
+  return body;
+}
+
+// ===== Joints / Constraints =====
+function createSpring(bodyA, bodyB) {
+  const ptA = { x: bodyA.position.x, y: bodyA.position.y };
+  const ptB = { x: bodyB.position.x, y: bodyB.position.y };
+
+  const constraint = Constraint.create({
+    bodyA: bodyA,
+    pointA: { x: 0, y: 0 },
+    bodyB: bodyB,
+    pointB: { x: 0, y: 0 },
+    stiffness: 0.02,
+    damping: 0.01,
+    length: Vector.magnitude(Vector.sub(ptA, ptB)),
+    render: { strokeStyle: '#533483', lineWidth: 2 }
+  });
+  constraint.customLabel = '弹簧';
+  Composite.add(engine.world, constraint);
+  return constraint;
+}
+
+function createPinConstraint(body, pointX, pointY) {
+  const constraint = Constraint.create({
+    pointA: { x: pointX, y: pointY },
+    bodyB: body,
+    pointB: { x: 0, y: 0 },
+    stiffness: 1,
+    length: 0,
+    render: { strokeStyle: '#e94560', lineWidth: 2, type: 'line' }
+  });
+  constraint.customLabel = '固定点';
+  constraint.isPin = true;
+  Composite.add(engine.world, constraint);
+  return constraint;
+}
+
+// ===== Collision Events for Visual Annotations =====
+let collisionPairs = [];
+
+Events.on(engine, 'collisionStart', (event) => {
+  collisionPairs = event.pairs.map(p => ({
+    bodyA: p.bodyA,
+    bodyB: p.bodyB,
+    normal: p.collision.normal,
+    depth: p.collision.depth,
+    contact: p.collision.supports && p.collision.supports[0] || p.collision.contactPoints?.[0]
+  }));
+});
+
+// ===== Render =====
+function drawBody(body) {
+  if (body.isStatic && body.label === 'ground') return; // skip ground for clean look
+
+  const vertices = body.vertices;
+  ctx.beginPath();
+  ctx.moveTo(vertices[0].x, vertices[0].y);
+  for (let i = 1; i < vertices.length; i++) {
+    ctx.lineTo(vertices[i].x, vertices[i].y);
+  }
+  ctx.closePath();
+
+  // Fill
+  const fillColor = body.customColor || '#16213e';
+  ctx.fillStyle = fillColor + '99';
+  ctx.fill();
+
+  // Stroke
+  ctx.strokeStyle = fillColor;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Selection highlight
+  if (body === selectedBody) {
+    ctx.strokeStyle = '#e94560';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([5, 3]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Label
+  if (showLabels && body.customLabel && !body.isStatic) {
+    ctx.fillStyle = '#fff';
+    ctx.font = '11px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText(body.customLabel, body.position.x, body.position.y - 5);
+    if (body.id !== undefined) {
+      ctx.fillStyle = '#888';
+      ctx.font = '9px Segoe UI';
+      ctx.fillText('#' + body.id, body.position.x, body.position.y + 8);
+    }
+  }
+}
+
+function drawConstraint(c) {
+  if (!c.bodyA && !c.bodyB) return;
+
+  let pA, pB;
+  if (c.bodyA) {
+    pA = Vector.add(c.bodyA.position, c.pointA || { x: 0, y: 0 });
+  } else if (c.pointA) {
+    pA = c.pointA;
+  }
+
+  if (c.bodyB) {
+    pB = Vector.add(c.bodyB.position, c.pointB || { x: 0, y: 0 });
+  } else if (c.pointB) {
+    pB = c.pointB;
+  }
+
+  if (!pA || !pB) return;
+
+  ctx.beginPath();
+  ctx.moveTo(pA.x, pA.y);
+  ctx.lineTo(pB.x, pB.y);
+
+  if (c.isPin) {
+    ctx.strokeStyle = '#e94560';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 3]);
+  } else {
+    ctx.strokeStyle = '#533483';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([]);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Pin joint: draw anchor point
+  if (c.isPin) {
+    ctx.beginPath();
+    ctx.arc(pA.x, pA.y, 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#e94560';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  // Spring anchor point
+  if (springAnchor && c === springAnchor.constraint) {
+    ctx.beginPath();
+    ctx.arc(pA.x, pA.y, 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#533483';
+    ctx.fill();
+  }
+
+  // Label
+  if (showLabels && c.customLabel) {
+    const mx = (pA.x + pB.x) / 2;
+    const my = (pA.y + pB.y) / 2;
+    ctx.fillStyle = '#aaa';
+    ctx.font = '10px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText(c.customLabel, mx, my - 8);
+  }
+
+  // Draw normal and tangent vectors for constraints
+  if (showVectors) {
+    drawConstraintVectors(pA, pB, c);
+  }
+}
+
+function drawConstraintVectors(pA, pB, c) {
+  const dx = pB.x - pA.x;
+  const dy = pB.y - pA.y;
+  const len = Math.sqrt(dx * dx + dy * dy);
+  if (len < 1) return;
+
+  const nx = dx / len;
+  const ny = dy / len;
+  const tx = -ny;
+  const ty = nx;
+  const mx = (pA.x + pB.x) / 2;
+  const my = (pA.y + pB.y) / 2;
+  const vecScale = 0.4;
+
+  // Normal vector
+  ctx.beginPath();
+  ctx.moveTo(mx, my);
+  ctx.lineTo(mx + nx * 30 * vecScale, my + ny * 30 * vecScale);
+  ctx.strokeStyle = '#e94560';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  // Arrowhead
+  const ax = mx + nx * 30 * vecScale;
+  const ay = my + ny * 30 * vecScale;
+  ctx.beginPath();
+  ctx.moveTo(ax, ay);
+  ctx.lineTo(ax - nx * 6 + tx * 3, ay - ny * 6 + ty * 3);
+  ctx.lineTo(ax - nx * 6 - tx * 3, ay - ny * 6 - ty * 3);
+  ctx.closePath();
+  ctx.fillStyle = '#e94560';
+  ctx.fill();
+  ctx.fillStyle = '#aaa';
+  ctx.font = '9px Segoe UI';
+  ctx.fillText('N', ax + 8, ay + 3);
+
+  // Tangent vector
+  ctx.beginPath();
+  ctx.moveTo(mx, my);
+  ctx.lineTo(mx + tx * 20 * vecScale, my + ty * 20 * vecScale);
+  ctx.strokeStyle = '#00b4d8';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  const bx = mx + tx * 20 * vecScale;
+  const by = my + ty * 20 * vecScale;
+  ctx.beginPath();
+  ctx.moveTo(bx, by);
+  ctx.lineTo(bx - tx * 6 + nx * 3, by - ty * 6 + nx * 3);
+  ctx.lineTo(bx - tx * 6 - nx * 3, by - ty * 6 - nx * 3);
+  ctx.closePath();
+  ctx.fillStyle = '#00b4d8';
+  ctx.fill();
+  ctx.fillStyle = '#aaa';
+  ctx.fillText('T', bx + 8, by + 3);
+}
+
+function drawCollisionAnnotations() {
+  if (!showVectors) return;
+
+  collisionPairs.forEach(pair => {
+    if (!pair.contact && !pair.normal) return;
+
+    const contact = pair.contact || pair.contact;
+    const normal = pair.normal;
+
+    if (!contact || !normal) return;
+
+    // Draw contact point
+    ctx.beginPath();
+    ctx.arc(contact.x, contact.y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#f77f00';
+    ctx.fill();
+
+    // Draw normal vector
+    const nLen = 40;
+    ctx.beginPath();
+    ctx.moveTo(contact.x, contact.y);
+    ctx.lineTo(contact.x + normal.x * nLen, contact.y + normal.y * nLen);
+    ctx.strokeStyle = '#e94560';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Arrowhead
+    const ex = contact.x + normal.x * nLen;
+    const ey = contact.y + normal.y * nLen;
+    const nx = normal.x, ny = normal.y;
+    const tx = -ny, ty = nx;
+    ctx.beginPath();
+    ctx.moveTo(ex, ey);
+    ctx.lineTo(ex - nx * 8 + tx * 4, ey - ny * 8 + ty * 4);
+    ctx.lineTo(ex - nx * 8 - tx * 4, ey - ny * 8 - ty * 4);
+    ctx.closePath();
+    ctx.fillStyle = '#e94560';
+    ctx.fill();
+
+    // Tangent
+    const tLen = 30;
+    ctx.beginPath();
+    ctx.moveTo(contact.x, contact.y);
+    ctx.lineTo(contact.x + tx * tLen, contact.y + ty * tLen);
+    ctx.strokeStyle = '#00b4d8';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = '#aaa';
+    ctx.font = '10px Segoe UI';
+    ctx.fillText('N', ex + 8, ey + 3);
+    ctx.fillText('T', contact.x + tx * tLen + 8, contact.y + ty * tLen + 3);
+  });
+}
+
+function drawGravityVector() {
+  if (!showVectors) return;
+  const bodies = Composite.allBodies(engine.world).filter(b => !b.isStatic);
+  if (bodies.length === 0) return;
+
+  const gravity = engine.gravity;
+  const gMag = gravity.y * 100;
+
+  bodies.forEach((body, i) => {
+    const scale = 0.3;
+    const gx = gravity.x * 20 * scale;
+    const gy = gravity.y * 20 * scale;
+    const startX = body.position.x;
+    const startY = body.position.y - 25;
+
+    ctx.beginPath();
+    ctx.moveTo(startX, startY);
+    ctx.lineTo(startX + gx * 5, startY + gy * 5);
+    ctx.strokeStyle = '#f77f00';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([3, 3]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // G label
+    ctx.fillStyle = '#f77f00';
+    ctx.font = '9px Segoe UI';
+    ctx.fillText('g', startX + gx * 5 + 5, startY + gy * 5);
+  });
+}
+
+function drawVelocityVectors() {
+  if (!showVectors) return;
+  const bodies = Composite.allBodies(engine.world).filter(b => !b.isStatic && b.speed > 0.5);
+
+  bodies.forEach(body => {
+    const vx = body.velocity.x;
+    const vy = body.velocity.y;
+    const scale = 8;
+    const ex = body.position.x + vx * scale;
+    const ey = body.position.y + vy * scale;
+    const len = Math.sqrt(vx * vx + vy * vy) * scale;
+    const nx = vx * scale / len;
+    const ny = vy * scale / len;
+
+    ctx.beginPath();
+    ctx.moveTo(body.position.x, body.position.y);
+    ctx.lineTo(ex, ey);
+    ctx.strokeStyle = '#00ff88';
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.7;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  });
+}
+
+function render() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw ground
+  ctx.fillStyle = '#16213e';
+  ctx.fillRect(0, canvas.height - 30, canvas.width, 30);
+  ctx.strokeStyle = '#0f3460';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, canvas.height - 30);
+  ctx.lineTo(canvas.width, canvas.height - 30);
+  ctx.stroke();
+
+  // Draw constraints
+  const constraints = Composite.allConstraints(engine.world);
+  constraints.forEach(c => drawConstraint(c));
+
+  // Draw bodies
+  const bodies = Composite.allBodies(engine.world);
+  bodies.forEach(b => drawBody(b));
+
+  // Draw collision annotations
+  drawCollisionAnnotations();
+
+  // Draw velocity vectors
+  drawVelocityVectors();
+
+  // Draw gravity indicators
+  drawGravityVector();
+
+  // Draw spring creation preview
+  if (springAnchor) {
+    ctx.beginPath();
+    ctx.arc(springAnchor.body.position.x, springAnchor.body.position.y, 30, 0, Math.PI * 2);
+    ctx.strokeStyle = '#533483';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Pin preview
+  if (pinTarget) {
+    ctx.beginPath();
+    ctx.arc(pinTarget.position.x, pinTarget.position.y, 30, 0, Math.PI * 2);
+    ctx.strokeStyle = '#e94560';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // HUD
+  document.getElementById('body-count').textContent = bodies.filter(b => !b.isStatic || b.label !== 'ground').length;
+  document.getElementById('constraint-count').textContent = constraints.filter(c => c !== mouseConstraint.constraint).length;
+  document.getElementById('current-tool').textContent =
+    currentTool === 'select' ? '选择' :
+    currentTool === 'box' ? '方块' :
+    currentTool === 'circle' ? '圆形' :
+    currentTool === 'triangle' ? '三角' :
+    currentTool === 'spring' ? '弹簧' :
+    currentTool === 'pin' ? '固定点' : currentTool;
+}
+
+// ===== Game Loop =====
+function update() {
+  if (!isPaused) {
+    Engine.update(engine, 1000 / 60);
+  }
+  render();
+  requestAnimationFrame(update);
+}
+
+// ===== Tool Selection =====
+let selectedBody = null;
+
+document.querySelectorAll('.tool-btn[data-tool]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tool-btn[data-tool]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentTool = btn.dataset.tool;
+    springAnchor = null;
+    pinTarget = null;
+
+    // Toggle mouse constraint based on tool
+    if (currentTool === 'select') {
+      Composite.add(engine.world, mouseConstraint);
+    } else {
+      Composite.remove(engine.world, mouseConstraint);
+    }
+  });
+});
+
+// ===== Canvas Click Handling =====
+canvas.addEventListener('mousedown', (e) => {
+  const mousePos = { x: e.offsetX, y: e.offsetY };
+
+  // Find body under cursor
+  const bodies = Composite.allBodies(engine.world).filter(b => !b.isStatic);
+  const clicked = Matter.Query.point(bodies, mousePos)[0];
+
+  if (currentTool === 'box' && !clicked) {
+    createBox(mousePos.x, mousePos.y);
+    return;
+  }
+  if (currentTool === 'circle' && !clicked) {
+    createCircle(mousePos.x, mousePos.y);
+    return;
+  }
+  if (currentTool === 'triangle' && !clicked) {
+    createTriangle(mousePos.x, mousePos.y);
+    return;
+  }
+
+  if (currentTool === 'spring') {
+    if (clicked) {
+      if (!springAnchor) {
+        springAnchor = { body: clicked };
+      } else if (springAnchor.body !== clicked) {
+        createSpring(springAnchor.body, clicked);
+        springAnchor = null;
+      }
+    }
+    return;
+  }
+
+  if (currentTool === 'pin') {
+    if (clicked) {
+      if (!pinTarget) {
+        pinTarget = clicked;
+      } else if (pinTarget !== clicked) {
+        createPinConstraint(pinTarget, clicked.position.x, clicked.position.y);
+        pinTarget = null;
+      }
+    }
+    return;
+  }
+
+  // Select tool
+  if (clicked) {
+    selectedBody = clicked;
+  } else {
+    selectedBody = null;
+  }
+});
+
+// ===== Double-click to remove =====
+canvas.addEventListener('dblclick', (e) => {
+  const mousePos = { x: e.offsetX, y: e.offsetY };
+  const allBodies = Composite.allBodies(engine.world);
+  const clicked = Matter.Query.point(allBodies, mousePos)[0];
+  if (clicked && !clicked.isStatic) {
+    // Remove constraints attached to this body
+    const constraints = Composite.allConstraints(engine.world);
+    const toRemove = constraints.filter(c => c.bodyA === clicked || c.bodyB === clicked);
+    toRemove.forEach(c => Composite.remove(engine.world, c));
+    Composite.remove(engine.world, clicked);
+    if (selectedBody === clicked) selectedBody = null;
+  }
+});
+
+// ===== Keyboard Shortcuts =====
+document.addEventListener('keydown', (e) => {
+  switch(e.key.toLowerCase()) {
+    case 'v':
+      showVectors = !showVectors;
+      document.getElementById('btn-show-vectors').textContent = '向量: ' + (showVectors ? '开' : '关');
+      break;
+    case 'l':
+      showLabels = !showLabels;
+      document.getElementById('btn-show-labels').textContent = '标签: ' + (showLabels ? '开' : '关');
+      break;
+    case ' ':
+      isPaused = !isPaused;
+      document.getElementById('btn-pause').textContent = isPaused ? '▶️ 继续' : '⏸️ 暂停';
+      e.preventDefault();
+      break;
+    case 'delete':
+    case 'backspace':
+      if (selectedBody) {
+        const constraints = Composite.allConstraints(engine.world);
+        const toRemove = constraints.filter(c => c.bodyA === selectedBody || c.bodyB === selectedBody);
+        toRemove.forEach(c => Composite.remove(engine.world, c));
+        Composite.remove(engine.world, selectedBody);
+        selectedBody = null;
+      }
+      break;
+    case 'escape':
+      springAnchor = null;
+      pinTarget = null;
+      selectedBody = null;
+      break;
+  }
+});
+
+// ===== Toolbar Buttons =====
+document.getElementById('btn-show-vectors').addEventListener('click', function() {
+  showVectors = !showVectors;
+  this.textContent = '向量: ' + (showVectors ? '开' : '关');
+});
+
+document.getElementById('btn-show-labels').addEventListener('click', function() {
+  showLabels = !showLabels;
+  this.textContent = '标签: ' + (showLabels ? '开' : '关');
+});
+
+document.getElementById('btn-pause').addEventListener('click', function() {
+  isPaused = !isPaused;
+  this.textContent = isPaused ? '▶️ 继续' : '⏸️ 暂停';
+});
+
+document.getElementById('btn-clear').addEventListener('click', () => {
+  const bodies = Composite.allBodies(engine.world).filter(b => !b.isStatic);
+  bodies.forEach(b => Composite.remove(engine.world, b));
+  const constraints = Composite.allConstraints(engine.world).filter(c => c !== mouseConstraint.constraint);
+  constraints.forEach(c => Composite.remove(engine.world, c));
+  springAnchor = null;
+  pinTarget = null;
+  selectedBody = null;
+});
+
+// ===== Resize =====
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  Body.setPosition(ground, { x: canvas.width / 2, y: canvas.height - 15 });
+  Body.setPosition(wallR, { x: canvas.width + 15, y: canvas.height / 2 });
+});
+
+// ===== Start =====
+requestAnimationFrame(update);
+</script>
+
+</body>
+</html>

@@ -2,54 +2,64 @@
 
 此文件为 Claude Code (claude.ai/code) 在处理此代码库时提供指导。
 
-## 项目概览
+## 项目定位
 
-这是一个 Claude Code 源代码仓库（@doge-code/cli），是一个基于 TypeScript/React 的 CLI 工具，集成了 AI 代理、工具系统、命令系统和插件体系。项目使用 Bun 作为运行时（v1.3.5+），依赖 Node 24+。
+这是 [`Claude Code`](https://github.com/anthropics/claude-code) 的 Fork 魔改版（`@doge-code/cli`），并非官方源码。核心差异：汉化提示词、支持自定义 BaseURL/API Key、多模型切换、可编译为独立 exe、去除官方登录流绑定。
+
+默认用户目录为 `~/.doge`，**不要**与原版 Claude Code 的 `.claude` 目录混用。
+
+## 开发规则（来自 .dogerules，优先级高于通用惯例）
+
+### YAGNI 阶梯决策
+写代码前停在第一个能成立的阶梯：不需要构建？代码库已有？标准库能覆盖？原生平台特性？已装依赖？一行能写完？才到：写最少能工作的代码。
+
+### Bug 修复
+一个报告说的是症状，grep 所有调用者，一次性修共享函数。一个 guard 比每个 caller 各打一补丁更小。
+
+### 代码修改确认
+所有修改后必须做 diff 级确认：`git diff` + grep 关键函数/接口，确保功能点没丢。代码移动时先确认完整迁移再删旧代码。
+
+### 文件/目录清理
+绝不凭目录名字推断用途就批量删除。删除前必须：列出每个文件 → 检查引用 → 不确定的逐一询问。
 
 ## 常用命令
 
 ```bash
-# 开发启动（热重载）
+# 开发启动（热重载，入口: src/bootstrap-entry.ts）
 bun run dev
 
-# 生产构建
+# 构建（编译为独立可执行文件 ./doge）
 bun run build
+# 输出: ./doge
 
-# 代码检查
+# 代码检查/格式化（Biome）
 bun run lint
-bun run lint:fix  # 自动修复
-
-# 格式化代码
+bun run lint:fix   # 自动修复
 bun run format
 
 # 运行测试
-# 集成测试（连接真实数据库）
-bun test src/__tests__/integration
-# 端到端测试
-bun test src/__tests__/e2e
+bun test                           # 所有测试
+bun run test:unit                  # 仅单元测试
+bun run test:unit:watch            # watch 模式
+bun run test:coverage              # 覆盖率
+
+# 桌面端构建
+bun run build:desktop
 ```
 
-运行单个测试：`bun test <test-file-name>.test.ts`
+运行单个测试：`bun test <路径>` 或 `bun test -t "测试名描述"`
 
-## Windows / MSYS2 环境配置
+## Windows / MSYS2 环境
 
-本项目使用 MSYS2 bash（Git Bash）作为 Shell，且自定义了 `find` / `grep` / `rg` 命令包装器（`.tools/` 目录）。
+项目使用 Git Bash（MSYS2）作为 Shell，`.tools/` 目录自定义了 `find`/`grep`/`rg` 包装器。
 
-### 首次 clone 后必须执行的步骤
+首次 clone 后必须：① 将 `.tools/` 加入 PATH（排在 `C:\Windows\System32` 之前）；② 在 `~/.bashrc` 中设置 MSYS2 路径转换环境变量和 alias；③ `source ~/.bashrc`。
 
-**1. 将 `.tools` 加入系统 PATH**
-
-确保 `D:\doge-code\.tools\` 在 PATH 中排在 `C:\Windows\System32` 之前，否则 `find` / `grep` 会被系统原生命令覆盖。
-
-**2. 在 `~/.bashrc` 中设置环境变量和 alias**
-
+在 `~/.bashrc` 中添加：
 ```bash
-# MSYS2 路径转换保护
 export MSYS_NO_PATHCONV=1
 export MSYS2_ARG_CONV_EXCL=*
 export MSYS2_ENV_CONV_EXCL=/*/
-
-# 使用 cygpath 转换路径，避免 Node.js 把 D:\doge-code 错误解析为 D:\d\doge-code
 _TOOLS_DIR=$(cygpath -w /d/doge-code/.tools)
 alias grep="node \"\$_TOOLS_DIR/search.cjs\""
 alias rg="node \"\$_TOOLS_DIR/search.cjs\""
@@ -57,28 +67,52 @@ alias findstr="node \"\$_TOOLS_DIR/search.cjs\""
 alias find="node \"\$_TOOLS_DIR/find.cjs\""
 ```
 
-> `cygpath -w /d/doge-code/.tools` 将 MSYS2 路径 `/d/doge-code/.tools` 正确转换为 Windows 路径 `D:\doge-code\.tools`，避免 MSYS2 的 `/d/` → `D:` 转换被 Node.js 二次处理时出错（`\d` 被当作转义序列，导致 `D:\d\doge-code`）。
+验证：`find . -maxdepth 2 -name "*.ts" -type f | head -5` 应输出正常文件列表，而非 `MODULE_NOT_FOUND`。
 
-**3. 重新加载配置**
+## 测试配置
+
+- 测试框架：Vitest 3.2.4（`vitest.config.ts`）
+- 路径别名：`@` → `/src`（与 tsconfig.json 一致）
+- pool: `forks`（避免线程间 module cache 污染）
+- 测试匹配模式：
+  - `tests/unit/**/*.test.ts` / `.test.tsx`
+  - `src/__tests__/**/*.test.ts` / `.test.tsx`
+- 排除：`tests/e2e`、`src/__tests__/e2e`、`desktop/e2e`
+- E2E 测试使用 Playwright，需单独运行：`bun run test:e2e`
+
+## 构建系统
+
+### CLI 构建
 
 ```bash
-source ~/.bashrc
+bun run prebuild   # 嵌入状态行到源码
+bun run build      # 编译为 ./doge（--compile 模式）
 ```
 
-### 验证配置
+构建产物 `./doge` 是独立可执行文件，不依赖 Bun 运行时。
+
+### 桌面端构建（Electron）
 
 ```bash
-find . -maxdepth 2 -name "*.ts" -type f | head -5
-grep -r "TODO" src/ --include="*.ts" -l | head -5
+bun run build:desktop
 ```
 
-如果输出正常文件列表（而非 `MODULE_NOT_FOUND` 错误），说明配置成功。
+桌面端使用 electron-vite + electron-builder，asarUnpack 包含 `@electron`、`electron-updater`、`node-pty`。
 
-### 技术细节
+## Git 规范
 
-- `.tools/find.cjs` 和 `.tools/grep.cjs` 通过 `spawn('rg', ...)` 委托给 ripgrep
-- `.tools/find.cmd` / `grep.cmd` 是 Windows cmd 包装器，设置 `MSYS_NO_PATHCONV=1` 防止 MSYS2 路径转换
-- 原始 `rg.exe` 位于 `/f/bin/rg`（通过 PATH 查找），不在 `.tools/` 目录中
+- **提交时间戳**：`.githooks/commit-msg` 自动在提交消息标题末尾追加 ` [yyyy-mm-dd HH:MM:SS]`，无需手动添加
+- **.gitignore**：每次提交必须同步暂存 `.gitignore`
+
+## Docker 部署
+
+```bash
+docker build -t doge-code:latest .
+docker-compose up -d   # 带 Prometheus + Grafana 监控（--profile monitoring）
+docker-compose down
+```
+
+镜像多阶段构建：`deps` → `builder` → `runner`（非 root 用户运行）。
 
 ## 核心架构结构
 
@@ -185,6 +219,25 @@ src/
 6. **Bun 特性**：使用 feature() 进行构建时死代码消除，使用 profileCheckpoint() 进行性能分析
 7. **环境变量**：使用 process.env.CLAUDE_CODE_* 前缀的项目环境变量
 
+## 首轮内容收敛与树状渐进加载
+
+为避免把上千个技能/命令/工具/agent/MCP 定义一次性全发给模型，发送前有四级漏斗，按消息内容逐步掺入相关能力（"树"状），已发送的条目不反复发：
+
+- **工具**（`src/utils/toolSearch.ts` 的 `filterToolsForMessage`）：简单问候只保留 `ALWAYS_ON_TOOLS`（6 个）；普通消息按关键词匹配；MCP 工具在问候轮跳过（走 ToolSearch 的 `defer_loading`）。
+- **技能/命令**（`src/utils/attachments.ts` 的 `getSkillListingAttachments` + `src/utils/toolSearch.ts` 的 `filterSkillsForMessage`）：bundled + MCP 始终保留，长尾技能只在 `name/description/whenToUse` 与消息 token 词面重叠时注入。
+- **agent 列表**（`src/utils/attachments.ts` 的 `getAgentListingDeltaAttachment`）：首轮问候跳过，下一轮非问候消息一次性补全，后续只发 added/removed 增量。
+- **已发不重发**：skills 用 `sentSkillNames` 增量 diff，agents 从消息历史的 `announced` 集合重建 diff，tools 靠 LRU 过滤缓存 + prompt cache 断点。
+- **清空重置**：`/clear` → `clearSessionCaches` → `resetSentSkillNames()`（`src/commands/clear/caches.ts`）；compact → `postCompactCleanup` → `clearToolFilterCache()`（`src/services/compact/postCompactCleanup.ts`）。
+
+相关环境变量开关（均可用环境变量回退）：
+
+| 开关 | 作用 | 回退 |
+|---|---|---|
+| `CLAUDE_CODE_DISABLE_MINIMAL_FIRST_TURN=true` | 关闭首轮问候收敛 | skills/agents/MCP 首轮即全量 |
+| `CLAUDE_CODE_DISABLE_SKILL_MESSAGE_FILTER=true` | 关闭技能关键词过滤 | 长尾技能全量发送（旧行为） |
+
+> 中文消息没有自然词边界，`filterSkillsForMessage` 用「英文 token ≥3 字符 + 中文单字/bi-gram」的**词面匹配**（零依赖、本地可运行），而非语义检索；召回率依赖技能 `description` 写了对应词。若需「换个说法也能命中」，需另行评估 `EXPERIMENTAL_SKILL_SEARCH` 语义发现链路。
+
 ## 测试实践
 
 - **集成测试** (`src/__tests__/integration/`)：连接真实数据库/服务
@@ -203,6 +256,35 @@ bun run build
 ```
 
 项目使用 GitHub Actions（.github/workflows/）进行 CI。
+
+## OpenAI 兼容接口
+
+项目支持中间转接层模式：内部仍按 Anthropic Messages 结构工作的主逻辑，转发到 OpenAI Chat Completions 接口。通过 `/login` 可切换不同 BaseURL、API Key、模型。
+
+## 额外 CLI 命令（README 中列出但 CLAUDE.md 未覆盖）
+
+| 命令 | 功能 |
+|------|------|
+| `/login` | 切换 BaseURL / API Key / 模型 |
+| `/plugins` | 管理插件 |
+| `/skills` | 管理技能 |
+| `/agents` | 管理代理 |
+| `/compact` | 压缩会话内容 |
+| `/rewind` / 两次 ESC | 上下文回滚到指定轮次 |
+| `/resume` | 恢复选定会话 |
+| `/rename` | 命名会话 |
+| `/model` | 切换模型 |
+| `/cost` | 查看计费（待完善） |
+| `/plan` / Shift+Tab 两次 | 进入计划模式 |
+| `/stock` | 股票查询 |
+| `/diagnose` | 系统环境诊断 |
+| `/workspace` | 工作区管理 |
+| `/memory-search` | 记忆搜索 |
+| `/rules` | 持久化规则管理（见 .dogerules） |
+| `/dashboard` | 用量仪表盘（Web 界面，端口 3456） |
+| `/bughunter` | Bug 猎人代码扫描 |
+| `/autocomplete` | 智能补全 |
+| `/release-notes` | 发布说明 |
 
 ## 提交规范
 

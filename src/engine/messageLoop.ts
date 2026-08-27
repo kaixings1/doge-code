@@ -14,6 +14,7 @@ import { RequestBuilder, type HarnessConfig } from "./requestBuilder.ts";
 import { ResponseHandler, type ProcessedResponse } from "./responseHandler.ts";
 import { ToolScheduler } from "./toolScheduler.ts";
 import { ErrorClassifier } from "./errors/classifier.ts";
+import { ErrorRecovery } from "./errors/recovery.ts";
 import { AutoCompactor } from "./autoCompactor.ts";
 import { AutoFixLoop, type AutoFixLoopConfig } from "./autoFixLoop.ts";
 import { cleanupHistoryBase64, applyPhase2Degradation, DEFAULT_IMAGE_BUDGET_CONFIG, type ImageBudgetConfig } from "./imageBudgetGuard.ts";
@@ -26,6 +27,17 @@ export interface QueryResult {
   iterations: number;
   tokenUsage: unknown;
   duration: number;
+  /** 会话持久化：恢复所需的完整状态（吸收自 CrewAI 状态持久化） */
+  sessionId?: string
+  /** 会话快照时间戳 */
+  snapshotAt?: number
+  /** Token 成本摘要（吸收自 OpenCode TokenUsage + cost-tracker） */
+  costSummary?: {
+    totalCostUSD: number
+    inputTokens: number
+    outputTokens: number
+    iterations: number
+  }
 }
 
 /**
@@ -86,6 +98,8 @@ export interface MessageLoopDeps {
 export class MessageLoop {
   private maxIterations = 100;
   private currentIteration = 0;
+  /** Human-in-the-loop: 等待恢复的暂停输入（吸收自 CrewAI Human-in-the-loop） */
+  private pendingResumeInput: string | null = null;
 
   constructor(private deps: MessageLoopDeps) {
     // 确保 onEvent 始终有默认值
@@ -113,6 +127,8 @@ export class MessageLoop {
     }
     // 初始化 Hook 管理器（吸收自 ECC hooks）：支持外部注册 PreToolUse/PostToolUse 拦截器
     this.hookManager = this.deps.hookManager ?? new HookManager()
+    // 初始化 Self-healing 错误恢复（吸收自 Browser-Use self-healing harness）
+    this.errorRecovery = new ErrorRecovery(this.deps.stateMachine, this.deps.retryHandler, this.deps.autoCompactor)
   }
 
   private consecutiveToolFailures = 0;
@@ -120,6 +136,8 @@ export class MessageLoop {
   private gitContext: GitContextInjector | null = null;
   private hookManager: HookManager;
   private lastToolCalls: Array<{ name: string }> = [];
+  /** Self-healing 错误恢复（吸收自 Browser-Use / error-coordinator） */
+  private errorRecovery: ErrorRecovery;
 
   /** 重置自动修复循环计数器（新任务开始时调用） */
   resetAutoFixLoop(): void {
@@ -131,10 +149,28 @@ export class MessageLoop {
     this.gitContext = null
   }
 
+  /** Human-in-the-loop: 外部恢复执行（吸收自 CrewAI Human-in-the-loop） */
+  resume(input?: string): void {
+    this.pendingResumeInput = input ?? '继续'
+    this.deps.stateMachine.resume()
+  }
+
+  /** Human-in-the-loop: 外部暂停执行（吸收自 CrewAI Human-in-the-loop） */
+  pause(reason?: string): void {
+    this.deps.stateMachine.pause({ reason })
+  }
+
+  /** 检查当前是否处于暂停状态 */
+  isPaused(): boolean {
+    return this.deps.stateMachine.isPaused()
+  }
+
   async run(userMessage: string): Promise<QueryResult> {
-    // 新任务开始时重置自动修复循环和 git 上下文
+    // 新任务开始时重置自动修复循环、git 上下文、token 迭代快照和暂停状态
     this.resetAutoFixLoop()
     this.resetGitContext()
+    this.deps.tokenBudget.resetIterationSnapshots?.()
+    this.pendingResumeInput = null
     this.lastToolCalls = []
     this.deps.conversation.messages.push({ role: "user", content: userMessage } as InternalMessage);
     await this.deps.stateMachine.transition("responding", { message: userMessage });
@@ -142,6 +178,23 @@ export class MessageLoop {
 
     const start = Date.now();
     while (this.deps.stateMachine.canContinue()) {
+      // Human-in-the-loop: 处理暂停状态（吸收自 CrewAI Human-in-the-loop）
+      if (this.deps.stateMachine.isPaused()) {
+        engineLog('PAUSED', 'MessageLoop 已暂停，等待用户恢复');
+        this.deps.onEvent({ type: 'needs_user', prompt: '执行已暂停，请输入"继续"或"resume"恢复' });
+        // 等待外部调用 resume() 恢复
+        await new Promise<void>(resolve => {
+          const checkInterval = setInterval(() => {
+            if (!this.deps.stateMachine.isPaused()) {
+              clearInterval(checkInterval)
+              resolve()
+            }
+          }, 500)
+        })
+        engineLog('RESUMED', 'MessageLoop 已恢复执行');
+        this.deps.onEvent({ type: 'should_continue' });
+      }
+
       this.currentIteration++;
       if (this.currentIteration > this.maxIterations) {
         await this.deps.stateMachine.transition("crashed", { reason: "超过最大迭代次数" });
@@ -149,8 +202,23 @@ export class MessageLoop {
       }
       this.deps.onEvent({ type: 'iteration_start', iteration: this.currentIteration });
       try {
+        // 如果有待处理的恢复输入，注入到对话中
+        if (this.pendingResumeInput) {
+          this.deps.conversation.messages.push({ role: "user", content: this.pendingResumeInput } as InternalMessage);
+          this.pendingResumeInput = null
+        }
         const shouldContinue = await this.runIteration();
         if (!shouldContinue) {
+          // AcceptanceGate 验收（吸收自 intent-driven-development）：进入 done 前检查所有 required 标准
+          if (this.deps.acceptanceGate) {
+            const gateResult = await this.deps.acceptanceGate.check()
+            if (!gateResult.allRequiredPass) {
+              engineLog('ACCEPTANCE', 'Required acceptance criteria not met, continuing to fix')
+              this.deps.onEvent({ type: 'should_continue' })
+              await this.deps.stateMachine.transition("should_continue")
+              continue
+            }
+          }
           await this.deps.stateMachine.transition("done");
           break;
         }
@@ -171,6 +239,39 @@ export class MessageLoop {
         console.error(`[${ts2}] [ENGINE] stack: ${errStack}`);
         this.deps.onEvent({ type: 'error', error: errMsg, stack: errStack });
         if (this.deps.stateMachine.isTerminal()) break;
+
+        // Self-healing 错误恢复（吸收自 Browser-Use self-healing harness + error-coordinator）
+        const recoveryResult = await this.errorRecovery.recover(error instanceof Error ? error : new Error(errMsg))
+        engineLog('RECOVERY', JSON.stringify(recoveryResult))
+        if (recoveryResult.success) {
+          if (recoveryResult.action === 'retry') {
+            await this.deps.stateMachine.transition("should_continue");
+            continue
+          }
+          if (recoveryResult.action === 'continue') {
+            await this.deps.stateMachine.transition("should_continue");
+            continue
+          }
+          if (recoveryResult.action === 'restart') {
+            await this.deps.stateMachine.transition("responding");
+            continue
+          }
+        }
+        if (recoveryResult.requiresUserAction) {
+          await this.deps.stateMachine.transition("needs_user", { prompt: recoveryResult.requiresUserAction.prompt });
+          break
+        }
+        // Human-in-the-loop: 错误恢复失败时暂停等待用户干预（吸收自 CrewAI Human-in-the-loop）
+        if (this.deps.hookManager) {
+          engineLog('PAUSE_ON_ERROR', '错误恢复失败，暂停等待用户干预')
+          await this.deps.stateMachine.pause({ reason: `错误恢复失败: ${errMsg}` })
+          // 等待恢复
+          await new Promise<void>(resolve => {
+            const check = setInterval(() => {
+              if (!this.deps.stateMachine.isPaused()) { clearInterval(check); resolve() }
+            }, 500)
+          })
+        }
         await this.deps.stateMachine.transition("crashed", { error: ErrorClassifier.classify(error) });
         break;
       }
@@ -182,6 +283,7 @@ export class MessageLoop {
       iterations: this.currentIteration,
       tokenUsage: this.deps.tokenBudget.getUsage(),
       duration: Date.now() - start,
+      costSummary: this.deps.tokenBudget.getCostBreakdown(this.deps.model),
     };
     this.deps.onEvent({ type: 'done', result });
     return result;

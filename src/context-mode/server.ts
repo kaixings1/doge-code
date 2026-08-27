@@ -367,8 +367,23 @@ server.server.setRequestHandler(ListResourceTemplatesRequestSchema, async () => 
 export function sanitizeSchemaForStrictClients(node: unknown): unknown {
   if (Array.isArray(node)) return node.map(sanitizeSchemaForStrictClients);
   if (node === null || typeof node !== "object") return node;
+  const source = node as Record<string, unknown>;
   const out: Record<string, unknown> = {};
-  for (const [key, value] of Object.entries(node as Record<string, unknown>)) {
+
+  // Zod v4 stores internal state on a non-enumerable `_zod` property.
+  // Object.entries() skips it, so the sanitized clone would lose the
+  // property entirely and break hosts that access `schema._zod.def`.
+  // Preserve it explicitly on the output object.
+  if (source._zod) {
+    Object.defineProperty(out, "_zod", {
+      value: source._zod,
+      writable: false,
+      enumerable: false,
+      configurable: false,
+    });
+  }
+
+  for (const [key, value] of Object.entries(source)) {
     if (key === "additionalProperties") continue;
     if (key === "const") {
       out.enum = [value];

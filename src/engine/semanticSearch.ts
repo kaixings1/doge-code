@@ -66,6 +66,12 @@ export interface SearchOptions {
   maxResults?: number
   fileTypes?: string[]
   directories?: string[]
+  /**
+   * 可选：文件关联度评分回调（吸收自 KnowledgeStore.associate）。
+   * 返回 0-1 之间的关联强度，用于在 BM25 排序基础上做关联记忆增强。
+   * 纯函数保持：不在此函数内部调用任何 I/O，由外部传入预计算结果。
+   */
+  getAssociations?: (filePath: string) => number
 }
 
 export interface QueryAnalysis {
@@ -276,6 +282,7 @@ export function searchIndex(
   const N = index.totalChunks
   const queryLower = query.toLowerCase()
   const hits: SemanticHit[] = []
+  const getAssociations = options.getAssociations
 
   for (const file of index.files) {
     // 过滤
@@ -314,6 +321,12 @@ export function searchIndex(
       if (chunkLower.includes(queryLower)) score *= 1.5
       if (analysis.targets.some(t => chunkLower.includes(t.toLowerCase()))) score *= 1.4
       if (analysis.targets.some(t => fileNameNorm.includes(normalizeSymbolName(t)))) score *= 1.6
+
+      // 关联记忆增强（吸收自 KnowledgeStore.associate + Supermemory）
+      if (getAssociations) {
+        const association = getAssociations(file.path)
+        if (association > 0) score *= (1 + association)
+      }
 
       // 找最匹配的行
       let bestLine = chunk.lineStart
@@ -544,6 +557,30 @@ export class SemanticIndexer {
   search(query: string, options: SearchOptions = {}): SemanticHit[] {
     if (!this.indexData) this.rebuildIndexData()
     return searchIndex(this.indexData!, query, options)
+  }
+
+  /**
+   * 带关联记忆增强的搜索（吸收自 KnowledgeStore.associate + Supermemory）。
+   * 传入 KnowledgeStore 和入口条目 ID，为每个文件计算关联度并注入排序。
+   */
+  searchWithAssociations(
+    query: string,
+    knowledgeStore: { associate(entryId: string, options?: { limit?: number }): Promise<Array<{ entry: { id: string }; score: number }>> },
+    entryId: string,
+    options: Omit<SearchOptions, 'getAssociations'> = {},
+  ): Promise<SemanticHit[]> {
+    if (!this.indexData) this.rebuildIndexData()
+    // 将知识存储的条目 ID 映射到文件路径（通过 entry.id == file path 约定）
+    const associationMap = new Map<string, number>()
+    return knowledgeStore.associate(entryId, { limit: 50 }).then(results => {
+      for (const r of results) {
+        associationMap.set(r.entry.id, r.score)
+      }
+      return searchIndex(this.indexData!, query, {
+        ...options,
+        getAssociations: (filePath: string) => associationMap.get(filePath) ?? 0,
+      })
+    })
   }
 
   searchSymbols(query: string, maxResults = 20): SymbolHit[] {

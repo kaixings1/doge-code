@@ -107,7 +107,7 @@ export function HighlightedThinkingText(t0) {
         }
         let t4;
         if ($[23] !== t2 || $[24] !== t3) {
-          t4 = <Text>{t2}{t3}</Text>;
+          t4 = <Box flexDirection="row">{t2}{t3}</Box>;
           $[23] = t2;
           $[24] = t3;
           $[25] = t4;
@@ -121,7 +121,7 @@ export function HighlightedThinkingText(t0) {
       let cursor = 0;
       for (const t of triggers) {
         if (t.start > cursor) {
-          parts.push(<Text key={`plain-${cursor}`}><Ansi>{beautifyInlineText(text.slice(cursor, t.start), theme)}</Ansi></Text>);
+          parts.push(<Box key={`plain-${cursor}`} flexDirection="row"><Ansi>{beautifyInlineText(text.slice(cursor, t.start), theme)}</Ansi></Box>);
         }
         for (let i = t.start; i < t.end; i++) {
           parts.push(<Text key={`rb-${i}`} color={getRainbowColor(i - t.start)}>{text[i]}</Text>);
@@ -129,7 +129,7 @@ export function HighlightedThinkingText(t0) {
         cursor = t.end;
       }
       if (cursor < text.length) {
-        parts.push(<Text key={`plain-${cursor}`}><Ansi>{beautifyInlineText(text.slice(cursor), theme)}</Ansi></Text>);
+        parts.push(<Box key={`plain-${cursor}`} flexDirection="row"><Ansi>{beautifyInlineText(text.slice(cursor), theme)}</Ansi></Box>);
       }
     }
     $[15] = pointerColor;
@@ -153,7 +153,7 @@ export function HighlightedThinkingText(t0) {
   }
   let t3;
   if ($[28] !== parts || $[29] !== t2) {
-    t3 = <Text>{t2}{parts}</Text>;
+    t3 = <Box flexDirection="row">{t2}{parts}</Box>;
     $[28] = parts;
     $[29] = t2;
     $[30] = t3;

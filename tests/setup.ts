@@ -25,6 +25,17 @@ try {
   process.env.TERMINAL_EMULATOR = ''
 } catch { /* env vars may be read-only in some environments */ }
 
+// Polyfill MutationObserver for dom-mutator package in Node.js test environment
+// This prevents "Unhandled error between tests" from dom-mutator's connectGlobalObserver
+if (typeof globalThis.MutationObserver === 'undefined') {
+  globalThis.MutationObserver = class MutationObserver {
+    constructor(callback) {}
+    observe(target, options) {}
+    disconnect() {}
+    takeRecords() { return [] }
+  }
+}
+
 import { existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { register } from 'node:module';
@@ -74,4 +85,3 @@ Module._resolveFilename = function (
     throw err;
   }
 };
-

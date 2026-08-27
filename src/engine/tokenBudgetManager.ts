@@ -32,6 +32,8 @@ export interface TokenUsageReport {
   costPer1MIn: number;
   /** Cost per 1M output tokens used for calculation */
   costPer1MOut: number;
+  /** Per-iteration breakdown（吸收自 OpenCode TokenUsage 细粒度追踪） */
+  iterations?: Array<{ inputTokens: number; outputTokens: number; costUSD: number }>
 }
 
 export interface BudgetCheckResult {
@@ -72,6 +74,8 @@ export class TokenBudgetManager {
   private usageHistory: { usedTokens: number; percentage: number; status: BudgetStatus }[] = [];
   private inputTokens = 0;
   private outputTokens = 0;
+  /** 每次 API 调用的 token 消耗快照（吸收自 OpenCode TokenUsage 细粒度追踪） */
+  private iterationSnapshots: Array<{ inputTokens: number; outputTokens: number; costUSD: number }> = [];
 
   constructor(config: Partial<BudgetConfig> = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config };
@@ -110,6 +114,10 @@ export class TokenBudgetManager {
   recordUsage(inputTokens: number, outputTokens: number): void {
     this.inputTokens += inputTokens;
     this.outputTokens += outputTokens;
+    // 记录本次迭代的快照（吸收自 OpenCode TokenUsage 细粒度追踪）
+    const costIn = inputTokens * (this.config.costPer1MIn ?? 0) / 1_000_000
+    const costOut = outputTokens * (this.config.costPer1MOut ?? 0) / 1_000_000
+    this.iterationSnapshots.push({ inputTokens, outputTokens, costUSD: costIn + costOut })
   }
 
   /**
@@ -125,7 +133,36 @@ export class TokenBudgetManager {
       estimatedCostUSD: costIn + costOut,
       costPer1MIn: this.config.costPer1MIn ?? 0,
       costPer1MOut: this.config.costPer1MOut ?? 0,
+      iterations: [...this.iterationSnapshots],
     };
+  }
+
+  /** 获取每次迭代的 token 消耗快照 */
+  getIterationSnapshots(): Array<{ inputTokens: number; outputTokens: number; costUSD: number }> {
+    return [...this.iterationSnapshots]
+  }
+
+  /** 重置迭代快照（新任务开始时调用） */
+  resetIterationSnapshots(): void {
+    this.iterationSnapshots = []
+  }
+
+  /** 按模型维度计算成本摘要（吸收自 OpenCode TokenUsage 细粒度追踪 + cost-tracker） */
+  getCostBreakdown(modelName: string): { totalCostUSD: number; inputTokens: number; outputTokens: number; iterations: number } {
+    let totalCost = 0
+    let totalIn = 0
+    let totalOut = 0
+    for (const snap of this.iterationSnapshots) {
+      totalCost += snap.costUSD
+      totalIn += snap.inputTokens
+      totalOut += snap.outputTokens
+    }
+    return {
+      totalCostUSD: totalCost,
+      inputTokens: totalIn,
+      outputTokens: totalOut,
+      iterations: this.iterationSnapshots.length,
+    }
   }
 
   estimateAvailableOutput(messages: InternalMessage[]): number {

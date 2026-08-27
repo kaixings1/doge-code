@@ -8,14 +8,15 @@ import { readdir } from 'fs/promises'
 import { basename, join } from 'path'
 import { parseFrontmatter } from '../utils/frontmatterParser.js'
 import { readFileInRange } from '../utils/readFileInRange.js'
-import { type MemoryType, parseMemoryType } from './memoryTypes.js'
+import { parseMemoryType, MEMORY_SKILL_PREFIX, type MemoryType } from './memoryTypes.js'
 
 export type MemoryHeader = {
   filename: string
   filePath: string
   mtimeMs: number
   description: string | null
-  type: MemoryType | undefined
+  type: MemoryType | null
+  autoSkill?: string[]
 }
 
 const MAX_MEMORY_FILES = 200
@@ -53,13 +54,16 @@ export async function scanMemoryFiles(
           signal,
         )
         const { frontmatter } = parseFrontmatter(content, filePath)
-        return {
+        const skills = extractAutoSkills(frontmatter)
+        const entry: MemoryHeader = {
           filename: relativePath,
           filePath,
           mtimeMs,
           description: frontmatter.description || null,
-          type: parseMemoryType(frontmatter.type),
+          type: parseMemoryType(frontmatter.type) || null,
         }
+        if (skills.length > 0) entry.autoSkill = skills
+        return entry
       }),
     )
 
@@ -77,6 +81,25 @@ export async function scanMemoryFiles(
 }
 
 /**
+ * 从记忆文件 frontmatter 中提取 autoSkill 标签。
+ * 吸收自 Supermemory 关联记忆：自动识别记忆条目关联的技能。
+ * 返回 skill 名称列表（去重）。
+ */
+export function extractAutoSkills(frontmatter: Record<string, unknown>): string[] {
+  const raw = frontmatter[MEMORY_SKILL_PREFIX]
+  if (!raw) {
+    return []
+  }
+  if (typeof raw === 'string') {
+    return [raw]
+  }
+  if (Array.isArray(raw)) {
+    return raw.filter((s): s is string => typeof s === 'string')
+  }
+  return []
+}
+
+/**
  * 将记忆头部格式化为文本清单：每行一个文件，格式为
  * [type] filename (timestamp): description。由召回选择器提示词
  * 和提取代理提示词共同使用。
@@ -86,9 +109,13 @@ export function formatMemoryManifest(memories: MemoryHeader[]): string {
     .map(m => {
       const tag = m.type ? `[${m.type}] ` : ''
       const ts = new Date(m.mtimeMs).toISOString()
-      return m.description
-        ? `- ${tag}${m.filename} (${ts}): ${m.description}`
-        : `- ${tag}${m.filename} (${ts})`
+      const skillTag = m.autoSkill && m.autoSkill.length > 0
+        ? ` [skills: ${m.autoSkill.join(', ')}]`
+        : ''
+      const desc = m.description
+        ? `: ${m.description}`
+        : ''
+      return `- ${tag}${m.filename} (${ts})${desc}${skillTag}`
     })
     .join('\n')
 }

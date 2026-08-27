@@ -1,11 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import {
   filterToolsForMessage,
+  filterSkillsForMessage,
   isSimpleConversationMessage,
   ALWAYS_ON_TOOLS,
   clearToolFilterCache,
 } from '../../src/utils/toolSearch.js'
 import type { Tool } from '../../src/Tool.js'
+import type { Command } from '../../src/types/command.js'
 
 // Minimal mock tools for testing
 const mockTools: Tool[] = [
@@ -144,8 +146,13 @@ describe('filterToolsForMessage', () => {
     expect(filtered.some(t => t.name === 'FileReadTool')).toBe(true)
   })
 
-  it('should always include MCP tools', () => {
+  it('should skip MCP tools for simple greetings', () => {
     const filtered = filterToolsForMessage(mockTools, 'hi')
+    expect(filtered.some(t => t.name === 'Mcp__ExampleServer_ReadFile')).toBe(false)
+  })
+
+  it('should include MCP tools for non-simple messages', () => {
+    const filtered = filterToolsForMessage(mockTools, 'read the file')
     expect(filtered.some(t => t.name === 'Mcp__ExampleServer_ReadFile')).toBe(true)
     expect(filtered.find(t => t.name === 'Mcp__ExampleServer_ReadFile')!.isMcp).toBe(true)
   })
@@ -162,5 +169,84 @@ describe('filterToolsForMessage', () => {
     const result1 = filterToolsForMessage(mockTools, 'hi')
     const result2 = filterToolsForMessage(subset, 'hi')
     expect(result1.length).toBeGreaterThanOrEqual(result2.length)
+  })
+})
+
+describe('filterSkillsForMessage', () => {
+  const skill = (
+    name: string,
+    loadedFrom: Command['loadedFrom'],
+    desc = '',
+    whenToUse = '',
+  ): Command =>
+    ({
+      name,
+      loadedFrom,
+      description: desc,
+      whenToUse,
+      type: 'prompt',
+      source: 'plugin',
+    }) as unknown as Command
+
+  it('keeps bundled and MCP skills regardless of message', () => {
+    const cmds = [
+      skill('bundled-skill', 'bundled'),
+      skill('mcp-skill', 'mcp'),
+      skill('my-tail-skill', 'skills', 'nothing related'),
+    ]
+    const result = filterSkillsForMessage(cmds, 'read the file')
+    expect(result.map(c => c.name)).toEqual(
+      expect.arrayContaining(['bundled-skill', 'mcp-skill']),
+    )
+  })
+
+  it('drops tail skills with no token overlap', () => {
+    const cmds = [
+      skill('bundled-skill', 'bundled'),
+      skill('my-tail-skill', 'skills', 'fix postgres migrations'),
+    ]
+    const result = filterSkillsForMessage(cmds, 'write a react component')
+    expect(result.some(c => c.name === 'my-tail-skill')).toBe(false)
+  })
+
+  it('includes tail skills whose description matches a message token', () => {
+    const cmds = [
+      skill('bundled-skill', 'bundled'),
+      skill('migration-helper', 'skills', 'fix postgres migrations'),
+      skill('unrelated-skill', 'skills', 'design logos'),
+    ]
+    const result = filterSkillsForMessage(cmds, 'help me fix postgres migrations')
+    expect(result.some(c => c.name === 'migration-helper')).toBe(true)
+    expect(result.some(c => c.name === 'unrelated-skill')).toBe(false)
+  })
+
+  it('matches Chinese tokens (single-character preserved)', () => {
+    const cmds = [
+      skill('bundled-skill', 'bundled'),
+      skill('迁移助手', 'skills', '数据库迁移'),
+      skill('unrelated', 'skills', 'design'),
+    ]
+    const result = filterSkillsForMessage(cmds, '帮我做数据库迁移')
+    expect(result.some(c => c.name === '迁移助手')).toBe(true)
+    expect(result.some(c => c.name === 'unrelated')).toBe(false)
+  })
+
+  it('ignores stopwords and short English tokens', () => {
+    const cmds = [
+      skill('bundled-skill', 'bundled'),
+      skill('the-helper', 'skills', 'the'),
+    ]
+    // "the" 是停用词，不应匹配任何长尾技能
+    const result = filterSkillsForMessage(cmds, 'the a hi')
+    expect(result.some(c => c.name === 'the-helper')).toBe(false)
+  })
+
+  it('dedups bundled core vs tail by name', () => {
+    const cmds = [
+      skill('dup', 'bundled', 'bundled desc'),
+      skill('dup', 'skills', 'tail desc'),
+    ]
+    const result = filterSkillsForMessage(cmds, 'tail')
+    expect(result.filter(c => c.name === 'dup')).toHaveLength(1)
   })
 })

@@ -55,6 +55,7 @@ import diffMode from './commands/diff-mode/index.ts'
 import diffReview from './commands/diff-review/index.ts'
 import blockMode from './commands/block-mode/index.ts'
 import repoMap from './commands/repo-map/index.tsx'
+import repoPack from './commands/repo-pack/index.ts'
 import ctx_viz from './commands/ctx_viz/index.tsx'
 import doctor from './commands/doctor/index.ts'
 import dogeConfig from './commands/doge-config/index.ts'
@@ -500,6 +501,7 @@ const COMMANDS = memoize((): Command[] => [
   diffReview,
   blockMode,
   repoMap,
+  repoPack,
   diagnose,
   eco,
   doctor,
