@@ -1153,7 +1153,6 @@ export function REPL({
       const added = prev.length === 0 || next[0] === prev[0] ? next.slice(-delta) : next.slice(0, delta);
       if (added.some(isHumanTurn)) {
         userMessagePendingRef.current = false;
-        userInputBaselineRef.current = next.length;
       } else {
         userInputBaselineRef.current = next.length;
       }
