@@ -454,7 +454,7 @@ export type Tool<
    * 无论 `name` 是否带有前缀（mcp__server__tool）还是无前缀（CLAUDE_AGENT_SDK_MCP_NO_PREFIX 模式），
    * 所有 MCP 工具上都存在此项。
    */
-  mcpInfo?: { serverName: string; toolName: string }
+  mcpInfo?: { serverName: string; toolName: string; registeredAt?: number }
   readonly name: string
   /**
    * 返回标准化的工具元信息，对齐 OpenCode (Go) 的 ToolInfo 接口。

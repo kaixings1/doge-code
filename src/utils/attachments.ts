@@ -162,8 +162,10 @@ import type { QuerySource } from '../constants/querySource.js'
 import {
   getDeferredToolsDelta,
   isDeferredToolsDeltaEnabled,
+  isSimpleConversationMessage,
   isToolSearchEnabledOptimistic,
   isToolSearchToolAvailable,
+  filterSkillsForMessage,
   modelSupportsToolReference,
   type DeferredToolsDeltaScanContext,
 } from './toolSearch.js'
@@ -775,6 +777,13 @@ export async function getAttachments(
 
   const isMainThread = !toolUseContext.agentId
 
+  // 首轮简单问候（"hi"/"hello"/"你好"等）：收敛 skills/agents/MCP 工具，
+  // 避免在纯问候轮注入数百个技能描述、数百个 agent 描述和无关联的 MCP 工具。
+  // 可通过 CLAUDE_CODE_DISABLE_MINIMAL_FIRST_TURN=true 关闭。
+  const minimalFirstTurn =
+    !isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_MINIMAL_FIRST_TURN) &&
+    Boolean(input && isSimpleConversationMessage(input))
+
   // 响应用户输入的附件
   const userInputAttachments = input
     ? [
@@ -855,7 +864,9 @@ export async function getAttachments(
       ),
     ),
     maybe('agent_listing_delta', () =>
-      Promise.resolve(getAgentListingDeltaAttachment(toolUseContext, messages)),
+      Promise.resolve(
+        getAgentListingDeltaAttachment(toolUseContext, messages, minimalFirstTurn),
+      ),
     ),
     maybe('mcp_instructions_delta', () =>
       Promise.resolve(
@@ -878,7 +889,9 @@ export async function getAttachments(
     maybe('nested_memory', () => getNestedMemoryAttachments(context)),
     // relevant_memories 已移至异步预取（startRelevantMemoryPrefetch）
     maybe('dynamic_skill', () => getDynamicSkillAttachments(context)),
-    maybe('skill_listing', () => getSkillListingAttachments(context)),
+    maybe('skill_listing', () =>
+      getSkillListingAttachments(context, minimalFirstTurn, input ?? ''),
+    ),
     // 回合间 技能发现现在通过 startSkillDiscoveryPrefetch 运行
     // (query.ts, 与主回合并发)。原来在这里的阻塞调用是
     // assistant_turn 信号——97% 的 Haiku 调用在生产中找不到任何内容。
@@ -1492,8 +1505,14 @@ export function getDeferredToolsDeltaAttachment(
 export function getAgentListingDeltaAttachment(
   toolUseContext: ToolUseContext,
   messages: Message[] | undefined,
+  minimalFirstTurn: boolean = false,
 ): Attachment[] {
   if (!shouldInjectAgentListInMessages()) return []
+
+  // 首轮简单问候（"hi"/"hello"/"你好"）时跳过 agent 列表——数百个
+  // agent 描述对纯问候毫无意义。延迟到非问候轮，由增量 diff 检测并补发
+  // 完整集合（announced 为空时 added = 全量）。
+  if (minimalFirstTurn && (messages ?? []).length === 0) return []
 
   // 如果 AgentTool 不在池中则跳过 — 列表将无法操作。
   if (
@@ -2648,8 +2667,15 @@ export function filterToBundledAndMcp(commands: Command[]): Command[] {
   return filtered
 }
 
+/** 技能消息过滤开关——默认开启，可通过环境变量关闭以回退到全量发送。 */
+function isSkillMessageFilterEnabled(): boolean {
+  return !isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_SKILL_MESSAGE_FILTER)
+}
+
 async function getSkillListingAttachments(
   toolUseContext: ToolUseContext,
+  minimalFirstTurn: boolean,
+  message: string,
 ): Promise<Attachment[]> {
   if (process.env.NODE_ENV === 'test') {
     return []
@@ -2681,17 +2707,19 @@ async function getSkillListingAttachments(
     return !dangerousSkillPrefixes.some(prefix => cmd.name.startsWith(prefix))
   })
 
-  // 当技能搜索激活时，过滤为仅内置 + MCP，而不是完全抑制。
-  // 解决了 turn-0 缺口：主线程通过 getTurnZeroSkillDiscovery（阻塞式）
-  // 获得 turn-0 发现，但子 agent 使用异步 subagent_spawn 信号
-  // （在工具之后收集，turn 1 可见）。内置 + MCP 很小且意图明确；
-  // 用户/项目/插件技能通过发现机制处理。先调用 feature() 以支持
-  // DCE——否则即使使用 ?. 在 null 上，属性访问字符串也会泄漏。
+  // 树状渐进过滤，优先级从「最窄」到「最宽」逐级放宽：
+  // 1. 首轮问候（minimalFirstTurn）→ 仅 bundled + MCP
+  // 2. 技能搜索开启 → 仅 bundled + MCP（发现机制接管长尾）
+  // 3. 关键词过滤开启（默认）→ bundled + MCP + 消息相关的长尾技能
+  // 4. 全部关闭 → 全量发送（旧行为，可回退）
   if (
-    feature('EXPERIMENTAL_SKILL_SEARCH') &&
-    skillSearchModules?.featureCheck.isSkillSearchEnabled()
+    minimalFirstTurn ||
+    (feature('EXPERIMENTAL_SKILL_SEARCH') &&
+      skillSearchModules?.featureCheck.isSkillSearchEnabled())
   ) {
     allCommands = filterToBundledAndMcp(allCommands)
+  } else if (isSkillMessageFilterEnabled() && message) {
+    allCommands = filterSkillsForMessage(allCommands, message)
   }
 
   const agentKey = toolUseContext.agentId ?? ''

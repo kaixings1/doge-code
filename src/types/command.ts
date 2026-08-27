@@ -257,3 +257,13 @@ export function getCommandName(cmd: CommandBase): string {
 export function isCommandEnabled(cmd: CommandBase): boolean {
   return cmd.isEnabled?.() ?? true
 }
+
+/**
+ * 验证技能栈组合兼容性（吸收自 AAS Core stackCompatible）。
+ * 当 composable=true 时，检查 stackCompatible 中声明的兼容技能是否都可用。
+ */
+export function validateStackCompatibility(cmd: CommandBase, availableSkillIds: Set<string>): { valid: boolean; missing: string[] } {
+  const stackCompatible = cmd.stackCompatible ?? []
+  const missing = stackCompatible.filter(id => !availableSkillIds.has(id))
+  return { valid: missing.length === 0, missing }
+}

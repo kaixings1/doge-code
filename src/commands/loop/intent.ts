@@ -199,6 +199,8 @@ export function isLoopIntentText(text: string): boolean {
   if (!trimmed || trimmed.length < 4) return false
   // 以斜杠开头的是命令，不在此处理
   if (trimmed.startsWith('/')) return false
+  // 排除已由本系统注入的循环引擎指令标记，防止反复解析同一指令
+  if (trimmed.includes('[循环引擎指令]')) return false
   // 需要同时有触发词 + 条件子句，避免误判普通句子（如"这个循环有问题"）
   const hasTrigger = TRIGGER_PATTERNS.some(p => p.test(trimmed))
   if (!hasTrigger) return false

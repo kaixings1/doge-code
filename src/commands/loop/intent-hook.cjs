@@ -100,6 +100,8 @@ function cleanGoal(raw, conditions) {
 function isLoopIntent(text) {
   const t = (text || '').trim()
   if (!t || t.length < 4 || t.startsWith('/')) return false
+  // 排除已由本系统注入的循环引擎指令标记，防止反复解析同一指令
+  if (t.includes('[循环引擎指令]')) return false
   if (!TRIGGER_RE.test(t)) return false
   return /直到|直至|一直(?:到|至)|循环(?:到|至|执行)|until|till|repeat\s+until/i.test(t)
 }

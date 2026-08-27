@@ -2925,6 +2925,10 @@ export function handleMessageFromStream(
   onApiMetrics?: (metrics: { ttftMs: number }) => void,
   onStreamingText?: (f: (current: string | null) => string | null) => void,
 ): void {
+  // 让出事件循环的辅助函数，确保 React 有时间在连续流事件之间渲染中间状态。
+  // 这在快速流（MORE 模式、小请求体）下特别重要，否则所有 setState 被 React 批处理为单次渲染。
+  const yieldToReact = () => { Promise.resolve().then(() => {}) }
+
   if (!message || typeof message !== 'object' || !('type' in message)) {
     onStreamingText?.(() => null)
     return
@@ -2968,6 +2972,7 @@ export function handleMessageFromStream(
 
   if (message.type === 'stream_request_start') {
     onSetStreamMode('requesting')
+    yieldToReact()
     return
   }
 
@@ -2975,11 +2980,13 @@ export function handleMessageFromStream(
     if (message.ttftMs != null) {
       onApiMetrics?.({ ttftMs: message.ttftMs as number })
     }
+    yieldToReact()
   }
 
   if ((message.event as any).type === 'message_stop') {
     onSetStreamMode('tool-use')
     onStreamingToolUses(() => [])
+    yieldToReact()
     return
   }
 
@@ -2991,15 +2998,18 @@ export function handleMessageFromStream(
         isConnectorTextBlock((message.event as any).content_block)
       ) {
         onSetStreamMode('responding')
+        yieldToReact()
         return
       }
       switch ((message.event as any).content_block.type) {
         case 'thinking':
         case 'redacted_thinking':
           onSetStreamMode('thinking')
+          yieldToReact()
           return
         case 'text':
           onSetStreamMode('responding')
+          yieldToReact()
           return
         case 'tool_use': {
           onSetStreamMode('tool-input')
@@ -3013,6 +3023,7 @@ export function handleMessageFromStream(
               unparsedToolInput: '',
             },
           ])
+          yieldToReact()
           return
         }
         case 'server_tool_use':
@@ -3027,6 +3038,7 @@ export function handleMessageFromStream(
         case 'tool_search_tool_result':
         case 'compaction':
           onSetStreamMode('tool-input')
+          yieldToReact()
           return
       }
       return
@@ -3036,6 +3048,7 @@ export function handleMessageFromStream(
           const deltaText = (message.event as any).delta.text
           onUpdateLength(deltaText)
           onStreamingText?.(text => (text ?? '') + deltaText)
+          // 不在每个 text_delta 后让出——高频更新需要批量处理以保持流畅
           return
         }
         case 'input_json_delta': {
@@ -3068,12 +3081,15 @@ export function handleMessageFromStream(
           return
       }
     case 'content_block_stop':
+      yieldToReact()
       return
     case 'message_delta':
       onSetStreamMode('responding')
+      yieldToReact()
       return
     default:
       onSetStreamMode('responding')
+      yieldToReact()
       return
   }
 }

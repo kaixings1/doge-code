@@ -1153,6 +1153,7 @@ export function REPL({
       const added = prev.length === 0 || next[0] === prev[0] ? next.slice(-delta) : next.slice(0, delta);
       if (added.some(isHumanTurn)) {
         userMessagePendingRef.current = false;
+        userInputBaselineRef.current = next.length;
       } else {
         userInputBaselineRef.current = next.length;
       }
@@ -2721,6 +2722,12 @@ export function REPL({
       querySource: getQuerySourceForREPL()
     })) {
       onQueryEvent(event);
+      // Yield at key stream boundaries so React can render intermediate states.
+      // REPL path: events are raw StreamEvent types from query.ts.
+      // Skip content_block_delta (fires per token, already flushed).
+      if (event.type !== 'content_block_delta') {
+        await Promise.resolve()
+      }
     }
     if (feature('BUDDY') && typeof (globalThis as Record<string, unknown>).fireCompanionObserver === 'function') {
       const _fireCompanionObserver = (globalThis as Record<string, unknown>).fireCompanionObserver as (
@@ -4346,7 +4353,7 @@ export function REPL({
   const viewedAgentTask = viewedTeammateTask ?? (viewedTask && isLocalAgentTask(viewedTask) ? viewedTask : undefined);
 
   // 当流式文本显示时绕过 useDeferredValue，以便 Messages 在与流式文本清除相同的帧中渲染最终消息。当未加载时也绕过 — deferredMessages 仅在流式传输期间重要（保持输入响应）；在响应结束后，立即显示消息可防止微调器消失但答案尚未出现的抖动间隙。只有 reducedMotion 用户在加载期间保留延迟路径。
-  const usesSyncMessages = showStreamingText || !isLoading;
+  const usesSyncMessages = true;
   // 当查看代理时，永远不要回退到领导者 — 在引导/流填充之前为空。关闭 see-leader-type-agent 脚枪。
   const displayedMessages = viewedAgentTask ? viewedAgentTask.messages ?? [] : usesSyncMessages ? messages : deferredMessages;
   // 显示占位符，直到真实的用户消息出现在 displayedMessages 中。userInputOnProcessing 在整个响应期间保持设置（在 resetLoadingState 中清除）；此长度检查在 displayedMessages 增长超过在提交时捕获的基线后隐藏它。
@@ -4792,9 +4799,7 @@ export function REPL({
               {true && !(companionNarrow && isFullscreenEnvEnabled()) && companionVisible ? <CompanionSprite /> : null}
             </Box>} />
       </MCPConnectionManager>
-    </KeybindingSetup>;
-  logForDebugging('[REPL:DEBUG] REPL render complete, about to return JSX')
-  logForDebugging('[REPL:DEBUG] REPL render complete, about to return JSX')
+    </KeybindingSetup>; 
   const stabilizedReturn = <ReplRuntimeBoundary>{mainReturn}</ReplRuntimeBoundary>;
   if (isFullscreenEnvEnabled()) {
     return <AlternateScreen mouseTracking={isMouseTrackingEnabled()}>

@@ -43,6 +43,7 @@ import {
 } from './formatters.js'
 import { DESCRIPTION, LSP_TOOL_NAME } from './prompt.js'
 import { lspToolInputSchema } from './schemas.js'
+import { checkForLSPDiagnostics } from '../../services/lsp/LSPDiagnosticRegistry.js'
 import {
   renderToolResultMessage,
   renderToolUseErrorMessage,
@@ -69,6 +70,7 @@ const inputSchema = lazySchema(() =>
         'prepareCallHierarchy',
         'incomingCalls',
         'outgoingCalls',
+        'listDiagnostics',
       ])
       .describe('要执行的 LSP 操作'),
     filePath: z.string().describe('文件的绝对或相对路径'),
@@ -99,6 +101,7 @@ const outputSchema = lazySchema(() =>
         'prepareCallHierarchy',
         'incomingCalls',
         'outgoingCalls',
+        'listDiagnostics',
       ])
       .describe('已执行的 LSP 操作'),
     result: z.string().describe('LSP 操作的格式化结果'),
@@ -163,6 +166,11 @@ export const LSPTool = buildTool({
       }
     }
 
+    // listDiagnostics reads from local registry — skip file existence check
+    if (input.operation === 'listDiagnostics') {
+      return { result: true }
+    }
+
     // Validate file exists and is a regular file
     const fs = getFsImplementation()
     const absolutePath = expandPath(input.filePath)
@@ -224,6 +232,54 @@ export const LSPTool = buildTool({
   async call(input: Input, _context) {
     const absolutePath = expandPath(input.filePath)
     const cwd = getCwd()
+
+    // listDiagnostics: read from local registry, no LSP request needed
+    if (input.operation === 'listDiagnostics') {
+      const diagnostics = checkForLSPDiagnostics()
+      const filterPath = input.filePath?.trim()
+
+      // Filter by filePath if provided
+      const filtered = filterPath
+        ? diagnostics.flatMap(d => d.files.filter(f => f.uri === filterPath || f.uri.endsWith(filterPath)))
+        : diagnostics.flatMap(d => d.files)
+
+      if (filtered.length === 0) {
+        return {
+          data: {
+            operation: 'listDiagnostics',
+            result: '当前没有可用的 LSP 诊断信息。',
+            filePath: input.filePath,
+            resultCount: 0,
+            fileCount: 0,
+          } satisfies Output,
+        }
+      }
+
+      const lines: string[] = []
+      let totalDiags = 0
+      for (const file of filtered) {
+        lines.push(`${file.uri}：`)
+        for (const diag of file.diagnostics) {
+          const sev = diag.severity === 'Error' ? '❌' : diag.severity === 'Warning' ? '⚠️' : diag.severity === 'Info' ? 'ℹ️' : '💡'
+          const pos = `行 ${diag.range.start.line + 1}:${diag.range.start.character + 1}`
+          const codeStr = diag.code ? ` [${diag.code}]` : ''
+          const srcStr = diag.source ? ` (${diag.source})` : ''
+          lines.push(`  ${sev} [${pos}] ${diag.message}${codeStr}${srcStr}`)
+          totalDiags++
+        }
+        lines.push('')
+      }
+
+      return {
+        data: {
+          operation: 'listDiagnostics',
+          result: lines.join('\n').trimEnd(),
+          filePath: input.filePath,
+          resultCount: totalDiags,
+          fileCount: filtered.length,
+        } satisfies Output,
+      }
+    }
 
     // Wait for initialization if it's still pending
     // This prevents returning "no server available" before init completes
@@ -508,6 +564,12 @@ function getMethodAndParams(
           textDocument: { uri },
           position,
         },
+      }
+    case 'listDiagnostics':
+      // No LSP request needed — reads from the local diagnostic registry
+      return {
+        method: '',
+        params: {},
       }
   }
 }

@@ -35,9 +35,48 @@ export class Orchestrator {
   }
 
   /**
-   * 提交任务并执行
+   * 提交任务并执行（吸收自 LangSmith / CrewAI trace：自动追踪编排链路）
    */
   async run(taskDescription: string): Promise<OrchestrationResult> {
+    const traceName = `orchestrator:${this.config.mode}`
+    const traceId = this.deps.onTraceStart?.(traceName, taskDescription)
+    const startTime = Date.now()
+    try {
+      const result = await this._runImpl(taskDescription)
+      this.deps.onTraceEnd?.(traceId, result.summary ?? '', [`mode:${this.config.mode}`])
+      // 追踪数据持久化（吸收自 LangSmith export）
+      if (traceId && this.deps.onTracePersist) {
+        this.deps.onTracePersist({
+          traceId,
+          name: traceName,
+          input: taskDescription,
+          output: result.summary,
+          metadata: [`mode:${this.config.mode}`],
+          startTime,
+          endTime: Date.now(),
+        })
+      }
+      return result
+    } catch (error) {
+      const errMsg = error instanceof Error ? error.message : String(error)
+      this.deps.onTraceFail?.(traceId, errMsg)
+      // 失败 trace 也持久化
+      if (traceId && this.deps.onTracePersist) {
+        this.deps.onTracePersist({
+          traceId,
+          name: traceName,
+          input: taskDescription,
+          error: errMsg,
+          metadata: [`mode:${this.config.mode}`],
+          startTime,
+          endTime: Date.now(),
+        })
+      }
+      throw error
+    }
+  }
+
+  private async _runImpl(taskDescription: string): Promise<OrchestrationResult> {
     if (this.config.mode === 'discuss') {
       return this.runDiscussMode(taskDescription)
     }
@@ -344,6 +383,14 @@ export class Orchestrator {
 export interface OrchestratorDeps {
   /** 执行 LLM 调用：role + systemPrompt + userPrompt + context → output */
   executeLLM: (role: string, systemPrompt: string, userPrompt: string, context: string) => Promise<string>
+  /** 编排链路追踪开始（吸收自 LangSmith / CrewAI trace） */
+  onTraceStart?: (name: string, input: string) => string
+  /** 编排链路追踪结束 */
+  onTraceEnd?: (traceId: string, output: string, metadata?: string[]) => void
+  /** 编排链路追踪失败 */
+  onTraceFail?: (traceId: string, error: string) => void
+  /** 追踪数据持久化回调（吸收自 LangSmith export）：将 trace 记录写入外部存储 */
+  onTracePersist?: (record: { traceId: string; name: string; input: string; output?: string; error?: string; metadata?: string[]; startTime: number; endTime: number }) => void
 }
 
 // ---------------------------------------------------------------------------

@@ -6,7 +6,7 @@
  * loaded upfront.
  */
 
-import { memoize } from '../vendor/lodash.js'
+import { memoize, uniqBy } from '../vendor/lodash.js'
 import { getFeatureValue_CACHED_MAY_BE_STALE } from '../services/analytics/growthbook.js'
 import {
   type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
@@ -18,6 +18,7 @@ import {
   type Tools,
   toolMatchesName,
 } from '../Tool.js'
+import type { Command } from '../types/command.js'
 import type { AgentDefinition } from '../tools/AgentTool/loadAgentsDir.js'
 import {
   formatDeferredToolLine,
@@ -938,11 +939,14 @@ export function filterToolsForMessage(tools: Tools, message: string): Tools {
     }
   }
 
-  // Always include MCP tools — they are user-provided and should always be available
-  // when the user is talking about topics that might relate to them
-  for (const tool of tools) {
-    if (tool.isMcp) {
-      toolNamesToInclude.add(tool.name)
+  // MCP 工具默认总是包含——它们是用户提供的，应在相关话题下可用。
+  // 但首轮简单问候（"hi"/"hello"）时跳过：MCP 工具应通过 ToolSearch
+  // 的 defer_loading 机制按需发现，而非在问候轮全量注入。
+  if (!isSimpleConversationMessage(message)) {
+    for (const tool of tools) {
+      if (tool.isMcp) {
+        toolNamesToInclude.add(tool.name)
+      }
     }
   }
 
@@ -950,5 +954,90 @@ export function filterToolsForMessage(tools: Tools, message: string): Tools {
   _toolFilterCache.set(cacheKey, toolNamesToInclude)
 
   return tools.filter(tool => toolNamesToInclude.has(tool.name))
+}
+
+// === 技能长尾的树状渐进过滤（方案 A） ===
+// 与工具的消息过滤同源：bundled + MCP 技能始终保留（核心、量小、意图明确），
+// 长尾技能（skills/plugin/commands_DEPRECATED/managed 等来源）仅当
+// name/description/whenToUse 与用户消息 token 有词面重叠时才保留。
+
+// 停用词：低频信息量的常见词，避免误匹配长尾技能。
+const SKILL_FILTER_STOPWORDS = new Set([
+  'the', 'a', 'an', 'and', 'or', 'but', 'if', 'to', 'of', 'in', 'on', 'for',
+  'with', 'is', 'are', 'be', 'do', 'does', 'it', 'this', 'that', 'what',
+  'which', 'who', 'how', 'my', 'your', 'our', 'their', 'we', 'you', 'i',
+  '的', '了', '和', '是', '在', '有', '我', '你', '他', '她', '它', '们',
+  '这', '那', '就', '都', '而', '及', '与', '或', '一个', '没有', '可以',
+  '什么', '怎么', '为什么', '要', '会', '能', '被', '让', '把', '给', '对',
+  '从', '到', '上', '下', '里', '中', '做', '用', '去', '来', '还', '也',
+])
+
+/**
+ * 将用户消息拆分为有信息量的 token，用于与技能的 name/description/whenToUse
+ * 做词面匹配。英文 token 需长度 ≥ 3 才保留（过滤 "hi"/"a" 等噪声）；中文
+ * token 意义密度高，任意长度保留（单字也保留，中文单字如"测""迁"仍具区分度）。
+ */
+function tokenizeSkillMessage(message: string): string[] {
+  const raw = message
+    .toLowerCase()
+    .split(/[\s,.;:!?，。；：！？、"'()\[\]{}<>/\\|@#$%^&*+=~`—-]+/)
+    .map(t => t.trim())
+    .filter(t => t.length > 0)
+
+  const tokens: string[] = []
+  for (const t of raw) {
+    if (SKILL_FILTER_STOPWORDS.has(t)) continue
+    // 含中文：中文无空格分界，整串无法作为匹配单元，因此展开为 bi-gram
+    // （连续双字），使 "数据库迁移" 这类技能描述能被 "迁移"/"数据" 命中。
+    // 启发式过滤宁可多发不可漏发，因此接受 bi-gram 带来的少量误匹配。
+    if (/[\u4e00-\u9fa5]/.test(t)) {
+      const han = t.replace(/[^\u4e00-\u9fa5]/g, '')
+      if (han.length === 1) {
+        tokens.push(han)
+      } else {
+        for (let i = 0; i + 1 < han.length; i++) {
+          tokens.push(han.slice(i, i + 2))
+        }
+      }
+      continue
+    }
+    // 纯英文/数字：长度 ≥ 3
+    if (t.length >= 3) tokens.push(t)
+  }
+  return tokens
+}
+
+/**
+ * 判断某个技能是否与用户消息的 token 有词面重叠。
+ * 在 name + description + whenToUse 的拼接里做大小写不敏感的包含匹配。
+ */
+function skillMatchesTokens(cmd: Command, tokens: string[]): boolean {
+  if (tokens.length === 0) return false
+  const haystack = `${cmd.name} ${cmd.description ?? ''} ${cmd.whenToUse ?? ''}`.toLowerCase()
+  return tokens.some(t => haystack.includes(t))
+}
+
+/**
+ * 按用户消息关键词过滤长尾技能，实现「树状渐进掺入」。
+ * bundled + MCP 技能始终保留（核心、量小、意图明确）；长尾技能
+ * （skills/plugin/commands_DEPRECATED/managed 等来源）仅当 name/description/
+ * whenToUse 与消息 token 有词面重叠时才保留。
+ *
+ * 返回「候选技能全集」——与 sentSkillNames 增量 diff 结合后，
+ * 已发送的技能会被跳过，从而实现「已发不重发」+「按需渐进」。
+ */
+export function filterSkillsForMessage(
+  commands: Command[],
+  message: string,
+): Command[] {
+  const tokens = tokenizeSkillMessage(message)
+  const core = commands.filter(
+    cmd => cmd.loadedFrom === 'bundled' || cmd.loadedFrom === 'mcp',
+  )
+  const matchedTail = commands.filter(cmd => {
+    if (cmd.loadedFrom === 'bundled' || cmd.loadedFrom === 'mcp') return false
+    return skillMatchesTokens(cmd, tokens)
+  })
+  return uniqBy([...core, ...matchedTail], 'name')
 }
 // FORCE_RECOMPILE_2026_07_23_2300

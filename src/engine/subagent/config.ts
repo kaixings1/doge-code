@@ -24,6 +24,67 @@ export interface SubAgentConfig {
   canSpawnSubagents?: boolean;
   /** OpenCode 特性吸收: Agent 模式标识（plan / build / explore） */
   mode?: 'plan' | 'build' | 'explore';
+  /** 吸收自 OpenClaude: 模型 ID，用于按模型强度路由子代理 */
+  modelId?: string;
+  /** 吸收自 OpenClaude: 路由优先级，数值越大优先级越高 */
+  priority?: number;
+  /** 吸收自 AAS Core：能力标签列表，用于代理发现和路由匹配 */
+  capabilities?: string[];
+
+  // ─── Harness 策略接口（吸收自 ag2 Harness 组合模式）───
+  /** 组装策略：如何将工具、知识和记忆组合成系统提示（吸收自 ag2 AssemblyPolicy） */
+  assembly?: {
+    /** 工具组装模式 */
+    tools?: 'all' | 'filtered' | 'none'
+    /** 知识注入模式 */
+    knowledge?: 'query_based' | 'full' | 'none'
+    /** 记忆注入模式 */
+    memory?: 'recent' | 'full' | 'none'
+    /** 自定义系统提示模板 */
+    systemPromptTemplate?: string
+  }
+  /** 知识策略：如何查询和使用知识库（吸收自 ag2 KnowledgePolicy） */
+  knowledge?: {
+    /** 知识检索模式 */
+    retrieval?: 'semantic' | 'keyword' | 'hybrid'
+    /** 最大检索条目数 */
+    maxEntries?: number
+    /** 最小相似度阈值 */
+    minScore?: number
+    /** 知识存储后端 */
+    store?: 'disk' | 'memory' | 'custom'
+  }
+  /** 压缩策略：如何管理上下文窗口（吸收自 ag2 CompactPolicy） */
+  compact?: {
+    /** 压缩触发阈值（token 比例） */
+    triggerRatio?: number
+    /** 压缩策略 */
+    strategy?: 'summarize' | 'sliding_window' | 'selective'
+    /** 保留最近 N 条消息 */
+    keepRecent?: number
+  }
+  /** 任务生成策略：是否允许 Agent 自主生成子任务（吸收自 ag2 TaskGenerationPolicy） */
+  tasks?: {
+    /** 是否允许生成子任务 */
+    enabled?: boolean
+    /** 最大子任务深度 */
+    maxDepth?: number
+    /** 子任务超时（ms） */
+    timeout?: number
+  }
+
+  // ─── 自进化技能树（吸收自 Hermes Agent 自改进学习循环）───
+  /** 自进化技能树：Agent 可自主学习和扩展的能力（吸收自 Hermes Agent） */
+  skillTree?: {
+    /** 已掌握的技能列表 */
+    mastered: string[]
+    /** 当前学习中的技能 */
+    learning: string[]
+    /** 技能熟练度（0-1） */
+    proficiency: Record<string, number>
+    /** 上次更新时间戳（ms） */
+    lastUpdated: number
+  }
 }
 
 export const predefinedAgents: Record<string, SubAgentConfig> = {

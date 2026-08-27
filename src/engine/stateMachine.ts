@@ -15,7 +15,9 @@ export type QueryState =
   | "should_continue"
   | "done"
   | "crashed"
-  | "aborted_by_user";
+  | "aborted_by_user"
+  /** Human-in-the-loop: 用户主动暂停，等待干预后恢复 */
+  | "paused";
 
 export interface StateChangeEvent {
   from: QueryState;
@@ -42,12 +44,13 @@ export class QueryStateMachine {
 
   private setupTransitions(): void {
     this.transitions.set("idle", ["responding", "aborted_by_user"]);
-    this.transitions.set("responding", ["needs_user", "should_continue", "crashed", "aborted_by_user", "done"]);
+    this.transitions.set("responding", ["needs_user", "should_continue", "crashed", "aborted_by_user", "done", "paused"]);
     this.transitions.set("needs_user", ["responding", "aborted_by_user", "done"]);
     this.transitions.set("should_continue", ["responding", "done", "aborted_by_user", "crashed"]);
     this.transitions.set("done", ["responding", "aborted_by_user"]);
     this.transitions.set("crashed", ["responding", "aborted_by_user"]);
     this.transitions.set("aborted_by_user", ["responding"]);
+    this.transitions.set("paused", ["responding", "aborted_by_user", "done"]);
   }
 
   private setupGuards(): void {
@@ -106,6 +109,20 @@ export class QueryStateMachine {
     return TERMINAL.includes(this.currentState);
   }
 
+  /** Human-in-the-loop: 暂停执行，等待用户干预（吸收自 CrewAI Human-in-the-loop） */
+  async pause(context?: unknown): Promise<void> {
+    await this.transition("paused", context)
+  }
+
+  /** Human-in-the-loop: 从暂停恢复执行 */
+  async resume(): Promise<void> {
+    await this.transition("responding")
+  }
+
+  isPaused(): boolean {
+    return this.currentState === "paused"
+  }
+
   canContinue(): boolean {
     return !this.isTerminal();
   }
@@ -118,6 +135,21 @@ export class QueryStateMachine {
   reset(): void {
     this.currentState = "idle";
     this.stateHistory = [];
+  }
+
+  /** Checkpoint 持久化（吸收自 oh-my-pi Checkpoint）：序列化当前状态用于恢复 */
+  takeSnapshot(): { state: QueryState; history: QueryState[]; timestamp: number } {
+    return {
+      state: this.currentState,
+      history: [...this.stateHistory],
+      timestamp: Date.now(),
+    }
+  }
+
+  /** 从快照恢复状态 */
+  restoreSnapshot(snapshot: { state: QueryState; history: QueryState[] }): void {
+    this.currentState = snapshot.state
+    this.stateHistory = [...snapshot.history]
   }
 }
 
@@ -140,8 +172,11 @@ export interface AcceptanceGateResult {
   results: Array<{ id: string; passed: boolean; description: string }>
 }
 
+export type AcceptanceGateListener = (result: AcceptanceGateResult) => void
+
 export class AcceptanceGate {
   private criteria: AcceptanceCriterion[] = []
+  private listeners = new Set<AcceptanceGateListener>()
 
   add(criterion: AcceptanceCriterion): void {
     this.criteria.push(criterion)
@@ -157,6 +192,12 @@ export class AcceptanceGate {
 
   get count(): number {
     return this.criteria.length
+  }
+
+  /** 注册监听器：每次 check() 完成后通知（吸收自 intent-driven-development 事件驱动） */
+  onChange(listener: AcceptanceGateListener): () => void {
+    this.listeners.add(listener)
+    return () => { this.listeners.delete(listener) }
   }
 
   /**
@@ -177,10 +218,15 @@ export class AcceptanceGate {
       return criterion?.priority === 'required'
     })
 
-    return {
+    const result: AcceptanceGateResult = {
       allRequiredPass: requiredResults.every((r) => r.passed),
       results,
     }
+    // 通知所有监听器（吸收自 intent-driven-development 事件驱动）
+    for (const listener of this.listeners) {
+      try { listener(result) } catch { /* noop */ }
+    }
+    return result
   }
 
   /**

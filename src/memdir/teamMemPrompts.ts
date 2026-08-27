@@ -22,6 +22,7 @@ import { getTeamMemPath } from './teamMemPaths.js'
 export function buildCombinedMemoryPrompt(
   extraGuidelines?: string[],
   skipIndex = false,
+  concise = false,
 ): string {
   const autoDir = getAutoMemPath()
   const teamDir = getTeamMemPath()
@@ -56,6 +57,36 @@ export function buildCombinedMemoryPrompt(
         '- 更新或删除错误或过时的记忆',
         '- 不要写重复的记忆。在写入新记忆之前，先检查是否有可以更新的现有记忆。',
       ]
+
+  if (concise) {
+    const lines = [
+      '# 记忆（精简模式）',
+      '',
+      `两个目录：private \`${autoDir}\` + team \`${teamDir}\`。${DIRS_EXIST_GUIDANCE}`,
+      '',
+      '记住用户偏好、项目上下文和外部系统指针。不要保存可从代码或 git 历史推导的内容。私有 vs 团队：个人偏好存私有，项目约定存团队。',
+      '',
+      ...TYPES_SECTION_CONCISE,
+    ]
+    if (!skipIndex) {
+      lines.push(
+        '',
+        '## 索引',
+        `在各自目录的 \`${ENTRYPOINT_NAME}\` 中添加简短指针条目（一行，<150 字符）。`,
+      )
+    }
+    lines.push(
+      '',
+      '## 持久化机制',
+      '- 计划 > 记忆：方法共识用计划，变更用更新计划',
+      '- 任务 > 记忆：步骤跟踪用任务，跨会话背景用记忆',
+      '',
+      ...(extraGuidelines ?? []),
+      '',
+    )
+    lines.push(...buildSearchingPastContextSection(autoDir))
+    return lines.join('\n')
+  }
 
   const lines = [
     '# 记忆',

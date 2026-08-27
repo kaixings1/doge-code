@@ -98,23 +98,14 @@ export function formatDogerulesForSystemPrompt(entries: DogerulesEntry[]): strin
   if (entries.length === 0) return ''
 
   const sections: string[] = []
-  sections.push('## 持久化规则 (Dogerules)')
-  sections.push('')
-  sections.push('以下是用户定义的持久化规则。这些规则对所有交互都有效，你必须严格遵守。')
-  sections.push('')
-
   for (const entry of entries) {
     const typeLabel =
-      entry.type === 'global' ? '全局规则' :
-      entry.type === 'project' ? '项目规则' : '本地规则'
-    sections.push(`### [${typeLabel}] ${entry.path}`)
-    sections.push('')
+      entry.type === 'global' ? '[全局]' :
+      entry.type === 'project' ? '[项目]' : '[本地]'
+    sections.push(`${typeLabel} ${entry.path}`)
     sections.push(entry.content)
     sections.push('')
   }
-
-  sections.push('---')
-  sections.push('')
 
   return sections.join('\n')
 }

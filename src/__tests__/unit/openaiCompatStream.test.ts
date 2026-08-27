@@ -1,0 +1,161 @@
+import { describe, it, expect } from 'vitest';
+import { createAnthropicStreamFromOpenAI } from '../../services/api/openaiCompat.js';
+
+/**
+ * Test: createAnthropicStreamFromOpenAI should yield AssistantMessage at stream end
+ * This is the core fix for the bug where UI never displayed responses from OpenAI-compatible APIs.
+ */
+describe('createAnthropicStreamFromOpenAI', () => {
+  function createSSEReader(chunks: string[]): ReadableStreamDefaultReader<Uint8Array> {
+    const stream = new ReadableStream({
+      pull(controller) {
+        if (chunks.length > 0) {
+          const chunk = chunks.shift()!;
+          controller.enqueue(new TextEncoder().encode(chunk));
+        } else {
+          controller.close();
+        }
+      },
+    });
+    return stream.getReader();
+  }
+
+  it('should yield AssistantMessage after message_stop for OpenAI choices path', async () => {
+    // Simulate OpenAI-compatible streaming response
+    const chunks = [
+      // First chunk with message_start equivalent (OpenAI format)
+      'data: {"id":"test-1","object":"chat.completion.chunk","created":1234567890,"model":"test-model","choices":[{"index":0,"delta":{"role":"assistant","content":""},"finish_reason":null}]}\n\n',
+      // Text delta
+      'data: {"id":"test-1","object":"chat.completion.chunk","created":1234567890,"model":"test-model","choices":[{"index":0,"delta":{"content":"Hello"},"finish_reason":null}]}\n\n',
+      // More text
+      'data: {"id":"test-1","object":"chat.completion.chunk","created":1234567890,"model":"test-model","choices":[{"index":0,"delta":{"content":" world"},"finish_reason":null}]}\n\n',
+      // Finish
+      'data: {"id":"test-1","object":"chat.completion.chunk","created":1234567890,"model":"test-model","choices":[{"index":0,"delta":{"content":""},"finish_reason":"stop"}],"usage":{"prompt_tokens":10,"completion_tokens":5}}\n\n',
+      // [DONE]
+      'data: [DONE]\n\n',
+    ];
+
+    const reader = createSSEReader(chunks);
+    const gen = createAnthropicStreamFromOpenAI({
+      reader,
+      model: 'test-model',
+    });
+
+    const events: any[] = [];
+    for await (const event of gen) {
+      events.push(event);
+    }
+
+    // Filter for assistant messages
+    const assistantMessages = events.filter(e => e.type === 'assistant');
+
+    // The bug: without the fix, assistantMessages would be empty
+    // With the fix: we should get exactly 1 AssistantMessage
+    expect(assistantMessages.length).toBeGreaterThan(0);
+
+    const msg = assistantMessages[0]!;
+    expect(msg.type).toBe('assistant');
+    expect(msg.message.content).toBeDefined();
+
+    // Should have text content
+    const textBlocks = msg.message.content.filter((c: any) => c.type === 'text');
+    const fullText = textBlocks.map((c: any) => c.text).join('');
+    expect(fullText).toContain('Hello world');
+  });
+
+  it('should yield AssistantMessage when text is in reasoning_content (StepFun path)', async () => {
+    // Simulate StepFun API response: text in reasoning_content, content is empty
+    const chunks = [
+      'data: {"id":"test-1","object":"chat.completion.chunk","created":1234567890,"model":"test-model","choices":[{"index":0,"delta":{"role":"assistant","content":"","reasoning":"The","reasoning_content":"The"},"finish_reason":null}]}\n\n',
+      'data: {"id":"test-1","object":"chat.completion.chunk","created":1234567890,"model":"test-model","choices":[{"index":0,"delta":{"content":"","reasoning":" answer","reasoning_content":" answer"},"finish_reason":null}]}\n\n',
+      'data: {"id":"test-1","object":"chat.completion.chunk","created":1234567890,"model":"test-model","choices":[{"index":0,"delta":{"content":"","reasoning":" is","reasoning_content":" is"},"finish_reason":null}]}\n\n',
+      'data: {"id":"test-1","object":"chat.completion.chunk","created":1234567890,"model":"test-model","choices":[{"index":0,"delta":{"content":"","reasoning":" 42","reasoning_content":" 42"},"finish_reason":"stop"}],"usage":{"prompt_tokens":10,"completion_tokens":5}}\n\n',
+      'data: [DONE]\n\n',
+    ];
+
+    const reader = createSSEReader(chunks);
+    const gen = createAnthropicStreamFromOpenAI({
+      reader,
+      model: 'test-model',
+    });
+
+    const events: any[] = [];
+    for await (const event of gen) {
+      events.push(event);
+    }
+
+    const assistantMessages = events.filter(e => e.type === 'assistant');
+    expect(assistantMessages.length).toBeGreaterThan(0);
+
+    const msg = assistantMessages[0]!;
+    expect(msg.type).toBe('assistant');
+    const textBlocks = msg.message.content.filter((c: any) => c.type === 'text');
+    const fullText = textBlocks.map((c: any) => c.text).join('');
+    expect(fullText).toContain('The answer is 42');
+  });
+
+  it('should yield AssistantMessage with thinking delta (DeepSeek path)', async () => {
+    // Simulate DeepSeek API: uses "thinking" field for reasoning tokens
+    const chunks = [
+      'data: {"id":"test-1","object":"chat.completion.chunk","created":1234567890,"model":"deepseek-chat","choices":[{"index":0,"delta":{"role":"assistant","content":""},"finish_reason":null}]}\n\n',
+      'data: {"id":"test-1","object":"chat.completion.chunk","created":1234567890,"model":"deepseek-chat","choices":[{"index":0,"delta":{"thinking":"Let me think"},"finish_reason":null}]}\n\n',
+      'data: {"id":"test-1","object":"chat.completion.chunk","created":1234567890,"model":"deepseek-chat","choices":[{"index":0,"delta":{"thinking":" about this","content":""},"finish_reason":null}]}\n\n',
+      'data: {"id":"test-1","object":"chat.completion.chunk","created":1234567890,"model":"deepseek-chat","choices":[{"index":0,"delta":{"content":"Done."},"finish_reason":"stop"}],"usage":{"prompt_tokens":10,"completion_tokens":5}}\n\n',
+      'data: [DONE]\n\n',
+    ];
+
+    const reader = createSSEReader(chunks);
+    const gen = createAnthropicStreamFromOpenAI({
+      reader,
+      model: 'deepseek-chat',
+    });
+
+    const events: any[] = [];
+    for await (const event of gen) {
+      events.push(event);
+    }
+
+    const assistantMessages = events.filter(e => e.type === 'assistant');
+    expect(assistantMessages.length).toBeGreaterThan(0);
+
+    const msg = assistantMessages[0]!;
+    expect(msg.type).toBe('assistant');
+    const textBlocks = msg.message.content.filter((c: any) => c.type === 'text');
+    const fullText = textBlocks.map((c: any) => c.text).join('');
+    expect(fullText).toContain('Let me think about this');
+    expect(fullText).toContain('Done.');
+  });
+
+  it('should yield AssistantMessage for native Anthropic path', async () => {
+    // Simulate native Anthropic streaming response
+    const chunks = [
+      'data: {"type":"message_start","message":{"id":"msg-1","type":"message","role":"assistant","model":"test-model","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":10,"output_tokens":0}}}\n\n',
+      'data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}}\n\n',
+      'data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Hi"}}\n\n',
+      'data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" there"}}\n\n',
+      'data: {"type":"content_block_stop","index":0}\n\n',
+      'data: {"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null},"usage":{"output_tokens":5}}\n\n',
+      'data: {"type":"message_stop"}\n\n',
+    ];
+
+    const reader = createSSEReader(chunks);
+    const gen = createAnthropicStreamFromOpenAI({
+      reader,
+      model: 'test-model',
+    });
+
+    const events: any[] = [];
+    for await (const event of gen) {
+      events.push(event);
+    }
+
+    const assistantMessages = events.filter(e => e.type === 'assistant');
+    expect(assistantMessages.length).toBeGreaterThan(0);
+
+    const msg = assistantMessages[0]!;
+    expect(msg.type).toBe('assistant');
+    const textBlocks = msg.message.content.filter((c: any) => c.type === 'text');
+    const fullText = textBlocks.map((c: any) => c.text).join('');
+    expect(fullText).toContain('Hi there');
+  });
+});

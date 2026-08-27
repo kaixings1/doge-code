@@ -40,6 +40,75 @@ interface AgentTemplate {
 const AGENTS_DIR = join(homedir(), '.doge', 'agents')
 
 const BUILTIN_TEMPLATES: Record<string, AgentTemplate> = {
+  'agents-md-12': {
+    name: 'agents-md-12',
+    description: 'AGENTS.md 12 节标准模板 - 吸收自 Deep Agents 的完整 Agent 定义格式',
+    systemPrompt: `# AGENTS.md — 12 节标准模板
+
+## 1. Identity
+你是 {agent_name}，{description}
+
+## 2. Tools
+可用工具：{tools}
+
+## 3. Model
+模型：{model} | 温度：{temperature} | 最大 Tokens：{maxTokens}
+
+## 4. Instructions
+{instructions}
+
+## 5. Knowledge
+知识库策略：{knowledge_policy}
+- query_based: 按需查询知识库
+- full: 完整注入所有相关知识
+
+## 6. Memory
+记忆策略：{memory_policy}
+- recent: 仅最近对话
+- full: 完整历史
+
+## 7. Skills
+所需技能：{skills}
+
+## 8. Constraints
+{constraints}
+
+## 9. Output
+输出格式：{output_format}
+
+## 10. Error Handling
+错误处理策略：{error_handling}
+- retry: 自动重试
+- fallback: 降级处理
+- escalate: 上报用户
+
+## 11. Collaboration
+协作方式：{collaboration}
+
+## 12. Evaluation
+评估标准：{evaluation_criteria}`,
+    tools: ['Read', 'Glob', 'Grep', 'Bash'],
+    model: 'claude-sonnet-4-6',
+    temperature: 0.5,
+    maxTokens: 4096,
+    variables: {
+      agent_name: 'Agent 名称',
+      description: 'Agent 职责描述',
+      tools: '工具列表',
+      model: '模型名称',
+      temperature: '0.5',
+      maxTokens: '4096',
+      instructions: '核心指令',
+      knowledge_policy: 'query_based',
+      memory_policy: 'recent',
+      skills: '技能列表',
+      constraints: '约束条件',
+      output_format: 'Markdown',
+      error_handling: 'retry',
+      collaboration: '独立执行',
+      evaluation_criteria: '功能正确性 + 代码质量',
+    },
+  },
   'code-reviewer': {
     name: 'code-reviewer',
     description: '代码审查专家 - 深度分析代码质量、安全性和最佳实践',

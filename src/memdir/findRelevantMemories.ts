@@ -10,6 +10,39 @@ import {
   scanMemoryFiles,
 } from './memoryScan.js'
 
+/**
+ * 基于 autoSkill 关联标签对记忆进行预筛选排序（吸收自 Supermemory 关联记忆）。
+ * 当查询匹配记忆的 autoSkill 标签时，提升其排序权重，使 LLM 选择器优先考虑高关联记忆。
+ * 返回按关联度降序排列的记忆列表。
+ */
+function scoreByAutoSkill(memories: MemoryHeader[], query: string): MemoryHeader[] {
+  if (memories.length <= 1) return memories
+
+  const queryLower = query.toLowerCase()
+  const queryWords = queryLower.split(/\s+/).filter(w => w.length > 1)
+
+  const scored = memories.map(m => {
+    let score = 0
+    if (m.autoSkill && m.autoSkill.length > 0) {
+      for (const skill of m.autoSkill) {
+        const skillLower = skill.toLowerCase()
+        if (queryLower.includes(skillLower)) {
+          score += 2
+        }
+        for (const word of queryWords) {
+          if (skillLower.includes(word) || word.includes(skillLower)) {
+            score += 1
+          }
+        }
+      }
+    }
+    return { memory: m, score }
+  })
+
+  scored.sort((a, b) => b.score - a.score)
+  return scored.map(s => s.memory)
+}
+
 export type RelevantMemory = {
   path: string
   mtimeMs: number
@@ -47,9 +80,12 @@ export async function findRelevantMemories(
     return []
   }
 
+  // 预筛选：基于 autoSkill 关联标签对记忆排序，提升 LLM 选择器的召回准确率
+  const presorted = scoreByAutoSkill(memories, query)
+
   const selectedFilenames = await selectRelevantMemories(
     query,
-    memories,
+    presorted,
     signal,
     recentTools,
   )

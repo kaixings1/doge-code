@@ -75,6 +75,7 @@ import { PlanModeTool } from './tools/PlanModeTool/PlanModeTool.js'
 import { BranchTool } from './tools/BranchTool/BranchTool.js'
 import { GitTool } from './tools/GitTool/GitTool.js'
 import { CompareTool } from './tools/CompareTool/CompareTool.js'
+import { SearchReplaceEditTool } from './tools/SearchReplaceEditTool/SearchReplaceEditTool.js'
 import { GraphqlTool } from './tools/GraphqlTool/GraphqlTool.js'
 import { HttpTool } from './tools/HttpTool/HttpTool.js'
 import { DatabaseTool } from './tools/DatabaseTool/DatabaseTool.js'
@@ -343,6 +344,7 @@ export function getAllBaseTools(): Tools {
     _tools.push(AgentDevelopmentTool);
     _tools.push(LLMRouterTool);
     _tools.push(CompareTool);
+    _tools.push(SearchReplaceEditTool);
     _tools.push(GraphqlTool);
     _tools.push(HttpTool);
     _tools.push(DatabaseTool);
