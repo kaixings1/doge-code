@@ -46,24 +46,16 @@ describe('createAnthropicStreamFromOpenAI', () => {
       events.push(event);
     }
 
-    // Filter for assistant messages
-    const assistantMessages = events.filter(e => e.type === 'assistant');
+    // Collect all text deltas from content_block_delta events
+    const textDeltas = events
+      .filter(e => e.type === 'content_block_delta' && e.delta?.type === 'text_delta')
+      .map(e => e.delta.text);
 
-    // The bug: without the fix, assistantMessages would be empty
-    // With the fix: we should get exactly 1 AssistantMessage
-    expect(assistantMessages.length).toBeGreaterThan(0);
-
-    const msg = assistantMessages[0]!;
-    expect(msg.type).toBe('assistant');
-    expect(msg.message.content).toBeDefined();
-
-    // Should have text content
-    const textBlocks = msg.message.content.filter((c: any) => c.type === 'text');
-    const fullText = textBlocks.map((c: any) => c.text).join('');
+    const fullText = textDeltas.join('');
     expect(fullText).toContain('Hello world');
   });
 
-  it('should yield AssistantMessage when text is in reasoning_content (StepFun path)', async () => {
+  it('should yield text from reasoning_content (StepFun path)', async () => {
     // Simulate StepFun API response: text in reasoning_content, content is empty
     const chunks = [
       'data: {"id":"test-1","object":"chat.completion.chunk","created":1234567890,"model":"test-model","choices":[{"index":0,"delta":{"role":"assistant","content":"","reasoning":"The","reasoning_content":"The"},"finish_reason":null}]}\n\n',
@@ -84,17 +76,16 @@ describe('createAnthropicStreamFromOpenAI', () => {
       events.push(event);
     }
 
-    const assistantMessages = events.filter(e => e.type === 'assistant');
-    expect(assistantMessages.length).toBeGreaterThan(0);
+    // Collect all text deltas from content_block_delta events
+    const textDeltas = events
+      .filter(e => e.type === 'content_block_delta' && e.delta?.type === 'text_delta')
+      .map(e => e.delta.text);
 
-    const msg = assistantMessages[0]!;
-    expect(msg.type).toBe('assistant');
-    const textBlocks = msg.message.content.filter((c: any) => c.type === 'text');
-    const fullText = textBlocks.map((c: any) => c.text).join('');
+    const fullText = textDeltas.join('');
     expect(fullText).toContain('The answer is 42');
   });
 
-  it('should yield AssistantMessage with thinking delta (DeepSeek path)', async () => {
+  it('should yield thinking delta as text (DeepSeek path)', async () => {
     // Simulate DeepSeek API: uses "thinking" field for reasoning tokens
     const chunks = [
       'data: {"id":"test-1","object":"chat.completion.chunk","created":1234567890,"model":"deepseek-chat","choices":[{"index":0,"delta":{"role":"assistant","content":""},"finish_reason":null}]}\n\n',
@@ -115,18 +106,17 @@ describe('createAnthropicStreamFromOpenAI', () => {
       events.push(event);
     }
 
-    const assistantMessages = events.filter(e => e.type === 'assistant');
-    expect(assistantMessages.length).toBeGreaterThan(0);
+    // Collect all text deltas (including converted thinking deltas)
+    const textDeltas = events
+      .filter(e => e.type === 'content_block_delta' && e.delta?.type === 'text_delta')
+      .map(e => e.delta.text);
 
-    const msg = assistantMessages[0]!;
-    expect(msg.type).toBe('assistant');
-    const textBlocks = msg.message.content.filter((c: any) => c.type === 'text');
-    const fullText = textBlocks.map((c: any) => c.text).join('');
+    const fullText = textDeltas.join('');
     expect(fullText).toContain('Let me think about this');
     expect(fullText).toContain('Done.');
   });
 
-  it('should yield AssistantMessage for native Anthropic path', async () => {
+  it('should convert native Anthropic stream events', async () => {
     // Simulate native Anthropic streaming response
     const chunks = [
       'data: {"type":"message_start","message":{"id":"msg-1","type":"message","role":"assistant","model":"test-model","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":10,"output_tokens":0}}}\n\n',
@@ -149,13 +139,21 @@ describe('createAnthropicStreamFromOpenAI', () => {
       events.push(event);
     }
 
-    const assistantMessages = events.filter(e => e.type === 'assistant');
-    expect(assistantMessages.length).toBeGreaterThan(0);
+    // Collect all text deltas
+    const textDeltas = events
+      .filter(e => e.type === 'content_block_delta' && e.delta?.type === 'text_delta')
+      .map(e => e.delta.text);
 
-    const msg = assistantMessages[0]!;
-    expect(msg.type).toBe('assistant');
-    const textBlocks = msg.message.content.filter((c: any) => c.type === 'text');
-    const fullText = textBlocks.map((c: any) => c.text).join('');
+    const fullText = textDeltas.join('');
     expect(fullText).toContain('Hi there');
+
+    // Verify all expected event types were emitted
+    const eventTypes = events.map(e => e.type);
+    expect(eventTypes).toContain('message_start');
+    expect(eventTypes).toContain('content_block_start');
+    expect(eventTypes).toContain('content_block_delta');
+    expect(eventTypes).toContain('content_block_stop');
+    expect(eventTypes).toContain('message_delta');
+    expect(eventTypes).toContain('message_stop');
   });
 });

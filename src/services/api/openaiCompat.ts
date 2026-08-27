@@ -656,8 +656,8 @@ export async function* createAnthropicStreamFromOpenAI(input: {
         }
 
         // 将 thinking 增量当作文本增量处理
-        if (delta && (delta as any).thinking !== undefined) {
-          const t = (delta as any).thinking as string
+        if (delta && ((delta as any).thinking !== undefined || (delta as any).reasoning_content !== undefined)) {
+          const t = ((delta as any).thinking as string) || ((delta as any).reasoning_content as string) || ''
           logForDebugging(`[openaiCompat] 检测到 thinking 增量, 长度=${t.length}`, { level: 'debug' })
           if (activeBlockType !== 'text') {
             yield* closeActiveBlock()
