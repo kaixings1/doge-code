@@ -1,5 +1,7 @@
 // biome-ignore-all assist/source/organizeImports: ANT-ONLY 导入标记不得重新排序
 import { toolMatchesName, type Tool, type Tools } from './Tool.js'
+import { feature } from 'bun:bundle'
+import { loadConditionalCommand } from './commands/loader.js'
 import { AgentTool } from './tools/AgentTool/AgentTool.js'
 import { AgentIntegrationTool } from './tools/AgentIntegrationTool/AgentIntegrationTool.js'
 import { SkillTool } from './tools/SkillTool/SkillTool.js'
@@ -14,40 +16,42 @@ import { TaskStopTool } from './tools/TaskStopTool/TaskStopTool.js'
 import { BriefTool } from './tools/BriefTool/BriefTool.js'
 // 死代码消除：仅限 ant 的工具条件导入
 /* eslint-disable custom-rules/no-process-env-top-level */
-const REPLTool =
-  process.env.USER_TYPE === 'ant'
-    ? require('./tools/REPLTool/REPLTool.js').REPLTool
-    : null
-const SuggestBackgroundPRTool =
-  process.env.USER_TYPE === 'ant'
-    ? require('./tools/SuggestBackgroundPRTool/SuggestBackgroundPRTool.js')
-        .SuggestBackgroundPRTool
-    : null
-const SleepTool =
-  feature('PROACTIVE') || feature('KAIROS')
-    ? require('./tools/SleepTool/SleepTool.js').SleepTool
-    : null
-const cronTools = feature('AGENT_TRIGGERS')
-  ? [
+const REPLTool = loadConditionalCommand(
+  () => process.env.USER_TYPE === 'ant',
+  () => require('./tools/REPLTool/REPLTool.js').REPLTool
+)
+const SuggestBackgroundPRTool = loadConditionalCommand(
+  () => process.env.USER_TYPE === 'ant',
+  () => require('./tools/SuggestBackgroundPRTool/SuggestBackgroundPRTool.js').SuggestBackgroundPRTool
+)
+const SleepTool = loadConditionalCommand(
+  [() => feature('PROACTIVE'), () => feature('KAIROS')],
+  () => require('./tools/SleepTool/SleepTool.js').SleepTool
+)
+const cronTools = loadConditionalCommand(
+  () => feature('AGENT_TRIGGERS'),
+  () => [
       require('./tools/ScheduleCronTool/CronCreateTool.js').CronCreateTool,
       require('./tools/ScheduleCronTool/CronDeleteTool.js').CronDeleteTool,
       require('./tools/ScheduleCronTool/CronListTool.js').CronListTool,
     ]
-  : []
-const RemoteTriggerTool = feature('AGENT_TRIGGERS_REMOTE')
-  ? require('./tools/RemoteTriggerTool/RemoteTriggerTool.js').RemoteTriggerTool
-  : null
-const SendUserFileTool = feature('KAIROS')
-  ? require('./tools/SendUserFileTool/SendUserFileTool.js').SendUserFileTool
-  : null
-const PushNotificationTool =
-  feature('KAIROS') || feature('KAIROS_PUSH_NOTIFICATION')
-    ? require('./tools/PushNotificationTool/PushNotificationTool.js')
-        .PushNotificationTool
-    : null
-const SubscribePRTool = feature('KAIROS_GITHUB_WEBHOOKS')
-  ? require('./tools/SubscribePRTool/SubscribePRTool.js').SubscribePRTool
-  : null
+) ?? []
+const RemoteTriggerTool = loadConditionalCommand(
+  () => feature('AGENT_TRIGGERS_REMOTE'),
+  () => require('./tools/RemoteTriggerTool/RemoteTriggerTool.js').RemoteTriggerTool
+)
+const SendUserFileTool = loadConditionalCommand(
+  () => feature('KAIROS'),
+  () => require('./tools/SendUserFileTool/SendUserFileTool.js').SendUserFileTool
+)
+const PushNotificationTool = loadConditionalCommand(
+  [() => feature('KAIROS'), () => feature('KAIROS_PUSH_NOTIFICATION')],
+  () => require('./tools/PushNotificationTool/PushNotificationTool.js').PushNotificationTool
+)
+const SubscribePRTool = loadConditionalCommand(
+  () => feature('KAIROS_GITHUB_WEBHOOKS'),
+  () => require('./tools/SubscribePRTool/SubscribePRTool.js').SubscribePRTool
+)
 /* eslint-enable custom-rules/no-process-env-top-level */
 import { TaskOutputTool } from './tools/TaskOutputTool/TaskOutputTool.js'
 import { WebSearchTool } from './tools/WebSearchTool/WebSearchTool.js'
