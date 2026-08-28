@@ -102,7 +102,7 @@ export class SummaryStrategy implements CompactStrategy {
   private async generateSummaryWithLLM(messages: InternalMessage[], memoryContext = ''): Promise<string> {
     if (!this._llmClient) return this.generateSummaryFallback(messages);
 
-    const summarizePrompt = "Summarize this conversation to preserve context for continuation. Include: 1) Main topic and progression. 2) What was recently implemented, modified, or debugged. 3) Technologies, frameworks, and architectural decisions discussed. 4) Files created or modified, their purposes and key changes. 5) Problems encountered and how they were resolved. 6) Pending work or next steps. Focus on technical identifiers (file paths, function names, errors)." + memoryContext;
+    const summarizePrompt = "总结此对话以保留继续所需的上下文。请包含：1)对话主题与进展。2)最近实现、修改或调试的内容。3)讨论过的技术、框架与架构决策。4)创建或修改的文件及其用途和关键变更。5)遇到的问题及解决方法。6)待办工作或下一步。聚焦技术标识符（文件路径、函数名、错误信息）。" + memoryContext;
 
     const contextMsgs: InternalMessage[] = [
       ...messages,
