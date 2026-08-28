@@ -1,22 +1,5 @@
 // biome-ignore-all assist/source/organizeImports: ANT-ONLY 导入标记不得重新排序
-import { createRequire } from 'node:module'
-
-// 用于在 Electron 环境下兼容 require 的场景（如外部 CommonJS 模块）
-const dynamicRequire = createRequire(import.meta.url)
-
-/**
- * 安全的动态加载函数，避免在 Electron bundle 中 createRequire 无法解析模块路径时崩溃。
- * 在 Electron/Vite 构建中，feature() 返回 false，所有条件加载的命令都为 null。
- * 在 Bun 原生构建中，feature() 进行编译时死代码消除，相关 import 会被内联。
- * 此函数仅作为后备，防止任何动态 require/import 加载失败导致崩溃。
- */
-function safeRequire<T>(path: string): T | null {
-  try {
-    return dynamicRequire(path) as T
-  } catch {
-    return null
-  }
-}
+import { safeRequire, loadConditionalCommand } from './commands/loader.js'
 
 import addDir from './commands/add-dir/index.ts'
 import addModel from './commands/add-model/index.ts'
@@ -107,7 +90,6 @@ import team from './commands/team/index.ts'
 import game from './commands/game/index.ts'
 import refactor from './commands/refactor.ts'
 import explain from './commands/explain/index.ts'
-import collab from './commands/collab/index.ts'
 import autocomplete from './commands/autocomplete/index.ts'
 import terminalComplete from './commands/complete/index.ts'
 import testGen from './commands/test-gen.ts'
@@ -211,10 +193,10 @@ import monitor from './commands/monitor/index.ts'
 import backup from './commands/backup/index.ts'
 import mcpToolSearch from './commands/mcp-tool-search/index.ts'
 import promptDiff from './commands/prompt-diff/index.ts'
-let agentsPlatform: Command | null = null
-if (process.env.USER_TYPE === 'ant') {
-  agentsPlatform = safeRequire('./commands/agents-platform/index.js')?.default ?? null
-}
+const agentsPlatform = loadConditionalCommand(
+  () => process.env.USER_TYPE === 'ant',
+  () => safeRequire('./commands/agents-platform/index.js')?.default ?? null
+)
 
 import securityReview from './commands/security-review.ts'
 import bughunter from './commands/bughunter/index.tsx'
@@ -229,69 +211,69 @@ import { feature } from 'bun:bundle'
 
 // 死代码消除：条件导入
 
-const proactive =
-  (feature('PROACTIVE') || process.env['CLAUDE_CODE_FEATURE_PROACTIVE'] === '1') ||
-  (feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1')
-    ? safeRequire('./commands/proactive.js')?.default
-    : null
-const briefCommand =
-  (feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') ||
-  (feature('KAIROS_BRIEF') || process.env['CLAUDE_CODE_FEATURE_KAIROS_BRIEF'] === '1')
-    ? safeRequire('./commands/brief.js')?.default
-    : null
-const assistantCommand =
-  feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1'
-    ? safeRequire('./commands/assistant/index.js')?.default
-    : null
-const bridge =
-  feature('BRIDGE_MODE') || process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1'
-    ? safeRequire('./commands/bridge/index.js')?.default
-    : null
-const remoteControlServerCommand =
-  (feature('DAEMON') || process.env['CLAUDE_CODE_FEATURE_DAEMON'] === '1') &&
-  (feature('BRIDGE_MODE') || process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1')
-    ? safeRequire('./commands/remoteControlServer/index.js')?.default
-    : null
-const voiceCommand =
-  feature('VOICE_MODE') || process.env['CLAUDE_CODE_FEATURE_VOICE_MODE'] === '1'
-    ? safeRequire('./commands/voice/index.js')?.default
-    : null
-const forceSnip =
-  feature('HISTORY_SNIP') || process.env['CLAUDE_CODE_FEATURE_HISTORY_SNIP'] === '1'
-    ? safeRequire('./commands/force-snip.js')?.default
-    : null
-const workflowsCmd =
-  feature('WORKflow_SCRIPTS') || process.env['CLAUDE_CODE_FEATURE_WORKFLOW_SCRIPTS'] === '1'
-    ? safeRequire('./commands/workflows/index.js')?.default
-    : null
-const webCmd =
-  feature('CCR_REMOTE_SETUP') || process.env['CLAUDE_CODE_FEATURE_CCR_REMOTE_SETUP'] === '1'
-    ? safeRequire('./commands/remote-setup/index.js')?.default
-    : null
-const clearSkillIndexCache =
-  feature('EXPERIMENTAL_SKILL_SEARCH') || process.env['CLAUDE_CODE_FEATURE_EXPERIMENTAL_SKILL_SEARCH'] === '1'
-    ? safeRequire('./services/skillSearch/localSearch.js')?.clearSkillIndexCache
-    : null
-const subscribePr =
-  feature('KAIROS_GITHUB_WEBHOOKS') || process.env['CLAUDE_CODE_FEATURE_KAIROS_GITHUB_WEBHOOKS'] === '1'
-    ? safeRequire('./commands/subscribe-pr.js')?.default
-    : null
-const ultraplan =
-  feature('ULTRAPLAN') || process.env['CLAUDE_CODE_FEATURE_ULTRAPLAN'] === '1'
-    ? safeRequire('./commands/ultraplan.js')?.default
-    : null
-const torch =
-  feature('TORCH') || process.env['CLAUDE_CODE_FEATURE_TORCH'] === '1'
-    ? safeRequire('./commands/torch.js')?.default
-    : null
-const peersCmd =
-  feature('UDS_INBOX') || process.env['CLAUDE_CODE_FEATURE_UDS_INBOX'] === '1'
-    ? safeRequire('./commands/peers/index.js')?.default
-    : null
-const forkCmd =
-  feature('FORK_SUBAGENT') || process.env['CLAUDE_CODE_FEATURE_FORK_SUBAGENT'] === '1'
-    ? safeRequire('./commands/fork/index.js')?.default
-    : null
+const proactive = loadConditionalCommand(
+  [() => feature('PROACTIVE') || process.env['CLAUDE_CODE_FEATURE_PROACTIVE'] === '1',
+   () => feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1'],
+  () => safeRequire('./commands/proactive.js')?.default
+)
+const briefCommand = loadConditionalCommand(
+  [() => feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1',
+   () => feature('KAIROS_BRIEF') || process.env['CLAUDE_CODE_FEATURE_KAIROS_BRIEF'] === '1'],
+  () => safeRequire('./commands/brief.js')?.default
+)
+const assistantCommand = loadConditionalCommand(
+  () => feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1',
+  () => safeRequire('./commands/assistant/index.js')?.default
+)
+const bridge = loadConditionalCommand(
+  () => feature('BRIDGE_MODE') || process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1',
+  () => safeRequire('./commands/bridge/index.js')?.default
+)
+const remoteControlServerCommand = loadConditionalCommand(
+  () => (feature('DAEMON') || process.env['CLAUDE_CODE_FEATURE_DAEMON'] === '1') &&
+          (feature('BRIDGE_MODE') || process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1'),
+  () => safeRequire('./commands/remoteControlServer/index.js')?.default
+)
+const voiceCommand = loadConditionalCommand(
+  () => feature('VOICE_MODE') || process.env['CLAUDE_CODE_FEATURE_VOICE_MODE'] === '1',
+  () => safeRequire('./commands/voice/index.js')?.default
+)
+const forceSnip = loadConditionalCommand(
+  () => feature('HISTORY_SNIP') || process.env['CLAUDE_CODE_FEATURE_HISTORY_SNIP'] === '1',
+  () => safeRequire('./commands/force-snip.js')?.default
+)
+const workflowsCmd = loadConditionalCommand(
+  () => feature('WORKflow_SCRIPTS') || process.env['CLAUDE_CODE_FEATURE_WORKFLOW_SCRIPTS'] === '1',
+  () => safeRequire('./commands/workflows/index.js')?.default
+)
+const webCmd = loadConditionalCommand(
+  () => feature('CCR_REMOTE_SETUP') || process.env['CLAUDE_CODE_FEATURE_CCR_REMOTE_SETUP'] === '1',
+  () => safeRequire('./commands/remote-setup/index.js')?.default
+)
+const clearSkillIndexCache = loadConditionalCommand(
+  () => feature('EXPERIMENTAL_SKILL_SEARCH') || process.env['CLAUDE_CODE_FEATURE_EXPERIMENTAL_SKILL_SEARCH'] === '1',
+  () => safeRequire('./services/skillSearch/localSearch.js')?.clearSkillIndexCache
+)
+const subscribePr = loadConditionalCommand(
+  () => feature('KAIROS_GITHUB_WEBHOOKS') || process.env['CLAUDE_CODE_FEATURE_KAIROS_GITHUB_WEBHOOKS'] === '1',
+  () => safeRequire('./commands/subscribe-pr.js')?.default
+)
+const ultraplan = loadConditionalCommand(
+  () => feature('ULTRAPLAN') || process.env['CLAUDE_CODE_FEATURE_ULTRAPLAN'] === '1',
+  () => safeRequire('./commands/ultraplan.js')?.default
+)
+const torch = loadConditionalCommand(
+  () => feature('TORCH') || process.env['CLAUDE_CODE_FEATURE_TORCH'] === '1',
+  () => safeRequire('./commands/torch.js')?.default
+)
+const peersCmd = loadConditionalCommand(
+  () => feature('UDS_INBOX') || process.env['CLAUDE_CODE_FEATURE_UDS_INBOX'] === '1',
+  () => safeRequire('./commands/peers/index.js')?.default
+)
+const forkCmd = loadConditionalCommand(
+  () => feature('FORK_SUBAGENT') || process.env['CLAUDE_CODE_FEATURE_FORK_SUBAGENT'] === '1',
+  () => safeRequire('./commands/fork/index.js')?.default
+)
 import buddy from './commands/buddy/index.ts'
 
 import thinkback from './commands/thinkback/index.ts'
@@ -801,12 +783,10 @@ async function getSkills(cwd: string): Promise<{
   }
 }
 
-const getWorkflowCommands =
-  feature('WORKFLOW_SCRIPTS') || process.env['CLAUDE_CODE_FEATURE_WORKFLOW_SCRIPTS'] === '1'
-    ? (
-        safeRequire('./tools/WorkflowTool/createWorkflowCommand.js') as { getWorkflowCommands: (cwd: string) => Promise<Command[]> } | null
-      )?.getWorkflowCommands ?? null
-    : null
+const getWorkflowCommands = loadConditionalCommand(
+  () => feature('WORKFLOW_SCRIPTS') || process.env['CLAUDE_CODE_FEATURE_WORKFLOW_SCRIPTS'] === '1',
+  () => (safeRequire('./tools/WorkflowTool/createWorkflowCommand.js') as { getWorkflowCommands: (cwd: string) => Promise<Command[]> } | null)?.getWorkflowCommands ?? null
+)
 
 /**
  * 根据命令声明的 `availability`（认证/提供商要求）进行过滤。

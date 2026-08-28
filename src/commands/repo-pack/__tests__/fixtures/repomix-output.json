@@ -1,0 +1,20 @@
+{
+  "name": "D:/doge-code/src/commands/repo-pack/__tests__/fixtures",
+  "timestamp": "2026-08-28T06:22:24.541Z",
+  "files": [
+    {
+      "path": "README.md",
+      "tokens": 9,
+      "content": "# Test Project\nThis is a test.\n"
+    },
+    {
+      "path": "repomix-output.md",
+      "tokens": 65,
+      "content": "# Repository: D:/doge-code/src/commands/repo-pack/__tests__/fixtures\n\n> Packed by repo-pack | 2026-08-28T06:22:24.519Z\n\n## Files\n\n### README.md\n\n```\n# Test Project\nThis is a test.\n\n```\n\n---\nTotal files: 1 | Estimated tokens: 9"
+    }
+  ],
+  "stats": {
+    "totalFiles": 2,
+    "totalTokens": 74
+  }
+}
