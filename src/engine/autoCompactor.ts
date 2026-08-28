@@ -102,7 +102,7 @@ export class SummaryStrategy implements CompactStrategy {
   private async generateSummaryWithLLM(messages: InternalMessage[], memoryContext = ''): Promise<string> {
     if (!this._llmClient) return this.generateSummaryFallback(messages);
 
-    const summarizePrompt = "Summarize this conversation for context continuity. Include: what the conversation is about, what was recently implemented or changed, key files and functions involved, and any pending work or unresolved problems. Focus on technical details (file paths, function names, errors) that would be essential for continuing. Be concise." + memoryContext;
+    const summarizePrompt = "Summarize this conversation to preserve context for continuation. Include: 1) Main topic and progression. 2) What was recently implemented, modified, or debugged. 3) Technologies, frameworks, and architectural decisions discussed. 4) Files created or modified, their purposes and key changes. 5) Problems encountered and how they were resolved. 6) Pending work or next steps. Focus on technical identifiers (file paths, function names, errors)." + memoryContext;
 
     const contextMsgs: InternalMessage[] = [
       ...messages,
