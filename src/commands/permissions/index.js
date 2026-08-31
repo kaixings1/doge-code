@@ -1,0 +1,8 @@
+const permissions = {
+    type: 'local-jsx',
+    name: 'permissions',
+    aliases: ['allowed-tools'],
+    description: '管理允许和拒绝工具权限规则',
+    load: () => import('./permissions.tsx'),
+};
+export default permissions;

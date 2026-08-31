@@ -1,0 +1,246 @@
+import { z } from 'zod/v4';
+import { buildTool } from '../../Tool.js';
+import { formatFileSize } from '../../utils/format.js';
+import { lazySchema } from '../../utils/lazySchema.js';
+import { getRuleByContentsForTool } from '../../utils/permissions/permissions.js';
+import { isPreapprovedHost } from './preapproved.js';
+import { DESCRIPTION, WEB_FETCH_TOOL_NAME } from './prompt.js';
+import { getToolUseSummary, renderToolResultMessage, renderToolUseMessage, renderToolUseProgressMessage, } from './UI.js';
+import { applyPromptToMarkdown, getURLMarkdownContent, isPreapprovedUrl, MAX_MARKDOWN_LENGTH, } from './utils.js';
+const inputSchema = lazySchema(() => z.strictObject({
+    url: z.string().url().describe('要获取内容的 URL'),
+    prompt: z.string().describe('用于处理获取内容的提示词'),
+}));
+const outputSchema = lazySchema(() => z.object({
+    bytes: z.number().describe('获取内容的字节大小'),
+    code: z.number().describe('HTTP 响应码'),
+    codeText: z.string().describe('HTTP 响应码文本'),
+    result: z
+        .string()
+        .describe('应用提示词到内容后的处理结果'),
+    durationMs: z
+        .number()
+        .describe('获取和处理内容所花费的时间（毫秒）'),
+    url: z.string().describe('已获取的 URL'),
+}));
+function webFetchToolInputToPermissionRuleContent(input) {
+    try {
+        const parsedInput = WebFetchTool.inputSchema.safeParse(input);
+        if (!parsedInput.success) {
+            return `input:${input.toString()}`;
+        }
+        const { url } = parsedInput.data;
+        const hostname = new URL(url).hostname;
+        return `domain:${hostname}`;
+    }
+    catch {
+        return `input:${input.toString()}`;
+    }
+}
+export const WebFetchTool = buildTool({
+    name: WEB_FETCH_TOOL_NAME,
+    searchHint: '从 URL 获取并提取内容',
+    // 100K chars - tool result persistence threshold
+    maxResultSizeChars: 100000,
+    shouldDefer: false,
+    async description(input) {
+        const { url } = input;
+        try {
+            const hostname = new URL(url).hostname;
+            return `Claude 想要获取 ${hostname} 的内容`;
+        }
+        catch {
+            return `Claude 想要获取该 URL 的内容`;
+        }
+    },
+    userFacingName() {
+        return '获取网页';
+    },
+    getToolUseSummary,
+    getActivityDescription(input) {
+        const summary = getToolUseSummary(input);
+        return summary ? `正在获取 ${summary}` : '正在获取网页';
+    },
+    get inputSchema() {
+        return inputSchema();
+    },
+    get outputSchema() {
+        return outputSchema();
+    },
+    isConcurrencySafe() {
+        return true;
+    },
+    isReadOnly() {
+        return true;
+    },
+    toAutoClassifierInput(input) {
+        return input.prompt ? `${input.url}: ${input.prompt}` : input.url;
+    },
+    async checkPermissions(input, context) {
+        const appState = context.getAppState();
+        const permissionContext = appState.toolPermissionContext;
+        // Check if the hostname is in the preapproved list
+        try {
+            const { url } = input;
+            const parsedUrl = new URL(url);
+            if (isPreapprovedHost(parsedUrl.hostname, parsedUrl.pathname)) {
+                return {
+                    behavior: 'allow',
+                    updatedInput: input,
+                    decisionReason: { type: 'other', reason: 'Preapproved host' },
+                };
+            }
+        }
+        catch {
+            // If URL parsing fails, continue with normal permission checks
+        }
+        // Check for a rule specific to the tool input (matching hostname)
+        const ruleContent = webFetchToolInputToPermissionRuleContent(input);
+        const denyRule = getRuleByContentsForTool(permissionContext, WebFetchTool, 'deny').get(ruleContent);
+        if (denyRule) {
+            return {
+                behavior: 'deny',
+                message: `${WebFetchTool.name} 拒绝了访问 ${ruleContent}。`,
+                decisionReason: {
+                    type: 'rule',
+                    rule: denyRule,
+                },
+            };
+        }
+        const askRule = getRuleByContentsForTool(permissionContext, WebFetchTool, 'ask').get(ruleContent);
+        if (askRule) {
+            return {
+                behavior: 'ask',
+                message: `Claude 请求使用 ${WebFetchTool.name} 的权限，但您尚未授予。`,
+                decisionReason: {
+                    type: 'rule',
+                    rule: askRule,
+                },
+                suggestions: buildSuggestions(ruleContent),
+            };
+        }
+        const allowRule = getRuleByContentsForTool(permissionContext, WebFetchTool, 'allow').get(ruleContent);
+        if (allowRule) {
+            return {
+                behavior: 'allow',
+                updatedInput: input,
+                decisionReason: {
+                    type: 'rule',
+                    rule: allowRule,
+                },
+            };
+        }
+        return {
+            behavior: 'ask',
+            message: `Claude 请求使用 ${WebFetchTool.name} 的权限，但您尚未授予。`,
+            suggestions: buildSuggestions(ruleContent),
+        };
+    },
+    async prompt(_options) {
+        // Always include the auth warning regardless of whether ToolSearch is
+        // currently in the tools list. Conditionally toggling this prefix based
+        // on ToolSearch availability caused the tool description to flicker
+        // between SDK query() calls (when ToolSearch enablement varies due to
+        // MCP tool count thresholds), invalidating the Anthropic API prompt
+        // cache on each toggle — two consecutive cache misses per flicker event.
+        return `重要提示：WebFetch 无法访问需要身份验证的 URL（如 Google Docs、Confluence、Jira、GitHub 等）。如果目标 URL 需要登录，请寻找提供认证访问的专用 MCP 工具。
+${DESCRIPTION}`;
+    },
+    async validateInput(input) {
+        const { url } = input;
+        try {
+            new URL(url);
+        }
+        catch {
+            return {
+                result: false,
+                message: `错误：无效的 URL "${url}"。提供的 URL 无法解析。`,
+                meta: { reason: 'invalid_url' },
+                errorCode: 1,
+            };
+        }
+        return { result: true };
+    },
+    renderToolUseMessage,
+    renderToolUseProgressMessage,
+    renderToolResultMessage,
+    async call({ url, prompt }, { abortController, options: { isNonInteractiveSession } }) {
+        const start = Date.now();
+        const response = await getURLMarkdownContent(url, abortController);
+        // Check if we got a redirect to a different host
+        if ('type' in response && response.type === 'redirect') {
+            const statusText = response.statusCode === 301
+                ? '永久移动'
+                : response.statusCode === 308
+                    ? '永久重定向'
+                    : response.statusCode === 307
+                        ? '临时重定向'
+                        : '找到';
+            const message = `检测到重定向：该 URL 重定向到不同的主机。
+
+原始 URL：${response.originalUrl}
+重定向 URL：${response.redirectUrl}
+状态：${response.statusCode} ${statusText}
+
+要完成您的请求，我需要从重定向 URL 获取内容。请再次使用 WebFetch，参数如下：
+- url: "${response.redirectUrl}"
+- prompt: "${prompt}"`;
+            const output = {
+                bytes: Buffer.byteLength(message),
+                code: response.statusCode,
+                codeText: statusText,
+                result: message,
+                durationMs: Date.now() - start,
+                url,
+            };
+            return {
+                data: output,
+            };
+        }
+        const { content, bytes, code, codeText, contentType, persistedPath, persistedSize, } = response;
+        const isPreapproved = isPreapprovedUrl(url);
+        let result;
+        if (isPreapproved &&
+            contentType.includes('text/markdown') &&
+            content.length < MAX_MARKDOWN_LENGTH) {
+            result = content;
+        }
+        else {
+            result = await applyPromptToMarkdown(prompt, content, abortController.signal, isNonInteractiveSession, isPreapproved);
+        }
+        // Binary content (PDFs, etc.) was additionally saved to disk with a
+        // mime-derived extension. Note it so Claude can inspect the raw file
+        // if the Haiku summary above isn't enough.
+        if (persistedPath) {
+            result += `\n\n[二进制内容（${contentType}，${formatFileSize(persistedSize ?? bytes)}）也已保存到 ${persistedPath}]`;
+        }
+        const output = {
+            bytes,
+            code,
+            codeText,
+            result,
+            durationMs: Date.now() - start,
+            url,
+        };
+        return {
+            data: output,
+        };
+    },
+    mapToolResultToToolResultBlockParam({ result }, toolUseID) {
+        return {
+            tool_use_id: toolUseID,
+            type: 'tool_result',
+            content: result,
+        };
+    },
+});
+function buildSuggestions(ruleContent) {
+    return [
+        {
+            type: 'addRules',
+            destination: 'localSettings',
+            rules: [{ toolName: WEB_FETCH_TOOL_NAME, ruleContent }],
+            behavior: 'allow',
+        },
+    ];
+}
