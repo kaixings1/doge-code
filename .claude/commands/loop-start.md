@@ -1,36 +1,109 @@
 ---
-description: Start a managed autonomous loop pattern with safety defaults and explicit stop conditions.
+description: "启动循环操作员 — 支持 11 种循环模式：串行/并行/流水线/扇出/事件驱动/状态机/共识/自愈/限速/优先级/链式"
+argument-hint: "<pattern> <tasks...> [--max-iterations N] [--budget-tokens N] [--parallelism N] [--mode safe|fast]"
+model: sonnet
+color: orange
 ---
 
-# Loop Start Command
+# Loop Start
 
-Start a managed autonomous loop pattern with safety defaults.
+启动循环操作员，支持多种循环模式。
 
 ## Usage
 
-`/loop-start [pattern] [--mode safe|fast]`
+`/loop-start <pattern> <tasks...> [options]`
 
-- `pattern`: `sequential`, `continuous-pr`, `rfc-dag`, `infinite`
-- `--mode`:
-  - `safe` (default): strict quality gates and checkpoints
-  - `fast`: reduced gates for speed
+### Patterns
 
-## Flow
+| Pattern | 描述 | 适用场景 |
+|---------|------|----------|
+| `sequential` | 串行循环 | 任务有依赖关系 |
+| `parallel` | 并行循环 | 任务独立，需要速度 |
+| `pipeline` | 流水线 | 多阶段处理，输出链式传递 |
+| `fanout` | 扇出/扇入 | 大批量任务分拆聚合 |
+| `event-driven` | 事件驱动 | 文件变化/Git/PR 事件 |
+| `state-machine` | 状态机 | 复杂多阶段状态转移 |
+| `consensus` | 多模型共识 | 高价值决策需要多模型确认 |
+| `self-healing` | 自愈循环 | 需要自动错误恢复 |
+| `rate-limited` | 速率限制 | API 调用需要限流 |
+| `priority` | 优先级调度 | 任务有紧急程度差异 |
+| `chaining` | 循环链 | 多循环串联执行 |
 
-1. Confirm repository state and branch strategy.
-2. Select loop pattern and model tier strategy.
-3. Enable required hooks/profile for the chosen mode.
-4. Create loop plan and write runbook under `.claude/plans/`.
-5. Print commands to start and monitor the loop.
+### Options
+
+- `--max-iterations N` — 最大迭代次数（默认 10）
+- `--budget-tokens N` — Token 预算（默认 100000）
+- `--parallelism N` — 并行度（默认 4，仅 parallel/fanout 模式）
+- `--mode` — `safe`（严格质量门控，默认）或 `fast`（快速模式）
+
+## Examples
+
+```bash
+# 串行循环：依次执行 3 个任务
+/loop-start sequential "lint" "test" "build"
+
+# 并行循环：同时分析 3 个模块
+/loop-start parallel "analyze src/commands/" "analyze src/api/" "analyze src/components/" --parallelism 3
+
+# 流水线：lint → test → build → deploy
+/loop-start pipeline "bun run lint" "bun test" "bun run build" "bun run deploy"
+
+# 扇出：并行分析所有子目录
+/loop-start fanout "src/commands" "src/api" "src/components" "src/utils"
+
+# 自愈循环：启动服务器（失败自动恢复）
+/loop-start self-healing "bun run src/server/server.ts"
+
+# 多模型共识：代码审查
+/loop-start consensus "Review src/commands/loop-v2/index.ts for security issues"
+
+# 优先级调度
+/loop-start priority "fix-critical-bug" "add-docs" "refactor" --priorities 0 2 3
+```
 
 ## Required Safety Checks
 
-- Verify tests pass before first loop iteration.
-- Ensure `ECC_HOOK_PROFILE` is not disabled globally.
-- Ensure loop has explicit stop condition.
+Before starting any loop:
+
+1. Verify tests pass before first iteration.
+2. Ensure loop has explicit stop condition.
+3. Set budget tokens to prevent runaway costs.
+4. Configure checkpoint directory for crash recovery.
+5. Verify dead letter queue directory is writable.
+
+## Stop Conditions
+
+Loops stop when:
+- All tasks completed successfully
+- Max iterations reached
+- Budget tokens exceeded
+- Circuit breaker triggered (consecutive failures)
+- User interrupt (Ctrl+C)
+
+## Monitoring
+
+Use `/loop-status` to inspect running loops:
+```bash
+/loop-status              # Show all active loops
+/loop-status --watch      # Real-time monitoring
+/loop-status --loop-id <id>  # Specific loop
+```
+
+## Integration with /ship
+
+Loop integrates with `/ship` workflow:
+```bash
+/ship --loop-pipeline sequential "lint" "test" "build"
+```
+
+This runs the ship phases as a loop pipeline, with each phase as a stage.
 
 ## Arguments
 
 $ARGUMENTS:
-- `<pattern>` optional (`sequential|continuous-pr|rfc-dag|infinite`)
+- `<pattern>` optional — Loop pattern (see table above)
+- `<tasks...>` optional — Tasks to execute in the loop
+- `--max-iterations N` optional
+- `--budget-tokens N` optional
+- `--parallelism N` optional
 - `--mode safe|fast` optional
