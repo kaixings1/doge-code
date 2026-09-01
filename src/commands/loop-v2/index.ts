@@ -25,10 +25,14 @@
  */
 
 import type { Command } from '../../commands.js'
-import type { LocalCommandCall, LocalCommandResult } from '../../types/command.js'
+import type { LocalCommandCall, LocalCommandResult, LocalJSXCommandContext } from '../../types/command.js'
 import { existsSync, mkdirSync, writeFileSync, readFileSync, readdirSync } from 'fs'
 import { join } from 'path'
 import { homedir } from 'os'
+
+// 当前命令执行上下文（call 时设置，供 executeTask 回退到真 AI 执行时使用）。
+// loop-v2 是同步 local 命令，单次执行期间不会并发，模块级暂存是安全的。
+let activeContext: LocalJSXCommandContext | null = null
 
 // ============================================================================
 // 类型定义
@@ -650,6 +654,27 @@ async function executeTask(task: string): Promise<{ success: boolean; task: stri
     task,
     '',
   )
+
+  // 阶段 1：关键词匹配不到（executeTaskWithStrategy 返回「规划模式」提示）时，
+  // 回退到真 AI 执行器（调 LongCat API 生成并执行 bash 命令），而非假执行。
+  if (
+    result.success &&
+    (result.output.includes('需要 AI 代理执行') || result.output.includes('规划模式'))
+  ) {
+    const { createAITaskExecutor } = await import('../loop/ai-task-executor.js')
+    const ctx = activeContext ?? { options: { mainLoopModel: '' } }
+    const executor = createAITaskExecutor(ctx as never, {
+      maxRetries: 2,
+      taskTimeout: 120000,
+    })
+    const aiResult = await executor(task, '', {
+      id: `v2-ai-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      description: task,
+    })
+    const tokens = Math.max(1, Math.round((aiResult.output.length + task.length) / 4))
+    return { success: aiResult.success, task, output: aiResult.output, tokens }
+  }
+
   const tokens = Math.max(1, Math.round((result.output.length + task.length) / 4))
   return { success: result.success, task, output: result.output, tokens }
 }
@@ -746,6 +771,7 @@ function saveMetrics(metrics: LoopMetrics, config: LoopConfig): void {
 // ============================================================================
 
 const call: LocalCommandCall = async (args, _context): Promise<LocalCommandResult> => {
+  activeContext = _context ?? null
   const trimmed = args.trim()
   const parts = trimmed.split(/\s+/)
   const pattern = parts[0] || 'sequential'
