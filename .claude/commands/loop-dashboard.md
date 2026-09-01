@@ -88,14 +88,24 @@ And renders:
 - Frontend: Vanilla HTML/CSS/JS (no build step)
 - Charts: Chart.js (CDN)
 - Data: JSON files (no database)
-- Server: `src/services/loop-dashboard/server.ts` (port 3711)
+- Server: Node.js HTTP server (port 3711)
 
-## Files
+## Implementation Files
 
+### Command Entry
+- `src/commands/loop-dashboard/index.ts` — 命令入口
+- `src/commands/loop-dashboard/index.js` — 编译输出
+- `src/__tests__/commands/loop-dashboard.test.ts` — 测试
+
+### Dashboard Service
 - `src/services/loop-dashboard/server.ts` — HTTP 服务器 + HTML 渲染
 - `src/services/loop-dashboard/api.ts` — 数据读取和聚合
 - `src/services/loop-dashboard/types.ts` — 类型定义
 - `src/services/loop-dashboard/index.ts` — 入口导出
+- `src/services/loop-dashboard/server.js` — 编译输出
+- `src/services/loop-dashboard/api.js` — 编译输出
+- `src/services/loop-dashboard/types.js` — 编译输出
+- `src/services/loop-dashboard/index.js` — 编译输出
 
 ## API Endpoints
 

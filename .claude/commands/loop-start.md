@@ -91,12 +91,13 @@ Use `/loop-status` to inspect running loops:
 
 ## Integration with /ship
 
-Loop integrates with `/ship` workflow:
+Loop 可与 `/ship` 工作流配合使用：
+
 ```bash
-/ship --loop-pipeline sequential "lint" "test" "build"
+/loop-start pipeline "bun run lint" "bun test" "bun run build"
 ```
 
-This runs the ship phases as a loop pipeline, with each phase as a stage.
+`/ship` 内置 `ship-ci-review-loop.ts`，提供 CI 监控（`getCIStatus`）和 PR 评论循环（`getPRFeedback`），可用 loop 驱动其多轮迭代。
 
 ## Arguments
 
