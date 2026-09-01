@@ -136,6 +136,7 @@ import ssh from './commands/ssh/index.ts'
 import healthScore from './commands/health-score/index.ts'
 import health from './commands/health/index.ts'
 import loopV2 from './commands/loop-v2/index.ts'
+import loopOrchestrate from './commands/loop-orchestrate/index.ts'
 import loopDashboard from './commands/loop-dashboard/index.ts'
 import loopStartV2 from './commands/loop-start-v2/index.ts'
 import loopStatusV2 from './commands/loop-status-v2/index.ts'
@@ -706,6 +707,7 @@ const COMMANDS = memoize((): Command[] => [
   loopCommand,
   ...loopShortcuts,
   loopV2,
+  loopOrchestrate,
   loopStartV2,
   loopStatusV2,
   loopDashboard,

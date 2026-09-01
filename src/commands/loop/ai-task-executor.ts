@@ -340,7 +340,13 @@ ${taskDescription}
 
     try {
       // ─── 第一次 AI 调用 ───
-      const executionPrompt = `你是一个 DevOps 工程师。请完成以下任务，必须输出可执行的 bash 命令来创建文件。
+      // 支持角色化：systemPrompt 非空时作为角色身份，否则回退默认 DevOps 工程师。
+      const role = systemPrompt && systemPrompt.trim()
+        ? systemPrompt.trim()
+        : '你是一个专业的 DevOps 工程师。请执行真实的 bash 命令来创建文件。'
+      const executionPrompt = `${role}
+
+请完成以下任务，必须输出可执行的 bash 命令来创建文件。
 
 ⚠️ 重要：你必须只输出 bash 命令，用 \`\`\`bash 代码块包裹。不要输出文字描述、计划或分析。只有 bash 命令会被执行。
 
@@ -369,7 +375,7 @@ EOF
         await writeFile(`loop-request-${task.id}.json`, JSON.stringify({ model, prompt: executionPrompt }, null, 2), 'utf-8')
       } catch { /* ignore */ }
 
-      let aiOutput = await callAI('你是一个专业的 DevOps 工程师。请执行真实的 bash 命令来创建文件。', executionPrompt)
+      let aiOutput = await callAI(role, executionPrompt)
 
       // 保存 AI 响应用于调试
       try {
