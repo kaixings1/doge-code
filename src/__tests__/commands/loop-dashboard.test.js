@@ -1,0 +1,8 @@
+import { describe, it, expect } from 'vitest';
+import * as mod from './../../commands/loop-dashboard/index';
+describe('loop-dashboard', () => {
+    describe('loopDashboard', () => {
+        it('should be defined', () => { expect(mod.default).toBeDefined(); });
+        it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0); });
+    });
+});

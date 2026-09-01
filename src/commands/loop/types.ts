@@ -18,7 +18,7 @@ export interface LoopGoal {
 }
 
 /** 验证模式 */
-export type VerifyMode = 'none' | 'test' | 'build' | 'lint' | 'files'
+export type VerifyMode = 'none' | 'test' | 'build' | 'lint' | 'files' | 'full'
 
 /** 检查点状态（用于中断恢复） */
 export interface CheckpointState {
@@ -83,6 +83,10 @@ export interface LoopOptions {
   askUser?: AskUserFn
   /** 连续无进展轮数阈值（触发询问，默认 3） */
   stagnantThreshold?: number
+  /** 详细日志落盘路径（JSONL，每事件一行）。不指定则仅屏幕输出，不落盘 */
+  logPath?: string
+  /** 日志中的循环标识（用于跨命令追踪同一循环），默认自动生成 */
+  logId?: string
 }
 
 /** Loop event types */

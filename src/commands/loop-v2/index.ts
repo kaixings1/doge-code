@@ -136,9 +136,25 @@ function generateId(): string {
 async function runSequentialLoop(tasks: string[], config: LoopConfig, loopId: string): Promise<LocalCommandResult> {
   const results: any[] = []
   let tokensUsed = 0
+  const breaker = new CircuitBreaker(config.circuitBreakerThreshold, config.circuitBreakerCooldownMs)
 
   for (let i = 0; i < tasks.length; i++) {
     const task = tasks[i]
+
+    // 熔断器：打开且未过冷却期时快速失败，拒绝执行
+    if (!breaker.canExecute()) {
+      addToDeadLetterQueue({
+        taskId: generateId(),
+        loopId,
+        pattern: 'sequential',
+        error: `熔断器打开（连续 ${config.circuitBreakerThreshold} 次失败），跳过任务`,
+        retries: 0,
+        createdAt: new Date().toISOString(),
+        status: 'pending',
+      })
+      continue
+    }
+
     const checkpoint: LoopCheckpoint = {
       loopId,
       iteration: i + 1,
@@ -152,11 +168,16 @@ async function runSequentialLoop(tasks: string[], config: LoopConfig, loopId: st
     try {
       const result = await executeTask(task)
       results.push(result)
+      tokensUsed += result.tokens ?? 0
+      checkpoint.tokensUsed = tokensUsed
+      checkpoint.cost = tokensUsed * 0.00001
       checkpoint.status = 'completed'
       checkpoint.result = result
+      breaker.recordSuccess()
     } catch (err: any) {
       checkpoint.status = 'failed'
       checkpoint.error = err.message
+      breaker.recordFailure()
       if (i < config.maxRetries) {
         await sleep(config.backoffBaseMs * Math.pow(2, i))
         i-- // 重试
@@ -180,7 +201,8 @@ async function runSequentialLoop(tasks: string[], config: LoopConfig, loopId: st
     }
   }
 
-  return text(`串行循环完成\n执行任务: ${tasks.length}\n成功: ${results.length}\nToken 消耗: ${tokensUsed}`)
+  const breakerNote = breaker.isOpen() ? `\n⚠️ 熔断器状态: open` : ''
+  return text(`串行循环完成\n执行任务: ${tasks.length}\n成功: ${results.length}\nToken 消耗: ${tokensUsed}${breakerNote}`)
 }
 
 /**
@@ -189,6 +211,7 @@ async function runSequentialLoop(tasks: string[], config: LoopConfig, loopId: st
 async function runParallelLoop(tasks: string[], config: LoopConfig, loopId: string): Promise<LocalCommandResult> {
   const maxParallel = Math.min(tasks.length, 4) // 最大并行度 4
   const results: any[] = []
+  let tokensUsed = 0
 
   // 分批并行执行
   for (let i = 0; i < tasks.length; i += maxParallel) {
@@ -200,6 +223,7 @@ async function runParallelLoop(tasks: string[], config: LoopConfig, loopId: stri
     for (const result of batchResults) {
       if (result.status === 'fulfilled') {
         results.push(result.value)
+        tokensUsed += result.value.tokens ?? 0
       } else {
         // 失败任务进入死信队列
         addToDeadLetterQueue({
@@ -215,7 +239,7 @@ async function runParallelLoop(tasks: string[], config: LoopConfig, loopId: stri
     }
   }
 
-  return text(`并行循环完成\n执行任务: ${tasks.length}\n成功: ${results.length}\n并行度: ${maxParallel}`)
+  return text(`并行循环完成\n执行任务: ${tasks.length}\n成功: ${results.length}\n并行度: ${maxParallel}\nToken 消耗: ${tokensUsed}`)
 }
 
 /**
@@ -505,6 +529,58 @@ class TokenBucket {
 }
 
 /**
+ * 熔断器（方向 2 能力加强）
+ *
+ * 连续失败达到 threshold → open（拒绝执行，快速失败）
+ * cooldownMs 后 → half-open（允许试探一次）
+ * 试探成功 → closed；试探失败 → 重新 open
+ *
+ * 落地 LoopConfig 中已声明但未实现的 circuitBreakerThreshold / circuitBreakerCooldownMs。
+ */
+class CircuitBreaker {
+  private state: 'closed' | 'open' | 'half-open' = 'closed'
+  private failureCount = 0
+  private openedAt = 0
+
+  constructor(private threshold: number, private cooldownMs: number) {}
+
+  /** 是否允许执行（open 状态且未过冷却期时拒绝） */
+  canExecute(): boolean {
+    if (this.state === 'open') {
+      if (Date.now() - this.openedAt >= this.cooldownMs) {
+        this.state = 'half-open'
+        return true
+      }
+      return false
+    }
+    return true
+  }
+
+  /** 执行成功：关闭熔断器，重置失败计数 */
+  recordSuccess(): void {
+    this.state = 'closed'
+    this.failureCount = 0
+  }
+
+  /** 执行失败：累加失败计数，达到阈值或试探失败时打开熔断器 */
+  recordFailure(): void {
+    this.failureCount++
+    if (this.state === 'half-open' || this.failureCount >= this.threshold) {
+      this.state = 'open'
+      this.openedAt = Date.now()
+    }
+  }
+
+  isOpen(): boolean {
+    return this.state === 'open'
+  }
+
+  status(): string {
+    return this.state
+  }
+}
+
+/**
  * 12. 循环链（Loop Chaining）— 多循环串联执行
  */
 async function runChainingLoop(chains: Array<{ name: string; pattern: LoopPattern; tasks: string[]; options?: Record<string, any> }>, config: LoopConfig, loopId: string): Promise<LocalCommandResult> {
@@ -565,13 +641,23 @@ async function executeLoop(pattern: LoopPattern, tasks: string[], config: LoopCo
 // 核心执行函数
 // ============================================================================
 
-async function executeTask(task: string): Promise<any> {
-  // 实际实现中会调用 Agent 或执行 shell 命令
-  return { success: true, task, output: `Executed: ${task}` }
+async function executeTask(task: string): Promise<{ success: boolean; task: string; output: string; tokens: number }> {
+  // 方向 4：接入真实执行，复用 /loop 引擎的智能执行器
+  // （根据任务描述关键词选择 shell 命令：test→bun test、lint→bun run lint 等）
+  const { executeTaskWithStrategy } = await import('../loop/engine.js')
+  const result = await executeTaskWithStrategy(
+    { id: `v2-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, description: task, status: 'running' },
+    task,
+    '',
+  )
+  const tokens = Math.max(1, Math.round((result.output.length + task.length) / 4))
+  return { success: result.success, task, output: result.output, tokens }
 }
 
 async function executeStage(stageName: string, task: string, input: any): Promise<any> {
-  return { stage: stageName, input, output: `Stage ${stageName} completed` }
+  // 方向 4：流水线阶段也接入真实执行
+  const result = await executeTask(task)
+  return { stage: stageName, input, output: result.output }
 }
 
 function mergeResults(results: any[]): any[] {
@@ -625,8 +711,10 @@ async function applyHealingStrategy(strategy: string): Promise<void> {
 
 function saveCheckpoint(checkpoint: LoopCheckpoint, config: LoopConfig): void {
   ensureDir(config.checkpointDir)
-  const filePath = join(config.checkpointDir, `${checkpoint.loopId}.json`)
-  writeFileSync(filePath, JSON.stringify(checkpoint, null, 2))
+  // 最新快照（用于状态恢复 / 最后状态查询）
+  writeFileSync(join(config.checkpointDir, `${checkpoint.loopId}.json`), JSON.stringify(checkpoint, null, 2))
+  // 逐迭代历史快照（方向 1：可回溯每个迭代的完整状态，不再被覆盖丢失）
+  writeFileSync(join(config.checkpointDir, `${checkpoint.loopId}.${checkpoint.iteration}.json`), JSON.stringify(checkpoint, null, 2))
 }
 
 function addToDeadLetterQueue(task: DeadLetterTask, config: LoopConfig = DEFAULT_CONFIG): void {
