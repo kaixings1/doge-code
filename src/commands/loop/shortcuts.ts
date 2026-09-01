@@ -40,6 +40,9 @@ export function parseLoopArgs(args: string): {
   autoRepair: boolean
   progressInterval: number
   ask: boolean
+  log: string | null
+  logId: string | null
+  quiet: boolean
 } {
   const result = {
     goal: '',
@@ -64,6 +67,9 @@ export function parseLoopArgs(args: string): {
     autoRepair: true,
     progressInterval: 0,
     ask: false,
+    log: null as string | null,
+    logId: null as string | null,
+    quiet: false,
   }
 
   // 引号感知分词：保留 "..." 内的空格（如 --criteria "文章 CRUD"）
@@ -104,7 +110,7 @@ export function parseLoopArgs(args: string): {
       }
     } else if (part === '--verify' && i + 1 < parts.length) {
       const v = parts[++i].toLowerCase()
-      if (['none', 'test', 'build', 'lint', 'files'].includes(v)) {
+      if (['none', 'test', 'build', 'lint', 'files', 'full'].includes(v)) {
         result.verify = v
       }
     } else if (part === '--report' && i + 1 < parts.length) {
@@ -135,6 +141,15 @@ export function parseLoopArgs(args: string): {
     } else if (part === '--ask') {
       // B4 关键节点询问用户方向
       result.ask = true
+    } else if (part === '--log' && i + 1 < parts.length) {
+      // 方向1：详细日志落盘路径（JSONL）
+      result.log = parts[++i]
+    } else if (part === '--log-id' && i + 1 < parts.length) {
+      // 方向1：日志循环标识
+      result.logId = parts[++i]
+    } else if (part === '--quiet') {
+      // 方向1：关闭屏幕滚动日志
+      result.quiet = true
     } else if (part === '--output' && i + 1 < parts.length) {
       result.outputPath = parts[++i]
     } else if (part === '--timeout' && i + 1 < parts.length) {

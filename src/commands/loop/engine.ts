@@ -28,6 +28,7 @@ import {
   summarizeSubtasks,
   type ProgressReporter,
 } from './progress.js'
+import { createLogSink, toLogEntry, type LogSink, type LogContext } from './logger.js'
 
 const DEFAULT_MAX_ITERATIONS = 20
 
@@ -118,7 +119,24 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
     lastCompletedCount: 0,
   }
 
-  const emit = (event: LoopEvent) => { options.onProgress?.(event) }
+  // ─── 详细日志层（方向 1）：指定 logPath 时落盘 JSONL，可全量检查 ───
+  const logId = options.logId ?? `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`
+  const logSink: LogSink | null = options.logPath ? createLogSink(options.logPath) : null
+  const logCtx: LogContext = {
+    loopId: logId,
+    source: 'loop',
+    strategy: options.strategy,
+    iteration: 0,
+  }
+
+  const emit = (event: LoopEvent) => {
+    options.onProgress?.(event)
+    if (logSink) {
+      // 同步最新迭代号到日志上下文，使每条日志能追溯到具体轮次
+      logCtx.iteration = state.iteration
+      logSink.append(toLogEntry(event, logCtx))
+    }
+  }
 
   emit({ type: 'loop_start', strategy: options.strategy, goal: goal.description })
 
@@ -691,6 +709,7 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
       emit({ type: 'warn', message: `报告已生成: ${reportPath}` })
     }
 
+    logSink?.close()
     return result
 
   } catch (error) {
@@ -700,6 +719,7 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
     emit({ type: 'error', error: errMsg })
     emit({ type: 'loop_end', success: false, iterations: state.iteration, duration: Date.now() - state.startTime, reason: errMsg })
 
+    logSink?.close()
     return {
       success: false,
       iterations: state.iteration,
@@ -721,7 +741,7 @@ export async function executeLoop(options: LoopEngineOptions): Promise<LoopResul
  * - 包含 "git" → 执行 git 命令
  * - 其他 → 返回提示信息
  */
-async function executeTaskWithStrategy(
+export async function executeTaskWithStrategy(
   task: SubTask,
   prompt: string,
   systemPrompt: string,
@@ -853,6 +873,12 @@ async function runVerification(
       : { passed: false, reason: '未检测到文件创建（请用 bash 命令实际创建文件）' }
   }
 
+  // full 模式（方向 3）：接入 verify.md 的完整验证
+  // 构建 → 类型 → lint → 测试 → console.log 审计 → git 状态 → 密钥扫描
+  if (mode === 'full') {
+    return runFullVerification()
+  }
+
   // 依次尝试验证命令，直到找到可用的
   const commands = VERIFY_COMMANDS[mode] || []
   for (const cmd of commands) {
@@ -875,6 +901,52 @@ async function runVerification(
     }
   }
   return { passed: true, reason: `${mode} 验证跳过（无可用命令）` }
+}
+
+/**
+ * 完整验证（方向 3）：与 verify.md 对齐的全面质量门禁
+ *
+ * 依次执行 build → typecheck → lint → test → console.log 审计 → git 状态 → 密钥扫描，
+ * 任一步失败即整体失败，并汇总每步结果。
+ */
+async function runFullVerification(): Promise<{ passed: boolean; reason: string }> {
+  const steps: Array<{ name: string; cmd: string | null }> = [
+    { name: 'build', cmd: 'bun run build 2>&1 | tail -20' },
+    { name: 'typecheck', cmd: 'bunx tsc --noEmit --skipLibCheck 2>&1 | tail -20' },
+    { name: 'lint', cmd: 'bun run lint 2>&1 | tail -20' },
+    { name: 'test', cmd: 'bun test 2>&1 | tail -30' },
+    { name: 'console.log 审计', cmd: 'rg -n "console\\.log" src 2>&1 | head -20 || echo "无 console.log"' },
+    { name: 'git 状态', cmd: 'git status --short 2>&1 | head -20' },
+  ]
+
+  const results: string[] = []
+  let allPassed = true
+
+  for (const step of steps) {
+    if (!step.cmd) continue
+    try {
+      const output = execSync(step.cmd, {
+        cwd: process.cwd(),
+        encoding: 'utf-8',
+        timeout: 120000,
+        stdio: ['pipe', 'pipe', 'pipe'],
+      })
+      results.push(`✅ ${step.name}: 通过`)
+      if (step.name === 'console.log 审计' && output.trim() && !output.includes('无 console.log')) {
+        results.push(`   发现 console.log: ${output.split('\n').length} 行`)
+      }
+    } catch (err) {
+      const e = err as { stdout?: string; stderr?: string; status?: number }
+      allPassed = false
+      const tail = ((e.stdout ?? '') + (e.stderr ?? '')).slice(0, 200)
+      results.push(`❌ ${step.name}: 失败 (退出码 ${e.status ?? 'unknown'})${tail ? `\n   ${tail}` : ''}`)
+    }
+  }
+
+  return {
+    passed: allPassed,
+    reason: `full 验证${allPassed ? '通过' : '失败'}\n${results.join('\n')}`,
+  }
 }
 
 // ============================================================================

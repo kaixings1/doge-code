@@ -3,7 +3,7 @@
 // ============================================================================
 
 import type { Command, LocalCommandCall, LocalCommandResult } from '../commands.js'
-import { existsSync, readdirSync, readFileSync, statSync, unlinkSync } from 'fs'
+import { existsSync, readdirSync, readFileSync, writeFileSync, statSync, unlinkSync } from 'fs'
 import { join } from 'path'
 import { homedir } from 'os'
 
@@ -52,6 +52,7 @@ const LOOP_BASE = join(homedir(), '.doge', 'loops')
 const CHECKPOINT_DIR = join(LOOP_BASE, 'checkpoints')
 const DLQ_DIR = join(LOOP_BASE, 'dead-letter-queue')
 const METRICS_FILE = join(LOOP_BASE, 'metrics.json')
+const LOGS_DIR = join(LOOP_BASE, 'logs')
 
 function safeNum(v: any): number {
   return typeof v === 'number' && Number.isFinite(v) ? v : 0
@@ -180,16 +181,74 @@ const call: LocalCommandCall = async (args): Promise<LocalCommandResult> => {
         '  /loop-status-v2 --loop-id <id>   查看特定循环',
         '  /loop-status-v2 --json           JSON 格式输出',
         '  /loop-status-v2 --dead-letter    只显示死信队列',
+        '  /loop-status-v2 --retry <taskId> 将死信标记为重试',
+        '  /loop-status-v2 --discard <taskId> 丢弃死信',
+        '  /loop-status-v2 --review <taskId> 将死信标记为已审查',
         '  /loop-status-v2 --metrics        只显示指标统计',
         '  /loop-status-v2 --checkpoints    只显示检查点历史',
+        '  /loop-status-v2 --trace <loopId> 重放指定循环的完整执行日志',
+        '  /loop-status-v2 --logs           列出所有日志文件',
         '  /loop-status-v2 --clean          清理过期数据（>7 天）',
         '',
         '存储位置：',
         `  检查点: ${CHECKPOINT_DIR}`,
         `  死信队列: ${DLQ_DIR}`,
         `  指标文件: ${METRICS_FILE}`,
+        `  日志: ${LOGS_DIR}`,
       ].join('\n'),
     }
+  }
+
+  // Trace mode：重放指定循环的完整执行日志（方向 1 详细日志）
+  if (s.includes('--trace')) {
+    const parts = s.trim().split(/\s+/)
+    const idx = parts.indexOf('--trace')
+    const loopId = idx >= 0 && parts[idx + 1] && !parts[idx + 1]!.startsWith('--') ? parts[idx + 1] : null
+    if (!loopId) {
+      return { type: 'text', value: '❌ --trace 需要指定 loopId：/loop-status-v2 --trace <loopId>' }
+    }
+    const logFile = join(LOGS_DIR, `${loopId}.jsonl`)
+    if (!existsSync(logFile)) {
+      return {
+        type: 'text',
+        value: `❌ 未找到日志文件: ${logFile}\n提示：运行 /loop --log <path> 或指定 --log-id 时才会落盘日志。`,
+      }
+    }
+    const entries = readFileSync(logFile, 'utf-8')
+      .split('\n')
+      .filter(Boolean)
+      .map(line => {
+        try { return JSON.parse(line) } catch { return null }
+      })
+      .filter(Boolean)
+
+    const lines = [`## 🔎 循环执行轨迹: ${loopId}`, ``, `共 ${entries.length} 条日志事件`, '']
+    for (const e of entries) {
+      const time = new Date(e.ts).toLocaleString('zh-CN')
+      const levelMark = e.level === 'error' ? '❌' : e.level === 'warn' ? '⚠️' : '  '
+      const iter = e.iteration > 0 ? ` #${e.iteration}` : ''
+      lines.push(`${levelMark} [${time}] ${e.event}${iter} — ${e.detail}`)
+    }
+    return { type: 'text', value: lines.join('\n') }
+  }
+
+  // Logs mode：列出所有日志文件
+  if (s.includes('--logs')) {
+    if (!existsSync(LOGS_DIR)) {
+      return { type: 'text', value: '📁 暂无日志文件。' }
+    }
+    const files = readdirSync(LOGS_DIR).filter(f => f.endsWith('.jsonl'))
+    if (files.length === 0) {
+      return { type: 'text', value: '📁 暂无日志文件。' }
+    }
+    const lines = ['## 📁 日志文件', '', `共 ${files.length} 个日志`, '']
+    for (const f of files.slice(0, 30)) {
+      const stat = statSync(join(LOGS_DIR, f))
+      const loopId = f.replace(/\.jsonl$/, '')
+      lines.push(`- ${loopId}（${(stat.size / 1024).toFixed(1)} KB）`)
+    }
+    if (files.length > 30) lines.push(`  ... 还有 ${files.length - 30} 个日志`)
+    return { type: 'text', value: lines.join('\n') }
   }
 
   // Clean mode
@@ -216,6 +275,36 @@ const call: LocalCommandCall = async (args): Promise<LocalCommandResult> => {
     }
 
     return { type: 'text', value: `✅ 已清理 ${cleaned} 个过期文件（>7 天）` }
+  }
+
+  // Dead letter operations（方向 3）：重试 / 丢弃 / 标记已审查
+  const dlqOp = ['--retry', '--discard', '--review'].find(op => s.includes(op))
+  if (dlqOp) {
+    const parts = s.trim().split(/\s+/)
+    const idx = parts.indexOf(dlqOp)
+    const taskId = idx >= 0 && parts[idx + 1] && !parts[idx + 1]!.startsWith('--') ? parts[idx + 1] : null
+    if (!taskId) {
+      return { type: 'text', value: `❌ ${dlqOp} 需要指定 taskId：/loop-status-v2 ${dlqOp} <taskId>` }
+    }
+    const newStatus = dlqOp === '--retry' ? 'retried' : dlqOp === '--discard' ? 'discarded' : 'reviewed'
+    // 支持完整 taskId 或前 16 位简写匹配
+    const dlqFiles = existsSync(DLQ_DIR) ? readdirSync(DLQ_DIR).filter(f => f.endsWith('.json')) : []
+    const matched = dlqFiles.find(f => {
+      const base = f.replace(/\.json$/, '')
+      return base === taskId || base.startsWith(taskId)
+    })
+    if (!matched) {
+      return { type: 'text', value: `❌ 死信队列中未找到 taskId: ${taskId}` }
+    }
+    const fp = join(DLQ_DIR, matched)
+    try {
+      const d = JSON.parse(readFileSync(fp, 'utf-8'))
+      d.status = newStatus
+      writeFileSync(fp, JSON.stringify(d, null, 2))
+      return { type: 'text', value: `✅ 死信 ${matched} 已标记为 ${newStatus}` }
+    } catch (err) {
+      return { type: 'text', value: `❌ 更新死信失败: ${err instanceof Error ? err.message : String(err)}` }
+    }
   }
 
   // Dead letter only

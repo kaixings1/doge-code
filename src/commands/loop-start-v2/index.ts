@@ -98,7 +98,9 @@ function saveCheckpoint(loopId: string, iteration: number, status: string, token
     tokensUsed,
     cost: tokensUsed * 0.00001,
   }
+  // 最新快照 + 逐迭代历史（方向 1：可回溯，不再被覆盖丢失）
   writeFileSync(join(config.checkpointDir, `${loopId}.json`), JSON.stringify(checkpoint, null, 2))
+  writeFileSync(join(config.checkpointDir, `${loopId}.${iteration}.json`), JSON.stringify(checkpoint, null, 2))
 }
 
 function addToDeadLetterQueue(loopId: string, error: string, retries: number, config: LoopConfig): void {
@@ -138,9 +140,15 @@ function sleep(ms: number): Promise<void> {
 // ============================================================================
 
 async function executeTask(task: string): Promise<{ success: boolean; output: string }> {
-  // 实际实现中会调用 Agent 或执行 shell 命令
-  await sleep(100) // 模拟执行
-  return { success: true, output: `Executed: ${task}` }
+  // 方向 4：接入真实执行，复用 /loop 引擎的智能执行器
+  // （根据任务描述关键词选择 shell 命令：test→bun test、lint→bun run lint 等）
+  const { executeTaskWithStrategy } = await import('../loop/engine.js')
+  const result = await executeTaskWithStrategy(
+    { id: `v2-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, description: task, status: 'running' },
+    task,
+    '',
+  )
+  return { success: result.success, output: result.output }
 }
 
 async function runLoop(pattern: string, tasks: string[], config: LoopConfig, loopId: string): Promise<LocalCommandResult> {

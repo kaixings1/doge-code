@@ -11,13 +11,14 @@ import * as React from 'react'
 import { Box, Text, useInput } from '../../ink.js'
 import type { Command } from '../../commands.js'
 import type { LocalJSXCommandCall, LocalJSXCommandContext } from '../../types/command.js'
-import type { LoopGoal, LoopStrategyName, SubTask } from './types.js'
+import type { LoopGoal, LoopStrategyName, SubTask, LoopEvent } from './types.js'
 import { getStrategy, getStrategyInfo, getAvailableStrategies } from './strategies/index.js'
 import { isValidStrategy } from './engine.js'
 import { createAITaskExecutor } from './ai-task-executor.js'
 import { formatStatusLine, formatFinalReport, formatSubTaskSummary, type ProgressState } from './progress-ui.js'
 import { parseLoopArgs, autoSelectStrategy } from './shortcuts.js'
 import { formatPlan } from './planner.js'
+import { toLogEntry, formatLogLine, type LogContext } from './logger.js'
 
 type ParsedLoopArgs = ReturnType<typeof parseLoopArgs>
 
@@ -38,7 +39,7 @@ function renderHelp(): string {
   --auto                   自动选择策略（根据目标关键词）
   --parallel <N>           并行执行度（多个子任务同时执行）
   --budget <时间>          时间预算（如 30s / 5m / 2h），超时自动停止
-  --verify <模式>          验证模式: test / build / lint / files
+  --verify <模式>          验证模式: test / build / lint / files / full（完整质量门禁）
   --report <路径>          生成 Markdown 报告到指定路径
   --checkpoint <路径>      保存/恢复执行进度（中断后可恢复）
   --max-iterations <N>     最大迭代次数（默认 20）
@@ -47,6 +48,9 @@ function renderHelp(): string {
   --no-repair              禁用验证失败自动修复（执行验证 B2）
   --progress <秒>          定期汇报进度间隔（进度汇报 B4）
   --ask                    关键节点询问用户方向（进度汇报 B4）
+  --log <路径>             详细日志落盘（JSONL，每事件一行，可全量回溯）
+  --log-id <id>            日志循环标识（配合 --log 追踪同一循环）
+  --quiet                  关闭屏幕滚动日志（默认开启）
   --json                   JSON 格式输出
   --help                   显示本帮助
   --examples               显示详细示例
@@ -201,6 +205,30 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       context.setMessages(() => next)
     }
 
+    // ─── 滚动日志渲染：每条事件独立追加，历史保留（方向 1 详细日志） ───
+    const LOG_BASE_UUID = `loop-log-${Date.now()}`
+    let logSeq = 0
+    const logCtx: LogContext = {
+      loopId: parsed.logId ?? `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
+      source: 'loop',
+      strategy: strategy.name,
+      iteration: 0,
+    }
+    const pushLog = (event: LoopEvent) => {
+      if (!context.setMessages || parsed.quiet) return
+      if ('iteration' in event && typeof event.iteration === 'number') {
+        logCtx.iteration = event.iteration
+      }
+      const line = formatLogLine(toLogEntry(event, logCtx))
+      const prev = messagesRef.current
+      const next = [
+        ...prev,
+        { type: 'system' as const, content: line, date: new Date().toISOString(), uuid: `${LOG_BASE_UUID}-${logSeq++}` },
+      ]
+      messagesRef.current = next
+      context.setMessages(() => next)
+    }
+
     // ─── 自动 checkpoint： SIGINT 时保存进度 ───
     const checkpointPath = parsed.checkpoint ?? void 0
     const saveCheckpointNow = async () => {
@@ -242,13 +270,15 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
       snapshot: parsed.snapshot,
       autoRepair: parsed.autoRepair,
       progressIntervalMs: parsed.progressInterval > 0 ? parsed.progressInterval * 1000 : void 0,
+      logPath: parsed.log ?? void 0,
+      logId: parsed.logId ?? void 0,
       askUser: parsed.ask
         ? async (question: string, choices: string[]) => {
             onDone(`\n${question}\n选项: ${choices.join(' / ')}\n（当前模式无法交互，自动选择「继续执行」）`, { display: 'system' })
             return '继续执行'
           }
         : void 0,
-      onProgress: (event: { type: string; [k: string]: unknown }) => {
+      onProgress: (event: LoopEvent) => {
         switch (event.type) {
           case 'loop_start':
             progressState.phase = 'planning'
@@ -309,6 +339,8 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
             pushProgress(formatStatusLine(progressState))
             break
         }
+        // 滚动日志（方向 1）：非 progress（心跳/进度摘要）事件逐条追加，历史保留
+        if (event.type !== 'progress') pushLog(event)
       },
     })
 
