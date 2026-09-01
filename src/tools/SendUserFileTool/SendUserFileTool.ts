@@ -21,6 +21,16 @@ export class SendUserFileTool implements Tool {
     required: ['filePath']
   }
   validate = () => ({ valid: true })
+
+  prompt = async (_options: {
+    getToolPermissionContext: () => Promise<any>
+    tools: any
+    agents: any
+    allowedAgentTypes?: string[]
+  }): Promise<string> => {
+    return this.description
+  }
+
   execute = async (params: Record<string, any>) => {
     const filePath = params?.filePath || ''
     const encoding = params?.encoding || 'text'

@@ -255,7 +255,7 @@ export class QueryEngine {
         },
       },
       conversation: this._conversation,
-      systemPrompt: opts.systemPrompt ?? "You are Doge Code, a helpful AI programming assistant.",
+      systemPrompt: opts.systemPrompt ?? "你是 Doge Code，一个专业的 AI 编程助手。请始终使用中文回复用户，除非用户明确要求使用其他语言。所有工具执行结果、代码注释和解释都应为中文。",
       model: opts.model,
       maxOutputTokens: opts.maxOutputTokens ?? 40000,
       toolDefinitions: this._toolDefinitions,

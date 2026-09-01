@@ -50,13 +50,13 @@ tools: ["Read", "Write", "Edit", "Grep", "Glob"]
 2. **无障碍树**：屏幕阅读器将朗读的内容描述。
 3. **合规映射**：所涉及的特定 WCAG 2.2 标准列表。
 
-## Examples
+## 示例
 
-### Example: Accessible Search Component
+### 示例：无障碍搜索组件
 
-**Input**: "Create a search bar with a submit icon."
-**Action**: Ensuring the icon-only button has a visible label and the input is correctly labeled.
-**Output**:
+**输入**："创建一个带提交图标的搜索栏。"
+**操作**：确保纯图标按钮有可见标签，输入框有正确标签。
+**输出**：
 
 ```html
 <form role="search">
@@ -106,28 +106,28 @@ tools: ["Read", "Write", "Edit", "Grep", "Glob"]
 | **自动播放媒体**     | 对有认知障碍的用户造成干扰；干扰屏幕阅读器音频。            |
 | **空按钮**          | 没有 `aria-label` 或 `accessibilityLabel` 的纯图标按钮对屏幕阅读器不可见。 |
 
-## Accessibility Decision Record Template
+## 无障碍决策记录模板
 
-For major UI decisions, use this format:
+对于重要的 UI 决策，使用以下格式：
 
 ````markdown
-# ADR-ACC-[000]: [Title of the Accessibility Decision]
+# ADR-ACC-[000]: [无障碍决策标题]
 
-## Status
+## 状态
 
-Proposed | **Accepted** | Deprecated | Superseded by [ADR-XXX]
+提议中 | **已接受** | 已弃用 | 被 [ADR-XXX] 取代
 
-## Context
+## 上下文
 
-_Describe the UI component or workflow being addressed._
+_描述正在解决的 UI 组件或工作流程。_
 
-- **Platform**: [Web | iOS | Android | Cross-platform]
-- **WCAG 2.2 Success Criterion**: [e.g., 2.5.8 Target Size (Minimum)]
-- **Problem**: What is the current accessibility barrier? (e.g., "The 'Close' button in the modal is too small for users with motor impairments.")
+- **平台**: [Web | iOS | Android | 跨平台]
+- **WCAG 2.2 成功标准**: [例如，2.5.8 目标大小（最小）]
+- **问题**: 当前的无障碍障碍是什么？（例如，"模态框中的'关闭'按钮对于运动障碍用户来说太小。"）
 
-## Decision
+## 决策
 
-_Detail the specific implementation choice._
+_详细说明具体实现选择。_
 "We will implement a touch target of at least 44x44 points for all mobile navigation elements and 24x24 CSS pixels for web, ensuring a minimum 4px spacing between adjacent targets."
 
 ## Implementation Details
@@ -144,6 +144,6 @@ Button(action: close) {
 ```
 ````
 
-## Reference
+## 参考
 
-- See skill `accessibility` to transform raw UI requirements into platform-specific accessible code (WAI-ARIA, SwiftUI, or Jetpack Compose) based on WCAG 2.2 criteria.
+- 参考技能 `accessibility`，根据 WCAG 2.2 标准将原始 UI 需求转换为平台特定的无障碍代码（WAI-ARIA、SwiftUI 或 Jetpack Compose）。

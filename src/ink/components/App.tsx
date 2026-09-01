@@ -154,7 +154,7 @@ export default class App extends PureComponent<Props, State> {
 
   // Determines if TTY is supported on the provided stdin
   isRawModeSupported(): boolean {
-    return this.props.stdin.isTTY;
+    return !!this.props.stdin.isTTY && typeof this.props.stdin.setRawMode === 'function';
   }
   override render() {
     return <TerminalSizeContext.Provider value={{

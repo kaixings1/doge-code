@@ -9,7 +9,7 @@ const dynamicRequire = createRequire(import.meta.url)
  * 在 Bun 原生构建中，feature() 进行编译时死代码消除，相关 import 会被内联。
  * 此函数仅作为后备，防止任何动态 require/import 加载失败导致崩溃。
  */
-export function safeRequire<T>(path: string): T | null {
+export function safeRequire<T = any>(path: string): T | null {
   try {
     return dynamicRequire(path) as T
   } catch {

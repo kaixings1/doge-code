@@ -16,13 +16,11 @@ import { TerminalWriteContext } from '../useTerminalNotification.js';
 export function useTerminalTitle(title) {
     const writeRaw = useContext(TerminalWriteContext);
     useEffect(() => {
-        if (title === null || !writeRaw)
-            return;
+        if (title === null) return;
         const clean = stripAnsi(title);
         if (process.platform === 'win32') {
             process.title = clean;
-        }
-        else {
+        } else if (writeRaw) {
             writeRaw(osc(OSC.SET_TITLE_AND_ICON, clean));
         }
     }, [title, writeRaw]);

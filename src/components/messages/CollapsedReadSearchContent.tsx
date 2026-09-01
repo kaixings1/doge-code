@@ -348,8 +348,9 @@ export function CollapsedReadSearchContent({
       nonMemParts.push(<Text key="comma-s">，</Text>);
     }
     nonMemParts.push(<Text key="search">
-        {searchVerb} <Text bold>{searchCount}</Text>{' '}
-        {searchCount === 1 ? '模式' : '模式'}
+        <Text color="info">{searchVerb}</Text>{' '}
+        <Text bold>{searchCount}</Text>{' '}
+        <Text color="info">{searchCount === 1 ? '模式' : '模式'}</Text>
       </Text>);
   }
   if (readCount > 0) {
@@ -359,8 +360,9 @@ export function CollapsedReadSearchContent({
       nonMemParts.push(<Text key="comma-r">，</Text>);
     }
     nonMemParts.push(<Text key="read">
-        {readVerb} <Text bold>{readCount}</Text>{' '}
-        {readCount === 1 ? '文件' : '文件'}
+        <Text color="info">{readVerb}</Text>{' '}
+        <Text bold>{readCount}</Text>{' '}
+        <Text color="info">{readCount === 1 ? '文件' : '文件'}</Text>
       </Text>);
   }
   if (listCount > 0) {
@@ -370,8 +372,9 @@ export function CollapsedReadSearchContent({
       nonMemParts.push(<Text key="comma-l">，</Text>);
     }
     nonMemParts.push(<Text key="list">
-        {listVerb} <Text bold>{listCount}</Text>{' '}
-        {listCount === 1 ? '目录' : '目录'}
+        <Text color="info">{listVerb}</Text>{' '}
+        <Text bold>{listCount}</Text>{' '}
+        <Text color="info">{listCount === 1 ? '目录' : '目录'}</Text>
       </Text>);
   }
   if (replCount > 0) {
@@ -380,8 +383,9 @@ export function CollapsedReadSearchContent({
       nonMemParts.push(<Text key="comma-repl">，</Text>);
     }
     nonMemParts.push(<Text key="repl">
-        {replVerb} <Text bold>{replCount}</Text>{' '}
-        {replCount === 1 ? '次' : '次'}
+        <Text color="info">{replVerb}</Text>{' '}
+        <Text bold>{replCount}</Text>{' '}
+        <Text color="info">{replCount === 1 ? '次' : '次'}</Text>
       </Text>);
   }
   if (mcpCallCount > 0) {
@@ -392,10 +396,12 @@ export function CollapsedReadSearchContent({
       nonMemParts.push(<Text key="comma-mcp">，</Text>);
     }
     nonMemParts.push(<Text key="mcp">
-        {verb_0} {serverLabel}
+        <Text color="info">{verb_0}</Text>{' '}
+        {serverLabel}
         {mcpCallCount > 1 && <>
             {' '}
-            <Text bold>{mcpCallCount}</Text> 次
+            <Text bold>{mcpCallCount}</Text>{' '}
+            <Text color="info">次</Text>
           </>}
       </Text>);
   }
@@ -406,8 +412,9 @@ export function CollapsedReadSearchContent({
       nonMemParts.push(<Text key="comma-bash">，</Text>);
     }
     nonMemParts.push(<Text key="bash">
-        {verb_1} <Text bold>{bashCount}</Text> 条 bash{' '}
-        {bashCount === 1 ? '命令' : '命令'}
+        <Text color="info">{verb_1}</Text>{' '}
+        <Text bold>{bashCount}</Text>{' '}
+        <Text color="info">条 bash {bashCount === 1 ? '命令' : '命令'}</Text>
       </Text>);
   }
 
@@ -421,8 +428,9 @@ export function CollapsedReadSearchContent({
       memParts.push(<Text key="comma-mr">，</Text>);
     }
     memParts.push(<Text key="mem-read">
-        {verb_2} <Text bold>{memoryReadCount}</Text>{' '}
-        {memoryReadCount === 1 ? '记忆' : '记忆'}
+        <Text color="info">{verb_2}</Text>{' '}
+        <Text bold>{memoryReadCount}</Text>{' '}
+        <Text color="info">{memoryReadCount === 1 ? '记忆' : '记忆'}</Text>
       </Text>);
   }
   if (memorySearchCount > 0) {
@@ -440,8 +448,9 @@ export function CollapsedReadSearchContent({
       memParts.push(<Text key="comma-mw">，</Text>);
     }
     memParts.push(<Text key="mem-write">
-        {verb_4} <Text bold>{memoryWriteCount}</Text>{' '}
-        {memoryWriteCount === 1 ? '记忆' : '记忆'}
+        <Text color="info">{verb_4}</Text>{' '}
+        <Text bold>{memoryWriteCount}</Text>{' '}
+        <Text color="info">{memoryWriteCount === 1 ? '记忆' : '记忆'}</Text>
       </Text>);
   }
   return <Box flexDirection="column" marginTop={1} backgroundColor={bg}>

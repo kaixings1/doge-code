@@ -15,7 +15,7 @@ import { ensureKeychainPrefetchCompleted, startKeychainPrefetch } from './utils/
 
 // eslint-disable-next-line custom-rules/no-top-level-side-effects
 startKeychainPrefetch()
-import { feature } from 'bun:bundle';
+// feature() removed - replaced with env var checks
 import { Command as CommanderCommand, InvalidArgumentError, Option } from '@commander-js/extra-typings';
 import chalk from 'chalk';
 import { readFileSync, writeFileSync } from 'fs';
@@ -78,12 +78,12 @@ const getTeammateModeSnapshot = () => require('./utils/swarm/backends/teammateMo
 /* eslint-enable @typescript-eslint/no-require-imports */
 // 死代码消除：COORDINATOR_MODE 的条件导入
 /* eslint-disable @typescript-eslint/no-require-imports */
-const coordinatorModeModule = feature('COORDINATOR_MODE') ? require('./coordinator/coordinatorMode.js') as typeof import('./coordinator/coordinatorMode.js') : null;
+const coordinatorModeModule = process.env['CLAUDE_CODE_FEATURE_COORDINATOR_MODE'] === '1' ? require('./coordinator/coordinatorMode.js') as typeof import('./coordinator/coordinatorMode.js') : null;
 /* eslint-enable @typescript-eslint/no-require-imports */
 // 死代码消除：KAIROS（助手模式）的条件导入
 /* eslint-disable @typescript-eslint/no-require-imports */
-const assistantModule = feature('KAIROS') ? require('./assistant/index.js') as typeof import('./assistant/index.js') : null;
-const kairosGate = feature('KAIROS') ? require('./assistant/gate.js') as typeof import('./assistant/gate.js') : null;
+const assistantModule = process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' ? require('./assistant/index.js') as typeof import('./assistant/index.js') : null;
+const kairosGate = process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' ? require('./assistant/gate.js') as typeof import('./assistant/gate.js') : null;
 import { relative, resolve } from 'path';
 import { isAnalyticsDisabled } from './services/analytics/config.js';
 import { getFeatureValue_CACHED_MAY_BE_STALE } from './services/analytics/growthbook.js';
@@ -175,7 +175,7 @@ import { plural } from './utils/stringUtils.js';
 import { type ChannelEntry, getInitialMainLoopModel, getIsNonInteractiveSession, getSdkBetas, getSessionId, getUserMsgOptIn, setAllowedChannels, setAllowedSettingSources, setChromeFlagOverride, setClientType, setCwdState, setDirectConnectServerUrl, setFlagSettingsPath, setInitialMainLoopModel, setInlinePlugins, setIsInteractive, setKairosActive, setOriginalCwd, setQuestionPreviewFormat, setSdkBetas, setSessionBypassPermissionsMode, setSessionPersistenceDisabled, setSessionSource, setUserMsgOptIn, switchSession } from './bootstrap/state.js';
 
 /* eslint-disable @typescript-eslint/no-require-imports */
-const autoModeStateModule = feature('TRANSCRIPT_CLASSIFIER') ? require('./utils/permissions/autoModeState.js') as typeof import('./utils/permissions/autoModeState.js') : null;
+const autoModeStateModule = process.env['CLAUDE_CODE_FEATURE_TRANSCRIPT_CLASSIFIER'] === '1' ? require('./utils/permissions/autoModeState.js') as typeof import('./utils/permissions/autoModeState.js') : null;
 
 // TeleportRepoMismatchDialog, TeleportResumeWrapper dynamically imported at call sites
 import { migrateAutoUpdatesToSettings } from './migrations/migrateAutoUpdatesToSettings.js';
@@ -333,7 +333,7 @@ function runMigrations(): void {
     migrateSonnet45ToSonnet46();
     migrateOpusToOpus1m();
     migrateReplBridgeEnabledToRemoteControlAtStartup();
-    if (feature('TRANSCRIPT_CLASSIFIER')) {
+    if (process.env['CLAUDE_CODE_FEATURE_TRANSCRIPT_CLASSIFIER'] === '1') {
       resetAutoModeOptInForDefaultOffer();
     }
     if ("external" === 'ant') {
@@ -524,7 +524,7 @@ type PendingConnect = {
   authToken: string | undefined;
   dangerouslySkipPermissions: boolean;
 };
-const _pendingConnect: PendingConnect | undefined = feature('DIRECT_CONNECT') ? {
+const _pendingConnect: PendingConnect | undefined = process.env['CLAUDE_CODE_FEATURE_DIRECT_CONNECT'] === '1' ? {
   url: undefined,
   authToken: undefined,
   dangerouslySkipPermissions: false
@@ -535,7 +535,7 @@ type PendingAssistantChat = {
   sessionId?: string;
   discover: boolean;
 };
-const _pendingAssistantChat: PendingAssistantChat | undefined = feature('KAIROS') ? {
+const _pendingAssistantChat: PendingAssistantChat | undefined = process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' ? {
   sessionId: undefined,
   discover: false
 } : undefined;
@@ -551,7 +551,7 @@ type PendingSSH = {
   /** 在初始生成时转发给远程 CLI 的额外 CLI 参数（--resume、-c）。 */
   extraCliArgs: string[];
 };
-const _pendingSSH: PendingSSH | undefined = feature('SSH_REMOTE') ? {
+const _pendingSSH: PendingSSH | undefined = process.env['CLAUDE_CODE_FEATURE_SSH_REMOTE'] === '1' ? {
   host: undefined,
   cwd: undefined,
   permissionMode: undefined,
@@ -561,7 +561,6 @@ const _pendingSSH: PendingSSH | undefined = feature('SSH_REMOTE') ? {
 } : undefined;
 export async function main() {
   // profileCheckpoint('main_function_start');
-
   // 保留恢复的调试别名，而不在 Commander 中注册无效的多字符短标志。
   if (process.argv.includes('-d2e')) {
     process.argv = process.argv.map(arg => arg === '-d2e' ? '--debug-to-stderr' : arg);
@@ -588,7 +587,7 @@ export async function main() {
 
   // 检查 argv 中是否有 cc:// 或 cc+unix:// URL —— 重写以便主命令处理它，提供完整的交互式 TUI 而不是精简的子命令。
   // 对于无头 (-p)，我们重写到内部 `open` 子命令。
-  if (feature('DIRECT_CONNECT')) {
+  if (process.env['CLAUDE_CODE_FEATURE_DIRECT_CONNECT'] === '1') {
     const rawCliArgs = process.argv.slice(2);
     const ccIdx = rawCliArgs.findIndex(a => a.startsWith('cc://') || a.startsWith('cc+unix://'));
     if (ccIdx !== -1 && _pendingConnect) {
@@ -629,7 +628,7 @@ export async function main() {
   }
 
   // 提前处理深度链接 URI —— 由 OS 协议处理器调用，应在完整初始化前退出，因为它只需解析 URI 并打开终端。
-  if (feature('LODESTONE')) {
+  if (process.env['CLAUDE_CODE_FEATURE_LODESTONE'] === '1') {
     const handleUriIdx = process.argv.indexOf('--handle-uri');
     if (handleUriIdx !== -1 && process.argv[handleUriIdx + 1]) {
       const {
@@ -659,7 +658,7 @@ export async function main() {
   }
 
   // `claude assistant [sessionId]` —— 暂存并剥离，以便主命令处理它，提供完整的交互式 TUI。仅限位置 0（匹配下方的 ssh 模式）—— indexOf 会对 `claude -p "explain assistant"` 产生误报。根标志在子命令之前（例如 `--debug assistant`）会回退到存根，该存根会打印用法。
-  if (feature('KAIROS') && _pendingAssistantChat) {
+  if (process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' && _pendingAssistantChat) {
     const rawArgs = process.argv.slice(2);
     if (rawArgs[0] === 'assistant') {
       const nextArg = rawArgs[1];
@@ -677,7 +676,7 @@ export async function main() {
   }
 
   // `claude ssh <host> [dir]` —— 从 argv 中剥离，以便主命令处理程序运行（完整交互式 TUI），暂存 host/dir 供 REPL 分支在约 3720 行处拾取。v1 中不支持无头 (-p) 模式：SSH 会话需要本地 REPL 驱动（中断、权限）。
-  if (feature('SSH_REMOTE') && _pendingSSH) {
+  if (process.env['CLAUDE_CODE_FEATURE_SSH_REMOTE'] === '1' && _pendingSSH) {
     const rawCliArgs = process.argv.slice(2);
     // SSH 特定的标志可以出现在主机位置参数之前（例如 `ssh --permission-mode auto host /tmp` —— 标准的 POSIX 标志在位置参数之前）。在检查是否给出了主机之前将它们全部提取出来，因此 `claude ssh --permission-mode auto host` 和 `claude ssh host --permission-mode auto` 是等价的。下面的主机检查只需要防范 `-h`/`--help`（commander 应该处理）。
     if (rawCliArgs[0] === 'ssh') {
@@ -885,6 +884,7 @@ async function run(): Promise<CommanderCommand> {
     // profileCheckpoint('preAction_after_mdm');
     //log('init() START');
     await init();
+    logForDebugging('[TRACE] preAction after init()');
     // profileCheckpoint('preAction_after_init');
     //log('process.title setting');
 
@@ -922,7 +922,7 @@ async function run(): Promise<CommanderCommand> {
     runMigrations();
     void loadRemoteManagedSettings();
     void loadPolicyLimits();
-    if (feature('UPLOAD_USER_SETTINGS')) {
+    if (process.env['CLAUDE_CODE_FEATURE_UPLOAD_USER_SETTINGS'] === '1') {
       void import('./services/settingsSync/index.js').then(m => m.uploadUserSettingsInBackground());
     }
     ////try { require('fs').writeFileSync('d:/trace.txt', 'BEFORE_KAIROS_GATE\n', {flag:'a'}); } catch(e) {}
@@ -1007,20 +1007,20 @@ async function run(): Promise<CommanderCommand> {
     }
 	  // //console.warn(chalk.yellow('options string'));
     // 助手模式
-    if (feature('KAIROS')) {
+    if (process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') {
     } else {
     }
     // 助手模式：当 .claude/settings.json 具有 assistant: true 且 tengu_kairos GrowthBook 门控开启时，强制开启 brief。
     // //console.warn(chalk.yellow('KAIROS string'));
 		let kairosEnabled = false;
     let assistantTeamContext: Awaited<ReturnType<NonNullable<typeof assistantModule>['initializeAssistantTeam']>> | undefined;
-    if (feature('KAIROS') && (options as {
+    if (process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' && (options as {
       assistant?: boolean;
     }).assistant && assistantModule) {
       // --assistant（Agent SDK 守护进程模式）：在下方的 isAssistantMode() 运行之前强制设置门闩。守护进程已经检查了权限 — 不要让子进程重新检查 tengu_kairos。
       assistantModule.markAssistantForced();
     }
-    if (feature('KAIROS') && assistantModule?.isAssistantMode() &&
+    if (process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' && assistantModule?.isAssistantMode() &&
     // 生成的队友共享领导者的工作目录 + settings.json，因此 isAssistantMode() 对它们也为真。--agent-id 被设置意味着我们是一个生成的队友（约 170 行后 extractTeammateOptions 运行，因此在此处检查原始 commander 选项）—— 不要重新初始化团队或覆盖 teammateMode/proactive/brief。
     !(options as {
       agentId?: unknown;
@@ -1031,7 +1031,9 @@ async function run(): Promise<CommanderCommand> {
         //console.warn(chalk.yellow('助手模式已禁用：目录不受信任。接受信任对话框并重启。'));
       } else {
         // 阻塞门控检查 — 立即返回缓存的 `true`；如果磁盘缓存为 false/缺失，则惰性初始化 GrowthBook 并获取最新（最多约 5 秒）。--assistant 完全跳过门控（守护进程已预先授权）。
+        logForDebugging('[TRACE] BEFORE kairosGate.isKairosEnabled');
         kairosEnabled = assistantModule.isAssistantForced() || (await kairosGate.isKairosEnabled());
+        logForDebugging('[TRACE] AFTER kairosGate.isKairosEnabled, kairosEnabled=' + kairosEnabled);
         if (kairosEnabled) {
           const opts = options as {
             brief?: boolean;
@@ -1083,7 +1085,7 @@ async function run(): Promise<CommanderCommand> {
     let fileDownloadPromise: Promise<DownloadResult[]> | undefined;
     const agentsJson = options.agents;
     const agentCli = options.agent;
-    if (feature('BG_SESSIONS') && agentCli) {
+    if (process.env['CLAUDE_CODE_FEATURE_BG_SESSIONS'] === '1' && agentCli) {
       process.env.CLAUDE_CODE_AGENT = agentCli;
     }
 	  // //console.warn(chalk.yellow('BG_SESSIONS'));
@@ -1379,7 +1381,7 @@ async function run(): Promise<CommanderCommand> {
 	//console.error('[TRACE ' + Date.now() + '] AFTER_setSessionBypassPermissionsMode');
 
     //console.error('[TRACE ' + Date.now() + '] BEFORE_TRANSCRIPT_CLASSIFIER');
-    if (feature('TRANSCRIPT_CLASSIFIER')) {
+    if (process.env['CLAUDE_CODE_FEATURE_TRANSCRIPT_CLASSIFIER'] === '1') {
       //console.error('[TRACE ' + Date.now() + '] INSIDE TRANSCRIPT_CLASSIFIER');
       // autoModeFlagCli 是”用户是否打算在本会话中使用自动模式”的信号。
       // 当：--enable-auto-mode、--permission-mode auto、解析模式为 auto，或者 settings defaultMode 为 auto 但门控拒绝（permissionMode 解析为 default 且无显式 CLI 覆盖）时设置。
@@ -1456,7 +1458,7 @@ async function run(): Promise<CommanderCommand> {
         let reservedNameError: string | null = null;
         if (nonSdkConfigNames.some(isClaudeInChromeMCPServer)) {
           reservedNameError = `无效的 MCP 配置: "${CLAUDE_IN_CHROME_MCP_SERVER_NAME}" 是保留的 MCP 名称。`;
-        } else if (feature('CHICAGO_MCP')) {
+        } else if (process.env['CLAUDE_CODE_FEATURE_CHICAGO_MCP'] === '1') {
           const {
             isComputerUseMCPServer,
             COMPUTER_USE_MCP_SERVER_NAME
@@ -1548,7 +1550,7 @@ async function run(): Promise<CommanderCommand> {
           ...dynamicMcpConfig,
           ...chromeMcpConfig
         };
-        const hint = feature('WEB_BROWSER_TOOL') && typeof Bun !== 'undefined' && 'WebView' in Bun ? CLAUDE_IN_CHROME_SKILL_HINT_WITH_WEBBROWSER : CLAUDE_IN_CHROME_SKILL_HINT;
+        const hint = process.env['CLAUDE_CODE_FEATURE_WEB_BROWSER_TOOL'] === '1' && typeof Bun !== 'undefined' && 'WebView' in Bun ? CLAUDE_IN_CHROME_SKILL_HINT_WITH_WEBBROWSER : CLAUDE_IN_CHROME_SKILL_HINT;
         appendSystemPrompt = appendSystemPrompt ? `${appendSystemPrompt}\n\n${hint}` : hint;
       } catch (error) {
         // 静默跳过自动启用的任何错误
@@ -1576,7 +1578,7 @@ async function run(): Promise<CommanderCommand> {
     // chicago MCP：受保护的计算机使用（应用允许列表 + 前台门控 + SCContentFilter 截图）。仅限 Ant，受 GrowthBook 门控 — 失败静默（这是内部试用）。平台和交互式检查内联，以便非 macOS / 打印模式的 Ant 完全跳过重型 @ant/computer-use-mcp 导入。gates.js 轻量（仅类型包导入）。
     //
     // 放在企业 MCP 配置检查之后：该检查拒绝任何带有 `type !== 'sdk'` 的 dynamicMcpConfig 条目，而我们的配置是 `type: 'stdio'`。一个启用了 GB 门控的企业配置 Ant 否则会 process.exit(1)。Chrome 有相同的潜在问题但已发布未出事故；chicago 将自己置于正确位置。
-    if (feature('CHICAGO_MCP') && getPlatform() === 'macos' && !getIsNonInteractiveSession()) {
+    if (process.env['CLAUDE_CODE_FEATURE_CHICAGO_MCP'] === '1' && getPlatform() === 'macos' && !getIsNonInteractiveSession()) {
       try {
         const {
           getChicagoEnabled
@@ -1606,7 +1608,7 @@ async function run(): Promise<CommanderCommand> {
     // 来自 --channels 标志的频道服务器允许列表 — 其入站推送通知应注册此会话的服务器。该选项在 feature() 块内添加，因此 TS 在 options 类型上不知道它 — 与 main.tsx:1824 处的 --assistant 模式相同。
     // devChannels 被延迟：showSetupScreens 显示确认对话框，仅在接受时追加到 allowedChannels。
     let devChannels: ChannelEntry[] | undefined;
-    if (feature('KAIROS') || feature('KAIROS_CHANNELS')) {
+    if (process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' || process.env['CLAUDE_CODE_FEATURE_KAIROS_CHANNELS'] === '1') {
       // 将 plugin:name@marketplace / server:Y 标签解析为类型化条目。
       // 标签决定了下游的信任模型：plugin-kind 触发市场验证 + GrowthBook 允许列表，server-kind 除非设置了开发标志，否则总是允许列表失败（模式仅限插件）。
       // 无标签或无市场的插件条目是硬错误 — 在门控中静默不匹配会看起来像频道“开启”但从未触发任何事件。
@@ -1675,7 +1677,7 @@ async function run(): Promise<CommanderCommand> {
     }
 // //console.warn(chalk.yellow('KAIROSCHICAGO_MCP??'));
     // SDK 对 SendUserMessage 的选择加入，通过 --tools。所有会话都需要明确选择加入；在 --tools 中列出表示意图。在 initializeToolPermissionContext 之前运行，以便 getToolsForDefaultPreset() 在计算基础工具禁止过滤器时将工具视为已启用。条件 require 避免将工具名称字符串泄漏到外部构建中。
-    if ((feature('KAIROS') || feature('KAIROS_BRIEF')) && baseTools.length > 0) {
+    if ((process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' || process.env['CLAUDE_CODE_FEATURE_KAIROS_BRIEF'] === '1') && baseTools.length > 0) {
       /* eslint-disable @typescript-eslint/no-require-imports */
       const {
         BRIEF_TOOL_NAME,
@@ -1700,6 +1702,7 @@ async function run(): Promise<CommanderCommand> {
       allowDangerouslySkipPermissions,
       addDirs: addDir
     });
+    logForDebugging('[TRACE] AFTER initializeToolPermissionContext');
     let toolPermissionContext = initResult.toolPermissionContext;
     const {
       warnings,
@@ -1713,7 +1716,7 @@ async function run(): Promise<CommanderCommand> {
       }
       toolPermissionContext = removeDangerousPermissions(toolPermissionContext, overlyBroadBashPermissions);
     }
-    if (feature('TRANSCRIPT_CLASSIFIER') && dangerousPermissions.length > 0) {
+    if (process.env['CLAUDE_CODE_FEATURE_TRANSCRIPT_CLASSIFIER'] === '1' && dangerousPermissions.length > 0) {
       toolPermissionContext = stripDangerousPermissionsForAutoMode(toolPermissionContext);
     }
 
@@ -1752,12 +1755,9 @@ async function run(): Promise<CommanderCommand> {
       servers: {} as Record<string, ScopedMcpServerConfig>
     }) : getClaudeCodeMcpConfigs(dynamicMcpConfig)).then(result => {
       mcpConfigResolvedMs = Date.now() - mcpConfigStart;
-      require('fs').writeFileSync('d:/trace.log', `MCP config resolved at ${Date.now()}\n`, { flag: 'a' });
       return result;
     });
     if (!isBareMode()) {
-      require('fs').writeFileSync('d:/trace.log', `BEFORE await mcpConfigPromise at ${Date.now()}\n`, { flag: 'a' });
-     // mcpConfigPromise.then(() => require('fs').writeFileSync('d:/trace.log', `AFTER await mcpConfigPromise at ${Date.now()}\n`, { flag: 'a' }));
     }
 
     // 注意：我们在这里不调用 prefetchAllMcpResources - 这被延迟到信任对话框之后
@@ -1812,14 +1812,11 @@ async function run(): Promise<CommanderCommand> {
     // 稍后 REPL 路径中的 maybeActivateProactive() 调用是幂等的。
     maybeActivateProactive(options);
 // //console.warn(chalk.yellow('maybeActivateProactive??'));
-    require('fs').writeFileSync('d:/trace.log', `BEFORE getTools at ${Date.now()}\n`, { flag: 'a' });
     let tools = getTools(toolPermissionContext);
 		// //console.warn(chalk.yellow('toolPermissionContext??'));
-    require('fs').writeFileSync('d:/trace.log', `AFTER getTools (${tools.length} tools) at ${Date.now()}\n`, { flag: 'a' });
-
     // 为无头路径应用协调器模式工具过滤
     // （镜像 REPL/交互式路径的 useMergedTools.ts 过滤）
-    if (feature('COORDINATOR_MODE') && isEnvTruthy(process.env.CLAUDE_CODE_COORDINATOR_MODE)) {
+    if (process.env['CLAUDE_CODE_FEATURE_COORDINATOR_MODE'] === '1' && isEnvTruthy(process.env.CLAUDE_CODE_COORDINATOR_MODE)) {
       const {
         applyCoordinatorToolFilter
       } = await import('./utils/toolPool.js');
@@ -1855,7 +1852,7 @@ async function run(): Promise<CommanderCommand> {
     const {
       setup
     } = await import('./setup.js');
-    const messagingSocketPath = feature('UDS_INBOX') ? (options as {
+    const messagingSocketPath = process.env['CLAUDE_CODE_FEATURE_UDS_INBOX'] === '1' ? (options as {
       messagingSocketPath?: string;
     }).messagingSocketPath : undefined;
     // 将 setup() 与 commands+agents 加载并行化。setup() 的约 28ms 主要是 startUdsMessaging（套接字绑定，约 20ms）—— 不涉及磁盘 I/O，因此不会与 getCommands 的文件读取争用。通过 !worktreeEnabled 门控，因为 --worktree 会使 setup() process.chdir()（setup.ts:203），而命令/代理需要 chdir 后的工作目录。
@@ -1880,7 +1877,7 @@ async function run(): Promise<CommanderCommand> {
     // 仅当显式请求套接字时，才将用户消息重放到 stream-json。自动生成的套接字是被动的 —— 它允许工具在需要时注入，但默认开启不应为从未使用它的 SDK 消费者重塑 stream-json。
     // 希望注入并希望这些注入在流中可见的调用方显式传递 --messaging-socket-path（或 --replay-user-messages）。
     let effectiveReplayUserMessages = !!options.replayUserMessages;
-    if (feature('UDS_INBOX')) {
+    if (process.env['CLAUDE_CODE_FEATURE_UDS_INBOX'] === '1') {
       if (!effectiveReplayUserMessages && outputFormat === 'stream-json') {
         effectiveReplayUserMessages = !!(options as {
           messagingSocketPath?: string;
@@ -1923,8 +1920,14 @@ async function run(): Promise<CommanderCommand> {
     const currentCwd = worktreeEnabled ? getCwd() : preSetupCwd;
     const commandsStart = Date.now();
     // 汇合在 setup() 之前启动的 promise（如果 worktreeEnabled 门控了早期启动，则重新开始）。两者都根据工作目录进行记忆。
-    require('fs').writeFileSync('d:/trace.log', `BEFORE Promise.all commands at ${Date.now()}\n`, { flag: 'a' });
-    const [commands, agentDefinitionsResult] = await Promise.all([commandsPromise ?? getCommands(currentCwd), agentDefsPromise ?? getAgentDefinitionsWithOverrides(currentCwd)]);
+    let commands: any;
+    let agentDefinitionsResult: any;
+    try {
+      [commands, agentDefinitionsResult] = await Promise.all([commandsPromise || getCommands(currentCwd), agentDefsPromise || getAgentDefinitionsWithOverrides(currentCwd)]);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      throw err;
+    }
     // profileCheckpoint('action_commands_loaded');
 // //console.warn(chalk.yellow('action_commands_loaded???'));
     // 如果通过 --agents 标志提供了 CLI 代理，则进行解析
@@ -2060,7 +2063,7 @@ async function run(): Promise<CommanderCommand> {
     }
     maybeActivateBrief(options);
     // defaultView: 'chat' 是一个持久化的选择加入 — 检查授权并设置 userMsgOptIn，以便工具和提示部分激活。仅交互式：defaultView 是一个显示偏好；SDK 会话没有显示，并且助手安装程序将 defaultView:'chat' 写入 settings.local.json，否则会泄漏到同一目录中的 --print 会话中。在 maybeActivateBrief() 之后立即运行，以便在下方任何 isBriefEnabled() 读取之前，所有启动选择加入路径都已触发。在 GB 终止开关后的持久化 'chat' 会失败（授权失败）。
-    if ((feature('KAIROS') || feature('KAIROS_BRIEF')) && !getIsNonInteractiveSession() && !getUserMsgOptIn() && getInitialSettings().defaultView === 'chat') {
+    if ((process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' || process.env['CLAUDE_CODE_FEATURE_KAIROS_BRIEF'] === '1') && !getIsNonInteractiveSession() && !getUserMsgOptIn() && getInitialSettings().defaultView === 'chat') {
       /* eslint-disable @typescript-eslint/no-require-imports */
       const {
         isBriefEntitled
@@ -2071,16 +2074,16 @@ async function run(): Promise<CommanderCommand> {
       }
     }
     // 协调器模式有自己的系统提示并过滤掉 Sleep，因此通用的主动提示会告诉它调用它无法访问的工具，并与委托指令冲突。
-    if ((feature('PROACTIVE') || feature('KAIROS')) && ((options as {
+    if ((process.env['CLAUDE_CODE_FEATURE_PROACTIVE'] === '1' || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') && ((options as {
       proactive?: boolean;
     }).proactive || isEnvTruthy(process.env.CLAUDE_CODE_PROACTIVE)) && !coordinatorModeModule?.isCoordinatorMode()) {
       /* eslint-disable @typescript-eslint/no-require-imports */
-      const briefVisibility = feature('KAIROS') || feature('KAIROS_BRIEF') ? (require('./tools/BriefTool/BriefTool.js') as typeof import('./tools/BriefTool/BriefTool.js')).isBriefEnabled() ? '在检查点调用 SendUserMessage 来标记进展。' : '用户将看到你输出的任何文本。' : '用户将看到你输出的任何文本。';
+      const briefVisibility = process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' || process.env['CLAUDE_CODE_FEATURE_KAIROS_BRIEF'] === '1' ? (require('./tools/BriefTool/BriefTool.js') as typeof import('./tools/BriefTool/BriefTool.js')).isBriefEnabled() ? '在检查点调用 SendUserMessage 来标记进展。' : '用户将看到你输出的任何文本。' : '用户将看到你输出的任何文本。';
       /* eslint-enable @typescript-eslint/no-require-imports */
       const proactivePrompt = `\n# 主动模式\n\n您处于主动模式。请主动行事 — 探索、行动、推进，无需等待指令。\n\n首先简要问候用户。\n\n您将定期收到 <tick> 提示。这些是检查点。请执行您认为最有用的操作，若无事可做则调用 Sleep。${briefVisibility}`;
       appendSystemPrompt = appendSystemPrompt ? `${appendSystemPrompt}\n\n${proactivePrompt}` : proactivePrompt;
     }
-    if (feature('KAIROS') && kairosEnabled && assistantModule) {
+    if (process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' && kairosEnabled && assistantModule) {
       const assistantAddendum = assistantModule.getAssistantSystemPromptAddendum();
       appendSystemPrompt = appendSystemPrompt ? `${appendSystemPrompt}\n\n${assistantAddendum}` : assistantAddendum;
     }
@@ -2154,7 +2157,7 @@ async function run(): Promise<CommanderCommand> {
       ////try { require('fs').writeFileSync('d:/trace.txt', 'AFTER_SETUP_SCREENS\n', {flag:'a'}); } catch(e) {}
 
       // 现在信任已建立且 GrowthBook 拥有认证标头，解析 --remote-control / --rc 授权门控。
-      if (feature('BRIDGE_MODE') && remoteControlOption !== undefined) {
+      if (process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1' && remoteControlOption !== undefined) {
         const {
           getBridgeDisabledReason
         } = await import('./bridge/bridgeEnabled.js');
@@ -2166,7 +2169,7 @@ async function run(): Promise<CommanderCommand> {
       }
 
       // 检查待处理的代理内存快照更新（仅适用于 --agent 模式，仅限 ant）
-      if (feature('AGENT_MEMORY_SNAPSHOT') && mainThreadAgentDefinition && isCustomAgent(mainThreadAgentDefinition) && mainThreadAgentDefinition.memory && mainThreadAgentDefinition.pendingSnapshotUpdate) {
+      if (process.env['CLAUDE_CODE_FEATURE_AGENT_MEMORY_SNAPSHOT'] === '1' && mainThreadAgentDefinition && isCustomAgent(mainThreadAgentDefinition) && mainThreadAgentDefinition.memory && mainThreadAgentDefinition.pendingSnapshotUpdate) {
         const agentDef = mainThreadAgentDefinition;
         const choice = await launchSnapshotUpdateDialog(root, {
           agentType: agentDef.agentType,
@@ -2388,7 +2391,7 @@ async function run(): Promise<CommanderCommand> {
       systemPromptFlag: systemPrompt ? options.systemPromptFile ? 'file' : 'flag' : undefined,
       appendSystemPromptFlag: appendSystemPrompt ? options.appendSystemPromptFile ? 'file' : 'flag' : undefined,
       thinkingConfig,
-      assistantActivationPath: feature('KAIROS') && kairosEnabled ? assistantModule?.getAssistantActivationPath() : undefined
+      assistantActivationPath: process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' && kairosEnabled ? assistantModule?.getAssistantActivationPath() : undefined
     });
 // //console.warn(chalk.yellow('logTenguInit???'));
     // 在初始化时记录一次上下文指标
@@ -2487,7 +2490,7 @@ async function run(): Promise<CommanderCommand> {
           advisorModel
         }),
         // kairosEnabled 门控 executeForkedSlashCommand（processSlashCommand.tsx:132）和 AgentTool 的 shouldRunAsync 中的异步即发即弃路径。REPL 的 initialState 在约 3459 行处设置此项；无头默认值为 false，因此守护进程子进程的计划任务和 Agent 工具调用会同步运行 — 生成时 N 个过期的定时任务 = N 个串行子代理轮次阻塞用户输入。在 :1620 行计算，远在此分支之前。
-        ...(feature('KAIROS') ? {
+        ...(process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' ? {
           kairosEnabled
         } : {})
       };
@@ -2503,7 +2506,7 @@ async function run(): Promise<CommanderCommand> {
 
       // 自动模式门控的异步检查 — 根据需要纠正状态并禁用自动模式。
       // 门控于 TRANSCRIPT_CLASSIFIER（而非 USER_TYPE），以便 GrowthBook 终止开关也为外部构建运行。
-      if (feature('TRANSCRIPT_CLASSIFIER')) {
+      if (process.env['CLAUDE_CODE_FEATURE_TRANSCRIPT_CLASSIFIER'] === '1') {
         void verifyAutoModeGateAccess(toolPermissionContext, headlessStore.getState().fastMode).then(({
           updateContext
         }) => {
@@ -2733,10 +2736,10 @@ if (claudeaiTimedOut) {
       mode: isAgentSwarmsEnabled() && getTeammateUtils().isPlanModeRequired() ? 'plan' as const : toolPermissionContext.mode
     };
     // 所有启动选择加入路径（--tools、--brief、defaultView）已在上面触发；initialIsBriefOnly 仅读取结果状态。
-    const initialIsBriefOnly = feature('KAIROS') || feature('KAIROS_BRIEF') ? getUserMsgOptIn() : false;
+    const initialIsBriefOnly = process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' || process.env['CLAUDE_CODE_FEATURE_KAIROS_BRIEF'] === '1' ? getUserMsgOptIn() : false;
     const fullRemoteControl = remoteControl || getRemoteControlAtStartup() || kairosEnabled;
     let ccrMirrorEnabled = false;
-    if (feature('CCR_MIRROR') && !fullRemoteControl) {
+    if (process.env['CLAUDE_CODE_FEATURE_CCR_MIRROR'] === '1' && !fullRemoteControl) {
       /* eslint-disable @typescript-eslint/no-require-imports */
       const {
         isCcrMirrorEnabled
@@ -2850,7 +2853,7 @@ if (claudeaiTimedOut) {
       }),
       // 同步计算 teamContext 以避免在渲染期间 useEffect setState。
       // KAIROS: assistantTeamContext 优先 — 在 KAIROS 块中更早设置，以便 Agent(name: "foo") 可以在没有 TeamCreate 的情况下生成进程内队友。computeInitialTeamContext() 适用于读取自己身份的 tmux 生成的队友，而非助手模式领导者。
-      teamContext: feature('KAIROS') ? assistantTeamContext ?? computeInitialTeamContext?.() : computeInitialTeamContext?.()
+      teamContext: process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' ? assistantTeamContext ?? computeInitialTeamContext?.() : computeInitialTeamContext?.()
     };
 
     // 将 CLI 初始提示添加到历史记录
@@ -2966,7 +2969,7 @@ if (options.continue) {
 	logError(error);
 	process.exit(1);
   }
-} else if (feature('DIRECT_CONNECT') && _pendingConnect?.url) {
+} else if (process.env['CLAUDE_CODE_FEATURE_DIRECT_CONNECT'] === '1' && _pendingConnect?.url) {
   // `claude connect <url>` — 连接到远程服务器的完整交互式 TUI
   let directConnectConfig;
   try {
@@ -3003,7 +3006,7 @@ if (options.continue) {
 	thinkingConfig
   }, renderAndRun);
   return;
-} else if (feature('SSH_REMOTE') && _pendingSSH?.host) {
+} else if (process.env['CLAUDE_CODE_FEATURE_SSH_REMOTE'] === '1' && _pendingSSH?.host) {
   // `claude ssh <host> [dir]` — 探测远程主机，必要时部署二进制，
   // 通过 unix-socket -R 转发到本地认证代理，将 REPL 交给 SSHSession。
   // 工具在远程运行，UI 在本地渲染。
@@ -3069,7 +3072,7 @@ if (options.continue) {
 	thinkingConfig
   }, renderAndRun);
   return;
-} else if (feature('KAIROS') && _pendingAssistantChat && (_pendingAssistantChat.sessionId || _pendingAssistantChat.discover)) {
+} else if (process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' && _pendingAssistantChat && (_pendingAssistantChat.sessionId || _pendingAssistantChat.discover)) {
   // `claude assistant [sessionId]` — REPL 作为远程助手会话的纯查看器客户端。
   // 代理循环在远程运行；此进程流式传输实时事件并 POST 消息。
   // 历史记录通过 useAssistantHistory 上滚时懒加载（此处无阻塞获取）。
@@ -3577,7 +3580,7 @@ if (options.continue) {
   maybeActivateProactive(options);
   maybeActivateBrief(options);
   // 为全新会话持久化当前模式，以便将来恢复时知道使用了哪种模式
-  if (feature('COORDINATOR_MODE')) {
+  if (process.env['CLAUDE_CODE_FEATURE_COORDINATOR_MODE'] === '1') {
 	saveMode(coordinatorModeModule?.isCoordinatorMode() ? 'coordinator' : 'normal');
   }
 
@@ -3588,7 +3591,7 @@ if (options.continue) {
   // —— 及其隐含的工作目录 / CLAUDE.md —— 来自
   // 外部来源而非他们键入的内容。
   let deepLinkBanner: ReturnType<typeof createSystemMessage> | null = null;
-  if (feature('LODESTONE')) {
+  if (process.env['CLAUDE_CODE_FEATURE_LODESTONE'] === '1') {
 	if (options.deepLinkOrigin) {
 	  logEvent('tengu_deep_link_opened', {
 		has_prefill: Boolean(options.prefill),
@@ -3636,22 +3639,22 @@ if ("external" === 'ant') {
   program.addOption(new Option('--tasks [id]', '[仅 ANT] 任务模式：监视任务并自动处理它们。可选的 id 同时用作任务列表 ID 和代理 ID（默认为 "tasklist"）。').argParser(String).hideHelp());
   program.option('--agent-teams', '[仅 ANT] 强制 Claude 使用多代理模式解决问题', () => true);
 }
-if (feature('TRANSCRIPT_CLASSIFIER')) {
+if (process.env['CLAUDE_CODE_FEATURE_TRANSCRIPT_CLASSIFIER'] === '1') {
   program.addOption(new Option('--enable-auto-mode', '启用 auto 模式').hideHelp());
 }
-if (feature('PROACTIVE') || feature('KAIROS')) {
+if (process.env['CLAUDE_CODE_FEATURE_PROACTIVE'] === '1' || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') {
   program.addOption(new Option('--proactive', '以主动自主模式启动'));
 }
-if (feature('UDS_INBOX')) {
+if (process.env['CLAUDE_CODE_FEATURE_UDS_INBOX'] === '1') {
   program.addOption(new Option('--messaging-socket-path <path>', 'UDS 消息服务器的 Unix 域套接字路径（默认为临时路径）'));
 }
-if (feature('KAIROS') || feature('KAIROS_BRIEF')) {
+if (process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' || process.env['CLAUDE_CODE_FEATURE_KAIROS_BRIEF'] === '1') {
   program.addOption(new Option('--brief', '启用 SendUserMessage 工具用于代理与用户的通信'));
 }
-if (feature('KAIROS')) {
+if (process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') {
   program.addOption(new Option('--assistant', '强制助手模式（供 Agent SDK 守护进程使用）').hideHelp());
 }
-if (feature('KAIROS') || feature('KAIROS_CHANNELS')) {
+if (process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' || process.env['CLAUDE_CODE_FEATURE_KAIROS_CHANNELS'] === '1') {
   program.addOption(new Option('--channels <servers...>', '其频道通知（入站推送）应注册此会话的 MCP 服务器。以空格分隔的服务器名称。').hideHelp());
   program.addOption(new Option('--dangerously-load-development-channels <servers...>', '加载不在批准白名单上的频道服务器。仅用于本地频道开发。启动时会显示确认对话框。').hideHelp());
 }
@@ -3673,11 +3676,11 @@ program.addOption(new Option('--sdk-url <url>', '使用远程 WebSocket 端点�
 // 为所有构建启用 teleport/remote 标志，但在正式发布前保持未记录状态
 program.addOption(new Option('--teleport [session]', '恢复 teleport 会话，可选择指定会话 ID').hideHelp());
 program.addOption(new Option('--remote [description]', '使用给定描述创建远程会话').hideHelp());
-if (feature('BRIDGE_MODE')) {
+if (process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1') {
   program.addOption(new Option('--remote-control [name]', '启动启用了 Remote Control 的交互式会话（可选命名）').argParser(value => value || true).hideHelp());
   program.addOption(new Option('--rc [name]', '--remote-control 的别名').argParser(value => value || true).hideHelp());
 }
-if (feature('HARD_FAIL')) {
+if (process.env['CLAUDE_CODE_FEATURE_HARD_FAIL'] === '1') {
   program.addOption(new Option('--hard-fail', '在 logError 调用时崩溃，而不是静默记录').hideHelp());
 }
 // profileCheckpoint('run_main_options_built');
@@ -3767,7 +3770,7 @@ mcp.command('reset-project-choices').description('重置此项目中所有已批
 });
 
 // claude server
-if (feature('DIRECT_CONNECT')) {
+if (process.env['CLAUDE_CODE_FEATURE_DIRECT_CONNECT'] === '1') {
   program.command('server').description('启动 Claude Code 会话服务器').option('--port <number>', 'HTTP 端口', '0').option('--host <string>', '绑定地址', '0.0.0.0').option('--auth-token <token>', '用于认证的 Bearer 令牌').option('--unix <path>', '监听 Unix 域套接字').option('--workspace <dir>', '未指定 cwd 的会话的默认工作目录').option('--idle-timeout <ms>', '分离会话的空闲超时（毫秒，0 = 永不过期）', '600000').option('--max-sessions <n>', '最大并发会话数（0 = 无限制）', '32').action(async (opts: {
 	port: string;
 	host: string;
@@ -3851,7 +3854,7 @@ if (feature('DIRECT_CONNECT')) {
 // （类似于上面的 DIRECT_CONNECT/cc:// 模式）。如果 commander 到达
 // 此操作，则意味着 argv 重写未触发（例如，用户运行了
 // `claude ssh` 但没有提供主机）— 仅打印用法。
-if (feature('SSH_REMOTE')) {
+if (process.env['CLAUDE_CODE_FEATURE_SSH_REMOTE'] === '1') {
   program.command('ssh <host> [dir]').description('通过 SSH 在远程主机上运行 Claude Code。部署二进制文件并' + '将 API 认证隧道传回本地机器 — 无需远程设置。').option('--permission-mode <mode>', '远程会话的权限模式').option('--dangerously-skip-permissions', '跳过远程所有权限提示（危险）').option('--local', '端到端测试模式 — 在本地生成子 CLI（跳过 ssh/部署）。' + '测试认证代理和 unix-socket 管道，无需远程主机。').action(async () => {
 	// main() 中的 argv 重写应在 commander 运行前消耗 `ssh <host>`。
 	// 到达此处意味着缺少主机或重写谓词不匹配。
@@ -3863,7 +3866,7 @@ if (feature('SSH_REMOTE')) {
 // claude connect — 子命令仅处理 -p（无头）模式。
 // 交互模式（不带 -p）由 main() 中的早期 argv 重写处理，
 // 该重写会重定向到具有完整 TUI 支持的主命令。
-if (feature('DIRECT_CONNECT')) {
+if (process.env['CLAUDE_CODE_FEATURE_DIRECT_CONNECT'] === '1') {
   program.command('open <cc-url>').description('连接到 Claude Code 服务器（内部使用 — 使用 cc:// URL）').option('-p, --print [prompt]', '打印模式（无头模式）').option('--output-format <format>', '输出格式：text、json、stream-json', 'text').action(async (ccUrl: string, opts: {
 	print?: string | boolean;
 	outputFormat: string;
@@ -4090,7 +4093,7 @@ program.command('agents').description('列出已配置的代理').option('--sett
   await agentsHandler();
   process.exit(0);
 });
-if (feature('TRANSCRIPT_CLASSIFIER')) {
+if (process.env['CLAUDE_CODE_FEATURE_TRANSCRIPT_CLASSIFIER'] === '1') {
   // 当 tengu_auto_mode_config.enabled === 'disabled' 时跳过（熔断机制）。
   // 从磁盘缓存读取 — 注册时 GrowthBook 尚未初始化。
   if (getAutoModeEnabledStateIfCached() !== 'disabled') {
@@ -4127,7 +4130,7 @@ if (feature('TRANSCRIPT_CLASSIFIER')) {
 // 通过 try/catch 返回 false — 但在付出 ~65ms 的副作用之前
 // （25ms 设置 Zod 解析 + 40ms 同步 `security` 钥匙串子进程）。
 // 动态可见性从未生效；该命令始终隐藏。
-if (feature('BRIDGE_MODE')) {
+if (process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1') {
   program.command('remote-control', {
 	hidden: true
   }).alias('rc').description('连接您的本地环境以通过 claude.ai/code 进行远程控制会话').action(async () => {
@@ -4139,7 +4142,7 @@ if (feature('BRIDGE_MODE')) {
 	await bridgeMain(process.argv.slice(3));
   });
 }
-if (feature('KAIROS')) {
+if (process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') {
   program.command('assistant [sessionId]').description('将 REPL 作为客户端附加到运行中的桥接会话。如果未提供 sessionId，则通过 API 发现会话。').action(() => {
 	// 上面的 argv 重写应在 commander 运行前消耗 `assistant [id]`。
 	// 到达此处意味着根标志先出现（例如 `--debug assistant`）
@@ -4398,7 +4401,7 @@ async function logTenguInit({
 		appendSystemPromptFlag: appendSystemPromptFlag as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
 	  }),
 	  is_simple: isBareMode() || undefined,
-	  is_coordinator: feature('COORDINATOR_MODE') && coordinatorModeModule?.isCoordinatorMode() ? true : undefined,
+	  is_coordinator: process.env['CLAUDE_CODE_FEATURE_COORDINATOR_MODE'] === '1' && coordinatorModeModule?.isCoordinatorMode() ? true : undefined,
 	  ...(assistantActivationPath && {
 		assistantActivationPath: assistantActivationPath as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
 	  }),
@@ -4417,7 +4420,7 @@ async function logTenguInit({
   }
 }
 function maybeActivateProactive(options: unknown): void {
-  if ((feature('PROACTIVE') || feature('KAIROS')) && ((options as {
+  if ((process.env['CLAUDE_CODE_FEATURE_PROACTIVE'] === '1' || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') && ((options as {
 	proactive?: boolean;
   }).proactive || isEnvTruthy(process.env.CLAUDE_CODE_PROACTIVE))) {
 	// eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -4428,7 +4431,7 @@ function maybeActivateProactive(options: unknown): void {
   }
 }
 function maybeActivateBrief(options: unknown): void {
-  if (!(feature('KAIROS') || feature('KAIROS_BRIEF'))) return;
+  if (!(process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' || process.env['CLAUDE_CODE_FEATURE_KAIROS_BRIEF'] === '1')) return;
   const briefFlag = (options as {
 	brief?: boolean;
   }).brief;

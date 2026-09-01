@@ -31,10 +31,9 @@ export function isBridgeEnabled(): boolean {
   // 肯定三元模式 — 参见 docs/feature-gating.md。
   // 否定模式 (if (!feature(...)) return) 不会从外部构建中消除
   // 内联字符串字面量。
-  return feature('BRIDGE_MODE') || process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1'
-    ? isClaudeAISubscriber() &&
-        getFeatureValue_CACHED_MAY_BE_STALE('tengu_ccr_bridge', false)
-    : false
+  if (feature('BRIDGE_MODE')) return isClaudeAISubscriber() && getFeatureValue_CACHED_MAY_BE_STALE('tengu_ccr_bridge', false)
+  if (process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1') return isClaudeAISubscriber() && getFeatureValue_CACHED_MAY_BE_STALE('tengu_ccr_bridge', false)
+  return false
 }
 
 /**
@@ -51,10 +50,9 @@ export function isBridgeEnabled(): boolean {
  */
 export async function isBridgeEnabledBlocking(): Promise<boolean> {
   if (isLocalBridgeMode()) return true
-  return feature('BRIDGE_MODE') || process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1'
-    ? isClaudeAISubscriber() &&
-        (await checkGate_CACHED_OR_BLOCKING('tengu_ccr_bridge'))
-    : false
+  if (feature('BRIDGE_MODE')) return isClaudeAISubscriber() && (await checkGate_CACHED_OR_BLOCKING('tengu_ccr_bridge'))
+  if (process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1') return isClaudeAISubscriber() && (await checkGate_CACHED_OR_BLOCKING('tengu_ccr_bridge'))
+  return false
 }
 
 /**
@@ -72,7 +70,7 @@ export async function isBridgeEnabledBlocking(): Promise<boolean> {
  */
 export async function getBridgeDisabledReason(): Promise<string | null> {
   if (isLocalBridgeMode()) return null
-  if (feature('BRIDGE_MODE') || process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1') {
+  if (feature('BRIDGE_MODE')) {
     if (!isClaudeAISubscriber()) {
       return '远程控制需要 claude.ai 订阅。运行 `claude auth login` 使用你的 claude.ai 账户登录。'
     }
@@ -83,6 +81,21 @@ export async function getBridgeDisabledReason(): Promise<string | null> {
       return '无法确定你的组织的远程控制资格。运行 `claude auth login` 刷新你的账户信息。'
     }
     if (!(process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1') && !(await checkGate_CACHED_OR_BLOCKING('tengu_ccr_bridge'))) {
+      return '远程控制尚未在你的账户中启用。'
+    }
+    return null
+  }
+  if (process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1') {
+    if (!isClaudeAISubscriber()) {
+      return '远程控制需要 claude.ai 订阅。运行 `claude auth login` 使用你的 claude.ai 账户登录。'
+    }
+    if (!hasProfileScope()) {
+      return '远程控制需要完整权限的登录令牌。出于安全原因，长期令牌（来自 `claude setup-token` 或 CLAUDE_CODE_OAUTH_TOKEN）仅限于推理用途。运行 `claude auth login` 以使用远程控制。'
+    }
+    if (!getOauthAccountInfo()?.organizationUuid) {
+      return '无法确定你的组织的远程控制资格。运行 `claude auth login` 刷新你的账户信息。'
+    }
+    if (!(await checkGate_CACHED_OR_BLOCKING('tengu_ccr_bridge'))) {
       return '远程控制尚未在你的账户中启用。'
     }
     return null
@@ -121,9 +134,9 @@ function getOauthAccountInfo(): ReturnType<
  */
 export function isEnvLessBridgeEnabled(): boolean {
   if (isLocalBridgeMode()) return true
-  return feature('BRIDGE_MODE') || process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1'
-    ? getFeatureValue_CACHED_MAY_BE_STALE('tengu_bridge_repl_v2', false)
-    : false
+  if (feature('BRIDGE_MODE')) return getFeatureValue_CACHED_MAY_BE_STALE('tengu_bridge_repl_v2', false)
+  if (process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1') return getFeatureValue_CACHED_MAY_BE_STALE('tengu_bridge_repl_v2', false)
+  return false
 }
 
 /**
@@ -136,12 +149,19 @@ export function isEnvLessBridgeEnabled(): boolean {
  * Defaults to true — the shim stays active until explicitly disabled.
  */
 export function isCseShimEnabled(): boolean {
-  return feature('BRIDGE_MODE') || process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1'
-    ? getFeatureValue_CACHED_MAY_BE_STALE(
-        'tengu_bridge_repl_v2_cse_shim_enabled',
-        true,
-      )
-    : true
+  if (feature('BRIDGE_MODE')) {
+    return getFeatureValue_CACHED_MAY_BE_STALE(
+      'tengu_bridge_repl_v2_cse_shim_enabled',
+      true,
+    )
+  }
+  if (process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1') {
+    return getFeatureValue_CACHED_MAY_BE_STALE(
+      'tengu_bridge_repl_v2_cse_shim_enabled',
+      true,
+    )
+  }
+  return true
 }
 
 /**
@@ -158,7 +178,15 @@ export function checkBridgeMinVersion(): string | null {
   // 肯定模式——参见 docs/feature-gating.md。
   // 否定模式 (if (!feature(...)) return) 不会从外部构建中消除
   // 内联字符串字面量。
-  if (feature('BRIDGE_MODE') || process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1') {
+  if (feature('BRIDGE_MODE')) {
+    const config = getDynamicConfig_CACHED_MAY_BE_STALE<{
+      minVersion: string
+    }>('tengu_bridge_min_version', { minVersion: '0.0.0' })
+    if (config.minVersion && lt(MACRO.VERSION, config.minVersion)) {
+      return `你的 Claude Code 版本 (${MACRO.VERSION}) 太旧，无法使用远程控制。\n需要版本 ${config.minVersion} 或更高。运行 \`claude update\` 进行更新。`
+    }
+  }
+  if (process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1') {
     const config = getDynamicConfig_CACHED_MAY_BE_STALE<{
       minVersion: string
     }>('tengu_bridge_min_version', { minVersion: '0.0.0' })
@@ -180,9 +208,9 @@ export function checkBridgeMinVersion(): string | null {
  * config.ts → growthbook.ts import cycle (growthbook.ts → user.ts → config.ts).
  */
 export function getCcrAutoConnectDefault(): boolean {
-  return feature('CCR_AUTO_CONNECT') || process.env['CLAUDE_CODE_FEATURE_CCR_AUTO_CONNECT'] === '1'
-    ? getFeatureValue_CACHED_MAY_BE_STALE('tengu_cobalt_harbor', false)
-    : false
+  if (feature('CCR_AUTO_CONNECT')) return getFeatureValue_CACHED_MAY_BE_STALE('tengu_cobalt_harbor', false)
+  if (process.env['CLAUDE_CODE_FEATURE_CCR_AUTO_CONNECT'] === '1') return getFeatureValue_CACHED_MAY_BE_STALE('tengu_cobalt_harbor', false)
+  return false
 }
 
 /**
@@ -192,10 +220,9 @@ export function getCcrAutoConnectDefault(): boolean {
  * local opt-in; GrowthBook controls rollout.
  */
 export function isCcrMirrorEnabled(): boolean {
-  return feature('CCR_MIRROR') || process.env['CLAUDE_CODE_FEATURE_CCR_MIRROR'] === '1'
-    ? isEnvTruthy(process.env.CLAUDE_CODE_CCR_MIRROR) ||
-        getFeatureValue_CACHED_MAY_BE_STALE('tengu_ccr_mirror', false)
-    : false
+  if (feature('CCR_MIRROR')) return isEnvTruthy(process.env.CLAUDE_CODE_CCR_MIRROR) || getFeatureValue_CACHED_MAY_BE_STALE('tengu_ccr_mirror', false)
+  if (process.env['CLAUDE_CODE_FEATURE_CCR_MIRROR'] === '1') return isEnvTruthy(process.env.CLAUDE_CODE_CCR_MIRROR) || getFeatureValue_CACHED_MAY_BE_STALE('tengu_ccr_mirror', false)
+  return false
 }
 
 /**

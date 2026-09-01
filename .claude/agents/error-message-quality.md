@@ -1,35 +1,34 @@
 ---
-name: Error Message Quality
-description: Ensure error handling surfaces actionable messages to users
+name: error-message-quality
+description: 确保错误处理向用户呈现可操作的错误信息
 ---
 
-# Error Message Quality Check
+# Error Message Quality Check（错误消息质量检查）
 
-Review this pull request for error handling quality. The most common user-facing issues in this codebase are generic "Unknown error" messages and swallowed error details that prevent users from diagnosing problems themselves.
+审查此 PR 中的错误处理质量。此代码库中最常见的用户面问题是一般的"未知错误"消息和吞掉的错误详情，这阻止用户自行诊断问题。
 
-## What to Check
+## 检查内容
 
-1. **Catch blocks that discard error details** - Look for `catch` blocks that re-throw or return a generic message without including the original error's message, status code, or context.
+1. **丢弃错误详情的 catch 块** — 查找在不包含原始错误消息、状态码或上下文的情况下重新抛出或返回通用消息的 `catch` 块。
 
-2. **HTTP status codes without user-friendly mapping** - When making API calls (especially to LLM providers), ensure that common HTTP errors produce distinct, actionable messages:
+2. **HTTP 状态码缺乏用户友好映射** — 发起 API 调用时（尤其是对 LLM 提供商），确保常见的 HTTP 错误产生不同的、可操作的消息：
+   - `401` → "API 密钥无效"（而非"未知错误"）
+   - `402` → "资金不足或配额已用尽"
+   - `403` → "访问被拒绝 - 检查你的 API 密钥权限"
+   - `429` → "速率限制 - 请等待后重试"
+   - `5xx` → "提供商服务错误 - 稍后重试"
 
-   - `401` → "Invalid API key" (not "Unknown error")
-   - `402` → "Insufficient funds or quota exceeded"
-   - `403` → "Access denied - check your API key permissions"
-   - `429` → "Rate limited - please wait and retry"
-   - `5xx` → "Provider service error - try again later"
+3. **静默失败** — 查找空的 catch 块、仅记录但未暴露的捕获错误，或被吞掉的 promise rejection。
 
-3. **Silent failures** - Look for empty catch blocks, caught errors that are only logged but not surfaced, or promise rejections that are swallowed.
+4. **缺乏上下文的错误消息** — 错误消息应包含什么操作失败以及用户可以做什么，而不仅仅是原始错误字符串。
 
-4. **Error messages that lack context** - Error messages should include what operation failed and what the user can do about it, not just the raw error string.
+## 什么情况不需要标记
 
-## What NOT to Flag
+- 模块之间错误正确向上传播的内部错误处理
+- 测试文件
+- 仅用于调试/开发的错误日志
+- 被有意捕获并静默处理的错误（有清晰的代码注释说明原因）
 
-- Internal error handling between modules where errors are properly propagated up
-- Test files
-- Debug/development-only error logging
-- Errors that are intentionally caught and handled silently (with a clear code comment explaining why)
+## 范围
 
-## Scope
-
-Only review files changed in this PR. Do not audit the entire codebase. If you find issues, make targeted fixes to improve the error messages in the changed code. If no error handling issues exist in the changed files, do nothing.
+只审查此 PR 中变更的文件。不要审计整个代码库。如果发现问题，针对变更代码中的错误消息进行有针对性修复。如果变更文件中不存在错误处理问题，则不做任何操作。

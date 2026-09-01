@@ -1402,7 +1402,7 @@ export async function runBridgeLoop(
   // 如果循环因致命原因退出（环境过期、认证失败、放弃），则跳过 —— 此时恢复不可能，消息会与已打印的错误相矛盾。
   // isFeatureEnabled('KAIROS') 开关：--session-id 仅限蚂蚁内部；没有开关时回退到 PR 之前的行为（每次关闭都归档+注销）。
   if (
-    (feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') &&
+    feature('KAIROS') &&
     config.spawnMode === 'single-session' &&
     initialSessionId &&
     !fatalExit
@@ -1644,21 +1644,29 @@ export function parseArgs(args: string[]): ParsedArgs {
       name = args[++i]!
     } else if (arg.startsWith('--name=')) {
       name = arg.slice('--name='.length)
-    } else if (
-      (feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') &&
-      arg === '--session-id' &&
-      i + 1 < args.length
-    ) {
+    } else if (feature('KAIROS') && arg === '--session-id' && i + 1 < args.length) {
       sessionId = args[++i]!
       if (!sessionId) {
         return makeError('--session-id 需要一个值')
       }
-    } else if ((feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') && arg.startsWith('--session-id=')) {
+    } else if (feature('KAIROS') && arg.startsWith('--session-id=')) {
       sessionId = arg.slice('--session-id='.length)
       if (!sessionId) {
         return makeError('--session-id 需要一个值')
       }
-    } else if ((feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') && (arg === '--continue' || arg === '-c')) {
+    } else if (feature('KAIROS') && (arg === '--continue' || arg === '-c')) {
+      continueSession = true
+    } else if (process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' && arg === '--session-id' && i + 1 < args.length) {
+      sessionId = args[++i]!
+      if (!sessionId) {
+        return makeError('--session-id 需要一个值')
+      }
+    } else if (process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' && arg.startsWith('--session-id=')) {
+      sessionId = arg.slice('--session-id='.length)
+      if (!sessionId) {
+        return makeError('--session-id 需要一个值')
+      }
+    } else if (process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' && (arg === '--continue' || arg === '-c')) {
       continueSession = true
     } else if (arg === '--spawn' || arg.startsWith('--spawn=')) {
       if (spawnMode !== undefined) {
@@ -1789,16 +1797,14 @@ async function printHelp(): Promise<void> {
   claude remote-control [选项]
 选项
   --name <名称>                    会话名称（显示在 claude.ai/code 中）
-${
-  feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1'
-    ? `  -c, --continue                   恢复此目录中的最后一次会话
+  --permission-mode <模式>         生成会话的权限模式
+                                   (${modes})
+${feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1'
+  ? `  -c, --continue                   恢复此目录中的最后一次会话
   --session-id <id>                按 ID 恢复特定会话（不能与生成标志或
                                    --continue 一起使用）
 `
-    : ''
-}  --permission-mode <模式>         生成会话的权限模式
-                                   (${modes})
-  --debug-file <路径>              将调试日志写入文件
+  : ''}  --debug-file <路径>              将调试日志写入文件
   -v, --verbose                    启用详细输出
   -h, --help                       显示此帮助
 ${serverOptions}
@@ -2481,12 +2487,15 @@ export async function bridgeMain(args: string[]): Promise<void> {
   // 由 preCreateSession 控制：默认开启；--no-create-session-in-dir 选择退出。
   // 当 --session-id 恢复成功时，完全跳过创建 —— 会话已存在且 bridge/reconnect 已将其重新入队。
   // 当恢复请求因环境不匹配失败时，effectiveResumeSessionId 为 undefined，
-  // 因此我们回退到全新会话创建（遵循上面打印的“改为创建全新会话”警告）。
+  // 因此我们回退到全新会话创建（遵循上面打印的”改为创建全新会话”警告)。
   let initialSessionId: string | null =
     (feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') && effectiveResumeSessionId
       ? effectiveResumeSessionId
       : null
-  if (preCreateSession && !((feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') && effectiveResumeSessionId)) {
+  if (
+    preCreateSession &&
+    !((feature('KAIROS') || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') && effectiveResumeSessionId)
+  ) {
     const { createBridgeSession } = await import('./createSession.js')
     try {
       initialSessionId = await createBridgeSession({

@@ -32,6 +32,13 @@ export class CtxInspectTool implements Tool {
     required: []
   }
   validate = () => ({ valid: true })
+  isEnabled = () => true
+  async prompt() {
+    return this.description
+  }
+  userFacingName() {
+    return this.name
+  }
 
   private buildReport(detail: string, includeEnv: boolean, includeMemory: boolean): InspectReport {
     const report: InspectReport = {

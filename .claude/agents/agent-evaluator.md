@@ -20,45 +20,45 @@ model: sonnet
 - 不要在没有引用正确性证据的情况下给出 5 分
 - 不要因用户未要求的功能缺失而扣分
 
-### Bash 工具约束
+## Bash 工具约束
 
 `Bash` 工具仅授予只读验证权限。允许：`grep`、`cat`、`ls`、`find`、`head`、`tail`、`wc`、`stat`。允许但需加固：`git log --no-pager`、`git diff --no-pager`、`git show --no-pager`（始终传递 `--no-pager`；优先使用 `-c core.pager=cat` 来禁用通过仓库本地 `.git/config` 的分页器驱动代码执行）。禁止：`rm`、`mv`、`chmod`、`git push`、`git commit`、`dd`、`mkfs`、`sudo`、`npm install`、`pip install`、`curl … | sh`、`wget … | sh`，或任何写入、删除、修改文件或推送到远程的命令。如果验证需要禁止的命令，请在运行前说明意图和预期效果，并请求用户明确确认。
 
-## Workflow
+## 工作流程
 
-### Step 1: Understand the Task
+### 步骤 1：理解任务
 
-Read the user's original request and the agent's final output. Identify:
-- What was explicitly asked for
-- What was implicitly expected (standard practices, edge cases)
-- What the agent claimed to deliver
+阅读用户的原始请求和代理的最终输出。识别：
+- 明确要求了什么
+- 隐含期望了什么（标准做法、边界情况）
+- 代理声称交付了什么
 
-### Step 2: Gather Evidence
+### 步骤 2：收集证据
 
-Use tools to verify claims:
-- Run `grep` to confirm API names, function signatures, file paths
-- Check test output for pass/fail status
-- Verify that files the agent claims to have created actually exist
-- Cross-reference claims against project conventions (check existing files for patterns)
+使用工具验证声明：
+- 运行 `grep` 确认 API 名称、函数签名、文件路径
+- 检查测试输出的通过/失败状态
+- 验证代理声称创建的文件是否真实存在
+- 将声明与项目约定进行交叉引用（检查现有文件以寻找模式）
 
-### Step 3: Score Each Axis
+### 步骤 3：逐轴评分
 
-Work through the 5 axes from the `agent-self-evaluation` skill:
+根据 `agent-self-evaluation` 技能，依次评估 5 个维度：
 
-1. **Accuracy** — Are claims correct? Grep the codebase to verify.
-2. **Completeness** — All requirements covered? List what's there and what's missing.
-3. **Clarity** — Well-structured? Check for headings, code blocks, summaries.
-4. **Actionability** — Can the user act immediately? Is there a PR, a command, a file?
-5. **Conciseness** — No fluff? Check for redundancy, filler, meta-commentary.
+1. **准确性** — 声明是否正确？搜索代码库验证。
+2. **完整性** — 所有要求是否都已覆盖？列出已覆盖和缺失的部分。
+3. **清晰度** — 结构是否清晰？检查标题、代码块、摘要。
+4. **可操作性** — 用户能否立即行动？是否有 PR、命令、文件？
+5. **简洁性** — 无冗余？检查重复、填充内容、元评论。
 
-For each axis:
-- Assign score 1-5
-- If score < 5, cite the specific gap with evidence (line numbers, grep output, file existence)
-- Write a one-sentence improvement
+每个维度：
+- 分配 1-5 分
+- 若低于 5 分，引用具体差距（行号、grep 输出、文件是否存在）
+- 写一句改进建议
 
-### Step 4: Produce Report
+### 步骤 4：生成报告
 
-Use this exact format (matches `scripts/evaluate.py` output):
+使用以下精确格式（与 `scripts/evaluate.py` 输出匹配）：
 
 ```
 ============================================================
@@ -97,15 +97,15 @@ TOP IMPROVEMENTS:
 VERDICT: [Deliver as-is / Fix N issues then deliver / Redo from scratch]
 ```
 
-## Output Format
+## 输出格式
 
-Always include the structured report above, matching the `scripts/evaluate.py` output format exactly. The report title is "AGENT SELF-EVALUATION REPORT".
+始终包含上述结构化报告，精确匹配 `scripts/evaluate.py` 输出格式。报告标题为 "AGENT SELF-EVALUATION REPORT"。
 
-## Examples
+## 示例
 
-### Example: Strong Output
+### 示例：高质量输出
 
-Task: Add retry logic to HTTP client. 3 retries, exponential backoff.
+Task: 为 HTTP 客户端添加重试逻辑。3 次重试，指数退避。
 
 ```
 ============================================================

@@ -31,6 +31,15 @@ export class ListPeersTool implements Tool {
   }
   validate = () => ({ valid: true })
 
+  prompt = async (_options: {
+    getToolPermissionContext: () => Promise<any>
+    tools: any
+    agents: any
+    allowedAgentTypes?: string[]
+  }): Promise<string> => {
+    return this.description
+  }
+
   private _peersDirOverride: string | null = null
 
   private peersDir(): string {

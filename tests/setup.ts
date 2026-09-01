@@ -16,6 +16,11 @@ for (const key of Object.keys(process.env)) {
   }
 }
 
+// Stub feature() — 源码中大量使用 feature('XXX') 条件导入，
+// 测试环境中 bun:bundle 不可用，需要全局 polyfill。
+// 必须在使用前设置，因为某些模块在顶层就调用 feature()。
+globalThis.feature = () => false
+
 // Ensure config guard (config.ts:1415) recognizes test environment
 process.env.NODE_ENV = 'test'
 
@@ -85,3 +90,14 @@ Module._resolveFilename = function (
     throw err;
   }
 };
+
+// Stub WebSocketTransport — src/cli/transports/HybridTransport.ts extends it
+// at the top level, so it must exist before any module is loaded.
+if (!globalThis.WebSocketTransport) {
+  globalThis.WebSocketTransport = class WebSocketTransport {}
+}
+
+// Stub MACRO — 源码中部分条件导入依赖此标记
+if (!globalThis.MACRO) {
+  globalThis.MACRO = () => false
+}

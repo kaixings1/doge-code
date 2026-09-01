@@ -1,48 +1,48 @@
 ---
-name: Dependency Security Review
-description: Review dependency changes for security implications and breaking changes
+name: dependency-security-review
+description: 审查依赖变更的安全影响和破坏性变更
 ---
 
-# Dependency Security Review
+# Dependency Security Review（依赖安全审查）
 
-Review this pull request for changes to dependencies. A significant portion of PRs in this repo are automated dependency bumps (Dependabot, Snyk). This check ensures dependency changes get meaningful review.
+审查此 PR 中的依赖变更。此仓库中的很大一部分 PR 是自动依赖升级（Dependabot、Snyk）。此检查确保依赖变更得到有意义的审查。
 
-## What to Check
+## 检查内容
 
-### For Any `package.json` Changes
+### 对于任何 `package.json` 变更
 
-1. **New dependencies** - For each newly added dependency:
+1. **新依赖** — 对于每个新添加的依赖：
 
-   - Is it well-maintained (not abandoned)?
-   - Does it have known vulnerabilities?
-   - Is it the right choice, or does an existing dependency already cover this use case?
-   - Is the version pinned appropriately (exact vs range)?
+   - 维护是否良好（未被废弃）？
+   - 是否有已知漏洞？
+   - 选择是否正确，还是现有依赖已涵盖此用例？
+   - 版本是否固定得当（精确版本 vs 范围版本）？
 
-2. **Major version bumps** - For major version upgrades:
+2. **大版本升级** — 对于主版本升级：
 
-   - Are there breaking changes that affect our usage?
-   - Have the callers been updated to match the new API?
+   - 是否有影响我们使用的破坏性变更？
+   - 调用方是否已更新以匹配新 API？
 
-3. **Removed dependencies** - For each removed dependency:
-   - Are all imports/requires of this dependency also removed?
-   - Is there a replacement, or was the functionality dropped?
+3. **移除的依赖** — 对于每个移除的依赖：
+   - 该依赖的所有 import/require 是否也已移除？
+   - 是否有替代方案，还是功能被丢弃了？
 
-### For `package-lock.json` Changes
+### 对于 `package-lock.json` 变更
 
-1. **Large lockfile diffs** (>500 lines changed) - Flag for human review, as they may indicate a transitive dependency shift that warrants attention.
+1. **大型 lockfile 差异**（>500 行变更）— 标记为需要人工审查，因为它们可能表明有值得关注的传递依赖转移。
 
-2. **New transitive dependencies** - Check if the total dependency count increased significantly.
+2. **新的传递依赖** — 检查总依赖数是否显著增加。
 
-### Security-Specific Concerns
+### 安全相关关注点
 
-1. **Packages with filesystem/network access** - New dependencies that read/write files or make network requests deserve extra scrutiny since this tool runs locally on user machines.
+1. **具有文件系统/网络访问权限的包** - 新读取/写入文件或发起网络请求的依赖值得额外审查，因为此工具在用户机器上本地运行。
 
-2. **Native/binary dependencies** - New native modules (`node-gyp`, `.node` binaries) increase the attack surface and build complexity.
+2. **原生/二进制依赖** - 新的原生模块（`node-gyp`、`.node` 二进制文件）会增加攻击面和构建复杂度。
 
-3. **Post-install scripts** - Dependencies with `postinstall` scripts can execute arbitrary code during `npm install`.
+3. **安装后脚本** - 带有 `postinstall` 脚本的依赖可以在 `npm install` 期间执行任意代码。
 
-## What to Do
+## 处理方式
 
-- If you find concerning dependency changes, add a comment explaining the concern.
-- Do NOT modify `package.json` or `package-lock.json` files directly.
-- If no dependency files were changed in this PR, do nothing.
+- 如果发现令人担忧的依赖变更，添加注释说明问题。
+- 不要直接修改 `package.json` 或 `package-lock.json` 文件。
+- 如果此 PR 中没有变更任何依赖文件，则不做任何操作。

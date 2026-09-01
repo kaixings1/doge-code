@@ -53,13 +53,11 @@ let telemetryInitialized = false
 
 export const init = memoize(async (): Promise<void> => {
   profileCheckpoint('init_function_start')
-
   // 验证配置是否有效并启用配置系统
   try {
     const configsStart = Date.now()
     enableConfigs()
     profileCheckpoint('init_configs_enabled')
-
     // 在信任对话框之前仅应用安全的环境变量
     // 完整的环境变量在建立信任后应用
     const envVarsStart = Date.now()
@@ -75,11 +73,9 @@ export const init = memoize(async (): Promise<void> => {
     initSentry()
 
     profileCheckpoint('init_safe_env_vars_applied')
-
     // 确保退出时刷新所有内容
     setupGracefulShutdown()
     profileCheckpoint('init_after_graceful_shutdown')
-
     // 初始化第一方事件日志记录（没有安全问题，但推迟到启动后以避免
     // 在启动时加载 OpenTelemetry sdk-logs）。growthbook.js 此时已在
     // 模块缓存中（firstPartyEventLogger 导入了它），因此第二次动态导入不会增加加载成本。
@@ -121,10 +117,8 @@ export const init = memoize(async (): Promise<void> => {
 
     // 配置全局 HTTP 代理器（proxy 和/或 mTLS）
     configureGlobalAgents()
-
     // 预连接到 Anthropic API
     preconnectAnthropicApi()
-
     // CCR upstreamproxy
     if (isEnvTruthy(process.env.CLAUDE_CODE_REMOTE)) {
       try {
@@ -143,7 +137,6 @@ export const init = memoize(async (): Promise<void> => {
 
     // 如果相关则设置 git-bash
     setShellIfWindows()
-
     // 注册 LSP 管理器清理
     registerCleanup(shutdownLspServerManager)
 
@@ -160,7 +153,6 @@ export const init = memoize(async (): Promise<void> => {
       await ensureScratchpadDir()
     } else {
     }
-
     //profileCheckpoint('init_function_end')
   } catch (error) {
     if (error instanceof ConfigParseError) {

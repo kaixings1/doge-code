@@ -76,13 +76,13 @@ describe('createAnthropicStreamFromOpenAI', () => {
       events.push(event);
     }
 
-    // Collect all text deltas from content_block_delta events
-    const textDeltas = events
-      .filter(e => e.type === 'content_block_delta' && e.delta?.type === 'text_delta')
-      .map(e => e.delta.text);
+    // Collect all thinking deltas (reasoning_content should NOT appear as text_delta)
+    const thinkingDeltas = events
+      .filter(e => e.type === 'content_block_delta' && e.delta?.type === 'thinking_delta')
+      .map(e => e.delta.thinking);
 
-    const fullText = textDeltas.join('');
-    expect(fullText).toContain('The answer is 42');
+    const fullThinking = thinkingDeltas.join('');
+    expect(fullThinking).toContain('The answer is 42');
   });
 
   it('should yield thinking delta as text (DeepSeek path)', async () => {
@@ -106,14 +106,62 @@ describe('createAnthropicStreamFromOpenAI', () => {
       events.push(event);
     }
 
-    // Collect all text deltas (including converted thinking deltas)
+    // Collect all thinking deltas (thinking content should NOT appear as text_delta)
+    const thinkingDeltas = events
+      .filter(e => e.type === 'content_block_delta' && e.delta?.type === 'thinking_delta')
+      .map(e => e.delta.thinking);
+
+    const fullThinking = thinkingDeltas.join('');
+    expect(fullThinking).toContain('Let me think about this');
+
+    // Collect text deltas separately
     const textDeltas = events
       .filter(e => e.type === 'content_block_delta' && e.delta?.type === 'text_delta')
       .map(e => e.delta.text);
 
     const fullText = textDeltas.join('');
-    expect(fullText).toContain('Let me think about this');
     expect(fullText).toContain('Done.');
+  });
+
+  it('should emit thinking_delta events for thinking content (not text_delta)', async () => {
+    const chunks = [
+      'data: {"id":"test-1","object":"chat.completion.chunk","created":1234567890,"model":"deepseek-chat","choices":[{"index":0,"delta":{"role":"assistant","content":""},"finish_reason":null}]}\n\n',
+      'data: {"id":"test-1","object":"chat.completion.chunk","created":1234567890,"model":"deepseek-chat","choices":[{"index":0,"delta":{"thinking":"Let me think"},"finish_reason":null}]}\n\n',
+      'data: {"id":"test-1","object":"chat.completion.chunk","created":1234567890,"model":"deepseek-chat","choices":[{"index":0,"delta":{"thinking":" about this"},"finish_reason":null}]}\n\n',
+      'data: {"id":"test-1","object":"chat.completion.chunk","created":1234567890,"model":"deepseek-chat","choices":[{"index":0,"delta":{"content":"Done."},"finish_reason":"stop"}],"usage":{"prompt_tokens":10,"completion_tokens":5}}\n\n',
+      'data: [DONE]\n\n',
+    ];
+
+    const reader = createSSEReader(chunks);
+    const gen = createAnthropicStreamFromOpenAI({ reader, model: 'deepseek-chat' });
+
+    const events: any[] = [];
+    for await (const event of gen) {
+      events.push(event);
+    }
+
+    // Verify thinking block is created with type 'thinking'
+    const blockStarts = events.filter(e => e.type === 'content_block_start');
+    const thinkingBlockStart = blockStarts.find(e => e.content_block?.type === 'thinking');
+    expect(thinkingBlockStart).toBeDefined();
+
+    // Verify thinking deltas are emitted (not text_delta)
+    const thinkingDeltaEvents = events.filter(e => e.type === 'content_block_delta' && e.delta?.type === 'thinking_delta');
+    expect(thinkingDeltaEvents.length).toBeGreaterThan(0);
+
+    const thinkingText = thinkingDeltaEvents.map(e => e.delta.thinking).join('');
+    expect(thinkingText).toContain('Let me think about this');
+
+    // Verify text block is created separately after thinking
+    const textBlockStart = blockStarts.find(e => e.content_block?.type === 'text');
+    expect(textBlockStart).toBeDefined();
+
+    // Verify text deltas contain only the actual response text
+    const textDeltas = events.filter(e => e.type === 'content_block_delta' && e.delta?.type === 'text_delta');
+    const fullText = textDeltas.map(e => e.delta.text).join('');
+    expect(fullText).toContain('Done.');
+    // Thinking content should NOT appear in text deltas
+    expect(fullText).not.toContain('Let me think');
   });
 
   it('should convert native Anthropic stream events', async () => {

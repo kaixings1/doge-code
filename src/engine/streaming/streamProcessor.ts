@@ -202,6 +202,11 @@ export class StreamProcessor {
       this.buffer.push(chunk)
       return { type: "content_block_delta", chunk }
     }
+    if (delta.type === "thinking_delta") {
+      const chunk = { type: "thinking", thinking: delta.thinking, index: event.index }
+      this.buffer.push(chunk)
+      return { type: "content_block_delta", chunk }
+    }
     if (delta.type === "input_json_delta") {
       const chunk = { type: "tool_use", id: this.currentBlock.id, name: this.currentBlock.name, inputDelta: delta.partial_json, index: event.index }
       this.buffer.push(chunk)
@@ -217,6 +222,10 @@ export class StreamProcessor {
     if (this.currentBlock.type === "text") {
       const fullText = blockChunks.filter((c) => c.type === "text").map((c) => c.text || "").join("")
       this.currentBlock.text = fullText
+    }
+    if (this.currentBlock.type === "thinking") {
+      const fullThinking = blockChunks.filter((c) => c.type === "thinking").map((c) => c.thinking || "").join("")
+      this.currentBlock.text = fullThinking
     }
     if (this.currentBlock.type === "tool_use") {
       if (this.currentBlock.input === null || this.currentBlock.input === undefined) {

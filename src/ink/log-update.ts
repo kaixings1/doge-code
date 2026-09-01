@@ -227,7 +227,8 @@ export class LogUpdate {
       prev.screen.height >= prev.viewport.height &&
       prev.screen.height > 0 &&
       cursorAtBottom &&
-      !isGrowing
+      !isGrowing &&
+      prev.screen.height !== next.screen.height
     ) {
       // viewportY = rows in scrollback from content overflow
       // +1 for the row pushed by cursor-restore scroll

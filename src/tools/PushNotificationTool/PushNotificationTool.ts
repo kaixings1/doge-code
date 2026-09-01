@@ -35,6 +35,13 @@ export class PushNotificationTool implements Tool {
     required: ['title', 'message']
   }
   validate = () => ({ valid: true })
+  isEnabled = () => true
+  async prompt() {
+    return this.description
+  }
+  userFacingName() {
+    return this.name
+  }
 
   private queue: NotificationItem[] = []
   private sending = false

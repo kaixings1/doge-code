@@ -762,8 +762,17 @@ function renderNodeToOutput(
         // spacer) making scrollTop >= prevMaxScroll true by artifact, not
         // because the user was at bottom.
         const grew = scrollHeight >= prevScrollHeight
+        // pendingDelta < 0 means the user is actively scrolling up (wheel,
+        // PageUp, scrollTo with decreasing y, etc.). In that case the
+        // positionally-at-bottom check is stale — scrollTopBeforeFollow
+        // hasn't caught up to the pending delta yet, so we'd incorrectly
+        // snap the viewport back to bottom while the user is reading
+        // something above. Only follow when there's no in-flight upward
+        // scroll.
+        const pendingUp = (node.pendingScrollDelta ?? 0) < 0
         const atBottom =
-          sticky || (grew && scrollTopBeforeFollow >= prevMaxScroll)
+          sticky ||
+          (grew && scrollTopBeforeFollow >= prevMaxScroll && !pendingUp)
         if (atBottom && (node.pendingScrollDelta ?? 0) >= 0) {
           node.scrollTop = maxScroll
           node.pendingScrollDelta = undefined
@@ -831,6 +840,16 @@ function renderNodeToOutput(
           node.pendingScrollDelta = undefined
         }
         let scrollTop = Math.max(0, Math.min(cur, maxScroll))
+        // 虚拟滚动会暂时缩小 scrollHeight（尾部卸载 + 陈旧 heightCache
+        // spacer，见上方 at-bottom follow 的 grew 注释），把 maxScroll
+        // 低估到接近 0。用户向上阅读时（cur < prevMaxScroll 说明用户不在
+        // 底部），直接 clamp 会把视图拉到顶部（scrollTop=0，LOGO 区域）。
+        // 缩小期间保留 cur，内容恢复后（grew=true）下一帧自然归位；真实
+        // 的内容缩小（/clear 等）也只在首帧保留，随后 grew 恢复并正确
+        // clamp 到新的（更小的）maxScroll。
+        if (!grew && cur < prevMaxScroll) {
+          scrollTop = Math.max(0, cur)
+        }
         // Virtual-scroll clamp: if scrollTop raced past the currently-mounted
         // range (burst PageUp before React re-renders), render at the EDGE of
         // the mounted children instead of blank spacer. Do NOT write back to

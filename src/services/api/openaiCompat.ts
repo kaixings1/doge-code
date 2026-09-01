@@ -384,8 +384,9 @@ export async function* createAnthropicStreamFromOpenAI(input: {
   let nativeMessageDeltaSent = false
 
   // choices 路径的状态
-  let activeBlockType: 'text' | null = null
+  let activeBlockType: 'text' | 'thinking' | null = null
   let activeBlockIndex: number | null = null
+  let thinkingBlockIndex: number | null = null    // thinking 块索引，用于 transition 到 text 时关闭
 
   // 冒号结尾检测：服务器可能在冒号后 premature [DONE]，等待 20 秒确认
   let colonDeadline: number | null = null
@@ -655,19 +656,20 @@ export async function* createAnthropicStreamFromOpenAI(input: {
           yield { type: 'message_start', message: { id: chunk.id ?? 'openai-compat', type: 'message', role: 'assistant', model: input.model, content: [], stop_reason: null, stop_sequence: null, usage: { input_tokens: promptTokens, output_tokens: 0 } } } as BetaRawMessageStreamEvent
         }
 
-        // 将 thinking 增量当作文本增量处理
+        // thinking/reasoning 增量：创建 thinking 类型的 content block
         if (delta && ((delta as any).thinking !== undefined || (delta as any).reasoning_content !== undefined)) {
           const t = ((delta as any).thinking as string) || ((delta as any).reasoning_content as string) || ''
           logForDebugging(`[openaiCompat] 检测到 thinking 增量, 长度=${t.length}`, { level: 'debug' })
-          if (activeBlockType !== 'text') {
+          if (activeBlockType !== 'thinking') {
             yield* closeActiveBlock()
-            activeBlockIndex = nextContentIndex++
-            logForDebugging(`[openaiCompat] 创建新文本块 index=${activeBlockIndex} 用于 thinking`, { level: 'debug' })
-            yield { type: 'content_block_start', index: activeBlockIndex, content_block: { type: 'text', text: '' } } as BetaRawMessageStreamEvent
-            activeBlockType = 'text'
+            thinkingBlockIndex = nextContentIndex++
+            logForDebugging(`[openaiCompat] 创建新 thinking 块 index=${thinkingBlockIndex}`, { level: 'debug' })
+            yield { type: 'content_block_start', index: thinkingBlockIndex, content_block: { type: 'thinking', thinking: '' } } as BetaRawMessageStreamEvent
+            activeBlockType = 'thinking'
+            activeBlockIndex = thinkingBlockIndex
           }
           if (activeBlockIndex !== null) {
-            yield { type: 'content_block_delta', index: activeBlockIndex, delta: { type: 'text_delta', text: t } } as BetaRawMessageStreamEvent
+            yield { type: 'content_block_delta', index: activeBlockIndex, delta: { type: 'thinking_delta', thinking: t } } as BetaRawMessageStreamEvent
           }
         }
 
