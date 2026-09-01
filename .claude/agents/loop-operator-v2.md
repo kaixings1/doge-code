@@ -624,54 +624,64 @@ if (resultA.success) {
 
 ## 与其他组件的集成
 
-### 与 BackgroundManager 集成
+### 与 Loop Dashboard 集成（已实现）
 ```typescript
-// 循环中使用 BackgroundManager 执行后台任务
-background_run("bun test")
+// 循环中启动监控面板
+// src/services/loop-dashboard/server.ts (port 3711)
+import { startLoopDashboard } from '../services/loop-dashboard/index.js'
+startLoopDashboard({ port: 3711 })
+// 浏览器访问 http://localhost:3711/loop-dashboard
+```
+
+### 与 Loop Status 集成（已实现）
+```typescript
+// 循环执行过程中记录状态到本地文件系统
+// ~/.doge/loops/checkpoints/{loop-id}.json
+// ~/.doge/loops/metrics.json
+// ~/.doge/loops/dead-letter-queue/{task-id}.json
+// 使用 /loop-status 查看状态
+```
+
+### 与 ship-ci-review-loop 集成（已实现）
+```typescript
+// src/commands/ship/ship-ci-review-loop.ts
+// CI/Review 监控循环：等待 CI 通过 → 等待评论 → 分类处理 → 迭代直到零未解决评论
+import { getCIStatus, waitForCI, monitorPRComments } from '../commands/ship/ship-ci-review-loop.js'
+```
+
+### 与 BackgroundManager 集成（future）
+```typescript
+// 计划中：循环中使用 BackgroundManager 执行后台任务
+// background_run("bun test")
 // 结果自动注入下一轮
 ```
 
-### 与 Async Hooks 集成
-```json
-{
-  "hooks": {
-    "TaskCreated": [{
-      "hooks": [{
-        "type": "command",
-        "command": "python3 .claude/hooks/auto-executor.py",
-        "async": true
-      }]
-    }]
-  }
-}
+### 与 Cron 集成（future）
+```typescript
+// 计划中：定时循环
+// cron_create({
+//   cron: "*/5 * * * *",
+//   prompt: "/health code",
+//   recurring: true
+// })
 ```
 
-### 与 Cron 集成
+### 与 Queue 集成（future）
 ```typescript
-// 定时循环
-cron_create({
-  cron: "*/5 * * * *", // 每 5 分钟
-  prompt: "/health code",
-  recurring: true
-})
+// 计划中：任务队列循环
+// queue_push("loop-queue", { task: "analyze", file: "src/foo.ts" })
+// while (queue_length("loop-queue") > 0) {
+//   const task = queue_pop("loop-queue")
+//   await execute(task)
+// }
 ```
 
-### 与 Queue 集成
+### 与 Event Stream 集成（future）
 ```typescript
-// 任务队列循环
-queue_push("loop-queue", { task: "analyze", file: "src/foo.ts" })
-while (queue_length("loop-queue") > 0) {
-  const task = queue_pop("loop-queue")
-  await execute(task)
-}
-```
-
-### 与 Event Stream 集成
-```typescript
-// 事件驱动循环
-event_stream_subscribe("code-changes", (event) => {
-  runLintAndFix(event.file)
-})
+// 计划中：事件驱动循环
+// event_stream_subscribe("code-changes", (event) => {
+//   runLintAndFix(event.file)
+// })
 ```
 
 ---

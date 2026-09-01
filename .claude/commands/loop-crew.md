@@ -134,3 +134,8 @@ Crew 循环会记录到 Loop V2 监控系统：
 - 每个角色作为独立的 subtask 追踪
 - 角色执行时间单独统计
 - 最终聚合结果作为 loop 结果
+
+### 实际实现连接
+- 角色执行通过 `Agent()` 工具并行启动
+- 状态记录到 `~/.doge/loops/checkpoints/`
+- 监控面板：`/loop-dashboard`（`src/services/loop-dashboard/`）

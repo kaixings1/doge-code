@@ -120,11 +120,11 @@ Ralph Loop 可以与 Loop V2 的监控系统集成：
 
 ```bash
 # 启动 Ralph 循环时同时启动监控
-/loop-status-v2 --watch
+/loop-status --watch
 /ralph-loop "重构任务" --max-iterations 10
 ```
 
- Ralph Loop 的状态会被记录到：
+Ralph Loop 的状态会被记录到：
 - `~/.doge/loops/checkpoints/ralph-{timestamp}.json`
 - `~/.doge/loops/metrics.json`
 
