@@ -1,45 +1,42 @@
 ---
-name: Input Validation
-description: Ensure user-facing inputs have proper validation and error feedback
+name: input-validation
+description: 确保面向用户的输入有正确的验证和错误反馈
 ---
 
-# Input Validation Check
+# Input Validation Check（输入验证检查）
 
-Review this pull request for input validation quality. The most common user issues in this codebase stem from malformed API keys, blank inputs, and missing configuration values that produce confusing downstream errors.
+审查此 PR 中的输入验证质量。此代码库中最常见的用户问题源于格式错误的 API 密钥、空输入和缺失的配置值，这些会产生令人困惑的下游错误。
 
-## What to Check
+## 检查内容
 
-1. **API keys and secrets** - Any code that accepts API keys, tokens, or credentials should:
+1. **API 密钥和密钥** — 接受 API 密钥、令牌或凭据的任何代码应该：
+   - 拒绝明显无效的值（空字符串、仅空白、像 "your-api-key-here" 这样的占位符文本）
+   - 在可能的情况下验证格式（例如，OpenAI 密钥以 `sk-` 开头，Anthropic 密钥以 `sk-ant-` 开头）
+   - 在使用不良密钥发起网络请求前提供清晰的错误消息
 
-   - Reject obviously invalid values (empty strings, whitespace-only, placeholder text like "your-api-key-here")
-   - Validate format where possible (e.g., OpenAI keys start with `sk-`, Anthropic keys start with `sk-ant-`)
-   - Provide a clear error message before making a network request with a bad key
+2. **配置值** — 新的或修改的配置解析应该：
+   - 验证必填字段是否存在且非空
+   - 验证类型（例如，数字确实是数字，URL 是有效的 URL）
+   - 提供命名特定字段和预期格式的清晰错误消息
+   - 不要因为单个无效值而崩溃整个配置加载流程
 
-2. **Configuration values** - New or modified config parsing should:
+3. **用户文本输入** — 新的或修改的 UI 输入应该：
+   - 优雅处理空/仅空白提交
+   - 清理将用于文件路径、URL 或 shell 命令的输入
+   - 不允许提交稍后会静默失败的无效数据
 
-   - Validate required fields are present and non-empty
-   - Validate types (e.g., numbers are actually numbers, URLs are valid URLs)
-   - Provide clear error messages that name the specific field and expected format
-   - Not crash the entire config loading process for a single invalid value
+4. **URL 和端点验证** — 当用户提供自定义 URL 时（例如自托管的 LLM 端点）：
+   - 验证 URL 格式
+   - 处理缺失的协议（如果缺失则添加 `https://`）
+   - 在尝试连接前提供反馈
 
-3. **User text inputs** - New or modified UI inputs should:
+## 什么情况不需要标记
 
-   - Handle empty/whitespace-only submissions gracefully
-   - Sanitize inputs that will be used in file paths, URLs, or shell commands
-   - Not allow submission of invalid data that will fail silently later
+- 内部函数参数（信任内部调用方）
+- 测试输入
+- 已存在且正常工作验证
+- 具有合理默认值且不需要用户输入的配置值
 
-4. **URL and endpoint validation** - When users provide custom URLs (e.g., for self-hosted LLM endpoints):
-   - Validate URL format
-   - Handle missing protocol (add `https://` if missing)
-   - Provide feedback before attempting connection
+## 范围
 
-## What NOT to Flag
-
-- Internal function parameters (trust internal callers)
-- Test inputs
-- Validation that already exists and is working correctly
-- Configuration values with sensible defaults that don't require user input
-
-## Scope
-
-Only review files changed in this PR. If you find missing validation, add it directly. Keep fixes minimal and focused. If no user-facing input handling was changed, do nothing.
+只审查此 PR 中变更的文件。如果发现缺失的验证，直接添加。保持修复最小化和针对性。如果没有变更面向用户的输入处理，则不做任何操作。

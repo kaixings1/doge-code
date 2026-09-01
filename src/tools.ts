@@ -1,6 +1,5 @@
 // biome-ignore-all assist/source/organizeImports: ANT-ONLY 导入标记不得重新排序
 import { toolMatchesName, type Tool, type Tools } from './Tool.js'
-import { feature } from 'bun:bundle'
 import { loadConditionalCommand } from './commands/loader.js'
 import { AgentTool } from './tools/AgentTool/AgentTool.js'
 import { AgentIntegrationTool } from './tools/AgentIntegrationTool/AgentIntegrationTool.js'
@@ -20,16 +19,12 @@ const REPLTool = loadConditionalCommand(
   () => process.env.USER_TYPE === 'ant',
   () => require('./tools/REPLTool/REPLTool.js').REPLTool
 )
-const SuggestBackgroundPRTool = loadConditionalCommand(
-  () => process.env.USER_TYPE === 'ant',
-  () => require('./tools/SuggestBackgroundPRTool/SuggestBackgroundPRTool.js').SuggestBackgroundPRTool
-)
 const SleepTool = loadConditionalCommand(
-  [() => feature('PROACTIVE'), () => feature('KAIROS')],
+  [() => process.env['CLAUDE_CODE_FEATURE_PROACTIVE'] === '1', () => process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1'],
   () => require('./tools/SleepTool/SleepTool.js').SleepTool
 )
 const cronTools = loadConditionalCommand(
-  () => feature('AGENT_TRIGGERS'),
+  () => process.env['CLAUDE_CODE_FEATURE_AGENT_TRIGGERS'] === '1',
   () => [
       require('./tools/ScheduleCronTool/CronCreateTool.js').CronCreateTool,
       require('./tools/ScheduleCronTool/CronDeleteTool.js').CronDeleteTool,
@@ -37,19 +32,19 @@ const cronTools = loadConditionalCommand(
     ]
 ) ?? []
 const RemoteTriggerTool = loadConditionalCommand(
-  () => feature('AGENT_TRIGGERS_REMOTE'),
+  () => process.env['CLAUDE_CODE_FEATURE_AGENT_TRIGGERS_REMOTE'] === '1',
   () => require('./tools/RemoteTriggerTool/RemoteTriggerTool.js').RemoteTriggerTool
 )
 const SendUserFileTool = loadConditionalCommand(
-  () => feature('KAIROS'),
+  () => process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1',
   () => require('./tools/SendUserFileTool/SendUserFileTool.js').SendUserFileTool
 )
 const PushNotificationTool = loadConditionalCommand(
-  [() => feature('KAIROS'), () => feature('KAIROS_PUSH_NOTIFICATION')],
+  [() => process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1', () => process.env['CLAUDE_CODE_FEATURE_KAIROS_PUSH_NOTIFICATION'] === '1'],
   () => require('./tools/PushNotificationTool/PushNotificationTool.js').PushNotificationTool
 )
 const SubscribePRTool = loadConditionalCommand(
-  () => feature('KAIROS_GITHUB_WEBHOOKS'),
+  () => process.env['CLAUDE_CODE_FEATURE_KAIROS_GITHUB_WEBHOOKS'] === '1',
   () => require('./tools/SubscribePRTool/SubscribePRTool.js').SubscribePRTool
 )
 /* eslint-enable custom-rules/no-process-env-top-level */
@@ -101,7 +96,7 @@ import { TestingPermissionTool } from './tools/testing/TestingPermissionTool.js'
 import { GrepTool } from './tools/GrepTool/GrepTool.js'
 import { TungstenTool } from './tools/TungstenTool/TungstenTool.js'
 // 懒加载 require 以打破循环依赖：tools.ts -> TeamCreateTool/TeamDeleteTool -> ... -> tools.ts
- 
+
 const getTeamCreateTool = () =>
   require('./tools/TeamCreateTool/TeamCreateTool.js')
     .TeamCreateTool as typeof import('./tools/TeamCreateTool/TeamCreateTool.js').TeamCreateTool
@@ -143,33 +138,32 @@ export {
   ASYNC_AGENT_ALLOWED_TOOLS,
   COORDINATOR_MODE_ALLOWED_TOOLS,
 } from './constants/tools.js'
-import { feature } from 'bun:bundle'
 // 死代码消除：OVERFLOW_TEST_TOOL 的条件导入
 /* eslint-disable custom-rules/no-process-env-top-level */
-const OverflowTestTool = feature('OVERFLOW_TEST_TOOL')
+const OverflowTestTool = process.env['CLAUDE_CODE_FEATURE_OVERFLOW_TEST_TOOL'] === '1'
   ? require('./tools/OverflowTestTool/OverflowTestTool.js').OverflowTestTool
   : null
-const CtxInspectTool = feature('CONTEXT_COLLAPSE')
+const CtxInspectTool = process.env['CLAUDE_CODE_FEATURE_CONTEXT_COLLAPSE'] === '1'
   ? require('./tools/CtxInspectTool/CtxInspectTool.js').CtxInspectTool
   : null
-const TerminalCaptureTool = feature('TERMINAL_PANEL')
+const TerminalCaptureTool = process.env['CLAUDE_CODE_FEATURE_TERMINAL_PANEL'] === '1'
   ? require('./tools/TerminalCaptureTool/TerminalCaptureTool.js')
       .TerminalCaptureTool
   : null
-const WebBrowserTool = feature('WEB_BROWSER_TOOL')
+const WebBrowserTool = process.env['CLAUDE_CODE_FEATURE_WEB_BROWSER_TOOL'] === '1'
   ? require('./tools/WebBrowserTool/WebBrowserTool.js').WebBrowserTool
   : null
-const coordinatorModeModule = feature('COORDINATOR_MODE')
+const coordinatorModeModule = process.env['CLAUDE_CODE_FEATURE_COORDINATOR_MODE'] === '1'
   ? (require('./coordinator/coordinatorMode.js') as typeof import('./coordinator/coordinatorMode.js'))
   : null
-const SnipTool = feature('HISTORY_SNIP')
+const SnipTool = process.env['CLAUDE_CODE_FEATURE_HISTORY_SNIP'] === '1'
   ? require('./tools/SnipTool/SnipTool.js').SnipTool
   : null
-const ListPeersTool = feature('UDS_INBOX')
+const ListPeersTool = process.env['CLAUDE_CODE_FEATURE_UDS_INBOX'] === '1'
   ? require('./tools/ListPeersTool/ListPeersTool.js').ListPeersTool
   : null
 const AgentProxyTool = require('./tools/AgentProxyTool/index.js').AgentProxyTool
-const WorkflowTool = feature('WORKFLOW_SCRIPTS')
+const WorkflowTool = process.env['CLAUDE_CODE_FEATURE_WORKFLOW_SCRIPTS'] === '1'
   ? (() => {
       require('./tools/WorkflowTool/bundled/index.js').initBundledWorkflows()
       return require('./tools/WorkflowTool/WorkflowTool.js').WorkflowTool
@@ -221,7 +215,7 @@ export function parseToolPreset(preset: string): ToolPreset | null {
  */
 export function getToolsForDefaultPreset(): string[] {
   const tools = getAllBaseTools()
-  const isEnabled = tools.map(tool => tool.isEnabled())
+  const isEnabled = tools.map(tool => typeof tool.isEnabled === 'function' ? tool.isEnabled() : true)
   return tools.filter((_, i) => isEnabled[i]).map(tool => tool.name)
 }
 
@@ -263,7 +257,6 @@ export function _markToolInitEnd(): void {
 
 export function getAllBaseTools(): Tools {
   _markToolInitStart()
-	
   const _tools: Tool[] = [];
   try {
     _tools.push(AgentTool);
@@ -271,7 +264,6 @@ export function getAllBaseTools(): Tools {
     _tools.push(TaskOutputTool);
     _tools.push(BashTool);
     _tools.push(GlobTool, GrepTool);
-    _tools.push(ExitPlanModeV2Tool);
     _tools.push(FileReadTool);
     _tools.push(FileEditTool);
     _tools.push(FileWriteTool);
@@ -295,17 +287,17 @@ export function getAllBaseTools(): Tools {
       _tools.push(TaskCreateTool, TaskGetTool, TaskUpdateTool, TaskListTool);
     }
     if (OverflowTestTool) { _tools.push(OverflowTestTool); }
-    if (CtxInspectTool) { _tools.push(CtxInspectTool); }
-    if (TerminalCaptureTool) { _tools.push(TerminalCaptureTool); }
+    if (CtxInspectTool) { _tools.push(new CtxInspectTool()); }
+    if (TerminalCaptureTool) { _tools.push(new TerminalCaptureTool()); }
     if (isEnvTruthy(process.env.ENABLE_LSP_TOOL)) { _tools.push(LSPTool); }
     if (isWorktreeModeEnabled()) { _tools.push(EnterWorktreeTool, ExitWorktreeTool); }
     _tools.push(getSendMessageTool());
-    if (ListPeersTool) { _tools.push(ListPeersTool); }
+    if (ListPeersTool) { _tools.push(new ListPeersTool()); }
     if (AgentProxyTool) { _tools.push(new AgentProxyTool()); }
     if (isAgentSwarmsEnabled()) {
       _tools.push(getTeamCreateTool(), getTeamDeleteTool());
     }
-    if (VerifyPlanExecutionTool) { _tools.push(VerifyPlanExecutionTool); }
+    if (VerifyPlanExecutionTool) { _tools.push(new VerifyPlanExecutionTool()); }
     if (process.env.USER_TYPE === 'ant' && REPLTool) {
       _tools.push(REPLTool);
     }
@@ -314,11 +306,11 @@ export function getAllBaseTools(): Tools {
     if (cronTools.length > 0) { _tools.push(...cronTools); }
     if (RemoteTriggerTool) { _tools.push(RemoteTriggerTool); }
 		if (MonitorTool) { _tools.push(MonitorTool); }
- 
+
     _tools.push(BriefTool);
-    if (SendUserFileTool) { _tools.push(SendUserFileTool); }
-    if (PushNotificationTool) { _tools.push(PushNotificationTool); }
-    if (SubscribePRTool) { _tools.push(SubscribePRTool); }
+    if (SendUserFileTool) { _tools.push(new SendUserFileTool()); }
+    if (PushNotificationTool) { _tools.push(new PushNotificationTool()); }
+    if (SubscribePRTool) { _tools.push(new SubscribePRTool()); }
     if (getPowerShellTool()) { _tools.push(getPowerShellTool() as Tool); }
     if (SnipTool) { _tools.push(SnipTool); }
     if (process.env.NODE_ENV === 'test') {
@@ -361,34 +353,16 @@ export function getAllBaseTools(): Tools {
     _tools.push(QueueTool);
     _tools.push(CacheTool);
     _tools.push(LoggerTool);
-    _tools.push(MetricsTool); 
+    _tools.push(MetricsTool);
     _tools.push(BackupTool);
     _tools.push(McpToolSearchTool);
     _tools.push(MultiFileEditTool);
-    if (SuggestBackgroundPRTool) { _tools.push(SuggestBackgroundPRTool); } 
-    if (WebBrowserTool) { _tools.push(WebBrowserTool); } 
+    if (WebBrowserTool) { _tools.push(new WebBrowserTool()); }
   } finally {
     _markToolInitEnd()
   }
-	if(isEnvTruthy(process.env.CLAUDE_CODE_CONSOLE_DEBUG) ||isEnvTruthy(process.env.DEBUG) )
-	{
-		for (let i = 0; i < _tools.length; i++) {
-			const t = _tools[i];
-			if (t === null) {
-				console.error(`❌ _tools[${i}] is null`);
-			} else if (t === undefined) {
-				console.error(`❌ _tools[${i}] is undefined`);
-			} else if (typeof t !== 'object') {
-				console.error(`❌ _tools[${i}] is primitive:`, typeof t, t);
-			} else if (typeof t.prompt !== 'function') {
-				console.error(`❌ MISSING prompt():`, t.name || '(no name)', 'at index', i);
-			}
-			//else
-				//console.error(`${i}prompt():`,t, t.name );
-		}
-	}
- 
-	return _tools.filter(Boolean) as Tools;
+
+  return _tools.filter(Boolean) as Tools;
 }
 
 /**
@@ -404,7 +378,10 @@ export function filterToolsByDenyRules<
     mcpInfo?: { serverName: string; toolName: string }
   },
 >(tools: readonly T[], permissionContext: ToolPermissionContext): T[] {
-  return tools.filter(tool => !getDenyRuleForTool(permissionContext, tool))
+  const result = tools.filter(tool => {
+    return !getDenyRuleForTool(permissionContext, tool)
+  })
+  return result
 }
 
 export const getTools = (permissionContext: ToolPermissionContext): Tools => {
@@ -415,7 +392,7 @@ export const getTools = (permissionContext: ToolPermissionContext): Tools => {
     if (isReplModeEnabled() && REPLTool) {
       const replSimple: Tool[] = [REPLTool]
       if (
-        feature('COORDINATOR_MODE') &&
+        process.env['CLAUDE_CODE_FEATURE_COORDINATOR_MODE'] === '1' &&
         coordinatorModeModule?.isCoordinatorMode()
       ) {
         replSimple.push(TaskStopTool, getSendMessageTool())
@@ -444,39 +421,39 @@ export const getTools = (permissionContext: ToolPermissionContext): Tools => {
    ConfigTool,
 
    /*TungstenTool,*/
-    
-   //SuggestBackgroundPRTool, 
-//WebBrowserTool, 
+
+   //SuggestBackgroundPRTool,
+//WebBrowserTool,
 /*
    TaskCreateTool,
 	 TaskGetTool, TaskUpdateTool, TaskListTool,
 
-//OverflowTestTool, 
-//CtxInspectTool, 
-//TerminalCaptureTool, 
-   LSPTool, 
-EnterWorktreeTool, ExitWorktreeTool, 
+//OverflowTestTool,
+//CtxInspectTool,
+//TerminalCaptureTool,
+   LSPTool,
+EnterWorktreeTool, ExitWorktreeTool,
   getSendMessageTool(),
- //ListPeersTool, 
+ //ListPeersTool,
   // getTeamCreateTool(), getTeamDeleteTool(),
- //VerifyPlanExecutionTool, 
+ //VerifyPlanExecutionTool,
    //REPLTool,
- //WorkflowTool, 
- SleepTool, 
- //...cronTools, 
- //RemoteTriggerTool, 
+ //WorkflowTool,
+ SleepTool,
+ //...cronTools,
+ //RemoteTriggerTool,
  //MonitorTool,
  BriefTool,
- //SendUserFileTool, 
- // PushNotificationTool, 
- //SubscribePRTool, 
- //getPowerShellTool() as Tool, 
-// SnipTool, 
+ //SendUserFileTool,
+ // PushNotificationTool,
+ //SubscribePRTool,
+ //getPowerShellTool() as Tool,
+// SnipTool,
 /*
 TestingPermissionTool,
 ListMcpResourcesTool,
 ReadMcpResourceTool,
-ToolSearchTool, 
+ToolSearchTool,
 UltrareviewTool,
 LessPermissionPromptsTool,
 EffortTool,
@@ -486,7 +463,7 @@ VimVisualModeTool,
 TerminalPanelTool,
 ContextCollapseTool,
 //WorkflowTool,
-//SnipTool, 
+//SnipTool,
 PlanModeTool,
 BranchTool,
 GitTool,
@@ -510,14 +487,14 @@ McpToolSearchTool,
 MultiFileEditTool*/
 
  ]
-		
-		
-		
+
+
+
     // 当协调者模式也激活时，包含 AgentTool 和 TaskStopTool，
     // 以便协调者获得 Task+TaskStop（通过 useMergedTools 过滤），并且
     // 工作节点获得 Bash/Read/Edit（通过 filterToolsForAgent 过滤）。
     if (
-      feature('COORDINATOR_MODE') &&
+      process.env['CLAUDE_CODE_FEATURE_COORDINATOR_MODE'] === '1' &&
       coordinatorModeModule?.isCoordinatorMode()
     ) {
       simpleTools.push(AgentTool, TaskStopTool, getSendMessageTool())
@@ -550,8 +527,16 @@ MultiFileEditTool*/
     }
   }
 
-  const isEnabled = allowedTools.map(_ => _.isEnabled())
-  return allowedTools.filter((_, i) => isEnabled[i])
+  const isEnabled: any[] = []
+  for (let i = 0; i < allowedTools.length; i++) {
+    const tool = allowedTools[i]
+    isEnabled.push(typeof tool.isEnabled === 'function' ? tool.isEnabled() : true)
+  }
+  const result = []
+  for (let i = 0; i < allowedTools.length; i++) {
+    if (isEnabled[i]) result.push(allowedTools[i])
+  }
+  return result
 }
 
 /**
@@ -611,4 +596,5 @@ export function getMergedTools(
 ): Tools {
   const builtInTools = getTools(permissionContext)
   return [...builtInTools, ...mcpTools]
-}// FORCE_RECOMPILE_2026_07_23_2300  
+}// FORCE_RECOMPILE_2026_07_23_2300
+

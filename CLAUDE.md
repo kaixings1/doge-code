@@ -154,8 +154,6 @@ src/
 | 13 | AI 测试生成 | `src/commands/test-gen.ts` | `/test-gen` | prompt 命令，vitest/pytest/go/cargo 多框架 + 5 轮修复循环 |
 | 14 | 安全扫描 | `src/commands/security-audit/` | `/security-audit`（别名 `/audit`,`/sast`）| local 命令，6 种规则（SQL注入/XSS/命令注入/硬编码密钥等）+ 递归扫描 + JSON/text 输出 |
 | 15 | 多 Agent 协作 | `src/tools/AgentTool/AgentTool.tsx` + `src/cli/handlers/agents.ts` | AgentTool + `/agents` | 复用项目既有通用 Agent（general-purpose/plan/explore 等）|
-
-| 15 | 多 Agent 协作 | `src/tools/AgentTool/AgentTool.tsx` + `src/cli/handlers/agents.ts` | AgentTool + `/agents` | 复用项目既有通用 Agent（general-purpose/plan/explore 等）|
 | 16 | Ghost Text 自动补全 | 规划中 | 待定 | 行内 AI 建议，Tab 接受，类似 Cursor/Copilot |
 | 17 | 智能代码重构 | 规划中 | 待定 | AI 驱动大规模重构（重命名/提取函数/类型修复） |
 | 18 | API 成本追踪 | 规划中 | 待定 | 按会话/项目/模型维度统计 token 消耗和费用 |

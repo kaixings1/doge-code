@@ -451,57 +451,18 @@ function TranscriptSearchBar({
         </Text> : null}
     </Box>;
 }
-const TITLE_ANIMATION_FRAMES = ['⠂', '⠐'];
-const TITLE_STATIC_PREFIX = '✳';
-const TITLE_ANIMATION_INTERVAL_MS = 960;
+const TITLE_IDLE_PREFIX = '🟩';
 
 /**
- * 设置终端标签页标题，在查询运行时显示动画前缀符号。与 REPL 隔离，使得 960ms 动画滴答只重新渲染这个叶子组件（返回 null — 纯副作用），而不是整个 REPL 树。提取之前，滴答导致每次响应的整个持续时间内每秒约 1 次 REPL 渲染，拖累 PromptInput 及其相关组件。
+ * 设置终端标签页标题，空闲时显示绿方块图标，忙碌时清空图标。
+ * 与 REPL 隔离，使得状态变化只重新渲染这个叶子组件（返回 null — 纯副作用）。
  */
 function AnimatedTerminalTitle(t0) {
-  const $ = _c(7);
-  const {
-    isAnimating,
-    title,
-    disabled,
-    noPrefix,
-    sessionId
-  } = t0;
-  const terminalFocused = useTerminalFocus();
-  const [frame, setFrame] = useState(0);
-  let t1;
-  let t2;
-  if ($[0] !== disabled || $[1] !== isAnimating || $[2] !== noPrefix || $[3] !== terminalFocused) {
-    t1 = () => {
-      if (disabled || noPrefix || !isAnimating || !terminalFocused) {
-        return;
-      }
-      const interval = setInterval(_temp2, TITLE_ANIMATION_INTERVAL_MS, setFrame);
-      return () => clearInterval(interval);
-    };
-    t2 = [disabled, noPrefix, isAnimating, terminalFocused];
-    $[0] = disabled;
-    $[1] = isAnimating;
-    $[2] = noPrefix;
-    $[3] = terminalFocused;
-    $[4] = t1;
-    $[5] = t2;
-  } else {
-    t1 = $[4];
-    t2 = $[5];
-  }
-  useEffect(t1, t2);
-  const prefix = isAnimating ? TITLE_ANIMATION_FRAMES[frame] ?? TITLE_STATIC_PREFIX : TITLE_STATIC_PREFIX;
-  // 当提供 sessionId 时，在标题末尾附加完整会话ID，便于意外退出后用 --resume 恢复
+  const { isIdle, title, disabled, sessionId } = t0;
+  const prefix = isIdle ? ` ${TITLE_IDLE_PREFIX}` : '';
   const titleWithSession = sessionId ? `${title} ${sessionId}` : title;
-  useTerminalTitle(disabled ? null : noPrefix ? titleWithSession : `${prefix} ${titleWithSession}`);
+  useTerminalTitle(disabled ? null : `${prefix} ${titleWithSession}`);
   return null;
-}
-function _temp2(setFrame_0) {
-  return setFrame_0(_temp);
-}
-function _temp(f) {
-  return (f + 1) % TITLE_ANIMATION_FRAMES.length;
 }
 type ReplRuntimeBoundaryState = {
   error: Error | null;
@@ -1076,8 +1037,7 @@ export function REPL({
   const isWaitingForApproval = toolUseConfirmQueue.length > 0 || promptQueue.length > 0 || pendingWorkerRequest || pendingSandboxRequest;
   // 本地 jsx 命令（如 /plugin，/config）显示等待输入的用户界面对话框。要求 jsx != null — 如果标志卡在 true 但 jsx 为 null，则视为未显示，这样 TextInput 焦点和队列处理器不会因为幽灵覆盖层而死锁。
   const isShowingLocalJSXCommand = toolJSX?.isLocalJSXCommand === true && toolJSX?.jsx != null;
-  const titleIsAnimating = isLoading && !isWaitingForApproval && !isShowingLocalJSXCommand;
-  // 标题动画状态存在于 <AnimatedTerminalTitle> 中，因此 960ms 滴答不会重新渲染 REPL。titleDisabled/terminalTitle 仍在此处计算，因为 onQueryImpl 会读取它们（后台会话描述，Haiku 标题提取门）。
+  // 标题状态存在于 <AnimatedTerminalTitle> 中，状态变化只重新渲染这个叶子组件。titleDisabled/terminalTitle 仍在此处计算，因为 onQueryImpl 会读取它们（后台会话描述，Haiku 标题提取门）。
 
   // 防止 macOS 在 Claude 工作时休眠
   useEffect(() => {
@@ -4286,7 +4246,7 @@ export function REPL({
         {toolJSX.jsx}
       </Box>;
     const transcriptReturn = <KeybindingSetup>
-        <AnimatedTerminalTitle isAnimating={titleIsAnimating} title={terminalTitle} disabled={titleDisabled} noPrefix={true} sessionId={getSessionId()} />
+        <AnimatedTerminalTitle isIdle={sessionStatus === 'idle'} title={terminalTitle} disabled={titleDisabled} sessionId={getSessionId()} />
         <GlobalKeybindingHandlers {...globalKeybindingProps} />
         {feature('VOICE_MODE') ? <VoiceKeybindingHandler voiceHandleKeyEvent={voice.handleKeyEvent} stripTrailing={voice.stripTrailing} resetAnchor={voice.resetAnchor} isActive={!toolJSX?.isLocalJSXCommand} /> : null}
         <CommandKeybindingHandlers onSubmit={onSubmit} isActive={!toolJSX?.isLocalJSXCommand} />
@@ -4372,7 +4332,7 @@ export function REPL({
 
   // 根部的 <AlternateScreen>：其内部的所有内容都在其 <Box height={rows}> 内。处理程序/上下文是零高度的，因此 FullscreenLayout 中 ScrollBox 的 flexGrow 相对于此 Box 解析。上面的对话记录早期返回以同样的方式包装其虚拟滚动分支；只有 30 上限转储分支保持未包装，以支持原生终端滚动回退。
   const mainReturn = <KeybindingSetup>
-      <AnimatedTerminalTitle isAnimating={titleIsAnimating} title={terminalTitle} disabled={titleDisabled} noPrefix={true} sessionId={getSessionId()} />
+      <AnimatedTerminalTitle isIdle={sessionStatus === 'idle'} title={terminalTitle} disabled={titleDisabled} sessionId={getSessionId()} />
       <GlobalKeybindingHandlers {...globalKeybindingProps} />
       {feature('VOICE_MODE') ? <VoiceKeybindingHandler voiceHandleKeyEvent={voice.handleKeyEvent} stripTrailing={voice.stripTrailing} resetAnchor={voice.resetAnchor} isActive={!toolJSX?.isLocalJSXCommand} /> : null}
       <CommandKeybindingHandlers onSubmit={onSubmit} isActive={!toolJSX?.isLocalJSXCommand} />

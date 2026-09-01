@@ -1,7 +1,7 @@
 import React from 'react';
 import type { StatsStore } from './context/stats.js';
 import type { Root } from './ink.js';
-import type { Props as REPLProps } from './screens/REPL.js';
+import type { Props as REPLProps } from './screens/REPL.tsx';
 import type { AppState } from './state/AppStateStore.js';
 import type { FpsMetrics } from './utils/fpsTracker.js';
 
@@ -26,7 +26,7 @@ export async function launchRepl(root: Root, appProps: AppWrapperProps, replProp
   let lastError: Error | null = null;
   for (let i = 0; i < 3; i++) {
     try {
-      const mod = await import('./screens/REPL.js');
+      const mod = await import('./screens/REPL.tsx');
       REPL = mod.REPL;
       console.error('[STEP-1] launchRepl: REPL module loaded (attempt ' + i + ')');
       break;
@@ -40,9 +40,7 @@ export async function launchRepl(root: Root, appProps: AppWrapperProps, replProp
   }
 
   if (!REPL) {
-    const minimalMod = await import('./screens/REPL-minimal.js');
-    REPL = minimalMod.REPL;
-    console.error('[STEP-1F] launchRepl: fell back to REPL-minimal');
+    throw new Error('Failed to load REPL screen after 3 attempts: ' + (lastError as Error).message);
   }
   console.error('[STEP-2] launchRepl: about to call renderAndRun');
   await renderAndRun(root, <App {...appProps}>

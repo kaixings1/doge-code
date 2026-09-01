@@ -121,6 +121,23 @@ export function SpinnerAnimationRow({
       ? (Math.sin((time / 1000) * Math.PI) + 1) / 2
       : 0;
 
+  // === 首字到达时间 & 速度计算 ===
+  const firstCharTimeRef = useRef<number | null>(null);
+  const respLen = responseLengthRef.current;
+  if (respLen > 0 && firstCharTimeRef.current === null) {
+    firstCharTimeRef.current = now;
+  }
+  let speedText: string | null = null;
+  if (firstCharTimeRef.current !== null && respLen > 0) {
+    const speedElapsedMs = now - firstCharTimeRef.current;
+    if (speedElapsedMs >= 2000) {
+      const charsPerSecond = respLen / (speedElapsedMs / 1000);
+      if (charsPerSecond >= 1) {
+        speedText = Math.round(charsPerSecond) + ' t/s';
+      }
+    }
+  }
+
   // === 令牌计数器动画 ===
   const tokenCounterRef = useRef(currentResponseLength);
   if (!reducedMotion) {
@@ -305,6 +322,9 @@ export function SpinnerAnimationRow({
 		<Text dimColor={tokenFlashIntensity === 0} color={tokenFlashColor}>
 		  {tokenCount} 个 token
 		</Text>
+		{speedText && (
+		  <Text dimColor={true}> {" "}{speedText}</Text>
+		)}
 		{tokenPreview && (
 		  <Text dimColor={previewFlashIntensity === 0} color={previewFlashColor}>
 			{" "}“{tokenPreview}”

@@ -19,8 +19,8 @@ const toolsDir = fs.existsSync(path.join(exeDir, '.tools'))
   ? path.join(exeDir, '.tools')
   : computedToolsDir
 process.env.PATH = toolsDir + ';' + process.env.PATH
-ensureBootstrapMacro()
 
+ensureBootstrapMacro()
 // 优先使用环境变量 DOGE_API_JSON 指定自定义配置路径（进程隔离用）
 const apiJsonPath = (() => {
   const envPath = process.env.DOGE_API_JSON;
@@ -37,7 +37,6 @@ if (fs.existsSync(apiJsonPath)) {
     activeConfig = data.presets[presetName];
   }
 }
-
 if (activeConfig?.baseURL && !activeConfig.baseURL.startsWith('http://0.0.0.0')) {
   const rawBase = activeConfig.baseURL.replace(/\/+$/, '');
   // 对于 Anthropic 协议，直接设置完整的 /v1/messages 地址，SDK 就不会再追加了
@@ -56,6 +55,53 @@ if (activeConfig?.baseURL && !activeConfig.baseURL.startsWith('http://0.0.0.0'))
   process.env.CLAUDE_CODE_COMPATIBLE_API_PROVIDER = 'openai';
 }
 
+// === 调试文件初始化：确保日志文件从启动之初就有内容 ===
+// doge.exe 旧版会主动写启动日志，新版 bun run 路径需要显式处理
+// 支持5种格式: --debug-file=path / --debug-file path / --d=path / -d path / 默认 debug.log
+{
+  let debugFilePath: string | null = null;
+  for (let i = 0; i < process.argv.length; i++) {
+    const arg = process.argv[i];
+    if (arg === '--debug-file' && i + 1 < process.argv.length) {
+      debugFilePath = process.argv[i + 1];
+      break;
+    }
+    const debugFileMatch = arg.match(/^--debug-file=(.+)$/);
+    if (debugFileMatch) {
+      debugFilePath = debugFileMatch[1];
+      break;
+    }
+    if (arg === '--d' && i + 1 < process.argv.length && !process.argv[i + 1].startsWith('-')) {
+      debugFilePath = process.argv[i + 1];
+      break;
+    }
+    const dMatch = arg.match(/^-d=(.+)$/);
+    if (dMatch) {
+      debugFilePath = dMatch[1];
+      break;
+    }
+  }
+  if (debugFilePath) {
+    // 有明确路径：通过 logForDebugging 写入，后续所有日志统一走 debug.js
+    try {
+      const { logForDebugging } = await import('./utils/debug.js');
+      logForDebugging('[bootstrap] doge 启动完成，log-file=' + debugFilePath, { level: 'info' });
+    } catch {
+      // debug.js 未就绪时静默跳过
+    }
+  } else {
+    // 默认：直接写 ./debug.log，确保启动就有内容
+    try {
+      const now = new Date();
+      const ts = now.toLocaleString('sv-SE').replace('T', ' ').slice(0, 19);
+      fs.appendFileSync('./debug.log', `${ts} [INFO] [bootstrap] doge 启动完成\n`);
+    } catch {
+      // 写文件失败时静默跳过
+    }
+  }
+}
+// === 调试文件初始化结束 ===
+
 async function main(): Promise<void> {
   // 桌面模式：DOGE_DESKTOP=1 时通过 launch-electron.ts spawn Electron 进程
   if (process.env.DOGE_DESKTOP === '1') {
@@ -63,8 +109,18 @@ async function main(): Promise<void> {
     launchDesktop()
     return
   }
-
-  await import('./entrypoints/cli.tsx')
+  try {
+    const mod = await import('./entrypoints/cli.tsx')
+    const mainFn = mod.default || mod.main
+    if (mainFn && typeof mainFn === 'function') {
+      await mainFn()
+    }
+  } catch (e) {
+    console.error('[IMPORT ERROR]:', e)
+    process.exit(1)
+  }
 }
 
-void main()
+main().catch(e => {
+  console.error('[main() CATCH]:', e)
+})

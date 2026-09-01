@@ -11,21 +11,37 @@ import { TerminalWriteContext } from '../useTerminalNotification.js'
  * Pass `null` to opt out — the hook becomes a no-op and leaves the
  * terminal title untouched.
  *
- * On Windows, uses `process.title` (classic conhost doesn't support OSC).
+ * On Windows, sets both `process.title` (conhost) and OSC 0 (Windows Terminal).
  * Elsewhere, writes OSC 0 (set title+icon) via Ink's stdout.
+ *
+ * Cleanup: clears the title on unmount to avoid stale title after exit.
  */
 export function useTerminalTitle(title: string | null): void {
   const writeRaw = useContext(TerminalWriteContext)
 
   useEffect(() => {
-    if (title === null || !writeRaw) return
+    if (title === null) return
 
     const clean = stripAnsi(title)
 
     if (process.platform === 'win32') {
-      process.title = clean
-    } else {
+      try { process.title = clean } catch { /* ignore */ }
+      // Windows Terminal supports OSC 0; conhost ignores it harmlessly.
+      if (writeRaw) {
+        writeRaw(osc(OSC.SET_TITLE_AND_ICON, clean))
+      }
+    } else if (writeRaw) {
       writeRaw(osc(OSC.SET_TITLE_AND_ICON, clean))
+    }
+
+    return () => {
+      // Clear title on unmount to avoid stale title persisting after exit
+      if (process.platform === 'win32') {
+        try { process.title = '' } catch { /* ignore */ }
+      }
+      if (writeRaw) {
+        writeRaw(osc(OSC.SET_TITLE_AND_ICON, ''))
+      }
     }
   }, [title, writeRaw])
 }

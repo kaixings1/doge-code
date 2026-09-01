@@ -32,7 +32,7 @@ const INTERNAL_WORKER_TOOLS = new Set([
 ])
 
 export function isCoordinatorMode(): boolean {
-  if (feature('COORDINATOR_MODE')) {
+  if (process.env['CLAUDE_CODE_FEATURE_COORDINATOR_MODE'] === '1') {
     return isEnvTruthy(process.env.CLAUDE_CODE_COORDINATOR_MODE)
   }
   return false

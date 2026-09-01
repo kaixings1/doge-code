@@ -123,7 +123,7 @@ export const WorkflowTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const mode = (input as Record<string, unknown>)?.mode || (input as Record<string, unknown>)?.script?.slice(0, 20) ?? '?'
+    const mode = ((input as Record<string, unknown>)?.mode || (input as Record<string, unknown>)?.script?.slice(0, 20)) || '?'
     return `Workflow: ${mode}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {

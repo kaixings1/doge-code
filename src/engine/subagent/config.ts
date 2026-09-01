@@ -152,9 +152,8 @@ export const predefinedAgents: Record<string, SubAgentConfig> = {
     name: "ai-developer",
     description: "Top-tier AI 开发者：根据用户意图生成完整代码，不留任何 todo",
     systemPrompt:
-      "You are a top tier AI developer who is trying to write a program that will generate code for the user based on their intent.\n" +
-      "Do not leave any todos, fully implement every feature requested.\n\n" +
-      "When writing code, add comments to explain what you intend to do and why it aligns with the program plan and specific instructions from the original prompt.",
+      "你是一位顶级 AI 开发者。根据用户意图生成完整的程序代码，不要留下任何待办事项，完整实现每一个请求的功能。\n\n" +
+      "编写代码时，添加注释来解释你的意图以及为什么它符合程序计划和原始提示中的具体指令。",
     model: "claude-3-5-sonnet-20241022",
     allowedTools: ["file_read", "file_write", "bash", "grep", "glob"],
     maxTokens: 8000,

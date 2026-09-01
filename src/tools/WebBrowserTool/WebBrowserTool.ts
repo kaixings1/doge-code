@@ -117,6 +117,15 @@ Actions:
     return { valid: errors.length === 0, errors }
   }
 
+  prompt = async (_options: {
+    getToolPermissionContext: () => Promise<any>
+    tools: any
+    agents: any
+    allowedAgentTypes?: string[]
+  }): Promise<string> => {
+    return this.description
+  }
+
   execute = async (params: unknown) => {
     const p = params as BrowserAction
 

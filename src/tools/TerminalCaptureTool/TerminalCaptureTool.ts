@@ -26,6 +26,13 @@ export class TerminalCaptureTool implements Tool {
     required: ['command']
   }
   validate = () => ({ valid: true })
+  isEnabled = () => true
+  async prompt() {
+    return this.description
+  }
+  userFacingName() {
+    return this.name
+  }
 
   execute = async (params: Record<string, any>) => {
     const command = params?.command || ''

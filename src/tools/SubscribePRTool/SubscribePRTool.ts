@@ -30,6 +30,13 @@ export class SubscribePRTool implements Tool {
     required: ['action']
   }
   validate = () => ({ valid: true })
+  isEnabled = () => true
+  async prompt() {
+    return this.description
+  }
+  userFacingName() {
+    return this.name
+  }
 
   // ─── Webhook 服务器状态（D2：实时推送） ───
   private webhookServer: Server | null = null

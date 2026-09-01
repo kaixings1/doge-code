@@ -365,7 +365,17 @@ export class MessageLoop {
       return true;
     }
 
-    if (processed.stopReason === 'end_turn') return false;
+    if (processed.stopReason === 'end_turn') {
+      if (typeof processed.content === 'string' && processed.content.trim()) {
+        engineLog('AUTO_CONTINUE', `end_turn 收到回复，自动继续，避免提前终止`);
+        this.deps.conversation.messages.push({
+          role: 'user',
+          content: '继续',
+        } as InternalMessage);
+        return true;
+      }
+      return false;
+    }
     if (processed.stopReason === 'max_tokens') {
       this.deps.onEvent({ type: 'should_continue' });
       return true;

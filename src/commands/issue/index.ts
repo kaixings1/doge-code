@@ -1,11 +1,11 @@
 // issue command — GitHub Issue 读取 + loop 引擎自动修复
-import type { Command, LocalCommandCall, LocalCommandResult } from '../types/command.js'
+import type { Command, LocalCommandCall, LocalCommandResult } from '../../types/command.ts'
 import { execSync } from 'child_process'
 import { existsSync, readFileSync } from 'fs'
 import { join } from 'path'
-import { gitExe } from '../utils/git.js'
-import { executeLoop } from '../commands/loop/engine.js'
-import type { LoopGoal, LoopOptions } from '../commands/loop/types.js'
+import { gitExe } from '../../utils/git.ts'
+import { executeLoop } from '../loop/engine.ts'
+import type { LoopGoal, LoopOptions } from '../loop/types.ts'
 
 // ==================== 类型 ====================
 

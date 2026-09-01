@@ -16,31 +16,27 @@ export async function resolve(specifier, context, nextResolve) {
     specifier.endsWith('.js') &&
     (specifier.startsWith('.') || specifier.startsWith('/') || specifier.startsWith('file:'))
   ) {
+    const tsSpecifier = specifier.replace(/\.js$/, '.ts');
+    // 优先尝试 .ts 文件（让 vitest alias 能拦截 src/commands.ts 等模块）
     try {
-      return await nextResolve(specifier, context);
+      return await nextResolve(tsSpecifier, context);
     } catch {
-      const tsSpecifier = specifier.replace(/\.js$/, '.ts');
+      // .ts 不存在时回退到 .js
       try {
-        return await nextResolve(tsSpecifier, context);
+        return await nextResolve(specifier, context);
       } catch {
-        // .ts 也不存在时检查文件系统中的实际文件
         let candidate = specifier;
         if (specifier.startsWith('file:')) {
           candidate = fileURLToPath(specifier);
-        } else if (!specifier.startsWith('.')) {
-          candidate = specifier;
-        } else {
+        } else if (specifier.startsWith('.')) {
           const base = context.parentURL ? fileURLToPath(new URL(specifier, context.parentURL)) : specifier;
-          const tsCandidate = base.replace(/\.js$/, '.ts');
-          if (existsSync(tsCandidate)) {
-            return nextResolve(new URL(tsCandidate, context.parentURL).href, context);
-          }
+          candidate = base.replace(/\.js$/, '.ts');
         }
-        if (candidate !== specifier && existsSync(candidate.replace(/\.js$/, '.ts'))) {
-          return nextResolve(candidate.replace(/\.js$/, '.ts'), context);
+        if (candidate !== specifier && existsSync(candidate)) {
+          return nextResolve(new URL(candidate, context.parentURL).href, context);
         }
         throw new Error(
-          `[esm-resolver] Cannot resolve import('${specifier}')：找不到 .js 或 .ts 文件`,
+          `[esm-resolver] Cannot resolve import('${specifier}')：找不到 .ts 或 .js 文件`,
         );
       }
     }

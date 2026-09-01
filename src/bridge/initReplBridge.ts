@@ -68,7 +68,7 @@ import { logBridgeSkip } from './debugUtils.js'
 import { checkEnvLessBridgeMinVersion } from './envLessBridgeConfig.js'
 import { getPollIntervalConfig } from './pollConfig.js'
 import type { BridgeState, ReplBridgeHandle } from './replBridge.js'
-import { initBridgeCore } from './replBridge.js'
+import { initBridgeCore as _realInitBridgeCore } from './replBridge.js'
 import { setCseShimGate } from './sessionIdCompat.js'
 import type { BridgeWorkerType } from './types.js'
 import { startFeishuBridge } from './feishuBridge.js'
@@ -110,6 +110,7 @@ export type InitBridgeOptions = {
 
 export async function initReplBridge(
   options?: InitBridgeOptions,
+  initBridgeCore = _realInitBridgeCore ?? null,
 ): Promise<ReplBridgeHandle | null> {
   const {
     onInboundMessage,
@@ -495,6 +496,9 @@ export async function initReplBridge(
   // 6. 委派。BridgeCoreHandle 是 ReplBridgeHandle 的结构超集
   //（增加了 REPL 调用者不使用的 writeSdkMessages），
   // 因此不需要适配器 — 只需在返回时使用更窄的类型。
+  if (!initBridgeCore) {
+    return null
+  }
   const bridgeHandle = await initBridgeCore({
     dir: getOriginalCwd(),
     machineName: hostname(),
