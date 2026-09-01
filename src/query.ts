@@ -163,6 +163,15 @@ function* yieldMissingToolResultBlocks(
 
 const MAX_OUTPUT_TOKENS_RECOVERY_LIMIT = 3
 
+// 空内容自动继续：模型返回空响应（end_turn 等）时，自动注入「继续」消息让 AI 续写，
+// 而非停下等用户手动输入 retry。限制重试次数防止无限循环。
+const EMPTY_CONTENT_RETRY_LIMIT = 3
+
+/** 是否启用空内容自动继续（默认开启，可通过 AUTO_CONTINUE_ON_EMPTY=false 关闭） */
+function isAutoContinueOnEmptyEnabled(): boolean {
+  return process.env.AUTO_CONTINUE_ON_EMPTY !== 'false'
+}
+
 function isWithheldMaxOutputTokens(
   msg: Message | StreamEvent | undefined,
 ): msg is AssistantMessage {
@@ -195,6 +204,7 @@ type State = {
   pendingToolUseSummary: Promise<ToolUseSummaryMessage | null> | undefined
   stopHookActive: boolean | undefined
   turnCount: number
+  emptyContentRetryCount: number
   transition: Continue | undefined
 }
 
@@ -224,6 +234,7 @@ function createNextState(
   // 重置字段遵循“大多数分支重置”原则
   const defaultReset = {
     maxOutputTokensRecoveryCount: 0,
+    emptyContentRetryCount: 0,
     hasAttemptedReactiveCompact: false,
     maxOutputTokensOverride: undefined,
     pendingToolUseSummary: undefined,
@@ -302,6 +313,7 @@ async function* queryLoop(
     maxOutputTokensRecoveryCount: 0,
     hasAttemptedReactiveCompact: false,
     turnCount: 1,
+    emptyContentRetryCount: 0,
     pendingToolUseSummary: undefined,
     transition: undefined,
   }
@@ -331,6 +343,7 @@ async function* queryLoop(
       pendingToolUseSummary,
       stopHookActive,
       turnCount,
+      emptyContentRetryCount,
     } = state
 
     const pendingSkillPrefetch = skillPrefetch?.startSkillDiscoveryPrefetch(
@@ -960,13 +973,43 @@ async function* queryLoop(
         )
 
         if (emptyContentResult.isEmptyContent) {
+          // 自动继续：模型返回空内容（如 end_turn）时，自动注入「继续」消息让 AI 续写，
+          // 而非停下等用户手动输入 retry。达到重试上限或关闭开关后回退到提示用户。
+          if (
+            isAutoContinueOnEmptyEnabled() &&
+            emptyContentRetryCount < EMPTY_CONTENT_RETRY_LIMIT
+          ) {
+            const continueMessage = createUserMessage({
+              content:
+                '请继续你之前的工作。上一次响应因故为空（可能是模型暂时错误或内容被过滤），' +
+                '请从上次中断处继续，无需道歉或重述已做内容。',
+              isMeta: true,
+            })
+            yield createSystemMessage(
+              `⚠️ 模型返回空内容（停止原因: ${emptyContentResult.finishReason}），` +
+                `自动继续第 ${emptyContentRetryCount + 1}/${EMPTY_CONTENT_RETRY_LIMIT} 次...`,
+              'warning',
+            )
+            state = createNextState(state, {
+              messages: [
+                ...messagesForQuery,
+                ...assistantMessages,
+                continueMessage,
+              ],
+              emptyContentRetryCount: emptyContentRetryCount + 1,
+              turnCount: turnCount + 1,
+              transition: { reason: 'empty_content_retry' },
+            })
+            continue
+          }
+
           for (const warning of emptyContentResult.warnings) {
             yield warning
           }
-          return { 
-            reason: 'empty_content', 
+          return {
+            reason: 'empty_content',
             finishReason: emptyContentResult.finishReason,
-            canRetry: true 
+            canRetry: true
           }
         }
       }
