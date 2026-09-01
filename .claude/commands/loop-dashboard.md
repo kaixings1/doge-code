@@ -1,6 +1,7 @@
 ---
 description: 打开 Loop V2 Web 监控面板（浏览器可视化）
 argument-hint: "[--port PORT] [--checkpoints PATH] [--metrics PATH]"
+model: sonnet
 ---
 
 # Loop Dashboard
@@ -65,7 +66,7 @@ argument-hint: "[--port PORT] [--checkpoints PATH] [--metrics PATH]"
 
 ## Implementation
 
-The dashboard is a simple HTML/JS page served by the local HTTP server:
+The dashboard is served by the local HTTP server:
 
 ```
 GET http://localhost:3711/loop-dashboard
@@ -87,10 +88,21 @@ And renders:
 - Frontend: Vanilla HTML/CSS/JS (no build step)
 - Charts: Chart.js (CDN)
 - Data: JSON files (no database)
-- Server: Existing HTTP server (port 3710/3711)
+- Server: `src/services/loop-dashboard/server.ts` (port 3711)
 
 ## Files
 
-- `src/server/loop-dashboard.ts` — 路由处理
-- `public/loop-dashboard.html` — 前端页面
-- `public/loop-dashboard.js` — 数据获取和渲染逻辑
+- `src/services/loop-dashboard/server.ts` — HTTP 服务器 + HTML 渲染
+- `src/services/loop-dashboard/api.ts` — 数据读取和聚合
+- `src/services/loop-dashboard/types.ts` — 类型定义
+- `src/services/loop-dashboard/index.ts` — 入口导出
+
+## API Endpoints
+
+- `GET /` — 渲染完整 HTML 仪表板
+- `GET /api/loop-dashboard` — JSON 格式数据
+- `GET /api/health` — 健康检查
+
+## Watch Mode
+
+Dashboard 每 30 秒自动刷新。如需实时监控，保持浏览器标签页打开即可。
