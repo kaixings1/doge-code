@@ -1,7 +1,0 @@
-export default {
-    type: 'local-jsx',
-    name: 'usage',
-    description: '显示计划用量限制',
-    availability: ['claude-ai'],
-    load: () => import('./usage.tsx'),
-};
