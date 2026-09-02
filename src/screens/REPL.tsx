@@ -283,7 +283,7 @@ import { CompanionSprite, CompanionFloatingBubble, MIN_COLS_FOR_FULL_SPRITE } fr
 import { DevBar } from '../components/DevBar.js';
 // Session manager removed - using AppState now
 import type { RemoteSessionConfig } from '../remote/RemoteSessionManager.js';
-import { REMOTE_SAFE_COMMANDS } from '../commands.js';
+import { getRemoteSafeCommands } from '../commands.js';
 import type { RemoteMessageContent } from '../utils/teleport/api.js';
 import { FullscreenLayout, useUnseenDivider, computeUnseenDivider } from '../components/FullscreenLayout.js';
 import { isFullscreenEnvEnabled, maybeGetTmuxMouseHint, isMouseTrackingEnabled } from '../utils/fullscreen.js';
@@ -1261,7 +1261,7 @@ export function REPL({
   const handleRemoteInit = useCallback((remoteSlashCommands: string[]) => {
     const remoteCommandSet = new Set(remoteSlashCommands);
     // Keep commands that CCR lists OR that are in the local-safe set
-    setLocalCommands(prev => prev.filter(cmd => remoteCommandSet.has(cmd.name) || REMOTE_SAFE_COMMANDS.has(cmd)));
+    setLocalCommands(prev => prev.filter(cmd => remoteCommandSet.has(cmd.name) || getRemoteSafeCommands().has(cmd)));
   }, [setLocalCommands]);
   const hasInterruptibleToolInProgressRef = useRef(false);
 
