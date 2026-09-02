@@ -1,4 +1,5 @@
 ---
+name: loop-crew
 description: "Crew 循环引擎 — 多 Agent 角色分配与协作，模拟 CrewAI 模式"
 argument-hint: "<task> [--roles role1,role2,...] [--max-iterations N]"
 model: sonnet
@@ -6,6 +7,16 @@ color: orange
 ---
 
 # Loop Crew — 多 Agent 协作循环
+
+> **Guard**: 如果 `$ARGUMENTS` 为空或仅包含选项而没有 `<task>`，立即输出以下内容并停止，不要执行任何工作流：
+> ```
+> 用法: /loop-crew <task> [--roles role1,role2,...] [--max-iterations N]
+>
+> <task> 是必填参数。示例:
+>   /loop-crew "分析 src/commands/ 的安全性并生成报告"
+>   /loop-crew "重构 utils 目录" --roles coder,reviewer,tester
+> ```
+> 输出后立即停止，不要进入 Phase 1。
 
 Crew 循环引擎模拟 CrewAI 的多角色协作模式。将任务分解为多个角色，每个角色由独立的 Agent 执行，最终汇总结果。
 

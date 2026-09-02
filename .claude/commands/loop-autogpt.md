@@ -1,4 +1,5 @@
 ---
+name: loop-autogpt
 description: "AutoGPT 循环引擎 — 目标驱动 + 自主规划 + 工具调用链"
 argument-hint: "<goal> [--max-steps N] [--budget-tokens N] [--continuous]"
 model: sonnet
@@ -6,6 +7,16 @@ color: orange
 ---
 
 # Loop AutoGPT — 自主目标驱动循环
+
+> **Guard**: 如果 `$ARGUMENTS` 为空或仅包含选项而没有 `<goal>`，立即输出以下内容并停止：
+> ```
+> 用法: /loop-autogpt <goal> [--max-steps N] [--budget-tokens N] [--continuous]
+>
+> <goal> 是必填参数。示例:
+>   /loop-autogpt "创建一个完整的 Todo List CLI 应用"
+>   /loop-autogpt "分析项目依赖，找出可优化的包" --max-steps 10
+> ```
+> 输出后立即停止，不要进入 Phase 1。
 
 AutoGPT 循环引擎模拟 AutoGPT 的自主目标驱动模式。AI 接收一个高层目标，自主分解为步骤，规划执行顺序，调用工具，验证结果，循环直到目标达成。
 

@@ -1,4 +1,5 @@
 ---
+name: loop-start
 description: "启动循环操作员 — 支持 11 种循环模式：串行/并行/流水线/扇出/事件驱动/状态机/共识/自愈/限速/优先级/链式"
 argument-hint: "<pattern> <tasks...> [--max-iterations N] [--budget-tokens N] [--parallelism N] [--mode safe|fast]"
 model: sonnet
@@ -6,6 +7,19 @@ color: orange
 ---
 
 # Loop Start
+
+> **Guard**: 如果 `$ARGUMENTS` 为空，立即输出以下内容并停止：
+> ```
+> 用法: /loop-start <pattern> <tasks...> [options]
+>
+> 可用模式: sequential, parallel, pipeline, fanout, event-driven, state-machine,
+>          consensus, self-healing, rate-limited, priority, chaining
+>
+> 示例:
+>   /loop-start sequential "lint" "test" "build"
+>   /loop-start parallel "analyze src/" "analyze api/" --parallelism 2
+> ```
+> 输出后立即停止，不要执行任何循环。
 
 启动循环操作员，支持多种循环模式。
 

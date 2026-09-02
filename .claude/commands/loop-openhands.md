@@ -1,4 +1,5 @@
 ---
+name: loop-openhands
 description: "OpenHands 策略循环引擎 — 代码修改 + 测试 + 提交闭环"
 argument-hint: "<task> [--repo PATH] [--max-iterations N] [--test-cmd CMD]"
 model: sonnet
@@ -6,6 +7,16 @@ color: orange
 ---
 
 # Loop OpenHands — 代码修改与提交闭环
+
+> **Guard**: 如果 `$ARGUMENTS` 为空或仅包含选项而没有 `<task>`，立即输出以下内容并停止：
+> ```
+> 用法: /loop-openhands <task> [--repo PATH] [--max-iterations N] [--test-cmd CMD]
+>
+> <task> 是必填参数。示例:
+>   /loop-openhands "修复登录页面的 CSS 响应式问题"
+>   /loop-openhands "添加用户注册 API 端点" --max-iterations 5
+> ```
+> 输出后立即停止，不要进入 Phase 1。
 
 OpenHands 循环引擎模拟 OpenHands（原 OpenDevin）的自主软件工程模式。在指定代码库中理解任务、修改代码、运行测试、提交变更，形成完整闭环。
 

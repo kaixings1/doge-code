@@ -1,4 +1,5 @@
 ---
+name: loop-langgraph
 description: "LangGraph 循环引擎 — 状态图驱动 + 条件路由 + 循环"
 argument-hint: "<task> [--graph-file PATH] [--max-iterations N]"
 model: sonnet
@@ -6,6 +7,16 @@ color: orange
 ---
 
 # Loop LangGraph — 状态图驱动循环
+
+> **Guard**: 如果 `$ARGUMENTS` 为空或仅包含选项而没有 `<task>`，立即输出以下内容并停止：
+> ```
+> 用法: /loop-langgraph <task> [--graph-file PATH] [--max-iterations N]
+>
+> <task> 是必填参数。示例:
+>   /loop-langgraph "重构 src/utils/ 目录"
+>   /loop-langgraph "修复 CI 中的所有 failing tests" --max-iterations 5
+> ```
+> 输出后立即停止，不要进入状态图。
 
 LangGraph 循环引擎使用状态图（State Graph）驱动任务执行。定义节点（states）和边（transitions），根据条件自动路由，支持循环和条件分支。
 
