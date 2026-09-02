@@ -1002,7 +1002,12 @@ export const getSlashCommandToolSkills = memoize(
  * 1. 在 main.tsx 中渲染 REPL 之前预过滤命令（防止与 CCR 初始化产生竞态）
  * 2. 在 REPL 的 handleRemoteInit 中，CCR 过滤后仍保留仅限本地的命令
  */
-export const REMOTE_SAFE_COMMANDS: Set<Command> = new Set([
+// 惰性求值：避免模块初始化时访问命令对象（feedback 等）。
+// 循环依赖（commands.ts → 某命令 → … → Tool.ts → commands.ts）会导致
+// 模块顶层立即 new Set([... feedback ...]) 时 feedback 仍处于 TDZ，
+// 报 "Cannot access 'feedback' before initialization"。改为 memoize 后，
+// 仅在首次调用 getRemoteSafeCommands() 时才访问命令对象，彼时模块已加载完成。
+export const getRemoteSafeCommands: () => Set<Command> = memoize((): Set<Command> => new Set([
   session, // 显示远程会话的二维码/URL
   exit, // 退出 TUI
   clear, // 清屏
@@ -1025,7 +1030,7 @@ export const REMOTE_SAFE_COMMANDS: Set<Command> = new Set([
   summary, // 状态行切换
   stickers, // 贴纸
   mobile, // 移动端二维码
-]) as Set<Command>
+]) as Set<Command>)
 
 /**
  * 类型为 'local' 的内置命令中，当通过远程控制桥接器收到时**可以**安全执行的那些。
@@ -1037,7 +1042,7 @@ export const REMOTE_SAFE_COMMANDS: Set<Command> = new Set([
  *
  * 添加一个能在移动端工作的新 'local' 命令时，请将其添加至此。默认阻止。
  */
-export const BRIDGE_SAFE_COMMANDS: Set<Command> = new Set(
+export const getBridgeSafeCommands: () => Set<Command> = memoize((): Set<Command> => new Set(
   [
     compact, // 压缩上下文 —— 在手机上会话中期很有用
     clear, // 清空对话记录
@@ -1046,7 +1051,7 @@ export const BRIDGE_SAFE_COMMANDS: Set<Command> = new Set(
     releaseNotes, // 显示更新日志
     files, // 列出跟踪的文件
   ].filter((c): c is Command => c !== null),
-)
+))
 
 /**
  * 判断一个斜杠命令在其输入通过远程控制桥接器（移动端/Web 客户端）到达时是否可以安全执行。
@@ -1058,7 +1063,7 @@ export const BRIDGE_SAFE_COMMANDS: Set<Command> = new Set(
 export function isBridgeSafeCommand(cmd: Command): boolean {
   if (cmd.type === 'local-jsx') return false
   if (cmd.type === 'prompt') return true
-  return BRIDGE_SAFE_COMMANDS.has(cmd)
+  return getBridgeSafeCommands().has(cmd)
 }
 
 /**
@@ -1066,7 +1071,8 @@ export function isBridgeSafeCommand(cmd: Command): boolean {
  * 用于在 --remote 模式下渲染 REPL 时预过滤命令，防止本地专属命令在 CCR 初始化消息到达前短暂可用。
  */
 export function filterCommandsForRemoteMode(commands: Command[]): Command[] {
-  return commands.filter(cmd => REMOTE_SAFE_COMMANDS.has(cmd))
+  const safe = getRemoteSafeCommands()
+  return commands.filter(cmd => safe.has(cmd))
 }
 
 export function findCommand(
