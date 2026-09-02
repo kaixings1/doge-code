@@ -11,3 +11,11 @@ build/
 debug*.txt
 stderr*.txt
 stdout*.txt
+
+# repo-pack 测试运行时生成的输出产物（只保留输入：README.md、src/）
+src/commands/repo-pack/__tests__/fixtures/repomix-output.*
+src/commands/repo-pack/__tests__/fixtures/custom-output.*
+src/commands/repo-pack/__tests__/fixtures/data.json
+
+# 编译产物（源码为 .ts/.tsx，编译后由 compile.bat 清理）
+src/services/remoteManagedSettings/securityCheck.jsx
