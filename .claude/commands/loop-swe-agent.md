@@ -1,4 +1,5 @@
 ---
+name: loop-swe-agent
 description: "SWE-Agent 策略循环引擎 — 问题定位 + 修复 + 验证"
 argument-hint: "<problem> [--instance-id ID] [--max-steps N]"
 model: sonnet
@@ -6,6 +7,16 @@ color: orange
 ---
 
 # Loop SWE-Agent — 问题定位与修复循环
+
+> **Guard**: 如果 `$ARGUMENTS` 为空或仅包含选项而没有 `<problem>`，立即输出以下内容并停止：
+> ```
+> 用法: /loop-swe-agent <problem> [--instance-id ID] [--max-steps N]
+>
+> <problem> 是必填参数。示例:
+>   /loop-swe-agent "FIX: 用户头像上传失败，返回 500 错误"
+>   /loop-swe-agent "修复内存泄漏：长时间运行后浏览器标签页崩溃"
+> ```
+> 输出后立即停止，不要进入 Phase 1。
 
 SWE-Agent 循环引擎模拟 SWE-Agent（Facebook 的软件工程代理）的问题解决模式。针对给定的软件问题，执行定位、修复、验证的闭环。
 
