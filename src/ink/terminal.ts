@@ -169,13 +169,15 @@ export function supportsExtendedKeys(): boolean {
 }
 
 /** True if the terminal scrolls the viewport when it receives cursor-up
- *  sequences that reach above the visible area. On Windows, conhost's
- *  SetConsoleCursorPosition follows the cursor into scrollback
- *  (microsoft/terminal#14774), yanking users to the top of their buffer
- *  mid-stream. WT_SESSION catches WSL-in-Windows-Terminal where platform
- *  is linux but output still routes through conhost. */
+ *  sequences that reach above the visible area. On Windows conhost, a
+ *  SetConsoleCursorPosition bug (microsoft/terminal#17474) can yank the
+ *  viewport into scrollback mid-stream; WT_SESSION catches WSL-in-Windows-
+ *  Terminal where platform is linux but output still routes through conhost.
+ *  Native Windows terminals (conhost / Windows Terminal) are intentionally
+ *  NOT gated here: losing real-time streaming text is worse than a rare
+ *  scroll-back blink. */
 export function hasCursorUpViewportYankBug(): boolean {
-  return process.platform === 'win32' || !!process.env.WT_SESSION
+  return !!process.env.WT_SESSION && process.platform !== 'win32'
 }
 
 // Computed once at module load — terminal capabilities don't change mid-session.

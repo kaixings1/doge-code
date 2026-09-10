@@ -30,9 +30,22 @@
 - **验证**: openaiCompatStream.test.ts 5/5 通过；7 个 XML 示例单测全部符合预期（taskId 数值化、replace_all 布尔化、`||`/`"` 原样保留、反斜杠路径保留）
 - **注意**: 一次流多 `<function=>`、`reasoning_content` 通道内的 XML 暂未覆盖（已知边界）
 
----
+### [x] 10. Windows 流式正文不实时刷新修复
+- **文件**: `src/ink/terminal.ts`
+- **根因**: `hasCursorUpViewportYankBug()` 在 `win32` 硬编码恒 `true` → `REPL.tsx` 的 `showStreamingText` 恒 `false` → `onStreamingText` 空执行 → 流式正文实时通道完全失效，正文只能靠 `content_block_stop` 整块一次性 setMessages（"流式不刷新，结束一次性显示几页"）
+- **操作**: `hasCursorUpViewportYankBug()` 移除 `process.platform === 'win32'` 强制禁用，仅保留 `WT_SESSION`（WSL-in-Windows-Terminal，走 conhost 仍防卷屏）
+- **取舍**: 原生 Windows 终端（conhost / Windows Terminal）恢复流式正文实时刷新，代价为可能触发 conhost 光标卷屏回跳（microsoft/terminal#17474）
+- **验证**: biome 通过；全量测试无新增失败（106 fail / 68 errors 为既有 pre-existing）
+- **后续**: 若流式恢复后出现"工具调用后正文回退/流中断"，为 openaiCompat index 连续性 + claude.ts `contentBlocks[index]` 找不到块抛 RangeError 问题（方案 C），需另处理
 
-## P1 — 计划阶段（中风险）
+### [x] 11. /login 命令消失修复
+- **文件**: `src/commands/login/index.ts`
+- **根因**: `login/index.ts` 导出格式偏离其他命令——写成 `export default () => ({...})`（工厂函数），其余命令均为 `export default {...}`（直接命令对象）。`getGlobCommands()` 将 `mod.default` 直接当 Command 读取，login 的工厂函数使其被当作无效数据（name/type 为空），无法作为 `/login` 注册
+- **操作**: 去掉 `() =>` 工厂包装，改为直接导出命令对象，字段（type/name/description/isEnabled/load）原样保留
+- **验证**: `getCommands()` 中 login 出现且 `type=local-jsx`、`isEnabled()=true`、`load` 存在；`builtInCommandNames` 含 `login`；login.test.ts 1/1 通过
+- **注意**: 排查其他命令是否也有"工厂函数"式导出，避免同类问题
+
+---
 
 ### [ ] 3. main.tsx 拆分（仅计划，暂不执行）
 - **文件**: `src/main.tsx`（238KB）

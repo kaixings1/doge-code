@@ -577,7 +577,25 @@ async function* createAnthropicStreamFromOpenAIInner(
       }
     }
 	  if (textBufferIndex === null) {
-		  textBuffer = '';
+		  if (textBuffer.length > 0) {
+			  const idx = nextContentIndex++
+			  yield {
+				type: 'content_block_start',
+				index: idx,
+				content_block: { type: 'text', text: '' },
+			  } as BetaRawMessageStreamEvent
+			  yield {
+				type: 'content_block_delta',
+				index: idx,
+				delta: { type: 'text_delta', text: textBuffer },
+			  } as BetaRawMessageStreamEvent
+			  yield {
+				type: 'content_block_stop',
+				index: idx,
+			  } as BetaRawMessageStreamEvent
+			  textBuffer = ''
+			  lastFlushTime = Date.now()
+		  }
 		  return;
 	  }
     const sentenceEndRegex = /[。！？.!?：:]/;
@@ -968,8 +986,8 @@ async function* createAnthropicStreamFromOpenAIInner(
           } as BetaRawMessageStreamEvent
         }
 
-// thinking / reasoning_content \u589E\u91CF\uFF08DeepSeek\u3001StepFun \u7B49\u6A21\u578B\u7684\u63A8\u7406\u8F93\u51FA\uFF09
-        // \u5355\u72EC\u8D70 thinking \u901A\u9053\uFF0C\u4EA7\u51FA thinking_delta\uFF0C\u4E0D\u6DF7\u5165\u6B63\u6587 text_delta\u3002
+        // 增量（DeepSeek、StepFun 等模型的推理输出）
+        // 单独走 thinking 通道，产出 thinking_delta，不混入正文 text_delta。
         {
           const raw = delta as Record<string, unknown>
           const r = raw?.reasoning_content
