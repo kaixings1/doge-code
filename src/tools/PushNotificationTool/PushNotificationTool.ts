@@ -1,4 +1,5 @@
 import { type Tool } from '../../engine/types.js'
+import { z } from 'zod/v4'
 import { execSync } from 'child_process'
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs'
 import { join } from 'path'
@@ -33,6 +34,10 @@ export class PushNotificationTool implements Tool {
       wait: { type: 'boolean', description: 'Wait for delivery confirmation' }
     },
     required: ['title', 'message']
+  }
+  /** 渲染层（src/Tool.ts 接口）需要 inputSchema；返回宽松 schema 兼容 */
+  get inputSchema() {
+    return z.object({ title: z.string().optional(), message: z.string().optional() }).passthrough()
   }
   validate = () => ({ valid: true })
   isEnabled = () => true

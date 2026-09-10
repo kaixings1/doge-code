@@ -424,7 +424,7 @@ export async function* createAnthropicStreamFromOpenAI(input: {
   model: string
 }): AsyncGenerator<BetaRawMessageStreamEvent, BetaMessage, void> {
 	  // 【补丁③】共享 pending 状态，供 wrapper 处理工具调用 XML
-  const pendingState: { xml: string | null } = { xml: null }
+  const pendingState: { xml: string | null; enteredAt?: number } = { xml: null }
   const inner = createAnthropicStreamFromOpenAIInner(input, pendingState)
   yield* wrapPendingToolXml(inner, pendingState, input.model)
 }
@@ -433,7 +433,7 @@ async function* createAnthropicStreamFromOpenAIInner(
     reader: ReadableStreamDefaultReader<Uint8Array>
     model: string
   },
-  pendingState: { xml: string | null },
+  pendingState: { xml: string | null; enteredAt?: number },
 ): AsyncGenerator<BetaRawMessageStreamEvent, BetaMessage, void> {
 	// 文本缓冲相关
 	let textBuffer = ''                       // 待发送的文本
@@ -458,7 +458,7 @@ async function* createAnthropicStreamFromOpenAIInner(
   let inChoiceList = false      // 【补丁②】是否处于"逐项勾选清单"上下文（1./- /□ 开头的篇章），清单内不做 - 硬分
 
   // choices 路径的状态
-  let activeBlockType: 'text' | null = null
+  let activeBlockType: 'text' | 'thinking' | null = null
   let activeBlockIndex: number | null = null
   const toolIdxMap = new Map<number, number>()               // 上游 tool_calls index -> Anthropic index
   const toolState = new Map<number, { id: string; name: string; arguments: string }>()
@@ -633,11 +633,11 @@ async function* createAnthropicStreamFromOpenAIInner(
           }
           textBuffer = textBuffer.slice(endPos)
         } else {
-          // 没有句子结束符，检查双换行、长度和时间
-          const hasDoubleNewline = textBuffer.endsWith('\n\n')
+          // 没有句子结束符，遇到单个换行即刷新，让界面逐行更新
+          const hasNewline = textBuffer.includes('\n')
           const exceedsMaxLength = textBuffer.length >= 200
           const exceedsTime = Date.now() - lastFlushTime >= 200
-          if (hasDoubleNewline || exceedsMaxLength || exceedsTime) {
+          if (hasNewline || exceedsMaxLength || exceedsTime) {
             if (textBuffer.trim().length > 0) {
               yield {
                 type: 'content_block_delta',
@@ -968,79 +968,63 @@ async function* createAnthropicStreamFromOpenAIInner(
           } as BetaRawMessageStreamEvent
         }
 
-        // 将 thinking 增量当作文本增量处理（并入统一缓冲）
-        if (delta && (delta as Record<string, unknown>).thinking !== undefined) {
-          const t = (delta as Record<string, unknown>).thinking as string
-          // 如果当前活动块不是文本块，需要切换
-          if (activeBlockType !== 'text') {
-            if (textBuffer && textBufferIndex !== null) {
+// thinking / reasoning_content \u589E\u91CF\uFF08DeepSeek\u3001StepFun \u7B49\u6A21\u578B\u7684\u63A8\u7406\u8F93\u51FA\uFF09
+        // \u5355\u72EC\u8D70 thinking \u901A\u9053\uFF0C\u4EA7\u51FA thinking_delta\uFF0C\u4E0D\u6DF7\u5165\u6B63\u6587 text_delta\u3002
+        {
+          const raw = delta as Record<string, unknown>
+          const r = raw?.reasoning_content
+          const t = raw?.thinking
+          const thinkingText = (typeof r === 'string' ? r : '') + (typeof t === 'string' ? t : '')
+          if (thinkingText.length > 0) {
+            if (activeBlockType !== 'thinking') {
+              if (textBuffer && textBufferIndex !== null) {
+                yield {
+                  type: 'content_block_delta',
+                  index: textBufferIndex,
+                  delta: { type: 'text_delta', text: textBuffer },
+                } as BetaRawMessageStreamEvent
+                textBuffer = ''
+                textBufferIndex = null
+                lastFlushTime = Date.now()
+              }
+              yield* closeActiveBlock()
+              activeBlockIndex = nextContentIndex++
               yield {
-                type: 'content_block_delta',
-                index: textBufferIndex,
-                delta: { type: 'text_delta', text: textBuffer },
+                type: 'content_block_start',
+                index: activeBlockIndex,
+                content_block: { type: 'thinking', thinking: '' },
               } as BetaRawMessageStreamEvent
+              activeBlockType = 'thinking'
               textBuffer = ''
               textBufferIndex = null
-              lastFlushTime = Date.now()
             }
-            yield* closeActiveBlock()
-            activeBlockIndex = nextContentIndex++
             yield {
-              type: 'content_block_start',
-              index: activeBlockIndex,
-              content_block: { type: 'text', text: '' },
+              type: 'content_block_delta',
+              index: activeBlockIndex!,
+              delta: { type: 'thinking_delta', thinking: thinkingText },
             } as BetaRawMessageStreamEvent
-            activeBlockType = 'text'
-            textBufferIndex = activeBlockIndex
-            textBuffer = ''
+            lastFlushTime = Date.now()
           }
-          textBuffer += t
-          yield* flushBufferedText()
         }
-
-        // reasoning_content 增量（DeepSeek 等模型的推理输出）
-        if (delta?.reasoning_content) {
-          const text = delta.reasoning_content as string
-          if (activeBlockType !== 'text') {
-            if (textBuffer && textBufferIndex !== null) {
-              yield {
-                type: 'content_block_delta',
-                index: textBufferIndex,
-                delta: { type: 'text_delta', text: textBuffer },
-              } as BetaRawMessageStreamEvent
-              textBuffer = ''
-              textBufferIndex = null
-              lastFlushTime = Date.now()
-            }
-            yield* closeActiveBlock()
-            activeBlockIndex = nextContentIndex++
-            yield {
-              type: 'content_block_start',
-              index: activeBlockIndex,
-              content_block: { type: 'text', text: '' },
-            } as BetaRawMessageStreamEvent
-            activeBlockType = 'text'
-            textBufferIndex = activeBlockIndex
-            textBuffer = ''
-          }
-          textBuffer += text
-          yield* flushBufferedText()
-        }
-				
         // 文本增量
         if (delta?.content) {
           const text = delta.content as string
-          // 【补丁③】pending 态：新文本直接追加到 pending，不走常规通道
+// \u3010\u8865\u4E01\u2462\u3011pending \u6001\uFF1A\u65B0\u6587\u672C\u76F4\u63A5\u8FFD\u52A0\u5230 pending\uFF0C\u4E0D\u8D70\u5E38\u89C4\u901A\u9053
           if (pendingState.xml !== null) {
             pendingState.xml += text
-            if (pendingState.xml.length > 16 * 1024) {
-              // 误伤保护：超长视为普通文本，退出 pending
+            const tooLong = pendingState.xml.length > 2 * 1024
+            const tooOld =
+              pendingState.enteredAt !== undefined &&
+              Date.now() - pendingState.enteredAt > 3000
+            if (tooLong || tooOld) {
+              // \u8BEF\u4F24\u4FDD\u62A4\uFF1A\u8D85\u957F/\u8D85\u65F6\u89C6\u4E3A\u666E\u901A\u6587\u672C\uFF0C\u9000\u51FA pending
               textBuffer += pendingState.xml
               pendingState.xml = null
+              pendingState.enteredAt = undefined
             } else {
               continue
             }
-          }					
+          }
           // 检测冒号结尾逻辑保持不变（用于 premature [DONE] 判断）
           if (text.endsWith(':') || text.endsWith('：')) {
             colonDeadline = Date.now() + COLON_GRACE_MS
@@ -1090,9 +1074,10 @@ async function* createAnthropicStreamFromOpenAIInner(
             }
           }
 
-          // 累积新文本
+// \u7D2F\u79EF\u65B0\u6587\u672C
           textBuffer += text
-          // 【补丁③】检测工具调用 XML 特征，进入 pending 缓冲
+          // \u3010\u8865\u4E01\u2462\u3011\u68C0\u6D4B\u5DE5\u5177\u8C03\u7528 XML \u7279\u5F81\uFF0C\u8FDB\u5165 pending \u7F13\u51B2
+          let skipFlush = false
           if (pendingState.xml === null) {
             const m = textBuffer.match(/(?:^|\n)[ \t]*(<function\s*=\s*[A-Za-z_][\w]*\s*>)/)
             if (m && m.index !== undefined) {
@@ -1106,12 +1091,13 @@ async function* createAnthropicStreamFromOpenAIInner(
                 } as BetaRawMessageStreamEvent
               }
               pendingState.xml = textBuffer.slice(xmlStart)
+              pendingState.enteredAt = Date.now()
               textBuffer = ''
-              continue
+              skipFlush = true
             }
           }
-          // 调用统一的句子切分发送函数
-          yield* flushBufferedText()
+          // \u8C03\u7528\u7EDF\u4E00\u7684\u53E5\u5B50\u5207\u5206\u53D1\u9001\u51FD\u6570\uFF08pending \u6001\u4E0B\u8DF3\u8FC7\uFF0C\u4F46\u4E0D\u4E2D\u65AD tool_calls/finish_reason \u7684\u5904\u7406\uFF09
+          if (!skipFlush) yield* flushBufferedText()
         } 
           
         // 工具调用增量
@@ -1304,11 +1290,15 @@ function parsePendingToolXml(
   const name = fnM[1]
   const body = xml.slice(fnM.index + fnM[0].length)
 
-  const paramRe = /<parameter\s*=\s*([A-Za-z_][\w]*)\s*>/g
+  // \u884C\u9996\u6A21\u5F0F\uFF1A\u53EA\u8BA4\u884C\u9996\uFF08\u53EF\u5E26 0~2 \u7A7A\u683C\u7F29\u8FDB\uFF09\u7684 <parameter=KEY>\uFF0C
+  // \u907F\u514D\u628A\u53C2\u6570\u503C\u5185\u90E8\u7684 <parameter=...> \u5B57\u9762\u91CF\uFF08\u5982\u4EE3\u7801/\u6B63\u5219\uFF09\u8BEF\u5224\u4E3A\u4E0B\u4E00\u4E2A\u53C2\u6570\u8FB9\u754C\u3002
+  const paramRe = /(?:^|\n)[ \t]{0,2}<parameter\s*=\s*([A-Za-z_][\w]*)\s*>/g
   const hits: Array<{ key: string; tagStart: number; tagEnd: number }> = []
   let pm: RegExpExecArray | null
   while ((pm = paramRe.exec(body)) !== null) {
-    hits.push({ key: pm[1], tagStart: pm.index, tagEnd: pm.index + pm[0].length })
+    // pm.index \u73B0\u5728\u6307\u5411\u884C\u9996\uFF08\u542B\u524D\u7F6E \n \u6216\u4E32\u9996\uFF09\uFF0C\u9700\u8981\u81EA\u5DF1\u7B97 < \u7684\u4F4D\u7F6E
+    const lt = pm.index + pm[0].indexOf('<parameter')
+    hits.push({ key: pm[1], tagStart: lt, tagEnd: pm.index + pm[0].length })
   }
 
   const args: Record<string, unknown> = {}
@@ -1317,15 +1307,25 @@ function parsePendingToolXml(
   for (let i = 0; i < hits.length; i++) {
     const hit = hits[i]
     const nextTagStart = i + 1 < hits.length ? hits[i + 1].tagStart : body.length
-    let raw = body.slice(hit.tagEnd, nextTagStart)
-    raw = raw
-      .replace(/<\/parameter\s*>/g, '')
-      .replace(/<\/function\s*>/g, '')
-      .replace(/<function\s*=[^>]*>/g, '')
-      .trim()
+    const raw = stripToolXmlTags(body.slice(hit.tagEnd, nextTagStart))
     args[hit.key] = coerceToolArgValue(dedentParamValue(raw))
   }
   return { name, args }
+}
+
+/**
+ * \u5265\u79BB\u53C2\u6570\u503C\u91CC\u6B8B\u7559\u7684\u5DE5\u5177\u8C03\u7528 XML \u95ED\u5408\u6807\u7B7E\u3002
+ * \u53EA\u5265\u95ED\u5408\u6807\u7B7E\u2014\u2014\u4E0D\u52A8 <parameter= / <function= \u8FD9\u7C7B\u5F00\u6807\u7B7E\uFF0C
+ * \u56E0\u4E3A\u90A3\u4E9B\u53EF\u80FD\u662F\u503C\u5185\u90E8\u7684\u4EE3\u7801\u5B57\u9762\u91CF\u3002
+ * \u8986\u76D6\u5404\u5BB6\u98CE\u683C\u53D8\u4F53\uFF1AClaude\uFF08tool_call/invoke/antml:*\uFF09\u3001OpenAI\uFF08function_call\uFF09\u7B49\u3002
+ */
+function stripToolXmlTags(s: string): string {
+  return s
+    .replace(
+      /<\/(?:parameter|function|function_call|tool_call|tool_use|invoke|antml:invoke|antml:parameter|antml:function_calls)\s*>/gi,
+      '',
+    )
+    .trim()
 }
 
 function coerceToolArgValue(raw: string): unknown {
@@ -1368,7 +1368,7 @@ function dedentParamValue(s: string): string {
 }
 
 async function* emitPendingToolUseAsAnthropic(
-  state: { xml: string | null },
+  state: { xml: string | null; enteredAt?: number },
   indexRef: { value: number },
 ): AsyncGenerator<BetaRawMessageStreamEvent, boolean, void> {
   if (state.xml === null) return false
@@ -1412,10 +1412,10 @@ async function* emitPendingToolUseAsAnthropic(
 
 async function* wrapPendingToolXml(
   inner: AsyncGenerator<BetaRawMessageStreamEvent, BetaMessage, void>,
-  state: { xml: string | null },
+  state: { xml: string | null; enteredAt?: number },
   model: string,
 ): AsyncGenerator<BetaRawMessageStreamEvent, BetaMessage, void> {
-  const indexRef = { value: 1000000 }  // 大偏移，避免与内层 index 冲突
+  const indexRef = { value: 100 }  // 从 100 起，避开内层 index（通常 < 20）
 
   while (true) {
     let r: IteratorResult<BetaRawMessageStreamEvent, BetaMessage>

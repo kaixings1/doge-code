@@ -18,6 +18,18 @@
 - **目标**: 100+ 静态导入改为动态扫描 `commands/` 目录自动注册
 - **原则**: 新命令无需修改主文件，遵循 OCP
 
+### [x] 9. openaiCompat 配对工具 XML 解析修复
+- **文件**: `src/services/api/openaiCompat.ts`
+- **目标**: 修复采集/流式工具调用未配对闭合标签导致的 pending 误裁决、解析失败吞内容
+- **操作**:
+  - pending 追加逻辑：2KB 超长 + 3 秒超时双保险裁决（`tooLong`/`tooOld`）
+  - pending 进入逻辑：`skipFlush` 替代 `continue`，进入时记 `enteredAt`
+  - `flushBufferedText` 单换行触发刷新（`hasNewline` 替代 `hasDoubleNewline`）
+  - `parsePendingToolXml` 改为 `<parameter=` 行首匹配，新增 `stripToolXmlTags` 剥离闭合标签
+  - `indexRef` 起始 `1000000` → `100`
+- **验证**: openaiCompatStream.test.ts 5/5 通过；7 个 XML 示例单测全部符合预期（taskId 数值化、replace_all 布尔化、`||`/`"` 原样保留、反斜杠路径保留）
+- **注意**: 一次流多 `<function=>`、`reasoning_content` 通道内的 XML 暂未覆盖（已知边界）
+
 ---
 
 ## P1 — 计划阶段（中风险）

@@ -1,4 +1,5 @@
 import { type Tool } from '../../engine/types.js'
+import { z } from 'zod/v4'
 import { readFileSync, existsSync, statSync, openSync, readSync, closeSync } from 'fs'
 import { extname } from 'path'
 import { createHash } from 'crypto'
@@ -20,6 +21,10 @@ export class SendUserFileTool implements Tool {
     },
     required: ['filePath']
   }
+  /** 渲染层（src/Tool.ts 接口）需要 inputSchema；返回宽松 schema 兼容 */
+  get inputSchema() {
+    return z.object({ filePath: z.string().optional() }).passthrough()
+  }
   validate = () => ({ valid: true })
 
   prompt = async (_options: {
@@ -29,6 +34,10 @@ export class SendUserFileTool implements Tool {
     allowedAgentTypes?: string[]
   }): Promise<string> => {
     return this.description
+  }
+
+  userFacingName() {
+    return this.name
   }
 
   execute = async (params: Record<string, any>) => {

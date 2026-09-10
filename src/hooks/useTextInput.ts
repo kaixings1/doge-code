@@ -397,6 +397,9 @@ export function useTextInput({
               // 保留 \r 以便它下面变成 \n（anthropics/claude-code#31316）
               // （anthropics/claude-code#31316）
               const text = stripAnsi(input)
+                // 先将 CRLF 规范化为 LF：Windows cmd/PowerShell 等终端回车发送 \r\n，
+                // 若不先合并，后续 replace(/\r/g, '\n') 会把 \r 也转成 \n 导致双换行
+                .replace(/\r\n/g, '\n')
                 // eslint-disable-next-line custom-rules/no-lookbehind-regex -- .replace(re, str) on 1-2 char keystrokes: no-match returns same string (Object.is), regex never runs
                 .replace(/(?<=[^\\\r\n])\r$/, '')
                 .replace(/\r/g, '\n')

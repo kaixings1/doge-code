@@ -60,6 +60,24 @@ export type AgentEvent =
   | { type: 'should_continue' }
   | { type: 'pre_tool_use'; toolUseId: string; toolName: string; input: Record<string, unknown> }
 
+/**
+ * 自动继续（autoContinue）配置。
+ * 决定在哪些场景下自动注入「继续」推进循环，而不是停下等用户确认。
+ * 默认所有开关均为 false（关闭），需要显式开启。
+ */
+export interface AutoContinueConfig {
+  /** 总开关：为 true 时 readSearch 分支生效；其他分支还需各自开关 */
+  enabled?: boolean;
+  /** 单任务内最大自动继续次数（防无限循环，默认 5） */
+  maxCount?: number;
+  /** read/search/grep 工具后，AI 返回无工具调用的纯文本时自动继续（默认 true） */
+  readSearch?: boolean;
+  /** AI 回复正文含「是否继续」等确认关键词时自动继续（较激进，默认 false） */
+  continueKeyword?: boolean;
+  /** end_turn 且有内容时自动继续（替代原有「始终自动继续」，默认 false） */
+  endTurn?: boolean;
+}
+
 export interface MessageLoopDeps {
   stateMachine: QueryStateMachine;
   tokenBudget: TokenBudgetManager;
@@ -93,6 +111,8 @@ export interface MessageLoopDeps {
   hookManager?: HookManager;
   /** 多角色编排器：拦截 orchestrator_run 工具调用并执行编排 */
   orchestrator?: import('../orchestrator/index.js').Orchestrator;
+  /** 自动继续配置：由配置决定是否在特定场景自动注入「继续」。默认关闭 */
+  autoContinue?: AutoContinueConfig;
 }
 
 export class MessageLoop {
@@ -136,6 +156,8 @@ export class MessageLoop {
   private gitContext: GitContextInjector | null = null;
   private hookManager: HookManager;
   private lastToolCalls: Array<{ name: string }> = [];
+  /** 自动继续次数（单任务内限制，防止无限循环）。对应 AutoContinueConfig.maxCount */
+  private autoContinueCount = 0;
   /** Self-healing 错误恢复（吸收自 Browser-Use / error-coordinator） */
   private errorRecovery: ErrorRecovery;
 
@@ -172,6 +194,7 @@ export class MessageLoop {
     this.deps.tokenBudget.resetIterationSnapshots?.()
     this.pendingResumeInput = null
     this.lastToolCalls = []
+    this.autoContinueCount = 0
     this.deps.conversation.messages.push({ role: "user", content: userMessage } as InternalMessage);
     await this.deps.stateMachine.transition("responding", { message: userMessage });
     this.consecutiveToolFailures = 0;
@@ -340,24 +363,34 @@ export class MessageLoop {
     }
 
     // 自动继续优先于 stopReason 检查和 needsUserInput：
-    // 如果满足自动继续条件，直接注入"继续"并继续循环，跳过用户确认流程
-    // 1. 上一步调用了 read/search/glob/grep，且 AI 返回了无工具调用的纯文本回复
-    //    ponytail: 重置 lastToolCalls 避免无限循环（每次只自动继续一次）
-    if (hadReadOrSearch && processed.toolCalls.length === 0) {
-      engineLog('AUTO_CONTINUE', '检测到 read/search 后提前终止，自动继续');
-      this.lastToolCalls = [];
-      return true;
-    }
-    // 2. AI 回复正文包含"是否继续"等关键词
-    const content = typeof processed.content === 'string' ? processed.content : '';
-    if (content && /是否继续|是否需要|是否同意|需要我|继续吗|确认一下|要不要|需不需要|可不可以|行不行|能不能|是否可以|是否要|是否需|可以吗|开始吗|同意吗|确认吗|有问题吗|没问题吧|没问题|请问|是不是|对不对|可否|是否可行|是否|继续|需要|确认|同意|能否|好吗|行吗/.test(content)) {
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      this.deps.conversation.messages.push({
-        role: 'user',
-        content: '继续',
-      } as InternalMessage);
-      engineLog('AUTO_CONTINUE', '检测到"是否继续"关键词，3秒后自动发送"继续"');
-      return true;
+    // 是否自动继续由配置决定（deps.autoContinue），默认关闭。
+    // 配置允许时，直接注入"继续"并继续循环，跳过用户确认流程。
+    // ponytail: 用 autoContinueCount 限制次数，避免无限循环。
+    const ac = this.deps.autoContinue
+    const acEnabled = ac?.enabled ?? false
+    const acLeft = ac?.maxCount ?? 5
+    if (acEnabled && this.autoContinueCount < acLeft) {
+      // 1. 上一步调用了 read/search/glob/grep，且 AI 返回了无工具调用的纯文本回复
+      const acReadSearch = ac?.readSearch ?? true
+      if (acReadSearch && hadReadOrSearch && processed.toolCalls.length === 0) {
+        engineLog('AUTO_CONTINUE', '检测到 read/search 后提前终止，自动继续');
+        this.lastToolCalls = [];
+        this.autoContinueCount++
+        return true;
+      }
+      // 2. AI 回复正文包含"是否继续"等确认关键词（该场景较激进，默认额外关闭）
+      const acKeyword = ac?.continueKeyword ?? false
+      const content = typeof processed.content === 'string' ? processed.content : '';
+      if (acKeyword && content && /是否继续|是否需要|是否同意|需要我|继续吗|确认一下|要不要|需不需要|可不可以|行不行|能不能|是否可以|是否要|是否需|可以吗|开始吗|同意吗|确认吗|有问题吗|没问题吧|没问题|请问|是不是|对不对|可否|是否可行|是否|继续|需要|确认|同意|好吗|行吗/.test(content)) {
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        this.deps.conversation.messages.push({
+          role: 'user',
+          content: '继续',
+        } as InternalMessage);
+        engineLog('AUTO_CONTINUE', '检测到"是否继续"关键词，3秒后自动发送"继续"');
+        this.autoContinueCount++
+        return true;
+      }
     }
 
     if (processed.needsUserInput) {
@@ -367,12 +400,17 @@ export class MessageLoop {
 
     if (processed.stopReason === 'end_turn') {
       if (typeof processed.content === 'string' && processed.content.trim()) {
-        engineLog('AUTO_CONTINUE', `end_turn 收到回复，自动继续，避免提前终止`);
-        this.deps.conversation.messages.push({
-          role: 'user',
-          content: '继续',
-        } as InternalMessage);
-        return true;
+        // end_turn 且 AI 有回复时，是否继续由配置决定（默认 false）
+        const acEndTurn = (ac?.endTurn ?? false) && acEnabled && this.autoContinueCount < acLeft
+        if (acEndTurn) {
+          engineLog('AUTO_CONTINUE', `end_turn 收到回复，按配置自动继续`);
+          this.deps.conversation.messages.push({
+            role: 'user',
+            content: '继续',
+          } as InternalMessage);
+          this.autoContinueCount++
+        }
+        return acEndTurn
       }
       return false;
     }

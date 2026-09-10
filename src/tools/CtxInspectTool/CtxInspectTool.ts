@@ -1,4 +1,5 @@
 import { type Tool } from '../../engine/types.js'
+import { z } from 'zod/v4'
 import { existsSync, readFileSync } from 'fs'
 import { join } from 'path'
 import { homedir } from 'os'
@@ -30,6 +31,10 @@ export class CtxInspectTool implements Tool {
       includeMemory: { type: 'boolean', description: 'Include memory usage' }
     },
     required: []
+  }
+  /** 渲染层（src/Tool.ts 接口）需要 inputSchema；返回宽松 schema 兼容 */
+  get inputSchema() {
+    return z.object({ detail: z.string().optional() }).passthrough()
   }
   validate = () => ({ valid: true })
   isEnabled = () => true

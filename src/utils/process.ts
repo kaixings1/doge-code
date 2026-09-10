@@ -1,3 +1,5 @@
+import { writeTeeSync } from './tee.js'
+
 function handleEPIPE(
   stream: NodeJS.WriteStream,
 ): (err: NodeJS.ErrnoException) => void {
@@ -27,10 +29,12 @@ function writeOut(stream: NodeJS.WriteStream, data: string): void {
 
 export function writeToStdout(data: string): void {
   writeOut(process.stdout, data)
+  void writeTeeSync(data)
 }
 
 export function writeToStderr(data: string): void {
   writeOut(process.stderr, data)
+  void writeTeeSync(data)
 }
 
 // Write error to stderr and exit with code 1. Consolidates the

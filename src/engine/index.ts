@@ -5,7 +5,7 @@
  * 工具调度 + Token 预算 + 自动压缩 + 错误处理/恢复 + 流式 + 子代理。
  */
 import { QueryStateMachine } from "./stateMachine.ts";
-import { MessageLoop, type MessageLoopDeps, type QueryResult } from "./messageLoop.ts";
+import { MessageLoop, type MessageLoopDeps, type QueryResult, type AutoContinueConfig } from "./messageLoop.ts";
 import { MessageNormalizer, type InternalMessage } from "./messageNormalizer.ts";
 import { RequestBuilder, type ToolDefinition } from "./requestBuilder.ts";
 import { ResponseHandler } from "./responseHandler.ts";
@@ -68,6 +68,8 @@ export interface EngineOptions {
   acceptanceCriteria?: import("./stateMachine.ts").AcceptanceCriterion[];
   /** Hook 管理器（吸收自 ECC hooks）：注册 PreToolUse/PostToolUse 拦截器 */
   hookManager?: HookManager;
+  /** 自动继续配置：由配置决定是否在特定场景自动注入「继续」。默认关闭 */
+  autoContinue?: AutoContinueConfig;
 }
 
 /**
@@ -275,6 +277,7 @@ export class QueryEngine {
       harness: opts.harness,
       acceptanceGate,
       hookManager: opts.hookManager,
+      autoContinue: opts.autoContinue,
     };
     this.messageLoop = new MessageLoop(deps);
 

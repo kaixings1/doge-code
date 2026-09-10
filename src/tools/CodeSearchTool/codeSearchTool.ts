@@ -34,6 +34,10 @@ export class CodeSearchTool implements Tool {
     return errors.length === 0 ? { valid: true } : { valid: false, errors };
   }
 
+  userFacingName() {
+    return this.name
+  }
+
   async execute(params: unknown): Promise<{ content: unknown }> {
     const p = params as Record<string, unknown>;
     const query = String(p.query);

@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -n \"sendMessage\\\\|send_message\\\\|postMessage\\\\|\\\\.post\\(\" d:/doge-code/src/cli/handlers/*.ts)",
+      "Bash(grep -n \"429\\\\|retry\\\\|Retry\\\\|rateLimit\" d:/doge-code/src/services/api/*.ts)",
+      "Bash(ls d:/doge-code/*.json)",
+      "Bash(ls d:/doge-code/.doge*)"
+    ]
+  }
+}

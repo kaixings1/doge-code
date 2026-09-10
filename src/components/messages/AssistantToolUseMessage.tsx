@@ -65,7 +65,10 @@ export function AssistantToolUseMessage(t0) {
         break bb0;
       }
       const tool = findToolByName(tools, param.name);
-      if (!tool) {
+      // 防御：工具可能绕过 buildTool 直接实现（缺 inputSchema/userFacingName）。
+      // 与 renderToolActivity 的 try·catch 降级一致 —— 残缺工具不拖垮整个 REPL 主树。
+      if (!tool || !tool.inputSchema) {
+        logError(new Error(`Tool ${param.name} has no inputSchema (missing buildTool fields)`));
         t1 = null;
         break bb0;
       }
@@ -74,7 +77,7 @@ export function AssistantToolUseMessage(t0) {
       t1 = {
         tool,
         input,
-        userFacingToolName: tool.userFacingName(data),
+        userFacingToolName: tool.userFacingName?.(data) ?? '',
         userFacingToolNameBackgroundColor: tool.userFacingNameBackgroundColor?.(data),
         isTransparentWrapper: tool.isTransparentWrapper?.() ?? false
       };

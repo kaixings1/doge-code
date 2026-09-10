@@ -1182,6 +1182,32 @@ export function Config({
       }));
       setGlobalConfig(getGlobalConfig());
     }
+  }, {
+    id: 'sessionEndSound',
+    label: `会话结束声音：${process.env.CLAUDE_CODE_SESSION_END_SOUND || 'beep (终端蜂鸣)'}`,
+    searchText: '会话结束声音 beep mp3 wav',
+    value: process.env.CLAUDE_CODE_SESSION_END_SOUND || 'beep',
+    options: ['beep', 'none', 'mp3', 'wav'],
+    type: 'enum' as const,
+    onChange(value: string) {
+      if (value === 'none') {
+        process.env.CLAUDE_CODE_SESSION_END_SOUND = 'none';
+      } else if (value === 'beep') {
+        process.env.CLAUDE_CODE_SESSION_END_SOUND = 'beep';
+      } else {
+        process.env.CLAUDE_CODE_SESSION_END_SOUND = value;
+      }
+    }
+  }, {
+    id: 'qqCompactOutput',
+    label: `QQ 紧凑输出 (CLAUDE_CODE_QQ)：${process.env.CLAUDE_CODE_QQ === '1' ? '开启' : '关闭'}`,
+    searchText: 'QQ 紧凑输出 换行 CLAUDE_CODE_QQ',
+    value: process.env.CLAUDE_CODE_QQ === '1' ? '开启' : '关闭',
+    options: ['开启', '关闭'],
+    type: 'enum' as const,
+    onChange(value: string) {
+      process.env.CLAUDE_CODE_QQ = value === '开启' ? '1' : '';
+    }
   }];
 
   // Filter settings based on search query

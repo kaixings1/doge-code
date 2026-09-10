@@ -1,4 +1,5 @@
 import { type Tool } from '../../engine/types.js'
+import { z } from 'zod/v4'
 import { readdirSync, existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs'
 import { join } from 'path'
 import { createSocket } from 'dgram'
@@ -28,6 +29,10 @@ export class ListPeersTool implements Tool {
       timeout: { type: 'number', description: 'Discovery timeout in ms' }
     },
     required: []
+  }
+  /** 渲染层（src/Tool.ts 接口）需要 inputSchema；返回宽松 schema 兼容 */
+  get inputSchema() {
+    return z.object({ action: z.string().optional() }).passthrough()
   }
   validate = () => ({ valid: true })
 
@@ -149,6 +154,10 @@ export class ListPeersTool implements Tool {
         }, timeoutMs)
       })
     })
+  }
+
+  userFacingName() {
+    return this.name
   }
 
   execute = async (params: Record<string, any>) => {

@@ -22,6 +22,9 @@ try {
     const indexTsxPath = dirPath + '/index.tsx'
     const target = fs.existsSync(indexPath) ? indexPath : fs.existsSync(indexTsxPath) ? indexTsxPath : null
     if (!target) continue
+    // 仅允许 index.ts / index.tsx，防止 commands/ 下恶意文件被执行
+    const allowed = ['index.ts', 'index.tsx']
+    if (!allowed.includes(path.basename(target))) continue
     try {
       const mod = require(target)
       modules[entry.name] = mod
@@ -221,10 +224,6 @@ const conditionalCommands: Record<string, () => Command | null> = {
   webCmd: () =>
     process.env['CLAUDE_CODE_FEATURE_CCR_REMOTE_SETUP'] === '1'
       ? safeRequire('./commands/remote-setup/index.js')?.default ?? null
-      : null,
-  clearSkillIndexCache: () =>
-    process.env['CLAUDE_CODE_FEATURE_EXPERIMENTAL_SKILL_SEARCH'] === '1'
-      ? safeRequire('./services/skillSearch/localSearch.js')?.clearSkillIndexCache ?? null
       : null,
   subscribePr: () =>
     process.env['CLAUDE_CODE_FEATURE_KAIROS_GITHUB_WEBHOOKS'] === '1'
@@ -452,7 +451,9 @@ export function clearCommandMemoizationCaches(): void {
   // getSkillToolCommands/getCommands 之上的另一层 memoization。
   // 仅清除内部缓存对最外层是无效的 —— lodash memoize 会直接返回缓存结果，
   // 而不会进入已被清除的内层。必须显式清除它。
-  clearSkillIndexCache?.()
+  if (process.env['CLAUDE_CODE_FEATURE_EXPERIMENTAL_SKILL_SEARCH'] === '1') {
+    safeRequire('./services/skillSearch/localSearch.js')?.clearSkillIndexCache?.()
+  }
 }
 
 export function clearCommandsCache(): void {

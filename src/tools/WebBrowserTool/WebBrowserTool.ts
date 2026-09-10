@@ -1,5 +1,6 @@
 import { type Tool } from '../../engine/types.js'
 import { execFileNoThrow } from '../../utils/execFileNoThrow.js'
+import { z } from 'zod/v4'
 
 type BrowserAction =
   | { action: 'navigate'; url: string }
@@ -53,17 +54,7 @@ function encodeImageToBase64(buffer: Buffer, mediaType: string): string {
 
 export class WebBrowserTool implements Tool {
   name = 'web_browser'
-  description = `Web browser automation tool using Playwright.
-Actions:
-- navigate: Navigate to a URL (e.g., {action: 'navigate', url: 'https://example.com'})
-- screenshot: Take a screenshot of current page (returns image data)
-- getContent: Get the visible text content of the current page
-- click: Click an element by CSS selector (e.g., {action: 'click', selector: 'button.submit'})
-- type: Type text into an input field (e.g., {action: 'type', selector: '#search', text: 'hello'})
-- scroll: Scroll the page (direction: up/down/top/bottom)
-- executeJS: Execute JavaScript and return result (e.g., {action: 'executeJS', script: 'document.title'})
-- close: Close the browser session
-- getPageInfo: Get current page URL, title, and status`
+  description = `Web browser automation tool using Playwright. Actions: navigate / screenshot / getContent / click / type / scroll / executeJS / close / getPageInfo.`
 
   parameters = {
     type: 'object',
@@ -83,6 +74,11 @@ Actions:
   } as Record<string, unknown>
 
   timeout = 60000
+
+  /** 渲染层（src/Tool.ts 接口）需要 inputSchema；此处返回宽松 schema 兼容 */
+  get inputSchema() {
+    return z.object({ action: z.string().optional() }).passthrough()
+  }
 
   validate = (params: unknown) => {
     const p = params as BrowserAction
@@ -124,6 +120,10 @@ Actions:
     allowedAgentTypes?: string[]
   }): Promise<string> => {
     return this.description
+  }
+
+  userFacingName() {
+    return this.name
   }
 
   execute = async (params: unknown) => {

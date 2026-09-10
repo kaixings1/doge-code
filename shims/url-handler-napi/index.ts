@@ -1,1 +1,1 @@
-export { waitForUrlEvent } from '../../vendor/url-handler-src/index.ts'
+export { waitForUrlEvent } from '../../src/vendor/url-handler-src/index.ts'

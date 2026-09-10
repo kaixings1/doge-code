@@ -126,7 +126,9 @@ describe('MessageLoop 自动继续集成测试', () => {
     const deps = createDeps([
       { content: '是否继续处理剩余文件？', stopReason: 'end_turn' },
       { content: '已处理完毕，任务完成。', stopReason: 'end_turn' },
-    ])
+    ], {
+      autoContinue: { enabled: true, continueKeyword: true },
+    })
 
     const loop = new MessageLoop(deps)
     const result = await loop.run('请帮我分析项目')
@@ -150,7 +152,9 @@ describe('MessageLoop 自动继续集成测试', () => {
     const deps = createDeps([
       { content: '需要我继续吗？', stopReason: 'end_turn' },
       { content: '后续操作已执行完毕。', stopReason: 'end_turn' },
-    ])
+    ], {
+      autoContinue: { enabled: true, continueKeyword: true },
+    })
 
     const loop = new MessageLoop(deps)
     const result = await loop.run('执行任务')
@@ -175,7 +179,9 @@ describe('MessageLoop 自动继续集成测试', () => {
       { content: '文件内容分析完毕，未发现异常。', stopReason: 'end_turn' },
       // 第三轮：自动继续后 AI 完成分析
       { content: '分析完成，发现 3 个潜在问题。', stopReason: 'end_turn' },
-    ])
+    ], {
+      autoContinue: { enabled: true, readSearch: true },
+    })
 
     const loop = new MessageLoop(deps)
     const result = await loop.run('请分析这个文件')
@@ -196,7 +202,9 @@ describe('MessageLoop 自动继续集成测试', () => {
       },
       { content: '搜索完成，共 3 条匹配。', stopReason: 'end_turn' },
       { content: '根据搜索结果，共 3 条匹配，已整理完毕。', stopReason: 'end_turn' },
-    ])
+    ], {
+      autoContinue: { enabled: true, readSearch: true },
+    })
 
     const loop = new MessageLoop(deps)
     const result = await loop.run('搜索相关代码')
@@ -248,7 +256,9 @@ describe('MessageLoop 自动继续集成测试', () => {
     const deps = createDeps([
       { content: '确认一下后续操作', stopReason: 'end_turn' },
       { content: '好的，操作已执行完毕。', stopReason: 'end_turn' },
-    ])
+    ], {
+      autoContinue: { enabled: true, continueKeyword: true },
+    })
 
     const loop = new MessageLoop(deps)
     const result = await loop.run('执行操作')

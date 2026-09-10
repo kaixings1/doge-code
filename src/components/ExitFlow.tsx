@@ -2,6 +2,7 @@ import { c as _c } from "react/compiler-runtime";
 import { sample } from '../vendor/lodash.js';
 import React from 'react';
 import { gracefulShutdown } from '../utils/gracefulShutdown.js';
+import { triggerSessionEndSound } from '../utils/endOfSessionSound.js';
 import { WorktreeExitDialog } from './WorktreeExitDialog.js';
 const GOODBYE_MESSAGES = ['再见！', '回见！', '拜拜！', '稍后见！'];
 function getRandomGoodbyeMessage(): string {
@@ -22,6 +23,7 @@ export function ExitFlow(t0) {
   let t1;
   if ($[0] !== onDone) {
     t1 = async function onExit(resultMessage) {
+      triggerSessionEndSound();
       onDone(resultMessage ?? getRandomGoodbyeMessage());
       await gracefulShutdown(0, "prompt_input_exit");
     };

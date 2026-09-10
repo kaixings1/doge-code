@@ -3041,6 +3041,10 @@ export function REPL({
     // exchange (matches OpenCode's auto-scroll behavior).
     repinScroll();
 
+    // Tee: 镜像用户输入到另一个控制台/文件
+    const { writeTeeSync } = await import('../utils/tee.js');
+    writeTeeSync(input + '\n');
+
     // Resume loop mode if paused
     if (feature('PROACTIVE') || feature('KAIROS')) {
       proactiveModule?.resumeProactive();

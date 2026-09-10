@@ -1,4 +1,5 @@
 import { type Tool } from '../../engine/types.js'
+import { z } from 'zod/v4'
 import { execSync } from 'child_process'
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs'
 import { join, dirname } from 'path'
@@ -28,6 +29,10 @@ export class SubscribePRTool implements Tool {
       limit: { type: 'number', description: 'Max events to show for webhook-events (default 20, max 100)' }
     },
     required: ['action']
+  }
+  /** 渲染层（src/Tool.ts 接口）需要 inputSchema；返回宽松 schema 兼容 */
+  get inputSchema() {
+    return z.object({ action: z.string().optional() }).passthrough()
   }
   validate = () => ({ valid: true })
   isEnabled = () => true
