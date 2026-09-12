@@ -4,9 +4,13 @@
 // Static imports so bun build --compile bundles every command module into the binary.
 // COMMAND_MODULES is the runtime registry keyed by command name.
 
+import * as mod__shared_strings from '../commands/_shared/strings.ts'
 import * as mod_add_dir from '../commands/add-dir/index.ts'
+import * as mod_add_dir_validation from '../commands/add-dir/validation.ts'
 import * as mod_add_model from '../commands/add-model/index.ts'
+import * as mod_add_model_add_model from '../commands/add-model/add-model.ts'
 import * as mod_advisor from '../commands/advisor/index.ts'
+import * as mod_advisor_advisor from '../commands/advisor/advisor.ts'
 import * as mod_agent_new from '../commands/agent-new/index.ts'
 import * as mod_agents from '../commands/agents/index.ts'
 import * as mod_agents_platform from '../commands/agents-platform/index.ts'
@@ -14,7 +18,12 @@ import * as mod_ant_trace from '../commands/ant-trace/index.tsx'
 import * as mod_api_debug from '../commands/api-debug/index.ts'
 import * as mod_api_doc from '../commands/api-doc/index.ts'
 import * as mod_api_test from '../commands/api-test/index.ts'
+import * as mod_asktime_asktime from '../commands/asktime/asktime.ts'
 import * as mod_assistant from '../commands/assistant/index.ts'
+import * as mod_assistant_assistant from '../commands/assistant/assistant.ts'
+import * as mod_assistant_AssistantSessionChooser from '../commands/assistant/AssistantSessionChooser.ts'
+import * as mod_assistant_sessionDiscovery from '../commands/assistant/sessionDiscovery.ts'
+import * as mod_assistant_sessionHistory from '../commands/assistant/sessionHistory.ts'
 import * as mod_auto from '../commands/auto/index.ts'
 import * as mod_auto_commit from '../commands/auto-commit/index.ts'
 import * as mod_auto_mode_reset from '../commands/auto-mode-reset/index.ts'
@@ -23,14 +32,18 @@ import * as mod_autofix_pr from '../commands/autofix-pr/index.tsx'
 import * as mod_backfill_sessions from '../commands/backfill-sessions/index.ts'
 import * as mod_background from '../commands/background/index.ts'
 import * as mod_backup from '../commands/backup/index.ts'
+import * as mod_backup_backup from '../commands/backup/backup.ts'
 import * as mod_backup_full from '../commands/backup-full/index.ts'
 import * as mod_batch_han from '../commands/batch-han/index.ts'
+import * as mod_batch_han_batch_han from '../commands/batch-han/batch-han.ts'
 import * as mod_benchmark from '../commands/benchmark/index.ts'
 import * as mod_blame from '../commands/blame/index.ts'
 import * as mod_block_mode from '../commands/block-mode/index.ts'
+import * as mod_block_mode_block_mode from '../commands/block-mode/block-mode.ts'
 import * as mod_bookmark from '../commands/bookmark/index.ts'
 import * as mod_brain_sync from '../commands/brain-sync/index.ts'
 import * as mod_branch from '../commands/branch/index.ts'
+import * as mod_branch_branch from '../commands/branch/branch.ts'
 import * as mod_break_cache from '../commands/break-cache/index.ts'
 import * as mod_bridge from '../commands/bridge/index.ts'
 import * as mod_bridge_kick from '../commands/bridge-kick.ts'
@@ -39,47 +52,72 @@ import * as mod_brief from '../commands/brief.ts'
 import * as mod_browser from '../commands/browser/index.tsx'
 import * as mod_btw from '../commands/btw/index.ts'
 import * as mod_buddy from '../commands/buddy/index.ts'
+import * as mod_buddy_buddy from '../commands/buddy/buddy.ts'
 import * as mod_bughunter from '../commands/bughunter/index.tsx'
 import * as mod_bundle from '../commands/bundle/index.ts'
 import * as mod_cache from '../commands/cache/index.ts'
 import * as mod_changelog from '../commands/changelog/index.ts'
+import * as mod_changelog_changelog from '../commands/changelog/changelog.ts'
 import * as mod_changelog_gen from '../commands/changelog-gen/index.ts'
 import * as mod_chrome from '../commands/chrome/index.ts'
 import * as mod_clear from '../commands/clear/index.ts'
+import * as mod_clear_caches from '../commands/clear/caches.ts'
+import * as mod_clear_clear from '../commands/clear/clear.ts'
+import * as mod_clear_conversation from '../commands/clear/conversation.ts'
+import * as mod_clear_session_result_handler from '../commands/clear/session-result-handler.ts'
+import * as mod_clear_tool_call_executor from '../commands/clear/tool-call-executor.ts'
+import * as mod_clear_tool_handler from '../commands/clear/tool-handler.ts'
+import * as mod_clear_tool_protocol_handler from '../commands/clear/tool-protocol-handler.ts'
 import * as mod_clone_all_1500 from '../commands/clone-all-1500/index.ts'
 import * as mod_cmd from '../commands/cmd/index.ts'
+import * as mod_cmd_cmd from '../commands/cmd/cmd.ts'
 import * as mod_code_health from '../commands/code-health/index.ts'
 import * as mod_code_review from '../commands/code-review/index.ts'
 import * as mod_code_review_assistant from '../commands/code-review-assistant/index.ts'
+import * as mod_code_review_assistant_code_review_assistant from '../commands/code-review-assistant/code_review_assistant.ts'
+import * as mod_code_review_assistant_codeReviewAssistant from '../commands/code-review-assistant/codeReviewAssistant.ts'
 import * as mod_code_search from '../commands/code-search/index.tsx'
 import * as mod_collab from '../commands/collab/index.ts'
 import * as mod_color from '../commands/color/index.ts'
+import * as mod_color_color from '../commands/color/color.ts'
 import * as mod_commit from '../commands/commit.ts'
 import * as mod_commit_push_pr from '../commands/commit-push-pr.ts'
 import * as mod_compact from '../commands/compact/index.ts'
+import * as mod_compact_compact from '../commands/compact/compact.ts'
 import * as mod_compare from '../commands/compare/index.ts'
+import * as mod_compare_compare from '../commands/compare/compare.ts'
 import * as mod_complete from '../commands/complete/index.ts'
 import * as mod_config from '../commands/config/index.ts'
 import * as mod_conflict from '../commands/conflict/index.ts'
 import * as mod_context from '../commands/context/index.ts'
 import * as mod_context_collapse from '../commands/context-collapse/index.ts'
+import * as mod_context_collapse_context_collapse from '../commands/context-collapse/context-collapse.ts'
+import * as mod_context_collapse_contextCollapse from '../commands/context-collapse/contextCollapse.ts'
+import * as mod_context_context_noninteractive from '../commands/context/context-noninteractive.ts'
 import * as mod_contributors from '../commands/contributors/index.ts'
 import * as mod_copy from '../commands/copy/index.ts'
 import * as mod_copy_page from '../commands/copy-page/index.ts'
+import * as mod_copy_page_copy_page from '../commands/copy-page/copy-page.ts'
 import * as mod_cost from '../commands/cost/index.ts'
+import * as mod_cost_cost from '../commands/cost/cost.ts'
 import * as mod_cost_history from '../commands/cost-history/index.ts'
 import * as mod_createMovedToPluginCommand from '../commands/createMovedToPluginCommand.ts'
 import * as mod_cron from '../commands/cron/index.ts'
+import * as mod_cron_cron from '../commands/cron/cron.ts'
 import * as mod_ctx_viz from '../commands/ctx_viz/index.tsx'
 import * as mod_custom_cmd from '../commands/custom-cmd/index.ts'
 import * as mod_dashboard from '../commands/dashboard/index.ts'
 import * as mod_data_query from '../commands/data-query/index.ts'
 import * as mod_database from '../commands/database/index.ts'
+import * as mod_database_database from '../commands/database/database.ts'
+import * as mod_database_database_connection_pool from '../commands/database/database-connection-pool.ts'
 import * as mod_db_migrate from '../commands/db-migrate/index.ts'
 import * as mod_dead_code from '../commands/dead-code/index.ts'
 import * as mod_debug from '../commands/debug/index.ts'
 import * as mod_debug_tool_call from '../commands/debug-tool-call/index.ts'
 import * as mod_dependency_analyzer from '../commands/dependency-analyzer/index.ts'
+import * as mod_dependency_analyzer_dependency_analyzer from '../commands/dependency-analyzer/dependency_analyzer.ts'
+import * as mod_dependency_analyzer_dependencyAnalyzer from '../commands/dependency-analyzer/dependencyAnalyzer.ts'
 import * as mod_deploy from '../commands/deploy/index.ts'
 import * as mod_deps from '../commands/deps/index.ts'
 import * as mod_deps_viz from '../commands/deps-viz/index.ts'
@@ -95,7 +133,9 @@ import * as mod_docker_sandbox from '../commands/docker-sandbox/index.ts'
 import * as mod_docs from '../commands/docs/index.ts'
 import * as mod_doctor from '../commands/doctor/index.ts'
 import * as mod_documentation_index from '../commands/documentation-index/index.ts'
+import * as mod_documentation_index_documentation_index from '../commands/documentation-index/documentation-index.ts'
 import * as mod_doge_config from '../commands/doge-config/index.ts'
+import * as mod_doge_config_dogeConfig from '../commands/doge-config/dogeConfig.ts'
 import * as mod_duplicate from '../commands/duplicate/index.ts'
 import * as mod_eco from '../commands/eco/index.ts'
 import * as mod_effort from '../commands/effort/index.ts'
@@ -103,39 +143,52 @@ import * as mod_env from '../commands/env/index.ts'
 import * as mod_env_diff from '../commands/env-diff/index.ts'
 import * as mod_errors from '../commands/errors/index.ts'
 import * as mod_event_stream from '../commands/event-stream/index.ts'
+import * as mod_event_stream_eventStream from '../commands/event-stream/eventStream.ts'
 import * as mod_evolve from '../commands/evolve/index.ts'
 import * as mod_excel from '../commands/excel/index.ts'
 import * as mod_exit from '../commands/exit/index.ts'
 import * as mod_explain from '../commands/explain/index.ts'
 import * as mod_export from '../commands/export/index.ts'
 import * as mod_extra_usage from '../commands/extra-usage/index.ts'
+import * as mod_extra_usage_extra_usage_core from '../commands/extra-usage/extra-usage-core.ts'
+import * as mod_extra_usage_extra_usage_noninteractive from '../commands/extra-usage/extra-usage-noninteractive.ts'
 import * as mod_fast from '../commands/fast/index.ts'
 import * as mod_feedback from '../commands/feedback/index.ts'
 import * as mod_file_history from '../commands/file-history/index.ts'
 import * as mod_file_search from '../commands/file-search/index.ts'
 import * as mod_file_watcher from '../commands/file-watcher/index.ts'
+import * as mod_file_watcher_file_watcher from '../commands/file-watcher/file-watcher.ts'
+import * as mod_file_watcher_fileWatcher from '../commands/file-watcher/fileWatcher.ts'
 import * as mod_files from '../commands/files/index.ts'
+import * as mod_files_files from '../commands/files/files.ts'
 import * as mod_fmt from '../commands/fmt/index.ts'
 import * as mod_focus from '../commands/focus/index.ts'
+import * as mod_focus_focus from '../commands/focus/focus.ts'
 import * as mod_focused_fix from '../commands/focused-fix/index.ts'
 import * as mod_force_snip from '../commands/force-snip.ts'
 import * as mod_fork from '../commands/fork/index.ts'
 import * as mod_fuck from '../commands/fuck/index.ts'
+import * as mod_fuck_fuck from '../commands/fuck/fuck.ts'
 import * as mod_game from '../commands/game/index.ts'
 import * as mod_getting_started from '../commands/getting-started/index.ts'
+import * as mod_getting_started_getting_started from '../commands/getting-started/getting-started.ts'
 import * as mod_git_graph from '../commands/git-graph/index.ts'
 import * as mod_glossary from '../commands/glossary/index.ts'
+import * as mod_glossary_glossary from '../commands/glossary/glossary.ts'
 import * as mod_good_claude from '../commands/good-claude/index.ts'
 import * as mod_graph from '../commands/graph/index.ts'
 import * as mod_graphql from '../commands/graphql/index.ts'
+import * as mod_graphql_graphql from '../commands/graphql/graphql.ts'
 import * as mod_grep from '../commands/grep/index.ts'
 import * as mod_health from '../commands/health/index.ts'
 import * as mod_health_score from '../commands/health-score/index.ts'
 import * as mod_heapdump from '../commands/heapdump/index.ts'
+import * as mod_heapdump_heapdump from '../commands/heapdump/heapdump.ts'
 import * as mod_help from '../commands/help/index.ts'
 import * as mod_hooks from '../commands/hooks/index.ts'
 import * as mod_htaccess from '../commands/htaccess/index.ts'
 import * as mod_http from '../commands/http/index.ts'
+import * as mod_http_http from '../commands/http/http.ts'
 import * as mod_i18n_extract from '../commands/i18n-extract.ts'
 import * as mod_ide from '../commands/ide/index.ts'
 import * as mod_image from '../commands/image/index.ts'
@@ -144,47 +197,80 @@ import * as mod_imports from '../commands/imports/index.ts'
 import * as mod_init from '../commands/init.ts'
 import * as mod_init_verifiers from '../commands/init-verifiers.ts'
 import * as mod_insights from '../commands/insights/index.ts'
+import * as mod_insights_insights from '../commands/insights/insights.ts'
 import * as mod_install_feishu_app from '../commands/install-feishu-app/index.ts'
 import * as mod_install_github_app from '../commands/install-github-app/index.ts'
+import * as mod_install_github_app_setupGitHubActions from '../commands/install-github-app/setupGitHubActions.ts'
+import * as mod_install_github_app_types from '../commands/install-github-app/types.ts'
 import * as mod_install_slack_app from '../commands/install-slack-app/index.ts'
+import * as mod_install_slack_app_install_slack_app from '../commands/install-slack-app/install-slack-app.ts'
 import * as mod_issue from '../commands/issue/index.ts'
 import * as mod_k8s from '../commands/k8s/index.ts'
 import * as mod_keybindings from '../commands/keybindings/index.ts'
+import * as mod_keybindings_keybindings from '../commands/keybindings/keybindings.ts'
 import * as mod_less_permission_prompts from '../commands/less-permission-prompts/index.ts'
+import * as mod_less_permission_prompts_lessPermissionPrompts from '../commands/less-permission-prompts/lessPermissionPrompts.ts'
 import * as mod_license from '../commands/license/index.ts'
 import * as mod_lighthouse from '../commands/lighthouse/index.ts'
 import * as mod_loader from '../commands/loader.ts'
 import * as mod_logger from '../commands/logger/index.ts'
+import * as mod_logger_logger from '../commands/logger/logger.ts'
 import * as mod_login from '../commands/login/index.ts'
 import * as mod_logout from '../commands/logout/index.ts'
 import * as mod_logs from '../commands/logs/index.ts'
 import * as mod_loop from '../commands/loop/index.tsx'
+import * as mod_loop_ai_task_executor from '../commands/loop/ai-task-executor.ts'
 import * as mod_loop_dashboard from '../commands/loop-dashboard/index.ts'
+import * as mod_loop_engine from '../commands/loop/engine.ts'
+import * as mod_loop_intent from '../commands/loop/intent.ts'
+import * as mod_loop_logger from '../commands/loop/logger.ts'
 import * as mod_loop_orchestrate from '../commands/loop-orchestrate/index.ts'
+import * as mod_loop_orchestrate_agentExecutor from '../commands/loop-orchestrate/agentExecutor.ts'
+import * as mod_loop_planner from '../commands/loop/planner.ts'
+import * as mod_loop_progress from '../commands/loop/progress.ts'
+import * as mod_loop_progress_ui from '../commands/loop/progress-ui.ts'
+import * as mod_loop_shortcuts from '../commands/loop/shortcuts.ts'
+import * as mod_loop_snapshot from '../commands/loop/snapshot.ts'
 import * as mod_loop_start_v2 from '../commands/loop-start-v2/index.ts'
 import * as mod_loop_status_v2 from '../commands/loop-status-v2/index.ts'
+import * as mod_loop_strategy_examples from '../commands/loop/strategy-examples.ts'
+import * as mod_loop_strategy_manuals from '../commands/loop/strategy-manuals.ts'
+import * as mod_loop_types from '../commands/loop/types.ts'
 import * as mod_loop_v2 from '../commands/loop-v2/index.ts'
 import * as mod_mcp from '../commands/mcp/index.ts'
+import * as mod_mcp_addCommand from '../commands/mcp/addCommand.ts'
 import * as mod_mcp_config from '../commands/mcp-config/index.ts'
+import * as mod_mcp_config_mcp_config from '../commands/mcp-config/mcp-config.ts'
+import * as mod_mcp_config_mcpConfig from '../commands/mcp-config/mcpConfig.ts'
 import * as mod_mcp_discovery from '../commands/mcp-discovery/index.ts'
 import * as mod_mcp_tool_search from '../commands/mcp-tool-search/index.ts'
+import * as mod_mcp_tool_search_mcp_tool_search from '../commands/mcp-tool-search/mcp-tool-search.ts'
+import * as mod_mcp_tool_search_mcpToolsearch from '../commands/mcp-tool-search/mcpToolsearch.ts'
+import * as mod_mcp_xaaIdpCommand from '../commands/mcp/xaaIdpCommand.ts'
 import * as mod_memory from '../commands/memory/index.ts'
 import * as mod_memory_bank from '../commands/memory-bank/index.ts'
+import * as mod_memory_memorySearch from '../commands/memory/memorySearch.ts'
 import * as mod_memory_monitor from '../commands/memory-monitor/index.ts'
+import * as mod_memory_monitor_memoryMonitor from '../commands/memory-monitor/memoryMonitor.ts'
 import * as mod_memory_search from '../commands/memory-search/index.ts'
 import * as mod_metrics from '../commands/metrics/index.ts'
+import * as mod_metrics_metrics from '../commands/metrics/metrics.ts'
 import * as mod_mobile from '../commands/mobile/index.ts'
+import * as mod_mobile_connect from '../commands/mobile/connect.ts'
 import * as mod_mock_limits from '../commands/mock-limits/index.ts'
 import * as mod_model from '../commands/model/index.ts'
 import * as mod_monitor from '../commands/monitor/index.ts'
+import * as mod_monitor_monitor from '../commands/monitor/monitor.ts'
 import * as mod_nginx from '../commands/nginx/index.ts'
 import * as mod_notebook from '../commands/notebook/index.ts'
+import * as mod_notebook_notebook from '../commands/notebook/notebook.ts'
 import * as mod_notes from '../commands/notes/index.ts'
 import * as mod_notify from '../commands/notify/index.ts'
 import * as mod_oauth_refresh from '../commands/oauth-refresh/index.ts'
 import * as mod_onboarding from '../commands/onboarding/index.tsx'
 import * as mod_outdated from '../commands/outdated/index.ts'
 import * as mod_output_style from '../commands/output-style/index.ts'
+import * as mod_output_style_output_style from '../commands/output-style/output-style.ts'
 import * as mod_pair from '../commands/pair/index.ts'
 import * as mod_passes from '../commands/passes/index.ts'
 import * as mod_pdf from '../commands/pdf/index.ts'
@@ -192,55 +278,83 @@ import * as mod_peers from '../commands/peers/index.ts'
 import * as mod_perf_issue from '../commands/perf-issue/index.tsx'
 import * as mod_performance from '../commands/performance/index.ts'
 import * as mod_performance_profiler from '../commands/performance-profiler/index.ts'
+import * as mod_performance_profiler_performance_profiler from '../commands/performance-profiler/performance_profiler.ts'
 import * as mod_permissions from '../commands/permissions/index.ts'
 import * as mod_pipeline from '../commands/pipeline/index.ts'
 import * as mod_plan from '../commands/plan/index.ts'
 import * as mod_plan_mode from '../commands/plan-mode/index.ts'
+import * as mod_plan_mode_plan_mode from '../commands/plan-mode/plan-mode.ts'
+import * as mod_plan_mode_planMode from '../commands/plan-mode/planMode.ts'
 import * as mod_plugin from '../commands/plugin/index.ts'
 import * as mod_plugin_market from '../commands/plugin-market/index.ts'
+import * as mod_plugin_parseArgs from '../commands/plugin/parseArgs.ts'
+import * as mod_plugin_PluginErrors from '../commands/plugin/PluginErrors.ts'
+import * as mod_plugin_types from '../commands/plugin/types.ts'
+import * as mod_plugin_unifiedTypes from '../commands/plugin/unifiedTypes.ts'
+import * as mod_plugin_usePagination from '../commands/plugin/usePagination.ts'
 import * as mod_ports from '../commands/ports/index.ts'
 import * as mod_powerup from '../commands/powerup/index.ts'
+import * as mod_powerup_powerup from '../commands/powerup/powerup.ts'
 import * as mod_pr_comments from '../commands/pr_comments/index.ts'
 import * as mod_pr_review from '../commands/pr-review/index.ts'
 import * as mod_privacy_settings from '../commands/privacy-settings/index.ts'
 import * as mod_proactive from '../commands/proactive/index.ts'
 import * as mod_project_purge from '../commands/project-purge/index.ts'
+import * as mod_project_purge_project_purge from '../commands/project-purge/project-purge.ts'
 import * as mod_project_stats from '../commands/project-stats/index.ts'
 import * as mod_prompt_diff from '../commands/prompt-diff/index.ts'
 import * as mod_prune_sessions from '../commands/prune-sessions/index.ts'
+import * as mod_prune_sessions_prune_sessions from '../commands/prune-sessions/prune-sessions.ts'
 import * as mod_queue from '../commands/queue/index.ts'
+import * as mod_queue_queue from '../commands/queue/queue.ts'
 import * as mod_rag from '../commands/rag/index.ts'
+import * as mod_rag_api from '../commands/rag/api.ts'
 import * as mod_rate_limit_options from '../commands/rate-limit-options/index.ts'
 import * as mod_readme from '../commands/readme/index.ts'
 import * as mod_recall from '../commands/recall/index.ts'
+import * as mod_recall_recall from '../commands/recall/recall.ts'
 import * as mod_redis from '../commands/redis/index.ts'
 import * as mod_refactor from '../commands/refactor/index.ts'
 import * as mod_reflect from '../commands/reflect/index.ts'
+import * as mod_reflect_reflect from '../commands/reflect/reflect.ts'
 import * as mod_release from '../commands/release/index.ts'
 import * as mod_release_notes from '../commands/release-notes/index.ts'
+import * as mod_release_notes_release_notes from '../commands/release-notes/release-notes.ts'
 import * as mod_reload_plugins from '../commands/reload-plugins/index.ts'
+import * as mod_reload_plugins_reload_plugins from '../commands/reload-plugins/reload-plugins.ts'
 import * as mod_remote_env from '../commands/remote-env/index.ts'
 import * as mod_remote_setup from '../commands/remote-setup/index.ts'
+import * as mod_remote_setup_api from '../commands/remote-setup/api.ts'
 import * as mod_remoteControlServer from '../commands/remoteControlServer/index.ts'
 import * as mod_remove_model from '../commands/remove-model/index.ts'
+import * as mod_remove_model_remove_model from '../commands/remove-model/remove-model.ts'
 import * as mod_rename from '../commands/rename/index.ts'
+import * as mod_rename_generateSessionName from '../commands/rename/generateSessionName.ts'
+import * as mod_rename_rename from '../commands/rename/rename.ts'
 import * as mod_replay from '../commands/replay/index.ts'
+import * as mod_replay_replay from '../commands/replay/replay.ts'
 import * as mod_repo_map from '../commands/repo-map/index.tsx'
 import * as mod_repo_pack from '../commands/repo-pack/index.ts'
 import * as mod_reset_limits from '../commands/reset-limits/index.tsx'
 import * as mod_resume from '../commands/resume/index.ts'
 import * as mod_review from '../commands/review.ts'
+import * as mod_review_reviewRemote from '../commands/review/reviewRemote.ts'
+import * as mod_review_ultrareviewEnabled from '../commands/review/ultrareviewEnabled.ts'
 import * as mod_rewind from '../commands/rewind/index.ts'
+import * as mod_rewind_rewind from '../commands/rewind/rewind.ts'
 import * as mod_robots from '../commands/robots/index.ts'
 import * as mod_rstk from '../commands/rstk/index.ts'
+import * as mod_rstk_rstk from '../commands/rstk/rstk.ts'
 import * as mod_rules from '../commands/rules/index.ts'
 import * as mod_sandbox_toggle from '../commands/sandbox-toggle/index.ts'
 import * as mod_scaffold from '../commands/scaffold/index.ts'
 import * as mod_schedule from '../commands/schedule/index.ts'
+import * as mod_schedule_schedule from '../commands/schedule/schedule.ts'
 import * as mod_security from '../commands/security/index.ts'
 import * as mod_security_audit from '../commands/security-audit/index.ts'
 import * as mod_security_review from '../commands/security-review.ts'
 import * as mod_self_check from '../commands/self-check/index.ts'
+import * as mod_self_check_self_check.verify from '../commands/self-check/self-check.verify.ts'
 import * as mod_seo_audit from '../commands/seo-audit/index.ts'
 import * as mod_session from '../commands/session/index.ts'
 import * as mod_session_search from '../commands/session-search.ts'
@@ -248,12 +362,16 @@ import * as mod_session_tag from '../commands/session-tag.ts'
 import * as mod_sessions from '../commands/sessions/index.tsx'
 import * as mod_share from '../commands/share/index.ts'
 import * as mod_shell from '../commands/shell/index.ts'
+import * as mod_shell_shell from '../commands/shell/shell.ts'
 import * as mod_ship from '../commands/ship/index.ts'
+import * as mod_ship_ship_ci_review_loop from '../commands/ship/ship-ci-review-loop.ts'
 import * as mod_sitemap from '../commands/sitemap/index.ts'
 import * as mod_skill_create_from_session from '../commands/skill-create-from-session/index.ts'
 import * as mod_skills from '../commands/skills/index.ts'
 import * as mod_skills_i18n from '../commands/skills-i18n/index.ts'
+import * as mod_skills_i18n_skills_i18n from '../commands/skills-i18n/skills-i18n.ts'
 import * as mod_snapshot from '../commands/snapshot/index.ts'
+import * as mod_snapshot_snapshot from '../commands/snapshot/snapshot.ts'
 import * as mod_snippet from '../commands/snippet/index.ts'
 import * as mod_snippets from '../commands/snippets/index.ts'
 import * as mod_spec_workflow from '../commands/spec-workflow/index.ts'
@@ -262,7 +380,17 @@ import * as mod_stash from '../commands/stash/index.ts'
 import * as mod_stats from '../commands/stats/index.ts'
 import * as mod_status from '../commands/status/index.ts'
 import * as mod_stickers from '../commands/stickers/index.ts'
+import * as mod_stickers_stickers from '../commands/stickers/stickers.ts'
 import * as mod_stock from '../commands/stock/index.ts'
+import * as mod_stock_alerts from '../commands/stock/alerts.ts'
+import * as mod_stock_api from '../commands/stock/api.ts'
+import * as mod_stock_charts from '../commands/stock/charts.ts'
+import * as mod_stock_indicators from '../commands/stock/indicators.ts'
+import * as mod_stock_portfolio from '../commands/stock/portfolio.ts'
+import * as mod_stock_screener from '../commands/stock/screener.ts'
+import * as mod_stock_types from '../commands/stock/types.ts'
+import * as mod_stock_utils from '../commands/stock/utils.ts'
+import * as mod_stock_watchlist from '../commands/stock/watchlist.ts'
 import * as mod_subscribe_pr from '../commands/subscribe-pr.ts'
 import * as mod_summary from '../commands/summary/index.ts'
 import * as mod_swe_fix from '../commands/swe-fix/index.ts'
@@ -271,44 +399,60 @@ import * as mod_tag from '../commands/tag/index.ts'
 import * as mod_task from '../commands/task/index.ts'
 import * as mod_task_claim from '../commands/task-claim/index.ts'
 import * as mod_task_create from '../commands/task-create/index.ts'
+import * as mod_task_create_task_create from '../commands/task-create/task-create.ts'
+import * as mod_task_create_taskCreate from '../commands/task-create/taskCreate.ts'
+import * as mod_task_task from '../commands/task/task.ts'
 import * as mod_tasks from '../commands/tasks/index.ts'
 import * as mod_tc from '../commands/tc/index.ts'
 import * as mod_team from '../commands/team/index.ts'
 import * as mod_team_collab from '../commands/team-collab/index.ts'
 import * as mod_team_onboarding from '../commands/team-onboarding/index.ts'
+import * as mod_team_onboarding_team_onboarding from '../commands/team-onboarding/team-onboarding.ts'
+import * as mod_team_team from '../commands/team/team.ts'
 import * as mod_teleport from '../commands/teleport/index.tsx'
 import * as mod_templates from '../commands/templates/index.ts'
 import * as mod_terminal from '../commands/terminal/index.ts'
 import * as mod_terminalSetup from '../commands/terminalSetup/index.ts'
+import * as mod_terminalSetup_terminalSetup from '../commands/terminalSetup/terminalSetup.ts'
 import * as mod_test_gen from '../commands/test-gen.ts'
 import * as mod_test_run from '../commands/test-run/index.ts'
 import * as mod_theme from '../commands/theme/index.ts'
 import * as mod_thinkback from '../commands/thinkback/index.ts'
 import * as mod_thinkback_play from '../commands/thinkback-play/index.ts'
+import * as mod_thinkback_play_thinkback_play from '../commands/thinkback-play/thinkback-play.ts'
 import * as mod_todo from '../commands/todo/index.ts'
 import * as mod_tokens from '../commands/tokens/index.ts'
+import * as mod_tokens_tokens from '../commands/tokens/tokens.ts'
 import * as mod_torch from '../commands/torch.ts'
 import * as mod_translate from '../commands/translate/index.ts'
 import * as mod_tree from '../commands/tree/index.ts'
 import * as mod_tui from '../commands/tui/index.ts'
 import * as mod_updateapikey from '../commands/updateapikey/index.ts'
+import * as mod_updateapikey_updateapikey from '../commands/updateapikey/updateapikey.ts'
 import * as mod_updateskills from '../commands/updateskills/index.ts'
 import * as mod_upgrade from '../commands/upgrade/index.ts'
 import * as mod_usage from '../commands/usage/index.ts'
 import * as mod_vector_search from '../commands/vector-search/index.tsx'
 import * as mod_version from '../commands/version.ts'
 import * as mod_vim from '../commands/vim/index.ts'
+import * as mod_vim_vim from '../commands/vim/vim.ts'
 import * as mod_voice from '../commands/voice/index.ts'
+import * as mod_voice_voice from '../commands/voice/voice.ts'
 import * as mod_watch from '../commands/watch/index.ts'
 import * as mod_websocket from '../commands/websocket/index.ts'
+import * as mod_websocket_websocket from '../commands/websocket/websocket.ts'
 import * as mod_wiki from '../commands/wiki/index.ts'
 import * as mod_workflows from '../commands/workflows/index.ts'
 import * as mod_workspace from '../commands/workspace.ts'
 
 export const COMMAND_MODULES: Record<string, { default?: any }> = {
+  '_shared-strings': mod__shared_strings,
   'add-dir': mod_add_dir,
+  'add-dir-validation': mod_add_dir_validation,
   'add-model': mod_add_model,
+  'add-model-add-model': mod_add_model_add_model,
   'advisor': mod_advisor,
+  'advisor-advisor': mod_advisor_advisor,
   'agent-new': mod_agent_new,
   'agents': mod_agents,
   'agents-platform': mod_agents_platform,
@@ -316,7 +460,12 @@ export const COMMAND_MODULES: Record<string, { default?: any }> = {
   'api-debug': mod_api_debug,
   'api-doc': mod_api_doc,
   'api-test': mod_api_test,
+  'asktime-asktime': mod_asktime_asktime,
   'assistant': mod_assistant,
+  'assistant-assistant': mod_assistant_assistant,
+  'assistant-AssistantSessionChooser': mod_assistant_AssistantSessionChooser,
+  'assistant-sessionDiscovery': mod_assistant_sessionDiscovery,
+  'assistant-sessionHistory': mod_assistant_sessionHistory,
   'auto': mod_auto,
   'auto-commit': mod_auto_commit,
   'auto-mode-reset': mod_auto_mode_reset,
@@ -325,14 +474,18 @@ export const COMMAND_MODULES: Record<string, { default?: any }> = {
   'backfill-sessions': mod_backfill_sessions,
   'background': mod_background,
   'backup': mod_backup,
+  'backup-backup': mod_backup_backup,
   'backup-full': mod_backup_full,
   'batch-han': mod_batch_han,
+  'batch-han-batch-han': mod_batch_han_batch_han,
   'benchmark': mod_benchmark,
   'blame': mod_blame,
   'block-mode': mod_block_mode,
+  'block-mode-block-mode': mod_block_mode_block_mode,
   'bookmark': mod_bookmark,
   'brain-sync': mod_brain_sync,
   'branch': mod_branch,
+  'branch-branch': mod_branch_branch,
   'break-cache': mod_break_cache,
   'bridge': mod_bridge,
   'bridge-kick': mod_bridge_kick,
@@ -341,47 +494,72 @@ export const COMMAND_MODULES: Record<string, { default?: any }> = {
   'browser': mod_browser,
   'btw': mod_btw,
   'buddy': mod_buddy,
+  'buddy-buddy': mod_buddy_buddy,
   'bughunter': mod_bughunter,
   'bundle': mod_bundle,
   'cache': mod_cache,
   'changelog': mod_changelog,
+  'changelog-changelog': mod_changelog_changelog,
   'changelog-gen': mod_changelog_gen,
   'chrome': mod_chrome,
   'clear': mod_clear,
+  'clear-caches': mod_clear_caches,
+  'clear-clear': mod_clear_clear,
+  'clear-conversation': mod_clear_conversation,
+  'clear-session-result-handler': mod_clear_session_result_handler,
+  'clear-tool-call-executor': mod_clear_tool_call_executor,
+  'clear-tool-handler': mod_clear_tool_handler,
+  'clear-tool-protocol-handler': mod_clear_tool_protocol_handler,
   'clone-all-1500': mod_clone_all_1500,
   'cmd': mod_cmd,
+  'cmd-cmd': mod_cmd_cmd,
   'code-health': mod_code_health,
   'code-review': mod_code_review,
   'code-review-assistant': mod_code_review_assistant,
+  'code-review-assistant-code_review_assistant': mod_code_review_assistant_code_review_assistant,
+  'code-review-assistant-codeReviewAssistant': mod_code_review_assistant_codeReviewAssistant,
   'code-search': mod_code_search,
   'collab': mod_collab,
   'color': mod_color,
+  'color-color': mod_color_color,
   'commit': mod_commit,
   'commit-push-pr': mod_commit_push_pr,
   'compact': mod_compact,
+  'compact-compact': mod_compact_compact,
   'compare': mod_compare,
+  'compare-compare': mod_compare_compare,
   'complete': mod_complete,
   'config': mod_config,
   'conflict': mod_conflict,
   'context': mod_context,
   'context-collapse': mod_context_collapse,
+  'context-collapse-context-collapse': mod_context_collapse_context_collapse,
+  'context-collapse-contextCollapse': mod_context_collapse_contextCollapse,
+  'context-context-noninteractive': mod_context_context_noninteractive,
   'contributors': mod_contributors,
   'copy': mod_copy,
   'copy-page': mod_copy_page,
+  'copy-page-copy-page': mod_copy_page_copy_page,
   'cost': mod_cost,
+  'cost-cost': mod_cost_cost,
   'cost-history': mod_cost_history,
   'createMovedToPluginCommand': mod_createMovedToPluginCommand,
   'cron': mod_cron,
+  'cron-cron': mod_cron_cron,
   'ctx_viz': mod_ctx_viz,
   'custom-cmd': mod_custom_cmd,
   'dashboard': mod_dashboard,
   'data-query': mod_data_query,
   'database': mod_database,
+  'database-database': mod_database_database,
+  'database-database-connection-pool': mod_database_database_connection_pool,
   'db-migrate': mod_db_migrate,
   'dead-code': mod_dead_code,
   'debug': mod_debug,
   'debug-tool-call': mod_debug_tool_call,
   'dependency-analyzer': mod_dependency_analyzer,
+  'dependency-analyzer-dependency_analyzer': mod_dependency_analyzer_dependency_analyzer,
+  'dependency-analyzer-dependencyAnalyzer': mod_dependency_analyzer_dependencyAnalyzer,
   'deploy': mod_deploy,
   'deps': mod_deps,
   'deps-viz': mod_deps_viz,
@@ -397,7 +575,9 @@ export const COMMAND_MODULES: Record<string, { default?: any }> = {
   'docs': mod_docs,
   'doctor': mod_doctor,
   'documentation-index': mod_documentation_index,
+  'documentation-index-documentation-index': mod_documentation_index_documentation_index,
   'doge-config': mod_doge_config,
+  'doge-config-dogeConfig': mod_doge_config_dogeConfig,
   'duplicate': mod_duplicate,
   'eco': mod_eco,
   'effort': mod_effort,
@@ -405,39 +585,52 @@ export const COMMAND_MODULES: Record<string, { default?: any }> = {
   'env-diff': mod_env_diff,
   'errors': mod_errors,
   'event-stream': mod_event_stream,
+  'event-stream-eventStream': mod_event_stream_eventStream,
   'evolve': mod_evolve,
   'excel': mod_excel,
   'exit': mod_exit,
   'explain': mod_explain,
   'export': mod_export,
   'extra-usage': mod_extra_usage,
+  'extra-usage-extra-usage-core': mod_extra_usage_extra_usage_core,
+  'extra-usage-extra-usage-noninteractive': mod_extra_usage_extra_usage_noninteractive,
   'fast': mod_fast,
   'feedback': mod_feedback,
   'file-history': mod_file_history,
   'file-search': mod_file_search,
   'file-watcher': mod_file_watcher,
+  'file-watcher-file-watcher': mod_file_watcher_file_watcher,
+  'file-watcher-fileWatcher': mod_file_watcher_fileWatcher,
   'files': mod_files,
+  'files-files': mod_files_files,
   'fmt': mod_fmt,
   'focus': mod_focus,
+  'focus-focus': mod_focus_focus,
   'focused-fix': mod_focused_fix,
   'force-snip': mod_force_snip,
   'fork': mod_fork,
   'fuck': mod_fuck,
+  'fuck-fuck': mod_fuck_fuck,
   'game': mod_game,
   'getting-started': mod_getting_started,
+  'getting-started-getting-started': mod_getting_started_getting_started,
   'git-graph': mod_git_graph,
   'glossary': mod_glossary,
+  'glossary-glossary': mod_glossary_glossary,
   'good-claude': mod_good_claude,
   'graph': mod_graph,
   'graphql': mod_graphql,
+  'graphql-graphql': mod_graphql_graphql,
   'grep': mod_grep,
   'health': mod_health,
   'health-score': mod_health_score,
   'heapdump': mod_heapdump,
+  'heapdump-heapdump': mod_heapdump_heapdump,
   'help': mod_help,
   'hooks': mod_hooks,
   'htaccess': mod_htaccess,
   'http': mod_http,
+  'http-http': mod_http_http,
   'i18n-extract': mod_i18n_extract,
   'ide': mod_ide,
   'image': mod_image,
@@ -446,47 +639,80 @@ export const COMMAND_MODULES: Record<string, { default?: any }> = {
   'init': mod_init,
   'init-verifiers': mod_init_verifiers,
   'insights': mod_insights,
+  'insights-insights': mod_insights_insights,
   'install-feishu-app': mod_install_feishu_app,
   'install-github-app': mod_install_github_app,
+  'install-github-app-setupGitHubActions': mod_install_github_app_setupGitHubActions,
+  'install-github-app-types': mod_install_github_app_types,
   'install-slack-app': mod_install_slack_app,
+  'install-slack-app-install-slack-app': mod_install_slack_app_install_slack_app,
   'issue': mod_issue,
   'k8s': mod_k8s,
   'keybindings': mod_keybindings,
+  'keybindings-keybindings': mod_keybindings_keybindings,
   'less-permission-prompts': mod_less_permission_prompts,
+  'less-permission-prompts-lessPermissionPrompts': mod_less_permission_prompts_lessPermissionPrompts,
   'license': mod_license,
   'lighthouse': mod_lighthouse,
   'loader': mod_loader,
   'logger': mod_logger,
+  'logger-logger': mod_logger_logger,
   'login': mod_login,
   'logout': mod_logout,
   'logs': mod_logs,
   'loop': mod_loop,
+  'loop-ai-task-executor': mod_loop_ai_task_executor,
   'loop-dashboard': mod_loop_dashboard,
+  'loop-engine': mod_loop_engine,
+  'loop-intent': mod_loop_intent,
+  'loop-logger': mod_loop_logger,
   'loop-orchestrate': mod_loop_orchestrate,
+  'loop-orchestrate-agentExecutor': mod_loop_orchestrate_agentExecutor,
+  'loop-planner': mod_loop_planner,
+  'loop-progress': mod_loop_progress,
+  'loop-progress-ui': mod_loop_progress_ui,
+  'loop-shortcuts': mod_loop_shortcuts,
+  'loop-snapshot': mod_loop_snapshot,
   'loop-start-v2': mod_loop_start_v2,
   'loop-status-v2': mod_loop_status_v2,
+  'loop-strategy-examples': mod_loop_strategy_examples,
+  'loop-strategy-manuals': mod_loop_strategy_manuals,
+  'loop-types': mod_loop_types,
   'loop-v2': mod_loop_v2,
   'mcp': mod_mcp,
+  'mcp-addCommand': mod_mcp_addCommand,
   'mcp-config': mod_mcp_config,
+  'mcp-config-mcp-config': mod_mcp_config_mcp_config,
+  'mcp-config-mcpConfig': mod_mcp_config_mcpConfig,
   'mcp-discovery': mod_mcp_discovery,
   'mcp-tool-search': mod_mcp_tool_search,
+  'mcp-tool-search-mcp-tool-search': mod_mcp_tool_search_mcp_tool_search,
+  'mcp-tool-search-mcpToolsearch': mod_mcp_tool_search_mcpToolsearch,
+  'mcp-xaaIdpCommand': mod_mcp_xaaIdpCommand,
   'memory': mod_memory,
   'memory-bank': mod_memory_bank,
+  'memory-memorySearch': mod_memory_memorySearch,
   'memory-monitor': mod_memory_monitor,
+  'memory-monitor-memoryMonitor': mod_memory_monitor_memoryMonitor,
   'memory-search': mod_memory_search,
   'metrics': mod_metrics,
+  'metrics-metrics': mod_metrics_metrics,
   'mobile': mod_mobile,
+  'mobile-connect': mod_mobile_connect,
   'mock-limits': mod_mock_limits,
   'model': mod_model,
   'monitor': mod_monitor,
+  'monitor-monitor': mod_monitor_monitor,
   'nginx': mod_nginx,
   'notebook': mod_notebook,
+  'notebook-notebook': mod_notebook_notebook,
   'notes': mod_notes,
   'notify': mod_notify,
   'oauth-refresh': mod_oauth_refresh,
   'onboarding': mod_onboarding,
   'outdated': mod_outdated,
   'output-style': mod_output_style,
+  'output-style-output-style': mod_output_style_output_style,
   'pair': mod_pair,
   'passes': mod_passes,
   'pdf': mod_pdf,
@@ -494,55 +720,83 @@ export const COMMAND_MODULES: Record<string, { default?: any }> = {
   'perf-issue': mod_perf_issue,
   'performance': mod_performance,
   'performance-profiler': mod_performance_profiler,
+  'performance-profiler-performance_profiler': mod_performance_profiler_performance_profiler,
   'permissions': mod_permissions,
   'pipeline': mod_pipeline,
   'plan': mod_plan,
   'plan-mode': mod_plan_mode,
+  'plan-mode-plan-mode': mod_plan_mode_plan_mode,
+  'plan-mode-planMode': mod_plan_mode_planMode,
   'plugin': mod_plugin,
   'plugin-market': mod_plugin_market,
+  'plugin-parseArgs': mod_plugin_parseArgs,
+  'plugin-PluginErrors': mod_plugin_PluginErrors,
+  'plugin-types': mod_plugin_types,
+  'plugin-unifiedTypes': mod_plugin_unifiedTypes,
+  'plugin-usePagination': mod_plugin_usePagination,
   'ports': mod_ports,
   'powerup': mod_powerup,
+  'powerup-powerup': mod_powerup_powerup,
   'pr_comments': mod_pr_comments,
   'pr-review': mod_pr_review,
   'privacy-settings': mod_privacy_settings,
   'proactive': mod_proactive,
   'project-purge': mod_project_purge,
+  'project-purge-project-purge': mod_project_purge_project_purge,
   'project-stats': mod_project_stats,
   'prompt-diff': mod_prompt_diff,
   'prune-sessions': mod_prune_sessions,
+  'prune-sessions-prune-sessions': mod_prune_sessions_prune_sessions,
   'queue': mod_queue,
+  'queue-queue': mod_queue_queue,
   'rag': mod_rag,
+  'rag-api': mod_rag_api,
   'rate-limit-options': mod_rate_limit_options,
   'readme': mod_readme,
   'recall': mod_recall,
+  'recall-recall': mod_recall_recall,
   'redis': mod_redis,
   'refactor': mod_refactor,
   'reflect': mod_reflect,
+  'reflect-reflect': mod_reflect_reflect,
   'release': mod_release,
   'release-notes': mod_release_notes,
+  'release-notes-release-notes': mod_release_notes_release_notes,
   'reload-plugins': mod_reload_plugins,
+  'reload-plugins-reload-plugins': mod_reload_plugins_reload_plugins,
   'remote-env': mod_remote_env,
   'remote-setup': mod_remote_setup,
+  'remote-setup-api': mod_remote_setup_api,
   'remoteControlServer': mod_remoteControlServer,
   'remove-model': mod_remove_model,
+  'remove-model-remove-model': mod_remove_model_remove_model,
   'rename': mod_rename,
+  'rename-generateSessionName': mod_rename_generateSessionName,
+  'rename-rename': mod_rename_rename,
   'replay': mod_replay,
+  'replay-replay': mod_replay_replay,
   'repo-map': mod_repo_map,
   'repo-pack': mod_repo_pack,
   'reset-limits': mod_reset_limits,
   'resume': mod_resume,
   'review': mod_review,
+  'review-reviewRemote': mod_review_reviewRemote,
+  'review-ultrareviewEnabled': mod_review_ultrareviewEnabled,
   'rewind': mod_rewind,
+  'rewind-rewind': mod_rewind_rewind,
   'robots': mod_robots,
   'rstk': mod_rstk,
+  'rstk-rstk': mod_rstk_rstk,
   'rules': mod_rules,
   'sandbox-toggle': mod_sandbox_toggle,
   'scaffold': mod_scaffold,
   'schedule': mod_schedule,
+  'schedule-schedule': mod_schedule_schedule,
   'security': mod_security,
   'security-audit': mod_security_audit,
   'security-review': mod_security_review,
   'self-check': mod_self_check,
+  'self-check-self-check.verify': mod_self_check_self_check.verify,
   'seo-audit': mod_seo_audit,
   'session': mod_session,
   'session-search': mod_session_search,
@@ -550,12 +804,16 @@ export const COMMAND_MODULES: Record<string, { default?: any }> = {
   'sessions': mod_sessions,
   'share': mod_share,
   'shell': mod_shell,
+  'shell-shell': mod_shell_shell,
   'ship': mod_ship,
+  'ship-ship-ci-review-loop': mod_ship_ship_ci_review_loop,
   'sitemap': mod_sitemap,
   'skill-create-from-session': mod_skill_create_from_session,
   'skills': mod_skills,
   'skills-i18n': mod_skills_i18n,
+  'skills-i18n-skills-i18n': mod_skills_i18n_skills_i18n,
   'snapshot': mod_snapshot,
+  'snapshot-snapshot': mod_snapshot_snapshot,
   'snippet': mod_snippet,
   'snippets': mod_snippets,
   'spec-workflow': mod_spec_workflow,
@@ -564,7 +822,17 @@ export const COMMAND_MODULES: Record<string, { default?: any }> = {
   'stats': mod_stats,
   'status': mod_status,
   'stickers': mod_stickers,
+  'stickers-stickers': mod_stickers_stickers,
   'stock': mod_stock,
+  'stock-alerts': mod_stock_alerts,
+  'stock-api': mod_stock_api,
+  'stock-charts': mod_stock_charts,
+  'stock-indicators': mod_stock_indicators,
+  'stock-portfolio': mod_stock_portfolio,
+  'stock-screener': mod_stock_screener,
+  'stock-types': mod_stock_types,
+  'stock-utils': mod_stock_utils,
+  'stock-watchlist': mod_stock_watchlist,
   'subscribe-pr': mod_subscribe_pr,
   'summary': mod_summary,
   'swe-fix': mod_swe_fix,
@@ -573,39 +841,51 @@ export const COMMAND_MODULES: Record<string, { default?: any }> = {
   'task': mod_task,
   'task-claim': mod_task_claim,
   'task-create': mod_task_create,
+  'task-create-task-create': mod_task_create_task_create,
+  'task-create-taskCreate': mod_task_create_taskCreate,
+  'task-task': mod_task_task,
   'tasks': mod_tasks,
   'tc': mod_tc,
   'team': mod_team,
   'team-collab': mod_team_collab,
   'team-onboarding': mod_team_onboarding,
+  'team-onboarding-team-onboarding': mod_team_onboarding_team_onboarding,
+  'team-team': mod_team_team,
   'teleport': mod_teleport,
   'templates': mod_templates,
   'terminal': mod_terminal,
   'terminalSetup': mod_terminalSetup,
+  'terminalSetup-terminalSetup': mod_terminalSetup_terminalSetup,
   'test-gen': mod_test_gen,
   'test-run': mod_test_run,
   'theme': mod_theme,
   'thinkback': mod_thinkback,
   'thinkback-play': mod_thinkback_play,
+  'thinkback-play-thinkback-play': mod_thinkback_play_thinkback_play,
   'todo': mod_todo,
   'tokens': mod_tokens,
+  'tokens-tokens': mod_tokens_tokens,
   'torch': mod_torch,
   'translate': mod_translate,
   'tree': mod_tree,
   'tui': mod_tui,
   'updateapikey': mod_updateapikey,
+  'updateapikey-updateapikey': mod_updateapikey_updateapikey,
   'updateskills': mod_updateskills,
   'upgrade': mod_upgrade,
   'usage': mod_usage,
   'vector-search': mod_vector_search,
   'version': mod_version,
   'vim': mod_vim,
+  'vim-vim': mod_vim_vim,
   'voice': mod_voice,
+  'voice-voice': mod_voice_voice,
   'watch': mod_watch,
   'websocket': mod_websocket,
+  'websocket-websocket': mod_websocket_websocket,
   'wiki': mod_wiki,
   'workflows': mod_workflows,
   'workspace': mod_workspace,
 }
 
-export const COMMAND_COUNT = 300
+export const COMMAND_COUNT = 440

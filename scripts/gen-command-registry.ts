@@ -13,35 +13,66 @@ interface Entry {
 function scanCommands(dir: string): Entry[] {
   const entries: Entry[] = []
   const dirNames = new Set<string>()
-  const items = readdirSync(dir, { withFileTypes: true })
+  const usedFileNames = new Set<string>()
 
-  // 第一遍：收集目录型命令
-  for (const item of items) {
-    if (item.isDirectory()) {
-      const dirPath = join(dir, item.name)
+  function scanDir(currentDir: string, prefix: string = ''): void {
+    const items = readdirSync(currentDir, { withFileTypes: true })
+    const subDirs: string[] = []
+
+    // 先收集目录，判断是否有 index.ts/index.tsx
+    for (const item of items) {
+      if (item.isDirectory()) {
+        subDirs.push(item.name)
+      }
+    }
+
+    // 目录型命令
+    for (const subName of subDirs) {
+      const dirPath = join(currentDir, subName)
       const indexPath = join(dirPath, 'index.ts')
       const indexTsxPath = join(dirPath, 'index.tsx')
       let target: string | null = null
       if (existsSync(indexPath)) target = indexPath
       else if (existsSync(indexTsxPath)) target = indexTsxPath
       else continue
+      const cmdName = prefix ? `${prefix}-${subName}` : subName
       const relPath = relative(OUTPUT_DIR, target).replace(/\\/g, '/')
-      entries.push({ name: item.name, relFromGenerated: relPath })
-      dirNames.add(item.name)
+      entries.push({ name: cmdName, relFromGenerated: relPath })
+      dirNames.add(cmdName)
+    }
+
+    // 顶层单文件命令：commands/<name>.ts（仅扫描顶层，子目录中非 index.ts 由递归处理）
+    if (prefix === '') {
+      for (const item of items) {
+        if (item.isFile() && item.name.endsWith('.ts') && !item.name.endsWith('.test.ts')) {
+          const commandName = item.name.replace(/\.ts$/, '')
+          if (dirNames.has(commandName)) continue // 目录优先
+          const filePath = join(currentDir, item.name)
+          const relPath = relative(OUTPUT_DIR, filePath).replace(/\\/g, '/')
+          entries.push({ name: commandName, relFromGenerated: relPath })
+          usedFileNames.add(commandName)
+        }
+      }
+    }
+
+    // 递归子目录中的非 index.ts 单文件命令（如 loop/shortcuts.ts）
+    for (const subName of subDirs) {
+      const subPath = join(currentDir, subName)
+      const subItems = readdirSync(subPath, { withFileTypes: true })
+      for (const item of subItems) {
+        if (item.isFile() && item.name.endsWith('.ts') && !item.name.endsWith('.test.ts')) {
+          if (item.name === 'index.ts' || item.name === 'index.tsx') continue
+          const commandName = item.name.replace(/\.ts$/, '')
+          const fullName = prefix ? `${prefix}-${commandName}` : `${subName}-${commandName}`
+          const filePath = join(subPath, item.name)
+          const relPath = relative(OUTPUT_DIR, filePath).replace(/\\/g, '/')
+          entries.push({ name: fullName, relFromGenerated: relPath })
+        }
+      }
     }
   }
 
-  // 第二遍：收集单文件命令（跳过与目录同名的，避免冲突）
-  for (const item of items) {
-    if (item.isFile() && item.name.endsWith('.ts') && !item.name.endsWith('.test.ts')) {
-      const commandName = item.name.replace(/\.ts$/, '')
-      if (dirNames.has(commandName)) continue // 目录优先
-      const filePath = join(dir, item.name)
-      const relPath = relative(OUTPUT_DIR, filePath).replace(/\\/g, '/')
-      entries.push({ name: commandName, relFromGenerated: relPath })
-    }
-  }
-
+  scanDir(dir)
   return entries.sort((a, b) => a.name.localeCompare(b.name))
 }
 

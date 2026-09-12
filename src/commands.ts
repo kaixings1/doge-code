@@ -8,7 +8,18 @@ import { safeRequire, loadConditionalCommand } from './commands/loader.js'
 // 磁盘上的 commands/ 目录不存在于二进制内部，因此 fallback 使用
 // scripts/gen-command-registry.ts 生成的静态 COMMAND_MODULES 注册表
 import { COMMAND_MODULES } from './generated/command-modules.js'
-let commandModules: Record<string, { default?: any }> = COMMAND_MODULES
+let commandModules: Record<string, { default?: any }> = {}
+const isTestEnv = process.env.NODE_ENV === 'test'
+if (!isTestEnv) {
+  try {
+    commandModules = import.meta.glob('./commands/**/index.ts', { eager: true })
+  } catch {
+    // glob 不可用，降级到静态注册表
+  }
+}
+if (Object.keys(commandModules).length === 0) {
+  commandModules = COMMAND_MODULES
+}
 
 import { feature } from 'bun:bundle'
 import { memoize } from './vendor/lodash.js'
@@ -136,26 +147,22 @@ const usageReport: Command = {
 }
 
 // 多导出命令映射（非标准默认导出）
+// 编译后 require 无法解析源码路径，直接从 COMMAND_MODULES 取
 const multiExportCommands: Record<string, () => Command | Command[] | null> = {
   contextNonInteractive: () => {
-    const mod = require('./commands/context/index.ts')
-    return mod.contextNonInteractive ?? null
+    return commandModules['context']?.contextNonInteractive ?? null
   },
   ultrareview: () => {
-    const mod = require('./commands/review.ts')
-    return mod.ultrareview ?? null
+    return commandModules['review']?.ultrareview ?? null
   },
   resetLimits: () => {
-    const mod = require('./commands/reset-limits/index.tsx')
-    return mod.resetLimits ?? null
+    return commandModules['reset-limits']?.resetLimits ?? null
   },
   resetLimitsNonInteractive: () => {
-    const mod = require('./commands/reset-limits/index.tsx')
-    return mod.resetLimitsNonInteractive ?? null
+    return commandModules['reset-limits']?.resetLimitsNonInteractive ?? null
   },
   loopShortcuts: () => {
-    const mod = require('./commands/loop/shortcuts.ts')
-    return mod.loopShortcuts ?? null
+    return commandModules['loop-shortcuts']?.loopShortcuts ?? null
   },
 }
 
@@ -203,10 +210,6 @@ const conditionalCommands: Record<string, () => Command | null> = {
   subscribePr: () =>
     process.env['CLAUDE_CODE_FEATURE_KAIROS_GITHUB_WEBHOOKS'] === '1'
       ? safeRequire('./commands/subscribe-pr.js')?.default ?? null
-      : null,
-  ultraplan: () =>
-    process.env['CLAUDE_CODE_FEATURE_ULTRAPLAN'] === '1'
-      ? safeRequire('./commands/ultraplan.js')?.default ?? null
       : null,
   torch: () =>
     process.env['CLAUDE_CODE_FEATURE_TORCH'] === '1'
