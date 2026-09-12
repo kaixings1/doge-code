@@ -4,33 +4,61 @@ import { safeRequire, loadConditionalCommand } from './commands/loader.js'
 // 动态扫描 commands/ 目录下所有 index.ts 文件，替代 200+ 静态导入
 // eager: true 使导入同步执行，避免异步兼容问题
 // 在 Node.js 等非 Bun 环境中 import.meta.glob 不可用，使用 fs 动态扫描降级
+// import.meta.glob 在 Bun 编译时完成扫描，结果直接嵌入二进制
+// 无需运行时 readdirSync 降级——编译后 import.meta.dir/url 指向虚拟路径，
+// 磁盘上的 commands/ 目录不存在于二进制内部
 let commandModules: Record<string, { default?: any }> = {}
-try {
-  const globResult = import.meta.glob('./commands/**/index.ts', { eager: true })
-  commandModules = globResult
-} catch {
-  // import.meta.glob 不可用，使用 fs 动态扫描 commands/ 目录
+// import.meta.glob 是 Bun 编译期特性，在测试环境（Vite 模拟）下会触发级联导入，
+// 导致所有命令模块被静态加载并引发大量失败。检测到测试环境时直接跳过 glob，
+// 降级到 fs.readdirSync 动态扫描。
+const isTestEnv = process.env.NODE_ENV === 'test'
+if (!isTestEnv) {
+  try {
+    commandModules = import.meta.glob('./commands/**/index.ts', { eager: true })
+  } catch {
+    // glob 不可用，降级到 fs 扫描
+  }
+}
+if (Object.keys(commandModules).length === 0) {
+  // import.meta.glob 不可用或跳过，使用 fs 动态扫描 commands/ 目录
+  // 使用 import.meta.url 而非 import.meta.dir，因为 Bun 编译后 import.meta.dir
+  // 可能被映射到虚拟路径（如 B:\~BUN\root\），导致 scandir 失败
   const fs = require('fs')
   const path = require('path')
-  const baseDir = path.resolve(import.meta.dir, 'commands')
+  const baseDir = path.resolve(new URL('.', import.meta.url).pathname, 'commands')
   const modules: Record<string, { default?: any }> = {}
-  const entries = fs.readdirSync(baseDir, { withFileTypes: true })
-  for (const entry of entries) {
-    if (!entry.isDirectory()) continue
-    const dirPath = baseDir + '/' + entry.name
-    const indexPath = dirPath + '/index.ts'
-    const indexTsxPath = dirPath + '/index.tsx'
-    const target = fs.existsSync(indexPath) ? indexPath : fs.existsSync(indexTsxPath) ? indexTsxPath : null
-    if (!target) continue
-    // 仅允许 index.ts / index.tsx，防止 commands/ 下恶意文件被执行
-    const allowed = ['index.ts', 'index.tsx']
-    if (!allowed.includes(path.basename(target))) continue
-    try {
-      const mod = require(target)
-      modules[entry.name] = mod
-    } catch {
-      // 静默跳过无法加载的模块
+  try {
+    const entries = fs.readdirSync(baseDir, { withFileTypes: true })
+    for (const entry of entries) {
+      if (entry.isDirectory()) {
+        const dirPath = baseDir + '/' + entry.name
+        const indexPath = dirPath + '/index.ts'
+        const indexTsxPath = dirPath + '/index.tsx'
+        const target = fs.existsSync(indexPath) ? indexPath : fs.existsSync(indexTsxPath) ? indexTsxPath : null
+        if (!target) continue
+        const allowed = ['index.ts', 'index.tsx']
+        if (!allowed.includes(path.basename(target))) continue
+        try {
+          const mod = require(target)
+          modules[entry.name] = mod
+        } catch {
+          // 静默跳过无法加载的模块
+        }
+      } else if (entry.isFile() && entry.name.endsWith('.ts') && !entry.name.endsWith('.test.ts')) {
+        // 单文件命令（如 init.ts、workspace.ts、commit.ts 等）
+        // ponytail: 文件名即命令名，仅限 commands/ 顶层 .ts 文件
+        const filePath = baseDir + '/' + entry.name
+        const commandName = entry.name.replace(/\.ts$/, '')
+        try {
+          const mod = require(filePath)
+          modules[commandName] = mod
+        } catch {
+          // 静默跳过无法加载的模块
+        }
+      }
     }
+  } catch {
+    // 扫描目录失败，返回空对象
   }
   commandModules = modules
 }
