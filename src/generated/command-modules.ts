@@ -354,7 +354,7 @@ import * as mod_security from '../commands/security/index.ts'
 import * as mod_security_audit from '../commands/security-audit/index.ts'
 import * as mod_security_review from '../commands/security-review.ts'
 import * as mod_self_check from '../commands/self-check/index.ts'
-import * as mod_self_check_self_check.verify from '../commands/self-check/self-check.verify.ts'
+import * as mod_self_check_verify from '../commands/self-check/self-check.verify.ts'
 import * as mod_seo_audit from '../commands/seo-audit/index.ts'
 import * as mod_session from '../commands/session/index.ts'
 import * as mod_session_search from '../commands/session-search.ts'
@@ -796,7 +796,7 @@ export const COMMAND_MODULES: Record<string, { default?: any }> = {
   'security-audit': mod_security_audit,
   'security-review': mod_security_review,
   'self-check': mod_self_check,
-  'self-check-self-check.verify': mod_self_check_self_check.verify,
+  'self-check-self-check.verify': mod_self_check_verify,
   'seo-audit': mod_seo_audit,
   'session': mod_session,
   'session-search': mod_session_search,

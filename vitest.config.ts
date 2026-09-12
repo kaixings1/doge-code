@@ -4,61 +4,7 @@ import path from 'node:path'
 // Plugin to prevent esbuild cascade from loading real command modules.
 // Strategy: return stub content from onLoad so esbuild never follows
 // the heavy import chain (React/Ink/etc) inside those files.
-const cascadeBreakPlugin = {
-  name: 'cascade-break',
-  async resolveId(source, importer) {
-    // Intercept .js → .ts/.tsx conversion, .tsx → .ts conversion, and .ts → stub redirection
-    if (!source.endsWith('.js') && !source.endsWith('.tsx') && !source.endsWith('.ts')) return null
-    const isJs = source.endsWith('.js')
-    const isTsx = source.endsWith('.tsx')
-    const isTs = source.endsWith('.ts') && !isTsx
-    if (!isJs && !isTsx && !isTs) return null
-    const base = isJs ? source.slice(0, -3) : source.slice(0, -4)
-    const tsSource = `${base}.ts`
-    const tsxSource = `${base}.tsx`
-    const jsSource = `${base}.js`
-    try {
-      const { existsSync } = await import('node:fs')
-      const path = (await import('node:path')).default
-      // Resolve relative to importer's directory (not cwd)
-      const baseDir = importer ? path.dirname(importer) : process.cwd()
-      const absJs = path.isAbsolute(jsSource) ? jsSource : path.join(baseDir, jsSource)
-      if (isJs) {
-        // .js → .ts conversion: if .js doesn't exist, redirect to .ts/.tsx
-        if (!existsSync(absJs)) {
-          const absTs = path.join(baseDir, tsSource)
-          const absTsx = path.join(baseDir, tsxSource)
-          if (existsSync(absTs)) return { id: tsSource }
-          if (existsSync(absTsx)) return { id: tsxSource }
-        }
-      }
-      if (isTsx) {
-        // .tsx → .ts: if .ts exists, redirect to it (load hook will stub it)
-        // tsSource is like 'src/commands/issue/index.ts' (relative to cwd)
-        // baseDir is like 'D:/doge-code/src/commands/' (importer's directory)
-        // Strip 'src/' prefix to avoid duplicating path segments
-        const tsRelative = tsSource.startsWith('src/') ? tsSource.slice(4) : tsSource
-        const absTs = path.join(baseDir, tsRelative)
-        if (existsSync(absTs)) return { id: tsSource }
-      }
-    } catch {}
-    return null
-  },
-  async load(id) {
-    // Only stub known problematic files that trigger React/Ink cascade
-    // Match both forward-slash and backslash paths (Windows compatibility)
-    // Also match Vite's absolute path format: D:/doge-code/src/commands/issue/index.ts(x)
-    if (!/src[/\\]commands[/\\]issue[/\\]index\.(ts|tsx)$/.test(id)) return null
-    return {
-      contents: 'export default {};\n',
-      resolveDir: path.dirname(id),
-      watchFiles: [id],
-    }
-  },
-}
-
 export default defineConfig({
-  plugins: [cascadeBreakPlugin],
   test: {
     setupFiles: ['tests/setup.ts'],
     include: ['tests/unit/**/*.test.ts', 'tests/unit/**/*.test.tsx', 'src/__tests__/**/*.test.ts', 'src/__tests__/**/*.test.tsx', 'src/**/__tests__/**/*.test.ts', 'src/**/*.test.ts'],
@@ -108,6 +54,8 @@ export default defineConfig({
       'src/utils/config.js': '/src/bridge/__tests__/__mocks__/config.mock.js',
       'src/utils/auth.js': '/src/bridge/__tests__/__mocks__/auth.mock.js',
       'src/utils/sessionTitle.js': '/src/bridge/__tests__/__mocks__/sessionTitle.mock.js',
+      'src/generated/command-modules.ts': '/src/bridge/__tests__/__mocks__/command-modules.mock.js',
+      'src/generated/command-modules.js': '/src/bridge/__tests__/__mocks__/command-modules.mock.js',
       'src/utils/words.js': '/src/bridge/__tests__/__mocks__/words.mock.js',
       'src/utils/git.js': '/src/bridge/__tests__/__mocks__/git.mock.js',
       'src/utils/lazySchema.js': '/src/bridge/__tests__/__mocks__/lazySchema.mock.js',
@@ -138,6 +86,7 @@ export default defineConfig({
       // npm packages
       'emoji-regex': '/src/bridge/__tests__/__mocks__/emoji-regex.mock.js',
       'get-east-asian-width': '/src/bridge/__tests__/__mocks__/get-east-asian-width.mock.js',
+      'bun:sqlite': '/src/bridge/__tests__/__mocks__/bun-sqlite.mock.js',
     },
   },
 })

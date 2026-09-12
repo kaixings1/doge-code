@@ -8,18 +8,7 @@ import { safeRequire, loadConditionalCommand } from './commands/loader.js'
 // 磁盘上的 commands/ 目录不存在于二进制内部，因此 fallback 使用
 // scripts/gen-command-registry.ts 生成的静态 COMMAND_MODULES 注册表
 import { COMMAND_MODULES } from './generated/command-modules.js'
-let commandModules: Record<string, { default?: any }> = {}
-const isTestEnv = process.env.NODE_ENV === 'test'
-if (!isTestEnv) {
-  try {
-    commandModules = import.meta.glob('./commands/**/index.ts', { eager: true })
-  } catch {
-    // glob 不可用，降级到静态注册表
-  }
-}
-if (Object.keys(commandModules).length === 0) {
-  commandModules = COMMAND_MODULES
-}
+let commandModules: Record<string, { default?: any }> = COMMAND_MODULES
 
 import { feature } from 'bun:bundle'
 import { memoize } from './vendor/lodash.js'
