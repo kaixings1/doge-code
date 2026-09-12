@@ -8,23 +8,7 @@ import { safeRequire, loadConditionalCommand } from './commands/loader.js'
 // 磁盘上的 commands/ 目录不存在于二进制内部，因此 fallback 使用
 // scripts/gen-command-registry.ts 生成的静态 COMMAND_MODULES 注册表
 import { COMMAND_MODULES } from './generated/command-modules.js'
-let commandModules: Record<string, { default?: any }> = {}
-// import.meta.glob 是 Bun 编译期特性，在测试环境（Vite 模拟）下会触发级联导入，
-// 导致所有命令模块被静态加载并引发大量失败。检测到测试环境时直接跳过 glob，
-// 降级到 COMMAND_MODULES 静态注册表。
-const isTestEnv = process.env.NODE_ENV === 'test'
-if (!isTestEnv) {
-  try {
-    commandModules = import.meta.glob('./commands/**/index.ts', { eager: true })
-  } catch {
-    // glob 不可用，降级到静态注册表
-  }
-}
-if (Object.keys(commandModules).length === 0) {
-  // import.meta.glob 不可用或跳过，使用编译时生成的静态命令注册表
-  // 所有命令模块已由 scripts/gen-command-registry.ts 静态导入并打包进二进制
-  commandModules = COMMAND_MODULES
-}
+let commandModules: Record<string, { default?: any }> = COMMAND_MODULES
 
 import { feature } from 'bun:bundle'
 import { memoize } from './vendor/lodash.js'
