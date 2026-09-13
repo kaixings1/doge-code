@@ -6,7 +6,9 @@ import { FallbackToolUseErrorMessage } from '../../components/FallbackToolUseErr
 import { MessageResponse } from '../../components/MessageResponse.js';
 import { Box, Text } from '../../ink.js';
 import { getDisplayPath } from '../../utils/file.js';
+import { beautifyInlineText } from '../../utils/inlineBeautify.js';
 import { extractTag } from '../../utils/messages.js';
+import type { ThemeName } from '../../utils/theme.js';
 import type { Input, Output } from './LSPTool.js';
 import { getSymbolAtPosition } from './symbolContext.js';
 
@@ -59,13 +61,14 @@ const OPERATION_LABELS: Record<Input['operation'], {
  * Reusable component for LSP result summaries with collapsed/expanded views
  */
 function LSPResultSummary(t0) {
-  const $ = _c(24);
+  const $ = _c(25);
   const {
     operation,
     resultCount,
     fileCount,
     content,
-    verbose
+    verbose,
+    theme
   } = t0;
   let t1;
   if ($[0] !== operation) {
@@ -119,41 +122,43 @@ function LSPResultSummary(t0) {
       t5 = $[12];
     }
     let t6;
-    if ($[13] !== content) {
-      t6 = <Box marginLeft={5}><Text>{content}</Text></Box>;
+    if ($[13] !== content || $[14] !== theme) {
+      const beautified = beautifyInlineText(content || '', theme);
+      t6 = <Box marginLeft={5}><Text>{beautified}</Text></Box>;
       $[13] = content;
-      $[14] = t6;
+      $[14] = theme;
+      $[15] = t6;
     } else {
-      t6 = $[14];
+      t6 = $[15];
     }
     let t7;
-    if ($[15] !== t5 || $[16] !== t6) {
+    if ($[16] !== t5 || $[17] !== t6) {
       t7 = <Box flexDirection="column">{t5}{t6}</Box>;
-      $[15] = t5;
-      $[16] = t6;
-      $[17] = t7;
+      $[16] = t5;
+      $[17] = t6;
+      $[18] = t7;
     } else {
-      t7 = $[17];
+      t7 = $[18];
     }
     return t7;
   }
   let t4;
-  if ($[18] !== resultCount) {
+  if ($[19] !== resultCount) {
     t4 = resultCount > 0 && <CtrlOToExpand />;
-    $[18] = resultCount;
-    $[19] = t4;
+    $[19] = resultCount;
+    $[20] = t4;
   } else {
-    t4 = $[19];
+    t4 = $[20];
   }
   let t5;
-  if ($[20] !== primaryText || $[21] !== secondaryText || $[22] !== t4) {
+  if ($[21] !== primaryText || $[22] !== secondaryText || $[23] !== t4) {
     t5 = <MessageResponse height={1}><Text>{primaryText}{secondaryText} {t4}</Text></MessageResponse>;
-    $[20] = primaryText;
-    $[21] = secondaryText;
-    $[22] = t4;
-    $[23] = t5;
+    $[21] = primaryText;
+    $[22] = secondaryText;
+    $[23] = t4;
+    $[24] = t5;
   } else {
-    t5 = $[23];
+    t5 = $[24];
   }
   return t5;
 }
@@ -210,18 +215,21 @@ export function renderToolUseErrorMessage(result: ToolResultBlockParam['content'
   return <FallbackToolUseErrorMessage result={result} verbose={verbose} />;
 }
 export function renderToolResultMessage(output: Output, _progressMessages: unknown[], {
-  verbose
+  verbose,
+  theme
 }: {
   verbose: boolean;
+  theme: ThemeName;
 }): React.ReactNode {
   // Use collapsed/expanded view if we have count information
   if (output.resultCount !== undefined && output.fileCount !== undefined) {
-    return <LSPResultSummary operation={output.operation} resultCount={output.resultCount} fileCount={output.fileCount} content={output.result} verbose={verbose} />;
+    return <LSPResultSummary operation={output.operation} resultCount={output.resultCount} fileCount={output.fileCount} content={output.result} verbose={verbose} theme={theme} />;
   }
 
   // Fallback for error cases where counts aren't available
   // (e.g., LSP server initialization failures, request errors)
+  const beautified = beautifyInlineText(output.result || '', theme);
   return <MessageResponse>
-      <Text>{output.result}</Text>
+      <Text>{beautified}</Text>
     </MessageResponse>;
 }

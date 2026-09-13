@@ -18,15 +18,7 @@ startKeychainPrefetch()
 // feature() removed - replaced with env var checks
 import { Command as CommanderCommand, InvalidArgumentError, Option } from '@commander-js/extra-typings';
 import chalk from 'chalk';
-import { readFileSync, writeFileSync } from 'fs';
-const RESTART_COUNTER_PATH = 'd:/restart_counter.txt';
-let restartCount = 0;
-try {
-  restartCount = parseInt(readFileSync(RESTART_COUNTER_PATH, 'utf8').trim(), 10) || 0;
-} catch { /* ignore */ }
-restartCount++;
-writeFileSync(RESTART_COUNTER_PATH, String(restartCount), { flag: 'w' });
-//console.error('[RESTART-COUNTER] cliMain invocation #' + restartCount);
+import { readFileSync } from 'fs';
 import { mapValues } from './vendor/lodash.js';
 import { pickBy } from './vendor/lodash.js';
 import { uniqBy } from './vendor/lodash.js';
@@ -874,6 +866,7 @@ async function run(): Promise<CommanderCommand> {
     const log = (msg: string) => {
       const t = Date.now();
       //process.stderr.write(`[MAIN-DEBUG] [${t}] ${msg}\n`);
+      try { require('fs').writeFileSync('d:/trace.txt', `[MAIN-DEBUG] [${t}] ${msg}\n`, {flag:'a'}); } catch(e) {}
     };
     log('preAction START');
     // 等待在模块评估时启动的异步子进程加载（第 12-20 行）。
@@ -881,9 +874,12 @@ async function run(): Promise<CommanderCommand> {
     // 必须在 init() 之前解析，init() 会触发首次设置读取（applySafeConfigEnvironmentVariables → getSettingsForSource('policySettings') → isRemoteManagedSettingsEligible → 否则同步钥匙串读取约 65ms）。
     //log('ensureMdmSettingsLoaded+ensureKeychainPrefetchCompleted START');
     await Promise.all([ensureMdmSettingsLoaded(), ensureKeychainPrefetchCompleted()]);
+    log('[TRACE] after ensureMdmSettingsLoaded+ensureKeychainPrefetchCompleted');
     // profileCheckpoint('preAction_after_mdm');
     //log('init() START');
+    log('[TRACE] init() START');
     await init();
+    log('[TRACE] after init()');
     logForDebugging('[TRACE] preAction after init()');
     // profileCheckpoint('preAction_after_init');
     //log('process.title setting');
@@ -894,6 +890,7 @@ async function run(): Promise<CommanderCommand> {
     if (!isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_TERMINAL_TITLE)) {
       try { process.title = 'claude'; } catch(e) { /* Windows console may hang on title change */ }
     }
+    log('[TRACE] AFTER_TITLE');
     ////try { require('fs').writeFileSync('d:/trace.txt', 'AFTER_TITLE\n', {flag:'a'}); } catch(e) {}
     //log('附加日志接收器');
     // 附加日志接收器，以便子命令处理程序可以使用 logEvent/logError。
@@ -902,6 +899,7 @@ async function run(): Promise<CommanderCommand> {
       initSinks
     } = await import('./utils/sinks.js');
     initSinks();
+    log('[TRACE] AFTER_SINKS');
     ////try { require('fs').writeFileSync('d:/trace.txt', 'AFTER_SINKS\n', {flag:'a'}); } catch(e) {}
     // profileCheckpoint('preAction_after_sinks');
 	//log('preAction_after_sinks');
@@ -918,6 +916,7 @@ async function run(): Promise<CommanderCommand> {
       setInlinePlugins(pluginDir);
       clearPluginCache('preAction: --plugin-dir inline plugins');
     }
+    log('[TRACE] preAction END, about to dispatch command');
 	  //log('try ');
     runMigrations();
     void loadRemoteManagedSettings();

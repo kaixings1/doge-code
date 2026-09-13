@@ -95,13 +95,18 @@ export function showSetupDialog<T = void>(root: Root, renderer: (done: (result: 
  */
 export async function renderAndRun(root: Root, element: React.ReactNode): Promise<void> {
   //console.error('[STEP-A] renderAndRun: before root.render');
+  try { require('fs').writeFileSync('d:/trace.txt', '[renderAndRun] BEFORE root.render\n', {flag:'a'}); } catch(e) {}
   root.render(element);
+  try { require('fs').writeFileSync('d:/trace.txt', '[renderAndRun] AFTER root.render\n', {flag:'a'}); } catch(e) {}
   //console.error('[STEP-B] renderAndRun: after root.render');
   startDeferredPrefetches();
+  try { require('fs').writeFileSync('d:/trace.txt', '[renderAndRun] AFTER startDeferredPrefetches\n', {flag:'a'}); } catch(e) {}
   //console.error('[STEP-C] renderAndRun: after startDeferredPrefetches, before waitUntilExit');
   await root.waitUntilExit();
+  try { require('fs').writeFileSync('d:/trace.txt', '[renderAndRun] AFTER waitUntilExit\n', {flag:'a'}); } catch(e) {}
   //console.error('[STEP-D] renderAndRun: after waitUntilExit');
   await gracefulShutdown(0);
+  try { require('fs').writeFileSync('d:/trace.txt', '[renderAndRun] AFTER gracefulShutdown\n', {flag:'a'}); } catch(e) {}
   //console.error('[STEP-E] renderAndRun: after gracefulShutdown');
 }
 export async function showSetupScreens(root: Root, permissionMode: PermissionMode, allowDangerouslySkipPermissions: boolean, commands?: Command[], claudeInChrome?: boolean, devChannels?: ChannelEntry[]): Promise<boolean> {

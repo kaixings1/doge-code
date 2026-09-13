@@ -7,9 +7,10 @@ import * as React from 'react';
 import { useState, useCallback } from 'react';
 import { useKeybinding, useKeybindings } from '../../keybindings/useKeybinding.js';
 import figures from '../../vendor/figures.js';
-import { type GlobalConfig, saveGlobalConfig, getCurrentProjectConfig, type OutputStyle } from '../../utils/config.js';
+import { type GlobalConfig, saveGlobalConfig, getCurrentProjectConfig, saveCurrentProjectConfig, type OutputStyle } from '../../utils/config.js';
 import { normalizeApiKeyForConfig } from '../../utils/authPortable.js';
 import { getGlobalConfig, getAutoUpdaterDisabledReason, formatAutoUpdaterDisabledReason, getRemoteControlAtStartup } from '../../utils/config.js';
+import { getFeatureOverrides, OVERRIDABLE_FEATURES } from '../../utils/featureOverrides.js';
 import chalk from 'chalk';
 import { permissionModeTitle, permissionModeFromString, toExternalPermissionMode, isExternalPermissionMode, EXTERNAL_PERMISSION_MODES, PERMISSION_MODES, type ExternalPermissionMode, type PermissionMode } from '../../utils/permissions/PermissionMode.js';
 import { getAutoModeEnabledState, hasAutoModeOptInAnySource, transitionPlanAutoMode } from '../../utils/permissions/permissionSetup.js';
@@ -1208,7 +1209,34 @@ export function Config({
     onChange(value: string) {
       process.env.CLAUDE_CODE_QQ = value === '开启' ? '1' : '';
     }
-  }];
+  },
+  // Runtime feature overrides — always visible for discoverability
+  // Only features compiled with env-var guards can be toggled here.
+  ...OVERRIDABLE_FEATURES.map(feat => {
+    const overrides = getFeatureOverrides()
+    const isEnabled = overrides[feat] ?? false
+    return {
+      id: `feature_${feat}`,
+      label: feat,
+      value: isEnabled,
+      type: 'boolean' as const,
+      searchText: `feature ${feat} 开关 运行时`,
+      onChange(enabled: boolean) {
+        saveCurrentProjectConfig(current => ({
+          ...current,
+          featureOverrides: {
+            ...(current.featureOverrides ?? {}),
+            [feat]: enabled
+          }
+        }))
+        process.env[`CLAUDE_CODE_FEATURE_${feat.toUpperCase()}`] = enabled ? '1' : '0'
+        logEvent('tengu_feature_override_changed', {
+          feature: feat,
+          enabled
+        })
+      }
+    }
+  })];
 
   // Filter settings based on search query
   const filteredSettingsItems = React.useMemo(() => {

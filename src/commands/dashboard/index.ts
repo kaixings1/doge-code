@@ -8,7 +8,7 @@ import type { LocalCommandCall } from '../types/command.js'
 import { startDashboardServer, isDashboardRunning, getDashboardPort, getDashboardData } from '../../services/dashboard/index.js'
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs'
 import { join } from 'path'
-import { getClaudeConfigHomeDir } from '../utils/envUtils.js'
+import { getClaudeConfigHomeDir } from '../../utils/envUtils.js'
 
 // ============================================================================
 // Helper Functions

@@ -84,8 +84,6 @@ export default defineConfig({
       'src/bridge/bridgeApi.js': '/src/bridge/__tests__/__mocks__/bridgeApi.mock.js',
       'src/bridge/trustedDevice.js': '/src/bridge/__tests__/__mocks__/trustedDevice.mock.js',
       // npm packages
-      'emoji-regex': '/src/bridge/__tests__/__mocks__/emoji-regex.mock.js',
-      'get-east-asian-width': '/src/bridge/__tests__/__mocks__/get-east-asian-width.mock.js',
       'bun:sqlite': '/src/bridge/__tests__/__mocks__/bun-sqlite.mock.js',
     },
   },

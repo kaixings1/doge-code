@@ -12,7 +12,6 @@
  * - 详细的执行日志与错误上下文
  */
 
-import { Bash } from '../../../tools/bash/index.js'
 import { exec } from '../../utils/Shell.js'
 import type { ShellCommand } from '../../utils/ShellCommand.js'
 import { createStreamingCommand } from '../../utils/Shell.js'; // 新增

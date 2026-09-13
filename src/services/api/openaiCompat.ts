@@ -715,30 +715,31 @@ async function* createAnthropicStreamFromOpenAIInner(
                 cause: new Error('premature_done'),
               })
             }
-						if (textBuffer && textBufferIndex !== null) {
-  yield {
-    type: 'content_block_delta',
-    index: textBufferIndex,
-    delta: { type: 'text_delta', text: textBuffer },
-  } as BetaRawMessageStreamEvent;
-  textBuffer = '';
-  textBufferIndex = null;
-  lastFlushTime = Date.now();
-}
+              if (textBuffer && textBufferIndex !== null) {
+                yield {
+                  type: 'content_block_delta',
+                  index: textBufferIndex,
+                  delta: { type: 'text_delta', text: textBuffer },
+                } as BetaRawMessageStreamEvent
+                lastFlushTime = Date.now()
+              }
+              textBuffer = ''
+              textBufferIndex = null
             await closeActiveBlock()
             for (const ai of toolIdxMap.values()) {
               yield { type: 'content_block_stop', index: ai } as BetaRawMessageStreamEvent
             }
             if (!nativeMessageDeltaSent && started) {
-							if (textBuffer && textBufferIndex !== null) {
-								yield {
-									type: 'content_block_delta',
-									index: textBufferIndex,
-									delta: { type: 'text_delta', text: textBuffer },
-								} as BetaRawMessageStreamEvent
-								textBuffer = ''
-								textBufferIndex = null
-							}
+              if (textBuffer && textBufferIndex !== null) {
+                yield {
+                  type: 'content_block_delta',
+                  index: textBufferIndex,
+                  delta: { type: 'text_delta', text: textBuffer },
+                } as BetaRawMessageStreamEvent
+                textBuffer = ''
+                textBufferIndex = null
+                lastFlushTime = Date.now()
+              }
               yield {
                 type: 'message_delta',
                 delta: { stop_reason: 'end_turn', stop_sequence: null },
@@ -1013,6 +1014,14 @@ async function* createAnthropicStreamFromOpenAIInner(
                 content_block: { type: 'thinking', thinking: '' },
               } as BetaRawMessageStreamEvent
               activeBlockType = 'thinking'
+              if (textBuffer && textBufferIndex !== null) {
+                yield {
+                  type: 'content_block_delta',
+                  index: textBufferIndex,
+                  delta: { type: 'text_delta', text: textBuffer },
+                } as BetaRawMessageStreamEvent
+                lastFlushTime = Date.now()
+              }
               textBuffer = ''
               textBufferIndex = null
             }

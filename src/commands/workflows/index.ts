@@ -1,5 +1,4 @@
 import type { Command, LocalJSXCommandContext, LocalCommandResult } from '../../commands.js'
-import { feature } from 'bun:bundle'
 
 const HELP_TEXT = `🏗️ Workflow 命令
 
@@ -23,7 +22,7 @@ const workflows = {
   name: 'workflows',
   description: '管理工作流脚本 — 创建、列出、运行和删除可复用任务序列',
   argumentHint: '<list|show|run|create|delete>',
-  isEnabled: () => feature('WORKFLOW_SCRIPTS'),
+  isEnabled: () => process.env['CLAUDE_CODE_FEATURE_WORKFLOW_SCRIPTS'] === '1',
   supportsNonInteractive: false,
   load: () => Promise.resolve({
     call: async (args: string, context: LocalJSXCommandContext): Promise<LocalCommandResult> => {

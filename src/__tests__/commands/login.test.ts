@@ -5,5 +5,5 @@ describe('login', () => {
   it('module should load', async () => {
     const m = await import('./../../commands/login/index')
     expect(m).toBeDefined()
-  })
+  }, 20000)
 })

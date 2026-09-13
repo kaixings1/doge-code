@@ -1,11 +1,11 @@
 import { c as _c } from "react/compiler-runtime";
 import * as React from 'react';
-import { useMemo } from 'react';
 import { useTerminalSize } from '../../hooks/useTerminalSize.js';
-import { Ansi, Text } from '../../ink.js';
+import { Ansi, Text, useTheme } from '../../ink.js';
 import { createHyperlink } from '../../utils/hyperlink.js';
 import { jsonParse, jsonStringify } from '../../utils/slowOperations.js';
 import { renderTruncatedContent } from '../../utils/terminal.js';
+import { beautifyInlineText } from '../../utils/inlineBeautify.js';
 import { MessageResponse } from '../MessageResponse.js';
 import { InVirtualListContext } from '../messageActions.js';
 import { useExpandShellOutput } from './ExpandShellOutputContext.js';
@@ -17,7 +17,7 @@ export function tryFormatJson(line: string): string {
     // Check if precision was lost during JSON round-trip
     // This happens when large integers exceed Number.MAX_SAFE_INTEGER
     // We normalize both strings by removing whitespace and unnecessary
-    // escapes (\/ is valid but optional in JSON) for comparison
+    // escapes (\/ is valid but optional in JSON) to compare.
     const normalizedOriginal = line.replace(/\\\//g, '/').replace(/\s+/g, '');
     const normalizedStringified = stringified.replace(/\s+/g, '');
     if (normalizedOriginal !== normalizedStringified) {
@@ -45,7 +45,7 @@ export function linkifyUrlsInText(content: string): string {
   return content.replace(URL_IN_JSON, url => createHyperlink(url));
 }
 export function OutputLine(t0) {
-  const $ = _c(11);
+  const $ = _c(13);
   const {
     content,
     verbose,
@@ -59,6 +59,7 @@ export function OutputLine(t0) {
   const expandShellOutput = useExpandShellOutput();
   const inVirtualList = React.useContext(InVirtualListContext);
   const shouldShowFull = verbose || expandShellOutput;
+  const [theme] = useTheme();
   let t1;
   if ($[0] !== columns || $[1] !== content || $[2] !== inVirtualList || $[3] !== linkifyUrls || $[4] !== shouldShowFull) {
     bb0: {
@@ -82,25 +83,34 @@ export function OutputLine(t0) {
     t1 = $[5];
   }
   const formattedContent = t1;
-  const color = isError ? "error" : isWarning ? "warning" : undefined;
   let t2;
-  if ($[6] !== formattedContent) {
-    t2 = <Ansi>{formattedContent}</Ansi>;
+  if ($[6] !== formattedContent || $[7] !== theme) {
+    t2 = beautifyInlineText(formattedContent, theme);
     $[6] = formattedContent;
-    $[7] = t2;
+    $[7] = theme;
+    $[8] = t2;
   } else {
-    t2 = $[7];
+    t2 = $[8];
   }
+  const beautified = t2;
+  const color = isError ? "error" : isWarning ? "warning" : "";
   let t3;
-  if ($[8] !== color || $[9] !== t2) {
-    t3 = <MessageResponse><Text color={color}>{t2}</Text></MessageResponse>;
-    $[8] = color;
-    $[9] = t2;
+  if ($[9] !== beautified) {
+    t3 = <Ansi>{beautified}</Ansi>;
+    $[9] = beautified;
     $[10] = t3;
   } else {
     t3 = $[10];
   }
-  return t3;
+  let t4;
+  if ($[11] !== color || $[12] !== t3) {
+    t4 = <MessageResponse><Text color={color}>{t3}</Text></MessageResponse>;
+    $[11] = color;
+    $[12] = t4;
+  } else {
+    t4 = $[12];
+  }
+  return t4;
 }
 
 /**
@@ -112,6 +122,6 @@ export function OutputLine(t0) {
  */
 export function stripUnderlineAnsi(content: string): string {
   return content.replace(
-   
+
   /\u001b\[([0-9]+;)*4(;[0-9]+)*m|\u001b\[4(;[0-9]+)*m|\u001b\[([0-9]+;)*4m/g, '');
 }

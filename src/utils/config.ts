@@ -125,6 +125,9 @@ export type ProjectConfig = {
   worktreeBaseRef?: 'fresh' | 'head'
   forceHyperlink?: boolean
   emojiCompletionEnabled?: boolean
+
+  // 运行时 feature 开关覆盖（ant-only）
+  featureOverrides?: Record<string, boolean>
 }
 
 export type GlobalConfig = {

@@ -1,6 +1,30 @@
 import '../generated/macro.js';
 import '../generated/status-line-embedded.js';
 
+// Apply runtime feature overrides from project config BEFORE any module
+// that checks CLAUDE_CODE_FEATURE_* env vars is imported.
+// Reads raw JSON directly to avoid configReadingAllowed guard.
+import { applyFeatureOverrides } from '../utils/featureOverrides.js';
+import { getGlobalClaudeFile } from '../utils/env.js';
+import { safeParseJSON } from '../utils/json.js';
+import { readFileSync } from 'fs';
+try {
+  const raw = readFileSync(getGlobalClaudeFile(), 'utf-8')
+  const parsed = safeParseJSON(raw)
+  if (parsed && parsed.projects) {
+    const cwd = process.cwd()
+    let bestMatch: string | null = null
+    for (const [p] of Object.entries(parsed.projects)) {
+      if (cwd.startsWith(p) && (!bestMatch || p.length > bestMatch.length)) {
+        bestMatch = p
+      }
+    }
+    if (bestMatch && parsed.projects[bestMatch]?.featureOverrides) {
+      applyFeatureOverrides(parsed.projects[bestMatch].featureOverrides)
+    }
+  }
+} catch { /* config not available yet, overrides will be applied later */ }
+
 // Bugfix for corepack auto-pinning，它会将 yarnpkg 添加到用户的 package.json 中
 // eslint-disable-next-line custom-rules/no-top-level-side-effects
 process.env.COREPACK_ENABLE_AUTO_PIN = '0';

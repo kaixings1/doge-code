@@ -129,8 +129,16 @@ export const init = memoize(async (): Promise<void> => {
           '../utils/subprocessEnv.js'
         )
         registerUpstreamProxyEnvFn(getUpstreamProxyEnv)
-        await initUpstreamProxy()
+        // 防止 localhost:5678 无服务时 WebSocket 连接永久挂起
+        await Promise.race([
+          initUpstreamProxy(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('initUpstreamProxy timed out after 8s')), 8000))
+        ])
       } catch (err) {
+        logForDebugging(
+          `[upstreamproxy] init failed: ${err instanceof Error ? err.message : String(err)}; proxy disabled`,
+          { level: 'warn' },
+        )
       }
     } else {
     }

@@ -9,19 +9,22 @@ import { Box, Text } from '../../ink.js';
 import type { ToolProgressData } from '../../Tool.js';
 import type { ProgressMessage } from '../../types/message.js';
 import { FILE_NOT_FOUND_CWD_NOTE, getDisplayPath } from '../../utils/file.js';
+import { beautifyInlineText } from '../../utils/inlineBeautify.js';
 import { truncate } from '../../utils/format.js';
 import { extractTag } from '../../utils/messages.js';
+import type { ThemeName } from '../../utils/theme.js';
 
 // Reusable component for search result summaries
 function SearchResultSummary(t0) {
-  const $ = _c(26);
+  const $ = _c(29);
   const {
     count,
     countLabel,
     secondaryCount,
     secondaryLabel,
     content,
-    verbose
+    verbose,
+    theme
   } = t0;
   let t1;
   if ($[0] !== count) {
@@ -82,41 +85,43 @@ function SearchResultSummary(t0) {
       t6 = $[14];
     }
     let t7;
-    if ($[15] !== content) {
-      t7 = <Box marginLeft={5}><Text>{content}</Text></Box>;
+    if ($[15] !== content || $[16] !== theme) {
+      const beautified = beautifyInlineText(content || '', theme);
+      t7 = <Box marginLeft={5}><Text>{beautified}</Text></Box>;
       $[15] = content;
-      $[16] = t7;
+      $[16] = theme;
+      $[17] = t7;
     } else {
-      t7 = $[16];
+      t7 = $[17];
     }
     let t8;
-    if ($[17] !== t6 || $[18] !== t7) {
+    if ($[18] !== t6 || $[19] !== t7) {
       t8 = <Box flexDirection="column">{t6}{t7}</Box>;
-      $[17] = t6;
-      $[18] = t7;
-      $[19] = t8;
+      $[18] = t6;
+      $[19] = t7;
+      $[20] = t8;
     } else {
-      t8 = $[19];
+      t8 = $[20];
     }
     return t8;
   }
   let t5;
-  if ($[20] !== count) {
+  if ($[15] !== count) {
     t5 = count > 0 && <CtrlOToExpand />;
-    $[20] = count;
-    $[21] = t5;
+    $[15] = count;
+    $[16] = t5;
   } else {
-    t5 = $[21];
+    t5 = $[16];
   }
   let t6;
-  if ($[22] !== primaryText || $[23] !== secondaryText || $[24] !== t5) {
+  if ($[17] !== primaryText || $[18] !== secondaryText || $[19] !== t5) {
     t6 = <MessageResponse height={1}><Text>{primaryText}{secondaryText} {t5}</Text></MessageResponse>;
-    $[22] = primaryText;
-    $[23] = secondaryText;
-    $[24] = t5;
-    $[25] = t6;
+    $[17] = primaryText;
+    $[18] = secondaryText;
+    $[19] = t5;
+    $[20] = t6;
   } else {
-    t6 = $[25];
+    t6 = $[20];
   }
   return t6;
 }
@@ -174,20 +179,22 @@ export function renderToolResultMessage({
   numLines,
   numMatches
 }: Output, _progressMessagesForMessage: ProgressMessage<ToolProgressData>[], {
-  verbose
+  verbose,
+  theme
 }: {
   verbose: boolean;
+  theme: ThemeName;
 }): React.ReactNode {
   if (mode === 'content') {
-    return <SearchResultSummary count={numLines ?? 0} countLabel="行" content={content} verbose={verbose} />;
+    return <SearchResultSummary count={numLines ?? 0} countLabel="行" content={content} verbose={verbose} theme={theme} />;
   }
   if (mode === 'count') {
-    return <SearchResultSummary count={numMatches ?? 0} countLabel="匹配" secondaryCount={numFiles} secondaryLabel="文件" content={content} verbose={verbose} />;
+    return <SearchResultSummary count={numMatches ?? 0} countLabel="匹配" secondaryCount={numFiles} secondaryLabel="文件" content={content} verbose={verbose} theme={theme} />;
   }
 
   // files_with_matches mode
   const fileListContent = filenames.map(filename => filename).join('\n');
-  return <SearchResultSummary count={numFiles} countLabel="文件" content={fileListContent} verbose={verbose} />;
+  return <SearchResultSummary count={numFiles} countLabel="文件" content={fileListContent} verbose={verbose} theme={theme} />;
 }
 export function getToolUseSummary(input: Partial<{
   pattern: string;
