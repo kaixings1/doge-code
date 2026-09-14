@@ -13,12 +13,6 @@
     "strict": false,
     "ignoreDeprecations": "6.0",
     "noEmit": true,
-    "baseUrl": ".",
-    "paths": {
-      "src/*": [
-        "./src/*"
-      ]
-    },
     "types": [
       "bun"
     ],

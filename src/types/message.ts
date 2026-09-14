@@ -169,6 +169,8 @@ export type HookResultMessage = MessageBase & {
 /** 工具调用摘要消息 */
 export type ToolUseSummaryMessage = MessageBase & {
   type: 'tool_use_summary'
+  summary: string
+  precedingToolUseIds: string[]
 }
 
 /** 墓碑消息（标记删除） */

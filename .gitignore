@@ -20,8 +20,19 @@ src/commands/repo-pack/__tests__/fixtures/repomix-output.*
 src/commands/repo-pack/__tests__/fixtures/custom-output.*
 src/commands/repo-pack/__tests__/fixtures/data.json
 
-# 编译产物（源码为 .ts/.tsx，编译后由 compile.bat 清理）
+# 编译产物
+doge.exe
 src/services/remoteManagedSettings/securityCheck.jsx
+
+# 测试产物
+coverage/
+test_results*.txt
+test_results*.json
+test_output*.txt
+test_final.txt
+test_plugin.mjs
+temp/
+errors-export.json
 
 # doge-code 运行时配置（含 API token，禁止提交）
 .doge/

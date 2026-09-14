@@ -567,16 +567,20 @@ export class QueryEngine {
           (msg.content.includes(`<${LOCAL_COMMAND_STDOUT_TAG}>`) ||
             msg.content.includes(`<${LOCAL_COMMAND_STDERR_TAG}>`))
         ) {
-          yield localCommandOutputToSDKAssistantMessage(msg.content, msg.uuid)
+          yield localCommandOutputToSDKAssistantMessage(
+            msg.content,
+            msg.uuid as `${string}-${string}-${string}-${string}-${string}`,
+          )
         }
 
         if (msg.type === 'system' && msg.subtype === 'compact_boundary') {
+          const boundaryMsg = msg as import('./types/message.js').SystemCompactBoundaryMessage
           yield {
             type: 'system',
             subtype: 'compact_boundary' as const,
             session_id: getSessionId(),
-            uuid: msg.uuid,
-            compact_metadata: toSDKCompactMetadata(msg.compactMetadata),
+            uuid: boundaryMsg.uuid,
+            compact_metadata: toSDKCompactMetadata(boundaryMsg.compactMetadata),
           } as SDKCompactBoundaryMessage
         }
       }
@@ -625,7 +629,7 @@ export class QueryEngine {
                 fileHistory: updater(prev.fileHistory),
               }))
             },
-            message.uuid,
+            message.uuid as `${string}-${string}-${string}-${string}-${string}`,
           )
         })
     }
@@ -675,7 +679,8 @@ export class QueryEngine {
           message.type === 'system' &&
           message.subtype === 'compact_boundary'
         ) {
-          const tailUuid = message.compactMetadata?.preservedSegment?.tailUuid
+          const sysBoundary = message as import('./types/message.js').SystemCompactBoundaryMessage
+          const tailUuid = sysBoundary.compactMetadata?.preservedSegment?.tailUuid
           if (tailUuid) {
             const tailIdx = this.mutableMessages.findLastIndex(
               m => m.uuid === tailUuid,
@@ -685,7 +690,7 @@ export class QueryEngine {
             }
           }
         }
-        messages.push(message)
+        messages.push(message as import('./types/message.js').Message)
         if (persistSession) {
           // 对 assistant 消息采用即发即弃。claude.ts 为每个内容块产出一条 assistant 消息，
           // 然后在 message_delta 时修改最后一条消息的 message.usage/stop_reason ——
@@ -727,53 +732,67 @@ export class QueryEngine {
         case 'tombstone':
           // 墓碑消息是移除消息的控制信号，跳过它们
           break
-        case 'assistant':
+        case 'assistant': {
+          const assistantMsg = message as import('./types/message.js').AssistantMessage
           // 如果已经设置，则捕获 stop_reason（合成消息）。对于流式响应，
           // 在 content_block_stop 时此值为 null；真实值通过 message_delta 到达（下方处理）。
-          if (message.message.stop_reason != null) {
-            lastStopReason = message.message.stop_reason
+          if (assistantMsg.message?.stop_reason != null) {
+            lastStopReason = assistantMsg.message.stop_reason
           }
-          this.mutableMessages.push(message)
-          yield* normalizeMessage(message)
+          this.mutableMessages.push(assistantMsg)
+          yield* normalizeMessage(assistantMsg)
           break
-        case 'progress':
-          this.mutableMessages.push(message)
+        }
+        case 'progress': {
+          const progressMsg = message as import('./types/message.js').ProgressMessage
+          this.mutableMessages.push(progressMsg)
           // 内联记录，以便下一次 ask() 调用中的去重循环能将其视为已记录。
           // 若不如此，延迟的进度会与 mutableMessages 中已记录的工具结果交错，
           // 去重遍历会将 startingParentUuid 冻结在错误的消息上 —— 导致链条分叉，
           // 并在恢复时使对话成为孤儿。
           if (persistSession) {
-            messages.push(message)
+            messages.push(progressMsg)
             void recordTranscript(messages)
           }
-          yield* normalizeMessage(message)
+          yield* normalizeMessage(progressMsg)
           break
-        case 'user':
-          this.mutableMessages.push(message)
-          yield* normalizeMessage(message)
+        }
+        case 'user': {
+          const userMsg = message as import('./types/message.js').UserMessage
+          this.mutableMessages.push(userMsg)
+          yield* normalizeMessage(userMsg)
           break
-        case 'stream_event':
-          if (message.event.type === 'message_start') {
+        }
+        case 'stream_event': {
+          const streamEvt = message as import('./types/message.js').StreamEvent & {
+            event: {
+              type: string
+              message?: { usage?: Parameters<typeof updateUsage>[1] }
+              usage?: Parameters<typeof updateUsage>[1]
+              delta?: { stop_reason?: string | null }
+            }
+          }
+          if (streamEvt.event.type === 'message_start') {
             // 为新消息重置当前消息用量
             currentMessageUsage = EMPTY_USAGE
             currentMessageUsage = updateUsage(
               currentMessageUsage,
-              message.event.message.usage,
+              streamEvt.event.message?.usage as Parameters<typeof updateUsage>[1],
             )
           }
-          if (message.event.type === 'message_delta') {
+          if (streamEvt.event.type === 'message_delta') {
             currentMessageUsage = updateUsage(
               currentMessageUsage,
-              message.event.usage,
+              streamEvt.event.usage,
             )
             // 从 message_delta 捕获 stop_reason。assistant 消息在 content_block_stop 时产出，
             // 其 stop_reason 为 null；真实值仅在此处到达（参见 claude.ts 的 message_delta 处理器）。
             // 若无此步骤，result.stop_reason 始终为 null。
-            if (message.event.delta.stop_reason != null) {
-              lastStopReason = message.event.delta.stop_reason
+            if (streamEvt.event.delta?.stop_reason != null) {
+              lastStopReason = streamEvt.event.delta.stop_reason
             }
           }
-          if (message.event.type === 'message_stop') {
+          if (streamEvt.event.type === 'message_stop') {
             // 将当前消息用量累加到总用量中
             // 防止非标准 API 响应导致的 currentMessageUsage 未定义
             if (currentMessageUsage) {
@@ -787,7 +806,7 @@ export class QueryEngine {
           if (includePartialMessages) {
             yield {
               type: 'stream_event' as const,
-              event: message.event,
+              event: streamEvt.event,
               session_id: getSessionId(),
               parent_tool_use_id: null,
               uuid: randomUUID(),
@@ -795,20 +814,22 @@ export class QueryEngine {
           }
 
           break
-        case 'attachment':
-          this.mutableMessages.push(message)
+        }
+        case 'attachment': {
+          const att = message as import('./types/message.js').AttachmentMessage
+          this.mutableMessages.push(att)
           // 内联记录（原因同上方 progress）
           if (persistSession) {
-            messages.push(message)
+            messages.push(att)
             void recordTranscript(messages)
           }
 
           // 从 StructuredOutput 工具调用中提取结构化输出
-          if (message.attachment.type === 'structured_output') {
-            structuredOutputFromTool = message.attachment.data
+          if (att.attachment?.type === 'structured_output') {
+            structuredOutputFromTool = att.attachment.data
           }
           // 处理来自 query.ts 的达到最大轮数信号
-          else if (message.attachment.type === 'max_turns_reached') {
+          else if (att.attachment?.type === 'max_turns_reached') {
             if (persistSession) {
               if (
                 isEnvTruthy(process.env.CLAUDE_CODE_EAGER_FLUSH) ||
@@ -823,7 +844,7 @@ export class QueryEngine {
               duration_ms: Date.now() - startTime,
               duration_api_ms: getTotalAPIDuration(),
               is_error: true,
-              num_turns: message.attachment.turnCount,
+              num_turns: att.attachment.turnCount as number,
               stop_reason: lastStopReason,
               session_id: getSessionId(),
               total_cost_usd: getTotalCost(),
@@ -836,7 +857,7 @@ export class QueryEngine {
               ),
               uuid: randomUUID(),
               errors: [
-                `已达到最大对话轮数 (${message.attachment.maxTurns})`,
+                `已达到最大对话轮数 (${att.attachment.maxTurns as number})`,
               ],
             }
             return
@@ -859,36 +880,29 @@ export class QueryEngine {
               isReplay: true,
             } as SDKUserMessageReplay
           }
+          }
           break
         case 'stream_request_start':
           // 不产出流请求开始消息
           break
         case 'system': {
-          // Snip 边界：在我们的存储上重放，以移除僵尸消息和过时标记。
-          // 产出的边界是信号，而非待压入的数据 —— 重放会生成其自身的等价边界。
-          // 若无此步骤，标记会持续存在并在每个轮次重新触发，且 mutableMessages 永远不会收缩
-          // （在长 SDK 会话中造成内存泄漏）。
-          // 子类型检查位于注入的回调内部，以使受功能门控的字符串保留在本文件之外（被排除字符串检查）。
+          const sysMsg = message as import('./types/message.js').SystemMessage
           const snipResult = this.config.snipReplay?.(
-            message,
+            sysMsg,
             this.mutableMessages,
           )
-          if (snipResult !== undefined) {
-            if (snipResult.executed) {
-              this.mutableMessages.length = 0
-              this.mutableMessages.push(...snipResult.messages)
-            }
+          if (snipResult && snipResult.executed) {
+            this.mutableMessages.length = 0
+            this.mutableMessages.push(...snipResult.messages)
             break
           }
-          this.mutableMessages.push(message)
+          this.mutableMessages.push(sysMsg)
           // 向 SDK 产出压缩边界消息
+          const sysBoundary = sysMsg as import('./types/message.js').SystemCompactBoundaryMessage
           if (
-            message.subtype === 'compact_boundary' &&
-            message.compactMetadata
+            sysBoundary.subtype === 'compact_boundary' &&
+            sysBoundary.compactMetadata
           ) {
-            // 释放压缩前的消息以供 GC。边界刚刚被压入，因此它是最后一个元素。
-            // query.ts 内部已使用 getMessagesAfterCompactBoundary()，
-            // 因此后续仅需边界后的消息。
             const mutableBoundaryIdx = this.mutableMessages.length - 1
             if (mutableBoundaryIdx > 0) {
               this.mutableMessages.splice(0, mutableBoundaryIdx)
@@ -897,41 +911,46 @@ export class QueryEngine {
             if (localBoundaryIdx > 0) {
               messages.splice(0, localBoundaryIdx)
             }
-
             yield {
               type: 'system',
               subtype: 'compact_boundary' as const,
               session_id: getSessionId(),
-              uuid: message.uuid,
-              compact_metadata: toSDKCompactMetadata(message.compactMetadata),
+              uuid: sysBoundary.uuid,
+              compact_metadata: toSDKCompactMetadata(sysBoundary.compactMetadata),
             }
           }
-          if (message.subtype === 'api_error') {
+          const sysErr = sysBoundary as import('./types/message.js').SystemAPIErrorMessage & {
+            retryAttempt?: number
+            maxRetries?: number
+            retryInMs?: number
+          }
+          if (sysBoundary.subtype === 'api_error') {
             yield {
               type: 'system',
               subtype: 'api_retry' as const,
-              attempt: message.retryAttempt,
-              max_retries: message.maxRetries,
-              retry_delay_ms: message.retryInMs,
-              error_status: message.error.status ?? null,
-              error: categorizeRetryableAPIError(message.error),
+              attempt: sysErr.retryAttempt || 0,
+              max_retries: sysErr.maxRetries || 0,
+              retry_delay_ms: sysErr.retryInMs || 0,
+              error_status: (sysErr.error as { status?: number | null } | undefined)?.status || null,
+              error: categorizeRetryableAPIError(sysErr.error as unknown as Parameters<typeof categorizeRetryableAPIError>[0]),
               session_id: getSessionId(),
-              uuid: message.uuid,
+              uuid: sysBoundary.uuid,
             }
           }
-          // 在无头模式下不产出其他系统消息
           break
         }
-        case 'tool_use_summary':
+        case 'tool_use_summary': {
+          const summaryMsg = message as import('./types/message.js').ToolUseSummaryMessage
           // 向 SDK 产出工具使用摘要消息
           yield {
             type: 'tool_use_summary' as const,
-            summary: message.summary,
-            preceding_tool_use_ids: message.precedingToolUseIds,
+            summary: summaryMsg.summary,
+            preceding_tool_use_ids: summaryMsg.precedingToolUseIds,
             session_id: getSessionId(),
-            uuid: message.uuid,
+            uuid: summaryMsg.uuid,
           }
           break
+        }
       }
 
       // 检查是否超出 USD 预算
@@ -1235,10 +1254,11 @@ export async function* ask({
     orphanedPermission,
     ...(feature('HISTORY_SNIP')
       ? {
-          snipReplay: (yielded: Message, store: Message[]) => {
-            if (!snipProjection!.isSnipBoundaryMessage(yielded))
-              return undefined
-            return snipModule!.snipCompactIfNeeded(store, { force: true })
+          snipReplay: (yieldedSystemMsg: Message, store: Message[]) => {
+            if (!snipProjection!.isSnipBoundaryMessage())
+              return { messages: [] as Message[], executed: false }
+            const result = snipModule!.snipCompactIfNeeded(store, { force: true })
+            return { messages: result.messages as Message[], executed: result.changed }
           },
         }
       : {}),

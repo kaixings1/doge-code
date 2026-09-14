@@ -5,7 +5,7 @@ export function snipCompactIfNeeded<T>(messages: T, _options?: unknown): {
   return { messages, changed: false }
 }
 
-export function isSnipBoundaryMessage(): boolean {
+export function isSnipBoundaryMessage(_msg?: Message): boolean {
   return false
 }
 
