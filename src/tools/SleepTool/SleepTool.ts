@@ -1,9 +1,9 @@
 import { feature } from 'bun:bundle'
 import { z } from 'zod/v4'
-import type { ToolResultBlockParam } from 'src/Tool.js'
-import { buildTool } from 'src/Tool.js'
-import { lazySchema } from 'src/utils/lazySchema.js'
-import { notifyAutomationStateChanged } from 'src/utils/sessionState.js'
+import type { ToolResultBlockParam } from '../../Tool.js'
+import { buildTool } from '../../Tool.js'
+import { lazySchema } from '../../utils/lazySchema.js'
+import { notifyAutomationStateChanged } from '../../utils/sessionState.js'
 import {
   SLEEP_TOOL_NAME,
   DESCRIPTION,
