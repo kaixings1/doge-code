@@ -34,7 +34,7 @@
 
 // ─── 自包含解析逻辑（不依赖 TS 编译产物）───────────────────────────
 
-const TRIGGER_RE = /直到|直至|为止|循环|反复|迭代|不断|重复|持续|until|while|repeat\s+until/i
+const TRIGGER_RE = /直到|直至|为止|反复|迭代|不断|重复|持续|until|while|repeat\s+until/i
 
 const CONDITION_RES = [
   /直到([^，。；,;]+)/g,

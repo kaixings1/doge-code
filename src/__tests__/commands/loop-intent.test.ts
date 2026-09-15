@@ -27,4 +27,16 @@ describe('loop intent - injected instruction guard', () => {
     expect(result).not.toBeNull()
     expect(result!.criteria.length).toBeGreaterThanOrEqual(1)
   })
+
+  it('should NOT trigger on 循环 alone without condition', () => {
+    expect(isLoopIntentText('这个循环有问题')).toBe(false)
+    expect(isLoopIntentText('循环检查一下')).toBe(false)
+    expect(isLoopIntentText('进入循环队列')).toBe(false)
+    expect(extractLoopIntent('这个循环有问题')).toBeNull()
+  })
+
+  it('should NOT trigger on xh队列 (拼音输入场景)', () => {
+    expect(isLoopIntentText('xh队列')).toBe(false)
+    expect(extractLoopIntent('xh队列')).toBeNull()
+  })
 })
