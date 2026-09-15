@@ -7,6 +7,7 @@
 export { Orchestrator, type OrchestratorDeps, DEFAULT_CONFIG } from './orchestrator.js'
 export { PipelineExecutor, type PipelineExecutorDeps, PIPELINE_STAGES } from './pipeline.js'
 export { TaskGraph, buildPipelineGraph, buildParallelGraph } from './taskGraph.js'
+export { UnifiedScheduler, createUnifiedScheduler, type SchedulerMode, type SchedulerOptions, type SchedulerEvent } from '../unifiedScheduler.js'
 export {
   buildAgentDefinition,
   getAllRoles,
