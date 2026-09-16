@@ -1,4 +1,4 @@
-import type { InternalPermissionMode } from 'src/types/permissions.js'
+import type { InternalPermissionMode } from '../../../types/permissions.js'
 
 export type SDKControlInitializeRequest = {
   subtype: 'initialize'

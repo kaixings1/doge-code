@@ -1,3 +1,4 @@
+import { z } from 'zod/v4'
 import { feature } from 'bun:bundle'
 import type {
   ContentBlockParam,
@@ -612,8 +613,25 @@ async function checkPermissionsAndCallTool(
     progress: ToolProgress<ToolProgressData> | ProgressMessage<HookProgress>,
   ) => void,
 ): Promise<MessageUpdateLazy[]> {
-  // Validate input types with zod (surprisingly, the model is not great at generating valid input)
-  const parsedInput = tool.inputSchema.safeParse(input)
+  // Validate input types with zod (surprisingly, the model is not great at generating valid input).
+  // Defensively strip any fields the schema doesn't know about so that upstream
+  // callers sending extra params (e.g. `sessionId`) are tolerated without
+  // loosening the per-tool strict definition.
+  const rawSchema = tool.inputSchema instanceof z.ZodObject
+    ? tool.inputSchema
+    : tool.inputSchema instanceof z.ZodEffects &&
+      tool.inputSchema._def.in instanceof z.ZodObject
+      ? tool.inputSchema._def.in
+      : null
+  const knownKeys = rawSchema ? Object.keys(rawSchema.shape) : []
+  const cleanedInput = Array.isArray(input)
+    ? input
+    : knownKeys.length > 0 && typeof input === 'object' && input !== null
+      ? Object.fromEntries(
+          Object.entries(input).filter(([key]) => knownKeys.includes(key)),
+        )
+      : input
+  const parsedInput = tool.inputSchema.safeParse(cleanedInput)
 
   if (!parsedInput.success) {
     let errorContent = formatZodValidationError(tool.name, parsedInput.error)

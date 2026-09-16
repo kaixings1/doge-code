@@ -11,7 +11,7 @@ import type {
   BetaToolUnion,
   BetaUsage,
 } from '@anthropic-ai/sdk/resources/beta/messages/messages.mjs'
-import type { AssistantMessage } from 'src/types/message.js'
+import type { AssistantMessage } from '../../types/message.js'
 
 type AnyBlock = Record<string, unknown>
 
