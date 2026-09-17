@@ -163,11 +163,11 @@ function buildPrompt(opts: {
       : BASE_QUESTION
   const firstStep = userArgs
     ? `用户已经告诉了您他们的需求（请查看底部的用户请求）。跳过初始问题，直接进入对应的工作流程。`
-    : `您的第一步必须是调用单个 ${ASK_USER_QUESTION_TOOL_NAME} 工具（无前言）。请使用以下精确字符串作为 \`question\` 字段 — 不要改写或缩短：
+    : `您的第一步必须是调用单个 ${ASK_USER_QUESTION_TOOL_NAME} 工具（无前言）。参数形如 \`{questions: [{question, header, options}]}\`：在 \`questions\` 数组中放入一个问题，其 \`question\` 字段请使用以下精确字符串 — 不要改写或缩短：
 
 ${jsonStringify(initialQuestion)}
 
-设置 \`header: "操作"\` 并提供四个操作选项（创建/列表/更新/运行）。用户选择后，按照下方对应的工作流程执行。`
+该问题的 \`header\` 设为 \`"操作"\`，\`options\` 提供四个操作选项（创建/列表/更新/运行）。用户选择后，按照下方对应的工作流程执行。`
 
   return `# 定时远程代理
 

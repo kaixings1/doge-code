@@ -103,6 +103,24 @@
 - **验证**: 该测试 9/9 通过（修复前 `abc` 与 `-5` 两项必然失败，测试确实能拦住回归）；`tsc` 0 错误；`biome` 通过；全量 `vitest run` → 363 文件 / 1857 测试全部通过
 - **为何不加 UI 项**: 该参数在**每次重试循环建立时**读取，不能做文件 IO（`loadDogeConfig` 是同步读盘），故 env 是正确设计；而 `settings.json` 的 `env` 已提供持久配置通道，再加会话级 UI 项是倒退
 
+### [x] 15. 修复 AskUserQuestion 报「缺少必需参数 `questions`」（提示词与 schema 不一致）
+- **现象**: 调用 `AskUserQuestion` 返回 `InputValidationError: ... 缺少必需参数 \`questions\``
+- **文件**: `src/skills/bundled/scheduleRemoteAgents.ts:166,170`
+- **根因**: 该技能的提示词指示的形状与工具 schema 不符
+  - 提示词原文:「请使用以下精确字符串作为 **`question`** 字段 …… 设置 **`header: "操作"`** 并提供四个操作选项」
+  - 实际 schema（`AskUserQuestionTool.tsx:62`）: `z.strictObject({ questions: z.array(questionSchema()).min(1).max(4), ... })`，且 `header` / `options` 是 `questions[]` 元素**内部**的字段
+  - 即提示词把模型引向扁平结构 `{question, header, options}`，而 schema 要求 `{questions: [{question, header, options}]}`
+  - 正确形状的权威说明见 `src/components/tasks/RemoteSessionDetailDialog.tsx:51` 注释：`// Input shape is {questions: [{question, header, options}]}.`
+  - 且 `inputSchema` 用 `z.strictObject` → 顶层多余键 `question`/`header`/`options` 被拒；配合 commit `df289e601` 在 zod 校验前**过滤未知字段**的逻辑，这些键被剥掉后只剩 `{}`，于是唯一报错正是「缺少必需参数 `questions`」——与现象完全吻合
+- **非回归**: 该错误自 `5070d4a27 Initial commit` 就存在（英文原文同样是 `Use this EXACT string for the \`question\` field` + `Set \`header: "Action"\``），`39a11b9ea 大改提示词后提交` 只是把它译成中文，未引入也未修复
+- **操作**: 改写提示词，明确 `questions` 数组包裹与嵌套字段关系：
+  - 参数形如 `{questions: [{question, header, options}]}`：在 `questions` 数组中放入一个问题，其 `question` 字段使用精确字符串
+  - 该问题的 `header` 设为 `"操作"`，`options` 提供四个操作选项
+- **为何不在工具层加兼容垫片**: 模型生成的工具输入确是信任边界，但此处是**本项目自己的提示词写错了**。修提示词是根因修复；加垫片会保留错误提示词，使所有调用方（含第三方模型）继续产出错误形状，属治标。且 .dogerules 明确「不要为不可能发生的情况添加回退」
+- **同源排查**: 全库搜索「`question` 字段」类表述，另有 `src/commands/init.ts:81` 提到 `question` 字段，但其上下文是在描述问题对象**内部**字段（`question` 纯文本 vs `options[].preview` markdown），未要求顶层扁平结构，且无失败证据 → **不改**
+- **验证**: `tsc` 0 错误；`biome` 通过；全量 `vitest run` → 363 文件 / 1857 测试全部通过（无测试引用该技能构建函数，故无测试需同步）
+- **注意**: 该技能构建函数未导出，无法直接单测渲染结果；如需回归防护，需先导出构建函数
+
 ---
 
 ### [ ] 3. main.tsx 拆分（仅计划，暂不执行）
@@ -176,11 +194,38 @@
 
 ---
 
-## P4 — 后续增强
+### [!] 8. 测试覆盖率 — 已测量，阈值为配置失真（未改动门禁）
+- **命令**: `bun run test:coverage`（= `vitest run --coverage`）
+- **2026-09-17 实测结果**（解析 `coverage/coverage-final.json`，44MB）：
 
-### [ ] 8. 测试覆盖增强
-- 运行 `bun run test:coverage` 确认当前覆盖率
-- 为拆分后的模块补充单元测试
+| 指标 | 实测 | vitest.config.ts 阈值 | 差距 |
+|---|---|---|---|
+| 语句 / 行 | **10.88%** | 70% | 需提升 6.4 倍 |
+| 函数 | **13.82%** | 70% | — |
+| 分支 | — | 60% | — |
+
+- **绝对量**: 被统计 2860 文件 / **513,987 语句**，已覆盖 55,931 语句
+- **未覆盖主体**: **1328 个文件完全未覆盖（0%），合计 227,454 语句 = 全部语句的 44%**
+- **未覆盖集中在结构上难测的代码**（按语句数）：
+
+| 文件 | 语句 | 覆盖 |
+|---|---|---|
+| `src/cli/print.ts` | 4077 | 0% |
+| `src/screens/REPL.tsx` | 3397 | 0% |
+| `src/main.tsx` | 3377 | 0% |
+| `src/commands/batch-han/batch-han.ts` | 3103 | 0% |
+| `src/context-mode/**`（95 文件） | 23944 | **0%** |
+| `src/components/**`（419 文件） | 72414 | 1.7% |
+| `src/generated/**`（4 文件） | 2296 | **0%** |
+
+- **判断**: 70% 阈值是**配置失真**而非可达目标。理由：① 主体是 Ink/React UI 组件与 CLI 入口，需完整渲染层才能测，而本项目**未安装 `ink-testing-library`**（无组件测试基础设施）；② 现有 1857 个测试以 `should be defined` / `should be a const` 形状断言为主，不驱动真实执行；③ `src/generated/**` 是机器生成代码，纳入覆盖率统计本身是测量错误
+- **为何不修改阈值**: 覆盖率门禁属质量门禁。把阈值下调到实测值以让红灯变绿，正是「用破坏性捷径让问题消失」的反模式（见 .dogerules）。**改动门禁需团队决策，不由我单方面执行**
+- **建议**（若采纳需团队确认）: 把阈值改为「按当前基线冻结 + 逐步提高」的棘轮模式（如 statements 12% 起步，每次只升不降），并先排除 `src/generated/**` 这类生成代码与 `src/entrypoints/**`
+- **当前副作用**: `bun run test:coverage` **必然非零退出**（三条 ERROR 行），CI 若接入该命令会一直红
+
+---
+
+## P4 — 后续增强
 
 ---
 
