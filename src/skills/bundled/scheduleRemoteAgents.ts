@@ -167,7 +167,7 @@ function buildPrompt(opts: {
 
 ${jsonStringify(initialQuestion)}
 
-该问题的 \`header\` 设为 \`"操作"\`，\`options\` 提供四个操作选项（创建/列表/更新/运行）。用户选择后，按照下方对应的工作流程执行。`
+该问题的 \`header\` 设为 \`"操作"\`，\`options\` 提供四个操作选项（创建/列表/更新/运行）。每个 option 必须同时给出 \`label\`（简短标签）与 \`description\`（该操作做什么）——二者均为必填。用户选择后，按照下方对应的工作流程执行。`
 
   return `# 定时远程代理
 

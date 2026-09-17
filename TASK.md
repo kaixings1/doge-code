@@ -118,8 +118,12 @@
   - 该问题的 `header` 设为 `"操作"`，`options` 提供四个操作选项
 - **为何不在工具层加兼容垫片**: 模型生成的工具输入确是信任边界，但此处是**本项目自己的提示词写错了**。修提示词是根因修复；加垫片会保留错误提示词，使所有调用方（含第三方模型）继续产出错误形状，属治标。且 .dogerules 明确「不要为不可能发生的情况添加回退」
 - **同源排查**: 全库搜索「`question` 字段」类表述，另有 `src/commands/init.ts:81` 提到 `question` 字段，但其上下文是在描述问题对象**内部**字段（`question` 纯文本 vs `options[].preview` markdown），未要求顶层扁平结构，且无失败证据 → **不改**
-- **验证**: `tsc` 0 错误；`biome` 通过；全量 `vitest run` → 363 文件 / 1857 测试全部通过（无测试引用该技能构建函数，故无测试需同步）
-- **注意**: 该技能构建函数未导出，无法直接单测渲染结果；如需回归防护，需先导出构建函数
+- **验证**: `tsc` 0 错误；`biome` 通过；全量 `vitest run` → 364 文件 / 1869 测试全部通过
+- **机制实证**: 已确认 `toolExecution.ts:620-635` 的实现——取 `rawSchema.shape` 的已知键（AskUserQuestion 为 `['questions','answers','annotations','metadata']`）过滤输入。扁平形状的 `question`/`header`/`options` 全部不属于已知键，被剥掉后剩 `{}`，故唯一报错是「缺少必需参数 `questions`」，与现象完全吻合
+- **回归防护**: 新增 `src/__tests__/tools/askUserQuestionSchema.test.ts`（12 用例），其中核心用例即复现该路径：`stripUnknown(扁平形状)` 断言等于 `{}`、且错误 `path` 含 `questions`。另覆盖正确形状通过、`min(1)`/`max(4)`/`options min(2)`、问题文本与选项标签去重、`strictObject` 拒绝顶层未知键（过滤后可容忍）
+- **同类排查**: 搜索「`question` 字段」类表述与「EXACT string / 精确字符串」式强制指令，仅 `scheduleRemoteAgents.ts` 一处命中；`AgentTool/prompt.ts:276` 的 `SendMessage` `to` 字段已核对 schema（`to: z.string()`）正确；`skills/bundled/skillify.ts:150` 的「不要使用 body 字段」是否定性提示，无误导
+- **顺带加固**: 原提示词只说「提供四个操作选项」，未提 `options[].label` 与 `options[].description` 均为**必填**（schema 无 default），存在同类失效风险 → 补明二者必填
+- **注意**: 该技能构建函数 `buildPrompt` 未导出，无法直接单测渲染结果；本次测试覆盖的是 schema 契约层，提示词文本正确性靠人工核对。如需更强防护，需先导出构建函数
 
 ---
 
