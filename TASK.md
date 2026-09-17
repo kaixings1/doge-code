@@ -13,10 +13,22 @@
 - **操作**: 删除第 110 行重复导入
 - **验证**: `bun run lint` 通过
 
-### [ ] 2. commands.ts 动态注册改造
+### [!] 2. commands.ts 动态注册改造 — 经查证为「已回退方向」，建议不再执行
 - **文件**: `src/commands.ts` → `src/commands/`
-- **目标**: 100+ 静态导入改为动态扫描 `commands/` 目录自动注册
-- **原则**: 新命令无需修改主文件，遵循 OCP
+- **原始目标**: 100+ 静态导入改为动态扫描 `commands/` 目录自动注册（OCP）
+- **2026-09-17 查证结论**: 该方向已被尝试并回退至少 4 次，非「未开始」
+  - `df71dcead` fallback 改用 COMMAND_MODULES 静态注册表（首次引入）
+  - `03ff8b6eb` commands.ts 直接使用 COMMAND_MODULES 作为默认值
+  - `69f0c35df` multiExportCommands 改用 COMMAND_MODULES，280 → 440 个命令
+  - `045ddbd4e` Expand commands.ts with multi-export + conditional command support
+  - 这 4 次提交全部是 `fix`，全部在修「编译后命令不可用」
+  - **当前 `COMMAND_MODULES` / `COMMAND_REGISTRY` 在 src/ 下零引用（仅自引用），接线已被回退**
+- **回退根因**: `bun build --compile` 后 `import.meta.dir` 指向虚拟路径 `B:/~BUN/root/`，磁盘上不存在 `commands/` 目录，动态扫描不可用；静态注册表又需人工同步
+- **当前生成物质量不足以直接接线**:
+  - `src/generated/command-modules.ts`：220 个模块导入，而 `commands.ts` 仅需 151 个 → **多收 69 个辅助文件**（如 `_shared/strings.ts` → key `_shared-strings`、`add-dir/validation.ts` → key `add-dir-validation`）
+  - key 由**文件路径派生**而非模块 `default.name` → `add-model-add-model` ≠ 真实命令名 `add-model`
+  - 丢失 `COMMANDS()` 数组中人工编排的顺序（影响 /help 与补全排序）
+- **建议**: 不执行接线。若仍需 OCP，正确做法是改造 `scripts/gen-command-registry.ts`——① 只收 `index.ts/index.tsx` 与顶层单文件命令；② key 改为读取模块 `default.name`；③ 顺序由 `sortOrder` 等显式字段声明而非字典序。改造前需先能验证 280 个命令的注册/别名/type 全量对齐
 
 ### [x] 9. openaiCompat 配对工具 XML 解析修复
 - **文件**: `src/services/api/openaiCompat.ts`
@@ -45,6 +57,52 @@
 - **验证**: `getCommands()` 中 login 出现且 `type=local-jsx`、`isEnabled()=true`、`load` 存在；`builtInCommandNames` 含 `login`；login.test.ts 1/1 通过
 - **注意**: 排查其他命令是否也有"工厂函数"式导出，避免同类问题
 
+### [x] 12. 工具组配置化（对应挂起后台任务 bg-mu2gfg0i）
+- **新增文件**:
+  - `src/utils/toolGroups.ts` — 工具组配置与过滤逻辑（读 ~/.doge/config.json 的 toolGroups 段）
+  - `src/commands/toolgroup/index.ts` + `toolgroup.ts` — `/toolgroup` 命令入口
+  - `src/__tests__/utils/toolGroups.test.ts` — 10 个测试用例
+- **修改文件**:
+  - `src/tools.ts` — `getAllBaseTools(options?: { unfiltered?: boolean })` 末尾接入 `filterToolsByActiveGroup`；新增 `unfiltered` 选项供管理界面展示完整工具清单
+  - `src/commands.ts` — 注册 `toolgroup` 命令（+2 行）
+  - `src/components/Settings/Config.tsx` — Settings 界面新增「当前工具组」枚举项（界面化，见下）
+  - `src/utils/config/dogeConfig.ts` — 修复 `ensureDogeDir()` 缺少 `mkdirSync` 导入的既有 bug（~/.doge 不存在时首次写入抛 ReferenceError）
+- **能力**（对应原需求逐条）:
+  - 组内工具增删 → `/toolgroup add|rm <组名> <工具..>`
+  - 全局组可用 → 内置 `global` 组语义为「全部工具」，不可增删
+  - 全局组另存为命名组 → `/toolgroup new <组名>`（快照当前全部工具）
+  - 运行时可切组、调整后立即生效 → `/toolgroup use <组名>`；`getAllBaseTools()` 每次重新构建且配置每次读盘，无需重启
+  - 不删除已有功能 → 默认处于 `global` 组时过滤为恒等变换
+- **界面化**（`src/components/Settings/Config.tsx`）:
+  - 在 Settings 中新增 `type: 'enum'` 项「当前工具组：\<组名\>」，可直接下拉切换
+  - 复用该文件既有模式：`useState` 回显 + `onChange` 写配置并触发重渲染（避免切换后 UI 显示旧值）
+  - 仅当存在命名组时出现（只有 global 一个选项的枚举无交互意义，避免给不用此功能的用户添噪音）
+  - `toolGroupList` 提到数组外只读一次配置，避免在长列表渲染中重复同步 IO
+  - 边界：**组的创建/增删工具仍走 `/toolgroup` 命令**。Ink 的 Setting 类型仅支持 boolean/enum，复杂组编辑需专门子组件（如 ModelPicker 式的 managedEnum），成本高于收益
+- **与既有机制的关系**: 环境变量 `CLAUDE_CODE_FEATURE_*`（`featureOverrides` 系统 + `loadConditionalCommand`）决定**加载期**工具是否存在；工具组是叠加其上的**运行期可见性**过滤器，两者不冲突
+- **验证**:
+  - `vitest run src/__tests__/utils/toolGroups.test.ts` → 10/10 通过
+  - `vitest run src/__tests__/tools/ src/__tests__/commands/` → 292 文件 / 1015 测试全部通过
+  - `tsc --noEmit --skipLibCheck` → 0 错误（含 Config.tsx 改动）
+  - `biome check` 改动文件 → 通过
+  - `bun run src/bootstrap-entry.ts --version` → EXIT=0（启动路径未破坏）
+  - 端到端脚本（临时，已删）→ 13 项全通过：真实配置落盘/读回、`mkdirSync` 修复生效、切组过滤生效、拒绝不存在的工具与组、删除激活组后回落 global
+- **已知边界**: 组只按工具名过滤，无法用组「开启」一个因环境变量而未 import 的工具（需在 `tools.ts` 的 conditionalImport 层扩展）
+
+### [x] 13. 清理过期运行时任务状态
+- **问题**: 会话 `3be8cea9` 的 `2.json`「创建任务执行器」停留在 `in_progress`，但其目标是 Electron 架构 `src/main/tasks/`，本仓库无 `src/main/`、`src/preload/`（属另一项目）
+- **操作**: 该任务对应实现已于 `src/utils/taskExecutor.ts`（389 行）落地，状态改为 `completed`
+
+### [x] 14. 修复 CLAUDE_CODE_MAX_RETRIES 非法值致所有 API 调用静默失败
+- **文件**: `src/services/api/withRetry.ts`（`getDefaultMaxRetries()`）
+- **根因**: 原实现 `return Math.min(parseInt(env, 10), 15)` 未校验 `parseInt` 结果。环境变量非法时 `parseInt` 返回 `NaN`，`Math.min(NaN, 15)` 仍为 `NaN` → `getMaxRetries()` 返回 `NaN` → 重试循环 `for (let attempt = 1; attempt <= maxRetries + 1; attempt++)` 中 `1 <= NaN` 恒为 `false`，**循环体一次都不执行**：不发任何请求，`lastError` 保持未赋值，紧接着 `withRetry.ts:583` 抛 `CannotRetryError`（携带未赋值的 lastError）
+- **影响**: 一个手误的环境变量（如 `CLAUDE_CODE_MAX_RETRIES=abc`）会让**所有** API 调用立即失败且不发出任何请求，错误信息指向不明确的原因，极难定位
+- **同类隐患**: 负数（如 `-5`）同样使循环不执行（`1 <= -4` 为 false）
+- **操作**: 解析后校验 `Number.isFinite(parsed) && parsed >= 0` 才采用，否则回落到 `DEFAULT_MAX_RETRIES`（15）。保留 `0` 为合法值（不重试，循环仍执行 1 次）、保留上限截断 15、保留 watchdog 无限重试分支
+- **新增测试**: `src/__tests__/api/withRetryMaxRetries.test.ts` — 9 个用例，覆盖未设置 / 合法值 / 0 / 超上限截断 / 非数字 / 负数 / 空串 / watchdog / 「返回值始终能驱动循环至少执行一次」不变量
+- **验证**: 该测试 9/9 通过（修复前 `abc` 与 `-5` 两项必然失败，测试确实能拦住回归）；`tsc` 0 错误；`biome` 通过；全量 `vitest run` → 363 文件 / 1857 测试全部通过
+- **为何不加 UI 项**: 该参数在**每次重试循环建立时**读取，不能做文件 IO（`loadDogeConfig` 是同步读盘），故 env 是正确设计；而 `settings.json` 的 `env` 已提供持久配置通道，再加会话级 UI 项是倒退
+
 ---
 
 ### [ ] 3. main.tsx 拆分（仅计划，暂不执行）
@@ -71,11 +129,18 @@
 
 ## P2 — 可执行阶段（中低风险）
 
-### [ ] 4. tools.ts 条件加载标准化
+### [!] 4. tools.ts 条件加载标准化 — 经查证前提有误，不建议执行
 - **文件**: `src/tools.ts`
-- **问题**: 11 处 `require()` 动态加载打破循环依赖，模式分散
-- **目标**: 统一为 `conditionalImport()` 工具函数
-- **验证**: 所有条件工具仍按预期加载/跳过
+- **原始描述**: 11 处 `require()` 动态加载打破循环依赖，模式分散，统一为 `conditionalImport()`
+- **2026-09-17 查证结论**: 原始描述**混淆了两种目的不同的加载模式**，`src/tools.ts` 实为 4 类：
+  - **A 类 · 条件加载 × 8**，已用 `loadConditionalCommand`：REPLTool、SleepTool、cronTools、RemoteTriggerTool、SendUserFileTool、PushNotificationTool、SubscribePRTool
+  - **B 类 · 条件加载 × 9**，内联三元：VerifyPlanExecutionTool、OverflowTestTool、CtxInspectTool、TerminalCaptureTool、WebBrowserTool、coordinatorModeModule、SnipTool、ListPeersTool、WorkflowTool
+  - **C 类 · 懒加载破环 × 3**：`getTeamCreateTool` / `getTeamDeleteTool` / `getSendMessageTool`（`tools.ts:100-108`）；另有 `getPowerShellTool`（`:188`）为条件 + 懒加载混合
+  - **D 类 · 无条件直接 require × 1**：AgentProxyTool
+- **C 类不可统一**: 其源码注释明确「懒加载 require 以打破循环依赖：tools.ts → TeamCreateTool/TeamDeleteTool → ... → tools.ts」。改 `loadConditionalCommand` 会把「每次调用时 require」变成「模块加载时求值一次」，**导致循环依赖回归**
+- **A/B 类统一的收益**: 仅「模式一致」+ `safeRequire` 的 try/catch 兜底。但已实测 48/48 条件引用点全部解析成功、0 死条件（临时脚本，已删），**兜底收益当前为 0**
+- **结论**: 纯重构、零功能收益、需改 9 处顶层模块加载逻辑（影响启动顺序与副作用，如 `WorkflowTool` 的 `initBundledWorkflows()`）。违背「最短能工作的 diff 赢」，**不做**
+
 
 ### [ ] 5. Tool.ts 类型拆分
 - **文件**: `src/Tool.ts`（31KB）
@@ -92,10 +157,17 @@
 
 ## P3 — 待评估（中风险）
 
-### [ ] 6. core.ts 迁移/移除
-- **文件**: `src/core.ts`（34KB，GrowthBook SDK）
-- **问题**: 与项目核心（AI CLI）完全无关，放在 src/ 根目录造成混淆
-- **操作**: 确认无内部引用后迁移到 `vendor/` 或直接移除
+### [!] 6. core.ts 迁移/移除 — 经查证前提有误（并非无引用），暂不执行
+- **文件**: `src/core.ts`（34KB，GrowthBook SDK 实现）
+- **原始描述**: 「确认无内部引用后迁移到 `vendor/` 或直接移除」
+- **2026-09-17 查证结论**: **`src/core.ts` 是活的，有 3 个引用**：
+  - `src/GrowthBook.ts:58` — `} from "./core";`
+  - `src/GrowthBookClient.ts:43` — `} from "./core";`
+  - `src/sticky-bucket-service.ts:7` — `import { getStickyBucketAttributeKey } from "./core";`
+- **排查教训**: 首次搜索只匹配 `./core.js`（带扩展名），漏掉**无扩展名**的 `from "./core"`；同类失误另一次是只查 `.ts` 漏 `.tsx`（误判 `ultraplan.tsx` 不存在）。**搜索引用必须覆盖全部导入形式（带/不带扩展名、动态 import、require、别名）**
+- **判断**: 「与 AI CLI 无关」属实，但它是被引用的分析 SDK，不是死代码。且 GrowthBook 相关文件是**一整套**（`core.ts` / `GrowthBook.ts` / `GrowthBookClient.ts` / `mongrule.ts` / `types/growthbook.ts` / `types/mongrule.ts` / `sticky-bucket-service.ts` / `auto-wrapper.ts`），`auto-wrapper.ts` → `GrowthBook.ts` → `core.ts` 构成链路
+- **结论**: 若要迁移须**整体迁移整套 + 改 3 处导入**，属目录整洁性质，无功能收益且触及启动路径。**暂不执行**；如确要做，需先确认 `auto-wrapper.ts` 是否在启动路径上
+
 
 ### [ ] 7. query.ts 与 query/ 合并
 - **文件**: `src/query.ts`（50KB）+ `src/query/` 目录
@@ -109,6 +181,80 @@
 ### [ ] 8. 测试覆盖增强
 - 运行 `bun run test:coverage` 确认当前覆盖率
 - 为拆分后的模块补充单元测试
+
+---
+
+## 挂起后台任务处置（2026-09-17）
+
+运行时任务目录 `~/.doge/tasks/` 中两个长期挂起的 background 任务：
+
+| 任务 | 创建时间 | 描述 | 处置 |
+|---|---|---|---|
+| bg-mu2gfg0i | 09-15 | 工具组环境变量配置化 | ✅ 已完成，见 #12 |
+| bg-mu4dnjoo | 09-16 | 复查全部源码，硬编码参数/分支逻辑配置化 + 界面化 | ✅ 三个维度已复查完毕，结论见下（修掉 1 个真实 bug，见 #14） |
+
+### 关于 bg-mu4dnjoo（硬编码配置化）
+
+**实测结论（2026-09-17）：既有 `featureOverrides` 系统完整，无缺口，不需要改动。**
+
+对全库 `CLAUDE_CODE_FEATURE_*` 检查点做了机器统计（临时脚本，已删）：
+
+| 指标 | 数量 |
+|---|---|
+| 代码中实际检查的 FEATURE 变量 | 42 |
+| `OVERRIDABLE_FEATURES` 已登记 | 48 |
+| 在用但未登记 | 2（见下） |
+| 已登记但代码中未直接检查 | 9 |
+
+未登记的 2 个经核实**均为有意排除**，不是遗漏：
+- `DUMP_SYSTEM_PROMPT`（`src/entrypoints/cli.tsx:88`）— 注释明确「仅 Ant 内部：通过 feature 标志从外部构建中排除」，需配合 `--dump-system-prompt` 参数
+- `ULTRAPLAN`（`src/commands.ts:263`）— 命令在 `INTERNAL_ONLY_COMMANDS` 中，而该数组仅在 `process.env.USER_TYPE === 'ant'` 时注册（`src/commands.ts:718`）
+
+`OVERRIDABLE_FEATURES` 是**暴露给外部用户的 Settings 开关列表**，把 Ant 内部特性登记进去属设计错误。故**不修改**。
+
+**其他 env 布尔开关维度**（扫描全库 `process.env`，排除 FEATURE_* 与系统/凭据类）：
+
+| 指标 | 数量 |
+|---|---|
+| `process.env` 变量总数 | 657 |
+| 「布尔开关」形式（`=== '1'` / `'true'`）且非 FEATURE_* | 18 |
+| 其中在 Settings UI 已有手写开关项 | 2（`CLAUDE_CODE_QQ`、`CLAUDE_CODE_SESSION_END_SOUND`） |
+
+余下 16 个多为运行时/内部开关（`CLAUDE_CODE_REMOTE` 23 文件、`IS_SANDBOX`、`DEBUG`、`CTX_FETCH_STRICT` 等），**不适合暴露给终端用户**。仅 2 个手写 UI 项不足以支撑抽象（相似 3 行代码优于过早抽象）。
+
+**→ 结论：在「env / 开关」维度上，本任务已无可做的改进项。**
+
+### 维度三：硬编码数值参数（超时 / 限制 / 阈值 / 重试）
+
+机器扫描全库（排除 tests/vendor/generated；临时脚本已删）：
+
+| 指标 | 数量 |
+|---|---|
+| 硬编码数值参数候选（标识符名含 TIMEOUT/MS/DELAY/RETRY/MAX_/LIMIT/THRESHOLD/BATCH 等） | 404 |
+| 不同标识符 | 366 |
+| 同名参数散落在多个文件 | 22 组 |
+
+**逐一核查 22 组同名参数后，结论是「不应批量配置化」**：
+
+1. **多数为不同服务的正当独立取值**，不是漂移。例：`FETCH_TIMEOUT_MS` 5000/10000/60_000 分别对应 MCP、policyLimits、WebFetch —— 三者用途不同，强行统一反而错
+2. **少数重复位于有意分叉的安全代码**。最典型是两份 `pathValidation.ts`：
+   - `utils/permissions/pathValidation.ts`（485 行）
+   - `tools/PowerShellTool/pathValidation.ts`（1913 行）
+   - 5 个同名函数**0 个逐字相同**：`validatePath` 113 vs 228 行、`isPathAllowed` 123 vs 111 行、`expandTilde` 有平台守卫差异（`process.platform === 'win32'`）、`formatDirectoryList` 仅消息语言不同（英文 `, and N more` vs 中文 `，以及其余 N 个`）
+   - → 这是 **PowerShell 专用的有意分叉**（需处理 `~\`、盘符、冒号值等），不是粗心复制。为省几十行而合并**安全校验代码**，风险远大于收益，**不动**
+3. **结构性平行 ≠ 应合并**。`settings/changeDetector.ts`（488 行）与 `skills/skillChangeDetector.ts`（311 行）是同一「文件稳定性监听」模式的两份实现，合并可省约 300 行；但会牵动设置热重载与技能热重载两条用户可见链路，属高风险重构，**超出本任务范围，不做**
+
+**配置化通道本就存在（关键发现）**：`settings.json` 已支持持久化 `env` 字段（`src/utils/settings/types.ts:35` 的 `EnvironmentVariablesSchema = z.record(z.string(), z.coerce.string())`）。即
+```json
+{ "env": { "CLAUDE_CODE_MAX_RETRIES": "5" } }
+```
+已可持久配置任意环境变量。**因此为这类参数另加 UI 项反而更差** —— 现有 Settings 中的 env 项（如 `CLAUDE_CODE_QQ`）只写 `process.env`，属会话级、重启即失效；而 `settings.json` 的 `env` 是持久的。
+
+**→ 结论：不新增配置项、不做批量配置化。** 本次复查的唯一实质产出是下面修掉的一个真实 bug。
+
+- **配置化闭环已存在**: `Settings/Config.tsx:1219` 直接遍历 `OVERRIDABLE_FEATURES` 生成 boolean 开关（写项目配置 + 设 env），即「往数组加一项 → UI 自动出现开关」，无需手工接线
+- **需先界定范围**: 「复查所有源代码」无法一次性完成。建议按「发现一处 → 确认一处 → 改一处」推进，而非先全库普查后批量改
+- **参照模板**: 工具组（#12）即为该方向的一个实例——把硬编码的可见性判断提取为可配置项 + 命令入口 + Settings 界面项，可作为后续同类改造的模板
 
 ---
 

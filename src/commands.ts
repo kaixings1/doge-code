@@ -42,6 +42,7 @@ import repoPack from './commands/repo-pack/index.ts'
 import ctx_viz from './commands/ctx_viz/index.tsx'
 import doctor from './commands/doctor/index.ts'
 import dogeConfig from './commands/doge-config/index.ts'
+import toolgroup from './commands/toolgroup/index.ts'
 import mcpConfig from './commands/mcp-config/index.ts'
 import mcpDiscovery from './commands/mcp-discovery/index.ts'
 import memory from './commands/memory/index.ts'
@@ -468,6 +469,7 @@ const COMMANDS = memoize((): Command[] => [
   desktop,
   glossary,
   dogeConfig,
+  toolgroup,
   mcpConfig,
   context,
   contextNonInteractive,

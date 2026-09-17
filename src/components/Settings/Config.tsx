@@ -11,6 +11,7 @@ import { type GlobalConfig, saveGlobalConfig, getCurrentProjectConfig, saveCurre
 import { normalizeApiKeyForConfig } from '../../utils/authPortable.js';
 import { getGlobalConfig, getAutoUpdaterDisabledReason, formatAutoUpdaterDisabledReason, getRemoteControlAtStartup } from '../../utils/config.js';
 import { getFeatureOverrides, OVERRIDABLE_FEATURES } from '../../utils/featureOverrides.js';
+import { getActiveGroupName, listToolGroups, setActiveGroup } from '../../utils/toolGroups.js';
 import chalk from 'chalk';
 import { permissionModeTitle, permissionModeFromString, toExternalPermissionMode, isExternalPermissionMode, EXTERNAL_PERMISSION_MODES, PERMISSION_MODES, type ExternalPermissionMode, type PermissionMode } from '../../utils/permissions/PermissionMode.js';
 import { getAutoModeEnabledState, hasAutoModeOptInAnySource, transitionPlanAutoMode } from '../../utils/permissions/permissionSetup.js';
@@ -108,6 +109,9 @@ export function Config({
   const [customBaseURL, setCustomBaseURL] = useState(getGlobalConfig().customApiEndpoint?.baseURL ?? '');
   const [customApiKey, setCustomApiKey] = useState(getGlobalConfig().customApiEndpoint?.apiKey ?? '');
   const [customModelValue, setCustomModelValue] = useState(getGlobalConfig().customApiEndpoint?.model ?? process.env.ANTHROPIC_MODEL ?? '');
+  // 工具组：配置存在 ~/.doge/config.json，与 /toolgroup 命令共用同一份状态。
+  // 用本地 state 回显，避免切换后 UI 仍显示旧组名。
+  const [activeToolGroup, setActiveToolGroup] = useState(getActiveGroupName());
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [scrollOffset, setScrollOffset] = useState(0);
   const [isSearchMode, setIsSearchMode] = useState(true);
@@ -274,6 +278,8 @@ export function Config({
         : 'Not set';
 
   // TODO: Add MCP servers
+  // 只读一次配置文件，避免在长列表渲染中重复同步 IO
+  const toolGroupList = listToolGroups();
   const settingsItems: Setting[] = [
   ...(feature('MCP_UI') ? [{
     id: 'mcpServers',
@@ -1210,6 +1216,24 @@ export function Config({
       process.env.CLAUDE_CODE_QQ = value === '开启' ? '1' : '';
     }
   },
+  // 工具组切换：仅在用户创建过命名组时出现（只有 global 一个选项的枚举无交互意义）。
+  // 组本身的新建/增删工具走 /toolgroup 命令，此处只负责「当前用哪一组」。
+  ...(toolGroupList.length > 1 ? [{
+    id: 'toolGroup',
+    label: `当前工具组：${activeToolGroup}`,
+    value: activeToolGroup,
+    options: toolGroupList.map(g => g.name),
+    type: 'enum' as const,
+    searchText: '工具组 toolgroup 工具开关 切换组',
+    onChange(value: string) {
+      try {
+        setActiveGroup(value)
+        setActiveToolGroup(value)
+      } catch (err) {
+        logError(err instanceof Error ? err : new Error(String(err)))
+      }
+    }
+  }] : []),
   // Runtime feature overrides — always visible for discoverability
   // Only features compiled with env-var guards can be toggled here.
   ...OVERRIDABLE_FEATURES.map(feat => {

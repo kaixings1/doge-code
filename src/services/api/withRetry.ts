@@ -867,7 +867,13 @@ export function getDefaultMaxRetries(): number {
   }
   if (process.env.CLAUDE_CODE_MAX_RETRIES) {
     const parsed = parseInt(process.env.CLAUDE_CODE_MAX_RETRIES, 10)
-    return Math.min(parsed, 15)  // 上限 15（v2.1.186 变更）
+    // 非法值（非数字 → NaN）或负数会让重试循环一次都不执行
+    // （`attempt <= maxRetries + 1` 恒为 false）：不发任何请求，
+    // lastError 保持未赋值，直接抛 CannotRetryError。此处回落到默认值，
+    // 避免一个手误的环境变量让所有 API 调用静默失败。
+    if (Number.isFinite(parsed) && parsed >= 0) {
+      return Math.min(parsed, 15)  // 上限 15（v2.1.186 变更）
+    }
   }
   return DEFAULT_MAX_RETRIES
 }

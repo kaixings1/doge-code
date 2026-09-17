@@ -177,6 +177,7 @@ import { isEnvTruthy } from './utils/envUtils.js'
 import { isPowerShellToolEnabled } from './utils/shell/shellToolUtils.js'
 import { isAgentSwarmsEnabled } from './utils/agentSwarmsEnabled.js'
 import { isWorktreeModeEnabled } from './utils/worktreeModeEnabled.js'
+import { filterToolsByActiveGroup } from './utils/toolGroups.js'
 import {
   REPL_TOOL_NAME,
   REPL_ONLY_TOOLS,
@@ -255,7 +256,11 @@ export function _markToolInitEnd(): void {
   }
 }
 
-export function getAllBaseTools(): Tools {
+/**
+ * @param options.unfiltered 为 true 时忽略当前工具组的过滤，返回环境变量层面
+ *   的全部工具。工具组管理界面（/toolgroup）需要用它展示可加入组的完整工具清单。
+ */
+export function getAllBaseTools(options?: { unfiltered?: boolean }): Tools {
   _markToolInitStart()
   const _tools: Tool[] = [];
   try {
@@ -362,7 +367,9 @@ export function getAllBaseTools(): Tools {
     _markToolInitEnd()
   }
 
-  return _tools.filter(Boolean) as Tools;
+  // 运行期工具组过滤：默认全局组下为恒等变换（不改变既有行为）
+  const built = _tools.filter(Boolean) as Tool[]
+  return (options?.unfiltered ? built : filterToolsByActiveGroup(built)) as Tools;
 }
 
 /**
