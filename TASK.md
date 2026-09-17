@@ -198,6 +198,30 @@
 
 ---
 
+### [x] 16. 修复空输入框按 diw/ciw/yiw 崩溃（findTextObject 空文本越界）
+- **文件**: `src/vim/textObjects.ts`（`findWordObject()`）
+- **现象**: 空输入框上按 `diw`/`ciw`/`yiw`/`daw` 等文本对象操作，抛 `TypeError`（读取未定义值的 index 属性）
+- **根因**: `findWordObject` 内
+  ```ts
+  let graphemeIdx = graphemes.length - 1          // 空文本时 = -1
+  const offsetAt = (idx) => idx < graphemes.length ? graphemes[idx]!.index : text.length
+                                                    // 只判上界，-1 < 0 成立
+  ```
+  空文本时 `graphemes` 为空数组 → `graphemeIdx = -1`；三个分支（word/ws/punct）全不成立（`test('')` 均为 false）→ `startIdx`/`endIdx` 保持 `-1` → 末尾 `offsetAt(-1)` 读取数组负索引处的未定义值 → **TypeError**
+- **可达性（已确认，非理论）**: 两个调用点
+  - `transitions.ts:363` `fromOperatorTextObj` —— **正常按键路径**（NORMAL 模式按 `d`→`i`→`w`）
+  - `useVimInput.ts:164` `replayLastChange` —— 按 `.` 重复上次 textobj 操作
+  两处均无 try/catch，异常沿 `TransitionResult.execute` 冒泡。空输入框是 CLI 中最常见的状态（刚启动/刚提交/刚清空）
+- **操作**: 在 `findWordObject` 入口加 `if (text.length === 0) return null`。返回 `null` 与「未找到文本对象」语义一致，且 `executeOperatorTextObj` 已有 `if (!range) return` 守卫，等价于空操作
+- **未采用的方案**: 给 `offsetAt` 加下界判断——能防同类越界但不表达意图，且会掩盖「空文本应为空操作」这一语义
+- **同模块排查（已确证无其他同类问题）**: 新增 `src/__tests__/vim/operators.test.ts`（54 用例）对 `operators.ts` 全部 13 个导出函数做边界冒烟——8 种文本（空/单字符/纯换行/多行/前后空格/括号） × 每个偏移量，逐一调用全部函数。**54/54 通过，说明该模块仅此一处空文本崩溃**。另确认 `findQuoteObject`、`findBracketObject` 在空文本上原本就返回 `null`（安全）
+- **新增测试**: `src/__tests__/vim/textObjects.test.ts`（30 用例）+ `operators.test.ts`（54 用例）
+  - 边界用例：空文本 iw/aw/iW/aW、全空白文本，断言不抛异常
+  - 语义用例：`iw`/`aw`（含吞后随空格、行尾吞前导空格）、标点、空白、`aW`；`i"`/`a"`/`i'`/反引号、引号仅本行配对；`i(`/`a(`/`ib`/`i)`、嵌套取最近层、外层括号、`i{`/`iB`/`i[`/`i]`/`i<`/`i>`、不配对返回 null
+- **模块覆盖率**: `src/vim/**` 由 **0% → 已覆盖**（此前 1012 语句全未覆盖）
+- **验证**: `textObjects.test.ts` 30/30、`operators.test.ts` 54/54（修复前空文本 3 项必然失败，测试确实拦得住回归）；`tsc` 0 错误；`biome` 通过；全量 `vitest run` → 366 文件 / 1954 测试全部通过
+- **过程教训（我在本轮重复犯同类搜索错误）**: 查 `findTextObject` 调用方时，因 `head_limit` 截断而误判为「除测试外零调用」，实际 `operators.ts:15` 有导入。这已是本轮第三次同类失误（前两次：只搜 `.ts` 漏 `.tsx`、只搜 `./core.js` 漏无扩展名 `./core`）。**搜索引用时必须显式确认结果未被截断，并覆盖全部导入形式**
+
 ### [!] 8. 测试覆盖率 — 已测量，阈值为配置失真（未改动门禁）
 - **命令**: `bun run test:coverage`（= `vitest run --coverage`）
 - **2026-09-17 实测结果**（解析 `coverage/coverage-final.json`，44MB）：

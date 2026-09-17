@@ -66,6 +66,12 @@ function findWordObject(
   isInner: boolean,
   isWordChar: (ch: string) => boolean,
 ): TextObjectRange {
+  // 空文本没有文本对象可选中。必须在此提前返回：下面的 graphemeIdx 初始化为
+  // graphemes.length - 1，空文本时为 -1，而 offsetAt 只判断上界
+  // （idx < graphemes.length），-1 < 0 成立会去读 graphemes[-1].index 而抛
+  // TypeError。空输入框上按 diw/ciw/yiw 即触发。
+  if (text.length === 0) return null
+
   // 预先分割为字素，以便安全迭代
   const graphemes: Array<{ segment: string; index: number }> = []
   for (const { segment, index } of getGraphemeSegmenter().segment(text)) {
