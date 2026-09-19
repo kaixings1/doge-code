@@ -1,6 +1,6 @@
 import type { Command, LocalCommandCall } from '../types/command.js'
 
-const call: LocalCommandCall = async () => {
+const call: LocalCommandCall = async (args) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
     return { type: 'text' as const, value: `version — 显示当前运行的版本号\n用法: /version`.trim() }
   }

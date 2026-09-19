@@ -2,7 +2,8 @@
 // Loop Dashboard Command - Loop V2 Web 监控面板
 // ============================================================================
 
-import type { Command, LocalCommandCall, LocalCommandResult } from '../commands.js'
+import type { Command, LocalCommandResult } from '../../commands.js'
+import type { LocalCommandCall } from '../../types/command.js'
 import {
   startLoopDashboardServer,
   stopLoopDashboardServer,

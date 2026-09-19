@@ -19,7 +19,7 @@ function getBrowserTool(): WebBrowserTool {
 }
 
 export const call: LocalJSXCommandCall = async (_onDone, context, _args) => {
-  if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
+  if ((_args || '').trim() === 'help' || (_args || '').trim() === '--help' || (_args || '').trim() === '-h') {
     return { type: 'text' as const, value: `browser — Interactive web browser (navigate URLs, take screenshots, interact with pages)\n用法: /browser`.trim() }
   }
   const [, setRefresh] = React.useState(0)

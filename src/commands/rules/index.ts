@@ -3,8 +3,8 @@
 // 管理 .dogerules 文件，提供跨会话的持久化指令
 // ============================================================================
 
-import type { Command } from '../commands.js'
-import type { LocalCommandCall } from '../types/command.js'
+import type { Command } from '../../commands.js'
+import type { LocalCommandCall } from '../../types/command.js'
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs'
 import { join, resolve } from 'path'
 import { getClaudeConfigHomeDir } from '../../utils/envUtils.js'

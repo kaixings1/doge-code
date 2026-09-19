@@ -3,8 +3,8 @@
 // 打开团队/企业用量分析仪表盘
 // ============================================================================
 
-import type { Command } from '../commands.js'
-import type { LocalCommandCall } from '../types/command.js'
+import type { Command } from '../../commands.js'
+import type { LocalCommandCall } from '../../types/command.js'
 import { startDashboardServer, isDashboardRunning, getDashboardPort, getDashboardData } from '../../services/dashboard/index.js'
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs'
 import { join } from 'path'

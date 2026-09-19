@@ -2,7 +2,8 @@
 // Loop Start V2 Command - 启动增强版循环操作员
 // ============================================================================
 
-import type { Command, LocalCommandCall, LocalCommandResult } from '../commands.js'
+import type { Command, LocalCommandResult } from '../../commands.js'
+import type { LocalCommandCall } from '../../types/command.js'
 import { existsSync, mkdirSync, writeFileSync, readFileSync, readdirSync } from 'fs'
 import { join } from 'path'
 import { homedir } from 'os'

@@ -131,8 +131,8 @@ function formatProjectSummary(summary: ProjectCostSummary): string {
 // Main Command Implementation
 // ============================================================================
 
-export const call: CostHistoryCall = async (_, parsed) => {
-  if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
+export const call: CostHistoryCall = async (_args, parsed) => {
+  if ((parsed as { help?: boolean }).help) {
     return { type: 'text' as const, value: `cost-history — 查看 API 成本历史记录与趋势（按会话/模型/时间）\n用法: /cost-history`.trim() }
   }
   // 清空历史

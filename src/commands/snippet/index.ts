@@ -1,5 +1,5 @@
-import type { Command } from '../commands.js'
-import type { LocalCommandCall } from '../types/command.js'
+import type { Command } from '../../commands.js'
+import type { LocalCommandCall } from '../../types/command.js'
 import { existsSync, readFileSync, writeFileSync, mkdirSync, readdirSync, unlinkSync, statSync, renameSync, copyFileSync } from 'fs'
 import { join, basename, extname } from 'path'
 import { homedir } from 'os'

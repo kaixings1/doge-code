@@ -2,7 +2,8 @@
 // Loop Status V2 Command - 检查增强版循环操作员状态
 // ============================================================================
 
-import type { Command, LocalCommandCall, LocalCommandResult } from '../commands.js'
+import type { Command, LocalCommandResult } from '../../commands.js'
+import type { LocalCommandCall } from '../../types/command.js'
 import { existsSync, readdirSync, readFileSync, writeFileSync, statSync, unlinkSync } from 'fs'
 import { join } from 'path'
 import { homedir } from 'os'

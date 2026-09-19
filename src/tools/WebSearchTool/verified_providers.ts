@@ -1,5 +1,15 @@
 // === 新增搜索引擎 Provider (curl 验证存活) ===
 
+/**
+ * 发起 GET 请求并解析 JSON。各 provider 的 fetch 依赖此辅助函数，
+ * 此前只调用未定义，导致 TS2304（15 处）。
+ */
+async function fetchJson(url: string, signal?: AbortSignal): Promise<any> {
+  const res = await fetch(url, { signal })
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+  return res.json()
+}
+
 export const verifiedAliveProviders = [
   // 国内搜索引擎
   { name: '百度搜索', offline: false, fetch: async (q) => {

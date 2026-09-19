@@ -11,7 +11,7 @@
  *   /auto 用 TDD 实现用户登录
  */
 
-import type { Command, LocalCommandCall, LocalCommandResult } from '../types/command.js'
+import type { Command, LocalCommandCall, LocalCommandResult } from '../../types/command.js'
 import { execSync } from 'child_process'
 
 // ============================================================================

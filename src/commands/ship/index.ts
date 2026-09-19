@@ -12,7 +12,7 @@
  * 复用: commit-push-pr.ts (PR 创建工具)
  */
 
-import type { Command, LocalCommandCall, LocalCommandResult } from '../types/command.js'
+import type { Command, LocalCommandCall, LocalCommandResult } from '../../types/command.js'
 import { execFileNoThrow } from '../../utils/execFileNoThrow.js'
 import { gitExe } from '../../utils/git.js'
 import { runCIMonitorLoop, getCIStatus, getPRFeedback } from './ship-ci-review-loop.js'
