@@ -34,7 +34,7 @@ function saveBookmarks(bookmarks: Bookmark[]) {
 
 export const call: LocalCommandCall = async (args) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
-    return { output: `bookmark — 代码书签 - 标记和跳转到重要代码位置\n用法: /bookmark`.trim(), truncated: false }
+    return { type: 'text' as const, value: `bookmark — 代码书签 - 标记和跳转到重要代码位置\n用法: /bookmark`.trim() }
   }
   const s = (args ?? '').trim()
   const parts = s.split(/\s+/)

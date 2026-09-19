@@ -41,7 +41,7 @@ function saveTask(task: BackgroundTask) {
 
 export const call: LocalCommandCall = async (args) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
-    return { output: `background — 后台任务管理 - 运行/查看/终止/监控后台任务\n用法: /background`.trim(), truncated: false }
+    return { type: 'text' as const, value: `background — 后台任务管理 - 运行/查看/终止/监控后台任务\n用法: /background`.trim() }
   }
   const s = (args ?? '').trim()
   const parts = s.split(/\s+/)

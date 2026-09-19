@@ -1,5 +1,6 @@
 import { describe, expect, test, beforeEach } from "vitest";
 import * as brainSyncModule from "../index";
+import { expectText } from "../../../__tests__/utils/commandResult.js";
 
 const bsCall = brainSyncModule.call;
 
@@ -10,20 +11,18 @@ describe("brain-sync", () => {
 
   test("returns help for empty args", async () => {
     const result = await bsCall("");
-    expect(result.type).toBe("text");
-    expect(result.value).toContain("Brain Sync");
+    expect(expectText(result)).toContain("Brain Sync");
   });
 
   test("returns help for --help", async () => {
     const result = await bsCall("--help");
-    expect(result.type).toBe("text");
-    expect(result.value).toContain("--status");
-    expect(result.value).toContain("--sync");
+    expect(expectText(result)).toContain("--status");
+    expect(expectText(result)).toContain("--sync");
   });
 
   test("status shows no groups when store is empty", async () => {
     const result = await bsCall("--status --json");
-    const data = JSON.parse(result.value);
+    const data = JSON.parse(expectText(result));
     expect(data.mode).toBe("status");
     expect(data.groups.length).toBe(0);
     expect(data.items.length).toBe(0);
@@ -46,7 +45,7 @@ describe("brain-sync", () => {
     });
 
     const result = await bsCall("--status --json");
-    const data = JSON.parse(result.value);
+    const data = JSON.parse(expectText(result));
     expect(data.groups.length).toBe(1);
     expect(data.groups[0].id).toBe("g1");
     expect(data.items.length).toBeGreaterThanOrEqual(1);
@@ -61,7 +60,7 @@ describe("brain-sync", () => {
     });
 
     const result = await bsCall("--sync --dry-run --json");
-    const data = JSON.parse(result.value);
+    const data = JSON.parse(expectText(result));
     expect(data.mode).toBe("sync");
     expect(data.dryRun).toBe(true);
     expect(data.skippedCount).toBeGreaterThanOrEqual(1);
@@ -76,7 +75,7 @@ describe("brain-sync", () => {
     });
 
     const result = await bsCall("--sync --json");
-    const data = JSON.parse(result.value);
+    const data = JSON.parse(expectText(result));
     expect(data.mode).toBe("sync");
     expect(data.dryRun).toBe(false);
     expect(data.syncedCount).toBeGreaterThanOrEqual(1);
@@ -97,7 +96,7 @@ describe("brain-sync", () => {
     });
 
     const result = await bsCall("--status --scope architecture --json");
-    const data = JSON.parse(result.value);
+    const data = JSON.parse(expectText(result));
     expect(data.groups.length).toBe(1);
     expect(data.groups[0].id).toBe("g1");
   });
@@ -110,7 +109,7 @@ describe("brain-sync", () => {
     });
 
     const result = await bsCall("--status --json");
-    const data = JSON.parse(result.value);
+    const data = JSON.parse(expectText(result));
     expect(data.groups.length).toBe(0);
   });
 
@@ -122,7 +121,7 @@ describe("brain-sync", () => {
     });
 
     const result = await bsCall("--status --json");
-    const data = JSON.parse(result.value);
+    const data = JSON.parse(expectText(result));
     expect(data.groups.length).toBe(0);
   });
 
@@ -136,7 +135,7 @@ describe("brain-sync", () => {
     });
 
     const result = await bsCall("--status --json");
-    const data = JSON.parse(result.value);
+    const data = JSON.parse(expectText(result));
     expect(data.items.length).toBe(0);
   });
 
@@ -150,7 +149,7 @@ describe("brain-sync", () => {
     });
 
     const result = await bsCall("--status --json");
-    const data = JSON.parse(result.value);
+    const data = JSON.parse(expectText(result));
     expect(data.items.length).toBe(0);
   });
 });

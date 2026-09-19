@@ -30,6 +30,7 @@ vi.mock('../../bootstrap/state.js', () => ({
 }))
 
 import { call, parseCheckpointLine } from '../../commands/task/task.ts'
+import { expectText } from "../utils/commandResult.js";
 
 // ---------------------------------------------------------------------------
 // 测试隔离
@@ -59,10 +60,9 @@ function writeBgTask(task: any) {
 
 describe('call — 空参数', () => {
   it('返回帮助信息', async () => {
-    const result = await call('', {})
-    expect(result.type).toBe('text')
-    expect(result.value).toContain('Background Task Engine')
-    expect(result.value).toContain('/task <描述>')
+    const result = await call('')
+    expect(expectText(result)).toContain('Background Task Engine')
+    expect(expectText(result)).toContain('/task <描述>')
   })
 })
 
@@ -72,12 +72,11 @@ describe('call — 空参数', () => {
 
 describe('call — 创建任务', () => {
   it('应写入 checkpoint 文件并返回任务信息', async () => {
-    const result = await call('重构 auth 模块', {})
+    const result = await call('重构 auth 模块')
 
-    expect(result.type).toBe('text')
-    expect(result.value).toContain('后台任务已提交')
-    expect(result.value).toContain('重构 auth 模块')
-    expect(result.value).toContain('执行中')
+    expect(expectText(result)).toContain('后台任务已提交')
+    expect(expectText(result)).toContain('重构 auth 模块')
+    expect(expectText(result)).toContain('执行中')
 
     expect(fs.existsSync(CHECKPOINT_PATH)).toBe(true)
     const saved = JSON.parse(fs.readFileSync(CHECKPOINT_PATH, 'utf-8'))
@@ -86,7 +85,7 @@ describe('call — 创建任务', () => {
   })
 
   it('应 enqueue 执行 prompt', async () => {
-    await call('分析依赖图', {})
+    await call('分析依赖图')
 
     expect(enqueueCalls.length).toBe(1)
     expect(enqueueCalls[0].mode).toBe('prompt')
@@ -121,12 +120,11 @@ describe('call — 自动恢复', () => {
       updatedAt: '2024-01-01T00:05:00Z',
     })
 
-    const result = await call('', {})
+    const result = await call('')
 
-    expect(result.type).toBe('text')
-    expect(result.value).toContain('自动恢复')
-    expect(result.value).toContain('未完成的任务')
-    expect(result.value).toContain('3/10')
+    expect(expectText(result)).toContain('自动恢复')
+    expect(expectText(result)).toContain('未完成的任务')
+    expect(expectText(result)).toContain('3/10')
 
     expect(enqueueCalls.length).toBe(1)
     expect(enqueueCalls[0].value).toContain('[后台任务恢复')
@@ -140,8 +138,8 @@ describe('call — 自动恢复', () => {
 
 describe('call — list 子命令', () => {
   it('无任务时返回提示', async () => {
-    const result = await call('list', {})
-    expect(result.value).toContain('没有后台任务')
+    const result = await call('list')
+    expect(expectText(result)).toContain('没有后台任务')
   })
 
   it('有任务时列出摘要', async () => {
@@ -156,11 +154,11 @@ describe('call — list 子命令', () => {
       updatedAt: '2024-01-01T00:02:00Z',
     })
 
-    const result = await call('list', {})
-    expect(result.value).toContain('列出测试任务')
-    expect(result.value).toContain('running')
-    expect(result.value).toContain('2/5')
-    expect(result.value).toContain('🔄')
+    const result = await call('list')
+    expect(expectText(result)).toContain('列出测试任务')
+    expect(expectText(result)).toContain('running')
+    expect(expectText(result)).toContain('2/5')
+    expect(expectText(result)).toContain('🔄')
   })
 })
 
@@ -170,8 +168,8 @@ describe('call — list 子命令', () => {
 
 describe('call — status 子命令', () => {
   it('无任务时返回未找到', async () => {
-    const result = await call('status', {})
-    expect(result.value).toContain('任务未找到')
+    const result = await call('status')
+    expect(expectText(result)).toContain('任务未找到')
   })
 
   it('有任务时返回详情', async () => {
@@ -188,14 +186,14 @@ describe('call — status 子命令', () => {
       updatedAt: '2024-01-01T00:01:00Z',
     })
 
-    const result = await call('status', {})
-    expect(result.value).toContain('任务详情')
-    expect(result.value).toContain('状态测试')
-    expect(result.value).toContain('running')
-    expect(result.value).toContain('第 1 步')
-    expect(result.value).toContain('共 3 步')
-    expect(result.value).toContain('第一步')
-    expect(result.value).toContain('结果A')
+    const result = await call('status')
+    expect(expectText(result)).toContain('任务详情')
+    expect(expectText(result)).toContain('状态测试')
+    expect(expectText(result)).toContain('running')
+    expect(expectText(result)).toContain('第 1 步')
+    expect(expectText(result)).toContain('共 3 步')
+    expect(expectText(result)).toContain('第一步')
+    expect(expectText(result)).toContain('结果A')
   })
 })
 
@@ -205,8 +203,8 @@ describe('call — status 子命令', () => {
 
 describe('call — resume 子命令', () => {
   it('无任务时返回未找到', async () => {
-    const result = await call('resume bg-xxx', {})
-    expect(result.value).toContain('任务未找到')
+    const result = await call('resume bg-xxx')
+    expect(expectText(result)).toContain('任务未找到')
   })
 
   it('已完成的任务不能恢复', async () => {
@@ -222,8 +220,8 @@ describe('call — resume 子命令', () => {
       finalResult: '完成',
     })
 
-    const result = await call('resume bg-done', {})
-    expect(result.value).toContain('任务已完成')
+    const result = await call('resume bg-done')
+    expect(expectText(result)).toContain('任务已完成')
     expect(enqueueCalls.length).toBe(0)
   })
 
@@ -240,8 +238,8 @@ describe('call — resume 子命令', () => {
       error: 'syntax error',
     })
 
-    const result = await call('resume bg-fail', {})
-    expect(result.value).toContain('任务失败')
+    const result = await call('resume bg-fail')
+    expect(expectText(result)).toContain('任务失败')
     expect(enqueueCalls.length).toBe(0)
   })
 
@@ -259,9 +257,9 @@ describe('call — resume 子命令', () => {
       updatedAt: '2024-01-01T00:02:00Z',
     })
 
-    const result = await call('resume bg-resume-me', {})
-    expect(result.value).toContain('恢复任务')
-    expect(result.value).toContain('从第 2 步继续')
+    const result = await call('resume bg-resume-me')
+    expect(expectText(result)).toContain('恢复任务')
+    expect(expectText(result)).toContain('从第 2 步继续')
 
     const saved = JSON.parse(fs.readFileSync(CHECKPOINT_PATH, 'utf-8'))
     expect(saved.status).toBe('running')
@@ -278,8 +276,8 @@ describe('call — resume 子命令', () => {
 
 describe('call — cancel 子命令', () => {
   it('无任务时返回未找到', async () => {
-    const result = await call('cancel bg-xxx', {})
-    expect(result.value).toContain('任务未找到')
+    const result = await call('cancel bg-xxx')
+    expect(expectText(result)).toContain('任务未找到')
   })
 
   it('取消任务', async () => {
@@ -294,9 +292,9 @@ describe('call — cancel 子命令', () => {
       updatedAt: '2024-01-01T00:01:00Z',
     })
 
-    const result = await call('cancel bg-cancel-me', {})
-    expect(result.value).toContain('已取消任务')
-    expect(result.value).toContain('bg-cancel-me')
+    const result = await call('cancel bg-cancel-me')
+    expect(expectText(result)).toContain('已取消任务')
+    expect(expectText(result)).toContain('bg-cancel-me')
 
     const saved = JSON.parse(fs.readFileSync(CHECKPOINT_PATH, 'utf-8'))
     expect(saved.status).toBe('failed')
@@ -310,8 +308,8 @@ describe('call — cancel 子命令', () => {
 
 describe('call — result 子命令', () => {
   it('无任务时返回未找到', async () => {
-    const result = await call('result bg-xxx', {})
-    expect(result.value).toContain('任务未找到')
+    const result = await call('result bg-xxx')
+    expect(expectText(result)).toContain('任务未找到')
   })
 
   it('未完成的任务返回提示', async () => {
@@ -326,8 +324,8 @@ describe('call — result 子命令', () => {
       updatedAt: '2024-01-01T00:01:00Z',
     })
 
-    const result = await call('result bg-not-done', {})
-    expect(result.value).toContain('任务未完成')
+    const result = await call('result bg-not-done')
+    expect(expectText(result)).toContain('任务未完成')
   })
 
   it('已完成的任务返回报告', async () => {
@@ -347,15 +345,15 @@ describe('call — result 子命令', () => {
       finalResult: '重构完成，所有测试通过。',
     })
 
-    const result = await call('result bg-done-report', {})
-    expect(result.value).toContain('任务完成报告')
-    expect(result.value).toContain('已完成的任务')
-    expect(result.value).toContain('重构完成，所有测试通过。')
-    expect(result.value).toContain('[0] 分析')
-    expect(result.value).toContain('[1] 修改')
-    expect(result.value).toContain('[2] 验证')
-    expect(result.value).toContain('src/a.ts')
-    expect(result.value).toContain('3分0秒')
+    const result = await call('result bg-done-report')
+    expect(expectText(result)).toContain('任务完成报告')
+    expect(expectText(result)).toContain('已完成的任务')
+    expect(expectText(result)).toContain('重构完成，所有测试通过。')
+    expect(expectText(result)).toContain('[0] 分析')
+    expect(expectText(result)).toContain('[1] 修改')
+    expect(expectText(result)).toContain('[2] 验证')
+    expect(expectText(result)).toContain('src/a.ts')
+    expect(expectText(result)).toContain('3分0秒')
   })
 })
 
@@ -365,10 +363,9 @@ describe('call — result 子命令', () => {
 
 describe('call — 未知输入', () => {
   it('非子命令前缀的输入会创建新任务', async () => {
-    const result = await call('unknown-command', {})
-    expect(result.type).toBe('text')
-    expect(result.value).toContain('后台任务已提交')
-    expect(result.value).toContain('unknown-command')
+    const result = await call('unknown-command')
+    expect(expectText(result)).toContain('后台任务已提交')
+    expect(expectText(result)).toContain('unknown-command')
   })
 })
 
@@ -378,7 +375,7 @@ describe('call — 未知输入', () => {
 
 describe('buildExecutionPrompt', () => {
   it('生成包含任务描述和规则标记的执行提示', async () => {
-    await call('测试执行 prompt', {})
+    await call('测试执行 prompt')
 
     const prompt = enqueueCalls.find((c: any) => c.value.includes('[后台任务执行'))
     expect(prompt).toBeDefined()
@@ -411,7 +408,7 @@ describe('buildResumePrompt', () => {
       updatedAt: '2024-01-01T00:03:00Z',
     })
 
-    await call('resume bg-resume-prompt', {})
+    await call('resume bg-resume-prompt')
 
     const prompt = enqueueCalls.find((c: any) => c.value.includes('[后台任务恢复'))
     expect(prompt).toBeDefined()

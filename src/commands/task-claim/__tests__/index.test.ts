@@ -1,5 +1,6 @@
 import { describe, expect, test, beforeEach } from "vitest";
 import * as taskClaimModule from "../index";
+import { expectText } from "../../../__tests__/utils/commandResult.js";
 
 const tcCall = taskClaimModule.call;
 
@@ -10,18 +11,16 @@ describe("task-claim", () => {
 
   test("returns help for empty args", async () => {
     const result = await tcCall("");
-    expect(result.type).toBe("text");
-    expect(result.value).toContain("Task Claim");
+    expect(expectText(result)).toContain("Task Claim");
   });
 
   test("returns help for --help", async () => {
     const result = await tcCall("--help");
-    expect(result.type).toBe("text");
-    expect(result.value).toContain("--claim");
-    expect(result.value).toContain("--release");
-    expect(result.value).toContain("--steal");
-    expect(result.value).toContain("--status");
-    expect(result.value).toContain("--list");
+    expect(expectText(result)).toContain("--claim");
+    expect(expectText(result)).toContain("--release");
+    expect(expectText(result)).toContain("--steal");
+    expect(expectText(result)).toContain("--status");
+    expect(expectText(result)).toContain("--list");
   });
 
   test("registers default tasks on first call", async () => {
@@ -32,8 +31,7 @@ describe("task-claim", () => {
 
   test("claim creates a lease and returns claim info", async () => {
     const result = await tcCall("--claim task-001 --session sess-abc --json");
-    expect(result.type).toBe("text");
-    const data = JSON.parse(result.value);
+    const data = JSON.parse(expectText(result));
     expect(data.claimId).toBeDefined();
     expect(data.taskId).toBe("task-001");
     expect(data.ownerSessionId).toBe("sess-abc");
@@ -51,7 +49,7 @@ describe("task-claim", () => {
   test("double claim on same task fails", async () => {
     await tcCall("--claim task-001 --session sess-abc");
     const result = await tcCall("--claim task-001 --session sess-xyz --json");
-    expect(result.value).toMatch(/error/i);
+    expect(expectText(result)).toMatch(/error/i);
   });
 
   test("release frees the lease", async () => {
@@ -66,7 +64,7 @@ describe("task-claim", () => {
 
   test("status shows available for unclaimed task", async () => {
     const result = await tcCall("--status task-999 --json");
-    const data = JSON.parse(result.value);
+    const data = JSON.parse(expectText(result));
     expect(data.classification).toBe("available");
     expect(data.state).toBeUndefined();
   });
@@ -76,7 +74,7 @@ describe("task-claim", () => {
     await tcCall("--claim task-002 --session sess-xyz");
 
     const result = await tcCall("--list --json");
-    const data = JSON.parse(result.value);
+    const data = JSON.parse(expectText(result));
     expect(data.activeLeases.length).toBe(2);
     const taskIds = data.activeLeases.map((l: any) => l.taskId).sort();
     expect(taskIds).toEqual(["task-001", "task-002"]);
@@ -88,7 +86,7 @@ describe("task-claim", () => {
     await tcCall(`--release ${claimData.claimId}`);
 
     const result = await tcCall("--list --json");
-    const data = JSON.parse(result.value);
+    const data = JSON.parse(expectText(result));
     expect(data.activeLeases.length).toBe(0);
   });
 
@@ -107,31 +105,31 @@ describe("task-claim", () => {
   test("steal with wrong expected claim id fails", async () => {
     await tcCall("--claim task-001 --session sess-abc");
     const result = await tcCall("--steal wrong-claim-id --session sess-new --reason test --json");
-    expect(result.value).toMatch(/error/i);
+    expect(expectText(result)).toMatch(/error/i);
   });
 
   test("release with invalid claim id fails", async () => {
     const result = await tcCall("--release invalid-claim-id --json");
-    expect(result.value).toMatch(/error/i);
+    expect(expectText(result)).toMatch(/error/i);
   });
 
   test("claim without required options fails", async () => {
     const result = await tcCall("--claim --json");
-    expect(result.value).toContain("Error");
+    expect(expectText(result)).toContain("Error");
   });
 
   test("release without required options fails", async () => {
     const result = await tcCall("--release --json");
-    expect(result.value).toContain("Error");
+    expect(expectText(result)).toContain("Error");
   });
 
   test("steal without required options fails", async () => {
     const result = await tcCall("--steal --json");
-    expect(result.value).toContain("Error");
+    expect(expectText(result)).toContain("Error");
   });
 
   test("status without required options fails", async () => {
     const result = await tcCall("--status --json");
-    expect(result.value).toContain("Error");
+    expect(expectText(result)).toContain("Error");
   });
 });

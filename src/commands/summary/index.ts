@@ -4,7 +4,7 @@ import { getIsNonInteractiveSession } from '../../bootstrap/state.js'
 
 const call = async (args: string, context: any) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
-    return { output: `summary — 总结当前会话内容和关键决策\n用法: /summary`.trim(), truncated: false }
+    return { type: 'text' as const, value: `summary — 总结当前会话内容和关键决策\n用法: /summary`.trim() }
   }
   const { messages } = context || {}
   if (!messages || messages.length === 0) {

@@ -438,7 +438,7 @@ ${endpoints.map(e => `<div class="endpoint"><span class="method ${e.method.toLow
 
 export const call: LocalCommandCall = async (args) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
-    return { output: `api-doc — Next.js App Router handler\n用法: /api-doc`.trim(), truncated: false }
+    return { type: 'text' as const, value: `api-doc — Next.js App Router handler\n用法: /api-doc`.trim() }
   }
   const p = args.trim().split(/\s+/)
   const c = p[0] || ''

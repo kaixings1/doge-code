@@ -6,6 +6,7 @@ const ffCall = focusedFixModule.call
 import { readFileSync, writeFileSync, mkdirSync } from "fs"
 import { join, dirname } from "path"
 import { tmpdir } from "os"
+import { expectText } from "../../../__tests__/utils/commandResult.js";
 
 function tempDir(name: string, files: Record<string, string>): string {
   const dir = join(tmpdir(), "focused-fix-" + Date.now())
@@ -21,14 +22,12 @@ function tempDir(name: string, files: Record<string, string>): string {
 describe("focused-fix", () => {
   test("returns help for empty args", async () => {
     const result = await ffCall("")
-    expect(result.type).toBe("text")
-    expect(result.value).toContain("Focused Fix")
+    expect(expectText(result)).toContain("Focused Fix")
   })
 
   test("returns help for --help", async () => {
     const result = await ffCall("--help")
-    expect(result.type).toBe("text")
-    expect(result.value).toContain("SCOPE")
+    expect(expectText(result)).toContain("SCOPE")
   })
 
   test("runs full pipeline on valid target", async () => {
@@ -37,7 +36,7 @@ describe("focused-fix", () => {
       "utils.ts": "export function helper() { return 42 }\n",
     })
     const result = await ffCall(`--json ${dir}`)
-    const data = JSON.parse(result.value)
+    const data = JSON.parse(expectText(result))
     expect(data.target).toBe(dir)
     expect(data.phases.length).toBe(5)
     expect(data.phases[0].phase).toBe(1)
@@ -58,7 +57,7 @@ describe("focused-fix", () => {
       "index.ts": "export const x = 1\n",
     })
     const result = await ffCall(`--json ${dir}`)
-    const data = JSON.parse(result.value)
+    const data = JSON.parse(expectText(result))
     const diag = data.phases.find((p: any) => p.phase === 3)
     expect(diag.findings.some((f: string) => f.includes("测试文件"))).toBe(true)
   })
@@ -68,7 +67,7 @@ describe("focused-fix", () => {
       "index.ts": "export const x = 1\n",
     })
     const result = await ffCall(`--dry-run --json ${dir}`)
-    const data = JSON.parse(result.value)
+    const data = JSON.parse(expectText(result))
     const fix = data.phases.find((p: any) => p.phase === 4)
     expect(fix.status).toBe("warn")
     expect(fix.findings.some((f: string) => f.includes("dry-run"))).toBe(true)
@@ -79,7 +78,7 @@ describe("focused-fix", () => {
       "index.ts": "export const x = 1\n",
     })
     const result = await ffCall(`--phase 3 --json ${dir}`)
-    const data = JSON.parse(result.value)
+    const data = JSON.parse(expectText(result))
     expect(data.phases.length).toBe(1)
     expect(data.phases[0].phase).toBe(3)
     expect(data.phases[0].name).toBe("DIAGNOSE")
@@ -87,7 +86,7 @@ describe("focused-fix", () => {
 
   test("handles non-existent path", async () => {
     const result = await ffCall("--json /nonexistent/path/12345")
-    const data = JSON.parse(result.value)
+    const data = JSON.parse(expectText(result))
     expect(data.verdict).toBe("FAIL")
     expect(data.phases.some((p: any) => p.status === "fail")).toBe(true)
   })
@@ -97,8 +96,7 @@ describe("focused-fix", () => {
       "index.ts": "export const x = 1\n",
     })
     const result = await ffCall(dir)
-    expect(result.type).toBe("text")
-    expect(result.value).toContain("Focused Fix Report")
-    expect(result.value).toContain("Phase 1")
+    expect(expectText(result)).toContain("Focused Fix Report")
+    expect(expectText(result)).toContain("Phase 1")
   })
 })

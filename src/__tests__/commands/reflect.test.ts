@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { call } from '../../commands/reflect/reflect.ts'
 import type { LocalCommandCall } from '../../types/command.js'
+import { expectText } from "../utils/commandResult.js";
 
 // Mock dependencies
 vi.mock('../../bootstrap/state.js', () => ({
@@ -41,11 +42,10 @@ describe('reflect command', () => {
 
     const result = await call('', mockContext)
 
-    expect(result.type).toBe('text')
-    expect(result.value).toContain('claude-sonnet-4-6')
-    expect(result.value).toContain('反思报告')
-    expect(result.value).toContain('仓库状态')
-    expect(result.value).toContain('可用命令')
+    expect(expectText(result)).toContain('claude-sonnet-4-6')
+    expect(expectText(result)).toContain('反思报告')
+    expect(expectText(result)).toContain('仓库状态')
+    expect(expectText(result)).toContain('可用命令')
   })
 
   it('should detect Node.js project and suggest relevant commands', async () => {
@@ -60,9 +60,9 @@ describe('reflect command', () => {
 
     const result = await call('', mockContext)
 
-    expect(result.value).toContain('Node.js')
-    expect(result.value).toContain('/bughunter')
-    expect(result.value).toContain('/refactor')
+    expect(expectText(result)).toContain('Node.js')
+    expect(expectText(result)).toContain('/bughunter')
+    expect(expectText(result)).toContain('/refactor')
   })
 
   it('should include helpful commands in suggestions', async () => {
@@ -77,10 +77,10 @@ describe('reflect command', () => {
 
     const result = await call('', mockContext)
 
-    expect(result.value).toContain('/cost')
-    expect(result.value).toContain('/memory')
-    expect(result.value).toContain('/advisor')
-    expect(result.value).toContain('/collab')
+    expect(expectText(result)).toContain('/cost')
+    expect(expectText(result)).toContain('/memory')
+    expect(expectText(result)).toContain('/advisor')
+    expect(expectText(result)).toContain('/collab')
   })
 
   it('should show git branch and status when in git repo', async () => {
@@ -95,9 +95,9 @@ describe('reflect command', () => {
 
     const result = await call('', mockContext)
 
-    expect(result.value).toContain('main')
-    expect(result.value).toContain('abc123d')
-    expect(result.value).toContain('干净')
+    expect(expectText(result)).toContain('main')
+    expect(expectText(result)).toContain('abc123d')
+    expect(expectText(result)).toContain('干净')
   })
 
   it('should handle non-git directory gracefully', async () => {
@@ -115,6 +115,6 @@ describe('reflect command', () => {
 
     const result = await call('', mockContext)
 
-    expect(result.value).toContain('不是 Git 仓库')
+    expect(expectText(result)).toContain('不是 Git 仓库')
   })
 })

@@ -1,8 +1,7 @@
 import { readdir, stat, readFile, writeFile } from 'fs/promises'
 import { execSync } from 'child_process'
 import { tmpdir } from 'node:os'
-import type { Command } from '../../commands.js'
-import type { LocalCommandCall } from '../../types/command.js'
+import type { LocalCommandResult } from '../../types/command.js'
 
 const HELP = `Repo Pack — 将代码库打包为 AI 友好格式
 
@@ -381,11 +380,13 @@ function escapeXml(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 }
 
-const repoPack: Command = {
+// 注意：本命令在顶层暴露 `call`（而非通过 LocalCommand.load 懒加载），
+// 与 LocalCommand 契约不同，但现有加载路径与测试均依赖该形状，故此处不做结构改造。
+const repoPack = {
   name: 'repo-pack',
   description: '将代码库打包为 AI 友好格式 (类似 repomix)',
   type: 'local',
-  call: async (input, _ctx): Promise<LocalCommandCall> => {
+  call: async (input, _ctx): Promise<LocalCommandResult> => {
     const s = typeof input === 'string' ? input : input.message ?? ''
 
     if (s.includes('--help')) {

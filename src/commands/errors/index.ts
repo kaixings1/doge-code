@@ -180,7 +180,7 @@ function applyFixToFile(filePath: string, lineNumber: number, suggestedFix: stri
 
 export const call: LocalCommandCall = async (args) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
-    return { output: `errors — ⚠️ 错误监控 - 扫描/追踪/自动修复/模式/导出\n用法: /errors`.trim(), truncated: false }
+    return { type: 'text', value: `errors — ⚠️ 错误监控 - 扫描/追踪/自动修复/模式/导出\n用法: /errors`.trim() }
   }
   const s = (args ?? '').trim()
   const parts = s.split(/\s+/)
@@ -326,11 +326,11 @@ export const call: LocalCommandCall = async (args) => {
   ].join('\n') }
 }
 
-const errorsCmd: Command = {
+const errorsCmd = {
   type: 'local', name: 'errors',
   description: '⚠️ 错误监控 - 扫描/追踪/自动修复/模式/导出',
   aliases: ['/errors', '/err'], supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
-}
+  load: () => Promise.resolve({ call }),
+} satisfies Command
 
 export default errorsCmd

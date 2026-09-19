@@ -9,7 +9,7 @@ function run(cmd: string): string {
 
 export const call: LocalJSXCommandCall = async (args) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
-    return { output: `k8s — Kubernetes 集群管理：pods/deploy/svc/get/describe/logs\n用法: /k8s`.trim(), truncated: false }
+    return { type: 'text' as const, value: `k8s — Kubernetes 集群管理：pods/deploy/svc/get/describe/logs\n用法: /k8s`.trim() }
   }
   const p = args.trim().split(/\s+/)
   const c = p[0] || ''

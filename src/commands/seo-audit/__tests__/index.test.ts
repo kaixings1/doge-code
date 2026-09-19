@@ -6,6 +6,7 @@ const seoCall = seoAuditModule.call
 import { readFileSync, writeFileSync, mkdirSync } from "fs"
 import { join, dirname } from "path"
 import { tmpdir } from "os"
+import { expectText } from "../../../__tests__/utils/commandResult.js";
 
 function tempFile(name: string, content: string): string {
   const dir = join(tmpdir(), "seo-audit-" + Date.now())
@@ -19,34 +20,32 @@ function tempFile(name: string, content: string): string {
 describe("seo-audit", () => {
   test("returns help for empty args", async () => {
     const result = await seoCall("")
-    expect(result.type).toBe("text")
-    expect(result.value).toContain("SEO")
+    expect(expectText(result)).toContain("SEO")
   })
 
   test("returns help for --help", async () => {
     const result = await seoCall("--help")
-    expect(result.type).toBe("text")
-    expect(result.value).toContain("min-length")
+    expect(expectText(result)).toContain("min-length")
   })
 
   test("detects missing title", async () => {
     const file = tempFile("test.md", "---\ndescription: test desc\n---\n\nHello world content here enough words to pass")
     const result = await seoCall(`--json ${file}`)
-    const data = JSON.parse(result.value)
+    const data = JSON.parse(expectText(result))
     expect(data.issues.some((i: any) => i.rule === "missing-title")).toBe(true)
   })
 
   test("detects missing description", async () => {
     const file = tempFile("test2.md", "---\ntitle: This is a sufficiently long title for testing purposes here\n---\n\nHello world content here enough words to pass")
     const result = await seoCall(`--json ${file}`)
-    const data = JSON.parse(result.value)
+    const data = JSON.parse(expectText(result))
     expect(data.issues.some((i: any) => i.rule === "missing-desc")).toBe(true)
   })
 
   test("detects thin content", async () => {
     const file = tempFile("test3.md", "---\ntitle: This is a sufficiently long title for testing purposes here\ndescription: This is a sufficiently long description for testing SEO purposes here\n---\n\nshort")
     const result = await seoCall(`--json ${file}`)
-    const data = JSON.parse(result.value)
+    const data = JSON.parse(expectText(result))
     expect(data.issues.some((i: any) => i.rule === "thin-content")).toBe(true)
   })
 
@@ -65,15 +64,14 @@ ${body}
 `
     const file = tempFile("clean.md", content)
     const result = await seoCall(`--json ${file}`)
-    const data = JSON.parse(result.value)
+    const data = JSON.parse(expectText(result))
     expect(data.issues.length).toBe(0)
   })
 
   test("outputs non-json format by default", async () => {
     const file = tempFile("test4.md", "---\ntitle: Short\ndescription: Short\n---\n\nshort")
     const result = await seoCall(file)
-    expect(result.type).toBe("text")
-    expect(result.value).toContain("SEO 审计")
+    expect(expectText(result)).toContain("SEO 审计")
   })
 
   test("detects missing H1", async () => {
@@ -86,14 +84,14 @@ Some paragraph without heading
 `
     const file = tempFile("no-h1.md", content)
     const result = await seoCall(`--json ${file}`)
-    const data = JSON.parse(result.value)
+    const data = JSON.parse(expectText(result))
     expect(data.issues.some((i: any) => i.rule === "missing-h1")).toBe(true)
   })
 
   test("detects title length issue", async () => {
     const file = tempFile("short-title.md", "---\ntitle: Short\ndescription: This is a sufficiently long description for testing SEO purposes here\n---\n\nHello world content here enough words to pass")
     const result = await seoCall(`--json ${file}`)
-    const data = JSON.parse(result.value)
+    const data = JSON.parse(expectText(result))
     expect(data.issues.some((i: any) => i.rule === "title-length")).toBe(true)
   })
 })

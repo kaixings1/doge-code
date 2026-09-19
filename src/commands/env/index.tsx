@@ -5,7 +5,7 @@ import * as React from 'react'
 
 export const call: LocalJSXCommandCall = async () => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
-    return { output: `env — 显示环境变量\n用法: /env`.trim(), truncated: false }
+    return { type: 'text' as const, value: `env — 显示环境变量\n用法: /env`.trim() }
   }
   const envVars = [
     { name: 'env', value: process.env.ANTHROPIC_BASE_URL || '（未设置）' },

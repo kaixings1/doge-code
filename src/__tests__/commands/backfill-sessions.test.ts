@@ -2,11 +2,12 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { existsSync, mkdirSync, rmSync, writeFileSync, readdirSync } from 'fs'
 import { join } from 'path'
 import { getCachedDirEntries, setCachedDirEntries, clearDirCache } from '../../utils/dirCache.js'
+import type { LocalCommandResult } from '../../types/command.js'
 
 const TMP_DIR = join(process.cwd(), '.tmp', 'doge-backfill-test')
 const SESSION_DIR = join(TMP_DIR, '.doge', 'sessions')
 
-let call: (args: string) => Promise<{ type: string; value: string }>
+let call: (args: string) => Promise<LocalCommandResult>
 
 beforeEach(async () => {
   clearDirCache()

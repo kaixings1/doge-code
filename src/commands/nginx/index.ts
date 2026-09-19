@@ -10,7 +10,7 @@ function run(cmd: string): string {
 
 export const call: LocalJSXCommandCall = async (args) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
-    return { output: `nginx — Nginx 管理：status/start/stop/reload/test/sites/logs/config\n用法: /nginx`.trim(), truncated: false }
+    return { type: 'text' as const, value: `nginx — Nginx 管理：status/start/stop/reload/test/sites/logs/config\n用法: /nginx`.trim() }
   }
   const p = args.trim().split(/\s+/)
   const c = p[0] || ''

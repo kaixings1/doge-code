@@ -62,7 +62,7 @@ const TEMPLATES: ProjectTemplate[] = [
 
 export const call: LocalCommandCall = async (args) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
-    return { output: `templates — React + TypeScript + Vite starter\n用法: /templates`.trim(), truncated: false }
+    return { type: 'text' as const, value: `templates — React + TypeScript + Vite starter\n用法: /templates`.trim() }
   }
   const s = (args ?? '').trim()
   const parts = s.split(/\s+/)

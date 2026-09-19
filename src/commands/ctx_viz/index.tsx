@@ -66,7 +66,7 @@ function getRealContextInfo() {
 // ============================================================================
 export const call: LocalJSXCommandCall = async () => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
-    return { output: `ctx_viz — 显示上下文使用情况（Token、消息数、工具调用、会话时长）\n用法: /ctx_viz`.trim(), truncated: false }
+    return { type: 'text' as const, value: `ctx_viz — 显示上下文使用情况（Token、消息数、工具调用、会话时长）\n用法: /ctx_viz`.trim() }
   }
   const [refreshKey, setRefreshKey] = React.useState(0)
   // 自动刷新（每 5 秒）

@@ -5,7 +5,7 @@ import path from 'path'
 
 export const call: LocalJSXCommandCall = async (args) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
-    return { output: `image — 图片信息查看与管理：info/ls/convert\n用法: /image`.trim(), truncated: false }
+    return { type: 'text' as const, value: `image — 图片信息查看与管理：info/ls/convert\n用法: /image`.trim() }
   }
   const p = args.trim().split(/\s+/)
   const c = p[0] || ''

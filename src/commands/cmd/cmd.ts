@@ -17,10 +17,10 @@ const call: LocalCommandCall = async (args, context) => {
 
   if (filtered.length === 0) {
     return {
-      output: query
+      type: 'text' as const,
+      value: query
         ? `没有找到匹配 "${args}" 的命令\n\n提示: 尝试搜索命令名、别名或关键词`
         : '没有可用的命令',
-      truncated: false,
     }
   }
 

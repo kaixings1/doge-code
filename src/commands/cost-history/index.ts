@@ -133,7 +133,7 @@ function formatProjectSummary(summary: ProjectCostSummary): string {
 
 export const call: CostHistoryCall = async (_, parsed) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
-    return { output: `cost-history — 查看 API 成本历史记录与趋势（按会话/模型/时间）\n用法: /cost-history`.trim(), truncated: false }
+    return { type: 'text' as const, value: `cost-history — 查看 API 成本历史记录与趋势（按会话/模型/时间）\n用法: /cost-history`.trim() }
   }
   // 清空历史
   if (parsed.clear) {

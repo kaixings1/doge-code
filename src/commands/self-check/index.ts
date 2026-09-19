@@ -1515,7 +1515,7 @@ function getModeLabel(mode: CheckMode): string {
 
 const call: LocalCommandCall = async (args, _context): Promise<LocalCommandResult> => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
-    return { output: `self-check — 🔍 自检命令 - 改完代码后自动验证，不对就继续改（lint/test/type-check/build/security/audit/coverage）\n用法: /self-check`.trim(), truncated: false }
+    return { type: 'text' as const, value: `self-check — 🔍 自检命令 - 改完代码后自动验证，不对就继续改（lint/test/type-check/build/security/audit/coverage）\n用法: /self-check`.trim() }
   }
   return runSelfCheck(args)
 }

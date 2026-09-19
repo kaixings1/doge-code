@@ -132,7 +132,7 @@ CMD ${options.cmd || '["java", "-jar", "app.jar"]'}`,
 
 export const call: LocalJSXCommandCall = async (args) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
-    return { output: `docker — Docker - ps/logs/exec/compose/stats/networks/volumes/prune/scan/generate/config\n用法: /docker`.trim(), truncated: false }
+    return { type: 'text' as const, value: `docker — Docker - ps/logs/exec/compose/stats/networks/volumes/prune/scan/generate/config\n用法: /docker`.trim() }
   }
   const p = args.trim().split(/\s+/)
   const c = p[0] || ''

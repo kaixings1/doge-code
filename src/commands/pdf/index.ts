@@ -4,7 +4,7 @@ import fs from 'fs'
 
 export const call: LocalJSXCommandCall = async (args) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
-    return { output: `pdf — PDF 文件读取与信息查看：read/info\n用法: /pdf`.trim(), truncated: false }
+    return { type: 'text' as const, value: `pdf — PDF 文件读取与信息查看：read/info\n用法: /pdf`.trim() }
   }
   const p = args.trim().split(/\s+/)
   const c = p[0] || ''

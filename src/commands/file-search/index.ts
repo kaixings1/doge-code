@@ -1,7 +1,6 @@
 import type { Command } from '../../commands.js'
 import type { LocalCommandCall } from '../../types/command.js'
-import { execSync } from 'child_process'
-import { readFileSync, existsSync, readdirSync, statSync } from 'fs'
+import { readFileSync, existsSync, readdirSync } from 'fs'
 import { join, extname } from 'path'
 import iconv from 'iconv-lite'
 
@@ -66,12 +65,24 @@ function searchInDir(pattern: string, dir: string, exts: string[], context = 0):
   return results
 }
 
+function countFiles(dir: string): number {
+  let n = 0
+  try {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      if (entry.name.startsWith('.') || entry.name === 'node_modules' || entry.name === 'dist' || entry.name === 'build') continue
+      if (entry.isDirectory()) n += countFiles(join(dir, entry.name))
+      else n += 1
+    }
+  } catch { /* ignore */ }
+  return n
+}
+
 export const call: LocalCommandCall = async (args) => {
   const s = (args ?? '').trim()
   const parts = s.split(/\s+/)
   const cmd = parts[0]?.toLowerCase() || 'help'
 
-  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['🔍 文件搜索', '', '📖 用法：', '  /file-search <模式>             在所有文件中搜索', '  /file-search <模式> <文件>      在指定文件中搜索', '  /file-search <模式> --ext .ts   在 .ts 文件中搜索', '  /file-search <模式> -C 2        显示 2 行上下文', '  /file-search count <模式>       统计匹配数', '  /file-search files <模式>       列出含匹配的文件', '  /file-search replace <原> <新>   预览替换', '  /file-search grep <模式>        使用 grep（更快）', '  /file-search ripgrep <模式>     使用 ripgrep（最快）', '  /file-search stats              搜索统计', ''].join('\n') }
+  if (cmd === 'help' || cmd === '') return { type: 'text', value: ['🔍 文件搜索', '', '📖 用法：', '  /file-search <模式>             在所有文件中搜索', '  /file-search <模式> <文件>      在指定文件中搜索', '  /file-search <模式> --ext .ts   在 .ts 文件中搜索', '  /file-search <模式> -C 2        显示 2 行上下文', '  /file-search count <模式>       统计匹配数', '  /file-search files <模式>       列出含匹配的文件', '  /file-search replace <原> <新>   预览替换', '  /file-search grep <模式>        同 search，列出文件:行号', '  /file-search stats              项目文件数', ''].join('\n') }
 
   if (cmd === 'count') {
     const pattern = parts[1]
@@ -107,29 +118,18 @@ export const call: LocalCommandCall = async (args) => {
     return { type: 'text', value: lines.join('\n') }
   }
 
-  if (cmd === 'grep') {
+  if (cmd === 'grep' || cmd === 'ripgrep' || cmd === 'rg') {
     const pattern = parts.slice(1).join(' ')
     if (!pattern) return { type: 'text', value: '📖 用法：/file-search grep <模式>' }
-    try {
-      const output = execSync('rg -n "' + pattern + '" . --max-count 50 2>/dev/null || grep -rn "' + pattern + '" . --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" --include="*.py" --include="*.go" --include="*.java" --include="*.rs" --include="*.md" -l 2>/dev/null | head -50', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
-      return { type: 'text', value: output || 'ℹ️ 未找到匹配' }
-    } catch { return { type: 'text', value: 'ℹ️ 未找到匹配' } }
-  }
-
-  if (cmd === 'ripgrep' || cmd === 'rg') {
-    const pattern = parts.slice(1).join(' ')
-    if (!pattern) return { type: 'text', value: '📖 用法：/file-search rg <模式>' }
-    try {
-      const output = execSync('rg -n "' + pattern + '" . --max-count 50 2>/dev/null || echo "ripgrep not installed"', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
-      return { type: 'text', value: output || 'ℹ️ 未找到匹配' }
-    } catch { return { type: 'text', value: 'ℹ️ 未找到匹配' } }
+    const results = searchInDir(pattern, '.', []).slice(0, 50)
+    if (results.length === 0) return { type: 'text', value: 'ℹ️ 未找到匹配' }
+    const lines = ['🔍 ' + pattern + '（' + results.length + ' 个匹配）', '']
+    results.forEach(r => lines.push(r.file + ':' + r.line + ' - ' + r.text.slice(0, 80)))
+    return { type: 'text', value: lines.join('\n') }
   }
 
   if (cmd === 'stats') {
-    try {
-      const output = execSync('find . -type f -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/dist/*" | wc -l', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] })
-      return { type: 'text', value: '📊 项目文件数：' + output.trim() }
-    } catch { return { type: 'text', value: '❌ 无法统计文件数' } }
+    return { type: 'text', value: '📊 项目文件数：' + countFiles('.') }
   }
 
   // Default: search

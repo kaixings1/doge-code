@@ -62,46 +62,46 @@ describe('ListPeersTool', () => {
   })
 
   it('list 无 peers 时返回提示', async () => {
-    const result = await tool.execute({ action: 'list' }, {})
+    const result = await tool.execute({ action: 'list' })
     expect(result.content[0].text).toContain('No peer connections found')
     expect(result.content[0].text).toContain('action=discover')
   })
 
   it('add 添加 peer 后 list 能列出', async () => {
-    const addResult = await tool.execute({ action: 'add', host: '192.168.1.50', name: 'dev-box', port: 45678 }, {})
+    const addResult = await tool.execute({ action: 'add', host: '192.168.1.50', name: 'dev-box', port: 45678 })
     expect(addResult.content[0].text).toContain('Added peer: dev-box')
 
     // 同实例、同 tmpDir，add 写入后 list 应可见
-    const listResult = await tool.execute({ action: 'list' }, {})
+    const listResult = await tool.execute({ action: 'list' })
     expect(listResult.content[0].text).toContain('dev-box')
     expect(listResult.content[0].text).toContain('192.168.1.50')
   })
 
   it('add 缺 host 时返回错误', async () => {
-    const result = await tool.execute({ action: 'add', name: 'nohost' }, {})
+    const result = await tool.execute({ action: 'add', name: 'nohost' })
     expect(result.content[0].text).toContain('Error: host is required')
   })
 
   it('remove 删除 peer', async () => {
-    await tool.execute({ action: 'add', host: '10.0.0.5', name: 'to-remove' }, {})
-    const rem = await tool.execute({ action: 'remove', name: 'to-remove' }, {})
+    await tool.execute({ action: 'add', host: '10.0.0.5', name: 'to-remove' })
+    const rem = await tool.execute({ action: 'remove', name: 'to-remove' })
     expect(rem.content[0].text).toContain('Removed peer: to-remove')
 
-    const listResult = await tool.execute({ action: 'list' }, {})
+    const listResult = await tool.execute({ action: 'list' })
     expect(listResult.content[0].text).toContain('No peer connections')
   })
 
   it('remove 不存在的 peer 返回未找到', async () => {
-    const result = await tool.execute({ action: 'remove', name: 'ghost' }, {})
+    const result = await tool.execute({ action: 'remove', name: 'ghost' })
     expect(result.content[0].text).toContain('Peer not found')
   })
 
   it('discover 收到 UDP 响应后合并到注册表', async () => {
     // 先添加一个 peer
-    await tool.execute({ action: 'add', host: '1.2.3.4', name: 'manual-peer' }, {})
+    await tool.execute({ action: 'add', host: '1.2.3.4', name: 'manual-peer' })
 
     // 模拟 UDP 响应：在 discover 发送广播后触发
-    const discoverPromise = tool.execute({ action: 'discover', timeout: 500 }, {})
+    const discoverPromise = tool.execute({ action: 'discover', timeout: 500 })
 
     // 让事件循环跑一轮后触发响应
     await new Promise(r => setTimeout(r, 50))
@@ -116,17 +116,17 @@ describe('ListPeersTool', () => {
   })
 
   it('discover 无响应时提示未发现', async () => {
-    const result = await tool.execute({ action: 'discover', timeout: 50 }, {})
+    const result = await tool.execute({ action: 'discover', timeout: 50 })
     expect(result.content[0].text).toContain('no peers responded')
   })
 
   it('ping 无响应时返回超时', async () => {
-    const result = await tool.execute({ action: 'ping', host: '192.168.1.99', timeout: 50 }, {})
+    const result = await tool.execute({ action: 'ping', host: '192.168.1.99', timeout: 50 })
     expect(result.content[0].text).toContain('timeout')
   })
 
   it('ping 收到响应时返回耗时', async () => {
-    const promise = tool.execute({ action: 'ping', host: '192.168.1.99', timeout: 200 }, {})
+    const promise = tool.execute({ action: 'ping', host: '192.168.1.99', timeout: 200 })
     setTimeout(() => {
       socketInstance?.emit('message', Buffer.from(JSON.stringify({ type: 'doge-pong' })), { address: '192.168.1.99', port: 45678 })
     }, 5)
@@ -135,7 +135,7 @@ describe('ListPeersTool', () => {
   })
 
   it('ping 缺 host 时返回错误', async () => {
-    const result = await tool.execute({ action: 'ping' }, {})
+    const result = await tool.execute({ action: 'ping' })
     expect(result.content[0].text).toContain('Error: host is required')
   })
 })

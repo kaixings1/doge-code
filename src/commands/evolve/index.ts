@@ -514,7 +514,7 @@ function generateEvolutionFiles(result: EvolveResult): string {
 // 命令注册
 // ============================================================================
 
-const evolve: Command = {
+const evolve = {
   type: 'local',
   name: 'evolve',
   description: '直觉进化系统 — 聚类分析命令/技能/代理进化候选',
@@ -528,7 +528,7 @@ const evolve: Command = {
   ],
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call }),
-}
+} satisfies Command
 
 export { evolve }
 export default evolve

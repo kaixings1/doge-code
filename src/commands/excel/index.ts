@@ -12,7 +12,7 @@ function runPy(code: string): string {
 
 export const call: LocalJSXCommandCall = async (args) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
-    return { output: `excel — Excel 文件读取与转换：read/info/sheets/csv\n用法: /excel`.trim(), truncated: false }
+    return { type: 'text' as const, value: `excel — Excel 文件读取与转换：read/info/sheets/csv\n用法: /excel`.trim() }
   }
   const p = args.trim().split(/\s+/)
   const c = p[0] || ''

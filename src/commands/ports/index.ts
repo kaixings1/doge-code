@@ -54,7 +54,7 @@ function isPortAvailable(port: number): boolean {
 
 export const call: LocalCommandCall = async (args) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
-    return { output: `ports — 🔌 端口管理 - 列出/检查/终止/查找/监控\n用法: /ports`.trim(), truncated: false }
+    return { type: 'text' as const, value: `ports — 🔌 端口管理 - 列出/检查/终止/查找/监控\n用法: /ports`.trim() }
   }
   const s = (args ?? '').trim()
   const parts = s.split(/\s+/)

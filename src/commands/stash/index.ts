@@ -64,7 +64,7 @@ function saveNotes(notes: Record<string, string>) {
 
 export const call: LocalCommandCall = async (args) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
-    return { output: `stash — 🗂️ Git 暂存管理 - 保存/弹出/应用/查看/文件/分支/删除/备注/重命名/比较\n用法: /stash`.trim(), truncated: false }
+    return { type: 'text' as const, value: `stash — 🗂️ Git 暂存管理 - 保存/弹出/应用/查看/文件/分支/删除/备注/重命名/比较\n用法: /stash`.trim() }
   }
   const s = (args ?? '').trim()
   const parts = s.split(/\s+/)

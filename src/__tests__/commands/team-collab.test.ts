@@ -6,6 +6,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { expectText } from "../utils/commandResult.js";
 
 // ===========================================================================
 // Mock：全局 fetch + execSync（callAI 和 runQualityGate 依赖）
@@ -230,22 +231,21 @@ describe('team-collab 命令', () => {
   describe('空参数调用', () => {
     it('返回帮助信息，包含用法说明', async () => {
       const call = await getCallFn()
-      const result = await call('', {})
+      const result = await call('')
 
-      expect(result.type).toBe('text')
-      expect(result.value).toContain('多角色协作')
-      expect(result.value).toContain('/team-collab')
-      expect(result.value).toContain('pipeline')
-      expect(result.value).toContain('discuss')
-      expect(result.value).toContain('parallel')
+      expect(expectText(result)).toContain('多角色协作')
+      expect(expectText(result)).toContain('/team-collab')
+      expect(expectText(result)).toContain('pipeline')
+      expect(expectText(result)).toContain('discuss')
+      expect(expectText(result)).toContain('parallel')
     })
 
     it('返回示例用法', async () => {
       const call = await getCallFn()
-      const result = await call('', {})
+      const result = await call('')
 
-      expect(result.value).toContain('示例')
-      expect(result.value).toContain('实现用户认证模块')
+      expect(expectText(result)).toContain('示例')
+      expect(expectText(result)).toContain('实现用户认证模块')
     })
   })
 
@@ -259,23 +259,22 @@ describe('team-collab 命令', () => {
       delete process.env.ANTHROPIC_API_KEY
 
       const call = await getCallFn()
-      const result = await call('实现用户认证', {})
+      const result = await call('实现用户认证')
 
-      expect(result.type).toBe('text')
-      expect(result.value).toContain('需要配置 API 密钥')
-      expect(result.value).toContain('DOGE_API_KEY')
-      expect(result.value).toContain('ANTHROPIC_API_KEY')
+      expect(expectText(result)).toContain('需要配置 API 密钥')
+      expect(expectText(result)).toContain('DOGE_API_KEY')
+      expect(expectText(result)).toContain('ANTHROPIC_API_KEY')
     })
 
     it('设置 ANTHROPIC_API_KEY 时同样通过 key 检查', async () => {
       process.env.ANTHROPIC_API_KEY = 'sk-test-key'
 
       const call = await getCallFn()
-      const result = await call('', {})
+      const result = await call('')
 
       // 有 key 时不应返回 key 错误，而是帮助文本
-      expect(result.value).not.toContain('需要配置 API 密钥')
-      expect(result.value).toContain('多角色协作')
+      expect(expectText(result)).not.toContain('需要配置 API 密钥')
+      expect(expectText(result)).toContain('多角色协作')
     })
   })
 
@@ -290,16 +289,15 @@ describe('team-collab 命令', () => {
       setupLLM()
 
       const call = await getCallFn()
-      const result = await call('实现用户认证模块', {})
+      const result = await call('实现用户认证模块')
 
       // 验证 orchestrator 被调用，且任务描述正确
       expect(orchestratorRunCalls.length).toBe(1)
       expect(orchestratorRunCalls[0].task).toBe('实现用户认证模块')
 
       // 验证输出包含 pipeline 标识
-      expect(result.value).toContain('流水线')
-      expect(result.value).toContain('pipeline')
-      expect(result.type).toBe('text')
+      expect(expectText(result)).toContain('流水线')
+      expect(expectText(result)).toContain('pipeline')
     })
 
     it('显式 pipeline 前缀也使用 pipeline 模式', async () => {
@@ -309,11 +307,11 @@ describe('team-collab 命令', () => {
       setupLLM()
 
       const call = await getCallFn()
-      const result = await call('pipeline 重构支付流程', {})
+      const result = await call('pipeline 重构支付流程')
 
       expect(orchestratorRunCalls.length).toBe(1)
       expect(orchestratorRunCalls[0].task).toBe('重构支付流程')
-      expect(result.value).toContain('流水线')
+      expect(expectText(result)).toContain('流水线')
     })
   })
 
@@ -328,13 +326,12 @@ describe('team-collab 命令', () => {
       setupLLM()
 
       const call = await getCallFn()
-      const result = await call('discuss 重构支付流程', {})
+      const result = await call('discuss 重构支付流程')
 
       expect(orchestratorRunCalls.length).toBe(1)
       expect(orchestratorRunCalls[0].task).toBe('重构支付流程')
-      expect(result.value).toContain('讨论')
-      expect(result.value).toContain('discuss')
-      expect(result.type).toBe('text')
+      expect(expectText(result)).toContain('讨论')
+      expect(expectText(result)).toContain('discuss')
     })
 
     it('discuss 模式输出包含各阶段角色结果', async () => {
@@ -344,14 +341,14 @@ describe('team-collab 命令', () => {
       setupLLM()
 
       const call = await getCallFn()
-      const result = await call('discuss 代码安全审查', {})
+      const result = await call('discuss 代码安全审查')
 
       // 验证输出包含各角色的执行结果
-      expect(result.value).toContain('researcher')
-      expect(result.value).toContain('pm')
-      expect(result.value).toContain('architect')
-      expect(result.value).toContain('engineer')
-      expect(result.value).toContain('qa')
+      expect(expectText(result)).toContain('researcher')
+      expect(expectText(result)).toContain('pm')
+      expect(expectText(result)).toContain('architect')
+      expect(expectText(result)).toContain('engineer')
+      expect(expectText(result)).toContain('qa')
     })
   })
 
@@ -366,13 +363,12 @@ describe('team-collab 命令', () => {
       setupLLM()
 
       const call = await getCallFn()
-      const result = await call('parallel 分析代码库安全漏洞', {})
+      const result = await call('parallel 分析代码库安全漏洞')
 
       expect(orchestratorRunCalls.length).toBe(1)
       expect(orchestratorRunCalls[0].task).toBe('分析代码库安全漏洞')
-      expect(result.value).toContain('并行')
-      expect(result.value).toContain('parallel')
-      expect(result.type).toBe('text')
+      expect(expectText(result)).toContain('并行')
+      expect(expectText(result)).toContain('parallel')
     })
   })
 
@@ -387,9 +383,9 @@ describe('team-collab 命令', () => {
       setupLLM()
 
       const call = await getCallFn()
-      const result = await call('实现用户认证模块', {})
+      const result = await call('实现用户认证模块')
 
-      expect(result.value).toContain('实现用户认证模块')
+      expect(expectText(result)).toContain('实现用户认证模块')
     })
 
     it('输出包含模式信息', async () => {
@@ -399,10 +395,10 @@ describe('team-collab 命令', () => {
       setupLLM()
 
       const call = await getCallFn()
-      const result = await call('实现用户认证模块', {})
+      const result = await call('实现用户认证模块')
 
-      expect(result.value).toContain('**模式**:')
-      expect(result.value).toContain('pipeline')
+      expect(expectText(result)).toContain('**模式**:')
+      expect(expectText(result)).toContain('pipeline')
     })
 
     it('输出包含执行状态', async () => {
@@ -412,10 +408,10 @@ describe('team-collab 命令', () => {
       setupLLM()
 
       const call = await getCallFn()
-      const result = await call('实现用户认证模块', {})
+      const result = await call('实现用户认证模块')
 
-      expect(result.value).toContain('**状态**:')
-      expect(result.value).toContain('✅ 成功')
+      expect(expectText(result)).toContain('**状态**:')
+      expect(expectText(result)).toContain('✅ 成功')
     })
 
     it('输出包含最终阶段', async () => {
@@ -425,10 +421,10 @@ describe('team-collab 命令', () => {
       setupLLM()
 
       const call = await getCallFn()
-      const result = await call('实现用户认证模块', {})
+      const result = await call('实现用户认证模块')
 
-      expect(result.value).toContain('**最终阶段**:')
-      expect(result.value).toContain('done')
+      expect(expectText(result)).toContain('**最终阶段**:')
+      expect(expectText(result)).toContain('done')
     })
 
     it('输出包含质量评分', async () => {
@@ -438,10 +434,10 @@ describe('team-collab 命令', () => {
       setupLLM()
 
       const call = await getCallFn()
-      const result = await call('实现用户认证模块', {})
+      const result = await call('实现用户认证模块')
 
-      expect(result.value).toContain('**质量评分**:')
-      expect(result.value).toContain('/100')
+      expect(expectText(result)).toContain('**质量评分**:')
+      expect(expectText(result)).toContain('/100')
     })
 
     it('输出包含总耗时', async () => {
@@ -451,10 +447,10 @@ describe('team-collab 命令', () => {
       setupLLM()
 
       const call = await getCallFn()
-      const result = await call('实现用户认证模块', {})
+      const result = await call('实现用户认证模块')
 
-      expect(result.value).toContain('**总耗时**:')
-      expect(result.value).toContain('s')
+      expect(expectText(result)).toContain('**总耗时**:')
+      expect(expectText(result)).toContain('s')
     })
 
     it('输出包含总迭代次数', async () => {
@@ -464,9 +460,9 @@ describe('team-collab 命令', () => {
       setupLLM()
 
       const call = await getCallFn()
-      const result = await call('实现用户认证模块', {})
+      const result = await call('实现用户认证模块')
 
-      expect(result.value).toContain('**总迭代**:')
+      expect(expectText(result)).toContain('**总迭代**:')
     })
 
     it('输出包含各阶段执行详情', async () => {
@@ -476,15 +472,15 @@ describe('team-collab 命令', () => {
       setupLLM()
 
       const call = await getCallFn()
-      const result = await call('实现用户认证模块', {})
+      const result = await call('实现用户认证模块')
 
-      expect(result.value).toContain('执行详情')
+      expect(expectText(result)).toContain('执行详情')
       // 验证每个角色都有执行结果行
-      expect(result.value).toContain('researcher')
-      expect(result.value).toContain('pm')
-      expect(result.value).toContain('architect')
-      expect(result.value).toContain('engineer')
-      expect(result.value).toContain('qa')
+      expect(expectText(result)).toContain('researcher')
+      expect(expectText(result)).toContain('pm')
+      expect(expectText(result)).toContain('architect')
+      expect(expectText(result)).toContain('engineer')
+      expect(expectText(result)).toContain('qa')
     })
 
     it('输出包含产出文件列表', async () => {
@@ -494,11 +490,11 @@ describe('team-collab 命令', () => {
       setupLLM()
 
       const call = await getCallFn()
-      const result = await call('实现用户认证模块', {})
+      const result = await call('实现用户认证模块')
 
-      expect(result.value).toContain('产出文件')
-      expect(result.value).toContain('src/auth.ts')
-      expect(result.value).toContain('src/auth.test.ts')
+      expect(expectText(result)).toContain('产出文件')
+      expect(expectText(result)).toContain('src/auth.ts')
+      expect(expectText(result)).toContain('src/auth.test.ts')
     })
 
     it('输出包含合并输出和摘要', async () => {
@@ -508,11 +504,11 @@ describe('team-collab 命令', () => {
       setupLLM()
 
       const call = await getCallFn()
-      const result = await call('实现用户认证模块', {})
+      const result = await call('实现用户认证模块')
 
-      expect(result.value).toContain('合并输出')
-      expect(result.value).toContain('完整的多角色协作输出内容')
-      expect(result.value).toContain('✅ 成功')
+      expect(expectText(result)).toContain('合并输出')
+      expect(expectText(result)).toContain('完整的多角色协作输出内容')
+      expect(expectText(result)).toContain('✅ 成功')
     })
   })
 
@@ -522,10 +518,9 @@ describe('team-collab 命令', () => {
   describe('边界情况', () => {
     it('仅提供空格时返回帮助', async () => {
       const call = await getCallFn()
-      const result = await call('   ', {})
+      const result = await call('   ')
 
-      expect(result.type).toBe('text')
-      expect(result.value).toContain('多角色协作')
+      expect(expectText(result)).toContain('多角色协作')
     })
 
     it('任务描述前后的空格被正确裁剪', async () => {
@@ -535,7 +530,7 @@ describe('team-collab 命令', () => {
       setupLLM()
 
       const call = await getCallFn()
-      const result = await call('  实现用户认证模块  ', {})
+      const result = await call('  实现用户认证模块  ')
 
       expect(orchestratorRunCalls.length).toBe(1)
       expect(orchestratorRunCalls[0].task).toBe('实现用户认证模块')
@@ -548,7 +543,7 @@ describe('team-collab 命令', () => {
       setupLLM()
 
       const call = await getCallFn()
-      const result = await call('pipeline  重构支付流程  ', {})
+      const result = await call('pipeline  重构支付流程  ')
 
       expect(orchestratorRunCalls.length).toBe(1)
       expect(orchestratorRunCalls[0].task).toBe('重构支付流程')
@@ -558,18 +553,16 @@ describe('team-collab 命令', () => {
       // 代码执行顺序：先检测 mode，再检查 taskDescription，最后检查 API key
       // 因此缺少 API key 时先返回 key 错误
       const call = await getCallFn()
-      const result = await call('discuss   ', {})
+      const result = await call('discuss   ')
 
-      expect(result.type).toBe('text')
-      expect(result.value).toContain('需要配置 API 密钥')
+      expect(expectText(result)).toContain('需要配置 API 密钥')
     })
 
     it('parallel 前缀后仅空格在缺少 API key 时先返回 key 错误', async () => {
       const call = await getCallFn()
-      const result = await call('parallel   ', {})
+      const result = await call('parallel   ')
 
-      expect(result.type).toBe('text')
-      expect(result.value).toContain('需要配置 API 密钥')
+      expect(expectText(result)).toContain('需要配置 API 密钥')
     })
   })
 
@@ -586,11 +579,10 @@ describe('team-collab 命令', () => {
       setupLLM()
 
       const call = await getCallFn()
-      const result = await call('测试任务', {})
+      const result = await call('测试任务')
 
-      expect(result.type).toBe('text')
-      expect(result.value).toContain('协作编排失败')
-      expect(result.value).toContain('模拟的编排器错误')
+      expect(expectText(result)).toContain('协作编排失败')
+      expect(expectText(result)).toContain('模拟的编排器错误')
     })
   })
 
@@ -600,31 +592,31 @@ describe('team-collab 命令', () => {
   describe('帮助文本', () => {
     it('包含三种模式的说明', async () => {
       const call = await getCallFn()
-      const result = await call('', {})
+      const result = await call('')
 
-      expect(result.value).toContain('pipeline 模式')
-      expect(result.value).toContain('讨论模式')
-      expect(result.value).toContain('并行模式')
+      expect(expectText(result)).toContain('pipeline 模式')
+      expect(expectText(result)).toContain('讨论模式')
+      expect(expectText(result)).toContain('并行模式')
     })
 
     it('包含 pipeline 严格顺序的角色链', async () => {
       const call = await getCallFn()
-      const result = await call('', {})
+      const result = await call('')
 
-      expect(result.value).toContain('PM')
-      expect(result.value).toContain('Architect')
-      expect(result.value).toContain('TeamLeader')
-      expect(result.value).toContain('Engineer')
-      expect(result.value).toContain('QA')
+      expect(expectText(result)).toContain('PM')
+      expect(expectText(result)).toContain('Architect')
+      expect(expectText(result)).toContain('TeamLeader')
+      expect(expectText(result)).toContain('Engineer')
+      expect(expectText(result)).toContain('QA')
     })
 
     it('包含具体的使用示例', async () => {
       const call = await getCallFn()
-      const result = await call('', {})
+      const result = await call('')
 
-      expect(result.value).toContain('/team-collab 实现用户认证模块')
-      expect(result.value).toContain('/team-collab discuss 重构支付流程')
-      expect(result.value).toContain('/team-collab parallel 分析代码库安全漏洞')
+      expect(expectText(result)).toContain('/team-collab 实现用户认证模块')
+      expect(expectText(result)).toContain('/team-collab discuss 重构支付流程')
+      expect(expectText(result)).toContain('/team-collab parallel 分析代码库安全漏洞')
     })
   })
 })

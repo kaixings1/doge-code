@@ -381,11 +381,20 @@ export type Tool<
    * 优先使用工具名称中未出现的术语（例如，为 NotebookEdit 使用 'jupyter'）。
    */
   searchHint?: string
+  /**
+   * 工具执行入口。
+   *
+   * 运行时由 toolExecution 传入全部 5 个参数，但绝大多数工具只用得上第一个
+   * `args`。因此除 `args` 外的参数声明为可选：实现方可以只写
+   * `call({...})`（多数工具），也可以写完整的
+   * `call(input, ctx, canUseTool, parentMessage, onProgress)`（BashTool 等）。
+   * 调用方只传 `args` 同样合法。
+   */
   call(
     args: z.infer<Input>,
-    context: ToolUseContext,
-    canUseTool: CanUseToolFn,
-    parentMessage: AssistantMessage,
+    context?: ToolUseContext,
+    canUseTool?: CanUseToolFn,
+    parentMessage?: AssistantMessage,
     onProgress?: ToolCallProgress<P>,
   ): Promise<ToolResult<Output>>
   description(

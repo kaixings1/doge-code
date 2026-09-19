@@ -9,7 +9,7 @@ function run(cmd: string): string {
 
 export const call: LocalJSXCommandCall = async (args) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
-    return { output: `redis — Redis 缓存操作：get/set/del/keys/ping/info/flush\n用法: /redis`.trim(), truncated: false }
+    return { type: 'text' as const, value: `redis — Redis 缓存操作：get/set/del/keys/ping/info/flush\n用法: /redis`.trim() }
   }
   const p = args.trim().split(/\s+/)
   const c = p[0] || ''
