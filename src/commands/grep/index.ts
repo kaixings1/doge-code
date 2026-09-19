@@ -4,6 +4,7 @@ import { execSync } from 'child_process'
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from 'fs'
 import { join, extname } from 'path'
 import { homedir } from 'os'
+import iconv from 'iconv-lite'
 
 const CONFIG_DIR = join(homedir(), '.doge', 'grep')
 const CONFIG_FILE = join(CONFIG_DIR, 'config.json')
@@ -77,22 +78,49 @@ function escapeRegex(str: string): string {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
+const ENCODINGS = ['utf-8', 'gbk', 'utf-16le', 'windows-1252', 'latin1'] as const
+
 function searchInFile(pattern: RegExp, file: string, options: SearchOptions): SearchResult[] {
   const results: SearchResult[] = []
   try {
-    const lines = readFileSync(file, 'utf-8').split('\n')
-    lines.forEach((line, i) => {
-      pattern.lastIndex = 0
-      if (pattern.test(line)) {
-        const ctx: string[] = []
-        if (options.context > 0) {
-          for (let c = Math.max(0, i - options.context); c <= Math.min(lines.length - 1, i + options.context); c++) {
-            if (c !== i) ctx.push(`${c + 1}: ${lines[c].slice(0, 100)}`)
-          }
-        }
-        results.push({ file, line: i + 1, text: line.trim().slice(0, 150), contextLines: ctx })
+    const raw = readFileSync(file)
+
+    // Decode once per encoding, reuse for all lines.
+    // Only try GBK/UTF-16LE/Latin1 if UTF-8 produced replacement chars
+    // (indicating the file is not actually UTF-8).
+    const utf8Content = iconv.decode(raw, 'utf-8')
+    const replacementRatio = (utf8Content.match(/\ufffd/g) || []).length / Math.max(utf8Content.length, 1)
+    const encodingsToTry: readonly string[] = replacementRatio > 0.01
+      ? ENCODINGS
+      : ['utf-8']
+
+    for (const enc of encodingsToTry) {
+      let content: string
+      try {
+        content = enc === 'utf-8' ? utf8Content : iconv.decode(raw, enc)
+      } catch {
+        continue
       }
-    })
+
+      const matches: SearchResult[] = []
+      const lines = content.split('\n')
+      lines.forEach((line, i) => {
+        pattern.lastIndex = 0
+        if (pattern.test(line)) {
+          const ctx: string[] = []
+          if (options.context > 0) {
+            for (let c = Math.max(0, i - options.context); c <= Math.min(lines.length - 1, i + options.context); c++) {
+              if (c !== i) ctx.push(`${c + 1}: ${lines[c].slice(0, 100)}`)
+            }
+          }
+          matches.push({ file, line: i + 1, text: line.trim().slice(0, 150), contextLines: ctx })
+        }
+      })
+
+      if (matches.length > 0) {
+        return matches
+      }
+    }
   } catch { /* ignore */ }
   return results
 }

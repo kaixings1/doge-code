@@ -3,26 +3,50 @@ import type { LocalCommandCall } from '../../types/command.js'
 import { execSync } from 'child_process'
 import { readFileSync, existsSync, readdirSync, statSync } from 'fs'
 import { join, extname } from 'path'
+import iconv from 'iconv-lite'
 
 interface SearchResult { file: string; line: number; text: string; context: string[] }
+
+const ENCODINGS = ['utf-8', 'gbk', 'utf-16le', 'windows-1252', 'latin1'] as const
 
 function searchInFile(pattern: string, file: string, context = 0): SearchResult[] {
   const results: SearchResult[] = []
   if (!existsSync(file)) return results
   try {
-    const content = readFileSync(file, 'utf-8')
-    const lines = content.split('\n')
-    const regex = new RegExp(pattern, 'gi')
-    lines.forEach((line, i) => {
-      if (regex.test(line)) {
-        const ctx = []
-        for (let c = Math.max(0, i - context); c <= Math.min(lines.length - 1, i + context); c++) {
-          if (c !== i) ctx.push('  ' + (c + 1) + ': ' + lines[c])
-        }
-        results.push({ file, line: i + 1, text: line.trim(), context: ctx })
+    const raw = readFileSync(file)
+
+    const utf8Content = iconv.decode(raw, 'utf-8')
+    const replacementRatio = (utf8Content.match(/\ufffd/g) || []).length / Math.max(utf8Content.length, 1)
+    const encodingsToTry: readonly string[] = replacementRatio > 0.01
+      ? ENCODINGS
+      : ['utf-8']
+
+    for (const enc of encodingsToTry) {
+      let content: string
+      try {
+        content = enc === 'utf-8' ? utf8Content : iconv.decode(raw, enc)
+      } catch {
+        continue
       }
-      regex.lastIndex = 0
-    })
+
+      const matches: SearchResult[] = []
+      const regex = new RegExp(pattern, 'gi')
+      const lines = content.split('\n')
+      lines.forEach((line, i) => {
+        if (regex.test(line)) {
+          const ctx = []
+          for (let c = Math.max(0, i - context); c <= Math.min(lines.length - 1, i + context); c++) {
+            if (c !== i) ctx.push('  ' + (c + 1) + ': ' + lines[c])
+          }
+          matches.push({ file, line: i + 1, text: line.trim(), context: ctx })
+        }
+        regex.lastIndex = 0
+      })
+
+      if (matches.length > 0) {
+        return matches
+      }
+    }
   } catch { /* ignore */ }
   return results
 }
