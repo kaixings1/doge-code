@@ -1,5 +1,5 @@
 import { c as _c } from "react/compiler-runtime";
-import type { ToolResultBlockParam, ToolUseBlockParam } from '@anthropic-ai/sdk/resources/index.mjs';
+import type { ContentBlockParam, ToolResultBlockParam, ToolUseBlockParam } from '@anthropic-ai/sdk/resources/index.mjs';
 import * as React from 'react';
 import { ConfigurableShortcutHint } from '../../components/ConfigurableShortcutHint.js';
 import { CtrlOToExpand, SubAgentProvider } from '../../components/CtrlOToExpand.js';
@@ -37,6 +37,12 @@ const MAX_PROGRESS_MESSAGES_TO_SHOW = 3;
  * skill_progress）。其他进度类型（例如从子代理转发的 bash_progress）
  * 缺少此字段，UI 辅助函数必须跳过它们。
  */
+/** 取消息的内容块数组；Message 联合含索引签名，需统一收敛为数组 */
+function contentBlocksOf(message: unknown): ContentBlockParam[] {
+  const blocks = (message as { message?: { content?: unknown } } | undefined)?.message?.content
+  return Array.isArray(blocks) ? (blocks as ContentBlockParam[]) : []
+}
+
 function hasProgressMessage(data: Progress): data is AgentToolProgress {
   if (!('message' in data)) {
     return false;
@@ -380,9 +386,20 @@ export function renderToolResultMessage(data: Output, progressMessagesForMessage
     content: completionMessage,
     usage: {
       ...usage,
+      input_tokens: usage?.input_tokens ?? 0,
+      output_tokens: usage?.output_tokens ?? 0,
+      cache_creation_input_tokens: usage?.cache_creation_input_tokens ?? 0,
+      cache_read_input_tokens: usage?.cache_read_input_tokens ?? 0,
+      server_tool_use: usage?.server_tool_use ?? { web_search_requests: 0, web_fetch_requests: 0 },
+      service_tier: usage?.service_tier ?? null,
+      output_tokens_details: null,
       inference_geo: null,
       iterations: null,
-      speed: null
+      speed: null,
+      cache_creation: usage?.cache_creation ?? {
+        ephemeral_1h_input_tokens: 0,
+        ephemeral_5m_input_tokens: 0,
+      },
     }
   });
   return <Box flexDirection="column">
@@ -475,7 +492,7 @@ export function renderToolUseProgressMessage(progressMessages: ProgressMessage<P
         return false;
       }
       const message = msg.data.message;
-      return message.message.content.some(content => content.type === 'tool_use');
+      return contentBlocksOf(message).some(content => content.type === 'tool_use');
     });
     const latestAssistant = progressMessages.findLast((msg): msg is ProgressMessage<AgentToolProgress> => hasProgressMessage(msg.data) && msg.data.message.type === 'assistant');
     let tokens = null;
@@ -524,7 +541,7 @@ export function renderToolUseProgressMessage(progressMessages: ProgressMessage<P
     if (!hasProgressMessage(data)) {
       return false;
     }
-    return data.message.message.content.some(content => content.type === 'tool_use');
+    return contentBlocksOf(data.message).some(content => content.type === 'tool_use');
   });
   const firstData = progressMessages[0]?.data;
   const prompt = firstData && hasProgressMessage(firstData) ? firstData.prompt : undefined;
@@ -632,7 +649,7 @@ function calculateAgentStats(progressMessages: ProgressMessage<Progress>[]): {
       return false;
     }
     const message = msg.data.message;
-    return message.type === 'user' && message.message.content.some(content => content.type === 'tool_result');
+    return message.type === 'user' && contentBlocksOf(message).some(content => content.type === 'tool_result');
   });
   const latestAssistant = progressMessages.findLast((msg): msg is ProgressMessage<AgentToolProgress> => hasProgressMessage(msg.data) && msg.data.message.type === 'assistant');
   let tokens = null;
@@ -834,10 +851,10 @@ export function extractLastToolInfo(progressMessages: ProgressMessage<Progress>[
       return false;
     }
     const message = msg.data.message;
-    return message.type === 'user' && message.message.content.some(c => c.type === 'tool_result');
+    return message.type === 'user' && contentBlocksOf(message).some(c => c.type === 'tool_result');
   });
   if (lastToolResult?.data.message.type === 'user') {
-    const toolResultBlock = lastToolResult.data.message.message.content.find(c => c.type === 'tool_result');
+    const toolResultBlock = contentBlocksOf(lastToolResult.data.message).find(c => c.type === 'tool_result');
     if (toolResultBlock?.type === 'tool_result') {
       // 查找对应的 tool_use — 已在上方建立索引
       const toolUseBlock = toolUseByID.get(toolResultBlock.tool_use_id);

@@ -133,6 +133,16 @@ const taskSummaryModule = feature('BG_SESSIONS')
  
 
 /**
+ * 取助手消息的内容块数组。
+ * AssistantMessageContent 是 string | ContentBlock[] 联合，直接用 .filter/.map
+ * 在 string 分支上会报错；此处统一收敛为数组（非数组时返回空数组）。
+ */
+function contentBlocksOf(message: AssistantMessage | undefined): ContentBlock[] {
+  const blocks = (message?.message as { content?: unknown } | undefined)?.content
+  return Array.isArray(blocks) ? (blocks as ContentBlock[]) : []
+}
+
+/**
  * 为缺失工具结果的助手消息生成合成工具结果消息。
  * 用于异常恢复场景，例如模型回退或错误终止时。
  */
@@ -141,7 +151,7 @@ function* yieldMissingToolResultBlocks(
   errorMessage: string,
 ) {
   for (const assistantMessage of assistantMessages) {
-    const toolUseBlocks = assistantMessage.message.content.filter(
+    const toolUseBlocks = contentBlocksOf(assistantMessage).filter(
       content => content.type === 'tool_use',
     ) as ToolUseBlock[]
 
@@ -663,7 +673,7 @@ async function* queryLoop(
             if (streamingFallbackOccured) {
               logForDebugging('[DEBUG] assistantMessages count=' + assistantMessages.length);
               for (const msg of assistantMessages) {
-                logForDebugging('[DEBUG] msg content types=' + msg.message.content.map(c => c.type).join(','));
+                logForDebugging('[DEBUG] msg content types=' + contentBlocksOf(msg).map(c => c.type).join(','));
                 yield { type: 'tombstone' as const, message: msg };
               }
               logEvent('tengu_orphaned_messages_tombstoned', {
@@ -883,7 +893,7 @@ async function* queryLoop(
       logEvent('tengu_query_error', {
         assistantMessages: assistantMessages.length,
         toolUses: assistantMessages.flatMap(_ =>
-          _.message.content.filter(content => content.type === 'tool_use'),
+          contentBlocksOf(_).filter(content => content.type === 'tool_use'),
         ).length,
 
         queryChainId: queryChainIdForAnalytics,
@@ -1292,7 +1302,7 @@ async function* queryLoop(
       const lastAssistantMessage = assistantMessages.at(-1)
       let lastAssistantText: string | undefined
       if (lastAssistantMessage) {
-        const textBlocks = lastAssistantMessage.message.content.filter(
+        const textBlocks = contentBlocksOf(lastAssistantMessage).filter(
           block => block.type === 'text',
         )
         if (textBlocks.length > 0) {
