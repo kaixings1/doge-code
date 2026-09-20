@@ -105,17 +105,32 @@ export function* normalizeMessage(message: Message): Generator<SDKMessage> {
           message: _.message,
           parent_tool_use_id: null,
           session_id: getSessionId(),
-          uuid: _.uuid,
-          error: _.error,
+          uuid: _.uuid as string | undefined,
+          error: _.error as
+                  | 'unknown'
+                  | 'authentication_failed'
+                  | 'billing_error'
+                  | 'rate_limit'
+                  | 'invalid_request'
+                  | 'server_error'
+                  | 'max_output_tokens'
+                  | undefined,
         }
       }
       return
     case 'progress':
+      // ProgressMessage.data 的默认泛型为 unknown，先收窄为局部变量
+      const data = message.data as {
+        type?: string
+        message?: Message
+        elapsedTimeSeconds?: number
+        taskId?: string
+      }
       if (
-        message.data.type === 'agent_progress' ||
-        message.data.type === 'skill_progress'
+        data.type === 'agent_progress' ||
+        data.type === 'skill_progress'
       ) {
-        for (const _ of normalizeMessages([message.data.message])) {
+        for (const _ of normalizeMessages([data.message])) {
           switch (_.type) {
             case 'assistant':
               // 跳过不应输出到 SDK 的空消息（例如 "(无内容)"）
@@ -125,31 +140,39 @@ export function* normalizeMessage(message: Message): Generator<SDKMessage> {
               yield {
                 type: 'assistant',
                 message: _.message,
-                parent_tool_use_id: message.parentToolUseID,
+                parent_tool_use_id: message.parentToolUseID as string,
                 session_id: getSessionId(),
-                uuid: _.uuid,
-                error: _.error,
+                uuid: _.uuid as string | undefined,
+                error: _.error as
+                  | 'unknown'
+                  | 'authentication_failed'
+                  | 'billing_error'
+                  | 'rate_limit'
+                  | 'invalid_request'
+                  | 'server_error'
+                  | 'max_output_tokens'
+                  | undefined,
               }
               break
             case 'user':
               yield {
                 type: 'user',
                 message: _.message,
-                parent_tool_use_id: message.parentToolUseID,
+                parent_tool_use_id: message.parentToolUseID as string,
                 session_id: getSessionId(),
-                uuid: _.uuid,
-                timestamp: _.timestamp,
-                isSynthetic: _.isMeta || _.isVisibleInTranscriptOnly,
+                uuid: _.uuid as string | undefined,
+                timestamp: _.timestamp as string | undefined,
+                isSynthetic: Boolean(_.isMeta || _.isVisibleInTranscriptOnly),
                 tool_use_result: _.mcpMeta
-                  ? { content: _.toolUseResult, ..._.mcpMeta }
+                  ? { content: _.toolUseResult, ...(_.mcpMeta as Record<string, unknown>) }
                   : _.toolUseResult,
               }
               break
           }
         }
       } else if (
-        message.data.type === 'bash_progress' ||
-        message.data.type === 'powershell_progress'
+        data.type === 'bash_progress' ||
+        data.type === 'powershell_progress'
       ) {
         // 过滤 bash 进度，每分钟最多发送一次
         // 目前仅针对 Claude Code Remote 发出
@@ -161,7 +184,7 @@ export function* normalizeMessage(message: Message): Generator<SDKMessage> {
         }
 
         // 使用 parentToolUseID 作为键，因为 toolUseID 在每次进度消息中都会变化
-        const trackingKey = message.parentToolUseID
+        const trackingKey = String(message.parentToolUseID ?? '')
         const now = Date.now()
         const lastSent = toolProgressLastSentTime.get(trackingKey) || 0
         const timeSinceLastSent = now - lastSent
@@ -181,12 +204,12 @@ export function* normalizeMessage(message: Message): Generator<SDKMessage> {
           toolProgressLastSentTime.set(trackingKey, now)
           yield {
             type: 'tool_progress',
-            tool_use_id: message.toolUseID,
+            tool_use_id: message.toolUseID as string,
             tool_name:
-              message.data.type === 'bash_progress' ? 'Bash' : 'PowerShell',
-            parent_tool_use_id: message.parentToolUseID,
-            elapsed_time_seconds: message.data.elapsedTimeSeconds,
-            task_id: message.data.taskId,
+              data.type === 'bash_progress' ? 'Bash' : 'PowerShell',
+            parent_tool_use_id: message.parentToolUseID as string,
+            elapsed_time_seconds: Number(data.elapsedTimeSeconds ?? 0),
+            task_id: data.taskId as string | undefined,
             session_id: getSessionId(),
             uuid: message.uuid,
           }
@@ -200,11 +223,11 @@ export function* normalizeMessage(message: Message): Generator<SDKMessage> {
           message: _.message,
           parent_tool_use_id: null,
           session_id: getSessionId(),
-          uuid: _.uuid,
-          timestamp: _.timestamp,
-          isSynthetic: _.isMeta || _.isVisibleInTranscriptOnly,
+          uuid: _.uuid as string | undefined,
+          timestamp: _.timestamp as string | undefined,
+          isSynthetic: Boolean(_.isMeta || _.isVisibleInTranscriptOnly),
           tool_use_result: _.mcpMeta
-            ? { content: _.toolUseResult, ..._.mcpMeta }
+            ? { content: _.toolUseResult, ...(_.mcpMeta as Record<string, unknown>) }
             : _.toolUseResult,
         }
       }
