@@ -161,6 +161,7 @@ export const TaskOutputTool: Tool<InputSchema, TaskOutputToolOutput> = buildTool
     return this.isReadOnly?.(_input) ?? false;
   },
   isEnabled() {
+    // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
     return "external" !== 'ant';
   },
   isReadOnly(_input) {

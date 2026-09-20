@@ -25,6 +25,7 @@ export const TestingPermissionTool: Tool<InputSchema, string> = buildTool({
     return 'TestingPermission';
   },
   isEnabled() {
+    // @ts-expect-error 构建期字面量替换：构建时 "production" 会被替换为 process.env.NODE_ENV
     return "production" === 'test';
   },
   isConcurrencySafe() {

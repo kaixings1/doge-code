@@ -96,6 +96,7 @@ const fullInputSchema = lazySchema(() => {
     mode: permissionModeSchema().optional().describe('代理的权限模式（例如 "plan" 要求计划审批）。')
   });
   return baseInputSchema().merge(multiAgentInputSchema).extend({
+    // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
     isolation: ("external" === 'ant' ? z.enum(['worktree', 'remote']) : z.enum(['worktree'])).optional().describe('外部模式：隔离模式。"worktree" 创建临时 git 工作树使代理在仓库的隔离副本上工作。"remote" 在远程 CCR 环境中启动代理（始终在后台运行）。'),
     cwd: z.string().optional().describe('运行代理的绝对路径。覆盖此代理内所有文件系统和 shell 操作的工作目录。与 isolation: "worktree" 互斥。')
   });
@@ -441,6 +442,7 @@ export const AgentTool = buildTool({
 
     // Remote isolation: delegate to CCR. Gated ant-only — the guard enables
     // dead code elimination of the entire block for external builds.
+    // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
     if ("external" === 'ant' && effectiveIsolation === 'remote') {
       const eligibility = await checkRemoteAgentEligibility();
       if (!eligibility.eligible) {
@@ -531,6 +533,7 @@ export const AgentTool = buildTool({
         // 记录子代理的代理记忆加载事件
         if (selectedAgent.memory) {
           logEvent('tengu_agent_memory_loaded', {
+            // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
             ...("external" === 'ant' && {
               agent_type: selectedAgent.agentType as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
             }),
@@ -1293,6 +1296,7 @@ export const AgentTool = buildTool({
     // Only route through auto mode classifier when in auto mode
     // In all other modes, auto-approve sub-agent generation
     // Note: "external" === 'ant' guard enables dead code elimination for external builds
+    // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
     if ("external" === 'ant' && appState.toolPermissionContext.mode === 'auto') {
       return {
         behavior: 'passthrough',

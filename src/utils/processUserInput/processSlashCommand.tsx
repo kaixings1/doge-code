@@ -273,6 +273,7 @@ async function executeForkedSlashCommand(command: CommandBase & PromptCommand, a
   logForDebugging(`Forked slash command /${command.name} completed with agent ${agentId}`);
 
   // Prepend debug log for ant users so it appears inside the command output
+  // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
   if ("external" === 'ant') {
     resultText = `[ANT-ONLY] API calls: ${getDisplayPath(getDumpPromptsPath(agentId))}\n${resultText}`;
   }
@@ -573,6 +574,7 @@ export async function processSlashCommand(inputString: string, precedingInputBlo
     logEvent('tengu_input_command', {
       ...eventData,
       invocation_trigger: 'user-slash' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
+      // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
       ...("external" === 'ant' && {
         skill_name: commandName as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
         ...(returnedCommand.type === 'prompt' && {
@@ -641,6 +643,7 @@ export async function processSlashCommand(inputString: string, precedingInputBlo
   logEvent('tengu_input_command', {
     ...eventData,
     invocation_trigger: 'user-slash' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
+    // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
     ...("external" === 'ant' && {
       skill_name: commandName as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
       ...(returnedCommand.type === 'prompt' && {

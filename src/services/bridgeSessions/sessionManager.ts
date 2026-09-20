@@ -16,7 +16,7 @@ export interface SessionEntry {
   environment: Record<string, string>
   windows: WindowEntry[]
   activeWindowId: string
-  backend: 'tmux' | 'screen' | 'local'
+  backend: TerminalBackend
   tmuxSessionName?: string
   metadata: {
     sshHost?: string
@@ -64,7 +64,7 @@ let activeSessionId: string | null = null
 // Backend detection
 // ============================================================================
 
-export type TerminalBackend = 'tmux' | 'screen' | 'none'
+export type TerminalBackend = 'tmux' | 'screen' | 'local' | 'none'
 
 export async function detectAvailableBackend(): Promise<TerminalBackend> {
   try {

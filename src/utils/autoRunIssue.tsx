@@ -81,6 +81,7 @@ export type AutoRunIssueReason = 'feedback_survey_bad' | 'feedback_survey_good';
  */
 export function shouldAutoRunIssue(reason: AutoRunIssueReason): boolean {
   // Only for Ant users
+  // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
   if ("external" !== 'ant') {
     return false;
   }
@@ -100,6 +101,7 @@ export function shouldAutoRunIssue(reason: AutoRunIssueReason): boolean {
  */
 export function getAutoRunCommand(reason: AutoRunIssueReason): string {
   // Only ant builds have the /good-claude command
+  // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
   if ("external" === 'ant' && reason === 'feedback_survey_good') {
     return '/good-claude';
   }

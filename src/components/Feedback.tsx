@@ -32,6 +32,7 @@ import TextInput from './TextInput.js';
 
 // 此值通过测试 URL 长度限制实验得出
 const GITHUB_URL_LIMIT = 7250;
+// @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
 const GITHUB_ISSUES_REPO_URL = "external" === 'ant' ? 'https://github.com/anthropics/claude-cli-internal/issues' : 'https://github.com/anthropics/claude-code/issues';
 type Props = {
   abortSignal: AbortSignal;

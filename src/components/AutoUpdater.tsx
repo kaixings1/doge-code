@@ -49,6 +49,7 @@ export function AutoUpdater({
     if (isUpdatingRef.current) {
       return;
     }
+    // @ts-expect-error 构建期字面量替换：构建时 "production" 会被替换为 process.env.NODE_ENV
     if ("production" === 'test' || "production" === 'development') {
       logForDebugging('AutoUpdater: Skipping update check in test/dev environment');
       return;

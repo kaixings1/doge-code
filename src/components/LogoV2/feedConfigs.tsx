@@ -33,6 +33,7 @@ export function createRecentActivityFeed(activities: LogOption[]): FeedConfig {
 
 export function createWhatsNewFeed(releaseNotes: string[]): FeedConfig {
   const lines: FeedLine[] = releaseNotes.map(note => {
+    // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
     if ("external" === 'ant') {
       const match = note.match(/^(\d+\s+\w+\s+ago)\s+(.+)$/);
       if (match) {
@@ -48,12 +49,14 @@ export function createWhatsNewFeed(releaseNotes: string[]): FeedConfig {
   });
 
   const emptyMessage =
+    // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
     "external" === 'ant'
       ? '无法获取最新的 claude-cli-internal 提交'
       : '查看 Claude Code 更新日志';
 
   return {
     title:
+      // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
       "external" === 'ant'
         ? "最新动态 [蚂蚁内部：最新CC提交]"
         : "新功能",

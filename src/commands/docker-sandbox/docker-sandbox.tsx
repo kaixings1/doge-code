@@ -138,7 +138,9 @@ export const dockerSandboxUI: LocalJSXCommandCall = (_onDone, _context, args) =>
       return
     }
 
-    if (screen === 'main' || screen === 'status' || screen === 'logs') {
+    // logs 屏幕单独处理（见下方 else if），避免其 'r' 刷新分支不可达
+    // 'status' 从不被 setScreen 设置，属过时分支，已移除
+    if (screen === 'main') {
       if (key.escape) {
         _onDone()
       } else if (input === 's') {

@@ -7,6 +7,7 @@ export function MemoryUsageIndicator(): React.ReactNode {
   // the hook means the 10s polling interval is never set up in external builds.
   // USER_TYPE is a build-time constant, so the hook call below is either always
   // reached or dead-code-eliminated — never conditional at runtime.
+  // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
   if ("external" !== 'ant') {
     return null;
   }

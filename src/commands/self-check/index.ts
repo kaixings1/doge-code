@@ -43,7 +43,7 @@ import { join } from 'path'
 // ==================== 类型定义 ====================
 
 type ProjectType = 'node' | 'python' | 'rust' | 'go' | 'java' | 'unknown'
-type CheckMode = 'full' | 'lint' | 'test' | 'type-check' | 'build' | 'security' | 'audit' | 'coverage' | 'changed' | 'diff' | 'perf' | 'ci'
+type CheckMode = 'full' | 'lint' | 'test' | 'type-check' | 'build' | 'security' | 'audit' | 'coverage' | 'changed' | 'diff' | 'perf' | 'ci' | 'history'
 type OutputFormat = 'markdown' | 'json'
 
 interface CheckOptions {
@@ -1007,7 +1007,7 @@ function parseArgs(args: string): CheckOptions {
   let autoFix = false
   let applyFix = false
 
-  const validModes: CheckMode[] = ['lint', 'test', 'type-check', 'build', 'security', 'audit', 'coverage', 'changed', 'diff', 'perf', 'ci']
+  const validModes: CheckMode[] = ['full', 'lint', 'test', 'type-check', 'build', 'security', 'audit', 'coverage', 'changed', 'diff', 'perf', 'ci', 'history']
   if (validModes.includes(parts[0] as CheckMode)) {
     mode = parts[0] as CheckMode
   }
@@ -1413,25 +1413,25 @@ function formatOutput(options: CheckOptions, result: CheckResult, report: CheckR
     }
     lines.push('')
   } else {
-    if (options.mode === 'full' || options.mode === 'lint') {
+    if (options.mode === 'lint') {
       lines.push(`**Lint**: ${result.lintPassed ? '✅ 通过' : '❌ 失败'}`)
     }
-    if (options.mode === 'full' || options.mode === 'test') {
+    if (options.mode === 'test') {
       lines.push(`**Test**: ${result.testPassed ? '✅ 通过' : '❌ 失败'}`)
     }
-    if (options.mode === 'full' || options.mode === 'type-check') {
+    if (options.mode === 'type-check') {
       lines.push(`**Type-check**: ${result.typeCheckPassed ? '✅ 通过' : '❌ 失败'}`)
     }
-    if (options.mode === 'full' || options.mode === 'build') {
+    if (options.mode === 'build') {
       lines.push(`**Build**: ${result.buildPassed ? '✅ 通过' : '❌ 失败'}`)
     }
-    if (options.mode === 'full' || options.mode === 'security') {
+    if (options.mode === 'security') {
       lines.push(`**Security**: ${result.securityPassed ? '✅ 通过' : '❌ 失败'}`)
     }
-    if (options.mode === 'full' || options.mode === 'audit') {
+    if (options.mode === 'audit') {
       lines.push(`**Audit**: ${result.auditPassed ? '✅ 通过' : '❌ 失败'}`)
     }
-    if (options.mode === 'full' || options.mode === 'coverage') {
+    if (options.mode === 'coverage') {
       if (result.coveragePercent !== undefined) {
         lines.push(`**Coverage**: ${result.coveragePassed ? '✅' : '❌'} ${result.coveragePercent.toFixed(1)}%`)
       }
@@ -1506,7 +1506,9 @@ function getModeLabel(mode: CheckMode): string {
     'coverage': '覆盖率检查',
     'changed': '变更文件检查',
     'diff': '增量 Diff 检查',
+    'perf': '性能检查',
     'ci': 'CI 模拟',
+    'history': '历史记录',
   }
   return labels[mode]
 }
@@ -1525,6 +1527,7 @@ const selfCheck = {
   name: 'self-check',
   description: '🔍 自检命令 - 改完代码后自动验证，不对就继续改（lint/test/type-check/build/security/audit/coverage）',
   aliases: ['/self-check', '/check', '/verify'],
+  supportsNonInteractive: true,
   load: () => Promise.resolve({ call }),
 } satisfies Command
 

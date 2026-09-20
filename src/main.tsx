@@ -258,6 +258,7 @@ function isBeingDebugged() {
 }
 
 // 如果检测到 node 调试或检查，则退出
+// @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
 if ("external" !== 'ant' && isBeingDebugged()) {
   // 直接使用 process.exit，因为此时处于顶级代码，尚未导入 gracefulShutdown
   // eslint-disable-next-line custom-rules/no-top-level-side-effects
@@ -328,6 +329,7 @@ function runMigrations(): void {
     if (process.env['CLAUDE_CODE_FEATURE_TRANSCRIPT_CLASSIFIER'] === '1') {
       resetAutoModeOptInForDefaultOffer();
     }
+    // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
     if ("external" === 'ant') {
       migrateFennecToOpus();
     }
@@ -404,6 +406,7 @@ export function startDeferredPrefetches(): void {
   }
 
   // 事件循环停滞检测器 —— 当主线程阻塞超过 500ms 时记录日志
+  // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
   if ("external" === 'ant') {
     void import('./utils/eventLoopStallDetector.js').then(m => m.startEventLoopStallDetector());
   }
@@ -1107,10 +1110,12 @@ async function run(): Promise<CommanderCommand> {
     const disableSlashCommands = options.disableSlashCommands || false;
 
     // 提取任务模式选项（仅限 ant）
+    // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
     const tasksOption = "external" === 'ant' && (options as {
       tasks?: boolean | string;
     }).tasks;
     const taskListId = tasksOption ? typeof tasksOption === 'string' ? tasksOption : DEFAULT_TASKS_MODE_TASK_LIST_ID : undefined;
+    // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
     if ("external" === 'ant' && taskListId) {
       process.env.CLAUDE_CODE_TASK_LIST_ID = taskListId;
     }
@@ -1502,6 +1507,7 @@ async function run(): Promise<CommanderCommand> {
     // 存储显式的 CLI 标志，以便队友可以继承它
     setChromeFlagOverride(chromeOpts.chrome);
     //console.error('[TRACE ' + Date.now() + '] AFTER_setChromeFlagOverride');
+    // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
     const enableClaudeInChrome = shouldEnableClaudeInChrome(chromeOpts.chrome) && ("external" === 'ant' || isClaudeAISubscriber());
     //console.error('[TRACE ' + Date.now() + '] AFTER_shouldEnableClaudeInChrome');
     const autoEnableClaudeInChrome = !enableClaudeInChrome && !isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_CIC) && shouldAutoEnableClaudeInChrome();
@@ -1710,6 +1716,7 @@ async function run(): Promise<CommanderCommand> {
     } = initResult;
 
     // 处理 ant 用户过于宽泛的 shell 允许规则（Bash(*)、PowerShell(*)）
+    // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
     if ("external" === 'ant' && overlyBroadBashPermissions.length > 0) {
       for (const permission of overlyBroadBashPermissions) {
       }
@@ -1906,6 +1913,7 @@ async function run(): Promise<CommanderCommand> {
     //  - 无环境变量覆盖（它会在 _CACHED_MAY_BE_STALE 访问磁盘之前短路）
     //  - 磁盘上缺少标志（== null 也捕获了 #22279 之前的有毒 null）
     const explicitModel = options.model || process.env.ANTHROPIC_MODEL;
+    // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
     if ("external" === 'ant' && explicitModel && explicitModel !== 'default' && !hasGrowthBookEnvOverride('tengu_ant_model_override') && getGlobalConfig().cachedGrowthBookFeatures?.['tengu_ant_model_override'] == null) {
       await initializeGrowthBook();
     }
@@ -2046,6 +2054,7 @@ async function run(): Promise<CommanderCommand> {
         // 为 tmux 队友记录代理内存加载事件
         if (customAgent.memory) {
           logEvent('tengu_agent_memory_loaded', {
+            // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
             ...("external" === 'ant' && {
               agent_type: customAgent.agentType as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
             }),
@@ -2122,6 +2131,7 @@ async function run(): Promise<CommanderCommand> {
       stats = ctx.stats;
       ////try { require('fs').writeFileSync('d:/trace.txt', 'AFTER_RENDER_CTX\n', {flag:'a'}); } catch(e) {}
       // 在 Ink 挂载之前安装 asciicast 录像机（仅限 ant，通过 CLAUDE_CODE_TERMINAL_RECORDING=1 选择加入）
+      // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
       if ("external" === 'ant') {
         installAsciicastRecorder();
       }
@@ -2640,6 +2650,7 @@ if (claudeaiTimedOut) {
       if (!isBareMode()) {
         startDeferredPrefetches();
         void import('./utils/backgroundHousekeeping.js').then(m => m.startBackgroundHousekeeping());
+        // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
         if ("external" === 'ant') {
           void import('./utils/sdkHeapDumpMonitor.js').then(m => m.startSdkMemoryMonitor());
         }
@@ -2877,6 +2888,7 @@ if (claudeaiTimedOut) {
     //   - 运行时：上传器检查 github.com/anthropics/* 远程 + gcloud 认证。
     //   - 安全性：CLAUDE_CODE_DISABLE_SESSION_DATA_UPLOAD=1 绕过（测试设置此项）。
     // 导入是动态且异步的，以避免增加启动延迟。
+    // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
     const sessionUploaderPromise = "external" === 'ant' ? import('./utils/sessionDataUploader.js') : null;
 
     // 将会话上传器解析延迟到 onTurnComplete 回调，以避免在 main.tsx 中添加新的顶层 await（性能关键路径）。
@@ -3390,6 +3402,7 @@ if (options.continue) {
 	  }
 	}
   }
+  // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
   if ("external" === 'ant') {
 	if (options.resume && typeof options.resume === 'string' && !maybeSessionId) {
 	  // 检查 ccshare URL（例如 https://go/ccshare/boris-20260311-211036）
@@ -3625,6 +3638,7 @@ program.option('--tmux', '为工作树创建 tmux 会话（需要 --worktree）�
 if (canUserConfigureAdvisor()) {
   program.addOption(new Option('--advisor <model>', '使用指定模型（别名或完整 ID）启用服务器端顾问工具。').hideHelp());
 }
+// @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
 if ("external" === 'ant') {
   program.addOption(new Option('--delegate-permissions', '[仅 ANT] --permission-mode auto 的别名。').implies({
 	permissionMode: 'auto'
@@ -4176,6 +4190,7 @@ program.command('update').alias('upgrade').description('检查更新并在可用
 });
 // //console.warn(chalk.yellow('update.upgrade???'));
 // claude up — 运行项目的 CLAUDE.md 中 "# claude up" 的设置指令。
+// @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
 if ("external" === 'ant') {
   program.command('up').description('[仅 ANT] 使用最近 CLAUDE.md 的 "# claude up" 部分初始化或升级本地开发环境').action(async () => {
 	const {
@@ -4187,6 +4202,7 @@ if ("external" === 'ant') {
 // //console.warn(chalk.yellow('update.external???'));
 // claude rollback（仅 ant）
 // 回滚到之前的版本
+// @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
 if ("external" === 'ant') {
   program.command('rollback [target]').description('📖 用法: [仅 ANT] 回滚到之前的版本\n\n示例：\n  claude rollback                                    从当前版本回退 1 个版本\n  claude rollback 3                                  从当前版本回退 3 个版本\n  claude rollback 2.0.73-dev.20251217.t190658        回滚到特定版本').option('-l, --list', '列出最近发布的版本及其时间').option('--dry-run', '仅显示将要安装的内容而不实际安装').option('--safe', '回滚到服务器固定的安全版本（由值班人员在事故期间设置）').action(async (target?: string, options?: {
 	list?: boolean;
@@ -4211,6 +4227,7 @@ program.command('install [target]').description('安装 Claude Code 原生构建
 });
 // //console.warn(chalk.yellow('即使已安装也强制安装???'));
 // 仅 ant 命令
+// @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
 if ("external" === 'ant') {
   const validateLogId = (value: string) => {
 	const maybeSessionId = validateUuid(value);
@@ -4245,6 +4262,7 @@ if ("external" === 'ant') {
 	} = await import('./cli/handlers/ant.js');
 	await exportHandler(source, outputFile);
   });
+  // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
   if ("external" === 'ant') {
 	const taskCmd = program.command('task').description('[仅 ANT] 管理任务列表任务');
 	taskCmd.command('create <subject>').description('创建新任务').option('-d, --description <text>', '任务描述').option('-l, --list <id>', '任务列表 ID（默认为 "tasklist"）').action(async (subject: string, opts: {
@@ -4405,6 +4423,7 @@ async function logTenguInit({
 		assistantActivationPath: assistantActivationPath as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
 	  }),
 	  autoUpdatesChannel: (getInitialSettings().autoUpdatesChannel ?? 'latest') as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
+	  // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
 	  ...("external" === 'ant' ? (() => {
 		const cwd = getCwd();
 		const gitRoot = findGitRoot(cwd);

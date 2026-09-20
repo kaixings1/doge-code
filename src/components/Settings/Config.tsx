@@ -269,13 +269,12 @@ export function Config({
   }
 
   const customApiProvider = getGlobalConfig().customApiEndpoint?.provider;
+  // provider 仅支持 'anthropic' | 'openai'（Gemini 经 OpenAI 兼容协议接入）
   const customApiProviderDisplay = customApiProvider === 'openai'
     ? 'OpenAI-compatible'
-    : customApiProvider === 'gemini'
-      ? 'Gemini API'
-      : customApiProvider === 'anthropic'
-        ? 'Anthropic-compatible'
-        : 'Not set';
+    : customApiProvider === 'anthropic'
+      ? 'Anthropic-compatible'
+      : 'Not set';
 
   // TODO: Add MCP servers
   // 只读一次配置文件，避免在长列表渲染中重复同步 IO
@@ -523,6 +522,7 @@ export function Config({
     }
   }] : []),
   // Speculation toggle (ant-only)
+  // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
   ...("external" === 'ant' ? [{
     id: 'speculationEnabled',
     label: '推测执行',

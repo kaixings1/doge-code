@@ -1192,6 +1192,7 @@ function renderOverviewToAnsi(stats: ClaudeCodeStats): string[] {
   lines.push(row('活跃天数', activeDaysVal, '高峰时段', peakHourVal));
 
   // 推测模式节省时间（ant 专属）
+  // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
   if ("external" === 'ant' && stats.totalSpeculationTimeSavedMs > 0) {
     const label = '推测模式节省：'.padEnd(COL1_LABEL_WIDTH);
     lines.push(label + h(formatDuration(stats.totalSpeculationTimeSavedMs)));

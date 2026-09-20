@@ -294,7 +294,9 @@ function PromptInput({
   // otherwise bridge becomes an invisible selection stop.
   const bridgeFooterVisible = replBridgeConnected && (replBridgeExplicit || replBridgeReconnecting);
   // Tmux pill (ant-only) — visible when there's an active tungsten session
+  // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
   const hasTungstenSession = useAppState(s => "external" === 'ant' && s.tungstenActiveSession !== undefined);
+  // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
   const tmuxFooterVisible = "external" === 'ant' && hasTungstenSession;
   // WebBrowser pill — visible when a browser is open
   const bagelFooterVisible = useAppState(s => false);
@@ -391,6 +393,7 @@ function PromptInput({
   // exist. When only local_agent tasks are running (coordinator/fork mode), the
   // pill is absent, so the -1 sentinel would leave nothing visually selected.
   // In that case, skip -1 and treat 0 as the minimum selectable index.
+  // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
   const hasBgTaskPill = useMemo(() => Object.values(tasks).some(t => isBackgroundTask(t) && !("external" === 'ant' && isPanelAgentTask(t))), [tasks]);
   const minCoordinatorIndex = hasBgTaskPill ? -1 : 0;
   // Clamp index when tasks complete and the list shrinks beneath the cursor
@@ -455,6 +458,7 @@ function PromptInput({
   // Panel shows retained-completed agents too (getVisibleAgentTasks), so the
   // pill must stay navigable whenever the panel has rows — not just when
   // something is running.
+  // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
   const tasksFooterVisible = (runningTaskCount > 0 || "external" === 'ant' && coordinatorTaskCount > 0) && !shouldHideTasksFooter(tasks, showSpinnerTree);
   const teamsFooterVisible = cachedTeams.length > 0;
   const footerItems = useMemo(() => [tasksFooterVisible && 'tasks', tmuxFooterVisible && 'tmux', bagelFooterVisible && 'bagel', teamsFooterVisible && 'teams', bridgeFooterVisible && 'bridge', companionFooterVisible && 'companion'].filter(Boolean) as FooterItem[], [tasksFooterVisible, tmuxFooterVisible, bagelFooterVisible, teamsFooterVisible, bridgeFooterVisible, companionFooterVisible]);
@@ -1747,6 +1751,7 @@ function PromptInput({
   useKeybindings({
     'footer:up': () => {
       // ↑ scrolls within the coordinator task list before leaving the pill
+      // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
       if (tasksSelected && "external" === 'ant' && coordinatorTaskCount > 0 && coordinatorTaskIndex > minCoordinatorIndex) {
         setCoordinatorTaskIndex(prev => prev - 1);
         return;
@@ -1755,6 +1760,7 @@ function PromptInput({
     },
     'footer:down': () => {
       // ↓ scrolls within the coordinator task list, never leaves the pill
+      // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
       if (tasksSelected && "external" === 'ant' && coordinatorTaskCount > 0) {
         if (coordinatorTaskIndex < coordinatorTaskCount - 1) {
           setCoordinatorTaskIndex(prev => prev + 1);
@@ -1818,6 +1824,7 @@ function PromptInput({
           }
           break;
         case 'tmux':
+          // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
           if ("external" === 'ant') {
             setAppState(prev => prev.tungstenPanelAutoHidden ? {
               ...prev,

@@ -69,7 +69,8 @@ export async function analyzeCodebase(path?: string): Promise<AnalysisResult> {
 
     async function walk(dir: string, depth = 0): Promise<void> {
       if (depth > 3) return
-      let entries: Awaited<ReturnType<typeof readdir>>
+      // 不显式标注类型：否则会丢失 withFileTypes 重载信息，把 entry 推断成 Buffer
+      let entries
       try {
         entries = await readdir(dir, { withFileTypes: true })
       } catch {

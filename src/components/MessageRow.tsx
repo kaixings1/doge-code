@@ -300,6 +300,7 @@ export function isMessageStreaming(msg: RenderableMessage, streamingToolUseIDs: 
       return content?.type === 'tool_use' && streamingToolUseIDs.has(content.id);
     });
   }
+  // @ts-expect-error Message 联合缺少 CollapsedReadSearchMessage，但 collapseReadSearch 会生成该类型（TODO: 补齐类型定义）
   if (msg.type === 'collapsed_read_search') {
     const toolIds = getToolUseIdsFromCollapsedGroup(msg);
     return toolIds.some(id => streamingToolUseIDs.has(id));
@@ -319,6 +320,7 @@ export function allToolsResolved(msg: RenderableMessage, resolvedToolUseIDs: Set
       return content?.type === 'tool_use' && resolvedToolUseIDs.has(content.id);
     });
   }
+  // @ts-expect-error Message 联合缺少 CollapsedReadSearchMessage，但 collapseReadSearch 会生成该类型（TODO: 补齐类型定义）
   if (msg.type === 'collapsed_read_search') {
     const toolIds = getToolUseIdsFromCollapsedGroup(msg);
     return toolIds.every(id => resolvedToolUseIDs.has(id));
@@ -350,6 +352,7 @@ export function areMessageRowPropsEqual(prev: Props, next: Props): boolean {
   if (prev.verbose !== next.verbose) return false;
 
   // collapsed_read_search is never static in prompt mode (matches shouldRenderStatically)
+  // @ts-expect-error Message 联合缺少 CollapsedReadSearchMessage，但 collapseReadSearch 会生成该类型（TODO: 补齐类型定义）
   if (prev.message.type === 'collapsed_read_search' && next.screen !== 'transcript') {
     return false;
   }

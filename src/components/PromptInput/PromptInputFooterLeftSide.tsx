@@ -248,6 +248,7 @@ function ModeIndicator({
   const showSpinnerTree = expandedView === 'teammates';
   const prStatus = usePrStatus(isLoading, isPrStatusEnabled());
   const hasTmuxSession = useAppState(
+    // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
     s => "external" === 'ant' && s.tungstenActiveSession !== undefined,
   );
 
@@ -278,6 +279,7 @@ function ModeIndicator({
         Object.values(tasks),
         t =>
           isBackgroundTask(t) &&
+          // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
           !("external" === 'ant' && isPanelAgentTask(t)),
       ),
     [tasks],
@@ -411,6 +413,7 @@ function ModeIndicator({
     // BackgroundTaskStatus 不在 parts 中 —— 它作为 Box 兄弟元素渲染，这样它的可点击 Box 就不会嵌套在
     // <Text wrap="truncate"> 包装器内（协调器会抛出 Box-in-Text 错误）。
     // Tmux 药丸（仅 ant）—— 在导航顺序中紧跟在任务之后出现
+    // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
     ...("external" === 'ant' && hasTmuxSession
       ? [<TungstenPill key="tmux" selected={tmuxSelected} />]
       : []),
@@ -503,6 +506,7 @@ function ModeIndicator({
 
   // 当面板有可见行时添加“↓ 管理任务”提示
   const hasCoordinatorTasks =
+    // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
     "external" === 'ant' && getVisibleAgentTasks(tasks).length > 0;
 
   // 任务药丸作为 Box 兄弟元素渲染（不是 parts 条目），这样它的可点击 Box 就不会嵌套在

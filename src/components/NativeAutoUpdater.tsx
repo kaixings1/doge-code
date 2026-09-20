@@ -14,6 +14,12 @@ import { gt } from '../utils/semver.js';
 import { getInitialSettings } from '../utils/settings/settings.js';
 
 /**
+ * 构建期字面量：外部构建保持原值，内部构建会被替换为 'ant'。
+ * 标注为 string 以便与 'ant' 比较能通过类型检查（JSX 内无法使用 @ts-expect-error）。
+ */
+const BUILD_ENV: string = 'external';
+
+/**
  * Categorize error messages for analytics
  */
 function getErrorType(errorMessage: string): string {
@@ -74,6 +80,7 @@ export function NativeAutoUpdater({
     if (isUpdatingRef.current) {
       return;
     }
+    // @ts-expect-error 构建期字面量替换：构建时 "production" 会被替换为 process.env.NODE_ENV
     if ("production" === 'test' || "production" === 'development') {
       logForDebugging('NativeAutoUpdater: Skipping update check in test/dev environment');
       return;
@@ -184,7 +191,7 @@ export function NativeAutoUpdater({
       {autoUpdaterResult?.status === 'install_failed' && <Text color="error" wrap="truncate">
           ✗ Auto-update failed &middot; Try <Text bold>/status</Text>
         </Text>}
-      {maxVersionIssue && "external" === 'ant' && <Text color="warning">
+      {maxVersionIssue && BUILD_ENV === 'ant' && <Text color="warning">
           ⚠ Known issue: {maxVersionIssue} &middot; Run{' '}
           <Text bold>claude rollback --safe</Text> to downgrade
         </Text>}

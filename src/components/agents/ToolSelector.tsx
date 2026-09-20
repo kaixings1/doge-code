@@ -58,6 +58,7 @@ function getToolBuckets(): ToolBuckets {
     },
     EXECUTION: {
       name: '执行工具',
+      // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
       toolNames: new Set([BashTool.name, "external" === 'ant' ? TungstenTool.name : undefined].filter(n => n !== undefined))
     },
     MCP: {

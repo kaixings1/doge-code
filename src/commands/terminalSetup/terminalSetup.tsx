@@ -119,6 +119,7 @@ export async function setupTerminal(theme: ThemeName): Promise<string> {
   maybeMarkProjectOnboardingComplete();
 
   // Install shell completions (ant-only, since the completion command is ant-only)
+  // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
   if ("external" === 'ant') {
     result += await setupShellCompletion(theme);
   }

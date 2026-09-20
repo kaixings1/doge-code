@@ -6,6 +6,7 @@ import { Text, useInterval } from '../ink.js';
 
 // 开发构建或所有 ants 时显示 DevBar
 function shouldShowDevBar(): boolean {
+  // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
   return "production" === 'development' || "external" === 'ant';
 }
 export function DevBar() {

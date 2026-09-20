@@ -580,6 +580,7 @@ const MessagesImpl = ({
   const lookupsRef = useRef(lookups_0);
   lookupsRef.current = lookups_0;
   const isItemClickable = useCallback((msg_6: RenderableMessage): boolean => {
+    // @ts-expect-error Message 联合缺少 CollapsedReadSearchMessage，但 collapseReadSearch 会生成该类型（TODO: 补齐类型定义）
     if (msg_6.type === 'collapsed_read_search') return true;
     if (msg_6.type === 'assistant') {
       const b = Array.isArray(msg_6.message.content) ? msg_6.message.content[0] as unknown as AdvisorBlock | undefined : undefined;
@@ -619,6 +620,7 @@ const MessagesImpl = ({
     // sibling after this map, so it's never in renderableMessages — OR it
     // in explicitly so the group flips to past tense as soon as text starts
     // streaming instead of waiting for the block to finalize.
+    // @ts-expect-error Message 联合缺少 CollapsedReadSearchMessage，但 collapseReadSearch 会生成该类型（TODO: 补齐类型定义）
     const hasContentAfter = msg_8.type === 'collapsed_read_search' && (!!streamingText || hasContentAfterIndex(renderableMessages, index, tools, streamingToolUseIDs));
     const k_0 = messageKey(msg_8);
     const row = <MessageRow key={k_0} message={msg_8} isUserContinuation={isUserContinuation} hasContentAfter={hasContentAfter} tools={tools} commands={commands} verbose={verbose || isItemExpanded(msg_8) || cursor?.expanded === true && index === selectedIdx} inProgressToolUseIDs={inProgressToolUseIDs} streamingToolUseIDs={streamingToolUseIDs} screen={screen} canAnimate={canAnimate} onOpenRateLimitOptions={onOpenRateLimitOptions} lastThinkingBlockId={lastThinkingBlockId} latestBashOutputUUID={latestBashOutputUUID} columns={columns} isLoading={isLoading} lookups={lookups_0} />;

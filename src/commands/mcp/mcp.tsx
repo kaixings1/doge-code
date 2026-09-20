@@ -77,6 +77,7 @@ export async function call(onDone: LocalJSXCommandOnDone, _context: unknown, arg
   }
 
   // Redirect base /mcp command to /plugins installed tab for ant users
+  // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
   if ("external" === 'ant') {
     return <PluginSettings onComplete={onDone} args="manage" showMcpRedirectMessage />;
   }

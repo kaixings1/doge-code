@@ -113,6 +113,7 @@ export function AttachmentMessage({
       // names — shortId is undefined outside ant builds anyway.
       const names = attachment.skills.map(s => s.shortId ? `${s.name} [${s.shortId}]` : s.name).join(', ');
       const firstId = attachment.skills[0]?.shortId;
+      // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
       const hint = "external" === 'ant' && !isDemoEnv && firstId ? ` · /skill-feedback ${firstId} 1=wrong 2=noisy 3=good [comment]` : '';
       return <Line>
           <Text bold>{attachment.skills.length}</Text> 个相关{' '}

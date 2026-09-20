@@ -222,6 +222,7 @@ function SpinnerWithVerbInner({
   // doesn't trigger re-renders; we pick up updates on the parent's ~25x/turn
   // re-render cadence, same as the old ApiMetricsLine did.
   let ttftText: string | null = null;
+  // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
   if ("external" === 'ant' && apiMetricsRef?.current && apiMetricsRef.current.length > 0) {
     ttftText = computeTtftText(apiMetricsRef.current);
   }

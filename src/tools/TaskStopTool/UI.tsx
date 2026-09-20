@@ -25,6 +25,7 @@ export function renderToolResultMessage(output: Output, _progressMessagesForMess
 }: {
   verbose: boolean;
 }): React.ReactNode {
+  // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
   if ("external" === 'ant') {
     return null;
   }

@@ -96,6 +96,7 @@ export function shouldHideTasksFooter(tasks: {
   if (!showSpinnerTree) return false;
   let hasVisibleTask = false;
   for (const t of Object.values(tasks) as TaskState[]) {
+    // @ts-expect-error 构建期字面量替换：外部构建保持 "external"，内部构建替换为 'ant'
     if (!isBackgroundTask(t) || "external" === 'ant' && isPanelAgentTask(t)) {
       continue;
     }

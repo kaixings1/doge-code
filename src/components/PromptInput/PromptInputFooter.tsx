@@ -186,7 +186,7 @@ function BridgeStatusIndicator({
   });
 
   // 对于隐式（配置驱动）远程连接，仅显示“正在重新连接”状态
-  if (!explicit && status.label !== '远程控制正在重新连接') {
+  if (!explicit && status.label !== '远程控制重新连接中') {
     return null;
   }
 
