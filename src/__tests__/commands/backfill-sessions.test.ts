@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, rmSync, writeFileSync, readdirSync } from 'fs'
 import { join } from 'path'
 import { getCachedDirEntries, setCachedDirEntries, clearDirCache } from '../../utils/dirCache.js'
 import type { LocalCommandResult } from '../../types/command.js'
+import { expectText } from '../utils/commandResult.js'
 
 const TMP_DIR = join(process.cwd(), '.tmp', 'doge-backfill-test')
 const SESSION_DIR = join(TMP_DIR, '.doge', 'sessions')
@@ -39,28 +40,28 @@ function setSessionCache() {
 describe('backfill-sessions call', () => {
   it('help should show usage', async () => {
     const result = await call('help')
-    expect(result.value).toContain('会话回填工具')
-    expect(result.value).toContain('list')
+    expect(expectText(result)).toContain('会话回填工具')
+    expect(expectText(result)).toContain('list')
   })
 
   it('empty command shows help', async () => {
     const result = await call('')
-    expect(result.value).toContain('会话回填工具')
+    expect(expectText(result)).toContain('会话回填工具')
   })
 
   it('list with no sessions returns empty', async () => {
     const result = await call('list')
-    expect(result.value).toContain('没有找到会话文件')
+    expect(expectText(result)).toContain('没有找到会话文件')
   })
 
   it('stats with no sessions shows stats', async () => {
     const result = await call('stats')
-    expect(result.value).toContain('会话统计')
+    expect(expectText(result)).toContain('会话统计')
   })
 
   it('unknown command returns error', async () => {
     const result = await call('unknown')
-    expect(result.value).toContain('未知命令')
+    expect(expectText(result)).toContain('未知命令')
   })
 })
 
@@ -77,22 +78,22 @@ describe('backfill-sessions with data', () => {
 
   it('list shows sessions', async () => {
     const result = await call('list')
-    expect(result.value).toContain('Test1')
-    expect(result.value).toContain('Test2')
+    expect(expectText(result)).toContain('Test1')
+    expect(expectText(result)).toContain('Test2')
   })
 
   it('stats shows count 2', async () => {
     const result = await call('stats')
-    expect(result.value).toContain('会话总数: 2')
+    expect(expectText(result)).toContain('会话总数: 2')
   })
 
   it('find-empty lists empty sessions', async () => {
     const result = await call('find-empty')
-    expect(result.value).toContain('s2')
+    expect(expectText(result)).toContain('s2')
   })
 
   it('search matches session name', async () => {
     const result = await call('search Test1')
-    expect(result.value).toContain('s1')
+    expect(expectText(result)).toContain('s1')
   })
 })

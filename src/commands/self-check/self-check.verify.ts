@@ -42,7 +42,7 @@ async function verify() {
   await check('帮助信息包含所有用法和项目类型', async () => {
     const cmd = await selfCheck.load()
     const result = await cmd.call('', {} as any)
-    const text = result.value as string
+    const text = result.type === 'text' ? result.value : ''
     const sections = [
       '完整检查', 'lint', 'test', 'type-check', 'build', 'security', 'audit',
       'coverage', 'changed', 'ci', 'Node.js', 'Python', 'Rust', 'Go', 'Java'

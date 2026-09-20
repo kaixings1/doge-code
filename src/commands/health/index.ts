@@ -13,6 +13,11 @@
 import type { Command } from '../../commands.js'
 import type { LocalCommandCall, LocalCommandResult } from '../../types/command.js'
 import { existsSync, mkdirSync, writeFileSync, readdirSync, statSync } from 'fs'
+
+/** 从命令结果中安全取出文本，非 text 结果返回空串 */
+function textOf(result: LocalCommandResult): string {
+  return result.type === 'text' ? result.value : ''
+}
 import { join, extname } from 'path'
 import { homedir } from 'os'
 
@@ -138,7 +143,7 @@ async function runOverview(): Promise<LocalCommandResult> {
   // 1. 代码健康度
   try {
     const codeResult = await subCommands['code'].fn('')
-    const codeText = codeResult.value
+    const codeText = textOf(codeResult)
     const scoreMatch = codeText.match(/\*\*总分\*\*:\s*(\d+)/)
     const gradeMatch = codeText.match(/\*\*等级\*\*:\s*(\S+)/)
     const score = scoreMatch ? scoreMatch[1] : '?'
@@ -155,7 +160,7 @@ async function runOverview(): Promise<LocalCommandResult> {
   // 2. 健康评分
   try {
     const scoreResult = await subCommands['score'].fn('')
-    const scoreText = scoreResult.value
+    const scoreText = textOf(scoreResult)
     const match = scoreText.match(/\*\*总分\*\*:\s*(\d+)\/100\s*\((\S+)\)/)
     if (match) {
       lines.push('### 📊 健康评分')
@@ -171,7 +176,7 @@ async function runOverview(): Promise<LocalCommandResult> {
   // 3. 服务器状态
   try {
     const serverResult = await subCommands['server'].fn('')
-    lines.push(serverResult.value)
+    lines.push(textOf(serverResult))
     lines.push('')
   } catch {
     lines.push('### 🖥️ 服务器状态')

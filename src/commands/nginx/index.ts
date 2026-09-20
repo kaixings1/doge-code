@@ -1,5 +1,5 @@
 import type { Command } from '../../commands.js'
-import type { LocalJSXCommandCall } from '../../types/command.js'
+import type { LocalCommandCall } from '../../types/command.js'
 import { execSync } from 'child_process'
 import fs from 'fs'
 
@@ -8,7 +8,7 @@ function run(cmd: string): string {
   catch (e: any) { return '❌ 错误: ' + e.message }
 }
 
-export const call: LocalJSXCommandCall = async (args) => {
+export const call: LocalCommandCall = async (args) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
     return { type: 'text' as const, value: `nginx — Nginx 管理：status/start/stop/reload/test/sites/logs/config\n用法: /nginx`.trim() }
   }
@@ -40,5 +40,5 @@ export const call: LocalJSXCommandCall = async (args) => {
   return { type: 'text', value: r || '(无输出)' }
 }
 
-const cmd = { type: 'local-jsx' as const, name: 'nginx', description: 'Nginx 管理：status/start/stop/reload/test/sites/logs/config', argumentHint: '<status|start|stop|reload|test|sites|logs|config> [args]', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
+const cmd = { type: 'local' as const, name: 'nginx', description: 'Nginx 管理：status/start/stop/reload/test/sites/logs/config', argumentHint: '<status|start|stop|reload|test|sites|logs|config> [args]', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
 export default cmd

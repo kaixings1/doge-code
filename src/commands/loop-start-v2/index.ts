@@ -262,8 +262,11 @@ const call: LocalCommandCall = async (args): Promise<LocalCommandResult> => {
 
   const result = await runLoop(pattern, tasks, config, loopId)
 
+  // result 是判别联合，需先窄化再取 value；非 text 结果直接透传
+  if (result.type !== 'text') return result
+
   return {
-    ...result,
+    type: 'text',
     value: `🔄 循环已启动\n循环 ID: ${loopId}\n模式: ${pattern}\n任务数: ${tasks.length}\n\n${result.value}`,
   }
 }

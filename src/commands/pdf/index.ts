@@ -1,8 +1,8 @@
 import type { Command } from '../../commands.js'
-import type { LocalJSXCommandCall } from '../../types/command.js'
+import type { LocalCommandCall } from '../../types/command.js'
 import fs from 'fs'
 
-export const call: LocalJSXCommandCall = async (args) => {
+export const call: LocalCommandCall = async (args) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
     return { type: 'text' as const, value: `pdf — PDF 文件读取与信息查看：read/info\n用法: /pdf`.trim() }
   }
@@ -27,5 +27,5 @@ export const call: LocalJSXCommandCall = async (args) => {
   return { type: 'text', value: r || '(无内容)' }
 }
 
-const cmd = { type: 'local-jsx' as const, name: 'pdf', description: 'PDF 文件读取与信息查看：read/info', argumentHint: '<read|info> <文件>', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
+const cmd = { type: 'local' as const, name: 'pdf', description: 'PDF 文件读取与信息查看：read/info', argumentHint: '<read|info> <文件>', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
 export default cmd

@@ -1,8 +1,8 @@
 import type { Command } from '../../commands.js'
-import type { LocalJSXCommandCall } from '../../types/command.js'
+import type { LocalCommandCall } from '../../types/command.js'
 import { ragApi } from './api.js'
 
-export const call: LocalJSXCommandCall = async (args) => {
+export const call: LocalCommandCall = async (args) => {
   const parts = args.trim().split(/\s+/)
   const subcmd = parts[0] || ''
 
@@ -33,7 +33,7 @@ export const call: LocalJSXCommandCall = async (args) => {
 }
 
 const ragCommand = {
-  type: 'local-jsx' as const,
+  type: 'local' as const,
   name: 'rag',
   description: 'RAG 本地知识库 - 索引文件夹和搜索',
   argumentHint: '<add|query|list|clear> [args]',

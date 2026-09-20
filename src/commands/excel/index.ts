@@ -1,5 +1,5 @@
 import type { Command } from '../../commands.js'
-import type { LocalJSXCommandCall } from '../../types/command.js'
+import type { LocalCommandCall } from '../../types/command.js'
 import { execSync } from 'child_process'
 import fs from 'fs'
 
@@ -10,7 +10,7 @@ function runPy(code: string): string {
   } catch (e: any) { return '❌ 错误: ' + e.message }
 }
 
-export const call: LocalJSXCommandCall = async (args) => {
+export const call: LocalCommandCall = async (args) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
     return { type: 'text' as const, value: `excel — Excel 文件读取与转换：read/info/sheets/csv\n用法: /excel`.trim() }
   }
@@ -34,5 +34,5 @@ export const call: LocalJSXCommandCall = async (args) => {
   return { type: 'text', value: r || '(无输出)' }
 }
 
-const cmd = { type: 'local-jsx' as const, name: 'excel', description: 'Excel 文件读取与转换：read/info/sheets/csv', argumentHint: '<read|info|sheets|csv> <file>', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
+const cmd = { type: 'local' as const, name: 'excel', description: 'Excel 文件读取与转换：read/info/sheets/csv', argumentHint: '<read|info|sheets|csv> <file>', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
 export default cmd

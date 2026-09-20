@@ -1,5 +1,5 @@
 import type { Command } from '../../commands.js'
-import type { LocalJSXCommandCall } from '../../types/command.js'
+import type { LocalCommandCall } from '../../types/command.js'
 import { execSync } from 'child_process'
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'fs'
 import { join, extname, basename, dirname } from 'path'
@@ -130,7 +130,7 @@ CMD ${options.cmd || '["java", "-jar", "app.jar"]'}`,
   return templates[language] || 'Unsupported language: ' + language + '\nSupported: ' + Object.keys(templates).join(', ')
 }
 
-export const call: LocalJSXCommandCall = async (args) => {
+export const call: LocalCommandCall = async (args) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
     return { type: 'text' as const, value: `docker — Docker - ps/logs/exec/compose/stats/networks/volumes/prune/scan/generate/config\n用法: /docker`.trim() }
   }
@@ -228,5 +228,5 @@ export const call: LocalJSXCommandCall = async (args) => {
   }
 }
 
-const cmd = { type: 'local-jsx' as const, name: 'docker', description: 'Docker - ps/logs/exec/compose/stats/networks/volumes/prune/scan/generate/config', argumentHint: '<ps|logs|exec|compose|stats|networks|volumes|prune|scan|generate|config> [args]', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
+const cmd = { type: 'local' as const, name: 'docker', description: 'Docker - ps/logs/exec/compose/stats/networks/volumes/prune/scan/generate/config', argumentHint: '<ps|logs|exec|compose|stats|networks|volumes|prune|scan|generate|config> [args]', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
 export default cmd

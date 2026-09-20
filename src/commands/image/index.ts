@@ -1,9 +1,9 @@
 import type { Command } from '../../commands.js'
-import type { LocalJSXCommandCall } from '../../types/command.js'
+import type { LocalCommandCall } from '../../types/command.js'
 import fs from 'fs'
 import path from 'path'
 
-export const call: LocalJSXCommandCall = async (args) => {
+export const call: LocalCommandCall = async (args) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
     return { type: 'text' as const, value: `image — 图片信息查看与管理：info/ls/convert\n用法: /image`.trim() }
   }
@@ -39,5 +39,5 @@ export const call: LocalJSXCommandCall = async (args) => {
   return { type: 'text', value: r || '(无输出)' }
 }
 
-const cmd = { type: 'local-jsx' as const, name: 'image', description: '图片信息查看与管理：info/ls/convert', argumentHint: '<info|ls|convert> [args]', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
+const cmd = { type: 'local' as const, name: 'image', description: '图片信息查看与管理：info/ls/convert', argumentHint: '<info|ls|convert> [args]', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
 export default cmd

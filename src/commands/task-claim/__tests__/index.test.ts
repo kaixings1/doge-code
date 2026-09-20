@@ -41,7 +41,7 @@ describe("task-claim", () => {
   test("claim updates task status to in_progress", async () => {
     await tcCall("--claim task-001 --session sess-abc");
     const statusResult = await tcCall("--status task-001 --json");
-    const data = JSON.parse(statusResult.value);
+    const data = JSON.parse(expectText(statusResult));
     expect(data.classification).toBe("owned");
     expect(data.state).toBe("reserving");
   });
@@ -54,10 +54,10 @@ describe("task-claim", () => {
 
   test("release frees the lease", async () => {
     const claimResult = await tcCall("--claim task-001 --session sess-abc --json");
-    const claimData = JSON.parse(claimResult.value);
+    const claimData = JSON.parse(expectText(claimResult));
 
     const releaseResult = await tcCall(`--release ${claimData.claimId} --json`);
-    const releaseData = JSON.parse(releaseResult.value);
+    const releaseData = JSON.parse(expectText(releaseResult));
     expect(releaseData).toHaveProperty("released");
     expect(releaseData.released.taskId).toBe("task-001");
   });
@@ -82,7 +82,7 @@ describe("task-claim", () => {
 
   test("list excludes released leases", async () => {
     const claimResult = await tcCall("--claim task-001 --session sess-abc --json");
-    const claimData = JSON.parse(claimResult.value);
+    const claimData = JSON.parse(expectText(claimResult));
     await tcCall(`--release ${claimData.claimId}`);
 
     const result = await tcCall("--list --json");
@@ -92,11 +92,11 @@ describe("task-claim", () => {
 
   test("steal reassigns ownership with provenance", async () => {
     const claimResult = await tcCall("--claim task-001 --session sess-abc --json");
-    const claimData = JSON.parse(claimResult.value);
+    const claimData = JSON.parse(expectText(claimResult));
 
     const stealResult = await tcCall(`--steal ${claimData.claimId} --session sess-new --reason timeout --json`);
     expect(stealResult.type).toBe("text");
-    const stealData = JSON.parse(stealResult.value);
+    const stealData = JSON.parse(expectText(stealResult));
     expect(stealData.stolen.taskId).toBe("task-001");
     expect(stealData.stolen.ownerSessionId).toBe("sess-new");
     expect(stealData.stolen.previousClaimId).toBe(claimData.claimId);

@@ -78,9 +78,9 @@ describe("spec-workflow", () => {
 
   test("approvals status lists all approvals", async () => {
     const a1 = await swCall('approvals request --title "A" --file a.md --json');
-    JSON.parse(a1.value)
+    JSON.parse(expectText(a1))
     const a2 = await swCall('approvals request --title "B" --file b.md --json');
-    JSON.parse(a2.value)
+    JSON.parse(expectText(a2))
 
     const result = await swCall("approvals status --json");
     const data = JSON.parse(expectText(result));
@@ -89,7 +89,7 @@ describe("spec-workflow", () => {
 
   test("approvals status with id returns specific approval", async () => {
     const createResult = await swCall('approvals request --title "Test" --file test.md --json');
-    const createData = JSON.parse(createResult.value);
+    const createData = JSON.parse(expectText(createResult));
     const approvalId = createData.approval.id;
 
     const result = await swCall(`approvals status --id ${approvalId} --json`);
@@ -100,7 +100,7 @@ describe("spec-workflow", () => {
 
   test("approvals delete removes approval", async () => {
     const createResult = await swCall('approvals request --title "Delete Me" --file del.md --json');
-    const createData = JSON.parse(createResult.value);
+    const createData = JSON.parse(expectText(createResult));
     const approvalId = createData.approval.id;
 
     const result = await swCall(`approvals delete --id ${approvalId} --json`);
@@ -110,7 +110,7 @@ describe("spec-workflow", () => {
 
     // 确认已删除
     const statusResult = await swCall(`approvals status --id ${approvalId}`);
-    expect(statusResult.value).toContain("not found");
+    expect(expectText(statusResult)).toContain("not found");
   });
 
   test("log records implementation", async () => {
