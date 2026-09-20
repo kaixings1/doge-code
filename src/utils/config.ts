@@ -1806,3 +1806,24 @@ export function _setGlobalConfigCacheForTesting(
   globalConfigCache.config = config
   globalConfigCache.mtime = config ? Date.now() : 0
 }
+
+/**
+ * 用户输入的粘贴内容（已解析，含内联内容）。
+ * 由 history.ts 的 resolveStoredPastedContent 从存储形态还原。
+ */
+export type PastedContent = {
+  id: number
+  type: 'text' | 'image'
+  content: string
+  mediaType?: string
+  filename?: string
+}
+
+/** 提示历史条目（ctrl+r / 上箭头回放使用） */
+export type HistoryEntry = {
+  display: string
+  pastedContents: Record<number, PastedContent>
+  timestamp: number
+  project: string
+  sessionId: string
+}

@@ -272,6 +272,9 @@ async function logEntryToHistoryEntry(entry: LogEntry): Promise<HistoryEntry> {
   return {
     display: entry.display,
     pastedContents,
+    timestamp: entry.timestamp,
+    project: entry.project,
+    sessionId: entry.sessionId ?? '',
   }
 }
 
