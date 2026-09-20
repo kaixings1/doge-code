@@ -182,7 +182,7 @@ const sitemap: Command = {
   description: 'Sitemap - generate/scan/preview/robots/validate/submit/config/base-url',
   aliases: ['/sitemap', '/sm'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default sitemap

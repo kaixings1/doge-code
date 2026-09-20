@@ -138,7 +138,7 @@ const snippets: Command = {
   description: '📝 代码片段 - 列表/搜索/使用/添加/编辑/删除/复制/标签/最近/初始化',
   aliases: '/snippets, /snip, /template'.split(','),
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default snippets

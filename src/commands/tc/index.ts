@@ -118,7 +118,7 @@ const tc: Command = {
   description: '📊 测试覆盖率 - 运行/报告/显示/缺失/趋势/徽章/HTML/JSON/阈值',
   aliases: '/tc, /coverage, /cov'.split(','),
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default tc

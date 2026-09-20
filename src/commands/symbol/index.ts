@@ -278,7 +278,7 @@ const symbol: Command = {
   description: '🔍 符号导航（高级） - 查找/定义/重命名/预览/提取/内联/用法/图谱/备份/恢复',
   aliases: ['/symbol', '/sym', '/sr'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default symbol

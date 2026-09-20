@@ -317,7 +317,7 @@ const fmt: Command = {
   description: '🎨 格式化器 - 检查/修复/全部/差异/统计/历史/配置/安装/语言',
   aliases: ['/fmt', '/format'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default fmt

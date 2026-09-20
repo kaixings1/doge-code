@@ -131,7 +131,7 @@ const notes: Command = {
   description: '📝 快速笔记 - 列表/添加/查看/编辑/删除/搜索/置顶/标签/导出/导入',
   aliases: '/notes, /note, /n'.split(','),
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default notes

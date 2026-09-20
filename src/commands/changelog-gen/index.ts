@@ -131,7 +131,7 @@ const changelogGen: Command = {
   description: '变更日志 - 生成/历史/预览/保存/统计/类型/作者',
   aliases: '/changelog-gen, /clg, /cl'.split(','),
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default changelogGen

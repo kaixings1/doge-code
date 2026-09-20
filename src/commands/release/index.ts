@@ -160,7 +160,7 @@ const release: Command = {
   type: 'local', name: 'release',
   description: '🚀 发布管理 - 版本提升/说明/变更日志/标签/创建/发布',
   aliases: ['/release', '/rel'], supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default release

@@ -149,7 +149,7 @@ const testRun: Command = {
   type: 'local', name: 'test-run',
   description: '🧪 测试运行器 - 运行/监视/覆盖率/调试/快照/耗时/框架',
   aliases: ['/test-run', '/test', '/t'], supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default testRun

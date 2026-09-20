@@ -10,6 +10,9 @@ async function callText(args: string): Promise<string> {
   return result.value
 }
 
+// 全仓递归扫描随仓库增长而变慢，给足超时避免误报失败
+const SCAN_TIMEOUT = 120_000
+
 describe('file-search', () => {
   test('returns help for empty args', async () => {
     const value = await callText('')
@@ -24,13 +27,14 @@ describe('file-search', () => {
     expect(value).not.toContain('无法统计文件数')
     const n = Number(value.replace(/\D/g, ''))
     expect(n).toBeGreaterThan(0)
-  })
+  }, SCAN_TIMEOUT)
 
-  test('grep returns file:line matches', async () => {
+  test('grep returns matches in file:line format', async () => {
     const value = await callText('grep execSync')
-    // 本仓库源码中存在该标识符，应能匹配到而非报错
     expect(value).toContain('个匹配')
-  })
+    // 断言输出格式为 "路径:行号 - 内容"
+    expect(value).toMatch(/:\d+ - /)
+  }, SCAN_TIMEOUT)
 
   test('grep without pattern returns usage', async () => {
     const value = await callText('grep')
@@ -40,11 +44,11 @@ describe('file-search', () => {
   test('rg is aliased to grep behaviour', async () => {
     const value = await callText('rg execSync')
     expect(value).toContain('个匹配')
-  })
+  }, SCAN_TIMEOUT)
 
-  test('non-matching pattern reports no match', { timeout: 60000 }, async () => {
+  test('non-matching pattern reports no match', async () => {
     const needle = 'zzz_' + 'no_such' + '_pattern_' + 'zzz'
     const value = await callText(needle)
     expect(value).toContain('未找到匹配')
-  })
+  }, SCAN_TIMEOUT)
 })

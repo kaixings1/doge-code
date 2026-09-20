@@ -490,6 +490,6 @@ export default {
   name: 'task-create',
   type: 'local',
   description: '创建/管理持久化任务 list|done|delete|clear-done',
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
   call: call,
 }

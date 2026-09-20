@@ -50,11 +50,21 @@ function searchInFile(pattern: string, file: string, context = 0): SearchResult[
   return results
 }
 
+/**
+ * 遍历时跳过的目录。除构建产物外，还包含体积大且非项目源码的目录
+ * （vendor 为第三方仓库、coverage 为测试报告），否则全仓扫描需十几秒。
+ */
+const SKIP_DIRS = new Set(['node_modules', 'dist', 'build', 'vendor', 'coverage', 'out', 'tmp'])
+
+function shouldSkip(entry: { name: string }): boolean {
+  return entry.name.startsWith('.') || SKIP_DIRS.has(entry.name)
+}
+
 function searchInDir(pattern: string, dir: string, exts: string[], context = 0): SearchResult[] {
   const results: SearchResult[] = []
   try {
     for (const entry of readdirSync(dir, { withFileTypes: true })) {
-      if (entry.name.startsWith('.') || entry.name === 'node_modules' || entry.name === 'dist' || entry.name === 'build') continue
+      if (shouldSkip(entry)) continue
       const fp = join(dir, entry.name)
       if (entry.isDirectory()) results.push(...searchInDir(pattern, fp, exts, context))
       else if (entry.isFile() && (exts.length === 0 || exts.includes(extname(entry.name)))) {
@@ -69,7 +79,7 @@ function countFiles(dir: string): number {
   let n = 0
   try {
     for (const entry of readdirSync(dir, { withFileTypes: true })) {
-      if (entry.name.startsWith('.') || entry.name === 'node_modules' || entry.name === 'dist' || entry.name === 'build') continue
+      if (shouldSkip(entry)) continue
       if (entry.isDirectory()) n += countFiles(join(dir, entry.name))
       else n += 1
     }
@@ -169,7 +179,7 @@ const fileSearch: Command = {
   type: 'local', name: 'file-search',
   description: '🔍 文件搜索 - 正则/搜索/统计/文件/替换/grep/rg/上下文',
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default fileSearch

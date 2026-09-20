@@ -161,7 +161,7 @@ const env: Command = {
   type: 'local', name: 'env',
   description: '环境变量管理 - 列出/获取/设置/删除/比较/复制/检查/导出/导入',
   aliases: ['/env', '/environment'], supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default env

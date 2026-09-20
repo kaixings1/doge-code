@@ -117,7 +117,7 @@ const docs: Command = {
   description: '📚 文档 - 生成/API/README/类/函数/托管/导出/搜索',
   aliases: '/docs, /doc, /documentation'.split(','),
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default docs

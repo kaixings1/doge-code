@@ -140,7 +140,7 @@ const cloneAll: Command = {
   aliases: ['/clone-all'],
   argumentHint: '[count|update|help]',
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default cloneAll

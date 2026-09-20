@@ -172,7 +172,7 @@ const logs: Command = {
   type: 'local', name: 'logs',
   description: '📋 日志查看器 - tail/follow/search/filter/stats/pm2/docker/nginx',
   aliases: ['/logs', '/log'], supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default logs

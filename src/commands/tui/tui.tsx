@@ -507,6 +507,6 @@ export default {
   name: 'tui',
   type: 'local-jsx',
   description: '全屏终端界面（闪烁免模式），支持主题/监控/会话/诊断',
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
   call: call
 }

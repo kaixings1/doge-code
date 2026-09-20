@@ -118,7 +118,7 @@ const readme: Command = {
   description: '📄 README - 生成/预览/保存/徽章/目录/检查/更新/章节',
   aliases: '/readme, /rm'.split(','),
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default readme

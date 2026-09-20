@@ -141,7 +141,7 @@ const envDiff: Command = {
   description: '环境变量对比 - 比较/缺失/多余/共享/模板/验证/同步/导出/导入',
   aliases: '/env-diff, /envd, /env-compare'.split(','),
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default envDiff

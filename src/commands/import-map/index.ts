@@ -120,7 +120,7 @@ const importMap: Command = {
   description: '导入映射图 - stats/circular/orphans/external/dot/mermaid/depth/save',
   aliases: '/import-map, /im, /imports'.split(','),
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default importMap

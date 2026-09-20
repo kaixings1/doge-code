@@ -137,7 +137,7 @@ const bookmark: Command = {
   description: '代码书签 - 标记和跳转到重要代码位置',
   aliases: ['/bookmark', '/bm'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default bookmark

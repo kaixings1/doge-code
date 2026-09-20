@@ -212,7 +212,7 @@ const watch: Command = {
   description: '👁️ 文件监视 - 快照/检查/扫描/状态/日志/清空/配置/自动操作',
   aliases: ['/watch', '/w'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default watch

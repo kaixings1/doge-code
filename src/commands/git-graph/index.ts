@@ -264,7 +264,7 @@ const gitGraph: Command = {
   description: '📊 Git 图表 - 统计/作者/时间线/热门文件/波动/活跃度/连续提交/洞察',
   aliases: ['/git-graph', '/gg', '/gitlog'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default gitGraph

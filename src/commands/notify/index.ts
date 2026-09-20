@@ -170,7 +170,7 @@ const notify: Command = {
   type: 'local', name: 'notify',
   description: '🔔 通知 - 规则/事件/历史/Webhook',
   aliases: ['/notify', '/alert'], supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default notify

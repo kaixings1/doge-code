@@ -383,7 +383,7 @@ const collab = {
   description: '实时协作编辑 — 基于 CRDT 的多人实时协作',
   argumentHint: '<create|join|leave|list|info|insert|delete|sync|comment|comments>',
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 } satisfies Command
 
 export default collab

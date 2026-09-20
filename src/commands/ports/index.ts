@@ -134,7 +134,7 @@ const ports: Command = {
   type: 'local', name: 'ports',
   description: '🔌 端口管理 - 列出/检查/终止/查找/监控',
   aliases: ['/ports', '/port'], supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default ports

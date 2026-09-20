@@ -130,7 +130,7 @@ const customCmd: Command = {
   description: '管理自定义斜杠命令',
   aliases: ['/custom-cmd', '/cc'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default customCmd

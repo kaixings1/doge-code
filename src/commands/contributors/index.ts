@@ -124,7 +124,7 @@ const contributors: Command = {
   description: '贡献者分析 - 列表/图表/文件/趋势/邮箱/全部',
   aliases: '/contributors, /contrib, /authors'.split(','),
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default contributors

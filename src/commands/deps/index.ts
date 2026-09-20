@@ -200,7 +200,7 @@ const deps: Command = {
   description: '📦 依赖管理 - 状态/过期/更新/添加/移除/审计',
   aliases: ['/deps', '/dep', '/packages'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default deps

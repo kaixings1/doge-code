@@ -315,7 +315,7 @@ const htaccess: Command = {
   description: 'htaccess 管理器 - 安全/SPA/缓存/压缩/重定向/性能/API/维护模式',
   aliases: ['/htaccess', '/hta'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default htaccess

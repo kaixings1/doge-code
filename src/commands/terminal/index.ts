@@ -106,7 +106,7 @@ const terminal: Command = {
   description: '🖥️ 终端管理器 - open/split/tab/kill/send/shortcuts/history/size',
   aliases: '/terminal, /term, /t'.split(','),
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default terminal

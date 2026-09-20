@@ -246,7 +246,7 @@ const bundle: Command = {
   description: '📦 Bundle - 体积/最大文件/类型/分析/优化/历史/趋势/配置/导出',
   aliases: ['/bundle', '/bun'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default bundle

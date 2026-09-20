@@ -214,6 +214,6 @@ export default {
   name: 'mcp-tool-search',
   type: 'local',
   description: '搜索和管理 MCP 工具',
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
   call: call
 }

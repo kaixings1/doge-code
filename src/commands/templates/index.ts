@@ -158,7 +158,7 @@ const templates: Command = {
   description: '📦 项目模板 - 从模板创建新项目',
   aliases: ['/templates', '/tmpl', '/scaffold'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default templates

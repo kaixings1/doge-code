@@ -931,7 +931,7 @@ const proactive: Command = {
   description: '💡 主动建议 - 扫描问题与改进/自动修复/忽略规则/趋势报告',
   aliases: ['/proactive', '/suggest'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default proactive

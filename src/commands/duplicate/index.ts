@@ -226,7 +226,7 @@ const duplicate: Command = {
   description: '重复代码检测 - 列表/文件/比例/配置/历史/导出/建议',
   aliases: ['/duplicate', '/dup'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default duplicate

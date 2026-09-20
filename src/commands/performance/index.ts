@@ -306,7 +306,7 @@ const performance: Command = {
   description: '📈 性能分析 - 文件/函数/热点/复杂度/大小/异步/基准',
   aliases: ['/performance', '/perf'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default performance

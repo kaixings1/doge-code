@@ -119,7 +119,7 @@ const debug: Command = {
   description: '调试集成 - 启动/附加/断点/单步/vscode/配置',
   aliases: '/debug, /dbg, /d'.split(','),
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default debug

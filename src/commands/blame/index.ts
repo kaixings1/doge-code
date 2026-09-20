@@ -101,7 +101,7 @@ const blame: Command = {
   type: 'local', name: 'blame',
   description: 'Git Blame - 文件/作者统计/热力图/最近修改',
   aliases: ['/blame', '/bl'], supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default blame

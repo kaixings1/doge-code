@@ -599,7 +599,7 @@ const codeHealth: Command = {
   description: '代码健康检查 - 文件/复杂度/大小/文档/测试/重复/风格/安全/历史/基准',
   aliases: ['/code-health', '/ch'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default codeHealth

@@ -1194,7 +1194,7 @@ const memorySearch = {
     { name: 'help', description: '显示帮助', required: false },
   ],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 } satisfies Command
 
 export default memorySearch

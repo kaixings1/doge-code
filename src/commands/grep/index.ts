@@ -233,7 +233,7 @@ const grep: Command = {
   description: '🔍 搜索 - 搜索/上下文/正则/统计/仅文件/配置/历史',
   aliases: ['/grep', '/g', '/rg'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default grep

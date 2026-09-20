@@ -107,7 +107,7 @@ const fileHistory: Command = {
   type: 'local', name: 'file-history',
   description: '📅 文件历史 - 变更/对比/恢复/作者/趋势',
   aliases: ['/file-history', '/fh'], supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default fileHistory

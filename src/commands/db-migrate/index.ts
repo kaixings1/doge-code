@@ -177,7 +177,7 @@ const dbMigrate: Command = {
   description: '数据库迁移 - 状态/执行/回滚/创建/应用/验证/重置/历史/生成',
   aliases: '/db-migrate, /migrate, /dbm'.split(','),
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default dbMigrate

@@ -254,7 +254,7 @@ const costHistory = {
     },
   ],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 } satisfies Command
 
 export default costHistory

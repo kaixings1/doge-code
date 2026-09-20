@@ -288,7 +288,7 @@ const deadCode: Command = {
   description: '死代码检测 - 静态/工具/导出/导入/函数/类/统计/历史/导出',
   aliases: ['/dead-code', '/dead', '/unused'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default deadCode

@@ -142,7 +142,7 @@ const conflict: Command = {
   type: 'local', name: 'conflict',
   description: '合并冲突 - 列出/显示/解决(ours/theirs/both)/中止/继续',
   aliases: ['/conflict', '/merge'], supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default conflict

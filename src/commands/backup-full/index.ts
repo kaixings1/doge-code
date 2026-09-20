@@ -165,7 +165,7 @@ const backupFull: Command = {
   description: 'Full backup - create/restore/list/delete/export/import/clean/verify/diff',
   aliases: '/backup-full, /bf, /bak'.split(','),
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default backupFull

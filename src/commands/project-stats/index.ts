@@ -151,7 +151,7 @@ const projectStats: Command = {
   description: '📊 项目统计 - 全部/文件/行数/git/贡献者/活动/大小/健康/导出',
   aliases: '/project-stats, /ps, /stats'.split(','),
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default projectStats

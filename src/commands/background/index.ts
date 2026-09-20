@@ -196,7 +196,7 @@ const background: Command = {
   description: '后台任务管理 - 运行/查看/终止/监控后台任务',
   aliases: ['/bg', '/background'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default background

@@ -134,7 +134,7 @@ const ssh: Command = {
   description: '🔒 SSH 管理器 - 列出/添加/连接/执行/复制/密钥/测试/日志',
   aliases: '/ssh, /remote'.split(','),
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default ssh

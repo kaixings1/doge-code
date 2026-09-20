@@ -175,7 +175,7 @@ const prReview: Command = {
   type: 'local', name: 'pr-review',
   description: '🔍 GitHub PR 审查 - 摘要/问题/清单/批准/评论',
   aliases: ['/pr-review', '/pr'], supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default prReview

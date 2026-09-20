@@ -332,7 +332,7 @@ const deploy: Command = {
   description: '🚀 部署 - 多环境/历史/健康/回滚/检查/配置',
   aliases: ['/deploy', '/ship'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default deploy

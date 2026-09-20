@@ -229,7 +229,7 @@ const outdated: Command = {
   description: '📦 过期依赖 - 大版本/小版本/补丁/安全/安全更新/全部更新/统计/历史',
   aliases: ['/outdated', '/old', '/update'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default outdated

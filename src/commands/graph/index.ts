@@ -123,7 +123,7 @@ const graph: Command = {
   description: '依赖关系图 - mermaid/dot/html/stats/circular/orphans/tree/save',
   aliases: '/graph, /deps-graph, /dg'.split(','),
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default graph

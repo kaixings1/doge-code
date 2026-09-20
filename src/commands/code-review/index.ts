@@ -493,7 +493,7 @@ const codeReview: Command = {
   description: '🔍 深度代码审查 - 文件/分支/提交/修复/基准/历史/趋势/配置',
   aliases: ['/code-review', '/review', '/cr'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 }
 
 export default codeReview

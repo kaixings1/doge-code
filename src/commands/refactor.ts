@@ -446,7 +446,7 @@ const command = {
   description: '智能代码重构：自动分析 + 提取/重命名/拆分/性能优化',
   aliases: ['/refactor', '/ref'],
   supportsNonInteractive: true,
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
   call,
 } satisfies Command
 

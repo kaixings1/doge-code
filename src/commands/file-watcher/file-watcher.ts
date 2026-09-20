@@ -91,5 +91,5 @@ export default {
   name: 'file-watcher',
   type: 'local',
   description: '文件系统监视器管理',
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
 } satisfies Command

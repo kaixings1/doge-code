@@ -715,6 +715,6 @@ export default {
   name: 'http',
   type: 'local-jsx',
   description: 'HTTP 客户端 - 支持重试、代理、表单、认证、并发、速率限制等',
-  load: () => Promise.resolve({ call: call as unknown as Command['call'] }),
+  load: () => Promise.resolve({ call }),
   call: call
 }
