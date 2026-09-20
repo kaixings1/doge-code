@@ -1,5 +1,6 @@
 // biome-ignore-all assist/source/organizeImports: 仅 ANT 的导入标记不得重新排序
 import type {
+  ContentBlock,
   ToolResultBlockParam,
   ToolUseBlock,
 } from '@anthropic-ai/sdk/resources/index.mjs'
@@ -687,11 +688,13 @@ async function* queryLoop(
             }
             let yieldMessage: typeof message = message
             if (message.type === 'assistant') {
-            logForDebugging(`[DEBUG] 1 Received assistant message, content length=${message.message.content.length}`);
-            logForDebugging(`[DEBUG] 1 Content types: ${JSON.stringify(message.message.content.map(c => c.type))}`);
-              let clonedContent: typeof message.message.content | undefined
-              for (let i = 0; i < message.message.content.length; i++) {
-                const block = message.message.content[i]!
+              // 局部窄化：StreamEvent 的索引签名使 message.message 解析为 unknown
+              const assistantContent = (message.message as { content?: ContentBlock[] } | undefined)?.content
+              logForDebugging(`[DEBUG] 1 Received assistant message, content length=${assistantContent?.length ?? 0}`);
+              logForDebugging(`[DEBUG] 1 Content types: ${JSON.stringify(assistantContent?.map(c => c.type) ?? [])}`);
+              let clonedContent: ContentBlock[] | undefined
+              for (let i = 0; i < (assistantContent?.length ?? 0); i++) {
+                const block = assistantContent[i]!
                 if (
                   block.type === 'tool_use' &&
                   typeof block.input === 'object' &&
@@ -703,15 +706,15 @@ async function* queryLoop(
                   )
                   if (tool?.backfillObservableInput) {
                     try {
-                    const originalInput = block.input as Record<string, unknown>
-                    const inputCopy = { ...originalInput }
-                    tool.backfillObservableInput(inputCopy)
-                    const addedFields = Object.keys(inputCopy).some(
-                      k => !(k in originalInput),
-                    )
-                    if (addedFields) {
-                      clonedContent ??= [...message.message.content]
-                      clonedContent[i] = { ...block, input: inputCopy }
+                      const originalInput = block.input as Record<string, unknown>
+                      const inputCopy = { ...originalInput }
+                      tool.backfillObservableInput(inputCopy)
+                      const addedFields = Object.keys(inputCopy).some(
+                        k => !(k in originalInput),
+                      )
+                      if (addedFields) {
+                        clonedContent ??= [...assistantContent]
+                        clonedContent[i] = { ...block, input: inputCopy }
                       }
                     } catch (err) {
                       logError(`工具 ${block.name} 回填输入失败: ${err instanceof Error ? err.message : String(err)}`)
@@ -754,11 +757,12 @@ async function* queryLoop(
               yield yieldMessage
             }
             if (message.type === 'assistant') {
-            logForDebugging(`[DEBUG] 2 Received assistant message, content length=${message.message.content.length}`);
-            logForDebugging(`[DEBUG]  2 Content types: ${JSON.stringify(message.message.content.map(c => c.type))}`);
+              const assistantContent2 = (message.message as { content?: ContentBlock[] } | undefined)?.content
+              logForDebugging(`[DEBUG] 2 Received assistant message, content length=${assistantContent2?.length ?? 0}`);
+              logForDebugging(`[DEBUG]  2 Content types: ${JSON.stringify(assistantContent2?.map(c => c.type) ?? [])}`);
               assistantMessages.push(message)
 
-              const msgToolUseBlocks = message.message.content.filter(
+              const msgToolUseBlocks = (assistantContent2 ?? []).filter(
                 content => content.type === 'tool_use',
               ) as ToolUseBlock[]
               if (msgToolUseBlocks.length > 0) {
@@ -767,7 +771,7 @@ async function* queryLoop(
                 needsFollowUp = true;
               } else {
                 logForDebugging('[DEBUG] no tool blocks found in message');
-                logForDebugging(`[DEBUG] content blocks: ${JSON.stringify(message.message.content.map(c => c.type))}`);
+                logForDebugging(`[DEBUG] content blocks: ${JSON.stringify(assistantContent2?.map(c => c.type) ?? [])}`);
                 logForDebugging(`[DEBUG] tool_calls exists? ${!!(message as Record<string, unknown>).tool_calls}`);
               }
 
