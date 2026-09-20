@@ -3,6 +3,12 @@ import type {
   SDKPartialAssistantMessage,
   StdoutMessage,
 } from '../../entrypoints/sdk/controlTypes.js'
+import { errorMessage } from '../../utils/errors.js'
+import { createAxiosInstance } from '../../utils/proxy.js'
+import {
+  registerSessionActivityCallback,
+  unregisterSessionActivityCallback,
+} from '../../utils/sessionActivity.js'
 import { decodeJwtExpiry } from '../../bridge/jwtUtils.js'
 import { logForDebugging } from '../../utils/debug.js'
 import {
@@ -213,7 +219,13 @@ export function clearStreamAccumulatorForMessage(
   }
 }
 
-type RequestResult = { ok: true } | { ok: false; retryAfterMs?: number }
+/**
+ * HTTP 请求结果。两个分支都声明 retryAfterMs，
+ * 否则 `!result.ok` 的判别窄化无法把联合收敛到失败分支。
+ */
+type RequestResult =
+  | { ok: true; retryAfterMs?: number }
+  | { ok: false; retryAfterMs?: number }
 
 type WorkerEvent = {
   payload: EventPayload
