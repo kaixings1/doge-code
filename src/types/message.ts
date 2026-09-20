@@ -131,7 +131,13 @@ export type SystemThinkingMessage = SystemMessage
 /** 系统记忆保存消息 */
 export type SystemMemorySavedMessage = SystemMessage
 /** 系统停止钩子摘要消息 */
-export type SystemStopHookSummaryMessage = SystemMessage
+export type SystemStopHookSummaryMessage = SystemMessage & {
+  subtype?: 'stop_hook_summary'
+  hookLabel?: string
+  hookCount?: number
+  totalDurationMs?: number
+  hookInfos: Array<{ command?: string; durationMs?: number }>
+}
 /** 系统信息消息 */
 export type SystemInformationalMessage = SystemMessage
 /** 系统压缩边界消息 */
@@ -202,16 +208,68 @@ export type PartialCompactDirection = 'older' | 'newer' | 'both' | string
 
 /** 折叠读取搜索组 */
 export type CollapsedReadSearchGroup = {
-  [key: string]: unknown
+  type: 'collapsed_read_search'
+  /** 搜索/读取/列表/REPL 操作计数 */
+  searchCount: number
+  readCount: number
+  listCount: number
+  replCount: number
+  /** 记忆操作计数 */
+  memorySearchCount: number
+  memoryReadCount: number
+  memoryWriteCount: number
+  /** 团队记忆操作计数（TEAMMEM 特性启用时写入） */
+  teamMemorySearchCount?: number
+  teamMemoryReadCount?: number
+  teamMemoryWriteCount?: number
+  /** 文件路径与搜索参数 */
+  readFilePaths: string[]
+  searchArgs: string[]
+  memoryReadFilePaths?: string[]
+  teamMemoryReadFilePaths?: string[]
+  latestDisplayHint?: string
+  /** 组内消息与展示用首条消息 */
+  messages: MessageBase[]
+  displayMessage: Message
+  /** 身份信息 */
+  uuid: UUID
+  timestamp?: string
+  /** MCP 调用统计 */
+  mcpCallCount?: number
+  mcpServerNames?: string[]
+  /** Bash 与 git 操作统计（全屏模式下写入） */
+  bashCount?: number
+  gitOpBashCount?: number
+  bashCommands?: string[]
+  commits?: Array<{ kind: 'committed' | 'amended' | 'cherry-picked'; sha: string }>
+  pushes?: Array<{ branch: string }>
+  branches?: Array<{ action: 'merged' | 'rebased'; ref: string }>
+  prs?: Array<{ action: 'created' | 'edited' | 'merged' | 'commented' | 'closed' | 'ready'; number: number; url?: string }>
+  /** 钩子统计 */
+  hookCount?: number
+  hookTotalMs?: number
+  hookInfos?: Array<{ command?: string; durationMs?: number }>
+  /** 相关记忆 */
+  relevantMemories?: Array<{ path: string; content: string }>
 }
 
 /** 分组工具调用消息 */
 export type GroupedToolUseMessage = MessageBase & {
   type: 'grouped_tool_use'
+  /** 工具名与组内消息 */
+  toolName: string
+  messages: MessageBase[]
+  results?: MessageBase[]
+  displayMessage?: Message
+  messageId?: string
 }
 
-/** 可折叠消息 */
-export type CollapsibleMessage = MessageBase
+/**
+ * 可折叠消息。
+ * 起始数据是完整 Message（含 type 判别字段）——
+ * 若仅为 MessageBase，则 type predicate 与 RenderableMessage 的窄化均无法成立。
+ */
+export type CollapsibleMessage = Message
 
 /** 规范化助手消息 */
 export type NormalizedAssistantMessage = AssistantMessage

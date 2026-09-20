@@ -378,10 +378,13 @@ function isNonCollapsibleToolUse(
 function isPreToolHookSummary(
   msg: RenderableMessage,
 ): msg is SystemStopHookSummaryMessage {
+  // 前置分支已把 msg 窄化到不含 system 的剩余类型，直接访问判别字段会被推断为
+  // never；故先按宽类型读取再判定。
+  const m = msg as { type?: string; subtype?: string; hookLabel?: string }
   return (
-    msg.type === 'system' &&
-    msg.subtype === 'stop_hook_summary' &&
-    msg.hookLabel === 'PreToolUse'
+    m.type === 'system' &&
+    m.subtype === 'stop_hook_summary' &&
+    m.hookLabel === 'PreToolUse'
   )
 }
 
