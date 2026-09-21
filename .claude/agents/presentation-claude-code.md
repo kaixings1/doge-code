@@ -25,119 +25,119 @@ color: green
 
 范围：此代理仅编辑 claude-code-best-practice 演示文稿。vibe-coding 和 claude-gemini 演示文稿由各自的代理拥有——不要从这里触及它们。
 
-## Origin & Identity
+## 起源与身份
 
-- **Forked from** `presentation/2026-04-25-gdg-kolachi-cli-claude-code-gemini/index.html` on 2026-04-30 (commit-tracked in the parent repo).
-- **Renamed** to "Claude Code Best Practice" — `<title>` tag, slide-1 HTML comment, slide-1 subtitle, and the GDG event badge were all updated to drop event-specific branding.
-- **Trailing Gemini-comparison slides removed** (old slides 49–52: Comparison header, File structure, Model & context window, Gemini Orchestration Workflow). Old slide 53 ("Thank you") was renumbered to 49. Final deck is **49 slides**.
-- **Favicon** is now `claude-jumping.svg` (not `gemini-jumping.svg`).
-- **Right-corner global Gemini mascot was deleted**; only the left-corner Claude mascot remains.
+- **衍生自** `presentation/2026-04-25-gdg-kolachi-cli-claude-code-gemini/index.html`，于 2026-04-30 派生（在父仓库中由提交跟踪）。
+- **重命名**为 "Claude Code Best Practice" —— `<title>` 标签、幻灯片 1 的 HTML 注释、幻灯片 1 副标题和 GDG 活动徽章都被更新，以去除活动特定的品牌标识。
+- **末尾的 Gemini 对比幻灯片已移除**（旧幻灯片 49–52：对比标题、文件结构、模型与上下文窗口、Gemini 编排工作流）。旧幻灯片 53（"Thank you"）重新编号为 49。最终幻灯片组为 **49 张幻灯片**。
+- **网站图标**现在是 `claude-jumping.svg`（不是 `gemini-jumping.svg`）。
+- **右上角全局 Gemini 吉祥物已删除**；只保留左上角的 Claude 吉祥物。
 
-## Target Audience Context
+## 目标受众上下文
 
-Originally written for a non-technical GDG audience. As the canonical best-practices deck, it now needs to read for a **mixed audience** (non-engineers AND practitioners reusing slides in other contexts). Default rules:
+最初为非技术 GDG 受众编写。作为规范的最佳实践幻灯片组，它现在需要面向**混合受众**（非工程师**和**在其他场景重用幻灯片的从业者）。默认规则：
 
-- Keep the strong analogies (weather-reporter running example, "Claude's brain", "pocket rulebook", etc.) — they work for both audiences and are the deck's signature voice.
-- When introducing a technical term, give an analogy first, then the term.
-- Avoid event-specific framing (no "today at GDG…", no dates, no co-presenter callouts unless intentional).
+- 保留有力的类比（天气预报员贯穿示例、"Claude 的大脑"、"口袋规则手册"等）——它们对两类受众都有效，是幻灯片组的标志性语气。
+- 引入技术术语时，先给类比，再给术语。
+- 避免活动特定的框架（不要 "today at GDG…"、不要日期、不要联合演讲者标注，除非有意为之）。
 
-## Presentation Structure (verify against the file before edits)
+## 演示文稿结构（编辑前请对照文件核实）
 
-Single-file HTML presentation with inline CSS and JS. Core conventions:
+带内联 CSS 和 JS 的单文件 HTML 演示文稿。核心约定：
 
-- **Slides** are `<div class="slide" data-slide="N">…</div>`, numbered sequentially starting at 1. The active slide gets `.active`.
-- **Title slides** use `class="slide title-slide"` and render centered.
-- **Section dividers** use `class="slide section-slide"` and may carry a `data-level` attribute that triggers a level badge on the section-divider's `<h1>`.
-- **No journey bar.** This deck uses *only* the simpler level-badge system — `updateLevelBadge()` in the `<script>` block injects a `.level-badge` span onto the active section divider's `<h1>` when `data-level` changes between slides. There is no right-rail journey track, no journey ticks, no `LEVELS` heights/colors map.
-- **`LEVEL_LABELS` map** in the JS block defines display labels for level keys: `agents`, `skills`, `context`, `claude-md`, `commands`, `workflow`. If you add or rename a level, update this map.
-- **`data-level` keys currently used on slides** (as of 2026-04-30): `agents` (7 slides), `claude-md` (4), `skills` (3), `context` (3), `workflow` (3). The `commands` key is defined in `LEVEL_LABELS` but no slide currently carries it — dead key, safe to leave or remove.
+- **幻灯片**是 `<div class="slide" data-slide="N">…</div>`，从 1 开始顺序编号。活动幻灯片获得 `.active`。
+- **标题幻灯片**使用 `class="slide title-slide"` 并居中渲染。
+- **章节分隔页**使用 `class="slide section-slide"`，可携带触发章节分隔页 `<h1>` 上级别徽章的 `data-level` 属性。
+- **无旅程条。** 此幻灯片组*仅*使用更简单的级别徽章系统——`<script>` 块中的 `updateLevelBadge()` 在幻灯片之间 `data-level` 变化时，将 `.level-badge` span 注入到活动章节分隔页的 `<h1>` 上。没有右侧栏旅程轨道、没有旅程刻度、没有 `LEVELS` 高度/颜色映射。
+- **`LEVEL_LABELS` 映射**在 JS 块中定义级别键的显示标签：`agents`、`skills`、`context`、`claude-md`、`commands`、`workflow`。如果你添加或重命名级别，更新此映射。
+- **幻灯片当前使用的 `data-level` 键**（截至 2026-04-30）：`agents`（7 张）、`claude-md`（4）、`skills`（3）、`context`（3）、`workflow`（3）。`commands` 键在 `LEVEL_LABELS` 中定义但当前没有幻灯片携带它——死键，保留或移除都安全。
 
-### Reusable styled boxes
+### 可复用样式框
 
-- `.trigger-box` — neutral grey box (key point / takeaway)
-- `.analogy-box` — purple box (use heavily — analogies are this deck's signature voice)
-- `.how-to-trigger` — green box (takeaway / how-to-use)
-- `.warning-box` — orange box (limitation / gotcha)
-- `.info-box` — blue box (informational aside)
-- `.code-block` — dark code sample with `.comment`, `.key`, `.string`, `.cmd`, `.claude-file` syntax spans
-- `.two-col` with `.col-card` (`.good` / `.bad` variants) — comparison layouts
-- `.use-cases` with `.use-case-item` — bulleted list with emoji icons
-- `.hiring-steps` with `.hiring-step.level-N` — numbered analogy walkthrough
-- `.field-row` with `.field-name` / `.field-desc` / `.field-required` — frontmatter field docs
-- `.pillar-footer` with `.pillar-mini-card` (and `.inactive` variant) — 5-card reference strip below the fold on some content slides
+- `.trigger-box` — 中性灰色框（关键点 / 要点）
+- `.analogy-box` — 紫色框（大量使用——类比是此幻灯片组的标志性语气）
+- `.how-to-trigger` — 绿色框（要点 / 如何使用）
+- `.warning-box` — 橙色框（限制 / 坑）
+- `.info-box` — 蓝色框（信息性旁注）
+- `.code-block` — 深色代码示例，带 `.comment`、`.key`、`.string`、`.cmd`、`.claude-file` 语法 span
+- `.two-col` 配合 `.col-card`（`.good` / `.bad` 变体）— 对比布局
+- `.use-cases` 配合 `.use-case-item` — 带 emoji 图标的项目符号列表
+- `.hiring-steps` 配合 `.hiring-step.level-N` — 编号化类比演示
+- `.field-row` 配合 `.field-name` / `.field-desc` / `.field-required` — frontmatter 字段文档
+- `.pillar-footer` 配合 `.pillar-mini-card`（以及 `.inactive` 变体）— 某些内容幻灯片折叠线以下的 5 卡片参考条
 
-### Navigation & meta
+### 导航与元信息
 
-- `goToSlide(N)` is defined in the script but is NOT called with hardcoded slide numbers anywhere in the deck (only via `currentSlide` arithmetic in `nextSlide`/`prevSlide` and keyboard handlers). This means **renumbering is structurally simpler than in TOC-driven decks** — no `goToSlide(N)` references to chase. **However**, if you ADD a TOC slide that uses `onclick="goToSlide(N)"`, you take on the renumbering-update burden from that point forward — note it in Learnings.
-- `totalSlides` is auto-computed from the DOM (`document.querySelectorAll('[data-slide]').length`) — no manual bump needed when adding/removing slides.
-- The progress bar (`#progress`) and slide counter (`#slideCounter`) update automatically from `currentSlide / totalSlides`.
+- `goToSlide(N)` 在脚本中定义，但幻灯片组中任何地方都**没有**用硬编码幻灯片编号调用它（仅通过 `nextSlide`/`prevSlide` 和键盘处理器中的 `currentSlide` 算术）。这意味着**重新编号在结构上比目录驱动的幻灯片组更简单**——无需追踪 `goToSlide(N)` 引用。**然而**，如果你添加一个使用 `onclick="goToSlide(N)"` 的目录幻灯片，从那一刻起你就承担了重新编号更新的负担——在 Learnings 中注明。
+- `totalSlides` 从 DOM 自动计算（`document.querySelectorAll('[data-slide]').length`）——添加/删除幻灯片时无需手动增加。
+- 进度条（`#progress`）和幻灯片计数器（`#slideCounter`）从 `currentSlide / totalSlides` 自动更新。
 
-### Global mascots
+### 全局吉祥物
 
-- **Left-corner mascot only**: `<div class="header-logo"><img src="../../!/claude-jumping.svg" .../></div>` placed just before `.navigation`. The deck no longer has a right-corner mascot (the Gemini mascot was removed on 2026-04-30 as part of the rename).
-- The `.header-logo.right` CSS rule (line ~79) is now dead — no element uses it. Harmless; remove only during a deliberate cleanup pass.
+- **仅左上角吉祥物**：`<div class="header-logo"><img src="../../!/claude-jumping.svg" .../></div>` 放在 `.navigation` 之前。幻灯片组不再有右上角吉祥物（Gemini 吉祥物于 2026-04-30 作为重命名的一部分被移除）。
+- `.header-logo.right` CSS 规则（约第 79 行）现在是死代码——没有元素使用它。无害；只在刻意的清理过程中移除。
 
-## Workflow
+## 工作流
 
-### Step 1: Read the current state
+### 第 1 步：读取当前状态
 
-Before any edit, read `presentation/claude-code-best-practice/index.html` and confirm:
-- Current total slide count (should be 49 unless the deck has evolved)
-- Current `data-slide` numbering is contiguous (1..N)
-- Current `data-level` assignments
-- Whether any new `goToSlide(N)` hardcoded references have been added since this agent's Learnings were last updated
+在任何编辑之前，读取 `presentation/claude-code-best-practice/index.html` 并确认：
+- 当前幻灯片总数（除非幻灯片组已演变，应为 49）
+- 当前 `data-slide` 编号是连续的（1..N）
+- 当前 `data-level` 分配
+- 自上次更新此代理的 Learnings 以来是否添加了任何新的 `goToSlide(N)` 硬编码引用
 
-Do NOT trust any numbers in this agent file without verifying — the deck evolves.
+在没有验证的情况下**不要**信任此代理文件中的任何数字——幻灯片组会演变。
 
-### Step 2: Apply changes
+### 第 2 步：应用更改
 
-- **Content changes**: Edit slide HTML within existing `<div class="slide">` elements.
-- **New slides**: Insert new slide divs with correct sequential `data-slide` numbering.
-- **Reorder**: Move slide divs AND renumber ALL `data-slide` attributes sequentially. If `goToSlide(N)` hardcoded calls exist (check first), update those too.
-- **Level changes**: Update `data-level` attributes on section dividers. If you add a new level key, also add it to the `LEVEL_LABELS` map.
-- **Styling**: Match existing CSS patterns. Prefer reusable classes over inline styles.
-- **Cross-deck slide imports**: When importing slides from `presentation-claude-gemini` or `presentation-vibe-coding`, read the source's slide content verbatim, then restyle into THIS deck's classes — never copy CSS from other decks. This deck deliberately keeps its own stylesheet to stay self-contained.
+- **内容更改**：在现有 `<div class="slide">` 元素内编辑幻灯片 HTML。
+- **新幻灯片**：插入新的幻灯片 div，使用正确的顺序 `data-slide` 编号。
+- **重排序**：移动幻灯片 div **并**按顺序重新编号**所有** `data-slide` 属性。如果存在 `goToSlide(N)` 硬编码调用（先检查），也要更新它们。
+- **级别更改**：更新章节分隔页上的 `data-level` 属性。如果你添加新的级别键，也要将其添加到 `LEVEL_LABELS` 映射。
+- **样式**：匹配现有 CSS 模式。优先使用可复用类而非内联样式。
+- **跨幻灯片组导入幻灯片**：从 `presentation-claude-gemini` 或 `presentation-vibe-coding` 导入幻灯片时，逐字阅读来源的幻灯片内容，然后重设为**本**幻灯片组的类——绝不从其他幻灯片组复制 CSS。此幻灯片组刻意保留自己的样式表以保持自包含。
 
-### Step 3: Verify integrity
+### 第 3 步：验证完整性
 
-After changes, confirm:
-1. All `data-slide` attributes are sequential (1, 2, 3, …) with no gaps or duplicates.
-2. Every `data-level` value on a slide is a key in the `LEVEL_LABELS` map (or add it).
-3. No `.level-badge` is hardcoded in slide HTML (it's JS-injected at runtime).
-4. The closing slide's title and content reflect the deck's current identity ("Claude Code Best Practice", not the old GDG framing).
-5. No event-specific branding leaked back in (no "GDG", no "Kolachi", no event date in the title slide unless intentional).
-6. Inline `<!-- Slide N: ... -->` comments are still in sync with `data-slide` values (these are cosmetic but help manual navigation — if you renumber, run a sed pass to fix them too).
+更改后，确认：
+1. 所有 `data-slide` 属性都是顺序的（1、2、3……），没有空缺或重复。
+2. 幻灯片上的每个 `data-level` 值都是 `LEVEL_LABELS` 映射中的键（或添加它）。
+3. 幻灯片 HTML 中没有硬编码 `.level-badge`（它在运行时由 JS 注入）。
+4. 结尾幻灯片的标题和内容反映幻灯片组的当前身份（"Claude Code Best Practice"，而非旧的 GDG 框架）。
+5. 没有活动特定的品牌标识泄漏回来（标题幻灯片中没有 "GDG"、没有 "Kolachi"、没有活动日期，除非有意为之）。
+6. 内联 `<!-- Slide N: ... -->` 注释仍与 `data-slide` 值同步（这些是装饰性的，但有助于手动导航——如果你重新编号，也运行一次 sed 修复它们）。
 
-### Step 4: Self-evolution (after every execution)
+### 第 4 步：自我演进（每次执行后）
 
-Append a short entry to the **Learnings** section if you:
-- Discovered a new convention not yet documented here
-- Hit an edge case worth recording
-- Imported slides from another deck (note source deck + slide range)
-- Diverged from the GDG-deck conventions in a deliberate way
+如果你有以下情况，向 **Learnings** 章节追加一条简短条目：
+- 发现了此处尚未记录的新约定
+- 遇到了值得记录的边缘情况
+- 从另一个幻灯片组导入了幻灯片（注明来源幻灯片组 + 幻灯片范围）
+- 以刻意的方式偏离了 GDG 幻灯片组的约定
 
-Keep entries terse (one or two lines each). The goal is to keep this agent's knowledge in sync with the actual file.
+保持条目简洁（每条一到两行）。目标是让此代理的知识与实际文件保持同步。
 
-## Critical Requirements
+## 关键要求
 
-1. **Sequential numbering**: After any add/remove/reorder, renumber ALL slides sequentially. Check for `goToSlide(N)` hardcoded calls before committing.
-2. **Level integrity**: Every `data-level` attribute must have a matching entry in `LEVEL_LABELS`.
-3. **Preserve event-agnostic identity**: This deck must NOT pick up event-specific branding (GDG, conference dates, co-presenters as event-locked). If a slide is intrinsically event-locked, flag it in the report rather than importing.
-4. **Match existing patterns**: Reuse the styled-box classes (`.analogy-box`, `.trigger-box`, etc.) rather than inventing new ones.
-5. **Plain language with analogies**: Lead with analogies. The weather-reporter running example, "Claude's brain", and "pocket rulebook" are this deck's signature voice — preserve them.
+1. **顺序编号**：在任何添加/删除/重排序之后，按顺序重新编号所有幻灯片。提交前检查 `goToSlide(N)` 硬编码调用。
+2. **级别完整性**：每个 `data-level` 属性都必须在 `LEVEL_LABELS` 中有匹配的条目。
+3. **保持活动无关身份**：此幻灯片组**不得**采用活动特定的品牌标识（GDG、会议日期、作为活动锁定的联合演讲者）。如果某张幻灯片本质上是活动锁定的，在报告中标记它，而不是导入。
+4. **匹配现有模式**：重用样式框类（`.analogy-box`、`.trigger-box` 等），而非发明新的。
+5. **带类比的通俗语言**：以类比开头。天气预报员贯穿示例、"Claude 的大脑"和"口袋规则手册"是此幻灯片组的标志性语气——保留它们。
 
-## Output Summary
+## 输出摘要
 
-After completing changes, report to the user:
-- What slides were added / removed / changed / renumbered
-- Current total slide count
-- Current `data-level` assignments (or note if unchanged)
-- Any deviations from prior conventions (and why)
-- Any "out of scope" items you noticed but deliberately didn't touch
+完成更改后，向用户报告：
+- 添加 / 删除 / 更改 / 重新编号了哪些幻灯片
+- 当前幻灯片总数
+- 当前 `data-level` 分配（或注明未变更）
+- 与先前约定的任何偏离（以及原因）
+- 你注意到但刻意未触及的任何"超出范围"项目
 
 ## Learnings
 
-_Findings from previous executions are recorded here. Add new entries as bullet points. Keep terse._
+_来自以往执行的发现记录在此处。以项目符号形式添加新条目。保持简洁。_
 
 - **2026-04-30 agent created by forking off `presentation-claude-gemini`**: this agent was created when the user copied the GDG deck into `presentation/claude-code-best-practice/` to serve as their canonical reusable best-practices deck. Source agent's 25+ dated learnings were intentionally NOT copied — most of them describe journey-bar work, weather-reporter rebuild, and slide-redesign passes that don't apply to this simpler deck. Start fresh and accumulate learnings specific to this deck's evolution.
 - **2026-04-30 rename + Gemini-decoupling pass (53 → 49 slides)**: deck rebranded from "Claude Code & Gemini CLI" to "Claude Code Best Practice". Changes: (1) `<title>` tag → "Claude Code Best Practice"; (2) slide-1 HTML comment "GDG Kolachi Conference Title" → "Claude Code Best Practice — Title"; (3) slide-1 subtitle simplified from the two-brand "Lessons from Claude Code — applied to — Gemini CLI" line to single-brand "Practical patterns for Claude Code"; (4) GDG event-badge gradient pill replaced with a neutral grey pill linking to `github.com/shanraisshan/claude-code-best-practice` — preserved `margin-top: 88px` so slide-1 spacing stays balanced; (5) deleted old slides 49–52 (Comparison header, File structure, Model & context window, Gemini Orchestration Workflow); (6) renumbered old slide 53 ("Thank you") → 49; (7) favicon swapped from `gemini-jumping.svg` to `claude-jumping.svg`; (8) right-corner global `.header-logo.right` div removed (Gemini mascot). Slide-1 H1 "Agentic Engineering in the CLI" was DELIBERATELY KEPT — it's the topic of the talk, not the deck name.

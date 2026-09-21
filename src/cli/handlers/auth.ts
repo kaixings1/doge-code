@@ -94,7 +94,7 @@ export async function installOAuthTokens(tokens: OAuthTokens): Promise<void> {
     logForDebugging(String(err), { level: 'error' }),
   )
 
-  if (shouldUseClaudeAIAuth(tokens.scopes)) {
+  if (shouldUseClaudeAIAuth(tokens.scopes as string[])) {
     await fetchAndStoreClaudeCodeFirstTokenDate().catch(err =>
       logForDebugging(String(err), { level: 'error' }),
     )
@@ -173,7 +173,7 @@ export async function authLogin({
       })
 
       logEvent('tengu_oauth_success', {
-        loginWithClaudeAi: shouldUseClaudeAIAuth(tokens.scopes),
+        loginWithClaudeAi: shouldUseClaudeAIAuth(tokens.scopes as string[]),
       })
       process.stdout.write('登录成功。\n')
       process.exit(0)

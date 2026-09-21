@@ -1,30 +1,30 @@
 ---
-description: Enforce TDD workflow for Kotlin. Write Kotest tests first, then implement. Verify 80%+ coverage with Kover.
+description: 强制 Kotlin 的 TDD 工作流。先写 Kotest 测试，再实现。用 Kover 验证 80%+ 覆盖率。
 ---
 
-# Kotlin TDD Command
+# Kotlin TDD 命令
 
-This command enforces test-driven development methodology for Kotlin code using Kotest, MockK, and Kover.
+此命令对 Kotlin 代码强制测试驱动开发方法论，使用 Kotest、MockK 和 Kover。
 
-## What This Command Does
+## 此命令做什么
 
-1. **Define Types/Interfaces**: Scaffold function signatures first
-2. **Write Kotest Tests**: Create comprehensive test specs (RED)
-3. **Run Tests**: Verify tests fail for the right reason
-4. **Implement Code**: Write minimal code to pass (GREEN)
-5. **Refactor**: Improve while keeping tests green
-6. **Check Coverage**: Ensure 80%+ coverage with Kover
+1. **定义类型/接口**：先搭建函数签名骨架
+2. **编写 Kotest 测试**：创建全面的测试规范（RED）
+3. **运行测试**：验证测试因正确的原因而失败
+4. **实现代码**：编写通过测试的最小代码（GREEN）
+5. **重构**：在保持测试通过的同时改进
+6. **检查覆盖率**：用 Kover 确保 80%+ 覆盖率
 
-## When to Use
+## 何时使用
 
-Use `/kotlin-test` when:
-- Implementing new Kotlin functions or classes
-- Adding test coverage to existing Kotlin code
-- Fixing bugs (write failing test first)
-- Building critical business logic
-- Learning TDD workflow in Kotlin
+在以下情况使用 `/kotlin-test`：
+- 实现新的 Kotlin 函数或类
+- 为现有 Kotlin 代码添加测试覆盖
+- 修复 bug（先写失败的测试）
+- 构建关键业务逻辑
+- 学习 Kotlin 中的 TDD 工作流
 
-## TDD Cycle
+## TDD 循环
 
 ```
 RED     -> Write failing Kotest test
@@ -33,7 +33,7 @@ REFACTOR -> Improve code, tests stay green
 REPEAT  -> Next test case
 ```
 
-## Example Session
+## 会话示例
 
 ````text
 User: /kotlin-test I need a function to validate user registration requests
@@ -151,7 +151,7 @@ RegistrationValidatorTest > valid registration returns Valid FAILED
 FAILED (5 tests, 0 passed, 5 failed)
 ```
 
-✓ Tests fail as expected (NotImplementedError).
+✓ 测试如预期失败（NotImplementedError）。
 
 ## Step 4: Implement Minimal Code (GREEN)
 
@@ -188,7 +188,7 @@ RegistrationValidatorTest > multiple errors returns all errors PASSED
 PASSED (5 tests, 5 passed, 0 failed)
 ```
 
-✓ All tests passing!
+✓ 所有测试通过！
 
 ## Step 6: Check Coverage
 
@@ -198,14 +198,14 @@ $ ./gradlew koverHtmlReport
 Coverage: 100.0% of statements
 ```
 
-✓ Coverage: 100%
+✓ 覆盖率：100%
 
 ## TDD Complete!
 ````
 
-## Test Patterns
+## 测试模式
 
-### StringSpec (Simplest)
+### StringSpec（最简单）
 
 ```kotlin
 class CalculatorTest : StringSpec({
@@ -215,7 +215,7 @@ class CalculatorTest : StringSpec({
 })
 ```
 
-### BehaviorSpec (BDD)
+### BehaviorSpec（BDD）
 
 ```kotlin
 class OrderServiceTest : BehaviorSpec({
@@ -227,7 +227,7 @@ class OrderServiceTest : BehaviorSpec({
 })
 ```
 
-### Data-Driven Tests
+### 数据驱动测试
 
 ```kotlin
 class ParserTest : FunSpec({
@@ -239,7 +239,7 @@ class ParserTest : FunSpec({
 })
 ```
 
-### Coroutine Testing
+### 协程测试
 
 ```kotlin
 class AsyncServiceTest : FunSpec({
@@ -252,7 +252,7 @@ class AsyncServiceTest : FunSpec({
 })
 ```
 
-## Coverage Commands
+## 覆盖率命令
 
 ```bash
 # Run tests with coverage
@@ -274,39 +274,39 @@ open build/reports/kover/html/index.html
 ./gradlew test --info
 ```
 
-## Coverage Targets
+## 覆盖率目标
 
 | Code Type | Target |
 |-----------|--------|
-| Critical business logic | 100% |
-| Public APIs | 90%+ |
-| General code | 80%+ |
-| Generated code | Exclude |
+| 关键业务逻辑 | 100% |
+| 公共 API | 90%+ |
+| 一般代码 | 80%+ |
+| 生成代码 | 排除 |
 
-## TDD Best Practices
+## TDD 最佳实践
 
-**DO:**
-- Write test FIRST, before any implementation
-- Run tests after each change
-- Use Kotest matchers for expressive assertions
-- Use MockK's `coEvery`/`coVerify` for suspend functions
-- Test behavior, not implementation details
-- Include edge cases (empty, null, max values)
+**要做的：**
+- **先**写测试，在任何实现之前
+- 每次改动后运行测试
+- 使用 Kotest 匹配器进行富有表现力的断言
+- 对挂起函数使用 MockK 的 `coEvery`/`coVerify`
+- 测试行为，而非实现细节
+- 包含边界情况（空、null、最大值）
 
-**DON'T:**
-- Write implementation before tests
-- Skip the RED phase
-- Test private functions directly
-- Use `Thread.sleep()` in coroutine tests
-- Ignore flaky tests
+**不要做的：**
+- 在测试之前写实现
+- 跳过 RED 阶段
+- 直接测试私有函数
+- 在协程测试中使用 `Thread.sleep()`
+- 忽略不稳定的测试
 
-## Related Commands
+## 相关命令
 
-- `/kotlin-build` - Fix build errors
-- `/kotlin-review` - Review code after implementation
-- `verification-loop` skill - Run full verification loop
+- `/kotlin-build` - 修复构建错误
+- `/kotlin-review` - 实现后审查代码
+- `verification-loop` 技能 - 运行完整验证循环
 
-## Related
+## 相关
 
-- Skill: `skills/kotlin-testing/`
-- Skill: `skills/tdd-workflow/`
+- Skill：`skills/kotlin-testing/`
+- Skill：`skills/tdd-workflow/`

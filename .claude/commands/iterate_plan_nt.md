@@ -7,17 +7,17 @@ model: opus
 
 你的任务是根据用户反馈更新现有的实施计划。你应该保持怀疑态度、全面考虑，并确保更改基于实际的代码库现状。
 
-## Initial Response
+## 初始响应
 
-When this command is invoked:
+当此命令被调用时：
 
-1. **Parse the input to identify**:
-   - Plan file path (e.g., `thoughts/shared/plans/2025-10-16-feature.md`)
-   - Requested changes/feedback
+1. **解析输入以识别**：
+   - 计划文件路径（例如 `thoughts/shared/plans/2025-10-16-feature.md`）
+   - 请求的更改/反馈
 
-2. **Handle different input scenarios**:
+2. **处理不同的输入场景**：
 
-   **If NO plan file provided**:
+   **如果未提供计划文件**：
    ```
    I'll help you iterate on an existing implementation plan.
 
@@ -25,9 +25,9 @@ When this command is invoked:
 
    Tip: You can list recent plans with `ls -lt thoughts/shared/plans/ | head`
    ```
-   Wait for user input, then re-check for feedback.
+   等待用户输入，然后重新检查反馈。
 
-   **If plan file provided but NO feedback**:
+   **如果提供了计划文件但无反馈**：
    ```
    I've found the plan at [path]. What changes would you like to make?
 
@@ -37,54 +37,60 @@ When this command is invoked:
    - "Adjust the scope to exclude feature X"
    - "Split Phase 2 into two separate phases"
    ```
-   Wait for user input.
+   等待用户输入。
 
-   **If BOTH plan file AND feedback provided**:
-   - Proceed immediately to Step 1
-   - No preliminary questions needed
+   **如果同时提供了计划文件和反馈**：
+   - 立即进入第 1 步
+   - 无需预备问题
 
-## Process Steps
+## 过程步骤
 
-### Step 1: Read and Understand Current Plan
+### 第 1 步：读取并理解当前计划
 
-1. **Read the existing plan file COMPLETELY**:
-   - Use the Read tool WITHOUT limit/offset parameters
-   - Understand the current structure, phases, and scope
-   - Note the success criteria and implementation approach
+1. **完整读取现有计划文件**：
+   - 使用 Read 工具时**不带** limit/offset 参数
+   - 理解当前结构、阶段和范围
+   - 记录成功标准和实现方法
 
-2. **Understand the requested changes**:
-   - Parse what the user wants to add/modify/remove
-   - Identify if changes require codebase research
-   - Determine scope of the update
+2. **理解请求的更改**：
+   - 解析用户想要添加/修改/删除什么
+   - 识别更改是否需要代码库研究
+   - 确定更新的范围
 
-### Step 2: Research If Needed
+### 第 2 步：如需要则研究
 
-**Only spawn research tasks if the changes require new technical understanding.**
+**仅当更改需要新的技术理解时才生成研究任务。**
 
-If the user's feedback requires understanding new code patterns or validating assumptions:
+如果用户的反馈需要理解新的代码模式或验证假设：
 
-1. **Create a research todo list** using TodoWrite
+1. **创建研究待办列表**使用 TodoWrite
 
-2. **Spawn parallel sub-tasks for research**:
-   Use the right agent for each type of research:
+2. **生成并行子任务进行研究**：
+   为每种研究类型使用正确的代理：
 
-   **For code investigation:**
-   - **codebase-locator** - To find relevant files
-   - **codebase-analyzer** - To understand implementation details
-   - **codebase-pattern-finder** - To find similar patterns
+   **用于代码调查：**
+   - **codebase-locator** —— 查找相关文件
+   - **codebase-analyzer** —— 理解实现细节
+   - **codebase-pattern-finder** —— 查找类似模式
 
-   **Be EXTREMELY specific about directories**:
-   - Include full path context in prompts
+   **用于历史上下文：**
+   - **thoughts-locator** —— 查找相关研究或决策
+   - **thoughts-analyzer** —— 从文档中提取洞见
 
-3. **Read any new files identified by research**:
-   - Read them FULLY into the main context
-   - Cross-reference with the plan requirements
+   **对目录 EXTREMELY 具体**：
+   - 如果更改涉及"WUI"，指定 `humanlayer-wui/` 目录
+   - 如果涉及"daemon"，指定 `hld/` 目录
+   - 在提示中包含完整路径上下文
 
-4. **Wait for ALL sub-tasks to complete** before proceeding
+3. **读取研究识别的任何新文件**：
+   - 将它们完整读入主上下文
+   - 与计划需求交叉引用
 
-### Step 3: Present Understanding and Approach
+4. **等待所有子任务完成**后再继续
 
-Before making changes, confirm your understanding:
+### 第 3 步：呈现理解和方案
+
+在做出更改之前，确认你的理解：
 
 ```
 Based on your feedback, I understand you want to:
@@ -102,31 +108,35 @@ I plan to update the plan by:
 Does this align with your intent?
 ```
 
-Get user confirmation before proceeding.
+在继续之前获得用户确认。
 
-### Step 4: Update the Plan
+### 第 4 步：更新计划
 
-1. **Make focused, precise edits** to the existing plan:
-   - Use the Edit tool for surgical changes
-   - Maintain the existing structure unless explicitly changing it
-   - Keep all file:line references accurate
-   - Update success criteria if needed
+1. **对现有计划进行聚焦、精确的编辑**：
+   - 使用 Edit 工具进行外科手术式更改
+   - 保持现有结构，除非明确更改它
+   - 保持所有 file:line 引用准确
+   - 如需要则更新成功标准
 
-2. **Ensure consistency**:
-   - If adding a new phase, ensure it follows the existing pattern
-   - If modifying scope, update "What We're NOT Doing" section
-   - If changing approach, update "Implementation Approach" section
-   - Maintain the distinction between automated vs manual success criteria
+2. **确保一致性**：
+   - 如果添加新阶段，确保它遵循现有模式
+   - 如果修改范围，更新"我们**不**做什么"章节
+   - 如果更改方法，更新"实现方法"章节
+   - 保持自动化 vs 手动成功标准的区分
 
-3. **Preserve quality standards**:
-   - Include specific file paths and line numbers for new content
-   - Write measurable success criteria
-   - Use `make` commands for automated verification
-   - Keep language clear and actionable
+3. **保持质量标准**：
+   - 为新内容包含具体文件路径和行号
+   - 编写可衡量的成功标准
+   - 对自动化验证使用 `make` 命令
+   - 保持语言清晰且可操作
 
-### Step 5: Sync and Review
+### 第 5 步：同步与审查
 
-**Present the changes made**:
+1. **同步更新后的计划**：
+   - 运行 `humanlayer thoughts sync`
+   - 这确保更改被正确索引
+
+2. **呈现所做的更改**：
    ```
    I've updated the plan at `thoughts/shared/plans/[filename].md`
 
@@ -141,85 +151,86 @@ Get user confirmation before proceeding.
    Would you like any further adjustments?
    ```
 
-**Be ready to iterate further** based on feedback
+3. **准备好基于反馈进一步迭代**
 
-## Important Guidelines
+## 重要指南
 
-1. **Be Skeptical**:
-   - Don't blindly accept change requests that seem problematic
-   - Question vague feedback - ask for clarification
-   - Verify technical feasibility with code research
-   - Point out potential conflicts with existing plan phases
+1. **保持怀疑**：
+   - 不要盲目接受看起来有问题的更改请求
+   - 质疑模糊的反馈——要求澄清
+   - 通过代码研究验证技术可行性
+   - 指出与现有计划阶段的潜在冲突
 
-2. **Be Surgical**:
-   - Make precise edits, not wholesale rewrites
-   - Preserve good content that doesn't need changing
-   - Only research what's necessary for the specific changes
-   - Don't over-engineer the updates
+2. **要外科手术式**：
+   - 进行精确编辑，而非整体重写
+   - 保留不需要更改的好内容
+   - 只研究特定更改所需的内容
+   - 不要过度设计更新
 
-3. **Be Thorough**:
-   - Read the entire existing plan before making changes
-   - Research code patterns if changes require new technical understanding
-   - Ensure updated sections maintain quality standards
-   - Verify success criteria are still measurable
+3. **要彻底**：
+   - 在做出更改前读取整个现有计划
+   - 如果更改需要新的技术理解则研究代码模式
+   - 确保更新后的章节保持质量标准
+   - 验证成功标准仍可衡量
 
-4. **Be Interactive**:
-   - Confirm understanding before making changes
-   - Show what you plan to change before doing it
-   - Allow course corrections
-   - Don't disappear into research without communicating
+4. **保持互动**：
+   - 在做出更改前确认理解
+   - 在做之前展示你计划更改什么
+   - 允许调整方向
+   - 不要消失在研究中而不沟通
 
-5. **Track Progress**:
-   - Use TodoWrite to track update tasks if complex
-   - Update todos as you complete research
-   - Mark tasks complete when done
+5. **跟踪进展**：
+   - 如果复杂则使用 TodoWrite 跟踪更新任务
+   - 完成研究时更新待办
+   - 完成时标记任务完成
 
-6. **No Open Questions**:
-   - If the requested change raises questions, ASK
-   - Research or get clarification immediately
-   - Do NOT update the plan with unresolved questions
-   - Every change must be complete and actionable
+6. **无未决问题**：
+   - 如果请求的更改引发问题，**询问**
+   - 立即研究或获取澄清
+   - **不要**用未解决问题更新计划
+   - 每个更改必须完整且可操作
 
-## Success Criteria Guidelines
+## 成功标准指南
 
-When updating success criteria, always maintain the two-category structure:
+更新成功标准时，始终维持两类结构：
 
-1. **Automated Verification** (can be run by execution agents):
-   - Commands that can be run: `make test`, `npm run lint`, etc.
-   - Specific files that should exist
-   - Code compilation/type checking
+1. **自动化验证**（可由执行代理运行）：
+   - 可运行的命令：`make test`、`npm run lint` 等
+   - 优先使用 `make` 命令：用 `make -C humanlayer-wui check` 而非 `cd humanlayer-wui && bun run fmt`
+   - 应存在的具体文件
+   - 代码编译/类型检查
 
-2. **Manual Verification** (requires human testing):
-   - UI/UX functionality
-   - Performance under real conditions
-   - Edge cases that are hard to automate
-   - User acceptance criteria
+2. **手动验证**（需要人工测试）：
+   - UI/UX 功能
+   - 真实条件下的性能
+   - 难以自动化的边缘情况
+   - 用户验收标准
 
-## Sub-task Spawning Best Practices
+## 子任务生成最佳实践
 
-When spawning research sub-tasks:
+生成研究子任务时：
 
-1. **Only spawn if truly needed** - don't research for simple changes
-2. **Spawn multiple tasks in parallel** for efficiency
-3. **Each task should be focused** on a specific area
-4. **Provide detailed instructions** including:
-   - Exactly what to search for
-   - Which directories to focus on
-   - What information to extract
-   - Expected output format
-5. **Request specific file:line references** in responses
-6. **Wait for all tasks to complete** before synthesizing
-7. **Verify sub-task results** - if something seems off, spawn follow-up tasks
+1. **仅当确实需要时才生成** —— 不要为简单更改做研究
+2. **并行生成多个任务**以提高效率
+3. **每个任务应聚焦**于特定领域
+4. **提供详细指令**，包括：
+   - 确切搜索什么
+   - 关注哪些目录
+   - 提取什么信息
+   - 预期输出格式
+5. **在响应中请求具体 file:line 引用**
+6. **等待所有任务完成**后再综合
+7. **验证子任务结果** —— 如果有问题，生成后续任务
 
-## Example Interaction Flows
+## 示例交互流程
 
-**Scenario 1: User provides everything upfront**
+**场景 1：用户提前提供一切**
 ```
 User: /iterate_plan thoughts/shared/plans/2025-10-16-feature.md - add phase for error handling
 Assistant: [Reads plan, researches error handling patterns, updates plan]
 ```
 
-**Scenario 2: User provides just plan file**
+**场景 2：用户只提供计划文件**
 ```
 User: /iterate_plan thoughts/shared/plans/2025-10-16-feature.md
 Assistant: I've found the plan. What changes would you like to make?
@@ -227,12 +238,12 @@ User: Split Phase 2 into two phases - one for backend, one for frontend
 Assistant: [Proceeds with update]
 ```
 
-**Scenario 3: User provides no arguments**
+**场景 3：用户不提供参数**
 ```
 User: /iterate_plan
 Assistant: Which plan would you like to update? Please provide the path...
 User: thoughts/shared/plans/2025-10-16-feature.md
 Assistant: I've found the plan. What changes would you like to make?
-User: Add more specific success criteria to phase 4
+User: Add more specific success criteria
 Assistant: [Proceeds with update]
 ```

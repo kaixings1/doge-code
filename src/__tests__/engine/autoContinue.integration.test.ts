@@ -93,7 +93,7 @@ describe('MessageLoop 自动继续集成测试', () => {
       ['grep', { name: 'grep', description: '搜索内容', parameters: { type: 'object', properties: { pattern: { type: 'string' } } }, validate: () => ({ valid: true }), execute: async () => ({ content: '' }) }],
       ['edit', { name: 'edit', description: '编辑文件', parameters: { type: 'object', properties: { file_path: { type: 'string' } } }, validate: () => ({ valid: true }), execute: async () => ({ content: '' }) }],
     ])
-    const toolDefinitions = Array.from(toolRegistry.values())
+    const toolDefinitions = Array.from(toolRegistry.values()) as unknown as Array<{ name: string; description: string; input_schema: Record<string, unknown> }>
 
     return {
       stateMachine: new QueryStateMachine(),
@@ -284,5 +284,73 @@ describe('MessageLoop 自动继续集成测试', () => {
     expect(apiClient.callCount).toBe(2)
     expect(result.iterations).toBe(2)
     expect(result.state).toBe('done')
+  })
+
+  // ── 场景 6（回归）：正文含关键词的同时附带工具调用 ──
+  // 根因 A：原实现先判 toolCalls.length > 0 就直接 return true，
+  // 导致关键词分支被整体跳过，且下一轮 content 已被剥离成空串，任务静默终止。
+
+  it('正文含"是否继续"且同时带工具调用时，关键词仍应生效', async () => {
+    const deps = createDeps([
+      // 第 1 轮：正文问"是否继续"，同时吐出一个 read 工具调用
+      { content: '我已完成初步分析，是否继续深入？', stopReason: 'tool_use', toolCalls: [{ id: 'tu_1', name: 'read', input: { file_path: 'a.ts' } }] },
+      // 第 2 轮：自动继续后的回复
+      { content: '深入分析完毕，发现 2 处问题。', stopReason: 'end_turn' },
+      // 第 3 轮：readSearch 分支继续后的答复
+      { content: '全部处理完成。', stopReason: 'end_turn' },
+    ], {
+      autoContinue: { enabled: true, continueKeyword: true },
+    })
+
+    const loop = new MessageLoop(deps)
+    const result = await loop.run('分析项目')
+
+    const apiClient = deps.apiClient as ReturnType<typeof createMockApiClient>
+    // 轮次拆解：①带工具调用的回复（关键词仍须被识别）→ ②注入"继续"后的回复
+    // → ③上一轮用过 read 且回复短，readSearch 分支再继续一轮。
+    expect(apiClient.callCount).toBe(3)
+    expect(result.iterations).toBe(3)
+    expect(result.state).toBe('done')
+    // 正文不能被吞掉，"是否继续"这句应保留在历史里
+    const assistantMessages = result.messages.filter(m => m.role === 'assistant')
+    const joined = JSON.stringify(assistantMessages)
+    expect(joined).toContain('是否继续')
+  })
+
+  it('read 后短回复会继续，但受 maxCount 限制不会无限空转', async () => {
+    const deps = createDeps([
+      { content: '正在读取文件。', stopReason: 'tool_use', toolCalls: [{ id: 'tu_9', name: 'read', input: { file_path: 'a.ts' } }] },
+      // 后续每轮都是同样的短回复，模拟"AI 一直不给出结论"
+      { content: '继续分析中。', stopReason: 'end_turn' },
+      { content: '继续分析中。', stopReason: 'end_turn' },
+      { content: '继续分析中。', stopReason: 'end_turn' },
+      { content: '继续分析中。', stopReason: 'end_turn' },
+    ], {
+      autoContinue: { enabled: true, readSearch: true, maxCount: 3 },
+    })
+
+    const loop = new MessageLoop(deps)
+    const result = await loop.run('读取并汇报')
+
+    // maxCount=3 封顶自动继续次数：1 次初始 + 最多 3 次自动继续 + 工具调用轮。
+    // 关键是不会空转到 maxIterations(100) 后以 crashed 收场。
+    const apiClient = deps.apiClient as ReturnType<typeof createMockApiClient>
+    expect(apiClient.callCount).toBeLessThanOrEqual(5)
+    expect(result.state).toBe('done')
+  })
+
+  it('关键词自动继续应写入"继续"消息到对话历史', async () => {
+    const deps = createDeps([
+      { content: '是否继续执行下一步？', stopReason: 'end_turn' },
+      { content: '下一步已完成。', stopReason: 'end_turn' },
+    ], {
+      autoContinue: { enabled: true, continueKeyword: true },
+    })
+
+    const loop = new MessageLoop(deps)
+    const result = await loop.run('执行任务')
+
+    const injected = result.messages.filter(m => m.role === 'user' && m.content === '继续')
+    expect(injected.length).toBeGreaterThanOrEqual(1)
   })
 })

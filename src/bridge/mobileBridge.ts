@@ -75,6 +75,22 @@ function createMessage(type: string, data: Record<string, unknown> = {}, request
   return { uuid: randomUUID(), type, data, requestId, timestamp: Date.now() }
 }
 
+/** 仅允许 localhost / 127.0.0.1 / [::1] 来源，防止跨域携带认证头。 */
+function isLocalOrigin(origin: string): boolean {
+  try {
+    const url = new URL(origin)
+    const hostname = url.hostname.toLowerCase()
+    return (
+      hostname === 'localhost' ||
+      hostname === '127.0.0.1' ||
+      hostname === '::1' ||
+      hostname === '[::1]'
+    )
+  } catch {
+    return false
+  }
+}
+
 // ─── 移动端桥接客户端 ───
 
 export class MobileBridgeClient {
@@ -373,10 +389,12 @@ export function createMobileHttpBridge(options: {
     try {
       const http = await import('http')
       server = http.createServer((req, res) => {
-        // CORS 头
-        res.setHeader('Access-Control-Allow-Origin', '*')
+        const origin = req.headers.origin
+        const allowedOrigin = origin && isLocalOrigin(origin) ? origin : 'null'
+        res.setHeader('Access-Control-Allow-Origin', allowedOrigin)
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        res.setHeader('Vary', 'Origin')
 
         if (req.method === 'OPTIONS') {
           res.writeHead(204)
@@ -524,10 +542,12 @@ export class MobileBridgeServer {
       const httpModule = await import('http')
 
       this.httpServer = httpModule.createServer((req, res) => {
-        // CORS 头
-        res.setHeader('Access-Control-Allow-Origin', '*')
+        const origin = req.headers.origin
+        const allowedOrigin = origin && isLocalOrigin(origin) ? origin : 'null'
+        res.setHeader('Access-Control-Allow-Origin', allowedOrigin)
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Mobile-Secret')
+        res.setHeader('Vary', 'Origin')
 
         if (req.method === 'OPTIONS') {
           res.writeHead(204)

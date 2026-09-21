@@ -1,13 +1,13 @@
 ---
-description: Plan and execute a full marketing campaign. Accepts a product brief and returns positioning, landing page copy, email sequence, social posts, ad variants, video scripts, and a content calendar. Can also review existing copy for conversion quality.
+description: 规划并执行完整的营销活动。接受产品简介并返回定位、落地页文案、邮件序列、社交帖子、广告变体、视频脚本和内容日历。也可审查现有文案的转化质量。
 allowed_tools: ["Read", "Grep", "Glob", "WebSearch", "WebFetch", "Write"]
 ---
 
 # /marketing-campaign
 
-Plan and execute a marketing campaign from brief to full content suite.
+从简介到完整内容套件，规划并执行营销活动。
 
-## Usage
+## 用法
 
 ```
 /marketing-campaign                          # Prompt for brief interactively
@@ -16,29 +16,29 @@ Plan and execute a marketing campaign from brief to full content suite.
 /marketing-campaign review [file-or-brief]   # Copy audit for conversion and brand consistency
 ```
 
-## What It Does
+## 此命令做什么
 
-1. **Research** — Profiles the target audience and maps competitors before writing anything
-2. **Positioning** — Locks the campaign angle and tone profile first
-3. **Copy production** — Generates the full content suite in the right order (landing page → emails → social → ads → video scripts → calendar)
-4. **Review** — Gates all output through a conversion and brand consistency checklist
+1. **研究** —— 在动笔之前先勾勒目标受众画像并绘制竞品地图
+2. **定位** —— 先锁定活动角度和语调画像
+3. **文案产出** —— 按正确顺序生成完整内容套件（落地页 → 邮件 → 社交 → 广告 → 视频脚本 → 日历）
+4. **审查** —— 所有输出都必须通过转化率和品牌一致性检查清单
 
-## Modes
+## 模式
 
-### Full Campaign Mode
+### 完整活动模式
 
-Provide a product brief containing:
-- Product name and description
-- Target audience (specific, not generic)
-- Core problem the product solves
-- Core benefit / outcome
-- Tone guidance
-- Channels required
-- Launch goal or timeline
+提供包含以下内容的产品简介：
+- 产品名称和描述
+- 目标受众（具体，而非泛泛）
+- 产品解决的核心问题
+- 核心收益 / 成果
+- 语调指引
+- 所需渠道
+- 发布目标或时间线
 
-The agent returns all campaign deliverables in order, with a copy review summary at the end.
+代理按顺序返回所有活动交付物，末尾附一份文案审查摘要。
 
-### Single Deliverable Mode
+### 单一交付物模式
 
 ```
 /marketing-campaign copy landing-page
@@ -48,24 +48,24 @@ The agent returns all campaign deliverables in order, with a copy review summary
 /marketing-campaign copy video-scripts
 ```
 
-Requires positioning to be defined first. Run full mode or provide the angle before requesting a single deliverable.
+需要先定义定位。在请求单一交付物之前，先运行完整模式或提供角度。
 
-### Copy Review Mode
+### 文案审查模式
 
 ```
 /marketing-campaign review path/to/copy.md
 /marketing-campaign review "paste copy here"
 ```
 
-Returns a structured audit against:
-- 5-second clarity test (above-fold copy)
-- CTA quality (specific, earned, one per piece)
-- Brand tone consistency
-- Claim specificity and supportability
-- Platform-native fit
-- Cross-channel consistency
+返回针对以下方面的结构化审计：
+- 5 秒清晰度测试（首屏文案）
+- CTA 质量（具体、有说服力、每篇一个）
+- 品牌语调一致性
+- 主张的具体性与可支撑性
+- 平台原生适配度
+- 跨渠道一致性
 
-## Brief Template
+## 简介模板
 
 ```markdown
 Product: [name]
@@ -78,9 +78,9 @@ Channels: [landing page, email, LinkedIn, X, ads, video]
 Goal: [launch, waitlist, signups, awareness — and timeline]
 ```
 
-## Output Location
+## 输出位置
 
-When saving campaign assets, the convention is `.claude/campaigns/{campaign-name}/`:
+保存活动资产时，约定为 `.claude/campaigns/{campaign-name}/`：
 
 ```
 .claude/campaigns/product-launch/
@@ -93,9 +93,9 @@ When saving campaign assets, the convention is `.claude/campaigns/{campaign-name
 └── content-calendar.md
 ```
 
-Confirm the save location before writing files.
+写文件前先确认保存位置。
 
-## Examples
+## 示例
 
 ```
 /marketing-campaign Build a 7-day launch campaign for an AI career platform for UK university students.
@@ -109,20 +109,20 @@ Confirm the save location before writing files.
 /marketing-campaign review .claude/campaigns/the-key/landing-page.md
 ```
 
-## Agent Delegation
+## 代理委派
 
-This command invokes:
-- `marketing-agent` — campaign planning and copy production
-- `brand-voice` — voice capture when tone needs locking across multiple outputs
-- `content-engine` — platform-native social content production
-- `crosspost` — multi-platform distribution
-- `market-research` — deep audience or competitive intelligence
+此命令调用：
+- `marketing-agent` — 活动规划与文案产出
+- `brand-voice` — 当语调需要在多个输出间锁定时进行语调捕捉
+- `content-engine` — 平台原生的社交内容生产
+- `crosspost` — 多平台分发
+- `market-research` — 深度受众或竞品情报
 
-## Related Commands
+## 相关命令
 
-- `/plan` — Strategic planning before a campaign
-- `/plan-prd` — Product requirements document before briefing a campaign
-- `/code-review` — Review code behind a landing page implementation
+- `/plan` — 活动前的战略规划
+- `/plan-prd` — 在向活动简报前先产出产品需求文档
+- `/code-review` — 审查落地页实现背后的代码
 
 ---
 

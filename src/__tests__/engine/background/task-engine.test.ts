@@ -7,8 +7,8 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import * as fs from 'fs'
 import * as path from 'path'
-import { TaskEngine, StepResult, StepExecutor } from '@/engine/background/task-engine.ts'
-import { parseCheckpointLine } from '@/commands/task/task.ts'
+import { TaskEngine, StepResult, StepExecutor } from '../../../engine/background/task-engine.js'
+import { parseCheckpointLine } from '../../../commands/task/task.js'
 
 import * as os from 'os'
 const TEST_TASKS_DIR = path.join(os.tmpdir(), 'doge-task-engine-test')

@@ -63,16 +63,16 @@ export type AgentEvent =
 /**
  * 自动继续（autoContinue）配置。
  * 决定在哪些场景下自动注入「继续」推进循环，而不是停下等用户确认。
- * 默认所有开关均为 false（关闭），需要显式开启。
+ * 默认 enabled/readSearch/continueKeyword 均为 true（开启），endTurn 默认 false。
  */
 export interface AutoContinueConfig {
   /** 总开关：为 true 时 readSearch 分支生效；其他分支还需各自开关 */
   enabled?: boolean;
-  /** 单任务内最大自动继续次数（防无限循环，默认 5） */
+  /** 单任务内最大自动继续次数（防无限循环，默认 10） */
   maxCount?: number;
   /** read/search/grep 工具后，AI 返回无工具调用的纯文本时自动继续（默认 true） */
   readSearch?: boolean;
-  /** AI 回复正文含「是否继续」等确认关键词时自动继续（较激进，默认 false） */
+  /** AI 回复正文含「是否继续」等确认关键词时自动继续（默认 true） */
   continueKeyword?: boolean;
   /** end_turn 且有内容时自动继续（替代原有「始终自动继续」，默认 false） */
   endTurn?: boolean;
@@ -245,6 +245,9 @@ export class MessageLoop {
           await this.deps.stateMachine.transition("done");
           break;
         }
+        // runIteration 返回 true 表示"要继续下一轮"。状态机可能停在
+        // should_continue（自动继续/工具调用路径），需归一到 responding，
+        // 保证下一轮迭代的起始状态可预期。
         if (this.deps.stateMachine.state === "should_continue") {
           await this.deps.stateMachine.transition("responding");
         }
@@ -337,51 +340,43 @@ export class MessageLoop {
     console.log('[ENGINE] Backfilled interrupted tool calls to preserve message history integrity');
   }
 
+  /** 提取响应正文的纯文本部分（string 直接返回，block 数组拼接 text 块） */
+  private _extractText(content: unknown): string {
+    if (typeof content === 'string') return content
+    if (Array.isArray(content)) {
+      return content
+        .filter((b): b is { type: string; text: string } =>
+          typeof b === 'object' && b !== null && (b as { type?: string }).type === 'text')
+        .map(b => b.text)
+        .join('')
+    }
+    return ''
+  }
+
+  /** 自动继续关键词正则：AI 正文出现这些词说明它在等用户确认 */
+  private static readonly CONTINUE_KEYWORDS =
+    /要不要我继续|需要我继续|并继续下一轮|让我继续|是否继续|是否需要|是否同意|需要我|继续吗|确认一下|要不要|需不需要|可不可以|行不行|能不能|是否可以|是否要|是否需|可以吗|开始吗|同意吗|确认吗|有问题吗|没问题吧|没问题|请问|是不是|对不对|可否|是否可行|是否|继续|需要|确认|同意|好吗|行吗/
+
   /** 将助手回复写入 conversation，并决定是否继续（吸收自 CoreCoder agent.py） */
   private async _recordAssistantResponse(processed: ProcessedResponse): Promise<boolean> {
-    const hadReadOrSearch = this.lastToolCalls.some(tc => tc.name === 'read' || tc.name === 'search' || tc.name === 'glob' || tc.name === 'grep')
+    const hadReadOrSearch = this.lastToolCalls.some(
+      tc => tc.name === 'read' || tc.name === 'search' || tc.name === 'glob' || tc.name === 'grep'
+    )
+    const textContent = this._extractText(processed.content)
+    const hasToolCalls = processed.toolCalls.length > 0
 
-    if (processed.content && processed.toolCalls.length === 0) {
-      this.deps.conversation.messages.push({
-        role: 'assistant',
-        content: processed.content,
-      } as InternalMessage);
-    } else if (processed.toolCalls.length > 0) {
-      const blocks: Array<Record<string, unknown>> = [];
-      if (typeof processed.content === 'string' && processed.content) {
-        blocks.push({ type: 'text', text: processed.content });
-      }
-      for (const tc of processed.toolCalls) {
-        blocks.push({ type: 'tool_use', id: tc.id, name: tc.name, input: tc.input });
-      }
-      this.deps.conversation.messages.push({
-        role: 'assistant',
-        content: blocks,
-      } as InternalMessage);
-      // 有工具调用 → 必须继续执行工具（ponytail: 最短路径，不加额外判断）
-      return true;
-    }
-
-    // 自动继续优先于 stopReason 检查和 needsUserInput：
-    // 是否自动继续由配置决定（deps.autoContinue），默认关闭。
-    // 配置允许时，直接注入"继续"并继续循环，跳过用户确认流程。
-    // ponytail: 用 autoContinueCount 限制次数，避免无限循环。
     const ac = this.deps.autoContinue
-    const acEnabled = ac?.enabled ?? false
-    const acLeft = ac?.maxCount ?? 5
+    const acEnabled = ac?.enabled ?? true
+    const acLeft = ac?.maxCount ?? 10
+    // ── 分支 1：正文含"是否继续"类关键词 → 注入"继续"并继续循环 ──
+    // 该判断必须在工具调用分支之前：模型完全可能在正文里问"是否继续"的同时
+    // 吐出一个工具调用，此时按工具调用优先会导致关键词逻辑被整体跳过。
+ 
     if (acEnabled && this.autoContinueCount < acLeft) {
-      // 1. 上一步调用了 read/search/glob/grep，且 AI 返回了无工具调用的纯文本回复
-      const acReadSearch = ac?.readSearch ?? true
-      if (acReadSearch && hadReadOrSearch && processed.toolCalls.length === 0) {
-        engineLog('AUTO_CONTINUE', '检测到 read/search 后提前终止，自动继续');
-        this.lastToolCalls = [];
-        this.autoContinueCount++
-        return true;
-      }
-      // 2. AI 回复正文包含"是否继续"等确认关键词（该场景较激进，默认额外关闭）
-      const acKeyword = ac?.continueKeyword ?? false
-      const content = typeof processed.content === 'string' ? processed.content : '';
-      if (acKeyword && content && /是否继续|是否需要|是否同意|需要我|继续吗|确认一下|要不要|需不需要|可不可以|行不行|能不能|是否可以|是否要|是否需|可以吗|开始吗|同意吗|确认吗|有问题吗|没问题吧|没问题|请问|是不是|对不对|可否|是否可行|是否|继续|需要|确认|同意|好吗|行吗/.test(content)) {
+      const acKeyword = ac?.continueKeyword ?? true
+      if (acKeyword && textContent && MessageLoop.CONTINUE_KEYWORDS.test(textContent)) {
+        // 正文原样入库，避免"是否继续"这句从历史里消失
+        this._pushAssistantText(textContent, processed.toolCalls)
         await new Promise(resolve => setTimeout(resolve, 3000));
         this.deps.conversation.messages.push({
           role: 'user',
@@ -391,15 +386,41 @@ export class MessageLoop {
         this.autoContinueCount++
         return true;
       }
+      // 分支 2：上一步调用了 read/search/glob/grep，且本次是无工具调用的短文本回复
+      // 额外条件：回复长度 < 200 字符（避免将完整结论误判为"想继续"）
+      // ponytail: 不做收尾词黑名单——"分析完毕"这类句子恰是本分支要拯救的
+      // "提前终止"场景。防空转交由 autoContinueCount（maxCount，默认 10）兜底。
+      const acReadSearch = ac?.readSearch ?? true
+      if (acReadSearch && hadReadOrSearch && !hasToolCalls && textContent.trim().length < 200) {
+        engineLog('AUTO_CONTINUE', '检测到 read/search 后短回复终止，自动继续');
+        this._pushAssistantText(textContent, processed.toolCalls)
+        this.lastToolCalls = [];
+        this.autoContinueCount++
+        return true;
+      }
+    }
+
+    // ── 分支 3：有工具调用 → 入库并继续执行工具 ──
+    if (hasToolCalls) {
+      this._pushAssistantText(textContent, processed.toolCalls)
+      return true;
+    }
+
+    // ── 分支 4：纯文本回复且无需继续 → 入库后按 stopReason 决策 ──
+    if (textContent) {
+      this.deps.conversation.messages.push({
+        role: 'assistant',
+        content: textContent,
+      } as InternalMessage);
     }
 
     if (processed.needsUserInput) {
-      this.deps.onEvent({ type: 'needs_user', prompt: processed.content as string });
+      this.deps.onEvent({ type: 'needs_user', prompt: textContent });
       return true;
     }
 
     if (processed.stopReason === 'end_turn') {
-      if (typeof processed.content === 'string' && processed.content.trim()) {
+      if (textContent.trim()) {
         // end_turn 且 AI 有回复时，是否继续由配置决定（默认 false）
         const acEndTurn = (ac?.endTurn ?? false) && acEnabled && this.autoContinueCount < acLeft
         if (acEndTurn) {
@@ -410,7 +431,7 @@ export class MessageLoop {
           } as InternalMessage);
           this.autoContinueCount++
         }
-        return acEndTurn
+        return acEndTurn;
       }
       return false;
     }
@@ -420,6 +441,22 @@ export class MessageLoop {
     }
 
     return false;
+  }
+
+  /** 将助手回复（正文 + 工具调用）写入 conversation */
+  private _pushAssistantText(text: string, toolCalls: ProcessedResponse['toolCalls']): void {
+    if (toolCalls.length === 0) {
+      if (text) {
+        this.deps.conversation.messages.push({ role: 'assistant', content: text } as InternalMessage);
+      }
+      return
+    }
+    const blocks: Array<Record<string, unknown>> = [];
+    if (text) blocks.push({ type: 'text', text });
+    for (const tc of toolCalls) {
+      blocks.push({ type: 'tool_use', id: tc.id, name: tc.name, input: tc.input });
+    }
+    this.deps.conversation.messages.push({ role: 'assistant', content: blocks } as InternalMessage);
   }
 
   /** 执行单个迭代：构建请求 → 获取响应 → 处理工具调用 */
@@ -481,9 +518,7 @@ export class MessageLoop {
       const gateResult = await this.deps.acceptanceGate.check()
       if (!gateResult.allRequiredPass) {
         engineLog('ACCEPTANCE', 'Required acceptance criteria not met, continuing to fix')
-        this.deps.onEvent({
-          type: 'should_continue',
-        })
+        this.deps.onEvent({type: 'should_continue',})
         shouldContinue = true
       }
     }
@@ -531,11 +566,7 @@ export class MessageLoop {
 
       // 发射工具调用开始事件
       for (const tc of validCalls) {
-        this.deps.onEvent({
-          type: 'tool_call_start',
-          toolUseId: tc.id,
-          toolName: tc.name,
-          input: tc.input as Record<string, unknown>,
+        this.deps.onEvent({type: 'tool_call_start',toolUseId: tc.id,toolName: tc.name,input: tc.input as Record<string, unknown>,
         });
       }
 
@@ -672,7 +703,7 @@ export class MessageLoop {
       }
 
       // 连续失败达到阈值时停止
-      if (this.consecutiveToolFailures >= 3) {
+      if (this.consecutiveToolFailures >= 4) {
         engineLog('WARN', 'Too many consecutive tool failures, stopping tool loop');
         this.deps.conversation.messages.push({
           role: "system",
@@ -734,15 +765,18 @@ export class MessageLoop {
       return true;
     }
 
-    // 无工具调用的回合结束
+
+    // ── 无工具调用的回合结束 ──
     this.deps.onEvent({ type: 'iteration_end', iteration: this.currentIteration, hasToolCalls: false });
 
-    if (processed.needsUserInput) {
+    // 🔴 改这里：只有"不继续"时才进入 needs_user
+    // 自动继续（关键词/readSearch/endTurn）已经决定了要继续，
+    // 就不该被服务端的 needsUserInput 标志拉回等待用户输入。
+    if (processed.needsUserInput && !shouldContinue) {
       await this.deps.stateMachine.transition("needs_user", { prompt: processed.content });
       return true;
     }
 
-    // 自动继续已在 _recordAssistantResponse 中处理，此处不再覆盖
     if (!shouldContinue) {
       if (processed.stopReason === "end_turn") return false;
       if (processed.stopReason === "max_tokens") {
@@ -751,6 +785,8 @@ export class MessageLoop {
       }
     }
     return shouldContinue;
+    
+  
   }
 
   /** 根据编辑的文件构建验证步骤列表（吸收自 code-change-verification skill） */

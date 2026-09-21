@@ -179,9 +179,10 @@ export async function mcpListHandler(): Promise<void> {
         // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
         console.log(`${name}: ${server.url} - ${status}`);
       } else if (!server.type || server.type === 'stdio') {
-        const args = Array.isArray(server.args) ? server.args : [];
+        const stdioServer = server as { type?: string; command?: string; args?: unknown[] }
+        const args = Array.isArray(stdioServer.args) ? stdioServer.args : [];
         // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-        console.log(`${name}: ${server.command} ${args.join(' ')} - ${status}`);
+        console.log(`${name}: ${stdioServer.command} ${args.join(' ')} - ${status}`);
       }
     }
   }

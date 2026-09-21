@@ -1,29 +1,29 @@
 ---
-description: Fix Kotlin/Gradle build errors, compiler warnings, and dependency issues incrementally. Invokes the kotlin-build-resolver agent for minimal, surgical fixes.
+description: 增量修复 Kotlin/Gradle 构建错误、编译器警告和依赖问题。调用 kotlin-build-resolver 代理进行最小化、外科手术式的修复。
 ---
 
-# Kotlin Build and Fix
+# Kotlin 构建与修复
 
-This command invokes the **kotlin-build-resolver** agent to incrementally fix Kotlin build errors with minimal changes.
+此命令调用 **kotlin-build-resolver** 代理，以最小改动增量修复 Kotlin 构建错误。
 
-## What This Command Does
+## 此命令做什么
 
-1. **Run Diagnostics**: Execute `./gradlew build`, `detekt`, `ktlintCheck`
-2. **Parse Errors**: Group by file and sort by severity
-3. **Fix Incrementally**: One error at a time
-4. **Verify Each Fix**: Re-run build after each change
-5. **Report Summary**: Show what was fixed and what remains
+1. **运行诊断**：执行 `./gradlew build`、`detekt`、`ktlintCheck`
+2. **解析错误**：按文件分组并按严重程度排序
+3. **增量修复**：一次一个错误
+4. **验证每次修复**：每次改动后重新运行构建
+5. **报告摘要**：显示已修复和剩余的问题
 
-## When to Use
+## 何时使用
 
-Use `/kotlin-build` when:
-- `./gradlew build` fails with errors
-- Kotlin compiler reports errors
-- `./gradlew detekt` reports violations
-- Gradle dependency resolution fails
-- After pulling changes that break the build
+在以下情况使用 `/kotlin-build`：
+- `./gradlew build` 失败并报错
+- Kotlin 编译器报告错误
+- `./gradlew detekt` 报告违规
+- Gradle 依赖解析失败
+- 拉取变更后构建被破坏
 
-## Diagnostic Commands Run
+## 运行的诊断命令
 
 ```bash
 # Primary build check
@@ -40,7 +40,7 @@ Use `/kotlin-build` when:
 ./gradlew build --refresh-dependencies
 ```
 
-## Example Session
+## 会话示例
 
 ````text
 User: /kotlin-build
@@ -134,41 +134,41 @@ $ ./gradlew test
 Build Status: PASS: SUCCESS
 ````
 
-## Common Errors Fixed
+## 常见错误及修复
 
 | Error | Typical Fix |
 |-------|-------------|
-| `Unresolved reference: X` | Add import or dependency |
-| `Type mismatch` | Fix type conversion or assignment |
-| `'when' must be exhaustive` | Add missing sealed class branches |
-| `Suspend function can only be called from coroutine` | Add `suspend` modifier |
-| `Smart cast impossible` | Use local `val` or `let` |
-| `None of the following candidates is applicable` | Fix argument types |
-| `Could not resolve dependency` | Fix version or add repository |
+| `Unresolved reference: X` | 添加 import 或依赖 |
+| `Type mismatch` | 修正类型转换或赋值 |
+| `'when' must be exhaustive` | 补齐缺失的 sealed class 分支 |
+| `Suspend function can only be called from coroutine` | 添加 `suspend` 修饰符 |
+| `Smart cast impossible` | 使用局部 `val` 或 `let` |
+| `None of the following candidates is applicable` | 修正参数类型 |
+| `Could not resolve dependency` | 修正版本或添加仓库 |
 
-## Fix Strategy
+## 修复策略
 
-1. **Build errors first** - Code must compile
-2. **Detekt violations second** - Fix code quality issues
-3. **ktlint warnings third** - Fix formatting
-4. **One fix at a time** - Verify each change
-5. **Minimal changes** - Don't refactor, just fix
+1. **构建错误优先** - 代码必须先能编译
+2. **Detekt 违规其次** - 修复代码质量问题
+3. **ktlint 警告第三** - 修复格式
+4. **一次一个修复** - 验证每次改动
+5. **最小改动** - 不要重构，只修复
 
-## Stop Conditions
+## 停止条件
 
-The agent will stop and report if:
-- Same error persists after 3 attempts
-- Fix introduces more errors
-- Requires architectural changes
-- Missing external dependencies
+代理将在以下情况停止并报告：
+- 同一错误在 3 次尝试后仍然存在
+- 修复引入了更多错误
+- 需要架构性改动
+- 缺少外部依赖
 
-## Related Commands
+## 相关命令
 
-- `/kotlin-test` - Run tests after build succeeds
-- `/kotlin-review` - Review code quality
-- `verification-loop` skill - Full verification loop
+- `/kotlin-test` - 构建成功后运行测试
+- `/kotlin-review` - 审查代码质量
+- `verification-loop` 技能 - 完整验证循环
 
-## Related
+## 相关
 
-- Agent: `agents/kotlin-build-resolver.md`
-- Skill: `skills/kotlin-patterns/`
+- Agent：`agents/kotlin-build-resolver.md`
+- Skill：`skills/kotlin-patterns/`

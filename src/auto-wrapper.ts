@@ -1,3 +1,4 @@
+// @ts-ignore — js-cookie 缺少类型声明
 import Cookies from "js-cookie";
 import {
   CacheSettings,

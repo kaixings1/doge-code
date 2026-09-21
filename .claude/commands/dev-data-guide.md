@@ -2,47 +2,47 @@
 alwaysApply: false
 ---
 
-# Continue Development Data (Dev Data) Guide
+# Continue 开发数据（Dev Data）指南
 
-## Overview
+## 概述
 
-Development data (dev data) captures detailed information about how developers interact with LLM-aided development tools. Unlike basic telemetry, dev data includes lots of details into the complete software development workflow, including code context, user interactions, and development patterns.
+开发数据（dev data）记录了开发者如何与 LLM 辅助开发工具交互的详细信息。与基础遥测不同，dev data 包含完整软件开发工作流中的大量细节，包括代码上下文、用户交互和开发模式。
 
-## Core Architecture
+## 核心架构
 
-### Primary Implementation Files
+### 主要实现文件
 
-- **`/core/data/log.ts`**: Main `DataLogger` class - singleton for event logging and remote transmission
-- **`/packages/config-yaml/src/schemas/data/`**: Schema definitions for all event types
+- **`/core/data/log.ts`**：主 `DataLogger` 类 - 用于事件日志和远程传输的单例
+- **`/packages/config-yaml/src/schemas/data/`**：所有事件类型的 schema 定义
 
-### Storage Locations
+### 存储位置
 
-- **Default storage**: `~/.continue/dev_data/`
-- **Event files**: `~/.continue/dev_data/{version}/{eventName}.jsonl`
+- **默认存储**：`~/.continue/dev_data/`
+- **事件文件**：`~/.continue/dev_data/{version}/{eventName}.jsonl`
 
-## Event Types and Schemas
+## 事件类型与 Schema
 
-### Core Event Types
+### 核心事件类型
 
-1. **`tokensGenerated`**: LLM token usage tracking
-2. **`autocomplete`**: Code completion interactions
-3. **`chatInteraction`**: Chat-based development assistance
-4. **`editInteraction`**: Code editing sessions
-5. **`editOutcome`**: Results of edit operations
-6. **`nextEditOutcome`**: Next Edit feature outcomes
-7. **`chatFeedback`**: User feedback on AI responses
-8. **`toolUsage`**: Tool interaction statistics
-9. **`quickEdit`**: Quick edit functionality usage
+1. **`tokensGenerated`**：LLM token 用量跟踪
+2. **`autocomplete`**：代码补全交互
+3. **`chatInteraction`**：基于聊天的开发协助
+4. **`editInteraction`**：代码编辑会话
+5. **`editOutcome`**：编辑操作的结果
+6. **`nextEditOutcome`**：Next Edit 功能的产出
+7. **`chatFeedback`**：用户对 AI 响应的反馈
+8. **`toolUsage`**：工具交互统计
+9. **`quickEdit`**：快速编辑功能的使用
 
-### Schema Versioning
+### Schema 版本管理
 
-- **Version 0.1.0**: Initial schema implementation
-- **Version 0.2.0**: Current schema with expanded fields and metadata
-- **Schema files**: Located in `/packages/config-yaml/src/schemas/data/`
+- **版本 0.1.0**：初始 schema 实现
+- **版本 0.2.0**：当前 schema，字段和元数据更丰富
+- **Schema 文件**：位于 `/packages/config-yaml/src/schemas/data/`
 
-### Base Schema Structure
+### 基础 Schema 结构
 
-All events inherit from a base schema (`/packages/config-yaml/src/schemas/data/base.ts`):
+所有事件都继承自一个基础 schema（`/packages/config-yaml/src/schemas/data/base.ts`）：
 
 ```typescript
 {
@@ -55,37 +55,37 @@ All events inherit from a base schema (`/packages/config-yaml/src/schemas/data/b
 }
 ```
 
-## Key Integration Points
+## 关键集成点
 
-### Autocomplete System
+### 自动补全系统
 
-- **File**: `/core/autocomplete/util/AutocompleteLoggingService.ts`
-- **Purpose**: Tracks code completion acceptance/rejection, timing, and cache hits
-- **Integration**: Called from autocomplete engine when completions are shown/accepted
+- **文件**：`/core/autocomplete/util/AutocompleteLoggingService.ts`
+- **用途**：跟踪代码补全的接受/拒绝、计时和缓存命中
+- **集成**：补全显示/被接受时由补全引擎调用
 
-### Chat Interface
+### 聊天界面
 
-- **Integration**: Chat interactions logged through `DataLogger.logDevData()`
-- **Data**: Includes prompts, responses, context, and user feedback
-- **Privacy**: Can be configured to exclude code content
+- **集成**：聊天交互通过 `DataLogger.logDevData()` 记录
+- **数据**：包含提示词、响应、上下文和用户反馈
+- **隐私**：可配置为排除代码内容
 
-### Edit Features
+### 编辑功能
 
-- **Files**: `/extensions/vscode/src/extension/EditOutcomeTracker.ts`, `/core/nextEdit/NextEditLoggingService.ts`
-- **Purpose**: Track edit suggestions, acceptance rates, and outcomes
-- **Integration**: Embedded in edit workflow to capture user decisions
+- **文件**：`/extensions/vscode/src/extension/EditOutcomeTracker.ts`, `/core/nextEdit/NextEditLoggingService.ts`
+- **用途**：跟踪编辑建议、接受率和结果
+- **集成**：嵌入编辑工作流以捕获用户决策
 
-### LLM Token Tracking
+### LLM Token 跟踪
 
-- **File**: `/core/llm/index.ts`
-- **Purpose**: Track token usage across all LLM providers
-- **Storage**: SQLite database for efficient querying and reporting
+- **文件**：`/core/llm/index.ts`
+- **用途**：跟踪所有 LLM 提供方的 token 用量
+- **存储**：SQLite 数据库，便于高效查询和报告
 
-## Configuration and Customization
+## 配置与定制
 
-### Configuration Structure
+### 配置结构
 
-Dev data is configured through `data` blocks in your Continue config:
+Dev data 通过 Continue 配置中的 `data` 块配置：
 
 ```yaml
 data:
@@ -103,78 +103,78 @@ data:
     events: ["tokensGenerated", "toolUsage"]
 ```
 
-### Configuration Options
+### 配置选项
 
-- **`destination`**: Where to send data (`file://` for local, `http://`/`https://` for remote)
-- **`schema`**: Schema version to use (`"0.1.0"` or `"0.2.0"`)
-- **`level`**: Data detail level (`"all"` includes code, `"noCode"` excludes code content)
-- **`events`**: Array of event types to collect
-- **`apiKey`**: Authentication for remote endpoints
+- **`destination`**：数据发送到哪里（`file://` 为本地，`http://`/`https://` 为远程）
+- **`schema`**：使用的 schema 版本（`"0.1.0"` 或 `"0.2.0"`）
+- **`level`**：数据详细程度（`"all"` 包含代码，`"noCode"` 排除代码内容）
+- **`events`**：要收集的事件类型数组
+- **`apiKey`**：远程端点的认证
 
-### Privacy Controls
+### 隐私控制
 
-- **`"all"` level**: Includes code content (prefixes, suffixes, completions)
-- **`"noCode"` level**: Excludes code content, only metadata and metrics
-- **Local-first**: Data is always stored locally, remote transmission is optional
+- **`"all"` 级别**：包含代码内容（前缀、后缀、补全）
+- **`"noCode"` 级别**：排除代码内容，仅元数据和指标
+- **本地优先**：数据始终存储在本地，远程传输是可选的
 
-## Making Changes to Dev Data
+## 修改 Dev Data
 
-### Adding New Event Types
+### 添加新事件类型
 
-1. **Create schema**: Add new event schema in `/packages/config-yaml/src/schemas/data/`
-2. **Update index**: Add to schema aggregator in `/packages/config-yaml/src/schemas/data/index.ts`
-3. **Implement logging**: Add logging calls in relevant service files
-4. **Update version**: Consider schema version bump if breaking changes
+1. **创建 schema**：在 `/packages/config-yaml/src/schemas/data/` 中添加新事件 schema
+2. **更新索引**：添加到 `/packages/config-yaml/src/schemas/data/index.ts` 中的 schema 聚合器
+3. **实现日志**：在相关服务文件中添加日志调用
+4. **更新版本**：如果有破坏性变更，考虑提升 schema 版本
 
-### Modifying Existing Events
+### 修改现有事件
 
-1. **Schema changes**: Update schema files in `/packages/config-yaml/src/schemas/data/`
-2. **Backward compatibility**: Ensure changes don't break existing data consumers
-3. **Version management**: Increment schema version for breaking changes
-4. **Test thoroughly**: Validate schema changes with existing data
+1. **Schema 变更**：更新 `/packages/config-yaml/src/schemas/data/` 中的 schema 文件
+2. **向后兼容**：确保变更不破坏现有的数据消费方
+3. **版本管理**：对破坏性变更递增 schema 版本
+4. **充分测试**：用现有数据验证 schema 变更
 
-### Adding New Logging Points
+### 添加新的日志点
 
-1. **Import DataLogger**: `import { DataLogger } from "core/data/log"`
-2. **Log events**: Call `DataLogger.getInstance().logDevData(eventName, data)`
-3. **Follow patterns**: Use existing logging services as examples
-4. **Validate data**: Ensure logged data matches schema requirements
+1. **导入 DataLogger**：`import { DataLogger } from "core/data/log"`
+2. **记录事件**：调用 `DataLogger.getInstance().logDevData(eventName, data)`
+3. **遵循模式**：以现有日志服务为范例
+4. **校验数据**：确保记录的数据符合 schema 要求
 
-### Debugging Dev Data Issues
+### 调试 Dev Data 问题
 
-1. **Check local storage**: Verify files are being created in `~/.continue/dev_data/`
-2. **Validate schemas**: Ensure event data matches expected schema format
-3. **Review configuration**: Check `data` blocks in Continue config
-4. **Test endpoints**: Verify remote endpoints are reachable and accepting data
+1. **检查本地存储**：验证文件是否在 `~/.continue/dev_data/` 中创建
+2. **校验 schema**：确保事件数据符合预期的 schema 格式
+3. **检查配置**：核对 Continue 配置中的 `data` 块
+4. **测试端点**：验证远程端点可达并能接受数据
 
-## Best Practices
+## 最佳实践
 
-### When Adding New Events
+### 添加新事件时
 
-- Follow existing naming conventions for event types
-- Include sufficient context for analysis without oversharing sensitive data
-- Consider privacy implications and respect user configuration levels
-- Add appropriate error handling and logging
+- 遵循事件类型的现有命名约定
+- 包含足够的上下文以便分析，同时不过度暴露敏感数据
+- 考虑隐私影响，尊重用户配置的级别
+- 添加恰当的错误处理和日志
 
-### When Modifying Schemas
+### 修改 Schema 时
 
-- Maintain backward compatibility when possible
-- Document schema changes thoroughly
-- Consider impact on existing data consumers
-- Test with real development data
+- 尽可能保持向后兼容
+- 详尽记录 schema 变更
+- 考虑对现有数据消费方的影响
+- 用真实开发数据测试
 
-### When Integrating Logging
+### 集成日志时
 
-- Use the singleton pattern: `DataLogger.getInstance()`
-- Log events at appropriate points in user workflow
-- Respect user privacy settings and configuration
-- Handle errors gracefully without disrupting user experience
+- 使用单例模式：`DataLogger.getInstance()`
+- 在用户工作流的恰当位置记录事件
+- 尊重用户隐私设置和配置
+- 优雅地处理错误，不干扰用户体验
 
-## Common Patterns
+## 常见模式
 
-### Service-Based Logging
+### 基于服务的日志
 
-Most dev data logging follows a service pattern:
+大多数 dev data 日志遵循服务模式：
 
 ```typescript
 export class FeatureLoggingService {
@@ -186,9 +186,9 @@ export class FeatureLoggingService {
 }
 ```
 
-### Event-Driven Logging
+### 事件驱动日志
 
-Events are typically logged at key interaction points:
+事件通常在关键交互点记录：
 
 ```typescript
 // When user accepts autocomplete
@@ -197,4 +197,4 @@ onAutocompleteAccepted(completion: CompletionData) {
 }
 ```
 
-This guide provides the foundation for understanding and working with Continue's dev data system. Always prioritize user privacy and follow established patterns when making changes.
+本指南为理解和处理 Continue 的 dev data 系统提供了基础。做任何改动时，始终优先考虑用户隐私并遵循既有模式。

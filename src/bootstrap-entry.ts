@@ -111,7 +111,7 @@ async function main(): Promise<void> {
   }
   try {
     const mod = await import('./entrypoints/cli.tsx')
-    const mainFn = mod.default || mod.main
+    const mainFn = (mod as any).default || (mod as any).main
     if (mainFn && typeof mainFn === 'function') {
       await mainFn()
     }

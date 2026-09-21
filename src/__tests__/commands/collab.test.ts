@@ -29,10 +29,10 @@ beforeEach(async () => {
   process.env.HOME = currentDir
   process.env.USERPROFILE = currentDir
   const mod = await import('../../commands/collab/index.js')
-  call = async (args: string) => {
+  call = (async (args: string) => {
     const m = await mod.default.load()
-    return m.call(args)
-  }
+    return m.call(args, null as any)
+  }) as (args: string) => Promise<{ type: string; value: string }>
 })
 
 afterEach(() => {

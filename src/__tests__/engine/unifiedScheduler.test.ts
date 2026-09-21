@@ -6,8 +6,8 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { UnifiedScheduler, createUnifiedScheduler, type SchedulerEvent } from '@/engine/unifiedScheduler.js'
-import * as tasks from '@/utils/tasks.js'
+import { UnifiedScheduler, createUnifiedScheduler, type SchedulerEvent } from '../../engine/unifiedScheduler.js'
+import * as tasks from '../../utils/tasks.js'
 import * as os from 'os'
 import * as fs from 'fs'
 import { join } from 'path'

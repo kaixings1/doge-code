@@ -140,6 +140,7 @@ export type QueryEngineConfig = {
   maxTurns?: number
   maxBudgetUsd?: number
   taskBudget?: { total: number }
+  autoContinue?: import('./engine/messageLoop.js').AutoContinueConfig
   jsonSchema?: Record<string, unknown>
   verbose?: boolean
   replayUserMessages?: boolean
@@ -662,6 +663,7 @@ export class QueryEngine {
       querySource: 'sdk',
       maxTurns,
       taskBudget,
+      autoContinue: this.config.autoContinue,
     })) {
       // 记录 assistant、user 以及压缩边界消息
       if (
@@ -1224,6 +1226,14 @@ export async function* ask({
   agents?: AgentDefinition[]
   setSDKStatus?: (status: SDKStatus) => void
   orphanedPermission?: OrphanedPermission
+  /** 自动继续配置：由配置决定是否在特定场景自动注入「继续」。默认开启 */
+  autoContinue?: {
+    enabled?: boolean
+    maxCount?: number
+    readSearch?: boolean
+    continueKeyword?: boolean
+    endTurn?: boolean
+  }
 }): AsyncGenerator<SDKMessage, void, unknown> {
   const engine = new QueryEngine({
     cwd,

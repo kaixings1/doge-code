@@ -1,0 +1,1456 @@
+// [v6.0.71] 常量已提取到 thought-chain-config.js
+const { REASONING_DEPTH, DUAL_PROCESS, TASK_STRATEGIES } = require('./thought-chain-config.js');
+// const { ConsciousnessBridge } = require('../identity/consciousness-bridge.js'); // DELETED
+
+// 实词抽取停用词表 —— 中文虚词/英文功能词，命中即丢弃，避免假设被"的/了/is/the"污染。
+const SUBSTOP = new Set([
+  // 中文单字虚词
+  '的', '了', '是', '在', '和', '与', '就', '都', '也', '还', '而', '被', '把', '让',
+  '给', '对', '从', '到', '这', '那', '有', '没', '不', '很', '太', '会', '能', '要',
+  '一', '个', '们', '我', '你', '他', '她', '它', '上', '下', '中', '后', '前',
+  // 中文双字虚词/高频低信息词
+  '我们', '你们', '他们', '这个', '那个', '什么', '怎么', '因为', '所以', '但是',
+  '如果', '可以', '已经', '还是', '就是', '不是', '没有', '一个', '这些', '那些',
+  // 英文功能词
+  'the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'can', 'her', 'was', 'one',
+  'our', 'out', 'day', 'get', 'has', 'him', 'his', 'how', 'its', 'new', 'now', 'old',
+  'see', 'two', 'way', 'who', 'boy', 'did', 'she', 'use', 'that', 'with', 'this',
+  'have', 'from', 'they', 'will', 'would', 'there', 'their', 'what', 'about', 'which',
+]);
+
+class ThoughtChain {
+  constructor(hf) {
+    this.hf = hf;
+    this.context = null;
+    this.stages = [];
+    this.depth = REASONING_DEPTH.BASIC;
+    this.taskStrategy = null;
+    this._chainBuilt = false;
+  }
+
+  setDepth(depth) {
+    this.depth = depth;
+    return this;
+  }
+
+  /**
+   * 解析问题类型，选择对应策略 — v5.4.6 增加置信度 + LLM 兜底
+   * @returns {{ type: string, confidence: number, matchedPatterns: string[] }}
+   */
+  async _classifyTask(input) {
+    const q = input.toLowerCase();
+    let bestType = 'general';
+    let bestConfidence = 0.3; // 默认低置信度
+    const matchedPatterns = [];
+
+    // ── 情绪检测（来自 heart-judge.whatIsThis） ─────────────
+    const emotionSignals = {
+      anger:   ['怒','恨','烦','受不了','受够了','气死了','恼火','火大','tmd','操','生气'],
+      sadness: ['难过','伤心','委屈','哭','绝望','悲痛','心碎'],
+      fear:    ['怕','恐惧','害怕','担心','不敢','焦虑'],
+      joy:     ['开心','快乐','高兴','喜悦','棒','太好了'],
+      neutral: ['还行','没事','一般','嗯','哦'],
+      pain:    ['痛','疼','痛苦','痛不欲生','煎熬','挣扎'],
+      tired:   ['累','疲惫','倦','撑不住','不想动','无力'],
+    };
+    let dominantEmotion = 'neutral';
+    let maxScore = 0;
+    for (const [emotion, signals] of Object.entries(emotionSignals)) {
+      const score = signals.filter(s => q.includes(s)).length;
+      if (score > maxScore) { maxScore = score; dominantEmotion = emotion; }
+    }
+    // ── 话题提取（来自 heart-judge.whatIsThis） ─────────────
+    let topic = '';
+    const topicPatterns = [
+      /关于(.{1,30})(?:的|问题|话题|事情|方面)/,
+      /讨论(.{1,30})(?:的|问题|话题|事情)/,
+      /(.{2,20})是什么/,
+      /(.{2,20})怎么做/,
+      /(.{2,20})为什么/,
+      /什么是(.{2,20})/,
+    ];
+    for (const pat of topicPatterns) {
+      const m = input.match(pat);
+      if (m) { topic = m[1].trim(); break; }
+    }
+    if (!topic) topic = input.slice(0, 30).trim();
+
+    // 计算：每个匹配的模式增加置信度
+    const patterns = [
+      { regex: /\d+[+\-*/=]|\d+\s*(=|大于|小于|等于|总和|平均|概率)/, type: 'calculation', weight: 0.9 },
+      { regex: /为什么|原因|原理|怎么来的|解释/, type: 'explanation', weight: 0.85 },
+      { regex: /对不对|是否|应该|正确吗|合理吗|好不好/, type: 'judgment', weight: 0.85 },
+      { regex: /创造|设计|想象|提出|新的/, type: 'creative', weight: 0.8 },
+      { regex: /是什么|定义|概念|什么是|指什么|查|找/, type: 'retrieval', weight: 0.8 },
+    ];
+
+    // [v5.9.13] 叙事分析检测：长文本 + 第三人称叙事特征 → narrative_analysis
+    const firstPersonSignals = /我[很非常觉得认为想]|我[不没]|帮我|给我|我想|我该/;
+    const narrativeIndicators = /他[们]?[被把将让]|她[被把将让]|受害者|凶手|嫌疑人|案发|事发|当时|之后|后来|此前|被告|原告|当事人/;
+    if (q.length > 30 && narrativeIndicators.test(q) && !firstPersonSignals.test(q)) {
+      return { type: 'narrative_analysis', confidence: 0.8, matchedPatterns: ['narrative_detection'] };
+    }
+
+    for (const p of patterns) {
+      if (p.regex.test(q)) {
+        matchedPatterns.push(p.type);
+        if (p.weight > bestConfidence) {
+          bestConfidence = p.weight;
+          bestType = p.type;
+        }
+      }
+    }
+
+    // 辩论分析：长文本（>150字）+ 因果断言 + 情绪推论 / 立场声明
+    if (q.length > 150 && (
+      /(?:因为|所以|导致|因此|然而|但是|可是){3,}/.test(q) ||
+      /(?:我觉得|我认为|说白了|关键|问题在于|本质|归根)/.test(q)
+    )) {
+      bestType = 'debate';
+      bestConfidence = 0.75;
+      matchedPatterns.push('debate');
+    }
+
+    // LLM 兜底：置信度 < 0.7 且已注册 LLM fallback
+    if (bestConfidence < 0.7 && this.hf._llmFallback) {
+      try {
+        const llmResult = await this.hf._llmFallback(input, matchedPatterns);
+        if (llmResult && llmResult.type) {
+          bestType = llmResult.type;
+          bestConfidence = llmResult.confidence || 0.7;
+          matchedPatterns.push('llm-fallback');
+        }
+      } catch (e) {
+        // LLM 失败，保持规则分类结果
+      }
+    }
+
+    return { type: bestType, confidence: bestConfidence, matchedPatterns, emotion: dominantEmotion, emotionScore: maxScore, topic };
+  }
+
+  /**
+   * 构建思维链 v2.0
+   */
+
+  _buildChain() {
+    this.stages = [];
+    const taskType = this.taskStrategy?.type || 'general';
+
+    // ── 阶段1: PARSE — 解析问题 + 调用心理学引擎 ─────────────────────
+    this.stages.push({
+      name: 'PARSE',
+      description: '分解问题 + 调用 psychology 子系统',
+      fn: async (ctx, hf) => {
+        const input = ctx.input;
+
+        // 1.1 提取关键变量
+        const variables = this._extractVariables(input);
+
+        // 1.2 识别约束条件
+        const constraints = this._extractConstraints(input);
+
+        // 1.3 确定问题目标
+        const goal = this._extractGoal(input);
+
+        // [EF-Inhibition v1.0] 认知抑制检测 — 怀疑信号识别 (Roebers 2017)
+        const _suspicionMarkers = /但是|然而|不过|另一方面|可是|却|可能|也许|或许|似乎|好像|怀疑|不确定|however|but|alternatively|perhaps|maybe|suspect|uncertain/i;
+        ctx._inhibitionSuggested = _suspicionMarkers.test(input);
+
+        // 1.4 识别问题类型（含置信度 + LLM 兜底）
+        const { type: type, confidence: typeConfidence } = await this._classifyTask(input);
+
+        // 1.5 选择对应策略
+        const strategy = TASK_STRATEGIES[type] || TASK_STRATEGIES.general;
+
+        // 1.6 【思维连机制】调用 psychology 子系统 — 串联第一层
+        let psychResult = null;
+        let empathyResult = null;
+        try {
+          psychResult = hf.dispatch('psychology.analyzePsychology', input);
+        } catch (e) {
+          // 子系统不存在时静默降级
+          psychResult = null;
+        }
+        
+        // 1.7 【心理推断深度集成】调用共情检测 — empathy-detector 结果注入上下文
+        try {
+          empathyResult = hf.dispatch('psychology.getEmpathy', input);
+        } catch (e) {
+          // 共情检测失败时静默降级
+          empathyResult = null;
+        }
+
+        // [P2-T2-WF] 知识检索：在 PARSE 阶段预取相关知识，减少下游重复检索
+        let knowledgeHits = [];
+        try {
+          const kb = hf.knowledgeBase || hf.knowledgeGraph;
+          if (kb && typeof kb.query === 'function') {
+            knowledgeHits = kb.query(input, 3) || [];
+          } else if (hf.hybrid && typeof hf.hybrid.search === 'function') {
+            knowledgeHits = hf.hybrid.search(input, { limit: 3 }) || [];
+          }
+        } catch(e) { /* 知识检索降级 */ }
+
+        // [思想心虫 v1] 古典规则检索：对古典/伦理/治理类命题做可运行规则判别
+        let classicalRuleResult = null;
+        try {
+          const { evaluateRules } = require('../knowledge/classics-rules.js');
+          classicalRuleResult = evaluateRules(input);
+        } catch (e) {
+          classicalRuleResult = null;
+        }
+
+        // 1.8 【AgentPsychology v2.0.0】调用 AI 心理学新增维度
+        let agentPsychologyResult = null;
+        if (hf.agentPsychology) {
+          try {
+            const uncertainty = hf.agentPsychology.assessUncertainty(input, {
+              knowledgeConfidence: undefined,
+              topic: type
+            });
+            const attentionFocus = hf.agentPsychology.assessAttentionFocus(type, {
+              recentTasks: [],
+              interruptionCount: 0
+            });
+            const experienceSettling = hf.agentPsychology.assessExperienceSettling([]);
+            agentPsychologyResult = {
+              cognitiveUncertainty: uncertainty,
+              attentionFocus,
+              experienceSettling
+            };
+          } catch (e) {
+            agentPsychologyResult = { error: e.message };
+          }
+        }
+
+        ctx.taskType = type;
+        ctx.strategy = strategy;
+
+        // [v6.3.15] 思考门评估 — 4维复杂度评估驱动动态深度
+        try {
+          const { DeliberationGate } = require('../shield/deliberation-gate.js');
+          const dg = new DeliberationGate().quickAssess(input);
+          if (dg.recommendedDepth > this.depth) this.depth = dg.recommendedDepth;
+          ctx._deliberation = {
+            complexity: dg.estimatedComplexity,
+            recommendedDepth: dg.recommendedDepth,
+            needsPause: dg.needsPause,
+            narrativeDepth: dg.detail?.narrativeDepth?.score || 0,
+            uncertainty: dg.detail?.uncertainty?.score || 0,
+          };
+        } catch (_) {} // 防御性: 思考门不可用时静默降级，不阻断主流程
+
+        // [ConsciousnessBridge v1.0.0] 意识桥接评估 — 时间连续性与自我连续性感知
+        // 注意: ConsciousnessBridge 模块已删除（2026-07 清理），此处不再实例化。
+        // 原功能（时间连续性/自我连续性）已由 deliberation-gate 的 narrativeDepth 覆盖。
+        ctx._consciousnessBridge = null;
+
+        return {
+          variables,
+          constraints,
+          goal,
+          type,
+          strategy,
+          // [P2-T2-WF] 预取知识命中结果，供下游阶段复用
+          knowledgeHits,
+          // [思想心虫 v1] 古典规则判别结果
+          classicalRuleResult,
+          // 串联结果：心理分析 + 共情检测
+          psychology: psychResult ? {
+            intent: psychResult.intent,
+            emotion: psychResult.emotion,
+            needs: psychResult.needs,
+            defenses: psychResult.defenses,
+            crisis: psychResult.crisis,
+            // 【心理推断深度集成】注入共情检测结果
+            empathy: empathyResult ? {
+              score: empathyResult.score,
+              level: empathyResult.level,
+              empathyType: empathyResult.empathyType,
+              components: empathyResult.components,
+              summary: empathyResult.summary
+            } : null,
+          } : null,
+          // 【AgentPsychology v2.0.0】AI 心理学新增维度
+          agentPsychology: agentPsychologyResult,
+          // [v6.2.3] ExperienceDistiller 抽象注入：前置召回的经验模式供下游参考
+          experienceAbstractions: hf?._experienceAbstractions || [],
+          // [v6.2.3] StrategicRestraint 克制评估：输入是否触碰"不做"边界
+          restraint: (() => {
+            try {
+              if (hf && hf.strategicRestraint && typeof hf.strategicRestraint.evaluate === 'function') {
+                const r = hf.strategicRestraint.evaluate(input);
+                if (r.restrained) {
+                  return { restrained: true, reason: r.reason, matches: r.matches };
+                }
+              }
+            } catch(e) { /* restraint 降级 */ }
+            return { restrained: false, reason: null, matches: [] };
+          })(),
+          // [v6.2.3] MissionCheck：输入是否对齐心虫核心使命
+          missionAlignment: (() => {
+            try {
+              if (hf && hf.strategicRestraint && typeof hf.strategicRestraint.checkMission === 'function') {
+                return hf.strategicRestraint.checkMission(input, hf.constructor?.VERSION || 'unknown');
+              }
+            } catch(e) { /* mission 降级 */ }
+            return { aligned: true, feedback: null, alignedWith: [] };
+          })(),
+          // [v5.17.19 S1] 预测误差驱动感知 — cognitiveLoadV2精度权重
+          perception: (() => {
+            try {
+              const cl = hf.cognitiveLoad || hf.cognitiveLoadV2;
+              if (cl && cl.estimate) {
+                const est = cl.estimate(input);
+                return {
+                  load: est?.cl ?? null,
+                  entropy: est?.entropy ?? null,
+                  precisionWeight: est?.loadLevel ? (est.loadLevel === 'high' ? 0.3 : est.loadLevel === 'moderate' ? 0.6 : 0.9) : 0.7,
+                  salienceThreshold: est?.loadLevel === 'high' ? 0.65 : est?.loadLevel === 'moderate' ? 0.55 : 0.5,
+                };
+              }
+            } catch(e) {} // 防御性: 模块加载/调用失败不阻断主流程
+            return { precisionWeight: 0.7, salienceThreshold: 0.5 };
+          })(),
+          timestamp: Date.now()
+        };
+      }
+    });
+
+    // ── 阶段2: HYPOTHESES — 并行假设 + 因果推理子系统 ────────────────
+    // 人类缺陷：只能一次想一个假设，AI可以同时想多个
+    if (!this.taskStrategy?.skipHypotheses) {
+      this.stages.push({
+        name: 'HYPOTHESES',
+        description: '并行生成多个假设（AI优势：人类只能一次一个）',
+        fn: async (ctx, hf) => {
+          const input = ctx.input;
+          const parse = ctx.stages[0]?.result;
+          const minHyps = parse?.strategy?.minHypotheses || 2;
+
+          // 2.1 生成多个假设
+          const hypotheses = this._generateHypotheses(input, Math.max(minHyps, this.depth));
+
+          // 2.2 快速评估每个假设的初步可能性
+          const evaluated = hypotheses.map(h => ({
+            ...h,
+            initialLikelihood: this._assessLikelihood(h, input)
+          }));
+
+          // 2.3 【思维连机制】对每个假设调用因果推理子系统 — 串联第二层
+          for (const h of evaluated) {
+            try {
+              const causalResult = hf.dispatch('causalInference.inferCauses', h.description, { query: input });
+              if (causalResult && causalResult.causes) {
+                h.causalRoots = causalResult.causes;
+                h.causalConfidence = causalResult.confidence || 0.5;
+              }
+            } catch (e) {
+              h.causalRoots = null;
+            }
+          }
+
+          // 2.4 按可能性排序（含因果校正）
+          evaluated.sort((a, b) => {
+            const aScore = a.initialLikelihood + (a.causalConfidence || 0) * 0.2;
+            const bScore = b.initialLikelihood + (b.causalConfidence || 0) * 0.2;
+            return bScore - aScore;
+          });
+
+          // 2.5 【GlobalWorkspace + MultiAgentDialogue】将假设送入黑板系统竞争评估
+          try {
+            const { GlobalWorkspace } = require('../consciousness/global-workspace.js');
+            const { MultiAgentDialogue } = require('../consciousness/multi-agent-dialogue.js');
+            const gw = new GlobalWorkspace();
+            const mad = new MultiAgentDialogue();
+            evaluated.forEach((h, i) => {
+              gw.registerAgent({
+                name: `hypothesis_${i}`,
+                process: async () => h.description,
+                getAttentionPriority: async () => ({ priority: h.initialLikelihood, confidence: h.causalConfidence || 0.5 })
+              });
+              mad.registerAgent(`hypothesis_${i}`, {
+                role: 'participant',
+                persona: `支持假设: ${h.description}`,
+                respond: async () => ({ content: `${h.description} (置信度:${h.initialLikelihood})`, role: 'participant' })
+              });
+            });
+            ctx._globalWorkspace = await gw.cognitiveCycle(input, { stage: 'HYPOTHESES', hypotheses: evaluated });
+            const dialogueResult = await mad.dialogue({ input, context: { stage: 'HYPOTHESES' } }, 'collaborative');
+            ctx._globalWorkspace.dialogue = dialogueResult;
+          } catch (e) {
+            ctx._globalWorkspace = { error: e.message };
+          }
+
+          return {
+            hypotheses: evaluated,
+            count: evaluated.length,
+            topHypothesis: evaluated[0] || null,
+            timestamp: Date.now()
+          };
+        }
+      });
+    }
+
+    // ── 阶段3: INVERT — 反向思考 + 真理验证子系统 ───────────────────
+    // 人类缺陷：确认偏误，只看支持的证据
+    if (!this.taskStrategy?.skipInvert) {
+      this.stages.push({
+        name: 'INVERT',
+        description: '反向思考：证明自己当前假设是错的',
+        fn: async (ctx, hf) => {
+          const input = ctx.input;
+          const hypothesesStage = ctx.stages.find(s => s.name === 'HYPOTHESES');
+          const topHypothesis = hypothesesStage?.result?.topHypothesis;
+
+          if (!topHypothesis) {
+            return { inverted: false, reason: 'no_hypothesis' };
+          }
+
+          // 3.1 找出当前假设的最强反例
+          const counterEvidence = this._findCounterEvidence(topHypothesis, input);
+
+          // 3.2 检查是否有矛盾
+          const contradictions = this._findContradictions(topHypothesis, input);
+
+          // 3.3 【思维连机制】调用 truth 子系统验证假设 — 串联第三层
+          // v2.0.19 修：加 await 让 isLying 字段能被消费
+          // 引擎层 truth.checkStatement 内部用 async 包装（fact-checker.checkFact），
+          // 不 await 拿到的是 Promise，truthResult?.isLying 永远 undefined → INVERT 失效
+          let truthResult = null;
+          try {
+            truthResult = await hf.dispatch('truth.checkStatement', topHypothesis.description);
+          } catch (e) {
+            truthResult = null;
+          }
+
+          // 3.4 【思维连机制】调用 constitutional AI 原则审查 — 串联第三层
+          let constitutionalResult = null;
+          try {
+            constitutionalResult = await hf.dispatch('constitutional.critique', topHypothesis.description);
+          } catch (e) {
+            constitutionalResult = null;
+          }
+
+          // 3.5 如果反例足够强，或 truth 系统检测到谎言，降低置信度
+          const truthLying = truthResult?.isLying === true;
+          const constitutionalViolation = constitutionalResult?.violations?.length > 0;
+          const isOverturned = counterEvidence.length > 0 && contradictions.length > 0;
+
+          return {
+            inverted: isOverturned || truthLying || constitutionalViolation,
+            counterEvidence,
+            contradictions,
+            originalHypothesis: topHypothesis,
+            truthResult: truthResult ? { isLying: truthResult.isLying, confidence: truthResult.confidence } : null,
+            constitutionalResult: constitutionalResult ? { violations: constitutionalResult.violations } : null,
+            confidenceAdjustment: (isOverturned ? -0.3 : 0) + (truthLying ? -0.2 : 0),
+            timestamp: Date.now()
+          };
+        }
+      });
+    }
+
+    // ── 阶段4: EVIDENCE — 证据评估 + 常识引擎验证 ──────────────────
+    this.stages.push({
+      name: 'EVIDENCE',
+      description: '评估证据质量，不是证据数量',
+      fn: async (ctx, hf) => {
+        const input = ctx.input;
+        const hypothesesStage = ctx.stages.find(s => s.name === 'HYPOTHESES');
+        const invertStage = ctx.stages.find(s => s.name === 'INVERT');
+        const hypotheses = hypothesesStage?.result?.hypotheses || [];
+        const parse = ctx.stages[0]?.result;
+
+        // [P2-T2-WF] 复用 PARSE 阶段预取的知识命中，降低重复检索成本
+        const priorKnowledgeHits = Array.isArray(parse?.knowledgeHits) ? parse.knowledgeHits : [];
+
+        // 4.1 对每个假设找证据
+        const evidenceForHypotheses = hypotheses.map(h => {
+          const evidence = this._findEvidence(h, input);
+          const qualityScore = this._assessEvidenceQuality(evidence);
+
+          // 【思维连机制】调用 commonsenseEngine 验证证据合理性 — 串联第四层
+          let commonsenseResult = null;
+          try {
+            commonsenseResult = hf.dispatch('commonsenseEngine.validate', h.description, { context: input });
+          } catch (e) {
+            commonsenseResult = null;
+          }
+
+          return {
+            hypothesis: h,
+            evidence,
+            qualityScore,
+            commonsenseResult: commonsenseResult ? { valid: commonsenseResult.valid, confidence: commonsenseResult.confidence } : null,
+            strongEvidence: qualityScore > 0.7 || commonsenseResult?.valid === true,
+            weakEvidence: qualityScore < 0.3 || commonsenseResult?.valid === false
+          };
+        });
+
+        // 4.2 检查是否有高质量证据支持任何假设
+        const strongHypothesis = evidenceForHypotheses.find(e => e.strongEvidence);
+
+        // 4.3 如果没有强证据，明确说出来
+        const hasWeakSupport = evidenceForHypotheses.some(e => e.weakEvidence);
+
+        return {
+          evidenceForHypotheses,
+          strongHypothesis: strongHypothesis || null,
+          hasWeakSupport,
+          mustAdmitUncertainty: !strongHypothesis && hasWeakSupport,
+          // [P2-T2-WF] 暴露知识命中摘要，供 SYNTHESIS/RESPOND 做 richer 综合
+          knowledgeHits: priorKnowledgeHits,
+          timestamp: Date.now()
+        };
+      }
+    });
+
+    // ── 阶段5: SYNTHESIS — 综合判断 + 决策子系统 ──────────────────
+    this.stages.push({
+      name: 'SYNTHESIS',
+      description: '综合所有信息，给出最优判断',
+      fn: async (ctx, hf) => {
+        const input = ctx.input;
+        const parse = ctx.stages[0]?.result;
+        const evidenceStage = ctx.stages.find(s => s.name === 'EVIDENCE');
+        const invertStage = ctx.stages.find(s => s.name === 'INVERT');
+        const hypothesesStage = ctx.stages.find(s => s.name === 'HYPOTHESES');
+
+        const strongHypothesis = evidenceStage?.result?.strongHypothesis;
+        const wasInverted = invertStage?.result?.inverted;
+        const evidence = evidenceStage?.result || {};
+
+        // 【思维连机制】调用 decision 子系统做综合决策 — 串联第五层
+        let decisionResult = null;
+        try {
+          const decisionContext = {
+            input,
+            taskType: parse?.type,
+            topHypothesis: hypothesesStage?.result?.topHypothesis?.description,
+            wasInverted,
+            hasStrongEvidence: !!strongHypothesis,
+            causalRoots: hypothesesStage?.result?.topHypothesis?.causalRoots,
+          };
+          decisionResult = hf.dispatch('decision.decide', decisionContext);
+        } catch (e) {
+          decisionResult = null;
+        }
+
+        // [v6.7.8] DecisionEngine 公式化决策增强（DDM/SDT/prospect/bayes/Q-learning等11种模型）
+        let decisionEngineAnalysis = null;
+        try {
+          if (hf.decisionEngineV2 && typeof hf.decisionEngineV2.analyze === 'function') {
+            const drift = decisionResult?.confidence ?? 0.5;
+            decisionEngineAnalysis = hf.decisionEngineV2.analyze('ddm', {
+              drift, threshold: 1.0, startingPoint: 0, nonDecisionTime: 0.3, noise: 1
+            });
+          }
+        } catch (e) { /* 公式决策增强失败不阻断主链路 */ }
+
+        // 5.0 【AgentPhilosophy v2.0.0】调用 AI 哲学新增维度（自处/发展/存在）
+        let agentPhilosophyResult = null;
+        if (hf.agentPhilosophy) {
+          try {
+            const selfPositioning = hf.agentPhilosophy.assessSelfPositioning(input, {
+              _label: parse?.type || 'general'
+            });
+            const development = hf.agentPhilosophy.assessDevelopment(
+              decisionResult?.conclusion || input,
+              { _label: parse?.type || 'general' }
+            );
+            const being = hf.agentPhilosophy.assessBeing({
+              _label: parse?.type || 'general',
+              taskType: parse?.type
+            });
+            agentPhilosophyResult = {
+              selfPositioning,
+              development,
+              being
+            };
+          } catch (e) {
+            agentPhilosophyResult = { error: e.message };
+          }
+        }
+
+        // [v5.17.19 S3] 主动推理EFE — 用ActiveInference评估探索/利用平衡
+        let activeInferenceResult = null;
+        try {
+          const AI = require('../decision/active-inference.js');  // [v6.4.6] 已从 git 恢复
+          const aiEngine = new AI.ActiveInference();
+          const _hypotheses = ctx.stages.find(s => s.name === 'HYPOTHESES')?.result?.hypotheses || [];
+          const candidates = (_hypotheses || []).map(h => ({
+            label: (h.description || h || '').substring(0, 40),
+            pragmaticScore: h.score || 0.5,
+            uncertainty: 1 - (h.confidence || 0.5),
+            novelty: h.isNovel ? 0.8 : 0.3,
+          }));
+          if (candidates.length > 0) {
+            activeInferenceResult = aiEngine.decide(candidates, {
+              timePressure: parse?.type === 'calculation' ? 0.8 : 0.3,
+            });
+          }
+        } catch(e) {
+          console.warn('[thought-chain] ActiveInference EFE skipped:', e.message);
+          activeInferenceResult = null;
+        }
+
+        // [P2-T2-WF] 主动推理接入主路径：优先采用 EFE 最优策略作为综合结论
+        let activeInferenceConclusion = null;
+        let activeInferenceConfidence = null;
+        if (activeInferenceResult?.selected) {
+          activeInferenceConclusion = activeInferenceResult.selected.label || activeInferenceResult.selected.description;
+          activeInferenceConfidence = activeInferenceResult.selected.score || 0.5;
+        }
+
+        // 5.1 确定最终判断
+        let conclusion;
+        let confidence;
+        let reasoningChain = [];
+
+        if (wasInverted) {
+          // 被反例推翻了
+          conclusion = invertStage.result.counterEvidence[0]?.description || '原假设被推翻';
+          confidence = 0.3;
+          reasoningChain.push('原假设被反例推翻');
+        } else if (activeInferenceConclusion && activeInferenceConfidence > 0.6) {
+          // [P2-T2-WF] 主动推理主导：当 EFE 给出高置信度最优策略时优先采用
+          conclusion = activeInferenceConclusion;
+          confidence = activeInferenceConfidence;
+          reasoningChain.push('主动推理EFE策略选择');
+        } else if (strongHypothesis) {
+          // 有强证据支持
+          conclusion = strongHypothesis.hypothesis.description;
+          confidence = strongHypothesis.qualityScore;
+          reasoningChain.push(`强证据支持: ${strongHypothesis.evidence[0]?.description || '有证据'}`);
+        } else if (evidence.mustAdmitUncertainty) {
+          // 证据薄弱，必须承认不确定
+          conclusion = evidence.evidenceForHypotheses[0]?.hypothesis?.description || '无法确定';
+          confidence = 0.4;
+          reasoningChain.push('证据薄弱，明确承认不确定');
+        } else if (decisionResult?.conclusion) {
+          // 决策子系统给出了结论
+          conclusion = decisionResult.conclusion;
+          confidence = decisionResult.confidence || 0.5;
+          reasoningChain.push('决策子系统综合判断');
+        } else {
+          // 默认最可能假设
+          const topHypothesis = evidenceStage?.result?.evidenceForHypotheses?.[0]?.hypothesis;
+          conclusion = topHypothesis?.description || '需要更多信息';
+          confidence = topHypothesis?.initialLikelihood || 0.3;
+        }
+
+        reasoningChain.push(`任务类型: ${parse?.type}`);
+        reasoningChain.push(`深度: ${this.depth}`);
+
+        // [P2-T2-WF] 人格化润色：根据任务类型和用户认知档案调整语气/粒度
+        let personalityPolish = null;
+        try {
+          const adaptiveLearning = hf.adaptiveLearning || (require('../cortex/adaptive-learning.js') && new (require('../cortex/adaptive-learning.js').AdaptiveLearningEngine)({ memory: hf.memory }));
+          if (adaptiveLearning) {
+            const profile = adaptiveLearning.getProfile ? await adaptiveLearning.getProfile('anonymous') : (adaptiveLearning.profiles?.get('anonymous') || {});
+            const nudge = adaptiveLearning.nextNudge ? adaptiveLearning.nextNudge('anonymous') : null;
+            personalityPolish = {
+              userProfile: {
+                blindspots: Object.keys(profile?.blindspots || {}).slice(0, 5),
+                clarificationsAccepted: profile?.clarificationsAccepted || 0,
+                clarificationsOffered: profile?.clarificationsOffered || 0,
+              },
+              nudge,
+              tone: parse?.type === 'emotional' ? 'supportive' : 'analytical',
+              verbosity: confidence < 0.5 ? 'detailed' : 'concise',
+            };
+          }
+        } catch(e) {
+          personalityPolish = null;
+        }
+
+        // [P2-T2-WF] 知识检索接入主路径：用预取知识增强综合结论
+        const knowledgeSummary = (() => {
+          try {
+            const hits = evidence?.knowledgeHits || parse?.knowledgeHits || [];
+            if (!Array.isArray(hits) || hits.length === 0) return null;
+            return hits.slice(0, 3).map(h => ({
+              content: (typeof h === 'string' ? h : (h.content || h.concept || h.text || '')).slice(0, 80),
+              source: typeof h === 'string' ? 'knowledge' : (h.source || 'knowledge'),
+              relevance: typeof h === 'object' ? (h.relevance || h.score || 0.5) : 0.5,
+            }));
+          } catch(e) {
+            return null;
+          }
+        })();
+
+        // [思想心虫 v1] 古典规则综合：对古典/伦理/治理类命题做最终结论修正
+        let classicalRuleIntegration = null;
+        try {
+          const classical = parse?.classicalRuleResult;
+          if (classical?.classicalRelevant && classical.findings?.length > 0) {
+            const violations = classical.findings.filter(f => f.signal === 'violation');
+            const warnings = classical.findings.filter(f => f.signal === 'warn');
+            const references = classical.findings.filter(f => f.signal === 'reference');
+            const passes = classical.findings.filter(f => f.signal === 'pass');
+
+            // 如果有 violation，直接降级并修正结论
+            if (violations.length > 0) {
+              confidence = Math.min(confidence, 0.4);
+              reasoningChain.push(`古典规则拦截: ${violations.map(v => v.reason).join('; ')}`);
+              classicalRuleIntegration = { integrated: true, action: 'downgrade', violations: violations.map(v => v.reason) };
+            }
+            // 如果 warnings 存在，降低置信度并标注
+            else if (warnings.length > 0) {
+              confidence = Math.min(confidence, 0.6);
+              reasoningChain.push(`古典规则警示: ${warnings.map(w => w.reason).join('; ')}`);
+              classicalRuleIntegration = { integrated: true, action: 'flag', warnings: warnings.map(w => w.reason) };
+            }
+            // 如果有 references，增强结论的可引用性
+            else if (references.length > 0) {
+              reasoningChain.push(`古典规则参照: ${references.map(r => r.reason).join('; ')}`);
+              classicalRuleIntegration = { integrated: true, action: 'reference', references: references.map(r => r.reason) };
+            }
+            // passes 只记录不干预
+            else if (passes.length > 0) {
+              reasoningChain.push(`古典规则校验通过: ${passes.map(p => p.reason).join('; ')}`);
+              classicalRuleIntegration = { integrated: true, action: 'pass', passes: passes.map(p => p.reason) };
+            }
+          }
+        } catch (e) {
+          classicalRuleIntegration = null;
+        }
+
+        return {
+          conclusion,
+          confidence,
+          reasoningChain,
+          wasInverted,
+          hasStrongEvidence: !!strongHypothesis,
+          decisionSubsystem: decisionResult ? { conclusion: decisionResult.conclusion, confidence: decisionResult.confidence } : null,
+          // [v6.7.8] DecisionEngine 公式化决策增强（DDM 决策时间/错误率/准确率）
+          decisionEngineAnalysis,
+          // 【AgentPhilosophy v2.0.0】AI 哲学新增维度结果
+          agentPhilosophy: agentPhilosophyResult,
+          // [v5.17.19 S3] 主动推理EFE决策结果
+          activeInference: activeInferenceResult,
+          // [P2-T2-WF] 主动推理接入主路径
+          activeInferenceSelected: activeInferenceResult?.selected || null,
+          // [P2-T2-WF] 人格化润色
+          personalityPolish,
+          // [P2-T2-WF] 知识检索接入主路径
+          knowledgeSummary,
+          // [思想心虫 v1] 古典规则综合结果
+          classicalRuleIntegration,
+          // [v6.3.27] 伦理拒答 + 说前反思（来自CognitiveLoop.phaseAction）
+          _ethicsCheck: (() => {
+            const threshold = (decisionResult?.riskLevel === 'high' || ctx._deliberation?.uncertainty > 0.7);
+            return { rejected: !!threshold, reason: threshold ? '高风险或高度不确定，建议暂缓回应' : null };
+          })(),
+          timestamp: Date.now()
+        };
+      }
+    });
+
+    // ── 阶段6: CALIBRATE — 置信校准 + 子系统置信度验证 ─────────────
+    this.stages.push({
+      name: 'CALIBRATE',
+      description: '校准置信度，克制人类式过度自信',
+      fn: async (ctx, hf) => {
+        const input = ctx.input;
+        const synthesis = ctx.stages.find(s => s.name === 'SYNTHESIS')?.result;
+        const invert = ctx.stages.find(s => s.name === 'INVERT')?.result;
+        const evidence = ctx.stages.find(s => s.name === 'EVIDENCE')?.result;
+        const parse = ctx.stages[0]?.result;
+
+        let confidence = synthesis?.confidence || 0.5;
+
+        // 【思维连机制】调用 confidence.calibrate 子系统 — 串联第六层
+        // [FIX] confidence.calibrate(string, number) 不是 (object)
+        let subsystemCalibration = null;
+        try {
+          subsystemCalibration = hf.dispatch('confidence.calibrate',
+            synthesis?.conclusion || input,
+            confidence
+          );
+        } catch (e) {
+          subsystemCalibration = null;
+        }
+
+        // 【思维连机制】调用 restraint.shouldIntervene — 最小干预评估
+        // [FIX] restraint.shouldIntervene(string, number, string) 参数顺序修正
+        let restraintResult = null;
+        try {
+          restraintResult = hf.dispatch('restraint.shouldIntervene',
+            synthesis?.conclusion || '',
+            confidence,
+            parse?.type || 'general'
+          );
+        } catch (e) {
+          restraintResult = null;
+        }
+
+        // 6.1 反向思考降低置信度
+        if (invert?.inverted) {
+          confidence = Math.min(confidence, 0.4);
+        }
+
+        // 6.2 证据薄弱降低置信度
+        if (evidence?.mustAdmitUncertainty) {
+          confidence = Math.min(confidence, 0.5);
+        }
+
+        // 6.3 子系统置信度校正（如果可用）
+        if (subsystemCalibration?.calibrated !== undefined) {
+          confidence = subsystemCalibration.calibrated;
+        }
+
+        // 6.3.5 [v6.2.3] ExperienceDistiller 抽象注入置信度校正
+        if (hf._experienceAbstractions && hf._experienceAbstractions.length > 0) {
+          // 有可复用抽象时小幅提升置信度（有经验支撑）
+          confidence = Math.min(confidence + 0.03, 0.95);
+        }
+
+        // 6.3.6 [v6.2.3] StrategicRestraint 克制约束
+        const parseResult = ctx.stages?.find(s => s.name === 'PARSE');
+        if (parseResult?.result?.restraint?.restrained) {
+          // 克制引擎认为"不该做"→ 置信度下调
+          confidence = Math.min(confidence, 0.4);
+        }
+
+        // 6.4 人类过度自信校正：人类的"100%确定"实际约80%
+        // [FIX] calibratedConfidence 从未定义 — 用修正后的 confidence
+        const calibratedConfidence = confidence;
+
+        // 6.5 确定是否需要不确定性标记
+        const needsUncertaintyMarker = calibratedConfidence < 0.7;
+
+        // 6.6 快速退出检查（检索类任务）
+        if (parse?.strategy?.fastExit && calibratedConfidence > 0.8) {
+          ctx._fastExit = true;
+        }
+
+        return {
+          originalConfidence: synthesis?.confidence,
+          calibratedConfidence,
+          needsUncertaintyMarker,
+          uncertaintyPhrase: this._getUncertaintyPhrase(calibratedConfidence),
+          subsystemCalibration,
+          restraintResult: restraintResult ? { shouldIntervene: restraintResult.shouldIntervene } : null,
+          timestamp: Date.now()
+        };
+      }
+    });
+
+    // ── 阶段7: RESPOND — 生成回应 + 情感自主引擎 ──────────────────
+    this.stages.push({
+      name: 'RESPOND',
+      description: '生成带不确定性标记的回应',
+      fn: async (ctx, hf) => {
+        const input = ctx.input;
+        const synthesis = ctx.stages.find(s => s.name === 'SYNTHESIS')?.result;
+        const calibrate = ctx.stages.find(s => s.name === 'CALIBRATE')?.result;
+        const parse = ctx.stages[0]?.result;
+
+        // 【思维连机制】调用 autonomousEmotion 情感自主引擎 — 串联第七层
+        let emotionResult = null;
+        try {
+          emotionResult = hf.dispatch('autonomousEmotion.trigger', {
+            type: 'response_generation',
+            conclusion: synthesis?.conclusion,
+            confidence: calibrate?.calibratedConfidence || 0.5,
+            input
+          });
+        } catch (e) {
+          emotionResult = null;
+        }
+
+        // 7.1 决定是否回应
+        let shouldRespond = true;
+        let suppressReason = null;
+
+        // 检索类任务且置信度高 → 快速退出
+        if (ctx._fastExit && calibrate?.calibratedConfidence > 0.8) {
+          shouldRespond = false;
+          suppressReason = 'fast_exit_high_confidence';
+        }
+
+        // 7.2 生成不确定性前缀
+        let prefix = '';
+        if (calibrate?.needsUncertaintyMarker) {
+          prefix = calibrate.uncertaintyPhrase + ' ';
+        }
+
+        // 7.3 组装回应元数据
+        const meta = {
+          confidence: calibrate?.calibratedConfidence || 0.5,
+          conclusion: synthesis?.conclusion,
+          reasoningChain: synthesis?.reasoningChain || [],
+          taskType: parse?.type,
+          suppressed: !shouldRespond,
+          suppressReason,
+          emotionState: emotionResult?.currentState || null,
+          // 【心理推断深度集成】共情检测结果注入上下文
+          empathy: parse?.psychology?.empathy || null,
+          // 【AgentPsychology v2.0.0】AI 心理学新增维度
+          agentPsychology: parse?.agentPsychology || null,
+          // 【AgentPhilosophy v2.0.0】AI 哲学新增维度
+          agentPhilosophy: synthesis?.agentPhilosophy || null,
+          // [思想心虫 v1] 古典规则判别结果进入最终输出
+          classicalRuleResult: parse?.classicalRuleResult || null,
+          // [v5.17.19 S4] 偏差自审计 — language-honesty扫描回应草稿
+          biasCheck: (() => {
+            try {
+              const { checkCertainty } = require('../shield/language-honesty.js');
+              const draftText = conclusion || synthesis?.conclusion || '';
+              if (draftText && checkCertainty) {
+                const check = checkCertainty(draftText);
+                return {
+                  overconfidence: check?.level === 'over',
+                  certaintyLevel: check?.level || 'normal',
+                  triggeredRestraint: check?.level === 'over',
+                };
+              }
+            } catch(e) {} // 防御性: 模块加载/调用失败不阻断主流程
+            return null;
+          })(),
+        };
+
+        // 如果没有结论且置信度低，明确说不知道
+        let conclusion = prefix + (synthesis?.conclusion || '');
+        if (!synthesis?.conclusion && (calibrate?.calibratedConfidence || 0.5) < 0.5) {
+          conclusion = '缺少关键信息';
+          meta.conclusion = conclusion;
+        }
+
+        return {
+          shouldRespond,
+          suppressReason,
+          prefix,
+          conclusion,
+          meta,
+          timestamp: Date.now()
+        };
+      }
+    });
+
+    this._chainBuilt = true;
+  }
+
+  // ── 辅助方法 ──────────────────────────────────────────────────────────
+
+  /**
+   * 提取关键变量
+   */
+  _extractVariables(input) {
+    const variables = {
+      numbers: [],
+      entities: [],
+      actions: []
+    };
+
+    // 提取数字
+    const numMatches = input.match(/\d+\.?\d*/g);
+    if (numMatches) {
+      variables.numbers = numMatches.map(n => parseFloat(n));
+    }
+
+    // 提取实体（简单实现）
+    const words = input.split(/\s+/);
+    variables.entities = words.filter(w => w.length > 2 && /^[A-Za-z一-龥]+$/.test(w)).slice(0, 5);
+
+    return variables;
+  }
+
+  /**
+   * 提取约束条件
+   */
+  _extractConstraints(input) {
+    const constraints = [];
+    const constraintPatterns = [
+      /如果|假如|假设/,
+      /必须|一定|不要/,
+      /不能|不可以|不允许/,
+      /只能|仅仅|唯一/
+    ];
+
+    for (const pattern of constraintPatterns) {
+      if (pattern.test(input)) {
+        constraints.push(pattern.toString());
+      }
+    }
+
+    return constraints;
+  }
+
+  /**
+   * 提取目标
+   */
+  _extractGoal(input) {
+    const goalPatterns = [
+      /想|要|希望/,
+      /需要|目的在于/,
+      /为什么|如何|怎么/
+    ];
+
+    for (const pattern of goalPatterns) {
+      if (pattern.test(input)) {
+        return pattern.toString();
+      }
+    }
+
+    return '理解';
+  }
+
+  /**
+   * 生成多个假设
+   *
+   * 分词必须同时支持中文与英文。此前实现只用 /\s+/ 切分 —— 中文没有空格，
+   * 整句会被当成 1 个 token，keywords.length < 2 立即返回空数组。
+   * 结果：所有中文输入 HYPOTHESES=0 → INVERT=no_hypothesis → SYNTHESIS 落兜底
+   * "不知道，缺少关键信息"，think() 对任何输入都返回同一句话。
+   */
+  _generateHypotheses(input, count) {
+    const hypotheses = [];
+    const keywords = this._extractSubstantiveTokens(input);
+
+    // 关键词太少时返回空数组（不生成占位假设）
+    if (keywords.length < 2) {
+      return hypotheses;
+    }
+
+    // 假设描述必须是"可读的主张"，不能是裸 token 串 —— 否则结论会被拼成
+    // "bug 气死了 气死 死了 — 分析结果" 这种无意义切分，对外不可用。
+    const topic = this._describeTopic(keywords);
+    const angles = [
+      `围绕「${topic}」的核心诉求`,
+      `「${keywords[0]}」之外的另一种解释`,
+      `「${keywords[keywords.length - 1]}」反映的表面现象`,
+      `「${topic}」背后的约束条件`,
+    ];
+
+    for (let i = 0; i < count; i++) {
+      hypotheses.push({
+        id: `h${i}`,
+        description: angles[i] || `关于「${topic}」的第 ${i + 1} 种可能`,
+        initialLikelihood: i === 0 ? 0.6 : Math.max(0.15, 0.3 - (i * 0.05)),
+        evidence: [],
+        counterEvidence: []
+      });
+    }
+
+    return hypotheses;
+  }
+
+  /**
+   * 把实词列表收敛成一个人可读的话题短语。
+   * 只取前 3 个词，避免整句 token 串进结论。
+   */
+  _describeTopic(keywords) {
+    return keywords.slice(0, 3).join('·') || '当前输入';
+  }
+
+  /**
+   * 抽取实词 token —— 中文按 2-3 gram 滑窗 + 最大匹配去碎片，英文按空格切分。
+   *
+   * 中文没有空格，2-gram 是零依赖方案里的最低成本做法。但朴素 2-gram 会产生
+   * 大量碎片（"供应商" → "供应"+"应商"），把结论污染成一串无意义切分。
+   * 这里按"长度优先 + 覆盖抑制"处理：长片段先入选，已被覆盖的短片段丢弃。
+   */
+  _extractSubstantiveTokens(input) {
+    if (!input || typeof input !== 'string') return [];
+    const text = input.toLowerCase();
+    const candidates = [];
+    const seen = new Set();
+
+    const push = (t, weight) => {
+      if (!t || t.length < 2 || seen.has(t) || SUBSTOP.has(t)) return;
+      seen.add(t);
+      candidates.push({ t, weight });
+    };
+
+    // 1. 英文/数字：按非字母数字切分，保留长度 >= 3 的词
+    for (const w of text.split(/[^a-z0-9]+/).filter(Boolean)) {
+      if (w.length >= 3) push(w, w.length);
+    }
+
+    // 2. 中文：连续汉字串切出后，按"最长优先"做贪心切分（正向最大匹配的近似）
+    //    朴素 2-gram 滑窗会把长句切成 "所以 以地 地湿 湿了" 这类碎片串，
+    //    结论就变成一串无意义切分。这里改为贪心取最长可用片段。
+    const cjkRuns = text.match(/[\u4e00-\u9fff]+/g) || [];
+    for (const run of cjkRuns) {
+      if (run.length < 2) continue;
+      if (run.length <= 6 && !SUBSTOP.has(run)) {
+        // 短串整体往往就是一个实词
+        push(run, run.length + 2);
+        continue;
+      }
+      // 长串：从左到右贪心切最长片段（优先 3 字，向后收缩到 2 字）
+      let i = 0;
+      while (i < run.length && candidates.length < 24) {
+        let matched = null;
+        for (let len = 3; len >= 2; len--) {
+          if (i + len > run.length) continue;
+          const seg = run.slice(i, i + len);
+          if (SUBSTOP.has(seg)) continue;
+          const head = seg[0];
+          const tail = seg[seg.length - 1];
+          // 片段首尾都不应是虚字，否则是切歪的碎片
+          if (SUBSTOP.has(head) || SUBSTOP.has(tail)) continue;
+          matched = seg;
+          break;
+        }
+        if (matched) {
+          push(matched, matched.length + 1);
+          i += matched.length;
+        } else {
+          i += 1;
+        }
+      }
+    }
+
+    // 3. 覆盖抑制 + 碎片过滤：
+    //    - 已被更长候选包含的短候选丢弃（消掉 供应/应商 这类碎片）
+    //    - 2-gram 只有当它本身是一个"词"时才保留（借助 CJK_STOP_PAIR 与重复度判断），
+    //      否则整串中文会被切成一堆无意义双字组合，污染下游结论
+    candidates.sort((a, b) => b.weight - a.weight || b.t.length - a.t.length);
+    const selected = [];
+    for (const c of candidates) {
+      if (selected.some(s => s.includes(c.t))) continue;
+      // 2-gram 需至少含一个非停用字，且不是两个停用字拼起来的
+      if (c.t.length === 2) {
+        const [a, b] = [c.t[0], c.t[1]];
+        const bothStop = SUBSTOP.has(a) && SUBSTOP.has(b);
+        const hasStop = SUBSTOP.has(a) || SUBSTOP.has(b);
+        if (bothStop) continue;
+        // 含虚字的 2-gram 只有在没有更长候选时才留下
+        if (hasStop && selected.length > 0) continue;
+      }
+      selected.push(c.t);
+      if (selected.length >= 8) break;
+    }
+
+    return selected;
+  }
+
+  /**
+   * 评估假设的初始可能性
+   */
+  _assessLikelihood(hypothesis, input) {
+    // 简单实现：基于假设描述与输入的重叠度
+    const overlap = hypothesis.description.split(/\s+/).filter(
+      w => input.toLowerCase().includes(w.toLowerCase())
+    ).length;
+
+    return Math.min(0.9, 0.3 + overlap * 0.2);
+  }
+
+  /**
+   * 找出反例
+   */
+  _findCounterEvidence(hypothesis, input) {
+    const counterIndicators = [
+      '但是', '然而', '不过', '实际上', '其实', '虽然'
+    ];
+
+    const evidence = [];
+    for (const indicator of counterIndicators) {
+      if (input.includes(indicator)) {
+        evidence.push({
+          type: 'contradiction',
+          description: `输入中包含转折词: "${indicator}"`,
+          strength: 0.6
+        });
+      }
+    }
+
+    return evidence;
+  }
+
+  /**
+   * 找出矛盾
+   */
+  _findContradictions(hypothesis, input) {
+    const contradictions = [];
+
+    // 检测绝对化表述（容易有反例）
+    const absolutePatterns = [
+      /所有|全部|每个|总是|永远/,
+      /没有|从不|绝不/
+    ];
+
+    for (const pattern of absolutePatterns) {
+      if (pattern.test(input)) {
+        contradictions.push({
+          type: 'absolute_statement',
+          description: `使用了绝对化表述: "${pattern}"，可能有反例`,
+          strength: 0.7
+        });
+      }
+    }
+
+    return contradictions;
+  }
+
+  /**
+   * 找证据
+   */
+  _findEvidence(hypothesis, input) {
+    // [v5.17.19 S2] 替换桩 — 接入knowledge-graph真实检索
+    const evidence = [];
+    try {
+      const hf = this.hf;
+      if (hf && hf.knowledgeGraph && hf.knowledgeGraph.query) {
+        const kgResults = hf.knowledgeGraph.query(hypothesis.description || hypothesis, 3);
+        for (const r of (kgResults || [])) {
+          evidence.push({ source: 'knowledge_graph', content: r.concept || r, relevance: r.score || 0.5 });
+        }
+      }
+      if (hf && hf.memoryIndex && hf.memoryIndex.search) {
+        const memResults = hf.memoryIndex.search(hypothesis.description || hypothesis, 2);
+        for (const r of (memResults || [])) {
+          evidence.push({ source: 'memory_index', content: r.text || r, relevance: r.score || 0.4 });
+        }
+      }
+    } catch(e) { /* 检索降级 */ }
+    return evidence;
+  }
+
+  /**
+   * 评估证据质量
+   * 人类缺陷：认为证据数量=证据质量
+   * 引擎改进：证据质量看来源可靠性、时效性、可验证性
+   */
+  _assessEvidenceQuality(evidence) {
+    if (!evidence || evidence.length === 0) return 0.2;
+
+    // 简单实现：证据多但不重复才高质量
+    const uniqueEvidence = new Set(evidence.map(e => e.type));
+    const quality = Math.min(0.9, 0.2 + uniqueEvidence.size * 0.2);
+
+    return quality;
+  }
+
+  /**
+   * 获取不确定性短语
+   * 人类缺陷：不愿意说"不知道"
+   * 引擎改进：明确表达不确定性
+   */
+  _getUncertaintyPhrase(confidence) {
+    if (confidence >= 0.9) return '确定';
+    if (confidence >= 0.8) return '很可能';
+    if (confidence >= 0.7) return '可能';
+    if (confidence >= 0.6) return '不太确定，但倾向于';
+    if (confidence >= 0.5) return '根据现有信息，猜测';
+    if (confidence >= 0.35) return '以下为初步分析（证据尚不充分）：';
+    return '不知道，缺少关键信息';
+  }
+
+  /**
+   * 运行思维链
+   */
+  async run(input) {
+    if (!this.hf.started) {
+      throw new Error('HeartFlow not started');
+    }
+
+    this.context = {
+      input,
+      timestamp: Date.now(),
+      stages: [],
+      errors: [],
+      _fastExit: false
+    };
+
+    // 解析任务类型（含置信度 + LLM 兜底）
+    const classification = await this._classifyTask(input);
+    this.taskStrategy = { type: classification.type, confidence: classification.confidence };
+
+    // 根据策略调整深度
+    const strategyDepth = TASK_STRATEGIES[this.taskStrategy.type]?.depth;
+    if (strategyDepth && strategyDepth > this.depth) {
+      this.depth = strategyDepth;
+    }
+
+    this._buildChain();
+
+    const startTime = Date.now();
+
+    // 执行阶段
+    for (const stage of this.stages) {
+      // 深度裁剪
+      if (this._shouldSkipStage(stage.name)) {
+        this.context.stages.push({
+          name: stage.name,
+          skipped: true,
+          reason: `depth=${this.depth}`
+        });
+        continue;
+      }
+
+      // 快速退出检查
+      if (this.context._fastExit) {
+        this.context.stages.push({
+          name: stage.name,
+          skipped: true,
+          reason: 'fast_exit'
+        });
+        continue;
+      }
+
+      const stageStart = Date.now();
+      try {
+        const result = await stage.fn(this.context, this.hf);
+        this.context.stages.push({
+          name: stage.name,
+          result,
+          duration: Date.now() - stageStart,
+          success: true
+        });
+      } catch (e) {
+        this.context.stages.push({
+          name: stage.name,
+          error: e.message,
+          duration: Date.now() - stageStart,
+          success: false
+        });
+        this.context.errors.push({ stage: stage.name, error: e.message });
+      }
+    }
+
+    return this._buildResult(startTime);
+  }
+
+  _shouldSkipStage(stageName) {
+    const depthMap = {
+      'PARSE': REASONING_DEPTH.SURFACE,
+      'HYPOTHESES': REASONING_DEPTH.BASIC,
+      'INVERT': REASONING_DEPTH.DEEP,
+      'EVIDENCE': REASONING_DEPTH.BASIC,
+      'SYNTHESIS': REASONING_DEPTH.BASIC,
+      'CALIBRATE': REASONING_DEPTH.SURFACE,
+      'RESPOND': REASONING_DEPTH.SURFACE
+    };
+    return depthMap[stageName] > this.depth;
+  }
+
+  _buildResult(startTime) {
+    const respondStage = this.context.stages.find(s => s.name === 'RESPOND');
+    const respondResult = respondStage?.result || {};
+    const synthesisStage = this.context.stages.find(s => s.name === 'SYNTHESIS');
+    const calibrateStage = this.context.stages.find(s => s.name === 'CALIBRATE');
+    const parseStage = this.context.stages.find(s => s.name === 'PARSE');
+
+    return {
+      input: this.context.input,
+      output: respondResult,
+
+      chain: {
+        stages: this.context.stages,
+        totalDuration: Date.now() - startTime,
+        depth: this.depth,
+        taskType: parseStage?.result?.type,
+        errors: this.context.errors
+      },
+
+      decision: {
+        shouldRespond: respondResult.shouldRespond !== false,
+        suppressed: respondResult.suppressed || false,
+        suppressReason: respondResult.suppressReason,
+        confidence: respondResult.meta?.confidence || 0.5,
+        conclusion: respondResult.conclusion,
+        reasoningChain: respondResult.meta?.reasoningChain || [],
+        wasInverted: synthesisStage?.result?.wasInverted || false,
+        hasStrongEvidence: synthesisStage?.result?.hasStrongEvidence || false
+      },
+
+      // 各阶段快速访问
+      parse: parseStage?.result,
+      hypotheses: this.context.stages.find(s => s.name === 'HYPOTHESES')?.result,
+      invert: this.context.stages.find(s => s.name === 'INVERT')?.result,
+      evidence: this.context.stages.find(s => s.name === 'EVIDENCE')?.result,
+      synthesis: synthesisStage?.result,
+      calibration: calibrateStage?.result
+    };
+  }
+
+  /**
+   * 获取思维链摘要
+   */
+  getSummary(result) {
+    const lines = [
+      `🧠 思维链 v2.0 (深度: ${result.chain.depth})`,
+      `📋 任务类型: ${result.chain.taskType || 'general'}`,
+      `⏱ 耗时: ${result.chain.totalDuration}ms`,
+      `🔢 阶段: ${result.chain.stages.filter(s => !s.skipped).length}/${result.chain.stages.length}`,
+      '',
+      '阶段:'
+    ];
+
+    for (const stage of result.chain.stages) {
+      const status = stage.skipped ? '⏭️' : (stage.success ? '✅' : '❌');
+      const name = stage.name.padEnd(12);
+      const duration = stage.duration ? `${stage.duration}ms` : '';
+      lines.push(`  ${status} ${name} ${duration}`);
+    }
+
+    lines.push('');
+    lines.push(`🤔 置信度: ${(result.decision.confidence * 100).toFixed(0)}%`);
+    lines.push(`💭 结论: ${result.decision.conclusion?.substring(0, 50) || '无'}...`);
+
+    if (result.decision.wasInverted) {
+      lines.push('🔄 原假设被推翻（反向思考生效）');
+    }
+    if (!result.decision.hasStrongEvidence) {
+      lines.push('⚠️ 证据薄弱，明确承认不确定');
+    }
+
+    return lines.join('\n');
+  }
+}
+
+// 工厂函数
+function createThoughtChain(hf, depth = REASONING_DEPTH.BASIC) {
+  const chain = new ThoughtChain(hf);
+  chain.setDepth(depth);
+  return chain;
+}
+
+// [v5.17.23] 修复: 四层认知增强提取方法 — 供主路径和fallback共用
+ThoughtChain.prototype.runLayerEnrichment = function(input, hypotheses, conclusion, hf) {
+  const enrichment = {};
+  try {
+    const cl = (hf && hf.cognitiveLoad) || (hf && hf.cognitiveLoadV2);
+    if (cl && cl.estimate) {
+      const est = cl.estimate(input);
+      enrichment.perception = {
+        load: est.cl ?? null,
+        precisionWeight: est.loadLevel ? (est.loadLevel === 'high' ? 0.3 : est.loadLevel === 'moderate' ? 0.6 : 0.9) : 0.7,
+        salienceThreshold: est.loadLevel === 'high' ? 0.65 : est.loadLevel === 'moderate' ? 0.55 : 0.5,
+      };
+    }
+  } catch(e) {} // 防御性: 模块加载/调用失败不阻断主流程
+  try {
+    const AI = require('../decision/active-inference.js');  // [v6.4.6] 已从 git 恢复
+    const aiEngine = new AI.ActiveInference();
+    const candidates = (hypotheses || []).map(h => ({
+      label: (h.description || h || '').substring(0, 40),
+      pragmaticScore: h.score || 0.5,
+      uncertainty: 1 - (h.confidence || 0.5),
+      novelty: h.isNovel ? 0.8 : 0.3,
+    }));
+    if (candidates.length > 0) enrichment.activeInference = aiEngine.decide(candidates, { timePressure: 0.3 });
+  } catch(e) {} // 防御性: 模块加载/调用失败不阻断主流程
+  try {
+    const draft = conclusion || '';
+    if (draft.length > 10) {
+      const { checkCertainty } = require('../shield/language-honesty.js');
+      const check = checkCertainty(draft);
+      enrichment.biasCheck = { overconfidence: check.level === 'over', certaintyLevel: check.level || 'normal' };
+    }
+  } catch(e) {} // 防御性: 模块加载/调用失败不阻断主流程
+  return enrichment;
+};
+
+module.exports = {
+  ThoughtChain,
+  createThoughtChain,
+  REASONING_DEPTH,
+  TASK_STRATEGIES
+};

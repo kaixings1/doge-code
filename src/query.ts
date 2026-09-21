@@ -203,6 +203,14 @@ export type QueryParams = {
   skipCacheWrite?: boolean
   taskBudget?: { total: number }
   deps?: QueryDeps
+  /** 自动继续配置：默认全部开启 */
+  autoContinue?: {
+    enabled?: boolean
+    maxCount?: number
+    readSearch?: boolean
+    continueKeyword?: boolean
+    endTurn?: boolean
+  }
 }
 
 type State = {
@@ -217,6 +225,8 @@ type State = {
   turnCount: number
   emptyContentRetryCount: number
   transition: Continue | undefined
+  lastToolCalls: Array<{ name: string }>
+  autoContinueCount: number
 }
 
 export async function* query(
@@ -250,7 +260,11 @@ function createNextState(
     maxOutputTokensOverride: undefined,
     pendingToolUseSummary: undefined,
     stopHookActive: undefined,
+    lastToolCalls: [],
   }
+  // autoContinueCount 故意不在此重置：它是跨轮次的累计计数器，用于封顶
+  // 自动继续次数（maxCount）。若清零，各自动继续分支里的 += 1 将恒为 1，
+  // maxCount 永远不触顶 → 无限循环（会话停住不动、后台持续发请求）。
   return {
     ...base,
     ...defaultReset,
@@ -327,6 +341,8 @@ async function* queryLoop(
     emptyContentRetryCount: 0,
     pendingToolUseSummary: undefined,
     transition: undefined,
+    lastToolCalls: [],
+    autoContinueCount: 0,
   }
   const budgetTracker = feature('TOKEN_BUDGET') ? createBudgetTracker() : null
 
@@ -541,6 +557,14 @@ async function* queryLoop(
     const toolResults: (UserMessage | AttachmentMessage)[] = []
     const toolUseBlocks: ToolUseBlock[] = []
     let needsFollowUp = false
+
+    // 这三个变量必须声明在自动继续分支（本循环体后半段）之前，因为该分支
+    // 会读取它们。原先它们声明在循环体尾部，导致 TDZ
+    // ReferenceError: Cannot access 'xxx' before initialization，
+    // 使自动继续的 continue 静默抛错、会话卡死。
+    let updatedToolUseContext = toolUseContext
+    let nextTurnCount = turnCount + 1
+    let nextPendingToolUseSummary: Promise<ToolUseSummaryMessage | null> | undefined
 
     queryCheckpoint('query_setup_start')
     const useStreamingToolExecution = config.gates.streamingToolExecution
@@ -1236,12 +1260,69 @@ async function* queryLoop(
         }
       }
 
+      // ── 自动继续：在结束前检查是否应继续 ──
+      // 注意：下面三个变量原先声明在循环体尾部（1313/1362/1457 行附近），
+      // 但自动继续分支在它们声明之前就要读取，触发 TDZ 的
+      // ReferenceError: Cannot access 'xxx' before initialization，
+      // 导致 continue 时静默抛错、会话卡死。已在循环体前部提前声明。
+      if (!toolUseBlocks.length && assistantMessages.length > 0) {
+        const lastAssistant = assistantMessages.at(-1)
+        const textBlocks = contentBlocksOf(lastAssistant).filter(b => b.type === 'text')
+        const replyText = textBlocks.map(b => 'text' in b ? b.text : '').join('').trim()
+        const ac = params.autoContinue
+        const acEnabled = ac?.enabled ?? true
+        const acLeft = ac?.maxCount ?? 10
+        if (acEnabled && state.autoContinueCount < acLeft && replyText) {
+          // read/search/grep 后短回复触发
+          const acReadSearch = ac?.readSearch ?? true
+          const hadReadOrSearch = state.lastToolCalls.some(
+            tc => tc.name === 'read' || tc.name === 'search' || tc.name === 'glob' || tc.name === 'grep'
+          )
+          if (
+            acReadSearch
+            && hadReadOrSearch
+            && replyText.length < 200
+          ) {
+            logForDebugging('[AUTO_CONTINUE] read/search 后短回复，自动继续')
+            state = createNextState(state, {
+              messages: [...messagesForQuery, ...assistantMessages, ...toolResults],
+              toolUseContext: updatedToolUseContext,
+              autoCompactTracking: tracking,
+              turnCount: nextTurnCount,
+              pendingToolUseSummary: nextPendingToolUseSummary,
+              transition: { reason: 'autoContinue_readSearch' },
+            })
+            state.autoContinueCount += 1
+            continue
+          }
+          // 关键词触发
+          const acKeyword = ac?.continueKeyword ?? true
+          if (
+            acKeyword
+            && /要不要我继续|需要我继续|并继续下一轮|让我继续|是否继续|是否需要|是否同意|需要我|继续吗|确认一下|要不要|需不需要|可不可以|行不行|能不能|是否可以|是否要|是否需|可以吗|开始吗|同意吗|确认吗|有问题吗|没问题吧|没问题|请问|是不是|对不对|可否|是否可行|是否|继续|需要|确认|同意|好吗|行吗/.test(replyText)
+          ) {
+            logForDebugging('[AUTO_CONTINUE] 检测到关键词，自动继续')
+            const continueMsg = createUserMessage({ content: '继续', isMeta: true })
+            state = createNextState(state, {
+              messages: [...messagesForQuery, ...assistantMessages, ...toolResults, continueMsg],
+              toolUseContext: updatedToolUseContext,
+              autoCompactTracking: tracking,
+              turnCount: nextTurnCount,
+              pendingToolUseSummary: nextPendingToolUseSummary,
+              transition: { reason: 'autoContinue_keyword' },
+            })
+            state.autoContinueCount += 1
+            continue
+          }
+        }
+      }
+
       playTaskCompleteSound()
       return { reason: 'completed' }
     }
 
     let shouldPreventContinuation = false
-    let updatedToolUseContext = toolUseContext
+    // updatedToolUseContext 已在循环体前部声明（供自动继续分支使用）
 
     queryCheckpoint('query_tool_execution_start')
 
@@ -1290,9 +1371,7 @@ async function* queryLoop(
     }
     queryCheckpoint('query_tool_execution_end')
 
-    let nextPendingToolUseSummary:
-      | Promise<ToolUseSummaryMessage | null>
-      | undefined
+    // nextPendingToolUseSummary 已在循环体前部声明（供自动继续分支使用）
     if (
       config.gates.emitToolUseSummaries &&
       toolUseBlocks.length > 0 &&
@@ -1385,7 +1464,7 @@ async function* queryLoop(
       return { reason: 'hook_stopped' }
     }
 
-    let nextTurnCount = turnCount + 1
+    // nextTurnCount 已在循环体前部声明（供自动继续分支使用）
 
     if (tracking?.compacted) {
       tracking.turnCounter++
@@ -1562,5 +1641,7 @@ async function* queryLoop(
       pendingToolUseSummary: nextPendingToolUseSummary,
       transition: { reason: 'next_turn' },
     })
+    // 更新 lastToolCalls 为当前轮次的工具调用
+    state.lastToolCalls = toolUseBlocks.map(b => ({ name: b.name }))
   }
 }

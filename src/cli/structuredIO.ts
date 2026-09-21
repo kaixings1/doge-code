@@ -168,7 +168,7 @@ export class StructuredIO {
    */
   private trackResolvedToolUseId(request: SDKControlRequest): void {
     if (request.request.subtype === 'can_use_tool') {
-      this.resolvedToolUseIds.add(request.request.tool_use_id)
+      this.resolvedToolUseIds.add((request.request as any).tool_use_id)
       if (this.resolvedToolUseIds.size > MAX_RESOLVED_TOOL_USE_IDS) {
         // 驱逐最旧的条目（Sets 按插入顺序迭代）
         const first = this.resolvedToolUseIds.values().next().value

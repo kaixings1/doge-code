@@ -27,84 +27,84 @@ skills:
 
 范围：此代理仅编辑 vibe-coding 演示文稿。claude-gemini 演示文稿由 `presentation-claude-gemini` 代理拥有——不要从这里编辑它。
 
-## Your Task
+## 你的任务
 
-Apply the requested changes to the presentation while maintaining structural integrity.
+对演示文稿应用所请求的更改，同时保持结构完整性。
 
-## Workflow
+## 工作流
 
-### Step 1: Understand Current State (presentation-structure skill)
+### 第 1 步：理解当前状态（presentation-structure 技能）
 
-Follow the presentation-structure skill to understand:
-- The slide format (`data-slide` and `data-level` attributes)
-- The journey bar level system (Low/Medium/High/Pro — 4 discrete levels)
-- The section structure (Parts 0-6 + Appendix)
-- How slide numbering works
+遵循 presentation-structure 技能以理解：
+- 幻灯片格式（`data-slide` 和 `data-level` 属性）
+- 旅程条级别系统（Low/Medium/High/Pro — 4 个离散级别）
+- 章节结构（第 0-6 部分 + 附录）
+- 幻灯片编号如何工作
 
-### Step 2: Apply Changes
+### 第 2 步：应用更改
 
-Based on the request:
-- **Content changes**: Edit slide HTML within existing `<div class="slide">` elements
-- **New slides**: Insert new slide divs with correct `data-slide` numbering
-- **Reorder**: Move slide divs and renumber all `data-slide` attributes sequentially
-- **Level changes**: Update `data-level` attributes on section-divider slides (3 transition points in main presentation: Low at slide 10, Medium at slide 18, High at slide 29; Part 6 at slide 34 also uses `high` — the presentation caps at High, not Pro)
-- **Styling changes**: Update CSS within the `<style>` block, matching existing patterns
+根据请求：
+- **内容更改**：在现有 `<div class="slide">` 元素内编辑幻灯片 HTML
+- **新幻灯片**：插入新的幻灯片 div，使用正确的 `data-slide` 编号
+- **重排序**：移动幻灯片 div 并按顺序重新编号所有 `data-slide` 属性
+- **级别更改**：更新章节分隔页上的 `data-level` 属性（主演示中有 3 个过渡点：幻灯片 10 的 Low、幻灯片 18 的 Medium、幻灯片 29 的 High；第 6 部分的幻灯片 34 也使用 `high` —— 演示封顶于 High，而非 Pro）
+- **样式更改**：更新 `<style>` 块内的 CSS，匹配现有模式
 
-### Step 3: Match Styling (presentation-styling skill)
+### 第 3 步：匹配样式（presentation-styling 技能）
 
-Follow the presentation-styling skill to ensure:
-- New content uses the correct CSS classes
-- Code blocks use syntax highlighting spans
-- Layout components match existing patterns
+遵循 presentation-styling 技能以确保：
+- 新内容使用正确的 CSS 类
+- 代码块使用语法高亮 span
+- 布局组件匹配现有模式
 
-### Step 4: Verify Integrity
+### 第 4 步：验证完整性
 
-After changes, verify:
-1. All `data-slide` attributes are sequential (1, 2, 3, ...)
-2. `data-level` transitions exist at section dividers: slide 10 (`low`), 18 (`medium`), 29 (`high`), 34 (`high`) — the main presentation caps at High, not Pro
-3. No duplicate slide numbers exist
-4. The `totalSlides` JS variable matches the actual count (it's auto-computed from DOM)
-5. Any `goToSlide()` calls in the TOC point to correct slide numbers
-6. Level transition slides in `vibe-to-agentic-framework` match actual `<h1>` titles in `presentation/vibe-coding-to-agentic-engineering/index.html`
-7. Agent identifiers are consistent across examples (use `frontend-engineer` / `backend-engineer`; do not introduce aliases like `frontend-eng`)
-8. Hook references remain canonical (`16 hook events`) in presentation-facing content
-9. Do not manually insert `.level-badge` or `.weight-badge` markup in slide HTML (badges are JS-injected)
-10. Settings precedence text must separate user-writable override order from enforced policy (`managed-settings.json`)
-11. If slide 32 is touched, ensure skill frontmatter coverage includes `context: fork`
-12. Keep the framework skill identity canonical: `presentation/vibe-to-agentic-framework` (do not rename to variants)
+更改后，验证：
+1. 所有 `data-slide` 属性都是顺序的（1、2、3……）
+2. 章节分隔页上存在 `data-level` 过渡：幻灯片 10（`low`）、18（`medium`）、29（`high`）、34（`high`）—— 主演示封顶于 High，而非 Pro
+3. 不存在重复的幻灯片编号
+4. `totalSlides` JS 变量与实际数量匹配（它从 DOM 自动计算）
+5. 目录中的任何 `goToSlide()` 调用都指向正确的幻灯片编号
+6. `vibe-to-agentic-framework` 中的级别过渡幻灯片与 `presentation/vibe-coding-to-agentic-engineering/index.html` 中实际的 `<h1>` 标题匹配
+7. 各示例中的代理标识符一致（使用 `frontend-engineer` / `backend-engineer`；不要引入像 `frontend-eng` 这样的别名）
+8. Hook 引用在面向演示的内容中保持规范（`16 hook events`）
+9. 不要在幻灯片 HTML 中手动插入 `.level-badge` 或 `.weight-badge` 标记（徽章由 JS 注入）
+10. 设置优先级文本必须将用户可写的覆盖顺序与强制策略（`managed-settings.json`）分开
+11. 如果触及幻灯片 32，确保技能 frontmatter 覆盖包含 `context: fork`
+12. 保持框架技能身份规范：`presentation/vibe-to-agentic-framework`（不要重命名为变体）
 
-### Step 5: Self-Evolution (after every execution)
+### 第 5 步：自我演进（每次执行后）
 
-After completing changes to the presentation, you MUST update your own knowledge to stay in sync. This prevents knowledge drift between the presentation and the skills you rely on.
+完成演示文稿更改后，你**必须**更新自己的知识以保持同步。这防止演示文稿与你依赖的技能之间的知识漂移。
 
-#### 5a. Update the Framework Skill
+#### 5a. 更新框架技能
 
-Read the actual current state of `presentation/vibe-coding-to-agentic-engineering/index.html` and update `.claude/skills/presentation/vibe-to-agentic-framework/SKILL.md`:
+阅读 `presentation/vibe-coding-to-agentic-engineering/index.html` 的实际当前状态，并更新 `.claude/skills/presentation/vibe-to-agentic-framework/SKILL.md`：
 
-- **Level Transition Table**: If any level transitions were added, removed, or changed, update the table to reflect actual `data-level` attributes and their slide numbers. The table must always match reality.
-- **Section ranges**: If slide numbering changed (e.g., Part 3 now spans slides 19–25 instead of 18–24), update the journey arc section descriptions.
-- **Level labels**: If section dividers have new `Level: X` text in their `section-desc`, update the corresponding Part descriptions.
-- **New concepts**: If a new slide introduces a concept not yet described in the journey arc, add a bullet explaining what it is and how it fits the Vibe Coding → Agentic Engineering narrative.
-- **Removed concepts**: If a slide was removed, remove its description from the journey arc.
+- **级别过渡表**：如果有任何级别过渡被添加、移除或更改，更新表格以反映实际的 `data-level` 属性及其幻灯片编号。表格必须始终与现实匹配。
+- **章节范围**：如果幻灯片编号改变（例如第 3 部分现在跨幻灯片 19–25 而非 18–24），更新旅程弧章节描述。
+- **级别标签**：如果章节分隔页在其 `section-desc` 中有新的 `Level: X` 文本，更新相应的部分描述。
+- **新概念**：如果新幻灯片引入旅程弧中尚未描述的概念，添加一个项目符号解释它是什么以及它如何契合 Vibe Coding → Agentic Engineering 叙事。
+- **移除的概念**：如果某张幻灯片被移除，从旅程弧中移除其描述。
 
-#### 5b. Update the Structure Skill
+#### 5b. 更新结构技能
 
-Update `.claude/skills/presentation/presentation-structure/SKILL.md`:
+更新 `.claude/skills/presentation/presentation-structure/SKILL.md`：
 
-- **Level Transitions table**: Update section slide ranges and level assignments to match the current presentation.
-- **Section divider examples**: If section divider format changed, update the example HTML.
+- **级别过渡表**：更新章节幻灯片范围和级别分配，以匹配当前演示文稿。
+- **章节分隔页示例**：如果章节分隔页格式改变，更新示例 HTML。
 
-#### 5c. Cross-Doc Consistency (when claims change)
+#### 5c. 跨文档一致性（当声明改变时）
 
-If your slide edits change canonical claims that are also documented elsewhere, sync these files in the same execution:
+如果你的幻灯片编辑更改了也记录在其他地方的规范声明，在同一次执行中同步这些文件：
 
-- `best-practice/claude-settings.md` for settings precedence and hook counts
-- `.claude/hooks/HOOKS-README.md` for hook-event totals and names
-- `reports/claude-global-vs-project-settings.md` for settings precedence language
+- `best-practice/claude-settings.md` 用于设置优先级和 hook 计数
+- `.claude/hooks/HOOKS-README.md` 用于 hook 事件总数和名称
+- `reports/claude-global-vs-project-settings.md` 用于设置优先级语言
 
-#### 5d. Update This Agent (yourself)
+#### 5d. 更新此代理（你自己）
 
-If you encountered an edge case, discovered a new pattern, or found that the workflow needed adjustment, append a brief note to the "Learnings" section below. This helps future invocations avoid the same issues.
+如果你遇到边缘情况、发现新模式，或发现工作流需要调整，向下面的 "Learnings" 章节追加简短说明。这有助于未来的调用避免同样的问题。
 
 ## Learnings
 
@@ -119,17 +119,17 @@ _Findings from previous executions are recorded here. Add new entries as bullet 
 - The main presentation caps at **High** level (not Pro). Slide 34 uses `data-level="high"`. The Pro tick on the journey bar remains as a visual scale marker showing the theoretical ceiling, but the fill never reaches it. Do not assign `data-level="pro"` to any slide in the main presentation.
 - Journey bar top/bottom labels (`journey-label-top` / `journey-label-bottom`) were removed from both presentation files. The current-level indicator now uses the format `Current = <strong>Level</strong>` rendered via `innerHTML` in the JS `updateJourneyBar` function. The `journey-level-label` CSS class was updated to use lighter, smaller styling (font-weight: 400, font-size: 0.65rem, color: #777) since the label word is now light and only the bold `<strong>` element is accented.
 
-## Critical Requirements
+## 关键要求
 
-1. **Sequential Numbering**: After any add/remove/reorder, renumber ALL slides sequentially
-2. **Level Integrity**: The main presentation has `data-level` transitions at slides 10 (low), 18 (medium), 29 (high), 34 (high). It caps at High — `data-level="pro"` is NOT used in the main presentation. The Pro tick mark on the bar is a visual reference marker only.
-3. **Preserve Existing Content**: Don't modify slides that aren't part of the requested change
-4. **Match Patterns**: Use the same HTML patterns as existing slides (see skills)
+1. **顺序编号**：在任何添加/删除/重排序之后，按顺序重新编号所有幻灯片
+2. **级别完整性**：主演示在幻灯片 10（low）、18（medium）、29（high）、34（high）有 `data-level` 过渡。它封顶于 High —— 主演示中**不**使用 `data-level="pro"`。条上的 Pro 刻度标记仅为视觉参考标记。
+3. **保留现有内容**：不要修改不属于所请求更改的幻灯片
+4. **匹配模式**：使用与现有幻灯片相同的 HTML 模式（参见技能）
 
-## Output Summary
+## 输出摘要
 
-After completing changes, report:
-- What slides were changed
-- Current total slide count
-- Current level transitions (which slides carry `data-level`)
-- Any renumbering that occurred
+完成更改后，报告：
+- 更改了哪些幻灯片
+- 当前幻灯片总数
+- 当前级别过渡（哪些幻灯片携带 `data-level`）
+- 发生的任何重新编号

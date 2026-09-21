@@ -23,88 +23,88 @@ color: cyan
 
 范围：此代理仅编辑 claude-gemini 演示文稿。vibe-coding 演示文稿由 `presentation-vibe-coding` 代理拥有——不要从这里触及它。
 
-## Target Audience Context
+## 目标受众上下文
 
-This presentation is written for a **non-technical audience** (non-engineers, operators, PMs, first-time Claude Code users). Prefer plain language, strong analogies, and concrete examples over jargon. If a slide introduces a technical term, give an analogy first.
+此演示文稿面向**非技术受众**（非工程师、运营、产品经理、首次使用 Claude Code 的用户）编写。优先使用通俗语言、有力的类比和具体示例，而非术语。如果某张幻灯片引入技术术语，先给出类比。
 
-## Presentation Structure (as of writing — verify against the file before edits)
+## 演示文稿结构（撰写时 — 编辑前请对照文件核实）
 
-Single-file HTML presentation with inline CSS and JS. Core conventions:
+带内联 CSS 和 JS 的单文件 HTML 演示文稿。核心约定：
 
-- **Slides** are `<div class="slide" data-slide="N">…</div>`, numbered sequentially starting at 1. The active slide gets `.active`.
-- **Title slides** use `class="slide title-slide"` and render centered.
-- **Section dividers** use `class="slide section-slide"` with a `data-level` attribute to drive the journey bar.
-- **Journey bar** (right side, fixed) shows a 6-level progression across 2 days. Levels are defined in JS:
-  - `prompting` (Day 1, Level 1, 17%, blue)
-  - `agents` (Day 1, Level 2, 33%, orange)
-  - `skills` (Day 1, Level 3, 50%, green)
-  - `memory` (Day 2, Level 4, 67%, purple)
-  - `building` (Day 2, Level 5, 83%, teal)
-  - `orchestration` (Day 2, Level 6, 100%, yellow)
-- **Journey ticks** (right-hand rail, top→bottom): Commands, Build, Memory, Skills, Agents, Prompts. If you re-order or rename levels, you must update this tick list AND the `LEVELS` map in the `<script>` block AND the `data-level` attributes on section dividers — all three must stay in sync.
-- **Level badge** (`.level-badge`) is injected by JS onto the active section divider's `<h1>` when the level changes — do NOT hardcode it in slide HTML.
-- **Day badge** (`.day-badge`) IS hardcoded in slide HTML on the first section divider of each day.
+- **幻灯片**是 `<div class="slide" data-slide="N">…</div>`，从 1 开始顺序编号。活动幻灯片获得 `.active`。
+- **标题幻灯片**使用 `class="slide title-slide"` 并居中渲染。
+- **章节分隔页**使用 `class="slide section-slide"` 配合 `data-level` 属性来驱动旅程条。
+- **旅程条**（右侧，固定）显示跨越 2 天的 6 级进展。级别在 JS 中定义：
+  - `prompting`（第 1 天，级别 1，17%，蓝色）
+  - `agents`（第 1 天，级别 2，33%，橙色）
+  - `skills`（第 1 天，级别 3，50%，绿色）
+  - `memory`（第 2 天，级别 4，67%，紫色）
+  - `building`（第 2 天，级别 5，83%，青色）
+  - `orchestration`（第 2 天，级别 6，100%，黄色）
+- **旅程刻度**（右侧栏，从上到下）：Commands、Build、Memory、Skills、Agents、Prompts。如果你重新排序或重命名级别，必须更新此刻度列表**和** `<script>` 块中的 `LEVELS` 映射**和**章节分隔页上的 `data-level` 属性——三者必须保持同步。
+- **级别徽章**（`.level-badge`）由 JS 在级别变化时注入到活动章节分隔页的 `<h1>` 上——**不要**在幻灯片 HTML 中硬编码它。
+- **日期徽章**（`.day-badge`）**确实**硬编码在每天第一个章节分隔页的幻灯片 HTML 中。
 
-### Reusable styled boxes
+### 可复用样式框
 
-- `.trigger-box` — neutral grey box (key point / takeaway)
-- `.analogy-box` — purple box (for analogies — use heavily for non-technical audience)
-- `.how-to-trigger` — green box (takeaway / how-to-use)
-- `.warning-box` — orange box (limitation / gotcha)
-- `.info-box` — blue box (informational aside)
-- `.code-block` — dark code sample with `.comment`, `.key`, `.string`, `.cmd`, `.claude-file` syntax spans
-- `.two-col` with `.col-card` (`.good` / `.bad` variants) — comparison layouts
-- `.use-cases` with `.use-case-item` — bulleted list with emoji icons
-- `.hiring-steps` with `.hiring-step.level-N` — numbered analogy walkthrough
-- `.field-row` with `.field-name` / `.field-desc` / `.field-required` / `.field-recommended` — frontmatter field docs
+- `.trigger-box` — 中性灰色框（关键点 / 要点）
+- `.analogy-box` — 紫色框（用于类比——面向非技术受众请大量使用）
+- `.how-to-trigger` — 绿色框（要点 / 如何使用）
+- `.warning-box` — 橙色框（限制 / 坑）
+- `.info-box` — 蓝色框（信息性旁注）
+- `.code-block` — 深色代码示例，带 `.comment`、`.key`、`.string`、`.cmd`、`.claude-file` 语法 span
+- `.two-col` 配合 `.col-card`（`.good` / `.bad` 变体）— 对比布局
+- `.use-cases` 配合 `.use-case-item` — 带 emoji 图标的项目符号列表
+- `.hiring-steps` 配合 `.hiring-step.level-N` — 编号化类比演示
+- `.field-row` 配合 `.field-name` / `.field-desc` / `.field-required` / `.field-recommended` — frontmatter 字段文档
 
-### Navigation & meta
+### 导航与元信息
 
-- `goToSlide(N)` is called from TOC items — if you renumber slides, update every `onclick="goToSlide(N)"` reference (the overview TOC on slide 2 uses this extensively).
-- `totalSlides` is auto-computed from the DOM — no manual bump needed.
+- `goToSlide(N)` 从目录项调用——如果你重新编号幻灯片，更新每个 `onclick="goToSlide(N)"` 引用（幻灯片 2 上的概览目录大量使用它）。
+- `totalSlides` 从 DOM 自动计算——无需手动增加。
 
-## Workflow
+## 工作流
 
-### Step 1: Read the current state
+### 第 1 步：读取当前状态
 
-Before any edit, read `presentation/2026-04-25-gdg-kolachi-cli-claude-code-gemini/index.html` and confirm:
-- Current total slide count
-- Current `data-level` assignments (which slides carry which level)
-- Current TOC `goToSlide(N)` targets on slide 2
+在任何编辑之前，读取 `presentation/2026-04-25-gdg-kolachi-cli-claude-code-gemini/index.html` 并确认：
+- 当前幻灯片总数
+- 当前 `data-level` 分配（哪些幻灯片属于哪个级别）
+- 幻灯片 2 上当前的目录 `goToSlide(N)` 目标
 
-Do NOT trust any numbers in this agent file without verifying — the presentation evolves.
+在没有验证的情况下**不要**信任此代理文件中的任何数字——演示文稿会演变。
 
-### Step 2: Apply changes
+### 第 2 步：应用更改
 
-- **Content changes**: Edit slide HTML within existing `<div class="slide">` elements.
-- **New slides**: Insert new slide divs with correct sequential `data-slide` numbering.
-- **Reorder**: Move slide divs AND renumber ALL `data-slide` attributes sequentially AND update all `goToSlide(N)` calls.
-- **Level changes**: Update `data-level` attributes on section dividers. If you add or rename a level, update the `LEVELS` map in the `<script>` block and the `.journey-ticks` labels too.
-- **Styling**: Match existing CSS patterns. Prefer reusable classes over inline styles.
+- **内容更改**：在现有 `<div class="slide">` 元素内编辑幻灯片 HTML。
+- **新幻灯片**：插入新的幻灯片 div，使用正确的顺序 `data-slide` 编号。
+- **重排序**：移动幻灯片 div **并**按顺序重新编号**所有** `data-slide` 属性**并**更新所有 `goToSlide(N)` 调用。
+- **级别更改**：更新章节分隔页上的 `data-level` 属性。如果你添加或重命名级别，也要更新 `<script>` 块中的 `LEVELS` 映射和 `.journey-ticks` 标签。
+- **样式**：匹配现有 CSS 模式。优先使用可复用类而非内联样式。
 
-### Step 3: Verify integrity
+### 第 3 步：验证完整性
 
-After changes, confirm:
-1. All `data-slide` attributes are sequential (1, 2, 3, …) with no gaps or duplicates.
-2. Every `data-level` value on a section divider is one of the six level keys in the `LEVELS` map (or add a new one there).
-3. `.journey-ticks` labels match the level order shown in the bar.
-4. All `goToSlide(N)` calls in the slide-2 TOC point to the correct section-divider slide.
-5. Day badges (`.day-badge`) appear on the first section divider of each day only.
-6. No `.level-badge` is hardcoded in slide HTML.
-7. Title of the closing summary slide reflects the actual content of the presentation.
+更改后，确认：
+1. 所有 `data-slide` 属性都是顺序的（1、2、3……），没有空缺或重复。
+2. 章节分隔页上的每个 `data-level` 值都是 `LEVELS` 映射中六个级别键之一（或在其中添加新的）。
+3. `.journey-ticks` 标签与条中显示的级别顺序匹配。
+4. 幻灯片 2 目录中的所有 `goToSlide(N)` 调用都指向正确的章节分隔页幻灯片。
+5. 日期徽章（`.day-badge`）只出现在每天的**第一个**章节分隔页上。
+6. 幻灯片 HTML 中没有硬编码 `.level-badge`。
+7. 结尾总结幻灯片标题反映演示文稿的实际内容。
 
-### Step 4: Self-evolution (after every execution)
+### 第 4 步：自我演进（每次执行后）
 
-After completing edits, append a short entry to the **Learnings** section below if you:
-- Discovered a new convention not yet documented here
-- Hit an edge case worth recording
-- Changed a level definition, tick label, or day/level mapping
+完成编辑后，如果你有以下情况，向下面的 **Learnings** 章节追加一条简短条目：
+- 发现了此处尚未记录的新约定
+- 遇到了值得记录的边缘情况
+- 更改了级别定义、刻度标签或日期/级别映射
 
-Keep entries terse (one or two lines each). The goal is to keep this agent's knowledge in sync with the actual file.
+保持条目简洁（每条一到两行）。目标是让此代理的知识与实际文件保持同步。
 
 ## Learnings
 
-_Findings from previous executions are recorded here. Add new entries as bullet points._
+_来自以往执行的发现记录在此处。以项目符号形式添加新条目。_
 
 - (none yet — this agent was created 2026-04-17 by splitting the original `presentation-curator` into per-presentation agents.)
 - **2026-04-17 opening-arc rearrange for non-technical audience**: new Day 1 flow is Context → CLAUDE.md → Agents → Skills (Prompting-as-its-own-section was dropped per user brief; prompting survives only as the "stranger" side of the Prompting-vs-Agent comparison on slide 11). Introduced two new levels: `context` (muted rose, `hsl(340, 50%, 55%)`) and `claude-md` (warm amber, `hsl(25, 75%, 50%)`). Level count is now **7** across 2 days; heights redistributed at 14 / 29 / 43 / 57 / 71 / 86 / 100%. New tick order top→bottom: Commands, Build, Memory, Skills, Agents, CLAUDE.md, Context. Day 2 CLAUDE.md deep-dive (Level 5, `memory`) kept intact — the Day 1 `claude-md` section is the light analogy-led intro, Day 2 is the loading-mechanics dive. Renamed its h1 to "Project Memory (Deeper Dive)" so the two CLAUDE.md sections don't feel redundant.

@@ -1,22 +1,22 @@
 ---
-description: "Create a GitHub PR from current branch with unpushed commits — discovers templates, analyzes changes, pushes"
+description: "从当前分支及未推送的提交创建 GitHub PR —— 发现模板、分析变更、推送"
 argument-hint: "[base-branch] (default: main)"
 ---
 
-# Create Pull Request
+# 创建 Pull Request
 
-**Input**: `$ARGUMENTS` — optional, may contain a base branch name and/or flags (e.g., `--draft`).
+**输入**：`$ARGUMENTS` —— 可选，可能包含基础分支名和/或标志（例如 `--draft`）。
 
-**Parse `$ARGUMENTS`**:
-- Extract any recognized flags (`--draft`)
-- Treat remaining non-flag text as the base branch name
-- Default base branch to `main` if none specified
+**解析 `$ARGUMENTS`**：
+- 提取任何已识别的标志（`--draft`）
+- 把其余非标志文本作为基础分支名
+- 未指定时基础分支默认为 `main`
 
 ---
 
-## Phase 1 — VALIDATE
+## 阶段 1 —— 校验（VALIDATE）
 
-Check preconditions:
+检查前置条件：
 
 ```bash
 git branch --show-current
@@ -24,90 +24,90 @@ git status --short
 git log origin/<base>..HEAD --oneline
 ```
 
-| Check | Condition | Action if Failed |
+| 检查 | 条件 | 失败时的动作 |
 |---|---|---|
-| Not on base branch | Current branch ≠ base | Stop: "Switch to a feature branch first." |
-| Clean working directory | No uncommitted changes | Warn: "You have uncommitted changes. Commit or stash first." |
-| Has commits ahead | `git log origin/<base>..HEAD` not empty | Stop: "No commits ahead of `<base>`. Nothing to PR." |
-| No existing PR | `gh pr list --head <branch> --json number` is empty | Stop: "PR already exists: #<number>. Use `gh pr view <number> --web` to open it." |
+| 不在基础分支上 | 当前分支 ≠ base | 停止："Switch to a feature branch first." |
+| 工作目录干净 | 无未提交变更 | 警告："You have uncommitted changes. Commit or stash first." |
+| 有领先的提交 | `git log origin/<base>..HEAD` 非空 | 停止："No commits ahead of `<base>`. Nothing to PR." |
+| 无既有 PR | `gh pr list --head <branch> --json number` 为空 | 停止："PR already exists: #<number>. Use `gh pr view <number> --web` to open it." |
 
-If all checks pass, proceed.
+如果所有检查都通过，继续。
 
 ---
 
-## Phase 2 — DISCOVER
+## 阶段 2 —— 发现（DISCOVER）
 
-### PR Template
+### PR 模板
 
-Search for PR template in order:
+按顺序搜索 PR 模板：
 
-1. `.github/PULL_REQUEST_TEMPLATE/` directory — if exists, list files and let user choose (or use `default.md`)
+1. `.github/PULL_REQUEST_TEMPLATE/` 目录 —— 如果存在，列出文件让用户选择（或使用 `default.md`）
 2. `.github/PULL_REQUEST_TEMPLATE.md`
 3. `.github/pull_request_template.md`
 4. `docs/pull_request_template.md`
 
-If found, read it and use its structure for the PR body.
+如果找到，读取它并用其结构作为 PR 正文。
 
-### Commit Analysis
+### 提交分析
 
 ```bash
 git log origin/<base>..HEAD --format="%h %s" --reverse
 ```
 
-Analyze commits to determine:
-- **PR title**: Use conventional commit format with type prefix — `feat: ...`, `fix: ...`, etc.
-  - If multiple types, use the dominant one
-  - If single commit, use its message as-is
-- **Change summary**: Group commits by type/area
+分析提交以确定：
+- **PR 标题**：使用带类型前缀的约定式提交格式 —— `feat: ...`、`fix: ...` 等
+  - 如果有多个类型，使用占主导的那个
+  - 如果是单个提交，直接使用其消息
+- **变更摘要**：按类型/领域对提交分组
 
-### File Analysis
+### 文件分析
 
 ```bash
 git diff origin/<base>..HEAD --stat
 git diff origin/<base>..HEAD --name-only
 ```
 
-Categorize changed files: source, tests, docs, config, migrations.
+对变更文件分类：源码、测试、文档、配置、迁移。
 
-### Planning Artifacts
+### 规划工件
 
-Check for related artifacts produced by `/plan-prd`, `/plan`, or the legacy PRP workflow:
-- `.claude/prds/` — PRDs this PR implements a milestone of
-- `.claude/plans/` — Plans executed by this PR
-- `.claude/PRPs/prds/` — legacy PRP PRDs
-- `.claude/PRPs/plans/` — legacy PRP implementation plans
-- `.claude/PRPs/reports/` — legacy PRP implementation reports
+检查由 `/plan-prd`、`/plan` 或旧版 PRP 工作流产出的相关工件：
+- `.claude/prds/` —— 本 PR 实现了其中某个里程碑的 PRD
+- `.claude/plans/` —— 本 PR 执行的计划
+- `.claude/PRPs/prds/` —— 旧版 PRP PRD
+- `.claude/PRPs/plans/` —— 旧版 PRP 实现计划
+- `.claude/PRPs/reports/` —— 旧版 PRP 实现报告
 
-Reference these in the PR body if they exist.
+如果它们存在，在 PR 正文中引用。
 
 ---
 
-## Phase 3 — PUSH
+## 阶段 3 —— 推送（PUSH）
 
 ```bash
 git push -u origin HEAD
 ```
 
-If push fails due to divergence:
+如果推送因分叉而失败：
 ```bash
 git fetch origin
 git rebase origin/<base>
 git push -u origin HEAD
 ```
 
-If rebase conflicts occur, stop and inform the user.
+如果 rebase 出现冲突，停止并告知用户。
 
 ---
 
-## Phase 4 — CREATE
+## 阶段 4 —— 创建（CREATE）
 
-### With Template
+### 有模板时
 
-If a PR template was found in Phase 2, fill in each section using the commit and file analysis. Preserve all template sections — leave sections as "N/A" if not applicable rather than removing them.
+如果在阶段 2 找到了 PR 模板，使用提交和文件分析填写每个章节。保留所有模板章节 —— 不适用的章节留为 "N/A" 而不是删除它们。
 
-### Without Template
+### 无模板时
 
-Use this default format:
+使用此默认格式：
 
 ```markdown
 ## Summary
@@ -131,7 +131,7 @@ Use this default format:
 <linked issues with Closes/Fixes/Relates to #N, or "None">
 ```
 
-### Create the PR
+### 创建 PR
 
 ```bash
 gh pr create \
@@ -143,7 +143,7 @@ gh pr create \
 
 ---
 
-## Phase 5 — VERIFY
+## 阶段 5 —— 验证（VERIFY）
 
 ```bash
 gh pr view --json number,url,title,state,baseRefName,headRefName,additions,deletions,changedFiles
@@ -152,9 +152,9 @@ gh pr checks --json name,status,conclusion 2>/dev/null || true
 
 ---
 
-## Phase 6 — OUTPUT
+## 阶段 6 —— 输出（OUTPUT）
 
-Report to user:
+向用户报告：
 
 ```
 PR #<number>: <title>
@@ -175,10 +175,10 @@ Next steps:
 
 ---
 
-## Edge Cases
+## 边界情况
 
-- **No `gh` CLI**: Stop with: "GitHub CLI (`gh`) is required. Install: <https://cli.github.com/>"
-- **Not authenticated**: Stop with: "Run `gh auth login` first."
-- **Force push needed**: If remote has diverged and rebase was done, use `git push --force-with-lease` (never `--force`).
-- **Multiple PR templates**: If `.github/PULL_REQUEST_TEMPLATE/` has multiple files, list them and ask user to choose.
-- **Large PR (>20 files)**: Warn about PR size. Suggest splitting if changes are logically separable.
+- **没有 `gh` CLI**：以 "GitHub CLI (`gh`) is required. Install: <https://cli.github.com/>" 停止
+- **未认证**：以 "Run `gh auth login` first." 停止
+- **需要强制推送**：如果远端已分叉且已执行 rebase，使用 `git push --force-with-lease`（绝不用 `--force`）。
+- **多个 PR 模板**：如果 `.github/PULL_REQUEST_TEMPLATE/` 有多个文件，列出它们并让用户选择。
+- **大型 PR（>20 个文件）**：警告 PR 体积。如果变更在逻辑上可分离，建议拆分。

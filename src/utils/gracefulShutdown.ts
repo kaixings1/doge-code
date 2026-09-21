@@ -124,10 +124,14 @@ function cleanupTerminalModes(): void {
     // Respect CLAUDE_CODE_DISABLE_TERMINAL_TITLE — if the user opted out of
     // title changes, don't clear their existing title on exit either.
     if (!isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_TERMINAL_TITLE)) {
+      // OSC 0 清空序列在所有平台都必须发送：它是清除终端标签页标题
+      // （含绿色空闲图标）的唯一可靠方式。win32 上仅 process.title=''
+      // 会把标题变成 "bun"（Bun 的进程名）而非清空，且非全屏模式下
+      // React 的 useTerminalTitle cleanup 不会运行（inst.unmount() 只在
+      // alt-screen 活跃时被调用），因此此处必须显式写 OSC 0。
+      writeSync(1, CLEAR_TERMINAL_TITLE)
       if (process.platform === 'win32') {
         process.title = ''
-      } else {
-        writeSync(1, CLEAR_TERMINAL_TITLE)
       }
     }
   } catch {

@@ -77,7 +77,7 @@ export const TaskSchema = lazySchema(() =>
   z.object({
     id: z.string(),
     subject: z.string(),
-    description: z.string(),
+    description: z.string().optional(),
     activeForm: z.string().optional(), // present continuous form for spinner (e.g., "Running tests")
     owner: z.string().optional(), // agent ID
     status: TaskStatusSchema(),

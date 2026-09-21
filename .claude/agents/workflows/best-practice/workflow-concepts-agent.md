@@ -25,113 +25,113 @@ allowedTools:
 
 ---
 
-## Phase 1: Fetch External Data (in parallel)
+## 阶段 1：获取外部数据（并行）
 
-Fetch all sources using WebFetch simultaneously:
+使用 WebFetch 同时获取所有源：
 
-1. **Claude Code Documentation Index** — `https://code.claude.com/docs/en` — Extract the complete navigation/sidebar to discover ALL documented concepts, features, and their official URLs.
-2. **Claude Code Changelog** — `https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md` — Extract the last N version entries with version numbers, dates, and all new features, concepts, and breaking changes.
-3. **Claude Code Features Overview** — `https://code.claude.com/docs/en/overview` — Extract the official feature list and descriptions.
+1. **Claude Code 文档索引** —— `https://code.claude.com/docs/en` —— 提取完整的导航/侧边栏以发现**所有**记录的文档、功能及其官方 URL。
+2. **Claude Code 变更日志** —— `https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md` —— 提取最近 N 个版本条目，含版本号、日期和所有新功能、概念和破坏性更改。
+3. **Claude Code 功能概览** —— `https://code.claude.com/docs/en/overview` —— 提取官方功能列表和描述。
 
-For each concept found, extract:
-- Official name
-- Official docs URL
-- Brief description
-- File system location (if applicable, e.g., `.claude/commands/`, `~/.claude/teams/`)
-- When it was introduced (version/date from changelog if available)
+对找到的每个概念，提取：
+- 官方名称
+- 官方文档 URL
+- 简要描述
+- 文件系统位置（如适用，例如 `.claude/commands/`、`~/.claude/teams/`）
+- 何时引入（如可用，来自变更日志的版本/日期）
 
 ---
 
-## Phase 2: Read Local Repository State (in parallel)
+## 阶段 2：读取本地仓库状态（并行）
 
-Read ALL of the following:
+读取以下**所有**：
 
-| File | What to extract |
+| 文件 | 要提取什么 |
 |------|-----------------|
-| `README.md` | The CONCEPTS table (lines 22-39 approximately) — extract every row: Feature name, link URL, location, description, and any badges |
-| `CLAUDE.md` | Any references to concepts or features not in the CONCEPTS table |
-| `reports/claude-global-vs-project-settings.md` | Features listed here (Tasks, Agent Teams, etc.) that may be missing from CONCEPTS |
+| `README.md` | CONCEPTS 表（约第 22-39 行）—— 提取每一行：功能名、链接 URL、位置、描述和任何徽章 |
+| `CLAUDE.md` | 任何 CONCEPTS 表中没有的概念或功能引用 |
+| `reports/claude-global-vs-project-settings.md` | 此处列出但可能从 CONCEPTS 中缺失的功能（Tasks、Agent Teams 等） |
 
 ---
 
-## Phase 3: Analysis
+## 阶段 3：分析
 
-Compare external data against the local README CONCEPTS section. Check for:
+对照本地 README CONCEPTS 章节比较外部数据。检查：
 
-### Missing Concepts
-Concepts/features present in official Claude Code docs but missing from the CONCEPTS table. Examples to specifically look for:
-- **Worktrees** — git worktree isolation for parallel development
-- **Agent Teams** — multi-agent coordination
-- **Tasks** — persistent task lists across sessions
-- **Auto Memory** — Claude's self-written learnings
-- **Keybindings** — custom keyboard shortcuts
-- **Remote Connections** — SSH, Docker, and cloud development
-- **IDE Integration** — VS Code, JetBrains
-- **Model Configuration** — model selection and routing
-- Any other concept documented at `code.claude.com/docs/en/*` not in the CONCEPTS table
+### 缺失的概念
+官方 Claude Code 文档中存在但 CONCEPTS 表中缺失的概念/功能。要特别留意的示例：
+- **Worktrees** —— 用于并行开发的 git worktree 隔离
+- **Agent Teams** —— 多代理协调
+- **Tasks** —— 跨会话的持久任务列表
+- **Auto Memory** —— Claude 自行编写的学习成果
+- **Keybindings** —— 自定义键盘快捷键
+- **Remote Connections** —— SSH、Docker 和云开发
+- **IDE Integration** —— VS Code、JetBrains
+- **Model Configuration** —— 模型选择和路由
+- `code.claude.com/docs/en/*` 记录的、不在 CONCEPTS 表中的任何其他概念
 
-### Changed Concepts
-Concepts whose official name, URL, location, or description has changed since last documented.
+### 已更改的概念
+自上次记录以来官方名称、URL、位置或描述已更改的概念。
 
-### Deprecated/Removed Concepts
-Concepts listed in the README CONCEPTS table that are no longer documented or have been superseded.
+### 已弃用/移除的概念
+README CONCEPTS 表中列出但不再记录或已被取代的概念。
 
-### URL Accuracy
-For each concept in the CONCEPTS table, verify:
-- The official docs URL is still valid
-- The URL hasn't changed or been redirected
-- The linked page actually covers the concept described
+### URL 准确性
+对 CONCEPTS 表中的每个概念，验证：
+- 官方文档 URL 仍然有效
+- URL 未更改或被重定向
+- 链接的页面实际涵盖所描述的概念
 
-### Description Accuracy
-For each concept, verify:
-- The location path is correct
-- The description matches the official docs
-- The feature name matches official naming
+### 描述准确性
+对每个概念，验证：
+- 位置路径正确
+- 描述匹配官方文档
+- 功能名匹配官方命名
 
-### Badge Accuracy
-For concepts with best-practice or implemented badges:
-- Verify the badge links point to existing files
-- Flag any concepts that should have badges but don't (e.g., a best-practice report exists but no badge is shown)
-
----
-
-## Return Format
-
-Return your findings as a structured report with these sections:
-
-1. **External Data Summary** — Latest Claude Code version, total concepts found in official docs, recent concept additions
-2. **Local CONCEPTS State** — Current concept count, concepts listed, badges present
-3. **Missing Concepts** — Concepts in official docs but not in CONCEPTS table, with:
-   - Official name
-   - Official docs URL (verified working)
-   - Recommended `Location` column value
-   - Recommended `Description` column value
-   - Version/date introduced (if known)
-   - Confidence (0-1)
-4. **Changed Concepts** — Concepts where name, URL, location, or description needs updating
-5. **Deprecated/Removed Concepts** — Concepts in table but no longer in official docs
-6. **URL Accuracy** — Per-concept URL verification results
-7. **Description Accuracy** — Per-concept description verification
-8. **Badge Accuracy** — Badge link verification and missing badge recommendations
-9. **Note on README** — Any structural observations about the CONCEPTS table format that might need attention
-
-Be thorough and specific. Include URLs, version numbers, and exact text where possible.
+### 徽章准确性
+对带最佳实践或已实现徽章的概念：
+- 验证徽章链接指向存在的文件
+- 标记任何应有徽章但没有的概念（例如存在最佳实践报告但未显示徽章）
 
 ---
 
-## Critical Rules
+## 返回格式
 
-1. **Fetch ALL sources** — never skip any
-2. **Never guess** versions, URLs, or dates — extract from fetched data
-3. **Read ALL local files** before analyzing
-4. **Missing concepts are HIGH PRIORITY** — flag them prominently
-5. **Verify every URL** — check that official docs links actually work
-6. **Do NOT modify any files** — this is read-only research
-7. **Include the exact row format** — for missing concepts, provide the exact markdown table row ready to paste
+将你的发现作为结构化报告返回，含这些章节：
+
+1. **外部数据摘要** —— 最新 Claude Code 版本、官方文档中找到的概念总数、最近的概念添加
+2. **本地 CONCEPTS 状态** —— 当前概念数、列出的概念、存在的徽章
+3. **缺失的概念** —— 官方文档中但 CONCEPTS 表中没有的概念，含：
+   - 官方名称
+   - 官方文档 URL（已验证有效）
+   - 推荐的 `Location` 列值
+   - 推荐的 `Description` 列值
+   - 引入的版本/日期（如已知）
+   - 置信度（0-1）
+4. **已更改的概念** —— 名称、URL、位置或描述需要更新的概念
+5. **已弃用/移除的概念** —— 表中但官方文档中没有的概念
+6. **URL 准确性** —— 每个概念的 URL 验证结果
+7. **描述准确性** —— 每个概念的描述验证
+8. **徽章准确性** —— 徽章链接验证和缺失徽章建议
+9. **关于 README 的说明** —— 关于 CONCEPTS 表格式的任何可能需要关注的结构性观察
+
+要彻底且具体。尽可能包含 URL、版本号和确切文本。
 
 ---
 
-## Sources
+## 关键规则
+
+1. **获取所有源** —— 绝不跳过任何一个
+2. **绝不猜测**版本、URL 或日期——从获取的数据中提取
+3. **读取所有本地文件**在分析之前
+4. **缺失的概念是高优先级** —— 突出标记它们
+5. **验证每个 URL** —— 检查官方文档链接实际有效
+6. **不要修改任何文件** —— 这是只读研究
+7. **包含确切的行动格式** —— 对缺失概念，提供可直接粘贴的确切 markdown 表行
+
+---
+
+## 来源
 
 1. [Claude Code Docs Index](https://code.claude.com/docs/en) — Official documentation navigation
 2. [Changelog](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md) — Claude Code release history

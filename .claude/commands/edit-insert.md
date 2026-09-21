@@ -1,25 +1,25 @@
 ---
-description: Edit an existing insert. Change text content or manage insert-level conditions. Changes apply to all subscriptions that reference the insert.
+description: 编辑现有的 insert。修改文本内容或管理 insert 层级条件。变更会应用到引用该 insert 的所有订阅。
 ---
 
-# Edit Insert
+# 编辑 Insert
 
-**Announce:** "[skill-bus] Editing insert."
+**宣告：** "[skill-bus] Editing insert."
 
-## Process
+## 流程
 
-### Step 1: Scope Selection
+### 第 1 步：范围选择
 
-Ask using AskUserQuestion:
-**"Which scope to edit in?"**
+使用 AskUserQuestion 询问：
+**"在哪个范围内编辑？"**
 - **Global** - `~/.claude/skill-bus.json`
 - **Project** - `.claude/skill-bus.json`
 
-If the selected scope has no config file or no inserts, show: "No inserts found in {scope} config. Run /skill-bus:add-sub to create inserts."
+如果所选范围没有配置文件或没有 insert，显示："No inserts found in {scope} config. Run /skill-bus:add-sub to create inserts."
 
-### Step 2: Select Insert
+### 第 2 步：选择 Insert
 
-Show inserts in the selected scope:
+显示所选范围内的 insert：
 
 Set `SCOPE` to the user's choice from Step 1 (`global` or `project`), then run:
 
@@ -29,29 +29,29 @@ SCOPE="global"  # or "project" — set from Step 1
 python3 "$SB_CLI" inserts --scope "$SCOPE" --cwd "$PWD"
 ```
 
-Display the output (without the "[Create new insert]" line). Ask: **"Which insert to edit?"**
+显示输出（不含 "[Create new insert]" 那一行）。询问：**"要编辑哪个 insert？"**
 
-**Cross-scope note:** If the user selects a scope but the insert they want is in the other scope, inform them: "This insert is defined in {other scope} scope. Switch to that scope to edit it."
+**跨范围提示：** 如果用户选择了某个范围，但想要的 insert 在另一个范围，告知他们："This insert is defined in {other scope} scope. Switch to that scope to edit it."
 
-### Step 3: Choose What to Edit
+### 第 3 步：选择要编辑什么
 
-Ask using AskUserQuestion:
-**"What would you like to edit?"**
-- **Text** - Change the insert's text content
-- **Conditions** - Add, remove, or modify insert-level conditions
-- **Both** - Edit text and conditions
+使用 AskUserQuestion 询问：
+**"你想编辑什么？"**
+- **Text** - 修改 insert 的文本内容
+- **Conditions** - 添加、移除或修改 insert 层级条件
+- **Both** - 同时编辑文本和条件
 
-### Step 4a: Edit Text (if selected)
+### 第 4a 步：编辑文本（如果选择）
 
-Display the full current text of the selected insert.
+显示所选 insert 的完整当前文本。
 
-Ask: **"What should the new text be?"**
+询问：**"新的文本应该是什么？"**
 
-### Step 4b: Edit Conditions (if selected)
+### 第 4b 步：编辑条件（如果选择）
 
-Show current insert-level conditions:
+显示当前的 insert 层级条件：
 
-When conditions exist:
+有条件时：
 ```
 Current conditions on 'compound-knowledge':
   1. fileExists("docs/")
@@ -60,30 +60,30 @@ These conditions apply to ALL subscriptions using this insert
 (unless a subscription opts out with "inheritConditions": false).
 ```
 
-When no conditions:
+无条件时：
 ```
 No conditions on 'compound-knowledge'.
 Insert-level conditions apply to ALL subscriptions using this insert.
 ```
 
-Present options using AskUserQuestion:
-**"What condition change?"**
-- **Add condition** - Add a new condition to this insert
-- **Remove condition** - Remove an existing condition (only when conditions exist)
-- **Replace all** - Clear and set new conditions
-- **Clear all** - Remove all conditions from this insert
+使用 AskUserQuestion 呈现选项：
+**"要做什么条件变更？"**
+- **Add condition** - 为此 insert 添加一个新条件
+- **Remove condition** - 移除一个现有条件（仅当有条件时）
+- **Replace all** - 清空并设置新条件
+- **Clear all** - 移除此 insert 的所有条件
 
-**If "Add condition":** Use the same condition selection flow as add-sub Step 4 (present 5+1 types, get value, offer NOT wrap, loop for more).
+**如果选择 "Add condition"：** 使用与 add-sub 第 4 步相同的条件选择流程（呈现 5+1 种类型、获取值、提供 NOT 包裹、循环添加更多）。
 
-**If "Remove condition":** Show numbered list, ask which to remove.
+**如果选择 "Remove condition"：** 显示编号列表，询问要移除哪一个。
 
-**If "Replace all":** Clear existing, then use add-condition flow.
+**如果选择 "Replace all"：** 清空现有条件，然后使用添加条件流程。
 
-**If "Clear all":** Set conditions to undefined (remove the key from the insert object).
+**If "Clear all":** 将条件设为 undefined（从 insert 对象中移除该键）。
 
-### Step 5: Save and Confirm
+### 第 5 步：保存并确认
 
-Update the insert in the config file. Show which subscriptions are affected (scan BOTH scopes for references):
+在配置文件中更新 insert。显示受影响的订阅（**两个**范围都扫描以查找引用）：
 
 ```
 Updated insert 'compound-knowledge'.
@@ -94,17 +94,17 @@ Affects subscriptions:
   → superpowers:brainstorming [pre] (global) — effective: fileExists("docs/")
 ```
 
-When a subscription opts out with no own conditions:
+当订阅退出且没有自己的条件时：
 ```
   → superpowers:code-review [pre] (project) — effective: (no conditions — opts out with inheritConditions: false)
 ```
 
-When a subscription opts out but has its own conditions:
+当订阅退出但有自己的条件时：
 ```
   → superpowers:code-review [pre] (project) — effective: gitBranch("feature/*") (subscription-level only — opts out of insert conditions)
 ```
 
-When no subscriptions reference this insert:
+当没有订阅引用此 insert 时：
 ```
 Affects subscriptions: (none — this insert is not referenced by any subscription)
 ```

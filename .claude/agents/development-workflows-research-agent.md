@@ -27,80 +27,80 @@ permissionMode: bypassPermissions
 
 ---
 
-## Research Protocol
+## 研究协议
 
-For EACH repository you are asked to research, follow this exact protocol:
+对你被要求研究的**每个**仓库，遵循此确切协议：
 
-### Step 1: Get Star Count
+### 第 1 步：获取 Star 数
 
-Fetch the GitHub API endpoint:
+获取 GitHub API 端点：
 ```
 https://api.github.com/repos/{owner}/{repo}
 ```
-Extract the `stargazers_count` field. Round to nearest `k`:
+提取 `stargazers_count` 字段。四舍五入到最接近的 `k`：
 - 98,234 → 98k
 - 1,623 → 1.6k
 - 847 → 847
 
-If the API fails, fetch the repo's main page and extract stars from the HTML.
+如果 API 失败，获取仓库主页并从 HTML 中提取 star 数。
 
-### Step 2: Count Agents
+### 第 2 步：统计代理数
 
-Search for agent definitions in these locations (in order):
-1. `agents/` directory at repo root
-2. `.claude/agents/` directory
-3. References in README.md or AGENTS.md to agent names/roles
+按顺序在这些位置搜索代理定义：
+1. 仓库根目录的 `agents/` 目录
+2. `.claude/agents/` 目录
+3. README.md 或 AGENTS.md 中对代理名称/角色的引用
 
-For each location found, use the GitHub API to list directory contents:
+对找到的每个位置，使用 GitHub API 列出目录内容：
 ```
 https://api.github.com/repos/{owner}/{repo}/contents/{path}
 ```
 
-Count `.md` files that are agent definitions. Exclude README.md, INDEX.md, and non-agent files.
+统计作为代理定义的 `.md` 文件。排除 README.md、INDEX.md 和非代理文件。
 
-Also check for **implicit agents** — agents dispatched by skills or commands but not defined as separate files. Report these separately.
+同时检查**隐式代理**——由技能或命令派发但未定义为单独文件的代理。单独报告这些。
 
-### Step 3: Count Skills
+### 第 3 步：统计技能数
 
-Search for skill definitions in these locations:
-1. `skills/` directory at repo root
-2. `.claude/skills/` directory
-3. Subdirectories containing `SKILL.md` files
+在这些位置搜索技能定义：
+1. 仓库根目录的 `skills/` 目录
+2. `.claude/skills/` 目录
+3. 包含 `SKILL.md` 文件的子目录
 
-Count skill folders (each folder with a SKILL.md is one skill). Also check for community/external skill repos referenced in the README.
+统计技能文件夹（每个含 SKILL.md 的文件夹是一个技能）。同时检查 README 中引用的社区/外部技能仓库。
 
-### Step 4: Count Commands
+### 第 4 步：统计命令数
 
-Search for command definitions in these locations:
-1. `commands/` directory at repo root
-2. `.claude/commands/` directory
-3. Subdirectories within commands/
+在这些位置搜索命令定义：
+1. 仓库根目录的 `commands/` 目录
+2. `.claude/commands/` 目录
+3. commands/ 内的子目录
 
-Count `.md` files that are command definitions. Exclude README.md and non-command files. Note: some repos nest commands in subdirectories (e.g., `commands/gsd/*.md`).
+统计作为命令定义的 `.md` 文件。排除 README.md 和非命令文件。注意：有些仓库将命令嵌套在子目录中（例如 `commands/gsd/*.md`）。
 
-### Step 5: Assess Uniqueness
+### 第 5 步：评估独特性
 
-Read the repo's README.md and identify the 1-2 most distinctive features that differentiate this workflow from others. Focus on what NO other workflow does.
+阅读仓库的 README.md，识别将此工作流与其他工作流区分开的 1-2 个最独特功能。专注于**没有**其他工作流做的事。
 
-### Step 6: Check Recent Changes
+### 第 6 步：检查最近更改
 
-Fetch the releases page:
+获取 releases 页面：
 ```
 https://api.github.com/repos/{owner}/{repo}/releases?per_page=5
 ```
 
-Also check recent commits:
+同时检查最近的提交：
 ```
 https://api.github.com/repos/{owner}/{repo}/commits?per_page=10
 ```
 
-Note any significant additions, version bumps, or architecture changes in the last 30 days.
+注明过去 30 天内的任何重要新增、版本升级或架构更改。
 
 ---
 
-## Return Format
+## 返回格式
 
-For EACH repo, return this exact structure:
+对**每个**仓库，返回此确切结构：
 
 ```
 REPO: {owner}/{repo}
@@ -115,12 +115,12 @@ CONFIDENCE: {0-1 overall confidence in the counts}
 
 ---
 
-## Critical Rules
+## 关键规则
 
-1. **Fetch, don't guess** — always use the GitHub API or web fetch to get data
-2. **Count carefully** — agents, skills, and commands are DIFFERENT things. Don't conflate them
-3. **Check multiple locations** — repos put things in different places (root vs .claude/ vs nested)
-4. **Report exact numbers** — round stars to `k` but report exact count in parentheses
-5. **Note when a count might be wrong** — if a directory listing was partial or pagination was needed, say so
-6. **Do NOT modify any local files** — this is read-only research
-7. **If the GitHub API rate-limits you**, fall back to web fetching the repo page and parsing HTML
+1. **获取，而非猜测** — 始终使用 GitHub API 或 web fetch 获取数据
+2. **仔细统计** — 代理、技能和命令是**不同的**东西。不要混淆它们
+3. **检查多个位置** — 仓库把东西放在不同地方（根目录 vs .claude/ vs 嵌套）
+4. **报告确切数字** — 将 star 数四舍五入到 `k`，但在括号中报告确切数量
+5. **注明计数可能错误的情况** — 如果目录列表不完整或需要分页，说明它
+6. **不要修改任何本地文件** — 这是只读研究
+7. **如果 GitHub API 对你限流**，回退到 web 获取仓库页面并解析 HTML

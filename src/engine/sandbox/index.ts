@@ -50,7 +50,7 @@ export interface SandboxConfig {
  */
 export class NoOpSandboxPolicy implements SandboxPolicy {
   name = 'noop'
-  allowCommand(): boolean {
+  allowCommand(_toolName?: string, _input?: Record<string, unknown>): boolean {
     return true
   }
 }

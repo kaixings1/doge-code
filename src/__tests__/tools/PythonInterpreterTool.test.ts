@@ -9,20 +9,25 @@ vi.mock('../../utils/Shell.js', () => ({
 
 describe('PythonInterpreterTool', () => {
   beforeEach(() => {
+    // exec() 返回 ShellCommand，执行结果在其 result 上
     mockExec = vi.fn(() =>
       Promise.resolve({
-        stdout: '',
-        stderr: '',
-        code: 0,
+        result: Promise.resolve({
+          stdout: '',
+          stderr: '',
+          code: 0,
+        }),
       })
     )
   })
 
   it('执行简单代码并返回输出', async () => {
     mockExec.mockResolvedValueOnce({
-      stdout: '42\n',
-      stderr: '',
-      code: 0,
+      result: Promise.resolve({
+        stdout: '42\n',
+        stderr: '',
+        code: 0,
+      }),
     })
     const result = await PythonInterpreterTool.call({
       code: 'print(42)',
@@ -41,9 +46,11 @@ describe('PythonInterpreterTool', () => {
 
   it('执行失败返回错误', async () => {
     mockExec.mockResolvedValueOnce({
-      stdout: '',
-      stderr: 'NameError: name \'x\' is not defined',
-      code: 1,
+      result: Promise.resolve({
+        stdout: '',
+        stderr: 'NameError: name \'x\' is not defined',
+        code: 1,
+      }),
     })
     const result = await PythonInterpreterTool.call({
       code: 'print(x)',

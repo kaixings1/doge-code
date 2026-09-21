@@ -4,40 +4,40 @@ description: 根据上次拉取请求的反馈重新处理工作项
 
 基于上次拉取请求后收到的反馈，重新处理工作项 AB#$ARGUMENTS。遵循此工作流：
 
-## Step 1: Find the Latest Pull Request
+## 第 1 步：找到最新的拉取请求
 
-Handle `$ARGUMENTS` as either `1234` or `AB#1234` — strip the `AB#` prefix when calling the MCP API.
+将 `$ARGUMENTS` 作为 `1234` 或 `AB#1234` 处理——调用 MCP API 时剥离 `AB#` 前缀。
 
-Find the most recent PR linked to this work item:
+找到链接到此工作项的最新的 PR：
 
-1. Read the work item via MCP and note its **relations** — look for pull request artifact links
-2. For each linked PR, fetch its details via `repo_get_pull_request_by_id` and record the **creationDate**
-3. Identify the **most recent PR** by creation date — this is the baseline for detecting new feedback
+1. 通过 MCP 读取工作项并记录其**关系** —— 查找拉取请求产物链接
+2. 对每个链接的 PR，通过 `repo_get_pull_request_by_id` 获取其详情并记录 **creationDate**
+3. 按创建日期识别**最新的 PR** —— 这是检测新反馈的基线
 
-Save the PR's `creationDate` as `LAST_PR_DATE` — everything after this timestamp is new feedback.
+将 PR 的 `creationDate` 保存为 `LAST_PR_DATE` —— 此时间戳之后的都是新反馈。
 
-## Step 2: Gather Rework Feedback
+## 第 2 步：收集返工反馈
 
-### New Comments
+### 新评论
 
-Read the work item comments via `wit_list_work_item_comments`. Filter to only comments created **after** `LAST_PR_DATE`. These contain the rework feedback.
+通过 `wit_list_work_item_comments` 读取工作项评论。仅过滤出在 `LAST_PR_DATE` **之后**创建的评论。这些包含返工反馈。
 
-For each new comment, check for embedded images (`<img>` tags with `src` URLs pointing to Azure DevOps attachments). **Download and view every embedded image** using WebFetch — they often contain screenshots of bugs, visual issues, or annotated UI showing what needs to change.
+对每条新评论，检查嵌入的图像（`<img>` 标签，`src` URL 指向 Azure DevOps 附件）。使用 WebFetch **下载并查看每个嵌入图像** —— 它们通常包含 bug 截图、视觉问题或标注的 UI，显示需要更改什么。
 
-### Description & Acceptance Criteria Changes
+### 描述与验收标准更改
 
-Read the work item revisions via `wit_list_work_item_revisions`. Check if the **description** or **acceptance criteria** fields were modified **after** `LAST_PR_DATE`.
+通过 `wit_list_work_item_revisions` 读取工作项修订。检查**描述**或**验收标准**字段是否在 `LAST_PR_DATE` **之后**被修改。
 
-- If changed: extract the **current** description and acceptance criteria, and note what was added or modified
-- If unchanged: still read the current description and acceptance criteria — a comment may reference something that was in the original requirements but missing from the implementation
+- 如果更改：提取**当前**描述和验收标准，并记录添加或修改了什么
+- 如果未更改：仍然读取当前描述和验收标准——评论可能引用了原始需求中但实现中缺失的东西
 
-### Always Re-read Requirements
+### 始终重新阅读需求
 
-Regardless of whether description/acceptance criteria changed, **always read the full current description and acceptance criteria**. Rework comments often say things like "the original requirement for X is missing" without the description itself changing. You need the full context to understand what the feedback is referring to.
+无论描述/验收标准是否更改，**始终读取完整的当前描述和验收标准**。返工评论常说"X 的原始需求缺失"而描述本身没有更改。你需要完整上下文来理解反馈指的是什么。
 
-## Step 3: Summarize Rework and Confirm
+## 第 3 步：总结返工并确认
 
-Present a summary of the rework feedback to the user:
+向用户呈现返工反馈的摘要：
 
 ```
 ## Rework for AB#{id}: {title}
@@ -57,14 +57,14 @@ Present a summary of the rework feedback to the user:
 Does this capture the rework correctly? Do you have any additional context?
 ```
 
-**Wait for the user to respond.** Do NOT proceed until the user confirms or provides additional context. If they add context, incorporate it into the plan.
+**等待用户响应。** 在用户确认或提供额外上下文之前，**不要**继续。如果他们添加上下文，将其纳入计划。
 
-## Step 4: Explore & Plan
+## 第 4 步：探索与规划
 
-1. **Explore** the codebase to map relevant files — focus on files changed in the last PR and any new areas needed
-2. **Plan** the rework approach
+1. **探索**代码库以映射相关文件——关注上一个 PR 中更改的文件以及需要的任何新区域
+2. **规划**返工方法
 
-Present the plan to the user:
+向用户呈现计划：
 
 ```
 ## Rework Plan for AB#{id}
@@ -93,40 +93,40 @@ Present the plan to the user:
 Approve this plan? (yes / no / suggest changes)
 ```
 
-**Wait for the user to approve the plan.** Do NOT start implementation until the user approves. If they suggest changes, revise the plan and present it again.
+**等待用户批准计划。** 在用户批准之前**不要**开始实现。如果他们建议更改，修订计划并再次呈现。
 
-## Step 5: Switch to Existing Branch
+## 第 5 步：切换到现有分支
 
-The work item already has a branch from the previous PR. Switch to it:
+工作项已有一个来自上一个 PR 的分支。切换到它：
 
-1. Get the source branch name from the most recent PR
-2. Switch to that branch: `git checkout <branch-name>`
-3. Pull the latest: `git pull`
+1. 从最新 PR 获取源分支名
+2. 切换到该分支：`git checkout <branch-name>`
+3. 拉取最新：`git pull`
 
-If the PR was completed/merged and the branch was deleted, create a new branch from the PR's target branch following the same naming convention as `/implement` Step 4.
+如果 PR 已完成/合并且分支被删除，则从 PR 的目标分支创建一个新分支，遵循与 `/implement` 第 4 步相同的命名约定。
 
-## Step 6: Implement
+## 第 6 步：实现
 
-1. **Implement** the rework using backend and/or frontend agents according to the approved plan
-2. **Generate mockup** if there are UI changes
+1. 根据已批准的计划，使用后端和/或前端代理**实现**返工
+2. 如果有 UI 更改则**生成样稿**
 
-## Step 7: Build Validation
+## 第 7 步：构建验证
 
-Run a build check **before** any other quality checks. Use the `build-validator` agent to verify that all projects compile successfully.
+在任何其他质量检查**之前**运行构建检查。使用 `build-validator` 代理验证所有项目成功编译。
 
-- If the build fails, **fix the errors immediately** and re-run until the build passes
-- Do NOT proceed to review, tests, or lint until the build is clean
+- 如果构建失败，**立即修复错误**并重新运行直到构建通过
+- 在构建干净之前**不要**继续审查、测试或 lint
 
-## Step 8: Quality Checks
+## 第 8 步：质量检查
 
-1. **Review** code for quality, security, and Clean Architecture compliance
-2. **Run tests** — unit, integration, and build validation
-3. **Run lint** — ESLint and dotnet format
+1. **审查**代码的质量、安全性和 Clean Architecture 合规性
+2. **运行测试** —— 单元、集成和构建验证
+3. **运行 lint** —— ESLint 和 dotnet format
 
-## Step 9: UAT Gate
+## 第 9 步：UAT 门禁
 
-### If Hot Fix:
-Skip manual UAT. Present an abbreviated confirmation:
+### 如果是热修复：
+跳过手动 UAT。呈现简化的确认：
 
 ```
 Rework complete. All automated checks passed.
@@ -134,10 +134,10 @@ Rework complete. All automated checks passed.
 Push changes? (yes/no)
 ```
 
-Wait for confirmation before proceeding.
+在继续之前等待确认。
 
-### If Feature, User Story, Bug, or other:
-Generate a UAT checklist from the acceptance criteria and present:
+### 如果是功能、用户故事、Bug 或其他：
+从验收标准生成 UAT 检查清单并呈现：
 
 ```
 Automated checks passed and the UAT checklist is ready.
@@ -153,10 +153,10 @@ Did manual testing pass?
            and I will investigate and fix before asking you again
 ```
 
-Wait for the user's response before proceeding. Do NOT push until confirmed.
+在继续之前等待用户的响应。在确认之前**不要**推送。
 
-## Step 10: Push and Update
+## 第 10 步：推送并更新
 
-1. Push the changes: `git push`
-2. Add a comment on the existing PR summarizing what was changed in the rework
-3. Update the work item status in Azure DevOps if needed
+1. 推送更改：`git push`
+2. 在现有 PR 上添加评论，总结返工中更改了什么
+3. 如需要在 Azure DevOps 中更新工作项状态

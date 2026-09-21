@@ -23,163 +23,163 @@ allowedTools:
 
 **需检查的版本：** 使用提示中提供的编号（默认：10）。
 
-This is a **read-only research** workflow. Fetch sources, read local files, compare, and return findings. Do NOT take any actions or modify files.
+这是一个**只读研究**工作流。获取源、读取本地文件、比较并返回发现。不要采取任何行动或修改文件。
 
 ---
 
-## Phase 1: Fetch External Data (in parallel)
+## 阶段 1：获取外部数据（并行）
 
-Fetch all three sources using WebFetch simultaneously:
+使用 WebFetch 同时获取所有三个源：
 
-1. **Settings Documentation** — `https://code.claude.com/docs/en/settings` — Extract the complete list of officially supported settings keys, their types, defaults, descriptions, and any examples. Pay special attention to: settings hierarchy, permissions structure, hook events, MCP configuration, sandbox options, plugin settings, model configuration, display settings, and environment variables.
-2. **CLI Reference** — `https://code.claude.com/docs/en/cli-reference` — Extract settings-related CLI flags (`--settings`, `--setting-sources`, `--permission-mode`, `--allowedTools`, `--disallowedTools`), permission modes, and any settings override behavior.
-3. **Changelog** — `https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md` — Extract the last N version entries with version numbers, dates, and all settings-related changes (new settings keys, new hook events, new permission syntax, new sandbox options, behavior changes, bug fixes, breaking changes).
+1. **设置文档** —— `https://code.claude.com/docs/en/settings` —— 提取官方支持的设置键的完整列表、它们的类型、默认值、描述和任何示例。特别关注：设置层次、权限结构、hook 事件、MCP 配置、沙箱选项、插件设置、模型配置、显示设置和环境变量。
+2. **CLI 参考** —— `https://code.claude.com/docs/en/cli-reference` —— 提取与设置相关的 CLI 标志（`--settings`、`--setting-sources`、`--permission-mode`、`--allowedTools`、`--disallowedTools`）、权限模式和任何设置覆盖行为。
+3. **变更日志** —— `https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md` —— 提取最近 N 个版本条目，含版本号、日期和所有设置相关更改（新设置键、新 hook 事件、新权限语法、新沙箱选项、行为更改、bug 修复、破坏性更改）。
 
 ---
 
-## Phase 2: Read Local Repository State (in parallel)
+## 阶段 2：读取本地仓库状态（并行）
 
-Read ALL of the following:
+读取以下**所有**：
 
-| File | What to check |
+| 文件 | 要检查什么 |
 |------|---------------|
-| `best-practice/claude-settings.md` | Settings Hierarchy table, Core Configuration tables, Permissions section (modes, tool syntax), Hook Events table (16 events), Hook Properties, Hook Matcher Patterns, Hook Exit Codes, Hook Environment Variables, MCP Settings table, Sandbox Settings table, Plugin Settings table, Model Aliases table, Model Environment Variables, Display Settings table, Status Line config, AWS & Cloud settings, Environment Variables table, Useful Commands table, Quick Reference example, Sources list |
-| `best-practice/claude-cli-startup-flags.md` | Environment Variables section — verify ownership boundary (startup-only vars stay here, `env`-configurable vars stay in settings report) |
-| `CLAUDE.md` | Configuration Hierarchy section, Hooks System section, any settings-related patterns |
+| `best-practice/claude-settings.md` | 设置层次表、核心配置表、权限章节（模式、工具语法）、Hook 事件表（16 个事件）、Hook 属性、Hook 匹配器模式、Hook 退出代码、Hook 环境变量、MCP 设置表、沙箱设置表、插件设置表、模型别名表、模型环境变量、显示设置表、状态行配置、AWS 与云设置、环境变量表、有用命令表、快速参考示例、源列表 |
+| `best-practice/claude-cli-startup-flags.md` | 环境变量章节——验证所有权边界（仅启动变量留在此处，`env` 可配置的变量留在设置报告中） |
+| `CLAUDE.md` | 配置层次章节、Hooks 系统章节、任何设置相关模式 |
 
 ---
 
-## Phase 3: Analysis
+## 阶段 3：分析
 
-Compare external data against local report state. Check for:
+对照本地报告状态比较外部数据。检查：
 
-### Missing Settings Keys
-Compare official docs settings keys against each section table in the report. Flag any keys present in official docs but missing from the report, with the version that introduced them. Check ALL sections:
-- General Settings, Plans Directory, Attribution Settings, Authentication Helpers, Company Announcements
-- Permission keys, Permission modes, Tool permission syntax
-- Hook events, Hook properties
-- MCP settings
-- Sandbox settings (including network sub-keys)
-- Plugin settings
-- Model aliases, Model environment variables
-- Display settings, Status line fields, File suggestion config
-- AWS & Cloud settings
-- Environment variables
+### 缺失的设置键
+对照报告中的每个章节表比较官方文档设置键。标记官方文档中存在但报告中缺失的任何键及引入它们的版本。检查**所有**章节：
+- General Settings、Plans Directory、Attribution Settings、Authentication Helpers、Company Announcements
+- 权限键、权限模式、工具权限语法
+- Hook 事件、Hook 属性
+- MCP 设置
+- 沙箱设置（包括网络子键）
+- 插件设置
+- 模型别名、模型环境变量
+- 显示设置、状态行字段、文件建议配置
+- AWS 与云设置
+- 环境变量
 
-### Changed Setting Behavior
-For each setting in the report, verify its type, default value, and description match the official docs. Flag any discrepancies.
+### 更改的设置行为
+对报告中的每个设置，验证其类型、默认值和描述匹配官方文档。标记任何差异。
 
-### Deprecated/Removed Settings
-Check if any settings listed in the report are no longer documented in official sources. Flag for removal consideration.
+### 已弃用/移除的设置
+检查报告中列出的任何设置是否不再在官方来源中记录。标记以供考虑移除。
 
-### Permission Syntax Accuracy
-Verify the Tool Permission Syntax table:
-- Are all tool patterns listed?
-- Are wildcard behaviors correctly documented?
-- Are bash wildcard notes accurate?
-- Any new permission tools or syntax?
+### 权限语法准确性
+验证工具权限语法表：
+- 是否列出了所有工具模式？
+- 通配符行为是否正确记录？
+- bash 通配符备注是否准确？
+- 是否有新的权限工具或语法？
 
-### Hook Event Accuracy
-> **SKIP** — Hook analysis is excluded from this workflow. Hooks are maintained in the [claude-code-hooks](https://github.com/shanraisshan/claude-code-hooks) repo. Only verify that the hooks redirect section in the report still points to the correct repo URL.
+### Hook 事件准确性
+> **跳过** —— Hook 分析从此工作流中排除。Hooks 维护在 [claude-code-hooks](https://github.com/shanraisshan/claude-code-hooks) 仓库中。仅验证报告中的 hooks 重定向章节仍指向正确的仓库 URL。
 
-### MCP Setting Accuracy
-Verify MCP Settings:
-- Are all MCP-related settings keys listed?
-- Is the server matching syntax correct?
-- Any new MCP configuration options?
+### MCP 设置准确性
+验证 MCP 设置：
+- 是否列出了所有 MCP 相关设置键？
+- 服务器匹配语法是否正确？
+- 是否有新的 MCP 配置选项？
 
-### Sandbox Setting Accuracy
-Verify Sandbox Settings:
-- Are all sandbox keys listed (including nested network sub-keys)?
-- Are defaults correct?
-- Any new sandbox options?
+### 沙箱设置准确性
+验证沙箱设置：
+- 是否列出了所有沙箱键（包括嵌套网络子键）？
+- 默认值是否正确？
+- 是否有新的沙箱选项？
 
-### Plugin Setting Accuracy
-Verify Plugin Settings:
-- Are all plugin-related keys listed?
-- Is the scope correct for each?
-- Any new plugin configuration options?
+### 插件设置准确性
+验证插件设置：
+- 是否列出了所有插件相关键？
+- 每个的作用域是否正确？
+- 是否有新的插件配置选项？
 
-### Model Configuration Accuracy
-Verify Model Configuration:
-- Are all model aliases listed?
-- Is the effort level documentation accurate?
-- Are model environment variables complete?
+### 模型配置准确性
+验证模型配置：
+- 是否列出了所有模型别名？
+- effort 级别文档是否准确？
+- 模型环境变量是否完整？
 
-### Display & UX Accuracy
-Verify Display Settings:
-- Are all display keys listed with correct types and defaults?
-- Is the status line configuration accurate?
-- Are spinner settings documented correctly?
-- Is the file suggestion configuration documented?
+### 显示与 UX 准确性
+验证显示设置：
+- 是否列出了所有显示键及正确的类型和默认值？
+- 状态行配置是否准确？
+- spinner 设置是否被正确记录？
+- 文件建议配置是否被记录？
 
-### Environment Variable Completeness
-Verify the Environment Variables table:
-- Are all `env`-configurable vars listed?
-- Are descriptions accurate?
-- Cross-reference with `best-practice/claude-cli-startup-flags.md` — vars that are startup-only should NOT be in the settings report, and vice versa. Flag any ownership boundary violations.
+### 环境变量完整性
+验证环境变量表：
+- 是否列出了所有 `env` 可配置的变量？
+- 描述是否准确？
+- 与 `best-practice/claude-cli-startup-flags.md` 交叉引用——仅启动的变量**不应**在设置报告中，反之亦然。标记任何所有权边界违规。
 
-### Settings Hierarchy Accuracy
-Verify the 5-level override chain:
-- Are all priority levels listed correctly?
-- Are file locations accurate?
-- Is the version control column correct?
-- Is the managed settings policy layer documented accurately?
+### 设置层次准确性
+验证 5 级覆盖链：
+- 所有优先级级别是否正确列出？
+- 文件位置是否准确？
+- 版本控制列是否正确？
+- 托管设置策略层是否被准确记录？
 
-### Example Accuracy
-Verify the Quick Reference complete example:
-- Does it use current setting keys with valid syntax?
-- Does it demonstrate the most important settings from each section?
-- Are values realistic and current?
+### 示例准确性
+验证快速参考完整示例：
+- 是否使用带有效语法的当前设置键？
+- 是否演示了每个章节中最重要的设置？
+- 值是否现实且当前？
 
-### CLAUDE.md Consistency
-Verify CLAUDE.md's settings-related sections are consistent with the report. Check the Configuration Hierarchy section matches the report's information. Hook-related CLAUDE.md sections are outside this workflow's scope.
+### CLAUDE.md 一致性
+验证 CLAUDE.md 的设置相关章节与报告一致。检查配置层次章节匹配报告的信息。与 Hook 相关的 CLAUDE.md 章节超出此工作流范围。
 
-### Sources Accuracy
-Verify the Sources section links are still valid and point to correct documentation pages.
-
----
-
-## Return Format
-
-Return your findings as a structured report with these sections:
-
-1. **External Data Summary** — Key facts from the 3 fetched sources (latest version, total official settings, recent changes)
-2. **Local Report State** — Current section count, settings count per section, examples status
-3. **Missing Settings** — Keys in official docs but not in report, with version introduced
-4. **Changed Setting Behavior** — Per-key type/default/description discrepancies
-5. **Deprecated/Removed Settings** — Keys in report but not in official docs
-6. **Permission Syntax Accuracy** — Tool pattern and mode comparison results
-7. **Hook Event Accuracy** — SKIP (hooks externalized to claude-code-hooks repo; only verify redirect link)
-8. **MCP Setting Accuracy** — MCP configuration comparison results
-9. **Sandbox Setting Accuracy** — Sandbox table comparison results
-10. **Plugin Setting Accuracy** — Plugin configuration comparison results
-11. **Model Configuration Accuracy** — Alias and env var comparison results
-12. **Display & UX Accuracy** — Display settings comparison results
-13. **Environment Variable Completeness** — Env var comparison and ownership boundary check
-14. **Settings Hierarchy Accuracy** — Override chain comparison results
-15. **Example Accuracy** — Quick Reference example verification
-16. **CLAUDE.md Consistency** — Settings-related section accuracy
-17. **Sources Accuracy** — Link validity
-
-Be thorough and specific. Include version numbers, file paths, and line references where possible.
+### 源准确性
+验证源章节链接仍然有效并指向正确的文档页面。
 
 ---
 
-## Critical Rules
+## 返回格式
 
-1. **Fetch ALL 3 sources** — never skip any
-2. **Never guess** versions or dates — extract from fetched data
-3. **Read ALL local files** before analyzing
-4. **New settings keys are HIGH PRIORITY** — flag them prominently
-5. **Cross-reference setting counts** — the report's setting count per section must match official docs
-6. **Verify the Quick Reference example** — it must reflect current settings
-7. **Do NOT modify any files** — this is read-only research
-8. **Check env var ownership boundary** — vars in `claude-cli-startup-flags.md` should not be duplicated in the settings report
+将你的发现作为结构化报告返回，含这些章节：
+
+1. **外部数据摘要** —— 来自 3 个获取源的关键事实（最新版本、官方设置总数、最近更改）
+2. **本地报告状态** —— 当前章节数、每章节设置数、示例状态
+3. **缺失的设置** —— 官方文档中但报告中缺失的键及引入版本
+4. **更改的设置行为** —— 每个键的类型/默认值/描述差异
+5. **已弃用/移除的设置** —— 报告中但官方文档中没有的键
+6. **权限语法准确性** —— 工具模式和模式比较结果
+7. **Hook 事件准确性** —— 跳过（hooks 已外部化到 claude-code-hooks 仓库；仅验证重定向链接）
+8. **MCP 设置准确性** —— MCP 配置比较结果
+9. **沙箱设置准确性** —— 沙箱表比较结果
+10. **插件设置准确性** —— 插件配置比较结果
+11. **模型配置准确性** —— 别名和环境变量比较结果
+12. **显示与 UX 准确性** —— 显示设置比较结果
+13. **环境变量完整性** —— 环境变量比较和所有权边界检查
+14. **设置层次准确性** —— 覆盖链比较结果
+15. **示例准确性** —— 快速参考示例验证
+16. **CLAUDE.md 一致性** —— 设置相关章节准确性
+17. **源准确性** —— 链接有效性
+
+要彻底且具体。尽可能包含版本号、文件路径和行引用。
 
 ---
 
-## Sources
+## 关键规则
+
+1. **获取所有 3 个源** —— 绝不跳过任何一个
+2. **绝不猜测**版本或日期——从获取的数据中提取
+3. **读取所有本地文件**在分析之前
+4. **新设置键是高优先级** —— 突出标记它们
+5. **交叉引用设置计数** —— 报告的每个章节设置计数必须匹配官方文档
+6. **验证快速参考示例** —— 它必须反映当前设置
+7. **不要修改任何文件** —— 这是只读研究
+8. **检查环境变量所有权边界** —— `claude-cli-startup-flags.md` 中的变量不应在设置报告中重复
+
+---
+
+## 来源
 
 1. [Claude Code Settings Documentation](https://code.claude.com/docs/en/settings) — Official settings reference
 2. [CLI Reference](https://code.claude.com/docs/en/cli-reference) — CLI flags including settings overrides

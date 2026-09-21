@@ -20,6 +20,9 @@ const outputSchema = lazySchema(() =>
     output: z.string().optional().describe('代码输出'),
     error: z.string().optional().describe('错误信息'),
     exit_code: z.number().optional().describe('退出码'),
+    // call() 的返回值包含 message，原 schema 未声明该字段，
+    // 会导致 schema 校验时被剥离
+    message: z.string().optional().describe('结果说明'),
   }),
 )
 
@@ -35,6 +38,8 @@ export const PythonInterpreterTool = buildTool({
   description: async () =>
     'Python 代码解释器工具：在隔离环境中执行 Python 代码。吸收 smolagents 精华，支持安全代码执行和导入限制。',
   callOn: 'manual',
+  // 代码输出可能较长，超出后持久化到磁盘并返回预览
+  maxResultSizeChars: 100_000,
   async prompt() {
     return '使用 python_interpreter 工具执行 Python 代码。支持数学计算、数据处理、文件操作等。代码会写入临时文件后执行。'
   },
@@ -62,7 +67,9 @@ export const PythonInterpreterTool = buildTool({
     return `Python: ${preview}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
-    const msg = (content as Record<string, unknown>).message || 'Python 执行完成'
+    // 索引签名使 message 为 unknown，需收窄为字符串才能作为 tool_result content
+    const raw = (content as Record<string, unknown>).message
+    const msg = typeof raw === 'string' && raw.length > 0 ? raw : 'Python 执行完成'
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',
@@ -111,12 +118,15 @@ if stderr_val:
       await writeFile(tempFile, wrappedCode, 'utf-8')
 
       try {
-        const result = await exec(
+        const shellCommand = await exec(
           `python "${tempFile}"`,
           new AbortController().signal,
           'bash',
           { timeout: effectiveTimeout * 1000 }
         )
+        // exec() 返回 ShellCommand，执行结果在其 result（Promise<ExecResult>）上，
+        // 需 await 后才能读取 code/stdout/stderr
+        const result = await shellCommand.result
 
         return {
           data: {
@@ -145,4 +155,4 @@ if stderr_val:
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

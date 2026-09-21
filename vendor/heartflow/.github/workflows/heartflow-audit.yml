@@ -1,0 +1,48 @@
+name: HeartFlow Security Audit
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  schedule:
+    - cron: '0 3 * * 1'  # weekly Monday 03:00 UTC
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run HeartFlow Audit
+        id: audit
+        uses: mark-HeartFlow/mark-heartflow-skill@main
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          scan_depth: full
+          fail_on_high: false
+          output_path: heartflow-audit-report.md
+          upload_report: true
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: heartflow-audit-report
+          path: heartflow-audit-report.md
+          retention-days: 30
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: mark-HeartFlow/mark-heartflow-skill/.github/comment-action@main
+        with:
+          report_path: heartflow-audit-report.md
+          risk_level: ${{ steps.audit.outputs.risk_level }}
+          findings_count: ${{ steps.audit.outputs.findings_count }}

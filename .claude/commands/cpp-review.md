@@ -1,54 +1,54 @@
 ---
-description: Comprehensive C++ code review for memory safety, modern C++ idioms, concurrency, and security. Invokes the cpp-reviewer agent.
+description: 针对内存安全、现代 C++ 惯用法、并发和安全性的全面 C++ 代码审查。调用 cpp-reviewer 代理。
 ---
 
-# C++ Code Review
+# C++ 代码审查
 
-This command invokes the **cpp-reviewer** agent for comprehensive C++-specific code review.
+此命令调用 **cpp-reviewer** 代理进行全面的 C++ 专属代码审查。
 
-## What This Command Does
+## 此命令做什么
 
-1. **Identify C++ Changes**: Find modified `.cpp`, `.hpp`, `.cc`, `.h` files via `git diff`
-2. **Run Static Analysis**: Execute `clang-tidy` and `cppcheck`
-3. **Memory Safety Scan**: Check for raw new/delete, buffer overflows, use-after-free
-4. **Concurrency Review**: Analyze thread safety, mutex usage, data races
-5. **Modern C++ Check**: Verify code follows C++17/20 conventions and best practices
-6. **Generate Report**: Categorize issues by severity
+1. **识别 C++ 变更**：通过 `git diff` 查找修改过的 `.cpp`、`.hpp`、`.cc`、`.h` 文件
+2. **运行静态分析**：执行 `clang-tidy` 和 `cppcheck`
+3. **内存安全扫描**：检查裸 new/delete、缓冲区溢出、use-after-free
+4. **并发审查**：分析线程安全、互斥锁使用、数据竞争
+5. **现代 C++ 检查**：验证代码遵循 C++17/20 约定和最佳实践
+6. **生成报告**：按严重程度归类问题
 
-## When to Use
+## 何时使用
 
-Use `/cpp-review` when:
-- After writing or modifying C++ code
-- Before committing C++ changes
-- Reviewing pull requests with C++ code
-- Onboarding to a new C++ codebase
-- Checking for memory safety issues
+在以下情况使用 `/cpp-review`：
+- 编写或修改 C++ 代码之后
+- 提交 C++ 变更之前
+- 审查包含 C++ 代码的拉取请求
+- 加入新的 C++ 代码库时
+- 检查内存安全问题
 
-## Review Categories
+## 审查类别
 
-### CRITICAL (Must Fix)
-- Raw `new`/`delete` without RAII
-- Buffer overflows and use-after-free
-- Data races without synchronization
-- Command injection via `system()`
-- Uninitialized variable reads
-- Null pointer dereferences
+### CRITICAL（必须修复）
+- 没有 RAII 的裸 `new`/`delete`
+- 缓冲区溢出和 use-after-free
+- 没有同步的数据竞争
+- 通过 `system()` 的命令注入
+- 读取未初始化变量
+- 空指针解引用
 
-### HIGH (Should Fix)
-- Rule of Five violations
-- Missing `std::lock_guard` / `std::scoped_lock`
-- Detached threads without proper lifetime management
-- C-style casts instead of `static_cast`/`dynamic_cast`
-- Missing `const` correctness
+### HIGH（应当修复）
+- 违反 Rule of Five
+- 缺少 `std::lock_guard` / `std::scoped_lock`
+- 分离线程没有恰当的生命周期管理
+- 使用 C 风格转换而非 `static_cast`/`dynamic_cast`
+- 缺少 `const` 正确性
 
-### MEDIUM (Consider)
-- Unnecessary copies (pass by value instead of `const&`)
-- Missing `reserve()` on known-size containers
-- `using namespace std;` in headers
-- Missing `[[nodiscard]]` on important return values
-- Overly complex template metaprogramming
+### MEDIUM（考虑）
+- 不必要的拷贝（按值传递而非 `const&`）
+- 已知大小的容器缺少 `reserve()`
+- 头文件中使用 `using namespace std;`
+- 重要返回值缺少 `[[nodiscard]]`
+- 过于复杂的模板元编程
 
-## Automated Checks Run
+## 运行的自动化检查
 
 ```bash
 # Static analysis
@@ -61,7 +61,7 @@ cppcheck --enable=all --suppress=missingIncludeSystem src/
 cmake --build build -- -Wall -Wextra -Wpedantic
 ```
 
-## Example Usage
+## 使用示例
 
 ```text
 User: /cpp-review
@@ -111,22 +111,22 @@ void processUser(const User& user) {
 Recommendation: FAIL: Block merge until CRITICAL issue is fixed
 ```
 
-## Approval Criteria
+## 批准标准
 
 | Status | Condition |
 |--------|-----------|
-| PASS: Approve | No CRITICAL or HIGH issues |
-| WARNING: Warning | Only MEDIUM issues (merge with caution) |
-| FAIL: Block | CRITICAL or HIGH issues found |
+| PASS: Approve | 没有 CRITICAL 或 HIGH 问题 |
+| WARNING: Warning | 仅有 MEDIUM 问题（谨慎合并） |
+| FAIL: Block | 发现 CRITICAL 或 HIGH 问题 |
 
-## Integration with Other Commands
+## 与其他命令的集成
 
-- Use `/cpp-test` first to ensure tests pass
-- Use `/cpp-build` if build errors occur
-- Use `/cpp-review` before committing
-- Use `/code-review` for non-C++ specific concerns
+- 先用 `/cpp-test` 确保测试通过
+- 如果出现构建错误，使用 `/cpp-build`
+- 提交前使用 `/cpp-review`
+- 非 C++ 专属的问题使用 `/code-review`
 
-## Related
+## 相关
 
-- Agent: `agents/cpp-reviewer.md`
-- Skills: `skills/cpp-coding-standards/`, `skills/cpp-testing/`
+- Agent：`agents/cpp-reviewer.md`
+- Skills：`skills/cpp-coding-standards/`, `skills/cpp-testing/`

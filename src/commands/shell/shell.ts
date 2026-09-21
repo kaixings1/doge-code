@@ -1,7 +1,4 @@
-import { execSync, exec } from 'child_process'
-import { promisify } from 'util'
-
-const execAsync = promisify(exec)
+import { exec } from 'child_process'
 
 export async function call(args: string, context: any): Promise<string> {
   if (!args || args.trim() === '') {
@@ -25,7 +22,7 @@ export async function call(args: string, context: any): Promise<string> {
   }
 
   try {
-    const { stdout, stderr } = await execAsync(args, { 
+    const { stdout, stderr } = await exec(args, {
       cwd: process.cwd(),
       timeout: 30000 // 30 second timeout
     })

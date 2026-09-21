@@ -1,0 +1,15 @@
+name: 'HeartFlow Audit Comment'
+description: 'Comment audit summary on a PR'
+inputs:
+  report_path:
+    required: true
+  risk_level:
+    required: true
+  findings_count:
+    required: true
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
+branding:
+  icon: 'message-square'
+  color: 'blue'

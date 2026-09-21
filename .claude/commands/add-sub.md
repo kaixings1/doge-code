@@ -1,48 +1,48 @@
 ---
-description: Subscribe to a skill event. Adds a subscription that injects context before or after a skill runs. Supports optional conditions at both insert-level (inherited) and subscription-level (AND-stacked).
+description: 订阅技能事件。添加一个订阅，在技能运行前或运行后注入上下文。支持在 insert 层级（被继承）和订阅层级（AND 叠加）配置可选条件。
 ---
 
-# Subscribe to Skill Event
+# 订阅技能事件
 
-**Announce:** "[skill-bus] Adding subscription."
+**宣告：** "[skill-bus] Adding subscription."
 
-## Process
+## 流程
 
-### Step 1: Scope Selection
+### 第 1 步：范围选择
 
-Ask the user using AskUserQuestion:
+使用 AskUserQuestion 询问用户：
 
-**"What scope for this subscription?"**
-- **Global** - Applies to all projects. Saved to `~/.claude/skill-bus.json`
-- **Project** - This repo only. Saved to `.claude/skill-bus.json`
+**"这个订阅使用什么范围？"**
+- **Global** - 应用于所有项目。保存到 `~/.claude/skill-bus.json`
+- **Project** - 仅此仓库。保存到 `.claude/skill-bus.json`
 
-### Step 2: Skill Selection
+### 第 2 步：技能选择
 
-Run the skill discovery script to show available skills:
+运行技能发现脚本以显示可用技能：
 
 ```bash
 SB_CLI=$(ls ~/.claude/plugins/cache/*/skill-bus/*/lib/cli.py ~/.claude/plugins/repos/skill-bus/lib/cli.py 2>/dev/null | tail -1)
 python3 "$SB_CLI" skills --cwd "$PWD"
 ```
 
-Display the output to the user, then ask: **"Which skill(s) to subscribe to?"**
+向用户显示输出，然后询问：**"要订阅哪个（些）技能？"**
 
-If the user enters a `*` wildcard pattern, warn them:
-> "Wildcard subscriptions match many skills and add context tokens on every match. Are you sure?"
+如果用户输入 `*` 通配符模式，警告他们：
+> "通配符订阅会匹配大量技能，并在每次匹配时增加上下文 token。你确定吗？"
 
-### Step 3: Timing Selection
+### 第 3 步：触发时机选择
 
-Ask using AskUserQuestion:
-**"When should this fire?"**
-- **Pre** - Before the skill loads. Use for: adding context, referencing files, setting up state.
-- **Post** - After the skill tool returns. Use for: supplementing skill output.
-- **Complete** *(experimental)* - After Claude finishes the skill's full scope of work. Use for: triggering follow-up skills, capturing outputs, chaining workflows. Auto-injects "you MUST run /skill-bus:complete" instruction. Requires `"completionHooks": true` in settings.
+使用 AskUserQuestion 询问：
+**"这应该在何时触发？"**
+- **Pre** - 在技能加载之前。用于：添加上下文、引用文件、设置状态。
+- **Post** - 在技能工具返回之后。用于：补充技能输出。
+- **Complete** *（实验性）* - 在 Claude 完成技能的完整工作范围之后。用于：触发后续技能、捕获输出、串联工作流。自动注入 "you MUST run /skill-bus:complete" 指令。需要在设置中配置 `"completionHooks": true`。
 
-### Step 4: Insert Selection
+### 第 4 步：Insert 选择
 
-Show existing inserts for the selected scope:
+显示所选范围的现有 insert：
 
-Set `SCOPE` to the user's choice from Step 1 (`global` or `project`), then run:
+将 `SCOPE` 设为用户在第 1 步的选择（`global` 或 `project`），然后运行：
 
 ```bash
 SB_CLI=$(ls ~/.claude/plugins/cache/*/skill-bus/*/lib/cli.py ~/.claude/plugins/repos/skill-bus/lib/cli.py 2>/dev/null | tail -1)
@@ -50,24 +50,24 @@ SCOPE="global"  # or "project" — set from Step 1
 python3 "$SB_CLI" inserts --scope "$SCOPE" --cwd "$PWD"
 ```
 
-Display the output.
+显示输出。
 
-Ask: **"Which insert to attach?"**
+询问：**"要附加哪个 insert？"**
 
-**If "Create new":**
-1. Ask for insert name (slug format, e.g., `deploy-guard`)
-2. **Name existence check:** If an insert with that name already exists in the target scope, refuse: "Insert '{name}' already exists. Use the existing one, or choose a different name." Offer to link to the existing insert instead.
-3. Ask for insert text (the context to inject)
-4. Check text length — if >200 chars (~50 tokens), warn:
-   > "This insert is fairly long (~N tokens). Proceed?"
-5. Save insert to the `inserts` object in the target config
+**如果选择 "Create new"：**
+1. 询问 insert 名称（slug 格式，例如 `deploy-guard`）
+2. **名称存在性检查：** 如果目标范围内已存在同名 insert，则拒绝："Insert '{name}' already exists. Use the existing one, or choose a different name." 并提议改为链接到现有 insert。
+3. 询问 insert 文本（要注入的上下文）
+4. 检查文本长度 —— 如果 >200 字符（约 50 token），警告：
+   > "这个 insert 相当长（约 N token）。继续吗？"
+5. 将 insert 保存到目标配置的 `inserts` 对象中
 
-**If existing insert:**
-Proceed to Step 5.
+**如果选择现有 insert：**
+继续到第 5 步。
 
-### Step 5: Conditions (Optional)
+### 第 5 步：条件（可选）
 
-**Check if the selected insert has insert-level conditions.** If it does, show:
+**检查所选 insert 是否有 insert 层级条件。** 如果有，显示：
 
 ```
 Insert 'compound-knowledge' has insert-level conditions:
@@ -77,20 +77,20 @@ These are inherited by this subscription (AND-stacked with any subscription cond
 To opt out of inherited conditions, choose "Opt out" below.
 ```
 
-Ask using AskUserQuestion:
-**"Add subscription-level conditions?"**
-- **No extra conditions** - Only insert-level conditions apply (or none if insert has none)
-- **Add conditions** - Add subscription-specific conditions (AND-stacked with insert conditions)
-- **Opt out of insert conditions** - This subscription ignores insert-level conditions. Sets `"inheritConditions": false`.
+使用 AskUserQuestion 询问：
+**"添加订阅层级条件吗？"**
+- **No extra conditions** - 仅应用 insert 层级条件（若 insert 无条件则没有）
+- **Add conditions** - 添加订阅专属条件（与 insert 条件 AND 叠加）
+- **Opt out of insert conditions** - 此订阅忽略 insert 层级条件。设置 `"inheritConditions": false`。
 
-If the insert has no conditions, simplify to:
-**"Add conditions? (subscription only fires when ALL conditions pass)"**
-- **No conditions** - Always fires when the skill matches
-- **Add conditions** - Only fire when runtime conditions are met
+如果 insert 没有条件，简化为：
+**"添加条件吗？（订阅仅在所有条件都通过时才触发）"**
+- **No conditions** - 技能匹配时始终触发
+- **Add conditions** - 仅在运行时条件满足时触发
 
-**If "Add conditions":**
+**如果选择 "Add conditions"：**
 
-Present the available condition types:
+呈现可用的条件类型：
 
 ```
 Condition types:
@@ -108,61 +108,61 @@ Condition types:
                      Example (regex): package.json matches "prisma.*\d+\.\d+"
 ```
 
-Ask: **"Which condition type?"**
+询问：**"哪种条件类型？"**
 
-Then ask for the value based on the type:
-- `fileExists`: **"What path should exist?"** (relative to project root)
-- `gitBranch`: **"What branch pattern?"** (supports globs like `feature/*`, `fix/*`)
-- `envSet`: **"Which environment variable?"**
-- `envEquals`: **"Which variable?"** then **"What value?"**
-- `fileContains`: **"Which file?"** then **"What pattern to search for?"** then **"Use regex matching?"** (yes/no, default: no)
+然后根据类型询问值：
+- `fileExists`：**"应该存在什么路径？"**（相对于项目根目录）
+- `gitBranch`：**"什么分支模式？"**（支持 `feature/*`、`fix/*` 之类的 glob）
+- `envSet`：**"哪个环境变量？"**
+- `envEquals`：**"哪个变量？"** 然后 **"什么值？"**
+- `fileContains`：**"哪个文件？"** 然后 **"搜索什么模式？"** 然后 **"使用正则匹配吗？"**（yes/no，默认：no）
 
-After each condition, ask using AskUserQuestion:
-**"Add another condition? (AND logic — all must pass)"**
-- **Done** - No more conditions
-- **Add another** - Add one more condition
-- **Wrap in NOT** - Negate the last condition added
+每个条件之后，使用 AskUserQuestion 询问：
+**"添加另一个条件吗？（AND 逻辑 —— 全部必须通过）"**
+- **Done** - 不再添加条件
+- **Add another** - 再添加一个条件
+- **Wrap in NOT** - 对最后添加的条件取反
 
-**If "Wrap in NOT":** Wrap the most recent condition in `{"not": {...}}`. Show the updated condition. Then ask again if they want to add more.
+**如果选择 "Wrap in NOT"：** 把最近的条件包裹进 `{"not": {...}}`。显示更新后的条件。然后再次询问是否要添加更多。
 
-**If "Opt out of insert conditions":** Set `"inheritConditions": false` on the subscription. Then ask if they want to add subscription-level conditions (same flow as "Add conditions" above).
+**如果选择 "Opt out of insert conditions"：** 在订阅上设置 `"inheritConditions": false`。然后询问是否要添加订阅层级条件（流程与上面的 "Add conditions" 相同）。
 
-### Step 6: Duplicate Check
+### 第 6 步：重复检查
 
-Check if the `insert+on+when` tuple already exists in the target scope.
-If duplicate: show "This subscription already exists: {insert} -> {skill} [{timing}]. Nothing to add." and stop.
+检查 `insert+on+when` 元组在目标范围内是否已存在。
+如果重复：显示 "This subscription already exists: {insert} -> {skill} [{timing}]. Nothing to add." 并停止。
 
-Note: Two subscriptions with the same `insert+on+when` but different conditions ARE considered duplicates. Conditions modify behavior, not identity. If the user wants different conditions for the same insert+skill, they should create a differently-named insert.
+注意：两个具有相同 `insert+on+when` 但不同条件的订阅**确实**被视为重复。条件修改的是行为，不是身份。如果用户想为同一个 insert+skill 配置不同条件，他们应该创建一个不同命名的 insert。
 
-### Step 7: Save Subscription
+### 第 7 步：保存订阅
 
-Create the subscription object:
+创建订阅对象：
 
-Without conditions:
+无条件：
 ```json
 {"insert": "<name>", "on": "<pattern>", "when": "<pre|post|complete>"}
 ```
 
-With subscription-level conditions:
+带订阅层级条件：
 ```json
 {"insert": "<name>", "on": "<pattern>", "when": "<pre|post|complete>", "conditions": [{"fileExists": "docs/plans/"}, {"gitBranch": "feature/*"}]}
 ```
 
-With inheritConditions opt-out:
+带 inheritConditions 退出：
 ```json
 {"insert": "<name>", "on": "<pattern>", "when": "<pre|post|complete>", "inheritConditions": false}
 ```
 
-With opt-out AND own conditions:
+带退出且自有条件：
 ```json
 {"insert": "<name>", "on": "<pattern>", "when": "<pre|post|complete>", "inheritConditions": false, "conditions": [{"gitBranch": "feature/*"}]}
 ```
 
-Append to the `subscriptions` array in the target config. If the file doesn't exist, create it with `mkdir -p .claude` for project scope.
+追加到目标配置的 `subscriptions` 数组中。如果文件不存在，项目范围用 `mkdir -p .claude` 创建目录。
 
-### Step 8: Confirm
+### 第 8 步：确认
 
-When insert has conditions and subscription adds more:
+当 insert 有条件且订阅添加了更多条件时：
 ```
 Subscription created:
   insert: compound-knowledge
@@ -178,13 +178,13 @@ Subscription created:
   Saved to .claude/skill-bus.json
 ```
 
-When opt-out:
+退出时：
 ```
   Effective conditions:
     (none — opted out of insert conditions with inheritConditions: false)
 ```
 
-When opt-out with own conditions:
+退出但有自己的条件时：
 ```
   Effective conditions:
     inherited: (opted out with inheritConditions: false)
@@ -192,7 +192,7 @@ When opt-out with own conditions:
     logic:     gitBranch("feature/*")
 ```
 
-When no conditions anywhere:
+任何位置都无条件时：
 ```
   Conditions: none (always fires when skill matches)
 ```

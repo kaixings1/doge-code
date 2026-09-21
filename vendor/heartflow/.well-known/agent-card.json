@@ -1,0 +1,67 @@
+{
+  "name": "HeartFlow Agent",
+  "description": "安全合规的人工智能 Agent 执行引擎，45维判别 + 出域防护 + 审计追溯 + 全局熔断",
+  "version": "6.7.5",
+  "vendor": "mark-heartflow",
+  "license": "MIT",
+  "repository": "https://github.com/mark-HeartFlow/mark-heartflow-skill",
+  "documentation": "https://github.com/mark-HeartFlow/mark-heartflow-skill/blob/main/README.md",
+  "contact": {
+    "email": "owner@mark-heartflow.ai",
+    "maintainer": "HeartFlow Owner"
+  },
+  "privacy": "本地优先，无遥测，数据不外传",
+  "termsOfService": "https://github.com/mark-HeartFlow/mark-heartflow-skill/blob/main/TERMS.md",
+  "capabilities": {
+    "discriminationDimensions": 45,
+    "tools": 153,
+    "complianceStandards": [
+      "GB/T 42497-2023",
+      "GB/Z 185-2026",
+      "ISO/IEC 27001",
+      "NIST AI RMF"
+    ],
+    "features": [
+      "content-safety-filter",
+      "pii-detection",
+      "outbound-gate",
+      "audit-trace-hmac",
+      "circuit-breaker"
+    ]
+  },
+  "authentication": {
+    "type": "bearer",
+    "scheme": "HEARTFLOW_MCP_TOKEN",
+    "description": "Bearer token in Authorization header"
+  },
+  "interfaces": [
+    {
+      "type": "MCP",
+      "version": "2024-11-05",
+      "transport": [
+        "stdio",
+        "http-sse"
+      ],
+      "endpoint": "http://127.0.0.1:8099"
+    }
+  ],
+  "availability": {
+    "uptime": "99.9%",
+    "sla": "本地部署，无外部依赖"
+  },
+  "tools": {
+    "count": 153,
+    "categories": [
+      "think",
+      "discriminate",
+      "memory",
+      "emotion",
+      "decision",
+      "safety",
+      "audit",
+      "circuit-breaker",
+      "outbound-gate",
+      "safe-fetch"
+    ]
+  }
+}

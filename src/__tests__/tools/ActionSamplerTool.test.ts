@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { ActionSamplerTool, type Action } from '../../tools/ActionSamplerTool/ActionSamplerTool.js'
 
 describe('ActionSamplerTool', () => {
-  const makeActions = (count: number): Action[] =>
+  const makeActions = (count: number): unknown[] =>
     Array.from({ length: count }, (_, i) => ({
       id: `a${i}`,
       name: `action_${i}`,

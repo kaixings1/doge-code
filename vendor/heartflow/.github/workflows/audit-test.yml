@@ -1,0 +1,18 @@
+name: audit-test
+on: [push, pull_request]
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: Install deps
+        run: npm install --ignore-scripts --no-fund --no-audit 2>&1
+      - name: Syntax check all JS files
+        run: |
+          find src -name '*.js' -exec node --check {} \; 2>&1
+          echo "Syntax check passed"
+      - name: Run test suite
+        run: node test/run-all.js 2>&1

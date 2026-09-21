@@ -319,7 +319,7 @@ export function filterToolProgressMessages(
 ): ProgressMessage<ToolProgressData>[] {
   return progressMessagesForMessage.filter(
     (msg): msg is ProgressMessage<ToolProgressData> =>
-      msg.data?.type !== 'hook_progress',
+      typeof msg.data === 'object' && msg.data !== null && (msg.data as Record<string, unknown>).type !== 'hook_progress',
   )
 }
 
@@ -381,6 +381,12 @@ export type Tool<
    * 优先使用工具名称中未出现的术语（例如，为 NotebookEdit 使用 'jupyter'）。
    */
   searchHint?: string
+  /**
+   * 工具触发时机标注（'manual' 等）。
+   * 39 个工具声明了该字段，但当前无消费方读取——保留声明以维持现有工具定义可用，
+   * 语义待后续明确。
+   */
+  callOn?: string
   /**
    * 工具执行入口。
    *

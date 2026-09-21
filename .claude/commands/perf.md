@@ -1,42 +1,42 @@
 ---
-description: Structured performance investigation with baselines, profiling, and evidence-backed decisions
+description: 结构化的性能调查，包含基线、profiling 和有证据支撑的决策
 argument-hint: "[--resume] [--phase setup|baseline|breaking-point|constraints|hypotheses|code-paths|profiling|optimization|decision|consolidation] [--id <id>] [--scenario <text>] [--command <cmd>] [--version <ver>] [--duration <seconds>] [--runs <n>] [--aggregate <median|mean|min|max>] [--quote <text>] [--hypotheses-file <path>] [--param-env <name>] [--param-min <n>] [--param-max <n>] [--cpu <limit>] [--memory <limit>] [--change <summary>] [--verdict <continue|stop>] [--rationale <text>]"
 allowed-tools: Read, Write, Edit, Task, Bash(git:*), Bash(node:*), Bash(npm:*), Bash(pnpm:*), Bash(yarn:*), Bash(cargo:*), Bash(go:*), Bash(pytest:*), Bash(mvn:*), Bash(gradle:*)
 ---
 
-# /perf - Performance Investigation Workflow
+# /perf - 性能调查工作流
 
-Run a rigorous, evidence-driven performance investigation with strict rules, baselines, and reproducible benchmarks.
+运行严格的、证据驱动的性能调查，配备严格的规则、基线和可复现的基准测试。
 
-## Canonical Requirements
+## 规范要求
 
-All behavior must follow:
-- `docs/perf-requirements.md` (source of truth)
+所有行为必须遵循：
+- `docs/perf-requirements.md`（真相来源）
 - `docs/perf-research-methodology.md`
 
-## Arguments
+## 参数
 
-- `--resume`: Continue the latest investigation from `{state-dir}/perf/investigation.json`
-- `--phase <phase>`: Force starting phase (use only when resuming)
-- `--id <id>`: Set investigation id (new only)
-- `--scenario <text>`: Short scenario description
-- `--command <cmd>`: Benchmark command (prints PERF_METRICS markers)
-- `--version <ver>`: Baseline version label
-- `--duration <seconds>`: Benchmark duration override (default 60s; use smaller values for micro-benchmarks)
-- `--runs <n>`: Number of runs for start-to-end benchmarks (use with median aggregation)
-- `--aggregate <median|mean|min|max>`: Aggregation method for multi-run benchmarks (default median)
-- `--quote <text>`: User quote to record in logs
-- `--hypotheses-file <path>`: JSON file with hypothesis list (for hypotheses phase)
-- `--param-env <name>`: Env var for breaking-point value (default PERF_PARAM_VALUE)
-- `--param-min <n>`: Breaking-point min value (default 1)
-- `--param-max <n>`: Breaking-point max value (default 500)
-- `--cpu <limit>`: Constraint CPU limit (default 1)
-- `--memory <limit>`: Constraint memory limit (default 1GB)
-- `--change <summary>`: Optimization change summary
-- `--verdict <continue|stop>`: Decision verdict
-- `--rationale <text>`: Decision rationale
+- `--resume`：从 `{state-dir}/perf/investigation.json` 继续最近的调查
+- `--phase <phase>`：强制起始阶段（仅在恢复时使用）
+- `--id <id>`：设置调查 id（仅新建时）
+- `--scenario <text>`：简短的场景描述
+- `--command <cmd>`：基准测试命令（打印 PERF_METRICS 标记）
+- `--version <ver>`：基线版本标签
+- `--duration <seconds>`：基准测试时长覆盖（默认 60s；微基准测试使用更小的值）
+- `--runs <n>`：从开始到结束的基准测试运行次数（配合中位数聚合使用）
+- `--aggregate <median|mean|min|max>`：多次运行基准测试的聚合方法（默认中位数）
+- `--quote <text>`：记录到日志中的用户原话
+- `--hypotheses-file <path>`：包含假设列表的 JSON 文件（用于 hypotheses 阶段）
+- `--param-env <name>`：断点值使用的环境变量（默认 PERF_PARAM_VALUE）
+- `--param-min <n>`：断点最小值（默认 1）
+- `--param-max <n>`：断点最大值（默认 500）
+- `--cpu <limit>`：约束 CPU 上限（默认 1）
+- `--memory <limit>`：约束内存上限（默认 1GB）
+- `--change <summary>`：优化变更摘要
+- `--verdict <continue|stop>`：决策裁决
+- `--rationale <text>`：决策理由
 
-## Phase 1: Initialize Investigation State
+## 阶段 1：初始化调查状态
 
 ```javascript
 const { getPluginRoot } = require('@awesome-slash/lib/cross-platform');
@@ -460,10 +460,10 @@ async function runPhase() {
 await runPhase();
 ```
 
-## Output
+## 输出
 
-- Updated `{state-dir}/perf/investigation.json`
-- Investigation log at `{state-dir}/perf/investigations/<id>.md`
-- Baseline files at `{state-dir}/perf/baselines/<version>.json`
+- 更新后的 `{state-dir}/perf/investigation.json`
+- 位于 `{state-dir}/perf/investigations/<id>.md` 的调查日志
+- 位于 `{state-dir}/perf/baselines/<version>.json` 的基线文件
 
-Begin the performance investigation now.
+现在开始性能调查。

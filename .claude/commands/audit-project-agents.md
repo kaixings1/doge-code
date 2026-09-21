@@ -1,33 +1,33 @@
-# Phase 2: Multi-Agent Review - Reference
+# 阶段 2：多代理审查 - 参考
 
-This file contains detailed agent coordination for `/audit-project`.
+此文件包含 `/audit-project` 的详细代理协调逻辑。
 
-**Parent document**: `audit-project.md`
+**父文档**：`audit-project.md`
 
-**Review Pass Definitions**: See `orchestrate-review` skill for canonical pass definitions (core + conditional). This command uses the same review passes but detects signals from project structure (not just changed files).
+**审查遍定义**：规范遍定义（核心 + 条件）见 `orchestrate-review` 技能。此命令使用相同的审查遍，但信号从项目结构检测（而不仅仅是变更的文件）。
 
-## Agent Specialization
+## 代理专精
 
-### File Filtering by Agent
+### 按代理划分的文件过滤
 
-Each agent reviews only relevant files:
+每个代理只审查相关文件：
 
 | Agent | File Patterns |
 |-------|--------------|
-| code-quality-reviewer | All source files (includes error handling) |
-| security-expert | Auth, validation, API endpoints, config |
-| performance-engineer | Hot paths, algorithms, loops, queries |
-| test-quality-guardian | Test files + missing-test signals |
-| architecture-reviewer | Cross-module boundaries, core packages |
-| database-specialist | Models, queries, migrations |
-| api-designer | API routes, controllers, handlers |
-| frontend-specialist | Components, state management |
-| backend-specialist | Services, domain logic, queues |
-| devops-reviewer | CI/CD configs, Dockerfiles |
+| code-quality-reviewer | 所有源文件（包含错误处理） |
+| security-expert | 认证、校验、API 端点、配置 |
+| performance-engineer | 热路径、算法、循环、查询 |
+| test-quality-guardian | 测试文件 + 缺失测试信号 |
+| architecture-reviewer | 跨模块边界、核心包 |
+| database-specialist | 模型、查询、迁移 |
+| api-designer | API 路由、控制器、处理器 |
+| frontend-specialist | 组件、状态管理 |
+| backend-specialist | 服务、领域逻辑、队列 |
+| devops-reviewer | CI/CD 配置、Dockerfile |
 
-## Review Queue File
+## 审查队列文件
 
-Create a temporary review queue file in the platform state dir. Review passes append JSONL or return JSON for the parent to write.
+在平台状态目录中创建一个临时审查队列文件。审查遍追加 JSONL，或返回 JSON 由父级写入。
 
 ```javascript
 const path = require('path');
@@ -96,9 +96,9 @@ if (!fs.existsSync(reviewQueuePath)) {
 }
 ```
 
-## Agent Coordination
+## 代理协调
 
-Use Task tool to launch agents in parallel:
+使用 Task 工具并行启动代理：
 
 ```javascript
 const agents = [];
@@ -250,9 +250,9 @@ if (HAS_CICD) {
 }
 ```
 
-## Finding Consolidation
+## 发现项合并
 
-After all agents complete:
+所有代理完成后：
 
 ```javascript
 function consolidateFindings(agentResults) {
@@ -322,9 +322,9 @@ function consolidateFindings(agentResults) {
 }
 ```
 
-## Queue Cleanup
+## 队列清理
 
-After fixes and re-review, remove the queue file if no open issues remain:
+修复并重新审查后，如果没有未解决的问题，则删除队列文件：
 
 ```javascript
 const queueState = safeReadJson(reviewQueuePath);
@@ -345,9 +345,9 @@ if (openCount === 0) {
 }
 ```
 
-## Framework-Specific Patterns
+## 框架专属模式
 
-### React Patterns
+### React 模式
 
 ```javascript
 const reactPatterns = {
@@ -367,7 +367,7 @@ const reactPatterns = {
 };
 ```
 
-### Express Patterns
+### Express 模式
 
 ```javascript
 const expressPatterns = {
@@ -383,7 +383,7 @@ const expressPatterns = {
 };
 ```
 
-### Django Patterns
+### Django 模式
 
 ```javascript
 const djangoPatterns = {
@@ -398,7 +398,7 @@ const djangoPatterns = {
 };
 ```
 
-## Pattern Application
+## 模式应用
 
 ```javascript
 function applyPatterns(findings, frameworkPatterns) {
@@ -417,7 +417,7 @@ function applyPatterns(findings, frameworkPatterns) {
 }
 ```
 
-## Review Output Format
+## 审查输出格式
 
 ```markdown
 ## Agent Reports
@@ -442,10 +442,10 @@ Findings:
 ## Consolidated Summary
 
 **Total Issues**: X
-- Critical: Y (must fix)
-- High: Z (should fix)
-- Medium: A (consider)
-- Low: B (nice to have)
+- Critical: Y（必须修复）
+- High: Z（应当修复）
+- Medium: A（考虑）
+- Low: B（可选改进）
 
 **Top Files by Issue Count**:
 1. src/api/users.ts: 5 issues

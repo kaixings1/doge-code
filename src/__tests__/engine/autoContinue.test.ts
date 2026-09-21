@@ -16,7 +16,7 @@ class TestableMessageLoop extends MessageLoop {
     stopReason: string
     needsUserInput?: boolean
   }): Promise<boolean> {
-    return this._recordAssistantResponse({
+    return (this as unknown as { _recordAssistantResponse(processed: unknown): Promise<boolean> })._recordAssistantResponse({
       content: processed.content,
       toolCalls: processed.toolCalls,
       stopReason: processed.stopReason,
@@ -64,25 +64,25 @@ describe('MessageLoop 自动继续', () => {
     ;(loop as any).lastToolCalls = []
   })
 
-  // ── 默认关闭：未配置时不自动继续 ──
+  // ── 默认开启：未配置时自动继续 ��─
 
-  it('未配置 autoContinue 时，即使含"是否继续"也不自动继续', async () => {
+  it('未配置 autoContinue 时，AI 回复含"是否继续"应自动继续', async () => {
     const result = await loop.recordAssistant({
       content: '是否继续处理剩余文件？',
       toolCalls: [],
       stopReason: 'end_turn',
     })
-    expect(result).toBe(false)
+    expect(result).toBe(true)
   })
 
-  it('未配置 autoContinue 时，read 后 AI 返回纯文本也不自动继续', async () => {
+  it('未配置 autoContinue 时，read 后 AI 返回纯文本应自动继续', async () => {
     ;(loop as any).lastToolCalls = [{ name: 'read' }]
     const result = await loop.recordAssistant({
       content: '这是文件内容分析',
       toolCalls: [],
       stopReason: 'end_turn',
     })
-    expect(result).toBe(false)
+    expect(result).toBe(true)
   })
 
   // ── 关键词触发（需配置 continueKeyword: true） ──
@@ -107,8 +107,8 @@ describe('MessageLoop 自动继续', () => {
     expect(result).toBe(true)
   })
 
-  it('配置 keyword 但未启用总开关时不应自动继续', async () => {
-    const l = makeLoop({ continueKeyword: true })
+  it('显式设置 enabled: false 时应阻止自动继续（即使含关键词）', async () => {
+    const l = makeLoop({ enabled: false, continueKeyword: true })
     const result = await l.recordAssistant({
       content: '是否继续？',
       toolCalls: [],

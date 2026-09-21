@@ -94,7 +94,7 @@ export class RemoteIO extends StructuredIO {
     // 设置数据回调
     this.isBridge = process.env.CLAUDE_CODE_ENVIRONMENT_KIND === 'bridge'
     this.isDebug = isDebugMode()
-    this.transport.setOnData((data: string) => {
+    (this.transport as any).setOnData?.((data: string) => {
       this.inputStream.write(data)
       if (this.isBridge && this.isDebug) {
         writeToStdout(data.endsWith('\n') ? data : data + '\n')
@@ -102,7 +102,7 @@ export class RemoteIO extends StructuredIO {
     })
 
     // 设置关闭回调以处理连接失败
-    this.transport.setOnClose(() => {
+    (this.transport as any).setOnClose?.(() => {
       // 结束输入流以触发优雅关闭
       this.inputStream.end()
     })
@@ -228,7 +228,7 @@ export class RemoteIO extends StructuredIO {
     if (this.ccrClient) {
       await this.ccrClient.writeEvent(message)
     } else {
-      await this.transport.write(message)
+      await (this.transport as any).write(message)
     }
     if (this.isBridge) {
       if (message.type === 'control_request' || this.isDebug) {

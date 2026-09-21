@@ -1,48 +1,41 @@
 ---
-description: Run the orch-review native Workflow over a diff (local changes or a GitHub PR) and report blocking vs advisory findings. Surface for the orch-review workflow.
+description: 对一个 diff（本地变更或 GitHub PR）运行 orch-review 原生 Workflow，并报告阻塞性与建议性发现。orch-review 工作流的入口。
 argument-hint: [pr-number | pr-url | blank for local uncommitted changes]
 ---
 
 # /orch-review
 
-Surface for `workflows/orch-review.workflow.js` — the native Workflow port of
-orch-pipeline Phase 5 (Review). This command computes a diff, hands it to the
-workflow, and presents the result. The workflow owns the fan-out (one reviewer
-per dimension, dedup, adversarial verify); this command owns input and output.
+`workflows/orch-review.workflow.js` 的入口 —— orch-pipeline 阶段 5（审查）的原生 Workflow 移植版。此命令计算 diff、交给工作流，并呈现结果。工作流负责扇出（每个维度一个审查者、去重、对抗性验证）；此命令负责输入和输出。
 
-**Input**: $ARGUMENTS
+**输入**：$ARGUMENTS
 
 ---
 
-## Mode Selection
+## 模式选择
 
 | Input | Mode |
 |---|---|
-| Blank | **Local Mode** — review uncommitted changes |
-| Number (e.g. `42`) or PR URL | **PR Mode** — review a GitHub PR |
+| 留空 | **本地模式** —— 审查未提交的变更 |
+| 数字（如 `42`）或 PR URL | **PR 模式** —— 审查一个 GitHub PR |
 
 ---
 
-## Phase 1 — GATHER
+## 阶段 1 —— 收集
 
-Build the unified diff and the metadata the workflow needs.
+构建统一 diff 和工作流所需的元数据。
 
-**Local Mode:**
+**本地模式：**
 
 ```bash
 git diff --name-only HEAD          # changedFiles
 git diff HEAD                      # diff text
 ```
 
-If the diff is empty, stop: "Nothing to review."
+如果 diff 为空，停止："Nothing to review."
 
-**PR Mode:**
+**PR 模式：**
 
-First derive a **safe numeric PR id** from `$ARGUMENTS` — never pass the raw
-argument to the shell. Accept either a bare integer, or the trailing number of a
-`https://github.com/<owner>/<repo>/pull/<N>` URL. Reject anything else (extra
-text, shell metacharacters, a non-PR URL) and stop with an error. Use only the
-extracted integer `<NUMBER>` below:
+先从 `$ARGUMENTS` 推导出一个**安全的数字 PR id** —— 绝不要把原始参数传给 shell。接受裸整数，或 `https://github.com/<owner>/<repo>/pull/<N>` URL 末尾的数字。拒绝其他任何形式（多余文本、shell 元字符、非 PR URL）并以错误停止。下面只使用提取出的整数 `<NUMBER>`：
 
 ```bash
 gh pr diff <NUMBER>                       # diff text
@@ -50,17 +43,13 @@ gh pr view <NUMBER> --json files \
   --jq '.files[].path'                    # changedFiles
 ```
 
-If the PR is not found, stop with an error.
+如果找不到 PR，以错误停止。
 
-Then derive `language` from the dominant changed-file extension (for example
-`.ts`/`.tsx` to `typescript`, `.py` to `python`, `.go` to `go`). Leave it unset
-when the change is mixed or non-code — the workflow simply skips the
-language-specific reviewer.
+然后从占主导的变更文件扩展名推导 `language`（例如 `.ts`/`.tsx` → `typescript`，`.py` → `python`，`.go` → `go`）。当变更是混合的或非代码时，保持未设置 —— 工作流会直接跳过语言专属的审查者。
 
-## Phase 2 — INVOKE
+## 阶段 2 —— 调用
 
-Call the Workflow tool. The workflow validates its own input and fails closed on
-a missing or empty diff, so always pass a non-empty `diff`.
+调用 Workflow 工具。工作流会校验自己的输入，并在 diff 缺失或为空时失败关闭（fail closed），因此始终传入非空的 `diff`。
 
 ```jsonc
 Workflow({
@@ -73,9 +62,7 @@ Workflow({
 })
 ```
 
-The workflow fans out reviewers in parallel, dedups findings on the normalized
-evidence snippet, and runs an adversarial verifier on every unique CRITICAL/HIGH
-finding. It returns:
+工作流并行扇出审查者，基于归一化的证据片段对发现项去重，并对每个唯一的 CRITICAL/HIGH 发现项运行对抗性验证器。它返回：
 
 ```jsonc
 {
@@ -88,32 +75,23 @@ finding. It returns:
 }
 ```
 
-## Phase 3 — REPORT
+## 阶段 3 —— 报告
 
-Present the result to the user (this is the human review gate; the workflow does
-not commit anything):
+向用户呈现结果（这是人工审查关卡；工作流不做任何提交）：
 
-- Lead with `verdict` and the `stats` line (dimensions, raw to unique collapse).
-- List every `blocking` finding with file, severity, and evidence — these must
-  clear before a commit. Findings tagged "could not be verified" stay in
-  `blocking` by design; call them out as needing manual confirmation.
-- List `advisory` findings briefly (MEDIUM/LOW and verifier-refuted items).
-- If `incomplete` is true, state which dimensions in `failedDimensions` did not
-  run and that the verdict is therefore not a clean approval.
+- 先给出 `verdict` 和 `stats` 行（维度数、raw 到 unique 的收敛）。
+- 逐条列出所有 `blocking` 发现项，附文件、严重程度和证据 —— 这些必须在提交前清除。标记为 "could not be verified" 的发现项按设计保留在 `blocking` 中；请明确指出它们需要人工确认。
+- 简要列出 `advisory` 发现项（MEDIUM/LOW 以及被验证器驳回的项）。
+- 如果 `incomplete` 为 true，说明 `failedDimensions` 中有哪些维度未运行，因此该裁决并非干净的批准。
 
-## Fail-Closed Contract
+## 失败关闭契约
 
-This command must never present a clean APPROVE when the review could not fully
-run. If the Workflow tool itself errors, report the failure — do not fall back to
-a hand-rolled review and do not imply the diff was approved.
+当审查无法完整运行时，此命令绝不可呈现一个干净的 APPROVE。如果 Workflow 工具本身出错，报告该失败 —— 不要退回手工审查，也不要暗示该 diff 已获批准。
 
 ---
 
-## Edge Cases
+## 边界情况
 
-- **No `gh` CLI (PR Mode)**: stop and tell the user PR Mode needs `gh`; suggest
-  Local Mode against a checked-out branch instead.
-- **Large diff**: the workflow caps reviewer concurrency automatically, so a
-  large diff is slower but safe; warn the user it may take longer.
-- **Binary or generated files**: drop them from `changedFiles` before invoking —
-  they add noise to the security trigger without reviewable content.
+- **没有 `gh` CLI（PR 模式）**：停止并告知用户 PR 模式需要 `gh`；改为建议对已检出分支使用本地模式。
+- **大型 diff**：工作流会自动限制审查者并发，因此大 diff 更慢但安全；提醒用户可能需要更长时间。
+- **二进制或生成的文件**：调用前把它们从 `changedFiles` 中剔除 —— 它们会给安全触发条件增加噪音，却没有可审查的内容。

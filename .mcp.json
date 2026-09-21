@@ -24,6 +24,11 @@
     "git": {
       "command": "uv",
       "args": ["--directory", "D:/MFC_TESTER/mcp_servers_downloaded/mcp-everything/src/git", "run", "mcp-server-git", "--repository", "D:/MFC_TESTER"]
+    },
+    "heartflow": {
+      "type": "sse",
+      "url": "http://127.0.0.1:8099/mcp",
+      "headersHelper": "D:/doge-code/vendor/heartflow/scripts/mcp-headers-helper.cmd"
     }
   }
 }

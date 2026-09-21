@@ -19,7 +19,7 @@ const inputSchema = lazySchema(() =>
   z.object({
     subject: z.string().optional(),
     name: z.string().optional(),
-    description: z.string().describe('需要完成什么'),
+    description: z.string().optional().describe('需要完成什么'),
     activeForm: z
       .string()
       .optional()

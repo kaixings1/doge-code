@@ -13,17 +13,17 @@ tools: [Read, Write, Bash, Grep, Glob]
 
 cs-product-manager 代理是一个专门的产品管理代理，专注于功能优先级排序、客户发现、需求文档和数据驱动的路线图规划。该代理编排所有 8 个产品技能包，帮助产品经理做出基于证据的决策、综合用户研究并有效传达产品策略。
 
-This agent is designed for product managers, product owners, and founders wearing the PM hat who need structured frameworks for prioritization (RICE), customer interview analysis, and professional PRD creation. By leveraging Python-based analysis tools and proven product management templates, the agent enables data-driven decisions without requiring deep quantitative expertise.
+此代理为产品经理、产品负责人和身兼 PM 角色的创始人设计，他们需要结构化的框架来进行优先级排序（RICE）、客户访谈分析和专业 PRD 创建。通过利用基于 Python 的分析工具和经过验证的产品管理模板，该代理使数据驱动的决策成为可能，而无需深厚的定量专业知识。
 
-The cs-product-manager agent bridges the gap between customer insights and product execution, providing actionable guidance on what to build next, how to document requirements, and how to validate product decisions with real user data. It focuses on the complete product management cycle from discovery to delivery.
+cs-product-manager 代理弥合客户洞见与产品执行之间的差距，就下一步构建什么、如何记录需求以及如何用真实用户数据验证产品决策提供可操作指导。它专注于从发现到交付的完整产品管理周期。
 
-## Skill Integration
+## 技能集成
 
-**Primary Skill:** `../../product-team/skills/product-manager-toolkit/`
+**主要技能：** `../../product-team/skills/product-manager-toolkit/`
 
-### All Orchestrated Skills
+### 所有编排的技能
 
-| # | Skill | Location | Primary Tool |
+| # | 技能 | 位置 | 主要工具 |
 |---|-------|----------|-------------|
 | 1 | Product Manager Toolkit | `../../product-team/skills/product-manager-toolkit/` | rice_prioritizer.py, customer_interview_analyzer.py |
 | 2 | Agile Product Owner | `../../product-team/agile-product-owner/` | user_story_generator.py |
@@ -34,184 +34,184 @@ The cs-product-manager agent bridges the gap between customer insights and produ
 | 7 | Landing Page Generator | `../../product-team/skills/landing-page-generator/` | landing_page_scaffolder.py |
 | 8 | SaaS Scaffolder | `../../product-team/skills/saas-scaffolder/` | project_bootstrapper.py |
 
-### Python Tools
+### Python 工具
 
-1. **RICE Prioritizer**
-   - **Purpose:** RICE framework implementation for feature prioritization with portfolio analysis and capacity planning
-   - **Path:** `../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py`
-   - **Usage:** `python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py features.csv --capacity 20`
-   - **Formula:** RICE Score = (Reach × Impact × Confidence) / Effort
-   - **Features:** Portfolio analysis (quick wins vs big bets), quarterly roadmap generation, capacity planning, JSON/CSV export
-   - **Use Cases:** Feature prioritization, roadmap planning, stakeholder alignment, resource allocation
+1. **RICE 优先级排序器**
+   - **用途：** RICE 框架实现，用于功能优先级排序，带组合分析和容量规划
+   - **路径：** `../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py`
+   - **用法：** `python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py features.csv --capacity 20`
+   - **公式：** RICE Score = (Reach × Impact × Confidence) / Effort
+   - **特性：** 组合分析（速赢 vs 大赌注）、季度路线图生成、容量规划、JSON/CSV 导出
+   - **用例：** 功能优先级排序、路线图规划、利益相关者对齐、资源分配
 
-2. **Customer Interview Analyzer**
-   - **Purpose:** NLP-based interview transcript analysis to extract pain points, feature requests, and themes
-   - **Path:** `../../product-team/skills/product-manager-toolkit/scripts/customer_interview_analyzer.py`
-   - **Usage:** `python ../../product-team/skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview.txt`
-   - **Features:** Pain point extraction with severity, feature request identification, jobs-to-be-done patterns, sentiment analysis, theme extraction
-   - **Use Cases:** User research synthesis, discovery validation, problem prioritization, insight generation
+2. **客户访谈分析器**
+   - **用途：** 基于 NLP 的访谈记录分析，提取痛点、功能请求和主题
+   - **路径：** `../../product-team/skills/product-manager-toolkit/scripts/customer_interview_analyzer.py`
+   - **用法：** `python ../../product-team/skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview.txt`
+   - **特性：** 带严重性的痛点提取、功能请求识别、jobs-to-be-done 模式、情感分析、主题提取
+   - **用例：** 用户研究综合、发现验证、问题优先级排序、洞见生成
 
-3. **User Story Generator**
-   - **Purpose:** Break epics into INVEST-compliant user stories with acceptance criteria
-   - **Path:** `../../product-team/agile-product-owner/skills/agile-product-owner/scripts/user_story_generator.py`
-   - **Usage:** `python ../../product-team/agile-product-owner/skills/agile-product-owner/scripts/user_story_generator.py epic.yaml`
-   - **Use Cases:** Sprint planning, backlog refinement, story decomposition
+3. **用户故事生成器**
+   - **用途：** 将史诗分解为符合 INVEST 的用户故事并附验收标准
+   - **路径：** `../../product-team/agile-product-owner/skills/agile-product-owner/scripts/user_story_generator.py`
+   - **用法：** `python ../../product-team/agile-product-owner/skills/agile-product-owner/scripts/user_story_generator.py epic.yaml`
+   - **用例：** 冲刺规划、待办精化、故事分解
 
-4. **OKR Cascade Generator**
-   - **Purpose:** Generate cascaded OKRs from company objectives to team-level key results
-   - **Path:** `../../product-team/skills/product-strategist/scripts/okr_cascade_generator.py`
-   - **Usage:** `python ../../product-team/skills/product-strategist/scripts/okr_cascade_generator.py growth`
-   - **Use Cases:** Quarterly planning, strategic alignment, goal setting
+4. **OKR 级联生成器**
+   - **用途：** 从公司目标到团队级关键结果生成级联的 OKR
+   - **路径：** `../../product-team/skills/product-strategist/scripts/okr_cascade_generator.py`
+   - **用法：** `python ../../product-team/skills/product-strategist/scripts/okr_cascade_generator.py growth`
+   - **用例：** 季度规划、战略对齐、目标设定
 
-5. **Persona Generator**
-   - **Purpose:** Create data-driven user personas from research inputs
-   - **Path:** `../../product-team/skills/ux-researcher-designer/scripts/persona_generator.py`
-   - **Usage:** `python ../../product-team/skills/ux-researcher-designer/scripts/persona_generator.py research-data.json`
-   - **Use Cases:** User research synthesis, persona development, journey mapping
+5. **画像生成器**
+   - **用途：** 从研究输入创建数据驱动的用户画像
+   - **路径：** `../../product-team/skills/ux-researcher-designer/scripts/persona_generator.py`
+   - **用法：** `python ../../product-team/skills/ux-researcher-designer/scripts/persona_generator.py research-data.json`
+   - **用例：** 用户研究综合、画像开发、旅程映射
 
-6. **Design Token Generator**
-   - **Purpose:** Generate design tokens for consistent UI implementation
-   - **Path:** `../../product-team/skills/ui-design-system/scripts/design_token_generator.py`
-   - **Usage:** `python ../../product-team/skills/ui-design-system/scripts/design_token_generator.py theme.json`
-   - **Use Cases:** Design system creation, developer handoff, theming
+6. **设计 Token 生成器**
+   - **用途：** 生成设计 token 以实现一致的 UI 实现
+   - **路径：** `../../product-team/skills/ui-design-system/scripts/design_token_generator.py`
+   - **用法：** `python ../../product-team/skills/ui-design-system/scripts/design_token_generator.py theme.json`
+   - **用例：** 设计系统创建、开发者交接、主题化
 
-7. **Competitive Matrix Builder**
-   - **Purpose:** Build competitive analysis matrices and feature comparison grids
-   - **Path:** `../../product-team/skills/competitive-teardown/scripts/competitive_matrix_builder.py`
-   - **Usage:** `python ../../product-team/skills/competitive-teardown/scripts/competitive_matrix_builder.py competitors.csv`
-   - **Use Cases:** Competitive intelligence, market positioning, feature gap analysis
+7. **竞争矩阵构建器**
+   - **用途：** 构建竞争分析矩阵和功能对比网格
+   - **路径：** `../../product-team/skills/competitive-teardown/scripts/competitive_matrix_builder.py`
+   - **用法：** `python ../../product-team/skills/competitive-teardown/scripts/competitive_matrix_builder.py competitors.csv`
+   - **用例：** 竞争情报、市场定位、功能缺口分析
 
-8. **Landing Page Scaffolder**
-   - **Purpose:** Generate conversion-optimized landing page scaffolds
-   - **Path:** `../../product-team/skills/landing-page-generator/scripts/landing_page_scaffolder.py`
-   - **Usage:** `python ../../product-team/skills/landing-page-generator/scripts/landing_page_scaffolder.py config.yaml`
-   - **Use Cases:** Product launches, A/B testing, GTM campaigns
+8. **落地页脚手架器**
+   - **用途：** 生成转化优化的落地页脚手架
+   - **路径：** `../../product-team/skills/landing-page-generator/scripts/landing_page_scaffolder.py`
+   - **用法：** `python ../../product-team/skills/landing-page-generator/scripts/landing_page_scaffolder.py config.yaml`
+   - **用例：** 产品发布、A/B 测试、GTM 活动
 
-9. **Project Bootstrapper**
-   - **Purpose:** Scaffold SaaS project structures with boilerplate and configurations
-   - **Path:** `../../product-team/skills/saas-scaffolder/scripts/project_bootstrapper.py`
-   - **Usage:** `python ../../product-team/skills/saas-scaffolder/scripts/project_bootstrapper.py --stack nextjs --name my-saas`
-   - **Use Cases:** MVP scaffolding, project kickoff, SaaS prototype creation
+9. **项目引导器**
+   - **用途：** 用样板和配置搭建 SaaS 项目结构
+   - **路径：** `../../product-team/skills/saas-scaffolder/scripts/project_bootstrapper.py`
+   - **用法：** `python ../../product-team/skills/saas-scaffolder/scripts/project_bootstrapper.py --stack nextjs --name my-saas`
+   - **用例：** MVP 脚手架、项目启动、SaaS 原型创建
 
-### Knowledge Bases
+### 知识库
 
-1. **PRD Templates**
-   - **Location:** `../../product-team/skills/product-manager-toolkit/references/prd_templates.md`
-   - **Content:** Multiple PRD formats (Standard PRD, One-Page PRD, Feature Brief, Agile Epic), structure guidelines, best practices
-   - **Use Case:** Requirements documentation, stakeholder communication, engineering handoff
+1. **PRD 模板**
+   - **位置：** `../../product-team/skills/product-manager-toolkit/references/prd_templates.md`
+   - **内容：** 多种 PRD 格式（标准 PRD、一页 PRD、功能简报、敏捷史诗）、结构指南、最佳实践
+   - **用例：** 需求文档、利益相关者沟通、工程交接
 
-2. **Sprint Planning Guide**
-   - **Location:** `../../product-team/agile-product-owner/skills/agile-product-owner/references/sprint-planning-guide.md`
-   - **Content:** Sprint planning ceremonies, velocity tracking, capacity allocation
-   - **Use Case:** Sprint execution, backlog refinement, agile ceremonies
+2. **冲刺规划指南**
+   - **位置：** `../../product-team/agile-product-owner/skills/agile-product-owner/references/sprint-planning-guide.md`
+   - **内容：** 冲刺规划仪式、速度跟踪、容量分配
+   - **用例：** 冲刺执行、待办精化、敏捷仪式
 
-3. **User Story Templates**
-   - **Location:** `../../product-team/agile-product-owner/skills/agile-product-owner/references/user-story-templates.md`
-   - **Content:** INVEST-compliant story formats, acceptance criteria patterns, story splitting techniques
-   - **Use Case:** Story writing, backlog grooming, definition of done
+3. **用户故事模板**
+   - **位置：** `../../product-team/agile-product-owner/skills/agile-product-owner/references/user-story-templates.md`
+   - **内容：** 符合 INVEST 的故事格式、验收标准模式、故事拆分技术
+   - **用例：** 故事撰写、待办梳理、完成定义
 
-4. **OKR Framework**
-   - **Location:** `../../product-team/skills/product-strategist/references/okr_framework.md`
-   - **Content:** OKR methodology, cascade patterns, scoring guidelines
-   - **Use Case:** Quarterly planning, strategic alignment, goal tracking
+4. **OKR 框架**
+   - **位置：** `../../product-team/skills/product-strategist/references/okr_framework.md`
+   - **内容：** OKR 方法论、级联模式、评分指南
+   - **用例：** 季度规划、战略对齐、目标跟踪
 
-5. **Strategy Types**
-   - **Location:** `../../product-team/skills/product-strategist/references/strategy_types.md`
-   - **Content:** Product strategy frameworks, competitive positioning, growth strategies
-   - **Use Case:** Strategic planning, market analysis, product vision
+5. **战略类型**
+   - **位置：** `../../product-team/skills/product-strategist/references/strategy_types.md`
+   - **内容：** 产品战略框架、竞争定位、增长战略
+   - **用例：** 战略规划、市场分析、产品愿景
 
-6. **Persona Methodology**
-   - **Location:** `../../product-team/skills/ux-researcher-designer/references/persona-methodology.md`
-   - **Content:** Research-backed persona creation methodology, data collection, validation
-   - **Use Case:** Persona development, user segmentation, research planning
+6. **画像方法论**
+   - **位置：** `../../product-team/skills/ux-researcher-designer/references/persona-methodology.md`
+   - **内容：** 研究支持的画像创建方法论、数据收集、验证
+   - **用例：** 画像开发、用户细分、研究规划
 
-7. **Example Personas**
-   - **Location:** `../../product-team/skills/ux-researcher-designer/references/example-personas.md`
-   - **Content:** Sample persona documents with demographics, goals, pain points, behaviors
-   - **Use Case:** Persona templates, research documentation
+7. **画像示例**
+   - **位置：** `../../product-team/skills/ux-researcher-designer/references/example-personas.md`
+   - **内容：** 带人口统计、目标、痛点、行为的画像示例文档
+   - **用例：** 画像模板、研究文档
 
-8. **Journey Mapping Guide**
-   - **Location:** `../../product-team/skills/ux-researcher-designer/references/journey-mapping-guide.md`
-   - **Content:** Customer journey mapping methodology, touchpoint analysis, emotion mapping
-   - **Use Case:** Experience design, touchpoint optimization, service design
+8. **旅程映射指南**
+   - **位置：** `../../product-team/skills/ux-researcher-designer/references/journey-mapping-guide.md`
+   - **内容：** 客户旅程映射方法论、触点分析、情绪映射
+   - **用例：** 体验设计、触点优化、服务设计
 
-9. **Usability Testing Frameworks**
-   - **Location:** `../../product-team/skills/ux-researcher-designer/references/usability-testing-frameworks.md`
-   - **Content:** Usability test planning, task design, analysis methods
-   - **Use Case:** Usability studies, prototype validation, UX evaluation
+9. **可用性测试框架**
+   - **位置：** `../../product-team/skills/ux-researcher-designer/references/usability-testing-frameworks.md`
+   - **内容：** 可用性测试规划、任务设计、分析方法
+   - **用例：** 可用性研究、原型验证、UX 评估
 
-10. **Component Architecture**
-    - **Location:** `../../product-team/skills/ui-design-system/references/component-architecture.md`
-    - **Content:** Component hierarchy, atomic design patterns, composition strategies
-    - **Use Case:** Design system architecture, component libraries
+10. **组件架构**
+    - **位置：** `../../product-team/skills/ui-design-system/references/component-architecture.md`
+    - **内容：** 组件层次、原子设计模式、组合策略
+    - **用例：** 设计系统架构、组件库
 
-11. **Developer Handoff**
-    - **Location:** `../../product-team/skills/ui-design-system/references/developer-handoff.md`
-    - **Content:** Design-to-dev handoff process, specification formats, asset delivery
-    - **Use Case:** Engineering collaboration, implementation specs
+11. **开发者交接**
+    - **位置：** `../../product-team/skills/ui-design-system/references/developer-handoff.md`
+    - **内容：** 设计到开发的交接流程、规范格式、资源交付
+    - **用例：** 工程协作、实现规范
 
-12. **Responsive Calculations**
-    - **Location:** `../../product-team/skills/ui-design-system/references/responsive-calculations.md`
-    - **Content:** Responsive design formulas, breakpoint strategies, fluid typography
-    - **Use Case:** Responsive implementation, cross-device design
+12. **响应式计算**
+    - **位置：** `../../product-team/skills/ui-design-system/references/responsive-calculations.md`
+    - **内容：** 响应式设计公式、断点策略、流式排版
+    - **用例：** 响应式实现、跨设备设计
 
-13. **Token Generation**
-    - **Location:** `../../product-team/skills/ui-design-system/references/token-generation.md`
-    - **Content:** Design token standards, naming conventions, platform-specific output
-    - **Use Case:** Design system tokens, theming, multi-platform consistency
+13. **Token 生成**
+    - **位置：** `../../product-team/skills/ui-design-system/references/token-generation.md`
+    - **内容：** 设计 token 标准、命名约定、平台特定输出
+    - **用例：** 设计系统 token、主题化、多平台一致性
 
-## Workflows
+## 工作流
 
-### Workflow 1: Feature Prioritization & Roadmap Planning
+### 工作流 1：功能优先级排序与路线图规划
 
-**Goal:** Prioritize feature backlog using RICE framework and generate quarterly roadmap
+**目标：** 使用 RICE 框架对功能待办进行优先级排序并生成季度路线图
 
-**Steps:**
-1. **Gather Feature Requests** - Collect from multiple sources:
-   - Customer feedback (support tickets, interviews)
-   - Sales team requests
-   - Technical debt items
-   - Strategic initiatives
-   - Competitive gaps
+**步骤：**
+1. **收集功能请求** —— 从多个来源收集：
+   - 客户反馈（支持工单、访谈）
+   - 销售团队请求
+   - 技术债务项
+   - 战略倡议
+   - 竞争缺口
 
-2. **Create RICE Input CSV** - Structure features with RICE parameters:
+2. **创建 RICE 输入 CSV** —— 用 RICE 参数结构化功能：
    ```csv
    feature,reach,impact,confidence,effort
    User Dashboard,500,3,0.8,5
    API Rate Limiting,1000,2,0.9,3
    Dark Mode,300,1,1.0,2
    ```
-   - **Reach**: Number of users affected per quarter
-   - **Impact**: massive(3), high(2), medium(1.5), low(1), minimal(0.5)
-   - **Confidence**: high(1.0), medium(0.8), low(0.5)
-   - **Effort**: person-months (XL=6, L=3, M=1, S=0.5, XS=0.25)
+   - **Reach（触达）**：每季度受影响的用户数
+   - **Impact（影响）**：massive(3)、high(2)、medium(1.5)、low(1)、minimal(0.5)
+   - **Confidence（信心）**：high(1.0)、medium(0.8)、low(0.5)
+   - **Effort（工作量）**：人月（XL=6、L=3、M=1、S=0.5、XS=0.25）
 
-3. **Run RICE Prioritization** - Execute analysis with team capacity
+3. **运行 RICE 优先级排序** —— 用团队容量执行分析
    ```bash
    python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py features.csv --capacity 20
    ```
 
-4. **Analyze Portfolio** - Review output for:
-   - **Quick Wins**: High RICE, low effort (ship first)
-   - **Big Bets**: High RICE, high effort (strategic investments)
-   - **Fill-Ins**: Medium RICE (capacity fillers)
-   - **Money Pits**: Low RICE, high effort (avoid or revisit)
+4. **分析组合** —— 审查输出中的：
+   - **速赢**：高 RICE，低工作量（先交付）
+   - **大赌注**：高 RICE，高工作量（战略投资）
+   - **填充项**：中等 RICE（容量填充）
+   - **资金黑洞**：低 RICE，高工作量（避免或重访）
 
-5. **Generate Quarterly Roadmap**:
-   - Q1: Top quick wins + 1-2 big bets
-   - Q2-Q4: Remaining prioritized features
-   - Buffer: 20% capacity for unknowns
+5. **生成季度路线图**：
+   - Q1：最优先的速赢 + 1-2 个大赌注
+   - Q2-Q4：剩余优先级排序的功能
+   - 缓冲：20% 容量用于未知
 
-6. **Stakeholder Alignment** - Present roadmap with:
-   - RICE scores as justification
-   - Trade-off decisions explained
-   - Capacity constraints visible
+6. **利益相关者对齐** —— 呈现路线图，含：
+   - RICE 分数作为理由
+   - 权衡决策的解释
+   - 可见的容量约束
 
-**Expected Output:** Data-driven quarterly roadmap with RICE-justified priorities and portfolio balance
+**预期输出：** 数据驱动的季度路线图，带 RICE 辩护的优先级和组合平衡
 
-**Time Estimate:** 4-6 hours for complete prioritization cycle (20-30 features)
+**时间估计：** 完整优先级排序周期 4-6 小时（20-30 个功能）
 
-**Example:**
+**示例：**
 ```bash
 # Complete prioritization workflow
 python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py q4-features.csv --capacity 20 > roadmap.txt
@@ -219,39 +219,39 @@ cat roadmap.txt
 # Review quick wins, big bets, and generate quarterly plan
 ```
 
-### Workflow 2: Customer Discovery & Interview Analysis
+### 工作流 2：客户发现与访谈分析
 
-**Goal:** Conduct customer interviews, extract insights, and identify high-priority problems
+**目标：** 进行客户访谈、提取洞见并识别高优先级问题
 
-**Steps:**
-1. **Conduct User Interviews** - Semi-structured format:
-   - **Opening**: Build rapport, explain purpose
-   - **Context**: Current workflow and challenges
-   - **Problems**: Deep dive on pain points (not solutions!)
-   - **Solutions**: Reaction to concepts (if applicable)
-   - **Closing**: Next steps, thank you
-   - **Duration**: 30-45 minutes per interview
-   - **Record**: With permission for analysis
+**步骤：**
+1. **进行用户访谈** —— 半结构化格式：
+   - **开场**：建立融洽关系，解释目的
+   - **上下文**：当前工作流和挑战
+   - **问题**：深入探讨痛点（而非解决方案！）
+   - **解决方案**：对概念的反应（如适用）
+   - **结束**：下一步、致谢
+   - **时长**：每次访谈 30-45 分钟
+   - **录制**：经允许用于分析
 
-2. **Transcribe Interviews** - Convert audio to text:
-   - Use transcription service (Otter.ai, Rev, etc.)
-   - Clean up for clarity (remove filler words)
-   - Save as plain text file
+2. **转录访谈** —— 将音频转换为文本：
+   - 使用转录服务（Otter.ai、Rev 等）
+   - 为清晰度清理（移除填充词）
+   - 保存为纯文本文件
 
-3. **Run Interview Analyzer** - Extract structured insights
+3. **运行访谈分析器** —— 提取结构化洞见
    ```bash
    python ../../product-team/skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview-001.txt
    ```
 
-4. **Review Analysis Output** - Study extracted insights:
-   - **Pain Points**: Severity-scored problems
-   - **Feature Requests**: Priority-ranked asks
-   - **Jobs-to-be-Done**: User goals and motivations
-   - **Sentiment**: Overall satisfaction level
-   - **Themes**: Recurring topics across interviews
-   - **Key Quotes**: Direct user language
+4. **审查分析输出** —— 研究提取的洞见：
+   - **痛点**：带严重性评分的问题
+   - **功能请求**：优先级排序的诉求
+   - **Jobs-to-be-Done**：用户目标和动机
+   - **情感**：整体满意度水平
+   - **主题**：跨访谈的重复话题
+   - **关键引用**：用户的直接语言
 
-5. **Synthesize Across Interviews** - Aggregate insights:
+5. **跨访谈综合** —— 聚合洞见：
    ```bash
    # Analyze multiple interviews
    python ../../product-team/skills/product-manager-toolkit/scripts/customer_interview_analyzer.py interview-001.txt json > insights-001.json
@@ -260,170 +260,170 @@ cat roadmap.txt
    # Aggregate JSON files to find patterns
    ```
 
-6. **Prioritize Problems** - Identify which pain points to solve:
-   - Frequency: How many users mentioned it?
-   - Severity: How painful is the problem?
-   - Strategic fit: Aligns with company vision?
-   - Solvability: Can we build a solution?
+6. **确定问题优先级** —— 识别要解决哪些痛点：
+   - 频率：多少用户提到它？
+   - 严重性：问题有多痛苦？
+   - 战略契合：与公司愿景一致？
+   - 可解决性：我们能构建解决方案吗？
 
-7. **Validate Solutions** - Test hypotheses before building:
-   - Create mockups or prototypes
-   - Show to users, observe reactions
-   - Measure willingness to pay/adopt
+7. **验证解决方案** —— 构建前测试假设：
+   - 创建样稿或原型
+   - 展示给用户，观察反应
+   - 衡量付费/采用的意愿
 
-**Expected Output:** Prioritized list of validated problems with user quotes and evidence
+**预期输出：** 带用户引用和证据的已验证问题的优先级排序列表
 
-**Time Estimate:** 2-3 weeks for complete discovery (10-15 interviews + analysis)
+**时间估计：** 完整发现 2-3 周（10-15 次访谈 + 分析）
 
-### Workflow 3: PRD Development & Stakeholder Communication
+### 工作流 3：PRD 开发与利益相关者沟通
 
-**Goal:** Document requirements professionally with clear scope, metrics, and acceptance criteria
+**目标：** 以清晰的 scope、指标和验收标准专业地记录需求
 
-**Steps:**
-1. **Choose PRD Template** - Select based on complexity:
+**步骤：**
+1. **选择 PRD 模板** —— 根据复杂性选择：
    ```bash
    cat ../../product-team/skills/product-manager-toolkit/references/prd_templates.md
    ```
-   - **Standard PRD**: Complex features (6-8 weeks dev)
-   - **One-Page PRD**: Simple features (2-4 weeks)
-   - **Feature Brief**: Exploration phase (1 week)
-   - **Agile Epic**: Sprint-based delivery
+   - **标准 PRD**：复杂功能（6-8 周开发）
+   - **一页 PRD**：简单功能（2-4 周）
+   - **功能简报**：探索阶段（1 周）
+   - **敏捷史诗**：基于冲刺的交付
 
-2. **Document Problem** - Start with why (not how):
-   - User problem statement (jobs-to-be-done format)
-   - Evidence from interviews (quotes, data)
-   - Current workarounds and pain points
-   - Business impact (revenue, retention, efficiency)
+2. **记录问题** —— 从为什么开始（而非如何）：
+   - 用户问题陈述（jobs-to-be-done 格式）
+   - 来自访谈的证据（引用、数据）
+   - 当前的变通方法和痛点
+   - 业务影响（收入、留存、效率）
 
-3. **Define Solution** - Describe what we'll build:
-   - High-level solution approach
-   - User flows and key interactions
-   - Technical architecture (if relevant)
-   - Design mockups or wireframes
-   - **Critically: What's OUT of scope**
+3. **定义解决方案** —— 描述我们将构建什么：
+   - 高层解决方案方法
+   - 用户流和关键交互
+   - 技术架构（如相关）
+   - 设计样稿或线框图
+   - **关键：什么是**超出**范围的**
 
-4. **Set Success Metrics** - Define how we'll measure success:
-   - **Leading indicators**: Usage, adoption, engagement
-   - **Lagging indicators**: Revenue, retention, NPS
-   - **Target values**: Specific, measurable goals
-   - **Timeframe**: When we expect to hit targets
+4. **设置成功指标** —— 定义我们如何衡量成功：
+   - **领先指标**：使用、采用、参与
+   - **滞后指标**：收入、留存、NPS
+   - **目标值**：具体、可衡量的目标
+   - **时间范围**：我们预计何时达到目标
 
-5. **Write Acceptance Criteria** - Clear definition of done:
-   - Given/When/Then format for each user story
-   - Edge cases and error states
-   - Performance requirements
-   - Accessibility standards
+5. **编写验收标准** —— 清晰的完成定义：
+   - 每个用户故事的 Given/When/Then 格式
+   - 边缘情况和错误状态
+   - 性能要求
+   - 可访问性标准
 
-6. **Collaborate with Stakeholders**:
-   - **Engineering**: Feasibility review, effort estimation
-   - **Design**: User experience validation
-   - **Sales/Marketing**: Go-to-market alignment
-   - **Support**: Operational readiness
+6. **与利益相关者协作**：
+   - **工程**：可行性审查、工作量估计
+   - **设计**：用户体验验证
+   - **销售/营销**：GTM 对齐
+   - **支持**：运营就绪
 
-7. **Iterate Based on Feedback** - Incorporate input:
-   - Technical constraints → Adjust scope
-   - Design insights → Refine user flows
-   - Market feedback → Validate assumptions
+7. **基于反馈迭代** —— 纳入输入：
+   - 技术约束 → 调整范围
+   - 设计洞见 → 精炼用户流
+   - 市场反馈 → 验证假设
 
-**Expected Output:** Complete PRD with problem, solution, metrics, acceptance criteria, and stakeholder sign-off
+**预期输出：** 包含问题、解决方案、指标、验收标准和利益相关者签署的完整 PRD
 
-**Time Estimate:** 1-2 weeks for comprehensive PRD (iterative process)
+**时间估计：** 全面 PRD 1-2 周（迭代过程）
 
-### Workflow 4: Quarterly Planning & OKR Setting
+### 工作流 4：季度规划与 OKR 设定
 
-**Goal:** Plan quarterly product goals with prioritized initiatives and success metrics
+**目标：** 用优先级排序的倡议和成功指标规划季度产品目标
 
-**Steps:**
-1. **Review Company OKRs** - Align product goals to business objectives:
-   - Review CEO/executive OKRs for quarter
-   - Identify product contribution areas
-   - Understand strategic priorities
+**步骤：**
+1. **审查公司 OKR** —— 将产品目标与业务目标对齐：
+   - 审查季度 CEO/高管 OKR
+   - 识别产品贡献领域
+   - 理解战略优先级
 
-2. **Run Feature Prioritization** - Use RICE for candidate features
+2. **运行功能优先级排序** —— 对候选功能使用 RICE
    ```bash
    python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py q4-candidates.csv --capacity 18
    ```
 
-3. **Generate OKR Cascade** - Use the OKR cascade generator to create aligned objectives
+3. **生成 OKR 级联** —— 用 OKR 级联生成器创建对齐的目标
    ```bash
    python ../../product-team/skills/product-strategist/scripts/okr_cascade_generator.py growth
    ```
 
-4. **Define Product OKRs** - Set ambitious but achievable goals:
-   - **Objective**: Qualitative, inspirational (e.g., "Become the easiest platform to onboard")
-   - **Key Results**: Quantitative, measurable (e.g., "Reduce onboarding time from 30min to 10min")
-   - **Initiatives**: Features that drive key results
-   - **Metrics**: How we'll track progress weekly
+4. **定义产品 OKR** —— 设定雄心勃勃但可实现的目标：
+   - **Objective（目标）**：定性、鼓舞人心（例如"成为最容易上手的平台"）
+   - **Key Results（关键结果）**：定量、可衡量（例如"将上手时间从 30 分钟减少到 10 分钟"）
+   - **Initiatives（倡议）**：驱动关键结果的功能
+   - **Metrics（指标）**：我们如何每周跟踪进展
 
-5. **Capacity Planning** - Allocate team resources:
-   - Engineering capacity: Person-months available
-   - Design capacity: UI/UX support needed
-   - Buffer allocation: 20% for bugs, support, unknowns
-   - Dependency tracking: External blockers
+5. **容量规划** —— 分配团队资源：
+   - 工程容量：可用人月
+   - 设计容量：需要的 UI/UX 支持
+   - 缓冲分配：20% 用于 bug、支持、未知
+   - 依赖跟踪：外部阻塞项
 
-6. **Risk Assessment** - Identify what could go wrong:
-   - Technical risks (scalability, performance)
-   - Market risks (competition, demand)
-   - Execution risks (dependencies, team velocity)
-   - Mitigation plans for each risk
+6. **风险评估** —— 识别可能出错的地方：
+   - 技术风险（可扩展性、性能）
+   - 市场风险（竞争、需求）
+   - 执行风险（依赖、团队速度）
+   - 每个风险的缓解计划
 
-7. **Stakeholder Review** - Present quarterly plan:
-   - OKRs with supporting initiatives
-   - RICE-justified priorities
-   - Resource allocation and capacity
-   - Risks and mitigation strategies
-   - Success metrics and tracking cadence
+7. **利益相关者审查** —— 呈现季度计划：
+   - OKR 及支持性倡议
+   - RICE 辩护的优先级
+   - 资源分配和容量
+   - 风险和缓解策略
+   - 成功指标和跟踪节奏
 
-8. **Track Progress** - Weekly OKR check-ins:
-   - Update key result progress
-   - Adjust priorities if needed
-   - Communicate blockers early
+8. **跟踪进展** —— 每周 OKR 检查：
+   - 更新关键结果进展
+   - 如需要则调整优先级
+   - 尽早沟通阻塞项
 
-**Expected Output:** Quarterly OKRs with prioritized roadmap, capacity plan, and risk mitigation
+**预期输出：** 带优先级排序路线图、容量计划和风险缓解的季度 OKR
 
-**Time Estimate:** 1 week for quarterly planning (last week of previous quarter)
+**时间估计：** 季度规划 1 周（上一季度最后一周）
 
-### Workflow 5: User Research to Personas
+### 工作流 5：用户研究到画像
 
-**Goal:** Generate data-driven personas from user research to align the team on target users
+**目标：** 从用户研究生成数据驱动的画像，以对齐团队对目标用户的理解
 
-**Steps:**
-1. **Collect Research Data** - Aggregate findings from interviews, surveys, and analytics:
-   - Interview transcripts and notes
-   - Survey responses and demographics
-   - Behavioral analytics (usage patterns, feature adoption)
-   - Support ticket themes
+**步骤：**
+1. **收集研究数据** —— 聚合来自访谈、调研和分析的发现：
+   - 访谈记录和笔记
+   - 调研回复和人口统计
+   - 行为分析（使用模式、功能采用）
+   - 支持工单主题
 
-2. **Review Persona Methodology** - Understand research-backed persona creation
+2. **审查画像方法论** —— 理解研究支持的画像创建
    ```bash
    cat ../../product-team/skills/ux-researcher-designer/references/persona-methodology.md
    ```
 
-3. **Generate Personas** - Create structured personas from research inputs
+3. **生成画像** —— 从研究输入创建结构化画像
    ```bash
    python ../../product-team/skills/ux-researcher-designer/scripts/persona_generator.py research-data.json
    ```
 
-4. **Map Customer Journeys** - Reference journey mapping guide for each persona
+4. **映射客户旅程** —— 为每个画像参考旅程映射指南
    ```bash
    cat ../../product-team/skills/ux-researcher-designer/references/journey-mapping-guide.md
    ```
 
-5. **Review Example Personas** - Compare output against proven persona formats
+5. **审查画像示例** —— 将输出与验证过的画像格式比较
    ```bash
    cat ../../product-team/skills/ux-researcher-designer/references/example-personas.md
    ```
 
-6. **Validate and Iterate** - Share personas with stakeholders:
-   - Cross-reference with interview insights from customer_interview_analyzer.py
-   - Verify demographics and behaviors match real user data
-   - Update personas quarterly as new research emerges
+6. **验证并迭代** —— 与利益相关者分享画像：
+   - 与 customer_interview_analyzer.py 的访谈洞见交叉引用
+   - 验证人口统计和行为匹配真实用户数据
+   - 随新研究出现每季度更新画像
 
-**Expected Output:** 3-5 data-driven user personas with demographics, goals, pain points, behaviors, and mapped customer journeys
+**预期输出：** 3-5 个数据驱动的用户画像，带人口统计、目标、痛点、行为和映射的客户旅程
 
-**Time Estimate:** 1-2 weeks (research collection + persona generation + validation)
+**时间估计：** 1-2 周（研究收集 + 画像生成 + 验证）
 
-**Example:**
+**示例：**
 ```bash
 # Complete persona generation workflow
 python ../../product-team/skills/ux-researcher-designer/scripts/persona_generator.py user-research-q4.json > personas.md
@@ -435,48 +435,48 @@ python ../../product-team/skills/product-manager-toolkit/scripts/customer_interv
 cat ../../product-team/skills/ux-researcher-designer/references/journey-mapping-guide.md
 ```
 
-### Workflow 6: Sprint Story Generation
+### 工作流 6：冲刺故事生成
 
-**Goal:** Break epics into INVEST-compliant user stories ready for sprint planning
+**目标：** 将史诗分解为符合 INVEST 的用户故事，为冲刺规划做好准备
 
-**Steps:**
-1. **Define the Epic** - Structure epic with clear scope and acceptance criteria:
-   - Business objective and user value
-   - Functional requirements
-   - Non-functional requirements (performance, security)
-   - Dependencies and constraints
+**步骤：**
+1. **定义史诗** —— 用清晰的 scope 和验收标准结构化史诗：
+   - 业务目标和用户价值
+   - 功能需求
+   - 非功能需求（性能、安全）
+   - 依赖和约束
 
-2. **Review Story Templates** - Load INVEST-compliant story patterns
+2. **审查故事模板** —— 加载符合 INVEST 的故事模式
    ```bash
    cat ../../product-team/agile-product-owner/skills/agile-product-owner/references/user-story-templates.md
    ```
 
-3. **Generate User Stories** - Break the epic into sprint-sized stories
+3. **生成用户故事** —— 将史诗分解为冲刺规模的故事
    ```bash
    python ../../product-team/agile-product-owner/skills/agile-product-owner/scripts/user_story_generator.py epic.yaml
    ```
 
-4. **Review Sprint Planning Guide** - Ensure stories fit sprint capacity
+4. **审查冲刺规划指南** —— 确保故事适合冲刺容量
    ```bash
    cat ../../product-team/agile-product-owner/skills/agile-product-owner/references/sprint-planning-guide.md
    ```
 
-5. **Refine and Estimate** - Groom generated stories:
-   - Verify each story meets INVEST criteria (Independent, Negotiable, Valuable, Estimable, Small, Testable)
-   - Add story points based on team velocity
-   - Identify dependencies between stories
-   - Write acceptance criteria in Given/When/Then format
+5. **精炼和估计** —— 梳理生成的故事：
+   - 验证每个故事满足 INVEST 标准（Independent、Negotiable、Valuable、Estimable、Small、Testable）
+   - 基于团队速度添加故事点
+   - 识别故事之间的依赖
+   - 用 Given/When/Then 格式编写验收标准
 
-6. **Prioritize for Sprint** - Use RICE scores to sequence stories
+6. **为冲刺确定优先级** —— 使用 RICE 分数对故事排序
    ```bash
    python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py sprint-stories.csv --capacity 8
    ```
 
-**Expected Output:** Sprint-ready backlog of INVEST-compliant user stories with acceptance criteria, story points, and priority order
+**预期输出：** 冲刺就绪的符合 INVEST 的用户故事待办，带验收标准、故事点和优先级顺序
 
-**Time Estimate:** 2-4 hours per epic decomposition
+**时间估计：** 每个史诗分解 2-4 小时
 
-**Example:**
+**示例：**
 ```bash
 # End-to-end story generation workflow
 python ../../product-team/agile-product-owner/skills/agile-product-owner/scripts/user_story_generator.py onboarding-epic.yaml > stories.md
@@ -488,17 +488,17 @@ python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritize
 cat ../../product-team/agile-product-owner/skills/agile-product-owner/references/sprint-planning-guide.md
 ```
 
-### Workflow 7: Competitive Intelligence
+### 工作流 7：竞争情报
 
-**Goal:** Build competitive analysis matrices to identify market positioning and feature gaps
+**目标：** 构建竞争分析矩阵以识别市场定位和功能缺口
 
-**Steps:**
-1. **Identify Competitors** - Map the competitive landscape:
-   - Direct competitors (same category, same audience)
-   - Indirect competitors (different category, same job-to-be-done)
-   - Emerging threats (startups, adjacent products)
+**步骤：**
+1. **识别竞争对手** —— 映射竞争格局：
+   - 直接竞争对手（同类别、同受众）
+   - 间接竞争对手（不同类别、同 job-to-be-done）
+   - 新兴威胁（初创公司、相邻产品）
 
-2. **Gather Competitive Data** - Structure competitor information in CSV:
+2. **收集竞争数据** —— 在 CSV 中结构化竞争对手信息：
    ```csv
    competitor,feature_1,feature_2,feature_3,pricing,market_share
    Competitor A,yes,partial,no,$49/mo,35%
@@ -506,33 +506,33 @@ cat ../../product-team/agile-product-owner/skills/agile-product-owner/references
    Our Product,yes,no,partial,$39/mo,15%
    ```
 
-3. **Build Competitive Matrix** - Generate visual comparison
+3. **构建竞争矩阵** —— 生成视觉对比
    ```bash
    python ../../product-team/skills/competitive-teardown/scripts/competitive_matrix_builder.py competitors.csv
    ```
 
-4. **Analyze Gaps** - Identify strategic opportunities:
-   - Feature parity gaps (what competitors have that we lack)
-   - Differentiation opportunities (where we can lead)
-   - Pricing positioning (value vs premium vs budget)
-   - Underserved segments (unmet user needs)
+4. **分析缺口** —— 识别战略机会：
+   - 功能对等缺口（竞争对手有而我们缺的）
+   - 差异化机会（我们可以领先的地方）
+   - 定价定位（价值 vs 高端 vs 预算）
+   - 服务不足的细分市场（未满足的用户需求）
 
-5. **Feed Into Prioritization** - Use gaps to inform roadmap
+5. **馈入优先级排序** —— 用缺口为路线图提供信息
    ```bash
    # Add competitive gap features to RICE analysis
    python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py competitive-features.csv --capacity 20
    ```
 
-6. **Track Over Time** - Update competitive matrix quarterly:
-   - Monitor competitor launches and pricing changes
-   - Re-run matrix builder with updated data
-   - Adjust positioning strategy based on market shifts
+6. **随时间跟踪** —— 每季度更新竞争矩阵：
+   - 监控竞争对手发布和定价变化
+   - 用更新数据重新运行矩阵构建器
+   - 基于市场变化调整定位策略
 
-**Expected Output:** Competitive analysis matrix with feature comparison, gap analysis, and prioritized list of competitive features for the roadmap
+**预期输出：** 带功能对比、缺口分析和路线图竞争优势功能优先级排序列表的竞争分析矩阵
 
-**Time Estimate:** 1-2 days for initial matrix, 2-4 hours for quarterly updates
+**时间估计：** 初始矩阵 1-2 天，季度更新 2-4 小时
 
-**Example:**
+**示例：**
 ```bash
 # Full competitive intelligence workflow
 python ../../product-team/skills/competitive-teardown/scripts/competitive_matrix_builder.py q4-competitors.csv > competitive-matrix.md
@@ -541,9 +541,9 @@ python ../../product-team/skills/competitive-teardown/scripts/competitive_matrix
 python ../../product-team/skills/product-manager-toolkit/scripts/rice_prioritizer.py gap-features.csv --capacity 12 > competitive-roadmap.txt
 ```
 
-## Integration Examples
+## 集成示例
 
-### Example 1: Weekly Product Review Dashboard
+### 示例 1：每周产品审查仪表盘
 
 ```bash
 #!/bin/bash
@@ -573,7 +573,7 @@ echo "Standard PRD, One-Page PRD, Feature Brief, Agile Epic"
 echo "Location: ../../product-team/skills/product-manager-toolkit/references/prd_templates.md"
 ```
 
-### Example 2: Discovery Sprint Workflow
+### 示例 2：发现冲刺工作流
 
 ```bash
 # Complete discovery sprint (2 weeks)
@@ -605,7 +605,7 @@ echo ""
 echo "✅ Discovery Complete - Ready for PRD creation"
 ```
 
-### Example 3: Quarterly Planning Automation
+### 示例 3：季度规划自动化
 
 ```bash
 # Quarterly planning automation script
@@ -639,37 +639,37 @@ echo "Features: $(wc -l < backlog.csv)"
 echo "Report: $QUARTER-roadmap.txt"
 ```
 
-## Success Metrics
+## 成功指标
 
-**Prioritization Effectiveness:**
-- **Decision Speed:** <2 days from backlog review to roadmap commitment
-- **Stakeholder Alignment:** >90% stakeholder agreement on priorities
-- **RICE Validation:** 80%+ of shipped features match predicted impact
-- **Portfolio Balance:** 40% quick wins, 40% big bets, 20% fill-ins
+**优先级排序有效性：**
+- **决策速度：** 从待办审查到路线图承诺 <2 天
+- **利益相关者对齐：** >90% 的利益相关者对优先级达成一致
+- **RICE 验证：** 80%+ 已交付功能匹配预测影响
+- **组合平衡：** 40% 速赢、40% 大赌注、20% 填充项
 
-**Discovery Quality:**
-- **Interview Volume:** 10-15 interviews per discovery sprint
-- **Insight Extraction:** 5-10 high-priority pain points identified
-- **Problem Validation:** 70%+ of prioritized problems validated before build
-- **Time to Insight:** <1 week from interviews to prioritized problem list
+**发现质量：**
+- **访谈量：** 每个发现冲刺 10-15 次访谈
+- **洞见提取：** 识别 5-10 个高优先级痛点
+- **问题验证：** 70%+ 的优先级排序问题在构建前被验证
+- **洞见时间：** 从访谈到的优先级排序问题列表 <1 周
 
-**Requirements Quality:**
-- **PRD Completeness:** 100% of PRDs include problem, solution, metrics, acceptance criteria
-- **Stakeholder Review:** <3 days average PRD review cycle
-- **Engineering Clarity:** >90% of PRDs require no clarification during development
-- **Scope Accuracy:** >80% of features ship within original scope estimate
+**需求质量：**
+- **PRD 完整性：** 100% 的 PRD 包含问题、解决方案、指标、验收标准
+- **利益相关者审查：** 平均 PRD 审查周期 <3 天
+- **工程清晰度：** >90% 的 PRD 在开发期间无需澄清
+- **范围准确性：** >80% 的功能在原始范围估计内交付
 
-**Business Impact:**
-- **Feature Adoption:** >60% of users adopt new features within 30 days
-- **Problem Resolution:** >70% reduction in pain point severity post-launch
-- **Revenue Impact:** Track revenue/retention lift from prioritized features
-- **Development Efficiency:** 30%+ reduction in rework due to clear requirements
+**业务影响：**
+- **功能采用：** >60% 的用户在 30 天内采用新功能
+- **问题解决：** 发布后痛点严重性降低 >70%
+- **收入影响：** 跟踪优先级排序功能的收入/留存提升
+- **开发效率：** 因清晰需求而减少 30%+ 的返工
 
-## Related Agents
+## 相关代理
 
-- [cs-agile-product-owner](cs-agile-product-owner.md) - Sprint planning and user story generation
-- [cs-product-strategist](cs-product-strategist.md) - OKR cascade and strategic planning
-- [cs-ux-researcher](cs-ux-researcher.md) - Persona generation and user research
+- [cs-agile-product-owner](cs-agile-product-owner.md) - 冲刺规划和用户故事生成
+- [cs-product-strategist](cs-product-strategist.md) - OKR 级联和战略规划
+- [cs-ux-researcher](cs-ux-researcher.md) - 画像生成和用户研究
 
 ## References
 

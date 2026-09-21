@@ -119,7 +119,23 @@
         "hooks": [
           {
             "type": "command",
+            "command": "node D:/doge-code/.claude/hooks/heartflow-guard.ts",
+            "timeout": 5000
+          },
+          {
+            "type": "command",
             "command": "node D:/doge-code/.claude/hooks/skill-activation-prompt.ts \"$ARGUMENTS\"",
+            "timeout": 5000
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node D:/doge-code/.claude/hooks/heartflow-guard.ts",
             "timeout": 5000
           }
         ]

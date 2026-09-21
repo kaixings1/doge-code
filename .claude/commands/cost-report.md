@@ -1,35 +1,28 @@
 ---
-description: Generate a local Claude Code cost report from the ECC cost-tracker metrics log.
+description: 从 ECC cost-tracker 指标日志生成本地 Claude Code 成本报告。
 argument-hint: [csv]
 ---
 
-# Cost Report
+# 成本报告
 
-Summarize local Claude Code spend by day, model, and session from the metrics
-log that ECC's `stop:cost-tracker` hook writes.
+从 ECC 的 `stop:cost-tracker` hook 写入的指标日志中，按天、模型和会话汇总本地 Claude Code 支出。
 
-## Where the data lives
+## 数据位置
 
-The tracker appends one JSON object per session-stop to
-`~/.claude/metrics/costs.jsonl`. Each row is a **cumulative snapshot for that
-session**, so the report takes the **latest row per `session_id`** and sums
-across sessions (summing every row would multiply-count).
+tracker 在每次会话停止时向 `~/.claude/metrics/costs.jsonl` 追加一个 JSON 对象。每一行是**该会话的累积快照**，因此报告取**每个 `session_id` 的最新一行**并在会话间求和（对每一行求和会导致重复计数）。
 
-Row schema:
+行结构：
 `{ timestamp, session_id, transcript_path, model, input_tokens, output_tokens, cache_write_tokens, cache_read_tokens, estimated_cost_usd }`
 
-## What this command does
+## 此命令做什么
 
-1. Check that `~/.claude/metrics/costs.jsonl` exists. If it does not, tell the
-   user the tracker is not set up yet (it populates after the first session ends
-   with the `stop:cost-tracker` hook enabled).
-2. Reduce rows to the latest snapshot per session and aggregate.
-3. Present a compact report, or export recent rows as CSV when the argument is `csv`.
+1. 检查 `~/.claude/metrics/costs.jsonl` 是否存在。如果不存在，告诉用户 tracker 尚未设置好（它在启用 `stop:cost-tracker` hook 的情况下，第一个会话结束后才会填充）。
+2. 将行归约为每个会话的最新快照并进行聚合。
+3. 呈现一份紧凑报告，或者当参数为 `csv` 时将最近的行导出为 CSV。
 
-`node` is used instead of `sqlite3`/`jq` so this works identically on macOS,
-Linux, and Windows.
+使用 `node` 而不是 `sqlite3`/`jq`，以便在 macOS、Linux 和 Windows 上行为一致。
 
-## Report
+## 报告
 
 ```bash
 node -e '
@@ -58,7 +51,7 @@ const days=new Map();for(const r of latest){const k=day(r);days.set(k,(days.get(
 '
 ```
 
-## CSV export (`/cost-report csv`)
+## CSV 导出（`/cost-report csv`）
 
 ```bash
 node -e '
@@ -71,11 +64,10 @@ for(const r of rows)console.log([r.timestamp,r.session_id,r.model,r.input_tokens
 '
 ```
 
-## Report format
+## 报告格式
 
-1. Summary: today, yesterday, total, session count.
-2. By model: models ranked by total cost.
-3. Last seven days: date and cost.
+1. 摘要：今天、昨天、总计、会话数。
+2. 按模型：按总成本排序的模型。
+3. 最近七天：日期与成本。
 
-Rely on the precomputed `estimated_cost_usd` values written by the tracker; do
-not re-estimate pricing from raw tokens here.
+依赖 tracker 写入的预计算 `estimated_cost_usd` 值；不要在此从原始 token 重新估算价格。

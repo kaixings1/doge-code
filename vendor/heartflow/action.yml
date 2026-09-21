@@ -1,0 +1,44 @@
+name: 'HeartFlow AI Agent Security Audit'
+description: 'Audit your repo for secrets, command injection, path traversal, prompt injection and MCP risks.'
+author: 'yun520-1'
+
+inputs:
+  github_token:
+    description: 'GitHub token for repository access'
+    required: true
+    default: ${{ github.token }}
+  scan_depth:
+    description: 'Scan depth. Only "full" (recursive) is implemented; "quick" is accepted for compatibility.'
+    required: false
+    default: 'full'
+  output_path:
+    description: 'Path to write the audit report'
+    required: false
+    default: 'heartflow-audit-report.md'  # generated artefact; gitignored (do not commit)
+  fail_on_high:
+    description: 'Fail the workflow if high-severity findings are detected'
+    required: false
+    default: 'false'
+  upload_report:
+    description: 'Emit the upload-artifact command for the report. The action does not upload it itself.'
+    required: false
+    default: 'true'
+
+outputs:
+  report_path:
+    description: 'Path to the generated audit report'
+    value: ${{ steps.audit.outputs.report_path }}
+  risk_level:
+    description: 'Overall risk level (Low/Medium/High/Critical)'
+    value: ${{ steps.audit.outputs.risk_level }}
+  findings_count:
+    description: 'Total number of findings'
+    value: ${{ steps.audit.outputs.findings_count }}
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
+
+branding:
+  icon: 'shield'
+  color: 'blue'

@@ -46,7 +46,7 @@ model: sonnet
 
 1. 首先使用 grep 工具查找关键词。
 2. 可选地，使用 glob 查找文件模式
-3. 也使用 LS 和 Glob �查找！
+3. 也使用 LS 和 Glob 查找！
 
 ### 按语言/框架精炼
 - **JavaScript/TypeScript**: 查找 src/、lib/、components/、pages/、api/

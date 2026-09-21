@@ -1,0 +1,5293 @@
+{
+  "metadata": {
+    "version": "5.15.2",
+    "last_updated": "2026-07-25",
+    "total_formulas": 619,
+    "categories": [
+      "biology",
+      "chemistry",
+      "cognitive_science",
+      "computer_science",
+      "earth_science",
+      "economics",
+      "engineering",
+      "mathematics",
+      "neuroscience",
+      "philosophy",
+      "physics",
+      "psychology",
+      "quantum_computing"
+    ],
+    "sources": [
+      "advanced",
+      "base",
+      "batch_merge",
+      "generated"
+    ],
+    "computable_rate": "99.9%",
+    "last_cleanup": "2026-07-10",
+    "before_count": 3529,
+    "after_count": 366,
+    "removed": {
+      "duplicate": 301,
+      "category": 1646,
+      "basic": 16,
+      "total": 1963
+    },
+    "math_removed": 1200,
+    "math_kept": 84
+  },
+  "formulas": [
+    {
+      "id": "big_o_notation",
+      "name": "大 O 表示法",
+      "category": "computer_science",
+      "subcategory": "algorithms",
+      "formula": "f = O(g(n)) if ∃c,n0 s.t. f(n) ≤ c*g(n) ∀n ≥ n0",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "shannon_entropy",
+      "name": "香农熵",
+      "category": "computer_science",
+      "subcategory": "information_theory",
+      "formula": "H = -Σp(x) * log2(p(x))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "turing_machine",
+      "name": "图灵机",
+      "category": "computer_science",
+      "subcategory": "computability",
+      "formula": "M = (Q, Σ, Γ, δ, q0, q_accept, q_reject)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "shannon_information_entropy",
+      "name": "香农信息熵",
+      "formula": "H = -Σ p(x) log₂ p(x)",
+      "category": "cognitive_science",
+      "subcategory": "information_theory"
+    },
+    {
+      "id": "cross_entropy",
+      "name": "交叉熵",
+      "formula": "H = -Σ p(x) log q(x)",
+      "category": "cognitive_science",
+      "subcategory": "information_theory"
+    },
+    {
+      "id": "kl_divergence",
+      "name": "KL 散度",
+      "formula": "D_KL = Σ p(x) log(p(x)/q(x))",
+      "category": "cognitive_science",
+      "subcategory": "information_theory"
+    },
+    {
+      "id": "ebbinghaus_forgetting_curve",
+      "name": "艾宾浩斯遗忘曲线",
+      "formula": "R = exp(-t/S)",
+      "category": "cognitive_science",
+      "subcategory": "memory"
+    },
+    {
+      "id": "pad_emotion_model",
+      "name": "PAD 情绪空间模型",
+      "formula": "(P,A,D) = f(stimulus, context)",
+      "category": "cognitive_science",
+      "subcategory": "emotion"
+    },
+    {
+      "id": "cognitive_load_index",
+      "name": "认知负载指数",
+      "formula": "CL = (intrinsic + extraneous + germane) / working_memory_capacity",
+      "category": "cognitive_science",
+      "subcategory": "cognition"
+    },
+    {
+      "id": "bayesian_updating",
+      "name": "贝叶斯更新（信念修正）",
+      "formula": "P = P(D|H) P(H) / P(D)",
+      "category": "cognitive_science",
+      "subcategory": "belief_updating"
+    },
+    {
+      "id": "information_value",
+      "name": "信息价值（决策理论）",
+      "formula": "EVSI = E[U(D)] - E[U(∅)]",
+      "category": "cognitive_science",
+      "subcategory": "decision_theory"
+    },
+    {
+      "id": "expected_utility",
+      "name": "期望效用",
+      "formula": "EU = Σ p_i u(x_i)",
+      "category": "cognitive_science",
+      "subcategory": "decision_theory"
+    },
+    {
+      "id": "metacognitive_confidence",
+      "name": "元认知置信度",
+      "formula": "C = 1 - Var(p)",
+      "category": "cognitive_science",
+      "subcategory": "metacognition"
+    },
+    {
+      "id": "joint_entropy",
+      "name": "联合熵",
+      "formula": "H = -Σ p(x,y) log p(x,y)",
+      "category": "cognitive_science",
+      "subcategory": "information_theory",
+      "difficulty": "intermediate",
+      "source": "builtin_v6"
+    },
+    {
+      "id": "conditional_entropy",
+      "name": "条件熵",
+      "formula": "H = H(X,Y) - H(Y)",
+      "category": "cognitive_science",
+      "subcategory": "information_theory",
+      "difficulty": "intermediate",
+      "source": "builtin_v6"
+    },
+    {
+      "id": "mutual_information",
+      "name": "互信息",
+      "formula": "I = H(X) - H(X|Y)",
+      "category": "cognitive_science",
+      "subcategory": "information_theory",
+      "difficulty": "advanced",
+      "source": "builtin_v6"
+    },
+    {
+      "id": "channel_capacity",
+      "name": "信道容量（香农）",
+      "formula": "C = max_{p(x)} I(X;Y)",
+      "category": "cognitive_science",
+      "subcategory": "information_theory",
+      "difficulty": "advanced",
+      "source": "builtin_v6"
+    },
+    {
+      "id": "rate_distortion",
+      "name": "率失真函数",
+      "formula": "R = min_{p(ŷ|x): E[d(X,Ŷ)]≤D} I(X;Ŷ)",
+      "category": "cognitive_science",
+      "subcategory": "information_theory",
+      "difficulty": "advanced",
+      "source": "builtin_v6"
+    },
+    {
+      "id": "yarkes_dodson",
+      "name": "耶克斯-多德森定律",
+      "formula": "Performance = f(arousal) = -a·A² + b·A + c",
+      "category": "cognitive_science",
+      "subcategory": "arousal",
+      "difficulty": "intermediate",
+      "source": "builtin_v6"
+    },
+    {
+      "id": "q_learning_update",
+      "name": "Q-Learning 更新规则",
+      "formula": "Q = undefined",
+      "category": "cognitive_science",
+      "subcategory": "reinforcement_learning",
+      "difficulty": "advanced",
+      "source": "builtin_v6"
+    },
+    {
+      "id": "policy_gradient",
+      "name": "策略梯度定理",
+      "formula": "∇J(θ) = E[∇ log π(a|s) Q(s,a)]",
+      "category": "cognitive_science",
+      "subcategory": "reinforcement_learning",
+      "difficulty": "advanced",
+      "source": "builtin_v6"
+    },
+    {
+      "id": "bellman_equation",
+      "name": "贝尔曼方程",
+      "formula": "V = max_a [R(s,a) + γ V(s')]",
+      "category": "cognitive_science",
+      "subcategory": "reinforcement_learning",
+      "difficulty": "advanced",
+      "source": "builtin_v6"
+    },
+    {
+      "id": "softmax_policy",
+      "name": "Softmax 策略",
+      "formula": "π(a|s) = exp(Q(s,a)/τ) / Σ exp(Q(s,a')/τ)",
+      "category": "cognitive_science",
+      "subcategory": "reinforcement_learning",
+      "difficulty": "intermediate",
+      "source": "builtin_v6"
+    },
+    {
+      "id": "experience_replay",
+      "name": "经验回放",
+      "formula": "sample batch from D = {(s,a,r,s')}",
+      "category": "cognitive_science",
+      "subcategory": "reinforcement_learning",
+      "difficulty": "intermediate",
+      "source": "builtin_v6"
+    },
+    {
+      "id": "irt_1pl",
+      "name": "IRT 单参数模型（Rasch）",
+      "formula": "P = 1 / (1 + e^{-(θ - b)})",
+      "category": "psychology",
+      "subcategory": "measurement",
+      "difficulty": "advanced",
+      "description": "Rasch 模型：正确作答概率",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "irt_2pl",
+      "name": "IRT 双参数模型",
+      "formula": "P = 1 / (1 + e^{-a(θ - b)})",
+      "category": "psychology",
+      "subcategory": "measurement",
+      "difficulty": "advanced",
+      "description": "a=区分度，b=难度",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "irt_3pl",
+      "name": "IRT 三参数模型",
+      "formula": "P = c + (1-c) / (1 + e^{-a(θ - b)})",
+      "category": "psychology",
+      "subcategory": "measurement",
+      "difficulty": "advanced",
+      "description": "c=猜测参数",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "irt_4pl",
+      "name": "IRT 四参数模型",
+      "formula": "P = d + (c-d) / (1 + e^{-a(θ - b)})",
+      "category": "psychology",
+      "subcategory": "measurement",
+      "difficulty": "advanced",
+      "description": "d=失误参数",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "irt_information",
+      "name": "IRT 信息函数",
+      "formula": "I = a² P(θ)(1-P(θ))",
+      "category": "psychology",
+      "subcategory": "measurement",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "irt_test_information",
+      "name": "测验信息函数",
+      "formula": "I_test = Σ_i I_i(θ)",
+      "category": "psychology",
+      "subcategory": "measurement",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "irt_sem",
+      "name": "IRT 标准误",
+      "formula": "SE = 1/sqrt(I(θ))",
+      "category": "psychology",
+      "subcategory": "measurement",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "factor_model",
+      "name": "因子分析模型",
+      "formula": "X = ΛF + ε",
+      "category": "psychology",
+      "subcategory": "factor_analysis",
+      "difficulty": "advanced",
+      "description": "X:观测变量，Λ:因子载荷，F:因子分数",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "factor_covariance",
+      "name": "因子协方差",
+      "formula": "Σ = Λ Φ Λ^T + Ψ",
+      "category": "psychology",
+      "subcategory": "factor_analysis",
+      "difficulty": "advanced",
+      "description": "Φ:因子协方差，Ψ:独特方差",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "pca_svd",
+      "name": "PCA（SVD 分解）",
+      "formula": "X = U Σ V^T, 主成分 = V 的列",
+      "category": "psychology",
+      "subcategory": "dimension_reduction",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "kmo_test",
+      "name": "KMO 检验",
+      "formula": "KMO = Σr²_{ij} / (Σr²_{ij} + Σp²_{ij})",
+      "category": "psychology",
+      "subcategory": "factor_analysis",
+      "difficulty": "advanced",
+      "description": "r=偏相关，p=相关，>0.6 适合因子分析",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "bartlett_test",
+      "name": "Bartlett 球形检验",
+      "formula": "χ² = - (n-1 - (2p+5)/6) log(det(R))",
+      "category": "psychology",
+      "subcategory": "factor_analysis",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "sem_measurement",
+      "name": "SEM 测量方程",
+      "formula": "y = Λ_y η + ε, x = Λ_x ξ + δ",
+      "category": "psychology",
+      "subcategory": "sem",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "sem_structural",
+      "name": "SEM 结构方程",
+      "formula": "η = B η + Γ ξ + ζ",
+      "category": "psychology",
+      "subcategory": "sem",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "sem_fit_cfi",
+      "name": "CFI 拟合指数",
+      "formula": "CFI = 1 - (N-null - df_null)/(N_default - df_default)",
+      "category": "psychology",
+      "subcategory": "sem",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "sem_fit_rmsea",
+      "name": "RMSEA",
+      "formula": "RMSEA = sqrt(max((χ²/df - 1)/(N-1), 0))",
+      "category": "psychology",
+      "subcategory": "sem",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "sem_fit_srms",
+      "name": "SRMR",
+      "formula": "SRMR = sqrt(Σ(w_ij (s_ij - σ_ij)²) / p)",
+      "category": "psychology",
+      "subcategory": "sem",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "actr_activation",
+      "name": "ACT-R 激活方程",
+      "formula": "A_i = B_i + S_i + P_i - O_i",
+      "category": "cognitive_science",
+      "subcategory": "actr",
+      "difficulty": "advanced",
+      "description": "B:基础级，S:源级，P:部分匹配，O:输出干扰",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "actr_base_level",
+      "name": "ACT-R 基础级学习",
+      "formula": "B_i = ln(Σ_j t_j^{-d})",
+      "category": "cognitive_science",
+      "subcategory": "actr",
+      "difficulty": "advanced",
+      "description": "t_j:第 j 次学习的年龄，d:衰减参数（默认 0.5）",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "actr_spreading",
+      "name": "ACT-R 扩散激活",
+      "formula": "S_i = Σ_j W_j·A_j · S_j",
+      "category": "cognitive_science",
+      "subcategory": "actr",
+      "difficulty": "advanced",
+      "description": "W:连接权重，A:源激活，S:扩散强度",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "actr_noise",
+      "name": "ACT-R 噪声（玻尔兹曼）",
+      "formula": "P = e^{A_i/τ} / Σ_j e^{A_j/τ}",
+      "category": "cognitive_science",
+      "subcategory": "actr",
+      "difficulty": "advanced",
+      "description": "τ:温度参数",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "actr_expected_gain",
+      "name": "ACT-R 期望增益",
+      "formula": "EG = Σ P(outcome)·Utility(outcome)",
+      "category": "cognitive_science",
+      "subcategory": "actr",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "soar_qlearning",
+      "name": "Soar Q-Learning 更新",
+      "formula": "Q = α[r + γ max_a' Q(s',a') - Q(s,a)]",
+      "category": "cognitive_science",
+      "subcategory": "soar",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "clarion_acs",
+      "name": "CLARION ACS 选择规则",
+      "formula": "P = e^{Cl(a_i)/τ} / Σ_j e^{Cl(a_j)/τ}",
+      "category": "cognitive_science",
+      "subcategory": "clarion",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "clarion_bottom_up",
+      "name": "CLARION 自下而上激活",
+      "formula": "A_bottom = Σ w_ij · I_j",
+      "category": "cognitive_science",
+      "subcategory": "clarion",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "subjective_utility",
+      "name": "主观期望效用（SEU）",
+      "formula": "SEU = Σ_i p_i(s) · u(o_i)",
+      "category": "cognitive_science",
+      "subcategory": "decision_theory",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "prospect_value",
+      "name": "前景理论价值函数",
+      "formula": "v = x^α if x≥0, v(x)",
+      "category": "cognitive_science",
+      "subcategory": "prospect_theory",
+      "difficulty": "advanced",
+      "description": "α,β∈(0,1), λ>1 损失厌恶",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "prospect_weight",
+      "name": "前景理论权重函数",
+      "formula": "w = p^γ / (p^γ + (1-p)^γ)^{1/γ}",
+      "category": "cognitive_science",
+      "subcategory": "prospect_theory",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "regret_theory",
+      "name": "后悔理论",
+      "formula": "U = Σ_i p_i · (u(o_i) - R(o_i, o_best))",
+      "category": "cognitive_science",
+      "subcategory": "decision_theory",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "nash_equilibrium",
+      "name": "纳什均衡",
+      "formula": "u_i = undefined",
+      "category": "cognitive_science",
+      "subcategory": "game_theory",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "minimax",
+      "name": "极小极大定理",
+      "formula": "max_min u_i = min_max u_i（零和博弈）",
+      "category": "cognitive_science",
+      "subcategory": "game_theory",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "shapley_value",
+      "name": "沙普利值（合作博弈）",
+      "formula": "φ_i = Σ_{S⊆N\\{i}} (|S|!(n-|S|-1)!/n! · (v(S∪{i})-v(S))",
+      "category": "cognitive_science",
+      "subcategory": "game_theory",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "matching_pennies",
+      "name": "匹配 pennies 博弈",
+      "formula": "混合策略：p=0.5",
+      "category": "cognitive_science",
+      "subcategory": "game_theory",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "carnap_confirmation",
+      "name": "卡尔纳普确认函数",
+      "formula": "c = P(H|E) - P(H)",
+      "category": "philosophy",
+      "subcategory": "inductive_logic",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "bayes_factor",
+      "name": "贝叶斯因子",
+      "formula": "BF = P(E|H_1) / P(E|H_0)",
+      "category": "philosophy",
+      "subcategory": "confirmation_theory",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "odds_ratio",
+      "name": "后验赔率",
+      "formula": "O = BF · O(H)",
+      "category": "philosophy",
+      "subcategory": "confirmation_theory",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "popper_corroboration",
+      "name": "波普尔确认度",
+      "formula": "C = P(E|H) - P(E|¬H)",
+      "category": "philosophy",
+      "subcategory": "falsificationism",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "deontic_obligation",
+      "name": "义务逻辑：应当",
+      "formula": "O = undefined",
+      "category": "philosophy",
+      "subcategory": "deontic_logic",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "deontic_permission",
+      "name": "义务逻辑：允许",
+      "formula": "P = undefined",
+      "category": "philosophy",
+      "subcategory": "deontic_logic",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "deontic_prohibition",
+      "name": "义务逻辑：禁止",
+      "formula": "F = undefined",
+      "category": "philosophy",
+      "subcategory": "deontic_logic",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "iit_phi",
+      "name": "整合信息论 Φ（Tononi）",
+      "formula": "Φ = min_{M ∈ P} MI(PARTITION(M))",
+      "category": "cognitive_science",
+      "subcategory": "consciousness",
+      "difficulty": "advanced",
+      "description": "Φ:整合信息量，越大越有意识",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "iit_mechanism",
+      "name": "IIT 机制 Φ",
+      "formula": "φ_m = MI({(m, past)}|cut) - MI({(m, past)}|MICE)",
+      "category": "cognitive_science",
+      "subcategory": "consciousness",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "iit_causal_emergence",
+      "name": "因果涌现",
+      "formula": "CE = MI(cause | cut) - MI(cause | no cut)",
+      "category": "cognitive_science",
+      "subcategory": "consciousness",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "gwt_accessibility",
+      "name": "全球工作空间可及性",
+      "formula": "A_i = Σ_j w_{ij} · GW(t) + noise",
+      "category": "cognitive_science",
+      "subcategory": "consciousness",
+      "difficulty": "advanced",
+      "description": "GW:全局工作空间激活",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "gwt_competition",
+      "name": "GWT 竞争赢家",
+      "formula": "winner = argmax_i A_i(t)",
+      "category": "cognitive_science",
+      "subcategory": "consciousness",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "predictive_coding_free_energy",
+      "name": "预测编码自由能",
+      "formula": "F = -ln p(s, μ) = -ln p(s|μ) - ln p(μ)",
+      "category": "cognitive_science",
+      "subcategory": "predictive_coding",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "predictive_coding_prediction_error",
+      "name": "预测误差",
+      "formula": "ε = s - g(μ), 其中 g:生成模型",
+      "category": "cognitive_science",
+      "subcategory": "predictive_coding",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "active_inference_efe",
+      "name": "主动推断期望自由能",
+      "formula": "G = -E[Q(s,π)] + H[Q(s,π)]",
+      "category": "cognitive_science",
+      "subcategory": "active_inference",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "active_inference_precision",
+      "name": "精确度权重",
+      "formula": "γ = 1/σ²_ε",
+      "category": "cognitive_science",
+      "subcategory": "active_inference",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "pad_pleasure",
+      "name": "PAD 愉悦度（量化）",
+      "formula": "P = w_1·positive_words - w_2·negative_words + baseline",
+      "category": "cognitive_science",
+      "subcategory": "emotion",
+      "difficulty": "advanced",
+      "description": "w:词权重，baseline:人格偏移",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "emotion_blend",
+      "name": "情绪混合模型",
+      "formula": "E_mixed = Σ_i w_i · E_i, Σ w_i = 1",
+      "category": "cognitive_science",
+      "subcategory": "emotion",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "yarkes_dodson_equation",
+      "name": "耶克斯-多德森（量化）",
+      "formula": "Performance = -a(A - A_opt)² + b, a>0",
+      "category": "cognitive_science",
+      "subcategory": "arousal",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "flow_channel_equation",
+      "name": "心流通道（量化）",
+      "formula": "Flow = 1 - |log2(challenge/ skill)| / max_bits",
+      "category": "cognitive_science",
+      "subcategory": "flow",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "cognitive_dissonance",
+      "name": "认知失调（量化）",
+      "formula": "Dissonance = Σ w_i · (belief_i - action_i)²",
+      "category": "psychology",
+      "subcategory": "social",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "bystander_effect",
+      "name": "旁观者效应",
+      "formula": "P = 1 - (1 - p)^n, n",
+      "category": "psychology",
+      "subcategory": "social",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "social_influence_model",
+      "name": "社会影响模型（French-Harary）",
+      "formula": "x_i = x_i(t) + λ Σ_j w_{ij} (x_j(t) - x_i(t))",
+      "category": "psychology",
+      "subcategory": "social",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "homophily",
+      "name": "同质性指数",
+      "formula": "H = (E_within - E_random) / (E_total - E_random)",
+      "category": "psychology",
+      "subcategory": "social",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "vygotsky_zpd",
+      "name": "维果茨基最近发展区",
+      "formula": "ZPD = [ability_with_help - independent_ability]",
+      "category": "psychology",
+      "subcategory": "development",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "hodgkin_huxley",
+      "name": "Hodgkin-Huxley 模型",
+      "formula": "C_m dV/dt = - (I_Na + I_K + I_L) + I_ext",
+      "category": "neuroscience",
+      "subcategory": "neuron",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "fitzhugh_nagumo",
+      "name": "FitzHugh-Nagumo 模型",
+      "formula": "dv/dt = v - v³/3 - w + I, dw/dt = (v + a - bw)/τ",
+      "category": "neuroscience",
+      "subcategory": "neuron",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "neural_firing_rate",
+      "name": "神经元放电率",
+      "formula": "r = Φ(Σ w_i x_i + b)",
+      "category": "neuroscience",
+      "subcategory": "neuron",
+      "difficulty": "advanced",
+      "description": "Φ:激活函数（sigmoid/ReLU）",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "stdp",
+      "name": "脉冲时间依赖可塑性（STDP）",
+      "formula": "Δw = A_+ e^{-Δt/τ_+} if Δt>0, Δw = -A_- e^{Δt/τ_-} if Δt<0",
+      "category": "neuroscience",
+      "subcategory": "plasticity",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "bcm_theory",
+      "name": "BCM 可塑性理论",
+      "formula": "dw/dt = η · (y · (y - θ) · x)",
+      "category": "neuroscience",
+      "subcategory": "plasticity",
+      "difficulty": "advanced",
+      "description": "θ:滑动阈值 = E[y²]",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "brain_network_modularity",
+      "name": "脑网络模块度",
+      "formula": "Q = (1/2m) Σ_{ij} (A_{ij} - k_i k_j/2m) δ(c_i, c_j)",
+      "category": "neuroscience",
+      "subcategory": "network",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "ebbinghaus_forgetting",
+      "name": "遗忘曲线",
+      "formula": "R = e^{-t/S}",
+      "category": "cognitive_science",
+      "subcategory": "memory",
+      "source": "cognitive_science_literature"
+    },
+    {
+      "id": "ebbinghaus_retention_rate",
+      "name": "留存率（天）",
+      "formula": "R = 2^{-d/τ}, τ≈1天",
+      "category": "cognitive_science",
+      "subcategory": "memory",
+      "source": "cognitive_science_literature"
+    },
+    {
+      "id": "flow_channel",
+      "name": "心流通道",
+      "formula": "Flow = 1 - |log₂(challenge/skill)| / max_bits",
+      "category": "cognitive_science",
+      "subcategory": "flow",
+      "source": "cognitive_science_literature"
+    },
+    {
+      "id": "flow_optimal",
+      "name": "最优心流",
+      "formula": "challenge = skill × 1.1",
+      "category": "cognitive_science",
+      "subcategory": "flow",
+      "source": "cognitive_science_literature"
+    },
+    {
+      "id": "yerkes_dodson_optimal",
+      "name": "耶克斯-多德森最优唤醒",
+      "formula": "A_opt = (b ± sqrt(b² - 4ac)) / (2a)",
+      "category": "cognitive_science",
+      "subcategory": "arousal",
+      "source": "cognitive_science_literature"
+    },
+    {
+      "id": "expected_utility_general",
+      "name": "期望效用（一般形式）",
+      "formula": "EU = ∫ u(x) p(x) dx",
+      "category": "cognitive_science",
+      "subcategory": "decision_theory",
+      "source": "cognitive_science_literature"
+    },
+    {
+      "id": "bayes_continuous",
+      "name": "连续贝叶斯更新",
+      "formula": "p = undefined",
+      "category": "cognitive_science",
+      "subcategory": "belief_updating",
+      "source": "cognitive_science_literature"
+    },
+    {
+      "id": "sarsa_update",
+      "name": "SARSA 更新",
+      "formula": "Q = undefined",
+      "category": "cognitive_science",
+      "subcategory": "reinforcement_learning",
+      "source": "cognitive_science_literature"
+    },
+    {
+      "id": "actor_critic",
+      "name": "Actor-Critic",
+      "formula": "δ = r + γ V(s') - V(s)",
+      "category": "cognitive_science",
+      "subcategory": "reinforcement_learning",
+      "source": "cognitive_science_literature"
+    },
+    {
+      "id": "integrated_information",
+      "name": "整合信息 Φ（近似）",
+      "formula": "Φ = min_{partition} MI(PARTITION)",
+      "category": "cognitive_science",
+      "subcategory": "consciousness",
+      "source": "cognitive_science_literature"
+    },
+    {
+      "id": "global_workspace",
+      "name": "全局工作空间激活",
+      "formula": "GW = f(∑ w_i · A_i(t))",
+      "category": "cognitive_science",
+      "subcategory": "consciousness",
+      "source": "cognitive_science_literature"
+    },
+    {
+      "id": "social_influence_french",
+      "name": "French 社会影响",
+      "formula": "x_i = x_i(t) + λ ∑_j w_{ij} (x_j(t) - x_i(t))",
+      "category": "cognitive_science",
+      "subcategory": "social",
+      "source": "cognitive_science_literature"
+    },
+    {
+      "id": "bayes_confirmation",
+      "name": "贝叶斯确认度",
+      "formula": "c = P(H|E) - P(H)",
+      "category": "philosophy",
+      "subcategory": "confirmation_theory",
+      "source": "cognitive_science_literature"
+    },
+    {
+      "id": "psych_reliability_cronbach",
+      "name": "克隆巴赫 α",
+      "formula": "α = (k/(k-1)) (1 - Σσ²_i/σ²_total)",
+      "category": "psychology",
+      "subcategory": "measurement",
+      "source": "handbook_psych"
+    },
+    {
+      "id": "psych_reliability_test_retest",
+      "name": "重测信度",
+      "formula": "r_{xx'} = corr(X, X')",
+      "category": "psychology",
+      "subcategory": "measurement",
+      "source": "handbook_psych"
+    },
+    {
+      "id": "psych_validity_concurrent",
+      "name": "同时效度",
+      "formula": "r_{xy} = corr(X, Y)",
+      "category": "psychology",
+      "subcategory": "measurement",
+      "source": "handbook_psych"
+    },
+    {
+      "id": "psych_standard_error_measurement",
+      "name": "测量标准误",
+      "formula": "SEM = σ_x √(1-r_{xx})",
+      "category": "psychology",
+      "subcategory": "measurement",
+      "source": "handbook_psych"
+    },
+    {
+      "id": "psych_effect_size_cohens_d",
+      "name": "科恩 d",
+      "formula": "d = (μ₁ - μ₂)/σ_pooled",
+      "category": "psychology",
+      "subcategory": "statistics",
+      "source": "handbook_psych"
+    },
+    {
+      "id": "psych_effect_size_hedges_g",
+      "name": "赫奇斯 g",
+      "formula": "g = d (1 - 3/(4n-9))",
+      "category": "psychology",
+      "subcategory": "statistics",
+      "source": "handbook_psych"
+    },
+    {
+      "id": "psych_soar_preference",
+      "name": "Soar 偏好决策",
+      "formula": "P = Σ w_i · s_i(o)",
+      "category": "cognitive_science",
+      "subcategory": "soar",
+      "source": "handbook_psych"
+    },
+    {
+      "id": "psych_clarion_bottom_up",
+      "name": "CLARION 自下而上",
+      "formula": "A_i = Σ_j w_{ij} · I_j + noise",
+      "category": "cognitive_science",
+      "subcategory": "clarion",
+      "source": "handbook_psych"
+    },
+    {
+      "id": "psych_actr_decision_time",
+      "name": "ACT-R 决策时间",
+      "formula": "T = F * e^{activation/τ}",
+      "category": "cognitive_science",
+      "subcategory": "actr",
+      "source": "handbook_psych"
+    },
+    {
+      "id": "psych_actr_memory_threshold",
+      "name": "ACT-R 记忆阈值",
+      "formula": "P = 1 / (1 + e^{-(A - τ)/s})",
+      "category": "cognitive_science",
+      "subcategory": "actr",
+      "source": "handbook_psych"
+    },
+    {
+      "id": "psych_biased_competition",
+      "name": "偏置竞争模型",
+      "formula": "A_i = w_i · S_i + ∑_{j≠i} w_{ij} · A_j",
+      "category": "cognitive_science",
+      "subcategory": "attention",
+      "source": "handbook_psych"
+    },
+    {
+      "id": "psych_global_workspace_broadcast",
+      "name": "全局工作空间广播",
+      "formula": "GW = Σ_i w_i · A_i(t) + noise",
+      "category": "cognitive_science",
+      "subcategory": "consciousness",
+      "source": "handbook_psych"
+    },
+    {
+      "id": "psych_information_integration",
+      "name": "信息整合（IIT）",
+      "formula": "Φ = min_{partition} MI(partition)",
+      "category": "cognitive_science",
+      "subcategory": "consciousness",
+      "source": "handbook_psych"
+    },
+    {
+      "id": "psych_vygotsky_scaffolding",
+      "name": "维果茨基脚手架",
+      "formula": "ZPD = [actual, potential_with_help]",
+      "category": "psychology",
+      "subcategory": "development",
+      "source": "handbook_psych"
+    },
+    {
+      "id": "psych_phq9_score",
+      "name": "PHQ-9 抑郁量表",
+      "formula": "Score = Σ_9 items (0-3 each)",
+      "category": "psychology",
+      "subcategory": "clinical",
+      "source": "handbook_psych"
+    },
+    {
+      "id": "psych_gad7_score",
+      "name": "GAD-7 焦虑量表",
+      "formula": "Score = Σ_7 items (0-3 each)",
+      "category": "psychology",
+      "subcategory": "clinical",
+      "source": "handbook_psych"
+    },
+    {
+      "id": "psych_hamilton_depression",
+      "name": "汉密尔顿抑郁量表",
+      "formula": "HAM-D = Σ_17 items",
+      "category": "psychology",
+      "subcategory": "clinical",
+      "source": "handbook_psych"
+    },
+    {
+      "id": "philosophy_confirmation_degree",
+      "name": "确认度（卡尔纳普）",
+      "formula": "c = P(H|E) - P(H)",
+      "category": "philosophy",
+      "subcategory": "confirmation_theory",
+      "source": "handbook_philosophy"
+    },
+    {
+      "id": "philosophy_odds_updating",
+      "name": "赔率更新",
+      "formula": "O = BF · O(H)",
+      "category": "philosophy",
+      "subcategory": "confirmation_theory",
+      "source": "handbook_philosophy"
+    },
+    {
+      "id": "philosophy_modal_possibility_distribution",
+      "name": "可能性分布",
+      "formula": "Π(ω) = 1 - P(ω)",
+      "category": "philosophy",
+      "subcategory": "modal_logic",
+      "source": "handbook_philosophy"
+    },
+    {
+      "id": "philosophy_deontic_distribution",
+      "name": "义务分配",
+      "formula": "O = undefined",
+      "category": "philosophy",
+      "subcategory": "deontic_logic",
+      "source": "handbook_philosophy"
+    },
+    {
+      "id": "philosophy_deontic_conflict",
+      "name": "义务冲突",
+      "formula": "O = undefined",
+      "category": "philosophy",
+      "subcategory": "deontic_logic",
+      "source": "handbook_philosophy"
+    },
+    {
+      "id": "philosophy_minimax_regret",
+      "name": "最小最大后悔",
+      "formula": "a* = argmin_a max_s (u(a*,s) - u(a,s))",
+      "category": "philosophy",
+      "subcategory": "decision_theory",
+      "source": "handbook_philosophy"
+    },
+    {
+      "id": "philosophy_utilitarian_sum",
+      "name": "功利主义总和",
+      "formula": "V = Σ_i u(i)",
+      "category": "philosophy",
+      "subcategory": "ethics",
+      "source": "handbook_philosophy"
+    },
+    {
+      "id": "philosophy_prioritarianism",
+      "name": "优先主义",
+      "formula": "V = Σ_i w(u(i)) · u(i), w decreasing",
+      "category": "philosophy",
+      "subcategory": "ethics",
+      "source": "handbook_philosophy"
+    },
+    {
+      "id": "bayesian_update",
+      "name": "贝叶斯更新",
+      "formula": "P = undefined",
+      "category": "cognitive_science",
+      "subcategory": "from_arxiv",
+      "source": "arXiv_keyword:Bayesian"
+    },
+    {
+      "id": "schrodinger_equation",
+      "name": "薛定谔方程",
+      "formula": "iℏ ∂ψ/∂t = Ĥψ",
+      "category": "cognitive_science",
+      "subcategory": "from_arxiv",
+      "source": "arXiv_keyword:Schrödinger"
+    },
+    {
+      "id": "sci_cs_big_o",
+      "name": "大 O 记号",
+      "formula": "f(n) = O(g(n)) ⇔ ∃ M>0, n₀ s.t. |f(n)| ≤ M|g(n)| for n>n₀",
+      "category": "computer_science",
+      "subcategory": "algorithms",
+      "source": "wikipedia_manual_science"
+    },
+    {
+      "id": "sci_cs_hamming_dist",
+      "name": "汉明距离",
+      "formula": "d(x,y) = Σ (x_i ⊕ y_i)",
+      "category": "computer_science",
+      "subcategory": "coding_theory",
+      "source": "wikipedia_manual_science"
+    },
+    {
+      "id": "sci_cs_complexity_class_p",
+      "name": "P 类问题",
+      "formula": "P = {L | L is decidable in polynomial time}",
+      "category": "computer_science",
+      "subcategory": "complexity_theory",
+      "source": "wikipedia_manual_science"
+    },
+    {
+      "id": "sci_cs_complexity_class_np",
+      "name": "NP 类问题",
+      "formula": "NP = {L | L has polynomial-time verifier}",
+      "category": "computer_science",
+      "subcategory": "complexity_theory",
+      "source": "wikipedia_manual_science"
+    },
+    {
+      "id": "quantum_quantum_entanglement_entropy",
+      "name": "Entanglement entropy",
+      "formula": "S(ρ_A) = -Tr(ρ_A log ρ_A)",
+      "category": "physics",
+      "subcategory": "quantum_computing",
+      "source": "quantum_dataset"
+    },
+    {
+      "id": "cs_cs_big_o",
+      "name": "Big O notation",
+      "formula": "T(n) = O(f(n))",
+      "category": "computer_science",
+      "subcategory": "algorithms",
+      "source": "wikipedia_computer_science"
+    },
+    {
+      "id": "cs_cs_time_complexity",
+      "name": "Time complexity",
+      "formula": "T(n) = Σ_{i=1}^n c_i",
+      "category": "computer_science",
+      "subcategory": "algorithms",
+      "source": "wikipedia_computer_science"
+    },
+    {
+      "id": "cs_cs_space_complexity",
+      "name": "Space complexity",
+      "formula": "S(n) = Σ_{i=1}^n s_i",
+      "category": "computer_science",
+      "subcategory": "algorithms",
+      "source": "wikipedia_computer_science"
+    },
+    {
+      "id": "cs_cs_master_theorem",
+      "name": "Master theorem",
+      "formula": "T(n) = a*T(n/b) + f(n)",
+      "category": "computer_science",
+      "subcategory": "algorithms",
+      "source": "wikipedia_computer_science"
+    },
+    {
+      "id": "cs_cs_gradient_descent",
+      "name": "Gradient descent update",
+      "formula": "θ = θ - α * ∇J(θ)",
+      "category": "computer_science",
+      "subcategory": "machine_learning",
+      "source": "wikipedia_computer_science"
+    },
+    {
+      "id": "cs_cs_backprop",
+      "name": "Backpropagation",
+      "formula": "∂E/∂w = ∂E/∂y * ∂y/∂w",
+      "category": "computer_science",
+      "subcategory": "machine_learning",
+      "source": "wikipedia_computer_science"
+    },
+    {
+      "id": "cs_cs_softmax",
+      "name": "Softmax function",
+      "formula": "σ(z)_i = e^{z_i} / Σ_j e^{z_j}",
+      "category": "computer_science",
+      "subcategory": "machine_learning",
+      "source": "wikipedia_computer_science"
+    },
+    {
+      "id": "cs_cs_cross_entropy",
+      "name": "Cross-entropy loss",
+      "formula": "L = -Σ y_i log(ŷ_i)",
+      "category": "computer_science",
+      "subcategory": "machine_learning",
+      "source": "wikipedia_computer_science"
+    },
+    {
+      "id": "cs_cs_relu",
+      "name": "ReLU activation",
+      "formula": "f(x) = max(0, x)",
+      "category": "computer_science",
+      "subcategory": "machine_learning",
+      "source": "wikipedia_computer_science"
+    },
+    {
+      "id": "cs_cs_sigmoid",
+      "name": "Sigmoid activation",
+      "formula": "σ(x) = 1 / (1 + e^{-x})",
+      "category": "computer_science",
+      "subcategory": "machine_learning",
+      "source": "wikipedia_computer_science"
+    },
+    {
+      "id": "cs_cs_shannon_entropy",
+      "name": "Shannon entropy",
+      "formula": "H(X) = -Σ p(x) log p(x)",
+      "category": "computer_science",
+      "subcategory": "information_theory",
+      "source": "wikipedia_computer_science"
+    },
+    {
+      "id": "cs_cs_kl_divergence",
+      "name": "KL divergence",
+      "formula": "D_KL(P||Q) = Σ P(x) log(P(x)/Q(x))",
+      "category": "computer_science",
+      "subcategory": "information_theory",
+      "source": "wikipedia_computer_science"
+    },
+    {
+      "id": "cs_cs_mutual_information",
+      "name": "Mutual information",
+      "formula": "I(X;Y) = H(X) - H(X|Y)",
+      "category": "computer_science",
+      "subcategory": "information_theory",
+      "source": "wikipedia_computer_science"
+    },
+    {
+      "id": "cs_cs_channel_capacity",
+      "name": "Channel capacity",
+      "formula": "C = max_{p(x)} I(X;Y)",
+      "category": "computer_science",
+      "subcategory": "information_theory",
+      "source": "wikipedia_computer_science"
+    },
+    {
+      "id": "cog_cog_act_r",
+      "name": "ACT-R declarative memory",
+      "formula": "S = B - Σ w_i * ln(P_i)",
+      "category": "cognitive_science",
+      "subcategory": "cognitive_architecture",
+      "source": "wikipedia_cognitive_science"
+    },
+    {
+      "id": "cog_cog_forgetting",
+      "name": "遗忘概率",
+      "formula": "P(forget) = 1 - exp(-λ*t)",
+      "category": "cognitive_science",
+      "subcategory": "memory",
+      "source": "wikipedia_cognitive_science"
+    },
+    {
+      "id": "cog_cog_working_memory",
+      "name": "工作记忆容量",
+      "formula": "C = 7 ± 2 chunks",
+      "category": "cognitive_science",
+      "subcategory": "memory",
+      "source": "wikipedia_cognitive_science"
+    },
+    {
+      "id": "cog_cog_attention",
+      "name": "注意力权重",
+      "formula": "w_i = softmax(s_i)",
+      "category": "cognitive_science",
+      "subcategory": "attention",
+      "source": "wikipedia_cognitive_science"
+    },
+    {
+      "id": "cog_cog_spatial_attention",
+      "name": "空间注意力",
+      "formula": "A(x,y) = exp(-(x²+y²)/(2σ²))",
+      "category": "cognitive_science",
+      "subcategory": "attention",
+      "source": "wikipedia_cognitive_science"
+    },
+    {
+      "id": "cog_cog_feature_integration",
+      "name": "特征整合理论",
+      "formula": "P(bind) = exp(-n/τ)",
+      "category": "cognitive_science",
+      "subcategory": "attention",
+      "source": "wikipedia_cognitive_science"
+    },
+    {
+      "id": "cog_cog_drp",
+      "name": "Diffusion Decision Model",
+      "formula": "p(correct) = 1/(1 + exp(-Δμ/σ))",
+      "category": "cognitive_science",
+      "subcategory": "decision_making",
+      "source": "wikipedia_cognitive_science"
+    },
+    {
+      "id": "cog_cog_ prospect_theory",
+      "name": "前景理论",
+      "formula": "v(x) = x^α if x≥0, -λ*(-x)^β if x<0",
+      "category": "cognitive_science",
+      "subcategory": "decision_making",
+      "source": "wikipedia_cognitive_science"
+    },
+    {
+      "id": "cog_cog_cumulative_prospect",
+      "name": "累积前景理论",
+      "formula": "V = Σ v(x_i) * w(P_i)",
+      "category": "cognitive_science",
+      "subcategory": "decision_making",
+      "source": "wikipedia_cognitive_science"
+    },
+    {
+      "id": "cog_cog_reinforcement",
+      "name": "强化学习",
+      "formula": "Q(s,a) = Q(s,a) + α*(r + γ*max_a' Q(s',a') - Q(s,a))",
+      "category": "cognitive_science",
+      "subcategory": "learning",
+      "source": "wikipedia_cognitive_science"
+    },
+    {
+      "id": "cog_cog_rescorla_wagner",
+      "name": "Rescorla-Wagner 模型",
+      "formula": "ΔV = α*β*(λ - ΣV)",
+      "category": "cognitive_science",
+      "subcategory": "learning",
+      "source": "wikipedia_cognitive_science"
+    },
+    {
+      "id": "cog_cog_hebbian",
+      "name": "赫布学习",
+      "formula": "Δw_ij = η * x_i * x_j",
+      "category": "cognitive_science",
+      "subcategory": "learning",
+      "source": "wikipedia_cognitive_science"
+    },
+    {
+      "id": "cog_cog_neural",
+      "name": "神经元模型",
+      "formula": "τ*dV/dt = -V + Σ w_i*I_i",
+      "category": "cognitive_science",
+      "subcategory": "neural_computation",
+      "source": "wikipedia_cognitive_science"
+    },
+    {
+      "id": "cog_cog_hopfield",
+      "name": "Hopfield 网络",
+      "formula": "E = -0.5*Σ_i Σ_j w_ij*V_i*V_j",
+      "category": "cognitive_science",
+      "subcategory": "neural_computation",
+      "source": "wikipedia_cognitive_science"
+    },
+    {
+      "id": "cog_cog_boltzmann",
+      "name": "玻尔兹曼机",
+      "formula": "P(V) = exp(-E(V)/T) / Z",
+      "category": "cognitive_science",
+      "subcategory": "neural_computation",
+      "source": "wikipedia_cognitive_science"
+    },
+    {
+      "id": "cog_cog_reliability",
+      "name": "信度（Cronbach α）",
+      "formula": "α = (k/(k-1)) * (1 - Σ σ_i²/σ_total²)",
+      "category": "cognitive_science",
+      "subcategory": "psychometrics",
+      "source": "wikipedia_cognitive_science"
+    },
+    {
+      "id": "cog_cog_validity",
+      "name": "效度",
+      "formula": "r_xy = Cov(X,Y)/(σ_x*σ_y)",
+      "category": "cognitive_science",
+      "subcategory": "psychometrics",
+      "source": "wikipedia_cognitive_science"
+    },
+    {
+      "id": "cog_cog_item_response",
+      "name": "项目反应理论",
+      "formula": "P(θ) = 1/(1 + exp(-a*(θ - b)))",
+      "category": "cognitive_science",
+      "subcategory": "psychometrics",
+      "source": "wikipedia_cognitive_science"
+    },
+    {
+      "id": "cog_cog_long_term_memory",
+      "name": "长期记忆巩固",
+      "formula": "LTP = f(θ, γ)",
+      "category": "cognitive_science",
+      "subcategory": "memory",
+      "source": "wikipedia_cognitive_science"
+    },
+    {
+      "id": "psych_social_comparison_upward",
+      "name": "上行社会比较",
+      "formula": "S_subjective = f(own, better_other)",
+      "category": "psychology",
+      "subcategory": "social",
+      "source": "handbook_psych"
+    },
+    {
+      "id": "psych_erikson_crisis",
+      "name": "埃里克森危机",
+      "formula": "Crisis_resolution = f(age, social_support)",
+      "category": "psychology",
+      "subcategory": "development",
+      "source": "handbook_psych"
+    },
+    {
+      "id": "pad_arousal",
+      "name": "PAD 唤醒度（量化）",
+      "formula": "A = f(exclamation_count, capial_ratio, punctuation_density)",
+      "category": "cognitive_science",
+      "subcategory": "emotion",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "pad_dominance",
+      "name": "PAD 支配度（量化）",
+      "formula": "D = f(sentence_length, modal_verbs, command_count)",
+      "category": "cognitive_science",
+      "subcategory": "emotion",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "social_comparison",
+      "name": "社会比较理论",
+      "formula": "Satisfaction = f(own_outcome, referent_outcome)",
+      "category": "psychology",
+      "subcategory": "social",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "erikson_stages",
+      "name": "埃里克森阶段理论",
+      "formula": "Crisis_resolution = f(age, social_support)",
+      "category": "psychology",
+      "subcategory": "development",
+      "difficulty": "advanced",
+      "description": "",
+      "source": "psych_philosophy_v6"
+    },
+    {
+      "id": "spacing_effect",
+      "name": "间隔效应",
+      "formula": "R = f(interval, repetitions)",
+      "category": "cognitive_science",
+      "subcategory": "memory",
+      "source": "cognitive_science_literature"
+    },
+    {
+      "id": "cs_cs_binary_search",
+      "name": "Binary search complexity",
+      "formula": "T = log n",
+      "category": "computer_science",
+      "subcategory": "searching",
+      "source": "wikipedia_computer_science"
+    },
+    {
+      "id": "cs_cs_bfs",
+      "name": "BFS complexity",
+      "formula": "T = V + E",
+      "category": "computer_science",
+      "subcategory": "graph_algorithms",
+      "source": "wikipedia_computer_science"
+    },
+    {
+      "id": "cs_cs_dfs",
+      "name": "DFS complexity",
+      "formula": "T = V + E",
+      "category": "computer_science",
+      "subcategory": "graph_algorithms",
+      "source": "wikipedia_computer_science"
+    },
+    {
+      "id": "cs_cs_array_access",
+      "name": "Array access time",
+      "formula": "T = 1",
+      "category": "computer_science",
+      "subcategory": "data_structures",
+      "source": "wikipedia_computer_science"
+    },
+    {
+      "id": "cs_cs_linked_list_access",
+      "name": "Linked list access",
+      "formula": "T = n",
+      "category": "computer_science",
+      "subcategory": "data_structures",
+      "source": "wikipedia_computer_science"
+    },
+    {
+      "id": "cs_cs_heap_insert",
+      "name": "Heap insert",
+      "formula": "T = log n",
+      "category": "computer_science",
+      "subcategory": "data_structures",
+      "source": "wikipedia_computer_science"
+    },
+    {
+      "id": "cog_cowan_limit",
+      "name": "考恩容量限制",
+      "category": "cognitive_science",
+      "subcategory": "memory",
+      "formula": "C = 4 +/- 1 items",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cog_cognitive_load",
+      "name": "认知负载",
+      "category": "cognitive_science",
+      "subcategory": "attention",
+      "formula": "CL = (intrinsic + extraneous + germane) / WMC",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cog_intrinsic_load",
+      "name": "内在负载",
+      "category": "cognitive_science",
+      "subcategory": "attention",
+      "formula": "IL = element_interactivity * complexity",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cog_weber_fechner",
+      "name": "韦伯-费希纳定律",
+      "category": "cognitive_science",
+      "subcategory": "perception",
+      "formula": "dS = k*dI/I",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cog_stevens_power",
+      "name": "斯蒂文斯幂定律",
+      "category": "cognitive_science",
+      "subcategory": "perception",
+      "formula": "P = k*I^n",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cog_signal_detection_d",
+      "name": "信号检测d",
+      "category": "cognitive_science",
+      "subcategory": "perception",
+      "formula": "d = z(hit) - z(false_alarm)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cog_criterion_beta",
+      "name": "判断标准beta",
+      "category": "cognitive_science",
+      "subcategory": "perception",
+      "formula": "beta = f(signal)/f(noise) at criterion",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cog_rational_analysis",
+      "name": "理性分析",
+      "category": "cognitive_science",
+      "subcategory": "decision",
+      "formula": "P(choice) = exp(U_i/t) / sum(exp(U_j/t))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cog_bayes_optimal",
+      "name": "贝叶斯最优推理",
+      "category": "cognitive_science",
+      "subcategory": "reasoning",
+      "formula": "P(h|d) = P(d|h)*P(h)/P(d)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cog_information_gap",
+      "name": "信息缺口理论",
+      "category": "cognitive_science",
+      "subcategory": "curiosity",
+      "formula": "curiosity = f(information_gap)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cog_spreading_activation",
+      "name": "扩散激活",
+      "category": "cognitive_science",
+      "subcategory": "semantic",
+      "formula": "A_i = sum(w_ij * A_j) - decay",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cog_tip_of_tongue",
+      "name": "舌尖现象",
+      "category": "cognitive_science",
+      "subcategory": "memory",
+      "formula": "TOT = partial_activation < threshold",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cog_fluency_heuristic",
+      "name": "流畅性启发式",
+      "category": "cognitive_science",
+      "subcategory": "decision",
+      "formula": "P(choose) = f(processing_fluency)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cog_dual_process",
+      "name": "双系统理论",
+      "category": "cognitive_science",
+      "subcategory": "reasoning",
+      "formula": "System1 = fast/automatic, System2 = slow/deliberate",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cog_iceberg_model",
+      "name": "意识冰山模型",
+      "category": "cognitive_science",
+      "subcategory": "consciousness",
+      "formula": "conscious = tip, unconscious = bulk",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cog_global_workspace",
+      "name": "全局工作空间理论",
+      "category": "cognitive_science",
+      "subcategory": "consciousness",
+      "formula": "consciousness = global broadcast of local processors",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cog_predictive_coding",
+      "name": "预测编码",
+      "category": "cognitive_science",
+      "subcategory": "perception",
+      "formula": "prediction_error = sensory_input - prediction",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cog_free_energy_principle",
+      "name": "自由能原理",
+      "category": "cognitive_science",
+      "subcategory": "consciousness",
+      "formula": "F = -ln(p(o)) + D_KL(q||p)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "psy_rescorla_wagner",
+      "name": "雷斯科拉-瓦格纳模型",
+      "category": "psychology",
+      "subcategory": "learning",
+      "formula": "dV = alpha*beta*(lambda - V_total)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "psy_skinner_reinforcement",
+      "name": "斯金纳强化",
+      "category": "psychology",
+      "subcategory": "learning",
+      "formula": "behavior = f(reinforcement_history)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "psy_bandura_self_efficacy",
+      "name": "自我效能感",
+      "category": "psychology",
+      "subcategory": "social",
+      "formula": "performance = ability * self_efficacy * task_difficulty",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "psy_big_five_o",
+      "name": "大五-开放性",
+      "category": "psychology",
+      "subcategory": "personality",
+      "formula": "O = imagination + curiosity + aesthetic_sensitivity",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "psy_big_five_c",
+      "name": "大五-尽责性",
+      "category": "psychology",
+      "subcategory": "personality",
+      "formula": "C = organization + diligence + self_discipline",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "psy_big_five_e",
+      "name": "大五-外向性",
+      "category": "psychology",
+      "subcategory": "personality",
+      "formula": "E = sociability + assertiveness + positive_emotion",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "psy_big_five_a",
+      "name": "大五-宜人性",
+      "category": "psychology",
+      "subcategory": "personality",
+      "formula": "A = trust + altruism + cooperation",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "psy_big_five_n",
+      "name": "大五-神经质",
+      "category": "psychology",
+      "subcategory": "personality",
+      "formula": "N = anxiety + depression + emotional_instability",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "psy_likert_scale",
+      "name": "李克特量表",
+      "category": "psychology",
+      "subcategory": "measurement",
+      "formula": "score = sum(item_ratings) / n_items",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "psy_cronbach_alpha",
+      "name": "克伦巴赫alpha",
+      "category": "psychology",
+      "subcategory": "measurement",
+      "formula": "alpha = (k/(k-1))*(1 - sum(var_i)/var_total)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "psy_cohen_d",
+      "name": "科恩d效应量",
+      "category": "psychology",
+      "subcategory": "measurement",
+      "formula": "d = (M1 - M2) / SD_pooled",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "psy_correlation",
+      "name": "皮尔逊相关",
+      "category": "psychology",
+      "subcategory": "measurement",
+      "formula": "r = sum((x-x_bar)*(y-y_bar)) / sqrt(sum((x-x_bar)^2)*sum((y-y_bar)^2))",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "psy_anova_f",
+      "name": "方差分析F值",
+      "category": "psychology",
+      "subcategory": "measurement",
+      "formula": "F = MS_between / MS_within",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "psy_t_test",
+      "name": "t检验",
+      "category": "psychology",
+      "subcategory": "measurement",
+      "formula": "t = (M1 - M2) / SE_diff",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "psy_chi_square",
+      "name": "卡方检验",
+      "category": "psychology",
+      "subcategory": "measurement",
+      "formula": "chi2 = sum((O-E)^2/E)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "psy_iq_deviation",
+      "name": "IQ离差法",
+      "category": "psychology",
+      "subcategory": "intelligence",
+      "formula": "IQ = 100 + 15*z where z = (score - mean)/sd",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "psy_g_factor",
+      "name": "g因素",
+      "category": "psychology",
+      "subcategory": "intelligence",
+      "formula": "g = common_variance_across_cognitive_tests",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "psy_stress_coping",
+      "name": "压力应对模型",
+      "category": "psychology",
+      "subcategory": "stress",
+      "formula": "stress = demand - (resources + coping)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "psy_attachment_style",
+      "name": "依恋风格",
+      "category": "psychology",
+      "subcategory": "developmental",
+      "formula": "attachment = f(caregiver_responsiveness, consistency)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "neuro_nernst_eq",
+      "name": "能斯特方程(神经)",
+      "category": "neuroscience",
+      "subcategory": "membrane_biophysics",
+      "formula": "E_ion = (RT/zF)*ln([ion]_out/[ion]_in)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "neuro_goldman_hodgkin_katz",
+      "name": "GHK电压方程",
+      "category": "neuroscience",
+      "subcategory": "membrane_biophysics",
+      "formula": "V_m = (RT/F)*ln((P_K*[K]_o + P_Na*[Na]_o + P_Cl*[Cl]_i)/(P_K*[K]_i + P_Na*[Na]_i + P_Cl*[Cl]_o))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "neuro_hodgkin_huxley",
+      "name": "Hodgkin-Huxley方程",
+      "category": "neuroscience",
+      "subcategory": "action_potential",
+      "formula": "I = C_m*dV/dt + I_Na + I_K + I_L",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "neuro_sodium_current",
+      "name": "钠电流",
+      "category": "neuroscience",
+      "subcategory": "action_potential",
+      "formula": "I_Na = g_Na*m^3*h*(V - E_Na)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "neuro_potassium_current",
+      "name": "钾电流",
+      "category": "neuroscience",
+      "subcategory": "action_potential",
+      "formula": "I_K = g_K*n^4*(V - E_K)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "neuro_leak_current",
+      "name": "漏电流",
+      "category": "neuroscience",
+      "subcategory": "action_potential",
+      "formula": "I_L = g_L*(V - E_L)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "neuro_membrane_tc",
+      "name": "膜时间常数",
+      "category": "neuroscience",
+      "subcategory": "membrane_biophysics",
+      "formula": "tau = R_m*C_m",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "neuro_length_constant",
+      "name": "长度常数",
+      "category": "neuroscience",
+      "subcategory": "membrane_biophysics",
+      "formula": "lambda = sqrt(r*R_m/(2*R_i))",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "neuro_synaptic_conductance",
+      "name": "突触电导",
+      "category": "neuroscience",
+      "subcategory": "synaptic",
+      "formula": "g_syn(t) = g_max*(t/tau)*exp(1-t/tau)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "neuro_stp_u",
+      "name": "短时可塑U",
+      "category": "neuroscience",
+      "subcategory": "synaptic",
+      "formula": "U = U_0 + u*(1-U_0)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "neuro_stp_r",
+      "name": "短时可塑R",
+      "category": "neuroscience",
+      "subcategory": "synaptic",
+      "formula": "dR/dt = (1-R)/tau_rec - u*R*delta(t-t_spike)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "neuro_ltp_rule",
+      "name": "LTP规则(Hebbian)",
+      "category": "neuroscience",
+      "subcategory": "plasticity",
+      "formula": "dW = eta*pre*post",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "neuro_stdp",
+      "name": "STDP窗口",
+      "category": "neuroscience",
+      "subcategory": "plasticity",
+      "formula": "dW = A_plus*exp(-dt/tau_plus) if dt>0, -A_minus*exp(dt/tau_minus) if dt<0",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "neuro_bcm_rule",
+      "name": "BCM规则",
+      "category": "neuroscience",
+      "subcategory": "plasticity",
+      "formula": "dW = eta*phi(post, theta)*pre where theta = f(post^2)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "neuro_firing_rate",
+      "name": "发放率模型",
+      "category": "neuroscience",
+      "subcategory": "neural_coding",
+      "formula": "r = f(I) = I_threshold function",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "neuro_poisson_spikes",
+      "name": "泊松发放",
+      "category": "neuroscience",
+      "subcategory": "neural_coding",
+      "formula": "P(n_spikes in T) = (r*T)^n*exp(-r*T)/n!",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "neuro_tuning_curve",
+      "name": "调谐曲线",
+      "category": "neuroscience",
+      "subcategory": "neural_coding",
+      "formula": "r(theta) = r_0 + r_max*cos(theta - theta_pref)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "neuro_population_vector",
+      "name": "群体向量",
+      "category": "neuroscience",
+      "subcategory": "neural_coding",
+      "formula": "direction = sum(r_i*e_i)/sum(r_i)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "neuro_fano_factor",
+      "name": "法诺因子",
+      "category": "neuroscience",
+      "subcategory": "neural_coding",
+      "formula": "FF = variance/mean",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "neuro_neural_entropy",
+      "name": "神经信息熵",
+      "category": "neuroscience",
+      "subcategory": "neural_coding",
+      "formula": "H = -sum(p(r)*log(p(r)))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "phil_modus_ponens",
+      "name": "肯定前件",
+      "category": "philosophy",
+      "subcategory": "logic",
+      "formula": "P -> Q, P |= Q",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "phil_modus_tollens",
+      "name": "否定后件",
+      "category": "philosophy",
+      "subcategory": "logic",
+      "formula": "P -> Q, not Q |= not P",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "phil_hypothetical_syllogism",
+      "name": "假言三段论",
+      "category": "philosophy",
+      "subcategory": "logic",
+      "formula": "P -> Q, Q -> R |= P -> R",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "phil_disjunctive_syllogism",
+      "name": "析取三段论",
+      "category": "philosophy",
+      "subcategory": "logic",
+      "formula": "P or Q, not P |= Q",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "phil_contradiction",
+      "name": "归谬法",
+      "category": "philosophy",
+      "subcategory": "logic",
+      "formula": "P -> (Q and not Q) |= not P",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "phil_de_morgan_and",
+      "name": "德摩根定律(与)",
+      "category": "philosophy",
+      "subcategory": "logic",
+      "formula": "not(P and Q) = not P or not Q",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "phil_de_morgan_or",
+      "name": "德摩根定律(或)",
+      "category": "philosophy",
+      "subcategory": "logic",
+      "formula": "not(P or Q) = not P and not Q",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "phil_distributive_and",
+      "name": "分配律(与)",
+      "category": "philosophy",
+      "subcategory": "logic",
+      "formula": "P and (Q or R) = (P and Q) or (P and R)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "phil_distributive_or",
+      "name": "分配律(或)",
+      "category": "philosophy",
+      "subcategory": "logic",
+      "formula": "P or (Q and R) = (P or Q) and (P or R)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "phil_contrapositive",
+      "name": "逆否命题",
+      "category": "philosophy",
+      "subcategory": "logic",
+      "formula": "P -> Q = not Q -> not P",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "phil_excluded_middle",
+      "name": "排中律",
+      "category": "philosophy",
+      "subcategory": "logic",
+      "formula": "P or not P = True",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "phil_noncontradiction",
+      "name": "矛盾律",
+      "category": "philosophy",
+      "subcategory": "logic",
+      "formula": "not(P and not P) = True",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "phil_double_negation",
+      "name": "双重否定",
+      "category": "philosophy",
+      "subcategory": "logic",
+      "formula": "not(not P) = P",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "phil_material_implication",
+      "name": "实质蕴涵",
+      "category": "philosophy",
+      "subcategory": "logic",
+      "formula": "P -> Q = not P or Q",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "phil_bayesian_epistemology",
+      "name": "贝叶斯认识论",
+      "category": "philosophy",
+      "subcategory": "epistemology",
+      "formula": "P(h|e) = P(e|h)*P(h)/P(e)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "phil_gettier_condition",
+      "name": "盖梯尔条件",
+      "category": "philosophy",
+      "subcategory": "epistemology",
+      "formula": "knowledge = justified_true_belief + no_Gettier_case",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "phil_utility_bentham",
+      "name": "功利主义(边沁)",
+      "category": "philosophy",
+      "subcategory": "ethics",
+      "formula": "utility = sum(pleasure - pain)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "phil_veil_of_ignorance",
+      "name": "无知之幕",
+      "category": "philosophy",
+      "subcategory": "political",
+      "formula": "justice = principles chosen behind veil of ignorance",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cs_time_complexity_log",
+      "name": "对数复杂度",
+      "category": "computer_science",
+      "subcategory": "complexity",
+      "formula": "T(n) = O(log(n))",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cs_time_complexity_nlogn",
+      "name": "线性对数复杂度",
+      "category": "computer_science",
+      "subcategory": "complexity",
+      "formula": "T(n) = O(n*log(n))",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cs_shannon_entropy_bits",
+      "name": "香农熵(比特)",
+      "category": "computer_science",
+      "subcategory": "information_theory",
+      "formula": "H = -sum(p_i*log2(p_i))",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cs_channel_capacity_binary",
+      "name": "二元信道容量",
+      "category": "computer_science",
+      "subcategory": "information_theory",
+      "formula": "C = 1 - H(p)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cs_hamming_bound",
+      "name": "汉明界",
+      "category": "computer_science",
+      "subcategory": "coding_theory",
+      "formula": "sum(C(n,i)) <= 2^(n-k)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cs_bayes_classifier",
+      "name": "贝叶斯分类器",
+      "category": "computer_science",
+      "subcategory": "machine_learning",
+      "formula": "y_hat = argmax P(y|x) = argmax P(x|y)*P(y)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cs_gradient_descent",
+      "name": "梯度下降",
+      "category": "computer_science",
+      "subcategory": "machine_learning",
+      "formula": "theta = theta - alpha*grad(J)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cs_softmax",
+      "name": "Softmax函数",
+      "category": "computer_science",
+      "subcategory": "machine_learning",
+      "formula": "P(y=i) = exp(z_i)/sum(exp(z_j))",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cs_cross_entropy_loss",
+      "name": "交叉熵损失",
+      "category": "computer_science",
+      "subcategory": "machine_learning",
+      "formula": "L = -sum(y*log(y_hat))",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cs_mse_loss",
+      "name": "均方误差",
+      "category": "computer_science",
+      "subcategory": "machine_learning",
+      "formula": "MSE = (1/n)*sum((y - y_hat)^2)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cs_l2_regularization",
+      "name": "L2正则化",
+      "category": "computer_science",
+      "subcategory": "machine_learning",
+      "formula": "J_reg = J + lambda*sum(theta^2)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cs_attention",
+      "name": "注意力机制",
+      "category": "computer_science",
+      "subcategory": "deep_learning",
+      "formula": "Attention(Q,K,V) = softmax(Q*K^T/sqrt(d_k))*V",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cs_transformer_ffn",
+      "name": "Transformer FFN",
+      "category": "computer_science",
+      "subcategory": "deep_learning",
+      "formula": "FFN(x) = max(0, x*W1 + b1)*W2 + b2",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cs_layer_norm",
+      "name": "层归一化",
+      "category": "computer_science",
+      "subcategory": "deep_learning",
+      "formula": "LN = (x - mu)/sqrt(sigma^2 + eps) * gamma + beta",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cs_backpropagation",
+      "name": "反向传播链式法则",
+      "category": "computer_science",
+      "subcategory": "deep_learning",
+      "formula": "dL/dw = dL/da * da/dz * dz/dw",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "sig_snr",
+      "name": "信噪比",
+      "category": "engineering",
+      "subcategory": "signal_processing",
+      "formula": "SNR = P_signal / P_noise",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "sig_snr_db",
+      "name": "信噪比(dB)",
+      "category": "engineering",
+      "subcategory": "signal_processing",
+      "formula": "SNR_dB = 10*log10(P_signal/P_noise)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "distribution_1",
+      "name": "Binomial(n,p) 分布",
+      "formula": "P = k)",
+      "category": "mathematics",
+      "subcategory": "probability_distributions",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "distribution_2",
+      "name": "Poisson(λ) 分布",
+      "formula": "P = k)",
+      "category": "mathematics",
+      "subcategory": "probability_distributions",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "linalg_0",
+      "name": "determinant_2x2",
+      "formula": "det = ad - bc",
+      "category": "mathematics",
+      "subcategory": "linear_algebra",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "linalg_1",
+      "name": "determinant_3x3",
+      "formula": "det = a(ei-fh) - b(di-fg) + c(dh-eg)",
+      "category": "mathematics",
+      "subcategory": "linear_algebra",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "linalg_3",
+      "name": "trace",
+      "formula": "tr = Σ a_ii",
+      "category": "mathematics",
+      "subcategory": "linear_algebra",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "linalg_4",
+      "name": "eigenvalue_def",
+      "formula": "det = 0",
+      "category": "mathematics",
+      "subcategory": "linear_algebra",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "linalg_6",
+      "name": "matrix_norm_frobenius",
+      "formula": "||A||_F = sqrt(Σ|a_ij|²)",
+      "category": "mathematics",
+      "subcategory": "linear_algebra",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "wiki_math_la_rank",
+      "name": "矩阵的秩",
+      "formula": "rank(A) = dim(col(A))",
+      "category": "mathematics",
+      "subcategory": "linear_algebra",
+      "source": "wikipedia_manual_math"
+    },
+    {
+      "id": "adv_var_euler_lagrange",
+      "name": "Euler-Lagrange",
+      "formula": "dF/dy - d/dx (dF/dy') = 0",
+      "category": "mathematics",
+      "subcategory": "calculus_variations",
+      "source": "wikipedia_advanced"
+    },
+    {
+      "id": "nmf_first_binomial_formula",
+      "name": "First Binomial Formula",
+      "names": [
+        "First Binomial Formula",
+        "Binomial Formula",
+        "first binomial formula",
+        "binomial formula",
+        "square of a binomial",
+        "square of a sum"
+      ],
+      "category": "mathematics",
+      "subcategory": "named_formulas",
+      "formula": "(a + b)^2 = a^2 + 2ab + b^2",
+      "difficulty": "intermediate",
+      "source": "named_math_formulas (ddrg)"
+    },
+    {
+      "id": "nmf_second_binomial_formula",
+      "name": "Second Binomial Formula",
+      "names": [
+        "Second Binomial Formula",
+        "Binomial Formula",
+        "second binomial formula",
+        "binomial formula",
+        "square of a binomial",
+        "square of a difference"
+      ],
+      "category": "mathematics",
+      "subcategory": "named_formulas",
+      "formula": "(a - b)^2 = a^2 - 2a\\cdot b + b^2",
+      "difficulty": "intermediate",
+      "source": "named_math_formulas (ddrg)"
+    },
+    {
+      "id": "nmf_third_binomial_formula",
+      "name": "Third Binomial Formula",
+      "names": [
+        "Third Binomial Formula",
+        "Binomial Formula",
+        "third binomial formula",
+        "binomial formula",
+        "difference of squares"
+      ],
+      "category": "mathematics",
+      "subcategory": "named_formulas",
+      "formula": "(a + b)(a - b) = a^2 - b^2",
+      "difficulty": "intermediate",
+      "source": "named_math_formulas (ddrg)"
+    },
+    {
+      "id": "nmf_binomial_coefficient_formula",
+      "name": "Binomial Coefficient Formula",
+      "names": [
+        "Binomial coefficient formula",
+        "Binomial coefficient"
+      ],
+      "category": "mathematics",
+      "subcategory": "named_formulas",
+      "formula": "\\binom{n}{k} = \\frac{n!}{k!(n-k)!}",
+      "difficulty": "intermediate",
+      "source": "named_math_formulas (ddrg)"
+    },
+    {
+      "id": "nmf_binomial_theorem",
+      "name": "Binomial Theorem",
+      "names": [
+        "Binomial Theorem"
+      ],
+      "category": "mathematics",
+      "subcategory": "named_formulas",
+      "formula": "(a+b)^n = \\sum_{k=0}^{n} \\binom{n}{k} a^{n-k} b^k",
+      "difficulty": "intermediate",
+      "source": "named_math_formulas (ddrg)"
+    },
+    {
+      "id": "nmf_determinant_of_2x2_matrix",
+      "name": "Determinant of 2x2 Matrix",
+      "names": [
+        "Determinant of 2x2 Matrix"
+      ],
+      "category": "mathematics",
+      "subcategory": "named_formulas",
+      "formula": "det([[a, b], [c, d]]) = ad - bc",
+      "difficulty": "intermediate",
+      "source": "named_math_formulas (ddrg)"
+    },
+    {
+      "id": "nmf_determinant_of_3x3_matrix",
+      "name": "Determinant of 3x3 Matrix",
+      "names": [
+        "Determinant of 3x3 Matrix"
+      ],
+      "category": "mathematics",
+      "subcategory": "named_formulas",
+      "formula": "det\\left([[a, b, c], [d, e, f], [g, h, j]]\\right) = a * \\det([[e, f], [h, j]]) - b * \\det([[d, f], [g, j]]) + c * \\det([[d, e], [g, h]])",
+      "difficulty": "intermediate",
+      "source": "named_math_formulas (ddrg)"
+    },
+    {
+      "id": "nmf_gaussian_integral",
+      "name": "Gaussian Integral",
+      "names": [
+        "Gaussian Integral",
+        "Euler-Poisson Integral"
+      ],
+      "category": "mathematics",
+      "subcategory": "named_formulas",
+      "formula": "\\int_{-\\infty}^\\infty exp(-x^2) dx = \\sqrt{\\pi}",
+      "difficulty": "intermediate",
+      "source": "named_math_formulas (ddrg)"
+    },
+    {
+      "id": "nmf_eulers_identity",
+      "name": "Eulers Identity",
+      "names": [
+        "Eulers Formula",
+        "Eulers Identiy",
+        "Eulers Formula for complex analysis"
+      ],
+      "category": "mathematics",
+      "subcategory": "named_formulas",
+      "formula": "exp(\\mathrm{i}\\pi) + 1 = 0",
+      "difficulty": "intermediate",
+      "source": "named_math_formulas (ddrg)"
+    },
+    {
+      "id": "nmf_eulers_formula",
+      "name": "Eulers Formula",
+      "names": [
+        "Eulers Formula",
+        "Eulers Identiy",
+        "Eulers Complex Exponential Identity"
+      ],
+      "category": "mathematics",
+      "subcategory": "named_formulas",
+      "formula": "e^{\\mathrm{i}\\alpha} = \\cos{\\alpha} + \\mathrm{i}\\sin{\\alpha}",
+      "difficulty": "intermediate",
+      "source": "named_math_formulas (ddrg)"
+    },
+    {
+      "id": "nmf_eulers_formula_for_polyhedra",
+      "name": "Eulers Formula for polyhedra",
+      "names": [
+        "Eulers Formula for polyhedra",
+        "Euler's formula for polyhedra",
+        "Eulers formula for planar graphs",
+        "Eulers Polyhedral Formula"
+      ],
+      "category": "mathematics",
+      "subcategory": "named_formulas",
+      "formula": "V - E + F = 2",
+      "difficulty": "intermediate",
+      "source": "named_math_formulas (ddrg)"
+    },
+    {
+      "id": "nmf_derivative_of_a_function",
+      "name": "Derivative of a Function",
+      "names": [
+        "Derivative of a Function",
+        "Differentiation definition"
+      ],
+      "category": "mathematics",
+      "subcategory": "named_formulas",
+      "formula": "f'(x) = \\lim_{h \\to 0} \\frac{f(x+h)-f(x)}{h}",
+      "difficulty": "intermediate",
+      "source": "named_math_formulas (ddrg)"
+    },
+    {
+      "id": "nmf_derivative_of_inverse_function",
+      "name": "Derivative of Inverse Function",
+      "names": [
+        "Derivative of Inverse Function"
+      ],
+      "category": "mathematics",
+      "subcategory": "named_formulas",
+      "formula": "\\frac{d}{dx} \\left[f^{-1}(x)\\right] = \\frac{1}{f'(f^{-1}(x))}",
+      "difficulty": "intermediate",
+      "source": "named_math_formulas (ddrg)"
+    },
+    {
+      "id": "nmf_eulers_number",
+      "name": "Eulers Number",
+      "names": [
+        "Eulers number",
+        "Number e",
+        "Mathematical constant e"
+      ],
+      "category": "mathematics",
+      "subcategory": "named_formulas",
+      "formula": "e = \\lim_{n\\to \\infty}(1+1/n)^n",
+      "difficulty": "intermediate",
+      "source": "named_math_formulas (ddrg)"
+    },
+    {
+      "id": "nmf_bayes_theorem",
+      "name": "Bayes' Theorem",
+      "names": [
+        "Bayes' Theorem",
+        "Bayes Theorem",
+        "Bayes law",
+        "Bayes probability rule",
+        "Bayes conditional probability theorem",
+        "Bayes posterior probability theorem"
+      ],
+      "category": "mathematics",
+      "subcategory": "named_formulas",
+      "formula": "P(A|B) = (P(B|A) \\cdot P(A)) / P(B)",
+      "difficulty": "intermediate",
+      "source": "named_math_formulas (ddrg)"
+    },
+    {
+      "id": "nmf_binomial_distribution",
+      "name": "Binomial Distribution",
+      "names": [
+        "Binomial Distribution"
+      ],
+      "category": "mathematics",
+      "subcategory": "named_formulas",
+      "formula": "P(X=k) = \\binom{n}{k} p^k * (1-p)^{n-k}",
+      "difficulty": "intermediate",
+      "source": "named_math_formulas (ddrg)"
+    },
+    {
+      "id": "nmf_poisson_distribution",
+      "name": "Poisson Distribution",
+      "names": [
+        "Poisson Distribution"
+      ],
+      "category": "mathematics",
+      "subcategory": "named_formulas",
+      "formula": "P(X=k) = \\frac{e^{-\\lambda} \\lambda^k}{k!}",
+      "difficulty": "intermediate",
+      "source": "named_math_formulas (ddrg)"
+    },
+    {
+      "id": "nmf_normal_distribution",
+      "name": "Normal Distribution",
+      "names": [
+        "Normal Distribution"
+      ],
+      "category": "mathematics",
+      "subcategory": "named_formulas",
+      "formula": "f(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}} e^{-(x-\\mu)^2/(2\\sigma^2)}",
+      "difficulty": "intermediate",
+      "source": "named_math_formulas (ddrg)"
+    },
+    {
+      "id": "nmf_law_of_total_probability",
+      "name": "Law of Total Probability",
+      "names": [
+        "Law of Total Probabilities"
+      ],
+      "category": "mathematics",
+      "subcategory": "named_formulas",
+      "formula": "P(A) = \\sum_{i=1}^n P(A|B_i)P(B_i)",
+      "difficulty": "intermediate",
+      "source": "named_math_formulas (ddrg)"
+    },
+    {
+      "id": "nmf_variance",
+      "name": "Variance",
+      "names": [
+        "Variance",
+        "Variance of a random variable"
+      ],
+      "category": "mathematics",
+      "subcategory": "named_formulas",
+      "formula": "Var(X) = E((X - E(X))^2)",
+      "difficulty": "intermediate",
+      "source": "named_math_formulas (ddrg)"
+    },
+    {
+      "id": "nmf_covariance",
+      "name": "Covariance",
+      "names": [
+        "Covariance",
+        "Covariance of random variables"
+      ],
+      "category": "mathematics",
+      "subcategory": "named_formulas",
+      "formula": "Cov[X,Y] = E[(X - E[X])(Y - E[Y])]",
+      "difficulty": "intermediate",
+      "source": "named_math_formulas (ddrg)"
+    },
+    {
+      "id": "nmf_binomial_series",
+      "name": "Binomial Series",
+      "names": [
+        "Binomial Series"
+      ],
+      "category": "mathematics",
+      "subcategory": "named_formulas",
+      "formula": "\\forall \\alpha, x \\in\\mathbb{C} > 0: |x| < 1 \\Rightarrow (1 + x)^{\\alpha} =1 + \\binom{\\alpha}{1}x + \\binom{\\alpha}{2}x^2 + \\binom{\\alpha}{3}x^3 + \\binom{\\alpha}{4}x^4 + \\binom{\\alpha}{5}x^5 + \\ldots",
+      "difficulty": "intermediate",
+      "source": "named_math_formulas (ddrg)"
+    },
+    {
+      "id": "ode_laplace_def",
+      "name": "拉普拉斯变换定义",
+      "category": "mathematics",
+      "subcategory": "differential_equations",
+      "formula": "L = integral(0,inf,f*exp(-s*t))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "ode_variation_params",
+      "name": "常数变易法",
+      "category": "mathematics",
+      "subcategory": "differential_equations",
+      "formula": "u = -integral(y2*f/W)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "sf_gamma",
+      "name": "伽马函数",
+      "category": "mathematics",
+      "subcategory": "special_functions",
+      "formula": "G = integral(0,inf,t^(z-1)*exp(-t))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "sf_beta_integral",
+      "name": "贝塔积分",
+      "category": "mathematics",
+      "subcategory": "special_functions",
+      "formula": "B = integral(0,1,t^(a-1)*(1-t)^(b-1))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "sf_legendre_orth",
+      "name": "勒让德正交",
+      "category": "mathematics",
+      "subcategory": "special_functions",
+      "formula": "integral(-1,1,Pm*Pn) = 2*delta/(2*n+1)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "sf_elliptic_k",
+      "name": "完全椭圆积分K",
+      "category": "mathematics",
+      "subcategory": "special_functions",
+      "formula": "K = integral(0,pi/2,1/sqrt(1-k^2*sin(t)^2))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "sf_elliptic_e",
+      "name": "完全椭圆积分E",
+      "category": "mathematics",
+      "subcategory": "special_functions",
+      "formula": "E = integral(0,pi/2,sqrt(1-k^2*sin(t)^2))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "it_fourier_def",
+      "name": "傅里叶变换定义",
+      "category": "mathematics",
+      "subcategory": "integral_transforms",
+      "formula": "F = integral(-inf,inf,f*exp(-i*w*x))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "it_fourier_parseval",
+      "name": "帕塞瓦尔定理",
+      "category": "mathematics",
+      "subcategory": "integral_transforms",
+      "formula": "integral(abs(f)^2) = (1/(2*pi))*integral(abs(F)^2)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "it_mellin_def",
+      "name": "梅林变换定义",
+      "category": "mathematics",
+      "subcategory": "integral_transforms",
+      "formula": "M = integral(0,inf,f*x^(s-1))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "it_mellin_inv",
+      "name": "梅林逆变换",
+      "category": "mathematics",
+      "subcategory": "integral_transforms",
+      "formula": "f = (1/(2*pi*i))*integral(c-i*inf,c+i*inf,M*x^(-s))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "it_hilbert_def",
+      "name": "希尔伯特变换",
+      "category": "mathematics",
+      "subcategory": "integral_transforms",
+      "formula": "H = (1/pi)*integral(-inf,inf,f(t)/(x-t))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "it_hilbert_inv",
+      "name": "希尔伯特逆变换",
+      "category": "mathematics",
+      "subcategory": "integral_transforms",
+      "formula": "f = -(1/pi)*integral(-inf,inf,H(t)/(x-t))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "it_hankel_def",
+      "name": "汉克尔变换",
+      "category": "mathematics",
+      "subcategory": "integral_transforms",
+      "formula": "H = integral(0,inf,f*J(nu)*r*r)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "it_abel_def",
+      "name": "阿贝尔变换",
+      "category": "mathematics",
+      "subcategory": "integral_transforms",
+      "formula": "A = integral(r,inf,f(r)/sqrt(r^2-x^2))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "it_radon_def",
+      "name": "拉东变换",
+      "category": "mathematics",
+      "subcategory": "integral_transforms",
+      "formula": "R = integral(-inf,inf,f(x*t+s*n))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "it_hartley_def",
+      "name": "哈特利变换",
+      "category": "mathematics",
+      "subcategory": "integral_transforms",
+      "formula": "H = integral(-inf,inf,f*(cos(w*x)+sin(w*x))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "it_stft_def",
+      "name": "短时傅里叶变换",
+      "category": "mathematics",
+      "subcategory": "integral_transforms",
+      "formula": "STFT = integral(-inf,inf,f*w*exp(-i*w*t))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "it_wigner_def",
+      "name": "维格纳分布",
+      "category": "mathematics",
+      "subcategory": "integral_transforms",
+      "formula": "W = integral(-inf,inf,f(x+t/2)*f(x-t/2)*exp(-i*w*t))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "it_wavelet_def",
+      "name": "连续小波变换",
+      "category": "mathematics",
+      "subcategory": "integral_transforms",
+      "formula": "CWT = integral(-inf,inf,f*psi((t-b)/a)/sqrt(abs(a)))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "var_action",
+      "name": "作用量定义",
+      "category": "mathematics",
+      "subcategory": "calculus_of_variations",
+      "formula": "S = integral(t1,t2,L(q,q,t))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "var_canonical_transform",
+      "name": "正则变换",
+      "category": "mathematics",
+      "subcategory": "calculus_of_variations",
+      "formula": "F = integral(p*dq - H*dt) + dS",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "prob_entropy_diff",
+      "name": "微分熵",
+      "category": "mathematics",
+      "subcategory": "probability",
+      "formula": "H = -integral(f*log(f))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "top_gauss_bonnet",
+      "name": "高斯-博内定理",
+      "category": "mathematics",
+      "subcategory": "topology",
+      "formula": "integral(K) = 2*pi*chi",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "top_homology_rank",
+      "name": "同调群秩",
+      "category": "mathematics",
+      "subcategory": "topology",
+      "formula": "rank(H_k) = b_k",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "top_index_theorem",
+      "name": "阿蒂亚-辛格指标定理",
+      "category": "mathematics",
+      "subcategory": "topology",
+      "formula": "index(D) = integral(ch(E)*Td(X))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "la_rank_nullity",
+      "name": "秩-零化度定理",
+      "category": "mathematics",
+      "subcategory": "linear_algebra",
+      "formula": "rank(A) + nullity(A) = n",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "wiki_analysis_taylor_remainder_integral",
+      "name": "泰勒余项(积分型)",
+      "category": "mathematics",
+      "subcategory": "mathematical_analysis",
+      "formula": "R_n(x) = integral(f^(n+1)(t)*(x-t)^n/n!, t, a, x)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "wiki_analysis_cauchy_integral_derivative",
+      "name": "柯西积分导数公式",
+      "category": "mathematics",
+      "subcategory": "mathematical_analysis",
+      "formula": "f^(n)(z_0) = (n!/(2*pi*i)) * integral(f(z)/(z-z_0)^(n+1), z, C)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "wiki_analysis_cauchy_integral_theorem",
+      "name": "柯西积分定理",
+      "category": "mathematics",
+      "subcategory": "mathematical_analysis",
+      "formula": "integral(f(z), z, C) = 0",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "wiki_analysis_integral_test",
+      "name": "积分判别法",
+      "category": "mathematics",
+      "subcategory": "mathematical_analysis",
+      "formula": "sum(a_n)收敛 <=> integral(f(x), x, 1, inf)收敛",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "wiki_analysis_fourier_coefficient_a",
+      "name": "傅里叶系数a_n",
+      "category": "mathematics",
+      "subcategory": "mathematical_analysis",
+      "formula": "a_n = (1/pi) * integral(f(x)*cos(n*x), x, -pi, pi)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "wiki_analysis_fourier_coefficient_b",
+      "name": "傅里叶系数b_n",
+      "category": "mathematics",
+      "subcategory": "mathematical_analysis",
+      "formula": "b_n = (1/pi) * integral(f(x)*sin(n*x), x, -pi, pi)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "wiki_analysis_riemann_integral_def",
+      "name": "黎曼积分定义",
+      "category": "mathematics",
+      "subcategory": "mathematical_analysis",
+      "formula": "integral(f(x), x, a, b) = lim(sum(f(x_i)*delta_x))",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "wiki_analysis_mean_value_theorem_integral",
+      "name": "积分中值定理",
+      "category": "mathematics",
+      "subcategory": "mathematical_analysis",
+      "formula": "integral(f(x), x, a, b) = f(c)*(b-a)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "wiki_analysis_fundamental_theorem_calculus_1",
+      "name": "微积分基本定理(第一基本定理)",
+      "category": "mathematics",
+      "subcategory": "mathematical_analysis",
+      "formula": "d/dx integral(f(t), t, a, x) = f(x)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "wiki_analysis_fundamental_theorem_calculus_2",
+      "name": "微积分基本定理(第二基本定理)",
+      "category": "mathematics",
+      "subcategory": "mathematical_analysis",
+      "formula": "integral(f(x), x, a, b) = F(b) - F(a)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "wiki_complex_laurent_coefficient",
+      "name": "洛朗系数",
+      "category": "mathematics",
+      "subcategory": "complex_analysis",
+      "formula": "a_n = (1/(2*pi*i))*integral(f(z)/(z-z_0)^(n+1), z, C)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "wiki_complex_morera_theorem",
+      "name": "莫雷拉定理",
+      "category": "mathematics",
+      "subcategory": "complex_analysis",
+      "formula": "integral(f(z), z, C) = 0 for all C => f全纯",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "wiki_complex_schwarz_christoffel",
+      "name": "施瓦茨-克里斯托费尔映射",
+      "category": "mathematics",
+      "subcategory": "complex_analysis",
+      "formula": "f(z) = A*integral(product((t-x_k)^(alpha_k-1)), t, z0, z) + B",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "wiki_complex_jensen_formula",
+      "name": "詹森公式",
+      "category": "mathematics",
+      "subcategory": "complex_analysis",
+      "formula": "log|f(0)| = sum(log(r/|a_k|)) - (1/(2*pi))*integral(log|f(r*exp(i*theta))|, theta, 0, 2*pi)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "wiki_complex_poisson_integral",
+      "name": "泊松积分公式",
+      "category": "mathematics",
+      "subcategory": "complex_analysis",
+      "formula": "f(z) = (1/(2*pi))*integral(f(exp(i*t))*(1-|z|^2)/|exp(i*t)-z|^2, t, 0, 2*pi)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "wiki_ode_wronskian_abel",
+      "name": "阿贝尔恒等式",
+      "category": "mathematics",
+      "subcategory": "ordinary_differential_equations",
+      "formula": "W(x) = W(x0)*exp(-integral(P))",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "wiki_ode_inverse_laplace",
+      "name": "逆拉普拉斯变换",
+      "category": "mathematics",
+      "subcategory": "ordinary_differential_equations",
+      "formula": "f(t) = (1/(2*pi*i))*integral(F(s)*exp(s*t), s, c-i*inf, c+i*inf)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "wiki_pde_poisson_green_function",
+      "name": "泊松方程格林函数解",
+      "category": "mathematics",
+      "subcategory": "partial_differential_equations",
+      "formula": "u(x) = integral(G(x,y)*f(y), y)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "wiki_pde_energy_estimate_wave",
+      "name": "波动方程能量估计",
+      "category": "mathematics",
+      "subcategory": "partial_differential_equations",
+      "formula": "E(t) = integral((du/dt)^2 + c^2*(du/dx)^2, x) = E(0)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "wiki_pde_energy_estimate_heat",
+      "name": "热传导方程能量估计",
+      "category": "mathematics",
+      "subcategory": "partial_differential_equations",
+      "formula": "d/dt integral(u^2) = -2*alpha*integral((du/dx)^2)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "wiki_info_shannon_entropy_continuous",
+      "name": "微分熵(连续)",
+      "category": "mathematics",
+      "subcategory": "information_theory",
+      "formula": "h(X) = -integral(p(x)*log(p(x)), x)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "wiki_info_kl_divergence_continuous",
+      "name": "KL散度(连续)",
+      "category": "mathematics",
+      "subcategory": "information_theory",
+      "formula": "D_KL(P||Q) = integral(P(x)*log(P(x)/Q(x)), x)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "stat_auc_roc",
+      "name": "AUC-ROC",
+      "category": "mathematics",
+      "subcategory": "statistics",
+      "formula": "AUC = P(score_positive > score_negative)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "stat_precision",
+      "name": "精确率",
+      "category": "mathematics",
+      "subcategory": "statistics",
+      "formula": "precision = TP / (TP + FP)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "stat_recall",
+      "name": "召回率",
+      "category": "mathematics",
+      "subcategory": "statistics",
+      "formula": "recall = TP / (TP + FN)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "stat_f1_score",
+      "name": "F1分数",
+      "category": "mathematics",
+      "subcategory": "statistics",
+      "formula": "F1 = 2*precision*recall/(precision+recall)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "criticality_susceptibility",
+      "name": "临界磁化率 (Ginzburg-Landau)",
+      "category": "neuroscience",
+      "subcategory": "criticality",
+      "formula": "χ = K^{-3/2} where K is branching ratio",
+      "difficulty": "advanced",
+      "source": "arXiv:2602.19023"
+    },
+    {
+      "id": "maxcal_psi",
+      "name": "MaxCal 意识度量 ψ (KL 散度高斯基)",
+      "category": "cognitive_science",
+      "subcategory": "consciousness",
+      "formula": "ψ = (1/2) * Σ(x_i - μ_i)²/σ_i²",
+      "difficulty": "advanced",
+      "source": "arXiv:2605.12536"
+    },
+    {
+      "id": "emotion_transition_entropy",
+      "name": "情绪转移熵 (图拉普拉斯谱隙)",
+      "category": "psychology",
+      "subcategory": "emotion_dynamics",
+      "formula": "λ_2 (second eigenvalue of graph Laplacian of transition matrix)",
+      "difficulty": "advanced",
+      "source": "arXiv:2606.01906"
+    },
+    {
+      "id": "emotion_transition_matrix",
+      "name": "Emotion Transition Matrix (Dirichlet Posterior)",
+      "category": "psychology",
+      "subcategory": "emotion_dynamics",
+      "formula": "T[i][j] = (count[i->j] + a) / (count[i->*] + Ka), spectral gap from graph Laplacian",
+      "difficulty": "advanced",
+      "source": "arXiv:2606.01906"
+    },
+    {
+      "id": "dirichlet_confidence",
+      "name": "Dirichlet Evidence-Accumulation Confidence",
+      "category": "cognitive_science",
+      "subcategory": "decision_making",
+      "formula": "a_new = a_old + evidence, confidence = 1 - H(Dir(a)) / H_max, stop if H < tau",
+      "difficulty": "advanced",
+      "source": "arXiv:2605.26147"
+    },
+    {
+      "id": "ei_working_memory",
+      "name": "E/I Balance Working Memory Capacity",
+      "category": "neuroscience",
+      "subcategory": "cognitive_capacity",
+      "formula": "WM_capacity = base_capacity / (1 + E/I_ratio), E/I = mean(W_exc) / mean(W_inh)",
+      "difficulty": "advanced",
+      "source": "arXiv:2606.27529"
+    },
+    {
+      "id": "motivational_bias",
+      "name": "Motivational Bias (Grether alpha-beta)",
+      "category": "psychology",
+      "subcategory": "motivation",
+      "formula": "log(P(want)/P(not)) = alpha * log(LR) + beta, alpha = evidence sensitivity, beta = motivational bias",
+      "difficulty": "advanced",
+      "source": "arXiv:2606.17657"
+    },
+    {
+      "id": "adaptive_learning_rate",
+      "name": "Adaptive Learning Rate (Resource-Rational Schedule)",
+      "category": "cognitive_science",
+      "subcategory": "reinforcement_learning",
+      "formula": "alpha(t) = alpha_0 / (1 + beta * sqrt(t)), t = update count, alpha_0 = 0.5, beta controls decay speed",
+      "difficulty": "intermediate",
+      "source": "HeartFlow v8.16.0 — resource-rational Q-learning"
+    },
+    {
+      "id": "sequential_attention_weight",
+      "name": "Sequential Attention Weight (Recency Discount)",
+      "category": "cognitive_science",
+      "subcategory": "decision_making",
+      "formula": "w(i) = exp(-lambda * i), i = position (0=most recent), lambda = decay coefficient",
+      "difficulty": "intermediate",
+      "source": "arXiv:2605.08716 — sequential decision model"
+    },
+    {
+      "id": "weighted_accuracy",
+      "name": "Weighted Accuracy (Recency-Weighted Hit Rate)",
+      "category": "cognitive_science",
+      "subcategory": "decision_making",
+      "formula": "ACC_w = sum(w_i * correct_i) / sum(w_i), w_i = exp(-lambda * (N-1-i))",
+      "difficulty": "intermediate",
+      "source": "HeartFlow v8.16.0 — derived from 2605.08716"
+    },
+    {
+      "id": "s_measure",
+      "name": "S-Measure (Set Similarity)",
+      "category": "cognitive_science",
+      "subcategory": "similarity",
+      "formula": "S(A,B) = |A ∩ B| / (|A ∪ B| + ε)",
+      "difficulty": "basic",
+      "source": "arXiv — set-theoretic similarity measure"
+    },
+    {
+      "id": "free_energy_heuristics",
+      "name": "Free Energy Heuristics (Decision)",
+      "category": "cognitive_science",
+      "subcategory": "decision",
+      "formula": "F = accuracy - T × (H_post - H_prior)",
+      "difficulty": "advanced",
+      "source": "arXiv — free energy principle in heuristic decision-making"
+    },
+    {
+      "id": "ginzburg_landau_cognitive",
+      "name": "Ginzburg-Landau Cognitive Criticality",
+      "category": "cognitive_science",
+      "subcategory": "criticality",
+      "formula": "ψ(T) = ψ₀ × √(max(0, 1 - T/Tc))",
+      "difficulty": "advanced",
+      "source": "arXiv:2602.19023 — Ginzburg-Landau theory of cognitive criticality"
+    },
+    {
+      "id": "w_axis_emotional_bond_density",
+      "name": "情感连接密度 (Emotional Bond Density)",
+      "category": "psychology",
+      "subcategory": "w_axis",
+      "formula": "E_density = (Σ_i w_i * depth_i) / N, w_i = 1 / (1 + days_since_last_contact_i)",
+      "difficulty": "intermediate",
+      "variables": {
+        "w_i": {
+          "name": "接触衰减权重",
+          "description": "越久未联系，权重越低"
+        },
+        "depth_i": {
+          "name": "单次连接深度",
+          "description": "0-1，情感共鸣强度"
+        },
+        "N": {
+          "name": "关系总数",
+          "description": "活跃关系数量"
+        }
+      },
+      "source": "HeartFlow v6.0.3 — W轴：情感连接密度"
+    },
+    {
+      "id": "w_axis_trauma_activation",
+      "name": "创伤活跃度 (Trauma Activation Level)",
+      "category": "psychology",
+      "subcategory": "w_axis",
+      "formula": "T_active = sigmoid(Σ_j trigger_j * salience_j - threshold)",
+      "difficulty": "advanced",
+      "variables": {
+        "trigger_j": {
+          "name": "触发因子",
+          "description": "当前环境中的创伤线索"
+        },
+        "salience_j": {
+          "name": "显著性",
+          "description": "该线索对个体的情感权重"
+        },
+        "threshold": {
+          "name": "阈值",
+          "description": "个体当前的整合能力"
+        }
+      },
+      "source": "HeartFlow v6.0.3 — W轴：创伤活跃度"
+    },
+    {
+      "id": "w_axis_awakening_signal",
+      "name": "觉醒信号强度 (Awakening Signal Strength)",
+      "category": "psychology",
+      "subcategory": "w_axis",
+      "formula": "A_signal = max(0, meta_cognition * 0.5 + polarity_flip * 0.3 + arousal_spike * 0.2)",
+      "difficulty": "advanced",
+      "variables": {
+        "meta_cognition": {
+          "name": "元认知标记",
+          "description": "0-1，是否出现'我意识到'等元认知语言"
+        },
+        "polarity_flip": {
+          "name": "语义反转",
+          "description": "0-1，当前立场与历史立场的极性差异"
+        },
+        "arousal_spike": {
+          "name": "情绪强度跃升",
+          "description": "0-1，arousal>0.5且pleasure显著变化"
+        }
+      },
+      "source": "HeartFlow v6.0.3 — W轴：觉醒信号强度，基于arXiv 2505.01542情感支持综述"
+    },
+    {
+      "id": "newtons_second_law",
+      "name": "牛顿第二定律",
+      "category": "physics",
+      "subcategory": "mechanics",
+      "formula": "F = ma",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "newtons_first_law",
+      "name": "牛顿第一定律",
+      "category": "physics",
+      "subcategory": "mechanics",
+      "formula": "∑F = 0 ⇔ dv/dt = 0",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "newtons_third_law",
+      "name": "牛顿第三定律",
+      "category": "physics",
+      "subcategory": "mechanics",
+      "formula": "F_12 = -F_21",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "newtons_law_of_universal_gravitation",
+      "name": "万有引力定律",
+      "category": "physics",
+      "subcategory": "mechanics",
+      "formula": "F = G * m1 * m2 / r²",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "kinematic_equation_velocity",
+      "name": "匀变速直线运动速度公式",
+      "category": "physics",
+      "subcategory": "mechanics",
+      "formula": "v = v₀ + at",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "kinematic_equation_position",
+      "name": "匀变速直线运动位移公式",
+      "category": "physics",
+      "subcategory": "mechanics",
+      "formula": "x = x₀ + v₀t + ½at²",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "kinematic_equation_velocity_squared",
+      "name": "速度-位移关系式",
+      "category": "physics",
+      "subcategory": "mechanics",
+      "formula": "v² = v₀² + 2aΔx",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "momentum_conservation",
+      "name": "动量守恒定律",
+      "category": "physics",
+      "subcategory": "mechanics",
+      "formula": "m₁v₁ + m₂v₂ = m₁v₁' + m₂v₂'",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "impulse_momentum_theorem",
+      "name": "动量定理",
+      "category": "physics",
+      "subcategory": "mechanics",
+      "formula": "J = FΔt = Δp",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "kinetic_energy",
+      "name": "动能公式",
+      "category": "physics",
+      "subcategory": "mechanics",
+      "formula": "KE = ½mv²",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "potential_energy_gravitational",
+      "name": "重力势能",
+      "category": "physics",
+      "subcategory": "mechanics",
+      "formula": "PE = mgh",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "conservation_of_mechanical_energy",
+      "name": "机械能守恒定律",
+      "category": "physics",
+      "subcategory": "mechanics",
+      "formula": "KE₁ + PE₁ = KE₂ + PE₂",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "work_done_by_force",
+      "name": "功的定义",
+      "category": "physics",
+      "subcategory": "mechanics",
+      "formula": "W = F·d·cosθ",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "power_mechanical",
+      "name": "功率公式",
+      "category": "physics",
+      "subcategory": "mechanics",
+      "formula": "P = W/t = F·v",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "centripetal_force",
+      "name": "向心力",
+      "category": "physics",
+      "subcategory": "mechanics",
+      "formula": "F_c = mv²/r = mω²r",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "torque",
+      "name": "力矩",
+      "category": "physics",
+      "subcategory": "mechanics",
+      "formula": "τ = r × F",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "angular_momentum",
+      "name": "角动量",
+      "category": "physics",
+      "subcategory": "mechanics",
+      "formula": "L = Iω = r × p",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "simple_harmonic_motion_period",
+      "name": "简谐运动周期",
+      "category": "physics",
+      "subcategory": "mechanics",
+      "formula": "T = 2π√(m/k)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "simple_pendulum_period",
+      "name": "单摆周期公式",
+      "category": "physics",
+      "subcategory": "mechanics",
+      "formula": "T = 2π√(L/g)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "keplers_third_law",
+      "name": "开普勒第三定律",
+      "category": "physics",
+      "subcategory": "mechanics",
+      "formula": "T² / r³ = 4π² / (GM)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "hookes_law",
+      "name": "胡克定律",
+      "category": "physics",
+      "subcategory": "mechanics",
+      "formula": "F = -kx",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "friction_force_kinetic",
+      "name": "滑动摩擦力",
+      "category": "physics",
+      "subcategory": "mechanics",
+      "formula": "f_k = μ_k·N",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "bernoullis_equation",
+      "name": "伯努利方程",
+      "category": "physics",
+      "subcategory": "fluid",
+      "formula": "P + ½ρv² + ρgh = constant",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "continuity_equation_fluid",
+      "name": "流体连续性方程",
+      "category": "physics",
+      "subcategory": "fluid",
+      "formula": "A₁v₁ = A₂v₂",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "archimedes_principle",
+      "name": "阿基米德浮力原理",
+      "category": "physics",
+      "subcategory": "fluid",
+      "formula": "F_b = ρgV",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "pascals_principle",
+      "name": "帕斯卡原理",
+      "category": "physics",
+      "subcategory": "fluid",
+      "formula": "P = F₁/A₁ = F₂/A₂",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "poiseuilles_law",
+      "name": "泊肃叶定律",
+      "category": "physics",
+      "subcategory": "fluid",
+      "formula": "Q = πr⁴ΔP / (8ηL)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "ideal_gas_law",
+      "name": "理想气体状态方程",
+      "category": "physics",
+      "subcategory": "thermodynamics",
+      "formula": "PV = nRT",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "first_law_of_thermodynamics",
+      "name": "热力学第一定律",
+      "category": "physics",
+      "subcategory": "thermodynamics",
+      "formula": "ΔU = Q - W",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "second_law_of_thermodynamics_clausius",
+      "name": "热力学第二定律（克劳修斯表述）",
+      "category": "physics",
+      "subcategory": "thermodynamics",
+      "formula": "∮ dQ/T ≤ 0",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "entropy_change_reversible",
+      "name": "可逆过程熵变",
+      "category": "physics",
+      "subcategory": "thermodynamics",
+      "formula": "ΔS = ∫ dQ_rev / T",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "carnot_efficiency",
+      "name": "卡诺热机效率",
+      "category": "physics",
+      "subcategory": "thermodynamics",
+      "formula": "η = 1 - T_c / T_h",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "boltzmann_entropy",
+      "name": "玻尔兹曼熵公式",
+      "category": "physics",
+      "subcategory": "thermodynamics",
+      "formula": "S = k_B · ln(Ω)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "gibbs_free_energy",
+      "name": "吉布斯自由能",
+      "category": "physics",
+      "subcategory": "thermodynamics",
+      "formula": "G = H - TS",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "helmholtz_free_energy",
+      "name": "亥姆霍兹自由能",
+      "category": "physics",
+      "subcategory": "thermodynamics",
+      "formula": "F = U - TS",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "enthalpy",
+      "name": "焓",
+      "category": "physics",
+      "subcategory": "thermodynamics",
+      "formula": "H = U + PV",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "heat_capacity_constant_pressure",
+      "name": "定压热容",
+      "category": "physics",
+      "subcategory": "thermodynamics",
+      "formula": "C_p = (∂H/∂T)_p",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "maxwell_boltzmann_distribution",
+      "name": "麦克斯韦-玻尔兹曼速率分布",
+      "category": "physics",
+      "subcategory": "thermodynamics",
+      "formula": "f(v) = 4π(m/(2πkT))^(3/2) · v² · exp(-mv²/(2kT))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "van_der_waals_equation",
+      "name": "范德瓦尔斯方程",
+      "category": "physics",
+      "subcategory": "thermodynamics",
+      "formula": "(P + an²/V²)(V - nb) = nRT",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "heat_engine_efficiency",
+      "name": "热机效率",
+      "category": "physics",
+      "subcategory": "thermodynamics",
+      "formula": "η = W / Q_h = 1 - Q_c / Q_h",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "maxwell_relation_thermodynamic",
+      "name": "麦克斯韦关系式",
+      "category": "physics",
+      "subcategory": "thermodynamics",
+      "formula": "(∂T/∂V)_S = -(∂P/∂S)_V",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "coulombs_law",
+      "name": "库仑定律",
+      "category": "physics",
+      "subcategory": "electromagnetism",
+      "formula": "F = k_e · q₁q₂ / r²",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "gausss_law_electricity",
+      "name": "高斯定律（电场）",
+      "category": "physics",
+      "subcategory": "electromagnetism",
+      "formula": "∮ E·dA = Q_enc / ε₀",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "gausss_law_magnetism",
+      "name": "高斯定律（磁场）",
+      "category": "physics",
+      "subcategory": "electromagnetism",
+      "formula": "∮ B·dA = 0",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "faradays_law",
+      "name": "法拉第电磁感应定律",
+      "category": "physics",
+      "subcategory": "electromagnetism",
+      "formula": "∮ E·dl = -dΦ_B / dt",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "amperes_law",
+      "name": "安培定律",
+      "category": "physics",
+      "subcategory": "electromagnetism",
+      "formula": "∮ B·dl = μ₀ I_enc",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "maxwell_ampere_law",
+      "name": "麦克斯韦-安培定律",
+      "category": "physics",
+      "subcategory": "electromagnetism",
+      "formula": "∮ B·dl = μ₀ I + μ₀ε₀ dΦ_E / dt",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "lorentz_force_law",
+      "name": "洛伦兹力",
+      "category": "physics",
+      "subcategory": "electromagnetism",
+      "formula": "F = q(E + v × B)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "ohms_law",
+      "name": "欧姆定律",
+      "category": "physics",
+      "subcategory": "electromagnetism",
+      "formula": "V = IR",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "joules_law_electric",
+      "name": "焦耳定律（电功率）",
+      "category": "physics",
+      "subcategory": "electromagnetism",
+      "formula": "P = I²R = V²/R",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "electric_dipole_moment",
+      "name": "电偶极矩",
+      "category": "physics",
+      "subcategory": "electromagnetism",
+      "formula": "p = q · d",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "magnetic_dipole_moment",
+      "name": "磁偶极矩",
+      "category": "physics",
+      "subcategory": "electromagnetism",
+      "formula": "μ = I · A",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "electromagnetic_wave_equation",
+      "name": "电磁波动方程",
+      "category": "physics",
+      "subcategory": "electromagnetism",
+      "formula": "∇²E = μ₀ε₀ · ∂²E/∂t²",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "capacitance_definition",
+      "name": "电容定义",
+      "category": "physics",
+      "subcategory": "electromagnetism",
+      "formula": "C = Q / V",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "electric_field_point_charge",
+      "name": "点电荷电场强度",
+      "category": "physics",
+      "subcategory": "electromagnetism",
+      "formula": "E = k_e · q / r²",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "electric_potential_point_charge",
+      "name": "点电荷电势",
+      "category": "physics",
+      "subcategory": "electromagnetism",
+      "formula": "V = k_e · q / r",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "magnetic_field_wire",
+      "name": "无限长直导线磁场",
+      "category": "physics",
+      "subcategory": "electromagnetism",
+      "formula": "B = μ₀ I / (2πr)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "resistors_in_series",
+      "name": "串联电阻",
+      "category": "physics",
+      "subcategory": "electromagnetism",
+      "formula": "R_eq = R₁ + R₂ + ... + R_n",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "resistors_in_parallel",
+      "name": "并联电阻",
+      "category": "physics",
+      "subcategory": "electromagnetism",
+      "formula": "1/R_eq = 1/R₁ + 1/R₂ + ... + 1/R_n",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "time_dependent_schrodinger_equation",
+      "name": "含时薛定谔方程",
+      "category": "physics",
+      "subcategory": "quantum",
+      "formula": "iℏ ∂Ψ/∂t = ĤΨ",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "time_independent_schrodinger_equation",
+      "name": "定态薛定谔方程",
+      "category": "physics",
+      "subcategory": "quantum",
+      "formula": "Ĥψ = Eψ",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "heisenberg_uncertainty_principle",
+      "name": "海森堡不确定原理",
+      "category": "physics",
+      "subcategory": "quantum",
+      "formula": "Δx · Δp ≥ ℏ/2",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "pauli_exclusion_principle",
+      "name": "泡利不相容原理",
+      "category": "physics",
+      "subcategory": "quantum",
+      "formula": "No two fermions share same (n, l, m_l, m_s)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "planck_einstein_relation",
+      "name": "普朗克-爱因斯坦关系",
+      "category": "physics",
+      "subcategory": "quantum",
+      "formula": "E = hν = ℏω",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "de_broglie_wavelength",
+      "name": "德布罗意波长",
+      "category": "physics",
+      "subcategory": "quantum",
+      "formula": "λ = h / p",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "canonical_commutation_relation",
+      "name": "正则对易关系",
+      "category": "physics",
+      "subcategory": "quantum",
+      "formula": "[x̂, p̂] = iℏ",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "quantum_harmonic_oscillator_energy",
+      "name": "量子谐振子能级",
+      "category": "physics",
+      "subcategory": "quantum",
+      "formula": "E_n = ℏω (n + ½)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "hydrogen_atom_energy_levels",
+      "name": "氢原子能级",
+      "category": "physics",
+      "subcategory": "quantum",
+      "formula": "E_n = -13.6 eV / n²",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "born_rule",
+      "name": "玻恩定则",
+      "category": "physics",
+      "subcategory": "quantum",
+      "formula": "P(x) = |Ψ(x)|²",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "energy_time_uncertainty",
+      "name": "能量-时间不确定关系",
+      "category": "physics",
+      "subcategory": "quantum",
+      "formula": "ΔE · Δt ≥ ℏ/2",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "wave_function_normalization",
+      "name": "波函数归一化条件",
+      "category": "physics",
+      "subcategory": "quantum",
+      "formula": "∫ |Ψ|² dV = 1",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "probability_current_density",
+      "name": "概率流密度",
+      "category": "physics",
+      "subcategory": "quantum",
+      "formula": "j = (ℏ/(2mi)) (Ψ*∇Ψ - Ψ∇Ψ*)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "expectation_value_quantum",
+      "name": "量子力学期望值",
+      "category": "physics",
+      "subcategory": "quantum",
+      "formula": "⟨Â⟩ = ∫ Ψ* Â Ψ dV",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "mass_energy_equivalence",
+      "name": "质能方程",
+      "category": "physics",
+      "subcategory": "relativity",
+      "formula": "E = mc²",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "lorentz_transformation",
+      "name": "洛伦兹变换",
+      "category": "physics",
+      "subcategory": "relativity",
+      "formula": "x' = γ(x - vt),  t' = γ(t - vx/c²)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "time_dilation",
+      "name": "时间膨胀",
+      "category": "physics",
+      "subcategory": "relativity",
+      "formula": "Δt' = γ Δt₀,  γ = 1/√(1 - v²/c²)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "length_contraction",
+      "name": "长度收缩",
+      "category": "physics",
+      "subcategory": "relativity",
+      "formula": "L' = L₀ / γ",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "relativistic_momentum",
+      "name": "相对论动量",
+      "category": "physics",
+      "subcategory": "relativity",
+      "formula": "p = γmv",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "einstein_field_equations_simplified",
+      "name": "爱因斯坦场方程（简化）",
+      "category": "physics",
+      "subcategory": "relativity",
+      "formula": "G_μν = 8πG · T_μν / c⁴",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "relativistic_energy_momentum",
+      "name": "相对论能量-动量关系",
+      "category": "physics",
+      "subcategory": "relativity",
+      "formula": "E² = (pc)² + (mc²)²",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "relativistic_velocity_addition",
+      "name": "相对论速度合成公式",
+      "category": "physics",
+      "subcategory": "relativity",
+      "formula": "u' = (u - v) / (1 - uv/c²)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "relativistic_doppler_effect",
+      "name": "相对论多普勒效应",
+      "category": "physics",
+      "subcategory": "relativity",
+      "formula": "f_obs = f_src · √((1+β)/(1-β)),  β = v/c",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "minkowski_metric",
+      "name": "闵可夫斯基度规",
+      "category": "physics",
+      "subcategory": "relativity",
+      "formula": "ds² = -(cdt)² + dx² + dy² + dz²",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "snells_law",
+      "name": "斯涅尔定律（折射定律）",
+      "category": "physics",
+      "subcategory": "optics",
+      "formula": "n₁ sinθ₁ = n₂ sinθ₂",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "thin_lens_equation",
+      "name": "薄透镜成像公式",
+      "category": "physics",
+      "subcategory": "optics",
+      "formula": "1/f = 1/dₒ + 1/dᵢ",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "doppler_effect_mechanical_wave",
+      "name": "多普勒效应（机械波）",
+      "category": "physics",
+      "subcategory": "optics",
+      "formula": "f' = f · (v ± vₒ) / (v ∓ vₛ)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "double_slit_interference",
+      "name": "双缝干涉明纹条件",
+      "category": "physics",
+      "subcategory": "optics",
+      "formula": "d · sinθ = mλ",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "single_slit_diffraction",
+      "name": "单缝衍射暗纹条件",
+      "category": "physics",
+      "subcategory": "optics",
+      "formula": "a · sinθ = mλ",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "plancks_blackbody_law",
+      "name": "普朗克黑体辐射定律",
+      "category": "physics",
+      "subcategory": "optics",
+      "formula": "B(ν,T) = (2hν³/c²) · 1/(exp(hν/kT) - 1)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "wiens_displacement_law",
+      "name": "维恩位移定律",
+      "category": "physics",
+      "subcategory": "optics",
+      "formula": "λ_max · T = b",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "refractive_index_definition",
+      "name": "折射率定义",
+      "category": "physics",
+      "subcategory": "optics",
+      "formula": "n = c / v",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "braggs_law",
+      "name": "布拉格衍射定律",
+      "category": "physics",
+      "subcategory": "optics",
+      "formula": "nλ = 2d · sinθ",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "beer_lambert_law",
+      "name": "比尔-朗伯定律",
+      "category": "physics",
+      "subcategory": "optics",
+      "formula": "I = I₀ · exp(-αx)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "lens_maker_equation",
+      "name": "透镜制造公式",
+      "category": "physics",
+      "subcategory": "optics",
+      "formula": "1/f = (n-1)(1/R₁ - 1/R₂)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "prospect_value_complete",
+      "name": "前景理论价值函数（完整）",
+      "category": "psychology",
+      "subcategory": "decision_theory",
+      "formula": "v(x) = x^alpha if x>=0, v(x) = -lambda * (-x)^beta if x<0",
+      "difficulty": "advanced",
+      "description": "alpha,beta in (0,1), lambda>1 损失厌恶系数"
+    },
+    {
+      "id": "cumulative_prospect_value",
+      "name": "累积前景理论",
+      "category": "psychology",
+      "subcategory": "decision_theory",
+      "formula": "V = sum_i pi_i * v(x_i), pi_i = w(P_i) - w(P*_{i-1})",
+      "difficulty": "advanced",
+      "description": "用累积概率权重替代单个概率权重"
+    },
+    {
+      "id": "hyperbolic_discounting",
+      "name": "时间贴现双曲线模型",
+      "category": "psychology",
+      "subcategory": "decision_theory",
+      "formula": "V = A / (1 + k * D)",
+      "difficulty": "intermediate",
+      "description": "V:当前主观价值, A:未来奖赏, D:延迟时间, k:贴现率"
+    },
+    {
+      "id": "equate_to_differentiate",
+      "name": "齐当别模型",
+      "category": "psychology",
+      "subcategory": "decision_theory",
+      "formula": "choice = argmax_i (|V_i(best_dim) - V_j(best_dim)| / sum_d |V_i(d) - V_j(d)|)",
+      "difficulty": "advanced",
+      "description": "在维度上比较优劣，选择差异最大的维度上的优势选项"
+    },
+    {
+      "id": "eu_maximization_principle",
+      "name": "期望效用最大化",
+      "category": "psychology",
+      "subcategory": "decision_theory",
+      "formula": "a* = argmax_a sum_i p_i(s_i|a) * u(s_i)",
+      "difficulty": "beginner",
+      "description": "决策者选择期望效用最大的行动"
+    },
+    {
+      "id": "rank_dependent_utility",
+      "name": "等级依赖效用理论",
+      "category": "psychology",
+      "subcategory": "decision_theory",
+      "formula": "RDU = sum_i pi_i * u(x_i), pi_i = w(sum_{j>=i} p_j) - w(sum_{j>i} p_j)",
+      "difficulty": "advanced",
+      "description": "用等级依赖权重替代线性概率"
+    },
+    {
+      "id": "regret_theory_complete",
+      "name": "后悔理论（Loomes-Sugden）",
+      "category": "psychology",
+      "subcategory": "decision_theory",
+      "formula": "EU_i = sum_j p_j * [u(x_ij) + R(u(x_ij) - u(x_kj))]",
+      "difficulty": "advanced",
+      "description": "R:后悔函数, 比较实际结果与其他选项的差异"
+    },
+    {
+      "id": "certainty_effect",
+      "name": "确定性效应",
+      "category": "psychology",
+      "subcategory": "decision_theory",
+      "formula": "w(p) > p for small p, w(p) < p for moderate/large p, w(1) = 1",
+      "difficulty": "intermediate",
+      "description": "概率权重函数, 小概率高估大概率低估"
+    },
+    {
+      "id": "power_law_learning_curve",
+      "name": "幂定律学习曲线",
+      "category": "psychology",
+      "subcategory": "learning_memory",
+      "formula": "T(N) = a * N^(-b)",
+      "difficulty": "intermediate",
+      "description": "T:反应时间, N:练习次数, a:初始表现, b:学习率"
+    },
+    {
+      "id": "hebbian_rule_delta",
+      "name": "赫布规则（突触权重更新）",
+      "category": "psychology",
+      "subcategory": "learning_memory",
+      "formula": "delta_w = eta * x_i * y_j",
+      "difficulty": "intermediate",
+      "description": "eta:学习率, x_i:前突触活动, y_j:后突触活动"
+    },
+    {
+      "id": "td_error_delta",
+      "name": "强化学习TD误差",
+      "category": "psychology",
+      "subcategory": "learning_memory",
+      "formula": "delta = R + gamma * V(s') - V(s)",
+      "difficulty": "advanced",
+      "description": "delta:预测误差, R:即时奖励, gamma:折扣因子, V:状态值"
+    },
+    {
+      "id": "rescorla_wagner_full",
+      "name": "Rescorla-Wagner 条件化模型",
+      "category": "psychology",
+      "subcategory": "learning_memory",
+      "formula": "delta_V_i = alpha_i * beta * (lambda - sum_j V_j)",
+      "difficulty": "advanced",
+      "description": "V:联结强度, alpha:线索显著性, beta:US强度参数, lambda:最大条件化"
+    },
+    {
+      "id": "retrieval_cue_familiarity",
+      "name": "提取线索熟悉度",
+      "category": "psychology",
+      "subcategory": "learning_memory",
+      "formula": "F = phi(sum w_i * f_i), phi:logistic function",
+      "difficulty": "intermediate",
+      "description": "F:熟悉度判断, w_i:线索权重, f_i:线索特征匹配度"
+    },
+    {
+      "id": "encoding_specificity",
+      "name": "编码特异性原理",
+      "category": "psychology",
+      "subcategory": "learning_memory",
+      "formula": "P(retrieval) = overlap(encoding_context, retrieval_context)",
+      "difficulty": "beginner",
+      "description": "回忆概率取决于编码与提取时情境的重叠程度"
+    },
+    {
+      "id": "interference_decay_model",
+      "name": "干扰与衰减模型",
+      "category": "psychology",
+      "subcategory": "learning_memory",
+      "formula": "P_recall = d(t) * (1 - interference), d(t) = exp(-lambda * t)",
+      "difficulty": "intermediate",
+      "description": "同时考虑时间衰减和相似记忆干扰"
+    },
+    {
+      "id": "dual_store_memory_model",
+      "name": "双重存储记忆模型（Atkinson-Shiffrin）",
+      "category": "psychology",
+      "subcategory": "learning_memory",
+      "formula": "P_LTM = rehearsal * encoding_strength / capacity_STM",
+      "difficulty": "intermediate",
+      "description": "记忆从感觉登记->短时存储->长时存储的转移概率"
+    },
+    {
+      "id": "sweller_intrinsic_load",
+      "name": "内在认知负荷（Sweller）",
+      "category": "psychology",
+      "subcategory": "cognitive_load",
+      "formula": "IL = element_interactivity * domain_complexity",
+      "difficulty": "intermediate",
+      "description": "由学习材料本身的难度和元素交互性决定"
+    },
+    {
+      "id": "sweller_extraneous_load",
+      "name": "外在认知负荷",
+      "category": "psychology",
+      "subcategory": "cognitive_load",
+      "formula": "EL = suboptimal_instructional_design_penalty",
+      "difficulty": "intermediate",
+      "description": "由不恰当的教学设计引起的额外负荷"
+    },
+    {
+      "id": "sweller_germane_load",
+      "name": "相关认知负荷",
+      "category": "psychology",
+      "subcategory": "cognitive_load",
+      "formula": "GL = schema_construction_effort * motivation",
+      "difficulty": "intermediate",
+      "description": "用于图式建构和自动化处理的认知资源"
+    },
+    {
+      "id": "mental_effort_index",
+      "name": "心智努力评级指数",
+      "category": "psychology",
+      "subcategory": "cognitive_load",
+      "formula": "MEI = (task_difficulty_rating + perceived_effort_rating) / 2",
+      "difficulty": "beginner",
+      "description": "主观心智努力评价的综合指标"
+    },
+    {
+      "id": "redundancy_effect_cognitive",
+      "name": "冗余效应（认知负荷）",
+      "category": "psychology",
+      "subcategory": "cognitive_load",
+      "formula": "learning_gain = f(unique_info) - f(redundant_info * interference)",
+      "difficulty": "intermediate",
+      "description": "冗余信息增加认知负荷降低学习效果"
+    },
+    {
+      "id": "modality_effect_cognitive",
+      "name": "通道效应（双通道加工）",
+      "category": "psychology",
+      "subcategory": "cognitive_load",
+      "formula": "retention = f(visual + auditory) - f(visual_only or auditory_only)",
+      "difficulty": "intermediate",
+      "description": "视听双通道呈现优于单通道"
+    },
+    {
+      "id": "item_discrimination_power",
+      "name": "项目区分度指数",
+      "category": "psychology",
+      "subcategory": "psychometrics",
+      "formula": "D = P_high - P_low, P_high = top27% correct rate, P_low = bottom27% correct rate",
+      "difficulty": "intermediate",
+      "description": "高分组与低分组在该项目上的正确率之差"
+    },
+    {
+      "id": "criterion_validity_coefficient",
+      "name": "效标关联效度系数",
+      "category": "psychology",
+      "subcategory": "psychometrics",
+      "formula": "r_xy = Cov(X,Y) / (sigma_X * sigma_Y)",
+      "difficulty": "intermediate",
+      "description": "测验分数与效标测量之间的相关"
+    },
+    {
+      "id": "measurement_se_formula",
+      "name": "测量标准误",
+      "category": "psychology",
+      "subcategory": "psychometrics",
+      "formula": "SEM = sigma_x * sqrt(1 - r_xx)",
+      "difficulty": "intermediate",
+      "description": "sigma_x:测验标准差, r_xx:信度系数"
+    },
+    {
+      "id": "split_half_reliability",
+      "name": "分半信度（Spearman-Brown校正）",
+      "category": "psychology",
+      "subcategory": "psychometrics",
+      "formula": "r_total = 2 * r_half / (1 + r_half)",
+      "difficulty": "intermediate",
+      "description": "r_half:两半分数的相关, 校正为全长测验信度"
+    },
+    {
+      "id": "inter_rater_reliability_kappa",
+      "name": "评分者间信度（Cohen's Kappa）",
+      "category": "psychology",
+      "subcategory": "psychometrics",
+      "formula": "kappa = (P_o - P_e) / (1 - P_e)",
+      "difficulty": "advanced",
+      "description": "P_o:观察一致率, P_e:期望一致率"
+    },
+    {
+      "id": "standardized_alpha",
+      "name": "标准化克朗巴赫α",
+      "category": "psychology",
+      "subcategory": "psychometrics",
+      "formula": "alpha_std = (k * r_bar) / (1 + (k-1) * r_bar)",
+      "difficulty": "intermediate",
+      "description": "r_bar:项目间平均相关, k:项目数"
+    },
+    {
+      "id": "yerkes_dodson_inverted_u",
+      "name": "耶克斯-多德森定律（倒U型）",
+      "category": "psychology",
+      "subcategory": "emotion_motivation",
+      "formula": "A = H^(-c) * R, Performance = -a * (A - A_opt)^2 + b",
+      "difficulty": "intermediate",
+      "description": "H:任务难度, R:唤醒度, A:实际唤醒, 简单任务需高唤醒"
+    },
+    {
+      "id": "expectancy_value_theory",
+      "name": "期望价值理论（Atkinson）",
+      "category": "psychology",
+      "subcategory": "emotion_motivation",
+      "formula": "M = E * V",
+      "difficulty": "beginner",
+      "description": "M:动机强度, E:成功期望(0-1), V:成功价值"
+    },
+    {
+      "id": "self_efficacy_quantified",
+      "name": "自我效能感（量化模型）",
+      "category": "psychology",
+      "subcategory": "emotion_motivation",
+      "formula": "SE = sum(mastery_experience * w1 + vicarious_exp * w2 + verbal_persuasion * w3 + physiological_state * w4)",
+      "difficulty": "intermediate",
+      "description": "四种效能信息来源加权总和"
+    },
+    {
+      "id": "relative_deprivation_index",
+      "name": "相对剥夺感指数",
+      "category": "psychology",
+      "subcategory": "emotion_motivation",
+      "formula": "RD = (desired_outcome - actual_outcome) / desired_outcome",
+      "difficulty": "intermediate",
+      "description": "期望与现实的差距除以期望水平"
+    },
+    {
+      "id": "attributional_theory_motivation",
+      "name": "归因理论动机模型（Weiner）",
+      "category": "psychology",
+      "subcategory": "emotion_motivation",
+      "formula": "future_expectancy = f(locus * stability * controllability of attribution)",
+      "difficulty": "intermediate",
+      "description": "对结果的归因维度影响未来期望和动机"
+    },
+    {
+      "id": "flow_channel_model_motivation",
+      "name": "心流通道动机模型",
+      "category": "psychology",
+      "subcategory": "emotion_motivation",
+      "formula": "flow_zone = { (s, c) | |log2(c/s)| < threshold }, s:skill, c:challenge",
+      "difficulty": "intermediate",
+      "description": "技能与挑战平衡时进入心流状态"
+    },
+    {
+      "id": "cognitive_dissonance_weighted",
+      "name": "费斯廷格认知失调（加权）",
+      "category": "psychology",
+      "subcategory": "social_psychology",
+      "formula": "D = sum_i (w_i * d_i), d_i = |belief_i - action_i|",
+      "difficulty": "advanced",
+      "description": "D:失调程度, w_i:认知元素重要性权重, d_i:信念-行为差距"
+    },
+    {
+      "id": "principle_of_least_interest",
+      "name": "最小利益原则（Waller）",
+      "category": "psychology",
+      "subcategory": "social_psychology",
+      "formula": "power_difference = (1 - interest_A/interest_B) for the less interested partner",
+      "difficulty": "intermediate",
+      "description": "对关系依赖度越低的一方拥有更多权力"
+    },
+    {
+      "id": "social_comparison_direction",
+      "name": "社会比较方向",
+      "category": "psychology",
+      "subcategory": "social_psychology",
+      "formula": "comparison_outcome = sign(own - referent) * weight(relevance)",
+      "difficulty": "intermediate",
+      "description": "向上比较(negative)或向下比较(positive)影响自尊"
+    },
+    {
+      "id": "equity_theory_formula",
+      "name": "公平理论（Adams）",
+      "category": "psychology",
+      "subcategory": "social_psychology",
+      "formula": "equity_ratio = (outcomes_A / inputs_A) / (outcomes_B / inputs_B)",
+      "difficulty": "beginner",
+      "description": "OA/IA = OB/IB 时为公平，不等时产生不公平感"
+    },
+    {
+      "id": "social_identity_salience",
+      "name": "社会认同显著性",
+      "category": "psychology",
+      "subcategory": "social_psychology",
+      "formula": "S = f(contextual_accessibility * fit), fit = comparative_fit + normative_fit",
+      "difficulty": "advanced",
+      "description": "社会类别的显著度由可及性和匹配度决定"
+    },
+    {
+      "id": "normative_social_influence",
+      "name": "规范性社会影响（Asch）",
+      "category": "psychology",
+      "subcategory": "social_psychology",
+      "formula": "conformity_probability = 1 - (1 - p_majority)^(n * group_pressure)",
+      "difficulty": "intermediate",
+      "description": "服从群体规范的倾向随多数一致人数增加"
+    },
+    {
+      "id": "utilitarianism_total_sum",
+      "name": "功利主义总效用",
+      "category": "philosophy",
+      "subcategory": "ethics",
+      "formula": "U_total = sum_i u_i, best_action = argmax_a sum_i u_i(a)",
+      "difficulty": "beginner",
+      "description": "最佳行动是最大化社会总效用的行动"
+    },
+    {
+      "id": "rawls_difference_principle",
+      "name": "罗尔斯差别原则",
+      "category": "philosophy",
+      "subcategory": "ethics",
+      "formula": "social_order = max min_i x_i, inequalities allowed iff benefit least_advantaged",
+      "difficulty": "intermediate",
+      "description": "最大化最不利者的利益：maximin准则"
+    },
+    {
+      "id": "kant_categorical_imperative_universal",
+      "name": "康德定言令式（普遍法则公式）",
+      "category": "philosophy",
+      "subcategory": "ethics",
+      "formula": "act only according to that maxim through which you can at the same time will that it become a universal law",
+      "difficulty": "intermediate",
+      "description": "行事的准则应可同时成为普遍法则"
+    },
+    {
+      "id": "kant_categorical_imperative_humanity",
+      "name": "康德定言令式（人是目的公式）",
+      "category": "philosophy",
+      "subcategory": "ethics",
+      "formula": "act in such a way that you treat humanity never merely as a means but always at the same time as an end",
+      "difficulty": "intermediate",
+      "description": "永远不要把他人仅当作手段"
+    },
+    {
+      "id": "golden_rule_reciprocity",
+      "name": "黄金法则（互惠原则）",
+      "category": "philosophy",
+      "subcategory": "ethics",
+      "formula": "do unto others as you would have them do unto you (or: do not do to others what you do not want done to yourself)",
+      "difficulty": "beginner",
+      "description": "跨文化伦理普适原则，也称己所不欲勿施于人"
+    },
+    {
+      "id": "double_effect_doctrine",
+      "name": "双重效应原则",
+      "category": "philosophy",
+      "subcategory": "ethics",
+      "formula": "action is permissible if: (1) act is good/neutral (2) good effect intended (3) bad effect unintended (4) proportionally grave reason",
+      "difficulty": "advanced",
+      "description": "允许有可预见但非意图的负面间接后果"
+    },
+    {
+      "id": "commitment_constraint_ethics",
+      "name": "承诺约束（Sen/Williams）",
+      "category": "philosophy",
+      "subcategory": "ethics",
+      "formula": "choice_c = argmax_a u_i(a) subject to commitment_constraint(a) >= threshold",
+      "difficulty": "advanced",
+      "description": "个人的承诺和价值观对效用最大化施加约束"
+    },
+    {
+      "id": "veil_of_ignorance_quantified",
+      "name": "无知之幕（量化模型）",
+      "category": "philosophy",
+      "subcategory": "ethics",
+      "formula": "just_principle = argmax_p E[U(random_position | p)] under veil_of_ignorance",
+      "difficulty": "intermediate",
+      "description": "在不知道自己社会位置时选择的原则就是正义的"
+    },
+    {
+      "id": "scanlon_contractualism",
+      "name": "斯坎伦契约主义",
+      "category": "philosophy",
+      "subcategory": "ethics",
+      "formula": "action is wrong if it could not be justified to others on grounds they could not reasonably reject",
+      "difficulty": "advanced",
+      "description": "道德原则是不能被任何理性人合理拒绝的原则"
+    },
+    {
+      "id": "nash_equilibrium_formal_def",
+      "name": "纳什均衡正式定义",
+      "category": "philosophy",
+      "subcategory": "game_theory",
+      "formula": "s* is NE iff for all players i: u_i(s*_i, s*_{-i}) >= u_i(s'_i, s*_{-i}) for all s'_i in S_i",
+      "difficulty": "advanced",
+      "description": "没有任何玩家可通过单方面改变策略获得更高收益"
+    },
+    {
+      "id": "prisoners_dilemma_matrix",
+      "name": "囚徒困境收益矩阵",
+      "category": "philosophy",
+      "subcategory": "game_theory",
+      "formula": "R > P > S (defection dominant), CC > DD > DC both cooperate Pareto optimal",
+      "difficulty": "intermediate",
+      "description": "R:合作奖励, P:背叛惩罚, S:傻瓜收益, T:背叛诱惑, T>R>P>S"
+    },
+    {
+      "id": "pareto_optimality_criterion",
+      "name": "帕累托最优标准",
+      "category": "philosophy",
+      "subcategory": "game_theory",
+      "formula": "state X is Pareto optimal iff not exists Y such that u_i(Y) >= u_i(X) for all i and u_j(Y) > u_j(X) for some j",
+      "difficulty": "intermediate",
+      "description": "无法在不损害任何人利益的情况下改善至少一人"
+    },
+    {
+      "id": "arrows_impossibility_theorem",
+      "name": "阿罗不可能定理",
+      "category": "philosophy",
+      "subcategory": "game_theory",
+      "formula": "no SWF satisfies all: (1) unrestricted domain (2) Pareto efficiency (3) independence of irrelevant alternatives (4) non-dictatorship for >= 3 alternatives",
+      "difficulty": "advanced",
+      "description": "没有社会福利函数能同时满足四个合理的民主条件"
+    },
+    {
+      "id": "shapley_value_formula",
+      "name": "沙普利值（联盟博弈）",
+      "category": "philosophy",
+      "subcategory": "game_theory",
+      "formula": "phi_i(v) = sum_{S subset N\\{i}} (|S|!*(n-|S|-1)!/n!) * (v(S U {i}) - v(S))",
+      "difficulty": "advanced",
+      "description": "每个玩家的边际贡献期望值"
+    },
+    {
+      "id": "nucleolus_solution",
+      "name": "核仁解",
+      "category": "philosophy",
+      "subcategory": "game_theory",
+      "formula": "nucleolus = argmin lexicographically sort excess(S) for all S subset N, excess(S) = v(S) - sum_{i in S} x_i",
+      "difficulty": "advanced",
+      "description": "按字典序最小化所有联盟的不满度"
+    },
+    {
+      "id": "core_cooperative_game",
+      "name": "合作博弈核",
+      "category": "philosophy",
+      "subcategory": "game_theory",
+      "formula": "Core = {x in R^n | sum_i x_i = v(N), sum_{i in S} x_i >= v(S) for all S subset N}",
+      "difficulty": "advanced",
+      "description": "所有联盟都无法反对的分配集合"
+    },
+    {
+      "id": "nash_bargaining_solution",
+      "name": "纳什讨价还价解",
+      "category": "philosophy",
+      "subcategory": "game_theory",
+      "formula": "x* = argmax prod_i (u_i(x) - d_i), subject to u_i(x) >= d_i",
+      "difficulty": "advanced",
+      "description": "最大化各方超过威胁点的效用之积"
+    },
+    {
+      "id": "minimax_regret_philosophy",
+      "name": "最小最大后悔（Savage）",
+      "category": "philosophy",
+      "subcategory": "game_theory",
+      "formula": "a* = argmin_a max_s [max_{a'} u(a',s) - u(a,s)]",
+      "difficulty": "advanced",
+      "description": "选择使最大可能后悔最小化的行动"
+    },
+    {
+      "id": "mixed_strategy_nash",
+      "name": "混合策略纳什均衡",
+      "category": "philosophy",
+      "subcategory": "game_theory",
+      "formula": "sigma* is MSNE iff E[u_i(sigma*_i, sigma*_{-i})] >= E[u_i(s'_i, sigma*_{-i})] for all mixed s'_i",
+      "difficulty": "advanced",
+      "description": "玩家以概率分布随机选择策略的纳什均衡"
+    },
+    {
+      "id": "agm_belief_revision_axioms",
+      "name": "AGM信念修正六公设",
+      "category": "philosophy",
+      "subcategory": "epistemology",
+      "formula": "(K*1) K*phi is a belief set. (K*2) phi in K*phi. (K*3) K*phi subset K+phi. (K*4) if not-phi not in K then K+phi subset K*phi. (K*5) K*phi = K_perp iff phi is contradictory. (K*6) if phi<=>psi then K*phi = K*psi",
+      "difficulty": "advanced",
+      "description": "Alchourron-Gardenfors-Makinson信念修正理论的六条基本公设"
+    },
+    {
+      "id": "occams_razor_probabilistic",
+      "name": "奥卡姆剃刀（概率形式）",
+      "category": "philosophy",
+      "subcategory": "epistemology",
+      "formula": "P(H_i|E) approx P(E|H_i) * P(H_i), simpler H_i with fewer params has higher prior P(H_i)",
+      "difficulty": "advanced",
+      "description": "简单假设有更高的先验概率，贝叶斯奥卡姆剃刀"
+    },
+    {
+      "id": "underdetermination_thesis",
+      "name": "不确定性论题（Duhem-Quine）",
+      "category": "philosophy",
+      "subcategory": "epistemology",
+      "formula": "evidence underdetermines theory: for any E, exists H1, H2 such that P(E|H1)=P(E|H2) but H1 != H2",
+      "difficulty": "advanced",
+      "description": "同一证据可由多个不相容理论同等解释"
+    },
+    {
+      "id": "coherentism_justification_formula",
+      "name": "融贯论证成",
+      "category": "philosophy",
+      "subcategory": "epistemology",
+      "formula": "J(belief) = sum_{i != j} (consistency(b_i, b_j) + explanatory_coherence(b_i, b_j)) / n",
+      "difficulty": "advanced",
+      "description": "信念的证成程度取决于它在信念网络中的融贯性"
+    },
+    {
+      "id": "reliabilism_justification",
+      "name": "可靠主义证成（Goldman）",
+      "category": "philosophy",
+      "subcategory": "epistemology",
+      "formula": "belief B is justified iff B is produced by a reliable process R where P(R produces true belief) > threshold",
+      "difficulty": "intermediate",
+      "description": "信念的证成取决于产生它的认知过程的可靠性"
+    },
+    {
+      "id": "sosa_virtue_epistemology",
+      "name": "索萨德性认识论（AAA模型）",
+      "category": "philosophy",
+      "subcategory": "epistemology",
+      "formula": "knowledge = apt_belief = accuracy + adroitness + aptness",
+      "difficulty": "advanced",
+      "description": "知识是真确的(accurate)、灵巧的(adroit)和适当的(apt)信念"
+    },
+    {
+      "id": "social_welfare_function_utilitarian",
+      "name": "功利主义社会福利函数",
+      "category": "philosophy",
+      "subcategory": "political_philosophy",
+      "formula": "SWF = sum_i u_i(x) (Bentham) or SWF = min_i u_i(x) (Rawlsian)",
+      "difficulty": "intermediate",
+      "description": "边沁:总效用最大化, 罗尔斯:最少受惠者效用最大化"
+    },
+    {
+      "id": "nozick_entitlement_theory",
+      "name": "诺齐克持有正义三原则",
+      "category": "philosophy",
+      "subcategory": "political_philosophy",
+      "formula": "just_holdings = [just_original_acquisition] OR [just_transfer] OR [rectification_of_injustice]",
+      "difficulty": "intermediate",
+      "description": "获取正义+转让正义+矫正正义：符合三者之一的持有就是正义的"
+    },
+    {
+      "id": "equality_of_opportunity_formula",
+      "name": "机会均等形式原则",
+      "category": "philosophy",
+      "subcategory": "political_philosophy",
+      "formula": "fair_competition: P(success_i) = f(effort_i, talent_i) NOT f(circumstance_i)",
+      "difficulty": "intermediate",
+      "description": "成功应仅取决于努力和才能而非出身等境况"
+    },
+    {
+      "id": "libertarian_minimal_state",
+      "name": "自由主义最小国家（Nozick）",
+      "category": "philosophy",
+      "subcategory": "political_philosophy",
+      "formula": "state_scope = { only protection_against_force, theft, fraud, enforcement_of_contracts }",
+      "difficulty": "intermediate",
+      "description": "国家仅限保护性功能，任何再分配都是侵犯权利"
+    },
+    {
+      "id": "capabilities_approach",
+      "name": "可行能力方法（Sen/Nussbaum）",
+      "category": "philosophy",
+      "subcategory": "political_philosophy",
+      "formula": "wellbeing = capability_set_c, c = { functionings_person_can_achieve_and_value }",
+      "difficulty": "advanced",
+      "description": "福利不是拥有什么而是能做什么和成为什么"
+    },
+    {
+      "id": "deliberative_democracy_formula",
+      "name": "商议民主模型",
+      "category": "philosophy",
+      "subcategory": "political_philosophy",
+      "formula": "legitimate_outcome iff (inclusive + equal + informed + consequential_deliberation)",
+      "difficulty": "intermediate",
+      "description": "合法政治决策来自自由平等的公民之间的理性商议"
+    },
+    {
+      "id": "calc_derivative_limit",
+      "name": "导数极限定义",
+      "category": "mathematics",
+      "subcategory": "calculus",
+      "formula": "f'(x) = lim_{h->0} (f(x+h) - f(x))/h",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "calc_chain_rule",
+      "name": "链式法则",
+      "category": "mathematics",
+      "subcategory": "calculus",
+      "formula": "dy/dx = dy/du * du/dx",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "calc_product_rule",
+      "name": "乘积法则",
+      "category": "mathematics",
+      "subcategory": "calculus",
+      "formula": "d(uv)/dx = u*dv/dx + v*du/dx",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "calc_quotient_rule",
+      "name": "商法则",
+      "category": "mathematics",
+      "subcategory": "calculus",
+      "formula": "d(u/v)/dx = (v*du/dx - u*dv/dx)/v^2",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "calc_taylor_series",
+      "name": "泰勒展开",
+      "category": "mathematics",
+      "subcategory": "calculus",
+      "formula": "f(x) = sum_{n=0}^{inf} f^{(n)}(a)*(x-a)^n/n!",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "calc_lagrange_mvt",
+      "name": "拉格朗日中值定理",
+      "category": "mathematics",
+      "subcategory": "calculus",
+      "formula": "f(b) - f(a) = f'(c)*(b-a), c in (a,b)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "calc_riemann_integral",
+      "name": "定积分定义",
+      "category": "mathematics",
+      "subcategory": "calculus",
+      "formula": "integral_a^b f(x)dx = lim_{n->inf} sum_{i=1}^n f(x_i)*delta_x_i",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "calc_integration_by_parts",
+      "name": "分部积分法",
+      "category": "mathematics",
+      "subcategory": "calculus",
+      "formula": "integral u*dv = uv - integral v*du",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "calc_lhopital_rule",
+      "name": "洛必达法则",
+      "category": "mathematics",
+      "subcategory": "calculus",
+      "formula": "lim_{x->a} f(x)/g(x) = lim_{x->a} f'(x)/g'(x), if form 0/0 or inf/inf",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "calc_green_theorem",
+      "name": "格林定理",
+      "category": "mathematics",
+      "subcategory": "calculus",
+      "formula": "integral_C (Ldx + Mdy) = integral_D (dM/dx - dL/dy)dA",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "calc_stokes_theorem",
+      "name": "斯托克斯定理",
+      "category": "mathematics",
+      "subcategory": "calculus",
+      "formula": "integral_dS F*dr = integral_S curl(F)*dS",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "calc_divergence_theorem",
+      "name": "散度定理",
+      "category": "mathematics",
+      "subcategory": "calculus",
+      "formula": "integral_dV div(F)dV = integral_S F*n dS",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "la_eigenvalue_equation",
+      "name": "特征方程",
+      "category": "mathematics",
+      "subcategory": "linear_algebra",
+      "formula": "det(A - lambda*I) = 0",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "la_svd_decomposition",
+      "name": "奇异值分解(SVD)",
+      "category": "mathematics",
+      "subcategory": "linear_algebra",
+      "formula": "A = U*Sigma*V^T, U^T*U = I, V^T*V = I, Sigma = diag(sigma_1,...,sigma_r)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "la_pca_formula",
+      "name": "PCA公式",
+      "category": "mathematics",
+      "subcategory": "linear_algebra",
+      "formula": "Cov(X) = (1/(n-1))*X^T*X, Cov(X)*v_i = lambda_i*v_i",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "la_matrix_frobenius_norm",
+      "name": "Frobenius矩阵范数",
+      "category": "mathematics",
+      "subcategory": "linear_algebra",
+      "formula": "||A||_F = sqrt(sum_i sum_j a_ij^2) = sqrt(trace(A^T*A))",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "la_cauchy_schwarz_inequality",
+      "name": "柯西-施瓦茨不等式",
+      "category": "mathematics",
+      "subcategory": "linear_algebra",
+      "formula": "|<u,v>|^2 <= <u,u>*<v,v>",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "la_gram_schmidt_process",
+      "name": "格拉姆-施密特正交化",
+      "category": "mathematics",
+      "subcategory": "linear_algebra",
+      "formula": "u_k = v_k - sum_{j=1}^{k-1} proj_{u_j}(v_k), e_k = u_k/||u_k||",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "la_orthogonal_projection",
+      "name": "正交投影",
+      "category": "mathematics",
+      "subcategory": "linear_algebra",
+      "formula": "proj_W(v) = A*(A^T*A)^{-1}*A^T*v",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "la_least_squares_solution",
+      "name": "最小二乘解",
+      "category": "mathematics",
+      "subcategory": "linear_algebra",
+      "formula": "x = (A^T*A)^{-1}*A^T*b for min_x ||Ax - b||^2",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "la_cholesky_decomposition",
+      "name": "Cholesky分解",
+      "category": "mathematics",
+      "subcategory": "linear_algebra",
+      "formula": "A = L*L^T, where L is lower triangular and A is SPD",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "la_cayley_hamilton_theorem",
+      "name": "Cayley-Hamilton定理",
+      "category": "mathematics",
+      "subcategory": "linear_algebra",
+      "formula": "p_A(A) = 0, where p_A(lambda) = det(A - lambda*I)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "info_jensen_shannon_divergence",
+      "name": "JS散度",
+      "category": "mathematics",
+      "subcategory": "information_theory",
+      "formula": "D_JS(P||Q) = 0.5*D_KL(P||M) + 0.5*D_KL(Q||M), M = 0.5*(P+Q)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "info_fano_inequality",
+      "name": "Fano不等式",
+      "category": "mathematics",
+      "subcategory": "information_theory",
+      "formula": "H(X|Y) <= H_2(P_e) + P_e*log(|X|-1), P_e = P(X != X_hat)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "info_data_processing_inequality",
+      "name": "数据处理不等式",
+      "category": "mathematics",
+      "subcategory": "information_theory",
+      "formula": "I(X;Z) <= I(X;Y) for Markov chain X->Y->Z",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "info_entropy_rate",
+      "name": "熵率",
+      "category": "mathematics",
+      "subcategory": "information_theory",
+      "formula": "H(X) = lim_{n->inf} (1/n)*H(X_1,X_2,...,X_n) for stochastic process",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "info_differential_entropy",
+      "name": "微分熵",
+      "category": "mathematics",
+      "subcategory": "information_theory",
+      "formula": "h(X) = -integral f(x)*log(f(x))dx for continuous random variable X",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "info_fisher_information",
+      "name": "Fisher信息量",
+      "category": "mathematics",
+      "subcategory": "information_theory",
+      "formula": "I(theta) = E[(d/d_theta log f(X;theta))^2]",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "info_cramer_rao_bound",
+      "name": "Cramér-Rao下界",
+      "category": "mathematics",
+      "subcategory": "information_theory",
+      "formula": "Var(theta_hat) >= 1/I(theta) for unbiased estimator theta_hat",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "info_renyi_entropy",
+      "name": "Rényi熵",
+      "category": "mathematics",
+      "subcategory": "information_theory",
+      "formula": "H_alpha(X) = (1/(1-alpha))*log(sum_i p_i^alpha), alpha >= 0, alpha != 1",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "opt_gradient_descent_update",
+      "name": "梯度下降更新",
+      "category": "mathematics",
+      "subcategory": "optimization",
+      "formula": "theta = theta - eta*grad_J(theta)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "opt_lagrange_multiplier_method",
+      "name": "拉格朗日乘数法",
+      "category": "mathematics",
+      "subcategory": "optimization",
+      "formula": "L(x,lambda) = f(x) + sum_i lambda_i*g_i(x), grad_L = 0 at optimum",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "opt_kkt_conditions",
+      "name": "KKT条件",
+      "category": "mathematics",
+      "subcategory": "optimization",
+      "formula": "grad_f(x*) + sum_i mu_i*grad_h_i(x*) + sum_j lambda_j*grad_g_j(x*) = 0, lambda_j*g_j(x*) = 0, lambda_j >= 0",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "opt_adam_optimizer_update",
+      "name": "Adam优化器",
+      "category": "mathematics",
+      "subcategory": "optimization",
+      "formula": "m_t = beta1*m_{t-1} + (1-beta1)*g_t, v_t = beta2*v_{t-1} + (1-beta2)*g_t^2, theta_t = theta_{t-1} - eta*m_t_hat/(sqrt(v_t_hat)+eps)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "opt_newton_method",
+      "name": "牛顿法",
+      "category": "mathematics",
+      "subcategory": "optimization",
+      "formula": "x_{k+1} = x_k - H_f(x_k)^{-1}*grad_f(x_k)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "opt_stochastic_gradient_descent",
+      "name": "随机梯度下降(SGD)",
+      "category": "mathematics",
+      "subcategory": "optimization",
+      "formula": "theta_{t+1} = theta_t - eta_t*grad_L(theta_t; x_i,y_i)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "graph_laplacian_matrix",
+      "name": "图拉普拉斯矩阵",
+      "category": "mathematics",
+      "subcategory": "graph_theory",
+      "formula": "L = D - A, D_ii = deg(v_i), A_ij = 1 if edge ij exists",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "graph_pagerank_formula",
+      "name": "PageRank算法",
+      "category": "mathematics",
+      "subcategory": "graph_theory",
+      "formula": "PR(u) = (1-d)/N + d*sum_{v in N(u)} PR(v)/L(v)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "graph_clustering_coefficient",
+      "name": "聚类系数",
+      "category": "mathematics",
+      "subcategory": "graph_theory",
+      "formula": "C_i = 2*|{e_jk: v_j,v_k in N(v_i)}|/(k_i*(k_i-1))",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "graph_betweenness_centrality",
+      "name": "介数中心性",
+      "category": "mathematics",
+      "subcategory": "graph_theory",
+      "formula": "g(v) = sum_{s!=v!=t} sigma_{st}(v)/sigma_{st}",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "graph_degree_centrality",
+      "name": "度中心性",
+      "category": "mathematics",
+      "subcategory": "graph_theory",
+      "formula": "C_D(v) = deg(v)/(N-1)",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "graph_eigenvector_centrality",
+      "name": "特征向量中心性",
+      "category": "mathematics",
+      "subcategory": "graph_theory",
+      "formula": "c_v = (1/lambda)*sum_{u in N(v)} c_u, where A*c = lambda*c",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cogsci_attention_bottleneck",
+      "name": "注意瓶颈模型",
+      "category": "cognitive_science",
+      "subcategory": "attention",
+      "formula": "C_bottleneck = min(early_selection_capacity, late_selection_capacity)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cogsci_attention_resource_allocation",
+      "name": "注意资源分配",
+      "category": "cognitive_science",
+      "subcategory": "attention",
+      "formula": "R_allocation = sum_i w_i*S_i, with sum_i w_i <= total_capacity",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cogsci_attention_central_capacity",
+      "name": "中央容量理论",
+      "category": "cognitive_science",
+      "subcategory": "attention",
+      "formula": "Dual_task_cost = a*T_primary + b*T_secondary - c*automaticity",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cogsci_attention_spotlight",
+      "name": "聚光灯注意模型",
+      "category": "cognitive_science",
+      "subcategory": "attention",
+      "formula": "Processing_benefit = A_0*exp(-d^2/(2*sigma^2))",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cogsci_attention_perceptual_load",
+      "name": "知觉负载理论",
+      "category": "cognitive_science",
+      "subcategory": "attention",
+      "formula": "Distraction = f(perceptual_load, distractor_salience), negative if load > threshold",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cogsci_attention_guided_search",
+      "name": "引导搜索模型",
+      "category": "cognitive_science",
+      "subcategory": "attention",
+      "formula": "Activation = bottom_up_salience + top_down_guidance, RT = f(rank_of_target)",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cogsci_consciousness_gnw_simplified",
+      "name": "全局神经工作空间(GNW)",
+      "category": "cognitive_science",
+      "subcategory": "consciousness",
+      "formula": "P_conscious = sigmoid(I_stimulus - theta_gnw), ignition when global_avalanche > threshold",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cogsci_consciousness_integrated_phi",
+      "name": "整合信息Φ(IIT)",
+      "category": "cognitive_science",
+      "subcategory": "consciousness",
+      "formula": "Phi = min_{partition} D_KL(p(cause,effect)||product(marginals))",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cogsci_consciousness_hot",
+      "name": "高阶思维理论(HOT)",
+      "category": "cognitive_science",
+      "subcategory": "consciousness",
+      "formula": "M_state = M_meta(M_first_order), consciousness = existence_of_M_state",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cogsci_consciousness_dynamic_core",
+      "name": "动态核理论",
+      "category": "cognitive_science",
+      "subcategory": "consciousness",
+      "formula": "D_core = functional_cluster with high mutual_info_integration and low mutual_info_segregation",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cogsci_consciousness_default_mode",
+      "name": "默认模式网络(DMN)",
+      "category": "cognitive_science",
+      "subcategory": "consciousness",
+      "formula": "DMN_activity = f(task_difficulty, self_referential_thought), DMN anticorrelated with task_positive_network",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cogsci_consciousness_attention_schema",
+      "name": "注意图式理论",
+      "category": "cognitive_science",
+      "subcategory": "consciousness",
+      "formula": "P_awareness = f(attention_schema, attended_stimulus), schema = internal_model_of_attention",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cogsci_language_word_frequency",
+      "name": "词频效应",
+      "category": "cognitive_science",
+      "subcategory": "language",
+      "formula": "RT = beta_0 - beta_1*log(frequency) + noise",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cogsci_language_semantic_priming",
+      "name": "语义启动效应",
+      "category": "cognitive_science",
+      "subcategory": "language",
+      "formula": "RT(related) = RT(unrelated) - priming_effect, priming_effect = f(association_strength)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cogsci_language_nested_structure",
+      "name": "嵌套结构加工",
+      "category": "cognitive_science",
+      "subcategory": "language",
+      "formula": "Processing_cost = O(2^n) for center_embedding_depth n",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cogsci_language_piaget_stages",
+      "name": "皮亚杰认知发展阶段",
+      "category": "cognitive_science",
+      "subcategory": "language",
+      "formula": "Stage(age) = sensorimotor(0-2) -> preoperational(2-7) -> concrete_operational(7-11) -> formal_operational(11+)",
+      "difficulty": "beginner"
+    },
+    {
+      "id": "cogsci_language_dual_route_reading",
+      "name": "双路径阅读模型",
+      "category": "cognitive_science",
+      "subcategory": "language",
+      "formula": "P(correct) = w_lexical*lexical_route_outcome + w_sublexical*sublexical_route_outcome",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cogsci_language_statistical_learning",
+      "name": "统计学习",
+      "category": "cognitive_science",
+      "subcategory": "language",
+      "formula": "P(segment) = f(transitional_probability), TP(x,y) = P(y|x)",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cogsci_reasoning_actr_production",
+      "name": "ACT-R产生式规则",
+      "category": "cognitive_science",
+      "subcategory": "reasoning",
+      "formula": "If goal_type = G and condition C then action A, Utility = P_success*G_cost - P_failure*F_cost",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cogsci_reasoning_actr_buffer",
+      "name": "ACT-R认知架构缓冲区",
+      "category": "cognitive_science",
+      "subcategory": "reasoning",
+      "formula": "Buffer_state = f(retrieval_goal, imaginal, manual, vocal, visual), each buffer holds one chunk",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cogsci_reasoning_soar_decision",
+      "name": "Soar决策周期",
+      "category": "cognitive_science",
+      "subcategory": "reasoning",
+      "formula": "Decision = propose(operators) -> compare(preferences) -> select(best) -> apply(operator), timeout -> impasse -> subgoal",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cogsci_reasoning_mental_model",
+      "name": "心理模型理论",
+      "category": "cognitive_science",
+      "subcategory": "reasoning",
+      "formula": "Validity = models_where_conclusion_holds / total_models, fewer models -> faster reasoning",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cogsci_reasoning_analogical_transfer",
+      "name": "类比推理与迁移",
+      "category": "cognitive_science",
+      "subcategory": "reasoning",
+      "formula": "P(transfer) = f(structural_similarity, surface_similarity), structural_similarity > surface_similarity for deep transfer",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cogsci_reasoning_insight_problem",
+      "name": "顿悟问题解决",
+      "category": "cognitive_science",
+      "subcategory": "reasoning",
+      "formula": "P(solution) = f(incubation_time, restructuring), insight marked by sudden spike in solution_probability",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cogsci_metacognition_calibration",
+      "name": "校准曲线",
+      "category": "cognitive_science",
+      "subcategory": "metacognition",
+      "formula": "Calibration = mean((confidence_i - accuracy_i)^2, i in bins), perfect = 0",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cogsci_metacognition_insight_bias",
+      "name": "自知力偏差",
+      "category": "cognitive_science",
+      "subcategory": "metacognition",
+      "formula": "Insight_bias = mean_confidence - mean_accuracy, positive = overconfidence, negative = underconfidence",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cogsci_metacognition_dunning_kruger",
+      "name": "Dunning-Kruger效应",
+      "category": "cognitive_science",
+      "subcategory": "metacognition",
+      "formula": "Self_assessed_ability = true_ability + bias, bias = f(true_ability), high at low ability, low at high ability",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cogsci_metacognition_conf_acc_correlation",
+      "name": "信心-准确率相关性",
+      "category": "cognitive_science",
+      "subcategory": "metacognition",
+      "formula": "Gamma = (concordant_pairs - discordant_pairs)/(concordant_pairs + discordant_pairs), Goodman-Kruskal gamma",
+      "difficulty": "advanced"
+    },
+    {
+      "id": "cogsci_metacognition_feeling_of_knowing",
+      "name": "知晓感(FOK)",
+      "category": "cognitive_science",
+      "subcategory": "metacognition",
+      "formula": "FOK_accuracy = P(recognize|FOK_yes) - P(recognize|FOK_no), gamma correlation for tip_of_tongue states",
+      "difficulty": "intermediate"
+    },
+    {
+      "id": "cogsci_metacognition_judgment_learning",
+      "name": "学习判断(JOL)",
+      "category": "cognitive_science",
+      "subcategory": "metacognition",
+      "formula": "JOL_accuracy = P(recall|JOL) - baseline_recall, delayed_JOL more accurate than immediate_JOL",
+      "difficulty": "intermediate"
+    }
+  ]
+}

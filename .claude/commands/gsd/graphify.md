@@ -12,29 +12,29 @@ requires: [config, fast, phase, update]
 
 **仅 CJS (graphify)：** `graphify` 子命令未在 `gsd-sdk query` 上注册。使用 `node $HOME/.claude/get-shit-done/bin/gsd-tools.cjs graphify …`，如此命令和 `docs/CLI-TOOLS.md` 中所述。其他工具可能仍在使用存在处理程序的 `gsd-sdk query`。
 
-## Step 0 -- Banner
+## 第 0 步 —— 横幅
 
-**Before ANY tool calls**, display this banner:
+**在任何工具调用之前**，显示此横幅：
 
 ```
 GSD > GRAPHIFY
 ```
 
-Then proceed to Step 1.
+然后继续到第 1 步。
 
-## Step 1 -- Config Gate
+## 第 1 步 —— 配置门禁
 
-Check if graphify is enabled by reading `.planning/config.json` directly using the Read tool.
+通过使用 Read 工具直接读取 `.planning/config.json` 检查 graphify 是否启用。
 
-**DO NOT use the gsd-tools config get-value command** -- it hard-exits on missing keys.
+**不要使用 gsd-tools config get-value 命令** —— 它在键缺失时会硬退出。
 
-1. Read `.planning/config.json` using the Read tool
-2. If the file does not exist: display the disabled message below and **STOP**
-3. Parse the JSON content. Check if `config.graphify && config.graphify.enabled === true`
-4. If `graphify.enabled` is NOT explicitly `true`: display the disabled message below and **STOP**
-5. If `graphify.enabled` is `true`: proceed to Step 2
+1. 使用 Read 工具读取 `.planning/config.json`
+2. 如果文件不存在：显示下面的禁用消息并**停止**
+3. 解析 JSON 内容。检查 `config.graphify && config.graphify.enabled === true`
+4. 如果 `graphify.enabled` **未**显式为 `true`：显示下面的禁用消息并**停止**
+5. 如果 `graphify.enabled` 为 `true`：继续到第 2 步
 
-**Disabled message:**
+**禁用消息：**
 
 ```
 GSD > GRAPHIFY
@@ -48,19 +48,19 @@ Then run /gsd:graphify build to create the initial graph.
 
 ---
 
-## Step 2 -- Parse Argument
+## 第 2 步 —— 解析参数
 
-Parse `$ARGUMENTS` to determine the operation mode:
+解析 `$ARGUMENTS` 以确定操作模式：
 
-| Argument | Action |
+| 参数 | 动作 |
 |----------|--------|
-| `build` | Run inline build (Step 3) |
-| `query <term>` | Run inline query (Step 2a) |
-| `status` | Run inline status check (Step 2b) |
-| `diff` | Run inline diff check (Step 2c) |
-| No argument or unknown | Show usage message |
+| `build` | 运行内联构建（第 3 步） |
+| `query <term>` | 运行内联查询（第 2a 步） |
+| `status` | 运行内联状态检查（第 2b 步） |
+| `diff` | 运行内联 diff 检查（第 2c 步） |
+| 无参数或未知 | 显示用法消息 |
 
-**Usage message** (shown when no argument or unrecognized argument):
+**用法消息**（在无参数或无法识别的参数时显示）：
 
 ```
 GSD > GRAPHIFY
@@ -74,86 +74,86 @@ Modes:
   diff            Show changes since last build
 ```
 
-### Step 2a -- Query
+### 第 2a 步 —— 查询
 
-Run:
+运行：
 
 ```bash
 node $HOME/.claude/get-shit-done/bin/gsd-tools.cjs graphify query <term>
 ```
 
-Parse the JSON output and display results:
-- If the output contains `"disabled": true`, display the disabled message from Step 1 and **STOP**
-- If the output contains `"error"` field, display the error message and **STOP**
-- If no nodes found, display: `No graph matches for '<term>'. Try /gsd:graphify build to create or rebuild the graph.`
-- Otherwise, display matched nodes grouped by type, with edge relationships and confidence tiers (EXTRACTED/INFERRED/AMBIGUOUS)
+解析 JSON 输出并显示结果：
+- 如果输出包含 `"disabled": true`，显示第 1 步的禁用消息并**停止**
+- 如果输出包含 `"error"` 字段，显示错误消息并**停止**
+- 如果未找到节点，显示：`No graph matches for '<term>'. Try /gsd:graphify build to create or rebuild the graph.`
+- 否则，按类型分组显示匹配的节点，带边关系和置信度层级（EXTRACTED/INFERRED/AMBIGUOUS）
 
-**STOP** after displaying results. Do not spawn an agent.
+显示结果后**停止**。不要生成代理。
 
-### Step 2b -- Status
+### 第 2b 步 —— 状态
 
-Run:
+运行：
 
 ```bash
 node $HOME/.claude/get-shit-done/bin/gsd-tools.cjs graphify status
 ```
 
-Parse the JSON output and display:
-- If `exists: false`, display the message field
-- Otherwise show last build time, node/edge/hyperedge counts, and STALE or FRESH indicator
-- If `built_at_commit` is non-null, also display a `Source commit:` line:
-  - `commit_stale === false` (rebuilt at HEAD): `Source commit: <built_at_commit> (current)`
-  - `commit_stale === true` (graph behind HEAD): `Source commit: <built_at_commit> (<commits_behind> commits behind HEAD)`
-  - `commit_stale === null` (unreachable commit / no git): `Source commit: <built_at_commit> (freshness unknown)`
-- If `built_at_commit` is null (pre-graphify-v0.7 graph), omit the source-commit line entirely — do not render "Source commit: unknown"
+解析 JSON 输出并显示：
+- 如果 `exists: false`，显示 message 字段
+- 否则显示上次构建时间、节点/边/超边计数，以及 STALE 或 FRESH 指标
+- 如果 `built_at_commit` 非 null，同时显示 `Source commit:` 行：
+  - `commit_stale === false`（在 HEAD 重建）：`Source commit: <built_at_commit> (current)`
+  - `commit_stale === true`（图谱落后于 HEAD）：`Source commit: <built_at_commit> (<commits_behind> commits behind HEAD)`
+  - `commit_stale === null`（不可达提交/无 git）：`Source commit: <built_at_commit> (freshness unknown)`
+- 如果 `built_at_commit` 为 null（graphify-v0.7 之前的图谱），完全省略 source-commit 行——不要渲染 "Source commit: unknown"
 
-The mtime-based STALE/FRESH flag and the commit-based `commit_stale` measure
-different things and can disagree (e.g., a CI-built graph rebuilt minutes ago
-against an old checkout reads as FRESH on mtime but `commit_stale: true`).
-Surface both so the agent can choose.
+基于 mtime 的 STALE/FRESH 标志和基于提交的 `commit_stale` 测量
+不同的东西，可能不一致（例如，几分钟前针对旧 checkout 重建的 CI 构建图谱
+在 mtime 上读为 FRESH 但 `commit_stale: true`）。
+两者都呈现，以便代理可以选择。
 
-**STOP** after displaying status. Do not spawn an agent.
+显示状态后**停止**。不要生成代理。
 
-### Step 2c -- Diff
+### 第 2c 步 —— Diff
 
-Run:
+运行：
 
 ```bash
 node $HOME/.claude/get-shit-done/bin/gsd-tools.cjs graphify diff
 ```
 
-Parse the JSON output and display:
-- If `no_baseline: true`, display the message field
-- Otherwise show node and edge change counts (added/removed/changed)
+解析 JSON 输出并显示：
+- 如果 `no_baseline: true`，显示 message 字段
+- 否则显示节点和边变更计数（添加/删除/更改）
 
-If no snapshot exists, suggest running `build` twice (first to create, second to generate a diff baseline).
+如果不存在快照，建议运行 `build` 两次（第一次创建，第二次生成 diff 基线）。
 
-**STOP** after displaying diff. Do not spawn an agent.
+显示 diff 后**停止**。不要生成代理。
 
 ---
 
-## Step 3 -- Build (Inline)
+## 第 3 步 —— 构建（内联）
 
-Run the pre-flight check first:
+首先运行预检：
 
 ```bash
 node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" graphify build
 ```
 
-Parse the JSON output:
-- If `disabled: true`: display the disabled message from Step 1 and **STOP**
-- If `error`: display the error message and **STOP**
-- If `action: "spawn_agent"`: pre-flight passed -- proceed with the inline build below
+解析 JSON 输出：
+- 如果 `disabled: true`：显示第 1 步的禁用消息并**停止**
+- 如果 `error`：显示错误消息并**停止**
+- 如果 `action: "spawn_agent"`：预检通过——继续下面的内联构建
 
-(The `spawn_agent` action name is historical. The skill now performs the build inline because graphify v0.7+ split the build into a fast AST-extraction phase and a separate clustering + report-write phase. Sub-agent isolation kept the cached extraction phase alive but SIGTERM'd the post-extraction phase when the agent exited, leaving the cache populated but no `graph.json` artifacts written. The CLI still emits the `spawn_agent` signal so external callers and tests keep working.)
+（`spawn_agent` 动作名称是历史遗留。该技能现在内联执行构建，因为 graphify v0.7+ 将构建拆分为快速的 AST 提取阶段和单独的聚类 + 报告写入阶段。子代理隔离保持了缓存的提取阶段存活，但在代理退出时对提取后阶段发送 SIGTERM，使缓存被填充但没有写入 `graph.json` 产物。CLI 仍发出 `spawn_agent` 信号，以便外部调用者和测试继续工作。）
 
-Display:
+显示：
 
 ```text
 GSD > Building knowledge graph...
 ```
 
-Run the build, copy artifacts, write the diff snapshot, and report the summary in a single foreground Bash call so the whole pipeline survives to completion. Use a `timeout` of `600000` ms (10 minutes), which covers the `graphify.build_timeout` ceiling (default 300 s) with margin:
+在单个前台 Bash 调用中运行构建、复制产物、写入 diff 快照并报告摘要，以便整个流水线存活到完成。使用 `600000` ms（10 分钟）的 `timeout`，它覆盖 `graphify.build_timeout` 上限（默认 300 秒）并留有余量：
 
 ```bash
 graphify update . \
@@ -164,36 +164,36 @@ graphify update . \
   && node "$HOME/.claude/get-shit-done/bin/gsd-tools.cjs" graphify status
 ```
 
-Do NOT pass `run_in_background: true`. Typical builds complete in 15-60 seconds and the entire chain must run foreground.
+**不要**传递 `run_in_background: true`。典型构建在 15-60 秒内完成，整个链必须在前台运行。
 
-If the chain fails (non-zero exit):
-- Display: `## GRAPHIFY BUILD FAILED` followed by the captured stderr
-- Do NOT delete `.planning/graphs/` -- the prior valid graph remains available
-- **STOP**
+如果链失败（非零退出）：
+- 显示：`## GRAPHIFY BUILD FAILED` 后跟捕获的 stderr
+- **不要**删除 `.planning/graphs/` —— 先前有效的图谱仍然可用
+- **停止**
 
-If the chain succeeds:
-- Parse the trailing `graphify status` JSON
-- Display: `## GRAPHIFY BUILD COMPLETE` with the node, edge, and hyperedge counts
-
----
-
-## MVP-Mode Node Rendering
-
-**MVP-mode rendering.** When a phase has `**Mode:** mvp` in ROADMAP.md (resolved via `gsd-sdk query roadmap.get-phase --pick mode`), render its graph node with two distinct visual signals:
-
-1. **Distinct fill color.** Use `#22c55e` (green) for MVP-mode phase nodes. Standard phases keep the default fill color. Two-channel signaling (color + label) handles color-blind and grayscale renders.
-2. **`MVP` label suffix.** Append ` (MVP)` to the node's label text. Example: a phase originally labeled `Phase 1: User Auth` renders as `Phase 1: User Auth (MVP)`.
-
-Both signals fire together — never just one. Per PRD Q5 decision, the goal is unambiguous visual distinction in any render context.
-
-When the phase mode is null/absent, render with the standard color and label — no behavioral change for non-MVP phases.
+如果链成功：
+- 解析末尾的 `graphify status` JSON
+- 显示：`## GRAPHIFY BUILD COMPLETE` 及节点、边和超边计数
 
 ---
 
-## Anti-Patterns
+## MVP 模式节点渲染
 
-1. DO NOT spawn an agent for any operation -- build, query, status, and diff all run inline. Sub-agent isolation terminates background bash when the agent exits, which previously truncated graphify builds mid-write and left only the cache populated (#3166).
-2. DO NOT pass `run_in_background: true` for the build chain -- the operation is fast and must complete in the foreground.
-3. DO NOT modify graph files directly -- always go through `graphify update .` and the snapshot CLI.
-4. DO NOT skip the config gate check.
-5. DO NOT use `gsd-tools config get-value` for the config gate -- it exits on missing keys.
+**MVP 模式渲染。** 当一个阶段在 ROADMAP.md 中有 `**Mode:** mvp` 时（通过 `gsd-sdk query roadmap.get-phase --pick mode` 解析），用两个不同的视觉信号渲染其图谱节点：
+
+1. **不同的填充色。** 对 MVP 模式阶段节点使用 `#22c55e`（绿色）。标准阶段保持默认填充色。双通道信号（颜色 + 标签）处理色盲和灰度渲染。
+2. **`MVP` 标签后缀。** 在节点的标签文本后追加 ` (MVP)`。示例：原本标记为 `Phase 1: User Auth` 的阶段渲染为 `Phase 1: User Auth (MVP)`。
+
+两个信号同时触发——绝不要只用一个。根据 PRD Q5 决策，目标是在任何渲染上下文中都能无歧义地区分。
+
+当阶段模式为 null/缺失时，用标准颜色和标签渲染——非 MVP 阶段无行为变化。
+
+---
+
+## 反模式
+
+1. **不要**为任何操作生成代理——构建、查询、状态和 diff 都内联运行。子代理隔离在代理退出时终止后台 bash，此前会截断 graphify 构建的写入中途，只留下被填充的缓存（#3166）。
+2. **不要**为构建链传递 `run_in_background: true` —— 操作很快且必须在前台完成。
+3. **不要**直接修改图谱文件——始终通过 `graphify update .` 和快照 CLI。
+4. **不要**跳过配置门禁检查。
+5. **不要**为配置门禁使用 `gsd-tools config get-value` —— 它在键缺失时退出。

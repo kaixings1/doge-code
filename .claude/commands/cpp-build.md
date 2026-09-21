@@ -1,29 +1,29 @@
 ---
-description: Fix C++ build errors, CMake issues, and linker problems incrementally. Invokes the cpp-build-resolver agent for minimal, surgical fixes.
+description: 增量修复 C++ 构建错误、CMake 问题和链接器问题。调用 cpp-build-resolver 代理进行最小化、外科手术式的修复。
 ---
 
-# C++ Build and Fix
+# C++ 构建与修复
 
-This command invokes the **cpp-build-resolver** agent to incrementally fix C++ build errors with minimal changes.
+此命令调用 **cpp-build-resolver** 代理，以最小改动增量修复 C++ 构建错误。
 
-## What This Command Does
+## 此命令做什么
 
-1. **Run Diagnostics**: Execute `cmake --build`, `clang-tidy`, `cppcheck`
-2. **Parse Errors**: Group by file and sort by severity
-3. **Fix Incrementally**: One error at a time
-4. **Verify Each Fix**: Re-run build after each change
-5. **Report Summary**: Show what was fixed and what remains
+1. **运行诊断**：执行 `cmake --build`、`clang-tidy`、`cppcheck`
+2. **解析错误**：按文件分组并按严重程度排序
+3. **增量修复**：一次一个错误
+4. **验证每次修复**：每次改动后重新运行构建
+5. **报告摘要**：显示已修复和剩余的问题
 
-## When to Use
+## 何时使用
 
-Use `/cpp-build` when:
-- `cmake --build build` fails with errors
-- Linker errors (undefined references, multiple definitions)
-- Template instantiation failures
-- Include/dependency issues
-- After pulling changes that break the build
+在以下情况使用 `/cpp-build`：
+- `cmake --build build` 失败并报错
+- 链接器错误（未定义引用、多重定义）
+- 模板实例化失败
+- include/依赖问题
+- 拉取变更后构建被破坏
 
-## Diagnostic Commands Run
+## 运行的诊断命令
 
 ```bash
 # CMake configure
@@ -37,7 +37,7 @@ clang-tidy src/*.cpp -- -std=c++17
 cppcheck --enable=all src/
 ```
 
-## Example Session
+## 会话示例
 
 ```text
 User: /cpp-build
@@ -132,42 +132,42 @@ All tests passed.
 Build Status: PASS: SUCCESS
 ```
 
-## Common Errors Fixed
+## 常见错误及修复
 
 | Error | Typical Fix |
 |-------|-------------|
-| `undeclared identifier` | Add `#include` or fix typo |
-| `no matching function` | Fix argument types or add overload |
-| `undefined reference` | Link library or add implementation |
-| `multiple definition` | Use `inline` or move to .cpp |
-| `incomplete type` | Replace forward decl with `#include` |
-| `no member named X` | Fix member name or include |
-| `cannot convert X to Y` | Add appropriate cast |
-| `CMake Error` | Fix CMakeLists.txt configuration |
+| `undeclared identifier` | 添加 `#include` 或修正拼写 |
+| `no matching function` | 修正参数类型或添加重载 |
+| `undefined reference` | 链接库或添加实现 |
+| `multiple definition` | 使用 `inline` 或移到 .cpp |
+| `incomplete type` | 用 `#include` 替换前向声明 |
+| `no member named X` | 修正成员名或添加 include |
+| `cannot convert X to Y` | 添加适当的类型转换 |
+| `CMake Error` | 修正 CMakeLists.txt 配置 |
 
-## Fix Strategy
+## 修复策略
 
-1. **Compilation errors first** - Code must compile
-2. **Linker errors second** - Resolve undefined references
-3. **Warnings third** - Fix with `-Wall -Wextra`
-4. **One fix at a time** - Verify each change
-5. **Minimal changes** - Don't refactor, just fix
+1. **编译错误优先** - 代码必须先能编译
+2. **链接器错误其次** - 解决未定义引用
+3. **警告第三** - 用 `-Wall -Wextra` 修复
+4. **一次一个修复** - 验证每次改动
+5. **最小改动** - 不要重构，只修复
 
-## Stop Conditions
+## 停止条件
 
-The agent will stop and report if:
-- Same error persists after 3 attempts
-- Fix introduces more errors
-- Requires architectural changes
-- Missing external dependencies
+代理将在以下情况停止并报告：
+- 同一错误在 3 次尝试后仍然存在
+- 修复引入了更多错误
+- 需要架构性改动
+- 缺少外部依赖
 
-## Related Commands
+## 相关命令
 
-- `/cpp-test` - Run tests after build succeeds
-- `/cpp-review` - Review code quality
-- `verification-loop` skill - Full verification loop
+- `/cpp-test` - 构建成功后运行测试
+- `/cpp-review` - 审查代码质量
+- `verification-loop` 技能 - 完整验证循环
 
-## Related
+## 相关
 
-- Agent: `agents/cpp-build-resolver.md`
-- Skill: `skills/cpp-coding-standards/`
+- Agent：`agents/cpp-build-resolver.md`
+- Skill：`skills/cpp-coding-standards/`
