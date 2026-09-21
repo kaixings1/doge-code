@@ -494,7 +494,8 @@ export function createUserMessage({
   timestamp?: string
   imagePasteIds?: number[]
   // 对于 tool_result 消息：包含匹配 tool_use 的 assistant 消息的 UUID
-  sourceToolAssistantUUID?: UUID
+  // 用 string 以与 MessageBase.uuid 保持一致（后者为 string）
+  sourceToolAssistantUUID?: string
   // 发送消息时的权限模式（用于回退恢复）
   permissionMode?: PermissionMode
   summarizeMetadata?: {

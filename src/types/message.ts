@@ -6,6 +6,13 @@ export type MessageOrigin = {
 
 import type { ContentBlock, ContentBlockParam } from '@anthropic-ai/sdk'
 
+/**
+ * UUID 字符串（8-4-4-4-12 形式）。
+ * 原先直接引用未导入的全局 `UUID`，导致 5 处 TS2304；
+ * 此处显式声明模板字面量类型，既保留格式约束又保持自洽。
+ */
+export type UUID = `${string}-${string}-${string}-${string}-${string}`
+
 /** 消息基类 */
 export type MessageBase = {
   /** 消息唯一标识 */
@@ -46,8 +53,11 @@ export type UserMessage = MessageBase & {
     content: string | ContentBlockParam[]
     [key: string]: unknown
   }
-  /** 对于 tool_result 消息：包含匹配 tool_use 的 assistant 消息的 UUID */
-  sourceToolAssistantUUID?: UUID
+  /**
+   * 对于 tool_result 消息：包含匹配 tool_use 的 assistant 消息的 UUID。
+   * 用 string 以与 MessageBase.uuid 保持一致（后者为 string）。
+   */
+  sourceToolAssistantUUID?: string
 }
 
 /** 助手消息内容块类型 */
