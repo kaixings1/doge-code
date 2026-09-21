@@ -82,7 +82,7 @@ So that [benefit].
 If any of these are unclear, **STOP and ask the user** before proceeding:
 
 - The core deliverable is vague
-- Success criteria are undefined
+- 成功标准未定义
 - There are multiple valid interpretations
 - Technical approach has major unknowns
 
