@@ -1073,7 +1073,9 @@ export const AgentTool = buildTool({
               result
             } = raceResult;
             if (result.done) break;
-            const message = result.value;
+            // IteratorResult 的 done=false 分支不会窄化 value（其为 Message | void），
+            // 此处显式收窄
+            const message = result.value as MessageType;
             agentMessages.push(message);
 
             // Emit task_progress for the VS Code subagent panel
@@ -1093,10 +1095,12 @@ export const AgentTool = buildTool({
 
             // Forward bash_progress events from sub-agent to parent so the SDK
             // receives tool_progress events just as it does for the main agent.
-            if (message.type === 'progress' && (message.data.type === 'bash_progress' || message.data.type === 'powershell_progress') && onProgress) {
+            // ProgressMessage.data 的泛型默认为 unknown，先收窄再访问
+            const progressData = message.data as { type?: string }
+            if (message.type === 'progress' && (progressData.type === 'bash_progress' || progressData.type === 'powershell_progress') && onProgress) {
               onProgress({
-                toolUseID: message.toolUseID,
-                data: message.data
+                toolUseID: message.toolUseID as string,
+                data: message.data as Progress
               });
             }
             if (message.type !== 'assistant' && message.type !== 'user') {
