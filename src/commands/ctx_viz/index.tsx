@@ -15,13 +15,21 @@ export interface ContextStats {
 }
 // 默认数据提供者（当真实数据未注入时，返回占位值，不进行任何估算/随机）
 function defaultStatsProvider(): ContextStats {
-  const g = (global as { [key: string]: unknown }).__CLAUDE_CONTEXT__ || {}
+  // 全局注入点无静态类型，统一按 unknown 读取后逐一收窄
+  const g = ((global as { [key: string]: unknown }).__CLAUDE_CONTEXT__ ?? {}) as Record<string, unknown>
+  const messageCount = typeof g.messageCount === 'number'
+    ? g.messageCount
+    : (Array.isArray(g.messages) ? g.messages.length : 0)
+  const toolCalls = typeof g.toolCalls === 'number'
+    ? g.toolCalls
+    : (typeof g.toolCallCount === 'number' ? g.toolCallCount : 0)
+  const sessionStart = typeof g.sessionStart === 'number' ? g.sessionStart : Number.NaN
   return {
     tokensUsed: typeof g.tokensUsed === 'number' ? g.tokensUsed : 0,
     maxTokens: typeof g.maxTokens === 'number' ? g.maxTokens : (parseInt(process.env.CLAUDE_CODE_MAX_TOKENS || '0', 10) || 0),
-    messageCount: typeof g.messageCount === 'number' ? g.messageCount : (g.messages?.length ?? 0),
-    toolCalls: typeof g.toolCalls === 'number' ? g.toolCalls : (g.toolCallCount ?? 0),
-    sessionStart: typeof g.sessionStart === 'number' ? g.sessionStart : undefined,
+    messageCount,
+    toolCalls,
+    ...(Number.isNaN(sessionStart) ? {} : { sessionStart }),
   }
 }
 // 可替换的外部统计提供者（用于接入真实数据）
@@ -66,7 +74,14 @@ function getRealContextInfo() {
 // ============================================================================
 export const call: LocalJSXCommandCall = async (_onDone, _context, args) => {
   if ((args || '').trim() === 'help' || (args || '').trim() === '--help' || (args || '').trim() === '-h') {
-    return { type: 'text' as const, value: `ctx_viz — 显示上下文使用情况（Token、消息数、工具调用、会话时长）\n用法: /ctx_viz`.trim() }
+    // JSX 命令必须返回 ReactNode，不能返回 text 结果对象
+    return (
+      <Box flexDirection="column" padding={1}>
+        <Text bold>📊 上下文可视化</Text>
+        <Text>用法: /ctx_viz</Text>
+        <Text dimColor>显示上下文使用情况（Token、消息数、工具调用、会话时长）</Text>
+      </Box>
+    )
   }
   const [refreshKey, setRefreshKey] = React.useState(0)
   // 自动刷新（每 5 秒）
@@ -142,7 +157,7 @@ export const call: LocalJSXCommandCall = async (_onDone, _context, args) => {
         <Text>会话时长: {formatSessionDuration()}</Text>
       </Box>
       {/* 状态及建议 */}
-        <Box marginTop={1}>
+      <Box marginTop={1}>
         <Text color={statusColor}>状态: {statusText}</Text>
       </Box>
       {ctx.usagePercent > 80 && (
