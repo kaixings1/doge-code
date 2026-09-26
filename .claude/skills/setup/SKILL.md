@@ -1,31 +1,31 @@
 ---
 name: setup
-description: Use first for install/update routing — sends setup, doctor, or MCP requests to the correct OMC setup flow
+description: 首次安装/更新路由 — 将 setup、doctor 或 MCP 请求发送到正确的 OMC 设置流程。
 level: 2
 ---
 
-# Setup
+# 安装设置
 
-Use `/oh-my-claudecode:setup` as the unified setup/configuration entrypoint.
+使用 `/oh-my-claudecode:setup` 作为统一的安装/配置入口。
 
-## Usage
+## 用法
 
 ```bash
-/oh-my-claudecode:setup                # full setup wizard
-/oh-my-claudecode:setup doctor         # installation diagnostics
-/oh-my-claudecode:setup mcp            # MCP server configuration
-/oh-my-claudecode:setup wizard --local # explicit wizard path
+/oh-my-claudecode:setup                # 完整安装向导
+/oh-my-claudecode:setup doctor         # 安装诊断
+/oh-my-claudecode:setup mcp            # MCP 服务器配置
+/oh-my-claudecode:setup wizard --local # 显式指定向导路径
 ```
 
-## Routing
+## 路由
 
-Process the request by the **first argument only** so install/setup questions land on the right flow immediately:
+仅依据**第一个参数**处理请求，让安装/设置类问题立即落到正确的流程：
 
-- No argument, `wizard`, `local`, `global`, or `--force` -> route to `/oh-my-claudecode:omc-setup` with the same remaining args
-- `doctor` -> route to `/oh-my-claudecode:omc-doctor` with everything after the `doctor` token
-- `mcp` -> route to `/oh-my-claudecode:mcp-setup` with everything after the `mcp` token
+- 无参数、`wizard`、`local`、`global` 或 `--force` -> 路由到 `/oh-my-claudecode:omc-setup`，并原样传递剩余参数
+- `doctor` -> 路由到 `/oh-my-claudecode:omc-doctor`，并传递 `doctor` 标记之后的所有内容
+- `mcp` -> 路由到 `/oh-my-claudecode:mcp-setup`，并传递 `mcp` 标记之后的所有内容
 
-Examples:
+示例：
 
 ```bash
 /oh-my-claudecode:setup --local          # => /oh-my-claudecode:omc-setup --local
@@ -33,9 +33,9 @@ Examples:
 /oh-my-claudecode:setup mcp github       # => /oh-my-claudecode:mcp-setup github
 ```
 
-## Notes
+## 说明
 
-- `/oh-my-claudecode:omc-setup`, `/oh-my-claudecode:omc-doctor`, and `/oh-my-claudecode:mcp-setup` remain valid compatibility entrypoints.
-- Prefer `/oh-my-claudecode:setup` in new documentation and user guidance.
+- `/oh-my-claudecode:omc-setup`、`/oh-my-claudecode:omc-doctor` 和 `/oh-my-claudecode:mcp-setup` 仍是有效的兼容入口。
+- 在新的文档和用户指引中，优先使用 `/oh-my-claudecode:setup`。
 
-Task: {{ARGUMENTS}}
+任务：{{ARGUMENTS}}

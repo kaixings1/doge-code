@@ -6,16 +6,16 @@ origin: ECC
 
 # JPA/Hibernate 模式
 
-用于 Spring Boot 中的数据建模、仓库层（Repositories）实现和性能调优。
+用于 Spring Boot 中的数据建模、仓库层实现和性能调优。
 
 ## 何时激活
 
-- 设计 JPA 实体（Entities）和表映射
+- 设计 JPA 实体和表映射
 - 定义关联关系（@OneToMany、@ManyToOne、@ManyToMany）
 - 优化查询（防止 N+1 问题、抓取策略、投影）
-- 配置事务、审计（Auditing）或逻辑删除
+- 配置事务、审计或逻辑删除
 - 设置分页、排序或自定义 Repository 方法
-- 调优连接池（HikariCP）或二级缓存（Second-level Caching）
+- 调优连接池（HikariCP）或二级缓存
 
 ## 实体设计
 
@@ -43,7 +43,7 @@ public class MarketEntity {
 }
 ```
 
-启用审计（Auditing）：
+启用审计：
 ```java
 @Configuration
 @EnableJpaAuditing
@@ -57,8 +57,8 @@ class JpaConfig {}
 private List<PositionEntity> positions = new ArrayList<>();
 ```
 
-- 默认使用延迟加载（Lazy Loading）；必要时在查询中使用 `JOIN FETCH`
-- 避免在集合上使用 `EAGER`；在读取路径中使用 DTO 投影（Projections）
+- 默认使用延迟加载；必要时在查询中使用 `JOIN FETCH`
+- 避免在集合上使用 `EAGER`；在读取路径中使用 DTO 投影
 
 ```java
 @Query("select m from MarketEntity m left join fetch m.positions where m.id = :id")
@@ -76,7 +76,7 @@ public interface MarketRepository extends JpaRepository<MarketEntity, Long> {
 }
 ```
 
-- 对轻量级查询使用投影（Projections）：
+- 对轻量级查询使用投影：
 ```java
 public interface MarketSummary {
   Long getId();
@@ -90,7 +90,7 @@ Page<MarketSummary> findAllBy(Pageable pageable);
 
 - 在 Service 方法上添加 `@Transactional` 注解
 - 在读取路径上使用 `@Transactional(readOnly = true)` 以进行优化
-- 谨慎选择传播行为（Propagation）；避免长事务
+- 谨慎选择传播行为；避免长事务
 
 ```java
 @Transactional
@@ -109,7 +109,7 @@ PageRequest page = PageRequest.of(pageNumber, pageSize, Sort.by("createdAt").des
 Page<MarketEntity> markets = repo.findByStatus(MarketStatus.ACTIVE, page);
 ```
 
-对于类游标分页（Cursor-like pagination），在 JPQL 中包含 `id > :lastId` 并配合排序。
+对于类游标分页，在 JPQL 中包含 `id > :lastId` 并配合排序。
 
 ## 索引与性能
 
@@ -135,12 +135,12 @@ spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
 
 ## 缓存
 
-- 一级缓存（1st-level cache）是基于 EntityManager 的；避免跨事务保留实体
-- 对于读多写少的实体，谨慎考虑二级缓存（Second-level cache）；验证逐出策略（Eviction Strategy）
+- 一级缓存是基于 EntityManager 的；避免跨事务保留实体
+- 对于读多写少的实体，谨慎考虑二级缓存；验证逐出策略
 
-## 数据库迁移 (Migrations)
+## 数据库迁移
 
-- 使用 Flyway 或 Liquibase；生产环境绝不依赖 Hibernate 的自动 DDL（auto DDL）
+- 使用 Flyway 或 Liquibase；生产环境绝不依赖 Hibernate 的自动 DDL
 - 保持迁移脚本的幂等性和增量性；避免在没有计划的情况下删除列
 
 ## 测试数据访问

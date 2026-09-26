@@ -4,7 +4,7 @@ description: 用于本地开发、容器安全、网络、卷策略和多服务�
 origin: ECC
 ---
 
-# Docker 模式 (Docker Patterns)
+# Docker 模式
 
 容器化开发的 Docker 和 Docker Compose 最佳实践。
 
@@ -12,9 +12,9 @@ origin: ECC
 
 - 为本地开发设置 Docker Compose
 - 设计多容器架构
-- 排查容器网络或卷（Volume）问题
+- 排查容器网络或卷问题
 - 审查 Dockerfile 的安全性与镜像大小
-- 从本地开发迁移到容器化工作流（Workflow）
+- 从本地开发迁移到容器化工作流
 
 ## 用于本地开发的 Docker Compose
 
@@ -81,13 +81,13 @@ volumes:
 ### 开发与生产环境的 Dockerfile
 
 ```dockerfile
-# 阶段：依赖安装 (dependencies)
+# 阶段：依赖安装
 FROM node:22-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 
-# 阶段：开发环境 (dev - 支持热重载、调试工具)
+# 阶段：开发环境（支持热重载、调试工具）
 FROM node:22-alpine AS dev
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
@@ -95,14 +95,14 @@ COPY . .
 EXPOSE 3000
 CMD ["npm", "run", "dev"]
 
-# 阶段：构建 (build)
+# 阶段：构建
 FROM node:22-alpine AS build
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build && npm prune --production
 
-# 阶段：生产环境 (production - 最小化镜像)
+# 阶段：生产环境（最小化镜像）
 FROM node:22-alpine AS production
 WORKDIR /app
 RUN addgroup -g 1001 -S appgroup && adduser -S appuser -u 1001
@@ -116,7 +116,7 @@ HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://localhost:3000/heal
 CMD ["node", "dist/server.js"]
 ```
 
-### 覆盖文件（Override Files）
+### 覆盖文件
 
 ```yaml
 # docker-compose.override.yml (自动加载，仅限开发环境设置)
@@ -142,16 +142,16 @@ services:
 ```
 
 ```bash
-# 开发环境 (自动加载 override)
+# 开发环境（自动加载 override）
 docker compose up
 
 # 生产环境
 docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 ```
 
-## 网络（Networking）
+## 网络
 
-### 服务发现（Service Discovery）
+### 服务发现
 
 在同一个 Compose 网络中的服务可以通过服务名解析：
 ```
@@ -160,7 +160,7 @@ postgres://postgres:postgres@db:5432/app_dev    # "db" 解析为 db 容器
 redis://redis:6379/0                             # "redis" 解析为 redis 容器
 ```
 
-### 自定义网络（Custom Networks）
+### 自定义网络
 
 ```yaml
 services:
@@ -192,17 +192,17 @@ services:
     # 在生产环境中完全省略 ports -- 仅在 Docker 网络内部可访问
 ```
 
-## 卷策略（Volume Strategies）
+## 卷策略
 
 ```yaml
 volumes:
-  # 命名卷 (Named volume): 在容器重启间持久化，由 Docker 管理
+  # 命名卷：在容器重启间持久化，由 Docker 管理
   pgdata:
 
-  # 绑定挂载 (Bind mount): 将宿主机目录映射到容器（用于开发）
+  # 绑定挂载：将宿主机目录映射到容器（用于开发）
   # - ./src:/app/src
 
-  # 匿名卷 (Anonymous volume): 防止绑定挂载覆盖容器生成的特定内容
+  # 匿名卷：防止绑定挂载覆盖容器生成的特定内容
   # - /app/node_modules
 ```
 
@@ -222,7 +222,7 @@ services:
       - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql  # 初始化脚本
 ```
 
-## 容器安全（Container Security）
+## 容器安全
 
 ### Dockerfile 硬化
 
@@ -234,7 +234,7 @@ FROM node:22.12-alpine3.20
 RUN addgroup -g 1001 -S app && adduser -S app -u 1001
 USER app
 
-# 3. 移除能力 (Capabilites，在 compose 中配置)
+# 3. 移除能力（Capabilites，在 compose 中配置）
 # 4. 尽可能使用只读根文件系统
 # 5. 不在镜像层中存储密钥
 ```
@@ -256,7 +256,7 @@ services:
       - NET_BIND_SERVICE          # 仅当需要绑定 < 1024 端口时
 ```
 
-### 密钥管理（Secret Management）
+### 密钥管理
 
 ```yaml
 # 推荐：使用环境变量（在运行时注入）
@@ -267,7 +267,7 @@ services:
     environment:
       - API_KEY                  # 从宿主机环境继承
 
-# 推荐：Docker Secrets (Swarm 模式)
+# 推荐：Docker Secrets（Swarm 模式）
 secrets:
   db_password:
     file: ./secrets/db_password.txt
@@ -299,7 +299,7 @@ README.md
 tests/
 ```
 
-## 调试（Debugging）
+## 调试
 
 ### 常用命令
 
@@ -341,7 +341,7 @@ docker network ls
 docker network inspect <project>_default
 ```
 
-## 反模式（Anti-Patterns）
+## 反模式
 
 ```
 # 不良实践：在没有编排工具的情况下在生产环境使用 docker compose

@@ -5,29 +5,29 @@ origin: ECC
 tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 
-# 评测工具链（Eval Harness）技能（Skill）
+# 评测工具链技能
 
-一个用于 Claude Code 会话的正式评测框架，实现了评测驱动开发（Eval-Driven Development, EDD）原则。
+一个用于 Claude Code 会话的正式评测框架，实现了评测驱动开发（EDD）原则。
 
 ## 何时激活
 
 - 为 AI 辅助工作流设置评测驱动开发（EDD）
 - 为 Claude Code 任务完成定义通过/失败的标准
-- 使用 pass@k 指标衡量智能体（Agent）的可靠性
-- 为提示词（Prompt）或智能体（Agent）的变更创建回归测试套件
-- 跨模型版本对智能体（Agent）性能进行基准测试
+- 使用 pass@k 指标衡量智能体的可靠性
+- 为提示词或智能体的变更创建回归测试套件
+- 跨模型版本对智能体性能进行基准测试
 
 ## 核心理念
 
-评测驱动开发（Eval-Driven Development）将评测视为“AI 开发的单元测试”：
+评测驱动开发（EDD）将评测视为“AI 开发的单元测试”：
 - 在实现之**前**定义预期行为
 - 在开发过程中持续运行评测
-- 追踪每次变更带来的回归（Regression）
+- 追踪每次变更带来的回归
 - 使用 pass@k 指标进行可靠性衡量
 
 ## 评测类型
 
-### 能力评测（Capability Evals）
+### 能力评测
 测试 Claude 是否能够完成之前无法完成的任务：
 ```markdown
 [CAPABILITY EVAL: feature-name]
@@ -39,21 +39,21 @@ tools: Read, Write, Edit, Bash, Grep, Glob
 预期输出：对预期结果的描述
 ```
 
-### 回归评测（Regression Evals）
+### 回归评测
 确保变更不会破坏现有功能：
 ```markdown
 [REGRESSION EVAL: feature-name]
-基线（Baseline）：SHA 或检查点（checkpoint）名称
+基线：SHA 或检查点名称
 测试项：
-  - existing-test-1: 通过/失败（PASS/FAIL）
-  - existing-test-2: 通过/失败（PASS/FAIL）
-  - existing-test-3: 通过/失败（PASS/FAIL）
+  - existing-test-1: 通过/失败
+  - existing-test-2: 通过/失败
+  - existing-test-3: 通过/失败
 结果：X/Y 通过（之前为 Y/Y）
 ```
 
-## 评分器（Grader）类型
+## 评分器类型
 
-### 1. 基于代码的评分器（Code-Based Grader）
+### 1. 基于代码的评分器
 使用代码进行确定性检查：
 ```bash
 # 检查文件是否包含预期模式
@@ -66,7 +66,7 @@ npm test -- --testPathPattern="auth" && echo "PASS" || echo "FAIL"
 npm run build && echo "PASS" || echo "FAIL"
 ```
 
-### 2. 基于模型的评分器（Model-Based Grader）
+### 2. 基于模型的评分器
 使用 Claude 评测开放式输出：
 ```markdown
 [MODEL GRADER PROMPT]
@@ -80,13 +80,13 @@ npm run build && echo "PASS" || echo "FAIL"
 推理：[解释说明]
 ```
 
-### 3. 人工评分器（Human Grader）
+### 3. 人工评分器
 标记以进行人工审查：
 ```markdown
 [HUMAN REVIEW REQUIRED]
 变更内容：描述发生了什么变化
 原因：为什么需要人工审查
-风险等级：低/中/高（LOW/MEDIUM/HIGH）
+风险等级：低/中/高
 ```
 
 ## 指标
@@ -159,24 +159,24 @@ npm test -- --testPathPattern="existing"
   pass@1: 67% (2/3)
   pass@3: 100% (3/3)
 
-状态：准备好进行评审 (READY FOR REVIEW)
+状态：准备好进行评审
 ```
 
 ## 集成模式
 
-### 实现前（Pre-Implementation）
+### 实现前
 ```
 /eval define feature-name
 ```
 在 `.claude/evals/feature-name.md` 创建评测定义文件
 
-### 实现过程中（During Implementation）
+### 实现过程中
 ```
 /eval check feature-name
 ```
 运行当前评测并报告状态
 
-### 实现后（Post-Implementation）
+### 实现后
 ```
 /eval report feature-name
 ```
@@ -195,7 +195,7 @@ npm test -- --testPathPattern="existing"
 
 ## 最佳实践
 
-1. **在编码前（BEFORE）定义评测** - 强制对成功标准进行清晰思考
+1. **在编码前定义评测** - 强制对成功标准进行清晰思考
 2. **频繁运行评测** - 尽早发现回归
 3. **随时间跟踪 pass@k** - 监控可靠性趋势
 4. **尽可能使用代码评分器** - 确定性优于概率性
@@ -203,10 +203,10 @@ npm test -- --testPathPattern="existing"
 6. **保持评测快速** - 慢速评测往往不会被运行
 7. **将评测与代码一同进行版本控制** - 评测是一等公民资产
 
-## 示例：添加身份验证（Authentication）
+## 示例：添加身份验证
 
 ```markdown
-## EVAL: add-authentication
+## 评测：add-authentication
 
 ### 第 1 阶段：定义 (10 分钟)
 能力评测：
@@ -232,5 +232,5 @@ npm test -- --testPathPattern="existing"
 ==============================
 能力：5/5 通过 (pass@3: 100%)
 回归：3/3 通过 (pass^3: 100%)
-状态：准予发布 (SHIP IT)
+状态：准予发布
 ```

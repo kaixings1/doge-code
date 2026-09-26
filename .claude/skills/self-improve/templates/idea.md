@@ -1,5 +1,5 @@
-# Experiment Ideas
+# 实验想法
 
-<!-- Add your experiment ideas here. These will be given highest priority by the planners. -->
-<!-- Format: one idea per section with a title and description. -->
-<!-- Ideas are consumed once per iteration and cleared after planners read them. -->
+<!-- 在此添加实验想法。这些想法将获得规划者的最高优先级。 -->
+<!-- 格式：每个想法一个区块，包含标题和描述。 -->
+<!-- 想法每轮迭代消费一次，规划者读取后清空。 -->

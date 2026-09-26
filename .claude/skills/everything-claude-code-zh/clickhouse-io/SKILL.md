@@ -4,11 +4,11 @@ description: ClickHouse 数据库模式、查询优化、分析以及高性能�
 origin: ECC
 ---
 
-# ClickHouse 分析模式 (ClickHouse Analytics Patterns)
+# ClickHouse 分析模式
 
 针对高性能分析和数据工程的 ClickHouse 特定模式。
 
-## 何时激活 (When to Activate)
+## 何时激活
 
 - 设计 ClickHouse 表结构（MergeTree 引擎选择）
 - 编写分析查询（聚合、窗口函数、连接）
@@ -17,7 +17,7 @@ origin: ECC
 - 将分析业务从 PostgreSQL/MySQL 迁移到 ClickHouse
 - 实现实时仪表盘或时间序列分析
 
-## 概述 (Overview)
+## 概述
 
 ClickHouse 是一款用于联机分析处理（OLAP）的列式数据库管理系统（DBMS）。它针对大型数据集的高速分析查询进行了优化。
 
@@ -28,7 +28,7 @@ ClickHouse 是一款用于联机分析处理（OLAP）的列式数据库管理�
 - 分布式查询
 - 实时分析
 
-## 表设计模式 (Table Design Patterns)
+## 表设计模式
 
 ### MergeTree 引擎（最常用）
 
@@ -91,7 +91,7 @@ GROUP BY hour, market_id
 ORDER BY hour DESC;
 ```
 
-## 查询优化模式 (Query Optimization Patterns)
+## 查询优化模式
 
 ### 高效过滤
 
@@ -113,7 +113,7 @@ WHERE volume > 1000
   AND date >= '2025-01-01';
 ```
 
-### 聚合 (Aggregations)
+### 聚合
 
 ```sql
 -- ✅ 推荐：使用 ClickHouse 特有的聚合函数
@@ -138,7 +138,7 @@ FROM trades
 WHERE created_at >= now() - INTERVAL 1 HOUR;
 ```
 
-### 窗口函数 (Window Functions)
+### 窗口函数
 
 ```sql
 -- 计算累计总量
@@ -156,7 +156,7 @@ WHERE date >= today() - INTERVAL 30 DAY
 ORDER BY market_id, date;
 ```
 
-## 数据插入模式 (Data Insertion Patterns)
+## 数据插入模式
 
 ### 批量插入（推荐）
 
@@ -197,7 +197,7 @@ async function insertTrade(trade: Trade) {
 }
 ```
 
-### 流式插入 (Streaming Insert)
+### 流式插入
 
 ```typescript
 // 用于持续的数据摄取
@@ -215,7 +215,7 @@ async function streamInserts() {
 }
 ```
 
-## 物化视图 (Materialized Views)
+## 物化视图
 
 ### 实时聚合
 
@@ -244,7 +244,7 @@ WHERE hour >= now() - INTERVAL 24 HOUR
 GROUP BY hour, market_id;
 ```
 
-## 性能监控 (Performance Monitoring)
+## 性能监控
 
 ### 查询性能
 
@@ -282,7 +282,7 @@ GROUP BY database, table
 ORDER BY sum(bytes) DESC;
 ```
 
-## 常用分析查询 (Common Analytics Queries)
+## 常用分析查询
 
 ### 时间序列分析
 
@@ -316,7 +316,7 @@ GROUP BY signup_date
 ORDER BY signup_date DESC;
 ```
 
-### 漏斗分析 (Funnel Analysis)
+### 漏斗分析
 
 ```sql
 -- 转化漏斗
@@ -337,7 +337,7 @@ FROM (
 GROUP BY session_id;
 ```
 
-### 同期群分析 (Cohort Analysis)
+### 同期群分析
 
 ```sql
 -- 按注册月份划分的用户同期群
@@ -357,7 +357,7 @@ GROUP BY cohort, month, months_since_signup
 ORDER BY cohort, months_since_signup;
 ```
 
-## 数据管道模式 (Data Pipeline Patterns)
+## 数据管道模式
 
 ### ETL 模式
 
@@ -407,33 +407,33 @@ pgClient.on('notification', async (msg) => {
 })
 ```
 
-## 最佳实践 (Best Practices)
+## 最佳实践
 
-### 1. 分区策略 (Partitioning Strategy)
+### 1. 分区策略
 - 按时间分区（通常为月或日）
 - 避免过多分区（会影响性能）
 - 使用 DATE 类型作为分区键
 
-### 2. 排序键 (Ordering Key)
+### 2. 排序键
 - 将最常过滤的列放在前面
 - 考虑基数（高基数列在前）
 - 排序方式会影响压缩效果
 
-### 3. 数据类型 (Data Types)
+### 3. 数据类型
 - 使用最小且合适的类型（UInt32 vs UInt64）
 - 对重复出现的字符串使用 LowCardinality
 - 对分类数据使用 Enum
 
-### 4. 避免 (Avoid)
+### 4. 避免
 - 使用 SELECT *（应指定具体列）
 - 使用 FINAL（应在查询前合并数据）
 - 过多的 JOIN（分析场景应进行反规范化）
 - 频繁的小批量插入（应改用批量插入）
 
-### 5. 监控 (Monitoring)
+### 5. 监控
 - 跟踪查询性能
 - 监控磁盘使用情况
-- 检查合并操作 (merge operations)
+- 检查合并操作
 - 查看慢查询日志
 
 **记住**：ClickHouse 在分析型负载方面表现卓越。请根据你的查询模式设计表结构，采用批量插入，并利用物化视图进行实时聚合。

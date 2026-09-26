@@ -4,9 +4,9 @@ description: LLM API 使用成本优化模式——基于任务复杂度的模�
 origin: ECC
 ---
 
-# 成本感知型 LLM 流水线 (Cost-Aware LLM Pipeline)
+# 成本感知型 LLM 流水线
 
-在保持质量的同时控制 LLM API 成本的模式。将模型路由 (Model Routing)、预算跟踪 (Budget Tracking)、重试逻辑 (Retry Logic) 和提示词缓存 (Prompt Caching) 组合成一个可复用的流水线。
+在保持质量的同时控制 LLM API 成本的模式。将模型路由、预算跟踪、重试逻辑和提示词缓存组合成一个可复用的流水线。
 
 ## 何时启用
 
@@ -17,7 +17,7 @@ origin: ECC
 
 ## 核心概念
 
-### 1. 基于任务复杂度的模型路由 (Model Routing)
+### 1. 基于任务复杂度的模型路由
 
 为简单任务自动选择更便宜的模型，将昂贵的模型留给复杂任务。
 
@@ -41,9 +41,9 @@ def select_model(
     return MODEL_HAIKU  # 简单任务 (便宜 3-4 倍)
 ```
 
-### 2. 不可变成本跟踪 (Immutable Cost Tracking)
+### 2. 不可变成本跟踪
 
-使用冻结的数据类 (Frozen Dataclasses) 跟踪累计支出。每次 API 调用都会返回一个新的跟踪器——绝不修改原始状态。
+使用冻结的数据类跟踪累计支出。每次 API 调用都会返回一个新的跟踪器——绝不修改原始状态。
 
 ```python
 from dataclasses import dataclass
@@ -76,9 +76,9 @@ class CostTracker:
         return self.total_cost > self.budget_limit
 ```
 
-### 3. 精细化重试逻辑 (Narrow Retry Logic)
+### 3. 精细化重试逻辑
 
-仅在瞬时错误 (Transient Errors) 时重试。对身份验证或错误请求执行快速失败 (Fail Fast)。
+仅在瞬时错误时重试。对身份验证或错误请求执行快速失败。
 
 ```python
 from anthropic import (
@@ -98,13 +98,13 @@ def call_with_retry(func, *, max_retries: int = _MAX_RETRIES):
         except _RETRYABLE_ERRORS:
             if attempt == max_retries - 1:
                 raise
-            time.sleep(2 ** attempt)  # 指数退避 (Exponential backoff)
+            time.sleep(2 ** attempt)  # 指数退避
     # AuthenticationError, BadRequestError 等 -> 立即抛出异常
 ```
 
-### 4. 提示词缓存 (Prompt Caching)
+### 4. 提示词缓存
 
-缓存较长的系统提示词 (System Prompts)，避免在每次请求时重复发送。
+缓存较长的系统提示词，避免在每次请求时重复发送。
 
 ```python
 messages = [
@@ -167,7 +167,7 @@ def process(text: str, config: Config, tracker: CostTracker) -> tuple[Result, Co
 - **为超过 1024 tokens 的系统提示词使用提示词缓存**——既能节省成本又能降低延迟。
 - **绝不在身份验证或校验错误时重试**——仅重试瞬时故障（网络、频率限制、服务器错误）。
 
-## 应避免的反模式 (Anti-Patterns)
+## 应避免的反模式
 
 - 不分复杂度，对所有请求都使用最昂贵的模型。
 - 对所有错误进行重试（在永久性失败上浪费预算）。
@@ -180,4 +180,4 @@ def process(text: str, config: Config, tracker: CostTracker) -> tuple[Result, Co
 - 任何调用 Claude、OpenAI 或类似 LLM API 的应用。
 - 成本累积迅速的批量处理流水线。
 - 需要智能路由的多模型架构。
-- 需要预算安全护栏 (Guardrails) 的生产系统。
+- 需要预算安全护栏的生产系统。

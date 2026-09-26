@@ -1,22 +1,22 @@
-# Improvement Goal
+# 改进目标
 
-## Objective
-<!-- Define what exactly should improve -->
+## 目标
+<!-- 定义需要改进的具体内容 -->
 
-## Target Metric
-- **Metric name**:
-- **Target value**:
-- **Direction**: higher_is_better | lower_is_better
+## 目标指标
+- **指标名称**:
+- **目标值**:
+- **方向**: higher_is_better | lower_is_better
 
-## Scope
-- **In scope**:
-- **Out of scope**:
+## 范围
+- **范围内**:
+- **范围外**:
 
-## Milestones (optional)
-| Milestone | Target | Strategy Focus |
+## 里程碑（可选）
+| 里程碑 | 目标 | 策略重点 |
 |-----------|--------|----------------|
-| M1 | | Quick wins, low-hanging fruit |
-| M2 | | Moderate improvements |
+| M1 | | 快速获胜、低垂果实 |
+| M2 | | 适度改进 |
 
-## Experiment Ideas (optional)
-<!-- Add specific ideas for the improvement loop to try -->
+## 实验想法（可选）
+<!-- 为改进循环添加具体想法 -->

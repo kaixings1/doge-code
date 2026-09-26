@@ -1,84 +1,84 @@
 ---
 name: external-context
-description: Invoke parallel document-specialist agents for external web searches and documentation lookup
+description: 调用并行 document-specialist 代理进行外部网页搜索和文档查找。
 argument-hint: <search query or topic>
 level: 4
 ---
 
-# External Context Skill
+# 外部上下文技能
 
-Fetch external documentation, references, and context for a query. Decomposes into 2-5 facets and spawns parallel document-specialist Claude agents.
+为某个查询抓取外部文档、参考资料与上下文。它会将查询分解为 2-5 个切面，并并行启动多个 document-specialist Claude 代理。
 
-## Usage
+## 用法
 
 ```
 /oh-my-claudecode:external-context <topic or question>
 ```
 
-### Examples
+### 示例
 
 ```
-/oh-my-claudecode:external-context What are the best practices for JWT token rotation in Node.js?
-/oh-my-claudecode:external-context Compare Prisma vs Drizzle ORM for PostgreSQL
-/oh-my-claudecode:external-context Latest React Server Components patterns and conventions
+/oh-my-claudecode:external-context Node.js 中 JWT 令牌轮换的最佳实践是什么？
+/oh-my-claudecode:external-context 对比 Prisma 与 Drizzle ORM 在 PostgreSQL 上的差异
+/oh-my-claudecode:external-context 最新的 React Server Components 模式与约定
 ```
 
-## Protocol
+## 协议
 
-### Step 1: Facet Decomposition
+### 步骤 1：切面分解
 
-Given a query, decompose into 2-5 independent search facets:
+给定一个查询，将其分解为 2-5 个独立的搜索切面：
 
 ```markdown
-## Search Decomposition
+## 搜索分解
 
-**Query:** <original query>
+**查询：** <original query>
 
-### Facet 1: <facet-name>
-- **Search focus:** What to search for
-- **Sources:** Official docs, GitHub, blogs, etc.
+### 切面 1：<facet-name>
+- **搜索重点：** 要搜索的内容
+- **来源：** 官方文档、GitHub、博客等。
 
-### Facet 2: <facet-name>
+### 切面 2：<facet-name>
 ...
 ```
 
-### Step 2: Parallel Agent Invocation
+### 步骤 2：并行调用代理
 
-Fire independent facets in parallel via Task tool:
+通过 Task 工具并行触发各个独立切面：
 
 ```
-Task(subagent_type="oh-my-claudecode:document-specialist", model="sonnet", prompt="Search for: <facet 1 description>. Use WebSearch and WebFetch to find official documentation and examples. Cite all sources with URLs.")
+Task(subagent_type="oh-my-claudecode:document-specialist", model="sonnet", prompt="搜索：<facet 1 description>。使用 WebSearch 和 WebFetch 查找官方文档与示例。引用所有来源并附上 URL。")
 
-Task(subagent_type="oh-my-claudecode:document-specialist", model="sonnet", prompt="Search for: <facet 2 description>. Use WebSearch and WebFetch to find official documentation and examples. Cite all sources with URLs.")
+Task(subagent_type="oh-my-claudecode:document-specialist", model="sonnet", prompt="搜索：<facet 2 description>。使用 WebSearch 和 WebFetch 查找官方文档与示例。引用所有来源并附上 URL。")
 ```
 
-Maximum 5 parallel document-specialist agents.
+最多 5 个并行的 document-specialist 代理。
 
-### Step 3: Synthesis Output Format
+### 步骤 3：综合结果输出格式
 
-Present synthesized results in this format:
+按以下格式呈现综合后的结果：
 
 ```markdown
-## External Context: <query>
+## 外部上下文：<query>
 
-### Key Findings
-1. **<finding>** - Source: [title](url)
-2. **<finding>** - Source: [title](url)
+### 关键发现
+1. **<finding>** - 来源：[标题](url)
+2. **<finding>** - 来源：[标题](url)
 
-### Detailed Results
+### 详细结果
 
-#### Facet 1: <name>
+#### 切面 1：<name>
 <aggregated findings with citations>
 
-#### Facet 2: <name>
+#### 切面 2：<name>
 <aggregated findings with citations>
 
-### Sources
-- [Source 1](url)
-- [Source 2](url)
+### 来源
+- [来源 1](url)
+- [来源 2](url)
 ```
 
-## Configuration
+## 配置
 
-- Maximum 5 parallel document-specialist agents
-- No magic keyword trigger - explicit invocation only
+- 最多 5 个并行的 document-specialist 代理
+- 无魔法关键词触发 - 仅支持显式调用

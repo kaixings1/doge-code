@@ -1,83 +1,83 @@
 ---
 name: adk-review
-description: Reviews all local changes in the repository for errors, styling compliance, unintended outcomes, and necessary documentation/test/sample updates. Generates a report and assists in fixing identified issues on-demand. Triggers on "adk-review", "review changes", "pr review", "check code style", "verify changes".
+description: 审查仓库中所有本地变更的错误、样式合规性、非预期结果以及必要的文档/测试/样例更新。生成报告并按需协助修复已识别的问题。
 ---
 
-# ADK Change Reviewer (adk-review)
+# ADK 变更审查器（adk-review）
 
-This skill guides AI assistants in performing a comprehensive, rigorous review of local repository changes before they are committed or submitted. It evaluates code correctness, style guidelines, architectural impact, and checks if associated tests, samples, and documentation need updates. It generates a detailed report and, upon explicit user request, assists in automatically fixing the identified issues.
+此技能指导 AI 助手在提交或上报之前，对本地仓库变更进行全面、严格的审查。它评估代码正确性、风格指南、架构影响，并检查相关测试、样例和文档是否需要更新。它生成详细报告，并在用户明确要求时协助自动修复已识别的问题。
 
 > [!NOTE]
-> Always read this skill and follow its steps when asked to review local changes or before finalizing a PR/commit.
+> 当被要求审查本地变更时，或在最终确定 PR/提交之前，请始终阅读此技能并遵循其步骤。
 
 ---
 
-## Review Checklist Dimensions
+## 审查清单维度
 
-### 1. Code Correctness & Errors
-- **Syntax & Types**: Ensure the code is free of syntax errors and conforms to strong typing guidelines. Avoid using `Any`, and prefer specific/abstract types. Use `X | None` instead of `Optional[X]`.
-- **Imports**: Verify there are no circular imports. Ensure absolute imports are used where appropriate.
-- **Exception Handling**: Avoid bare `except:`. Always catch specific exceptions and log them properly with context.
-- **Visibility**: Ensure internal modules and package-private attributes use proper naming (e.g., prefixed with `_`) per ADK rules.
-- **Edge Cases & Defensive Programming**:
-  - **Type & Attribute Discrimination**: Explicitly verify an object's type (e.g., using `isinstance`) before checking type-specific or custom attributes (e.g., checking if a node is an `LlmAgent` before inspecting its `mode`), avoiding errors on unexpected types.
-  - **Boundary and Null Conditions**: Ensure robust handling for boundary conditions and null values (e.g., `None`, empty collections, zero, or empty strings) using validation or fallback defaults.
-  - **Preconditions & Invariants**: Validate that preconditions and state invariants are checked before performing core logic.
+### 1. 代码正确性与错误
+- **语法与类型**：确保代码无语法错误并符合强类型指南。避免使用 `Any`，优先使用具体/抽象类型。使用 `X | None` 而非 `Optional[X]`。
+- **导入**：验证没有循环导入。确保在适当处使用绝对导入。
+- **异常处理**：避免裸 `except:`。始终捕获特定异常并带上下文正确记录日志。
+- **可见性**：确保内部模块和包私有属性按 ADK 规则使用恰当的命名（例如以 `_` 为前缀）。
+- **边界情况与防御式编程**：
+  - **类型与属性判别**：在检查类型专属或自定义属性之前，显式验证对象类型（例如使用 `isinstance`）（例如在检查 `mode` 之前先确认节点是 `LlmAgent`），避免在意外类型上报错。
+  - **边界与空值条件**：确保用校验或回退默认值健壮处理边界条件和空值（例如 `None`、空集合、零或空字符串）。
+  - **前置条件与不变量**：验证在执行核心逻辑之前已检查前置条件和状态不变量。
 
-### 2. Code Quality & Design
-- **Complexity & Readability**: Identify overly complex functions or classes. Suggest refactoring (e.g., splitting functions, extracting helper classes) to improve readability and maintainability. Ensure code is self-documenting.
-- **Design Patterns**: Check if appropriate design patterns are used. Avoid anti-patterns. Ensure high cohesion and low coupling.
-- **Performance & Efficiency**: Look for performance bottlenecks, such as unnecessary database queries, redundant computations, inefficient loops, or excessive memory allocation.
-- **Security & Privacy**: Verify that inputs are validated, sensitive data is handled securely, and there are no potential security vulnerabilities (like injection, resource exhaustion, or exposure of internal state).
+### 2. 代码质量与设计
+- **复杂度与可读性**：识别过于复杂的函数或类。建议重构（例如拆分函数、提取辅助类）以提升可读性和可维护性。确保代码自文档化。
+- **设计模式**：检查是否使用了恰当的设计模式。避免反模式。确保高内聚低耦合。
+- **性能与效率**：查找性能瓶颈，如不必要的数据库查询、冗余计算、低效循环或过多内存分配。
+- **安全与隐私**：验证输入已校验、敏感数据被安全处理，且不存在潜在安全漏洞（如注入、资源耗尽或内部状态暴露）。
 
-### 3. Style and Convention Compliance
-- **ADK Style Guide**: Cross-reference all code changes with the guidelines in the `adk-style` skill (including Pydantic v2 patterns, lazy logging evaluation, and file structure).
-- **Pre-commit Hooks**: Ensure changed files are formatted and linted. Remind the user to run `pre-commit run --files <files>` if hooks like `isort`, `pyink`, `addlicense`, or `mdformat` are not configured automatically.
+### 3. 风格与约定合规
+- **ADK 风格指南**：把所有代码变更与 `adk-style` 技能中的指南对照（包括 Pydantic v2 模式、惰性日志求值和文件结构）。
+- **Pre-commit 钩子**：确保变更文件已格式化和 lint。如果 `isort`、`pyink`、`addlicense` 或 `mdformat` 等钩子未自动配置，提醒用户运行 `pre-commit run --files <files>`。
 
-### 4. Architectural Integrity & Unintended Outcomes
-- **Public API Stability**: Verify whether changes modify, remove, or restrict public-facing interfaces, classes, methods, argument lists, or CLI structures (e.g., in the public package namespaces under `src/google/adk/`). Breaking changes are unacceptable without a formal deprecation cycle under Semantic Versioning.
-- **Execution & Resumption**: If changing workflows, nodes, or state management, ensure compatibility with the ADK 2.0 event execution lifecycle and session resumption (HITL/checkpoints).
-- **Concurrency & Safety**: Check for race conditions or resource leaks. Ensure long-running or shared resources (like plugins, exporters, and connections) are closed/disposed of safely.
+### 4. 架构完整性与非预期结果
+- **公共 API 稳定性**：验证变更是否修改、移除或限制了面向公众的接口、类、方法、参数列表或 CLI 结构（例如 `src/google/adk/` 下的公共包命名空间）。未经语义化版本控制下的正式弃用周期，破坏性变更不可接受。
+- **执行与恢复**：如果变更涉及工作流、节点或状态管理，确保兼容 ADK 2.0 事件执行生命周期和会话恢复（HITL/检查点）。
+- **并发与安全**：检查竞态条件或资源泄漏。确保长期运行或共享的资源（如插件、导出器和连接）被安全关闭/释放。
 
-### 5. Documentation Impact (`docs/design` and `docs/guides`)
-- **Design & Architecture**: Determine if the change updates a core design contract. If so, check if design docs under `docs/design/` require updates or new documents need to be written.
-- **Guides**: If the changes introduce a new feature or change a public API/workflow pattern, check if the guides under `docs/guides/` need updates.
+### 5. 文档影响（`docs/design` 与 `docs/guides`）
+- **设计与架构**：判断变更是否更新了核心设计契约。如果是，检查 `docs/design/` 下的设计文档是否需要更新，或是否需要撰写新文档。
+- **指南**：如果变更引入了新功能或改变了公共 API/工作流模式，检查 `docs/guides/` 下的指南是否需要更新。
 
-### 6. Sample Compatibility & Updates
-- **Sample Integrity**: Verify if existing samples under `contributing/samples/` are affected by the change.
-- **New Samples**: If the changes introduce a key new capability, assess whether a new sample should be added to demonstrate the feature (following `adk-sample-creator` conventions).
+### 6. 样例兼容性与更新
+- **样例完整性**：验证 `contributing/samples/` 下的既有样例是否受该变更影响。
+- **新样例**：如果变更引入了关键新能力，评估是否应添加新样例来演示该功能（遵循 `adk-sample-creator` 约定）。
 
-### 7. Test Coverage & Quality
-- **Coverage**: Ensure that all modified or new code paths have corresponding unit or integration tests under `tests/`.
-- **ADK Test Rules**: Ensure test implementations adhere to the 9 rules in the `adk-style` testing reference (e.g., using deterministic IDs, event normalization, and clean up utilities).
+### 7. 测试覆盖与质量
+- **覆盖**：确保所有修改或新增的代码路径在 `tests/` 下有对应的单元或集成测试。
+- **ADK 测试规则**：确保测试实现遵循 `adk-style` 测试参考中的 9 条规则（例如使用确定性 ID、事件归一化和清理工具）。
 
 ---
 
-## Execution Workflow
+## 执行工作流
 
-When the `adk-review` skill is triggered, you MUST execute the following steps:
+当 `adk-review` 技能被触发时，你**必须**执行以下步骤：
 
-### Step 1: Retrieve Local Changes
-Run `git status` and `git diff` to identify exactly which files have been modified, added, or deleted.
+### 步骤 1：获取本地变更
+运行 `git status` 和 `git diff`，精确识别哪些文件被修改、新增或删除。
 
-### Step 2: Perform the Multi-Dimensional Review
-Analyze the retrieved diffs file-by-file against the seven dimensions in the Checklist. Identify any errors, deviations, or missing files (such as docs, tests, or samples).
+### 步骤 2：执行多维度审查
+逐文件对照清单中的七个维度分析获取到的 diff。识别任何错误、偏差或缺失的文件（如文档、测试或样例）。
 
-### Step 3: Generate and Present a Review Report
-Generate a clear, beautifully formatted Markdown report categorized by priority:
-- 🔴 **Critical Errors, Bugs, & Security**: Syntax, type safety violations, race conditions, resource leaks, or security vulnerabilities.
-- 🟠 **Code Quality & Design**: High complexity, poor readability, performance bottlenecks, or architectural misalignment.
-- 🟡 **Style & Conventions**: Lints, formatting issues, non-lazy logging, or minor typing mismatches.
-- 🔵 **Documentation, Tests, & Samples**: Missing or stale test coverage, design docs, or user guides.
+### 步骤 3：生成并呈现审查报告
+生成一份清晰、排版精良的 Markdown 报告，按优先级分类：
+- 🔴 **严重错误、Bug 与安全**：语法、类型安全违规、竞态条件、资源泄漏或安全漏洞。
+- 🟠 **代码质量与设计**：高复杂度、可读性差、性能瓶颈或架构错位。
+- 🟡 **风格与约定**：lint、格式问题、非惰性日志或轻微类型不匹配。
+- 🔵 **文档、测试与样例**：缺失或过时的测试覆盖、设计文档或用户指南。
 
-Include the specific filename and line number/context for each finding.
+每条发现都包含具体文件名和行号/上下文。
 
-### Step 4: Present Findings and Stop
-Stop execution here. Do **NOT** call any code editing tools or modify the codebase automatically. Present the generated review report clearly to the user, highlighting key takeaways, and stop.
+### 步骤 4：呈现发现并停止
+在此停止执行。**不要**调用任何代码编辑工具或自动修改代码库。清晰地向用户呈现生成的审查报告，突出关键要点，然后停止。
 
-Do **NOT** ask the user if they want you to fix the issues, and do **NOT** offer interactive fixing options by default. Simply stop and wait for the user to explicitly command or ask you to fix the changes.
+**不要**询问用户是否要你修复问题，也**不要**默认提供交互式修复选项。只需停止并等待用户明确指示或要求你修复这些变更。
 
-### Step 5 (Optional): Implement Authorized Fixes & Verify
-If, and only if, the user explicitly instructs or requests you to apply a fix for some or all of the identified findings:
-1. Perform the necessary edits using precise code editing tools. Ensure all fixes strictly comply with the established `adk-style` and `adk-architecture` rules.
-2. Verify correctness by running associated unit and integration tests (e.g., via `pytest` or pre-commit hooks) before concluding.
+### 步骤 5（可选）：实施已授权的修复并验证
+当且仅当用户明确指示或要求你对部分或全部已识别发现应用修复时：
+1. 使用精确的代码编辑工具执行必要修改。确保所有修复严格符合既定的 `adk-style` 和 `adk-architecture` 规则。
+2. 在结束之前，通过运行相关单元和集成测试（例如通过 `pytest` 或 pre-commit 钩子）验证正确性。

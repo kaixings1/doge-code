@@ -1,85 +1,85 @@
 ---
 name: devops-tools
-description: |
-  Provides tool awareness for DevOps, infrastructure, and cloud engineering tasks.
-  Use when users need to work with Docker, Kubernetes, Terraform, cloud platforms,
-  monitoring systems, or any DevOps-related tooling. This skill maintains a registry
-  of tools organized by category and provides knowledge of commands and use cases.
+description: "为 DevOps、基础设施和云工程任务提供工具感知。在用户需要与 Docker、Kubernetes、Terraform、云平台协作时使用。"
+  为 DevOps、基础设施与云工程任务提供工具感知。
+  当用户需要与 Docker、Kubernetes、Terraform、云平台、
+  监控系统或任何 DevOps 相关工具协作时使用。此技能维护一个
+  按类别组织的工具注册表，并提供命令与用例方面的知识。
 Keywords: devops, docker, kubernetes, terraform, aws, gcp, azure, monitoring, ci-cd, infrastructure, cloud, containers
 ---
 
-# DevOps Tools
+# DevOps 工具
 
-Tool awareness registry for DevOps, infrastructure, and cloud engineering tasks.
+面向 DevOps、基础设施与云工程任务的工具感知注册表。
 
-## Categories
+## 类别
 
-### Container Management
+### 容器管理
 
-| Tool | Commands |
+| 工具 | 命令 |
 |------|----------|
 | **Docker** | `docker run`, `docker build`, `docker ps`, `docker compose` |
 | **Kubernetes** | `kubectl get pods`, `kubectl apply -f`, `kubectl describe` |
 
-### Infrastructure as Code (IaC)
+### 基础设施即代码（IaC）
 
-| Tool | Commands |
+| 工具 | 命令 |
 |------|----------|
 | **Terraform** | `terraform plan`, `terraform apply`, `terraform destroy` |
 | **Helm** | `helm install`, `helm upgrade`, `helm list` |
 | **AWS CLI** | `aws s3 ls`, `aws ec2 describe-instances`, `aws cloudformation list` |
 | **Google Cloud CLI** | `gcloud compute instances list`, `gcloud container clusters list` |
 
-### Web Servers & Proxies
+### Web 服务器与代理
 
-| Tool | Commands |
+| 工具 | 命令 |
 |------|----------|
 | **Nginx** | `nginx -t`, `nginx -s reload`, `nginx -s stop` |
 
-### Databases & Caching
+### 数据库与缓存
 
-| Tool | Commands |
+| 工具 | 命令 |
 |------|----------|
 | **Redis CLI** | `redis-cli ping`, `redis-cli info`, `redis-cli keys` |
 | **PostgreSQL CLI** | `psql -U`, `psql -c 'SELECT ...'`, `psql --version` |
 | **Elasticsearch** | `curl -X GET localhost:9200/_cat/indices`, `curl -X POST localhost:9200/_bulk` |
 
-### Monitoring & Logging
+### 监控与日志
 
-| Tool | Commands |
+| 工具 | 命令 |
 |------|----------|
-| **Prometheus** | Monitor metrics collection |
-| **Grafana** | Data visualization |
-| **Loki** | Log aggregation |
-| **Datadog** | APM monitoring |
+| **Prometheus** | 监控指标采集 |
+| **Grafana** | 数据可视化 |
+| **Loki** | 日志聚合 |
+| **Datadog** | APM 监控 |
 
 ### CI/CD
 
-| Tool | Commands |
+| 工具 | 命令 |
 |------|----------|
-| **Jenkins** | CI/CD server |
+| **Jenkins** | CI/CD 服务器 |
 | **GitLab CI** | GitLab CI/CD |
-| **ArgoCD** | GitOps deployment |
+| **ArgoCD** | GitOps 部署 |
 
-### Service Mesh & K8s Tooling
+### 服务网格与 K8s 工具
 
-| Tool | Commands |
+| 工具 | 命令 |
 |------|----------|
-| **kubebuilder** | Kubernetes project generation |
-| **helm** | Kubernetes package manager |
-| **istioctl** | Istio service mesh management |
-| **argocd** | GitOps deployment |
+| **kubebuilder** | Kubernetes 项目生成 |
+| **helm** | Kubernetes 包管理器 |
+| **istioctl** | Istio 服务网格管理 |
+| **argocd** | GitOps 部署 |
 
-### Network Tools
+### 网络工具
 
-| Tool | Commands |
+| 工具 | 命令 |
 |------|----------|
-| **tcpdump** | Packet capture and analysis |
-| **nmap** | Network scanning |
-| **curl / wget** | HTTP requests |
-| **postman** | API testing |
+| **tcpdump** | 数据包捕获与分析 |
+| **nmap** | 网络扫描 |
+| **curl / wget** | HTTP 请求 |
+| **postman** | API 测试 |
 
-## All Tools (JSON)
+## 全部工具（JSON）
 
 ```json
 [
@@ -99,22 +99,22 @@ Tool awareness registry for DevOps, infrastructure, and cloud engineering tasks.
 ]
 ```
 
-## Usage
+## 使用方式
 
-When users reference DevOps tools or need to perform DevOps operations:
-1. Identify the relevant tool category
-2. Reference the appropriate commands
-3. Provide context-aware suggestions based on the tool's use case
+当用户提及 DevOps 工具或需要执行 DevOps 操作时：
+1. 确定相关的工具类别
+2. 参考相应的命令
+3. 结合工具的用例给出具备上下文感知的建议
 
-## Adding New Tools
+## 添加新工具
 
-To add a new tool to this registry:
+如需向此注册表添加新工具：
 
 ```bash
-# Add new tool to the tool definition file
+# 向工具定义文件添加新工具
 cat ~/.doge/skills/tool_definition.json | jq '.tools |= [.tools | map(select(.name != "docker"))] + [{
   "name": "docker",
-  "description": "Docker container management",
+  "description": "Docker 容器管理",
   "commands": ["docker run", "docker build", "docker ps", "docker compose"],
   "type": "devops"
 }]' > temp.json && mv temp.json ~/.doge/skills/tool_definition.json

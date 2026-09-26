@@ -1,43 +1,43 @@
 ---
 name: skillify
 aliases: [learner]
-description: Turn a repeatable workflow from the current session into a reusable OMC skill draft
+description: 将当前会话中的可重复工作流转换为可复用的 OMC 技能草稿。
 ---
 
 # Skillify
 
-Use this skill when the current session uncovered a repeatable workflow that should become a reusable OMC skill.
+当当前会话中发现了一个应当沉淀为可复用 OMC 技能的可重复工作流时，使用本技能。
 
-> Compatibility: `/oh-my-claudecode:learner` is a deprecated alias for this skill. Prefer `/oh-my-claudecode:skillify` in docs, prompts, and new workflows. Internal implementation modules may still use the learner name.
+> 兼容性：`/oh-my-claudecode:learner` 是本技能的一个已弃用别名。在文档、提示词和新工作流中，优先使用 `/oh-my-claudecode:skillify`。内部实现模块可能仍在使用 learner 这个名称。
 
-## Goal
-Capture a successful multi-step workflow as a concrete skill draft instead of rediscovering it later.
+## 目标
+把一个成功的多步骤工作流固化成一份具体的技能草稿，而不是日后重新摸索一遍。
 
-## Quality Gate
-Before extracting a skill, all three should be true:
-- "Could someone Google this in 5 minutes?" → No.
-- "Is this specific to this codebase, project, or workflow?" → Yes.
-- "Did this take real debugging, design, or operational effort to discover?" → Yes.
+## 质量门槛
+在提取技能之前，以下三条都应当成立：
+- “别人能在 5 分钟内 Google 到吗？” → 不能。
+- “这是否是这个代码库、项目或工作流所特有的？” → 是。
+- “发现它是否真的花了调试、设计或运维上的功夫？” → 是。
 
-Prefer skills that encode decision-making heuristics, constraints, pitfalls, and verification steps. Avoid generic snippets, boilerplate, or library usage examples that belong in normal documentation.
+优先沉淀那些把决策启发式、约束、坑点和验证步骤编码进去的技能。避免通用片段、样板代码，或属于常规文档的库用法示例。
 
-## Workflow
-1. Identify the repeatable task the session accomplished.
-2. Extract:
-   - inputs
-   - ordered steps
-   - success criteria
-   - constraints / pitfalls
-   - verification evidence
-   - best target location for the skill
-3. Decide whether the workflow belongs as:
-   - a repo built-in skill
-   - a user/project learned skill
-   - documentation only
-4. When drafting a learned skill file, output a complete skill file that starts with YAML frontmatter.
-   - Never emit plain markdown-only skill files.
-   - Do **not** write plain markdown without frontmatter.
-   - Minimum frontmatter:
+## 工作流
+1. 找出本次会话所完成的可重复任务。
+2. 提取：
+   - 输入
+   - 有序步骤
+   - 成功标准
+   - 约束 / 坑点
+   - 验证证据
+   - 该技能的最佳目标存放位置
+3. 判断该工作流应当属于：
+   - 仓库内置技能
+   - 用户/项目学习型技能
+   - 仅作为文档
+4. 起草学习型技能文件时，输出一份以 YAML frontmatter 开头的完整技能文件。
+   - 绝不要只输出纯 Markdown 的技能文件。
+   - **不要**写没有 frontmatter 的纯 Markdown。
+   - 最少的 frontmatter：
      ```yaml
      ---
      name: <skill-name>
@@ -47,23 +47,23 @@ Prefer skills that encode decision-making heuristics, constraints, pitfalls, and
        - <trigger-2>
      ---
      ```
-   - Write learned/user/project skills to flat file-backed paths:
+   - 将学习型/用户级/项目级技能写到扁平的、以文件为载体的路径：
      - `${CLAUDE_CONFIG_DIR:-~/.claude}/skills/omc-learned/<skill-name>.md`
      - `.omc/skills/<skill-name>.md`
-   - Remember that uncommitted skills are still worktree-local until committed or copied to a user-level directory.
-5. Draft the rest of the skill file with clear triggers, steps, success criteria, and pitfalls.
-6. Point out anything still too fuzzy to encode safely.
+   - 请记住：未提交的技能仍然是工作树本地的，直到它被提交，或被复制到用户级目录。
+5. 起草技能文件的其余部分，包含清晰的触发条件、步骤、成功标准和坑点。
+6. 指出任何仍然过于模糊、无法安全固化下来的内容。
 
-## Rules
-- Only capture workflows that are actually repeatable.
-- Keep the skill practical and scoped.
-- Prefer explicit success criteria over vague prose.
-- If the workflow still has unresolved branching decisions, note them before drafting.
-- Keep `omc-learned` as the storage directory name for compatibility; do not present it as the public invocation name.
+## 规则
+- 只沉淀真正可重复的工作流。
+- 让技能保持实用、范围收敛。
+- 优先写明确的成功标准，而不是含糊的散文式描述。
+- 如果该工作流仍有未解决的分支决策，在起草前先把它们记下来。
+- 为保持兼容性，保留 `omc-learned` 作为存储目录名；不要把它当作对外的调用名来呈现。
 
-## Output
-- Proposed skill name
-- Target location
-- Draft workflow structure or complete skill file
-- Verification or quality-gate notes
-- Open questions, if any
+## 输出
+- 建议的技能名称
+- 目标位置
+- 草拟的工作流结构或完整的技能文件
+- 验证或质量门槛说明
+- 待解决的开放问题（若有）

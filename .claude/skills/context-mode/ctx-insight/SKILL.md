@@ -1,24 +1,24 @@
 ---
 name: ctx-insight
 description: |
-  Open the context-mode Insight dashboard in your default browser.
-  Insight is the hosted analytics layer for AI-assisted engineering teams —
-  per-engineer productive rate, retry waste, blocker detection, role-narrowed views.
-  Trigger: /context-mode:ctx-insight
+  在默认浏览器中打开 context-mode 的 Insight 仪表盘。
+  Insight 是面向 AI 辅助工程团队的托管分析层 ——
+  每位工程师的产出率、重试浪费、阻塞检测、按角色收窄的视图。
+  触发：/context-mode:ctx-insight
 user-invocable: true
 ---
 
 # Context Mode Insight
 
-Open the hosted Insight dashboard in the user's default browser.
+在用户的默认浏览器中打开托管版 Insight 仪表盘。
 
-## Instructions
+## 操作步骤
 
-1. Call the `ctx_insight` MCP tool (no parameters). It opens
-   <https://context-mode.com/insight> in the default browser and returns a
-   confirmation line.
-2. Display the tool's output to the user.
-3. Tell the user:
-   - "Insight opened at https://context-mode.com/insight"
-   - The landing page at context-mode.com/insight is the single source of truth for sign-in and pricing details.
-   - If the browser did not open automatically, share the URL so they can open it manually.
+1. 调用 `ctx_insight` MCP 工具（无需参数）。它会在默认浏览器中打开
+   <https://context-mode.com/insight>，并返回一行
+   确认信息。
+2. 把该工具的输出显示给用户。
+3. 告诉用户：
+   - "已在 https://context-mode.com/insight 打开 Insight"
+   - context-mode.com/insight 落地页是登录与定价详情的唯一权威来源。
+   - 如果浏览器没有自动打开，把该 URL 分享出去，让用户手动打开。

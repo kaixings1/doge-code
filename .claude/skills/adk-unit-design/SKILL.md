@@ -1,88 +1,88 @@
 ---
 name: adk-unit-design
-description: Creates or updates code unit design documents for source code documentation.
+description: 为源代码文档创建或更新代码单元设计文档。
 ---
 
-# ADK Code Unit Design
+# ADK 代码单元设计
 
-This skill creates or updates a detailed software engineering design document for new or updated code file or specified code unit. The design document it generates is meant to explain the code to a developer who wants to modify or extend the code unit as part of the ADK development framework. Similar to a *unit test*, a *unit design* provides a generated software engineering design based on the *actual, implemented code* rather than any proposed code design or proposed software architecture.
+本技能会为新增或更新的代码文件、或指定的代码单元，创建或更新一份详细的软件工程设计文档。它生成的设计文档，旨在向希望修改或扩展该代码单元的开发者解释这段代码，且该代码单元属于 ADK 开发框架的一部分。与*单元测试*类似，*单元设计*是基于*实际已实现的代码*生成的软件工程设计，而不是基于任何提议的代码设计或提议的软件架构。
 
-## Input
+## 输入
 
-- Code files containing new functionality
-- Names of new methods and classes (optional)
-- Code files for base classes or interfaces that the new functionality depends on (optional)
-- Code unit tests (optional)
-- Example code files (optional)
+- 包含新功能的代码文件
+- 新增方法与新增类的名称（可选）
+- 新功能所依赖的基类或接口的代码文件（可选）
+- 代码单元测试（可选）
+- 示例代码文件（可选）
 
-## Analysis
+## 分析
 
-- Review specified code files for changes and named methods to determine:
-  - Purpose and intended use of the new or updated code units
-  - Any data flows handled by the new or updated code units
-  - Dependencies required by the new or updated code units
-  - Approaches for extending or customizing the code unit to add new capabilities
-  - Classes that depend on the new or updated code units
-  - Operational limitations of the new or updated code units
+- 审阅指定的代码文件，了解其中的改动以及指定的方法，从而确定：
+  - 新增或更新代码单元的用途与预期用法
+  - 新增或更新代码单元所处理的所有数据流
+  - 新增或更新代码单元所需的依赖项
+  - 通过扩展或定制该代码单元来添加新能力的方法
+  - 依赖新增或更新代码单元的那些类
+  - 新增或更新代码单元的运行限制
 
-## Output
+## 输出
 
-- Look for an existing design document in the `/docs/design/***` directory of this repository.
-  - If a design already exists, update the existing design incrementally and prioritize preserving the previous content as much as possible.
-  - If no design document exists, create a design file for the new code unit in the `/docs/design/***` directory of this repository, using the relative path of the code unit. For example, if the code unit is called `/topic/function/class.ext`, create a design document in the location `/docs/design/topic/function/class/index.md`.
-- Any links to local code files should be translated to URL links to the `google/adk-python` repository on GitHub. For example, if the local code unit path is `***/adk-python/topic/function/class.ext#L93`, the URL to the code file should be `https://github.com/google/adk-python/blob/main/topic/function/class.ext#L93`.
+- 在本仓库的 `/docs/design/***` 目录中查找已有的设计文档。
+  - 如果设计文档已存在，则以增量方式更新该已有设计，并尽可能优先保留先前的内容。
+  - 如果不存在设计文档，则在本仓库的 `/docs/design/***` 目录中为该新代码单元创建设计文件，并使用该代码单元的相对路径。例如，如果该代码单元名为 `/topic/function/class.ext`，则在 `/docs/design/topic/function/class/index.md` 位置创建设计文档。
+- 指向本地代码文件的任何链接，都应转换为指向 GitHub 上 `google/adk-python` 仓库的 URL 链接。例如，如果本地代码单元路径为 `***/adk-python/topic/function/class.ext#L93`，那么该代码文件的 URL 应为 `https://github.com/google/adk-python/blob/main/topic/function/class.ext#L93`。
 
-### Design document structure and content
+### 设计文档的结构与内容
 
-Use the following structure and instructions to create the design document for the code unit:
+请使用以下结构和说明为该代码单元创建设计文档：
 
 ```
-# (name of code unit or code file) - Code Unit Design
+# （代码单元或代码文件的名称）- 代码单元设计
 
-- 2-sentence summary of the code unit
+- 用 2 句话概述该代码单元
 
-## Introduction
+## 引言
 
-- Paragraph(s) explaining:
-  - The purpose and application of the code unit, including intended use cases
-  - Developer problems solved by this code unit
-  - Agent capabilities enabled by this code unit
+- 用段落说明：
+  - 该代码单元的用途与应用，包括预期用例
+  - 该代码单元为开发者解决的问题
+  - 该代码单元所支撑的 Agent 能力
 
-## High-level architecture
+## 高层架构
 
-- Describe the software architecture of this code unit and how it fits into the larger ADK framework
-- Explain general execution flow of this code unit
-- Describe any data flows handled by the code unit including inputs and outputs
-- Explain any cross-class dependencies of the code unit, including upstream dependencies and downstream dependencies
+- 描述该代码单元的软件架构，以及它如何融入更大的 ADK 框架
+- 解释该代码单元的一般执行流程
+- 描述该代码单元处理的所有数据流，包括输入与输出
+- 解释该代码单元的任何跨类依赖，包括上游依赖与下游依赖
 
-### Extension points
+### 扩展点
 
-- Describe how the code unit could be extended or customized to add new features or capabilities
-- Note specific parts of the code unit that are designed to be extended or customized, including:
-  - Abstract classes
-  - Interfaces
-  - Hooks
-  - Callbacks
-  - Configurable parameters
-  - Plugin architecture
-  - Other extension points
+- 描述可以如何扩展或定制该代码单元，以添加新功能或新能力
+- 指出该代码单元中经设计可被扩展或定制的具体部分，包括：
+  - 抽象类
+  - 接口
+  - 钩子
+  - 回调
+  - 可配置参数
+  - 插件架构
+  - 其它扩展点
 
-### Extension constraints
+### 扩展约束
 
-- Describe what parts of the code unit should not be modified, based on:
-  - architectural constraints
-  - implementation limitations
-  - cross-class dependencies
-  - other constraints
+- 说明该代码单元中哪些部分不应被修改，依据包括：
+  - 架构约束
+  - 实现限制
+  - 跨类依赖
+  - 其它约束
 
-## Limitations
+## 局限性
 
-- Mention any limitations of the code unit, if known, such as:
-  - input constraints
-  - data structure constraints
-  - output constraints
-  - performance limitations
-  - memory limitations
-  - other limitations
+- 说明该代码单元已知的任何局限性，例如：
+  - 输入约束
+  - 数据结构约束
+  - 输出约束
+  - 性能限制
+  - 内存限制
+  - 其它限制
 
 ```

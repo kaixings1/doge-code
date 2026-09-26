@@ -4,7 +4,7 @@ description: "针对 Django 项目的验证循环：包含数据库迁移、代�
 origin: ECC
 ---
 
-# Django 验证循环 (Django Verification Loop)
+# Django 验证循环
 
 在提交 PR 前、重大变更后以及部署前运行，以确保 Django 应用的质量与安全性。
 
@@ -12,11 +12,11 @@ origin: ECC
 
 - 在为 Django 项目提交 Pull Request 前
 - 在重大模型变更、迁移更新或依赖升级后
-- 预发布（Staging）或生产环境部署前的验证
+- 预发布或生产环境部署前的验证
 - 运行完整的 环境检查 → 代码检查 → 测试 → 安全扫描 → 部署就绪流水线
 - 验证迁移安全性及测试覆盖率
 
-## 阶段 1：环境检查 (Environment Check)
+## 阶段 1：环境检查
 
 ```bash
 # 验证 Python 版本
@@ -32,7 +32,7 @@ python -c "import os; import environ; print('DJANGO_SECRET_KEY set' if os.enviro
 
 如果环境配置错误，请停止并修复。
 
-## 阶段 2：代码质量与格式化 (Code Quality & Formatting)
+## 阶段 2：代码质量与格式化
 
 ```bash
 # 类型检查
@@ -54,12 +54,12 @@ python manage.py check --deploy
 ```
 
 常见问题：
-- 公共函数缺失类型提示（Type hints）
+- 公共函数缺失类型提示
 - 违反 PEP 8 格式规范
 - 未排序的导入语句
-- 生产环境配置中遗留了调试设置（Debug settings）
+- 生产环境配置中遗留了调试设置
 
-## 阶段 3：数据库迁移 (Migrations)
+## 阶段 3：数据库迁移
 
 ```bash
 # 检查未应用的迁移
@@ -68,7 +68,7 @@ python manage.py showmigrations
 # 创建缺失的迁移
 python manage.py makemigrations --check
 
-# 预演迁移应用 (Dry-run)
+# 预演迁移应用
 python manage.py migrate --plan
 
 # 应用迁移（测试环境）
@@ -83,7 +83,7 @@ python manage.py makemigrations --merge  # 仅在存在冲突时运行
 - 任何迁移冲突
 - 模型变更但未生成迁移文件
 
-## 阶段 4：测试 + 覆盖率 (Tests + Coverage)
+## 阶段 4：测试 + 覆盖率
 
 ```bash
 # 使用 pytest 运行所有测试并生成覆盖率报告
@@ -109,13 +109,13 @@ open htmlcov/index.html
 
 | 组件 | 目标 |
 |-----------|--------|
-| 模型 (Models) | 90%+ |
-| 序列化器 (Serializers) | 85%+ |
-| 视图 (Views) | 80%+ |
-| 服务 (Services) | 90%+ |
+| 模型 | 90%+ |
+| 序列化器 | 85%+ |
+| 视图 | 80%+ |
+| 服务 | 90%+ |
 | 总体 | 80%+ |
 
-## 阶段 5：安全扫描 (Security Scan)
+## 阶段 5：安全扫描
 
 ```bash
 # 依赖漏洞扫描
@@ -141,7 +141,7 @@ python -c "from django.core.exceptions import ImproperlyConfigured; from django.
 - 检测到硬编码的密钥
 - DEBUG 模式状态（生产环境应为 False）
 
-## 阶段 6：Django 管理命令 (Django Management Commands)
+## 阶段 6：Django 管理命令
 
 ```bash
 # 检查模型问题
@@ -160,7 +160,7 @@ python manage.py check --database default
 python -c "from django.core.cache import cache; cache.set('test', 'value', 10); print(cache.get('test'))"
 ```
 
-## 阶段 7：性能检查 (Performance Checks)
+## 阶段 7：性能检查
 
 ```bash
 # Django Debug Toolbar 输出（检查 N+1 查询）
@@ -184,7 +184,7 @@ EOF
 - 缺失的数据库索引
 - 检测到重复查询
 
-## 阶段 8：静态资源 (Static Assets)
+## 阶段 8：静态资源
 
 ```bash
 # 检查 npm 依赖（如果使用 npm）
@@ -199,7 +199,7 @@ ls -la staticfiles/
 python manage.py findstatic css/style.css
 ```
 
-## 阶段 9：配置审查 (Configuration Review)
+## 阶段 9：配置审查
 
 ```python
 # 在 Python shell 中运行以验证设置
@@ -223,7 +223,7 @@ for check, result in checks.items():
 EOF
 ```
 
-## 阶段 10：日志配置 (Logging Configuration)
+## 阶段 10：日志配置
 
 ```bash
 # 测试日志输出
@@ -238,7 +238,7 @@ EOF
 tail -f /var/log/django/django.log
 ```
 
-## 阶段 11：API 文档 (API Documentation, 如果使用 DRF)
+## 阶段 11：API 文档（如果使用 DRF）
 
 ```bash
 # 生成 Schema
@@ -248,11 +248,11 @@ python manage.py generateschema --format openapi-json > schema.json
 # 检查 schema.json 是否为有效的 JSON
 python -c "import json; json.load(open('schema.json'))"
 
-# 访问 Swagger UI (如果使用 drf-yasg)
+# 访问 Swagger UI（如果使用 drf-yasg）
 # 在浏览器访问 http://localhost:8000/swagger/
 ```
 
-## 阶段 12：差异审查 (Diff Review)
+## 阶段 12：差异审查
 
 ```bash
 # 显示差异统计
@@ -280,7 +280,7 @@ git diff | grep "import pdb"  # 调试器
 - 外部调用已包含错误处理
 - 关键位置已进行事务管理
 
-## 输出模板 (Output Template)
+## 输出模板
 
 ```
 DJANGO 验证报告
@@ -365,7 +365,7 @@ DJANGO 验证报告
 3. 部署到预发布环境进行最终测试
 ```
 
-## 部署前检查清单 (Pre-Deployment Checklist)
+## 部署前检查清单
 
 - [ ] 所有测试均已通过
 - [ ] 覆盖率 ≥ 80%
@@ -384,13 +384,13 @@ DJANGO 验证报告
 - [ ] HTTPS/SSL 已配置
 - [ ] 环境变量已记录文档
 
-## 持续集成 (Continuous Integration)
+## 持续集成
 
 ### GitHub Actions 示例
 
 ```yaml
 # .github/workflows/django-verification.yml
-name: Django Verification
+name: Django 验证
 
 on: [push, pull_request]
 
@@ -411,47 +411,47 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: 设置 Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      - name: Cache pip
+      - name: 缓存 pip
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
 
-      - name: Install dependencies
+      - name: 安装依赖
         run: |
           pip install -r requirements.txt
           pip install ruff black mypy pytest pytest-django pytest-cov bandit safety pip-audit
 
-      - name: Code quality checks
+      - name: 代码质量检查
         run: |
           ruff check .
           black . --check
           isort . --check-only
           mypy .
 
-      - name: Security scan
+      - name: 安全扫描
         run: |
           bandit -r . -f json -o bandit-report.json
           safety check --full-report
           pip-audit
 
-      - name: Run tests
+      - name: 运行测试
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/test
           DJANGO_SECRET_KEY: test-secret-key
         run: |
           pytest --cov=apps --cov-report=xml --cov-report=term-missing
 
-      - name: Upload coverage
+      - name: 上传覆盖率报告
         uses: codecov/codecov-action@v3
 ```
 
-## 快速参考 (Quick Reference)
+## 快速参考
 
 | 检查项 | 命令 |
 |-------|---------|

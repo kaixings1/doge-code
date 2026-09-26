@@ -1,43 +1,43 @@
 ---
 name: cmux-markdown
-description: Open markdown files in a formatted viewer panel with live reload. Use when you need to display plans, documentation, or notes alongside the terminal with rich rendering (headings, code blocks, tables, lists).
+description: 在带实时重载的格式化查看面板中打开 markdown 文件。当你需要在终端旁以富渲染方式（标题、代码块、表格、列表）展示计划、文档或笔记时使用。
 ---
 
-# Markdown Viewer with cmux
+# 配合 cmux 使用的 Markdown 查看器
 
-Write a `.md` file, open it in a panel, and the panel re-renders whenever the file changes on disk. Use it for agent plans and task lists alongside the terminal, documentation and changelogs while working, and notes another process updates progressively.
+写一个 `.md` 文件，在面板中打开它，此后只要磁盘上的文件发生变化，面板就会重新渲染。可用于在终端旁展示代理计划与任务列表、工作过程中的文档与变更日志，以及由另一个进程逐步更新的笔记。
 
 ```bash
-cmux markdown open plan.md                              # split next to the current terminal
+cmux markdown open plan.md                              # 在当前终端旁分屏打开
 cmux markdown open /path/to/PLAN.md
-cmux markdown open design.md --workspace workspace:2    # also --surface, --window
+cmux markdown open design.md --workspace workspace:2    # 也可用 --surface、--window
 ```
 
-Relative paths resolve against the caller's cwd and `~` expands; the resolved absolute path comes back in the output.
+相对路径基于调用方的 cwd 解析，`~` 会被展开；解析后的绝对路径会在输出中返回。
 
-## Agent usage
+## 代理用法
 
-Write the full plan file first, then open it, so the panel never shows a partially written file. After that, overwrite or append freely: each write triggers a re-render, and atomic replacement (editor saves, `sed -i`, VS Code) is handled.
+先把完整的计划文件写好，再打开它，这样面板就绝不会显示一个只写了一半的文件。之后可以随意覆盖或追加：每次写入都会触发重新渲染，并且能正确处理原子替换（编辑器保存、`sed -i`、VS Code）。
 
-To instruct coding agents in a project, add to its `AGENTS.md`:
+要在某个项目中指示编码代理，可在其 `AGENTS.md` 中加入：
 
 ```markdown
-## Plan Display
+## 计划展示
 
-When creating a plan or task list, write it to a `.md` file and open it in cmux:
+创建计划或任务列表时，把它写入一个 `.md` 文件并在 cmux 中打开：
 
     cmux markdown open plan.md
 
-The panel renders markdown with rich formatting and auto-updates when the file changes.
+该面板会以富格式渲染 markdown，并在文件变化时自动更新。
 ```
 
-## Rendering
+## 渲染
 
-Headings h1-h6 (dividers on h1/h2), fenced code blocks in monospace, inline code with a highlighted background, tables with alternating row colors, nested ordered and unordered lists, blockquotes with a left border, bold/italic/strikethrough, clickable links, horizontal rules, and inline images. Light and dark mode both supported.
+标题 h1-h6（h1/h2 带分隔线）、等宽字体的围栏代码块、带高亮背景的行内代码、行色交替的表格、嵌套的有序与无序列表、带左边框的引用块、粗体/斜体/删除线、可点击链接、水平分隔线以及行内图片。亮色与暗色模式均支持。
 
-## Deep-dive references
+## 深入参考
 
-| Reference | When to Use |
+| 参考 | 何时使用 |
 |-----------|-------------|
-| [references/commands.md](references/commands.md) | Full command syntax, options, output shape, panel behavior |
-| [references/live-reload.md](references/live-reload.md) | File watching, atomic writes, unavailable-file state, performance |
+| [references/commands.md](references/commands.md) | 完整命令语法、选项、输出结构、面板行为 |
+| [references/live-reload.md](references/live-reload.md) | 文件监听、原子写入、文件不可用状态、性能 |

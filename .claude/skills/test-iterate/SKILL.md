@@ -5,17 +5,17 @@ argument-hint: "<测试命令> [--max-iterations <n>] [--expected <pattern>]"
 level: 3
 ---
 
-# Test-Iterate Skill
+# Test-Iterate 技能
 
 [TEST-ITERATE ACTIVATED - AUTONOMOUS EXECUTE → ANALYZE → ITERATE]
 
-## Purpose
+## 用途
 
 执行测试或命令，分析输出结果，判断是否与预期相符，不符则自动修复并重新执行，循环直到达标。
 
 **核心循环**：执行 → 分析 → 决策（继续/停止）
 
-## When to Use
+## 何时使用
 
 - 用户说"测试一下"、"跑一下看看"、"验证是否正常"
 - 用户要求"拿去实际测试"、"执行结果拿来"
@@ -23,13 +23,13 @@ level: 3
 - 用户说"先执行，看结果再决定"
 - 任何需要"执行→看结果→决定下一步"的场景
 
-## When NOT to Use
+## 何时不使用
 
 - 只是需要解释代码或概念 → 直接回答
 - 用户明确要求只执行一次，不做迭代 → 直接执行命令
 - 需要人工介入的决策（如破坏性操作）→ 先询问
 
-## Workflow
+## 工作流程
 
 ### 1. 解析参数
 
@@ -83,13 +83,13 @@ level: 3
 - 如果继续：回到步骤 2
 - 如果停止：输出最终报告
 
-## Output Format
+## 输出格式
 
 每次迭代输出：
 
 ```
 [TEST-ITERATE Cycle 1/5] 执行: npx vitest run
-[TEST-ITERATE Cycle 1/5] 结果: PASS - 27 tests passed
+[TEST-ITERATE Cycle 1/5] 结果: PASS - 27 个测试通过
 [TEST-ITERATE COMPLETE] 达标，停止迭代
 ```
 
@@ -97,15 +97,15 @@ level: 3
 
 ```
 [TEST-ITERATE Cycle 1/5] 执行: npx vitest run
-[TEST-ITERATE Cycle 1/5] 结果: FAIL - 3 tests failed
-[TEST-ITERATE Cycle 1/5] 错误: src/foo.test.ts - missing mock
+[TEST-ITERATE Cycle 1/5] 结果: FAIL - 3 个测试失败
+[TEST-ITERATE Cycle 1/5] 错误: src/foo.test.ts - 缺少 mock
 [TEST-ITERATE Cycle 1/5] 修复: 添加 mock
 [TEST-ITERATE Cycle 2/5] 执行: npx vitest run
-[TEST-ITERATE Cycle 2/5] 结果: PASS - 27 tests passed
+[TEST-ITERATE Cycle 2/5] 结果: PASS - 27 个测试通过
 [TEST-ITERATE COMPLETE] 达标，停止迭代
 ```
 
-## Examples
+## 示例
 
 <Good>
 User: "test-iterate npx vitest run src/__tests__/commands/task.test.ts"
@@ -132,7 +132,7 @@ User: "test-iterate 删除所有文件"
 → 这是破坏性操作，应该先询问
 </Bad>
 
-## Rules
+## 规则
 
 1. **实际执行** - 必须真实运行命令，拿到真实输出
 2. **真实分析** - 基于实际输出分析，不猜测
@@ -140,7 +140,7 @@ User: "test-iterate 删除所有文件"
 4. **停止条件** - 达到预期或达到最大迭代次数必须停止
 5. **透明输出** - 每次迭代清楚显示执行命令、结果、决策
 
-## Integration
+## 集成
 
 可与其他技能组合：
 - `/ultraqa` - 更完整的 QA 循环（包含架构验证）

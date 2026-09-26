@@ -1,53 +1,53 @@
 ---
 name: second-opinion
-description: Get a second opinion from OpenAI's Codex CLI running locally. Use this skill when in Plan Mode for large or critical tasks, when stuck on a debugging dead end, when facing architecture trade-offs, for subtle edge cases in code review, or any situation where an independent perspective would add value. Also use when the user explicitly asks for a "second opinion", "another perspective", "cross-check this", "ask Codex", or "ask GPT". This is the DEFAULT second-opinion engine — Codex runs a completely different model architecture from Claude, so it catches blind spots Claude shares with itself. For a Gemini second opinion specifically, the user says "ask Gemini" (separate second-opinion-gemini skill); "ask both" runs this skill and that one, then synthesizes.
+description: 从本地运行的 OpenAI Codex CLI 获取第二意见。在计划模式下的重大/关键任务、调试死胡同、架构权衡、代码审查的细微边界情况时使用。
 user_invocable: false
 ---
 
-# Second Opinion — OpenAI Codex
+# 第二意见 — OpenAI Codex
 
-Get an independent second opinion from OpenAI's Codex CLI. It uses Codex's default model — a completely different architecture and training run from Claude, which makes it genuinely useful for catching blind spots, validating reasoning on edge cases, or surfacing trade-offs Claude would miss (Claude's own errors tend to be invisible to Claude).
+从 OpenAI 的 Codex CLI 获取独立的第二意见。它使用的是 Codex 的默认模型 —— 与 Claude 完全不同的架构和训练过程，因此它在发现盲点、验证边界情况下的推理，或揭示 Claude 可能遗漏的权衡取舍时确实有用（Claude 自身的错误往往对 Claude 不可见）。
 
-Codex has full read access to the project — it can read files, grep code, and explore the codebase. Its project instructions (`AGENTS.md` at the repository root) tell it to prime itself on the key docs before answering. You provide the specific question and any focused context; Codex handles the rest.
+Codex 对项目拥有完整的读取权限 —— 它可以读取文件、搜索代码并探索代码库。它的项目指令（仓库根目录下的 `AGENTS.md`）要求它在作答前先熟悉关键文档。你只需提供具体的问题和任何聚焦的上下文；剩下的交给 Codex。
 
-This is the **default** second-opinion engine. For a Gemini second opinion specifically, the user invokes the separate `second-opinion-gemini` skill ("ask Gemini"). When the user says "ask both", run this skill and that one, then synthesize all three views (yours + Codex + Gemini).
+这是**默认**的第二意见引擎。若要专门获取 Gemini 的第二意见，用户会调用单独的 `second-opinion-gemini` 技能（“询问 Gemini”）。当用户说“两个都问”时，运行本技能和那个技能，然后综合三方观点（你的 + Codex + Gemini）。
 
-## When to Use
+## 何时使用
 
-- Architecture decisions with real trade-offs
-- Debugging where you've been going in circles
-- Code review on tricky logic or subtle edge cases
-- Validating your reasoning before the user acts on it
-- When the user explicitly asks for a second opinion
+- 存在真实权衡取舍的架构决策
+- 反复绕圈、原地打转的调试
+- 针对棘手逻辑或微妙边界情况的代码审查
+- 在用户据此行动之前验证你的推理
+- 用户明确要求第二意见时
 
-Don't use this for routine tasks — every call takes 10-60+ seconds and consumes ChatGPT-plan quota. Reserve it for decisions where being wrong has real consequences.
+不要把它用于例行任务 —— 每次调用要花 10-60 秒以上，并消耗 ChatGPT 套餐额度。请把它留给那些判断错误会产生真实后果的决策。
 
-## Process
+## 流程
 
-### Step 1: Prepare the Prompt
+### 第 1 步：准备提示词
 
-Codex has NO access to your conversation history, but it CAN read project files. Structure your prompt as:
+Codex 无法访问你的对话历史，但它可以读取项目文件。按以下结构组织你的提示词：
 
-1. **The question** — what exactly you want Codex to weigh in on
-2. **Your current thinking** (recommended) — share your position so Codex can challenge it
-3. **Relevant area** (optional) — if the project has distinct modules or components, state which one this is about so Codex primes on the right docs. Default is the whole project; only narrow this when it helps.
-4. **Specific context** (if needed) — pipe code snippets or diffs via stdin when the relevant code is scattered or you want to focus attention on specific sections
+1. **问题** — 你究竟想让 Codex 就什么发表意见
+2. **你当前的想法**（推荐）— 分享你的立场，好让 Codex 能够质疑它
+3. **相关区域**（可选）— 如果项目有各自独立的模块或组件，说明本次针对的是哪一个，好让 Codex 熟悉正确的文档。默认是整个项目；只有在有帮助时才缩小范围。
+4. **具体上下文**（如需要）— 当相关代码分散各处，或你想把注意力集中在特定部分时，通过 stdin 传入代码片段或 diff
 
-For questions about existing project code, you can simply reference file paths — Codex will read them itself.
+对于关于项目现有代码的问题，你只需引用文件路径 —— Codex 会自己读取它们。
 
-### Step 2: Invoke Codex
+### 第 2 步：调用 Codex
 
-In the commands below, `<repo-root>` is the root of your repository — the directory containing `AGENTS.md` (and your `.git` directory). Use an absolute path so `AGENTS.md` and the project docs are discoverable regardless of the current working directory.
+在下面的命令中，`<repo-root>` 是你仓库的根目录 —— 也就是包含 `AGENTS.md`（以及你的 `.git` 目录）的目录。请使用绝对路径，这样无论当前工作目录是什么，`AGENTS.md` 和项目文档都能被找到。
 
-**CRITICAL: Permission-free invocation pattern.** The command MUST start with `codex` (matches the `Bash(codex:*)` allow rule) and MUST NOT use `$()` command substitution or `/tmp/` file redirects — both trigger permission prompts.
+**关键：免授权的调用模式。** 命令必须以 `codex` 开头（匹配 `Bash(codex:*)` 允许规则），并且绝不能使用 `$()` 命令替换或 `/tmp/` 文件重定向 —— 这两种做法都会触发权限提示。
 
-**Standard call** (Codex reads project files itself — preferred):
+**标准调用**（Codex 自己读取项目文件 — 首选）：
 
 ```bash
 codex exec -s read-only -C <repo-root> '<your question here>' < /dev/null
 ```
 
-**With context piped via stdin** (for code snippets, diffs, or focused excerpts — Codex appends piped stdin as a `<stdin>` block):
+**通过 stdin 传入上下文**（用于代码片段、diff 或聚焦的摘录 —— Codex 会把管道传入的 stdin 追加为一个 `<stdin>` 块）：
 
 ```bash
 codex exec -s read-only -C <repo-root> '<your question here>' <<'CONTEXT_EOF'
@@ -55,68 +55,68 @@ codex exec -s read-only -C <repo-root> '<your question here>' <<'CONTEXT_EOF'
 CONTEXT_EOF
 ```
 
-**Required flags / arguments — no exceptions:**
+**必需标志 / 参数 — 没有例外：**
 
-| Flag | Why |
+| 标志 | 原因 |
 |------|-----|
-| `exec` | Non-interactive headless mode. Tool calls are auto-approved in this mode. |
-| `-s read-only` | Sandbox the consultant to read-only — it explores files but cannot modify anything. Matches its `AGENTS.md` "do not modify" instruction with a hard guarantee. |
-| `-C <repo-root>` | Working root = repository root, so `AGENTS.md` and the project docs are discoverable regardless of cwd. |
-| `< /dev/null` (standard call) | Close stdin so Codex doesn't block waiting on it when no context is piped. |
+| `exec` | 非交互式无头模式。此模式下工具调用会自动批准。 |
+| `-s read-only` | 把顾问沙箱限制为只读 — 它会探索文件，但不能修改任何东西。以硬性保障配合其 `AGENTS.md` 中“不要修改”的指令。 |
+| `-C <repo-root>` | 工作根目录 = 仓库根目录，这样无论 cwd 是什么，`AGENTS.md` 和项目文档都能被找到。 |
+| `< /dev/null`（标准调用） | 关闭 stdin，这样在没有传入上下文时 Codex 不会阻塞等待它。 |
 
-**DO NOT pass `-m`.** Leave the model unset so Codex uses its own default. Pinning a slug goes stale, and the `-codex` model family (e.g. `*-codex`) is **rejected on a ChatGPT-account login** — only the chat models work, so leaving it unset is correct. If the default ever resolves to something that is NOT a real GPT chat model, treat the run as unavailable rather than accepting a degraded second opinion (see Important Rules).
+**不要传 `-m`。** 让模型保持未设置，这样 Codex 会使用它自己的默认值。固定某个 slug 会过时，而 `-codex` 模型家族（例如 `*-codex`）在 **ChatGPT 账号登录下会被拒绝** — 只有 chat 模型可用，所以保持未设置是正确的。如果默认值解析出的并非真正的 GPT chat 模型，请把该次运行视为不可用，而不要接受一份降级了的第二意见（见重要规则）。
 
-**Output shape.** Codex prints a running transcript to stdout: a startup banner, its reasoning, any `exec`/tool calls it makes (e.g. `rg`, file reads), a `tokens used` line, and then **the final answer as the trailing block**. The Bash tool captures everything. The noise is easily identified and ignored — the final agent message is the last paragraph(s) after the `tokens used` line. If the output contains a `429`, `usage limit`, `quota`, or `rate limit` error, treat as unavailable.
+**输出形态。** Codex 会向 stdout 打印一份持续的过程记录：启动横幅、它的推理、它所做的任何 `exec`/工具调用（例如 `rg`、文件读取）、一行 `tokens used`，然后是**作为结尾块的最终回答**。Bash 工具会捕获全部内容。噪声很容易识别并忽略 — 最终 agent 消息是 `tokens used` 那一行之后的最后一段（几段）。如果输出中包含 `429`、`usage limit`、`quota` 或 `rate limit` 错误，则视为不可用。
 
-Set a **600-second timeout** on the Bash tool call (Codex may need time to read files and reason through complex questions).
+为 Bash 工具调用设置 **600 秒超时**（Codex 可能需要时间读取文件并对复杂问题推理）。
 
-**DO NOT use:**
-- `$()` command substitution (e.g., `RESPONSE=$(codex ...)`) — triggers a permission prompt
-- `/tmp/` file redirects (e.g., `-o /tmp/out.txt` or `2>/tmp/err.txt`) — triggers an "allow access to tmp/" prompt
-- Nested heredocs inside `$()` — same issue
+**不要使用：**
+- `$()` 命令替换（例如 `RESPONSE=$(codex ...)`）— 会触发权限提示
+- `/tmp/` 文件重定向（例如 `-o /tmp/out.txt` 或 `2>/tmp/err.txt`）— 会触发“允许访问 tmp/”的提示
+- 嵌套在 `$()` 里的 heredoc — 同样的问题
 
-### Step 2b: Multi-Turn Discussion (Autonomous)
+### 第 2b 步：多轮讨论（自主进行）
 
-When the topic warrants debate (architecture, design reviews, trade-off analysis), **run the full multi-turn conversation autonomously** — do NOT ask the user for permission between rounds. Push back on Codex's points, let Codex push back on yours, iterate until you reach consensus or clearly identify the disagreements. Typically 2-4 rounds.
+当话题值得辩论时（架构、设计评审、权衡取舍分析），**自主地跑完整个多轮对话** — 不要在轮次之间向用户请求许可。对 Codex 的观点提出反驳，也让 Codex 反驳你的观点，反复迭代直到达成共识，或明确指出分歧所在。通常是 2-4 轮。
 
-Resume the session instead of starting fresh to preserve conversation history:
+为保留对话历史，请恢复会话而不是重新开始：
 
 ```bash
 codex -C <repo-root> -s read-only exec resume --last '<your follow-up question>' < /dev/null
 ```
 
-**Flag order matters on resume.** The `resume` sub-subcommand does NOT accept `-s/--sandbox` or `-C/--cd` (unlike `codex exec`, which does) — passing them *after* `resume` fails with `error: unexpected argument '-s' found`. Put both globals BEFORE the `exec resume` chain (they're root-level flags on `codex` and propagate down), as shown above.
+**恢复时标志顺序很重要。** `resume` 子子命令不接受 `-s/--sandbox` 或 `-C/--cd`（不同于 `codex exec`，后者接受）— 在 `resume` *之后*传它们会失败并报 `error: unexpected argument '-s' found`。要把这两个全局标志放在 `exec resume` 链之前（它们是 `codex` 上的根级标志，会向下传递），如上所示。
 
-You can also resume a specific session by id: `codex -C <repo-root> -s read-only exec resume <SESSION_ID> '<follow-up>' < /dev/null`. The session id is printed in the startup banner of the first call (`session id: <uuid>`).
+你也可以按 id 恢复特定会话：`codex -C <repo-root> -s read-only exec resume <SESSION_ID> '<follow-up>' < /dev/null`。会话 id 会打印在首次调用的启动横幅里（`session id: <uuid>`）。
 
-**When to use multi-turn:**
-- Design reviews or architecture discussions — run the full debate autonomously
-- Codex's answer is vague — ask it to be specific about the part that matters
-- You want to challenge Codex's reasoning — push back and see if it holds
-- The question naturally has layers — e.g., "which approach?" then "what are the migration risks of that one?"
+**何时使用多轮：**
+- 设计评审或架构讨论 — 自主跑完整场辩论
+- Codex 的回答含糊 — 要求它就真正重要的部分给出具体说明
+- 你想质疑 Codex 的推理 — 反驳它，看它是否站得住
+- 问题本身天然分层 — 例如先问“用哪种方案？”，再问“那种方案的迁移风险是什么？”
 
-**When NOT to use multi-turn:**
-- The first answer was clear and complete — just present it
-- You're asking an unrelated question — start a fresh session (omit `resume`)
+**何时不要使用多轮：**
+- 第一次回答就已经清晰完整 — 直接呈现即可
+- 你要问一个不相关的问题 — 开一个新会话（省略 `resume`）
 
-### Step 3: Present the Result
+### 第 3 步：呈现结果
 
-**If multi-turn:** Present a consolidated synthesis — the key agreements, remaining disagreements, and your joint recommendation. Don't dump each round's raw output; the user wants the conclusion, not the transcript.
+**如果是多轮：** 呈现一份整合后的综述 — 关键的共识、仍然存在的分歧，以及你们的联合建议。不要把每一轮的原始输出都倒出来；用户要的是结论，不是过程记录。
 
-**If single-turn:** Present Codex's response, then add your own brief synthesis: where you agree, where you disagree, and what the user should take away from both perspectives. The value is in the synthesis, not just the raw second opinion.
+**如果是单轮：** 先呈现 Codex 的回复，然后加上你自己的简要综述：你在哪里同意、哪里不同意，以及用户应当从双方观点中带走什么。价值在于综述，而不只是原始的第二意见。
 
-**If Codex is unavailable** (quota / usage limit / 429 / rate limit):
+**如果 Codex 不可用**（quota / usage limit / 429 / rate limit）：
 
-> Codex is currently unavailable (usage limit / rate limited). I won't silently swap in a weaker model. You can say "ask Gemini" for an independent second opinion from a different architecture, or I'll proceed with my own analysis only.
+> Codex 目前不可用（用量限制 / 已被限流）。我不会悄悄换用一个更弱的模型。你可以说“询问 Gemini”，从另一种架构获取独立的第二意见，否则我就只用我自己的分析继续。
 
-Do NOT silently fall back to a different model within Codex. Report unavailability, offer Gemini as the alternate independent voice, and continue with your own reasoning.
+不要在 Codex 内部悄悄回退到另一个模型。报告不可用，把 Gemini 作为备选的独立声音提供出来，并用你自己的推理继续。
 
-**If there's another error**, show the filtered output and continue with your own reasoning.
+**如果出现了其它错误**，展示过滤后的输出，并用你自己的推理继续。
 
-## Important Rules
+## 重要规则
 
-1. **Don't accept a degraded model silently.** The whole value is an independent second architecture. Leaving the model unset (Codex's default chat model) is correct; if the default ever resolves to a non-GPT or a thin/local model, report it rather than presenting it as a meaningful second opinion.
-2. **Don't over-use.** This is for genuinely tricky decisions, not routine coding questions you can answer confidently yourself.
-3. **Shell quoting matters.** For prompts containing single quotes, escape with `'\''`. For very complex prompts, use the stdin heredoc form (see Step 2).
-4. **Command must start with `codex`** to match the `Bash(codex:*)` allow rule. Never wrap in `$()` or redirect to `/tmp/`.
-5. **Codex is read-only here.** Always pass `-s read-only`. Never grant it write/`danger-full-access` sandbox modes for a second opinion — it's a consultant, not a builder.
+1. **不要默默接受降级的模型。** 全部价值就在于一个独立的第二架构。保持模型未设置（Codex 的默认 chat 模型）是正确的；如果默认值解析出的是非 GPT 模型，或是一个单薄的/本地模型，请报告出来，而不要把它当作一份有意义的第二意见来呈现。
+2. **不要过度使用。** 它用于真正棘手的决策，而不是你自己就能有把握回答的例行编码问题。
+3. **Shell 引号很关键。** 对于包含单引号的提示词，用 `'\''` 转义。对于非常复杂的提示词，使用 stdin heredoc 形式（见第 2 步）。
+4. **命令必须以 `codex` 开头**，才能匹配 `Bash(codex:*)` 允许规则。绝不要用 `$()` 包裹它，也不要重定向到 `/tmp/`。
+5. **这里 Codex 是只读的。** 始终传入 `-s read-only`。为获取第二意见时，绝不要授予它写/`danger-full-access` 沙箱模式 — 它是顾问，不是构建者。

@@ -1,82 +1,74 @@
 ---
 name: adk-debug
-description: Use when debugging ADK agents, inspecting sessions, testing agent behavior, troubleshooting tool calls, event flow issues, or diagnosing LLM/model problems.
+description: 在调试 ADK 代理、检查会话、测试代理行为、排查工具调用、事件流问题或诊断 LLM/模型问题时使用。
 ---
 
-# Debugging ADK Agents
+# 调试 ADK 代理
 
-Two debugging modes: `adk web` (browser UI + API) and `adk run` (CLI).
+两种调试模式：`adk web`（浏览器 UI + API）和 `adk run`（CLI）。
 
 > [!NOTE]
-> **Preference**: For most development and debugging tasks, `adk run` (CLI) is preferred as it is faster and more convenient. **Within `adk run`, query mode is preferred over interactive mode** because it requires less human intervention. However, `adk web` is still required for UI-specific issues, session management visualization, or debugging the API server itself.
+> **偏好**：对大多数开发和调试任务，优先使用 `adk run`（CLI），因为它更快更便捷。**在 `adk run` 中，query 模式优先于交互模式**，因为它需要更少的人工干预。不过，对 UI 专属问题、会话管理可视化或调试 API 服务器本身，仍需使用 `adk web`。
 
 
 ---
 
-## Mode 1: adk web (Browser UI + REST API)
+## 模式 1：adk web（浏览器 UI + REST API）
 
-Best for: visual inspection, session management, multi-turn testing.
+最适合：可视化检查、会话管理、多轮测试。
 
-### Dev server workflow
+### 开发服务器工作流
 
-Before starting a server, ask the user:
-1. **Is there already a running `adk web` server?** If yes, use it
-   (check with `curl -s http://localhost:8000/health`).
-2. **If not**, start one. Use `run_in_background` so it doesn't
-   block. **Remember to shut it down when debugging is done.**
+启动服务器之前，询问用户：
+1. **是否已有运行中的 `adk web` 服务器？** 如果有，直接使用
+   （用 `curl -s http://localhost:8000/health` 检查）。
+2. **如果没有**，启动一个。使用 `run_in_background` 以免阻塞。**记得在调试完成后关闭它。**
 
 ```bash
-# Check if server is already running
+# 检查服务器是否已在运行
 curl -s http://localhost:8000/health
 
-# Start server (if not running)
-adk web path/to/agents_dir                    # default: http://localhost:8000
-adk web -v path/to/agents_dir                 # verbose (DEBUG level)
-adk web --reload_agents path/to/agents_dir    # auto-reload on file changes
+# 启动服务器（如果尚未运行）
+adk web path/to/agents_dir                    # 默认：http://localhost:8000
+adk web -v path/to/agents_dir                 # 详细日志（DEBUG 级别）
+adk web --reload_agents path/to/agents_dir    # 文件变更时自动重载
 
-# Shut down when done (if you started it)
-# Kill the background process or Ctrl+C
+# 完成后关闭（如果是你启动的）
+# 杀掉后台进程或按 Ctrl+C
 ```
 
 > [!TIP]
-> **Coding Agent Friendly Setup**: To allow a coding agent to read the server logs, recommend the user to start the server and redirect output to a file in a location the agent can read (e.g., the conversation's artifact directory or a shared workspace folder):
+> **对编码代理友好的设置**：为了让编码代理能读取服务器日志，建议用户启动服务器并把输出重定向到代理可读取位置的某个文件（例如对话的工件目录或共享工作区文件夹）：
 > ```bash
 > adk web -v path/to/agents_dir 2>&1 | tee path/to/agent_readable_log.log
 > ```
-> This ensures both the user and the agent can inspect the full debug logs.
+> 这确保用户和代理都能检查完整的调试日志。
 
-Web UI: `http://localhost:8000/dev-ui/`
+Web 界面：`http://localhost:8000/dev-ui/`
 
-### Session inspection via curl
+### 通过 curl 检查会话
 
 ```bash
-# List sessions
+# 列出会话
 curl -s http://localhost:8000/apps/{app_name}/users/{user_id}/sessions | python3 -m json.tool
 
-# Get full session with events
+# 获取包含事件的完整会话
 curl -s http://localhost:8000/apps/{app_name}/users/{user_id}/sessions/{session_id} | python3 -m json.tool
 ```
 
-Do NOT delete sessions after debugging — the user may want to
-inspect them in the web UI.
+调试后**不要**删除会话 —— 用户可能想在 Web 界面中检查它们。
 
-### Summarize events
+### 摘要事件
 
-Fetch the session JSON and write a Python script to summarize
-it. Do NOT use hardcoded inline scripts — the JSON schema may
-change. Instead, fetch the raw JSON first:
+拉取会话 JSON 并编写 Python 脚本汇总它。**不要**使用硬编码的内联脚本 —— JSON schema 可能变化。而是先拉取原始 JSON：
 
 ```bash
 curl -s http://localhost:8000/apps/{app_name}/users/{user_id}/sessions/{session_id} | python3 -m json.tool
 ```
 
-Then write a script based on the actual structure you see.
-Key fields to look for in each event: `author`, `branch`,
-`content.parts` (text, functionCall, functionResponse),
-`output`, `actions` (transferToAgent, requestTask, finishTask),
-`nodeInfo.path`.
+然后根据你看到的实际结构编写脚本。每个事件中要查找的关键字段：`author`、`branch`、`content.parts`（text、functionCall、functionResponse）、`output`、`actions`（transferToAgent、requestTask、finishTask）、`nodeInfo.path`。
 
-### Send test messages via curl
+### 通过 curl 发送测试消息
 
 ```bash
 SESSION=$(curl -s -X POST http://localhost:8000/apps/{app_name}/users/test/sessions \
@@ -85,121 +77,118 @@ SESSION=$(curl -s -X POST http://localhost:8000/apps/{app_name}/users/test/sessi
 curl -N -X POST http://localhost:8000/run_sse \
   -H "Content-Type: application/json" \
   -d "{\"app_name\":\"{app_name}\",\"user_id\":\"test\",\"session_id\":\"$SESSION\",
-       \"new_message\":{\"role\":\"user\",\"parts\":[{\"text\":\"your message here\"}]},
+       \"new_message\":{\"role\":\"user\",\"parts\":[{\"text\":\"在这里写你的消息\"}]},
        \"streaming\":false}"
 ```
 
-### Debug endpoints (traces)
+### 调试端点（trace）
 
 ```bash
-# Trace for a specific event
+# 某个特定事件的 trace
 curl -s http://localhost:8000/debug/trace/{event_id} | python3 -m json.tool
 
-# All traces for a session
+# 某个会话的所有 trace
 curl -s http://localhost:8000/debug/trace/session/{session_id} | python3 -m json.tool
 
-# Health check
+# 健康检查
 curl -s http://localhost:8000/health
 ```
 
-### Extract LLM content history
+### 提取 LLM 内容历史
 
-Fetch trace data and inspect the `call_llm` spans. The LLM
-request/response are in span attributes:
+拉取 trace 数据并检查 `call_llm` span。LLM 请求/响应保存在 span 属性中：
 
 ```bash
 curl -s http://localhost:8000/debug/trace/session/{session_id} | python3 -m json.tool
 ```
 
-Look for spans with `name: "call_llm"` and inspect their
-`attributes.gcp.vertex.agent.llm_request` (JSON string of the
-full request including `contents`, `config`, `model`).
+查找 `name: "call_llm"` 的 span，并检查其 `attributes.gcp.vertex.agent.llm_request`（完整请求的 JSON 字符串，包含 `contents`、`config`、`model`）。
 
-### Key span attributes
+### 关键 span 属性
 
-| Attribute | Description |
+| 属性 | 描述 |
 |-----------|-------------|
-| `gcp.vertex.agent.llm_request` | Full LLM request JSON (contents, config, model) |
-| `gcp.vertex.agent.llm_response` | Full LLM response JSON |
-| `gcp.vertex.agent.event_id` | Event ID — correlate with session events |
-| `gen_ai.request.model` | Model name |
-| `gen_ai.usage.input_tokens` | Input token count |
-| `gen_ai.usage.output_tokens` | Output token count |
-| `gen_ai.response.finish_reasons` | Stop reason |
+| `gcp.vertex.agent.llm_request` | 完整 LLM 请求 JSON（contents、config、model） |
+| `gcp.vertex.agent.llm_response` | 完整 LLM 响应 JSON |
+| `gcp.vertex.agent.event_id` | 事件 ID —— 与会话事件关联 |
+| `gen_ai.request.model` | 模型名称 |
+| `gen_ai.usage.input_tokens` | 输入 token 数 |
+| `gen_ai.usage.output_tokens` | 输出 token 数 |
+| `gen_ai.response.finish_reasons` | 停止原因 |
 
 ---
 
-## Mode 2: adk run (CLI)
+## 模式 2：adk run（CLI）
 
-Best for: quick testing, scripting, CI/CD, headless debugging.
+最适合：快速测试、脚本编写、CI/CD、无头调试。
 
-### Run interactively
-
-```bash
-adk run path/to/my_agent                      # interactive prompts
-adk run -v path/to/my_agent                   # verbose logging
-```
-
-### Run with query (automated)
+### 交互式运行
 
 ```bash
-adk run path/to/my_agent "query"              # run with query
-adk run --jsonl path/to/my_agent "query"      # output structured JSONL (noise reduced)
+adk run path/to/my_agent                      # 交互式提示
+adk run -v path/to/my_agent                   # 详细日志
 ```
 
-### When to use automated query mode
+### 带 query 运行（自动化）
 
-- **Fast & Lightweight**: Run tests quickly without starting the `adk web` dev server.
-- **Easy Automation**: Perfect for CI/CD pipelines and regression scripts.
-- **Highly Composable**: You can pipe the `--jsonl` output to standard tools like `jq`, `grep`, or `diff`.
-- **Parallel Execution**: Each run is an isolated process. You can run multiple tests concurrently without port conflicts.
-- **State Isolation**: Use `--in_memory` for fast, side-effect-free testing (no database updates).
-- **Multi-Turn Support**: Remember to set a session ID if you need to maintain conversation state across turns.
+```bash
+adk run path/to/my_agent "query"              # 带查询运行
+adk run --jsonl path/to/my_agent "query"      # 输出结构化 JSONL（减少噪声）
+```
+
+### 何时使用自动化 query 模式
+
+- **快速轻量**：无需启动 `adk web` 开发服务器即可快速运行测试。
+- **易于自动化**：非常适合 CI/CD 流水线和回归脚本。
+- **高度可组合**：可把 `--jsonl` 输出管道给 `jq`、`grep` 或 `diff` 等标准工具。
+- **并行执行**：每次运行是隔离进程。可并发运行多个测试而不会有端口冲突。
+- **状态隔离**：使用 `--in_memory` 进行快速、无副作用的测试（不更新数据库）。
+- **多轮支持**：若需跨轮次保持会话状态，记得设置 session ID。
 
 > [!TIP]
-> Always read the sample's `README.md` first to understand expected inputs and behaviors!
+> 请先阅读样例的 `README.md`，以理解预期输入和行为！
 
-### Unit Tests vs. Sample Agents (When to use which)
+### 单元测试与样例代理（何时用哪个）
 
-Choosing the right testing strategy is crucial for efficiency and coverage:
+选择正确的测试策略对效率和覆盖度至关重要：
 
-- **Use Unit Tests when**:
-  - Testing **isolated logic**, specific methods, or edge cases of a single component.
-  - Verifying **data schemas**, Pydantic validations, or utility functions.
-  - *Location*: `tests/unittests/`.
+- **在以下情况使用单元测试**：
+  - 测试**孤立逻辑**、特定方法或单个组件的边界情况。
+  - 验证**数据 schema**、Pydantic 校验或工具函数。
+  - *位置*：`tests/unittests/`。
 
-- **Use Sample Agents (Integration Testing) when**:
-  - Developing features with **multi-level integration** (Runner + Agent + Workflow) or changes with wide impact.
-  - Testing complex scenarios like **Human-in-the-Loop (HITL)** or long-running tools.
-  - You need to verify the **real behavior** of the agent in a simulated environment.
-  - *Location*: Create a sample under `contributing/agent_samples/` (refer to `adk-sample-creator`).
+- **在以下情况使用样例代理（集成测试）**：
+  - 开发具有**多层级集成**（Runner + Agent + Workflow）的功能或影响面广的变更。
+  - 测试**人在环中（HITL）**或长时间运行工具等复杂场景。
+  - 需要在模拟环境中验证代理的**真实行为**。
+  - *位置*：在 `contributing/agent_samples/` 下创建样例（参见 `adk-sample-creator`）。
 
 > [!IMPORTANT]
-> **AI Assistant Reminder**: If you create a temporary sample agent for testing, you **MUST delete it** after verification is complete, unless the user explicitly asks to keep it.
+> **AI 助手提醒**：如果你为测试创建了临时样例代理，验证完成后你**必须删除它**，除非用户明确要求保留。
 
-### Exit Codes & Details
+### 退出码与详情
 
-- **Exit Code 0**: Success.
-- **Exit Code 1**: Error (e.g., API key missing, agent load failure).
-- **Exit Code 2**: Paused (Workflow is waiting for human input/HITL).
+- **退出码 0**：成功。
+- **退出码 1**：错误（例如缺少 API 密钥、代理加载失败）。
+- **退出码 2**：暂停（Workflow 正在等待人工输入/HITL）。
 
-For more options and flags, run:
+更多选项和标志，请运行：
 ```bash
 adk run --help
 ```
 
-### Event printing utility
+### 事件打印工具
 
 ```python
 from google.adk.utils._debug_output import print_event
 
-print_event(event, verbose=False)  # text responses only
-print_event(event, verbose=True)   # tool calls, code execution, inline data
+print_event(event, verbose=False)  # 仅文本响应
+print_event(event, verbose=True)   # 工具调用、代码执行、内联数据
 ```
 
-Location: `src/google/adk/utils/_debug_output.py`
+位置：`src/google/adk/utils/_debug_output.py`
 
-### Programmatic debugging
+### 编程式调试
 
 ```python
 from google.adk import Agent, Runner
@@ -219,149 +208,149 @@ for event in runner.run(user_id="u", session_id=session.id, new_message="hello")
 
 ---
 
-## Logging
+## 日志
 
-Shared across both modes.
+两种模式共用。
 
-Set log level with `--log_level` (DEBUG, INFO, WARNING, ERROR, CRITICAL) or `-v` for DEBUG.
-Logs write to `/tmp/agents_log/`. Tail latest: `tail -F /tmp/agents_log/agent.latest.log`
-Logger name: `google_adk`. Setup: `src/google/adk/cli/utils/logs.py`
+用 `--log_level`（DEBUG、INFO、WARNING、ERROR、CRITICAL）或 `-v` 设置日志级别（`-v` 即 DEBUG）。
+日志写入 `/tmp/agents_log/`。跟踪最新：`tail -F /tmp/agents_log/agent.latest.log`
+Logger 名称：`google_adk`。设置：`src/google/adk/cli/utils/logs.py`
 
-| Env Variable | Effect |
+| 环境变量 | 作用 |
 |---|---|
-| `ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS` | Include prompt/response in traces (default: `true`) |
-| `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` | Enable prompt/response in OTEL spans |
-| `GOOGLE_CLOUD_PROJECT` | Required for `--trace_to_cloud` |
+| `ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS` | 在 trace 中包含 prompt/response（默认：`true`） |
+| `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` | 在 OTEL span 中捕获 prompt/response |
+| `GOOGLE_CLOUD_PROJECT` | `--trace_to_cloud` 所需 |
 
 ---
 
-## Common Issues
+## 常见问题
 
-### 1. Agent outputs raw JSON instead of calling tools
+### 1. 代理输出裸 JSON 而不调用工具
 
-**Symptom:** Agent with `output_schema` dumps JSON text instead of calling tools.
-**Cause:** `output_schema` sets `response_schema` on the LLM config, activating controlled generation (JSON-only mode).
-**Check:** Look for `response_mime_type: "application/json"` in the LLM request.
-**Location:** `src/google/adk/flows/llm_flows/basic.py`
+**症状：** 带 `output_schema` 的代理输出 JSON 文本而非调用工具。
+**原因：** `output_schema` 在 LLM 配置上设置了 `response_schema`，激活受控生成（仅 JSON 模式）。
+**检查：** 在 LLM 请求中查找 `response_mime_type: "application/json"`。
+**位置：** `src/google/adk/flows/llm_flows/basic.py`
 
-### 2. Events missing from session / not visible to plugins
+### 2. 事件在会话中缺失 / 插件不可见
 
-**Symptom:** Events from sub-agents don't appear in plugin callbacks or runner event stream.
-**Cause:** Direct `append_event` calls inside components bypass the runner's event loop.
-**Check:** Only the runner (`runners.py`) should call `append_event`. Components should yield events.
+**症状：** 子代理的事件不出现在插件回调或 runner 事件流中。
+**原因：** 组件内直接调用 `append_event` 绕过了 runner 的事件循环。
+**检查：** 只有 runner（`runners.py`）应调用 `append_event`。组件应产出事件。
 
-### 3. `NameError: name 'X' is not defined` at runtime
+### 3. 运行时出现 `NameError: name 'X' is not defined`
 
-**Symptom:** `{"error": "name 'SomeClass' is not defined"}`
-**Cause:** Class imported under `TYPE_CHECKING` but used at runtime (e.g., `isinstance()`).
-**Fix:** Move import outside `TYPE_CHECKING` or use a local import.
+**症状：** `{"error": "name 'SomeClass' is not defined"}`
+**原因：** 类在 `TYPE_CHECKING` 下导入却在运行时使用（例如 `isinstance()`）。
+**修复：** 把导入移出 `TYPE_CHECKING`，或使用局部导入。
 
-### 4. Sub-agent doesn't have context from parent conversation
+### 4. 子代理没有父对话的上下文
 
-**Symptom:** Sub-agent only sees its own input, not the parent's history.
-**Cause:** Branch isolation — sub-agents on a branch only see events on that branch.
-**Fix:** Write the sub-agent's `description` to prompt the parent to include context in delegation input.
+**症状：** 子代理只看到自己的输入，看不到父级历史。
+**原因：** 分支隔离 —— 分支上的子代理只能看到该分支上的事件。
+**修复：** 编写子代理的 `description`，促使父级在委派输入中包含上下文。
 
-### 5. Agent validation errors at startup
+### 5. 启动时代理校验错误
 
-**Symptom:** `ValueError` on agent construction.
-**Common causes:**
-- `"All tools must be set via LlmAgent.tools."` — Don't pass tools via `generate_content_config`
-- `"System instruction must be set via LlmAgent.instruction."` — Don't set via `generate_content_config`
-- `"Response schema must be set via LlmAgent.output_schema."` — Don't set via `generate_content_config`
-**Location:** `src/google/adk/agents/llm_agent.py` — `validate_generate_content_config`
+**症状：** 构造代理时报 `ValueError`。
+**常见原因：**
+- `"All tools must be set via LlmAgent.tools."` —— 不要通过 `generate_content_config` 传递工具
+- `"System instruction must be set via LlmAgent.instruction."` —— 不要通过 `generate_content_config` 设置
+- `"Response schema must be set via LlmAgent.output_schema."` —— 不要通过 `generate_content_config` 设置
+**位置：** `src/google/adk/agents/llm_agent.py` —— `validate_generate_content_config`
 
-### 6. LLM calls exceeding limit
+### 6. LLM 调用超出上限
 
-**Symptom:** `LlmCallsLimitExceededError: Max number of llm calls limit of N exceeded`
-**Cause:** `run_config.max_llm_calls` limit reached.
-**Fix:** Increase `max_llm_calls` in `RunConfig`, or investigate why the agent is looping.
-**Location:** `src/google/adk/agents/invocation_context.py`
+**症状：** `LlmCallsLimitExceededError: Max number of llm calls limit of N exceeded`
+**原因：** 达到 `run_config.max_llm_calls` 上限。
+**修复：** 提高 `RunConfig` 中的 `max_llm_calls`，或排查代理为何循环。
+**位置：** `src/google/adk/agents/invocation_context.py`
 
-### 7. Tool errors silently swallowed
+### 7. 工具错误被静默吞掉
 
-**Symptom:** Tool call fails but agent continues without expected result.
-**Cause:** Errors are caught and returned as function response text. Set `on_tool_error_callback` to customize.
-**Check:** Look for error text in function response events.
+**症状：** 工具调用失败，但代理在没有预期结果的情况下继续。
+**原因：** 错误被捕获并以函数响应文本的形式返回。设置 `on_tool_error_callback` 可自定义。
+**检查：** 在函数响应事件中查找错误文本。
 
-### 8. Agent not loading / not discovered
+### 8. 代理未加载 / 未被发现
 
-**Symptom:** `adk web` doesn't list the agent, or returns 404.
-**Cause:** Agent directory must follow convention:
+**症状：** `adk web` 未列出该代理，或返回 404。
+**原因：** 代理目录必须遵循约定：
 ```
 my_agent/
-  __init__.py   # MUST contain: from . import agent
-  agent.py      # MUST define: root_agent = Agent(...) OR app = App(...)
+  __init__.py   # 必须包含：from . import agent
+  agent.py      # 必须定义：root_agent = Agent(...) 或 app = App(...)
 ```
 
-### 9. Sync tool blocking the event loop
+### 9. 同步工具阻塞事件循环
 
-**Symptom:** Agent hangs or becomes very slow.
-**Cause:** Sync tools run in a thread pool (max 4 workers). All workers busy → new tool calls block.
-**Fix:** Make tools async if they do I/O.
+**症状：** 代理卡住或变得非常慢。
+**原因：** 同步工具在线程池中运行（最多 4 个工作线程）。所有工作线程都忙 → 新工具调用阻塞。
+**修复：** 若工具做 I/O，改为异步。
 
 ---
 
-## LLM Finish Reasons
+## LLM 停止原因
 
-- `STOP` — normal completion
-- `MAX_TOKENS` — output truncated (increase `max_output_tokens`)
-- `SAFETY` — blocked by safety filters
-- `RECITATION` — blocked for recitation
+- `STOP` —— 正常完成
+- `MAX_TOKENS` —— 输出被截断（提高 `max_output_tokens`）
+- `SAFETY` —— 被安全过滤器拦截
+- `RECITATION` —— 因复述被拦截
 
 ---
 
-## Event Flow Architecture
+## 事件流架构
 
 ```
-User message
+用户消息
   -> Runner.run_async()
-    -> Runner._exec_with_plugin()        # persists events, runs plugins
-      -> agent.run_async()               # yields events
+    -> Runner._exec_with_plugin()        # 持久化事件，运行插件
+      -> agent.run_async()               # 产出事件
         -> LlmAgent._run_async_impl()
-          -> BaseLlmFlow.run_async()       # Execution flow
-            -> _AutoFlow or _SingleFlow   # Flow implementations
-              -> call_llm               # LLM request + response
-              -> execute_tools          # tool dispatch (functions.py)
+          -> BaseLlmFlow.run_async()       # 执行流程
+            -> _AutoFlow or _SingleFlow   # 流程实现
+              -> call_llm               # LLM 请求 + 响应
+              -> execute_tools          # 工具分发（functions.py）
 ```
 
 ---
 
-## Callback Chain
+## 回调链
 
-**Before model call:** PluginManager `run_before_model_callback()` → agent `canonical_before_model_callbacks`
-**After model call:** PluginManager `run_after_model_callback()` → agent `canonical_after_model_callbacks`
-**Before/after tool call:** PluginManager `run_before_tool_callback()` / `run_after_tool_callback()` → agent callbacks
+**模型调用前：** PluginManager `run_before_model_callback()` → agent `canonical_before_model_callbacks`
+**模型调用后：** PluginManager `run_after_model_callback()` → agent `canonical_after_model_callbacks`
+**工具调用前/后：** PluginManager `run_before_tool_callback()` / `run_after_tool_callback()` → 代理回调
 
 ---
 
-## Key Files for Debugging
+## 调试关键文件
 
-| Area | File |
+| 领域 | 文件 |
 |---|---|
-| Runner event loop | `src/google/adk/runners.py` |
-| LLM request building | `src/google/adk/flows/llm_flows/basic.py` |
-| Tool dispatch | `src/google/adk/flows/llm_flows/functions.py` |
-| Multi-agent orchestration | `src/google/adk/workflow/` |
-| Content/context building | `src/google/adk/flows/llm_flows/contents.py` |
-| Task support | `src/google/adk/agents/llm/task/` |
-| Agent config + validation | `src/google/adk/agents/llm_agent.py` |
-| Event model | `src/google/adk/events/event.py` |
-| Session services | `src/google/adk/sessions/` |
-| Invocation context | `src/google/adk/agents/invocation_context.py` |
-| Web server + debug endpoints | `src/google/adk/cli/adk_web_server.py` |
-| Debug output printer | `src/google/adk/utils/_debug_output.py` |
+| Runner 事件循环 | `src/google/adk/runners.py` |
+| LLM 请求构建 | `src/google/adk/flows/llm_flows/basic.py` |
+| 工具分发 | `src/google/adk/flows/llm_flows/functions.py` |
+| 多代理编排 | `src/google/adk/workflow/` |
+| Content/上下文构建 | `src/google/adk/flows/llm_flows/contents.py` |
+| Task 支持 | `src/google/adk/agents/llm/task/` |
+| 代理配置 + 校验 | `src/google/adk/agents/llm_agent.py` |
+| 事件模型 | `src/google/adk/events/event.py` |
+| 会话服务 | `src/google/adk/sessions/` |
+| 调用上下文 | `src/google/adk/agents/invocation_context.py` |
+| Web 服务器 + 调试端点 | `src/google/adk/cli/adk_web_server.py` |
+| 调试输出打印器 | `src/google/adk/utils/_debug_output.py` |
 
 ---
 
-## Debugging Checklist
+## 调试检查清单
 
-1. **Start with logs** — `-v` flag, check `/tmp/agents_log/agent.latest.log`
-2. **Inspect the session** — curl endpoints (`adk web`) or print events (`adk run`)
-3. **Check event actions** — `transfer_to_agent`, `request_task`, `finish_task`, `escalate`
-4. **Check event.output** — single_turn and task agents set output here
-5. **Check traces** — `/debug/trace/session/{id}` for model/token usage
-6. **Verify agent structure** — `__init__.py` imports, `root_agent` or `app` defined
-7. **Check tool responses** — look for error text in function response events
-8. **Check LLM finish reason** — `STOP`, `MAX_TOKENS`, `SAFETY`
-9. **Test in isolation** — create a minimal agent with just the problem tool/config
+1. **从日志开始** —— `-v` 标志，检查 `/tmp/agents_log/agent.latest.log`
+2. **检查会话** —— curl 端点（`adk web`）或打印事件（`adk run`）
+3. **检查事件 actions** —— `transfer_to_agent`、`request_task`、`finish_task`、`escalate`
+4. **检查 event.output** —— single_turn 和 task 代理在此设置输出
+5. **检查 trace** —— 用 `/debug/trace/session/{id}` 查看模型/token 用量
+6. **验证代理结构** —— `__init__.py` 导入、已定义 `root_agent` 或 `app`
+7. **检查工具响应** —— 在函数响应事件中查找错误文本
+8. **检查 LLM 停止原因** —— `STOP`、`MAX_TOKENS`、`SAFETY`
+9. **隔离测试** —— 只带出问题的工具/配置创建最小代理

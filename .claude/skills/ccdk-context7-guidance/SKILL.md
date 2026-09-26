@@ -1,36 +1,36 @@
 ---
 name: context7-guidance
-description: Fetch CURRENT library/framework/API/CLI documentation via Context7 instead of relying on training data. Use whenever the user mentions a specific library, framework, SDK, API, or cloud service, asks a setup/configuration question, plans a version migration, or is debugging library-specific behavior. Triggers on common web frameworks, APIs, and cloud services — even well-known ones, since training data may be stale.
+description: 通过 Context7 获取当前库/框架/API/CLI 文档，而非依赖训练数据。在用户提到具体库、框架、SDK、API 或云服务，询问设置/配置问题，计划版本迁移或调试库特定行为时使用。
 ---
 
-# Context7 Guidance — Current Docs Over Training Data
+# Context7 指南 — 用当前文档取代训练数据
 
-The kit ships the Context7 plugin permission so you can pull **current** documentation at the version the project actually uses. Training data drifts: APIs get deprecated, defaults change, config keys get renamed. When the question is about a real library, fetch the docs — don't answer from memory.
+本工具包已内置 Context7 插件权限，让你能按项目实际使用的版本拉取**当前**文档。训练数据会漂移：API 被废弃、默认值发生变化、配置键被改名。当问题涉及真实存在的库时，去获取文档——不要凭记忆回答。
 
-## When to Use
+## 何时使用
 
-Reach for Context7 when the user:
+当用户出现以下情况时，就该用 Context7：
 
-- Names a specific library, framework, SDK, or cloud service (common web frameworks, APIs, and cloud services — even ones you "know")
-- Asks a setup or configuration question ("how do I wire up X middleware?")
-- Plans a version migration ("upgrading to vN — what changed?")
-- Is debugging library-specific behavior (an error, a deprecation, an unexpected default)
-- Wants code that calls a third-party API — verify the signature before writing it
+- 点名某个具体的库、框架、SDK 或云服务（常见的 Web 框架、API 和云服务——即使是你"已经知道"的那些）
+- 提出安装或配置类问题（"这个 X 中间件该怎么接起来？"）
+- 计划版本迁移（"升级到 vN——有哪些变化？"）
+- 正在调试某个库特有的行为（一个报错、一次废弃警告、一个意料之外的默认值）
+- 想要调用第三方 API 的代码——写之前先核实签名
 
-**When NOT to use it:** general programming concepts, refactoring your own code, debugging your own business logic, writing a script from scratch, or code review of non-library logic. Context7 is for *external* surfaces, not your codebase.
+**不要用它的情况：** 通用编程概念、重构你自己的代码、调试你自己的业务逻辑、从零开始写一个脚本，或审查与库无关的逻辑代码。Context7 面向的是*外部*接口，不是你的代码库。
 
-## How to Fetch
+## 如何获取文档
 
-1. **Resolve the library ID.** Call `resolve-library-id` with the library name and pass the user's **full question** as the query — it sharpens the ranking.
-2. **Pick the best match.** Prefer an exact name match and the official/primary package over community forks. If the user named a version, prefer the version-specific ID.
-3. **Query the docs.** Call `query-docs` with the chosen library ID and the user's specific question (not a single keyword).
-4. **Answer from the result.** Use the fetched docs, include relevant examples, and cite the version when it matters.
+1. **解析库 ID。** 用库名调用 `resolve-library-id`，并把用户的**完整问题**作为 query 传进去——这能让排序更准。
+2. **挑出最匹配的结果。** 优先选择名称完全一致的项，以及官方/主包而不是社区分支。如果用户指定了版本，优先选用针对该版本的 ID。
+3. **查询文档。** 用选定的库 ID 和用户的具体问题（不要只丢一个关键词）调用 `query-docs`。
+4. **依据结果作答。** 使用获取到的文档，附上相关示例，在版本有影响时注明版本。
 
-If the tools aren't directly callable, load them first via ToolSearch (`select:mcp__context7__resolve-library-id,mcp__context7__query-docs`) — don't skip verification just because they weren't preloaded.
+如果这些工具无法直接调用，先用 ToolSearch 加载它们（`select:mcp__context7__resolve-library-id,mcp__context7__query-docs`）——不要因为它们没有被预加载就跳过核实。
 
-## Guidelines
+## 准则
 
-- **Pass the full question**, not one word — it improves relevance at both steps.
-- **Be version-aware** — when the user mentions a version, carry it into the resolve step.
-- **Prefer official sources** when several matches exist.
-- **Fall back to web search only if Context7 has no coverage** for that library.
+- **传完整问题**，不要只传一个词——这能同时提升两步的相关性。
+- **留意版本**——用户提到版本时，把它带入解析步骤。
+- 存在多个匹配时，**优先选择官方来源**。
+- 只有在 Context7 对该库**没有收录时**，才回退到网页搜索。

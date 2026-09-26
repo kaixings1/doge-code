@@ -1,24 +1,24 @@
 ---
 name: django-patterns
-description: Django 架构模式、使用 DRF 的 REST API 设计、ORM 最佳实践、缓存、信号（Signals）、中间件（Middleware）以及生产级 Django 应用。
+description: Django 架构模式、使用 DRF 的 REST API 设计、ORM 最佳实践、缓存、信号、中间件以及生产级 Django 应用。
 origin: ECC
 ---
 
-# Django 开发模式 (Django Development Patterns)
+# Django 开发模式
 
 适用于可扩展、可维护应用程序的生产级 Django 架构模式。
 
-## 何时激活 (When to Activate)
+## 何时激活
 
 - 构建 Django Web 应用程序
 - 设计 Django REST Framework (DRF) API
-- 处理 Django ORM 和模型 (Models)
+- 处理 Django ORM 和模型
 - 搭建 Django 项目结构
-- 实现缓存 (Caching)、信号 (Signals)、中间件 (Middleware)
+- 实现缓存、信号、中间件
 
-## 项目结构 (Project Structure)
+## 项目结构
 
-### 推荐布局 (Recommended Layout)
+### 推荐布局
 
 ```
 myproject/
@@ -50,7 +50,7 @@ myproject/
         └── ...
 ```
 
-### 配置拆分模式 (Split Settings Pattern)
+### 配置拆分模式
 
 ```python
 # config/settings/base.py
@@ -150,9 +150,9 @@ LOGGING = {
 }
 ```
 
-## 模型设计模式 (Model Design Patterns)
+## 模型设计模式
 
-### 模型最佳实践 (Model Best Practices)
+### 模型最佳实践
 
 ```python
 from django.db import models
@@ -225,7 +225,7 @@ class Product(models.Model):
         super().save(*args, **kwargs)
 ```
 
-### 查询集最佳实践 (QuerySet Best Practices)
+### 查询集最佳实践
 
 ```python
 from django.db import models
@@ -265,7 +265,7 @@ class Product(models.Model):
 Product.objects.active().with_category().in_stock()
 ```
 
-### 管理器方法 (Manager Methods)
+### 管理器方法
 
 ```python
 class ProductManager(models.Manager):
@@ -295,9 +295,9 @@ class Product(models.Model):
     custom = ProductManager()
 ```
 
-## Django REST Framework 模式 (Django REST Framework Patterns)
+## Django REST Framework 模式
 
-### 序列化器模式 (Serializer Patterns)
+### 序列化器模式
 
 ```python
 from rest_framework import serializers
@@ -380,7 +380,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return user
 ```
 
-### 视图集模式 (ViewSet Patterns)
+### 视图集模式
 
 ```python
 from rest_framework import viewsets, status, filters
@@ -406,7 +406,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     ordering = ['-created_at']
 
     def get_serializer_class(self):
-        """根据动作 (action) 返回相应的序列化器。"""
+        """根据动作返回相应的序列化器。"""
         if self.action == 'create':
             return ProductCreateSerializer
         return ProductSerializer
@@ -439,7 +439,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         return self.get_paginated_response(serializer.data)
 ```
 
-### 自定义动作 (Custom Actions)
+### 自定义动作
 
 ```python
 from rest_framework.decorators import api_view, permission_classes
@@ -471,7 +471,7 @@ def add_to_cart(request):
     return Response({'message': '已加入购物车'}, status=status.HTTP_201_CREATED)
 ```
 
-## 服务层模式 (Service Layer Pattern)
+## 服务层模式
 
 ```python
 # apps/orders/services.py
@@ -529,9 +529,9 @@ class OrderService:
         pass
 ```
 
-## 缓存策略 (Caching Strategies)
+## 缓存策略
 
-### 视图级缓存 (View-Level Caching)
+### 视图级缓存
 
 ```python
 from django.views.decorators.cache import cache_page
@@ -544,7 +544,7 @@ class ProductListView(generic.ListView):
     context_object_name = 'products'
 ```
 
-### 模板片段缓存 (Template Fragment Caching)
+### 模板片段缓存
 
 ```django
 {% load cache %}
@@ -553,7 +553,7 @@ class ProductListView(generic.ListView):
 {% endcache %}
 ```
 
-### 低级缓存 (Low-Level Caching)
+### 低级缓存
 
 ```python
 from django.core.cache import cache
@@ -570,7 +570,7 @@ def get_featured_products():
     return products
 ```
 
-### 查询集缓存 (QuerySet Caching)
+### 查询集缓存
 
 ```python
 from django.core.cache import cache
@@ -588,9 +588,9 @@ def get_popular_categories():
     return categories
 ```
 
-## 信号 (Signals)
+## 信号
 
-### 信号模式 (Signal Patterns)
+### 信号模式
 
 ```python
 # apps/users/signals.py
@@ -624,9 +624,9 @@ class UsersConfig(AppConfig):
         import apps.users.signals
 ```
 
-## 中间件 (Middleware)
+## 中间件
 
-### 自定义中间件 (Custom Middleware)
+### 自定义中间件
 
 ```python
 # middleware/active_user_middleware.py
@@ -658,9 +658,9 @@ class RequestLoggingMiddleware(MiddlewareMixin):
         return response
 ```
 
-## 性能优化 (Performance Optimization)
+## 性能优化
 
-### 预防 N+1 查询 (N+1 Query Prevention)
+### 预防 N+1 查询
 
 ```python
 # 差 - N+1 查询
@@ -680,7 +680,7 @@ for product in products:
         print(tag.name)
 ```
 
-### 数据库索引 (Database Indexing)
+### 数据库索引
 
 ```python
 class Product(models.Model):
@@ -697,7 +697,7 @@ class Product(models.Model):
         ]
 ```
 
-### 批量操作 (Bulk Operations)
+### 批量操作
 
 ```python
 # 批量创建
@@ -716,19 +716,19 @@ Product.objects.bulk_update(products, ['is_active'])
 Product.objects.filter(stock=0).delete()
 ```
 
-## 快速参考 (Quick Reference)
+## 快速参考
 
 | 模式 | 描述 |
 |---------|-------------|
-| 配置拆分 (Split settings) | 分离开发/生产/测试配置 |
-| 自定义查询集 (Custom QuerySet) | 可复用的查询方法 |
-| 服务层 (Service Layer) | 业务逻辑分离 |
-| 视图集 (ViewSet) | REST API 端点 |
-| 序列化器校验 (Serializer validation) | 请求/响应转换 |
+| 配置拆分 | 分离开发/生产/测试配置 |
+| 自定义查询集 | 可复用的查询方法 |
+| 服务层 | 业务逻辑分离 |
+| 视图集 | REST API 端点 |
+| 序列化器校验 | 请求/响应转换 |
 | select_related | 外键优化 |
 | prefetch_related | 多对多优化 |
-| 缓存优先 (Cache first) | 缓存高耗时操作 |
-| 信号 (Signals) | 事件驱动的动作 |
-| 中间件 (Middleware) | 请求/响应处理 |
+| 缓存优先 | 缓存高耗时操作 |
+| 信号 | 事件驱动的动作 |
+| 中间件 | 请求/响应处理 |
 
 请记住：Django 提供了许多便捷方式，但对于生产级应用程序，结构和组织比简洁的代码更重要。为可维护性而构建。

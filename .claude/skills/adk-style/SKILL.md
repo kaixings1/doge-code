@@ -1,20 +1,20 @@
 ---
 name: adk-style
-description: ADK development style guide for routine nits — Python idioms, codebase conventions, imports, typing, Pydantic patterns, formatting, logging, async/concurrency, and file organization. Use this skill whenever writing code, tests, or reviewing PRs for the ADK project to ensure compliance with styling and coding conventions. Triggers on "code style", "how should I format", "naming convention", "lint", "nit", "imports", "typing", "Pydantic patterns", "testing rules", "async", "io".
+description: ADK 开发样式指南 — Python 惯用模式、代码库约定、导入、类型标注、Pydantic 模式、格式化、日志、异步/并发和文件组织。在为 ADK 项目编写代码、测试或审查 PR 时使用。
 ---
 
-# ADK Style Guide
+# ADK 风格指南
 
-## Style Guide (references/)
-- [Visibility](references/visibility.md) — naming conventions for module-private, internal, and package-private visibility.
-- [Imports](references/imports.md) — relative vs absolute imports, `TYPE_CHECKING` patterns.
-- [Typing](references/typing.md) — strong typing, avoiding Any, bare type names, keyword-only arguments, `Optional` vs `| None`, abstract parameter types, mutable default avoidance, runtime type discrimination.
-- [Pydantic Patterns](references/pydantic.md) — Pydantic v2 usage, `Field()` constraints, `field_validator`, `model_validator`, private attributes, deprecation migration, post-init setup.
-- [Formatting](references/formatting.md) — indentation, line limits, and running pre-commit hooks.
-- [Documentation](references/documentation.md) — comments and docstrings.
-- [Logging](references/logging.md) — lazy evaluation and log levels.
-- [Async and Concurrency](references/async.md) — async I/O requirements, avoiding blocking the event loop.
-- [File Organization](references/file-organization.md) — file headers and class organization.
+## 风格指南（references/）
+- [可见性](references/visibility.md) —— 模块私有、内部、包私有可见性的命名约定。
+- [导入](references/imports.md) —— 相对导入与绝对导入、`TYPE_CHECKING` 模式。
+- [类型提示](references/typing.md) —— 强类型、避免 Any、裸类型名、仅关键字参数、`Optional` 与 `| None`、抽象参数类型、避免可变默认参数、运行时类型区分。
+- [Pydantic 模式](references/pydantic.md) —— Pydantic v2 用法、`Field()` 约束、`field_validator`、`model_validator`、私有属性、废弃迁移、初始化后设置。
+- [格式化](references/formatting.md) —— 缩进、行长限制，以及运行 pre-commit 钩子。
+- [文档](references/documentation.md) —— 注释与 docstring。
+- [日志](references/logging.md) —— 惰性求值与日志级别。
+- [异步与并发](references/async.md) —— 异步 I/O 要求、避免阻塞事件循环。
+- [文件组织](references/file-organization.md) —— 文件头与类的组织。
 
-## Testing
-[references/testing.md](references/testing.md) — core principles, 9 rules for writing ADK tests, test structure template
+## 测试
+[references/testing.md](references/testing.md) —— 核心原则、编写 ADK 测试的 9 条规则、测试结构模板

@@ -72,7 +72,7 @@ mkdir -p $TARGET/skills $TARGET/rules
 ```
 问题："仅安装核心技能，还是包含小众/框架扩展包？"
 选项：
-  - "仅核心（推荐）" —— "tdd, e2e, evals, verification, research-first, security, frontend patterns, compacting, 跨职能 Anthropic 技能"
+  - "仅核心（推荐）" —— "tdd, e2e, 评测, 验证, 研究优先, 安全, 前端模式, 压缩, 跨职能 Anthropic 技能"
   - "核心 + 选定的小众技能" —— "在核心技能之后添加框架/领域特定技能"
   - "仅小众技能" —— "跳过核心，安装特定的框架/领域技能"
 默认：仅核心
@@ -175,7 +175,7 @@ cp -r $ECC_ROOT/skills/<skill-name> $TARGET/skills/
 问题："你想安装哪些规则集？"
 选项：
   - "通用规则（推荐）" —— "与语言无关的原则：代码风格、git 工作流、测试、安全等（8 个文件）"
-  - "TypeScript/JavaScript" —— "TS/JS 模式、Hooks、使用 Playwright 的测试（5 个文件）"
+  - "TypeScript/JavaScript" —— "TS/JS 模式、钩子（Hooks）、使用 Playwright 的测试（5 个文件）"
   - "Python" —— "Python 模式、pytest、black/ruff 格式化（5 个文件）"
   - "Go" —— "Go 模式、表格驱动测试、gofmt/staticcheck（5 个文件）"
 ```

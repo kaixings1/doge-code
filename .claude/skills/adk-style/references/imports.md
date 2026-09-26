@@ -1,22 +1,22 @@
-# Imports Style Guide
+# 导入风格指南
 
-## General Rules
+## 通用规则
 
-- **Source code** (`src/`): Use relative imports.
+- **源代码**（`src/`）：使用相对导入。
   `from ..agents.llm_agent import LlmAgent`
-- **Tests** (`tests/`): Use absolute imports.
+- **测试**（`tests/`）：使用绝对导入。
   `from google.adk.agents.llm_agent import LlmAgent`
-- **Import from module**: Import from the module file, not from `__init__.py`.
-  `from ..agents.llm_agent import LlmAgent` (not `from ..agents import LlmAgent`)
-- **CLI package** (`cli/`):
-  - Treat as an external package.
-  - Use **relative imports** for files within the `cli/` package.
-  - Use **absolute imports** for files outside of the `cli/` package.
-  - **Dependency Direction**: Only `cli/` can import from the rest of the codebase. The other codebase must **STRICTLY NOT** import from `cli/`.
+- **从模块导入**：从模块文件导入，而非从 `__init__.py`。
+  `from ..agents.llm_agent import LlmAgent`（而非 `from ..agents import LlmAgent`）
+- **CLI 包**（`cli/`）：
+  - 视为外部包。
+  - 对 `cli/` 包内的文件使用**相对导入**。
+  - 对 `cli/` 包外的文件使用**绝对导入**。
+  - **依赖方向**：只有 `cli/` 可以从代码库的其余部分导入。代码库的其余部分必须**严格不**从 `cli/` 导入。
 
-## TYPE_CHECKING Imports
+## TYPE_CHECKING 导入
 
-Use `TYPE_CHECKING` for imports needed only by type hints to avoid circular imports at runtime:
+使用 `TYPE_CHECKING` 导入仅由类型提示需要的导入，以避免运行时的循环导入：
 
 ```python
 from __future__ import annotations
@@ -26,4 +26,4 @@ if TYPE_CHECKING:
     from ..agents.invocation_context import InvocationContext
 ```
 
-This works because `from __future__ import annotations` makes all annotations strings (deferred evaluation), so the import is never needed at runtime.
+这样做是因为 `from __future__ import annotations` 将所有注解设为字符串（延迟求值），因此在运行时永远不需要该导入。

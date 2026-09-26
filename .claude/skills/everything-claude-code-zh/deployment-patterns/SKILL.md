@@ -1,25 +1,25 @@
 ---
 name: deployment-patterns
-description: Deployment workflows, CI/CD pipeline patterns, Docker containerization, health checks, rollback strategies, and production readiness checklists for web applications.
+description: 面向 Web 应用的部署工作流、CI/CD 流水线模式、Docker 容器化、健康检查、回滚策略以及生产就绪自检清单。
 origin: ECC
 ---
 
-# 部署模式 (Deployment Patterns)
+# 部署模式
 
 生产部署工作流与 CI/CD 最佳实践。
 
 ## 何时激活
 
-- 设置 CI/CD 流水线 (Pipelines)
+- 设置 CI/CD 流水线
 - 对应用程序进行 Docker 容器化
 - 规划部署策略（蓝绿部署、金丝雀部署、滚动更新）
-- 实现健康检查 (Health Checks) 与就绪探针 (Readiness Probes)
+- 实现健康检查与就绪探针
 - 准备生产发布
 - 配置环境特定的设置
 
-## 部署策略 (Deployment Strategies)
+## 部署策略
 
-### 滚动部署 (Rolling Deployment) - 默认
+### 滚动部署 - 默认
 
 逐渐替换实例 —— 在滚动更新期间，旧版本和新版本同时运行。
 
@@ -41,7 +41,7 @@ origin: ECC
 **缺点：** 两个版本同时运行 —— 要求变更必须向后兼容
 **适用场景：** 标准部署，向后兼容的变更
 
-### 蓝绿部署 (Blue-Green Deployment)
+### 蓝绿部署
 
 运行两个完全相同的环境。原子化地切换流量。
 
@@ -58,7 +58,7 @@ origin: ECC
 **缺点：** 部署期间需要 2 倍的基础设施资源
 **适用场景：** 关键服务，对问题零容忍
 
-### 金丝雀部署 (Canary Deployment)
+### 金丝雀部署
 
 首先将小部分比例的流量路由到新版本。
 
@@ -76,7 +76,7 @@ v2: 100% 流量
 
 **优点：** 在全量推出前通过真实流量发现问题
 **缺点：** 需要流量切分基础设施和监控
-**适用场景：** 高流量服务，高风险变更，特性标志 (Feature Flags)
+**适用场景：** 高流量服务，高风险变更，特性标志
 
 ## Docker
 
@@ -168,7 +168,7 @@ CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers
 ### Docker 最佳实践
 
 ```
-# 推荐做法 (GOOD practices)
+# 推荐做法
 - 使用具体的版本标签 (node:22-alpine, 而非 node:latest)
 - 使用多阶段构建以最小化镜像大小
 - 以非 root 用户运行
@@ -177,7 +177,7 @@ CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers
 - 添加 HEALTHCHECK 指令
 - 在 docker-compose 或 k8s 中设置资源限制
 
-# 错误做法 (BAD practices)
+# 错误做法
 - 以 root 用户运行
 - 使用 :latest 标签
 - 在一个 COPY 层中复制整个仓库
@@ -185,7 +185,7 @@ CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers
 - 在镜像中存储机密信息（应使用环境变量或机密管理器）
 ```
 
-## CI/CD 流水线 (CI/CD Pipeline)
+## CI/CD 流水线
 
 ### GitHub Actions (标准流水线)
 
@@ -242,7 +242,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     environment: production
     steps:
-      - name: Deploy to production
+      - name: 部署到生产环境
         run: |
           # 平台特定的部署命令
           # Railway: railway up
@@ -251,17 +251,17 @@ jobs:
           echo "Deploying ${{ github.sha }}"
 ```
 
-### 流水线阶段 (Pipeline Stages)
+### 流水线阶段
 
 ```
 PR 开启:
-  代码扫描 (lint) → 类型检查 (typecheck) → 单元测试 → 集成测试 → 预览部署
+  代码扫描 → 类型检查 → 单元测试 → 集成测试 → 预览部署
 
 合并到 main:
-  代码扫描 (lint) → 类型检查 (typecheck) → 单元测试 → 集成测试 → 构建镜像 → 部署到预发环境 → 冒烟测试 → 部署到生产环境
+  代码扫描 → 类型检查 → 单元测试 → 集成测试 → 构建镜像 → 部署到预发环境 → 冒烟测试 → 部署到生产环境
 ```
 
-## 健康检查 (Health Checks)
+## 健康检查
 
 ### 健康检查接口
 
@@ -300,7 +300,7 @@ async function checkDatabase(): Promise<HealthCheck> {
 }
 ```
 
-### Kubernetes 探针 (Probes)
+### Kubernetes 探针
 
 ```yaml
 livenessProbe:
@@ -328,7 +328,7 @@ startupProbe:
   failureThreshold: 30    # 30 * 5s = 150s 最大启动时间
 ```
 
-## 环境配置 (Environment Configuration)
+## 环境配置
 
 ### 云原生应用 (Twelve-Factor App) 模式
 
@@ -359,11 +359,11 @@ const envSchema = z.object({
   LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
 });
 
-// 启动时验证 —— 如果配置错误则立即崩溃 (fail fast)
+// 启动时验证 —— 如果配置错误则立即崩溃
 export const env = envSchema.parse(process.env);
 ```
 
-## 回滚策略 (Rollback Strategy)
+## 回滚策略
 
 ### 瞬时回滚
 
@@ -385,11 +385,11 @@ npx prisma migrate resolve --rolled-back <migration-name>
 
 - [ ] 之前的镜像/产物可用且已标记标签
 - [ ] 数据库迁移向后兼容（无破坏性变更）
-- [ ] 特性标志 (Feature flags) 可以在不部署的情况下禁用新功能
+- [ ] 特性标志可以在不部署的情况下禁用新功能
 - [ ] 已针对错误率激增配置监控告警
 - [ ] 在生产发布前已在预发环境测试过回滚
 
-## 生产就绪自检清单 (Production Readiness Checklist)
+## 生产就绪自检清单
 
 在任何生产部署之前：
 
@@ -409,19 +409,19 @@ npx prisma migrate resolve --rolled-back <migration-name>
 
 ### 监控
 - [ ] 已导出应用指标（请求率、延迟、错误率）
-- [ ] 已针对 错误率 > 阈值 配置告警
+- [ ] 已针对错误率 > 阈值配置告警
 - [ ] 已设置日志聚合（结构化日志，可搜索）
-- [ ] 已对健康检查接口进行可用性 (Uptime) 监控
+- [ ] 已对健康检查接口进行可用性监控
 
 ### 安全
 - [ ] 已对依赖项进行 CVE 漏洞扫描
 - [ ] 已针对允许的源配置 CORS
-- [ ] 公共接口已启用速率限制 (Rate limiting)
-- [ ] 身份验证 (Authentication) 和授权 (Authorization) 已验证
+- [ ] 公共接口已启用速率限制
+- [ ] 身份验证和授权已验证
 - [ ] 已设置安全响应头 (CSP, HSTS, X-Frame-Options)
 
 ### 运维
 - [ ] 回滚计划已记录并经过测试
 - [ ] 数据库迁移已针对生产规模的数据进行过测试
-- [ ] 针对常见失败场景的运行手册 (Runbook)
-- [ ] 已定义值班 (On-call) 轮换和升级路径
+- [ ] 针对常见失败场景的运行手册
+- [ ] 已定义值班轮换和升级路径

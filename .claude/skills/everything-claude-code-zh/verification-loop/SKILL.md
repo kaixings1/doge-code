@@ -4,13 +4,13 @@ description: "Claude Code 会话的全方位验证系统。"
 origin: ECC
 ---
 
-# 验证循环技能（Verification Loop Skill）
+# 验证循环技能
 
 Claude Code 会话的全方位验证系统。
 
 ## 何时使用
 
-在以下场景调用此技能（Skill）：
+在以下场景调用此技能：
 - 完成功能开发或重大代码变更后
 - 在创建拉取请求（PR）之前
 - 当你想确保通过质量门禁时
@@ -73,7 +73,7 @@ grep -rn "api_key" --include="*.ts" --include="*.js" . 2>/dev/null | head -10
 grep -rn "console.log" --include="*.ts" --include="*.tsx" src/ 2>/dev/null | head -10
 ```
 
-### 阶段 6：变更审查（Diff Review）
+### 阶段 6：变更审查
 ```bash
 # 显示变更内容
 git diff --stat
@@ -90,15 +90,15 @@ git diff HEAD~1 --name-only
 运行所有阶段后，生成验证报告：
 
 ```
-验证报告（VERIFICATION REPORT）
+验证报告
 ==================
 
-构建 (Build):     [通过/失败]
-类型 (Types):     [通过/失败] (X 个错误)
-Lint:            [通过/失败] (X 个警告)
-测试 (Tests):     [通过/失败] (X/Y 通过, Z% 覆盖率)
-安全 (Security):  [通过/失败] (X 个问题)
-变更 (Diff):      [X 个文件已变更]
+构建:     [通过/失败]
+类型:     [通过/失败] (X 个错误)
+Lint:     [通过/失败] (X 个警告)
+测试:     [通过/失败] (X/Y 通过, Z% 覆盖率)
+安全:     [通过/失败] (X 个问题)
+变更:     [X 个文件已变更]
 
 总体评价:   [已就绪/未就绪] 提交 PR
 
@@ -120,7 +120,7 @@ Lint:            [通过/失败] (X 个警告)
 运行：/verify
 ```
 
-## 与钩子（Hooks）集成
+## 与钩子集成
 
-此技能是 `PostToolUse` 钩子（Hooks）的补充，但提供更深入的验证。
+此技能是 `PostToolUse` 钩子的补充，但提供更深入的验证。
 钩子能立即捕捉问题；此技能则提供全方位的审查。

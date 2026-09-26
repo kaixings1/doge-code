@@ -1,28 +1,28 @@
-# Advanced Workflow Patterns Reference
+# 高级工作流模式参考
 
-Nested workflows, dynamic nodes, retry configuration, custom node types, and graph construction.
+嵌套工作流、动态节点、重试配置、自定义节点类型以及图构建。
 
-## 📋 Agent Verification Checklist (Advanced Patterns)
-Use this checklist when implementing complex workflows:
+## 📋 代理验证清单（高级模式）
+实现复杂工作流时使用此清单：
 
-- [ ] **Validation**: Does your graph follow all 7 validation rules? (e.g., no unconditional cycles)
-- [ ] **Custom Nodes**: If creating a custom node, did you override `get_name()` and `run()`?
-- [ ] **Dynamic Execution**: If using `run_node`, did you follow the rules in the dedicated dynamic-nodes reference?
-- [ ] **Waiting State**: Did you use `wait_for_output=True` if the node should stay in WAITING state until output is yielded?
+- [ ] **校验**：你的图是否遵循全部 7 条校验规则？（例如无无条件循环）
+- [ ] **自定义节点**：若创建自定义节点，是否重写了 `get_name()` 和 `run()`？
+- [ ] **动态执行**：若使用 `run_node`，是否遵循了专门的 dynamic-nodes 参考中的规则？
+- [ ] **等待状态**：若节点应保持 WAITING 状态直到产出输出，是否使用了 `wait_for_output=True`？
 
-## 💡 Quick Reference
+## 💡 快速参考
 
-- **Retry**: `RetryConfig(max_attempts=5, initial_delay=1.0)`
-- **Custom Node Fields**: `rerun_on_resume`, `wait_for_output`, `retry_config`, `timeout`
+- **重试**：`RetryConfig(max_attempts=5, initial_delay=1.0)`
+- **自定义节点字段**：`rerun_on_resume`、`wait_for_output`、`retry_config`、`timeout`
 
-## Nested Workflows
+## 嵌套工作流
 
-A `Workflow` is both an agent and a node. Use one workflow inside another:
+`Workflow` 既是代理又是节点。把一个工作流用在另一个里面：
 
 ```python
 from google.adk.workflow import Workflow
 
-# Inner workflow
+# 内层工作流
 inner = Workflow(
     name="inner_pipeline",
     edges=[
@@ -31,41 +31,40 @@ inner = Workflow(
     ],
 )
 
-# Outer workflow using inner as a node
+# 外层工作流，把内层工作流当作节点使用
 outer = Workflow(
     name="outer_pipeline",
     edges=[
         ('START', pre_process),
-        (pre_process, inner),      # Nested workflow
+        (pre_process, inner),      # 嵌套工作流
         (inner, post_process),
     ],
 )
 ```
 
-The inner workflow receives the predecessor's output as its START input and its terminal output flows to the next node in the outer workflow.
+内层工作流把前驱节点的输出作为其 START 输入接收，其终止输出则流向外部工作流中的下一个节点。
 
-## Dynamic Node Scheduling
+## 动态节点调度
 
-Schedule nodes at runtime using `ctx.run_node()`.
+使用 `ctx.run_node()` 在运行时调度节点。
 
-See the dedicated [Dynamic Node Scheduling Reference](dynamic-nodes.md) for
-detailed rules, examples, and best practices.
+详细规则、示例和最佳实践见专门的 [动态节点调度参考](dynamic-nodes.md)。
 
-## Retry Configuration
+## 重试配置
 
-Configure automatic retry for nodes that may fail:
+为可能失败的节点配置自动重试：
 
 ```python
 from google.adk.workflow import RetryConfig
 from google.adk.workflow import FunctionNode
 
 retry = RetryConfig(
-    max_attempts=5,         # Max attempts (default: 5). 0 or 1 = no retry
-    initial_delay=1.0,      # Seconds before first retry (default: 1.0)
-    max_delay=60.0,         # Max seconds between retries (default: 60.0)
-    backoff_factor=2.0,     # Delay multiplier per attempt (default: 2.0)
-    jitter=1.0,             # Randomness factor (default: 1.0, 0.0 = none)
-    exceptions=None,        # Exception types to retry (None = all)
+    max_attempts=5,         # 最大尝试次数（默认 5）。0 或 1 表示不重试
+    initial_delay=1.0,      # 首次重试前的等待秒数（默认 1.0）
+    max_delay=60.0,         # 两次重试之间的最大秒数（默认 60.0）
+    backoff_factor=2.0,     # 每次尝试的延迟倍数（默认 2.0）
+    jitter=1.0,             # 随机抖动因子（默认 1.0，0.0 表示无抖动）
+    exceptions=None,        # 需要重试的异常类型（None 表示全部）
 )
 
 node = FunctionNode(
@@ -75,7 +74,7 @@ node = FunctionNode(
 )
 ```
 
-### Retry delay formula
+### 重试延迟公式
 
 ```
 delay = initial_delay * (backoff_factor ^ attempt)
@@ -83,19 +82,19 @@ delay = min(delay, max_delay)
 delay = delay * (1 + random(0, jitter))
 ```
 
-### Accessing the attempt count
+### 访问尝试次数
 
 ```python
 def my_node(ctx: Context, node_input: str) -> str:
-  # attempt_count is 1 on the first try, ≥2 on retries
+  # attempt_count 首次尝试为 1，重试时 ≥2
   if ctx.attempt_count > 1:
-    print(f"Retry attempt {ctx.attempt_count}")
+    print(f"重试第 {ctx.attempt_count} 次")
   return "result"
 ```
 
-## Custom Node Types
+## 自定义节点类型
 
-Subclass `BaseNode` for custom behavior:
+为自定义行为继承 `BaseNode`：
 
 ```python
 from google.adk.workflow import BaseNode
@@ -106,7 +105,7 @@ from typing import Any, AsyncGenerator
 from typing_extensions import override
 
 class BatchProcessorNode(BaseNode):
-  """Processes items in batches."""
+  """按批次处理条目。"""
   model_config = ConfigDict(arbitrary_types_allowed=True)
 
   name: str = Field(default="batch_processor")
@@ -137,63 +136,63 @@ class BatchProcessorNode(BaseNode):
     yield Event(output=results)
 ```
 
-### BaseNode Fields
+### BaseNode 字段
 
-| Field | Default | Description |
+| 字段 | 默认值 | 描述 |
 |-------|---------|-------------|
-| `rerun_on_resume` | `False` | Whether to rerun after HITL interrupt |
-| `wait_for_output` | `False` | Node stays in WAITING state until it yields output (see below) |
-| `retry_config` | `None` | Retry configuration on failure |
-| `timeout` | `None` | Max seconds for node to complete |
+| `rerun_on_resume` | `False` | HITL 中断后是否重新运行 |
+| `wait_for_output` | `False` | 节点保持 WAITING 状态直到产出输出（见下文） |
+| `retry_config` | `None` | 失败时的重试配置 |
+| `timeout` | `None` | 节点完成的最大秒数 |
 
 ### wait_for_output
 
-When `wait_for_output=True`, a node that finishes without yielding an `Event` with output moves to **WAITING** state instead of COMPLETED. Downstream nodes are **not** triggered. The node can then be re-triggered by upstream predecessors.
+当 `wait_for_output=True` 时，一个完成但未产出带输出 `Event` 的节点会进入 **WAITING** 状态而非 COMPLETED。下游节点**不会**被触发。该节点之后可被上游前驱节点重新触发。
 
-This is how `JoinNode` works internally — it runs once per predecessor, storing partial inputs, and only yields output (triggering downstream) when all predecessors have completed. `LlmAgentWrapper` in `task` mode also sets `wait_for_output=True` automatically.
+`JoinNode` 内部就是这样工作的 —— 它为每个前驱运行一次，存储部分输入，只有当所有前驱都完成时才产出输出（触发下游）。`task` 模式下的 `LlmAgentWrapper` 也会自动设置 `wait_for_output=True`。
 
 ```python
 from google.adk.workflow import BaseNode
 
 class CollectorNode(BaseNode):
-  wait_for_output: bool = True  # Stay in WAITING until output is yielded
+  wait_for_output: bool = True  # 保持 WAITING 状态，直到产出输出
 
   async def run(self, *, ctx, node_input):
-    # Store partial input, don't yield output yet
+    # 存储部分输入，暂时不产出输出
     collected = ctx.state.get("collected", [])
     collected.append(node_input)
     yield Event(state={"collected": collected})
 
-    # Only yield output when we have enough
+    # 只有收集够了才产出输出
     if len(collected) >= 3:
       yield Event(output=collected)
-      # Now node transitions to COMPLETED and triggers downstream
+      # 此时节点转为 COMPLETED 并触发下游
 ```
 
-Nodes with `wait_for_output=True` default:
+`wait_for_output=True` 为默认值的节点：
 
-- `JoinNode`: `True` (waits for all predecessors)
-- `LlmAgentWrapper` (task mode): `True` (set in `model_post_init`)
-- All other nodes: `False`
+- `JoinNode`：`True`（等待所有前驱）
+- `LlmAgentWrapper`（task 模式）：`True`（在 `model_post_init` 中设置）
+- 所有其他节点：`False`
 
-### Required Methods
+### 必需的方法
 
-| Method | Description |
+| 方法 | 描述 |
 |--------|-------------|
-| `get_name() -> str` | Return the node name |
-| `run(*, ctx, node_input) -> AsyncGenerator` | Execute the node, yield events |
+| `get_name() -> str` | 返回节点名称 |
+| `run(*, ctx, node_input) -> AsyncGenerator` | 执行节点，产出事件 |
 
 ## ToolNode
 
-Wrap an ADK tool as a workflow node:
+把 ADK 工具封装为工作流节点：
 
 ```python
 from google.adk.workflow._tool_node import _ToolNode as ToolNode
 from google.adk.tools.function_tool import FunctionTool
 
 def search(query: str) -> str:
-  """Search for information."""
-  return f"Results for: {query}"
+  """搜索信息。"""
+  return f"查询结果：{query}"
 
 tool = FunctionTool(search)
 tool_node = ToolNode(tool, name="search_node")
@@ -202,17 +201,17 @@ agent = Workflow(
     name="with_tool",
     edges=[
         ('START', prepare_query),
-        (prepare_query, tool_node),  # Input must be dict (tool args) or None
+        (prepare_query, tool_node),  # 输入必须是字典（工具参数）或 None
         (tool_node, process_results),
     ],
 )
 ```
 
-**Important**: ToolNode input must be a dictionary of tool arguments or None.
+**重要**：ToolNode 的输入必须是工具参数字典或 None。
 
 ## AgentNode
 
-Wrap any `BaseAgent` (not just LlmAgent) as a workflow node:
+把任何 `BaseAgent`（不只是 LlmAgent）封装为工作流节点：
 
 ```python
 from google.adk.workflow._agent_node import AgentNode
@@ -235,50 +234,50 @@ agent = Workflow(
 )
 ```
 
-## Graph Validation Rules
+## 图校验规则
 
-The workflow graph is validated on construction. These rules are enforced:
+工作流图在构造时被校验。以下规则会被强制执行：
 
-1. START node must exist
-2. START node must not have incoming edges
-3. All non-START nodes must be reachable (appear as `to_node` in some edge)
-4. No duplicate node names
-5. No duplicate edges
-6. At most one `__DEFAULT__` route per node
-7. No unconditional cycles (cycles must have at least one routed edge)
+1. START 节点必须存在
+2. START 节点不得有入边
+3. 所有非 START 节点必须可达（在某个边中作为 `to_node` 出现）
+4. 无重复节点名
+5. 无重复边
+6. 每个节点最多一个 `__DEFAULT__` 路由
+7. 无无条件循环（循环必须至少有一条路由边）
 
-## Edge Construction Patterns
+## 边构造模式
 
 ```python
 from google.adk.workflow import Edge
 from google.adk.workflow._workflow_graph import WorkflowGraph
 
-# Tuple syntax (most common)
+# 元组语法（最常用）
 edges = [
-    ('START', node_a),                    # Simple edge
-    (node_a, node_b, "route"),            # Routed edge
-    (node_a, (node_b, node_c)),           # Fan-out
-    ((node_b, node_c), join_node),        # Fan-in
+    ('START', node_a),                    # 普通边
+    (node_a, node_b, "route"),            # 带路由的边
+    (node_a, (node_b, node_c)),           # 扇出
+    ((node_b, node_c), join_node),        # 汇合
 ]
 
-# Sequence shorthand (tuple with 3+ elements creates chain)
+# 顺序简写（含 3 个以上元素的元组会创建链）
 edges = [('START', node_a, node_b, node_c)]
-# Equivalent to: [('START', node_a), (node_a, node_b), (node_b, node_c)]
+# 等价于：[('START', node_a), (node_a, node_b), (node_b, node_c)]
 
-# Routing map (dict syntax)
+# 路由映射（dict 语法）
 edges = [
     (classifier, {"success": handler_a, "error": handler_b}),
 ]
 
-# Edge objects (explicit)
+# Edge 对象（显式写法）
 edges = [
     Edge(START, node_a),
     Edge(node_a, node_b, route="success"),
 ]
 
-# Edge.chain helper
+# Edge.chain 辅助方法
 edges = Edge.chain('START', node_a, node_b, node_c)
-# Returns: [(START, node_a), (node_a, node_b), (node_b, node_c)]
+# 返回：[(START, node_a), (node_a, node_b), (node_b, node_c)]
 
 # WorkflowGraph.from_edge_items
 graph = WorkflowGraph.from_edge_items([
@@ -288,9 +287,9 @@ graph = WorkflowGraph.from_edge_items([
 agent = Workflow(name="my_workflow", graph=graph)
 ```
 
-## Source File Locations
+## 源文件位置
 
-| Component | File |
+| 组件 | 文件 |
 |-----------|------|
 | Workflow | `src/google/adk/workflow/_workflow.py` |
 | WorkflowGraph, Edge | `src/google/adk/workflow/_workflow_graph.py` |
@@ -302,7 +301,7 @@ agent = Workflow(name="my_workflow", graph=graph)
 | JoinNode | `src/google/adk/workflow/_join_node.py` |
 | ParallelWorker | `src/google/adk/workflow/_parallel_worker.py` |
 | BaseNode, START | `src/google/adk/workflow/_base_node.py` |
-| @node decorator | `src/google/adk/workflow/_node.py` |
+| @node 装饰器 | `src/google/adk/workflow/_node.py` |
 | RetryConfig | `src/google/adk/workflow/_retry_config.py` |
 | Event | `src/google/adk/events/event.py` |
 | RequestInput | `src/google/adk/events/request_input.py` |

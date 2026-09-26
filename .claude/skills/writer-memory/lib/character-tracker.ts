@@ -1,18 +1,18 @@
 /**
- * Character Tracking Module
+ * 角色追踪模块
  * 캐릭터 추적 및 검증 시스템
  */
 
 import { loadMemory, saveMemory, generateId, now } from './memory-manager';
 import type { Character, EmotionPoint, SpeechLevel, WriterMemory } from './memory-manager';
 
-// === Helper to find character ===
+// === 查找角色的辅助函数 ===
 function findCharacter(memory: WriterMemory, nameOrAlias: string): Character | null {
-  // Direct lookup
+  // 直接查找
   if (memory.characters[nameOrAlias]) {
     return memory.characters[nameOrAlias];
   }
-  // Alias lookup
+  // 别名查找
   for (const char of Object.values(memory.characters)) {
     if (char.aliases?.includes(nameOrAlias)) {
       return char;
@@ -21,7 +21,7 @@ function findCharacter(memory: WriterMemory, nameOrAlias: string): Character | n
   return null;
 }
 
-// === Character CRUD ===
+// === 角色 CRUD ===
 
 export function addCharacter(name: string, options?: {
   arc?: string;
@@ -35,7 +35,7 @@ export function addCharacter(name: string, options?: {
   if (!memory) return null;
 
   if (memory.characters[name]) {
-    return null; // Already exists
+    return null; // 已存在
   }
 
   const character: Character = {
@@ -65,7 +65,7 @@ export function updateCharacter(name: string, updates: Partial<Character>): Char
   const character = findCharacter(memory, name);
   if (!character) return null;
 
-  // Apply updates (excluding id, name, created)
+  // 应用更新（排除不可变字段）
   const { id, name: _, created, ...allowedUpdates } = updates as any;
   Object.assign(character, allowedUpdates, { updated: now() });
 
@@ -108,7 +108,7 @@ export function listCharacters(): CharacterSummary[] {
   }));
 }
 
-// === Alias Management ===
+// === 别名管理 ===
 
 export function addAlias(characterName: string, alias: string): boolean {
   const memory = loadMemory();
@@ -148,7 +148,7 @@ export function resolveCharacter(nameOrAlias: string): Character | null {
   return findCharacter(memory, nameOrAlias);
 }
 
-// === Emotion Timeline ===
+// === 情感时间线 ===
 
 export function addEmotionPoint(characterName: string, emotion: string, trigger: string, options?: {
   sceneId?: string;
@@ -190,7 +190,7 @@ export function getEmotionArc(characterName: string): string {
   return timeline.map(e => e.emotion).join(' → ');
 }
 
-// === Dialogue Validation ===
+// === 对白校验 ===
 
 export interface ValidationResult {
   status: 'PASS' | 'WARN' | 'FAIL';
@@ -204,11 +204,11 @@ export interface ValidationResult {
 }
 
 export function detectSpeechLevel(text: string): SpeechLevel {
-  // 존댓말 patterns
+  // 존댓말 模式
   const formal = /요$|습니다$|세요$|십시오$/;
-  // 반말 patterns
+  // 반말 模式
   const informal = /야$|아$|어$|지$|는데$/;
-  // 해체 patterns
+  // 해체 模式
   const casual = /임$|음$|ㅋ|ㅎ$/;
 
   const sentences = text.split(/[.!?]/).filter(s => s.trim());
@@ -243,7 +243,7 @@ export function validateDialogue(characterName: string, dialogue: string): Valid
     };
   }
 
-  // Check tone
+  // 检查语调
   const exclamations = (dialogue.match(/!/g) || []).length;
   const toneCheck = { passed: true, detail: '톤 일치' };
   if (character.tone.includes('담백') && exclamations > 1) {
@@ -251,14 +251,14 @@ export function validateDialogue(characterName: string, dialogue: string): Valid
     toneCheck.detail = `담백한 톤에 느낌표 ${exclamations}개는 과함`;
   }
 
-  // Check speech level
+  // 检查语阶
   const detected = detectSpeechLevel(dialogue);
   const speechCheck = {
     passed: detected === character.speechLevel || detected === '혼합',
     detail: detected === character.speechLevel ? '말투 일치' : `기대: ${character.speechLevel}, 감지: ${detected}`
   };
 
-  // Check keywords
+  // 检查关键词
   const keywordCheck = { passed: true, detail: '키워드 없음 (검사 생략)' };
   if (character.keywords.length > 0) {
     const hasKeyword = character.keywords.some(kw => dialogue.includes(kw));
@@ -286,7 +286,7 @@ export function validateDialogue(characterName: string, dialogue: string): Valid
   };
 }
 
-// === Profile Generation ===
+// === 档案生成 ===
 
 export function generateCharacterProfile(characterName: string): string {
   const character = resolveCharacter(characterName);

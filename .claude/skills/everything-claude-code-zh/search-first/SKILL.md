@@ -1,6 +1,6 @@
 ---
 name: search-first
-description: Research-before-coding workflow. Search for existing tools, libraries, and patterns before writing custom code. Invokes the researcher agent.
+description: 编码前先调研的工作流。在编写自定义代码之前，先搜索已有的工具、库和模式。会调用调研智能体（researcher agent）。
 origin: ECC
 ---
 
@@ -88,7 +88,7 @@ Task(subagent_type="general-purpose", prompt="
 - 代码检查（Linting）→ `eslint`, `ruff`, `textlint`, `markdownlint`
 - 格式化（Formatting）→ `prettier`, `black`, `gofmt`
 - 测试（Testing）→ `jest`, `pytest`, `go test`
-- Pre-commit → `husky`, `lint-staged`, `pre-commit`
+- 提交前检查（Pre-commit）→ `husky`, `lint-staged`, `pre-commit`
 
 ### AI/LLM 集成
 - Claude SDK → 参考 Context7 获取最新文档

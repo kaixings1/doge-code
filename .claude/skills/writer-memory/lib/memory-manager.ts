@@ -1,19 +1,19 @@
 /**
  * memory-manager.ts
  *
- * Core memory management module for the Writer Memory System.
- * Handles all CRUD operations for .writer-memory/ storage.
+ * Writer Memory 系统的核心记忆管理模块。
+ * 处理 .writer-memory/ 存储的全部增删改查操作。
  *
- * This is a REFERENCE IMPLEMENTATION that Claude reads when the skill
- * is activated. Written as real, runnable TypeScript with proper types,
- * error handling, and atomic operations.
+ * 这是一个参考实现，技能被激活时由 Claude 阅读。
+ * 以真实可运行的 TypeScript 编写，包含完整的类型、
+ * 错误处理与原子操作。
  */
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync, renameSync, readdirSync } from "fs";
 import { join, dirname } from "path";
 
 // ---------------------------------------------------------------------------
-// Types
+// 类型
 // ---------------------------------------------------------------------------
 
 export type SpeechLevel = "반말" | "존댓말" | "해체" | "혼합";
@@ -30,9 +30,9 @@ export type RelationshipType =
 export interface EmotionPoint {
   timestamp: string;
   sceneId?: string;
-  /** Korean emotion word, e.g. "그리움" */
+  /** 韩语情感词，例如 "그리움" */
   emotion: string;
-  /** What caused this emotion */
+  /** 引发该情感的原因 */
   trigger: string;
   intensity: 1 | 2 | 3 | 4 | 5;
 }
@@ -41,24 +41,24 @@ export interface Character {
   id: string;
   name: string;
   aliases: string[];
-  /** Arc summary, e.g. "체념->욕망자각->선택" */
+  /** 情感弧线摘要，例如 "체념->욕망자각->선택" */
   arc: string;
-  /** Tone summary, e.g. "담백, 현재충실" */
+  /** 对白语调摘要，例如 "담백, 현재충실" */
   tone: string;
   speechLevel: SpeechLevel;
-  /** Characteristic phrases/words */
+  /** 该角色惯用的词句 */
   keywords: string[];
-  /** Attitude summary (태도 요약) */
+  /** 态度摘要（태도 요약） */
   attitude: string;
   timeline: EmotionPoint[];
   notes: string;
   created: string;
   updated: string;
-  /** Words/patterns the character would NEVER say */
+  /** 该角色绝不会说的词句/句式 */
   taboo?: string[];
-  /** Default emotional state */
+  /** 默认情绪状态 */
   emotional_baseline?: string;
-  /** What triggers emotional changes */
+  /** 引发情绪变化的诱因 */
   triggers?: string[];
 }
 
@@ -73,7 +73,7 @@ export interface Location {
   name: string;
   description: string;
   atmosphere: string;
-  /** Other location IDs */
+  /** 其他地点的 ID */
   connectedTo: string[];
 }
 
@@ -96,12 +96,12 @@ export interface RelationshipEvent {
 
 export interface Relationship {
   id: string;
-  /** Character ID */
+  /** 角色 ID */
   from: string;
-  /** Character ID */
+  /** 角色 ID */
   to: string;
   type: RelationshipType;
-  /** e.g. "일방적 짝사랑 -> 상호 이해" */
+  /** 例如 "일방적 짝사랑 -> 상호 이해" */
   dynamic: string;
   speechLevel?: SpeechLevel;
   evolution: RelationshipEvent[];
@@ -156,9 +156,9 @@ export interface SynopsisState {
 export interface ProjectMeta {
   name: string;
   genre: string;
-  /** ISO timestamp */
+  /** ISO 时间戳 */
   created: string;
-  /** ISO timestamp */
+  /** ISO 时间戳 */
   updated: string;
 }
 
@@ -198,7 +198,7 @@ export interface ValidationResult {
 }
 
 // ---------------------------------------------------------------------------
-// Constants
+// 常量
 // ---------------------------------------------------------------------------
 
 const MEMORY_DIR = ".writer-memory";
@@ -207,27 +207,27 @@ const BACKUP_DIR = "backups";
 const MAX_BACKUPS = 20;
 
 // ---------------------------------------------------------------------------
-// Path Helpers
+// 路径辅助函数
 // ---------------------------------------------------------------------------
 
-/** Returns the path to the main memory JSON file. */
+/** 返回主记忆 JSON 文件的路径。 */
 export function getMemoryPath(): string {
   return join(MEMORY_DIR, MEMORY_FILE);
 }
 
-/** Returns the path to the backups directory. */
+/** 返回备份目录的路径。 */
 export function getBackupPath(): string {
   return join(MEMORY_DIR, BACKUP_DIR);
 }
 
 // ---------------------------------------------------------------------------
-// ID Generation
+// ID 生成
 // ---------------------------------------------------------------------------
 
 /**
- * Generate a prefixed unique ID using unix timestamp + random suffix.
- * @param prefix - e.g. "char", "rel", "scene"
- * @returns e.g. "char_1706123456_a3f"
+ * 使用 Unix 时间戳 + 随机后缀生成带前缀的唯一 ID。
+ * @param prefix - 例如 "char"、"rel"、"scene"
+ * @returns 例如 "char_1706123456_a3f"
  */
 export function generateId(prefix: string): string {
   const ts = Math.floor(Date.now() / 1000);
@@ -236,23 +236,23 @@ export function generateId(prefix: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// Timestamps
+// 时间戳
 // ---------------------------------------------------------------------------
 
-/** Returns the current time as an ISO 8601 string. */
+/** 以 ISO 8601 字符串返回当前时间。 */
 export function now(): string {
   return new Date().toISOString();
 }
 
 /**
- * Format an ISO timestamp into Korean date format.
- * @param iso - ISO 8601 string
- * @returns e.g. "2024년 1월 24일"
+ * 将 ISO 时间戳格式化为韩语日期格式。
+ * @param iso - ISO 8601 字符串
+ * @returns 例如 "2024년 1월 24일"
  */
 export function formatKoreanDate(iso: string): string {
   const d = new Date(iso);
   if (isNaN(d.getTime())) {
-    return iso; // fallback for invalid dates
+    return iso; // 日期无效时的回退处理
   }
   const year = d.getFullYear();
   const month = d.getMonth() + 1;
@@ -261,20 +261,20 @@ export function formatKoreanDate(iso: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// Initialization
+// 初始化
 // ---------------------------------------------------------------------------
 
 /**
- * Create a fresh WriterMemory structure for a new project.
- * Also ensures the .writer-memory/ directory tree exists on disk.
+ * 为新项目创建一个全新的 WriterMemory 结构。
+ * 同时确保磁盘上存在 .writer-memory/ 目录树。
  *
- * @param projectName - e.g. "이별의 온도"
- * @param genre - e.g. "멜로 / 성장 드라마"
+ * @param projectName - 例如 "이별의 온도"
+ * @param genre - 例如 "멜로 / 성장 드라마"
  */
 export function initMemory(projectName: string, genre: string): WriterMemory {
   const timestamp = now();
 
-  // Ensure directory structure
+  // 确保目录结构存在
   const memDir = MEMORY_DIR;
   const backDir = getBackupPath();
   if (!existsSync(memDir)) {
@@ -319,12 +319,12 @@ export function initMemory(projectName: string, genre: string): WriterMemory {
 }
 
 // ---------------------------------------------------------------------------
-// Core CRUD
+// 核心增删改查
 // ---------------------------------------------------------------------------
 
 /**
- * Load the writer memory from disk.
- * @returns The parsed WriterMemory, or null if the file does not exist or is corrupt.
+ * 从磁盘加载 writer memory。
+ * @returns 解析后的 WriterMemory；若文件不存在或已损坏则返回 null。
  */
 export function loadMemory(): WriterMemory | null {
   const memPath = getMemoryPath();
@@ -336,43 +336,43 @@ export function loadMemory(): WriterMemory | null {
     const parsed = JSON.parse(raw) as WriterMemory;
     return parsed;
   } catch (err) {
-    console.error(`[writer-memory] Failed to load memory from ${memPath}:`, err);
+    console.error(`[writer-memory] 从 ${memPath} 加载记忆失败：`, err);
     return null;
   }
 }
 
 /**
- * Persist memory to disk using an atomic write (write to temp, then rename).
- * Automatically updates the project.updated timestamp and creates a backup
- * of the previous state.
+ * 使用原子写入（先写临时文件，再重命名）将记忆持久化到磁盘。
+ * 自动更新 project.updated 时间戳，并为先前的状态
+ * 创建备份。
  *
- * @returns true on success, false on failure
+ * @returns 成功返回 true，失败返回 false
  */
 export function saveMemory(memory: WriterMemory): boolean {
   const memPath = getMemoryPath();
   const memDir = dirname(memPath);
 
   try {
-    // Ensure directory exists
+    // 确保目录存在
     if (!existsSync(memDir)) {
       mkdirSync(memDir, { recursive: true });
     }
 
-    // Backup existing file before overwriting
+    // 覆盖前先备份已有文件
     if (existsSync(memPath)) {
       try {
         const existing = readFileSync(memPath, "utf-8");
         const existingMemory = JSON.parse(existing) as WriterMemory;
         createBackup(existingMemory);
       } catch {
-        // If backup fails, continue with save anyway
+        // 若备份失败，仍然继续保存
       }
     }
 
-    // Update timestamp
+    // 更新时间戳
     memory.project.updated = now();
 
-    // Atomic write: write to temp file, then rename
+    // 原子写入：先写临时文件，再重命名
     const tmpPath = memPath + ".tmp";
     const json = JSON.stringify(memory, null, 2);
     writeFileSync(tmpPath, json, "utf-8");
@@ -380,16 +380,16 @@ export function saveMemory(memory: WriterMemory): boolean {
 
     return true;
   } catch (err) {
-    console.error(`[writer-memory] Failed to save memory to ${memPath}:`, err);
+    console.error(`[writer-memory] 保存记忆到 ${memPath} 失败：`, err);
     return false;
   }
 }
 
 /**
- * Create a timestamped backup of the given memory state.
- * Old backups beyond MAX_BACKUPS are pruned automatically.
+ * 为给定的记忆状态创建一个带时间戳的备份。
+ * 超出 MAX_BACKUPS 的旧备份会被自动清理。
  *
- * @returns The backup file path, or empty string on failure.
+ * @returns 备份文件路径；失败时返回空字符串。
  */
 export function createBackup(memory: WriterMemory): string {
   const backDir = getBackupPath();
@@ -404,43 +404,43 @@ export function createBackup(memory: WriterMemory): string {
     const json = JSON.stringify(memory, null, 2);
     writeFileSync(backupFile, json, "utf-8");
 
-    // Prune old backups
+    // 清理旧备份
     pruneBackups(backDir);
 
     return backupFile;
   } catch (err) {
-    console.error("[writer-memory] Failed to create backup:", err);
+    console.error("[writer-memory] 创建备份失败：", err);
     return "";
   }
 }
 
 /**
- * Remove oldest backup files when count exceeds MAX_BACKUPS.
+ * 当备份数量超过 MAX_BACKUPS 时，移除最旧的备份文件。
  */
 function pruneBackups(backDir: string): void {
   try {
     const files = readdirSync(backDir)
       .filter((f) => f.startsWith("memory-") && f.endsWith(".json"))
-      .sort(); // lexicographic sort works because filenames contain ISO timestamps
+      .sort(); // 字典序排序即可，因为文件名中包含 ISO 时间戳
 
     while (files.length > MAX_BACKUPS) {
       const oldest = files.shift()!;
       const fullPath = join(backDir, oldest);
-      // Use writeFileSync trick: overwrite then unlink is not needed;
-      // simply use fs.unlinkSync
+      // 不需要「先覆盖再删除」的技巧；
+      // 直接使用 fs.unlinkSync 即可
       require("fs").unlinkSync(fullPath);
     }
   } catch {
-    // Non-critical; ignore pruning errors
+    // 非关键问题；忽略清理时的错误
   }
 }
 
 // ---------------------------------------------------------------------------
-// Memory Stats
+// 记忆统计
 // ---------------------------------------------------------------------------
 
 /**
- * Compute aggregate statistics about the memory store.
+ * 计算记忆存储的汇总统计信息。
  */
 export function getMemoryStats(memory: WriterMemory): MemoryStats {
   const characters = Object.values(memory.characters);
@@ -457,7 +457,7 @@ export function getMemoryStats(memory: WriterMemory): MemoryStats {
       storageSizeKB = Math.round((stat.size / 1024) * 100) / 100;
     }
   } catch {
-    // If stat fails, leave at 0
+    // 若 stat 失败，保持为 0
   }
 
   return {
@@ -472,12 +472,12 @@ export function getMemoryStats(memory: WriterMemory): MemoryStats {
 }
 
 // ---------------------------------------------------------------------------
-// Search / Query Helpers
+// 搜索 / 查询辅助函数
 // ---------------------------------------------------------------------------
 
 /**
- * Find a character by exact name match (case-sensitive).
- * @param name - e.g. "서연"
+ * 按名称精确匹配（区分大小写）查找角色。
+ * @param name - 例如 "서연"
  */
 export function findCharacterByName(
   memory: WriterMemory,
@@ -492,8 +492,8 @@ export function findCharacterByName(
 }
 
 /**
- * Find a character by one of their aliases.
- * @param alias - e.g. "연이" (nickname for 서연)
+ * 通过角色的某个别名查找角色。
+ * @param alias - 例如 "연이"（서연 的昵称）
  */
 export function findCharacterByAlias(
   memory: WriterMemory,
@@ -508,9 +508,9 @@ export function findCharacterByAlias(
 }
 
 /**
- * Find a relationship between two characters (in either direction).
- * @param char1 - Character ID
- * @param char2 - Character ID
+ * 查找两个角色之间的关系（任一方向均可）。
+ * @param char1 - 角色 ID
+ * @param char2 - 角色 ID
  */
 export function findRelationship(
   memory: WriterMemory,
@@ -527,7 +527,7 @@ export function findRelationship(
 }
 
 /**
- * Find a scene by its unique ID.
+ * 按唯一 ID 查找场景。
  */
 export function findSceneById(
   memory: WriterMemory,
@@ -537,8 +537,8 @@ export function findSceneById(
 }
 
 /**
- * Find all scenes that include a given character.
- * @param characterId - Character ID to search for
+ * 查找包含指定角色的所有场景。
+ * @param characterId - 要搜索的角色 ID
  */
 export function findScenesByCharacter(
   memory: WriterMemory,
@@ -548,12 +548,12 @@ export function findScenesByCharacter(
 }
 
 /**
- * Full-text search across all memory domains.
- * Matches query substring (case-insensitive) against names, descriptions,
- * notes, keywords, and content fields.
+ * 跨所有记忆域进行全文搜索。
+ * 将查询子串（不区分大小写）与名称、描述、
+ * 备注、关键词和内容字段进行匹配。
  *
- * @param query - Search string, e.g. "그리움" or "카페"
- * @returns Matching results sorted by domain priority
+ * @param query - 搜索字符串，例如 "그리움" 或 "카페"
+ * @returns 按域优先级排序的匹配结果
  */
 export function searchMemory(
   memory: WriterMemory,
@@ -565,7 +565,7 @@ export function searchMemory(
   const matches = (text: string | undefined): boolean =>
     text != null && text.toLowerCase().includes(q);
 
-  // Search characters
+  // 搜索角色
   for (const char of Object.values(memory.characters)) {
     if (
       matches(char.name) ||
@@ -589,7 +589,7 @@ export function searchMemory(
     }
   }
 
-  // Search relationships
+  // 搜索关系
   for (const rel of memory.relationships) {
     if (matches(rel.dynamic) || matches(rel.notes)) {
       const fromChar = memory.characters[rel.from];
@@ -606,7 +606,7 @@ export function searchMemory(
     }
   }
 
-  // Search scenes
+  // 搜索场景
   for (const scene of memory.scenes) {
     if (
       matches(scene.title) ||
@@ -631,7 +631,7 @@ export function searchMemory(
     }
   }
 
-  // Search themes
+  // 搜索主题
   for (const theme of memory.themes) {
     if (
       matches(theme.name) ||
@@ -648,7 +648,7 @@ export function searchMemory(
     }
   }
 
-  // Search world
+  // 搜索世界观
   const world = memory.world;
   if (
     matches(world.name) ||
@@ -660,7 +660,7 @@ export function searchMemory(
       (l) => matches(l.name) || matches(l.description) || matches(l.atmosphere)
     )
   ) {
-    // Find the most relevant location if applicable
+    // 如果适用，找出最相关的地点
     const matchedLoc = world.locations.find(
       (l) => matches(l.name) || matches(l.description)
     );
@@ -679,7 +679,7 @@ export function searchMemory(
   return results;
 }
 
-/** Truncate a string to maxLen, appending ellipsis if needed. */
+/** 将字符串截断到 maxLen，必要时追加省略号。 */
 function truncate(text: string | undefined, maxLen: number): string {
   if (!text) return "";
   if (text.length <= maxLen) return text;
@@ -687,110 +687,110 @@ function truncate(text: string | undefined, maxLen: number): string {
 }
 
 // ---------------------------------------------------------------------------
-// Validation
+// 校验
 // ---------------------------------------------------------------------------
 
 /**
- * Validate the structural integrity of a WriterMemory object.
- * Checks for required fields, dangling references, and data consistency.
+ * 校验 WriterMemory 对象的结构完整性。
+ * 检查必填字段、悬空引用和数据一致性。
  */
 export function validateMemory(memory: WriterMemory): ValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
 
-  // Version check
+  // 版本检查
   if (memory.version !== "1.0") {
-    errors.push(`Unsupported version: "${memory.version}" (expected "1.0")`);
+    errors.push(`不支持的版本："${memory.version}"（应为 "1.0"）`);
   }
 
-  // Project meta
+  // 项目元数据
   if (!memory.project.name) {
-    errors.push("Project name is empty");
+    errors.push("项目名称为空");
   }
   if (!memory.project.genre) {
-    warnings.push("Project genre is empty");
+    warnings.push("项目类型为空");
   }
   if (!memory.project.created) {
-    errors.push("Project created timestamp is missing");
+    errors.push("项目创建时间戳缺失");
   }
 
-  // Characters
+  // 角色
   const charIds = new Set(Object.keys(memory.characters));
   for (const [id, char] of Object.entries(memory.characters)) {
     if (char.id !== id) {
       errors.push(
-        `Character key "${id}" does not match character.id "${char.id}"`
+        `角色键 "${id}" 与 character.id "${char.id}" 不一致`
       );
     }
     if (!char.name) {
-      errors.push(`Character "${id}" has no name`);
+      errors.push(`角色 "${id}" 没有名称`);
     }
     for (const ep of char.timeline) {
       if (ep.intensity < 1 || ep.intensity > 5) {
         warnings.push(
-          `Character "${char.name}" has emotion point with intensity ${ep.intensity} (expected 1-5)`
+          `角色 "${char.name}" 的情感点强度为 ${ep.intensity}（应为 1-5）`
         );
       }
       if (ep.sceneId && !memory.scenes.some((s) => s.id === ep.sceneId)) {
         warnings.push(
-          `Character "${char.name}" references non-existent scene "${ep.sceneId}" in timeline`
+          `角色 "${char.name}" 在时间线中引用了不存在的场景 "${ep.sceneId}"`
         );
       }
     }
   }
 
-  // Relationships
+  // 关系
   for (const rel of memory.relationships) {
     if (!charIds.has(rel.from)) {
       errors.push(
-        `Relationship "${rel.id}" references non-existent character "${rel.from}"`
+        `关系 "${rel.id}" 引用了不存在的角色 "${rel.from}"`
       );
     }
     if (!charIds.has(rel.to)) {
       errors.push(
-        `Relationship "${rel.id}" references non-existent character "${rel.to}"`
+        `关系 "${rel.id}" 引用了不存在的角色 "${rel.to}"`
       );
     }
     if (rel.from === rel.to) {
       warnings.push(
-        `Relationship "${rel.id}" is self-referential (from === to === "${rel.from}")`
+        `关系 "${rel.id}" 是自引用（from === to === "${rel.from}"）`
       );
     }
   }
 
-  // Scenes
+  // 场景
   const sceneIds = new Set<string>();
   for (const scene of memory.scenes) {
     if (sceneIds.has(scene.id)) {
-      errors.push(`Duplicate scene ID: "${scene.id}"`);
+      errors.push(`重复的场景 ID："${scene.id}"`);
     }
     sceneIds.add(scene.id);
 
     for (const charId of scene.characters) {
       if (!charIds.has(charId)) {
         warnings.push(
-          `Scene "${scene.title}" references non-existent character "${charId}"`
+          `场景 "${scene.title}" 引用了不存在的角色 "${charId}"`
         );
       }
     }
     if (scene.cuts.length === 0) {
-      warnings.push(`Scene "${scene.title}" has no cuts`);
+      warnings.push(`场景 "${scene.title}" 没有镜头`);
     }
   }
 
-  // Themes
+  // 主题
   for (const theme of memory.themes) {
     for (const charId of theme.relatedCharacters) {
       if (!charIds.has(charId)) {
         warnings.push(
-          `Theme "${theme.name}" references non-existent character "${charId}"`
+          `主题 "${theme.name}" 引用了不存在的角色 "${charId}"`
         );
       }
     }
     for (const sid of theme.relatedScenes) {
       if (!sceneIds.has(sid)) {
         warnings.push(
-          `Theme "${theme.name}" references non-existent scene "${sid}"`
+          `主题 "${theme.name}" 引用了不存在的场景 "${sid}"`
         );
       }
     }

@@ -12,25 +12,25 @@ origin: ECC
 
 - 编写新的 Django 应用程序时
 - 实现 Django REST Framework API 时
-- 测试 Django 模型（Models）、视图（Views）和序列化器（Serializers）时
+- 测试 Django 模型、视图和序列化器时
 - 为 Django 项目搭建测试基础设施时
 
 ## Django 的 TDD 工作流
 
-### 红-绿-重构（Red-Green-Refactor）周期
+### 红-绿-重构周期
 
 ```python
-# 步骤 1: 红（RED） - 编写失败的测试
+# 步骤 1: 红 - 编写失败的测试
 def test_user_creation():
     user = User.objects.create_user(email='test@example.com', password='testpass123')
     assert user.email == 'test@example.com'
     assert user.check_password('testpass123')
     assert not user.is_staff
 
-# 步骤 2: 绿（GREEN） - 使测试通过
+# 步骤 2: 绿 - 使测试通过
 # 创建 User 模型或工厂
 
-# 步骤 3: 重构（REFACTOR） - 在保持测试通过的同时改进代码
+# 步骤 3: 重构 - 在保持测试通过的同时改进代码
 ```
 
 ## 配置
@@ -57,7 +57,7 @@ markers =
     integration: 标记为集成测试
 ```
 
-### 测试设置（Settings）
+### 测试设置
 
 ```python
 # config/settings/test.py
@@ -234,7 +234,7 @@ def test_multiple_products():
     assert len(products) == 10
 ```
 
-## 模型（Model）测试
+## 模型测试
 
 ### 模型测试用例
 
@@ -310,7 +310,7 @@ class TestProductModel:
             product.reduce_stock(10)  # 库存不足
 ```
 
-## 视图（View）测试
+## 视图测试
 
 ### Django 视图测试
 
@@ -372,7 +372,7 @@ class TestProductViews:
 
 ## DRF API 测试
 
-### 序列化器（Serializer）测试
+### 序列化器测试
 
 ```python
 # tests/test_serializers.py
@@ -546,7 +546,7 @@ class TestProductAPI:
         assert response.data['count'] == 1
 ```
 
-## Mock 模拟与打补丁（Patching）
+## Mock 模拟与打补丁
 
 ### 模拟外部服务
 
@@ -667,9 +667,9 @@ class TestCheckoutFlow:
 
 ## 测试最佳实践
 
-### 应该（DO）
+### 应该
 
-- **使用工厂（Factories）**: 而不是手动创建对象
+- **使用工厂**: 而不是手动创建对象
 - **每个测试一个断言**: 保持测试专注
 - **使用描述性的测试名称**: 例如 `test_user_cannot_delete_others_post`
 - **测试边缘情况**: 空输入、None 值、边界条件
@@ -678,7 +678,7 @@ class TestCheckoutFlow:
 - **测试权限**: 确保授权逻辑正常工作
 - **保持测试快速**: 使用 `--reuse-db` 和 `--nomigrations`
 
-### 不该（DON'T）
+### 不该
 
 - **不要测试 Django 内部机制**: 相信 Django 本身是正常的
 - **不要测试第三方库代码**: 相信第三方库是正常的
@@ -688,7 +688,7 @@ class TestCheckoutFlow:
 - **不要测试私有方法**: 只测试公共接口
 - **不要使用生产数据库**: 始终使用测试数据库
 
-## 覆盖率（Coverage）
+## 覆盖率
 
 ### 覆盖率配置
 
@@ -704,11 +704,11 @@ open htmlcov/index.html
 
 | 组件 | 目标覆盖率 |
 |-----------|-----------------|
-| 模型 (Models) | 90%+ |
-| 序列化器 (Serializers) | 85%+ |
-| 视图 (Views) | 80%+ |
-| 服务 (Services) | 90%+ |
-| 工具类 (Utilities) | 80%+ |
+| 模型 | 90%+ |
+| 序列化器 | 85%+ |
+| 视图 | 80%+ |
+| 服务 | 90%+ |
+| 工具类 | 80%+ |
 | 整体 | 80%+ |
 
 ## 快速参考

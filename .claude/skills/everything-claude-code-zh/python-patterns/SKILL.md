@@ -1,10 +1,10 @@
 ---
 name: python-patterns
-description: 构建健壮、高效且易于维护的 Python 应用程序的 Python 惯用法（Pythonic idioms）、PEP 8 标准、类型提示（Type hints）以及最佳实践。
+description: 构建健壮、高效且易于维护的 Python 应用程序的 Python 惯用法、PEP 8 标准、类型提示以及最佳实践。
 origin: ECC
 ---
 
-# Python 开发模式 (Python Development Patterns)
+# Python 开发模式
 
 用于构建健壮、高效且易于维护的应用程序的 Python 惯用模式与最佳实践。
 
@@ -13,11 +13,11 @@ origin: ECC
 - 编写新的 Python 代码时
 - 评审 Python 代码时
 - 重构现有的 Python 代码时
-- 设计 Python 包（Packages）或模块（Modules）时
+- 设计 Python 包或模块时
 
 ## 核心原则
 
-### 1. 可读性至上 (Readability Counts)
+### 1. 可读性至上
 
 Python 优先考虑可读性。代码应当直观且易于理解。
 
@@ -33,7 +33,7 @@ def get_active_users(u):
     return [x for x in u if x.a]
 ```
 
-### 2. 显式优于隐式 (Explicit is Better Than Implicit)
+### 2. 显式优于隐式
 
 避免使用“魔法”；确保代码的行为清晰透明。
 
@@ -51,7 +51,7 @@ import some_module
 some_module.setup()  # 这行代码具体做了什么？
 ```
 
-### 3. EAFP - 宽恕好过许可 (Easier to Ask Forgiveness Than Permission)
+### 3. EAFP - 宽恕好过许可
 
 Python 倾向于使用异常处理而非预先检查条件。
 
@@ -63,7 +63,7 @@ def get_value(dictionary: dict, key: str) -> Any:
     except KeyError:
         return default_value
 
-# 不推荐：LBYL (Look Before You Leap) 风格
+# 不推荐：LBYL（先检查后执行）风格
 def get_value(dictionary: dict, key: str) -> Any:
     if key in dictionary:
         return dictionary[key]
@@ -71,7 +71,7 @@ def get_value(dictionary: dict, key: str) -> Any:
         return default_value
 ```
 
-## 类型提示 (Type Hints)
+## 类型提示
 
 ### 基础类型标注
 
@@ -122,7 +122,7 @@ def first(items: list[T]) -> T | None:
     return items[0] if items else None
 ```
 
-### 基于协议 (Protocol) 的鸭子类型
+### 基于协议的鸭子类型
 
 ```python
 from typing import Protocol
@@ -160,7 +160,7 @@ def load_config(path: str) -> Config:
         return None  # 静默失败！
 ```
 
-### 异常链 (Exception Chaining)
+### 异常链
 
 ```python
 def process_data(data: str) -> Result:
@@ -194,7 +194,7 @@ def get_user(user_id: str) -> User:
     return user
 ```
 
-## 上下文管理器 (Context Managers)
+## 上下文管理器
 
 ### 资源管理
 
@@ -255,9 +255,9 @@ with DatabaseTransaction(conn):
     conn.create_profile(user.id, profile_data)
 ```
 
-## 推导式 (Comprehensions) 与生成器 (Generators)
+## 推导式与生成器
 
-### 列表推导式 (List Comprehensions)
+### 列表推导式
 
 ```python
 # 推荐：使用列表推导式进行简单的转换
@@ -282,7 +282,7 @@ def filter_and_transform(items: Iterable[int]) -> list[int]:
     return result
 ```
 
-### 生成器表达式 (Generator Expressions)
+### 生成器表达式
 
 ```python
 # 推荐：使用生成器进行惰性求值
@@ -306,9 +306,9 @@ for line in read_large_file("huge.txt"):
     process(line)
 ```
 
-## 数据类 (Data Classes) 与具名元组 (Named Tuples)
+## 数据类与具名元组
 
-### 数据类 (Data Classes)
+### 数据类
 
 ```python
 from dataclasses import dataclass, field
@@ -348,7 +348,7 @@ class User:
             raise ValueError(f"无效的年龄: {self.age}")
 ```
 
-### 具名元组 (Named Tuples)
+### 具名元组
 
 ```python
 from typing import NamedTuple
@@ -367,7 +367,7 @@ p2 = Point(3, 4)
 print(p1.distance(p2))  # 5.0
 ```
 
-## 装饰器 (Decorators)
+## 装饰器
 
 ### 函数装饰器
 
@@ -390,7 +390,7 @@ def timer(func: Callable) -> Callable:
 def slow_function():
     time.sleep(1)
 
-# slow_function() 打印: slow_function took 1.0012s
+# slow_function() 打印: slow_function 耗时 1.0012s
 ```
 
 ### 参数化装饰器
@@ -437,9 +437,9 @@ def process():
 # 每次调用 process() 都会打印调用计数
 ```
 
-## 并发模式 (Concurrency Patterns)
+## 并发模式
 
-### 用于 I/O 密集型任务的多线程 (Threading)
+### 用于 I/O 密集型任务的多线程
 
 ```python
 import concurrent.futures
@@ -465,7 +465,7 @@ def fetch_all_urls(urls: list[str]) -> dict[str, str]:
     return results
 ```
 
-### 用于 CPU 密集型任务的多进程 (Multiprocessing)
+### 用于 CPU 密集型任务的多进程
 
 ```python
 def process_data(data: list[int]) -> int:
@@ -498,7 +498,7 @@ async def fetch_all(urls: list[str]) -> dict[str, str]:
     return dict(zip(urls, results))
 ```
 
-## 包结构组织 (Package Organization)
+## 包结构组织
 
 ### 标准项目布局
 
@@ -624,7 +624,7 @@ result = buffer.getvalue()
 black .
 isort .
 
-# 静态检查 (Linting)
+# 静态检查
 ruff check .
 pylint mypackage/
 
@@ -686,18 +686,18 @@ addopts = "--cov=mypackage --cov-report=term-missing"
 
 | 惯用法 | 描述 |
 |-------|-------------|
-| EAFP | 宽恕好过许可 (Easier to Ask Forgiveness than Permission) |
-| 上下文管理器 (Context managers) | 使用 `with` 进行资源管理 |
-| 列表推导式 (List comprehensions) | 用于简单的转换 |
-| 生成器 (Generators) | 用于惰性求值和大型数据集 |
-| 类型提示 (Type hints) | 标注函数签名 |
-| 数据类 (Dataclasses) | 用于带有自动生成方法的资源容器 |
+| EAFP | 宽恕好过许可 |
+| 上下文管理器 | 使用 `with` 进行资源管理 |
+| 列表推导式 | 用于简单的转换 |
+| 生成器 | 用于惰性求值和大型数据集 |
+| 类型提示 | 标注函数签名 |
+| 数据类 | 用于带有自动生成方法的资源容器 |
 | `__slots__` | 用于内存优化 |
 | f-strings | 用于字符串格式化 (Python 3.6+) |
 | `pathlib.Path` | 用于路径操作 (Python 3.4+) |
 | `enumerate` | 在循环中获取索引-元素对 |
 
-## 应避免的反模式 (Anti-Patterns)
+## 应避免的反模式
 
 ```python
 # 不推荐：可变默认参数
@@ -747,4 +747,4 @@ except SpecificError as e:
     logger.error(f"操作失败: {e}")
 ```
 
-__记住__：Python 代码应当是可读的、显式的，并遵循“最小惊讶原则”（principle of least surprise）。如有疑虑，请优先考虑清晰度而非技巧性。
+__记住__：Python 代码应当是可读的、显式的，并遵循“最小惊讶原则”。如有疑虑，请优先考虑清晰度而非技巧性。

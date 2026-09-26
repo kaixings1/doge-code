@@ -1,152 +1,107 @@
 ---
 name: adk-verify-snippets
-description: >
-  Extracts and verifies the runnability and code coverage of all Python code blocks inside a Markdown file.
-  Generates a detailed compilation and execution report.
+description: "提取并验证 Markdown 文件中所有 Python 代码块的可运行性与代码覆盖率。生成详细的编译与执行报告。"
+  提取并验证 Markdown 文件中所有 Python 代码块的可运行性与代码覆盖率。
+  生成详细的编译与执行报告。
 metadata:
   author: Antigravity
   version: 1.4.0
 ---
 
-# Verify Markdown Snippets Skill
+# 验证 Markdown 代码片段技能
 
-This skill extracts all ` ```python ` blocks from a Markdown file, executes each
-one in a process-isolated environment using the bundled `run.py` harness, and
-generates a structured report covering load status, run status, and line
-coverage.
+此技能从 Markdown 文件中提取所有 ` ```python ` 块，使用内置的 `run.py` 测试框架在进程隔离环境中逐个执行，并生成涵盖加载状态、运行状态和行覆盖率的结构化报告。
 
-> [!CAUTION] **STRICT READ-ONLY CONSTRAINT — READ THIS BEFORE DOING ANYTHING
-> ELSE**
+> [!CAUTION] **严格只读约束 —— 在做任何其他事之前先读这里**
 >
-> This skill is **read-only**. The agent **MUST NOT**: - **Modify** any file in
-> the repository (source, test, config, docs, or skill files — including this
-> SKILL.md). - **Delete** any file in the repository. - **Create** any new file
-> in the repository.
+> 此技能是**只读的**。代理**不得**：- **修改**仓库中的任何文件（源码、测试、配置、文档或技能文件 —— 包括本 SKILL.md）。- **删除**仓库中的任何文件。- **创建**仓库中的任何新文件。
 >
-> The **only two write operations permitted** are: 1. Writing temporary `.py`
-> snippet files to a **system temp directory outside the repository**. 2.
-> Writing the final `<filename>_REPORT.md` into the **same directory as the
-> source Markdown file**.
+> **仅允许两种写操作**：1. 把临时 `.py` 片段文件写入**仓库之外的系统临时目录**。2. 把最终的 `<filename>_REPORT.md` 写入**与源 Markdown 文件相同的目录**。
 >
-> If in doubt, do not write. Any other mutation is a violation of this skill's
-> contract.
+> 如有疑问，就不要写。任何其他改动都是对技能契约的违反。
 
 --------------------------------------------------------------------------------
 
-## 🔧 Prerequisites
+## 🔧 前置条件
 
-1.  **ADK Python environment**: Run from the repository root with the `uv`
-    virtual environment active.
-2.  **`coverage` package** *(optional)*: Enables per-snippet coverage reporting.
-    Without it, coverage columns show `—`.
+1.  **ADK Python 环境**：在仓库根目录、激活 `uv` 虚拟环境的情况下运行。
+2.  **`coverage` 包** *（可选）*：启用逐片段覆盖率报告。没有它时，覆盖率列显示 `—`。
 
     ```bash
     uv pip install coverage
     ```
 
-3.  **Gemini API key**: Required only for snippets that instantiate an `Agent`,
-    `App`, or `Workflow` (which make live Gemini API calls). Set one of:
+3.  **Gemini API 密钥**：仅对实例化 `Agent`、`App` 或 `Workflow`（会发起真实 Gemini API 调用）的片段需要。设置其一：
 
     ```bash
     export GEMINI_API_KEY="your-key-here"
-    # or
+    # 或者
     export GOOGLE_API_KEY="your-key-here"
     ```
 
-    If both are set, `GEMINI_API_KEY` takes precedence.
+    如果两者都设置，`GEMINI_API_KEY` 优先。
 
 --------------------------------------------------------------------------------
 
-## 🛠️ Usage
+## 🛠️ 用法
 
 ```bash
 uv run --no-sync python .agents/skills/adk-verify-snippets/scripts/verify_md.py <path_to_markdown_file.md>
 ```
 
-The script prints progress for each snippet, then writes a report to
-**`<filename>_REPORT.md`** in the same directory as the source file and prints
-the full path on completion.
+脚本会为每个片段打印进度，然后把报告写入**源文件所在目录**的 **`<filename>_REPORT.md`**，并在完成时打印完整路径。
 
-**Report contents:** :- **Executive Summary table** — one row per snippet:
-preceding heading, Load phase status, Run phase status, coverage %, and error
-detail.
+**报告内容：** - **执行摘要表** —— 每个片段一行：前导标题、加载阶段状态、运行阶段状态、覆盖率 %、错误详情。
 
--   **Detailed section** — for each snippet: the extracted code block, full
-    execution logs (stdout + stderr/traceback), and the coverage report.
+-   **详情章节** —— 每个片段：提取出的代码块、完整执行日志（stdout + stderr/traceback）、覆盖率报告。
 
 --------------------------------------------------------------------------------
 
-## 📝 How Snippets Are Classified
+## 📝 片段如何分类
 
-Each ` ```python ` block falls into one of these categories:
+每个 ` ```python ` 块属于以下类别之一：
 
-### 1. Runnability Test (has a module-level ADK component)
+### 1. 可运行性测试（含模块级 ADK 组件）
 
-If the snippet assigns a `Workflow`, `Agent`, or `App` to a **module-level
-variable**, the runner executes it against the Gemini API.
+如果片段把 `Workflow`、`Agent` 或 `App` 赋值给**模块级变量**，运行器会针对 Gemini API 执行它。
 
--   The variable name does not matter — the runner finds it automatically via
-    `vars(module)`.
--   For multi-agent snippets, the runner identifies the root agent by excluding
-    any agent that appears in another agent's `sub_agents` list.
--   To use a custom test prompt instead of the default `"Test input topic"`,
-    define a module-level `test_input` string in the snippet.
+-   变量名无关紧要 —— 运行器通过 `vars(module)` 自动找到它。
+-   对于多代理片段，运行器通过排除出现在其他代理 `sub_agents` 列表中的代理来识别根代理。
+-   要使用自定义测试提示而非默认的 `"Test input topic"`，在片段中定义模块级 `test_input` 字符串。
 
-If no module-level ADK component is found, the run phase is skipped and the
-report shows `➖ NO ADK COMPONENT`.
+如果未找到模块级 ADK 组件，则跳过运行阶段，报告显示 `➖ NO ADK COMPONENT`。
 
-### 2. Loadability-Only (no ADK component)
+### 2. 仅可加载（无 ADK 组件）
 
-The runner verifies the snippet compiles and imports without error. No API call
-is made.
+运行器验证片段能无错编译和导入。不发起 API 调用。
 
-### 3. Skipped (annotated with ignore)
+### 3. 已跳过（标记为 ignore）
 
-Place `<!-- verify-snippets: ignore -->` immediately before the opening
-` ```python ` fence to exclude a block entirely. Use this for pseudo-code,
-illustrative examples, or snippets that require external setup.
+把 `<!-- verify-snippets: ignore -->` 紧放在起始 ` ```python ` 围栏之前，即可完全排除该块。用于伪代码、说明性示例或需要外部环境准备的片段。
 
 ````markdown
 <!-- verify-snippets: ignore -->
 ```python
-# pseudo-code — not runnable as-is
+# 伪代码 —— 无法按原样运行
 my_agent = Agent(model="gemini-ultra-hypothetical", ...)
 ```
 ````
 
-The report shows these as `⏭️ SKIPPED`.
+报告把这些显示为 `⏭️ SKIPPED`。
 
 --------------------------------------------------------------------------------
 
-## ⚠️ Known Limitations
+## ⚠️ 已知限制
 
--   **No shared state between snippets**: Each snippet runs in a fresh
-    subprocess with no imports or variables carried over from previous snippets.
-    A snippet that depends on code from an earlier block will fail with
-    `NameError` or `ImportError`. Make each snippet self-contained, or annotate
-    it with `<!-- verify-snippets: ignore -->`.
--   **120-second timeout**: Each snippet is killed after 120 seconds. Annotate
-    long-running or blocking snippets with `<!-- verify-snippets: ignore -->`.
--   **Ignore annotation placement**: The `<!-- verify-snippets: ignore -->`
-    annotation applies to the next ` ```python ` fence encountered. Blank lines
-    between the annotation and the fence are tolerated, but any non-blank line
-    (prose or a heading) cancels the annotation.
--   **Bare ` ``` ` closes the block**: The parser closes a Python block on the
-    first bare ` ``` ` line (no language tag). A bare ` ``` ` appearing as
-    content inside a snippet (e.g. to demonstrate Markdown syntax) will
-    prematurely close the block. Annotate such snippets with
-    `<!-- verify-snippets: ignore -->`.
+-   **片段之间无共享状态**：每个片段在全新子进程中运行，不会从先前片段继承任何导入或变量。依赖更早代码块的片段会因 `NameError` 或 `ImportError` 失败。请让每个片段自包含，或用 `<!-- verify-snippets: ignore -->` 标注。
+-   **120 秒超时**：每个片段在 120 秒后被终止。请用 `<!-- verify-snippets: ignore -->` 标注长时间运行或阻塞的片段。
+-   **忽略标注的位置**：`<!-- verify-snippets: ignore -->` 标注作用于其后遇到的第一个 ` ```python ` 围栏。标注与围栏之间的空行可容忍，但任何非空行（正文或标题）都会使标注失效。
+-   **裸 ` ``` ` 会关闭块**：解析器遇到第一个裸 ` ``` ` 行（无语言标签）时关闭 Python 块。作为片段内容出现的裸 ` ``` `（例如演示 Markdown 语法）会提前关闭该块。请用 `<!-- verify-snippets: ignore -->` 标注这类片段。
 
 --------------------------------------------------------------------------------
 
-## ⚠️ Behavioral Constraints (For AI Agents)
+## ⚠️ 行为约束（针对 AI 代理）
 
--   **Read-only**: See the caution block at the top. The constraint is absolute.
--   **Report only, do not fix**: The agent MUST NOT rewrite the source Markdown,
-    modify code blocks, or generate patches. Present the summary table to the
-    user and stop.
--   **Present the summary table verbatim**: After the script completes, read the
-    generated `_REPORT.md` and copy the Executive Summary table to the user
-    **exactly as written** — same six columns, same order, no renaming or
-    dropping: `Snippet | Preceding Heading | Load Phase | Run Phase | Coverage |
-    Details`
+-   **只读**：见顶部的警示块。该约束是绝对的。
+-   **只报告，不修复**：代理**不得**重写源 Markdown、修改代码块或生成补丁。向用户展示摘要表后停止。
+-   **逐字展示摘要表**：脚本完成后，读取生成的 `_REPORT.md`，把执行摘要表**完全按原文**复制给用户 —— 同样六列、同样顺序，不得重命名或删减：`Snippet | Preceding Heading | Load Phase | Run Phase | Coverage | Details`

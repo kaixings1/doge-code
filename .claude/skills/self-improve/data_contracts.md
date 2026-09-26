@@ -1,22 +1,22 @@
-# Data Contracts: Inter-Agent Communication Schemas
+# 数据契约：代理间通信 Schema
 
-Canonical JSON schemas for all messages exchanged between agents in the self-improvement loop.
+自我改进循环中各代理之间交换的全部消息的规范 JSON schema。
 
-## 1. Plan Document
+## 1. 计划文档
 
-**Producer:** planner | **Consumer:** critic, executor
+**生产者：** 规划器 | **消费者：** critic、执行器
 
 ```json
 {
   "plan_id": "round_{N}_{planner_id}",
   "planner_id": "planner_a|planner_b|planner_c",
   "round": 1,
-  "hypothesis": "Doing X should improve Y because Z",
+  "hypothesis": "执行 X 应当改进 Y，因为 Z",
   "approach_family": "<taxonomy value>",
   "critic_approved": false,
   "target_files": ["path/to/file1"],
   "steps": [
-    { "step": 1, "file": "path/to/file", "change": "exact description" }
+    { "step": 1, "file": "path/to/file", "change": "精确描述" }
   ],
   "expected_outcome": {
     "metric": "<metric from goal>",
@@ -45,16 +45,16 @@ Canonical JSON schemas for all messages exchanged between agents in the self-imp
 }
 ```
 
-## 2. Benchmark Result
+## 2. 基准结果
 
-**Producer:** executor | **Consumer:** tournament (SKILL.md)
+**生产者：** 执行器 | **消费者：** 锦标赛（SKILL.md）
 
 ```json
 {
   "executor_id": "executor_{id}",
   "plan_id": "round_{n}_planner_{x}",
   "benchmark_score": 85.2,
-  "benchmark_raw": "full stdout verbatim",
+  "benchmark_raw": "完整 stdout 原文",
   "status": "success|regression|error|timeout",
   "sub_scores": { "dim_a": 85.2, "dim_b": 42.3 },
   "failure_analysis": null,
@@ -62,15 +62,15 @@ Canonical JSON schemas for all messages exchanged between agents in the self-imp
 }
 ```
 
-**Status definitions:**
-- `success` — score improved or held even
-- `regression` — score dropped below baseline
-- `error` — benchmark could not run
-- `timeout` — exceeded time limit
+**状态定义：**
+- `success` —— 分数提升或持平
+- `regression` —— 分数跌破基线
+- `error` —— 基准无法运行
+- `timeout` —— 超出时间限制
 
-## 3. Research Brief
+## 3. 研究简报
 
-**Producer:** researcher | **Consumer:** planners
+**生产者：** 研究者 | **消费者：** 规划器
 
 ```json
 {
@@ -79,9 +79,9 @@ Canonical JSON schemas for all messages exchanged between agents in the self-imp
   "repo_analysis_summary": "...",
   "ideas": [
     {
-      "title": "Short action name",
-      "source": "Specific origin",
-      "evidence": "Concrete evidence",
+      "title": "简短的动作名",
+      "source": "具体来源",
+      "evidence": "确凿证据",
       "approach_family": "<taxonomy value>",
       "confidence": "high|medium|low",
       "estimated_impact": "3-5%"
@@ -90,9 +90,9 @@ Canonical JSON schemas for all messages exchanged between agents in the self-imp
 }
 ```
 
-## 4. Iteration History Record
+## 4. 迭代历史记录
 
-**Producer:** orchestrator | **Consumer:** planners, researcher
+**生产者：** 编排器 | **消费者：** 规划器、研究者
 
 ```json
 {
@@ -113,10 +113,10 @@ Canonical JSON schemas for all messages exchanged between agents in the self-imp
       "hypothesis": "...",
       "sub_scores": {},
       "failure_analysis": {
-        "what": "Score dropped",
-        "why": "Root cause",
+        "what": "分数下降",
+        "why": "根本原因",
         "category": "regression",
-        "lesson": "Actionable lesson"
+        "lesson": "可执行的教训"
       }
     }
   ],
@@ -124,9 +124,9 @@ Canonical JSON schemas for all messages exchanged between agents in the self-imp
 }
 ```
 
-## 5. Visualization Data
+## 5. 可视化数据
 
-**File:** `<self-improve-root>/tracking/raw_data.json` — top-level JSON array, append-only.
+**文件：** `<self-improve-root>/tracking/raw_data.json` —— 顶层 JSON 数组，只追加。
 
 ```json
 [
@@ -141,35 +141,35 @@ Canonical JSON schemas for all messages exchanged between agents in the self-imp
 ]
 ```
 
-## 6. Approach Family Taxonomy
+## 6. 方法族分类
 
-| Tag | Description |
+| 标签 | 描述 |
 |-----|-------------|
-| `architecture` | Model/component structure changes |
-| `training_config` | Optimizer, LR, scheduler, batch size, epochs |
-| `data` | Data loading, augmentation, preprocessing |
-| `infrastructure` | Mixed precision, distributed training, checkpointing |
-| `optimization` | Algorithmic/numerical optimizations |
-| `testing` | Evaluation methodology changes |
-| `documentation` | Documentation-only changes |
-| `other` | Does not fit above — explain in evidence |
+| `architecture` | 模型/组件结构变更 |
+| `training_config` | 优化器、学习率、调度器、批大小、训练轮数 |
+| `data` | 数据加载、增强、预处理 |
+| `infrastructure` | 混合精度、分布式训练、检查点保存 |
+| `optimization` | 算法/数值优化 |
+| `testing` | 评估方法论变更 |
+| `documentation` | 纯文档变更 |
+| `other` | 不符合以上各项 —— 需在证据中说明 |
 
-Custom families from harness.md are also valid.
+来自 harness.md 的自定义方法族同样有效。
 
-## 7. Failure Analysis Object
+## 7. 失败分析对象
 
 ```json
 {
-  "what": "Factual description with scores/errors",
-  "why": "Root cause mechanism",
+  "what": "带分数/错误的事实性描述",
+  "why": "根本原因机制",
   "category": "oom|timeout|regression|logic_error|scope_error|infrastructure|benchmark_parse_error|sealed_file_violation",
-  "lesson": "Actionable lesson for future planners"
+  "lesson": "给未来规划器的可执行教训"
 }
 ```
 
-## 8. Iteration State
+## 8. 迭代状态
 
-**File:** `<self-improve-root>/state/iteration_state.json` — tracks within-iteration progress.
+**文件：** `<self-improve-root>/state/iteration_state.json` —— 跟踪迭代内的进度。
 
 ```json
 {
@@ -200,9 +200,9 @@ Custom families from harness.md are also valid.
 }
 ```
 
-## 9. Merge Report
+## 9. 合并报告
 
-**Producer:** tournament (SKILL.md) | **Consumer:** orchestrator
+**生产者：** 锦标赛（SKILL.md）| **消费者：** 编排器
 
 ```json
 {
@@ -211,7 +211,7 @@ Custom families from harness.md are also valid.
   "winner": {
     "executor_id": "executor_2",
     "branch": "experiment/round_3_executor_2",
-    "hypothesis": "Cache intermediate results",
+    "hypothesis": "缓存中间结果",
     "score_before": 142.3,
     "score_after": 118.7,
     "sub_scores": {}
@@ -224,24 +224,24 @@ Custom families from harness.md are also valid.
 }
 ```
 
-**Status definitions:**
-- `merged` — a candidate was merged and re-benchmark confirmed improvement
-- `no_improvement` — candidates existed and were tested, but all failed re-benchmark (no merge occurred)
-- `no_winner` — all executors failed or produced non-success status (no candidates to evaluate)
-- `all_rejected` — all plans were rejected by the critic (execution was skipped)
+**状态定义：**
+- `merged` —— 有候选被合并，且重跑基准确认了改进
+- `no_improvement` —— 存在候选且已测试，但重跑基准全部失败（未发生合并）
+- `no_winner` —— 所有执行器都失败或产出了非成功状态（没有可评估的候选）
+- `all_rejected` —— 所有计划都被 critic 拒绝（执行被跳过）
 
-`reason` is required (string) when status is not `merged`, null when `merged`.
+当状态不是 `merged` 时，`reason` 为必填（字符串）；为 `merged` 时为 null。
 ```
 
-## 10. Plan Archive
+## 10. 计划归档
 
-**Location:** `<self-improve-root>/state/plan_archive/round_{n}/`
+**位置：** `<self-improve-root>/state/plan_archive/round_{n}/`
 
-Exact copies of all plan JSON files, including critic and architect reviews. Permanent retention.
+所有计划 JSON 文件的精确副本，包含 critic 与 architect 评审。永久保留。
 
-## 11. Event Log
+## 11. 事件日志
 
-**File:** `<self-improve-root>/tracking/events.json` — append-only array.
+**文件：** `<self-improve-root>/tracking/events.json` —— 只追加的数组。
 
 ```json
 [
@@ -259,16 +259,16 @@ Exact copies of all plan JSON files, including critic and architect reviews. Per
 ]
 ```
 
-## 12. Goal Phase
+## 12. 目标阶段
 
-Defined in goal.md under `## Phases`. Tracked in agent-settings.json as `current_phase`.
+定义在 goal.md 的 `## Phases` 下。在 agent-settings.json 中以 `current_phase` 跟踪。
 
 ```markdown
 ## Phases
-| Phase | Focus | Sub-Score Targets | Status |
+| 阶段 | 重点 | 子分数目标 | 状态 |
 |-------|-------|-------------------|--------|
-| phase_1 | Primary dimension | dim_a >= 90.0 | active |
-| phase_2 | Secondary dimension | dim_b <= 50.0 | pending |
+| phase_1 | 主要维度 | dim_a >= 90.0 | active |
+| phase_2 | 次要维度 | dim_b <= 50.0 | pending |
 ```
 
-Phase transitions are tracked as events but do not affect tournament selection.
+阶段转换会被记录为事件，但不影响锦标赛选择。

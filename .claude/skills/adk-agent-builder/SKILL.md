@@ -1,69 +1,69 @@
 ---
 name: adk-agent-builder
-description: Central hub for building, testing, and iterating on ADK agents. Trigger this skill when the user wants to create a new agent, configure modes (task, single-turn), or build graph-based workflows.
+description: ADK 代理构建器 — 构建、测试和迭代 ADK 代理的中心枢纽。在用户想要创建新代理、配置模式（task/single-turn）或构建基于图的 workflow 时使用。
 ---
 
-# ADK Agent Builder
+# ADK 代理构建器
 
-This file serves as a directory of specialized reference guides for developing
-agents with ADK. To avoid context pollution, read only the relevant reference
-file based on your current task.
+本文件是一份目录，收录了用 ADK 开发代理时所需的各类专题
+参考指南。为避免上下文污染，请只阅读与当前任务相关的
+参考文件。
 
-## Core Concepts Directory
+## 核心概念目录
 
-Refer to these files for foundational knowledge:
+以下文件提供基础知识：
 
-- **Getting Started & Basic Agents**: [getting-started.md](references/getting-started.md)
-  - Environment setup, API key configuration, and minimal agent definitions.
-- **Tool Catalog**: [tool-catalog.md](references/tool-catalog.md)
-  - How to bind function tools, MCP tools, OpenAPI specs, and Google API tools.
-- **Agent Modes (Task / Single-Turn)**: [task-mode.md](references/task-mode.md)
-  - Multi-turn structured delegation and autonomous single-turn execution patterns.
--   **Import Paths**: [import-paths.md](references/import-paths.md)
-    -   Canonical and verbose import paths for core components, tools, and
-        events.
+- **入门与基础代理**：[getting-started.md](references/getting-started.md)
+  - 环境搭建、API Key 配置，以及最小可用的代理定义。
+- **工具目录**：[tool-catalog.md](references/tool-catalog.md)
+  - 如何绑定函数工具、MCP 工具、OpenAPI 规范，以及 Google API 工具。
+- **代理模式（Task / Single-Turn）**：[task-mode.md](references/task-mode.md)
+  - 多轮结构化委托与自主单轮执行模式。
+-   **导入路径**：[import-paths.md](references/import-paths.md)
+    -   核心组件、工具和事件的规范导入路径与完整导入
+        路径。
 
-## Workflow & Graph Orchestration
+## 工作流与图编排
 
-Refer to these files when building complex graphs:
+构建复杂图时参考以下文件：
 
-- **Function Nodes**: [function-nodes.md](references/function-nodes.md)
-  - How to use functions as nodes, type resolution, and generators.
-- **Routing & Conditions**: [routing-and-conditions.md](references/routing-and-conditions.md)
-  - Edge patterns, dict-based routing, self-loops, and conditional execution.
-- **LLM Agent Nodes**: [llm-agent-nodes.md](references/llm-agent-nodes.md)
-  - How to use LLM agents as workflow nodes, task wrappers, and handling output schemas.
--   **Advanced Patterns**:
+- **函数节点**：[function-nodes.md](references/function-nodes.md)
+  - 如何把函数用作节点、类型解析，以及生成器。
+- **路由与条件**：[routing-and-conditions.md](references/routing-and-conditions.md)
+  - 边模式、基于 dict 的路由、自循环，以及条件执行。
+- **LLM 代理节点**：[llm-agent-nodes.md](references/llm-agent-nodes.md)
+  - 如何把 LLM 代理用作工作流节点、任务包装器，以及处理输出 schema。
+-   **高级模式**：
     [advanced-patterns.md](references/advanced-patterns.md)
-    -   Nested workflows, custom node types, and graph validation rules.
+    -   嵌套工作流、自定义节点类型，以及图校验规则。
 
-## Advanced Orchestration Patterns
+## 高级编排模式
 
-- **Parallel Processing & Fan-Out**: [parallel-and-fanout.md](references/parallel-and-fanout.md)
-  - `ParallelWorker` for list splitting and concurrent processing, fan-out/join patterns.
-- **Human-in-the-Loop**: [human-in-the-loop.md](references/human-in-the-loop.md)
-  - Pausing execution for user input, resumable workflows, and AuthConfig on nodes.
-- **Dynamic Nodes**: [dynamic-nodes.md](references/dynamic-nodes.md)
-  - Scheduling nodes at runtime dynamically via `ctx.run_node()`.
+- **并行处理与扇出**：[parallel-and-fanout.md](references/parallel-and-fanout.md)
+  - 用 `ParallelWorker` 做列表拆分与并发处理，以及扇出/汇合模式。
+- **人在环中**：[human-in-the-loop.md](references/human-in-the-loop.md)
+  - 暂停执行以等待用户输入、可恢复工作流，以及节点上的 AuthConfig。
+- **动态节点**：[dynamic-nodes.md](references/dynamic-nodes.md)
+  - 在运行时通过 `ctx.run_node()` 动态调度节点。
 
-## Infrastructure & Utilities
+## 基础设施与实用工具
 
-- **State & Events**: [state-and-events.md](references/state-and-events.md)
-  - Using context API, sharing global state, and yield event structures.
--   **Session & Memory**:
+- **状态与事件**：[state-and-events.md](references/state-and-events.md)
+  - 使用上下文 API、共享全局状态，以及产出事件的结构。
+-   **会话与记忆**：
     [session-and-state.md](references/session-and-state.md)
-    -   Session state mutation, scope conventions, and database session
-        services.
--   **Callbacks & Plugins**:
+    -   会话状态修改、作用域约定，以及数据库会话
+        服务。
+-   **回调与插件**：
     [callbacks-and-plugins.md](references/callbacks-and-plugins.md)
-    -   Implementing callbacks, plugin manager integration, and override
-        behavior.
-- **Multi-Agent Systems**: [multi-agent.md](references/multi-agent.md)
-  - Hierarchical execution (e.g., `SequentialAgent`, `LoopAgent`, `ParallelAgent`).
-- **Testing Strategies**: [testing.md](references/testing.md)
-  - Automated queries with `adk run`, unit tests, and integration testing with sample agents.
+    -   实现回调、插件管理器集成，以及覆盖
+        行为。
+- **多代理系统**：[multi-agent.md](references/multi-agent.md)
+  - 层级执行（例如 `SequentialAgent`、`LoopAgent`、`ParallelAgent`）。
+- **测试策略**：[testing.md](references/testing.md)
+  - 用 `adk run` 做自动化查询、单元测试，以及配合示例代理做集成测试。
 
-## Standards & Guidelines
+## 标准与指南
 
-- **Best Practices**: [best-practices.md](references/best-practices.md)
-  - Critical rules (Pydantic schemas, content events, state-based data flow).
+- **最佳实践**：[best-practices.md](references/best-practices.md)
+  - 关键规则（Pydantic schema、内容事件、基于 state 的数据流）。

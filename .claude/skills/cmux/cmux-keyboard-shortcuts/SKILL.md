@@ -1,21 +1,21 @@
 ---
 name: cmux-keyboard-shortcuts
-description: "Guide and apply cmux keyboard shortcut customization. Use when the user asks to customize, rebind, unbind, reset, audit, or create shortcut templates for cmux, including tmux-style, Vim-style, terminal-first, browser-heavy, iTerm/Terminal-like, or agent-triage layouts."
+description: "引导并应用 cmux 键盘快捷键自定义。当用户要求为 cmux 定制、重新绑定、解绑、重置、审计快捷键或创建快捷键模板时使用，包括 tmux 风格、Vim 风格、终端优先、浏览器优先、iTerm/Terminal 风格或代理分诊布局。"
 ---
 
 # cmux-keyboard-shortcuts
 
-Turn a user's workflow preferences into cmux shortcut bindings in `~/.config/cmux/cmux.json`: guide, propose compact templates, apply the selected changes, and confirm the config parses with recognized keys.
+把用户的工作流偏好变成 `~/.config/cmux/cmux.json` 中的 cmux 快捷键绑定：先引导，提出紧凑的模板，应用所选的改动，并确认配置能以被识别的键正常解析。
 
-## Contributor rule: adding a new shortcut
+## 贡献者规则：新增一个快捷键
 
-Every new cmux-owned keyboard shortcut must be added to `Sources/KeyboardShortcutSettings.swift`, visible and editable in Settings > Keyboard Shortcuts, supported as `shortcuts.bindings.<actionId>` in `~/.config/cmux/cmux.json`, and documented in `web/app/[locale]/(landing)/docs/keyboard-shortcuts/page.tsx` and the configuration docs. All four, not a subset.
+每一个新的 cmux 自有键盘快捷键都必须加入 `Sources/KeyboardShortcutSettings.swift`，在 Settings > Keyboard Shortcuts 中可见且可编辑，在 `~/.config/cmux/cmux.json` 中支持 `shortcuts.bindings.<actionId>`，并在 `web/app/[locale]/(landing)/docs/keyboard-shortcuts/page.tsx` 与配置文档中记录。四者缺一不可，不能只做一部分。
 
-## Prerequisites
+## 前置条件
 
-- Work from a cmux checkout or worktree root when possible.
-- Use `skills/cmux-settings/scripts/cmux-settings` for every read/write. It reads JSONC, writes atomically, and validates JSON plus recognized settings keys.
-- Action IDs: `skills/cmux-settings/references/shortcut-actions.md`. Current defaults: `web/data/cmux-shortcuts.ts` or `Sources/KeyboardShortcutSettings.swift`.
+- 尽可能在 cmux 检出目录或 worktree 根目录下工作。
+- 每次读/写都使用 `skills/cmux-settings/scripts/cmux-settings`。它会读取 JSONC、以原子方式写入，并校验 JSON 以及被识别的设置键。
+- Action ID：`skills/cmux-settings/references/shortcut-actions.md`。当前默认值：`web/data/cmux-shortcuts.ts` 或 `Sources/KeyboardShortcutSettings.swift`。
 
 ```bash
 if [[ -z "${CMUX_SETTINGS:-}" ]]; then
@@ -33,28 +33,28 @@ if [[ -z "${CMUX_SETTINGS:-}" ]]; then
 fi
 ```
 
-## Shortcut model
+## 快捷键模型
 
-- Setting path: `shortcuts.bindings.<actionId>`.
-- Single stroke: `"cmd+b"`.
-- Chord: `["ctrl+b","c"]`. The first stroke needs a modifier unless the key is Space. The second stroke can be bare.
-- Unbind: prefer `null` for explicit unbinds. `""`, `"none"`, `"clear"`, `"unbound"`, and `"disabled"` are accepted aliases, but `null` is the clearest JSON value and matches the templates below.
-- `selectSurfaceByNumber` and `selectWorkspaceByNumber` must use a digit from 1 to 9. `cmd+1` means the full `cmd+1` through `cmd+9` family.
-- `showHideAllWindows` is the only system-wide shortcut. It cannot be a chord, requires modifiers, and may be rejected by macOS if reserved.
-- `globalSearch` is application-scoped and only fires while cmux is active.
-- `showHideAllWindows` also requires Settings > Global Hotkey > Enable System-Wide Hotkey. The binding can validate in `cmux.json` while the feature is disabled, so warn the user to enable that setting before reporting the shortcut as usable.
-- `unset` deletes a `cmux.json` override. It does not clear shortcut changes saved through the Settings UI/UserDefaults. If the user asks for true built-in defaults, tell them to use Settings > Keyboard Shortcuts > Reset Default Shortcuts after clearing file-managed overrides, then verify in the app. For `showHideAllWindows`, use Settings > Global Hotkey to restore the shortcut to `ctrl+opt+cmd+.` because Keyboard Shortcuts > Reset Default Shortcuts intentionally skips the global hotkey.
-- Saving `cmux.json` live reloads. Never tell the user to restart cmux.
+- 设置路径：`shortcuts.bindings.<actionId>`。
+- 单次按键：`"cmd+b"`。
+- 组合键（chord）：`["ctrl+b","c"]`。第一次按键需要一个修饰键，除非该键是 Space。第二次按键可以是裸键。
+- 解绑：显式解绑优先使用 `null`。`""`、`"none"`、`"clear"`、`"unbound"` 与 `"disabled"` 都是可接受的别名，但 `null` 是最清晰的 JSON 值，也与下面的模板一致。
+- `selectSurfaceByNumber` 与 `selectWorkspaceByNumber` 必须使用 1 到 9 的数字。`cmd+1` 表示完整的 `cmd+1` 到 `cmd+9` 这一族。
+- `showHideAllWindows` 是唯一的系统级快捷键。它不能是组合键、需要修饰键，并且如果被系统占用，macOS 可能会拒绝它。
+- `globalSearch` 是应用级的，仅在 cmux 处于活动状态时触发。
+- `showHideAllWindows` 还要求开启 Settings > Global Hotkey > Enable System-Wide Hotkey。在该功能关闭时，绑定仍可能在 `cmux.json` 中通过校验，因此要提醒用户先启用该设置，再宣称该快捷键可用。
+- `unset` 只会删除 `cmux.json` 中的覆盖项。它不会清除通过 Settings UI/UserDefaults 保存的快捷键改动。如果用户想要真正的内置默认值，请告诉他们在清除由文件管理的覆盖项之后使用 Settings > Keyboard Shortcuts > Reset Default Shortcuts，然后在应用中核实。对于 `showHideAllWindows`，请使用 Settings > Global Hotkey 把快捷键恢复为 `ctrl+opt+cmd+.`，因为 Keyboard Shortcuts > Reset Default Shortcuts 会有意跳过这个全局热键。
+- 保存 `cmux.json` 会实时重载。绝不要让用户重启 cmux。
 
-## Workflow
+## 工作流程
 
-1. Classify the request:
-   - **One-off rebind/unbind:** map the phrase to an action ID, apply, validate, report previous and new binding.
-   - **Audit:** inspect bindings, validate, summarize overrides and unbound shortcuts without writing.
-   - **Reset:** clarify file-managed overrides vs true built-in defaults (see the `unset` rule above).
-   - **Broad customization:** propose 3-5 templates below and ask the user to choose.
-   - **Named style** (tmux, Vim, iTerm, browser, agent triage): pick the closest template, show the changed actions and likely collisions, and ask before a bulk apply unless the user already named that template.
-2. Inspect existing config:
+1. 对请求分类：
+   - **一次性重新绑定/解绑：** 把说法映射到一个 action ID，应用、校验，并报告原绑定与新绑定。
+   - **审计：** 检查绑定、校验，在不写入的前提下汇总覆盖项与已解绑的快捷键。
+   - **重置：** 区分由文件管理的覆盖项与真正的内置默认值（见上面的 `unset` 规则）。
+   - **广泛自定义：** 提出下面 3-5 个模板，让用户选择。
+   - **具名风格**（tmux、Vim、iTerm、浏览器、代理分诊）：挑最接近的模板，展示会被改动的动作与可能冲突的地方，并且在批量应用前先询问，除非用户已经点名了该模板。
+2. 检查现有配置：
 
    ```bash
    "$CMUX_SETTINGS" path
@@ -62,13 +62,13 @@ fi
    "$CMUX_SETTINGS" validate
    ```
 
-3. Snapshot prior values for every action you will change. A path that was absent reverts with `unset`; a path with an existing custom value reverts with `set <same-json-value>`.
+3. 为每个将要改动的动作快照其原值。原本不存在的路径用 `unset` 还原；已有自定义值的路径用 `set <same-json-value>` 还原。
 
    ```bash
    "$CMUX_SETTINGS" get shortcuts.bindings.focusLeft 2>/dev/null || printf '<absent>\n'
    ```
 
-4. Apply only the chosen action paths, then `"$CMUX_SETTINGS" validate`.
+4. 只应用选定的动作路径，然后执行 `"$CMUX_SETTINGS" validate`。
 
    ```bash
    "$CMUX_SETTINGS" set shortcuts.bindings.newSurface '["ctrl+b","c"]'
@@ -76,16 +76,16 @@ fi
    "$CMUX_SETTINGS" set shortcuts.bindings.sendFeedback null
    ```
 
-5. Read back each changed action: `"$CMUX_SETTINGS" get shortcuts.bindings.newSurface`.
-6. Finish with the template name, changed actions, and exact revert commands from the snapshot.
+5. 读回每个被改动的动作：`"$CMUX_SETTINGS" get shortcuts.bindings.newSurface`。
+6. 最后给出模板名称、被改动的动作，以及来自快照的精确还原命令。
 
-## Preset templates
+## 预设模板
 
-Apply action by action, never by overwriting the whole `shortcuts.bindings` object.
+逐个动作地应用，绝不要覆盖整个 `shortcuts.bindings` 对象。
 
-### Tmux Prefix
+### Tmux 前缀
 
-One terminal-style namespace; `ctrl+b` starts a cmux chord instead of reaching the shell.
+一个终端风格的命名空间；`ctrl+b` 会开启一个 cmux 组合键，而不是发送给 shell。
 
 ```bash
 "$CMUX_SETTINGS" set shortcuts.bindings.newSurface '["ctrl+b","c"]'
@@ -104,9 +104,9 @@ One terminal-style namespace; `ctrl+b` starts a cmux chord instead of reaching t
 "$CMUX_SETTINGS" set shortcuts.bindings.equalizeSplits '["ctrl+b","="]'
 ```
 
-### macOS Terminal/iTerm Restore
+### 恢复 macOS Terminal/iTerm 风格
 
-These actions already match cmux built-in defaults, so clear file overrides rather than writing default values.
+这些动作已经与 cmux 的内置默认值一致，所以应清除文件中的覆盖项，而不是写入默认值。
 
 ```bash
 for a in newSurface closeTab nextSurface prevSurface selectSurfaceByNumber \
@@ -115,9 +115,9 @@ for a in newSurface closeTab nextSurface prevSurface selectSurfaceByNumber \
 done
 ```
 
-### Vim Pane Navigation
+### Vim 面板导航
 
-Prefix-free pane movement with no arrow keys.
+无需前缀、不使用方向键的面板移动。
 
 ```bash
 "$CMUX_SETTINGS" set shortcuts.bindings.focusLeft cmd+opt+h
@@ -130,9 +130,9 @@ Prefix-free pane movement with no arrow keys.
 "$CMUX_SETTINGS" set shortcuts.bindings.equalizeSplits cmd+opt+=
 ```
 
-### Agent Triage
+### 代理分诊
 
-Unread handling on one key family. `toggleUnread` stays on `cmd+opt+u` so this composes with Vim Pane Navigation without colliding with `cmd+opt+j`.
+用一组键处理未读。`toggleUnread` 保持在 `cmd+opt+u`，这样它就能与 Vim 面板导航组合使用，而不会与 `cmd+opt+j` 冲突。
 
 ```bash
 "$CMUX_SETTINGS" set shortcuts.bindings.showNotifications cmd+u
@@ -143,9 +143,9 @@ Unread handling on one key family. `toggleUnread` stays on `cmd+opt+u` so this c
 "$CMUX_SETTINGS" set shortcuts.bindings.focusRightSidebar cmd+shift+e
 ```
 
-### Workspace And Surface Lanes
+### 工作区与界面通道
 
-Workspaces and surfaces on distinct number and bracket lanes.
+让工作区与界面分别落在不同的数字通道与方括号通道上。
 
 ```bash
 "$CMUX_SETTINGS" set shortcuts.bindings.selectWorkspaceByNumber cmd+1
@@ -156,9 +156,9 @@ Workspaces and surfaces on distinct number and bracket lanes.
 "$CMUX_SETTINGS" set shortcuts.bindings.prevSurface 'cmd+shift+['
 ```
 
-### Browser Defaults Restore
+### 恢复浏览器默认值
 
-Return embedded-browser behavior to common macOS browser shortcuts. `unset` keeps future cmux defaults applying.
+把内嵌浏览器行为恢复为 macOS 浏览器常用的快捷键。`unset` 能让未来的 cmux 默认值继续生效。
 
 ```bash
 for a in openBrowser focusBrowserAddressBar browserBack browserForward browserReload \
@@ -168,9 +168,9 @@ for a in openBrowser focusBrowserAddressBar browserBack browserForward browserRe
 done
 ```
 
-### Terminal-First Cleanup
+### 终端优先清理
 
-Fewer app-level shortcuts. Prefer unbinding only the actions the user names; this is a starting proposal.
+更少的应用级快捷键。优先只解绑用户点名的动作；这只是一个起步方案。
 
 ```bash
 for a in renameTab renameWorkspace editWorkspaceDescription triggerFlash sendFeedback; do
@@ -178,12 +178,12 @@ for a in renameTab renameWorkspace editWorkspaceDescription triggerFlash sendFee
 done
 ```
 
-## Rules
+## 规则
 
-- Do not edit `~/.config/cmux/settings.json` unless the user explicitly asks; it is legacy fallback config.
-- Do not overwrite all of `shortcuts.bindings` unless the user wants a full replacement.
-- Do not invent action IDs. Validate against the schema or `shortcut-actions.md`.
-- Do not apply a broad template without showing the changed actions first, unless the user named that template.
-- Do not promise conflict detection from `cmux-settings validate`. It validates JSON and supported keys, not shortcut syntax, macOS reservation, or focus-context conflicts.
-- Before assigning `cmd+[` or `cmd+]` to application-scoped actions, warn that they collide with browser Back/Forward unless the browser actions are also changed or unbound.
-- `unset` clears file-managed overrides for one action. Do not call that a built-in default reset unless Settings UI/UserDefaults values were also reset.
+- 除非用户明确要求，否则不要编辑 `~/.config/cmux/settings.json`；它是旧版的回退配置。
+- 除非用户想要整体替换，否则不要覆盖整个 `shortcuts.bindings`。
+- 不要杜撰 action ID。请对照 schema 或 `shortcut-actions.md` 校验。
+- 除非用户点名了某个模板，否则不要在未先展示改动动作的情况下应用一个宽泛的模板。
+- 不要承诺 `cmux-settings validate` 能检测冲突。它只校验 JSON 与受支持的键，不校验快捷键语法、macOS 保留占用或焦点上下文冲突。
+- 在把 `cmd+[` 或 `cmd+]` 分配给应用级动作之前，要提醒它们会与浏览器的后退/前进冲突，除非同时修改或解绑相应的浏览器动作。
+- `unset` 只会清除某个动作由文件管理的覆盖项。除非 Settings UI/UserDefaults 中的值也被重置，否则不要把它称作内置默认值重置。

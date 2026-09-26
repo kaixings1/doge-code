@@ -1,50 +1,50 @@
 ---
 name: cmux-dev-workflow
-description: "Contributor workflow rules for cmux setup, Xcode project normalization, tagged sidebar ExtensionKit development, and dev builds. Use when setting up the cmux repo, changing Xcode project files, adding sidebar extensions, or working with tagged debug builds."
+description: "面向 cmux 贡献者的工作流规则：仓库初始化、Xcode 工程归一化、带 tag 的侧边栏 ExtensionKit 开发，以及开发构建。在初始化 cmux 仓库、改动 Xcode 工程文件、添加侧边栏扩展，或使用带 tag 的调试构建时用。"
 ---
 
-# cmux Dev Workflow
+# cmux 开发工作流
 
-## Initial setup
+## 初始安装
 
-`./scripts/setup.sh` initializes submodules, builds GhosttyKit, and installs the pbxproj normalization pre-commit hook.
+`./scripts/setup.sh` 会初始化子模块、构建 GhosttyKit，并安装 pbxproj 归一化 pre-commit 钩子。
 
-## Tagged local dev
+## 带 tag 的本地开发
 
-Build the Debug app after every code change:
+每次改完代码都要构建 Debug app：
 
 ```bash
 ./scripts/reload.sh --tag <short-tag>
 ```
 
-It builds without launching; pass `--launch` only when you need the app open. Never run bare `xcodebuild` or open an untagged `cmux DEV.app`: untagged builds share the default debug socket and bundle ID with other agents, causing conflicts and stealing focus.
+它只构建、不启动；只有确实需要把 app 打开时才传 `--launch`。绝不要直接运行裸的 `xcodebuild`，也不要打开未打 tag 的 `cmux DEV.app`：未打 tag 的构建会与其他 agent 共用默认的调试 socket 和 bundle ID，导致冲突并抢走焦点。
 
-For CLI or socket dogfood against a tagged Debug app:
+要对带 tag 的 Debug app 做 CLI 或 socket 内部试用：
 
 ```bash
 CMUX_TAG=<tag> scripts/cmux-debug-cli.sh list-workspaces
 ```
 
-Do not use `/tmp/cmux-cli` for tagged dogfood; that symlink points at the most recently reloaded build. See [references/tagged-builds.md](references/tagged-builds.md).
+不要把 `/tmp/cmux-cli` 用于带 tag 的内部试用；那个符号链接指向最近一次重新加载的构建。参见 [references/tagged-builds.md](references/tagged-builds.md)。
 
-## Xcode toolchain
+## Xcode 工具链
 
-The team is pinned to Xcode 26.x. `.xcode-version` is the single source of truth for the major; `cmux.xcodeproj/project.pbxproj` carries `objectVersion = 60`, what Xcode 26 writes by default. (`objectVersion = 77` is reserved for synchronized folder groups, which cmux does not use.)
+团队锁定在 Xcode 26.x。`.xcode-version` 是主版本号的唯一事实来源；`cmux.xcodeproj/project.pbxproj` 中带的是 `objectVersion = 60`，即 Xcode 26 的默认写入值。（`objectVersion = 77` 保留给同步文件夹分组，cmux 并不使用。）
 
-`scripts/setup.sh` installs the tracked `scripts/git-hooks/pre-commit`, which runs `scripts/normalize-pbxproj.py` on any staged `project.pbxproj` so Xcode's nondeterministic reordering never reaches a commit. The hook is idempotent. CI runs `scripts/check-pbxproj.sh` to enforce both the `objectVersion` pin and normalization, so skipping the hook gives a clear PR failure. Bumping the pin is a deliberate team decision: see [references/xcode-project-normalization.md](references/xcode-project-normalization.md).
+`scripts/setup.sh` 会安装纳入版本管理的 `scripts/git-hooks/pre-commit`，它会对任何已暂存的 `project.pbxproj` 运行 `scripts/normalize-pbxproj.py`，这样 Xcode 不确定性的重排就永远不会进入提交。该钩子是幂等的。CI 会运行 `scripts/check-pbxproj.sh`，同时强制 `objectVersion` 的锁定值和归一化，所以跳过钩子会得到一个明确的 PR 失败。提升该锁定值是需要团队刻意决策的事：参见 [references/xcode-project-normalization.md](references/xcode-project-normalization.md)。
 
-## Sidebar extension point (dev tagging)
+## 侧边栏扩展点（开发期打 tag）
 
-Each tagged dev build gets its own ExtensionKit sidebar extension point so concurrent dev builds do not collide. Three build settings drive it:
+每个带 tag 的开发构建都有自己专属的 ExtensionKit 侧边栏扩展点，这样并发的开发构建就不会互相撞车。有三个构建设置驱动它：
 
-- `CMUX_SIDEBAR_EXTENSION_POINT_ID` (default `com.cmuxterm.app.cmux.sidebar`): the extension point identifier baked into Info.plist at build time.
-- `CMUX_BUNDLE_ID_SUFFIX` (default empty): inserted into the app and appex bundle ids so a tagged extension gets a distinct identity that pkd records separately.
-- `CMUX_DISPLAY_NAME_SUFFIX` (default empty): appended to the appex `CFBundleDisplayName`. The OS groups sidebar extensions by display name for the enable/disable and availability counts the host reads, so two same-named appexes installed side by side are treated as one logical extension and toggling one perturbs the other.
+- `CMUX_SIDEBAR_EXTENSION_POINT_ID`（默认 `com.cmuxterm.app.cmux.sidebar`）：构建时写进 Info.plist 的扩展点标识符。
+- `CMUX_BUNDLE_ID_SUFFIX`（默认空）：插入 app 与 appex 的 bundle id，使带 tag 的扩展获得一个 pkd 会单独记录的不同身份。
+- `CMUX_DISPLAY_NAME_SUFFIX`（默认空）：追加到 appex 的 `CFBundleDisplayName`。操作系统按显示名称对侧边栏扩展分组，以得出宿主读取的启用/停用与可用数量，所以两个同名的 appex 并排安装时会被当成同一个逻辑扩展，切换其中一个会扰动另一个。
 
-The host resolves its point id at runtime from the Info.plist key `CMUXSidebarExtensionPointIdentifier` via `CmuxSidebarExtensionPoint.identifier(in:)`. `./scripts/reload.sh --tag <tag>` scopes the host point to `com.cmuxterm.app.debug.<tag>.cmux.sidebar`. Build a matching tag-scoped sample extension with:
+宿主在运行时通过 `CmuxSidebarExtensionPoint.identifier(in:)` 从 Info.plist 键 `CMUXSidebarExtensionPointIdentifier` 解析自己的扩展点 id。`./scripts/reload.sh --tag <tag>` 会把宿主扩展点限定为 `com.cmuxterm.app.debug.<tag>.cmux.sidebar`。用下面的命令构建一个匹配的、按 tag 限定的示例扩展：
 
 ```bash
 ./scripts/reload-extension.sh --tag <tag> [--host-bundle-id <id>] [--example sample|tabs|both]
 ```
 
-See [references/sidebar-extension-tagging.md](references/sidebar-extension-tagging.md) for the settings it passes, the no-re-signing rule, and the checklist for authoring a new tag-ready sample extension.
+关于它传入的设置、禁止重新签名的规则，以及编写新的、可用于 tag 的示例扩展的检查清单，参见 [references/sidebar-extension-tagging.md](references/sidebar-extension-tagging.md)。

@@ -4,40 +4,40 @@ description: 适用于 TypeScript、JavaScript、React 和 Node.js 开发的通�
 origin: ECC
 ---
 
-# 编码标准与最佳实践 (Coding Standards & Best Practices)
+# 编码标准与最佳实践
 
 适用于所有项目的通用编码标准。
 
-## 何时启用 (When to Activate)
+## 何时启用
 
 - 启动新项目或模块时
-- 为了质量和可维护性进行代码审查（Code Review）时
+- 为了质量和可维护性进行代码审查时
 - 重构现有代码以遵循规范时
 - 强制执行命名、格式或结构的一致性时
 - 设置 linting、格式化或类型检查规则时
 - 引导新贡献者了解编码规范时
 
-## 代码质量原则 (Code Quality Principles)
+## 代码质量原则
 
-### 1. 可读性优先 (Readability First)
+### 1. 可读性优先
 - 代码被阅读的次数远多于编写的次数
 - 变量和函数命名应清晰明确
 - 优先选择自描述代码，而非依赖注释
 - 保持一致的格式化风格
 
-### 2. KISS 原则 (Keep It Simple, Stupid)
+### 2. KISS 原则（保持简单直接）
 - 采用最简单的可行方案
-- 避免过度设计（Over-engineering）
+- 避免过度设计
 - 不进行过早优化
 - 易于理解胜过奇技淫巧
 
-### 3. DRY 原则 (Don't Repeat Yourself)
+### 3. DRY 原则（不要重复自己）
 - 将公共逻辑提取为函数
 - 创建可复用的组件
 - 在模块间共享工具函数
 - 避免“复制粘贴式”编程
 
-### 4. YAGNI 原则 (You Aren't Gonna Need It)
+### 4. YAGNI 原则（你不会需要它）
 - 不要在功能被需要之前就构建它
 - 避免投机性的通用设计
 - 仅在必要时增加复杂性
@@ -45,7 +45,7 @@ origin: ECC
 
 ## TypeScript/JavaScript 规范
 
-### 变量命名 (Variable Naming)
+### 变量命名
 
 ```typescript
 // ✅ 优：描述性命名
@@ -59,7 +59,7 @@ const flag = true
 const x = 1000
 ```
 
-### 函数命名 (Function Naming)
+### 函数命名
 
 ```typescript
 // ✅ 优：动词-名词模式
@@ -73,7 +73,7 @@ function similarity(a, b) { }
 function email(e) { }
 ```
 
-### 不可变性模式（关键） (Immutability Pattern)
+### 不可变性模式（关键）
 
 ```typescript
 // ✅ 始终使用展开运算符（Spread Operator）
@@ -89,7 +89,7 @@ user.name = 'New Name'  // 劣
 items.push(newItem)     // 劣
 ```
 
-### 错误处理 (Error Handling)
+### 错误处理
 
 ```typescript
 // ✅ 优：完善的错误处理
@@ -131,7 +131,7 @@ const markets = await fetchMarkets()
 const stats = await fetchStats()
 ```
 
-### 类型安全 (Type Safety)
+### 类型安全
 
 ```typescript
 // ✅ 优：定义正确的类型
@@ -154,7 +154,7 @@ function getMarket(id: any): Promise<any> {
 
 ## React 最佳实践
 
-### 组件结构 (Component Structure)
+### 组件结构
 
 ```typescript
 // ✅ 优：带类型的函数式组件
@@ -188,7 +188,7 @@ export function Button(props) {
 }
 ```
 
-### 自定义 Hook (Custom Hooks)
+### 自定义 Hook
 
 ```typescript
 // ✅ 优：可复用的自定义 Hook
@@ -210,7 +210,7 @@ export function useDebounce<T>(value: T, delay: number): T {
 const debouncedQuery = useDebounce(searchQuery, 500)
 ```
 
-### 状态管理 (State Management)
+### 状态管理
 
 ```typescript
 // ✅ 优：正确更新状态
@@ -223,7 +223,7 @@ setCount(prev => prev + 1)
 setCount(count + 1)  // 在异步场景下可能会由于闭包导致状态过期
 ```
 
-### 条件渲染 (Conditional Rendering)
+### 条件渲染
 
 ```typescript
 // ✅ 优：清晰的条件渲染
@@ -235,9 +235,9 @@ setCount(count + 1)  // 在异步场景下可能会由于闭包导致状态过�
 {isLoading ? <Spinner /> : error ? <ErrorMessage error={error} /> : data ? <DataDisplay data={data} /> : null}
 ```
 
-## API 设计规范 (API Design Standards)
+## API 设计规范
 
-### REST API 约定 (REST API Conventions)
+### REST API 约定
 
 ```
 GET    /api/markets              # 列出所有市场
@@ -251,7 +251,7 @@ DELETE /api/markets/:id          # 删除市场
 GET /api/markets?status=active&limit=10&offset=0
 ```
 
-### 响应格式 (Response Format)
+### 响应格式
 
 ```typescript
 // ✅ 优：一致的响应结构
@@ -280,7 +280,7 @@ return NextResponse.json({
 }, { status: 400 })
 ```
 
-### 输入验证 (Input Validation)
+### 输入验证
 
 ```typescript
 import { z } from 'zod'
@@ -311,9 +311,9 @@ export async function POST(request: Request) {
 }
 ```
 
-## 文件组织 (File Organization)
+## 文件组织
 
-### 项目结构 (Project Structure)
+### 项目结构
 
 ```
 src/
@@ -334,7 +334,7 @@ src/
 └── styles/              # 全局样式
 ```
 
-### 文件命名 (File Naming)
+### 文件命名
 
 ```
 components/Button.tsx          # 组件使用 PascalCase (大驼峰)
@@ -343,9 +343,9 @@ lib/formatDate.ts             # 工具函数使用 camelCase
 types/market.types.ts         # 使用 camelCase 并带上 .types 后缀
 ```
 
-## 注释与文档 (Comments & Documentation)
+## 注释与文档
 
-### 何时编写注释 (When to Comment)
+### 何时编写注释
 
 ```typescript
 // ✅ 优：解释“为什么”，而不是“是什么”
@@ -363,7 +363,7 @@ count++
 name = user.name
 ```
 
-### 针对公共 API 的 JSDoc (JSDoc for Public APIs)
+### 针对公共 API 的 JSDoc
 
 ```typescript
 /**
@@ -388,9 +388,9 @@ export async function searchMarkets(
 }
 ```
 
-## 性能最佳实践 (Performance Best Practices)
+## 性能最佳实践
 
-### 记忆化 (Memoization)
+### 记忆化
 
 ```typescript
 import { useMemo, useCallback } from 'react'
@@ -406,7 +406,7 @@ const handleSearch = useCallback((query: string) => {
 }, [])
 ```
 
-### 延迟加载 (Lazy Loading)
+### 延迟加载
 
 ```typescript
 import { lazy, Suspense } from 'react'
@@ -423,7 +423,7 @@ export function Dashboard() {
 }
 ```
 
-### 数据库查询 (Database Queries)
+### 数据库查询
 
 ```typescript
 // ✅ 优：仅选择需要的列
@@ -438,9 +438,9 @@ const { data } = await supabase
   .select('*')
 ```
 
-## 测试规范 (Testing Standards)
+## 测试规范
 
-### 测试结构 (AAA 模式) (Test Structure (AAA Pattern))
+### 测试结构（AAA 模式）
 
 ```typescript
 test('calculates similarity correctly', () => {
@@ -456,7 +456,7 @@ test('calculates similarity correctly', () => {
 })
 ```
 
-### 测试命名 (Test Naming)
+### 测试命名
 
 ```typescript
 // ✅ 优：描述性的测试名称
@@ -469,11 +469,11 @@ test('works', () => { })
 test('test search', () => { })
 ```
 
-## 代码异味（Code Smell）检测
+## 代码异味检测
 
-注意以下反模式（Anti-patterns）：
+注意以下反模式：
 
-### 1. 过长函数 (Long Functions)
+### 1. 过长函数
 ```typescript
 // ❌ 劣：函数长度 > 50 行
 function processMarketData() {
@@ -488,7 +488,7 @@ function processMarketData() {
 }
 ```
 
-### 2. 过深嵌套 (Deep Nesting)
+### 2. 过深嵌套
 ```typescript
 // ❌ 劣：5 层以上嵌套
 if (user) {
@@ -513,7 +513,7 @@ if (!hasPermission) return
 // 执行操作
 ```
 
-### 3. 魔数 (Magic Numbers)
+### 3. 魔数
 ```typescript
 // ❌ 劣：未解释的数字
 if (retryCount > 3) { }

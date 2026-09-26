@@ -18,7 +18,7 @@ description: Apple FoundationModels 框架，用于设备端大语言模型（LL
 
 ## 核心模式 —— 可用性检查
 
-在创建会话（Session）之前，请务必检查模型的可用性：
+在创建会话之前，请务必检查模型的可用性：
 
 ```swift
 struct GenerativeView: View {
@@ -60,7 +60,7 @@ let first = try await session.respond(to: "我有鸡肉和米饭")
 let followUp = try await session.respond(to: "那素食选择呢？")
 ```
 
-提示词指令（Instructions）的关键点：
+提示词指令的关键点：
 - 定义模型的角色（“你是一个导师”）
 - 指定要做什么（“帮助提取日历事件”）
 - 设置风格偏好（“尽可能简短地回答”）
@@ -109,7 +109,7 @@ print("简介: \(response.content.profile)")
 
 允许模型调用自定义代码以执行特定领域任务：
 
-### 1. 定义一个工具（Tool）
+### 1. 定义一个工具
 
 ```swift
 struct RecipeSearchTool: Tool {
@@ -216,7 +216,7 @@ var body: some View {
 ## 最佳实践
 
 - **始终在创建会话前检查 `model.availability`** —— 处理所有不可用的情况
-- **使用 `instructions`** 来引导模型行为 —— 它们的优先级高于提示词（Prompts）
+- **使用 `instructions`** 来引导模型行为 —— 它们的优先级高于提示词
 - **在发送新请求前检查 `isResponding`** —— 会话每次处理一个请求
 - **访问 `response.content`** 获取结果 —— 而非 `.output`
 - **将大型输入分成块** —— 4,096 Token 限制适用于指令 + 提示词 + 输出的总和

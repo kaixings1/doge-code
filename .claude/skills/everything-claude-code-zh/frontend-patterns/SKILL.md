@@ -4,7 +4,7 @@ description: 针对 React、Next.js、状态管理、性能优化及 UI 最佳�
 origin: ECC
 ---
 
-# 前端开发模式 (Frontend Development Patterns)
+# 前端开发模式
 
 适用于 React、Next.js 和高性能用户界面的现代前端模式。
 
@@ -16,11 +16,11 @@ origin: ECC
 - 优化性能（记忆化、虚拟化、代码分割）
 - 处理表单（验证、受控输入、Zod 模式）
 - 处理客户端路由与导航
-- 构建可访问（Accessible）、响应式的 UI 模式
+- 构建可访问、响应式的 UI 模式
 
-## 组件模式 (Component Patterns)
+## 组件模式
 
-### 组合优于继承 (Composition Over Inheritance)
+### 组合优于继承
 
 ```typescript
 // ✅ 推荐：组件组合
@@ -48,7 +48,7 @@ export function CardBody({ children }: { children: React.ReactNode }) {
 </Card>
 ```
 
-### 复合组件 (Compound Components)
+### 复合组件
 
 ```typescript
 interface TabsContextValue {
@@ -98,7 +98,7 @@ export function Tab({ id, children }: { id: string, children: React.ReactNode })
 </Tabs>
 ```
 
-### Render Props 模式 (Render Props Pattern)
+### Render Props 模式
 
 ```typescript
 interface DataLoaderProps<T> {
@@ -132,9 +132,9 @@ export function DataLoader<T>({ url, children }: DataLoaderProps<T>) {
 </DataLoader>
 ```
 
-## 自定义 Hook 模式 (Custom Hooks Patterns)
+## 自定义 Hook 模式
 
-### 状态管理 Hook (State Management Hook)
+### 状态管理 Hook
 
 ```typescript
 export function useToggle(initialValue = false): [boolean, () => void] {
@@ -151,7 +151,7 @@ export function useToggle(initialValue = false): [boolean, () => void] {
 const [isOpen, toggleOpen] = useToggle()
 ```
 
-### 异步数据获取 Hook (Async Data Fetching Hook)
+### 异步数据获取 Hook
 
 ```typescript
 interface UseQueryOptions<T> {
@@ -206,7 +206,7 @@ const { data: markets, loading, error, refetch } = useQuery(
 )
 ```
 
-### 防抖 Hook (Debounce Hook)
+### 防抖 Hook
 
 ```typescript
 export function useDebounce<T>(value: T, delay: number): T {
@@ -234,9 +234,9 @@ useEffect(() => {
 }, [debouncedQuery])
 ```
 
-## 状态管理模式 (State Management Patterns)
+## 状态管理模式
 
-### Context + Reducer 模式 (Context + Reducer Pattern)
+### Context + Reducer 模式
 
 ```typescript
 interface State {
@@ -289,9 +289,9 @@ export function useMarkets() {
 }
 ```
 
-## 性能优化 (Performance Optimization)
+## 性能优化
 
-### 记忆化 (Memoization)
+### 记忆化
 
 ```typescript
 // ✅ 使用 useMemo 处理高开销计算
@@ -315,7 +315,7 @@ export const MarketCard = React.memo<MarketCardProps>(({ market }) => {
 })
 ```
 
-### 代码分割与懒加载 (Code Splitting & Lazy Loading)
+### 代码分割与懒加载
 
 ```typescript
 import { lazy, Suspense } from 'react'
@@ -339,7 +339,7 @@ export function Dashboard() {
 }
 ```
 
-### 长列表虚拟化 (Virtualization for Long Lists)
+### 长列表虚拟化
 
 ```typescript
 import { useVirtualizer } from '@tanstack/react-virtual'
@@ -383,9 +383,9 @@ export function VirtualMarketList({ markets }: { markets: Market[] }) {
 }
 ```
 
-## 表单处理模式 (Form Handling Patterns)
+## 表单处理模式
 
-### 带验证的受控表单 (Controlled Form with Validation)
+### 带验证的受控表单
 
 ```typescript
 interface FormData {
@@ -460,7 +460,7 @@ export function CreateMarketForm() {
 }
 ```
 
-## 错误边界模式 (Error Boundary Pattern)
+## 错误边界模式
 
 ```typescript
 interface ErrorBoundaryState {
@@ -508,9 +508,9 @@ export class ErrorBoundary extends React.Component<
 </ErrorBoundary>
 ```
 
-## 动画模式 (Animation Patterns)
+## 动画模式
 
-### Framer Motion 动画 (Framer Motion Animations)
+### Framer Motion 动画
 
 ```typescript
 import { motion, AnimatePresence } from 'framer-motion'
@@ -562,9 +562,9 @@ export function Modal({ isOpen, onClose, children }: ModalProps) {
 }
 ```
 
-## 可访问性模式 (Accessibility Patterns)
+## 可访问性模式
 
-### 键盘导航 (Keyboard Navigation)
+### 键盘导航
 
 ```typescript
 export function Dropdown({ options, onSelect }: DropdownProps) {
@@ -605,7 +605,7 @@ export function Dropdown({ options, onSelect }: DropdownProps) {
 }
 ```
 
-### 焦点管理 (Focus Management)
+### 焦点管理
 
 ```typescript
 export function Modal({ isOpen, onClose, children }: ModalProps) {

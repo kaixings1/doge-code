@@ -1,12 +1,12 @@
 ---
 name: project-guidelines-example
-description: "基于真实生产应用程序的项目特定技能（Skill）模板示例。"
+description: "基于真实生产应用程序的项目特定技能模板示例。"
 origin: ECC
 ---
 
-# 项目指南技能（Skill）示例
+# 项目指南技能示例
 
-这是一个项目特定技能（Skill）的示例。请将其作为你自己项目的模板。
+这是一个项目特定技能的示例。请将其作为你自己项目的模板。
 
 基于真实生产应用程序：[Zenith](https://zenith.chat) - AI 驱动的客户挖掘平台。
 
@@ -24,26 +24,26 @@ origin: ECC
 ## 架构概览
 
 **技术栈：**
-- **前端（Frontend）**: Next.js 15 (App Router), TypeScript, React
-- **后端（Backend）**: FastAPI (Python), Pydantic 模型
-- **数据库（Database）**: Supabase (PostgreSQL)
-- **AI**: 支持工具调用（tool calling）和结构化输出（structured output）的 Claude API
-- **部署（Deployment）**: Google Cloud Run
-- **测试（Testing）**: Playwright (E2E), pytest (后端), React Testing Library
+- **前端**: Next.js 15 (App Router), TypeScript, React
+- **后端**: FastAPI (Python), Pydantic 模型
+- **数据库**: Supabase (PostgreSQL)
+- **AI**: 支持工具调用和结构化输出的 Claude API
+- **部署**: Google Cloud Run
+- **测试**: Playwright (E2E), pytest (后端), React Testing Library
 
 **服务：**
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                         前端（Frontend）                    │
+│                         前端                                │
 │  Next.js 15 + TypeScript + TailwindCSS                     │
-│  部署于（Deployed）: Vercel / Cloud Run                    │
+│  部署于: Vercel / Cloud Run                                │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                         后端（Backend）                     │
+│                         后端                                │
 │  FastAPI + Python 3.11 + Pydantic                          │
-│  部署于（Deployed）: Cloud Run                             │
+│  部署于: Cloud Run                                         │
 └─────────────────────────────────────────────────────────────┘
                               │
               ┌───────────────┼───────────────┐
@@ -330,8 +330,8 @@ SUPABASE_KEY=eyJ...
 
 ## 关键规则
 
-1. **不得使用表情符号**（No emojis）：在代码、注释或文档中不得使用表情符号
-2. **不可变性**（Immutability）：永远不要直接修改对象或数组
+1. **不得使用表情符号**：在代码、注释或文档中不得使用表情符号
+2. **不可变性**：永远不要直接修改对象或数组
 3. **TDD**：在实现之前编写测试
 4. **最低 80% 覆盖率**
 5. **采用多个小文件**：通常 200-400 行，最多 800 行

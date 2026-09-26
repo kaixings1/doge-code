@@ -1,18 +1,18 @@
 ---
 name: cmux-shared-behavior
-description: "Shared behavior and mutation-path rules for cmux. Use when a behavior is exposed through multiple entrypoints such as keyboard shortcuts, command palette, context menu, CLI, settings, debug menu, optimistic UI, or tests that previously missed a bug."
+description: "cmux 的共享行为与变更路径规则。当某个行为通过多个入口暴露时使用，例如键盘快捷键、命令面板、上下文菜单、CLI、设置、调试菜单、乐观 UI，或此前漏掉过 bug 的测试。"
 ---
 
-# cmux Shared Behavior
+# cmux 共享行为
 
-## Shared entrypoints
+## 共享入口
 
-When a behavior is exposed through multiple surfaces (keyboard shortcut, command palette, context menu, CLI/socket command, settings UI, debug menu), implement one shared action/model path and verify every entrypoint that should invoke it. Do not patch one surface and leave the others with duplicated logic.
+当某个行为通过多个界面暴露时（键盘快捷键、命令面板、上下文菜单、CLI/socket 命令、设置界面、调试菜单），只实现一条共享的 action/model 路径，并核实每一个应当调用它的入口。不要只给某一个界面打补丁，而让其它界面保留重复的逻辑。
 
-## Optimistic updates
+## 乐观更新
 
-Keep one mutation path. Record pending state with a request id or a previous snapshot, reconcile from the authoritative result, and handle failure with an explicit rollback or error state. Never let each entrypoint maintain its own optimistic copy.
+只保留一条变更路径。用请求 id 或先前的快照记录待定状态，依据权威结果进行对账，并在失败时以显式回滚或错误状态处理。绝不要让每个入口各自维护自己的乐观副本。
 
-## Missed-bug coverage
+## 漏掉 bug 的覆盖
 
-When a user says tests missed a bug, add or adjust behavior-level coverage around the exact repro path before claiming the fix is complete.
+当用户说测试漏掉了某个 bug 时，先针对确切的复现路径补充或调整行为级覆盖，再宣称修复完成。

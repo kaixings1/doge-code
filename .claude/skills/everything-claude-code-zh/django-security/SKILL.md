@@ -4,13 +4,13 @@ description: Django 安全最佳实践，涵盖身份验证、授权、CSRF 防�
 origin: ECC
 ---
 
-# Django 安全最佳实践 (Django Security Best Practices)
+# Django 安全最佳实践
 
 针对 Django 应用程序的全面安全指南，旨在防范常见漏洞。
 
 ## 何时启用
 
-- 设置 Django 身份验证 (Authentication) 和授权 (Authorization) 时
+- 设置 Django 身份验证和授权时
 - 实现用户权限和角色时
 - 配置生产环境安全设置时
 - 审查 Django 应用程序的安全问题时
@@ -70,7 +70,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 ```
 
-## 身份验证 (Authentication)
+## 身份验证
 
 ### 自定义用户模型
 
@@ -112,7 +112,7 @@ PASSWORD_HASHERS = [
 ]
 ```
 
-### 会话管理 (Session Management)
+### 会话管理
 
 ```python
 # 会话配置
@@ -123,7 +123,7 @@ SESSION_SAVE_EVERY_REQUEST = False
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # 更好的用户体验，但安全性略低
 ```
 
-## 授权 (Authorization)
+## 授权
 
 ### 权限
 
@@ -431,7 +431,7 @@ MEDIA_DOMAIN = 'https://media.example.com'
 
 ## API 安全
 
-### 频率限制 (Rate Limiting)
+### 频率限制
 
 ```python
 # settings.py

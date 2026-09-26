@@ -1,14 +1,14 @@
 ---
 name: adk-setup
-description: Set up a local development environment for the ADK Python project. Use when the user wants to get started developing, set up their environment, install dependencies, or prepare for contributing.
+description: 为 ADK Python 项目设置本地开发环境。在用户想要开始开发、设置环境、安装依赖或准备贡献时使用。
 disable-model-invocation: true
 ---
 
-Set up the local development environment for ADK Python.
+为 ADK Python 设置本地开发环境。
 
-## Prerequisites
+## 前置条件
 
-Check the following before proceeding:
+开始前请检查以下内容：
 
 1. **Python 3.10+**
 
@@ -16,69 +16,69 @@ Check the following before proceeding:
    python3 --version
    ```
 
-2. **uv package manager** (required — do not use pip/venv directly)
+2. **uv 包管理器**（必需 —— 不要直接使用 pip/venv）
    ```bash
    uv --version
    ```
-   If not installed:
+   如果尚未安装：
    ```bash
    curl -LsSf https://astral.sh/uv/install.sh | sh
    ```
 
-## Setup Steps
+## 设置步骤
 
-Run these commands from the project root:
+在项目根目录下运行这些命令：
 
-3. **Create and activate a virtual environment:**
+3. **创建并激活虚拟环境：**
 
    ```bash
    uv venv --python "python3.11" ".venv"
    source .venv/bin/activate
    ```
 
-4. **Install all dependencies for development:**
+4. **安装开发所需的全部依赖：**
 
    ```bash
    uv sync --all-extras
    ```
 
-5. **Install development tools:**
+5. **安装开发工具：**
 
    ```bash
    uv tool install pre-commit
    uv tool install tox --with tox-uv
    ```
 
-6. **Install addlicense (requires Go):**
+6. **安装 addlicense（需要 Go）：**
 
    ```bash
    go version && go install github.com/google/addlicense@latest
    ```
 
    > [!NOTE]
-   > If Go is not installed, tell the user:
-   > "Go is required for the addlicense tool. Please install Go from https://go.dev/dl/ and then re-run the `adk-setup` skill to complete the setup."
+   > 如果未安装 Go，请告诉用户：
+   > "addlicense 工具需要 Go。请从 https://go.dev/dl/ 安装 Go，然后重新运行 `adk-setup` 技能以完成设置。"
 
-7. **Set up pre-commit hooks:**
+7. **配置 pre-commit 钩子：**
 
    ```bash
    pre-commit install
    ```
 
-8. **Verify everything works by running tests locally:**
+8. **在本地运行测试，验证一切正常：**
    ```bash
    pytest tests/unittests -n auto
    ```
 
-## Key Commands Reference
+## 关键命令参考
 
-| Task                                 | Command                                           |
+| 任务                                 | 命令                                              |
 | :----------------------------------- | :------------------------------------------------ |
-| Run unit tests (Fast)                | `pytest tests/unittests`                          |
-| Run tests across all Python versions | `tox`                                             |
-| Format codebase                      | `pre-commit run --all-files`                      |
-| Run tests in parallel                | `pytest tests/unittests -n auto`                  |
-| Run specific test file               | `pytest tests/unittests/agents/test_llm_agent.py` |
-| Launch web UI                        | `adk web path/to/agents_dir`                      |
-| Run agent via CLI                    | `adk run path/to/my_agent`                        |
-| Build wheel                          | `uv build`                                        |
+| 运行单元测试（快速）                 | `pytest tests/unittests`                          |
+| 在所有 Python 版本上运行测试         | `tox`                                             |
+| 格式化代码库                         | `pre-commit run --all-files`                      |
+| 并行运行测试                         | `pytest tests/unittests -n auto`                  |
+| 运行指定的测试文件                   | `pytest tests/unittests/agents/test_llm_agent.py` |
+| 启动 Web 界面                        | `adk web path/to/agents_dir`                      |
+| 通过 CLI 运行 agent                  | `adk run path/to/my_agent`                        |
+| 构建 wheel 包                        | `uv build`                                        |

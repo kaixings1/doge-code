@@ -1,125 +1,125 @@
 ---
 name: learner
-description: Extract a learned skill from the current conversation
+description: 从当前对话中提取一项学到的技能。
 level: 7
 ---
 
-# Learner Skill
+# Learner 技能
 
-> Deprecated compatibility alias: use `/oh-my-claudecode:skillify` for new skill extraction workflows. This file remains for internal implementation/history and compatibility.
+> 已弃用的兼容性别名：新的技能提取工作流请使用 `/oh-my-claudecode:skillify`。本文件为内部实现 / 历史与兼容性而保留。
 
-This is a Level 7 (self-improving) skill. It has two distinct sections:
-- **Expertise**: Domain knowledge about what makes a good skill. Updated automatically as patterns are discovered.
-- **Workflow**: Stable extraction procedure. Rarely changes.
+这是一个 Level 7（自改进）技能。它有两个独立的部分：
+- **领域知识**：关于什么构成好技能的领域知识。随模式被发现而自动更新。
+- **工作流**：稳定的提取流程。很少变化。
 
-Only the Expertise section should be updated during improvement cycles.
-
----
-
-## Expertise
-
-> This section contains domain knowledge that improves over time.
-> It can be updated by the learner itself when new patterns are discovered.
-
-### Core Principle
-
-Reusable skills are not code snippets to copy-paste, but **principles and decision-making heuristics** that teach Claude HOW TO THINK about a class of problems.
-
-**The difference:**
-- BAD (mimicking): "When you see ConnectionResetError, add this try/except block"
-- GOOD (reusable skill): "In async network code, any I/O operation can fail independently due to client/server lifecycle mismatches. The principle: wrap each I/O operation separately, because failure between operations is the common case, not the exception."
-
-### Quality Gate
-
-Before extracting a skill, ALL three must be true:
-- "Could someone Google this in 5 minutes?" → NO
-- "Is this specific to THIS codebase?" → YES
-- "Did this take real debugging effort to discover?" → YES
-
-### Recognition Signals
-
-Extract ONLY after:
-- Solving a tricky bug that required deep investigation
-- Discovering a non-obvious workaround specific to this codebase
-- Finding a hidden gotcha that wastes time when forgotten
-- Uncovering undocumented behavior that affects this project
-
-### What Makes a USEFUL Skill
-
-1. **Non-Googleable**: Something you couldn't easily find via search
-   - BAD: "How to read files in TypeScript" ❌
-   - GOOD: "This codebase uses custom path resolution in ESM that requires fileURLToPath + specific relative paths" ✓
-
-2. **Context-Specific**: References actual files, error messages, or patterns from THIS codebase
-   - BAD: "Use try/catch for error handling" ❌
-   - GOOD: "The aiohttp proxy in server.py:42 crashes on ClientDisconnectedError - wrap StreamResponse in try/except" ✓
-
-3. **Actionable with Precision**: Tells you exactly WHAT to do and WHERE
-   - BAD: "Handle edge cases" ❌
-   - GOOD: "When seeing 'Cannot find module' in dist/, check tsconfig.json moduleResolution matches package.json type field" ✓
-
-4. **Hard-Won**: Took significant debugging effort to discover
-   - BAD: Generic programming patterns ❌
-   - GOOD: "Race condition in worker.ts - the Promise.all at line 89 needs await before the map callback returns" ✓
-
-### Anti-Patterns (DO NOT EXTRACT)
-
-- Generic programming patterns (use documentation instead)
-- Refactoring techniques (these are universal)
-- Library usage examples (use library docs)
-- Type definitions or boilerplate
-- Anything a junior dev could Google in 5 minutes
+在改进周期中只应更新领域知识部分。
 
 ---
 
-## Workflow
+## 领域知识
 
-> This section contains the stable extraction procedure.
-> It should NOT be updated during improvement cycles.
+> 本部分包含随时间改进的领域知识。
+> 当发现新模式时，可由 learner 自身更新。
 
-### Step 1: Gather Required Information
+### 核心原则
 
-- **Problem Statement**: The SPECIFIC error, symptom, or confusion that occurred
-  - Include actual error messages, file paths, line numbers
-  - Example: "TypeError in src/hooks/session.ts:45 when sessionId is undefined after restart"
+可复用的技能不是可复制粘贴的代码片段，而是**原则和决策启发式**，教会 Claude 如何思考一类问题。
 
-- **Solution**: The EXACT fix, not general advice
-  - Include code snippets, file paths, configuration changes
-  - Example: "Add null check before accessing session.user, regenerate session on 401"
+**区别在于：**
+- 差的（模仿）："当你看到 ConnectionResetError 时，加上这段 try/except 块"
+- 好的（可复用技能）："在异步网络代码中，任何 I/O 操作都可能因客户端/服务端生命周期不匹配而独立失败。原则：把每个 I/O 操作单独包裹，因为操作之间的失败是常态，而非例外。"
 
-- **Triggers**: Keywords that would appear when hitting this problem again
-  - Use error message fragments, file names, symptom descriptions
-  - Example: ["sessionId undefined", "session.ts TypeError", "401 session"]
+### 质量关卡
 
-- **Scope**: Almost always Project-level unless it's a truly universal insight
+提取技能之前，以下三项必须全部成立：
+- "别人能在 5 分钟内 Google 到吗？" → 否
+- "这是否特定于本代码库？" → 是
+- "发现它是否耗费了真实的调试成本？" → 是
 
-### Step 2: Quality Validation
+### 识别信号
 
-The system REJECTS skills that are:
-- Too generic (no file paths, line numbers, or specific error messages)
-- Easily Googleable (standard patterns, library usage)
-- Vague solutions (no code snippets or precise instructions)
-- Poor triggers (generic words that match everything)
+**仅在**以下情况之后提取：
+- 解决了一个需要深入调查的棘手 bug
+- 发现了本代码库特有的、不易察觉的变通方案
+- 发现了被遗忘时会浪费时间的隐藏陷阱
+- 发现了影响本项目但未被记录的行为
 
-### Step 3: Classify as Expertise or Workflow
+### 什么构成有用的技能
 
-Before saving, determine if the learning is:
-- **Expertise** (domain knowledge, pattern, gotcha) → Save as `{topic}-expertise.md`
-- **Workflow** (operational procedure, step sequence) → Save as `{topic}-workflow.md`
+1. **不可 Google**：无法通过搜索轻易找到的东西
+   - 差："如何在 TypeScript 中读取文件" ❌
+   - 好："本代码库在 ESM 中使用自定义路径解析，需要 fileURLToPath + 特定的相对路径" ✓
 
-This classification ensures expertise can be updated independently without destabilizing workflows.
+2. **上下文特定**：引用本代码库的真实文件、错误消息或模式
+   - 差："用 try/catch 处理错误" ❌
+   - 好："server.py:42 里的 aiohttp 代理遇到 ClientDisconnectedError 就会崩溃 - 把 StreamResponse 包进 try/except" ✓
 
-### Step 4: Save Location
+3. **精确可操作**：确切告诉你做什么以及在哪里做
+   - 差："处理好各种边界情况" ❌
+   - 好："在 dist/ 里看到 'Cannot find module' 时，检查 tsconfig.json 的 moduleResolution 是否与 package.json 的 type 字段匹配" ✓
 
-- **User-level**: `${CLAUDE_CONFIG_DIR:-~/.claude}/skills/omc-learned/<skill-name>.md` - Rare. Only for truly portable insights.
-- **Project-level**: `.omc/skills/<skill-name>.md` - Default. Intended to be committed with the repo when you want the team to keep the skill. In linked worktrees, uncommitted skills are still worktree-local and disappear if that worktree is deleted.
+4. **来之不易**：发现它耗费了大量调试功夫
+   - 差：通用编程模式 ❌
+   - 好："worker.ts 里的竞态条件 - 第 89 行的 Promise.all 需要在 map 回调返回前 await" ✓
 
-### Required File Format
+### 反模式（不要提取）
 
-Every learned skill file MUST start with YAML frontmatter so learned-skill flat-file discovery can load it.
-Do **not** write plain markdown without frontmatter.
+- 通用编程模式（改用文档）
+- 重构技巧（这些是普适的）
+- 库用法示例（改用库文档）
+- 类型定义或样板代码
+- 初级开发者 5 分钟就能 Google 到的任何东西
 
-Minimum required frontmatter:
+---
+
+## 工作流
+
+> 本部分包含稳定的提取流程。
+> 在改进周期中**不应**更新它。
+
+### 步骤 1：收集所需信息
+
+- **问题陈述**：发生过的**具体**错误、症状或困惑
+  - 包含真实错误消息、文件路径、行号
+   - 例如："重启后 sessionId 为 undefined 时，src/hooks/session.ts:45 抛出 TypeError"
+
+- **解决方案**：**确切**的修复，而非泛泛建议
+  - 包含代码片段、文件路径、配置变更
+   - 例如："访问 session.user 前先做空值检查，遇到 401 时重新生成会话"
+
+- **触发词**：再次遇到此问题时会出现的关键词
+  - 使用错误消息片段、文件名、症状描述
+   - 例如：["sessionId 未定义", "session.ts TypeError", "401 会话"]
+
+- **范围**：几乎总是项目级，除非是真正普适的洞见
+
+### 步骤 2：质量校验
+
+系统会**拒绝**以下技能：
+- 过于泛泛（无文件路径、行号或具体错误消息）
+- 易被 Google 到（标准模式、库用法）
+- 方案含糊（无代码片段或精确指令）
+- 触发词质量差（泛泛到能匹配一切的词）
+
+### 步骤 3：归类为领域知识或工作流
+
+保存之前，判断该学习成果属于：
+- **领域知识**（领域知识、模式、陷阱）→ 保存为 `{topic}-expertise.md`
+- **工作流**（操作流程、步骤序列）→ 保存为 `{topic}-workflow.md`
+
+这种归类确保领域知识可独立更新，而不会动摇工作流。
+
+### 步骤 4：保存位置
+
+- **用户级**：`${CLAUDE_CONFIG_DIR:-~/.claude}/skills/omc-learned/<skill-name>.md` - 罕见。仅用于真正可移植的洞见。
+- **项目级**：`.omc/skills/<skill-name>.md` - 默认。当你希望团队保留该技能时，应随仓库一起提交。在链接的 worktree 中，未提交的技能仍属 worktree 本地，若该 worktree 被删除则会消失。
+
+### 必需的文件格式
+
+每个学到的技能文件**必须**以 YAML frontmatter 开头，以便 learned-skill 的扁平文件发现机制能加载它。
+**不要**写入不带 frontmatter 的纯 markdown。
+
+最小必需的 frontmatter：
 
 ```yaml
 ---
@@ -131,7 +131,7 @@ triggers:
 ---
 ```
 
-### Skill Body Template
+### 技能正文模板
 
 ```markdown
 ---
@@ -142,27 +142,27 @@ triggers:
   - <trigger-2>
 ---
 
-# [Skill Name]
+# [技能名称]
 
-## The Insight
-What is the underlying PRINCIPLE you discovered? Not the code, but the mental model.
+## 洞察
+你发现的底层**原则**是什么？不是代码，而是心智模型。
 
-## Why This Matters
-What goes wrong if you don't know this? What symptom led you here?
+## 为什么重要
+如果你不知道这一点会出什么问题？是什么症状把你引到这里？
 
-## Recognition Pattern
-How do you know when this skill applies? What are the signs?
+## 识别模式
+你如何知道该技能适用？有哪些迹象？
 
-## The Approach
-The decision-making heuristic, not just code. How should Claude THINK about this?
+## 方法
+决策启发式，而不仅是代码。Claude 应**如何思考**这件事？
 
-## Example (Optional)
-If code helps, show it - but as illustration of the principle, not copy-paste material.
+## 示例（可选）
+如果代码有帮助，就展示它 —— 但作为原则的示例说明，而非可复制粘贴的素材。
 ```
 
-**Key**: A skill is REUSABLE if Claude can apply it to NEW situations, not just identical ones.
+**关键**：如果 Claude 能把技能应用到**新**情境而不只是完全相同的情境，它才是可复用的。
 
-## Related Commands
+## 相关命令
 
-- /oh-my-claudecode:note - Save quick notes that survive compaction (less formal than skills)
-- /oh-my-claudecode:ralph - Start a development loop with learning capture
+- /oh-my-claudecode:note - 保存能挺过压缩的快速笔记（不如技能正式）
+- /oh-my-claudecode:ralph - 启动带学习捕获的开发循环

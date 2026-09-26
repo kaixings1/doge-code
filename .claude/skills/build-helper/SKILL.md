@@ -1,13 +1,13 @@
 ---
 name: build-helper
-description: |
+description: "构建项目并自动处理 Bun 到 Node.js 的兼容性补丁。使用场景：开发后构建、发布前打包、CI/CD 流水线。"
   构建项目并自动处理 Bun 到 Node.js 的兼容性补丁。
   使用场景：开发后构建、发布前打包、CI/CD 流水线。
   触发词：构建、build、bundle、打包、发布、deploy。
 Keywords: build, bun, bundle, deploy, 构建, 打包, 发布
 ---
 
-# Build Helper
+# 构建助手
 
 项目构建工具，基于 `scripts/build.ts`。
 
@@ -28,7 +28,7 @@ CLAUDE_CODE_BUILD_OUTDIR=custom-dist bun run scripts/build.ts
    - 目标：`bun`
    - 开启代码分割（`splitting: true`）
    - 自动收集 `FEATURE_*` 环境变量作为构建特性标志
-3. **Node.js 兼容补丁** — 替换 Bun-only 的 `import.meta.require` 为兼容写法
+3. **Node.js 兼容补丁** — 替换 Bun 专属的 `import.meta.require` 为兼容写法
 
 ## 特性标志
 
@@ -40,7 +40,7 @@ FEATURE_BUDDY=1  # Buddy 集成
 ```
 
 ```typescript
-// 自动收集的 features:
+// 自动收集的特性标志：
 const defaultFeatures = ['BUDDY'];
 const envFeatures = Object.keys(process.env)
   .filter(k => k.startsWith('FEATURE_'))
@@ -53,7 +53,7 @@ const features = [...new Set([...defaultFeatures, ...envFeatures])];
 构建后的文件会自动替换：
 
 ```javascript
-// 替换前（Bun-only）
+// 替换前（Bun 专属）
 var __require = import.meta.require;
 
 // 替换后（Node.js 兼容）
@@ -65,7 +65,7 @@ var __require = typeof import.meta.require === "function"
 ## 输出示例
 
 ```
-Bundled 15 files to dist/ (patched 15 for Node.js compat)
+已打包 15 个文件到 dist/（其中 15 个已做 Node.js 兼容补丁）
 ```
 
 ## 前置条件

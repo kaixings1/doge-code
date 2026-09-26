@@ -1,88 +1,88 @@
 ---
 name: ultragoal
-description: Durable multi-goal workflow that persists plan/ledger artifacts under .omc/ultragoal and prints Claude /goal handoff text for the active session
+description: 持久化多目标工作流，在 .omc/ultragoal 下持久化计划/账本产物，并为当前会话输出 Claude /goal 交接文本。
 argument-hint: "<brief or subcommand>"
 level: 3
 ---
 
 <Purpose>
-Ultragoal breaks a brief into an ordered set of goals, records start/checkpoint/blocker/failure events in a durable append-only ledger, and tells the active Claude agent how to drive the Claude Code `/goal` slash command alongside the plan. It does not — and cannot — mutate Claude `/goal` state from the shell; it persists durable repo state and prints a model-facing handoff that the active agent must act on in-session.
+Ultragoal 把一段简报拆解为一组有序的目标，把 start/checkpoint/blocker/failure 事件记录进一个持久化的、只追加的账本，并告诉当前活跃的 Claude agent 如何配合计划去驱动 Claude Code 的 `/goal` 斜杠命令。它不会——也无法——从 shell 修改 Claude `/goal` 的状态；它做的是持久化仓库状态，并打印一份面向模型的交接文本，由当前活跃的 agent 在会话内据此行动。
 </Purpose>
 
 <Use_When>
-- The user wants a durable, repo-native way to track an ultragoal across multiple Claude sessions or worktrees
-- The work is large enough to warrant multiple ordered "stories" with attempt counts and per-story evidence
-- The user wants the final completion gated behind ai-slop-cleaner + verification + $code-review
-- The user wants the active Claude `/goal` directive coordinated with the ledger so that a session restart does not lose progress
+- 用户想要一种持久的、与仓库原生契合的方式，跨多个 Claude 会话或 worktree 跟踪一个 ultragoal
+- 工作量足够大，需要用多个有序的“故事”来承载，并带有尝试次数与每个故事各自的证据
+- 用户希望最终的完成必须通过 ai-slop-cleaner + verification + $code-review 三道关卡
+- 用户希望当前活跃的 Claude `/goal` 指令与账本保持协同，这样会话重启也不会丢失进度
 </Use_When>
 
 <Do_Not_Use_When>
-- The task is a single small change — use direct delegation or `ralph` instead
-- The user wants the assistant to literally invoke `/goal` itself from the shell — that is not possible; `omc ultragoal` only writes artifacts and prints handoff text
-- The user wants a planning-only artifact with no execution loop — use `plan` instead
+- 任务只是一处很小的改动——请改用直接委派或 `ralph`
+- 用户希望助手真的从 shell 里自己去调用 `/goal`——这是做不到的；`omc ultragoal` 只写入产物并打印交接文本
+- 用户只想要一个不带动执行循环的纯规划产物——请改用 `plan`
 </Do_Not_Use_When>
 
 <Why_This_Exists>
-Claude Code `/goal` is a session-scoped Stop hook: it blocks the session from stopping until a condition holds, and auto-clears on success. That is a great single-session execution primitive, but it loses state across sessions and does not by itself enforce a final review gate. `omc ultragoal` adds a durable plan, ledger, and gating layer so a long multi-step initiative can survive session restarts, fresh worktrees, and review iterations while still leveraging Claude `/goal` to keep the active agent focused.
+Claude Code `/goal` 是一个会话作用域的 Stop hook：在某个条件成立之前，它会阻止会话停止，并在成功时自动清除。作为单会话的执行原语，它非常出色，但它会跨会话丢失状态，自身也不强制设立最终评审关卡。`omc ultragoal` 增加了一层持久化计划、账本与关卡机制，让一个长期多步骤的计划能够挺过会话重启、全新 worktree 和一轮轮评审，同时仍然借助 Claude `/goal` 让当前活跃的 agent 保持专注。
 </Why_This_Exists>
 
 <How_To_Use>
 
-1. Create a plan from a brief:
+1. 根据简报创建计划：
    ```
    omc ultragoal create-goals --brief-file plan.md
    ```
-   Or with explicit stories:
+   或者显式给出各个故事：
    ```
-   omc ultragoal create-goals --brief "ship the migration" \
-     --goal "Schema::Add new columns" \
-     --goal "Backfill::Backfill rows in batches" \
-     --goal "Cutover::Drop old columns and switch reads"
+   omc ultragoal create-goals --brief "推进这次迁移" \
+     --goal "Schema::新增列" \
+     --goal "Backfill::分批回填数据行" \
+     --goal "Cutover::删除旧列并切换读取路径"
    ```
-   The default mode is `aggregate` (one Claude `/goal` covers the run).
-   Pass `--claude-goal-mode per-story` if you want each story to have its own `/goal`.
+   默认模式是 `aggregate`（整轮运行由同一个 Claude `/goal` 覆盖）。
+   如果你希望每个故事都有自己的 `/goal`，就传 `--claude-goal-mode per-story`。
 
-   **Multi-repo workspaces / parallel sessions:** when several Claude sessions
-   in the same workspace need to run `/ultragoal` concurrently, pass either
-   `--plan-id <stable-id>` or `--auto-plan-id` so the plan is written to
-   `.omc/ultragoal/plans/{planId}/` instead of the shared single-plan path.
-   Without that flag, two sessions creating goals would clobber each other.
-   `--auto-plan-id` derives `{epochMs}-{slug}` from the brief title. Then thread
-   the same `--plan-id <id>` through every subsequent subcommand in that session.
-   Use `omc ultragoal list-plans` to enumerate available planIds when needed.
+   **多仓库工作区 / 并行会话：**当同一个工作区里有多个 Claude 会话
+   需要并发运行 `/ultragoal` 时，传入
+   `--plan-id <stable-id>` 或 `--auto-plan-id`，这样计划会被写入
+   `.omc/ultragoal/plans/{planId}/`，而不是共享的单计划路径。
+   不加这个参数，两个会话各自创建目标时就会互相覆盖。
+   `--auto-plan-id` 会从简报标题推导出 `{epochMs}-{slug}`。之后，在该会话中
+   后续的每一条子命令都要串上同一个 `--plan-id <id>`。
+   需要时可以用 `omc ultragoal list-plans` 列出所有可用的 planId。
 
-2. Start (or resume) the next story:
+2. 开始（或恢复）下一个故事：
    ```
    omc ultragoal complete-goals
    ```
-   This prints a model-facing handoff. The active Claude agent must read it and:
-   - Set the native Claude `/goal` for this session — in standalone Claude Code neither the
-     shell nor the agent can do it, so ask the user to type `/goal <aggregate objective>` and
-     wait. `--claude-goal-json` (below) reconciles the ledger only and does not satisfy the
-     PreToolUse `/goal` guard, which blocks tool calls until it observes an active `/goal`.
-   - Work the story.
-   - When the story is complete (and for the final story, after the full quality gate), share back a snapshot of the active `/goal` state and call `checkpoint`.
+   这会打印一份面向模型的交接文本。当前活跃的 Claude agent 必须读取它，并：
+   - 为本会话设置原生的 Claude `/goal`——在独立运行的 Claude Code 中，无论是
+     shell 还是 agent 都做不到，所以要请用户输入 `/goal <aggregate objective>`，然后
+     等待。`--claude-goal-json`（见下文）只用于对账账本，并不满足
+     PreToolUse 的 `/goal` 守卫——该守卫会一直拦截工具调用，直到它观测到一个活跃的 `/goal`。
+   - 推进这个故事。
+   - 当故事完成时（对于最后一个故事，则是在通过完整质量关卡之后），回传一份当前活跃 `/goal` 状态的快照，并调用 `checkpoint`。
 
-3. Checkpoint a story:
+3. 对一个故事做 checkpoint：
    ```
    omc ultragoal checkpoint --goal-id G001-... --status complete \
      --evidence "tests/files/PR evidence" \
      --claude-goal-json '{"goal":{"objective":"...","status":"active"}}'
    ```
-   For the final story, also pass `--quality-gate-json` containing
-   `aiSlopCleaner`, `verification`, and `codeReview` evidence (all clean).
+   对于最后一个故事，还要传入包含
+   `aiSlopCleaner`、`verification`、`codeReview` 证据的 `--quality-gate-json`（三者都必须是干净通过的）。
 
-4. If the final review is not clean, do NOT mark complete. Record blockers:
+4. 如果最终评审不干净，绝不要标记为完成。改为记录阻塞项：
    ```
    omc ultragoal record-review-blockers --goal-id G00X-... \
-     --title "Resolve final code-review blockers" \
-     --objective "Fix the listed review findings and rerun final gates" \
+     --title "解决最终的代码评审阻塞项" \
+     --objective "修复列出的评审发现并重跑最终关卡" \
      --evidence "<the review findings>" \
      --claude-goal-json '{"goal":{"objective":"...","status":"active"}}'
    ```
-   This appends a new blocker story and keeps the Claude `/goal` active.
+   这会追加一个新的阻塞故事，并让 Claude `/goal` 保持活跃。
 
-5. Inspect state at any time:
+5. 随时查看状态：
    ```
    omc ultragoal status
    ```
@@ -90,7 +90,7 @@ Claude Code `/goal` is a session-scoped Stop hook: it blocks the session from st
 </How_To_Use>
 
 <Important_Limitations>
-- The shell cannot invoke or mutate Claude Code `/goal` state. `omc ultragoal` only persists durable artifacts and prints instructions that the active Claude agent reads and acts on in-session.
-- Snapshots passed via `--claude-goal-json` are model-supplied proof of the active `/goal` state; OMC validates them for textual consistency with the plan's expected objective and ledger event, but it cannot independently observe Claude `/goal` state. They do not satisfy the PreToolUse `/goal` guard, which requires an actual active `/goal` — a host-injected snapshot or the native `/goal` the user set in-session.
-- If the Claude `/goal` slash command is renamed or restructured, only the handoff wording needs to change; the reconciliation logic is name-agnostic.
+- shell 无法调用或修改 Claude Code 的 `/goal` 状态。`omc ultragoal` 只持久化耐久产物，并打印出当前活跃的 Claude agent 会在会话内读取并执行的指令。
+- 通过 `--claude-goal-json` 传入的快照，是模型自己提供的、关于活跃 `/goal` 状态的证明；OMC 会校验它们在文本上与计划预期的 objective 以及账本事件是否一致，但无法独立观测 Claude `/goal` 的状态。它们不满足 PreToolUse 的 `/goal` 守卫——该守卫要求确实存在一个活跃的 `/goal`，即由宿主注入的快照，或用户在会话内设置的原生 `/goal`。
+- 如果 Claude `/goal` 斜杠命令被改名或重构，只需要改动交接文本的措辞；对账逻辑本身与名称无关。
 </Important_Limitations>

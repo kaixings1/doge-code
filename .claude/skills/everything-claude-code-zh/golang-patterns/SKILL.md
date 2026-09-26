@@ -4,7 +4,7 @@ description: 编写稳健、高效且易于维护的 Go 应用程序的惯用模
 origin: ECC
 ---
 
-# Go 开发模式 (Go Development Patterns)
+# Go 开发模式
 
 构建稳健、高效且易于维护的应用程序的惯用 Go 模式和最佳实践。
 
@@ -45,7 +45,7 @@ func GetUser(id string) (*User, error) {
 
 ### 2. 使“零值”有用
 
-设计类型时，使其零值（Zero Value）在无需显式初始化的情况下即可立即使用。
+设计类型时，使其零值在无需显式初始化的情况下即可立即使用。
 
 ```go
 // 推荐：零值即有用
@@ -72,7 +72,7 @@ type BadCounter struct {
 
 ### 3. 接受接口，返回结构体
 
-函数应当接受接口（Interface）参数并返回具体类型（Concrete types/Structs）。
+函数应当接受接口参数并返回具体类型（结构体）。
 
 ```go
 // 推荐：接受接口，返回具体类型
@@ -90,7 +90,7 @@ func ProcessData(r io.Reader) (io.Reader, error) {
 }
 ```
 
-## 错误处理模式 (Error Handling Patterns)
+## 错误处理模式
 
 ### 带有上下文的错误包装
 
@@ -124,7 +124,7 @@ func (e *ValidationError) Error() string {
     return fmt.Sprintf("validation failed on %s: %s", e.Field, e.Message)
 }
 
-// 常见情况的哨兵错误 (Sentinel errors)
+// 常见情况的哨兵错误
 var (
     ErrNotFound     = errors.New("resource not found")
     ErrUnauthorized = errors.New("unauthorized")
@@ -171,9 +171,9 @@ if err != nil {
 _ = writer.Close() // 尽力而为的清理，错误已在别处记录
 ```
 
-## 并发模式 (Concurrency Patterns)
+## 并发模式
 
-### 工作池 (Worker Pool)
+### 工作池
 
 ```go
 func WorkerPool(jobs <-chan Job, results chan<- Result, numWorkers int) {
@@ -216,7 +216,7 @@ func FetchWithTimeout(ctx context.Context, url string) ([]byte, error) {
 }
 ```
 
-### 优雅停机 (Graceful Shutdown)
+### 优雅停机
 
 ```go
 func GracefulShutdown(server *http.Server) {
@@ -265,7 +265,7 @@ func FetchAll(ctx context.Context, urls []string) ([][]byte, error) {
 }
 ```
 
-### 避免协程泄漏 (Goroutine Leaks)
+### 避免协程泄漏
 
 ```go
 // 不推荐：如果 context 被取消，协程会泄漏
@@ -295,7 +295,7 @@ func safeFetch(ctx context.Context, url string) <-chan []byte {
 }
 ```
 
-## 接口设计 (Interface Design)
+## 接口设计
 
 ### 小而专注的接口
 
@@ -361,7 +361,7 @@ func WriteAndFlush(w io.Writer, data []byte) error {
 }
 ```
 
-## 包组织 (Package Organization)
+## 包组织
 
 ### 标准项目布局
 
@@ -378,7 +378,7 @@ myproject/
 ├── pkg/
 │   └── client/               # 公共 API 客户端
 ├── api/
-│   └── v1/                   # API 定义 (proto, OpenAPI)
+│   └── v1/                   # API 定义（proto、OpenAPI）
 ├── testdata/                 # 测试固件
 ├── go.mod
 ├── go.sum
@@ -409,7 +409,7 @@ func init() {
     db, _ = sql.Open("postgres", os.Getenv("DATABASE_URL"))
 }
 
-// 推荐：依赖注入 (Dependency injection)
+// 推荐：依赖注入
 type Server struct {
     db *sql.DB
 }
@@ -419,9 +419,9 @@ func NewServer(db *sql.DB) *Server {
 }
 ```
 
-## 结构体设计 (Struct Design)
+## 结构体设计
 
-### 函数式选项模式 (Functional Options Pattern)
+### 函数式选项模式
 
 ```go
 type Server struct {
@@ -463,7 +463,7 @@ server := NewServer(":8080",
 )
 ```
 
-### 通过嵌套实现组合 (Embedding)
+### 通过嵌套实现组合
 
 ```go
 type Logger struct {
@@ -491,7 +491,7 @@ s := NewServer(":8080")
 s.Log("Starting...") // 调用了嵌入的 Logger.Log
 ```
 
-## 内存与性能 (Memory and Performance)
+## 内存与性能
 
 ### 当大小已知时预分配切片
 
@@ -622,23 +622,23 @@ issues:
   exclude-use-default: false
 ```
 
-## 快速参考：Go 惯用语 (Go Idioms)
+## 快速参考：Go 惯用语
 
 | 惯用语 | 描述 |
 |-------|-------------|
 | 接受接口，返回结构体 | 函数接受接口参数，返回具体类型 |
-| 错误即值 (Errors are values) | 将错误视为一等公民，而非异常 |
-| 不要通过共享内存来通信 | 使用通道 (Channels) 在协程间进行协调 |
+| 错误即值 | 将错误视为一等公民，而非异常 |
+| 不要通过共享内存来通信 | 使用通道在协程间进行协调 |
 | 使零值有用 | 类型在未显式初始化时也应能工作 |
 | 少许复制好过少许依赖 | 避免不必要的外部依赖 |
 | 清晰优于巧妙 | 优先考虑可读性而非代码的巧妙性 |
 | gofmt 并非谁的最爱，却是每个人的朋友 | 始终使用 gofmt/goimports 进行格式化 |
 | 尽早返回 | 优先处理错误，保持“快乐路径”不缩进 |
 
-## 应避免的反模式 (Anti-Patterns)
+## 应避免的反模式
 
 ```go
-// 不推荐：在长函数中使用裸返回 (Naked returns)
+// 不推荐：在长函数中使用裸返回
 func process() (result int, err error) {
     // ... 50 行代码 ...
     return // 返回了什么？

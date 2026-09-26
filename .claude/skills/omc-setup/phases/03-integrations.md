@@ -1,69 +1,69 @@
-# Phase 3: Integration Setup
+# 阶段 3：集成设置
 
-**Skip condition**: If resuming and `lastCompletedStep >= 6`, skip this entire phase.
+**跳过条件**：如果是恢复且 `lastCompletedStep >= 6`，跳过整个阶段。
 
-## Step 3.1: Verify Plugin Installation
+## 步骤 3.1：验证插件安装
 
 ```bash
-grep -q "oh-my-claudecode" "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/settings.json" && echo "Plugin verified" || echo "Plugin NOT found - run: claude /install-plugin oh-my-claudecode"
+grep -q "oh-my-claudecode" "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/settings.json" && echo "插件已验证" || echo "未找到插件 - 请运行：claude /install-plugin oh-my-claudecode"
 ```
 
-## Step 3.2: Offer MCP Server Configuration
+## 步骤 3.2：提供 MCP 服务器配置
 
-MCP servers extend Claude Code with additional tools (web search, GitHub, etc.).
+MCP 服务器用额外的工具扩展 Claude Code（网页搜索、GitHub 等）。
 
-Use AskUserQuestion: "Would you like to configure MCP servers for enhanced capabilities? (Context7, Exa search, GitHub, etc.)"
+使用 AskUserQuestion："是否要配置 MCP 服务器以增强能力？（Context7、Exa 搜索、GitHub 等）"
 
-If yes, invoke the mcp-setup skill:
+如果是，调用 mcp-setup 技能：
 ```
 /oh-my-claudecode:mcp-setup
 ```
 
-If no, skip to next step.
+如果否，跳到下一步。
 
-## Step 3.3: Configure Agent Teams (Optional)
+## 步骤 3.3：配置代理团队（可选）
 
-Agent teams are an experimental Claude Code feature that lets you spawn N coordinated agents working on a shared task list with inter-agent messaging. **Teams are disabled by default** and require enabling via `settings.json`.
+代理团队是一项实验性的 Claude Code 功能，让你生成 N 个协同工作的代理，它们在共享任务列表上工作并支持代理间消息传递。**团队默认禁用**，需要通过 `settings.json` 启用。
 
-Reference: https://code.claude.com/docs/en/agent-teams
+参考：https://code.claude.com/docs/en/agent-teams
 
-Use AskUserQuestion:
+使用 AskUserQuestion：
 
-**Question:** "Would you like to enable agent teams? Teams let you spawn coordinated agents (e.g., `/team 3:executor 'fix all errors'`). This is an experimental Claude Code feature."
+**问题：** "是否要启用代理团队？团队让你可以生成互相协同的代理（例如 `/team 3:executor 'fix all errors'`）。这是 Claude Code 的一项实验性功能。"
 
-**Options:**
-1. **Yes, enable teams (Recommended)** - Enable the experimental feature and configure defaults
-2. **No, skip** - Leave teams disabled (can enable later)
+**选项：**
+1. **是，启用团队（推荐）** - 启用该实验性功能并配置默认值
+2. **否，跳过** - 保持团队禁用（之后可启用）
 
-### If User Chooses YES:
+### 如果用户选择**是**：
 
-#### 3.3.1: Enable Agent Teams in settings.json
+#### 3.3.1：在 settings.json 中启用代理团队
 
-**CRITICAL**: Agent teams require `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` to be set in `~/.claude/settings.json`. This must be done carefully to preserve existing user settings.
+**关键**：代理团队要求在 `~/.claude/settings.json` 中设置 `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`。必须谨慎操作以保留既有的用户设置。
 
-First, read the current settings.json:
+首先，读取当前的 settings.json：
 
 ```bash
 SETTINGS_FILE="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/settings.json"
 
 if [ -f "$SETTINGS_FILE" ]; then
-  echo "Current settings.json found"
+  echo "已找到当前的 settings.json"
   cat "$SETTINGS_FILE"
 else
-  echo "No settings.json found - will create one"
+  echo "未找到 settings.json - 将新建一个"
 fi
 ```
 
-Then use the Read tool to read `${CLAUDE_CONFIG_DIR:-~/.claude}/settings.json` (if it exists). Use the Edit tool to merge the teams configuration while preserving ALL existing settings.
+然后使用 Read 工具读取 `${CLAUDE_CONFIG_DIR:-~/.claude}/settings.json`（如果存在）。使用 Edit 工具合并团队配置，同时保留**全部**既有设置。
 
-Use jq to safely merge without overwriting existing settings:
+使用 jq 安全地合并，而不覆盖既有设置：
 
 ```bash
 SETTINGS_FILE="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/settings.json"
 
 if ! command -v jq >/dev/null 2>&1; then
-  echo "ERROR: jq is required to update $SETTINGS_FILE safely."
-  echo "Install jq and rerun setup. Existing settings were not modified."
+  echo "错误：安全更新 $SETTINGS_FILE 需要 jq。"
+  echo "请安装 jq 后重新运行设置。现有设置未被修改。"
   exit 1
 fi
 
@@ -73,11 +73,11 @@ if [ -f "$SETTINGS_FILE" ]; then
   if jq '.env = (.env // {} | . + {"CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"})' "$SETTINGS_FILE" > "$TEMP_FILE"; then
     mv "$TEMP_FILE" "$SETTINGS_FILE"
   else
-    echo "ERROR: Failed to update $SETTINGS_FILE. Existing settings were not modified."
+    echo "错误：更新 $SETTINGS_FILE 失败。现有设置未被修改。"
     exit 1
   fi
   trap - EXIT
-  echo "Added CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS to existing settings.json"
+  echo "已将 CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS 添加到现有的 settings.json"
 else
   mkdir -p "$(dirname "$SETTINGS_FILE")"
   cat > "$SETTINGS_FILE" << 'SETTINGS_EOF'
@@ -87,76 +87,76 @@ else
   }
 }
 SETTINGS_EOF
-  echo "Created settings.json with teams enabled"
+  echo "已创建 settings.json 并启用团队"
 fi
 ```
 
-**IMPORTANT**: The Edit tool is preferred for modifying settings.json when possible, since it preserves formatting and comments. The jq approach above is the fallback for when the file needs structural merging.
+**重要**：在可能的情况下，修改 settings.json 优先使用 Edit 工具，因为它保留格式和注释。上面的 jq 方式是当文件需要结构化合并时的回退方案。
 
-#### 3.3.2: Configure Teammate Display Mode
+#### 3.3.2：配置队友显示模式
 
-Use AskUserQuestion:
+使用 AskUserQuestion：
 
-**Question:** "How should teammates be displayed?"
+**问题：** "队友应该如何显示？"
 
-**Options:**
-1. **Auto (Recommended)** - Uses split panes if in tmux, otherwise in-process. Best for most users.
-2. **In-process** - All teammates in your main terminal. Use Shift+Up/Down to select. Works everywhere.
-3. **Split panes (tmux)** - Each teammate in its own pane. Requires tmux or iTerm2.
+**选项：**
+1. **自动（推荐）** - 在 tmux 中使用分屏，否则使用进程内。最适合大多数用户。
+2. **进程内** - 所有队友都在你的主终端中。用 Shift+Up/Down 选择。各处可用。
+3. **分屏（tmux）** - 每个队友在各自的 pane 中。需要 tmux 或 iTerm2。
 
-If user chooses anything other than "Auto", add `teammateMode` to settings.json:
+如果用户选择的不是 "Auto"，则向 settings.json 添加 `teammateMode`：
 
 ```bash
 SETTINGS_FILE="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/settings.json"
 
 if ! command -v jq >/dev/null 2>&1; then
-  echo "ERROR: jq is required to update $SETTINGS_FILE safely."
-  echo "Install jq and rerun setup. Existing settings were not modified."
+  echo "错误：安全更新 $SETTINGS_FILE 需要 jq。"
+  echo "请安装 jq 后重新运行设置。现有设置未被修改。"
   exit 1
 fi
 
-# TEAMMATE_MODE is "in-process" or "tmux" based on user choice
-# Skip this if user chose "Auto" (that's the default)
+# 根据用户的选择，TEAMMATE_MODE 为 "in-process" 或 "tmux"
+# 如果用户选择了 "Auto"（即默认值），则跳过此项
 TEMP_FILE=$(mktemp "${SETTINGS_FILE}.tmp.XXXXXX")
 trap 'rm -f "$TEMP_FILE"' EXIT
 if jq --arg mode "TEAMMATE_MODE" '. + {teammateMode: $mode}' "$SETTINGS_FILE" > "$TEMP_FILE"; then
   mv "$TEMP_FILE" "$SETTINGS_FILE"
 else
-  echo "ERROR: Failed to update $SETTINGS_FILE. Existing settings were not modified."
+  echo "错误：更新 $SETTINGS_FILE 失败。现有设置未被修改。"
   exit 1
 fi
 trap - EXIT
-echo "Teammate display mode set to: TEAMMATE_MODE"
+echo "队友显示模式已设置为：TEAMMATE_MODE"
 ```
 
-#### 3.3.3: Configure Team Defaults in omc-config
+#### 3.3.3：在 omc-config 中配置团队默认值
 
-Use AskUserQuestion with multiple questions:
+使用带多个问题的 AskUserQuestion：
 
-**Question 1:** "How many agents should teams spawn by default?"
+**问题 1：** "团队默认应该生成多少个代理？"
 
-**Options:**
-1. **3 agents (Recommended)** - Good balance of speed and resource usage
-2. **5 agents (maximum)** - Maximum parallelism for large tasks
-3. **2 agents** - Conservative, for smaller projects
+**选项：**
+1. **3 个代理（推荐）** - 速度与资源占用的良好平衡
+2. **5 个代理（最大）** - 大型任务的最大并行度
+3. **2 个代理** - 保守选择，适用于较小项目
 
-**Question 2:** "Which CLI provider should teammates use by default?"
+**问题 2：** "队友默认应该使用哪个 CLI 提供方？"
 
-**Options:**
-1. **claude (Recommended)** - Default provider with the widest compatibility
-2. **codex** - Use Codex CLI workers by default when installed
-3. **gemini** - Use Gemini CLI workers by default when installed (enterprise/API-key tier)
-4. **antigravity** - Use Antigravity CLI (`agy`) workers by default when installed; Google's successor to the Gemini CLI (install per the [official instructions](https://antigravity.google))
+**选项：**
+1. **claude（推荐）** - 默认提供方，兼容性最广
+2. **codex** - 已安装时默认使用 Codex CLI 工作进程
+3. **gemini** - 已安装时默认使用 Gemini CLI 工作进程（企业/API 密钥档）
+4. **antigravity** - 已安装时默认使用 Antigravity CLI（`agy`）工作进程；Google 对 Gemini CLI 的继任者（按[官方说明](https://antigravity.google) 安装）
 
-Store the team configuration in `~/.claude/.omc-config.json`:
+把团队配置存储到 `~/.claude/.omc-config.json`：
 
 ```bash
 CONFIG_FILE="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.omc-config.json"
 mkdir -p "$(dirname "$CONFIG_FILE")"
 
 if ! command -v jq >/dev/null 2>&1; then
-  echo "ERROR: jq is required to update $CONFIG_FILE safely."
-  echo "Install jq and rerun setup. Existing config was not modified."
+  echo "错误：安全更新 $CONFIG_FILE 需要 jq。"
+  echo "请安装 jq 后重新运行设置。现有配置未被修改。"
   exit 1
 fi
 
@@ -166,7 +166,7 @@ else
   EXISTING='{}'
 fi
 
-# Replace MAX_AGENTS, AGENT_TYPE with user choices
+# 把 MAX_AGENTS、AGENT_TYPE 替换为用户的选择
 TEMP_FILE=$(mktemp "${CONFIG_FILE}.tmp.XXXXXX")
 trap 'rm -f "$TEMP_FILE"' EXIT
 if printf '%s\n' "$EXISTING" | jq \
@@ -175,47 +175,47 @@ if printf '%s\n' "$EXISTING" | jq \
   '. + {team: {ops: {maxAgents: $maxAgents, defaultAgentType: $agentType, monitorIntervalMs: 30000, shutdownTimeoutMs: 15000}}}' > "$TEMP_FILE"; then
   mv "$TEMP_FILE" "$CONFIG_FILE"
 else
-  echo "ERROR: Failed to update $CONFIG_FILE. Existing config was not modified."
+  echo "错误：更新 $CONFIG_FILE 失败。现有配置未被修改。"
   exit 1
 fi
 trap - EXIT
 
-echo "Team configuration saved:"
-echo "  Max agents: MAX_AGENTS"
-echo "  Default provider: AGENT_TYPE"
-echo "  Model: teammates inherit your session model"
+echo "团队配置已保存："
+echo "  最大代理数：MAX_AGENTS"
+echo "  默认提供方：AGENT_TYPE"
+echo "  模型：队友继承你的会话模型"
 ```
 
-**Note:** Teammates do not have a separate model default. Each teammate is a full Claude Code session that inherits your configured model. Subagents spawned by teammates can use any model tier.
+**注意：** 队友没有单独的模型默认值。每个队友都是一个完整的 Claude Code 会话，继承你所配置的模型。由队友生成的子代理可使用任何模型等级。
 
-#### Verify settings.json Integrity
+#### 验证 settings.json 完整性
 
-After all modifications, verify settings.json is valid JSON and contains the expected keys:
+所有修改之后，验证 settings.json 是合法 JSON 并包含预期的键：
 
 ```bash
 SETTINGS_FILE="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/settings.json"
 
 if jq empty "$SETTINGS_FILE" 2>/dev/null; then
-  echo "settings.json: valid JSON"
+  echo "settings.json：JSON 合法"
 else
-  echo "ERROR: settings.json is invalid JSON! Restoring from backup..."
+  echo "错误：settings.json 不是合法的 JSON！正在从备份恢复..."
   exit 1
 fi
 
 if jq -e '.env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS' "$SETTINGS_FILE" > /dev/null 2>&1; then
-  echo "Agent teams: ENABLED"
+  echo "代理团队：已启用"
 else
-  echo "WARNING: Agent teams env var not found in settings.json"
+  echo "警告：在 settings.json 中未找到代理团队的环境变量"
 fi
 
 echo ""
-echo "Final settings.json:"
+echo "最终的 settings.json："
 jq '.' "$SETTINGS_FILE"
 ```
 
-### If User Chooses NO:
+### 如果用户选择**否**：
 
-Skip this step. Agent teams will remain disabled. User can enable later by adding to `~/.claude/settings.json`:
+跳过本步骤。代理团队将保持禁用。用户之后可通过向 `~/.claude/settings.json` 添加以下内容来启用：
 ```json
 {
   "env": {
@@ -224,9 +224,9 @@ Skip this step. Agent teams will remain disabled. User can enable later by addin
 }
 ```
 
-Or by running `/oh-my-claudecode:omc-setup --force` and choosing to enable teams.
+或运行 `/oh-my-claudecode:omc-setup --force` 并选择启用团队。
 
-## Save Progress
+## 保存进度
 
 ```bash
 CONFIG_TYPE=$(jq -r '.configType // "unknown"' ".omc/state/setup-state.json" 2>/dev/null || echo "unknown")

@@ -4,23 +4,23 @@
 
 ---
 
-## 1. 주인공의 태도 (Protagonist Attitude)
+## 1. 주인공의 태도（主角态度摘要）
 
 {{PROTAGONIST_ATTITUDE}}
 
-## 2. 관계의 핵심 구도 (Core Relationships)
+## 2. 관계의 핵심 구도（核心关系结构）
 
 {{CORE_RELATIONSHIPS}}
 
-## 3. 정서적 테마 (Emotional Theme)
+## 3. 정서적 테마（情感主题）
 
 {{EMOTIONAL_THEME}}
 
-## 4. 장르와 실제 감정의 거리 (Genre vs Real Emotion)
+## 4. 장르와 실제 감정의 거리（类型与真实情感对比）
 
 {{GENRE_VS_EMOTION}}
 
-## 5. 엔딩이 남기는 잔상 (Ending Aftertaste)
+## 5. 엔딩이 남기는 잔상（结局情感余韵）
 
 {{ENDING_AFTERTASTE}}
 

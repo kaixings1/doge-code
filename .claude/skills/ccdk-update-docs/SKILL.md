@@ -1,161 +1,161 @@
 ---
 name: update-docs
-description: Update project documentation after code changes. Maintains the 4 core ai-context files (spec, project-structure, progress, deployment-infrastructure) and CLAUDE.md. Use after completing features, refactors, or any changes that affect project structure, capabilities, or status. Also creates initial documentation if files don't exist yet.
+description: 代码变更后更新项目文档。维护 4 个核心 ai-context 文件（spec、project-structure、progress、deployment-infrastructure）和 CLAUDE.md。
 user_invocable: true
 ---
 
-# Update Docs — Documentation Maintenance
+# Update Docs — 文档维护
 
-Keep project documentation synchronized with the current state of the code. Updates the core `docs/ai-context/` files and `CLAUDE.md` as needed.
+让项目文档与代码的当前状态保持同步。按需更新核心的 `docs/ai-context/` 文件与 `CLAUDE.md`。
 
-## Core Documentation Principle
+## 文档核心原则
 
-**Compress aggressively — the default for every line is DELETE.** A line earns its place only when it encodes something an AI agent cannot derive from the code, git log, or spec.md. Every run prunes as much as it adds.
+**激进压缩——每一行的默认动作是删除。** 只有当一行承载了 AI 智能体无法从代码、git log 或 spec.md 中推导出的信息时，它才配留在文档里。每次运行删掉的内容都应不亚于新增的内容。
 
-**Document current "is" state only — never reference legacy implementations or what changed.**
+**只记录当前的"实然"状态——绝不提及历史实现或改了什么。**
 
-- Write as if the documentation is being read for the first time
-- No "previously", "was changed from", "used to be", or "improved" language
-- No migration notes or upgrade paths within the docs themselves
-- If something was removed, remove it from docs — don't leave a "removed X" note
-- No build-state qualifiers ("recently added", "just landed", "new in this release") — dead the moment work ships; git log carries that
+- 按"文档是第一次被阅读"的语气来写
+- 不要用"此前""由……改为""曾经是""已改进"这类措辞
+- 文档自身不写迁移说明或升级路径
+- 若某项内容已被移除，就从文档中删掉它——不要留下"已移除 X"的备注
+- 不要写构建状态限定词（"最近新增""刚刚落地""本版本新加入"）——工作一发布就失效；那是 git log 的职责
 
-**Audience: AI agents, not humans.** These docs exist so a future session can prime fast. No marketing, no narrative arc, no "we did X then Y," no friendly hedging. Prefer tables, bold inline labels, and pseudocode over prose. Put code identifiers in backticks. Pair every non-obvious rule with a one-phrase reason (security, past incident, vendor quirk).
+**受众是 AI 智能体，不是人。** 这些文档的存在是为了让未来的会话能快速完成预热。不要营销腔、不要叙事弧线、不要"我们先做 X 再做 Y"、不要套近乎式的含糊表达。优先用表格、加粗行内标签和伪代码，而非散文。代码标识符放进反引号。每一条非显而易见的规则都配一句简短理由（安全、历史事故、厂商怪癖）。
 
-## When to Skip
+## 何时跳过
 
-**The bar is architecture, not activity.** A run only earns doc changes when a change lands **new architecture** — a data flow, contract, invariant, or design decision a future session could not reconstruct from code alone. Fold that into `spec.md` in present tense. That is the ONLY thing that earns new lines — never a record that the work happened (git carries that), never a "we fixed/added X" note. If "document this change" reduces to "note that we did it," write nothing.
+**门槛是架构，不是活动量。** 只有当一次变更落地了**新架构**——未来的会话无法仅凭代码重建的数据流、契约、不变量或设计决策——这次运行才值得改动文档。用现在时把它并入 `spec.md`。这是唯一值得新增行的东西——绝不是"工作发生过"的记录（那是 git 的职责），也绝不是"我们修复/新增了 X"的备注。如果"记录这次变更"最终退化为"记一笔我们做过这件事"，那就什么都别写。
 
-Do NOT run this skill for:
-- Bug fixes that don't change architecture or capabilities
-- Small refactors (rename, extract method) that don't change behavior
-- UI tweaks or styling changes
-- Single file additions within existing patterns
-- Performance optimizations without architectural impact
-- Comment or formatting changes
+以下情况不要运行本技能：
+- 不改变架构或能力的缺陷修复
+- 不改变行为的小规模重构（重命名、抽取方法）
+- UI 微调或样式修改
+- 沿用既有模式的单个文件新增
+- 无架构影响的性能优化
+- 注释或格式调整
 
-## What NOT to Document
+## 不要记录什么
 
-Claude Code can read files and grep code. Only document what **cannot be inferred from the code itself**:
+Claude Code 能读文件、能 grep 代码。只记录**无法从代码本身推断出来**的内容：
 
-| Don't document | Why | Instead |
+| 不要记录 | 原因 | 改为 |
 |----------------|-----|---------|
-| Standard language conventions | Claude already knows them | Only project-specific deviations |
-| Response JSON examples | Claude reads actual source files | Request contract + error codes only |
-| File-by-file descriptions | Claude can Glob and Read | Only non-obvious file purposes |
-| Completed checklist items | Done = in git history | Remove from progress.md |
-| ASCII art diagrams | Many lines, low value | Use compact tables |
+| 标准语言惯例 | Claude 已经知道它们 | 只写项目特有的偏离 |
+| 响应 JSON 示例 | Claude 会读真实源文件 | 只写请求契约 + 错误码 |
+| 逐文件说明 | Claude 会用 Glob 和 Read | 只写非显而易见的文件用途 |
+| 已完成的清单项 | 完成 = 已在 git 历史里 | 从 progress.md 中删除 |
+| ASCII 字符画图示 | 行数多、价值低 | 改用紧凑表格 |
 
-**Density test:** Before adding content, ask: "Could Claude figure this out by reading the code?" If yes, don't document it.
+**密度检验：** 添加内容之前先问："Claude 读代码能自己弄明白吗？" 如果能，就不要记录。
 
-## Process
+## 流程
 
-### Step 0 (optional): Scope to a module
+### 步骤 0（可选）：把范围收窄到某个模块
 
-Default scope is the **whole project** — one project per repo. If your repo splits into modules/components under distinct top-level paths (each with its own `docs/ai-context/`), you may narrow to the one touched this session: `git status --short` shows which path has modified files; update only that module's docs. Skip this step entirely if the project has a single `docs/ai-context/` — which is the common case.
+默认范围是**整个项目**——每个仓库一个项目。如果你的仓库在互不相同的顶层路径下拆成了多个模块/组件（每个都有自己的 `docs/ai-context/`），可以收窄到本次会话涉及的那个：`git status --short` 会显示哪个路径下有被改动的文件；只更新该模块的文档。如果项目只有一个 `docs/ai-context/`（这是常见情况），完全跳过这一步。
 
-### Step 1: Analyze What Changed
+### 步骤 1：分析改了什么
 
-Check recent changes:
+查看最近的改动：
 
 ```bash
 git diff --stat HEAD
 git log --oneline -5
 ```
 
-Identify what categories of change occurred:
-- **New feature or capability** → update `spec.md`, possibly `progress.md`
-- **New files or directories** → update `project-structure.md`
-- **Deployment or infrastructure change** → update `deployment-infrastructure.md`
-- **Milestone completed or status change** → update `progress.md`
-- **New architecture decision or rule** → update `CLAUDE.md`
+判断发生了哪些类别的变更：
+- **新功能或新能力** → 更新 `spec.md`，可能还要更新 `progress.md`
+- **新增文件或目录** → 更新 `project-structure.md`
+- **部署或基础设施变更** → 更新 `deployment-infrastructure.md`
+- **里程碑完成或状态变化** → 更新 `progress.md`
+- **新的架构决策或规则** → 更新 `CLAUDE.md`
 
-### Step 2: Update Relevant Files
+### 步骤 2：更新相关文件
 
-Only update files where the change is meaningful. The 4 core files and their ownership:
+只更新那些改到点上的文件。4 个核心文件及其职责归属：
 
-| File | What It Owns | Update When |
+| 文件 | 负责什么 | 何时更新 |
 |------|-------------|-------------|
-| `docs/ai-context/spec.md` | What the product does — features, API contracts, data flows | New feature, API change, behavior change |
-| `docs/ai-context/project-structure.md` | File tree, tech stack, directory organization | New files/dirs, dependency changes, tech stack change |
-| `docs/ai-context/progress.md` | What's done, what's next, blockers | Phase completed, new work started, status change |
-| `docs/ai-context/deployment-infrastructure.md` | Hosting, accounts, secrets, CI/CD | Infrastructure change, new service, new secret |
-| `CLAUDE.md` | Project rules, architecture decisions, coding standards | New rule, new decision, changed constraint |
+| `docs/ai-context/spec.md` | 产品做什么——功能、API 契约、数据流 | 新功能、API 变更、行为变更 |
+| `docs/ai-context/project-structure.md` | 文件树、技术栈、目录组织 | 新增文件/目录、依赖变更、技术栈变更 |
+| `docs/ai-context/progress.md` | 已完成什么、下一步是什么、阻碍项 | 阶段完成、新工作启动、状态变化 |
+| `docs/ai-context/deployment-infrastructure.md` | 托管、账号、密钥、CI/CD | 基础设施变更、新服务、新密钥 |
+| `CLAUDE.md` | 项目规则、架构决策、编码规范 | 新规则、新决策、约束变化 |
 
-### Step 3: Apply the Single Source of Truth Rule
+### 步骤 3：落实单一事实来源规则
 
-**State each fact exactly once** across the ai-context + `CLAUDE.md` bundle. If the same fact appears in multiple files, keep only the canonical owner and delete the rest — no breadcrumb pointer left behind. Resolve contradictions by trusting the canonical owner.
+**每个事实只在 ai-context + `CLAUDE.md` 这套文档里陈述一次。** 如果同一个事实出现在多个文件中，只保留它的正式归属处并删除其余副本——不要留下指路面包屑。出现矛盾时，以正式归属处的说法为准。
 
-- **Internal section refs are allowed** — within one file, pointing `§3.7 → §3.2` for navigation is fine.
-- **Cross-file breadcrumbs are forbidden.** `/update-docs` and `/prime` load the bundle together, so writing `See spec.md §X` from another file is pure overhead. Move the fact to its owner; don't leave a pointer.
+- **允许文件内的章节引用**——在同一个文件里写 `§3.7 → §3.2` 便于导航是可以的。
+- **禁止跨文件指路。** `/update-docs` 和 `/prime` 会一起加载这套文档，所以在别的文件里写 `See spec.md §X` 纯属多余。把事实挪到它的归属处，不要留指针。
 
-Examples:
-- API endpoint details → `spec.md` (not CLAUDE.md)
-- File naming conventions → `CLAUDE.md` (not project-structure.md)
-- Deployment URLs → `deployment-infrastructure.md` (not spec.md)
+示例：
+- API 端点细节 → `spec.md`（不是 CLAUDE.md）
+- 文件命名惯例 → `CLAUDE.md`（不是 project-structure.md）
+- 部署 URL → `deployment-infrastructure.md`（不是 spec.md）
 
-**Header-rename hazard:** in single-source-of-truth docs, section-number pointers are load-bearing. If `/prime` is light (TOC + opening invariants only), deep facts are reached via `CLAUDE.md → spec.md <section>` pointers. Renaming a `## ` header means updating every pointer that cites it — or the pointer dangles.
+**改标题的风险：** 在单一事实来源的文档里，章节编号指针是承重结构。如果 `/prime` 是轻量的（只有目录 + 开头的不变量），深层事实要通过 `CLAUDE.md → spec.md <section>` 这类指针才能到达。重命名一个 `## ` 标题意味着要更新所有引用它的指针——否则指针就悬空了。
 
-### Step 4: Keep Docs Lean
+### 步骤 4：让文档保持精简
 
-Only document non-obvious complexity that can't be inferred from reading the code:
-- Architecture decisions and their rationale
-- Non-obvious constraints (e.g., "audio must never be stored")
-- Cross-cutting concerns that span multiple files
-- External service configurations
+只记录那些无法通过阅读代码推断出来的、非显而易见的复杂之处：
+- 架构决策及其理由
+- 非显而易见的约束（例如"音频绝不能持久化存储"）
+- 横跨多个文件的横切关注点
+- 外部服务配置
 
-Do NOT document:
-- What a function does (the code shows this)
-- Standard framework patterns (the framework docs cover this)
-- Obvious file purposes (e.g., "utils.ts contains utility functions")
+不要记录：
+- 某个函数做了什么（代码本身就说明了）
+- 标准框架模式（框架文档已经涵盖）
+- 显而易见的文件用途（例如"utils.ts 里放的是工具函数"）
 
-### Step 5: Create Missing Files
+### 步骤 5：创建缺失的文件
 
-If `docs/ai-context/` files don't exist yet, create them from the current codebase state. Analyze the code, tech stack, and project structure to populate each file with accurate current-state documentation.
+如果 `docs/ai-context/` 里的文件还不存在，就依据代码库当前状态创建它们。分析代码、技术栈和项目结构，为每个文件填入准确的当前状态文档。
 
-## Doc-Specific Rules
+## 各文档的具体规则
 
-**progress.md:**
-- Use absolute dates, never relative ("March 2026", not "last week")
-- When marking items complete, DELETE the item (don't strike through) — the fix is in git history
-- Keep completed phase summaries to a single table row (~10 words), not paragraphs
-- Remove completed checklist items that have been done for 2+ weeks
-- Security items: remove when fixed, keep only open issues
+**progress.md：**
+- 用绝对日期，绝不用相对时间（"2026 年 3 月"，而不是"上周"）
+- 把条目标记为完成时，直接删除该条目（不要加删除线）——修复本身已在 git 历史里
+- 已完成的阶段总结压缩成表格的一行（约 10 个词），不要写成段落
+- 已完成超过 2 周的清单项要删除
+- 安全相关条目：修好后删除，只保留未解决的问题
 
-**spec.md:**
-- Don't duplicate CLAUDE.md content (architecture principles, coding standards)
-- Document request format + error codes + key behaviors — skip response examples
-- Reference shared utility files by path, don't reproduce their content
-- Load-bearing / cross-cutting invariants live in the spec's **opening** section(s). Light prime reads only the opening + TOC, so an invariant buried mid-doc is invisible at session start. When folding a shipped feature in, hoist any new cross-cutting invariant up as one terse line + a `→ §` pointer to its detail section.
+**spec.md：**
+- 不要重复 CLAUDE.md 的内容（架构原则、编码规范）
+- 记录请求格式 + 错误码 + 关键行为——跳过响应示例
+- 引用共享工具文件时只写路径，不要复制其内容
+- 承重的/横切的不变量放在 spec 的**开头**章节。轻量预热只读开头 + 目录，所以埋在文档中部的不变量在会话开始时是看不见的。并入已发布特性时，把任何新的横切不变量提到前面，写成一行简练的话 + 一个指向其详情章节的 `→ §` 指针。
 
-**CLAUDE.md:**
-- Only rules that change Claude's behavior — if removing a line wouldn't cause Claude to do anything differently, delete it
-- Not a reference doc: no test structure tables, no naming convention tables for standard patterns
+**CLAUDE.md：**
+- 只写会改变 Claude 行为的规则——如果删掉某一行不会让 Claude 的做法有任何不同，就删掉它
+- 这不是参考手册：不要放测试结构表格，也不要放标准模式的命名惯例表格
 
-## Doc Lifecycle — Permanent vs Non-Permanent
+## 文档生命周期——永久与非永久
 
-- **Fold-on-ship.** When a feature ships, fold its feature-doc's current architecture into `spec.md` (present tense) and retire the feature doc. Never leave shipped architecture in a future/feature doc.
-- **Hoist cross-cutting invariants up.** An invariant that spans the whole project belongs in `spec.md`'s opening, not buried in a feature doc.
-- **Permanence.** `spec.md` / `project-structure.md` / `CLAUDE.md` are permanent and must NOT cite non-permanent docs (e.g. `open-issues/*`, feature docs) by specific-file link. Only `progress.md` (the roadmap) may. Carve-out: `project-structure.md` may list a non-permanent doc as a file-tree entry (filename + one-line role), but no deep section-number citations into it.
+- **发布即并入。** 某个特性发布时，把它特性文档中的当前架构并入 `spec.md`（用现在时），然后让该特性文档退役。绝不要把已发布的架构留在未来/特性文档里。
+- **把横切不变量提上去。** 贯穿整个项目的不变量属于 `spec.md` 的开头，而不是埋在某个特性文档里。
+- **永久性。** `spec.md` / `project-structure.md` / `CLAUDE.md` 是永久文档，绝不允许以"指定文件链接"的方式引用非永久文档（例如 `open-issues/*`、特性文档）。只有 `progress.md`（路线图）可以这么做。例外：`project-structure.md` 可以把非永久文档列为文件树中的一项（文件名 + 一行职责说明），但不得对其做深入的章节编号引用。
 
-## Named-Reference Lifecycle (optional convention)
+## 具名引用生命周期（可选约定）
 
-If you tag recurring traps, gotchas, or open issues with stable IDs, give each tag a stale-pass rule so dead references get pruned instead of accumulating. The exact scheme is yours — below is one example using an open-issue tag `T-XX`; adopt it, rename it, or skip it entirely.
+如果你用稳定的 ID 给反复出现的陷阱、坑点或未解决问题打标签，就给每个标签配一条过期清理规则，让失效的引用被清掉而不是越积越多。具体方案由你决定——下面是一个用未解决问题标签 `T-XX` 的示例；你可以采用、改名，或完全跳过。
 
-- **Traps / gotchas:** for each tagged item, grep the cited files/symbols. If ALL referenced files/symbols are gone, the item is dead — delete it. If the item is keyed to a resolution that has shipped, verify and delete.
-- **Gates / checklists:** any checked (`[x]`) row → delete immediately; done lives in git.
-- **Open follow-ups:** if the cited file/symbol is gone OR a recent commit closes the item → delete.
-- **Library-version notes** (e.g. "X needs Y ≥ 0.31"): if the current pin is already past the threshold, surface it to the user rather than silently deleting — you may not know whether upstream actually fixed the issue.
+- **陷阱 / 坑点：** 对每个已打标签的条目，grep 它引用的文件/符号。如果所有被引用的文件/符号都不在了，该条目已死——删除它。如果该条目挂靠的解决方案已经发布，核实后删除。
+- **关卡 / 清单：** 任何已勾选（`[x]`）的行 → 立即删除；完成状态存在于 git 中。
+- **待跟进事项：** 如果引用的文件/符号已不存在，或最近的提交已关闭该条目 → 删除。
+- **库版本备注**（例如"X 需要 Y ≥ 0.31"）：如果当前锁定的版本已经越过该阈值，向用户提出它，而不是默默删掉——你可能并不知道上游是否真的修好了该问题。
 
-Run the stale pass every invocation, regardless of which tagging scheme (if any) you use.
+无论你使用哪种打标签方案（或者根本不用），每次调用都要跑一遍过期清理。
 
-## Bloat Check
+## 冗余检查
 
-After updating, silently check `progress.md`:
-- Each completed phase row: ~10 words max in "What" column — trim immediately if longer
-- No duplication with spec.md — if progress.md restates architecture details, delete and cross-reference
-- Dead items: remove completed checklist items done 2+ weeks with no ongoing relevance
+更新之后，静默检查 `progress.md`：
+- 每个已完成阶段的表行："What" 列最多约 10 个词——超出就立即精简
+- 不要与 spec.md 重复——如果 progress.md 重述了架构细节，就删掉并改为交叉引用
+- 失效条目：删除已完成超过 2 周且当前不再相关的清单项
 
-**Net-line audit guard:** if a run adds ≥10 lines while deleting 0, pause and reconsider. Something is almost always prunable — a run that only grows is a smell.
+**净增行数审查护栏：** 如果一次运行新增 ≥10 行而删除 0 行，先停下来重新考虑。几乎总有些东西可以精简——只增不减的运行是有问题的信号。
 
-Then check if CLAUDE.md would also benefit from an update based on the changes made.
+然后检查基于所做的改动，CLAUDE.md 是否也值得更新。

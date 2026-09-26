@@ -1,68 +1,68 @@
-# PR Review Context
+# PR 审查上下文
 
-You are reviewing PR #{{PR_NUMBER}}: **{{PR_TITLE}}**
+正在审查 PR #{{PR_NUMBER}}：**{{PR_TITLE}}**
 
-## PR Details
+## PR 详情
 
-- **Author**: @{{PR_AUTHOR}}
-- **Branch**: `{{HEAD_BRANCH}}` → `{{BASE_BRANCH}}`
+- **作者**: @{{PR_AUTHOR}}
+- **分支**: `{{HEAD_BRANCH}}` → `{{BASE_BRANCH}}`
 - **URL**: {{PR_URL}}
 
-## Description
+## 描述
 
 {{PR_BODY}}
 
-## Changed Files
+## 变更文件
 
 {{CHANGED_FILES}}
 
-## Review Focus
+## 审查重点
 
-1. **Code Quality**
-   - Follow existing patterns and conventions
-   - Clean, readable, maintainable code
-   - Appropriate abstractions
+1. **代码质量**
+   - 遵循现有模式和约定
+   - 代码简洁、可读、可维护
+   - 适当的抽象层次
 
-2. **Correctness**
-   - Does it do what it claims?
-   - Edge cases handled?
-   - Error handling appropriate?
+2. **正确性**
+   - 功能是否如声称的那样工作？
+   - 边界情况是否处理？
+   - 错误处理是否合适？
 
-3. **Security**
-   - Input validation
-   - No hardcoded secrets
-   - Safe dependencies
+3. **安全性**
+   - 输入校验
+   - 无硬编码密钥
+   - 依赖安全
 
-4. **Testing**
-   - Adequate test coverage
-   - Tests are meaningful
-   - Edge cases tested
+4. **测试**
+   - 测试覆盖率足够
+   - 测试有意义
+   - 边界情况已测试
 
-5. **Documentation**
-   - Code is self-documenting
-   - Complex logic explained
-   - API changes documented
+5. **文档**
+   - 代码自文档化
+   - 复杂逻辑有说明
+   - API 变更有文档
 
-## Commands
+## 命令
 
 ```bash
-# View diff
+# 查看 diff
 git diff {{BASE_BRANCH}}...HEAD
 
-# Run the narrowest relevant tests first
-# If this clean review worktree has a symlinked node_modules from the source repo,
-# focused vitest commands should work without a fresh install.
-npm run test:run -- <changed-test-paths>  # preferred focused verification
-npm test  # or appropriate full test command if focused coverage is insufficient
+# 先运行最相关的测试
+# 如果此审查工作区通过 symlink 链接了源仓库的 node_modules，
+# 则无需重新安装即可运行聚焦的 vitest 命令。
+npm run test:run -- <changed-test-paths>  # 优先聚焦验证
+npm test  # 或合适的完整测试命令
 
-# Check build
-npm run build  # or appropriate build command
+# 检查构建
+npm run build  # 或合适的构建命令
 ```
 
-## Review Checklist
+## 审查清单
 
-- [ ] Code follows project style
-- [ ] No obvious bugs or logic errors
-- [ ] Security concerns addressed
-- [ ] Tests pass and cover changes
-- [ ] Documentation updated if needed
+- [ ] 代码符合项目风格
+- [ ] 无明显 bug 或逻辑错误
+- [ ] 安全问题已处理
+- [ ] 测试通过且覆盖变更
+- [ ] 文档已更新（如需要）

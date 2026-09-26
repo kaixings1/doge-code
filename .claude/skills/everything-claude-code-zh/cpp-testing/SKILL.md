@@ -1,6 +1,6 @@
 ---
 name: cpp-testing
-description: 仅在编写/更新/修复 C++ 测试、配置 GoogleTest/CTest、诊断失败或不稳定的测试、或添加覆盖率/检测器（Sanitizers）时使用。
+description: 仅在编写/更新/修复 C++ 测试、配置 GoogleTest/CTest、诊断失败或不稳定的测试、或添加覆盖率/检测器时使用。
 origin: ECC
 ---
 
@@ -14,8 +14,8 @@ origin: ECC
 - 为 C++ 组件设计单元/集成测试覆盖
 - 添加测试覆盖、CI 门禁或回归防护
 - 配置 CMake/CTest 工作流以实现一致性执行
-- 调查测试失败或不稳定（Flaky）行为
-- 启用检测器（Sanitizers）进行内存/竞态诊断
+- 调查测试失败或不稳定行为
+- 启用检测器进行内存/竞态诊断
 
 ### 不适用场景
 
@@ -26,8 +26,8 @@ origin: ECC
 
 ## 核心概念
 
-- **TDD 循环**：红（Red）→ 绿（Green）→ 重构（Refactor）（测试先行，最小化修复，然后清理）。
-- **隔离性**：优先选择依赖注入和伪造对象（Fakes），而非全局状态。
+- **TDD 循环**：红 → 绿 → 重构（测试先行，最小化修复，然后清理）。
+- **隔离性**：优先选择依赖注入和伪造对象，而非全局状态。
 - **测试布局**：`tests/unit`、`tests/integration`、`tests/testdata`。
 - **Mocks vs Fakes**：Mock 用于交互验证，Fake 用于有状态的行为模拟。
 - **CTest 发现**：使用 `gtest_discover_tests()` 进行稳定的测试发现。
@@ -37,9 +37,9 @@ origin: ECC
 
 遵循 红 → 绿 → 重构 循环：
 
-1. **红（RED）**：编写一个捕获新行为的失败测试。
-2. **绿（GREEN）**：实施最小化的更改以使测试通过。
-3. **重构（REFACTOR）**：在保持测试为绿色的前提下进行清理。
+1. **红**：编写一个捕获新行为的失败测试。
+2. **绿**：实施最小化的更改以使测试通过。
+3. **重构**：在保持测试为绿色的前提下进行清理。
 
 ```cpp
 // tests/add_test.cpp
@@ -47,16 +47,16 @@ origin: ECC
 
 int Add(int a, int b); // 由生产代码提供。
 
-TEST(AddTest, AddsTwoNumbers) { // 红（RED）
+TEST(AddTest, AddsTwoNumbers) { // 红
   EXPECT_EQ(Add(2, 3), 5);
 }
 
 // src/add.cpp
-int Add(int a, int b) { // 绿（GREEN）
+int Add(int a, int b) { // 绿
   return a + b;
 }
 
-// 重构（REFACTOR）：一旦测试通过，简化/重命名代码
+// 重构：一旦测试通过，简化/重命名代码
 ```
 
 ## 代码示例
@@ -74,7 +74,7 @@ TEST(CalculatorTest, AddsTwoNumbers) {
 }
 ```
 
-### 测试固件 (Fixture) (gtest)
+### 测试固件 (gtest)
 
 ```cpp
 // tests/user_store_test.cpp
@@ -109,7 +109,7 @@ TEST_F(UserStoreTest, FindsExistingUser) {
 }
 ```
 
-### 打桩测试 (Mock) (gmock)
+### 打桩测试 (gmock)
 
 ```cpp
 // tests/notifier_test.cpp
@@ -199,13 +199,13 @@ ctest --test-dir build -R "UserStoreTest.*" --output-on-failure
 ## 调试失败用例
 
 1. 使用 gtest 过滤器重新运行单个失败的测试。
-2. 在失败的断言周围添加作用域日志（Scoped Logging）。
-3. 启用检测器（Sanitizers）重新运行。
+2. 在失败的断言周围添加作用域日志。
+3. 启用检测器重新运行。
 4. 根本原因修复后，扩展到运行完整套件。
 
-## 覆盖率 (Coverage)
+## 覆盖率
 
-优先使用目标级（Target-level）设置，而非全局标志。
+优先使用目标级设置，而非全局标志。
 
 ```cmake
 option(ENABLE_COVERAGE "Enable coverage flags" OFF)
@@ -242,7 +242,7 @@ llvm-profdata merge -sparse build-llvm/default.profraw -o build-llvm/default.pro
 llvm-cov report build-llvm/example_tests -instr-profile=build-llvm/default.profdata
 ```
 
-## 检测器 (Sanitizers)
+## 检测器
 
 ```cmake
 option(ENABLE_ASAN "Enable AddressSanitizer" OFF)
@@ -263,16 +263,16 @@ if(ENABLE_TSAN)
 endif()
 ```
 
-## 不稳定测试（Flaky Tests）防护准则
+## 不稳定测试防护准则
 
-- 永远不要使用 `sleep` 进行同步；请使用条件变量（Condition Variables）或门闩（Latches）。
+- 永远不要使用 `sleep` 进行同步；请使用条件变量或门闩。
 - 确保临时目录在每个测试中都是唯一的，并且始终进行清理。
 - 在单元测试中避免依赖真实时间、网络或文件系统。
 - 为随机输入使用确定性的种子。
 
 ## 最佳实践
 
-### 建议（DO）
+### 建议
 
 - 保持测试的确定性和隔离性
 - 优先使用依赖注入而非全局变量
@@ -280,17 +280,17 @@ endif()
 - 在 CTest 标签或目录中区分单元测试与集成测试
 - 在 CI 中运行检测器以进行内存和竞态检测
 
-### 禁止（DON'T）
+### 禁止
 
 - 不要在单元测试中依赖真实时间或网络
 - 当可以使用条件变量时，不要使用 sleep 进行同步
-- 不要过度打桩（Mock）简单的值对象（Value Objects）
+- 不要过度打桩简单的值对象
 - 不要对非关键日志使用脆弱的字符串匹配
 
 ### 常见陷阱
 
 - **使用固定的临时路径** → 为每个测试生成唯一的临时目录并清理。
-- **依赖墙上时钟时间（Wall clock time）** → 注入时钟或使用伪造的时间源。
+- **依赖墙上时钟时间** → 注入时钟或使用伪造的时间源。
 - **不稳定的并发测试** → 使用条件变量/门闩和有界等待。
 - **隐藏的全局状态** → 在测试固件中重置全局状态，或移除全局变量。
 - **过度 Mock** → 优先对有状态行为使用 Fake，仅对交互使用 Mock。
@@ -320,5 +320,5 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
 
 ## GoogleTest 的替代方案
 
-- **Catch2**：仅头文件，具有表现力的匹配器（Matchers）
+- **Catch2**：仅头文件，具有表现力的匹配器
 - **doctest**：轻量级，极小的编译开销

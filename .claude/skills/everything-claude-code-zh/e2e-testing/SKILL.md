@@ -4,11 +4,11 @@ description: Playwright E2E 测试模式、页面对象模型 (Page Object Model
 origin: ECC
 ---
 
-# E2E 测试模式 (E2E Testing Patterns)
+# E2E 测试模式
 
 用于构建稳定、快速且易于维护的 E2E 测试套件的全面 Playwright 模式。
 
-## 测试文件组织 (Test File Organization)
+## 测试文件组织
 
 ```
 tests/
@@ -29,7 +29,7 @@ tests/
 └── playwright.config.ts
 ```
 
-## 页面对象模型 (Page Object Model - POM)
+## 页面对象模型（POM）
 
 ```typescript
 import { Page, Locator } from '@playwright/test'
@@ -64,13 +64,13 @@ export class ItemsPage {
 }
 ```
 
-## 测试结构 (Test Structure)
+## 测试结构
 
 ```typescript
 import { test, expect } from '@playwright/test'
 import { ItemsPage } from '../../pages/ItemsPage'
 
-test.describe('项目搜索 (Item Search)', () => {
+test.describe('项目搜索', () => {
   let itemsPage: ItemsPage
 
   test.beforeEach(async ({ page }) => {
@@ -97,7 +97,7 @@ test.describe('项目搜索 (Item Search)', () => {
 })
 ```
 
-## Playwright 配置 (Playwright Configuration)
+## Playwright 配置
 
 ```typescript
 import { defineConfig, devices } from '@playwright/test'
@@ -136,9 +136,9 @@ export default defineConfig({
 })
 ```
 
-## 不稳定测试模式 (Flaky Test Patterns)
+## 不稳定测试模式
 
-### 隔离 (Quarantine)
+### 隔离
 
 ```typescript
 test('flaky: complex search', async ({ page }) => {
@@ -152,25 +152,25 @@ test('conditional skip', async ({ page }) => {
 })
 ```
 
-### 识别不稳定 (Identify Flakiness)
+### 识别不稳定
 
 ```bash
 npx playwright test tests/search.spec.ts --repeat-each=10
 npx playwright test tests/search.spec.ts --retries=3
 ```
 
-### 常见原因与修复 (Common Causes & Fixes)
+### 常见原因与修复
 
-**竞态条件 (Race conditions):**
+**竞态条件：**
 ```typescript
 // 错误做法：假设元素已就绪
 await page.click('[data-testid="button"]')
 
-// 正确做法：使用自动等待的定位器 (locator)
+// 正确做法：使用自动等待的定位器
 await page.locator('[data-testid="button"]').click()
 ```
 
-**网络时机 (Network timing):**
+**网络时机：**
 ```typescript
 // 错误做法：任意设置超时
 await page.waitForTimeout(5000)
@@ -179,7 +179,7 @@ await page.waitForTimeout(5000)
 await page.waitForResponse(resp => resp.url().includes('/api/data'))
 ```
 
-**动画时机 (Animation timing):**
+**动画时机：**
 ```typescript
 // 错误做法：在动画进行时点击
 await page.click('[data-testid="menu-item"]')
@@ -190,9 +190,9 @@ await page.waitForLoadState('networkidle')
 await page.locator('[data-testid="menu-item"]').click()
 ```
 
-## 产物管理 (Artifact Management)
+## 产物管理
 
-### 截图 (Screenshots)
+### 截图
 
 ```typescript
 await page.screenshot({ path: 'artifacts/after-login.png' })
@@ -200,7 +200,7 @@ await page.screenshot({ path: 'artifacts/full-page.png', fullPage: true })
 await page.locator('[data-testid="chart"]').screenshot({ path: 'artifacts/chart.png' })
 ```
 
-### 追踪 (Traces)
+### 追踪
 
 ```typescript
 await browser.startTracing(page, {
@@ -212,7 +212,7 @@ await browser.startTracing(page, {
 await browser.stopTracing()
 ```
 
-### 视频 (Video)
+### 视频
 
 ```typescript
 // 在 playwright.config.ts 中配置
@@ -222,7 +222,7 @@ use: {
 }
 ```
 
-## CI/CD 集成 (CI/CD Integration)
+## CI/CD 集成
 
 ```yaml
 # .github/workflows/e2e.yml
@@ -250,38 +250,38 @@ jobs:
           retention-days: 30
 ```
 
-## 测试报告模板 (Test Report Template)
+## 测试报告模板
 
 ```markdown
-# E2E 测试报告 (E2E Test Report)
+# E2E 测试报告
 
-**日期 (Date):** YYYY-MM-DD HH:MM
-**耗时 (Duration):** Xm Ys
-**状态 (Status):** 通过 (PASSING) / 失败 (FAILING)
+**日期：** YYYY-MM-DD HH:MM
+**耗时：** Xm Ys
+**状态：** 通过 / 失败
 
-## 摘要 (Summary)
-- 总计: X | 通过: Y (Z%) | 失败: A | 不稳定 (Flaky): B | 跳过: C
+## 摘要
+- 总计: X | 通过: Y (Z%) | 失败: A | 不稳定: B | 跳过: C
 
-## 失败的测试 (Failed Tests)
+## 失败的测试
 
 ### test-name
-**文件 (File):** `tests/e2e/feature.spec.ts:45`
-**错误 (Error):** 期望元素可见
-**截图 (Screenshot):** artifacts/failed.png
-**建议修复 (Recommended Fix):** [描述内容]
+**文件：** `tests/e2e/feature.spec.ts:45`
+**错误：** 期望元素可见
+**截图：** artifacts/failed.png
+**建议修复：** [描述内容]
 
-## 产物 (Artifacts)
+## 产物
 - HTML 报告: playwright-report/index.html
 - 截图: artifacts/*.png
 - 视频: artifacts/videos/*.webm
-- 追踪 (Traces): artifacts/*.zip
+- 追踪: artifacts/*.zip
 ```
 
-## 钱包 / Web3 测试 (Wallet / Web3 Testing)
+## 钱包 / Web3 测试
 
 ```typescript
 test('wallet connection', async ({ page, context }) => {
-  // 模拟钱包提供者 (Mock wallet provider)
+  // 模拟钱包提供者
   await context.addInitScript(() => {
     window.ethereum = {
       isMetaMask: true,
@@ -299,7 +299,7 @@ test('wallet connection', async ({ page, context }) => {
 })
 ```
 
-## 金融 / 关键流程测试 (Financial / Critical Flow Testing)
+## 金融 / 关键流程测试
 
 ```typescript
 test('trade execution', async ({ page }) => {
@@ -310,7 +310,7 @@ test('trade execution', async ({ page }) => {
   await page.locator('[data-testid="position-yes"]').click()
   await page.locator('[data-testid="trade-amount"]').fill('1.0')
 
-  // 验证预览 (Verify preview)
+  // 验证预览
   const preview = page.locator('[data-testid="trade-preview"]')
   await expect(preview).toContainText('1.0')
 

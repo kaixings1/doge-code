@@ -1,81 +1,81 @@
-# Multi-Agent Patterns
+# 多代理模式
 
-## 📋 Agent Verification Checklist (Multi-Agent)
-Use this checklist when setting up multi-agent systems:
-- [ ] **Description**: Does every sub-agent have a clear `description`? (Used by LLM for routing or tool generation)
-- [ ] **Model Inheritance**: Did you let sub-agents inherit the model from the coordinator to avoid duplication?
-- [ ] **Loop Termination**: If using `LoopAgent`, is there a clear way to call `exit_loop` to prevent infinite loops?
+## 验证清单（多代理）
+设置多代理系统时使用此清单：
+- [ ] **描述**：每个子代理是否都有清晰的 `description`？（LLM 用于路由或工具生成）
+- [ ] **模型继承**：是否让子代理继承协调器的模型以避免重复？
+- [ ] **循环终止**：如果使用 `LoopAgent`，是否有明确的 `exit_loop` 调用来防止无限循环？
 
-## 💡 Quick Reference
-- **Sequential**: `SequentialAgent(sub_agents=[a, b, c])`
-- **Parallel**: `ParallelAgent(sub_agents=[a, b, c])`
-- **Loop**: `LoopAgent(sub_agents=[a, b], max_iterations=5)`
+## 快速参考
+- **顺序执行**：`SequentialAgent(sub_agents=[a, b, c])`
+- **并行执行**：`ParallelAgent(sub_agents=[a, b, c])`
+- **循环**：`LoopAgent(sub_agents=[a, b], max_iterations=5)`
 
-## LLM-Based Multi-Agent (Chat Transfer)
+## 基于 LLM 的多代理（聊天转移）
 
 ```python
 from google.adk.agents.llm_agent import Agent
 
 researcher = Agent(
     name='researcher',
-    description='Researches topics.',
-    instruction='You research topics and provide findings.',
+    description='研究主题。',
+    instruction='你研究主题并提供发现。',
     tools=[search_tool],
 )
 
 writer = Agent(
     name='writer',
-    description='Writes content.',
-    instruction='You write content based on research.',
+    description='撰写内容。',
+    instruction='你根据研究撰写内容。',
 )
 
 root_agent = Agent(
     model='gemini-2.5-flash',
     name='coordinator',
     instruction=(
-        'Delegate research to the researcher and '
-        'writing to the writer.'
+        '将研究委托给 researcher，'
+        '将写作委托给 writer。'
     ),
     sub_agents=[researcher, writer],
 )
 ```
 
-**Key rules:**
-- Only the root agent needs `model=`. Sub-agents inherit it.
-- Each sub-agent needs a `description` (used for routing).
-- Transfer between agents is automatic via LLM reasoning.
-- `disallow_transfer_to_parent=True` prevents back-transfer.
-- `disallow_transfer_to_peers=True` prevents peer-transfer.
+**关键规则：**
+- 只有根代理需要 `model=`。子代理继承它。
+- 每个子代理都需要 `description`（用于路由）。
+- 代理之间的转移通过 LLM 推理自动进行。
+- `disallow_transfer_to_parent=True` 防止向父代理回传。
+- `disallow_transfer_to_peers=True` 防止同级转移。
 
-## Task-Based Multi-Agent (Structured Delegation)
+## 基于任务的多代理（结构化委托）
 
-For structured input/output, use task mode instead of chat transfer. See **`task-mode.md`** for full details.
+对于结构化输入/输出，使用任务模式而非聊天转移。完整细节参见 **`task-mode.md`**。
 
 ```python
 from google.adk import Agent
 
 worker = Agent(
     name='worker',
-    mode='task',                     # or 'single_turn'
+    mode='task',                     # 或 'single_turn'
     input_schema=WorkerInput,
     output_schema=WorkerOutput,
-    instruction='Do work, then call finish_task.',
-    description='Performs structured work.',
+    instruction='执行工作，然后调用 finish_task。',
+    description='执行结构化工作。',
 )
 
 root_agent = Agent(
     name='coordinator',
     model='gemini-2.5-flash',
     sub_agents=[worker],
-    instruction='Delegate to worker via request_task_worker.',
+    instruction='通过 request_task_worker 委托给 worker。',
 )
 ```
 
-## Non-LLM Orchestration Agents
+## 非 LLM 编排代理
 
 ### SequentialAgent
 
-Runs sub-agents in order, one after another:
+按顺序依次运行子代理：
 
 ```python
 from google.adk.agents.sequential_agent import SequentialAgent
@@ -88,7 +88,7 @@ root_agent = SequentialAgent(
 
 ### ParallelAgent
 
-Runs sub-agents concurrently:
+并发运行子代理：
 
 ```python
 from google.adk.agents.parallel_agent import ParallelAgent
@@ -101,7 +101,7 @@ root_agent = ParallelAgent(
 
 ### LoopAgent
 
-Repeats sub-agents until `exit_loop` is called:
+重复运行子代理，直到调用 `exit_loop`：
 
 ```python
 from google.adk.tools import exit_loop
@@ -110,7 +110,7 @@ from google.adk.agents.loop_agent import LoopAgent
 looping_agent = Agent(
     name='checker',
     tools=[exit_loop],
-    instruction='Check the result and call exit_loop if done.',
+    instruction='检查结果，如果完成则调用 exit_loop。',
 )
 
 root_agent = LoopAgent(
@@ -120,23 +120,20 @@ root_agent = LoopAgent(
 )
 ```
 
-## Model Configuration
+## 模型配置
 
-- Default model: `gemini-2.5-flash`
-- Override globally: `Agent.set_default_model('gemini-2.5-pro')`
-- Model inheritance: sub-agents inherit parent's model if not set
-- Non-Gemini models via LiteLlm:
+- 默认模型：`gemini-2.5-flash`
+- 全局覆盖：`Agent.set_default_model('gemini-2.5-pro')`
+- 模型继承：如果未设置，子代理继承父代理的模型
+- 非 Gemini 模型通过 LiteLlm：
   ```python
   from google.adk.models.lite_llm import LiteLlm
   root_agent = Agent(model=LiteLlm(model='anthropic/claude-sonnet-4-20250514'), ...)
   ```
 
-## Common Pitfalls
+## 常见陷阱
 
-- **Agent stuck in sub-agent:** Sub-agent has no path back to parent.
-  Set `disallow_transfer_to_parent=False` (default) or add explicit
-  transfer instructions.
-- **Wrong agent handles request:** Ambiguous `description` fields. Make
-  each agent's description clearly differentiate its scope.
-- **Circular imports:** Define all agents in a single `agent.py` file,
-  or use a shared module for sub-agents.
+- **代理卡在子代理中：** 子代理没有返回父代理的路径。
+  设置 `disallow_transfer_to_parent=False`（默认值）或添加明确的转移指令。
+- **错误的代理处理请求：** `description` 字段含糊。使每个代理的描述清晰区分其职责范围。
+- **循环导入：** 在单个 `agent.py` 文件中定义所有代理，或使用共享模块存放子代理。

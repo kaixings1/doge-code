@@ -1,22 +1,22 @@
 ---
 name: ctx-search
 description: |
-  Search context-mode's persistent FTS5 knowledge base for previously indexed
-  local project content, documentation, or session memory.
-  Trigger: /context-mode:ctx-search
+  在 context-mode 的 FTS5 持久知识库中搜索此前已索引的
+  本地项目内容、文档或会话记忆。
+  触发：/context-mode:ctx-search
 user-invocable: true
 ---
 
-# Context Mode Search
+# Context Mode 搜索
 
-Search indexed content without rereading raw sources into conversation context.
+搜索已索引内容，而无需把原始来源重读进对话上下文。
 
-## Instructions
+## 操作步骤
 
-1. Prefer the `ctx_search` MCP tool when it is available.
-2. Batch all related questions in one `queries` array.
-3. Scope with `source` when the user names a project or indexed label.
-4. Use short, specific queries of two to four technical terms.
+1. 可用时优先用 `ctx_search` MCP 工具。
+2. 把所有相关问题放进一个 `queries` 数组里批量查询。
+3. 当用户指明某个项目或已索引标签时，用 `source` 限定范围。
+4. 使用两到四个技术术语的简短、具体的查询。
 
 ```javascript
 ctx_search({
@@ -26,10 +26,10 @@ ctx_search({
 })
 ```
 
-5. If MCP tools are unavailable, fall back to the CLI:
+5. 如果 MCP 工具不可用，退回到 CLI：
 
 ```bash
 context-mode search "authentication middleware" --source project:<name> --limit 5
 ```
 
-6. If the index is empty, tell the user to run `/context-mode:ctx-index` or `context-mode index <path>` first.
+6. 如果索引为空，告诉用户先运行 `/context-mode:ctx-index` 或 `context-mode index <path>`。

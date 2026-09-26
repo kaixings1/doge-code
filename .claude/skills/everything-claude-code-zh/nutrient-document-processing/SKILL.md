@@ -4,11 +4,11 @@ description: 使用 Nutrient DWS API 处理、转换、OCR、提取、脱敏、�
 origin: ECC
 ---
 
-# Nutrient 文档处理（Nutrient Document Processing）
+# Nutrient 文档处理
 
 使用 [Nutrient DWS Processor API](https://www.nutrient.io/api/) 处理文档。转换格式、提取文本和表格、对扫描文档进行 OCR 光学字符识别、脱敏个人身份信息（PII）、添加水印、进行数字签名以及填充 PDF 表单。
 
-## 设置（Setup）
+## 设置
 
 在 **[nutrient.io](https://dashboard.nutrient.io/sign_up/?product=processor)** 获取免费 API 密钥。
 
@@ -18,9 +18,9 @@ export NUTRIENT_API_KEY="pdf_live_..."
 
 所有请求均以 multipart POST 形式发送至 `https://api.nutrient.io/build`，并包含一个 `instructions` JSON 字段。
 
-## 操作（Operations）
+## 操作
 
-### 转换文档（Convert Documents）
+### 转换文档
 
 ```bash
 # DOCX 转 PDF
@@ -47,7 +47,7 @@ curl -X POST https://api.nutrient.io/build \
 
 支持的输入格式：PDF, DOCX, XLSX, PPTX, DOC, XLS, PPT, PPS, PPSX, ODT, RTF, HTML, JPG, PNG, TIFF, HEIC, GIF, WebP, SVG, TGA, EPS。
 
-### 提取文本和数据（Extract Text and Data）
+### 提取文本和数据
 
 ```bash
 # 提取纯文本
@@ -65,7 +65,7 @@ curl -X POST https://api.nutrient.io/build \
   -o tables.xlsx
 ```
 
-### OCR 扫描文档（OCR Scanned Documents）
+### OCR 扫描文档
 
 ```bash
 # OCR 转为可搜索的 PDF（支持 100 多种语言）
@@ -78,7 +78,7 @@ curl -X POST https://api.nutrient.io/build \
 
 语言：支持 100 多种语言，通过 ISO 639-2 代码指定（例如 `eng`, `deu`, `fra`, `spa`, `jpn`, `kor`, `chi_sim`, `chi_tra`, `ara`, `hin`, `rus`）。也可以使用完整的语言名称，如 `english` 或 `german`。请参阅[完整的 OCR 语言对照表](https://www.nutrient.io/guides/document-engine/ocr/language-support/)以获取所有支持的代码。
 
-### 脱敏敏感信息（Redact Sensitive Information）
+### 脱敏敏感信息
 
 ```bash
 # 基于模式（SSN, 电子邮件）
@@ -96,9 +96,9 @@ curl -X POST https://api.nutrient.io/build \
   -o redacted.pdf
 ```
 
-预设（Presets）：`social-security-number`, `email-address`, `credit-card-number`, `international-phone-number`, `north-american-phone-number`, `date`, `time`, `url`, `ipv4`, `ipv6`, `mac-address`, `us-zip-code`, `vin`。
+预设：`social-security-number`, `email-address`, `credit-card-number`, `international-phone-number`, `north-american-phone-number`, `date`, `time`, `url`, `ipv4`, `ipv6`, `mac-address`, `us-zip-code`, `vin`。
 
-### 添加水印（Add Watermarks）
+### 添加水印
 
 ```bash
 curl -X POST https://api.nutrient.io/build \
@@ -108,7 +108,7 @@ curl -X POST https://api.nutrient.io/build \
   -o watermarked.pdf
 ```
 
-### 数字签名（Digital Signatures）
+### 数字签名
 
 ```bash
 # 自签名 CMS 签名
@@ -119,7 +119,7 @@ curl -X POST https://api.nutrient.io/build \
   -o signed.pdf
 ```
 
-### 填充 PDF 表单（Fill PDF Forms）
+### 填充 PDF 表单
 
 ```bash
 curl -X POST https://api.nutrient.io/build \
@@ -158,8 +158,8 @@ curl -X POST https://api.nutrient.io/build \
 - 为合同或协议进行数字签名
 - 以编程方式填充 PDF 表单
 
-## 链接（Links）
+## 链接
 
-- [API 游乐场 (API Playground)](https://dashboard.nutrient.io/processor-api/playground/)
+- [API 游乐场](https://dashboard.nutrient.io/processor-api/playground/)
 - [完整 API 文档](https://www.nutrient.io/guides/dws-processor/)
 - [npm MCP 服务器](https://www.npmjs.com/package/@nutrient-sdk/dws-mcp-server)

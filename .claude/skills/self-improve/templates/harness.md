@@ -1,18 +1,18 @@
-# Harness Rules
+# 测试框架规则
 
-## H001 — One Hypothesis Per Plan
-Each plan must test exactly ONE hypothesis. Plans with zero or multiple hypotheses are rejected by the critic.
+## H001 — 每计划一个假设
+每个计划必须恰好测试一个假设。包含零个或多个假设的计划将被 critic 拒绝。
 
-## H002 — No Approach Family Streak
-The same `approach_family` must not appear as the winner for 3 or more consecutive iterations. This prevents the system from getting stuck in a local exploration loop.
+## H002 — 禁止相同方法家族连胜
+同一个 `approach_family` 不能连续 3 次或以上获胜。这防止系统陷入局部探索循环。
 
-## H003 — Intra-Round Diversity
-Within a single round, no two plans may share the same `approach_family`. The critic rejects the later plan if a duplicate family is detected.
+## H003 — 轮内多样性
+在同一轮内，任意两个计划不能共享同一个 `approach_family`。如果检测到重复家族，critic 将拒绝后来的计划。
 
-## Custom Rules
-<!-- Add project-specific rules here -->
+## 自定义规则
+<!-- 在此添加项目特定规则 -->
 
-## Custom Approach Families
-<!-- Add custom approach families here (one per line, prefixed with - or *) -->
-<!-- Example: -->
+## 自定义方法家族
+<!-- 在此添加自定义方法家族（每行一个，以 - 或 * 开头） -->
+<!-- 示例： -->
 <!-- - `prompt_engineering` -->

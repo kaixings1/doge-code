@@ -1,56 +1,56 @@
-# Feature Development Context
+# 功能开发上下文
 
-You are developing feature: **{{FEATURE_NAME}}**
+正在开发功能：**{{FEATURE_NAME}}**
 
-## Details
+## 详情
 
-- **Branch**: `{{BRANCH_NAME}}`
-- **Base**: `{{BASE_BRANCH}}`
-- **Project**: {{PROJECT}}
+- **分支**: `{{BRANCH_NAME}}`
+- **基分支**: `{{BASE_BRANCH}}`
+- **项目**: {{PROJECT}}
 
-## Feature Scope
+## 功能范围
 
 {{FEATURE_DESCRIPTION}}
 
-## Development Approach
+## 开发流程
 
-1. **Plan**
-   - Define requirements
-   - Break into subtasks
-   - Identify dependencies
+1. **规划**
+   - 明确需求
+   - 拆分子任务
+   - 识别依赖关系
 
-2. **Implement**
-   - Follow project patterns
-   - Write clean, testable code
-   - Commit incrementally
+2. **实现**
+   - 遵循项目规范
+   - 编写简洁、可测试的代码
+   - 逐步提交
 
-3. **Test**
-   - Unit tests for new code
-   - Integration tests if needed
-   - Manual testing
+3. **测试**
+   - 新代码的单元测试
+   - 需要时的集成测试
+   - 手动测试
 
-4. **Document**
-   - Update relevant docs
-   - Add code comments where needed
-   - Update CHANGELOG if applicable
+4. **文档**
+   - 更新相关文档
+   - 必要时添加代码注释
+   - 更新 CHANGELOG
 
-## Commands
+## 命令
 
 ```bash
-# Run tests
-npm test  # or appropriate test command
+# 运行测试
+npm test  # 或合适的测试命令
 
-# Check build
-npm run build  # or appropriate build command
+# 检查构建
+npm run build  # 或合适的构建命令
 
-# Create PR when ready
+# 准备就绪后创建 PR
 gh pr create --title "Feature: {{FEATURE_NAME}}" --body "## Summary\n\n<description>\n\n## Changes\n\n- <change 1>\n- <change 2>"
 ```
 
-## Feature Checklist
+## 功能清单
 
-- [ ] Requirements understood
-- [ ] Implementation complete
-- [ ] Tests written and passing
-- [ ] Documentation updated
-- [ ] Ready for PR
+- [ ] 需求已明确
+- [ ] 实现已完成
+- [ ] 测试已编写并通过
+- [ ] 文档已更新
+- [ ] 准备提交 PR

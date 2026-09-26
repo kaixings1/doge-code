@@ -1,62 +1,62 @@
 ---
 name: cmux-ghostty
-description: "Ghostty submodule and GhosttyKit workflow rules for cmux. Use when modifying the ghostty submodule, rebuilding GhosttyKit.xcframework, updating the parent submodule pointer, or documenting fork conflict notes."
+description: "cmux 的 Ghostty 子模块与 GhosttyKit 工作流规则。在修改 ghostty 子模块、重新构建 GhosttyKit.xcframework、更新父仓库的子模块指针，或记录 fork 冲突备注时使用。"
 ---
 
 # cmux Ghostty
 
-## GhosttyKit builds
+## GhosttyKit 构建
 
-Always rebuild the xcframework with Release optimizations:
+始终以 Release 优化重新构建 xcframework：
 
 ```bash
 cd ghostty && zig build -Demit-xcframework=true -Dxcframework-target=universal -Doptimize=ReleaseFast
 ```
 
-## Submodule workflow
+## 子模块工作流
 
-Ghostty changes are committed in the `ghostty` submodule and pushed to the `manaflow-ai/ghostty` fork. Keep `docs/ghostty-fork.md` current with fork changes and conflict notes.
+Ghostty 的改动在 `ghostty` 子模块中提交，并推送到 `manaflow-ai/ghostty` fork。要用 fork 改动和冲突备注保持 `docs/ghostty-fork.md` 为最新。
 
-Always run `git remote -v` first and push to whichever remote is `manaflow-ai/ghostty`. `.gitmodules` sets the submodule URL to that fork, so in a normal checkout it is `origin`; older setups tracked upstream as `origin` and added the fork as `manaflow`. Substitute the right name below.
+始终先运行 `git remote -v`，然后推送到那个指向 `manaflow-ai/ghostty` 的 remote。`.gitmodules` 把子模块 URL 设为该 fork，所以在正常的检出中它就是 `origin`；较旧的配置会把上游当作 `origin`，并把该 fork 添加为 `manaflow`。下面请替换成正确的名字。
 
 ```bash
 cd ghostty
-git remote -v                  # find the manaflow-ai/ghostty remote (usually origin)
+git remote -v                  # 找到指向 manaflow-ai/ghostty 的 remote（通常是 origin）
 git checkout -b <branch>
 git add <files>
 git commit -m "..."
 git push origin <branch>
 ```
 
-To pull in changes from upstream `ghostty-org/ghostty`, add it as an explicit remote first, since no checkout has it by default:
+要从上游 `ghostty-org/ghostty` 拉取改动，先把它添加为一个显式 remote，因为默认没有任何检出会带上它：
 
 ```bash
 cd ghostty
-git remote add upstream https://github.com/ghostty-org/ghostty.git   # once
+git remote add upstream https://github.com/ghostty-org/ghostty.git   # 只做一次
 git fetch upstream
 git checkout main
 git merge upstream/main
 git push origin main
 ```
 
-Then record the new SHA in the parent repo:
+然后在父仓库中记录新的 SHA：
 
 ```bash
 cd ..
 git add ghostty
-git commit -m "Update ghostty submodule"
+git commit -m "更新 ghostty 子模块"
 ```
 
-## Submodule safety
+## 子模块安全
 
-For any submodule (ghostty, `vendor/bonsplit`, `homebrew-cmux`), push the submodule commit to its remote branch **before** committing the updated pointer in the parent repo. Never commit on a detached HEAD or a temporary branch: the parent then points at a SHA unreachable from any remote branch, and a future checkout or CI job fails to fetch it.
+对于任何子模块（ghostty、`vendor/bonsplit`、`homebrew-cmux`），都要**先把子模块提交推送到它的远端分支**，然后在父仓库中提交更新后的指针。绝不要在分离头指针或临时分支上提交：那样父仓库会指向一个从任何远端分支都不可达的 SHA，之后的检出或 CI 任务就会拉取失败。
 
-Verify the commit is reachable from the branch the pointer should track, using the remote you just pushed to:
+用你刚推送到的那个 remote，验证该提交从指针应当跟踪的分支上是可达的：
 
 ```bash
 cd ghostty && git fetch origin main && git merge-base --is-ancestor HEAD origin/main
 ```
 
-## Detailed reference
+## 详细参考
 
-- [references/submodule-safety.md](references/submodule-safety.md): the ordered safe sequence and fork documentation expectations.
+- [references/submodule-safety.md](references/submodule-safety.md)：有序的安全操作步骤，以及对 fork 文档的期望。

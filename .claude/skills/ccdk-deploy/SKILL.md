@@ -1,271 +1,257 @@
 ---
 name: deploy
-description: Test and deploy changes safely. Discovers deploy targets, runs fail-stop gates before going live, optionally shadow-deploys and swaps, then runs report-only post-deploy checks. This is a TEMPLATE — customize the commands and checks for your specific deployment pipeline.
+description: 安全地测试并部署变更。发现部署目标，在上线前运行 fail-stop 关卡，可选地影子部署并切换，然后运行仅报告的部署后检查。
 user_invocable: true
 ---
 
-# Deploy — Safe Deployment Pipeline
+# Deploy —— 安全部署流水线
 
 <!-- ============================================================
-     TEMPLATE: Customize this skill for your deployment pipeline.
-     Replace every [PLACEHOLDER] and every commented "CUSTOMIZE"
-     block with your actual commands. Delete the patterns you
-     don't use (shadow/canary is optional). The structure —
-     discover → gate → deploy → report — is the part worth keeping.
+     模板：请针对你的部署流水线自定义本技能。
+     把每一个 [PLACEHOLDER] 和每一处注释里的 CUSTOMIZE 块替换为你的真实命令。
+     删除你用不到的模式（shadow/canary 是可选的）。
+     这个结构 发现 → 关卡 → 部署 → 报告 才是值得保留的部分。
      ============================================================ -->
 
-Pipeline shape: **discover targets → fail-stop gate → deploy → report-only checks**. The default scope is the whole project; module-level targeting is optional (see Target Discovery).
+流水线形态：**发现目标 → fail-stop 关卡 → 部署 → 仅报告检查**。默认范围为整个项目；模块级定向是可选的（见目标发现）。
 
-## Input
+## 输入
 
 ```
 /deploy [target(s)...] [--all] [--skip-tests]
 ```
 
-- **`target(s)`** (optional) — specific services/functions/apps to deploy. Omit to auto-detect from the git diff.
-- **`--all`** — deploy every target affected by the current diff.
-- **`--skip-tests`** — skip the pre-deploy test gate (use only when tests were just run).
+- **`target(s)`**（可选）—— 要部署的特定服务/函数/应用。省略则从 git diff 自动检测。
+- **`--all`** —— 部署当前 diff 所影响的每一个目标。
+- **`--skip-tests`** —— 跳过部署前测试关卡（仅在刚刚跑过测试时使用）。
 
-<!-- CUSTOMIZE: list your valid deploy targets, or delete this line if your repo has a single deploy target -->
-Valid targets: `[YOUR_TARGET_1]`, `[YOUR_TARGET_2]`, ...
+<!-- 自定义：列出你合法的部署目标；若你的仓库只有一个部署目标，可删除本行 -->
+有效目标：`[YOUR_TARGET_1]`, `[YOUR_TARGET_2]`, ...
 
-## Target Discovery
+## 目标发现
 
-The pipeline finds *what* to deploy by scanning for **capability-marker files** — the file that signals "this directory is independently deployable." Discover targets instead of hardcoding them, so a newly-added target works without editing this skill.
+流水线通过扫描**能力标记文件**来确定部署**什么**，即那个表明此目录可独立部署的文件。要去发现目标，而不是硬编码它们，这样新增一个目标时无需修改本技能。
 
-<!-- CUSTOMIZE: pick the marker file(s) for your stack and the directory layout.
-     One project per repo: usually there is a single marker at the repo root,
-     and "discovery" just confirms it exists. Use module-level markers only if
-     your repo genuinely ships more than one independently-deployable unit. -->
+<!-- 自定义：为你的技术栈和目录布局选择标记文件。
+     每仓库一个项目：通常在仓库根有一个标记，而发现只是确认它存在。
+     仅当你的仓库确实发布多个可独立部署单元时才使用模块级标记。 -->
 ```bash
-# Scan for the capability marker. Default to the whole project (repo root).
-# Examples of marker files (pick ONE for your stack):
-#   <!-- e.g. fly.toml | vercel.json | wrangler.toml | serverless.yml
-#         | Dockerfile | Procfile | package.json with a "deploy" script -->
+# 扫描能力标记。默认取整个项目（仓库根）。
+# 标记文件示例（为你的技术栈选一个）：
+#   <!-- 例如 fly.toml | vercel.json | wrangler.toml | serverless.yml
+#         | Dockerfile | Procfile | 带 deploy 脚本的 package.json -->
 find . -maxdepth 2 -name '[YOUR_MARKER_FILE]' -not -path '*/node_modules/*'
 ```
 
-If a marker is found at the repo root → the deploy target is the whole project (the common case). If markers exist in multiple subdirectories → each is an independent target; map the diff to the affected one(s).
+如果在仓库根找到标记，则部署目标就是整个项目（常见情况）。如果多个子目录中都存在标记，则每个都是独立目标；把 diff 映射到受影响的目标。
 
-### Resolving deploy config (fallback hierarchy)
+### 解析部署配置（回退层级）
 
-Read deploy config (app id, account/project identifier, region — whatever your provider needs) from the **first** source that exists:
+从**第一个**存在的来源读取部署配置（应用 id、账号/项目标识、区域，即你的提供方需要的任何信息）：
 
-1. **Committed config** — a tracked file checked into the repo (canonical, worktree-safe).
-   <!-- CUSTOMIZE: e.g. fly.toml `app =`, vercel.json, a `.deploy-target` file you commit -->
-2. **CLI-managed temp/state** — whatever your provider's CLI writes after `link`/`login` (often gitignored).
-   <!-- CUSTOMIZE: e.g. `.vercel/project.json`, a CLI cache under the project's temp dir -->
-3. **Heuristic** — derive from a convention (directory name, repo name, an env var).
-   <!-- CUSTOMIZE: e.g. app name == repo name; region from an env var -->
+1. **已提交配置** —— 签入仓库的受跟踪文件（规范，对 worktree 安全）。
+   <!-- 自定义：例如 fly.toml 的 app =、vercel.json、你提交的 .deploy-target 文件 -->
+2. **CLI 管理的临时/状态** —— 你的提供方 CLI 在 link/login 之后写入的内容（常被 gitignore）。
+   <!-- 自定义：例如 .vercel/project.json、项目临时目录下的 CLI 缓存 -->
+3. **启发式** —— 按约定推导（目录名、仓库名、某个环境变量）。
+   <!-- 自定义：例如应用名等于仓库名；区域取自环境变量 -->
 
-If none resolve, STOP with an actionable message:
+如果都无法解析，带着可操作的消息 STOP：
 `No deploy config for [target]. Run '[YOUR_LINK_COMMAND]', or create '[YOUR_COMMITTED_CONFIG_FILE]'.`
 
-### Detect what changed
+### 检测改了什么
 
-If no target was passed explicitly, map the diff to targets:
+如果没有显式传入目标，就把 diff 映射到目标：
 
 ```bash
 git diff --name-only HEAD
 git diff --name-only --cached
 ```
 
-<!-- CUSTOMIZE: map changed paths → affected target(s). With a single target this
-     reduces to "is anything deployable changed?" -->
+<!-- 自定义：把变更路径映射到受影响的目标。若只有单个目标，这就简化为是否有可部署的东西变了。 -->
 
-## Shared-code dependency awareness
+## 共享代码依赖感知
 
-If the diff touches shared/library code that other deployable units import, those importers must be redeployed too — they bundle the changed code.
+如果 diff 触及了其他可部署单元所导入的共享/库代码，那些导入方也必须重新部署，因为它们把变更的代码打包进去了。
 
-<!-- CUSTOMIZE: point this at your shared dir and your import syntax.
-     The pattern: find direct importers, then recurse once for transitive importers. -->
+<!-- 自定义：把它指向你的共享目录与导入语法。模式是：先找直接导入方，再为传递导入方递归一次。 -->
 ```bash
-# Direct importers of the changed shared file:
+# 变更共享文件的直接导入方：
 grep -rl "[CHANGED_SHARED_PATH]" [YOUR_SOURCE_GLOB]
 
-# Transitive: a shared file that imports the changed shared file is itself
-# "changed" — repeat the grep for it, then add its importers. Recurse until
-# the set stops growing (usually one extra pass is enough).
+# 传递依赖：一个导入了变更共享文件的共享文件本身也是已变更的，对它重复 grep，然后加入它的导入方。递归直到集合不再增长（通常多跑一轮就够了）。
 ```
 
-Each affected target then runs through the full deploy pipeline below.
+然后每个受影响的目标都走下面完整的部署流水线。
 
-## Pipeline
+## 流水线
 
-### Step 1 — Preflight
+### 步骤 1 —— 预检
 
-1. Resolve target(s), the deploy list, and deploy config.
-2. Print a summary so the operator can sanity-check before anything ships:
+1. 解析目标、部署清单与部署配置。
+2. 打印一份摘要，以便操作者在任何东西发出之前先做健全性检查：
    ```
-   Repo:    <path>
-   Branch:  <name> @ <short-sha>
-   Targets: <list>
+   仓库：   <path>
+   分支：   <name> @ <short-sha>
+   目标：   <list>
    ```
-   <!-- CUSTOMIZE: if you work on feature branches, also show `git log main..HEAD --oneline` -->
-3. **Classify each target as new vs. existing** in production (see Step 3 — the two branches differ).
-   <!-- CUSTOMIZE: how to ask your provider "does this already exist live?"
-        e.g. `flyctl status`, `vercel ls`, `wrangler deployments list`, an API call -->
+   <!-- 自定义：如果你在特性分支上工作，也显示 git log main..HEAD --oneline -->
+3. **把每个目标分类为生产环境中的新增或已存在**（见步骤 3，这两个分支不同）。
+   <!-- 自定义：如何向你的提供方询问这个是否已在线上存在，例如 flyctl status、vercel ls、wrangler deployments list、一次 API 调用 -->
 
-### Step 2 — Pre-deploy gate (FAIL-STOP)
+### 步骤 2 —— 部署前关卡（FAIL-STOP）
 
-These run **before** anything goes live. A failure here means **nothing is deployed** — the live target is untouched.
+这些在任何东西上线之前运行。这里失败意味着什么都不部署，线上目标不受影响。
 
-<!-- CUSTOMIZE: replace with your test command. Discover it if you can
-     (e.g. a "test" script in package.json) and skip cleanly if none exists. -->
+<!-- 自定义：替换为你的测试命令。尽可能去发现它（例如 package.json 里的 test 脚本）；若不存在则干净地跳过。 -->
 ```bash
 [YOUR_TEST_COMMAND]
 ```
 
-- Non-zero exit → **STOP**. Report which suite failed, pass/fail counts. Deploy nothing.
-- Skipped only when `--skip-tests` is set or no test command is discovered.
+- 非零退出 → STOP。报告哪个套件失败、通过/失败计数。不部署任何东西。
+- 仅在设置了 --skip-tests 或未发现测试命令时跳过。
 
-### Step 3 — Deploy
+### 步骤 3 —— 部署
 
-Deploy targets **one at a time**. If one fails, stop and report — do not continue to the remaining targets.
+一次一个地部署目标。如果某个失败，停止并报告，不要继续处理剩下的目标。
 
-#### 3a. New target (does not yet exist in production)
+#### 3a. 新目标（生产环境中尚不存在）
 
-Nothing live to protect, so deploy directly:
+没有线上内容需要保护，所以直接部署：
 
 ```bash
 [YOUR_DEPLOY_COMMAND] [target]
 ```
 
-- Then run the **smoke probe** (see below). A hard failure (target won't boot / not routable) → STOP and report. There is no previous version to fall back to; the operator inspects.
+- 然后运行冒烟探针（见下）。硬失败（目标无法启动或不可路由）→ STOP 并报告。没有可回退的上一版本；由操作者检查。
 
-#### 3b. Existing target — optional Shadow/Canary, then swap
+#### 3b. 已存在目标 —— 可选的 Shadow/Canary，然后切换
 
-<!-- OPTIONAL PATTERN. Skip this whole sub-step if your provider already does
-     atomic, instant rollback (most PaaS do — keep a previous-release id instead,
-     see "Rollback" below). Use shadow/canary when a bad deploy would otherwise
-     be served to users before you can verify it. -->
+<!-- 可选模式。如果你的提供方已经支持原子的即时回滚，可跳过整个子步骤（多数 PaaS 都支持，改为保留上一个 release id，见下面的回滚）。
+     当一次糟糕的部署会在你验证之前就被提供给用户时，才使用 shadow/canary。 -->
 
-Deploy a **staging variant** alongside the live one, probe it, and only swap if it passes. The live target keeps serving the old code until the swap.
+在存活版本旁部署一个预发布变体，对其进行探测，只有它通过才切换。在切换之前，线上目标持续提供旧代码。
 
-1. **Shadow-deploy** a parallel variant (a separate slug / preview URL / canary slice):
+1. **影子部署**一个并行变体（独立的 slug、预览 URL 或 canary 切片）：
    ```bash
-   [YOUR_SHADOW_DEPLOY_COMMAND]      # deploy as <target>-shadow / a preview / N% canary
+   [YOUR_SHADOW_DEPLOY_COMMAND]      # 部署为 <target>-shadow / 一个预览 / N% canary
    ```
-   <!-- CUSTOMIZE per provider, e.g.:
-        Vercel:      vercel deploy            (preview URL, not --prod)
+   <!-- CUSTOMIZE：按提供方，例如：
+        Vercel:      vercel deploy            （预览 URL，而非 --prod）
         Fly.io:      flyctl deploy --strategy canary
-        AWS Lambda:  publish a new version + weighted alias
-        Cloudflare:  wrangler deploy --name <target>-shadow   (separate Worker) -->
-   - Shadow deploy fails → run **Cleanup helper** on the shadow, STOP. Live target untouched.
+        AWS Lambda:  发布一个新版本 + 加权别名
+        Cloudflare:  wrangler deploy --name <target>-shadow   （独立的 Worker） -->
+   - 影子部署失败 → 对影子运行清理辅助，STOP。线上目标不受影响。
 
-2. **Smoke-probe gate (FAIL-STOP)** — probe the shadow URL:
+2. **冒烟探针关卡（FAIL-STOP）** —— 探测影子 URL：
    ```bash
    [YOUR_SHADOW_SMOKE_PROBE]
    ```
-   - Fail → run **Cleanup helper** on the shadow, STOP. Live target untouched.
+   - 失败 → 对影子运行清理辅助，STOP。线上目标不受影响。
 
-3. **Swap** — promote the verified bundle to the live target:
+3. **切换** —— 把已验证的包体提升为线上目标：
    ```bash
-   [YOUR_SWAP_COMMAND]               # promote shadow → live / shift 100% traffic
+   [YOUR_SWAP_COMMAND]               # 把影子提升为线上 / 把 100% 流量切过去
    ```
-   <!-- CUSTOMIZE per provider, e.g.:
+   <!-- CUSTOMIZE：按提供方，例如：
         Vercel:      vercel promote <deployment-url>
-        Fly.io:      shift traffic to the canary release
-        AWS Lambda:  point the alias at the new version
-        Cloudflare:  deploy the verified bundle to the live Worker name -->
-   - Swap fails → see **Retry-once** in Error handling. The live target may be mid-state; do NOT touch git.
+        Fly.io:      把流量切到 canary 版本
+        AWS Lambda:  把别名指向新版本
+        Cloudflare:  把已验证的包体部署到线上的 Worker 名称 -->
+   - 切换失败 → 见错误处理中的重试一次。线上目标可能处于中间状态；不要动 git。
 
-4. **Post-swap probe (REPORT-ONLY)** — probe the live URL. See Step 4. On failure, **report and keep the shadow live** for inspection — do not roll back automatically.
+4. **切换后探针（仅报告）** —— 探测线上 URL。见步骤 4。失败时报告并保留影子存活以供检查，不要自动回滚。
 
-5. **Cleanup** — on success, remove the shadow (see Cleanup helper).
+5. **清理** —— 成功后移除影子（见清理辅助）。
 
-### Step 4 — Post-deploy verification (REPORT-ONLY)
+### 步骤 4 —— 部署后验证（仅报告）
 
-These run **after** the target is live. They **cannot** un-deploy — by definition the new code is already serving. So they are **report-only**: surface the result, never trigger a destructive auto-rollback.
+这些在目标上线之后运行。它们不能撤销部署，按定义新代码已经在提供服务。所以它们是仅报告的：呈现结果，绝不触发破坏性的自动回滚。
 
-<!-- CUSTOMIZE: e2e / smoke / health checks against the LIVE target -->
+<!-- 自定义：针对线上目标的 e2e、冒烟或健康检查 -->
 ```bash
 [YOUR_POST_DEPLOY_CHECK]
 ```
 
-- Pass → report success.
-- Fail → **re-run once** (post-deploy checks are flaky: cold starts, propagation lag, rate limits). Still failing → **report it**. If a shadow is still live (3b), **keep it live** for the operator to inspect. **Do NOT** auto-rollback via git or redeploy of old code.
+- 通过 → 报告成功。
+- 失败 → 重跑一次（部署后检查本来就易抖动：冷启动、传播延迟、限流）。仍然失败 → 报告它。若影子仍存活（3b），保持它存活以供操作者检查。绝不通过 git 或重新部署旧代码来自动回滚。
 
-> The split that matters: **gates fail-stop before the swap; post-deploy checks only report after it.** A check that runs after code is live can warn but must never silently mutate the deployment or the repo.
+> 关键的区分是：关卡在切换前 fail-stop；部署后检查只在切换后报告。在代码上线之后运行的检查可以警告，但绝不能静默地改动部署或仓库。
 
-## Smoke probe semantics
+## 冒烟探针语义
 
-A minimal "is it alive and routable?" check — no app secrets or auth needed.
+一个最小化的存活且可路由检查，不需要应用密钥或认证。
 
-<!-- CUSTOMIZE: replace the URL; adjust which codes mean PASS for your auth setup -->
+<!-- 自定义：替换 URL；按你的认证配置调整哪些状态码算 PASS -->
 ```bash
 curl -s -o /dev/null -w "%{http_code}" "[YOUR_TARGET_URL]"
 ```
 
-- **5xx** — crashed on boot or dispatch. **FAIL.**
-- **404** — the router doesn't know this target (bad deploy / wrong name). **FAIL.**
-- **401 / 403** — auth middleware rejected the unauthenticated probe, but the target is alive. **PASS.**
-- **2xx / other 4xx** — the target responded. **PASS.**
+- **5xx** —— 启动或分发时崩溃。FAIL。
+- **404** —— 路由器不认识这个目标（部署错误或名称错误）。FAIL。
+- **401 / 403** —— 认证中间件拒绝了未认证的探针，但目标还活着。PASS。
+- **2xx 或其他 4xx** —— 目标有响应。PASS。
 
-## Cleanup helper
+## 清理辅助
 
-Remove a shadow/canary variant after a swap, or after a failed gate. Safe to run idempotently; cleanup failures are reported but never block an already-completed swap.
+在切换之后、或某次关卡失败之后移除一个 shadow/canary 变体。可安全地幂等运行；清理失败会被报告，但绝不会阻塞一次已完成的切换。
 
 ```bash
-# Remote: delete the shadow deployment.
+# 远程：删除影子部署。
 [YOUR_SHADOW_DELETE_COMMAND]
 
-# Local (if your shadow created files): note that `rm -rf` may be permission-gated.
-# A surgical enumerate-then-remove avoids the prompt:
+# 本地（若你的影子创建了文件）：注意 rm -rf 可能受权限拦截。先枚举再删除的外科手术式做法可避免该提示：
 find [SHADOW_DIR] -depth -type f -delete
 find [SHADOW_DIR] -depth -type d -empty -delete
 ```
 
-## Error handling
+## 错误处理
 
-- **Pre-deploy test failure** → nothing deployed; report.
-- **Shadow deploy failure** → run Cleanup helper on the shadow, stop; live target untouched.
-- **Gate (smoke-probe) failure** → run Cleanup helper on the shadow, stop; live target untouched.
-- **Swap failure (Retry-once)** → swaps are normally atomic but can hit a transient error. Re-run the swap command **once**. If it fails again, **report** — the live target may be in an unknown state (old code still serving, or partially updated). Do NOT mutate git state. Operator inspects.
-- **Post-swap / post-deploy check failure** → **report**. Keep the shadow live (don't clean it up) so the operator can compare. Do NOT auto-rollback.
+- **部署前测试失败** → 不部署任何东西；报告。
+- **影子部署失败** → 对影子运行清理辅助，停止；线上目标不受影响。
+- **关卡（冒烟探针）失败** → 对影子运行清理辅助，停止；线上目标不受影响。
+- **切换失败（重试一次）** → 切换通常是原子的，但可能撞上瞬时错误。重跑一次切换命令。若再次失败，报告，因为线上目标可能处于未知状态（旧代码仍在提供服务，或部分已更新）。不要改动 git 状态。由操作者检查。
+- **切换后或部署后检查失败** → 报告。保持影子存活（不要清理它），以便操作者作对比。不要自动回滚。
 
-## Rollback
+## 回滚
 
-<!-- IMPORTANT: prefer your provider's native, atomic rollback. Almost every host
-     keeps previous immutable releases you can re-point traffic to instantly. That
-     is far safer than rebuilding old code from git. Capture the previous release
-     id at deploy time so rollback is a one-liner. -->
+<!-- 重要：优先使用你提供方的原生原子回滚。几乎每个托管平台都保留着可以即时把流量重新指向的不可变先前版本。这比从 git 重建旧代码安全得多。在部署时捕获上一个 release id，这样回滚就是一行命令。 -->
 ```bash
-[YOUR_NATIVE_ROLLBACK_COMMAND]    # re-point traffic to the previous good release
+[YOUR_NATIVE_ROLLBACK_COMMAND]    # 把流量重新指向上一个良好版本
 ```
-<!-- CUSTOMIZE per provider, e.g.:
+<!-- CUSTOMIZE：按提供方，例如：
      Vercel:      vercel rollback <previous-deployment-url>
      Fly.io:      flyctl releases list  →  flyctl deploy --image <previous-image>
-     AWS Lambda:  point the alias back at the previous version
+     AWS Lambda:  把别名指回上一个版本
      Cloudflare:  wrangler rollback [<version-id>] -->
 
-> Do **not** rebuild old code with `git checkout` and redeploy as a rollback path. It's destructive (can clobber working-tree state), slow, and may not reproduce the exact bytes that were live. The shadow-then-swap flow above already gives you the real safety net: **if anything fails before the swap, the live target was never touched** — "rollback" is simply "don't swap."
+> 不要用 git checkout 重建旧代码再重新部署，把它当作回滚路径。它是破坏性的（可能覆盖工作区状态），很慢，且未必能复现当时线上那一份确切字节。上面的影子后切换流程已经给了你真正的安全网：任何在切换之前发生的失败，线上目标都没被碰过，回滚其实就是不切换。
 
-## Step — Report
+## 步骤 —— 报告
 
 ```
-Deploy Complete
+部署完成
 ───────────────
-Targets: <target> @ <deploy-id>
-Branch:  <branch> @ <sha>
-Tests:   <X/X passed | skipped (none found) | skipped (--skip-tests)>
-Results:
-  <target1>: shadow → gate PASS → swap → post-check OK → cleaned
-  <target2>: new → deploy → probe OK
+目标：   <target> @ <deploy-id>
+分支：   <branch> @ <sha>
+测试：   <X/X 通过 | 已跳过（未找到） | 已跳过（--skip-tests）>
+结果：
+  <target1>: 影子 → 关卡 PASS → 切换 → 部署后检查 OK → 已清理
+  <target2>: 新增 → 部署 → 探针 OK
 ```
 
-## Skip conditions
+## 跳过条件
 
-Do NOT deploy for:
-- Documentation-only changes (`*.md`)
-- Client/frontend-only changes when deploying a backend (and vice-versa)
-- Test-only changes (unless `--all` is explicit)
-- Config that doesn't require redeploy
+以下情况不要部署：
+- 仅文档的变更（*.md）
+- 在部署后端时仅客户端或前端的变更（反之亦然）
+- 仅测试的变更（除非显式指定 --all）
+- 不需要重新部署的配置
 
-## Notes
+## 说明
 
-1. **Gates are the safety net** — the pre-deploy test gate and the shadow smoke-probe both fail-stop *before* the swap. If anything fails there, the live target was never touched.
-2. **Post-deploy checks only report** — once code is live they can't un-deploy it, so they warn but never auto-rollback.
-3. **Shadow/canary is optional** — use it when a bad deploy would reach users before you can verify. If your host already does atomic instant rollback, you may not need it.
-4. **Rollback should be native and atomic** — re-point traffic to a previous release; never rebuild old code from git.
-5. **Every fresh worktree that deploys** needs the committed deploy-config file (Target Discovery #1), or it falls back to CLI state / heuristic.
+1. **关卡就是安全网** —— 部署前测试关卡与影子冒烟探针都在切换之前 fail-stop。若在此处有任何失败，线上目标都没被碰过。
+2. **部署后检查只报告** —— 一旦代码上线，它们无法撤销部署，所以只警告，绝不自动回滚。
+3. **Shadow/canary 是可选的** —— 当一次糟糕的部署会在你验证之前触达用户时才用它。若你的托管平台已支持原子即时回滚，你可能不需要它。
+4. **回滚应当是原生的、原子的** —— 把流量重新指向上一个版本；绝不要从 git 重建旧代码。
+5. **每个要部署的全新 worktree** 都需要已提交的部署配置文件（目标发现第 1 条），否则会回退到 CLI 状态或启发式。

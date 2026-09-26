@@ -1,20 +1,20 @@
 ---
 name: review-work
-description: Review uncommitted code changes using parallel Claude sub-agents (Bug Hunter, Rules Auditor, optional Architect). The invoking agent triages the diff by file path into impacted modules and risk surfaces, then spawns reviewers scaled to the change. Each reviewer self-primes via /prime, verifies any API/library claim via Context7 (mandatory — unverified claims are auto-discarded), and reports an intent verdict against progress.md before its findings. Catches bugs, security issues, CLAUDE.md compliance, and test-coverage gaps. Skip for trivial typos/formatting. Use after substantive implementation work, or when the Stop hook requests it. Also invocable manually with /review-work.
+description: 用并行 Claude 子代理审查未提交的代码变更。可发现 bug、安全问题、CLAUDE.md 合规性与测试覆盖缺口。
 user_invocable: true
 ---
 
-# Review Work — Automated Code Review
+# Review Work —— 自动化代码审查
 
-Review uncommitted code changes using **Claude sub-agents** as independent reviewers. The invoking agent (you) triages the diff and decides who reviews; reviewers self-prime via `/prime`, verify API/library claims via Context7, and report against `progress.md` intent.
+用 **Claude 子代理**作为独立审查者来审查未提交的代码变更。调用方（你）对 diff 做分诊并决定由谁审查；审查者通过 `/prime` 自行预热，通过 Context7 核验 API/库主张，并针对 `progress.md` 的意图作出报告。
 
-This skill is run **by an AI**, not by a human — use judgment about the change you just made. Don't apply a fixed rubric mechanically. Zero external dependencies: reviewers are Claude sub-agents.
+本技能**由 AI 运行**，而非人类 —— 请对你刚做出的改动运用判断力。不要机械套用固定评分标准。零外部依赖：审查者就是 Claude 子代理。
 
-## Process
+## 流程
 
-### Step 1: Capture the Diff (+ Tests)
+### 步骤 1：捕获 Diff（含测试）
 
-Run these and save the output:
+运行以下命令并保存输出：
 
 ```bash
 git diff --stat HEAD
@@ -24,256 +24,236 @@ git diff --stat HEAD
 git diff HEAD
 ```
 
-`git diff HEAD` captures **uncommitted** work — the normal pre-commit flow. If the work was already committed (e.g. direct-to-`main`), review the last commit instead: `git diff HEAD~1 HEAD` (or `git show HEAD`).
+`git diff HEAD` 捕获的是**未提交**的工作，这是常规的提交前流程。若工作已经提交（例如直接提交到 main），改为审查最后一次提交：`git diff HEAD~1 HEAD`（或 `git show HEAD`）。
 
-If the project has a test command configured and relevant source changed, run it and capture the output:
+如果项目配置了测试命令且相关源码有变更，运行它并捕获输出：
 
 ```bash
-# Use whatever test/build command is appropriate for this project's stack.
-# e.g. npm test · pytest · cargo test · go test ./... · the test_command in
-# hooks/config/pipeline.json if set.
+# 使用适合本项目技术栈的测试/构建命令。
+# 例如 npm test、pytest、cargo test、go test ./...，或在 hooks/config/pipeline.json 中设置的 test_command。
 ```
 
-Test/build failures are the #1 finding for every reviewer — include the failure output in each reviewer's prompt verbatim.
+测试/构建失败是每个审查者的头号发现项 —— 请把失败输出原样包含进每个审查者的提示中。
 
-### Step 2: Triage
+### 步骤 2：分诊
 
-Look at the changed file paths and produce two lists.
+查看变更的文件路径，产出两份清单。
 
-**Impacted modules** — by default the whole project is one scope (one project per repo). Only split into modules/components when the diff clearly spans distinct top-level areas (e.g. `api/` vs `web/`, `backend/` vs `frontend/`). If it's all one area, that's a single scope — don't manufacture splits.
+**受影响的模块** —— 默认情况下整个项目就是一个范围（一个仓库一个项目）。仅当 diff 明显横跨不同的顶层区域时才拆分为模块/组件（例如 api/ 与 web/、backend/ 与 frontend/）。如果都在同一区域，那就是单一范围，不要人为制造拆分。
 
-**Risk surfaces** — flag the presence of any of these generic surfaces. For each one that fires, inject the matching focus-area line into reviewer prompts in Step 4:
+**风险面** —— 标记是否存在以下任一通用风险面。对每一个命中的风险面，在步骤 4 把对应的关注点行注入审查者提示：
 
-| Surface | Inject this focus-area line |
+| 风险面 | 注入此关注点行 |
 |---|---|
-| Authentication / authorization | "Auth code touched — check for privilege escalation, missing access checks, and tokens/sessions handled correctly." |
-| Database / schema migration | "Schema migration touched — check locking, backfills, NOT NULL on existing rows, and that access rules/constraints are preserved." |
-| Configuration / secrets | "Config or secrets touched — confirm no secrets are hardcoded or logged, and environment-specific values aren't baked into source." |
-| Dependency manifest | "Dependency manifest changed — confirm new deps are pinned, sourced legitimately, and not duplicating existing functionality." |
-| Critical-path / user-facing flow | "Critical-path or user-facing flow touched — check error handling, input validation at boundaries, and that the happy path plus failure modes are covered." |
+| 认证/授权 | "改动触及认证代码 —— 检查权限提升、缺失的访问校验，以及令牌/会话是否被正确处理。" |
+| 数据库/结构迁移 | "改动触及结构迁移 —— 检查加锁、回填、既有行上的 NOT NULL，以及访问规则/约束是否被保留。" |
+| 配置/密钥 | "改动触及配置或密钥 —— 确认没有硬编码或记录密钥，且环境专属值没有被固化进源码。" |
+| 依赖清单 | "依赖清单发生变更 —— 确认新依赖已锁定版本、来源合法，且没有与既有功能重复。" |
+| 关键路径/面向用户的流程 | "改动触及关键路径或面向用户的流程 —— 检查错误处理、边界处的输入校验，以及正常路径与失败模式是否都被覆盖。" |
+如果没有任何风险面命中，就完全省略关注点章节。
 
-Omit the focus-areas section entirely if no surfaces fire.
+### 步骤 3：决定审查者 —— 判断准则
 
-### Step 3: Decide Reviewers — Judgment Rubric
+当改动确实琐碎时，**完全跳过本技能**：
+- 仅注释 / 仅格式 / 仅拼写
+- 无逻辑或契约影响的单行修复
+- 不引用代码的纯文档编辑
 
-**Skip the skill entirely** when the change is genuinely trivial:
-- Comment-only / formatting / typo-only
-- Single-line fix with no logic or contract effect
-- Pure doc edits with no code references
+如果跳过，向用户说明一次：改动琐碎，跳过审查。然后继续。
 
-If you skip, tell the user once: "Change is trivial, skipping review." Then continue.
+对非琐碎的改动，按 diff 规模决定审查者数量：
 
-For non-trivial changes, scale reviewers to the diff:
+- **变更少于约 50 行 → 一名审查者**，使用 Bug Hunter + Rules Auditor 合并清单（步骤 4 的单一审查者模板）。
+- **约 50 行以上，或 2 个以上模块 → 并行专家**：一名 **Bug Hunter**（正确性 + 安全性）和一名 **Rules Auditor**（项目规则 + 测试）。当 diff 可拆为不同模块时，给每位专家其所覆盖模块的范围说明。
 
-- **Under ~50 lines changed → one reviewer** with the combined Bug Hunter + Rules Auditor checklist (Step 4, single-reviewer template).
-- **~50+ lines, or 2+ modules → parallel specialists**: a **Bug Hunter** (correctness + security) and a **Rules Auditor** (project rules + tests). When the diff splits into distinct modules, give each specialist the scope note for the modules it covers.
+当以下任一条件成立时，**增加一名可选的 Architect 审查者**：
+- 变更横跨 2 个以上模块/组件
+- 引入了新的抽象或 API 契约（不只是配置调整）
+- 重构/迁移未完成，或文件被重命名/移动
+- diff 显示范围蔓延 —— 超出了当前任务所需
 
-**Add an OPTIONAL Architect reviewer** when ANY of these is true:
-- Changes span 2+ modules/components
-- New abstraction or API contract introduced (not just a config tweak)
-- A refactor / migration is left unfinished, or files were renamed/moved
-- The diff shows scope creep — more than the active task called for
+大多数改动只需 1 名审查者。较大或跨模块的改动用 2 名。Architect 仅在改动具有设计意义时才出现 —— 不要预先生成它。
 
-Most changes need 1 reviewer. Larger or multi-module changes get 2. The Architect appears only when the change is design-significant — don't pre-spawn it.
+### 步骤 4：派生审查者（并行，单条消息）
 
-### Step 4: Spawn Reviewers (Parallel, Single Message)
+使用 **Agent 工具**，设 `subagent_type: "Explore"`（只读）。把所有审查者放在**一条消息**中发送，让它们并行运行。角色内联即可 —— 不需要自定义子代理文件。
 
-Use the **Agent tool** with `subagent_type: "Explore"` (read-only). Send all reviewers in a **single message** so they run in parallel. Inline the role — no custom sub-agent files needed.
-
-Every reviewer prompt includes these shared blocks. Define them once, paste into each template:
+每个审查者提示都包含以下共享块。定义一次，粘贴进每个模板：
 
 ```
-## Required reading (self-prime)
-Before reviewing, run /prime — read .claude/commands/prime.md and follow its
-file-loading instructions to load this project's core docs (spec,
-project-structure, progress). Skip the acknowledgement step — load the files,
-then review.
+## 必读内容（自行预热）
+审查之前运行 /prime —— 阅读 .claude/commands/prime.md 并遵循其文件加载指示，
+加载本项目的核心文档（spec、project-structure、progress）。跳过确认步骤 —— 直接加载文件，然后审查。
 
-## The diff
-{full `git diff HEAD` output}
+## diff
+{完整的 git diff HEAD 输出}
 
-## Test results
-{Step 1 test/build output, or "n/a — no testable files in this diff"}
+## 测试结果
+{步骤 1 的测试/构建输出，或 n/a，即此 diff 中没有可测试的文件}
 
-## Focus areas flagged by triage
-{relevant lines from the Step 2 catalogue; omit this section if none fired}
+## 分诊标记的关注点
+{步骤 2 目录中的相关行；若没有任何命中则省略本节}
 
-## Mandatory verification (Context7)
-If you flag a finding about an API signature, library usage, deprecation, or
-SDK version behavior, you MUST first call the Context7 query-docs tool to
-verify it. If that tool isn't directly callable, load it via ToolSearch first
-(`select:mcp__context7__query-docs`) — don't skip verification just because the
-tool wasn't preloaded. Tag every finding:
-- [verified]   — Context7 confirmed the issue.
-- [unverified] — you couldn't or didn't check. AUTO-DISCARDED by the judge.
-                 Don't bother reporting these.
-- [n/a]        — finding is not an API/library claim (most bugs and rules).
+## 强制核验（Context7）
+如果你就 API 签名、库用法、弃用或 SDK 版本行为标记一个发现项，你**必须**先调用 Context7
+query-docs 工具来核验它。若该工具不能直接调用，先通过 ToolSearch 加载它
+（select:mcp__context7__query-docs）—— 不要仅因工具未预加载就跳过核验。为每条发现项打标签：
+- [verified]   —— Context7 已确认该问题。
+- [unverified] —— 你无法核验或未核验。会被裁判自动丢弃，不必报告这些。
+- [n/a]        —— 该发现项不属于 API/库主张（多数 bug 与规则如此）。
 
-## Intent verification (required, output FIRST)
-Before your findings, output exactly one line:
+## 意图核验（必需，首先输出）
+在给出发现项之前，恰好输出一行：
 
-    INTENT: [yes | partial | no | n/a] — <one-line reason referencing progress.md>
+    INTENT: [yes | partial | no | n/a] —— <引用 progress.md 的单行理由>
 
-- yes     — diff fulfills the active task in docs/ai-context/progress.md.
-- partial — fulfills part of it, or fulfills it but adds unrelated changes (scope creep).
-- no      — diff doesn't match anything in progress.md's active scope.
-- n/a     — there is no progress.md, or no active task to verify against.
+- yes     —— diff 完成了 docs/ai-context/progress.md 中的当前任务。
+- partial —— 只完成了一部分，或虽完成但夹带了无关改动（范围蔓延）。
+- no      —— diff 与 progress.md 当前范围中的任何任务都不匹配。
+- n/a     —— 不存在 progress.md，或没有可供核验的当前任务。
 
-## Output format
-INTENT line first, then one finding per line:
+## 输出格式
+先输出 INTENT 行，然后每行一个发现项：
 
-    [high|medium|low] [verified|unverified|n/a] path/to/file:line — Description. Reason: <why this is a problem>.
+    [high|medium|low] [verified|unverified|n/a] path/to/file:line —— 描述。理由：<为何这是问题>。
 
-Check ONLY for real issues. Don't nitpick style, naming, or formatting unless
-it causes a bug. If a category is clean, omit it. Don't invent issues to seem
-thorough — only report what you can point to in the diff.
+只检查真实的问题。不要挑剔风格、命名或格式，除非它会导致 bug。若某个类别没有问题，就省略它。
+不要为了显得周全而编造问题，只报告你能在 diff 中指出的内容。
 ```
 
 ---
 
-#### Template: Single Reviewer (small diffs)
+#### 模板：单一审查者（小 diff）
 
 ```
-You are a code reviewer for an uncommitted-diff code review. Cover both
-correctness/security AND project-rule/test compliance.
+你是未提交 diff 代码审查的审查者。同时覆盖正确性/安全性以及项目规则/测试合规性。
 
-{shared blocks}
+{共享块}
 
-## Checklist
-**BUGS** — Logic errors, null/undefined handling, off-by-one, race conditions,
-async/await mistakes, state-machine violations, wrong return types, unreachable
-code, missing error handling, incorrect boolean logic.
+## 检查清单
+**缺陷** —— 逻辑错误、null/undefined 处理、差一错误、竞态条件、
+async/await 误用、状态机违规、错误的返回类型、不可达代码、
+缺失的错误处理、错误的布尔逻辑。
 
-**SECURITY** — Secrets or PII logged or exposed, missing input validation at
-system boundaries, internals leaked in error messages, hardcoded secrets,
-injection vulnerabilities, broken access checks.
+**安全** —— 密钥或 PII 被记录或暴露、系统边界处缺失输入校验、
+错误消息中泄露内部信息、硬编码密钥、
+注入漏洞、失效的访问校验。
 
-**PROJECT RULES** — Violations of the loaded CLAUDE.md and ai-context docs:
-architecture decisions, coding conventions, wrong storage/transport layer, any
-documented project-specific constraint.
+**项目规则** —— 违反已加载的 CLAUDE.md 与 ai-context 文档：架构决策、编码约定、
+错误的存储/传输层、任何记录在案的项目专属约束。
 
-**TESTS** — If this touches shared modules or critical paths, do corresponding
-tests exist? Are assertions structural rather than exact-string matches?
+**测试** —— 若改动触及共享模块或关键路径，是否存在对应的测试？
+断言是否是结构化的，而非精确字符串匹配？
 ```
 
 ---
 
-#### Template: Bug Hunter (correctness + security)
+#### 模板：Bug Hunter（正确性 + 安全性）
 
 ```
-You are the Bug Hunter for an uncommitted-diff code review. Your ONLY job is
-logic errors and security vulnerabilities. Ignore style, naming, and project
-rules — the Rules Auditor handles those.
+你是未提交 diff 代码审查中的 Bug Hunter。你**唯一**的职责是逻辑错误与安全漏洞。
+忽略风格、命名与项目规则 —— 那些由 Rules Auditor 负责。
 
-{shared blocks}
+{共享块}
 
-## Checklist
-**BUGS** — Logic errors, null/undefined handling, off-by-one, race conditions,
-async/await mistakes, state-machine violations, wrong return types, unreachable
-code, missing error handling, incorrect boolean logic.
+## 检查清单
+**缺陷** —— 逻辑错误、null/undefined 处理、差一错误、竞态条件、
+async/await 误用、状态机违规、错误的返回类型、不可达代码、
+缺失的错误处理、错误的布尔逻辑。
 
-**SECURITY** — Secrets or PII logged or exposed, missing input validation at
-system boundaries, internals leaked in error messages, hardcoded secrets,
-injection vulnerabilities, unsafe deserialization, broken access checks.
-```
-
----
-
-#### Template: Rules Auditor (project rules + test coverage)
-
-```
-You are the Rules Auditor for an uncommitted-diff code review. Your ONLY job is
-compliance with this project's rules and test coverage. Ignore general
-correctness and security — the Bug Hunter handles those.
-
-{shared blocks}
-
-## Checklist
-**PROJECT RULES** — Violations of the loaded CLAUDE.md and ai-context docs:
-architecture decisions, coding conventions, wrong storage/transport layer, any
-documented project-specific constraint.
-
-**TESTS** — If this touches shared modules or critical paths, do corresponding
-tests exist? Are assertions structural rather than exact-string matches?
+**安全** —— 密钥或 PII 被记录或暴露、系统边界处缺失输入校验、
+错误消息中泄露内部信息、硬编码密钥、
+注入漏洞、不安全的反序列化、失效的访问校验。
 ```
 
 ---
 
-#### Template: Architect (optional — design-significant changes)
+#### 模板：Rules Auditor（项目规则 + 测试覆盖）
 
 ```
-You are the Architect reviewer for an uncommitted-diff code review. You look at
-the diff AS A WHOLE — design coherence, structural soundness, invariants. You do
-NOT report line-level bugs or style; the other reviewers handle that.
+你是未提交 diff 代码审查中的 Rules Auditor。你**唯一**的职责是本项目规则的合规性与测试覆盖。
+忽略一般的正确性与安全性 —— 那些由 Bug Hunter 负责。
 
-{shared blocks}
+{共享块}
 
-## What to check
-- **Premature abstraction** — a new abstraction wrapping one caller, or where a
-  few inline lines would have been clearer.
-- **Half-finished migrations** — files renamed inconsistently, removed code
-  still referenced, dual code paths left after a rewrite.
-- **Cross-file invariants** — type renames, signature/contract changes: are all
-  call sites updated?
-- **Cross-module impact** — when a shared module changes, do its consumers still
-  hold conceptually? Are public APIs preserved, or the break noted?
-- **Dead code** — branches, parameters, or files no longer reachable.
-- **Scope creep** — does the diff do more than progress.md's active task called
-  for? Refactor mixed into feature work?
+## 检查清单
+**项目规则** —— 违反已加载的 CLAUDE.md 与 ai-context 文档：
+架构决策、编码约定、错误的存储/传输层、任何
+记录在案的项目专属约束。
 
-Architect findings tend to be MEDIUM/HIGH because they're structural. Be
-precise — point to specific files and behaviors, not vibes.
+**测试** —— 若改动触及共享模块或关键路径，是否存在对应的
+测试？断言是否是结构化的，而非精确字符串匹配？
 ```
 
-### Step 5: Judge Findings
+---
 
-Combine output from all reviewers and evaluate each finding. Reviewers have fresh eyes but lack your conversation context — they don't know WHY you made certain choices.
+#### 模板：Architect（可选 —— 具有设计意义的改动）
 
-**Auto-discard unconditionally:**
-- Findings tagged `[unverified]` about API/library/SDK claims. Context7 is mandatory — no verification, no finding.
+```
+你是未提交 diff 代码审查中的 Architect 审查者。你把 diff 作为**一个整体**来看 —— 设计连贯性、结构稳健性、不变量。你**不**报告行级 bug 或风格问题；那些由其他审查者负责。
 
-**For everything else:**
+{共享块}
 
-| Verdict | Action |
+## 检查什么
+- **过早抽象** —— 一个只包裹了一个调用方的新抽象，或者几行内联代码会更清晰的情形。
+- **半途而废的迁移** —— 文件重命名不一致，被删除的代码仍被引用，重写后留下双份代码路径。
+- **跨文件不变量** —— 类型重命名、签名/契约变更：所有调用点都更新了吗？
+- **跨模块影响** —— 当一个共享模块变更时，它的消费方在概念上还成立吗？公共 API 是否被保留，或者破坏是否被注明？
+- **死代码** —— 不再可达的分支、参数或文件。
+- **范围蔓延** —— diff 是否做了超出 progress.md 当前任务所需的事？重构是否被混进了功能开发中？
+
+Architect 的发现项往往是 MEDIUM/HIGH，因为它们是结构性的。请精确 —— 指向具体的文件与行为，而不是凭感觉。
+```
+
+### 步骤 5：裁定发现项
+
+合并所有审查者的输出，并评估每一条发现项。审查者拥有全新的视角，但缺少你的对话上下文 —— 他们不知道你**为什么**做出某些选择。
+
+**无条件自动丢弃：**
+- 标记为 [unverified] 的 API/库/SDK 主张类发现项。Context7 是强制的 —— 没有核验，就没有发现项。
+
+**对其它所有发现项：**
+
+| 裁定 | 动作 |
 |---------|--------|
-| Valid (high/medium) — real issue, agreed | Fix it now |
-| Valid (low) — real but minor | Note to user, don't fix unless asked |
-| False positive — reviewer misread context or flagged an intentional choice | Reject with a one-line reason |
+| 有效（high/medium）—— 真实问题，且认可 | 立即修复 |
+| 有效（low）—— 真实但轻微 | 告知用户，除非被要求否则不修复 |
+| 误报 —— 审查者误读了上下文，或标记了一个有意为之的选择 | 用单行理由驳回 |
 
-**Lead with INTENT** if any reviewer reported `partial` or `no` — that's the headline, not the line findings. Code can be locally clean but solving the wrong problem.
+**以 INTENT 开头**，如果有审查者报告了 partial 或 no —— 那才是头条，而不是行级发现项。代码可能局部干净，却在解决错误的问题。
 
-### Step 6: Output to User
+### 步骤 6：输出给用户
 
 ```
-## Code Review Results
+## 代码审查结果
 
-Reviewers: <list, e.g. "Bug Hunter + Rules Auditor (parallel)" or "single reviewer">
-Modules touched: <list, or "whole project">
-Tests: <pass | fail | n/a>
-**Intent: <yes | partial | no | n/a>** — <one-line reason>
+审查者：<清单，例如 Bug Hunter + Rules Auditor（并行）或单一审查者>
+触及的模块：<清单，或整个项目>
+测试：<pass｜fail｜n/a>
+**意图：<yes｜partial｜no｜n/a>** —— <单行理由>
 
-### Blockers
-- [high] file:line — <description>. **Action:** Fixed | Rejected (reason) | Noted
+### 阻塞项
+- [high] file:line —— <描述>。**动作：** 已修复｜已驳回（理由）｜已备注
 
-### Mediums
-- [med] file:line — <description>. **Action:** …
+### 中等问题
+- [med] file:line —— <描述>。**动作：** …
 
-### Lows
-<N findings — expand if you want details>
+### 轻微问题
+<N 条发现项 —— 需要细节时可展开>
 ```
 
-If everything is clean: a single line — "No blockers. N low-severity items (expand if interested). Intent: <verdict>."
+如果一切干净：单行输出即可 —— 无阻塞项。N 条低严重度项（有兴趣可展开）。意图：<裁定>。
 
-## Important Rules
+## 重要规则
 
-1. **Never skip review for non-trivial work.** Self-review is not review.
-2. **Trivial means trivial.** Comments, formatting, typos, no-logic-effect single-line fixes. Anything that changes behavior is non-trivial.
-3. **Never blindly accept findings.** Reviewers can hallucinate file paths, misread logic, or flag intentional choices. You're the judge.
-4. **Auto-discard `[unverified]` API/library findings.** Context7 is mandatory — no verification, no finding. Don't relax this.
-5. **Lead with INTENT.** A diff that's clean but off-target is worse than a diff with fixable bugs.
-6. **Reviewers are read-only.** Use `subagent_type: "Explore"`. They never edit code — only the judge (you) applies fixes.
-7. **Test failures dominate.** If tests failed, that's finding #1; everything else is secondary.
-8. **Don't pre-spawn the Architect.** Use the rubric — most changes don't need it.
-9. **Spawn in parallel.** Multiple reviewers → single message with multiple Agent calls.
+1. **对非琐碎的工作绝不跳过审查。** 自我审查不算审查。
+2. **琐碎就是琐碎。** 注释、格式、拼写、无逻辑影响的单行修复。任何改变行为的改动都是非琐碎的。
+3. **绝不盲目接受发现项。** 审查者可能凭空捏造文件路径、误读逻辑，或标记有意为之的选择。你是裁判。
+4. **自动丢弃 [unverified] 的 API/库发现项。** Context7 是强制的 —— 没有核验，就没有发现项。不要放松这点。
+5. **以 INTENT 开头。** 一个干净但跑题的 diff，比一个有可修复 bug 的 diff 更糟。
+6. **审查者是只读的。** 使用 subagent_type: "Explore"。它们绝不编辑代码 —— 只有裁判（你）才应用修复。
+7. **测试失败优先。** 如果测试失败，那就是头号发现项；其它都是次要的。
+8. **不要预先生成 Architect。** 使用判断准则 —— 大多数改动不需要它。
+9. **并行派生。** 多个审查者时，用一条消息包含多次 Agent 调用。
 </content>
 </invoke>

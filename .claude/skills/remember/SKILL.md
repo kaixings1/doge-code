@@ -1,41 +1,41 @@
 ---
 name: remember
-description: Review reusable project knowledge and decide what belongs in project memory, notepad, or durable docs
+description: 审查可复用的项目知识，决定哪些内容属于项目记忆、记事本或持久文档。
 ---
 
-# Remember
+# 记忆
 
-Use this skill when the user wants to preserve or organize useful knowledge discovered during a session.
+当用户想要保留或整理会话过程中发现的有用知识时，使用本技能。
 
-## Goal
-Promote durable, reusable knowledge into the right memory surface instead of leaving it buried in chat history.
+## 目标
+把持久、可复用的知识沉淀到合适的记忆载体中，而不是让它埋在聊天记录里。
 
-## Memory surfaces
-- **Project memory** — durable team/project knowledge
-- **Notepad priority** — short high-signal context for the next turns
-- **Notepad working** — temporary active-session notes
-- **Docs / AGENTS / CLAUDE files** — durable instructions and conventions when they truly belong there
+## 记忆载体
+- **项目记忆** — 持久的团队/项目知识
+- **优先记事本** — 为接下来几轮对话准备的高信号简短上下文
+- **工作记事本** — 会话进行中的临时笔记
+- **文档 / AGENTS / CLAUDE 文件** — 当确实属于这些文件时，长期有效的指令与约定
 
-## Workflow
-1. Gather the relevant session findings.
-2. Classify each item:
-   - durable project fact
-   - temporary working note
-   - operator preference or instruction
-   - duplicate / stale / conflicting information
-3. Propose the best destination for each item.
-4. Write or update only the appropriate memory surface.
-5. Call out duplicates or conflicts that should be cleaned up.
+## 工作流程
+1. 汇总本次会话中的相关发现。
+2. 对每一项进行分类：
+   - 持久的项目事实
+   - 临时的工作笔记
+   - 操作者偏好或指令
+   - 重复 / 过时 / 相互冲突的信息
+3. 为每一项提出最合适的存放位置。
+4. 只写入或更新合适的记忆载体。
+5. 指出应当清理的重复或冲突内容。
 
-## Rules
-- Do not dump everything into one store.
-- Prefer project memory for durable team knowledge.
-- Prefer notepad for short-lived working context.
-- Keep entries concise and actionable.
-- If something is uncertain, mark it as uncertain rather than storing it as fact.
+## 规则
+- 不要把一切都堆进同一个存储里。
+- 持久的团队知识优先放进项目记忆。
+- 短生命周期的工作上下文优先放进记事本。
+- 条目保持简洁且可执行。
+- 如果某件事并不确定，就标注为不确定，而不要把它当作事实存下来。
 
-## Output
-- What was stored
-- Where it was stored
-- Any duplicates/conflicts found
+## 输出
+- 存了什么
+- 存到了哪里
+- 发现的任何重复/冲突
 

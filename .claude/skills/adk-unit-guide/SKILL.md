@@ -1,87 +1,87 @@
 ---
 name: adk-unit-guide
-description: Creates detailed code unit guides for source code documentation.
+description: 为源代码文档创建详细的代码单元指南。
 ---
 
-# ADK code unit guide
-This skill creates a detailed developer guide for new or updated code file or direct code input. The guide it generates is meant to explain the code to a developer who wants to use it in an application, but with a higher level of technical detail than what would appear in published developer documentation. Similar to a *unit test*, a *unit guide* provides generated, granular-level documentation for a unit of code, without worrying about bloating the actual developer documentation with too many details.
+# ADK 代码单元指南
+本技能为新增或更新的代码文件、或直接输入的代码，创建一份详细的开发者指南。它生成的指南旨在向希望在应用程序中使用这段代码的开发者解释代码，但技术细节程度高于已发布的开发者文档中会出现的内容。与*单元测试*类似，*单元指南*为一段代码单元提供自动生成的细粒度文档，同时不必担心用过多细节把真正的开发者文档撑得臃肿。
 
-## Input
+## 输入
 
-- Code files containing new functionality
-- Code unit tests (optional)
-- Code design files (optional)
-- Names of new methods and classes (optional)
+- 包含新功能的代码文件
+- 代码单元的测试（可选）
+- 代码设计文件（可选）
+- 新方法和类的名称（可选）
 
-## Analysis
+## 分析
 
-- Review the code design files, if provided. Make note of:
-  - Purpose and intended use of the new or updated code units
-  - Classes that depend on the new or updated code units
-  - Additional dependencies required by the new or updated code units
-  - Limitations of the new or updated code units
-- Review specified code file for changes and named methods, if provided.
-- Determine what classes and code files may depend on the new or updated code units.
+- 如果提供了代码设计文件，请通读它们。记录以下内容：
+  - 新增或更新代码单元的用途与预期用法
+  - 依赖这些新增或更新代码单元的类
+  - 这些新增或更新代码单元所需的额外依赖
+  - 这些新增或更新代码单元的限制
+- 如果指定了代码文件，请审查其中的改动和指名的方法。
+- 确定哪些类和代码文件可能依赖这些新增或更新代码单元。
 
-## Output
+## 输出
 
-- Look for an existing guide in the `/docs/guides/***` directory of this repository.
-  - If a guide already exists, update the existing guide incrementally and prioritize preserving the previous content as much as possible.
-  - If no guide exists, create a guide file for the new code unit in the `/docs/guides/***` directory of this repository, using the relative path of the code unit. For example, if the code unit is called `/topic/function/class.ext`, create a guide in the location `/docs/guides/topic/function/class/index.md`.
-- **Update the Index**: Whenever a new guide is created, or an existing guide's title/summary changes, update the index file `/docs/guides/README.md`. Ensure the guide is listed under the correct category with a link and a brief summary.
+- 在本仓库的 `/docs/guides/***` 目录中查找已有的指南。
+  - 如果指南已存在，请以增量方式更新这份已有指南，并尽可能优先保留原有内容。
+  - 如果不存在指南，请在本仓库的 `/docs/guides/***` 目录中为该代码单元创建一份指南文件，并使用代码单元的相对路径。例如，若代码单元为 `/topic/function/class.ext`，则在 `/docs/guides/topic/function/class/index.md` 位置创建指南。
+- **更新索引**：每当创建新指南，或已有指南的标题/摘要发生变化时，都要更新索引文件 `/docs/guides/README.md`。确保该指南被列在正确的分类下，并附上链接和简要摘要。
 
-### Guide structure and content
+### 指南结构与内容
 
-Use the following structure and instructions to create the guide for the code unit:
+请使用以下结构和说明为该代码单元创建指南：
 
 ```
-# Title: name of the code file or code unit
+# 标题：代码文件或代码单元的名称
 
-- 2-sentence summary of the code unit
+- 用 2 句话概括该代码单元
 
-## Introduction
+## 简介
 
-- Paragraph(s) explaining:
-  - The purpose and application of the code unit
-  - Key classes that depend on this code unit
-  - Developer problems solved by this code unit
+- 用一段或多段说明：
+  - 该代码单元的用途与应用场景
+  - 依赖该代码单元的关键类
+  - 该代码单元为开发者解决的问题
 
-## Get started
+## 快速上手
 
-- Present a single, minimum implementation of the code unit to demonstrate its use.
-- Show enough of the containing classes to make it clear where the code could be used.
-- Use unit test code as a starting point for the code example, if available.
-- When writing a sample agent, do not set the `model` attribute.
-- For workflow node samples, prefer using a simple Python function rather than extending `BaseNode` to demonstrate the node's logic, unless class extension is explicitly required for the use case.
-- When wrapping Python functions as workflow nodes, prefer using the `@node` decorator instead of `FunctionNode` directly, whenever possible.
+- 给出该代码单元的一个最小可用实现，以演示它的用法。
+- 展示足够多的外层类代码，让人清楚这段代码可以用在哪里。
+- 如果有单元测试代码，请以它作为示例代码的起点。
+- 编写示例 agent 时，不要设置 `model` 属性。
+- 对于工作流节点示例，优先使用简单的 Python 函数来演示节点逻辑，而不是继承 `BaseNode`，除非该用例明确要求继承类。
+- 将 Python 函数包装为工作流节点时，只要有可能，优先使用 `@node` 装饰器，而不是直接用 `FunctionNode`。
 
-## How it works
+## 工作原理
 
-- Explain how the code unit accomplishes its purpose or solves a problem.
-- Mention key code classes that depend on this code unit.
-- Mention code classes that this code unit depends on.
-- Explain any cross-class dependencies of the code unit.
+- 说明该代码单元如何达成它的用途或解决问题。
+- 说明依赖该代码单元的关键代码类。
+- 说明该代码单元所依赖的代码类。
+- 说明该代码单元涉及的任何跨类依赖。
 
-## Configuration options
+## 配置选项
 
-- If the code unit has configuration options (e.g., settings, configuration objects), document them in a table detailing parameters, types, default values, and descriptions.
-- **Do NOT** list options inherited from base classes. Focus only on options introduced by the code unit itself.
-- Dive into each option to provide detailed description and usage patterns, rather than just repeating the type and a brief description.
-- **Do NOT** list references of all attributes or methods of the classes. Exhaustive API references belong in auto-generated reference documentation, not in guides. Guides should focus on how to use the code unit.
+- 如果该代码单元有配置选项（例如设置、配置对象），请用表格记录它们，详列参数、类型、默认值和说明。
+- **不要**列出从基类继承来的选项。只关注该代码单元自身引入的选项。
+- 每个选项都要深入说明，给出详细的描述和用法模式，而不是只重复类型和一句简要说明。
+- **不要**列出这些类的所有属性或方法的引用。详尽的 API 参考应放在自动生成的参考文档里，而不是指南里。指南应聚焦于如何使用该代码单元。
 
-## Advanced applications
+## 高级应用
 
-- Determine if there are advanced use cases for the code unit.
-- Add advanced applications of the code unit, including:
-  - Problem solved
-  - Implementations for special circumstances
+- 判断该代码单元是否存在高级用例。
+- 补充该代码单元的高级应用，包括：
+  - 解决的问题
+  - 针对特殊情形的实现方式
 
-## Limitations
+## 限制
 
-- Mention any limitations of the code unit, if known.
+- 如果已知，请说明该代码单元的任何限制。
 
-## Related samples
+## 相关示例
 
-- Link to relevant samples in the `contributing/` directory that demonstrate the use of this code unit.
+- 链接到 `contributing/` 目录中演示该代码单元用法的相关示例。
 
 ```

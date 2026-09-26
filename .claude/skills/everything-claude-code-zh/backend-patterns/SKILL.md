@@ -4,17 +4,17 @@ description: 后端架构模式、API 设计、数据库优化以及针对 Node.
 origin: ECC
 ---
 
-# 后端开发模式 (Backend Development Patterns)
+# 后端开发模式
 
 用于构建可扩展服务端应用的后端架构模式与最佳实践。
 
-## 何时激活 (When to Activate)
+## 何时激活
 
 - 设计 REST 或 GraphQL API 端点时
-- 实现仓储层（Repository）、服务层（Service）或控制层（Controller）时
+- 实现仓储层、服务层或控制层时
 - 优化数据库查询（N+1 问题、索引、连接池）时
 - 添加缓存（Redis、内存缓存、HTTP 缓存头）时
-- 设置后台作业（Background jobs）或异步处理时
+- 设置后台作业或异步处理时
 - 为 API 构建错误处理与数据校验机制时
 - 编写中间件（身份验证、日志记录、限流）时
 
@@ -35,7 +35,7 @@ DELETE /api/markets/:id             # 删除资源
 GET /api/markets?status=active&sort=volume&limit=20&offset=0
 ```
 
-### 仓储模式 (Repository Pattern)
+### 仓储模式
 
 ```typescript
 // 抽象数据访问逻辑
@@ -69,7 +69,7 @@ class SupabaseMarketRepository implements MarketRepository {
 }
 ```
 
-### 服务层模式 (Service Layer Pattern)
+### 服务层模式
 
 ```typescript
 // 将业务逻辑与数据访问分离
@@ -98,7 +98,7 @@ class MarketService {
 }
 ```
 
-### 中间件模式 (Middleware Pattern)
+### 中间件模式
 
 ```typescript
 // 请求/响应处理流水线
@@ -165,7 +165,7 @@ markets.forEach(market => {
 })
 ```
 
-### 事务模式 (Transaction Pattern)
+### 事务模式
 
 ```typescript
 async function createMarketWithPosition(
@@ -239,7 +239,7 @@ class CachedMarketRepository implements MarketRepository {
 }
 ```
 
-### 旁路缓存模式 (Cache-Aside Pattern)
+### 旁路缓存模式
 
 ```typescript
 async function getMarketWithCache(id: string): Promise<Market> {
@@ -313,7 +313,7 @@ export async function GET(request: Request) {
 }
 ```
 
-### 指数退避重试 (Retry with Exponential Backoff)
+### 指数退避重试
 
 ```typescript
 async function fetchWithRetry<T>(
@@ -428,7 +428,7 @@ export const DELETE = requirePermission('delete')(
 )
 ```
 
-## 限流 (Rate Limiting)
+## 限流
 
 ### 简单的内存限流器
 
@@ -476,7 +476,7 @@ export async function GET(request: Request) {
 }
 ```
 
-## 后台任务与队列 (Background Jobs & Queues)
+## 后台任务与队列
 
 ### 简单队列模式
 
@@ -531,7 +531,7 @@ export async function POST(request: Request) {
 }
 ```
 
-## 日志与监控 (Logging & Monitoring)
+## 日志与监控
 
 ### 结构化日志
 

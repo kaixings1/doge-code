@@ -1,30 +1,30 @@
 ---
 name: database-migrations
-description: 跨 PostgreSQL、MySQL 及常用 ORM（Prisma、Drizzle、Django、TypeORM、golang-migrate）的模式变更（schema changes）、数据迁移、回滚及零停机部署（zero-downtime deployments）的数据库迁移最佳实践。
+description: 跨 PostgreSQL、MySQL 及常用 ORM（Prisma、Drizzle、Django、TypeORM、golang-migrate）的模式变更、数据迁移、回滚及零停机部署的数据库迁移最佳实践。
 origin: ECC
 ---
 
-# 数据库迁移模式（Database Migration Patterns）
+# 数据库迁移模式
 
-面向生产系统的安全、可逆的数据库模式变更（Schema Changes）。
+面向生产系统的安全、可逆的数据库模式变更。
 
 ## 激活时机
 
 - 创建或修改数据库表
 - 添加/删除列或索引
-- 执行数据迁移（数据回填 backfill、转换 transform）
-- 规划零停机（zero-downtime）模式变更
+- 执行数据迁移（数据回填、转换）
+- 规划零停机模式变更
 - 为新项目设置迁移工具链
 
 ## 核心原则
 
 1. **所有变更皆为迁移** —— 严禁手动修改生产环境数据库
-2. **生产环境仅向前迁移** —— 回滚需使用新的向前迁移（forward migrations）
+2. **生产环境仅向前迁移** —— 回滚需使用新的向前迁移
 3. **模式迁移与数据迁移分离** —— 严禁在一次迁移中混用 DDL 和 DML
 4. **针对生产规模数据进行测试** —— 在 100 行数据上正常的迁移可能会导致 1000 万行数据锁表
 5. **部署后的迁移不可变** —— 严禁编辑已在生产环境运行过的迁移文件
 
-## 迁移安全核查表（Migration Safety Checklist）
+## 迁移安全核查表
 
 在执行任何迁移之前：
 
@@ -67,7 +67,7 @@ CREATE INDEX CONCURRENTLY idx_users_email ON users (email);
 
 ### 重命名列（零停机）
 
-严禁在生产环境直接重命名。请使用“扩展-收缩（expand-contract）”模式：
+严禁在生产环境直接重命名。请使用“扩展-收缩”模式：
 
 ```sql
 -- 第 1 步：添加新列（迁移文件 001）
@@ -294,21 +294,21 @@ DROP INDEX IF EXISTS idx_users_avatar;
 ALTER TABLE users DROP COLUMN IF EXISTS avatar_url;
 ```
 
-## 零停机迁移策略（Zero-Downtime Migration Strategy）
+## 零停机迁移策略
 
-对于关键生产变更，遵循“扩展-收缩（expand-contract）”模式：
+对于关键生产变更，遵循“扩展-收缩”模式：
 
 ```
-阶段 1：扩展（EXPAND）
+阶段 1：扩展
   - 添加新列/表（可为空或带默认值）
   - 部署：应用同时写入旧列和新列
   - 回填现有数据
 
-阶段 2：迁移（MIGRATE）
+阶段 2：迁移
   - 部署：应用从新列读取，同时写入旧列和新列
   - 验证数据一致性
 
-阶段 3：收缩（CONTRACT）
+阶段 3：收缩
   - 部署：应用仅使用新列
   - 在独立的迁移中删除旧列/表
 ```
@@ -328,7 +328,7 @@ ALTER TABLE users DROP COLUMN IF EXISTS avatar_url;
 | 反模式 | 失败原因 | 更好做法 |
 |-------------|-------------|-----------------|
 | 在生产环境手动执行 SQL | 无审计跟踪，不可重复 | 始终使用迁移文件 |
-| 编辑已部署的迁移 | 导致环境间出现差异（drift） | 创建新的迁移文件 |
+| 编辑已部署的迁移 | 导致环境间出现差异 | 创建新的迁移文件 |
 | 不带默认值的 NOT NULL | 锁表，重写所有行 | 先添加可为空列，回填数据，再添加约束 |
 | 在大表上使用内联索引 | 在构建期间阻塞写入 | 使用 CREATE INDEX CONCURRENTLY |
 | 模式与数据混在同一个迁移中 | 难以回滚，事务过长 | 将其分为独立的迁移 |

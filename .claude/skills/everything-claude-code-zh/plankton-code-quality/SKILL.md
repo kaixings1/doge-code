@@ -4,9 +4,9 @@ description: "使用 Plankton 实现编写时代码质量强制执行 —— 通
 origin: community
 ---
 
-# Plankton 代码质量技能（Plankton Code Quality Skill）
+# Plankton 代码质量技能
 
-Plankton（感谢 @alxfazio）的集成参考，这是一个针对 Claude Code 的编写时（Write-time）代码质量强制执行系统。Plankton 通过工具调用后钩子（PostToolUse hooks）在每次文件编辑时运行格式化程序和 Linter，然后启动 Claude 子进程（Subprocess）来修复智能体（Agent）未捕捉到的违规项。
+Plankton（感谢 @alxfazio）的集成参考，这是一个针对 Claude Code 的编写时代码质量强制执行系统。Plankton 通过工具调用后钩子（PostToolUse hooks）在每次文件编辑时运行格式化程序和 Linter，然后启动 Claude 子进程来修复智能体未捕捉到的违规项。
 
 ## 适用场景
 
@@ -39,7 +39,7 @@ Plankton（感谢 @alxfazio）的集成参考，这是一个针对 Claude Code �
 │   ├─ Sonnet: 复杂性、重构 (C901, PLR 代码) — 300s 超时
 │   └─ Opus: 类型系统、深度推理 (unresolved-attribute) — 600s 超时
 ├─ 重新运行阶段 1+2 以验证修复结果
-└─ 如果清理完成则 Exit 0，如果仍存在违规项则 Exit 2（报告给主智能体）
+└─ 如果清理完成则退出码 0，如果仍存在违规项则退出码 2（报告给主智能体）
 ```
 
 ### 主智能体看到的内容
@@ -81,14 +81,14 @@ cd plankton
 # 安装核心依赖
 brew install jaq ruff uv
 
-# 安装 Python linter
+# 安装 Python Linter
 uv sync --all-extras
 
 # 启动 Claude Code — 钩子将自动激活
 claude
 ```
 
-无需安装命令，无需插件配置。当你向在 Plankton 目录中运行 Claude Code 时，`.claude/settings.json` 中的钩子会自动被加载。
+无需安装命令，无需插件配置。当你在 Plankton 目录中运行 Claude Code 时，`.claude/settings.json` 中的钩子会自动被加载。
 
 ### 针对单个项目的集成
 

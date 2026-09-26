@@ -4,9 +4,9 @@ description: 基于 C++ 核心指南 (isocpp.github.io) 的 C++ 编码规范。�
 origin: ECC
 ---
 
-# C++ 编码规范 (C++ Core Guidelines)
+# C++ 编码规范
 
-源自 [C++ 核心指南 (C++ Core Guidelines)](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines) 的现代 C++ (C++17/20/23) 综合编码规范。强制执行类型安全 (Type safety)、资源安全 (Resource safety)、不变性 (Immutability) 和清晰度。
+源自 [C++ 核心指南](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines) 的现代 C++ (C++17/20/23) 综合编码规范。强制执行类型安全、资源安全、不变性和清晰度。
 
 ## 何时使用
 
@@ -22,16 +22,16 @@ origin: ECC
 - 无法采用现代 C++ 特性的遗留 C 代码库
 - 特定指南与硬件约束冲突的嵌入式/裸机上下文（需选择性调整）
 
-## 核心原则 (Cross-Cutting Principles)
+## 核心原则
 
 以下主题贯穿整个指南并构成基础：
 
 1. **处处 RAII** (P.8, R.1, E.6, CP.20)：将资源生命周期与对象生命周期绑定。资源获取即初始化 (RAII)
-2. **默认不变性** (P.10, Con.1-5, ES.25)：优先使用 `const`/`constexpr`；可变性应当是例外。不变性 (Immutability)
-3. **类型安全** (P.4, I.4, ES.46-49, Enum.3)：利用类型系统在编译时防止错误。类型安全 (Type safety)
-4. **表达意图** (P.3, F.1, NL.1-2, T.10)：名称、类型和概念应能传达目的。表达意图 (Express intent)
+2. **默认不变性** (P.10, Con.1-5, ES.25)：优先使用 `const`/`constexpr`；可变性应当是例外。不变性
+3. **类型安全** (P.4, I.4, ES.46-49, Enum.3)：利用类型系统在编译时防止错误。类型安全
+4. **表达意图** (P.3, F.1, NL.1-2, T.10)：名称、类型和概念应能传达目的。表达意图
 5. **最小化复杂性** (F.2-3, ES.5, Per.4-5)：简单的代码才是正确的代码
-6. **值语义优于指针语义** (C.10, R.3-5, F.20, CP.31)：优先考虑按值返回和作用域对象。值语义 (Value semantics)
+6. **值语义优于指针语义** (C.10, R.3-5, F.20, CP.31)：优先考虑按值返回和作用域对象。值语义
 
 ## 哲学与接口 (P.*, I.*)
 
@@ -51,7 +51,7 @@ origin: ECC
 | **I.11** | 绝不通过原始指针或引用转移所有权 |
 | **I.23** | 保持较少的函数参数数量 |
 
-### 正确示例 (DO)
+### 正确示例
 
 ```cpp
 // P.10 + I.4: 不可变的强类型接口
@@ -62,7 +62,7 @@ struct Temperature {
 Temperature boil(const Temperature& water);
 ```
 
-### 错误示例 (DON'T)
+### 错误示例
 
 ```cpp
 // 弱接口：所有权不明确，单位不明确
@@ -83,7 +83,7 @@ int g_counter = 0;  // 违反 I.2
 | **F.3** | 保持函数简短且简单 |
 | **F.4** | 如果函数可能在编译时求值，请将其声明为 `constexpr` |
 | **F.6** | 如果函数绝不抛出异常，请将其声明为 `noexcept` |
-| **F.8** | 优先选择纯函数 (Pure functions) |
+| **F.8** | 优先选择纯函数 |
 | **F.16** | 对于“输入”参数，低开销拷贝类型按值传递，其他类型按 `const&` 传递 |
 | **F.20** | 对于“输出”值，优先选择返回值而非输出参数 |
 | **F.21** | 若要返回多个“输出”值，优先返回结构体 |
@@ -121,7 +121,7 @@ constexpr int factorial(int n) noexcept {
 static_assert(factorial(5) == 120);
 ```
 
-### 反模式 (Anti-Patterns)
+### 反模式
 
 - 从函数返回 `T&&` (F.45)
 - 使用 `va_arg` / C 风格变长参数 (F.55)
@@ -134,17 +134,17 @@ static_assert(factorial(5) == 120);
 
 | 规则 | 摘要 |
 |------|---------|
-| **C.2** | 如果存在不变式 (Invariant)，使用 `class`；如果成员数据独立变化，使用 `struct` |
+| **C.2** | 如果存在不变式，使用 `class`；如果成员数据独立变化，使用 `struct` |
 | **C.9** | 最小化成员的公开暴露 |
-| **C.20** | 如果可以避免定义默认操作，则不要定义（零法则 Rule of Zero） |
-| **C.21** | 如果定义或 `=delete` 了任何拷贝/移动/析构函数，请处理所有五个（五法则 Rule of Five） |
+| **C.20** | 如果可以避免定义默认操作，则不要定义（零法则） |
+| **C.21** | 如果定义或 `=delete` 了任何拷贝/移动/析构函数，请处理所有五个（五法则） |
 | **C.35** | 基类析构函数：要么是 public virtual，要么是 protected non-virtual |
 | **C.41** | 构造函数应创建一个完全初始化的对象 |
 | **C.46** | 将单参数构造函数声明为 `explicit` |
-| **C.67** | 多态类 (Polymorphic class) 应抑制公开的拷贝/移动 |
+| **C.67** | 多态类应抑制公开的拷贝/移动 |
 | **C.128** | 虚函数：必须精确指定 `virtual`、`override` 或 `final` 中的一个 |
 
-### 零法则 (Rule of Zero)
+### 零法则
 
 ```cpp
 // C.20: 让编译器生成特殊成员
@@ -156,7 +156,7 @@ struct Employee {
 };
 ```
 
-### 五法则 (Rule of Five)
+### 五法则
 
 ```cpp
 // C.21: 如果必须管理资源，请定义所有五个
@@ -211,10 +211,10 @@ private:
 };
 ```
 
-### 反模式 (Anti-Patterns)
+### 反模式
 
 - 在构造函数/析构函数中调用虚函数 (C.82)
-- 对非平凡 (Non-trivial) 类型使用 `memset`/`memcpy` (C.90)
+- 对非平凡类型使用 `memset`/`memcpy` (C.90)
 - 为虚函数及其覆盖者提供不同的默认参数 (C.140)
 - 使数据成员成为 `const` 或引用，这会抑制移动/拷贝 (C.12)
 
@@ -251,7 +251,7 @@ render(widget.get());
 ### RAII 模式
 
 ```cpp
-// R.1: 资源获取即初始化 (Resource acquisition is initialization)
+// R.1: 资源获取即初始化
 class FileHandle {
 public:
     explicit FileHandle(const std::string& path)
@@ -280,7 +280,7 @@ private:
 };
 ```
 
-### 反模式 (Anti-Patterns)
+### 反模式
 
 - 裸 `new`/`delete` (R.11)
 - C++ 代码中使用 `malloc()`/`free()` (R.10)
@@ -298,10 +298,10 @@ private:
 | **ES.23** | 优先选择 `{}` 初始化语法 |
 | **ES.25** | 除非打算修改，否则将对象声明为 `const` 或 `constexpr` |
 | **ES.28** | 对 `const` 变量的复杂初始化使用 lambda |
-| **ES.45** | 避免幻数 (Magic constants)；使用符号常量 |
+| **ES.45** | 避免幻数；使用符号常量 |
 | **ES.46** | 避免收窄/有损的算术转换 |
 | **ES.47** | 使用 `nullptr` 而非 `0` 或 `NULL` |
-| **ES.48** | 避免强制类型转换 (Casts) |
+| **ES.48** | 避免强制类型转换 |
 | **ES.50** | 不要转换掉 `const` 属性 |
 
 ### 初始化
@@ -322,7 +322,7 @@ const auto config = [&] {
 }();
 ```
 
-### 反模式 (Anti-Patterns)
+### 反模式
 
 - 未初始化的变量 (ES.20)
 - 使用 `0` 或 `NULL` 作为指针 (ES.47 —— 应使用 `nullptr`)
@@ -380,7 +380,7 @@ void run() {
 }
 ```
 
-### 反模式 (Anti-Patterns)
+### 反模式
 
 - 抛出内置类型如 `int` 或字符串字面量 (E.14)
 - 按值捕获（存在对象切割风险） (E.15)
@@ -434,16 +434,16 @@ constexpr int MAX_SENSORS = 256;
 
 | 规则 | 摘要 |
 |------|---------|
-| **CP.2** | 避免数据竞态 (Data races) |
+| **CP.2** | 避免数据竞态 |
 | **CP.3** | 最小化显式共享可写数据 |
-| **CP.4** | 以任务 (Tasks) 而非线程 (Threads) 的方式思考 |
+| **CP.4** | 以任务而非线程的方式思考 |
 | **CP.8** | 不要使用 `volatile` 进行同步 |
 | **CP.20** | 使用 RAII，绝不直接调用 `lock()`/`unlock()` |
 | **CP.21** | 使用 `std::scoped_lock` 获取多个互斥锁 |
 | **CP.22** | 持有锁时绝不调用未知代码 |
 | **CP.42** | 不要无条件等待 |
 | **CP.44** | 记得为你的 `lock_guard` 和 `unique_lock` 命名 |
-| **CP.100** | 除非绝对必要，否则不要使用无锁编程 (Lock-free programming) |
+| **CP.100** | 除非绝对必要，否则不要使用无锁编程 |
 
 ### 安全加锁
 
@@ -484,10 +484,10 @@ void transfer(Account& from, Account& to, double amount) {
 }
 ```
 
-### 反模式 (Anti-Patterns)
+### 反模式
 
 - 使用 `volatile` 进行同步 (CP.8 —— 它仅用于硬件 I/O)
-- 分离线程 (Detaching threads) (CP.26 —— 生命周期管理将变得几乎不可能)
+- 分离线程 (CP.26 —— 生命周期管理将变得几乎不可能)
 - 未命名的锁保护：`std::lock_guard<std::mutex>(m);` 会立即销毁 (CP.44)
 - 调用回调时持有锁 (CP.22 —— 死锁风险)
 - 缺乏深厚专业知识却进行无锁编程 (CP.100)
@@ -500,11 +500,11 @@ void transfer(Account& from, Account& to, double amount) {
 |------|---------|
 | **T.1** | 使用模板提升抽象层级 |
 | **T.2** | 使用模板为多种参数类型表达算法 |
-| **T.10** | 为所有模板参数指定概念 (Concepts) |
+| **T.10** | 为所有模板参数指定概念 |
 | **T.11** | 尽可能使用标准概念 |
 | **T.13** | 简单概念优先使用简写表示法 |
 | **T.43** | 优先选择 `using` 而非 `typedef` |
-| **T.120** | 仅在确实需要时使用模板元编程 (Template metaprogramming) |
+| **T.120** | 仅在确实需要时使用模板元编程 |
 | **T.144** | 不要特化函数模板（应使用重载） |
 
 ### 概念 Concepts (C++20)
@@ -536,7 +536,7 @@ template<Serializable T>
 void save(const T& obj, const std::string& path);
 ```
 
-### 反模式 (Anti-Patterns)
+### 反模式
 
 - 可见命名空间中使用无约束模板 (T.47)
 - 特化函数模板而非重载 (T.144)
@@ -601,13 +601,13 @@ enum { RED, GREEN, BLUE };           // 违反 Enum.3 + Enum.5 + Enum.6
 | **SF.1** | 代码文件使用 `.cpp`，接口文件使用 `.h` |
 | **SF.7** | 不要在头文件的全局作用域编写 `using namespace` |
 | **SF.8** | 为所有 `.h` 文件使用 `#include` 保护 |
-| **SF.11** | 头文件应当是自包含的 (Self-contained) |
+| **SF.11** | 头文件应当是自包含的 |
 | **NL.5** | 避免在名称中编码类型信息（不使用匈牙利命名法） |
 | **NL.8** | 使用一致的命名风格 |
 | **NL.9** | 仅对宏名称使用 全大写 (ALL_CAPS) |
 | **NL.10** | 优先选择 `下划线风格 (underscore_style)` 命名 |
 
-### 头文件保护 (Header Guard)
+### 头文件保护
 
 ```cpp
 // SF.8: 包含保护 (或 #pragma once)
@@ -655,7 +655,7 @@ private:
 }  // namespace my_project
 ```
 
-### 反模式 (Anti-Patterns)
+### 反模式
 
 - 头文件全局作用域中使用 `using namespace std;` (SF.7)
 - 依赖包含顺序的头文件 (SF.10, SF.11)
@@ -693,7 +693,7 @@ std::vector<Point> points;           // 推荐：连续存储
 std::vector<std::unique_ptr<Point>> indirect_points; // 不良实践：指针追踪
 ```
 
-### 反模式 (Anti-Patterns)
+### 反模式
 
 - 在没有性能分析数据的情况下进行优化 (Per.1, Per.6)
 - 选择“聪明”的低级代码而非清晰的抽象 (Per.4, Per.5)
@@ -714,7 +714,7 @@ std::vector<std::unique_ptr<Point>> indirect_points; // 不良实践：指针追
 - [ ] 单参数构造函数设为 `explicit` (C.46)
 - [ ] 应用了零法则或五法则 (C.20, C.21)
 - [ ] 基类析构函数为 public virtual 或 protected non-virtual (C.35)
-- [ ] 模板通过概念 (Concepts) 进行约束 (T.10)
+- [ ] 模板通过概念进行约束 (T.10)
 - [ ] 头文件全局作用域中无 `using namespace` (SF.7)
 - [ ] 头文件具有包含保护且是自包含的 (SF.8, SF.11)
 - [ ] 锁使用 RAII (`scoped_lock`/`lock_guard`) (CP.20)

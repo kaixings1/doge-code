@@ -1,6 +1,6 @@
 ---
 name: configure-notifications
-description: Configure notification integrations (Telegram, Discord, Slack) via natural language
+description: 通过自然语言配置通知集成（Telegram、Discord、Slack）。
 triggers:
   - "configure notifications"
   - "setup notifications"
@@ -16,36 +16,36 @@ triggers:
 level: 2
 ---
 
-# Configure Notifications
+# 配置通知
 
-Set up OMC notification integrations so you're alerted when sessions end, need input, or complete background tasks.
+配置 OMC 通知集成，这样当会话结束、需要输入或后台任务完成时，你都能收到提醒。
 
-## Routing
+## 路由
 
-Detect which provider the user wants based on their request or argument:
-- If the trigger or argument contains "telegram" → follow the **Telegram** section
-- If the trigger or argument contains "discord" → follow the **Discord** section
-- If the trigger or argument contains "slack" → follow the **Slack** section
-- If no provider is specified, use AskUserQuestion:
+根据用户的请求或参数判断其想要哪个服务商：
+- 如果触发词或参数包含 "telegram" → 执行 **Telegram** 小节
+- 如果触发词或参数包含 "discord" → 执行 **Discord** 小节
+- 如果触发词或参数包含 "slack" → 执行 **Slack** 小节
+- 如果未指定服务商，使用 AskUserQuestion：
 
-**Question:** "Which notification service would you like to configure?"
+**问题：** "你想配置哪个通知服务？"
 
-**Options:**
-1. **Telegram** - Bot token + chat ID. Works on mobile and desktop.
-2. **Discord** - Webhook or bot token + channel ID.
-3. **Slack** - Incoming webhook URL.
+**选项：**
+1. **Telegram** - 机器人 token + 聊天 ID。移动端和桌面端均可使用。
+2. **Discord** - Webhook 或机器人 token + 频道 ID。
+3. **Slack** - Incoming webhook URL。
 
 ---
 
-## Telegram Setup
+## Telegram 配置
 
-Set up Telegram notifications so OMC can message you when sessions end, need input, or complete background tasks.
+配置 Telegram 通知，这样当会话结束、需要输入或后台任务完成时，OMC 可以给你发消息。
 
-### How This Skill Works
+### 本技能的工作方式
 
-This is an interactive, natural-language configuration skill. Walk the user through setup by asking questions with AskUserQuestion. Write the result to `${CLAUDE_CONFIG_DIR:-~/.claude}/.omc-config.json`.
+这是一个交互式、自然语言配置技能。通过 AskUserQuestion 向用户提问，引导其完成配置。将结果写入 `${CLAUDE_CONFIG_DIR:-~/.claude}/.omc-config.json`。
 
-### Step 1: Detect Existing Configuration
+### 步骤 1：检测现有配置
 
 ```bash
 CONFIG_FILE="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.omc-config.json"
@@ -67,88 +67,88 @@ else
 fi
 ```
 
-If existing config is found, show the user what's currently configured and ask if they want to update or reconfigure.
+如果发现现有配置，向用户展示当前已配置的内容，并询问其想要更新还是重新配置。
 
-### Step 2: Create a Telegram Bot
+### 步骤 2：创建 Telegram 机器人
 
-Guide the user through creating a bot if they don't have one:
+如果用户还没有机器人，引导其创建一个：
 
 ```
-To set up Telegram notifications, you need a Telegram bot token and your chat ID.
+要设置 Telegram 通知，你需要一个 Telegram 机器人 token 和你的聊天 ID。
 
-CREATE A BOT (if you don't have one):
-1. Open Telegram and search for @BotFather
-2. Send /newbot
-3. Choose a name (e.g., "My OMC Notifier")
-4. Choose a username (e.g., "my_omc_bot")
-5. BotFather will give you a token like: 123456789:ABCdefGHIjklMNOpqrsTUVwxyz
+创建机器人（如果你还没有）：
+1. 打开 Telegram 并搜索 @BotFather
+2. 发送 /newbot
+3. 选择一个名称（例如 "My OMC Notifier"）
+4. 选择一个用户名（例如 "my_omc_bot"）
+5. BotFather 会给你一个类似这样的 token：123456789:ABCdefGHIjklMNOpqrsTUVwxyz
 
-GET YOUR CHAT ID:
-1. Start a chat with your new bot (send /start)
-2. Visit: https://api.telegram.org/bot<YOUR_TOKEN>/getUpdates
-3. Look for "chat":{"id":YOUR_CHAT_ID}
-   - Personal chat IDs are positive numbers (e.g., 123456789)
-   - Group chat IDs are negative numbers (e.g., -1001234567890)
+获取你的聊天 ID：
+1. 与你新建的机器人开始对话（发送 /start）
+2. 访问：https://api.telegram.org/bot<YOUR_TOKEN>/getUpdates
+3. 查找 "chat":{"id":YOUR_CHAT_ID}
+   - 个人聊天 ID 是正数（例如 123456789）
+   - 群组聊天 ID 是负数（例如 -1001234567890）
 ```
 
-### Step 3: Collect Bot Token
+### 步骤 3：收集机器人 token
 
-Use AskUserQuestion:
+使用 AskUserQuestion：
 
-**Question:** "Paste your Telegram bot token (from @BotFather)"
+**问题：** "粘贴你的 Telegram 机器人 token（来自 @BotFather）"
 
-The user will type their token in the "Other" field.
+用户会在 "Other" 字段中输入其 token。
 
-**Validate** the token:
-- Must match pattern: `digits:alphanumeric` (e.g., `123456789:ABCdefGHI...`)
-- If invalid, explain the format and ask again
+**校验** token：
+- 必须匹配模式：`digits:alphanumeric`（例如 `123456789:ABCdefGHI...`）
+- 如果无效，说明格式要求并重新询问
 
-### Step 4: Collect Chat ID
+### 步骤 4：收集聊天 ID
 
-Use AskUserQuestion:
+使用 AskUserQuestion：
 
-**Question:** "Paste your Telegram chat ID (the number from getUpdates API)"
+**问题：** "粘贴你的 Telegram 聊天 ID（来自 getUpdates API 的数字）"
 
-The user will type their chat ID in the "Other" field.
+用户会在 "Other" 字段中输入其聊天 ID。
 
-**Validate** the chat ID:
-- Must be a number (positive for personal, negative for groups)
-- If invalid, offer to help them find it:
+**校验** 聊天 ID：
+- 必须是数字（个人为正数，群组为负数）
+- 如果无效，主动帮助其查找：
 
 ```bash
-# Help user find their chat ID
+# 帮助用户找到其聊天 ID
 BOT_TOKEN="USER_PROVIDED_TOKEN"
-echo "Fetching recent messages to find your chat ID..."
-curl -s "https://api.telegram.org/bot${BOT_TOKEN}/getUpdates" | jq '.result[-1].message.chat.id // .result[-1].message.from.id // "No messages found - send /start to your bot first"'
+echo "正在获取最近消息以查找你的聊天 ID..."
+curl -s "https://api.telegram.org/bot${BOT_TOKEN}/getUpdates" | jq '.result[-1].message.chat.id // .result[-1].message.from.id // "未找到消息 - 请先向你的机器人发送 /start"'
 ```
 
-### Step 5: Choose Parse Mode
+### 步骤 5：选择解析模式
 
-Use AskUserQuestion:
+使用 AskUserQuestion：
 
-**Question:** "Which message format do you prefer?"
+**问题：** "你更喜欢哪种消息格式？"
 
-**Options:**
-1. **Markdown (Recommended)** - Bold, italic, code blocks with Markdown syntax
-2. **HTML** - Bold, italic, code with HTML tags
+**选项：**
+1. **Markdown（推荐）** - 使用 Markdown 语法的粗体、斜体、代码块
+2. **HTML** - 使用 HTML 标签的粗体、斜体、代码
 
-### Step 6: Configure Events
+### 步骤 6：配置事件
 
-Use AskUserQuestion with multiSelect:
+使用带 multiSelect 的 AskUserQuestion：
 
-**Question:** "Which events should trigger Telegram notifications?"
+**问题：** "哪些事件应触发 Telegram 通知？"
 
-**Options (multiSelect: true):**
-1. **Session end (Recommended)** - When a Claude session finishes
-2. **Input needed** - When Claude is waiting for your response (great for long-running tasks)
-3. **Session start** - When a new session begins
-4. **Session continuing** - When a persistent mode keeps the session alive
+**选项（multiSelect: true）：**
+1. **会话结束（推荐）** - 当 Claude 会话完成时
+2. **需要输入** - 当 Claude 正在等待你的回复时（非常适合长时间运行的任务）
+3. **会话开始** - 当新会话启动时
+4. **会话持续** - 当持久模式让会话保持存活时
 
-Default selection: session-end + ask-user-question.
+默认选择：session-end + ask-user-question。
 
-### Step 7: Write Configuration
+### 步骤 7：写入配置
 
-Read the existing config, merge the new Telegram settings, and write back:
+读取现有配置，合并新的 Telegram 设置，然后写回：
 
 ```bash
 CONFIG_FILE="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.omc-config.json"
@@ -160,7 +160,7 @@ else
   EXISTING='{}'
 fi
 
-# BOT_TOKEN, CHAT_ID, PARSE_MODE are collected from user
+# BOT_TOKEN、CHAT_ID、PARSE_MODE 由用户收集提供
 echo "$EXISTING" | jq \
   --arg token "$BOT_TOKEN" \
   --arg chatId "$CHAT_ID" \
@@ -175,30 +175,30 @@ echo "$EXISTING" | jq \
    }' > "$CONFIG_FILE"
 ```
 
-#### Add event-specific config if user didn't select all events:
+#### 如果用户未选择全部事件，添加针对具体事件的配置：
 
-For each event NOT selected, disable it:
+对每个未被选择的事件，将其禁用：
 
 ```bash
-# Example: disable session-start if not selected
+# 示例：如果未选择 session-start，则将其禁用
 echo "$(cat "$CONFIG_FILE")" | jq \
   '.notifications.events = (.notifications.events // {}) |
    .notifications.events["session-start"] = {enabled: false}' > "$CONFIG_FILE"
 ```
 
-### Step 8: Test the Configuration
+### 步骤 8：测试配置
 
-After writing config, offer to send a test notification:
+写入配置后，主动提出发送一条测试通知：
 
-Use AskUserQuestion:
+使用 AskUserQuestion：
 
-**Question:** "Send a test notification to verify the setup?"
+**问题：** "发送一条测试通知以验证配置？"
 
-**Options:**
-1. **Yes, test now (Recommended)** - Send a test message to your Telegram chat
-2. **No, I'll test later** - Skip testing
+**选项：**
+1. **是，立即测试（推荐）** - 向你的 Telegram 聊天发送一条测试消息
+2. **否，我稍后测试** - 跳过测试
 
-#### If testing:
+#### 如果测试：
 
 ```bash
 BOT_TOKEN="USER_PROVIDED_TOKEN"
@@ -209,75 +209,75 @@ RESPONSE=$(curl -s -w "\n%{http_code}" \
   "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
   -d "chat_id=${CHAT_ID}" \
   -d "parse_mode=${PARSE_MODE}" \
-  -d "text=OMC test notification - Telegram is configured!")
+  -d "text=OMC 测试通知 - Telegram 已配置成功！")
 
 HTTP_CODE=$(echo "$RESPONSE" | tail -1)
 BODY=$(echo "$RESPONSE" | head -1)
 
 if [ "$HTTP_CODE" = "200" ]; then
-  echo "Test notification sent successfully!"
+  echo "测试通知发送成功！"
 else
-  echo "Failed (HTTP $HTTP_CODE):"
-  echo "$BODY" | jq -r '.description // "Unknown error"' 2>/dev/null || echo "$BODY"
+  echo "失败（HTTP $HTTP_CODE）："
+  echo "$BODY" | jq -r '.description // "未知错误"' 2>/dev/null || echo "$BODY"
 fi
 ```
 
-Report success or failure. Common issues:
-- **401 Unauthorized**: Bot token is invalid
-- **400 Bad Request: chat not found**: Chat ID is wrong, or user hasn't sent `/start` to the bot
-- **Network error**: Check connectivity to api.telegram.org
+报告成功或失败。常见问题：
+- **401 Unauthorized**：机器人 token 无效
+- **400 Bad Request: chat not found**：聊天 ID 错误，或者用户尚未向机器人发送 `/start`
+- **Network error**：检查到 api.telegram.org 的网络连通性
 
-### Step 9: Confirm
+### 步骤 9：确认
 
-Display the final configuration summary:
+展示最终配置摘要：
 
 ```
-Telegram Notifications Configured!
+Telegram 通知配置完成！
 
-  Bot:        @your_bot_username
-  Chat ID:    123456789
-  Format:     Markdown
-  Events:     session-end, ask-user-question
+  机器人:     @your_bot_username
+  聊天 ID:    123456789
+  格式:       Markdown
+  事件:       session-end, ask-user-question
 
-Config saved to: ~/.claude/.omc-config.json
+配置已保存至: ~/.claude/.omc-config.json
 
-You can also set these via environment variables:
+你也可以通过环境变量设置这些值:
   OMC_TELEGRAM_BOT_TOKEN=123456789:ABCdefGHI...
   OMC_TELEGRAM_CHAT_ID=123456789
 
-To reconfigure: /oh-my-claudecode:configure-notifications telegram
-To configure Discord: /oh-my-claudecode:configure-notifications discord
-To configure Slack: /oh-my-claudecode:configure-notifications slack
+重新配置: /oh-my-claudecode:configure-notifications telegram
+配置 Discord: /oh-my-claudecode:configure-notifications discord
+配置 Slack: /oh-my-claudecode:configure-notifications slack
 ```
 
-### Environment Variable Alternative
+### 环境变量替代方案
 
-Users can skip this wizard entirely by setting env vars in their shell profile:
+用户可以在自己的 shell 配置文件中设置环境变量，完全跳过此向导：
 
 ```bash
 export OMC_TELEGRAM_BOT_TOKEN="123456789:ABCdefGHIjklMNOpqrsTUVwxyz"
 export OMC_TELEGRAM_CHAT_ID="123456789"
 ```
 
-Env vars are auto-detected by the notification system without needing `.omc-config.json`.
+通知系统会自动检测环境变量，无需 `.omc-config.json`。
 
 ---
 
-## Discord Setup
+## Discord 配置
 
-Set up Discord notifications so OMC can ping you when sessions end, need input, or complete background tasks.
+配置 Discord 通知，这样当会话结束、需要输入或后台任务完成时，OMC 可以提醒你。
 
-### How This Skill Works
+### 本技能的工作方式
 
-This is an interactive, natural-language configuration skill. Walk the user through setup by asking questions with AskUserQuestion. Write the result to `${CLAUDE_CONFIG_DIR:-~/.claude}/.omc-config.json`.
+这是一个交互式、自然语言配置技能。通过 AskUserQuestion 向用户提问，引导其完成配置。将结果写入 `${CLAUDE_CONFIG_DIR:-~/.claude}/.omc-config.json`。
 
-### Step 1: Detect Existing Configuration
+### 步骤 1：检测现有配置
 
 ```bash
 CONFIG_FILE="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.omc-config.json"
 
 if [ -f "$CONFIG_FILE" ]; then
-  # Check for existing discord config
+  # 检查是否已有 discord 配置
   HAS_DISCORD=$(jq -r '.notifications.discord.enabled // false' "$CONFIG_FILE" 2>/dev/null)
   HAS_DISCORD_BOT=$(jq -r '.notifications["discord-bot"].enabled // false' "$CONFIG_FILE" 2>/dev/null)
   WEBHOOK_URL=$(jq -r '.notifications.discord.webhookUrl // empty' "$CONFIG_FILE" 2>/dev/null)
@@ -297,92 +297,92 @@ else
 fi
 ```
 
-If existing config is found, show the user what's currently configured and ask if they want to update or reconfigure.
+如果发现现有配置，向用户展示当前已配置的内容，并询问其想要更新还是重新配置。
 
-### Step 2: Choose Discord Method
+### 步骤 2：选择 Discord 方式
 
-Use AskUserQuestion:
+使用 AskUserQuestion：
 
-**Question:** "How would you like to send Discord notifications?"
+**问题：** "你想如何发送 Discord 通知？"
 
-**Options:**
-1. **Webhook (Recommended)** - Create a webhook in your Discord channel. Simple, no bot needed. Just paste the URL.
-2. **Bot API** - Use a Discord bot token + channel ID. More flexible, requires a bot application.
+**选项：**
+1. **Webhook（推荐）** - 在你的 Discord 频道中创建一个 webhook。简单，无需机器人。只需粘贴 URL。
+2. **Bot API** - 使用 Discord 机器人 token + 频道 ID。更灵活，但需要创建一个机器人应用。
 
-### Step 3A: Webhook Setup
+### 步骤 3A：Webhook 配置
 
-If user chose Webhook:
+如果用户选择了 Webhook：
 
-Use AskUserQuestion:
+使用 AskUserQuestion：
 
-**Question:** "Paste your Discord webhook URL. To create one: Server Settings > Integrations > Webhooks > New Webhook > Copy URL"
+**问题：** "粘贴你的 Discord webhook URL。创建方法：服务器设置 > 集成 > Webhooks > 新建 Webhook > 复制 URL"
 
-The user will type their webhook URL in the "Other" field.
+用户会在 "Other" 字段中输入 webhook URL。
 
-**Validate** the URL:
-- Must start with `https://discord.com/api/webhooks/` or `https://discordapp.com/api/webhooks/`
-- If invalid, explain the format and ask again
+**校验** URL：
+- 必须以 `https://discord.com/api/webhooks/` 或 `https://discordapp.com/api/webhooks/` 开头
+- 如果无效，说明格式要求并重新询问
 
-### Step 3B: Bot API Setup
+### 步骤 3B：Bot API 配置
 
-If user chose Bot API:
+如果用户选择了 Bot API：
 
-Ask two questions:
+询问两个问题：
 
-1. **"Paste your Discord bot token"** - From discord.com/developers > Your App > Bot > Token
-2. **"Paste the channel ID"** - Right-click channel > Copy Channel ID (requires Developer Mode)
+1. **"粘贴你的 Discord 机器人 token"** - 来自 discord.com/developers > 你的应用 > Bot > Token
+2. **"粘贴频道 ID"** - 右键点击频道 > 复制频道 ID（需要开启开发者模式）
 
-### Step 4: Configure Mention (User Ping)
+### 步骤 4：配置提及（用户提醒）
 
-Use AskUserQuestion:
+使用 AskUserQuestion：
 
-**Question:** "Would you like notifications to mention (ping) someone?"
+**问题：** "你希望通知中提及（提醒）某人吗？"
 
-**Options:**
-1. **Yes, mention a user** - Tag a specific user by their Discord user ID
-2. **Yes, mention a role** - Tag a role by its role ID
-3. **No mentions** - Just post the message without pinging anyone
+**选项：**
+1. **是，提及某个用户** - 通过 Discord 用户 ID 标记特定用户
+2. **是，提及某个角色** - 通过角色 ID 标记某个角色
+3. **不提及任何人** - 直接发布消息，不提醒任何人
 
-#### If user wants to mention a user:
+#### 如果用户想提及某个用户：
 
-Ask: "What is the Discord user ID to mention? (Right-click user > Copy User ID, requires Developer Mode)"
+询问："要提及的 Discord 用户 ID 是什么？（右键点击用户 > 复制用户 ID，需要开启开发者模式）"
 
-The mention format is: `<@USER_ID>` (e.g., `<@1465264645320474637>`)
+提及格式为：`<@USER_ID>`（例如 `<@1465264645320474637>`）
 
-#### If user wants to mention a role:
+#### 如果用户想提及某个角色：
 
-Ask: "What is the Discord role ID to mention? (Server Settings > Roles > right-click role > Copy Role ID)"
+询问："要提及的 Discord 角色 ID 是什么？（服务器设置 > 角色 > 右键点击角色 > 复制角色 ID）"
 
-The mention format is: `<@&ROLE_ID>` (e.g., `<@&123456789>`)
+提及格式为：`<@&ROLE_ID>`（例如 `<@&123456789>`）
 
-### Step 5: Configure Events
+### 步骤 5：配置事件
 
-Use AskUserQuestion with multiSelect:
+使用带 multiSelect 的 AskUserQuestion：
 
-**Question:** "Which events should trigger Discord notifications?"
+**问题：** "哪些事件应触发 Discord 通知？"
 
-**Options (multiSelect: true):**
-1. **Session end (Recommended)** - When a Claude session finishes
-2. **Input needed** - When Claude is waiting for your response (great for long-running tasks)
-3. **Session start** - When a new session begins
-4. **Session continuing** - When a persistent mode keeps the session alive
+**选项（multiSelect: true）：**
+1. **会话结束（推荐）** - 当 Claude 会话完成时
+2. **需要输入** - 当 Claude 正在等待你的回复时（非常适合长时间运行的任务）
+3. **会话开始** - 当新会话启动时
+4. **会话持续** - 当持久模式让会话保持存活时
 
-Default selection: session-end + ask-user-question.
+默认选择：session-end + ask-user-question。
 
-### Step 6: Optional Username Override
+### 步骤 6：可选的用户名覆盖
 
-Use AskUserQuestion:
+使用 AskUserQuestion：
 
-**Question:** "Custom bot display name? (Shows as the webhook sender name in Discord)"
+**问题：** "自定义机器人显示名称？（在 Discord 中显示为 webhook 发送者名称）"
 
-**Options:**
-1. **OMC (default)** - Display as "OMC"
-2. **Claude Code** - Display as "Claude Code"
-3. **Custom** - Enter a custom name
+**选项：**
+1. **OMC（默认）** - 显示为 "OMC"
+2. **Claude Code** - 显示为 "Claude Code"
+3. **自定义** - 输入自定义名称
 
-### Step 7: Write Configuration
+### 步骤 7：写入配置
 
-Read the existing config, merge the new Discord settings, and write back:
+读取现有配置，合并新的 Discord 设置，然后写回：
 
 ```bash
 CONFIG_FILE="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.omc-config.json"
@@ -395,13 +395,13 @@ else
 fi
 ```
 
-#### For Webhook method:
+#### 对于 Webhook 方式：
 
-Build the notifications object with the collected values and merge into `.omc-config.json` using jq:
+用收集到的值构建 notifications 对象，并使用 jq 合并到 `.omc-config.json`：
 
 ```bash
-# WEBHOOK_URL, MENTION, USERNAME are collected from user
-# EVENTS is the list of enabled events
+# WEBHOOK_URL、MENTION、USERNAME 由用户收集提供
+# EVENTS 是已启用事件的列表
 
 echo "$EXISTING" | jq \
   --arg url "$WEBHOOK_URL" \
@@ -417,7 +417,7 @@ echo "$EXISTING" | jq \
    }' > "$CONFIG_FILE"
 ```
 
-#### For Bot API method:
+#### 对于 Bot API 方式：
 
 ```bash
 echo "$EXISTING" | jq \
@@ -434,94 +434,94 @@ echo "$EXISTING" | jq \
    }' > "$CONFIG_FILE"
 ```
 
-#### Add event-specific config if user didn't select all events:
+#### 如果用户未选择全部事件，添加针对具体事件的配置：
 
-For each event NOT selected, disable it:
+对每个未被选择的事件，将其禁用：
 
 ```bash
-# Example: disable session-start if not selected
+# 示例：如果未选择 session-start，则将其禁用
 echo "$(cat "$CONFIG_FILE")" | jq \
   '.notifications.events = (.notifications.events // {}) |
    .notifications.events["session-start"] = {enabled: false}' > "$CONFIG_FILE"
 ```
 
-### Step 8: Test the Configuration
+### 步骤 8：测试配置
 
-After writing config, offer to send a test notification:
+写入配置后，主动提出发送一条测试通知：
 
-Use AskUserQuestion:
+使用 AskUserQuestion：
 
-**Question:** "Send a test notification to verify the setup?"
+**问题：** "发送一条测试通知以验证配置？"
 
-**Options:**
-1. **Yes, test now (Recommended)** - Send a test message to your Discord channel
-2. **No, I'll test later** - Skip testing
+**选项：**
+1. **是，立即测试（推荐）** - 向你的 Discord 频道发送一条测试消息
+2. **否，我稍后测试** - 跳过测试
 
-#### If testing:
+#### 如果测试：
 
 ```bash
-# For webhook:
+# 对于 webhook：
 curl -s -o /dev/null -w "%{http_code}" \
   -H "Content-Type: application/json" \
-  -d "{\"content\": \"${MENTION:+$MENTION\\n}OMC test notification - Discord is configured!\"}" \
+  -d "{\"content\": \"${MENTION:+$MENTION\\n}OMC 测试通知 - Discord 已配置成功！\"}" \
   "$WEBHOOK_URL"
 ```
 
-Report success or failure. If it fails, help the user debug (check URL, permissions, etc.).
+报告成功或失败。如果失败，帮助用户排查（检查 URL、权限等）。
 
-### Step 9: Confirm
+### 步骤 9：确认
 
-Display the final configuration summary:
+展示最终配置摘要：
 
 ```
-Discord Notifications Configured!
+Discord 通知配置完成！
 
-  Method:   Webhook / Bot API
-  Mention:  <@1465264645320474637> (or "none")
-  Events:   session-end, ask-user-question
-  Username: OMC
+  方式:     Webhook / Bot API
+  提及:     <@1465264645320474637>（或 "none"）
+  事件:     session-end, ask-user-question
+  用户名:   OMC
 
-Config saved to: ~/.claude/.omc-config.json
+配置已保存至: ~/.claude/.omc-config.json
 
-You can also set these via environment variables:
+你也可以通过环境变量设置这些值:
   OMC_DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
   OMC_DISCORD_MENTION=<@1465264645320474637>
 
-To reconfigure: /oh-my-claudecode:configure-notifications discord
-To configure Telegram: /oh-my-claudecode:configure-notifications telegram
-To configure Slack: /oh-my-claudecode:configure-notifications slack
+重新配置: /oh-my-claudecode:configure-notifications discord
+配置 Telegram: /oh-my-claudecode:configure-notifications telegram
+配置 Slack: /oh-my-claudecode:configure-notifications slack
 ```
 
-### Environment Variable Alternative
+### 环境变量替代方案
 
-Users can skip this wizard entirely by setting env vars in their shell profile:
+用户可以在自己的 shell 配置文件中设置环境变量，完全跳过此向导：
 
-**Webhook method:**
+**Webhook 方式：**
 ```bash
 export OMC_DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/..."
-export OMC_DISCORD_MENTION="<@1465264645320474637>"  # optional
+export OMC_DISCORD_MENTION="<@1465264645320474637>"  # 可选
 ```
 
-**Bot API method:**
+**Bot API 方式：**
 ```bash
 export OMC_DISCORD_NOTIFIER_BOT_TOKEN="your-bot-token"
 export OMC_DISCORD_NOTIFIER_CHANNEL="your-channel-id"
-export OMC_DISCORD_MENTION="<@1465264645320474637>"  # optional
+export OMC_DISCORD_MENTION="<@1465264645320474637>"  # 可选
 ```
 
-Env vars are auto-detected by the notification system without needing `.omc-config.json`.
+通知系统会自动检测环境变量，无需 `.omc-config.json`。
 
 ---
 
-## Slack Setup
+## Slack 配置
 
-Set up Slack notifications so OMC can message you when sessions end, need input, or complete background tasks.
+配置 Telegram 通知，这样当会话结束、需要输入或后台任务完成时，OMC 可以给你发消息。
 
-### How This Skill Works
+### 本技能的工作方式
 
-This is an interactive, natural-language configuration skill. Walk the user through setup by asking questions with AskUserQuestion. Write the result to `${CLAUDE_CONFIG_DIR:-~/.claude}/.omc-config.json`.
+这是一个交互式、自然语言配置技能。通过 AskUserQuestion 向用户提问，引导其完成配置。将结果写入 `${CLAUDE_CONFIG_DIR:-~/.claude}/.omc-config.json`。
 
-### Step 1: Detect Existing Configuration
+### 步骤 1：检测现有配置
 
 ```bash
 CONFIG_FILE="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.omc-config.json"
@@ -545,104 +545,104 @@ else
 fi
 ```
 
-If existing config is found, show the user what's currently configured and ask if they want to update or reconfigure.
+如果发现现有配置，向用户展示当前已配置的内容，并询问其想要更新还是重新配置。
 
-### Step 2: Create a Slack Incoming Webhook
+### 步骤 2：创建 Slack Incoming Webhook
 
-Guide the user through creating a webhook if they don't have one:
+如果用户还没有 webhook，引导其创建一个：
 
 ```
-To set up Slack notifications, you need a Slack incoming webhook URL.
+要设置 Slack 通知，你需要一个 Slack incoming webhook URL。
 
-CREATE A WEBHOOK:
-1. Go to https://api.slack.com/apps
-2. Click "Create New App" > "From scratch"
-3. Name your app (e.g., "OMC Notifier") and select your workspace
-4. Go to "Incoming Webhooks" in the left sidebar
-5. Toggle "Activate Incoming Webhooks" to ON
-6. Click "Add New Webhook to Workspace"
-7. Select the channel where notifications should be posted
-8. Copy the webhook URL (starts with https://hooks.slack.com/services/...)
+创建 WEBHOOK：
+1. 访问 https://api.slack.com/apps
+2. 点击 "Create New App" > "From scratch"
+3. 为你的应用命名（例如 "OMC Notifier"）并选择你的工作区
+4. 在左侧边栏进入 "Incoming Webhooks"
+5. 将 "Activate Incoming Webhooks" 开关打开
+6. 点击 "Add New Webhook to Workspace"
+7. 选择通知要发布到的频道
+8. 复制 webhook URL（以 https://hooks.slack.com/services/... 开头）
 ```
 
-### Step 3: Collect Webhook URL
+### 步骤 3：收集 Webhook URL
 
-Use AskUserQuestion:
+使用 AskUserQuestion：
 
-**Question:** "Paste your Slack incoming webhook URL (starts with https://hooks.slack.com/services/...)"
+**问题：** "粘贴你的 Slack incoming webhook URL（以 https://hooks.slack.com/services/... 开头）"
 
-The user will type their webhook URL in the "Other" field.
+用户会在 "Other" 字段中输入 webhook URL。
 
-**Validate** the URL:
-- Must start with `https://hooks.slack.com/services/`
-- If invalid, explain the format and ask again
+**校验** URL：
+- 必须以 `https://hooks.slack.com/services/` 开头
+- 如果无效，说明格式要求并重新询问
 
-### Step 4: Configure Mention (User/Group Ping)
+### 步骤 4：配置提及（用户/群组提醒）
 
-Use AskUserQuestion:
+使用 AskUserQuestion：
 
-**Question:** "Would you like notifications to mention (ping) someone?"
+**问题：** "你希望通知中提及（提醒）某人吗？"
 
-**Options:**
-1. **Yes, mention a user** - Tag a specific user by their Slack member ID
-2. **Yes, mention a channel** - Use @channel to notify everyone in the channel
-3. **Yes, mention @here** - Notify only active members in the channel
-4. **No mentions** - Just post the message without pinging anyone
+**选项：**
+1. **是，提及某个用户** - 通过 Slack 成员 ID 标记特定用户
+2. **是，提及某个频道** - 使用 @channel 通知频道内所有人
+3. **是，提及 @here** - 只通知频道内在线的成员
+3. **不提及任何人** - 直接发布消息，不提醒任何人
 
-#### If user wants to mention a user:
+#### 如果用户想提及某个用户：
 
-Ask: "What is the Slack member ID to mention? (Click on a user's profile > More (⋯) > Copy member ID)"
+询问："要提及的 Slack 成员 ID 是什么？（点击用户个人资料 > 更多 (⋯) > 复制成员 ID）"
 
-The mention format is: `<@MEMBER_ID>` (e.g., `<@U1234567890>`)
+提及格式为：`<@MEMBER_ID>`（例如 `<@U1234567890>`）
 
-#### If user wants @channel:
+#### 如果用户想提及 @channel：
 
-The mention format is: `<!channel>`
+提及格式为：`<!channel>`
 
-#### If user wants @here:
+#### 如果用户想提及 @here：
 
-The mention format is: `<!here>`
+提及格式为：`<!here>`
 
-### Step 5: Configure Events
+### 步骤 5：配置事件
 
-Use AskUserQuestion with multiSelect:
+使用带 multiSelect 的 AskUserQuestion：
 
-**Question:** "Which events should trigger Slack notifications?"
+**问题：** "哪些事件应触发 Slack 通知？"
 
-**Options (multiSelect: true):**
-1. **Session end (Recommended)** - When a Claude session finishes
-2. **Input needed** - When Claude is waiting for your response (great for long-running tasks)
-3. **Session start** - When a new session begins
-4. **Session continuing** - When a persistent mode keeps the session alive
+**选项（multiSelect: true）：**
+1. **会话结束（推荐）** - 当 Claude 会话完成时
+2. **需要输入** - 当 Claude 正在等待你的回复时（非常适合长时间运行的任务）
+3. **会话开始** - 当新会话启动时
+4. **会话持续** - 当持久模式让会话保持存活时
 
-Default selection: session-end + ask-user-question.
+默认选择：session-end + ask-user-question。
 
-### Step 6: Optional Channel Override
+### 步骤 6：可选的频道覆盖
 
-Use AskUserQuestion:
+使用 AskUserQuestion：
 
-**Question:** "Override the default notification channel? (The webhook already has a default channel)"
+**问题：** "覆盖默认通知频道？（该 webhook 已经有一个默认频道）"
 
-**Options:**
-1. **Use webhook default (Recommended)** - Post to the channel selected during webhook setup
-2. **Override channel** - Specify a different channel (e.g., #alerts)
+**选项：**
+1. **使用 webhook 默认值（推荐）** - 发布到设置 webhook 时选择的频道
+2. **覆盖频道** - 指定其他频道（例如 #alerts）
 
-If override, ask for the channel name (e.g., `#alerts`).
+如果选择覆盖，询问频道名称（例如 `#alerts`）。
 
-### Step 7: Optional Username Override
+### 步骤 7：可选的用户名覆盖
 
-Use AskUserQuestion:
+使用 AskUserQuestion：
 
-**Question:** "Custom bot display name? (Shows as the webhook sender name in Slack)"
+**问题：** "自定义机器人显示名称？（在 Slack 中显示为 webhook 发送者名称）"
 
-**Options:**
-1. **OMC (default)** - Display as "OMC"
-2. **Claude Code** - Display as "Claude Code"
-3. **Custom** - Enter a custom name
+**选项：**
+1. **OMC（默认）** - 显示为 "OMC"
+2. **Claude Code** - 显示为 "Claude Code"
+3. **自定义** - 输入自定义名称
 
-### Step 8: Write Configuration
+### 步骤 8：写入配置
 
-Read the existing config, merge the new Slack settings, and write back:
+读取现有配置，合并新的 Slack 设置，然后写回：
 
 ```bash
 CONFIG_FILE="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.omc-config.json"
@@ -654,7 +654,7 @@ else
   EXISTING='{}'
 fi
 
-# WEBHOOK_URL, MENTION, USERNAME, CHANNEL are collected from user
+# WEBHOOK_URL、MENTION、USERNAME、CHANNEL 由用户收集提供
 echo "$EXISTING" | jq \
   --arg url "$WEBHOOK_URL" \
   --arg mention "$MENTION" \
@@ -671,33 +671,33 @@ echo "$EXISTING" | jq \
    }' > "$CONFIG_FILE"
 ```
 
-#### Add event-specific config if user didn't select all events:
+#### 如果用户未选择全部事件，添加针对具体事件的配置：
 
-For each event NOT selected, disable it:
+对每个未被选择的事件，将其禁用：
 
 ```bash
-# Example: disable session-start if not selected
+# 示例：如果未选择 session-start，则将其禁用
 echo "$(cat "$CONFIG_FILE")" | jq \
   '.notifications.events = (.notifications.events // {}) |
    .notifications.events["session-start"] = {enabled: false}' > "$CONFIG_FILE"
 ```
 
-### Step 9: Test the Configuration
+### 步骤 9：测试配置
 
-After writing config, offer to send a test notification:
+写入配置后，主动提出发送一条测试通知：
 
-Use AskUserQuestion:
+使用 AskUserQuestion：
 
-**Question:** "Send a test notification to verify the setup?"
+**问题：** "发送一条测试通知以验证配置？"
 
-**Options:**
-1. **Yes, test now (Recommended)** - Send a test message to your Slack channel
-2. **No, I'll test later** - Skip testing
+**选项：**
+1. **是，立即测试（推荐）** - 向你的 Slack 频道发送一条测试消息
+2. **否，我稍后测试** - 跳过测试
 
-#### If testing:
+#### 如果测试：
 
 ```bash
-# For webhook:
+# 对于 webhook：
 MENTION_PREFIX=""
 if [ -n "$MENTION" ]; then
   MENTION_PREFIX="${MENTION}\n"
@@ -705,181 +705,181 @@ fi
 
 curl -s -o /dev/null -w "%{http_code}" \
   -H "Content-Type: application/json" \
-  -d "{\"text\": \"${MENTION_PREFIX}OMC test notification - Slack is configured!\"}" \
+  -d "{\"text\": \"${MENTION_PREFIX}OMC 测试通知 - Slack 已配置成功！\"}" \
   "$WEBHOOK_URL"
 ```
 
-Report success or failure. Common issues:
-- **403 Forbidden**: Webhook URL is invalid or revoked
-- **404 Not Found**: Webhook URL is incorrect
-- **channel_not_found**: Channel override is invalid
-- **Network error**: Check connectivity to hooks.slack.com
+报告成功或失败。常见问题：
+- **403 Forbidden**：Webhook URL 无效或已被撤销
+- **404 Not Found**：Webhook URL 不正确
+- **channel_not_found**：频道覆盖无效
+- **Network error**：检查到 hooks.slack.com 的网络连通性
 
-### Step 10: Confirm
+### 步骤 10：确认
 
-Display the final configuration summary:
+展示最终配置摘要：
 
 ```
-Slack Notifications Configured!
+Slack 通知配置完成！
 
   Webhook:  https://hooks.slack.com/services/T00/B00/xxx...
-  Mention:  <@U1234567890> (or "none")
-  Channel:  #alerts (or "webhook default")
-  Events:   session-end, ask-user-question
-  Username: OMC
+  提及:     <@U1234567890>（或 "none"）
+  频道:     #alerts（或 "webhook default"）
+  事件:     session-end, ask-user-question
+  用户名:   OMC
 
-Config saved to: ~/.claude/.omc-config.json
+配置已保存至: ~/.claude/.omc-config.json
 
-You can also set these via environment variables:
+你也可以通过环境变量设置这些值:
   OMC_SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
   OMC_SLACK_MENTION=<@U1234567890>
 
-To reconfigure: /oh-my-claudecode:configure-notifications slack
-To configure Discord: /oh-my-claudecode:configure-notifications discord
-To configure Telegram: /oh-my-claudecode:configure-notifications telegram
+重新配置: /oh-my-claudecode:configure-notifications slack
+配置 Discord: /oh-my-claudecode:configure-notifications discord
+配置 Telegram: /oh-my-claudecode:configure-notifications telegram
 ```
 
-### Environment Variable Alternative
+### 环境变量替代方案
 
-Users can skip this wizard entirely by setting env vars in their shell profile:
+用户可以在自己的 shell 配置文件中设置环境变量，完全跳过此向导：
 
 ```bash
 export OMC_SLACK_WEBHOOK_URL="https://hooks.slack.com/services/T00/B00/xxx"
-export OMC_SLACK_MENTION="<@U1234567890>"  # optional
+export OMC_SLACK_MENTION="<@U1234567890>"  # 可选
 ```
 
-Env vars are auto-detected by the notification system without needing `.omc-config.json`.
+通知系统会自动检测环境变量，无需 `.omc-config.json`。
 
-### Slack Mention Formats
+### Slack 提及格式
 
-| Type | Format | Example |
+| 类型 | 格式 | 示例 |
 |------|--------|---------|
-| User | `<@MEMBER_ID>` | `<@U1234567890>` |
-| Channel | `<!channel>` | `<!channel>` |
-| Here | `<!here>` | `<!here>` |
-| Everyone | `<!everyone>` | `<!everyone>` |
-| User Group | `<!subteam^GROUP_ID>` | `<!subteam^S1234567890>` |
+| 用户 | `<@MEMBER_ID>` | `<@U1234567890>` |
+| 频道 | `<!channel>` | `<!channel>` |
+| 在线成员 | `<!here>` | `<!here>` |
+| 所有人 | `<!everyone>` | `<!everyone>` |
+| 用户组 | `<!subteam^GROUP_ID>` | `<!subteam^S1234567890>` |
 
 ---
 
-## Platform Activation Flags
+## 平台激活标志
 
-All notification platforms require activation via CLI flags per session:
+所有通知平台都需要在每次会话中通过 CLI 标志激活：
 
-- `omc --telegram` — Activates Telegram notifications (sets `OMC_TELEGRAM=1`)
-- `omc --discord` — Activates Discord notifications (sets `OMC_DISCORD=1`)
-- `omc --slack` — Activates Slack notifications (sets `OMC_SLACK=1`)
-- `omc --webhook` — Activates webhook notifications (sets `OMC_WEBHOOK=1`)
-- `omc --openclaw` — Activates OpenClaw gateway integration (sets `OMC_OPENCLAW=1`)
+- `omc --telegram` — 激活 Telegram 通知（设置 `OMC_TELEGRAM=1`）
+- `omc --discord` — 激活 Discord 通知（设置 `OMC_DISCORD=1`）
+- `omc --slack` — 激活 Slack 通知（设置 `OMC_SLACK=1`）
+- `omc --webhook` — 激活 webhook 通知（设置 `OMC_WEBHOOK=1`）
+- `omc --openclaw` — 激活 OpenClaw 网关集成（设置 `OMC_OPENCLAW=1`）
 
-Without these flags, configured platforms remain dormant. This prevents unwanted notifications during development while keeping configuration persistent.
+如果不加这些标志，已配置的平台将保持休眠。这样既能避免开发期间收到不需要的通知，又能让配置持久保留。
 
-**Examples:**
-- `omc --telegram --discord` — Telegram + Discord active
-- `omc --telegram --slack --webhook` — Telegram + Slack + Webhook active
-- `omc --telegram --openclaw` — Telegram + OpenClaw active
-- `omc` — No notifications sent (all platforms require explicit activation)
+**示例：**
+- `omc --telegram --discord` — Telegram + Discord 已激活
+- `omc --telegram --slack --webhook` — Telegram + Slack + Webhook 已激活
+- `omc --telegram --openclaw` — Telegram + OpenClaw 已激活
+- `omc` — 不发送任何通知（所有平台都需要显式激活）
 
 ---
 
-## Hook Event Templates
+## Hook 事件模板
 
-Customize notification messages per event and per platform using `omc_config.hook.json`.
+使用 `omc_config.hook.json` 按事件和平台自定义通知消息。
 
-### Routing
+### 路由
 
-If the trigger or argument contains "hook", "template", or "customize messages" → follow this section.
+如果触发词或参数包含 "hook"、"template" 或 "customize messages" → 执行本小节。
 
-### Step 1: Detect Existing Hook Config
+### 步骤 1：检测现有 Hook 配置
 
-Check if `${CLAUDE_CONFIG_DIR:-~/.claude}/omc_config.hook.json` exists. If it does, show the current configuration. If not, explain what it does.
-
-```
-Hook event templates let you customize the notification messages sent to each platform.
-You can set different messages for Discord vs Telegram vs Slack, and control which
-events fire on which platform.
-
-Config file: ~/.claude/omc_config.hook.json
-```
-
-### Step 2: Choose Event to Configure
-
-Use AskUserQuestion:
-
-**Question:** "Which event would you like to configure templates for?"
-
-**Options:**
-1. **session-end** - When a Claude session finishes (most common)
-2. **ask-user-question** - When Claude is waiting for input
-3. **session-idle** - When Claude finishes and waits for input
-4. **session-start** - When a new session begins
-
-### Step 3: Show Available Variables
-
-Display the template variables available for the chosen event:
+检查 `${CLAUDE_CONFIG_DIR:-~/.claude}/omc_config.hook.json` 是否存在。如果存在，展示当前配置。如果不存在，说明它的作用。
 
 ```
-Available template variables:
+Hook 事件模板让你可以自定义发送到各平台的通知消息。
+你可以为 Discord、Telegram、Slack 分别设置不同的消息，并控制哪些
+事件在哪个平台上触发。
 
-RAW FIELDS:
-  {{sessionId}}      - Session identifier
-  {{timestamp}}      - ISO timestamp
-  {{tmuxSession}}    - tmux session name
-  {{projectPath}}    - Full project directory path
-  {{projectName}}    - Project directory basename
-  {{reason}}         - Stop/end reason
-  {{activeMode}}     - Active OMC mode name
-  {{question}}       - Question text (ask-user-question only)
-  {{agentName}}      - Agent name (agent-call only)
-  {{agentType}}      - Agent type (agent-call only)
-
-COMPUTED (smart formatting):
-  {{duration}}       - Human-readable duration (e.g., "5m 23s")
-  {{time}}           - Locale time string
-  {{modesDisplay}}   - Comma-separated modes or empty
-  {{iterationDisplay}} - "3/10" format or empty
-  {{agentDisplay}}   - "2/5 completed" or empty
-  {{projectDisplay}} - Project name with fallbacks
-  {{footer}}         - tmux + project info line
-  {{tmuxTailBlock}}  - Recent output in code fence or empty
-  {{reasonDisplay}}  - Reason with "unknown" fallback
-
-CONDITIONALS:
-  {{#if variableName}}content shown when truthy{{/if}}
+配置文件: ~/.claude/omc_config.hook.json
 ```
 
-### Step 4: Collect Template
+### 步骤 2：选择要配置的事件
 
-Use AskUserQuestion:
+使用 AskUserQuestion：
 
-**Question:** "Enter the message template for this event (use {{variables}} for dynamic content)"
+**问题：** "你想为哪个事件配置模板？"
 
-**Options:**
-1. **Use default template** - Keep the built-in message format
-2. **Simple summary** - Short one-line format
-3. **Custom** - Enter your own template
+**选项：**
+1. **session-end** - 当 Claude 会话完成时（最常见）
+2. **ask-user-question** - 当 Claude 正在等待输入时
+3. **session-idle** - 当 Claude 完成并等待输入时
+4. **session-start** - 当新会话启动时
 
-If "Simple summary", use a pre-built compact template:
-- session-end: `{{projectDisplay}} session ended ({{duration}}) — {{reasonDisplay}}`
-- ask-user-question: `Input needed on {{projectDisplay}}: {{question}}`
-- session-idle: `{{projectDisplay}} is idle. {{#if reason}}Reason: {{reason}}{{/if}}`
-- session-start: `Session started: {{projectDisplay}} at {{time}}`
+### 步骤 3：展示可用变量
 
-### Step 5: Per-Platform Overrides
+展示所选事件可用的模板变量：
 
-Use AskUserQuestion:
+```
+可用的模板变量：
 
-**Question:** "Do you want different messages for specific platforms?"
+原始字段：
+  {{sessionId}}      - 会话标识符
+  {{timestamp}}      - ISO 时间戳
+  {{tmuxSession}}    - tmux 会话名称
+  {{projectPath}}    - 项目目录完整路径
+  {{projectName}}    - 项目目录的基本名称
+  {{reason}}         - 停止/结束原因
+  {{activeMode}}     - 当前激活的 OMC 模式名称
+  {{question}}       - 问题文本（仅 ask-user-question）
+  {{agentName}}      - Agent 名称（仅 agent-call）
+  {{agentType}}      - Agent 类型（仅 agent-call）
 
-**Options:**
-1. **No, same for all (Recommended)** - Use the same template everywhere
-2. **Yes, customize per platform** - Set different templates for Discord, Telegram, Slack
+计算字段（智能格式化）：
+  {{duration}}       - 人类可读的时长（例如 "5m 23s"）
+  {{time}}           - 本地化的时间字符串
+  {{modesDisplay}}   - 逗号分隔的模式列表，或为空
+  {{iterationDisplay}} - "3/10" 格式，或为空
+  {{agentDisplay}}   - "2/5 completed"，或为空
+  {{projectDisplay}} - 带兜底值的项目名称
+  {{footer}}         - tmux + 项目信息行
+  {{tmuxTailBlock}}  - 代码围栏中的最近输出，或为空
+  {{reasonDisplay}}  - 带 "unknown" 兜底值的原因
 
-If per-platform: ask for each enabled platform's template separately.
+条件语句：
+  {{#if variableName}}条件为真时显示的内容{{/if}}
+```
 
-### Step 6: Write Configuration
+### 步骤 4：收集模板
 
-Read or create `${CLAUDE_CONFIG_DIR:-~/.claude}/omc_config.hook.json` and merge the new settings:
+使用 AskUserQuestion：
+
+**问题：** "输入此事件的消息模板（使用 {{variables}} 表示动态内容）"
+
+**选项：**
+1. **使用默认模板** - 保留内置的消息格式
+2. **简单摘要** - 简短的单行格式
+3. **自定义** - 输入你自己的模板
+
+如果选择 "简单摘要"，使用预置的紧凑模板：
+- session-end: `{{projectDisplay}} 会话已结束（{{duration}}）— {{reasonDisplay}}`
+- ask-user-question: `{{projectDisplay}} 需要输入：{{question}}`
+- session-idle: `{{projectDisplay}} 处于空闲状态。{{#if reason}}原因：{{reason}}{{/if}}`
+- session-start: `会话已开始：{{projectDisplay}}，时间 {{time}}`
+
+### 步骤 5：按平台覆盖
+
+使用 AskUserQuestion：
+
+**问题：** "你想为特定平台使用不同的消息吗？"
+
+**选项：**
+1. **否，全部相同（推荐）** - 在所有位置使用同一个模板
+2. **是，按平台自定义** - 为 Discord、Telegram、Slack 设置不同的模板
+
+如果按平台自定义：分别询问每个已启用平台的模板。
+
+### 步骤 6：写入配置
+
+读取或创建 `${CLAUDE_CONFIG_DIR:-~/.claude}/omc_config.hook.json` 并合并新设置：
 
 ```json
 {
@@ -898,13 +898,13 @@ Read or create `${CLAUDE_CONFIG_DIR:-~/.claude}/omc_config.hook.json` and merge 
 }
 ```
 
-### Step 7: Validate and Test
+### 步骤 7：校验与测试
 
-Validate the template using `validateTemplate()` to check for unknown variables. If any are found, warn the user and offer to correct.
+使用 `validateTemplate()` 校验模板，检查是否存在未知变量。如果发现未知变量，警告用户并提供修正建议。
 
-Offer to send a test notification with the new template.
+主动提出使用新模板发送一条测试通知。
 
-### Example Config
+### 示例配置
 
 ```json
 {
@@ -913,19 +913,19 @@ Offer to send a test notification with the new template.
   "events": {
     "session-end": {
       "enabled": true,
-      "template": "Session {{sessionId}} ended after {{duration}}. Reason: {{reasonDisplay}}",
+      "template": "会话 {{sessionId}} 在 {{duration}} 后结束。原因：{{reasonDisplay}}",
       "platforms": {
         "discord": {
-          "template": "**Session Complete** | `{{projectDisplay}}` | {{duration}} | {{reasonDisplay}}"
+          "template": "**会话完成** | `{{projectDisplay}}` | {{duration}} | {{reasonDisplay}}"
         },
         "telegram": {
-          "template": "Done: {{projectDisplay}} ({{duration}})\n{{#if contextSummary}}Summary: {{contextSummary}}{{/if}}"
+          "template": "完成：{{projectDisplay}}（{{duration}}）\n{{#if contextSummary}}摘要：{{contextSummary}}{{/if}}"
         }
       }
     },
     "ask-user-question": {
       "enabled": true,
-      "template": "{{#if question}}{{question}}{{/if}}\nWaiting for input on {{projectDisplay}}"
+      "template": "{{#if question}}{{question}}{{/if}}\n{{projectDisplay}} 正在等待输入"
     }
   }
 }
@@ -933,30 +933,30 @@ Offer to send a test notification with the new template.
 
 ---
 
-## Related
+## 相关
 
-- `/oh-my-claudecode:configure-openclaw` — Configure OpenClaw gateway integration
+- `/oh-my-claudecode:configure-openclaw` — 配置 OpenClaw 网关集成
 
 ---
 
-## Custom Integration (OpenClaw, n8n, CLI, etc.)
+## 自定义集成（OpenClaw、n8n、CLI 等）
 
-Configure custom webhooks and CLI commands for services beyond the native Discord/Telegram/Slack integrations.
+为原生 Discord/Telegram/Slack 集成之外的服务配置自定义 webhook 和 CLI 命令。
 
-### Routing
+### 路由
 
-If the user says "custom integration", "openclaw", "n8n", "webhook", "cli command", or similar → follow this section.
+如果用户提到 "custom integration"、"openclaw"、"n8n"、"webhook"、"cli command" 或类似内容 → 执行本小节。
 
-### Migration from OpenClaw
+### 从 OpenClaw 迁移
 
-If `~/.claude/omc_config.openclaw.json` exists, detect and offer migration:
+如果 `~/.claude/omc_config.openclaw.json` 存在，检测并提供迁移：
 
-**Step 1: Detect Legacy Config**
+**步骤 1：检测旧版配置**
 ```bash
 LEGACY_CONFIG="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/omc_config.openclaw.json"
 if [ -f "$LEGACY_CONFIG" ]; then
   echo "LEGACY_FOUND=true"
-  # Check if already migrated
+  # 检查是否已迁移
   if jq -e '.customIntegrations.integrations[] | select(.preset == "openclaw")' "$CONFIG_FILE" >/dev/null 2>&1; then
     echo "ALREADY_MIGRATED=true"
   else
@@ -967,101 +967,101 @@ else
 fi
 ```
 
-**Step 2: Offer Migration**
-If legacy found and not migrated:
+**步骤 2：提供迁移**
+如果发现旧版配置且尚未迁移：
 
-**Question:** "Existing OpenClaw configuration detected. Would you like to migrate it to the new format?"
+**问题：** "检测到现有 OpenClaw 配置。你想将其迁移到新格式吗？"
 
-**Options:**
-1. **Yes, migrate now** - Convert legacy config to custom integration
-2. **No, configure fresh** - Skip migration and start new
-3. **Show me the legacy config first** - Display current OpenClaw settings
+**选项：**
+1. **是，立即迁移** - 将旧版配置转换为自定义集成
+2. **否，从头配置** - 跳过迁移并重新开始
+3. **先让我看看旧版配置** - 展示当前 OpenClaw 设置
 
-If migrate:
-- Read `omc_config.openclaw.json`
-- Transform to custom integration format
-- Save to `.omc-config.json`
-- Backup legacy to `omc_config.openclaw.json.bak`
-- Show success message
+如果迁移：
+- 读取 `omc_config.openclaw.json`
+- 转换为自定义集成格式
+- 保存到 `.omc-config.json`
+- 将旧版配置备份为 `omc_config.openclaw.json.bak`
+- 显示成功消息
 
-### Custom Integration Wizard
+### 自定义集成向导
 
-**Step 1: Select Integration Type**
+**步骤 1：选择集成类型**
 
-**Question:** "Which type of custom integration would you like to configure?"
+**问题：** "你想配置哪种类型的自定义集成？"
 
-**Options:**
-1. **OpenClaw Gateway** - Wake external automations and AI agents
-2. **n8n Webhook** - Trigger n8n workflows
-3. **Custom Agent Gateway** - Send notifications to a custom agent webhook
-4. **Generic Webhook** - Custom HTTPS webhook
-5. **Generic CLI Command** - Execute shell command on events
+**选项：**
+1. **OpenClaw 网关** - 唤醒外部自动化流程和 AI agent
+2. **n8n Webhook** - 触发 n8n 工作流
+3. **自定义 Agent 网关** - 将通知发送到自定义 agent webhook
+4. **通用 Webhook** - 自定义 HTTPS webhook
+5. **通用 CLI 命令** - 在事件发生时执行 shell 命令
 
-### OpenClaw/n8n/Custom Agent Gateway Preset Flow
+### OpenClaw/n8n/自定义 Agent 网关预设流程
 
-**Step 2: Gateway URL**
+**步骤 2：网关 URL**
 
-**Question:** "What is your gateway/webhook URL?"
+**问题：** "你的网关/webhook URL 是什么？"
 
-**Validation:**
-- Must be HTTPS (except localhost for development)
-- Must be valid URL format
+**校验：**
+- 必须是 HTTPS（开发环境下的 localhost 除外）
+- 必须是有效的 URL 格式
 
-**Step 3: Authentication (Optional)**
+**步骤 3：认证（可选）**
 
-**Question:** "Does your gateway require authentication?"
+**问题：** "你的网关需要认证吗？"
 
-**Options:**
+**选项：**
 1. **Bearer token** - Authorization: Bearer <token>
-2. **Custom header** - Name and value
-3. **No authentication**
+2. **自定义请求头** - 名称和值
+3. **不需要认证**
 
-If Bearer: ask for token
-If Custom: ask for header name and value
+如果选择 Bearer：询问 token
+如果选择自定义：询问请求头名称和值
 
-**Step 4: Events**
+**步骤 4：事件**
 
-Use AskUserQuestion with multiSelect:
+使用带 multiSelect 的 AskUserQuestion：
 
-**Question:** "Which events should trigger this integration?"
+**问题：** "哪些事件应触发此集成？"
 
-**Options (with defaults from preset):**
+**选项（含预设默认值）：**
 - session-start
 - session-end
 - session-stop
 - session-idle
 - ask-user-question
 
-Default for OpenClaw: session-start, session-end, stop
-Default for n8n: session-end, ask-user-question
+OpenClaw 的默认值：session-start、session-end、stop
+n8n 的默认值：session-end、ask-user-question
 
-**Step 5: Test**
+**步骤 5：测试**
 
-**Question:** "Send a test notification to verify the configuration?"
+**问题：** "发送一条测试通知以验证配置？"
 
-**Options:**
-1. **Yes, test now** - Send test webhook
-2. **No, skip test**
+**选项：**
+1. **是，立即测试** - 发送测试 webhook
+2. **否，跳过测试**
 
-If test:
+如果测试：
 ```bash
-# For webhook integrations
+# 对于 webhook 集成
 curl -X POST \
   -H "Content-Type: application/json" \
   ${AUTH_HEADER:+"-H \"$AUTH_HEADER\""} \
-  -d '{"event":"test","instruction":"OMC test notification","timestamp":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' \
+  -d '{"event":"test","instruction":"OMC 测试通知","timestamp":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' \
   "$WEBHOOK_URL"
 ```
 
-Show result (HTTP status, any error).
+展示结果（HTTP 状态码、任何错误）。
 
-**Step 6: Write Configuration**
+**步骤 6：写入配置**
 
-Merge into `.omc-config.json`:
+合并到 `.omc-config.json`：
 
 ```json
 {
-  "notifications": { /* existing native configs */ },
+  "notifications": { /* 现有的原生配置 */ },
   "customIntegrations": {
     "enabled": true,
     "integrations": [
@@ -1077,7 +1077,7 @@ Merge into `.omc-config.json`:
             "Content-Type": "application/json",
             "Authorization": "Bearer ..."
           },
-          "bodyTemplate": "{\\"event\\":\\"{{event}}\\",\\"instruction\\":\\"Session {{sessionId}} {{event}}\\",\\"timestamp\\":\\"{{timestamp}}\\"}",
+          "bodyTemplate": "{\\"event\\":\\"{{event}}\\",\\"instruction\\":\\"会话 {{sessionId}} {{event}}\\",\\"timestamp\\":\\"{{timestamp}}\\"}",
           "timeout": 10000
         },
         "events": ["session-start", "session-end"]
@@ -1087,21 +1087,21 @@ Merge into `.omc-config.json`:
 }
 ```
 
-### Generic Webhook Flow
+### 通用 Webhook 流程
 
-**Step 2: URL**
-Ask for webhook URL (HTTPS required).
+**步骤 2：URL**
+询问 webhook URL（需要 HTTPS）。
 
-**Step 3: Method**
-Ask for HTTP method (GET, POST, PUT, PATCH, DELETE). Default: POST.
+**步骤 3：请求方法**
+询问 HTTP 方法（GET、POST、PUT、PATCH、DELETE）。默认：POST。
 
-**Step 4: Headers**
-Ask for headers in "Name: Value" format, one per line. Default: Content-Type: application/json
+**步骤 4：请求头**
+询问请求头，格式为 "名称: 值"，每行一个。默认：Content-Type: application/json
 
-**Step 5: Body Template**
-Show available template variables and ask for body template (JSON or other format).
+**步骤 5：请求体模板**
+展示可用的模板变量，并询问请求体模板（JSON 或其他格式）。
 
-Default:
+默认：
 ```json
 {
   "event": "{{event}}",
@@ -1111,32 +1111,32 @@ Default:
 }
 ```
 
-**Step 6: Timeout**
-Ask for timeout in milliseconds (1000-60000). Default: 10000.
+**步骤 6：超时**
+询问超时时间，单位为毫秒（1000-60000）。默认：10000。
 
-**Step 7: Events**
-Multi-select events.
+**步骤 7：事件**
+多选事件。
 
-**Step 8: Test and Save**
-Same as preset flow.
+**步骤 8：测试并保存**
+与预设流程相同。
 
-### Generic CLI Command Flow
+### 通用 CLI 命令流程
 
-**Step 2: Command**
+**步骤 2：命令**
 
-**Question:** "What command should be executed? (single executable, no arguments)"
+**问题：** "应执行哪个命令？（单个可执行文件，不带参数）"
 
-**Example:** `curl`, `/usr/local/bin/my-script`, `notify-send`
+**示例：** `curl`、`/usr/local/bin/my-script`、`notify-send`
 
-**Validation:**
-- No spaces
-- No shell metacharacters
+**校验：**
+- 不能包含空格
+- 不能包含 shell 元字符
 
-**Step 3: Arguments**
+**步骤 3：参数**
 
-**Question:** "Command arguments (use {{variable}} for dynamic values). Enter one per line."
+**问题：** "命令参数（使用 {{variable}} 表示动态值）。每行输入一个。"
 
-**Example:**
+**示例：**
 ```
 -X
 POST
@@ -1145,70 +1145,70 @@ POST
 https://my-api.com/notify
 ```
 
-Show available template variables reference.
+展示可用的模板变量参考。
 
-**Step 4: Timeout**
-Ask for timeout (1000-60000ms). Default: 5000.
+**步骤 4：超时**
+询问超时时间（1000-60000ms）。默认：5000。
 
-**Step 5: Events**
-Multi-select events.
+**步骤 5：事件**
+多选事件。
 
-**Step 6: Test and Save**
+**步骤 6：测试并保存**
 
-For test, execute command with test values:
+测试时，使用测试值执行命令：
 ```bash
 $COMMAND "${ARGS[@]//{{event}}/test}"
 ```
 
-Show stdout/stderr and exit code.
+展示 stdout/stderr 和退出码。
 
-### Managing Custom Integrations
+### 管理自定义集成
 
-**List existing:**
+**列出已有的：**
 ```bash
 jq '.customIntegrations.integrations[] | {id, type, preset, enabled, events}' "$CONFIG_FILE"
 ```
 
-**Disable/Enable:**
+**禁用/启用：**
 ```bash
-# Disable
+# 禁用
 jq '.customIntegrations.integrations = [.customIntegrations.integrations[] | if .id == "my-integration" then .enabled = false else . end]' "$CONFIG_FILE"
 
-# Enable
+# 启用
 jq '.customIntegrations.integrations = [.customIntegrations.integrations[] | if .id == "my-integration" then .enabled = true else . end]' "$CONFIG_FILE"
 ```
 
-**Remove:**
+**移除：**
 ```bash
 jq '.customIntegrations.integrations = [.customIntegrations.integrations[] | select(.id != "my-integration")]' "$CONFIG_FILE"
 ```
 
-### Template Variables Reference
+### 模板变量参考
 
-All custom integrations support these template variables:
+所有自定义集成都支持以下模板变量：
 
-| Variable | Description | Example |
+| 变量 | 说明 | 示例 |
 |----------|-------------|---------|
-| `{{sessionId}}` | Unique session ID | `sess_abc123` |
-| `{{projectPath}}` | Full project path | `/home/user/my-project` |
-| `{{projectName}}` | Project directory name | `my-project` |
-| `{{timestamp}}` | ISO 8601 timestamp | `2026-03-05T14:30:00Z` |
-| `{{event}}` | Event name | `session-end` |
-| `{{duration}}` | Human-readable duration | `45s` |
-| `{{durationMs}}` | Duration in milliseconds | `45000` |
-| `{{reason}}` | Stop/end reason | `completed` |
-| `{{tmuxSession}}` | tmux session name | `claude:my-project` |
+| `{{sessionId}}` | 唯一的会话 ID | `sess_abc123` |
+| `{{projectPath}}` | 项目完整路径 | `/home/user/my-project` |
+| `{{projectName}}` | 项目目录名称 | `my-project` |
+| `{{timestamp}}` | ISO 8601 时间戳 | `2026-03-05T14:30:00Z` |
+| `{{event}}` | 事件名称 | `session-end` |
+| `{{duration}}` | 人类可读的时长 | `45s` |
+| `{{durationMs}}` | 以毫秒为单位的时长 | `45000` |
+| `{{reason}}` | 停止/结束原因 | `completed` |
+| `{{tmuxSession}}` | tmux 会话名称 | `claude:my-project` |
 
-Session-end only:
+仅 session-end：
 - `{{agentsSpawned}}`, `{{agentsCompleted}}`, `{{modesUsed}}`, `{{contextSummary}}`
 
-Ask-user-question only:
+仅 ask-user-question：
 - `{{question}}`
 
 ---
 
-## Related
+## 相关
 
-- Template variables: `src/notifications/template-variables.ts`
-- Validation: `src/notifications/validation.ts`
-- Presets: `src/notifications/presets.ts`
+- 模板变量：`src/notifications/template-variables.ts`
+- 校验：`src/notifications/validation.ts`
+- 预设：`src/notifications/presets.ts`

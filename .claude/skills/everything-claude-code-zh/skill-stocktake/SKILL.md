@@ -64,9 +64,9 @@ cd ~/path/to/my-project
 展示脚本输出的扫描摘要和清单表格：
 
 ```
-Scanning:
-  ✓ ~/.claude/skills/         (17 files)
-  ✗ {cwd}/.claude/skills/    (not found — global skills only)
+扫描：
+  ✓ ~/.claude/skills/         （17 个文件）
+  ✗ {cwd}/.claude/skills/    （未找到 —— 仅含全局技能）
 ```
 
 | 技能 | 7天使用率 | 30天使用率 | 描述 |
@@ -162,7 +162,7 @@ Scanning:
     "skill-name": {
       "path": "~/.claude/skills/skill-name/SKILL.md",
       "verdict": "Keep",
-      "reason": "Concrete, actionable, unique value for X workflow",
+      "reason": "针对 X 工作流的具体、可操作、独特的价值",
       "mtime": "2026-01-15T08:30:00Z"
     }
   }

@@ -1,198 +1,198 @@
 ---
 name: release
-description: Generic release assistant — analyzes repo release rules, caches them in .omc/RELEASE_RULE.md, then guides the release
+description: 通用发布助手 — 分析仓库发布规则，缓存到 .omc/RELEASE_RULE.md，然后指导发布流程。
 level: 3
 ---
 
-# Release Skill
+# 发布技能
 
-A thin, repo-aware release assistant. On first run it inspects the project and CI to derive release rules, stores them in `.omc/RELEASE_RULE.md` for future use, then walks you through a release using those rules.
+一个轻量、能感知仓库情况的发布助手。首次运行时，它会检查项目与 CI 来推导出发布规则，把这些规则存入 `.omc/RELEASE_RULE.md` 供以后使用，然后依据这些规则带你走完一次发布流程。
 
-## Usage
+## 用法
 
 ```
 /oh-my-claudecode:release [version]
 ```
 
-- `version` is optional. If omitted the skill will ask. Accepts `patch`, `minor`, `major`, or an explicit semver like `2.4.0`.
-- Add `--refresh` to force re-analysis of the repo even when a cached rule file exists.
+- `version` 是可选的。如果省略，技能会主动询问。可接受 `patch`、`minor`、`major`，或像 `2.4.0` 这样明确的语义化版本号。
+- 加上 `--refresh` 可以强制重新分析仓库，即使已经存在缓存的规则文件。
 
-## Execution Flow
+## 执行流程
 
-### Step 0 — Load or Build Release Rules
+### 第 0 步 — 加载或构建发布规则
 
-Check whether `.omc/RELEASE_RULE.md` exists.
+检查 `.omc/RELEASE_RULE.md` 是否存在。
 
-**If it does NOT exist (or `--refresh` was passed):** Run the full repo analysis below and write the file.
+**如果它不存在（或者传入了 `--refresh`）：** 执行下面完整的仓库分析，并写入该文件。
 
-**If it DOES exist:** Read the file. Then do a quick delta check — scan `.github/workflows/` (or equivalent CI dirs: `.circleci/`, `.travis.yml`, `Jenkinsfile`, `bitbucket-pipelines.yml`, `gitlab-ci.yml`) for any modifications newer than the `last-analyzed` timestamp in the rule file. If relevant workflow files changed, re-run the analysis for those sections and update the file. Report what changed.
-
----
-
-### Step 1 — Repo Analysis (first run or --refresh)
-
-Inspect the repo and answer the following. Write answers into `.omc/RELEASE_RULE.md`.
-
-#### 1a. Version Sources
-
-- Locate all files that contain a version string matching the current version in `package.json` / `pyproject.toml` / `Cargo.toml` / `build.gradle` / `VERSION` file / etc.
-- List each file and the field or regex pattern used to find the version.
-- Detect whether there is a release automation script (e.g. `scripts/release.*`, `Makefile release` target, `bump2version`, `release-it`, `semantic-release`, `changesets`, `goreleaser`).
-
-#### 1b. Registry / Distribution
-
-- npm (`package.json` with `publishConfig` or `npm publish` in CI), PyPI (`pyproject.toml` + `twine`/`flit`), Cargo (`Cargo.toml`), Docker (`Dockerfile` + push step), GitHub Packages, other.
-- Is there a CI step that publishes automatically on tag push? Which workflow file and job?
-
-#### 1c. Release Trigger
-
-- Identify what starts the release: tag push (`v*`), manual dispatch (`workflow_dispatch`), merge to main/master, a release branch merge, a commit message pattern.
-
-#### 1d. Test Gate
-
-- Identify the test command and where it runs in CI.
-- Are tests required to pass before publish? Note any bypass flags.
-
-#### 1e. Release Notes / Changelog
-
-- Does a `CHANGELOG.md` or `CHANGELOG.rst` exist?
-- What convention is used: Keep a Changelog, Conventional Commits, GitHub auto-generated, none?
-- Is there a release body file (e.g. `.github/release-body.md`) committed pre-tag?
-
-#### 1f. First-Time User Check
-
-- Does a release workflow exist in `.github/workflows/` (or equivalent)? If not, flag this and offer to scaffold one.
-- Is there a `.gitignore` entry preventing build artifacts from being committed? If not, flag it.
-- Are git tags being used? Run `git tag --list` to check. If no tags exist, flag and explain best practice.
+**如果它确实存在：** 读取该文件。然后做一次快速的差异检查 — 扫描 `.github/workflows/`（或同等的 CI 目录：`.circleci/`、`.travis.yml`、`Jenkinsfile`、`bitbucket-pipelines.yml`、`gitlab-ci.yml`），看是否有任何文件的修改时间晚于规则文件里的 `last-analyzed` 时间戳。如果相关的工作流文件发生了改动，就重新执行这些部分的分析并更新该文件。报告发生了什么变化。
 
 ---
 
-### Step 2 — Write `.omc/RELEASE_RULE.md`
+### 第 1 步 — 仓库分析（首次运行或 --refresh）
 
-Create or overwrite the file with this structure:
+检查仓库并回答以下问题。把答案写入 `.omc/RELEASE_RULE.md`。
+
+#### 1a. 版本来源
+
+- 找出所有包含版本字符串的文件，这些字符串要与 `package.json` / `pyproject.toml` / `Cargo.toml` / `build.gradle` / `VERSION` 文件 / 等处的当前版本一致。
+- 列出每个文件，以及用来定位版本号的字段或正则表达式模式。
+- 检测是否存在发布自动化脚本（例如 `scripts/release.*`、`Makefile release` 目标、`bump2version`、`release-it`、`semantic-release`、`changesets`、`goreleaser`）。
+
+#### 1b. 注册表 / 分发
+
+- npm（`package.json` 带 `publishConfig`，或 CI 里的 `npm publish`）、PyPI（`pyproject.toml` + `twine`/`flit`）、Cargo（`Cargo.toml`）、Docker（`Dockerfile` + 推送步骤）、GitHub Packages、其它。
+- 是否存在一个在推送标签时自动发布的 CI 步骤？是哪个工作流文件、哪个任务？
+
+#### 1c. 发布触发方式
+
+- 判断是什么启动了发布：推送标签（`v*`）、手动触发（`workflow_dispatch`）、合并到 main/master、合并发布分支、某种提交信息模式。
+
+#### 1d. 测试门禁
+
+- 判断测试命令是什么，以及它在 CI 中的哪个环节运行。
+- 发布前是否要求测试必须通过？记录任何绕过用的标志。
+
+#### 1e. 发布说明 / 变更日志
+
+- 是否存在 `CHANGELOG.md` 或 `CHANGELOG.rst`？
+- 使用哪种约定：Keep a Changelog、Conventional Commits、GitHub 自动生成，还是没有？
+- 是否存在一个在打标签之前就已提交的发布正文文件（例如 `.github/release-body.md`）？
+
+#### 1f. 首次使用检查
+
+- `.github/workflows/`（或同等位置）中是否存在发布工作流？如果没有，请指出并主动提出生成一个脚手架。
+- 是否有 `.gitignore` 条目阻止构建产物被提交？如果没有，请指出来。
+- 是否在使用 git 标签？运行 `git tag --list` 来检查。如果没有任何标签，请指出来并解释最佳实践。
+
+---
+
+### 第 2 步 — 写入 `.omc/RELEASE_RULE.md`
+
+按以下结构创建或覆盖该文件：
 
 ```markdown
-# Release Rules
+# 发布规则
 <!-- last-analyzed: YYYY-MM-DDTHH:MM:SSZ -->
 
-## Version Sources
+## 版本来源
 <!-- list of files + patterns -->
 
-## Release Trigger
+## 发布触发方式
 <!-- what kicks off the release -->
 
-## Test Gate
+## 测试门禁
 <!-- command + CI job name -->
 
-## Registry / Distribution
+## 注册表 / 分发
 <!-- npm, PyPI, Docker, etc. + CI job that publishes -->
 
-## Release Notes Strategy
+## 发布说明策略
 <!-- convention + files -->
 
-## CI Workflow Files
+## CI 工作流文件
 <!-- paths to relevant workflow files -->
 
-## First-Time Setup Gaps
+## 首次配置缺口
 <!-- any missing pieces found during analysis, or "none" -->
 ```
 
 ---
 
-### Step 3 — Determine Version
+### 第 3 步 — 确定版本号
 
-If the user provided a version argument, use it. Otherwise:
+如果用户提供了版本号参数，就用它。否则：
 
-1. Show the current version (from the primary version file).
-2. Show what `patch`, `minor`, and `major` would produce.
-3. Ask the user which to use.
+1. 显示当前版本（取自主要的版本文件）。
+2. 显示 `patch`、`minor` 和 `major` 分别会得到什么版本号。
+3. 询问用户要用哪一个。
 
-Validate the chosen version is a valid semver string.
-
----
-
-### Step 4 — Pre-Release Checklist
-
-Present a checklist derived from the release rules. At minimum:
-
-- [ ] All changes intended for this release are committed and pushed
-- [ ] CI is green on the target branch
-- [ ] Tests pass locally (run the test gate command)
-- [ ] Version bump applied to all version source files
-- [ ] Release notes / changelog prepared (see Step 5)
-
-Ask the user to confirm before proceeding, or run each step if they say "go ahead".
+校验所选版本号是合法的语义化版本字符串。
 
 ---
 
-### Step 5 — Release Notes Guidance
+### 第 4 步 — 发布前检查清单
 
-Help the user write good release notes. Apply whichever convention the repo uses. Default guidance when no convention is detected:
+展示一份依据发布规则推导出的检查清单。至少包括：
 
-**What makes a good release note:**
-- Lead with **what changed for users**, not internal implementation details.
-- Group by type: `New Features`, `Bug Fixes`, `Breaking Changes`, `Deprecations`, `Internal / Chores`.
-- For each item: one sentence, link to the PR or issue, credit the author if external.
-- **Breaking changes** go first and must include a migration path.
-- Omit changes users never see (refactors, CI tweaks, test-only changes) unless they affect build reproducibility.
+- [ ] 本次发布计划包含的所有改动都已提交并推送
+- [ ] 目标分支上的 CI 是绿色通过状态
+- [ ] 本地测试通过（运行测试门禁命令）
+- [ ] 版本号已更新到所有版本来源文件
+- [ ] 发布说明 / 变更日志已准备好（见第 5 步）
 
-**Example entry format:**
+在继续之前请用户确认，或者如果用户说“继续吧”，就逐项执行每一步。
+
+---
+
+### 第 5 步 — 发布说明指导
+
+帮助用户写出好的发布说明。按仓库使用的约定来执行。当没有检测到任何约定时，使用以下默认指导：
+
+**什么样的发布说明才算好：**
+- 开头先讲**用户能感知到的变化**，而不是内部实现细节。
+- 按类型分组：`New Features`、`Bug Fixes`、`Breaking Changes`、`Deprecations`、`Internal / Chores`。
+- 每个条目：一句话，附上 PR 或 issue 链接，如果贡献者来自外部就注明其姓名。
+- **破坏性变更**要放在最前面，并且必须包含迁移方案。
+- 省略用户永远看不到的改动（重构、CI 调整、仅测试相关的改动），除非它们影响构建的可复现性。
+
+**条目格式示例：**
 ```
-### Bug Fixes
-- Fix session drop on token expiry (#123) — @contributor
+### 缺陷修复
+- 修复令牌过期时会话掉线的问题（#123）— @contributor
 ```
 
-If the repo uses Conventional Commits, generate a draft changelog from `git log <prev-tag>..HEAD --no-merges --format="%s"` grouped by commit type. Show it to the user and let them edit.
+如果仓库使用 Conventional Commits，就用 `git log <prev-tag>..HEAD --no-merges --format="%s"` 按提交类型分组生成一份变更日志草稿。把它展示给用户，让他们编辑。
 
 ---
 
-### Step 6 — Execute Release
+### 第 6 步 — 执行发布
 
-Using the rules discovered, walk through:
+依据发现的规则，逐步执行：
 
-1. **Bump version** — apply to each version source file.
-2. **Run tests** — execute the test gate command.
-3. **Commit** — `git add <version files> CHANGELOG.md` and commit with `chore(release): bump version to vX.Y.Z`.
-4. **Tag** — `git tag -a vX.Y.Z -m "vX.Y.Z"` (annotated tags are preferred over lightweight).
-5. **Push** — `git push origin <branch> && git push origin vX.Y.Z`.
-6. **CI takes over** — if the release trigger is a tag push, remind the user that CI will handle the rest (publish, GitHub release creation). Show the expected CI workflow file.
-7. **Manual publish** — if no CI automation exists, list the manual publish command (e.g. `npm publish --access public`, `twine upload dist/*`).
+1. **更新版本号** — 应用到每个版本来源文件。
+2. **运行测试** — 执行测试门禁命令。
+3. **提交** — `git add <version files> CHANGELOG.md`，并用 `chore(release): bump version to vX.Y.Z` 作为提交信息提交。
+4. **打标签** — `git tag -a vX.Y.Z -m "vX.Y.Z"`（推荐使用附注标签，而不是轻量标签）。
+5. **推送** — `git push origin <branch> && git push origin vX.Y.Z`。
+6. **CI 接手** — 如果发布触发方式是推送标签，提醒用户后续由 CI 处理（发布、创建 GitHub Release）。展示预期的 CI 工作流文件。
+7. **手动发布** — 如果不存在任何 CI 自动化，列出手动发布命令（例如 `npm publish --access public`、`twine upload dist/*`）。
 
 ---
 
-### Step 7 — First-Time Setup Suggestions
+### 第 7 步 — 首次配置建议
 
-If gaps were found in Step 1f, offer concrete help:
+如果在第 1f 步发现了缺口，提供具体的帮助：
 
-**No release workflow:**
-> Your repo doesn't have a release CI workflow. A GitHub Actions workflow triggered on `v*` tag push is the most common best practice. It can:
-> - Run tests
-> - Publish to npm/PyPI/etc.
-> - Create a GitHub Release with your release notes
+**没有发布工作流：**
+> 你的仓库没有发布 CI 工作流。在推送 `v*` 标签时触发的 GitHub Actions 工作流是最常见的最佳实践。它可以：
+> - 运行测试
+> - 发布到 npm/PyPI/等
+> - 用你的发布说明创建 GitHub Release
 >
-> Want me to scaffold a `.github/workflows/release.yml` for your stack?
+> 要我按你的技术栈生成一个 `.github/workflows/release.yml` 脚手架吗？
 
-**No git tags:**
-> This appears to be the first release. Git tags let GitHub, npm, and other tools understand your version history. We'll create your first tag in Step 6.
+**没有 git 标签：**
+> 这看起来是第一次发布。git 标签能让 GitHub、npm 和其它工具理解你的版本历史。我们会在第 6 步创建你的第一个标签。
 
-**Build artifacts not gitignored:**
-> Build artifacts are present in git history or not gitignored. This inflates repo size and creates merge conflicts. Want me to add them to `.gitignore`?
-
----
-
-### Step 8 — Verify
-
-After the push:
-- Check CI status: `gh run list --workflow=<release workflow> --limit=3` (if `gh` is available).
-- Check the registry (npm, PyPI) for the new version after a few minutes.
-- Confirm a GitHub Release was created: `gh release view vX.Y.Z`.
-
-Report success or flag any failures.
+**构建产物未加入 gitignore：**
+> 构建产物存在于 git 历史中，或者未被 gitignore 忽略。这会撑大仓库体积并造成合并冲突。要我把它们加进 `.gitignore` 吗？
 
 ---
 
-## Notes
+### 第 8 步 — 验证
 
-- This skill does **not** hardcode any project-specific version files or commands. Everything is derived from repo inspection.
-- `.omc/RELEASE_RULE.md` is a local cache. Commit it to your repo if you want to share the derived rules with your team, or add it to `.gitignore` if you prefer it stays local.
-- For complex monorepos or multi-package workspaces, the skill will detect workspace patterns (npm workspaces, pnpm workspaces, Cargo workspace) and adapt accordingly.
+推送之后：
+- 检查 CI 状态：`gh run list --workflow=<release workflow> --limit=3`（如果 `gh` 可用）。
+- 过几分钟后到注册表（npm、PyPI）检查新版本。
+- 确认 GitHub Release 已创建：`gh release view vX.Y.Z`。
+
+报告成功，或指出任何失败。
+
+---
+
+## 注意事项
+
+- 本技能**不会**硬编码任何项目专属的版本文件或命令。一切都通过检查仓库推导得出。
+- `.omc/RELEASE_RULE.md` 是本地缓存。如果你想和团队共享推导出的规则，就把它提交到仓库；如果你希望它只留在本地，就把它加进 `.gitignore`。
+- 对于复杂的 monorepo 或多包工作区，本技能会检测工作区模式（npm workspaces、pnpm workspaces、Cargo workspace）并相应调整。

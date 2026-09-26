@@ -1,8 +1,8 @@
 /**
- * Relationship Graph Module for Writer Memory System
+ * 写作记忆系统的关系图模块
  *
- * Tracks character relationships with evolution over time,
- * Korean relationship types, and graph-based analysis.
+ * 跟踪角色关系随时间的演变、
+ * 韩语关系类型，以及基于图的分析。
  */
 
 import { loadMemory, saveMemory, generateId, now } from './memory-manager';
@@ -15,17 +15,17 @@ import type {
 } from './memory-manager';
 
 // ============================================================================
-// Relationship CRUD Operations
+// 关系增删改查操作
 // ============================================================================
 
 /**
- * Create a new relationship between two characters
+ * 在两个角色之间创建一条新关系
  *
- * @param char1Name - First character name
- * @param char2Name - Second character name
- * @param type - Relationship type
- * @param options - Optional relationship properties
- * @returns Created relationship
+ * @param char1Name - 第一个角色名
+ * @param char2Name - 第二个角色名
+ * @param type - 关系类型
+ * @param options - 可选的关系属性
+ * @returns 创建出的关系
  */
 export function addRelationship(
   char1Name: string,
@@ -40,7 +40,7 @@ export function addRelationship(
   const memory = loadMemory();
   if (!memory) return null;
 
-  // Check if relationship already exists
+  // 检查该关系是否已存在
   const existing = memory.relationships.find(r =>
     (r.from === char1Name && r.to === char2Name) ||
     (r.from === char2Name && r.to === char1Name)
@@ -69,12 +69,12 @@ export function addRelationship(
 }
 
 /**
- * Update an existing relationship with partial data
+ * 用部分数据更新一条已存在的关系
  *
- * @param char1Name - First character name
- * @param char2Name - Second character name
- * @param updates - Partial relationship updates
- * @returns Updated relationship
+ * @param char1Name - 第一个角色名
+ * @param char2Name - 第二个角色名
+ * @param updates - 关系的部分更新内容
+ * @returns 更新后的关系
  */
 export function updateRelationship(
   char1Name: string,
@@ -97,10 +97,10 @@ export function updateRelationship(
 }
 
 /**
- * Remove a relationship between two characters
+ * 删除两个角色之间的一条关系
  *
- * @param char1Name - First character name
- * @param char2Name - Second character name
+ * @param char1Name - 第一个角色名
+ * @param char2Name - 第二个角色名
  */
 export function removeRelationship(char1Name: string, char2Name: string): boolean {
   const memory = loadMemory();
@@ -121,11 +121,11 @@ export function removeRelationship(char1Name: string, char2Name: string): boolea
 }
 
 /**
- * Get relationship between two characters (direction-agnostic)
+ * 获取两个角色之间的关系（不区分方向）
  *
- * @param char1Name - First character name
- * @param char2Name - Second character name
- * @returns Relationship or undefined
+ * @param char1Name - 第一个角色名
+ * @param char2Name - 第二个角色名
+ * @returns 关系对象，若不存在则为 undefined
  */
 export function getRelationship(char1Name: string, char2Name: string): Relationship | undefined {
   const memory = loadMemory();
@@ -138,10 +138,10 @@ export function getRelationship(char1Name: string, char2Name: string): Relations
 }
 
 /**
- * List all relationships, optionally filtered by character
+ * 列出所有关系，可选按角色过滤
  *
- * @param characterName - Optional character to filter by
- * @returns Array of relationships
+ * @param characterName - 可选的过滤角色
+ * @returns 关系数组
  */
 export function listRelationships(characterName?: string): Relationship[] {
   const memory = loadMemory();
@@ -157,18 +157,18 @@ export function listRelationships(characterName?: string): Relationship[] {
 }
 
 // ============================================================================
-// Relationship Evolution
+// 关系演变
 // ============================================================================
 
 /**
- * Add a timeline event to a relationship
+ * 为一条关系添加一个时间线事件
  *
- * @param char1Name - First character name
- * @param char2Name - Second character name
- * @param change - Description of relationship change
- * @param catalyst - What caused the change
- * @param sceneId - Optional scene reference
- * @returns Created event
+ * @param char1Name - 第一个角色名
+ * @param char2Name - 第二个角色名
+ * @param change - 关系变化的描述
+ * @param catalyst - 引起该变化的原因
+ * @param sceneId - 可选的场景引用
+ * @returns 创建出的事件
  */
 export function addRelationshipEvent(
   char1Name: string,
@@ -201,11 +201,11 @@ export function addRelationshipEvent(
 }
 
 /**
- * Get all timeline events for a relationship
+ * 获取一条关系的全部时间线事件
  *
- * @param char1Name - First character name
- * @param char2Name - Second character name
- * @returns Array of events sorted by timestamp
+ * @param char1Name - 第一个角色名
+ * @param char2Name - 第二个角色名
+ * @returns 按时间戳排序的事件数组
  */
 export function getRelationshipTimeline(char1Name: string, char2Name: string): RelationshipEvent[] {
   const relationship = getRelationship(char1Name, char2Name);
@@ -218,11 +218,11 @@ export function getRelationshipTimeline(char1Name: string, char2Name: string): R
 }
 
 /**
- * Get relationship arc summary (e.g., "첫만남 → 오해 → 화해")
+ * 获取关系弧线摘要（例如 "첫만남 → 오해 → 화해"）
  *
- * @param char1Name - First character name
- * @param char2Name - Second character name
- * @returns Arc summary string
+ * @param char1Name - 第一个角色名
+ * @param char2Name - 第二个角色名
+ * @returns 弧线摘要字符串
  */
 export function getRelationshipArc(char1Name: string, char2Name: string): string {
   const timeline = getRelationshipTimeline(char1Name, char2Name);
@@ -235,14 +235,14 @@ export function getRelationshipArc(char1Name: string, char2Name: string): string
 }
 
 // ============================================================================
-// Graph Operations
+// 图操作
 // ============================================================================
 
 /**
- * Get all connections for a character with direction info
+ * 获取某个角色的全部连接，并附带方向信息
  *
- * @param characterName - Character name
- * @returns Connections with direction (outgoing/incoming/mutual)
+ * @param characterName - 角色名
+ * @returns 带方向的连接（outgoing/incoming/mutual）
  */
 export function getCharacterConnections(characterName: string): Array<{
   relationship: Relationship;
@@ -255,16 +255,16 @@ export function getCharacterConnections(characterName: string): Array<{
     const isFrom = r.from === characterName;
     return {
       relationship: r,
-      direction: 'mutual' as const, // Most relationships are bidirectional
+      direction: 'mutual' as const, // 大多数关系都是双向的
       otherCharacter: isFrom ? r.to : r.from
     };
   });
 }
 
 /**
- * Get full relationship graph
+ * 获取完整的关系图
  *
- * @returns Graph with nodes (characters) and edges (relationships)
+ * @returns 包含节点（角色）和边（关系）的图
  */
 export function getRelationshipWeb(): {
   nodes: string[];
@@ -289,14 +289,14 @@ export function getRelationshipWeb(): {
 }
 
 // ============================================================================
-// Korean Labels
+// 韩语标签
 // ============================================================================
 
 /**
- * Get Korean label for relationship type
+ * 获取关系类型对应的韩语标签
  *
- * @param type - Relationship type
- * @returns Korean label
+ * @param type - 关系类型
+ * @returns 韩语标签
  */
 export function getKoreanRelationType(type: RelationshipType): string {
   const labels: Record<RelationshipType, string> = {
@@ -313,15 +313,15 @@ export function getKoreanRelationType(type: RelationshipType): string {
 }
 
 // ============================================================================
-// Profile Generation
+// 档案生成
 // ============================================================================
 
 /**
- * Generate markdown profile for a relationship
+ * 为一条关系生成 Markdown 档案
  *
- * @param char1Name - First character name
- * @param char2Name - Second character name
- * @returns Markdown profile
+ * @param char1Name - 第一个角色名
+ * @param char2Name - 第二个角色名
+ * @returns Markdown 档案
  */
 export function generateRelationshipProfile(char1Name: string, char2Name: string): string {
   const relationship = getRelationship(char1Name, char2Name);
@@ -361,9 +361,9 @@ export function generateRelationshipProfile(char1Name: string, char2Name: string
 }
 
 /**
- * Generate ASCII map of all relationships with symbols
+ * 用符号生成所有关系的 ASCII 地图
  *
- * @returns ASCII relationship map
+ * @returns ASCII 关系地图
  */
 export function generateRelationshipMap(): string {
   const web = getRelationshipWeb();

@@ -1,25 +1,25 @@
 ---
 name: neat-freak
-description: >-
-  Knowledge and governance closeout: reconcile project docs, rule files
-  (CLAUDE.md/AGENTS.md), authorized agent memory, and workspace residue with
-  what the code and runtime actually do, so the next session or the next
-  person starts from one current answer. Trigger when the user names
-  "neat-freak", "洁癖", or "/neat" — and also on clear knowledge-closeout
-  intent without the name: syncing or tidying project docs/rules/memory after
-  development ("把文档和记忆整理一下", "收尾时把文档同步掉", "docs 和代码对不上了"),
-  stale or conflicting CLAUDE.md/memory, a clean handoff to a teammate or a
-  fresh session, or auditing whether workspace rules are actually followed.
-  Do not trigger for pure coding/refactoring/debugging tasks, tidying data or
-  prose (JSON, 周报, changelog announcements), or a bare "整理" with no
-  project-knowledge context.
+description: "知识和治理收尾：协调项目文档、规则文件（CLAUDE.md/AGENTS.md）、授权代理记忆和工作区残留物。"
+  知识与治理收尾：对齐项目文档、规则文件
+  （CLAUDE.md/AGENTS.md）、获准维护的代理记忆和工作区残留物，与
+  代码和运行时的实际行为，使下一次会话或下一位
+  接手者都从唯一一份现役答案出发。当用户
+  点名 "neat-freak"、"洁癖"或"/neat"——以及在明确表达知识收尾
+  意图而未点名时也触发：开发后同步或整理项目文档/规则/记忆，
+  （"把文档和记忆整理一下"、"收尾时把文档同步掉"、"docs 和代码对不上了"）、
+  CLAUDE.md/记忆陈旧或冲突、向同事或全新会话干净交接，
+  或审计工作区的规则是否真正得到遵守。
+  纯编码/重构/调试任务、整理数据或
+  文章（JSON、周报、changelog 公告），或没有
+  项目知识上下文的单纯"整理"，都不触发。
 compatibility: Requires filesystem read access. Writes and destructive actions follow the active agent, workspace, and user authorization rules. Git and rg improve verification; scripts/audit-inventory.sh needs Bash — without it, do the equivalent checks manually. Works on any Agent Skills platform.
 metadata:
   version: "3.0.0"
   category: knowledge-governance
 ---
 
-# 洁癖 — Knowledge and Governance Closeout
+# 洁癖 — 知识与治理收尾
 
 你是知识库编辑、规范审计员和收尾者。目标不是「多写一点」，而是让代码、真实运行态、项目文档、Agent 规则、获准维护的记忆和工作区状态彼此一致，让下一次会话或第一次接手的人能找到唯一现役答案。
 
@@ -30,9 +30,9 @@ metadata:
 | 事实面 | 要回答的问题 | 常见证据 |
 |---|---|---|
 | 代码 | 现在真正实现了什么？ | 当前分支、schema、配置、测试 |
-| 运行态 | 用户实际得到什么？ | deploy marker、服务、真实页面/API、控制台 |
+| 运行态 | 用户实际得到什么？ | 部署标记、服务、真实页面/API、控制台 |
 | 文档 | 人和下游看到的是不是现役答案？ | README、架构、接入、运维文档 |
-| 规则 | Agent 收到的约束是否同源、可执行、无死引用？ | 层级 CLAUDE.md/AGENTS.md、override、hooks |
+| 规则 | Agent 收到的约束是否同源、可执行、无死引用？ | 层级 CLAUDE.md/AGENTS.md、覆盖项、钩子 |
 | 记忆 | 快照是否仍准确且允许修改？ | 平台记忆入口、索引、生成来源 |
 | 工作区 | 是否仍有未集成或未审计的残留？ | 会话残留文件、worktree、分支、临时库 |
 
@@ -46,8 +46,8 @@ metadata:
 
 1. **文档同步**：当前项目的代码/文档/规则一致性；记忆默认只读，除非用户或项目收尾规则明确授权写入。
 2. **知识收尾**：文档、规则、获准维护的记忆和会话复盘。
-3. **发布收尾**：在知识收尾之外核对本地、远端、生产和 live surface；知识凭证完成后才能清场。
-4. **工作区审计**：只有用户明确说「整个 workspace / 全部项目 / 审全部」时，才逐项目扩大内容审计。
+3. **发布收尾**：在知识收尾之外核对本地、远端、生产和线上真实呈现；知识凭证完成后才能清场。
+4. **工作区审计**：只有用户明确说「整个工作区 / 全部项目 / 审全部」时，才逐项目扩大内容审计。
 
 清场会删除分支、worktree、临时库或中间产物，属于不可在交付汇报前自动吞掉的破坏性收尾。默认顺序是：先完成知识收尾和只读清场预览，向用户完整汇报并保留复核现场；只有用户看完汇报后明确确认可以清场，才执行删除并补充汇报清场结果。用户在最初任务里说「做完后清理」不替代这次最终汇报后的确认。
 
@@ -63,7 +63,7 @@ metadata:
 
 - 现场规则文件明确规定了收尾/发布流程；
 - 有远端协作或部署产物要核对（PR、CI、生产服务、CDN、多客户端缓存）；
-- 涉及多项目联动、多平台记忆或 workspace 级审计。
+- 涉及多项目联动、多平台记忆或工作区级审计。
 
 都不命中（典型：单人项目、没有规则文件或刚起步、文档很少）→ 轻量路径。拿不准 → 完整路径。
 
@@ -85,10 +85,10 @@ metadata:
 |---|---|
 | CLAUDE.md / AGENTS.md / rules | 下次 Agent 不看到就会犯错的边界、命令和工作流 |
 | README / docs | 系统如何使用、工作、运维，以及当前外部合同 |
-| Agent memory | 偏好、非显然经验、仍需跨会话保留的短索引；不是第二套架构文档 |
-| git / changelog / incident docs | 历史过程、单次事故、版本叙事 |
+| Agent 记忆 | 偏好、非显然经验、仍需跨会话保留的短索引；不是第二套架构文档 |
+| git / changelog / 事故文档 | 历史过程、单次事故、版本叙事 |
 
-规则文件的真身和同源方式以当前工作空间为准：可能是软链、导入或平台原生 override，不能把「CLAUDE.md 永远是真身」泛化到所有项目。平台路径、加载顺序和尺寸限制见 [references/agent-paths.md](references/agent-paths.md)。
+规则文件的真身和同源方式以当前工作空间为准：可能是软链、导入或平台原生覆盖项，不能把「CLAUDE.md 永远是真身」泛化到所有项目。平台路径、加载顺序和尺寸限制见 [references/agent-paths.md](references/agent-paths.md)。
 
 记忆毕业到 docs/ 或规则层的判据：它讲的是稳定机制、同一教训已反复出现，或其他接手者也必须知道。把结论并入权威文档后，按平台允许的方式缩成指针或交给生成管线整合；不要复制成第二处真相。项目事实不会自动「毕业成 skill」；只有用户明确要求抽象可复用工作流时才改 skill。
 
@@ -101,7 +101,7 @@ metadata:
 - 记录规则文件、Markdown 清单、软链状态、Git/worktree 状态和关键文件体量。
 - 使用 [references/agent-paths.md](references/agent-paths.md) 的平台专属预算；未列出的平台按其中的三分法探测归类，不能把 Claude 自动记忆和 Codex 项目指令/生成记忆当成同一种文件。
 
-「全量盘点」不等于把大型仓库每篇文档都塞进上下文：机械枚举全部文件，先读 README、规则、文档索引和与本次变更命中的文档；只有仓库很小、索引缺失、发现矛盾或用户明确要求 exhaustive audit 时才逐篇全文读取。
+「全量盘点」不等于把大型仓库每篇文档都塞进上下文：机械枚举全部文件，先读 README、规则、文档索引和与本次变更命中的文档；只有仓库很小、索引缺失、发现矛盾或用户明确要求穷尽式审计时才逐篇全文读取。
 
 ### 1. 建立现役事实矩阵
 
@@ -117,7 +117,7 @@ metadata:
 从项目根到当前工作目录读取实际生效的规则链，并检查：
 
 - 必备文件、命名、目录、ignore、安全红线是否被遵守；
-- CLAUDE.md、AGENTS.md、override、导入和软链是否符合本工作空间声明；
+- CLAUDE.md、AGENTS.md、覆盖项、导入和软链是否符合本工作空间声明；
 - 上下级规则是否矛盾，命令、路径和项目引用是否真实存在；
 - 同类违规是否已经第三次出现，若是则建议或实施现场规则授权的确定性门禁。
 
@@ -125,7 +125,7 @@ metadata:
 
 ### 3. 路由受影响知识面
 
-根据改动类型搜索旧字段、路由、环境变量、服务名、模型名、状态词和退役符号。先找现有条目并就地改，避免追加平行版本。跨项目协议变化要同时查上游合同和实际 consumer。
+根据改动类型搜索旧字段、路由、环境变量、服务名、模型名、状态词和退役符号。先找现有条目并就地改，避免追加平行版本。跨项目协议变化要同时查上游合同和实际消费方。
 
 映射见 [references/sync-matrix.md](references/sync-matrix.md)。文件名只是常见形态；以项目自己的文档结构为准，不强造 `integration-guide.md`、`handoff.md` 或 changelog。
 
@@ -142,9 +142,9 @@ metadata:
 只有用户请求、项目收尾合同或平台规则明确授权时才写记忆：
 
 - Claude 自动记忆可按其平台规则整理，但仍只处理本次作用域。
-- Codex/其他机器生成记忆通常不可手改；将该事实面标成 `generated-read-only`，只使用当前产品公开或环境明确规定的控制面（如 `/memories`、设置、配置项或获准的 correction input），再由宿主 consolidation 整合。不要为生成记忆自设文件尺寸阈值、压缩候选格式或重复 warning。
+- Codex/其他机器生成记忆通常不可手改；将该事实面标成 `generated-read-only`，只使用当前产品公开或环境明确规定的控制面（如 `/memories`、设置、配置项或获准的修正输入），再由宿主整合流程完成整合。不要为生成记忆自设文件尺寸阈值、压缩候选格式或重复警告。
 - 未知平台的记忆机制先探测再动：找不到官方控制面就默认只读。
-- docs-only 请求不应顺手制造新的长期记忆。
+- 只涉及文档的请求不应顺手制造新的长期记忆。
 - 会话复盘只记录真实发生、未来可复用的教训；「本次没有新教训」是合法结果，不能硬凑。
 
 ### 6. 验证并完成发布闭环
@@ -153,13 +153,13 @@ metadata:
 
 若本次属于发布收尾：
 
-1. 核对 local、remote、生产 marker/service 和真实用户路径；
+1. 核对本地、远端、生产标记/服务和真实用户路径；
 2. 明确 merged 与 deployed/live verified 的差别；
 3. 完成知识收尾及项目要求的凭证；
 4. 只读预览待清理对象，向用户完整汇报结果并保留现场；
 5. 停下来等待用户在汇报后明确确认可以清场；
 6. 记录现场要求的用户确认凭证，最后才清理分支、worktree、临时库和中间产物；
-7. 清理后重新审计，确认没有误删仍含唯一改动的 lane，并补充汇报清场结果。
+7. 清理后重新审计，确认没有误删仍含唯一改动的通道，并补充汇报清场结果。
 
 ### 7. 分两阶段用结果汇报
 
@@ -168,7 +168,7 @@ metadata:
 1. **影响（用户视角）**：哪些误导、风险或交接成本被消除。
 2. **结论与行动**：改了什么、验证了什么、当前终态是什么。
 3. **需要用户决定的**：只有越权、破坏性或无法裁决的项目。
-4. **技术细节**：关键文件、门禁、版本/marker 和受控警告。
+4. **技术细节**：关键文件、门禁、版本/标记和受控警告。
 
 轻量路径和完整路径共用同一份骨架：
 
@@ -184,10 +184,10 @@ metadata:
 - 删除候选：<文件 + 理由>；未确认前一个都没删
 - 无法裁决：<矛盾 + 两边证据>
 
-**遗留**：<pending / out-of-scope / 未消除 warning；没有就写「无」>
+**遗留**：<pending / out-of-scope / 未消除警告；没有就写「无」>
 ```
 
-必须明确列出 `pending`、`out-of-scope` 和未消除的 warning，并在存在待清场现场时写明「复核现场仍保留，等待用户确认后清场」；不能用「保证干净」掩盖它们。用户确认并完成清场后，只补充汇报实际删除项、清场审计和残留 warning，不重写第一阶段的完整结果。体量超过平台预算 70% 时才报告读数。
+必须明确列出 `pending`、`out-of-scope` 和未消除的警告，并在存在待清场现场时写明「复核现场仍保留，等待用户确认后清场」；不能用「保证干净」掩盖它们。用户确认并完成清场后，只补充汇报实际删除项、清场审计和残留警告，不重写第一阶段的完整结果。体量超过平台预算 70% 时才报告读数。
 
 ## 最终自检
 
@@ -198,9 +198,9 @@ metadata:
 - [ ] 现役事实只剩一个权威版本，退役符号的非历史引用已清。
 - [ ] 文档和规则没有新增流水账；主规则净增长异常时已重新压缩。
 - [ ] 轻量路径：规则文件五要素齐全且精简；残留清单已交用户确认，未确认未删。
-- [ ] 所有适用门禁通过；发布收尾已 live verify，知识凭证、完整汇报和用户明确确认都先于清场。
+- [ ] 所有适用门禁通过；发布收尾已做线上验证，知识凭证、完整汇报和用户明确确认都先于清场。
 - [ ] 未把最初任务中的「做完后清理」误当成用户看完最终汇报后的确认。
-- [ ] 用户确认后才执行清场；最终工作区重新审计，残留和 warning 已如实补充报告。
+- [ ] 用户确认后才执行清场；最终工作区重新审计，残留和警告已如实补充报告。
 
 ## 参考资料
 

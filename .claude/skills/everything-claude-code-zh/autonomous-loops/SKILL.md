@@ -4,43 +4,43 @@ description: "自主运行 Claude Code 循环的模式与架构 —— 从简单
 origin: ECC
 ---
 
-# 自主循环技能 (Autonomous Loops Skill)
+# 自主循环技能
 
-用于自主运行 Claude Code 循环的模式、架构和参考实现。涵盖了从简单的 `claude -p` 流水线到完整的 RFC 驱动多智能体（multi-agent）DAG 编排的所有内容。
+用于自主运行 Claude Code 循环的模式、架构和参考实现。涵盖了从简单的 `claude -p` 流水线到完整的 RFC 驱动多智能体DAG 编排的所有内容。
 
 ## 适用场景
 
-- 设置无需人工干预即可运行的自主开发工作流（Workflows）
+- 设置无需人工干预即可运行的自主开发工作流
 - 为你的问题选择合适的循环架构（简单 vs 复杂）
 - 构建 CI/CD 风格的持续开发流水线
-- 运行具有合并协调机制的并行智能体（Agents）
-- 在循环迭代之间实现上下文（Context）持久化
-- 为自主工作流添加质量门禁（Quality gates）和清理环节
+- 运行具有合并协调机制的并行智能体
+- 在循环迭代之间实现上下文持久化
+- 为自主工作流添加质量门禁和清理环节
 
-## 循环模式频谱 (Loop Pattern Spectrum)
+## 循环模式频谱
 
 从最简单到最复杂：
 
 | 模式 | 复杂度 | 最适用于 |
 |---------|-----------|----------|
-| [顺序流水线 (Sequential Pipeline)](#1-sequential-pipeline-claude--p) | 低 | 日常开发步骤、脚本化工作流 |
+| [顺序流水线](#1-sequential-pipeline-claude--p) | 低 | 日常开发步骤、脚本化工作流 |
 | [NanoClaw REPL](#2-nanoclaw-repl) | 低 | 交互式持久化会话 |
-| [无限智能体循环 (Infinite Agentic Loop)](#3-infinite-agentic-loop) | 中 | 并行内容生成、规约驱动的工作 |
-| [持续 Claude PR 循环 (Continuous Claude PR Loop)](#4-continuous-claude-pr-loop) | 中 | 带有 CI 门禁的多日迭代项目 |
-| [去杂质模式 (De-Sloppify Pattern)](#5-the-de-sloppify-pattern) | 附加项 | 任何实现步骤后的质量清理 |
+| [无限智能体循环](#3-infinite-agentic-loop) | 中 | 并行内容生成、规约驱动的工作 |
+| [持续 Claude PR 循环](#4-continuous-claude-pr-loop) | 中 | 带有 CI 门禁的多日迭代项目 |
+| [去杂质模式](#5-the-de-sloppify-pattern) | 附加项 | 任何实现步骤后的质量清理 |
 | [Ralphinho / RFC 驱动的 DAG](#6-ralphinho--rfc-driven-dag-orchestration) | 高 | 大型功能、带合并队列的多单元并行工作 |
 
 ---
 
-## 1. 顺序流水线 (Sequential Pipeline, `claude -p`)
+## 1. 顺序流水线（`claude -p`）
 
-**最简单的循环。** 将日常开发分解为一系列非交互式的 `claude -p` 调用。每次调用都是一个带有明确提示词（Prompt）的专注步骤。
+**最简单的循环。** 将日常开发分解为一系列非交互式的 `claude -p` 调用。每次调用都是一个带有明确提示词的专注步骤。
 
 ### 核心见解
 
 > 如果你无法理解这样的循环，那就意味着你甚至无法在交互模式下驱动 LLM 修复你的代码。
 
-`claude -p` 标志（flag）以非交互方式运行 Claude Code 并提供提示词，完成后退出。通过链式调用构建流水线：
+`claude -p` 标志以非交互方式运行 Claude Code 并提供提示词，完成后退出。通过链式调用构建流水线：
 
 ```bash
 #!/bin/bash
@@ -63,14 +63,14 @@ claude -p "为所有暂存的更改创建一个约定式提交（conventional co
 
 ### 关键设计原则
 
-1. **每个步骤都是隔离的** — 每次 `claude -p` 调用都有一个新的上下文窗口（Context window），这意味着步骤之间不会有上下文污染。
+1. **每个步骤都是隔离的** — 每次 `claude -p` 调用都有一个新的上下文窗口，这意味着步骤之间不会有上下文污染。
 2. **顺序很重要** — 步骤按顺序执行。每一步都建立在前一步留下的文件系统状态之上。
 3. **负面指令是危险的** — 不要说“不要测试类型系统”。相反，添加一个单独的清理步骤（参见 [去杂质模式](#5-the-de-sloppify-pattern)）。
 4. **退出码会传播** — `set -e` 会在失败时停止流水线。
 
 ### 变体
 
-**使用模型路由 (Model Routing)：**
+**使用模型路由：**
 ```bash
 # 使用 Opus 进行调研（深度推理）
 claude -p --model opus "分析代码库架构并编写添加缓存的计划..."
@@ -134,9 +134,9 @@ CLAW_SESSION=my-project CLAW_SKILLS=tdd-workflow,security-review node scripts/cl
 
 ---
 
-## 3. 无限智能体循环 (Infinite Agentic Loop)
+## 3. 无限智能体循环
 
-**双提示词系统**，用于协调并行子智能体（sub-agents）进行规约驱动的生成。由 disler 开发（致谢：@disler）。
+**双提示词系统**，用于协调并行子智能体进行规约驱动的生成。由 disler 开发（致谢：@disler）。
 
 ### 架构：双提示词系统
 
@@ -203,7 +203,7 @@ CLAW_SESSION=my-project CLAW_SKILLS=tdd-workflow,security-review node scripts/cl
 
 ---
 
-## 4. 持续 Claude PR 循环 (Continuous Claude PR Loop)
+## 4. 持续 Claude PR 循环
 
 **生产级 Shell 脚本**，在持续循环中运行 Claude Code，创建 PR、等待 CI 并自动合并。由 AnandChowdhary 开发（致谢：@AnandChowdhary）。
 
@@ -298,7 +298,7 @@ continuous-claude \
 
 ### 关键配置
 
-| 标志 (Flag) | 用途 |
+| 标志 | 用途 |
 |------|---------|
 | `--max-runs N` | 在 N 次成功迭代后停止 |
 | `--max-cost $X` | 花费 $X 后停止 |
@@ -311,9 +311,9 @@ continuous-claude \
 
 ---
 
-## 5. 去杂质模式 (The De-Sloppify Pattern)
+## 5. 去杂质模式
 
-**适用于任何循环的附加模式。** 在每个实现者（Implementer）步骤之后添加一个专门的清理/重构步骤。
+**适用于任何循环的附加模式。** 在每个实现者步骤之后添加一个专门的清理/重构步骤。
 
 ### 问题所在
 
@@ -373,9 +373,9 @@ done
 
 ---
 
-## 6. Ralphinho / RFC 驱动的 DAG 编排 (RFC-Driven DAG Orchestration)
+## 6. Ralphinho / RFC 驱动的 DAG 编排
 
-**最复杂的模式。** 一个由 RFC 驱动的多智能体流水线，它将规约分解为依赖 DAG（有向无环图），通过分层质量流水线运行每个单元，并通过智能体驱动的合并队列（Merge queue）落地。由 enitrat 开发（致谢：@enitrat）。
+**最复杂的模式。** 一个由 RFC 驱动的多智能体流水线，它将规约分解为依赖 DAG（有向无环图），通过分层质量流水线运行每个单元，并通过智能体驱动的合并队列落地。由 enitrat 开发（致谢：@enitrat）。
 
 ### 架构概览
 
@@ -435,7 +435,7 @@ interface WorkUnit {
 第 2 层: [unit-d, unit-e]     ← 依赖于 unit-c
 ```
 
-### 复杂度层级 (Complexity Tiers)
+### 复杂度层级
 
 不同的层级对应不同的流水线深度：
 
@@ -463,9 +463,9 @@ interface WorkUnit {
 | 审查修复 | Codex | 处理审查中发现的问题 |
 | 最终审查 | Opus | 质量门禁（仅限大型层级） |
 
-**核心设计：** 审查者绝不是编写代码的人。这消除了作者偏见（author bias）—— 这是自我审查中最常见的疏漏来源。
+**核心设计：** 审查者绝不是编写代码的人。这消除了作者偏见—— 这是自我审查中最常见的疏漏来源。
 
-### 带有剔除机制的合并队列 (Merge Queue with Eviction)
+### 带有剔除机制的合并队列
 
 质量流水线完成后，单元进入合并队列：
 
@@ -509,7 +509,7 @@ final-review.reasoning ───────────────────
 evictionContext ───────────────────────────→ implement (合并冲突后)
 ```
 
-### 工作树隔离 (Worktree Isolation)
+### 工作树隔离
 
 每个单元都在隔离的工作树中运行（使用 jj/Jujutsu，而非 git）：
 ```
@@ -578,7 +578,7 @@ evictionContext ─────────────────────�
 
 ---
 
-## 反模式 (Anti-Patterns)
+## 反模式
 
 ### 常见错误
 

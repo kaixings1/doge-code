@@ -1,13 +1,13 @@
 ---
 name: test-analyzer
-description: |
+description: "分析测试结果和代码覆盖率，识别失败模式和未达标项。使用场景：运行测试后分析结果、检查覆盖率是否达标、排查失败的测试用例。"
   分析测试结果和代码覆盖率，识别失败模式和未达标项。
   使用场景：运行测试后分析结果、检查覆盖率是否达标、排查失败的测试用例。
   触发词：测试分析、覆盖率检查、analyze-tests、check-coverage、分析日志、analyze-logs。
 Keywords: test, coverage, analyze, logs, failure, 测试, 覆盖率, 日志分析
 ---
 
-# Test Analyzer
+# 测试分析技能
 
 测试结果和覆盖率分析工具集，基于项目已有的 scripts/ 脚本。
 

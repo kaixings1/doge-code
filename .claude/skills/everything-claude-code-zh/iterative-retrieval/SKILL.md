@@ -1,26 +1,26 @@
 ---
 name: iterative-retrieval
-description: 逐步优化上下文检索以解决子智能体（subagent）上下文问题的模式。
+description: 逐步优化上下文检索以解决子智能体上下文问题的模式。
 origin: ECC
 ---
 
-# 迭代检索模式（Iterative Retrieval Pattern）
+# 迭代检索模式
 
-解决了多智能体工作流（multi-agent workflows）中的“上下文问题”——子智能体（subagent）在开始工作前往往不知道自己需要哪些上下文。
+解决了多智能体工作流中的“上下文问题”——子智能体在开始工作前往往不知道自己需要哪些上下文。
 
 ## 何时激活
 
-- 生成需要事先无法完全预测的代码库上下文（codebase context）的子智能体时
+- 生成需要事先无法完全预测的代码库上下文的子智能体时
 - 构建上下文需要逐步优化的多智能体工作流时
 - 在智能体任务中遇到“上下文过大”或“缺失上下文”的失败时
 - 为代码探索设计类 RAG 的检索流水线时
-- 优化智能体编排（agent orchestration）中的 Token 使用时
+- 优化智能体编排中的 Token 使用时
 
-## 问题背景（The Problem）
+## 问题背景
 
 生成的子智能体通常只带有有限的上下文。它们并不清楚：
 - 哪些文件包含相关的代码
-- 代码库中存在哪些模式（patterns）
+- 代码库中存在哪些模式
 - 项目使用了哪些术语
 
 标准方法往往会失败：
@@ -28,7 +28,7 @@ origin: ECC
 - **什么都不发**：智能体缺少关键信息。
 - **猜测需求**：经常猜错。
 
-## 解决方案：迭代检索（The Solution: Iterative Retrieval）
+## 解决方案：迭代检索
 
 一个由 4 个阶段组成的循环，用于逐步优化上下文：
 
@@ -50,7 +50,7 @@ origin: ECC
 └─────────────────────────────────────────────┘
 ```
 
-### 阶段 1：派发（DISPATCH）
+### 阶段 1：派发
 
 初始的广泛查询，用于收集候选文件：
 
@@ -66,7 +66,7 @@ const initialQuery = {
 const candidates = await retrieveFiles(initialQuery);
 ```
 
-### 阶段 2：评估（EVALUATE）
+### 阶段 2：评估
 
 评估检索到的内容的相关性：
 
@@ -87,7 +87,7 @@ function evaluateRelevance(files, task) {
 - **低 (0.2-0.4)**：间接相关
 - **无 (0-0.2)**：不相关，排除
 
-### 阶段 3：优化（REFINE）
+### 阶段 3：优化
 
 根据评估结果更新搜索条件：
 
@@ -114,7 +114,7 @@ function refineQuery(evaluation, previousQuery) {
 }
 ```
 
-### 阶段 4：循环（LOOP）
+### 阶段 4：循环
 
 使用优化后的条件重复执行（最多 3 个周期）：
 
@@ -150,14 +150,14 @@ async function iterativeRetrieve(task, maxCycles = 3) {
 任务："修复身份验证令牌过期 bug"
 
 周期 1:
-  派发 (DISPATCH)：在 src/** 中搜索 "token", "auth", "expiry"
-  评估 (EVALUATE)：发现 auth.ts (0.9), tokens.ts (0.8), user.ts (0.3)
-  优化 (REFINE)：添加 "refresh", "jwt" 关键词；排除 user.ts
+  派发：在 src/** 中搜索 "token", "auth", "expiry"
+  评估：发现 auth.ts (0.9), tokens.ts (0.8), user.ts (0.3)
+  优化：添加 "refresh", "jwt" 关键词；排除 user.ts
 
 周期 2:
-  派发 (DISPATCH)：搜索优化后的术语
-  评估 (EVALUATE)：发现 session-manager.ts (0.95), jwt-utils.ts (0.85)
-  优化 (REFINE)：上下文已足够（2 个高度相关文件）
+  派发：搜索优化后的术语
+  评估：发现 session-manager.ts (0.95), jwt-utils.ts (0.85)
+  优化：上下文已足够（2 个高度相关文件）
 
 结果：auth.ts, tokens.ts, session-manager.ts, jwt-utils.ts
 ```
@@ -165,27 +165,27 @@ async function iterativeRetrieve(task, maxCycles = 3) {
 ### 案例 2：功能实现
 
 ```
-任务："为 API 端点添加速率限制 (rate limiting)"
+任务："为 API 端点添加速率限制"
 
 周期 1:
-  派发 (DISPATCH)：在 routes/** 中搜索 "rate", "limit", "api"
-  评估 (EVALUATE)：无匹配项 —— 代码库使用的是 "throttle" 术语
-  优化 (REFINE)：添加 "throttle", "middleware" 关键词
+  派发：在 routes/** 中搜索 "rate", "limit", "api"
+  评估：无匹配项 —— 代码库使用的是 "throttle" 术语
+  优化：添加 "throttle", "middleware" 关键词
 
 周期 2:
-  派发 (DISPATCH)：搜索优化后的术语
-  评估 (EVALUATE)：发现 throttle.ts (0.9), middleware/index.ts (0.7)
-  优化 (REFINE)：需要路由器模式
+  派发：搜索优化后的术语
+  评估：发现 throttle.ts (0.9), middleware/index.ts (0.7)
+  优化：需要路由器模式
 
 周期 3:
-  派发 (DISPATCH)：搜索 "router", "express" 模式
-  评估 (EVALUATE)：发现 router-setup.ts (0.8)
-  优化 (REFINE)：上下文已足够
+  派发：搜索 "router", "express" 模式
+  评估：发现 router-setup.ts (0.8)
+  优化：上下文已足够
 
 结果：throttle.ts, middleware/index.ts, router-setup.ts
 ```
 
-## 与智能体（Agents）集成
+## 与智能体集成
 
 在智能体提示词中使用：
 
@@ -208,6 +208,6 @@ async function iterativeRetrieve(task, maxCycles = 3) {
 
 ## 相关资源
 
-- [长篇指南 (The Longform Guide)](https://x.com/affaanmustafa/status/2014040193557471352) —— 子智能体编排部分
+- [长篇指南](https://x.com/affaanmustafa/status/2014040193557471352) —— 子智能体编排部分
 - `continuous-learning` 技能 —— 用于随时间改进的模式
 - `~/.claude/agents/` 中的智能体定义

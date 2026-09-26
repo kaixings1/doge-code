@@ -1,106 +1,106 @@
 ---
 name: ultraqa
-description: QA cycling workflow - test, verify, fix, repeat until goal met
+description: QA 循环工作流 — 测试、验证、修复、重复，直到达成目标。
 argument-hint: "[--tests|--build|--lint|--typecheck|--custom <pattern>] [--interactive]"
 level: 3
 ---
 
-# UltraQA Skill
+# UltraQA 技能
 
 [ULTRAQA ACTIVATED - AUTONOMOUS QA CYCLING]
 
-## Overview
+## 总览
 
-You are now in **ULTRAQA** mode - an autonomous QA cycling workflow that runs until your quality goal is met.
+你现在处于 **ULTRAQA** 模式 —— 一个自主的 QA 循环工作流，持续运行直到你的质量目标达成。
 
-**Cycle**: qa-tester → architect verification → fix → repeat
+**循环**：qa-tester → architect 验证 → 修复 → 重复
 
-## Relationship to `/goal`, Ralph, Team, and Ultragoal
+## 与 `/goal`、Ralph、Team 和 Ultragoal 的关系
 
-UltraQA owns repeated quality-gate cycling only. Use the deterministic conflict policies `refuse`, `adopt_existing`, and `artifact_only` rather than non-deterministic warning handling. Use it after the target behavior is known and the remaining question is whether tests, build, lint, typecheck, or another explicit QA condition passes. If Claude Code `/goal` is active, UltraQA may produce visible command evidence for that goal, but must not describe the `/goal` evaluator as independently running commands or reading files. If Ralph or Team is active, UltraQA is a verification/fix sub-loop under that authority rather than a competing session loop. If no active loop is safe, record QA expectations and evidence in artifact-only Ultragoal notes instead of claiming automatic execution.
+UltraQA **只**负责重复的质量门禁循环。请使用确定性的冲突策略 `refuse`、`adopt_existing` 和 `artifact_only`，而非不确定性的警告处理。在目标行为已知、且剩余问题只是测试/构建/lint/类型检查或另一个显式 QA 条件是否通过时使用它。如果 Claude Code 的 `/goal` 处于活动状态，UltraQA 可以为该目标产出可见的命令证据，但**不得**把 `/goal` 求值器描述为在独立运行命令或读取文件。如果 Ralph 或 Team 处于活动状态，UltraQA 是该权威之下的验证/修复子循环，而非与之竞争的会话循环。如果没有任何活动循环是安全的，则把 QA 预期和证据记录到仅工件的 Ultragoal 笔记中，而不是声称已自动执行。
 
-## Goal Parsing
+## 目标解析
 
-Parse the goal from arguments. Supported formats:
+从参数解析目标。支持的格式：
 
-| Invocation                                     | Goal Type | What to Check                    |
+| 调用方式                                        | 目标类型 | 检查内容 |
 | ---------------------------------------------- | --------- | -------------------------------- |
-| `/oh-my-claudecode:ultraqa --tests`            | tests     | All test suites pass             |
-| `/oh-my-claudecode:ultraqa --build`            | build     | Build succeeds with exit 0       |
-| `/oh-my-claudecode:ultraqa --lint`             | lint      | No lint errors                   |
-| `/oh-my-claudecode:ultraqa --typecheck`        | typecheck | No TypeScript errors             |
-| `/oh-my-claudecode:ultraqa --custom "pattern"` | custom    | Custom success pattern in output |
+| `/oh-my-claudecode:ultraqa --tests`            | tests     | 所有测试套件通过 |
+| `/oh-my-claudecode:ultraqa --build`            | build     | 构建成功，退出码 0 |
+| `/oh-my-claudecode:ultraqa --lint`             | lint      | 无 lint 错误 |
+| `/oh-my-claudecode:ultraqa --typecheck`        | typecheck | 无 TypeScript 错误 |
+| `/oh-my-claudecode:ultraqa --custom "pattern"` | custom    | 输出中的自定义成功模式 |
 
-If no structured goal provided, interpret the argument as a custom goal.
+如果未提供结构化目标，则把该参数解释为自定义目标。
 
-## Cycle Workflow
+## 循环工作流
 
-### Cycle N (Max 5)
+### 第 N 轮（最多 5 轮）
 
-1. **RUN QA**: Execute verification based on goal type
-   - `--tests`: Run the project's test command
-   - `--build`: Run the project's build command
-   - `--lint`: Run the project's lint command
-   - `--typecheck`: Run the project's type check command
-   - `--custom`: Run appropriate command and check for pattern
-   - `--interactive`: Use qa-tester for interactive CLI/service testing:
+1. **运行 QA**：按目标类型执行验证
+   - `--tests`：运行项目的测试命令
+   - `--build`：运行项目的构建命令
+   - `--lint`：运行项目的 lint 命令
+   - `--typecheck`：运行项目的类型检查命令
+   - `--custom`：运行合适的命令并检查模式
+   - `--interactive`：使用 qa-tester 进行交互式 CLI/服务测试：
      ```
-     Task(subagent_type="oh-my-claudecode:qa-tester", model="sonnet", prompt="TEST:
-     Goal: [describe what to verify]
-     Service: [how to start]
-     Test cases: [specific scenarios to verify]")
+     Task(subagent_type="oh-my-claudecode:qa-tester", model="sonnet", prompt="测试：
+     目标：[描述要验证什么]
+     服务：[如何启动]
+     测试用例：[要验证的具体场景]")
      ```
 
-2. **CHECK RESULT**: Did the goal pass?
-   - **YES** → Exit with success message
-   - **NO** → Continue to step 3
+2. **检查结果**：目标通过了吗？
+   - **是** → 带成功消息退出
+   - **否** → 继续第 3 步
 
-3. **ARCHITECT DIAGNOSIS**: Spawn architect to analyze failure
-
-   ```
-   Task(subagent_type="oh-my-claudecode:architect", model="opus", prompt="DIAGNOSE FAILURE:
-   Goal: [goal type]
-   Output: [test/build output]
-   Provide root cause and specific fix recommendations.")
-   ```
-
-4. **FIX ISSUES**: Apply architect's recommendations
+3. **ARCHITECT 诊断**：启动 architect 分析失败原因
 
    ```
-   Task(subagent_type="oh-my-claudecode:executor", model="sonnet", prompt="FIX:
-   Issue: [architect diagnosis]
-   Files: [affected files]
-   Apply the fix precisely as recommended.")
+   Task(subagent_type="oh-my-claudecode:architect", model="opus", prompt="诊断失败：
+   目标：[目标类型]
+   输出：[测试/构建输出]
+   给出根本原因和具体的修复建议。")
    ```
 
-5. **REPEAT**: Go back to step 1
+4. **修复问题**：应用 architect 的建议
 
-## Exit Conditions
+   ```
+   Task(subagent_type="oh-my-claudecode:executor", model="sonnet", prompt="修复：
+   问题：[architect 诊断结果]
+   文件：[受影响的文件]
+   严格按建议应用修复。")
+   ```
 
-| Condition             | Action                                                                        |
+5. **重复**：回到第 1 步
+
+## 退出条件
+
+| 条件 | 动作 |
 | --------------------- | ----------------------------------------------------------------------------- |
-| **Goal Met**          | Exit with success: "ULTRAQA COMPLETE: Goal met after N cycles"                |
-| **Cycle 5 Reached**   | Exit with diagnosis: "ULTRAQA STOPPED: Max cycles. Diagnosis: ..."            |
-| **Same Failure 3x**   | Exit early: "ULTRAQA STOPPED: Same failure detected 3 times. Root cause: ..." |
-| **Environment Error** | Exit: "ULTRAQA ERROR: [tmux/port/dependency issue]"                           |
+| **目标达成** | 带成功信息退出："ULTRAQA COMPLETE: 经过 N 轮后达成目标" |
+| **达到第 5 轮** | 带诊断退出："ULTRAQA STOPPED: 已达最大轮次。诊断: ..." |
+| **同一失败 3 次** | 提前退出："ULTRAQA STOPPED: 检测到同一失败 3 次。根本原因: ..." |
+| **环境错误** | 退出："ULTRAQA ERROR: [tmux/端口/依赖问题]" |
 
-## Observability
+## 可观测性
 
-Output progress each cycle:
+每轮输出进度：
 
 ```
-[ULTRAQA Cycle 1/5] Running tests...
-[ULTRAQA Cycle 1/5] FAILED - 3 tests failing
-[ULTRAQA Cycle 1/5] Architect diagnosing...
-[ULTRAQA Cycle 1/5] Fixing: auth.test.ts - missing mock
-[ULTRAQA Cycle 2/5] Running tests...
-[ULTRAQA Cycle 2/5] PASSED - All 47 tests pass
-[ULTRAQA COMPLETE] Goal met after 2 cycles
+[ULTRAQA Cycle 1/5] 正在运行测试...
+[ULTRAQA Cycle 1/5] FAILED - 3 个测试失败
+[ULTRAQA Cycle 1/5] Architect 诊断中...
+[ULTRAQA Cycle 1/5] 修复: auth.test.ts - 缺少 mock
+[ULTRAQA Cycle 2/5] 正在运行测试...
+[ULTRAQA Cycle 2/5] PASSED - 全部 47 个测试通过
+[ULTRAQA COMPLETE] 经过 2 轮后达成目标
 ```
 
-## State Tracking
+## 状态跟踪
 
-Track state in `.omc/ultraqa-state.json`:
+在 `.omc/ultraqa-state.json` 中跟踪状态：
 
 ```json
 {
@@ -109,44 +109,44 @@ Track state in `.omc/ultraqa-state.json`:
   "goal_pattern": null,
   "cycle": 1,
   "max_cycles": 5,
-  "failures": ["3 tests failing: auth.test.ts"],
+  "failures": ["3 个测试失败: auth.test.ts"],
   "started_at": "2024-01-18T12:00:00Z",
   "session_id": "uuid"
 }
 ```
 
-## Cancellation
+## 取消
 
-User can cancel with `/oh-my-claudecode:cancel` which clears the state file.
+用户可用 `/oh-my-claudecode:cancel` 取消，它会清除状态文件。
 
-## Important Rules
+## 重要规则
 
-1. **PARALLEL when possible** - Run diagnosis while preparing potential fixes
-2. **TRACK failures** - Record each failure to detect patterns
-3. **EARLY EXIT on pattern** - 3x same failure = stop and surface
-4. **CLEAR OUTPUT** - User should always know current cycle and status
-5. **CLEAN UP** - Clear state file on completion or cancellation
+1. **尽可能并行** —— 在准备潜在修复的同时运行诊断
+2. **跟踪失败** —— 记录每次失败以发现模式
+3. **发现模式则提前退出** —— 同一失败 3 次 = 停止并上报
+4. **输出清晰** —— 用户应始终知道当前轮次和状态
+5. **清理** —— 完成或取消时清除状态文件
 
-## STATE CLEANUP ON COMPLETION
+## 完成时的状态清理
 
-**IMPORTANT: Delete state files on completion - do NOT just set `active: false`**
+**重要：完成时**删除**状态文件 —— 不要只是把 `active` 设为 `false`**
 
-When goal is met OR max cycles reached OR exiting early:
+当目标达成、达到最大轮次、或提前退出时：
 
 ```bash
-# Delete ultraqa state file
+# 删除 ultraqa 状态文件
 rm -f .omc/state/ultraqa-state.json
 ```
 
-This ensures clean state for future sessions. Stale state files with `active: false` should not be left behind.
+这确保未来会话有干净的状态。不应留下 `active: false` 的陈旧状态文件。
 
-## Parallel session caveats
+## 并行会话注意事项
 
-- **Multi-repo workspace anchor:** drop a `.omc-workspace` marker at the parent directory so multiple sessions across sub-repos share one `.omc/`. Resolution order: `OMC_STATE_DIR > .omc-workspace > git > cwd`. See `docs/REFERENCE.md`.
-- **Session id source:** OMC_SESSION_ID env var wins in CLI contexts; hook payload data.session_id wins in hook contexts.
-- **Plan id (when applicable):** UltraQA state is session-scoped. Mutual-exclusion with ralph applies only within the same session.
-- **Parallel verdict:** supported (session-scoped state)
+- **多仓库工作区锚点：** 在父目录放置一个 `.omc-workspace` 标记，使跨子仓库的多个会话共享同一个 `.omc/`。解析顺序：`OMC_STATE_DIR > .omc-workspace > git > cwd`。见 `docs/REFERENCE.md`。
+- **会话 id 来源：** CLI 场景下 OMC_SESSION_ID 环境变量优先；hook 场景下 hook 载荷的 data.session_id 优先。
+- **计划 id（如适用）：** UltraQA 状态是会话级的。与 ralph 的互斥仅在同一会话内适用。
+- **并行判定：** 支持（会话级状态）
 
 ---
 
-Begin ULTRAQA cycling now. Parse the goal and start cycle 1.
+现在开始 ULTRAQA 循环。解析目标并启动第 1 轮。

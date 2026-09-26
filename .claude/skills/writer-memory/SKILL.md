@@ -1,68 +1,68 @@
 ---
 name: writer-memory
-description: Agentic memory system for writers - track characters, relationships, scenes, and themes
+description: 面向写作者的代理记忆系统 — 跟踪角色、关系、场景与主题。
 argument-hint: "init|char|rel|scene|query|validate|synopsis|status|export [args]"
 level: 7
 ---
 
-# Writer Memory - Agentic Memory System for Writers
+# Writer Memory —— 面向写作者的代理记忆系统
 
-Persistent memory system designed for creative writers, with first-class support for Korean storytelling workflows.
+为创意写作者设计的持久化记忆系统，对韩语叙事工作流提供一等支持。
 
-## Overview
+## 总览
 
-Writer Memory maintains context across Claude sessions for fiction writers. It tracks:
+Writer Memory 为小说作者跨 Claude 会话保持上下文。它跟踪：
 
-- **Characters (캐릭터)**: Emotional arcs (감정궤도), attitudes (태도), dialogue tone (대사톤), speech levels
-- **World (세계관)**: Settings, rules, atmosphere, constraints
-- **Relationships (관계)**: Character dynamics and evolution over time
-- **Scenes (장면)**: Cut composition (컷구성), narration tone, emotional tags
-- **Themes (테마)**: Emotional themes (정서테마), authorial intent
+- **角色（캐릭터）**：情感弧线（감정궤도）、态度（태도）、对白语调（대사톤）、语阶
+- **世界观（세계관）**：背景设定、规则、氛围、约束
+- **关系（관계）**：角色间的互动与随时间演变
+- **场景（장면）**：镜头构成（컷구성）、旁白语调、情感标签
+- **主题（테마）**：情感主题（정서테마）、作者意图
 
-All data persists in `.writer-memory/memory.json` for git-friendly collaboration.
+全部数据持久化在 `.writer-memory/memory.json` 中，便于 git 协作。
 
-## Commands
+## 命令
 
-| Command | Action |
+| 命令 | 动作 |
 |---------|--------|
-| `/oh-my-claudecode:writer-memory init <project-name>` | Initialize new project memory |
-| `/oh-my-claudecode:writer-memory status` | Show memory overview (character count, scene count, etc) |
-| `/oh-my-claudecode:writer-memory char add <name>` | Add new character |
-| `/oh-my-claudecode:writer-memory char <name>` | View character details |
-| `/oh-my-claudecode:writer-memory char update <name> <field> <value>` | Update character field |
-| `/oh-my-claudecode:writer-memory char list` | List all characters |
-| `/oh-my-claudecode:writer-memory rel add <char1> <char2> <type>` | Add relationship |
-| `/oh-my-claudecode:writer-memory rel <char1> <char2>` | View relationship |
-| `/oh-my-claudecode:writer-memory rel update <char1> <char2> <event>` | Add relationship event |
-| `/oh-my-claudecode:writer-memory scene add <title>` | Add new scene |
-| `/oh-my-claudecode:writer-memory scene <id>` | View scene details |
-| `/oh-my-claudecode:writer-memory scene list` | List all scenes |
-| `/oh-my-claudecode:writer-memory theme add <name>` | Add theme |
-| `/oh-my-claudecode:writer-memory world set <field> <value>` | Set world attribute |
-| `/oh-my-claudecode:writer-memory query <question>` | Query memory naturally (Korean supported) |
-| `/oh-my-claudecode:writer-memory validate <character> <dialogue>` | Check if dialogue matches character tone |
-| `/oh-my-claudecode:writer-memory synopsis` | Generate emotion-focused synopsis |
-| `/oh-my-claudecode:writer-memory export` | Export full memory as readable markdown |
-| `/oh-my-claudecode:writer-memory backup` | Create manual backup |
+| `/oh-my-claudecode:writer-memory init <project-name>` | 初始化新项目记忆 |
+| `/oh-my-claudecode:writer-memory status` | 显示记忆概览（角色数、场景数等） |
+| `/oh-my-claudecode:writer-memory char add <name>` | 添加新角色 |
+| `/oh-my-claudecode:writer-memory char <name>` | 查看角色详情 |
+| `/oh-my-claudecode:writer-memory char update <name> <field> <value>` | 更新角色字段 |
+| `/oh-my-claudecode:writer-memory char list` | 列出所有角色 |
+| `/oh-my-claudecode:writer-memory rel add <char1> <char2> <type>` | 添加关系 |
+| `/oh-my-claudecode:writer-memory rel <char1> <char2>` | 查看关系 |
+| `/oh-my-claudecode:writer-memory rel update <char1> <char2> <event>` | 添加关系事件 |
+| `/oh-my-claudecode:writer-memory scene add <title>` | 添加新场景 |
+| `/oh-my-claudecode:writer-memory scene <id>` | 查看场景详情 |
+| `/oh-my-claudecode:writer-memory scene list` | 列出所有场景 |
+| `/oh-my-claudecode:writer-memory theme add <name>` | 添加主题 |
+| `/oh-my-claudecode:writer-memory world set <field> <value>` | 设置世界观属性 |
+| `/oh-my-claudecode:writer-memory query <question>` | 以自然语言查询记忆（支持韩语） |
+| `/oh-my-claudecode:writer-memory validate <character> <dialogue>` | 检查对白是否符合角色语调 |
+| `/oh-my-claudecode:writer-memory synopsis` | 生成以情感为核心的梗概 |
+| `/oh-my-claudecode:writer-memory export` | 导出完整记忆为可读 markdown |
+| `/oh-my-claudecode:writer-memory backup` | 创建手动备份 |
 
-## Memory Types
+## 记忆类型
 
-### 캐릭터 메모리 (Character Memory)
+### 캐릭터 메모리（角色记忆）
 
-Tracks individual character attributes essential for consistent portrayal:
+跟踪对一致塑造至关重要的个体角色属性：
 
-| Field | Korean | Description |
+| 字段 | 韩语 | 描述 |
 |-------|--------|-------------|
-| `arc` | 감정궤도 | Emotional journey (e.g., "체념 -> 욕망자각 -> 선택") |
-| `attitude` | 태도 | Current disposition toward life/others |
-| `tone` | 대사톤 | Dialogue style (e.g., "담백", "직설적", "회피적") |
-| `speechLevel` | 말투 레벨 | Formality: 반말, 존댓말, 해체, 혼합 |
-| `keywords` | 핵심 단어 | Characteristic words/phrases they use |
-| `taboo` | 금기어 | Words/phrases they would never say |
-| `emotional_baseline` | 감정 기준선 | Default emotional state |
-| `triggers` | 트리거 | What provokes emotional reactions |
+| `arc` | 감정궤도 | 情感历程（例如 "체념 -> 욕망자각 -> 선택"） |
+| `attitude` | 태도 | 当前对生活/他人的态度倾向 |
+| `tone` | 대사톤 | 对白风格（例如 "담백"、"직설적"、"회피적"） |
+| `speechLevel` | 말투 레벨 | 敬语层级：반말、존댓말、해체、혼합 |
+| `keywords` | 핵심 단어 | 该角色惯用的词句 |
+| `taboo` | 금기어 | 该角色绝不会说的词句 |
+| `emotional_baseline` | 감정 기준선 | 默认情绪状态 |
+| `triggers` | 트리거 | 引发情绪反应的诱因 |
 
-**Example:**
+**示例：**
 ```
 /writer-memory char add 새랑
 /writer-memory char update 새랑 arc "체념 -> 욕망자각 -> 선택"
@@ -72,32 +72,32 @@ Tracks individual character attributes essential for consistent portrayal:
 /writer-memory char update 새랑 taboo "사랑해, 보고싶어"
 ```
 
-### 세계관 메모리 (World Memory)
+### 세계관 메모리（世界观记忆）
 
-Establishes the universe your story inhabits:
+确立你的故事所处的世界：
 
-| Field | Korean | Description |
+| 字段 | 韩语 | 描述 |
 |-------|--------|-------------|
-| `setting` | 배경 | Time, place, social context |
-| `rules` | 규칙 | How the world operates (magic systems, social norms) |
-| `atmosphere` | 분위기 | Overall mood and tone |
-| `constraints` | 제약 | What cannot happen in this world |
-| `history` | 역사 | Relevant backstory |
+| `setting` | 배경 | 时间、地点、社会背景 |
+| `rules` | 규칙 | 世界如何运转（魔法体系、社会规范） |
+| `atmosphere` | 분위기 | 整体氛围与基调 |
+| `constraints` | 제약 | 在这个世界中不可能发生的事 |
+| `history` | 역사 | 相关的背景故事 |
 
-### 관계 메모리 (Relationship Memory)
+### 관계 메모리（关系记忆）
 
-Captures the dynamic between characters over time:
+捕捉角色之间随时间的动态：
 
-| Field | Description |
+| 字段 | 描述 |
 |-------|-------------|
-| `type` | Base relationship: romantic, familial, friendship, rivalry, professional |
-| `status` | Current state: budding, stable, strained, broken, healing |
-| `power_dynamic` | Who has the upper hand, if any |
-| `events` | Timeline of relationship-changing moments |
-| `tension` | Current unresolved conflicts |
-| `intimacy_level` | Emotional closeness (1-10) |
+| `type` | 基础关系：romantic、familial、friendship、rivalry、professional |
+| `status` | 当前状态：budding、stable、strained、broken、healing |
+| `power_dynamic` | 谁占上风（若有） |
+| `events` | 改变关系的时刻时间线 |
+| `tension` | 当前未解决的冲突 |
+| `intimacy_level` | 情感亲密度（1-10） |
 
-**Example:**
+**示例：**
 ```
 /writer-memory rel add 새랑 해랑 romantic
 /writer-memory rel update 새랑 해랑 "첫 키스 - 새랑 회피"
@@ -105,105 +105,105 @@ Captures the dynamic between characters over time:
 /writer-memory rel update 새랑 해랑 "새랑 먼저 손 잡음"
 ```
 
-### 장면 메모리 (Scene Memory)
+### 장면 메모리（场景记忆）
 
-Tracks individual scenes and their emotional architecture:
+跟踪单个场景及其情感结构：
 
-| Field | Korean | Description |
+| 字段 | 韩语 | 描述 |
 |-------|--------|-------------|
-| `title` | 제목 | Scene identifier |
-| `characters` | 등장인물 | Who appears |
-| `location` | 장소 | Where it happens |
-| `cuts` | 컷 구성 | Shot-by-shot breakdown |
-| `narration_tone` | 내레이션 톤 | Narrative voice style |
-| `emotional_tag` | 감정 태그 | Primary emotions (e.g., "설렘+불안") |
-| `purpose` | 목적 | Why this scene exists in the story |
-| `before_after` | 전후 변화 | What changes for characters |
+| `title` | 제목 | 场景标识 |
+| `characters` | 등장인물 | 出场人物 |
+| `location` | 장소 | 发生地点 |
+| `cuts` | 컷 구성 | 逐镜头分解 |
+| `narration_tone` | 내레이션 톤 | 旁白语态风格 |
+| `emotional_tag` | 감정 태그 | 主要情绪（例如 "설렘+불안"） |
+| `purpose` | 목적 | 该场景在故事中存在的理由 |
+| `before_after` | 전후 변화 | 角色发生了什么变化 |
 
-### 테마 메모리 (Theme Memory)
+### 테마 메모리（主题记忆）
 
-Captures the deeper meaning woven through your story:
+捕捉贯穿你故事的深层意义：
 
-| Field | Korean | Description |
+| 字段 | 韩语 | 描述 |
 |-------|--------|-------------|
-| `name` | 이름 | Theme identifier |
-| `expression` | 표현 방식 | How this theme manifests |
-| `scenes` | 관련 장면 | Scenes that embody this theme |
-| `character_links` | 캐릭터 연결 | Which characters carry this theme |
-| `author_intent` | 작가 의도 | What you want readers to feel |
+| `name` | 이름 | 主题标识 |
+| `expression` | 표현 방식 | 该主题如何体现 |
+| `scenes` | 관련 장면 | 体现该主题的场景 |
+| `character_links` | 캐릭터 연결 | 承载该主题的角色 |
+| `author_intent` | 작가 의도 | 你想让读者感受到什么 |
 
-## Synopsis Generation (시놉시스)
+## 梗概生成（시놉시스）
 
-The `/synopsis` command generates an emotion-focused summary using 5 essential elements:
+`/synopsis` 命令使用 5 个基本要素生成以情感为核心的摘要：
 
-### 5 Essential Elements (시놉시스 5요소)
+### 5 个基本要素（시놉시스 5요소）
 
-1. **주인공 태도 요약** (Protagonist Attitude Summary)
-   - How the protagonist approaches life/love/conflict
-   - Their core emotional stance
-   - Example: "새랑은 상실을 예방하기 위해 먼저 포기하는 사람"
+1. **주인공 태도 요약**（主角态度摘要）
+   - 主角如何面对生活/爱情/冲突
+   - 其核心情感立场
+   - 示例："새랑은 상실을 예방하기 위해 먼저 포기하는 사람"
 
-2. **관계 핵심 구도** (Core Relationship Structure)
-   - The central dynamic driving the story
-   - Power imbalances and tensions
-   - Example: "사랑받는 자와 사랑하는 자의 불균형"
+2. **관계 핵심 구도**（核心关系结构）
+   - 驱动故事的核心互动
+   - 权力失衡与张力
+   - 示例："사랑받는 자와 사랑하는 자의 불균형"
 
-3. **정서적 테마** (Emotional Theme)
-   - The feeling the story evokes
-   - Not plot, but emotional truth
-   - Example: "손에 쥔 행복을 믿지 못하는 불안"
+3. **정서적 테마**（情感主题）
+   - 故事唤起的感受
+   - 不是情节，而是情感真相
+   - 示例："손에 쥔 행복을 믿지 못하는 불안"
 
-4. **장르 vs 실제감정 대비** (Genre vs Real Emotion Contrast)
-   - Surface genre expectations vs. actual emotional content
-   - Example: "로맨스지만 본질은 자기수용 서사"
+4. **장르 vs 실제감정 대비**（类型与真实情感对比）
+   - 表层的类型期待 vs. 实际的情感内容
+   - 示例："로맨스지만 본질은 자기수용 서사"
 
-5. **엔딩 정서 잔상** (Ending Emotional Aftertaste)
-   - The lingering feeling after the story ends
-   - Example: "씁쓸한 안도, 불완전한 해피엔딩의 여운"
+5. **엔딩 정서 잔상**（结局情感余韵）
+   - 故事结束后萦绕的感受
+   - 示例："씁쓸한 안도, 불완전한 해피엔딩의 여운"
 
-## Character Validation (캐릭터 검증)
+## 角色校验（캐릭터 검증）
 
-The `/validate` command checks if dialogue matches a character's established voice.
+`/validate` 命令检查对白是否符合角色已确立的声线。
 
-### What Gets Checked
+### 检查内容
 
-| Check | Description |
+| 检查项 | 描述 |
 |-------|-------------|
-| **Speech Level** | Does formality match? (반말/존댓말/해체) |
-| **Tone Match** | Does the emotional register fit? |
-| **Keyword Usage** | Uses characteristic words? |
-| **Taboo Violation** | Uses forbidden words? |
-| **Emotional Range** | Within character's baseline? |
-| **Context Fit** | Appropriate for relationship and scene? |
+| **语阶** | 敬语层级是否匹配？（반말/존댓말/해체） |
+| **语调匹配** | 情感语域是否契合？ |
+| **关键词使用** | 是否使用了特征词？ |
+| **禁忌词违反** | 是否使用了禁用词？ |
+| **情感幅度** | 是否在角色基准线内？ |
+| **语境契合** | 是否适合该关系与场景？ |
 
-### Validation Results
+### 校验结果
 
-- **PASS**: Dialogue is consistent with character
-- **WARN**: Minor inconsistencies, may be intentional
-- **FAIL**: Significant deviation from established voice
+- **PASS**：对白与角色一致
+- **WARN**：轻微不一致，可能是有意为之
+- **FAIL**：显著偏离已确立的声线
 
-**Example:**
+**示例：**
 ```
 /writer-memory validate 새랑 "사랑해, 해랑아. 너무 보고싶었어."
 ```
-Output:
+输出：
 ```
-[FAIL] 새랑 validation failed:
-- TABOO: "사랑해" - character avoids direct declarations
-- TABOO: "보고싶었어" - character suppresses longing expressions
-- TONE: Too emotionally direct for 새랑's 담백 style
+[FAIL] 새랑 校验未通过：
+- TABOO: "사랑해" —— 该角色回避直接表白
+- TABOO: "보고싶었어" —— 该角色压抑思念的表达
+- TONE: 对 새랑 的 담백 风格而言过于情绪外露
 
-Suggested alternatives:
-- "...왔네." (minimal acknowledgment)
-- "늦었다." (deflection to external fact)
-- "밥 먹었어?" (care expressed through practical concern)
+建议替代说法：
+- "...왔네."（最低限度的回应）
+- "늦었다."（把话题引向外部事实）
+- "밥 먹었어?"（用实际关心表达在意）
 ```
 
-## Context Query (맥락 질의)
+## 语境查询（맥락 질의）
 
-Natural language queries against memory, with full Korean support.
+对记忆做自然语言查询，完整支持韩语。
 
-### Example Queries
+### 查询示例
 
 ```
 /writer-memory query "새랑은 이 상황에서 뭐라고 할까?"
@@ -214,55 +214,55 @@ Natural language queries against memory, with full Korean support.
 /writer-memory query "해랑이 화났을 때 말투는?"
 ```
 
-The system synthesizes answers from all relevant memory types.
+系统会综合所有相关记忆类型给出答案。
 
-## Behavior
+## 行为特性
 
-1. **On Init**: Creates `.writer-memory/memory.json` with project metadata and empty collections
-2. **Auto-Backup**: Changes are backed up before modification to `.writer-memory/backups/`
-3. **Korean-First**: Emotion vocabulary uses Korean terms throughout
-4. **Session Loading**: Memory is loaded on session start for immediate context
-5. **Git-Friendly**: JSON formatted for clean diffs and collaboration
+1. **初始化时**：创建 `.writer-memory/memory.json`，含项目元数据和空集合
+2. **自动备份**：修改前会把变更备份到 `.writer-memory/backups/`
+3. **韩语优先**：情感词汇全程使用韩语术语
+4. **会话加载**：会话开始时即载入记忆，提供即时上下文
+5. **对 git 友好**：JSON 格式化以获得干净的 diff 并便于协作
 
-## Integration
+## 集成
 
-### With OMC Notepad System
-Writer Memory integrates with `.omc/notepad.md`:
-- Scene ideas can be captured as notes
-- Character insights from analysis sessions are preserved
-- Cross-reference between notepad and memory
+### 与 OMC Notepad 系统集成
+Writer Memory 与 `.omc/notepad.md` 集成：
+- 场景构想可作为笔记捕获
+- 分析会话中的角色洞察会被保留
+- 在 notepad 与记忆之间交叉引用
 
-### With Architect Agent
-For complex character analysis:
+### 与 Architect 代理集成
+对于复杂的角色分析：
 ```
 Task(subagent_type="oh-my-claudecode:architect",
      model="opus",
-     prompt="Analyze 새랑's arc across all scenes...")
+     prompt="分析 새랑 在所有场景中的情感弧线……")
 ```
 
-### Character Validation Pipeline
-Validation pulls context from:
-- Character memory (tone, keywords, taboo)
-- Relationship memory (dynamics with dialogue partner)
-- Scene memory (current emotional context)
-- Theme memory (authorial intent)
+### 角色校验流水线
+校验从以下来源提取上下文：
+- 角色记忆（语调、关键词、禁忌词）
+- 关系记忆（与对白对象的互动）
+- 场景记忆（当前情感语境）
+- 主题记忆（作者意图）
 
-### Synopsis Builder
-Synopsis generation aggregates:
-- All character arcs
-- Key relationship events
-- Scene emotional tags
-- Theme expressions
+### 梗概构建器
+梗概生成会聚合：
+- 所有角色弧线
+- 关键关系事件
+- 场景情感标签
+- 主题表达
 
-## Examples
+## 示例
 
-### Full Workflow
+### 完整工作流
 
 ```
-# Initialize project
+# 初始化项目
 /writer-memory init 봄의 끝자락
 
-# Add characters
+# 添加角色
 /writer-memory char add 새랑
 /writer-memory char update 새랑 arc "체념 -> 욕망자각 -> 선택"
 /writer-memory char update 새랑 tone "담백, 현재충실"
@@ -273,60 +273,60 @@ Synopsis generation aggregates:
 /writer-memory char update 해랑 tone "직진, 솔직"
 /writer-memory char update 해랑 speechLevel "반말"
 
-# Establish relationship
+# 建立关系
 /writer-memory rel add 새랑 해랑 romantic
 /writer-memory rel update 새랑 해랑 "첫 만남 - 해랑 일방적 호감"
 /writer-memory rel update 새랑 해랑 "새랑 거절"
 /writer-memory rel update 새랑 해랑 "재회 - 새랑 내적 동요"
 
-# Set world
+# 设置世界观
 /writer-memory world set setting "서울, 현대, 20대 후반 직장인"
 /writer-memory world set atmosphere "도시의 건조함 속 미묘한 온기"
 
-# Add themes
+# 添加主题
 /writer-memory theme add "포기하지 않는 사랑"
 /writer-memory theme add "자기 보호의 벽"
 
-# Add scene
+# 添加场景
 /writer-memory scene add "옥상 재회"
 
-# Query for writing
+# 写作前查询
 /writer-memory query "새랑은 이별 장면에서 어떤 톤으로 말할까?"
 
-# Validate dialogue
+# 校验对白
 /writer-memory validate 새랑 "해랑아, 그만하자."
 
-# Generate synopsis
+# 生成梗概
 /writer-memory synopsis
 
-# Export for reference
+# 导出以备查阅
 /writer-memory export
 ```
 
-### Quick Character Check
+### 快速角色查看
 
 ```
 /writer-memory char 새랑
 ```
 
-Output:
+输出：
 ```
 ## 새랑
 
-**Arc (감정궤도):** 체념 -> 욕망자각 -> 선택
-**Attitude (태도):** 방어적, 현실주의
-**Tone (대사톤):** 담백, 현재충실
-**Speech Level (말투):** 해체
-**Keywords (핵심어):** 그냥, 뭐, 괜찮아
-**Taboo (금기어):** 사랑해, 보고싶어
+**情感弧线（감정궤도）：** 체념 -> 욕망자각 -> 선택
+**态度（태도）：** 방어적, 현실주의
+**对白语调（대사톤）：** 담백, 현재충실
+**语阶（말투）：** 해체
+**关键词（핵심어）：** 그냥, 뭐, 괜찮아
+**禁忌词（금기어）：** 사랑해, 보고싶어
 
-**Relationships:**
-- 해랑: romantic (intimacy: 6/10, status: healing)
+**关系：**
+- 해랑：romantic（亲密度：6/10，状态：healing）
 
-**Scenes Appeared:** 옥상 재회, 카페 대화, 마지막 선택
+**出场场景：** 옥상 재회, 카페 대화, 마지막 선택
 ```
 
-## Storage Schema
+## 存储结构
 
 ```json
 {
@@ -405,40 +405,40 @@ Output:
 }
 ```
 
-## File Structure
+## 文件结构
 
 ```
 .writer-memory/
-├── memory.json          # Main memory file
-├── backups/             # Auto-backups before changes
+├── memory.json          # 主记忆文件
+├── backups/             # 变更前的自动备份
 │   ├── memory-2024-01-15-090000.json
 │   └── memory-2024-01-20-143000.json
-└── exports/             # Markdown exports
+└── exports/             # Markdown 导出
     └── export-2024-01-20.md
 ```
 
-## Tips for Writers
+## 给作者的建议
 
-1. **Start with Characters**: Build character memories before scenes
-2. **Update Relationships After Key Scenes**: Track evolution actively
-3. **Use Validation While Writing**: Catch voice inconsistencies early
-4. **Query Before Difficult Scenes**: Let the system remind you of context
-5. **Regular Synopsis**: Generate periodically to check thematic coherence
-6. **Backup Before Major Changes**: Use `/backup` before significant story pivots
+1. **从角色开始**：先建立角色记忆，再写场景
+2. **关键场景后更新关系**：主动跟踪演变
+3. **写作时使用校验**：及早发现声线不一致
+4. **难写场景前先查询**：让系统提醒你上下文
+5. **定期生成梗概**：周期性检查主题一致性
+6. **重大改动前备份**：在重大剧情转折前使用 `/backup`
 
-## Troubleshooting
+## 故障排查
 
-**Memory not loading?**
-- Check `.writer-memory/memory.json` exists
-- Verify JSON syntax is valid
-- Run `/writer-memory status` to diagnose
+**记忆未加载？**
+- 检查 `.writer-memory/memory.json` 是否存在
+- 验证 JSON 语法是否合法
+- 运行 `/writer-memory status` 诊断
 
-**Validation too strict?**
-- Review taboo list for unintended entries
-- Consider if character is growing (arc progression)
-- Intentional breaks from pattern are valid for dramatic moments
+**校验过于严格？**
+- 检查禁忌词清单中是否有非预期的条目
+- 考虑角色是否在成长（弧线推进）
+- 有意打破模式在戏剧性时刻是合理的
 
-**Query not finding context?**
-- Ensure relevant data is in memory
-- Try more specific queries
-- Check character names match exactly
+**查询未找到上下文？**
+- 确保相关数据已在记忆中
+- 尝试更具体的查询
+- 检查角色名是否完全匹配

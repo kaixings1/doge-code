@@ -1,22 +1,22 @@
 ---
 name: ctx-index
 description: |
-  Index a local file or directory into context-mode's persistent FTS5 knowledge base
-  so future ctx_search calls can retrieve focused snippets without rereading raw files.
-  Trigger: /context-mode:ctx-index
+  把本地文件或目录索引进 context-mode 的 FTS5 持久知识库，
+  以便之后的 ctx_search 调用能取回聚焦片段，而无需重读原始文件。
+  触发：/context-mode:ctx-index
 user-invocable: true
 ---
 
-# Context Mode Index
+# Context Mode 索引
 
-Index local project content for later search.
+索引本地项目内容，供后续搜索使用。
 
-## Instructions
+## 操作步骤
 
-1. Prefer the `ctx_index` MCP tool when it is available.
-2. Ask for a path only if the user did not provide one and the current project root is ambiguous.
-3. Use `path`, not large inline `content`, so file bytes do not enter the conversation.
-4. For repository indexing, pass conservative bounds and a clear source label:
+1. 可用时优先用 `ctx_index` MCP 工具。
+2. 仅当用户没有提供路径、且当前项目根目录不明确时，才询问路径。
+3. 用 `path`，不要用大段内联 `content`，这样文件字节不会进入对话。
+4. 索引代码仓库时，传保守的上限和一个清晰的来源标签：
 
 ```javascript
 ctx_index({
@@ -27,20 +27,20 @@ ctx_index({
 })
 ```
 
-5. If MCP tools are unavailable, fall back to the CLI:
+5. 如果 MCP 工具不可用，退回到 CLI：
 
 ```bash
 context-mode index . --source project:<name>
 ```
 
-6. Report the indexed source label, file count or section count, and the matching search command:
+6. 报告已索引的来源标签、文件数或章节数，以及对应的搜索命令：
 
 ```javascript
 ctx_search({ source: "project:<name>", queries: ["..."] })
 ```
 
-## Safety
+## 安全
 
-- Do not index dependency directories, build outputs, secrets, or generated artifacts.
-- Prefer `--exclude` or `exclude` for project-specific noisy paths.
-- For broad repos, ask the user before raising `maxFiles` above 500.
+- 不要索引依赖目录、构建产物、密钥或生成的文件。
+- 对于项目里噪声大的路径，优先用 `--exclude` 或 `exclude`。
+- 对较大的仓库，在把 `maxFiles` 调到 500 以上之前先询问用户。

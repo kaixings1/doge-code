@@ -1,176 +1,161 @@
 ---
 name: context-mode
 description: |
-  Use context-mode tools (ctx_execute, ctx_execute_file) instead of Bash/cat when processing
-  large outputs. Triggers: "analyze logs", "summarize output", "process data",
-  "parse JSON", "filter results", "extract errors", "check build output",
-  "analyze dependencies", "process API response", "large file analysis",
-  "page snapshot", "browser snapshot", "DOM structure", "inspect page",
-  "accessibility tree", "Playwright snapshot",
-  "run tests", "test output", "coverage report", "git log", "recent commits",
-  "diff between branches", "list containers", "pod status", "disk usage",
-  "fetch docs", "API reference", "index documentation",
-  "call API", "check response", "query results",
-  "find TODOs", "count lines", "codebase statistics", "security audit",
-  "outdated packages", "dependency tree", "cloud resources", "CI/CD output".
-  Also triggers on ANY MCP tool output that may exceed 20 lines.
-  Subagent routing is handled automatically via PreToolUse hook.
+  在处理大量输出时，用 context-mode 工具（ctx_execute、ctx_execute_file）代替 Bash/cat。触发词：analyze logs、summarize output、process data、parse JSON、filter results、extract errors、check build output、analyze dependencies、process API response、large file analysis、page snapshot、browser snapshot、DOM structure、inspect page、accessibility tree、Playwright snapshot、run tests、test output、coverage report、git log、recent commits、diff between branches、list containers、pod status、disk usage、fetch docs、API reference、index documentation、call API、check response、query results、find TODOs、count lines、codebase statistics、security audit、outdated packages、dependency tree、cloud resources、CI/CD output。任何可能超过 20 行的 MCP 工具输出也会触发。子代理路由通过 PreToolUse hook 自动处理。
 ---
 
-# Context Mode: Default for All Large Output
+# Context Mode：所有大输出量的默认选择
 
-## MANDATORY RULE
+## 强制规则
 
 <context_mode_logic>
   <mandatory_rule>
-    Default to context-mode for ALL commands. Only use Bash for guaranteed-small-output operations.
+    所有命令默认使用 context-mode。仅在输出确定很小的操作中才用 Bash。
   </mandatory_rule>
 </context_mode_logic>
 
-Bash whitelist (safe to run directly):
-- **File mutations**: `mkdir`, `mv`, `cp`, `rm`, `touch`, `chmod`
-- **Git writes**: `git add`, `git commit`, `git push`, `git checkout`, `git branch`, `git merge`
-- **Navigation**: `cd`, `pwd`, `which`
-- **Process control**: `kill`, `pkill`
-- **Package management**: `npm install`, `npm publish`, `pip install`
-- **Simple output**: `echo`, `printf`
+Bash 白名单（可直接运行）：
+- **文件修改**：mkdir、mv、cp、rm、touch、chmod
+- **Git 写操作**：git add、git commit、git push、git checkout、git branch、git merge
+- **导航**：cd、pwd、which
+- **进程控制**：kill、pkill
+- **包管理**：npm install、npm publish、pip install
+- **简单输出**：echo、printf
 
-**Everything else → `ctx_execute` or `ctx_execute_file`.** Any command that reads, queries, fetches, lists, logs, tests, builds, diffs, inspects, or calls an external service. This includes ALL CLIs (gh, aws, kubectl, docker, terraform, wrangler, fly, heroku, gcloud, etc.) — there are thousands and we cannot list them all.
+**其它一切 → 使用 ctx_execute 或 ctx_execute_file。** 任何会读取、查询、抓取、列举、记录日志、测试、构建、比较差异、检查或调用外部服务的命令。这包括所有 CLI（gh、aws、kubectl、docker、terraform、wrangler、fly、heroku、gcloud 等），它们有成千上万个，无法逐一列出。
 
-**When uncertain, use context-mode.** Every KB of unnecessary context reduces the quality and speed of the entire session.
+**不确定时就用 context-mode。** 每浪费 1KB 不必要的上下文，都会降低整场会话的质量与速度。
 
-## Decision Tree
+## 决策树
 
 ```
-About to run a command / read a file / call an API?
+即将运行命令 / 读取文件 / 调用 API？
 │
-├── Command is on the Bash whitelist (file mutations, git writes, navigation, echo)?
-│   └── Use Bash
+├── 命令在 Bash 白名单里（文件修改、git 写操作、导航、echo）？
+│   └── 使用 Bash
 │
-├── Output MIGHT be large or you're UNSURE?
-│   └── Use context-mode ctx_execute or ctx_execute_file
+├── 输出可能很大，或者你不确定？
+│   └── 使用 context-mode 的 ctx_execute 或 ctx_execute_file
 │
-├── Fetching web documentation or HTML page?
-│   └── Use ctx_fetch_and_index → ctx_search
+├── 抓取网页文档或 HTML 页面？
+│   └── 使用 ctx_fetch_and_index → ctx_search
 │
-├── Using Playwright (navigate, snapshot, console, network)?
-│   └── ALWAYS use filename parameter to save to file, then:
-│       browser_snapshot(filename) → ctx_index(path) or ctx_execute_file(path)
+├── 使用 Playwright（navigate、snapshot、console、network）？
+│   └── 始终用 filename 参数保存到文件，然后：
+│       browser_snapshot(filename) → ctx_index(path) 或 ctx_execute_file(path)
 │       browser_console_messages(filename) → ctx_execute_file(path)
 │       browser_network_requests(filename) → ctx_execute_file(path)
-│       ⚠ browser_navigate returns a snapshot automatically — ignore it,
-│         use browser_snapshot(filename) for any inspection.
-│       ⚠ Playwright MCP uses a SINGLE browser instance — NOT parallel-safe.
-│         For parallel browser ops, use agent-browser via execute instead.
+│       ⚠ browser_navigate 会自动返回一份快照 —— 忽略它，
+│         任何检查都用 browser_snapshot(filename)。
+│       ⚠ Playwright MCP 只用一个浏览器实例 —— 不能并行。
+│         并行浏览器操作请改用 execute 调用 agent-browser。
 │
-├── Using agent-browser (parallel-safe browser automation)?
-│   └── Run via execute (shell) — each call gets its own subprocess:
+├── 使用 agent-browser（可并行的浏览器自动化）？
+│   └── 通过 execute（shell）运行 —— 每次调用有独立子进程：
 │       execute("agent-browser open example.com && agent-browser snapshot -i -c")
-│       ✓ Supports sessions for isolated browser instances
-│       ✓ Safe for parallel subagent execution
-│       ✓ Lightweight accessibility tree with ref-based interaction
+│       ✓ 支持会话，可隔离浏览器实例
+│       ✓ 子代理并行执行安全
+│       ✓ 轻量可访问性树，基于 ref 交互
 │
-├── Processing output from another MCP tool (Context7, GitHub API, etc.)?
-│   ├── Output already in context from a previous tool call?
-│   │   └── Use it directly. Do NOT re-index with ctx_index(content: ...).
-│   ├── Need to search the output multiple times?
-│   │   └── Save to file via ctx_execute, then ctx_index(path) → ctx_search
-│   └── One-shot extraction?
-│       └── Save to file via ctx_execute, then ctx_execute_file(path)
+├── 处理来自另一个 MCP 工具的输出（Context7、GitHub API 等）？
+│   ├── 输出已在之前某次工具调用的上下文中？
+│   │   └── 直接使用它。不要用 ctx_index(content: ...) 重新索引。
+│   ├── 需要多次搜索该输出？
+│   │   └── 用 ctx_execute 保存到文件，然后 ctx_index(path) → ctx_search
+│   └── 一次性提取？
+│       └── 用 ctx_execute 保存到文件，然后 ctx_execute_file(path)
 │
-└── Reading a file to analyze/summarize (not edit)?
-    └── Use ctx_execute_file (file loads into FILE_CONTENT, not context)
+└── 读取文件以分析/总结（不是编辑）？
+    └── 使用 ctx_execute_file（文件载入 FILE_CONTENT，不进上下文）
 ```
 
-## When to Use Each Tool
+## 各工具的适用场景
 
-| Situation | Tool | Example |
+| 场景 | 工具 | 示例 |
 |-----------|------|---------|
-| Hit an API endpoint | `ctx_execute` | `fetch('http://localhost:3000/api/orders')` |
-| Run CLI that returns data | `ctx_execute` | `gh pr list`, `aws s3 ls`, `kubectl get pods` |
-| Run tests | `ctx_execute` | `npm test`, `pytest`, `go test ./...` |
-| Git operations | `ctx_execute` | `git log --oneline -50`, `git diff HEAD~5` |
-| Docker/K8s inspection | `ctx_execute` | `docker stats --no-stream`, `kubectl describe pod` |
-| Read a log file | `ctx_execute_file` | Parse access.log, error.log, build output |
-| Read a data file | `ctx_execute_file` | Analyze CSV, JSON, YAML, XML |
-| Read source code to analyze | `ctx_execute_file` | Count functions, find patterns, extract metrics |
-| Fetch web docs | `ctx_fetch_and_index` | Index React/Next.js/Zod docs, then search |
-| Playwright snapshot | `browser_snapshot(filename)` → `ctx_index(path)` → `ctx_search` | Save to file, index server-side, query |
-| Playwright snapshot (one-shot) | `browser_snapshot(filename)` → `ctx_execute_file(path)` | Save to file, extract in sandbox |
-| Playwright console/network | `browser_*(filename)` → `ctx_execute_file(path)` | Save to file, analyze in sandbox |
-| MCP output (already in context) | Use directly | Don't re-index — it's already loaded |
-| MCP output (need multi-query) | `ctx_execute` to save → `ctx_index(path)` → `ctx_search` | Save to file first, index server-side |
-| Wipe indexed KB content | `ctx_purge(confirm: true)` | Permanently deletes all indexed content |
+| 调用 API 端点 | ctx_execute | fetch('http://localhost:3000/api/orders') |
+| 运行会返回数据的 CLI | ctx_execute | gh pr list、aws s3 ls、kubectl get pods |
+| 运行测试 | ctx_execute | npm test、pytest、go test ./... |
+| Git 操作 | ctx_execute | git log --oneline -50、git diff HEAD~5 |
+| Docker/K8s 检查 | ctx_execute | docker stats --no-stream、kubectl describe pod |
+| 读取日志文件 | ctx_execute_file | 解析 access.log、error.log、构建输出 |
+| 读取数据文件 | ctx_execute_file | 分析 CSV、JSON、YAML、XML
+| 读取源码以作分析 | ctx_execute_file | 统计函数、查找模式、提取指标 |
+| 抓取网页文档 | ctx_fetch_and_index | 索引 React/Next.js/Zod 文档，然后搜索 |
+| Playwright 快照 | browser_snapshot(filename) → ctx_index(path) → ctx_search | 保存到文件，服务端索引，再查询 |
+| Playwright 快照（一次性） | browser_snapshot(filename) → ctx_execute_file(path) | 保存到文件，在沙箱中提取 |
+| Playwright 控制台/网络 | browser_*(filename) → ctx_execute_file(path) | 保存到文件，在沙箱中分析 |
+| MCP 输出（已在上下文中） | 直接使用 | 不要重新索引，它已加载 |
+| MCP 输出（需多次查询） | 用 ctx_execute 保存 → ctx_index(path) → ctx_search | 先保存到文件，服务端索引 |
+| 清空已索引的知识库内容 | ctx_purge(confirm: true) | 永久删除所有已索引内容 |
 
-## Automatic Triggers
+## 自动触发
 
-Use context-mode for ANY of these, without being asked:
+以下任何情形都无需被要求，自动使用 context-mode：
 
-- **API debugging**: "hit this endpoint", "call the API", "check the response", "find the bug in the response"
-- **Log analysis**: "check the logs", "what errors", "read access.log", "debug the 500s"
-- **Test runs**: "run the tests", "check if tests pass", "test suite output"
-- **Git history**: "show recent commits", "git log", "what changed", "diff between branches"
-- **Data inspection**: "look at the CSV", "parse the JSON", "analyze the config"
-- **Infrastructure**: "list containers", "check pods", "S3 buckets", "show running services"
-- **Dependency audit**: "check dependencies", "outdated packages", "security audit"
-- **Build output**: "build the project", "check for warnings", "compile errors"
-- **Code metrics**: "count lines", "find TODOs", "function count", "analyze codebase"
-- **Web docs lookup**: "look up the docs", "check the API reference", "find examples"
+- **API 调试**：调用这个端点、调用该 API、检查响应、找出响应中的 bug
+- **日志分析**：查看日志、有哪些错误、读取 access.log、调试 500 错误
+- **测试运行**：运行测试、检查测试是否通过、测试套件输出
+- **Git 历史**：显示最近提交、git log、改了什么、分支间差异
+- **数据查看**：看下 CSV、解析 JSON、分析配置
+- **基础设施**：列举容器、检查 pod、S3 桶、显示运行中的服务
+- **依赖审计**：检查依赖、过期的包、安全审计
+- **构建输出**：构建项目、检查警告、编译错误
+- **代码指标**：统计行数、查找 TODO、函数计数、分析代码库
+- **网页文档查询**：查文档、查看 API 参考、找示例
 
-## Language Selection
+## 语言选择
 
-| Situation | Language | Why |
+| 场景 | 语言 | 理由 |
 |-----------|----------|-----|
-| HTTP/API calls, JSON | `javascript` | Native fetch, JSON.parse, async/await |
-| Data analysis, CSV, stats | `python` | csv, statistics, collections, re |
-| Shell commands with pipes | `shell` | grep, awk, jq, native tools |
-| File pattern matching | `shell` | find, wc, sort, uniq |
+| HTTP/API 调用、JSON | javascript | 原生 fetch、JSON.parse、async/await |
+| 数据分析、CSV、统计 | python | csv、statistics、collections、re |
+| 带管道的 shell 命令 | shell | grep、awk、jq 等原生工具 |
+| 文件模式匹配 | shell | find、wc、sort、uniq |
 
-## Search Query Strategy
+## 搜索查询策略
 
-- BM25 uses **OR semantics** — results matching more terms rank higher automatically
-- Use 2-4 specific technical terms per query
-- **Always use `source` parameter** when multiple docs are indexed to avoid cross-source contamination
-  - Partial match works: `source: "Node"` matches `"Node.js v22 CHANGELOG"`
-- **Always use `queries` array** — batch ALL search questions in ONE call:
+- BM25 采用 OR 语义，匹配更多词的结果会自动排名更高
+- 每次查询使用 2-4 个具体的技术术语
+- 当索引了多个文档时，始终使用 source 参数，以避免跨源污染
+  - 支持部分匹配：source: Node 可匹配 Node.js v22 CHANGELOG
+- **始终使用 queries 数组** —— 在一次调用中批量放入所有搜索问题：
   - `ctx_search(queries: ["transform pipe", "refine superRefine", "coerce codec"], source: "Zod")`
-  - NEVER make multiple separate ctx_search() calls — put all queries in one array
+  - 绝不多次单独调用 ctx_search()，把所有查询放进一个数组
 
-## External Documentation
+## 外部文档
 
-- **Always use `ctx_fetch_and_index`** for external docs — NEVER `cat` or `ctx_execute` with local paths for packages you don't own
-- For GitHub-hosted projects, use the raw URL: `https://raw.githubusercontent.com/org/repo/main/CHANGELOG.md`
-- After indexing, use the `source` parameter in search to scope results to that specific document
+- 外部文档始终使用 ctx_fetch_and_index，对你不拥有的包，绝不用 cat 或带本地路径的 ctx_execute
+- 对于托管在 GitHub 上的项目，使用原始 URL：https://raw.githubusercontent.com/org/repo/main/CHANGELOG.md
+- 索引之后，在搜索中用 source 参数把结果范围限定到该特定文档
 
-## Critical Rules
+## 关键规则
 
-1. **Always console.log/print your findings.** stdout is all that enters context. No output = wasted call.
-2. **Write analysis code, not just data dumps.** Don't `console.log(JSON.stringify(data))` — analyze first, print findings.
-3. **Be specific in output.** Print bug details with IDs, line numbers, exact values — not just counts.
-4. **For files you need to EDIT**: Use the normal Read tool. context-mode is for analysis, not editing.
-5. **For Bash whitelist commands only**: Use Bash for file mutations, git writes, navigation, process control, package install, and echo. Everything else goes through context-mode.
-6. **Never use `ctx_index(content: large_data)`.** Use `ctx_index(path: ...)` to read files server-side. The `content` parameter sends data through context as a tool parameter — use it only for small inline text.
-7. **Always use `filename` parameter** on Playwright tools (`browser_snapshot`, `browser_console_messages`, `browser_network_requests`). Without it, the full output enters context.
-8. **Don't re-index data already in context.** If an MCP tool returned data in a previous response, it's already loaded — use it directly or save to file first.
+1. 始终 console.log/print 你的发现。进入上下文的只有 stdout。没有输出就等于白跑一次调用。
+2. 写分析代码，而不只是数据转储。不要 console.log(JSON.stringify(data))，先分析再打印发现。
+3. 输出要具体。打印 bug 细节及其 ID、行号、确切数值，而不只是计数。
+4. 对于你需要编辑的文件，使用普通的 Read 工具。context-mode 用于分析，而非编辑。
+5. 仅对 Bash 白名单命令，文件修改、git 写操作、导航、进程控制、包安装和 echo 使用 Bash。其它一切都走 context-mode。
+6. 绝不使用 ctx_index(content: large_data)。用 ctx_index(path: ...) 在服务端读取文件。content 参数会作为工具参数把数据送进上下文，仅用于少量内联文本。
+7. 在 Playwright 工具（browser_snapshot、browser_console_messages、browser_network_requests）上始终使用 filename 参数。没有它，完整输出就会进入上下文。
+8. 不要重新索引已在上下文中的数据。如果某个 MCP 工具在先前响应中返回了数据，它已加载，直接使用它或先保存到文件。
 
-## Sandboxed Data Workflow
+## 沙箱化数据工作流
 
 <sandboxed_data_workflow>
   <critical_rule>
-    When using tools that support saving to a file: ALWAYS use the 'filename' parameter.
-    NEVER return large raw datasets directly to context.
+    使用支持保存到文件的工具时，始终使用 filename 参数。绝不把大量原始数据集直接返回到上下文。
   </critical_rule>
   <workflow>
     LargeDataTool(filename: "path") → mcp__context-mode__ctx_index(path: "path") → ctx_search()
   </workflow>
 </sandboxed_data_workflow>
 
-This is the universal pattern for context preservation regardless of
-the source tool (Playwright, GitHub API, AWS CLI, etc.).
+这是保存上下文的通用模式，无论来源工具是什么（Playwright、GitHub API、AWS CLI 等）。
 
-## Examples
+## 示例
 
-### Debug an API endpoint
+### 调试 API 端点
 ```javascript
 const resp = await fetch('http://localhost:3000/api/orders');
 const { orders } = await resp.json();
@@ -186,68 +171,68 @@ console.log(`${orders.length} orders, ${bugs.length} bugs found:`);
 bugs.forEach(b => console.log(`- ${b}`));
 ```
 
-### Analyze test output
+### 分析测试输出
 ```shell
 npm test 2>&1
 echo "EXIT=$?"
 ```
 
-### Check GitHub PRs
+### 查看 GitHub PR
 ```shell
 gh pr list --json number,title,state,reviewDecision --jq '.[] | "\(.number) [\(.state)] \(.title) — \(.reviewDecision // "no review")"'
 ```
 
-### Read and analyze a large file
+### 读取并分析大型文件
 ```python
-# FILE_CONTENT is pre-loaded by ctx_execute_file
+# FILE_CONTENT 由 ctx_execute_file 预先载入
 import json
 data = json.loads(FILE_CONTENT)
 print(f"Records: {len(data)}")
-# ... analyze and print findings
+# ... 分析并打印发现
 ```
 
-## Browser & Playwright Integration
+## 浏览器与 Playwright 集成
 
-**When a task involves Playwright snapshots, screenshots, or page inspection, ALWAYS route through file → sandbox.**
+**当任务涉及 Playwright 快照、截图或页面检查时，始终走 file 到 sandbox 的路径。**
 
-Playwright `browser_snapshot` returns 10K–135K tokens of accessibility tree data. Calling it without `filename` dumps all of that into context. Passing the output to `ctx_index(content: ...)` sends it into context a SECOND time as a parameter. Both are wrong.
+Playwright 的 browser_snapshot 会返回 10K 到 135K token 的可访问性树数据。不带 filename 调用它，会把这些数据全部倾倒进上下文。把输出传给 ctx_index(content: ...) 会作为参数把它第二次送进上下文。两者都是错的。
 
-**The key insight**: `browser_snapshot` has a `filename` parameter that saves to file instead of returning to context. `ctx_index` has a `path` parameter that reads files server-side. `ctx_execute_file` processes files in a sandbox. **None of these touch context.**
+**关键洞见**：browser_snapshot 有一个 filename 参数，可保存到文件而非返回上下文。ctx_index 有一个 path 参数，可在服务端读取文件。ctx_execute_file 在沙箱中处理文件。这些都不触碰上下文。
 
-### Workflow A: Snapshot → File → Index → Search (multiple queries)
-
-```
-Step 1: browser_snapshot(filename: "/tmp/playwright-snapshot.md")
-        → saves to file, returns ~50B confirmation (NOT 135K tokens)
-
-Step 2: ctx_index(path: "/tmp/playwright-snapshot.md", source: "Playwright snapshot")
-        → reads file SERVER-SIDE, indexes into FTS5, returns ~80B confirmation
-
-Step 3: ctx_search(queries: ["login form email password"], source: "Playwright")
-        → returns only matching chunks (~300B)
-```
-
-**Total context: ~430B** instead of 270K tokens. Real 99% savings.
-
-### Workflow B: Snapshot → File → Execute File (one-shot extraction)
+### 工作流 A：快照 → 文件 → 索引 → 搜索（多次查询）
 
 ```
-Step 1: browser_snapshot(filename: "/tmp/playwright-snapshot.md")
-        → saves to file, returns ~50B confirmation
+步骤 1：browser_snapshot(filename: "/tmp/playwright-snapshot.md")
+        → 保存到文件，返回约 50B 的确认信息（不是 135K token）
 
-Step 2: ctx_execute_file(path: "/tmp/playwright-snapshot.md", language: "javascript", code: "
+步骤 2：ctx_index(path: "/tmp/playwright-snapshot.md", source: "Playwright snapshot")
+        → 在服务端读取文件，索引进 FTS5，返回约 80B 的确认信息
+
+步骤 3：ctx_search(queries: ["login form email password"], source: "Playwright")
+        → 只返回匹配的片段（约 300B）
+```
+
+**上下文总量：约 430B**，而不是 270K token。实际节省 99%。
+
+### 工作流 B：快照 → 文件 → 执行文件（一次性提取）
+
+```
+步骤 1：browser_snapshot(filename: "/tmp/playwright-snapshot.md")
+        → 保存到文件，返回约 50B 的确认信息
+
+步骤 2：ctx_execute_file(path: "/tmp/playwright-snapshot.md", language: "javascript", code: "
           const links = [...FILE_CONTENT.matchAll(/- link \"([^\"]+)\"/g)].map(m => m[1]);
           const buttons = [...FILE_CONTENT.matchAll(/- button \"([^\"]+)\"/g)].map(m => m[1]);
           const inputs = [...FILE_CONTENT.matchAll(/- textbox|- checkbox|- radio/g)];
           console.log('Links:', links.length, '| Buttons:', buttons.length, '| Inputs:', inputs.length);
           console.log('Navigation:', links.slice(0, 10).join(', '));
         ")
-        → processes in sandbox, returns ~200B summary
+        → 在沙箱中处理，返回约 200B 的摘要
 ```
 
-**Total context: ~250B** instead of 135K tokens.
+**上下文总量：约 250B**，而不是 135K token。
 
-### Workflow C: Console & Network (save to file if large)
+### 工作流 C：控制台与网络（数据量大时保存到文件）
 
 ```
 browser_console_messages(level: "error", filename: "/tmp/console.md")
@@ -257,44 +242,44 @@ browser_network_requests(includeStatic: false, filename: "/tmp/network.md")
 → ctx_execute_file(path: "/tmp/network.md", ...) or ctx_index(path: "/tmp/network.md", ...)
 ```
 
-### CRITICAL: Why `filename` + `path` is mandatory
+### 关键：为何 filename 加 path 是强制的
 
-| Approach | Context cost | Correct? |
+| 做法 | 上下文开销 | 正确吗？ |
 |----------|-------------|----------|
-| `browser_snapshot()` → raw into context | **135K tokens** | NO |
-| `browser_snapshot()` → `ctx_index(content: raw)` | **270K tokens** (doubled!) | NO |
-| `browser_snapshot(filename)` → `ctx_index(path)` → `ctx_search` | **~430B** | YES |
-| `browser_snapshot(filename)` → `ctx_execute_file(path)` | **~250B** | YES |
+| browser_snapshot() → 原始内容进上下文 | 135K token | 否 |
+| browser_snapshot() → ctx_index(content: raw) | 270K token（翻倍） | 否 |
+| browser_snapshot(filename) → ctx_index(path) → ctx_search | 约 430B | 是 |
+| browser_snapshot(filename) → ctx_execute_file(path) | 约 250B | 是 |
 
-### Key Rule
+### 关键规则
 
-> **ALWAYS use `filename` parameter when calling `browser_snapshot`, `browser_console_messages`, or `browser_network_requests`.**
-> Then process via `ctx_index(path: ...)` or `ctx_execute_file(path: ...)` — never `ctx_index(content: ...)`.
+> **调用 browser_snapshot、browser_console_messages 或 browser_network_requests 时，始终使用 filename 参数。**
+> 然后通过 ctx_index(path: ...) 或 ctx_execute_file(path: ...) 处理，绝不用 ctx_index(content: ...)。
 >
-> Data flow: **Playwright → file → server-side read → context**. Never: **Playwright → context → ctx_index(content) → context again**.
+> 数据流：Playwright → file → 服务端读取 → context。绝不要：Playwright → context → ctx_index(content) → 再次进入 context。
 
-## Subagent Usage
+## 子代理用法
 
-Subagents automatically receive context-mode tool routing via a PreToolUse hook. You do NOT need to manually add tool names to subagent prompts — the hook injects them. Just write natural task descriptions.
+子代理通过 PreToolUse hook 自动接收 context-mode 工具路由。你无需手动把工具名添加进子代理提示，hook 会注入它们。只需写出自然的任务描述即可。
 
-## Anti-Patterns
+## 反模式
 
-- Using `curl http://api/endpoint` via Bash → 50KB floods context. Use `ctx_execute` with fetch instead.
-- Using `cat large-file.json` via Bash → entire file in context. Use `ctx_execute_file` instead.
-- Using `gh pr list` via Bash → raw JSON in context. Use `ctx_execute` with `--jq` filter instead.
-- Piping Bash output through `| head -20` → you lose the rest. Use `ctx_execute` to analyze ALL data and print summary.
-- Narrowing `ctx_execute` output upstream of capture → `ctx_execute` captures, `ctx_search` filters; merging the layers drops data that the index never sees. See `references/anti-patterns.md` §8.
-- Running `npm test` via Bash → full test output in context. Use `ctx_execute` to capture and summarize.
-- Calling `browser_snapshot()` WITHOUT `filename` parameter → 135K tokens flood context. **Always** use `browser_snapshot(filename: "/tmp/snap.md")`.
-- Calling `browser_console_messages()` or `browser_network_requests()` WITHOUT `filename` → entire output floods context. **Always** use the `filename` parameter.
-- Passing ANY large data to `ctx_index(content: ...)` → data enters context as a parameter. **Always** use `ctx_index(path: ...)` to read server-side. The `content` parameter should only be used for small inline text you're composing yourself.
-- Calling an MCP tool (Context7 `query-docs`, GitHub API, etc.) then passing the response to `ctx_index(content: response)` → **doubles** context usage. The response is already in context — use it directly or save to file first.
-- Ignoring `browser_navigate` auto-snapshot → navigation response includes a full page snapshot. Don't rely on it for inspection — call `browser_snapshot(filename)` separately.
-- Expecting `ctx_stats` to reset or wipe anything → `ctx_stats` is read-only (shows stats only). Use `ctx_purge(confirm: true)` to permanently delete all indexed content.
+- 通过 Bash 用 curl http://api/endpoint，50KB 冲垮上下文。改用带 fetch 的 ctx_execute。
+- 通过 Bash 用 cat large-file.json，整个文件进上下文。改用 ctx_execute_file。
+- 通过 Bash 用 gh pr list，原始 JSON 进上下文。改用带 --jq 过滤的 ctx_execute。
+- 把 Bash 输出通过 | head -20 管道截断，你丢失了其余部分。用 ctx_execute 分析全部数据并打印摘要。
+- 在捕获之前收窄 ctx_execute 输出，ctx_execute 负责捕获、ctx_search 负责过滤；把这三层合并会丢弃索引从未看到的数据。见 references/anti-patterns.md 第 8 节。
+- 通过 Bash 运行 npm test，完整测试输出进上下文。用 ctx_execute 捕获并总结。
+- 调用 browser_snapshot() 时不带 filename 参数，135K token 冲垮上下文。始终使用 browser_snapshot(filename: "/tmp/snap.md")。
+- 调用 browser_console_messages() 或 browser_network_requests() 时不带 filename，整个输出冲垮上下文。始终使用 filename 参数。
+- 把任何大量数据传给 ctx_index(content: ...)，数据会作为参数进入上下文。始终用 ctx_index(path: ...) 在服务端读取。content 参数只应用于你自己编写的小段内联文本。
+- 先调用某个 MCP 工具（Context7 query-docs、GitHub API 等），再把响应传给 ctx_index(content: response)，上下文占用翻倍。该响应已在上下文中，直接使用它或先保存到文件。
+- 忽略 browser_navigate 的自动快照，导航响应包含完整页面快照。不要依赖它做检查，单独调用 browser_snapshot(filename)。
+- 指望 ctx_stats 重置或清空任何东西，ctx_stats 是只读的（只显示统计信息）。用 ctx_purge(confirm: true) 永久删除所有已索引内容。
 
-## Reference Files
+## 参考文件
 
-- [JavaScript/TypeScript Patterns](./references/patterns-javascript.md)
-- [Python Patterns](./references/patterns-python.md)
-- [Shell Patterns](./references/patterns-shell.md)
-- [Anti-Patterns & Common Mistakes](./references/anti-patterns.md)
+- [JavaScript/TypeScript 模式](./references/patterns-javascript.md)
+- [Python 模式](./references/patterns-python.md)
+- [Shell 模式](./references/patterns-shell.md)
+- [反模式与常见错误](./references/anti-patterns.md)

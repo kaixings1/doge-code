@@ -4,20 +4,20 @@ description: 生产级 API 的 REST API 设计模式，包括资源命名、状�
 origin: ECC
 ---
 
-# API 设计模式 (API Design Patterns)
+# API 设计模式
 
 设计一致且开发者友好的 REST API 的规范与最佳实践。
 
 ## 何时启用
 
-- 设计新的 API 端点 (Endpoints)
-- 审查现有的 API 合约 (Contracts)
+- 设计新的 API 端点
+- 审查现有的 API 合约
 - 添加分页、过滤或排序功能
 - 为 API 实现错误处理
 - 规划 API 版本控制策略
 - 构建公开或面向合作伙伴的 API
 
-## 资源设计 (Resource Design)
+## 资源设计
 
 ### URL 结构
 
@@ -57,9 +57,9 @@ POST   /api/v1/auth/refresh
 
 ## HTTP 方法与状态码
 
-### 方法语义 (Method Semantics)
+### 方法语义
 
-| 方法 (Method) | 幂等 (Idempotent) | 安全 (Safe) | 用途 |
+| 方法 | 幂等 | 安全 | 用途 |
 |--------|-----------|------|---------|
 | GET | 是 | 是 | 获取资源 |
 | POST | 否 | 否 | 创建资源，触发操作 |
@@ -111,7 +111,7 @@ HTTP/1.1 201 Created
 Location: /api/v1/users/abc-123
 ```
 
-## 响应格式 (Response Format)
+## 响应格式
 
 ### 成功响应
 
@@ -195,9 +195,9 @@ interface ApiError {
 // 通过 HTTP 状态码进行区分
 ```
 
-## 分页 (Pagination)
+## 分页
 
-### 基于偏移量 (Offset-Based) - 简单
+### 基于偏移量 - 简单
 
 ```
 GET /api/v1/users?page=2&per_page=20
@@ -211,7 +211,7 @@ LIMIT 20 OFFSET 20;
 **优点：** 易于实现，支持“跳转到第 N 页”。
 **缺点：** 偏移量较大时性能较差 (OFFSET 100000)，且在并发插入时可能出现不一致。
 
-### 基于游标 (Cursor-Based) - 可扩展
+### 基于游标 - 可扩展
 
 ```
 GET /api/v1/users?cursor=eyJpZCI6MTIzfQ&limit=20
@@ -240,14 +240,14 @@ LIMIT 21;  -- 多获取一个以确定是否有下一页 (has_next)
 
 | 使用场景 | 分页类型 |
 |----------|----------------|
-| 管理后台、小型数据集 (<10K) | 偏移量 (Offset) |
-| 无限滚动、Feed 流、大型数据集 | 游标 (Cursor) |
-| 公开 API | 默认使用游标 (Cursor)，可选偏移量 (Offset) |
-| 搜索结果 | 偏移量 (Offset)（用户通常期望看到页码） |
+| 管理后台、小型数据集 (<10K) | 偏移量 |
+| 无限滚动、Feed 流、大型数据集 | 游标 |
+| 公开 API | 默认使用游标，可选偏移量 |
+| 搜索结果 | 偏移量（用户通常期望看到页码） |
 
-## 过滤、排序与搜索 (Filtering, Sorting, and Search)
+## 过滤、排序与搜索
 
-### 过滤 (Filtering)
+### 过滤
 
 ```
 # 简单等值匹配
@@ -264,7 +264,7 @@ GET /api/v1/products?category=electronics,clothing
 GET /api/v1/orders?customer.country=US
 ```
 
-### 排序 (Sorting)
+### 排序
 
 ```
 # 单个字段（前缀 - 表示降序）
@@ -274,7 +274,7 @@ GET /api/v1/products?sort=-created_at
 GET /api/v1/products?sort=-featured,price,-created_at
 ```
 
-### 全文搜索 (Full-Text Search)
+### 全文搜索
 
 ```
 # 搜索查询参数
@@ -284,7 +284,7 @@ GET /api/v1/products?q=wireless+headphones
 GET /api/v1/users?email=alice
 ```
 
-### 稀疏字段集 (Sparse Fieldsets)
+### 稀疏字段集
 
 ```
 # 仅返回指定的字段（减少数据传输量）
@@ -292,9 +292,9 @@ GET /api/v1/users?fields=id,name,email
 GET /api/v1/orders?fields=id,total,status&include=customer.name
 ```
 
-## 身份验证与授权 (Authentication and Authorization)
+## 身份验证与授权
 
-### 基于令牌的身份验证 (Token-Based Auth)
+### 基于令牌的身份验证
 
 ```
 # Authorization 标头中的 Bearer 令牌
@@ -306,7 +306,7 @@ GET /api/v1/data
 X-API-Key: sk_live_abc123
 ```
 
-### 授权模式 (Authorization Patterns)
+### 授权模式
 
 ```typescript
 // 资源级别：检查所有权
@@ -324,9 +324,9 @@ app.delete("/api/v1/users/:id", requireRole("admin"), async (req, res) => {
 });
 ```
 
-## 速率限制 (Rate Limiting)
+## 速率限制
 
-### 响应标头 (Headers)
+### 响应标头
 
 ```
 HTTP/1.1 200 OK
@@ -345,16 +345,16 @@ Retry-After: 60
 }
 ```
 
-### 速率限制分级 (Rate Limit Tiers)
+### 速率限制分级
 
-| 级别 (Tier) | 限制 | 窗口 | 使用场景 |
+| 级别 | 限制 | 窗口 | 使用场景 |
 |------|-------|--------|----------|
-| 匿名 (Anonymous) | 30/min | 每 IP | 公开端点 |
-| 已认证 (Authenticated) | 100/min | 每用户 | 标准 API 访问 |
-| 高级 (Premium) | 1000/min | 每 API 密钥 | 付费 API 方案 |
-| 内部 (Internal) | 10000/min | 每服务 | 服务间调用 |
+| 匿名 | 30/min | 每 IP | 公开端点 |
+| 已认证 | 100/min | 每用户 | 标准 API 访问 |
+| 高级 | 1000/min | 每 API 密钥 | 付费 API 方案 |
+| 内部 | 10000/min | 每服务 | 服务间调用 |
 
-## 版本控制 (Versioning)
+## 版本控制
 
 ### URL 路径版本控制（推荐）
 
@@ -366,7 +366,7 @@ Retry-After: 60
 **优点：** 显式、易于路由、可缓存。
 **缺点：** 版本间 URL 会发生变化。
 
-### 标头版本控制 (Header Versioning)
+### 标头版本控制
 
 ```
 GET /api/users
@@ -396,9 +396,9 @@ Accept: application/vnd.myapp.v2+json
    - 更改身份验证方法
 ```
 
-## 实现模式 (Implementation Patterns)
+## 实现模式
 
-### TypeScript (Next.js API Route)
+### TypeScript（Next.js API 路由）
 
 ```typescript
 import { z } from "zod";
@@ -505,7 +505,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-## API 设计自检清单 (API Design Checklist)
+## API 设计自检清单
 
 在发布新端点之前：
 

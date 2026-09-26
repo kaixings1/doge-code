@@ -1,26 +1,26 @@
 ---
 name: ctx-stats
 description: |
-  Show how much context window context-mode saved this session.
-  Displays token consumption, context savings ratio, and per-tool breakdown.
-  Read-only — shows stats only, no reset capability.
-  To wipe the knowledge base entirely, use ctx_purge instead.
-  Trigger: /context-mode:ctx-stats
+  显示本会话中 context-mode 为你节省了多少上下文窗口。
+  展示 token 消耗、上下文节省比例，以及按工具细分的数据。
+  只读 —— 仅显示统计，没有重置功能。
+  要彻底清空知识库，请改用 ctx_purge。
+  触发：/context-mode:ctx-stats
 user-invocable: true
 ---
 
-# Context Mode Stats
+# Context Mode 统计
 
-Show context savings for the current session.
+显示当前会话的上下文节省情况。
 
-## Instructions
+## 操作步骤
 
-1. Call the `mcp__context-mode__ctx_stats` MCP tool (no parameters needed).
-2. **CRITICAL**: You MUST copy-paste the ENTIRE tool output as markdown text directly into your response message. Do NOT summarize, do NOT collapse, do NOT paraphrase. The user must see the full tables without pressing ctrl+o. Copy every line exactly as returned by the tool.
-3. After the full output, add ONE sentence highlighting the key savings metric, e.g.:
-   - "context-mode saved **12.4x** — 92% of data stayed in sandbox."
-   - If no data yet: "No context-mode calls yet this session."
+1. 调用 `mcp__context-mode__ctx_stats` MCP 工具（无需参数）。
+2. **关键**：你**必须**把工具输出的**全部内容**作为 markdown 文本直接复制粘贴进你的回复消息。不要总结，不要折叠，不要改写。用户必须在不按 ctrl+o 的情况下看到完整表格。按工具返回的样式逐行照抄。
+3. 在完整输出之后，加**一句**话点出关键的节省指标，例如：
+   - "context-mode 节省了 **12.4x** —— 92% 的数据留在了沙箱里。"
+   - 如果还没有数据："本会话还没有任何 context-mode 调用。"
 
-## Purge
+## 清空
 
-- **`ctx_purge(confirm: true)`** — Permanently deletes all indexed content from the knowledge base. Use `/context-mode:ctx-purge` for this.
+- **`ctx_purge(confirm: true)`** —— 从知识库中永久删除所有已索引内容。用 `/context-mode:ctx-purge` 完成此操作。

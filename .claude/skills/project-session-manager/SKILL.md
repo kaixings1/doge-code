@@ -1,50 +1,50 @@
 ---
 name: project-session-manager
-description: Worktree-first dev environment manager for issues, PRs, and features with optional tmux sessions
+description: 以 worktree 优先的开发环境管理器，面向 issue、PR 和功能开发，可选配 tmux 会话。
 aliases: [psm]
 level: 2
 ---
 
-# Project Session Manager (PSM) Skill
+# 项目会话管理器（PSM）技能
 
-`psm` is the compatibility alias for this canonical skill entrypoint.
+`psm` 是本规范技能入口的兼容性别名。
 
-> **Quick Start (worktree-first):** Start with `omc teleport` when you want an isolated issue/PR/feature worktree before adding any tmux/session orchestration:
+> **快速上手（worktree 优先）：** 当你想在加入任何 tmux/会话编排之前，先获得一个隔离的 issue/PR/功能 worktree 时，从 `omc teleport` 开始：
 > ```bash
-> omc teleport #123          # Create worktree for issue/PR
-> omc teleport my-feature    # Create worktree for feature
-> omc teleport list          # List worktrees
+> omc teleport #123          # 为 issue/PR 创建 worktree
+> omc teleport my-feature    # 为功能开发创建 worktree
+> omc teleport list          # 列出 worktree
 > ```
-> See [Teleport Command](#teleport-command) below for details.
+> 详情见下面的 [Teleport 命令](#teleport-command)。
 
-Automate isolated development environments using git worktrees and tmux sessions with Claude Code. Enables parallel work across multiple tasks, projects, and repositories.
+使用 git worktree 和 tmux 会话配合 Claude Code 自动化隔离的开发环境。支持跨多个任务、项目和仓库的并行工作。
 
-Canonical slash command: `/oh-my-claudecode:project-session-manager` (alias: `/oh-my-claudecode:psm`).
+规范的斜杠命令：`/oh-my-claudecode:project-session-manager`（别名：`/oh-my-claudecode:psm`）。
 
-## Commands
+## 命令
 
-| Command | Description | Example |
+| 命令 | 描述 | 示例 |
 |---------|-------------|---------|
-| `review <ref>` | PR review session | `/psm review omc#123` |
-| `fix <ref>` | Issue fix session | `/psm fix omc#42` |
-| `feature <proj> <name>` | Feature development | `/psm feature omc add-webhooks` |
-| `list [project]` | List active sessions | `/psm list` |
-| `attach <session>` | Attach to session | `/psm attach omc:pr-123` |
-| `kill <session>` | Kill session | `/psm kill omc:pr-123` |
-| `cleanup` | Clean merged/closed | `/psm cleanup` |
-| `status` | Current session info | `/psm status` |
+| `review <ref>` | PR 审查会话 | `/psm review omc#123` |
+| `fix <ref>` | Issue 修复会话 | `/psm fix omc#42` |
+| `feature <proj> <name>` | 功能开发 | `/psm feature omc add-webhooks` |
+| `list [project]` | 列出活动会话 | `/psm list` |
+| `attach <session>` | 附着到会话 | `/psm attach omc:pr-123` |
+| `kill <session>` | 终止会话 | `/psm kill omc:pr-123` |
+| `cleanup` | 清理已合并/已关闭项 | `/psm cleanup` |
+| `status` | 当前会话信息 | `/psm status` |
 
-## Project References
+## 项目引用
 
-Supported formats:
-- **Alias**: `omc#123` (requires `~/.psm/projects.json`)
-- **Full**: `owner/repo#123`
-- **URL**: `https://github.com/owner/repo/pull/123`
-- **Current**: `#123` (uses current directory's repo)
+支持的格式：
+- **别名**：`omc#123`（需要 `~/.psm/projects.json`）
+- **完整式**：`owner/repo#123`
+- **URL**：`https://github.com/owner/repo/pull/123`
+- **当前式**：`#123`（使用当前目录所在仓库）
 
-## Configuration
+## 配置
 
-### Project Aliases (`~/.psm/projects.json`)
+### 项目别名（`~/.psm/projects.json`）
 
 ```json
 {
@@ -62,18 +62,18 @@ Supported formats:
 }
 ```
 
-## Providers
+## 提供方
 
-PSM supports multiple issue tracking providers:
+PSM 支持多种 issue 跟踪提供方：
 
-| Provider | CLI Required | Reference Formats | Commands |
+| 提供方 | 所需 CLI | 引用格式 | 可用命令 |
 |----------|--------------|-------------------|----------|
-| GitHub (default) | `gh` | `owner/repo#123`, `alias#123`, GitHub URLs | review, fix, feature |
-| Jira | `jira` | `PROJ-123` (if PROJ configured), `alias#123` | fix, feature |
+| GitHub（默认） | `gh` | `owner/repo#123`、`alias#123`、GitHub URL | review、fix、feature |
+| Jira | `jira` | `PROJ-123`（若已配置 PROJ）、`alias#123` | fix、feature |
 
-### Jira Configuration
+### Jira 配置
 
-To use Jira, add an alias with `jira_project` and `provider: "jira"`:
+要使用 Jira，添加一个带 `jira_project` 和 `provider: "jira"` 的别名：
 
 ```json
 {
@@ -89,9 +89,9 @@ To use Jira, add an alias with `jira_project` and `provider: "jira"`:
 }
 ```
 
-**Important:** The `repo` field is still required for cloning the git repository. Jira tracks issues, but you work in a git repo.
+**重要：** 克隆 git 仓库仍需要 `repo` 字段。Jira 跟踪 issue，但你在 git 仓库中工作。
 
-For non-GitHub repos, use `clone_url` instead:
+对非 GitHub 仓库，改用 `clone_url`：
 ```json
 {
   "aliases": {
@@ -105,122 +105,117 @@ For non-GitHub repos, use `clone_url` instead:
 }
 ```
 
-### Jira Reference Detection
+### Jira 引用识别
 
-PSM only recognizes `PROJ-123` format as Jira when `PROJ` is explicitly configured as a `jira_project` in your aliases. This prevents false positives from branch names like `FIX-123`.
+只有当 `PROJ` 在你的别名中被显式配置为 `jira_project` 时，PSM 才把 `PROJ-123` 格式识别为 Jira。这可避免 `FIX-123` 之类的分支名造成误判。
 
-### Jira Examples
+### Jira 示例
 
 ```bash
-# Fix a Jira issue (MYPROJ must be configured)
+# 修复一个 Jira issue（必须先配置 MYPROJ）
 psm fix MYPROJ-123
 
-# Fix using alias (recommended)
+# 使用别名修复（推荐）
 psm fix mywork#123
 
-# Feature development (works same as GitHub)
+# 功能开发（与 GitHub 用法相同）
 psm feature mywork add-webhooks
 
-# Note: 'psm review' is not supported for Jira (no PR concept)
-# Use 'psm fix' for Jira issues
+# 注意：Jira 不支持 'psm review'（没有 PR 概念）
+# Jira issue 请使用 'psm fix'
 ```
 
-### Jira CLI Setup
+### Jira CLI 安装
 
-Install the Jira CLI:
+安装 Jira CLI：
 ```bash
 # macOS
 brew install ankitpokhrel/jira-cli/jira-cli
 
 # Linux
-# See: https://github.com/ankitpokhrel/jira-cli#installation
+# 参见：https://github.com/ankitpokhrel/jira-cli#installation
 
-# Configure (interactive)
+# 配置（交互式）
 jira init
 ```
 
-The Jira CLI handles authentication separately from PSM.
+Jira CLI 的认证由它自己处理，与 PSM 相互独立。
 
-## Directory Structure
+## 目录结构
 
 ```
 ~/.psm/
-├── projects.json       # Project aliases
-├── sessions.json       # Active session registry
-└── worktrees/          # Worktree storage
+├── projects.json       # 项目别名
+├── sessions.json       # 活动会话注册表
+└── worktrees/          # worktree 存储
     └── <project>/
         └── <type>-<id>/
 ```
 
-## Session Naming
+## 会话命名
 
-The **public session ID** (colon form, e.g. `omc:pr-123`) is the human-facing
-identifier stored in `sessions.json` and used with `psm attach`/`psm kill`. tmux
-reserves `:` and `.` for its `session:window.pane` target syntax and silently
-rewrites them, so the **actual tmux session name** uses a tmux-safe form where
-those characters become `_` (issue #3528). PSM translates the public ID to the
-tmux-safe name at every tmux boundary; attach directly with the tmux-safe name.
+**公开会话 ID**（冒号形式，例如 `omc:pr-123`）是面向人类的标识符，存储在 `sessions.json` 中，并用于 `psm attach`/`psm kill`。tmux 为它的 `session:window.pane` 目标语法保留了 `:` 和 `.`，并会静默重写它们，因此**实际的 tmux 会话名**使用一种 tmux 安全形式，把这些字符换成 `_`（issue #3528）。PSM 在每个 tmux 边界处把公开 ID 转换为 tmux 安全名；可直接用 tmux 安全名附着。
 
-| Type | Public ID (`psm attach`/`kill`) | Tmux Session (`tmux attach -t`) | Worktree Dir |
+| 类型 | 公开 ID（`psm attach`/`kill`） | tmux 会话（`tmux attach -t`） | worktree 目录 |
 |------|---------------------------------|---------------------------------|--------------|
-| PR Review | `omc:pr-123` | `psm_omc_pr-123` | `~/.psm/worktrees/omc/pr-123` |
-| Issue Fix | `omc:issue-42` | `psm_omc_issue-42` | `~/.psm/worktrees/omc/issue-42` |
-| Feature | `omc:feat-auth` | `psm_omc_feat-auth` | `~/.psm/worktrees/omc/feat-auth` |
+| PR 审查 | `omc:pr-123` | `psm_omc_pr-123` | `~/.psm/worktrees/omc/pr-123` |
+| Issue 修复 | `omc:issue-42` | `psm_omc_issue-42` | `~/.psm/worktrees/omc/issue-42` |
+| 功能开发 | `omc:feat-auth` | `psm_omc_feat-auth` | `~/.psm/worktrees/omc/feat-auth` |
 
 ---
 
-## Implementation Protocol
+## 实现协议
 
-When the user invokes a PSM command, follow this protocol:
+当用户调用 PSM 命令时，遵循此协议：
 
-### Parse Arguments
+### 解析参数
 
-Parse `{{ARGUMENTS}}` to determine:
-1. **Subcommand**: review, fix, feature, list, attach, kill, cleanup, status
-2. **Reference**: project#number, URL, or session ID
-3. **Options**: --branch, --base, --no-claude, --no-tmux, etc.
+解析 `{{ARGUMENTS}}` 以确定：
+1. **子命令**：review、fix、feature、list、attach、kill、cleanup、status
+2. **引用**：project#number、URL 或会话 ID
+3. **选项**：--branch、--base、--no-claude、--no-tmux 等
 
-### Subcommand: `review <ref>`
+### 子命令：`review <ref>`
 
-**Purpose**: Create PR review session
+**用途**：创建 PR 审查会话
 
-**Steps**:
+**步骤**：
 
-1. **Resolve reference**:
+1. **解析引用**：
    ```bash
-   # Read project aliases
+   # 读取项目别名
    cat ~/.psm/projects.json 2>/dev/null || echo '{"aliases":{}}'
 
-   # Parse ref format: alias#num, owner/repo#num, or URL
-   # Extract: project_alias, repo (owner/repo), pr_number, local_path
+   # 解析引用格式：alias#num、owner/repo#num 或 URL
+   # 提取：project_alias、repo（owner/repo）、pr_number、local_path
    ```
 
-2. **Fetch PR info**:
+2. **获取 PR 信息**：
    ```bash
    gh pr view <pr_number> --repo <repo> --json number,title,author,headRefName,baseRefName,body,files,url
    ```
 
-3. **Ensure local repo exists**:
+3. **确保本地仓库存在**：
    ```bash
-   # If local path doesn't exist, clone
+   # 若本地路径不存在则克隆
    if [[ ! -d "$local_path" ]]; then
      git clone "https://github.com/$repo.git" "$local_path"
    fi
    ```
 
-4. **Create worktree**:
+4. **创建 worktree**：
    ```bash
    worktree_path="$HOME/.psm/worktrees/$project_alias/pr-$pr_number"
 
-   # Fetch PR branch
+   # 拉取 PR 分支
    cd "$local_path"
    git fetch origin "pull/$pr_number/head:pr-$pr_number-review"
 
-   # Create worktree
+   # 创建 worktree
    git worktree add "$worktree_path" "pr-$pr_number-review"
    ```
 
-5. **Create session metadata**:
+5. **创建会话元数据**：
    ```bash
    cat > "$worktree_path/.psm-session.json" << EOF
    {
@@ -245,54 +240,54 @@ Parse `{{ARGUMENTS}}` to determine:
    EOF
    ```
 
-6. **Update sessions registry**:
+6. **更新会话注册表**：
    ```bash
-   # Add to ~/.psm/sessions.json
+   # 添加到 ~/.psm/sessions.json
    ```
 
-7. **Create tmux session** (tmux-safe name; `:`/`.` are translated to `_`):
+7. **创建 tmux 会话**（tmux 安全名；`:`/`.` 会被转换为 `_`）：
    ```bash
    tmux new-session -d -s "psm_${project_alias}_pr-$pr_number" -c "$worktree_path"
    ```
 
-8. **Launch Claude Code** (unless --no-claude):
+8. **启动 Claude Code**（除非使用 --no-claude）：
    ```bash
-   # --dangerously-skip-permissions prevents the "Do you trust this directory?" prompt
-   # and repeated tool-approval prompts from stalling the session (issue #2508).
+   # --dangerously-skip-permissions 可避免出现 “Do you trust this directory?” 提示，
+   # 也可避免反复的工具审批提示卡住会话（issue #2508）。
    tmux send-keys -t "psm_${project_alias}_pr-$pr_number" "claude --dangerously-skip-permissions" Enter
 
-   # After claude boots (PSM_CLAUDE_STARTUP_DELAY, default 5s), deliver the task.
-   # Use -l (literal) so special characters are not misinterpreted by tmux.
+   # claude 启动完成后（PSM_CLAUDE_STARTUP_DELAY，默认 5s）下发任务。
+   # 使用 -l（字面量），以免特殊字符被 tmux 错误解释。
    sleep "${PSM_CLAUDE_STARTUP_DELAY:-5}"
    tmux send-keys -t "psm_${project_alias}_pr-$pr_number" -l \
-     "Review PR #$pr_number: \"$pr_title\" by @$pr_author ($head_branch → $base_branch). URL: $pr_url." Enter
+     "审查 PR #$pr_number：\"$pr_title\"，作者 @$pr_author（$head_branch → $base_branch）。URL：$pr_url。" Enter
    ```
 
-9. **Output session info**:
+9. **输出会话信息**：
    ```
-   Session ready!
+   会话已就绪！
 
      ID: omc:pr-123
      Worktree: ~/.psm/worktrees/omc/pr-123
      Tmux: psm_omc_pr-123
 
-   To attach: tmux attach -t psm_omc_pr-123   (or: psm attach omc:pr-123)
+   附着方式：tmux attach -t psm_omc_pr-123   （或：psm attach omc:pr-123）
    ```
 
-### Subcommand: `fix <ref>`
+### 子命令：`fix <ref>`
 
-**Purpose**: Create issue fix session
+**用途**：创建 issue 修复会话
 
-**Steps**:
+**步骤**：
 
-1. **Resolve reference** (same as review)
+1. **解析引用**（与 review 相同）
 
-2. **Fetch issue info**:
+2. **获取 issue 信息**：
    ```bash
    gh issue view <issue_number> --repo <repo> --json number,title,body,labels,url
    ```
 
-3. **Create feature branch**:
+3. **创建功能分支**：
    ```bash
    cd "$local_path"
    git fetch origin main
@@ -300,32 +295,32 @@ Parse `{{ARGUMENTS}}` to determine:
    git checkout -b "$branch_name" origin/main
    ```
 
-4. **Create worktree**:
+4. **创建 worktree**：
    ```bash
    worktree_path="$HOME/.psm/worktrees/$project_alias/issue-$issue_number"
    git worktree add "$worktree_path" "$branch_name"
    ```
 
-5. **Create session metadata** (similar to review, type="fix")
+5. **创建会话元数据**（与 review 类似，type="fix"）
 
-6. **Update registry, create tmux, launch claude**:
-   Same as review, but pass issue context as the initial task prompt:
+6. **更新注册表、创建 tmux、启动 claude**：
+   与 review 相同，但把 issue 上下文作为初始任务提示传入：
    ```bash
    tmux send-keys -t "psm_${project_alias}_issue-$issue_number" "claude --dangerously-skip-permissions" Enter
-   # After claude boots, deliver the task (see PSM_CLAUDE_STARTUP_DELAY):
+   # claude 启动完成后下发任务（见 PSM_CLAUDE_STARTUP_DELAY）：
    tmux send-keys -t "psm_${project_alias}_issue-$issue_number" -l \
-     "Fix issue #$issue_number: \"$issue_title\". URL: $issue_url. Branch: $branch_name." Enter
+     "修复 issue #$issue_number：\"$issue_title\"。URL：$issue_url。分支：$branch_name。" Enter
    ```
 
-### Subcommand: `feature <project> <name>`
+### 子命令：`feature <project> <name>`
 
-**Purpose**: Start feature development
+**用途**：启动功能开发
 
-**Steps**:
+**步骤**：
 
-1. **Resolve project** (from alias or path)
+1. **解析项目**（来自别名或路径）
 
-2. **Create feature branch**:
+2. **创建功能分支**：
    ```bash
    cd "$local_path"
    git fetch origin main
@@ -333,80 +328,80 @@ Parse `{{ARGUMENTS}}` to determine:
    git checkout -b "$branch_name" origin/main
    ```
 
-3. **Create worktree**:
+3. **创建 worktree**：
    ```bash
    worktree_path="$HOME/.psm/worktrees/$project_alias/feat-$feature_name"
    git worktree add "$worktree_path" "$branch_name"
    ```
 
-4. **Create session, tmux, launch claude** with feature context as initial prompt:
+4. **创建会话、tmux、启动 claude**，并把功能上下文作为初始提示：
    ```bash
    tmux send-keys -t "psm_${project_alias}_feat-$feature_name" "claude --dangerously-skip-permissions" Enter
    tmux send-keys -t "psm_${project_alias}_feat-$feature_name" -l \
-     "Implement feature \"$feature_name\" for project $project. Branch: $branch_name." Enter
+     "为项目 $project 实现功能 \"$feature_name\"。分支：$branch_name。" Enter
    ```
 
-### Subcommand: `list [project]`
+### 子命令：`list [project]`
 
-**Purpose**: List active sessions
+**用途**：列出活动会话
 
-**Steps**:
+**步骤**：
 
-1. **Read sessions registry**:
+1. **读取会话注册表**：
    ```bash
    cat ~/.psm/sessions.json 2>/dev/null || echo '{"sessions":{}}'
    ```
 
-2. **Check tmux sessions**:
+2. **检查 tmux 会话**：
    ```bash
    tmux list-sessions -F "#{session_name}" 2>/dev/null | grep "^psm_"
    ```
 
-3. **Check worktrees**:
+3. **检查 worktree**：
    ```bash
    ls -la ~/.psm/worktrees/*/ 2>/dev/null
    ```
 
-4. **Format output**:
+4. **格式化输出**：
    ```
-   Active PSM Sessions:
+   活动中的 PSM 会话：
 
-   ID                 | Type    | Status   | Worktree
+   ID                 | 类型    | 状态     | Worktree
    -------------------|---------|----------|---------------------------
    omc:pr-123        | review  | active   | ~/.psm/worktrees/omc/pr-123
    omc:issue-42      | fix     | detached | ~/.psm/worktrees/omc/issue-42
    ```
 
-### Subcommand: `attach <session>`
+### 子命令：`attach <session>`
 
-**Purpose**: Attach to existing session
+**用途**：附着到既有会话
 
-**Steps**:
+**步骤**：
 
-1. **Parse session ID**: `project:type-number`
+1. **解析会话 ID**：`project:type-number`
 
-2. **Verify session exists**:
+2. **验证会话存在**：
    ```bash
-   tmux has-session -t "psm_${session_id//[.:]/_}" 2>/dev/null   # translate public id to tmux-safe name
+   tmux has-session -t "psm_${session_id//[.:]/_}" 2>/dev/null   # 把公开 id 转换为 tmux 安全名
    ```
 
-3. **Attach**:
+3. **附着**：
    ```bash
    tmux attach -t "psm_${session_id//[.:]/_}"
    ```
 
-### Subcommand: `kill <session>`
+### 子命令：`kill <session>`
 
-**Purpose**: Kill session and cleanup
+**用途**：终止会话并清理
 
-**Steps**:
+**步骤**：
 
-1. **Kill tmux session**:
+1. **终止 tmux 会话**：
    ```bash
    tmux kill-session -t "psm_${session_id//[.:]/_}" 2>/dev/null
    ```
 
-2. **Remove worktree**:
+2. **移除 worktree**：
    ```bash
    worktree_path=$(jq -r ".sessions[\"$session_id\"].worktree" ~/.psm/sessions.json)
    source_repo=$(jq -r ".sessions[\"$session_id\"].source_repo" ~/.psm/sessions.json)
@@ -415,157 +410,157 @@ Parse `{{ARGUMENTS}}` to determine:
    git worktree remove "$worktree_path" --force
    ```
 
-3. **Update registry**:
+3. **更新注册表**：
    ```bash
-   # Remove from sessions.json
+   # 从 sessions.json 中移除
    ```
 
-### Subcommand: `cleanup`
+### 子命令：`cleanup`
 
-**Purpose**: Clean up merged PRs and closed issues
+**用途**：清理已合并的 PR 和已关闭的 issue
 
-**Steps**:
+**步骤**：
 
-1. **Read all sessions**
+1. **读取所有会话**
 
-2. **For each PR session, check if merged**:
+2. **对每个 PR 会话，检查是否已合并**：
    ```bash
    gh pr view <pr_number> --repo <repo> --json merged,state
    ```
 
-3. **For each issue session, check if closed**:
+3. **对每个 issue 会话，检查是否已关闭**：
    ```bash
    gh issue view <issue_number> --repo <repo> --json closed,state
    ```
 
-4. **Clean up merged/closed sessions**:
-   - Kill tmux session
-   - Remove worktree
-   - Update registry
+4. **清理已合并/已关闭的会话**：
+   - 终止 tmux 会话
+   - 移除 worktree
+   - 更新注册表
 
-5. **Report**:
+5. **报告**：
    ```
-   Cleanup complete:
-     Removed: omc:pr-123 (merged)
-     Removed: omc:issue-42 (closed)
-     Kept: omc:feat-auth (active)
+   清理完成：
+     已移除：omc:pr-123（已合并）
+     已移除：omc:issue-42（已关闭）
+     已保留：omc:feat-auth（活动）
    ```
 
-### Subcommand: `status`
+### 子命令：`status`
 
-**Purpose**: Show current session info
+**用途**：显示当前会话信息
 
-**Steps**:
+**步骤**：
 
-1. **Detect current session** from tmux or cwd:
+1. **从 tmux 或 cwd 检测当前会话**：
    ```bash
    tmux display-message -p "#{session_name}" 2>/dev/null
-   # or check if cwd is inside a worktree
+   # 或检查 cwd 是否位于某个 worktree 内
    ```
 
-2. **Read session metadata**:
+2. **读取会话元数据**：
    ```bash
    cat .psm-session.json 2>/dev/null
    ```
 
-3. **Show status**:
+3. **显示状态**：
    ```
-   Current Session: omc:pr-123
-   Type: review
-   PR: #123 - Add webhook support
-   Branch: feature/webhooks
-   Created: 2 hours ago
+   当前会话：omc:pr-123
+   类型：review
+   PR：#123 - 添加 webhook 支持
+   分支：feature/webhooks
+   创建于：2 小时前
    ```
 
 ---
 
-## Error Handling
+## 错误处理
 
-| Error | Resolution |
+| 错误 | 解决方式 |
 |-------|------------|
-| Worktree exists | Offer: attach, recreate, or abort |
-| PR not found | Verify URL/number, check permissions |
-| No tmux | Warn and skip session creation |
-| No gh CLI | Error with install instructions |
+| worktree 已存在 | 提供选项：附着、重建或中止 |
+| 未找到 PR | 核对 URL/编号，检查权限 |
+| 没有 tmux | 发出警告并跳过会话创建 |
+| 没有 gh CLI | 报错并给出安装说明 |
 
-## Teleport Command
+## Teleport 命令
 
-The `omc teleport` command provides a lightweight alternative to full PSM sessions. It creates git worktrees without tmux session management — ideal for quick, isolated development.
+`omc teleport` 命令提供了完整 PSM 会话之外的轻量替代方案。它创建 git worktree 而不做 tmux 会话管理 —— 非常适合快速的隔离式开发。
 
-### Usage
+### 用法
 
 ```bash
-# Create worktree for an issue or PR
+# 为 issue 或 PR 创建 worktree
 omc teleport #123
 omc teleport owner/repo#123
 omc teleport https://github.com/owner/repo/issues/42
 
-# Create worktree for a feature
+# 为功能开发创建 worktree
 omc teleport my-feature
 
-# List existing worktrees
+# 列出已有的 worktree
 omc teleport list
 
-# Remove a worktree
+# 移除 worktree
 omc teleport remove issue/my-repo-123
 omc teleport remove --force feat/my-repo-my-feature
 ```
 
-### Options
+### 选项
 
-| Flag | Description | Default |
+| 标志 | 描述 | 默认值 |
 |------|-------------|---------|
-| `--worktree` | Create worktree (default, kept for compatibility) | `true` |
-| `--path <path>` | Custom worktree root directory | `~/Workspace/omc-worktrees/` |
-| `--base <branch>` | Base branch to create from | `main` |
-| `--json` | Output as JSON | `false` |
+| `--worktree` | 创建 worktree（默认，为兼容性保留） | `true` |
+| `--path <path>` | 自定义 worktree 根目录 | `~/Workspace/omc-worktrees/` |
+| `--base <branch>` | 创建所基于的基础分支 | `main` |
+| `--json` | 以 JSON 输出 | `false` |
 
-### Worktree Layout
+### worktree 布局
 
 ```
 ~/Workspace/omc-worktrees/
 ├── issue/
-│   └── my-repo-123/        # Issue worktrees
+│   └── my-repo-123/        # issue 的 worktree
 ├── pr/
-│   └── my-repo-456/        # PR review worktrees
+│   └── my-repo-456/        # PR 审查的 worktree
 └── feat/
-    └── my-repo-my-feature/ # Feature worktrees
+    └── my-repo-my-feature/ # 功能开发的 worktree
 ```
 
-### PSM vs Teleport
+### PSM 与 Teleport 对比
 
-| Feature | PSM | Teleport |
+| 功能 | PSM | Teleport |
 |---------|-----|----------|
-| Git worktree | Yes | Yes |
-| Tmux session | Yes | No |
-| Claude Code launch | Yes | No |
-| Session registry | Yes | No |
-| Auto-cleanup | Yes | No |
-| Project aliases | Yes | No (uses current repo) |
+| git worktree | 是 | 是 |
+| tmux 会话 | 是 | 否 |
+| 启动 Claude Code | 是 | 否 |
+| 会话注册表 | 是 | 否 |
+| 自动清理 | 是 | 否 |
+| 项目别名 | 是 | 否（使用当前仓库） |
 
-Use **PSM** for full managed sessions. Use **teleport** for quick worktree creation.
+需要完整的托管会话时用 **PSM**。需要快速创建 worktree 时用 **teleport**。
 
 ---
 
-## Requirements
+## 依赖要求
 
-Required:
-- `git` - Version control (with worktree support v2.5+)
-- `jq` - JSON parsing
-- `tmux` - Session management (optional, but recommended)
+必需：
+- `git` —— 版本控制（需支持 worktree，v2.5+）
+- `jq` —— JSON 解析
+- `tmux` —— 会话管理（可选，但推荐）
 
-Optional (per provider):
-- `gh` - GitHub CLI (for GitHub workflows)
-- `jira` - Jira CLI (for Jira workflows)
+可选（按提供方）：
+- `gh` —— GitHub CLI（用于 GitHub 工作流）
+- `jira` —— Jira CLI（用于 Jira 工作流）
 
-## Initialization
+## 初始化
 
-On first run, create default config:
+首次运行时，创建默认配置：
 
 ```bash
 mkdir -p ~/.psm/worktrees ~/.psm/logs
 
-# Create default projects.json if not exists
+# 若不存在则创建默认的 projects.json
 if [[ ! -f ~/.psm/projects.json ]]; then
   cat > ~/.psm/projects.json << 'EOF'
 {
@@ -585,7 +580,7 @@ if [[ ! -f ~/.psm/projects.json ]]; then
 EOF
 fi
 
-# Create sessions.json if not exists
+# 若不存在则创建 sessions.json
 if [[ ! -f ~/.psm/sessions.json ]]; then
   echo '{"version":1,"sessions":{},"stats":{"total_created":0,"total_cleaned":0}}' > ~/.psm/sessions.json
 fi

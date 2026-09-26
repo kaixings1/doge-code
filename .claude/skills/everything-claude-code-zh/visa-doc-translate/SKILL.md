@@ -5,19 +5,19 @@ description: 将签证申请文件（图像）翻译成英文，并创建包含�
 
 你正在协助翻译用于签证申请的文件。
 
-## 指令 (Instructions)
+## 指令
 
-当用户提供图像文件路径时，**自动 (AUTOMATICALLY)** 执行以下步骤，**无需 (WITHOUT)** 请求确认：
+当用户提供图像文件路径时，**自动** 执行以下步骤，**无需** 请求确认：
 
-1. **图像转换 (Image Conversion)**：如果文件是 HEIC 格式，使用 `sips -s format png <input> --out <output>` 将其转换为 PNG。
+1. **图像转换**：如果文件是 HEIC 格式，使用 `sips -s format png <input> --out <output>` 将其转换为 PNG。
 
-2. **图像旋转 (Image Rotation)**：
+2. **图像旋转**：
    - 检查 EXIF 方向数据。
    - 根据 EXIF 数据自动旋转图像。
    - 如果 EXIF 方向为 6，则逆时针旋转 90 度。
    - 根据需要应用额外的旋转（如果文档看起来是倒置的，尝试旋转 180 度）。
 
-3. **OCR 文本提取 (OCR Text Extraction)**：
+3. **OCR 文本提取**：
    - 自动尝试多种 OCR 方法：
      - macOS Vision 框架（macOS 首选）。
      - EasyOCR（跨平台，无需 tesseract）。
@@ -25,7 +25,7 @@ description: 将签证申请文件（图像）翻译成英文，并创建包含�
    - 从文档中提取所有文本信息。
    - 识别文档类型（存款证明、在职证明、退休证明等）。
 
-4. **翻译 (Translation)**：
+4. **翻译**：
    - 以专业水准将所有文本内容翻译成英文。
    - 保持原始文档的结构和格式。
    - 使用适用于签证申请的专业术语。
@@ -33,7 +33,7 @@ description: 将签证申请文件（图像）翻译成英文，并创建包含�
    - 对于中文姓名，使用拼音格式（例如：WU Zhengye）。
    - 准确保留所有数字、日期和金额。
 
-5. **PDF 生成 (PDF Generation)**：
+5. **PDF 生成**：
    - 使用 PIL 和 reportlab 库创建一个 Python 脚本。
    - 第 1 页：显示旋转后的原始图像，居中并缩放以适应 A4 页面。
    - 第 2 页：显示具有正确格式的英文翻译：
@@ -43,20 +43,20 @@ description: 将签证申请文件（图像）翻译成英文，并创建包含�
    - 在底部添加注释："This is a certified English translation of the original document"。
    - 执行脚本生成 PDF。
 
-6. **输出 (Output)**：在同一目录下创建一个名为 `<original_filename>_Translated.pdf` 的 PDF 文件。
+6. **输出**：在同一目录下创建一个名为 `<original_filename>_Translated.pdf` 的 PDF 文件。
 
-## 支持的文件类型 (Supported Documents)
+## 支持的文件类型
 
-- 银行存款证明 (Bank deposit certificates)
-- 收入证明 (Income certificates)
-- 在职证明 (Employment certificates)
-- 退休证明 (Retirement certificates)
-- 房产证明 (Property certificates)
-- 营业执照 (Business licenses)
-- 身份证和护照 (ID cards and passports)
+- 银行存款证明
+- 收入证明
+- 在职证明
+- 退休证明
+- 房产证明
+- 营业执照
+- 身份证和护照
 - 其他官方文件
 
-## 技术实现 (Technical Implementation)
+## 技术实现
 
 ### OCR 方法（按顺序尝试）
 
@@ -88,7 +88,7 @@ pip install pillow reportlab
 pip install pyobjc-framework-Vision pyobjc-framework-Quartz
 ```
 
-## 重要指南 (Important Guidelines)
+## 重要指南
 
 - **不要**在每个步骤都请求用户确认。
 - 自动确定最佳旋转角度。
@@ -97,7 +97,7 @@ pip install pyobjc-framework-Vision pyobjc-framework-Quartz
 - 使用整洁、专业的格式。
 - 完成整个过程并报告最终 PDF 的位置。
 
-## 使用示例 (Example Usage)
+## 使用示例
 
 ```bash
 /visa-doc-translate RetirementCertificate.PNG
@@ -105,9 +105,9 @@ pip install pyobjc-framework-Vision pyobjc-framework-Quartz
 /visa-doc-translate EmploymentLetter.jpg
 ```
 
-## 输出示例 (Output Example)
+## 输出示例
 
-该技能（Skill）将：
+该技能将：
 1. 使用可用的 OCR 方法提取文本。
 2. 翻译成专业的英文。
 3. 生成带有以下内容的 `<filename>_Translated.pdf`：

@@ -1,52 +1,52 @@
 ---
 name: hud
-description: Configure HUD display options (layout, presets, display elements)
+description: 配置 HUD 显示选项（布局、预设、显示元素）。
 argument-hint: "[setup|minimal|focused|full|status]"
-role: config-writer  # DOCUMENTATION ONLY - This skill writes to ~/.claude/ paths
-scope: ~/.claude/**  # DOCUMENTATION ONLY - Allowed write scope
+role: config-writer  # 仅作文档说明 - 本技能会写入 ~/.claude/ 路径
+scope: ~/.claude/**  # 仅作文档说明 - 允许写入的范围
 level: 2
 ---
 
-# HUD Skill
+# HUD 技能
 
-Configure the OMC HUD (Heads-Up Display) for the statusline.
+为状态栏配置 OMC HUD（抬头显示）。
 
-Note: All `~/.claude/...` paths in this guide respect `CLAUDE_CONFIG_DIR` when that environment variable is set.
+注意：当设置了 `CLAUDE_CONFIG_DIR` 环境变量时，本指南中所有 `~/.claude/...` 路径都遵循该变量。
 
-## Quick Commands
+## 快捷命令
 
-| Command | Description |
+| 命令 | 描述 |
 |---------|-------------|
-| `/oh-my-claudecode:hud` | Show current HUD status (auto-setup if needed) |
-| `/oh-my-claudecode:hud setup` | Install/repair HUD statusline |
-| `/oh-my-claudecode:hud minimal` | Switch to minimal display |
-| `/oh-my-claudecode:hud focused` | Switch to focused display (default) |
-| `/oh-my-claudecode:hud full` | Switch to full display |
-| `/oh-my-claudecode:hud status` | Show detailed HUD status |
+| `/oh-my-claudecode:hud` | 显示当前 HUD 状态（需要时自动设置） |
+| `/oh-my-claudecode:hud setup` | 安装/修复 HUD 状态栏 |
+| `/oh-my-claudecode:hud minimal` | 切换到最小显示 |
+| `/oh-my-claudecode:hud focused` | 切换到聚焦显示（默认） |
+| `/oh-my-claudecode:hud full` | 切换到完整显示 |
+| `/oh-my-claudecode:hud status` | 显示详细 HUD 状态 |
 
-## Auto-Setup
+## 自动设置
 
-When you run `/oh-my-claudecode:hud` or `/oh-my-claudecode:hud setup`, the system will automatically:
-1. Check if `~/.claude/hud/omc-hud.mjs` exists
-2. Check if `statusLine` is configured in `~/.claude/settings.json`
-3. If missing, create the HUD wrapper script and configure settings
-4. Report status and prompt to restart Claude Code if changes were made
+当你运行 `/oh-my-claudecode:hud` 或 `/oh-my-claudecode:hud setup` 时，系统会自动：
+1. 检查 `~/.claude/hud/omc-hud.mjs` 是否存在
+2. 检查 `~/.claude/settings.json` 中是否配置了 `statusLine`
+3. 如果缺失，创建 HUD 包装脚本并配置设置
+4. 报告状态，并在做出更改时提示重启 Claude Code
 
-**IMPORTANT**: If the argument is `setup` OR if the HUD script doesn't exist at `~/.claude/hud/omc-hud.mjs`, you MUST create the HUD files directly using the instructions below.
+**重要**：如果参数是 `setup`，**或** `~/.claude/hud/omc-hud.mjs` 处不存在 HUD 脚本，你**必须**按下面的说明直接创建 HUD 文件。
 
-### Setup Instructions (Run These Commands)
+### 设置说明（运行这些命令）
 
-**Step 1:** Check if setup is needed:
+**步骤 1：** 检查是否需要设置：
 ```bash
 node -e "const p=require('path'),f=require('fs'),d=process.env.CLAUDE_CONFIG_DIR||p.join(require('os').homedir(),'.claude');console.log(f.existsSync(p.join(d,'hud','omc-hud.mjs'))?'EXISTS':'MISSING')"
 ```
 
-**Step 2:** Verify the plugin is installed:
+**步骤 2：** 验证插件是否已安装：
 ```bash
 node -e "const p=require('path'),f=require('fs'),d=process.env.CLAUDE_CONFIG_DIR||p.join(require('os').homedir(),'.claude'),b=p.join(d,'plugins','cache','omc','oh-my-claudecode');try{const v=f.readdirSync(b).filter(x=>/^\d/.test(x)).sort((a,c)=>a.localeCompare(c,void 0,{numeric:true}));if(v.length===0){console.log('Plugin not installed - run: /plugin install oh-my-claudecode');process.exit()}const l=v[v.length-1],h=p.join(b,l,'dist','hud','index.js');console.log('Version:',l);console.log(f.existsSync(h)?'READY':'NOT_FOUND - try reinstalling: /plugin install oh-my-claudecode')}catch{console.log('Plugin not installed - run: /plugin install oh-my-claudecode')}"
 ```
 
-**Step 3:** If omc-hud.mjs is MISSING or argument is `setup`, install the HUD wrapper and its dependency from the canonical template:
+**步骤 3：** 如果 omc-hud.mjs 缺失或参数是 `setup`，从规范模板安装 HUD 包装器及其依赖：
 
 ```bash
 HUD_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hud"
@@ -55,27 +55,27 @@ cp "${CLAUDE_PLUGIN_ROOT}/scripts/lib/hud-wrapper-template.txt" "$HUD_DIR/omc-hu
 cp "${CLAUDE_PLUGIN_ROOT}/scripts/lib/config-dir.mjs" "$HUD_DIR/lib/config-dir.mjs"
 ```
 
-**IMPORTANT:** Always copy from the canonical template at `scripts/lib/hud-wrapper-template.txt`. Do NOT write the wrapper content inline — the template is the single source of truth and is guarded by drift tests (`src/__tests__/hud-wrapper-template-sync.test.ts`, `src/__tests__/paths-consistency.test.ts`).
+**重要：** 始终从 `scripts/lib/hud-wrapper-template.txt` 处的规范模板复制。**不要**内联编写包装器内容 —— 该模板是唯一真相来源，并受漂移测试保护（`src/__tests__/hud-wrapper-template-sync.test.ts`、`src/__tests__/paths-consistency.test.ts`）。
 
-**Step 4:** Make it executable (Unix only, skip on Windows):
+**步骤 4：** 使其可执行（仅 Unix，Windows 跳过）：
 ```bash
 node -e "if(process.platform==='win32'){console.log('Skipped (Windows)')}else{require('fs').chmodSync(require('path').join(process.env.CLAUDE_CONFIG_DIR||require('path').join(require('os').homedir(),'.claude'),'hud','omc-hud.mjs'),0o755);console.log('Done')}"
 ```
 
-**Step 5:** Update settings.json to use the HUD:
+**步骤 5：** 更新 settings.json 以使用 HUD：
 
-Read `${CLAUDE_CONFIG_DIR:-~/.claude}/settings.json`, then update/add the `statusLine` field.
+读取 `${CLAUDE_CONFIG_DIR:-~/.claude}/settings.json`，然后更新/添加 `statusLine` 字段。
 
-**IMPORTANT:** Do not use `~` in the command. On Unix, use `$HOME` to keep the path portable across machines. On Windows, use an absolute path because Windows does not expand `~` in shell commands.
+**重要：** 命令中不要使用 `~`。在 Unix 上，使用 `$HOME` 以保持路径跨机器可移植。在 Windows 上，使用绝对路径，因为 Windows 在 shell 命令中不会展开 `~`。
 
-If you are on Windows, first determine the correct path:
+如果你在 Windows 上，先确定正确的路径：
 ```bash
 node -e "const p=require('path').join(require('os').homedir(),'.claude','hud','omc-hud.mjs').split(require('path').sep).join('/');console.log(JSON.stringify(p))"
 ```
 
-**IMPORTANT:** The command path MUST use forward slashes on all platforms. Claude Code executes statusLine commands via bash, which interprets backslashes as escape characters and breaks the path.
+**重要：** 命令路径在所有平台上**必须**使用正斜杠。Claude Code 通过 bash 执行 statusLine 命令，bash 会把反斜杠解释为转义字符，从而破坏路径。
 
-Then set the `statusLine` field. On Unix it should stay portable and look like:
+然后设置 `statusLine` 字段。在 Unix 上它应保持可移植，形如：
 ```json
 {
   "statusLine": {
@@ -85,7 +85,7 @@ Then set the `statusLine` field. On Unix it should stay portable and look like:
 }
 ```
 
-On Windows the path uses forward slashes (not backslashes):
+在 Windows 上，路径使用正斜杠（而非反斜杠）：
 ```json
 {
   "statusLine": {
@@ -95,77 +95,77 @@ On Windows the path uses forward slashes (not backslashes):
 }
 ```
 
-Use the Edit tool to add/update this field while preserving other settings.
+使用 Edit 工具添加/更新该字段，同时保留其他设置。
 
-**Step 6:** Clean up old HUD scripts (if any):
+**步骤 6：** 清理旧 HUD 脚本（如有）：
 ```bash
 node -e "const p=require('path'),f=require('fs'),d=process.env.CLAUDE_CONFIG_DIR||p.join(require('os').homedir(),'.claude'),t=p.join(d,'hud','omc-hud.js');try{if(f.existsSync(t)){f.unlinkSync(t);console.log('Removed legacy omc-hud.js')}else{console.log('No legacy script found')}}catch{}"
 ```
 
-**Step 7:** Tell the user to restart Claude Code for changes to take effect.
+**步骤 7：** 告知用户重启 Claude Code 以使更改生效。
 
-## Display Presets
+## 显示预设
 
-### Minimal
-Shows only the essentials:
+### Minimal（最小）
+只显示必要项：
 ```
 [OMC] ralph | ultrawork | todos:2/5
 ```
 
-### Focused (Default)
-Shows all relevant elements:
+### Focused（聚焦，默认）
+显示所有相关元素：
 ```
 [OMC] branch:main | ralph:3/10 | US-002 | ultrawork skill:planner | ctx:67% | agents:2 | bg:3/5 | todos:2/5
 ```
 
-### Full
-Shows everything including multi-line agent details:
+### Full（完整）
+显示所有内容，包括多行代理详情：
 ```
 [OMC] repo:oh-my-claudecode branch:main | ralph:3/10 | US-002 (2/5) | ultrawork | ctx:[████░░]67% | agents:3 | bg:3/5 | todos:2/5
-├─ O architect    2m   analyzing architecture patterns...
-├─ e explore     45s   searching for test files
-└─ s executor     1m   implementing validation logic
+├─ O architect    2m   正在分析架构模式...
+├─ e explore     45s   正在搜索测试文件
+└─ s executor     1m   正在实现校验逻辑
 ```
 
-## Multi-Line Agent Display
+## 多行代理显示
 
-When agents are running, the HUD shows detailed information on separate lines:
-- **Tree characters** (`├─`, `└─`) show visual hierarchy
-- **Agent code** (O, e, s) indicates agent type with model tier color
-- **Duration** shows how long each agent has been running
-- **Description** shows what each agent is doing (up to 45 chars)
+当代理运行时，HUD 会在单独的行上显示详细信息：
+- **树形字符**（`├─`、`└─`）显示视觉层级
+- **代理代码**（O、e、s）以模型等级颜色指示代理类型
+- **时长**显示每个代理已运行的时长
+- **描述**显示每个代理正在做什么（最多 45 字符）
 
-## Display Elements
+## 显示元素
 
-| Element | Description |
+| 元素 | 描述 |
 |---------|-------------|
-| `[OMC]` | Mode identifier |
-| `repo:name` | Git repository name (cyan) |
-| `branch:name` | Git branch name (cyan) |
-| `ralph:3/10` | Ralph loop iteration/max |
-| `US-002` | Current PRD story ID |
-| `ultrawork` | Active mode badge |
-| `skill:name` | Last activated skill (cyan) |
-| `ctx:67%` | Context window usage |
-| `agents:2` | Running subagent count |
-| `bg:3/5` | Background task slots |
-| `todos:2/5` | Todo completion |
+| `[OMC]` | 模式标识 |
+| `repo:name` | Git 仓库名（青色） |
+| `branch:name` | Git 分支名（青色） |
+| `ralph:3/10` | Ralph 循环当前/最大迭代 |
+| `US-002` | 当前 PRD 故事 ID |
+| `ultrawork` | 活动模式徽章 |
+| `skill:name` | 最近激活的技能（青色） |
+| `ctx:67%` | 上下文窗口使用率 |
+| `agents:2` | 运行中的子代理数 |
+| `bg:3/5` | 后台任务槽位 |
+| `todos:2/5` | Todo 完成情况 |
 
-## Color Coding
+## 颜色编码
 
-- **Green**: Normal/healthy
-- **Yellow**: Warning (context >70%, ralph >7)
-- **Red**: Critical (context >85%, ralph at max)
+- **绿色**：正常/健康
+- **黄色**：警告（上下文 >70%，ralph >7）
+- **红色**：危急（上下文 >85%，ralph 达到上限）
 
-## Configuration Location
+## 配置位置
 
-HUD config is stored in `~/.claude/settings.json` under the `omcHud` key (or your custom config directory if `CLAUDE_CONFIG_DIR` is set).
+HUD 配置存储在 `~/.claude/settings.json` 的 `omcHud` 键下（如果设置了 `CLAUDE_CONFIG_DIR`，则在你的自定义配置目录中）。
 
-Legacy config location (deprecated): `~/.claude/.omc/hud-config.json`
+旧版配置位置（已弃用）：`~/.claude/.omc/hud-config.json`
 
-## Manual Configuration
+## 手动配置
 
-You can manually edit the config file. Each option can be set individually - any unset values will use defaults.
+你可以手动编辑配置文件。每个选项都可单独设置 —— 任何未设置的值将使用默认值。
 
 ```json
 {
@@ -212,33 +212,33 @@ You can manually edit the config file. Each option can be set individually - any
 
 ### callCountsFormat
 
-Controls the call-count badge icon style:
-- `"auto"` (default): emoji on macOS/Linux, ASCII on Windows/WSL
-- `"emoji"`: force `🔧 🤖 ⚡`
-- `"ascii"`: force `T: A: S:`
+控制调用计数徽章的图标样式：
+- `"auto"`（默认）：macOS/Linux 用 emoji，Windows/WSL 用 ASCII
+- `"emoji"`：强制使用 `🔧 🤖 ⚡`
+- `"ascii"`：强制使用 `T: A: S:`
 
 ### safeMode
 
-When `safeMode` is `true` (default), the HUD strips ANSI codes and uses ASCII-only output to prevent terminal rendering corruption during concurrent updates. This is especially important on Windows and when using terminal multiplexers.
+当 `safeMode` 为 `true`（默认）时，HUD 会剥离 ANSI 码并只使用 ASCII 输出，以防止并发更新期间的终端渲染损坏。这在 Windows 上以及使用终端复用器时尤其重要。
 
-### agentsFormat Options
+### agentsFormat 选项
 
-- `count`: agents:2
-- `codes`: agents:Oes (type-coded with model tier casing)
-- `codes-duration`: agents:O(2m)es (codes with duration)
-- `detailed`: agents:[architect(2m),explore,exec]
-- `descriptions`: O:analyzing code | e:searching (codes + what they're doing)
-- `tasks`: [analyzing code, searching...] (just descriptions)
-- `multiline`: Multi-line display with full agent details on separate lines
+- `count`：agents:2
+- `codes`：agents:Oes（按类型编码，大小写表示模型等级）
+- `codes-duration`：agents:O(2m)es（带时长的代码）
+- `detailed`：agents:[architect(2m),explore,exec]
+- `descriptions`：O:正在分析代码 | e:正在搜索（代码 + 正在做什么）
+- `tasks`：[正在分析代码, 正在搜索...]（只有描述）
+- `multiline`：多行显示，完整代理详情显示在单独的行上
 
-## Troubleshooting
+## 故障排查
 
-If the HUD is not showing:
-1. Run `/oh-my-claudecode:hud setup` to auto-install and configure
-2. Restart Claude Code after setup completes
-3. If still not working, run `/oh-my-claudecode:omc-doctor` for full diagnostics
+如果 HUD 未显示：
+1. 运行 `/oh-my-claudecode:hud setup` 自动安装并配置
+2. 设置完成后重启 Claude Code
+3. 如果仍不工作，运行 `/oh-my-claudecode:omc-doctor` 进行全面诊断
 
-**Legacy string format migration:** Older OMC versions wrote `statusLine` as a plain string (e.g., `"~/.claude/hud/omc-hud.mjs"`). Modern Claude Code (v2.1+) requires an object format. Running the installer or `/oh-my-claudecode:hud setup` will auto-migrate legacy strings to the correct object format:
+**旧版字符串格式迁移：** 较旧的 OMC 版本把 `statusLine` 写成纯字符串（例如 `"~/.claude/hud/omc-hud.mjs"`）。现代 Claude Code（v2.1+）要求对象格式。运行安装程序或 `/oh-my-claudecode:hud setup` 会自动把旧字符串迁移为正确的对象格式：
 ```json
 {
   "statusLine": {
@@ -248,12 +248,12 @@ If the HUD is not showing:
 }
 ```
 
-**Node 24+ compatibility:** The HUD wrapper script imports `homedir` from `node:os` (not `node:path`). If you encounter `SyntaxError: The requested module 'path' does not provide an export named 'homedir'`, re-run the installer to regenerate `omc-hud.mjs`.
+**Node 24+ 兼容性：** HUD 包装脚本从 `node:os`（而非 `node:path`）导入 `homedir`。如果你遇到 `SyntaxError: The requested module 'path' does not provide an export named 'homedir'`，重新运行安装程序以重新生成 `omc-hud.mjs`。
 
-Manual verification:
-- HUD script: `~/.claude/hud/omc-hud.mjs`
-- Settings: `~/.claude/settings.json` should have `statusLine` configured as an object with `type` and `command` fields
+手动验证：
+- HUD 脚本：`~/.claude/hud/omc-hud.mjs`
+- 设置：`~/.claude/settings.json` 中的 `statusLine` 应配置为带 `type` 和 `command` 字段的对象
 
 ---
 
-*The HUD updates automatically every ~300ms during active sessions.*
+*HUD 在活动会话期间每约 300ms 自动更新。*

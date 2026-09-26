@@ -1,13 +1,13 @@
 ---
 name: version-manager
-description: |
+description: "管理项目版本号（读取/升级 major/minor/patch/pre）。使用场景：发布新版本前升级版本号、查看当前版本、创建预发布版本。"
   管理项目版本号（读取/升级 major/minor/patch/pre）。
   使用场景：发布新版本前升级版本号、查看当前版本、创建预发布版本。
   触发词：版本管理、version、bump version、升级版本、major、minor、patch、pre-release。
 Keywords: version, bump, release, 版本, 升级, 发布
 ---
 
-# Version Manager
+# 版本管理器
 
 项目版本号管理工具，基于 `scripts/version.ts`。
 

@@ -1,7 +1,7 @@
 import { loadMemory, saveMemory, findSceneById, findScenesByCharacter, generateId, now } from './memory-manager';
 import type { Scene, Cut, WriterMemory } from './memory-manager';
 
-// === Korean Emotion Vocabulary ===
+// === 韩语情感词汇 ===
 const EMOTION_VOCABULARY: string[] = [
   "긴장", "설렘", "불안", "평온", "갈등",
   "슬픔", "기쁨", "분노", "체념", "희망",
@@ -16,7 +16,7 @@ const CUT_TYPE_LABELS: Record<string, string> = {
   internal: "내면"
 };
 
-// === Type Definitions ===
+// === 类型定义 ===
 export interface SceneSummary {
   id: string;
   title: string;
@@ -36,7 +36,7 @@ export interface SceneFlowEntry {
   cutCount: number;
 }
 
-// === Scene CRUD ===
+// === 场景 CRUD ===
 
 export function addScene(title: string, options?: {
   chapter?: string;
@@ -66,7 +66,7 @@ export function addScene(title: string, options?: {
 
     return newScene;
   } catch (error) {
-    console.error('Failed to add scene:', error);
+    console.error('添加场景失败：', error);
     return null;
   }
 }
@@ -77,11 +77,11 @@ export function updateScene(sceneId: string, updates: Partial<Scene>): Scene | n
     const scene = findSceneById(memory, sceneId);
 
     if (!scene) {
-      console.error(`Scene not found: ${sceneId}`);
+      console.error(`未找到场景：${sceneId}`);
       return null;
     }
 
-    // Apply updates (preserve immutable fields)
+    // 应用更新（保留不可变字段）
     Object.assign(scene, {
       ...updates,
       id: scene.id,
@@ -91,7 +91,7 @@ export function updateScene(sceneId: string, updates: Partial<Scene>): Scene | n
     saveMemory(memory);
     return scene;
   } catch (error) {
-    console.error('Failed to update scene:', error);
+    console.error('更新场景失败：', error);
     return null;
   }
 }
@@ -102,13 +102,13 @@ export function removeScene(sceneId: string): boolean {
     const index = memory.scenes.findIndex(s => s.id === sceneId);
 
     if (index === -1) {
-      console.error(`Scene not found: ${sceneId}`);
+      console.error(`未找到场景：${sceneId}`);
       return false;
     }
 
     memory.scenes.splice(index, 1);
 
-    // Reorder remaining scenes
+    // 重排剩余场景的顺序
     memory.scenes.forEach((scene, idx) => {
       scene.order = idx;
     });
@@ -116,7 +116,7 @@ export function removeScene(sceneId: string): boolean {
     saveMemory(memory);
     return true;
   } catch (error) {
-    console.error('Failed to remove scene:', error);
+    console.error('删除场景失败：', error);
     return false;
   }
 }
@@ -126,7 +126,7 @@ export function getScene(sceneId: string): Scene | null {
     const memory = loadMemory();
     return findSceneById(memory, sceneId);
   } catch (error) {
-    console.error('Failed to get scene:', error);
+    console.error('获取场景失败：', error);
     return null;
   }
 }
@@ -140,7 +140,7 @@ export function listScenes(options?: {
     const memory = loadMemory();
     let scenes = [...memory.scenes];
 
-    // Apply filters
+    // 应用筛选条件
     if (options?.chapter) {
       scenes = scenes.filter(s => s.chapter === options.chapter);
     }
@@ -153,10 +153,10 @@ export function listScenes(options?: {
       scenes = scenes.filter(s => s.emotionTags.includes(options.emotionTag!));
     }
 
-    // Sort by order
+    // 按顺序排序
     scenes.sort((a, b) => a.order - b.order);
 
-    // Convert to summaries
+    // 转换为摘要
     return scenes.map(scene => ({
       id: scene.id,
       title: scene.title,
@@ -167,12 +167,12 @@ export function listScenes(options?: {
       emotionTags: scene.emotionTags
     }));
   } catch (error) {
-    console.error('Failed to list scenes:', error);
+    console.error('列出场景失败：', error);
     return [];
   }
 }
 
-// === Cut Management (콘티 컷) ===
+// === 镜头管理（콘티 컷） ===
 
 export function addCut(sceneId: string, cut: {
   type: "dialogue" | "narration" | "action" | "internal";
@@ -185,7 +185,7 @@ export function addCut(sceneId: string, cut: {
     const scene = findSceneById(memory, sceneId);
 
     if (!scene) {
-      console.error(`Scene not found: ${sceneId}`);
+      console.error(`未找到场景：${sceneId}`);
       return false;
     }
 
@@ -202,7 +202,7 @@ export function addCut(sceneId: string, cut: {
     saveMemory(memory);
     return true;
   } catch (error) {
-    console.error('Failed to add cut:', error);
+    console.error('添加镜头失败：', error);
     return false;
   }
 }
@@ -213,18 +213,18 @@ export function updateCut(sceneId: string, cutOrder: number, updates: Partial<Cu
     const scene = findSceneById(memory, sceneId);
 
     if (!scene) {
-      console.error(`Scene not found: ${sceneId}`);
+      console.error(`未找到场景：${sceneId}`);
       return false;
     }
 
     const cut = scene.cuts.find(c => c.order === cutOrder);
 
     if (!cut) {
-      console.error(`Cut not found: order ${cutOrder} in scene ${sceneId}`);
+      console.error(`未找到镜头：场景 ${sceneId} 中不存在顺序 ${cutOrder}`);
       return false;
     }
 
-    // Apply updates (preserve order)
+    // 应用更新（保留顺序）
     Object.assign(cut, {
       ...updates,
       order: cut.order
@@ -233,7 +233,7 @@ export function updateCut(sceneId: string, cutOrder: number, updates: Partial<Cu
     saveMemory(memory);
     return true;
   } catch (error) {
-    console.error('Failed to update cut:', error);
+    console.error('更新镜头失败：', error);
     return false;
   }
 }
@@ -244,20 +244,20 @@ export function removeCut(sceneId: string, cutOrder: number): boolean {
     const scene = findSceneById(memory, sceneId);
 
     if (!scene) {
-      console.error(`Scene not found: ${sceneId}`);
+      console.error(`未找到场景：${sceneId}`);
       return false;
     }
 
     const index = scene.cuts.findIndex(c => c.order === cutOrder);
 
     if (index === -1) {
-      console.error(`Cut not found: order ${cutOrder} in scene ${sceneId}`);
+      console.error(`未找到镜头：场景 ${sceneId} 中不存在顺序 ${cutOrder}`);
       return false;
     }
 
     scene.cuts.splice(index, 1);
 
-    // Reorder remaining cuts
+    // 重排剩余镜头的顺序
     scene.cuts.forEach((cut, idx) => {
       cut.order = idx;
     });
@@ -265,7 +265,7 @@ export function removeCut(sceneId: string, cutOrder: number): boolean {
     saveMemory(memory);
     return true;
   } catch (error) {
-    console.error('Failed to remove cut:', error);
+    console.error('删除镜头失败：', error);
     return false;
   }
 }
@@ -276,25 +276,25 @@ export function reorderCuts(sceneId: string, newOrder: number[]): boolean {
     const scene = findSceneById(memory, sceneId);
 
     if (!scene) {
-      console.error(`Scene not found: ${sceneId}`);
+      console.error(`未找到场景：${sceneId}`);
       return false;
     }
 
     if (newOrder.length !== scene.cuts.length) {
-      console.error('New order length does not match cuts length');
+      console.error('新顺序的长度与镜头数量不一致');
       return false;
     }
 
-    // Validate all indices are present
+    // 校验所有索引是否齐全
     const sortedOrder = [...newOrder].sort((a, b) => a - b);
     for (let i = 0; i < sortedOrder.length; i++) {
       if (sortedOrder[i] !== i) {
-        console.error('Invalid order array: must contain all indices 0 to n-1');
+        console.error('无效的顺序数组：必须包含 0 到 n-1 的所有索引');
         return false;
       }
     }
 
-    // Reorder cuts
+    // 重排镜头顺序
     const reorderedCuts: Cut[] = newOrder.map(oldIdx => scene.cuts[oldIdx]);
     reorderedCuts.forEach((cut, newIdx) => {
       cut.order = newIdx;
@@ -305,12 +305,12 @@ export function reorderCuts(sceneId: string, newOrder: number[]): boolean {
     saveMemory(memory);
     return true;
   } catch (error) {
-    console.error('Failed to reorder cuts:', error);
+    console.error('重排镜头失败：', error);
     return false;
   }
 }
 
-// === Emotion Tags ===
+// === 情感标签 ===
 
 export function addEmotionTag(sceneId: string, tag: string): boolean {
   try {
@@ -318,13 +318,13 @@ export function addEmotionTag(sceneId: string, tag: string): boolean {
     const scene = findSceneById(memory, sceneId);
 
     if (!scene) {
-      console.error(`Scene not found: ${sceneId}`);
+      console.error(`未找到场景：${sceneId}`);
       return false;
     }
 
     if (scene.emotionTags.includes(tag)) {
-      console.warn(`Emotion tag already exists: ${tag}`);
-      return true; // Not an error
+      console.warn(`情感标签已存在：${tag}`);
+      return true; // 不算错误
     }
 
     scene.emotionTags.push(tag);
@@ -332,7 +332,7 @@ export function addEmotionTag(sceneId: string, tag: string): boolean {
     saveMemory(memory);
     return true;
   } catch (error) {
-    console.error('Failed to add emotion tag:', error);
+    console.error('添加情感标签失败：', error);
     return false;
   }
 }
@@ -343,15 +343,15 @@ export function removeEmotionTag(sceneId: string, tag: string): boolean {
     const scene = findSceneById(memory, sceneId);
 
     if (!scene) {
-      console.error(`Scene not found: ${sceneId}`);
+      console.error(`未找到场景：${sceneId}`);
       return false;
     }
 
     const index = scene.emotionTags.indexOf(tag);
 
     if (index === -1) {
-      console.warn(`Emotion tag not found: ${tag}`);
-      return true; // Not an error
+      console.warn(`未找到情感标签：${tag}`);
+      return true; // 不算错误
     }
 
     scene.emotionTags.splice(index, 1);
@@ -359,7 +359,7 @@ export function removeEmotionTag(sceneId: string, tag: string): boolean {
     saveMemory(memory);
     return true;
   } catch (error) {
-    console.error('Failed to remove emotion tag:', error);
+    console.error('删除情感标签失败：', error);
     return false;
   }
 }
@@ -371,7 +371,7 @@ export function getScenesByEmotion(emotionTag: string): Scene[] {
       .filter(scene => scene.emotionTags.includes(emotionTag))
       .sort((a, b) => a.order - b.order);
   } catch (error) {
-    console.error('Failed to get scenes by emotion:', error);
+    console.error('按情感获取场景失败：', error);
     return [];
   }
 }
@@ -391,32 +391,32 @@ export function getAllEmotionTags(): { tag: string; count: number }[] {
       .map(([tag, count]) => ({ tag, count }))
       .sort((a, b) => b.count - a.count);
   } catch (error) {
-    console.error('Failed to get all emotion tags:', error);
+    console.error('获取全部情感标签失败：', error);
     return [];
   }
 }
 
-// === Scene Organization ===
+// === 场景组织 ===
 
 export function reorderScenes(sceneIds: string[]): boolean {
   try {
     const memory = loadMemory();
 
     if (sceneIds.length !== memory.scenes.length) {
-      console.error('Scene IDs length does not match scenes length');
+      console.error('场景 ID 数量与场景数量不一致');
       return false;
     }
 
-    // Validate all IDs exist
+    // 校验所有 ID 是否存在
     const sceneMap = new Map(memory.scenes.map(s => [s.id, s]));
     for (const id of sceneIds) {
       if (!sceneMap.has(id)) {
-        console.error(`Scene not found: ${id}`);
+        console.error(`未找到场景：${id}`);
         return false;
       }
     }
 
-    // Reorder scenes
+    // 重排场景顺序
     memory.scenes = sceneIds.map(id => sceneMap.get(id)!);
     memory.scenes.forEach((scene, idx) => {
       scene.order = idx;
@@ -425,7 +425,7 @@ export function reorderScenes(sceneIds: string[]): boolean {
     saveMemory(memory);
     return true;
   } catch (error) {
-    console.error('Failed to reorder scenes:', error);
+    console.error('重排场景失败：', error);
     return false;
   }
 }
@@ -437,7 +437,7 @@ export function getSceneFlow(): SceneFlowEntry[] {
     return memory.scenes
       .sort((a, b) => a.order - b.order)
       .map(scene => ({
-        order: scene.order + 1, // 1-indexed for display
+        order: scene.order + 1, // 显示时从 1 开始计数
         title: scene.title,
         chapter: scene.chapter,
         primaryEmotion: scene.emotionTags[0] || "감정 미설정",
@@ -445,12 +445,12 @@ export function getSceneFlow(): SceneFlowEntry[] {
         cutCount: scene.cuts.length
       }));
   } catch (error) {
-    console.error('Failed to get scene flow:', error);
+    console.error('获取场景流程失败：', error);
     return [];
   }
 }
 
-// === Scene Profile Generation ===
+// === 场景档案生成 ===
 
 export function generateSceneProfile(sceneId: string): string {
   try {
@@ -498,7 +498,7 @@ export function generateSceneProfile(sceneId: string): string {
 
     return profile;
   } catch (error) {
-    console.error('Failed to generate scene profile:', error);
+    console.error('生成场景档案失败：', error);
     return `# 오류: 장면 프로필 생성 실패`;
   }
 }
@@ -535,10 +535,10 @@ export function generateSceneList(): string {
 
     return list;
   } catch (error) {
-    console.error('Failed to generate scene list:', error);
+    console.error('生成场景列表失败：', error);
     return `## 오류: 장면 목록 생성 실패`;
   }
 }
 
-// Export emotion vocabulary for external use
+// 导出情感词汇供外部使用
 export { EMOTION_VOCABULARY, CUT_TYPE_LABELS };

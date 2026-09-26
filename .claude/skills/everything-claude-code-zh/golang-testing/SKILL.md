@@ -4,7 +4,7 @@ description: Go 测试模式，包括表格驱动测试、子测试、基准测�
 origin: ECC
 ---
 
-# Go 测试模式 (Testing Patterns)
+# Go 测试模式
 
 遵循测试驱动开发（TDD）方法论，编写可靠且易于维护的 Go 测试的全面模式。
 
@@ -12,19 +12,19 @@ origin: ECC
 
 - 编写新的 Go 函数或方法时
 - 为现有代码增加测试覆盖率时
-- 为性能关键型代码创建基准测试（Benchmarks）时
-- 为输入验证实现模糊测试（Fuzz tests）时
+- 为性能关键型代码创建基准测试时
+- 为输入验证实现模糊测试时
 - 在 Go 项目中遵循 TDD 工作流时
 
 ## Go 的 TDD 工作流
 
-### 红-绿-重构 (RED-GREEN-REFACTOR) 循环
+### 红-绿-重构循环
 
 ```
-RED      → 先编写一个失败的测试
-GREEN    → 编写最少的代码使测试通过
-REFACTOR → 在保持测试通过的同时改进代码
-REPEAT   → 继续处理下一个需求
+红       → 先编写一个失败的测试
+绿       → 编写最少的代码使测试通过
+重构     → 在保持测试通过的同时改进代码
+重复     → 继续处理下一个需求
 ```
 
 ### Go 中的分步 TDD
@@ -38,7 +38,7 @@ func Add(a, b int) int {
     panic("not implemented") // 占位符
 }
 
-// 步骤 2：编写失败的测试 (RED)
+// 步骤 2：编写失败的测试
 // calculator_test.go
 package calculator
 
@@ -52,24 +52,24 @@ func TestAdd(t *testing.T) {
     }
 }
 
-// 步骤 3：运行测试 - 验证失败 (FAIL)
+// 步骤 3：运行测试 - 验证失败
 // $ go test
 // --- FAIL: TestAdd (0.00s)
 // panic: not implemented
 
-// 步骤 4：实现最少代码 (GREEN)
+// 步骤 4：实现最少代码
 func Add(a, b int) int {
     return a + b
 }
 
-// 步骤 5：运行测试 - 验证通过 (PASS)
+// 步骤 5：运行测试 - 验证通过
 // $ go test
 // PASS
 
 // 步骤 6：如果需要则进行重构，并验证测试仍然通过
 ```
 
-## 表格驱动测试 (Table-Driven Tests)
+## 表格驱动测试
 
 Go 测试的标准模式。能够以最少的代码实现全面的覆盖。
 
@@ -154,7 +154,7 @@ func TestParseConfig(t *testing.T) {
 }
 ```
 
-## 子测试与子基准测试 (Subtests and Sub-benchmarks)
+## 子测试与子基准测试
 
 ### 组织相关测试
 
@@ -219,7 +219,7 @@ func TestParallel(t *testing.T) {
 }
 ```
 
-## 测试助手 (Test Helpers)
+## 测试助手
 
 ### 助手函数
 
@@ -285,7 +285,7 @@ func TestFileProcessing(t *testing.T) {
 }
 ```
 
-## Golden Files (对比文件测试)
+## Golden 文件测试
 
 针对存储在 `testdata/` 中的预期输出文件进行测试。
 
@@ -308,7 +308,7 @@ func TestRender(t *testing.T) {
             golden := filepath.Join("testdata", tt.name+".golden")
 
             if *update {
-                // 更新 golden file: go test -update
+                // 更新 golden 文件：go test -update
                 err := os.WriteFile(golden, got, 0644)
                 if err != nil {
                     t.Fatalf("failed to update golden file: %v", err)
@@ -328,7 +328,7 @@ func TestRender(t *testing.T) {
 }
 ```
 
-## 使用接口进行 Mock (Mocking with Interfaces)
+## 使用接口进行 Mock
 
 ### 基于接口的 Mock
 
@@ -385,7 +385,7 @@ func TestUserService(t *testing.T) {
 }
 ```
 
-## 基准测试 (Benchmarks)
+## 基准测试
 
 ### 基础基准测试
 
@@ -459,7 +459,7 @@ func BenchmarkStringConcat(b *testing.B) {
 }
 ```
 
-## 模糊测试 (Fuzzing) (Go 1.18+)
+## 模糊测试（Go 1.18+）
 
 ### 基础模糊测试
 
@@ -519,7 +519,7 @@ func FuzzCompare(f *testing.F) {
 }
 ```
 
-## 测试覆盖率 (Test Coverage)
+## 测试覆盖率
 
 ### 运行覆盖率检查
 
@@ -680,8 +680,8 @@ go test -count=10 ./...
 
 ## 最佳实践
 
-**建议 (DO)：**
-- 先编写测试 (TDD)
+**建议：**
+- 先编写测试
 - 使用表格驱动测试实现全面覆盖
 - 测试行为，而非实现
 - 在助手函数中使用 `t.Helper()`
@@ -689,7 +689,7 @@ go test -count=10 ./...
 - 使用 `t.Cleanup()` 清理资源
 - 使用描述场景的有意义的测试名称
 
-**避免 (DON'T)：**
+**避免：**
 - 直接测试私有函数（应通过公共 API 进行测试）
 - 在测试中使用 `time.Sleep()`（应使用通道或条件）
 - 忽视不稳定的测试（应修复或移除它们）

@@ -1,14 +1,14 @@
 /**
- * Synopsis Builder - 정서 중심 시놉시스 생성기
+ * 梗概构建器 - 정서 중심 시놉시스 생성기
  *
- * Korean writers think: emotion → relationship → event → plot
- * NOT plot-first!
+ * 韩国创作者的思考顺序：情感 → 关系 → 事件 → 情节
+ * 而非先写情节！
  */
 
 import { loadMemory, saveMemory, now } from './memory-manager';
 import type { WriterMemory, Character, Relationship, Scene, SynopsisState } from './memory-manager';
 
-// === Synopsis Generation ===
+// === 梗概生成 ===
 
 export function generateSynopsis(options?: {
   protagonist?: string;
@@ -36,7 +36,7 @@ export function generateSynopsis(options?: {
   }
 }
 
-// === 5 Essential Element Extractors ===
+// === 5 个基本要素提取器 ===
 
 function findProtagonist(memory: WriterMemory, name?: string): Character | null {
   const chars = Object.values(memory.characters);
@@ -112,7 +112,7 @@ export function extractEndingAftertaste(memory: WriterMemory): string {
   return '❌ 엔딩 정서 잔상 미입력. synopsis update endingAftertaste "..." 로 추가하세요.';
 }
 
-// === Synopsis State Management ===
+// === 梗概状态管理 ===
 
 export function saveSynopsisState(state: SynopsisState): boolean {
   const memory = loadMemory();
@@ -144,7 +144,7 @@ export function updateSynopsisElement(element: keyof SynopsisState, value: strin
   return saveMemory(memory);
 }
 
-// === Format Functions ===
+// === 格式化函数 ===
 
 export function formatFullSynopsis(
   attitude: string,
@@ -219,7 +219,7 @@ export function formatPitchSynopsis(
   return `${projectName}는 ${attitude.split('.')[0]} ${name}이 ${theme.split('.')[0]}을 깨닫는 이야기. ${genreContrast.split('.')[0]}.`;
 }
 
-// === Checklist ===
+// === 检查清单 ===
 
 export interface ChecklistItem {
   element: string;
@@ -235,7 +235,7 @@ export function getSynopsisChecklist(memory: WriterMemory): ChecklistItem[] {
 
   const checklist: ChecklistItem[] = [];
 
-  // 1. Protagonist Attitude
+  // 1. 主角态度
   const hasArc = protagonist?.arc ? true : false;
   const hasAttitude = protagonist?.attitude ? true : false;
   checklist.push({
@@ -246,7 +246,7 @@ export function getSynopsisChecklist(memory: WriterMemory): ChecklistItem[] {
     suggestion: hasArc && hasAttitude ? '' : 'char update <name> arc "..." attitude "..."'
   });
 
-  // 2. Core Relationships
+  // 2. 核心关系结构
   const relCount = protagonist ? memory.relationships.filter(
     r => r.from === protagonist.name || r.to === protagonist.name
   ).length : 0;
@@ -258,7 +258,7 @@ export function getSynopsisChecklist(memory: WriterMemory): ChecklistItem[] {
     suggestion: relCount >= 2 ? '' : 'rel add <from> <to> <type>'
   });
 
-  // 3. Emotional Theme
+  // 3. 情感主题
   checklist.push({
     element: 'emotionalTheme',
     elementKr: '정서적 테마',
@@ -267,7 +267,7 @@ export function getSynopsisChecklist(memory: WriterMemory): ChecklistItem[] {
     suggestion: memory.themes.length > 0 ? '' : 'theme add <name>'
   });
 
-  // 4. Genre vs Emotion
+  // 4. 类型与真实情感对比
   const hasGenreContrast = memory.synopsis?.genreVsRealEmotion ? true : false;
   checklist.push({
     element: 'genreVsEmotion',
@@ -277,7 +277,7 @@ export function getSynopsisChecklist(memory: WriterMemory): ChecklistItem[] {
     suggestion: hasGenreContrast ? '' : 'synopsis update genreVsRealEmotion "..."'
   });
 
-  // 5. Ending Aftertaste
+  // 5. 结局情感余韵
   const hasAftertaste = memory.synopsis?.endingAftertaste ? true : false;
   checklist.push({
     element: 'endingAftertaste',
@@ -290,18 +290,18 @@ export function getSynopsisChecklist(memory: WriterMemory): ChecklistItem[] {
   return checklist;
 }
 
-// === Export ===
+// === 导出 ===
 
 export function exportSynopsisAsMarkdown(): string {
   const memory = loadMemory();
-  if (!memory) return '# Error: No memory found';
+  if (!memory) return '# 错误：未找到记忆';
 
   const synopsis = generateSynopsis({ format: 'full' });
-  if (!synopsis) return '# Error: Could not generate synopsis';
+  if (!synopsis) return '# 错误：无法生成梗概';
 
   const meta = `---
-project: ${memory.project.name || 'Untitled'}
-genre: ${memory.project.genre || 'Unspecified'}
+project: ${memory.project.name || '未命名'}
+genre: ${memory.project.genre || '未指定'}
 generated: ${new Date().toISOString()}
 ---
 
@@ -312,7 +312,7 @@ generated: ${new Date().toISOString()}
 
 export function exportSynopsisAsJSON(): object {
   const memory = loadMemory();
-  if (!memory) return { error: 'No memory found' };
+  if (!memory) return { error: '未找到记忆' };
 
   const checklist = getSynopsisChecklist(memory);
 

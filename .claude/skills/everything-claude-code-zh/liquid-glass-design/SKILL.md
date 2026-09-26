@@ -11,8 +11,8 @@ description: iOS 26 灵动玻璃（Liquid Glass）设计系统 — 适用于 Swi
 
 - 为 iOS 26+ 构建或更新采用新设计语言的应用
 - 实现玻璃风格的按钮、卡片、工具栏或容器
-- 在玻璃元素之间创建变形（Morphing）过渡
-- 为小组件（Widgets）应用灵动玻璃效果
+- 在玻璃元素之间创建变形过渡
+- 为小组件应用灵动玻璃效果
 - 将现有的模糊/材质效果迁移到新的灵动玻璃 API
 
 ## 核心模式 — SwiftUI
@@ -28,7 +28,7 @@ Text("Hello, World!")
     .glassEffect()  // 默认：常规变体，胶囊形状
 ```
 
-### 自定义形状和色调（Tint）
+### 自定义形状和色调
 
 ```swift
 Text("Hello, World!")
@@ -94,7 +94,7 @@ GlassEffectContainer(spacing: 20.0) {
 }
 ```
 
-### 变形（Morphing）过渡
+### 变形过渡
 
 在玻璃元素出现/消失时创建平滑的变形：
 
@@ -126,7 +126,7 @@ Button("Toggle") {
 
 ### 在侧边栏下方延伸水平滚动
 
-要允许水平滚动内容延伸到侧边栏或检查器（Inspector）下方，请确保 `ScrollView` 内容触及容器的领先/尾随（leading/trailing）边缘。当布局延伸到边缘时，系统会自动处理侧边栏下方的滚动行为 — 无需额外的修饰符。
+要允许水平滚动内容延伸到侧边栏或检查器下方，请确保 `ScrollView` 内容触及容器的前缘/后缘边缘。当布局延伸到边缘时，系统会自动处理侧边栏下方的滚动行为 — 无需额外的修饰符。
 
 ## 核心模式 — UIKit
 
@@ -176,7 +176,7 @@ containerView.contentView.addSubview(firstGlass)
 containerView.contentView.addSubview(secondGlass)
 ```
 
-### 滚动边缘效果（Scroll Edge Effects）
+### 滚动边缘效果
 
 ```swift
 scrollView.topEdgeEffect.style = .automatic
@@ -209,7 +209,7 @@ struct MyWidgetView: View {
 }
 ```
 
-### 用于视觉层级的强调组（Accent Groups）
+### 用于视觉层级的强调组
 
 ```swift
 HStack {

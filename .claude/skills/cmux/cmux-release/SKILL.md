@@ -1,26 +1,26 @@
 ---
 name: cmux-release
-description: "cmux release workflow, version bumping, changelog updates, pretag guard, release tags, and release asset expectations. Use when preparing or troubleshooting a cmux release."
+description: "cmux 发布流程、版本号提升、变更日志更新、pretag 守卫、发布标签以及发布产物的预期。在准备或排查 cmux 发布问题时使用。"
 ---
 
-# cmux Release
+# cmux 发布
 
-Prefer the `/release` command. It determines the new version (minor by default), gathers commits since the last tag, updates `CHANGELOG.md`, runs `./scripts/bump-version.sh`, commits, runs `./scripts/release-pretag-guard.sh`, then tags and pushes.
+优先使用 `/release` 命令。它会确定新版本号（默认 minor）、收集上一个标签以来的提交、更新 `CHANGELOG.md`、运行 `./scripts/bump-version.sh`、提交、运行 `./scripts/release-pretag-guard.sh`，然后打标签并推送。
 
-The docs changelog page at `web/app/[locale]/(landing)/docs/changelog/page.tsx` renders from `CHANGELOG.md`, so there is no separate docs changelog source to update.
+`web/app/[locale]/(landing)/docs/changelog/page.tsx` 处的文档变更日志页面由 `CHANGELOG.md` 渲染而来，因此没有单独的文档变更日志来源需要更新。
 
-## Version bumping
+## 版本号提升
 
 ```bash
 ./scripts/bump-version.sh          # minor (0.15.0 -> 0.16.0)
 ./scripts/bump-version.sh patch    # 0.15.0 -> 0.15.1
 ./scripts/bump-version.sh major    # 0.15.0 -> 1.0.0
-./scripts/bump-version.sh 1.0.0    # explicit version
+./scripts/bump-version.sh 1.0.0    # 显式版本号
 ```
 
-This updates `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION`. The build number auto-increments and must increase for Sparkle auto-update to work. Bump the minor version unless explicitly asked otherwise.
+它会更新 `MARKETING_VERSION` 与 `CURRENT_PROJECT_VERSION`。构建号会自动递增，并且必须递增，Sparkle 自动更新才能生效。除非明确要求其它方式，否则提升 minor 版本号。
 
-## Tagging
+## 打标签
 
 ```bash
 ./scripts/release-pretag-guard.sh
@@ -29,13 +29,13 @@ git push origin vX.Y.Z
 gh run watch --repo manaflow-ai/cmux
 ```
 
-If the pretag guard fails, run `./scripts/bump-version.sh`, commit the build-number bump, then retry.
+如果 pretag 守卫失败，运行 `./scripts/bump-version.sh`，提交构建号的提升，然后重试。
 
-## Release artifacts and secrets
+## 发布产物与密钥
 
-- The release asset is `cmux-macos.dmg`, attached to the tag. The README download button points to `releases/latest/download/cmux-macos.dmg`.
-- Signing and notarization require the GitHub secrets `APPLE_CERTIFICATE_BASE64`, `APPLE_CERTIFICATE_PASSWORD`, `APPLE_SIGNING_IDENTITY`, `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, `APPLE_TEAM_ID`.
+- 发布产物是 `cmux-macos.dmg`，附加在标签上。README 的下载按钮指向 `releases/latest/download/cmux-macos.dmg`。
+- 签名与公证需要 GitHub 密钥 `APPLE_CERTIFICATE_BASE64`、`APPLE_CERTIFICATE_PASSWORD`、`APPLE_SIGNING_IDENTITY`、`APPLE_ID`、`APPLE_APP_SPECIFIC_PASSWORD`、`APPLE_TEAM_ID`。
 
-## Detailed reference
+## 详细参考
 
-- [references/release-checklist.md](references/release-checklist.md): changelog tone, failure triage, and asset-rename fallout.
+- [references/release-checklist.md](references/release-checklist.md)：变更日志的措辞风格、失败排查以及产物重命名带来的连带影响。
