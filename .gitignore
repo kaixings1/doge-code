@@ -38,3 +38,6 @@ errors-export.json
 .doge/
 *.worktree-rewrite.bak
 *.bak
+
+# u1s1 工作流产物（workflow 脚本与进度存档，本地临时）
+.u1s1/
