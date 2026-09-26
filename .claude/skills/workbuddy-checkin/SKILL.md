@@ -21,7 +21,7 @@ license: MIT
    - 查状态：`POST https://copilot.tencent.com/v2/billing/meter/checkin-status`
    - 执行签到：`POST https://copilot.tencent.com/v2/billing/meter/daily-checkin`
    - 认证：`Authorization: Bearer <accessToken>`，并按桌面端 `buildHeaders` 附带 `X-User-Id: <account.uid>`；有 `auth.domain` 时加 `X-Domain`，企业账号另加 `X-Enterprise-Id` / `X-Tenant-Id`
-   - 兼容说明：`checkin.ps1` 走上述 `/v2/` 全量签名（对齐桌面端）；`checkin.sh` 仍走不带 `/v2/` 前缀、仅 `Authorization` 的旧写法。**两种写法实测均返回 200**（见 CHANGELOG 1.0.3 的验证矩阵），网关当前未强制 `/v2/` 或 `X-User-Id`；对齐桌面端属前向兼容加固，不是修复 401 的必要条件
+   - 兼容说明：本分发只有 `checkin.sh`，走不带 `/v2/` 前缀、仅 `Authorization` 的旧写法（上游的 `checkin.ps1` 走 `/v2/` 全量签名，未随本分发提供）。**两种写法实测均返回 200**（见 CHANGELOG 1.0.3 的验证矩阵），网关当前未强制 `/v2/` 或 `X-User-Id`；对齐桌面端属前向兼容加固，不是修复 401 的必要条件
 5. 脚本幂等：先查状态（命中即跳过）；`daily-checkin` 返回 `code=10001`（今天已签到）同样视为成功，避免重复请求被误报为失败。
 
 > ⚠️ v5.3.8 实测 `checkin-status` 的 `today_checked_in` 字段不可靠（签到成功后仍可能为 `false`）。因此幂等性主要靠 `daily-checkin` 的 `code=10001` 兜底。
@@ -37,13 +37,13 @@ workbuddy-checkin/
 │   └── dependencies.md         # 依赖清单与平台差异
 └── scripts/
     ├── decrypt-token.js        # 解密令牌（跨平台）
-    ├── checkin.sh              # macOS / Linux / Git Bash
-    ├── checkin.ps1             # Windows PowerShell
-    ├── setup.sh                # macOS / Linux 一键安装
-    └── setup.ps1               # Windows 一键安装
+    └── checkin.sh              # macOS / Linux / Git Bash
 ```
 
 `logs/` 目录运行后自动创建，存放签到日志。
+
+> 📌 **本分发只含 `checkin.sh`（bash）与 `decrypt-token.js`。** 上游的 `checkin.ps1`（Windows PowerShell）、`setup.sh` / `setup.ps1`（一键安装 Electron）**未包含在本仓库中**，相关说明保留在 `CHANGELOG.md` 中作为历史记录。
+> Windows 用户请在 **Git Bash** 下运行 `checkin.sh`（见下方「快速开始」）；旧版账户的 Electron 需手动安装并用 `WB_CHECKIN_ELECTRON=<path>` 指定。
 
 ## 依赖
 
@@ -54,7 +54,7 @@ workbuddy-checkin/
 | WorkBuddy 桌面端（已登录） | 提供本地登录态（v5.3.8+ 明文文件 / 旧版 `state.vscdb`） | 官网下载，必须登录过至少一次 |
 | Node.js（推荐 20+，v5.3.8+ 主路径必需） | 读取新版明文登录态、解析 JSON | nodejs.org 下载，或系统包管理器 |
 | curl（macOS/Linux 自带）/ curl.exe | 调用签到 API | Windows 10 1803+ 自带 |
-| Electron 运行时（≥ 30，推荐 37） | **仅旧版** `state.vscdb` 分支解密令牌用 | 仅旧版账户需要，运行 `scripts/setup.sh` 或 `setup.ps1` |
+| Electron 运行时（≥ 30，推荐 37） | **仅旧版** `state.vscdb` 分支解密令牌用 | 仅旧版账户需要；本仓库不含一键安装脚本，手动 `npm i electron@37`（或手动放置二进制）后用 `WB_CHECKIN_ELECTRON=<path>` 指定 |
 
 > v5.3.8+ 用户：装好 Node.js 并登录桌面端即可直接签到，**无需安装 Electron**。Electron 仅用于尚未迁移到新版明文存储的旧版 WorkBuddy/CodeBuddy 账户。
 
@@ -62,14 +62,16 @@ workbuddy-checkin/
 
 - **开箱即用（v5.3.8+）**：已装 WorkBuddy 桌面端并登录 + 系统已有 Node.js → 直接运行签到脚本。
 - **需安装 Node.js**：提示「未找到 Node」时，到 nodejs.org 安装，或用 `WB_CHECKIN_NODE=<path>` 指定。
-- **旧版账户需 Electron**：使用旧版 WorkBuddy/CodeBuddy（`state.vscdb`）且提示「未找到 Electron」时，执行：
+- **旧版账户需 Electron**：使用旧版 WorkBuddy/CodeBuddy（`state.vscdb`）且提示「未找到 Electron」时，手动准备 Electron 运行时（本仓库不含一键安装脚本）：
 
   ```bash
-  # macOS / Linux
-  bash scripts/setup.sh
-  # Windows（PowerShell）
-  powershell -ExecutionPolicy Bypass -File scripts\setup.ps1
+  # 在任意空目录安装（约 100MB），然后用环境变量指向其二进制
+  npm i electron@37
+  export WB_CHECKIN_ELECTRON="<Electron 二进制绝对路径>"
+  bash scripts/checkin.sh
   ```
+
+  macOS / Linux 的 Electron 二进式为 `.../Electron.app/Contents/MacOS/Electron`（Linux 无 .app 包裹，为 `.../electron`）；Windows 为 `...\electron.exe`。
 
 ### 可选 / 回退依赖
 
@@ -78,7 +80,7 @@ workbuddy-checkin/
 | Electron 运行时 | 仅旧版 `state.vscdb` 账户需要；v5.3.8+ 新版明文路径不需要 |
 | Node.js 内置 `node:sqlite`（Electron 37 / Node 22+ 自带） | 旧版分支自动回退到 `python3` 读取 sqlite |
 | `python3` | sh 版 JSON 解析降级为 `unknown`，签到请求仍会执行 |
-| `npm`（仅旧版 setup 首次安装 Electron 用） | 手动放置 Electron 后用 `WB_CHECKIN_ELECTRON=<path>`（sh）/ `-ElectronPath <path>`（ps1）指定 |
+| `npm`（仅旧版账户安装 Electron 用） | 手动放置 Electron 后用 `WB_CHECKIN_ELECTRON=<path>` 指定 |
 
 完整依赖说明见 `references/dependencies.md`。
 
@@ -86,17 +88,16 @@ workbuddy-checkin/
 
 macOS / Linux：
 ```bash
-bash scripts/setup.sh     # 检测运行时并验证令牌链路（v5.3.8+ 用 Node，旧版才需 Electron）
-bash scripts/checkin.sh   # 立即签到一次（验证）
+bash scripts/checkin.sh   # 立即签到一次（验证）。先自动探测运行时：v5.3.8+ 用 Node，旧版才需 Electron
 ```
 
-Windows（PowerShell）：
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts\setup.ps1
-powershell -ExecutionPolicy Bypass -File scripts\checkin.ps1
+Windows（推荐 **Git Bash**，本仓库只有 bash 版脚本）：
+```bash
+bash scripts/checkin.sh
+# 或在 Git Bash 里：WB_CHECKIN_NODE=/c/Program\ Files/nodejs/node.exe bash scripts/checkin.sh
 ```
 
-前提：本机已安装并**登录** WorkBuddy 桌面端；系统已安装 Node.js（v5.3.8+ 主路径）。
+前提：本机已安装并**登录** WorkBuddy 桌面端；系统已安装 Node.js（v5.3.8+ 主路径）；Windows 需 `curl.exe`（Win10 1803+ 自带）。
 
 ## 设置定时任务
 
@@ -109,9 +110,11 @@ crontab -e
 ```
 
 ### Windows（任务计划程序）
+
+Windows 下用 Git Bash 的 `bash.exe` 承载 `checkin.sh`（本仓库不含 PowerShell 版脚本）：
 ```powershell
-schtasks /Create /TN WorkBuddyDailyCheckin /TR "powershell -ExecutionPolicy Bypass -File C:\path\checkin.ps1" /SC DAILY /ST 09:00 /F
-schtasks /Create /TN WorkBuddyDailyCheckin2 /TR "powershell -ExecutionPolicy Bypass -File C:\path\checkin.ps1" /SC DAILY /ST 12:00 /F
+schtasks /Create /TN WorkBuddyDailyCheckin /TR "\"C:\Program Files\Git\bin\bash.exe\" -lc \"<仓库路径>/scripts/checkin.sh\"" /SC DAILY /ST 09:00 /F
+schtasks /Create /TN WorkBuddyDailyCheckin2 /TR "\"C:\Program Files\Git\bin\bash.exe\" -lc \"<仓库路径>/scripts/checkin.sh\"" /SC DAILY /ST 12:00 /F
 # （schtasks 单任务只支持一个 /ST，多时间点需建多个任务）
 ```
 
@@ -140,7 +143,7 @@ WorkBuddy 环境下可调用自动化任务工具（`automation_update`，recurr
   "rrule": "FREQ=DAILY;BYHOUR=9,12,15,18,21;BYMINUTE=0;BYSECOND=0",
   "cwds": ["<用户工作目录>"],
   "status": "ACTIVE",
-  "prompt": "运行 Bash 脚本 scripts/checkin.sh（Windows 用 checkin.ps1）。该脚本幂等：今日已签到会直接跳过。读取输出并汇报：签到成功领取多少积分 / 今日已签到 / 令牌失效需打开 WorkBuddy 刷新。"
+  "prompt": "运行 Bash 脚本 scripts/checkin.sh（Windows 下用 Git Bash 执行）。该脚本幂等：今日已签到会直接跳过。读取输出并汇报：签到成功领取多少积分 / 今日已签到 / 令牌失效需打开 WorkBuddy 刷新。"
 }
 ```
 > 注意：`update` 已有任务时必须显式传 `rrule`，否则可能被重置；`cwds` 不能用 Claw 工作区。
@@ -152,10 +155,10 @@ WorkBuddy 环境下可调用自动化任务工具（`automation_update`，recurr
 | 平台 | 脚本 | 新版明文登录态（v5.3.8+，主路径） | 旧版 state.vscdb（回退） |
 |---|---|---|---|
 | macOS | `checkin.sh` | `~/Library/Application Support/CodeBuddyExtension/Data/Public/auth/workbuddy-desktop.info` | `~/Library/Application Support/WorkBuddy/User/globalStorage/state.vscdb` |
-| Windows | `checkin.ps1`（或 Git Bash 跑 `checkin.sh`） | `%LOCALAPPDATA%\CodeBuddyExtension\Data\Public\auth\workbuddy-desktop.info`（回退 `%APPDATA%`） | `%APPDATA%\WorkBuddy\User\globalStorage\state.vscdb` |
+| Windows | `checkin.sh`（Git Bash，本仓库无 ps1 版） | `%LOCALAPPDATA%\CodeBuddyExtension\Data\Public\auth\workbuddy-desktop.info`（回退 `%APPDATA%`） | `%APPDATA%\WorkBuddy\User\globalStorage\state.vscdb` |
 | Linux | `checkin.sh` | `~/.config/CodeBuddyExtension/Data/Public/auth/workbuddy-desktop.info` | `~/.config/WorkBuddy/User/globalStorage/state.vscdb` |
 
-Windows PowerShell 执行策略用 `-ExecutionPolicy Bypass`；需 `curl.exe`（Win10 1803+ 自带）。
+Windows 下用 Git Bash 运行 `checkin.sh`（本仓库不含 PowerShell 版脚本）；需 `curl.exe`（Win10 1803+ 自带）。
 旧版 `state.vscdb` 分支在 Linux 需桌面会话 + 系统 keyring（GNOME Keyring / KWallet）；新版明文分支无此要求。
 
 ## 环境变量
@@ -163,8 +166,7 @@ Windows PowerShell 执行策略用 `-ExecutionPolicy Bypass`；需 `curl.exe`（
 | 变量 | 作用 |
 |------|------|
 | `WB_CHECKIN_NODE=<path>` | 指定 Node 二进制路径（v5.3.8+ 主路径用，sh/ps1 通用） |
-| `WB_CHECKIN_ELECTRON=<path>` | 指定 Electron 二进制路径（仅旧版 state.vscdb 回退用，sh 版） |
-| `-ElectronPath <path>` | 同上（ps1 版参数） |
+| `WB_CHECKIN_ELECTRON=<path>` | 指定 Electron 二进制路径（仅旧版 state.vscdb 回退用） |
 | `WB_CHECKIN_APP_NAME=CodeBuddy` | 兼容旧版应用名（仅旧版 state.vscdb 分支的 macOS 钥匙串密钥） |
 | `WB_CHECKIN_JITTER=<秒>` | 启动前随机等待 0~N 秒，避免整点风暴 |
 
@@ -177,9 +179,11 @@ Windows PowerShell 执行策略用 `-ExecutionPolicy Bypass`；需 `curl.exe`（
 - **偶发「令牌已过期（401）」但次日又正常（< 1.0.3）**：401 判定原为扫响应体子串，响应体里的随机 `requestId` 恰好含 `401` 时会误判（约 0.57%/次），当日签到被跳过且连续签到中断。1.0.3 起改用真实 HTTP 状态码判定。
 - **Windows 已登录却持续 401（< 1.0.3）**：1.0.2 的 win32 候选只探 `%APPDATA%`，而桌面端实际把明文登录态写在 `%LOCALAPPDATA%`；读不到新文件时会回退旧版 `state.vscdb`，取到**过期的历史会话令牌**，表现为「能拿到 token 但接口 401」。1.0.3 起优先探 `%LOCALAPPDATA%`。**排查 401 请先确认令牌来源，而非怀疑请求路径或请求头**（实测网关不强制 `/v2/` 与 `X-User-Id`，见 CHANGELOG 1.0.3）。
 - **macOS 解密报错但已登录（旧版账户）**：旧版迁移应用名仍是 `CodeBuddy`，设 `export WB_CHECKIN_APP_NAME=CodeBuddy` 后重试（仅走 state.vscdb 分支时生效）。
-- **Electron 下载慢/失败（旧版账户）**：配置 npm 镜像（见 `references/dependencies.md`）后重跑 setup；或手动放置 Electron 后用环境变量/参数指定。v5.3.8+ 新版账户无需 Electron。
-- **Windows 提示不是内部或外部命令**：用 `powershell -ExecutionPolicy Bypass -File …` 运行；确认 `curl.exe` 存在。
-- **沙箱里 `require('electron')` 报错**：Agent 沙箱默认设 `ELECTRON_RUN_AS_NODE=1`，脚本已用 `env -u`（sh）/ `Remove-Item Env:`（ps1）处理；v5.3.8+ 主路径用纯 Node，不受此影响。
+- **Electron 下载慢/失败（旧版账户）**：配置 npm 镜像（见 `references/dependencies.md`）后重试；或手动放置 Electron 后用 `WB_CHECKIN_ELECTRON=<path>` 指定。v5.3.8+ 新版账户无需 Electron。
+- **按文档跑 `checkin.ps1` / `setup.sh` 提示文件不存在**：本分发只含 `checkin.sh` 与 `decrypt-token.js`，PowerShell / setup 脚本未随仓库提供；Windows 请在 Git Bash 下运行 `checkin.sh`。
+- **Windows 提示不是内部或外部命令**：在 Git Bash 里用 `bash scripts/checkin.sh` 运行（不是 `checkin.sh`）；确认 `curl.exe` 存在。
+- **沙箱里 `require('electron')` 报错**：Agent 沙箱默认设 `ELECTRON_RUN_AS_NODE=1`，脚本已用 `env -u` 处理；v5.3.8+ 主路径用纯 Node，不受此影响。
+- **运行后 stdout 第一行不是 `DECRYPT_RESULT:`**（例如出现 `Downloading Electron...`）：旧版回退分支的 `require("electron")` 若解析到**已安装但未下载二进制**的 `electron` npm 包（如本仓库的 `node_modules/electron`），该包的 `index.js` 会在 require 时打印日志并尝试下载 ~100MB 二进制。消费方**必须**按行前缀过滤（`grep '^DECRYPT_RESULT:'`／`Select-String`）——`checkin.sh` 已是这种写法，所以不受影响；若不想触发下载，把 Node 指向不含该包的目录执行，或先补齐 Electron 二进制。
 
 ## 安全说明
 
@@ -203,7 +207,7 @@ Windows PowerShell 执行策略用 `-ExecutionPolicy Bypass`；需 `curl.exe`（
 
 ### 供应链提示
 
-安装 Electron 默认**不自动下载**（避免静默引入第三方大二进制）。如需自动安装，须显式设置环境变量 `WB_CHECKIN_AUTO_INSTALL_ELECTRON=1` 确认从官方 npm registry 下载 `electron@37`。
+上游的 setup 脚本（未随本分发提供）默认**不自动下载** Electron（避免静默引入第三方大二进制），需显式设 `WB_CHECKIN_AUTO_INSTALL_ELECTRON=1` 才会从官方 npm registry 下载 `electron@37`。本分发请自行安装 Electron，不要指望任何脚本替你下载。
 
 ## 所需权限
 
@@ -211,7 +215,7 @@ Windows PowerShell 执行策略用 `-ExecutionPolicy Bypass`；需 `curl.exe`（
 
 | 权限 | 范围 | 说明 |
 |------|------|------|
-| 本地代码执行 | 仅本 skill 的 `checkin.sh/.ps1`、`decrypt-token.js`、`setup.sh/.ps1` | 用户手动或定时触发，非后台常驻 |
+| 本地代码执行 | 仅本 skill 的 `checkin.sh`、`decrypt-token.js` | 用户手动或定时触发，非后台常驻 |
 | 本地文件读取 | 用户目录下的 WorkBuddy 登录态（v5.3.8+ 明文 `workbuddy-desktop.info` / 旧版 `state.vscdb`） | 读取登录态以获取调用官方接口所需的 accessToken |
 | 网络访问 | 仅 `copilot.tencent.com` 官方签到接口 | 不访问任何其他域名 |
 | 环境变量读取 | `WB_CHECKIN_*`（Node/Electron 路径、应用名、错峰、回退开关） | 均为本机用户显式配置 |

@@ -16,7 +16,7 @@
 
 | 组件 | 作用 | 获取方式 | 说明 |
 |---|---|---|---|
-| Electron 运行时（>= 30，推荐 37） | 仅旧版 `state.vscdb` 分支执行 `safeStorage.decryptString()` 解密令牌 | `scripts/setup.sh` / `setup.ps1`（npm install electron@37，约 100MB） | v5.3.8+ 新版账户**不需要**；旧版 CodeBuddy 用户需设 `WB_CHECKIN_APP_NAME=CodeBuddy` |
+| Electron 运行时（>= 30，推荐 37） | 仅旧版 `state.vscdb` 分支执行 `safeStorage.decryptString()` 解密令牌 | 本仓库**不含**一键安装脚本；在空目录手动 `npm i electron@37`（约 100MB），再用 `WB_CHECKIN_ELECTRON=<path>` 指定二进制 | v5.3.8+ 新版账户**不需要**；旧版 CodeBuddy 用户需设 `WB_CHECKIN_APP_NAME=CodeBuddy` |
 
 ## 可选 / 回退依赖（缺了也能跑，只是走回退路径）
 
@@ -24,7 +24,7 @@
 |---|---|---|
 | Node.js 内置 `node:sqlite` | 仅旧版分支读取 state.vscdb | 旧版分支自动回退到 python3 |
 | python3 | 回退读取 sqlite + 解析 API 响应 JSON（sh 版） | sh 版解析会降级为 unknown，签到仍会执行 |
-| npm | 仅旧版 setup 自动下载 Electron | 手动放置 Electron 后通过环境变量/参数指定路径 |
+| npm | 仅旧版账户安装 Electron 用 | 手动放置 Electron 后用 `WB_CHECKIN_ELECTRON=<path>` 指定路径 |
 
 > 说明：旧版分支的 decrypt-token.js 用 Node 内置 `node:sqlite` 读库（Electron 37 内置 Node 22 可用）；
 > 若所用 Electron 版本较旧不支持 `node:sqlite`，会自动调用 `python3` 读取，无需额外安装 npm 包。
@@ -47,10 +47,10 @@
 | 平台 | Shell | 新版明文登录态（v5.3.8+，主路径） | 旧版 state.vscdb（回退） | Electron 二进制（仅旧版） |
 |---|---|---|---|---|
 | macOS | `checkin.sh`（bash） | `~/Library/Application Support/CodeBuddyExtension/Data/Public/auth/workbuddy-desktop.info` | `~/Library/Application Support/WorkBuddy/User/globalStorage/state.vscdb` | `Electron.app/Contents/MacOS/Electron` |
-| Windows | `checkin.ps1`（PowerShell）或 Git Bash 下 `checkin.sh` | `%APPDATA%\CodeBuddyExtension\Data\Public\auth\workbuddy-desktop.info` | `%APPDATA%\WorkBuddy\User\globalStorage\state.vscdb` | `electron.exe` |
+| Windows | `checkin.sh`（**Git Bash**；本仓库无 ps1 版脚本） | `%LOCALAPPDATA%\CodeBuddyExtension\Data\Public\auth\workbuddy-desktop.info`（回退 `%APPDATA%`） | `%APPDATA%\WorkBuddy\User\globalStorage\state.vscdb` | `electron.exe` |
 | Linux | `checkin.sh`（bash） | `~/.config/CodeBuddyExtension/Data/Public/auth/workbuddy-desktop.info` | `~/.config/WorkBuddy/User/globalStorage/state.vscdb` | `electron`（无 .app 包裹） |
 
-> ⚠️ Windows / Linux 的 `CodeBuddyExtension/Data/Public/auth/workbuddy-desktop.info` 路径基于 v5.3.8 桌面端约定推导，已在 macOS 实测命中；其他平台如路径不一致，请以实际安装为准并反馈。
+> 警告：Windows / Linux 的 `CodeBuddyExtension/Data/Public/auth/workbuddy-desktop.info` 路径基于 v5.3.8 桌面端约定推导，已在 macOS 实测命中；其他平台如路径不一致，请以实际安装为准并反馈。
 
 ## 安装后的目录结构（示意）
 
@@ -60,9 +60,8 @@ workbuddy-checkin/
 ├── references/dependencies.md
 ├── scripts/
 │   ├── decrypt-token.js      # 跨平台：新版明文 Node 读取 + 旧版 state.vscdb Electron 解密
-│   ├── checkin.sh            # macOS / Linux / Git Bash（Node 优先，Electron 回退）
-│   ├── checkin.ps1           # Windows PowerShell（Node 优先，Electron 回退）
-│   ├── setup.sh              # macOS / Linux 环境检查（Node 优先，旧版才需 Electron）
-│   └── setup.ps1             # Windows 环境检查
+│   └── checkin.sh            # macOS / Linux / Git Bash（Node 优先，Electron 回退）
 └── logs/                     # 签到日志（自动创建）
 ```
+
+> 注意：上游另含 `checkin.ps1`（Windows PowerShell）与 `setup.sh` / `setup.ps1`（一键安装 Electron），**未包含在本仓库中**（见 `CHANGELOG.md` 历史记录）。Windows 用户请在 Git Bash 下运行 `checkin.sh`。
