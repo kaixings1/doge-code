@@ -45,7 +45,7 @@ export const ShellTool = buildTool({
   toAutoClassifierInput() {
     return ''
   },
-  async checkPermissions(input) {
+  async checkPermissions(input: Record<string, unknown>) {
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
