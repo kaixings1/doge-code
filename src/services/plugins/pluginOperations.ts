@@ -45,6 +45,7 @@ import {
 import {
   formatResolutionError,
   installResolvedPlugin,
+  type InstallCoreResult,
 } from '../../utils/plugins/pluginInstallationHelpers.js'
 import {
   cachePlugin,
@@ -379,38 +380,40 @@ export async function installPluginOp(
   })
 
   if (!result.ok) {
-    switch (result.reason) {
+    const failed = result as Extract<InstallCoreResult, { ok: false }>
+    switch (failed.reason) {
       case 'local-source-no-location':
         return {
           success: false,
-          message: `无法安装本地插件 "${result.pluginName}"：缺少市场安装位置`,
+          message: `无法安装本地插件 "${failed.pluginName}"：缺少市场安装位置`,
         }
       case 'settings-write-failed':
         return {
           success: false,
-          message: `Failed to update settings: ${result.message}`,
+          message: `Failed to update settings: ${failed.message}`,
         }
       case 'resolution-failed':
         return {
           success: false,
-          message: formatResolutionError(result.resolution),
+          message: formatResolutionError(failed.resolution),
         }
       case 'blocked-by-policy':
         return {
           success: false,
-          message: `Plugin "${result.pluginName}" is blocked by your organization's policy and cannot be installed`,
+          message: `Plugin "${failed.pluginName}" is blocked by your organization's policy and cannot be installed`,
         }
       case 'dependency-blocked-by-policy':
         return {
           success: false,
-          message: `Plugin "${result.pluginName}" depends on "${result.blockedDependency}", which is blocked by your organization's policy`,
+          message: `Plugin "${failed.pluginName}" depends on "${failed.blockedDependency}", which is blocked by your organization's policy`,
         }
     }
   }
 
+  const installed = result as Extract<InstallCoreResult, { ok: true }>
   return {
     success: true,
-    message: `Successfully installed plugin: ${pluginId} (scope: ${scope})${result.depNote}`,
+    message: `Successfully installed plugin: ${pluginId} (scope: ${scope})${installed.depNote}`,
     pluginId,
     pluginName: entry.name,
     scope,
