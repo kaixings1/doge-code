@@ -1,4 +1,5 @@
-import type { Command, LocalCommandModule } from '../../commands.js'
+import type { Command } from '../../commands.js'
+import type { LocalCommandModule } from '../../types/command.js'
 import { getAutoModeManager } from '../../features/index.js'
 
 const call = async (args: string) => {
@@ -34,6 +35,7 @@ const autoModeReset = {
   aliases: ['/auto-mode-reset', '/amr'],
   description: '重置自动模式配置为默认值 (更新日志 2.1.212)',
   argumentHint: '[--yes]',
+  supportsNonInteractive: true,
   isEnabled: () => true,
   get isHidden() {
     return false

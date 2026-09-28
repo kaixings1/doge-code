@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 import type { LocalCommandCall } from '../../types/command.js';
-import { createTask, updateTask } from '../../utils/taskManager.js';
+import { createTask } from '../../utils/taskManager.js';
 import { getSessionId } from '../../bootstrap/state.js';
 import { enqueue } from '../../utils/messageQueueManager.js';
 import type { QueuedCommand } from '../../types/textInputTypes.js';
