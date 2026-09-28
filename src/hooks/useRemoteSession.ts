@@ -158,9 +158,10 @@ export function useRemoteSession({
         const parts = [`type=${sdkMessage.type}`]
         if ('subtype' in sdkMessage) parts.push(`subtype=${sdkMessage.subtype}`)
         if (sdkMessage.type === 'user') {
-          const c = sdkMessage.message?.content
+          const msg = sdkMessage.message as { content?: unknown } | null
+          const c = msg?.content
           parts.push(
-            `content=${Array.isArray(c) ? c.map(b => b.type).join(',') : typeof c}`,
+            `content=${Array.isArray(c) ? c.map(b => (b as { type?: string })?.type).join(',') : typeof c}`,
           )
         }
         logForDebugging(`[useRemoteSession] Received ${parts.join(' ')}`)
@@ -248,12 +249,15 @@ export function useRemoteSession({
         // and inProcessRunner.ts; without this the set grows unbounded for the
         // session lifetime (BQ: CCR cohort shows 5.2x higher RSS slope).
         if (setInProgressToolUseIDs && sdkMessage.type === 'user') {
-          const content = sdkMessage.message?.content
+          const content = (
+            sdkMessage.message as { content?: unknown } | null
+          )?.content
           if (Array.isArray(content)) {
             const resultIds: string[] = []
-            for (const block of content) {
+            for (const raw of content) {
+              const block = raw as { type?: string; tool_use_id?: string }
               if (block.type === 'tool_result') {
-                resultIds.push(block.tool_use_id)
+                resultIds.push(block.tool_use_id ?? '')
               }
             }
             if (resultIds.length > 0) {
@@ -290,7 +294,10 @@ export function useRemoteSession({
             setInProgressToolUseIDs &&
             converted.message.type === 'assistant'
           ) {
-            const toolUseIds = converted.message.message.content
+            const blocks = Array.isArray(converted.message.message.content)
+              ? converted.message.message.content
+              : []
+            const toolUseIds = blocks
               .filter(block => block.type === 'tool_use')
               .map(block => block.id)
             if (toolUseIds.length > 0) {
@@ -346,7 +353,8 @@ export function useRemoteSession({
           behavior: 'ask',
           message:
             request.description ?? `${request.tool_name} requires permission`,
-          suggestions: request.permission_suggestions,
+          suggestions:
+            request.permission_suggestions as PermissionAskDecision['suggestions'],
           blockedPath: request.blocked_path,
         }
 

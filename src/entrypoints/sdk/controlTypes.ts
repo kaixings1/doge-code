@@ -1,4 +1,4 @@
-import type { InternalPermissionMode } from '../../../types/permissions.js'
+import type { InternalPermissionMode } from '../../types/permissions.js'
 
 export type SDKControlInitializeRequest = {
   subtype: 'initialize'
@@ -17,6 +17,18 @@ export type SDKControlCancelRequest = {
 
 export type SDKControlPermissionRequest = {
   subtype: 'permission'
+  /** 请求权限的工具名 */
+  tool_name?: string
+  /** 工具调用描述 */
+  description?: string
+  /** 工具调用的 use id */
+  tool_use_id?: string
+  /** 工具入参 */
+  input?: Record<string, unknown>
+  /** 权限建议 */
+  permission_suggestions?: unknown[]
+  /** 被阻止的路径 */
+  blocked_path?: string
   [key: string]: unknown
 }
 
