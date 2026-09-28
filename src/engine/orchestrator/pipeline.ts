@@ -7,7 +7,7 @@
  * 支持 autoFix（失败自动重试）和 qualityGate（QA 门禁）。
  */
 
-import type { WorkflowStage, AgentMessage, OrchestrationResult, RoleExecutionResult, OrchestratorConfig } from './messages.js'
+import type { WorkflowStage, AgentRole, AgentMessage, OrchestrationResult, RoleExecutionResult, OrchestratorConfig } from './messages.js'
 import { buildAgentDefinition } from './agentRole.js'
 
 // Pipeline 阶段定义
@@ -52,7 +52,7 @@ export class PipelineExecutor {
     let previousOutput = ''
 
     const stages = this.config.mode === 'parallel'
-      ? ['research', 'analyze', 'plan', 'implement', 'verify', 'review']
+      ? (['research', 'analyze', 'plan', 'implement', 'verify', 'review'] as WorkflowStage[])
       : PIPELINE_STAGES
 
     for (const stage of stages) {
@@ -281,6 +281,7 @@ export class PipelineExecutor {
     startTime: number
   ): OrchestrationResult {
     const qualityScore = computeQualityScore(roleResults)
+    const duration = Date.now() - startTime
 
     return {
       success,
@@ -288,9 +289,9 @@ export class PipelineExecutor {
       roleResults,
       mergedOutput,
       qualityScore,
-      totalDuration: Date.now() - startTime,
+      totalDuration: duration,
       totalIterations: this.totalIterations,
-      summary: this.buildSummary(success, finalStage, roleResults, qualityScore),
+      summary: this.buildSummary(success, finalStage, roleResults, qualityScore, duration),
       artifacts: this.artifacts,
     }
   }
@@ -298,12 +299,12 @@ export class PipelineExecutor {
   /**
    * 构建摘要
    */
-  private buildSummary(success: boolean, finalStage: WorkflowStage, results: RoleExecutionResult[], qualityScore: number): string {
+  private buildSummary(success: boolean, finalStage: WorkflowStage, results: RoleExecutionResult[], qualityScore: number, duration: number): string {
     const status = success ? '✅ 成功' : '❌ 失败'
     const lines = [
       `${status} | 最终阶段: ${finalStage}`,
       `质量评分: ${qualityScore}/100`,
-      `总耗时: ${this.formatDuration(this.totalDuration)}`,
+      `总耗时: ${this.formatDuration(duration)}`,
       `总迭代: ${this.totalIterations}`,
       '',
       '阶段执行结果:',
@@ -362,8 +363,8 @@ function computeQualityScore(results: RoleExecutionResult[]): number {
 // 阶段 → 角色映射
 // ---------------------------------------------------------------------------
 
-function stageToRole(stage: WorkflowStage): string {
-  const map: Record<WorkflowStage, string> = {
+function stageToRole(stage: WorkflowStage): AgentRole {
+  const map: Record<WorkflowStage, AgentRole> = {
     research: 'researcher',
     analyze: 'pm',
     design: 'architect',
