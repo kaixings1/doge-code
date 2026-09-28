@@ -250,6 +250,7 @@ export class QueryEngine {
       tokenBudget: this.tokenBudget,
       requestBuilder: this.requestBuilder,
       responseHandler: this.responseHandler,
+      retryHandler: this.retryHandler,
       toolScheduler,
       apiClient: {
         async sendMessage() {

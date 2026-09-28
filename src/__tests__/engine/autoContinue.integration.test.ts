@@ -5,6 +5,7 @@ import { TokenBudgetManager } from '../../engine/tokenBudgetManager.js'
 import { RequestBuilder } from '../../engine/requestBuilder.js'
 import { ResponseHandler, type APIEvent } from '../../engine/responseHandler.js'
 import { ToolScheduler } from '../../engine/toolScheduler.js'
+import { RetryHandler } from '../../engine/errors/retryHandler.js'
 import { type InternalMessage } from '../../engine/messageNormalizer.js'
 
 /**
@@ -100,6 +101,7 @@ describe('MessageLoop 自动继续集成测试', () => {
       tokenBudget: new TokenBudgetManager(),
       requestBuilder: new RequestBuilder(),
       responseHandler: new ResponseHandler(),
+      retryHandler: new RetryHandler(),
       toolScheduler: new ToolScheduler(
         toolRegistry,
         { check: async () => true, requestAuthorization: async () => true, requestPermission: async () => true } as any,

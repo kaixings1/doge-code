@@ -5,6 +5,7 @@ import { TokenBudgetManager } from '../../engine/tokenBudgetManager.js'
 import { RequestBuilder } from '../../engine/requestBuilder.js'
 import { ResponseHandler } from '../../engine/responseHandler.js'
 import { ToolScheduler } from '../../engine/toolScheduler.js'
+import { RetryHandler } from '../../engine/errors/retryHandler.js'
 
 /**
  * 暴露 _recordAssistantResponse 以便测试
@@ -33,6 +34,7 @@ function createDeps(overrides: Partial<MessageLoopDeps> = {}, autoContinue?: Aut
     tokenBudget: new TokenBudgetManager(),
     requestBuilder: new RequestBuilder(),
     responseHandler: new ResponseHandler(),
+    retryHandler: new RetryHandler(),
     toolScheduler: new ToolScheduler(new Map(), { check: async () => true, requestAuthorization: async () => true, requestPermission: async () => true } as any, { execute: async () => ({ content: '', toolUseId: '', success: true }) } as any),
     apiClient: { sendMessage: async () => [] } as any,
     conversation: { messages: [], addToolResults: () => {} },
