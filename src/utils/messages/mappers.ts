@@ -78,10 +78,12 @@ type SDKCompactMetadata = SDKCompactBoundaryMessage['compact_metadata']
 export function toSDKCompactMetadata(
   meta: CompactMetadata,
 ): SDKCompactMetadata {
-  const seg = meta.preservedSegment
+  const seg = meta.preservedSegment as
+    | { headUuid: string; anchorUuid: string; tailUuid: string }
+    | null
   return {
-    trigger: meta.trigger,
-    pre_tokens: meta.preTokens,
+    trigger: meta.trigger as 'manual' | 'auto',
+    pre_tokens: meta.preTokens as number,
     ...(seg && {
       preserved_segment: {
         head_uuid: seg.headUuid,
@@ -123,7 +125,7 @@ export function toSDKMessages(messages: Message[]): SDKMessage[] {
             session_id: getSessionId(),
             parent_tool_use_id: null,
             uuid: message.uuid,
-            error: message.error,
+            error: message.error as SDKAssistantMessage['error'],
           },
         ]
       case 'user':
@@ -135,7 +137,7 @@ export function toSDKMessages(messages: Message[]): SDKMessage[] {
             parent_tool_use_id: null,
             uuid: message.uuid,
             timestamp: message.timestamp,
-            isSynthetic: message.isMeta || message.isVisibleInTranscriptOnly,
+            isSynthetic: !!(message.isMeta || message.isVisibleInTranscriptOnly),
             // Structured tool output (not the string content sent to the
             // model — the full Output object). Rides the protobuf catchall
             // so web viewers can read things like BriefTool's file_uuid
@@ -153,7 +155,9 @@ export function toSDKMessages(messages: Message[]): SDKMessage[] {
               subtype: 'compact_boundary' as const,
               session_id: getSessionId(),
               uuid: message.uuid,
-              compact_metadata: toSDKCompactMetadata(message.compactMetadata),
+              compact_metadata: toSDKCompactMetadata(
+              message.compactMetadata as CompactMetadata,
+            ),
             },
           ]
         }
@@ -161,17 +165,19 @@ export function toSDKMessages(messages: Message[]): SDKMessage[] {
         // output (stdout/stderr). The same subtype is also used for command
         // input metadata (e.g. <command-name>...</command-name>) which must
         // not leak to the RC web UI.
-        if (
-          message.subtype === 'local_command' &&
-          (message.content.includes(`<${LOCAL_COMMAND_STDOUT_TAG}>`) ||
-            message.content.includes(`<${LOCAL_COMMAND_STDERR_TAG}>`))
-        ) {
-          return [
-            localCommandOutputToSDKAssistantMessage(
-              message.content,
-              message.uuid,
-            ),
-          ]
+        if (message.subtype === 'local_command') {
+          const content = message.content as string
+          if (
+            content.includes(`<${LOCAL_COMMAND_STDOUT_TAG}>`) ||
+            content.includes(`<${LOCAL_COMMAND_STDERR_TAG}>`)
+          ) {
+            return [
+              localCommandOutputToSDKAssistantMessage(
+                content,
+                message.uuid as `${string}-${string}-${string}-${string}-${string}`,
+              ),
+            ]
+          }
         }
         return []
       default:
