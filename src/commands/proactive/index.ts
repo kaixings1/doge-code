@@ -468,7 +468,6 @@ export const call: LocalCommandCall = async (args) => {
       return { type: 'text', value: '📋 当前配置：\n' + JSON.stringify(config, null, 2) }
     }
     try {
-      // @ts-expect-error dynamic key
       config[key] = value === 'true' ? true : value === 'false' ? false : value
       saveConfig(config)
       return { type: 'text', value: '✅ ' + key + ' = ' + config[key] }
