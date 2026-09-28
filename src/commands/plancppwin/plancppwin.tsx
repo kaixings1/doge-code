@@ -2845,9 +2845,7 @@ const plancppwin: Command = {
   type: 'local-jsx',
   name: 'plancppwin',
   description: 'Windows C++ 项目规划向导 — 交互式选型后生成可直接编译的工程规划提示词',
-  aliases: ['cppwin'],
-  supportsNonInteractive: false,
-  load: () =>
+  aliases: ['cppwin'],  load: () =>
     Promise.resolve({
       call: async (onDone: LocalJSXCommandOnDone, context: unknown, args: string) =>
         call(onDone, context, args),

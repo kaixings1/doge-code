@@ -290,9 +290,7 @@ const browser = {
   type: 'local-jsx' as const,
   name: 'browser',
   description: 'Interactive web browser (navigate URLs, take screenshots, interact with pages)',
-  aliases: ['browse', 'web'],
-  supportsNonInteractive: false,
-  load: () => Promise.resolve({ call }),
+  aliases: ['browse', 'web'],  load: () => Promise.resolve({ call }),
 } satisfies Command
 
 export default browser

@@ -567,9 +567,7 @@ const stockCommand: Command = {
   type: 'local-jsx' as const,
   name: 'stock',
   description: '股票行情 - 实时行情/技术分析/自选股/投资组合/筛选/图表/提醒',
-  aliases: ['/stock', '/quotes'],
-  supportsNonInteractive: true,
-  load: () => Promise.resolve({ call }),
+  aliases: ['/stock', '/quotes'],  load: () => Promise.resolve({ call }),
 }
 
 export default stockCommand

@@ -1229,9 +1229,7 @@ const bughunter: Command = {
   type: 'local-jsx' as const,
   name: 'bughunter',
   description: 'Bug 猎人 - 多模式扫描/严重级别/自动修复/基线对比/导出/统计',
-  aliases: ['/bughunter', '/bug-hunter', '/scan-bugs'],
-  supportsNonInteractive: true,
-  load: () => Promise.resolve({ call }),
+  aliases: ['/bughunter', '/bug-hunter', '/scan-bugs'],  load: () => Promise.resolve({ call }),
 }
 
 export default bughunter

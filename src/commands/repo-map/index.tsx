@@ -226,9 +226,7 @@ const repoMap = {
   type: 'local-jsx' as const,
   name: 'repo-map',
   description: '显示代码库结构映射（符号提取 + PageRank 排序，类似 Aider）',
-  aliases: ['repomap', 'map'],
-  supportsNonInteractive: false,
-  load: () => Promise.resolve({ call }),
+  aliases: ['repomap', 'map'],  load: () => Promise.resolve({ call }),
 } satisfies Command
 
 export default repoMap
