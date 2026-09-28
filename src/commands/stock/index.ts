@@ -4,7 +4,8 @@
 // ============================================================================
 
 import type { Command } from '../../commands.js'
-import type { LocalJSXCommandCall } from '../../types/command.js'
+import type { LocalCommandCall } from '../../types/command.js'
+import type { LocalCommandResult } from '../../types/command.js'
 import { Box, Text, useInput } from '../../ink.js'
 import * as React from 'react'
 
@@ -77,7 +78,7 @@ function parseArgs(args: string): ParsedArgs {
 // Main Call Function
 // ============================================================================
 
-export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
+export const call: LocalCommandCall = async (args) => {
   const parsed = parseArgs(args || '')
   const { action, code, subAction, extra } = parsed
 
@@ -137,7 +138,7 @@ export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
 // Handlers
 // ============================================================================
 
-async function handleQuote(code: string, type: string) {
+async function handleQuote(code: string, type: string): Promise<LocalCommandResult> {
   if (!code) return { type: 'text', value: '❌ 请提供股票代码' }
   if (type === 'finance') return await handleFinance(code)
   if (type === 'overview') return await handleOverview(code)
@@ -153,7 +154,7 @@ async function handleQuote(code: string, type: string) {
   return { type: 'text', value: lines.join('\n') }
 }
 
-async function handleBatch(codesStr: string) {
+async function handleBatch(codesStr: string): Promise<LocalCommandResult> {
   if (!codesStr) return { type: 'text', value: '❌ 请提供股票代码（逗号分隔）' }
   const codes = codesStr.split(',').map(c => c.trim()).filter(Boolean)
   const quotes = await getBatchQuotes(codes)
@@ -165,19 +166,19 @@ async function handleBatch(codesStr: string) {
   return { type: 'text', value: lines.join('\n') }
 }
 
-async function handleFinance(code: string) {
+async function handleFinance(code: string): Promise<LocalCommandResult> {
   if (!code) return { type: 'text', value: '❌ 请提供股票代码' }
   const result = await getFinanceData(code)
   return { type: 'text', value: result }
 }
 
-async function handleOverview(code: string) {
+async function handleOverview(code: string): Promise<LocalCommandResult> {
   if (!code) return { type: 'text', value: '❌ 请提供股票代码' }
   const result = await getCompanyOverview(code)
   return { type: 'text', value: result }
 }
 
-async function handleHistory(code: string, period: string, extra: Record<string, string>) {
+async function handleHistory(code: string, period: string, extra: Record<string, string>): Promise<LocalCommandResult> {
   if (!code) return { type: 'text', value: '❌ 请提供股票代码' }
   const count = extra.count ? parseInt(extra.count) : 30
   const kline = await getKLineData(code, (period || 'daily') as any, count)
@@ -195,20 +196,20 @@ async function handleHistory(code: string, period: string, extra: Record<string,
   return { type: 'text', value: lines.join('\n') }
 }
 
-async function handleIndicators(code: string) {
+async function handleIndicators(code: string): Promise<LocalCommandResult> {
   if (!code) return { type: 'text', value: '❌ 请提供股票代码' }
   const kline = await getKLineData(code, 'daily', 120)
   const result = performTechnicalAnalysis(kline)
   return { type: 'text', value: result }
 }
 
-async function handleAnalysis(code: string) {
+async function handleAnalysis(code: string): Promise<LocalCommandResult> {
   if (!code) return { type: 'text', value: '❌ 请提供股票代码' }
   const result = await getFullAnalysis(code)
   return { type: 'text', value: result }
 }
 
-async function handleWatchlist(subAction: string, code: string, extra: Record<string, string>) {
+async function handleWatchlist(subAction: string, code: string, extra: Record<string, string>): Promise<LocalCommandResult> {
   switch (subAction) {
     case 'add':
       if (!code) return { type: 'text', value: '❌ 请提供股票代码' }
@@ -243,7 +244,7 @@ async function handleWatchlist(subAction: string, code: string, extra: Record<st
   }
 }
 
-async function handlePortfolio(subAction: string, code: string, extra: Record<string, string>) {
+async function handlePortfolio(subAction: string, code: string, extra: Record<string, string>): Promise<LocalCommandResult> {
   switch (subAction) {
     case 'add':
       if (!code) return { type: 'text', value: '❌ 请提供股票代码' }
@@ -273,7 +274,7 @@ async function handlePortfolio(subAction: string, code: string, extra: Record<st
   }
 }
 
-async function handleScreen(subAction: string, extra: Record<string, string>) {
+async function handleScreen(subAction: string, extra: Record<string, string>): Promise<LocalCommandResult> {
   switch (subAction) {
     case 'low-val':
       return { type: 'text', value: await screenLowValuation() }
@@ -303,7 +304,7 @@ async function handleScreen(subAction: string, extra: Record<string, string>) {
   }
 }
 
-async function handleChart(code: string, subAction: string, extra: Record<string, string>) {
+async function handleChart(code: string, subAction: string, extra: Record<string, string>): Promise<LocalCommandResult> {
   if (!code) return { type: 'text', value: '❌ 请提供股票代码' }
   const period = (extra.period || 'daily') as any
   const count = extra.count ? parseInt(extra.count) : 60
@@ -325,7 +326,7 @@ async function handleChart(code: string, subAction: string, extra: Record<string
   }
 }
 
-async function handleAlert(subAction: string, code: string, extra: Record<string, string>) {
+async function handleAlert(subAction: string, code: string, extra: Record<string, string>): Promise<LocalCommandResult> {
   switch (subAction) {
     case 'add':
       if (!code) return { type: 'text', value: '❌ 请提供股票代码' }
@@ -355,7 +356,7 @@ async function handleAlert(subAction: string, code: string, extra: Record<string
   }
 }
 
-async function handleSearch(keyword: string) {
+async function handleSearch(keyword: string): Promise<LocalCommandResult> {
   if (!keyword) return { type: 'text', value: '❌ 请提供搜索关键词' }
   const results = await searchStock(keyword)
 
@@ -368,7 +369,7 @@ async function handleSearch(keyword: string) {
   return { type: 'text', value: lines.join('\n') }
 }
 
-async function handleMarket() {
+async function handleMarket(): Promise<LocalCommandResult> {
   const indices = await getIndexQuotes()
   const gainers = await getTopStocks('gainer', 5)
   const losers = await getTopStocks('loser', 5)
@@ -395,7 +396,7 @@ async function handleMarket() {
   return { type: 'text', value: lines.join('\n') }
 }
 
-async function handleNews(code: string) {
+async function handleNews(code: string): Promise<LocalCommandResult> {
   if (!code) return { type: 'text', value: '❌ 请提供股票代码' }
   const news = await getStockNews(code, 10)
 
@@ -409,7 +410,7 @@ async function handleNews(code: string) {
   return { type: 'text', value: lines.join('\n') }
 }
 
-async function handleFund(code: string) {
+async function handleFund(code: string): Promise<LocalCommandResult> {
   if (!code) return { type: 'text', value: '❌ 请提供股票代码' }
   const flow = await getFundFlow(code)
 
@@ -426,7 +427,7 @@ async function handleFund(code: string) {
   return { type: 'text', value: lines.join('\n') }
 }
 
-async function handleDividend(code: string) {
+async function handleDividend(code: string): Promise<LocalCommandResult> {
   if (!code) return { type: 'text', value: '❌ 请提供股票代码' }
   const dividends = await getDividendHistory(code)
 
@@ -439,26 +440,26 @@ async function handleDividend(code: string) {
   return { type: 'text', value: lines.join('\n') }
 }
 
-async function handleIndustry(code: string) {
+async function handleIndustry(code: string): Promise<LocalCommandResult> {
   if (!code) return { type: 'text', value: '❌ 请提供股票代码' }
   const result = await getIndustryComparison(code)
   const lines: string[] = [`🏭 ${code} 行业对比:`, `行业: ${result.industry}`, `行业平均PE: ${result.avgPE.toFixed(2)}`, `行业平均PB: ${result.avgPB.toFixed(2)}`]
   return { type: 'text', value: lines.join('\n') }
 }
 
-async function handleIncome(code: string) {
+async function handleIncome(code: string): Promise<LocalCommandResult> {
   if (!code) return { type: 'text', value: '❌ 请提供股票代码' }
   const result = await getIncomeStatement(code)
   return { type: 'text', value: result }
 }
 
-async function handleBalance(code: string) {
+async function handleBalance(code: string): Promise<LocalCommandResult> {
   if (!code) return { type: 'text', value: '❌ 请提供股票代码' }
   const result = await getBalanceSheet(code)
   return { type: 'text', value: result }
 }
 
-async function handleCashflow(code: string) {
+async function handleCashflow(code: string): Promise<LocalCommandResult> {
   if (!code) return { type: 'text', value: '❌ 请提供股票代码' }
   const result = await getCashFlow(code)
   return { type: 'text', value: result }
@@ -564,7 +565,8 @@ function renderHelp(): string {
 // ============================================================================
 
 const stockCommand: Command = {
-  type: 'local-jsx' as const,
+  type: 'local' as const,
+  supportsNonInteractive: true,
   name: 'stock',
   description: '股票行情 - 实时行情/技术分析/自选股/投资组合/筛选/图表/提醒',
   aliases: ['/stock', '/quotes'],  load: () => Promise.resolve({ call }),
