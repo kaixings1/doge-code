@@ -15,7 +15,7 @@ import {
   logEvent,
 } from '../../services/analytics/index.js'
 import { getFeatureValue_CACHED_MAY_BE_STALE } from '../../services/analytics/growthbook.js'
-import { type FilesApiConfig, uploadFile } from '../../services/api/filesApi.js'
+import { type FilesApiConfig, uploadFile, type UploadResult } from '../../services/api/filesApi.js'
 import { getCwd } from '../cwd.js'
 import { logForDebugging } from '../debug.js'
 import { execFileNoThrowWithCwd } from '../execFileNoThrow.js'
@@ -231,16 +231,17 @@ export async function createAndUploadGitBundle(
     )
 
     if (!bundle.ok) {
-      logForDebugging(`[gitBundle] ${bundle.error}`)
+      const fb = bundle as Extract<BundleCreateResult, { ok: false }>
+      logForDebugging(`[gitBundle] ${fb.error}`)
       logEvent('tengu_ccr_bundle_upload', {
         outcome:
-          bundle.failReason as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
+          fb.failReason as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
         max_bytes: maxBytes,
       })
       return {
         success: false,
-        error: bundle.error,
-        failReason: bundle.failReason,
+        error: fb.error,
+        failReason: fb.failReason,
       }
     }
 
@@ -254,7 +255,8 @@ export async function createAndUploadGitBundle(
         outcome:
           'failed' as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
       })
-      return { success: false, error: upload.error }
+      const fu = upload as Extract<UploadResult, { success: false }>
+      return { success: false, error: fu.error }
     }
 
     logForDebugging(

@@ -39,7 +39,7 @@ import { jsonStringify } from './slowOperations.js';
 import { asSystemPrompt } from './systemPromptType.js';
 import { fetchSession, type GitRepositoryOutcome, type GitSource, getBranchFromSession, getOAuthHeaders, type SessionResource } from './teleport/api.js';
 import { fetchEnvironments } from './teleport/environments.js';
-import { createAndUploadGitBundle } from './teleport/gitBundle.js';
+import { createAndUploadGitBundle, type BundleUploadResult } from './teleport/gitBundle.js';
 export type TeleportResult = {
   messages: Message[];
   branchName: string;
@@ -844,7 +844,8 @@ export async function teleportToRemote(options: {
           signal
         });
         if (!bundle.success) {
-          logError(new Error(`Bundle upload failed: ${bundle.error}`));
+          const fb = bundle as Extract<BundleUploadResult, { success: false }>
+          logError(new Error(`Bundle upload failed: ${fb.error}`));
           return null;
         }
         seedBundleFileId = bundle.fileId;
@@ -1008,11 +1009,12 @@ export async function teleportToRemote(options: {
         signal
       });
       if (!bundle.success) {
-        logError(new Error(`Bundle upload failed: ${bundle.error}`));
+        const fb = bundle as Extract<BundleUploadResult, { success: false }>
+        logError(new Error(`Bundle upload failed: ${fb.error}`));
         // Only steer users to GitHub setup when there's a remote to clone from.
         const setup = repoInfo ? '。请在 https://claude.ai/code 上设置 GitHub' : '';
         let msg: string;
-        switch (bundle.failReason) {
+        switch (fb.failReason) {
           case 'empty_repo':
             msg = '仓库没有提交 — 运行 `git add . && git commit -m "initial"` 然后重试';
             break;
@@ -1020,16 +1022,16 @@ export async function teleportToRemote(options: {
             msg = `仓库过大，无法传送${setup}`;
             break;
           case 'git_error':
-            msg = `创建 git bundle 失败（${bundle.error}）${setup}`;
+            msg = `创建 git bundle 失败（${fb.error}）${setup}`;
             break;
           case undefined:
-            msg = `Bundle 上传失败：${bundle.error}${setup}`;
+            msg = `Bundle 上传失败：${fb.error}${setup}`;
             break;
           default:
             {
-              const _exhaustive: never = bundle.failReason;
+              const _exhaustive: never = fb.failReason;
               void _exhaustive;
-              msg = `Bundle upload failed: ${bundle.error}`;
+              msg = `Bundle upload failed: ${fb.error}`;
             }
         }
         options.onBundleFail?.(msg);
