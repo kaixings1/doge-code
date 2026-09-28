@@ -240,9 +240,10 @@ async function buildRequestBody(options: any) {
     const chunks: Buffer[] = []
     for (const [key, value] of Object.entries(options.form)) {
       chunks.push(Buffer.from(`--${boundary}\r\n`))
-      if (typeof value === 'object' && 'filePath' in value) {
-        const fileData = await fs.promises.readFile(value.filePath)
-        chunks.push(Buffer.from(`Content-Disposition: form-data; name="${key}"; filename="${value.filename}"\r\n`))
+      if (typeof value === 'object' && value !== null && 'filePath' in value) {
+        const fileObj = value as { filePath: string; filename?: string }
+        const fileData = await fs.promises.readFile(fileObj.filePath)
+        chunks.push(Buffer.from(`Content-Disposition: form-data; name="${key}"; filename="${fileObj.filename ?? ''}"\r\n`))
         chunks.push(Buffer.from(`Content-Type: application/octet-stream\r\n\r\n`))
         chunks.push(fileData)
         chunks.push(Buffer.from(`\r\n`))
@@ -266,7 +267,7 @@ async function buildRequestBody(options: any) {
     }
       } catch {}
     } else if (Object.keys(options.form).length > 0) {
-      const encoded = querystring.stringify(options.form as Record<string, unknown>)
+      const encoded = querystring.stringify(options.form as Record<string, string | string[]>)
       options.body = encoded
       if (!options.headers['Content-Type']) {
         options.headers['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -611,7 +612,12 @@ export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
   }
 
   // 基础请求选项
-  const baseRequestOpts = {
+  const baseRequestOpts: {
+    method: string
+    headers: Record<string, string>
+    url: string
+    body?: unknown
+  } = {
     method: effectiveMethod,
     headers: { ...options.headers },
     url: options.url,
