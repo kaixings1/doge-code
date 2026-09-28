@@ -408,7 +408,11 @@ export async function installResolvedPlugin({
     allowedCrossMarketplaces,
   )
   if (!resolution.ok) {
-    return { ok: false, reason: 'resolution-failed', resolution }
+    return {
+      ok: false,
+      reason: 'resolution-failed',
+      resolution: resolution as ResolutionResult & { ok: false },
+    }
   }
 
   // ── Policy guard for transitive dependencies ──
@@ -525,31 +529,32 @@ export async function installPluginFromMarketplace({
     })
 
     if (!result.ok) {
-      switch (result.reason) {
+      const failed = result as Extract<InstallCoreResult, { ok: false }>
+      switch (failed.reason) {
         case 'local-source-no-location':
           return {
             success: false,
-            error: `无法在没有市场安装位置的情况下安装本地插件 "${result.pluginName}"`,
+            error: `无法在没有市场安装位置的情况下安装本地插件 "${failed.pluginName}"`,
           }
         case 'settings-write-failed':
           return {
             success: false,
-            error: `更新设置失败：${result.message}`,
+            error: `更新设置失败：${failed.message}`,
           }
         case 'resolution-failed':
           return {
             success: false,
-            error: formatResolutionError(result.resolution),
+            error: formatResolutionError(failed.resolution),
           }
         case 'blocked-by-policy':
           return {
             success: false,
-            error: `插件 "${result.pluginName}" 被您组织的策略阻止，无法安装`,
+            error: `插件 "${failed.pluginName}" 被您组织的策略阻止，无法安装`,
           }
         case 'dependency-blocked-by-policy':
           return {
             success: false,
-            error: `无法安装 "${result.pluginName}"：依赖 "${result.blockedDependency}" 被您组织的策略阻止`,
+            error: `无法安装 "${failed.pluginName}"：依赖 "${failed.blockedDependency}" 被您组织的策略阻止`,
           }
       }
     }
