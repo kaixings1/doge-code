@@ -138,11 +138,12 @@ export const ScheduleTool = buildTool({
           return { data: { success: false, message: '未找到要执行的命令' } as Output }
         }
         try {
-          const result = await exec(targetCommand, new AbortController().signal, 'bash', { timeout: 120000 })
+          const cmd = await exec(targetCommand, new AbortController().signal, 'bash', { timeout: 120000 })
+          const execResult = await cmd.result
           return {
             data: {
-              success: result.code === 0,
-              message: result.code === 0 ? '执行成功' : `执行失败: ${result.stderr}`,
+              success: execResult.code === 0,
+              message: execResult.code === 0 ? '执行成功' : `执行失败: ${execResult.stderr}`,
             } as Output,
           }
         } catch (err) {
