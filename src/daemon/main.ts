@@ -59,8 +59,16 @@ export async function daemonMain(args: string[]): Promise<void> {
         windowsHide: true,
       })
       child.unref()
-      writePid(child.pid ?? 0)
-      console.log(`守护进程已启动（pid=${child.pid}）`)
+      const pid = child.pid
+      if (pid == null) {
+        console.error('守护进程启动失败：无法获取子进程 PID')
+        return
+      }
+      writePid(pid)
+      child.on('exit', () => {
+        try { rmSync(pidFile(), { force: true }) } catch { /* ignore */ }
+      })
+      console.log(`守护进程已启动（pid=${pid}）`)
       return
     }
 

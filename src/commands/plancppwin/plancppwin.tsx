@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useExitOnCtrlCDWithKeybindings } from '../../hooks/useExitOnCtrlCDWithKeybindings.js';
 import { Box, Text, useInput } from '../../ink.js';
-import type { LocalJSXCommandOnDone } from '../../types/command.js';
+import type { Command, LocalJSXCommandOnDone } from '../../types/command.js';
 import { mkdirSync, readFileSync, writeFileSync, existsSync, statSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
@@ -2234,6 +2234,22 @@ function PlanCppWinUI({ onDone, targetDir }: { onDone: LocalJSXCommandOnDone; ta
     for (const g of GROUPS) for (const c of g.categories) n += c.items.length;
     return n;
   }, []);
+  // ── 已勾选项统计 ──
+  const totalChecked = useMemo(() => {
+    let n = 0;
+    try {
+      for (let gi = 0; gi < GROUPS.length; gi++) {
+        for (let ci = 0; ci < GROUPS[gi].categories.length; ci++) {
+          for (const item of GROUPS[gi].categories[ci].items) {
+            if (selections[makeKey(gi, ci, item.id)]) n++;
+          }
+        }
+      }
+    } catch {
+      // 结构不完整时保守返回 0
+    }
+    return n;
+  }, [selections]);
   const currentGroup = GROUPS[groupIndex];
   const targetExists = targetDir ? dirExists(targetDir) : false;
 
@@ -2823,3 +2839,19 @@ function generateProject(
   const prompt = lines.join('\n');
   onDone(prompt, { display: 'system', nextInput: prompt, submitNextInput: true });
 }
+
+// 命令注册对象：本文件此前只有 call() 实现、没有 Command 导出，导致 /plancppwin 一直未被接线。
+const plancppwin: Command = {
+  type: 'local-jsx',
+  name: 'plancppwin',
+  description: 'Windows C++ 项目规划向导 — 交互式选型后生成可直接编译的工程规划提示词',
+  aliases: ['cppwin'],
+  supportsNonInteractive: false,
+  load: () =>
+    Promise.resolve({
+      call: async (onDone: LocalJSXCommandOnDone, context: unknown, args: string) =>
+        call(onDone, context, args),
+    }),
+}
+
+export default plancppwin

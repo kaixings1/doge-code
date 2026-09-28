@@ -1,5 +1,5 @@
 ---
-description: Generate comprehensive documentation for code and APIs
+description: 为代码和 API 生成全面的文档。
 tags: [documentation, api-docs]
 ---
 

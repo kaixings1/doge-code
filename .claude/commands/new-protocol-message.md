@@ -1,6 +1,6 @@
 ---
 name: New protocol message
-description: Create a new protocol message from core/gui/ide to core/gui/ide
+description: 从 core/gui/ide 创建到 core/gui/ide 的新协议消息。
 alwaysApply: false
 ---
 

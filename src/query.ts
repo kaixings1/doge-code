@@ -114,15 +114,6 @@ import {
 } from './bootstrap/state.js'
 import { createBudgetTracker, checkTokenBudget } from './query/tokenBudget.js'
 import { count } from './utils/array.js'
-import {
-  shouldTruncate,
-  truncateMessages,
-  getTruncateConfig,
-} from './services/compact/truncateContext.js'
-import {
-  checkTruncateFrequency,
-  recordTruncateEvent,
-} from './utils/truncateRecovery.js'
  
 const snipModule = feature('HISTORY_SNIP')
   ? (require('./services/compact/snipCompact.js') as typeof import('./services/compact/snipCompact.js'))
@@ -439,7 +430,7 @@ async function* queryLoop(
       messagesForQuery = snipResult.messages
       snipTokensFreed = snipResult.tokensFreed
       if (snipResult.boundaryMessage) {
-        yield snipResult.boundaryMessage
+        yield snipResult.boundaryMessage as Message
       }
       queryCheckpoint('query_snip_end')
     }
@@ -458,11 +449,11 @@ async function* queryLoop(
 
     if (feature('CONTEXT_COLLAPSE') && contextCollapse) {
       const collapseResult = await contextCollapse.applyCollapsesIfNeeded(
-        messagesForQuery,
+        messagesForQuery as any,
         toolUseContext,
         querySource,
       )
-      messagesForQuery = collapseResult.messages
+      messagesForQuery = collapseResult.messages as any
     }
 
     const fullSystemPrompt = asSystemPrompt(
@@ -759,8 +750,8 @@ async function* queryLoop(
               if (clonedContent) {
                 yieldMessage = {
                   ...message,
-                  message: { ...message.message, content: clonedContent },
-                }
+                  message: { ...(message as any).message, content: clonedContent },
+                } as any
               }
             }
             let withheld = false
@@ -794,7 +785,7 @@ async function* queryLoop(
               const assistantContent2 = (message.message as { content?: ContentBlock[] } | undefined)?.content
               logForDebugging(`[DEBUG] 2 Received assistant message, content length=${assistantContent2?.length ?? 0}`);
               logForDebugging(`[DEBUG]  2 Content types: ${JSON.stringify(assistantContent2?.map(c => c.type) ?? [])}`);
-              assistantMessages.push(message)
+              assistantMessages.push(message as any)
 
               const msgToolUseBlocks = (assistantContent2 ?? []).filter(
                 content => content.type === 'tool_use',
@@ -814,7 +805,7 @@ async function* queryLoop(
                 !toolUseContext.abortController.signal.aborted
               ) {
                 for (const toolBlock of msgToolUseBlocks) {
-                  streamingToolExecutor.addTool(toolBlock, message)
+                  streamingToolExecutor.addTool(toolBlock, message as any)
                 }
               }
             }
@@ -1066,9 +1057,9 @@ async function* queryLoop(
           state.transition?.reason !== 'collapse_drain_retry'
         ) {
           const drained = contextCollapse.recoverFromOverflow(
-            messagesForQuery,
+            messagesForQuery as any,
             querySource,
-          )
+          ) as any
           if (drained.committed > 0) {
             // [REFACTOR] 使用 createNextState
             state = createNextState(state, {
@@ -1105,7 +1096,7 @@ async function* queryLoop(
             messagesForQuery,
           )
 
-          const postCompactMessages = buildPostCompactMessages(compacted)
+          const postCompactMessages = buildPostCompactMessages(compacted as any)
           for (const msg of postCompactMessages) {
             yield msg
           }

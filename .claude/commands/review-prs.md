@@ -1,61 +1,61 @@
-# Review PRs Command
+# 审查 PR 命令
 
-Triage incoming pull requests in parallel: decide what's worth merging, prep clean rebased worktrees, fix any blockers, and hand them back ready for human merge.
+并行地对新到的拉取请求做分诊：决定哪些值得合并、准备干净的已 rebase 工作树、修复阻塞项，并把它们交回来供人工合并。
 
-## Arguments
+## 参数
 
-- `$ARGUMENTS` — optional. Either:
-  - a space- or comma-separated list of PR numbers / URLs, OR
-  - GitHub-search qualifiers (`is:open`, `author:foo`, `label:bug`, `draft:false`, ...) and/or a relative time window like `3d`, `2w`, `12h`.
+- `$ARGUMENTS` —— 可选。可以是：
+  - 以空格或逗号分隔的 PR 编号 / URL 列表，**或**
+  - GitHub 搜索限定符（`is:open`、`author:foo`、`label:bug`、`draft:false`……）和/或相对时间窗口，如 `3d`、`2w`、`12h`。
 
-If no PRs and no flags are passed, default to **all open PRs opened in the last 3 days**.
+如果没有传入任何 PR 和标志，默认处理**过去 3 天内创建的所有未关闭 PR**。
 
-## Steps
+## 步骤
 
-### 1. Resolve the PR set
+### 1. 确定 PR 集合
 
-Parse `$ARGUMENTS`.
+解析 `$ARGUMENTS`。
 
-- If explicit PR numbers/URLs given, use them verbatim.
-- Otherwise call the `github` tool with `op: search_prs`. Default (no args):
+- 如果给出了明确的 PR 编号/URL，原样使用。
+- 否则调用 `github` 工具，`op: search_prs`。默认（无参数）：
 
   ```
   github { op: "search_prs", query: "is:open", since: "3d", limit: 50 }
   ```
 
-  Pass any user-supplied qualifiers verbatim through `query` (combine with `is:open` if not already present). Use `since` for the time window (`3d`, `2w`, `12h`, ISO date — see the `github` tool docs); set `dateField: "updated"` instead of the `created` default only when the user explicitly asks for recently-touched PRs.
+  用户提供的限定符原样通过 `query` 传递（如果尚未包含 `is:open`，则与之组合）。用 `since` 指定时间窗口（`3d`、`2w`、`12h`、ISO 日期 —— 见 `github` 工具文档）；仅当用户明确要求最近被修改过的 PR 时，才把默认的 `created` 改为 `dateField: "updated"`。
 
-Print the resolved set before fanning out so the user can confirm scope.
+在分派前打印确定下来的集合，以便用户确认范围。
 
-### 2. Fan out one subagent per PR
+### 2. 每个 PR 分派一个子代理
 
-Use **`task` with parallel subagents** — one task per PR. Pass the PR number, head ref, author, and the workflow below as the assignment. Each subagent works in isolation; they coordinate via `irc` only if a fix on PR A would obviously conflict with PR B.
+使用 **`task` 并行子代理** —— 每个 PR 一个任务。把 PR 编号、head ref、作者以及下面的工作流传下去作为任务。每个子代理在隔离环境中工作；仅当 PR A 上的修复会明显与 PR B 冲突时，才通过 `irc` 协调。
 
-Each subagent **MUST** follow this exact workflow:
+每个子代理**必须**严格遵循此工作流：
 
-#### a. Read & decide
+#### a. 阅读并决策
 
-1. Read `pr://<N>` (with comments by default; append `?comments=0` to skip) and `pr://<N>/diff` for the changed-files listing — use `pr://<N>/diff/all` when you need the full unified diff, or `pr://<N>/diff/<i>` for a single file slice.
-2. Check `git log origin/main` and `gh search prs` for whether the same change already landed.
-3. Classify into one of:
-   - **slop** — AI-generated noise, broken, off-spec, or net-negative. Drop, write a 1–2 line justification, do not check out.
-   - **superseded** — already fixed/merged in main or by a newer PR. Drop with a pointer.
-   - **worthy** — proceed.
+1. 读取 `pr://<N>`（默认含评论；追加 `?comments=0` 可跳过）以及 `pr://<N>/diff` 获取变更文件列表 —— 需要完整统一 diff 时用 `pr://<N>/diff/all`，或 `pr://<N>/diff/<i>` 获取单个文件切片。
+2. 检查 `git log origin/main` 和 `gh search prs`，看同样的变更是否已经落地。
+3. 归入以下类别之一：
+   - **slop** —— AI 生成的噪音、损坏、偏离规格，或净负面。丢弃，写 1-2 行理由，不检出。
+   - **superseded** —— 已在 main 中或由更新的 PR 修复/合并。丢弃并给出指向。
+   - **worthy** —— 继续处理。
 
-Anything ambiguous defaults to `worthy` — let the human decide on a real branch.
+任何含糊不清的都默认为 `worthy` —— 让人类在真实分支上决定。
 
-#### b. Check out into a worktree
+#### b. 检出到 worktree
 
 ```bash
 gh_PR=<NUMBER>
 # pr_checkout creates ~/.omp/wt/<encoded-repo>/pr-<N>/ and configures push remote
 ```
 
-Use the `github pr_checkout` tool, **not** raw `gh pr checkout`. That gives a dedicated worktree wired up for `pr_push` later.
+使用 `github pr_checkout` 工具，**不是**原生的 `gh pr checkout`。前者会给出一个专用 worktree，并为后续的 `pr_push` 接好线。
 
-#### c. Symlink build artifacts (skip native rebuilds)
+#### c. 符号链接构建产物（跳过原生重新编译）
 
-From inside the new worktree, link the heavy build outputs from the main checkout so `bun check` / `cargo build` / native loaders do not recompile:
+从新 worktree 内部，把主检出的重构建输出链接过来，以便 `bun check` / `cargo build` / 原生加载器不必重新编译：
 
 ```bash
 MAIN="<absolute path to main worktree, e.g. ~/Projects/pi>"
@@ -73,35 +73,35 @@ for f in "$MAIN"/packages/natives/native/*.node; do
 done
 ```
 
-Resolve `$MAIN` from the original cwd before `pr_checkout` (`git rev-parse --show-toplevel`). Use absolute paths in symlinks; the worktree lives outside the main repo so relative paths break.
+在 `pr_checkout` 之前从原始 cwd 解析 `$MAIN`（`git rev-parse --show-toplevel`）。符号链接中使用绝对路径；worktree 位于主仓库之外，相对路径会失效。
 
-#### d. Rebase onto main
+#### d. Rebase 到 main 上
 
 ```bash
 git fetch origin main
 git rebase origin/main
 ```
 
-If the rebase conflicts:
-- Resolve trivially mechanical conflicts (formatting, import order, adjacent-line edits) and continue.
-- Anything semantic → abort the rebase, leave a note in the final report, do not commit.
+如果 rebase 出现冲突：
+- 解决纯机械性的冲突（格式、导入顺序、相邻行编辑）并继续。
+- 任何语义性的 → 中止 rebase，在最终报告里留一条备注，不提交。
 
-#### e. Review & fix critical issues
+#### e. 审查并修复关键问题
 
-Inside the worktree, review the diff with the lens of: correctness, security, regressions, breaking-change impact, test coverage of the new path.
+在 worktree 内部，以下述视角审查 diff：正确性、安全性、回归、破坏性变更影响、新路径的测试覆盖。
 
-Only fix things that **block merge**: build/test breakage, obvious bugs introduced by the PR, missing edge-case handling the PR's own goal demands. Do **not** rewrite for taste, refactor unrelated code, or expand scope.
+只修复**阻塞合并**的东西：构建/测试破损、PR 引入的明显 bug、PR 自身目标所要求的边界情况处理缺失。**不要**出于审美重写、重构无关代码或扩大范围。
 
-For every fix:
-- Read existing patterns first; match repo conventions (see `AGENTS.md`).
-- Add or update tests for the actual behavior change.
-- Run only the targeted test file(s) for the area touched. No project-wide test runs from subagents.
+对每个修复：
+- 先阅读既有模式；匹配仓库约定（见 `AGENTS.md`）。
+- 为实际行为变更添加或更新测试。
+- 只运行受影响区域的定向测试文件。子代理不得运行项目级测试。
 
-Format/lint at the end with `bun fmt` over the union of files you edited.
+最后对你编辑过的文件集合运行 `bun fmt` 做格式/lint。
 
-#### f. Commit
+#### f. 提交
 
-One conventional commit per logical fix on top of the rebased PR branch:
+在已 rebase 的 PR 分支之上，每个逻辑修复一个约定式提交：
 
 ```bash
 git add -A
@@ -110,11 +110,11 @@ git commit -m "fix(<scope>): <what & why>
 Addresses review feedback on #<PR>."
 ```
 
-Do **not** amend the PR author's commits. Do **not** push — the human merges.
+**不要** amend PR 作者的提交。**不要**推送 —— 由人类合并。
 
-#### g. Report back
+#### g. 上报
 
-Each subagent returns a short structured report:
+每个子代理返回一份简短的结构化报告：
 
 ```
 PR #<N>  <title>
@@ -125,23 +125,23 @@ Fixes:    <commit shas + one-liners>   (or: none needed)
 Blockers: <anything the human must decide>
 ```
 
-### 3. Aggregate
+### 3. 汇总
 
-After all subagents finish, print a single summary table:
+所有子代理完成后，打印一张汇总表：
 
 ```
 | PR | Title | Decision | Rebase | Fixes | Blockers |
 |----|-------|----------|--------|-------|----------|
 ```
 
-Followed by the worktree paths grouped by decision, so the user can `cd` and merge in one go.
+随后按决策分组列出 worktree 路径，以便用户一次性 `cd` 并合并。
 
-## Rules
+## 规则
 
-- **MUST** use parallel subagents — one per PR — not a serial loop.
-- **MUST** use `github pr_checkout` (carries push metadata) — not raw `gh pr checkout`.
-- **MUST** symlink `target`, `node_modules`, and the native `*.node` binaries before any build/test runs in the worktree. **MUST NOT** symlink the whole `packages/natives/native/` directory that would shadow tracked PR changes.
-- **MUST NOT** push or merge. Human reviews and merges.
-- **MUST NOT** expand scope: fixes are limited to merge blockers on this PR's diff.
-- **MUST NOT** force-push over the PR author's history.
-- If a PR is `slop`/`superseded`, skip checkout entirely — just record the decision.
+- **必须**使用并行子代理 —— 每个 PR 一个 —— 而非串行循环。
+- **必须**使用 `github pr_checkout`（携带推送元数据）—— 而非原生的 `gh pr checkout`。
+- **必须**在 worktree 中运行任何构建/测试之前，符号链接 `target`、`node_modules` 和原生 `*.node` 二进制。**绝不可**符号链接整个 `packages/natives/native/` 目录，那会遮蔽被跟踪的 PR 变更。
+- **绝不**推送或合并。由人类审查并合并。
+- **绝不**扩大范围：修复仅限于此 PR diff 上的合并阻塞项。
+- **绝不**对 PR 作者的历史做强制推送。
+- 如果 PR 是 `slop`/`superseded`，完全跳过检出 —— 只记录决策。

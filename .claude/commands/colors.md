@@ -1,6 +1,6 @@
 ---
 name: Extension Color Themes
-description: Guidelines for using theme colors in GUI components
+description: 在 GUI 组件中使用主题颜色的指南。
 alwaysApply: false
 globs: "gui/**/*.tsx"
 ---

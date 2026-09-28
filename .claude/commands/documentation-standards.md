@@ -1,6 +1,6 @@
 ---
 globs: docs/\*_/_.{md,mdx}
-description: This style guide should be used as a reference for maintaining consistency across all Continue documentation
+description: 此样式指南应用于维护所有 Continue 文档的一致性。
 alwaysApply: false
 ---
 

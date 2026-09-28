@@ -253,8 +253,10 @@ function decisionReasonToOTelSource(
 function getNextImagePasteId(messages: Message[]): number {
   let maxId = 0
   for (const message of messages) {
-    if (message.type === 'user' && message.imagePasteIds) {
-      for (const id of message.imagePasteIds) {
+    // imagePasteIds 未声明在 MessageBase 上，走索引签名为 unknown；此处收窄为 number[]
+    const ids = message.imagePasteIds as number[] | null
+    if (message.type === 'user' && ids) {
+      for (const id of ids) {
         if (id > maxId) maxId = id
       }
     }
@@ -356,7 +358,8 @@ export async function* runToolUse(
     }
   }
   const messageId = assistantMessage.message.id
-  const requestId = assistantMessage.requestId
+  // requestId 未声明在 MessageBase 上，走索引签名为 unknown；此处收窄为 string
+  const requestId = assistantMessage.requestId as string | null
   const mcpServerType = getMcpServerType(
     toolName,
     toolUseContext.options.mcpClients,
@@ -549,7 +552,8 @@ function streamedCheckPermissionsAndCallTool(
       })
       stream.enqueue({
         message: createProgressMessage({
-          toolUseID: progress.toolUseID,
+          // toolUseID 在 ProgressMessage 分支下走索引签名为 unknown；此处收窄为 string
+          toolUseID: progress.toolUseID as string,
           parentToolUseID: toolUseID,
           data: progress.data,
         }),
@@ -598,6 +602,40 @@ export function buildSchemaNotSentHint(
 }
 
 
+// zod v4 用 ZodPipe 替代了 ZodEffects；从 ZodPipe 链中提取底层 ZodObject
+function extractZodObjectFromPipe(schema: z.ZodType): z.ZodObject | null {
+  let current: z.ZodType = schema
+  // zod v3 的 ZodEffects（zod v4 中不存在，用 any 兜底）
+  const ZodEffects = (z as unknown as Record<string, unknown>).ZodEffects as
+    | (new () => z.ZodType)
+    | null
+  for (let i = 0; i < 10; i++) {
+    if (current instanceof z.ZodObject) return current
+    // zod v3 兼容：ZodEffects 包裹内部 schema
+    if (ZodEffects && current instanceof ZodEffects) {
+      const inner = (current as unknown as { _def?: { in?: z.ZodType } })._def?.in
+      if (inner) {
+        current = inner
+        continue
+      }
+    }
+    // zod v4：ZodPipe 有 _def.in（输入 schema）
+    const pipe = current as unknown as { _def?: { in?: z.ZodType } }
+    if (pipe._def?.in) {
+      current = pipe._def.in
+      continue
+    }
+    // 其他包裹类型（ZodOptional/ZodNullable 等）有 innerType
+    const wrapped = current as unknown as { _def?: { innerType?: z.ZodType } }
+    if (wrapped._def?.innerType) {
+      current = wrapped._def.innerType
+      continue
+    }
+    return null
+  }
+  return null
+}
+
 async function checkPermissionsAndCallTool(
   tool: Tool,
   toolUseID: string,
@@ -617,12 +655,9 @@ async function checkPermissionsAndCallTool(
   // Defensively strip any fields the schema doesn't know about so that upstream
   // callers sending extra params (e.g. `sessionId`) are tolerated without
   // loosening the per-tool strict definition.
-  const rawSchema = tool.inputSchema instanceof z.ZodObject
-    ? tool.inputSchema
-    : tool.inputSchema instanceof z.ZodEffects &&
-      tool.inputSchema._def.in instanceof z.ZodObject
-      ? tool.inputSchema._def.in
-      : null
+  // Use extractZodObjectFromPipe to unwrap ZodPipe/ZodEffects/ZodOptional etc.
+  // and find the underlying ZodObject for known-key extraction.
+  const rawSchema = extractZodObjectFromPipe(tool.inputSchema)
   const knownKeys = rawSchema ? Object.keys(rawSchema.shape) : []
   const cleanedInput = Array.isArray(input)
     ? input

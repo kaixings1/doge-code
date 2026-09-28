@@ -1,74 +1,73 @@
 ---
-description: Publish oh-my-opencode to npm via GitHub Actions workflow
+description: 通过 GitHub Actions 工作流将 oh-my-opencode 发布到 npm
 argument-hint: <patch|minor|major>
 ---
 
+你是 oh-my-opencode 的发布经理。从头到尾执行**完整**发布工作流。
 
-You are the release manager for oh-my-opencode. Execute the FULL publish workflow from start to finish.
+## 关键：发布即交付 —— 直奔工作流
 
-## CRITICAL: PUBLISH IS SHIP-ONLY — GO STRAIGHT TO THE WORKFLOW
+`origin/dev` 已经过把关：每个 PR 和 push 都跑过 CI（在 3 个操作系统上的 test/typecheck/codex-compatibility），且发布工作流在发布任何东西之前会重新运行同样的关卡。
 
-`origin/dev` is already gated: every PR and push ran CI (test/typecheck/codex-compatibility on 3 OSes), and the publish workflow re-runs those same gates before anything is published.
+- **绝不**把 `/pre-publish-review`、`/review-work` 或任何代码重审作为发布请求的一部分运行。**只有**用户明确要求审查时才运行它们。
+- **绝不**在发布期间"修复"代码、开 PR，或进入修复并重审的循环。如果工作流失败或看起来哪里坏了，报告它并**停止** —— 发布不是修树的场合。
+- 带 bump 类型的发布请求会在几分钟内从步骤 0 走到步骤 3（触发）。唯一需要人类规模的工作是发布说明，在 CI 运行时起草。
 
-- **NEVER run `/pre-publish-review`, `/review-work`, or any code re-review as part of a publish request.** Those run ONLY when the user explicitly asks for a review.
-- **NEVER "fix" code, open PRs, or enter fix-and-re-audit loops during a publish.** If the workflow fails or something looks broken, report it and STOP — a publish is the wrong place to repair the tree.
-- A publish request with a bump type goes from Step 0 to Step 3 (trigger) in minutes. The only human-scale work is release notes, drafted while CI runs.
+## 关键：完整工作流意味着三个发布面
 
-## CRITICAL: FULL WORKFLOW MEANS THREE RELEASE SURFACES
+只有所有发布面都验证过后，发布才算完成：
 
-Publishing is complete only after all release surfaces are verified:
-
-| Release layer | Surface | Required proof |
+| 发布层 | 面 | 所需证据 |
 |---|---|---|
-| `omo pure components` | Core/MCP/shared-skill changes inside the published package payload | Release notes call out layer-specific version impact (from the workflow changelog, or `/get-unpublished-changes` when the user requested it). |
-| `omo opencode` | `oh-my-opencode` and `oh-my-openagent` npm packages plus platform packages | npm versions and GitHub release exist for the selected bump. |
-| `omo codex` | `lazycodex-ai`, Codex plugin metadata, and `code-yeongyu/lazycodex` marketplace release | Codex plugin metadata is stamped with the release version, `lazycodex-ai` publishes, and the LazyCodex repo release is created when the marketplace payload changed. |
+| `omo pure components` | 已发布包载荷内的 Core/MCP/shared-skill 变更 | 发布说明需点出该层专属的版本影响（来自工作流 changelog，或用户请求时的 `/get-unpublished-changes`）。 |
+| `omo opencode` | `oh-my-opencode` 和 `oh-my-openagent` npm 包以及平台包 | 所选 bump 对应的 npm 版本和 GitHub release 均存在。 |
+| `omo codex` | `lazycodex-ai`、Codex 插件元数据，以及 `code-yeongyu/lazycodex` marketplace release | Codex 插件元数据已盖印发布版本，`lazycodex-ai` 已发布，且当 marketplace 载荷变化时 LazyCodex 仓库的 release 已创建。 |
 
-The publish workflow must not be reported complete while any of `oh-my-opencode`, `oh-my-openagent`, `lazycodex-ai`, or `code-yeongyu/lazycodex` verification is unresolved.
+只要 `oh-my-opencode`、`oh-my-openagent`、`lazycodex-ai` 或 `code-yeongyu/lazycodex` 中任何一个的验证尚未解决，就不得报告发布工作流已完成。
 
-## CRITICAL: FULL WORKFLOW MEANS DISCORD TOO
+## 关键：完整工作流也意味着 Discord
 
-Publishing is not complete until the Discord release announcement has been attempted.
+在 Discord 发布公告被尝试之前，发布不算完成。
 
-- **DO NOT stop after creating the GitHub release.**
-- **DO NOT stop after drafting or applying release notes.**
-- **DO NOT wait for a second user acknowledgement if the user already confirmed the publish.**
-- After the release notes are finalized, immediately run Step 7.5 and post to Discord.
-- If Discord posting fails after authentication/retry, report the failure clearly and continue the remaining verification steps. A skipped Discord step is a workflow failure.
+- **不要在创建 GitHub release 后就停下。**
+- **不要在起草或应用发布说明后就停下。**
+- **如果用户已确认发布，不要再等第二次用户确认。**
+- 发布说明定稿后，立即运行步骤 7.5 并发布到 Discord。
+- 如果 Discord 发布在认证/重试后仍失败，清楚报告失败并继续剩余的验证步骤。跳过 Discord 步骤即视为工作流失败。
 
-## CRITICAL: NO EARLY TURN-END AFTER TRIGGER (COMPLETION CONTRACT)
+## 关键：触发后不得提早结束回合（完成契约）
 
-Once `gh workflow run publish` succeeds, the publish is NOT done. A prior session forgot this: it triggered the workflow and ended its turn, leaving the release unverified, the enhanced summary unwritten, and the Discord announcement unsent. That mistake is why this section exists.
+一旦 `gh workflow run publish` 成功，发布就**尚未**完成。此前某个会话忘了这一点：它触发了工作流就结束了回合，导致 release 未验证、增强摘要未撰写、Discord 公告未发送。这个错误就是本节存在的原因。
 
-After Step 3 (trigger), you MUST drive the run to a terminal conclusion AND complete every post-trigger step before ending your turn. You may NOT end the turn, hand off, or stop for the day while ANY of these is unresolved:
+在步骤 3（触发）之后，你**必须**推动该次运行走到终态结论，**并且**在结束回合前完成每一个触发后步骤。以下任何一项未解决时，你**不得**结束回合、交接，或就此收工：
 
-1. **Run conclusion** — `gh run view <id> --json conclusion` must return `success` (poll while drafting notes; never sleep idle).
-2. **Release exists** — Step 5: `gh release view v${NEW_VERSION}` resolves.
-3. **Enhanced summary applied** — Step 6 + Step 7: draft (mandatory for patch/minor/major) AND `gh release edit --notes-file` applied. "Patch is optional" is wrong; patch summaries are MANDATORY.
-4. **Discord announced** — Step 7.5: `agent-discordbot message send` attempted; either a message id is recorded OR a clear failure is reported to the user. A skipped Discord step is a workflow failure.
-5. **npm verified** — Step 8: `npm view oh-my-opencode version` (and oh-my-openagent, lazycodex-ai) shows `${NEW_VERSION}`.
+1. **运行结论** —— `gh run view <id> --json conclusion` 必须返回 `success`（起草说明时轮询；绝不要空闲 sleep）。
+2. **Release 存在** —— 步骤 5：`gh release view v${NEW_VERSION}` 能解析出结果。
+3. **增强摘要已应用** —— 步骤 6 + 步骤 7：起草（patch/minor/major 均强制）**且**已执行 `gh release edit --notes-file`。"patch 是可选的"是错的；patch 摘要**强制**。
+4. **Discord 已公告** —— 步骤 7.5：已尝试 `agent-discordbot message send`；要么记录了消息 id，要么向用户报告了明确的失败。跳过 Discord 步骤即视为工作流失败。
+5. **npm 已验证** —— 步骤 8：`npm view oh-my-opencode version`（以及 oh-my-openagent、lazycodex-ai）显示 `${NEW_VERSION}`。
 
-Only after all five are green may you end the turn. If the run fails, run `gh run view <id> --log-failed`, report it, and STOP (do not repair the tree mid-publish). If a post-trigger step fails for an external reason (npm propagation, Discord auth), report it clearly and continue the remaining steps — do not let one failure abort the rest.
+只有全部五项变绿后，你才可以结束回合。如果运行失败，执行 `gh run view <id> --log-failed`，报告它，并**停止**（不要在发布中途修树）。如果某个触发后步骤因外部原因失败（npm 传播、Discord 认证），清楚报告并继续剩余步骤 —— 不要让一次失败中止其余部分。
 
-This contract applies to the slash-command copies (`.agents/command/publish.md`, `.opencode/command/publish.md`) too; they are kept byte-identical to this skill per the `.agents/AGENTS.md` drift rule.
+此契约同样适用于斜杠命令副本（`.agents/command/publish.md`、`.opencode/command/publish.md`）；按 `.agents/AGENTS.md` 的漂移规则，它们与本文档保持逐字节一致。
 
-## CRITICAL: ARGUMENT REQUIREMENT
+## 关键：参数要求
 
-**You MUST receive a version bump type from the user.** Valid options:
-- `patch`: Bug fixes, backward-compatible (1.1.7 → 1.1.8)
-- `minor`: New features, backward-compatible (1.1.7 → 1.2.0)
-- `major`: Breaking changes (1.1.7 → 2.0.0)
+**你必须从用户处收到版本 bump 类型。** 有效选项：
+- `patch`：bug 修复，向后兼容（1.1.7 → 1.1.8）
+- `minor`：新功能，向后兼容（1.1.7 → 1.2.0）
+- `major`：破坏性变更（1.1.7 → 2.0.0）
 
-**If the user did not provide a bump type argument, STOP IMMEDIATELY and ask:**
+**如果用户没有提供 bump 类型参数，立即停止并询问：**
 > "To proceed with deployment, please specify a version bump type: `patch`, `minor`, or `major`"
 
-**DO NOT PROCEED without explicit user confirmation of bump type.**
+**未获得用户对 bump 类型的明确确认，不得继续。**
 
 ---
 
-## STEP 0: REGISTER TODO LIST (MANDATORY FIRST ACTION)
+## 步骤 0：注册 TODO 清单（强制的首个动作）
 
-**Before doing ANYTHING else**, create a detailed todo list using TodoWrite:
+**在做任何其他事之前**，用 TodoWrite 创建一份详细的 todo 清单：
 
 ```
 [
@@ -88,83 +87,83 @@ This contract applies to the slash-command copies (`.agents/command/publish.md`,
 ]
 ```
 
-**Mark each todo as `in_progress` when starting, `completed` when done. ONE AT A TIME.**
+**在开始时把每个 todo 标记为 `in_progress`，完成时标记为 `completed`。一次一个。**
 
 ---
 
-## STEP 1: CONFIRM BUMP TYPE
+## 步骤 1：确认 BUMP 类型
 
-If the user already named a bump type (argument or message), that IS the confirmation — state it and continue immediately. Only ask and wait when no bump type was given.
-
----
-
-## STEP 2: CHECK UNCOMMITTED CHANGES
-
-Run: `git status --porcelain`
-
-- If there are uncommitted changes, warn user and ask if they want to commit first
-- If clean, proceed
+如果用户已经指明了 bump 类型（参数或消息中），那**就是**确认 —— 陈述它并立即继续。仅当未给出 bump 类型时才询问并等待。
 
 ---
 
-## STEP 2.5: SYNC WITH REMOTE (MANDATORY)
+## 步骤 2：检查未提交的更改
 
-Check if there are unpushed commits:
+运行：`git status --porcelain`
+
+- 如果有未提交的更改，警告用户并询问他们是否要先提交
+- 如果干净，继续
+
+---
+
+## 步骤 2.5：与远端同步（强制）
+
+检查是否有未推送的提交：
 ```bash
 git log @{u}..HEAD --oneline
 ```
 
-**If there are unpushed commits, you MUST sync before triggering workflow:**
+**如果有未推送的提交，你必须在触发工作流之前同步：**
 ```bash
 git pull --rebase && git push
 ```
 
-This ensures the GitHub Actions workflow runs on the latest code including all local commits.
+这确保 GitHub Actions 工作流在包含所有本地提交的最新代码上运行。
 
 ---
 
-## STEP 3: TRIGGER GITHUB ACTIONS WORKFLOW
+## 步骤 3：触发 GitHub ACTIONS 工作流
 
-Run the publish workflow:
+运行发布工作流：
 ```bash
 gh workflow run publish -f bump={bump_type}
 ```
 
-Wait 3 seconds, then get the run ID:
+等待 3 秒，然后获取 run ID：
 ```bash
 gh run list --workflow=publish --limit=1 --json databaseId,status --jq '.[0]'
 ```
 
 ---
 
-## STEP 4: WAIT FOR WORKFLOW COMPLETION
+## 步骤 4：等待工作流完成
 
-The publish run is a single workflow with sequential stages. Expected timeline (from recent real runs, ~30 min total):
+发布运行是一个带顺序阶段的单一工作流。预期时间线（来自近期真实运行，总计约 30 分钟）：
 
-| Stage (job) | What it does | Typical |
+| 阶段（job） | 作用 | 典型耗时 |
 |---|---|---|
-| `test` / `typecheck` / `codex-compatibility` (3 OS) | Re-runs the CI gates on the release source | 4–8 min (Windows is the long pole) |
-| `prepare-release-state` | Stamps versions, opens + auto-merges the `release: vX.Y.Z` PR, waits for that PR's required CI checks | 10–15 min (dominant stage) |
-| `publish-platform` (build + publish, 12 targets) | Builds and publishes both platform package families | 3–4 min |
-| `publish-main` → `release` | Publishes `oh-my-opencode` / `oh-my-openagent` / `lazycodex-ai`, creates the GitHub release, syncs `code-yeongyu/lazycodex` | 4–6 min |
+| `test` / `typecheck` / `codex-compatibility`（3 个 OS） | 在发布源上重跑 CI 关卡 | 4–8 分钟（Windows 是长板） |
+| `prepare-release-state` | 盖印版本、开启并自动合并 `release: vX.Y.Z` PR、等待该 PR 所需的 CI 检查 | 10–15 分钟（占主导阶段） |
+| `publish-platform`（build + publish，12 个目标） | 构建并发布两个平台包家族 | 3–4 分钟 |
+| `publish-main` → `release` | 发布 `oh-my-opencode` / `oh-my-openagent` / `lazycodex-ai`，创建 GitHub release，同步 `code-yeongyu/lazycodex` | 4–6 分钟 |
 
-Poll job-level status every 30 seconds and report stage transitions to the user:
+每 30 秒轮询 job 级状态，并向用户报告阶段转换：
 ```bash
 gh run view {run_id} --json status,conclusion,jobs --jq '{status, conclusion, stage: ([.jobs[] | select(.status=="in_progress") | .name] | join(", "))}'
 ```
 
-**IMPORTANT: Use polling loop, NOT sleep commands.** Use the waiting time to draft the enhanced release summary (Step 6) — do not sit idle, and do not start any review activity.
+**重要：使用轮询循环，而不是 sleep 命令。** 利用等待时间起草增强发布摘要（步骤 6）—— 不要干等，也不要启动任何审查活动。
 
-If conclusion is `failure`, show error and stop:
+如果 conclusion 为 `failure`，显示错误并停止：
 ```bash
 gh run view {run_id} --log-failed
 ```
 
 ---
 
-## STEP 5: VERIFY RELEASE & PREVIEW AUTO-GENERATED CONTENT
+## 步骤 5：验证 RELEASE 并预览自动生成的内容
 
-Two goals: confirm the release exists, then show the user what the workflow already generated.
+两个目标：确认 release 存在，然后向用户展示工作流已经生成了什么。
 
 ```bash
 # Pull latest (workflow committed version bump)
@@ -175,14 +174,14 @@ NEW_VERSION=$(node -p "require('./package.json').version")
 gh release view "v${NEW_VERSION}" --json tagName,url --jq '{tag: .tagName, url: .url}'
 ```
 
-**After verifying, generate a local preview of the auto-generated content:**
+**验证之后，生成自动生成内容的本地预览：**
 
 ```bash
 bun run script/generate-changelog.ts
 ```
 
 <agent-instruction>
-After running the preview, present the output to the user and say:
+运行预览后，向用户呈现输出并说：
 
 > **The following content is ALREADY included in the release automatically:**
 > - Commit changelog (grouped by feat/fix/refactor)
@@ -192,40 +191,40 @@ After running the preview, present the output to the user and say:
 >
 > **For all release types**, an enhanced summary is **required** — I'll draft one in the next step.
 
-**APPROVAL GATE (single, binary):** The user's initial publish request with a named bump type IS the only approval this workflow requires. Do NOT wait for a separate acknowledgement here. Present the preview, then IMMEDIATELY proceed to Step 6. The only exception: if the user explicitly said "let me review the changelog before you continue" (or equivalent), stop and wait. Otherwise continue without ending the turn.
+**批准关卡（单一、二值）：** 用户最初带具名 bump 类型的发布请求**就是**本工作流所需的唯一批准。**不要**在这里等待单独的确认。呈现预览，然后**立即**进入步骤 6。唯一例外：如果用户明确说"让我先看 changelog 再继续"（或等价表述），则停下等待。否则继续，不要结束回合。
 </agent-instruction>
 
 ---
 
-## STEP 6: DRAFT ENHANCED RELEASE SUMMARY
+## 步骤 6：起草增强发布摘要
 
 <decision-gate>
 
-| Release Type | Action |
+| 发布类型 | 动作 |
 |-------------|--------|
-| **patch** | MANDATORY. Draft a concise bug-fix / change summary. Do NOT proceed without one. |
-| **minor** | MANDATORY. Draft a concise feature summary. Do NOT proceed without one. |
-| **major** | MANDATORY. Draft a full release narrative with migration notes if applicable. Do NOT proceed without one. |
+| **patch** | 强制。起草简洁的 bug 修复 / 变更摘要。没有它不得继续。 |
+| **minor** | 强制。起草简洁的功能摘要。没有它不得继续。 |
+| **major** | 强制。起草完整的发布叙述，如有需要附迁移说明。没有它不得继续。 |
 
 </decision-gate>
 
-### LAST RELEASE BEFORE THE OMO NATIVE CLI PUBLIC RELEASE
+### OMO 原生 CLI 公开发布前的最后一次发布
 
-When the user identifies this as the final release before the OmO Native CLI public release, the GitHub summary MUST begin with this dedicated heading and the Discord announcement MUST repeat it as a dedicated heading immediately after `@here`:
+当用户指出这是 OmO 原生 CLI 公开发布前的最后一次发布时，GitHub 摘要**必须**以此专用标题开头，且 Discord 公告**必须**在 `@here` 之后立即以专用标题重复它：
 
 `## LAST RELEASE BEFORE THE OMO NATIVE CLI PUBLIC RELEASE`
 
-### What You're Writing (and What You're NOT)
+### 你在写什么（以及你不写什么）
 
-You are writing the **headline layer** — a product announcement that sits ABOVE the auto-generated commit log. Think "release blog post", not "git log".
+你在写**标题层** —— 位于自动生成提交日志**之上**的产品公告。想象成"发布博客文章"，而不是 "git log"。
 
 <rules>
-- NEVER duplicate commit messages. The auto-generated section already lists every commit.
-- NEVER write generic filler like "Various bug fixes and improvements" or "Several enhancements".
-- ALWAYS focus on USER IMPACT: what can users DO now that they couldn't before?
-- ALWAYS group by THEME or CAPABILITY, not by commit type (feat/fix/refactor).
-- ALWAYS use concrete language: "You can now do X" not "Added X feature".
-- NEVER include internal adapter changes matching `senpi`, `omo-senpi`, `senpi-task`, `pi-goal`, or `pi-webfetch` in either release-note variant.
+- **绝不**重复提交消息。自动生成章节已经列出了每个提交。
+- **绝不**写"Various bug fixes and improvements"或"Several enhancements"这类泛泛填充。
+- **始终**聚焦**用户影响**：用户现在能做什么以前做不到的事？
+- **始终**按**主题**或**能力**分组，而非按提交类型（feat/fix/refactor）。
+- **始终**使用具体语言："You can now do X"，而不是 "Added X feature"。
+- **绝不**在任一发布说明变体中包含匹配 `senpi`、`omo-senpi`、`senpi-task`、`pi-goal` 或 `pi-webfetch` 的内部适配器变更。
 </rules>
 
 <examples>
@@ -255,11 +254,13 @@ Rules are now cached by file modification time. If your project has 50+ rule fil
 </good>
 </examples>
 
-### Drafting Process
+**关于示例**：上面的 `bad` / `good` 示例保持英文 —— 它们是**发布说明的输出样例**，展示目标文案风格，需与最终发布内容一致。
 
-1. **Analyze** the commit list from Step 5's preview. Identify 2-5 themes that matter to users.
-2. **Write** the summary to `/tmp/release-summary-v${NEW_VERSION}.md`.
-3. **Present** the draft to the user for review and approval before applying.
+### 起草流程
+
+1. **分析**步骤 5 预览中的提交列表。识别 2-5 个对用户重要的主题。
+2. **写**摘要到 `/tmp/release-summary-v${NEW_VERSION}.md`。
+3. **呈现**草稿给用户，供其在应用前审阅和批准。
 
 ```bash
 # Write your draft here
@@ -271,20 +272,169 @@ cat /tmp/release-summary-v${NEW_VERSION}.md
 ```
 
 <agent-instruction>
-Present the draft to the user:
+向用户呈现草稿：
 > "Here's the release summary I drafted. This will appear AT THE TOP of the release notes, above the auto-generated commit changelog and contributor thanks."
 
-**APPROVAL GATE (same single gate):** The initial publish confirmation covers this step too. Present the draft, then IMMEDIATELY proceed to Step 7 (apply) and Step 7.5 (Discord). Do NOT stop to wait for approval unless the user explicitly requested a release-note review hold before the publish started. The Discord announcement (Step 7.5) is mandatory and must not be blocked by a review hold that was never requested.
+**批准关卡（同一个单一关卡）：** 最初的发布确认也覆盖此步骤。呈现草稿，然后**立即**进入步骤 7（应用）和步骤 7.5（Discord）。**不要**停下来等批准，除非用户在发布开始前明确要求了发布说明审阅保留。Discord 公告（步骤 7.5）是强制的，且不得被一个从未被请求的审阅保留所阻塞。
 </agent-instruction>
 
 ---
 
-## STEP 7: APPLY ENHANCED SUMMARY TO RELEASE
+## 步骤 7：将增强摘要应用到 RELEASE
 
-This step is MANDATORY. The enhanced summary from Step 6 must always be applied.
+此步骤**强制**。步骤 6 的增强摘要必须始终被应用。
 
 <architecture>
-The final release note structure:
+最终的发布说明结构：
+
+```
+┌─────────────────────────────────────┐
+│  Enhanced Summary (from Step 6)     │  ← You wrote this
+│  - Theme-based, user-impact focused │
+├─────────────────────────────────────┤
+│  ---  (separator)                   │
+├─────────────────────────────────────┤
+│  Auto-generated Commit Changelog    │  ← Workflow wrote this
+│  - feat/fix/refactor grouped        │
+│  - Contributor thank-you messages   │
+└─────────────────────────────────────┘
+```
+</architecture>
+
+<zero-content-loss-policy>
+- **先**获取现有的 release 正文
+- 把你的摘要**前置**到它上面
+- 现有自动生成内容必须保持 **100% 完整**
+- 现有内容**一个字符都不得**被删除或修改
+</zero-content-loss-policy>
+
+```bash
+# 1. Fetch existing auto-generated body
+EXISTING_BODY=$(gh release view "v${NEW_VERSION}" --json body --jq '.body')
+
+# 2. Combine: enhanced summary on top, auto-generated below
+{
+  cat /tmp/release-summary-v${NEW_VERSION}.md
+  echo ""
+  echo "---"
+  echo ""
+  echo "$EXISTING_BODY"
+} > /tmp/final-release-v${NEW_VERSION}.md
+
+# 3. Update the release (additive only)
+gh release edit "v${NEW_VERSION}" --notes-file /tmp/final-release-v${NEW_VERSION}.md
+
+# 4. Confirm
+echo "✅ Release v${NEW_VERSION} updated with enhanced summary."
+gh release view "v${NEW_VERSION}" --json url --jq '.url'
+```
+
+---
+
+## 步骤 7.5：将发布说明发布到 DISCORD
+
+发布说明定稿后，把它们发布到 Discord 频道。此步骤对每次发布运行都是强制的。
+
+<hard-gate>
+在此步骤满足以下之一之前，工作流不算完成：
+1. 成功发送了一条 Discord 消息并记录了消息 ID，**或**
+2. 在 `agent-discordbot auth status` 加一次发送重试之后仍然失败，并向用户报告了 Jobdori bot-token 失败。
+
+绝不因为发布摘要还在等待批准就跳过此步骤。如果用户已经确认发布，就在停止前继续走完 Discord。
+</hard-gate>
+
+<agent-discord-instruction>
+1. 通过 `agent-discordbot` 使用 Jobdori bot token 发布发布公告。这是必需的发布路径；除非 bot 路径不可用且用户明确批准回退，否则不要使用个人 `agent-discord` token。固定 bot id，以便即使本地 `agent-discordbot` 当前 bot 变化，发布消息仍以 Jobdori bot 发出。
+```bash
+JOBDORI_BOT_ID=1486173823354146917
+agent-discordbot auth status --bot "$JOBDORI_BOT_ID"
+```
+
+2. **读取频道中的近期消息**以匹配既有公告风格：
+```bash
+JOBDORI_BOT_ID=1486173823354146917
+agent-discordbot message list 1454708427392680067 --bot "$JOBDORI_BOT_ID" --limit 5
+```
+
+3. 如果 `agent-discordbot` 不可用或未授权，停止并报告 Jobdori token 路径失败。只有到那时，人类才可以决定是否使用 `agent-discord`。
+
+4. 把发布公告发布到频道 `1454708427392680067`，匹配此前公告的风格。消息应遵循此结构：
+```
+@here
+
+🎉 **oh-my-opencode v{VERSION} — {Short Tagline}**
+
+**Feature 1** — one-line description.
+
+**Feature 2** — one-line description.
+
+**Feature 3** — one-line description.
+
+Plus {summary of remaining changes}.
+
+📦 Install / upgrade:
+`bun i -g oh-my-opencode@{VERSION}`  (or `npm`)
+
+📝 Full release notes: {RELEASE_URL}
+```
+
+```bash
+JOBDORI_BOT_ID=1486173823354146917
+RELEASE_URL=$(gh release view "v${NEW_VERSION}" --json url --jq '.url')
+agent-discordbot message send 1454708427392680067 "{your message following the style above}" --bot "$JOBDORI_BOT_ID"
+```
+
+如果消息发送失败，警告用户并继续 —— **不要**因 Discord 错误阻塞发布工作流。
+</agent-discord-instruction>
+
+---
+
+## 步骤 8：验证 NPM 发布
+
+轮询 npm registry 直到新版本出现：
+```bash
+npm view oh-my-opencode version
+```
+
+与预期版本比对。如果 2 分钟后仍不匹配，就 npm 传播延迟警告用户。
+
+---
+
+## 步骤 8.5：抽查平台二进制包
+
+平台包由**同一次**发布运行中的 `publish-platform` job 构建并发布 —— 没有单独的工作流需要等待，且 `publish-main` 在设计上会拒绝发布，除非匹配的平台二进制存在。抽查一个有代表性的样本：
+
+```bash
+for PKG in oh-my-opencode-darwin-arm64 oh-my-openagent-linux-x64 oh-my-opencode-windows-x64; do
+  npm view "$PKG" version
+done
+```
+
+每个都应显示 `${NEW_VERSION}`。不匹配时，警告用户并指向该次运行中的 `publish-platform` job —— 你自己不要重跑任何东西。
+
+---
+
+## 步骤 9：最终确认
+
+向用户报告成功，包含：
+- 新版本号
+- GitHub release URL：https://github.com/code-yeongyu/oh-my-opencode/releases/tag/v{version}
+- npm 包 URL：https://www.npmjs.com/package/oh-my-opencode
+- 平台包状态：抽查的平台包版本
+
+---
+
+## 错误处理
+
+- **工作流失败**：显示失败日志，建议检查 Actions 标签页
+- **找不到 release**：等待并重试，可能是传播延迟
+- **npm 未更新**：npm 可能需要 1-5 分钟传播，告知用户
+- **权限被拒**：用户可能需要用 `gh auth login` 重新认证
+- **平台 job 失败**：显示同一次运行中 `publish-platform` job 的日志，点名失败的 target，并停止 —— `publish-main` 在设计上会被阻塞直到它们通过
+
+## 语言
+
+用英文回复用户。
 
 ```
 ┌─────────────────────────────────────┐

@@ -448,7 +448,7 @@ const docSearch: Command = {
   type: 'local',
   name: 'doc-search',
   description: '搜索技术文档与 API — 支持 Apple 文档搜索模式',
-  aliases: ['doc-search', 'docs'],
+  aliases: ['doc-search'], // 注：原 aliases 里的 'docs' 与已注册的 /docs 命令冲突，接线时移除
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call }),
 }

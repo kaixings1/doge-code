@@ -1,5 +1,5 @@
 ---
-description: Review skill-bus telemetry — match counts, condition skips, no-coverage skills, and actionable suggestions. Helps identify which subscriptions fire, which are skipped, and where coverage gaps exist.
+description: 审查技能总线遥测——匹配计数、条件跳过、无覆盖技能和可操作建议。帮助识别哪些订阅触发、哪些被跳过以及覆盖差距在哪里。
 ---
 
 # Report

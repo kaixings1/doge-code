@@ -164,16 +164,24 @@
 - **结论**: 纯重构、零功能收益、需改 9 处顶层模块加载逻辑（影响启动顺序与副作用，如 `WorkflowTool` 的 `initBundledWorkflows()`）。违背「最短能工作的 diff 赢」，**不做**
 
 
-### [ ] 5. Tool.ts 类型拆分
-- **文件**: `src/Tool.ts`（31KB）
-- **目标**:
+### [x] 5. Tool.ts 类型拆分
+- **文件**: `src/Tool.ts`（803 行 → 40 行 barrel）
+- **目标**（已完成）:
   ```
   src/types/
-    ├── tool.ts           # Tool, Tools, ToolInfo
-    ├── toolContext.ts    # ToolUseContext, ToolPermissionContext
-    ├── toolProgress.ts   # 所有 *Progress 类型
-    └── toolPermission.ts # ToolPermissionRulesBySource
+    ├── tool.ts           # Tool, Tools, ToolInfo, ToolDef, buildTool 等
+    ├── toolContext.ts    # ToolUseContext, ToolPermissionContext, SetToolJSXFn 等
+    ├── toolProgress.ts   # 所有 *Progress 类型 + filterToolProgressMessages
+    └── toolPermission.ts # ToolPermissionRulesBySource（re-export from permissions.ts）
   ```
+- **操作**:
+  - 所有类型从 `Tool.ts`（803 行）拆分为 `src/types/` 下 4 个文件
+  - `Tool.ts` 保留为 barrel re-export，保持向后兼容
+  - `Tool` 与 `ToolUseContext` 互相引用，合入 `tool.ts` 避免循环依赖
+  - `HookProgress` 从 `types/hooks.ts` re-export（原有定义冲突）
+  - `ToolProgressData` 保留在 `types/tools.ts`（全库引用），`Tool.ts` re-export
+  - `ToolPermissionRulesBySource` 改为 re-export `types/permissions.ts`（消除重复定义）
+- **验证**: `tsc --noEmit --skipLibCheck` 拆分文件零错误；工具测试 146/146 通过
 
 ---
 
@@ -191,10 +199,14 @@
 - **结论**: 若要迁移须**整体迁移整套 + 改 3 处导入**，属目录整洁性质，无功能收益且触及启动路径。**暂不执行**；如确要做，需先确认 `auto-wrapper.ts` 是否在启动路径上
 
 
-### [ ] 7. query.ts 与 query/ 合并
-- **文件**: `src/query.ts`（50KB）+ `src/query/` 目录
-- **问题**: 职责边界模糊，逻辑分散在两个位置
-- **目标**: 统一归入 `src/query/index.ts`
+### [!] 7. query.ts 与 query/ 合并 — 经评估不建议执行
+- **文件**: `src/query.ts`（1638 行）+ `src/query/` 子目录（730 行，6 模块）
+- **2026-09-27 评估结论**: **当前结构合理，合并无功能收益**
+  - `query.ts` 是主查询引擎（`query()` + `queryLoop()` 生成器），`query/` 含 6 个聚焦模块：config/deps/emptyContentHandler/stopHooks/tokenBudget/transitions
+  - 职责分离清晰，非模糊：config 负责配置快照、deps 负责依赖注入、emptyContentHandler 负责空内容自动继续、stopHooks 负责停止钩子调度、tokenBudget 负责令牌预算决策、transitions 负责类型定义
+  - `query.ts` 是 `query/` 的唯一导入方，零外部引用 → "单入口" 已是事实
+  - 合并回单文件会丢失已有拆分结构；`query/index.ts` barrel 重导出属无意义间接层
+  - 纯重构、零功能收益、违背 YAGNI → **不做**
 
 ---
 

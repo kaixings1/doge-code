@@ -18,7 +18,7 @@
  *   bun scripts/generate-bitmap-font.ts
  */
 
-import { deflateSync } from 'zlib'
+import { deflateSync, deflate } from 'zlib'
 import { stringWidth } from '../ink/stringWidth.js'
 import {
   type AnsiColor,
@@ -88,16 +88,17 @@ export type AnsiToPngOptions = {
  * Render ANSI-escaped text directly to a PNG buffer.
  * Returns a Buffer containing a valid PNG (RGBA, 8-bit).
  */
-export function ansiToPng(
+export async function ansiToPng(
   ansiText: string,
   options: AnsiToPngOptions = {},
-): Buffer {
+): Promise<Buffer> {
   const {
     scale = 1,
     paddingX = 48,
     paddingY = 48,
     borderRadius = 16,
     background = DEFAULT_BG,
+    maxDim = 8192,
   } = options
 
   const lines = parseAnsi(ansiText)
@@ -117,6 +118,10 @@ export function ansiToPng(
 
   const width = (cols * GLYPH_W + paddingX * 2) * scale
   const height = (rows * GLYPH_H + paddingY * 2) * scale
+
+  if (width > maxDim || height > maxDim) {
+    throw new Error(`ansiToPng: output size ${width}x${height} exceeds maxDim ${maxDim}`)
+  }
 
   // RGBA buffer, pre-filled with the background color.
   const px = new Uint8Array(width * height * 4)
@@ -149,7 +154,7 @@ export function ansiToPng(
     }
   }
 
-  return encodePng(px, width, height)
+  return await encodePng(px, width, height)
 }
 
 /** Terminal column width of a parsed line. */
@@ -304,7 +309,7 @@ function chunk(type: string, data: Uint8Array): Buffer {
  * Encode an RGBA pixel buffer as PNG. Minimal encoder: 8-bit depth,
  * color type 6 (RGBA), filter 0 (none) on every scanline, single IDAT.
  */
-function encodePng(px: Uint8Array, width: number, height: number): Buffer {
+async function encodePng(px: Uint8Array, width: number, height: number): Promise<Buffer> {
   // IHDR
   const ihdr = Buffer.alloc(13)
   ihdr.writeUInt32BE(width, 0)
@@ -323,7 +328,12 @@ function encodePng(px: Uint8Array, width: number, height: number): Buffer {
     raw[dst] = 0
     raw.set(px.subarray(y * stride, (y + 1) * stride), dst + 1)
   }
-  const idat = deflateSync(raw)
+  const idat = await new Promise<Buffer>((resolve, reject) => {
+    deflate(raw, { level: 6 }, (err, result) => {
+      if (err) reject(err)
+      else resolve(Buffer.from(result))
+    })
+  })
 
   return Buffer.concat([
     PNG_SIG,

@@ -1,5 +1,9 @@
 import axios, { type AxiosError } from 'axios'
 import type { StdoutMessage } from '../../entrypoints/sdk/controlTypes.js'
+import { WebSocketTransport } from './WebSocketTransport.js'
+import type { WebSocketTransportOptions } from './WebSocketTransport.js'
+import { SerialBatchEventUploader } from './SerialBatchEventUploader.js'
+import { getSessionIngressAuthToken } from '../../utils/sessionIngressAuth.js'
 import { logForDebugging } from '../../utils/debug.js'
 
 const BATCH_FLUSH_INTERVAL_MS = 100
@@ -195,7 +199,7 @@ export class HybridTransport extends WebSocketTransport {
 
     const types = events.map(e => e.type).join(',')
     const uuids = events.map(e => (e as Record<string,unknown>).uuid ?? '-').join(',')
-    const bodyPreview = jsonStringify({ events }).slice(0, 500)
+    const bodyPreview = JSON.stringify({ events }).slice(0, 500)
     logForDebugging(
       `混合⬆ POST批量发送 count=${events.length} types=[${types}] uuids=[${uuids}]\n  body=${bodyPreview}`,
     )

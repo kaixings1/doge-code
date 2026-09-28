@@ -1,5 +1,5 @@
 ---
-description: Simplify code for clarity and maintainability — reduce complexity without changing behavior
+description: 简化代码以提高清晰度和可维护性——在不改变行为的前提下降低复杂度。
 ---
 
 Invoke the agent-skills:code-simplification skill.

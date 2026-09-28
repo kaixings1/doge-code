@@ -26,7 +26,8 @@ export function areExplorePlanAgentsEnabled(): boolean {
     // 第三方默认值: true — Bedrock/Vertex 保持代理启用（匹配实验前的外部行为）。A/B 测试实验组设为 false 以衡量移除的影响。
     return getFeatureValue_CACHED_MAY_BE_STALE('tengu_amber_stoat', true)
   }
-  return false
+  // Feature flag 关闭时默认启用，保持外部用户原有行为
+  return true
 }
 
 export function getBuiltInAgents(): AgentDefinition[] {

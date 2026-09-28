@@ -1,5 +1,5 @@
 ---
-description: Legacy slash-entry shim for the agent-sort skill. Prefer the skill directly.
+description: agent-sort 技能的后备斜杠入口。优先直接使用该技能。
 ---
 
 # Agent Sort (Legacy Shim)

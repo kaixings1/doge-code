@@ -1,5 +1,5 @@
 ---
-description: Fix Dart analyzer errors and Flutter build failures incrementally. Invokes the dart-build-resolver agent for minimal, surgical fixes.
+description: 增量修复 Dart 分析器错误和 Flutter 构建失败。调用 dart-build-resolver 代理进行最小化、精准修复。
 ---
 
 # Flutter Build and Fix

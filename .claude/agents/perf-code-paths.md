@@ -1,6 +1,6 @@
 ---
 name: perf-code-paths
-description: Map likely code paths for perf scenarios before profiling.
+description: 在性能分析之前，映射性能场景下最可能的代码路径。
 tools: Read, Grep, Glob
 model: sonnet
 ---

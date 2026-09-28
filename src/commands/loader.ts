@@ -36,3 +36,15 @@ export function loadConditionalCommand<T>(
       : conditions
   return shouldLoad ? loader() : null
 }
+
+/**
+ * 统一「工厂式导出」模块：部分条件命令的 default 是工厂函数（`export default function X() { return Command | null }`），
+ * 直接把它当命令注册会得到一个普通函数（没有 type/load，进入 /help 与分发即异常）。
+ * 这里统一调用一次工厂，拿到真正的命令对象；返回 null 表示该功能当前未实现，应直接跳过而不是注入占位项。
+ */
+export function resolveCommandExport<T>(moduleDefault: T | (() => T | null) | null | undefined): T | null {
+  if (typeof moduleDefault === 'function') {
+    return (moduleDefault as () => T | null)()
+  }
+  return moduleDefault ?? null
+}

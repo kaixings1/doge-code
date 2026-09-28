@@ -1,5 +1,5 @@
 ---
-description: Orchestrate altering an existing, working feature to new desired behavior — update tests to the new spec, change impl, review, gated commit. Wrapper for the orch-change-feature skill.
+description: 编排将现有工作功能更改为新期望行为——将测试更新为新规格、更改实现、审查、门控提交。orch-change-feature 技能的包装器。
 ---
 
 # /orch-change-feature

@@ -1,5 +1,5 @@
 ---
-description: Set up connect-apps - let Claude perform real actions in 500+ apps
+description: 设置 connect-apps——让 Claude 在 500+ 应用中执行实际操作。
 allowed-tools: [Bash, Write, AskUserQuestion]
 ---
 # Connect Apps Setup

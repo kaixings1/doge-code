@@ -32,8 +32,17 @@ const rateLimitMap = new Map<string, RateLimitEntry>()
 const RATE_LIMIT_WINDOW_MS = 60_000
 const RATE_LIMIT_MAX = 120
 
-// Per-session ownership: sessionId → secret
-const sessionSecretMap = new Map<string, string>()
+// Per-session ownership: sessionId → { secret, expiresAt }
+interface SessionSecretEntry { secret: string; expiresAt: number }
+const sessionSecretMap = new Map<string, SessionSecretEntry>()
+const SESSION_SECRET_TTL_MS = 24 * 60 * 60 * 1000 // 24h
+
+function cleanupExpiredSessionSecrets(): void {
+  const now = Date.now()
+  for (const [id, entry] of sessionSecretMap) {
+    if (entry.expiresAt < now) sessionSecretMap.delete(id)
+  }
+}
 
 function generateSessionSecret(): string {
   return Array.from(crypto.getRandomValues(new Uint8Array(32)))
@@ -44,7 +53,13 @@ function generateSessionSecret(): string {
 function validateSessionOwner(req: IncomingMessage, sessionId: string): boolean {
   const secret = req.headers['x-session-key']
   if (!secret || typeof secret !== 'string') return false
-  return sessionSecretMap.get(sessionId) === secret
+  const entry = sessionSecretMap.get(sessionId)
+  if (!entry) return false
+  if (entry.expiresAt < Date.now()) {
+    sessionSecretMap.delete(sessionId)
+    return false
+  }
+  return entry.secret === secret
 }
 
 function checkRateLimit(key: string): boolean {
@@ -150,7 +165,7 @@ export function startServer(
             dangerouslySkipPermissions: false,
           })
           const sessionSecret = generateSessionSecret()
-          sessionSecretMap.set(session.id, sessionSecret)
+          sessionSecretMap.set(session.id, { secret: sessionSecret, expiresAt: Date.now() + SESSION_SECRET_TTL_MS })
           sendJson(res, 201, {
             session_id: session.id,
             session_key: sessionSecret,
@@ -227,8 +242,13 @@ export function startServer(
     }
   })
 
-  server.listen(config.port, config.host)
+  server.listen(config.port, config.host).on('error', (err: NodeJS.ErrnoException) => {
+    log.error(`server listen failed: ${err.code} — ${err.message}`)
+    process.exit(1)
+  })
   log.info(`server listening on ${config.host}:${config.port}`)
+  // Periodic cleanup of expired session secrets (TTL = 24h)
+  setInterval(cleanupExpiredSessionSecrets, 5 * 60 * 1000)
 
   return {
     port: config.port,

@@ -1,6 +1,6 @@
 ---
 name: Test Coverage
-description: Ensure new functionality includes corresponding tests
+description: 确保新功能包含相应的测试。
 ---
 
 # Test Coverage Check

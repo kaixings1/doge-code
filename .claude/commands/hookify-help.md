@@ -1,5 +1,5 @@
 ---
-description: Get help with the hookify system
+description: 获取 hookify 系统的帮助信息。
 ---
 
 Display comprehensive hookify documentation.

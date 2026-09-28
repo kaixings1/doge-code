@@ -1,5 +1,5 @@
 ---
-description: Publish a validated epic update back to the issue and local cache.
+description: 将经验证的 epic 更新发布回 issue 和本地缓存。
 ---
 
 # /epic-publish

@@ -1,6 +1,6 @@
 ---
 globs: docs/**/*.{md,mdx}
-description: This rule applies to all documentation files to ensure consistent
+description: 此规则适用于所有文档文件，以确保一致性。
   SEO optimization and improve discoverability. It helps users and search
   engines understand the content of each page before reading it.
 ---

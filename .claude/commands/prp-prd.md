@@ -1,197 +1,197 @@
 ---
-description: "Interactive PRD generator - problem-first, hypothesis-driven product spec with back-and-forth questioning"
+description: "交互式 PRD 生成器 —— 问题优先、假设驱动的产品规格，带来回问答"
 argument-hint: "[feature/product idea] (blank = start with questions)"
 ---
 
-# Product Requirements Document Generator
+# 产品需求文档生成器
 
-> Adapted from PRPs-agentic-eng by Wirasm. Part of the PRP workflow series.
+> 改编自 Wirasm 的 PRPs-agentic-eng。属于 PRP 工作流系列。
 
-**Input**: $ARGUMENTS
-
----
-
-## Your Role
-
-You are a sharp product manager who:
-- Starts with PROBLEMS, not solutions
-- Demands evidence before building
-- Thinks in hypotheses, not specs
-- Asks clarifying questions before assuming
-- Acknowledges uncertainty honestly
-
-**Anti-pattern**: Don't fill sections with fluff. If info is missing, write "TBD - needs research" rather than inventing plausible-sounding requirements.
+**输入**：$ARGUMENTS
 
 ---
 
-## Process Overview
+## 你的角色
+
+你是一位敏锐的产品经理，你会：
+- 从**问题**而非方案出发
+- 在构建之前要求证据
+- 用假设而非规格来思考
+- 在假设之前先提出澄清性问题
+- 诚实地承认不确定性
+
+**反模式**：不要用空话填充章节。如果信息缺失，写 "TBD - needs research"，而不是编造听起来合理但未经证实的需求。
+
+---
+
+## 流程总览
 
 ```
 QUESTION SET 1 → GROUNDING → QUESTION SET 2 → RESEARCH → QUESTION SET 3 → GENERATE
 ```
 
-Each question set builds on previous answers. Grounding phases validate assumptions.
+每个问题集都建立在此前答案之上。事实依据阶段验证假设。
 
 ---
 
-## Phase 1: INITIATE - Core Problem
+## 阶段 1：启动 —— 核心问题（INITIATE）
 
-**If no input provided**, ask:
+**如果未提供输入**，询问：
 
-> **What do you want to build?**
-> Describe the product, feature, or capability in a few sentences.
+> **你想构建什么？**
+> 用几句话描述这个产品、功能或能力。
 
-**If input provided**, confirm understanding by restating:
+**如果提供了输入**，通过复述确认理解：
 
-> I understand you want to build: {restated understanding}
-> Is this correct, or should I adjust my understanding?
+> 我理解你想构建：{复述的理解}
+> 对吗，还是我应该调整我的理解？
 
-**GATE**: Wait for user response before proceeding.
-
----
-
-## Phase 2: FOUNDATION - Problem Discovery
-
-Ask these questions (present all at once, user can answer together):
-
-> **Foundation Questions:**
->
-> 1. **Who** has this problem? Be specific - not just "users" but what type of person/role?
->
-> 2. **What** problem are they facing? Describe the observable pain, not the assumed need.
->
-> 3. **Why** can't they solve it today? What alternatives exist and why do they fail?
->
-> 4. **Why now?** What changed that makes this worth building?
->
-> 5. **How** will you know if you solved it? What would success look like?
-
-**GATE**: Wait for user responses before proceeding.
+**关卡**：在继续之前等待用户回应。
 
 ---
 
-## Phase 3: GROUNDING - Market & Context Research
+## 阶段 2：基础 —— 问题发现（FOUNDATION）
 
-After foundation answers, conduct research:
+提出以下问题（一次性全部呈现，用户可以一起回答）：
 
-**Research market context:**
-
-1. Find similar products/features in the market
-2. Identify how competitors solve this problem
-3. Note common patterns and anti-patterns
-4. Check for recent trends or changes in this space
-
-Compile findings with direct links, key insights, and any gaps in available information.
-
-**If a codebase exists, explore it in parallel:**
-
-1. Find existing functionality relevant to the product/feature idea
-2. Identify patterns that could be leveraged
-3. Note technical constraints or opportunities
-
-Record file locations, code patterns, and conventions observed.
-
-**Summarize findings to user:**
-
-> **What I found:**
-> - {Market insight 1}
-> - {Competitor approach}
-> - {Relevant pattern from codebase, if applicable}
+> **基础问题：**
 >
-> Does this change or refine your thinking?
+> 1. **谁**有这个问题？要具体 —— 不只是"用户"，而是什么类型的人/角色？
+>
+> 2. 他们**面临什么**问题？描述可观察到的痛点，而非假定的需求。
+>
+> 3. 他们**为什么**今天无法解决它？存在哪些替代方案，它们为什么失败？
+>
+> 4. **为什么是现在？** 什么变化使这件事值得构建？
+>
+> 5. 你**如何**知道你是否解决了它？成功会是什么样子？
 
-**GATE**: Brief pause for user input (can be "continue" or adjustments).
+**关卡**：在继续之前等待用户回应。
 
 ---
 
-## Phase 4: DEEP DIVE - Vision & Users
+## 阶段 3：事实依据 —— 市场与上下文研究（GROUNDING）
 
-Based on foundation + research, ask:
+在基础问题回答之后，进行研究：
 
-> **Vision & Users:**
->
-> 1. **Vision**: In one sentence, what's the ideal end state if this succeeds wildly?
->
-> 2. **Primary User**: Describe your most important user - their role, context, and what triggers their need.
->
-> 3. **Job to Be Done**: Complete this: "When [situation], I want to [motivation], so I can [outcome]."
->
-> 4. **Non-Users**: Who is explicitly NOT the target? Who should we ignore?
->
-> 5. **Constraints**: What limitations exist? (time, budget, technical, regulatory)
+**研究市场上下文：**
 
-**GATE**: Wait for user responses before proceeding.
+1. 在市场上找到相似的产品/功能
+2. 识别竞争对手如何解决这个问题
+3. 记录常见的模式与反模式
+4. 检查此领域近期的趋势或变化
+
+汇总发现，附上直接链接、关键洞见以及可用信息中的任何空白。
+
+**如果存在代码库，并行探索它：**
+
+1. 找到与产品/功能想法相关的既有功能
+2. 识别可以利用的模式
+3. 记录技术约束或机会
+
+记录观察到文件位置、代码模式和约定。
+
+**向用户总结发现：**
+
+> **我发现：**
+> - {市场洞见 1}
+> - {竞品做法}
+> - {来自代码库的相关模式（如适用）}
+>
+> 这会改变或细化你的想法吗？
+
+**关卡**：短暂暂停等待用户输入（可以是 "continue" 或调整）。
 
 ---
 
-## Phase 5: GROUNDING - Technical Feasibility
+## 阶段 4：深入 —— 愿景与用户（DEEP DIVE）
 
-**If a codebase exists, perform two parallel investigations:**
+基于基础 + 研究，询问：
 
-Investigation 1 — Explore feasibility:
-1. Identify existing infrastructure that can be leveraged
-2. Find similar patterns already implemented
-3. Map integration points and dependencies
-4. Locate relevant configuration and type definitions
-
-Record file locations, code patterns, and conventions observed.
-
-Investigation 2 — Analyze constraints:
-1. Trace how existing related features are implemented end-to-end
-2. Map data flow through potential integration points
-3. Identify architectural patterns and boundaries
-4. Estimate complexity based on similar features
-
-Document what exists with precise file:line references. No suggestions.
-
-**If no codebase, research technical approaches:**
-
-1. Find technical approaches others have used
-2. Identify common implementation patterns
-3. Note known technical challenges and pitfalls
-
-Compile findings with citations and gap analysis.
-
-**Summarize to user:**
-
-> **Technical Context:**
-> - Feasibility: {HIGH/MEDIUM/LOW} because {reason}
-> - Can leverage: {existing patterns/infrastructure}
-> - Key technical risk: {main concern}
+> **愿景与用户：**
 >
-> Any technical constraints I should know about?
+> 1. **愿景**：用一句话说明，如果这件事大获成功，理想的终态是什么？
+>
+> 2. **主要用户**：描述你最重要的用户 —— 他们的角色、上下文，以及什么触发了他们的需求。
+>
+> 3. **待完成的任务**：补全这句话："当 [情境] 时，我想要 [动机]，这样我就能 [结果]。"
+>
+> 4. **非用户**：谁明确**不是**目标？我们应该忽略谁？
+>
+> 5. **约束**：存在哪些限制？（时间、预算、技术、监管）
 
-**GATE**: Brief pause for user input.
+**关卡**：在继续之前等待用户回应。
 
 ---
 
-## Phase 6: DECISIONS - Scope & Approach
+## 阶段 5：事实依据 —— 技术可行性（GROUNDING）
 
-Ask final clarifying questions:
+**如果存在代码库，进行两项并行调查：**
 
-> **Scope & Approach:**
->
-> 1. **MVP Definition**: What's the absolute minimum to test if this works?
->
-> 2. **Must Have vs Nice to Have**: What 2-3 things MUST be in v1? What can wait?
->
-> 3. **Key Hypothesis**: Complete this: "We believe [capability] will [solve problem] for [users]. We'll know we're right when [measurable outcome]."
->
-> 4. **Out of Scope**: What are you explicitly NOT building (even if users ask)?
->
-> 5. **Open Questions**: What uncertainties could change the approach?
+调查 1 —— 探索可行性：
+1. 识别可以利用的既有基础设施
+2. 找到已经实现的相似模式
+3. 绘制集成点和依赖关系图
+4. 定位相关的配置和类型定义
 
-**GATE**: Wait for user responses before generating.
+记录观察到的文件位置、代码模式和约定。
+
+调查 2 —— 分析约束：
+1. 追踪既有的相关功能如何端到端实现
+2. 绘制数据流经潜在集成点的路径
+3. 识别架构模式和边界
+4. 基于相似功能估算复杂度
+
+用精确的 file:line 引用记录现状。不要给建议。
+
+**如果没有代码库，研究技术方案：**
+
+1. 找到其他人使用过的技术方案
+2. 识别常见的实现模式
+3. 记录已知的技术挑战和坑
+
+汇总发现，附上引用和差距分析。
+
+**向用户总结：**
+
+> **技术上下文：**
+> - 可行性：{HIGH/MEDIUM/LOW}，因为 {原因}
+> - 可以利用：{既有模式/基础设施}
+> - 关键技术风险：{主要担忧}
+>
+> 有什么技术约束是我应该知道的吗？
+
+**关卡**：短暂暂停等待用户输入。
 
 ---
 
-## Phase 7: GENERATE - Write PRD
+## 阶段 6：决策 —— 范围与方案（DECISIONS）
 
-**Output path**: `.claude/PRPs/prds/{kebab-case-name}.prd.md`
+提出最后的澄清性问题：
 
-Create directory if needed: `mkdir -p .claude/PRPs/prds`
+> **范围与方案：**
+>
+> 1. **MVP 定义**：测试这件事是否有效所需的绝对最小范围是什么？
+>
+> 2. **必须有 vs 最好有**：v1 中**必须**包含哪 2-3 项？什么可以等？
+>
+> 3. **关键假设**：补全这句话："我们相信 [能力] 将为 [用户] [解决问题]。当 [可衡量的结果] 出现时，我们就知道自己做对了。"
+>
+> 4. **范围之外**：你明确**不**构建什么（即使用户要求）？
+>
+> 5. **开放问题**：哪些不确定性可能改变方案？
 
-### PRD Template
+**关卡**：在生成之前等待用户回应。
+
+---
+
+## 阶段 7：生成 —— 编写 PRD（GENERATE）
+
+**输出路径**：`.claude/PRPs/prds/{kebab-case-name}.prd.md`
+
+如需要则创建目录：`mkdir -p .claude/PRPs/prds`
+
+### PRD 模板
 
 ```markdown
 # {Product/Feature Name}
@@ -349,9 +349,9 @@ When {situation}, I want to {motivation}, so I can {outcome}.
 
 ---
 
-## Phase 8: OUTPUT - Summary
+## 阶段 8：输出 —— 摘要（OUTPUT）
 
-After generating, report:
+生成之后，报告：
 
 ```markdown
 ## PRD Created
@@ -396,7 +396,7 @@ This will automatically select the next pending phase and create an implementati
 
 ---
 
-## Question Flow Summary
+## 问题流程摘要
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -430,18 +430,18 @@ This will automatically select the next pending phase and create an implementati
 
 ---
 
-## Integration with ECC
+## 与 ECC 的集成
 
-After PRD generation:
-- Use `/prp-plan` to create implementation plans from PRD phases
-- Use `/plan` for simpler planning without PRD structure
-- Use `/save-session` to preserve PRD context across sessions
+PRD 生成之后：
+- 使用 `/prp-plan` 从 PRD 阶段创建实现计划
+- 使用 `/plan` 进行无 PRD 结构的更简单规划
+- 使用 `/save-session` 跨会话保留 PRD 上下文
 
-## Success Criteria
+## 成功标准
 
-- **PROBLEM_VALIDATED**: Problem is specific and evidenced (or marked as assumption)
-- **USER_DEFINED**: Primary user is concrete, not generic
-- **HYPOTHESIS_CLEAR**: Testable hypothesis with measurable outcome
-- **SCOPE_BOUNDED**: Clear must-haves and explicit out-of-scope
-- **QUESTIONS_ACKNOWLEDGED**: Uncertainties are listed, not hidden
-- **ACTIONABLE**: A skeptic could understand why this is worth building
+- **PROBLEM_VALIDATED**：问题是具体的且有证据支撑（或被标记为假设）
+- **USER_DEFINED**：主要用户是具体的，而非泛泛的
+- **HYPOTHESIS_CLEAR**：可测试的假设，带可衡量的结果
+- **SCOPE_BOUNDED**：清晰的必须有项和明确的范围之外
+- **QUESTIONS_ACKNOWLEDGED**：不确定性被列出，而非隐藏
+- **ACTIONABLE**：怀疑论者也能理解为什么这件事值得构建

@@ -1,5 +1,5 @@
 ---
-description: Legacy slash-entry shim for the context-budget skill. Prefer the skill directly.
+description: context-budget 技能的后备斜杠入口。优先直接使用该技能。
 ---
 
 # Context Budget Optimizer (Legacy Shim)

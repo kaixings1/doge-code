@@ -1,5 +1,5 @@
 ---
-description: Compare HEAD with the latest published npm versions and list all unpublished changes by release layer
+description: 比较 HEAD 与最新发布的 npm 版本，并按发布��列出所有未发布的更改。
 ---
 
 <command-instruction>

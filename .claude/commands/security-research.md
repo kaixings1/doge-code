@@ -1,5 +1,5 @@
 ---
-description: Run the Team Mode security-research audit with 3 vulnerability hunters and 2 PoC engineers
+description: 使用团队模式运行安全研究审计——3 个漏洞猎人和 2 个 PoC 工程师。
 ---
 
 <command-instruction>

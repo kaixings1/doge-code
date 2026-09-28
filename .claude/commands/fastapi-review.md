@@ -1,5 +1,5 @@
 ---
-description: Review a FastAPI application for architecture, async correctness, dependency injection, Pydantic schemas, security, performance, and testability.
+description: 审查 FastAPI 应用的架构、异步正确性、依赖注入、Pydantic 模式、安全性、性能和可测试性。
 ---
 
 # FastAPI Review

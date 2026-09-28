@@ -252,7 +252,7 @@ export function truncateHeadForPTLRetry(
     let acc = 0
     dropCount = 0
     for (const g of groups) {
-      acc += roughTokenCountEstimationForMessages(g)
+      acc += (roughTokenCountEstimationForMessages as any)(g)
       dropCount++
       if (acc >= tokenGap) break
     }
@@ -344,9 +344,9 @@ export function annotateBoundaryWithPreservedSegment(
     compactMetadata: {
       ...boundary.compactMetadata,
       preservedSegment: {
-        headUuid: keep[0]!.uuid,
+        headUuid: (keep[0]!.uuid as any),
         anchorUuid,
-        tailUuid: keep.at(-1)!.uuid,
+        tailUuid: (keep.at(-1)!.uuid as any),
       },
     },
   }
@@ -573,12 +573,12 @@ export async function compactConversation(
     const boundaryMarker = createCompactBoundaryMessage(
       isAutoCompact ? 'auto' : 'manual',
       preCompactTokenCount ?? 0,
-      messages.at(-1)?.uuid,
+      (messages.at(-1)?.uuid as any),
     )
     // 携带已加载的工具状态——摘要不会保留 tool_reference 块，因此压缩后的模式过滤器需要此信息以继续向 API 发送已加载的延迟工具模式。
     const preCompactDiscovered = extractDiscoveredToolNames(messages)
     if (preCompactDiscovered.size > 0) {
-      boundaryMarker.compactMetadata.preCompactDiscoveredTools = [
+      (boundaryMarker.compactMetadata as any).preCompactDiscoveredTools = [
         ...preCompactDiscovered,
       ].sort()
     }
@@ -605,7 +605,7 @@ export async function compactConversation(
     // 结果上下文的消息负载估算值。下一轮迭代的 shouldAutoCompact 会看到这个值加上约 20-40K 的系统提示词 + 工具 + userContext（通过 API usage.input_tokens）。
     // 因此 `willRetriggerNextTurn: true` 是一个强信号；`false` 可能仍会在接近阈值时重新触发。
     const truePostCompactTokenCount = roughTokenCountEstimationForMessages([
-      boundaryMarker,
+      (boundaryMarker as any),
       ...summaryMessages,
       ...postCompactFileAttachments,
       ...hookMessages,
@@ -971,14 +971,14 @@ export async function partialCompactConversation(
     const boundaryMarker = createCompactBoundaryMessage(
       'manual',
       preCompactTokenCount ?? 0,
-      lastPreCompactUuid,
+      (lastPreCompactUuid as any),
       userFeedback,
       messagesToSummarize.length,
     )
     // 使用 allMessages 而非 messagesToSummarize——集合合并是幂等的，比跟踪每半部分中工具所在位置更简单。
     const preCompactDiscovered = extractDiscoveredToolNames(allMessages)
     if (preCompactDiscovered.size > 0) {
-      boundaryMarker.compactMetadata.preCompactDiscoveredTools = [
+      (boundaryMarker.compactMetadata as any).preCompactDiscoveredTools = [
         ...preCompactDiscovered,
       ].sort()
     }
@@ -1038,7 +1038,7 @@ export async function partialCompactConversation(
     return {
       boundaryMarker: annotateBoundaryWithPreservedSegment(
         boundaryMarker,
-        anchorUuid,
+        (anchorUuid as any),
         messagesToKeep,
       ),
       summaryMessages,
@@ -1265,7 +1265,7 @@ async function streamCompactSummary({
       let next = await streamIter.next()
 
       while (!next.done) {
-        const event = next.value
+        const event = next.value as any
 
         if (
           !hasStartedStreaming &&
@@ -1287,7 +1287,7 @@ async function streamCompactSummary({
         }
 
         if (event.type === 'assistant') {
-          response = event
+          response = event as any
         }
 
         next = await streamIter.next()

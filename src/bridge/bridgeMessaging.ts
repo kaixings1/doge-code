@@ -198,7 +198,7 @@ export function handleIngressMessage(
         `[bridge:repl] handleIngressMessage: 收到 control_response, subtype=${respObj.subtype}, request_id=${respObj.request_id}`,
       )
       logForDebugging(
-        `[bridge:repl] handleIngressMessage:   response=${jsonStringify(pObj.response).slice(0, 1000)}`,
+        `[bridge:repl] handleIngressMessage:   response=${JSON.stringify(pObj.response).slice(0, 1000)}`,
       )
       onPermissionResponse?.(parsed)
       return
@@ -213,7 +213,7 @@ export function handleIngressMessage(
         `[bridge:repl] ⬇ 收到控制请求 control_request subtype=${parsed.request.subtype} request_id=${parsed.request_id} data=${JSON.stringify(parsed.request).slice(0,500)}`,
       )
       logForDebugging(
-        `[bridge:repl] handleIngressMessage:   request=${jsonStringify(pObj.request).slice(0, 1000)}`,
+        `[bridge:repl] handleIngressMessage:   request=${JSON.stringify(pObj.request).slice(0, 1000)}`,
       )
       onControlRequest?.(parsed)
       return

@@ -1,6 +1,6 @@
 ---
 name: perf-analyzer
-description: Synthesize perf findings into evidence-backed recommendations and decisions.
+description: 将性能分析结果综合为有证据支持的建议和决策。
 tools: Read, Write
 model: opus
 ---

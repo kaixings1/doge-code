@@ -1,5 +1,5 @@
 ---
-description: Comprehensive Rust code review for ownership, lifetimes, error handling, unsafe usage, and idiomatic patterns. Invokes the rust-reviewer agent.
+description: 针对所有权、生命周期、错误处理、unsafe 使用和地道模式的全面 Rust 代码审查。调用 rust-reviewer 代理。
 ---
 
 # Rust Code Review

@@ -1,5 +1,5 @@
 ---
-description: Guided setup — discover knowledge files, create subscriptions, enable telemetry, and close the feedback loop. Safe to re-run (additive).
+description: 引导式设置——发现知识文件、创建订阅、启用遥测并关闭反馈循环。可安全重新运行（增量式）。
 ---
 
 # Skill Bus Onboard

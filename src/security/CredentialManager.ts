@@ -24,11 +24,9 @@ export class CredentialManager {
   private storageFile: string;
   private encryptionKey: Buffer;
 
-  constructor(storageFile: string, encryptionKey?: string) {
+  constructor(storageFile: string, encryptionKey: string) {
     this.storageFile = storageFile;
-    this.encryptionKey = encryptionKey
-      ? crypto.scryptSync(encryptionKey, 'salt', 32)
-      : crypto.scryptSync('default-key', 'salt', 32);
+    this.encryptionKey = crypto.scryptSync(encryptionKey, 'salt', 32);
   }
 
   /**

@@ -1,5 +1,5 @@
 ---
-description: Easter egg command - about oh-my-opencode
+description: 彩蛋命令 - 关于 oh-my-opencode。
 ---
 
 <command-instruction>

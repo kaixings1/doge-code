@@ -1,41 +1,41 @@
 ---
-description: Multi-agent code review with iterative improvement
+description: 多代理代码审查与迭代改进
 argument-hint: "[scope] [--recent] [--domain AGENT] [--quick] [--create-tech-debt] [--resume]"
 allowed-tools: Bash(git:*), Bash(node:*), Read, Write, Edit, Glob, Grep, Task, AskUserQuestion
 ---
 
-# /audit-project - Multi-Agent Code Review
+# /audit-project - 多代理代码审查
 
-Comprehensive code review using specialized AI agents with iterative improvement.
+使用专门化 AI 代理进行全面代码审查，并迭代改进。
 
-## Quick Reference
+## 快速参考
 
-| Phase | Description | Details |
+| 阶段 | 描述 | 详情 |
 |-------|-------------|---------|
-| 1 | Context & Agent Selection | This file |
-| 2 | Multi-Agent Review | See `audit-project-agents.md` |
-| 3-4 | Tech Debt & Fixes | This file |
-| 5-6 | Verification & Iteration | This file |
-| 7 | Completion Report | This file |
-| 8 | GitHub Issues | See `audit-project-github.md` |
+| 1 | 上下文与代理选择 | 本文件 |
+| 2 | 多代理审查 | 见 `audit-project-agents.md` |
+| 3-4 | 技术债与修复 | 本文件 |
+| 5-6 | 验证与迭代 | 本文件 |
+| 7 | 完成报告 | 本文件 |
+| 8 | GitHub Issues | 见 `audit-project-github.md` |
 
-## Arguments
+## 参数
 
-Parse from $ARGUMENTS:
-- **Scope**: Path to review (default: `.`) or `--recent` (last 5 commits only)
-- **--domain AGENT**: Review with specific agent only (e.g., `--domain security`)
-- **--quick**: Single pass, no iteration (fast feedback)
-- **--create-tech-debt**: Force create/update TECHNICAL_DEBT.md
-- **--resume**: Resume from existing review queue file
+从 $ARGUMENTS 解析：
+- **Scope**：要审查的路径（默认 `.`）或 `--recent`（仅最近 5 个提交）
+- **--domain AGENT**：只用特定代理审查（例如 `--domain security`）
+- **--quick**：单遍，不迭代（快速反馈）
+- **--create-tech-debt**：强制创建/更新 TECHNICAL_DEBT.md
+- **--resume**：从既有审查队列文件恢复
 
-### Resume Mode
+### 恢复模式
 
-If `--resume` is provided, reuse the most recent review queue in the platform state dir.
-Otherwise create a new queue file. See `audit-project-agents.md` for queue handling.
+如果提供了 `--resume`，复用平台状态目录中最近的审查队列。
+否则创建新的队列文件。队列处理见 `audit-project-agents.md`。
 
-## Phase 1: Context Gathering
+## 阶段 1：上下文收集
 
-### Platform Detection
+### 平台检测
 
 ```bash
 # Get plugin root using Node.js helper
@@ -59,7 +59,7 @@ fi
 RESUME_MODE=$([ "${ARGUMENTS}" != "${ARGUMENTS%--resume*}" ] && echo "true" || echo "false")
 ```
 
-### Project Analysis
+### 项目分析
 
 ```bash
 FILE_COUNT=$(git ls-files | wc -l)
@@ -78,40 +78,40 @@ else
 fi
 ```
 
-### Agent Selection
+### 代理选择
 
-**Always Active:**
-- `code-quality-reviewer`: Code quality, error handling, maintainability
-- `security-expert`: Security vulnerabilities, auth, input validation
-- `performance-engineer`: Performance bottlenecks, algorithms, memory
-- `test-quality-guardian`: Test coverage and quality (reports missing tests)
+**始终启用：**
+- `code-quality-reviewer`：代码质量、错误处理、可维护性
+- `security-expert`：安全漏洞、认证、输入校验
+- `performance-engineer`：性能瓶颈、算法、内存
+- `test-quality-guardian`：测试覆盖与质量（报告缺失的测试）
 
-**Conditional:**
-- `architecture-reviewer`: Design patterns (if `FILE_COUNT > 50`)
-- `database-specialist`: Query optimization (if `HAS_DB=true`)
-- `api-designer`: REST best practices (if `HAS_API=true`)
-- `frontend-specialist`: Component design (if `HAS_FRONTEND=true`)
-- `backend-specialist`: Service and domain logic (if `HAS_BACKEND=true`)
-- `devops-reviewer`: CI/CD config (if `HAS_CICD=true`)
+**条件启用：**
+- `architecture-reviewer`：设计模式（如果 `FILE_COUNT > 50`）
+- `database-specialist`：查询优化（如果 `HAS_DB=true`）
+- `api-designer`：REST 最佳实践（如果 `HAS_API=true`）
+- `frontend-specialist`：组件设计（如果 `HAS_FRONTEND=true`）
+- `backend-specialist`：服务与领域逻辑（如果 `HAS_BACKEND=true`）
+- `devops-reviewer`：CI/CD 配置（如果 `HAS_CICD=true`）
 
-## Phase 2: Multi-Agent Review
+## 阶段 2：多代理审查
 
-See `audit-project-agents.md` for detailed agent coordination.
+详细的代理协调见 `audit-project-agents.md`。
 
-**Review queue:** Write findings to a temporary queue file in the platform state dir and keep it updated until all issues are resolved. Remove the file when the queue is empty.
+**审查队列：** 把发现写入平台状态目录中的临时队列文件，并持续更新直到所有问题解决。队列为空时删除该文件。
 
-### Finding Format (Required)
+### 发现格式（必需）
 
-Every finding MUST include:
-- **File:Line**: Exact location (e.g., `src/auth/session.ts:42`)
-- **Severity**: critical | high | medium | low
-- **Category**: From agent domain
-- **Description**: What's wrong and why
-- **Code Quote**: 1-3 lines showing issue
-- **Suggested Fix**: Specific remediation
-- **Effort**: small | medium | large
+每条发现**必须**包含：
+- **File:Line**：精确位置（例如 `src/auth/session.ts:42`）
+- **Severity**：critical | high | medium | low
+- **Category**：来自代理领域
+- **Description**：哪里错了以及为什么
+- **Code Quote**：展示问题的 1-3 行代码
+- **Suggested Fix**：具体的修复方案
+- **Effort**：small | medium | large
 
-### Example Finding
+### 发现示例
 
 ```markdown
 ### Finding: Unsafe SQL Query
@@ -126,9 +126,9 @@ const query = `SELECT * FROM users WHERE id = ${userId}`;
 **Effort**: small
 ```
 
-## Phase 3: Tech Debt Documentation
+## 阶段 3：技术债记录
 
-If TECHNICAL_DEBT.md exists or `--create-tech-debt`:
+如果 TECHNICAL_DEBT.md 存在或指定了 `--create-tech-debt`：
 
 ```markdown
 # Technical Debt
@@ -146,23 +146,23 @@ Last updated: $(date -I)
 - [ ] Issue 2
 ```
 
-## Phase 4: Automated Fixes
+## 阶段 4：自动修复
 
-### Fix Strategy
+### 修复策略
 
-1. **Auto-fixable** (lint, formatting): Apply directly
-2. **Manual fix** (code logic): Implement suggested fix
-3. **Design decision required**: Flag as blocked and report to user
-4. **False positive**: Mark and remove from review queue
+1. **可自动修复**（lint、格式）：直接应用
+2. **手动修复**（代码逻辑）：实现建议的修复
+3. **需要设计决策**：标记为阻塞并报告给用户
+4. **误报**：标记并从审查队列中移除
 
-### Fix Order
+### 修复顺序
 
-1. Critical severity first
-2. Then high → medium → low
-3. Then by effort (small → large)
-4. Then batch by file
+1. 先 critical 严重程度
+2. 然后 high → medium → low
+3. 然后按工作量（small → large）
+4. 然后按文件批量处理
 
-## Phase 5: Verification
+## 阶段 5：验证
 
 ```bash
 # Run tests
@@ -181,15 +181,15 @@ BUILD_STATUS=$?
 VERIFICATION_PASSED=$([ $TEST_STATUS -eq 0 ] && [ $LINT_STATUS -eq 0 ] && [ $BUILD_STATUS -eq 0 ] && echo "true" || echo "false")
 ```
 
-### Handle Failures
+### 处理失败
 
-If verification fails:
-1. Review recent changes (`git diff`)
-2. Identify breaking fix
-3. Rollback: `git restore <file>`
-4. Document as "fix caused regression"
+如果验证失败：
+1. 审查最近的变更（`git diff`）
+2. 定位导致破坏的修复
+3. 回滚：`git restore <file>`
+4. 记录为 "fix caused regression"
 
-## Phase 6: Iteration
+## 阶段 6：迭代
 
 ```javascript
 const initialReview = /* results from Phase 2 review */;
@@ -217,13 +217,13 @@ while (remainingIssues.length > 0) {
 }
 ```
 
-### Quick Mode
+### 快速模式
 
-If `--quick` flag: Single pass, findings only, no fixes.
+如果指定了 `--quick` 标志：单遍扫描，只给发现，不做修复。
 
-## Phase 6.5: Decision Gate (User)
+## 阶段 6.5：决策关卡（用户）
 
-After each iteration (or after re-review if issues remain), report the queue state and ask the user what to do next.
+每次迭代后（或问题仍存在时的重审后），报告队列状态并询问用户下一步做什么。
 
 ```javascript
 const openCount = remainingIssues.length;
@@ -257,7 +257,7 @@ if (choice === 'Continue review') {
 }
 ```
 
-## Phase 7: Completion Report
+## 阶段 7：完成报告
 
 ```markdown
 # Project Review Complete
@@ -288,32 +288,32 @@ ${FILE_COUNT} files modified
 [List of issues needing attention]
 ```
 
-## Phase 8: GitHub Issue Creation
+## 阶段 8：创建 GitHub Issue
 
-See `audit-project-github.md` for:
-- Creating GitHub issues for deferred items
-- Security issue handling (no public issues)
-- TECHNICAL_DEBT.md cleanup
+见 `audit-project-github.md`：
+- 为延后项创建 GitHub issue
+- 安全问题处理（不创建公开 issue）
+- TECHNICAL_DEBT.md 清理
 
-## Error Handling
+## 错误处理
 
-### No Framework Detected
+### 未检测到框架
 ```
 Framework detection failed, using generic patterns.
 ```
 
-### No Tests Available
+### 无可用测试
 ```
 No test suite detected. Skipping test-quality-guardian.
 ```
 
-### All Agents Failed
+### 所有代理失败
 ```
 ERROR: All review agents failed.
 Try: --recent or specific path for smaller scope.
 ```
 
-## Usage Examples
+## 用法示例
 
 ```bash
 /audit-project                    # Full review
@@ -324,12 +324,12 @@ Try: --recent or specific path for smaller scope.
 /audit-project --create-tech-debt # Force tech debt file
 ```
 
-## Success Criteria
+## 成功标准
 
-- [OK] All agents completed review
-- [OK] Evidence-based findings (file:line provided)
-- [OK] Critical issues fixed or documented
-- [OK] Verification passes
-- [OK] TECHNICAL_DEBT.md updated (if enabled)
+- [OK] 所有代理完成审查
+- [OK] 有证据支撑的发现（提供 file:line）
+- [OK] critical 问题已修复或已记录
+- [OK] 验证通过
+- [OK] TECHNICAL_DEBT.md 已更新（如启用）
 
-Begin Phase 1 now.
+现在开始阶段 1。

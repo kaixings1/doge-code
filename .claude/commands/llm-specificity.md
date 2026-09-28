@@ -1,6 +1,6 @@
 ---
 globs: core/llm/llms/**/*.{ts,test.ts}
-description: Tailor recommendations for LLM code based on which specific LLM is being used.
+description: 根据所使用的特定 LLM 定制推荐。
 ---
 
 # LLM Model Specificity

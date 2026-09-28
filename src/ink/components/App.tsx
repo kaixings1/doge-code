@@ -479,7 +479,6 @@ function processKeysInBatch(app: App, items: ParsedInput[], _unused1: undefined,
     updateLastInteractionTime();
   }
   for (const item of items) {
-    try { require('fs').writeFileSync('d:/trace.txt', 'BATCH_ITEM kind=' + item.kind + ' [call#' + processKeysInBatchCallCount + ']\n', {flag:'a'}); } catch(e) {}
     // Terminal responses (DECRPM, DA1, OSC replies, etc.) are not user
     // input — route them to the querier to resolve pending promises.
     if (item.kind === 'response') {
@@ -531,16 +530,12 @@ function processKeysInBatch(app: App, items: ParsedInput[], _unused1: undefined,
       continue;
     }
     app.handleInput(sequence);
-    try { require('fs').writeFileSync('d:/trace.txt', 'APP_AFTER_HANDLE_INPUT [call#' + processKeysInBatchCallCount + ']\n', {flag:'a'}); } catch(e) {}
     const event = new InputEvent(item);
     app.internal_eventEmitter.emit('input', event);
-    try { require('fs').writeFileSync('d:/trace.txt', 'APP_AFTER_EMIT [call#' + processKeysInBatchCallCount + ']\n', {flag:'a'}); } catch(e) {}
 
     // Also dispatch through the DOM tree so onKeyDown handlers fire.
     app.props.dispatchKeyboardEvent(item);
-    try { require('fs').writeFileSync('d:/trace.txt', 'APP_AFTER_DISPATCH [call#' + processKeysInBatchCallCount + ']\n', {flag:'a'}); } catch(e) {}
   }
-  try { require('fs').writeFileSync('d:/trace.txt', 'BATCH_END [call#' + processKeysInBatchCallCount + ']\n', {flag:'a'}); } catch(e) {}
 }
 
 /** Exported for testing. Mutates app.props.selection and click/hover state. */

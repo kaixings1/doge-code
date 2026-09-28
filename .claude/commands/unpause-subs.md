@@ -1,5 +1,5 @@
 ---
-description: Re-enable the skill bus after pausing. Restores subscription processing.
+description: 暂停后重新启用技能总线。恢复订阅处理。
 ---
 
 # Resume Skill Bus

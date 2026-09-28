@@ -1,68 +1,68 @@
 <ci-review-loop>
-# Phase 4: CI & Review Monitor Loop - Reference
+# 阶段 4：CI 与审查监控循环 - 参考
 
-This file contains detailed implementation for the CI & Review Monitor Loop phase of `/ship`.
+本文件包含 `/ship` 的 CI 与审查监控循环阶段的详细实现。
 
-**Parent document**: `ship.md`
+**父文档**：`ship.md`
 
 ---
 
 <mandatory-requirements>
-## This Phase Is Mandatory
+## 此阶段是强制的
 
-This is not optional. You must:
-1. Wait the full 3 minutes for auto-reviewers
-2. Run the monitor loop (not just check once)
-3. Address all comments before merge
+这不是可选的。你必须：
+1. 为自动审查者等待完整的 3 分钟
+2. 运行监控循环（而不是只检查一次）
+3. 合并前处理所有评论
 </mandatory-requirements>
 
 ---
 
 <pr-auto-review>
-## PR Auto-Review Process
+## PR 自动审查流程
 
-PRs receive automatic reviews from configured auto-reviewers (Copilot, Gemini, CodeRabbit, etc.).
+PR 会收到来自已配置自动审查者（Copilot、Gemini、CodeRabbit 等）的自动审查。
 
-**Mandatory workflow:**
-1. After PR creation, wait **at least 3 minutes** for first review round
-2. Read **all comments** from all reviewers
-3. Address **every comment** - no exceptions
-4. Iterate until **zero unresolved threads** (typically 2-4 rounds)
+**强制工作流：**
+1. PR 创建后，为第一轮审查等待**至少 3 分钟**
+2. 阅读所有审查者的**全部评论**
+3. 处理**每一条评论** —— 没有例外
+4. 迭代直到**零未解决线程**（通常 2-4 轮）
 
-**Rules:**
-- Always address all comments, including "minor" or "nit" suggestions
-- Do not skip a comment unless factually wrong or user-approved
-- Treat all feedback as **required changes**, not suggestions
+**规则：**
+- 始终处理所有评论，包括 "minor" 或 "nit" 类建议
+- 除非评论事实上错误或经用户同意，否则不要跳过任何评论
+- 把所有反馈视为**必须的修改**，而非建议
 </pr-auto-review>
 
 ---
 
 <overview>
-## Overview
+## 总览
 
-The monitor loop must wait for:
-1. CI to pass
-2. All comments resolved (addressed or replied to)
-3. No "changes requested" reviews remain
+监控循环必须等待：
+1. CI 通过
+2. 所有评论已解决（已处理或已回复）
+3. 不再有 "changes requested" 状态的审查
 
-## Why All Comments Matter
+## 为什么所有评论都重要
 
-**Every comment must be addressed:**
-- Critical/High issues: Fix immediately
-- Medium issues: Fix (don't defer)
-- Minor/Nit issues: Fix (shows attention to quality)
-- Style suggestions: Fix (maintains codebase consistency)
-- Questions: Answer with explanation
-- False positives: Reply explaining why, then resolve
-- Not relevant: Reply explaining why, then resolve
+**每条评论都必须被处理：**
+- Critical/High 问题：立即修复
+- Medium 问题：修复（不要延后）
+- Minor/Nit 问题：修复（体现对质量的关注）
+- 风格建议：修复（保持代码库一致性）
+- 提问：给出解释作答
+- 误报：回复说明原因，然后标记为已解决
+- 不相关：回复说明原因，然后标记为已解决
 
-Do not ignore comments. Do not leave comments unresolved. A clean PR has zero unresolved conversations.
+不要忽略评论。不要留下未解决的评论。干净的 PR 有零个未解决对话。
 </overview>
 
-## The Monitor Loop Algorithm
+## 监控循环算法
 
-> **Note:** The JavaScript below is **conceptual pseudocode** showing the algorithm flow.
-> Implement using bash functions defined in this file.
+> **注意：** 下面的 JavaScript 是展示算法流程的**概念性伪代码**。
+> 请使用本文件定义的 bash 函数来实现。
 
 ```javascript
 const MAX_ITERATIONS = 10;  // Safety limit
@@ -108,7 +108,7 @@ while (iteration < MAX_ITERATIONS) {
 }
 ```
 
-## Step 1: Wait for CI
+## 步骤 1：等待 CI
 
 ```bash
 wait_for_ci() {
@@ -139,7 +139,7 @@ wait_for_ci() {
 }
 ```
 
-## Step 2: Check PR Feedback
+## 步骤 2：检查 PR 反馈
 
 ```bash
 check_pr_feedback() {
@@ -180,7 +180,7 @@ check_pr_feedback() {
 }
 ```
 
-### Get Full Thread Details
+### 获取完整线程详情
 
 ```bash
 get_unresolved_threads() {
@@ -218,10 +218,10 @@ get_unresolved_threads() {
 }
 ```
 
-## Step 3: Address ALL Feedback
+## 步骤 3：处理所有反馈
 
-> **Note:** This is **conceptual pseudocode** showing the algorithm flow.
-> Implement using: gh api, Read, Edit, Task (ci-fixer), etc.
+> **注意：** 这是展示算法流程的**概念性伪代码**。
+> 请使用以下方式实现：gh api、Read、Edit、Task (ci-fixer) 等。
 
 ```javascript
 async function addressAllFeedback(prNumber) {
@@ -286,9 +286,9 @@ async function addressAllFeedback(prNumber) {
 }
 ```
 
-## Comment Analysis Heuristics
+## 评论分析启发式规则
 
-> **Note:** Classification heuristics for comment handling.
+> **注意：** 用于评论处理的分类启发式规则。
 
 ```javascript
 function analyzeComment(thread) {
@@ -316,9 +316,9 @@ function analyzeComment(thread) {
 }
 ```
 
-## Implementing Fixes
+## 实施修复
 
-Use the ci-fixer agent for code changes:
+代码变更使用 ci-fixer 代理：
 
 ```javascript
 Task({
@@ -340,7 +340,7 @@ Requirements:
 });
 ```
 
-## Resolving Threads
+## 解决线程
 
 ```bash
 resolve_thread() {
@@ -372,7 +372,7 @@ reply_to_comment() {
 }
 ```
 
-## Step 4: Commit and Push
+## 步骤 4：提交并推送
 
 ```bash
 commit_and_push_fixes() {
@@ -392,7 +392,7 @@ commit_and_push_fixes() {
 }
 ```
 
-## Complete Loop Script
+## 完整循环脚本
 
 ```bash
 #!/bin/bash
@@ -449,7 +449,7 @@ fi
 ```
 
 <iteration-summary>
-## Iteration Summary Output
+## 迭代摘要输出
 
 ```markdown
 ## Iteration ${iteration} Summary

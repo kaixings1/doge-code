@@ -1,35 +1,35 @@
 ---
-description: Fix React build failures (Vite, webpack, Next.js, CRA, Parcel, esbuild, Bun) incrementally — JSX/TSX compile errors, hydration mismatches, server/client component boundary failures, missing types. Invokes the react-build-resolver agent for minimal, surgical fixes.
+description: 增量修复 React 构建失败（Vite、webpack、Next.js、CRA、Parcel、esbuild、Bun）—— JSX/TSX 编译错误、水合不匹配、服务端/客户端组件边界失败、类型缺失。调用 react-build-resolver 代理进行最小化、外科手术式的修复。
 ---
 
-# React Build and Fix
+# React 构建与修复
 
-This command invokes the **react-build-resolver** agent to incrementally fix React build errors with minimal changes.
+此命令调用 **react-build-resolver** 代理，以最小改动增量修复 React 构建错误。
 
-## What This Command Does
+## 此命令做什么
 
-1. **Detect Build System**: Identify Vite, webpack, Next.js, CRA, Parcel, esbuild, or Bun
-2. **Run Build**: Execute the project's build script
-3. **Parse Errors**: Group by layer (TypeScript / bundler config / runtime / hydration)
-4. **Fix Incrementally**: One error at a time, re-running build after each change
-5. **Report Summary**: Show what was fixed and what remains
+1. **检测构建系统**：识别 Vite、webpack、Next.js、CRA、Parcel、esbuild 或 Bun
+2. **运行构建**：执行项目的构建脚本
+3. **解析错误**：按层分组（TypeScript / 打包器配置 / 运行时 / 水合）
+4. **增量修复**：一次一个错误，每次改动后重新运行构建
+5. **报告摘要**：显示已修复和剩余的问题
 
-## When to Use
+## 何时使用
 
-Use `/react-build` when:
+在以下情况使用 `/react-build`：
 
-- `npm run build` (or pnpm/yarn/bun equivalent) fails
-- JSX/TSX compile errors after a TypeScript or React upgrade
-- Next.js hydration mismatch errors at runtime
-- Server/Client Component boundary errors in App Router
-- After installing or upgrading `react`, `react-dom`, `@types/react`, or a bundler
-- Missing types or "module not found" errors involving React
+- `npm run build`（或 pnpm/yarn/bun 等价命令）失败
+- TypeScript 或 React 升级后出现 JSX/TSX 编译错误
+- 运行时出现 Next.js 水合不匹配错误
+- App Router 中的服务端/客户端组件边界错误
+- 安装或升级 `react`、`react-dom`、`@types/react` 或某个打包器之后
+- 涉及 React 的类型缺失或 "module not found" 错误
 
-## Scope
+## 范围
 
-This command owns **React build/bundler/runtime hydration** failures. For pure TypeScript type errors with no React involvement, use `/build-fix` (generic) instead.
+此命令负责 **React 构建/打包器/运行时水合** 失败。对于与 React 无关的纯 TypeScript 类型错误，请改用 `/build-fix`（通用）。
 
-## Diagnostic Commands Run
+## 运行的诊断命令
 
 ```bash
 # Project build script (preferred)
@@ -51,7 +51,7 @@ parcel build src/index.html         # Parcel
 bun build ./src/index.tsx --outdir=dist
 ```
 
-## Example Session
+## 会话示例
 
 ````text
 User: /react-build
@@ -142,46 +142,46 @@ $ npm test
 Build Status: PASS: SUCCESS
 ````
 
-## Common Errors Fixed
+## 常见错误及修复
 
 | Error | Typical Fix |
 |---|---|
-| `'React' is not defined` | Set `"jsx": "react-jsx"` in tsconfig (React 17+) |
-| Missing `@types/react` | `npm i -D @types/react @types/react-dom` |
-| `Unexpected token '<'` | Add `@vitejs/plugin-react` / `babel-loader` |
-| `You're importing a component that needs useState` (Next.js) | Add `"use client"` or move hook to a Client Component child |
-| `Module not found: Can't resolve 'fs'` (Next.js) | Remove `fs` import or move logic into Server Component / API route |
-| `Hydration failed because the initial UI does not match` | Move `Date.now()`/`Math.random()`/`window.*` to `useEffect` |
-| `Invalid hook call` | Multiple React copies — dedupe via `resolutions`/`overrides` |
-| `Element type is invalid` | Default vs named import mismatch |
+| `'React' is not defined` | 在 tsconfig 中设置 `"jsx": "react-jsx"`（React 17+） |
+| 缺少 `@types/react` | `npm i -D @types/react @types/react-dom` |
+| `Unexpected token '<'` | 添加 `@vitejs/plugin-react` / `babel-loader` |
+| `You're importing a component that needs useState`（Next.js） | 添加 `"use client"`，或把 hook 移到客户端组件子节点中 |
+| `Module not found: Can't resolve 'fs'`（Next.js） | 移除 `fs` 导入，或把逻辑移到服务端组件 / API 路由中 |
+| `Hydration failed because the initial UI does not match` | 把 `Date.now()`/`Math.random()`/`window.*` 移到 `useEffect` 中 |
+| `Invalid hook call` | 存在多份 React 副本 —— 通过 `resolutions`/`overrides` 去重 |
+| `Element type is invalid` | 默认导入与具名导入不匹配 |
 
-## Fix Strategy
+## 修复策略
 
-1. **Compile errors first** — code must build
-2. **Hydration errors second** — affects production correctness
-3. **Bundler config third** — restore plugin/loader correctness
-4. **One fix at a time** — verify each change
-5. **Minimal changes** — never `// @ts-ignore` without explanation
-6. **Re-run after each fix** — surface new errors immediately
+1. **编译错误优先** —— 代码必须先能构建
+2. **水合错误其次** —— 影响生产正确性
+3. **打包器配置第三** —— 恢复插件/加载器的正确性
+4. **一次一个修复** —— 验证每次改动
+5. **最小改动** —— 绝不在无解释的情况下使用 `// @ts-ignore`
+6. **每次修复后重跑** —— 立即暴露新错误
 
-## Stop Conditions
+## 停止条件
 
-The agent will stop and report if:
+代理将在以下情况停止并报告：
 
-- Same error persists after 3 attempts
-- Fix introduces more errors than it resolves
-- Requires architectural change beyond build resolution (e.g., redesigning the RSC boundary)
-- Bundler version no longer supports the installed React major
+- 同一错误在 3 次尝试后仍然存在
+- 修复引入的错误多于它解决的
+- 需要的架构性改动超出构建修复范畴（例如重新设计 RSC 边界）
+- 打包器版本不再支持已安装的 React 主版本
 
-## Related Commands
+## 相关命令
 
-- `/react-test` — run tests after the build is green
-- `/react-review` — review code quality after the build succeeds
-- `/build-fix` — generic build fixer (non-React)
-- `verification-loop` skill — full verification loop
+- `/react-test` — 构建通过后运行测试
+- `/react-review` — 构建成功后审查代码质量
+- `/build-fix` — 通用构建修复器（非 React）
+- `verification-loop` 技能 — 完整验证循环
 
-## Related
+## 相关
 
-- Agent: `agents/react-build-resolver.md`
-- Skills: `skills/react-patterns/`, `skills/frontend-patterns/`
-- Rules: `rules/react/coding-style.md`, `rules/react/patterns.md`
+- Agent：`agents/react-build-resolver.md`
+- Skills：`skills/react-patterns/`, `skills/frontend-patterns/`
+- Rules：`rules/react/coding-style.md`, `rules/react/patterns.md`

@@ -1,5 +1,5 @@
 ---
-description: Break an epic into task children without creating task branches.
+description: 将 epic 分解为子任务，而不创建任务分支。
 ---
 
 # /epic-decompose

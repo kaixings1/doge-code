@@ -113,8 +113,23 @@ export const getSystemContext = memoize(
 
     // 检测平台信息（Windows/Linux/Mac）
     const platform = process.platform === 'win32' ? 'Windows' : process.platform === 'darwin' ? 'macOS' : 'Linux'
-    const shell = process.env.CLAUDE_CODE_SHELL || process.env.SHELL || (process.platform === 'win32' ? 'cmd' : 'bash')
-    const shellInfo = `运行平台: ${platform}\n默认 Shell: ${shell}\n命令格式: ${process.platform === 'win32' ? '请返回 Windows cmd 格式的命令（使用 dir、type、del、findstr 等，避免 bash 特有语法）' : '请返回 Unix shell 格式的命令'}`
+    const rawShell = process.env.CLAUDE_CODE_SHELL || process.env.SHELL || ''
+    const shellShim = rawShell.toLowerCase()
+    const isNativeWinShell = shellShim.includes('cmd') || shellShim.includes('powershell') || shellShim.includes('pwsh')
+
+    let shellFormatInstruction: string
+    if (process.platform !== 'win32') {
+      shellFormatInstruction = '请返回 Unix shell 格式的命令'
+    } else if (!isNativeWinShell) {
+      shellFormatInstruction = '请返回 Unix shell 格式的命令（使用 ls、cat、grep 等），但使用 Windows 路径（如 D:/doge-code/file.txt）'
+    } else if (shellShim.includes('powershell') || shellShim.includes('pwsh')) {
+      shellFormatInstruction = '请返回 PowerShell 格式的命令'
+    } else {
+      shellFormatInstruction = '请返回 Windows cmd 格式的命令（使用 dir、type、del、findstr 等，避免 bash 特有语法）'
+    }
+
+    const shell = isNativeWinShell ? rawShell : (process.platform === 'win32' ? 'bash' : (rawShell || 'bash'))
+    const shellInfo = `运行平台: ${platform}\n默认 Shell: ${shell}\n命令格式: ${shellFormatInstruction}`
 
     const glossary = await loadGlossary()
 

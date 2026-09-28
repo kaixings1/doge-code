@@ -17,12 +17,37 @@ const inputSchema = _sdkInputSchema()
 
 /** 复刻 toolExecution.ts 中「校验前过滤未知字段」的行为 */
 function stripUnknown(schema: z.ZodTypeAny, input: unknown): unknown {
-  const raw =
-    schema instanceof z.ZodObject
-      ? schema
-      : schema instanceof z.ZodEffects && schema._def.in instanceof z.ZodObject
-        ? schema._def.in
-        : null
+  let raw: z.ZodObject | null = null
+  let current: z.ZodTypeAny = schema
+  // zod v3 的 ZodEffects（zod v4 中不存在，用 any 兜底）
+  const ZodEffects = (z as unknown as Record<string, unknown>).ZodEffects as
+    | (new () => z.ZodType)
+    | null
+  for (let i = 0; i < 10; i++) {
+    if (current instanceof z.ZodObject) {
+      raw = current
+      break
+    }
+    // zod v3: ZodEffects
+    if (ZodEffects && current instanceof ZodEffects) {
+      const inner = (current as unknown as { _def?: { in?: z.ZodTypeAny } })._def?.in
+      if (inner) {
+        current = inner
+        continue
+      }
+    }
+    // zod v4: ZodPipe → _def.in
+    if ((current as unknown as { _def?: { in?: z.ZodTypeAny } })?._def?.in) {
+      current = (current as unknown as { _def: { in: z.ZodTypeAny } })._def.in
+      continue
+    }
+    // ZodOptional/ZodNullable → _def.innerType
+    if ((current as unknown as { _def?: { innerType?: z.ZodTypeAny } })?._def?.innerType) {
+      current = (current as unknown as { _def: { innerType: z.ZodTypeAny } })._def.innerType
+      continue
+    }
+    break
+  }
   const knownKeys = raw ? Object.keys(raw.shape) : []
   if (typeof input !== 'object' || input === null || Array.isArray(input)) return input
   if (knownKeys.length === 0) return input

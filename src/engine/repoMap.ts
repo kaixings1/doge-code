@@ -199,12 +199,10 @@ export class RepoMap {
       for (const [, indices] of fileMap) {
         // 文件内符号共享投票（均匀分配）
         const share = damping / indices.length;
-        for (let a = 0; a < indices.length; a++) {
-          for (let b = 0; b < indices.length; b++) {
-            if (a !== b) {
-              newScores[indices[b]] += scores[indices[a]] * share;
-            }
-          }
+        // O(n) 替代原 O(n²)：先计算总贡献，再减去自贡献
+        const total = indices.reduce((sum, idx) => sum + scores[idx]!, 0) * share
+        for (const idx of indices) {
+          newScores[idx]! += total - scores[idx]! * share
         }
       }
 

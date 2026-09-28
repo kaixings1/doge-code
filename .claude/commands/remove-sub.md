@@ -1,5 +1,5 @@
 ---
-description: Unsubscribe from a skill event. Removes or disables subscriptions with scope-aware options.
+description: 取消订阅技能事件。具有范围感知选项的删除或禁用订阅。
 ---
 
 # Unsubscribe from Skill Event

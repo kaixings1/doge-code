@@ -1,5 +1,5 @@
 ---
-description: Sync epic issue bodies, labels, and local coordination snapshots from GitHub.
+description: 从 GitHub 同步 epic issue 正文、标签和本地协调快照。
 ---
 
 # /epic-sync

@@ -1,5 +1,5 @@
 ---
-description: Review Flutter/Dart code for idiomatic patterns, widget best practices, state management, performance, accessibility, and security. Invokes the flutter-reviewer agent.
+description: 审查 Flutter/Dart 代码的地道模式、widget 最佳实践、状态管理、性能、无障碍和安全性。调用 flutter-reviewer 代理。
 ---
 
 # Flutter Code Review

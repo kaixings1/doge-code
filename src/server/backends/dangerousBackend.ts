@@ -81,8 +81,18 @@ export class DangerousBackend {
     const session = this.sessions.get(sessionId)
     if (!session) return
     if (session.process.pid) {
-      try { session.process.kill('SIGKILL') } catch { /* ignore */ }
+      try {
+        if (process.platform === 'win32') {
+          spawn('taskkill', ['/T', '/F', '/PID', String(session.process.pid)])
+        } else {
+          session.process.kill('SIGKILL')
+        }
+      } catch { /* ignore */ }
     }
+    await new Promise<void>((resolve) => {
+      session.process.once('exit', () => resolve())
+      setTimeout(() => resolve(), 3000)
+    })
     this.sessions.delete(sessionId)
   }
 

@@ -1,5 +1,5 @@
 ---
-description: Anti-duplication guardrail for adding or changing skills
+description: 添加或更改技能时的防重复护栏。
 paths:
   - "skills/**"
 ---

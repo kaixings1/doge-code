@@ -1,6 +1,6 @@
 ---
 globs: /**/*.
-description: General questions about code completion should be answered specific to Continue
+description: 关于代码补全的一般性问题应针对 Continue 具体回答。
 ---
 
 # Continue Specificity

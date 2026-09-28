@@ -1,42 +1,42 @@
 ---
-description: Remove unused code from this project with ultrawork mode, LSP-verified safety, atomic commits
+description: 以 ultrawork 模式、经 LSP 验证的安全性、原子提交的方式移除本项目中的无用代码
 ---
 
 <command-instruction>
 
-Dead code removal via massively parallel deep agents. You are the ORCHESTRATOR — you scan, verify, batch, then delegate ALL removals to parallel agents.
+通过大规模并行深度代理移除死代码。你是**编排者（ORCHESTRATOR）** —— 你负责扫描、验证、分批，然后把**所有**移除工作委派给并行代理。
 
 <rules>
-- **LSP is law.** Verify with `LspFindReferences(includeDeclaration=false)` before ANY removal decision.
-- **Never remove entry points.** `src/index.ts`, `src/cli/index.ts`, test files, config files, `packages/` — off-limits.
-- **You do NOT remove code yourself.** You scan, verify, batch, then fire deep agents. They do the work.
+- **LSP 即法律。** 在做任何移除决策之前，用 `LspFindReferences(includeDeclaration=false)` 验证。
+- **绝不移除入口点。** `src/index.ts`、`src/cli/index.ts`、测试文件、配置文件、`packages/` —— 禁止触碰。
+- **你不自己移除代码。** 你扫描、验证、分批，然后发射深度代理。由它们干活。
 </rules>
 
 <false-positive-guards>
-NEVER mark as dead:
-- Symbols in `src/index.ts` or barrel `index.ts` re-exports
-- Symbols referenced in test files (tests are valid consumers)
-- Symbols with `@public` / `@api` JSDoc tags
-- Hook factories (`createXXXHook`), tool factories (`createXXXTool`), agent definitions in `agentSources`
-- Command templates, skill definitions, MCP configs
-- Symbols in `package.json` exports
+**绝不**标记为死代码：
+- `src/index.ts` 或 barrel `index.ts` 重导出中的符号
+- 测试文件中被引用的符号（测试是合法的消费方）
+- 带 `@public` / `@api` JSDoc 标签的符号
+- Hook 工厂（`createXXXHook`）、工具工厂（`createXXXTool`）、`agentSources` 中的 agent 定义
+- 命令模板、技能定义、MCP 配置
+- `package.json` exports 中的符号
 </false-positive-guards>
 
 ---
 
-## PHASE 1: SCAN — Find Dead Code Candidates
+## 阶段 1：扫描 —— 找出死代码候选
 
-Run ALL of these in parallel:
+并行运行以下**全部**：
 
 <parallel-scan>
 
-**TypeScript strict mode (your primary scanner — run this FIRST):**
+**TypeScript strict 模式（你的主要扫描器 —— 最先运行）：**
 ```bash
 bunx tsc --noEmit --noUnusedLocals --noUnusedParameters 2>&1
 ```
-This gives you the definitive list of unused locals, imports, parameters, and types with exact file:line locations.
+这会给你一份权威的未使用局部变量、导入、参数和类型清单，并带精确的 file:line 位置。
 
-**Explore agents (fire ALL simultaneously as background):**
+**Explore 代理（全部同时作为后台任务发射）：**
 
 ```
 task(subagent_type="explore", run_in_background=true, load_skills=[],
@@ -50,13 +50,13 @@ task(subagent_type="explore", run_in_background=true, load_skills=[],
 
 </parallel-scan>
 
-Collect all results into a master candidate list.
+把所有结果收集进一张主候选清单。
 
 ---
 
-## PHASE 2: VERIFY — LSP Confirmation (Zero False Positives)
+## 阶段 2：验证 —— LSP 确认（零误报）
 
-For EACH candidate from Phase 1:
+对阶段 1 的**每个**候选：
 
 ```typescript
 LspFindReferences(filePath, line, character, includeDeclaration=false)
@@ -64,7 +64,7 @@ LspFindReferences(filePath, line, character, includeDeclaration=false)
 // 1+ references → NOT dead, drop from list
 ```
 
-Also apply the false-positive-guards above. Produce a confirmed list:
+同时应用上面的误报防护。产出一份已确认清单：
 
 ```
 | # | File | Symbol | Type | Action |
@@ -74,26 +74,26 @@ Also apply the false-positive-guards above. Produce a confirmed list:
 | 3 | src/baz.ts:7 | ctx | parameter | PREFIX _ |
 ```
 
-**Action types:**
-- `REMOVE` — delete the symbol/import/file entirely
-- `PREFIX _` — unused function parameter required by signature → rename to `_paramName`
+**动作类型：**
+- `REMOVE` —— 彻底删除该符号/导入/文件
+- `PREFIX _` —— 签名所要求的未使用函数参数 → 重命名为 `_paramName`
 
-If ZERO confirmed: report "No dead code found" and STOP.
+如果确认数为**零**：报告 "No dead code found" 并**停止**。
 
 ---
 
-## PHASE 3: BATCH — Group by File for Conflict-Free Parallelism
+## 阶段 3：分批 —— 按文件分组以实现无冲突并行
 
 <batching-rules>
 
-**Goal: maximize parallel agents with ZERO git conflicts.**
+**目标：在零 git 冲突的前提下最大化并行代理数。**
 
-1. Group confirmed dead code items by FILE PATH
-2. All items in the SAME file go to the SAME batch (prevents two agents editing the same file)
-3. If a dead FILE (entire file deletion) exists, it's its own batch
-4. Target 5-15 batches. If fewer than 5 items total, use 1 batch per item.
+1. 把已确认的死代码项按**文件路径**分组
+2. **同一**文件中的所有项归入**同一**批次（防止两个代理编辑同一个文件）
+3. 如果存在死文件（整文件删除），它自成一个批次
+4. 目标 5-15 个批次。如果总项数少于 5，则每项一个批次。
 
-**Example batching:**
+**分批示例：**
 ```
 Batch A: [src/hooks/foo/hook.ts — 3 unused imports]
 Batch B: [src/features/bar/manager.ts — 2 unused constants, 1 dead function]
@@ -101,15 +101,15 @@ Batch C: [src/tools/baz/tool.ts — 1 unused param, src/tools/baz/types.ts — 1
 Batch D: [src/dead-file.ts — entire file deletion]
 ```
 
-Files in the same directory CAN be batched together (they won't conflict as long as no two agents edit the same file). Maximize batch count for parallelism.
+同一目录下的文件**可以**归入同一批次（只要没有两个代理编辑同一文件就不会冲突）。为并行度最大化批次数。
 
 </batching-rules>
 
 ---
 
-## PHASE 4: EXECUTE — Fire Parallel Deep Agents
+## 阶段 4：执行 —— 发射并行深度代理
 
-For EACH batch, fire a deep agent:
+对**每个**批次，发射一个深度代理：
 
 ```
 task(
@@ -123,7 +123,7 @@ task(
 
 <agent-prompt-template>
 
-Every deep agent gets this prompt structure (fill in the specifics per batch):
+每个深度代理都拿到这个提示结构（按批次填入具体内容）：
 
 ```
 ## TASK: Remove dead code from [file list]
@@ -161,21 +161,27 @@ Every deep agent gets this prompt structure (fill in the specifics per batch):
 
 </agent-prompt-template>
 
-Fire ALL batches simultaneously. Wait for all to complete.
+<agent-prompt-template>
+
+**注意**：上面的代理提示模板保持英文原文 —— 它是作为跨会话可能被复用的**指令载荷**传递给子代理的，其中的 `## TASK`、`## PROTOCOL`、`## CRITICAL` 章节标题是模板契约，翻译会破坏与其他会话/技能的一致性。
+
+</agent-prompt-template>
+
+**同时**发射**所有**批次。等待全部完成。
 
 ---
 
-## PHASE 5: FINAL VERIFICATION
+## 阶段 5：最终验证
 
-After ALL agents complete:
+在**所有**代理完成后：
 
 ```bash
 bun run typecheck   # must pass
-bun test            # note any NEW failures vs pre-existing
+bun run test        # note any NEW failures vs pre-existing
 bun run build       # must pass
 ```
 
-Produce summary:
+产出摘要：
 
 ```markdown
 ## Dead Code Removal Complete
@@ -190,29 +196,29 @@ Produce summary:
 |---|--------|------|--------|
 
 ### Verification
-- Typecheck: PASS/FAIL
-- Tests: X passing, Y failing (Z pre-existing)
-- Build: PASS/FAIL
-- Total removed: N symbols across M files
-- Total commits: K atomic commits
-- Parallel agents used: P
+- Typecheck：PASS/FAIL
+- Tests：X passing, Y failing (Z pre-existing)
+- Build：PASS/FAIL
+- 总计移除：N 个符号，跨 M 个文件
+- 总提交数：K 个原子提交
+- 使用的并行代理数：P
 ```
 
 ---
 
-## SCOPE CONTROL
+## 范围控制
 
-If `$ARGUMENTS` is provided, narrow the scan:
-- File path → only that file
-- Directory → only that directory
-- Symbol name → only that symbol
-- `all` or empty → full project scan (default)
+如果提供了 `$ARGUMENTS`，收窄扫描范围：
+- 文件路径 → 仅该文件
+- 目录 → 仅该目录
+- 符号名 → 仅该符号
+- `all` 或留空 → 全项目扫描（默认）
 
-## ABORT CONDITIONS
+## 中止条件
 
-STOP and report if:
-- More than 50 candidates found (ask user to narrow scope or confirm proceeding)
-- Build breaks and cannot be fixed by reverting
+在以下情况**停止**并报告：
+- 找到超过 50 个候选（请用户收窄范围或确认继续）
+- 构建中断且无法通过回退修复
 
 </command-instruction>
 

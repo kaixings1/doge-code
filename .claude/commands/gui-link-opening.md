@@ -1,6 +1,6 @@
 ---
 globs: gui/**/*
-description: Ensures consistent URL opening behavior in GUI components using the
+description: 确保 GUI 组件中使用系统默认浏览器打开 URL 的一致行为。
   IDE messenger pattern
 alwaysApply: false
 ---

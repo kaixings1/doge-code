@@ -1,31 +1,31 @@
 ---
-description: Enforce TDD workflow for React. Write React Testing Library tests first (behavior-focused, accessibility-first), then implement components. Detects Vitest or Jest and verifies coverage targets.
+description: 强制 React 的 TDD 工作流。先写 React Testing Library 测试（行为优先、无障碍优先），再实现组件。检测 Vitest 或 Jest 并验证覆盖率目标。
 ---
 
-# React TDD Command
+# React TDD 命令
 
-This command enforces test-driven development for React using React Testing Library plus Vitest or Jest, detected at runtime.
+此命令对 React 强制测试驱动开发，使用 React Testing Library 配合 Vitest 或 Jest（运行时检测）。
 
-## What This Command Does
+## 此命令做什么
 
-1. **Define Component Signature**: Scaffold the component, prop type, and exports
-2. **Write Behavior Tests First**: RTL queries (role-first), `userEvent`, MSW for network — RED
-3. **Run Tests**: Verify they fail for the right reason
-4. **Implement Minimal Code**: Just enough to pass — GREEN
-5. **Refactor**: Improve while keeping tests green
-6. **Check Coverage**: Hit the targets in [rules/react/testing.md](../rules/react/testing.md)
+1. **定义组件签名**：搭建组件、prop 类型和导出
+2. **先写行为测试**：RTL 查询（role 优先）、`userEvent`、MSW 处理网络 —— RED
+3. **运行测试**：验证它们因正确的原因而失败
+4. **实现最小代码**：刚好足以通过 —— GREEN
+5. **重构**：在保持测试通过的同时改进
+6. **检查覆盖率**：达到 [rules/react/testing.md](../rules/react/testing.md) 中的目标
 
-## When to Use
+## 何时使用
 
-Use `/react-test` when:
+在以下情况使用 `/react-test`：
 
-- Implementing a new React component or custom hook
-- Adding test coverage to an untested component
-- Fixing a bug (write failing test first that reproduces it)
-- Building forms, state machines, or accessibility-critical UI
-- Onboarding to RTL + Vitest/Jest workflow
+- 实现新的 React 组件或自定义 hook
+- 为未测试的组件添加测试覆盖
+- 修复 bug（先写能复现它的失败测试）
+- 构建表单、状态机或无障碍关键型 UI
+- 熟悉 RTL + Vitest/Jest 工作流
 
-## TDD Cycle
+## TDD 循环
 
 ```
 RED      -> Write failing test for the next behavior
@@ -34,16 +34,16 @@ REFACTOR -> Improve component, tests stay green
 REPEAT   -> Next behavior
 ```
 
-## Runner Detection
+## 运行器检测
 
 ```bash
 test -f vitest.config.ts -o -f vitest.config.js -o -f vite.config.ts   # Vitest
 grep -l '"jest"' package.json                                          # Jest
 ```
 
-Prefer Vitest for new Vite-based projects; respect Jest for existing setups.
+新的基于 Vite 的项目优先使用 Vitest；对既有配置尊重 Jest。
 
-## Example Session
+## 会话示例
 
 ````text
 User: /react-test I need a SearchInput component with debounced search
@@ -130,7 +130,7 @@ $ vitest run src/components/SearchInput.test.tsx
 × src/components/SearchInput.test.tsx (4 tests) ✘ Error: not implemented
 ```
 
-✓ Tests fail as expected.
+✓ 测试如预期失败。
 
 ## Step 4: Implement Minimal Code (GREEN)
 
@@ -156,7 +156,7 @@ export function SearchInput({ onSearch, placeholder, debounceMs = 300 }: Props) 
 }
 ```
 
-## Step 5: Run Tests — Verify PASS
+## Step 5: Run Tests — Verify PASS（验证通过）
 
 ```bash
 $ vitest run src/components/SearchInput.test.tsx
@@ -175,20 +175,20 @@ $ vitest run --coverage src/components/SearchInput.test.tsx
 ## TDD Complete!
 ````
 
-## Test Patterns
+## 测试模式
 
-### Behavior, not implementation
+### 测行为，而非实现
 
-Use `getByRole`, `getByLabelText`, `getByText`. Avoid `container.querySelector` and asserting on component state.
+使用 `getByRole`、`getByLabelText`、`getByText`。避免 `container.querySelector` 以及对组件 state 的断言。
 
-### `userEvent.setup()` per test
+### 每个测试单独 `userEvent.setup()`
 
 ```tsx
 const user = userEvent.setup();
 await user.click(screen.getByRole("button", { name: /save/i }));
 ```
 
-### MSW for network
+### 用 MSW 处理网络
 
 ```tsx
 beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
@@ -198,7 +198,7 @@ afterAll(() => server.close());
 server.use(http.post("/api/users", () => HttpResponse.json({ id: "1" }, { status: 201 })));
 ```
 
-### Custom hooks
+### 自定义 hooks
 
 ```tsx
 const { result } = renderHook(() => useCounter(0));
@@ -206,35 +206,35 @@ act(() => result.current.increment());
 expect(result.current.count).toBe(1);
 ```
 
-### Accessibility
+### 无障碍
 
 ```tsx
 import { axe } from "vitest-axe";
 expect(await axe(container)).toHaveNoViolations();
 ```
 
-## Coverage Targets
+## 覆盖率目标
 
 | Layer | Target |
 |---|---|
-| Pure utilities | >=90% |
-| Custom hooks | >=85% |
-| Presentational components | >=80% |
-| Container components | >=70% |
-| Pages | E2E covered separately |
+| 纯工具函数 | >=90% |
+| 自定义 hooks | >=85% |
+| 展示型组件 | >=80% |
+| 容器型组件 | >=70% |
+| 页面 | 由 E2E 单独覆盖 |
 
-Configure in `vitest.config.ts` / `jest.config.js` to enforce thresholds in CI.
+在 `vitest.config.ts` / `jest.config.js` 中配置，以在 CI 中强制阈值。
 
-## Anti-Patterns to Avoid
+## 要避免的反模式
 
-- `container.querySelector(...)` — bypasses accessibility queries
-- Asserting on render count
-- Mocking `react` itself (`jest.mock("react", ...)`)
-- Mocking child components by default (mock only when child has heavy side effects)
-- Ignoring `act()` warnings — they signal real bugs
-- Snapshot tests of rendered components (brittle, rubber-stamped) — use Playwright/Cypress visual diff instead
+- `container.querySelector(...)` —— 绕过了无障碍查询
+- 对渲染次数做断言
+- mock `react` 本身（`jest.mock("react", ...)`）
+- 默认 mock 子组件（仅当子组件有重度副作用时才 mock）
+- 忽略 `act()` 警告 —— 它们预示着真实的 bug
+- 对渲染组件做快照测试（脆弱、草率盖章）—— 改用 Playwright/Cypress 的视觉 diff
 
-## Test Commands
+## 测试命令
 
 ```bash
 # Vitest
@@ -252,14 +252,14 @@ jest path/to/file.test.tsx
 CI=true vitest run --coverage
 ```
 
-## Related Commands
+## 相关命令
 
-- `/react-build` — fix build errors before running tests
-- `/react-review` — review after implementation
-- `verification-loop` skill — full verification loop
+- `/react-build` — 运行测试前修复构建错误
+- `/react-review` — 实现后审查
+- `verification-loop` 技能 — 完整验证循环
 
-## Related
+## 相关
 
-- Skills: `skills/react-testing/`, `skills/tdd-workflow/`, `skills/accessibility/`, `skills/e2e-testing/`
-- Rules: `rules/react/testing.md`
-- Agents: `react-reviewer` (reviews test quality), `tdd-guide` (enforces TDD process)
+- Skills：`skills/react-testing/`, `skills/tdd-workflow/`, `skills/accessibility/`, `skills/e2e-testing/`
+- Rules：`rules/react/testing.md`
+- Agents：`react-reviewer`（审查测试质量）、`tdd-guide`（强制 TDD 流程）

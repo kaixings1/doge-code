@@ -1,83 +1,83 @@
 ---
-description: Comprehensive Vue.js code review for Composition API correctness, reactivity, composable patterns, template security, accessibility, and Vue-specific performance. Invokes the vue-reviewer agent (and typescript-reviewer alongside on .vue/.ts changes).
+description: 针对 Composition API 正确性、响应式、composable 模式、模板安全、无障碍和 Vue 专属性能的全面 Vue.js 代码审查。调用 vue-reviewer 代理（并在 .vue/.ts 变更时同时调用 typescript-reviewer）。
 ---
 
-# Vue Code Review
+# Vue 代码审查
 
-This command invokes the **vue-reviewer** agent for Vue-specific code review. For pull requests touching `.vue` files or Vue-containing `.ts`/`.js` files, both `vue-reviewer` and `typescript-reviewer` should run — each owns a distinct lane.
+此命令调用 **vue-reviewer** 代理进行 Vue 专属代码审查。对于触及 `.vue` 文件或包含 Vue 的 `.ts`/`.js` 文件的拉取请求，`vue-reviewer` 和 `typescript-reviewer` 都应运行 —— 各自负责不同的赛道。
 
-## What This Command Does
+## 此命令做什么
 
-1. **Identify Vue Changes**: Find modified `.vue` files and Vue-related `.ts`/`.js` files via `git diff`
-2. **Run Lint**: Execute `eslint` with `eslint-plugin-vue`
-3. **Typecheck**: Run `vue-tsc --noEmit` or the project's canonical typecheck command
-4. **Review Vue Lanes Only**: Reactivity, composables, template security, accessibility, Vue-specific performance
-5. **Generate Report**: Categorize issues by severity (CRITICAL / HIGH / MEDIUM)
+1. **识别 Vue 变更**：通过 `git diff` 查找修改过的 `.vue` 文件和 Vue 相关的 `.ts`/`.js` 文件
+2. **运行 Lint**：执行带 `eslint-plugin-vue` 的 `eslint`
+3. **类型检查**：运行 `vue-tsc --noEmit` 或项目规范的类型检查命令
+4. **只审查 Vue 赛道**：响应式、composables、模板安全、无障碍、Vue 专属性能
+5. **生成报告**：按严重程度归类问题（CRITICAL / HIGH / MEDIUM）
 
-## When to Use
+## 何时使用
 
-Use `/vue-review` when:
+在以下情况使用 `/vue-review`：
 
-- A PR or commit touches `.vue` files
-- After writing or modifying Vue components, composables, or Pinia stores
-- Before merging Vue code
-- Auditing template security (`v-html`, URL bindings)
-- Reviewing a new composable for correctness
-- Auditing Vue Router guards and navigation
-- Reviewing Nuxt server routes or SSR-specific code
+- PR 或提交触及 `.vue` 文件
+- 编写或修改 Vue 组件、composables 或 Pinia store 之后
+- 合并 Vue 代码之前
+- 审计模板安全（`v-html`、URL 绑定）
+- 审查新 composable 的正确性
+- 审计 Vue Router 守卫与导航
+- 审查 Nuxt 服务端路由或 SSR 专属代码
 
-For pure `.ts`/`.js` changes with no Vue imports, use `/code-review` (general) or invoke `typescript-reviewer` directly.
+对于不带 Vue 导入的纯 `.ts`/`.js` 变更，使用 `/code-review`（通用）或直接调用 `typescript-reviewer`。
 
-## Scope vs `/code-review` and TypeScript Review
+## 与 `/code-review` 及 TypeScript 审查的范围划分
 
-| Tool | Scope |
+| 工具 | 范围 |
 |---|---|
-| `vue-reviewer` (this command) | Reactivity, composables, template security, a11y, Vue performance, Pinia/Router |
-| `typescript-reviewer` | Generic TS/JS — `any` abuse, async correctness, Node security |
-| `security-reviewer` | Project-wide security audit |
-| `/code-review` | Generic uncommitted-changes or PR review |
+| `vue-reviewer`（本命令） | 响应式、composables、模板安全、a11y、Vue 性能、Pinia/Router |
+| `typescript-reviewer` | 通用 TS/JS —— `any` 滥用、异步正确性、Node 安全性 |
+| `security-reviewer` | 项目级安全审计 |
+| `/code-review` | 对未提交变更或 PR 的通用审查 |
 
-On a `.vue` / Vue-related PR, invoke both `vue-reviewer` and `typescript-reviewer`. Findings from each are non-overlapping by design.
+在 `.vue` / Vue 相关的 PR 上，同时调用 `vue-reviewer` 和 `typescript-reviewer`。两者的发现按设计不重叠。
 
-## Review Categories
+## 审查类别
 
-### CRITICAL (Must Fix)
+### CRITICAL（必须修复）
 
-- `v-html` with unsanitized input
-- `:href`/`:src` with unvalidated user URLs (`javascript:`, `data:`)
-- Secret in client bundle (`VITE_*`, Nuxt `public` runtimeConfig)
-- Server endpoint without input validation (Nuxt Nitro)
-- `localStorage`/`sessionStorage` for session tokens
-- Destructuring reactive props in Vue < 3.5 (breaks reactivity)
-- `reactive()` object replacement (breaks watchers)
-- Watcher source tracking a ref object instead of `.value`
+- 对未净化的输入使用 `v-html`
+- `:href`/`:src` 使用未校验的用户 URL（`javascript:`、`data:`）
+- 客户端包中的密钥（`VITE_*`、Nuxt `public` runtimeConfig）
+- 未经输入校验的服务端端点（Nuxt Nitro）
+- 用 `localStorage`/`sessionStorage` 存储会话令牌
+- 在 Vue < 3.5 中解构响应式 props（破坏响应式）
+- `reactive()` 对象被整体替换（破坏 watcher）
+- watcher 源追踪的是 ref 对象而非 `.value`
 
-### HIGH (Should Fix)
+### HIGH（应当修复）
 
-- Composable with module-scope side effects
-- Missing cleanup in composable (watcher, interval, listener)
-- `v-for` without `:key` or with `key={index}`
-- `v-if` + `v-for` on same element
-- Props mutation
-- Missing prop validation
-- Route guard returning false without redirect
-- `useRoute().params` destructured at top-level (snapshot)
-- `v-model` bound to computed without setter
-- Accessibility violations (missing labels, non-semantic interactive elements)
-- Direct store property mutation outside actions
+- composable 带有模块作用域副作用
+- composable 缺少清理（watcher、interval、listener）
+- `v-for` 缺少 `:key` 或使用 `key={index}`
+- 同一元素上同时使用 `v-if` 和 `v-for`
+- 修改 props
+- 缺少 prop 校验
+- 路由守卫返回 false 却未重定向
+- 在顶层解构 `useRoute().params`（快照）
+- `v-model` 绑定到没有 setter 的 computed
+- 无障碍违规（缺少标签、非语义化交互元素）
+- 在 actions 之外直接修改 store 属性
 
-### MEDIUM (Consider)
+### MEDIUM（考虑）
 
-- Options API in new Vue 3 code
-- Component over 300 lines
-- `v-show` where `v-if` is more appropriate (or vice versa)
-- Missing `:max` on `<KeepAlive>`
-- Missing `shallowRef` for large replaced data
-- Custom validation instead of vetted form library
-- `defineExpose` exposing more than necessary
-- `inheritAttrs` not disabled when using `v-bind="$attrs"`
+- 新的 Vue 3 代码中使用 Options API
+- 组件超过 300 行
+- 该用 `v-if` 却用 `v-show`（或反之）
+- `<KeepAlive>` 缺少 `:max`
+- 大幅替换的数据缺少 `shallowRef`
+- 自造校验而非使用经过检验的表单库
+- `defineExpose` 暴露了超出必要的内容
+- 使用 `v-bind="$attrs"` 时未禁用 `inheritAttrs`
 
-## Automated Checks Run
+## 运行的自动化检查
 
 ```bash
 # Lint (required)
@@ -94,9 +94,9 @@ npx eslint . --rule 'vue/no-v-html: warn' \
 npm audit
 ```
 
-If `eslint-plugin-vue` or `vue-tsc` is not configured, the review will flag the gap as a HIGH config issue and continue.
+如果未配置 `eslint-plugin-vue` 或 `vue-tsc`，审查会把该缺口标记为 HIGH 级配置问题并继续。
 
-## Example Usage
+## 使用示例
 
 ````text
 User: /vue-review
@@ -151,24 +151,24 @@ watch(userId, async (newId, _old, onCleanup) => {
 Recommendation: FAIL: Block merge until CRITICAL issue is fixed
 ````
 
-## Approval Criteria
+## 批准标准
 
 | Status | Condition |
 |---|---|
-| PASS: Approve | No CRITICAL or HIGH issues |
-| WARNING: Warning | Only MEDIUM issues (merge with caution) |
-| FAIL: Block | CRITICAL or HIGH issues found |
+| PASS: Approve | 没有 CRITICAL 或 HIGH 问题 |
+| WARNING: Warning | 仅有 MEDIUM 问题（谨慎合并） |
+| FAIL: Block | 发现 CRITICAL 或 HIGH 问题 |
 
-## Integration with Other Commands
+## 与其他命令的集成
 
-- Run your project's build command first if the build is broken
-- Run tests to ensure component tests pass
-- Run `/vue-review` before merging Vue code
-- Use `/code-review` for non-Vue-specific concerns on the same PR
+- 如果构建已损坏，先运行项目的构建命令
+- 运行测试以确保组件测试通过
+- 在合并 Vue 代码前运行 `/vue-review`
+- 同一 PR 上非 Vue 专属的问题使用 `/code-review`
 
-## Related
+## 相关
 
-- Agent: `agents/vue-reviewer.md`
-- Companion agent: `agents/typescript-reviewer.md` (run alongside for Vue-related TS/JS)
-- Skills: `skills/vue-patterns/`
-- Rules: `rules/vue/`
+- Agent：`agents/vue-reviewer.md`
+- 配套 Agent：`agents/typescript-reviewer.md`（Vue 相关 TS/JS 时一并运行）
+- Skills：`skills/vue-patterns/`
+- Rules：`rules/vue/`

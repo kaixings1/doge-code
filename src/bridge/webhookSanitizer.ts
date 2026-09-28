@@ -21,11 +21,11 @@ const DANGEROUS_PATTERNS: RegExp[] = [
  */
 export function sanitizeWebhookPayload<T>(value: T): T {
   if (typeof value === 'string') {
-    let result = value
+    let result: string = value
     for (const pattern of DANGEROUS_PATTERNS) {
       result = result.replace(pattern, '')
     }
-    return result as unknown as T
+    return result as T
   }
   return value
 }

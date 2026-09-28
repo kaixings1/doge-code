@@ -1,5 +1,5 @@
 ---
-description: Recommend the best model tier for the current task based on complexity, risk, and budget.
+description: 基于复杂度、风险和预算，为当前任务推荐最佳模型层级。
 ---
 
 # Model Route Command

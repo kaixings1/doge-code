@@ -178,13 +178,6 @@ import { CHROME_TOOL_SEARCH_INSTRUCTIONS } from '../../utils/claudeInChrome/prom
 import { getMaxThinkingTokensForModel } from '../../utils/context.js'
 import { logForDebugging } from '../../utils/debug.js'
 import { logForDiagnosticsNoPII } from '../../utils/diagLogs.js'
-import { type EffortValue, modelSupportsEffort } from '../../utils/effort.js'
-import {
-  isFastModeAvailable,
-  isFastModeCooldown,
-  isFastModeEnabled,
-  isFastModeSupportedByModel,
-} from '../../utils/fastMode.js'
 import { returnValue } from '../../utils/generators.js'
 import { headlessProfilerCheckpoint } from '../../utils/headlessProfiler.js'
 import { isMcpInstructionsDeltaEnabled } from '../../utils/mcpInstructionsDelta.js'
@@ -1241,7 +1234,7 @@ async function* queryModel(
     // DynamicToolComposer: 基于对话历史动态拼装工具列表
     // 当启用时，额外提取最近 N 轮对话中的模型响应信号，动态追加工具
     if (isDynamicToolComposerEnabled()) {
-      filteredTools = composeToolsForTurn(tools, messages, {
+      filteredTools = composeToolsForTurn(tools, messages as any, {
         historyWindow: 3,
         enabled: true,
       })
@@ -1277,8 +1270,8 @@ async function* queryModel(
       isModelSupportedForCacheEditing,
       getCachedMCConfig,
     } = await import('../compact/cachedMicrocompact.js')
-    const betas = await import('src/constants/betas.js')
-    cacheEditingBetaHeader = betas.CACHE_EDITING_BETA_HEADER
+    // const betas = await import('src/constants/betas.js') // removed: module not found
+    // cacheEditingBetaHeader = betas.CACHE_EDITING_BETA_HEADER // removed
     const featureEnabled = isCachedMicrocompactEnabled()
     const modelSupported = isModelSupportedForCacheEditing(options.model)
     cachedMCEnabled = featureEnabled && modelSupported
@@ -1891,6 +1884,7 @@ async function* queryModel(
 
 	// 防止在无端点配置时发出真实请求
 if (process.env.ANTHROPIC_BASE_URL === 'http://0.0.0.0:1' || !process.env.DOGE_API_KEY) {
+  // @ts-ignore
   return (async function* () {
     yield {
       type: 'assistant',
@@ -1994,7 +1988,6 @@ async (anthropic, attempt, context) => {
             },
             openAIRequest,
             signal,
-            retryNonce,
           )
           queryCheckpoint('query_response_headers_received')
           return createAnthropicStreamFromOpenAI({

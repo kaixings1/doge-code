@@ -70,12 +70,14 @@ export function getAllSources(): SkillSource[] {
  var description = String.fromCharCode(34,34);
  var url = String.fromCharCode(34,34);
  if (fs.existsSync(metaPath)) {
- try {
- var meta = JSON.parse(fs.readFileSync(metaPath, String.fromCharCode(117,116,102,45,56)));
- displayName = meta.displayName || e.name;
- description = meta.description || String.fromCharCode(34,34);
- url = meta.url || String.fromCharCode(34,34);
- } catch (ex) {}
+  try {
+  var meta = JSON.parse(fs.readFileSync(metaPath, String.fromCharCode(117,116,102,45,56)));
+  displayName = meta.displayName || e.name;
+  description = meta.description || String.fromCharCode(34,34);
+  url = meta.url || String.fromCharCode(34,34);
+  } catch (ex) {
+  console.warn('Failed to parse source metadata: ' + dirPath + ' - ' + (ex as Error).message);
+  }
  }
  result.push({ name: e.name, displayName: displayName, url: url, description: description, skillCount: skills.length });
  }

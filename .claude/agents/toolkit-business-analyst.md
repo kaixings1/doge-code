@@ -1,6 +1,6 @@
 ---
 name: business-analyst
-description: Performs requirements analysis, process mapping, gap analysis, and stakeholder alignment for technical projects
+description: 对技术项目执行需求分析、流程映射、差距分析和相关方对齐。
 tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 model: opus
 ---

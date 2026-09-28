@@ -54,10 +54,10 @@ describe('command registration - hasCommand integration', () => {
   })
 
   it('builtInCommandNames should contain every command name and alias', async () => {
-    const cmds = await getCommands('/')
+    const { COMMANDS } = await import('../../commands')
     const builtIn = builtInCommandNames()
     const missing: string[] = []
-    for (const cmd of cmds) {
+    for (const cmd of COMMANDS()) {
       if (!builtIn.has(cmd.name)) {
         missing.push(cmd.name)
       }

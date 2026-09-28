@@ -1,12 +1,12 @@
-# Phases 7-10: Deploy & Validate - Reference
+# 阶段 7-10：部署与验证 - 参考
 
-This file contains platform-specific deployment and validation for `/ship`.
+本文件包含 `/ship` 的平台专属部署与验证流程。
 
-**Parent document**: `ship.md`
+**父文档**：`ship.md`
 
-**Note**: Skip all phases if `WORKFLOW="single-branch"`.
+**注意**：如果 `WORKFLOW="single-branch"`，跳过所有阶段。
 
-## Phase 7: Deploy to Development
+## 阶段 7：部署到开发环境
 
 ### Railway
 
@@ -87,7 +87,7 @@ if [ "$DEPLOYMENT" = "netlify" ]; then
 fi
 ```
 
-### Generic / Unknown
+### 通用 / 未知平台
 
 ```bash
 if [ -z "$DEPLOYMENT" ] || [ "$DEPLOYMENT" = "null" ]; then
@@ -97,9 +97,9 @@ if [ -z "$DEPLOYMENT" ] || [ "$DEPLOYMENT" = "null" ]; then
 fi
 ```
 
-## Phase 8: Validate Development
+## 阶段 8：验证开发环境
 
-### Health Check
+### 健康检查
 
 ```bash
 echo "Running smoke tests on development..."
@@ -119,7 +119,7 @@ else
 fi
 ```
 
-### Error Log Monitoring
+### 错误日志监控
 
 ```bash
 echo "Checking logs for errors..."
@@ -143,7 +143,7 @@ else
 fi
 ```
 
-### Project Smoke Tests
+### 项目冒烟测试
 
 ```bash
 if jq -e '.scripts["smoke-test"]' package.json > /dev/null 2>&1; then
@@ -161,7 +161,7 @@ if jq -e '.scripts["smoke-test"]' package.json > /dev/null 2>&1; then
 fi
 ```
 
-### Validation Summary
+### 验证摘要
 
 ```markdown
 ## Development Validation [OK]
@@ -174,9 +174,9 @@ fi
 Proceeding to production...
 ```
 
-## Phase 9: Deploy to Production
+## 阶段 9：部署到生产环境
 
-### Merge to Production Branch
+### 合并到生产分支
 
 ```bash
 echo "Merging $MAIN_BRANCH → $PROD_BRANCH..."
@@ -203,9 +203,9 @@ else
 fi
 ```
 
-### Wait for Production Deployment
+### 等待生产部署
 
-Same platform-specific logic as Phase 7, but targeting production environment.
+与阶段 7 相同的平台专属逻辑，但目标是生产环境。
 
 ```bash
 echo "Waiting for production deployment..."
@@ -216,9 +216,9 @@ echo "Waiting for production deployment..."
 echo "[OK] Deployed to production: $PROD_URL"
 ```
 
-## Phase 10: Validate Production
+## 阶段 10：验证生产环境
 
-### Conservative Validation
+### 保守验证
 
 ```bash
 echo "Validating production deployment..."
@@ -237,7 +237,7 @@ else
 fi
 ```
 
-### Production Error Monitoring
+### 生产错误监控
 
 ```bash
 echo "Monitoring production logs..."
@@ -256,7 +256,7 @@ else
 fi
 ```
 
-### Production Smoke Tests
+### 生产冒烟测试
 
 ```bash
 if jq -e '.scripts["smoke-test:prod"]' package.json > /dev/null 2>&1; then
@@ -272,9 +272,9 @@ if jq -e '.scripts["smoke-test:prod"]' package.json > /dev/null 2>&1; then
 fi
 ```
 
-## Rollback Mechanism
+## 回滚机制
 
-**Triggered automatically on any production validation failure.**
+**在任何生产验证失败时自动触发。**
 
 ```bash
 rollback_production() {
@@ -312,9 +312,9 @@ rollback_production() {
 }
 ```
 
-## Platform Detection Reference
+## 平台检测参考
 
-The `detect-platform.js` script returns:
+`detect-platform.js` 脚本返回：
 
 ```json
 {
@@ -327,4 +327,4 @@ The `detect-platform.js` script returns:
 }
 ```
 
-Use these values to adapt deployment monitoring to your specific platform.
+使用这些值来让部署监控适配你的具体平台。

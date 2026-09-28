@@ -1,5 +1,5 @@
 ---
-description: "Quick commit with natural language file targeting — describe what to commit in plain English"
+description: 使用自然语言文件定位进行快速提交——用plain English描述要提交的内容。
 argument-hint: "[target description] (blank = all changes)"
 ---
 

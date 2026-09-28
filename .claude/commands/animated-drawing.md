@@ -1,5 +1,5 @@
 ---
-description: Animate a SUPPLIED drawing/photo of a character with real motion capture (Meta AnimatedDrawings) → raster GIF/MP4 of that drawing moving. To CREATE a vector doodle from scratch, use /ink-art.
+description: 为提供的角色绘图/照片添加真实动作捕捉动画（Meta AnimatedDrawings）→ 生成该绘图移动的光栅 GIF/MP4。如需从零创建矢量涂鸦，请使用 /ink-art。
 argument-hint: [path to drawing] [motion: dance|walk|jump|wave]
 ---
 

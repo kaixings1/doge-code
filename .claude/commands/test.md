@@ -1,5 +1,5 @@
 ---
-description: Run TDD workflow — write failing tests, implement, verify. For bugs, use the Prove-It pattern.
+description: 运行 TDD 工作流——编写失败的测试、实现、验证。对于 bug，使用 Prove-It 模式。
 ---
 
 Invoke the agent-skills:test-driven-development skill.

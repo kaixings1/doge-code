@@ -15,7 +15,7 @@ export type SuggestionItem = {
   color?: keyof Theme;
 };
 export type SuggestionType = 'command' | 'file' | 'directory' | 'agent' | 'shell' | 'custom-title' | 'slack-channel' | 'none';
-export const OVERLAY_MAX_ITEMS = 5;
+export const OVERLAY_MAX_ITEMS = 55;
 
 /**
  * Get the icon for a suggestion based on its type
@@ -221,7 +221,7 @@ export function PromptInputFooterSuggestions(t0) {
   const {
     rows
   } = useTerminalSize();
-  const maxVisibleItems = overlay ? OVERLAY_MAX_ITEMS : Math.min(6, Math.max(1, rows - 3));
+  const maxVisibleItems = overlay ? OVERLAY_MAX_ITEMS : Math.min(56, Math.max(1, rows - 3));
   if (suggestions.length === 0) {
     return null;
   }

@@ -1,5 +1,5 @@
 import { createHash } from 'crypto'
-import { readFileSync, realpathSync, statSync } from 'fs'
+import { readFileSync, readdirSync, realpathSync, statSync } from 'fs'
 import { open, readFile, realpath, stat } from 'fs/promises'
 import { memoize } from '../vendor/lodash.js'
 import { basename, dirname, join, resolve, sep } from 'path'
@@ -199,6 +199,39 @@ export const getIsGit = memoize(async (): Promise<boolean> => {
   return isGit
 })
 
+/**
+ * 解析指定目录的 .git 路径（worktree/submodule 的 .git 可能是文件）。
+ * 返回工作区根目录下的 .git 位置，找不到返回 null。
+ */
+async function resolveGitDir(cwd: string): Promise<string | null> {
+  const gitRoot = findGitRoot(cwd)
+  if (gitRoot === null) return null
+  return join(gitRoot, '.git')
+}
+
+/** 缓存化的 git 命令结果，供 getHead/getBranch 等导出 API 复用。 */
+const getCachedHead = memoize(async (): Promise<string> => {
+  const { stdout } = await execFileNoThrow(gitExe(), ['rev-parse', 'HEAD'])
+  return stdout.trim()
+})
+
+const getCachedBranch = memoize(async (): Promise<string> => {
+  const { stdout } = await execFileNoThrow(gitExe(), ['rev-parse', '--abbrev-ref', 'HEAD'])
+  return stdout.trim()
+})
+
+const getCachedRemoteUrl = memoize(async (): Promise<string | null> => {
+  const { stdout, code } = await execFileNoThrow(gitExe(), ['remote', 'get-url', 'origin'])
+  return code === 0 ? stdout.trim() : null
+})
+
+/** 默认远程分支名（origin/main 等），基于 findRemoteBase() 的搜索逻辑并缓存。 */
+const getCachedDefaultBranch = memoize(async (): Promise<string> => {
+  const base = await findRemoteBase()
+  if (base) return base
+  return 'main'
+})
+
 export function getGitDir(cwd: string): Promise<string | null> {
   return resolveGitDir(cwd)
 }
@@ -385,6 +418,18 @@ export const getFileStatus = async (): Promise<GitFileStatus> => {
     })
 
   return { tracked, untracked }
+}
+
+/** 通过文件系统统计 worktree 数量：<gitDir>/worktrees/ 下的条目数。 */
+export async function getWorktreeCountFromFs(): Promise<number> {
+  const gitDir = await resolveGitDir(getCwd())
+  if (!gitDir) return 0
+  try {
+    return readdirSync(join(gitDir, 'worktrees')).length
+  } catch {
+    // worktrees 目录可能不存在（非多 worktree 场景）
+    return 0
+  }
 }
 
 export const getWorktreeCount = async (): Promise<number> => {
@@ -576,6 +621,16 @@ export async function findRemoteBase(): Promise<string | null> {
 /**
  * Check if we're in a shallow clone by looking for <gitDir>/shallow.
  */
+async function isShallowCloneFs(): Promise<boolean> {
+  const gitDir = await resolveGitDir(getCwd())
+  if (!gitDir) return false
+  try {
+    return statSync(join(gitDir, 'shallow')).isFile()
+  } catch {
+    return false
+  }
+}
+
 function isShallowClone(): Promise<boolean> {
   return isShallowCloneFs()
 }

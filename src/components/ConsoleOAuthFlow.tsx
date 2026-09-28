@@ -39,9 +39,9 @@ type Props = {
   startingMessage?: string;
   mode?: 'login' | 'setup-token';
   forceLoginMethod?: 'claudeai' | 'console';
+  onTextInputStateChange?: (isInputting: boolean) => void;
 };
 
-type CompatibleApiProvider = 'anthropic' | 'openai';
 
 type OAuthStatus =
   | { state: 'idle' }
@@ -69,6 +69,7 @@ export function ConsoleOAuthFlow({
   startingMessage,
   mode = 'login',
   forceLoginMethod: forceLoginMethodProp,
+  onTextInputStateChange,
 }: Props) {
   const settings = getSettings_DEPRECATED() || {};
   const forceLoginMethod = forceLoginMethodProp ?? settings.forceLoginMethod;
@@ -152,6 +153,20 @@ export function ConsoleOAuthFlow({
       return () => clearTimeout(timer);
     }
   }, [safeOauthStatus]);
+
+  // 通知父组件当前是否处于文本输入状态，以便 Dialog 禁用 confirm:no
+  useEffect(() => {
+    let isInputting = false;
+    if (safeOauthStatus.state === 'custom_config') {
+      const step = safeOauthStatus.step;
+      isInputting =
+        step === 'baseURL' ||
+        step === 'apiKey' ||
+        step === 'model_input' ||
+        (step === 'model' && (modelSubStep === 'edit' || isEditingName));
+    }
+    onTextInputStateChange?.(isInputting);
+  }, [safeOauthStatus, modelSubStep, isEditingName, onTextInputStateChange]);
 
   useKeybinding(
     'confirm:yes',
@@ -1036,7 +1051,7 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
                   } else if (typeof value === 'string' && value.startsWith('preset:')) {
                     const idx = parseInt(value.split(':')[1], 10);
                     const preset = PRESET_ENDPOINTS[idx];
-                    logForDebugging('[OAuthFlow] selected preset endpoint:', preset.label, preset.baseURL);
+                    logForDebugging(`[OAuthFlow] selected preset endpoint: ${preset.label} ${preset.baseURL}`);
                     if (!preset) return;
                     setCustomBaseURL(preset.baseURL);
                     setCustomModel(preset.defaultModel);

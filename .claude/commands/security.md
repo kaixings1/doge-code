@@ -1,5 +1,5 @@
 ---
-description: Run comprehensive security review
+description: 运行全面的安全审查。
 agent: security-reviewer
 subtask: true
 ---

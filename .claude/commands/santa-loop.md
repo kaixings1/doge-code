@@ -1,53 +1,53 @@
 ---
-description: Adversarial dual-review convergence loop — two independent model reviewers must both approve before code ships.
+description: 对抗性双审查收敛循环 —— 两个独立的模型审查者必须都批准，代码才能交付。
 ---
 
 # Santa Loop
 
-Adversarial dual-review convergence loop using the santa-method skill. Two independent reviewers — different models, no shared context — must both return NICE before code ships.
+使用 santa-method 技能的对抗性双审查收敛循环。两个独立审查者 —— 不同模型、无共享上下文 —— 必须都返回 NICE，代码才能交付。
 
-## Purpose
+## 目的
 
-Run two independent reviewers (Claude Opus + an external model) against the current task output. Both must return NICE before the code is pushed. If either returns NAUGHTY, fix all flagged issues, commit, and re-run fresh reviewers — up to 3 rounds.
+针对当前任务产出运行两个独立审查者（Claude Opus + 一个外部模型）。代码被推送之前两者都必须返回 NICE。如果任一方返回 NAUGHTY，就修复所有被标记的问题、提交，并重新运行全新的审查者 —— 最多 3 轮。
 
-## Usage
+## 用法
 
 ```
 /santa-loop [file-or-glob | description]
 ```
 
-## Workflow
+## 工作流
 
-### Step 1: Identify What to Review
+### 第 1 步：确定要审查什么
 
-Determine the scope from `$ARGUMENTS` or fall back to uncommitted changes:
+从 `$ARGUMENTS` 确定范围，或回退到未提交的变更：
 
 ```bash
 git diff --name-only HEAD
 ```
 
-Read all changed files to build the full review context. If `$ARGUMENTS` specifies a path, file, or description, use that as the scope instead.
+读取所有变更文件以构建完整的审查上下文。如果 `$ARGUMENTS` 指定了路径、文件或描述，则改用那个作为范围。
 
-### Step 2: Build the Rubric
+### 第 2 步：构建评分标准
 
-Construct a rubric appropriate to the file types under review. Every criterion must have an objective PASS/FAIL condition. Include at minimum:
+构建适合所审查文件类型的评分标准。每条准则都必须有客观的 PASS/FAIL 条件。至少包含：
 
-| Criterion | Pass Condition |
+| 准则 | 通过条件 |
 |-----------|---------------|
-| Correctness | Logic is sound, no bugs, handles edge cases |
-| Security | No secrets, injection, XSS, or OWASP Top 10 issues |
-| Error handling | Errors handled explicitly, no silent swallowing |
-| Completeness | All requirements addressed, no missing cases |
-| Internal consistency | No contradictions between files or sections |
-| No regressions | Changes don't break existing behavior |
+| 正确性 | 逻辑健全、无 bug、处理边界情况 |
+| 安全性 | 无密钥、注入、XSS 或 OWASP Top 10 问题 |
+| 错误处理 | 错误被显式处理，无静默吞错 |
+| 完整性 | 所有需求都已满足，无遗漏情况 |
+| 内部一致性 | 文件或章节之间无矛盾 |
+| 无回归 | 变更不破坏既有行为 |
 
-Add domain-specific criteria based on file types (e.g., type safety for TS, memory safety for Rust, migration safety for SQL).
+根据文件类型添加领域专属准则（例如 TS 的类型安全、Rust 的内存安全、SQL 的迁移安全）。
 
-### Step 3: Dual Independent Review
+### 第 3 步：双独立审查
 
-Launch two reviewers **in parallel** using the Agent tool (both in a single message for concurrent execution). Both must complete before proceeding to the verdict gate.
+使用 Agent 工具**并行**启动两个审查者（两者放在单条消息中以并发执行）。两者都必须完成后才能进入裁决关卡。
 
-Each reviewer evaluates every rubric criterion as PASS or FAIL, then returns structured JSON:
+每个审查者将每条评分准则评估为 PASS 或 FAIL，然后返回结构化 JSON：
 
 ```json
 {
@@ -60,25 +60,25 @@ Each reviewer evaluates every rubric criterion as PASS or FAIL, then returns str
 }
 ```
 
-The verdict gate (Step 4) maps these to NICE/NAUGHTY: both PASS → NICE, either FAIL → NAUGHTY.
+裁决关卡（第 4 步）把这些映射为 NICE/NAUGHTY：两者都 PASS → NICE，任一 FAIL → NAUGHTY。
 
-#### Reviewer A: Claude Agent (always runs)
+#### 审查者 A：Claude Agent（始终运行）
 
-Launch an Agent (subagent_type: `code-reviewer`, model: `opus`) with the full rubric + all files under review. The prompt must include:
-- The complete rubric
-- All file contents under review
+启动一个 Agent（subagent_type: `code-reviewer`, model: `opus`），带上完整评分标准 + 所有被审查的文件。提示必须包含：
+- 完整的评分标准
+- 所有被审查文件的内容
 - "You are an independent quality reviewer. You have NOT seen any other review. Your job is to find problems, not to approve."
-- Return the structured JSON verdict above
+- 返回上面的结构化 JSON 裁决
 
-#### Reviewer B: External Model (Claude fallback only if no external CLI installed)
+#### 审查者 B：外部模型（仅当未安装外部 CLI 时回退到 Claude）
 
-First, detect which CLIs are available:
+首先，检测哪些 CLI 可用：
 ```bash
 command -v codex >/dev/null 2>&1 && echo "codex" || true
 command -v gemini >/dev/null 2>&1 && echo "gemini" || true
 ```
 
-Build the reviewer prompt (identical rubric + instructions as Reviewer A) and write it to a unique temp file:
+构建审查者提示（与审查者 A 相同的评分标准 + 指令），并写入唯一的临时文件：
 ```bash
 PROMPT_FILE=$(mktemp /tmp/santa-reviewer-b-XXXXXX.txt)
 cat > "$PROMPT_FILE" << 'EOF'
@@ -86,42 +86,42 @@ cat > "$PROMPT_FILE" << 'EOF'
 EOF
 ```
 
-Use the first available CLI:
+使用第一个可用的 CLI：
 
-**Codex CLI** (if installed)
+**Codex CLI**（如已安装）
 ```bash
 codex exec --sandbox read-only -m gpt-5.4 -C "$(pwd)" - < "$PROMPT_FILE"
 rm -f "$PROMPT_FILE"
 ```
 
-**Gemini CLI** (if installed and codex is not)
+**Gemini CLI**（如已安装且 codex 不可用）
 ```bash
 gemini -p "$(cat "$PROMPT_FILE")" -m gemini-2.5-pro
 rm -f "$PROMPT_FILE"
 ```
 
-**Claude Agent fallback** (only if neither `codex` nor `gemini` is installed)
-Launch a second Claude Agent (subagent_type: `code-reviewer`, model: `opus`). Log a warning that both reviewers share the same model family — true model diversity was not achieved but context isolation is still enforced.
+**Claude Agent 回退**（仅当 `codex` 和 `gemini` 都未安装时）
+启动第二个 Claude Agent（subagent_type: `code-reviewer`, model: `opus`）。记录一条警告：两个审查者属于同一模型家族 —— 未实现真正的模型多样性，但上下文隔离仍然生效。
 
-In all cases, the reviewer must return the same structured JSON verdict as Reviewer A.
+在所有情况下，审查者必须返回与审查者 A 相同的结构化 JSON 裁决。
 
-### Step 4: Verdict Gate
+### 第 4 步：裁决关卡
 
-- **Both PASS** → **NICE** — proceed to Step 6 (push)
-- **Either FAIL** → **NAUGHTY** — merge all critical issues from both reviewers, deduplicate, proceed to Step 5
+- **两者都 PASS** → **NICE** —— 进入第 6 步（推送）
+- **任一 FAIL** → **NAUGHTY** —— 合并两个审查者的所有关键问题，去重，进入第 5 步
 
-### Step 5: Fix Cycle (NAUGHTY path)
+### 第 5 步：修复循环（NAUGHTY 路径）
 
-1. Display all critical issues from both reviewers
-2. Fix every flagged issue — change only what was flagged, no drive-by refactors
-3. Commit all fixes in a single commit:
+1. 显示两个审查者的所有关键问题
+2. 修复每个被标记的问题 —— 只改被标记的内容，不做顺手重构
+3. 在单个提交中提交所有修复：
    ```
    fix: address santa-loop review findings (round N)
    ```
-4. Re-run Step 3 with **fresh reviewers** (no memory of previous rounds)
-5. Repeat until both return PASS
+4. 用**全新的审查者**重跑第 3 步（对之前轮次无记忆）
+5. 重复直到两者都返回 PASS
 
-**Maximum 3 iterations.** If still NAUGHTY after 3 rounds, stop and present remaining issues:
+**最多 3 次迭代。** 如果 3 轮之后仍是 NAUGHTY，停止并呈现剩余问题：
 
 ```
 SANTA LOOP ESCALATION (exceeded 3 iterations)
@@ -132,21 +132,21 @@ Remaining issues after 3 rounds:
 Manual review required before proceeding.
 ```
 
-Do NOT push.
+**不要**推送。
 
-### Step 6: Push (NICE path)
+### 第 6 步：推送（NICE 路径）
 
-When both reviewers return PASS:
+当两个审查者都返回 PASS 时：
 
 ```bash
 git push -u origin HEAD
 ```
 
-### Step 7: Final Report
+### 第 7 步：最终报告
 
-Print the output report (see Output section below).
+打印输出报告（见下面的输出章节）。
 
-## Output
+## 输出
 
 ```
 SANTA VERDICT: [NICE / NAUGHTY (escalated)]
@@ -163,13 +163,13 @@ Iterations: [N]/3
 Result:     [PUSHED / ESCALATED TO USER]
 ```
 
-## Notes
+## 说明
 
-- Reviewer A (Claude Opus) always runs — guarantees at least one strong reviewer regardless of tooling.
-- Model diversity is the goal for Reviewer B. GPT-5.4 or Gemini 2.5 Pro gives true independence — different training data, different biases, different blind spots. The Claude-only fallback still provides value via context isolation but loses model diversity.
-- Strongest available models are used: Opus for Reviewer A, GPT-5.4 or Gemini 2.5 Pro for Reviewer B.
-- External reviewers run with `--sandbox read-only` (Codex) to prevent repo mutation during review.
-- Fresh reviewers each round prevents anchoring bias from prior findings.
-- The rubric is the most important input. Tighten it if reviewers rubber-stamp or flag subjective style issues.
-- Commits happen on NAUGHTY rounds so fixes are preserved even if the loop is interrupted.
-- Push only happens after NICE — never mid-loop.
+- 审查者 A（Claude Opus）始终运行 —— 无论工具链如何，都保证至少有一位强力审查者。
+- 模型多样性是审查者 B 的目标。GPT-5.4 或 Gemini 2.5 Pro 提供真正的独立性 —— 不同的训练数据、不同的偏见、不同的盲点。纯 Claude 回退仍通过上下文隔离提供价值，但失去了模型多样性。
+- 使用可获得的最强模型：审查者 A 用 Opus，审查者 B 用 GPT-5.4 或 Gemini 2.5 Pro。
+- 外部审查者以 `--sandbox read-only`（Codex）运行，以防审查期间改动仓库。
+- 每轮使用全新审查者可防止先前发现的锚定偏差。
+- 评分标准是最重要的输入。如果审查者草率盖章通过或标记主观风格问题，就收紧它。
+- 提交发生在 NAUGHTY 轮次，因此即使循环被中断，修复也会被保留。
+- 只在 NICE 之后才推送 —— 绝不在循环中途推送。

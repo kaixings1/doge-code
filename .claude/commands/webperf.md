@@ -1,5 +1,5 @@
 ---
-description: Run a web performance audit via the web-performance-auditor persona
+description: 通过 web-performance-auditor 角色运行 Web 性能审计。
 ---
 
 `/webperf` targets web applications specifically. Do not use it for utility libraries, CLIs, or server-only code with no browser-facing output.

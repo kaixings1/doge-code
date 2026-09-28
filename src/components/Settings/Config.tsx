@@ -10,7 +10,7 @@ import figures from '../../vendor/figures.js';
 import { type GlobalConfig, saveGlobalConfig, getCurrentProjectConfig, saveCurrentProjectConfig, type OutputStyle } from '../../utils/config.js';
 import { normalizeApiKeyForConfig } from '../../utils/authPortable.js';
 import { getGlobalConfig, getAutoUpdaterDisabledReason, formatAutoUpdaterDisabledReason, getRemoteControlAtStartup } from '../../utils/config.js';
-import { getFeatureOverrides, OVERRIDABLE_FEATURES } from '../../utils/featureOverrides.js';
+import { getFeatureOverrides, OVERRIDABLE_FEATURES, FEATURE_DESCRIPTIONS } from '../../utils/featureOverrides.js';
 import { getActiveGroupName, listToolGroups, setActiveGroup } from '../../utils/toolGroups.js';
 import chalk from 'chalk';
 import { permissionModeTitle, permissionModeFromString, toExternalPermissionMode, isExternalPermissionMode, EXTERNAL_PERMISSION_MODES, PERMISSION_MODES, type ExternalPermissionMode, type PermissionMode } from '../../utils/permissions/PermissionMode.js';
@@ -109,6 +109,7 @@ export function Config({
   const [customBaseURL, setCustomBaseURL] = useState(getGlobalConfig().customApiEndpoint?.baseURL ?? '');
   const [customApiKey, setCustomApiKey] = useState(getGlobalConfig().customApiEndpoint?.apiKey ?? '');
   const [customModelValue, setCustomModelValue] = useState(getGlobalConfig().customApiEndpoint?.model ?? process.env.ANTHROPIC_MODEL ?? '');
+  const [openAICompatMode, setOpenAICompatMode] = useState(getGlobalConfig().customApiEndpoint?.openaiCompatMode ?? 'chat_completions');
   // 工具组：配置存在 ~/.doge/config.json，与 /toolgroup 命令共用同一份状态。
   // 用本地 state 回显，避免切换后 UI 仍显示旧组名。
   const [activeToolGroup, setActiveToolGroup] = useState(getActiveGroupName());
@@ -1234,17 +1235,63 @@ export function Config({
       }
     }
   }] : []),
+  // autoContinue 子开关：在特定场景下自动注入「继续」推进循环。
+  // 字段缺省时回退到 messageLoop 默认值（enabled/readSearch/continueKeyword=true，endTurn=false，maxCount=10）。
+  ...(() => {
+    const ac = getCurrentProjectConfig().autoContinue ?? {}
+    const setAc = (patch: Record<string, boolean | number>) => {
+      saveCurrentProjectConfig(current => ({
+        ...current,
+        autoContinue: { ...current.autoContinue, ...patch },
+      }))
+    }
+    const items = [
+      {
+        id: 'ac_enabled',
+        key: 'enabled' as const,
+        label: '自动继续 — 总开关（缺省=true：在特定场景自动注入「继续」推进循环）',
+        def: true,
+      },
+      {
+        id: 'ac_readSearch',
+        key: 'readSearch' as const,
+        label: '自动继续 — read/grep 后纯文本回复时自动继续（缺省=true）',
+        def: true,
+      },
+      {
+        id: 'ac_continueKeyword',
+        key: 'continueKeyword' as const,
+        label: '自动继续 — 回复含「是否继续」等关键词时自动继续（缺省=true）',
+        def: true,
+      },
+      {
+        id: 'ac_endTurn',
+        key: 'endTurn' as const,
+        label: '自动继续 — end_turn 且有内容时自动继续（缺省=false，启用可能增加消耗）',
+        def: false,
+      },
+    ]
+    return items.map(item => ({
+      id: item.id,
+      label: item.label,
+      value: ac[item.key] ?? item.def,
+      type: 'boolean' as const,
+      searchText: `autoContinue 自动继续 ${item.key}`,
+      onChange(v: boolean) { setAc({ [item.key]: v }) },
+    }))
+  })(),
   // Runtime feature overrides — always visible for discoverability
   // Only features compiled with env-var guards can be toggled here.
   ...OVERRIDABLE_FEATURES.map(feat => {
     const overrides = getFeatureOverrides()
     const isEnabled = overrides[feat] ?? false
+    const desc = FEATURE_DESCRIPTIONS[feat]
     return {
       id: `feature_${feat}`,
-      label: feat,
+      label: desc ? `${feat} — ${desc}` : feat,
       value: isEnabled,
       type: 'boolean' as const,
-      searchText: `feature ${feat} 开关 运行时`,
+      searchText: `feature ${feat} 开关 运行时 ${desc ?? ''}`,
       onChange(enabled: boolean) {
         saveCurrentProjectConfig(current => ({
           ...current,

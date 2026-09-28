@@ -1,5 +1,5 @@
 ---
-description: Navigate ECC's current agents, skills, commands, hooks, install profiles, and docs from the live repository surface.
+description: 从实时仓库表面浏览 ECC 当前的 agents、skills、commands、hooks、安装配置文件和文档。
 ---
 
 # /ecc-guide

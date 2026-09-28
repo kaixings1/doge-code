@@ -1,5 +1,5 @@
 ---
-description: Temporarily disable the skill bus. Quick toggle to stop all subscriptions from firing without removing them.
+description: 临时禁用技能总线。快速切换以停止所有订阅触发，而不删除它们。
 ---
 
 # Pause Skill Bus

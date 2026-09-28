@@ -1,4 +1,6 @@
 import { feature } from 'bun:bundle'
+// @ts-ignore - AbortError available at runtime
+declare const AbortError: typeof Error
 import type {
   ElicitResult,
   JSONRPCMessage,
@@ -38,6 +40,11 @@ import {
   applyPermissionUpdates,
   persistPermissionUpdates,
 } from '../utils/permissions/PermissionUpdate.js'
+import type { Output as PermissionToolOutput } from '../utils/permissions/PermissionPromptToolResultSchema.js'
+import {
+  outputSchema as permissionToolOutputSchema,
+  permissionPromptToolResultToPermissionDecision,
+} from '../utils/permissions/PermissionPromptToolResultSchema.js'
 import {
   notifySessionStateChanged,
   type RequiresActionDetails,
@@ -272,21 +279,22 @@ export class StructuredIO {
    * 回调通过信号中止 — 否则回调会挂起。
    */
   injectControlResponse(response: SDKControlResponse): void {
-    const requestId = response.response?.request_id
+    const responseAny = response as any
+    const requestId = responseAny.response?.request_id
     if (!requestId) return
     const request = this.pendingRequests.get(requestId)
     if (!request) return
-    this.trackResolvedToolUseId(request.request)
+    this.trackResolvedToolUseId((request as any).request)
     this.pendingRequests.delete(requestId)
     // 取消 SDK 消费者的 canUseTool 回调 — 桥接器获胜。
     void this.write({
       type: 'control_cancel_request',
       request_id: requestId,
     })
-    if (response.response.subtype === 'error') {
-      request.reject(new Error(response.response.error))
+    if (responseAny.response.subtype === 'error') {
+      request.reject(new Error((responseAny.response as any).error))
     } else {
-      const result = response.response.response
+      const result = (responseAny.response as any).response
       if (request.schema) {
         try {
           request.resolve(request.schema.parse(result))
@@ -329,9 +337,9 @@ export class StructuredIO {
       return undefined
     }
     try {
-      const message = normalizeControlMessageKeys(jsonParse(line)) as
-        | StdinMessage
-        | SDKMessage
+      const message = normalizeControlMessageKeys(
+        jsonParse(line),
+      ) as any as StdinMessage | SDKMessage
       if (message.type === 'keep_alive') {
         // 静默忽略 keep-alive 消息
         return undefined
@@ -361,7 +369,8 @@ export class StructuredIO {
         if (uuid) {
           notifyCommandLifecycle(uuid, 'completed')
         }
-        const request = this.pendingRequests.get(message.response.request_id)
+        const msgAny = message as any
+        const request = this.pendingRequests.get(msgAny.response.request_id)
         if (!request) {
           // 检查此 tool_use 是否已通过正常
           // 权限流解析。重复的控制响应传递（例如来自
@@ -369,8 +378,8 @@ export class StructuredIO {
           // 重新处理它们会将重复的助手消息推入
           // 对话中，导致 API 400 错误。
           const responsePayload =
-            message.response.subtype === 'success'
-              ? message.response.response
+            msgAny.response.subtype === 'success'
+              ? msgAny.response.response
               : undefined
           const toolUseID = responsePayload?.toolUseID
           if (
@@ -383,23 +392,23 @@ export class StructuredIO {
             return undefined
           }
           if (this.unexpectedResponseCallback) {
-            await this.unexpectedResponseCallback(message)
+            await this.unexpectedResponseCallback(message as any)
           }
           return undefined // 忽略我们不知道的请求的响应
         }
-        this.trackResolvedToolUseId(request.request)
-        this.pendingRequests.delete(message.response.request_id)
+        this.trackResolvedToolUseId((request as any).request)
+        this.pendingRequests.delete((message as any).response.request_id)
         // 通知桥接器当 SDK 消费者解析 can_use_tool
         // 请求，以便可以取消 claude.ai 上过期的权限提示。
         if (
-          request.request.request.subtype === 'can_use_tool' &&
+          (request as any).request.request.subtype === 'can_use_tool' &&
           this.onControlRequestResolved
         ) {
-          this.onControlRequestResolved(message.response.request_id)
+          this.onControlRequestResolved((message as any).response.request_id)
         }
 
-        if (message.response.subtype === 'error') {
-          request.reject(new Error(message.response.error))
+        if ((message as any).response.subtype === 'error') {
+          request.reject(new Error((message as any).response.error))
           return undefined
         }
         const result = message.response.response
@@ -438,9 +447,9 @@ export class StructuredIO {
       if (message.type === 'assistant' || message.type === 'system') {
         return message
       }
-      if (message.message.role !== 'user') {
+      if ((message as any).message.role !== 'user') {
         exitWithMessage(
-          `错误：期望消息角色为 'user'，但获取到'${message.message.role}'`,
+          `错误：期望消息角色为 'user'，但获取到'${(message as any).message.role}'`,
         )
       }
       return message
@@ -806,13 +815,13 @@ async function executePermissionRequestHooksForSDK(
         const finalInput = decision.updatedInput || input
 
         // 如果钩子提供权限更新（"始终允许"），则应用它们
-        const permissionUpdates = decision.updatedPermissions ?? []
+        const permissionUpdates = (decision.updatedPermissions ?? []) as any[]
         if (permissionUpdates.length > 0) {
-          persistPermissionUpdates(permissionUpdates)
+          persistPermissionUpdates(permissionUpdates as any)
           const currentAppState = toolUseContext.getAppState()
           const updatedContext = applyPermissionUpdates(
             currentAppState.toolPermissionContext,
-            permissionUpdates,
+            permissionUpdates as any,
           )
           // 通过 setAppState 更新权限上下文
           toolUseContext.setAppState(prev => {

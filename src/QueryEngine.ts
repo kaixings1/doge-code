@@ -43,7 +43,7 @@ import type { Message } from './types/message.js'
 import type { OrphanedPermission } from './types/textInputTypes.js'
 import { createAbortController } from './utils/abortController.js'
 import type { AttributionState } from './utils/commitAttribution.js'
-import { getGlobalConfig } from './utils/config.js'
+import { getGlobalConfig, getCurrentProjectConfig } from './utils/config.js'
 import { getCwd } from './utils/cwd.js'
 import { isBareMode, isEnvTruthy } from './utils/envUtils.js'
 import { getFastModeState } from './utils/fastMode.js'
@@ -1262,6 +1262,7 @@ export async function* ask({
     setSDKStatus,
     abortController,
     orphanedPermission,
+    autoContinue: getCurrentProjectConfig().autoContinue,
     ...(feature('HISTORY_SNIP')
       ? {
           snipReplay: (yieldedSystemMsg: Message, store: Message[]) => {

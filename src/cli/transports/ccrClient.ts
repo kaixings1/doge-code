@@ -140,38 +140,38 @@ export function accumulateStreamEvents(
   const out: EventPayload[] = []
   const touched = new Map<string[], CoalescedStreamEvent>()
   for (const msg of buffer) {
-    switch (msg.event.type) {
+    const msgAny = msg as any
+    const event = msgAny.event as Record<string, unknown>
+    switch (event.type) {
       case 'message_start': {
-        const id = msg.event.message.id
-        const prevId = state.scopeToMessage.get(scopeKey(msg))
+        const id = (event.message as Record<string, unknown>).id as string
+        const prevId = state.scopeToMessage.get(scopeKey(msgAny))
         if (prevId) state.byMessage.delete(prevId)
-        state.scopeToMessage.set(scopeKey(msg), id)
+        state.scopeToMessage.set(scopeKey(msgAny), id)
         state.byMessage.set(id, [])
-        out.push(msg)
+        out.push(msg as EventPayload)
         break
       }
       case 'content_block_delta': {
-        // ✅ 修改点1：同时允许 text_delta 和 thinking_delta 通过
+        const delta = event.delta as Record<string, unknown>
         if (
-          msg.event.delta.type !== 'text_delta' &&
-          msg.event.delta.type !== 'thinking_delta'
+          delta.type !== 'text_delta' &&
+          delta.type !== 'thinking_delta'
         ) {
-          out.push(msg)
+          out.push(msg as EventPayload)
           break
         }
-        const messageId = state.scopeToMessage.get(scopeKey(msg))
+        const messageId = state.scopeToMessage.get(scopeKey(msgAny))
         const blocks = messageId ? state.byMessage.get(messageId) : undefined
         if (!blocks) {
-          out.push(msg)
+          out.push(msg as EventPayload)
           break
         }
-        const chunks = (blocks[msg.event.index] ??= [])
-        // ✅ 修改点2：从 delta 中提取正确的文本字段
-        // 对于 thinking_delta，提取 thinking 字段；对于 text_delta，提取 text 字段
+        const chunks = (blocks[event.index as number] ??= [])
         const text =
-          msg.event.delta.type === 'thinking_delta'
-            ? (msg.event.delta as Record<string, unknown>).thinking
-            : (msg.event.delta as Record<string, unknown>).text
+          delta.type === 'thinking_delta'
+            ? (delta.thinking as string)
+            : (delta.text as string)
         chunks.push(text)
         const existing = touched.get(chunks)
         if (existing) {
@@ -180,13 +180,13 @@ export function accumulateStreamEvents(
         }
         const snapshot: CoalescedStreamEvent = {
           type: 'stream_event',
-          uuid: msg.uuid,
-          session_id: msg.session_id,
-          parent_tool_use_id: msg.parent_tool_use_id,
+          uuid: msgAny.uuid,
+          session_id: msgAny.session_id,
+          parent_tool_use_id: msgAny.parent_tool_use_id,
           event: {
             type: 'content_block_delta',
-            index: msg.event.index,
-            delta: { type: 'text_delta', text: chunks.join('') }, // 统一转换为 text_delta
+            index: event.index as number,
+            delta: { type: 'text_delta', text: chunks.join('') },
           },
         }
         touched.set(chunks, snapshot)
@@ -194,7 +194,7 @@ export function accumulateStreamEvents(
         break
       }
       default:
-        out.push(msg)
+        out.push(msg as EventPayload)
     }
   }
   return out
@@ -724,7 +724,7 @@ export class CCRClient {
    */
   async writeEvent(message: StdoutMessage): Promise<void> {
     if (message.type === 'stream_event') {
-      this.streamEventBuffer.push(message)
+      this.streamEventBuffer.push(message as any)
       if (!this.streamEventTimer) {
         this.streamEventTimer = setTimeout(
           () => void this.flushStreamEventBuffer(),
@@ -735,7 +735,7 @@ export class CCRClient {
     }
     await this.flushStreamEventBuffer()
     if (message.type === 'assistant') {
-      clearStreamAccumulatorForMessage(this.streamTextAccumulator, message)
+      clearStreamAccumulatorForMessage(this.streamTextAccumulator, message as any)
     }
     const msg = message as Record<string, unknown>
     logForDebugging(
@@ -774,7 +774,7 @@ export class CCRClient {
       this.streamTextAccumulator,
     )
     const deltaTypes = buffered.map(
-      m => (m.event.type === 'content_block_delta'
+      (m: any) => (m.event.type === 'content_block_delta'
         ? `${(m.event.delta as Record<string,unknown>).type}`
         : m.event.type)
     ).join(',')

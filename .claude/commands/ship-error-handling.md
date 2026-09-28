@@ -1,10 +1,10 @@
-# Error Handling & Recovery - Reference
+# 错误处理与恢复 - 参考
 
-This file contains error handling procedures for `/ship`.
+本文件包含 `/ship` 的错误处理流程。
 
-**Parent document**: `ship.md`
+**父文档**：`ship.md`
 
-## GitHub CLI Not Available
+## GitHub CLI 不可用
 
 ```markdown
 ERROR: GitHub CLI (gh) not found
@@ -20,7 +20,7 @@ Then authenticate:
   gh auth login
 ```
 
-## CI Failure
+## CI 失败
 
 ```markdown
 [ERROR] CI checks failed for PR #${PR_NUMBER}
@@ -36,9 +36,9 @@ To retry:
   /ship
 ```
 
-### CI Fix with ci-fixer Agent
+### 用 ci-fixer 代理修复 CI
 
-When CI fails, use the ci-fixer agent:
+CI 失败时，使用 ci-fixer 代理：
 
 ```javascript
 Task({
@@ -59,7 +59,7 @@ Requirements:
 });
 ```
 
-## Merge Conflicts
+## 合并冲突
 
 ```markdown
 [ERROR] Cannot merge PR #${PR_NUMBER}: conflicts with ${MAIN_BRANCH}
@@ -76,7 +76,7 @@ Then retry:
   /ship
 ```
 
-## Deployment Failure
+## 部署失败
 
 ```markdown
 [ERROR] Deployment failed
@@ -91,7 +91,7 @@ Check deployment logs:
 Once fixed, deployment will retry automatically.
 ```
 
-## Production Validation Failure with Rollback
+## 生产验证失败并回滚
 
 ```markdown
 [ERROR] Production validation failed
@@ -108,7 +108,7 @@ Fix the issues and try shipping again:
   /ship
 ```
 
-## Push Failure
+## 推送失败
 
 ```markdown
 [ERROR] Push to remote failed
@@ -122,7 +122,7 @@ Resolve and retry:
   /ship
 ```
 
-## PR Creation Failure
+## PR 创建失败
 
 ```markdown
 [ERROR] Failed to create PR
@@ -136,7 +136,7 @@ Check existing PRs:
   gh pr list --state all --head ${CURRENT_BRANCH}
 ```
 
-## Max Review Iterations Reached
+## 达到最大审查迭代次数
 
 ```markdown
 [ERROR] Max iterations (${MAX_ITERATIONS}) reached
@@ -154,7 +154,7 @@ Options:
 3. Continue with /ship after resolving
 ```
 
-## Worktree Cleanup Failure
+## Worktree 清理失败
 
 ```markdown
 [WARN] Failed to clean up worktree
@@ -166,9 +166,9 @@ Manual cleanup:
   git worktree prune
 ```
 
-## Force Push Safety
+## 强制推送安全
 
-When rollback requires force push:
+当回滚需要强制推送时：
 
 ```bash
 # ALWAYS use --force-with-lease instead of --force
@@ -182,9 +182,9 @@ if ! git push --force-with-lease origin $PROD_BRANCH; then
 fi
 ```
 
-## Recovery Procedures
+## 恢复流程
 
-### Resume After CI Fix
+### CI 修复后恢复
 
 ```bash
 # After fixing CI locally
@@ -196,7 +196,7 @@ git push
 /ship
 ```
 
-### Resume After Conflict Resolution
+### 冲突解决后恢复
 
 ```bash
 # After resolving merge conflicts
@@ -208,7 +208,7 @@ git push
 /ship
 ```
 
-### Resume After Manual Review Resolution
+### 手动处理审查意见后恢复
 
 ```bash
 # After manually addressing review comments
@@ -220,7 +220,7 @@ git push
 /ship
 ```
 
-### Cancel and Cleanup
+### 取消并清理
 
 ```bash
 # If you need to abandon the PR
@@ -231,24 +231,24 @@ git checkout $MAIN_BRANCH
 git branch -D $CURRENT_BRANCH
 ```
 
-## Exit Codes
+## 退出码
 
-| Code | Meaning |
+| 退出码 | 含义 |
 |------|---------|
-| 0 | Success - PR merged |
-| 1 | General failure |
-| 2 | CI failure (retryable) |
-| 3 | Review timeout (manual intervention) |
-| 4 | Deployment failure |
-| 5 | Rollback triggered |
+| 0 | 成功 - PR 已合并 |
+| 1 | 一般失败 |
+| 2 | CI 失败（可重试） |
+| 3 | 审查超时（需人工介入） |
+| 4 | 部署失败 |
+| 5 | 已触发回滚 |
 
-## Logging for Debugging
+## 调试日志
 
-Enable verbose logging:
+启用详细日志：
 
 ```bash
 export SHIP_DEBUG=1
 /ship
 ```
 
-This will output detailed information about each phase for troubleshooting.
+这会输出每个阶段的详细信息以便排查问题。

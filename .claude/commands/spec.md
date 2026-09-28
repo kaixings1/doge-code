@@ -1,5 +1,5 @@
 ---
-description: Start spec-driven development — write a structured specification before writing code
+description: 开始规格驱动开发——在编写代码之前编写结构化规格说明。
 ---
 
 Invoke the agent-skills:spec-driven-development skill.

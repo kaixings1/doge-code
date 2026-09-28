@@ -7265,3 +7265,990 @@
 584550.4 gap=78.0ms reconcile=0.0ms creates=0
 584550.4 commits=16/s maxGap=93.2ms
 584643.3 gap=93.0ms reconcile=0.1ms creates=0
+584722.3 gap=79.0ms reconcile=0.0ms creates=0
+584802.4 gap=64.5ms reconcile=0.1ms creates=0
+584894.2 gap=65.4ms reconcile=0.0ms creates=0
+584972.6 gap=78.4ms reconcile=0.1ms creates=0
+585050.4 gap=77.8ms reconcile=0.0ms creates=0
+585143.6 gap=93.2ms reconcile=0.0ms creates=0
+585233.2 gap=89.7ms reconcile=10.3ms creates=0
+585302.7 gap=53.2ms reconcile=0.1ms creates=0
+585393.7 gap=91.0ms reconcile=0.1ms creates=0
+585472.0 gap=78.4ms reconcile=0.0ms creates=0
+585551.2 gap=79.1ms reconcile=0.1ms creates=0
+585551.2 commits=16/s maxGap=93.2ms
+585635.5 gap=84.4ms reconcile=0.3ms creates=1
+585722.1 gap=62.1ms reconcile=0.0ms creates=0
+585783.9 gap=47.2ms reconcile=0.1ms creates=0
+585846.6 gap=62.7ms reconcile=0.0ms creates=0
+585909.8 gap=63.2ms reconcile=0.1ms creates=0
+585972.4 gap=62.6ms reconcile=0.1ms creates=0
+586035.3 gap=62.9ms reconcile=0.0ms creates=0
+586097.4 gap=62.1ms reconcile=0.0ms creates=0
+586159.8 gap=62.5ms reconcile=0.1ms creates=0
+586206.9 gap=47.0ms reconcile=0.0ms creates=0
+586285.9 gap=39.7ms reconcile=0.1ms creates=0
+586349.3 gap=63.4ms reconcile=0.0ms creates=0
+586409.4 gap=60.1ms reconcile=0.1ms creates=0
+586471.7 gap=62.3ms reconcile=0.0ms creates=0
+586533.7 gap=62.0ms reconcile=0.0ms creates=0
+586597.0 gap=63.3ms reconcile=0.1ms creates=0
+586597.0 commits=20/s maxGap=84.4ms
+586658.7 gap=61.7ms reconcile=0.0ms creates=0
+586722.5 gap=63.7ms reconcile=0.0ms creates=0
+586783.7 gap=46.5ms reconcile=0.1ms creates=0
+586830.2 gap=46.5ms reconcile=0.0ms creates=0
+586909.5 gap=62.9ms reconcile=0.0ms creates=0
+586973.2 gap=63.7ms reconcile=0.1ms creates=0
+587034.0 gap=60.9ms reconcile=0.0ms creates=0
+587097.0 gap=63.0ms reconcile=0.0ms creates=0
+587159.2 gap=62.2ms reconcile=0.0ms creates=0
+587228.7 gap=69.5ms reconcile=0.1ms creates=0
+587284.2 gap=37.2ms reconcile=0.0ms creates=0
+587351.1 gap=66.9ms reconcile=0.0ms creates=0
+587410.1 gap=59.1ms reconcile=0.1ms creates=0
+587456.8 gap=46.6ms reconcile=0.0ms creates=0
+587534.5 gap=61.0ms reconcile=0.0ms creates=0
+587597.7 gap=63.2ms reconcile=0.1ms creates=0
+587597.7 commits=20/s maxGap=69.5ms
+587659.5 gap=61.8ms reconcile=0.0ms creates=0
+587722.5 gap=63.0ms reconcile=0.0ms creates=0
+587783.7 gap=46.3ms reconcile=0.1ms creates=0
+587842.2 gap=58.6ms reconcile=0.5ms creates=9
+587908.5 gap=60.8ms reconcile=0.0ms creates=0
+587972.4 gap=63.9ms reconcile=0.1ms creates=0
+588034.2 gap=61.8ms reconcile=0.0ms creates=0
+588082.0 gap=47.8ms reconcile=0.0ms creates=0
+588159.2 gap=60.4ms reconcile=0.0ms creates=0
+588232.8 gap=73.7ms reconcile=0.1ms creates=0
+588285.2 gap=36.1ms reconcile=0.1ms creates=0
+588347.9 gap=62.7ms reconcile=0.0ms creates=0
+588409.4 gap=61.5ms reconcile=0.1ms creates=0
+588472.6 gap=63.2ms reconcile=0.0ms creates=0
+588533.8 gap=61.2ms reconcile=0.1ms creates=0
+588596.8 gap=63.0ms reconcile=0.1ms creates=0
+588658.6 gap=61.8ms reconcile=0.0ms creates=0
+588658.6 commits=22/s maxGap=73.7ms
+588705.4 gap=46.8ms reconcile=0.0ms creates=0
+588783.8 gap=46.4ms reconcile=0.1ms creates=0
+588840.4 gap=56.6ms reconcile=0.5ms creates=0
+588908.6 gap=68.2ms reconcile=0.0ms creates=0
+588971.7 gap=63.1ms reconcile=0.0ms creates=0
+589035.5 gap=63.8ms reconcile=0.1ms creates=0
+589098.3 gap=62.8ms reconcile=0.1ms creates=0
+589534.9 gap=436.5ms reconcile=0.6ms creates=13
+589627.8 gap=73.2ms reconcile=0.1ms creates=0
+589689.5 gap=61.7ms reconcile=0.0ms creates=0
+589689.5 commits=15/s maxGap=436.5ms
+589752.4 gap=62.9ms reconcile=0.0ms creates=0
+589810.6 gap=58.2ms reconcile=0.1ms creates=0
+589877.5 gap=66.9ms reconcile=0.1ms creates=0
+589956.6 gap=79.1ms reconcile=0.0ms creates=0
+590034.6 gap=78.0ms reconcile=0.1ms creates=0
+590099.4 gap=64.8ms reconcile=0.1ms creates=0
+590159.4 gap=60.0ms reconcile=0.0ms creates=0
+590222.6 gap=63.2ms reconcile=0.1ms creates=0
+590284.4 gap=61.9ms reconcile=0.0ms creates=0
+590350.2 gap=65.7ms reconcile=0.0ms creates=0
+590409.5 gap=59.4ms reconcile=0.1ms creates=0
+590471.5 gap=62.0ms reconcile=0.0ms creates=0
+590534.4 gap=62.8ms reconcile=0.0ms creates=0
+590586.4 gap=52.1ms reconcile=0.1ms creates=0
+590660.0 gap=73.6ms reconcile=0.1ms creates=0
+590723.2 gap=63.2ms reconcile=0.1ms creates=0
+590723.2 commits=16/s maxGap=79.1ms
+590784.2 gap=60.9ms reconcile=0.1ms creates=0
+590847.7 gap=63.5ms reconcile=0.1ms creates=0
+590887.0 gap=39.4ms reconcile=0.1ms creates=0
+590973.0 gap=64.4ms reconcile=0.1ms creates=0
+591033.7 gap=60.7ms reconcile=0.0ms creates=0
+591097.5 gap=63.8ms reconcile=0.0ms creates=0
+591158.5 gap=61.0ms reconcile=0.0ms creates=0
+591222.7 gap=64.2ms reconcile=0.1ms creates=0
+591283.6 gap=60.9ms reconcile=0.0ms creates=0
+591346.7 gap=63.0ms reconcile=0.0ms creates=0
+591408.7 gap=62.1ms reconcile=0.1ms creates=0
+591472.6 gap=63.8ms reconcile=0.0ms creates=0
+591535.2 gap=62.7ms reconcile=0.0ms creates=0
+591606.3 gap=71.0ms reconcile=0.1ms creates=0
+591659.0 gap=52.7ms reconcile=0.1ms creates=0
+591723.0 gap=64.0ms reconcile=0.0ms creates=0
+591784.7 gap=61.7ms reconcile=0.1ms creates=0
+591784.7 commits=18/s maxGap=71.0ms
+591847.7 gap=62.9ms reconcile=0.0ms creates=0
+591909.6 gap=61.9ms reconcile=0.0ms creates=0
+591973.7 gap=64.1ms reconcile=0.1ms creates=0
+592035.4 gap=61.7ms reconcile=0.1ms creates=0
+592097.6 gap=62.2ms reconcile=0.0ms creates=0
+592158.5 gap=60.9ms reconcile=0.0ms creates=0
+592222.6 gap=64.1ms reconcile=0.1ms creates=0
+592284.4 gap=61.8ms reconcile=0.0ms creates=0
+592347.3 gap=62.9ms reconcile=0.0ms creates=0
+592410.3 gap=63.0ms reconcile=0.1ms creates=0
+592477.4 gap=67.0ms reconcile=0.1ms creates=0
+592534.5 gap=57.1ms reconcile=0.1ms creates=0
+592598.6 gap=64.1ms reconcile=0.1ms creates=0
+592661.7 gap=63.1ms reconcile=0.0ms creates=0
+592732.0 gap=70.3ms reconcile=0.0ms creates=0
+592784.2 gap=52.2ms reconcile=0.1ms creates=0
+592849.0 gap=64.7ms reconcile=0.0ms creates=0
+592849.0 commits=17/s maxGap=70.3ms
+592909.9 gap=61.0ms reconcile=0.0ms creates=0
+592973.3 gap=63.4ms reconcile=0.1ms creates=0
+593035.0 gap=61.7ms reconcile=0.1ms creates=0
+593097.0 gap=38.6ms reconcile=0.1ms creates=0
+593175.5 gap=78.4ms reconcile=0.1ms creates=0
+593268.2 gap=92.7ms reconcile=0.0ms creates=0
+593348.0 gap=79.8ms reconcile=0.0ms creates=0
+593426.2 gap=78.2ms reconcile=0.1ms creates=0
+593519.0 gap=92.9ms reconcile=0.1ms creates=0
+593604.2 gap=68.7ms reconcile=0.1ms creates=0
+593676.9 gap=72.7ms reconcile=0.0ms creates=0
+593769.0 gap=92.1ms reconcile=0.0ms creates=0
+593846.2 gap=77.1ms reconcile=0.1ms creates=0
+593926.0 gap=79.8ms reconcile=0.0ms creates=0
+593926.0 commits=16/s maxGap=92.9ms
+594019.1 gap=93.1ms reconcile=0.1ms creates=0
+594096.9 gap=62.2ms reconcile=0.0ms creates=0
+594176.6 gap=79.7ms reconcile=0.1ms creates=0
+594269.2 gap=92.6ms reconcile=0.0ms creates=0
+594353.6 gap=84.4ms reconcile=0.1ms creates=0
+594425.5 gap=71.9ms reconcile=0.1ms creates=0
+594518.8 gap=93.4ms reconcile=0.0ms creates=0
+594602.5 gap=66.8ms reconcile=0.1ms creates=0
+594677.5 gap=75.0ms reconcile=0.0ms creates=0
+594768.7 gap=91.1ms reconcile=0.0ms creates=0
+594846.1 gap=77.5ms reconcile=0.1ms creates=0
+594926.7 gap=80.5ms reconcile=0.1ms creates=0
+594926.7 commits=14/s maxGap=93.4ms
+595019.4 gap=92.7ms reconcile=0.1ms creates=0
+595096.2 gap=62.1ms reconcile=0.0ms creates=0
+595175.7 gap=79.5ms reconcile=0.1ms creates=0
+595270.0 gap=94.3ms reconcile=0.1ms creates=0
+595346.5 gap=76.5ms reconcile=0.0ms creates=0
+595425.4 gap=78.9ms reconcile=0.1ms creates=0
+595518.8 gap=93.5ms reconcile=0.0ms creates=0
+595597.8 gap=60.9ms reconcile=0.1ms creates=0
+595677.1 gap=79.4ms reconcile=0.0ms creates=0
+595769.0 gap=91.9ms reconcile=0.0ms creates=0
+595847.5 gap=78.5ms reconcile=0.1ms creates=0
+595932.7 gap=85.2ms reconcile=0.1ms creates=0
+595932.7 commits=14/s maxGap=94.3ms
+596019.9 gap=87.3ms reconcile=0.1ms creates=0
+596096.0 gap=59.4ms reconcile=0.0ms creates=0
+596176.9 gap=80.9ms reconcile=0.1ms creates=0
+596268.8 gap=91.9ms reconcile=0.1ms creates=0
+596347.3 gap=78.6ms reconcile=0.1ms creates=0
+596426.9 gap=79.6ms reconcile=0.1ms creates=0
+596518.3 gap=91.4ms reconcile=0.1ms creates=0
+596601.6 gap=66.8ms reconcile=0.1ms creates=0
+596675.8 gap=74.2ms reconcile=0.0ms creates=0
+596768.3 gap=92.5ms reconcile=0.0ms creates=0
+596847.0 gap=78.7ms reconcile=0.1ms creates=0
+596926.5 gap=79.5ms reconcile=0.0ms creates=0
+597018.1 gap=91.7ms reconcile=0.1ms creates=0
+597018.1 commits=15/s maxGap=92.5ms
+597096.0 gap=62.6ms reconcile=0.0ms creates=0
+597175.7 gap=79.7ms reconcile=0.1ms creates=0
+597269.5 gap=93.8ms reconcile=0.0ms creates=0
+597346.1 gap=76.6ms reconcile=0.0ms creates=0
+597427.9 gap=81.8ms reconcile=0.1ms creates=0
+597459.4 gap=31.5ms reconcile=0.4ms creates=19
+597517.9 gap=52.1ms reconcile=0.0ms creates=0
+597605.8 gap=70.9ms reconcile=0.1ms creates=0
+597676.3 gap=70.5ms reconcile=0.1ms creates=0
+597769.5 gap=93.2ms reconcile=0.0ms creates=0
+597847.0 gap=77.4ms reconcile=0.1ms creates=0
+597926.7 gap=79.8ms reconcile=0.1ms creates=0
+598018.4 gap=91.6ms reconcile=0.2ms creates=0
+598018.4 commits=16/s maxGap=93.8ms
+598096.2 gap=61.5ms reconcile=0.0ms creates=0
+598177.1 gap=80.9ms reconcile=0.1ms creates=0
+598269.6 gap=89.8ms reconcile=0.0ms creates=0
+598346.7 gap=77.1ms reconcile=0.0ms creates=0
+598427.1 gap=80.5ms reconcile=0.1ms creates=0
+598518.3 gap=91.2ms reconcile=0.1ms creates=0
+598596.5 gap=57.8ms reconcile=0.1ms creates=0
+598676.5 gap=80.1ms reconcile=0.1ms creates=0
+598769.2 gap=92.7ms reconcile=0.1ms creates=0
+598847.0 gap=77.8ms reconcile=0.1ms creates=0
+598931.9 gap=84.9ms reconcile=0.1ms creates=0
+599021.5 gap=89.6ms reconcile=0.2ms creates=0
+599021.5 commits=15/s maxGap=92.7ms
+599077.6 gap=56.1ms reconcile=39.3ms creates=0
+599144.9 gap=65.0ms reconcile=0.0ms creates=0
+599223.1 gap=78.1ms reconcile=0.1ms creates=0
+599301.0 gap=78.0ms reconcile=0.1ms creates=0
+599393.9 gap=92.9ms reconcile=0.1ms creates=0
+599470.1 gap=76.1ms reconcile=0.2ms creates=0
+599535.7 gap=63.2ms reconcile=0.0ms creates=0
+599643.5 gap=85.1ms reconcile=0.2ms creates=0
+599723.1 gap=79.6ms reconcile=0.1ms creates=0
+599801.7 gap=78.6ms reconcile=0.1ms creates=0
+599894.2 gap=92.6ms reconcile=0.0ms creates=0
+599972.4 gap=78.2ms reconcile=0.1ms creates=0
+600035.0 gap=62.6ms reconcile=0.0ms creates=0
+600035.0 commits=16/s maxGap=92.9ms
+600143.4 gap=92.9ms reconcile=0.0ms creates=0
+600222.6 gap=79.2ms reconcile=0.1ms creates=0
+600301.5 gap=78.8ms reconcile=0.0ms creates=0
+600393.6 gap=92.2ms reconcile=0.1ms creates=0
+600471.5 gap=77.9ms reconcile=0.0ms creates=0
+600534.5 gap=30.2ms reconcile=0.0ms creates=0
+600643.5 gap=79.8ms reconcile=0.2ms creates=0
+600723.0 gap=79.5ms reconcile=0.1ms creates=0
+600815.1 gap=92.1ms reconcile=0.1ms creates=0
+600894.2 gap=79.1ms reconcile=0.1ms creates=0
+600972.0 gap=77.8ms reconcile=0.1ms creates=0
+601035.3 gap=63.3ms reconcile=0.0ms creates=0
+601035.3 commits=16/s maxGap=92.9ms
+601143.2 gap=90.7ms reconcile=0.0ms creates=0
+601221.8 gap=78.7ms reconcile=0.1ms creates=0
+601302.7 gap=80.9ms reconcile=0.0ms creates=0
+601393.9 gap=91.1ms reconcile=0.1ms creates=0
+601477.7 gap=83.8ms reconcile=0.1ms creates=0
+601534.6 gap=38.7ms reconcile=0.0ms creates=0
+601644.2 gap=86.5ms reconcile=0.1ms creates=0
+601722.6 gap=78.4ms reconcile=0.0ms creates=0
+601801.8 gap=79.2ms reconcile=0.1ms creates=0
+601895.0 gap=93.2ms reconcile=0.1ms creates=0
+601971.1 gap=76.1ms reconcile=0.1ms creates=0
+602034.8 gap=63.6ms reconcile=0.0ms creates=0
+602050.7 commits=16/s maxGap=93.2ms
+602143.9 gap=93.3ms reconcile=0.1ms creates=0
+602221.9 gap=78.0ms reconcile=0.1ms creates=0
+602301.5 gap=79.6ms reconcile=0.0ms creates=0
+602395.4 gap=93.9ms reconcile=0.1ms creates=0
+602471.8 gap=76.4ms reconcile=0.1ms creates=0
+602534.6 gap=46.1ms reconcile=0.0ms creates=0
+602643.5 gap=91.3ms reconcile=0.1ms creates=0
+602721.1 gap=77.6ms reconcile=0.0ms creates=0
+602800.5 gap=79.3ms reconcile=0.1ms creates=0
+602894.5 gap=94.0ms reconcile=0.2ms creates=0
+602972.9 gap=78.4ms reconcile=0.1ms creates=0
+603032.6 gap=59.7ms reconcile=0.0ms creates=0
+603096.6 gap=48.0ms reconcile=0.1ms creates=0
+603096.6 commits=16/s maxGap=94.0ms
+603145.8 gap=49.3ms reconcile=0.1ms creates=0
+603936.2 gap=790.3ms reconcile=1.0ms creates=20
+603977.8 gap=33.2ms reconcile=0.2ms creates=0
+604101.3 gap=123.5ms reconcile=0.1ms creates=0
+604101.3 commits=5/s maxGap=790.3ms
+604175.1 gap=73.8ms reconcile=0.1ms creates=0
+604276.6 gap=101.5ms reconcile=0.1ms creates=0
+604362.7 gap=86.1ms reconcile=0.1ms creates=0
+604426.3 gap=63.6ms reconcile=0.1ms creates=0
+604471.3 gap=45.0ms reconcile=0.1ms creates=0
+604518.8 gap=47.5ms reconcile=0.1ms creates=0
+604604.0 gap=85.1ms reconcile=0.1ms creates=0
+604690.4 gap=86.4ms reconcile=0.1ms creates=0
+604768.2 gap=77.8ms reconcile=0.1ms creates=0
+604847.4 gap=79.3ms reconcile=0.1ms creates=0
+604944.1 gap=96.6ms reconcile=0.1ms creates=0
+604981.2 gap=37.1ms reconcile=0.0ms creates=0
+605018.5 gap=37.4ms reconcile=0.1ms creates=0
+605097.7 gap=79.2ms reconcile=0.1ms creates=0
+605170.9 gap=73.1ms reconcile=0.2ms creates=0
+605170.9 commits=15/s maxGap=101.5ms
+605273.6 gap=91.3ms reconcile=0.1ms creates=0
+605346.1 gap=72.4ms reconcile=0.1ms creates=0
+605409.5 gap=63.5ms reconcile=0.3ms creates=0
+605471.2 gap=45.9ms reconcile=0.1ms creates=0
+605530.2 gap=58.9ms reconcile=0.1ms creates=0
+605610.5 gap=80.3ms reconcile=0.6ms creates=18
+605731.1 gap=120.7ms reconcile=0.1ms creates=0
+605801.3 gap=56.4ms reconcile=0.2ms creates=0
+605916.3 gap=115.0ms reconcile=0.1ms creates=0
+605974.3 gap=58.0ms reconcile=0.1ms creates=0
+606020.4 gap=46.1ms reconcile=0.5ms creates=7
+606097.7 gap=72.0ms reconcile=0.1ms creates=0
+606177.9 gap=80.2ms reconcile=0.1ms creates=0
+606177.9 commits=18/s maxGap=120.7ms
+606270.0 gap=92.1ms reconcile=0.1ms creates=0
+606346.7 gap=76.7ms reconcile=0.1ms creates=0
+606427.1 gap=80.3ms reconcile=0.1ms creates=0
+606471.6 gap=36.9ms reconcile=0.1ms creates=0
+606519.3 gap=47.7ms reconcile=0.1ms creates=0
+606598.4 gap=79.1ms reconcile=0.4ms creates=0
+606675.8 gap=77.4ms reconcile=0.1ms creates=0
+606772.1 gap=96.3ms reconcile=0.1ms creates=0
+606849.3 gap=77.2ms reconcile=0.1ms creates=0
+606927.4 gap=78.2ms reconcile=0.1ms creates=0
+606994.9 gap=67.5ms reconcile=0.1ms creates=0
+607100.4 gap=79.7ms reconcile=0.1ms creates=0
+607181.1 gap=80.6ms reconcile=0.2ms creates=0
+607181.1 commits=15/s maxGap=96.3ms
+607269.0 gap=88.0ms reconcile=0.1ms creates=0
+607346.9 gap=77.9ms reconcile=0.1ms creates=0
+607429.0 gap=82.2ms reconcile=0.1ms creates=0
+607487.1 gap=58.1ms reconcile=0.0ms creates=0
+607520.0 gap=32.8ms reconcile=0.1ms creates=0
+607599.2 gap=79.2ms reconcile=0.1ms creates=0
+607676.4 gap=77.3ms reconcile=0.1ms creates=0
+607769.3 gap=92.9ms reconcile=0.1ms creates=0
+607847.5 gap=78.2ms reconcile=0.1ms creates=0
+607926.3 gap=78.9ms reconcile=0.1ms creates=0
+607998.2 gap=71.9ms reconcile=0.1ms creates=0
+608097.5 gap=77.7ms reconcile=0.1ms creates=0
+608187.8 gap=90.3ms reconcile=0.1ms creates=0
+608187.8 commits=14/s maxGap=92.9ms
+608269.2 gap=81.3ms reconcile=0.1ms creates=0
+608347.3 gap=78.1ms reconcile=0.1ms creates=0
+608435.0 gap=87.7ms reconcile=0.1ms creates=0
+608487.6 gap=52.6ms reconcile=0.0ms creates=0
+608520.2 gap=32.6ms reconcile=0.1ms creates=0
+608598.3 gap=78.1ms reconcile=0.1ms creates=0
+608677.4 gap=79.1ms reconcile=0.1ms creates=0
+608768.9 gap=91.5ms reconcile=0.0ms creates=0
+608847.3 gap=78.4ms reconcile=0.1ms creates=0
+608926.7 gap=79.5ms reconcile=0.1ms creates=0
+608995.8 gap=69.1ms reconcile=0.6ms creates=0
+609053.2 gap=53.5ms reconcile=0.7ms creates=9
+609114.8 gap=52.5ms reconcile=0.1ms creates=0
+609179.1 gap=64.3ms reconcile=0.2ms creates=0
+609205.8 commits=18/s maxGap=91.5ms
+609309.1 gap=103.3ms reconcile=0.1ms creates=0
+609394.2 gap=85.1ms reconcile=0.1ms creates=0
+609473.5 gap=79.3ms reconcile=0.2ms creates=0
+609551.0 gap=48.6ms reconcile=0.1ms creates=0
+609645.7 gap=94.7ms reconcile=0.1ms creates=0
+609722.2 gap=76.5ms reconcile=0.1ms creates=0
+609770.7 gap=48.5ms reconcile=0.0ms creates=0
+609846.6 gap=75.9ms reconcile=0.1ms creates=0
+609926.7 gap=80.1ms reconcile=0.1ms creates=0
+610022.7 gap=96.0ms reconcile=0.1ms creates=0
+610063.6 gap=38.0ms reconcile=0.8ms creates=0
+610099.9 gap=36.3ms reconcile=0.1ms creates=0
+610183.6 gap=83.7ms reconcile=0.1ms creates=0
+610269.3 gap=85.7ms reconcile=0.1ms creates=0
+610269.3 commits=16/s maxGap=103.3ms
+610348.3 gap=79.0ms reconcile=0.1ms creates=0
+610426.7 gap=78.4ms reconcile=0.1ms creates=0
+610503.4 gap=76.7ms reconcile=0.1ms creates=0
+610597.4 gap=77.1ms reconcile=0.1ms creates=0
+610676.5 gap=79.2ms reconcile=0.1ms creates=0
+611363.9 gap=687.3ms reconcile=1.0ms creates=16
+611363.9 commits=7/s maxGap=687.3ms
+611473.3 gap=102.5ms reconcile=0.1ms creates=0
+611568.1 gap=94.8ms reconcile=0.1ms creates=0
+611644.4 gap=76.2ms reconcile=0.2ms creates=0
+611724.0 gap=79.6ms reconcile=0.1ms creates=0
+611800.5 gap=76.5ms reconcile=0.1ms creates=0
+611851.5 gap=51.0ms reconcile=0.1ms creates=0
+611894.0 gap=42.5ms reconcile=0.1ms creates=0
+611926.1 gap=32.1ms reconcile=0.1ms creates=0
+612019.8 gap=93.7ms reconcile=0.1ms creates=0
+612096.6 gap=76.8ms reconcile=0.1ms creates=0
+612153.7 gap=57.1ms reconcile=0.1ms creates=0
+612231.8 gap=78.1ms reconcile=0.1ms creates=0
+612302.2 gap=70.4ms reconcile=0.1ms creates=0
+612394.7 gap=92.5ms reconcile=0.2ms creates=0
+612394.7 commits=15/s maxGap=102.5ms
+612472.8 gap=78.1ms reconcile=0.1ms creates=0
+612550.4 gap=77.6ms reconcile=0.1ms creates=0
+612645.0 gap=94.6ms reconcile=0.1ms creates=0
+612721.6 gap=76.6ms reconcile=0.1ms creates=0
+612802.2 gap=80.6ms reconcile=0.1ms creates=0
+612894.1 gap=91.9ms reconcile=0.1ms creates=0
+612986.6 gap=92.5ms reconcile=0.1ms creates=0
+613051.9 gap=65.3ms reconcile=0.1ms creates=0
+613144.0 gap=92.1ms reconcile=0.1ms creates=0
+613225.9 gap=81.9ms reconcile=0.1ms creates=0
+613302.8 gap=76.9ms reconcile=0.1ms creates=0
+613353.3 gap=50.5ms reconcile=0.0ms creates=0
+613403.6 gap=50.3ms reconcile=0.0ms creates=0
+613403.6 commits=13/s maxGap=94.6ms
+613441.9 gap=38.4ms reconcile=0.1ms creates=0
+613529.5 gap=87.5ms reconcile=0.1ms creates=0
+613579.7 gap=50.2ms reconcile=0.1ms creates=0
+613644.8 gap=65.1ms reconcile=0.1ms creates=0
+613722.7 gap=77.8ms reconcile=0.1ms creates=0
+613803.0 gap=80.3ms reconcile=0.1ms creates=0
+613893.8 gap=74.1ms reconcile=0.1ms creates=0
+613971.7 gap=77.9ms reconcile=0.1ms creates=0
+614051.7 gap=79.9ms reconcile=0.1ms creates=0
+614145.7 gap=94.0ms reconcile=0.1ms creates=0
+614222.4 gap=76.8ms reconcile=0.1ms creates=0
+614304.0 gap=81.6ms reconcile=0.1ms creates=0
+614409.2 gap=105.2ms reconcile=0.3ms creates=0
+614409.2 commits=15/s maxGap=105.2ms
+614471.8 gap=62.6ms reconcile=0.0ms creates=0
+614524.6 gap=52.7ms reconcile=0.1ms creates=0
+614600.6 gap=76.1ms reconcile=0.1ms creates=0
+614678.2 gap=77.6ms reconcile=0.1ms creates=0
+614769.0 gap=90.8ms reconcile=0.1ms creates=0
+614803.7 gap=34.7ms reconcile=0.9ms creates=18
+614847.7 gap=44.0ms reconcile=0.1ms creates=0
+614895.1 gap=47.4ms reconcile=0.1ms creates=0
+614930.8 gap=35.7ms reconcile=0.1ms creates=0
+615019.3 gap=88.6ms reconcile=0.1ms creates=0
+615098.8 gap=79.5ms reconcile=0.1ms creates=0
+615149.3 gap=50.5ms reconcile=0.1ms creates=0
+615222.5 gap=73.2ms reconcile=0.2ms creates=0
+615301.5 gap=79.0ms reconcile=0.1ms creates=0
+615425.1 gap=123.6ms reconcile=0.3ms creates=0
+615425.1 commits=15/s maxGap=123.6ms
+615472.1 gap=47.0ms reconcile=0.1ms creates=0
+615558.0 gap=85.9ms reconcile=0.1ms creates=0
+615599.0 gap=41.0ms reconcile=0.1ms creates=0
+615644.5 gap=45.5ms reconcile=0.1ms creates=0
+615722.4 gap=77.9ms reconcile=0.1ms creates=0
+615808.6 gap=86.1ms reconcile=0.1ms creates=0
+615905.2 gap=96.7ms reconcile=0.3ms creates=0
+616013.8 gap=102.2ms reconcile=0.1ms creates=0
+616096.9 gap=83.1ms reconcile=0.1ms creates=0
+616176.4 gap=79.5ms reconcile=0.1ms creates=0
+616269.8 gap=93.4ms reconcile=0.0ms creates=0
+616347.7 gap=77.9ms reconcile=0.1ms creates=0
+616421.8 gap=74.1ms reconcile=0.1ms creates=0
+616429.2 commits=15/s maxGap=102.2ms
+616518.9 gap=89.6ms reconcile=0.1ms creates=0
+616597.3 gap=78.4ms reconcile=0.1ms creates=0
+616676.9 gap=79.6ms reconcile=0.1ms creates=0
+616768.6 gap=91.8ms reconcile=0.1ms creates=0
+616847.9 gap=79.2ms reconcile=0.1ms creates=0
+616908.9 gap=61.1ms reconcile=0.0ms creates=0
+617024.1 gap=98.3ms reconcile=0.2ms creates=0
+617097.1 gap=73.0ms reconcile=0.1ms creates=0
+617177.4 gap=80.3ms reconcile=0.1ms creates=0
+617270.2 gap=92.8ms reconcile=0.1ms creates=0
+617347.2 gap=76.9ms reconcile=0.1ms creates=0
+617420.8 gap=73.6ms reconcile=0.1ms creates=0
+617437.5 commits=14/s maxGap=98.3ms
+617519.0 gap=81.5ms reconcile=0.1ms creates=0
+617598.2 gap=79.2ms reconcile=0.2ms creates=0
+617676.6 gap=78.4ms reconcile=0.1ms creates=0
+617768.6 gap=92.0ms reconcile=0.1ms creates=0
+617833.9 gap=65.3ms reconcile=0.4ms creates=0
+617874.1 gap=40.3ms reconcile=1.2ms creates=9
+617971.9 gap=57.7ms reconcile=0.1ms creates=0
+618052.7 gap=80.8ms reconcile=0.2ms creates=0
+618143.4 gap=90.7ms reconcile=0.1ms creates=0
+618223.4 gap=80.0ms reconcile=0.1ms creates=0
+618302.3 gap=78.9ms reconcile=0.1ms creates=0
+618416.6 gap=114.3ms reconcile=0.1ms creates=0
+618473.4 gap=52.6ms reconcile=0.0ms creates=0
+618473.4 commits=17/s maxGap=114.3ms
+618555.5 gap=82.1ms reconcile=0.1ms creates=0
+618644.0 gap=88.4ms reconcile=0.1ms creates=0
+618722.6 gap=78.6ms reconcile=0.1ms creates=0
+618802.0 gap=79.4ms reconcile=0.1ms creates=0
+618856.7 gap=54.7ms reconcile=0.1ms creates=0
+618888.2 gap=31.5ms reconcile=0.8ms creates=0
+619020.1 gap=86.5ms reconcile=0.1ms creates=0
+619097.1 gap=77.0ms reconcile=0.1ms creates=0
+620828.2 gap=1731.1ms reconcile=0.2ms creates=0
+620828.2 commits=11/s maxGap=1731.1ms
+621747.0 gap=918.8ms reconcile=0.1ms creates=0
+622525.8 gap=778.8ms reconcile=0.7ms creates=16
+622525.8 commits=2/s maxGap=918.8ms
+622893.8 gap=368.0ms reconcile=0.0ms creates=0
+622924.0 gap=30.2ms reconcile=0.2ms creates=0
+622973.0 gap=49.0ms reconcile=0.2ms creates=0
+623062.7 gap=89.6ms reconcile=0.1ms creates=0
+623123.9 gap=61.2ms reconcile=0.1ms creates=0
+623213.6 gap=89.7ms reconcile=0.1ms creates=0
+623303.3 gap=89.8ms reconcile=0.1ms creates=0
+623404.9 gap=101.6ms reconcile=0.1ms creates=0
+623473.0 gap=68.1ms reconcile=0.0ms creates=0
+623553.9 gap=81.0ms reconcile=0.0ms creates=0
+623553.9 commits=10/s maxGap=368.0ms
+623623.3 gap=69.3ms reconcile=0.1ms creates=0
+623723.8 gap=100.6ms reconcile=0.0ms creates=0
+623803.4 gap=79.5ms reconcile=0.1ms creates=0
+623876.4 gap=73.0ms reconcile=0.2ms creates=0
+623973.9 gap=75.6ms reconcile=0.1ms creates=0
+624073.0 gap=99.1ms reconcile=0.1ms creates=0
+624160.9 gap=87.9ms reconcile=0.1ms creates=0
+624221.9 gap=61.0ms reconcile=0.1ms creates=0
+624310.6 gap=88.7ms reconcile=0.1ms creates=0
+624404.4 gap=93.8ms reconcile=0.1ms creates=0
+624475.7 gap=71.3ms reconcile=0.0ms creates=0
+624563.0 gap=87.3ms reconcile=0.1ms creates=0
+624563.0 commits=14/s maxGap=100.6ms
+624657.8 gap=94.9ms reconcile=0.1ms creates=0
+624722.1 gap=64.2ms reconcile=0.1ms creates=0
+624802.1 gap=80.1ms reconcile=0.1ms creates=0
+624911.3 gap=109.1ms reconcile=0.1ms creates=0
+625003.7 gap=92.5ms reconcile=0.1ms creates=0
+625059.9 gap=56.2ms reconcile=0.0ms creates=0
+625105.9 gap=46.0ms reconcile=0.6ms creates=19
+625190.0 gap=67.5ms reconcile=0.1ms creates=0
+625268.8 gap=78.8ms reconcile=0.1ms creates=0
+625347.7 gap=79.0ms reconcile=0.1ms creates=0
+625412.9 gap=65.1ms reconcile=0.0ms creates=0
+625455.8 gap=42.9ms reconcile=0.1ms creates=0
+625549.6 gap=93.8ms reconcile=0.1ms creates=0
+625600.5 gap=50.9ms reconcile=0.1ms creates=0
+625600.5 commits=15/s maxGap=109.1ms
+625676.5 gap=76.0ms reconcile=0.1ms creates=0
+625769.4 gap=92.9ms reconcile=0.1ms creates=0
+625846.3 gap=76.8ms reconcile=0.0ms creates=0
+625885.1 gap=35.1ms reconcile=0.1ms creates=0
+625955.1 gap=42.3ms reconcile=0.1ms creates=0
+626019.3 gap=64.2ms reconcile=0.1ms creates=0
+626098.0 gap=78.7ms reconcile=0.1ms creates=0
+626176.8 gap=78.8ms reconcile=0.1ms creates=0
+626269.8 gap=93.0ms reconcile=0.1ms creates=0
+626347.3 gap=77.6ms reconcile=0.1ms creates=0
+626408.9 gap=61.5ms reconcile=0.0ms creates=0
+626519.1 gap=92.3ms reconcile=0.1ms creates=0
+626597.8 gap=78.7ms reconcile=0.1ms creates=0
+626677.1 gap=79.3ms reconcile=0.1ms creates=0
+626677.1 commits=17/s maxGap=93.0ms
+626770.2 gap=93.0ms reconcile=0.0ms creates=0
+626847.9 gap=77.7ms reconcile=0.1ms creates=0
+626909.9 gap=62.0ms reconcile=0.0ms creates=0
+627019.6 gap=82.7ms reconcile=0.1ms creates=0
+627097.9 gap=78.3ms reconcile=0.1ms creates=0
+627175.7 gap=77.8ms reconcile=0.1ms creates=0
+627268.5 gap=92.8ms reconcile=0.0ms creates=0
+627347.8 gap=79.2ms reconcile=0.1ms creates=0
+627409.0 gap=61.2ms reconcile=0.0ms creates=0
+627518.5 gap=92.8ms reconcile=0.1ms creates=0
+627596.9 gap=78.4ms reconcile=0.1ms creates=0
+627646.5 gap=49.6ms reconcile=0.1ms creates=0
+627723.0 gap=76.5ms reconcile=0.1ms creates=0
+627723.0 commits=15/s maxGap=93.0ms
+627801.4 gap=78.4ms reconcile=0.1ms creates=0
+627879.4 gap=78.0ms reconcile=0.1ms creates=0
+627985.7 gap=73.2ms reconcile=0.1ms creates=0
+628053.7 gap=68.0ms reconcile=0.1ms creates=0
+628138.5 gap=84.9ms reconcile=0.9ms creates=9
+628225.0 gap=71.9ms reconcile=0.1ms creates=0
+628302.6 gap=77.6ms reconcile=0.1ms creates=0
+628394.1 gap=91.5ms reconcile=0.1ms creates=0
+628424.2 gap=30.1ms reconcile=0.0ms creates=0
+628472.2 gap=48.0ms reconcile=0.1ms creates=0
+628551.6 gap=79.4ms reconcile=0.0ms creates=0
+628647.1 gap=95.5ms reconcile=0.1ms creates=0
+628722.3 gap=75.2ms reconcile=0.1ms creates=0
+628800.8 gap=78.5ms reconcile=0.1ms creates=0
+628800.8 commits=18/s maxGap=95.5ms
+628893.4 gap=92.5ms reconcile=0.1ms creates=0
+628924.7 gap=31.4ms reconcile=0.0ms creates=0
+628974.4 gap=49.7ms reconcile=0.2ms creates=0
+629056.3 gap=81.9ms reconcile=0.1ms creates=0
+629135.6 gap=79.2ms reconcile=0.8ms creates=0
+629222.0 gap=69.1ms reconcile=0.1ms creates=0
+629301.7 gap=79.7ms reconcile=0.1ms creates=0
+629394.1 gap=92.4ms reconcile=0.1ms creates=0
+629425.3 gap=31.2ms reconcile=0.0ms creates=0
+629472.8 gap=47.6ms reconcile=0.1ms creates=0
+629551.6 gap=78.7ms reconcile=0.0ms creates=0
+629645.2 gap=93.6ms reconcile=0.1ms creates=0
+629722.3 gap=77.1ms reconcile=0.1ms creates=0
+629802.2 gap=79.9ms reconcile=0.1ms creates=0
+629802.2 commits=15/s maxGap=93.6ms
+629893.7 gap=91.5ms reconcile=0.0ms creates=0
+629945.1 gap=51.4ms reconcile=0.1ms creates=0
+630056.3 gap=83.1ms reconcile=0.1ms creates=0
+630136.3 gap=79.9ms reconcile=0.9ms creates=5
+630222.6 gap=73.9ms reconcile=0.1ms creates=0
+630300.6 gap=78.0ms reconcile=0.1ms creates=0
+630393.9 gap=93.3ms reconcile=0.1ms creates=0
+630425.0 gap=31.1ms reconcile=0.0ms creates=0
+631164.6 gap=739.7ms reconcile=0.9ms creates=20
+631164.6 commits=12/s maxGap=739.7ms
+631207.3 gap=33.6ms reconcile=0.2ms creates=0
+631269.9 gap=62.6ms reconcile=0.1ms creates=0
+631347.2 gap=77.3ms reconcile=0.1ms creates=0
+631435.6 gap=88.4ms reconcile=0.1ms creates=0
+631518.1 gap=82.5ms reconcile=0.1ms creates=0
+631598.4 gap=80.2ms reconcile=0.1ms creates=0
+631659.4 gap=61.0ms reconcile=0.0ms creates=0
+631692.5 gap=33.1ms reconcile=0.0ms creates=0
+631814.9 gap=92.5ms reconcile=0.1ms creates=0
+631901.8 gap=86.8ms reconcile=0.1ms creates=0
+631971.9 gap=70.1ms reconcile=0.1ms creates=0
+632025.3 gap=53.4ms reconcile=0.2ms creates=0
+632096.4 gap=71.1ms reconcile=0.1ms creates=0
+632149.7 gap=53.3ms reconcile=0.1ms creates=0
+632205.6 gap=55.9ms reconcile=0.1ms creates=0
+632205.6 commits=17/s maxGap=92.5ms
+632303.6 gap=81.2ms reconcile=0.1ms creates=0
+632367.3 gap=63.8ms reconcile=0.1ms creates=0
+632458.0 gap=90.6ms reconcile=0.1ms creates=0
+632493.7 gap=35.8ms reconcile=0.3ms creates=0
+632550.5 gap=50.5ms reconcile=0.0ms creates=0
+632610.9 gap=60.4ms reconcile=0.1ms creates=0
+632679.1 gap=68.2ms reconcile=0.1ms creates=0
+632733.3 gap=38.1ms reconcile=0.1ms creates=0
+632805.7 gap=72.4ms reconcile=0.1ms creates=0
+632893.6 gap=87.9ms reconcile=0.0ms creates=0
+632972.4 gap=78.8ms reconcile=0.1ms creates=0
+633026.5 gap=54.1ms reconcile=0.0ms creates=0
+633112.4 gap=85.9ms reconcile=0.6ms creates=18
+633209.8 gap=86.5ms reconcile=0.1ms creates=0
+633209.8 commits=18/s maxGap=90.6ms
+633277.8 gap=57.3ms reconcile=0.3ms creates=7
+633394.6 gap=93.3ms reconcile=0.1ms creates=0
+633471.3 gap=76.7ms reconcile=0.1ms creates=0
+633551.2 gap=79.9ms reconcile=0.1ms creates=0
+633643.6 gap=92.4ms reconcile=0.1ms creates=0
+633706.4 gap=62.8ms reconcile=0.1ms creates=0
+633804.3 gap=82.6ms reconcile=0.1ms creates=0
+633894.0 gap=64.8ms reconcile=0.1ms creates=0
+633973.5 gap=79.5ms reconcile=0.1ms creates=0
+634062.0 gap=88.5ms reconcile=0.1ms creates=0
+634143.9 gap=81.9ms reconcile=0.1ms creates=0
+634233.1 gap=89.1ms reconcile=0.1ms creates=0
+634233.1 commits=16/s maxGap=93.3ms
+634335.2 gap=90.6ms reconcile=0.1ms creates=0
+634426.0 gap=90.8ms reconcile=0.1ms creates=0
+634503.7 gap=77.7ms reconcile=0.1ms creates=0
+634597.7 gap=77.5ms reconcile=0.2ms creates=0
+634675.8 gap=78.0ms reconcile=0.1ms creates=0
+634706.6 gap=30.9ms reconcile=0.0ms creates=0
+634769.8 gap=63.1ms reconcile=0.1ms creates=0
+634847.7 gap=78.0ms reconcile=0.1ms creates=0
+634926.8 gap=79.0ms reconcile=0.1ms creates=0
+635753.8 gap=827.1ms reconcile=0.3ms creates=0
+635753.8 commits=12/s maxGap=827.1ms
+635804.5 gap=50.7ms reconcile=0.2ms creates=0
+635895.1 gap=90.6ms reconcile=0.1ms creates=0
+635971.7 gap=76.6ms reconcile=0.1ms creates=0
+636053.8 gap=82.1ms reconcile=0.1ms creates=0
+636144.0 gap=90.2ms reconcile=0.1ms creates=0
+636223.2 gap=79.2ms reconcile=0.2ms creates=0
+636301.3 gap=78.1ms reconcile=0.1ms creates=0
+636393.7 gap=92.4ms reconcile=0.1ms creates=0
+636472.3 gap=78.5ms reconcile=0.1ms creates=0
+636504.8 gap=32.5ms reconcile=0.1ms creates=0
+636551.3 gap=46.5ms reconcile=0.1ms creates=0
+636644.3 gap=93.0ms reconcile=0.1ms creates=0
+636724.1 gap=79.8ms reconcile=0.5ms creates=0
+636758.8 gap=34.6ms reconcile=1.5ms creates=9
+636758.8 commits=14/s maxGap=93.0ms
+636933.5 gap=166.6ms reconcile=0.2ms creates=0
+637019.9 gap=86.4ms reconcile=0.2ms creates=0
+637097.5 gap=77.6ms reconcile=0.1ms creates=0
+637146.9 gap=49.4ms reconcile=0.1ms creates=0
+637222.3 gap=75.3ms reconcile=0.1ms creates=0
+637272.9 gap=50.6ms reconcile=0.1ms creates=0
+637347.1 gap=74.3ms reconcile=0.2ms creates=0
+637427.0 gap=79.9ms reconcile=0.1ms creates=0
+637519.7 gap=92.6ms reconcile=0.1ms creates=0
+637597.1 gap=77.5ms reconcile=0.2ms creates=0
+637677.8 gap=80.6ms reconcile=0.0ms creates=0
+637722.1 gap=44.3ms reconcile=0.0ms creates=0
+637769.2 commits=15/s maxGap=166.6ms
+637848.0 gap=78.7ms reconcile=0.2ms creates=0
+637929.3 gap=81.3ms reconcile=0.1ms creates=0
+638204.4 gap=275.1ms reconcile=0.1ms creates=0
+638294.3 gap=69.5ms reconcile=0.1ms creates=0
+638329.5 gap=35.2ms reconcile=0.2ms creates=0
+638475.2 gap=145.7ms reconcile=0.1ms creates=0
+638552.3 gap=77.1ms reconcile=0.0ms creates=0
+638650.4 gap=98.1ms reconcile=0.1ms creates=0
+638725.7 gap=75.3ms reconcile=0.1ms creates=0
+638938.9 gap=190.6ms reconcile=0.1ms creates=0
+638938.9 commits=12/s maxGap=275.1ms
+639019.1 gap=80.1ms reconcile=0.1ms creates=0
+639786.0 gap=766.9ms reconcile=1.3ms creates=16
+639894.8 gap=88.9ms reconcile=0.1ms creates=0
+640005.9 gap=111.1ms reconcile=0.2ms creates=0
+640005.9 commits=6/s maxGap=766.9ms
+640107.2 gap=80.8ms reconcile=0.0ms creates=0
+640192.5 gap=85.2ms reconcile=0.4ms creates=0
+640269.3 gap=76.8ms reconcile=0.0ms creates=0
+640301.9 gap=32.6ms reconcile=0.0ms creates=0
+640349.6 gap=47.7ms reconcile=0.1ms creates=0
+640427.5 gap=77.9ms reconcile=0.4ms creates=0
+640519.3 gap=91.9ms reconcile=0.1ms creates=0
+640597.8 gap=78.5ms reconcile=0.1ms creates=0
+640676.5 gap=78.7ms reconcile=0.0ms creates=0
+640783.5 gap=107.0ms reconcile=0.2ms creates=0
+640814.6 gap=31.1ms reconcile=0.1ms creates=0
+640848.7 gap=34.1ms reconcile=0.1ms creates=0
+640954.5 gap=105.8ms reconcile=0.1ms creates=0
+641022.6 gap=68.1ms reconcile=0.1ms creates=0
+641022.6 commits=15/s maxGap=107.0ms
+641120.4 gap=97.8ms reconcile=0.1ms creates=0
+641207.1 gap=86.7ms reconcile=0.1ms creates=0
+641300.4 gap=93.3ms reconcile=0.1ms creates=0
+641394.5 gap=94.1ms reconcile=0.1ms creates=0
+641472.2 gap=77.7ms reconcile=0.0ms creates=0
+641524.4 gap=52.2ms reconcile=0.0ms creates=0
+641600.4 gap=76.0ms reconcile=0.1ms creates=0
+641653.9 gap=53.5ms reconcile=0.2ms creates=0
+641696.2 gap=36.2ms reconcile=0.1ms creates=0
+641768.6 gap=72.4ms reconcile=0.1ms creates=0
+641809.4 gap=40.8ms reconcile=0.0ms creates=0
+641847.8 gap=38.4ms reconcile=0.1ms creates=0
+641949.5 gap=101.6ms reconcile=0.1ms creates=0
+642036.4 gap=86.9ms reconcile=0.1ms creates=0
+642036.4 commits=15/s maxGap=101.6ms
+642127.7 gap=91.4ms reconcile=0.1ms creates=0
+642223.9 gap=96.2ms reconcile=0.1ms creates=0
+642315.4 gap=91.5ms reconcile=0.1ms creates=0
+642394.4 gap=79.1ms reconcile=0.2ms creates=0
+642471.8 gap=77.4ms reconcile=0.1ms creates=0
+642553.0 gap=81.2ms reconcile=0.1ms creates=0
+642644.9 gap=91.9ms reconcile=0.1ms creates=0
+642722.0 gap=77.1ms reconcile=0.0ms creates=0
+642805.3 gap=83.3ms reconcile=0.1ms creates=0
+642850.9 gap=45.6ms reconcile=0.7ms creates=2
+642907.9 gap=47.5ms reconcile=0.1ms creates=0
+642971.0 gap=42.2ms reconcile=0.4ms creates=8
+643046.0 gap=75.0ms reconcile=0.2ms creates=0
+643046.0 commits=15/s maxGap=96.2ms
+643228.2 gap=182.1ms reconcile=0.2ms creates=6
+643303.2 gap=75.0ms reconcile=0.2ms creates=4
+643358.0 gap=46.7ms reconcile=0.1ms creates=0
+643529.3 gap=171.3ms reconcile=0.1ms creates=0
+643571.4 gap=42.1ms reconcile=0.9ms creates=64
+643651.4 gap=64.3ms reconcile=0.1ms creates=0
+643722.3 gap=70.8ms reconcile=0.1ms creates=0
+644137.4 gap=415.1ms reconcile=0.3ms creates=0
+644137.4 commits=11/s maxGap=415.1ms
+644570.9 gap=433.5ms reconcile=0.0ms creates=0
+644604.1 gap=33.1ms reconcile=0.0ms creates=0
+645036.5 gap=432.5ms reconcile=0.0ms creates=0
+645107.8 gap=71.3ms reconcile=0.1ms creates=0
+645576.4 gap=468.6ms reconcile=0.0ms creates=0
+645576.4 commits=5/s maxGap=468.6ms
+645611.4 gap=35.0ms reconcile=0.0ms creates=0
+646106.4 gap=495.0ms reconcile=0.1ms creates=0
+646568.6 gap=462.1ms reconcile=0.0ms creates=0
+646601.5 gap=32.9ms reconcile=0.0ms creates=0
+646601.5 commits=4/s maxGap=495.0ms
+647111.0 gap=509.5ms reconcile=0.1ms creates=0
+647566.4 gap=455.4ms reconcile=0.0ms creates=0
+647602.7 gap=36.2ms reconcile=0.0ms creates=0
+647602.7 commits=3/s maxGap=509.5ms
+648108.8 gap=506.2ms reconcile=0.1ms creates=0
+648583.5 gap=474.7ms reconcile=0.1ms creates=0
+649111.4 gap=510.6ms reconcile=0.1ms creates=0
+649111.4 commits=4/s maxGap=510.6ms
+649588.2 gap=476.8ms reconcile=0.0ms creates=0
+649874.1 gap=269.2ms reconcile=0.1ms creates=0
+650124.4 gap=250.3ms reconcile=0.1ms creates=0
+650124.4 commits=4/s maxGap=476.8ms
+650583.5 gap=459.1ms reconcile=0.0ms creates=0
+651104.2 gap=505.3ms reconcile=0.0ms creates=0
+651592.3 gap=488.2ms reconcile=0.0ms creates=0
+651592.3 commits=4/s maxGap=505.3ms
+652108.8 gap=501.3ms reconcile=0.1ms creates=0
+652587.4 gap=478.5ms reconcile=0.1ms creates=0
+652604.0 commits=4/s maxGap=501.3ms
+653112.5 gap=508.5ms reconcile=0.0ms creates=0
+653589.7 gap=477.2ms reconcile=0.0ms creates=0
+653626.5 gap=36.8ms reconcile=0.0ms creates=0
+653626.5 commits=3/s maxGap=508.5ms
+654121.5 gap=495.0ms reconcile=0.1ms creates=0
+654585.8 gap=464.4ms reconcile=0.0ms creates=0
+654616.7 gap=30.8ms reconcile=0.0ms creates=0
+655122.0 gap=505.4ms reconcile=0.0ms creates=0
+655122.0 commits=4/s maxGap=505.4ms
+655584.1 gap=462.1ms reconcile=0.0ms creates=0
+655616.8 gap=32.7ms reconcile=0.0ms creates=0
+656124.8 gap=508.0ms reconcile=0.0ms creates=0
+656124.8 commits=3/s maxGap=508.0ms
+656591.2 gap=466.4ms reconcile=0.0ms creates=0
+656625.3 gap=34.1ms reconcile=0.0ms creates=0
+657125.0 gap=499.6ms reconcile=0.0ms creates=0
+657125.0 commits=3/s maxGap=499.6ms
+657595.1 gap=470.1ms reconcile=0.0ms creates=0
+658122.4 gap=508.4ms reconcile=0.0ms creates=0
+658581.8 gap=459.4ms reconcile=0.0ms creates=0
+658581.8 commits=4/s maxGap=508.4ms
+658614.5 gap=32.8ms reconcile=0.0ms creates=0
+659120.3 gap=505.8ms reconcile=0.0ms creates=0
+659587.7 gap=467.4ms reconcile=0.0ms creates=0
+659587.7 commits=3/s maxGap=505.8ms
+659620.1 gap=32.4ms reconcile=0.0ms creates=0
+660126.4 gap=506.3ms reconcile=0.0ms creates=0
+660586.2 gap=459.8ms reconcile=0.0ms creates=0
+660618.5 gap=32.2ms reconcile=0.0ms creates=0
+660618.5 commits=4/s maxGap=506.3ms
+661123.4 gap=505.0ms reconcile=0.0ms creates=0
+661590.2 gap=466.7ms reconcile=0.0ms creates=0
+661623.9 gap=33.7ms reconcile=0.0ms creates=0
+661623.9 commits=3/s maxGap=505.0ms
+662128.9 gap=504.9ms reconcile=0.0ms creates=0
+662581.9 gap=453.0ms reconcile=0.0ms creates=0
+662629.1 gap=47.2ms reconcile=0.0ms creates=0
+662629.1 commits=3/s maxGap=504.9ms
+663134.8 gap=505.8ms reconcile=0.0ms creates=0
+663584.6 gap=449.8ms reconcile=0.0ms creates=0
+663631.9 gap=47.3ms reconcile=0.0ms creates=0
+663631.9 commits=3/s maxGap=505.8ms
+664136.4 gap=504.4ms reconcile=0.0ms creates=0
+664589.1 gap=452.7ms reconcile=0.0ms creates=0
+664638.9 gap=49.8ms reconcile=0.0ms creates=0
+664638.9 commits=3/s maxGap=504.4ms
+664820.8 gap=181.9ms reconcile=0.1ms creates=1
+665140.9 gap=320.0ms reconcile=0.0ms creates=0
+665583.4 gap=442.5ms reconcile=0.0ms creates=0
+665630.2 gap=46.8ms reconcile=0.0ms creates=0
+666136.5 gap=506.4ms reconcile=0.0ms creates=0
+666136.5 commits=5/s maxGap=506.4ms
+666589.4 gap=452.9ms reconcile=0.0ms creates=0
+666637.0 gap=47.6ms reconcile=0.0ms creates=0
+666707.7 gap=70.7ms reconcile=0.1ms creates=0
+667140.3 gap=432.7ms reconcile=0.1ms creates=0
+667140.3 commits=4/s maxGap=452.9ms
+667589.6 gap=449.3ms reconcile=0.0ms creates=0
+667637.0 gap=47.4ms reconcile=0.0ms creates=0
+668142.4 gap=505.4ms reconcile=0.1ms creates=0
+668142.4 commits=3/s maxGap=505.4ms
+668594.2 gap=451.8ms reconcile=0.0ms creates=0
+668631.6 gap=37.4ms reconcile=0.0ms creates=0
+669142.6 gap=511.0ms reconcile=0.1ms creates=0
+669142.6 commits=3/s maxGap=511.0ms
+669625.6 gap=483.1ms reconcile=0.1ms creates=0
+670144.4 gap=514.9ms reconcile=0.1ms creates=0
+670144.4 commits=3/s maxGap=514.9ms
+670618.1 gap=473.7ms reconcile=0.0ms creates=0
+671151.4 gap=510.0ms reconcile=0.1ms creates=0
+671151.4 commits=3/s maxGap=510.0ms
+671613.3 gap=461.9ms reconcile=0.0ms creates=0
+671644.1 gap=30.8ms reconcile=0.0ms creates=0
+672176.8 gap=532.8ms reconcile=0.1ms creates=0
+672176.8 commits=3/s maxGap=532.8ms
+672621.5 gap=444.7ms reconcile=0.0ms creates=0
+672668.8 gap=47.3ms reconcile=0.0ms creates=0
+672826.4 gap=157.5ms reconcile=0.1ms creates=0
+673171.7 gap=345.4ms reconcile=0.0ms creates=0
+673616.5 gap=444.8ms reconcile=0.0ms creates=0
+673616.5 commits=5/s maxGap=444.8ms
+673663.8 gap=47.3ms reconcile=0.0ms creates=0
+674170.5 gap=506.8ms reconcile=0.1ms creates=0
+674625.9 gap=455.3ms reconcile=0.0ms creates=0
+674625.9 commits=3/s maxGap=506.8ms
+674678.7 gap=52.8ms reconcile=0.0ms creates=0
+675186.2 gap=507.5ms reconcile=0.0ms creates=0
+675614.8 gap=428.6ms reconcile=0.0ms creates=0
+675679.7 gap=64.9ms reconcile=0.0ms creates=0
+675679.7 commits=4/s maxGap=507.5ms
+676181.6 gap=501.9ms reconcile=0.1ms creates=0
+676625.5 gap=443.9ms reconcile=0.0ms creates=0
+676690.4 gap=64.9ms reconcile=0.0ms creates=0
+676690.4 commits=3/s maxGap=501.9ms
+677204.7 gap=514.3ms reconcile=0.0ms creates=0
+677622.7 gap=418.0ms reconcile=0.1ms creates=0
+677692.6 gap=70.0ms reconcile=0.0ms creates=0
+677692.6 commits=3/s maxGap=514.3ms
+678228.4 gap=535.7ms reconcile=0.1ms creates=0
+678617.1 gap=388.7ms reconcile=0.0ms creates=0
+678696.9 gap=79.8ms reconcile=0.0ms creates=0
+678696.9 commits=3/s maxGap=535.7ms
+679209.3 gap=512.4ms reconcile=0.0ms creates=0
+679627.3 gap=418.0ms reconcile=0.0ms creates=0
+679696.8 gap=69.5ms reconcile=0.0ms creates=0
+680213.0 gap=516.3ms reconcile=0.1ms creates=0
+680213.0 commits=4/s maxGap=516.3ms
+680615.8 gap=402.8ms reconcile=0.0ms creates=0
+680710.1 gap=94.3ms reconcile=0.0ms creates=0
+681227.4 gap=517.3ms reconcile=0.1ms creates=0
+681227.4 commits=3/s maxGap=517.3ms
+681613.8 gap=386.4ms reconcile=0.0ms creates=0
+681724.0 gap=110.1ms reconcile=0.0ms creates=0
+682229.8 gap=505.8ms reconcile=0.1ms creates=0
+682229.8 commits=3/s maxGap=505.8ms
+682643.8 gap=414.0ms reconcile=0.1ms creates=0
+682727.4 gap=83.5ms reconcile=0.0ms creates=0
+683234.4 gap=507.1ms reconcile=0.1ms creates=0
+683234.4 commits=3/s maxGap=507.1ms
+683648.4 gap=414.0ms reconcile=0.0ms creates=0
+683735.4 gap=87.0ms reconcile=0.1ms creates=0
+684230.5 gap=495.1ms reconcile=0.1ms creates=0
+684646.6 gap=416.1ms reconcile=0.0ms creates=0
+684646.6 commits=4/s maxGap=495.1ms
+684727.5 gap=80.9ms reconcile=0.0ms creates=0
+685233.4 gap=505.9ms reconcile=0.1ms creates=0
+685660.1 gap=426.7ms reconcile=0.0ms creates=0
+685660.1 commits=3/s maxGap=505.9ms
+685733.9 gap=73.7ms reconcile=0.0ms creates=0
+686228.8 gap=494.9ms reconcile=0.1ms creates=0
+686671.8 gap=443.1ms reconcile=0.0ms creates=0
+686671.8 commits=3/s maxGap=494.9ms
+686735.9 gap=64.1ms reconcile=0.0ms creates=0
+687009.7 gap=273.8ms reconcile=0.2ms creates=1
+687234.9 gap=225.2ms reconcile=0.0ms creates=0
+687659.7 gap=424.8ms reconcile=0.0ms creates=0
+687723.3 gap=63.6ms reconcile=0.0ms creates=0
+687723.3 commits=5/s maxGap=424.8ms
+688227.4 gap=504.1ms reconcile=0.0ms creates=0
+688664.7 gap=437.4ms reconcile=0.0ms creates=0
+688728.4 gap=63.7ms reconcile=0.0ms creates=0
+688728.4 commits=3/s maxGap=504.1ms
+689234.3 gap=505.9ms reconcile=0.0ms creates=0
+689661.4 gap=427.1ms reconcile=0.0ms creates=0
+689724.1 gap=62.6ms reconcile=0.0ms creates=0
+690228.7 gap=504.6ms reconcile=0.0ms creates=0
+690228.7 commits=4/s maxGap=505.9ms
+690666.2 gap=437.5ms reconcile=0.0ms creates=0
+690731.0 gap=64.8ms reconcile=0.0ms creates=0
+691224.7 gap=493.6ms reconcile=0.0ms creates=0
+691660.9 gap=436.2ms reconcile=0.0ms creates=0
+691660.9 commits=4/s maxGap=493.6ms
+691723.3 gap=62.5ms reconcile=0.0ms creates=0
+692229.2 gap=505.9ms reconcile=0.0ms creates=0
+692668.2 gap=439.0ms reconcile=0.0ms creates=0
+692668.2 commits=3/s maxGap=505.9ms
+692731.6 gap=63.5ms reconcile=0.0ms creates=0
+693235.9 gap=504.2ms reconcile=0.0ms creates=0
+693671.9 gap=436.0ms reconcile=0.0ms creates=0
+693671.9 commits=3/s maxGap=504.2ms
+693738.2 gap=66.3ms reconcile=0.0ms creates=0
+694240.9 gap=502.7ms reconcile=0.0ms creates=0
+694661.3 gap=420.4ms reconcile=0.0ms creates=0
+694742.1 gap=80.8ms reconcile=0.0ms creates=0
+694742.1 commits=4/s maxGap=502.7ms
+695249.7 gap=507.6ms reconcile=0.0ms creates=0
+695665.6 gap=415.9ms reconcile=0.0ms creates=0
+695744.0 gap=78.4ms reconcile=0.0ms creates=0
+695744.0 commits=3/s maxGap=507.6ms
+696249.0 gap=505.0ms reconcile=0.0ms creates=0
+696661.6 gap=412.6ms reconcile=0.0ms creates=0
+696740.9 gap=79.4ms reconcile=0.0ms creates=0
+697247.1 gap=506.1ms reconcile=0.0ms creates=0
+697247.1 commits=4/s maxGap=506.1ms
+697661.1 gap=414.1ms reconcile=0.0ms creates=0
+697738.7 gap=77.6ms reconcile=0.0ms creates=0
+698244.1 gap=505.4ms reconcile=0.0ms creates=0
+698667.4 gap=423.3ms reconcile=0.0ms creates=0
+698667.4 commits=4/s maxGap=505.4ms
+698746.2 gap=78.8ms reconcile=0.0ms creates=0
+699250.4 gap=504.2ms reconcile=0.0ms creates=0
+699662.6 gap=412.2ms reconcile=0.0ms creates=0
+699742.8 gap=80.2ms reconcile=0.0ms creates=0
+699742.8 commits=4/s maxGap=504.2ms
+700247.8 gap=505.0ms reconcile=0.0ms creates=0
+700661.3 gap=413.5ms reconcile=0.0ms creates=0
+700741.7 gap=80.4ms reconcile=0.0ms creates=0
+701247.4 gap=505.7ms reconcile=0.1ms creates=0
+701247.4 commits=4/s maxGap=505.7ms
+701664.3 gap=416.9ms reconcile=0.0ms creates=0
+701745.6 gap=81.3ms reconcile=0.0ms creates=0
+702237.4 gap=491.8ms reconcile=0.1ms creates=0
+702660.7 gap=423.3ms reconcile=0.0ms creates=0
+702660.7 commits=4/s maxGap=491.8ms
+702740.9 gap=80.3ms reconcile=0.0ms creates=0
+703249.8 gap=508.8ms reconcile=0.0ms creates=0
+703663.2 gap=413.4ms reconcile=0.0ms creates=0
+703663.2 commits=3/s maxGap=508.8ms
+703741.8 gap=78.6ms reconcile=0.0ms creates=0
+704246.8 gap=505.0ms reconcile=0.0ms creates=0
+704742.3 gap=495.5ms reconcile=0.0ms creates=0
+704742.3 commits=3/s maxGap=505.0ms
+705248.1 gap=505.8ms reconcile=0.0ms creates=0
+705738.7 gap=490.6ms reconcile=0.0ms creates=0
+706242.1 gap=503.4ms reconcile=0.0ms creates=0
+706242.1 commits=3/s maxGap=505.8ms
+706739.9 gap=497.8ms reconcile=0.0ms creates=0
+707245.5 gap=505.6ms reconcile=0.0ms creates=0
+707245.5 commits=2/s maxGap=505.6ms
+707750.0 gap=504.5ms reconcile=0.0ms creates=0
+708240.2 gap=490.2ms reconcile=0.1ms creates=0
+708749.6 gap=509.4ms reconcile=0.0ms creates=0
+708749.6 commits=3/s maxGap=509.4ms
+709246.4 gap=496.8ms reconcile=0.0ms creates=0
+709740.2 gap=493.8ms reconcile=0.0ms creates=0
+710245.8 gap=505.6ms reconcile=0.0ms creates=0
+710245.8 commits=3/s maxGap=505.6ms
+710743.8 gap=498.0ms reconcile=0.0ms creates=0
+711247.5 gap=503.8ms reconcile=0.0ms creates=0
+711247.5 commits=2/s maxGap=503.8ms

@@ -1,5 +1,5 @@
 ---
-description: Implement tasks incrementally — build, test, verify, commit. Add "auto" to run the whole plan in one approved pass.
+description: 增量实现任务——构建、测试、验证、提交。添加 "auto" 以一次性运行整个计划。
 ---
 
 Invoke the agent-skills:incremental-implementation skill alongside agent-skills:test-driven-development.

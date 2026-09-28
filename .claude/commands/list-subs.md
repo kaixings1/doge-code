@@ -1,5 +1,5 @@
 ---
-description: List all active skill-bus subscriptions across global and project scopes, showing merge status, insert-level and subscription-level conditions, effective condition stacking, and what would fire for each skill.
+description: 列出全局和项目范围内的所有活跃技能总线订阅，显示合并状态、插入级和订阅级条件、有效条件堆叠以及每个技能的触发情况。
 ---
 
 # List Skill Bus Subscriptions

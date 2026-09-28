@@ -22,7 +22,7 @@ export async function copyAnsiToClipboard(
     await mkdir(tempDir, { recursive: true })
 
     const pngPath = join(tempDir, `screenshot-${Date.now()}.png`)
-    const pngBuffer = ansiToPng(ansiText, options)
+    const pngBuffer = await ansiToPng(ansiText, options)
     await writeFile(pngPath, pngBuffer)
 
     const result = await copyPngToClipboard(pngPath)

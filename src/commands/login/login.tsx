@@ -1,6 +1,6 @@
 import { c as _c } from "react/compiler-runtime";
 import { feature } from 'bun:bundle';
-import * as React from 'react';
+import React, { useState } from 'react';
 import { resetCostState } from '../../bootstrap/state.js';
 import { clearTrustedDeviceToken, enrollTrustedDevice } from '../../bridge/trustedDevice.js';
 import type { LocalJSXCommandContext } from '../../commands.js';
@@ -65,8 +65,9 @@ export async function call(onDone: LocalJSXCommandOnDone, context: LocalJSXComma
   }} />;
 }
 export function Login(props) {
-  const $ = _c(12);
+  const $ = _c(14);
   const mainLoopModel = useMainLoopModel();
+  const [isTextInputting, setIsTextInputting] = useState(false);
   let t0;
   if ($[0] !== mainLoopModel || $[1] !== props) {
     t0 = () => props.onDone(false, mainLoopModel);
@@ -86,22 +87,24 @@ export function Login(props) {
     t1 = $[5];
   }
   let t2;
-  if ($[6] !== props.startingMessage || $[7] !== t1) {
-    t2 = <ConsoleOAuthFlow onDone={t1} startingMessage={props.startingMessage} />;
+  if ($[6] !== props.startingMessage || $[7] !== t1 || $[8] !== isTextInputting) {
+    t2 = <ConsoleOAuthFlow onDone={t1} startingMessage={props.startingMessage} onTextInputStateChange={setIsTextInputting} />;
     $[6] = props.startingMessage;
     $[7] = t1;
-    $[8] = t2;
+    $[8] = isTextInputting;
+    $[9] = t2;
   } else {
-    t2 = $[8];
+    t2 = $[9];
   }
   let t3;
-  if ($[9] !== t0 || $[10] !== t2) {
-    t3 = <Dialog title="登录" onCancel={t0} color="permission" inputGuide={_temp}>{t2}</Dialog>;
-    $[9] = t0;
-    $[10] = t2;
-    $[11] = t3;
+  if ($[10] !== t0 || $[11] !== t2 || $[12] !== isTextInputting) {
+    t3 = <Dialog title="登录" onCancel={t0} color="permission" inputGuide={_temp} isCancelActive={!isTextInputting}>{t2}</Dialog>;
+    $[10] = t0;
+    $[11] = t2;
+    $[12] = isTextInputting;
+    $[13] = t3;
   } else {
-    t3 = $[11];
+    t3 = $[13];
   }
   return t3;
 }

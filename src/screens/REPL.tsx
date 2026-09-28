@@ -473,7 +473,7 @@ class ReplRuntimeBoundary extends React.Component<{
   override state: ReplRuntimeBoundaryState = {
     error: null
   };
-  static override getDerivedStateFromError(error: Error): ReplRuntimeBoundaryState {
+  static getDerivedStateFromError(error: Error): ReplRuntimeBoundaryState {
     return {
       error
     };
@@ -1422,7 +1422,7 @@ export function REPL({
       bashTools: bashTools.current
     }).then(async tip => {
       if (tip) {
-        const content = await tip.content({
+        const content = await (tip as any).content({
           theme
         });
         setAppState(prev => ({
@@ -1598,7 +1598,7 @@ export function REPL({
   });
 
   // Frustration detection: show transcript sharing prompt after detecting frustrated messages
-  const frustrationDetection = useFrustrationDetection(messages, isLoading, hasActivePrompt, feedbackSurvey.state !== 'closed' || postCompactSurvey.state !== 'closed' || memorySurvey.state !== 'closed');
+  const frustrationDetection = (useFrustrationDetection as any)(messages, isLoading, hasActivePrompt, feedbackSurvey.state !== 'closed' || postCompactSurvey.state !== 'closed' || memorySurvey.state !== 'closed');
 
   // Initialize IDE integration
   useIDEIntegration({
@@ -2485,7 +2485,7 @@ export function REPL({
         if (feature('PROACTIVE') || feature('KAIROS')) {
           proactiveModule?.setContextBlocked(false);
         }
-      } else if (newMessage.type === 'progress' && isEphemeralToolProgress(newMessage.data.type)) {
+      } else if ((newMessage as any).type === 'progress' && isEphemeralToolProgress((newMessage as any).data.type)) {
         // Replace the previous ephemeral progress tick for the same tool
         // call instead of appending. Sleep/Bash emit a tick per second and
         // only the last one is rendered; appending blows up the messages
@@ -2498,7 +2498,7 @@ export function REPL({
         // "Initializing…" because it renders the full progress trail.
         setMessages(oldMessages => {
           const last = oldMessages.at(-1);
-          if (last?.type === 'progress' && last.parentToolUseID === newMessage.parentToolUseID && last.data.type === newMessage.data.type) {
+          if ((last as any)?.type === 'progress' && (last as any).parentToolUseID === newMessage.parentToolUseID && (last as any).data.type === (newMessage as any).data.type) {
             const copy = oldMessages.slice();
             copy[copy.length - 1] = newMessage;
             return copy;
@@ -2525,7 +2525,7 @@ export function REPL({
       setResponseLength(length => length + newContent.length);
     }, setStreamMode, setStreamingToolUses, tombstonedMessage => {
       setMessages(oldMessages => oldMessages.filter(m => m !== tombstonedMessage));
-      void removeTranscriptMessage(tombstonedMessage.uuid);
+      void removeTranscriptMessage((tombstonedMessage as any).uuid);
     }, setStreamingThinking, metrics => {
       const now = Date.now();
       const baseline = responseLengthRef.current;
@@ -2677,9 +2677,9 @@ export function REPL({
       systemContext,
       canUseTool,
       toolUseContext,
-	  includePartialMessages: true,
+      includePartialMessages: true,
       querySource: getQuerySourceForREPL()
-    })) {
+    } as any)) {
       onQueryEvent(event);
       // Yield at key stream boundaries so React can render intermediate states.
       // REPL path: events are raw StreamEvent types from query.ts.
@@ -2954,7 +2954,7 @@ export function REPL({
 
       // Atomically: clear initial message, set permission mode and rules, and store plan for verification
       const shouldStorePlanForVerification = initialMsg.message.planContent && ("external" as string) === 'ant' && isEnvTruthy(undefined);
-      setAppState(prev => {
+      (setAppState as any)((prev: any) => {
         // Build and apply permission updates (mode + allowedPrompts rules)
         let updatedToolPermissionContext = initialMsg.mode ? applyPermissionUpdates(prev.toolPermissionContext, buildPermissionUpdates(initialMsg.mode, initialMsg.allowedPrompts)) : prev.toolPermissionContext;
         // For auto, override the mode (buildPermissionUpdates maps
@@ -2987,7 +2987,7 @@ export function REPL({
             ...prev,
             fileHistory: updater(prev.fileHistory)
           }));
-        }, initialMsg.message.uuid);
+        }, initialMsg.message.uuid as any);
       }
 
       // Ensure SessionStart hook context is available before the first API
@@ -3061,7 +3061,7 @@ export function REPL({
           addToHistory({
             display: input,
             pastedContents,
-          });
+          } as any);
         }
         const loopCmd = toLoopCommand(intent);
         logEvent('tengu_loop_intent_detected', {
@@ -3241,7 +3241,7 @@ export function REPL({
       addToHistory({
         display: speculationAccept ? input : prependModeCharacterToInput(input, inputMode),
         pastedContents: speculationAccept ? {} : pastedContents
-      });
+      } as any);
       // Add the just-submitted command to the front of the ghost-text
       // cache so it's suggested immediately (not after the 60s TTL).
       if (inputMode === 'bash') {
@@ -3585,7 +3585,7 @@ export function REPL({
     }
 
     // 从我们正在回滚到的消息恢复状态
-    setAppState(prev => ({
+    (setAppState as any)((prev: any) => ({
       ...prev,
       // 从消息恢复权限模式
       toolPermissionContext: message.permissionMode && prev.toolPermissionContext.mode !== message.permissionMode ? {
@@ -3664,7 +3664,7 @@ export function REPL({
       const rawIdx = findRawIndex(msg.uuid);
       const raw = rawIdx >= 0 ? messages[rawIdx] : undefined;
       if (!raw || !selectableUserMessagesFilter(raw)) return;
-      const noFileChanges = !(await fileHistoryHasAnyChanges(fileHistory, raw.uuid));
+      const noFileChanges = !(await fileHistoryHasAnyChanges(fileHistory, raw.uuid as any));
       const onlySynthetic = messagesAfterAreOnlySynthetic(messages, rawIdx);
       if (noFileChanges && onlySynthetic) {
         // rewindConversationTo 的 setMessages 与流追加竞争 — 首先取消（幂等）。
@@ -4368,7 +4368,7 @@ export function REPL({
               {false && <TungstenLiveMonitor />}
               {feature('WEB_BROWSER_TOOL') ? WebBrowserPanelModule && <WebBrowserPanelModule.WebBrowserPanel /> : null}
               <Box flexGrow={1} />
-              {showSpinner && <SpinnerWithVerb mode={streamMode} spinnerTip={spinnerTip} responseLengthRef={responseLengthRef} apiMetricsRef={apiMetricsRef} overrideMessage={spinnerMessage} spinnerSuffix={stopHookSpinnerSuffix} verbose={verbose} loadingStartTimeRef={loadingStartTimeRef} totalPausedMsRef={totalPausedMsRef} pauseStartTimeRef={pauseStartTimeRef} overrideColor={spinnerColor} overrideShimmerColor={spinnerShimmerColor} hasActiveTools={inProgressToolUseIDs.size > 0} leaderIsIdle={!isLoading} useTimeGradient={true} />}
+              {showSpinner && <SpinnerWithVerb mode={streamMode} spinnerTip={spinnerTip} responseLengthRef={responseLengthRef} overrideMessage={spinnerMessage} spinnerSuffix={stopHookSpinnerSuffix} verbose={verbose} loadingStartTimeRef={loadingStartTimeRef} totalPausedMsRef={totalPausedMsRef} pauseStartTimeRef={pauseStartTimeRef} overrideColor={spinnerColor} overrideShimmerColor={spinnerShimmerColor} hasActiveTools={inProgressToolUseIDs.size > 0} leaderIsIdle={!isLoading} useTimeGradient={true} />}
               {!showSpinner && !isLoading && !userInputOnProcessing && !hasRunningTeammates && isBriefOnly && !viewedAgentTask && <BriefIdleStatus />}
               {isFullscreenEnvEnabled() && <PromptInputQueuedCommands />}
             </>} bottom={<Box flexDirection={true && companionNarrow ? 'column' : 'row'} width="100%" alignItems={true && companionNarrow ? undefined : 'flex-end'}>
@@ -4685,7 +4685,7 @@ export function REPL({
                 ...prev,
                 fileHistory: updater(prev.fileHistory)
               }));
-            }, message.uuid);
+            }, message.uuid as any);
           }} onSummarize={async (message: UserMessage, feedback?: string, direction: PartialCompactDirection = 'from') => {
             // 投射被截断的消息，以便压缩模型不会总结有意删除的内容。
             const compactMessages = getMessagesAfterCompactBoundary(messages);

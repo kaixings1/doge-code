@@ -1,52 +1,48 @@
 ---
-description: Run the ECC formatter quality gate for a single file and report remediation steps.
+description: 对单个文件运行 ECC 格式化器质量门禁，并报告修复步骤。
 ---
 
-# Quality Gate Command
+# 质量门禁命令
 
-Operator entry point for the formatter quality gate that normally runs as the
-`post:quality-gate` PostToolUse hook (`scripts/hooks/quality-gate.js`).
+格式化器质量门禁的操作入口，该门禁通常作为 `post:quality-gate` PostToolUse hook（`scripts/hooks/quality-gate.js`）运行。
 
-## How it actually works
+## 它实际如何工作
 
-The gate is a single-file formatter check driven by hook input, not CLI flags:
+该门禁是由 hook 输入驱动的单文件格式化器检查，而非 CLI 标志：
 
-- The script reads the target from the hook's stdin JSON
-  (`tool_input.file_path`); it does not take a path argument.
-- Behavior toggles are environment variables:
-  - `ECC_QUALITY_GATE_FIX=true` - apply formatting fixes instead of check-only
-  - `ECC_QUALITY_GATE_STRICT=true` - log formatter failures as gate failures
-- Coverage by file type:
-  - `.ts/.tsx/.js/.jsx/.json/.md` - Biome `check` or Prettier `--check`,
-    whichever the project ships (JS/TS under Biome is skipped here because
-    `post-edit-format` already runs `biome check --write`)
+- 脚本从 hook 的 stdin JSON（`tool_input.file_path`）读取目标；它不接受路径参数。
+- 行为开关是环境变量：
+  - `ECC_QUALITY_GATE_FIX=true` - 应用格式化修复，而非仅检查
+  - `ECC_QUALITY_GATE_STRICT=true` - 把格式化器失败记录为门禁失败
+- 按文件类型的覆盖范围：
+  - `.ts/.tsx/.js/.jsx/.json/.md` - Biome `check` 或 Prettier `--check`，
+    取决于项目使用哪一个（Biome 下的 JS/TS 在此跳过，因为
+    `post-edit-format` 已经运行了 `biome check --write`）
   - `.go` - `gofmt`
   - `.py` - `ruff format`
-- Lint and type checks are not part of this gate. Use the `verification-loop`
-  skill or the language verification skills for lint/type/test pipelines.
+- lint 和类型检查不属于此门禁。lint/类型/测试流水线请使用 `verification-loop`
+  技能或各语言的验证技能。
 
-## Usage
+## 用法
 
-To run the gate manually against one file, pipe hook-style JSON into the
-script (set the env toggles first if you want fix or strict behavior):
+要对单个文件手动运行门禁，把 hook 风格的 JSON 管道输入脚本
+（如果想要修复或严格行为，先设置环境变量开关）：
 
 ```bash
 echo '{"tool_input":{"file_path":"src/example.ts"}}' \
   | ECC_QUALITY_GATE_FIX=true node scripts/hooks/quality-gate.js
 ```
 
-Then report formatter findings and concrete remediation steps.
+然后报告格式化器发现项以及具体的修复步骤。
 
-## Notes
+## 说明
 
-Hook wiring enters through the async PostToolUse dispatcher in
-`hooks/hooks.json`. Its internal registry preserves the `post:quality-gate`
-ID and the `standard`/`strict` profiles.
+Hook 接线通过 `hooks/hooks.json` 中的异步 PostToolUse 分发器进入。其内部注册表保留了 `post:quality-gate` ID 以及 `standard`/`strict` 配置文件。
 
-## Arguments
+## 参数
 
-$ARGUMENTS:
+$ARGUMENTS：
 
-- `[path]` optional file to check. The script itself takes no CLI
-  arguments - when a path is given, substitute it as `tool_input.file_path`
-  in the stdin JSON shown above before running the command
+- `[path]` 可选，要检查的文件。脚本本身不接受任何 CLI
+  参数 —— 当给出路径时，在运行命令之前，把上面 stdin JSON 中的
+  `tool_input.file_path` 替换为该路径

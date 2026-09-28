@@ -159,7 +159,7 @@ export type StreamClientEvent = {
  */
 export class SSETransport implements Transport {
   private state: SSETransportState = 'idle'
-  private onData?: (data: string) => void
+  private _onData?: (data: string) => void
   private onCloseCallback?: (closeCode?: number) => void
   private onEventCallback?: (event: StreamClientEvent) => void
   private headers: Record<string, string>
@@ -519,7 +519,7 @@ export class SSETransport implements Transport {
       logForDebugging(
         `SSETransport: 即将调用 onData, 输出长度=${jsonOutput.length}`,
       )
-      this.onData?.(jsonOutput)
+      this._onData?.(jsonOutput)
     } else {
       logForDebugging(
         `SSETransport: 忽略负载中无类型的 client_event: event_id=${ev.event_id}`,
@@ -716,7 +716,7 @@ export class SSETransport implements Transport {
   }
 
   setOnData(callback: (data: string) => void): void {
-    this.onData = callback
+    this._onData = callback
   }
 
   setOnClose(callback: (closeCode?: number) => void): void {

@@ -1,5 +1,5 @@
 ---
-description: Legacy slash-entry shim for the documentation-lookup skill. Prefer the skill directly.
+description: documentation-lookup 技能的后备斜杠入口。优先直接使用该技能。
 ---
 
 # Docs Command (Legacy Shim)

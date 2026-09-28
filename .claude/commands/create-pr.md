@@ -1,5 +1,5 @@
 ---
-description: Streamlines pull request creation by handling the entire workflow: creating a new branch, committing changes, formatting modified files with Biome, and submitting the PR.
+description: 通过处理整个工作流来简化拉取请求创建：创建新分支、提交更改、用 Biome 格式化修改的文件并提交 PR。
 author: toyamarinyon
 author-url: https://github.com/toyamarinyon
 version: 1.0.0

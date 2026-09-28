@@ -1,6 +1,6 @@
 ---
 name: Update docs from GitHub PR
-description: Provide a PR link to update docs based on
+description: 提供 PR 链接以基于 PR 更新文档。
 alwaysApply: false
 ---
 

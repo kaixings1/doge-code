@@ -1,5 +1,5 @@
 ---
-description: DogeCode Local Development Environment Core Technology Capabilities - MCP Engine / Bun Runtime / InkTUI Terminal UI / AI Agent Orchestration | Author: kaixings <...5@qq.com>
+description: DogeCode 本地开发环境核心技术能力 - MCP 引擎 / Bun 运行时 / InkTUI 终端 UI / AI 代理编排 | 作者: kaixings
 lastUpdated: 2026-##
 tags: - capability - analysis - mcp - bun - ink-tui
 ---

@@ -159,15 +159,14 @@ export function ResumeTask({
     timeString: formatRelativeTime(new Date(session_0.updated_at))
   }));
   const maxTimeStringLength = Math.max(UPDATED_STRING.length, ...sessionMetadata.map(meta => meta.timeString.length));
-  const options = sessionMetadata.map(({
-    timeString,
-    title,
-    id
-  }) => {
+  const options = sessionMetadata.map((session) => {
+    const { timeString, title, id } = session;
     const paddedTime = timeString.padEnd(maxTimeStringLength, ' ');
 
     // Include branch name when API returns it
-    const branchPart = session_0.branch ? ` • ${session_0.branch}` : ''
+    const branchPart = session.repo?.default_branch
+      ? ` • ${session.repo.default_branch}`
+      : ''
     return {
       label: `${paddedTime}  ${title}${branchPart}`,
       value: id

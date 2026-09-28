@@ -1,6 +1,6 @@
 ---
 name: Unit Testing Rules
-description: Guidelines for unit testing in this project
+description: 本项目单元测试的指南。
 alwaysApply: false
 ---
 

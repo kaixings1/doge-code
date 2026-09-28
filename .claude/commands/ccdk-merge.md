@@ -1,84 +1,84 @@
-# Merge Command
+# Merge 命令
 
-Finalize work on a branch: verify docs + tree are clean, merge to main, clean up. Supports both standard `git checkout -b` branches and `git worktree` flows — auto-detected at pre-flight.
+完成分支上的工作：验证文档 + 工作区是干净的，合并到 main，清理。同时支持标准的 `git checkout -b` 分支和 `git worktree` 流程 —— 在预检时自动检测。
 
-**Context from user:** $ARGUMENTS
-
----
-
-## Philosophy
-
-`/merge` is a **verify + ship** command, not a do-everything-at-end-of-session cleanup. Doc updates, commits, and testing belong to the **work session** on the branch. By the time `/merge` runs — typically in a fresh `claude` session — those things should already be done. This command verifies the invariant, surfaces violations, and ships if clean.
-
-Rule of thumb: if you're tempted to have `/merge` silently fix something, STOP and surface it to the user instead. Merges are semi-destructive; a missed doc update or an accidentally-committed build artifact is much harder to undo after the fact.
-
-**Two scenarios, one command.** When the branch fast-forwards or auto-merges with no conflicts, this is pure verify + ship. When `main` has diverged and the merge conflicts — routine when overlapping branches touch the same files — conflict resolution becomes the real work (→ **Step 4b**). Resolving conflicts is NOT "silently fixing": surface the *approach decision* to the user, then execute it on rails with mandatory verification.
-
-**Prime directive (non-negotiable):** any merge where `main` had diverged — i.e., git *composed* a new tree from both sides, **whether it conflicted or auto-merged cleanly** — MUST pass the project's build/test before the merge commit is finalized (→ **Step 4c**). The nastiest defects are clean auto-merges with no conflict marker: a reference whose declaration the other side moved or deleted compiles on each parent alone and breaks only in the combined tree. Only building the composed tree catches it. (If `main` is already an ancestor of the branch — no divergence — the merged tree equals the branch tree, already built on-branch; the build is skippable.)
+**来自用户的上下文：** $ARGUMENTS
 
 ---
 
-## $ARGUMENTS conventions
+## 理念
 
-Two documented uses for `$ARGUMENTS`:
+`/merge` 是一个**验证 + 交付**命令，而不是会话结束时的万事通清理。文档更新、提交和测试属于分支上的**工作会话**。当 `/merge` 运行时 —— 通常是在一个全新的 `claude` 会话中 —— 这些事应该已经做完了。此命令验证不变量、暴露违规，并在干净时交付。
 
-- `Verified: <context>` — appended as a `Verified:` line in the merge commit. Opt-in; only include if user passed one.
-  Example: `/merge Verified: integration tests pass + manual smoke check`
-- `summary: <override>` — use as the merge-message summary instead of synthesizing from the diff.
-  Example: `/merge summary: swap payment provider from Stripe to Adyen`
+经验法则：如果你想把某件事交给 `/merge` 静默修复，**停下来**，改为向用户暴露它。合并是半破坏性的；一个遗漏的文档更新或一个误提交的构建产物，事后要撤销会困难得多。
 
-Do not prompt the user for verification notes. Most merges don't carry a `Verified:` line, and it's a deliberate signal rather than a checkbox.
+**两种场景，一个命令。** 当分支快进或在无冲突的情况下自动合并时，这就是纯粹的验证 + 交付。当 `main` 已经分叉且合并产生冲突时 —— 当重叠的分支触及相同文件时这是常态 —— 冲突解决就成了真正的工作（→ **步骤 4b**）。解决冲突**不是**"静默修复"：向用户暴露**方案决策**，然后在轨道上执行它并进行强制验证。
+
+**最高指令（不可协商）：** 任何 `main` 已分叉的合并 —— 即 git 从双方**组合**出一棵新树时，**无论它是冲突还是在无冲突的情况下干净自动合并** —— 都必须在合并提交最终确定之前通过项目的构建/测试（→ **步骤 4c**）。最棘手的缺陷就是没有冲突标记的干净自动合并：某个引用其声明被另一方移动或删除，在各自父节点上都能编译，只在组合树中才断裂。只有构建组合树才能捕获它。（如果 `main` 已经是分支的祖先 —— 没有分叉 —— 合并树就等于分支树，已在分支上构建过；构建可跳过。）
 
 ---
 
-## Pre-flight
+## $ARGUMENTS 约定
 
-1. **Detect mode.** Compare the current git dir to the main git dir:
+`$ARGUMENTS` 有两种文档化的用法：
+
+- `Verified: <context>` —— 作为 `Verified:` 行追加到合并提交中。可选加入；仅当用户传入时才包含。
+  例如：`/merge Verified: integration tests pass + manual smoke check`
+- `summary: <override>` —— 用作合并消息摘要，而非从 diff 合成。
+  例如：`/merge summary: swap payment provider from Stripe to Adyen`
+
+不要向用户索要验证备注。大多数合并不携带 `Verified:` 行，它是一个刻意的信号，而非勾选框。
+
+---
+
+## 预检
+
+1. **检测模式。** 比较当前 git 目录与主 git 目录：
    ```bash
    git rev-parse --git-dir
    git rev-parse --git-common-dir
    ```
-   - **Equal** → **standard mode** (regular clone, or operating from the main repo itself).
-   - **Different** → **worktree mode** (current dir is a linked worktree created via `git worktree add`).
+   - **相同** → **标准模式**（普通克隆，或本身就在主仓库中操作）。
+   - **不同** → **worktree 模式**（当前目录是通过 `git worktree add` 创建的链接工作树）。
 
-   Remember the mode — it controls how Step 4 (merge) and Step 5 (cleanup) behave.
+   记住这个模式 —— 它决定步骤 4（合并）和步骤 5（清理）的行为。
 
-2. **Verify branch.** Run `git branch --show-current`.
-   - Branch is `main` → stop: "You're on main — nothing to merge. Create a feature branch with `git checkout -b <name>` (standard mode) or run this from a worktree on the branch you want to merge (worktree mode)."
-   - Otherwise → capture `<branch>` = current branch name.
+2. **验证分支。** 运行 `git branch --show-current`。
+   - 分支是 `main` → 停止："You're on main — nothing to merge. Create a feature branch with `git checkout -b <name>` (standard mode) or run this from a worktree on the branch you want to merge (worktree mode)."
+   - 否则 → 记录 `<branch>` = 当前分支名。
 
-3. **Worktree mode only — capture `<main-repo-path>`:** the path listed for branch `main` in `git worktree list`. Standard mode doesn't need this (everything happens in the cwd).
+3. **仅 worktree 模式 —— 记录 `<main-repo-path>`：** `git worktree list` 中为分支 `main` 列出的路径。标准模式不需要这个（一切都在 cwd 中发生）。
 
-4. **Survey the branch:**
+4. **勘察分支：**
    ```bash
    git log main..HEAD --oneline
    git diff main --stat
    git log main..HEAD --name-only --format= | sort -u | cut -d/ -f1 | sort -u
    git status
    ```
-   In worktree mode, also run `git -C <main-repo-path> status` to spot uncommitted changes in the main repo.
+   在 worktree 模式下，还要运行 `git -C <main-repo-path> status` 以发现主仓库中未提交的更改。
 
-   The third command gives you the top-level directories touched — this drives the docs check in Step 2 (and, optionally, module-scoped build/test in Step 4c). Note lines-changed and file-count from `git diff main --stat` — this drives the Step 1 branch.
+   第三条命令给出被触及的顶层目录 —— 这驱动步骤 2 的文档检查（以及步骤 4c 中可选的按模块构建/测试）。注意 `git diff main --stat` 的变更行数和文件数 —— 这驱动步骤 1 的分支。
 
-5. **Detect divergence, predict conflicts, scan for rider commits** (read-only — do this BEFORE any merge; it routes Step 4):
+5. **检测分叉、预测冲突、扫描搭便车提交**（只读 —— 在任何合并之前执行；它决定步骤 4 的走向）：
    ```bash
    # Divergence? FALSE = main composed a new tree → MANDATORY build/test (Step 4c).
    git merge-base --is-ancestor main HEAD && echo "no divergence (ff-equivalent)" || echo "DIVERGED — build/test the composed tree"
    # Dry-run the merge: see the conflict set without touching anything.
    git merge-tree --write-tree --name-only main HEAD   # exit 0 = clean → 4a; exit 1 = conflicts → 4b
    ```
-   - `merge-base --is-ancestor` succeeds (exit 0) → main is already an ancestor → **no divergence** (fast-forward-equivalent); the build in 4c is skippable. Fails (exit 1) → **DIVERGED** → 4c is mandatory.
-   - `merge-tree` exit **0** → no conflicts (Step 4a). Exit **1** → the lines after the first (tree-OID) line are the conflicted paths (Step 4b).
-   - Pre-flight step 4's `git log main..HEAD --oneline` already lists **every commit this merge introduces**. Scan it for **riders** — unrelated commits riding the branch (merging a branch merges ALL its commits). If you see work beyond the branch's stated purpose, flag it to the user before merging and in the Step 6 report.
+   - `merge-base --is-ancestor` 成功（退出码 0）→ main 已是祖先 → **无分叉**（等价于快进）；4c 中的构建可跳过。失败（退出码 1）→ **已分叉** → 4c 为强制项。
+   - `merge-tree` 退出码 **0** → 无冲突（步骤 4a）。退出码 **1** → 首行（tree-OID）之后的行就是冲突路径（步骤 4b）。
+   - 预检步骤 4 的 `git log main..HEAD --oneline` 已列出**本次合并引入的每一个提交**。扫描其中的**搭便车者** —— 搭在分支上的无关提交（合并一个分支会合并它的**所有**提交）。如果你看到超出该分支既定目的的工作，在合并前向用户标记，并在步骤 6 报告中说明。
 
 ---
 
-## Step 1: Form a mental model
+## 步骤 1：形成心智模型
 
-You have no implicit session context (fresh session). Read the branch before drafting anything.
+你没有隐含的会话上下文（全新会话）。在起草任何内容之前先阅读该分支。
 
-- **Small diffs** (<200 lines changed AND <10 files): `git diff main` inline.
-- **Large diffs** (>200 lines OR >10 files): delegate to an `Explore` sub-agent (Sonnet) to keep context clean.
+- **小型 diff**（变更 <200 行 **且** <10 个文件）：直接内联 `git diff main`。
+- **大型 diff**（>200 行 **或** >10 个文件）：委派给 `Explore` 子代理（Sonnet）以保持上下文干净。
 
   ```
   Agent({
@@ -88,87 +88,87 @@ You have no implicit session context (fresh session). Read the branch before dra
   })
   ```
 
-Use the summary + diff stat to draft the merge message in Step 4. If `$ARGUMENTS` contained `summary: <override>`, use that instead and skip the synthesis.
+用该摘要和 diff stat 在步骤 4 起草合并消息。如果 `$ARGUMENTS` 包含 `summary: <override>`，则使用它并跳过合成。
 
 ---
 
-## Step 2: Docs-current guardrail
+## 步骤 2：文档最新性护栏
 
-From the top-level dirs touched (Pre-flight step 4 command), map to docs that might need updating:
+从被触及的顶层目录（预检步骤 4 命令）映射到可能需要更新的文档：
 
-| Top-level dir touched | Docs to consider |
+| 被触及的顶层目录 | 需考虑的文档 |
 |---|---|
-| Any code dir | `docs/ai-context/*.md`, root `CLAUDE.md` |
-| `assets/` (if present) | `assets/CLAUDE.md` |
-| Other top-level dirs | their local `CLAUDE.md` if one exists |
+| 任何代码目录 | `docs/ai-context/*.md`、根 `CLAUDE.md` |
+| `assets/`（如果存在） | `assets/CLAUDE.md` |
+| 其他顶层目录 | 它们的本地 `CLAUDE.md`（如果存在） |
 
-For monorepos with per-product subdirs (e.g., `ProductA/`, `ProductB/`), map each touched product dir to its own `<product>/docs/ai-context/` and `<product>/CLAUDE.md`.
+对于按产品划分子目录的 monorepo（例如 `ProductA/`、`ProductB/`），把每个被触及的产品目录映射到它自己的 `<product>/docs/ai-context/` 和 `<product>/CLAUDE.md`。
 
-**Decision flow:**
+**决策流程：**
 
-1. **Apply skip criteria** (from `.claude/skills/update-docs/SKILL.md` "When to Skip" section): bug fixes, small refactors, code cleanup, UI tweaks, single-file additions within existing patterns, perf opts without arch impact, comment/formatting changes. If the branch fits these → skip silently, proceed to Step 3.
+1. **应用跳过标准**（来自 `.claude/skills/update-docs/SKILL.md` 的 "When to Skip" 一节）：bug 修复、小重构、代码清理、UI 微调、在既有模式内的单文件新增、无架构影响的性能优化、注释/格式变更。如果分支符合这些 → 静默跳过，进入步骤 3。
 
-2. **Check whether docs were already touched on this branch:**
+2. **检查此分支上文档是否已被触及：**
    ```bash
    git log main..HEAD --name-only --format= | grep -E 'docs/ai-context/|CLAUDE\.md'
    ```
-   If yes → docs were handled in the work session. Skip silently, proceed to Step 3.
+   如果是 → 文档已在工作会话中处理过。静默跳过，进入步骤 3。
 
-3. **If substantive diff AND no doc touches on branch** → STOP. List the specific files likely needing attention, then present three options:
-   - **(a)** Abort the merge so the user can invoke the `/update-docs` skill in this or another session.
-   - **(b)** Proceed anyway (user explicitly accepts doc drift — note this for Step 6).
-   - **(c)** Cancel entirely.
+3. **如果是实质性 diff 且分支上没有触及文档** → 停止。列出可能需要关注的具体文件，然后给出三个选项：
+   - **(a)** 中止合并，让用户在当前或其他会话中调用 `/update-docs` 技能。
+   - **(b)** 仍然继续（用户明确接受文档漂移 —— 在步骤 6 中记录这一点）。
+   - **(c)** 完全取消。
 
-   **Wait for user choice. Do NOT auto-invoke `/update-docs`.** Merge is semi-destructive; this is a deliberate exception to the usual "skip redundant confirmation" preference.
+   **等待用户选择。不要自动调用 `/update-docs`。** 合并是半破坏性的；这是对通常"跳过冗余确认"偏好的刻意例外。
 
 ---
 
-## Step 3: Clean-tree guardrail
+## 步骤 3：干净工作区护栏
 
-- **Clean worktree** (`git status` shows nothing) → proceed silently to Step 4.
-- **Dirty worktree** → STOP. Show:
+- **干净工作区**（`git status` 无输出）→ 静默进入步骤 4。
+- **脏工作区** → 停止。显示：
   - `git status` output
   - `git diff --stat` summary
-  - A one-line categorization hint ("looks like build artifacts / generated files" vs "looks like code changes")
+  - 一行分类提示（"看起来像构建产物 / 生成文件" vs "看起来像代码变更"）
 
-  Ask the user to choose:
-  - **(a)** Commit specific named files — user names them. Follow repo commit style (conventional `feat:`/`fix:`/`chore:` prefix, HEREDOC message, `Co-Authored-By: Claude <noreply@anthropic.com>` trailer).
-  - **(b)** Discard the uncommitted changes.
-  - **(c)** Abort the merge.
+  让用户选择：
+  - **(a)** 提交指定的具名文件 —— 由用户命名。遵循仓库的提交风格（约定式 `feat:`/`fix:`/`chore:` 前缀、HEREDOC 消息、`Co-Authored-By: Claude <noreply@anthropic.com>` trailer）。
+  - **(b)** 丢弃未提交的更改。
+  - **(c)** 中止合并。
 
-**Never `git add -A` or `git add .`.** Never auto-commit without the user naming files. A merge commit that quietly swallows regenerated build output or stale `.DS_Store`s is painful to undo.
+**绝不 `git add -A` 或 `git add .`。** 绝不在用户未指定文件的情况下自动提交。一个悄悄吞掉重新生成的构建输出或过期 `.DS_Store` 的合并提交，事后撤销会很痛苦。
 
 ---
 
-## Step 4: Merge to main
+## 步骤 4：合并到 main
 
-Two things route this step:
-- **Mode** (Pre-flight step 1) — standard vs worktree — controls *where* the merge runs.
-- **Divergence** (Pre-flight step 5) — controls *how* the merge runs:
-  - **No divergence** → simple, single-command merge (Step 4a, fast path).
-  - **Diverged** → two-phase merge: stage with `--no-commit`, verify the composed tree (Step 4c), *then* commit. This is the prime directive — a clean auto-merge can still break the build.
-  - **Conflicts predicted** → Step 4b.
+两件事决定这一步的走向：
+- **模式**（预检步骤 1）—— 标准 vs worktree —— 决定合并**在哪里**运行。
+- **分叉**（预检步骤 5）—— 决定合并**如何**运行：
+  - **无分叉** → 简单的单命令合并（步骤 4a，快路径）。
+  - **已分叉** → 两阶段合并：用 `--no-commit` 暂存，验证组合树（步骤 4c），**然后**提交。这就是最高指令 —— 干净的自动合并仍可能破坏构建。
+  - **预测有冲突** → 步骤 4b。
 
-Throughout, the only difference between modes is the git invocation prefix:
-- **Standard mode:** `git checkout main` once, then run merge commands in the cwd.
-- **Worktree mode:** you cannot `git checkout main` inside a worktree (main is checked out in the main repo). Use `git -C <main-repo-path>` for **all** merge operations — never `cd` into the worktree's main.
+自始至终，两种模式唯一的差别是 git 调用的前缀：
+- **标准模式：** 先 `git checkout main` 一次，然后在 cwd 中运行合并命令。
+- **worktree 模式：** 你无法在 worktree 内部 `git checkout main`（main 已在主仓库中检出）。对**所有**合并操作使用 `git -C <main-repo-path>` —— 绝不要 `cd` 进 worktree 的 main。
 
-In the commands below, `<merge-git>` stands for `git` (standard mode, after `git checkout main`) or `git -C <main-repo-path>` (worktree mode). Substitute the right one.
+在下面的命令中，`<merge-git>` 代表 `git`（标准模式，在 `git checkout main` 之后）或 `git -C <main-repo-path>`（worktree 模式）。替换成正确的那个。
 
-### Step 4a: Merge
+### 步骤 4a：合并
 
-1. Confirm commits exist:
+1. 确认存在提交：
    ```bash
    git log main..HEAD --oneline
    ```
-   If empty → ask the user whether to just run Step 5 cleanup (zero-commit edge case; the branch had no work).
+   如果为空 → 询问用户是否只运行步骤 5 的清理（零提交边界情况；该分支没有工作）。
 
-2. **Standard mode only:** check out main in the cwd first:
+2. **仅标准模式：** 先在 cwd 中检出 main：
    ```bash
    git checkout main
    ```
 
-3. **Fast path — no divergence** (Pre-flight: `merge-base --is-ancestor` succeeded). The merged tree equals the branch tree, already built on-branch. Merge in one shot:
+3. **快路径 —— 无分叉**（预检：`merge-base --is-ancestor` 成功）。合并树等于分支树，已在分支上构建过。一次性合并：
    ```bash
    <merge-git> merge <branch> --no-ff -m "$(cat <<'EOF'
    Merge branch '<branch>' — <short summary>
@@ -179,18 +179,18 @@ In the commands below, `<merge-git>` stands for `git` (standard mode, after `git
    EOF
    )"
    ```
-   Then sanity-check (bullet 7 below) — skip bullet 6, the commit is already done — and go to **Step 5: Clean up**.
+   然后做完整性检查（下面的第 7 点）—— 跳过第 6 点，提交已完成 —— 并进入**步骤 5：清理**。
 
-4. **Two-phase path — diverged** (Pre-flight: `merge-base --is-ancestor` failed). Stage the merge WITHOUT committing so you can verify the composed tree before finalizing:
+4. **两阶段路径 —— 已分叉**（预检：`merge-base --is-ancestor` 失败）。**不提交**地暂存合并，以便在最终确定前验证组合树：
    ```bash
    <merge-git> merge <branch> --no-ff --no-commit
    ```
-   - **Conflicts** (Pre-flight predicted them) → go to **Step 4b**. Do NOT clean up the branch/worktree.
-   - **No conflicts** → continue to bullet 5 (Verify the composed tree) below.
+   - **有冲突**（预检已预测到）→ 进入**步骤 4b**。**不要**清理分支/worktree。
+   - **无冲突** → 继续到下面的第 5 点（验证组合树）。
 
-5. **Verify the composed tree** → run **Step 4c** now. A clean auto-merge can still break the build.
+5. **验证组合树** → 现在运行**步骤 4c**。干净的自动合并仍可能破坏构建。
 
-6. **Finalize the commit** (only after 4c is green):
+6. **最终确定提交**（仅在 4c 通过后）：
    ```bash
    <merge-git> commit -m "$(cat <<'EOF'
    Merge branch '<branch>' — <short summary>
@@ -202,120 +202,120 @@ In the commands below, `<merge-git>` stands for `git` (standard mode, after `git
    )"
    ```
 
-7. **Sanity-check** HEAD moved as expected:
+7. **完整性检查** HEAD 是否如期移动：
    ```bash
    <merge-git> log -1 --oneline
    ```
 
-**Merge message summary style:** one em-dash-separated clause capturing what the branch accomplished. Synthesize from the Step 1 mental model or use the `summary:` override from `$ARGUMENTS`. Examples of good summary clauses:
+**合并消息摘要风格：** 一个以破折号分隔的子句，概括该分支达成了什么。从步骤 1 的心智模型合成，或使用 `$ARGUMENTS` 中的 `summary:` 覆盖。好的摘要子句示例：
 - "auth middleware rewrite for compliance — drops session-token storage"
 - "swap payment provider from Stripe to Adyen"
 - "feature flag for new onboarding flow + telemetry plumbing"
 
 ---
 
-## Step 4b: Resolve conflicts
+## 步骤 4b：解决冲突
 
-Conflict-heavy merges are routine when parallel branches touch overlapping files — a real workflow, not a failure. But it's judgment-heavy and semi-destructive, so it runs on rails. **Never auto-resolve.**
+当并行分支触及重叠文件时，冲突密集的合并是常态 —— 这是真实的工作流，不是失败。但它高度依赖判断且半破坏性，所以要在轨道上运行。**绝不自动解决。**
 
-1. **Present + decide.** Show the user the conflicted-path set (from `merge-tree` in Pre-flight) and the commits being merged, then ask how to proceed:
-   - **(a) Resolve now** — resolve in this `--no-commit` merge, verify (4c), then finalize.
-   - **(b) Rebase first** — rebase the branch onto main, resolve there, then merge fast-forward (linear history; rewrites the branch).
-   - **(c) Abort** — `<merge-git> merge --abort`; leave it for a dedicated session.
+1. **呈现 + 决策。** 向用户显示冲突路径集合（来自预检中的 `merge-tree`）和正在合并的提交，然后询问如何继续：
+   - **(a) 现在解决** —— 在这个 `--no-commit` 合并中解决，验证（4c），然后最终确定。
+   - **(b) 先 rebase** —— 把分支 rebase 到 main 上，在那里解决，然后快进合并（线性历史；会重写分支）。
+   - **(c) 中止** —— `<merge-git> merge --abort`；留给专门的会话处理。
 
-   Wait for the choice — never auto-pick.
+   等待选择 —— 绝不自动挑选。
 
-2. **Resolve each hunk by INTENT, not by mechanically keeping both sides:**
+2. **按意图解决每个 hunk，而非机械地保留双方：**
    ```bash
    <merge-git> diff --name-only --diff-filter=U   # conflicted paths
    ```
-   - **Both-added** (each side adds different members) → usually keep both.
-   - **Delete-vs-keep** (one side deleted code the other still carries) → the deletion usually wins, but VERIFY intent before keeping code (see archaeology below). If a branch merely INHERITED code the other side DELIBERATELY deleted, take the deletion — keeping it resurrects removed behavior.
-   - **modify/delete** → decide by intent; `<merge-git> rm <path>` to accept the delete.
-   - **docs** → merge both narratives, but re-verify every factual CLAIM (test counts, file counts, version numbers) against reality — divergent branches assert different numbers (4c measures the truth).
+   - **双方新增**（各方添加了不同成员）→ 通常保留两者。
+   - **删除 vs 保留**（一方删除了另一方仍保留的代码）→ 通常删除胜出，但保留代码前要**验证**意图（见下面的考古）。如果某分支只是**继承**了另一方**刻意**删除的代码，则采用删除 —— 保留它会复活已移除的行为。
+   - **修改/删除** → 按意图决定；用 `<merge-git> rm <path>` 接受删除。
+   - **文档** → 合并双方的叙述，但要对照现实重新核验每一个事实**主张**（测试数、文件数、版本号）—— 分叉的分支会断言不同的数字（4c 度量真相）。
 
-3. **(optional) Conflict archaeology — opt-in advanced path.** When intent isn't obvious from the conflict alone, reconstruct it from history. Surface this to the user as an option; don't run it on every hunk by default.
+3. **（可选）冲突考古 —— 选择性加入的高级路径。** 当仅从冲突本身看不出意图时，从历史中重建它。把它作为选项呈现给用户；不要默认对每个 hunk 都运行。
    ```bash
    MB=$(git merge-base main <branch>)
    git show $MB:<path>                            # the file as it was at the common ancestor
    git show $MB:<path> | grep -n <symbol>         # was the symbol present in the base?
    git log $MB..main --diff-filter=D --oneline -- <path>  # did main delete it on purpose?
    ```
-   Reading the merge-base version (`git show <merge-base>:<path>`) tells you what BOTH sides started from, so you can tell an intentional deletion from an accidental inheritance. This is a read-only investigation — it never resolves anything for you.
+   阅读 merge-base 版本（`git show <merge-base>:<path>`）能告诉你**双方**从什么开始，因此你能区分刻意的删除和意外的继承。这是只读调查 —— 它从不为您解决任何问题。
 
-4. **(optional) Parallelize ANALYSIS, never resolution.** For a large conflict set (≳5 files, or conflicts needing archaeology), you MAY dispatch `Explore` sub-agents — one per file or cluster — each reporting, per conflict: what each side INTENDS, the merge-base archaeology, a recommended resolution + risks. The main agent SYNTHESIZES and APPLIES every resolution itself — cross-file invariants (one decision spanning several files) are invisible to per-file agents. Sub-agents read; they never edit.
+4. **（可选）并行化分析，绝不并行化解决。** 对于大型冲突集（约 5 个以上文件，或需要考古的冲突），你**可以**分派 `Explore` 子代理 —— 每个文件或每簇一个 —— 各自针对每个冲突报告：各方**意图**什么、merge-base 考古、推荐的解决方案 + 风险。主代理**自己**综合并应用每一个解决方案 —— 跨文件不变量（一个决策横跨多个文件）对逐文件代理是不可见的。子代理只读；它们绝不编辑。
 
-5. **Stage resolved files by name** (never `git add -A`); confirm `<merge-git> diff --name-only --diff-filter=U` is empty.
+5. **按名称暂存已解决的文件**（绝不 `git add -A`）；确认 `<merge-git> diff --name-only --diff-filter=U` 为空。
 
-6. **Verify + finalize** → run **Step 4c**, then `<merge-git> commit` (the in-progress merge picks up the staged resolution; use the Step 4a message template plus a one-line note on what conflicted and how you decided). Sanity-check HEAD.
+6. **验证 + 最终确定** → 运行**步骤 4c**，然后 `<merge-git> commit`（进行中的合并会拾取已暂存的解决方案；使用步骤 4a 的消息模板，并加一行说明冲突了什么以及你如何决定）。对 HEAD 做完整性检查。
 
 ---
 
-## Step 4c: Verify the composed tree (mandatory when main diverged)
+## 步骤 4c：验证组合树（main 分叉时强制）
 
-The prime directive. Run whenever git composed a new tree (divergence TRUE) — conflict or clean auto-merge — BEFORE finalizing the merge commit.
+最高指令。每当 git 组合出新树时（分叉为 TRUE）—— 无论冲突还是干净自动合并 —— 都在最终确定合并提交**之前**运行。
 
-1. **Discover the project's build/test command — don't hardcode it.** Look, in order, for what this repo already uses:
-   - A test/build runner declared in project config (e.g., `package.json` scripts, `Makefile` targets, `justfile`, `pyproject.toml`, `Cargo.toml`, a CI workflow under `.github/workflows/`, or a project skill/command that wraps the build).
-   - The repo's own `CLAUDE.md` or `docs/ai-context/*.md`, which often record the canonical build/test invocation.
-   - If a project `deploy` or build skill exists, reuse its discovery logic rather than reinventing it.
+1. **发现项目的构建/测试命令 —— 不要硬编码它。** 按顺序查找此仓库已经在用的东西：
+   - 在项目配置中声明的测试/构建运行器（例如 `package.json` scripts、`Makefile` targets、`justfile`、`pyproject.toml`、`Cargo.toml`、`.github/workflows/` 下的 CI 工作流，或封装构建的项目技能/命令）。
+   - 仓库自己的 `CLAUDE.md` 或 `docs/ai-context/*.md`，它们往往记录了规范的构建/测试调用方式。
+   - 如果存在项目的 `deploy` 或构建技能，复用它的发现逻辑，而不是重新发明。
 
    <!-- e.g. `npm test` / `make check` / `cargo test` / `pytest` / `go build ./...` — discover, don't assume -->
 
-   If you genuinely can't find one, STOP and ask the user how to build/test this repo rather than guessing.
+   如果你确实找不到，**停下来**询问用户如何构建/测试此仓库，而不是猜测。
 
-2. **Scope it (optional — default is the whole project).** Default to building/testing the **whole project**: it's the safest and this kit assumes one project per repo. *Optionally*, if the project is large and clearly partitioned, you MAY narrow to the **module/component** the diff touched — detect it by file path (the top-level dirs from Pre-flight step 4), and only when the build system supports targeting that subset cheaply. When in doubt, build the whole thing.
+2. **限定范围（可选 —— 默认是整个项目）。** 默认构建/测试**整个项目**：这是最安全的，且本工具包假定每个仓库一个项目。*可选地*，如果项目很大且分区清晰，你**可以**收窄到 diff 触及的**模块/组件** —— 按文件路径检测（预检步骤 4 的顶层目录），且仅当构建系统支持低成本地针对该子集时才这样做。有疑问时，构建整个项目。
 
-3. **Build, then test.** Run the discovered build; if it has platform/target variants that the diff touched, build each affected one (a target gated out of one build is invisible to it). Then run the test suite if the touched code is test-covered.
+3. **先构建，再测试。** 运行发现到的构建；如果它有 diff 触及的平台/目标变体，构建每一个受影响的变体（被某次构建排除在外的目标对它不可见）。然后，如果受影响的代码有测试覆盖，运行测试套件。
 
-4. **Fix every error the merge produced** (auto-merge orphans — a use whose declaration the other side removed — live here), then rebuild to green. If a fix is non-trivial or changes behavior, surface it to the user rather than guessing.
+4. **修复合并产生的每一个错误**（自动合并孤儿 —— 某个使用其声明被另一方移除 —— 就住在这里），然后重新构建至通过。如果修复不平凡或改变了行为，向用户暴露它，而非猜测。
 
-5. **Reconcile doc claims.** If you corrected any doc test-count / file-count / version numbers during conflict resolution, set them to the MEASURED value from this build/test run.
+5. **核对文档主张。** 如果你在冲突解决期间更正了任何文档中的测试数 / 文件数 / 版本号，把它们设为本次构建/测试运行**实测**的值。
 
-6. Only once green → return to Step 4a/4b to commit.
+6. 只有通过后才 → 回到步骤 4a/4b 提交。
 
 ---
 
-## Step 5: Clean up
+## 步骤 5：清理
 
-Only after a **successful** merge in Step 4.
+仅在步骤 4 中**成功**合并之后。
 
-### Standard mode
+### 标准模式
 
-You're already on main with the branch merged. Just delete the branch ref:
+你已经在 main 上且分支已合并。只需删除分支引用：
 
 ```bash
 git branch -d <branch>
 ```
 
-`-d` (lowercase) refuses to delete an unmerged branch — self-checking. If it errors, surface it to the user; do NOT escalate to `-D`.
+`-d`（小写）会拒绝删除未合并的分支 —— 自带检查。如果报错，向用户暴露它；**不要**升级为 `-D`。
 
-### Worktree mode
+### Worktree 模式
 
-1. Remove the worktree directory:
-   - If this worktree was created by `EnterWorktree` **this session**, use the `ExitWorktree` tool (`action: "remove"`, `discard_changes: true`). It warns about "unmerged commits" (it checks the worktree branch, not main) — but the commits ARE on main after Step 4.
-   - Otherwise — a pre-existing `git worktree add` — use:
+1. 移除 worktree 目录：
+   - 如果此 worktree 是**本会话**由 `EnterWorktree` 创建的，使用 `ExitWorktree` 工具（`action: "remove"`, `discard_changes: true`）。它会警告"未合并的提交"（它检查的是 worktree 分支，而非 main）—— 但步骤 4 之后这些提交**确实**在 main 上。
+   - 否则 —— 已有的 `git worktree add` —— 使用：
      ```bash
      git -C <main-repo-path> worktree remove <worktree-path>
      ```
-     It refuses if the worktree is dirty; it's clean here (all work is on main). The current shell cwd may be inside the worktree, so it can get deleted out from under you — keep using absolute paths / `git -C <main-repo-path>` afterward.
+     如果 worktree 是脏的它会拒绝；这里它是干净的（所有工作都在 main 上）。当前 shell 的 cwd 可能就在 worktree 内，所以它可能被从你脚下删除 —— 之后继续使用绝对路径 / `git -C <main-repo-path>`。
 
-2. Delete the branch ref. Without this, the branch sits at its pre-merge tip; a later `git worktree add` matching the same name will reuse the stale branch instead of branching off current main.
+2. 删除分支引用。否则分支会停留在其合并前的顶端；之后匹配同名分支的 `git worktree add` 会复用这个陈旧分支，而不是从当前 main 分出新分支。
    ```bash
    git -C <main-repo-path> branch -d <branch>
    ```
-   `-d` (lowercase) refuses to delete an unmerged branch. If it errors, surface it; do NOT escalate to `-D`.
+   `-d`（小写）会拒绝删除未合并的分支。如果报错，暴露它；**不要**升级为 `-D`。
 
 ---
 
-## Step 6: Confirm
+## 步骤 6：确认
 
-Report to the user:
-- Branch name + commit count merged
-- File/line summary (from Pre-flight stat)
-- One-line shipped summary (from Step 1 mental model or `$ARGUMENTS` override)
-- **If conflicts were resolved (4b):** which files + the key resolution decisions
-- **If the tree was composed (divergence — 4c ran):** the build/test result
-- **Any rider commits** that came along (Pre-flight step 5) — name them so the user can revert if unwanted
-- Any flags carried forward (e.g., "docs flagged as possibly stale but you chose to proceed")
-- "Back on main." — append "(worktree removed)" if you were in worktree mode.
+向用户报告：
+- 分支名 + 已合并的提交数
+- 文件/行数摘要（来自预检 stat）
+- 一行的交付摘要（来自步骤 1 的心智模型或 `$ARGUMENTS` 覆盖）
+- **如果解决了冲突（4b）：** 哪些文件 + 关键的解决决策
+- **如果树是组合出来的（分叉 —— 4c 运行了）：** 构建/测试结果
+- **任何搭便车而来的提交**（预检步骤 5）—— 点名它们，以便用户在不需要时可以回退
+- 任何被沿用的标记（例如"文档被标记为可能过时，但你选择继续"）
+- "Back on main." —— 如果你处于 worktree 模式，追加 "(worktree removed)"。

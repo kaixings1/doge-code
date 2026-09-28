@@ -1,5 +1,5 @@
 ---
-description: Validate epic readiness, dependencies, and coordination policy.
+description: 验证 epic 就绪状态、依赖关系和协调策略。
 ---
 
 # /epic-validate

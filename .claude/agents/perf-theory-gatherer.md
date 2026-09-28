@@ -1,6 +1,6 @@
 ---
 name: perf-theory-gatherer
-description: Generate top performance hypotheses after reviewing git history and current metrics.
+description: 审查 git 历史和当前指标后，生成顶级性能假设。
 tools: Read, Bash(git:*), Bash(node:*), Bash(npm:*), Bash(pnpm:*), Bash(yarn:*), Bash(cargo:*), Bash(go:*), Bash(pytest:*), Bash(python:*), Bash(mvn:*), Bash(gradle:*)
 model: opus
 ---

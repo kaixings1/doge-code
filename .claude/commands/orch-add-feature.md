@@ -1,5 +1,5 @@
 ---
-description: Orchestrate building a brand-new feature end to end — research, plan, TDD, review, gated commit. Wrapper that kicks off the orch-add-feature skill.
+description: 端到端编排构建全新功能——研究、规划、TDD、审查、门控提交。启动 orch-add-feature 技能的包装器。
 ---
 
 # /orch-add-feature

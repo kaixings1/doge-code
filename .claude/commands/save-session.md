@@ -1,59 +1,59 @@
 ---
-description: Save current session state to a dated file in ~/.claude/session-data/ so work can be resumed in a future session with full context.
+description: 把当前会话状态保存到 ~/.claude/session-data/ 下的带日期文件，以便未来会话能带着完整上下文恢复工作。
 ---
 
-# Save Session Command
+# 保存会话命令
 
-Capture everything that happened in this session — what was built, what worked, what failed, what's left — and write it to a dated file so the next session can pick up exactly where this one left off.
+捕获此会话中发生的一切 —— 构建了什么、什么有效、什么失败、还剩什么 —— 并写入带日期的文件，以便下一个会话能从这个会话离开的地方精确接续。
 
-## When to Use
+## 何时使用
 
-- End of a work session before closing Claude Code
-- Before hitting context limits (run this first, then start a fresh session)
-- After solving a complex problem you want to remember
-- Any time you need to hand off context to a future session
+- 工作会话结束时、关闭 Claude Code 之前
+- 即将触及上下文限制之前（先运行这个，再开始新会话）
+- 解决了一个你想记住的复杂问题之后
+- 任何时候你需要把上下文交接给未来的会话
 
-## Process
+## 流程
 
-### Step 1: Gather context
+### 第 1 步：收集上下文
 
-Before writing the file, collect:
+写文件之前，收集：
 
-- Read all files modified during this session (use git diff or recall from conversation)
-- Review what was discussed, attempted, and decided
-- Note any errors encountered and how they were resolved (or not)
-- Check current test/build status if relevant
+- 读取此会话中修改过的所有文件（用 git diff 或从对话中回忆）
+- 回顾讨论了什么、尝试了什么、决定了什么
+- 记录遇到的任何错误及其解决方式（或未解决）
+- 如相关，检查当前的测试/构建状态
 
-### Step 2: Create the sessions folder if it doesn't exist
+### 第 2 步：如果 sessions 文件夹不存在则创建
 
-Create the canonical sessions folder in the user's Claude home directory:
+在用户的 Claude 主目录中创建规范的 sessions 文件夹：
 
 ```bash
 mkdir -p ~/.claude/session-data
 ```
 
-### Step 3: Write the session file
+### 第 3 步：写会话文件
 
-Create `~/.claude/session-data/YYYY-MM-DD-<short-id>-session.tmp`, using today's actual date and a short-id that satisfies the rules enforced by `SESSION_FILENAME_REGEX` in `session-manager.js`:
+创建 `~/.claude/session-data/YYYY-MM-DD-<short-id>-session.tmp`，使用今天的真实日期，以及满足 `session-manager.js` 中 `SESSION_FILENAME_REGEX` 规则的 short-id：
 
-- Compatibility characters: letters `a-z` / `A-Z`, digits `0-9`, hyphens `-`, underscores `_`
-- Compatibility minimum length: 1 character
-- Recommended style for new files: lowercase letters, digits, and hyphens with 8+ characters to avoid collisions
+- 兼容字符：字母 `a-z` / `A-Z`、数字 `0-9`、连字符 `-`、下划线 `_`
+- 兼容最小长度：1 个字符
+- 新文件的推荐风格：小写字母、数字和连字符，8 个以上字符以避免冲突
 
-Valid examples: `abc123de`, `a1b2c3d4`, `frontend-worktree-1`, `ChezMoi_2`
-Avoid for new files: `A`, `test_id1`, `ABC123de`
+有效示例：`abc123de`、`a1b2c3d4`、`frontend-worktree-1`、`ChezMoi_2`
+新文件应避免：`A`、`test_id1`、`ABC123de`
 
-Full valid filename example: `2024-01-15-abc123de-session.tmp`
+完整有效文件名示例：`2024-01-15-abc123de-session.tmp`
 
-The legacy filename `YYYY-MM-DD-session.tmp` is still valid, but new session files should prefer the short-id form to avoid same-day collisions.
+旧版文件名 `YYYY-MM-DD-session.tmp` 仍然有效，但新会话文件应优先使用 short-id 形式，以避免同日冲突。
 
-### Step 4: Populate the file with all sections below
+### 第 4 步：用下面所有章节填充文件
 
-Write every section honestly. Do not skip sections — write "Nothing yet" or "N/A" if a section genuinely has no content. An incomplete file is worse than an honest empty section.
+诚实地写每一个章节。不要跳过章节 —— 如果某章节确实没有内容，就写 "Nothing yet" 或 "N/A"。不完整的文件比诚实为空的章节更糟。
 
-### Step 5: Show the file to the user
+### 第 5 步：向用户展示文件
 
-After writing, display the full contents and ask:
+写入之后，显示完整内容并询问：
 
 ```
 Session saved to [actual resolved path to the session file]
@@ -61,11 +61,11 @@ Session saved to [actual resolved path to the session file]
 Does this look accurate? Anything to correct or add before we close?
 ```
 
-Wait for confirmation. Make edits if requested.
+等待确认。如有要求则进行编辑。
 
 ---
 
-## Session File Format
+## 会话文件格式
 
 ```markdown
 # Session: YYYY-MM-DD
@@ -79,54 +79,51 @@ Wait for confirmation. Make edits if requested.
 
 ## What We Are Building
 
-[1-3 paragraphs describing the feature, bug fix, or task. Include enough
-context that someone with zero memory of this session can understand the goal.
-Include: what it does, why it's needed, how it fits into the larger system.]
+[1-3 段，描述该功能、bug 修复或任务。包含足够的上下文，使对此会话零记忆
+的人也能理解目标。包括：它做什么、为什么需要它、它如何契合更大的系统。]
 
 ---
 
 ## What WORKED (with evidence)
 
-[List only things that are confirmed working. For each item include WHY you
-know it works — test passed, ran in browser, Postman returned 200, etc.
-Without evidence, move it to "Not Tried Yet" instead.]
+[只列出已确认可用的东西。每一项都要包含你**为什么**知道它可用 —— 测试通过、
+在浏览器中跑通、Postman 返回 200 等。没有证据的，移到 "Not Tried Yet"。]
 
 - **[thing that works]** — confirmed by: [specific evidence]
 - **[thing that works]** — confirmed by: [specific evidence]
 
-If nothing is confirmed working yet: "Nothing confirmed working yet — all approaches still in progress or untested."
+如果还没有任何确认可用的内容："Nothing confirmed working yet — all approaches still in progress or untested."
 
 ---
 
 ## What Did NOT Work (and why)
 
-[This is the most important section. List every approach tried that failed.
-For each failure write the EXACT reason so the next session doesn't retry it.
-Be specific: "threw X error because Y" is useful. "didn't work" is not.]
+[这是最重要的章节。列出每一个尝试过但失败的做法。
+对每个失败写下**确切**原因，以免下一个会话重试它。
+要具体："threw X error because Y" 有用。"didn't work" 没用。]
 
 - **[approach tried]** — failed because: [exact reason / error message]
 - **[approach tried]** — failed because: [exact reason / error message]
 
-If nothing failed: "No failed approaches yet."
+如果没有失败："No failed approaches yet."
 
 ---
 
 ## What Has NOT Been Tried Yet
 
-[Approaches that seem promising but haven't been attempted. Ideas from the
-conversation. Alternative solutions worth exploring. Be specific enough that
-the next session knows exactly what to try.]
+[看起来有希望但尚未尝试的做法。对话中产生的想法。值得探索的替代方案。
+要足够具体，使下一个会话确切知道该尝试什么。]
 
 - [approach / idea]
 - [approach / idea]
 
-If nothing is queued: "No specific untried approaches identified."
+如果队列为空："No specific untried approaches identified."
 
 ---
 
 ## Current State of Files
 
-[Every file touched this session. Be precise about what state each file is in.]
+[此会话触碰过的每个文件。精确说明每个文件处于什么状态。]
 
 | File              | Status         | Notes                      |
 | ----------------- | -------------- | -------------------------- |
@@ -135,48 +132,48 @@ If nothing is queued: "No specific untried approaches identified."
 | `path/to/file.ts` | FAIL: Broken      | [what's wrong]             |
 | `path/to/file.ts` |  Not Started | [planned but not touched]  |
 
-If no files were touched: "No files modified this session."
+如果没有触碰任何文件："No files modified this session."
 
 ---
 
 ## Decisions Made
 
-[Architecture choices, tradeoffs accepted, approaches chosen and why.
-These prevent the next session from relitigating settled decisions.]
+[架构选择、接受的取舍、选定方案及原因。
+这些能防止下一个会话重新争论已定案的决策。]
 
 - **[decision]** — reason: [why this was chosen over alternatives]
 
-If no significant decisions: "No major decisions made this session."
+如果没有重要决策："No major decisions made this session."
 
 ---
 
 ## Blockers & Open Questions
 
-[Anything unresolved that the next session needs to address or investigate.
-Questions that came up but weren't answered. External dependencies waiting on.]
+[任何未解决、需要下一个会话处理或调查的事。
+出现过但未回答的问题。正在等待的外部依赖。]
 
 - [blocker / open question]
 
-If none: "No active blockers."
+如果没有："No active blockers."
 
 ---
 
 ## Exact Next Step
 
-[If known: The single most important thing to do when resuming. Be precise
-enough that resuming requires zero thinking about where to start.]
+[如果已知：恢复时最重要的那一件事。要足够精确，
+使恢复时无需思考从哪里开始。]
 
-[If not known: "Next step not determined — review 'What Has NOT Been Tried Yet'
+[如果未知："Next step not determined — review 'What Has NOT Been Tried Yet'
 and 'Blockers' sections to decide on direction before starting."]
 
 ---
 
 ## Environment & Setup Notes
 
-[Only fill this if relevant — commands needed to run the project, env vars
-required, services that need to be running, etc. Skip if standard setup.]
+[仅在相关时填写 —— 运行项目所需的命令、需要的环境变量、
+需要运行的服务等。如果是标准设置则跳过。]
 
-[If none: omit this section entirely.]
+[如果没有：完全省略此章节。]
 ```
 
 ---
@@ -265,11 +262,11 @@ Then test with Postman — the response should include a `Set-Cookie` header.
 
 ---
 
-## Notes
+## 说明
 
-- Each session gets its own file — never append to a previous session's file
-- The "What Did NOT Work" section is the most critical — future sessions will blindly retry failed approaches without it
-- If the user asks to save mid-session (not just at the end), save what's known so far and mark in-progress items clearly
-- The file is meant to be read by Claude at the start of the next session via `/resume-session`
-- Use the canonical global session store: `~/.claude/session-data/`
-- Prefer the short-id filename form (`YYYY-MM-DD-<short-id>-session.tmp`) for any new session file
+- 每个会话有自己的文件 —— 绝不要追加到之前会话的文件
+- "What Did NOT Work" 章节最关键 —— 没有它，未来的会话会盲目重试失败的方案
+- 如果用户要求在会话中途保存（不只是在结束时），保存目前已知的内容，并清楚地标记进行中的事项
+- 该文件意在由 Claude 在下一个会话开始时通过 `/resume-session` 读取
+- 使用规范的全局会话存储：`~/.claude/session-data/`
+- 任何新会话文件都优先使用 short-id 文件名形式（`YYYY-MM-DD-<short-id>-session.tmp`）

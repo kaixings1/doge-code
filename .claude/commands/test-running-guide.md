@@ -1,6 +1,6 @@
 ---
 globs: ["gui/**/*", "core/**/*"]
-description: Provides test running instructions for GUI and core folders
+description: 为 GUI 和核心文件夹提供测试运行说明。
 alwaysApply: false
 ---
 

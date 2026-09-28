@@ -4,94 +4,94 @@ description: 扫描并优化文档 SEO — Meta 标签、可读性、关键词�
 
 对文档文件运行 SEO 审计器。目标路径：`$ARGUMENTS`（默认：所有 docs/ 和根目录 README.md）。
 
-If `$ARGUMENTS` is `--report-only`, scan without making changes.
+若 `$ARGUMENTS` 为 `--report-only`，则只扫描不做修改。
 
-Execute all 7 phases. Auto-fix non-destructive issues. Never change URLs. Preserve content on high-ranking pages.
+执行全部 7 个阶段。自动修复非破坏性问题。绝不更改 URL。保留高排名页面的内容。
 
-## Phase 1: Discovery
+## 阶段 1：发现
 
-Find all target markdown files:
-- `docs/**/*.md` — all documentation pages
-- `README.md` files in domain root directories
-- If `$ARGUMENTS` specifies a path, scope to that path only
+找出所有目标 markdown 文件：
+- `docs/**/*.md` — 所有文档页面
+- 各领域根目录中的 `README.md` 文件
+- 若 `$ARGUMENTS` 指定了路径，则只限定于该路径
 
-For each file, extract current state: `title:` frontmatter, `description:` frontmatter, H1, H2s, word count, link count. Store as baseline for the report.
+对每个文件提取当前状态：`title:` frontmatter、`description:` frontmatter、H1、H2、字数、链接数。存为报告基线。
 
-Identify recently changed files: `git log --oneline -2 --name-only -- docs/ README.md`
+识别最近变更的文件： `git log --oneline -2 --name-only -- docs/ README.md`
 
-## Phase 2: Meta Tags
+## 阶段 2：Meta 标签
 
-For each file with YAML frontmatter:
+对每个带 YAML frontmatter 的文件：
 
-**Title** (`title:` field):
-- Must be 50-60 characters
-- Must contain a primary keyword
-- Must be unique across all pages
-- Auto-fix generic titles using domain context
+**标题**（`title:` 字段）：
+- 必须为 50-60 个字符
+- 必须包含主关键词
+- 在所有页面中必须唯一
+- 使用领域上下文自动修复泛化标题
 
-**Description** (`description:` field):
-- Must be 120-160 characters
-- Must contain primary keyword
-- Must be unique — no duplicates
-- Auto-fix from SKILL.md frontmatter or first paragraph
+**描述**（`description:` 字段）：
+- 必须为 120-160 个字符
+- 必须包含主关键词
+- 必须唯一 — 不得重复
+- 从 SKILL.md frontmatter 或首段自动修复
 
-Run SEO checker on built HTML pages:
+对构建后的 HTML 页面运行 SEO 检查器：
 ```bash
 python3 marketing-skill/seo-audit/scripts/seo_checker.py --file site/{path}/index.html
 ```
 
-## Phase 3: Content Quality
+## 阶段 3：内容质量
 
-**Heading structure:** One H1 per page, no skipped levels, keywords in headings.
+**标题结构：** 每页一个 H1，不跳级，关键词出现在标题中。
 
-**Readability:** Run content scorer:
+**可读性：** 运行内容评分器：
 ```bash
 python3 marketing-skill/content-production/scripts/content_scorer.py {file}
 ```
-Target: readability ≥ 70, structure ≥ 60.
+目标：可读性 ≥ 70，结构 ≥ 60。
 
-**AI detection** (on non-generated files only):
+**AI 痕迹检测**（仅针对非生成文件）：
 ```bash
 python3 marketing-skill/content-humanizer/scripts/humanizer_scorer.py {file}
 ```
-Flag pages < 50. Fix AI clichés: "delve", "leverage", "it's important to note", "comprehensive".
+标记低于 50 的页面。修复 AI 陈词滥调："delve"、"leverage"、"it's important to note"、"comprehensive"。
 
-**Do NOT rewrite** pages ranking well — only fix critical issues on those.
+**不要重写**排名良好的页面 —— 只修复其中的关键问题。
 
-## Phase 4: Keywords
+## 阶段 4：关键词
 
-Check each page has its primary keyword in: title, description, H1, first paragraph, at least one H2.
+检查每个页面的主关键词是否出现在：title、description、H1、首段、至少一个 H2 中。
 
-Keyword density: 1-2% for primary. Flag and reduce if > 3%.
+关键词密度：主关键词 1-2%。若超过 3% 则标记并降低。
 
-**Never change existing URLs.** Only optimize content and meta tags.
+**绝不更改既有 URL。** 只优化内容与 meta 标签。
 
-## Phase 5: Links
+## 阶段 5：链接
 
-**Internal links:** Verify all `[text](url)` targets exist. Fix broken links.
+**内部链接：** 校验所有 `[text](url)` 目标是否存在。修复失效链接。
 
-**Duplicate content:**
+**重复内容：**
 ```bash
 grep -rh '^description:' docs/**/*.md | sort | uniq -d
 ```
-Make each duplicate unique.
+让每个重复项变得唯一。
 
-**Orphan pages:** Find pages not in `mkdocs.yml` nav. Add them.
+**孤儿页面：** 找出不在 `mkdocs.yml` nav 中的页面。把它们加入导航。
 
-## Phase 6: Sitemap
+## 阶段 6：站点地图
 
-Rebuild the site to regenerate sitemap:
+重新构建站点以重新生成站点地图：
 ```bash
 mkdocs build
 ```
 
-Analyze the sitemap:
+分析站点地图：
 ```bash
 python3 marketing-skill/site-architecture/scripts/sitemap_analyzer.py site/sitemap.xml
 ```
 
-Verify all pages appear, no duplicates, no broken URLs.
+校验所有页面都已出现，无重复项，无失效 URL。
 
-## Phase 7: Report
+## 阶段 7：报告
 
-Present a summary showing: pages scanned, issues found, auto-fixes applied, manual review items, broken links fixed, orphans resolved, sitemap URL count. List preserved pages that were not modified.
+给出汇总，展示：已扫描页面数、发现的问题数、已应用的自动修复数、需人工复核项、已修复的失效链接数、已解决的孤儿页面数、站点地图 URL 数。列出未做修改的保留页面。

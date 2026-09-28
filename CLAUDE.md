@@ -61,13 +61,25 @@ export MSYS_NO_PATHCONV=1
 export MSYS2_ARG_CONV_EXCL=*
 export MSYS2_ENV_CONV_EXCL=/*/
 _TOOLS_DIR=$(cygpath -w /d/doge-code/.tools)
-alias grep="node \"\$_TOOLS_DIR/search.cjs\""
 alias rg="node \"\$_TOOLS_DIR/search.cjs\""
 alias findstr="node \"\$_TOOLS_DIR/search.cjs\""
 alias find="node \"\$_TOOLS_DIR/find.cjs\""
 ```
 
-验证：`find . -maxdepth 2 -name "*.ts" -type f | head -5` 应输出正常文件列表，而非 `MODULE_NOT_FOUND`。
+### search.cjs 能力边界（`.tools/search.cjs`）
+
+`rg` alias 指向 `search.cjs`（非原生 ripgrep），支持：
+- `-n` 行号、`-i` 忽略大小写、`-l` 只输出文件名、`-c` 计数
+- `-C N` 上下文行、`-r` 递归（默认开启）
+- `--glob "*.cpp"` 正向 glob、`--glob "!*.md"` 反向排除
+- `--max-depth N` 限制递归深度
+- 位置参数：第一个是 pattern，后续是路径（可省略，默认 `.`）
+
+**常见错误与修复**：
+- `rg -n "pattern" .` → 正确（递归搜索当前目录）
+- `rg -n "pattern" --glob "*.cpp" dir` → 正确（只搜 .cpp 文件）
+- `rg -n "pattern" "*.cpp"` → **错误**（`*.cpp` 会被当作路径，应改用 `--glob`）
+- 如需原生 ripgrep 完整功能：`command rg ...`（绕过 alias，但参数需用 Windows 路径）
 
 ## 测试配置
 

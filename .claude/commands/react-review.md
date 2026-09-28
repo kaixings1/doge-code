@@ -1,82 +1,82 @@
 ---
-description: Comprehensive React/JSX code review for hook correctness, render performance, server/client component boundaries, accessibility, and React-specific security. Invokes the react-reviewer agent (and typescript-reviewer alongside on TSX/JSX changes).
+description: 针对 hook 正确性、渲染性能、服务端/客户端组件边界、无障碍和 React 专属安全性的全面 React/JSX 代码审查。调用 react-reviewer 代理（并在 TSX/JSX 变更时同时调用 typescript-reviewer）。
 ---
 
-# React Code Review
+# React 代码审查
 
-This command invokes the **react-reviewer** agent for React-specific code review. For pull requests touching `.tsx`/`.jsx` files, both `react-reviewer` and `typescript-reviewer` should run — each owns a distinct lane.
+此命令调用 **react-reviewer** 代理进行 React 专属代码审查。对于触及 `.tsx`/`.jsx` 文件的拉取请求，`react-reviewer` 和 `typescript-reviewer` 都应运行 —— 各自负责不同的赛道。
 
-## What This Command Does
+## 此命令做什么
 
-1. **Identify React Changes**: Find modified `.tsx`/`.jsx` files (and React-containing `.ts`/`.js` files) via `git diff`
-2. **Run Lint**: Execute `eslint` with `eslint-plugin-react-hooks` and `eslint-plugin-jsx-a11y`
-3. **Typecheck**: Run `tsc --noEmit` or the project's canonical typecheck command
-4. **Review React Lanes Only**: Hook rules, RSC boundaries, accessibility, render performance, React-specific security
-5. **Generate Report**: Categorize issues by severity (CRITICAL / HIGH / MEDIUM)
+1. **识别 React 变更**：通过 `git diff` 查找修改过的 `.tsx`/`.jsx` 文件（以及包含 React 的 `.ts`/`.js` 文件）
+2. **运行 Lint**：执行带 `eslint-plugin-react-hooks` 和 `eslint-plugin-jsx-a11y` 的 `eslint`
+3. **类型检查**：运行 `tsc --noEmit` 或项目规范的类型检查命令
+4. **只审查 React 赛道**：hook 规则、RSC 边界、无障碍、渲染性能、React 专属安全性
+5. **生成报告**：按严重程度归类问题（CRITICAL / HIGH / MEDIUM）
 
-## When to Use
+## 何时使用
 
-Use `/react-review` when:
+在以下情况使用 `/react-review`：
 
-- A PR or commit touches `.tsx`/`.jsx` files
-- After writing or modifying React components, custom hooks, or pages
-- Before merging React code
-- Auditing accessibility on UI components
-- Reviewing a new hook for rules-of-hooks and dependency correctness
-- Auditing a Next.js App Router server/client component boundary
+- PR 或提交触及 `.tsx`/`.jsx` 文件
+- 编写或修改 React 组件、自定义 hook 或页面之后
+- 合并 React 代码之前
+- 审计 UI 组件的无障碍性
+- 审查新 hook 的 hook 规则和依赖正确性
+- 审计 Next.js App Router 的服务端/客户端组件边界
 
-For pure `.ts`/`.js` changes with no React imports, use `/code-review` (general) or invoke `typescript-reviewer` directly.
+对于不带 React 导入的纯 `.ts`/`.js` 变更，使用 `/code-review`（通用）或直接调用 `typescript-reviewer`。
 
-## Scope vs `/code-review` and TypeScript Review
+## 与 `/code-review` 及 TypeScript 审查的范围划分
 
-| Tool | Scope |
+| 工具 | 范围 |
 |---|---|
-| `react-reviewer` (this command) | Hooks rules, JSX, RSC, a11y, React-specific security, render perf |
-| `typescript-reviewer` | Generic TS/JS — `any` abuse, async correctness, Node security |
-| `security-reviewer` | Project-wide security audit |
-| `/code-review` | Generic uncommitted-changes or PR review |
+| `react-reviewer`（本命令） | hook 规则、JSX、RSC、a11y、React 专属安全性、渲染性能 |
+| `typescript-reviewer` | 通用 TS/JS —— `any` 滥用、异步正确性、Node 安全性 |
+| `security-reviewer` | 项目级安全审计 |
+| `/code-review` | 对未提交变更或 PR 的通用审查 |
 
-On a TSX/JSX PR, invoke both `react-reviewer` and `typescript-reviewer`. Findings from each are non-overlapping by design.
+在 TSX/JSX PR 上，同时调用 `react-reviewer` 和 `typescript-reviewer`。两者的发现按设计不重叠。
 
-## Review Categories
+## 审查类别
 
-### CRITICAL (Must Fix)
+### CRITICAL（必须修复）
 
-- `dangerouslySetInnerHTML` with unsanitized input
-- `href`/`src` with unvalidated user URLs (`javascript:`, `data:`)
-- Server Action without input validation
-- Secret in client bundle (`NEXT_PUBLIC_*`, `VITE_*`, `REACT_APP_*`)
-- `localStorage`/`sessionStorage` for session tokens
-- Conditional hook calls (violates Rules of Hooks)
-- Direct state mutation
-- Hook called outside a component or custom hook
+- 对未净化的输入使用 `dangerouslySetInnerHTML`
+- `href`/`src` 使用未校验的用户 URL（`javascript:`、`data:`）
+- 未经输入校验的 Server Action
+- 客户端包中的密钥（`NEXT_PUBLIC_*`、`VITE_*`、`REACT_APP_*`）
+- 用 `localStorage`/`sessionStorage` 存储会话令牌
+- 条件式 hook 调用（违反 Hook 规则）
+- 直接修改 state
+- 在组件或自定义 hook 之外调用 hook
 
-### HIGH (Should Fix)
+### HIGH（应当修复）
 
-- Missing `useEffect`/`useMemo`/`useCallback` deps (disabled `exhaustive-deps` without justification)
-- Effect for derived state
-- Effect missing cleanup
-- Stale closures in handlers/intervals
-- Server-only imports in Client Components
-- Sensitive data leaked via props to Client Components
-- Server Actions without auth checks
-- Accessibility violations (missing labels, non-semantic interactive elements, ARIA misuse)
-- `key={index}` in dynamic lists
-- Duplicated state, useEffect chains
+- 缺少 `useEffect`/`useMemo`/`useCallback` 依赖（无正当理由禁用 `exhaustive-deps`）
+- 用 Effect 处理派生状态
+- Effect 缺少清理
+- 处理器/定时器中的陈旧闭包
+- 客户端组件中的服务端专属导入
+- 通过 props 向客户端组件泄露敏感数据
+- Server Actions 缺少鉴权检查
+- 无障碍违规（缺少标签、非语义化交互元素、ARIA 误用）
+- 动态列表中使用 `key={index}`
+- 重复的 state、useEffect 链
 
-### MEDIUM (Consider)
+### MEDIUM（考虑）
 
-- Over-memoization without measured win
-- Inline new object/function as prop to memoized child
-- Suspense at route root only (no progressive reveal)
-- Long lists without virtualization
-- High-frequency value via `useContext`
-- Roll-your-own validation in non-trivial forms
-- Prop drilling beyond 3 levels
-- Component over 200 lines
-- Class components in new code
+- 没有实测收益的过度 memo 化
+- 向已 memo 化的子组件内联传入新对象/函数作为 prop
+- 仅在路由根部使用 Suspense（无渐进式呈现）
+- 长列表未使用虚拟化
+- 通过 `useContext` 传递高频变化的值
+- 在非平凡表单中自造校验逻辑
+- prop 逐层透传超过 3 层
+- 组件超过 200 行
+- 新代码中使用 class 组件
 
-## Automated Checks Run
+## 运行的自动化检查
 
 ```bash
 # Lint (required for any meaningful review)
@@ -95,9 +95,9 @@ npx eslint . --rule 'jsx-a11y/alt-text: error' \
 npm audit
 ```
 
-If `eslint-plugin-react-hooks` or `eslint-plugin-jsx-a11y` is not configured, the review will flag the gap as a HIGH config issue and continue.
+如果未配置 `eslint-plugin-react-hooks` 或 `eslint-plugin-jsx-a11y`，审查会把该缺口标记为 HIGH 级配置问题并继续。
 
-## Example Usage
+## 使用示例
 
 ````text
 User: /react-review
@@ -147,24 +147,24 @@ useEffect(() => {
 Recommendation: FAIL: Block merge until CRITICAL issue is fixed
 ````
 
-## Approval Criteria
+## 批准标准
 
 | Status | Condition |
 |---|---|
-| PASS: Approve | No CRITICAL or HIGH issues |
-| WARNING: Warning | Only MEDIUM issues (merge with caution) |
-| FAIL: Block | CRITICAL or HIGH issues found |
+| PASS: Approve | 没有 CRITICAL 或 HIGH 问题 |
+| WARNING: Warning | 仅有 MEDIUM 问题（谨慎合并） |
+| FAIL: Block | 发现 CRITICAL 或 HIGH 问题 |
 
-## Integration with Other Commands
+## 与其他命令的集成
 
-- Run `/react-build` first if the build is broken
-- Run `/react-test` to ensure component tests pass
-- Run `/react-review` before merging
-- Use `/code-review` for non-React-specific concerns on the same PR
+- 如果构建已损坏，先运行 `/react-build`
+- 运行 `/react-test` 确保组件测试通过
+- 合并前运行 `/react-review`
+- 同一 PR 上非 React 专属的问题使用 `/code-review`
 
-## Related
+## 相关
 
-- Agent: `agents/react-reviewer.md`
-- Companion agent: `agents/typescript-reviewer.md` (run alongside for TSX/JSX PRs)
-- Skills: `skills/react-patterns/`, `skills/react-testing/`, `skills/accessibility/`
-- Rules: `rules/react/`
+- Agent：`agents/react-reviewer.md`
+- 配套 Agent：`agents/typescript-reviewer.md`（TSX/JSX PR 时一并运行）
+- Skills：`skills/react-patterns/`, `skills/react-testing/`, `skills/accessibility/`
+- Rules：`rules/react/`

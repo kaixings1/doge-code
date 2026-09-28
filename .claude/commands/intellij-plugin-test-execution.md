@@ -1,6 +1,6 @@
 ---
 name: IntelliJ Plugin Test Execution
-description: Guidelines for running IntelliJ plugin tests with Gradle
+description: 使用 Gradle 运行 IntelliJ 插件测试的指南。
 alwaysApply: false
 globs: extensions/intellij/**/*Test.kt
 ---

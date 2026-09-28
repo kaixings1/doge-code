@@ -1,6 +1,7 @@
 import type { TelemetryEvent } from './types.js';
 import { execSync } from 'child_process';
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { existsSync, mkdirSync } from 'fs';
+import { readFile as fsReadFile, writeFile as fsWriteFile } from 'fs/promises';
 
 /**
  * 带重试的异步操作
@@ -100,29 +101,29 @@ export function withTimeout<T>(promise: Promise<T>, timeoutMs: number, message?:
   });
 }
 
-export async function readFile(path: string): Promise<string> {
-  return readFileSync(path, 'utf-8');
+export async function readFile(p: string): Promise<string> {
+  return await fsReadFile(p, 'utf-8').then((d: string) => d);
 }
 
-export async function writeFile(path: string, content: string): Promise<void> {
-  const dir = path.substring(0, path.lastIndexOf('\\'));
+export async function writeFile(p: string, content: string): Promise<void> {
+  const dir = p.substring(0, p.lastIndexOf('\\'));
   if (dir) { try { mkdirSync(dir, { recursive: true }); } catch { /* ignore */ } }
-  writeFileSync(path, content, 'utf-8');
+  await fsWriteFile(p, content, 'utf-8');
 }
 
-export async function fileExists(path: string): Promise<boolean> {
-  return existsSync(path);
+export async function fileExists(p: string): Promise<boolean> {
+  return existsSync(p);
 }
 
-export async function readJson<T>(path: string): Promise<T> {
-  const content = readFileSync(path, 'utf-8');
+export async function readJson<T>(p: string): Promise<T> {
+  const content = await fsReadFile(p, 'utf-8').then((d: string) => d);
   return JSON.parse(content) as T;
 }
 
-export async function writeJson(path: string, data: any): Promise<void> {
-  const dir = path.substring(0, path.lastIndexOf('\\'));
+export async function writeJson(p: string, data: any): Promise<void> {
+  const dir = p.substring(0, p.lastIndexOf('\\'));
   if (dir) { try { mkdirSync(dir, { recursive: true }); } catch { /* ignore */ } }
-  writeFileSync(path, JSON.stringify(data, null, 2), 'utf-8');
+  await fsWriteFile(p, JSON.stringify(data, null, 2));
 }
 
 export async function gitExec(args: string[]): Promise<string> {

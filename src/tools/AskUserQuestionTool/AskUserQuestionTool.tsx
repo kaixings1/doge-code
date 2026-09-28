@@ -110,6 +110,7 @@ export const AskUserQuestionTool: Tool<InputSchema, Output> = buildTool({
   name: ASK_USER_QUESTION_TOOL_NAME,
   searchHint: '向用户提示多项选择问题',
   maxResultSizeChars: 100_000,
+  alwaysLoad: true,
   shouldDefer: true,
   async description() {
     return DESCRIPTION;

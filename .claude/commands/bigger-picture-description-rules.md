@@ -1,6 +1,6 @@
 ---
 name: Bigger Picture Description Rules
-description: Guidelines for explaining how code works in context
+description: 关于如何在代码上下文中解释代码工作原理的指南。
 alwaysApply: false
 ---
 

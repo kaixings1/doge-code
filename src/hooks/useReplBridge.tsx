@@ -392,7 +392,7 @@ export function useReplBridge(messages: Message[], setMessages: (action: React.S
         } else {
           const permissionCallbacks: BridgePermissionCallbacks = {
             sendRequest(requestId_0, toolName, input, toolUseId, description, permissionSuggestions, blockedPath) {
-              handle_0.sendControlRequest({ type: 'control_request', request_id: requestId_0, request: { subtype: 'can_use_tool', tool_name: toolName, input, tool_use_id: toolUseId, description, ...(permissionSuggestions ? { permission_suggestions: permission_suggestions } : {}), ...(blockedPath ? { blocked_path: blockedPath } : {}) } });
+              handle_0.sendControlRequest({ type: 'control_request', request_id: requestId_0, request: { subtype: 'can_use_tool', tool_name: toolName, input, tool_use_id: toolUseId, description, ...(permissionSuggestions ? { permission_suggestions: permissionSuggestions } : {}), ...(blockedPath ? { blocked_path: blockedPath } : {}) } });
             },
             sendResponse(requestId_1, response) {
               const payload: Record<string, unknown> = { ...response };

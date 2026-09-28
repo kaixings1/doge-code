@@ -1,5 +1,5 @@
 ---
-description: Open a plan or HTML artifact in the browser Plan Canvas for annotate-and-approve review
+description: 在浏览器 Plan Canvas 中打开计划或 HTML 制品，进行批注和批准审查。
 argument-hint: "[path/to/artifact.plan.md | path/to/artifact.html]"
 ---
 

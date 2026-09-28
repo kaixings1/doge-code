@@ -203,7 +203,7 @@ export function getAuthTokenSource() {
   }
 
   const oauthTokens = getClaudeAIOAuthTokens()
-  if (shouldUseClaudeAIAuth(oauthTokens?.scopes) && oauthTokens?.accessToken) {
+  if (shouldUseClaudeAIAuth((oauthTokens as any)?.scopes) && oauthTokens?.accessToken) {
     return { source: 'claude.ai' as const, hasToken: true }
   }
 
@@ -1210,7 +1210,7 @@ export function saveOAuthTokensIfNeeded(tokens: OAuthTokens): {
   success: boolean
   warning?: string
 } {
-  if (!shouldUseClaudeAIAuth(tokens.scopes)) {
+  if (!shouldUseClaudeAIAuth((tokens as any).scopes)) {
     logEvent('tengu_oauth_tokens_not_claude_ai', {})
     return { success: true }
   }
@@ -1223,10 +1223,10 @@ export function saveOAuthTokensIfNeeded(tokens: OAuthTokens): {
 
   const secureStorage = getSecureStorage()
   const storageBackend =
-    secureStorage.name as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
+    (secureStorage as any).name as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
 
   try {
-    const storageData = secureStorage.read() || {}
+    const storageData = (secureStorage.read() || {}) as any
     const existingOauth = storageData.claudeAiOauth
 
     storageData.claudeAiOauth = {
@@ -1301,13 +1301,13 @@ export const getClaudeAIOAuthTokens = memoize((): OAuthTokens | null => {
   try {
     const secureStorage = getSecureStorage()
     const storageData = secureStorage.read()
-    const oauthData = storageData?.claudeAiOauth
+    const oauthData = (storageData as any)?.claudeAiOauth
 
     if (!oauthData?.accessToken) {
       return null
     }
 
-    return oauthData
+    return oauthData as any
   } catch (error) {
     logError(error)
     return null
@@ -1425,11 +1425,11 @@ export async function getClaudeAIOAuthTokensAsync(): Promise<OAuthTokens | null>
   try {
     const secureStorage = getSecureStorage()
     const storageData = await secureStorage.readAsync()
-    const oauthData = storageData?.claudeAiOauth
+    const oauthData = (storageData as any)?.claudeAiOauth
     if (!oauthData?.accessToken) {
       return null
     }
-    return oauthData
+    return oauthData as any
   } catch (error) {
     logError(error)
     return null
@@ -1480,7 +1480,7 @@ async function checkAndRefreshOAuthTokenIfNeededImpl(
     return false
   }
 
-  if (!shouldUseClaudeAIAuth(tokens.scopes)) {
+  if (!shouldUseClaudeAIAuth((tokens as any).scopes)) {
     return false
   }
 
@@ -1547,9 +1547,9 @@ async function checkAndRefreshOAuthTokenIfNeededImpl(
       // For Claude.ai subscribers, omit scopes so the default
       // CLAUDE_AI_OAUTH_SCOPES applies — this allows scope expansion
       // (e.g. adding user:file_upload) on refresh without re-login.
-      scopes: shouldUseClaudeAIAuth(lockedTokens.scopes)
+      scopes: shouldUseClaudeAIAuth((lockedTokens as any).scopes)
         ? undefined
-        : lockedTokens.scopes,
+        : (lockedTokens as any).scopes,
     })
     saveOAuthTokensIfNeeded(refreshedTokens)
 
@@ -1590,7 +1590,7 @@ export function isClaudeAISubscriber(): boolean {
  */
 export function hasProfileScope(): boolean {
   return (
-    getClaudeAIOAuthTokens()?.scopes?.includes(CLAUDE_AI_PROFILE_SCOPE) ?? false
+    (getClaudeAIOAuthTokens() as any)?.scopes?.includes(CLAUDE_AI_PROFILE_SCOPE) ?? false
   )
 }
 
@@ -1684,7 +1684,7 @@ export function getSubscriptionType(): SubscriptionType | null {
     return null
   }
 
-  return oauthTokens.subscriptionType ?? null
+  return (oauthTokens as any).subscriptionType ?? null
 }
 
 export function isMaxSubscriber(): boolean {
@@ -1719,7 +1719,7 @@ export function getRateLimitTier(): string | null {
     return null
   }
 
-  return oauthTokens.rateLimitTier ?? null
+  return (oauthTokens as any).rateLimitTier ?? null
 }
 
 export function getSubscriptionName(): string {

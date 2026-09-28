@@ -1,5 +1,5 @@
 ---
-description: Sweep blocked epic issues and reopen anything whose dependencies are closed.
+description: 清理被阻止的 epic issues，并重新打开所有依赖项已关闭的 issues。
 ---
 
 # /epic-unblock

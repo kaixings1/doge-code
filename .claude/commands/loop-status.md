@@ -1,5 +1,5 @@
 ---
-description: Inspect active loop state, progress, failure signals, and recommended intervention.
+description: 检查活跃循环状态、进度、失败信号和建议的干预措施。
 argument-hint: "[--watch] [--loop-id ID] [--json] [--dead-letter] [--metrics]"
 model: sonnet
 ---

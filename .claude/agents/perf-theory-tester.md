@@ -1,6 +1,6 @@
 ---
 name: perf-theory-tester
-description: Execute controlled perf experiments, one change at a time, with rollback between runs.
+description: 执行受控的性能实验，每次只改一个变量，并在运行间回滚。
 tools: Read, Write, Edit, Bash(git:*), Bash(npm:*), Bash(pnpm:*), Bash(yarn:*), Bash(cargo:*), Bash(go:*), Bash(pytest:*), Bash(python:*), Bash(mvn:*), Bash(gradle:*), Bash(node:*)
 model: opus
 ---

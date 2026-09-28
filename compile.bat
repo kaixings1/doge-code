@@ -91,7 +91,7 @@ set CLAUDE_CODE_FEATURE_HARD_FAIL=1
 
 set CLAUDE_CODE_FEATURE_ABLATION_BASELINE=1
 
-REM === ¸ß¼¶ÐÔÄÜ/·ÖÎö¹¦ÄÜ ===
+REM ===  ß¼     /         ===
 set CLAUDE_CODE_FEATURE_SHOT_STATS=0
 set CLAUDE_CODE_PROFILE_QUERY=0
 set CLAUDE_CODE_PROFILE_STARTUP=0
@@ -106,7 +106,7 @@ set CLAUDE_CODE_MAX_RETRIES=3
 set CLAUDE_CODE_OTEL_SHUTDOWN_TIMEOUT_MS=5000
 set CLAUDE_CODE_API_KEY_HELPER_TTL_MS=300000
 
-REM === ÔöÇ¿ Agent/ÍÅ¶Ó¹¦ÄÜ ===
+REM ===   Ç¿ Agent/ Å¶Ó¹    ===
 set CLAUDE_CODE_FEATURE_ULTRATHINK=1
 set CLAUDE_CODE_FEATURE_MONITOR_TOOL=1
 set CLAUDE_CODE_FEATURE_REVIEW_ARTIFACT=1
@@ -120,7 +120,7 @@ set CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS=8
 set CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=4
 set CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION=15
 
-REM === UI/UX ÔöÇ¿ ===
+REM === UI/UX   Ç¿ ===
 set CLAUDE_CODE_FEATURE_AUTO_THEME=1
 set CLAUDE_CODE_FEATURE_HISTORY_PICKER=1
 set CLAUDE_CODE_FEATURE_MCP_RICH_OUTPUT=1
@@ -135,7 +135,7 @@ set CLAUDE_CODE_FORCE_SYNC_OUTPUT=1
 set CLAUDE_CODE_DISABLE_TERMINAL_TITLE=0
 set CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000
 
-REM === É³Ïä/°²È«ÔöÇ¿ ===
+REM === É³  /  È«  Ç¿ ===
 set CLAUDE_CODE_DISABLE_CLAUDE_MDS=1
 set CLAUDE_CODE_DUMP_AUTO_MODE=1
 set CLAUDE_CODE_DISABLE_COMMAND_INJECTION_CHECK=0
@@ -144,12 +144,12 @@ set CLAUDE_CODE_DISABLE_CRON=0
 set CLAUDE_CODE_UNDERCOVER=0
 set CLAUDE_CODE_BUBBLEWRAP=0
 
-REM === Ô¶³ÌÇÅ½Ó/×ÀÃæ¹¦ÄÜ ===
+REM === Ô¶   Å½ /   æ¹¦   ===
 set CLAUDE_CODE_REMOTE=1
 set CLAUDE_CODE_LOCAL_BRIDGE=1
 set CLAUDE_CODE_LOCAL_BRIDGE_URL=http://localhost:5678
 
-REM === ÎÄ¼þ/Â·¾¶¹¦ÄÜ ===
+REM ===  Ä¼ /Â·       ===
 set CLAUDE_CODE_FILE_READ_MAX_OUTPUT_TOKENS=8000
 set CLAUDE_CODE_WORKFLOW_SIZE=40
 set CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS=30000
@@ -160,7 +160,7 @@ set CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=180000
 set CLAUDE_CODE_DISABLE_PRECOMPACT_SKIP=0
 set CLAUDE_CODE_SAVE_HOOK_ADDITIONAL_CONTEXT=1
 
-REM === µ÷ÊÔ/Õï¶Ï ===
+REM ===     /    ===
 set CLAUDE_CODE_DEBUG_REPAINTS=0
 set CLAUDE_CODE_COMMIT_LOG=0
 set CLAUDE_CODE_STREAM_CLOSE_TIMEOUT=60
@@ -169,12 +169,12 @@ set CLAUDE_CODE_STALL_TIMEOUT_MS_FOR_TESTING=60000
 set CLAUDE_CODE_PWSH_PARSE_TIMEOUT_MS=10000
 set CLAUDE_CODE_SLOW_OPERATION_THRESHOLD_MS=1000
 
-REM === API/Ä£ÐÍÔöÇ¿ ===
+REM === API/Ä£    Ç¿ ===
 set CLAUDE_CODE_DISABLE_NONSTREAMING_FALLBACK=0
 set CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=0
 set CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=0
 
-REM === ÐÂÔö feature() ±êÖ¾ (±àÒë ?  ?ÕâÐ© ?d.bat Ô­°æÖÐÈ± ?===
+REM ===      feature()   Ö¾ (     ?  ?  Ð© ?d.bat Ô­    È± ?===
 set CLAUDE_CODE_FEATURE_MCP_UI=1
 set CLAUDE_CODE_FEATURE_AWAY_SUMMARY=1
 set CLAUDE_CODE_FEATURE_OVERFLOW_TEST_TOOL=1
@@ -187,7 +187,7 @@ set CLAUDE_CODE_FEATURE_TREE_SITTER_BASH_SHADOW=1
 set CLAUDE_CODE_FEATURE_ALLOW_TEST_VERSIONS=0
 set CLAUDE_CODE_FEATURE_KAIROS_DREAM=1
 
-REM === ÐÂÔöÔËÐÐ ?env var ===
+REM ===          ?env var ===
 set CLAUDE_CODE_EAGER_FLUSH=1
 set CLAUDE_CODE_DISABLE_FAST_MODE=0
 set CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION=1
@@ -210,7 +210,7 @@ set CLAUDE_CODE_DISABLE_METRICS=0
 set CLAUDE_CODE_FORCE_FLUX_NATIVE=0
 set CLAUDE_CODE_CONSOLE_DEBUG=1
 
-REM === Claude Code ÄÚ²¿ env var ( ?CLAUDE_CODE_) ===
+REM === Claude Code  Ú²  env var ( ?CLAUDE_CODE_) ===
 set CLAUDE_CODE_DEV_VERSION=local
 set CLAUDE_CODE_DEV_BUILD_TIME=local
 set CLAUDE_CODE_EMIT_SESSION_STATE_EVENTS=1
@@ -269,8 +269,8 @@ rm -f package-lock.json yarn.lock
 # npm run build -- --force   
 
 REM === Clean up stale .js artifacts that shadow .ts sources (must run BEFORE bun build) ===
-REM ÕâÐ© .js ÊÇ¾É±àÒë²úÎï£¬TS ¸üÐÂºóÎ´Í¬²½£¬»áµ¼ÖÂ Bun ÓÅÏÈ¼ÓÔØ¹ýÆÚ .js ¶ø·Ç .ts
-REM ×Ô¶¯¼ÌÐøÂß¼­µÈÐÂ¹¦ÄÜ»áÒò´ËÊ§Ð§
+REM   Ð© .js  Ç¾É±     ï£¬TS    Âº Î´Í¬     áµ¼   Bun    È¼  Ø¹    .js      .ts
+REM  Ô¶      ß¼    Â¹  Ü»    Ê§Ð§
 PowerShell -Command "Remove-Item -Path 'src/__tests__/unit/openaiCompatStream.test.js','src/bootstrap-entry.js','src/bridge/bridgeMain.js','src/bridge/initReplBridge.js','src/cli/print.js','src/commands/issue/index.js','src/commands/loader.js','src/entrypoints/init.js','src/index.js','src/ink/log-update.js','src/ink/render-node-to-output.js','src/tools/CtxInspectTool/CtxInspectTool.js','src/tools/ListPeersTool/ListPeersTool.js','src/tools/PushNotificationTool/PushNotificationTool.js','src/tools/SendUserFileTool/SendUserFileTool.js','src/tools/SubscribePRTool/SubscribePRTool.js','src/tools/TerminalCaptureTool/TerminalCaptureTool.js','src/tools/WebBrowserTool/WebBrowserTool.js','src/tools.js','src/engine/messageLoop.js' -ErrorAction SilentlyContinue"
 echo [*] Stale .js artifacts cleaned
 rm src/screens/REPL.js
@@ -280,7 +280,8 @@ call bun run scripts/embed-status-line.ts
 call  bun build --define PROACTIVE=true  --define KAIROS=true  --define KAIROS_BRIEF=true   --define KAIROS_CHANNELS=true   --define BRIDGE_MODE=true   --define DAEMON=true   --define VOICE_MODE=true   --define HISTORY_SNIP=true   --define CCR_REMOTE_SETUP=true   --define EXPERIMENTAL_SKILL_SEARCH=true   --define KAIROS_GITHUB_WEBHOOKS=true   --define ULTRAPLAN=true   --define TORCH=true   --define UDS_INBOX=true  --define FORK_SUBAGENT=true  --define WORKFLOW_SCRIPTS=true   --define MCP_SKILLS=true   --define AGENT_TRIGGERS=true   --define CCR_AUTO_CONNECT=true   --define CCR_MIRROR=true   --define CACHED_MICROCOMPACT=true   --define CONNECTOR_TEXT=true   --define TRANSCRIPT_CLASSIFIER=true   --define BASH_CLASSIFIER=true   --define COORDINATOR_MODE=true   --define EXTRACT_MEMORIES=true   --define DOWNLOAD_USER_SETTINGS=true   --define COMMIT_ATTRIBUTION=true   --define STREAMLINED_OUTPUT=true   --define NATIVE_CLIENT_ATTESTATION=true   --define TOKEN_BUDGET=true   --define TEMPLATES=true   --define CHICAGO_MCP=true   --define BG_SESSIONS=true   --define BYOC_ENVIRONMENT_RUNNER=true   --define SELF_HOSTED_RUNNER=true   --define REACTIVE_COMPACT=true   --define CONTEXT_COLLAPSE=true   --define PROMPT_CACHE_BREAK_DETECTION=true   --define VERIFICATION_AGENT=true   --define AGENT_MEMORY_SNAPSHOT=true   --define BREAK_CACHE_COMMAND=true   --define NEW_INIT=true   --define MEMORY_SHAPE_TELEMETRY=true   --define TEAMMEM=true   --define DIRECT_CONNECT=true   --define LODESTONE=true   --define SSH_REMOTE=true   --define UPLOAD_USER_SETTINGS=true   --define HARD_FAIL=true   --define ABLATION_BASELINE=true   --define DUMP_SYSTEM_PROMPT=true   --define WEB_BROWSER_TOOL=true   --define QUICK_SEARCH=true   --define TERMINAL_PANEL=true   --define MESSAGE_ACTIONS=true   --define FILE_PERSISTENCE=true    ./src/bootstrap-entry.ts  --compile   --outfile ./doge   --external playwright   --external playwright-core
 
 ls
-dir
+dir /ad
+copy .\doge.exe f:\bin\doge.exe
 
 REM === Clean up build artifacts from src/ to prevent .js shadowing .ts ===
 PowerShell -Command "Get-ChildItem -Path 'src/commands/clear' -Filter '*.js' -ErrorAction SilentlyContinue | Remove-Item -Force"
@@ -290,11 +291,7 @@ PowerShell -Command "Get-ChildItem -Path 'src/tools/REPLTool' -Filter '*.js' -Er
 PowerShell -Command "Get-ChildItem -Path 'src/tools/VerifyPlanExecutionTool' -Filter '*.js' -ErrorAction SilentlyContinue | Remove-Item -Force"
 PowerShell -Command "Get-ChildItem -Path 'src' -Recurse -Filter '*.js.map' -ErrorAction SilentlyContinue | Remove-Item -Force"
 echo [*] Build artifacts cleaned from src/
-
-REM === ±àÒëºóÍ³Ò»ÇåÀí£ºµÝ¹éÉ¾³ý src ÏÂËùÓÐ .js ±àÒë²úÎï ===
-REM src ÏÂËùÓÐ .js ¶¼ÊÇ¹ýÆÚ±àÒë²úÎï£¨Ô´ÂëÎª .ts/.tsx£¬tsconfig noEmit£©£¬
-REM ±àÒëºóÍ³Ò»É¾³ý£¬±£Ö¤Ã¿´Î±àÒëµÃµ½È«ÐÂ¿ÉÖ´ÐÐÎÄ¼þ + ¸É¾»²Ö¿â¡£
-REM Õæ JS Ô´ÎÄ¼þ£¨Èç .claude/hooks/*.js£©²»ÔÚ src/ ÏÂ£¬²»ÊÜÓ°Ïì¡£
+ 
 PowerShell -Command "Get-ChildItem -Path 'src' -Recurse -Filter '*.js' -ErrorAction SilentlyContinue | Remove-Item -Force"
 echo [*] All src .js artifacts cleaned
 

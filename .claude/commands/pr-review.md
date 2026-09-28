@@ -1,5 +1,5 @@
 ---
-description: Reviews pull request changes to provide feedback, check for issues, and suggest improvements before merging into the main codebase.
+description: 审查拉取请求更改，在合并到主代码库之前提供反馈、检查问题并建议改进。
 author: arkavo-org
 author-url: https://github.com/arkavo-org
 version: 1.0.0

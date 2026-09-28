@@ -12,13 +12,9 @@ type AppWrapperProps = {
 };
 
 export async function launchRepl(root: Root, appProps: AppWrapperProps, replProps: REPLProps, renderAndRun: (root: Root, element: React.ReactNode) => Promise<void>): Promise<void> {
-  try { require('fs').writeFileSync('d:/trace.txt', '[launchRepl] START\n', {flag:'a'}); } catch(e) {}
-
   const {
     App
   } = await import('./components/App.js');
-  console.error('[STEP-0] launchRepl: App imported');
-  try { require('fs').writeFileSync('d:/trace.txt', '[launchRepl] App imported\n', {flag:'a'}); } catch(e) {}
 
   // Small delay to let Bun settle before loading large REPL module
   await new Promise(resolve => setTimeout(resolve, 100));
@@ -30,11 +26,9 @@ export async function launchRepl(root: Root, appProps: AppWrapperProps, replProp
     try {
       const mod = await import('./screens/REPL.tsx');
       REPL = mod.REPL;
-      console.error('[STEP-1] launchRepl: REPL module loaded (attempt ' + i + ')');
       break;
     } catch (err) {
       lastError = err as Error;
-      console.error('[STEP-ERR] launchRepl: REPL load failed attempt ' + i + ': ' + (err as Error).message);
       if (i < 2) {
         await new Promise(resolve => setTimeout(resolve, 500));
       }
@@ -44,11 +38,7 @@ export async function launchRepl(root: Root, appProps: AppWrapperProps, replProp
   if (!REPL) {
     throw new Error('Failed to load REPL screen after 3 attempts: ' + (lastError as Error).message);
   }
-  console.error('[STEP-2] launchRepl: about to call renderAndRun');
-  try { require('fs').writeFileSync('d:/trace.txt', '[launchRepl] BEFORE renderAndRun\n', {flag:'a'}); } catch(e) {}
   await renderAndRun(root, <App {...appProps}>
       <REPL {...replProps} />
     </App>);
-  console.error('[STEP-3] launchRepl: renderAndRun returned');
-  try { require('fs').writeFileSync('d:/trace.txt', '[launchRepl] AFTER renderAndRun\n', {flag:'a'}); } catch(e) {}
 }

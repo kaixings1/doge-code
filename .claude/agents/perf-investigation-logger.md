@@ -1,6 +1,6 @@
 ---
 name: perf-investigation-logger
-description: Append structured investigation notes with exact user quotes and rationale.
+description: 追加包含精确用户引用和理由的结构化调查记录。
 tools: Read, Write
 model: sonnet
 ---

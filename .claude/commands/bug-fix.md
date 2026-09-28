@@ -1,5 +1,5 @@
 ---
-description: Streamlines bug fixing by creating a GitHub issue first, then a feature branch for implementing and thoroughly testing the solution before merging.
+description: 通过先创建 GitHub issue，然后创建功能分支来实现和彻底测试解决方案，再合并，从而简化 bug 修复。
 author: danielscholl
 author-url: https://github.com/danielscholl
 version: 1.0.0
