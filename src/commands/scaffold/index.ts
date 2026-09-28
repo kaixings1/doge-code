@@ -392,7 +392,7 @@ export const call: LocalCommandCall = async (args, context) => {
   const words = s.split(/\s+/)
   const command = words[0] || 'help'
   const projectName = words[1] || 'my-project'
-  const cwd = context?.cwd || process.cwd()
+  const cwd = process.cwd()
 
   if (command === 'help' || s === '') {
     return { type: 'text', value: HELP_TEXT }

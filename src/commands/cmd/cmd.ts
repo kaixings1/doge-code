@@ -2,7 +2,7 @@ import type { LocalCommandCall, LocalCommandResult } from '../../types/command.j
 
 const call: LocalCommandCall = async (args, context) => {
   const query = args.trim().toLowerCase()
-  const allCommands = context.availableCommands || []
+  const allCommands = context.options?.commands || []
 
   let filtered = allCommands
   if (query) {

@@ -232,7 +232,7 @@ export const call: LocalCommandCall = async (args, context) => {
   }
 
   // 默认扫描当前目录
-  const cwd = context?.cwd || process.cwd()
+  const cwd = process.cwd()
   const issues = scanDirectory('.', [])
   return { type: 'text', value: formatReport(issues, format) }
 }

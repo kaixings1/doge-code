@@ -1,9 +1,11 @@
+import { feature } from 'bun:bundle'
 import type { Command, LocalCommandCall } from '../types/command.js'
 import { getIsNonInteractiveSession } from '../bootstrap/state.js'
 import { saveGlobalConfig } from '../utils/config.js'
 
 const call: LocalCommandCall = async (_args, context) => {
-  const { messages, appState } = context
+  const { messages } = context
+  const appState = context.getAppState()
   const userMsgs = messages.filter(m => m.type === 'user')
   const assistantMsgs = messages.filter(m => m.type === 'assistant')
   const toolCalls = messages.flatMap(m =>
@@ -11,7 +13,7 @@ const call: LocalCommandCall = async (_args, context) => {
   )
 
   // Torch 模式状态检测（从 appState 或全局配置）
-  const isTorchMode = appState?.userContext?.torchMode || false
+  const isTorchMode = feature('TORCH')
   const modeStatus = isTorchMode ? '🟢 已激活' : '⚪ 未激活'
 
   return {
