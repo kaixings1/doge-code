@@ -434,7 +434,7 @@ export class DockerSandboxManager {
 
     const workdir = cwd || this.config.workdir
 
-    return new AsyncGenerator(async function* () {
+    yield* (async function* () {
       const child = spawn(
         'docker',
         [
@@ -466,7 +466,7 @@ export class DockerSandboxManager {
       })
 
       yield { type: 'exit', code: exitCode }
-    })
+    })()
   }
 
   /**

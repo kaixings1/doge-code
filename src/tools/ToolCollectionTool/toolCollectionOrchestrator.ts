@@ -80,7 +80,11 @@ export class ToolCollectionOrchestrator {
     try {
       const result = await adapter.execute(input, {
         timeout: opts.timeout,
-        onProgress: opts.onProgress,
+        onProgress: progress =>
+          opts.onProgress?.(
+            name,
+            progress as unknown as { percent: number; message?: string },
+          ),
       })
       this.registry.recordExecution(name, result)
       return {
@@ -153,7 +157,7 @@ export class ToolCollectionOrchestrator {
     if (calls.length === 0) return []
 
     const results: ToolResult[] = []
-    const batches: Array<Array<typeof calls>> = []
+    const batches: Array<Array<(typeof calls)[number]>> = []
 
     for (let i = 0; i < calls.length; i += concurrency) {
       batches.push(calls.slice(i, i + concurrency))
