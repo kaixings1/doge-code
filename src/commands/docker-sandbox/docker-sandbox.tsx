@@ -17,7 +17,7 @@ import { color } from '../../ink.js'
 type Screen = 'main' | 'start' | 'config' | 'logs' | 'exec' | 'shell'
 type Action = 'start' | 'stop' | 'status' | 'logs' | 'exec' | 'shell' | 'config'
 
-export const dockerSandboxUI: LocalJSXCommandCall = (_onDone, _context, args) => {
+export const dockerSandboxUI: LocalJSXCommandCall = async (_onDone, _context, args) => {
   const [screen, setScreen] = React.useState<Screen>('main')
   const [status, setStatus] = React.useState<Awaited<ReturnType<DockerSandboxManager['getStatus']>>>({
     running: false,

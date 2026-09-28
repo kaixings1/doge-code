@@ -52,7 +52,7 @@ const KIND_COLORS: Record<string, string> = {
   content: 'white',
 }
 
-const codeSearchUI: LocalJSXCommandCall = (_onDone, _context, args) => {
+const codeSearchUI: LocalJSXCommandCall = async (_onDone, _context, args) => {
   const [query, setQuery] = React.useState('')
   const [mode, setMode] = React.useState<SearchMode>('hybrid')
   const [langFilter, setLangFilter] = React.useState<LanguageFilter>('all')
