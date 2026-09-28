@@ -119,6 +119,8 @@ type LocalCommand = {
  */
 export type LocalJSXCommandContext = ToolUseContext & {
   canUseTool?: CanUseToolFn
+  /** 进度更新回调（命令在执行中报告进度） */
+  updateProgress?: (message: string) => void
   setMessages: (updater: (prev: Message[]) => Message[]) => void
   options: {
     dynamicMcpConfig?: Record<string, ScopedMcpServerConfig>
