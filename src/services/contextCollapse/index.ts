@@ -30,21 +30,26 @@ export type Message = InternalMessage
 
 type Stats = {
   collapsedSpans: number
+  collapsedMessages: number
   stagedSpans: number
   health: {
     totalErrors: number
     totalEmptySpawns: number
     emptySpawnWarningEmitted: boolean
+    totalSpawns: number
+    lastError?: string
   }
 }
 
 const stats: Stats = {
   collapsedSpans: 0,
+  collapsedMessages: 0,
   stagedSpans: 0,
   health: {
     totalErrors: 0,
     totalEmptySpawns: 0,
     emptySpawnWarningEmitted: false,
+    totalSpawns: 0,
   },
 }
 
