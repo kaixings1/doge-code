@@ -658,7 +658,8 @@ export class CodexAdapter extends BaseAdapter implements HookAdapter {
 
     const hookConfig = this.readHooksConfig();
     if (!hookConfig.ok) {
-      if (hookConfig.reason === "missing" && codexPluginHooksAvailable) {
+      const failed = hookConfig as Extract<HooksConfigReadResult, { ok: false }>
+      if (failed.reason === "missing" && codexPluginHooksAvailable) {
         const pluginHookChecks = Object.keys(expected).map((hookName) => ({
           check: `${hookName} hook`,
           status: "pass" as const,
@@ -666,7 +667,7 @@ export class CodexAdapter extends BaseAdapter implements HookAdapter {
         }));
         return results.concat(pluginHookChecks);
       }
-      if (hookConfig.reason === "missing") {
+      if (failed.reason === "missing") {
         return results.concat([{
           check: "Hooks config",
           status: "fail",
@@ -674,11 +675,11 @@ export class CodexAdapter extends BaseAdapter implements HookAdapter {
           fix: "Copy configs/codex/hooks.json to hooks.json or run context-mode upgrade",
         }]);
       }
-      if (hookConfig.reason === "invalid_json") {
+      if (failed.reason === "invalid_json") {
         return results.concat([{
           check: "Hooks config",
           status: "fail",
-          message: `${this.getHooksPath()} is not valid JSON: ${hookConfig.error}`,
+          message: `${this.getHooksPath()} is not valid JSON: ${failed.error}`,
           fix: "Repair hooks.json so it contains valid JSON, then rerun context-mode upgrade if needed",
         }]);
       }
@@ -686,7 +687,7 @@ export class CodexAdapter extends BaseAdapter implements HookAdapter {
       return results.concat([{
         check: "Hooks config",
         status: "fail",
-        message: `Could not read ${this.getHooksPath()}: ${hookConfig.error}`,
+        message: `Could not read ${this.getHooksPath()}: ${failed.error}`,
         fix: "Check permissions and file accessibility for hooks.json, then rerun context-mode upgrade if needed",
       }]);
     }
@@ -838,14 +839,17 @@ export class CodexAdapter extends BaseAdapter implements HookAdapter {
     let hookFile: CodexHooksFile;
     if (hookConfig.ok) {
       hookFile = hookConfig.config;
-    } else if (hookConfig.reason === "missing") {
-      hookFile = { hooks: {} };
-    } else if (hookConfig.reason === "invalid_json") {
-      const backupPath = this.backupFile(this.getHooksPath(), ".broken");
-      changes.push(`Backed up malformed Codex hooks to ${backupPath}`);
-      hookFile = { hooks: {} };
     } else {
-      throw new Error(`Failed to update ${this.getHooksPath()}: ${hookConfig.error}`);
+      const failed = hookConfig as Extract<HooksConfigReadResult, { ok: false }>
+      if (failed.reason === "missing") {
+        hookFile = { hooks: {} };
+      } else if (failed.reason === "invalid_json") {
+        const backupPath = this.backupFile(this.getHooksPath(), ".broken");
+        changes.push(`Backed up malformed Codex hooks to ${backupPath}`);
+        hookFile = { hooks: {} };
+      } else {
+        throw new Error(`Failed to update ${this.getHooksPath()}: ${failed.error}`);
+      }
     }
 
     const hooks = hookFile.hooks && typeof hookFile.hooks === "object" && !Array.isArray(hookFile.hooks)
