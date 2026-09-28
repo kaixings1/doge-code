@@ -80,7 +80,10 @@ export async function generateToolUseSummary({
       },
     })
 
-    const summary = response.message.content
+    const content = Array.isArray(response.message.content)
+      ? response.message.content
+      : []
+    const summary = content
       .filter(block => block.type === 'text')
       .map(block => (block.type === 'text' ? block.text : ''))
       .join('')

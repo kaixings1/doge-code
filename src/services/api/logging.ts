@@ -735,22 +735,28 @@ export function logAPISuccessAndDuration({
     // Model output - visible to all users
     modelOutput =
       newMessages
-        .flatMap(m =>
-          m.message.content
+        .flatMap(m => {
+          const content = Array.isArray(m.message.content)
+            ? m.message.content
+            : []
+          return content
             .filter(c => c.type === 'text')
-            .map(c => (c as { type: 'text'; text: string }).text),
-        )
+            .map(c => (c as { type: 'text'; text: string }).text)
+        })
         .join('\n') || undefined
 
     // Thinking output - Ant-only (build-time gated)
     if (process.env.USER_TYPE === 'ant') {
       thinkingOutput =
         newMessages
-          .flatMap(m =>
-            m.message.content
+          .flatMap(m => {
+            const content = Array.isArray(m.message.content)
+              ? m.message.content
+              : []
+            return content
               .filter(c => c.type === 'thinking')
-              .map(c => (c as { type: 'thinking'; thinking: string }).thinking),
-          )
+              .map(c => (c as { type: 'thinking'; thinking: string }).thinking)
+          })
           .join('\n') || undefined
     }
 

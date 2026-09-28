@@ -113,7 +113,10 @@ function extractConversationContext(
 
   for (const msg of assistantMessages.reverse()) {
     // Extract text content from assistant message
-    const textBlocks = msg.message.content
+    const content = Array.isArray(msg.message.content)
+      ? msg.message.content
+      : []
+    const textBlocks = content
       .filter(c => c.type === 'text')
       .map(c => ('text' in c ? c.text : ''))
       .join(' ')
@@ -191,7 +194,7 @@ Explain this command in context.`
     )
 
     // Extract structured data from tool use block
-    const toolUseBlock = response.content.find(c => c.type === 'tool_use')
+    const toolUseBlock = (Array.isArray(response.content) ? response.content : []).find(c => c.type === 'tool_use')
     if (toolUseBlock && toolUseBlock.type === 'tool_use') {
       logForDebugging(
         `Permission explainer: tool input: ${jsonStringify(toolUseBlock.input).slice(0, 500)}`,

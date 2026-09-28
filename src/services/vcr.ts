@@ -193,7 +193,7 @@ function mapMessages(
           if (Array.isArray(_.content)) {
             return {
               ..._,
-              content: _.content.map(_ => {
+              content: (Array.isArray(_.content) ? _.content : []).map(_ => {
                 switch (_.type) {
                   case 'text':
                     return { ..._, text: f(_.text) }
@@ -255,8 +255,10 @@ function mapAssistantMessage(
     timestamp: message.timestamp,
     message: {
       ...message.message,
-      content: message.message.content
-        .map(_ => {
+      content: (Array.isArray(message.message.content)
+        ? message.message.content
+        : []
+      ).map(_ => {
           switch (_.type) {
             case 'text':
               return {
