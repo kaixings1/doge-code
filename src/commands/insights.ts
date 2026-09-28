@@ -120,7 +120,7 @@ const collectFromRemoteHost: (
           }
 
           const projectsDir = join(tempDir, 'projects')
-          let projectDirents: Awaited<ReturnType<typeof readdir>>
+          let projectDirents: { name: string; isDirectory(): boolean }[]
           try {
             projectDirents = await readdir(projectsDir, { withFileTypes: true })
           } catch {
@@ -146,7 +146,7 @@ const collectFromRemoteHost: (
               }
 
               // 复制会话文件（跳过已存在的）
-              let files: Awaited<ReturnType<typeof readdir>>
+              let files: { name: string }[]
               try {
                 files = await readdir(projectPath, { withFileTypes: true })
               } catch {
@@ -893,7 +893,7 @@ async function summarizeTranscriptChunk(chunk: string): Promise<string> {
       },
     })
 
-    const text = extractTextContent(result.message.content)
+    const text = extractTextContent(Array.isArray(result.message.content) ? result.message.content : [])
     return text || chunk.slice(0, 2000)
   } catch {
     // 出错时，仅返回截断的块
@@ -1036,7 +1036,7 @@ async function extractFacetsFromAPI(
       },
     })
 
-    const text = extractTextContent(result.message.content)
+    const text = extractTextContent(Array.isArray(result.message.content) ? result.message.content : [])
 
     // 解析 JSON 响应
     const jsonMatch = text.match(/\{[\s\S]*\}/)
@@ -1586,7 +1586,7 @@ async function generateSectionInsight(
       },
     })
 
-    const text = extractTextContent(result.message.content)
+    const text = extractTextContent(Array.isArray(result.message.content) ? result.message.content : [])
 
     if (text) {
       // 解析 JSON 响应
@@ -2750,7 +2750,7 @@ type LiteSessionInfo = {
 async function scanAllSessions(): Promise<LiteSessionInfo[]> {
   const projectsDir = getProjectsDir()
 
-  let dirents: Awaited<ReturnType<typeof readdir>>
+  let dirents: { name: string; isDirectory(): boolean }[]
   try {
     dirents = await readdir(projectsDir, { withFileTypes: true })
   } catch {
