@@ -227,6 +227,10 @@ export type CommandBase = {
   availability?: CommandAvailability[]
   /** 声明式命令参数定义（仅供命令执行器/补全提示消费，非 Command 类型调用约束） */
   arguments?: CommandArgument[]
+  /** 命令用法示例文本 */
+  usage?: string
+  /** 可调用示例 */
+  examples?: Array<{ command: string; description: string }>
   description: string
   hasUserSpecifiedDescription?: boolean
   /** 默认为 true。仅在命令有条件启用（功能标志、环境变量检查等）时设置 */

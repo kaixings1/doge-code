@@ -30,7 +30,7 @@ const KIND_COLORS: Record<string, string> = {
 
 
 // vectorSearchCommand 定义已移至文件末尾（TDZ 安全）
-const vectorSearchUI: LocalJSXCommandCall = (_onDone, _context, args) => {
+const vectorSearchUI: LocalJSXCommandCall = async (_onDone, _context, args) => {
   const [query, setQuery] = React.useState(args?.trim() || '')
   const [results, setResults] = React.useState<
     Array<{ file: string; line: number; snippet: string; score: number; kind: string }>
