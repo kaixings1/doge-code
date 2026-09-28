@@ -71,7 +71,6 @@ export function renderToScreen(
     stylePool = new StylePool()
     charPool = new CharPool()
     hyperlinkPool = new HyperlinkPool()
-    // @ts-expect-error react-reconciler 0.33 takes 10 args; @types says 11
     container = reconciler.createContainer(
       root,
       LegacyRoot,

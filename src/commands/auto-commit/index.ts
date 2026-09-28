@@ -207,7 +207,6 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'config') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
-    // @ts-expect-error dynamic
     config[key] = value === 'true' ? true : value === 'false' ? false : value
     saveConfig(config)
     return { type: 'text', value: '✅ ' + key + ' = ' + config[key] }

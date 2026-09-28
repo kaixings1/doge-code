@@ -147,7 +147,6 @@ export const call: LocalCommandCall = async (args) => {
     if (!id || !key) return { type: 'text', value: '📖 用法：/notify config <ID> <键> <值>\n键：sound（声音）、desktop（桌面）、email（邮件）、webhook、cooldown（冷却秒数）' }
     const rule = rules.find(r => r.id === id || r.id.startsWith(id))
     if (!rule) return { type: 'text', value: 'Not found: ' + id }
-    // @ts-expect-error dynamic
     if (key === 'sound' || key === 'desktop' || key === 'email') rule[key] = value === 'true'
     else if (key === 'cooldown') rule.cooldown = parseInt(value) || 60
     else if (key === 'webhook') rule.webhook = value

@@ -126,7 +126,6 @@ export const call: LocalCommandCall = async (args) => {
     const cat = parts[1]; const val = parseInt(parts[2])
     if (!cat || isNaN(val)) return { type: 'text', value: '用法: /lighthouse budget <类别> <分数>\n类别: performance, accessibility, bestPractices, seo, pwa' }
     if (!(cat in config.budgets)) return { type: 'text', value: `❌ 未知类别: ${cat}` }
-    // @ts-expect-error dynamic
     config.budgets[cat] = val
     saveConfig(config)
     return { type: 'text', value: `✅ [成功] ${cat} 预算: ${val}` }
@@ -135,7 +134,6 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'config') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: '当前配置:\n' + JSON.stringify(config, null, 2) }
-    // @ts-expect-error dynamic
     if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [成功] ${key} = ${value}` } }
     return { type: 'text', value: `❌ 未知配置项: ${key}` }
   }
@@ -143,7 +141,6 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'set') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: '用法: /lighthouse set <配置项> <值>' }
-    // @ts-expect-error dynamic
     if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [成功] ${key} = ${value}` } }
     return { type: 'text', value: `❌ 未知配置项: ${key}。可用项: ${Object.keys(config).join(', ')}` }
   }

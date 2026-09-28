@@ -118,7 +118,6 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'config') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: JSON.stringify(config, null, 2) }
-    // @ts-expect-error dynamic
     if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
     return { type: 'text', value: `❌ 未知配置项: ${key}` }
   }
@@ -126,7 +125,6 @@ export const call: LocalCommandCall = async (args) => {
   if (cmd === 'set') {
     const key = parts[1]; const value = parts.slice(2).join(' ')
     if (!key || !value) return { type: 'text', value: '📖 用法: /bundle set <配置项> <值>' }
-    // @ts-expect-error dynamic
     if (key in config) { config[key] = value; saveConfig(config); return { type: 'text', value: `✅ [OK] ${key} = ${value}` } }
     return { type: 'text', value: `❌ 未知配置项: ${key}。可用配置项: ${Object.keys(config).join(', ')}` }
   }
