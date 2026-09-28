@@ -181,6 +181,9 @@ export const COST_TIER_3_15 = {
   webSearchRequests: 0.01,
 } as const satisfies ModelCosts
 
+/** 未知/默认模型回退计费（采用 Claude 标准 Sonnet 层级，作为兜底成本估算） */
+const DEFAULT_UNKNOWN_MODEL_COST = COST_TIER_3_15
+
 /** Opus 4 / 4.1 计费层级：输入 $15 / 输出 $75 每百万 token */
 export const COST_TIER_15_75 = {
   inputTokens: 15,

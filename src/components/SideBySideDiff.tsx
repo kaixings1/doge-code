@@ -1,6 +1,6 @@
 import { type StructuredPatchHunk } from 'diff';
 import * as React from 'react';
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import type { ThemeName } from '../utils/theme.js';
 import { stringWidth } from '../ink/stringWidth.js';
 import { Box, NoSelect, Text, useTheme } from '../ink.js';

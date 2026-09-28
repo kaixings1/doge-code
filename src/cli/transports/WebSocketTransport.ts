@@ -8,7 +8,16 @@ import {
   unregisterSessionActivityCallback,
 } from '../../utils/sessionActivity.js'
 import { jsonStringify } from '../../utils/slowOperations.js'
+import { isEnvTruthy } from '../../utils/envUtils.js'
 import type { Transport } from './Transport.js'
+
+// Runtime helpers injected by the build/runtime — declared for type checking.
+// @ts-ignore - provided at runtime
+declare function getWebSocketProxyUrl(url: string): string | null
+// @ts-ignore - provided at runtime
+declare function getWebSocketProxyAgent(url: string): any
+// @ts-ignore - provided at runtime
+declare function getWebSocketTLSOptions(): Record<string, unknown> | null
 
 const KEEP_ALIVE_FRAME = '{"type":"keep_alive"}\n'
 
@@ -780,7 +789,7 @@ export class WebSocketTransport implements Transport {
       this.messageBuffer.add(message)
       this.lastSentId = message.uuid
       logForDebugging(
-        `WebSocketTransport: Message buffered, lastSentId=${this.lastSentId}, bufferSize=${this.messageBuffer.size()}`,
+        `WebSocketTransport: Message buffered, lastSentId=${this.lastSentId}, bufferSize=${this.messageBuffer.length()}`,
       )
     }
 
@@ -807,13 +816,15 @@ export class WebSocketTransport implements Transport {
 
   private getControlMessageDetailLabel(message: StdoutMessage): string {
     if (message.type === 'control_request') {
-      const { request_id, request } = message
+      const request = message as unknown as { request_id: string; request: { subtype: string; tool_name?: string } }
+      const { request_id, request: req } = request
       const toolName =
-        request.subtype === 'can_use_tool' ? request.tool_name : ''
-      return ` subtype=${request.subtype} request_id=${request_id}${toolName ? ` tool=${toolName}` : ''}`
+        req.subtype === 'can_use_tool' ? req.tool_name : ''
+      return ` subtype=${req.subtype} request_id=${request_id}${toolName ? ` tool=${toolName}` : ''}`
     }
     if (message.type === 'control_response') {
-      const { subtype, request_id } = message.response
+      const response = message.response as { subtype: string; request_id: string }
+      const { subtype, request_id } = response
       return ` subtype=${subtype} request_id=${request_id}`
     }
     return ''
@@ -900,11 +911,6 @@ export class WebSocketTransport implements Transport {
       this.pingInterval = null
       logForDebugging('WebSocketTransport: ping 间隔已停止')
     }
-  }
-
-  private onPong = () => {
-    this.pongReceived = true
-    logForDebugging('WebSocketTransport: 收到 pong 响应')
   }
 
   private startKeepaliveInterval(): void {

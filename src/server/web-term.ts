@@ -8,8 +8,11 @@
  * 然后浏览器打开 http://localhost:3210
  */
 
-import { ServerWebSocket } from 'bun'
+import { ServerWebSocket, type Subprocess } from 'bun'
 import * as os from 'os'
+
+/** Bun.spawn 返回的子进程句柄类型 */
+type BunSubprocess = Subprocess
 
 const PORT = 3210
 

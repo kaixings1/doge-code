@@ -1,4 +1,5 @@
 import { feature } from 'bun:bundle'
+import { randomUUID } from 'crypto'
 import Anthropic from '@anthropic-ai/sdk'
 import type { ClientOptions } from '@anthropic-ai/sdk/client'
 import * as vertexSdk from '@anthropic-ai/vertex-sdk'
@@ -240,7 +241,7 @@ export async function getAnthropicClient({
           getClient: () => ({
             getRequestHeaders: () => ({}),
           }),
-        } as VertexGoogleAuth)
+        } as unknown as InstanceType<typeof GoogleAuth>)
       : new GoogleAuth({
           scopes: ['https://www.googleapis.com/auth/cloud-platform'],
           // 仅将 ANTHROPIC_VERTEX_PROJECT_ID 作为最后的后备

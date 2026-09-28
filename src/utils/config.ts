@@ -27,6 +27,9 @@ import { stripBOM } from './jsonRead.js'
 import { jsonParse, jsonStringify } from './slowOperations.js'
 import { writeFileSyncAndFlush_DEPRECATED } from './file.js'
 import { getClaudeConfigHomeDir, isEnvTruthy } from './envUtils.js'
+import type { MemoryType } from './memory/types.js'
+import type { ModelOption } from './model/modelOptions.js'
+import type { ThemeSetting } from './theme.js'
 import { getEssentialTrafficOnlyReason } from './privacyLevel.js'
 import { getManagedFilePath } from './settings/managedPath.js'
 
@@ -35,7 +38,24 @@ import type { EDITOR_MODES, NOTIFICATION_CHANNELS } from './configConstants.js'
 // 防止 logEvent → getGlobalConfig → getConfig 在配置损坏时无限递归的重入标志
 let insideGetConfig = false
 
+// 团队记忆路径模块：仅在 feature('TEAMMEM') 构建中存在，运行时按需 require 打破循环依赖
+// （照搬 memdir.ts / extractMemories.ts 的 feature-gated require 模式）
+let teamMemPaths: typeof import('../memdir/teamMemPaths.js') | null = null
+if (feature('TEAMMEM')) {
+  teamMemPaths = require('../memdir/teamMemPaths.js') as typeof import('../memdir/teamMemPaths.js')
+}
+
+// CCR 自动连接默认值模块：设计上独立于 config.ts（见 bridgeEnabled.ts 注释，
+// 避免 config.ts → growthbook.ts 循环依赖），故运行时按需 require 而非静态导入
+let ccrAutoConnect: typeof import('../bridge/bridgeEnabled.js') | null = null
+if (feature('CCR_AUTO_CONNECT')) {
+  ccrAutoConnect = require('../bridge/bridgeEnabled.js') as typeof import('../bridge/bridgeEnabled.js')
+}
+
 export type NotificationChannel = (typeof NOTIFICATION_CHANNELS)[number]
+
+/** 安装方式：本地脚本运行 / 原生安装 / 全局安装 / 未知 */
+export type InstallMethod = 'local' | 'native' | 'global' | 'unknown'
 
 export type AccountInfo = {
   accountUuid: string
@@ -128,6 +148,17 @@ export type ProjectConfig = {
 
   // 运行时 feature 开关覆盖（ant-only）
   featureOverrides?: Record<string, boolean>
+  /**
+   * 自动继续配置：在特定场景下自动注入「继续」推进循环，而不是停下等用户确认。
+   * 字段缺省时使用 messageLoop 的默认值（enabled/readSearch/continueKeyword 默认 true，endTurn 默认 false）。
+   */
+  autoContinue?: {
+    enabled?: boolean
+    maxCount?: number
+    readSearch?: boolean
+    continueKeyword?: boolean
+    endTurn?: boolean
+  }
 }
 
 export type GlobalConfig = {

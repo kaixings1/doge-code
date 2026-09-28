@@ -65,7 +65,7 @@ import {
 } from './hooks.js'
 import type { MemoryType } from './memory/types.js'
 import { normalizePathForComparison } from './file.js'
-import { cacheKeys } from './fileStateCache.js'
+import { cacheKeys, type FileStateCache } from './fileStateCache.js'
 import { getErrnoCode } from './errors.js'
 import { getClaudeConfigHomeDir, isEnvTruthy } from './envUtils.js'
 import { expandPath } from './path.js'

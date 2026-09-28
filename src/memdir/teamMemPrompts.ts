@@ -9,6 +9,7 @@ import {
   MEMORY_FRONTMATTER_EXAMPLE,
   TRUSTING_RECALL_SECTION,
   TYPES_SECTION_COMBINED,
+  TYPES_SECTION_CONCISE,
   WHAT_NOT_TO_SAVE_SECTION,
 } from './memoryTypes.js'
 import { getAutoMemPath } from './paths.js'

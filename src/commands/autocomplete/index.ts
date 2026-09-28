@@ -4,7 +4,7 @@
 // ============================================================================
 
 import type { Command } from '../../commands.js'
-import type { LocalCommandCall } from '../../types/command.js'
+import type { LocalCommandCall, LocalCommandResult } from '../../types/command.js'
 import { readdirSync, existsSync, readFileSync, writeFileSync, mkdirSync, statSync } from 'fs'
 import { join, resolve, basename, extname } from 'path'
 

@@ -1,4 +1,6 @@
 import { open, readFile, stat } from 'fs/promises'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
+import { dirname } from 'path'
 import {
   applyEdits,
   modify,

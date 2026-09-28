@@ -26,6 +26,9 @@
   "exclude": [
     "src/**/*.mjs",
     "src/desktop-electron/renderer/components/MonacoEditorPanel.tsx",
-    ".tools/**/*"
+    ".tools/**/*",
+    "src/generated/command-modules.ts",
+    "src/generated/command-registry.ts",
+    "src/generated/macro.ts"
   ]
 }

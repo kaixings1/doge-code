@@ -19,8 +19,8 @@ export interface StockQuote {
   pe: number
   pb: number
   marketCap: number
-  totalShares: float
-  floatShares: float
+  totalShares: number
+  floatShares: number
   high52w: number
   low52w: number
   amplitude: number

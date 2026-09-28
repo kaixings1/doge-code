@@ -2,6 +2,16 @@ import { z } from 'zod/v4'
 import { buildTool, type ToolDef } from '../../Tool.js'
 import { lazySchema } from '../../utils/lazySchema.js'
 
+// better-sqlite3 为可选依赖（运行时 require），类型未随包提供，此处本地声明所需子集
+interface Database {
+  prepare(sql: string): {
+    all(...params: unknown[]): Record<string, unknown>[]
+    run(...params: unknown[]): { changes: number }
+  }
+  exec(sql: string): void
+  close(): void
+}
+
 const inputSchema = lazySchema(() =>
   z.object({
     operation: z.enum(['query', 'insert', 'update', 'delete', 'migrate']).describe('数据库操作'),

@@ -7,6 +7,12 @@
 
 import type { AppState } from '../../state/AppState.js'
 import { logForDebugging } from '../../utils/debug.js'
+import { logError } from '../../utils/log.js'
+import {
+  clearMarketplacesCache,
+  getDeclaredMarketplaces,
+  loadKnownMarketplacesConfig,
+} from '../../utils/plugins/marketplaceManager.js'
 import { clearPluginCache } from '../../utils/plugins/pluginLoader.js'
 import {
   diffMarketplaces,

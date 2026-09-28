@@ -37,8 +37,9 @@
 import type { Command } from '../../commands.js'
 import type { LocalCommandCall, LocalCommandResult } from '../../types/command.js'
 import { execSync } from 'child_process'
-import { existsSync, readFileSync, mkdirSync, writeFileSync } from 'fs'
-import { join } from 'path'
+import { existsSync, readFileSync, mkdirSync, writeFileSync, readdirSync } from 'fs'
+import { join, extname } from 'path'
+import { formatError } from '../../utils/toolErrors.js'
 
 // ==================== 类型定义 ====================
 

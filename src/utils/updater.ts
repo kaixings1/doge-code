@@ -1,3 +1,13 @@
+import { arch, platform } from 'os'
+
+/** 获取当前平台的架构与系统信息（用于拼接发布资产的下载文件名） */
+function getPlatformInfo(): { platform: string; arch: 'arm64' | 'x64' } {
+  return {
+    platform: platform(),
+    arch: arch() === 'arm64' ? 'arm64' : 'x64',
+  }
+}
+
 interface UpdateInfo {
   version: string;
   downloadUrl: string;

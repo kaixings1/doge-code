@@ -1,7 +1,7 @@
 import type { Command } from '../../commands.js'
 import type { LocalCommandCall } from '../../types/command.js'
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'fs'
-import { join, extname, basename, resolve, normalize } from 'path'
+import { dirname, join, extname, basename, resolve, normalize } from 'path'
 import { homedir } from 'os'
 import { execSync } from 'child_process'
 

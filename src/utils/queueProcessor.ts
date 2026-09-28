@@ -4,6 +4,7 @@ import {
   dequeueAllMatching,
   hasCommandsInQueue,
   peek,
+  recheckCommandQueue,
 } from './messageQueueManager.js'
 
 type ProcessQueueParams = {

@@ -5,7 +5,7 @@
  * 工具调度 + Token 预算 + 自动压缩 + 错误处理/恢复 + 流式 + 子代理。
  */
 import { QueryStateMachine } from "./stateMachine.ts";
-import { MessageLoop, type MessageLoopDeps, type QueryResult, type AutoContinueConfig } from "./messageLoop.ts";
+import { MessageLoop, engineLog, type MessageLoopDeps, type QueryResult, type AutoContinueConfig } from "./messageLoop.ts";
 import { MessageNormalizer, type InternalMessage } from "./messageNormalizer.ts";
 import { RequestBuilder, type ToolDefinition } from "./requestBuilder.ts";
 import { ResponseHandler } from "./responseHandler.ts";

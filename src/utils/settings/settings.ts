@@ -30,7 +30,11 @@ import {
   setSessionSettingsCache,
 } from './settingsCache.js'
 import { type SettingsJson, SettingsSchema } from './types.js'
-import { getEnabledSettingSources } from './constants.js'
+import {
+  getEnabledSettingSources,
+  type EditableSettingSource,
+  type SettingSource,
+} from './constants.js'
 import {
   filterInvalidPermissionRules,
   formatZodError,

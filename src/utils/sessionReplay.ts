@@ -10,10 +10,14 @@
  * 吸收自 OpenClaude 的 /replay 命令 + DeepSeek-Reasonix 的会话重放机制。
  */
 
-import { readFileSync, existsSync } from 'fs'
+import { existsSync, readFileSync, readdirSync } from 'fs'
 import { dirname, join } from 'path'
-import type { UUID } from '../types/ids.js'
-import type { Message, UserMessage, AssistantMessage } from '../types/message.js'
+import type {
+  AssistantMessage,
+  Message,
+  UserMessage,
+  UUID,
+} from '../types/message.js'
 
 const SESSIONS_DIR = (() => {
   try {
@@ -190,6 +194,10 @@ function findSessionFile(sessionId: string): string | null {
 function isTranscriptEntry(parsed: unknown): boolean {
   if (!parsed || typeof parsed !== 'object') return false
   const obj = parsed as Record<string, unknown>
-  const type = obj.type ?? obj.message?.type
+  const message =
+    typeof obj.message === 'object' && obj.message !== null
+      ? (obj.message as Record<string, unknown>)
+      : null
+  const type = obj.type ?? message?.type
   return ['user', 'assistant', 'system', 'attachment'].includes(type as string)
 }

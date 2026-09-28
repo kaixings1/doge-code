@@ -5,6 +5,7 @@ export type MessageOrigin = {
 }
 
 import type { ContentBlock, ContentBlockParam } from '@anthropic-ai/sdk'
+import type { Attachment } from '../utils/attachments.js'
 
 /**
  * UUID 字符串（8-4-4-4-12 形式）。

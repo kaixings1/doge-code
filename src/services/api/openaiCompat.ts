@@ -5,6 +5,7 @@ import { logForDebugging } from "../../utils/debug.js"
 import type {
   BetaMessage,
   BetaMessageParam,
+  BetaRawMessageDeltaEvent,
   BetaRawMessageStreamEvent,
   BetaToolChoiceAuto,
   BetaToolChoiceTool,
@@ -925,7 +926,7 @@ async function* createAnthropicStreamFromOpenAIInner(
 							}
               yield {
                 type: 'message_delta',
-                delta: event.delta as unknown as MessageDelta,
+                delta: event.delta as unknown as BetaRawMessageDeltaEvent['delta'],
                 usage: { output_tokens: completionTokens },
               } as BetaRawMessageStreamEvent
               break

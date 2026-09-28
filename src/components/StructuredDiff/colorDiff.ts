@@ -3,12 +3,12 @@ import {
   ColorFile,
   getNativeModule,
   getSyntaxTheme as nativeGetSyntaxTheme,
+  type SyntaxTheme,
 } from '../../native-ts/color-diff/index.js'
 export type {
   ColorDiffClass,
   ColorFileClass,
   Hunk,
-  SyntaxTheme,
 } from '../../native-ts/color-diff/index.js'
 import { isEnvDefinedFalsy } from '../../utils/envUtils.js'
 

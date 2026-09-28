@@ -35,8 +35,8 @@ export class RemoteIO extends StructuredIO {
   private url: URL
   private transport: Transport
   private inputStream: PassThrough
-  private readonly isBridge: boolean = false
-  private readonly isDebug: boolean = false
+  private isBridge: boolean
+  private isDebugFlag: boolean
   private ccrClient: CCRClient | null = null
   private keepAliveTimer: ReturnType<typeof setInterval> | null = null
 
@@ -93,10 +93,11 @@ export class RemoteIO extends StructuredIO {
 
     // 设置数据回调
     this.isBridge = process.env.CLAUDE_CODE_ENVIRONMENT_KIND === 'bridge'
-    this.isDebug = isDebugMode()
+    this.isDebugFlag = false
+    ;
     (this.transport as any).setOnData?.((data: string) => {
       this.inputStream.write(data)
-      if (this.isBridge && this.isDebug) {
+      if (this.isBridge && this.isDebugFlag) {
         writeToStdout(data.endsWith('\n') ? data : data + '\n')
       }
     })
@@ -231,7 +232,7 @@ export class RemoteIO extends StructuredIO {
       await (this.transport as any).write(message)
     }
     if (this.isBridge) {
-      if (message.type === 'control_request' || this.isDebug) {
+      if (message.type === 'control_request' || this.isDebugFlag) {
         writeToStdout(ndjsonSafeStringify(message) + '\n')
       }
     }

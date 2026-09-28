@@ -3,7 +3,7 @@
  *
  * 驱动：预算检查 → 构建请求 → 发送 API → 处理响应 → 执行工具 → 决定继续。
  */
-function engineLog(prefix: string, ...args: unknown[]): void {
+export function engineLog(prefix: string, ...args: unknown[]): void {
   const t = new Date().toLocaleTimeString('zh-CN', { hour12: false })
   console.log(`[${t}] [ENGINE:${prefix}]`, ...args)
 }
@@ -355,7 +355,8 @@ export class MessageLoop {
 
   /** 自动继续关键词正则：AI 正文出现这些词说明它在等用户确认 */
   private static readonly CONTINUE_KEYWORDS =
-    /要不要我继续|需要我继续|并继续下一轮|让我继续|是否继续|是否需要|是否同意|需要我|继续吗|确认一下|要不要|需不需要|可不可以|行不行|能不能|是否可以|是否要|是否需|可以吗|开始吗|同意吗|确认吗|有问题吗|没问题吧|没问题|请问|是不是|对不对|可否|是否可行|是否|继续|需要|确认|同意|好吗|行吗/
+    /是否需要|是否同意|需要我|继续吗|确认一下|要不要|需不需要|可不可以|行不行|能不能|是否可以|是否要|是否需|可以吗|开始吗|同意吗|确认吗|有问题吗|没问题吧|没问题|请问|是不是|对不对|可否|是否可行|是否|继续|需要|确认|同意|好吗|行吗/
+
 
   /** 将助手回复写入 conversation，并决定是否继续（吸收自 CoreCoder agent.py） */
   private async _recordAssistantResponse(processed: ProcessedResponse): Promise<boolean> {
@@ -367,7 +368,7 @@ export class MessageLoop {
 
     const ac = this.deps.autoContinue
     const acEnabled = ac?.enabled ?? true
-    const acLeft = ac?.maxCount ?? 10
+    const acLeft = ac?.maxCount ?? 50
     // ── 分支 1：正文含"是否继续"类关键词 → 注入"继续"并继续循环 ──
     // 该判断必须在工具调用分支之前：模型完全可能在正文里问"是否继续"的同时
     // 吐出一个工具调用，此时按工具调用优先会导致关键词逻辑被整体跳过。
@@ -377,7 +378,7 @@ export class MessageLoop {
       if (acKeyword && textContent && MessageLoop.CONTINUE_KEYWORDS.test(textContent)) {
         // 正文原样入库，避免"是否继续"这句从历史里消失
         this._pushAssistantText(textContent, processed.toolCalls)
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        await new Promise(resolve => setTimeout(resolve, 300));
         this.deps.conversation.messages.push({
           role: 'user',
           content: '继续',
@@ -391,7 +392,7 @@ export class MessageLoop {
       // ponytail: 不做收尾词黑名单——"分析完毕"这类句子恰是本分支要拯救的
       // "提前终止"场景。防空转交由 autoContinueCount（maxCount，默认 10）兜底。
       const acReadSearch = ac?.readSearch ?? true
-      if (acReadSearch && hadReadOrSearch && !hasToolCalls && textContent.trim().length < 200) {
+      if (acReadSearch && hadReadOrSearch && !hasToolCalls && textContent.trim().length < 100) {
         engineLog('AUTO_CONTINUE', '检测到 read/search 后短回复终止，自动继续');
         this._pushAssistantText(textContent, processed.toolCalls)
         this.lastToolCalls = [];
@@ -783,6 +784,12 @@ export class MessageLoop {
         await this.deps.stateMachine.transition("should_continue");
         return true;
       }
+    }
+    // autoContinue 分支（keyword / readSearch / endTurn）已通过
+    // _recordAssistantResponse 内部注入了"继续"消息并返回 true，
+    // 此处需透传 true 让外层循环继续下一轮迭代。
+    if (shouldContinue) {
+      await this.deps.stateMachine.transition("should_continue");
     }
     return shouldContinue;
     

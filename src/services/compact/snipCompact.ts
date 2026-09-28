@@ -1,6 +1,10 @@
+import type { Message } from '../../types/message.js'
+
 export function snipCompactIfNeeded<T>(messages: T, _options?: unknown): {
   messages: T
   changed: boolean
+  tokensFreed?: number
+  boundaryMessage?: unknown
 } {
   return { messages, changed: false }
 }

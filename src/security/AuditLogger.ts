@@ -29,6 +29,7 @@ export class AuditLogger {
   private maxBufferSize: number = 100;
   private flushInterval: number = 10000;
   private flushTimer: Timer | null = null;
+  private pendingFlush: Promise<void> = Promise.resolve();
 
   constructor(logFile: string) {
     this.logFile = logFile;
@@ -128,25 +129,28 @@ export class AuditLogger {
   }
 
   /**
-   * 刷新日志到文件
+   * 串行刷新日志到文件；即使缓冲区为空，也等待之前的写入完成。
    */
-  async flush(): Promise<void> {
-    if (this.entries.length === 0) return;
+  flush(): Promise<void> {
+    this.pendingFlush = this.pendingFlush.then(async () => {
+      if (this.entries.length === 0) return;
 
-    const entriesToFlush = [...this.entries];
-    this.entries = [];
+      const entriesToFlush = [...this.entries];
+      this.entries = [];
 
-    try {
-      const lines = entriesToFlush
-        .map((entry) => JSON.stringify(entry))
-        .join('\n');
+      try {
+        const lines = entriesToFlush
+          .map((entry) => JSON.stringify(entry))
+          .join('\n');
 
-      await fs.appendFile(this.logFile, lines + '\n', 'utf-8');
-    } catch (error) {
-      console.error('Failed to flush audit log:', error);
-      // 恢复未写入的日志
-      this.entries.unshift(...entriesToFlush);
-    }
+        await fs.appendFile(this.logFile, lines + '\n', 'utf-8');
+      } catch (error) {
+        console.error('Failed to flush audit log:', error);
+        // 恢复未写入的日志
+        this.entries.unshift(...entriesToFlush);
+      }
+    });
+    return this.pendingFlush;
   }
 
   /**
@@ -220,13 +224,13 @@ export class AuditLogger {
   }
 
   /**
-   * 停止定时刷新
+   * 停止定时刷新；调用方可 await stop() 等待剩余日志写入。
    */
-  stop(): void {
+  stop(): Promise<void> {
     if (this.flushTimer) {
       clearInterval(this.flushTimer);
       this.flushTimer = null;
     }
-    this.flush();
+    return this.flush();
   }
 }

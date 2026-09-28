@@ -1,5 +1,5 @@
 // biome-ignore-all assist/source/organizeImports: ANT-ONLY 导入标记不得重新排序
-import { safeRequire, loadConditionalCommand } from './commands/loader.js'
+import { safeRequire, loadConditionalCommand, resolveCommandExport } from './commands/loader.js'
 
 import addDir from './commands/add-dir/index.ts'
 import addModel from './commands/add-model/index.ts'
@@ -23,8 +23,7 @@ import diagnose from './commands/diagnose.ts'
 import eco from './commands/eco/index.ts'
 import commitPushPr from './commands/commit-push-pr.ts'
 import ship from './commands/ship/index.ts'
-import shipCiReviewLoop from './commands/ship/ship-ci-review-loop.ts'
-import asktime from './commands/asktime/asktime.ts'
+import asktime from './commands/asktime/asktime.tsx'
 import auto from './commands/auto/index.ts'
 import evolve from './commands/evolve/index.ts'
 import compact from './commands/compact/index.ts'
@@ -33,6 +32,18 @@ import { context, contextNonInteractive } from './commands/context/index.ts'
 import cost from './commands/cost/index.ts'
 import diff from './commands/diff/index.ts'
 import codeSearch from './commands/code-search/index.tsx'
+// ── 功能补齐（2026-09-26）：以下命令原本已完整实现，但从未在 commands.ts 接线，
+// 用户完全无法调用。此处仅补注册，不改动命令内部实现 ──
+import brainSync from './commands/brain-sync/index.ts'
+import dataQuery from './commands/data-query/index.ts'
+import depsCmd from './commands/deps/index.ts'
+import docSearch from './commands/doc-search/index.ts'
+import focusedFix from './commands/focused-fix/index.ts'
+import pipelineCmd from './commands/pipeline/index.ts'
+import seoAudit from './commands/seo-audit/index.ts'
+import specWorkflow from './commands/spec-workflow/index.ts'
+import taskClaim from './commands/task-claim/index.ts'
+import plancppwin from './commands/plancppwin/plancppwin.tsx'
 import sweFix from './commands/swe-fix/index.ts'
 import diffMode from './commands/diff-mode/index.ts'
 import diffReview from './commands/diff-review/index.ts'
@@ -233,7 +244,7 @@ const bridge = loadConditionalCommand(
 const remoteControlServerCommand = loadConditionalCommand(
   () => (process.env['CLAUDE_CODE_FEATURE_DAEMON'] === '1') &&
           (process.env['CLAUDE_CODE_FEATURE_BRIDGE_MODE'] === '1'),
-  () => safeRequire('./commands/remoteControlServer/index.js')?.default
+  () => resolveCommandExport(safeRequire('./commands/remoteControlServer/index.js')?.default)
 )
 const voiceCommand = loadConditionalCommand(
   () => process.env['CLAUDE_CODE_FEATURE_VOICE_MODE'] === '1',
@@ -241,7 +252,7 @@ const voiceCommand = loadConditionalCommand(
 )
 const forceSnip = loadConditionalCommand(
   () => process.env['CLAUDE_CODE_FEATURE_HISTORY_SNIP'] === '1',
-  () => safeRequire('./commands/force-snip.js')?.default
+  () => resolveCommandExport(safeRequire('./commands/force-snip.js')?.default)
 )
 const workflowsCmd = loadConditionalCommand(
   () => process.env['CLAUDE_CODE_FEATURE_WORKFLOW_SCRIPTS'] === '1',
@@ -257,7 +268,7 @@ const clearSkillIndexCache = loadConditionalCommand(
 )
 const subscribePr = loadConditionalCommand(
   () => process.env['CLAUDE_CODE_FEATURE_KAIROS_GITHUB_WEBHOOKS'] === '1',
-  () => safeRequire('./commands/subscribe-pr.js')?.default
+  () => resolveCommandExport(safeRequire('./commands/subscribe-pr.js')?.default)
 )
 const ultraplan = loadConditionalCommand(
   () => process.env['CLAUDE_CODE_FEATURE_ULTRAPLAN'] === '1',
@@ -444,7 +455,7 @@ export const INTERNAL_ONLY_COMMANDS = [
 
 // 声明为函数，以便在调用 getCommands 时才运行，
 // 因为底层函数会读取配置，而配置在模块初始化时无法读取。
-const COMMANDS = memoize((): Command[] => [
+export const COMMANDS = memoize((): Command[] => [
   addDir,
   addModel,
   removeModel,
@@ -549,7 +560,6 @@ const COMMANDS = memoize((): Command[] => [
   rewind,
   rstk,
   batchHan,
-  autocomplete,
   updateApiKey,
   securityReview,
   terminalSetup,
@@ -698,8 +708,18 @@ const COMMANDS = memoize((): Command[] => [
   securityAudit,
   agentNew,
   updateskills,
+  // ── 功能补齐（2026-09-26）：补注册原本已实现但不可达的命令 ──
+  brainSync,
+  dataQuery,
+  depsCmd,
+  docSearch,
+  focusedFix,
+  pipelineCmd,
+  seoAudit,
+  specWorkflow,
+  taskClaim,
+  plancppwin,
   cloneAll,
-  diagramCmd,
   apiDebug,
   pluginMarket,
   pair,
@@ -1073,7 +1093,7 @@ export function isBridgeSafeCommand(cmd: Command): boolean {
  * 用于在 --remote 模式下渲染 REPL 时预过滤命令，防止本地专属命令在 CCR 初始化消息到达前短暂可用。
  */
 export function filterCommandsForRemoteMode(commands: Command[]): Command[] {
-  return commands.filter(cmd => REMOTE_SAFE_COMMANDS.has(cmd))
+  return commands.filter(cmd => BRIDGE_SAFE_COMMANDS.has(cmd))
 }
 
 export function findCommand(

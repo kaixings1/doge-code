@@ -412,7 +412,10 @@ async function execWithProvider(
   //   • pass /bin/sh as the sandbox's inner shell to exec that invocation
   //   • outer spawn is also /bin/sh -c to parse the runtime's POSIX output
   // /bin/sh exists on every platform where sandbox is supported.
-  const isSandboxedPowerShell = shouldUseSandbox && shellType === 'powershell'
+  const isSandboxedPowerShell =
+    shouldUseSandbox &&
+    (provider.shellPath.includes('powershell') ||
+      provider.shellPath.includes('pwsh'))
   const sandboxBinShell = isSandboxedPowerShell ? '/bin/sh' : binShell
 
   if (shouldUseSandbox) {

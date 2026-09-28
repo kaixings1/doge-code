@@ -5,7 +5,12 @@
  * 提供与远程 Agent Protocol 服务器交互的客户端方法。
  */
 
-import type { AgentThread, AgentRun, CreateRunBody } from './types.js'
+import type {
+  AgentThread,
+  AgentRun,
+  CreateRunBody,
+  HealthResponse,
+} from './types.js'
 
 const DEFAULT_BASE = process.env.AGENT_PROTOCOL_URL ?? 'http://localhost:2024'
 

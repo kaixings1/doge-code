@@ -94,6 +94,7 @@ export const WebSocketTool = buildTool({
         return new Promise<{ data: Output }>((resolve) => {
           try {
             // 动态导入 WebSocket 以兼容不同环境
+            let timeoutHandle: ReturnType<typeof setTimeout> | null = null
             import('ws').then((wsModule) => {
               const WebSocketClient = wsModule.default || wsModule
               const ws = new WebSocketClient(url, { headers: headers as Record<string, string> })
@@ -107,7 +108,7 @@ export const WebSocketTool = buildTool({
                 connectedAt: 0,
               }
 
-              const timeoutHandle = setTimeout(() => {
+              timeoutHandle = setTimeout(() => {
                 try { ws.close() } catch { /* ignore */ }
                 connectionStore.delete(connId)
                 resolve({

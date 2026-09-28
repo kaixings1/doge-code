@@ -4,6 +4,7 @@ import { Box, Text, useInput, useStdin } from '../../ink.js'
 import React from 'react'
 import {
   DockerSandboxManager,
+  getDockerSandboxManager,
   type DockerSandboxConfig,
 } from '../../utils/sandbox/docker-sandbox.js'
 import { getCwdState } from '../../bootstrap/state.js'
