@@ -34,8 +34,8 @@ const inputSchema = lazySchema(() =>
       'stats=执行统计, alternatives=替代工具, search=搜索工具, categories=分类列表, tags=标签列表'
     ),
     tool_name: z.string().optional().describe('目标工具名称（execute/get_params/stats/alternatives 时需要）'),
-    tool_input: z.record(z.unknown()).optional().describe('工具输入参数（execute 时需要）'),
-    tool_def: z.record(z.unknown()).optional().describe('工具定义（add 时需要）'),
+    tool_input: z.record(z.string(), z.unknown()).optional().describe('工具输入参数（execute 时需要）'),
+    tool_def: z.record(z.string(), z.unknown()).optional().describe('工具定义（add 时需要）'),
     category: z.string().optional().describe('工具分类（list 时筛选）'),
     tag: z.string().optional().describe('工具标签（list 时筛选）'),
     query: z.string().optional().describe('搜索关键词（search 时需要）'),
@@ -61,7 +61,7 @@ const outputSchema = lazySchema(() =>
       required: z.boolean(),
       description: z.string().optional(),
     })).optional().describe('工具参数列表（get_params 时返回）'),
-    stats: z.record(z.unknown()).optional().describe('执行统计（stats 时返回）'),
+    stats: z.record(z.string(), z.unknown()).optional().describe('执行统计（stats 时返回）'),
     alternatives: z.array(z.object({
       name: z.string(),
       description: z.string().optional(),

@@ -20,7 +20,7 @@ const outputSchema = lazySchema(() =>
     themes: z.array(z.string()).optional().describe('可用主题列表'),
     currentTheme: z.string().optional().describe('当前主题名称'),
     message: z.string().describe('结果消息'),
-    theme: z.record(z.string()).optional().describe('主题详情'),
+    theme: z.record(z.string(), z.string()).optional().describe('主题详情'),
   }),
 )
 

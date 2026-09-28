@@ -14,7 +14,7 @@ const inputSchema = lazySchema(() =>
 const outputSchema = lazySchema(() =>
   z.object({
     status: z.string().describe('系统状态'),
-    metrics: z.record(z.number()).optional().describe('指标'),
+    metrics: z.record(z.string(), z.number()).optional().describe('指标'),
     message: z.string().optional().describe('状态消息'),
   }),
 )

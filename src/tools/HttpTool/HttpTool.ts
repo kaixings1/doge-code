@@ -6,7 +6,7 @@ const inputSchema = lazySchema(() =>
   z.object({
     method: z.enum(['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS']).describe('HTTP 方法'),
     url: z.string().url().describe('请求 URL'),
-    headers: z.record(z.string()).optional().describe('请求标头'),
+    headers: z.record(z.string(), z.string()).optional().describe('请求标头'),
     body: z.string().optional().describe('请求体（JSON 字符串或表单数据）'),
     timeout: z.number().optional().describe('超时时间（毫秒），默认 30000'),
   }),
@@ -16,7 +16,7 @@ const outputSchema = lazySchema(() =>
   z.object({
     status: z.number().describe('响应状态码'),
     statusText: z.string().describe('状态文本'),
-    headers: z.record(z.string()).describe('响应标头'),
+    headers: z.record(z.string(), z.string()).describe('响应标头'),
     body: z.string().describe('响应体'),
     durationMs: z.number().optional().describe('请求耗时（毫秒）'),
     sizeBytes: z.number().optional().describe('响应体大小（字节）'),

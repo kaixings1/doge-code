@@ -17,7 +17,7 @@ const inputSchema = lazySchema(() =>
     knowledge_source: z.string().optional().describe('知识库来源（url/file/path）'),
     toolkit_name: z.string().optional().describe('工具包名称'),
     message: z.string().optional().describe('用户消息（run时需要）'),
-    state: z.record(z.unknown()).optional().describe('会话状态'),
+    state: z.record(z.string(), z.unknown()).optional().describe('会话状态'),
   }),
 )
 
@@ -28,7 +28,7 @@ const outputSchema = lazySchema(() =>
     agent_id: z.string().optional().describe('Agent ID'),
     response: z.string().optional().describe('Agent响应'),
     session_id: z.string().optional().describe('会话ID'),
-    state: z.record(z.unknown()).optional().describe('当前状态'),
+    state: z.record(z.string(), z.unknown()).optional().describe('当前状态'),
     memory: z.array(z.unknown()).optional().describe('记忆内容'),
     knowledge: z.array(z.string()).optional().describe('知识库内容'),
     tools: z.array(z.string()).optional().describe('可用工具列表'),

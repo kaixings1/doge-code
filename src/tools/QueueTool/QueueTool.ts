@@ -14,7 +14,7 @@ const outputSchema = lazySchema(() =>
   z.object({
     success: z.boolean().describe('操作是否成功'),
     jobs: z.array(z.string()).optional().describe('任务列表'),
-    stats: z.record(z.number()).optional().describe('队列统计'),
+    stats: z.record(z.string(), z.number()).optional().describe('队列统计'),
     message: z.string().optional().describe('结果消息'),
   }),
 )

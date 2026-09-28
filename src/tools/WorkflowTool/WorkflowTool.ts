@@ -7,7 +7,7 @@ import { join, basename, extname } from 'path'
 const inputSchema = lazySchema(() =>
   z.object({
     script: z.string().describe('工作流脚本名称或内容'),
-    args: z.record(z.string()).optional().describe('脚本参数'),
+    args: z.record(z.string(), z.string()).optional().describe('脚本参数'),
     mode: z.enum(['run', 'list', 'create', 'delete', 'show']).optional().describe('工作流操作模式'),
   }),
 )

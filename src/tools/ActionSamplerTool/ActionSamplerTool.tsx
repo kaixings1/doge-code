@@ -8,7 +8,7 @@ const inputSchema = lazySchema(() =>
       id: z.string().describe('动作唯一标识'),
       name: z.string().describe('动作名称（如工具名）'),
       confidence: z.number().min(0).max(1).optional().describe('置信度分数（0-1），用于排序'),
-      metadata: z.record(z.unknown()).optional().describe('附加元数据'),
+      metadata: z.record(z.string(), z.unknown()).optional().describe('附加元数据'),
     })).min(1).describe('候选动作列表'),
     strategy: z.enum(['greedy', 'epsilon_greedy', 'top_k', 'weighted']).optional().describe('采样策略'),
     epsilon: z.number().min(0).max(1).optional().describe('epsilon-greedy 探索率（0-1）'),

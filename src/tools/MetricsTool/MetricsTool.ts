@@ -6,7 +6,7 @@ const inputSchema = lazySchema(() =>
   z.object({
     metric: z.string().describe('指标名称'),
     value: z.number().optional().describe('指标值'),
-    tags: z.record(z.string()).optional().describe('指标标签'),
+    tags: z.record(z.string(), z.string()).optional().describe('指标标签'),
   }),
 )
 

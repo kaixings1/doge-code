@@ -12,7 +12,7 @@ const inputSchema = lazySchema(() =>
     method: z.string().optional().describe('方法名（start/listen/route时需要）'),
     triggers: z.array(z.string()).optional().describe('触发条件列表（condition时需要）'),
     condition_type: z.enum(['or', 'and']).optional().describe('条件组合类型（condition时需要）'),
-    input_data: z.record(z.unknown()).optional().describe('输入数据（execute时需要）'),
+    input_data: z.record(z.string(), z.unknown()).optional().describe('输入数据（execute时需要）'),
   }),
 )
 
@@ -22,7 +22,7 @@ const outputSchema = lazySchema(() =>
     message: z.string().optional().describe('结果消息'),
     flow_id: z.string().optional().describe('流程ID'),
     node_id: z.string().optional().describe('节点ID'),
-    state: z.record(z.unknown()).optional().describe('流程状态'),
+    state: z.record(z.string(), z.unknown()).optional().describe('流程状态'),
     result: z.unknown().optional().describe('执行结果'),
     next_steps: z.array(z.string()).optional().describe('下一步节点列表'),
   }),

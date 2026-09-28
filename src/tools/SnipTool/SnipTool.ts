@@ -17,7 +17,7 @@ const outputSchema = lazySchema(() =>
     linesRemoved: z.number().describe('移除的消息数'),
     linesKept: z.number().describe('保留的消息数'),
     message: z.string().describe('结果消息'),
-    removedTypes: z.record(z.number()).optional().describe('按类型统计移除的消息数'),
+    removedTypes: z.record(z.string(), z.number()).optional().describe('按类型统计移除的消息数'),
   }),
 )
 

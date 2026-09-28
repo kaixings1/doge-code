@@ -8,7 +8,7 @@ const inputSchema = lazySchema(() =>
     action: z.enum(['connect', 'send', 'close', 'listen', 'status']).describe('WebSocket 操作'),
     message: z.string().optional().describe('要发送的消息（connect 时为初始消息）'),
     timeout: z.number().optional().describe('监听超时时间（毫秒）'),
-    headers: z.record(z.string()).optional().describe('连接头信息'),
+    headers: z.record(z.string(), z.string()).optional().describe('连接头信息'),
   }),
 )
 

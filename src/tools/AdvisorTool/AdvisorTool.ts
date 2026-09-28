@@ -15,7 +15,7 @@ const outputSchema = lazySchema(() =>
     advice: z.string().describe('顾问建议'),
     suggestions: z.array(z.string()).describe('建议列表'),
     confidence: z.number().describe('置信度 (0-1)'),
-    details: z.record(z.unknown()).optional().describe('分析详情'),
+    details: z.record(z.string(), z.unknown()).optional().describe('分析详情'),
   }),
 )
 

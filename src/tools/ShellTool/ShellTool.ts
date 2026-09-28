@@ -7,7 +7,7 @@ const inputSchema = lazySchema(() =>
   z.object({
     command: z.string().describe('要执行的 Shell 命令'),
     cwd: z.string().optional().describe('工作目录'),
-    env: z.record(z.string()).optional().describe('环境变量'),
+    env: z.record(z.string(), z.string()).optional().describe('环境变量'),
     timeout: z.number().optional().describe('超时时间（毫秒），默认 120000'),
   }),
 )

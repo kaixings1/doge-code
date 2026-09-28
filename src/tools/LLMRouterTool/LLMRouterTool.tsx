@@ -18,7 +18,7 @@ const outputSchema = lazySchema(() =>
   z.object({
     success: z.boolean(),
     message: z.string().optional().describe('结果消息'),
-    models: z.record(z.array(z.object({
+    models: z.record(z.string(), z.array(z.object({
       name: z.string(),
       id: z.string(),
     }))).optional().describe('可用模型列表'),

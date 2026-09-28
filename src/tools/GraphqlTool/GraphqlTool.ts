@@ -6,17 +6,17 @@ const inputSchema = lazySchema(() =>
   z.object({
     endpoint: z.string().url().describe('GraphQL 端点 URL'),
     query: z.string().describe('GraphQL 查询语句（query 或 mutation）'),
-    variables: z.record(z.unknown()).optional().describe('查询变量（JSON 对象）'),
+    variables: z.record(z.string(), z.unknown()).optional().describe('查询变量（JSON 对象）'),
     operationName: z.string().optional().describe('操作名称（可选）'),
-    headers: z.record(z.string()).optional().describe('请求标头'),
+    headers: z.record(z.string(), z.string()).optional().describe('请求标头'),
     timeout: z.number().optional().describe('超时时间（毫秒），默认 30000'),
   }),
 )
 
 const outputSchema = lazySchema(() =>
   z.object({
-    data: z.record(z.unknown()).optional().describe('查询结果数据'),
-    errors: z.array(z.record(z.unknown())).optional().describe('❌ 错误: GraphQL 错误列表'),
+    data: z.record(z.string(), z.unknown()).optional().describe('查询结果数据'),
+    errors: z.array(z.record(z.string(), z.unknown())).optional().describe('❌ 错误: GraphQL 错误列表'),
     status: z.number().describe('HTTP 状态码'),
     durationMs: z.number().optional().describe('请求耗时（毫秒）'),
   }),

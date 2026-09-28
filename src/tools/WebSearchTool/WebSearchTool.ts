@@ -1649,6 +1649,14 @@ const randomSceneryProviders: Provider[] = [{ name: '随机风景图片', offlin
 // ---------- 通用网页搜索 ----------
 const generalSearchProviders: Provider[] = [
   {
+    name: '百度搜索',
+    offline: false,
+    fetch: async (q) => {
+      const url = `https://www.baidu.com/s?wd=${encodeURIComponent(q)}`
+      return [{ title: `百度搜索：${q}`, url, snippet: '点击链接在百度中查看搜索结果', source: 'baidu' }]
+    }
+  },
+  {
     name: 'DuckDuckGo Instant Answer',
     offline: false,
     fetch: async (q, signal) => {
@@ -1669,14 +1677,6 @@ const generalSearchProviders: Provider[] = [
     }
   },
   {
-    name: 'Google 搜索',
-    offline: false,
-    fetch: async (q) => {
-      const url = `https://www.google.com/search?q=${encodeURIComponent(q)}`
-      return [{ title: `Google 搜索：${q}`, url, snippet: '点击链接在 Google 中查看搜索结果', source: 'google' }]
-    }
-  },
-  {
     name: 'Bing 搜索',
     offline: false,
     fetch: async (q) => {
@@ -1685,11 +1685,11 @@ const generalSearchProviders: Provider[] = [
     }
   },
   {
-    name: '百度搜索',
+    name: 'Google 搜索',
     offline: false,
     fetch: async (q) => {
-      const url = `https://www.baidu.com/s?wd=${encodeURIComponent(q)}`
-      return [{ title: `百度搜索：${q}`, url, snippet: '点击链接在百度中查看搜索结果', source: 'baidu' }]
+      const url = `https://www.google.com/search?q=${encodeURIComponent(q)}`
+      return [{ title: `Google 搜索：${q}`, url, snippet: '点击链接在 Google 中查看搜索结果', source: 'google' }]
     }
   },
   {

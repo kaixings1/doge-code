@@ -6,7 +6,7 @@ const inputSchema = lazySchema(() =>
   z.object({
     level: z.enum(['debug', 'info', 'warn', 'error']).describe('日志级别'),
     message: z.string().describe('日志消息'),
-    context: z.record(z.unknown()).optional().describe('日志上下文'),
+    context: z.record(z.string(), z.unknown()).optional().describe('日志上下文'),
   }),
 )
 

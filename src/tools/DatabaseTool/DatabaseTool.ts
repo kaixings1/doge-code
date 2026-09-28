@@ -26,7 +26,7 @@ const outputSchema = lazySchema(() =>
   z.object({
     success: z.boolean().describe('操作是否成功'),
     rowsAffected: z.number().optional().describe('受影响的行数'),
-    data: z.array(z.record(z.unknown())).optional().describe('查询结果'),
+    data: z.array(z.record(z.string(), z.unknown())).optional().describe('查询结果'),
     columns: z.array(z.string()).optional().describe('查询结果的列名'),
     lastInsertId: z.number().optional().describe('最后插入的 ID（SQLite）'),
     message: z.string().describe('操作结果消息'),

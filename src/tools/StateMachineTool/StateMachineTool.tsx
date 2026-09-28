@@ -13,8 +13,8 @@ const inputSchema = lazySchema(() =>
     source: z.string().optional().describe('源节点ID（add_edge时需要）'),
     target: z.string().optional().describe('目标节点ID（add_edge时需要）'),
     condition: z.string().optional().describe('路由条件（add_edge时需要）'),
-    state: z.record(z.unknown()).optional().describe('初始状态（invoke时需要）'),
-    config: z.record(z.unknown()).optional().describe('执行配置'),
+    state: z.record(z.string(), z.unknown()).optional().describe('初始状态（invoke时需要）'),
+    config: z.record(z.string(), z.unknown()).optional().describe('执行配置'),
   }),
 )
 
@@ -30,7 +30,7 @@ const outputSchema = lazySchema(() =>
       target: z.string(),
       condition: z.string().optional(),
     })).optional().describe('边列表'),
-    state: z.record(z.unknown()).optional().describe('当前状态'),
+    state: z.record(z.string(), z.unknown()).optional().describe('当前状态'),
     result: z.unknown().optional().describe('执行结果'),
     interrupted: z.boolean().optional().describe('是否被中断'),
   }),
