@@ -34,6 +34,11 @@ export class TerminalCaptureTool implements Tool {
     return this.name
   }
 
+  call = async (input: unknown, _context: unknown, _canUseTool: unknown, _assistantMessage: unknown, _onProgress?: (p: unknown) => void) => {
+    const result = await this.execute(input)
+    return { data: result }
+  }
+
   execute = async (params: Record<string, any>) => {
     const command = params?.command || ''
     if (!command) return { content: [{ type: 'text', text: 'Error: No command specified' }] }

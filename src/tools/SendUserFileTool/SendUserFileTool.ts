@@ -40,6 +40,11 @@ export class SendUserFileTool implements Tool {
     return this.name
   }
 
+  call = async (input: unknown, _context: unknown, _canUseTool: unknown, _assistantMessage: unknown, _onProgress?: (p: unknown) => void) => {
+    const result = await this.execute(input)
+    return { data: result }
+  }
+
   execute = async (params: Record<string, any>) => {
     const filePath = params?.filePath || ''
     const encoding = params?.encoding || 'text'

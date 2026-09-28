@@ -48,6 +48,11 @@ export class PushNotificationTool implements Tool {
     return this.name
   }
 
+  call = async (input: unknown, _context: unknown, _canUseTool: unknown, _assistantMessage: unknown, _onProgress?: (p: unknown) => void) => {
+    const result = await this.execute(input)
+    return { data: result }
+  }
+
   private queue: NotificationItem[] = []
   private sending = false
   private lastSent: string | null = null

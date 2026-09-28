@@ -126,6 +126,11 @@ export class WebBrowserTool implements Tool {
     return this.name
   }
 
+  call = async (input: unknown, _context: unknown, _canUseTool: unknown, _assistantMessage: unknown, _onProgress?: (p: unknown) => void) => {
+    const result = await this.execute(input)
+    return { data: result }
+  }
+
   execute = async (params: unknown) => {
     const p = params as BrowserAction
 
