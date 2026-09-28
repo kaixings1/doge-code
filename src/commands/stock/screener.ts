@@ -83,7 +83,7 @@ export async function screenStocks(criteria: ScreenCriteria): Promise<string> {
 /**
  * 检查是否匹配筛选条件
  */
-function matchesCriteria(stock: ScreenCriteria & { code: string; name: string; industry: string }, criteria: ScreenCriteria): boolean {
+function matchesCriteria(stock: ScreenResult, criteria: ScreenCriteria): boolean {
   if (criteria.pe) {
     if (criteria.pe.min !== undefined && stock.pe < criteria.pe.min) return false
     if (criteria.pe.max !== undefined && stock.pe > criteria.pe.max) return false
