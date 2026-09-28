@@ -13,6 +13,16 @@ import type { LogOption } from './logs.js'
 import type { Message } from './message.js'
 import type { PluginManifest } from './plugin.js'
 
+/** 命令参数定义（与 api/CommandRegistry.ts 的 ICommand 消费方约定一致） */
+export type CommandArgument = {
+  name: string
+  description?: string
+  required?: boolean
+  type?: 'string' | 'number' | 'boolean' | 'enum'
+  enum?: string[]
+  default?: unknown
+}
+
 export type LocalCommandResult =
   | { type: 'text'; value: string }       // 文本结果类型
   | {
@@ -213,6 +223,8 @@ export type CommandAvailability =
 
 export type CommandBase = {
   availability?: CommandAvailability[]
+  /** 声明式命令参数定义（仅供命令执行器/补全提示消费，非 Command 类型调用约束） */
+  arguments?: CommandArgument[]
   description: string
   hasUserSpecifiedDescription?: boolean
   /** 默认为 true。仅在命令有条件启用（功能标志、环境变量检查等）时设置 */
@@ -235,6 +247,8 @@ export type CommandBase = {
     | 'bundled'
     | 'mcp' // Where the command was loaded from
   kind?: 'workflow' // Distinguishes workflow-backed commands (badged in autocomplete)
+  /** 声明的兼容技能集（validateStackCompatibility 消费） */
+  stackCompatible?: string[]
   immediate?: boolean // 若为 true，命令立即执行，无需等待停止点（跳过队列）
   isSensitive?: boolean // 若为 true，参数将在会话记录中被脱敏
   /** 默认值为 `name`。仅在显示名称不同时覆盖（如插件前缀剥离） */
