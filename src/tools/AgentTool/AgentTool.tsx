@@ -12,7 +12,7 @@ import { getFeatureValue_CACHED_MAY_BE_STALE } from '../../services/analytics/gr
 import { type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS, logEvent } from '../../services/analytics/index.js';
 import { clearDumpState } from '../../services/api/dumpPrompts.js';
 import { completeAgentTask as completeAsyncAgent, createActivityDescriptionResolver, createProgressTracker, enqueueAgentNotification, failAgentTask as failAsyncAgent, getProgressUpdate, getTokenCountFromTracker, isLocalAgentTask, killAsyncAgent, registerAgentForeground, registerAsyncAgent, unregisterAgentForeground, updateAgentProgress as updateAsyncAgentProgress, updateProgressFromMessage } from '../../tasks/LocalAgentTask/LocalAgentTask.js';
-import { checkRemoteAgentEligibility, formatPreconditionError, getRemoteTaskSessionUrl, registerRemoteAgentTask } from '../../tasks/RemoteAgentTask/RemoteAgentTask.js';
+import { checkRemoteAgentEligibility, formatPreconditionError, getRemoteTaskSessionUrl, registerRemoteAgentTask, type RemoteAgentPreconditionResult } from '../../tasks/RemoteAgentTask/RemoteAgentTask.js';
 import { assembleToolPool } from '../../tools.js';
 import { asAgentId } from '../../types/ids.js';
 import { runWithAgentContext } from '../../utils/agentContext.js';
@@ -307,7 +307,7 @@ export const AgentTool = buildTool({
         plan_mode_required: spawnMode === 'plan',
         model: model ?? agentDef?.model,
         agent_type: subagent_type,
-        invokingRequestId: assistantMessage?.requestId
+        invokingRequestId: (assistantMessage?.requestId as string) ?? '',
       }, toolUseContext);
 
       // Type assertion uses TeammateSpawnedOutput (defined above) instead of any.
@@ -446,7 +446,11 @@ export const AgentTool = buildTool({
     if ("external" === 'ant' && effectiveIsolation === 'remote') {
       const eligibility = await checkRemoteAgentEligibility();
       if (!eligibility.eligible) {
-        const reasons = eligibility.errors.map(formatPreconditionError).join('\n');
+        const failedElig = eligibility as Extract<
+          RemoteAgentPreconditionResult,
+          { eligible: false }
+        >
+        const reasons = failedElig.errors.map(formatPreconditionError).join('\n');
         throw new Error(`无法启动远程代理：\n${reasons}`);
       }
       let bundleFailHint: string | undefined;
