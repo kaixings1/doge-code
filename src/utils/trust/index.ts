@@ -49,7 +49,7 @@ export async function addTrustedDirectory(directory: string): Promise<boolean> {
     // 避免重复添加
     if (!config.trustedDirectories.includes(directory)) {
       config.trustedDirectories.push(directory)
-      await saveGlobalConfig(config)
+      await saveGlobalConfig(() => config)
     }
     
     return true
@@ -73,7 +73,7 @@ export async function removeTrustedDirectory(directory: string): Promise<boolean
       config.trustedDirectories = config.trustedDirectories.filter(
         (dir: string) => dir !== directory
       )
-      await saveGlobalConfig(config)
+      await saveGlobalConfig(() => config)
     }
     
     return true

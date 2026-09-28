@@ -176,6 +176,8 @@ export type GlobalConfig = {
   projects?: Record<string, ProjectConfig>
   numStartups: number
   installMethod?: InstallMethod
+  /** 用户显式信任的工作目录列表（utils/trust 消费，相对/绝对路径均可） */
+  trustedDirectories?: string[]
   autoUpdates?: boolean
   // 区分基于保护机制的禁用与用户偏好
   autoUpdatesProtectedForNative?: boolean
