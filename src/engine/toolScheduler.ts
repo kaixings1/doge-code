@@ -4,6 +4,7 @@
  * 权限检查 → 分组（并行/串行）→ 执行 → 合并结果（保持顺序）。
  */
 import type { ToolCall } from "./responseHandler.ts";
+export type { ToolCall } from "./responseHandler.ts";
 import type { CircuitBreaker } from "./errors/circuitBreaker.ts";
 
 // [LOCAL] 本地定义工具类型，适配 D:\doge-code\src\ 架构

@@ -14,7 +14,7 @@
  * - 默认安全：未配置沙箱时行为与之前完全一致
  */
 
-import type { ToolExecutor } from "./toolScheduler.ts"
+import type { ToolExecutor } from "../toolScheduler.ts"
 import { PathGuard } from "../../security/PathGuard.js"
 import { CommandFilter } from "../../security/CommandFilter.js"
 
