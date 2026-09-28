@@ -31,7 +31,7 @@ const fork = {
 
         try {
           const toolUseContext = context as Record<string, unknown>
-          const result = await (m.AgentTool as Record<string, unknown>).call(
+          const result = await (m.AgentTool as { call: (args: unknown) => Promise<unknown> }).call(
             {
               prompt,
               description: prompt.length > 50 ? prompt.slice(0, 50) + '…' : prompt,
