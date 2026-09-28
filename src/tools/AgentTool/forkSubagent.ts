@@ -111,7 +111,7 @@ export function buildForkedMessages(
   }
 
   // 收集助手消息中的所有 tool_use 块
-  const toolUseBlocks = assistantMessage.message.content.filter(
+  const toolUseBlocks = (Array.isArray(assistantMessage.message.content) ? assistantMessage.message.content : []).filter(
     (block): block is BetaToolUseBlock => block.type === 'tool_use',
   )
 
