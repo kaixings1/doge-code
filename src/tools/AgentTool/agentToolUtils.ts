@@ -298,14 +298,19 @@ export function finalizeAgentTool(
   }
   // 从代理的响应中提取文本内容。如果最终的助理消息是纯 tool_use 块
   //（循环在中途退出），则回退到最近的有文本内容的助理消息。
-  let content = lastAssistantMessage.message.content.filter(
-    _ => _.type === 'text',
-  )
+  const contentBlocks = Array.isArray(
+      lastAssistantMessage.message.content,
+    )
+      ? lastAssistantMessage.message.content
+      : []
+  let content = contentBlocks.filter(_ => _.type === 'text')
   if (content.length === 0) {
     for (let i = agentMessages.length - 1; i >= 0; i--) {
       const m = agentMessages[i]!
       if (m.type !== 'assistant') continue
-      const textBlocks = m.message.content.filter(_ => _.type === 'text')
+      const textBlocks = (
+      Array.isArray(m.message.content) ? m.message.content : []
+      ).filter(_ => _.type === 'text')
       if (textBlocks.length > 0) {
         content = textBlocks
         break
@@ -359,7 +364,10 @@ export function finalizeAgentTool(
  */
 export function getLastToolUseName(message: MessageType): string | undefined {
   if (message.type !== 'assistant') return undefined
-  const block = message.message.content.findLast(b => b.type === 'tool_use')
+  const blocks = Array.isArray(message.message.content)
+    ? message.message.content
+    : []
+  const block = blocks.findLast(b => b.type === 'tool_use')
   return block?.type === 'tool_use' ? block.name : undefined
 }
 
@@ -487,7 +495,10 @@ export function extractPartialResult(
   for (let i = messages.length - 1; i >= 0; i--) {
     const m = messages[i]!
     if (m.type !== 'assistant') continue
-    const text = extractTextContent(m.message.content, '\n')
+    const text = extractTextContent(
+      Array.isArray(m.message.content) ? m.message.content : [],
+      '\n',
+    )
     if (text) {
       return text
     }
