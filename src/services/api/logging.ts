@@ -756,7 +756,7 @@ export function logAPISuccessAndDuration({
 
     // Check if any tool_use blocks were in the output
     hasToolCall = newMessages.some(m =>
-      m.message.content.some(c => c.type === 'tool_use'),
+      (Array.isArray(m.message.content) ? m.message.content : []).some(c => c.type === 'tool_use'),
     )
   }
 
