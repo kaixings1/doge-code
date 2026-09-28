@@ -2,7 +2,6 @@ import { z } from 'zod/v4'
 import { buildTool, type ToolDef } from '../../Tool.js'
 import { lazySchema } from '../../utils/lazySchema.js'
 import { exec } from '../../utils/Shell.js'
-import { schedule } from 'node:timers/promises'
 
 const inputSchema = lazySchema(() =>
   z.object({
@@ -65,7 +64,7 @@ export const CronTool = buildTool({
   renderToolUseMessage(input) {
     const action = (input as Record<string, unknown>)?.action ?? '?'
     const command = (input as Record<string, unknown>)?.command
-    return `Cron: ${action}${command ? ` (${command.substring(0, 30)})` : ''}`
+    return `Cron: ${action}${command ? ` (${String(command).substring(0, 30)})` : ''}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
     const msg = (content as Record<string, unknown>).message || 'Cron 操作完成'
@@ -137,11 +136,12 @@ export const CronTool = buildTool({
           return { data: { success: false, message: '未找到要执行的命令' } as Output }
         }
         try {
-          const result = await exec(targetCommand, new AbortController().signal, 'bash', { timeout: 120000 })
+          const cmd = await exec(targetCommand, new AbortController().signal, 'bash', { timeout: 120000 })
+          const execResult = await cmd.result
           return {
             data: {
-              success: result.code === 0,
-              message: result.code === 0 ? `执行成功` : `执行失败: ${result.stderr}`,
+              success: execResult.code === 0,
+              message: execResult.code === 0 ? `执行成功` : `执行失败: ${execResult.stderr}`,
             } as Output,
           }
         } catch (err) {

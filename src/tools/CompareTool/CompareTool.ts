@@ -64,15 +64,16 @@ export const CompareTool = buildTool({
   renderToolUseMessage(input) {
     const left = (input as Record<string, unknown>)?.left ?? '?'
     const right = (input as Record<string, unknown>)?.right ?? '?'
-    return `Compare: ${left.substring(0, 30)} ↔ ${right.substring(0, 30)}`
+    return `Compare: ${String(left).substring(0, 30)} ↔ ${String(right).substring(0, 30)}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
     const changes = (content as Record<string, unknown>).changes
     const identical = (content as Record<string, unknown>).identical
+    const changesCount = Array.isArray(changes) ? changes.length : 0
     const msg = identical
       ? '内容相同，无差异'
-      : changes && changes.length > 0
-        ? `发现 ${changes.length} 处变更`
+      : changesCount > 0
+        ? `发现 ${changesCount} 处变更`
         : '无差异'
     return {
       tool_use_id: toolUseID,
