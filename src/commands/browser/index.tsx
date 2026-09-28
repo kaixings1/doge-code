@@ -20,7 +20,7 @@ function getBrowserTool(): WebBrowserTool {
 
 export const call: LocalJSXCommandCall = async (_onDone, context, _args) => {
   if ((_args || '').trim() === 'help' || (_args || '').trim() === '--help' || (_args || '').trim() === '-h') {
-    return { type: 'text' as const, value: `browser — Interactive web browser (navigate URLs, take screenshots, interact with pages)\n用法: /browser`.trim() }
+    return <Text>放浏览 — 交互式网页浏览器（导航 URL、截图、与页面交互）\n用法: /browser</Text>
   }
   const [, setRefresh] = React.useState(0)
   const [mode, setMode] = React.useState<Mode>('navigate')
@@ -70,7 +70,9 @@ export const call: LocalJSXCommandCall = async (_onDone, context, _args) => {
 
     const result = await tool.execute({ action: 'screenshot' })
 
-    const imageContent = result.content.find(c => c.type === 'image')
+    const imageContent = (
+      result.content.find(c => c.type === 'image')
+    ) as { source?: { data?: string } } | null
     if (imageContent && imageContent.source) {
       const base64Data = imageContent.source.data as string
       setLastScreenshot(base64Data)
@@ -138,7 +140,7 @@ export const call: LocalJSXCommandCall = async (_onDone, context, _args) => {
         setRefresh(k => k + 1)
         return
       }
-      if (input && input.length === 1 && !key.ctrl && !key.meta && !key.alt) {
+      if (input && input.length === 1 && !key.ctrl && !key.meta) {
         setUrl(prev => prev + input)
         setRefresh(k => k + 1)
         return
