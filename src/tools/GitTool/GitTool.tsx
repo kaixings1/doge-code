@@ -36,6 +36,7 @@ async function runGit(args: string[]): Promise<{ stdout: string; stderr: string;
 
 export const GitTool = buildTool({
   name: 'git',
+  maxResultSizeChars: 100_000,
   description: async () => 'Git操作工具：查看状态、diff、提交历史、提交变更、暂存文件。吸收aider精华，支持智能commit message生成。',
   callOn: 'manual',
   async prompt() {
@@ -190,4 +191,4 @@ export const GitTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

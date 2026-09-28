@@ -53,6 +53,7 @@ function getMetricStats(metric: string): { count: number; sum: number; min: numb
 
 export const MetricsTool = buildTool({
   name: 'metrics',
+  maxResultSizeChars: 100_000,
   description: async () => '收集和上报指标数据（支持计数、直方图、标签）',
   callOn: 'always',
   async prompt() {
@@ -107,4 +108,4 @@ export const MetricsTool = buildTool({
       } as Output,
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

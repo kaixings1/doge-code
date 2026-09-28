@@ -111,6 +111,7 @@ function generateSummary(entries: ContextEntry[], format: string): string {
 
 export const ContextCollapseTool = buildTool({
   name: 'context-collapse',
+  maxResultSizeChars: 100_000,
   description: async () => '压缩上下文以减少 token 使用量（支持多种格式）',
   callOn: 'manual',
   async prompt() {
@@ -188,6 +189,6 @@ export const ContextCollapseTool = buildTool({
       } as Output,
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)
 
 export { addContext, contextStore }

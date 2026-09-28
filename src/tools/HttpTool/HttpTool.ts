@@ -27,6 +27,7 @@ export type Output = z.infer<ReturnType<typeof outputSchema>>
 
 export const HttpTool = buildTool({
   name: 'http',
+  maxResultSizeChars: 100_000,
   description: async () => '发送 HTTP 请求（GET/POST/PUT/DELETE/PATCH），返回完整响应',
   callOn: 'manual',
   async prompt() {
@@ -116,4 +117,4 @@ export const HttpTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

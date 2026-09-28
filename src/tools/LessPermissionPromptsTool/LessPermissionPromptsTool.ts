@@ -113,6 +113,7 @@ async function analyzePermissionPatterns(
 
 export const LessPermissionPromptsTool = buildTool({
   name: 'less-permission-prompts',
+  maxResultSizeChars: 100_000,
   description: async () => '基于调用模式分析并生成权限白名单建议',
   callOn: 'manual',
   async prompt() {
@@ -191,4 +192,4 @@ export const LessPermissionPromptsTool = buildTool({
       } as Output,
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

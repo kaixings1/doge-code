@@ -30,6 +30,7 @@ export type Output = z.infer<ReturnType<typeof outputSchema>>
 
 export const SandboxTool = buildTool({
   name: 'sandbox',
+  maxResultSizeChars: 100_000,
   description: async () =>
     '代码沙箱执行工具：在隔离环境中运行代码和命令。吸收 OpenHands/OpenInterpreter 精华，支持多语言代码执行。',
   callOn: 'manual',
@@ -140,4 +141,4 @@ export const SandboxTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

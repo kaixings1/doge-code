@@ -47,6 +47,8 @@ function createConnectionId(): string {
 }
 
 export const WebSocketTool = buildTool({
+
+  maxResultSizeChars: 100_000,
   name: 'websocket',
   description: async () => 'WebSocket 客户端（连接/发送/监听/关闭/状态）',
   callOn: 'manual',
@@ -265,4 +267,4 @@ export const WebSocketTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

@@ -65,6 +65,7 @@ function getOrCreateSession(agent: AgentInstance, sessionId?: string): string {
 
 export const AgentDevelopmentTool = buildTool({
   name: 'agent_development',
+  maxResultSizeChars: 100_000,
   description: async () =>
     'Agent开发工具：创建和管理具有记忆、知识库和工具包的智能体。吸收phidata/Agno精华，支持会话管理、状态持久化和多模型切换。',
   callOn: 'manual',
@@ -288,4 +289,4 @@ export const AgentDevelopmentTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

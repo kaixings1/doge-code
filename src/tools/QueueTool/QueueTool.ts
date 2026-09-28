@@ -45,6 +45,7 @@ function generateJobId(): string {
 
 export const QueueTool = buildTool({
   name: 'queue',
+  maxResultSizeChars: 100_000,
   description: async () => '管理任务队列和作业处理（push/pop/list/clear/stats）',
   callOn: 'manual',
   async prompt() {
@@ -133,4 +134,4 @@ export const QueueTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

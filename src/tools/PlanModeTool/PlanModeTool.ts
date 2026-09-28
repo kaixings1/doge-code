@@ -23,6 +23,7 @@ export type Output = z.infer<ReturnType<typeof outputSchema>>
 
 export const PlanModeTool = buildTool({
   name: 'plan-mode',
+  maxResultSizeChars: 100_000,
   description: async () => '管理计划模式状态（enter/exit/status）',
   callOn: 'manual',
   async prompt() {
@@ -91,4 +92,4 @@ export const PlanModeTool = buildTool({
       } as Output,
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

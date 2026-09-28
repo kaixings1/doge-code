@@ -25,6 +25,8 @@ const outputSchema = lazySchema(() =>
 export type Output = z.infer<ReturnType<typeof outputSchema>>
 
 export const GraphqlTool = buildTool({
+
+  maxResultSizeChars: 100_000,
   name: 'graphql',
   description: async () => '执行 GraphQL 查询和变更，返回 data 和 errors',
   callOn: 'manual',
@@ -112,4 +114,4 @@ export const GraphqlTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

@@ -68,6 +68,7 @@ function evaluateCondition(
 
 export const FlowTool = buildTool({
   name: 'flow',
+  maxResultSizeChars: 100_000,
   description: async () =>
     'Flow编排工具：创建和管理事件驱动的多步骤流程。吸收crewAI Flow精华，支持装饰器式DSL（start/listen/router）、条件组合（or/and）、状态流转和人类反馈。',
   callOn: 'manual',
@@ -265,4 +266,4 @@ export const FlowTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

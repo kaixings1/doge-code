@@ -24,6 +24,7 @@ export type Output = z.infer<ReturnType<typeof outputSchema>>
 
 export const McpToolSearchTool = buildTool({
   name: 'mcp-tool-search',
+  maxResultSizeChars: 100_000,
   description: async () => '搜索 MCP 服务器上的可用工具',
   callOn: 'manual',
   async prompt() {
@@ -105,4 +106,4 @@ export const McpToolSearchTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

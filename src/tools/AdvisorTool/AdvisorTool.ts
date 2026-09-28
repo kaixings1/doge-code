@@ -10,6 +10,8 @@ const inputSchema = lazySchema(() =>
   }),
 )
 
+type Input = z.infer<ReturnType<typeof inputSchema>>
+
 const outputSchema = lazySchema(() =>
   z.object({
     advice: z.string().describe('顾问建议'),
@@ -210,12 +212,13 @@ export function generateAdvice(focus: string, analysis: AnalysisResult): { advic
 
 export const AdvisorTool = buildTool({
   name: 'advisor',
+  maxResultSizeChars: 100_000,
   description: async () => 'AI 代码分析与建议（复杂度/架构/性能/安全）',
   callOn: 'manual',
   async prompt() {
     return '使用 advisor 工具分析代码库并提供改进建议。'
   },
-  get inputSchema() {
+  get inputSchema(): ReturnType<typeof inputSchema> {
     return inputSchema()
   },
   get outputSchema() {
@@ -244,7 +247,8 @@ export const AdvisorTool = buildTool({
       content: (content as Record<string, unknown>).advice || '分析完成',
     }
   },
-  async call({ query, focus = 'code', path }) {
+  async call(input: Input) {
+    const { query, focus = 'code', path } = input
     const analysis = await analyzeCodebase(path)
     const { advice, suggestions, confidence } = generateAdvice(focus, analysis)
 
@@ -274,4 +278,4 @@ export const AdvisorTool = buildTool({
       } as Output,
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

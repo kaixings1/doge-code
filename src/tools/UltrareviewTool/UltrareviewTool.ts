@@ -57,6 +57,7 @@ function analyzeCode(findings: string[]): { summary: string; score: number } {
 
 export const UltrareviewTool = buildTool({
   name: 'ultrareview',
+  maxResultSizeChars: 100_000,
   description: async () => '运行全面的代码审查（支持 quick/standard/deep 模式）',
   callOn: 'always',
   async prompt() {
@@ -173,4 +174,4 @@ export const UltrareviewTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

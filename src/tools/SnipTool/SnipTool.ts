@@ -94,6 +94,7 @@ export function snipeHistory(lines: number, keepRecent: number, preserveSystem: 
 
 export const SnipTool = buildTool({
   name: 'snip',
+  maxResultSizeChars: 100_000,
   description: async () => '裁剪历史上下文以减少 token 使用量',
   callOn: 'manual',
   async prompt() {
@@ -146,4 +147,4 @@ export const SnipTool = buildTool({
       } as Output,
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

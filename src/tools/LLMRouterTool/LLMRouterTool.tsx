@@ -80,6 +80,7 @@ function estimateTokens(text: string): number {
 
 export const LLMRouterTool = buildTool({
   name: 'llm_router',
+  maxResultSizeChars: 100_000,
   description: async () =>
     'LLM路由工具：统一管理和调用多厂商大语言模型。吸收devika精华，支持Claude/OpenAI/Gemini/Mistral/Groq/Ollama/LMStudio等模型统一接口、token估算和模型切换。',
   callOn: 'manual',
@@ -195,4 +196,4 @@ export const LLMRouterTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

@@ -122,6 +122,7 @@ function extractParams(schema: Record<string, unknown>): Array<{
 
 export const ToolCollectionTool = buildTool({
   name: 'tool_collection',
+  maxResultSizeChars: 100_000,
   description: async () =>
     '工具集合管理：统一注册、发现、执行和监控所有可用工具。' +
     '支持按分类/标签/搜索查询工具、获取参数 schema、执行工具、查看统计、查找替代工具。' +
@@ -367,4 +368,4 @@ export const ToolCollectionTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

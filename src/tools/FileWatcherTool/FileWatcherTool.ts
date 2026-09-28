@@ -39,6 +39,7 @@ function generateWatcherId(): string {
 
 export const FileWatcherTool = buildTool({
   name: 'file-watcher',
+  maxResultSizeChars: 100_000,
   description: async () => '监视文件系统变化（start/stop/list）',
   callOn: 'manual',
   async prompt() {
@@ -147,4 +148,4 @@ export const FileWatcherTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

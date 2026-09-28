@@ -38,6 +38,7 @@ async function resolveContent(input: string): Promise<string> {
 
 export const CompareTool = buildTool({
   name: 'compare',
+  maxResultSizeChars: 100_000,
   description: async () => '比较文件或内容，返回差异和变更列表',
   callOn: 'manual',
   async prompt() {
@@ -122,4 +123,4 @@ export const CompareTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

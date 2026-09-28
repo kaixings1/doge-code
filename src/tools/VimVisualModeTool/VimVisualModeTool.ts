@@ -121,6 +121,7 @@ function applyOperation(operation: string, content: string, selected: string, st
 
 export const VimVisualModeTool = buildTool({
   name: 'vim-visual-mode',
+  maxResultSizeChars: 100_000,
   description: async () => 'Vim 可视化模式（字符/行/块选择及操作）',
   callOn: 'always',
   async prompt() {
@@ -253,4 +254,4 @@ export const VimVisualModeTool = buildTool({
       } as Output,
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

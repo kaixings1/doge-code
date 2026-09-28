@@ -99,6 +99,7 @@ async function executeWorkflowStep(step: string, args: Record<string, string>): 
 
 export const WorkflowTool = buildTool({
   name: 'workflow',
+  maxResultSizeChars: 100_000,
   description: async () => '执行工作流脚本（支持 run/list/create/delete/show）',
   callOn: 'manual',
   async prompt() {
@@ -230,4 +231,4 @@ export const WorkflowTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

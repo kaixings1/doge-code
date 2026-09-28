@@ -25,6 +25,7 @@ export type Output = z.infer<ReturnType<typeof outputSchema>>
 
 export const ShellTool = buildTool({
   name: 'shell',
+  maxResultSizeChars: 100_000,
   description: async () => '执行 Shell 命令，支持自定义工作目录和环境变量',
   callOn: 'manual',
   async prompt() {
@@ -93,4 +94,4 @@ export const ShellTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

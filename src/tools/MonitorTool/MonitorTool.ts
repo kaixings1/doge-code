@@ -108,6 +108,7 @@ function getHealthStatus(): Record<string, number | string> {
 
 export const MonitorTool = buildTool({
   name: 'monitor',
+  maxResultSizeChars: 100_000,
   description: async () => '系统监控与健康检查（CPU/内存/磁盘/网络）',
   callOn: 'always',
   async prompt() {
@@ -193,4 +194,4 @@ export const MonitorTool = buildTool({
       } as Output,
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

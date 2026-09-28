@@ -33,6 +33,7 @@ function writeToMemoryLog(level: string, message: string, context?: Record<strin
 
 export const LoggerTool = buildTool({
   name: 'logger',
+  maxResultSizeChars: 100_000,
   description: async () => '写入结构化日志（debug/info/warn/error）',
   callOn: 'always',
   async prompt() {
@@ -91,4 +92,4 @@ export const LoggerTool = buildTool({
       } as Output,
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

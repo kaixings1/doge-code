@@ -32,6 +32,7 @@ const effortHistory: Array<{ level: string; model?: string; timestamp: number }>
 
 export const EffortTool = buildTool({
   name: 'effort',
+  maxResultSizeChars: 100_000,
   description: async () => '为支持的模型设置努力程度级别（低/中/高/最大）',
   callOn: 'manual',
   async prompt() {
@@ -96,4 +97,4 @@ export const EffortTool = buildTool({
       } as Output,
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

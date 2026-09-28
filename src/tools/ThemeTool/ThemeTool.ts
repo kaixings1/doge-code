@@ -98,6 +98,7 @@ async function listAllThemes(): Promise<string[]> {
 
 export const ThemeTool = buildTool({
   name: 'theme',
+  maxResultSizeChars: 100_000,
   description: async () => '创建、切换、列出和删除主题（支持内置和自定义主题）',
   callOn: 'manual',
   async prompt() {
@@ -214,4 +215,4 @@ export const ThemeTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

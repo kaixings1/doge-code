@@ -90,6 +90,7 @@ function resolveCondition(condition?: string, state?: Record<string, unknown>): 
 
 export const StateMachineTool = buildTool({
   name: 'state_machine',
+  maxResultSizeChars: 100_000,
   description: async () =>
     '状态机工具：构建、编译和执行基于图的状态机。吸收langgraph精华，支持节点定义、条件边、状态持久化和检查点。',
   callOn: 'manual',
@@ -307,4 +308,4 @@ export const StateMachineTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

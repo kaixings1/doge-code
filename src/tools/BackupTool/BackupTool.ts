@@ -44,6 +44,7 @@ async function listBackups(): Promise<string[]> {
 
 export const BackupTool = buildTool({
   name: 'backup',
+  maxResultSizeChars: 100_000,
   description: async () => '创建、恢复、列出和删除文件系统备份',
   callOn: 'manual',
   async prompt() {
@@ -150,4 +151,4 @@ export const BackupTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

@@ -34,6 +34,7 @@ async function runGit(args: string[]): Promise<{ stdout: string; stderr: string;
 
 export const BranchTool = buildTool({
   name: 'branch',
+  maxResultSizeChars: 100_000,
   description: async () => '创建和管理 Git 分支',
   callOn: 'manual',
   async prompt() {
@@ -170,4 +171,4 @@ export const BranchTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

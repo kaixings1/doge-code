@@ -87,6 +87,7 @@ function pickByStrategy(
 
 export const ActionSamplerTool = buildTool({
   name: 'action_sampler',
+  maxResultSizeChars: 100_000,
   description: async () =>
     '动作采样工具：从候选动作集中按策略选择最优动作。吸收 SWE-agent 精华，支持 epsilon-greedy 探索、top_k 采样、加权选择。',
   callOn: 'manual',
@@ -161,4 +162,4 @@ export const ActionSamplerTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

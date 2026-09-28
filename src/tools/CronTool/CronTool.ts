@@ -38,6 +38,7 @@ function generateCronId(): string {
 
 export const CronTool = buildTool({
   name: 'cron',
+  maxResultSizeChars: 100_000,
   description: async () => '管理定时任务（add/list/remove/run）',
   callOn: 'manual',
   async prompt() {
@@ -155,4 +156,4 @@ export const CronTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

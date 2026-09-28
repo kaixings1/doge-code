@@ -37,6 +37,8 @@ function generateScheduleId(): string {
 }
 
 export const ScheduleTool = buildTool({
+
+  maxResultSizeChars: 100_000,
   name: 'schedule',
   description: async () => '管理计划任务（create/list/cancel/run）',
   callOn: 'manual',
@@ -154,4 +156,4 @@ export const ScheduleTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

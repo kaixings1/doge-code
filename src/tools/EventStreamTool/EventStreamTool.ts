@@ -66,6 +66,7 @@ function addEvent(source: string, event: StreamEvent): void {
 
 export const EventStreamTool = buildTool({
   name: 'event-stream',
+  maxResultSizeChars: 100_000,
   description: async () => '事件流管理（subscribe/unsubscribe/publish/history/list）',
   callOn: 'manual',
   async prompt() {
@@ -202,4 +203,4 @@ export const EventStreamTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

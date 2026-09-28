@@ -37,6 +37,7 @@ const PROJECT_TEMPLATES: Record<string, string[]> = {
 
 export const ProjectScaffolderTool = buildTool({
   name: 'project_scaffolder',
+  maxResultSizeChars: 100_000,
   description: async () =>
     '项目脚手架工具：快速创建项目骨架。吸收 gpt-engineer 精华，支持多种项目类型和功能特性。',
   callOn: 'manual',
@@ -125,4 +126,4 @@ export const ProjectScaffolderTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

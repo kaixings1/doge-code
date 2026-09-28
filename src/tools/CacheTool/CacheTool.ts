@@ -40,6 +40,7 @@ function pruneExpired(): void {
 
 export const CacheTool = buildTool({
   name: 'cache',
+  maxResultSizeChars: 100_000,
   description: async () => '管理缓存操作（get/set/delete/clear/list）',
   callOn: 'manual',
   async prompt() {
@@ -117,4 +118,4 @@ export const CacheTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)

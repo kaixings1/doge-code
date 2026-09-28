@@ -93,6 +93,7 @@ function executeQuery(db: Database, sql: string, params?: unknown[]): { rows: Re
 
 export const DatabaseTool = buildTool({
   name: 'database',
+  maxResultSizeChars: 100_000,
   description: async () => '数据库操作（SQLite，支持 query/insert/update/delete/migrate）',
   callOn: 'manual',
   async prompt() {
@@ -210,4 +211,4 @@ export const DatabaseTool = buildTool({
       }
     }
   },
-} satisfies ToolDef<typeof inputSchema, Output>)
+} satisfies ToolDef<ReturnType<typeof inputSchema>, Output>)
