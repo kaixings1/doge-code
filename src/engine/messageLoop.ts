@@ -10,11 +10,12 @@ export function engineLog(prefix: string, ...args: unknown[]): void {
 import { QueryStateMachine } from "./stateMachine.ts";
 import { TokenBudgetManager } from "./tokenBudgetManager.ts";
 import { MessageNormalizer, type InternalMessage } from "./messageNormalizer.ts";
-import { RequestBuilder, type HarnessConfig } from "./requestBuilder.ts";
+import { RequestBuilder } from "./requestBuilder.ts";
 import { ResponseHandler, type ProcessedResponse } from "./responseHandler.ts";
 import { ToolScheduler } from "./toolScheduler.ts";
 import { ErrorClassifier } from "./errors/classifier.ts";
 import { ErrorRecovery } from "./errors/recovery.ts";
+import type { RetryHandler } from "./errors/retryHandler.ts";
 import { AutoCompactor } from "./autoCompactor.ts";
 import { AutoFixLoop, type AutoFixLoopConfig } from "./autoFixLoop.ts";
 import { cleanupHistoryBase64, applyPhase2Degradation, DEFAULT_IMAGE_BUDGET_CONFIG, type ImageBudgetConfig } from "./imageBudgetGuard.ts";
@@ -95,6 +96,10 @@ export interface MessageLoopDeps {
   onEvent?: (event: AgentEvent) => void;
   /** 自动压缩器：在 token 预算接近上限时触发会话压缩 */
   autoCompactor?: AutoCompactor;
+  /** 重试处理器：API 调用失败时按策略重试 */
+  retryHandler: RetryHandler;
+  /** 错误恢复与熔断器 */
+  recovery?: ErrorRecovery;
   /** 预测性 AI 助手：当前文件的静态分析建议 */
   preAnalysis?: Array<{ type: string; message: string; line?: number }>;
   /** 自动修复循环：在编辑工具成功后自动 lint→test→fix（吸收自 Aider） */
@@ -110,7 +115,7 @@ export interface MessageLoopDeps {
   /** Hook 管理器（吸收自 ECC hooks）：PreToolUse/PostToolUse 拦截 */
   hookManager?: HookManager;
   /** 多角色编排器：拦截 orchestrator_run 工具调用并执行编排 */
-  orchestrator?: import('../orchestrator/index.js').Orchestrator;
+  orchestrator?: import('./orchestrator/index.js').Orchestrator;
   /** 自动继续配置：由配置决定是否在特定场景自动注入「继续」。默认关闭 */
   autoContinue?: AutoContinueConfig;
 }
@@ -876,7 +881,11 @@ export class MessageLoop {
         }
         for (const action of selected) {
           const toolInput = (input as Record<string, unknown>).tool_input
-          resolved.push({ id: action.id + '_s', name: action.name, input: toolInput ?? {} })
+          resolved.push({
+            id: action.id + '_s',
+            name: action.name,
+            input: (toolInput as Record<string, unknown>) || {},
+          })
         }
       } catch (err) {
         engineLog('ACTION_SAMPLER', 'resolve error')
