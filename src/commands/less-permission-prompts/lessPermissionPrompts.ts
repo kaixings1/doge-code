@@ -3,8 +3,9 @@ import type { LocalJSXCommandCall } from '../../types/command.js';
 // 高级权限管理系统 - 简化版本
 // 包含：风险评估、白名单/黑名单管理、权限拦截测试
 export const call: LocalJSXCommandCall = async (onDone, context, args) => {
-  const appState = context?.getAppState?.() || {};
-  const messages = appState.messages || [];
+  const messages: Array<{
+    tool_calls?: Array<{ name?: string }>
+  }> = []
   const parts = args?.trim().split(/\s+/) || [];
   const command = parts[0]?.toLowerCase() || 'analyze';
 

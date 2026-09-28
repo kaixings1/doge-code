@@ -152,8 +152,7 @@ class FileWatcherService {
 const fileWatcher = new FileWatcherService()
 
 export const call: LocalJSXCommandCall = async (onDone, context, args) => {
-	const appState = context?.getAppState?.() || {}
-	const cwd = appState.cwd || process.cwd()
+	const cwd = process.cwd()
 	const parts = args?.trim().split(/\s+/) || []
 	const command = parts[0]?.toLowerCase() || 'status'
 
