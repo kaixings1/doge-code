@@ -249,12 +249,16 @@ export async function refreshOAuthToken(
         profileInfo?.rateLimitTier ?? existing?.rateLimitTier ?? null,
       profile: profileInfo?.rawProfile,
       tokenAccount: data.account
-        ? {
-            uuid: data.account.uuid,
-            emailAddress: data.account.email_address,
-            organizationUuid: data.organization?.uuid,
-          }
-        : undefined,
+        ? (() => {
+            const acct = data.account as { uuid?: string; email_address?: string }
+            const org = data.organization as { uuid?: string } | null
+            return {
+              uuid: acct.uuid ?? '',
+              emailAddress: acct.email_address ?? '',
+              organizationUuid: org?.uuid,
+            }
+          })()
+        : null,
     }
   } catch (error) {
     const responseBody =
@@ -435,9 +439,14 @@ export async function getOrganizationUUID(): Promise<string | null> {
   // config write path. Prefer local token-derived values before making a
   // profile request or giving up.
   const cachedTokens = getClaudeAIOAuthTokens()
+  const tokenAccount = (cachedTokens?.tokenAccount as
+    | { organizationUuid?: string }
+    | null)
+  const profileAccount = (cachedTokens?.profile as
+    | { organization?: { uuid?: string } }
+    | null)
   const tokenOrgUUID =
-    cachedTokens?.tokenAccount?.organizationUuid ??
-    cachedTokens?.profile?.organization?.uuid
+    tokenAccount?.organizationUuid ?? profileAccount?.organization?.uuid
   if (tokenOrgUUID) {
     return tokenOrgUUID
   }
@@ -448,7 +457,10 @@ export async function getOrganizationUUID(): Promise<string | null> {
     return null
   }
   const profile = await getOauthProfileFromOauthToken(accessToken)
-  const profileOrgUUID = profile?.organization?.uuid
+  const profileOrg = (profile?.organization as
+    | { uuid?: string }
+    | null)
+  const profileOrgUUID = profileOrg?.uuid
   if (!profileOrgUUID) {
     return null
   }
