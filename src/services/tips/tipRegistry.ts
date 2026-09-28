@@ -78,7 +78,7 @@ async function isMarketplacePluginRelevant(
   if (isPluginInstalled(`${pluginName}@${OFFICIAL_MARKETPLACE_NAME}`)) {
     return false
   }
-  const { bashTools } = context ?? {}
+  const bashTools = context?.bashTools as Set<string> | null
   if (signals.cli && bashTools?.size) {
     if (signals.cli.some(cmd => bashTools.has(cmd))) {
       return true
