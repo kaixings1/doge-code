@@ -7,7 +7,7 @@ import { readFileSync } from 'fs'
 // ============================================================================
 
 interface PairOptions {
-  mode: 'review' | 'coauthor' | 'debug'
+  mode: 'review' | 'coauthor' | 'debug' | 'deep'
   focus: string
   rounds: number
   autoFix: boolean

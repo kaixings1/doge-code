@@ -162,14 +162,14 @@ export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
 
   // 对文件进行排序：按符号数量降序（符号多的文件更重要）
   const sortedFiles = Array.from(repoData.files.entries())
-    .sort((a, b) => b[1].length - a[1].length)
+    .sort((a, b) => b[1].symbols.length - a[1].symbols.length)
     .slice(0, topN)
 
   // 渲染文件列表
   const fileEntries = sortedFiles.map(([file, symbols]) => {
     const relPath = getRelativePath(file)
-    const displaySymbols = symbols.slice(0, 8)
-    const hasMore = symbols.length > 8
+    const displaySymbols = symbols.symbols.slice(0, 8)
+    const hasMore = symbols.symbols.length > 8
 
     return (
       <Box key={file} flexDirection="column" marginBottom={1}>
@@ -177,12 +177,12 @@ export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
           <Text bold color="white">
             📄 {relPath}
           </Text>
-          <Text dimColor> ({symbols.length} 个符号)</Text>
+          <Text dimColor> ({symbols.symbols.length} 个符号)</Text>
         </Box>
         {displaySymbols.map(sym => renderSymbol(sym))}
         {hasMore && (
           <Box paddingLeft={2}>
-            <Text dimColor>  ... 还有 {symbols.length - 8} 个符号</Text>
+            <Text dimColor>  ... 还有 {symbols.symbols.length - 8} 个符号</Text>
           </Box>
         )}
       </Box>
