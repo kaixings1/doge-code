@@ -30,20 +30,21 @@ const outputSchema = z.object({
 export const MultiFileEditTool: ToolDef<InputSchema, typeof outputSchema> = buildTool({
   name: 'MultiFileEdit',
   prompt: async () => '使用 MultiFileEdit 可以一次编辑多个文件。',
-	description: '在一次调用中编辑多个文件（支持同时修改2-20个文件）。' +
-    '适用于需要跨多个文件协调修改的场景，' +
-    '例如重命名函数同时更新所有引用、修改接口定义及其所有实现等。' +
-    '每个操作使用精确的 old_string 到 new_string 替换。',
+	description: async () =>
+    '在一次调用中编辑多个文件（支持同时修改2-20个文件）。适用于需要跨多个文件协调修改的场景，例如重命名函数同时更新所有引用、修改接口定义及其所有实现等。每个操作使用精确的 old_string 到 new_string 替换。',
   inputSchema,
   outputSchema,
-  async *call(args, toolUseContext) {
+  async call(args, toolUseContext) {
     const { operations } = args
     const results: Array<{ file_path: string; success: boolean; error: string | null }> = []
 
     for (const op of operations) {
       try {
         const fullPath = expandPath(op.file_path)
-        const { readFileSyncWithMetadata, writeTextContent } = await import('../../utils/file.js')
+        const [{ readFileSyncWithMetadata }, { writeTextContent }] = await Promise.all([
+          import('../../utils/fileRead.js'),
+          import('../../utils/file.js'),
+        ])
 
         const meta = readFileSyncWithMetadata(fullPath)
         if (!meta) {
@@ -77,9 +78,8 @@ export const MultiFileEditTool: ToolDef<InputSchema, typeof outputSchema> = buil
 
     logForDebugging('MultiFileEdit: ' + summary)
 
-    yield {
-      type: 'resource',
-      value: {
+    return {
+      data: {
         results,
         summary,
       },
