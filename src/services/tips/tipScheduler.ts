@@ -22,7 +22,7 @@ export function selectTipWithLongestTimeSinceShown(
   // This is the tip that hasn't been shown for the longest time
   const tipsWithSessions = availableTips.map(tip => ({
     tip,
-    sessions: getSessionsSinceLastShown(tip.id),
+    sessions: getSessionsSinceLastShown(tip.id as string),
   }))
 
   tipsWithSessions.sort((a, b) => b.sessions - a.sessions)
@@ -47,12 +47,12 @@ export async function getTipToShowOnSpinner(
 
 export function recordShownTip(tip: Tip): void {
   // Record in history
-  recordTipShown(tip.id)
+  recordTipShown(tip.id as string)
 
   // Log event for analytics
   logEvent('tengu_tip_shown', {
     tipIdLength:
       tip.id as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
-    cooldownSessions: tip.cooldownSessions,
+    cooldownSessions: tip.cooldownSessions as number,
   })
 }
