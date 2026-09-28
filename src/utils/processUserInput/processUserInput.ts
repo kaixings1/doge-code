@@ -267,22 +267,23 @@ export async function processUserInput({
 
     // TODO: Clean this up
     if (hookResult.message) {
-      switch (hookResult.message.attachment.type) {
+      const attachment = (hookResult.message as { attachment?: unknown }).attachment as
+        | { type?: string; content?: unknown }
+        | null
+      switch (attachment?.type) {
         case 'hook_success':
-          if (!hookResult.message.attachment.content) {
-            // Skip if there is no content
+          if (!attachment?.content) {
             break
           }
           result.messages.push({
-            ...hookResult.message,
+            ...(hookResult.message as Record<string, unknown>),
             attachment: {
-              ...hookResult.message.attachment,
-              content: applyTruncation(hookResult.message.attachment.content),
+              ...attachment,
+              content: applyTruncation(String(attachment.content)),
             },
-          })
+          } as never)
           break
         default:
-          result.messages.push(hookResult.message)
           break
       }
     }
@@ -406,7 +407,12 @@ async function processUserInputBase(
       const resized = await maybeResizeAndDownsampleImageBlock(imageBlock)
       return {
         resized,
-        originalDimensions: pastedImage.dimensions,
+        originalDimensions: pastedImage.dimensions
+          ? {
+              originalWidth: pastedImage.dimensions.width,
+              originalHeight: pastedImage.dimensions.height,
+            }
+          : {},
         sourcePath:
           pastedImage.sourcePath ?? storedImagePaths.get(pastedImage.id),
       }
@@ -581,8 +587,8 @@ async function processUserInputBase(
     const trimmedInput = inputString.trim()
 
     const agentMention = attachmentMessages.find(
-      (m): m is AttachmentMessage<AgentMentionAttachment> =>
-        m.attachment.type === 'agent_mention',
+      (m): m is AttachmentMessage & { attachment: AgentMentionAttachment } =>
+        m.attachment?.type === 'agent_mention',
     )
 
     if (agentMention) {

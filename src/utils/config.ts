@@ -1850,6 +1850,10 @@ export type PastedContent = {
   content: string
   mediaType?: string
   filename?: string
+  /** 粘贴图片的原始尺寸（用于展示/压缩优化） */
+  dimensions?: { width: number; height: number }
+  /** 粘贴内容的源文件路径 */
+  sourcePath?: string
 }
 
 /** 提示历史条目（ctrl+r / 上箭头回放使用） */
