@@ -179,10 +179,7 @@ export default class Ink {
 
     // scheduleRender 由协调器的 resetAfterCommit 调用，此处使用节流（throttle）确保帧率稳定。
     const deferredRender = (): void => queueMicrotask(this.onRender);
-    this.scheduleRender = throttle(deferredRender, FRAME_INTERVAL_MS, {
-      leading: true,
-      trailing: true
-    });
+    this.scheduleRender = throttle(deferredRender, FRAME_INTERVAL_MS);
 
     // 卸载树后忽略最后一次渲染，防止退出前产生空输出
     this.isUnmounted = false;
@@ -224,7 +221,6 @@ export default class Ink {
         };
       }
     };
-    // @ts-expect-error @types/react-reconciler 声明了 11 个参数包含 transitionCallbacks，但 react-reconciler 0.33.0 源码只接受 10 个参数（无 transitionCallbacks）
     this.container = reconciler.createContainer(this.rootNode, ConcurrentRoot, null, false, null, 'id', noop,
     // onUncaughtError
     noop,
@@ -600,7 +596,6 @@ export default class Ink {
   }
   pause(): void {
     // 在暂停前刷新待处理的 React 更新并渲染。
-    // @ts-expect-error flushSyncFromReconciler 存在于 react-reconciler 0.31 但不在 @types/react-reconciler 中
     reconciler.flushSyncFromReconciler();
     this.onRender();
     this.isPaused = true;
@@ -1118,10 +1113,8 @@ export default class Ink {
         </TerminalWriteProvider>
       </App>;
 
-    // @ts-expect-error updateContainerSync 存在于 react-reconciler 但不在 @types/react-reconciler 中
     reconciler.updateContainerSync(tree, this.container, null, noop);
     //console.error('[INK-2] render: after updateContainerSync');
-    // @ts-expect-error flushSyncWork 存在于 react-reconciler 但不在 @types/react-reconciler 中
     reconciler.flushSyncWork();
     //console.error('[INK-3] render: after flushSyncWork (first frame committed)');
   }
@@ -1184,9 +1177,7 @@ export default class Ink {
       this.drainTimer = null;
     }
 
-    // @ts-expect-error updateContainerSync 存在于 react-reconciler 但不在 @types/react-reconciler 中
     reconciler.updateContainerSync(null, this.container, null, noop);
-    // @ts-expect-error flushSyncWork 存在于 react-reconciler 但不在 @types/react-reconciler 中
     reconciler.flushSyncWork();
     instances.delete(this.options.stdout);
 
