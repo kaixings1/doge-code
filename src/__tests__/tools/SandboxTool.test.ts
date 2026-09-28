@@ -2,13 +2,13 @@ import { describe, it, expect, vi } from 'vitest'
 import { SandboxTool } from '../../tools/SandboxTool/SandboxTool.js'
 
 vi.mock('../../utils/Shell.js', () => ({
-  exec: vi.fn(() =>
-    Promise.resolve({
+  exec: vi.fn(() => ({
+    result: Promise.resolve({
       stdout: 'Hello from sandbox\n',
       stderr: '',
       code: 0,
-    })
-  ),
+    }),
+  })),
 }))
 
 describe('SandboxTool', () => {

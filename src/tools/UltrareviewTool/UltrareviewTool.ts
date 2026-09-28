@@ -22,14 +22,14 @@ export type Output = z.infer<ReturnType<typeof outputSchema>>
 
 async function getGitDiff(target?: string): Promise<string> {
   const args = target ? [`diff`, target] : ['diff', 'HEAD~1']
-  const result = await exec(`git ${args.join(' ')}`, new AbortController().signal, 'bash', { timeout: 30000 })
-  return result.stdout
+  const cmd = exec(`git ${args.join(' ')}`, new AbortController().signal, 'bash', { timeout: 30000 })
+  return (await cmd.result).stdout
 }
 
 async function getChangedFiles(target?: string): Promise<string[]> {
   const args = target ? [`diff`, '--name-only', target] : ['diff', '--name-only', 'HEAD~1']
-  const result = await exec(`git ${args.join(' ')}`, new AbortController().signal, 'bash', { timeout: 30000 })
-  return result.stdout.split('\n').filter(Boolean)
+  const cmd = exec(`git ${args.join(' ')}`, new AbortController().signal, 'bash', { timeout: 30000 })
+  return (await cmd.result).stdout.split('\n').filter(Boolean)
 }
 
 function analyzeCode(findings: string[]): { summary: string; score: number } {

@@ -67,17 +67,18 @@ export const ShellTool = buildTool({
   async call({ command, cwd, env, timeout = 120000 }) {
     const startTime = Date.now()
     try {
-      const result = await exec(command, new AbortController().signal, 'bash', {
+      const cmd = exec(command, new AbortController().signal, 'bash', {
         timeout,
         cwd,
         env,
       })
+      const execResult = await cmd.result
       const durationMs = Date.now() - startTime
       return {
         data: {
-          exitCode: result.code ?? 0,
-          stdout: result.stdout || '',
-          stderr: result.stderr || '',
+          exitCode: execResult.code ?? 0,
+          stdout: execResult.stdout || '',
+          stderr: execResult.stderr || '',
           durationMs,
         } as Output,
       }

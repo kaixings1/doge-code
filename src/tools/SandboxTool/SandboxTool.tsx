@@ -76,19 +76,20 @@ export const SandboxTool = buildTool({
             return { data: { success: false, message: 'run 需要 command 参数' } as Output }
           }
           const effectiveTimeout = timeout ?? 30
-          const result = await exec(
+          const cmd = await exec(
             command,
             new AbortController().signal,
             'bash',
             { timeout: effectiveTimeout * 1000 }
           )
+          const execResult = await cmd.result
           return {
             data: {
-              success: result.code === 0,
-              output: result.stdout,
-              exit_code: result.code,
-              message: result.code === 0 ? '执行成功' : `执行失败 (exit ${result.code})`,
-              error: result.stderr || undefined,
+              success: execResult.code === 0,
+              output: execResult.stdout,
+              exit_code: execResult.code,
+              message: execResult.code === 0 ? '执行成功' : `执行失败 (exit ${execResult.code})`,
+              error: execResult.stderr || undefined,
             } as Output,
           }
         }
