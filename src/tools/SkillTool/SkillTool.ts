@@ -243,7 +243,10 @@ async function executeForkedSkill(
       ) {
         const normalizedNew = normalizeMessages([message])
         for (const m of normalizedNew) {
-          const hasToolContent = m.message.content.some(
+          const contentBlocks = Array.isArray(m.message.content)
+            ? m.message.content
+            : []
+          const hasToolContent = contentBlocks.some(
             c => c.type === 'tool_use' || c.type === 'tool_result',
           )
           if (hasToolContent) {
