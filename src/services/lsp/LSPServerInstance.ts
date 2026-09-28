@@ -139,7 +139,7 @@ export function createLSPServerInstance(
 
     // Cap crash-recovery attempts so a persistently crashing server doesn't
     // spawn unbounded child processes on every incoming request.
-    const maxRestarts = config.maxRestarts ?? 3
+    const maxRestarts = (config.maxRestarts ?? 3) as number
     if (state === 'error' && crashRecoveryCount > maxRestarts) {
       const error = new Error(
         `LSP 服务器 '${name}' 超过最大崩溃恢复尝试次数 (${maxRestarts})`,
@@ -155,13 +155,17 @@ export function createLSPServerInstance(
       logForDebugging(`正在启动 LSP 服务器实例: ${name}`)
 
       // Start the client
-      await client.start(config.command, config.args || [], {
-        env: config.env,
-        cwd: config.workspaceFolder,
-      })
+      await client.start(
+        config.command as string,
+        (config.args as string[] | null) || [],
+        {
+          env: config.env as Record<string, string> | null,
+          cwd: config.workspaceFolder as string | null,
+        },
+      )
 
       // Initialize with workspace info
-      const workspaceFolder = config.workspaceFolder || getCwd()
+      const workspaceFolder = (config.workspaceFolder as string | null) || getCwd()
       const workspaceUri = pathToFileURL(workspaceFolder).href
 
       const initParams: InitializeParams = {
@@ -238,10 +242,11 @@ export function createLSPServerInstance(
 
       initPromise = client.initialize(initParams)
       if (config.startupTimeout !== undefined) {
+        const startupTimeout = config.startupTimeout as number
         await withTimeout(
           initPromise,
-          config.startupTimeout,
-          `LSP 服务器 '${name}' 在初始化期间超时，经过 ${config.startupTimeout}ms`,
+          startupTimeout,
+          `LSP 服务器 '${name}' 在初始化期间超时，经过 ${startupTimeout}ms`,
         )
       } else {
         await initPromise
@@ -310,7 +315,7 @@ export function createLSPServerInstance(
 
     restartCount++
 
-    const maxRestarts = config.maxRestarts ?? 3
+    const maxRestarts = (config.maxRestarts ?? 3) as number
     if (restartCount > maxRestarts) {
       const error = new Error(
         `Max restart attempts (${maxRestarts}) exceeded for server '${name}'`,
