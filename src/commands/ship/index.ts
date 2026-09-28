@@ -34,7 +34,13 @@ interface ShipOptions {
 // Phase 1: Pre-flight Checks
 // ============================================================================
 
-async function preflightChecks(): Promise<{ ok: boolean; error?: string; platform?: string }> {
+async function preflightChecks(): Promise<{
+    ok: boolean
+    error?: string
+    platform?: string
+    currentBranch?: string
+    mainBranch?: string
+  }> {
   // Check gh CLI
   const { code: ghCode } = await execFileNoThrow('gh', ['--version'], { preserveOutputOnError: false })
   if (ghCode !== 0) {
