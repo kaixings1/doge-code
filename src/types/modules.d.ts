@@ -28,6 +28,8 @@ declare module 'better-sqlite3' {
     prepare(sql: string): Statement
     exec(sql: string): void
     close(): void
+    transaction<T extends (...args: unknown[]) => unknown>(fn: T): (...args: Parameters<T>) => ReturnType<T>
+    pragma(source: string): unknown
   }
   export const DatabaseConstructor: { new (filename: string, opts?: Record<string, unknown>): Database; prototype: Database }
   export default Database

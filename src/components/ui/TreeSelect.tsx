@@ -174,7 +174,7 @@ export function TreeSelect(t0) {
       }
     }
     for (const node_0 of nodes) {
-      traverse(node_0, 0);
+      traverse(node_0, 0, '');
     }
     $[4] = isExpanded;
     $[5] = nodes;
