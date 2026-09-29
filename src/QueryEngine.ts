@@ -867,17 +867,17 @@ export class QueryEngine {
           // 将 queued_command 附件作为 SDK 用户消息重放产出
           else if (
             replayUserMessages &&
-            message.attachment.type === 'queued_command'
+            att.attachment?.type === 'queued_command'
           ) {
             yield {
               type: 'user',
               message: {
                 role: 'user' as const,
-                content: message.attachment.prompt,
+                content: att.attachment.prompt,
               },
               session_id: getSessionId(),
               parent_tool_use_id: null,
-              uuid: message.attachment.source_uuid || message.uuid,
+              uuid: att.attachment.source_uuid || message.uuid,
               timestamp: message.timestamp,
               isReplay: true,
             } as SDKUserMessageReplay

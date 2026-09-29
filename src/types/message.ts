@@ -34,6 +34,8 @@ export type MessageBase = {
   toolUseResult?: unknown
   /** 消息来源信息 */
   origin?: MessageOrigin
+  /** 消息负载（user/assistant 消息的内容字段） */
+  message?: { content?: unknown; [key: string]: unknown }
   [key: string]: unknown
 }
 

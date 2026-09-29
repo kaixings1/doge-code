@@ -419,7 +419,9 @@ export function startBackgroundSession({
         lastRecordedUuid = event.uuid
 
         if (event.type === 'assistant') {
-          for (const block of event.message.content) {
+          const assistantEvent = event as import('../types/message.js').AssistantMessage
+          const content = assistantEvent.message!.content as string | import('@anthropic-ai/sdk').ContentBlock[]
+          for (const block of content) {
             if (block.type === 'text') {
               tokenCount += roughTokenCountEstimation(block.text)
             } else if (block.type === 'tool_use') {

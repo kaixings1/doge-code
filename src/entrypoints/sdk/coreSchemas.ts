@@ -1234,10 +1234,18 @@ export const RewindFilesResultSchema = lazySchema(() =>
 // This allows us to define SDK message types in Zod while maintaining proper typing.
 
 /** Placeholder for APIUserMessage from @anthropic-ai/sdk */
-export const APIUserMessagePlaceholder = lazySchema(() => z.unknown())
+export const APIUserMessagePlaceholder = lazySchema(() =>
+  z.object({
+    content: z.union([z.string(), z.array(z.object({ type: z.string() }).passthrough())]),
+  }),
+)
 
 /** Placeholder for APIAssistantMessage from @anthropic-ai/sdk */
-export const APIAssistantMessagePlaceholder = lazySchema(() => z.unknown())
+export const APIAssistantMessagePlaceholder = lazySchema(() =>
+  z.object({
+    content: z.array(z.object({ type: z.string() }).passthrough()),
+  }),
+)
 
 /** Placeholder for RawMessageStreamEvent from @anthropic-ai/sdk */
 export const RawMessageStreamEventPlaceholder = lazySchema(() => z.unknown())
