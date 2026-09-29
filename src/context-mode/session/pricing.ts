@@ -24,7 +24,7 @@
  * hook/server bundles at build time (no runtime fs read, no external file).
  */
 
-import catalog from "./model-prices.json" with { type: "json" };
+import catalog from "./model-prices.json";
 
 /** Per-Mtok price for one model. Any of the four rates may be null ("unknown"). */
 export interface Price {
@@ -189,3 +189,4 @@ export function nativeOrComputed(
   if (typeof nativeCostUsd === "number") return nativeCostUsd;
   return computeCostUsd(modelId, t);
 }
+

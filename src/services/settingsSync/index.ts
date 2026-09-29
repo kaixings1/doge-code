@@ -196,8 +196,9 @@ function isUsingOAuth(): boolean {
   }
 
   const tokens = getClaudeAIOAuthTokens()
+  const scopes = tokens?.scopes as Array<string>
   return Boolean(
-    tokens?.accessToken && tokens.scopes?.includes(CLAUDE_AI_INFERENCE_SCOPE),
+    tokens?.accessToken && scopes?.includes(CLAUDE_AI_INFERENCE_SCOPE),
   )
 }
 

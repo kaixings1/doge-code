@@ -5,7 +5,7 @@ import type {
   GrowthBookClient,
   StickyBucketService,
   UserScopedGrowthBook,
-} from "..";
+} from '@growthbook/growthbook';
 import { ConditionInterface, ParentConditionInterface } from "./mongrule";
 
 declare global {
@@ -668,3 +668,4 @@ export type FeatureLog = BaseLog & {
 
 /** 日志联合类型 */
 export type LogUnion = EventLog | ExperimentLog<any> | FeatureLog;
+

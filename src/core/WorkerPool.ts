@@ -2,7 +2,7 @@ import { Worker, isMainThread, parentPort, workerData } from 'worker_threads';
 import path from 'path';
 import os from 'os';
 import { TaskQueue } from './TaskQueue';
-import { MemoryManager } from './MemoryManager';
+import { MemoryManager } from './MemoryManager.ts';
 
 export interface PoolConfig {
   concurrency: number;
@@ -133,3 +133,4 @@ export class WorkerPool {
     return { ...stats, memory: mem };
   }
 }
+

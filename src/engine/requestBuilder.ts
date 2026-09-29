@@ -97,7 +97,7 @@ export class RequestBuilder {
       // 确保 system prompt 的前缀被缓存，减少重复 token 成本
       const systemWithCacheControl = systemPrompt.length > 100
         ? [
-            { type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } },
+            { type: 'text' as const, text: systemPrompt, cache_control: { type: 'ephemeral' as const } },
           ]
         : systemPrompt
 

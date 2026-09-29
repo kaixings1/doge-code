@@ -15,7 +15,7 @@ import type {
   SystemMessage,
   UserMessage,
 } from './message.js'
-import type { Notification } from './context/notifications.js'
+import type { Notification } from './context/notifications.ts'
 import type {
   MCPServerConnection,
   ServerResource,
@@ -53,8 +53,8 @@ import type {
   PromptRequest,
   PromptResponse,
 } from './hooks.js'
-import type { AgentId } from './types/ids.js'
-import type { DeepImmutable } from './types/utils.js'
+import type { AgentId } from './ids'
+import type { DeepImmutable } from './utils'
 import type { AttributionState } from '../utils/commitAttribution.js'
 import type { FileHistoryState } from '../utils/fileHistory.js'
 import type { Theme, ThemeName } from '../utils/theme.js'
@@ -567,3 +567,5 @@ export function filterToolProgressMessages(
 
 // 从集中位置重新导出 ToolProgressData
 export type { ToolProgressData } from './tools.js'
+
+

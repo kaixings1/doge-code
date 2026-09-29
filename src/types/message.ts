@@ -269,7 +269,7 @@ export type GroupedToolUseMessage = MessageBase & {
   type: 'grouped_tool_use'
   /** 工具名与组内消息 */
   toolName: string
-  messages: MessageBase[]
+  messages: Array<MessageBase & { message?: { content?: unknown } }>
   results?: MessageBase[]
   displayMessage?: Message
   messageId?: string
@@ -297,6 +297,27 @@ export type NormalizedMessage =
 /** 可渲染消息 */
 export type RenderableMessage = Message
 
+/** 折叠的 read/search 消息 */
+export type CollapsedReadSearchMessage = MessageBase & {
+  type: 'collapsed_read_search'
+  searchCount: number
+  readCount: number
+  listCount: number
+  replCount: number
+  memorySearchCount: number
+  memoryReadCount: number
+  memoryWriteCount: number
+  readFilePaths: string[]
+  searchArgs: string[]
+  messages: MessageBase[]
+  displayMessage: Message
+  uuid: UUID
+  mcpCallCount?: number
+  bashCount?: number
+  gitOpBashCount?: number
+  bashCommands?: string[]
+}
+
 export type Message =
   | UserMessage
   | AssistantMessage
@@ -307,6 +328,7 @@ export type Message =
   | ToolUseSummaryMessage
   | TombstoneMessage
   | GroupedToolUseMessage
+  | CollapsedReadSearchMessage
 
 export type MCPRemoteServer = {
   id: string

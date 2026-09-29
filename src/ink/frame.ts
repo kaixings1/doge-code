@@ -1,4 +1,4 @@
-import type { Cursor } from './cursor.js'
+import type { Cursor } from './cursor.ts'
 import type { Size } from './layout/geometry.js'
 import type { ScrollHint } from './render-node-to-output.js'
 import {
@@ -122,3 +122,4 @@ export function shouldClearScreen(
 
   return undefined
 }
+
