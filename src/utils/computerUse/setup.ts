@@ -24,7 +24,7 @@ export function setupComputerUseMCP(): {
   mcpConfig: Record<string, ScopedMcpServerConfig>
   allowedTools: string[]
 } {
-  const allowedTools = buildComputerUseTools(
+  const allowedTools = (buildComputerUseTools as any)(
     CLI_CU_CAPABILITIES,
     getChicagoCoordinateMode(),
   ).map(t => buildMcpToolName(COMPUTER_USE_MCP_SERVER_NAME, t.name))

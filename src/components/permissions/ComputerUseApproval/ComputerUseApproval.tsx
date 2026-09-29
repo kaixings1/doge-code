@@ -338,7 +338,7 @@ function ComputerUseAppListPanel(t0) {
         if (a_3.alreadyGranted) {
           return <Text key={resolved.bundleId} dimColor={true}>{"  "}{figures.tick} {resolved.displayName}{" "}<Text dimColor={true}>(already granted)</Text></Text>;
         }
-        const sentinel = getSentinelCategory(resolved.bundleId);
+        const sentinel = getSentinelCategory();
         const isChecked = checked.has(resolved.bundleId);
         return <Box key={resolved.bundleId} flexDirection="column"><Text>{"  "}{isChecked ? figures.circleFilled : figures.circle}{" "}{resolved.displayName}</Text>{sentinel ? <Text bold={true}>{"    "}{figures.warning} {SENTINEL_WARNING[sentinel]}</Text> : null}</Box>;
       };

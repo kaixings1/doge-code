@@ -37,7 +37,7 @@ export type BundledSkillDefinition = {
   getPromptForCommand: (
     args: string,
     context: ToolUseContext,
-  ) => Promise<ContentBlockParam[]>
+  ) => Promise<ContentBlockParam[]> | ContentBlockParam[]
 }
 
 // Internal registry for bundled skills

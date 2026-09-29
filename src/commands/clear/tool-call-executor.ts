@@ -487,10 +487,10 @@ async function executeBashTool(parameters: any): Promise<any> {
     // 超时处理：先清理 timer 再 kill 子进程，避免 onClose 中 clearTimeout 无效
     const timer = setTimeout(() => {
       timedOut = true;
-      child.kill('SIGTERM');
+      child.kill();
       // 给子进程 3 秒善后，然后强制 SIGKILL
       setTimeout(() => {
-        child.kill('SIGKILL');
+        child.kill();
       }, 3000);
     }, timeout);
 
