@@ -248,7 +248,7 @@ function isBeingDebugged() {
   try {
     // 动态导入更好但需异步 - 改用全局对象
     const inspector = (globalThis as Record<string, unknown> & { require: (id: string) => unknown }).require('inspector');
-    const hasInspectorUrl = !!inspector.url();
+    const hasInspectorUrl = !!(inspector as Record<string, unknown> & { url: () => string }).url();
     return hasInspectorUrl || hasInspectArg || hasInspectEnv;
   } catch {
     // 忽略错误，回退到参数检测
@@ -2643,7 +2643,7 @@ if (claudeaiTimedOut) {
       /* eslint-enable @typescript-eslint/no-require-imports */
       ccrMirrorEnabled = isCcrMirrorEnabled();
     }
-    const initialState: AppState = {
+    const initialState = {
       settings: getInitialSettings(),
       tasks: {},
       agentNameRegistry: new Map(),
@@ -2749,8 +2749,8 @@ if (claudeaiTimedOut) {
       }),
       // 同步计算 teamContext 以避免在渲染期间 useEffect setState。
       // KAIROS: assistantTeamContext 优先 — 在 KAIROS 块中更早设置，以便 Agent(name: "foo") 可以在没有 TeamCreate 的情况下生成进程内队友。computeInitialTeamContext() 适用于读取自己身份的 tmux 生成的队友，而非助手模式领导者。
-      teamContext: process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' ? assistantTeamContext ?? computeInitialTeamContext?.() : computeInitialTeamContext?.()
-    };
+      teamContext: process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1' ? (assistantTeamContext ?? computeInitialTeamContext?.()) as any : (computeInitialTeamContext?.()) as any
+    } as any;
 
     // 将 CLI 初始提示添加到历史记录
     if (inputPrompt) {
@@ -3722,9 +3722,8 @@ if (process.env['CLAUDE_CODE_FEATURE_DIRECT_CONNECT'] === '1') {
 	await writeServerLock({
 	  pid: process.pid,
 	  port: actualPort,
-	  host: config.host,
 	  httpUrl: config.unix ? `unix:${config.unix}` : `http://${config.host}:${actualPort}`,
-	  startedAt: Date.now()
+	  startedAt: String(Date.now())
 	});
 	let shuttingDown = false;
 	const shutdown = async () => {
@@ -3762,7 +3761,7 @@ if (process.env['CLAUDE_CODE_FEATURE_DIRECT_CONNECT'] === '1') {
   program.command('open <cc-url>').description('连接到 Claude Code 服务器（内部使用 — 使用 cc:// URL）').option('-p, --print [prompt]', '打印模式（无头模式）').option('--output-format <format>', '输出格式：text、json、stream-json', 'text').action(async (ccUrl: string, opts: {
 	print?: string | boolean;
 	outputFormat: string;
-  }) => {
+  }): Promise<void> => {
 	const {
 	  parseConnectUrl
 	} = await import('./server/parseConnectUrl.js');
