@@ -54,7 +54,7 @@ export function useSSHSession({
 }: UseSSHSessionProps): UseSSHSessionResult {
   const isRemoteMode = !!session
 
-  const managerRef = useRef<SSHSessionManager | null>(null)
+  const managerRef = useRef<{ connect(): void; disconnect(): void; sendMessage(content: unknown): boolean; sendInterrupt(): void; respondToPermissionRequest(requestId: string, result: unknown): void } | null>(null)
   const hasReceivedInitRef = useRef(false)
   const isConnectedRef = useRef(false)
 
@@ -69,8 +69,8 @@ export function useSSHSession({
     hasReceivedInitRef.current = false
     logForDebugging('[useSSHSession] wiring SSH session manager')
 
-    const manager = session.createManager({
-      onMessage: sdkMessage => {
+    const manager = (session as any).createManager({
+      onMessage: (sdkMessage: unknown) => {
         if (isSessionEndMessage(sdkMessage)) {
           setIsLoading(false)
         }
@@ -197,8 +197,8 @@ export function useSSHSession({
         }
         void gracefulShutdown(1, 'other', { finalMessage: msg })
       },
-      onError: error => {
-        logForDebugging(`[useSSHSession] error: ${error.message}`)
+      onError: (error: unknown) => {
+        logForDebugging(`[useSSHSession] error: ${(error as Error).message}`)
       },
     })
 

@@ -54,7 +54,7 @@ export const call: LocalCommandCall = async (args): Promise<LocalCommandResult> 
   // 解析端口
   const portMatch = s.match(/--port\s+(\d+)/)
   const port = portMatch ? parseInt(portMatch[1]!) : 3711
-  const openBrowser = s.includes('--open')
+  const shouldOpenBrowser = s.includes('--open')
 
   try {
     if (isLoopDashboardRunning()) {
@@ -69,7 +69,7 @@ export const call: LocalCommandCall = async (args): Promise<LocalCommandResult> 
     const actualPort = await startLoopDashboardServer(port)
     const url = `http://127.0.0.1:${actualPort}`
 
-    if (openBrowser) {
+    if (shouldOpenBrowser) {
       await openBrowser(url)
     }
 

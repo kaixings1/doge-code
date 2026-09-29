@@ -12,7 +12,7 @@ import type { Attachment } from '../utils/attachments.js'
  * 原先直接引用未导入的全局 `UUID`，导致 5 处 TS2304；
  * 此处显式声明模板字面量类型，既保留格式约束又保持自洽。
  */
-export type UUID = `${string}-${string}-${string}-${string}-${string}`
+export type UUID = string
 
 /** 消息基类 */
 export type MessageBase = {

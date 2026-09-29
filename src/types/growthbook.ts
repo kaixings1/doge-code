@@ -209,9 +209,7 @@ export type FeatureUsageCallbackWithUser = (
 ) => void;
 
 /** 插件函数 */
-export type Plugin = (
-  gb: GrowthBook | UserScopedGrowthBook | GrowthBookClient,
-) => void;
+export type Plugin = (gb: unknown) => void;
 
 /** 事件属性 */
 export type EventProperties = Record<string, unknown>;

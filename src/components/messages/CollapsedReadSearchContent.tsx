@@ -205,13 +205,13 @@ export function CollapsedReadSearchContent({
     for (const id_0 of toolUseIds) {
       if (!inProgressToolUseIDs.has(id_0)) continue;
       const latest = lookups.progressMessagesByToolUseID.get(id_0)?.at(-1)?.data;
-      if (latest?.type === 'repl_tool_call' && latest.phase === 'start') {
-        const input = latest.toolInput as {
-          command?: string;
-          pattern?: string;
-          file_path?: string;
-        } | null;
-        incomingHint = input?.file_path ?? (input?.pattern ? `"${input?.pattern}"` : input?.command) ?? latest.toolName;
+      if (latest && typeof latest === 'object' && (latest as Record<string, unknown>).type === 'repl_tool_call' && (latest as Record<string, unknown>).phase === 'start') {
+        const input = (latest as { toolInput?: { command?: string; pattern?: string; file_path?: string } }).toolInput;
+        const filePath = input && 'file_path' in input ? input.file_path : null;
+        const pattern = input && 'pattern' in input ? input.pattern : null;
+        const command = input && 'command' in input ? input.command : null;
+        const toolName = (latest as Record<string, unknown>).toolName as string;
+        incomingHint = filePath ?? (pattern ? `"${pattern}"` : command) ?? toolName;
       }
     }
   }
@@ -222,9 +222,14 @@ export function CollapsedReadSearchContent({
     const toolUses: NormalizedAssistantMessage[] = [];
     for (const msg of groupMessages) {
       if (msg.type === 'assistant') {
-        toolUses.push(msg);
+        toolUses.push(msg as NormalizedAssistantMessage);
       } else if (msg.type === 'grouped_tool_use') {
-        toolUses.push(...msg.messages);
+        const grouped = msg as { messages: any[] };
+        for (const inner of grouped.messages) {
+          if (inner.type === 'assistant') {
+            toolUses.push(inner as NormalizedAssistantMessage);
+          }
+        }
       }
     }
     return <Box flexDirection="column">
@@ -276,12 +281,13 @@ export function CollapsedReadSearchContent({
     for (const id_1 of toolUseIds) {
       if (!inProgressToolUseIDs.has(id_1)) continue;
       const data = lookups.progressMessagesByToolUseID.get(id_1)?.at(-1)?.data;
-      if (data?.type !== 'bash_progress' && data?.type !== 'powershell_progress') {
+      if (!data || (data as any).type !== 'bash_progress' && (data as any).type !== 'powershell_progress') {
         continue;
       }
-      if (elapsed === undefined || data.elapsedTimeSeconds > elapsed) {
-        elapsed = data.elapsedTimeSeconds;
-        lines = data.totalLines;
+      const typedData = data as { elapsedTimeSeconds: number; totalLines: number };
+      if (elapsed === undefined || typedData.elapsedTimeSeconds > elapsed) {
+        elapsed = typedData.elapsedTimeSeconds;
+        lines = typedData.totalLines;
       }
     }
     if (elapsed !== undefined && elapsed >= 2) {

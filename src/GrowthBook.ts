@@ -171,7 +171,7 @@ export class GrowthBook<
 
     if (options.plugins) {
       for (const plugin of options.plugins) {
-        plugin(this);
+        (plugin as (gb: unknown) => void)(this);
       }
     }
 

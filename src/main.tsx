@@ -247,7 +247,7 @@ function isBeingDebugged() {
   // 检查检查器是否可用且处于活动状态（表示正在调试）
   try {
     // 动态导入更好但需异步 - 改用全局对象
-    const inspector = (global as { [key: string]: unknown }).require('inspector');
+    const inspector = (globalThis as Record<string, unknown> & { require: (id: string) => unknown }).require('inspector');
     const hasInspectorUrl = !!inspector.url();
     return hasInspectorUrl || hasInspectArg || hasInspectEnv;
   } catch {
@@ -1429,8 +1429,8 @@ async function run(): Promise<CommanderCommand> {
         }
         dynamicMcpConfig = {
           ...dynamicMcpConfig,
-          ...allowed
-        };
+          ...allowed,
+        } as Record<string, ScopedMcpServerConfig>;
       }
     }
     //console.error('[TRACE ' + Date.now() + '] AFTER_MCP_CONFIG');
