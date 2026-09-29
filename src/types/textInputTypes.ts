@@ -170,6 +170,11 @@ export type BaseTextInputProps = {
   readonly onUndo?: () => void
 
   /**
+   * 可选回调：重做功能
+   */
+  readonly onRedo?: () => void
+
+  /**
    * 是否以暗淡颜色渲染文本
    */
   readonly dimColor?: boolean

@@ -410,6 +410,7 @@ function PromptInput({
   const [showQuickOpen, setShowQuickOpen] = useState(false);
   const [showGlobalSearch, setShowGlobalSearch] = useState(false);
   const [showHistoryPicker, setShowHistoryPicker] = useState(false);
+  const [showUndoHistoryPicker, setShowUndoHistoryPicker] = useState(false);
   const [showFastModePicker, setShowFastModePicker] = useState(false);
   const [showThinkingToggle, setShowThinkingToggle] = useState(false);
   const [showAutoModeOptIn, setShowAutoModeOptIn] = useState(false);
@@ -837,10 +838,13 @@ function PromptInput({
   const {
     pushToBuffer,
     undo,
+    redo,
+    jumpToIndex,
     canUndo,
+    canRedo,
     clearBuffer
   } = useInputBuffer({
-    maxBufferSize: 50,
+    maxBufferSize: 2000,
     debounceMs: 1000
   });
   useMaybeTruncateInput({
@@ -1318,6 +1322,18 @@ function PromptInput({
     }
   }, [canUndo, undo, trackAndSetInput, setPastedContents]);
 
+  // Handler for chat:redo - redo last undone edit
+  const handleRedo = useCallback(() => {
+    if (canRedo) {
+      const nextState = redo();
+      if (nextState) {
+        trackAndSetInput(nextState.text);
+        setCursorOffset(nextState.cursorOffset);
+        setPastedContents(nextState.pastedContents);
+      }
+    }
+  }, [canRedo, redo, trackAndSetInput, setPastedContents]);
+
   // Handler for chat:newline - insert a newline at the cursor position
   const handleNewline = useCallback(() => {
     pushToBuffer(input, cursorOffset, pastedContents);
@@ -1668,6 +1684,7 @@ function PromptInput({
   // fall through to history when the cursor can't move further.
   const chatHandlers = useMemo(() => ({
     'chat:undo': handleUndo,
+    'chat:redo': handleRedo,
     'chat:newline': handleNewline,
     'chat:externalEditor': handleExternalEditor,
     'chat:stash': handleStash,
@@ -1675,7 +1692,7 @@ function PromptInput({
     'chat:thinkingToggle': handleThinkingToggle,
     'chat:cycleMode': handleCycleMode,
     'chat:imagePaste': handleImagePaste
-  }), [handleUndo, handleNewline, handleExternalEditor, handleStash, handleModelPicker, handleThinkingToggle, handleCycleMode, handleImagePaste]);
+  }), [handleUndo, handleRedo, handleNewline, handleExternalEditor, handleStash, handleModelPicker, handleThinkingToggle, handleCycleMode, handleImagePaste]);
   useKeybindings(chatHandlers, {
     context: 'Chat',
     isActive: !isModalOverlayActive
@@ -1878,7 +1895,7 @@ function PromptInput({
     // Skip all input handling when a full-screen dialog is open. These dialogs
     // render via early return, but hooks run unconditionally — so without this
     // guard, Escape inside a dialog leaks to the double-press message-selector.
-    if (showTeamsDialog || showQuickOpen || showGlobalSearch || showHistoryPicker) {
+    if (showTeamsDialog || showQuickOpen || showGlobalSearch || showHistoryPicker || showUndoHistoryPicker) {
       return;
     }
 
@@ -1963,6 +1980,30 @@ function PromptInput({
         void popAllCommandsFromQueue();
         return;
       }
+
+      // If input has content, show undo history picker instead of clearing
+      if (input.trim() && canUndo) {
+        setShowUndoHistoryPicker(true);
+        return;
+      }
+
+      // When undo history picker is open, Enter selects the current entry
+      if (showUndoHistoryPicker) {
+        if (key.return) {
+          const selectedIndex = getCurrentIndex();
+          const selectedEntry = jumpToIndex(selectedIndex);
+          if (selectedEntry) {
+            trackAndSetInput(selectedEntry.text);
+            setCursorOffset(selectedEntry.cursorOffset);
+            setPastedContents(selectedEntry.pastedContents);
+          }
+          setShowUndoHistoryPicker(false);
+          return;
+        }
+        // Esc is handled by the guard above which returns early
+        return;
+      }
+
       if (messages.length > 0 && !input && !isLoading) {
         doublePressEscFromEmpty();
       }
@@ -2181,6 +2222,32 @@ function PromptInput({
       selectFooterItem(null);
     }} />;
   }
+  if (showUndoHistoryPicker) {
+    const undoEntries = getBuffer();
+    const currentIdx = getCurrentIndex();
+    const visibleEntries = undoEntries.slice(-20);
+    const startIndex = Math.max(0, undoEntries.length - 20);
+    return (
+      <Box flexDirection="column" marginTop={1}>
+        <Text bold>撤销历史 (最近 {visibleEntries.length} 项)</Text>
+        {visibleEntries.map((entry, i) => {
+          const globalIndex = startIndex + i;
+          const isCurrent = globalIndex === currentIdx;
+          const displayText = entry.text.length > 60
+            ? entry.text.slice(0, 60) + '...'
+            : entry.text;
+          return (
+            <Box key={globalIndex}>
+              <Text color={isCurrent ? 'cyan' : undefined}>
+                {isCurrent ? '>' : ' '} {globalIndex}: {displayText}
+              </Text>
+            </Box>
+          );
+        })}
+        <Text dimColor>Enter 选择 | Esc 关闭</Text>
+      </Box>
+    );
+  }
   const baseProps: BaseTextInputProps = {
     multiline: true,
     onSubmit,
@@ -2217,6 +2284,14 @@ function PromptInput({
         trackAndSetInput(previousState.text);
         setCursorOffset(previousState.cursorOffset);
         setPastedContents(previousState.pastedContents);
+      }
+    } : undefined,
+    onRedo: canRedo ? () => {
+      const nextState = redo();
+      if (nextState) {
+        trackAndSetInput(nextState.text);
+        setCursorOffset(nextState.cursorOffset);
+        setPastedContents(nextState.pastedContents);
       }
     } : undefined,
     highlights: combinedHighlights,

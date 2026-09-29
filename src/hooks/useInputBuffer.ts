@@ -20,7 +20,9 @@ export type UseInputBufferResult = {
     pastedContents?: Record<number, PastedContent>,
   ) => void
   undo: () => BufferEntry | undefined
+  redo: () => BufferEntry | undefined
   canUndo: boolean
+  canRedo: boolean
   clearBuffer: () => void
 }
 
@@ -96,11 +98,11 @@ export function useInputBuffer({
   )
 
   const undo = useCallback((): BufferEntry | undefined => {
-    if (currentIndex < 0 || buffer.length === 0) {
+    if (currentIndex <= 0 || buffer.length === 0) {
       return undefined
     }
 
-    const targetIndex = Math.max(0, currentIndex - 1)
+    const targetIndex = currentIndex - 1
     const entry = buffer[targetIndex]
 
     if (entry) {
@@ -110,6 +112,34 @@ export function useInputBuffer({
 
     return undefined
   }, [buffer, currentIndex])
+
+  const redo = useCallback((): BufferEntry | undefined => {
+    if (currentIndex < 0 || currentIndex >= buffer.length - 1) {
+      return undefined
+    }
+
+    const targetIndex = currentIndex + 1
+    const entry = buffer[targetIndex]
+
+    if (entry) {
+      setCurrentIndex(targetIndex)
+      return entry
+    }
+
+    return undefined
+  }, [buffer, currentIndex])
+
+  const jumpToIndex = useCallback((targetIndex: number): BufferEntry | undefined => {
+    if (targetIndex < 0 || targetIndex >= buffer.length || buffer.length === 0) {
+      return undefined
+    }
+    setCurrentIndex(targetIndex)
+    return buffer[targetIndex]
+  }, [buffer])
+
+  const getCurrentIndex = useCallback(() => currentIndex, [currentIndex])
+
+  const getBuffer = useCallback(() => buffer, [buffer])
 
   const clearBuffer = useCallback(() => {
     setBuffer([])
@@ -122,11 +152,17 @@ export function useInputBuffer({
   }, [lastPushTime, pendingPush])
 
   const canUndo = currentIndex > 0 && buffer.length > 1
+  const canRedo = currentIndex >= 0 && currentIndex < buffer.length - 1
 
   return {
     pushToBuffer,
     undo,
+    redo,
+    jumpToIndex,
     canUndo,
+    canRedo,
+    getCurrentIndex,
+    getBuffer,
     clearBuffer,
   }
 }
