@@ -334,7 +334,6 @@ import * as mod_rename_rename from '../commands/rename/rename.ts'
 import * as mod_replay from '../commands/replay/index.ts'
 import * as mod_replay_replay from '../commands/replay/replay.ts'
 import * as mod_repo_map from '../commands/repo-map/index.tsx'
-import * as mod_repo_pack from '../commands/repo-pack/index.ts'
 import * as mod_reset_limits from '../commands/reset-limits/index.tsx'
 import * as mod_resume from '../commands/resume/index.ts'
 import * as mod_review from '../commands/review.ts'
@@ -776,7 +775,6 @@ export const COMMAND_MODULES: Record<string, { default?: any }> = {
   'replay': mod_replay,
   'replay-replay': mod_replay_replay,
   'repo-map': mod_repo_map,
-  'repo-pack': mod_repo_pack,
   'reset-limits': mod_reset_limits,
   'resume': mod_resume,
   'review': mod_review,

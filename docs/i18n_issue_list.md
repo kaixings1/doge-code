@@ -1,0 +1,287 @@
+# i18n 汉化异常文件清单（逐个手工汉化作业清单）
+> 由扫描脚本生成。分类标准：
+> - **未汉化**：纯英文，正文英文句子 ≥10 行
+> - **英文为主**：有中文但英文行 > 2×中文行（汉化只翻了零星段落）
+> - **部分混杂**：有中文但英文行 > 中文行（汉化不彻底）
+>
+> 状态标记：`[ ] 待汉化` → `[x] 已完成`
+
+## 未汉化（纯英文）（99 个）
+- [x] agents/perf-orchestrator.md
+- [x] agents/roslyn-incremental-generator-specialist.md
+- [x] agents/toolkit-backend-developer.md
+- [x] agents/planner/prompt.jinja2
+- [x] commands/add-sub.md
+- [x] commands/anti-pattern-czar.md
+- [x] commands/aside.md
+- [x] commands/audit-project-agents.md
+- [x] commands/audit-project.md
+- [x] commands/ccdk-merge.md
+- [x] commands/cost-report.md
+- [x] commands/cpp-build.md
+- [x] commands/cpp-review.md
+- [x] commands/cpp-test.md
+- [x] commands/dev-data-guide.md
+- [x] commands/edit-insert.md
+- [x] commands/fix-issues.md
+- [x] commands/flutter-test.md
+- [x] commands/kotlin-build.md
+- [x] commands/kotlin-review.md
+- [x] commands/kotlin-test.md
+- [x] commands/marketing-campaign.md
+- [x] commands/merge.md
+- [x] commands/orch-review.md
+- [x] commands/perf.md
+- [x] commands/plan-prd.md
+- [x] commands/plan.md
+- [x] commands/pr.md
+- [x] commands/prp-implement.md
+- [x] commands/prp-plan.md
+- [x] commands/prp-pr.md
+- [x] commands/prp-prd.md
+- [x] commands/publish.md
+- [x] commands/quality-gate.md
+- [x] commands/react-build.md
+- [x] commands/react-review.md
+- [x] commands/react-test.md
+- [x] commands/remove-deadcode.md
+- [x] commands/resume-session.md
+- [x] commands/review-prs.md
+- [x] commands/rust-build.md
+- [x] commands/rust-test.md
+- [x] commands/santa-loop.md
+- [x] commands/save-session.md
+- [x] commands/ship-ci-review-loop.md
+- [x] commands/ship-deployment.md
+- [x] commands/ship-error-handling.md
+- [x] commands/ship.md
+- [x] commands/strict-development-rules.md
+- [x] commands/vue-review.md
+- [x] skills/adk-agent-builder/references/advanced-patterns.md
+- [x] skills/adk-agent-builder/references/best-practices.md
+- [x] skills/adk-debug/SKILL.md
+- [x] skills/adk-style/references/testing.md
+- [x] skills/adk-verify-snippets/SKILL.md
+- [x] skills/agent-builder/SKILL.md
+- [x] skills/agent-builder/references/agent-philosophy.md
+- [x] skills/agent-skills-code-simplification/SKILL.md
+- [x] skills/agent-skills-spec-driven-development/SKILL.md
+- [x] skills/autopilot/SKILL.md
+- [x] skills/cancel/SKILL.md
+- [x] skills/ccdk-deploy/SKILL.md
+- [x] skills/ccdk-review-work/SKILL.md
+- [x] skills/ccg/SKILL.md
+- [x] skills/claude-mem-openclaw/SKILL.md
+- [x] skills/cmux/cmux/SKILL.md
+- [x] skills/cmux/cmux-browser/SKILL.md
+- [x] skills/cmux/cmux-custom-sidebar/SKILL.md
+- [x] skills/cmux/cmux-workspace/SKILL.md
+- [x] skills/code-review/SKILL.md
+- [ ] skills/configure-notifications/SKILL.md
+- [x] skills/context-mode/context-mode/SKILL.md
+- [x] skills/deep-dive/SKILL.md
+- [x] skills/deep-interview/SKILL.md
+- [x] skills/deepinit/SKILL.md
+- [x] skills/herdr/SKILL.md
+- [x] skills/hud/SKILL.md
+- [x] skills/learner/SKILL.md
+- [x] skills/mcp-builder/SKILL.md
+- [x] skills/mcp-setup/SKILL.md
+- [x] skills/omc-doctor/SKILL.md
+- [x] skills/omc-setup/SKILL.md
+- [x] skills/omc-setup/phases/02-configure.md
+- [x] skills/omc-setup/phases/03-integrations.md
+- [x] skills/omc-setup/phases/04-welcome.md
+- [x] skills/omc-teams/SKILL.md
+- [x] skills/pdf/SKILL.md
+- [x] skills/plan/SKILL.md
+- [x] skills/project-session-manager/SKILL.md
+- [x] skills/ralph/SKILL.md
+- [x] skills/sciomc/SKILL.md
+- [x] skills/self-improve/si-benchmark-builder.md
+- [x] skills/self-improve/SKILL.md
+- [ ] skills/skill/SKILL.md
+- [ ] skills/team/SKILL.md
+- [x] skills/trace/SKILL.md
+- [x] skills/ultraqa/SKILL.md
+- [x] skills/ultrawork/SKILL.md
+- [x] skills/writer-memory/SKILL.md
+
+## 英文为主（87 个）
+- [x] agents/auto-translate-handle.md
+- [x] agents/codebase-pattern-finder.md
+- [x] agents/critic.md
+- [x] agents/dart-build-resolver.md
+- [x] agents/development-workflows-research-agent.md
+- [x] agents/django-build-resolver.md
+- [x] agents/django-reviewer.md
+- [x] agents/e2e-runner.md
+- [x] agents/gan-evaluator.md
+- [x] agents/gsd-code-fixer.md
+- [x] agents/gsd-debug-session-manager.md
+- [x] agents/gsd-debugger.md
+- [x] agents/gsd-doc-writer.md
+- [x] agents/gsd-domain-researcher.md
+- [x] agents/gsd-eval-planner.md
+- [x] agents/gsd-executor.md
+- [x] agents/gsd-framework-selector.md
+- [x] agents/gsd-integration-checker.md
+- [x] agents/gsd-intel-updater.md
+- [x] agents/gsd-pattern-mapper.md
+- [x] agents/gsd-phase-researcher.md
+- [x] agents/gsd-plan-checker.md
+- [x] agents/gsd-planner.md
+- [x] agents/gsd-project-researcher.md
+- [x] agents/gsd-research-synthesizer.md
+- [x] agents/gsd-roadmapper.md
+- [x] agents/gsd-ui-auditor.md
+- [x] agents/gsd-ui-researcher.md
+- [x] agents/gsd-verifier.md
+- [x] agents/kotlin-reviewer.md
+- [x] agents/network-architect.md
+- [x] agents/network-troubleshooter.md
+- [ ] agents/opensource-packager.md
+- [x] agents/performance-optimizer.md
+- [x] agents/qa-tester.md
+- [x] agents/react-build-resolver.md
+- [x] agents/react-reviewer.md
+- [ ] agents/report_compiler_agent.md
+- [x] agents/rust-build-resolver.md
+- [x] agents/swift-build-resolver.md
+- [ ] agents/synthesis_agent.md
+- [x] agents/ts-string-han.md
+- [ ] agents/vue-reviewer.md
+- [ ] agents/writer.md
+- [ ] agents/c-level/cs-cto-advisor.md
+- [ ] agents/data-ai/data-engineer.md
+- [ ] agents/data-ai/ml-engineer.md
+- [x] agents/game-studio/art-director.md
+- [x] agents/game-studio/audio-director.md
+- [x] agents/game-studio/creative-director.md
+- [x] agents/game-studio/economy-designer.md
+- [x] agents/game-studio/game-designer.md
+- [x] agents/game-studio/godot-csharp-specialist.md
+- [ ] agents/game-studio/godot-gdextension-specialist.md
+- [x] agents/game-studio/level-designer.md
+- [x] agents/game-studio/localization-lead.md
+- [x] agents/game-studio/narrative-director.md
+- [x] agents/game-studio/producer.md
+- [x] agents/game-studio/prototyper.md
+- [x] agents/game-studio/qa-lead.md
+- [x] agents/game-studio/release-manager.md
+- [x] agents/game-studio/systems-designer.md
+- [x] agents/game-studio/technical-director.md
+- [x] agents/game-studio/ui-programmer.md
+- [x] agents/game-studio/world-builder.md
+- [x] agents/language-experts/csharp-developer.md
+- [x] agents/language-experts/java-architect.md
+- [x] agents/language-experts/php-developer.md
+- [x] agents/product/cs-agile-product-owner.md
+- [x] agents/product/cs-product-manager.md
+- [x] agents/product/cs-product-strategist.md
+- [x] agents/product/cs-ux-researcher.md
+- [x] agents/project-management/cs-project-manager.md
+- [x] agents/workflows/best-practice/workflow-claude-settings-agent.md
+- [x] agents/workflows/best-practice/workflow-concepts-agent.md
+- [x] commands/create_plan.md
+- [x] commands/create_plan_generic.md
+- [x] commands/create_plan_nt.md
+- [x] commands/implement_plan.md
+- [x] commands/iterate_plan.md
+- [x] commands/iterate_plan_nt.md
+- [x] commands/linear.md
+- [x] commands/rework.md
+- [x] commands/gsd/graphify.md
+- [x] commands/gsd/quick.md
+- [x] commands/workflow-imports/security-review.md
+- [x] commands/workflows/best-practice/workflow-concepts.md
+
+## 部分混杂（85 个）
+- [ ] agents/deployer.md
+- [ ] agents/flutter-reviewer.md
+- [ ] agents/fsharp-reviewer.md
+- [ ] agents/go-build-resolver.md
+- [x] agents/gsd-ai-researcher.md
+- [x] agents/gsd-code-reviewer.md
+- [ ] agents/gsd-codebase-mapper.md
+- [x] agents/gsd-doc-synthesizer.md
+- [x] agents/gsd-eval-auditor.md
+- [x] agents/gsd-nyquist-auditor.md
+- [x] agents/gsd-user-profiler.md
+- [x] agents/harmonyos-app-resolver.md
+- [ ] agents/homelab-architect.md
+- [x] agents/java-reviewer.md
+- [ ] agents/marketing-agent.md
+- [ ] agents/mle-reviewer.md
+- [x] agents/network-config-reviewer.md
+- [ ] agents/opensource-forker.md
+- [x] agents/presentation-claude-code.md
+- [x] agents/presentation-claude-gemini.md
+- [x] agents/presentation-vibe-coding.md
+- [ ] agents/python-reviewer.md
+- [x] agents/pytorch-build-resolver.md
+- [ ] agents/research_architect_agent.md
+- [ ] agents/skill-reviewer.md
+- [ ] agents/tdd-guide.md
+- [ ] agents/typescript-reviewer.md
+- [ ] agents/weather-agent.md
+- [ ] agents/c-level/cs-ceo-advisor.md
+- [ ] agents/core-development/backend-developer.md
+- [ ] agents/data-ai/data-scientist.md
+- [ ] agents/data-ai/mlops-engineer.md
+- [ ] agents/engineering/cs-backend-engineer.md
+- [ ] agents/engineering/cs-frontend-engineer.md
+- [ ] agents/engineering/cs-wiki-ingestor.md
+- [ ] agents/engineering/cs-wiki-librarian.md
+- [x] agents/game-studio/ai-programmer.md
+- [x] agents/game-studio/analytics-engineer.md
+- [x] agents/game-studio/engine-programmer.md
+- [x] agents/game-studio/gameplay-programmer.md
+- [ ] agents/game-studio/godot-gdscript-specialist.md
+- [ ] agents/game-studio/godot-shader-specialist.md
+- [ ] agents/game-studio/godot-specialist.md
+- [x] agents/game-studio/lead-programmer.md
+- [ ] agents/game-studio/live-ops-designer.md
+- [x] agents/game-studio/network-programmer.md
+- [x] agents/game-studio/performance-analyst.md
+- [x] agents/game-studio/sound-designer.md
+- [x] agents/game-studio/tools-programmer.md
+- [ ] agents/game-studio/unity-specialist.md
+- [ ] agents/game-studio/unreal-specialist.md
+- [ ] agents/game-studio/ux-designer.md
+- [ ] agents/language-experts/django-developer.md
+- [ ] agents/language-experts/flutter-expert.md
+- [ ] agents/language-experts/kotlin-specialist.md
+- [ ] agents/language-experts/nextjs-developer.md
+- [ ] agents/language-experts/rails-expert.md
+- [ ] agents/language-experts/svelte-developer.md
+- [ ] agents/language-experts/vue-specialist.md
+- [ ] agents/marketing/cs-content-creator.md
+- [ ] agents/marketing/cs-demand-gen-specialist.md
+- [ ] agents/marketing/cs-webinar-marketer.md
+- [x] commands/constitution.md
+- [x] commands/implement.md
+- [x] commands/new-sdk-app.md
+- [x] commands/plugin-audit.md
+- [x] commands/ralph_plan.md
+- [x] commands/ralph_research.md
+- [x] commands/research_codebase.md
+- [x] commands/research_codebase_generic.md
+- [x] commands/research_codebase_nt.md
+- [x] commands/review.md
+- [x] commands/seo-auditor.md
+- [x] commands/tasks.md
+- [x] commands/taskstoissues.md
+- [x] commands/gsd/sketch.md
+- [x] commands/gsd/surface.md
+- [x] commands/gsd/workstreams.md
+- [x] commands/workflows/best-practice/workflow-claude-commands.md
+- [x] commands/workflows/best-practice/workflow-claude-settings.md
+- [x] commands/workflows/best-practice/workflow-claude-skills.md
+- [x] commands/workflows/best-practice/workflow-claude-subagents.md
+- [x] skills/everything-claude-code-zh/backend-patterns/SKILL.md
+- [x] skills/everything-claude-code-zh/frontend-patterns/SKILL.md
+- [x] skills/everything-claude-code-zh/swift-protocol-di-testing/SKILL.md
+
+---
+**合计：271 个文件待汉化**

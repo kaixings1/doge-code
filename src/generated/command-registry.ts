@@ -852,9 +852,6 @@ export const COMMAND_REGISTRY: CommandRegistryEntry[] = [
     "path": "../src/commands/repo-map/index.tsx"
   },
   {
-    "name": "repo-pack",
-    "path": "../src/commands/repo-pack/index.ts"
-  },
   {
     "name": "reset-limits",
     "path": "../src/commands/reset-limits/index.tsx"
@@ -1342,7 +1339,6 @@ export const COMMAND_PATH_207 = '../src/commands/remove-model/index.ts'
 export const COMMAND_PATH_208 = '../src/commands/rename/index.ts'
 export const COMMAND_PATH_209 = '../src/commands/replay/index.ts'
 export const COMMAND_PATH_210 = '../src/commands/repo-map/index.tsx'
-export const COMMAND_PATH_211 = '../src/commands/repo-pack/index.ts'
 export const COMMAND_PATH_212 = '../src/commands/reset-limits/index.tsx'
 export const COMMAND_PATH_213 = '../src/commands/resume/index.ts'
 export const COMMAND_PATH_214 = '../src/commands/rewind/index.ts'
