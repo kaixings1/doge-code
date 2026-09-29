@@ -117,8 +117,8 @@ export function MCPRemoteServerMenu({
   }, [reconnectMcpServer, server.name, onComplete]);
   const handleClaudeAIClearAuthComplete = React.useCallback(async () => {
     await clearServerCache(server.name, {
-      ...server.config,
-      scope: server.scope
+      ...(server.config as any),
+      scope: server.scope as any
     });
     setAppState(prev => {
       const newClients = prev.mcp.clients.map(c => c.name === server.name ? {
@@ -220,7 +220,7 @@ export function MCPRemoteServerMenu({
     if (orgUuid && server.config.type === 'claudeai-proxy' && server.config.id) {
       // Use the direct auth URL with org and server IDs
       // Replace 'mcprs' prefix with 'mcpsrv' if present
-      const serverId = server.config.id.startsWith('mcprs') ? 'mcpsrv' + server.config.id.slice(5) : server.config.id;
+      const serverId = (server.config.id as string).startsWith('mcprs') ? 'mcpsrv' + (server.config.id as string).slice(5) : (server.config.id as string);
       const productSurface = encodeURIComponent(process.env.CLAUDE_CODE_ENTRYPOINT || 'cli');
       authUrl = `${claudeAiBaseUrl}/api/organizations/${orgUuid}/mcp/start-auth/${serverId}?product_surface=${productSurface}`;
     } else {
@@ -240,7 +240,7 @@ export function MCPRemoteServerMenu({
     const wasEnabled = server.client.type !== 'disabled';
     try {
       await toggleMcpServer(server.name);
-      if (server.config.type === 'claudeai-proxy') {
+      if ((server.config.type as string) === 'claudeai-proxy') {
         logEvent('tengu_claudeai_mcp_toggle', {
           new_state: (wasEnabled ? 'disabled' : 'enabled') as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
         });
@@ -263,12 +263,12 @@ export function MCPRemoteServerMenu({
       // Revoke existing tokens if re-authenticating, but preserve step-up
       // auth state so the next OAuth flow can reuse cached scope/discovery.
       if (server.isAuthenticated && server.config) {
-        await revokeServerTokens(server.name, server.config, {
+        await revokeServerTokens(server.name, server.config as any, {
           preserveStepUpState: true
         });
       }
       if (server.config) {
-        await performMCPOAuthFlow(server.name, server.config, setAuthorizationUrl, controller.signal, {
+        await performMCPOAuthFlow(server.name, server.config as any, setAuthorizationUrl, controller.signal, {
           onWaitingForCallback: submit => {
             setManualCallbackSubmit(() => submit);
           }
@@ -304,12 +304,12 @@ export function MCPRemoteServerMenu({
     if (server.config.type === 'claudeai-proxy') return;
     if (server.config) {
       // First revoke the authentication tokens and clear all auth state
-      await revokeServerTokens(server.name, server.config);
+      await revokeServerTokens(server.name, server.config as any);
       logEvent('tengu_mcp_auth_config_clear', {});
 
       // Disconnect the client and clear the cache
       await clearServerCache(server.name, {
-        ...server.config,
+        ...(server.config as any),
         scope: server.scope
       });
 
@@ -342,7 +342,7 @@ export function MCPRemoteServerMenu({
     // XAA: silent exchange (cached id_token → no browser), so don't claim
     // one will open. If IdP login IS needed, authorizationUrl populates and
     // the URL fallback block below still renders.
-    const authCopy = server.config.type !== 'claudeai-proxy' && server.config.oauth?.xaa ? ' 正在通过您的身份提供商认证' : ' 浏览器窗口将打开进行认证';
+    const authCopy = (server.config.type as string) !== 'claudeai-proxy' && (server.config.oauth as any)?.xaa ? ' 正在通过您的身份提供商认证' : ' 浏览器窗口将打开进行认证';
     return <Box flexDirection="column" gap={1} padding={1}>
         <Text color="claude">正在认证 {server.name}…</Text>
         <Box>
@@ -478,7 +478,7 @@ export function MCPRemoteServerMenu({
       value: 'tools'
     });
   }
-  if (server.config.type === 'claudeai-proxy') {
+  if ((server.config.type as string) === 'claudeai-proxy') {
     if (server.client.type === 'connected') {
       menuOptions.push({
         label: '清除认证',
@@ -562,7 +562,7 @@ export function MCPRemoteServerMenu({
 
           <Box>
             <Text bold>配置位置: </Text>
-            <Text dimColor>{describeMcpConfigFilePath(server.scope)}</Text>
+            <Text dimColor>{describeMcpConfigFilePath(server.scope as any)}</Text>
           </Box>
 
           {server.client.type === 'connected' && <CapabilitiesSection serverToolsCount={serverToolsCount} serverPromptsCount={serverCommandsCount} serverResourcesCount={mcp.resources[server.name]?.length || 0} />}
@@ -600,7 +600,7 @@ export function MCPRemoteServerMenu({
               setIsReconnecting(true);
               try {
                 const result_1 = await reconnectMcpServer(server.name);
-                if (server.config.type === 'claudeai-proxy') {
+                if ((server.config.type as string) === 'claudeai-proxy') {
                   logEvent('tengu_claudeai_mcp_reconnect', {
                     success: result_1.client.type === 'connected'
                   });
@@ -610,7 +610,7 @@ export function MCPRemoteServerMenu({
                 } = handleReconnectResult(result_1, server.name);
                 onComplete?.(message_0);
               } catch (err_2) {
-                if (server.config.type === 'claudeai-proxy') {
+                if ((server.config.type as string) === 'claudeai-proxy') {
                   logEvent('tengu_claudeai_mcp_reconnect', {
                     success: false
                   });

@@ -52,7 +52,7 @@ import type { JumpHandle } from './VirtualMessageList.js';
 // and pegs CPU at 100%. Memo on agentDefinitions so a new messages array
 // doesn't invalidate the logo subtree. LogoV2/StatusNotices internally
 // subscribe to useAppState/useSettings for their own updates.
-const LogoHeader = React.memo(function LogoHeader(t0) {
+const LogoHeader = React.memo(function LogoHeader(t0: { agentDefinitions?: AgentDefinitionsResult }) {
   const $ = _c(3);
   const {
     agentDefinitions
@@ -408,7 +408,7 @@ const MessagesImpl = ({
           }
         }
       } else if (msg?.type === 'user') {
-        const hasToolResult = msg.message.content.some(block => block.type === 'tool_result');
+        const hasToolResult = Array.isArray(msg.message.content) && msg.message.content.some(block => (block as any).type === 'tool_result');
         if (!hasToolResult) {
           // Reached a previous user turn so don't show stale thinking from before
           return 'no-thinking';
@@ -511,14 +511,14 @@ const MessagesImpl = ({
     // SendUserFile delivers a file without replacement text, so dropping
     // assistant text for file-only turns would leave the user with no context.
     const dropTextToolNames = [BRIEF_TOOL_NAME].filter((n_0): n_0 is string => n_0 !== null);
-    const briefFiltered = briefToolNames.length > 0 && !isTranscriptMode ? isBriefOnly ? filterForBriefTool(messagesToShowNotTruncated, briefToolNames) : dropTextToolNames.length > 0 ? dropTextInBriefTurns(messagesToShowNotTruncated, dropTextToolNames) : messagesToShowNotTruncated : messagesToShowNotTruncated;
+    const briefFiltered = briefToolNames.length > 0 && !isTranscriptMode ? isBriefOnly ? filterForBriefTool(messagesToShowNotTruncated as any, briefToolNames) : dropTextToolNames.length > 0 ? dropTextInBriefTurns(messagesToShowNotTruncated as any, dropTextToolNames) : messagesToShowNotTruncated : messagesToShowNotTruncated;
     const messagesToShow = shouldTruncate ? briefFiltered.slice(-MAX_MESSAGES_TO_SHOW_IN_TRANSCRIPT_MODE) : briefFiltered;
     const hasTruncatedMessages = shouldTruncate && briefFiltered.length > MAX_MESSAGES_TO_SHOW_IN_TRANSCRIPT_MODE;
     const {
       messages: groupedMessages
-    } = applyGrouping(messagesToShow, tools, verbose);
+    } = applyGrouping(messagesToShow as any, tools, verbose);
     const collapsed = collapseBackgroundBashNotifications(collapseHookSummaries(collapseTeammateShutdowns(collapseReadSearchGroups(groupedMessages, tools))), verbose);
-    const lookups = buildMessageLookups(normalizedMessages, messagesToShow);
+    const lookups = buildMessageLookups(normalizedMessages, messagesToShow as any);
     const hiddenMessageCount = messagesToShowNotTruncated.length - MAX_MESSAGES_TO_SHOW_IN_TRANSCRIPT_MODE;
     return {
       collapsed,
@@ -538,7 +538,7 @@ const MessagesImpl = ({
     // renderRange is first: the chunked export path slices the
     // post-grouping array so each chunk gets correct tool-call grouping.
     const capApplies = !virtualScrollRuntimeGate && !disableRenderCap;
-    const sliceStart = capApplies ? computeSliceStart(collapsed_0, sliceAnchorRef) : 0;
+    const sliceStart = capApplies ? computeSliceStart(collapsed_0 as any, sliceAnchorRef) : 0;
     return renderRange ? collapsed_0.slice(renderRange[0], renderRange[1]) : sliceStart > 0 ? collapsed_0.slice(sliceStart) : collapsed_0;
   }, [collapsed_0, renderRange, virtualScrollRuntimeGate, disableRenderCap]);
   const streamingToolUseIDs = useMemo(() => new Set(streamingToolUses.map(__0 => __0.contentBlock.id)), [streamingToolUses]);
@@ -580,7 +580,7 @@ const MessagesImpl = ({
   const lookupsRef = useRef(lookups_0);
   lookupsRef.current = lookups_0;
   const isItemClickable = useCallback((msg_6: RenderableMessage): boolean => {
-    // @ts-expect-error Message 联合缺少 CollapsedReadSearchMessage，但 collapseReadSearch 会生成该类型（TODO: 补齐类型定义）
+    // @ts-ignore Message 联合缺少 CollapsedReadSearchMessage，但 collapseReadSearch 会生成该类型（TODO: 补齐类型定义）
     if (msg_6.type === 'collapsed_read_search') return true;
     if (msg_6.type === 'assistant') {
       const b = Array.isArray(msg_6.message.content) ? msg_6.message.content[0] as unknown as AdvisorBlock | undefined : undefined;
@@ -620,7 +620,7 @@ const MessagesImpl = ({
     // sibling after this map, so it's never in renderableMessages — OR it
     // in explicitly so the group flips to past tense as soon as text starts
     // streaming instead of waiting for the block to finalize.
-    // @ts-expect-error Message 联合缺少 CollapsedReadSearchMessage，但 collapseReadSearch 会生成该类型（TODO: 补齐类型定义）
+    // @ts-ignore Message 联合缺少 CollapsedReadSearchMessage，但 collapseReadSearch 会生成该类型（TODO: 补齐类型定义）
     const hasContentAfter = msg_8.type === 'collapsed_read_search' && (!!streamingText || hasContentAfterIndex(renderableMessages, index, tools, streamingToolUseIDs));
     const k_0 = messageKey(msg_8);
     const row = <MessageRow key={k_0} message={msg_8} isUserContinuation={isUserContinuation} hasContentAfter={hasContentAfter} tools={tools} commands={commands} verbose={verbose || isItemExpanded(msg_8) || cursor?.expanded === true && index === selectedIdx} inProgressToolUseIDs={inProgressToolUseIDs} streamingToolUseIDs={streamingToolUseIDs} screen={screen} canAnimate={canAnimate} onOpenRateLimitOptions={onOpenRateLimitOptions} lastThinkingBlockId={lastThinkingBlockId} latestBashOutputUUID={latestBashOutputUUID} columns={columns} isLoading={isLoading} lookups={lookups_0} />;
