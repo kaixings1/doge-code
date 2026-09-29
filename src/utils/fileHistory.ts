@@ -1,4 +1,4 @@
-import { createHash, type UUID } from 'crypto'
+import { createHash } from 'crypto'
 import { diffLines } from 'diff'
 import type { Stats } from 'fs'
 import {
@@ -413,7 +413,7 @@ export function fileHistoryCanRestore(
  */
 export async function fileHistoryGetDiffStats(
   state: FileHistoryState,
-  messageId: UUID,
+  messageId: string,
 ): Promise<DiffStats> {
   if (!fileHistoryEnabled()) {
     return undefined

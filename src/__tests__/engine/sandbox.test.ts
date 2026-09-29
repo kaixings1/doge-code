@@ -138,7 +138,7 @@ describe('createSandboxedExecutor', () => {
       policy: new CommandAllowlistPolicy({ allowedTools: [] }),
       onDeny: 'error',
     })
-    const result = await executor.execute({ name: 'Bash' }, { command: 'rm -rf /' }, { timeout: 0 })
+    const result = await executor.execute({ name: 'Bash' } as any, { command: 'rm -rf /' } as any, { timeout: 0 })
     expect(result).toBe('executed')
   })
 
@@ -148,7 +148,7 @@ describe('createSandboxedExecutor', () => {
       policy: new CommandAllowlistPolicy({ allowedTools: [] }),
       onDeny: 'error',
     })
-    await expect(executor.execute({ name: 'Bash' }, { command: 'test' }, { timeout: 0 })).rejects.toThrow()
+    await expect(executor.execute({ name: 'Bash' } as any, { command: 'test' } as any, { timeout: 0 })).rejects.toThrow()
   })
 
   it('onDeny=warn 时应放行并警告', async () => {
@@ -157,7 +157,7 @@ describe('createSandboxedExecutor', () => {
       policy: new CommandAllowlistPolicy({ allowedTools: [] }),
       onDeny: 'warn',
     })
-    const result = await executor.execute({ name: 'Bash' }, { command: 'test' }, { timeout: 0 })
+    const result = await executor.execute({ name: 'Bash' } as any, { command: 'test' } as any, { timeout: 0 })
     expect(result).toBe('executed')
   })
 
@@ -172,7 +172,7 @@ describe('createSandboxedExecutor', () => {
     })
     // Bash 在白名单，但路径穿越被 PathGuard 拦截
     await expect(
-      executor.execute({ name: 'Read' }, { path: '/project/../../etc/passwd' }, { timeout: 0 }),
+      executor.execute({ name: 'Read' } as any, { path: '/project/../../etc/passwd' } as any, { timeout: 0 }),
     ).rejects.toThrow()
   })
 })

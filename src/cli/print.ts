@@ -1922,7 +1922,7 @@ function runHeadlessStreaming(
               if (c.uuid && c.uuid !== command.uuid) {
                 output.enqueue({
                   type: 'user',
-                  message: { role: 'user', content: c.value },
+                  message: { role: 'user', content: c.value } as any,
                   session_id: getSessionId(),
                   parent_tool_use_id: null,
                   uuid: c.uuid,
@@ -5098,7 +5098,7 @@ function getStructuredIO(
           message: {
             role: 'user',
             content: inputPrompt,
-          },
+          } as any,
           parent_tool_use_id: null,
         } satisfies SDKUserMessage),
       ])

@@ -36,7 +36,7 @@ type WindowContext = Context & {
 };
 declare global {
   interface Window {
-    _growthbook?: GrowthBook;
+    _growthbook?: GrowthBook<Record<string, any>>;
     growthbook_queue?:
       | Array<(gb: GrowthBook) => void>
       | { push: (cb: (gb: GrowthBook) => void) => void };
@@ -168,7 +168,7 @@ const gb = new GrowthBook({
   remoteEval: !!dataContext.remoteEval,
   ...windowContext,
   plugins,
-  stickyBucketService,
+  stickyBucketService: stickyBucketService as any,
 });
 
 // 设置 renderer 以触发自定义 DOM 事件

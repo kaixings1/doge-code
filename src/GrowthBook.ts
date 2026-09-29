@@ -180,7 +180,7 @@ export class GrowthBook<
     }
 
     if (isBrowser && options.enableDevMode) {
-      window._growthbook = this;
+      window._growthbook = this as unknown as GrowthBook<Record<string, any>>;
       document.dispatchEvent(new Event("gbloaded"));
     }
 
@@ -244,7 +244,7 @@ export class GrowthBook<
     ) {
       this._options.stickyBucketAssignmentDocs =
         this.generateStickyBucketAssignmentDocsSync(
-          this._options.stickyBucketService as StickyBucketServiceSync,
+          this._options.stickyBucketService as unknown as StickyBucketServiceSync,
           payload,
         );
     }
@@ -572,7 +572,7 @@ export class GrowthBook<
     }
     this.logs = [];
 
-    if (isBrowser && window._growthbook === this) {
+    if (isBrowser && (window._growthbook as unknown) === this) {
       delete window._growthbook;
     }
 
@@ -1113,7 +1113,7 @@ export class GrowthBook<
       const ctx = this._getEvalContext();
       const docs = await getAllStickyBucketAssignmentDocs(
         ctx,
-        this._options.stickyBucketService,
+        this._options.stickyBucketService as unknown as import("D:/doge-code/src/sticky-bucket-service").StickyBucketService,
         data,
       );
       this._options.stickyBucketAssignmentDocs = docs;

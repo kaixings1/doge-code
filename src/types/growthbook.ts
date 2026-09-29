@@ -1,18 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import type {
-  GrowthBook,
+  GrowthBook as GrowthBookPkg,
   GrowthBookClient,
   StickyBucketService,
   UserScopedGrowthBook,
 } from '@growthbook/growthbook';
 import { ConditionInterface, ParentConditionInterface } from "./mongrule";
-
-declare global {
-  interface Window {
-    _growthbook?: GrowthBook;
-  }
-}
 
 /** 变体元数据 */
 export type VariationMeta = {

@@ -76,7 +76,8 @@ export function useSSHSession({
         }
 
         // Skip duplicate init messages (one per turn from stream-json mode).
-        if (sdkMessage.type === 'system' && sdkMessage.subtype === 'init') {
+        const msg = sdkMessage as Record<string, unknown>
+        if (msg.type === 'system' && msg.subtype === 'init') {
           if (hasReceivedInitRef.current) return
           hasReceivedInitRef.current = true
         }

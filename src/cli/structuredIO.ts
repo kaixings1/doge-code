@@ -206,7 +206,7 @@ export class StructuredIO {
       jsonStringify({
         type: 'user',
         session_id: '',
-        message: { role: 'user', content },
+        message: { role: 'user', content } as any,
         parent_tool_use_id: null,
       } satisfies SDKUserMessage) + '\n',
     )
@@ -695,7 +695,7 @@ export class StructuredIO {
     message: string,
     requestedSchema?: Record<string, unknown>,
     signal?: AbortSignal,
-    mode?: 'form' | 'url',
+    mode?: 'form' | 'url' | 'auto' | 'bubble',
     url?: string,
     elicitationId?: string,
   ): Promise<ElicitResult> {

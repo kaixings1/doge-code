@@ -117,9 +117,9 @@ export function MCPStdioServerMenu({
             <Text dimColor>{server.config.command}</Text>
           </Box>
 
-          {server.config.args && server.config.args.length > 0 && <Box>
+          {(server.config.args as any) && (server.config.args as any).length > 0 && <Box>
               <Text bold>参数: </Text>
-              <Text dimColor>{server.config.args.join(' ')}</Text>
+              <Text dimColor>{(server.config.args as any).join(' ')}</Text>
             </Box>}
 
           <Box>
