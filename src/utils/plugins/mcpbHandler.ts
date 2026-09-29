@@ -244,13 +244,13 @@ export function saveMcpServerUserConfig(
       Object.keys(secureScrubbed).length !==
         Object.keys(existingInSecureStorage).length
     if (Object.keys(sensitive).length > 0 || needSecureScrub) {
-      const existing = storage.read() ?? {}
-      if (!existing.pluginSecrets) {
-        existing.pluginSecrets = {}
+      const existing: Record<string, unknown> = storage.read() ?? {}
+      if (!(existing as Record<string, unknown>).pluginSecrets) {
+        (existing as Record<string, unknown>).pluginSecrets = {}
       }
       // secureStorage keyvault is a flat object — direct replace, no merge
       // semantics to worry about (unlike settings.json's mergeWith).
-      existing.pluginSecrets[k] = {
+      (existing as Record<string, unknown>).pluginSecrets[k] = {
         ...secureScrubbed,
         ...sensitive,
       }

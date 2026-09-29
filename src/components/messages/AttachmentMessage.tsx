@@ -443,7 +443,7 @@ function TeammateTaskStatus(t0) {
   } else {
     t1 = $[1];
   }
-  const task = useAppState(t1);
+  const task = useAppState(t1) as { type: string; identity?: { color: string; agentName: string } };
   if (task?.type !== "in_process_teammate") {
     let t2;
     if ($[2] !== attachment) {

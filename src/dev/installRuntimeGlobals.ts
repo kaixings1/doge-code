@@ -79,7 +79,7 @@ const defaults: MacroConfig = {
   VERSION_CHANGELOG: process.env.CLAUDE_CODE_DEV_CHANGELOG || '',
 }
 
-globalThis.MACRO = {
+(globalThis as any).MACRO = {
   ...defaults,
-  ...(typeof globalThis.MACRO === 'undefined' ? {} : globalThis.MACRO),
+  ...((globalThis as any).MACRO ?? {}),
 }

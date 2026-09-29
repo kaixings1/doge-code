@@ -121,19 +121,20 @@ export function assembleExplainContext(
   const implementsList: string[] = []
 
   for (const edge of outgoingEdges) {
-    if (edge.type === 'imports') {
+    const edgeType = (edge as any).type;
+    if (edgeType === 'imports') {
       const targetNode = graph.nodes.find(n => n.id === edge.to)
       if (targetNode) imports.push(targetNode.name)
     }
-    if (edge.type === 'calls') {
+    if (edgeType === 'calls') {
       const targetNode = graph.nodes.find(n => n.id === edge.to)
       if (targetNode) calls.push(targetNode.name)
     }
-    if (edge.type === 'extends') {
+    if (edgeType === 'extends') {
       const targetNode = graph.nodes.find(n => n.id === edge.to)
       if (targetNode) extendsList.push(targetNode.name)
     }
-    if (edge.type === 'implements') {
+    if (edgeType === 'implements') {
       const targetNode = graph.nodes.find(n => n.id === edge.to)
       if (targetNode) implementsList.push(targetNode.name)
     }

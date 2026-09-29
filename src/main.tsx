@@ -2115,7 +2115,8 @@ async function run(): Promise<CommanderCommand> {
       // 验证活动令牌的组织是否与 forceLoginOrgUUID（如果在托管设置中设置）匹配。在引导后运行，以便托管设置和登录状态完全加载。
       const orgValidation = await validateForceLoginOrg();
       if (!orgValidation.valid) {
-        await exitWithError(root, orgValidation.message);
+        const msg = 'message' in orgValidation ? orgValidation.message : '';
+        await exitWithError(root, msg);
       }
     }
 
@@ -2363,7 +2364,8 @@ async function run(): Promise<CommanderCommand> {
       // 为非交互式会话验证组织限制
       const orgValidation = await validateForceLoginOrg();
       if (!orgValidation.valid) {
-        process.stderr.write(orgValidation.message + '\n');
+        const msg = 'message' in orgValidation ? orgValidation.message : '';
+        process.stderr.write(msg + '\n');
         process.exit(1);
       }
 
