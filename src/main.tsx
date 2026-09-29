@@ -3758,6 +3758,7 @@ if (process.env['CLAUDE_CODE_FEATURE_SSH_REMOTE'] === '1') {
 // 交互模式（不带 -p）由 main() 中的早期 argv 重写处理，
 // 该重写会重定向到具有完整 TUI 支持的主命令。
 if (process.env['CLAUDE_CODE_FEATURE_DIRECT_CONNECT'] === '1') {
+  // @ts-ignore - commander action type is complex
   program.command('open <cc-url>').description('连接到 Claude Code 服务器（内部使用 — 使用 cc:// URL）').option('-p, --print [prompt]', '打印模式（无头模式）').option('--output-format <format>', '输出格式：text、json、stream-json', 'text').action(async (ccUrl: string, opts: {
 	print?: string | boolean;
 	outputFormat: string;

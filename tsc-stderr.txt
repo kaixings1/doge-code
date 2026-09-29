@@ -887,10 +887,6 @@ src/ink/components/ScrollBox.tsx(234,5): error TS2339: Property 'ink-box' does n
 src/ink/components/Text.tsx(244,11): error TS2339: Property 'ink-text' does not exist on type 'JSX.IntrinsicElements'.
 src/ink/components/Text.tsx(244,67): error TS2339: Property 'ink-text' does not exist on type 'JSX.IntrinsicElements'.
 src/interactiveHelpers.tsx(113,5): error TS2739: Type '{ hasTrustDialogAccepted: true; }' is missing the following properties from type 'ProjectConfig': allowedTools, mcpContextUris, projectOnboardingSeenCount
-src/main.tsx(3761,217): error TS2345: Argument of type '(ccUrl: string, opts: { print?: string | boolean; outputFormat: string; }) => Promise<void>' is not assignable to parameter of type '(this: Command<[string], { ...; }, {}>, args_0: string, args_1: { outputFormat?: string; print?: string | true; }, args_2: Command<[string], { outputFormat?: string; print?: string | true; }, {}>) => void | Promise<...>'.
-  Types of parameters 'opts' and 'args_1' are incompatible.
-    Type '{ outputFormat?: string; print?: string | true; }' is not assignable to type '{ print?: string | boolean; outputFormat: string; }'.
-      Property 'outputFormat' is optional in type '{ outputFormat?: string; print?: string | true; }' but required in type '{ print?: string | boolean; outputFormat: string; }'.
 src/memdir/findRelevantMemories.ts(101,13): error TS2339: Property 'logMemoryRecallShape' does not exist on type 'typeof import("D:/doge-code/src/memdir/memoryShapeTelemetry")'.
 src/memdir/memdir.ts(233,23): error TS2448: Block-scoped variable 'whenToAccessConcise' used before its declaration.
 src/memdir/memdir.ts(234,23): error TS2448: Block-scoped variable 'trustingRecallConcise' used before its declaration.
