@@ -1,4 +1,3 @@
-import * as skillDebugFs from 'fs'
 import { realpath } from 'fs/promises'
 import ignore from 'ignore'
 import { memoize } from '../vendor/lodash.js'
@@ -7,6 +6,7 @@ import {
   dirname,
   isAbsolute,
   join,
+  resolve,
   sep as pathSep,
   relative,
 } from 'path'
@@ -570,9 +570,7 @@ async function loadSkillsFromCommandsDir(
   cwd: string,
 ): Promise<SkillWithPath[]> {
   try {
-    skillDebugFs.writeFileSync('d:/skill_debug.log', `loadSkillsFromCommandsDir cwd=${cwd}\n`, { flag: 'a' })
     const markdownFiles = await loadMarkdownFilesForSubdir('commands', cwd)
-    skillDebugFs.writeFileSync('d:/skill_debug.log', `loadMarkdownFilesForSubdir returned ${markdownFiles.length} files: ${markdownFiles.map(f => f.filePath).join(', ')}\n`, { flag: 'a' })
     const processedFiles = transformSkillFiles(markdownFiles)
 
     const skills: SkillWithPath[] = []
@@ -655,8 +653,6 @@ export const getSkillDirCommands = async (cwd: string): Promise<Command[]> => {
     const projectSettingsEnabled =
       isSettingSourceEnabled('projectSettings') && !skillsLocked
 
-    skillDebugFs.writeFileSync('d:/skill_debug.log', `getSkillDirCommands cwd=${cwd}\nmanagedSkillsDir=${managedSkillsDir}\nuserSkillsDir=${userSkillsDir}\nprojectSkillsDirs=[${projectSkillsDirs.join(', ')}]\nprojectSettingsEnabled=${projectSettingsEnabled}\nadditionalDirs=${additionalDirs.join(', ')}\nisBareMode=${isBareMode()} skillsLocked=${skillsLocked}\n`, { flag: 'a' })
-
     // --bare: skip auto-discovery (managed/user/project dir walks + legacy
     // commands-dir). Load ONLY explicit --add-dir paths. Bundled skills
     // register separately. skillsLocked still applies — --bare is not a
@@ -682,6 +678,15 @@ export const getSkillDirCommands = async (cwd: string): Promise<Command[]> => {
 
     // Load from /skills/ directories, additional dirs, and legacy /commands/ in parallel
     // (all independent — different directories, no shared state)
+    //
+    // Drop --add-dir entries that resolve to cwd, which getProjectDirsUpToHome
+    // already walks via projectSkillsDirs; loading them again doubles every
+    // project skill and trips the same-file dedup below. Applied here (not
+    // before the --bare branch) so explicit `--bare --add-dir .` keeps its
+    // documented explicit-dirs-only semantics.
+    const dedupedAdditionalDirs = additionalDirs.filter(
+      dir => resolve(dir) !== resolve(cwd),
+    )
     const [
       managedSkills,
       userSkills,
@@ -704,7 +709,7 @@ export const getSkillDirCommands = async (cwd: string): Promise<Command[]> => {
         : Promise.resolve([]),
       projectSettingsEnabled
         ? Promise.all(
-            additionalDirs.map(dir =>
+            dedupedAdditionalDirs.map(dir =>
               loadSkillsFromSkillsDir(
                 join(dir, '.claude', 'skills'),
                 'projectSettings',
