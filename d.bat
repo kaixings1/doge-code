@@ -2,6 +2,9 @@ REM echo [%DATE% %TIME%] DOGE_START >> D:\doge-code\trace.log
 
 @echo off
 
+REM åˆ‡åˆ° UTF-8 ä»£ç é¡µï¼Œä½¿æœ¬æ–‡ä»¶å†…çš„ä¸­æ–‡æ³¨é‡Š/è¾“å‡ºæ­£ç¡®æ˜¾ç¤º
+chcp 65001 >nul
+
 del /q .bun-build* 2>nul
 rd /s /q node_modules\.cache 2>nul
 set CLAUDE_CODE_VERBOSE=1
@@ -92,7 +95,7 @@ set CLAUDE_CODE_FEATURE_HARD_FAIL=1
 set CLAUDE_CODE_FEATURE_ABLATION_BASELINE=1
 
 set CLAUDE_CODE_MORE=1
-REM === ¸ß¼¶ÐÔÄÜ/·ÖÎö¹¦ÄÜ ===
+REM === é«˜çº§æ€§èƒ½/åˆ†æžåŠŸèƒ½ ===
 set CLAUDE_CODE_FEATURE_SHOT_STATS=0
 set CLAUDE_CODE_PROFILE_QUERY=0
 set CLAUDE_CODE_PROFILE_STARTUP=0
@@ -101,14 +104,14 @@ set CLAUDE_CODE_PERFETTO_TRACE=0
 set CLAUDE_CODE_FEATURE_PERFETTO_TRACING=0
 set CLAUDE_CODE_PERFETTO_WRITE_INTERVAL_S=30
 set CLAUDE_CODE_DEBUG_LOG_LEVEL=debug
-REM    debug ¼ÇÂ¼ debug/info/warn/error£»ÐèÒª shell/cwd/stdout µÈ¸ßÁ÷Á¿Õï¶ÏÊ±¸ÄÎª verbose
+REM    debug è®°å½• debug/info/warn/errorï¼›éœ€è¦ shell/cwd/stdout ç­‰é«˜æµé‡è¯Šæ–­æ—¶æ”¹ä¸º verbose
 set CLAUDE_CODE_FEATURE_UNATTENDED_RETRY=0
 set CLAUDE_CODE_RETRY_WATCHDOG=0
 set CLAUDE_CODE_MAX_RETRIES=3
 set CLAUDE_CODE_OTEL_SHUTDOWN_TIMEOUT_MS=5000
 set CLAUDE_CODE_API_KEY_HELPER_TTL_MS=300000
 
-REM === ÔöÇ¿ Agent/ÍÅ¶Ó¹¦ÄÜ ===
+REM === å¢žå¼º Agent/å›¢é˜ŸåŠŸèƒ½ ===
 set CLAUDE_CODE_FEATURE_ULTRATHINK=0
 set CLAUDE_CODE_FEATURE_MONITOR_TOOL=1
 set CLAUDE_CODE_FEATURE_REVIEW_ARTIFACT=1
@@ -122,7 +125,7 @@ set CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS=8
 set CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=4
 set CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION=15
 
-REM === UI/UX ÔöÇ¿ ===
+REM === UI/UX å¢žå¼º ===
 set CLAUDE_CODE_FEATURE_AUTO_THEME=1
 set CLAUDE_CODE_FEATURE_HISTORY_PICKER=1
 set CLAUDE_CODE_FEATURE_MCP_RICH_OUTPUT=1
@@ -137,7 +140,7 @@ set CLAUDE_CODE_FORCE_SYNC_OUTPUT=1
 set CLAUDE_CODE_DISABLE_TERMINAL_TITLE=0
 set CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000
 
-REM === É³Ïä/°²È«ÔöÇ¿ ===
+REM === æ²™ç®±/å®‰å…¨å¢žå¼º ===
 set CLAUDE_CODE_DISABLE_CLAUDE_MDS=1
 set CLAUDE_CODE_DUMP_AUTO_MODE=1
 set CLAUDE_CODE_DISABLE_COMMAND_INJECTION_CHECK=0
@@ -146,12 +149,12 @@ set CLAUDE_CODE_DISABLE_CRON=0
 set CLAUDE_CODE_UNDERCOVER=0
 set CLAUDE_CODE_BUBBLEWRAP=0
 
-REM === Ô¶³ÌÇÅ½Ó/×ÀÃæ¹¦ÄÜ ===
+REM === è¿œç¨‹æ¡¥æŽ¥/æ¡Œé¢åŠŸèƒ½ ===
 set CLAUDE_CODE_REMOTE=1
 set CLAUDE_CODE_LOCAL_BRIDGE=1
 set CLAUDE_CODE_LOCAL_BRIDGE_URL=http://localhost:5678
 
-REM === ÎÄ¼þ/Â·¾¶¹¦ÄÜ ===
+REM === æ–‡ä»¶/è·¯å¾„åŠŸèƒ½ ===
 set CLAUDE_CODE_FILE_READ_MAX_OUTPUT_TOKENS=8000
 set CLAUDE_CODE_WORKFLOW_SIZE=40
 set CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS=30000
@@ -162,7 +165,7 @@ set CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=180000
 set CLAUDE_CODE_DISABLE_PRECOMPACT_SKIP=0
 set CLAUDE_CODE_SAVE_HOOK_ADDITIONAL_CONTEXT=1
 
-REM === µ÷ÊÔ/Õï¶Ï ===
+REM === è°ƒè¯•/è¯Šæ–­ ===
 set CLAUDE_CODE_DEBUG_REPAINTS=1
 set CLAUDE_CODE_COMMIT_LOG=
 set CLAUDE_CODE_STREAM_CLOSE_TIMEOUT=60
@@ -171,12 +174,12 @@ set CLAUDE_CODE_STALL_TIMEOUT_MS_FOR_TESTING=60000
 set CLAUDE_CODE_PWSH_PARSE_TIMEOUT_MS=10000
 set CLAUDE_CODE_SLOW_OPERATION_THRESHOLD_MS=1000
 
-REM === API/Ä£ÐÍÔöÇ¿ ===
+REM === API/æ¨¡åž‹å¢žå¼º ===
 set CLAUDE_CODE_DISABLE_NONSTREAMING_FALLBACK=0
 set CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=0
 set CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=0
 
-REM === ÐÂÔö feature() ±êÖ¾ (±àÒëÊ±) ¡ª ÕâÐ©ÔÚ d.bat Ô­°æÖÐÈ±Ê§ ===
+REM === æ–°å¢ž feature() æ ‡å¿— (ç¼–è¯‘æ—¶) â€” è¿™äº›åœ¨ d.bat åŽŸç‰ˆä¸­ç¼ºå¤± ===
 set CLAUDE_CODE_FEATURE_MCP_UI=1
 set CLAUDE_CODE_FEATURE_AWAY_SUMMARY=1
 set CLAUDE_CODE_FEATURE_OVERFLOW_TEST_TOOL=1
@@ -189,7 +192,7 @@ set CLAUDE_CODE_FEATURE_TREE_SITTER_BASH_SHADOW=1
 set CLAUDE_CODE_FEATURE_ALLOW_TEST_VERSIONS=0
 set CLAUDE_CODE_FEATURE_KAIROS_DREAM=1
 
-REM === ÐÂÔöÔËÐÐÊ± env var ===
+REM === æ–°å¢žè¿è¡Œæ—¶ env var ===
 set CLAUDE_CODE_EAGER_FLUSH=1
 set CLAUDE_CODE_DISABLE_FAST_MODE=0
 set CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION=1
@@ -211,7 +214,7 @@ set CLAUDE_CODE_MCP_INSTR_DELTA=0
 set CLAUDE_CODE_DISABLE_METRICS=0
 set CLAUDE_CODE_FORCE_FLUX_NATIVE=0
 
-REM === Claude Code ÄÚ²¿ env var (·Ç CLAUDE_CODE_) ===
+REM === Claude Code å†…éƒ¨ env var (éž CLAUDE_CODE_) ===
 set CLAUDE_CODE_DEV_VERSION=local
 set CLAUDE_CODE_DEV_BUILD_TIME=local
 set CLAUDE_CODE_EMIT_SESSION_STATE_EVENTS=1
@@ -240,6 +243,23 @@ if "%1"=="" (
     set DOGE_API_JSON=.doge\%1.json
 )
 
+
+REM === æœ¬åœ°æ¡¥æŽ¥æœåŠ¡å™¨ï¼šè‹¥ 5678 æœªç›‘å¬åˆ™åŽå°æ‹‰èµ· ===
+netstat -ano -p tcp | findstr ":5678" | findstr "LISTENING" >nul 2>&1
+if errorlevel 1 (
+    echo [d.bat] å¯åŠ¨æœ¬åœ°æ¡¥æŽ¥æœåŠ¡å™¨ (ç«¯å£ 5678)...
+    start "doge-bridge" /MIN bun run "D:\doge-code\scripts\bridge.ts"
+    REM ç­‰å¾…æœåŠ¡å™¨å°±ç»ªï¼šè½®è¯¢ç«¯å£
+    for /L %%i in (1,1,25) do (
+        timeout /t 1 /nobreak >nul 2>&1
+        netstat -ano -p tcp | findstr ":5678" | findstr "LISTENING" >nul 2>&1
+        if not errorlevel 1 goto :bridge_ready
+    )
+    echo [d.bat] è­¦å‘Š: æ¡¥æŽ¥æœåŠ¡å™¨æœªå°±ç»ªï¼Œæœ¬åœ°æ¡¥æŽ¥å°†ä¸å¯ç”¨
+) else (
+    echo [d.bat] æœ¬åœ°æ¡¥æŽ¥æœåŠ¡å™¨å·²åœ¨è¿è¡Œ (ç«¯å£ 5678)
+)
+:bridge_ready
 REM echo BEFORE_DOGE_EXE >> trace.log
 REM "D:\doge-code\doge.exe" --dangerously-skip-permissions --verbose %2 %3 %4 %5 --debug-file ./debug1.txt 
 
