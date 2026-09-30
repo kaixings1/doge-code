@@ -127,6 +127,65 @@
 
 ---
 
+### [x] 17. 恢复 openaiCompat 请求侧日志（日志中只有 SSE、看不到发送内容）
+- **现象**: debug 日志里能看到 SSE 响应，看不到发给 AI 的请求内容
+- **文件**: `src/services/api/openaiCompat.ts:289-306`（`createOpenAICompatStream`）
+- **根因**: 请求体日志在 `701f413aa`（2026-09-10 "清理调试日志"）被**注释掉**（原 302 行）。同提交还删除了 `convertAnthropicRequestToOpenAI` 中 8 条转换阶段日志（system 消息长度、user/assistant/tool 消息、目标模型、工具数等）
+- **量化佐证**: 扫描 `~/.doge/debug` 165 个日志文件 —— 响应侧 `读取到 chunk` 1,499,152 条、`解析出 N 个 SSE 事件` 1,496,726 条；请求侧 `请求体` 仅 6,090 条（约 245:1）。且 **40 个文件只有 URL 无请求体**，多于有请求体的 25 个，说明被注释的版本已成主流
+- **操作**: 改为「摘要 + 最后一条 user 消息全文」，而非原样恢复完整请求体
+  - 摘要行：model / 消息数 / 工具数 / 各条 `role:长度`
+  - 另记最后一条 user 消息全文（排查"发了什么"通常只看最新输入）
+  - `requestBody` 提为变量，使 `JSON.stringify(requestBody)` 与日志**同源**，不会出现"记的和发的不一致"
+  - 日志移到 `fetch` **之前**，401/429/超时等失败场景也能看到发送内容
+- **为何不恢复完整请求体**: 单次请求体含 system prompt（样本 1403 字符起）与全部历史，可达数十 KB；而响应侧已累计 150 万条、单日志文件最大 1.9MB。摘要行约 120 字节，体积仅零头
+- **回归防护**: 新增 `src/services/api/__tests__/openaiCompatRequestLog.test.ts`（2 用例）。故障成因正是"日志被注释时无测试拦截"，故该测试锁定「发请求前必须记录请求内容」契约。**已用变异测试验证守护有效**：把日志注释掉 → 2 个用例全部失败
+- **验证**: `tsc --noEmit` 零错误；`biome check` EXIT=0；相关测试 15 passed；全量 2075 passed / 0 failed；运行时加载 `bun run` 模块可 import 且转换正确
+- **生效前提**: 需带 `--debug` / `--debug-to-stderr` 启动，否则 `src/utils/debug.ts:112`（`USER_TYPE !== 'ant' && !isDebugMode()`）直接丢弃
+
+---
+
+### [x] 18. 修复 autoContinue 关键词分支三处退化（7 个测试失败）
+- **现象**: 全量测试 7 failed，全部位于 `src/__tests__/engine/autoContinue*.test.ts`
+- **文件**: `src/engine/messageLoop.ts:372-399`（`_recordAssistantResponse` 分支 1）
+- **根因**: 相对原始实现 `ada6a9b96` 出现三处退化，且后两处是**实现与自身文案/测试不一致**：
+  | # | 位置 | 退化后 | 恢复为 |
+  |---|---|---|---|
+  | 1 | `372` 关键词正则 | `/是否需要我继续\|需要我继续吗\|要不要继续处理\|需不需要我继续/`（4 个长短语） | 原始宽正则（30+ 关键词） |
+  | 2 | `395` 延时 | `30000`ms | `3000`ms（日志文案写的是"3秒"） |
+  | 3 | `398` 注入内容 | `'有必要就继续'` | `'继续'`（integration 测试 `:355` 断言 `content === '继续'`） |
+  - 正则退化 → "是否继续？""你现在要继续吗？"均不匹配
+  - 延时 30s → 超过 vitest 默认 5s 超时，即使正则匹配也会超时失败
+- **非本次引入**: 已用 `git stash` 隔离验证 —— 暂存本次 openaiCompat 改动后仍是同样 7 个失败
+- **为何逐项恢复而非改测试**: 三处的"正确值"都有权威来源 —— 延时与注入内容由提交 `ada6a9b96` 的原始实现 + 日志文案 + 测试断言三方一致确认为 3000ms / `'继续'`；正则由同提交的宽正则确认。改测试去适配退化值会掩盖真实行为回退
+- **验证**: autoContinue 专项 24 passed（原 17 passed / 7 failed）；**全量 2075 passed / 0 failed**（原 2068 / 7）；`tsc --noEmit` 零错误；`biome check` 通过；运行时加载确认 `CONTINUE_KEYWORDS` 对两句测试文本均返回 `true`
+- **记忆校正**: `feedback_autocontinue_config.md` 原记 `AutoContinueConfig` "**默认关闭**"，核对代码为 `?? true`（**开启**，仅 `endTurn` 默认 false，`maxCount` 默认 10）→ 已按实际更正。测试 `未配置 autoContinue 时…应自动继续` 正依赖该默认开启语义
+- **教训**: 改动带配套日志文案与测试断言的常量（延时/注入文本/正则）时，实现、文案、断言三者必须同步
+
+---
+
+### [x] 19. `--add-dir .` 导致技能双份加载与监听重复（同一根因两处调用点）
+
+- **现象**: 启动日志刷 `Skipping duplicate skill 'X' from projectSettings (same file already loaded from projectSettings)`，单次会话数百条；同时每次技能变更会触发两轮重载
+- **根因**: `d.bat` 传入 `--add-dir .`，解析后正是 cwd，而 `getProjectDirsUpToHome` 已沿 cwd 向上收集了同一个项目 skills 目录 → **同一批文件被加载两次**。日志中前后来源字符串完全相同（都是 `projectSettings`）即为铁证 —— 若是跨目录重名冲突，会显示 `from userSettings ... loaded from projectSettings`
+- **判定为「白费 IO」而非功能损坏**: 去重靠 `realpath` 生效，结果正确；但每次启动多扫 165 个目录并多做一遍 `getFileIdentity`
+- **量化佐证**: `D:/skill_debug.log` 1640 条记录中 1516 条 `additionalDirs=.`；其中 1272 条是 `cwd=D:\doge-code` + `.` 的组合，与 `d.bat` 完全吻合。日志本身因遗留探针累计到 **40MB**
+- **调用者普查**（`getAdditionalDirectoriesForClaudeMd()` 共 6 个消费者，逐个判定）:
+  | 调用者 | 受影响 | 依据 |
+  |---|---|---|
+  | `skills/loadSkillsDir.ts:651` | 是 | 已修（`cb240d435`） |
+  | `utils/skills/skillChangeDetector.ts:224` | 是 | 已修（`a75aa1f01`） |
+  | `utils/claudemd.ts:908` | 否 | 已有 `processedPaths` Set，`:603` 提前 return |
+  | `utils/plugins/addDirPluginSettings.ts:38,61` | 否 | `Object.assign` 幂等覆盖，结果不变 |
+  | `utils/sandbox/sandbox-adapter.ts:297` | 否 | 仅权限边界展开，重复项无副作用 |
+  | `context.ts:165` | 否 | 仅判 `length === 0` |
+- **操作一 `cb240d435`**: `additionalDirs` 过滤掉 `resolve(dir) === resolve(cwd)` 项；删除 3 处遗留调试探针 `skillDebugFs.writeFileSync('d:/skill_debug.log', ...)`（硬编码路径、无开关、每次同步写盘）
+  - **过滤位置放在 `--bare` 分支之后而非之前**（首版放错位置已修正）：`envUtils.ts:60` 承诺 `--add-dir` 在 bare 模式下仍生效，若提前过滤会让 `--bare --add-dir .` 因 `additionalDirs.length === 0` 走到 `return []`，把「去重」升级成「技能全丢」
+- **操作二 `a75aa1f01`**: `getWatchablePaths()` 的返回数组过一遍 Set。`chokidar.watch` 按路径计数且无内部去重，同一路径出现两次 → 改任一 SKILL.md 触发两次 `handleChange` → 两次 `scheduleReload`（debounce 兜住重载轮次，但 `pendingChangedPaths` 双份累积）
+- **验证**: 边界用例 5/5；`bun run test:unit` 114/114 通过；`biome check` 无告警；`bun build --compile` 7484 modules 通过；`tsc --noEmit` 零新增错误（812/813 行 `cache` 报错经比对 `git show HEAD` 属既有问题）
+- **实测生效**: 日志 `Loaded 367 unique skills (... project: 165, additional: 0, legacy commands: 201)` —— `additional` 由 165 归零，`Deduplicated` 条目彻底消失；`D:/skill_debug.log` 已不再生成
+
+---
+
 ### [ ] 3. main.tsx 拆分（仅计划，暂不执行）
 - **文件**: `src/main.tsx`（238KB）
 - **目标结构**:
