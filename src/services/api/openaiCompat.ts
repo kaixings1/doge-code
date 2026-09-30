@@ -272,6 +272,11 @@ export function convertAnthropicRequestToOpenAI(input: {
         ? { tool_choice: 'auto' as const }
         : {}),
   }
+  const toolNames = result.tools?.map(t => t.function.name) ?? []
+  logForDebugging(
+    `[openaiCompat] 转换完成: model=${targetModel}, 消息数=${messages.length}, 工具数=${toolNames.length}, 工具列表=[${toolNames.join(', ')}], tool_choice=${JSON.stringify(result.tool_choice ?? 'auto')}`,
+    { level: 'debug' },
+  )
   return result
 }
 
@@ -286,6 +291,45 @@ export async function createOpenAICompatStream(
 ): Promise<ReadableStreamDefaultReader<Uint8Array>> {
   const url = config.baseURL;
   logForDebugging(`[openaiCompat] 请求 URL: ${url}`, { level: 'debug' })
+  const requestBody = { ...request, stream: true }
+  const requestMessages: OpenAIChatMessage[] = requestBody.messages ?? []
+  const requestTools: Array<{ function?: { name?: string } }> = requestBody.tools ?? []
+  logForDebugging(
+    `[openaiCompat] 请求体摘要: model=${requestBody.model}, 消息数=${requestMessages.length}, 工具数=${requestTools.length}, 消息(role:长度)=[${requestMessages
+      .map(m => `${m.role}:${typeof m.content === 'string' ? m.content.length : 0}`)
+      .join(', ')}]`,
+    { level: 'debug' },
+  )
+  // 附加的工具清单：排查"拼接了什么工具"时最关键，工具名体积可控，默认落盘
+  if (requestTools.length > 0) {
+    logForDebugging(
+      `[openaiCompat] 本次请求附加工具: [${requestTools.map(t => t.function?.name ?? '?').join(', ')}]`,
+      { level: 'debug' },
+    )
+  }
+  // system prompt 是排查"注入了什么"的重点，长度默认落盘
+  const systemMessage = requestMessages.find(m => m.role === 'system')
+  if (systemMessage && typeof systemMessage.content === 'string') {
+    logForDebugging(
+      `[openaiCompat] system prompt 长度=${systemMessage.content.length}`,
+      { level: 'debug' },
+    )
+  }
+  // 排查"发了什么"通常只需最新用户输入，完整请求体（含 system prompt 与历史）体积过大，不落盘
+  const lastUserMessage = requestMessages.filter(m => m.role === 'user').at(-1)
+  if (lastUserMessage && typeof lastUserMessage.content === 'string') {
+    logForDebugging(`[openaiCompat] 最后一条 user 消息: ${lastUserMessage.content}`, {
+      level: 'debug',
+    })
+  }
+  // 完整 JSON 请求体：体积可达数十 KB，默认关闭。
+  // 需要逐字核对实际发出的数据包时，用 DOGE_DEBUG_DUMP_REQUEST=1 启动。
+  if (process.env.DOGE_DEBUG_DUMP_REQUEST === '1') {
+    logForDebugging(
+      `[openaiCompat] 完整请求体 JSON: ${JSON.stringify(requestBody)}`,
+      { level: 'debug' },
+    )
+  }
   const response = await (config.fetch ?? globalThis.fetch)(
     url,
     {
@@ -296,10 +340,9 @@ export async function createOpenAICompatStream(
         authorization: `Bearer ${config.apiKey}`,
         ...config.headers,
       },
-      body: JSON.stringify({ ...request, stream: true }),
+      body: JSON.stringify(requestBody),
     },
   );
-  //logForDebugging(`[openaiCompat] 请求体: ${JSON.stringify({ ...request, stream: true })}`, { level: 'debug' })
 
   if (!response.ok || !response.body) {
     let responseText = ''
@@ -424,10 +467,11 @@ export async function* createAnthropicStreamFromOpenAI(input: {
   reader: ReadableStreamDefaultReader<Uint8Array>
   model: string
 }): AsyncGenerator<BetaRawMessageStreamEvent, BetaMessage, void> {
-	  // 【补丁③】共享 pending 状态，供 wrapper 处理工具调用 XML
+  // 【补丁③】共享 pending 状态，供 wrapper 处理工具调用 XML
   const pendingState: { xml: string | null; enteredAt?: number } = { xml: null }
   const inner = createAnthropicStreamFromOpenAIInner(input, pendingState)
-  yield* wrapPendingToolXml(inner, pendingState, input.model)
+  const result = yield* wrapPendingToolXml(inner, pendingState, input.model)
+  return result as BetaMessage
 }
 async function* createAnthropicStreamFromOpenAIInner(
   input: {
@@ -1262,7 +1306,7 @@ async function* createAnthropicStreamFromOpenAIInner(
       promptTokens = maybeParsed.promptTokens
       completionTokens = maybeParsed.completionTokens
       for (const ev of maybeParsed.events) {
-        yield ev
+        yield ev as unknown as BetaRawMessageStreamEvent
       }
       _lastResponseBytes = responseBytes
       yield { type: 'message_stop' } as BetaRawMessageStreamEvent
@@ -1493,6 +1537,6 @@ async function* wrapPendingToolXml(
       }
     }
 
-    yield ev
+    yield ev as BetaRawMessageStreamEvent
   }
 }

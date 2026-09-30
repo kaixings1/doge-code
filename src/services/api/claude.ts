@@ -1248,6 +1248,21 @@ async function* queryModel(
     }
   }
 
+  // 记录工具裁剪结果：60+ 工具在此被过滤/动态拼装，被丢弃的工具名正是
+  // "模型为什么看不到某个工具"这类问题的第一现场，必须落盘
+  const keptToolNames = new Set(filteredTools.map(t => t.name))
+  const droppedToolNames = tools
+    .map(t => t.name)
+    .filter(name => !keptToolNames.has(name))
+  logForDebugging(
+    `[claude] 工具裁剪: 输入=${tools.length}, 保留=${filteredTools.length}, 丢弃=${droppedToolNames.length}` +
+      `, 路径=${isDynamicToolComposerEnabled() ? 'DynamicToolComposer' : 'filterToolsForMessage'}` +
+      (droppedToolNames.length > 0
+        ? `, 丢弃列表=[${droppedToolNames.join(', ')}]`
+        : ''),
+    { level: 'debug' },
+  )
+
   // 如果启用了工具搜索，添加工具搜索 beta 头 - defer_loading 被接受所必需
   // 头因提供商而异：1P/Foundry 使用 advanced-tool-use，Vertex/Bedrock 使用 tool-search-tool
   // 对于 Bedrock，此头必须放在 extraBodyParams 中，而不是 betas 数组

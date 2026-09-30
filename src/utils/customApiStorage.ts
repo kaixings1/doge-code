@@ -176,27 +176,37 @@ export function readCustomApiStorage(presetName?: string): CustomApiStorageData 
   const rawName = presetName ?? project.activePreset;
   const activeName = (typeof rawName === 'string' && rawName.trim()) ? rawName.trim() : undefined;
   
-  //logForDebugging('[readCustomApiStorage] activeName: ' + activeName, { level: 'debug' });
-  
+  // 端点来源排查的第一现场：请求发错地址/用了旧模型时，先看这里走的哪条分支。
+  // 注意只打印 baseURL 与 model，绝不打印 apiKey。
+  const logSource = (source: string, cfg: CustomApiStorageData): void => {
+    logForDebugging(
+      `[readCustomApiStorage] 端点来源=${source}, activeName=${activeName ?? '无'}, baseURL=${cfg.baseURL ?? '无'}, model=${cfg.model ?? '无'}`,
+      { level: 'debug' },
+    )
+  }
+
   if (activeName) {
     if (project.presets[activeName]) {
-      //logForDebugging('[readCustomApiStorage] ✅ using project preset: ' + activeName, { level: 'debug' });
-      return { ...project.presets[activeName] };
+      const cfg = { ...project.presets[activeName] }
+      logSource('项目预设', cfg)
+      return cfg;
     }
     const global = readGlobalStorage();
     if (global.presets[activeName]) {
-      //logForDebugging('[readCustomApiStorage] ✅ using global preset: ' + activeName, { level: 'debug' });
-      return { ...global.presets[activeName] };
+      const cfg = { ...global.presets[activeName] }
+      logSource('全局预设', cfg)
+      return cfg;
     }
   }
 
   const envConfig = loadConfigFromEnv(activeName);
   if (envConfig.baseURL || envConfig.apiKey) {
-    //logForDebugging('[readCustomApiStorage] ⚠️ using env fallback', { level: 'debug' });
-    return { provider: 'openai', baseURL: envConfig.baseURL, apiKey: envConfig.apiKey, model: envConfig.model };
+    const cfg = { provider: 'openai', baseURL: envConfig.baseURL, apiKey: envConfig.apiKey, model: envConfig.model } as CustomApiStorageData
+    logSource('环境变量兜底', cfg)
+    return cfg;
   }
 
-  //logForDebugging('[readCustomApiStorage] ❌ returning empty', { level: 'debug' });
+  logSource('无配置（返回空）', {})
   return {};
 }
 /**
