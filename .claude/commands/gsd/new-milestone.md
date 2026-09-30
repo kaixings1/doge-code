@@ -1,6 +1,6 @@
 ---
 name: gsd:new-milestone
-启动新里程碑周期 - 更新 PROJECT.md 并路由到需求。
+description: "启动新里程碑周期 - 更新 PROJECT.md 并路由到需求。"
 argument-hint: "[milestone name, e.g., 'v1.1 Notifications']"
 allowed-tools:
   - Read

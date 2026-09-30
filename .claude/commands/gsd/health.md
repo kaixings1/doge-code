@@ -1,6 +1,6 @@
 ---
 name: gsd:health
-诊断规划目录健康状况并选择性地修复问题。
+description: "诊断规划目录健康状况并选择性地修复问题。"
 argument-hint: "[--repair] [--context]"
 allowed-tools:
   - Read

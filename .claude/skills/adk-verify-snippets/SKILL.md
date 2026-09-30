@@ -1,8 +1,6 @@
 ---
 name: adk-verify-snippets
 description: "提取并验证 Markdown 文件中所有 Python 代码块的可运行性与代码覆盖率。生成详细的编译与执行报告。"
-  提取并验证 Markdown 文件中所有 Python 代码块的可运行性与代码覆盖率。
-  生成详细的编译与执行报告。
 metadata:
   author: Antigravity
   version: 1.4.0

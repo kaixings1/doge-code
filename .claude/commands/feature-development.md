@@ -1,6 +1,6 @@
 ---
-name: 功能开发
-description: 功能开发工作流
+name: 功能开发
+description: 功能开发工作流
 allowed_tools: ["Bash", "Read", "Write", "Grep", "Glob"]
 ---
 

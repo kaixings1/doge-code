@@ -1,6 +1,6 @@
 ---
 name: Wiki查询
-description: 查询 LLM Wiki — 先读取 index.md，深入 3-10 个相关页面，合成带有内联 [[wikilink]] 引用的答案，并提供将答案归档为新的比较或综合页面的选项。用法: /wiki-query "<question>"
+description: "查询 LLM Wiki — 先读取 index.md，深入 3-10 个相关页面，合成带有内联 [[wikilink]] 引用的答案，并提供将答案归档为新的比较或综合页面的选项。用法: /wiki-query '<question>'"
 ---
 <!-- canonical copy: engineering/llm-wiki/commands/wiki-query.md — keep in sync (root copy uses repo-root-relative script paths) -->
 

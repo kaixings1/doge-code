@@ -8,8 +8,7 @@ color: "#EF4444"
 #     - matcher: "Write|Edit"
 #       hooks:
 #         - type: command
-#           command: "echo 'EVAL-REVIEW written' 2>/dev
-ull || true"
+#           command: "echo 'EVAL-REVIEW written' 2>/dev/null || true"
 ---
 
 <role>

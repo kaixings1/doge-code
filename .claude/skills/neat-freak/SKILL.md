@@ -1,18 +1,8 @@
 ---
 name: neat-freak
-description: "知识和治理收尾：协调项目文档、规则文件（CLAUDE.md/AGENTS.md）、授权代理记忆和工作区残留物。"
-  知识与治理收尾：对齐项目文档、规则文件
-  （CLAUDE.md/AGENTS.md）、获准维护的代理记忆和工作区残留物，与
-  代码和运行时的实际行为，使下一次会话或下一位
-  接手者都从唯一一份现役答案出发。当用户
-  点名 "neat-freak"、"洁癖"或"/neat"——以及在明确表达知识收尾
-  意图而未点名时也触发：开发后同步或整理项目文档/规则/记忆，
-  （"把文档和记忆整理一下"、"收尾时把文档同步掉"、"docs 和代码对不上了"）、
-  CLAUDE.md/记忆陈旧或冲突、向同事或全新会话干净交接，
-  或审计工作区的规则是否真正得到遵守。
-  纯编码/重构/调试任务、整理数据或
-  文章（JSON、周报、changelog 公告），或没有
-  项目知识上下文的单纯"整理"，都不触发。
+description: >-
+  知识和治理收尾：协调项目文档、规则文件（CLAUDE.md/AGENTS.md）、授权代理记忆和工作区残留物。
+  知识与治理收尾：对齐项目文档、规则文件（CLAUDE.md/AGENTS.md）、获准维护的代理记忆和工作区残留物，与代码和运行时的实际行为，使下一次会话或下一位接手者都从唯一一份现役答案出发。当用户点名 "neat-freak"、"洁癖"或"/neat"——以及在明确表达知识收尾意图而未点名时也触发：开发后同步或整理项目文档/规则/记忆，（"把文档和记忆整理一下"、"收尾时把文档同步掉"、"docs 和代码对不上了"）、CLAUDE.md/记忆陈旧或冲突、向同事或全新会话干净交接，或审计工作区的规则是否真正得到遵守。纯编码/重构/调试任务、整理数据或文章（JSON、周报、changelog 公告），或没有项目知识上下文的单纯"整理"，都不触发。
 compatibility: Requires filesystem read access. Writes and destructive actions follow the active agent, workspace, and user authorization rules. Git and rg improve verification; scripts/audit-inventory.sh needs Bash — without it, do the equivalent checks manually. Works on any Agent Skills platform.
 metadata:
   version: "3.0.0"

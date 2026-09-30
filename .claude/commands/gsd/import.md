@@ -1,6 +1,6 @@
 ---
 name: gsd:import
-在写入任何内容前对项目决策进行冲突检测并导入外部计划。
+description: "在写入任何内容前对项目决策进行冲突检测并导入外部计划。"
 argument-hint: "--from <filepath> | --from-gsd2"
 allowed-tools:
   - Read

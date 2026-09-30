@@ -1,6 +1,6 @@
 ---
 name: gsd:thread
-管理跨会话工作的持久上下文任务线。
+description: "管理跨会话工作的持久上下文任务线。"
 argument-hint: "[list [--open | --resolved] | close <slug> | status <slug> | name | description]"
 allowed-tools:
   - Read

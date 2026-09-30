@@ -1,6 +1,6 @@
 ---
 name: gsd:review
-从外部 AI CLI 请求跨 AI 同行评审阶段计划。
+description: "从外部 AI CLI 请求跨 AI 同行评审阶段计划。"
 argument-hint: "--phase N [--gemini] [--claude] [--codex] [--opencode] [--qwen] [--cursor] [--all]"
 allowed-tools:
   - Read

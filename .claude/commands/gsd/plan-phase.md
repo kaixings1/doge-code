@@ -1,6 +1,6 @@
 ---
 name: gsd:plan-phase
-创建包含验证循环的详细阶段计划（PLAN.md）。
+description: "创建包含验证循环的详细阶段计划（PLAN.md）。"
 argument-hint: "[phase] [--auto] [--research] [--skip-research] [--research-phase <N>] [--view] [--gaps] [--skip-verify] [--prd <file>] [--ingest <path-or-glob>] [--ingest-format <auto|nygard|madr|narrative>] [--reviews] [--text] [--tdd] [--mvp]"
 allowed-tools:
   - Read

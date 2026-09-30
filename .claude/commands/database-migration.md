@@ -1,6 +1,6 @@
 ---
-name: 数据库迁移
-description: 数据库迁移命令
+name: 数据库迁移
+description: 数据库迁移命令
 allowed_tools: ["Bash", "Read", "Write", "Grep", "Glob"]
 ---
 

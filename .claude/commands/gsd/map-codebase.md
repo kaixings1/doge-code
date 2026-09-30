@@ -1,6 +1,6 @@
 ---
 name: gsd:map-codebase
-使用并行映射代理分析代码库以生成 .planning/codebase/ 文档。
+description: "使用并行映射代理分析代码库以生成 .planning/codebase/ 文档。"
 argument-hint: "[--fast [--focus tech|arch|quality|concerns]] [--query <term>|status|diff|refresh] [area]"
 allowed-tools:
   - Read

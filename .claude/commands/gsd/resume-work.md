@@ -1,6 +1,6 @@
 ---
 name: gsd:resume-work
-从上一会话恢复工作并完整恢复上下文。
+description: "从上一会话恢复工作并完整恢复上下文。"
 allowed-tools:
   - Read
   - Bash

@@ -1,6 +1,6 @@
 ---
 name: gsd:discuss-phase
-规划前通过自适应提问收集阶段上下文。
+description: "规划前通过自适应提问收集阶段上下文。"
 argument-hint: "<phase> [--all] [--auto] [--chain] [--batch] [--analyze] [--text] [--power] [--assumptions]"
 allowed-tools:
   - Read

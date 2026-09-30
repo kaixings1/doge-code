@@ -1,6 +1,6 @@
 ---
 name: gsd:secure-phase
-对已完成阶段的事后威胁缓解措施进行验证。
+description: "对已完成阶段的事后威胁缓解措施进行验证。"
 argument-hint: "[phase number]"
 allowed-tools:
   - Read

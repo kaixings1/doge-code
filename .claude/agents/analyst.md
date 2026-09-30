@@ -1,8 +1,8 @@
 ---
-name:  需求分析师
-description: 需求分析师——将产品范围转化为可实现的验收标准
-model: opus
-level: 3
+name:  需求分析师
+description: 需求分析师——将产品范围转化为可实现的验收标准
+model: opus
+level: 3
 disallowedTools: Write, Edit
 ---
 

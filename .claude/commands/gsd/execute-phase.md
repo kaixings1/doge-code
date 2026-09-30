@@ -1,6 +1,6 @@
 ---
 name: gsd:execute-phase
-以波次并行方式执行阶段中的所有计划。
+description: "以波次并行方式执行阶段中的所有计划。"
 argument-hint: "<phase-number> [--wave N] [--gaps-only] [--interactive] [--tdd]"
 allowed-tools:
   - Read

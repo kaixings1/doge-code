@@ -1,6 +1,6 @@
 ---
 name: gsd:update
-更新 GSD 到最新版本并显示更新日志。
+description: "更新 GSD 到最新版本并显示更新日志。"
 argument-hint: "[--sync | --reapply]"
 allowed-tools:
   - Read

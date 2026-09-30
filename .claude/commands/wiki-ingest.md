@@ -1,6 +1,6 @@
 ---
 name: Wiki导入
-description: 将 raw/ 中的源文件导入 LLM Wiki — 读取、讨论、编写摘要页面，更新 5-15 页的交叉引用，重新生成索引，追加到日志。用法: /wiki-ingest <path-to-source>
+description: "将 raw/ 中的源文件导入 LLM Wiki — 读取、讨论、编写摘要页面，更新 5-15 页的交叉引用，重新生成索引，追加到日志。用法: /wiki-ingest <path-to-source>"
 ---
 <!-- canonical copy: engineering/llm-wiki/commands/wiki-ingest.md — keep in sync (root copy uses repo-root-relative script paths) -->
 

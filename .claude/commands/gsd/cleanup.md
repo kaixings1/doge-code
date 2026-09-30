@@ -1,6 +1,6 @@
 ---
 name: gsd:cleanup
-归档已完成里程碑中的累计阶段目录。
+description: "归档已完成里程碑中的累计阶段目录。"
 allowed-tools:
   - Read
   - Write

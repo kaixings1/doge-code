@@ -1,5 +1,5 @@
 ---
-description: 深度功能修复 — 系统化修复整个功能/模块。用法: /focused-fix <feature-path>
+description: "深度功能修复 — 系统化修复整个功能/模块。用法: /focused-fix <feature-path>"
 ---
 
 使用 focused-fix 5 阶段协议系统修复 `$ARGUMENTS` 处的功能/模块。

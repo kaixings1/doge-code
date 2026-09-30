@@ -8,8 +8,7 @@ color: "#34D399"
 #     - matcher: "Write|Edit"
 #       hooks:
 #         - type: command
-#           command: "echo 'AI-SPEC written' 2>/dev
-ull || true"
+#           command: "echo 'AI-SPEC written' 2>/dev/null || true"
 ---
 
 <role>

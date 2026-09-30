@@ -1,6 +1,6 @@
 ---
 name: gsd:explore
-苏格拉底式构思和想法路由 - 在制定计划前深入思考。
+description: "苏格拉底式构思和想法路由 - 在制定计划前深入思考。"
 allowed-tools:
   - Read
   - Write

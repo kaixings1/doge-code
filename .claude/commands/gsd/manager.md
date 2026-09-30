@@ -1,6 +1,6 @@
 ---
 name: gsd:manager
-从单一终端管理多个阶段的交互式命令中心。
+description: "从单一终端管理多个阶段的交互式命令中心。"
 argument-hint: "[--analyze-deps]"
 allowed-tools:
   - Read

@@ -1,6 +1,6 @@
 ---
 name: gsd:inbox
-对照项目模板和贡献指南对开放的 GitHub issue 和 PR 进行分类和审查。
+description: "对照项目模板和贡献指南对开放的 GitHub issue 和 PR 进行分类和审查。"
 argument-hint: "[--issues] [--prs] [--label] [--close-incomplete] [--repo owner/repo]"
 allowed-tools:
   - Read

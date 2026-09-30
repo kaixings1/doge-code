@@ -1,6 +1,6 @@
 ---
 name: gsd:new-project
-使用深度上下文收集和 PROJECT.md 初始化新项目。
+description: "使用深度上下文收集和 PROJECT.md 初始化新项目。"
 argument-hint: "[--auto]"
 allowed-tools:
   - Read

@@ -1,7 +1,7 @@
 ---
 type: prompt
 name: gsd:complete-milestone
-归档已完成里程碑并为下一迭代做准备。
+description: "归档已完成里程碑并为下一迭代做准备。"
 argument-hint: <version>
 allowed-tools:
   - Read

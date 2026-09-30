@@ -1,6 +1,6 @@
 ---
 name: gsd:audit-milestone
-归档前对照初始意图审计里程碑完成情况。
+description: "归档前对照初始意图审计里程碑完成情况。"
 argument-hint: "[version]"
 allowed-tools:
   - Read

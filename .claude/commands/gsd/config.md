@@ -1,6 +1,6 @@
 ---
 name: gsd:config
-配置 GSD 设置 - 工作流切换、高级参数、集成和模型配置。
+description: "配置 GSD 设置 - 工作流切换、高级参数、集成和模型配置。"
 argument-hint: "[--advanced | --integrations | --profile <name>]"
 allowed-tools:
   - Read

@@ -1,6 +1,6 @@
 ---
 name: gsd:graphify
-构建、查询和检查 .planning/graphs/ 中的项目知识图谱。
+description: "构建、查询和检查 .planning/graphs/ 中的项目知识图谱。"
 argument-hint: "[build|query <term>|status|diff]"
 allowed-tools:
   - Read

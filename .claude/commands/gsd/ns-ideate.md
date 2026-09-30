@@ -1,6 +1,6 @@
 ---
 name: gsd-ideate
-探索 捕获 | 探索 草图 探针 规范 捕获。
+description: "探索 捕获 | 探索 草图 探针 规范 捕获。"
 argument-hint: ""
 allowed-tools:
   - Read

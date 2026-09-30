@@ -1,7 +1,7 @@
 ---
 type: prompt
 name: gsd:milestone-summary
-从里程碑产物生成综合项目摘要，用于团队入职和审查。
+description: "从里程碑产物生成综合项目摘要，用于团队入职和审查。"
 argument-hint: "[version]"
 allowed-tools:
   - Read

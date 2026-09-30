@@ -1,13 +1,6 @@
 ---
 name: agent-builder
-description: "为任意领域设计并构建 AI 代理。在以下情况使用：(1) 要求"创建代理"、"构建助手"或"设计 AI 系统"。"
-  为任意领域设计并构建 AI 代理。在以下情况使用：
-  (1) 要求"创建代理"、"构建助手"或"设计 AI 系统"
-  (2) 想了解代理架构、代理式模式或自主 AI
-  (3) 在能力、子代理、规划或技能机制方面需要帮助
-  (4) 询问 Claude Code、Cursor 或类似代理的内部机制
-  (5) 想为商业、研究、创意或运营任务构建代理
-  关键词：agent、assistant、autonomous、workflow、tool use、multi-step、orchestration
+description: "为任意领域设计并构建 AI 代理。在以下情况使用：(1) 要求\"创建代理\"、\"构建助手\"或\"设计 AI 系统\"。为任意领域设计并构建 AI 代理。在以下情况使用：(1) 要求\"创建代理\"、\"构建助手\"或\"设计 AI 系统\" (2) 想了解代理架构、代理式模式或自主 AI (3) 在能力、子代理、规划或技能机制方面需要帮助(4) 询问 Claude Code、Cursor 或类似代理的内部机制(5) 想为商业、研究、创意或运营任务构建代理关键词：agent、assistant、autonomous、workflow、tool use、multi-step、orchestration"
 ---
 
 # 代理构建器

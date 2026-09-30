@@ -1,7 +1,7 @@
 ---
-description: DogeCode 本地开发环境核心技术能力 - MCP 引擎 / Bun 运行时 / InkTUI 终端 UI / AI 代理编排 | 作者: kaixings
-lastUpdated: 2026-##
-tags: - capability - analysis - mcp - bun - ink-tui
+description: "DogeCode 本地开发环境核心技术能力 - MCP 引擎 / Bun 运行时 / InkTUI 终端 UI / AI 代理编排 | 作者: kaixings"
+lastUpdated: "2026"
+tags: [capability, analysis, mcp, bun, ink-tui]
 ---
 # 📘 DogeCode Local Development Environment
 ## Core Technology Capabilities Analysis Report (本地开发环境核心技术能力深度分析) **Target:** DogeCode v1.x+ | **Author:** kaixings <30...5@qq.com> | **Date Generated:** 2026- --- # Table of Contents - Complete Chapter Structure

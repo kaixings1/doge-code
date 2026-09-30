@@ -8,8 +8,7 @@ color: orange
 #     - matcher: "Write"
 #       hooks:
 #         - type: command
-#           command: "npx eslint --fix $FILE 2>/dev
-ull || true"
+#           command: "npx eslint --fix $FILE 2>/dev/null || true"
 ---
 
 <role>

@@ -1,6 +1,6 @@
 ---
 name: gsd:capture
-捕获想法、任务、笔记和创意种子到指定目的地。
+description: "捕获想法、任务、笔记和创意种子到指定目的地。"
 argument-hint: "[--note | --backlog | --seed | --list] [text]"
 allowed-tools:
   - Read

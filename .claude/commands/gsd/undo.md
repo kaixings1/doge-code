@@ -1,6 +1,6 @@
 ---
 name: gsd:undo
-安全的 git 回滚。使用阶段清单和依赖关系来回滚阶段或计划提交。
+description: "安全的 git 回滚。使用阶段清单和依赖关系来回滚阶段或计划提交。"
 argument-hint: "--last N | --phase NN | --plan NN-MM"
 allowed-tools:
   - Read

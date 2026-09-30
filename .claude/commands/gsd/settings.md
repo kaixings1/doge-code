@@ -1,6 +1,6 @@
 ---
 name: gsd:settings
-配置 GSD 工作流切换和模型配置。
+description: "配置 GSD 工作流切换和模型配置。"
 allowed-tools:
   - Read
   - Write

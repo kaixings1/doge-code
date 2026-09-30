@@ -1,6 +1,6 @@
 ---
 name: gsd:eval-review
-审计已执行的 AI 阶段的评估覆盖范围并生成 EVAL-REVIEW.md 修复计划。
+description: "审计已执行的 AI 阶段的评估覆盖范围并生成 EVAL-REVIEW.md 修复计划。"
 argument-hint: "[phase number]"
 allowed-tools:
   - Read

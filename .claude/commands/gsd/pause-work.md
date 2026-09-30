@@ -1,6 +1,6 @@
 ---
 name: gsd:pause-work
-在阶段中途暂停工作时创建上下文交接。
+description: "在阶段中途暂停工作时创建上下文交接。"
 argument-hint: "[--report]"
 allowed-tools:
   - Read

@@ -1,6 +1,6 @@
 ---
 name: gsd:mvp-phase
-将阶段规划为垂直 MVP 切片 - 用户故事、SPIDR 拆分，然后进行 plan-phase。
+description: "将阶段规划为垂直 MVP 切片 - 用户故事、SPIDR 拆分，然后进行 plan-phase。"
 argument-hint: "<phase-number>"
 allowed-tools:
   - Read

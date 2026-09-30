@@ -1,6 +1,6 @@
 ---
 name: gsd:fast
-内联执行快速任务 - 无需子代理、无需计划开销。
+description: "内联执行快速任务 - 无需子代理、无需计划开销。"
 argument-hint: "[task description]"
 allowed-tools:
   - Read

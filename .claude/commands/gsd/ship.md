@@ -1,6 +1,6 @@
 ---
 name: gsd:ship
-创建 PR、运行审查，并在验证通过后准备合并。
+description: "创建 PR、运行审查，并在验证通过后准备合并。"
 argument-hint: "[phase number or milestone, e.g., '4' or 'v1.0']"
 allowed-tools:
   - Read

@@ -1,10 +1,6 @@
 ---
 name: devops-tools
-description: "为 DevOps、基础设施和云工程任务提供工具感知。在用户需要与 Docker、Kubernetes、Terraform、云平台协作时使用。"
-  为 DevOps、基础设施与云工程任务提供工具感知。
-  当用户需要与 Docker、Kubernetes、Terraform、云平台、
-  监控系统或任何 DevOps 相关工具协作时使用。此技能维护一个
-  按类别组织的工具注册表，并提供命令与用例方面的知识。
+description: "为 DevOps、基础设施和云工程任务提供工具感知。在用户需要与 Docker、Kubernetes、Terraform、云平台协作时使用。为 DevOps、基础设施与云工程任务提供工具感知。当用户需要与 Docker、Kubernetes、Terraform、云平台、监控系统或任何 DevOps 相关工具协作时使用。此技能维护一个按类别组织的工具注册表，并提供命令与用例方面的知识。"
 Keywords: devops, docker, kubernetes, terraform, aws, gcp, azure, monitoring, ci-cd, infrastructure, cloud, containers
 ---
 

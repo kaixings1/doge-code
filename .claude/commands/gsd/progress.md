@@ -1,6 +1,6 @@
 ---
 name: gsd:progress
-检查进度、推进工作流或发送自由意图 - 统一的 GSD 情境命令。
+description: "检查进度、推进工作流或发送自由意图 - 统一的 GSD 情境命令。"
 argument-hint: "[--forensic | --next | --do \"task description\"]"
 allowed-tools:
   - Read

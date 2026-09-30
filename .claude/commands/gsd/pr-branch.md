@@ -1,6 +1,6 @@
 ---
 name: gsd:pr-branch
-通过过滤掉 .planning/ 提交来创建干净的 PR 分支 - 准备好进行代码审查。
+description: "通过过滤掉 .planning/ 提交来创建干净的 PR 分支 - 准备好进行代码审查。"
 argument-hint: "[target branch, default: main]"
 allowed-tools:
   - Bash

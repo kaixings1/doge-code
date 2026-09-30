@@ -1,6 +1,6 @@
 ---
 name: gsd:validate-phase
-对已完成阶段进行事后审计并填补 Nyquist 验证遗漏。
+description: "对已完成阶段进行事后审计并填补 Nyquist 验证遗漏。"
 argument-hint: "[phase number]"
 allowed-tools:
   - Read

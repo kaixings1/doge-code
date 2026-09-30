@@ -1,6 +1,6 @@
 ---
 name: gsd:docs-update
-生成或更新经过代码库验证的项目文档。
+description: "生成或更新经过代码库验证的项目文档。"
 argument-hint: "[--force] [--verify-only]"
 allowed-tools:
   - Read

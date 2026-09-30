@@ -1,6 +1,6 @@
 ---
 name: gsd:audit-uat
-对所有未完成的 UAT 和验证项进行跨阶段审计。
+description: "对所有未完成的 UAT 和验证项进行跨阶段审计。"
 allowed-tools:
   - Read
   - Glob

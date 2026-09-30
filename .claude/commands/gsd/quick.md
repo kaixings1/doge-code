@@ -1,6 +1,6 @@
 ---
 name: gsd:quick
-以 GSD 保障（原子提交、状态跟踪）执行快速任务，但跳过可选代理。
+description: "以 GSD 保障（原子提交、状态跟踪）执行快速任务，但跳过可选代理。"
 argument-hint: "[list | status <slug> | resume <slug> | --full] [--validate] [--discuss] [--research] [task description]"
 allowed-tools:
   - Read

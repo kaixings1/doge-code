@@ -1,9 +1,6 @@
 ---
 name: build-helper
-description: "构建项目并自动处理 Bun 到 Node.js 的兼容性补丁。使用场景：开发后构建、发布前打包、CI/CD 流水线。"
-  构建项目并自动处理 Bun 到 Node.js 的兼容性补丁。
-  使用场景：开发后构建、发布前打包、CI/CD 流水线。
-  触发词：构建、build、bundle、打包、发布、deploy。
+description: "构建项目并自动处理 Bun 到 Node.js 的兼容性补丁。使用场景：开发后构建、发布前打包、CI/CD 流水线。构建项目并自动处理 Bun 到 Node.js 的兼容性补丁。使用场景：开发后构建、发布前打包、CI/CD 流水线。触发词：构建、build、bundle、打包、发布、deploy。"
 Keywords: build, bun, bundle, deploy, 构建, 打包, 发布
 ---
 

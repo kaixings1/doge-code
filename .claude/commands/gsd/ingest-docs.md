@@ -1,6 +1,6 @@
 ---
 name: gsd:ingest-docs
-从仓库中现有的 ADR、PRD、SPEC 和文档启动或合并 .planning/ 设置。
+description: "从仓库中现有的 ADR、PRD、SPEC 和文档启动或合并 .planning/ 设置。"
 argument-hint: "[path] [--mode new|merge] [--manifest <file>] [--resolve auto|interactive]"
 allowed-tools:
   - Read

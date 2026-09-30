@@ -1,6 +1,6 @@
 ---
 name: gsd:plan-review-convergence
-跨 AI 规划融合循环 - 根据审查反馈重新规划，直到没有 HIGH 级别的顾虑。
+description: "跨 AI 规划融合循环 - 根据审查反馈重新规划，直到没有 HIGH 级别的顾虑。"
 argument-hint: "<phase> [--codex] [--gemini] [--claude] [--opencode] [--ollama] [--lm-studio] [--llama-cpp] [--text] [--ws <name>] [--all] [--max-cycles N]"
 allowed-tools:
   - Read

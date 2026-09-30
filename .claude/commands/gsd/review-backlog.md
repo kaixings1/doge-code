@@ -1,6 +1,6 @@
 ---
 name: gsd:review-backlog
-审查待办事项并将其提升到活跃里程碑。
+description: "审查待办事项并将其提升到活跃里程碑。"
 allowed-tools:
   - Read
   - Write
