@@ -141,6 +141,15 @@
 - **回归防护**: 新增 `src/services/api/__tests__/openaiCompatRequestLog.test.ts`（2 用例）。故障成因正是"日志被注释时无测试拦截"，故该测试锁定「发请求前必须记录请求内容」契约。**已用变异测试验证守护有效**：把日志注释掉 → 2 个用例全部失败
 - **验证**: `tsc --noEmit` 零错误；`biome check` EXIT=0；相关测试 15 passed；全量 2075 passed / 0 failed；运行时加载 `bun run` 模块可 import 且转换正确
 - **生效前提**: 需带 `--debug` / `--debug-to-stderr` 启动，否则 `src/utils/debug.ts:112`（`USER_TYPE !== 'ant' && !isDebugMode()`）直接丢弃
+- **后续扩展（同会话补齐上游链路）**: 首版只覆盖 `openaiCompat`，但"拼接了什么附加工具"的决策发生在更上游，故续补两段，形成完整链路
+  - `claude.ts:1251`（`queryModel`）：工具裁剪结果 —— 输入/保留/丢弃数量、路径（`DynamicToolComposer` 或 `filterToolsForMessage`）、**被丢弃的工具名列表**。60+ 工具在此裁到只剩一部分，此前全无日志，故"模型为什么看不到某工具"无从排查
+  - `customApiStorage.ts`（`readCustomApiStorage`）：端点来源 —— 项目预设/全局预设/环境变量兜底/无配置，4 分支统一走 `logSource()`。**只打印 `baseURL` 与 `model`，绝不打印 `apiKey`**
+  - 完整请求体 JSON 改为按需开关 `DOGE_DEBUG_DUMP_REQUEST=1`（原注释版本是完全不记录，现为可开启，兼顾体积）
+  - 全库扫描被注释日志共 **34 处**，其余属 swarm 后端探测 / frontmatter / ink 渲染，与本问题无关，未动；`openaiCompat.ts:1011` 因在流循环内每 chunk 触发，恢复会冲爆日志且无信息量，保持注释
+  - 守护测试补断言：`本次请求附加工具` 与 `system prompt 长度`（首版未覆盖工具清单，正是当年删日志未被拦截的原因）
+- **二次验证**: `tsc` 零新增错误（6 条报错经 stash 对比确认均为既有）；`src/services/api/ + src/__tests__/unit/ + tests/unit` **129 passed / 0 failed**；bun 运行真实函数实测日志落盘、开关生效、`sk-SECRET-KEY-12345` 未出现在日志中
+- **提交**: `bbe19e468`（分支 `feat/unified-task-scheduler`）。`openaiCompat.ts` 按用户确认一并带入了工作区里非本次的缩进修正与 3 处类型断言修复（消掉 TS2355）
+- **文档**: `docs/使用说明.md` 新增 11.3 节「排查"发给 AI 了什么"」（原 11.4 顺延为 11.5）；11.1 环境变量表补 `DOGE_DEBUG_DUMP_REQUEST`
 
 ---
 
