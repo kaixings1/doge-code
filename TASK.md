@@ -150,6 +150,18 @@
 - **二次验证**: `tsc` 零新增错误（6 条报错经 stash 对比确认均为既有）；`src/services/api/ + src/__tests__/unit/ + tests/unit` **129 passed / 0 failed**；bun 运行真实函数实测日志落盘、开关生效、`sk-SECRET-KEY-12345` 未出现在日志中
 - **提交**: `bbe19e468`（分支 `feat/unified-task-scheduler`）。`openaiCompat.ts` 按用户确认一并带入了工作区里非本次的缩进修正与 3 处类型断言修复（消掉 TS2355）
 - **文档**: `docs/使用说明.md` 新增 11.3 节「排查"发给 AI 了什么"」（原 11.4 顺延为 11.5）；11.1 环境变量表补 `DOGE_DEBUG_DUMP_REQUEST`
+- **端到端验证（重编译后实测）**: `bun run build`（bundle 7484 模块无错）→ 新 `doge.exe` 带 `--debug-to-stderr` 实跑，6 段日志全部落盘，链路完整：
+  ```
+  [readCustomApiStorage] 端点来源=项目预设, baseURL=http://127.0.0.1:3065/..., model=auto   (34 条)
+  [claude] 工具裁剪: 输入=76, 保留=62, 丢弃=14, 路径=filterToolsForMessage, 丢弃列表=[EnterPlanMode, ...]
+  [openaiCompat] 转换完成: model=auto, 消息数=3, 工具数=62, 工具列表=[action_sampler, ...]
+  [openaiCompat] 本次请求附加工具: [action_sampler, advisor, Agent, ...]  (62 个)
+  [openaiCompat] system prompt 长度=13966
+  [openaiCompat] 请求体摘要: 消息(role:长度)=[system:13966, user:235, user:2229]
+  ```
+  `DOGE_DEBUG_DUMP_REQUEST=1` 实测输出完整 JSON 119,231 字符，`JSON.parse` 通过，顶层字段 `model/messages/temperature/max_tokens/tools/stream` 齐全，与前 4 段日志口径一致（62 工具、3 消息、13966 字符 system）
+- **安全确认**: 完整 JSON 中无 `sk-` 形态密钥；日志中唯一匹配 `authorization` 的是既有日志 `has Authorization header: false`（意为"无此头"），非泄露
+- **踩坑**: `doge.exe` 编译前被 PID 69416 占用（500MB），用户选择不备份直接覆盖，编译成功；MSYS2 下 `timeout` 是 Windows 内置命令（非 GNU coreutils），套在命令前会报"无效语法"；`-p "hi" 2> file` 会把重定向的 `2` 误作第二个位置参数，需改用 `--print` 并把重定向放最前
 
 ---
 
