@@ -162,6 +162,7 @@
   `DOGE_DEBUG_DUMP_REQUEST=1` 实测输出完整 JSON 119,231 字符，`JSON.parse` 通过，顶层字段 `model/messages/temperature/max_tokens/tools/stream` 齐全，与前 4 段日志口径一致（62 工具、3 消息、13966 字符 system）
 - **安全确认**: 完整 JSON 中无 `sk-` 形态密钥；日志中唯一匹配 `authorization` 的是既有日志 `has Authorization header: false`（意为"无此头"），非泄露
 - **踩坑**: `doge.exe` 编译前被 PID 69416 占用（500MB），用户选择不备份直接覆盖，编译成功；MSYS2 下 `timeout` 是 Windows 内置命令（非 GNU coreutils），套在命令前会报"无效语法"；`-p "hi" 2> file` 会把重定向的 `2` 误作第二个位置参数，需改用 `--print` 并把重定向放最前
+- **失败路径验证（补测）**: 首版只验了成功路径，而"日志移到 fetch 之前"的核心价值恰在失败场景。用空 apiKey 请求本地端点触发真实 401，实测请求侧日志**全部落盘**：请求 URL / 请求体摘要 / 本次请求附加工具 / system prompt 长度 / 最后一条 user 消息 / 响应错误 六项均 YES，且 user 消息正文可见。异常为 `OpenAI compat request failed with status 401: Unauthorized: invalid or missing API key`
 
 ---
 
