@@ -231,7 +231,10 @@ async function getWatchablePaths(): Promise<string[]> {
     }
   }
 
-  return paths
+  // chokidar emits one event per watched path with no internal dedup, so
+  // `--add-dir .` (== cwd, already covered by the project paths above) would
+  // watch .claude/skills twice and fire double reloads on every edit.
+  return [...new Set(paths.map(p => platformPath.resolve(p)))]
 }
 
 function handleChange(path: string): void {
