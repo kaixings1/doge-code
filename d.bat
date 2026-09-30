@@ -1,14 +1,14 @@
-echo [%DATE% %TIME%] DOGE_START >> D:\doge-code\trace.log
+REM echo [%DATE% %TIME%] DOGE_START >> D:\doge-code\trace.log
 
 @echo off
 
 del /q .bun-build* 2>nul
 rd /s /q node_modules\.cache 2>nul
-set CLAUDE_CODE_VERBOSE=0
+set CLAUDE_CODE_VERBOSE=1
 set CLAUDE_CODE_USE_NATIVE_FILE_SEARCH=1
 set CLAUDE_CODE_GLOB_TIMEOUT_SECONDS=25
-set DEBUG=0
-set CLAUDE_CODE_CONSOLE_DEBUG=0
+set DEBUG=1
+set CLAUDE_CODE_CONSOLE_DEBUG=1
 set EMBEDDED_SEARCH_TOOLS=0
 set STREAM_FLUSH_MS=500
 set CLAUDE_CODE_ATTRIBUTION_HEADER=0
@@ -100,8 +100,8 @@ set CLAUDE_CODE_FEATURE_ENHANCED_TELEMETRY_BETA=0
 set CLAUDE_CODE_PERFETTO_TRACE=0
 set CLAUDE_CODE_FEATURE_PERFETTO_TRACING=0
 set CLAUDE_CODE_PERFETTO_WRITE_INTERVAL_S=30
-set CLAUDE_CODE_DEBUG_LOG_LEVEL=verbose
-REM    error
+set CLAUDE_CODE_DEBUG_LOG_LEVEL=debug
+REM    debug 记录 debug/info/warn/error；需要 shell/cwd/stdout 等高流量诊断时改为 verbose
 set CLAUDE_CODE_FEATURE_UNATTENDED_RETRY=0
 set CLAUDE_CODE_RETRY_WATCHDOG=0
 set CLAUDE_CODE_MAX_RETRIES=3
@@ -163,7 +163,7 @@ set CLAUDE_CODE_DISABLE_PRECOMPACT_SKIP=0
 set CLAUDE_CODE_SAVE_HOOK_ADDITIONAL_CONTEXT=1
 
 REM === 调试/诊断 ===
-set CLAUDE_CODE_DEBUG_REPAINTS=0
+set CLAUDE_CODE_DEBUG_REPAINTS=1
 set CLAUDE_CODE_COMMIT_LOG=
 set CLAUDE_CODE_STREAM_CLOSE_TIMEOUT=60
 set CLAUDE_CODE_DIAGNOSTICS_FILE=
@@ -240,7 +240,7 @@ if "%1"=="" (
     set DOGE_API_JSON=.doge\%1.json
 )
 
-echo BEFORE_DOGE_EXE >> trace.log
-REM "D:\doge-code\doge.exe" --dangerously-skip-permissions --verbose --add-dir . %2 %3 %4 %5 --debug-file ./debug.txt 
+REM echo BEFORE_DOGE_EXE >> trace.log
+REM "D:\doge-code\doge.exe" --dangerously-skip-permissions --verbose %2 %3 %4 %5 --debug-file ./debug1.txt 
 
-bun run "D:\doge-code\src\bootstrap-entry.ts" --dangerously-skip-permissions --verbose --add-dir . %2 %3
+bun run "D:\doge-code\src\bootstrap-entry.ts" --dangerously-skip-permissions --verbose %2 %3 --debug-file ./debug2.txt 
