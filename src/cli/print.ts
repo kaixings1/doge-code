@@ -357,10 +357,7 @@ import { isExtractModeActive } from '../memdir/paths.js'
 const coordinatorModeModule = feature('COORDINATOR_MODE')
   ? (require('../coordinator/coordinatorMode.js') as typeof import('../coordinator/coordinatorMode.js'))
   : null
-const proactiveModule =
-  feature('PROACTIVE') || feature('KAIROS')
-    ? (require('../proactive/index.js') as typeof import('../proactive/index.js'))
-    : null
+import { getProactiveModule } from '../utils/proactiveModule.js'
 const cronSchedulerModule = feature('AGENT_TRIGGERS')
   ? (require('../utils/cronScheduler.js') as typeof import('../utils/cronScheduler.js'))
   : null
@@ -530,11 +527,11 @@ export async function runHeadless(
   //（例如，环境变量在 argv 解析后由 SDK 传输注入）。
   if (
     (feature('PROACTIVE') || feature('KAIROS')) &&
-    proactiveModule &&
-    !proactiveModule.isProactiveActive() &&
+    getProactiveModule() &&
+    !getProactiveModule()!.isProactiveActive() &&
     isEnvTruthy(process.env.CLAUDE_CODE_PROACTIVE)
   ) {
-    proactiveModule.activateProactive('command')
+    getProactiveModule()!.activateProactive('command')
   }
 
   // 定期强制进行完整 GC 以控制内存使用
@@ -1793,8 +1790,8 @@ function runHeadlessStreaming(
       ? () => {
           setTimeout(() => {
             if (
-              !proactiveModule?.isProactiveActive() ||
-              proactiveModule.isProactivePaused() ||
+              !getProactiveModule()?.isProactiveActive() ||
+              getProactiveModule()!.isProactivePaused() ||
               inputClosed
             ) {
               return
@@ -2409,8 +2406,8 @@ function runHeadlessStreaming(
     // 主动轮询：如果主动模式处于活动状态且队列为空，则注入一次轮询
     if (
       (feature('PROACTIVE') || feature('KAIROS')) &&
-      proactiveModule?.isProactiveActive() &&
-      !proactiveModule.isProactivePaused()
+      getProactiveModule()?.isProactiveActive() &&
+      !getProactiveModule()!.isProactivePaused()
     ) {
       if (peek(isMainThread) === undefined && !inputClosed) {
         scheduleProactiveTick!()
@@ -3749,12 +3746,12 @@ function runHeadlessStreaming(
             enabled: boolean
           }
           if (req.enabled) {
-            if (!proactiveModule!.isProactiveActive()) {
-              proactiveModule!.activateProactive('command')
+            if (!getProactiveModule()!.isProactiveActive()) {
+              getProactiveModule()!.activateProactive('command')
               scheduleProactiveTick!()
             }
           } else {
-            proactiveModule!.deactivateProactive()
+            getProactiveModule()!.deactivateProactive()
           }
           sendControlResponseSuccess(message)
         } else if (message.request.subtype === 'remote_control') {

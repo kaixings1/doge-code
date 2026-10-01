@@ -2,12 +2,8 @@ import { feature } from 'bun:bundle'
 import type { PartialCompactDirection } from '../../types/message.js'
 
 // 死码消除：主动模式的按需导入
- 
-const proactiveModule =
-  feature('PROACTIVE') || feature('KAIROS')
-    ? (require('../../proactive/index.js') as typeof import('../../proactive/index.js'))
-    : null
- 
+import { getProactiveModule } from '../../utils/proactiveModule.js'
+
 
 // 激进的无工具前置声明。缓存共享的分叉路径继承父级的完整工具集（缓存键匹配所必需），
 // 而在 Sonnet 4.6+ 自适应思考模型上，模型有时会试图调用工具，尽管尾部的指令较弱。
@@ -354,7 +350,7 @@ ${formattedSummary}`
 
     if (
       (feature('PROACTIVE') || feature('KAIROS')) &&
-      proactiveModule?.isProactiveActive()
+      getProactiveModule()?.isProactiveActive()
     ) {
       continuation += `
 

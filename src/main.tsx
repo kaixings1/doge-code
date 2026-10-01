@@ -4,6 +4,7 @@
 // 3. startKeychainPrefetch 并行启动两个 macOS 钥匙串读取（OAuth + 旧版 API key）—— 否则 isRemoteManagedSettingsEligible() 会在 applySafeConfigEnvironmentVariables() 内部通过同步 spawn 顺序读取它们（每次 macOS 启动约 65ms）
 
 import { profileCheckpoint, profileReport } from './utils/startupProfiler.js';
+import { getProactiveModule } from './utils/proactiveModule.js';
 
 // eslint-disable-next-line custom-rules/no-top-level-side-effects
 profileCheckpoint('main_tsx_entry');
@@ -167,7 +168,7 @@ import { plural } from './utils/stringUtils.js';
 import { type ChannelEntry, getInitialMainLoopModel, getIsNonInteractiveSession, getSdkBetas, getSessionId, getUserMsgOptIn, setAllowedChannels, setAllowedSettingSources, setChromeFlagOverride, setClientType, setCwdState, setDirectConnectServerUrl, setFlagSettingsPath, setInitialMainLoopModel, setInlinePlugins, setIsInteractive, setKairosActive, setOriginalCwd, setQuestionPreviewFormat, setSdkBetas, setSessionBypassPermissionsMode, setSessionPersistenceDisabled, setSessionSource, setUserMsgOptIn, switchSession } from './bootstrap/state.js';
 
 /* eslint-disable @typescript-eslint/no-require-imports */
-const autoModeStateModule = process.env['CLAUDE_CODE_FEATURE_TRANSCRIPT_CLASSIFIER'] === '1' ? require('./utils/permissions/autoModeState.js') as typeof import('./utils/permissions/autoModeState.js') : null;
+const autoModeStateModule = process.env['CLAUDE_CODE_FEATURE_TRANSCRIPT_CLASSIFIER'] === '1' ? require('./utils/permissions/autoModeState.ts') as typeof import('./utils/permissions/autoModeState.ts') : null;
 
 // TeleportRepoMismatchDialog, TeleportResumeWrapper dynamically imported at call sites
 import { migrateAutoUpdatesToSettings } from './migrations/migrateAutoUpdatesToSettings.js';
@@ -4307,9 +4308,8 @@ function maybeActivateProactive(options: unknown): void {
   if ((process.env['CLAUDE_CODE_FEATURE_PROACTIVE'] === '1' || process.env['CLAUDE_CODE_FEATURE_KAIROS'] === '1') && ((options as {
 	proactive?: boolean;
   }).proactive || isEnvTruthy(process.env.CLAUDE_CODE_PROACTIVE))) {
-	// eslint-disable-next-line @typescript-eslint/no-require-imports
-	const proactiveModule = require('./proactive/index.js');
-	if (!proactiveModule.isProactiveActive()) {
+	const proactiveModule = getProactiveModule();
+	if (proactiveModule && !proactiveModule.isProactiveActive()) {
 	  proactiveModule.activateProactive('command');
 	}
   }

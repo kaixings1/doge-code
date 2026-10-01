@@ -76,8 +76,7 @@ const LogoHeader = React.memo(function LogoHeader(t0: { agentDefinitions?: Agent
 });
 
 // Dead code elimination: conditional import for proactive mode
- 
-const proactiveModule = feature('PROACTIVE') || feature('KAIROS') ? require('../proactive/index.js') : null;
+import { getProactiveModule } from '../utils/proactiveModule.js'
 const BRIEF_TOOL_NAME: string | null = feature('KAIROS') || feature('KAIROS_BRIEF') ? (require('../tools/BriefTool/prompt.js') as typeof import('../tools/BriefTool/prompt.js')).BRIEF_TOOL_NAME : null;
 const SEND_USER_FILE_TOOL_NAME: string | null = feature('KAIROS') ? (require('../tools/SendUserFileTool/prompt.js') as typeof import('../tools/SendUserFileTool/prompt.js')).SEND_USER_FILE_TOOL_NAME : null;
 
@@ -601,7 +600,7 @@ const MessagesImpl = ({
     progress
   } = useTerminalNotification();
   const prevProgressState = useRef<string | null>(null);
-  const progressEnabled = getGlobalConfig().terminalProgressBarEnabled && !getIsRemoteMode() && !(proactiveModule?.isProactiveActive() ?? false);
+  const progressEnabled = getGlobalConfig().terminalProgressBarEnabled && !getIsRemoteMode() && !(getProactiveModule()?.isProactiveActive() ?? false);
   useEffect(() => {
     const state = progressEnabled ? hasToolsInProgress ? 'indeterminate' : 'completed' : null;
     if (prevProgressState.current === state) return;

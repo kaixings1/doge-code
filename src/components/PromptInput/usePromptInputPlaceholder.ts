@@ -7,11 +7,7 @@ import { getExampleCommandFromCache } from '../../utils/exampleCommands.js'
 import { isQueuedCommandEditable } from '../../utils/messageQueueManager.js'
 
 // Dead code elimination: conditional import for proactive mode
- 
-const proactiveModule =
-  feature('PROACTIVE') || feature('KAIROS')
-    ? require('../../proactive/index.js')
-    : null
+import { getProactiveModule } from '../../utils/proactiveModule.js'
 
 type Props = {
   input: string
@@ -60,7 +56,7 @@ export function usePromptInputPlaceholder({
     if (
       submitCount < 1 &&
       promptSuggestionEnabled &&
-      !proactiveModule?.isProactiveActive()
+      !getProactiveModule()?.isProactiveActive()
     ) {
       return getExampleCommandFromCache()
     }

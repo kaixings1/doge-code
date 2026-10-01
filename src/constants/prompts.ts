@@ -70,10 +70,7 @@ const getCachedMCConfigForFRC = feature('CACHED_MICROCOMPACT')
     ).getCachedMCConfig
   : null
 
-const proactiveModule =
-  feature('PROACTIVE') || feature('KAIROS')
-    ? require('../proactive/index.js')
-    : null
+import { getProactiveModule } from '../utils/proactiveModule.js'
 const BRIEF_PROACTIVE_SECTION: string | null =
   feature('KAIROS') || feature('KAIROS_BRIEF')
     ? (
@@ -467,7 +464,7 @@ export async function getSystemPrompt(
 
   if (
     (feature('PROACTIVE') || feature('KAIROS')) &&
-    proactiveModule?.isProactiveActive()
+    getProactiveModule()?.isProactiveActive()
   ) {
     logForDebugging(`[SystemPrompt] path=simple-proactive`)
     return [
@@ -854,7 +851,7 @@ function getBriefSection(): string | null {
   // 当 proactive 激活时，getProactiveSection() 已经内联附加了该部分。在此处跳过以避免在系统提示中重复。
   if (
     (feature('PROACTIVE') || feature('KAIROS')) &&
-    proactiveModule?.isProactiveActive()
+    getProactiveModule()?.isProactiveActive()
   )
     return null
   return BRIEF_PROACTIVE_SECTION
@@ -862,7 +859,7 @@ function getBriefSection(): string | null {
 
 function getProactiveSection(): string | null {
   if (!(feature('PROACTIVE') || feature('KAIROS'))) return null
-  if (!proactiveModule?.isProactiveActive()) return null
+  if (!getProactiveModule()?.isProactiveActive()) return null
 
   return `# 自主工作
 

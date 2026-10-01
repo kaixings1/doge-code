@@ -56,7 +56,7 @@ import { runAgent } from './runAgent.js';
 import { renderGroupedAgentToolUse, renderToolResultMessage, renderToolUseErrorMessage, renderToolUseMessage, renderToolUseProgressMessage, renderToolUseRejectedMessage, renderToolUseTag, userFacingName, userFacingNameBackgroundColor } from './UI.js';
 
  
-const proactiveModule = feature('PROACTIVE') || feature('KAIROS') ? require('../../proactive/index.js') as typeof import('../../proactive/index.js') : null;
+import { getProactiveModule } from '../../utils/proactiveModule.js'
  
 
 // 进度显示常量（用于显示后台提示）
@@ -580,7 +580,7 @@ export const AgentTool = buildTool({
     // fire-and-forget 路径使用同一开关；<task-notification>
     // 重新进入由下方的 else 分支处理（registerAsyncAgentTask + notifyOnCompletion）。
     const assistantForceAsync = feature('KAIROS') ? appState.kairosEnabled : false;
-    const shouldRunAsync = (run_in_background === true || selectedAgent.background === true || isCoordinator || forceAsync || assistantForceAsync || (proactiveModule?.isProactiveActive() ?? false)) && !isBackgroundTasksDisabled;
+    const shouldRunAsync = (run_in_background === true || selectedAgent.background === true || isCoordinator || forceAsync || assistantForceAsync || (getProactiveModule()?.isProactiveActive() ?? false)) && !isBackgroundTasksDisabled;
     // 独立于父级组装工作代理的工具池。
     // 工作代理始终通过自己的权限模式从 assembleToolPool 获取工具，
     // 因此不受父级工具限制的影响。此处计算是为了让 runAgent

@@ -1,22 +1,28 @@
-REM ============================================================================
-REM  doge-code 构建脚本
-REM
-REM  环境变量说明：本脚本不再设置任何 CLAUDE_CODE_* / FEATURE 变量。
-REM  全部 200 个运行时环境变量由配置文件提供：
-REM    ~/.doge/settings.json        -> "env" 字段（用户级，对所有项目生效）
-REM    <项目>/.claude/settings.json -> "env" 字段（项目级）
-REM    修改方式：/config env.KEY=value  或直接编辑上述 JSON
-REM
-REM  feature gate 说明（重要）：
-REM    feature('X') 来自 bun:bundle，在构建时被替换为布尔字面量并 DCE。
-REM    运行时无法更改 —— 环境变量、--define 均无效。
-REM    唯一正确的开关是 CLI 的 `--feature X`（等价于 Bun.build 的 features 数组）。
-REM    历史上此处用的是 `--define X=true`，对 feature() 完全无效，
-REM    导致 57 个编译期 gate 全部固化为 false。
-REM ============================================================================
-
 @echo off
 chcp 65001 >nul
+
+REM ============================================================================
+REM  doge-code build script
+REM
+REM  NOTE: keep this file pure ASCII with CRLF line endings.
+REM  cmd.exe decodes a batch file using the ANSI code page (GBK on zh-CN);
+REM  UTF-8 Chinese bytes can swallow the following newline, merging lines so
+REM  that REM comment lines get executed as commands. Also, cmd.exe does NOT
+REM  treat '#' as a comment character (unlike sh) - it tries to run it.
+REM
+REM  Environment: this script sets no CLAUDE_CODE_* / FEATURE variables.
+REM  All runtime env vars come from config files:
+REM    ~/.doge/settings.json        -> "env" (user level)
+REM    <project>/.claude/settings.json -> "env" (project level)
+REM    Change via: /config env.KEY=value  or edit the JSON.
+REM
+REM  feature gate: feature('X') comes from bun:bundle and is replaced by a
+REM  boolean literal at build time (DCE). It cannot be changed at runtime --
+REM  env vars and --define are both ineffective. The only correct switch is
+REM  the CLI `--feature X` (equivalent to Bun.build's features array).
+REM  Historically `--define X=true` was used here, which does nothing for
+REM  feature() and froze all compile-time gates to false.
+REM ============================================================================
 
 rm -f .bun-build*
 rm -rf node_modules/.cache
@@ -26,12 +32,7 @@ rm -rf dist
 rm -rf out
 rm -rf build
 
-# npm cache clean --force
-# yarn cache clean
-# rm -rf node_modules
 rm -f package-lock.json yarn.lock
-# npm install  #  yarn
-# npm run build -- --force
 
 REM === Clean up stale .js artifacts that shadow .ts sources (must run BEFORE bun build) ===
 PowerShell -Command "Remove-Item -Path 'src/__tests__/unit/openaiCompatStream.test.js','src/bootstrap-entry.js','src/bridge/bridgeMain.js','src/bridge/initReplBridge.js','src/cli/print.js','src/commands/issue/index.js','src/commands/loader.js','src/entrypoints/init.js','src/index.js','src/ink/log-update.js','src/ink/render-node-to-output.js','src/tools/CtxInspectTool/CtxInspectTool.js','src/tools/ListPeersTool/ListPeersTool.js','src/tools/PushNotificationTool/PushNotificationTool.js','src/tools/SendUserFileTool/SendUserFileTool.js','src/tools/SubscribePRTool/SubscribePRTool.js','src/tools/TerminalCaptureTool/TerminalCaptureTool.js','src/tools/WebBrowserTool/WebBrowserTool.js','src/tools.js','src/engine/messageLoop.js' -ErrorAction SilentlyContinue"
@@ -48,9 +49,6 @@ REM   Adding --external ink avoids that, but the resulting exe then looks for
 REM   the ink package on disk at runtime. This script copies the exe to f:\bin\,
 REM   which has no node_modules -- verified the exe then dies with
 REM   "Cannot find package 'ink'". Both are unacceptable, so the feature stays off.
-REM
-REM Keep these comments pure ASCII: cmd.exe mis-parses full-width CJK punctuation
-REM (such as the colon here) as a command, which breaks the build.
 call bun build ^
     --feature PROACTIVE --feature KAIROS --feature KAIROS_BRIEF --feature KAIROS_CHANNELS --feature BRIDGE_MODE --feature DAEMON ^
     --feature VOICE_MODE --feature HISTORY_SNIP --feature CCR_REMOTE_SETUP --feature EXPERIMENTAL_SKILL_SEARCH --feature KAIROS_GITHUB_WEBHOOKS --feature ULTRAPLAN ^

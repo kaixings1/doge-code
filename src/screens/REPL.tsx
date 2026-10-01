@@ -196,12 +196,10 @@ import { restoreRemoteAgentTasks } from '../tasks/RemoteAgentTask/RemoteAgentTas
 import { useInboxPoller } from '../hooks/useInboxPoller.js';
 // 死代码消除：循环模式的条件导入
 /* eslint-disable @typescript-eslint/no-require-imports */
-const proactiveModule = feature('PROACTIVE') || feature('KAIROS') ? require('../proactive/index.js') : null;
+import { getProactiveModule, getUseProactive, getUseScheduledTasks } from '../utils/proactiveModule.js'
 const PROACTIVE_NO_OP_SUBSCRIBE = (_cb: () => void) => () => {};
 const PROACTIVE_FALSE = () => false;
 const SUGGEST_BG_PR_NOOP = (_p: string, _n: string): boolean => false;
-const useProactive = feature('PROACTIVE') || feature('KAIROS') ? require('../proactive/useProactive.js').useProactive : null;
-const useScheduledTasks = feature('AGENT_TRIGGERS') ? require('../hooks/useScheduledTasks.js').useScheduledTasks : null;
  
 import { isAgentSwarmsEnabled } from '../utils/agentSwarmsEnabled.js';
 import { useTaskListWatcher } from '../hooks/useTaskListWatcher.js';
@@ -655,7 +653,7 @@ export function REPL({
   useSkillsChange(isRemoteSession ? undefined : getProjectRoot(), setLocalCommands);
 
   // 跟踪主动模式以用于工具依赖 - SleepTool 根据主动状态过滤
-  const proactiveActive = React.useSyncExternalStore(proactiveModule?.subscribeToProactiveChanges ?? PROACTIVE_NO_OP_SUBSCRIBE, proactiveModule?.isProactiveActive ?? PROACTIVE_FALSE);
+  const proactiveActive = React.useSyncExternalStore(getProactiveModule()?.subscribeToProactiveChanges ?? PROACTIVE_NO_OP_SUBSCRIBE, getProactiveModule()?.isProactiveActive ?? PROACTIVE_FALSE);
 
   // BriefTool.isEnabled() 从引导状态读取 getUserMsgOptIn()，/brief 在会话中切换时同时改变 isBriefOnly。下面的 memo 需要一个 React 可见的依赖来在发生时重新运行 getTools()；isBriefOnly 是触发重新渲染的 AppState 镜像。如果没有这个，在会话中切换 /brief 会留下过时的工具列表（没有 SendUserMessage），模型输出纯文本，被 brief 过滤器隐藏。
   const isBriefOnly = useAppState(s => s.isBriefOnly);
@@ -1999,7 +1997,7 @@ export function REPL({
     // Pause proactive mode so the user gets control back.
     // It will resume when they submit their next input (see onSubmit).
     if (feature('PROACTIVE') || feature('KAIROS')) {
-      proactiveModule?.pauseProactive();
+      getProactiveModule()?.pauseProactive();
     }
     queryGuard.forceEnd();
     skipIdleCheckRef.current = false;
@@ -2489,7 +2487,7 @@ export function REPL({
         setConversationId(randomUUID());
         // Compaction succeeded — clear the context-blocked flag so ticks resume
         if (feature('PROACTIVE') || feature('KAIROS')) {
-          proactiveModule?.setContextBlocked(false);
+          getProactiveModule()?.setContextBlocked(false);
         }
       } else if ((newMessage as any).type === 'progress' && isEphemeralToolProgress((newMessage as any).data.type)) {
         // Replace the previous ephemeral progress tick for the same tool
@@ -2519,9 +2517,9 @@ export function REPL({
       // Cleared on compact boundary (above) or successful response (below).
       if (feature('PROACTIVE') || feature('KAIROS')) {
         if (newMessage.type === 'assistant' && 'isApiErrorMessage' in newMessage && newMessage.isApiErrorMessage) {
-          proactiveModule?.setContextBlocked(true);
+          getProactiveModule()?.setContextBlocked(true);
         } else if (newMessage.type === 'assistant') {
-          proactiveModule?.setContextBlocked(false);
+          getProactiveModule()?.setContextBlocked(false);
         }
       }
     }, newContent => {
@@ -2622,7 +2620,7 @@ export function REPL({
         // stale memoized rows remount with post-compact content.
         setConversationId(randomUUID());
         if (feature('PROACTIVE') || feature('KAIROS')) {
-          proactiveModule?.setContextBlocked(false);
+          getProactiveModule()?.setContextBlocked(false);
         }
       }
       resetLoadingState();
@@ -2659,7 +2657,7 @@ export function REPL({
     const userContext = {
       ...baseUserContext,
       ...getCoordinatorUserContext(freshMcpClients, isScratchpadEnabled() ? getScratchpadDir() : undefined),
-      ...((feature('PROACTIVE') || feature('KAIROS')) && proactiveModule?.isProactiveActive() && !terminalFocusRef.current ? {
+      ...((feature('PROACTIVE') || feature('KAIROS')) && getProactiveModule()?.isProactiveActive() && !terminalFocusRef.current ? {
         terminalFocus: 'The terminal is unfocused \u2014 the user is not actively watching.'
       } : {})
     };
@@ -3053,7 +3051,7 @@ export function REPL({
 
     // Resume loop mode if paused
     if (feature('PROACTIVE') || feature('KAIROS')) {
-      proactiveModule?.resumeProactive();
+      getProactiveModule()?.resumeProactive();
     }
 
     // ─── 循环意图自动捕获 ───
@@ -3943,7 +3941,7 @@ export function REPL({
     // condition would break rules-of-hooks.
     const assistantMode = store.getState().kairosEnabled;
     // biome-ignore lint/correctness/useHookAtTopLevel: feature() is a compile-time constant
-    useScheduledTasks!({
+    getUseScheduledTasks()!({
       isLoading,
       assistantMode,
       setMessages
@@ -3967,7 +3965,7 @@ export function REPL({
     // 循环模式：启用时自动滴答（通过 /job 命令）
     // eslint-disable-next-line react-hooks/rules-of-hooks
     // biome-ignore lint/correctness/useHookAtTopLevel: 条件性用于外部构建中的死代码消除
-    useProactive?.({
+    getUseProactive()?.({
       // 当初始消息待处理时抑制滴答 — 初始消息将异步处理，过早的滴答会与之竞争，导致展开的技能文本的并发查询排队。
       isLoading: isLoading || initialMessage !== null,
       queuedCommandsLength: queuedCommands.length,
@@ -4741,7 +4739,7 @@ export function REPL({
             // Partial compact bypasses handleMessageFromStream — clear
             // the context-blocked flag so proactive ticks resume.
             if (feature('PROACTIVE') || feature('KAIROS')) {
-              proactiveModule?.setContextBlocked(false);
+              getProactiveModule()?.setContextBlocked(false);
             }
             setConversationId(randomUUID());
             runPostCompactCleanup(context.options.querySource);

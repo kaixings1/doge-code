@@ -55,12 +55,8 @@ import { getPlatform } from '../../utils/platform.js';
 import { PrBadge } from '../PrBadge.js';
 
 // 死代码消除：proactive 模式的条件导入
- 
-const proactiveModule =
-  feature('PROACTIVE') || feature('KAIROS')
-    ? require('../../proactive/index.js')
-    : null;
- 
+import { getProactiveModule } from '../../utils/proactiveModule.js'
+
 
 const NO_OP_SUBSCRIBE = (_cb: () => void) => () => {};
 const NULL = () => null;
@@ -92,8 +88,8 @@ type Props = {
 // ========== 倒计时组件 ==========
 function ProactiveCountdown(): React.ReactNode {
   const nextTickAt = useSyncExternalStore(
-    proactiveModule?.subscribeToProactiveChanges ?? NO_OP_SUBSCRIBE,
-    proactiveModule?.getNextTickAt ?? NULL,
+    getProactiveModule()?.subscribeToProactiveChanges ?? NO_OP_SUBSCRIBE,
+    getProactiveModule()?.getNextTickAt ?? NULL,
     NULL,
   );
 
@@ -253,8 +249,8 @@ function ModeIndicator({
   );
 
   const nextTickAt = useSyncExternalStore(
-    proactiveModule?.subscribeToProactiveChanges ?? NO_OP_SUBSCRIBE,
-    proactiveModule?.getNextTickAt ?? NULL,
+    getProactiveModule()?.subscribeToProactiveChanges ?? NO_OP_SUBSCRIBE,
+    getProactiveModule()?.getNextTickAt ?? NULL,
     NULL,
   );
   // biome-ignore lint/correctness/useHookAtTopLevel: feature() 是编译时常量
