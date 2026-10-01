@@ -110,17 +110,24 @@ class TerminalPanel {
     }
 
     // Bind Meta+J (toggles back to Claude Code from inside the terminal)
-    // and configure the status bar hint. Chained with ';' to collapse
-    // 5 spawnSync calls into 1.
-    // biome-ignore format: one tmux command per line
-    spawnSync('tmux', [
-      '-L', socket,
-      'bind-key', '-n', 'M-j', 'detach-client', ';',
-      'set-option', '-g', 'status-style', 'bg=default', ';',
-      'set-option', '-g', 'status-left', '', ';',
-      'set-option', '-g', 'status-right', ' Alt+J to return to Claude ', ';',
-      'set-option', '-g', 'status-right-style', 'fg=brightblack',
-    ])
+    // and configure the status bar hint.
+    //
+    // NOTE: these must be separate spawnSync calls — tmux's ';' command
+    // separator swallows the value of any 3-arg command (set-option -g k v)
+    // that precedes another command, so only the final link of a chain
+    // takes effect. Verified on tmux 3.3.6.
+    const tmuxArgs = (...args: string[]) => ['-L', socket, ...args]
+    spawnSync('tmux', tmuxArgs('bind-key', '-n', 'M-j', 'detach-client'))
+    spawnSync('tmux', tmuxArgs('set-option', '-g', 'status-style', 'bg=default'))
+    spawnSync('tmux', tmuxArgs('set-option', '-g', 'status-left', ' '))
+    spawnSync(
+      'tmux',
+      tmuxArgs('set-option', '-g', 'status-right', ' Alt+J to return to Claude '),
+    )
+    spawnSync(
+      'tmux',
+      tmuxArgs('set-option', '-g', 'status-right-style', 'fg=brightblack'),
+    )
 
     if (!this.cleanupRegistered) {
       this.cleanupRegistered = true
