@@ -5,8 +5,6 @@
  * 支持 Windows 和 macOS/Linux 终端
  */
 
-import { isEnvTruthy } from './envUtils.js'
-
 // 是否启用声音提醒（默认启用以支持多窗口场景）
 const SOUND_NOTIFICATION_ENABLED = process.env.SOUND_ON_TASK_COMPLETE !== 'false'
 
