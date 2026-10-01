@@ -4,8 +4,7 @@
  * 必须在 KeybindingSetup 内部渲染，以便访问快捷键上下文
  * 此组件不渲染任何内容 - 它只注册快捷键处理器
  */
-// NOTE: use the runtime polyfill — 'bun:bundle' folds to false under `bun run`.
-import { feature } from '../utils/bun-bundle-polyfill.js';
+import { feature } from 'bun:bundle';
 import { useCallback } from 'react';
 import instances from '../ink/instances.js';
 import { useKeybinding } from '../keybindings/useKeybinding.js';

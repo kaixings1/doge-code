@@ -1,9 +1,8 @@
-// NOTE: must use the runtime polyfill, not 'bun:bundle'. Under `bun run`
-// (dev mode), Bun folds feature() to false at parse time regardless of env,
-// so terminal-panel keybindings would never register. The polyfill reads
-// CLAUDE_CODE_FEATURE_<NAME> at runtime; vitest aliases 'bun:bundle' to the
-// same module, and `bun build` output works with it too.
-import { feature } from '../utils/bun-bundle-polyfill.js'
+// feature() 由 bun:bundle 提供，在解析期做常量折叠 + DCE。
+// 开关只有 --feature=TERMINAL_PANEL（bun run / bun build 均支持）；
+// env 与 --define 对它无效。vitest 在 vitest.config.ts 里把
+// 'bun:bundle' alias 到 polyfill 以便测试。
+import { feature } from 'bun:bundle'
 import { satisfies } from '../utils/semver.js'
 import { isRunningWithBun } from '../utils/bundledMode.js'
 import { getPlatform } from '../utils/platform.js'

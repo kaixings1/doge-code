@@ -18,10 +18,10 @@ REM   <项目>/.claude/settings.json -> "env" 字段（项目级，团队共享�
 REM 修改方式：/config env.KEY=value   或直接编辑上述 JSON 的 env 字段
 REM 仅 DOGE_API_JSON 因依赖 %1 参数而保留在此处。
 REM
-REM 例外：TERMINAL_PANEL 必须在此显式设置。settings.json 的 env 会被
-REM managedEnv 的 SAFE_ENV_VARS 白名单过滤掉（该白名单不含任何
-REM CLAUDE_CODE_FEATURE_*），因此走配置文件无法到达 process.env。
-set CLAUDE_CODE_FEATURE_TERMINAL_PANEL=1
+REM 注：CLAUDE_CODE_FEATURE_* 走 settings.json 的 env 是完全有效的。
+REM managedEnv.applyConfigEnvironmentVariables() 应用全部来源的 env，
+REM 不受 SAFE_ENV_VARS 白名单限制（白名单只作用于信任前的 applySafe* 阶段）。
+REM 已实测 TERMINAL_PANEL / WORKFLOW_SCRIPTS / USER_TYPE 均可注入。
 
 if "%1"=="" (
     set DOGE_API_JSON=.doge\api.json
@@ -49,4 +49,7 @@ if errorlevel 1 (
 REM echo BEFORE_DOGE_EXE >> trace.log
 REM "D:\doge-code\doge.exe" --dangerously-skip-permissions --verbose %2 %3 %4 %5 --debug-file ./debug1.txt
 
-bun run "D:\doge-code\src\bootstrap-entry.ts" --dangerously-skip-permissions --verbose %2 %3 --debug-file ./debug2.txt
+REM --feature=TERMINAL_PANEL 是 bun run 的原生 flag，让 feature('TERMINAL_PANEL')
+REM 在解析期固化为 true。bun:bundle 的 feature() 是编译期常量折叠，env / --define
+REM 都改不了它 —— 只有 --feature 有效（实测：无 flag 为 false，加 flag 为 true）。
+bun run --feature=TERMINAL_PANEL "D:\doge-code\src\bootstrap-entry.ts" --dangerously-skip-permissions --verbose %2 %3 --debug-file ./debug2.txt
