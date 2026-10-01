@@ -451,17 +451,20 @@ function TranscriptSearchBar({
         </Text> : null}
     </Box>;
 }
-const TITLE_IDLE_PREFIX = '🟩';
+// 等待用户时的标题前缀。用纯文本方括号标记而非 emoji：
+// 实测 Windows Terminal 会丢弃 OSC 0 标题里的 emoji（🟩 被吞掉，
+// 标题开头只剩一个空格），纯文本则能稳定显示。
+const TITLE_IDLE_PREFIX = '[空闲]';
 
 /**
- * 设置终端标签页标题，空闲时显示绿方块图标，忙碌时清空图标。
+ * 设置终端标签页标题：等待用户输入时显示前缀，忙碌时只显示标题本体。
  * 与 REPL 隔离，使得状态变化只重新渲染这个叶子组件（返回 null — 纯副作用）。
  */
 function AnimatedTerminalTitle(t0) {
   const { isIdle, title, disabled, sessionId } = t0;
-  const prefix = isIdle ? ` ${TITLE_IDLE_PREFIX}` : '';
   const titleWithSession = sessionId ? `${title} ${sessionId}` : title;
-  useTerminalTitle(disabled ? null : `${prefix} ${titleWithSession}`);
+  const text = isIdle ? `${TITLE_IDLE_PREFIX} ${titleWithSession}` : titleWithSession;
+  useTerminalTitle(disabled ? null : text);
   return null;
 }
 type ReplRuntimeBoundaryState = {
@@ -1070,10 +1073,11 @@ export function REPL({
   // 不支持 OSC 21337 的终端会静默忽略，无需额外门控。
   useTabStatus(titleDisabled ? null : sessionStatus, getSessionId());
 
-  // 多窗口声音提醒：状态变化时播放提示音
+  // 多窗口声音提醒 + 窗口激活：状态变化时播放提示音并把终端切到前台
   // - busy -> idle: 对话完成提醒
   // - 变为 waiting: 需要用户干预提醒
   const { playInterventionSound, playTaskCompleteSound } = require('../utils/soundNotification.js');
+  const { focusTerminalWindow } = require('../utils/focusTerminalWindow.js');
   const prevSessionStatusRef = useRef(sessionStatus);
   useEffect(() => {
     const prev = prevSessionStatusRef.current;
@@ -1083,9 +1087,11 @@ export function REPL({
     if (sessionStatus === 'waiting') {
       // 需要用户干预：工具审批、输入等
       playInterventionSound();
+      void focusTerminalWindow(getSessionId());
     } else if (sessionStatus === 'idle' && prev === 'busy') {
       // 对话完成
       playTaskCompleteSound();
+      void focusTerminalWindow(getSessionId());
     }
   }, [sessionStatus]);
 
@@ -2379,7 +2385,7 @@ export function REPL({
           case 'hooks_start':
             setSpinnerColor('claudeBlue_FOR_SYSTEM_SPINNER');
             setSpinnerShimmerColor('claudeBlueShimmer_FOR_SYSTEM_SPINNER');
-            setSpinnerMessage(event.hookType === 'pre_compact' ? 'Running PreCompact hooks\u2026' : event.hookType === 'post_compact' ? 'Running PostCompact hooks\u2026' : 'Running SessionStart hooks\u2026');
+            setSpinnerMessage(event.hookType === 'pre_compact' ? '正在运行 PreCompact 钩子…' : event.hookType === 'post_compact' ? '正在运行 PostCompact 钩子…' : '正在运行 SessionStart 钩子…');
             break;
           case 'compact_start':
             setSpinnerMessage('正在压缩对话');
@@ -4250,7 +4256,7 @@ export function REPL({
         {toolJSX.jsx}
       </Box>;
     const transcriptReturn = <KeybindingSetup>
-        <AnimatedTerminalTitle isIdle={sessionStatus === 'idle'} title={terminalTitle} disabled={titleDisabled} sessionId={getSessionId()} />
+        <AnimatedTerminalTitle isIdle={sessionStatus === 'idle' || sessionStatus === 'waiting'} title={terminalTitle} disabled={titleDisabled} sessionId={getSessionId()} />
         <GlobalKeybindingHandlers {...globalKeybindingProps} />
         {feature('VOICE_MODE') ? <VoiceKeybindingHandler voiceHandleKeyEvent={voice.handleKeyEvent} stripTrailing={voice.stripTrailing} resetAnchor={voice.resetAnchor} isActive={!toolJSX?.isLocalJSXCommand} /> : null}
         <CommandKeybindingHandlers onSubmit={onSubmit} isActive={!toolJSX?.isLocalJSXCommand} />
@@ -4336,7 +4342,7 @@ export function REPL({
 
   // 根部的 <AlternateScreen>：其内部的所有内容都在其 <Box height={rows}> 内。处理程序/上下文是零高度的，因此 FullscreenLayout 中 ScrollBox 的 flexGrow 相对于此 Box 解析。上面的对话记录早期返回以同样的方式包装其虚拟滚动分支；只有 30 上限转储分支保持未包装，以支持原生终端滚动回退。
   const mainReturn = <KeybindingSetup>
-      <AnimatedTerminalTitle isIdle={sessionStatus === 'idle'} title={terminalTitle} disabled={titleDisabled} sessionId={getSessionId()} />
+      <AnimatedTerminalTitle isIdle={sessionStatus === 'idle' || sessionStatus === 'waiting'} title={terminalTitle} disabled={titleDisabled} sessionId={getSessionId()} />
       <GlobalKeybindingHandlers {...globalKeybindingProps} />
       {feature('VOICE_MODE') ? <VoiceKeybindingHandler voiceHandleKeyEvent={voice.handleKeyEvent} stripTrailing={voice.stripTrailing} resetAnchor={voice.resetAnchor} isActive={!toolJSX?.isLocalJSXCommand} /> : null}
       <CommandKeybindingHandlers onSubmit={onSubmit} isActive={!toolJSX?.isLocalJSXCommand} />
