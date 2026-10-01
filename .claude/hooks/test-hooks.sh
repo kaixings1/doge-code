@@ -12,6 +12,11 @@ FIX="$H/fixtures"
 pass=0
 fail=0
 
+# Keep fixture task ids out of the real task queue.
+export HOOK_LOG_DIR="$H/fixtures/logs"
+rm -rf "$HOOK_LOG_DIR"
+trap 'rm -rf "$HOOK_LOG_DIR"' EXIT
+
 run() {
   local label="$1" script="$2" input="$3" expect="$4"
   BASH_ENV= bash "$H/$script" < "$FIX/$input" >/dev/null 2>&1

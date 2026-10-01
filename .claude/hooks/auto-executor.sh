@@ -4,7 +4,9 @@
 
 . "$(dirname "$0")/hook-lib.sh"
 
-LOG_DIR="$(dirname "$0")/logs"
+# HOOK_LOG_DIR lets the regression suite redirect logs so it does not pollute
+# the real task queue with its fixture task ids.
+LOG_DIR="${HOOK_LOG_DIR:-$(dirname "$0")/logs}"
 TASK_LOG="$LOG_DIR/auto-executor.log"
 QUEUE_LOG="$LOG_DIR/task-queue.log"
 mkdir -p "$LOG_DIR"
