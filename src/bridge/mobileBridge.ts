@@ -916,6 +916,15 @@ export async function autoStartMobileBridge(port?: number): Promise<MobileBridge
     const server = await initMobileBridgeServer(`mobile-${Date.now()}`, getReplBridgeHandle(), port)
     if (server) {
       logForDebugging(`[MobileBridge] 自动启动成功: ${getMobileBridgeUrl(port)}`)
+      // 非交互终端（stdin 被重定向、或跑在脚本里）不会挂载 REPL，
+      // 而消息消费由 useQueueProcessor（随 REPL 挂载）负责。此时手机能连、
+      // 能收到 queued 回执，但消息永远不会进入对话 —— 极易误判为 bug，
+      // 故显式提示。
+      if (!process.stdin.isTTY) {
+        logForDebugging(
+          '[MobileBridge] 当前非交互终端：手机消息会入队但不会被消费（需真实终端运行 doge.exe）',
+        )
+      }
     }
     return server
   } catch (e) {
