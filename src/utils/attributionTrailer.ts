@@ -1,5 +1,5 @@
-import type { AttributionData } from '../commitAttribution.js'
-import { logForDebugging } from '../debug.js'
+import type { AttributionData } from './commitAttribution.js'
+import { logForDebugging } from './debug.js'
 
 /**
  * Build git trailer lines from attribution data for PR squash-merge commit messages.
