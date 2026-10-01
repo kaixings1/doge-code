@@ -150,11 +150,25 @@ class TerminalPanel {
   }
 
   private attachSession(): void {
-    spawnSync(
+    // attach 必须是"阻塞到用户脱离"的。若它瞬间返回（常见于 stdin 不是
+    // TTY 时 —— tmux 会打印版本号后退出），界面会立即弹回主界面。
+    // 记录耗时与退出码，便于事后从 debug 日志定位是哪种情况。
+    const startedAt = Date.now()
+    const result = spawnSync(
       'tmux',
       ['-L', getTerminalPanelSocket(), 'attach-session', '-t', TMUX_SESSION],
       { stdio: 'inherit' },
     )
+    const elapsed = Date.now() - startedAt
+    logForDebugging(
+      `Terminal panel: attach returned after ${elapsed}ms, status=${result.status}, error=${result.error?.message ?? 'none'}, isTTY=${process.stdin.isTTY}`,
+    )
+    if (elapsed < 500) {
+      logForDebugging(
+        'Terminal panel: attach exited immediately — tmux likely found no usable TTY. ' +
+          'Check that the terminal supports ConPTY handoff (Windows Terminal works; some shells embed the process without a console).',
+      )
+    }
   }
 
   // ── show shell ────────────────────────────────────────────────────
