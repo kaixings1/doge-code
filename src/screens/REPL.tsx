@@ -4234,7 +4234,9 @@ export function REPL({
     virtualScrollActive,
     // 栏打开是一种模式（拥有按键 — j/k 键入，Esc 取消）。
     // 导航（查询已设置，栏关闭）不是 — Esc 退出对话记录，与 less q 相同，高亮仍然可见。useSearchInput 不停止传播，因此没有这个门，transcript:exit 会在取消栏的同一个 Esc 上触发（子首先注册，首先触发，冒泡）。
-    searchBarOpen: searchOpen
+    searchBarOpen: searchOpen,
+    // 终端面板（Meta+J）用它挂载全屏覆盖层。
+    setToolJSX
   };
 
   // 使用冻结长度切片数组，避免克隆的内存开销
