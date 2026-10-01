@@ -506,9 +506,12 @@ export function useReplBridge(messages: Message[], setMessages: (action: React.S
   // 否则恒为 false。若把推送放在那里，手机永远收不到回复。
   const mobilePushIndexRef = useRef(0);
   useEffect(() => {
-    if (!getActiveMobileBridgeServer()) return;
+    // 游标必须先推进，再判断是否推送。
+    // 若先 `if (!server) return`，服务器未启动期间（手机尚未扫码）游标停留
+    // 在 0，等手机连上后首个 effect 会把整段历史对话一次性灌给手机。
     const start = Math.min(mobilePushIndexRef.current, messages.length);
     mobilePushIndexRef.current = messages.length;
+    if (!getActiveMobileBridgeServer()) return;
     for (let i = start; i < messages.length; i++) {
       const m = messages[i];
       if (!m) continue;

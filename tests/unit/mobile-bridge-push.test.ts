@@ -42,6 +42,28 @@ describe('mobileBridge 推送链路（真实源码）', () => {
     expect(getActiveMobileBridgeServer()).toBeNull()
   })
 
+  it('模拟游标：服务器后启动时不应回灌历史消息', () => {
+    // 复刻 useReplBridge 推送 effect 的游标语义（与源码 508-525 行一致）
+    const simulate = (serverUpAt: number, totalMessages: number) => {
+      let cursor = 0
+      let pushed = 0
+      for (let len = 1; len <= totalMessages; len++) {
+        // 关键顺序：先推进游标，再判断服务器
+        const start = Math.min(cursor, len)
+        cursor = len
+        const serverUp = len >= serverUpAt
+        if (!serverUp) continue
+        pushed += len - start
+      }
+      return pushed
+    }
+
+    // 服务器第 1 条消息时就绪：应推送全部
+    expect(simulate(1, 5)).toBe(5)
+    // 服务器第 4 条消息才就绪：只应推送 4、5，不回灌 1-3
+    expect(simulate(4, 5)).toBe(2)
+  })
+
   it('启动真实服务器后 pushToMobileClients 可调用且不抛异常', async () => {
     const { MobileBridgeServer } = await import('../../src/bridge/mobileBridge.js')
     const port = 15681
