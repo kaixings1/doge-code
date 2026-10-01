@@ -254,6 +254,51 @@ src/
 - **端到端测试** (`src/__tests__/e2e/`)：模拟完整用户流程
 - **性能测试** (`src/__tests__/performance/`)：基准测试
 
+## 环境变量与 feature gate
+
+环境变量**不再写在启动脚本里**，统一由配置文件提供：
+
+| 层级 | 路径 | 说明 |
+|------|------|------|
+| 用户级 | `~/.doge/settings.json` 的 `env` 字段 | 注意是 `.doge` 不是 `.claude`；对所有项目生效 |
+| 项目级 | `<项目>/.claude/settings.json` 的 `env` 字段 | 团队共享 |
+| 单次 | `--settings <file>` | 覆盖 |
+
+修改方式：`/config env.KEY=value`，或直接编辑上述 JSON。`d.bat` 仅保留 `DOGE_API_JSON`（依赖 `%1`，配置无法表达）。
+
+`env` 的应用走 `applyConfigEnvironmentVariables()`，**不受** `SAFE_ENV_VARS` 白名单限制（白名单只作用于信任前的 `applySafeConfigEnvironmentVariables()`）。
+
+**feature gate 有两个独立机制，不要混淆**：
+
+| 机制 | 控制方式 | 覆盖范围 |
+|------|----------|----------|
+| 编译期 DCE | `bun build --feature X` / `bun run --feature=X` | 决定 `feature('X')` 的常量折叠值 |
+| 运行时守卫 | `settings.json` 的 `env` 设 `CLAUDE_CODE_FEATURE_X=1` | 仅 41 个 feature 直接读 env |
+
+`feature('X')`（`bun:bundle`）在解析/构建期被替换为布尔字面量并 DCE，**运行时改不了**。三个关键事实（均经实测）：
+
+- `--define X=true` 对它**无效**（产物仍是 `if (false)`）
+- `settings.json` 设 `CLAUDE_CODE_FEATURE_X=1` 对它**也无效**——env 确实注入 `process.env`，但 `feature()` 不读 env
+- 唯一开关是 `--feature X`，`bun run`（源码直跑）和 `bun build`（打包）都支持
+
+因此配置 `env` 里写 `CLAUDE_CODE_FEATURE_*` 只对**有运行时守卫**的那 41 个有意义；其余 43 个是死数据，应删掉改用 `--feature`。判定方法：`rg "process.env\['?CLAUDE_CODE_FEATURE_X" src/` 有无命中。验证 `feature()` 是否生效：构建后 `cat` 产物看是 `if (true)` 还是 `if (false)`。
+
+> 构建含 `WORKFLOW_SCRIPTS` 时必须加 `--external ink`：该 feature 的 `require()` 条件加载会拉入 `ink/build/reconciler.js` 的 top-level await，静态分析阶段报错。
+
+> **不要启用 `UDS_INBOX`**：`src/setup.ts:98` 在该 feature 为真时调用
+> `m.startUdsMessaging()` 与 `m.getDefaultUdsSocketPath()`，但
+> `src/utils/udsMessaging.ts` 是 57 字节空存根（仅导出空的 `sendUdsMessage`），
+> 两个函数都不存在。产物**启动即崩**：
+>
+> ```
+> TypeError: m5.getDefaultUdsSocketPath is not a function
+>     at setup2 (B:/~BUN/root/doge:1228360:83)
+> ```
+>
+> `src/bootstrap-entry.ts:119` 捕获后 `process.exit(1)`，CLI 完全进不去。
+> 因 `feature()` 构建期固化，运行时设 env 无效，只能从构建参数去掉
+> `--feature UDS_INBOX`。要用该功能需先补全 udsMessaging 实现。
+
 ## 构建与部署
 
 ```bash
@@ -265,7 +310,7 @@ bun run build
 # 输出：./doge (CLI 可执行文件)
 ```
 
-项目使用 GitHub Actions（.github/workflows/）进行 CI。
+Windows 下另有 `compile.bat`（完整构建 + 清理）。项目使用 GitHub Actions（.github/workflows/）进行 CI。
 
 ## OpenAI 兼容接口
 
