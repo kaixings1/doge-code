@@ -610,14 +610,15 @@ export const connectToServer = memoize(
       // 而不是直接连接到远程 MCP。
       const sessionIngressToken = getSessionIngressAuthToken()
 
-      if (serverRef.type === 'sse') {
+      if ((serverRef as any).type === 'sse') {
+        const sseConfig = serverRef as any
         // 为此服务器创建身份验证提供程序
-        const authProvider = new ClaudeAuthProvider(name, serverRef)
+        const authProvider = new ClaudeAuthProvider(name, sseConfig)
 
         // 获取合并后的标头（静态 + 动态）
-        const combinedHeaders = await getMcpServerHeaders(name, serverRef)
+        const combinedHeaders = await getMcpServerHeaders(name, sseConfig)
 
-        // 在 SSEClientTransport 中使用身份验证提供程序
+        const sseUrl = sseConfig.url
         const transportOptions: SSEClientTransportOptions = {
           authProvider,
           // 每个请求使用新的超时，以避免陈旧的 AbortSignal 错误。
@@ -663,7 +664,7 @@ export const connectToServer = memoize(
         }
 
         transport = new SSEClientTransport(
-          new URL(serverRef.url),
+          new URL(sseUrl),
           transportOptions,
         )
         logMCPDebug(name, `SSE 传输已初始化，等待连接`)
@@ -791,10 +792,13 @@ export const connectToServer = memoize(
         )
 
         // 为此服务器创建身份验证提供程序
-        const authProvider = new ClaudeAuthProvider(name, serverRef)
+        const authProvider = new ClaudeAuthProvider(
+          name,
+          serverRef as any,
+        )
 
         // 获取合并后的标头（静态 + 动态）
-        const combinedHeaders = await getMcpServerHeaders(name, serverRef)
+        const combinedHeaders = await getMcpServerHeaders(name, serverRef as any)
 
         // 检查此服务器是否存储了 OAuth 令牌。如果有，SDK 的
         // authProvider 将设置 Authorization —— 不要用会话入口令牌覆盖
@@ -906,7 +910,9 @@ export const connectToServer = memoize(
         const { createLinkedTransportPair } = await import(
           './InProcessTransport.js'
         )
-        const context = createChromeContext(serverRef.env)
+        const context = createChromeContext(
+          (serverRef as any).env as Record<string, string>,
+        )
         inProcessServer = createClaudeForChromeMcpServer(context)
         const [clientTransport, serverTransport] = createLinkedTransportPair()
         await inProcessServer.connect(serverTransport)
@@ -917,6 +923,9 @@ export const connectToServer = memoize(
         (serverRef.type === 'stdio' || !serverRef.type) &&
         isComputerUseMCPServer!(name)
       ) {
+        const stdioConfig = serverRef as McpStdioServerConfig & {
+          scope: ConfigScope
+        }
         // 在进程内运行 Computer Use MCP 服务器 —— 与上述 Chrome 同理。
         // 该包的 CallTool 处理程序是一个存根；实际调度通过 wrapper.tsx 的 .call() 覆盖进行。
         const { createComputerUseMcpServerForCli } = await import(
@@ -931,17 +940,18 @@ export const connectToServer = memoize(
         transport = clientTransport
         logMCPDebug(name, `进程内 Computer Use MCP 服务器已启动`)
       } else if (serverRef.type === 'stdio' || !serverRef.type) {
+        const stdioConfig = serverRef as any
         const finalCommand =
-          process.env.CLAUDE_CODE_SHELL_PREFIX || serverRef.command
+          process.env.CLAUDE_CODE_SHELL_PREFIX || stdioConfig.command
         const finalArgs = process.env.CLAUDE_CODE_SHELL_PREFIX
-          ? [[serverRef.command, ...serverRef.args].join(' ')]
-          : serverRef.args
+          ? [[stdioConfig.command, ...stdioConfig.args].join(' ')]
+          : stdioConfig.args
         transport = new StdioClientTransport({
           command: finalCommand,
           args: finalArgs,
           env: {
             ...subprocessEnv(),
-            ...serverRef.env,
+            ...stdioConfig.env,
           } as Record<string, string>,
           stderr: 'pipe', // 防止 MCP 服务器的错误输出打印到 UI
         })
@@ -1366,14 +1376,14 @@ export const connectToServer = memoize(
 
         // 同时清除 fetch 缓存（以服务器名称为键）。重新连接
         // 会创建一个新的连接对象；如果不清除，下次 fetch 会从旧连接返回陈旧的工具/资源。
-        fetchToolsForClient.cache.delete(name)
-        fetchResourcesForClient.cache.delete(name)
-        fetchCommandsForClient.cache.delete(name)
+        (fetchToolsForClient as any).cache.delete(name)
+        (fetchResourcesForClient as any).cache.delete(name)
+        (fetchCommandsForClient as any).cache.delete(name)
         if (feature('MCP_SKILLS')) {
           fetchMcpSkillsForClient!.cache.delete(name)
         }
 
-        connectToServer.cache.delete(key)
+        (connectToServer as any).cache.delete(key)
         logMCPDebug(name, `已清除连接缓存以便重新连接`)
 
         if (originalOnclose) {

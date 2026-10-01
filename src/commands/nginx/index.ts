@@ -40,5 +40,5 @@ export const call: LocalCommandCall = async (args) => {
   return { type: 'text', value: r || '(无输出)' }
 }
 
-const cmd = { type: 'local' as const, name: 'nginx', description: 'Nginx 管理：status/start/stop/reload/test/sites/logs/config', argumentHint: '<status|start|stop|reload|test|sites|logs|config> [args]', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
+const cmd = { type: 'local' as const, name: 'nginx', description: 'Nginx 管理：status/start/stop/reload/test/sites/logs/config', argumentHint: '<status|start|stop|reload|test|sites|logs|config> [args]', isEnabled: () => true, load: () => import('./index.ts'), supportsNonInteractive: false } satisfies Command
 export default cmd

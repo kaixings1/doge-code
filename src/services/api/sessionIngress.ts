@@ -38,7 +38,7 @@ const sequentialAppendBySession: Map<
  * 获取或创建会话的顺序包装器
  * 确保同一会话的日志追加操作按顺序处理，避免竞态条件
  */
-function getOrCreateSequentialAppend(sessionId: string) {
+function getOrCreateSequentialAppend(sessionId: string | any) {
   let sequentialAppend = sequentialAppendBySession.get(sessionId)
   if (!sequentialAppend) {
     sequentialAppend = sequential(
@@ -59,14 +59,14 @@ function getOrCreateSequentialAppend(sessionId: string) {
  * （处理已终止进程中未完成请求造成的陈旧状态）。遇到 401 立即失败。
  */
 async function appendSessionLogImpl(
-  sessionId: string,
+  sessionId: string | any,
   entry: TranscriptMessage,
   url: string,
   headers: Record<string, string>,
 ): Promise<boolean> {
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
-      const lastUuid = lastUuidMap.get(sessionId)
+      const lastUuid = lastUuidMap.get(sessionId as any)
       const requestHeaders = { ...headers }
       if (lastUuid) {
         requestHeaders['Last-Uuid'] = lastUuid
@@ -78,7 +78,7 @@ async function appendSessionLogImpl(
       })
 
       if (response.status === 200 || response.status === 201) {
-        lastUuidMap.set(sessionId, entry.uuid)
+        lastUuidMap.set(sessionId as any, entry.uuid)
         logForDebugging(`会话日志成功写入 session ${sessionId}`)
         return true
       }
@@ -89,7 +89,7 @@ async function appendSessionLogImpl(
         const serverLastUuid = response.headers['x-last-uuid']
         if (serverLastUuid === entry.uuid) {
           // 该条目已是服务端最新条目——之前已成功存储
-          lastUuidMap.set(sessionId, entry.uuid)
+          lastUuidMap.set(sessionId as any, entry.uuid)
           logForDebugging(
             `会话条目 ${entry.uuid} 已存在于服务端，从陈旧状态中恢复`,
           )
@@ -163,7 +163,7 @@ async function appendSessionLogImpl(
  * 每个会话确保顺序执行，防止竞态条件
  */
 export async function appendSessionLog(
-  sessionId: string,
+  sessionId: string | any,
   entry: TranscriptMessage,
   url: string,
 ): Promise<boolean> {

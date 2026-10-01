@@ -2678,7 +2678,6 @@ if (claudeaiTimedOut) {
         },
         needsRefresh: false
       },
-      statusLineText: undefined,
       kairosEnabled,
       remoteSessionUrl: undefined,
       remoteConnectionStatus: 'connecting',

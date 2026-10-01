@@ -228,5 +228,5 @@ export const call: LocalCommandCall = async (args) => {
   }
 }
 
-const cmd = { type: 'local' as const, name: 'docker', description: 'Docker - ps/logs/exec/compose/stats/networks/volumes/prune/scan/generate/config', argumentHint: '<ps|logs|exec|compose|stats|networks|volumes|prune|scan|generate|config> [args]', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
+const cmd = { type: 'local' as const, name: 'docker', description: 'Docker - ps/logs/exec/compose/stats/networks/volumes/prune/scan/generate/config', argumentHint: '<ps|logs|exec|compose|stats|networks|volumes|prune|scan|generate|config> [args]', isEnabled: () => true, load: () => import('./index.ts'), supportsNonInteractive: false } satisfies Command
 export default cmd

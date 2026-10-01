@@ -61,6 +61,7 @@ import type {
   SystemCompactBoundaryMessage,
   SystemMessage,
   UserMessage,
+  UUID,
 } from '../types/message.js'
 import type { QueueOperationMessage } from '../types/messageQueueTypes.js'
 import { uniq } from './array.js'
@@ -1495,7 +1496,7 @@ export async function recordSidechainTranscript(
     cleanMessagesForLogging(messages),
     true,
     agentId,
-    startingParentUuid,
+    startingParentUuid as any,
   )
 }
 
@@ -1517,7 +1518,7 @@ export async function recordFileHistorySnapshot(
   isSnapshotUpdate: boolean,
 ) {
   await getProject().insertFileHistorySnapshot(
-    messageId,
+    messageId as any,
     snapshot,
     isSnapshotUpdate,
   )
@@ -1915,9 +1916,9 @@ function applyPreservedSegmentRelinks(
       // attachment pushed to mutableMessages but never recordTranscript'd
       // (SDK subprocess restarted before next turn's qe:420 flush).
       logEvent('tengu_relink_walk_broken', {
-        tailInTranscript: messages.has(lastSeg.tailUuid),
-        headInTranscript: messages.has(lastSeg.headUuid),
-        anchorInTranscript: messages.has(lastSeg.anchorUuid),
+        tailInTranscript: messages.has(lastSeg.tailUuid as any),
+        headInTranscript: messages.has(lastSeg.headUuid as any),
+        anchorInTranscript: messages.has(lastSeg.anchorUuid as any),
         walkSteps: walkSeen.size,
         transcriptSize: messages.size,
       })
@@ -1926,18 +1927,18 @@ function applyPreservedSegmentRelinks(
   }
 
   if (segIsLive) {
-    const head = messages.get(lastSeg.headUuid)
+    const head = messages.get(lastSeg.headUuid as any)
     if (head) {
-      messages.set(lastSeg.headUuid, {
+      messages.set(lastSeg.headUuid as any, {
         ...head,
-        parentUuid: lastSeg.anchorUuid,
+        parentUuid: lastSeg.anchorUuid as any,
       })
     }
     // Tail-splice: anchor's other children → tail. No-op if already pointing
     // at tail (the useLogMessages race case).
     for (const [uuid, msg] of messages) {
       if (msg.parentUuid === lastSeg.anchorUuid && uuid !== lastSeg.headUuid) {
-        messages.set(uuid, { ...msg, parentUuid: lastSeg.tailUuid })
+        messages.set(uuid as any, { ...msg, parentUuid: lastSeg.tailUuid as any })
       }
     }
     // Zero stale usage: on-disk input_tokens reflect pre-compact context

@@ -19,6 +19,7 @@ import {
 import { logEvent } from '../services/analytics/index.js'
 import { notifyVscodeFileUpdated } from '../services/mcp/vscodeSdkMcp.js'
 import type { LogOption } from '../types/logs.js'
+import type { UUID } from '../types/message.js'
 import { inspect } from 'util'
 import { getGlobalConfig } from './config.js'
 import { logForDebugging } from './debug.js'
@@ -88,7 +89,7 @@ export async function fileHistoryTrackEdit(
     updater: (prev: FileHistoryState) => FileHistoryState,
   ) => void,
   filePath: string,
-  messageId: string,
+  messageId: UUID,
 ): Promise<void> {
   if (!fileHistoryEnabled()) {
     return
@@ -939,7 +940,7 @@ export async function copyFileHistoryForResume(log: LogOption): Promise<void> {
     return
   }
 
-  const sessionId = getSessionId()
+  const sessionId = getSessionId() as any as any
   if (previousSessionId === sessionId) {
     logForDebugging(
       `FileHistory: No need to copy file history for resuming with same session id: ${sessionId}`,
@@ -1020,7 +1021,7 @@ export async function copyFileHistoryForResume(log: LogOption): Promise<void> {
         // Record the snapshot only if we have successfully migrated the backup files
         if (!copyFailed) {
           void recordFileHistorySnapshot(
-            snapshot.messageId,
+            snapshot.messageId as any,
             snapshot,
             false, // isSnapshotUpdate
           ).catch(_ => {

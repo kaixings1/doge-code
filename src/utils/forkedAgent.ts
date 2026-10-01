@@ -8,7 +8,7 @@
  * 4. Isolate mutable state to prevent interference with the main agent loop
  */
 
-import type { UUID } from 'crypto'
+import type { UUID } from '../types/message.js'
 import { randomUUID } from 'crypto'
 import type { PromptCommand } from '../commands.js'
 import type { QuerySource } from '../constants/querySource.js'
@@ -242,7 +242,7 @@ export function extractResultText(
   if (!lastAssistantMessage) return defaultText
 
   const textContent = extractTextContent(
-    lastAssistantMessage.message.content,
+    lastAssistantMessage.message.content as any,
     '\n',
   )
 
@@ -556,12 +556,13 @@ export async function runForkedAgent({
     })) {
       // Extract real usage from message_delta stream events (final usage per API call)
       if (message.type === 'stream_event') {
+        const streamMsg = message as { event?: { type?: string; usage?: unknown } }
         if (
           'event' in message &&
-          message.event?.type === 'message_delta' &&
-          message.event.usage
+          streamMsg.event?.type === 'message_delta' &&
+          streamMsg.event.usage
         ) {
-          const turnUsage = updateUsage({ ...EMPTY_USAGE }, message.event.usage)
+          const turnUsage = updateUsage({ ...EMPTY_USAGE }, streamMsg.event.usage as any)
           totalUsage = accumulateUsage(totalUsage, turnUsage)
         }
         continue
@@ -592,7 +593,7 @@ export async function runForkedAgent({
             ),
         )
         if (msg.type !== 'progress') {
-          lastRecordedUuid = msg.uuid
+          lastRecordedUuid = msg.uuid as any
         }
       }
     }

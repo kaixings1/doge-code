@@ -729,7 +729,7 @@ function renderHelp(): string {
 // Main Call Function
 // ============================================================================
 
-export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
+export async function call(onDone: any, _context: any, args: string) {
   const store = loadStore()
   const parts = (args || '').trim().split(/\s+/)
   const command = parts[0]?.toLowerCase() || 'interactive'
@@ -1159,7 +1159,7 @@ const SessionsComponent: React.FC<SessionsProps> = ({ store: initialStore, onDon
   const [mode, setMode] = React.useState<'list' | 'search' | 'stats' | 'help'>('list')
   const [searchQuery, setSearchQuery] = React.useState('')
   const [selectedIdx, setSelectedIdx] = React.useState(0)
-  const [message, setMessage] = React.useState<string | null(null)
+  const [message, setMessage] = React.useState<string | null>(null)
   const [refresh, setRefresh] = React.useState(0)
 
   const sessions = store.sessions.filter(s => !s.archived)

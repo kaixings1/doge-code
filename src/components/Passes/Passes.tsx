@@ -63,7 +63,7 @@ export function Passes({
         setIsAvailable(true);
 
         // Store the referral link if available
-        if (eligibilityData.referral_code_details?.referral_link) {
+        if ((eligibilityData as any).referral_code_details?.referral_link) {
           setReferralLink(eligibilityData.referral_code_details.referral_link);
         }
 
@@ -71,7 +71,7 @@ export function Passes({
         setReferrerReward(eligibilityData.referrer_reward);
 
         // Use the campaign returned from eligibility for redemptions
-        const campaign = eligibilityData.referral_code_details?.campaign ?? 'claude_code_guest_pass';
+        const campaign = (eligibilityData as any).referral_code_details?.campaign ?? 'claude_code_guest_pass';
 
         // Fetch redemptions data
         let redemptionsData: ReferralRedemptionsResponse;

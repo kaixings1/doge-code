@@ -4228,7 +4228,7 @@ server.registerTool(
 
     // FTS5 / SQLite — close in finally to prevent GC segfault (#247)
     {
-      let testDb: ReturnType<typeof loadDatabase> extends (...args: any[]) => infer R ? R : never;
+      let testDb: any;
       try {
         const Database = loadDatabase();
         testDb = new Database(":memory:");
@@ -4243,7 +4243,7 @@ server.registerTool(
       } catch (err: unknown) {
         lines.push(`[FAIL] FTS5 / SQLite: FAIL — ${err instanceof Error ? err.message : err}`);
       } finally {
-        try { testDb!?.close(); } catch { /* best effort */ }
+        try { testDb?.close(); } catch { /* best effort */ }
       }
     }
 
@@ -4852,7 +4852,7 @@ server.registerTool(
     const open = openBrowserSync(INSIGHT_URL);
     const text = open.ok
       ? `Opening Insight in your browser: ${INSIGHT_URL}`
-      : `Could not auto-open your browser (${open.reason}).\nOpen Insight manually: ${INSIGHT_URL}`;
+      : `Could not auto-open your browser (${(open as any).reason}).\nOpen Insight manually: ${INSIGHT_URL}`;
     return trackResponse("ctx_insight", {
       content: [{ type: "text" as const, text }],
     });

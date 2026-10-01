@@ -12,6 +12,7 @@ export type SDKControlInitializeRequest = {
 
 export type SDKControlCancelRequest = {
   subtype: 'cancel'
+  request_id: string
   [key: string]: unknown
 }
 

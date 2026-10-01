@@ -8,15 +8,16 @@ const backup = {
   name: 'backup',
   description: '备份当前会话数据到本地文件',
   load: () => import('./backup.js'),
+  supportsNonInteractive: true,
 } satisfies Command
 
 export default backup
 
-export async function call(args: string, context: any): Promise<string> {
+export async function call(args: string, context: any): Promise<{ type: 'text'; value: string }> {
   const sessionId = getSessionId()
   const worktreeSession = getCurrentWorktreeSession()
 
-  return `## backup
+  const result = `## backup
 
 ### 会话信息
 - 会话ID: ${sessionId}
@@ -36,4 +37,6 @@ ${args}
 ` : ''}
 
 > 备份完成。当前会话的所有状态已持久化到本地。`
+
+  return { type: 'text', value: result }
 }

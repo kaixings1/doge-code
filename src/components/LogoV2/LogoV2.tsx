@@ -231,8 +231,8 @@ export function LogoV2() {
     if ($[25] === Symbol.for("react.memo_cache_sentinel")) {
       t19 = false && !process.env.DEMO_VERSION && <Box paddingLeft={2} flexDirection="column"><Text dimColor={true}>使用 /issue 报告模型行为问题</Text></Box>;
       t20 = false && !process.env.DEMO_VERSION && <Box paddingLeft={2} flexDirection="column"><Text color="warning">[仅限 ANT] 日志：</Text><Text dimColor={true}>API 调用: {getDisplayPath(getDumpPromptsPath())}</Text><Text dimColor={true}>调试日志: {getDisplayPath(getDebugLogPath())}</Text>{isDetailedProfilingEnabled() && <Text dimColor={true}>启动性能: {getDisplayPath(getStartupPerfLogPath())}</Text>}</Box>;
-      t21 = false && <GateOverridesWarning />;
-      t22 = false && <ExperimentEnrollmentNotice />;
+      t21 = null;
+      t22 = null;
       $[25] = t19;
       $[26] = t20;
       $[27] = t21;
@@ -326,7 +326,7 @@ export function LogoV2() {
     let t18;
     let t19;
     if ($[42] === Symbol.for("react.memo_cache_sentinel")) {
-      t18 = false && <GateOverridesWarning />;
+      t18 = false && (null as any);
       t19 = false && <ExperimentEnrollmentNotice />;
       $[42] = t18;
       $[43] = t19;
@@ -529,7 +529,7 @@ export function LogoV2() {
   if ($[86] === Symbol.for("react.memo_cache_sentinel")) {
     t37 = false && !process.env.DEMO_VERSION && <Box paddingLeft={2} flexDirection="column"><Text dimColor={true}>使用 /issue 报告模型行为问题</Text></Box>;
     t38 = false && !process.env.DEMO_VERSION && <Box paddingLeft={2} flexDirection="column"><Text color="warning">[ANT-ONLY] Logs:</Text><Text dimColor={true}>API calls: {getDisplayPath(getDumpPromptsPath())}</Text><Text dimColor={true}>Debug logs: {getDisplayPath(getDebugLogPath())}</Text>{isDetailedProfilingEnabled() && <Text dimColor={true}>Startup Perf: {getDisplayPath(getStartupPerfLogPath())}</Text>}</Box>;
-    t39 = false && <GateOverridesWarning />;
+    t39 = false && (null as any);
     t40 = false && <ExperimentEnrollmentNotice />;
     $[86] = t37;
     $[87] = t38;

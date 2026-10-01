@@ -8,9 +8,24 @@ export type OAuthTokens = {
 export type SubscriptionType = string
 export type BillingType = string
 export type OAuthProfileResponse = Record<string, unknown>
-export type ReferralEligibilityResponse = Record<string, unknown>
+export type ReferralCampaign = string
 export type ReferralRedemptionsResponse = Record<string, unknown>
-export type ReferrerRewardInfo = Record<string, unknown>
+
+/** 推荐奖励信息。amount_minor_units 为最小货币单位（分），展示时需 /100。 */
+export type ReferrerRewardInfo = {
+  currency?: string
+  amount_minor_units?: number
+  [key: string]: unknown
+}
+
+/** 访客通行证资格缓存条目。见 src/utils/config.ts 的 passesEligibilityCache。 */
+export type ReferralEligibilityResponse = {
+  eligible?: boolean
+  timestamp?: number
+  referrer_reward?: ReferrerRewardInfo | null
+  remaining_passes?: number
+  [key: string]: unknown
+}
 
 /** OAuth token 交换响应 */
 export type OAuthTokenExchangeResponse = {

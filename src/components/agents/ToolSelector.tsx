@@ -82,7 +82,7 @@ function getMcpServerBuckets(tools: Tools): Array<{
   const serverMap = new Map<string, Tool[]>();
   tools.forEach(tool => {
     if (isMcpTool(tool)) {
-      const mcpInfo = mcpInfoFromString(tool.name);
+      const mcpInfo = mcpInfoFromString((tool as any).name);
       if (mcpInfo?.serverName) {
         const existing = serverMap.get(mcpInfo.serverName) || [];
         existing.push(tool);

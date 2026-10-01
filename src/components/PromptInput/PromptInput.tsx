@@ -842,6 +842,8 @@ function PromptInput({
     jumpToIndex,
     canUndo,
     canRedo,
+    getCurrentIndex,
+    getBuffer,
     clearBuffer
   } = useInputBuffer({
     maxBufferSize: 2000,
@@ -1067,7 +1069,7 @@ function PromptInput({
           clearBuffer();
           resetHistory();
           return;
-        } else if (result.error === 'no_team_context') {
+        } else if ((result as any).error === 'no_team_context') {
           // No team context - fall through to normal prompt submission
         } else {
           // Unknown recipient - fall through to normal prompt submission
@@ -1161,7 +1163,7 @@ function PromptInput({
       }
     }));
   }
-  function onImagePaste(image: string, mediaType?: string, filename?: string, dimensions?: ImageDimensions, sourcePath?: string) {
+  function onImagePaste(image: string, mediaType?: string, filename?: string, dimensions?: ImageDimensions & { width?: number; height?: number }, sourcePath?: string) {
     logEvent('tengu_paste_image', {});
     onModeChange('prompt');
     const pasteId = nextPasteIdRef.current++;
@@ -1172,7 +1174,7 @@ function PromptInput({
       mediaType: mediaType || 'image/png',
       // default to PNG if not provided
       filename: filename || 'Pasted image',
-      dimensions,
+      dimensions: dimensions as any,
       sourcePath
     };
 
@@ -2392,8 +2394,9 @@ function getInitialPasteId(messages: Message[]): number {
   for (const message of messages) {
     if (message.type === 'user') {
       // Check image paste IDs
-      if (message.imagePasteIds) {
-        for (const id of message.imagePasteIds) {
+      const pasteIds = (message as any).imagePasteIds as number[] | null
+      if (pasteIds) {
+        for (const id of pasteIds) {
           if (id > maxId) maxId = id;
         }
       }

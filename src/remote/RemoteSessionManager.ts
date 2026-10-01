@@ -142,13 +142,14 @@ export class RemoteSessionManager {
   ): void {
     // 处理控制请求（来自 CCR 的权限提示）
     if (message.type === 'control_request') {
-      this.handleControlRequest(message)
+      this.handleControlRequest(message as SDKControlRequest)
       return
     }
 
     // 处理控制取消请求（服务器取消待处理的权限提示）
     if (message.type === 'control_cancel_request') {
-      const { request_id } = message
+      const cancelMsg = message as SDKControlCancelRequest
+      const request_id = cancelMsg.request_id
       const pendingRequest = this.pendingPermissionRequests.get(request_id)
       logForDebugging(
         `[RemoteSessionManager] Permission request cancelled: ${request_id}`,
@@ -156,7 +157,7 @@ export class RemoteSessionManager {
       this.pendingPermissionRequests.delete(request_id)
       this.callbacks.onPermissionCancelled?.(
         request_id,
-        pendingRequest?.tool_use_id,
+        (pendingRequest as any)?.tool_use_id,
       )
       return
     }
@@ -183,8 +184,8 @@ export class RemoteSessionManager {
       logForDebugging(
         `[RemoteSessionManager] Permission request for tool: ${inner.tool_name}`,
       )
-      this.pendingPermissionRequests.set(request_id, inner)
-      this.callbacks.onPermissionRequest(inner, request_id)
+      this.pendingPermissionRequests.set(request_id, inner as SDKControlPermissionRequest)
+      this.callbacks.onPermissionRequest(inner as SDKControlPermissionRequest, request_id)
     } else {
       // 发送错误响应以处理未识别的子类型，避免服务器永远等待不会到来的回复。
       logForDebugging(

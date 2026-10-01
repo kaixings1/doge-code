@@ -178,7 +178,7 @@ function collectItems(opts: { scope?: string; dryRun?: boolean }): { items: Brai
   return { items, matchedGroups }
 }
 
-function runSync(items: BrainSyncItem[], dryRun: boolean): { synced: number; skipped: number; issues: string[] } {
+function runSync(items: BrainSyncItem[], dryRun: boolean): { syncedCount: number; skippedCount: number; issues: string[] } {
   let syncedCount = 0
   let skippedCount = 0
   const issues: string[] = []

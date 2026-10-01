@@ -2,7 +2,10 @@ REM echo [%DATE% %TIME%] DOGE_START >> D:\doge-code\trace.log
 
 @echo off
 
-REM 切到 UTF-8 代码页，使本文件内的中文注释/输出正确显示
+REM Switch to UTF-8 code page BEFORE any non-ASCII byte in this file.
+REM cmd.exe parses each line using the ANSI code page (GBK on zh-CN) until
+REM chcp runs; a UTF-8 Chinese char on the line above would desync the line
+REM boundary and truncate every following line. Keep this line pure ASCII.
 chcp 65001 >nul
 
 del /q .bun-build* 2>nul
@@ -95,7 +98,7 @@ set CLAUDE_CODE_FEATURE_HARD_FAIL=1
 set CLAUDE_CODE_FEATURE_ABLATION_BASELINE=1
 
 set CLAUDE_CODE_MORE=1
-REM === 高级性能/分析功能 ===
+REM === Advanced performance / profiling ===
 set CLAUDE_CODE_FEATURE_SHOT_STATS=0
 set CLAUDE_CODE_PROFILE_QUERY=0
 set CLAUDE_CODE_PROFILE_STARTUP=0
@@ -104,14 +107,14 @@ set CLAUDE_CODE_PERFETTO_TRACE=0
 set CLAUDE_CODE_FEATURE_PERFETTO_TRACING=0
 set CLAUDE_CODE_PERFETTO_WRITE_INTERVAL_S=30
 set CLAUDE_CODE_DEBUG_LOG_LEVEL=debug
-REM    debug 记录 debug/info/warn/error；需要 shell/cwd/stdout 等高流量诊断时改为 verbose
+REM    debug logs debug/info/warn/error; use verbose for high-volume shell/cwd/stdout diagnostics
 set CLAUDE_CODE_FEATURE_UNATTENDED_RETRY=0
 set CLAUDE_CODE_RETRY_WATCHDOG=0
 set CLAUDE_CODE_MAX_RETRIES=3
 set CLAUDE_CODE_OTEL_SHUTDOWN_TIMEOUT_MS=5000
 set CLAUDE_CODE_API_KEY_HELPER_TTL_MS=300000
 
-REM === 增强 Agent/团队功能 ===
+REM === Enhanced agent / team features ===
 set CLAUDE_CODE_FEATURE_ULTRATHINK=0
 set CLAUDE_CODE_FEATURE_MONITOR_TOOL=1
 set CLAUDE_CODE_FEATURE_REVIEW_ARTIFACT=1
@@ -125,7 +128,7 @@ set CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS=8
 set CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=4
 set CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION=15
 
-REM === UI/UX 增强 ===
+REM === UI/UX enhancements ===
 set CLAUDE_CODE_FEATURE_AUTO_THEME=1
 set CLAUDE_CODE_FEATURE_HISTORY_PICKER=1
 set CLAUDE_CODE_FEATURE_MCP_RICH_OUTPUT=1
@@ -140,7 +143,7 @@ set CLAUDE_CODE_FORCE_SYNC_OUTPUT=1
 set CLAUDE_CODE_DISABLE_TERMINAL_TITLE=0
 set CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS=5000
 
-REM === 沙箱/安全增强 ===
+REM === Sandbox / security enhancements ===
 set CLAUDE_CODE_DISABLE_CLAUDE_MDS=1
 set CLAUDE_CODE_DUMP_AUTO_MODE=1
 set CLAUDE_CODE_DISABLE_COMMAND_INJECTION_CHECK=0
@@ -149,12 +152,12 @@ set CLAUDE_CODE_DISABLE_CRON=0
 set CLAUDE_CODE_UNDERCOVER=0
 set CLAUDE_CODE_BUBBLEWRAP=0
 
-REM === 远程桥接/桌面功能 ===
+REM === Remote bridge / desktop ===
 set CLAUDE_CODE_REMOTE=1
 set CLAUDE_CODE_LOCAL_BRIDGE=1
 set CLAUDE_CODE_LOCAL_BRIDGE_URL=http://localhost:5678
 
-REM === 文件/路径功能 ===
+REM === File / path handling ===
 set CLAUDE_CODE_FILE_READ_MAX_OUTPUT_TOKENS=8000
 set CLAUDE_CODE_WORKFLOW_SIZE=40
 set CLAUDE_CODE_MCP_AUTO_BACKGROUND_MS=30000
@@ -165,7 +168,7 @@ set CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS=180000
 set CLAUDE_CODE_DISABLE_PRECOMPACT_SKIP=0
 set CLAUDE_CODE_SAVE_HOOK_ADDITIONAL_CONTEXT=1
 
-REM === 调试/诊断 ===
+REM === Debug / diagnostics ===
 set CLAUDE_CODE_DEBUG_REPAINTS=1
 set CLAUDE_CODE_COMMIT_LOG=
 set CLAUDE_CODE_STREAM_CLOSE_TIMEOUT=60
@@ -174,12 +177,12 @@ set CLAUDE_CODE_STALL_TIMEOUT_MS_FOR_TESTING=60000
 set CLAUDE_CODE_PWSH_PARSE_TIMEOUT_MS=10000
 set CLAUDE_CODE_SLOW_OPERATION_THRESHOLD_MS=1000
 
-REM === API/模型增强 ===
+REM === API / model enhancements ===
 set CLAUDE_CODE_DISABLE_NONSTREAMING_FALLBACK=0
 set CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=0
 set CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=0
 
-REM === 新增 feature() 标志 (编译时) — 这些在 d.bat 原版中缺失 ===
+REM === Additional feature() flags (compile-time) - missing from the original d.bat ===
 set CLAUDE_CODE_FEATURE_MCP_UI=1
 set CLAUDE_CODE_FEATURE_AWAY_SUMMARY=1
 set CLAUDE_CODE_FEATURE_OVERFLOW_TEST_TOOL=1
@@ -192,7 +195,7 @@ set CLAUDE_CODE_FEATURE_TREE_SITTER_BASH_SHADOW=1
 set CLAUDE_CODE_FEATURE_ALLOW_TEST_VERSIONS=0
 set CLAUDE_CODE_FEATURE_KAIROS_DREAM=1
 
-REM === 新增运行时 env var ===
+REM === Additional runtime env vars ===
 set CLAUDE_CODE_EAGER_FLUSH=1
 set CLAUDE_CODE_DISABLE_FAST_MODE=0
 set CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION=1
@@ -214,7 +217,7 @@ set CLAUDE_CODE_MCP_INSTR_DELTA=0
 set CLAUDE_CODE_DISABLE_METRICS=0
 set CLAUDE_CODE_FORCE_FLUX_NATIVE=0
 
-REM === Claude Code 内部 env var (非 CLAUDE_CODE_) ===
+REM === Claude Code internal env vars (non-CLAUDE_CODE_) ===
 set CLAUDE_CODE_DEV_VERSION=local
 set CLAUDE_CODE_DEV_BUILD_TIME=local
 set CLAUDE_CODE_EMIT_SESSION_STATE_EVENTS=1
@@ -244,20 +247,20 @@ if "%1"=="" (
 )
 
 
-REM === 本地桥接服务器：若 5678 未监听则后台拉起 ===
+REM === Local bridge server: start in background if 5678 is not listening ===
 netstat -ano -p tcp | findstr ":5678" | findstr "LISTENING" >nul 2>&1
 if errorlevel 1 (
-    echo [d.bat] 启动本地桥接服务器 (端口 5678)...
+    echo [d.bat] Starting local bridge server on port 5678 ...
     start "doge-bridge" /MIN bun run "D:\doge-code\scripts\bridge.ts"
-    REM 等待服务器就绪：轮询端口
+    REM Wait for the server to become ready by polling the port
     for /L %%i in (1,1,25) do (
         timeout /t 1 /nobreak >nul 2>&1
         netstat -ano -p tcp | findstr ":5678" | findstr "LISTENING" >nul 2>&1
         if not errorlevel 1 goto :bridge_ready
     )
-    echo [d.bat] 警告: 桥接服务器未就绪，本地桥接将不可用
+    echo [d.bat] WARNING: bridge server not ready, local bridge unavailable
 ) else (
-    echo [d.bat] 本地桥接服务器已在运行 (端口 5678)
+    echo [d.bat] Bridge server already running on port 5678
 )
 :bridge_ready
 REM echo BEFORE_DOGE_EXE >> trace.log

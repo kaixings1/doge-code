@@ -56,7 +56,7 @@ function extractImage(
   return undefined
 }
 
-function processOutput(output: NotebookCellOutput) {
+function processOutput(output: NotebookCellOutput & Record<string, unknown>) {
   switch (output.output_type) {
     case 'stream':
       return {
@@ -67,8 +67,8 @@ function processOutput(output: NotebookCellOutput) {
     case 'display_data':
       return {
         output_type: output.output_type,
-        text: processOutputText(output.data?.['text/plain']),
-        image: output.data && extractImage(output.data),
+        text: processOutputText((output.data as any)?.['text/plain']),
+        image: output.data && extractImage(output.data as any),
       }
     case 'error':
       return {
@@ -144,7 +144,7 @@ function cellOutputToToolResult(output: NotebookCellSourceOutput) {
       type: 'image',
       source: {
         data: output.image.image_data,
-        media_type: output.image.media_type,
+        media_type: output.image.media_type as any,
         type: 'base64',
       },
     })
@@ -169,7 +169,7 @@ export async function readNotebook(
   const buffer = await getFsImplementation().readFileBytes(fullPath)
   const content = buffer.toString('utf-8')
   const notebook = jsonParse(content) as NotebookContent
-  const language = notebook.metadata.language_info?.name ?? 'python'
+  const language = (notebook.metadata as any)?.language_info?.name ?? 'python'
   if (cellId) {
     const cell = notebook.cells.find(c => c.id === cellId)
     if (!cell) {

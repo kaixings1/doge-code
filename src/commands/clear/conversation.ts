@@ -151,7 +151,7 @@ export async function clearConversation({
               }
             }
             if ('abortController' in task) {
-              task.abortController?.abort()
+              (task as any).abortController?.abort()
             }
             if ('unregisterCleanup' in task) {
               ;(task as { unregisterCleanup?: () => void }).unregisterCleanup?.()

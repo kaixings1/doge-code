@@ -1,6 +1,6 @@
 import { feature } from 'bun:bundle';
 import * as React from 'react';
-import { memo, useCallback, useEffect, useRef } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { logEvent } from '../services/analytics/index.js';
 import { useAppState, useSetAppState } from '../state/AppState.js';
 import type { PermissionMode } from '../utils/permissions/PermissionMode.js';
@@ -122,7 +122,7 @@ function buildStatusLineCommandInput(permissionMode: PermissionMode, exceeds200k
       remaining_percentage: contextPercentages.remaining
     },
     exceeds_200k_tokens: exceeds200kTokens,
-    ...((rateLimits.five_hour || rateLimits.seven_day) && {
+    ...(((rateLimits as any).five_hour || (rateLimits as any).seven_day) && {
       rate_limits: rateLimits
     }),
     ...(isVimModeEnabled() && {
@@ -197,7 +197,8 @@ function StatusLineInner({
   const abortControllerRef = useRef<AbortController | undefined>(undefined);
   const permissionMode = useAppState(s => s.toolPermissionContext.mode);
   const additionalWorkingDirectories = useAppState(s => s.toolPermissionContext.additionalWorkingDirectories);
-  const statusLineText = useAppState(s => s.statusLineText);
+  // DOGE: statusLineText 改为局部状态，避免刷新时触发全局 setAppState 导致整棵 Ink 树重渲染、滚动位置丢失
+  const [statusLineText, setStatusLineText] = useState<string | undefined>(undefined);
   const rstkRefreshVersion = useAppState(s => s.rstkRefreshVersion);
   const setAppState = useSetAppState();
   const settings = useSettings();
@@ -265,13 +266,7 @@ function StatusLineInner({
       const statusInput = buildStatusLineCommandInput(permissionModeRef.current, exceeds200kTokens, settingsRef.current, msgs, Array.from(addedDirsRef.current.keys()), mainLoopModelRef.current, vimModeRef.current, sessionElapsed);
       const text = await executeStatusLineCommand(statusInput, controller.signal, undefined, logResult);
       if (!controller.signal.aborted) {
-        setAppState(prev => {
-          if (prev.statusLineText === text) return prev;
-          return {
-            ...prev,
-            statusLineText: text
-          };
-        });
+        setStatusLineText(text);
       }
     } catch (e: unknown) {
       // DOGE: 添加调试日志

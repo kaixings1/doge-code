@@ -114,7 +114,7 @@ export function checkCachedPassesEligibility(): {
     }
   }
 
-  const { eligible, timestamp } = cachedEntry
+  const { eligible = false, timestamp = 0 } = cachedEntry
   const now = Date.now()
   const needsRefresh = now - timestamp > CACHE_EXPIRATION_MS
 
@@ -137,8 +137,9 @@ const CURRENCY_SYMBOLS: Record<string, string> = {
 }
 
 export function formatCreditAmount(reward: ReferrerRewardInfo): string {
-  const symbol = CURRENCY_SYMBOLS[reward.currency] ?? `${reward.currency} `
-  const amount = reward.amount_minor_units / 100
+  const symbol =
+    (reward.currency && CURRENCY_SYMBOLS[reward.currency]) ?? `${reward.currency} `
+  const amount = (reward.amount_minor_units ?? 0) / 100
   const formatted = amount % 1 === 0 ? amount.toString() : amount.toFixed(2)
   return `${symbol}${formatted}`
 }

@@ -33,7 +33,7 @@ const outputSchema = lazySchema(() =>
 )
 
 export type Output = z.infer<ReturnType<typeof outputSchema>>
-export type Action = z.infer<ReturnType<typeof inputSchema>['shape']['actions']>
+export type Action = z.infer<ReturnType<typeof inputSchema>['shape']['actions']>[number]
 
 function pickByStrategy(
   actions: Action[],
@@ -42,7 +42,7 @@ function pickByStrategy(
   topK?: number,
   seed?: number
 ): { selected: Action[]; reason: string } {
-  const sorted = [...actions].sort((a, b) =>
+  const sorted = [...(actions as any)].sort((a, b) =>
     (b.confidence ?? 0.5) - (a.confidence ?? 0.5)
   )
 

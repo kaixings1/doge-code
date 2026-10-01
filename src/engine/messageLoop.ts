@@ -7,6 +7,13 @@ export function engineLog(prefix: string, ...args: unknown[]): void {
   const t = new Date().toLocaleTimeString('zh-CN', { hour12: false })
   console.log(`[${t}] [ENGINE:${prefix}]`, ...args)
 }
+
+/**
+ * 大对象 dump 日志开关（REQ / RESP / TOOL_CALLS / TOOL_RESULTS）。
+ * 这四处会先整份 JSON.stringify 再截断，开销随对话历史长度线性增长，
+ * 默认关闭。排查 SSE / 工具调用细节时设 DOGE_ENGINE_DUMP=1 开启。
+ */
+const ENGINE_DUMP = process.env.DOGE_ENGINE_DUMP === '1'
 import { QueryStateMachine } from "./stateMachine.ts";
 import { TokenBudgetManager } from "./tokenBudgetManager.ts";
 import { MessageNormalizer, type InternalMessage } from "./messageNormalizer.ts";
@@ -121,7 +128,7 @@ export interface MessageLoopDeps {
 }
 
 export class MessageLoop {
-  private maxIterations = 100;
+  private maxIterations = 10;
   private currentIteration = 0;
   /** Human-in-the-loop: 等待恢复的暂停输入（吸收自 CrewAI Human-in-the-loop） */
   private pendingResumeInput: string | null = null;
@@ -171,14 +178,16 @@ export class MessageLoop {
     this.autoFixLoop?.reset()
   }
 
-  /** 重置 git 上下文轮次（新任务开始时调用） */
+  /** 重置 git 上下文轮次（新任务开始时调用）。重建而非置 null，否则后续任务永久失效 */
   resetGitContext(): void {
-    this.gitContext = null
+    this.gitContext = this.deps.gitContext?.enabled
+      ? new GitContextInjector(this.deps.gitContext)
+      : null
   }
 
   /** Human-in-the-loop: 外部恢复执行（吸收自 CrewAI Human-in-the-loop） */
   resume(input?: string): void {
-    this.pendingResumeInput = input ?? '继续'
+    this.pendingResumeInput = input ?? '有必要继续吗？'
     this.deps.stateMachine.resume()
   }
 
@@ -200,6 +209,7 @@ export class MessageLoop {
     this.pendingResumeInput = null
     this.lastToolCalls = []
     this.autoContinueCount = 0
+    this.currentIteration = 0
     this.deps.conversation.messages.push({ role: "user", content: userMessage } as InternalMessage);
     await this.deps.stateMachine.transition("responding", { message: userMessage });
     this.consecutiveToolFailures = 0;
@@ -360,8 +370,7 @@ export class MessageLoop {
 
   /** 自动继续关键词正则：AI 正文出现这些词说明它在等用户确认 */
   private static readonly CONTINUE_KEYWORDS =
-    /是否需要|是否同意|需要我|继续吗|确认一下|要不要|需不需要|可不可以|行不行|能不能|是否可以|是否要|是否需|可以吗|开始吗|同意吗|确认吗|有问题吗|没问题吧|没问题|请问|是不是|对不对|可否|是否可行|是否|继续|需要|确认|同意|好吗|行吗/
-
+    /是否需要|是否同意|需要我|继续吗|确认一下|要不要|需不需要|可不可以|行不行|能不能|是否可以|是否要|是否需|可以吗|开始吗|同意吗|确认吗|有问题吗|没问题吧|没问题|请问|是不是|对不对|可否|是否可行|是否|继续|需要|确认|同意|能否|好吗|行吗/
 
   /** 将助手回复写入 conversation，并决定是否继续（吸收自 CoreCoder agent.py） */
   private async _recordAssistantResponse(processed: ProcessedResponse): Promise<boolean> {
@@ -373,7 +382,7 @@ export class MessageLoop {
 
     const ac = this.deps.autoContinue
     const acEnabled = ac?.enabled ?? true
-    const acLeft = ac?.maxCount ?? 50
+    const acLeft = ac?.maxCount ?? 10
     // ── 分支 1：正文含"是否继续"类关键词 → 注入"继续"并继续循环 ──
     // 该判断必须在工具调用分支之前：模型完全可能在正文里问"是否继续"的同时
     // 吐出一个工具调用，此时按工具调用优先会导致关键词逻辑被整体跳过。
@@ -383,7 +392,7 @@ export class MessageLoop {
       if (acKeyword && textContent && MessageLoop.CONTINUE_KEYWORDS.test(textContent)) {
         // 正文原样入库，避免"是否继续"这句从历史里消失
         this._pushAssistantText(textContent, processed.toolCalls)
-        await new Promise(resolve => setTimeout(resolve, 300));
+        await new Promise(resolve => setTimeout(resolve, 3000));
         this.deps.conversation.messages.push({
           role: 'user',
           content: '继续',
@@ -433,7 +442,7 @@ export class MessageLoop {
           engineLog('AUTO_CONTINUE', `end_turn 收到回复，按配置自动继续`);
           this.deps.conversation.messages.push({
             role: 'user',
-            content: '继续',
+            content: '如果有必要就请继续',
           } as InternalMessage);
           this.autoContinueCount++
         }
@@ -504,7 +513,7 @@ export class MessageLoop {
       harness: this.deps.harness,
     });
 
-    engineLog('REQ', JSON.stringify(request, null, 2).slice(0, 5000));
+    if (ENGINE_DUMP) engineLog('REQ', JSON.stringify(request, null, 2).slice(0, 5000));
 
     const stream = await this.deps.apiClient.sendMessage(request);
     const processed = await this.deps.responseHandler.handle(stream as AsyncIterable<{ type: string; [k: string]: unknown }>);
@@ -514,7 +523,7 @@ export class MessageLoop {
       this.deps.tokenBudget.recordUsage(processed.usage.inputTokens, processed.usage.outputTokens);
     }
 
-    engineLog('RESP', JSON.stringify(processed, null, 2).slice(0, 10000));
+    if (ENGINE_DUMP) engineLog('RESP', JSON.stringify(processed, null, 2).slice(0, 10000));
 
     // 将助手回复写入 conversation 并决定是否继续（吸收自 CoreCoder agent.py）
     let shouldContinue = await this._recordAssistantResponse(processed);
@@ -567,7 +576,7 @@ export class MessageLoop {
         return true;
       }
 
-      engineLog('TOOL_CALLS', JSON.stringify(validCalls, null, 2).slice(0, 10000));
+      if (ENGINE_DUMP) engineLog('TOOL_CALLS', JSON.stringify(validCalls, null, 2).slice(0, 10000));
       this.deps.onEvent({ type: 'request_sent', model: this.deps.model });
 
       // 发射工具调用开始事件
@@ -658,7 +667,7 @@ export class MessageLoop {
 
       this.lastToolCalls = finalCalls.map(tc => ({ name: tc.name }))
 
-      engineLog('TOOL_RESULTS', JSON.stringify(results, null, 2).slice(0, 10000));
+      if (ENGINE_DUMP) engineLog('TOOL_RESULTS', JSON.stringify(results, null, 2).slice(0, 10000));
 
       // 发射 hook 事件 + HookManager 触发：post_tool_use（吸收自 ECC hooks afterTool）
       for (const r of results) {

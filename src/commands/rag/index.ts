@@ -39,6 +39,7 @@ const ragCommand = {
   argumentHint: '<add|query|list|clear> [args]',
   isEnabled: () => true,
   load: () => import('./index.ts'),
+  supportsNonInteractive: false,
 } satisfies Command
 
 export default ragCommand

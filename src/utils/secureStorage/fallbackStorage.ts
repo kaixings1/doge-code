@@ -60,6 +60,20 @@ export function createFallbackStorage(
 
       return { success: false }
     },
+    async get(key: string): Promise<SecureStorageData | null> {
+      const result = await primary.get(key)
+      if (result !== null && result !== undefined) {
+        return result
+      }
+      return (await secondary.get(key)) || null
+    },
+    async set(key: string, value: SecureStorageData): Promise<void> {
+      // primary.set() resolves void and has no failure signal — it swallows
+      // write errors internally. Mirror into secondary unconditionally so the
+      // fallback copy stays fresh; update() remains the authoritative path.
+      await primary.set(key, value)
+      await secondary.set(key, value)
+    },
     delete(): boolean {
       const primarySuccess = primary.delete()
       const secondarySuccess = secondary.delete()

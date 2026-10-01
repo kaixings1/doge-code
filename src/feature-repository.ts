@@ -7,12 +7,11 @@ import {
   Polyfills,
 } from "./types/growthbook";
 import { getPolyfills, promiseTimeout } from "./util";
-import type {
-  GrowthBook,
-  InitOptions,
-  InitSyncOptions,
-  GrowthBookClient,
-} from ".";
+// 这三个类型分散在三个模块，原先统一从 "." 导入（src/index.ts 只是个
+// add/multiply 的示例文件，并不导出它们）。
+import type { GrowthBook } from "./GrowthBook.js";
+import type { GrowthBookClient } from "./GrowthBookClient.js";
+import type { InitOptions, InitSyncOptions } from "./types/growthbook.js";
 
 type CacheEntry = {
   data: FeatureApiResponse;

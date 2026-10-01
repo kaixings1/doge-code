@@ -34,5 +34,5 @@ export const call: LocalCommandCall = async (args) => {
   return { type: 'text', value: r || '(无输出)' }
 }
 
-const cmd = { type: 'local' as const, name: 'excel', description: 'Excel 文件读取与转换：read/info/sheets/csv', argumentHint: '<read|info|sheets|csv> <file>', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
+const cmd = { type: 'local' as const, name: 'excel', description: 'Excel 文件读取与转换：read/info/sheets/csv', argumentHint: '<read|info|sheets|csv> <file>', isEnabled: () => true, load: () => import('./index.ts'), supportsNonInteractive: false } satisfies Command
 export default cmd

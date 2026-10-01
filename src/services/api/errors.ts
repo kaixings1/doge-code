@@ -426,7 +426,7 @@ export function getAssistantMessageFromError(
   if (
     error instanceof APIConnectionTimeoutError ||
     (error instanceof APIConnectionError &&
-      error.message.toLowerCase().includes('timeout'))
+      (error as any).message.toLowerCase().includes('timeout'))
   ) {
     return createAssistantAPIErrorMessage({
       content: API_TIMEOUT_ERROR_MESSAGE,

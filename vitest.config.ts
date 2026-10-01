@@ -4,7 +4,51 @@ import path from 'node:path'
 // Plugin to prevent esbuild cascade from loading real command modules.
 // Strategy: return stub content from onLoad so esbuild never follows
 // the heavy import chain (React/Ink/etc) inside those files.
+const cascadeBreakPlugin = {
+  name: 'cascade-break',
+  async resolveId(source, importer) {
+    // commands/issue 被 commands.ts 以 './commands/issue/index.ts' 直接导入
+    // （带 .ts 后缀），会拉起 React/Ink 级联。在此给它一个虚拟 id，
+    // load() 识别出这个前缀后直接返回桩内容，esbuild 永不去碰真实文件。
+    if (/commands[/\\]issue[/\\]index\.(ts|tsx)$/.test(source)) {
+      return { id: '\0cascade-stub:commands/issue' }
+    }
+    // Only intercept .js → .ts/.tsx conversion. The .tsx → .ts branch was removed
+    // because it produced incorrect relative paths when the tsSource started with 'src/'
+    // and the baseDir was an absolute path like D:/doge-code/src/commands/.
+    if (!source.endsWith('.js')) return null
+    const base = source.slice(0, -3)
+    const tsSource = `${base}.ts`
+    const tsxSource = `${base}.tsx`
+    try {
+      const { existsSync } = await import('node:fs')
+      const path = (await import('node:path')).default
+      const baseDir = importer ? path.dirname(importer) : process.cwd()
+      const absJs = path.isAbsolute(source) ? source : path.join(baseDir, source)
+      if (!existsSync(absJs)) {
+        const absTs = path.join(baseDir, tsSource)
+        const absTsx = path.join(baseDir, tsxSource)
+        // 必须返回绝对路径：下方的 load() 用绝对路径正则匹配来打桩，
+        // 返回相对 id 会让 load 匹配不上，stub 失效继而 ERR_MODULE_NOT_FOUND。
+        if (existsSync(absTs)) return { id: absTs }
+        if (existsSync(absTsx)) return { id: absTsx }
+      }
+    } catch {}
+    return null
+  },
+  async load(id) {
+    // Only stub known problematic files that trigger React/Ink cascade.
+    // 虚拟 id 由上面的 resolveId 产生；\0 前缀是 Rollup 约定，表示
+    // "不要再到磁盘上找这个文件"，load 必须在这里给出内容。
+    if (id === '\0cascade-stub:commands/issue') {
+      return 'export default {};\n'
+    }
+    return null
+  },
+}
+
 export default defineConfig({
+  plugins: [cascadeBreakPlugin],
   test: {
     setupFiles: ['tests/setup.ts'],
     include: ['tests/unit/**/*.test.ts', 'tests/unit/**/*.test.tsx', 'src/__tests__/**/*.test.ts', 'src/__tests__/**/*.test.tsx', 'src/**/__tests__/**/*.test.ts', 'src/**/*.test.ts'],
@@ -54,8 +98,6 @@ export default defineConfig({
       'src/utils/config.js': '/src/bridge/__tests__/__mocks__/config.mock.js',
       'src/utils/auth.js': '/src/bridge/__tests__/__mocks__/auth.mock.js',
       'src/utils/sessionTitle.js': '/src/bridge/__tests__/__mocks__/sessionTitle.mock.js',
-      'src/generated/command-modules.ts': '/src/bridge/__tests__/__mocks__/command-modules.mock.js',
-      'src/generated/command-modules.js': '/src/bridge/__tests__/__mocks__/command-modules.mock.js',
       'src/utils/words.js': '/src/bridge/__tests__/__mocks__/words.mock.js',
       'src/utils/git.js': '/src/bridge/__tests__/__mocks__/git.mock.js',
       'src/utils/lazySchema.js': '/src/bridge/__tests__/__mocks__/lazySchema.mock.js',
@@ -84,7 +126,9 @@ export default defineConfig({
       'src/bridge/bridgeApi.js': '/src/bridge/__tests__/__mocks__/bridgeApi.mock.js',
       'src/bridge/trustedDevice.js': '/src/bridge/__tests__/__mocks__/trustedDevice.mock.js',
       // npm packages
-      'bun:sqlite': '/src/bridge/__tests__/__mocks__/bun-sqlite.mock.js',
+      // emoji-regex / get-east-asian-width 已真实安装在 node_modules，
+      // 曾指向 __mocks__ 下不存在的 mock 文件，导致 66 个套件
+      // ERR_MODULE_NOT_FOUND。包已就位，无需 alias。
     },
   },
 })

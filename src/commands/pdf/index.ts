@@ -27,5 +27,5 @@ export const call: LocalCommandCall = async (args) => {
   return { type: 'text', value: r || '(无内容)' }
 }
 
-const cmd = { type: 'local' as const, name: 'pdf', description: 'PDF 文件读取与信息查看：read/info', argumentHint: '<read|info> <文件>', isEnabled: () => true, load: () => import('./index.ts') } satisfies Command
+const cmd = { type: 'local' as const, name: 'pdf', description: 'PDF 文件读取与信息查看：read/info', argumentHint: '<read|info> <文件>', isEnabled: () => true, load: () => import('./index.ts'), supportsNonInteractive: false } satisfies Command
 export default cmd

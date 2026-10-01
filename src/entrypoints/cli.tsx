@@ -11,15 +11,15 @@ import { readFileSync } from 'fs';
 try {
   const raw = readFileSync(getGlobalClaudeFile(), 'utf-8')
   const parsed = safeParseJSON(raw)
-  if (parsed && parsed.projects) {
+  if (parsed && (parsed as any).projects) {
     const cwd = process.cwd()
     let bestMatch: string | null = null
-    for (const [p] of Object.entries(parsed.projects)) {
-      if (cwd.startsWith(p) && (!bestMatch || p.length > bestMatch.length)) {
+    for (const [p] of Object.entries((parsed as any).projects)) {
+      if ((cwd as string).startsWith(p) && (!bestMatch || p.length > bestMatch.length)) {
         bestMatch = p
       }
     }
-    if (bestMatch && parsed.projects[bestMatch]?.featureOverrides) {
+    if (bestMatch && (parsed as any).projects[bestMatch]?.featureOverrides) {
       applyFeatureOverrides(parsed.projects[bestMatch].featureOverrides)
     }
   }

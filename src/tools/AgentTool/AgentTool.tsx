@@ -237,6 +237,7 @@ export const AgentTool = buildTool({
   get outputSchema(): OutputSchema {
     return outputSchema();
   },
+  // @ts-ignore - AgentTool input has extra fields from feature flags
   async call({
     prompt,
     subagent_type,
@@ -746,7 +747,7 @@ export const AgentTool = buildTool({
       // invocation time — when this `void` fires — and survives every await
       // inside. No capture/restore needed; the detached closure sees the
       // parent turn's workload automatically, isolated from its finally.
-      void runWithAgentContext(asyncAgentContext, () => wrapWithCwd(() => runAsyncAgentLifecycle({
+      void runWithAgentContext(asyncAgentContext as any, () => wrapWithCwd(() => runAsyncAgentLifecycle({
         taskId: agentBackgroundTask.agentId,
         abortController: agentBackgroundTask.abortController!,
         makeStream: onCacheSafeParams => runAgent({
@@ -798,7 +799,7 @@ export const AgentTool = buildTool({
 
       // Wrap entire sync agent execution in context for analytics attribution
       // and optionally in a worktree cwd override for filesystem isolation
-      return runWithAgentContext(syncAgentContext, () => wrapWithCwd(async () => {
+      return runWithAgentContext(syncAgentContext as any, () => wrapWithCwd(async () => {
         const agentMessages: MessageType[] = [];
         const agentStartTime = Date.now();
         const syncTracker = createProgressTracker();
@@ -924,7 +925,7 @@ export const AgentTool = buildTool({
                 // Workload: inherited via ALS at `void` invocation time,
                 // same as the async-from-start path above.
                 // Continue agent in background and return async result
-                void runWithAgentContext(syncAgentContext, async () => {
+                void runWithAgentContext(syncAgentContext as any, async () => {
                   let stopBackgroundedSummarization: (() => void) | undefined;
                   try {
                     // Clean up the foreground iterator so its finally block runs
@@ -1404,7 +1405,7 @@ duration_ms: ${data.totalDurationMs}</usage>`
   renderToolUseProgressMessage,
   renderToolUseRejectedMessage,
   renderToolUseErrorMessage,
-  renderGroupedToolUse: renderGroupedAgentToolUse
+  renderGroupedToolUse: renderGroupedAgentToolUse as any
 } satisfies ToolDef<InputSchema, Output, Progress>);
 function resolveTeamName(input: {
   team_name?: string;

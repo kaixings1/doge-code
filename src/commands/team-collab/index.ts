@@ -346,6 +346,7 @@ const teamCollab = {
   name: 'team-collab',
   description: '多角色协作编排：PM/Architect/Engineer/QA/Researcher 全流程',
   load: () => Promise.resolve({ call }),
+  supportsNonInteractive: false,
 } satisfies Command
 
 export default teamCollab

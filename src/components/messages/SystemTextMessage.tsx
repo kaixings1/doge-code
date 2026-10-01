@@ -3,7 +3,7 @@ import { c as _c } from "react/compiler-runtime";
 import { Box, Text, type TextProps } from '../../ink.js';
 import { feature } from 'bun:bundle';
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { sample } from '../../vendor/lodash.js';
 import { BLACK_CIRCLE, REFERENCE_MARK, TEARDROP_ASTERISK } from '../../constants/figures.js';
 import figures from '../../vendor/figures.js';
@@ -511,14 +511,10 @@ function TurnDurationMessage(t0) {
     t1 = $[1];
   }
   const [backgroundTaskSummary] = useState(t1);
-  // DOGE: tick to refresh "elapsed ago" every second
-  const [, setTick] = useState(0);
-  useEffect(() => {
-    const id = setInterval(() => {
-      setTick(n => n + 1)
-    }, 1000);
-    return () => clearInterval(id);
-  }, [message.timestamp]);
+  // DOGE: 系统消息位于终端回放区（scrollback）。按 OffscreenFreeze 的说明，
+  // 视口上方内容变化会强制 log-update 全量重置终端、导致滚动跳顶。
+  // 因此挂载时快照一次 "now"，移除每秒 tick，让这段文本保持静止。
+  const [mountedNow] = useState(() => new Date());
   let t2;
   if ($[2] === Symbol.for("react.memo_cache_sentinel")) {
     t2 = getGlobalConfig().showTurnDuration ?? true;
@@ -570,8 +566,8 @@ function TurnDurationMessage(t0) {
   } else {
     t6 = $[8];
   }
-  const endTime = message.timestamp ? new Date(message.timestamp).toLocaleString() : new Date().toLocaleString()
-  const elapsedAgo = message.timestamp ? formatRelativeTimeAgo(new Date(message.timestamp), { now: new Date(), style: "narrow" }) : ""
+  const endTime = message.timestamp ? new Date(message.timestamp).toLocaleString() : mountedNow.toLocaleString()
+  const elapsedAgo = message.timestamp ? formatRelativeTimeAgo(new Date(message.timestamp), { now: mountedNow, style: "narrow" }) : ""
   const elapsedSuffix = elapsedAgo ? ` · ${elapsedAgo}` : ""
   const t7 = showTurnDuration && `${verb} for ${duration} — ${endTime}${elapsedSuffix}`;
   const t8 = backgroundTaskSummary && ` \u00B7 ${backgroundTaskSummary} still running`;

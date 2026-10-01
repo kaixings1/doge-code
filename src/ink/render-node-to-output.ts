@@ -839,15 +839,24 @@ function renderNodeToOutput(
           // schedule an infinite loop of no-op drain frames.
           node.pendingScrollDelta = undefined
         }
-        let scrollTop = Math.max(0, Math.min(cur, maxScroll))
-        // 虚拟滚动会暂时缩小 scrollHeight（尾部卸载 + 陈旧 heightCache
-        // spacer，见上方 at-bottom follow 的 grew 注释），把 maxScroll
-        // 低估到接近 0。用户向上阅读时（cur < prevMaxScroll 说明用户不在
-        // 底部），直接 clamp 会把视图拉到顶部（scrollTop=0，LOGO 区域）。
-        // 缩小期间保留 cur，内容恢复后（grew=true）下一帧自然归位；真实
-        // 的内容缩小（/clear 等）也只在首帧保留，随后 grew 恢复并正确
-        // clamp 到新的（更小的）maxScroll。
-        if (!grew && cur < prevMaxScroll) {
+        // 只有在用户真的位于底部时，才允许内容/布局变化吸附滚动位置
+        // （pin 到新 maxScroll）。否则——无论用户是静止在中间阅读、还是
+        // 正在向上滚动——任何 logo/通知高度变化、虚拟化重排导致的
+        // scrollHeight 骤降，都不得移动 scrollTop。
+        //
+        // 之前用 `!grew && cur < prevMaxScroll` 做单帧快照保护，但
+        // logo 高度变化引发的重排跨多帧，`grew`（与上一帧比较）会在其间
+        // 来回翻转，某帧 `grew=true` 时保护立即失效——而该帧 maxScroll
+        // 已骤降，`Math.min(cur, maxScroll)` 把滚动条压到接近 0（顶部
+        // LOGO 区）。改用权威的 `atBottom`（sticky 或位置持续贴近底部）
+        // 作为唯一允许吸附的开关，从根上避免回看被拉走。
+        let scrollTop
+        if (atBottom) {
+          scrollTop = Math.max(0, Math.min(cur, maxScroll))
+        } else {
+          // 用户在底部之外的任何位置——保留原始 scrollTop，不因 maxScroll
+          // 骤降而改变。视觉 clamp（下方 clamped）仍只做"挂载边缘"的
+          // 暂停展示，不会把中间阅读位置拉走。
           scrollTop = Math.max(0, cur)
         }
         // Virtual-scroll clamp: if scrollTop raced past the currently-mounted

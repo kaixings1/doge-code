@@ -59,7 +59,7 @@ function DistTagsDisplay(t0) {
   const {
     promise
   } = t0;
-  const distTags = use(promise);
+  const distTags = use(promise) as { latest?: string; stable?: string } | null;
   if (!distTags.latest) {
     let t1;
     if ($[0] === Symbol.for("react.memo_cache_sentinel")) {

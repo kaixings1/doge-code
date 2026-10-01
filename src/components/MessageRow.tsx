@@ -204,7 +204,7 @@ function MessageRowImpl(t0) {
       } else {
         let t5;
         if ($[31] !== inProgressToolUseIDs || $[32] !== msg) {
-          const toolUseID = getToolUseID(msg);
+          const toolUseID = getToolUseID(msg as any);
           t5 = !toolUseID || inProgressToolUseIDs.has(toolUseID);
           $[31] = inProgressToolUseIDs;
           $[32] = msg;
@@ -300,12 +300,11 @@ export function isMessageStreaming(msg: RenderableMessage, streamingToolUseIDs: 
       return content?.type === 'tool_use' && streamingToolUseIDs.has(content.id);
     });
   }
-  // @ts-expect-error Message 联合缺少 CollapsedReadSearchMessage，但 collapseReadSearch 会生成该类型（TODO: 补齐类型定义）
   if (msg.type === 'collapsed_read_search') {
-    const toolIds = getToolUseIdsFromCollapsedGroup(msg);
+    const toolIds = getToolUseIdsFromCollapsedGroup(msg as any);
     return toolIds.some(id => streamingToolUseIDs.has(id));
   }
-  const toolUseID = getToolUseID(msg);
+  const toolUseID = getToolUseID(msg as any);
   return !!toolUseID && streamingToolUseIDs.has(toolUseID);
 }
 
@@ -320,9 +319,8 @@ export function allToolsResolved(msg: RenderableMessage, resolvedToolUseIDs: Set
       return content?.type === 'tool_use' && resolvedToolUseIDs.has(content.id);
     });
   }
-  // @ts-expect-error Message 联合缺少 CollapsedReadSearchMessage，但 collapseReadSearch 会生成该类型（TODO: 补齐类型定义）
   if (msg.type === 'collapsed_read_search') {
-    const toolIds = getToolUseIdsFromCollapsedGroup(msg);
+    const toolIds = getToolUseIdsFromCollapsedGroup(msg as any);
     return toolIds.every(id => resolvedToolUseIDs.has(id));
   }
   if (msg.type === 'assistant') {
@@ -331,7 +329,7 @@ export function allToolsResolved(msg: RenderableMessage, resolvedToolUseIDs: Set
       return resolvedToolUseIDs.has(block.id);
     }
   }
-  const toolUseID = getToolUseID(msg);
+  const toolUseID = getToolUseID(msg as any);
   return !toolUseID || resolvedToolUseIDs.has(toolUseID);
 }
 
@@ -352,8 +350,7 @@ export function areMessageRowPropsEqual(prev: Props, next: Props): boolean {
   if (prev.verbose !== next.verbose) return false;
 
   // collapsed_read_search is never static in prompt mode (matches shouldRenderStatically)
-  // @ts-expect-error Message 联合缺少 CollapsedReadSearchMessage，但 collapseReadSearch 会生成该类型（TODO: 补齐类型定义）
-  if (prev.message.type === 'collapsed_read_search' && next.screen !== 'transcript') {
+  if ((prev.message as any).type === 'collapsed_read_search' && next.screen !== 'transcript') {
     return false;
   }
 
@@ -368,7 +365,7 @@ export function areMessageRowPropsEqual(prev: Props, next: Props): boolean {
   // lastThinkingBlockId affects thinking block visibility — but only for
   // messages that HAVE thinking content. Checking unconditionally busts the
   // memo for every scrollback message whenever thinking starts/stops (CC-941).
-  if (prev.lastThinkingBlockId !== next.lastThinkingBlockId && hasThinkingContent(next.message)) {
+  if (prev.lastThinkingBlockId !== next.lastThinkingBlockId && hasThinkingContent(next.message as any)) {
     return false;
   }
 

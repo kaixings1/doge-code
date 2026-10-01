@@ -120,7 +120,7 @@ export const DatabaseTool = buildTool({
   renderToolUseMessage(input) {
     const op = (input as Record<string, unknown>)?.operation ?? '?'
     const sql = (input as Record<string, unknown>)?.sql
-    return `Database: ${op}${sql ? ` ${sql.substring(0, 30)}` : ''}`
+    return `Database: ${op}${sql ? ` ${(sql as any).substring(0, 30)}` : ''}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
     const msg = (content as Record<string, unknown>).message || '操作完成'

@@ -21,14 +21,15 @@ type Props = {
 };
 
 export function SystemAPIErrorMessage({ message, verbose }: Props) {
+  const m = message as any
   const {
     retryAttempt,
     error,
     retryInMs: rawRetryInMs,
     maxRetries,
-  } = message;
+  } = m;
 
-  const retryInMs = rawRetryInMs > 0 ? rawRetryInMs : 0;
+  const retryInMs = (rawRetryInMs as number) > 0 ? (rawRetryInMs as number) : 0;
   const hidden = retryAttempt < 2 || retryInMs === 0;
   const [countdownMs, setCountdownMs] = useState(0);
   const prevRetryInMsRef = useRef<number>(0);

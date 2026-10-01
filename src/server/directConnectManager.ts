@@ -18,7 +18,7 @@ export type DirectConnectConfig = {
 }
 
 export type DirectConnectCallbacks = {
-  onMessage: (message: SDKMessage) => void
+  onMessage: (message: StdoutMessage) => void
   onPermissionRequest: (
     request: SDKControlPermissionRequest,
     requestId: string,
@@ -80,20 +80,21 @@ export class DirectConnectSessionManager {
 
         // Handle control requests (permission requests)
         if (parsed.type === 'control_request') {
-          if (parsed.request.subtype === 'can_use_tool') {
+          const ctrlRequest = parsed as any
+          if (ctrlRequest.request.subtype === 'can_use_tool') {
             this.callbacks.onPermissionRequest(
-              parsed.request,
-              parsed.request_id,
+              ctrlRequest.request,
+              ctrlRequest.request_id,
             )
           } else {
             // Send an error response for unrecognized subtypes so the
             // server doesn't hang waiting for a reply that never comes.
             logForDebugging(
-              `[DirectConnect] 不支持的控制请求子类型: ${parsed.request.subtype}`,
+              `[DirectConnect] 不支持的控制请求子类型: ${ctrlRequest.request.subtype}`,
             )
             this.sendErrorResponse(
-              parsed.request_id,
-              `不支持的控制请求子类型: ${parsed.request.subtype}`,
+              ctrlRequest.request_id,
+              `不支持的控制请求子类型: ${ctrlRequest.request.subtype}`,
             )
           }
           continue

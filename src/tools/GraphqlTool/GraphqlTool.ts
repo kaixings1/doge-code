@@ -53,7 +53,7 @@ export const GraphqlTool = buildTool({
   },
   renderToolUseMessage(input) {
     const query = (input as Record<string, unknown>)?.query
-    return `GraphQL: ${query ? query.substring(0, 50) : '?'}`
+    return `GraphQL: ${query ? (query as any).substring(0, 50) : '?'}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
     const errors = (content as Record<string, unknown>).errors

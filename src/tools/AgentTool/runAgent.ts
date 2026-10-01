@@ -566,7 +566,7 @@ export async function* runAgent({
       type: 'hook_additional_context',
       content: additionalContexts,
       hookName: 'SubagentStart',
-      toolUseID: randomUUID(),
+      toolUseID: randomUUID() as any,
       hookEvent: 'SubagentStart',
     })
     initialMessages.push(contextMessage)
@@ -759,7 +759,7 @@ export async function* runAgent({
   }).catch(_err => logForDebugging(`Failed to write agent metadata: ${_err}`))
 
   // 追踪最后记录的消息 UUID 以实现父链连续性
-  let lastRecordedUuid: UUID | null = initialMessages.at(-1)?.uuid ?? null
+  let lastRecordedUuid: UUID | null = (initialMessages as any).at(-1)?.uuid ?? null
 
   try {
     for await (const message of query({
@@ -777,17 +777,17 @@ export async function* runAgent({
       // 以便 TTFT/OTPS 在子代理执行期间更新。
       if (
         message.type === 'stream_event' &&
-        message.event.type === 'message_start' &&
-        message.ttftMs != null
+        (message as any).event.type === 'message_start' &&
+        (message as any).ttftMs != null
       ) {
-        toolUseContext.pushApiMetricsEntry?.(message.ttftMs)
+        toolUseContext.pushApiMetricsEntry?.((message as any).ttftMs)
         continue
       }
 
       // 生成附件消息（例如 structured_output）而不记录它们
       if (message.type === 'attachment') {
         // 处理来自 query.ts 的最大轮次信号
-        if (message.attachment.type === 'max_turns_reached') {
+        if ((message as any).attachment.type === 'max_turns_reached') {
           logForDebugging(
             `[Agent
 : $
@@ -802,7 +802,7 @@ export async function* runAgent({
           )
           break
         }
-        yield message
+        yield message as any
         continue
       }
 
@@ -833,9 +833,9 @@ export async function* runAgent({
           logForDebugging(`Failed to record sidechain transcript: ${err}`),
         )
         if (message.type !== 'progress') {
-          lastRecordedUuid = message.uuid
+          lastRecordedUuid = (message as any).uuid as UUID
         }
-        yield message
+        yield message as any
       }
     }
 

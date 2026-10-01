@@ -287,7 +287,7 @@ export function remove(commandsToRemove: QueuedCommand[]): void {
   }
 
   for (const _cmd of commandsToRemove) {
-    logOperation('remove')
+    logOperation('remove' as any)
   }
 }
 

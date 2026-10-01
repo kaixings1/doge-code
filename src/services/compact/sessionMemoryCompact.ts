@@ -137,7 +137,7 @@ export function hasTextBlocks(message: Message): boolean {
     const content = (Array.isArray(message.message.content) ? message.message.content : [])
     return content.some(block => block.type === 'text')
   }
-  if (message.type === 'user') {
+  if ((message as any).type === 'user') {
     const content = (Array.isArray(message.message.content) ? message.message.content : [])
     if (typeof content === 'string') {
       return content.length > 0

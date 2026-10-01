@@ -1,16 +1,12 @@
-import type {
-  LocalCommandContext,
-  LocalCommandOnDone,
-} from '../../types/command.js'
 import { getGlobalConfig } from '../../utils/config.js'
 import { updateSettingsForSource } from '../../utils/settings/settings.js'
 
 export async function call(
-  onDone: LocalCommandOnDone,
-  _context: LocalCommandContext,
+  _onDone: any,
+  _context: any,
   args: string,
-): Promise<null> {
-  const config = getGlobalConfig()
+): Promise<{ type: 'text'; value: string }> {
+  const config = getGlobalConfig() as any
   const current = config.blockOutput ?? false
 
   const trimmed = args?.trim().toLowerCase() || 'toggle'
@@ -28,11 +24,9 @@ export async function call(
     blockOutput: newValue,
   })
   if (error) {
-    onDone(`切换失败: ${error.message}`)
-    return null
+    return { type: 'text', value: `切换失败: ${error.message}` }
   }
 
   const mode = newValue ? '块状输出' : '普通输出'
-  onDone(`已切换到${mode}模式`)
-  return null
+  return { type: 'text', value: `已切换到${mode}模式` }
 }

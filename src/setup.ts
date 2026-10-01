@@ -291,7 +291,7 @@ export async function setup(
        
       ;(
         require('./services/contextCollapse/index.js') as typeof import('./services/contextCollapse/index.js')
-      ).initContextCollapse()
+      ).resetContextCollapse()
        
     }
   }

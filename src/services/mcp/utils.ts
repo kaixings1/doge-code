@@ -41,8 +41,8 @@ export function filterToolsByServer(tools: Tool[], serverName: string): Tool[] {
   const oldPrefix = `${serverName}/`
   return tools.filter(
     tool =>
-      tool.name?.startsWith(prefix) || tool.name?.startsWith(oldPrefix) ||
-      tool._originalName?.startsWith(oldPrefix),
+      (tool as any).name?.startsWith(prefix) || (tool as any).name?.startsWith(oldPrefix) ||
+      (tool as any)._originalName?.startsWith(oldPrefix),
   )
 }
 
@@ -251,7 +251,7 @@ export function isMcpTool(tool: Tool): boolean {
   return (
     tool.name?.startsWith('mcp__') ||
     tool.isMcp === true ||
-    tool._originalName?.includes('/')
+    (tool as any)._originalName?.includes('/')
   )
 }
 
@@ -528,7 +528,8 @@ export function extractAgentMcpServers(
         transport: 'stdio',
         command: config.command,
         needsAuth: false,
-      })
+        client: { type: 'stdio' },
+      } as AgentMcpServerInfo)
     } else if (isSSEConfig(config)) {
       result.push({
         name,
@@ -536,7 +537,8 @@ export function extractAgentMcpServers(
         transport: 'sse',
         url: config.url,
         needsAuth: true,
-      })
+        client: { type: 'sse' },
+      } as AgentMcpServerInfo)
     } else if (isHTTPConfig(config)) {
       result.push({
         name,
@@ -544,15 +546,17 @@ export function extractAgentMcpServers(
         transport: 'http',
         url: config.url,
         needsAuth: true,
-      })
+        client: { type: 'http' },
+      } as AgentMcpServerInfo)
     } else if (isWebSocketConfig(config)) {
       result.push({
         name,
         sourceAgents,
-        transport: 'ws',
+        transport: 'websocket',
         url: config.url,
-        needsAuth: false,
-      })
+        needsAuth: true,
+        client: { type: 'websocket' },
+      } as AgentMcpServerInfo)
     }
     // Skip unsupported transport types (sdk, claudeai-proxy, sse-ide, ws-ide)
     // These are internal types not meant for agent MCP server display

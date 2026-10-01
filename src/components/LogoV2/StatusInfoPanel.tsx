@@ -36,21 +36,21 @@ export function StatusInfoPanel({ maxWidth }: { maxWidth: number }) {
   const effortValue = useAppState(_temp2);
   const model = useMainLoopModel();
   const sessionId = getSessionId();
-  const sessionElapsed = getSessionElapsed();
+  // DOGE: Logo 横幅位于终端回放区（scrollback）。按 OffscreenFreeze 的说明，
+  // 视口上方内容变化会强制 log-update 全量重置终端、导致滚动跳顶。
+  // 因此启动时间在此处挂载时快照一次，不再每秒自增。
+  const [sessionElapsed] = useState(() => getSessionElapsed());
 
-  // 自刷新：监听 __RSTK_REFRESH_TS__ 信号 + 1s 轮询 api.json tokens 变化，
-  // 让 tokens/cost/缓存 数字在 /rstk 后或 API 调用后更新（Logo 启动横幅不会自动重渲染）
+  // 自刷新：监听 __RSTK_REFRESH_TS__ 信号（仅在 /rstk 等显式信号后刷新一次），
+  // 让 tokens/cost/缓存数字更新（Logo 启动横幅不会自动重渲染）
   const [, setTick] = useState(0);
   useEffect(() => {
     let lastRstkTs = (globalThis as any).__RSTK_REFRESH_TS__ as number;
-    let lastSent = readCustomApiStorage().tokens?.sent;
     const interval = setInterval(() => {
       const g = globalThis as any;
       const currentTs = g.__RSTK_REFRESH_TS__ as number;
-      const currentSent = readCustomApiStorage().tokens?.sent;
-      if (currentTs !== lastRstkTs || currentSent !== lastSent) {
+      if (currentTs !== lastRstkTs) {
         lastRstkTs = currentTs;
-        lastSent = currentSent;
         setTick(t => t + 1);
       }
     }, 1000);

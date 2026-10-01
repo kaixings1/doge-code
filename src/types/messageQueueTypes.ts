@@ -1,7 +1,7 @@
 /** 消息队列条目 */
 export type MessageQueueEntry = Record<string, unknown>
 
-export type QueueOperation = 'enqueue' | 'dequeue' | 'clear' | 'pause' | 'resume'
+export type QueueOperation = 'enqueue' | 'dequeue' | 'clear' | 'pause' | 'resume' | 'remove' | 'popAll'
 
 export interface QueueOperationMessage {
   type: 'queue-operation'

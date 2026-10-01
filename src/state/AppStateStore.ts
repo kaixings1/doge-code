@@ -91,7 +91,6 @@ export type AppState = DeepImmutable<{
   verbose: boolean
   mainLoopModel: ModelSetting
   mainLoopModelForSession: ModelSetting
-  statusLineText: string | undefined
   rstkRefreshVersion: number
   expandedView: 'none' | 'tasks' | 'teammates'
   isBriefOnly: boolean
@@ -469,7 +468,6 @@ export function getDefaultAppState(): AppState {
     mainLoopModel: null, // 别名、全名（来自 --model 或环境变量），或 null（默认值）
     mainLoopModelForSession: null,
     rstkRefreshVersion: 0,
-    statusLineText: undefined,
     expandedView: 'none',
     isBriefOnly: false,
     showTeammateMessagePreview: false,

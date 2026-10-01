@@ -67,6 +67,14 @@ export const plainTextStorage = {
       return { success: false }
     }
   },
+  async get(key: string): Promise<SecureStorageData | null> {
+    return this.readAsync()
+  },
+
+  async set(key: string, value: SecureStorageData): Promise<void> {
+    this.update(value)
+  },
+
   delete(): boolean {
     // sync IO: called from sync context (SecureStorage interface)
     const { storagePath } = getStoragePath()

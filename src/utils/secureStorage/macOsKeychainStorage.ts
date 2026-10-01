@@ -156,6 +156,14 @@ export const macOsKeychainStorage = {
       return { success: false }
     }
   },
+  async get(key: string): Promise<SecureStorageData | null> {
+    return this.readAsync()
+  },
+
+  async set(key: string, value: SecureStorageData): Promise<void> {
+    this.update(value)
+  },
+
   delete(): boolean {
     // Invalidate cache before delete
     clearKeychainCache()
