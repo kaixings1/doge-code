@@ -299,6 +299,26 @@ src/
 > 因 `feature()` 构建期固化，运行时设 env 无效，只能从构建参数去掉
 > `--feature UDS_INBOX`。要用该功能需先补全 udsMessaging 实现。
 
+> **批处理文件必须纯 ASCII + CRLF**：cmd.exe 用 GBK 解码 .bat，UTF-8 中文字节会
+> 吞掉换行导致 `REM` 被当命令执行（报 `The syntax of the command is incorrect.`）。
+> `chcp 65001` 写在文件里救不了已解析的行。且 cmd.exe 不认 `#` 注释。
+> 改 `d.bat` / `compile.bat` 后务必校验：
+> `python -c "d=open('d.bat','rb').read();print('nonascii=',sum(1 for x in d if x>127));print('crlf=',d.count(b'\r\n'))"`
+
+> **条件导入必须惰性化，不要写顶层 `const X = feature('F') ? require(...) : null`**：
+> 本仓库有 2841 个循环依赖（madge 实测），顶层 require 在模块求值期执行会绕回
+> 未求值完的模块，触发 TDZ `Cannot access 'X' before initialization`
+> （已出现过 `proactiveModule`、`SUGGEST_BG_PR_NOOP` 两例）。
+> ESM 的 `import` 会被提升，因此更早的顶层 require 同样先于其他 `const` 运行。
+> 先例：`src/commands.ts` 的 `getRemoteSafeCommands`、本次新增的
+> `src/utils/proactiveModule.ts`（`getProactiveModule` / `getUseProactive` /
+> `getUseScheduledTasks`）。新写条件导入时直接复用这些 getter。
+
+> **require 路径后缀用 `.ts` 而非 `.js`**：如 `src/utils/permissions/autoModeState`
+> 只有 `.ts` 和仅供 tsc 的 `.js.d.ts` 残留，bun 构建不认 `.js.d.ts`，
+> `require('...autoModeState.js')` 会报 `Could not resolve`。照
+> `src/services/api/claude.ts` 的写法用 `.ts`。
+
 ## 构建与部署
 
 ```bash
