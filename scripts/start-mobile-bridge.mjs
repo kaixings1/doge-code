@@ -21,6 +21,7 @@ import { existsSync } from 'fs'
 import { execSync, spawn } from 'child_process'
 import { networkInterfaces } from 'os'
 import { createConnection } from 'net'
+import http from 'http'
 
 const EXE = 'D:\\doge-code\\doge.exe'
 const PORT = 5680
@@ -92,16 +93,26 @@ if (USE_LAN) {
 } else {
   // USB 反向转发
   if (!existsSync(ADB)) {
-    console.log('[2/4] 未找到 adb: ' + ADB)
-    console.log('      请改用局域网模式: node scripts/start-mobile-bridge.mjs --lan')
-    phoneUrl = null
+    // 无 adb 也可用：服务端自动启动，走局域网地址
+    const fallback = getLanIp()
+    console.log('[2/4] 未找到 adb — 回退到局域网地址')
+    console.log('      如需 USB 通道，先安装 platform-tools')
+    phoneUrl = fallback ? `http://${fallback}:${PORT}` : null
   } else {
     try {
       const dev = execSync(`"${ADB}" devices`, { encoding: 'utf8', timeout: 10000, windowsHide: true })
       const hasDevice = dev.split(/\r?\n/).some((l) => /\tdevice$/.test(l))
       if (!hasDevice) {
-        console.log('[2/4] 未检测到手机 — 请插上 USB 线并开启 USB 调试')
-        phoneUrl = null
+        // 手机没连：服务端仍会自动启动，只是不能走 USB 通道。
+        // 回退到局域网地址，手机连同一 WiFi 即可访问。
+        const fallback = getLanIp()
+        console.log('[2/4] 未检测到手机 — 回退到局域网地址')
+        if (fallback) {
+          phoneUrl = `http://${fallback}:${PORT}`
+          console.log('      手机需连同一 WiFi，并放行防火墙（见下方 --lan 提示）')
+        } else {
+          phoneUrl = null
+        }
       } else {
         execSync(`"${ADB}" reverse tcp:${PORT} tcp:${PORT}`, { timeout: 10000, windowsHide: true })
         console.log('[2/4] USB 反向转发已建立 (手机 127.0.0.1:' + PORT + ' -> 电脑 ' + PORT + ')')
@@ -145,7 +156,7 @@ if (phoneUrl) {
 }
 console.log('  密钥:            ' + secret)
 console.log('')
-console.log('  在 CLI 里输入:   /mobile-connect')
+console.log('  服务端随 CLI 自动启动，无需手动执行 /mobile-connect')
 console.log('')
 line()
 console.log('')
@@ -158,6 +169,35 @@ const child = spawn(EXE, [], {
     CLAUDE_CODE_MOBILE_SECRET: secret,
   },
 })
+
+// 轮询确认服务端真的就绪（自动启动是异步的），并回显一次访问地址，
+// 便于确认"能连了"而不是凭启动输出猜测
+if (phoneUrl) {
+  const deadline = Date.now() + 20000
+  const probe = async () => {
+    while (Date.now() < deadline) {
+      const ok = await new Promise((resolve) => {
+        const req = http.get({ host: '127.0.0.1', port: PORT, path: '/', timeout: 1500 }, (res) => {
+          res.resume()
+          resolve(res.statusCode === 200)
+        })
+        req.on('error', () => resolve(false))
+        req.on('timeout', () => { req.destroy(); resolve(false) })
+      })
+      if (ok) {
+        console.log('')
+        console.log('  [就绪] 手机端服务端已启动 -> ' + phoneUrl)
+        console.log('')
+        return
+      }
+      await new Promise((r) => setTimeout(r, 1000))
+    }
+    console.log('')
+    console.log('  [未就绪] 20 秒内服务端未响应，请检查上方提示与 doge.exe 输出')
+    console.log('')
+  }
+  void probe()
+}
 
 child.on('exit', (code) => {
   console.log('')
