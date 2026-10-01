@@ -822,6 +822,12 @@ function getFunctionResultClearingSection(model: string): string | null {
     return null
   }
   const config = getCachedMCConfigForFRC()
+  // getCachedMCConfig() 当前是返回 null 的存根（见 services/compact/cachedMCConfig.ts），
+  // 这里必须容错，否则启用 CACHED_MICROCOMPACT 时构建系统提示即抛
+  // "null is not an object (evaluating 'config.supportedModels')"。
+  if (!config) {
+    return null
+  }
   const isModelSupported = config.supportedModels?.some(pattern =>
     model.includes(pattern),
   )

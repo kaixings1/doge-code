@@ -114,7 +114,7 @@ import {
 import { getAPIContextManagement } from '../compact/apiMicrocompact.js'
 
 const autoModeStateModule = feature('TRANSCRIPT_CLASSIFIER')
-  ? (require('../../utils/permissions/autoModeState.js') as typeof import('../../utils/permissions/autoModeState.js'))
+  ? (require('../../utils/permissions/autoModeState.ts') as typeof import('../../utils/permissions/autoModeState.ts'))
   : null
 
 import { feature } from 'bun:bundle'
@@ -1291,8 +1291,9 @@ async function* queryModel(
     const modelSupported = isModelSupportedForCacheEditing(options.model)
     cachedMCEnabled = featureEnabled && modelSupported
     const config = getCachedMCConfig()
+    // 同 prompts.ts：getCachedMCConfig() 是返回 null 的存根，读字段前需容错
     logForDebugging(
-      `Cached MC gate: enabled=${featureEnabled} modelSupported=${modelSupported} model=${options.model} supportedModels=${jsonStringify((config as Record<string, unknown>).supportedModels)}`,
+      `Cached MC gate: enabled=${featureEnabled} modelSupported=${modelSupported} model=${options.model} supportedModels=${jsonStringify((config as Record<string, unknown> | null)?.supportedModels ?? null)}`,
     )
   }
 
