@@ -30,7 +30,8 @@ const TMUX_SESSION = 'panel'
  * so that each instance has its own isolated terminal panel.
  */
 export function getTerminalPanelSocket(): string {
-  // Use first 8 chars of session UUID for uniqueness while keeping name short
+  // Full session UUID keeps sockets unique per instance. Path stays well
+  // under the 108-char Unix socket limit (/tmp/tmux-<uid>/ + 57 chars).
   const sessionId = getSessionId()
   return `claude-panel-${sessionId}`
 }

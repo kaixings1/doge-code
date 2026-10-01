@@ -4,7 +4,8 @@
  * 必须在 KeybindingSetup 内部渲染，以便访问快捷键上下文
  * 此组件不渲染任何内容 - 它只注册快捷键处理器
  */
-import { feature } from 'bun:bundle';
+// NOTE: use the runtime polyfill — 'bun:bundle' folds to false under `bun run`.
+import { feature } from '../utils/bun-bundle-polyfill.js';
 import { useCallback } from 'react';
 import instances from '../ink/instances.js';
 import { useKeybinding } from '../keybindings/useKeybinding.js';
@@ -13,6 +14,7 @@ import { getFeatureValue_CACHED_MAY_BE_STALE } from '../services/analytics/growt
 import { type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS, logEvent } from '../services/analytics/index.js';
 import { useAppState, useSetAppState } from '../state/AppState.js';
 import { count } from '../utils/array.js';
+import { logForDebugging } from '../utils/debug.js';
 import { getTerminalPanel } from '../utils/terminalPanel.js';
 type Props = {
   screen: Screen;
@@ -207,11 +209,15 @@ export function GlobalKeybindingHandlers({
 
   // 切换内置终端面板 (meta+j)
   // toggle() 在 spawnSync 中阻塞，直到用户从 tmux 分离
+  //
+  // NOTE: gated solely by the compile/runtime feature flag. The former
+  // `tengu_terminal_panel` GrowthBook check is intentionally dropped: when
+  // CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1 (telemetry off),
+  // isGrowthBookEnabled() is false and getFeatureValue_* returns the default
+  // before ever reading cachedGrowthBookFeatures — so that gate could never
+  // be enabled in this environment.
   const handleToggleTerminal = useCallback(() => {
     if (feature('TERMINAL_PANEL')) {
-      if (!getFeatureValue_CACHED_MAY_BE_STALE('tengu_terminal_panel', false)) {
-        return;
-      }
       getTerminalPanel().toggle();
     }
   }, []);

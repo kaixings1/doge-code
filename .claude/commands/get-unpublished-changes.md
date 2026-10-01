@@ -1,5 +1,5 @@
 ---
-description: 比较 HEAD 与最新发布的 npm 版本，并按发布��列出所有未发布的更改。
+description: 比较 HEAD 与最新发布的 npm 版本，并按发布类型列出所有未发布的更改。
 ---
 
 <command-instruction>

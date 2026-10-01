@@ -51,6 +51,7 @@ export const TerminalPanelTool = buildTool({
   name: 'terminal-panel',
   description: async () => '管理终端面板（show/hide/focus/write/clear/status）',
   callOn: 'manual',
+  maxResultSizeChars: 100_000,
   async prompt() {
     return '使用 terminal-panel 工具管理终端面板输出。'
   },
@@ -73,15 +74,16 @@ export const TerminalPanelTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const action = (input as Record<string, unknown>)?.action ?? '?'
-    const content = (input as Record<string, unknown>)?.content
-    return `Terminal: ${action}${content ? ` "${content.slice(0, 40)}"` : ''}`
+    const action = input?.action ?? '?'
+    const content = input?.content
+    const preview = typeof content === 'string' ? content.slice(0, 40) : ''
+    return `Terminal: ${action}${preview ? ` "${preview}"` : ''}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
     return {
       tool_use_id: toolUseID,
       type: 'tool_result',
-      content: (content as Record<string, unknown>).message || 'Terminal panel action completed',
+      content: content.message || 'Terminal panel action completed',
     }
   },
   async call({ action, content, title, stream = 'stdout' }) {
@@ -113,7 +115,14 @@ export const TerminalPanelTool = buildTool({
       }
       case 'write': {
         if (!content) {
-          return { data: { visible: currentSession.visible, focused: currentSession.focused, message: 'write 需要 content 参数', lines } } as Output
+          return {
+            data: {
+              visible: currentSession.visible,
+              focused: currentSession.focused,
+              message: 'write 需要 content 参数',
+              lines,
+            } as Output,
+          }
         }
         const prefix = stream === 'stderr' ? '[stderr]' : stream === 'both' ? '[all]' : ''
         const textToWrite = prefix ? `${prefix} ${content}` : content

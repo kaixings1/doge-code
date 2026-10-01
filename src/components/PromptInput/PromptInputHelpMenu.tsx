@@ -129,7 +129,7 @@ export function PromptInputHelpMenu(props) {
   const imagePasteShortcut = t19;
   let t20;
   if ($[20] !== dimColor || $[21] !== terminalShortcut) {
-    t20 = feature("TERMINAL_PANEL") ? getFeatureValue_CACHED_MAY_BE_STALE("tengu_terminal_panel", false) ? <Box><Text dimColor={dimColor}>{terminalShortcut} 打开终端</Text></Box> : null : null;
+    t20 = feature("TERMINAL_PANEL") ? <Box><Text dimColor={dimColor}>{terminalShortcut} 打开终端</Text></Box> : null;
     $[20] = dimColor;
     $[21] = terminalShortcut;
     $[22] = t20;
