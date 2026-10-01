@@ -120,15 +120,13 @@ function cleanupTerminalModes(): void {
     writeSync(1, CLEAR_ITERM2_PROGRESS)
     // Clear tab status (OSC 21337) so a stale dot doesn't linger
     if (supportsTabStatus()) writeSync(1, wrapForMultiplexer(CLEAR_TAB_STATUS))
-    // Clear terminal title so the tab doesn't show stale session info.
-    // Respect CLAUDE_CODE_DISABLE_TERMINAL_TITLE — if the user opted out of
-    // title changes, don't clear their existing title on exit either.
-    if (!isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_TERMINAL_TITLE)) {
-      // OSC 0 清空序列在所有平台都必须发送：它是清除终端标签页标题
-      // （含绿色空闲图标）的唯一可靠方式。win32 上仅 process.title=''
-      // 会把标题变成 "bun"（Bun 的进程名）而非清空，且非全屏模式下
-      // React 的 useTerminalTitle cleanup 不会运行（inst.unmount() 只在
-      // alt-screen 活跃时被调用），因此此处必须显式写 OSC 0。
+    // 终端标题清理：仅在标题功能被禁用时才清空。
+    //
+    // 标题功能启用时（未设置 CLAUDE_CODE_DISABLE_TERMINAL_TITLE），React 侧
+    // useTerminalTitle 持续写入含绿方块与 sessionId 的标题，这是用户特意
+    // 保留的会话标识——退出瞬间清掉它会让人回到终端后无从分辨是哪个会话。
+    // 因此启用时保留，禁用时才清掉可能残留的陈旧标题。
+    if (isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_TERMINAL_TITLE)) {
       writeSync(1, CLEAR_TERMINAL_TITLE)
       if (process.platform === 'win32') {
         process.title = ''

@@ -9,6 +9,7 @@ import { onExit } from 'signal-exit';
 import { flushInteractionTime } from '../bootstrap/state.js';
 import { getYogaCounters } from '../native-ts/yoga-layout/index.js';
 import { logForDebugging } from '../utils/debug.js';
+import { isEnvTruthy } from '../utils/envUtils.js';
 import { logError } from '../utils/log.js';
 import { format } from 'util';
 import { colorize } from './colorize.js';
@@ -1164,7 +1165,14 @@ export default class Ink {
       // 清除终端标题（OSC 0）——清除绿色空闲图标等残留。
       // 不依赖 React effect cleanup（useTerminalTitle 的清理），因为
       // signal-exit / process.exit 路径下组件卸载时序不可靠；必须同步写出。
-      writeSync(1, CLEAR_TERMINAL_TITLE);
+      //
+      // 条件清除：若标题功能启用（未设置 CLAUDE_CODE_DISABLE_TERMINAL_TITLE），
+      // React 侧会持续通过 useTerminalTitle 写入含绿方块与 sessionId 的标题，
+      // 这是用户期望保留的会话标识，此处不应清空——否则退出瞬间被抹掉。
+      // 仅在标题功能被禁用时才清掉可能存在的陈旧标题。
+      if (isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_TERMINAL_TITLE)) {
+        writeSync(1, CLEAR_TERMINAL_TITLE);
+      }
     }
     /* eslint-enable custom-rules/no-sync-fs */
 

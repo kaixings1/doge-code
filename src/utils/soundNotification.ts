@@ -18,6 +18,26 @@ export function isAutoContinueEnabled(): boolean {
 }
 let _beepSupported: boolean | null = null
 
+// 去重：同一类声音在窗口期内只播一次。
+//
+// 存在两条独立的完成音触发路径——query.ts 在 return { reason:'completed' }
+// 前播一次，REPL.tsx 在 sessionStatus 由 busy→idle 时再播一次。查询正常结束
+// 时两者必然先后触发，造成双响。在模块层去重比删掉任一处更安全：
+// query.ts 那一路在自动继续模式（AUTO_CONTINUE_ON_COMPLETE=true）下有独立
+// 价值——那时循环 continue，状态不转 idle，REPL 那一路根本不会触发。
+const DEDUPE_WINDOW_MS = 2500
+const lastPlayedAt = new Map<string, number>()
+
+function shouldPlay(kind: string): boolean {
+  const now = Date.now()
+  const last = lastPlayedAt.get(kind)
+  if (typeof last === 'number' && now - last < DEDUPE_WINDOW_MS) {
+    return false
+  }
+  lastPlayedAt.set(kind, now)
+  return true
+}
+
 /**
  * 检测终端是否支持 beep
  */
@@ -90,6 +110,7 @@ export function playNotificationSound(
 export function playTaskCompleteSound(): void {
   if (!SOUND_NOTIFICATION_ENABLED) return
   if (!isBeepSupported()) return
+  if (!shouldPlay('complete')) return
 
   if (process.platform === 'win32') {
     // Windows: 两次短促 Beep
@@ -109,6 +130,7 @@ export function playTaskCompleteSound(): void {
 export function playInterventionSound(): void {
   if (!SOUND_NOTIFICATION_ENABLED) return
   if (!isBeepSupported()) return
+  if (!shouldPlay('intervention')) return
 
   if (process.platform === 'win32') {
     // Windows: 三声急促 Beep
@@ -130,6 +152,7 @@ export function playInterventionSound(): void {
 export function playErrorSound(): void {
   if (!SOUND_NOTIFICATION_ENABLED) return
   if (!isBeepSupported()) return
+  if (!shouldPlay('error')) return
 
   if (process.platform === 'win32') {
     playWindowsBeep(300, 500)
