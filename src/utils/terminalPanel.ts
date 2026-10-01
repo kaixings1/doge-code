@@ -154,11 +154,22 @@ class TerminalPanel {
     // TTY 时 —— tmux 会打印版本号后退出），界面会立即弹回主界面。
     // 记录耗时与退出码，便于事后从 debug 日志定位是哪种情况。
     const startedAt = Date.now()
-    const result = spawnSync(
-      'tmux',
-      ['-L', getTerminalPanelSocket(), 'attach-session', '-t', TMUX_SESSION],
-      { stdio: 'inherit' },
-    )
+    const socket = getTerminalPanelSocket()
+    // On Windows the child must go through cmd.exe to inherit the console
+    // handle; a bare spawnSync leaves it without a usable console, and tmux
+    // then prints its version and exits immediately (rendering the panel
+    // flash-and-return). Mirrors the win32 branch in editor.ts:134.
+    const result =
+      process.platform === 'win32'
+        ? spawnSync(
+            `tmux -L ${socket} attach-session -t ${TMUX_SESSION}`,
+            { stdio: 'inherit', shell: true },
+          )
+        : spawnSync(
+            'tmux',
+            ['-L', socket, 'attach-session', '-t', TMUX_SESSION],
+            { stdio: 'inherit' },
+          )
     const elapsed = Date.now() - startedAt
     logForDebugging(
       `Terminal panel: attach returned after ${elapsed}ms, status=${result.status}, error=${result.error?.message ?? 'none'}, isTTY=${process.stdin.isTTY}`,
@@ -204,10 +215,25 @@ class TerminalPanel {
   private runShellDirect(): void {
     const shell = process.env.SHELL || '/bin/bash'
     const cwd = pwd()
-    spawnSync(shell, ['-i', '-l'], {
-      stdio: 'inherit',
-      cwd,
-      env: process.env,
-    })
+    // Same win32 console-inheritance caveat as attachSession: go through
+    // cmd.exe so the shell gets a usable console.
+    const result =
+      process.platform === 'win32'
+        ? spawnSync(shell, ['-i', '-l'], {
+            stdio: 'inherit',
+            cwd,
+            env: process.env,
+            shell: true,
+          })
+        : spawnSync(shell, ['-i', '-l'], {
+            stdio: 'inherit',
+            cwd,
+            env: process.env,
+          })
+    if (result.error) {
+      logForDebugging(
+        `Terminal panel: fallback shell failed: ${result.error.message}`,
+      )
+    }
   }
 }
