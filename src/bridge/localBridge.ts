@@ -306,10 +306,40 @@ export class LocalBridgeClient {
 // ─── 工厂函数 ───
 
 /**
+ * 在桥接服务器上注册会话，返回服务端签发的 session id。
+ *
+ * 服务端 scripts/bridge.ts:703 在 upgrade 时校验 session 是否存在，
+ * 不存在则立即 `ws.close(1008, 'Session not found')`。客户端自造的 id
+ * 未注册，会导致连接"连上即断"。
+ */
+async function registerSession(role: string, name?: string): Promise<string | null> {
+  try {
+    const res = await fetch(`${getLocalBridgeUrl()}/v1/code/sessions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ metadata: { role, name } }),
+    })
+    if (!res.ok) return null
+    const body = (await res.json()) as { id?: string }
+    return typeof body.id === 'string' ? body.id : null
+  } catch {
+    return null
+  }
+}
+
+/**
  * 初始化本地桥接连接（替代 initReplBridge）
  */
 export async function initLocalBridge(options: LocalBridgeOptions): Promise<LocalBridgeHandle | null> {
-  const client = new LocalBridgeClient(options)
+  const role = options.role || 'host'
+  const serverSessionId = await registerSession(role, options.initialName)
+  if (!serverSessionId) {
+    options.onStateChange?.('failed', '无法在桥接服务器注册会话（服务器未启动？）')
+    return null
+  }
+
+  // 用服务端签发的 id 建连；调用方传入的 id 仅作为本地标识保留。
+  const client = new LocalBridgeClient({ ...options, role, sessionId: serverSessionId })
 
   const connected = await client.connect()
   if (!connected) {
@@ -317,12 +347,12 @@ export async function initLocalBridge(options: LocalBridgeOptions): Promise<Loca
   }
 
   return {
-    sessionId: options.sessionId,
-    role: options.role || 'host',
+    sessionId: serverSessionId,
+    role,
     connected: true,
     environmentId: '',
-    bridgeSessionId: options.sessionId,
-    sessionIngressUrl: getLocalBridgeUrl(),
+    bridgeSessionId: serverSessionId,
+    sessionIngressUrl: `${getLocalBridgeUrl().replace(/^http/, 'ws')}/session-ingress/${serverSessionId}`,
 
     writeMessages(messages: Array<Record<string, unknown>>) {
       for (const msg of messages) {

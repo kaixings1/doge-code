@@ -112,6 +112,7 @@ import {
   isToolSearchEnabledOptimistic,
   isToolSearchToolAvailable,
 } from '../../utils/toolSearch.js'
+import { buildInlineSchemaFragment } from '../../utils/toolSchemaHint.js'
 import {
   McpAuthError,
   McpToolCallError_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
@@ -594,6 +595,19 @@ export function buildSchemaNotSentHint(
   if (!isDeferredTool(tool)) return null
   const discovered = extractDiscoveredToolNames(messages)
   if (discovered.has(tool.name)) return null
+
+  // Inline the schema so the retry can succeed without a ToolSearch round-trip.
+  // ToolSearch stays as the fallback for when the schema can't be rendered.
+  const inlineSchema = buildInlineSchemaFragment(tool.inputSchema)
+  if (inlineSchema) {
+    return (
+      `\n\nThis tool's schema was not sent to the API — it was not in the discovered-tool set derived from message history. ` +
+      `Here is the schema: ${inlineSchema} ` +
+      `Retry this call now with arguments matching that schema (note \`required\` and each property's type). ` +
+      `If you still cannot construct a valid call, load the full definition first: call ${TOOL_SEARCH_TOOL_NAME} with query "select:${tool.name}".`
+    )
+  }
+
   return (
     `\n\nThis tool's schema was not sent to the API — it was not in the discovered-tool set derived from message history. ` +
     `Without the schema in your prompt, typed parameters (arrays, numbers, booleans) get emitted as strings and the client-side parser rejects them. ` +
