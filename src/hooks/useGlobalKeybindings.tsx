@@ -5,7 +5,7 @@
  * 此组件不渲染任何内容 - 它只注册快捷键处理器
  */
 import { feature } from 'bun:bundle';
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import instances from '../ink/instances.js';
 import { useKeybinding } from '../keybindings/useKeybinding.js';
 import type { Screen } from '../screens/REPL.js';
@@ -15,6 +15,7 @@ import { useAppState, useSetAppState } from '../state/AppState.js';
 import { count } from '../utils/array.js';
 import { logForDebugging } from '../utils/debug.js';
 import { getTerminalPanel } from '../utils/terminalPanel.js';
+import { TerminalPanelView } from '../components/TerminalPanel/TerminalPanelView.js';
 type Props = {
   screen: Screen;
   setScreen: React.Dispatch<React.SetStateAction<Screen>>;
@@ -25,6 +26,12 @@ type Props = {
   onExitTranscript?: () => void;
   virtualScrollActive?: boolean;
   searchBarOpen?: boolean;
+  /** 挂载全屏覆盖层（终端面板用） */
+  setToolJSX?: (args: {
+    jsx: React.ReactNode | null;
+    shouldHidePromptInput: boolean;
+    isLocalJSXCommand?: boolean;
+  } | null) => void;
 };
 
 /**
@@ -43,7 +50,8 @@ export function GlobalKeybindingHandlers({
   onEnterTranscript,
   onExitTranscript,
   virtualScrollActive,
-  searchBarOpen = false
+  searchBarOpen = false,
+  setToolJSX
 }: Props): null {
   const expandedView = useAppState(s => s.expandedView);
   const setAppState = useSetAppState();
@@ -215,11 +223,41 @@ export function GlobalKeybindingHandlers({
   // isGrowthBookEnabled() is false and getFeatureValue_* returns the default
   // before ever reading cachedGrowthBookFeatures — so that gate could never
   // be enabled in this environment.
+  // 在终端面板与主界面之间切换。
+  //
+  // 实现走「内嵌 PTY」而非外部 tmux：Windows ConPTY 下 tmux attach 拿不到
+  // 控制台句柄，会打印版本号后立即退出（实测 status=0、约 30ms），上层
+  // 随即 exitAlternateScreen，表现为「切换了一下又弹回」。改成用
+  // Bun.spawn + 管道直接驱动 shell，输出由 TerminalPanelView 渲染。
+  const terminalOpenRef = useRef(false);
   const handleToggleTerminal = useCallback(() => {
-    if (feature('TERMINAL_PANEL')) {
+    if (!feature('TERMINAL_PANEL')) return;
+    if (!setToolJSX) {
+      logForDebugging(
+        'Terminal panel: setToolJSX unavailable, falling back to tmux panel',
+      );
       getTerminalPanel().toggle();
+      return;
     }
-  }, []);
+    if (terminalOpenRef.current) {
+      terminalOpenRef.current = false;
+      setToolJSX(null);
+      return;
+    }
+    terminalOpenRef.current = true;
+    setToolJSX({
+      jsx: (
+        <TerminalPanelView
+          onExit={() => {
+            terminalOpenRef.current = false;
+            setToolJSX(null);
+          }}
+        />
+      ),
+      shouldHidePromptInput: true,
+      isLocalJSXCommand: true,
+    });
+  }, [setToolJSX]);
   useKeybinding('app:toggleTerminal', handleToggleTerminal, {
     context: 'Global'
   });
