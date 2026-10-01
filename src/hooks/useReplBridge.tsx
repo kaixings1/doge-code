@@ -511,7 +511,14 @@ export function useReplBridge(messages: Message[], setMessages: (action: React.S
     // 在 0，等手机连上后首个 effect 会把整段历史对话一次性灌给手机。
     const start = Math.min(mobilePushIndexRef.current, messages.length);
     mobilePushIndexRef.current = messages.length;
-    if (!getActiveMobileBridgeServer()) return;
+    const server = getActiveMobileBridgeServer();
+    if (!server) {
+      logForDebugging(
+        `[mobile-push] effect 触发，messages=${messages.length}，无活动服务器，跳过`,
+      );
+      return
+    }
+    let pushed = 0;
     for (let i = start; i < messages.length; i++) {
       const m = messages[i];
       if (!m) continue;
@@ -521,10 +528,14 @@ export function useReplBridge(messages: Message[], setMessages: (action: React.S
       // 推送是旁路能力：任何异常都不得影响主流程
       try {
         pushToMobileClients({ role: m.type, text });
+        pushed++;
       } catch (e) {
         logForDebugging(`[bridge:repl] 推送移动端失败（已忽略）：${errorMessage(e)}`);
       }
     }
+    logForDebugging(
+      `[mobile-push] effect 触发，messages=${messages.length}，range=[${start},${messages.length})，已推送=${pushed}，客户端=${server.getClientCount()}`,
+    );
   }, [messages]);
 
   const sendBridgeResult = useCallback(() => {

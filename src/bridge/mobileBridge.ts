@@ -736,13 +736,22 @@ export class MobileBridgeServer {
         if (!message || typeof message !== 'string') return
         // 与 handleInboundMessage 保持一致：mode 'prompt' + 跳过斜杠命令解析。
         // 手机端输入不应被当作 CLI 斜杠命令执行。
-        enqueue({
-          value: message,
-          mode: 'prompt',
-          skipSlashCommands: true,
-          bridgeOrigin: true,
-        })
-        logForDebugging(`[MobileBridgeServer] 已注入移动端消息（${message.length} 字符）`)
+        try {
+          enqueue({
+            value: message,
+            mode: 'prompt',
+            skipSlashCommands: true,
+            bridgeOrigin: true,
+          })
+          logForDebugging(
+            `[mobile-push] 入站注入成功 enqueue("${message.slice(0, 40)}", ${message.length} 字符)`,
+          )
+        } catch (e) {
+          logForDebugging(
+            `[mobile-push] 入站注入失败：${e instanceof Error ? e.message : String(e)}`,
+            { level: 'error' },
+          )
+        }
         break
       }
       case 'interrupt': {
