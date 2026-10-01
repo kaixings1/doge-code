@@ -124,7 +124,7 @@
     "lru-cache": "^11.5.2",
     "marked": "^18.0.5",
     "modifiers-napi": "file:./shims/modifiers-napi",
-    "monaco-editor": "^0.56.0",
+    "monaco-editor": "^0.57.0",
     "p-map": "^5.5.0",
     "picomatch": "^4.0.4",
     "plist": "^5.0.0",
