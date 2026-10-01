@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { isLocalBridgeMode } from '../../bridge/bridgeConfig.js'
 import { getOauthConfig } from '../../constants/oauth.js'
 import { getOrganizationUUID } from '../../services/oauth/client.js'
 import { getClaudeAIOAuthTokens } from '../auth.js'
@@ -30,6 +31,21 @@ export type EnvironmentListResponse = {
  * @throws Error if the API request fails or no access token is available
  */
 export async function fetchEnvironments(): Promise<EnvironmentResource[]> {
+  // ponytail: 本地桥接模式返回伪造的 bridge 环境，让 /remote-env 菜单可用。
+  // 上限：environment_id 'local-bridge' 非真实 ID，仅本地桥接链路可用。
+  // 升级路径：改为请求 getLocalBridgeUrl() 的 /v1/environment_providers。
+  if (isLocalBridgeMode()) {
+    return [
+      {
+        kind: 'bridge',
+        environment_id: 'local-bridge',
+        name: 'Local doge-bridge',
+        created_at: new Date().toISOString(),
+        state: 'active',
+      },
+    ]
+  }
+
   const accessToken = getClaudeAIOAuthTokens()?.accessToken
   if (!accessToken) {
     throw new Error(
