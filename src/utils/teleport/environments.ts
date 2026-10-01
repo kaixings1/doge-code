@@ -39,7 +39,7 @@ export async function fetchEnvironments(): Promise<EnvironmentResource[]> {
       {
         kind: 'bridge',
         environment_id: 'local-bridge',
-        name: 'Local doge-bridge',
+        name: '本地桥接',
         created_at: new Date().toISOString(),
         state: 'active',
       },
