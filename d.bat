@@ -1,27 +1,25 @@
-REM echo [%DATE% %TIME%] DOGE_START >> D:\doge-code\trace.log
-
 @echo off
 
-REM Switch to UTF-8 code page BEFORE any non-ASCII byte in this file.
-REM cmd.exe parses each line using the ANSI code page (GBK on zh-CN) until
-REM chcp runs; a UTF-8 Chinese char on the line above would desync the line
-REM boundary and truncate every following line. Keep this line pure ASCII.
 chcp 65001 >nul
 
 del /q .bun-build* 2>nul
 rd /s /q node_modules\.cache 2>nul
 
-REM === 环境变量已迁移到配置文件 ===
-REM 全部 200 个 CLAUDE_CODE_* / FEATURE / 运行时变量现由以下配置文件提供：
-REM   ~/.doge/settings.json  ->  "env" 字段（用户级，优先级最高，对所有项目生效）
-REM   <项目>/.claude/settings.json -> "env" 字段（项目级，团队共享）
-REM 修改方式：/config env.KEY=value   或直接编辑上述 JSON 的 env 字段
-REM 仅 DOGE_API_JSON 因依赖 %1 参数而保留在此处。
+REM === Environment variables are provided by config files ===
+REM ~\.doge\settings.json            -> "env" (user level, highest priority)
+REM <project>\.claude\settings.json  -> "env" (project level, team shared)
+REM Edit with: /config env.KEY=value  or edit the env field of the JSON.
+REM Only DOGE_API_JSON stays here because it depends on %1.
 REM
-REM 注：CLAUDE_CODE_FEATURE_* 走 settings.json 的 env 是完全有效的。
-REM managedEnv.applyConfigEnvironmentVariables() 应用全部来源的 env，
-REM 不受 SAFE_ENV_VARS 白名单限制（白名单只作用于信任前的 applySafe* 阶段）。
-REM 已实测 TERMINAL_PANEL / WORKFLOW_SCRIPTS / USER_TYPE 均可注入。
+REM NOTE: CLAUDE_CODE_FEATURE_* through settings.json env is fully valid.
+REM managedEnv.applyConfigEnvironmentVariables() applies env from every
+REM source and is NOT limited by SAFE_ENV_VARS (that whitelist only applies
+REM to the pre-trust applySafe* phase).
+REM
+REM IMPORTANT: keep this file pure ASCII with CRLF line endings.
+REM cmd.exe decodes a batch file using the ANSI code page (GBK on zh-CN);
+REM UTF-8 Chinese bytes can swallow the following newline, merging lines so
+REM that REM comment lines get executed as commands.
 
 if "%1"=="" (
     set DOGE_API_JSON=.doge\api.json
@@ -49,7 +47,33 @@ if errorlevel 1 (
 REM echo BEFORE_DOGE_EXE >> trace.log
 REM "D:\doge-code\doge.exe" --dangerously-skip-permissions --verbose %2 %3 %4 %5 --debug-file ./debug1.txt
 
-REM --feature=TERMINAL_PANEL 是 bun run 的原生 flag，让 feature('TERMINAL_PANEL')
-REM 在解析期固化为 true。bun:bundle 的 feature() 是编译期常量折叠，env / --define
-REM 都改不了它 —— 只有 --feature 有效（实测：无 flag 为 false，加 flag 为 true）。
-bun run --feature=TERMINAL_PANEL "D:\doge-code\src\bootstrap-entry.ts" --dangerously-skip-permissions --verbose %2 %3 --debug-file ./debug2.txt
+REM === feature gates ===
+REM bun:bundle feature() is compile-time constant folding; env / --define
+REM cannot change it, only --feature / --feature= works (verified:
+REM no flag = false, with flag = true). bun run accepts both forms.
+bun run ^
+    --feature=TERMINAL_PANEL --feature=PROACTIVE --feature=KAIROS ^
+    --feature=KAIROS_BRIEF --feature=KAIROS_CHANNELS --feature=BRIDGE_MODE ^
+    --feature=DAEMON --feature=VOICE_MODE --feature=HISTORY_SNIP ^
+    --feature=CCR_REMOTE_SETUP --feature=EXPERIMENTAL_SKILL_SEARCH ^
+    --feature=KAIROS_GITHUB_WEBHOOKS --feature=ULTRAPLAN --feature=TORCH ^
+    --feature=FORK_SUBAGENT --feature=WORKFLOW_SCRIPTS --feature=MCP_SKILLS ^
+    --feature=AGENT_TRIGGERS --feature=CCR_AUTO_CONNECT --feature=CCR_MIRROR ^
+    --feature=CACHED_MICROCOMPACT --feature=CONNECTOR_TEXT ^
+    --feature=TRANSCRIPT_CLASSIFIER --feature=BASH_CLASSIFIER ^
+    --feature=COORDINATOR_MODE --feature=EXTRACT_MEMORIES ^
+    --feature=DOWNLOAD_USER_SETTINGS --feature=COMMIT_ATTRIBUTION ^
+    --feature=STREAMLINED_OUTPUT --feature=NATIVE_CLIENT_ATTESTATION ^
+    --feature=TOKEN_BUDGET --feature=TEMPLATES --feature=CHICAGO_MCP ^
+    --feature=BG_SESSIONS --feature=BYOC_ENVIRONMENT_RUNNER ^
+    --feature=SELF_HOSTED_RUNNER --feature=REACTIVE_COMPACT ^
+    --feature=CONTEXT_COLLAPSE --feature=PROMPT_CACHE_BREAK_DETECTION ^
+    --feature=VERIFICATION_AGENT --feature=AGENT_MEMORY_SNAPSHOT ^
+    --feature=BREAK_CACHE_COMMAND --feature=NEW_INIT ^
+    --feature=MEMORY_SHAPE_TELEMETRY --feature=TEAMMEM ^
+    --feature=DIRECT_CONNECT --feature=LODESTONE --feature=SSH_REMOTE ^
+    --feature=UPLOAD_USER_SETTINGS --feature=HARD_FAIL --feature=ABLATION_BASELINE ^
+    --feature=DUMP_SYSTEM_PROMPT --feature=WEB_BROWSER_TOOL --feature=QUICK_SEARCH ^
+    --feature=MESSAGE_ACTIONS --feature=FILE_PERSISTENCE ^
+    "D:\doge-code\src\bootstrap-entry.ts" ^
+    --dangerously-skip-permissions --verbose %2 %3 --debug-file ./debug2.txt
