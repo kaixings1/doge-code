@@ -2,67 +2,26 @@
 # Secret Blocker Hook (PreToolUse - Write/Edit)
 # Blocks file writes that contain hardcoded secrets, API keys, or credentials.
 # Exit code 2 = BLOCK the action.
+#
+# NOTE: MSYS2 mangles `grep -E` brace quantifiers ({20,}) and `python3` pipes,
+# so all matching is delegated to a standalone Python helper invoked by absolute
+# path. Do not inline regex into this script.
 
-# Read the tool input from stdin
+PY=""
+for c in /d/Python312/python.exe python.exe /c/Python312/python.exe; do
+  if command -v "$c" >/dev/null 2>&1; then PY="$c"; break; fi
+done
+if [ -z "$PY" ]; then
+  # No Python available: fail open rather than blocking every edit.
+  exit 0
+fi
+
 INPUT=$(cat)
 
-# Extract the file content being written (new_string for Edit, content for Write)
-CONTENT=$(echo "$INPUT" | python3 -c "
-import sys, json
-try:
-    data = json.load(sys.stdin)
-    tool = data.get('tool_name', '')
-    inp = data.get('tool_input', {})
-    if tool == 'Write':
-        print(inp.get('content', ''))
-    elif tool == 'Edit':
-        print(inp.get('new_string', ''))
-except:
-    pass
-" 2>/dev/null)
+printf '%s' "$INPUT" | "$PY" "$(dirname "$0")/secret-scanner.py"
+RC=$?
 
-if [ -z "$CONTENT" ]; then
-    exit 0
+if [ "$RC" -eq 2 ]; then
+  exit 2
 fi
-
-# Patterns that indicate hardcoded secrets
-BLOCKED=false
-REASON=""
-
-# MongoDB connection strings with credentials
-if echo "$CONTENT" | command grep -qE 'mongodb\+srv://[^$\{]+:[^$\{]+@'; then
-    BLOCKED=true
-    REASON="Hardcoded MongoDB connection string with credentials"
-fi
-
-# AWS keys
-if echo "$CONTENT" | command grep -qE 'AKIA[0-9A-Z]{16}'; then
-    BLOCKED=true
-    REASON="AWS access key detected"
-fi
-
-# Stripe secret keys (not env var references)
-if echo "$CONTENT" | command grep -qE 'sk_live_[a-zA-Z0-9]{20,}'; then
-    BLOCKED=true
-    REASON="Stripe live secret key detected"
-fi
-
-# Private keys
-if echo "$CONTENT" | command grep -qE 'BEGIN (RSA |EC |DSA )?PRIVATE KEY'; then
-    BLOCKED=true
-    REASON="Private key detected"
-fi
-
-# Generic password assignments (but not placeholder patterns)
-if echo "$CONTENT" | command grep -qiE '"(password|secret|apikey|api_key|token)"\s*:\s*"[^$\{\}][^"]{8,}"' | command grep -vqE 'Admin123!|Test123|placeholder|your-.*-here|xxx'; then
-    BLOCKED=true
-    REASON="Possible hardcoded credential"
-fi
-
-if [ "$BLOCKED" = true ]; then
-    echo "BLOCKED: $REASON"
-    echo "Use environment variables or Azure Key Vault instead of hardcoding secrets."
-    exit 2
-fi
-
 exit 0

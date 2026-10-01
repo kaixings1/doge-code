@@ -1,0 +1,1 @@
+{"tool_name":"mcp__mongodb__find","tool_input":{"collection":"users","filter":{"TaxId":"x"}}}

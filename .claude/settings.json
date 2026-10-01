@@ -1,4 +1,4 @@
-﻿{
+{
   "enableAllProjectMcpServers": true,
   "hooks": {
     "PreToolUse": [
@@ -7,11 +7,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 D:/doge-code/.claude/hooks/secret-blocker.py"
+            "command": "bash D:/doge-code/.claude/hooks/secret-blocker.sh"
           },
           {
             "type": "command",
-            "command": "python3 D:/doge-code/.claude/hooks/protected-files.py"
+            "command": "bash D:/doge-code/.claude/hooks/protected-files.sh"
           }
         ]
       },
@@ -20,7 +20,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 D:/doge-code/.claude/hooks/sensitive-data-blocker.py"
+            "command": "bash D:/doge-code/.claude/hooks/sensitive-data-blocker.sh"
           }
         ]
       },
@@ -29,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 D:/doge-code/.claude/hooks/sensitive-data-mcp-blocker.py"
+            "command": "bash D:/doge-code/.claude/hooks/sensitive-data-mcp-blocker.sh"
           }
         ]
       }
@@ -40,11 +40,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 D:/doge-code/.claude/hooks/auto-format.py"
+            "command": "bash D:/doge-code/.claude/hooks/auto-format.sh"
           },
           {
             "type": "command",
-            "command": "python3 D:/doge-code/.claude/hooks/test-on-change.py"
+            "command": "bash D:/doge-code/.claude/hooks/test-on-change.sh"
           }
         ]
       },
@@ -53,7 +53,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 D:/doge-code/.claude/hooks/sensitive-data-output-blocker.py"
+            "command": "bash D:/doge-code/.claude/hooks/sensitive-data-output-blocker.sh"
           }
         ]
       },
@@ -62,7 +62,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 D:/doge-code/.claude/hooks/sensitive-data-output-blocker.py"
+            "command": "bash D:/doge-code/.claude/hooks/sensitive-data-output-blocker.sh"
           }
         ]
       },
@@ -71,7 +71,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 D:/doge-code/.claude/hooks/sensitive-data-output-blocker.py"
+            "command": "bash D:/doge-code/.claude/hooks/sensitive-data-output-blocker.sh"
           }
         ]
       }
@@ -81,7 +81,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 D:/doge-code/.claude/hooks/auto-executor.py",
+            "command": "bash D:/doge-code/.claude/hooks/auto-executor.sh",
             "timeout": 10000,
             "async": true
           }
@@ -93,7 +93,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 D:/doge-code/.claude/hooks/auto-executor.py",
+            "command": "bash D:/doge-code/.claude/hooks/auto-executor.sh",
             "timeout": 10000,
             "async": true
           }
@@ -105,11 +105,16 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 D:/doge-code/.claude/hooks/uat-reminder.py"
+            "command": "bash D:/doge-code/.claude/hooks/uat-reminder.sh"
           },
           {
             "type": "command",
-            "command": "python3 D:/doge-code/.claude/hooks/self-improve.py"
+            "command": "bash D:/doge-code/.claude/hooks/self-improve.sh"
+          },
+          {
+            "type": "command",
+            "command": "node D:/doge-code/.claude/hooks/heartflow-guard.ts",
+            "timeout": 5000
           }
         ]
       }
@@ -125,17 +130,6 @@
           {
             "type": "command",
             "command": "node D:/doge-code/.claude/hooks/skill-activation-prompt.ts \"$ARGUMENTS\"",
-            "timeout": 5000
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node D:/doge-code/.claude/hooks/heartflow-guard.ts",
             "timeout": 5000
           }
         ]
