@@ -26,6 +26,7 @@ import { isLocalBridgeMode } from './bridgeConfig.js'
 import { getMobileSessionManager } from './mobileSession.js'
 import { handleMobileRequest, type MobileRequest, type MobileResponse } from './mobileProtocol.js'
 import type { ReplBridgeHandle } from './replBridge.js'
+import { enqueue } from '../utils/messageQueueManager.js'
 import { logForDebugging } from '../utils/debug.js'
 import type { SDKMessage } from '../entrypoints/agentSdkTypes.js'
 
@@ -520,15 +521,19 @@ export class MobileBridgeServer {
   private sessionManager = getMobileSessionManager()
   private connectedClients = new Set<WebSocket>()
   private isRunning = false
+  /** 共享密钥；空字符串表示未启用认证（仅限可信局域网，会在启动时警告） */
+  private secret: string
 
   constructor(options: {
     sessionId: string
     port?: number
     bridgeHandle?: ReplBridgeHandle
+    secret?: string
   }) {
     this.sessionId = options.sessionId
     this.port = options.port ?? 5680
     this.bridgeHandle = options.bridgeHandle ?? null
+    this.secret = options.secret ?? process.env.CLAUDE_CODE_MOBILE_SECRET ?? ''
   }
 
   /**
@@ -567,6 +572,15 @@ export class MobileBridgeServer {
           return
         }
 
+        // 手机端对话页面 — 扫码后在浏览器打开，无需安装 App
+        if (req.method === 'GET' && (req.url === '/' || req.url?.startsWith('/?') || req.url?.startsWith('/index'))) {
+          const port = this.port
+          const secret = this.secret ?? ''
+          res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' })
+          res.end(renderMobileChatPage(this.sessionId, port, secret))
+          return
+        }
+
         // 移动端命令 HTTP 接口
         if (req.method === 'POST' && req.url?.startsWith('/mobile/command')) {
           let body = ''
@@ -601,17 +615,27 @@ export class MobileBridgeServer {
         const deviceId = url.searchParams.get('deviceId') ?? 'unknown'
         const deviceType = (url.searchParams.get('deviceType') ?? 'unknown') as 'ios' | 'android' | 'unknown'
 
-        // 验证密钥
-        if (this.sessionManager.isDeviceAllowed(deviceId)) {
-          if (this.sessionManager['authInfo']?.secret && secret !== this.sessionManager['authInfo'].secret) {
-            ws.close(4001, '认证失败')
-            return
-          }
+        // 验证密钥：服务端配置了密钥时必须匹配，否则拒绝连接。
+        // 原实现在 isDeviceAllowed 为真时才校验（等于放行所有未授权设备），逻辑是反的。
+        if (this.secret && secret !== this.secret) {
+          ws.close(4001, '认证失败')
+          return
         }
 
-        // 创建移动端会话
-        const session = (this.sessionManager as any).createSession(deviceId, deviceType)
-        ;(this.sessionManager as any).updateSessionState(session.sessionId, 'connected')
+        // 创建移动端会话。
+        // createSession 在会话数达上限时会 throw；若不捕获，异常会从
+        // connection 回调逸出并终止进程（手机端断线自动重连必然触发）。
+        let session: { sessionId: string }
+        try {
+          session = (this.sessionManager as any).createSession(deviceId, deviceType)
+          ;(this.sessionManager as any).updateSessionState(session.sessionId, 'connected')
+        } catch (e) {
+          logForDebugging(
+            `[MobileBridgeServer] 创建会话失败，拒绝连接：${e instanceof Error ? e.message : String(e)}`,
+          )
+          ws.close(4002, '会话数已达上限')
+          return
+        }
 
         (ws as any).on('message', (data: string | Buffer) => {
           try {
@@ -634,12 +658,15 @@ export class MobileBridgeServer {
       })
 
       await new Promise<void>((resolve, reject) => {
-        this.httpServer.listen(this.port, 'localhost', resolve)
+        // 绑定 0.0.0.0 而非 localhost，否则手机（不同设备）无法连接。
+        // 安全由 MobileBridgeServer 的密钥校验与局域网边界共同保证。
+        this.httpServer.listen(this.port, '0.0.0.0', resolve)
         this.httpServer.on('error', reject)
       })
 
       this.isRunning = true
-      logForDebugging(`[MobileBridgeServer] 服务器启动在端口 ${this.port}`)
+      activeMobileServer = this
+      logForDebugging(`[MobileBridgeServer] 服务器启动在 ${getMobileBridgeUrl(this.port)}（监听 0.0.0.0:${this.port}）`)
     } catch (e) {
       logForDebugging(`[MobileBridgeServer] 启动失败: ${e instanceof Error ? e.message : String(e)}`)
     }
@@ -653,17 +680,28 @@ export class MobileBridgeServer {
       // 更新活动时间
       this.sessionManager.updateSessionMetadata(sessionId, { lastActivity: Date.now() })
 
-      // 处理请求
+      // 控制类消息（对话/中断）走入站注入路径，由对话引擎处理，
+      // 不走 handleMobileRequest —— 后者的 handler 只负责工具类请求。
+      if (msg.type === 'control') {
+        this.forwardToBridge(msg, sessionId)
+        if (ws.readyState === ws.OPEN) {
+          ws.send(JSON.stringify({
+            type: 'result',
+            requestId: msg.requestId,
+            data: { status: 'queued', message: '已提交' },
+            success: true,
+            timestamp: Date.now(),
+          }))
+        }
+        return
+      }
+
+      // 处理工具类请求
       const response = await handleMobileRequest(msg)
 
       // 发送响应回移动端
       if (ws.readyState === ws.OPEN) {
         ws.send(JSON.stringify(response))
-      }
-
-      // 如果是控制消息，转发给 bridgeHandle
-      if (this.bridgeHandle && msg.type === 'control') {
-        this.forwardToBridge(msg, sessionId)
       }
     } catch (e) {
       if (ws.readyState === ws.OPEN) {
@@ -680,24 +718,39 @@ export class MobileBridgeServer {
 
   /**
    * 将移动端消息转发到桥接
+   *
+   * 注意方向：bridgeHandle.writeMessages() 是「出站」——把本地对话镜像到
+   * 远端服务器（见 remoteBridgeCore.writeMessages 的 transport 调用），
+   * 用它无法把外部消息注入本地对话。
+   *
+   * 正确的「入站」入口是 messageQueueManager.enqueue()：REPL 的输入队列，
+   * 模块级单例，与 useReplBridge.tsx 的 handleInboundMessage 用的是同一条
+   * 路径（enqueue + mode:'prompt'）。故此处不依赖 bridgeHandle。
    */
   private forwardToBridge(msg: MobileRequest, sessionId: string): void {
-    if (!this.bridgeHandle) return
-
     const { action, params } = msg
 
     switch (action) {
       case 'sendMessage': {
         const { message } = params as { message: string }
-        this.bridgeHandle.writeMessages([{ type: 'user', message: { content: message } }])
+        if (!message || typeof message !== 'string') return
+        // 与 handleInboundMessage 保持一致：mode 'prompt' + 跳过斜杠命令解析。
+        // 手机端输入不应被当作 CLI 斜杠命令执行。
+        enqueue({
+          value: message,
+          mode: 'prompt',
+          skipSlashCommands: true,
+          bridgeOrigin: true,
+        })
+        logForDebugging(`[MobileBridgeServer] 已注入移动端消息（${message.length} 字符）`)
         break
       }
       case 'interrupt': {
-        this.bridgeHandle.sendControlCancelRequest(msg.requestId)
+        this.bridgeHandle?.sendControlCancelRequest(msg.requestId)
         break
       }
       case 'cancel': {
-        this.bridgeHandle.sendControlCancelRequest(msg.requestId)
+        this.bridgeHandle?.sendControlCancelRequest(msg.requestId)
         break
       }
     }
@@ -747,6 +800,10 @@ export class MobileBridgeServer {
     this.isRunning = false
     this.connectedClients.clear()
     this.sessionManager.stopCleanup()
+    // 仅当注册的仍是本实例时才清除，避免旧实例的 stop 摘掉新实例
+    if (activeMobileServer === this) {
+      activeMobileServer = null
+    }
   }
 
   /**
@@ -762,6 +819,34 @@ export class MobileBridgeServer {
   getClientCount(): number {
     return this.connectedClients.size
   }
+}
+
+// ─── 全局服务器注册表 ───
+
+/**
+ * 进程内活动的移动端桥接服务器。
+ *
+ * 用途：CLI 侧产生新消息时（assistant 回复 / 工具结果）需要推送到手机，
+ * 但消息流回调（useReplBridge 的转发 effect）不在服务器对象的闭包里，
+ * 需要一条模块级通路找到当前服务器实例。同 replBridgeHandle 的思路：
+ * 单进程单实例。
+ */
+let activeMobileServer: MobileBridgeServer | null = null
+
+export function getActiveMobileBridgeServer(): MobileBridgeServer | null {
+  return activeMobileServer
+}
+
+/**
+ * 把一条已生成的消息推送到所有已连接的手机端。
+ * 由 CLI 消息流转发 effect 调用；无活动服务器时静默返回。
+ */
+export function pushToMobileClients(message: {
+  role: 'user' | 'assistant' | 'system'
+  text: string
+}): void {
+  if (!activeMobileServer || !message.text) return
+  activeMobileServer.sendToAll(message.role, { text: message.text })
 }
 
 /**
@@ -784,9 +869,203 @@ export async function initMobileBridgeServer(
 }
 
 /**
+ * 探测本机局域网 IPv4 地址（手机需要通过该地址访问电脑）。
+ *
+ * 选择顺序很重要：机器上常有多个网卡（VMware/VirtualBox/Docker/WSL 虚拟网卡、
+ * 未连网的 APIPA 169.254.x.x 地址）。若随便取第一个非回环地址，很可能选中
+ * 虚拟网卡或 169.254 链路本地地址，手机根本连不上。
+ *
+ * 判定依据是「默认路由」：能上外网的那个网卡才是手机真正连着的网络。
+ * 仅靠网卡名或私有网段猜测不可靠——实测中"以太网 5"(192.168.26.152) 与
+ * WLAN(192.168.0.106) 都是 192.168 段，但只有后者走默认路由。
+ *
+ * 策略：
+ * 1. 解析 `route print` 找出默认网关对应的本机 IP（最可靠）
+ * 2. 回退：排除回环 / APIPA(169.254) / 常见虚拟网卡名，优先 192.168 段
+ * 3. 都失败时回退 localhost
+ */
+export function getLanIp(): string {
+  // 优先：从路由表取默认网关对应的本机地址。
+  // `route print` 是 Windows 专有命令，其他平台直接走回退策略，
+  // 避免无谓的 execSync 失败开销。
+  try {
+    if (process.platform !== 'win32') throw new Error('non-win32')
+    const { execSync } = require('child_process') as typeof import('child_process')
+    const out = execSync('route print -4', { encoding: 'utf8', timeout: 3000, windowsHide: true })
+    for (const raw of out.split(/\r?\n/)) {
+      const line = raw.trim()
+      // 目标为 0.0.0.0 的默认路由行，末列为接口本机 IP
+      if (!line.startsWith('0.0.0.0')) continue
+      const parts = line.split(/\s+/)
+      if (parts.length < 5) continue
+      const gateway = parts[2]
+      const ifaceIp = parts[3]
+      if (gateway === '0.0.0.0' || !ifaceIp) continue
+      if (ifaceIp.startsWith('169.254.') || ifaceIp === '127.0.0.1') continue
+      return ifaceIp
+    }
+  } catch {
+    // 忽略：进入回退策略
+  }
+
+  // 回退：网卡名 + 私有网段启发式
+  try {
+    const os = require('os') as typeof import('os')
+    const ifaces = os.networkInterfaces()
+    const VIRTUAL = /vmware|virtualbox|vethernet|hyper-v|docker|wsl|loopback|virtual|tap|tun|bluetooth|km-test|host-only/i
+    const candidates: string[] = []
+
+    for (const name of Object.keys(ifaces)) {
+      if (VIRTUAL.test(name)) continue
+      for (const info of ifaces[name] ?? []) {
+        if (info.family !== 'IPv4' || info.internal) continue
+        const addr = info.address
+        if (addr.startsWith('169.254.')) continue
+        candidates.push(addr)
+      }
+    }
+
+    if (candidates.length === 0) return 'localhost'
+    return candidates.find(a => a.startsWith('192.168.'))
+      ?? candidates.find(a => a.startsWith('10.'))
+      ?? candidates.find(a => /^172\.(1[6-9]|2\d|3[01])\./.test(a))
+      ?? candidates[0]
+  } catch {
+    // 忽略：回退到 localhost
+  }
+  return 'localhost'
+}
+
+/**
  * 获取移动端桥接 URL（用于二维码生成）
+ *
+ * 手机与电脑不在同一台机器上，必须返回局域网地址而非 localhost，
+ * 否则手机扫码后无法建立连接。
  */
 export function getMobileBridgeUrl(port?: number): string {
   const p = port ?? 5680
-  return `http://localhost:${p}`
+  return `http://${getLanIp()}:${p}`
+}
+
+/**
+ * 渲染手机端对话页面。
+ *
+ * 为什么不写原生 App：手机浏览器原生支持 WebSocket，扫码即用、零安装，
+ * 不必引入 JDK / Android SDK / Flutter 工具链。页面通过 /mobile/ws 与
+ * CLI 会话收发消息：发消息经 enqueue() 进入 REPL 输入队列（入站），
+ * 回复由 useReplBridge 的消息流转发 effect 经 pushToMobileClients() 推回。
+ */
+function renderMobileChatPage(sessionId: string, port: number, secret: string): string {
+  // JSON.stringify 只保证 JSON 语法合法，不保证可安全嵌入 <script>：
+  // 值中的 "</script>" 仍会闭合标签（可用于注入任意 JS）。
+  // 额外转义 < > & 为 \uXXXX，切断标签闭合路径。
+  const cfg = JSON.stringify({ sessionId, port, secret })
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026')
+  return `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>doge-code 对话</title>
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+       background:#1a1a1a;color:#e8e8e8;display:flex;flex-direction:column;height:100dvh}
+  header{padding:10px 14px;background:#232323;border-bottom:1px solid #333;display:flex;align-items:center;gap:8px;
+         padding-top:calc(10px + env(safe-area-inset-top))}
+  .dot{width:8px;height:8px;border-radius:50%;background:#888;flex:none}
+  .dot.on{background:#4ade80}.dot.off{background:#f87171}
+  header b{font-weight:600;font-size:14px}
+  header span{font-size:12px;color:#999;margin-left:auto}
+  #log{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch}
+  .m{max-width:86%;padding:9px 12px;border-radius:14px;white-space:pre-wrap;word-break:break-word}
+  .u{align-self:flex-end;background:#2563eb;color:#fff;border-bottom-right-radius:4px}
+  .a{align-self:flex-start;background:#2d2d2d;border-bottom-left-radius:4px}
+  .s{align-self:center;background:transparent;color:#888;font-size:12px;padding:2px}
+  footer{padding:8px 10px;padding-bottom:calc(8px + env(safe-area-inset-bottom));background:#232323;
+         border-top:1px solid #333;display:flex;gap:8px;align-items:flex-end}
+  textarea{flex:1;resize:none;background:#1a1a1a;color:#e8e8e8;border:1px solid #444;border-radius:10px;
+           padding:9px 11px;font:inherit;max-height:110px;min-height:40px}
+  button{background:#2563eb;color:#fff;border:0;border-radius:10px;padding:0 16px;height:40px;font:inherit;font-weight:600}
+  button:disabled{background:#444;color:#888}
+</style>
+</head>
+<body>
+<header><i class="dot" id="dot"></i><b>doge-code</b><span id="st">连接中…</span></header>
+<div id="log"></div>
+<footer>
+  <textarea id="in" rows="1" placeholder="输入消息…"></textarea>
+  <button id="send" disabled>发送</button>
+</footer>
+<script>
+var CFG = ${cfg};
+var log = document.getElementById('log'), inp = document.getElementById('in'),
+    btn = document.getElementById('send'), dot = document.getElementById('dot'), st = document.getElementById('st');
+var ws = null, ready = false;
+
+function bubble(text, cls){
+  var d = document.createElement('div');
+  d.className = 'm ' + cls;
+  d.textContent = text;
+  log.appendChild(d);
+  log.scrollTop = log.scrollHeight;
+  return d;
+}
+function status(on, label){
+  ready = on;
+  dot.className = 'dot ' + (on ? 'on' : 'off');
+  st.textContent = label;
+  btn.disabled = !on;
+}
+function connect(){
+  var url = 'ws://' + location.host + '/mobile/ws?deviceId=mobile-web&deviceType=android'
+          + (CFG.secret ? '&secret=' + encodeURIComponent(CFG.secret) : '');
+  try { ws = new WebSocket(url); } catch(e){ status(false,'无法创建连接'); return; }
+
+  ws.onopen = function(){ status(true, '已连接'); };
+  ws.onclose = function(){ status(false, '已断开，重连中…'); setTimeout(connect, 2000); };
+  ws.onerror = function(){ status(false, '连接错误'); };
+  ws.onmessage = function(ev){
+    var msg;
+    try { msg = JSON.parse(ev.data); } catch(e){ return; }
+    if (msg.type === 'assistant' || msg.type === 'message') {
+      var data = msg.data || {};
+      var text = data.text || data.message || data.content;
+      if (typeof text === 'string' && text) bubble(text, 'a');
+    } else if (msg.type === 'result') {
+      var d = msg.data || {};
+      if (d.message) bubble(String(d.message), 'a');
+      else if (d.status === 'queued') bubble('（已提交）', 'a');
+    } else if (msg.type === 'error') {
+      bubble('错误：' + ((msg.data && msg.data.error) || '未知'), 's');
+    } else if (msg.type === 'system') {
+      bubble(String((msg.data && msg.data.message) || ''), 's');
+    }
+  };
+}
+function send(){
+  var text = inp.value.trim();
+  if (!text || !ready) return;
+  bubble(text, 'u');
+  inp.value = ''; inp.style.height = 'auto';
+  ws.send(JSON.stringify({
+    type: 'control', action: 'sendMessage', params: { message: text },
+    requestId: String(Date.now()) + '-' + Math.random().toString(36).slice(2, 8),
+    sessionId: CFG.sessionId, timestamp: Date.now()
+  }));
+}
+btn.onclick = send;
+inp.addEventListener('input', function(){
+  inp.style.height = 'auto';
+  inp.style.height = Math.min(inp.scrollHeight, 110) + 'px';
+});
+inp.addEventListener('keydown', function(e){
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+});
+connect();
+</script>
+</body>
+</html>`
 }

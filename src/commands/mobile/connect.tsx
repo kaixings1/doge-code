@@ -22,6 +22,7 @@ import { Pane } from '../../components/design-system/Pane.js'
 import { useKeybinding } from '../../keybindings/useKeybinding.js'
 import type { LocalJSXCommandOnDone } from '../../types/command.js'
 import { isMobileBridgeAvailable, MobileBridgeServer, getMobileBridgeUrl } from '../../bridge/mobileBridge.js'
+import { getReplBridgeHandle } from '../../bridge/replBridgeHandle.js'
 import { getMobileSessionManager } from '../../bridge/mobileSession.js'
 import { logForDebugging } from '../../utils/debug.js'
 
@@ -55,9 +56,15 @@ function MobileConnectScreen(t0) {
       const startServer = async () => {
         try {
           const sessionId = `mobile-${Date.now()}`
-          const wsUrl = `${getMobileBridgeUrl().replace(/^http/, 'ws')}/mobile/ws?deviceId=claude-code&deviceType=desktop`
-          const httpUrl = `${getMobileBridgeUrl()}/mobile/command`
+          // 手机是独立设备，必须用局域网地址而非 localhost
+          const base = getMobileBridgeUrl()
+          const wsUrl = `${base.replace(/^http/, 'ws')}/mobile/ws?deviceId=mobile-web&deviceType=android`
+          const httpUrl = `${base}/mobile/command`
           const bridgeSecret = process.env.CLAUDE_CODE_MOBILE_SECRET ?? ''
+
+          // 取当前 CLI 会话的桥接句柄，手机消息经它进入对话。
+          // 没有句柄时移动端只能看状态、无法对话，需要明确提示用户。
+          const bridgeHandle = getReplBridgeHandle()
 
           setConnectInfo({
             sessionId,
@@ -71,8 +78,13 @@ function MobileConnectScreen(t0) {
             clientCount: 0,
           })
 
-          // 启动移动端桥接服务器
-          const mobileServer = new MobileBridgeServer({ sessionId, port: 5680 })
+          // 启动移动端桥接服务器（传入 bridgeHandle，否则消息无法进入 CLI）
+          const mobileServer = new MobileBridgeServer({
+            sessionId,
+            port: 5680,
+            secret: bridgeSecret,
+            ...(bridgeHandle ? { bridgeHandle } : {}),
+          })
           await mobileServer.start()
 
           if (!mobileServer.isServerRunning()) {
@@ -83,9 +95,10 @@ function MobileConnectScreen(t0) {
 
           setServer(mobileServer)
 
-          // 生成二维码 — 包含连接 URL + 下载链接
-          // 格式: claude://mobile-bridge?sessionId=...&wsUrl=...&iosUrl=...&androidUrl=...
-          const connectUrl = `claude://mobile-bridge?sessionId=${encodeURIComponent(sessionId)}&wsUrl=${encodeURIComponent(wsUrl)}&httpUrl=${encodeURIComponent(httpUrl)}&secret=${encodeURIComponent(bridgeSecret)}&iosUrl=${encodeURIComponent(PLATFORMS.ios.url)}&androidUrl=${encodeURIComponent(PLATFORMS.android.url)}`
+          // 生成二维码 — 直接指向手机浏览器可打开的对话页面。
+          // 不再使用 claude:// 自定义 scheme（官方 Claude App 不识别该协议，
+          // 扫码不会有任何反应），也不再放入 secret（避免密钥泄露在二维码中）。
+          const connectUrl = base
 
           const qrCode = await qrToString(connectUrl, {
             type: 'utf8',
@@ -245,22 +258,6 @@ function MobileConnectScreen(t0) {
     t11 = $[10]
   }
 
-  let t12
-  if ($[11] !== connectInfo?.iosUrl) {
-    t12 = <Text dimColor={true}>iOS 下载: {connectInfo?.iosUrl ?? ''}</Text>
-    $[11] = connectInfo?.iosUrl
-  } else {
-    t12 = $[11]
-  }
-
-  let t13
-  if ($[12] !== connectInfo?.androidUrl) {
-    t13 = <Text dimColor={true}>Android 下载: {connectInfo?.androidUrl ?? ''}</Text>
-    $[12] = connectInfo?.androidUrl
-  } else {
-    t13 = $[12]
-  }
-
   let t14
   if ($[13] !== error) {
     t14 = error ? <Text color="red">{error}</Text> : <Text> </Text>
@@ -282,7 +279,7 @@ function MobileConnectScreen(t0) {
   }
 
   let t16
-  if ($[15] !== t6 || $[16] !== t14 || $[17] !== t7 || $[18] !== t8 || $[19] !== t9 || $[20] !== t10 || $[21] !== t11 || $[22] !== t12 || $[23] !== t13 || $[24] !== t15 || $[25] !== handleKeyDown) {
+  if ($[15] !== t6 || $[16] !== t14 || $[17] !== t7 || $[18] !== t8 || $[19] !== t9 || $[20] !== t10 || $[21] !== t11 || $[24] !== t15 || $[25] !== handleKeyDown) {
     t16 = (
       <Pane>
         <Box flexDirection="column">
@@ -293,12 +290,11 @@ function MobileConnectScreen(t0) {
           {t8}
           {t9}
           {t10}
-          <Text>二维码 — 扫描后自动下载 Claude App 并连接：</Text>
+          <Text>二维码 — 用手机浏览器扫码打开对话页面：</Text>
           {t15}
           <Text dimColor={true}>链接（可复制到手机浏览器）:</Text>
           {t11}
-          {t12}
-          {t13}
+          <Text dimColor={true}>提示：手机需与电脑在同一 WiFi；若连不上请检查防火墙是否放行 5680 端口</Text>
           <Text dimColor={true}>按 Esc 或 Q 关闭</Text>
         </Box>
       </Pane>
@@ -310,8 +306,6 @@ function MobileConnectScreen(t0) {
     $[19] = t9
     $[20] = t10
     $[21] = t11
-    $[22] = t12
-    $[23] = t13
     $[24] = t15
     $[25] = handleKeyDown
     $[26] = t16

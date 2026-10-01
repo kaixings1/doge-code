@@ -7,6 +7,7 @@ import { buildBridgeConnectUrl } from '../bridge/bridgeStatusUtil.js';
 import { extractInboundMessageFields } from '../bridge/inboundMessages.js';
 import type { BridgeState, ReplBridgeHandle } from '../bridge/replBridge.js';
 import { setReplBridgeHandle } from '../bridge/replBridgeHandle.js';
+import { getActiveMobileBridgeServer, pushToMobileClients } from '../bridge/mobileBridge.js';
 import type { Command } from '../commands.js';
 import { getSlashCommandToolSkills, isBridgeSafeCommand } from '../commands.js';
 import { getRemoteSessionUrl } from '../constants/product.js';
@@ -28,6 +29,24 @@ import { getLeaderToolUseConfirmQueue } from '../utils/swarm/leaderPermissionBri
 
 export const BRIDGE_FAILURE_DISMISS_MS = 10_000;
 const MAX_CONSECUTIVE_INIT_FAILURES = 3;
+
+/**
+ * 从消息中提取可推送给手机端的纯文本。
+ * 仅取 text 内容块，忽略工具调用、tool_result 等非展示内容。
+ */
+function extractPlainText(m: Message): string {
+  const content = (m as { message?: { content?: unknown } }).message?.content;
+  if (typeof content === 'string') return content;
+  if (!Array.isArray(content)) return '';
+  const parts: string[] = [];
+  for (const block of content) {
+    if (block && typeof block === 'object' && (block as { type?: string }).type === 'text') {
+      const text = (block as { text?: unknown }).text;
+      if (typeof text === 'string') parts.push(text);
+    }
+  }
+  return parts.join('\n');
+}
 
 export function useReplBridge(messages: Message[], setMessages: (action: React.SetStateAction<Message[]>) => void, abortControllerRef: React.RefObject<AbortController | null>, commands: readonly Command[], mainLoopModel: string): {
   sendBridgeResult: () => void;
@@ -479,6 +498,31 @@ export function useReplBridge(messages: Message[], setMessages: (action: React.S
       handle_1.writeMessages(newMessages);
     }
   }, [messages, replBridgeConnected]);
+
+  // 手机端推送：必须独立于上面的桥接 effect。
+  // 上面的 effect 有三个守卫（isLocalBridgeMode/BRIDGE_MODE、replBridgeConnected、
+  // handleRef），而移动桥接（CLAUDE_CODE_MOBILE_BRIDGE=1）并不满足它们——
+  // replBridgeConnected 仅在 feature('BRIDGE_MODE') 为真时才读 AppState，
+  // 否则恒为 false。若把推送放在那里，手机永远收不到回复。
+  const mobilePushIndexRef = useRef(0);
+  useEffect(() => {
+    if (!getActiveMobileBridgeServer()) return;
+    const start = Math.min(mobilePushIndexRef.current, messages.length);
+    mobilePushIndexRef.current = messages.length;
+    for (let i = start; i < messages.length; i++) {
+      const m = messages[i];
+      if (!m) continue;
+      if (m.type !== 'user' && m.type !== 'assistant') continue;
+      const text = extractPlainText(m);
+      if (!text) continue;
+      // 推送是旁路能力：任何异常都不得影响主流程
+      try {
+        pushToMobileClients({ role: m.type, text });
+      } catch (e) {
+        logForDebugging(`[bridge:repl] 推送移动端失败（已忽略）：${errorMessage(e)}`);
+      }
+    }
+  }, [messages]);
 
   const sendBridgeResult = useCallback(() => {
     if (isLocalBridgeMode() || feature('BRIDGE_MODE')) {
