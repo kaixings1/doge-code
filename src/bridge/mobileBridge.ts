@@ -27,6 +27,7 @@ import { getMobileSessionManager } from './mobileSession.js'
 import { handleMobileRequest, type MobileRequest, type MobileResponse } from './mobileProtocol.js'
 import type { ReplBridgeHandle } from './replBridge.js'
 import { enqueue } from '../utils/messageQueueManager.js'
+import { getReplBridgeHandle } from './replBridgeHandle.js'
 import { logForDebugging } from '../utils/debug.js'
 import type { SDKMessage } from '../entrypoints/agentSdkTypes.js'
 
@@ -882,17 +883,48 @@ export function pushToMobileClients(message: {
  */
 export async function initMobileBridgeServer(
   sessionId: string,
-  bridgeHandle: ReplBridgeHandle,
+  bridgeHandle?: ReplBridgeHandle | null,
   port?: number,
+  secret?: string,
 ): Promise<MobileBridgeServer | null> {
-  const server = new MobileBridgeServer({
-    sessionId,
-    port,
-    bridgeHandle,
-  })
+  const opts: {
+    sessionId: string
+    port?: number
+    bridgeHandle?: ReplBridgeHandle
+    secret?: string
+  } = { sessionId, port }
+  if (bridgeHandle) opts.bridgeHandle = bridgeHandle
+  if (secret) opts.secret = secret
 
+  const server = new MobileBridgeServer(opts)
   await server.start()
   return server.isServerRunning() ? server : null
+}
+
+/**
+ * CLI 启动时自动开启移动端桥接（无需手动执行 /mobile-connect）。
+ *
+ * 触发条件：CLAUDE_CODE_MOBILE_BRIDGE=1（或本地桥接模式）。
+ * 静默失败：端口被占、无网络等情况只记日志，绝不影响 CLI 正常使用。
+ *
+ * 存在的理由：/mobile-connect 是 local-jsx 命令，只能在交互界面里手动输入；
+ * 自动化脚本、非交互场景无法触发，而手机端又需要在 CLI 启动时就就绪。
+ */
+export async function autoStartMobileBridge(port?: number): Promise<MobileBridgeServer | null> {
+  if (!isMobileBridgeAvailable()) return null
+  try {
+    const server = await initMobileBridgeServer(`mobile-${Date.now()}`, getReplBridgeHandle(), port)
+    if (server) {
+      logForDebugging(`[MobileBridge] 自动启动成功: ${getMobileBridgeUrl(port)}`)
+    }
+    return server
+  } catch (e) {
+    logForDebugging(
+      `[MobileBridge] 自动启动失败（已忽略）: ${e instanceof Error ? e.message : String(e)}`,
+      { level: 'error' },
+    )
+    return null
+  }
 }
 
 /**

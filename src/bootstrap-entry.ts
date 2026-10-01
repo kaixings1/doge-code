@@ -109,6 +109,19 @@ async function main(): Promise<void> {
     launchDesktop()
     return
   }
+
+  // 移动端桥接：CLAUDE_CODE_MOBILE_BRIDGE=1 时随 CLI 自动启动，
+  // 免去手动执行 /mobile-connect（该命令是 local-jsx，只能在交互界面输入，
+  // 非交互场景无法触发）。不 await 结果，失败只记日志，绝不影响 CLI。
+  try {
+    const mobile = await import('./bridge/mobileBridge.js')
+    if (mobile.isMobileBridgeAvailable()) {
+      void mobile.autoStartMobileBridge().catch(() => {})
+    }
+  } catch {
+    // 忽略：移动端桥接不可用时不应影响 CLI 启动
+  }
+
   try {
     const mod = await import('./entrypoints/cli.tsx')
     const mainFn = (mod as any).default || (mod as any).main
