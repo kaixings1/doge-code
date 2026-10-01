@@ -252,6 +252,9 @@ export function GlobalKeybindingHandlers({
             terminalOpenRef.current = false;
             setToolJSX(null);
           }}
+          onUnmount={() => {
+            terminalOpenRef.current = false;
+          }}
         />
       ),
       shouldHidePromptInput: true,

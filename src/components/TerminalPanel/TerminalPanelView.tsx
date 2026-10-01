@@ -21,6 +21,8 @@ type Props = {
   height?: number
   /** 用户按 Esc 时的回调 */
   onExit?: () => void
+  /** 组件卸载时回调（无论何种原因），用于同步外部开合状态 */
+  onUnmount?: () => void
 }
 
 function defaultShell(): string {
@@ -48,7 +50,7 @@ function asWritable(sink: unknown): Writable | null {
   return null
 }
 
-export function TerminalPanelView({ shell, height = 20, onExit }: Props) {
+export function TerminalPanelView({ shell, height = 20, onExit, onUnmount }: Props) {
   const [lines, setLines] = useState<string[]>([])
   const [exited, setExited] = useState(false)
   const procRef = useRef<ReturnType<typeof Bun.spawn> | null>(null)
@@ -125,8 +127,9 @@ export function TerminalPanelView({ shell, height = 20, onExit }: Props) {
       }
       procRef.current = null
       stdinRef.current = null
+      onUnmount?.()
     }
-  }, [shell])
+  }, [shell, onUnmount])
 
   // 键盘输入 → 子进程 stdin
   useInput((input, key) => {
