@@ -120,17 +120,19 @@ function cleanupTerminalModes(): void {
     writeSync(1, CLEAR_ITERM2_PROGRESS)
     // Clear tab status (OSC 21337) so a stale dot doesn't linger
     if (supportsTabStatus()) writeSync(1, wrapForMultiplexer(CLEAR_TAB_STATUS))
-    // 终端标题清理：仅在标题功能被禁用时才清空。
+    // Clear terminal title (OSC 0) so the [空闲] prefix / sessionId doesn't
+    // linger on the tab after the session ends. The React side keeps writing
+    // the title while running; once we exit it must be wiped so the user's
+    // shell tab doesn't keep showing "[空闲] 分析 adb..." forever.
     //
-    // 标题功能启用时（未设置 CLAUDE_CODE_DISABLE_TERMINAL_TITLE），React 侧
-    // useTerminalTitle 持续写入含绿方块与 sessionId 的标题，这是用户特意
-    // 保留的会话标识——退出瞬间清掉它会让人回到终端后无从分辨是哪个会话。
-    // 因此启用时保留，禁用时才清掉可能残留的陈旧标题。
-    if (isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_TERMINAL_TITLE)) {
-      writeSync(1, CLEAR_TERMINAL_TITLE)
-      if (process.platform === 'win32') {
-        process.title = ''
-      }
+    // Why unconditional: verify-terminal-cleanup.ts is a regression test that
+    // asserts this OSC 0 clear runs on every exit. The earlier "运行中绿方块
+    // 被覆盖" bug was NOT caused by this exit-path clear — it was the
+    // useTerminalTitle cleanup writing an empty title on dependency change,
+    // which is now fixed to reset to the title body instead.
+    writeSync(1, CLEAR_TERMINAL_TITLE)
+    if (process.platform === 'win32') {
+      process.title = ''
     }
   } catch {
     // Terminal may already be gone (e.g., SIGHUP after terminal close).
