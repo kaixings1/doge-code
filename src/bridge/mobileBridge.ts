@@ -637,20 +637,37 @@ export class MobileBridgeServer {
           return
         }
 
-        (ws as any).on('message', (data: string | Buffer) => {
+        // 事件绑定必须兼容两种 WebSocket 实现：
+        // - Node/ws 库的 WebSocket 有 .on()
+        // - bun 会把 ws 库的实例替换为 BunWebSocketMocked（暴露 addEventListener）
+        // 实测在 bun 下经 vitest/bun 引入本模块时 .on 不可用，只认 addEventListener。
+        // 两者都试，取存在的一方，避免 "ws.on is not a function" 导致连接处理整体失效。
+        const onMessage = (data: string | Buffer | { data?: unknown }) => {
           try {
-            const msg = JSON.parse(data.toString()) as MobileRequest
+            const raw = typeof data === 'string' || Buffer.isBuffer(data)
+              ? data.toString()
+              : String((data as { data?: unknown })?.data ?? data)
+            const msg = JSON.parse(raw) as MobileRequest
             this.handleMobileMessage(msg, session.sessionId, ws)
           } catch {
             // 忽略无效消息
           }
-        })
-
-        (ws as any).on('close', () => {
+        }
+        const onClose = () => {
           this.sessionManager.endSession(session.sessionId)
           this.connectedClients.delete(ws)
           this.broadcast('client_disconnected', { sessionId: session.sessionId, deviceId })
-        })
+        }
+
+        if (typeof (ws as any).on === 'function') {
+          ;(ws as any).on('message', onMessage)
+          ;(ws as any).on('close', onClose)
+        } else if (typeof (ws as any).addEventListener === 'function') {
+          ;(ws as any).addEventListener('message', (ev: any) => onMessage(ev))
+          ;(ws as any).addEventListener('close', onClose)
+        } else {
+          logForDebugging('[MobileBridgeServer] 无法为连接绑定事件（WebSocket 实现不兼容）', { level: 'error' })
+        }
 
         this.connectedClients.add(ws)
         this.broadcast('client_connected', { sessionId: session.sessionId, deviceId, deviceType })
@@ -684,7 +701,8 @@ export class MobileBridgeServer {
       // 不走 handleMobileRequest —— 后者的 handler 只负责工具类请求。
       if (msg.type === 'control') {
         this.forwardToBridge(msg, sessionId)
-        if (ws.readyState === ws.OPEN) {
+        // OPEN 恒为 1；不用 ws.OPEN，bun 的 BunWebSocketMocked 实例上该常量可能缺失
+        if (ws.readyState === 1) {
           ws.send(JSON.stringify({
             type: 'result',
             requestId: msg.requestId,
@@ -700,11 +718,11 @@ export class MobileBridgeServer {
       const response = await handleMobileRequest(msg)
 
       // 发送响应回移动端
-      if (ws.readyState === ws.OPEN) {
+      if (ws.readyState === 1) {
         ws.send(JSON.stringify(response))
       }
     } catch (e) {
-      if (ws.readyState === ws.OPEN) {
+      if (ws.readyState === 1) {
         ws.send(JSON.stringify({
           type: 'error',
           requestId: msg.requestId,
@@ -771,7 +789,7 @@ export class MobileBridgeServer {
   private broadcast(type: string, data: Record<string, unknown>): void {
     const msg = JSON.stringify({ type, data, timestamp: Date.now() })
     for (const ws of this.connectedClients) {
-      if (ws.readyState === ws.OPEN) {
+      if (ws.readyState === 1) {
         ws.send(msg)
       }
     }
