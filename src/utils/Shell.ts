@@ -313,7 +313,15 @@ export async function exec(
   // 🔴 Windows 安全保护：禁止 bashProvider 被调用（MSYS2 破坏内联代码）
   // 除非用户显式通过 CLAUDE_CODE_SHELL=xxx 或 CLAUDE_CODE_SHELL_WANT_BASH=1 授权
   // BashTool.tsx 中的命令归一化层会检查此逻辑的镜像版本，以确保方向正确。
-  if (process.platform === 'win32' && !process.env.CLAUDE_CODE_SHELL_WANT_BASH) {
+  //
+  // 例外：显式传入 powershell/pwsh 时不得降级 —— PowerShellTool 依赖此路径，
+  // 否则 Get-ChildItem / Set-Location 等会被 cmd.exe 当作外部命令而失败。
+  if (
+    process.platform === 'win32' &&
+    !process.env.CLAUDE_CODE_SHELL_WANT_BASH &&
+    shellType !== 'powershell' &&
+    shellType !== 'pwsh'
+  ) {
     const shim = (process.env.CLAUDE_CODE_SHELL || '').toLowerCase()
     if (!shim.includes('cmd') && !shim.includes('powershell') && !shim.includes('pwsh')) {
       // 强制降级到 cmd.exe

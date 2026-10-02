@@ -134,16 +134,17 @@ function fixModelCommandMistakes(cmd: string, platform: string): string {
     fixed = fixed.replace(/\s{2,}/g, ' ');
 
     // ------ 6. 修复未带引号的带空格路径 ------
-    // 如 `cat C:\Program Files\test.txt` 应转为 `cat "/c/Program Files/test.txt"`
-    // 这是一个启发式修复：查找命令中看起来是 Windows 路径的片段
-    // 且包含空格却没有被引号包裹
-    const pathWithSpaceRegex = /(?:^|\s)([a-zA-Z]:[^\s"'|&;]+[\s][^\s"'|&;]*)(?:\s|$)/g;
+    // 如 `cat C:/Program Files/test.txt` 应转为 `cat "C:/Program Files/test.txt"`
+    // 关键约束（修复 bug）：空格后的续接片段必须「本身仍含 /」（如 Program Files/test.txt 的
+    // Files/test.txt），否则会把下一个普通 token 误吞进路径（如 git -C D:/doge-code log 的 log）。
+    // 旧正则 `盘符:[^\s]+ [^\s]*` 会贪婪吞掉任意后续 token，产生 `-C "D:/doge-code log"` 错误。
+    const pathWithSpaceRegex = /(?:^|\s)([a-zA-Z]:\/[^\s"'|&;]*(?:\s+[^\s"'|&;]*\/[^\s"'|&;]*)*)(?:\s|$)/g;
     fixed = fixed.replace(pathWithSpaceRegex, (match) => {
         const trimmed = match.trim();
         // 避免重复加引号
         if (trimmed.startsWith('"') || trimmed.startsWith("'")) return match;
-        // 看起来像路径才修复
-        if (/^[a-zA-Z]:[\\\/]/.test(trimmed) || /^[\\\/]/.test(trimmed)) {
+        // 看起来像路径才修复（盘符 + 有斜杠）
+        if (/^[a-zA-Z]:\//.test(trimmed) || /^\//.test(trimmed)) {
             return ` "${trimmed}" `;
         }
         return match;
@@ -325,69 +326,85 @@ function collapseMultilineScript(script: string): string {
   return collapsed;
 }
 
+// Unix → Windows 命令映射表（cmd.exe 兼容）
+// 只转换 cmd.exe 不认识的常用命令，不覆盖 Windows 原生命令
+const UNIX_TO_WINDOWS_COMMANDS: { [key: string]: string } = {
+  'ls': 'dir',
+  'cat': 'type',
+  'grep': 'findstr',
+  'which': 'where',
+  'head': 'more',
+  'diff': 'fc',
+  'cp': 'copy',
+  'mv': 'move',
+  'rm': 'del',
+  'touch': 'type nul >',
+  'pwd': 'cd',
+  'uname': 'ver',
+  'clear': 'cls',
+  'env': 'set',
+  'export': 'set',
+};
+
+// shell 操作符/控制结构关键字（不是命令名，跳过转换）
+const SHELL_OPERATORS = new Set(['&&', '||', '|', ';', '>', '>>', '2>', '<', '(', ')', '{', '}', 'do', 'then', 'else', 'fi', 'esac', 'done', 'elif', 'rof', 'for', 'while', 'until', 'case', 'if', 'in']);
+
 /**
- * 将常见的 Unix 命令转换为 Windows cmd.exe 兼容命令
- * 当实际底层 shell 是 cmd.exe 时使用。
- * 支持：ls→dir, cat→type, grep→findstr, which→where, head→more, diff→fc, cp→copy, mv→move, rm→del 等
+ * 转换单个命令段（不含 && ; | 等分隔符）的首 token。
+ * 只改段首命令名，保留其余参数原样。
  */
-function normalizeUnixCommandForWindows(cmd: string): string {
-  if (process.platform !== 'win32') return cmd;
-
-  // 跳过空命令
-  const trimmed = cmd.trim();
-  if (!trimmed) return cmd;
-
+function normalizeUnixCommandSegment(segment: string): string {
   // 提取第一个 token（命令名），跳过开头的空白
-  const firstTokenMatch = trimmed.match(/^(\s*)([^\s]+)/);
-  if (!firstTokenMatch) return cmd;
+  const firstTokenMatch = segment.match(/^(\s*)([^\s]+)/);
+  if (!firstTokenMatch) return segment;
 
   const leadingWhitespace = firstTokenMatch[1];
   const firstToken = firstTokenMatch[2];
-  const rest = trimmed.slice(firstTokenMatch[0].length);
+  const rest = segment.slice(firstTokenMatch[0].length);
 
   // 跳过以 -/ 开头的标志参数（它们不是命令）
-  if (/^-/.test(firstToken)) return cmd;
+  if (/^-/.test(firstToken)) return segment;
 
   // 跳过 shell 操作符和控制结构关键字
-  const shellOperators = new Set(['&&', '||', '|', ';', '>', '>>', '2>', '<', '(', ')', '{', '}', 'do', 'then', 'else', 'fi', 'esac', 'done', 'elif', 'rof', 'for', 'while', 'until', 'case', 'if', 'in']);
-  if (shellOperators.has(firstToken.toLowerCase())) return cmd;
+  if (SHELL_OPERATORS.has(firstToken.toLowerCase())) return segment;
 
-  // 跳过以 # 开头的注释行
-  if (firstToken.startsWith('#')) return cmd;
+  // 跳过以 # 开头的注释
+  if (firstToken.startsWith('#')) return segment;
 
   // 跳过 env 变量赋值（如 VAR=value command）
-  if (/^[a-zA-Z_][a-zA-Z0-9_]*=/.test(firstToken)) return cmd;
+  if (/^[a-zA-Z_][a-zA-Z0-9_]*=/.test(firstToken)) return segment;
 
   // 去掉命令名末尾的任何参数引用（如 ${VAR} 或 $(CMD)）
   const commandName = firstToken.replace(/\(.*\)$/, '').replace(/\$\{.*\}$/, '');
   const cleanCommandName = commandName.replace(/^['"`]/, '').replace(/['"`]$/, '').toLowerCase();
 
-  // Unix → Windows 命令映射表
-  // 只转换 cmd.exe 不认识的常用命令，不覆盖 Windows 原生命令
-  const unixToWindows: { [key: string]: string } = {
-    'ls': 'dir',
-    'cat': 'type',
-    'grep': 'findstr',
-    'which': 'where',
-    'head': 'more',
-    'diff': 'fc',
-    'cp': 'copy',
-    'mv': 'move',
-    'rm': 'del',
-    'touch': 'type nul >',
-    'pwd': 'cd',
-    'uname': 'ver',
-    'clear': 'cls',
-    'env': 'set',
-    'export': 'set',
-  };
-
-  if (cleanCommandName in unixToWindows) {
-    const replacement = unixToWindows[cleanCommandName];
-    return leadingWhitespace + replacement + rest;
+  if (cleanCommandName in UNIX_TO_WINDOWS_COMMANDS) {
+    return leadingWhitespace + UNIX_TO_WINDOWS_COMMANDS[cleanCommandName] + rest;
   }
 
-  return cmd;
+  return segment;
+}
+
+/**
+ * 将常见的 Unix 命令转换为 Windows cmd.exe 兼容命令
+ * 当实际底层 shell 是 cmd.exe 时使用。
+ * 支持：ls→dir, cat→type, grep→findstr, which→where, head→more, diff→fc, cp→copy, mv→move, rm→del 等
+ *
+ * 按 && || ; | 分段，对每一段的首 token 做转换 —— 修复了旧实现只转首 token、
+ * 导致 `cd X && pwd && ls` 中 pwd/ls 漏转的问题。
+ */
+function normalizeUnixCommandForWindows(cmd: string): string {
+  if (process.platform !== 'win32') return cmd;
+
+  // 跳过空命令
+  if (!cmd.trim()) return cmd;
+
+  // 用捕获组保留原始分隔符（含前后空白），逐段转换
+  return cmd.split(/(\s*(?:&&|\|\||[;|])\s*)/).map((part, index) => {
+    // 奇数索引是分隔符本身，原样保留
+    if (index % 2 === 1) return part;
+    return normalizeUnixCommandSegment(part);
+  }).join('');
 }
 
 /**
