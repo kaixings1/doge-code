@@ -21,4 +21,5 @@ local.properties
 
 # 构建日志
 build-log*.txt
+test-log*.txt
 gradle-*.log

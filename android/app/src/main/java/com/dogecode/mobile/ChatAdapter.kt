@@ -6,6 +6,7 @@ import android.text.Spanned
 import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
+import android.text.style.TypefaceSpan
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -113,68 +114,94 @@ class ChatAdapter : RecyclerView.Adapter<ChatAdapter.VH>() {
     }
 
     companion object {
+        /** 片段类型，由纯文本解析产生，再由 renderMarkdown 转成 Spannable。 */
+        enum class Seg { TEXT, BOLD, CODE_BLOCK, CODE_INLINE }
+
+        data class Piece(val type: Seg, val text: String)
+
         /**
-         * 极简 Markdown → Spannable：
-         *   ```块```  → 深底等宽（不解析语言，保持原文）
-         *   **粗体**  → bold
-         *   `行内`    → 等宽 + 淡底
-         * 未闭合的标记按普通文本处理，不吞内容。
+         * 把极简 Markdown 解析为片段列表。
+         *
+         * 刻意不依赖任何 Android 类型，因此可在 JVM 单测中完整验证。
+         * 渲染（加 span）另由 renderMarkdown 完成 —— 那部分才需要 Android。
+         *
+         * 规则：
+         *   ```块```   → CODE_BLOCK（不解析语言，保持原文）
+         *   **粗体**   → BOLD
+         *   `行内`     → CODE_INLINE
+         * 未闭合的标记按普通文本处理，绝不吞内容 —— AI 流式输出时
+         * 出现未闭合标记是常态，吞字符会让用户看不到部分回复。
          */
-        fun renderMarkdown(src: String): CharSequence {
-            val sb = SpannableStringBuilder()
+        fun parseMarkdown(src: String): List<Piece> {
+            val out = mutableListOf<Piece>()
+            val text = StringBuilder()
+            fun flush() {
+                if (text.isNotEmpty()) {
+                    out.add(Piece(Seg.TEXT, text.toString()))
+                    text.clear()
+                }
+            }
             var i = 0
             while (i < src.length) {
                 if (src.startsWith("```", i)) {
                     val end = src.indexOf("```", i + 3)
-                    if (end > 0) {
-                        val code = src.substring(i + 3, end).trim('\n')
-                        val start = sb.length
-                        sb.append(code)
-                        sb.setSpan(
-                            BackgroundColorSpan(0xFF2A2A2A.toInt()),
-                            start, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-                        )
-                        sb.setSpan(
-                            android.text.style.TypefaceSpan("monospace"),
-                            start, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-                        )
-                        sb.setSpan(
-                            ForegroundColorSpan(0xFF9CDCFE.toInt()),
-                            start, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-                        )
+                    if (end >= 0) {
+                        flush()
+                        out.add(Piece(Seg.CODE_BLOCK, src.substring(i + 3, end).trim('\n')))
                         i = end + 3
                         continue
                     }
                 }
                 if (src.startsWith("**", i)) {
                     val end = src.indexOf("**", i + 2)
-                    if (end > 0) {
-                        val start = sb.length
-                        sb.append(src, i + 2, end)
-                        sb.setSpan(StyleSpan(Typeface.BOLD), start, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    if (end >= 0) {
+                        flush()
+                        out.add(Piece(Seg.BOLD, src.substring(i + 2, end)))
                         i = end + 2
                         continue
                     }
                 }
                 if (src[i] == '`') {
                     val end = src.indexOf('`', i + 1)
-                    if (end > 0) {
-                        val start = sb.length
-                        sb.append(src, i + 1, end)
-                        sb.setSpan(
-                            android.text.style.TypefaceSpan("monospace"),
-                            start, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-                        )
-                        sb.setSpan(
-                            BackgroundColorSpan(0xFF3A3A3A.toInt()),
-                            start, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-                        )
+                    if (end >= 0) {
+                        flush()
+                        out.add(Piece(Seg.CODE_INLINE, src.substring(i + 1, end)))
                         i = end + 1
                         continue
                     }
                 }
-                sb.append(src[i])
+                text.append(src[i])
                 i++
+            }
+            flush()
+            return out
+        }
+
+        /**
+         * 片段列表 → Spannable。
+         * 只负责加样式，文本内容由 parseMarkdown 决定。
+         */
+        fun renderMarkdown(src: String): CharSequence {
+            val sb = SpannableStringBuilder()
+            for (p in parseMarkdown(src)) {
+                val start = sb.length
+                sb.append(p.text)
+                val end = sb.length
+                when (p.type) {
+                    Seg.CODE_BLOCK -> {
+                        sb.setSpan(BackgroundColorSpan(0xFF2A2A2A.toInt()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        sb.setSpan(TypefaceSpan("monospace"), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        sb.setSpan(ForegroundColorSpan(0xFF9CDCFE.toInt()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    }
+                    Seg.BOLD -> {
+                        sb.setSpan(StyleSpan(Typeface.BOLD), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    }
+                    Seg.CODE_INLINE -> {
+                        sb.setSpan(TypefaceSpan("monospace"), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        sb.setSpan(BackgroundColorSpan(0xFF3A3A3A.toInt()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    }
+                    Seg.TEXT -> {}
+                }
             }
             return sb
         }

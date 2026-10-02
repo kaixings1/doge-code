@@ -85,4 +85,9 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+
+    // JVM 单元测试：只测不依赖 Android 框架的纯逻辑（序列化、文件名、
+    // Markdown 渲染、URL 解析）。涉及 Context/WebView 的部分必须真机测。
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.json:json:20240303")   // android.jar 的 org.json 是桩，测试需真实现
 }
