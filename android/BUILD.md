@@ -12,34 +12,50 @@ JDK / Android SDK / Flutter 工具链。本目录是**可选的外壳**，仅在
 
 ## 前置：编译环境
 
-只需两样（本机当前**都缺**，需自行安装）：
+需要两样：
 
-| 组件 | 版本要求 | 安装（管理员） | 校验 |
-|---|---|---|---|
-| JDK | 17 或以上 | `choco install -y temurin17` | `java -version` |
-| Android SDK | Platform 35 | `choco install -y android-sdk` | `echo %ANDROID_HOME%` |
+| 组件 | 版本要求 | 本机位置（已装） |
+|---|---|---|
+| JDK | 17 或以上 | `C:\Program Files (x86)\Android\openjdk\jdk-17.0.14` |
+| Android SDK | Platform 35 + build-tools 35.0.0 | `C:\Program Files (x86)\Android\android-sdk` |
 
-装完 SDK 后设置环境变量（新开窗口生效）：
+**注意**：这两个目录不在常规位置（不是 `Program Files\Java`，也不是
+`%LOCALAPPDATA%\Android\Sdk`），所以 `java -version` 直接跑会报 not found。
+编译前需显式设置环境变量：
 
 ```cmd
-set ANDROID_HOME=%LOCALAPPDATA%\Android\Sdk
+set JAVA_HOME=C:\Program Files (x86)\Android\openjdk\jdk-17.0.14
+set ANDROID_HOME=C:\Program Files (x86)\Android\android-sdk
+set ANDROID_SDK_ROOT=%ANDROID_HOME%
+set PATH=%JAVA_HOME%\bin;%PATH%
 ```
 
-或装 **Android Studio**（自带 JDK 与 SDK），在 `Settings → SDK Manager`
-确认 Platform 35 已安装。
+若换机器编译，用 `choco install -y temurin17 android-sdk`（管理员），
+或装 Android Studio（自带 JDK 与 SDK，在 `SDK Manager` 确认 Platform 35）。
 
 **Gradle 不需要手动装** —— `build.bat` 会按此顺序解析：
 wrapper（若有）→ PATH 里的 gradle → 自动下载 gradle-8.9 到 `.gradle-dist/`。
+（官方下载会重定向到 GitHub；GitHub 不通时改用腾讯云镜像：
+`https://mirrors.cloud.tencent.com/gradle/gradle-8.9-bin.zip`）
+
+**签名**：工程用 `android/debug.keystore`（自签，被 .gitignore 排除）。
+首次构建若该文件不存在会自动用 `keytool` 生成，无需手动准备。
 
 ## 编译
 
-在 `android/` 目录下：
+在 `android/` 目录下（先设好上面的环境变量）：
 
 ```cmd
 build.bat
 ```
 
-产物：`app\build\outputs\apk\debug\app-debug.apk`
+或直接调 Gradle（实测约 47 秒）：
+
+```cmd
+.gradle-dist\gradle-8.9\bin\gradle.bat assembleDebug
+```
+
+产物：`app\build\outputs\apk\debug\app-debug.apk`（约 3.2 MB）
 
 若本机装了 Android Studio，也可直接 `File → Open` 选本目录，点 ▶ 运行到手机。
 
@@ -53,19 +69,42 @@ adb install -r app\build\outputs\apk\debug\app-debug.apk
 
 或把 apk 拷到手机手动安装（需允许「安装未知来源应用」）。
 
-### MIUI / Redmi 安装被拒（本机实测遇到过）
+### MIUI / Redmi 安装被拒（本机实测确认）
 
-`adb shell id` 显示 `uid=2000(shell)`（无特权）时，MIUI 会拒绝安装，
-报 `INSTALL_FAILED_USER_RESTRICTED` 或类似错误。**必须先在手机上开启：**
+本机（Redmi 2312CRAD3C / Android 16 / MIUI V816）实测：
+
+```cmd
+adb install -r app-debug.apk
+# FAILURE [INSTALL_FAILED_USER_RESTRICTED: Install canceled by user]
+```
+
+`adb shell id` 为 `uid=2000(shell)`，**以下尝试全部失败**：
+
+| 尝试 | 结果 |
+|---|---|
+| `adb install -r` | INSTALL_FAILED_USER_RESTRICTED |
+| `adb shell pm install -r /data/local/tmp/x.apk` | 同上 |
+| `adb shell settings put global verifier_verify_adb_installs 0` | SecurityException: must have WRITE_SECURE_SETTINGS |
+
+**根因**：MIUI 的「USB 调试(安全设置)」未开启。shell 用户没有
+`WRITE_SECURE_SETTINGS`，**adb 侧无法绕过**。必须在手机上手动开：
 
 ```
 设置 → 更多设置 → 开发者选项
-  → 「USB 调试(安全设置)」   ← 安装 APK 的硬门槛，不开则任何 adb 安装都会被拒
+  → 「USB 调试(安全设置)」   ← 安装 APK 的硬门槛，不开则任何 adb 安装都被拒
   → 「USB 安装」（允许通过 USB 安装应用）
 ```
 
-部分 MIUI 版本开启「USB 调试(安全设置)」需要登录小米账号并插入 SIM 卡。
-这是 MIUI 的系统策略，**无法用 adb 命令绕过** —— 只能手动开。
+部分 MIUI 版本开启「USB 调试(安全设置)」需登录小米账号并插入 SIM 卡。
+
+**替代方案（不需要开该开关）**：把 APK 推到手机存储，用手机文件管理器点开安装：
+
+```cmd
+adb push app-debug.apk /sdcard/Download/doge-mobile.apk
+```
+
+然后在手机「文件管理 → 下载」里点 `doge-mobile.apk`，
+按提示允许「安装未知应用」即可。（本次已推送到该路径。）
 
 另外保持 `targetSdk` 不低于 33（本工程为 35），否则 MIUI 可能以
 「低 targetSdk 应用」为由拦截（`--bypass-low-target-sdk-block` 相关）。
