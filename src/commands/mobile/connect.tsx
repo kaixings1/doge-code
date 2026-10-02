@@ -36,6 +36,8 @@ interface ConnectInfo {
   androidUrl: string
   status: 'starting' | 'ready' | 'connected' | 'failed'
   clientCount: number
+  /** 无 REPL 桥接句柄：手机可连上但无法对话（消息进不了 CLI 会话） */
+  noBridgeHandle: boolean
 }
 
 const PLATFORMS = {
@@ -44,7 +46,7 @@ const PLATFORMS = {
 }
 
 function MobileConnectScreen(t0) {
-  const $ = _c(38)
+  const $ = _c(39)
   const { onDone } = t0
   const [connectInfo, setConnectInfo] = useState<ConnectInfo | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -65,6 +67,13 @@ function MobileConnectScreen(t0) {
           // 取当前 CLI 会话的桥接句柄，手机消息经它进入对话。
           // 没有句柄时移动端只能看状态、无法对话，需要明确提示用户。
           const bridgeHandle = getReplBridgeHandle()
+          if (!bridgeHandle) {
+            logForDebugging(
+              '[MobileConnect] 未取到 REPL 桥接句柄：手机将只能查看状态，无法对话。' +
+                '请确认已用 /mobile-connect 启动且日志出现 [bridge:repl] 本地桥接已连接。',
+              { level: 'error' },
+            )
+          }
 
           setConnectInfo({
             sessionId,
@@ -76,6 +85,7 @@ function MobileConnectScreen(t0) {
             androidUrl: PLATFORMS.android.url,
             status: 'starting',
             clientCount: 0,
+            noBridgeHandle: !bridgeHandle,
           })
 
           // 启动移动端桥接服务器（传入 bridgeHandle，否则消息无法进入 CLI）
@@ -258,6 +268,20 @@ function MobileConnectScreen(t0) {
     t11 = $[10]
   }
 
+  let t18
+  if ($[38] !== connectInfo?.noBridgeHandle) {
+    // noBridgeHandle：服务器已启动但未取到 REPL 桥接句柄 —— 手机可连上但
+    // 消息进不了 CLI 会话，只会停在"已提交"。必须显式告知，否则是静默失败。
+    t18 = connectInfo?.noBridgeHandle ? (
+      <Text color="red">⚠ 未连接 REPL 桥接：手机可连上但无法对话（消息只会停留在"已提交"）</Text>
+    ) : (
+      <Text> </Text>
+    )
+    $[38] = connectInfo?.noBridgeHandle
+  } else {
+    t18 = $[38]
+  }
+
   let t14
   if ($[13] !== error) {
     t14 = error ? <Text color="red">{error}</Text> : <Text> </Text>
@@ -279,12 +303,13 @@ function MobileConnectScreen(t0) {
   }
 
   let t16
-  if ($[15] !== t6 || $[16] !== t14 || $[17] !== t7 || $[18] !== t8 || $[19] !== t9 || $[20] !== t10 || $[21] !== t11 || $[24] !== t15 || $[25] !== handleKeyDown) {
+  if ($[15] !== t6 || $[16] !== t14 || $[17] !== t7 || $[18] !== t8 || $[19] !== t9 || $[20] !== t10 || $[21] !== t11 || $[24] !== t15 || $[25] !== handleKeyDown || $[38] !== t18) {
     t16 = (
       <Pane>
         <Box flexDirection="column">
           <Text bold={true}>📱 移动端连接</Text>
           {t14}
+          {t18}
           <Text>状态: {t6}</Text>
           {t7}
           {t8}

@@ -48,6 +48,20 @@ function extractPlainText(m: Message): string {
   return parts.join('\n');
 }
 
+/**
+ * 判断一条消息是否含有可推送给手机端的内容。
+ * 与 extractPlainText 不同：这里只看「有没有」，不取文本，用于区分
+ * 「回复确实是空的」与「回复内容结构不被 extractPlainText 识别」。
+ */
+function hasPushableContent(m: Message): boolean {
+  const content = (m as { message?: { content?: unknown } }).message?.content;
+  if (typeof content === 'string') return content.length > 0;
+  if (!Array.isArray(content)) return false;
+  return content.some(
+    b => b && typeof b === 'object' && (b as { type?: string }).type === 'text',
+  );
+}
+
 export function useReplBridge(messages: Message[], setMessages: (action: React.SetStateAction<Message[]>) => void, abortControllerRef: React.RefObject<AbortController | null>, commands: readonly Command[], mainLoopModel: string): {
   sendBridgeResult: () => void;
 } {
@@ -519,12 +533,26 @@ export function useReplBridge(messages: Message[], setMessages: (action: React.S
       return
     }
     let pushed = 0;
+    let skippedEmpty = 0;
+    let skippedUnrecognized = 0;
     for (let i = start; i < messages.length; i++) {
       const m = messages[i];
       if (!m) continue;
       if (m.type !== 'user' && m.type !== 'assistant') continue;
       const text = extractPlainText(m);
-      if (!text) continue;
+      if (!text) {
+        // 区分「确实是空消息」与「有内容但结构不被识别」——后者是真实的
+        // 推送丢失，此前因静默 continue 而无任何线索（手机只看到"已提交"）。
+        if (hasPushableContent(m)) {
+          skippedUnrecognized++;
+          logForDebugging(
+            `[mobile-push] 消息有内容但提取为空（结构不被识别），跳过 role=${m.type} index=${i}`,
+          );
+        } else {
+          skippedEmpty++;
+        }
+        continue;
+      }
       // 推送是旁路能力：任何异常都不得影响主流程
       try {
         pushToMobileClients({ role: m.type, text });
@@ -534,7 +562,7 @@ export function useReplBridge(messages: Message[], setMessages: (action: React.S
       }
     }
     logForDebugging(
-      `[mobile-push] effect 触发，messages=${messages.length}，range=[${start},${messages.length})，已推送=${pushed}，客户端=${server.getClientCount()}`,
+      `[mobile-push] effect 触发，messages=${messages.length}，range=[${start},${messages.length})，已推送=${pushed}，空消息=${skippedEmpty}，结构未识别=${skippedUnrecognized}，客户端=${server.getClientCount()}`,
     );
   }, [messages]);
 

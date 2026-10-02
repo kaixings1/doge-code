@@ -873,7 +873,16 @@ export function pushToMobileClients(message: {
   role: 'user' | 'assistant' | 'system'
   text: string
 }): void {
-  if (!activeMobileServer || !message.text) return
+  if (!message.text) {
+    logForDebugging(
+      `[mobile-push] 跳过空文本推送 role=${message.role}（无内容可推送）`,
+    )
+    return
+  }
+  if (!activeMobileServer) {
+    logForDebugging('[mobile-push] 跳过推送：无活动 MobileBridgeServer')
+    return
+  }
   activeMobileServer.sendToAll(message.role, { text: message.text })
 }
 
