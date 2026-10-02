@@ -274,7 +274,7 @@ async function main() {
         })
       }
 
-      return new Response('Not Found', { status: 404 })
+      return new Response('未找到', { status: 404 })
     },
 
     websocket: {

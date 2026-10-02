@@ -14,5 +14,5 @@ export const assistant = {
   isEnabled: () => true,
   supportsNonInteractive: true,
   // 委托到真实实现：assistant.js 的 default 本身就是 Command，其 load() 返回 { call }
-  load: () => import('../../assistant/assistant.js').then(m => m.default.load?.() ?? Promise.reject(new Error('assistant: load unavailable')))
+  load: () => import('../../assistant/assistant.js').then(m => m.default.load?.() ?? Promise.reject(new Error('assistant：加载不可用')))
 } satisfies Command

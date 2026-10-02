@@ -137,7 +137,7 @@ export function startServer(
       // Rate limit check (applies to all authenticated requests except /health)
       const rateKey = `ip:${req.socket.remoteAddress || 'unknown'}`
       if (!checkRateLimit(rateKey)) {
-        sendJson(res, 429, { error: 'Too many requests. Please retry later.' })
+        sendJson(res, 429, { error: '请求过于频繁。请稍后重试。' })
         return
       }
 
@@ -155,7 +155,7 @@ export function startServer(
         let parsed: any = {}
         try { parsed = JSON.parse(body) } catch { /* 空 body */ }
         if (!sessionManager || typeof sessionManager.createSession !== 'function') {
-          sendJson(res, 500, { error: 'Session manager not available' })
+          sendJson(res, 500, { error: '会话管理器不可用' })
           return
         }
         try {
@@ -192,7 +192,7 @@ export function startServer(
 
         // Ownership check: all session operations require session_key
         if (!validateSessionOwner(req, id)) {
-          sendJson(res, 403, { error: 'Forbidden: invalid or missing session key' })
+          sendJson(res, 403, { error: '禁止访问：会话密钥无效或缺失' })
           return
         }
 
@@ -208,7 +208,7 @@ export function startServer(
         if (req.method === 'GET' && !sub) {
           const info = sessionManager?.getSession ? sessionManager.getSession(id) : null
           if (!info) {
-            sendJson(res, 404, { error: `Session not found: ${id}` })
+            sendJson(res, 404, { error: `会话未找到: ${id}` })
             return
           }
           sendJson(res, 200, { session: info })

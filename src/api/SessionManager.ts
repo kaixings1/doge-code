@@ -115,7 +115,7 @@ export class SessionManager {
 
   async addMessage(sessionId: string, message: InternalMessage): Promise<void> {
     const session = this.sessions.get(sessionId);
-    if (!session) throw new Error(`Session not found: ${sessionId}`);
+    if (!session) throw new Error(`会话未找到: ${sessionId}`);
     session.messages.push(message);
     session.updatedAt = new Date();
     session.state.lastActive = new Date();
@@ -124,7 +124,7 @@ export class SessionManager {
 
   async clearMessages(sessionId: string): Promise<void> {
     const session = this.sessions.get(sessionId);
-    if (!session) throw new Error(`Session not found: ${sessionId}`);
+    if (!session) throw new Error(`会话未找到: ${sessionId}`);
     session.messages = [];
     session.updatedAt = new Date();
     this.persist(session);
@@ -156,7 +156,7 @@ export class SessionManager {
   /** 归档会话 */
   async archiveSession(sessionId: string): Promise<void> {
     const session = this.sessions.get(sessionId);
-    if (!session) throw new Error(`Session not found: ${sessionId}`);
+    if (!session) throw new Error(`会话未找到: ${sessionId}`);
     session.state.status = 'archived';
     this.persist(session);
   }
@@ -183,7 +183,7 @@ export class SessionManager {
       state: { ...data.state, lastActive: data.state?.lastActive ? new Date(data.state.lastActive) : null },
     };
     if (!session.id || !Array.isArray(session.messages)) {
-      throw new Error('Invalid session data: missing id or messages');
+      throw new Error('无效的会话数据：缺少 id 或 messages');
     }
     this.sessions.set(session.id, session);
     this.persist(session);
@@ -204,7 +204,7 @@ export class SessionManager {
       }
       return imported;
     } catch {
-      throw new Error(`Failed to import from: ${filePath}`);
+      throw new Error(`导入失败，来源: ${filePath}`);
     }
   }
 
@@ -288,7 +288,7 @@ export class SessionManager {
    */
   async addTag(sessionId: string, tag: string): Promise<void> {
     const session = this.sessions.get(sessionId)
-    if (!session) throw new Error(`Session not found: ${sessionId}`)
+    if (!session) throw new Error(`会话未找到: ${sessionId}`)
     if (!session.metadata.tags) session.metadata.tags = []
     if (!session.metadata.tags.includes(tag)) {
       session.metadata.tags.push(tag)
@@ -301,7 +301,7 @@ export class SessionManager {
    */
   async removeTag(sessionId: string, tag: string): Promise<void> {
     const session = this.sessions.get(sessionId)
-    if (!session) throw new Error(`Session not found: ${sessionId}`)
+    if (!session) throw new Error(`会话未找到: ${sessionId}`)
     if (session.metadata.tags) {
       session.metadata.tags = session.metadata.tags.filter(t => t !== tag)
       this.persist(session)

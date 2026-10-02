@@ -432,7 +432,7 @@ export function parseForSecurityFromAst(
   if (BRACE_WITH_QUOTE_RE.test(maskBracesInQuotedContexts(cmd))) {
     return {
       kind: 'too-complex',
-      reason: 'Contains brace with quote character (expansion obfuscation)',
+      reason: '包含带引号的括号（展开混淆）',
     }
   }
 
@@ -1120,7 +1120,7 @@ function walkFileRedirect(
   if (!op || target === null) {
     return {
       kind: 'too-complex',
-      reason: 'Unrecognized redirect shape',
+      reason: '无法识别的重定向形式',
       nodeType: node.type,
     }
   }
@@ -1176,7 +1176,7 @@ function walkHeredocRedirect(node: Node): ParseForSecurityResult | null {
   if (!isQuoted) {
     return {
       kind: 'too-complex',
-      reason: 'Heredoc with unquoted delimiter undergoes shell expansion',
+      reason: '使用未加引号定界符的 Heredoc 会经历 shell 展开',
       nodeType: 'heredoc_redirect',
     }
   }
@@ -1402,7 +1402,7 @@ function walkArgument(
   varScope: Map<string, string>,
 ): string | ParseForSecurityResult {
   if (!node) {
-    return { kind: 'too-complex', reason: 'Null argument node' }
+    return { kind: 'too-complex', reason: '参数节点为空' }
   }
 
   switch (node.type) {
@@ -1418,7 +1418,7 @@ function walkArgument(
       if (BRACE_EXPANSION_RE.test(node.text)) {
         return {
           kind: 'too-complex',
-          reason: 'Word contains brace expansion syntax',
+          reason: '单词包含括号展开语法',
           nodeType: 'word',
         }
       }
@@ -1435,7 +1435,7 @@ function walkArgument(
       if (node.children.length > 0) {
         return {
           kind: 'too-complex',
-          reason: 'Number node contains expansion (NN# arithmetic base syntax)',
+          reason: '数字节点包含展开（NN# 进制语法）',
           nodeType: node.children[0]?.type,
         }
       }
@@ -1824,7 +1824,7 @@ function walkVariableAssignment(
   if (name === null) {
     return {
       kind: 'too-complex',
-      reason: 'Variable assignment without name',
+      reason: '变量赋值缺少名称',
       nodeType: 'variable_assignment',
     }
   }
@@ -1846,7 +1846,7 @@ function walkVariableAssignment(
   if (name === 'IFS') {
     return {
       kind: 'too-complex',
-      reason: 'IFS assignment changes word-splitting — cannot model statically',
+      reason: 'IFS 赋值改变单词切分 — 无法静态建模',
       nodeType: 'variable_assignment',
     }
   }
@@ -1887,7 +1887,7 @@ function walkVariableAssignment(
     if (containsAnyPlaceholder(value)) {
       return {
         kind: 'too-complex',
-        reason: 'PS4 value derived from cmdsub/variable — runtime unknowable',
+        reason: 'PS4 值来自命令替换/变量 — 运行时不可知',
         nodeType: 'variable_assignment',
       }
     }
@@ -1914,7 +1914,7 @@ function walkVariableAssignment(
   if (value.includes('~')) {
     return {
       kind: 'too-complex',
-      reason: 'Tilde in assignment value — bash may expand at assignment time',
+      reason: '赋值值中包含波浪号 — bash 可能在赋值时展开',
       nodeType: 'variable_assignment',
     }
   }

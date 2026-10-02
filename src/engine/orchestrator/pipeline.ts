@@ -145,7 +145,7 @@ export class PipelineExecutor {
             output,
             iterations,
             duration: Date.now() - startTime,
-            error: output.includes('[BLOCKED]') ? 'Task blocked by agent' : undefined,
+            error: output.includes('[BLOCKED]') ? '任务被智能体阻塞' : undefined,
           }
         }
 
@@ -184,7 +184,7 @@ export class PipelineExecutor {
       output,
       iterations,
       duration: Date.now() - startTime,
-      error: 'Max retries exceeded',
+      error: '已超过最大重试次数',
     }
   }
 

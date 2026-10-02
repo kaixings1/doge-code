@@ -69,7 +69,7 @@ export class MobileSessionManager {
   /**
    * 创建新会话
    */
-  createSession(deviceName = 'Unknown Device', deviceType: 'ios' | 'android' | 'unknown' = 'unknown'): MobileSessionInfo {
+  createSession(deviceName = '未知设备', deviceType: 'ios' | 'android' | 'unknown' = 'unknown'): MobileSessionInfo {
     // 检查最大会话数
     if (this.sessions.size >= this.maxSessions) {
       // 清理过期会话

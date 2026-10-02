@@ -81,13 +81,13 @@ export class ToolRegistry {
   constructor(private maxTimeoutMs: number = 60000) {}
 
   register(tool: ITool): void {
-    if (!tool || !tool.name) throw new Error('Invalid tool: name is required');
-    if (this.tools.has(tool.name)) throw new Error(`Tool already registered: ${tool.name}`);
+    if (!tool || !tool.name) throw new Error('无效工具：名称不能为空');
+    if (this.tools.has(tool.name)) throw new Error(`工具已注册: ${tool.name}`);
     if (!tool.description || tool.description.trim().length === 0) {
-      throw new Error(`Invalid tool '${tool.name}': description is required`);
+      throw new Error(`无效工具 '${tool.name}'：描述不能为空`);
     }
     if (!tool.parameters || tool.parameters.type !== 'object') {
-      throw new Error(`Invalid tool '${tool.name}': parameters must be an object schema`);
+      throw new Error(`无效工具 '${tool.name}'：parameters 必须是对象 schema`);
     }
     this.tools.set(tool.name, tool);
     if (!this.stats.has(tool.name)) {
@@ -344,7 +344,7 @@ export class ToolRegistry {
       parameters: { type: 'object', properties: {}, required: [] },
       dependencies,
       compose: composeFn,
-      execute: async () => ({ success: false, error: 'Composite tool must use compose function', errorType: 'execution' }),
+      execute: async () => ({ success: false, error: '组合工具必须使用 compose 函数', errorType: 'execution' }),
     };
     this.register(composite);
     return composite;

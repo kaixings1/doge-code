@@ -186,7 +186,7 @@ export class UnifiedScheduler {
         type: 'task_routing',
         taskId: task.id,
         mode: routeMode,
-        reason: routeMode === 'orchestrated' ? 'needs multi-role orchestration' : 'simple single-agent task',
+        reason: routeMode === 'orchestrated' ? '需要多角色编排' : '简单的单智能体任务',
       })
 
       // 3. 执行

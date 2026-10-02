@@ -30,13 +30,13 @@ describe('CommandRegistry', () => {
     it('重复注册应该抛错', () => {
       const reg = new CommandRegistry();
       reg.register(makeCommand());
-      expect(() => reg.register(makeCommand())).toThrow('already registered');
+      expect(() => reg.register(makeCommand())).toThrow('已注册');
     });
 
     it('缺少名称/描述应该抛错', () => {
       const reg = new CommandRegistry();
-      expect(() => reg.register(makeCommand({ name: '' }))).toThrow('name is required');
-      expect(() => reg.register(makeCommand({ description: '' }))).toThrow('description is required');
+      expect(() => reg.register(makeCommand({ name: '' }))).toThrow('名称不能为空');
+      expect(() => reg.register(makeCommand({ description: '' }))).toThrow('描述不能为空');
     });
 
     it('别名冲突应该抛错', () => {

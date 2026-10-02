@@ -1100,7 +1100,7 @@ export async function pushTeamMemory(
         success: false,
         filesUploaded: 0,
         conflict: true,
-        error: 'Conflict resolution failed after retries',
+        error: '重试后冲突解决仍失败',
       }
     }
 
@@ -1141,7 +1141,7 @@ export async function pushTeamMemory(
   return {
     success: false,
     filesUploaded: 0,
-    error: 'Unexpected end of conflict resolution loop',
+    error: '冲突解决循环意外结束',
   }
 }
 

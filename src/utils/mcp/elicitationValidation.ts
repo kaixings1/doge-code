@@ -155,12 +155,12 @@ function getZodSchema(schema: PrimitiveSchemaDefinition): z.ZodTypeAny {
     switch (schema.format) {
       case 'email':
         stringSchema = stringSchema.email({
-          message: 'Must be a valid email address, e.g. user@example.com',
+          message: '必须是有效的电子邮件地址，例如 user@example.com',
         })
         break
       case 'uri':
         stringSchema = stringSchema.url({
-          message: 'Must be a valid URI, e.g. https://example.com',
+          message: '必须是有效的 URI，例如 https://example.com',
         })
         break
       case 'date':

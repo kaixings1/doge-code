@@ -251,7 +251,7 @@ function findUnmatched(entries: readonly ChannelEntry[], allowlist: ReturnType<t
     if (!installedPluginIds.has(`${entry.name}@${entry.marketplace}`)) {
       out.push({
         entry,
-        why: 'plugin not installed'
+        why: '插件未安装'
       });
     }
     if (!entry.dev && !allowed.some(e => e.plugin === entry.name && e.marketplace === entry.marketplace)) {

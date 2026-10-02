@@ -1,6 +1,6 @@
 import type { TelemetryEvent } from './types.js';
 import { execSync } from 'child_process';
-import { existsSync, mkdirSync } from 'fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { readFile as fsReadFile, writeFile as fsWriteFile } from 'fs/promises';
 
 /**

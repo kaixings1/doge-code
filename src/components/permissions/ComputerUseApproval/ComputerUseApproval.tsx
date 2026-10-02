@@ -202,7 +202,7 @@ function ComputerUseTccPanel(t0) {
 type AppListOption = 'allow_all' | 'deny';
 const SENTINEL_WARNING: Record<NonNullable<ReturnType<typeof getSentinelCategory>>, string> = {
   shell: 'equivalent to shell access',
-  filesystem: 'can read/write any file',
+  filesystem: '可读写任意文件',
   system_settings: 'can change system settings'
 };
 function ComputerUseAppListPanel(t0) {

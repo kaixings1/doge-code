@@ -4480,7 +4480,7 @@ function parseElicitationHookOutput(
   if (result.blocked && !result.succeeded) {
     return {
       blockingError: {
-        blockingError: result.output || `Elicitation blocked by hook`,
+        blockingError: result.output || `征询已被 hook 拦截`,
         command: result.command,
       },
     }
@@ -4509,7 +4509,7 @@ function parseElicitationHookOutput(
     if (parsed.decision === 'block' || result.blocked) {
       return {
         blockingError: {
-          blockingError: parsed.reason || 'Elicitation blocked by hook',
+          blockingError: parsed.reason || '征询已被 hook 拦截',
           command: result.command,
         },
       }

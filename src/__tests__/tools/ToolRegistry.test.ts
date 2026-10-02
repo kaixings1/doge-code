@@ -28,7 +28,7 @@ describe('ToolRegistry 注册管理', () => {
   it('重复注册抛错', () => {
     const reg = new ToolRegistry()
     reg.register(makeTool('A'))
-    expect(() => reg.register(makeTool('A'))).toThrow('already registered')
+    expect(() => reg.register(makeTool('A'))).toThrow('已注册')
   })
 
   it('缺少 name 抛错', () => {

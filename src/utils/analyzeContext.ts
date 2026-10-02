@@ -1043,7 +1043,7 @@ export async function analyzeContextUsage(
   // These don't count toward context usage but we show them for visibility
   if (deferredToolTokens > 0) {
     cats.push({
-      name: 'MCP tools (deferred)',
+      name: 'MCP 工具（延迟加载）',
       tokens: deferredToolTokens,
       color: 'inactive',
       isDeferred: true,
@@ -1053,7 +1053,7 @@ export async function analyzeContextUsage(
   // Show deferred builtin tools (when tool search is enabled)
   if (deferredBuiltinTokens > 0) {
     cats.push({
-      name: 'System tools (deferred)',
+      name: '系统工具（延迟加载）',
       tokens: deferredBuiltinTokens,
       color: 'inactive',
       isDeferred: true,

@@ -169,8 +169,8 @@ export async function loadKeybindings(): Promise<KeybindingsLoadResult> {
     // 验证结构 - bindings 必须是有效按键绑定块的数组
     if (!isKeybindingBlockArray(userBlocks)) {
       const errorMessage = !Array.isArray(userBlocks)
-        ? '"bindings" must be an array'
-        : 'keybindings.json contains invalid block structure'
+        ? '"bindings" 必须是数组'
+        : 'keybindings.json 包含无效的块结构'
       const suggestion = !Array.isArray(userBlocks)
         ? '"bindings" 需设为键位绑定块的数组'
         : 'Each block must have "context" (string) and "bindings" (object)'
@@ -298,8 +298,8 @@ export function loadKeybindingsSyncWithWarnings(): KeybindingsLoadResult {
     // 验证结构 - bindings 必须是有效按键绑定块的数组
     if (!isKeybindingBlockArray(userBlocks)) {
       const errorMessage = !Array.isArray(userBlocks)
-        ? '"bindings" must be an array'
-        : 'keybindings.json contains invalid block structure'
+        ? '"bindings" 必须是数组'
+        : 'keybindings.json 包含无效的块结构'
       const suggestion = !Array.isArray(userBlocks)
         ? '"bindings" 需设为键位绑定块的数组'
         : 'Each block must have "context" (string) and "bindings" (object)'

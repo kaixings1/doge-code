@@ -94,12 +94,12 @@ export async function addMemory(
   const newContent = existing + separator + trimmed
 
   if (newContent.length > MAX_FILE_SIZE) {
-    return 'Error: memory store full (' + MAX_FILE_SIZE + ' char limit). Use /memory-manage replace or remove to free space.'
+    return '错误：记忆存储已满（上限 ' + MAX_FILE_SIZE + ' 字符）。请使用 /memory-manage replace 或 remove 释放空间。'
   }
 
   await atomicWrite(path, newContent)
-  logForDebugging('[memoryManager] Added entry to ' + store + ' memory (' + trimmed.slice(0, 60) + '...)')
-  return 'Added to ' + store + ' memory.'
+  logForDebugging('[memoryManager] 已向 ' + store + ' 记忆添加条目 (' + trimmed.slice(0, 60) + '...)')
+  return '已添加到 ' + store + ' 记忆。'
 }
 
 /**
@@ -112,25 +112,25 @@ export async function replaceMemory(
   newEntry: string,
 ): Promise<string> {
   const content = await readMemory(store)
-  if (!content) return 'Error: memory store is empty.'
+  if (!content) return '错误：记忆存储为空。'
 
   // Split by section sign and find the matching entry
   const entries = content.split('\u00a7').map(e => e.trim())
   const idx = entries.findIndex(e => e.includes(oldSubstring.trim()))
 
   if (idx === -1) {
-    return 'Error: no entry containing "' + oldSubstring.slice(0, 40) + '" found.'
+    return '错误：未找到包含 "' + oldSubstring.slice(0, 40) + '" 的条目。'
   }
 
   entries[idx] = newEntry.trim()
   const newContent = entries.join('\n\u00a7\n')
 
   if (newContent.length > MAX_FILE_SIZE) {
-    return 'Error: result exceeds ' + MAX_FILE_SIZE + ' char limit.'
+    return '错误：结果超过 ' + MAX_FILE_SIZE + ' 字符上限。'
   }
 
   await atomicWrite(storePath(store), newContent)
-  return 'Replaced entry in ' + store + ' memory.'
+  return '已替换 ' + store + ' 记忆中的条目。'
 }
 
 /**
@@ -142,19 +142,19 @@ export async function removeMemory(
   substring: string,
 ): Promise<string> {
   const content = await readMemory(store)
-  if (!content) return 'Error: memory store is empty.'
+  if (!content) return '错误：记忆存储为空。'
 
   const entries = content.split('\u00a7').map(e => e.trim())
   const filtered = entries.filter(e => !e.includes(substring.trim()))
 
   if (filtered.length === entries.length) {
-    return 'Error: no entry containing "' + substring.slice(0, 40) + '" found.'
+    return '错误：未找到包含 "' + substring.slice(0, 40) + '" 的条目。'
   }
 
   const removed = entries.length - filtered.length
   const newContent = filtered.join('\n\u00a7\n')
   await atomicWrite(storePath(store), newContent)
-  return 'Removed ' + removed + ' entr' + (removed > 1 ? 'ies' : 'y') + ' from ' + store + ' memory.'
+  return '已从 ' + store + ' 记忆中移除 ' + removed + ' 个条目。'
 }
 
 /**

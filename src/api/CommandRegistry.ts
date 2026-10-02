@@ -93,10 +93,10 @@ export class CommandRegistry {
   }
 
   register(command: ICommand): void {
-    if (!command || !command.name) throw new Error('Invalid command: name is required');
-    if (this.commands.has(command.name)) throw new Error(`Command already registered: ${command.name}`);
+    if (!command || !command.name) throw new Error('无效命令：名称不能为空');
+    if (this.commands.has(command.name)) throw new Error(`命令已注册: ${command.name}`);
     if (!command.description || command.description.trim().length === 0) {
-      throw new Error(`Invalid command '${command.name}': description is required`);
+      throw new Error(`无效命令 '${command.name}'：描述不能为空`);
     }
     this.commands.set(command.name, command);
     if (command.aliases) {

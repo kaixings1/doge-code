@@ -415,7 +415,7 @@ export function createMobileHttpBridge(options: {
               res.end(JSON.stringify({ success: true, requestId: msg.requestId }))
             } catch (e) {
               res.writeHead(400, { 'Content-Type': 'application/json' })
-              res.end(JSON.stringify({ error: 'Invalid JSON' }))
+              res.end(JSON.stringify({ error: '无效的 JSON' }))
             }
           })
           return
@@ -432,7 +432,7 @@ export function createMobileHttpBridge(options: {
         }
 
         res.writeHead(404)
-        res.end('Not Found')
+        res.end('未找到')
       })
 
       await new Promise<void>((resolve, reject) => {
@@ -601,7 +601,7 @@ export class MobileBridgeServer {
         }
 
         res.writeHead(404)
-        res.end('Not Found')
+        res.end('未找到')
       })
 
       // 先 listen，成功后才绑定 WebSocketServer。

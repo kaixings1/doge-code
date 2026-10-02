@@ -1360,8 +1360,8 @@ export function parseMcpConfig(params: {
       errors.push({
         ...(filePath && { file: filePath }),
         path: `mcpServers.${name}`,
-        message: `Windows requires 'cmd /c' wrapper to execute npx`,
-        suggestion: `Change command to "cmd" with args ["/c", "npx", ...]. See: https://code.claude.com/docs/en/mcp#configure-mcp-servers`,
+        message: `Windows 需要 'cmd /c' 包装器来执行 npx`,
+        suggestion: `请将 command 改为 "cmd" 并设置 args 为 ["/c", "npx", ...]。参见：https://code.claude.com/docs/en/mcp#configure-mcp-servers`,
         mcpErrorMetadata: {
           scope,
           serverName: name,

@@ -148,7 +148,7 @@ function collectItems(opts: { scope?: string; dryRun?: boolean }): { items: Brai
         groupId: group.id,
         synced: !skipped,
         skipped,
-        reason: skipped ? 'not synced yet' : null,
+        reason: skipped ? '尚未同步' : null,
       })
     }
   }
@@ -171,7 +171,7 @@ function collectItems(opts: { scope?: string; dryRun?: boolean }): { items: Brai
       lifecycle: 'always-sync',
       synced: !skipped,
       skipped,
-      reason: skipped ? 'not synced yet' : null,
+      reason: skipped ? '尚未同步' : null,
     })
   }
 

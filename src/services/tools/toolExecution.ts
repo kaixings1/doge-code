@@ -1642,7 +1642,7 @@ async function checkPermissionsAndCallTool(
       resultingMessages.push({
         message: createAttachmentMessage({
           type: 'hook_stopped_continuation',
-          message: stopReason || 'Execution stopped by hook',
+          message: stopReason || '执行已被 hook 停止',
           hookName: `PreToolUse:${tool.name}`,
           toolUseID: toolUseID,
           hookEvent: 'PreToolUse',

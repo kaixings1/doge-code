@@ -9,6 +9,8 @@ import {
   createTelemetryEvent,
   serialize,
   deserialize,
+  getConfig,
+  setConfig,
 } from '../../api/utils.js';
 
 describe('getModelProvider', () => {
@@ -155,5 +157,22 @@ describe('createTelemetryEvent', () => {
   it('无属性时 properties 为空', () => {
     const event = createTelemetryEvent('bare_event');
     expect(event.properties).toEqual({});
+  });
+});
+
+// 回归测试：getConfig/setConfig 内部用裸调用 readFileSync/writeFileSync。
+// 曾因漏 import 导致运行时静默失效（写入不生效、读取恒返回默认值）。
+// 护栏：写入后必须能读回，读不到即视为回归。
+describe('config 读写往返（回归：fs 导入完整性）', () => {
+  const KEY = 'regression.fs.import';
+  const VAL = 'roundtrip-' + Date.now();
+
+  it('setConfig 写入后 getConfig 能读回', () => {
+    setConfig(KEY, VAL);
+    expect(getConfig(KEY, 'DEFAULT')).toBe(VAL);
+  });
+
+  it('getConfig 读取不存在的键返回默认值', () => {
+    expect(getConfig('regression.does.not.exist', 'FALLBACK')).toBe('FALLBACK');
   });
 });

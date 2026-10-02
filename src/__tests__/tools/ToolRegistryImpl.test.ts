@@ -28,15 +28,15 @@ describe('ToolRegistry 真实实现（D4 DI）', () => {
   it('非法工具注册抛错（缺 name/description/parameters）', () => {
     const reg = new ToolRegistry();
     const base = { type: 'object' as const, properties: {} };
-    expect(() => reg.register({ name: '', description: 'd', parameters: base, execute: async () => ({ success: true }) })).toThrow('name');
-    expect(() => reg.register({ name: 'x', description: '', parameters: base, execute: async () => ({ success: true }) })).toThrow('description');
+    expect(() => reg.register({ name: '', description: 'd', parameters: base, execute: async () => ({ success: true }) })).toThrow('名称不能为空');
+    expect(() => reg.register({ name: 'x', description: '', parameters: base, execute: async () => ({ success: true }) })).toThrow('描述不能为空');
     expect(() => reg.register({ name: 'x', description: 'd', parameters: { type: 'string' } as any, execute: async () => ({ success: true }) })).toThrow('parameters');
   });
 
   it('重复注册抛错', () => {
     const reg = new ToolRegistry();
     reg.register(makeTool('a'));
-    expect(() => reg.register(makeTool('a'))).toThrow('already registered');
+    expect(() => reg.register(makeTool('a'))).toThrow('已注册');
   });
 
   it('未解析依赖注册抛错', () => {

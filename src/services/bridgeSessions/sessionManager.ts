@@ -521,7 +521,7 @@ export async function setupRealSSHTunnel(
 ): Promise<{ success: boolean; port: number; pid?: number; error?: string }> {
   const session = sessions.get(sessionId)
   if (!session) {
-    return { success: false, port: 0, error: 'Session not found' }
+    return { success: false, port: 0, error: '会话未找到' }
   }
 
   const assignedPort = localPort || 8080 + sessions.size

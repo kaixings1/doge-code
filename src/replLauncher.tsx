@@ -36,7 +36,7 @@ export async function launchRepl(root: Root, appProps: AppWrapperProps, replProp
   }
 
   if (!REPL) {
-    throw new Error('Failed to load REPL screen after 3 attempts: ' + (lastError as Error).message);
+    throw new Error('尝试 3 次后仍无法加载 REPL 界面: ' + (lastError as Error).message);
   }
   await renderAndRun(root, <App {...appProps}>
       <REPL {...replProps} />

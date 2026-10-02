@@ -42,7 +42,7 @@ export interface TraceExportOptions {
   batchSize?: number
 }
 
-const DEFAULT_TRACE_DIR = join(homedir(), ".doge", "traces")
+const DEFAULT_TRACE_DIR = pathJoin(homedir(), ".doge", "traces")
 
 /** 将追踪记录追加写入 JSONL 文件（每行一条，吸收自 LangSmith trace export 格式） */
 export function appendTraceToFile(record: OrchestratorTraceRecord | SubAgentTraceRecord, options: TraceExportOptions = {}): void {

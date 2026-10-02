@@ -210,7 +210,7 @@ function validateBlock(
         warnings.push({
           type: 'invalid_action',
           severity: 'warning',
-          message: `Command binding "${action}" must be in "Chat" context, not "${contextName}"`,
+          message: `命令绑定 "${action}" 必须位于 "Chat" 上下文中，而不是 "${contextName}"`,
           key,
           context: contextName,
           action,

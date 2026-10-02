@@ -67,7 +67,7 @@ export class BigQueryMetricsExporter implements PushMetricExporter {
     if (this.isShutdown) {
       resultCallback({
         code: ExportResultCode.FAILED,
-        error: new Error('Exporter has been shutdown'),
+        error: new Error('导出器已关闭'),
       })
       return
     }

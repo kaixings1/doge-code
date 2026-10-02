@@ -1580,7 +1580,7 @@ export function checkEditableInternalPath(
       updatedInput: input,
       decisionReason: {
         type: 'other',
-        reason: 'auto memory files are allowed for writing',
+        reason: '自动记忆文件允许写入',
       },
     }
   }
@@ -1601,7 +1601,7 @@ export function checkEditableInternalPath(
       updatedInput: input,
       decisionReason: {
         type: 'other',
-        reason: 'Preview launch config is allowed for writing',
+        reason: '预览启动配置允许写入',
       },
     }
   }
@@ -1628,7 +1628,7 @@ export function checkReadableInternalPath(
       updatedInput: input,
       decisionReason: {
         type: 'other',
-        reason: 'Session memory files are allowed for reading',
+        reason: '会话记忆文件允许读取',
       },
     }
   }
@@ -1641,7 +1641,7 @@ export function checkReadableInternalPath(
       updatedInput: input,
       decisionReason: {
         type: 'other',
-        reason: 'Project directory files are allowed for reading',
+        reason: '项目目录文件允许读取',
       },
     }
   }
@@ -1653,7 +1653,7 @@ export function checkReadableInternalPath(
       updatedInput: input,
       decisionReason: {
         type: 'other',
-        reason: 'Plan files for current session are allowed for reading',
+        reason: '当前会话的计划文件允许读取',
       },
     }
   }
@@ -1673,7 +1673,7 @@ export function checkReadableInternalPath(
       updatedInput: input,
       decisionReason: {
         type: 'other',
-        reason: 'Tool result files are allowed for reading',
+        reason: '工具结果文件允许读取',
       },
     }
   }
@@ -1685,7 +1685,7 @@ export function checkReadableInternalPath(
       updatedInput: input,
       decisionReason: {
         type: 'other',
-        reason: 'Scratchpad files for current session are allowed for reading',
+        reason: '当前会话的暂存文件允许读取',
       },
     }
   }
@@ -1700,7 +1700,7 @@ export function checkReadableInternalPath(
       updatedInput: input,
       decisionReason: {
         type: 'other',
-        reason: 'Project temp directory files are allowed for reading',
+        reason: '项目临时目录文件允许读取',
       },
     }
   }
@@ -1712,7 +1712,7 @@ export function checkReadableInternalPath(
       updatedInput: input,
       decisionReason: {
         type: 'other',
-        reason: 'Agent memory files are allowed for reading',
+        reason: '智能体记忆文件允许读取',
       },
     }
   }
@@ -1724,7 +1724,7 @@ export function checkReadableInternalPath(
       updatedInput: input,
       decisionReason: {
         type: 'other',
-        reason: 'auto memory files are allowed for reading',
+        reason: '自动记忆文件允许读取',
       },
     }
   }
@@ -1740,7 +1740,7 @@ export function checkReadableInternalPath(
       updatedInput: input,
       decisionReason: {
         type: 'other',
-        reason: 'Task files are allowed for reading',
+        reason: '任务文件允许读取',
       },
     }
   }
@@ -1756,7 +1756,7 @@ export function checkReadableInternalPath(
       updatedInput: input,
       decisionReason: {
         type: 'other',
-        reason: 'Team files are allowed for reading',
+        reason: '团队文件允许读取',
       },
     }
   }
@@ -1773,7 +1773,7 @@ export function checkReadableInternalPath(
       updatedInput: input,
       decisionReason: {
         type: 'other',
-        reason: 'Bundled skill reference files are allowed for reading',
+        reason: '内置技能参考文件允许读取',
       },
     }
   }

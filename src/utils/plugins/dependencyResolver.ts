@@ -301,5 +301,5 @@ export function formatReverseDependentsSuffix(
   rdeps: string[] | undefined,
 ): string {
   if (!rdeps || rdeps.length === 0) return ''
-  return ` — warning: required by ${rdeps.join(', ')}`
+  return ` — 警告：被 ${rdeps.join(', ')} 依赖`
 }

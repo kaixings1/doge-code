@@ -772,7 +772,7 @@ export function startUserInputPerfettoSpan(context?: string): string {
   const agentInfo = getCurrentAgentInfo()
 
   pendingSpans.set(spanId, {
-    name: 'Waiting for User Input',
+    name: '等待用户输入',
     category: 'user_input',
     startTime: getTimestamp(),
     agentInfo,
@@ -783,7 +783,7 @@ export function startUserInputPerfettoSpan(context?: string): string {
 
   // Emit begin event
   events.push({
-    name: 'Waiting for User Input',
+    name: '等待用户输入',
     cat: 'user_input',
     ph: 'B',
     ts: pendingSpans.get(spanId)!.startTime,

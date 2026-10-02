@@ -192,7 +192,7 @@ describe('SessionManager', () => {
       try {
         await mgr.importSession('{"id":"x"}');
       } catch (e: any) {
-        threw = e.message.includes('Invalid session data');
+        threw = e.message.includes('无效的会话数据');
       }
       expect(threw).toBe(true);
     });

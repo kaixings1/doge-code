@@ -177,12 +177,12 @@ export class StreamingToolExecutor {
           {
             type: 'tool_result',
             content:
-              '<tool_use_error>Error: Streaming fallback - tool execution discarded</tool_use_error>',
+              '<tool_use_error>错误：流式回退 - 工具执行已丢弃</tool_use_error>',
             is_error: true,
             tool_use_id: toolUseId,
           },
         ],
-        toolUseResult: 'Streaming fallback - tool execution discarded',
+        toolUseResult: '流式回退 - 工具执行已丢弃',
         sourceToolAssistantUUID: assistantMessage.uuid,
       })
     }

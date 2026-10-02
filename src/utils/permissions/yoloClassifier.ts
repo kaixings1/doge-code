@@ -950,7 +950,7 @@ async function classifyYoloActionXml(
       logAutoModeOutcome('interrupted', model, { classifierType })
       return {
         shouldBlock: true,
-        reason: 'Classifier request aborted',
+        reason: '分类器请求已中止',
         model,
         unavailable: true,
         durationMs: Date.now() - overallStart,
@@ -1029,7 +1029,7 @@ export async function classifyYoloAction(
   if (actionCompact === '') {
     return {
       shouldBlock: false,
-      reason: 'Tool declares no classifier-relevant input',
+      reason: '工具未声明与分类器相关的输入',
       model: getClassifierModel(),
     }
   }
@@ -1214,7 +1214,7 @@ export async function classifyYoloAction(
       logAutoModeOutcome('parse_failure', model, { failureKind: 'no_tool_use' })
       return {
         shouldBlock: true,
-        reason: 'Classifier returned no tool use block - blocking for safety',
+        reason: '分类器未返回工具调用块 - 出于安全考虑拦截',
         model,
         usage,
         durationMs,
@@ -1238,7 +1238,7 @@ export async function classifyYoloAction(
       })
       return {
         shouldBlock: true,
-        reason: 'Invalid classifier response - blocking for safety',
+        reason: '分类器响应无效 - 出于安全考虑拦截',
         model,
         usage,
         durationMs,
@@ -1275,7 +1275,7 @@ export async function classifyYoloAction(
       logAutoModeOutcome('interrupted', model)
       return {
         shouldBlock: true,
-        reason: 'Classifier request aborted',
+        reason: '分类器请求已中止',
         model,
         unavailable: true,
       }

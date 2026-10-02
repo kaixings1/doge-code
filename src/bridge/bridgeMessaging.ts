@@ -412,7 +412,7 @@ export function handleServerControlRequest(
       const verdict = onSetPermissionMode?.(request.request.mode as any) ?? {
         ok: false,
         error:
-          'set_permission_mode is not supported in this context (onSetPermissionMode callback not registered)',
+          '此上下文中不支持 set_permission_mode（未注册 onSetPermissionMode 回调）',
       }
       if (verdict.ok) {
         response = {
