@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  允许明文 HTTP/WS 流量。桥接服务无 TLS，必须放行，否则 WebView 直接
+  ERR_CLEARTEXT_NOT_PERMITTED（targetSdk 28+ / Android 9+ 的默认行为）。
+
+  范围限定为：
+  - 127.0.0.1 / localhost：adb reverse 走 USB 通道时的地址（推荐方式）
+  - 192.168.0.0/16、10.0.0.0/8、172.16.0.0/12：常见局域网段
+
+  不做全局 cleartextTrafficPermitted=true，避免对任意公网地址也放开明文。
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">127.0.0.1</domain>
+        <domain includeSubdomains="false">localhost</domain>
+        <!-- 局域网段（手机与电脑同 WiFi 时使用） -->
+        <domain includeSubdomains="true">192.168.0.106</domain>
+    </domain-config>
+</network-security-config>

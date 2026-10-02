@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 简易矢量前景：深色圆角方块 + 绿色状态点，呼应对话页的“已连接”圆点 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#2d2d2d"
+        android:pathData="M30,34 h48 a8,8 0 0 1 8,8 v28 a8,8 0 0 1 -8,8 h-30 l-14,12 v-12 h-4 a8,8 0 0 1 -8,-8 v-28 a8,8 0 0 1 8,-8 z" />
+    <path
+        android:fillColor="#4ade80"
+        android:pathData="M54,50 m-7,0 a7,7 0 1,0 14,0 a7,7 0 1,0 -14,0" />
+</vector>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">doge-code</string>
+    <string name="url_hint">http://127.0.0.1:5680 (USB) 或 http://192.168.0.106:5680 (WiFi)</string>
+    <string name="reload">重新加载</string>
+    <string name="toggle_bar">折叠/展开地址栏</string>
+</resources>
