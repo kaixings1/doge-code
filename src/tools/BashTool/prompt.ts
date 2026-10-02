@@ -7,6 +7,7 @@ import { isEnvTruthy } from '../../utils/envUtils.js'
 import { shouldIncludeGitInstructions } from '../../utils/gitSettings.js'
 import { getClaudeTempDir } from '../../utils/permissions/filesystem.js'
 import { SandboxManager } from '../../utils/sandbox/sandbox-adapter.js'
+import { resolveWindowsShellKind } from '../../utils/shell/shellToolUtils.js'
 import { jsonStringify } from '../../utils/slowOperations.js'
 import {
   getDefaultBashTimeoutMs,
@@ -36,10 +37,12 @@ export function getMaxTimeoutMs(): number {
 const NO_PS_CMD_INSTRUCTION =
   '绝不要使用 PowerShell 语法（Get-ChildItem、Where-Object、Select-Object 等）或 Windows CMD 命令（dir、type、del）。仅使用 Unix/bash 命令（ls、grep、cat、find 等）。'
 
-function getShellToolDescription(): string {
-  const shell = process.env.CLAUDE_CODE_SHELL || process.env.SHELL || ''
-  const shim = shell.toLowerCase()
-  const isNativeWinShell = shim.includes('cmd') || shim.includes('powershell') || shim.includes('pwsh')
+export function getShellToolDescription(): string {
+  // 统一判定入口：与 BashTool 执行层、Shell.exec 使用同一事实来源。
+  // 关键：未声明环境变量时，执行层默认用 cmd.exe，提示词也必须按 cmd.exe 描述，
+  // 否则会告诉模型「运行在 Git Bash」而实际用 cmd 执行，导致 ls/grep/pwd 报 not recognized。
+  const resolvedKind = resolveWindowsShellKind()
+  const isNativeWinShell = resolvedKind !== 'bash'
 
   // Linux / macOS：原生 Unix 环境
   if (env.platform !== 'win32') {
@@ -63,9 +66,9 @@ function getShellToolDescription(): string {
     ].join('\n')
   }
 
-  // Windows + 原生 shell（cmd / powershell / pwsh）
-  const shellDisplay = shim.includes('powershell') || shim.includes('pwsh') ? 'PowerShell' : 'cmd.exe'
-  if (shim.includes('powershell') || shim.includes('pwsh')) {
+  // Windows + 原生 shell（cmd / powershell / pwsh）—— 用统一判定结果，不再读 shim
+  const shellDisplay = resolvedKind === 'powershell' ? 'PowerShell' : 'cmd.exe'
+  if (resolvedKind === 'powershell') {
     return [
       "工作目录在命令之间保持不变，但 shell 状态不会保留。",
       '',

@@ -5,6 +5,7 @@ import { getIsGit } from '../utils/git.js'
 import { getCwd } from '../utils/cwd.js'
 import { getIsNonInteractiveSession } from '../bootstrap/state.js'
 import { getCurrentWorktreeSession } from '../utils/worktree.js'
+import { resolveWindowsShellKind } from '../utils/shell/shellToolUtils.js'
 import { getSessionStartDate } from './common.js'
 import { getInitialSettings } from '../utils/settings/settings.js'
 import {
@@ -722,21 +723,22 @@ function getKnowledgeCutoff(modelId: string): string | null {
   return null
 }
 
-function getShellInfoLine(): string {
+export function getShellInfoLine(): string {
+  // 统一判定入口：与执行层同一事实来源。未声明环境变量时执行层用 cmd.exe，
+  // 此处不得再声称"运行于 MSYS2/Git Bash"，否则提示与实际执行矛盾。
+  const resolvedKind = resolveWindowsShellKind()
   const shell = process.env.CLAUDE_CODE_SHELL || process.env.SHELL || 'unknown'
-  const isNativeWinShell = shell.toLowerCase().includes('cmd') || shell.toLowerCase().includes('powershell') || shell.toLowerCase().includes('pwsh')
-  const shellName = shell.includes('zsh')
-    ? 'zsh'
-    : shell.includes('bash')
-      ? 'bash'
-      : isNativeWinShell
-        ? shell
-        : shell
-  if (env.platform === 'win32' && !isNativeWinShell) {
+  const shellName =
+    resolvedKind === 'bash'
+      ? (shell.includes('zsh') ? 'zsh' : 'bash')
+      : resolvedKind === 'powershell'
+        ? 'PowerShell'
+        : 'cmd.exe'
+  if (env.platform === 'win32' && resolvedKind === 'bash') {
     return `Shell：${shellName}（运行于 MSYS2/Git Bash 环境，使用 Unix shell 语法，而不是 Windows — 例如，/dev/null 而不是 NUL，路径中使用正斜杠）`
   }
-  if (env.platform === 'win32' && isNativeWinShell) {
-    return `Shell：${shellName}（运行于 Windows 原生 shell，请使用 Windows cmd 格式的命令：dir、type、del、grep，路径使用反斜杠 \\，禁止使用 bash/zsh 特有语法）`
+  if (env.platform === 'win32' && resolvedKind !== 'bash') {
+    return `Shell：${shellName}（运行于 Windows 原生 shell，请使用 Windows cmd 格式的命令：dir、type、del、findstr，路径使用反斜杠 \\，禁止使用 bash/zsh 特有语法）`
   }
   return `Shell：${shellName}`
 }

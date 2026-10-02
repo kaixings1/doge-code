@@ -17,6 +17,7 @@ import { getBranch, getDefaultBranch, getIsGit, gitExe } from './utils/git.js'
 import { getSessionEpoch } from './bootstrap/state.js'
 import { shouldIncludeGitInstructions } from './utils/gitSettings.js'
 import { logError } from './utils/log.js'
+import { resolveWindowsShellKind } from './utils/shell/shellToolUtils.js'
 
 const MAX_STATUS_CHARS = 2000
 
@@ -113,23 +114,24 @@ export const getSystemContext = memoize(
 
     // 检测平台信息（Windows/Linux/Mac）
     const platform = process.platform === 'win32' ? 'Windows' : process.platform === 'darwin' ? 'macOS' : 'Linux'
-    const rawShell = process.env.CLAUDE_CODE_SHELL || process.env.SHELL || ''
-    const shellShim = rawShell.toLowerCase()
-    const isNativeWinShell = shellShim.includes('cmd') || shellShim.includes('powershell') || shellShim.includes('pwsh')
+    // 统一判定入口：与实际执行层（BashTool 归一化 + Shell.exec）同一事实来源。
+    // 关键：未声明环境变量时执行层默认用 cmd.exe，此处的命令格式提示必须与之一致，
+    // 否则会指示模型用 Unix 命令而实际由 cmd 执行，导致 ls/grep/pwd 报 not recognized。
+    const resolvedShellKind = resolveWindowsShellKind()
+    const displayShell = resolvedShellKind === 'bash' ? 'bash' : resolvedShellKind === 'powershell' ? 'PowerShell' : 'cmd.exe'
 
     let shellFormatInstruction: string
     if (process.platform !== 'win32') {
       shellFormatInstruction = '请返回 Unix shell 格式的命令'
-    } else if (!isNativeWinShell) {
+    } else if (resolvedShellKind === 'bash') {
       shellFormatInstruction = '请返回 Unix shell 格式的命令（使用 ls、cat、grep 等），但使用 Windows 路径（如 D:/doge-code/file.txt）'
-    } else if (shellShim.includes('powershell') || shellShim.includes('pwsh')) {
+    } else if (resolvedShellKind === 'powershell') {
       shellFormatInstruction = '请返回 PowerShell 格式的命令'
     } else {
       shellFormatInstruction = '请返回 Windows cmd 格式的命令（使用 dir、type、del、findstr 等，避免 bash 特有语法）'
     }
 
-    const shell = isNativeWinShell ? rawShell : (process.platform === 'win32' ? 'bash' : (rawShell || 'bash'))
-    const shellInfo = `运行平台: ${platform}\n默认 Shell: ${shell}\n命令格式: ${shellFormatInstruction}`
+    const shellInfo = `运行平台: ${platform}\n默认 Shell: ${displayShell}\n命令格式: ${shellFormatInstruction}`
 
     const glossary = await loadGlossary()
 
