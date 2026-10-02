@@ -70,8 +70,18 @@ class MessageStore(private val context: Context, sessionKey: String = "default")
         private const val TAG = "MessageStore"
         private const val MAX_MESSAGES = 500
 
-        /** 会话标识：主机_端口，用作历史文件名（过滤掉文件名非法字符）。 */
+        /**
+         * 会话标识：主机_端口，用作历史文件名。
+         *
+         * 两步过滤，缺一不可：
+         * 1. 只保留 [A-Za-z0-9_.-]，其余替换为 _
+         * 2. 再把连续的 "." 折叠为单个 —— 上面一步保留了 "."（为可读性），
+         *    但 ".." 是路径穿越字符，仅靠字符白名单挡不住（"." 本身合法）。
+         *    测试 `路径穿越字符被消除` 覆盖此点。
+         */
         fun keyFor(host: String, port: Int): String =
-            "${host}_$port".replace(Regex("[^A-Za-z0-9_.-]"), "_")
+            "${host}_$port"
+                .replace(Regex("[^A-Za-z0-9_.-]"), "_")
+                .replace(Regex("\\.{2,}"), "_")
     }
 }
