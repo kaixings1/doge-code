@@ -23,6 +23,7 @@ src/commands/repo-pack/__tests__/fixtures/data.json
 # 编译产物
 doge.exe
 doge-*.exe
+doge_verify.exe
 *.bun-build
 src/services/remoteManagedSettings/securityCheck.jsx
 
