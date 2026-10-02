@@ -61,11 +61,17 @@ if exist "gradlew.bat" (
                 exit /b 1
             )
             if not exist "!DIST_DIR!" mkdir "!DIST_DIR!"
-            REM Path passed via env var to avoid quoting issues (spaces in path).
+            REM Official services.gradle.org 302-redirects to GitHub releases and
+            REM fails outright when GitHub is unreachable (observed on this machine).
+            REM So try multiple mirrors in order; stop at the first success.
+            REM Path is passed via env var so spaces in the path cannot break the
+            REM PowerShell command line.
             set GRADLE_DL_DIR=!DIST_DIR!
-            powershell -NoProfile -Command "& { $d=$env:GRADLE_DL_DIR; $u='https://services.gradle.org/distributions/gradle-8.9-bin.zip'; $z=Join-Path $d 'gradle-8.9-bin.zip'; Invoke-WebRequest -Uri $u -OutFile $z; Expand-Archive -Path $z -DestinationPath $d -Force; Remove-Item $z }"
+            powershell -NoProfile -Command "& { $d=$env:GRADLE_DL_DIR; $z=Join-Path $d 'gradle-8.9-bin.zip'; $urls=@('https://services.gradle.org/distributions/gradle-8.9-bin.zip','https://mirrors.cloud.tencent.com/gradle/gradle-8.9-bin.zip','https://mirrors.aliyun.com/macports/distfiles/gradle/gradle-8.9-bin.zip'); foreach ($u in $urls) { try { Write-Host ('  trying ' + $u); Invoke-WebRequest -Uri $u -OutFile $z -TimeoutSec 300 -UseBasicParsing; if ((Get-Item $z -ErrorAction SilentlyContinue).Length -gt 10MB) { Expand-Archive -Path $z -DestinationPath $d -Force; Remove-Item $z -Force; break } else { Write-Host '  too small, likely a redirect page'; Remove-Item $z -Force -ErrorAction SilentlyContinue } } catch { Write-Host ('  failed: ' + $_.Exception.Message) } } }"
             if not exist "!DIST_DIR!\gradle-8.9\bin\gradle.bat" (
-                echo   FAIL gradle auto-download failed. Install Gradle manually.
+                echo   FAIL gradle auto-download failed on all mirrors.
+                echo        Download gradle-8.9-bin.zip manually, extract to:
+                echo          !DIST_DIR!\gradle-8.9\
                 exit /b 1
             )
         )
