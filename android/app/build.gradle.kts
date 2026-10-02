@@ -49,6 +49,9 @@ android {
             storePassword = "android"
             keyAlias = "androiddebugkey"
             keyPassword = "android"
+            // 只依赖 v2 签名：minSdk 24（Android 7.0）起系统即支持 v2，
+            // AGP 8.x 对 minSdk>=24 也会强制关闭 v1（显式开 enableV1Signing
+            // 无效，实测仍报 v1=false）。v2 对目标机足够。
         }
     }
 
