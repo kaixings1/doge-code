@@ -711,7 +711,16 @@ export class MobileBridgeServer {
         }
 
         this.connectedClients.add(ws)
-        this.broadcast('client_connected', { sessionId: session.sessionId, deviceId, deviceType })
+        this.broadcast('client_connected', {
+          sessionId: session.sessionId,
+          deviceId,
+          deviceType,
+          // 队列消费由 useQueueProcessor（随 REPL 挂载）负责，而非交互终端下
+          // REPL 不挂载：消息能入队、能收到 queued 回执，但永远不会被处理。
+          // 把该状态告诉客户端，让手机端给出明确提示，而不是让用户对着
+          // 「已提交」苦等回复（这正是之前最难排查的一种静默失败）。
+          interactive: process.stdin.isTTY === true,
+        })
         logForDebugging(`[MobileBridgeServer] 客户端连接: ${deviceId}`)
       })
 
@@ -1140,6 +1149,20 @@ function connect(){
   ws.onmessage = function(ev){
     var msg;
     try { msg = JSON.parse(ev.data); } catch(e){ return; }
+    if (msg.type === 'client_connected') {
+      // 服务端告知队列是否会被消费。CLI 跑在非交互终端时 REPL 不挂载，
+      // 消息能入队但不会被处理 —— 必须显式告知，否则用户会对着
+      //「已提交」一直等不到回复（这正是最难排查的一类静默失败）。
+      if (msg.data && msg.data.interactive === false) {
+        status(true, '已连接（但 CLI 非交互）');
+        bubble('⚠ 电脑上的 CLI 运行在非交互模式，消息只会入队、不会被处理。\n'
+             + '请在真实终端里运行 doge.exe（或 node scripts/start-mobile-bridge.mjs），'
+             + '不要用 -p 或重定向 stdin 的方式启动。', 's');
+      } else {
+        status(true, '已连接');
+      }
+      return;
+    }
     if (msg.type === 'assistant' || msg.type === 'message') {
       var data = msg.data || {};
       var text = data.text || data.message || data.content;
