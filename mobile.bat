@@ -25,9 +25,11 @@ REM   then type in the CLI: /mobile-connect
 REM   open the printed URL/QR on your phone (same WiFi), port 5680
 
 set CLAUDE_CODE_MOBILE_BRIDGE=1
-REM 清掉可能从父 shell 继承来的 LOCAL_BRIDGE 标记：它会让每个普通 CLI 实例
-REM 都去抢 5680 端口（isMobileBridgeAvailable() 判定为 true），多实例并发时
-REM 除首个外全部因 EADDRINUSE 崩溃。移动桥接只由本文件的 MOBILE_BRIDGE 触发。
+REM Clear any LOCAL_BRIDGE marker inherited from the parent shell.
+REM Such a marker makes every plain CLI instance auto-start the mobile bridge
+REM and fight over port 5680 (isMobileBridgeAvailable() returns true), so with
+REM concurrent instances all but the first crash with EADDRINUSE.
+REM The mobile bridge is triggered ONLY by this file's MOBILE_BRIDGE flag.
 set CLAUDE_CODE_LOCAL_BRIDGE=
 set CLAUDE_CODE_LOCAL_BRIDGE_URL=
 

@@ -27,10 +27,11 @@ if "%1"=="" (
     set DOGE_API_JSON=.doge\%1.json
 )
 
-REM 清除从父 shell 继承的 LOCAL_BRIDGE 标记。该变量会让
-REM isMobileBridgeAvailable() 返回 true，导致每个普通实例都自动启动移动
-REM 桥接去抢 5680 端口；多实例并发时除首个外全部崩溃。
-REM 移动桥接请改用 mobile.bat（设的是 CLAUDE_CODE_MOBILE_BRIDGE=1）。
+REM Clear any LOCAL_BRIDGE marker inherited from the parent shell.
+REM Such a marker makes every plain CLI instance auto-start the mobile bridge
+REM and fight over port 5680 (isMobileBridgeAvailable() returns true), so with
+REM concurrent instances all but the first crash with EADDRINUSE.
+REM Use mobile.bat for the mobile bridge (it sets CLAUDE_CODE_MOBILE_BRIDGE=1).
 set CLAUDE_CODE_LOCAL_BRIDGE=
 set CLAUDE_CODE_LOCAL_BRIDGE_URL=
 
