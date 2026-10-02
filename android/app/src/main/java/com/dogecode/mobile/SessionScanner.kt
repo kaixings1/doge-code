@@ -68,21 +68,39 @@ object SessionScanner {
             }
             if (conn.responseCode != 200) return null
             val body = conn.inputStream.bufferedReader().use { it.readText() }
-            val o = JSONObject(body)
-            // 必须含 port 字段，避免把无关服务（恰好返回 JSON）误判为会话
-            if (!o.has("port") || !o.has("sessionId")) return null
-            Session(
-                port = o.optInt("port", port),
-                sessionId = o.optString("sessionId"),
-                label = o.optString("label").ifBlank { "会话 $port" },
-                cwd = o.optString("cwd"),
-                interactive = o.optBoolean("interactive", true),
-                clients = o.optInt("clients", 0),
-            )
+            parseSessionInfo(body, port)
         } catch (e: Exception) {
             null   // 端口无服务是常态，不记日志避免刷屏
         } finally {
             conn?.disconnect()
         }
+    }
+
+    /**
+     * 把 /mobile/session-info 的响应体解析为 Session。
+     *
+     * 纯逻辑（无网络/Android 依赖），独立出来以便单测 —— 这里有两处
+     * 判定直接决定「会话列表对不对」：什么算会话、字段缺失时怎么兜底。
+     *
+     * 返回 null 的情形：非法 JSON、缺少 port 或 sessionId。
+     * 缺字段判定是必需的 —— 端口段里可能有其它恰好返回 JSON 的服务，
+     * 若不校验就会出现在会话列表里，用户点进去连不上。
+     *
+     * @param fallbackPort 探测时用的端口，响应里没带 port 时用它兜底
+     */
+    fun parseSessionInfo(body: String, fallbackPort: Int): Session? {
+        val o = runCatching { JSONObject(body) }.getOrNull() ?: return null
+        if (!o.has("port") || !o.has("sessionId")) return null
+        val sessionId = o.optString("sessionId")
+        if (sessionId.isBlank()) return null
+        val port = o.optInt("port", fallbackPort)
+        return Session(
+            port = port,
+            sessionId = sessionId,
+            label = o.optString("label").ifBlank { "会话 $port" },
+            cwd = o.optString("cwd"),
+            interactive = o.optBoolean("interactive", true),
+            clients = o.optInt("clients", 0),
+        )
     }
 }
