@@ -169,7 +169,10 @@ class MainActivity : AppCompatActivity() {
     private fun showErrorPage(code: Int?) {
         showingError = true
         progress.visibility = View.GONE
-        val target = prefs.getString(KEY_URL, DEFAULT_URL) ?: DEFAULT_URL
+        val rawTarget = prefs.getString(KEY_URL, DEFAULT_URL) ?: DEFAULT_URL
+        // target 来自用户输入的地址栏，会被内插进 HTML 属性与文本。
+        // 必须转义，否则地址里的引号/尖括号可注入脚本（本地页面同样有风险）。
+        val target = htmlEscape(rawTarget)
         val html = """
             <!DOCTYPE html><html lang="zh-CN"><head>
             <meta charset="utf-8">
@@ -195,12 +198,26 @@ class MainActivity : AppCompatActivity() {
               <li>用的是 <code>5680</code> 端口吗？<br>（<code>5678</code> 是另一个服务，没有对话页面）</li>
               <li>USB 模式请确认已执行 <code>adb reverse tcp:5680 tcp:5680</code></li>
             </ul>
-            <button onclick="location.href='$target'">重试</button>
+            <button onclick="retry()">重试</button>
             <div class="url">当前地址：$target</div>
+            <script>
+              // 不用 location.href='$target' 内插：地址含引号会破坏脚本并可能注入。
+              // 这里在运行时读取已转义的 DOM 属性，避免把用户输入拼进 JS。
+              function retry(){ location.href = document.getElementById('tgt').getAttribute('data-url'); }
+            </script>
+            <div id="tgt" data-url="$target" hidden></div>
             </body></html>
         """.trimIndent()
-        webView.loadDataWithBaseURL(target, html, "text/html", "UTF-8", null)
+        webView.loadDataWithBaseURL(rawTarget, html, "text/html", "UTF-8", null)
     }
+
+    /** 转义 HTML 特殊字符，用于把用户输入安全地嵌进本地页面。 */
+    private fun htmlEscape(s: String): String = s
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace("\"", "&quot;")
+        .replace("'", "&#39;")
 
     /** 归一化用户输入：允许只填 IP / IP:端口 / 完整 URL。 */
     private fun normalize(raw: String): String {
