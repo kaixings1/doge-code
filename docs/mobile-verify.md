@@ -7,7 +7,16 @@
 
 `/mobile-connect` 此前是半成品：只写了服务端骨架，手机端从未编写，且链路两端断裂、中间三层是空壳，从未真正跑通过。本次修复 12 处问题后，手机浏览器扫码即可对话。
 
-选浏览器而非原生 App，是为避免引入 JDK / Android SDK / Flutter 工具链（数 GB）——手机浏览器原生支持 WebSocket，零安装。
+**两种客户端都可用，任选其一：**
+
+| 方式 | 安装 | 特性 |
+|---|---|---|
+| **浏览器**（默认） | 零安装，扫码即用 | 服务端自带页面 |
+| **Android 客户端** | 需编译 APK | 原生界面、本地历史、断线重连、通知、会话切换 |
+
+浏览器方案的优点是零安装 —— 手机浏览器原生支持 WebSocket，不必引入
+JDK / Android SDK / Flutter 工具链。Android 客户端见
+[`android/BUILD.md`](../android/BUILD.md)，需要自行编译（含 MIUI 安装限制说明）。
 
 ---
 
@@ -241,6 +250,49 @@ node scripts\verify-mobile.mjs
 收到并入了队），但 CLI 不会处理它——因为没有 REPL 在消费队列。**这不是 bug**。
 
 因此正常使用请直接运行 `doge.exe`（不要带 `-p`），保持交互界面在前台。
+
+**客户端现在会主动识别这一状态**：连接时服务端通过 `client_connected`
+下发 `interactive` 字段（`process.stdin.isTTY === true`），手机页面与
+Android 客户端据此显示「已连接（CLI 非交互，消息不会被处理）」，
+不必等用户对着「已提交」干等。
+
+## 多会话：同时连多个 CLI
+
+**一个桥接进程对应一个 CLI 对话**（队列是进程内单例，见下节架构说明）。
+要看多个会话，就开多个 CLI，各占一个端口：
+
+```cmd
+REM 终端 1
+set CLAUDE_CODE_MOBILE_BRIDGE=1
+set CLAUDE_CODE_MOBILE_PORT=5680
+set DOGE_SESSION_LABEL=前端重构
+doge.exe
+
+REM 终端 2
+set CLAUDE_CODE_MOBILE_BRIDGE=1
+set CLAUDE_CODE_MOBILE_PORT=5681
+set DOGE_SESSION_LABEL=修CI
+doge.exe
+```
+
+| 环境变量 | 作用 | 缺省 |
+|---|---|---|
+| `CLAUDE_CODE_MOBILE_PORT` | 监听端口 | `5680`（非法值也回落 5680） |
+| `DOGE_SESSION_LABEL` | 会话标签 | 回落为 cwd 目录名 |
+
+手机端（Android 客户端）在「连接设置 → 扫描会话」里扫描 `5680-5690`，
+列出所有活会话（含标签、交互状态、工作目录）供切换。
+
+发现机制基于 `GET /mobile/session-info`，返回：
+
+```json
+{ "sessionId": "mobile-...", "port": 5681, "cwd": "D:\\doge-code",
+  "label": "修CI", "interactive": false, "clients": 0, "lastActivity": 1790952339389 }
+```
+
+**为什么不做「一个进程内多个对话」**：`messageQueueManager` 是模块级单例，
+被 32 个文件依赖，改造风险高。详见
+[`docs/mobile-multi-session-plan-b-assessment.md`](./mobile-multi-session-plan-b-assessment.md)。
 
 ## 架构说明（便于排障）
 
