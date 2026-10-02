@@ -1209,11 +1209,11 @@ function checkProjectBoundary(
       content: [{
         type: "text" as const,
         text:
-          `File access blocked: "${filePath}" resolves outside the project root ` +
-          `(${projectDir}). context-mode confines ${toolName} to the workspace so it ` +
-          `cannot be used to bypass the host's sandbox/permission controls (issue #852). ` +
-          `To intentionally process a file outside the project, add a host allow rule, ` +
-          `e.g. "permissions": { "allow": ["Read(${filePath})"] } in your settings.`,
+          `文件访问被阻止：「${filePath}」解析后位于项目根目录之外 ` +
+          `（${projectDir}）。context-mode 将 ${toolName} 限制在工作区内，` +
+          `以免被用来绕过宿主机的沙箱/权限控制（issue #852）。 ` +
+          `如需有意处理项目外的文件，请添加 host 允许规则， ` +
+          `例如在 settings 中配置 "permissions": { "allow": ["Read(${filePath})"] }。`,
       }],
       isError: true,
     });

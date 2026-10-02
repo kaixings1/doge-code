@@ -2964,7 +2964,7 @@ export function formatReport(
     lines.push("");
 
     if (totalCalls === 0) {
-      lines.push("No tool calls yet. Use batch_execute or execute to start saving tokens.");
+      lines.push("尚无工具调用。使用 batch_execute 或 execute 开始节省 token。");
     } else {
       lines.push(`${kb(totalReturned)} entered context  |  0 tokens saved`);
     }
