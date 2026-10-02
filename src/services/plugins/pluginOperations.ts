@@ -786,7 +786,7 @@ export async function disableAllPluginsOp(): Promise<PluginOperationResult> {
   const enabledPlugins = getPluginEditableScopes()
 
   if (enabledPlugins.size === 0) {
-    return { success: true, message: 'No enabled plugins to disable' }
+    return { success: true, message: '没有已启用的插件需要禁用' }
   }
 
   const disabled: string[] = []

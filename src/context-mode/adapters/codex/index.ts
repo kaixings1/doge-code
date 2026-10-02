@@ -634,7 +634,7 @@ export class CodexAdapter extends BaseAdapter implements HookAdapter {
       results.push({
         check: "Codex plugin root",
         status: "warn",
-        message: "context-mode@context-mode is enabled, but `codex plugin list` did not report its runtime root",
+        message: "context-mode@context-mode 已启用，但 `codex plugin list` 未报告其运行时根目录",
         fix: "Restart Codex or verify `codex plugin list` shows context-mode@context-mode installed and enabled",
       });
     }
@@ -770,7 +770,7 @@ export class CodexAdapter extends BaseAdapter implements HookAdapter {
         return {
           check: "MCP registration",
           status: "warn",
-          message: "context-mode@context-mode plugin is enabled, but standalone [mcp_servers.context-mode] is also configured",
+          message: "context-mode@context-mode 插件已启用，但同时配置了独立的 [mcp_servers.context-mode]",
           fix: "context-mode upgrade",
         };
       }
@@ -779,7 +779,7 @@ export class CodexAdapter extends BaseAdapter implements HookAdapter {
         return {
           check: "MCP registration",
           status: "pass",
-          message: "context-mode@context-mode plugin enabled",
+          message: "context-mode@context-mode 插件已启用",
         };
       }
 
@@ -787,7 +787,7 @@ export class CodexAdapter extends BaseAdapter implements HookAdapter {
         return {
           check: "MCP registration",
           status: "pass",
-          message: "context-mode found in [mcp_servers] config",
+          message: "已在 [mcp_servers] 配置中找到 context-mode",
         };
       }
 
@@ -804,7 +804,7 @@ export class CodexAdapter extends BaseAdapter implements HookAdapter {
       return {
         check: "MCP registration",
         status: "fail",
-        message: "No [mcp_servers] section in config.toml",
+        message: "config.toml 中没有 [mcp_servers] 段",
         fix: `Add [mcp_servers.context-mode] to ${this.getSettingsPath()}`,
       };
     } catch {

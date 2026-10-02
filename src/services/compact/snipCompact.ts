@@ -17,4 +17,8 @@ export function isSnipRuntimeEnabled(): boolean {
   return false
 }
 
+export function isSnipMarkerMessage(_msg?: Message): boolean {
+  return false
+}
+
 export const SNIP_NUDGE_TEXT = ''

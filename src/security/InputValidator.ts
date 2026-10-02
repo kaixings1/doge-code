@@ -105,14 +105,14 @@ export class InputValidator {
 
     // 检查危险命令
     const dangerousPatterns = [
-      { pattern: /rm\s+-rf\s+\//, message: 'Recursive delete from root' },
-      { pattern: /:\(\)\s*\{\s*:\|:\&\s*\}\s*;/, message: 'Fork bomb detected' },
-      { pattern: /mkfs/, message: 'Filesystem format command' },
-      { pattern: /dd\s+.*of=\/dev\//, message: 'Direct device write' },
-      { pattern: />\s*\/dev\/sd[a-z]/, message: 'Direct device write' },
-      { pattern: /chmod\s+777\s+\//, message: 'Setting world-writable on root' },
-      { pattern: /curl.*\|\s*sh/, message: 'Remote code execution via curl' },
-      { pattern: /wget.*\|\s*sh/, message: 'Remote code execution via wget' },
+      { pattern: /rm\s+-rf\s+\//, message: '从根目录递归删除' },
+      { pattern: /:\(\)\s*\{\s*:\|:\&\s*\}\s*;/, message: '检测到 fork 炸弹' },
+      { pattern: /mkfs/, message: '文件系统格式化命令' },
+      { pattern: /dd\s+.*of=\/dev\//, message: '直接写入设备' },
+      { pattern: />\s*\/dev\/sd[a-z]/, message: '直接写入设备' },
+      { pattern: /chmod\s+777\s+\//, message: '将根目录设为全局可写' },
+      { pattern: /curl.*\|\s*sh/, message: '通过 curl 远程执行代码' },
+      { pattern: /wget.*\|\s*sh/, message: '通过 wget 远程执行代码' },
     ];
 
     for (const { pattern, message } of dangerousPatterns) {

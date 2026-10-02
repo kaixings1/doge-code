@@ -413,7 +413,7 @@ export class OpenCodeAdapter extends BaseAdapter implements HookAdapter {
         check: "Plugin registration",
         status: hasPlugin ? "pass" : "fail",
         message: hasPlugin
-          ? "context-mode found in plugin array"
+          ? "已在插件数组中找到 context-mode"
           : "context-mode not found in plugin array",
         fix: hasPlugin
           ? undefined
@@ -432,7 +432,7 @@ export class OpenCodeAdapter extends BaseAdapter implements HookAdapter {
       results.push({
         check: "Legacy MCP registration",
         status: "warn",
-        message: "mcp.context-mode is redundant: ctx_* tools are now provided by the plugin",
+        message: "mcp.context-mode 是冗余的：ctx_* 工具现已由插件提供",
         fix: "context-mode upgrade (removes only mcp.context-mode; preserves other MCP servers)",
       });
     }
@@ -462,7 +462,7 @@ export class OpenCodeAdapter extends BaseAdapter implements HookAdapter {
       return {
         check: "Plugin registration",
         status: "pass",
-        message: "context-mode found in plugin array",
+        message: "已在插件数组中找到 context-mode",
       };
     }
 

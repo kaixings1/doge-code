@@ -168,50 +168,50 @@ export const ReviewArtifactTool = buildTool({
           // ── Security checks ──
           if (checkAll || focus === 'security') {
             if (line.includes('eval(')) {
-              issues.push({ severity: 'critical', file: relFile, line: i + 1, message: 'Use of eval() is dangerous', suggestion: 'Avoid eval() - use JSON.parse or Function constructor alternatives', rule: 'security-no-eval' })
+              issues.push({ severity: 'critical', file: relFile, line: i + 1, message: '使用 eval() 是危险的', suggestion: '避免使用 eval() - 改用 JSON.parse 或 Function 构造器替代方案', rule: 'security-no-eval' })
             }
             if (line.includes('innerHTML') || line.includes('dangerouslySetInnerHTML')) {
-              issues.push({ severity: 'major', file: relFile, line: i + 1, message: 'XSS risk: direct HTML injection', suggestion: 'Use textContent, innerText, or a safe template library', rule: 'security-xss' })
+              issues.push({ severity: 'major', file: relFile, line: i + 1, message: 'XSS 风险：直接 HTML 注入', suggestion: '使用 textContent、innerText 或安全的模板库', rule: 'security-xss' })
             }
             if (line.match(/password\s*[:=]\s*['"][^'"]+['"]/i)) {
-              issues.push({ severity: 'critical', file: relFile, line: i + 1, message: 'Hardcoded password', suggestion: 'Move to environment variables or secret manager', rule: 'security-hardcoded-password' })
+              issues.push({ severity: 'critical', file: relFile, line: i + 1, message: '硬编码密码', suggestion: '移至环境变量或密钥管理器', rule: 'security-hardcoded-password' })
             }
             if (line.match(/api[_-]?key\s*[:=]\s*['"][^'"]+['"]/i)) {
-              issues.push({ severity: 'critical', file: relFile, line: i + 1, message: 'Hardcoded API key', suggestion: 'Move to environment variables', rule: 'security-hardcoded-key' })
+              issues.push({ severity: 'critical', file: relFile, line: i + 1, message: '硬编码 API 密钥', suggestion: '移至环境变量', rule: 'security-hardcoded-key' })
             }
             if (line.match(/secret\s*[:=]\s*['"][^'"]+['"]/i)) {
-              issues.push({ severity: 'critical', file: relFile, line: i + 1, message: 'Hardcoded secret', suggestion: 'Move to environment variables', rule: 'security-hardcoded-secret' })
+              issues.push({ severity: 'critical', file: relFile, line: i + 1, message: '硬编码密钥', suggestion: '移至环境变量', rule: 'security-hardcoded-secret' })
             }
             if (line.includes('document.cookie')) {
-              issues.push({ severity: 'major', file: relFile, line: i + 1, message: 'Direct cookie access', suggestion: 'Use HttpOnly cookies and avoid storing sensitive data in cookies', rule: 'security-cookie' })
+              issues.push({ severity: 'major', file: relFile, line: i + 1, message: '直接访问 cookie', suggestion: '使用 HttpOnly cookie，避免将敏感数据存入 cookie', rule: 'security-cookie' })
             }
             if (line.includes('execSync') && line.includes('+')) {
-              issues.push({ severity: 'major', file: relFile, line: i + 1, message: 'Command injection risk', suggestion: 'Use execFile or validate user input', rule: 'security-command-injection' })
+              issues.push({ severity: 'major', file: relFile, line: i + 1, message: '命令注入风险', suggestion: '使用 execFile 或校验用户输入', rule: 'security-command-injection' })
             }
             if (line.includes('exec(') || line.includes('execSync(')) {
-              issues.push({ severity: 'info', file: relFile, line: i + 1, message: 'Using child_process exec', suggestion: 'Consider execFile for safer execution', rule: 'security-child-process' })
+              issues.push({ severity: 'info', file: relFile, line: i + 1, message: '使用了 child_process exec', suggestion: '考虑改用 execFile 以获得更安全的执行', rule: 'security-child-process' })
             }
           }
 
           // ── Performance checks ──
           if (checkAll || focus === 'performance') {
             if (line.length > 200) {
-              issues.push({ severity: 'minor', file: relFile, line: i + 1, message: `Line too long (${line.length} chars)`, suggestion: 'Break into multiple lines for readability', rule: 'perf-long-line' })
+              issues.push({ severity: 'minor', file: relFile, line: i + 1, message: `行过长（${line.length} 字符）`, suggestion: '拆分为多行以提升可读性', rule: 'perf-long-line' })
             }
             if (line.includes('.map(') && line.includes('.find(')) {
               issues.push({ severity: 'major', file: relFile, line: i + 1, message: 'Possible N+1 query pattern', suggestion: 'Consider batch operations or single query', rule: 'perf-n-plus-1' })
             }
             if (line.includes('for (') && line.includes('let i = 0') && depth === 'deep') {
-              issues.push({ severity: 'info', file: relFile, line: i + 1, message: 'Traditional for loop', suggestion: 'Consider for...of or array methods', rule: 'perf-loop' })
+              issues.push({ severity: 'info', file: relFile, line: i + 1, message: '传统 for 循环', suggestion: '考虑改用 for...of 或数组方法', rule: 'perf-loop' })
             }
             if (line.includes('JSON.parse(JSON.stringify(')) {
-              issues.push({ severity: 'minor', file: relFile, line: i + 1, message: 'Deep clone via JSON is slow', suggestion: 'Use structuredClone or lodash cloneDeep', rule: 'perf-json-clone' })
+              issues.push({ severity: 'minor', file: relFile, line: i + 1, message: '通过 JSON 深拷贝较慢', suggestion: '使用 structuredClone 或 lodash cloneDeep', rule: 'perf-json-clone' })
             }
             if (line.includes('await ') && line.includes('Promise.all') === false && depth === 'deep') {
               // 检测串行 await 模式（粗略）
               const nextLines = lines.slice(i + 1, i + 4)
               if (nextLines.some(l => l.includes('await '))) {
-                issues.push({ severity: 'minor', file: relFile, line: i + 1, message: 'Possible serial awaits', suggestion: 'Consider Promise.all for parallel execution', rule: 'perf-serial-await' })
+                issues.push({ severity: 'minor', file: relFile, line: i + 1, message: '可能存在串行 await', suggestion: '考虑使用 Promise.all 并行执行', rule: 'perf-serial-await' })
               }
             }
           }
@@ -219,22 +219,22 @@ export const ReviewArtifactTool = buildTool({
           // ── Style checks ──
           if (checkAll || focus === 'style') {
             if (line.includes('console.log')) {
-              issues.push({ severity: depth === 'deep' ? 'info' : 'minor', file: relFile, line: i + 1, message: 'Console.log left in code', suggestion: 'Remove or replace with logger', rule: 'style-console-log' })
+              issues.push({ severity: depth === 'deep' ? 'info' : 'minor', file: relFile, line: i + 1, message: '代码中残留 console.log', suggestion: '移除或替换为日志器', rule: 'style-console-log' })
             }
             if (line.includes(': any') || line.includes('as any') || line.includes('as unknown as any')) {
-              issues.push({ severity: 'minor', file: relFile, line: i + 1, message: 'Use of `any` type', suggestion: 'Use proper TypeScript types or unknown with narrowing', rule: 'style-any' })
+              issues.push({ severity: 'minor', file: relFile, line: i + 1, message: '使用了 `any` 类型', suggestion: '使用恰当的 TypeScript 类型或 unknown 并配合类型收窄', rule: 'style-any' })
             }
             if (line.includes('// TODO')) {
-              issues.push({ severity: 'info', file: relFile, line: i + 1, message: 'TODO comment found', suggestion: 'Address the TODO or track it in an issue', rule: 'style-todo' })
+              issues.push({ severity: 'info', file: relFile, line: i + 1, message: '发现 TODO 注释', suggestion: '处理该 TODO 或在 issue 中跟踪', rule: 'style-todo' })
             }
             if (line.includes('// FIXME') || line.includes('// HACK') || line.includes('// XXX')) {
-              issues.push({ severity: 'minor', file: relFile, line: i + 1, message: 'FIXME/HACK comment found', suggestion: 'Fix the underlying issue', rule: 'style-fixme' })
+              issues.push({ severity: 'minor', file: relFile, line: i + 1, message: '发现 FIXME/HACK 注释', suggestion: '修复底层问题', rule: 'style-fixme' })
             }
             if (line.includes('function ') && !line.includes(':') && !line.includes('{')) {
-              issues.push({ severity: 'info', file: relFile, line: i + 1, message: 'Function missing return type annotation', suggestion: 'Add TypeScript return type', rule: 'style-return-type' })
+              issues.push({ severity: 'info', file: relFile, line: i + 1, message: '函数缺少返回类型注解', suggestion: '添加 TypeScript 返回类型', rule: 'style-return-type' })
             }
             if (/^\s+$/.test(line) && line.length > 4) {
-              issues.push({ severity: 'info', file: relFile, line: i + 1, message: 'Trailing whitespace', suggestion: 'Remove trailing whitespace', rule: 'style-trailing-space' })
+              issues.push({ severity: 'info', file: relFile, line: i + 1, message: '行尾空格', suggestion: '移除行尾空格', rule: 'style-trailing-space' })
             }
           }
         }

@@ -298,7 +298,7 @@ export class AntigravityCliAdapter extends AntigravityAdapter {
     return {
       check: "MCP registration",
       status: "fail",
-      message: "context-mode not found in Antigravity CLI mcpServers",
+      message: "Antigravity CLI mcpServers 中未找到 context-mode",
       fix: "agy plugin install https://github.com/mksglu/context-mode/tree/main/configs/antigravity-cli",
     };
   }

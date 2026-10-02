@@ -184,11 +184,11 @@ export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
   }
 
   const diffResult = run('gh pr diff ' + prNumber + ' 2>/dev/null')
-  if (!diffResult.ok) { onDone('[ERROR] Cannot fetch PR diff'); return null }
+  if (!diffResult.ok) { onDone('[ERROR] 无法获取 PR diff'); return null }
   const fixes = analyzeDiff(diffResult.output)
 
   if (subcmd === 'analyze') {
-    if (fixes.length === 0) { onDone('[OK] No issues found in PR #' + prNumber); return null }
+    if (fixes.length === 0) { onDone('[OK] PR #' + prNumber + ' 中未发现问题'); return null }
     const bySeverity: Record<string, number> = { critical: 0, high: 0, medium: 0, low: 0, info: 0 }
     const byCategory: Record<string, number> = {}
     fixes.forEach(f => { bySeverity[f.severity]++; byCategory[f.category] = (byCategory[f.category] || 0) + 1 })
@@ -205,11 +205,11 @@ export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
   }
 
   if (subcmd === 'fix') {
-    if (fixes.length === 0) { onDone('[OK] No issues to fix in PR #' + prNumber); return null }
+    if (fixes.length === 0) { onDone('[OK] PR #' + prNumber + ' 中无需修复的问题'); return null }
     const { applied, details } = applyFixes(fixes)
     const autoFixable = fixes.filter(f => f.autoFixable).length
     saveHistory({ date: new Date().toISOString(), pr: prNumber, issuesFound: fixes.length, issuesFixed: applied, status: 'fixed' })
-    onDone(['[OK] Applied ' + applied + ' safe fixes.', '', 'Summary:', '  Total issues: ' + fixes.length, '  Auto-fixable: ' + autoFixable, '  Applied: ' + applied, '  Manual review needed: ' + (fixes.length - autoFixable), '', 'Fixed files:', ...details, '', 'Note: console statements were commented out (not removed) to preserve debugging ability. Review and remove them manually.'].join('\n'))
+    onDone(['[OK] 已应用 ' + applied + ' 个安全修复。', '', '汇总：', '  问题总数：' + fixes.length, '  可自动修复：' + autoFixable, '  已应用：' + applied, '  需人工审查：' + (fixes.length - autoFixable), '', '已修复文件：', ...details, '', '注意：console 语句已被注释掉（而非删除）以保留调试能力。请人工审查并移除它们。'].join('\n'))
     return null
   }
 
@@ -226,7 +226,7 @@ export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
   }
 
   if (subcmd === 'checklist') {
-    if (!meta) { onDone('[ERROR] Cannot fetch PR metadata'); return null }
+    if (!meta) { onDone('[ERROR] 无法获取 PR 元数据'); return null }
     const checks: Array<[string, boolean]> = [
       ['Title is descriptive', meta.title.length > 10],
       ['PR has description', true],
@@ -273,7 +273,7 @@ ${summary || '- No significant issues found'}
 ---
 *Generated automatically by the autofix-pr tool*`
     const result = run(`gh pr comment ${prNumber} --body ${JSON.stringify(body)} 2>&1`)
-    onDone(result.ok ? '[OK] Comment posted' : '[ERROR] ' + result.output)
+    onDone(result.ok ? '[OK] 评论已发布' : '[ERROR] ' + result.output)
     return null
   }
 
@@ -282,13 +282,13 @@ ${summary || '- No significant issues found'}
       execSync('gh pr review ' + prNumber + ' --approve --body "Auto-approved: ' + fixes.length + ' issues found, ' + fixes.filter(f => f.autoFixable).length + ' auto-fixable"', { stdio: 'ignore' })
       saveHistory({ date: new Date().toISOString(), pr: prNumber, issuesFound: fixes.length, issuesFixed: fixes.filter(f => f.autoFixable).length, status: 'approved' })
       onDone('[OK] PR #' + prNumber + ' approved')
-    } catch { onDone('[ERROR] Approve failed') }
+    } catch { onDone('[ERROR] 批准失败') }
     return null
   }
 
-  onDone('Unknown: ' + subcmd)
+  onDone('未知子命令：' + subcmd)
   return null
 }
 
-const autofixPr = { type: 'local-jsx' as const, name: 'autofix-pr', description: 'Auto-fix PR - analyze/fix/report/meta/checklist/comment/summary/approve/history', argumentHint: '<analyze|fix|report|meta|checklist|comment|summary|approve|history> <PR>', isEnabled: () => true, load: () => import('./index.tsx') } satisfies Command
+const autofixPr = { type: 'local-jsx' as const, name: 'autofix-pr', description: '自动修复 PR - 分析/修复/报告/元数据/清单/评论/摘要/批准/历史', argumentHint: '<analyze|fix|report|meta|checklist|comment|summary|approve|history> <PR>', isEnabled: () => true, load: () => import('./index.tsx') } satisfies Command
 export default autofixPr

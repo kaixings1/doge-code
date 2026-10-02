@@ -817,7 +817,7 @@ async function classifyYoloActionXml(
         })
         return {
           shouldBlock: false,
-          reason: 'Allowed by fast classifier',
+          reason: '已由快速分类器放行',
           model,
           usage: stage1Usage,
           durationMs: stage1DurationMs,
@@ -834,7 +834,7 @@ async function classifyYoloActionXml(
           logAutoModeOutcome('parse_failure', model, { classifierType })
           return {
             shouldBlock: true,
-            reason: 'Classifier stage 1 unparseable - blocking for safety',
+            reason: '分类器阶段 1 无法解析 - 出于安全考虑拦截',
             model,
             usage: stage1Usage,
             durationMs: stage1DurationMs,
@@ -851,7 +851,7 @@ async function classifyYoloActionXml(
         })
         return {
           shouldBlock: true,
-          reason: parseXmlReason(stage1Text) ?? 'Blocked by fast classifier',
+          reason: parseXmlReason(stage1Text) ?? '已被快速分类器拦截',
           model,
           usage: stage1Usage,
           durationMs: stage1DurationMs,
@@ -905,7 +905,7 @@ async function classifyYoloActionXml(
       logAutoModeOutcome('parse_failure', model, { classifierType })
       return {
         shouldBlock: true,
-        reason: 'Classifier stage 2 unparseable - blocking for safety',
+        reason: '分类器阶段 2 无法解析 - 出于安全考虑拦截',
         model,
         usage: totalUsage,
         durationMs: totalDurationMs,
@@ -929,7 +929,7 @@ async function classifyYoloActionXml(
     return {
       thinking: parseXmlThinking(stage2Text) ?? undefined,
       shouldBlock: stage2Block,
-      reason: parseXmlReason(stage2Text) ?? 'No reason provided',
+      reason: parseXmlReason(stage2Text) ?? '未提供原因',
       model,
       usage: totalUsage,
       durationMs: totalDurationMs,
@@ -1251,7 +1251,7 @@ export async function classifyYoloAction(
     const classifierResult = {
       thinking: parsed.thinking,
       shouldBlock: parsed.shouldBlock,
-      reason: parsed.reason ?? 'No reason provided',
+      reason: parsed.reason ?? '未提供原因',
       model,
       usage,
       durationMs,

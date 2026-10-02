@@ -180,7 +180,7 @@ function getAuthHeaders(): {
       },
     }
   }
-  return { error: 'No OAuth token available for team memory sync' }
+  return { error: '没有可用于团队记忆同步的 OAuth 令牌' }
 }
 
 // ─── Fetch (pull) ────────────────────────────────────────────
@@ -238,7 +238,7 @@ async function fetchTeamMemoryOnce(
       })
       return {
         success: false,
-        error: 'Invalid team memory response format',
+        error: '团队记忆响应格式无效',
         skipRetry: true,
         errorType: 'parse',
       }
@@ -285,7 +285,7 @@ async function fetchTeamMemoryOnce(
       case 'timeout':
         return {
           success: false,
-          error: 'Team memory sync request timeout',
+          error: '团队记忆同步请求超时',
           errorType: 'timeout',
         }
       case 'network':
@@ -787,7 +787,7 @@ export async function pullTeamMemory(
       success: false,
       filesWritten: 0,
       entryCount: 0,
-      error: 'OAuth not available',
+      error: 'OAuth 不可用',
     }
   }
 
@@ -798,7 +798,7 @@ export async function pullTeamMemory(
       success: false,
       filesWritten: 0,
       entryCount: 0,
-      error: 'No git remote found',
+      error: '未找到 git 远程仓库',
     }
   }
 
@@ -897,7 +897,7 @@ export async function pushTeamMemory(
     return {
       success: false,
       filesUploaded: 0,
-      error: 'OAuth not available',
+      error: 'OAuth 不可用',
       errorType: 'no_oauth',
     }
   }
@@ -908,7 +908,7 @@ export async function pushTeamMemory(
     return {
       success: false,
       filesUploaded: 0,
-      error: 'No git remote found',
+      error: '未找到 git 远程仓库',
       errorType: 'no_repo',
     }
   }

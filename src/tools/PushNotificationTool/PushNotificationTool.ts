@@ -27,11 +27,11 @@ export class PushNotificationTool implements Tool {
   parameters = {
     type: 'object' as const,
     properties: {
-      title: { type: 'string', description: 'Notification title' },
-      message: { type: 'string', description: 'Notification message' },
-      sound: { type: 'boolean', description: 'Play sound with notification' },
-      priority: { type: 'string', description: 'Priority: low, normal, or high', enum: ['low', 'normal', 'high'] },
-      wait: { type: 'boolean', description: 'Wait for delivery confirmation' }
+      title: { type: 'string', description: '通知标题' },
+      message: { type: 'string', description: '通知消息内容' },
+      sound: { type: 'boolean', description: '随通知播放声音' },
+      priority: { type: 'string', description: '优先级：low、normal 或 high', enum: ['low', 'normal', 'high'] },
+      wait: { type: 'boolean', description: '等待投递确认' }
     },
     required: ['title', 'message']
   }
@@ -152,7 +152,7 @@ export class PushNotificationTool implements Tool {
     if (action === 'history') {
       const limit = params?.limit || 10
       const history = this.getHistory(limit)
-      if (history.length === 0) return { content: [{ type: 'text', text: 'No notification history.' }] }
+      if (history.length === 0) return { content: [{ type: 'text', text: '暂无通知历史。' }] }
       const lines = ['## Notification History', '']
       history.forEach(h => lines.push(`- [${h.priority}] ${h.title}: ${h.message} (${h.timestamp})`))
       return { content: [{ type: 'text', text: lines.join('\n') }] }

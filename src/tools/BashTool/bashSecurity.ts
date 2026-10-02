@@ -2111,7 +2111,7 @@ function validateQuotedNewline(context: ValidationContext): PermissionResult {
   // stripCommentLines only strips lines where trim().startsWith('#'), so
   // no # means no possible trigger.
   if (!originalCommand.includes('\n') || !originalCommand.includes('#')) {
-    return { behavior: 'passthrough', message: 'No newline or no hash' }
+    return { behavior: 'passthrough', message: '无换行符或无哈希' }
   }
 
   // Track quote state. Mirrors extractQuotedContent / validateCommentQuoteDesync:
@@ -2169,7 +2169,7 @@ function validateQuotedNewline(context: ValidationContext): PermissionResult {
     }
   }
 
-  return { behavior: 'passthrough', message: 'No quoted newline-hash pattern' }
+  return { behavior: 'passthrough', message: '无带引号的换行-哈希模式' }
 }
 
 /**
@@ -2235,7 +2235,7 @@ function validateZshDangerousCommands(
 
   return {
     behavior: 'passthrough',
-    message: 'No Zsh dangerous commands',
+    message: '无 Zsh 危险命令',
   }
 }
 

@@ -222,7 +222,7 @@ function getSettingsSyncAuthHeaders(): {
 
   return {
     headers: {},
-    error: 'No OAuth token available',
+    error: '没有可用的 OAuth 令牌',
   }
 }
 
@@ -263,7 +263,7 @@ async function fetchUserSettingsOnce(): Promise<SettingsSyncFetchResult> {
     if (!parsed.success) {
       return {
         success: false,
-        error: 'Invalid settings sync response format',
+        error: '设置同步响应格式无效',
       }
     }
 
@@ -278,11 +278,11 @@ async function fetchUserSettingsOnce(): Promise<SettingsSyncFetchResult> {
       case 'auth':
         return {
           success: false,
-          error: 'Not authorized for settings sync',
+          error: '未获授权进行设置同步',
           skipRetry: true,
         }
       case 'timeout':
-        return { success: false, error: 'Settings sync request timeout' }
+        return { success: false, error: '设置同步请求超时' }
       case 'network':
         return { success: false, error: '无法连接到服务器' }
       default:

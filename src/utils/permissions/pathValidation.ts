@@ -244,7 +244,7 @@ export function isPathAllowed(
       allowed: true,
       decisionReason: {
         type: 'other',
-        reason: 'Path is in sandbox write allowlist',
+        reason: '路径位于沙箱写入允许列表中',
       },
     }
   }
@@ -391,7 +391,7 @@ export function validatePath(
       resolvedPath: cleanPath,
       decisionReason: {
         type: 'other',
-        reason: 'UNC network paths require manual approval',
+        reason: 'UNC 网络路径需要人工批准',
       },
     }
   }
@@ -435,7 +435,7 @@ export function validatePath(
       resolvedPath: cleanPath,
       decisionReason: {
         type: 'other',
-        reason: 'Shell expansion syntax in paths requires manual approval',
+        reason: '路径中的 shell 展开语法需要人工批准',
       },
     }
   }

@@ -86,13 +86,13 @@ export const OPENCLAW_TOOL_DEFS: readonly OpenClawToolDef[] = [
   {
     name: "ctx_execute",
     description:
-      "Execute code in a sandboxed subprocess. Only stdout enters context. Prefer over Bash for any command producing >20 lines.",
+      "在沙箱子进程中执行代码。仅 stdout 进入上下文。任何产出超过 20 行的命令都优先用本工具而非 Bash。",
     parameters: {
       type: "object",
       properties: {
-        language: { type: "string", description: "Runtime language" },
-        code: { type: "string", description: "Source code to execute" },
-        timeout: { type: "number", description: "Max execution time in ms" },
+        language: { type: "string", description: "运行时语言" },
+        code: { type: "string", description: "要执行的源代码" },
+        timeout: { type: "number", description: "最大执行时间（毫秒）" },
       },
       required: ["language", "code"],
       additionalProperties: true,
@@ -102,13 +102,13 @@ export const OPENCLAW_TOOL_DEFS: readonly OpenClawToolDef[] = [
   {
     name: "ctx_execute_file",
     description:
-      "Execute code with a file path. Only printed summary enters context — raw file stays in sandbox.",
+      "以文件路径执行代码。仅打印的摘要进入上下文 —— 原始文件留在沙箱中。",
     parameters: {
       type: "object",
       properties: {
-        path: { type: "string", description: "File path" },
-        language: { type: "string", description: "Runtime language" },
-        code: { type: "string", description: "Source code" },
+        path: { type: "string", description: "文件路径" },
+        language: { type: "string", description: "运行时语言" },
+        code: { type: "string", description: "源代码" },
       },
       required: ["path", "language", "code"],
       additionalProperties: true,
@@ -117,12 +117,12 @@ export const OPENCLAW_TOOL_DEFS: readonly OpenClawToolDef[] = [
   },
   {
     name: "ctx_index",
-    description: "Store content in the FTS5 knowledge base for later search.",
+    description: "将内容存入 FTS5 知识库以便后续搜索。",
     parameters: {
       type: "object",
       properties: {
-        content: { type: "string", description: "Text to index" },
-        source: { type: "string", description: "Descriptive source label" },
+        content: { type: "string", description: "要索引的文本" },
+        source: { type: "string", description: "描述性来源标签" },
       },
       required: ["content", "source"],
       additionalProperties: true,
@@ -131,12 +131,12 @@ export const OPENCLAW_TOOL_DEFS: readonly OpenClawToolDef[] = [
   },
   {
     name: "ctx_search",
-    description: "Query indexed content via FTS5. Pass all questions as an array in ONE call.",
+    description: "通过 FTS5 查询已索引内容。所有问题请作为数组在一次调用中传入。",
     parameters: {
       type: "object",
       properties: {
-        queries: { type: "array", description: "Search queries" },
-        source: { type: "string", description: "Optional source filter" },
+        queries: { type: "array", description: "搜索查询" },
+        source: { type: "string", description: "可选的来源筛选" },
         sort: { type: "string", description: "relevance | timeline" },
       },
       additionalProperties: true,
@@ -145,12 +145,12 @@ export const OPENCLAW_TOOL_DEFS: readonly OpenClawToolDef[] = [
   },
   {
     name: "ctx_fetch_and_index",
-    description: "Fetch a URL, chunk it, and index — raw HTML never enters context.",
+    description: "抓取 URL、分块并索引 —— 原始 HTML 不会进入上下文。",
     parameters: {
       type: "object",
       properties: {
-        url: { type: "string", description: "URL to fetch" },
-        source: { type: "string", description: "Source label for indexed chunks" },
+        url: { type: "string", description: "要抓取的 URL" },
+        source: { type: "string", description: "已索引分块的来源标签" },
       },
       required: ["url"],
       additionalProperties: true,
@@ -160,12 +160,12 @@ export const OPENCLAW_TOOL_DEFS: readonly OpenClawToolDef[] = [
   {
     name: "ctx_batch_execute",
     description:
-      "Run multiple commands and search queries in ONE call. Primary research tool — replaces 30+ individual calls.",
+      "在一次调用中运行多个命令和搜索查询。主力研究工具 —— 可替代 30+ 次单独调用。",
     parameters: {
       type: "object",
       properties: {
-        commands: { type: "array", description: "Array of {label, command} objects" },
-        queries: { type: "array", description: "Search queries to run after indexing" },
+        commands: { type: "array", description: "{label, command} 对象数组" },
+        queries: { type: "array", description: "索引后要运行的搜索查询" },
       },
       additionalProperties: true,
     },
@@ -173,7 +173,7 @@ export const OPENCLAW_TOOL_DEFS: readonly OpenClawToolDef[] = [
   },
   {
     name: "ctx_stats",
-    description: "Show context-mode session statistics — token consumption and per-tool breakdown.",
+    description: "显示 context-mode 会话统计 —— token 消耗与各工具明细。",
     parameters: {
       type: "object",
       properties: {},
@@ -183,7 +183,7 @@ export const OPENCLAW_TOOL_DEFS: readonly OpenClawToolDef[] = [
   },
   {
     name: "ctx_doctor",
-    description: "Run context-mode diagnostics — runtimes, hooks, FTS5, plugin registration.",
+    description: "运行 context-mode 诊断 —— 运行时、钩子、FTS5、插件注册。",
     parameters: {
       type: "object",
       properties: {},
@@ -193,7 +193,7 @@ export const OPENCLAW_TOOL_DEFS: readonly OpenClawToolDef[] = [
   },
   {
     name: "ctx_upgrade",
-    description: "Upgrade context-mode to the latest version.",
+    description: "将 context-mode 升级到最新版本。",
     parameters: {
       type: "object",
       properties: {},
@@ -223,7 +223,7 @@ export const OPENCLAW_TOOL_DEFS: readonly OpenClawToolDef[] = [
   },
   {
     name: "ctx_insight",
-    description: "Open the hosted context-mode Insight dashboard (context-mode.com/insight) in the browser.",
+    description: "在浏览器中打开托管的 context-mode 洞察仪表盘（context-mode.com/insight）。",
     parameters: {
       type: "object",
       properties: {},

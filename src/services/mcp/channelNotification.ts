@@ -201,7 +201,7 @@ export function gateChannelServer(
     return {
       action: 'skip',
       kind: 'capability',
-      reason: 'server did not declare claude/channel capability',
+      reason: '服务器未声明 claude/channel 能力',
     }
   }
 
@@ -212,7 +212,7 @@ export function gateChannelServer(
     return {
       action: 'skip',
       kind: 'disabled',
-      reason: 'channels feature is not currently available',
+      reason: 'channels 功能当前不可用',
     }
   }
 
@@ -223,7 +223,7 @@ export function gateChannelServer(
     return {
       action: 'skip',
       kind: 'auth',
-      reason: 'channels requires claude.ai authentication (run /login)',
+      reason: 'channels 需要 claude.ai 认证（请运行 /login）',
     }
   }
 

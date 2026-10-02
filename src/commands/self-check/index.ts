@@ -681,9 +681,9 @@ function runPerfCheck(): { success: boolean; output: string } {
 
     const issues: { file: string; severity: string; title: string; suggestion: string }[] = []
     for (const f of results) {
-      if (f.lines > 500) issues.push({ file: f.file, severity: f.lines > 1000 ? 'high' : 'medium', title: 'File too large', suggestion: 'Split into smaller modules' })
-      if (f.avgComplexity > 10) issues.push({ file: f.file, severity: 'medium', title: 'High avg complexity', suggestion: 'Refactor complex functions' })
-      for (const fn of f.functions) { if (fn > 50) issues.push({ file: f.file, severity: 'medium', title: 'Long function', suggestion: 'Extract smaller functions' }) }
+      if (f.lines > 500) issues.push({ file: f.file, severity: f.lines > 1000 ? 'high' : 'medium', title: '文件过大', suggestion: '拆分为更小的模块' })
+      if (f.avgComplexity > 10) issues.push({ file: f.file, severity: 'medium', title: '平均复杂度偏高', suggestion: '重构复杂函数' })
+      for (const fn of f.functions) { if (fn > 50) issues.push({ file: f.file, severity: 'medium', title: '函数过长', suggestion: '提取为更小的函数' }) }
     }
 
     const score = Math.max(0, 100 - issues.filter(i => i.severity === 'high').length * 8 - issues.filter(i => i.severity === 'medium').length * 4)

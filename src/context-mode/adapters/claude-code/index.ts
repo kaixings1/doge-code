@@ -276,7 +276,7 @@ export class ClaudeCodeAdapter extends ClaudeCodeBaseAdapter implements HookAdap
    * that map auto-extends doctor coverage — no parallel hardcoded list
    * to maintain.
    *
-   * Algo-D5: appends a single "Plugin cache integrity" check that
+   * Algo-D5: appends a single "插件缓存完整性" check that
    * delegates to the same helper start.mjs uses at boot
    * (scripts/plugin-cache-integrity.mjs::assertPluginCacheIntegrity).
    * Same code, two callsites — boot fail-fast and doctor diagnostic
@@ -306,7 +306,7 @@ export class ClaudeCodeAdapter extends ClaudeCodeBaseAdapter implements HookAdap
     );
 
     const integrityCheck: HealthCheck = {
-      name: "Plugin cache integrity",
+      name: "插件缓存完整性",
       check: () => checkPluginCacheIntegritySync(pluginRoot),
     };
 
@@ -364,7 +364,7 @@ export class ClaudeCodeAdapter extends ClaudeCodeBaseAdapter implements HookAdap
       return {
         check: "Plugin registration",
         status: "warn",
-        message: "Could not read settings.json",
+        message: "无法读取 settings.json",
       };
     }
 
@@ -375,7 +375,7 @@ export class ClaudeCodeAdapter extends ClaudeCodeBaseAdapter implements HookAdap
       return {
         check: "Plugin registration",
         status: "warn",
-        message: "No enabledPlugins section found (might be using standalone MCP mode)",
+        message: "未找到 enabledPlugins 段（可能正在使用独立 MCP 模式）",
       };
     }
 
@@ -394,7 +394,7 @@ export class ClaudeCodeAdapter extends ClaudeCodeBaseAdapter implements HookAdap
     return {
       check: "Plugin registration",
       status: "warn",
-      message: "context-mode not in enabledPlugins (might be using standalone MCP mode)",
+      message: "enabledPlugins 中没有 context-mode（可能正在使用独立 MCP 模式）",
     };
   }
 

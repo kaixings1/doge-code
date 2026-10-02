@@ -21,12 +21,12 @@ export class ListPeersTool implements Tool {
   parameters = {
     type: 'object' as const,
     properties: {
-      action: { type: 'string', description: 'Action: list, discover, add, remove, or ping', enum: ['list', 'discover', 'add', 'remove', 'ping'] },
-      status: { type: 'string', description: 'Filter by peer status', enum: ['all', 'active', 'inactive'] },
-      host: { type: 'string', description: 'Peer host for add/ping action' },
-      port: { type: 'number', description: 'Peer port for add action' },
-      name: { type: 'string', description: 'Peer name for add action' },
-      timeout: { type: 'number', description: 'Discovery timeout in ms' }
+      action: { type: 'string', description: '操作：list、discover、add、remove 或 ping', enum: ['list', 'discover', 'add', 'remove', 'ping'] },
+      status: { type: 'string', description: '按节点状态筛选', enum: ['all', 'active', 'inactive'] },
+      host: { type: 'string', description: '用于 add/ping 操作的节点主机' },
+      port: { type: 'number', description: '用于 add 操作的节点端口' },
+      name: { type: 'string', description: '用于 add 操作的节点名称' },
+      timeout: { type: 'number', description: '发现超时时间（毫秒）' }
     },
     required: []
   }
@@ -180,7 +180,7 @@ export class ListPeersTool implements Tool {
       }
       const lines = ['## Peer Discovery', '', `Broadcast on port 45678, timeout ${timeout}ms`, '', `Found ${found.length} peers:`, '']
       found.forEach(p => lines.push(`- ${p.name} (${p.host}:${p.port}) v${p.version || '?'}`))
-      if (found.length === 0) lines.push('(no peers responded - make sure other instances are running)')
+      if (found.length === 0) lines.push('（无节点响应 - 请确保其他实例正在运行）')
       return { content: [{ type: 'text', text: lines.join('\n') }] }
     }
 
@@ -188,7 +188,7 @@ export class ListPeersTool implements Tool {
       const host = params?.host || ''
       const port = params?.port || 45678
       const name = params?.name || host
-      if (!host) return { content: [{ type: 'text', text: 'Error: host is required for add action' }] }
+      if (!host) return { content: [{ type: 'text', text: '错误：add 操作需要提供 host' }] }
       const peer: PeerInfo = {
         id: 'peer-' + Date.now().toString(36),
         name,
@@ -198,34 +198,34 @@ export class ListPeersTool implements Tool {
         lastActive: new Date().toISOString(),
       }
       this.savePeer(peer)
-      return { content: [{ type: 'text', text: `Added peer: ${name} (${host}:${port})` }] }
+      return { content: [{ type: 'text', text: `已添加节点：${name}（${host}:${port}）` }] }
     }
 
     if (action === 'remove') {
       const id = params?.id || params?.name || ''
-      if (!id) return { content: [{ type: 'text', text: 'Error: id or name is required for remove action' }] }
+      if (!id) return { content: [{ type: 'text', text: '错误：remove 操作需要提供 id 或 name' }] }
       const peers = this.loadPeers()
       const target = peers.find(p => p.id === id || p.name === id || p.host === id)
-      if (!target) return { content: [{ type: 'text', text: 'Peer not found: ' + id }] }
+      if (!target) return { content: [{ type: 'text', text: '未找到节点：' + id }] }
       const ok = this.removePeer(target.id)
-      return { content: [{ type: 'text', text: ok ? 'Removed peer: ' + target.name : 'Failed to remove peer' }] }
+      return { content: [{ type: 'text', text: ok ? '已移除节点：' + target.name : '移除节点失败' }] }
     }
 
     if (action === 'ping') {
       const host = params?.host || ''
       const port = params?.port || 45678
-      if (!host) return { content: [{ type: 'text', text: 'Error: host is required for ping action' }] }
+      if (!host) return { content: [{ type: 'text', text: '错误：ping 操作需要提供 host' }] }
       const result = await this.pingPeer(host, port, params?.timeout || 2000)
       return { content: [{ type: 'text', text: `Ping ${host}:${port} -> ${result.ok ? '✅ ' + result.ms + 'ms' : '❌ timeout'}` }] }
     }
 
     // list (default)
     const peers = this.loadPeers()
-    const lines: string[] = ['## Peer Connections', '']
+    const lines: string[] = ['## 节点连接', '']
     const filtered = statusFilter === 'all' ? peers : peers.filter(p => p.status === statusFilter)
     if (filtered.length === 0) {
-      lines.push('No peer connections found.')
-      lines.push('Use action=discover to broadcast on the network, or action=add to add manually.')
+      lines.push('未找到节点连接。')
+      lines.push('使用 action=discover 在网络中广播，或用 action=add 手动添加。')
     } else {
       lines.push(`Found ${filtered.length} peers:`)
       lines.push('')

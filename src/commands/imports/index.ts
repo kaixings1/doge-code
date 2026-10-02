@@ -155,7 +155,7 @@ export const call: LocalCommandCall = async (args) => {
 
 const imports: Command = {
   type: 'local', name: 'imports',
-  description: 'Import management - analyze/unused/organize/sort/convert/circular/graph',
+  description: '导入管理 - 分析/未使用/整理/排序/转换/循环依赖/依赖图',
   aliases: ['/imports', '/imp'], supportsNonInteractive: true,
   load: () => Promise.resolve({ call }),
 }

@@ -162,7 +162,7 @@ export const call: LocalCommandCall = async (args) => {
 
 const backupFull: Command = {
   type: 'local', name: 'backup-full',
-  description: 'Full backup - create/restore/list/delete/export/import/clean/verify/diff',
+  description: '完整备份 - 创建/恢复/列表/删除/导出/导入/清理/校验/对比',
   aliases: '/backup-full, /bf, /bak'.split(','),
   supportsNonInteractive: true,
   load: () => Promise.resolve({ call }),

@@ -1664,7 +1664,7 @@ server.registerTool(
   {
     // #852: surface code execution in the host approval prompt's title (the
     // only server-controlled field the MCP permission UI renders besides args).
-    title: "Run code in a sandbox (executes the supplied code)",
+    title: "在沙箱中运行代码（执行所提供代码）",
     // #846: runs arbitrary code in a sandbox with full network access.
     annotations: {
       readOnlyHint: false,
@@ -2060,7 +2060,7 @@ server.registerTool(
     // #852: the host's MCP approval prompt renders only the tool name/title +
     // raw args — the title is the one server-controlled signal, so make it
     // unambiguously announce code execution + file read for the reviewer.
-    title: "Run code over a file (executes code, reads the given path)",
+    title: "对文件运行代码（执行代码，读取指定路径）",
     // #846: runs arbitrary code over a file in a sandbox with full network access.
     annotations: {
       readOnlyHint: false,
@@ -2296,7 +2296,7 @@ EXAMPLE: ctx_index(path: "/path/to/large-spec.md", source: "openapi-v2-spec")`,
         .string()
         .optional()
         .describe(
-          "Label for the indexed content (e.g., 'Context7: React useEffect', 'Skill: frontend-design')",
+          "已索引内容的标签（例如 'Context7: React useEffect'、'Skill: frontend-design'）",
         ),
       include: z.array(z.string()).optional().describe(
         "Directory-only: glob patterns to include (default: all matching extensions).",
@@ -2327,7 +2327,7 @@ EXAMPLE: ctx_index(path: "/path/to/large-spec.md", source: "openapi-v2-spec")`,
         content: [
           {
             type: "text" as const,
-            text: "Error: Either content or path must be provided",
+            text: "错误：必须提供 content 或 path",
           },
         ],
         isError: true,
@@ -2368,7 +2368,7 @@ EXAMPLE: ctx_index(path: "/path/to/large-spec.md", source: "openapi-v2-spec")`,
             realTarget = realpathSync(resolvedPath);
           } catch {
             return trackResponse("ctx_index", {
-              content: [{ type: "text" as const, text: "Error: symlink target could not be resolved." }],
+              content: [{ type: "text" as const, text: "错误：无法解析符号链接目标。" }],
             });
           }
           if (realTarget !== resolvedPath) {
@@ -2568,7 +2568,7 @@ function coerceCommandsArray(val: unknown): unknown {
 server.registerTool(
   "ctx_search",
   {
-    title: "Search Indexed Content",
+    title: "搜索已索引内容",
     // #846: read-only query over the local FTS5 store. No mutation, no network.
     annotations: {
       readOnlyHint: true,
@@ -2615,7 +2615,7 @@ EXAMPLE: ctx_search(queries: ["last user prompt", "active skills", "open blocker
         return trackResponse("ctx_search", {
           content: [{
             type: "text" as const,
-            text: "Knowledge base is empty — no content has been indexed yet.\n\n" +
+            text: "知识库为空 —— 尚未索引任何内容。\n\n" +
               "ctx_search is a follow-up tool that queries previously indexed content. " +
               "To gather and index content first, use:\n" +
               "  • ctx_batch_execute(commands, queries) — run commands, auto-index output, and search in one call\n" +
@@ -2639,7 +2639,7 @@ EXAMPLE: ctx_search(queries: ["last user prompt", "active skills", "open blocker
 
       if (queryList.length === 0) {
         return trackResponse("ctx_search", {
-          content: [{ type: "text" as const, text: "Error: provide query or queries." }],
+          content: [{ type: "text" as const, text: "错误：请提供 query 或 queries。" }],
           isError: true,
         });
       }
@@ -3427,7 +3427,7 @@ function indexFetched(f: { url: string; source?: string; markdown: string; heade
 server.registerTool(
   "ctx_fetch_and_index",
   {
-    title: "Fetch & Index URL(s)",
+    title: "抓取并索引 URL",
     // #846: fetches external URLs (open world) and writes them into the store.
     annotations: {
       readOnlyHint: false,
@@ -3462,7 +3462,7 @@ EXAMPLE: ctx_fetch_and_index(
         .string()
         .optional()
         .describe(
-          "Label for the indexed content when using single `url` (e.g., 'React useEffect docs', 'Supabase Auth API'). For batch, put source in each requests entry.",
+          "使用单个 `url` 时已索引内容的标签（例如 'React useEffect 文档'、'Supabase Auth API'）。批量模式请将 source 放在每个 requests 条目中。",
         ),
       requests: z
         .preprocess(
@@ -3693,7 +3693,7 @@ EXAMPLE: ctx_fetch_and_index(
 server.registerTool(
   "ctx_batch_execute",
   {
-    title: "Batch Execute & Search",
+    title: "批量执行与搜索",
     // #846: runs arbitrary shell commands (with network) and indexes output.
     annotations: {
       readOnlyHint: false,
@@ -4460,7 +4460,7 @@ server.registerTool(
 server.registerTool(
   "ctx_purge",
   {
-    title: "Purge Knowledge Base",
+    title: "清空知识库",
     // #846: permanently deletes indexed content — destructive. Purging an
     // already-purged scope has no further effect (idempotent). No network.
     annotations: {
@@ -4537,7 +4537,7 @@ EXAMPLE: ctx_purge(confirm: true, scope: "project")`,
       return trackResponse("ctx_purge", {
         content: [{
           type: "text" as const,
-          text: "Purge cancelled. Pass confirm: true to proceed.",
+          text: "已取消清空。传入 confirm: true 以继续。",
         }],
       });
     }
@@ -4831,7 +4831,7 @@ const INSIGHT_URL = "https://context-mode.com/insight";
 server.registerTool(
   "ctx_insight",
   {
-    title: "Open Insight Dashboard",
+    title: "打开洞察仪表盘",
     // #846: opens a hosted dashboard URL in the browser — an external side
     // effect (open world), not a read-only query; safe to repeat.
     annotations: {

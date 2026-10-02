@@ -140,13 +140,13 @@ function analyzeProject(dir: string): FileMetrics[] {
 function generateIssues(files: FileMetrics[]): PerfIssue[] {
   const issues: PerfIssue[] = []
   for (const f of files) {
-    if (f.lines > 500) issues.push({ file: f.file, line: 1, type: 'bundle', severity: f.lines > 1000 ? 'high' : 'medium', title: 'File too large', description: `${f.lines} lines`, impact: 'Harder to maintain, slower to review', suggestion: 'Split into smaller modules (< 500 lines)', effort: f.lines > 1000 ? 'hard' : 'medium', category: 'Size' })
-    if (f.avgComplexity > 10) issues.push({ file: f.file, line: 1, type: 'algorithm', severity: f.avgComplexity > 20 ? 'high' : 'medium', title: 'High avg complexity', description: `Avg: ${f.avgComplexity}`, impact: 'Harder to test and debug', suggestion: 'Refactor complex functions', effort: 'medium', category: 'Complexity' })
+    if (f.lines > 500) issues.push({ file: f.file, line: 1, type: 'bundle', severity: f.lines > 1000 ? 'high' : 'medium', title: '文件过大', description: `${f.lines} 行`, impact: '难以维护，审查更慢', suggestion: '拆分为更小的模块（< 500 行）', effort: f.lines > 1000 ? 'hard' : 'medium', category: 'Size' })
+    if (f.avgComplexity > 10) issues.push({ file: f.file, line: 1, type: 'algorithm', severity: f.avgComplexity > 20 ? 'high' : 'medium', title: '平均复杂度偏高', description: `平均：${f.avgComplexity}`, impact: '难以测试和调试', suggestion: '重构复杂函数', effort: 'medium', category: 'Complexity' })
     for (const fn of f.functions) {
-      if (fn.length > 50) issues.push({ file: f.file, line: fn.line, type: 'cpu', severity: fn.length > 100 ? 'high' : 'medium', title: `Long function: ${fn.name}`, description: `${fn.length} lines`, impact: 'Difficult to understand', suggestion: 'Extract smaller functions', effort: 'medium', category: 'Size' })
-      if (fn.complexity > 10) issues.push({ file: f.file, line: fn.line, type: 'algorithm', severity: fn.complexity > 20 ? 'critical' : 'high', title: `High complexity: ${fn.name}`, description: `Complexity: ${fn.complexity}`, impact: 'Hard to test', suggestion: 'Simplify logic', effort: 'hard', category: 'Complexity' })
-      if (fn.depth > 4) issues.push({ file: f.file, line: fn.line, type: 'cpu', severity: 'medium', title: `Deep nesting: ${fn.name}`, description: `Depth: ${fn.depth}`, impact: 'Hard to read', suggestion: 'Extract nested logic', effort: 'medium', category: 'Readability' })
-      if (fn.params > 5) issues.push({ file: f.file, line: fn.line, type: 'cpu', severity: 'medium', title: `Too many params: ${fn.name}`, description: `${fn.params} params`, impact: 'Hard to use', suggestion: 'Use object parameter', effort: 'easy', category: 'API Design' })
+      if (fn.length > 50) issues.push({ file: f.file, line: fn.line, type: 'cpu', severity: fn.length > 100 ? 'high' : 'medium', title: `函数过长：${fn.name}`, description: `${fn.length} 行`, impact: '难以理解', suggestion: '提取为更小的函数', effort: 'medium', category: 'Size' })
+      if (fn.complexity > 10) issues.push({ file: f.file, line: fn.line, type: 'algorithm', severity: fn.complexity > 20 ? 'critical' : 'high', title: `复杂度过高：${fn.name}`, description: `复杂度：${fn.complexity}`, impact: '难以测试', suggestion: '简化逻辑', effort: 'hard', category: 'Complexity' })
+      if (fn.depth > 4) issues.push({ file: f.file, line: fn.line, type: 'cpu', severity: 'medium', title: `嵌套过深：${fn.name}`, description: `深度：${fn.depth}`, impact: '难以阅读', suggestion: '提取嵌套逻辑', effort: 'medium', category: 'Readability' })
+      if (fn.params > 5) issues.push({ file: f.file, line: fn.line, type: 'cpu', severity: 'medium', title: `参数过多：${fn.name}`, description: `${fn.params} 个参数`, impact: '难以使用', suggestion: '改用对象参数', effort: 'easy', category: 'API Design' })
     }
   }
   return issues

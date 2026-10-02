@@ -26,9 +26,9 @@ export class CtxInspectTool implements Tool {
   parameters = {
     type: 'object' as const,
     properties: {
-      detail: { type: 'string', description: 'Detail level: summary or full', enum: ['summary', 'full'] },
-      includeEnv: { type: 'boolean', description: 'Include environment variables' },
-      includeMemory: { type: 'boolean', description: 'Include memory usage' }
+      detail: { type: 'string', description: '详细程度：summary 或 full', enum: ['summary', 'full'] },
+      includeEnv: { type: 'boolean', description: '包含环境变量' },
+      includeMemory: { type: 'boolean', description: '包含内存使用情况' }
     },
     required: []
   }

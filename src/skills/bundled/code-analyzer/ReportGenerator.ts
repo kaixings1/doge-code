@@ -386,7 +386,7 @@ export class CodeAnalyzer {
           severity: 'high',
           category: 'duplication',
           location: { file: filePath },
-          description: 'Identical code detected across files',
+          description: '跨文件检测到完全相同的代码',
           evidence: {},
           recommendation: 'Extract common logic into shared module'
         });

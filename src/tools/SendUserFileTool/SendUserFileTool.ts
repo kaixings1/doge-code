@@ -10,14 +10,14 @@ export class SendUserFileTool implements Tool {
   parameters = {
     type: 'object' as const,
     properties: {
-      filePath: { type: 'string', description: 'Path to the file to send' },
-      encoding: { type: 'string', description: 'Output encoding: text or base64', enum: ['text', 'base64'] },
-      maxSize: { type: 'number', description: 'Maximum file size in bytes (default 5MB)' },
-      offset: { type: 'number', description: 'Read from this byte offset (must be >= 0)' },
-      length: { type: 'number', description: 'Read this many bytes (must be > 0, offset+length <= file size)' },
-      chunkSize: { type: 'number', description: 'Chunk size for large files (default 100KB)' },
-      preview: { type: 'number', description: 'Preview mode: only show first N lines' },
-      hash: { type: 'boolean', description: 'Include SHA-256 hash of the content' }
+      filePath: { type: 'string', description: '要发送的文件的路径' },
+      encoding: { type: 'string', description: '输出编码：text 或 base64', enum: ['text', 'base64'] },
+      maxSize: { type: 'number', description: '最大文件大小（字节，默认 5MB）' },
+      offset: { type: 'number', description: '从此字节偏移处读取（必须 >= 0）' },
+      length: { type: 'number', description: '读取的字节数（必须 > 0，且 offset+length <= 文件大小）' },
+      chunkSize: { type: 'number', description: '大文件的分块大小（默认 100KB）' },
+      preview: { type: 'number', description: '预览模式：仅显示前 N 行' },
+      hash: { type: 'boolean', description: '包含内容的 SHA-256 哈希' }
     },
     required: ['filePath']
   }

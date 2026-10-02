@@ -134,14 +134,14 @@ export function checkPermissionMode(
   ) {
     return {
       behavior: 'passthrough',
-      message: 'Mode is handled in main permission flow',
+      message: '模式在主权限流程中处理',
     }
   }
 
   if (toolPermissionContext.mode !== 'acceptEdits') {
     return {
       behavior: 'passthrough',
-      message: 'No mode-specific validation required',
+      message: '无需针对模式的额外校验',
     }
   }
 

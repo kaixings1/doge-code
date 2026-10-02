@@ -291,7 +291,7 @@ export const call: LocalJSXCommandCall = async (_onDone, context, _args) => {
 const browser = {
   type: 'local-jsx' as const,
   name: 'browser',
-  description: 'Interactive web browser (navigate URLs, take screenshots, interact with pages)',
+  description: '交互式网页浏览器（导航 URL、截图、与页面交互）',
   aliases: ['browse', 'web'],  load: () => Promise.resolve({ call }),
 } satisfies Command
 

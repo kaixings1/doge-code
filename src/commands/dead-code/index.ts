@@ -168,7 +168,7 @@ function toolAnalyze(config: DeadCodeConfig): DeadItem[] {
       const match = line.match(/(.+?):(\d+)\s+-\s+(.+)/)
       if (match) {
         const kind = match[3].includes('default export') ? 'export' : line.includes('used in module') ? 'import' : 'export'
-        items.push({ file: match[1], line: parseInt(match[2]), name: match[3].split(' ')[0], kind: kind as DeadItem['kind'], reason: 'Unused export (ts-prune)' })
+        items.push({ file: match[1], line: parseInt(match[2]), name: match[3].split(' ')[0], kind: kind as DeadItem['kind'], reason: '未使用的导出（ts-prune）' })
       }
     })
   }
@@ -177,7 +177,7 @@ function toolAnalyze(config: DeadCodeConfig): DeadItem[] {
     result.split('\n').forEach(line => {
       if (line.includes('Unused dependencies')) {
         line.split(':')[1]?.split(',').map((d: string) => d.trim()).filter(Boolean).forEach((dep: string) => {
-          items.push({ file: 'package.json', line: 1, name: dep, kind: 'import', reason: 'Unused dependency (depcheck)' })
+          items.push({ file: 'package.json', line: 1, name: dep, kind: 'import', reason: '未使用的依赖（depcheck）' })
         })
       }
     })

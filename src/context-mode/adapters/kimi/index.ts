@@ -485,7 +485,7 @@ export class KimiAdapter extends BaseAdapter implements HookAdapter {
         return {
           check: "MCP registration",
           status: "pass",
-          message: "context-mode found in mcp.json",
+          message: "已在 mcp.json 中找到 context-mode",
         };
       }
 
@@ -493,7 +493,7 @@ export class KimiAdapter extends BaseAdapter implements HookAdapter {
         return {
           check: "MCP registration",
           status: "fail",
-          message: "mcpServers section exists but context-mode not found",
+          message: "mcpServers 段存在，但未找到 context-mode",
           fix: `Add context-mode to mcpServers in ${this.getMcpPath()}`,
         };
       }
@@ -501,7 +501,7 @@ export class KimiAdapter extends BaseAdapter implements HookAdapter {
       return {
         check: "MCP registration",
         status: "fail",
-        message: "No mcpServers section in mcp.json",
+        message: "mcp.json 中缺少 mcpServers 段",
         fix: `Add mcpServers.context-mode to ${this.getMcpPath()}`,
       };
     } catch {

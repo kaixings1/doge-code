@@ -896,7 +896,7 @@ export default function piExtension(pi: any): void {
   // ── 8. Slash commands ──────────────────────────────────
 
   pi.registerCommand("ctx-stats", {
-    description: "Show context-mode session statistics",
+    description: "显示 context-mode 会话统计",
     handler: async (argsOrCtx: unknown, maybeCtx: unknown) => {
       const ctx = resolveCommandContext(argsOrCtx, maybeCtx);
       const text =
@@ -909,7 +909,7 @@ export default function piExtension(pi: any): void {
   });
 
   pi.registerCommand("ctx-doctor", {
-    description: "Run context-mode diagnostics",
+    description: "运行 context-mode 诊断",
     handler: async (argsOrCtx: unknown, maybeCtx: unknown) => {
       const ctx = resolveCommandContext(argsOrCtx, maybeCtx);
       const dbPath = getDBPath(projectDir);

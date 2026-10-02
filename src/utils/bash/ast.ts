@@ -406,27 +406,27 @@ export function parseForSecurityFromAst(
   // tree-sitter/bash differentials. Everything after this point trusts
   // tree-sitter's tokenization.
   if (CONTROL_CHAR_RE.test(cmd)) {
-    return { kind: 'too-complex', reason: 'Contains control characters' }
+    return { kind: 'too-complex', reason: '包含控制字符' }
   }
   if (UNICODE_WHITESPACE_RE.test(cmd)) {
-    return { kind: 'too-complex', reason: 'Contains Unicode whitespace' }
+    return { kind: 'too-complex', reason: '包含 Unicode 空白字符' }
   }
   if (BACKSLASH_WHITESPACE_RE.test(cmd)) {
     return {
       kind: 'too-complex',
-      reason: 'Contains backslash-escaped whitespace',
+      reason: '包含反斜杠转义的空白字符',
     }
   }
   if (ZSH_TILDE_BRACKET_RE.test(cmd)) {
     return {
       kind: 'too-complex',
-      reason: 'Contains zsh ~[ dynamic directory syntax',
+      reason: '包含 zsh ~[ 动态目录语法',
     }
   }
   if (ZSH_EQUALS_EXPANSION_RE.test(cmd)) {
     return {
       kind: 'too-complex',
-      reason: 'Contains zsh =cmd equals expansion',
+      reason: '包含 zsh =cmd 等号展开',
     }
   }
   if (BRACE_WITH_QUOTE_RE.test(maskBracesInQuotedContexts(cmd))) {

@@ -200,7 +200,7 @@ function scanForIssues(dir: string, config?: ProactiveConfig): ProactiveSuggesti
                 suggestions.push({
                   id: generateId(fullPath, i + 1, msg),
                   type: 'performance', severity: 'low', file: fullPath, line: i + 1,
-                  message: msg, suggestion: 'Use .map() or .filter() instead', autoFixable: true,
+                  message: msg, suggestion: '改用 .map() 或 .filter()', autoFixable: true,
                   status: 'open', detectedAt: now,
                 })
               }
@@ -209,7 +209,7 @@ function scanForIssues(dir: string, config?: ProactiveConfig): ProactiveSuggesti
                 suggestions.push({
                   id: generateId(fullPath, i + 1, msg),
                   type: 'performance', severity: 'medium', file: fullPath, line: i + 1,
-                  message: msg, suggestion: 'Use structuredClone() or a library like lodash.cloneDeep',
+                  message: msg, suggestion: '使用 structuredClone() 或 lodash.cloneDeep 之类的库',
                   autoFixable: true, status: 'open', detectedAt: now,
                 })
               }
@@ -220,7 +220,7 @@ function scanForIssues(dir: string, config?: ProactiveConfig): ProactiveSuggesti
                 suggestions.push({
                   id: generateId(fullPath, i + 1, msg),
                   type: 'security', severity: 'high', file: fullPath, line: i + 1,
-                  message: msg, suggestion: 'Use JSON.parse() or Function constructor with validation',
+                  message: msg, suggestion: '使用 JSON.parse() 或带校验的 Function 构造器',
                   autoFixable: false, status: 'open', detectedAt: now,
                 })
               }
@@ -229,7 +229,7 @@ function scanForIssues(dir: string, config?: ProactiveConfig): ProactiveSuggesti
                 suggestions.push({
                   id: generateId(fullPath, i + 1, msg),
                   type: 'security', severity: 'high', file: fullPath, line: i + 1,
-                  message: msg, suggestion: 'Use textContent or framework-safe rendering',
+                  message: msg, suggestion: '使用 textContent 或框架安全渲染',
                   autoFixable: false, status: 'open', detectedAt: now,
                 })
               }
@@ -241,7 +241,7 @@ function scanForIssues(dir: string, config?: ProactiveConfig): ProactiveSuggesti
                 suggestions.push({
                   id: generateId(fullPath, i + 1, msg),
                   type: 'maintainability', severity: 'medium', file: fullPath, line: i + 1,
-                  message: msg, suggestion: 'Extract nested logic into separate functions',
+                  message: msg, suggestion: '将嵌套逻辑提取为独立函数',
                   autoFixable: false, status: 'open', detectedAt: now,
                 })
               }
@@ -252,7 +252,7 @@ function scanForIssues(dir: string, config?: ProactiveConfig): ProactiveSuggesti
                 suggestions.push({
                   id: generateId(fullPath, i + 1, msg),
                   type: 'bug', severity: 'high', file: fullPath, line: i + 1,
-                  message: msg, suggestion: 'Add async keyword to the function or use .then()',
+                  message: msg, suggestion: '为函数添加 async 关键字，或改用 .then()',
                   autoFixable: false, status: 'open', detectedAt: now,
                 })
               }
@@ -263,7 +263,7 @@ function scanForIssues(dir: string, config?: ProactiveConfig): ProactiveSuggesti
                 suggestions.push({
                   id: generateId(fullPath, i + 1, msg),
                   type: 'style', severity: 'low', file: fullPath, line: i + 1,
-                  message: msg, suggestion: 'Break line into multiple lines (max 120 chars)',
+                  message: msg, suggestion: '拆分为多行（最多 120 字符）',
                   autoFixable: false, status: 'open', detectedAt: now,
                 })
               }

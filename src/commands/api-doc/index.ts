@@ -370,19 +370,19 @@ export function extractRoutesAdvanced(content: string): APIEndpoint[] {
     for (const m of appRouterMethods) {
       const match = line.match(new RegExp(`export\\s+(?:async\\s+)?(?:const|function)\\s+${m}\\b`))
       if (match) {
-        endpoints.push({ name: m, method: m, path: '', description: 'Next.js App Router handler', params: [], returnType: 'Response', file: '', line: i + 1 })
+        endpoints.push({ name: m, method: m, path: '', description: 'Next.js App Router 处理器', params: [], returnType: 'Response', file: '', line: i + 1 })
         break
       }
     }
     // 装饰器路由: @Get('/users') / @Post('/users')
     const decoratorMatch = line.match(/@(Get|Post|Put|Delete|Patch|Options|Head)\(\s*['"]([^'"]+)['"]\s*\)/)
     if (decoratorMatch) {
-      endpoints.push({ name: decoratorMatch[2], method: decoratorMatch[1].toUpperCase(), path: decoratorMatch[2], description: 'Decorator route', params: [], returnType: '', file: '', line: i + 1 })
+      endpoints.push({ name: decoratorMatch[2], method: decoratorMatch[1].toUpperCase(), path: decoratorMatch[2], description: '装饰器路由', params: [], returnType: '', file: '', line: i + 1 })
     }
     // 链式路由: app.route('/users').get(...)
     const chainMatch = line.match(/\.route\(\s*['"]([^'"]+)['"]\s*\)\s*\.(get|post|put|delete|patch)\s*\(/)
     if (chainMatch) {
-      endpoints.push({ name: chainMatch[1], method: chainMatch[2].toUpperCase(), path: chainMatch[1], description: 'Chained route', params: [], returnType: '', file: '', line: i + 1 })
+      endpoints.push({ name: chainMatch[1], method: chainMatch[2].toUpperCase(), path: chainMatch[1], description: '链式路由', params: [], returnType: '', file: '', line: i + 1 })
     }
     // 参数提取: async (req: Request<{ params: { id: string } }>
     if (line.includes('params:')) {
@@ -474,7 +474,7 @@ export const call: LocalCommandCall = async (args) => {
         endpoints.push({ name: match[1], method: '', path: '', description: '', params: [], returnType: '', file: file, line: content.substring(0, match.index).split('\n').length })
       }
       while ((match = classRegex.exec(content)) !== null) {
-        endpoints.push({ name: match[1], method: '', path: '', description: 'Class', params: [], returnType: '', file: file, line: content.substring(0, match.index).split('\n').length })
+        endpoints.push({ name: match[1], method: '', path: '', description: '类', params: [], returnType: '', file: file, line: content.substring(0, match.index).split('\n').length })
       }
     }
     if (format === 'html') { r = generateHTML(title, endpoints) }
@@ -606,5 +606,5 @@ export const call: LocalCommandCall = async (args) => {
   return { type: 'text', value: r || 'ℹ️ 无输出' }
 }
 
-const cmd = { type: 'local' as const, name: 'api-doc', description: 'API docs - gen/scan/routes/jsdoc/openapi/classes/interfaces/types/exports/all + html/md/json', argumentHint: '<gen|scan|routes|jsdoc|openapi|classes|interfaces|types|exports|all> [file|dir]', isEnabled: () => true, supportsNonInteractive: true, load: () => Promise.resolve({ call }) } satisfies Command
+const cmd = { type: 'local' as const, name: 'api-doc', description: 'API 文档 - 生成/扫描/路由/jsdoc/openapi/类/接口/类型/导出/全部 + html/md/json', argumentHint: '<gen|scan|routes|jsdoc|openapi|classes|interfaces|types|exports|all> [file|dir]', isEnabled: () => true, supportsNonInteractive: true, load: () => Promise.resolve({ call }) } satisfies Command
 export default cmd

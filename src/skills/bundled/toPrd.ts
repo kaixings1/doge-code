@@ -5,8 +5,8 @@ const PROMPT = '# To PRD\n\nTurn the current conversation context and codebase u
 export function registerToPrdSkill(): void {
   registerBundledSkill({
     name: 'to-prd',
-    description: 'Synthesize the current conversation into a PRD document and save to project root.',
-    whenToUse: 'When the user has discussed a feature enough to write a formal PRD without further interview.',
+    description: '将当前对话综合成 PRD 文档并保存到项目根目录。',
+    whenToUse: '当用户已充分讨论某个功能，无需进一步访谈即可撰写正式 PRD 时。',
     userInvocable: true,
     disableModelInvocation: true,
     getPromptForCommand() {

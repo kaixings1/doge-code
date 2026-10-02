@@ -98,16 +98,16 @@ const DEFAULT_CONFIG: ReviewConfig = {
 }
 
 const SECRET_PATTERNS: Array<{ pattern: RegExp; name: string; severity: ReviewIssue['severity'] }> = [
-  { pattern: /(api[_-]?key|apikey|secret|password|token|auth)\s*[:=]\s*['"][^'"]{8,}['"]/i, name: 'code-review', severity: 'critical' },
-  { pattern: /AWS_ACCESS_KEY_ID\s*[:=]\s*['"]?[A-Z0-9]{20}/, name: 'AWS Access Key', severity: 'critical' },
-  { pattern: /AWS_SECRET_ACCESS_KEY\s*[:=]\s*['"]?[A-Za-z0-9/+=]{40}/, name: 'AWS Secret Key', severity: 'critical' },
-  { pattern: /gh[pousr]_[A-Za-z0-9_]{36,}/, name: 'GitHub Personal Token', severity: 'critical' },
-  { pattern: /sk-[a-zA-Z0-9]{48}/, name: 'OpenAI API Key', severity: 'critical' },
-  { pattern: /-----BEGIN\s+(RSA|DSA|EC|OPENSSH)\s+PRIVATE\s+KEY-----/, name: 'Private Key', severity: 'critical' },
-  { pattern: /mongodb(\+srv)?:\/\/[^:]+:[^@]+@/, name: 'MongoDB Credentials in URL', severity: 'high' },
-  { pattern: /postgres:\/\/[^:]+:[^@]+@/, name: 'PostgreSQL Credentials in URL', severity: 'high' },
-  { pattern: /mysql:\/\/[^:]+:[^@]+@/, name: 'MySQL Credentials in URL', severity: 'high' },
-  { pattern: /(twitter|facebook|google)_(api_)?(secret|key)\s*[:=]\s*['"][^'"]{10,}['"]/i, name: 'Social Media API Secret', severity: 'high' },
+  { pattern: /(api[_-]?key|apikey|secret|password|token|auth)\s*[:=]\s*['"][^'"]{8,}['"]/i, name: '密钥', severity: 'critical' },
+  { pattern: /AWS_ACCESS_KEY_ID\s*[:=]\s*['"]?[A-Z0-9]{20}/, name: 'AWS 访问密钥', severity: 'critical' },
+  { pattern: /AWS_SECRET_ACCESS_KEY\s*[:=]\s*['"]?[A-Za-z0-9/+=]{40}/, name: 'AWS 秘密密钥', severity: 'critical' },
+  { pattern: /gh[pousr]_[A-Za-z0-9_]{36,}/, name: 'GitHub 个人令牌', severity: 'critical' },
+  { pattern: /sk-[a-zA-Z0-9]{48}/, name: 'OpenAI API 密钥', severity: 'critical' },
+  { pattern: /-----BEGIN\s+(RSA|DSA|EC|OPENSSH)\s+PRIVATE\s+KEY-----/, name: '私钥', severity: 'critical' },
+  { pattern: /mongodb(\+srv)?:\/\/[^:]+:[^@]+@/, name: 'URL 中的 MongoDB 凭据', severity: 'high' },
+  { pattern: /postgres:\/\/[^:]+:[^@]+@/, name: 'URL 中的 PostgreSQL 凭据', severity: 'high' },
+  { pattern: /mysql:\/\/[^:]+:[^@]+@/, name: 'URL 中的 MySQL 凭据', severity: 'high' },
+  { pattern: /(twitter|facebook|google)_(api_)?(secret|key)\s*[:=]\s*['"][^'"]{10,}['"]/i, name: '社交媒体 API 密钥', severity: 'high' },
 ]
 
 function loadConfig(): ReviewConfig {

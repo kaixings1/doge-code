@@ -260,15 +260,15 @@ function analyzeFile(file: string, config: HealthConfig): { metrics: HealthMetri
         issueCount++
       }
       if (config.rules['no-magic-numbers'] && /\b(?!0\b)(?!1\b)(?!2\b)(?!10\b)(?!100\b)\d{2,}\b(?!\s*[;,)\]])/.test(t)) {
-        issues.push({ file, line: lineNum, category: 'style', severity: 'low', message: 'Magic number', suggestion: 'Extract to named constant', rule: 'no-magic-numbers', effort: 'easy' })
+        issues.push({ file, line: lineNum, category: 'style', severity: 'low', message: '魔术数字', suggestion: '提取为具名常量', rule: 'no-magic-numbers', effort: 'easy' })
         issueCount++
       }
       if (config.rules['no-hardcoded-secrets'] && /(?:password|secret|token|apikey|api_key)\s*[:=]\s*['"][^'"]{8,}['"]/i.test(t) && !t.includes('process.env') && !t.includes('example') && !t.includes('sample')) {
-        issues.push({ file, line: lineNum, category: 'security', severity: 'critical', message: 'Hardcoded secret detected', suggestion: 'Move to environment variables (process.env)', rule: 'no-hardcoded-secrets', effort: 'easy' })
+        issues.push({ file, line: lineNum, category: 'security', severity: 'critical', message: '检测到硬编码密钥', suggestion: '移至环境变量（process.env）', rule: 'no-hardcoded-secrets', effort: 'easy' })
         issueCount++
       }
       if (t.length > 120) {
-        issues.push({ file, line: lineNum, category: 'style', severity: 'info', message: `Line too long (${t.length} chars)`, suggestion: 'Break line or extract to variable', rule: 'max-line-length', effort: 'trivial' })
+        issues.push({ file, line: lineNum, category: 'style', severity: 'info', message: `行过长（${t.length} 字符）`, suggestion: '换行或提取为变量', rule: 'max-line-length', effort: 'trivial' })
         issueCount++
       }
 
@@ -284,7 +284,7 @@ function analyzeFile(file: string, config: HealthConfig): { metrics: HealthMetri
       if (count >= 3) {
         metrics.duplicateBlocks++
         if (config.rules['no-duplicate-code'] && issueCount < MAX_ISSUES_PER_FILE) {
-          issues.push({ file, line: 1, category: 'duplication', severity: 'medium', message: `Duplicate code (${count}x): "${block.slice(0, 40)}..."`, suggestion: 'Extract to shared function/constant', rule: 'no-duplicate-code', effort: 'medium' })
+          issues.push({ file, line: 1, category: 'duplication', severity: 'medium', message: `重复代码（${count}x）："${block.slice(0, 40)}..."`, suggestion: '提取为共享函数/常量', rule: 'no-duplicate-code', effort: 'medium' })
           issueCount++
         }
       }

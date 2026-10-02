@@ -152,7 +152,7 @@ export class CursorAdapter extends BaseAdapter implements HookAdapter {
     if (response.decision === "deny") {
       return {
         permission: "deny",
-        user_message: response.reason ?? "Blocked by context-mode hook",
+        user_message: response.reason ?? "已被 context-mode hook 拦截",
       };
     }
     if (response.decision === "modify" && response.updatedInput) {
@@ -305,7 +305,7 @@ export class CursorAdapter extends BaseAdapter implements HookAdapter {
       results.push({
         check: "Native hook config",
         status: "fail",
-        message: "No readable native Cursor hook config found in .cursor/hooks.json or ~/.cursor/hooks.json",
+        message: "在 .cursor/hooks.json 或 ~/.cursor/hooks.json 中未找到可读的原生 Cursor hook 配置",
         fix: "context-mode upgrade",
       });
     } else {
@@ -481,7 +481,7 @@ export class CursorAdapter extends BaseAdapter implements HookAdapter {
     return {
       check: "MCP registration",
       status: "warn",
-      message: "Could not find context-mode in .cursor/mcp.json or ~/.cursor/mcp.json",
+      message: "在 .cursor/mcp.json 或 ~/.cursor/mcp.json 中找不到 context-mode",
     };
   }
 

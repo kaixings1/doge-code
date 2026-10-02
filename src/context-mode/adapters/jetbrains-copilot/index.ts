@@ -92,13 +92,13 @@ export class JetBrainsCopilotAdapter extends CopilotBaseAdapter {
         results.push({
           check: "PreToolUse hook",
           status: "pass",
-          message: "PreToolUse hook configured in .github/hooks/context-mode.json",
+          message: "PreToolUse hook 已在 .github/hooks/context-mode.json 中配置",
         });
       } else {
         results.push({
           check: "PreToolUse hook",
           status: "fail",
-          message: "PreToolUse not found in .github/hooks/context-mode.json",
+          message: ".github/hooks/context-mode.json 中未找到 PreToolUse",
           fix: "context-mode upgrade",
         });
       }
@@ -107,13 +107,13 @@ export class JetBrainsCopilotAdapter extends CopilotBaseAdapter {
         results.push({
           check: "SessionStart hook",
           status: "pass",
-          message: "SessionStart hook configured in .github/hooks/context-mode.json",
+          message: "SessionStart hook 已在 .github/hooks/context-mode.json 中配置",
         });
       } else {
         results.push({
           check: "SessionStart hook",
           status: "fail",
-          message: "SessionStart not found in .github/hooks/context-mode.json",
+          message: ".github/hooks/context-mode.json 中未找到 SessionStart",
           fix: "context-mode upgrade",
         });
       }
@@ -121,7 +121,7 @@ export class JetBrainsCopilotAdapter extends CopilotBaseAdapter {
       results.push({
         check: "Hook configuration",
         status: "fail",
-        message: "Could not read .github/hooks/context-mode.json",
+        message: "无法读取 .github/hooks/context-mode.json",
         fix: "context-mode upgrade",
       });
     }

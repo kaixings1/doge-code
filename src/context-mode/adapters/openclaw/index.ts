@@ -312,7 +312,7 @@ export class OpenClawAdapter extends BaseAdapter implements HookAdapter {
       results.push({
         check: "Plugin configuration",
         status: "fail",
-        message: "Could not read openclaw.json",
+        message: "无法读取 openclaw.json",
         fix: "context-mode upgrade",
       });
       return results;
@@ -328,7 +328,7 @@ export class OpenClawAdapter extends BaseAdapter implements HookAdapter {
         check: "Plugin registration",
         status: hasPlugin ? "pass" : "fail",
         message: hasPlugin
-          ? "context-mode found in plugins.entries"
+          ? "已在 plugins.entries 中找到 context-mode"
           : "context-mode not found in plugins.entries",
         fix: hasPlugin
           ? undefined
@@ -351,7 +351,7 @@ export class OpenClawAdapter extends BaseAdapter implements HookAdapter {
       results.push({
         check: "Plugin registration",
         status: "fail",
-        message: "No plugins.entries found in openclaw.json",
+        message: "在 openclaw.json 中未找到 plugins.entries",
         fix: "context-mode upgrade",
       });
     }
@@ -362,7 +362,7 @@ export class OpenClawAdapter extends BaseAdapter implements HookAdapter {
       results.push({
         check: "Context engine",
         status: "pass",
-        message: "context-mode registered as context engine (owns compaction)",
+        message: "context-mode 已注册为上下文引擎（负责压缩）",
       });
     } else {
       results.push({
@@ -382,7 +382,7 @@ export class OpenClawAdapter extends BaseAdapter implements HookAdapter {
       return {
         check: "Plugin registration",
         status: "warn",
-        message: "Could not read openclaw.json",
+        message: "无法读取 openclaw.json",
       };
     }
 
@@ -395,7 +395,7 @@ export class OpenClawAdapter extends BaseAdapter implements HookAdapter {
         return {
           check: "Plugin registration",
           status: "pass",
-          message: "context-mode found in plugins.entries",
+          message: "已在 plugins.entries 中找到 context-mode",
         };
       }
     }
@@ -403,7 +403,7 @@ export class OpenClawAdapter extends BaseAdapter implements HookAdapter {
     return {
       check: "Plugin registration",
       status: "fail",
-      message: "context-mode not found in openclaw.json plugins.entries",
+      message: "openclaw.json 的 plugins.entries 中未找到 context-mode",
       fix: "context-mode upgrade",
     };
   }

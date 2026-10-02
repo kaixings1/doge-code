@@ -22,11 +22,11 @@ export class SubscribePRTool implements Tool {
   parameters = {
     type: 'object' as const,
     properties: {
-      action: { type: 'string', description: 'Action: check, list, subscribe, unsubscribe, poll, webhook-start, webhook-stop, webhook-status, or webhook-events', enum: ['check', 'list', 'subscribe', 'unsubscribe', 'poll', 'webhook-start', 'webhook-stop', 'webhook-status', 'webhook-events'] },
-      repo: { type: 'string', description: 'Repository in format owner/repo' },
-      pr: { type: 'number', description: 'PR number' },
-      port: { type: 'number', description: 'Port for webhook server (default 45679)' },
-      limit: { type: 'number', description: 'Max events to show for webhook-events (default 20, max 100)' }
+      action: { type: 'string', description: '操作：check、list、subscribe、unsubscribe、poll、webhook-start、webhook-stop、webhook-status 或 webhook-events', enum: ['check', 'list', 'subscribe', 'unsubscribe', 'poll', 'webhook-start', 'webhook-stop', 'webhook-status', 'webhook-events'] },
+      repo: { type: 'string', description: '仓库，格式为 owner/repo' },
+      pr: { type: 'number', description: 'PR 编号' },
+      port: { type: 'number', description: 'webhook 服务器端口（默认 45679）' },
+      limit: { type: 'number', description: 'webhook-events 显示的最大事件数（默认 20，上限 100）' }
     },
     required: ['action']
   }
@@ -214,7 +214,7 @@ export class SubscribePRTool implements Tool {
 
     if (action === 'poll') {
       const subs = this.loadSubscriptions()
-      if (subs.length === 0) return { content: [{ type: 'text', text: 'No subscriptions to poll. Use subscribe action first.' }] }
+      if (subs.length === 0) return { content: [{ type: 'text', text: '没有可轮询的订阅。请先使用 subscribe 操作。' }] }
       const changes: string[] = []
       const lines = ['## Poll Results', '']
       for (const s of subs) {
@@ -239,7 +239,7 @@ export class SubscribePRTool implements Tool {
 
     if (action === 'list' && !repo) {
       const subs = this.loadSubscriptions()
-      if (subs.length === 0) return { content: [{ type: 'text', text: 'No subscriptions. Use subscribe action with repo and pr.' }] }
+      if (subs.length === 0) return { content: [{ type: 'text', text: '暂无订阅。请使用带 repo 和 pr 的 subscribe 操作。' }] }
       const lines = ['## Subscribed PRs', '']
       for (const s of subs) {
         try {
@@ -267,7 +267,7 @@ export class SubscribePRTool implements Tool {
       try {
         const output = execSync(`gh pr list --repo ${repo} --state open --limit 10 --json number,title,author,createdAt,headRefName 2>&1`, { encoding: 'utf-8', timeout: 15000 })
         const prs = JSON.parse(output)
-        if (prs.length === 0) return { content: [{ type: 'text', text: 'No open PRs found.' }] }
+        if (prs.length === 0) return { content: [{ type: 'text', text: '未找到打开的 PR。' }] }
         const lines = ['## Open PRs', '']
         prs.forEach((p: any) => lines.push(`- #${p.number}: ${p.title} (${p.author?.login || 'unknown'})`))
         return { content: [{ type: 'text', text: lines.join('\n') }] }
@@ -313,6 +313,6 @@ export class SubscribePRTool implements Tool {
       return { content: [{ type: 'text', text: this.formatWebhookEvents(limit) }] }
     }
 
-    return { content: [{ type: 'text', text: 'Usage: subscribe_pr with action=check repo=owner/repo pr=123' }] }
+    return { content: [{ type: 'text', text: '用法：subscribe_pr 带 action=check repo=owner/repo pr=123' }] }
   }
 }

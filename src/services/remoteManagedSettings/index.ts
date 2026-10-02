@@ -198,7 +198,7 @@ function getRemoteSettingsAuthHeaders(): {
 
   return {
     headers: {},
-    error: 'No authentication available',
+    error: '无可用认证信息',
   }
 }
 
@@ -259,7 +259,7 @@ async function fetchRemoteManagedSettings(
       // Auth errors should not be retried - return a special flag to skip retries
       return {
         success: false,
-        error: `Authentication required for remote settings`,
+        error: `远程设置需要认证`,
         skipRetry: true,
       }
     }
@@ -314,7 +314,7 @@ async function fetchRemoteManagedSettings(
       )
       return {
         success: false,
-        error: 'Invalid remote settings format',
+        error: '远程设置格式无效',
       }
     }
 
@@ -326,7 +326,7 @@ async function fetchRemoteManagedSettings(
       )
       return {
         success: false,
-        error: 'Invalid settings structure',
+        error: '设置结构无效',
       }
     }
 
@@ -347,7 +347,7 @@ async function fetchRemoteManagedSettings(
         // Auth errors (401, 403) should not be retried - the API key doesn't have access
         return {
           success: false,
-          error: 'Not authorized for remote settings',
+          error: '未获授权访问远程设置',
           skipRetry: true,
         }
       case 'timeout':

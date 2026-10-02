@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { useInput } from 'ink'
+import { useInput } from '../../ink.js'
 
 /**
  * Props for the WorkflowPermissionRequest Ink component.

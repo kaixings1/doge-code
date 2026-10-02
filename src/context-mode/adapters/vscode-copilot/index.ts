@@ -155,13 +155,13 @@ export class VSCodeCopilotAdapter extends CopilotBaseAdapter {
         results.push({
           check: "PreToolUse hook",
           status: "pass",
-          message: "PreToolUse hook configured in context-mode.json",
+          message: "PreToolUse hook 已在 context-mode.json 中配置",
         });
       } else {
         results.push({
           check: "PreToolUse hook",
           status: "fail",
-          message: "PreToolUse not found in context-mode.json",
+          message: "context-mode.json 中未找到 PreToolUse",
           fix: "context-mode upgrade",
         });
       }
@@ -171,13 +171,13 @@ export class VSCodeCopilotAdapter extends CopilotBaseAdapter {
         results.push({
           check: "SessionStart hook",
           status: "pass",
-          message: "SessionStart hook configured in context-mode.json",
+          message: "SessionStart hook 已在 context-mode.json 中配置",
         });
       } else {
         results.push({
           check: "SessionStart hook",
           status: "fail",
-          message: "SessionStart not found in context-mode.json",
+          message: "context-mode.json 中未找到 SessionStart",
           fix: "context-mode upgrade",
         });
       }
@@ -185,7 +185,7 @@ export class VSCodeCopilotAdapter extends CopilotBaseAdapter {
       results.push({
         check: "Hook configuration",
         status: "fail",
-        message: "Could not read .github/hooks/context-mode.json",
+        message: "无法读取 .github/hooks/context-mode.json",
         fix: "context-mode upgrade",
       });
     }
@@ -225,7 +225,7 @@ export class VSCodeCopilotAdapter extends CopilotBaseAdapter {
           return {
             check: "MCP registration",
             status: "pass",
-            message: "context-mode found in .vscode/mcp.json",
+            message: "已在 .vscode/mcp.json 中找到 context-mode",
           };
         }
       }
@@ -233,14 +233,14 @@ export class VSCodeCopilotAdapter extends CopilotBaseAdapter {
       return {
         check: "MCP registration",
         status: "fail",
-        message: "context-mode not found in .vscode/mcp.json",
-        fix: "Add context-mode server to .vscode/mcp.json",
+        message: ".vscode/mcp.json 中未找到 context-mode",
+        fix: "将 context-mode 服务器加入 .vscode/mcp.json",
       };
     } catch {
       return {
         check: "MCP registration",
         status: "warn",
-        message: "Could not read .vscode/mcp.json",
+        message: "无法读取 .vscode/mcp.json",
       };
     }
   }

@@ -15,21 +15,21 @@ interface ProjectTemplate {
 const TEMPLATES: ProjectTemplate[] = [
   {
     name: 'react-ts',
-    description: 'React + TypeScript + Vite starter',
+    description: 'React + TypeScript + Vite 起步模板',
     category: 'frontend',
     commands: ['npm create vite@latest . -- --template react-ts'],
     files: [],
   },
   {
     name: 'nextjs',
-    description: 'Next.js 14 + TypeScript + Tailwind',
+    description: 'Next.js 14 + TypeScript + Tailwind 模板',
     category: 'fullstack',
     commands: ['npx create-next-app@latest . --typescript --tailwind --eslint --app'],
     files: [],
   },
   {
     name: 'node-api',
-    description: 'Node.js + Express + TypeScript REST API',
+    description: 'Node.js + Express + TypeScript REST API 模板',
     category: 'backend',
     commands: [],
     files: [
@@ -40,7 +40,7 @@ const TEMPLATES: ProjectTemplate[] = [
   },
   {
     name: 'cli-tool',
-    description: 'TypeScript CLI tool with Bun',
+    description: '基于 Bun 的 TypeScript CLI 工具模板',
     category: 'cli',
     commands: [],
     files: [
@@ -50,7 +50,7 @@ const TEMPLATES: ProjectTemplate[] = [
   },
   {
     name: 'python-api',
-    description: 'Python + FastAPI REST API',
+    description: 'Python + FastAPI REST API 模板',
     category: 'backend',
     commands: [],
     files: [

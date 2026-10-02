@@ -72,19 +72,19 @@ export class ErrorRecovery {
         result = {
           success: false,
           action: "needs_user",
-          message: "Authentication failed. Please run /login.",
+          message: "认证失败。请运行 /login。",
           requiresUserAction: {
             type: "auth",
-            prompt: "Your API key is invalid. Please run `/login` to authenticate.",
+            prompt: "你的 API 密钥无效。请运行 `/login` 进行认证。",
           },
         };
         break
       case ErrorType.TOKEN_LIMIT_EXCEEDED:
         await this.autoCompactor.compactPlaceholder();
-        result = { success: true, action: "retry", message: "Compacted tokens, retrying" };
+        result = { success: true, action: "retry", message: "已压缩令牌，正在重试" };
         break
       case ErrorType.TOOL_EXECUTION_ERROR:
-        result = { success: true, action: "continue", message: "Tool failed, continuing" };
+        result = { success: true, action: "continue", message: "工具执行失败，继续" };
         break
       case ErrorType.STATE_ERROR:
         this.stateMachine.reset();

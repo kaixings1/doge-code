@@ -16,12 +16,12 @@ export class TerminalCaptureTool implements Tool {
   parameters = {
     type: 'object' as const,
     properties: {
-      command: { type: 'string', description: 'Command to execute and capture' },
-      timeout: { type: 'number', description: 'Timeout in milliseconds (default 30000)' },
-      cwd: { type: 'string', description: 'Working directory (default: current directory)' },
-      shell: { type: 'string', description: 'Shell to use: cmd, powershell, bash, or auto', enum: ['cmd', 'powershell', 'bash', 'auto'] },
-      maxOutput: { type: 'number', description: 'Maximum output length in chars (default 5000, buffer capped at 2x)' },
-      env: { type: 'object', description: 'Additional environment variables to pass' }
+      command: { type: 'string', description: '要执行并捕获输出的命令' },
+      timeout: { type: 'number', description: '超时时间（毫秒，默认 30000）' },
+      cwd: { type: 'string', description: '工作目录（默认：当前目录）' },
+      shell: { type: 'string', description: '使用的 shell：cmd、powershell、bash 或 auto', enum: ['cmd', 'powershell', 'bash', 'auto'] },
+      maxOutput: { type: 'number', description: '最大输出长度（字符，默认 5000，缓冲区上限为 2 倍）' },
+      env: { type: 'object', description: '要传递的附加环境变量' }
     },
     required: ['command']
   }

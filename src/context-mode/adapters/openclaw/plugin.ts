@@ -233,7 +233,7 @@ const configSchema = {
     enabled: {
       type: "boolean" as const,
       default: true,
-      description: "Enable or disable the context-mode plugin.",
+      description: "启用或禁用 context-mode 插件。",
     },
   },
   additionalProperties: false,
@@ -650,7 +650,7 @@ export default {
       },
       {
         name: "context-mode.session-reset",
-        description: "Session cleanup on /reset command",
+        description: "执行 /reset 命令时的会话清理",
       },
     );
     registerCommandHook(
@@ -668,7 +668,7 @@ export default {
       },
       {
         name: "context-mode.session-stop",
-        description: "Session cleanup on /stop command",
+        description: "执行 /stop 命令时的会话清理",
       },
     );
 
@@ -950,7 +950,7 @@ export default {
     if (api.registerCommand) {
       registerAutoReplyCommand({
         name: "ctx-stats",
-        description: "Show context-mode session statistics",
+        description: "显示 context-mode 会话统计",
         handler: () => {
           const text = buildStatsText(_latestDb!, _latestSessionId);
           return { text };
@@ -958,7 +958,7 @@ export default {
       });
       registerAutoReplyCommand({
         name: "ctx-doctor",
-        description: "Run context-mode diagnostics",
+        description: "运行 context-mode 诊断",
         handler: () => {
           const bundlePath = resolve(_latestPluginRoot, "cli.bundle.mjs");
           const fallbackPath = resolve(_latestPluginRoot, "build", "cli.js");
@@ -980,7 +980,7 @@ export default {
 
       registerAutoReplyCommand({
         name: "ctx-upgrade",
-        description: "Upgrade context-mode to the latest version",
+        description: "将 context-mode 升级到最新版本",
         handler: () => {
           const bundlePath = resolve(_latestPluginRoot, "cli.bundle.mjs");
           const fallbackPath = resolve(_latestPluginRoot, "build", "cli.js");

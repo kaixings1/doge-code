@@ -233,7 +233,7 @@ export const call: LocalCommandCall = async (args) => {
 }
 
 const autoCommit: Command = {
-  type: 'local', name: 'auto-commit', description: 'Smart auto-commit - AI generates commit messages, supports conventional commits',
+  type: 'local', name: 'auto-commit', description: '智能自动提交 - AI 生成提交信息，支持约定式提交',
   aliases: ['/auto-commit', '/acm'], supportsNonInteractive: true, load: () => Promise.resolve({ call }),
 }
 

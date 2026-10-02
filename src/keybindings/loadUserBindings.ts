@@ -172,7 +172,7 @@ export async function loadKeybindings(): Promise<KeybindingsLoadResult> {
         ? '"bindings" must be an array'
         : 'keybindings.json contains invalid block structure'
       const suggestion = !Array.isArray(userBlocks)
-        ? 'Set "bindings" to an array of keybinding blocks'
+        ? '"bindings" 需设为键位绑定块的数组'
         : 'Each block must have "context" (string) and "bindings" (object)'
       logForDebugging(`[keybindings] Invalid keybindings.json: ${errorMessage}`)
       return {
@@ -288,7 +288,7 @@ export function loadKeybindingsSyncWithWarnings(): KeybindingsLoadResult {
         {
           type: 'parse_error',
           severity: 'error',
-          message: 'keybindings.json must have a "bindings" array',
+          message: 'keybindings.json 必须包含 "bindings" 数组',
           suggestion: 'Use format: { "bindings": [ ... ] }',
         },
       ]
@@ -301,7 +301,7 @@ export function loadKeybindingsSyncWithWarnings(): KeybindingsLoadResult {
         ? '"bindings" must be an array'
         : 'keybindings.json contains invalid block structure'
       const suggestion = !Array.isArray(userBlocks)
-        ? 'Set "bindings" to an array of keybinding blocks'
+        ? '"bindings" 需设为键位绑定块的数组'
         : 'Each block must have "context" (string) and "bindings" (object)'
       cachedBindings = defaultBindings
       cachedWarnings = [

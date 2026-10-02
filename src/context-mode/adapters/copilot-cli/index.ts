@@ -365,7 +365,7 @@ export class CopilotCliAdapter extends CopilotBaseAdapter {
       return {
         check: "MCP registration",
         status: "pass",
-        message: "context-mode loaded from the Copilot CLI plugin bundle",
+        message: "已从 Copilot CLI 插件包加载 context-mode",
       };
     }
     try {
@@ -376,13 +376,13 @@ export class CopilotCliAdapter extends CopilotBaseAdapter {
         return {
           check: "MCP registration",
           status: "pass",
-          message: "context-mode found in Copilot CLI mcp-config.json",
+          message: "已在 Copilot CLI mcp-config.json 中找到 context-mode",
         };
       }
       return {
         check: "MCP registration",
         status: "fail",
-        message: "context-mode not found in Copilot CLI mcpServers",
+        message: "Copilot CLI mcpServers 中未找到 context-mode",
         // `context-mode upgrade` configures HOOKS only — never the MCP server.
         // Copilot CLI's own command writes ~/.copilot/mcp-config.json for us.
         fix: "copilot mcp add context-mode -- context-mode",

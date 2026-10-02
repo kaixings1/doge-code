@@ -26,13 +26,13 @@ export function optionForPermissionSaveDestination(saveDestination: EditableSett
     case 'projectSettings':
       return {
         label: '项目设置',
-        description: `Checked in at ${getRelativeSettingsFilePathForSource('projectSettings')}`,
+        description: `签入于 ${getRelativeSettingsFilePathForSource('projectSettings')}`,
         value: saveDestination
       };
     case 'userSettings':
       return {
         label: '用户设置',
-        description: `Saved in at ~/.claude/settings.json`,
+        description: `保存于 ~/.claude/settings.json`,
         value: saveDestination
       };
   }

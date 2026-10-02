@@ -334,7 +334,7 @@ export class GeminiCLIAdapter extends BaseAdapter implements HookAdapter {
       results.push({
         check: "BeforeTool hook",
         status: "fail",
-        message: "Could not read ~/.gemini/settings.json",
+        message: "无法读取 ~/.gemini/settings.json",
         fix: "context-mode upgrade",
       });
       return results;
@@ -362,7 +362,7 @@ export class GeminiCLIAdapter extends BaseAdapter implements HookAdapter {
       results.push({
         check: "BeforeTool hook",
         status: "fail",
-        message: "No BeforeTool hooks found",
+        message: "未找到 BeforeTool hook",
         fix: "context-mode upgrade",
       });
     }
@@ -387,7 +387,7 @@ export class GeminiCLIAdapter extends BaseAdapter implements HookAdapter {
       results.push({
         check: "SessionStart hook",
         status: "fail",
-        message: "No SessionStart hooks found",
+        message: "未找到 SessionStart hook",
         fix: "context-mode upgrade",
       });
     }
@@ -440,7 +440,7 @@ export class GeminiCLIAdapter extends BaseAdapter implements HookAdapter {
       return {
         check: "Plugin registration",
         status: "warn",
-        message: "Could not read ~/.gemini/settings.json",
+        message: "无法读取 ~/.gemini/settings.json",
       };
     }
 
@@ -462,7 +462,7 @@ export class GeminiCLIAdapter extends BaseAdapter implements HookAdapter {
         return {
           check: "Plugin registration",
           status: "pass",
-          message: "context-mode found in extensions",
+          message: "已在 extensions 中找到 context-mode",
         };
       }
     }
@@ -470,7 +470,7 @@ export class GeminiCLIAdapter extends BaseAdapter implements HookAdapter {
     return {
       check: "Plugin registration",
       status: "warn",
-      message: "context-mode not found in extensions (might be using standalone MCP mode)",
+      message: "extensions 中未找到 context-mode（可能正在使用独立 MCP 模式）",
     };
   }
 

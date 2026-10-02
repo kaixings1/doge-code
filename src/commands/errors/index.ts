@@ -32,17 +32,17 @@ interface ErrorPattern {
 
 const BUILTIN_PATTERNS: ErrorPattern[] = [
   { pattern: 'console.log', type: 'warning', message: 'console.log statement', fix: 'Remove or replace with logger', enabled: true },
-  { pattern: ': any', type: 'warning', message: 'Usage of any type', fix: 'Define specific type', enabled: true },
-  { pattern: 'as any', type: 'warning', message: 'Force cast to any', fix: 'Use proper type guards', enabled: true },
-  { pattern: 'catch.*{ }', type: 'logic', message: 'Empty catch block', fix: 'Add error handling or rethrow', enabled: true },
-  { pattern: 'catch.*{.*console.log.*}', type: 'logic', message: 'Catch block only logs', fix: 'Add recovery logic or rethrow', enabled: true },
-  { pattern: 'eval(', type: 'security', message: 'eval() can execute arbitrary code', fix: 'Use JSON.parse() or safe alternatives', enabled: true },
-  { pattern: 'innerHTML', type: 'security', message: 'innerHTML can cause XSS', fix: 'Use textContent or framework-safe rendering', enabled: true },
-  { pattern: 'TODO|FIXME|HACK|XXX', type: 'warning', message: 'Unfinished code marker', fix: 'Complete or create issue', enabled: true },
-  { pattern: '\\.forEach\\(.*push\\(', type: 'performance', message: 'forEach + push is inefficient', fix: 'Use .map() or .filter()', enabled: true },
-  { pattern: 'JSON\\.parse\\(JSON\\.stringify\\(', type: 'performance', message: 'Slow deep clone', fix: 'Use structuredClone()', enabled: true },
-  { pattern: 'await.*(?!async)', type: 'syntax', message: 'await outside async', fix: 'Add async keyword', enabled: true },
-  { pattern: 'var\\s+', type: 'warning', message: 'Use of var', fix: 'Use let or const', enabled: true },
+  { pattern: ': any', type: 'warning', message: '使用了 any 类型', fix: '定义具体的类型', enabled: true },
+  { pattern: 'as any', type: 'warning', message: '强制转换为 any', fix: '使用恰当的类型守卫', enabled: true },
+  { pattern: 'catch.*{ }', type: 'logic', message: '空的 catch 块', fix: '添加错误处理或重新抛出', enabled: true },
+  { pattern: 'catch.*{.*console.log.*}', type: 'logic', message: 'catch 块仅记录日志', fix: '添加恢复逻辑或重新抛出', enabled: true },
+  { pattern: 'eval(', type: 'security', message: 'eval() 可执行任意代码', fix: '使用 JSON.parse() 或安全的替代方案', enabled: true },
+  { pattern: 'innerHTML', type: 'security', message: 'innerHTML 可能导致 XSS', fix: '使用 textContent 或框架安全渲染', enabled: true },
+  { pattern: 'TODO|FIXME|HACK|XXX', type: 'warning', message: '未完成的代码标记', fix: '完成或创建 issue', enabled: true },
+  { pattern: '\\.forEach\\(.*push\\(', type: 'performance', message: 'forEach + push 效率低下', fix: '使用 .map() 或 .filter()', enabled: true },
+  { pattern: 'JSON\\.parse\\(JSON\\.stringify\\(', type: 'performance', message: '慢速深拷贝', fix: '使用 structuredClone()', enabled: true },
+  { pattern: 'await.*(?!async)', type: 'syntax', message: '在非 async 中使用 await', fix: '添加 async 关键字', enabled: true },
+  { pattern: 'var\\s+', type: 'warning', message: '使用了 var', fix: '使用 let 或 const', enabled: true },
 ]
 
 function loadErrors(): ErrorEntry[] {
@@ -158,7 +158,7 @@ function applyFixToFile(filePath: string, lineNumber: number, suggestedFix: stri
     const lines = content.split('\n')
     const idx = lineNumber - 1
     if (idx < 0 || idx >= lines.length) {
-      return { success: false, message: 'Line number out of range' }
+      return { success: false, message: '行号超出范围' }
     }
     const original = lines[idx]
     // Only auto-fix safe patterns: var → const, console.log comment, etc.

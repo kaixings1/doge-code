@@ -257,7 +257,7 @@ function getAuthHeaders(): {
 
   return {
     headers: {},
-    error: 'No authentication available',
+    error: '无可用认证信息',
   }
 }
 
@@ -307,7 +307,7 @@ async function fetchPolicyLimits(
     if (authHeaders.error) {
       return {
         success: false,
-        error: 'Authentication required for policy limits',
+        error: '策略限额需要认证',
         skipRetry: true,
       }
     }
@@ -356,7 +356,7 @@ async function fetchPolicyLimits(
       )
       return {
         success: false,
-        error: 'Invalid policy limits format',
+        error: '策略限额格式无效',
       }
     }
 
@@ -372,11 +372,11 @@ async function fetchPolicyLimits(
       case 'auth':
         return {
           success: false,
-          error: 'Not authorized for policy limits',
+          error: '未获授权访问策略限额',
           skipRetry: true,
         }
       case 'timeout':
-        return { success: false, error: 'Policy limits request timeout' }
+        return { success: false, error: '策略限额请求超时' }
       case 'network':
         return { success: false, error: '无法连接到服务器' }
       default:

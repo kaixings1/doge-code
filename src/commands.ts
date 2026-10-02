@@ -253,10 +253,13 @@ const forceSnip = loadConditionalCommand(
   () => process.env['CLAUDE_CODE_FEATURE_HISTORY_SNIP'] === '1',
   () => resolveCommandExport(safeRequire('./commands/force-snip.js')?.default)
 )
-const workflowsCmd = loadConditionalCommand(
-  () => process.env['CLAUDE_CODE_FEATURE_WORKFLOW_SCRIPTS'] === '1',
-  () => safeRequire('./commands/workflows/index.js')?.default
-)
+let cachedWorkflowsCmd: Command | null | undefined
+function getWorkflowsCmd(): Command | null {
+  if (cachedWorkflowsCmd === undefined) {
+    cachedWorkflowsCmd = process.env['CLAUDE_CODE_FEATURE_WORKFLOW_SCRIPTS'] === '1' ? safeRequire('./commands/workflows/index.js')?.default ?? null : null
+  }
+  return cachedWorkflowsCmd
+}
 const webCmd = loadConditionalCommand(
   () => process.env['CLAUDE_CODE_FEATURE_CCR_REMOTE_SETUP'] === '1',
   () => safeRequire('./commands/remote-setup/index.js')?.default
@@ -664,7 +667,7 @@ export const COMMANDS = memoize((): Command[] => [
   outdated,
   tree,
   grep,
-  ...(workflowsCmd ? [workflowsCmd] : []),
+  ...(getWorkflowsCmd() ? [getWorkflowsCmd()] : []),
   ...(torch ? [torch] : []),
   lessPermissionPrompts,
   contextCollapse,

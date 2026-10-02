@@ -1188,7 +1188,7 @@ export function checkReadPermissionForTool(
     ),
     decisionReason: {
       type: 'workingDir',
-      reason: 'Path is outside allowed working directories',
+      reason: '路径超出允许的工作目录',
     },
   }
 }
@@ -1410,7 +1410,7 @@ export function checkWritePermissionForTool<Input extends AnyObject>(
     decisionReason: !isInWorkingDir
       ? {
           type: 'workingDir',
-          reason: 'Path is outside allowed working directories',
+          reason: '路径超出允许的工作目录',
         }
       : undefined,
   }
@@ -1496,7 +1496,7 @@ export function checkEditableInternalPath(
       updatedInput: input,
       decisionReason: {
         type: 'other',
-        reason: 'Plan files for current session are allowed for writing',
+        reason: '当前会话的计划文件允许写入',
       },
     }
   }
@@ -1508,7 +1508,7 @@ export function checkEditableInternalPath(
       updatedInput: input,
       decisionReason: {
         type: 'other',
-        reason: 'Scratchpad files for current session are allowed for writing',
+        reason: '当前会话的暂存文件允许写入',
       },
     }
   }
@@ -1562,7 +1562,7 @@ export function checkEditableInternalPath(
       updatedInput: input,
       decisionReason: {
         type: 'other',
-        reason: 'Agent memory files are allowed for writing',
+        reason: '智能体记忆文件允许写入',
       },
     }
   }

@@ -174,7 +174,7 @@ export function registerMemoryManagerSkill(): void {
         const snapshot = await buildMemorySnapshot()
         return [{
           type: 'text',
-          text: 'Current memory snapshot:\n\n' + (snapshot || '(empty)') + '\n\nUsage: /memory-manage add|replace|remove agent|user <content>',
+          text: '当前记忆快照：\n\n' + (snapshot || '(empty)') + '\n\n用法：/memory-manage add|replace|remove agent|user <内容>',
         }]
       }
 
@@ -184,7 +184,7 @@ export function registerMemoryManagerSkill(): void {
       const content = parts.slice(2).join(' ')
 
       if (store !== 'agent' && store !== 'user') {
-        return [{ type: 'text', text: 'Error: store must be "agent" (MEMORY.md) or "user" (USER.md).' }]
+        return [{ type: 'text', text: '错误：store 必须是 "agent"（MEMORY.md）或 "user"（USER.md）。' }]
       }
 
       let result: string
@@ -193,7 +193,7 @@ export function registerMemoryManagerSkill(): void {
           result = await addMemory(store, content)
           break
         case 'replace':
-          if (parts.length < 4) return [{ type: 'text', text: 'Error: replace needs old text and new text. Usage: /memory-manage replace agent "old text" "new text"' }]
+          if (parts.length < 4) return [{ type: 'text', text: '错误：replace 需要旧文本和新文本。用法：/memory-manage replace agent "旧文本" "新文本"' }]
           const oldText = parts[2]
           const newText = parts.slice(3).join(' ')
           result = await replaceMemory(store, oldText, newText)
@@ -202,7 +202,7 @@ export function registerMemoryManagerSkill(): void {
           result = await removeMemory(store, content)
           break
         default:
-          return [{ type: 'text', text: 'Error: action must be add, replace, or remove.' }]
+          return [{ type: 'text', text: '错误：action 必须是 add、replace 或 remove。' }]
       }
 
       return [{ type: 'text', text: result }]

@@ -543,7 +543,7 @@ export class MessageLoop {
     }
     this.deps.conversation.messages.push({
       role: "system",
-      content: "Continuing to next iteration.",
+      content: "继续下一轮迭代。",
     } as InternalMessage);
 
     // 不在此处重置 consecutiveToolFailures——仅在工具成功执行后重置
@@ -566,7 +566,7 @@ export class MessageLoop {
       if (validCalls.length === 0) {
         this.deps.conversation.messages.push({
           role: "system",
-          content: "Previous tool calls were invalid. Please answer directly without using tools.",
+          content: "先前的工具调用无效。请直接回答，不要使用工具。",
         } as InternalMessage);
         if (this.consecutiveToolFailures >= 2) {
           engineLog('WARN', 'Too many consecutive invalid tool calls, stopping');
@@ -722,7 +722,7 @@ export class MessageLoop {
         engineLog('WARN', 'Too many consecutive tool failures, stopping tool loop');
         this.deps.conversation.messages.push({
           role: "system",
-          content: "Tool calls are failing. Please answer directly without using tools.",
+          content: "工具调用持续失败。请直接回答，不要使用工具。",
         } as InternalMessage);
         return false;
       }

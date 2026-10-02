@@ -60,7 +60,7 @@ export function createOpenAIToolDefinition(
 ): ToolDefinition {
   const toolDef: ToolDefinition = {
     name,
-    description: description || 'No description available',
+    description: description || '无可用描述',
     parameters: {
       type: 'object',
       properties: parameters || {},
@@ -72,7 +72,7 @@ export function createOpenAIToolDefinition(
     for (const [prop, propValue] of Object.entries(parameters.properties || {})) {
       toolDef.parameters.properties[prop] = {
         type: typeof propValue === 'string' ? 'text' : propValue,
-        description: typeof propValue === 'string' ? propValue : 'No description available',
+        description: typeof propValue === 'string' ? propValue : '无可用描述',
       }
     }
   }
@@ -101,7 +101,7 @@ export function generateOpenAIFunctionCallingPayloadLegacy(
   for (const [key, value] of Object.entries(data)) {
     const toolDefinition: ToolDefinition = {
       name: key,
-      description: typeof value === 'string' ? value : 'No description available',
+      description: typeof value === 'string' ? value : '无可用描述',
       parameters: {
         type: 'object',
         properties: {},
@@ -113,7 +113,7 @@ export function generateOpenAIFunctionCallingPayloadLegacy(
       for (const [prop, propValue] of Object.entries(value.properties || {})) {
         toolDefinition.parameters.properties[prop] = {
           type: typeof propValue === 'string' ? 'text' : propValue,
-          description: typeof propValue === 'string' ? propValue : 'No description available',
+          description: typeof propValue === 'string' ? propValue : '无可用描述',
         }
       }
     }
@@ -412,7 +412,7 @@ export function generateOpenAIFunctionCallingPayload(
   for (const [key, value] of Object.entries(data)) {
     const toolDefinition: ToolDefinition = {
       name: key,
-      description: typeof value === 'string' ? value : 'No description available',
+      description: typeof value === 'string' ? value : '无可用描述',
       parameters: {
         type: 'object',
         properties: {},
@@ -424,7 +424,7 @@ export function generateOpenAIFunctionCallingPayload(
       for (const [prop, propValue] of Object.entries(value.properties || {})) {
         toolDefinition.parameters.properties[prop] = {
           type: typeof propValue === 'string' ? 'text' : propValue,
-          description: typeof propValue === 'string' ? propValue : 'No description available',
+          description: typeof propValue === 'string' ? propValue : '无可用描述',
         }
       }
     }

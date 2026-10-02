@@ -2740,6 +2740,11 @@ const STRIPPED_TAGS_RE =
   /<(commit_analysis|context|function_analysis|pr_analysis)>.*?<\/\1>\n?/gs
 
 export function stripPromptXMLTags(content: string): string {
+  // Guard: 中断/清理流程中文本块可能为空（如 Ctrl+C 结束后残留的空文本块），
+  // 直接 .replace 会抛 "content.replace" 崩溃。
+  if (content == null) {
+    return ''
+  }
   return content.replace(STRIPPED_TAGS_RE, '').trim()
 }
 

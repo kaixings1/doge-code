@@ -90,7 +90,7 @@ export class EditBlockCoder implements Coder {
         if (success) {
           applied.push(edit);
         } else {
-          failed.push({ edit, reason: 'SEARCH block did not exactly match file content' });
+          failed.push({ edit, reason: 'SEARCH 块与文件内容不完全匹配' });
         }
       } catch (error) {
         failed.push({ edit, reason: error instanceof Error ? error.message : 'Unknown error' });
@@ -123,10 +123,10 @@ export class EditBlockCoder implements Coder {
           const diff = this.generateUnifiedDiff(edit.path, originalLines, updatedLines);
           diffs.push({ path: edit.path, diff, applied: true });
         } else {
-          diffs.push({ path: edit.path, diff: '', applied: false, reason: 'SEARCH block did not match' });
+          diffs.push({ path: edit.path, diff: '', applied: false, reason: 'SEARCH 块未匹配' });
         }
       } catch {
-        diffs.push({ path: edit.path, diff: '', applied: false, reason: 'File not found or unreadable' });
+        diffs.push({ path: edit.path, diff: '', applied: false, reason: '文件未找到或无法读取' });
       }
     }
     return diffs;

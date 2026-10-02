@@ -171,7 +171,7 @@ ${c.http2 ? `<IfModule mod_http2.c>
 </IfModule>` : '# HTTP/2 disabled'}`,
   },
   {
-    name: 'api', description: 'REST API - CORS、JSON、OPTIONS',
+    name: 'api', description: 'REST API - CORS、JSON、OPTIONS 配置',
     generate: (c) => `# REST API
 # CORS headers
 <IfModule mod_headers.c>
