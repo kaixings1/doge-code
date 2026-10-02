@@ -116,40 +116,16 @@ class BridgeClient(
     }
 
     private fun handleMessage(text: String) {
-        val obj = runCatching { JSONObject(text) }.getOrNull() ?: return
-        when (obj.optString("type")) {
-            "client_connected" -> {
+        when (val m = BridgeProtocol.parse(text)) {
+            is BridgeProtocol.Msg.Connected -> {
                 connected = true
                 retryDelayMs = 1000L
-                val interactive = obj.optJSONObject("data")?.optBoolean("interactive", true) ?: true
-                post { onEvent(Event.Connected(interactive)) }
+                post { onEvent(Event.Connected(m.interactive)) }
             }
-            "assistant", "message" -> {
-                val data = obj.optJSONObject("data") ?: return
-                val t = data.optString("text")
-                    .ifBlank { data.optString("message") }
-                    .ifBlank { data.optString("content") }
-                if (t.isNotBlank()) post { onEvent(Event.Incoming("assistant", t)) }
-            }
-            "system" -> {
-                val t = obj.optJSONObject("data")?.optString("message").orEmpty()
-                if (t.isNotBlank()) post { onEvent(Event.Incoming("system", t)) }
-            }
-            "result" -> {
-                val d = obj.optJSONObject("data")
-                val status = d?.optString("status").orEmpty()
-                if (status == "queued") {
-                    post { onEvent(Event.Queued(obj.optString("requestId"))) }
-                }
-                val msg = d?.optString("message").orEmpty()
-                if (msg.isNotBlank() && status != "queued") {
-                    post { onEvent(Event.Incoming("assistant", msg)) }
-                }
-            }
-            "error" -> {
-                val e = obj.optJSONObject("data")?.optString("error").orEmpty()
-                post { onEvent(Event.Error(e.ifBlank { "未知错误" })) }
-            }
+            is BridgeProtocol.Msg.Incoming -> post { onEvent(Event.Incoming(m.role, m.text)) }
+            is BridgeProtocol.Msg.Queued -> post { onEvent(Event.Queued(m.requestId)) }
+            is BridgeProtocol.Msg.Error -> post { onEvent(Event.Error(m.message)) }
+            BridgeProtocol.Msg.Ignored, BridgeProtocol.Msg.Unparsed -> {}
         }
     }
 
