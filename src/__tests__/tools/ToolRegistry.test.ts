@@ -124,7 +124,7 @@ describe('ToolRegistry 拓扑排序', () => {
     // register 会阻止未解析依赖注册，直接注入内部 Map 构造循环依赖
     ;(reg as any).tools.set('a', makeTool('a', { dependencies: ['b'] }))
     ;(reg as any).tools.set('b', makeTool('b', { dependencies: ['a'] }))
-    expect(() => reg.topoSort()).toThrow(/Circular dependency/)
+    expect(() => reg.topoSort()).toThrow(/循环依赖/)
   })
 
   it('getDependencyDepth 计算依赖深度', () => {

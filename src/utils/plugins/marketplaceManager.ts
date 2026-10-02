@@ -1136,7 +1136,7 @@ async function cacheMarketplaceFromGit(
     )
     safeCallProgress(
       onProgress,
-      'Found stale directory, cleaning up and re-cloning…',
+      '发现残留目录，正在清理并重新克隆…',
     )
   } catch (rmError) {
     if (!isENOENT(rmError)) {
@@ -1617,7 +1617,7 @@ async function loadAndCacheMarketplace(
 
       case 'npm': {
         // TODO: Implement npm package support
-        throw new Error('NPM marketplace sources not yet implemented')
+        throw new Error('NPM 应用市场源尚未实现')
       }
 
       case 'file': {
@@ -1685,7 +1685,7 @@ async function loadAndCacheMarketplace(
       }
 
       default:
-        throw new Error(`Unsupported marketplace source type`)
+        throw new Error(`不支持的应用市场源类型`)
     }
 
     // Load and validate the marketplace
@@ -1811,12 +1811,12 @@ export async function addMarketplaceSource(
     if (sourceHost) {
       errorMessage += ` (${sourceHost})`
     }
-    errorMessage += ' is blocked by enterprise policy.'
+    errorMessage += ' 被企业策略阻止。'
 
     if (allowlist.length > 0) {
       errorMessage += ` Allowed sources: ${allowlist.map(s => formatSourceForDisplay(s)).join(', ')}`
     } else {
-      errorMessage += ' No external marketplaces are allowed.'
+      errorMessage += ' 不允许使用外部应用市场。'
     }
 
     // If source is a github shorthand and there are hostPatterns, suggest using full URL
@@ -1865,9 +1865,9 @@ export async function addMarketplaceSource(
     const seedDir = seedDirFor(oldEntry.installLocation)
     if (seedDir) {
       throw new Error(
-        `Marketplace '${marketplace.name}' is seed-managed (${seedDir}). ` +
-          `To use a different source, ask your admin to update the seed, ` +
-          `or use a different marketplace name.`,
+        `应用市场 '${marketplace.name}' 由 seed 管理 (${seedDir})。 ` +
+          `如需使用不同的源，请让管理员更新 seed， ` +
+          `或使用其他应用市场名称。`,
       )
     }
     logForDebugging(
@@ -2400,8 +2400,8 @@ export async function refreshMarketplace(
     const seedDir = seedDirFor(installLocation)
     if (seedDir) {
       throw new Error(
-        `Marketplace '${name}' is seed-managed (${seedDir}) and its content is ` +
-          `controlled by the seed image. To update: ask your admin to update the seed.`,
+        `应用市场 '${name}' 由 seed 管理 (${seedDir})，其内容 ` +
+          `由 seed 镜像控制。如需更新：请让管理员更新 seed。`,
       )
     }
 
@@ -2416,11 +2416,11 @@ export async function refreshMarketplace(
       const resolvedLoc = resolve(installLocation)
       if (resolvedLoc !== cacheDir && !resolvedLoc.startsWith(cacheDir + sep)) {
         throw new Error(
-          `Marketplace '${name}' has a corrupted installLocation ` +
-            `(${installLocation}) — expected a path inside ${cacheDir}. ` +
-            `This can happen after cross-platform path writes or manual edits ` +
-            `to known_marketplaces.json. ` +
-            `Run: claude plugin marketplace remove "${name}" and re-add it.`,
+          `应用市场 '${name}' 的 installLocation 已损坏 ` +
+            `(${installLocation}) — 预期是 ${cacheDir} 内的路径。 ` +
+            `这可能发生在跨平台路径写入或手动编辑 ` +
+            `known_marketplaces.json 之后。 ` +
+            `请运行：claude plugin marketplace remove "${name}" 然后重新添加。`,
         )
       }
     }
@@ -2454,7 +2454,7 @@ export async function refreshMarketplace(
         // updatedCount on any non-throwing return. A silent return would
         // report "Updated 1 marketplace" when nothing was refreshed.
         throw new Error(
-          'Official marketplace GCS fetch failed and git fallback is disabled',
+          '官方应用市场 GCS 获取失败且 git 回退已禁用',
         )
       }
       logForDebugging('Official marketplace GCS failed; falling back to git', {
@@ -2534,8 +2534,8 @@ export async function refreshMarketplace(
             : redactUrlCredentials(source.url)
         const reason =
           name === 'claude-code-plugins'
-            ? `We've deprecated "claude-code-plugins" in favor of "claude-plugins-official".`
-            : `This marketplace may have been deprecated or moved to a new location.`
+            ? `我们已弃用 "claude-code-plugins"，改用 "claude-plugins-official"。`
+            : `此应用市场可能已废弃或迁移到新位置。`
         throw new Error(
           `此仓库中不再存在 marketplace.json 文件。\n\n` +
             `${reason}\n` +
@@ -2557,7 +2557,7 @@ export async function refreshMarketplace(
       // Read and validate to ensure the marketplace file is still valid
       await readCachedMarketplace(installLocation)
     } else {
-      throw new Error(`Unsupported marketplace source type for refresh`)
+      throw new Error(`不支持用于刷新的应用市场源类型`)
     }
 
     // Update lastUpdated timestamp
@@ -2603,9 +2603,9 @@ export async function setMarketplaceAutoUpdate(
   const seedDir = seedDirFor(entry.installLocation)
   if (seedDir) {
     throw new Error(
-      `Marketplace '${name}' is seed-managed (${seedDir}) and ` +
-        `auto-update is always disabled for seed content. ` +
-        `To update: ask your admin to update the seed.`,
+      `应用市场 '${name}' 由 seed 管理 (${seedDir})，` +
+        `seed 内容的自动更新始终处于禁用状态。 ` +
+        `如需更新：请让管理员更新 seed。`,
     )
   }
 

@@ -92,7 +92,7 @@ async function copyPngToClipboard(
     return {
       success: false,
       message:
-        'Failed to copy to clipboard. Please install xclip or xsel: sudo apt install xclip',
+        '复制到剪贴板失败。请安装 xclip 或 xsel：sudo apt install xclip',
     }
   }
 

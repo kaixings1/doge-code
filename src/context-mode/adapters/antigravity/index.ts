@@ -71,19 +71,19 @@ export class AntigravityAdapter extends BaseAdapter implements HookAdapter {
   // interface contract but will throw if called.
 
   parsePreToolUseInput(_raw: unknown): PreToolUseEvent {
-    throw new Error("Antigravity does not support hooks");
+    throw new Error("Antigravity 不支持 hook");
   }
 
   parsePostToolUseInput(_raw: unknown): PostToolUseEvent {
-    throw new Error("Antigravity does not support hooks");
+    throw new Error("Antigravity 不支持 hook");
   }
 
   parsePreCompactInput(_raw: unknown): PreCompactEvent {
-    throw new Error("Antigravity does not support hooks");
+    throw new Error("Antigravity 不支持 hook");
   }
 
   parseSessionStartInput(_raw: unknown): SessionStartEvent {
-    throw new Error("Antigravity does not support hooks");
+    throw new Error("Antigravity 不支持 hook");
   }
 
   // ── Response formatting ────────────────────────────────
@@ -150,8 +150,8 @@ export class AntigravityAdapter extends BaseAdapter implements HookAdapter {
         check: "Hook support",
         status: "warn",
         message:
-          "Antigravity does not support hooks. " +
-          "Only MCP integration is available.",
+          "Antigravity 不支持 hook。 " +
+          "仅提供 MCP 集成。",
       },
     ];
   }

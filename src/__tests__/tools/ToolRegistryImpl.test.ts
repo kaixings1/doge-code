@@ -144,7 +144,7 @@ describe('ToolRegistry 真实实现（D4 DI）', () => {
     const tools = (reg as any).tools as Map<string, ITool>;
     tools.set('a', makeTool('a', ['b']));
     tools.set('b', makeTool('b', ['a']));
-    expect(() => reg.topoSort()).toThrow('Circular');
+    expect(() => reg.topoSort()).toThrow('循环依赖');
   });
 
   it('依赖深度 / 叶子工具 / 依赖完整性', () => {

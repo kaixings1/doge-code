@@ -258,11 +258,11 @@ export const categoryLabels: Record<string, string> = {
 
 /** Explains why each category matters for continuity. */
 export const categoryHints: Record<string, string> = {
-  file: "Restored after compact — no need to re-read",
+  file: "压缩后已恢复 — 无需重新读取",
   rule: "Your project instructions survive context resets",
   prompt: "Continues exactly where you left off",
   decision: "Applied automatically — won’t ask again",
-  task: "Picks up from where it stopped",
+  task: "从中断处继续",
   error: "Tracked and monitored across compacts",
   git: "Branch, commit, and repo state preserved",
   env: "Runtime config carried forward",

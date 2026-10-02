@@ -844,7 +844,7 @@ export async function loadMcpbFile(
   // Check for manifest.json
   const manifestData = unzipped['manifest.json']
   if (!manifestData) {
-    const error = new Error('No manifest.json found in MCPB file')
+    const error = new Error('MCPB 文件中未找到 manifest.json')
     logError(error)
     throw error
   }

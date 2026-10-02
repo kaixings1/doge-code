@@ -856,7 +856,7 @@ export class ContentStore {
     const hasContent = typeof content === "string" && content.length > 0;
 
     if (!hasContent && !path) {
-      throw new Error("Either content or path must be provided");
+      throw new Error("必须提供 content 或 path 之一");
     }
 
     // Read file via fd to close the TOCTOU window between the security

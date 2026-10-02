@@ -178,7 +178,7 @@ export class OpenCodeAdapter extends BaseAdapter implements HookAdapter {
     if (response.decision === "deny") {
       // OpenCode TS plugin paradigm: throw Error to block
       throw new Error(
-        response.reason ?? "Blocked by context-mode hook",
+        response.reason ?? "已被 context-mode hook 拦截",
       );
     }
     if (response.decision === "modify" && response.updatedInput) {

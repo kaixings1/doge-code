@@ -271,13 +271,13 @@ export class CopilotCliAdapter extends CopilotBaseAdapter {
     if (response.decision === "deny") {
       return {
         permissionDecision: "deny",
-        permissionDecisionReason: response.reason ?? "Blocked by context-mode hook",
+        permissionDecisionReason: response.reason ?? "已被 context-mode hook 拦截",
       };
     }
     if (response.decision === "ask") {
       return {
         permissionDecision: "ask",
-        permissionDecisionReason: response.reason ?? "Action requires user confirmation",
+        permissionDecisionReason: response.reason ?? "该操作需要用户确认",
       };
     }
     if (response.decision === "modify" && response.updatedInput) {

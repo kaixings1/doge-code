@@ -149,11 +149,11 @@ export function validateOfficialNameSource(
       return null // Valid: reserved name from official git URL
     }
 
-    return `The name '${name}' is reserved for official Anthropic marketplaces. Only repositories from 'github.com/${OFFICIAL_GITHUB_ORG}/' can use this name.`
+    return `名称 '${name}' 已保留给官方 Anthropic 应用市场。仅来自 'github.com/${OFFICIAL_GITHUB_ORG}/' 的仓库可使用此名称。`
   }
 
   // Reserved names must come from GitHub (either 'github' or 'git' source)
-  return `The name '${name}' is reserved for official Anthropic marketplaces and can only be used with GitHub sources from the '${OFFICIAL_GITHUB_ORG}' organization.`
+  return `名称 '${name}' 已保留给官方 Anthropic 应用市场，且只能与来自 '${OFFICIAL_GITHUB_ORG}' 组织的 GitHub 源一起使用。`
 }
 
 /**
@@ -216,10 +216,10 @@ const RelativeCommandPath = lazySchema(() =>
 const MarketplaceNameSchema = lazySchema(() =>
   z
     .string()
-    .min(1, 'Marketplace must have a name')
+    .min(1, '应用市场必须有名称')
     .refine(name => !name.includes(' '), {
       message:
-        'Marketplace name cannot contain spaces. Use kebab-case (e.g., "my-marketplace")',
+        '应用市场名称不能包含空格。请使用 kebab-case（例如 "my-marketplace"）',
     })
     .refine(
       name =>
@@ -229,16 +229,16 @@ const MarketplaceNameSchema = lazySchema(() =>
         name !== '.',
       {
         message:
-          'Marketplace name cannot contain path separators (/ or \\), ".." sequences, or be "."',
+          '应用市场名称不能包含路径分隔符（/ 或 \\）、".." 序列，也不能是 "."',
       },
     )
     .refine(name => !isBlockedOfficialName(name), {
       message:
-        'Marketplace name impersonates an official Anthropic/Claude marketplace',
+        '应用市场名称冒充官方 Anthropic/Claude 应用市场',
     })
     .refine(name => name.toLowerCase() !== 'inline', {
       message:
-        'Marketplace name "inline" is reserved for --plugin-dir session plugins',
+        '应用市场名称 "inline" 已保留给 --plugin-dir 会话插件',
     })
     .refine(name => name.toLowerCase() !== 'builtin', {
       message: '市场名称 "builtin" 已保留给内置插件',
@@ -252,7 +252,7 @@ export const PluginAuthorSchema = lazySchema(() =>
   z.object({
     name: z
       .string()
-      .min(1, 'Author name cannot be empty')
+      .min(1, '作者名称不能为空')
       .describe('插件作者或组织的显示名称'),
     email: z
       .string()
@@ -275,10 +275,10 @@ const PluginManifestMetadataSchema = lazySchema(() =>
   z.object({
     name: z
       .string()
-      .min(1, 'Plugin name cannot be empty')
+      .min(1, '插件名称不能为空')
       .refine(name => !name.includes(' '), {
         message:
-          'Plugin name cannot contain spaces. Use kebab-case (e.g., "my-plugin")',
+          '插件名称不能包含空格。请使用 kebab-case（例如 "my-plugin"）',
       })
       .describe(
         'Unique identifier for the plugin, used for namespacing (prefer kebab-case)',
@@ -410,7 +410,7 @@ export const CommandMetadataSchema = lazySchema(() =>
       data => (data.source && !data.content) || (!data.source && data.content),
       {
         message:
-          'Command must have either "source" (file path) or "content" (inline markdown), but not both',
+          '命令必须包含 "source"（文件路径）或 "content"（内联 markdown）之一，不能同时包含两者',
       },
     ),
 )
@@ -720,7 +720,7 @@ export const LspServerConfigSchema = lazySchema(() =>
         },
         {
           message:
-            'Command should not contain spaces. Use args array for arguments.',
+            '命令不应包含空格。请使用 args 数组传递参数。',
         },
       )
       .describe(
@@ -839,14 +839,14 @@ const NpmPackageNameSchema = lazySchema(() =>
     .string()
     .refine(
       name => !name.includes('..') && !name.includes('//'),
-      'Package name cannot contain path traversal patterns',
+      '包名不能包含路径遍历模式',
     )
     .refine(name => {
       // Allow scoped packages (@org/package) and regular packages
       const scopedPackageRegex = /^@[a-z0-9][a-z0-9-._]*\/[a-z0-9][a-z0-9-._]*$/
       const regularPackageRegex = /^[a-z0-9][a-z0-9-._]*$/
       return scopedPackageRegex.test(name) || regularPackageRegex.test(name)
-    }, 'Invalid npm package name format'),
+    }, 'npm 包名格式无效'),
 )
 
 /**
@@ -1017,7 +1017,7 @@ export const MarketplaceSourceSchema = lazySchema(() =>
             name => !ALLOWED_OFFICIAL_MARKETPLACE_NAMES.has(name.toLowerCase()),
             {
               message:
-                'Reserved official marketplace names cannot be used with settings sources. ' +
+                '保留的官方应用市场名称不能与设置源一起使用。 ' +
                 'validateOfficialNameSource only accepts github/git sources from anthropics/* ' +
                 'for these names; a settings source would be rejected after ' +
                 'loadAndCacheMarketplace has already written to disk with cleanupNeeded=false.',
@@ -1049,7 +1049,7 @@ export const gitSha = lazySchema(() =>
     .length(40)
     .regex(
       /^[a-f0-9]{40}$/,
-      'Must be a full 40-character lowercase git commit SHA',
+      '必须是完整的 40 位小写 git commit SHA',
     ),
 )
 
@@ -1184,10 +1184,10 @@ const SettingsMarketplacePluginSchema = lazySchema(() =>
     .object({
       name: z
         .string()
-        .min(1, 'Plugin name cannot be empty')
+        .min(1, '插件名称不能为空')
         .refine(name => !name.includes(' '), {
           message:
-            'Plugin name cannot contain spaces. Use kebab-case (e.g., "my-plugin")',
+            '插件名称不能包含空格。请使用 kebab-case（例如 "my-plugin"）',
         })
         .describe('目标仓库中的插件名称'),
       source: PluginSourceSchema().describe(
@@ -1200,7 +1200,7 @@ const SettingsMarketplacePluginSchema = lazySchema(() =>
     })
     .refine(p => typeof p.source !== 'string', {
       message:
-        'Plugins in a settings-sourced marketplace must use remote sources ' +
+        '设置源应用市场中的插件必须使用远程源 ' +
         '(github, git-subdir, npm, url, pip). Relative-path sources like "./foo" ' +
         'have no marketplace repository to resolve against.',
     }),
@@ -1257,10 +1257,10 @@ export const PluginMarketplaceEntrySchema = lazySchema(() =>
     .extend({
       name: z
         .string()
-        .min(1, 'Plugin name cannot be empty')
+        .min(1, '插件名称不能为空')
         .refine(name => !name.includes(' '), {
           message:
-            'Plugin name cannot contain spaces. Use kebab-case (e.g., "my-plugin")',
+            '插件名称不能包含空格。请使用 kebab-case（例如 "my-plugin"）',
         })
         .describe('与插件名称匹配的唯一标识符'),
       source: PluginSourceSchema().describe('插件获取来源'),
@@ -1341,7 +1341,7 @@ export const PluginIdSchema = lazySchema(() =>
     .string()
     .regex(
       /^[a-z0-9][-a-z0-9._]*@[a-z0-9][-a-z0-9._]*$/i,
-      'Plugin ID must be in format: plugin@marketplace',
+      '插件 ID 格式必须为：plugin@marketplace',
     ),
 )
 
@@ -1370,7 +1370,7 @@ export const DependencyRefSchema = lazySchema(() =>
       .string()
       .regex(
         DEP_REF_REGEX,
-        'Dependency must be a plugin name, optionally qualified with @marketplace',
+        '依赖项必须是插件名称，可选带 @marketplace 限定',
       )
       .transform(s => s.replace(/@\^[^@]*$/, '')),
     z

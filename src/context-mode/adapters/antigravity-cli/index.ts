@@ -264,7 +264,7 @@ export class AntigravityCliAdapter extends AntigravityAdapter {
       // (mirrors hooks/core/formatters.mjs antigravity-cli.ask).
       return {
         decision: "ask",
-        reason: response.reason ?? "Action requires user confirmation",
+        reason: response.reason ?? "该操作需要用户确认",
       };
     }
     if (response.decision === "context" && response.additionalContext) {

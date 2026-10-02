@@ -466,7 +466,7 @@ const call: LocalCommandCall = async (args) => {
     return { type: 'text', value: formatList(listResult, json) }
   }
 
-  return { type: 'text', value: 'Error: unknown command. Use --help for usage.' }
+  return { type: 'text', value: '错误：未知命令。使用 --help 查看用法。' }
 }
 
 const taskClaim: Command = {

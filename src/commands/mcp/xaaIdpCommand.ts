@@ -161,7 +161,7 @@ export function registerMcpXaaIdpCommand(mcp: Command): void {
     )
     .option(
       '--id-token <jwt>',
-      'Write this pre-obtained id_token directly to cache, skipping the OIDC browser login',
+      '将此预先获取的 id_token 直接写入缓存，跳过 OIDC 浏览器登录',
     )
     .option(
       '--stdin',

@@ -608,7 +608,7 @@ export async function teleportFromSessionsAPI(sessionId: string, orgUUID: string
       logEvent('tengu_teleport_error_session_not_found_404', {
         sessionId: sessionId as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
       });
-      throw new TeleportOperationError(`${sessionId} not found.`, `${sessionId} not found.\n${chalk.dim('Run /status in Claude Code to check your account.')}`);
+      throw new TeleportOperationError(`${sessionId} 未找到。`, `${sessionId} 未找到。\n${chalk.dim('在 Claude Code 中运行 /status 检查你的账户。')}`);
     }
     logError(err);
     throw new Error(`从会话 API 获取会话失败：${err.message}`);
@@ -802,14 +802,14 @@ export async function teleportToRemote(options: {
     await checkAndRefreshOAuthTokenIfNeeded();
     const accessToken = getClaudeAIOAuthTokens()?.accessToken;
     if (!accessToken) {
-      logError(new Error('No access token found for remote session creation'));
+      logError(new Error('未找到用于创建远程会话的访问令牌'));
       return null;
     }
 
     // Get organization UUID
     const orgUUID = await getOrganizationUUID();
     if (!orgUUID) {
-      logError(new Error('Unable to get organization UUID for remote session creation'));
+      logError(new Error('无法获取用于创建远程会话的组织 UUID'));
       return null;
     }
 

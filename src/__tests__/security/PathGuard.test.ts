@@ -22,7 +22,7 @@ describe('PathGuard', () => {
     it('rejects ../ escape attempt', () => {
       const result = guard.validate('../../etc/passwd')
       expect(result.allowed).toBe(false)
-      expect(result.reason).toBe('Path traversal detected: escapes root directory')
+      expect(result.reason).toBe('检测到路径遍历：逃逸出根目录')
     })
 
     it('allows safe relative paths', () => {
@@ -104,7 +104,7 @@ describe('PathGuard', () => {
       })
       const result = g.validate('/home/user/project/docs/readme.md')
       expect(result.allowed).toBe(false)
-      expect(result.reason).toBe('Path is not in allowed directories')
+      expect(result.reason).toBe('路径不在允许的目录中')
     })
   })
 

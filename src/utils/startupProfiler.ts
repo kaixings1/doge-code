@@ -80,7 +80,7 @@ export function profileCheckpoint(name: string): void {
  */
 function getReport(): string {
   if (!DETAILED_PROFILING) {
-    return 'Startup profiling not enabled'
+    return '启动性能分析未启用'
   }
 
   const perf = getPerformance()

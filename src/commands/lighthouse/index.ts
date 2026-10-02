@@ -95,13 +95,13 @@ function runAudit(url: string, config: AuditConfig, format: 'json' | 'html' = 'j
 
 function generateRecommendations(scores: LighthouseScore, config: AuditConfig): string[] {
   const recs: string[] = []
-  if (scores.performance < 80) recs.push('Performance: Enable compression, lazy-load images, reduce main-thread work, use CDN')
-  if (scores.performance < 50) recs.push('Performance (critical): Consider SSR/SSG, code splitting, preconnect to origins')
-  if (scores.accessibility < 90) recs.push('Accessibility: Add aria-labels, fix color contrast, ensure keyboard navigation')
-  if (scores.bestPractices < 90) recs.push('Best Practices: Check for console errors, use HTTPS, set CSP headers')
-  if (scores.seo < 90) recs.push('SEO: Add meta descriptions, structured data, proper heading hierarchy, sitemap')
-  if (scores.pwa < 50) recs.push('PWA: Add manifest.json, service worker, offline support')
-  if (recs.length === 0) recs.push('Excellent! All categories meet or exceed targets.')
+  if (scores.performance < 80) recs.push('性能：启用压缩、图片懒加载、减少主线程工作、使用 CDN')
+  if (scores.performance < 50) recs.push('性能（严重）：考虑 SSR/SSG、代码分割、预连接到源站')
+  if (scores.accessibility < 90) recs.push('无障碍：添加 aria-label、修复颜色对比度、确保键盘导航')
+  if (scores.bestPractices < 90) recs.push('最佳实践：检查控制台错误、使用 HTTPS、设置 CSP 响应头')
+  if (scores.seo < 90) recs.push('SEO：添加 meta 描述、结构化数据、正确的标题层级、站点地图')
+  if (scores.pwa < 50) recs.push('PWA：添加 manifest.json、service worker、离线支持')
+  if (recs.length === 0) recs.push('优秀！所有类别均达到或超过目标。')
   return recs
 }
 

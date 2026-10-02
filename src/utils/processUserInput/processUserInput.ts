@@ -239,7 +239,7 @@ export async function processUserInput({
     if (hookResult.preventContinuation) {
       const message = hookResult.stopReason
         ? `Operation stopped by hook: ${hookResult.stopReason}`
-        : 'Operation stopped by hook'
+        : '操作已被 hook 停止'
       result.messages.push(
         createUserMessage({
           content: message,

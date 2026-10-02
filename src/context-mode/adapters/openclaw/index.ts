@@ -159,7 +159,7 @@ export class OpenClawAdapter extends BaseAdapter implements HookAdapter {
       // OpenClaw plugin paradigm: return { block, blockReason } to block
       return {
         block: true,
-        blockReason: response.reason ?? "Blocked by context-mode hook",
+        blockReason: response.reason ?? "已被 context-mode hook 拦截",
       };
     }
     if (response.decision === "modify" && response.updatedInput) {

@@ -26,11 +26,11 @@ export class InputValidator {
     const errors: string[] = [];
 
     if (typeof value !== 'string') {
-      return { valid: false, errors: ['Value must be a string'] };
+      return { valid: false, errors: ['值必须是字符串'] };
     }
 
     if (!options.allowEmpty && value.length === 0) {
-      errors.push('Value cannot be empty');
+      errors.push('值不能为空');
     }
 
     if (options.minLength && value.length < options.minLength) {
@@ -42,7 +42,7 @@ export class InputValidator {
     }
 
     if (options.pattern && !options.pattern.test(value)) {
-      errors.push('Value does not match required pattern');
+      errors.push('值不匹配要求的模式');
     }
 
     return {
@@ -60,7 +60,7 @@ export class InputValidator {
 
     // 检查空路径
     if (!path || path.trim().length === 0) {
-      return { valid: false, errors: ['Path cannot be empty'] };
+      return { valid: false, errors: ['路径不能为空'] };
     }
 
     // 检查路径遍历攻击
@@ -100,7 +100,7 @@ export class InputValidator {
     const errors: string[] = [];
 
     if (!command || command.trim().length === 0) {
-      return { valid: false, errors: ['Command cannot be empty'] };
+      return { valid: false, errors: ['命令不能为空'] };
     }
 
     // 检查危险命令
@@ -140,7 +140,7 @@ export class InputValidator {
     const errors: string[] = [];
 
     if (typeof value !== 'object' || value === null) {
-      return { valid: false, errors: ['Value must be an object'] };
+      return { valid: false, errors: ['值必须是对象'] };
     }
 
     for (const [key, rule] of Object.entries(schema)) {

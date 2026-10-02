@@ -99,7 +99,7 @@ export async function loadPluginLspServers(
         validationError:
           error instanceof Error
             ? `Failed to parse JSON: ${error.message}`
-            : 'Failed to parse JSON file',
+            : '解析 JSON 文件失败',
         source: 'plugin',
       })
     }
@@ -151,7 +151,7 @@ async function loadLspServersFromManifest(
           plugin: pluginName,
           serverName: decl,
           validationError:
-            'Invalid path: must be relative and within plugin directory',
+            '无效路径：必须是相对路径且位于插件目录内',
           source: 'plugin',
         })
         continue
@@ -193,7 +193,7 @@ async function loadLspServersFromManifest(
           validationError:
             error instanceof Error
               ? `Failed to parse JSON: ${error.message}`
-              : 'Failed to parse JSON file',
+              : '解析 JSON 文件失败',
           source: 'plugin',
         })
       }

@@ -28,7 +28,7 @@ function saveIndex(entries: IndexEntry[]) {
 export const ragApi = {
   async indexFolder(folderPath: string): Promise<string> {
     const absPath = path.resolve(folderPath)
-    if (!fs.existsSync(absPath)) return 'Folder not found: ' + absPath
+    if (!fs.existsSync(absPath)) return '未找到文件夹：' + absPath
 
     const entries: IndexEntry[] = []
     const extSet = new Set([
@@ -69,7 +69,7 @@ export const ragApi = {
 
   async query(searchText: string): Promise<string> {
     const entries = loadIndex()
-    if (entries.length === 0) return 'No indexed files. Use /rag add first.'
+    if (entries.length === 0) return '没有已索引的文件。请先使用 /rag add。'
 
     const lowerQuery = searchText.toLowerCase()
     const words = lowerQuery.split(/\s+/).filter(Boolean)

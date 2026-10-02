@@ -166,7 +166,7 @@ export class GeminiCLIAdapter extends BaseAdapter implements HookAdapter {
     if (response.decision === "deny") {
       return {
         decision: "deny",
-        reason: response.reason ?? "Blocked by context-mode hook",
+        reason: response.reason ?? "已被 context-mode hook 拦截",
       };
     }
     if (response.decision === "modify" && response.updatedInput) {

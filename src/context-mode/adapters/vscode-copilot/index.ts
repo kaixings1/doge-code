@@ -137,7 +137,7 @@ export class VSCodeCopilotAdapter extends CopilotBaseAdapter {
       results.push({
         check: "Hooks directory",
         status: "fail",
-        message: ".github/hooks/ directory not found",
+        message: "未找到 .github/hooks/ 目录",
         fix: "context-mode upgrade",
       });
       return results;

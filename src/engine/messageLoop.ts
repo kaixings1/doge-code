@@ -251,7 +251,7 @@ export class MessageLoop {
           if (this.deps.acceptanceGate) {
             const gateResult = await this.deps.acceptanceGate.check()
             if (!gateResult.allRequiredPass) {
-              engineLog('ACCEPTANCE', 'Required acceptance criteria not met, continuing to fix')
+              engineLog('ACCEPTANCE', '必需的验收标准未满足，继续修复')
               this.deps.onEvent({ type: 'should_continue' })
               await this.deps.stateMachine.transition("should_continue")
               continue
@@ -532,7 +532,7 @@ export class MessageLoop {
     if (!shouldContinue && this.deps.acceptanceGate) {
       const gateResult = await this.deps.acceptanceGate.check()
       if (!gateResult.allRequiredPass) {
-        engineLog('ACCEPTANCE', 'Required acceptance criteria not met, continuing to fix')
+        engineLog('ACCEPTANCE', '必需的验收标准未满足，继续修复')
         this.deps.onEvent({type: 'should_continue',})
         shouldContinue = true
       }
@@ -569,7 +569,7 @@ export class MessageLoop {
           content: "先前的工具调用无效。请直接回答，不要使用工具。",
         } as InternalMessage);
         if (this.consecutiveToolFailures >= 2) {
-          engineLog('WARN', 'Too many consecutive invalid tool calls, stopping');
+          engineLog('WARN', '连续无效的工具调用过多，停止');
           return false;
         }
         await this.deps.stateMachine.transition("should_continue");

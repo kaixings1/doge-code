@@ -132,7 +132,7 @@ export const call: LocalCommandCall = async (args) => {
   }
 
   if (cmd === 'circular') {
-    return { type: 'text', value: 'Circular dependency detection requires running: npx madge --circular .' }
+    return { type: 'text', value: '循环依赖检测需要运行：npx madge --circular .' }
   }
 
   if (cmd === 'graph') {

@@ -2329,7 +2329,7 @@ export async function loadTranscriptFromFile(
     } = await loadTranscriptFile(filePath)
 
     if (messages.size === 0) {
-      throw new Error('No messages found in JSONL file')
+      throw new Error('JSONL 文件中未找到消息')
     }
 
     // Find the most recent leaf message using pre-computed leaf UUIDs
@@ -2338,7 +2338,7 @@ export async function loadTranscriptFromFile(
     )
 
     if (!leafMessage) {
-      throw new Error('No valid conversation chain found in JSONL file')
+      throw new Error('JSONL 文件中未找到有效的对话链')
     }
 
     // Build the conversation chain backwards from leaf to root
@@ -2390,12 +2390,12 @@ export async function loadTranscriptFromFile(
     messages = parsed
   } else if (parsed && typeof parsed === 'object' && 'messages' in parsed) {
     if (!Array.isArray(parsed.messages)) {
-      throw new Error('Transcript messages must be an array')
+      throw new Error('转录消息必须是数组')
     }
     messages = parsed.messages
   } else {
     throw new Error(
-      'Transcript must be an array of messages or an object with a messages array',
+      '转录必须是消息数组，或包含 messages 数组的对象',
     )
   }
 

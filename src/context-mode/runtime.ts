@@ -579,7 +579,7 @@ export function getRuntimeSummary(runtimes: RuntimeMap): string {
       `  Python:     ${runtimes.python} (${getVersion(runtimes.python)})`,
     );
   } else {
-    lines.push(`  Python:     not available`);
+    lines.push(`  Python:     不可用`);
   }
 
   lines.push(
@@ -710,13 +710,13 @@ export function buildCommand(
 
     case "ruby":
       if (!runtimes.ruby) {
-        throw new Error("Ruby not available. Install ruby.");
+        throw new Error("Ruby 不可用。请安装 ruby。");
       }
       return [runtimes.ruby, filePath];
 
     case "go":
       if (!runtimes.go) {
-        throw new Error("Go not available. Install go.");
+        throw new Error("Go 不可用。请安装 go。");
       }
       return ["go", "run", filePath];
 
@@ -732,25 +732,25 @@ export function buildCommand(
 
     case "php":
       if (!runtimes.php) {
-        throw new Error("PHP not available. Install php.");
+        throw new Error("PHP 不可用。请安装 php。");
       }
       return ["php", filePath];
 
     case "perl":
       if (!runtimes.perl) {
-        throw new Error("Perl not available. Install perl.");
+        throw new Error("Perl 不可用。请安装 perl。");
       }
       return ["perl", filePath];
 
     case "r":
       if (!runtimes.r) {
-        throw new Error("R not available. Install R / Rscript.");
+        throw new Error("R 不可用。请安装 R / Rscript。");
       }
       return [runtimes.r, filePath];
 
     case "elixir":
       if (!runtimes.elixir) {
-        throw new Error( "Elixir not available. Install elixir.");
+        throw new Error( "Elixir 不可用。请安装 elixir。");
       }
       return ["elixir", filePath];
 

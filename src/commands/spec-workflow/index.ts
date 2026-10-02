@@ -288,12 +288,12 @@ const call: LocalCommandCall = async (args) => {
           }
         }
         if (!specName) {
-          return { type: 'text', value: 'Error: spec-workflow status requires a spec name\n\nUsage: /spec-workflow status <spec-name>' }
+          return { type: 'text', value: '错误：spec-workflow status 需要一个规格名称\n\n用法：/spec-workflow status <spec-name>' }
         }
         registerSpec(specName)
         const status = getSpecStatus(specName)
         if (!status) {
-          return { type: 'text', value: `Error: Specification '${specName}' not found` }
+          return { type: 'text', value: `错误：规格 '${specName}' 未找到` }
         }
         if (jsonOutput) {
           return { type: 'text', value: JSON.stringify(status, null, 2) }
@@ -312,7 +312,7 @@ const call: LocalCommandCall = async (args) => {
           }
         }
         if (!action) {
-          return { type: 'text', value: 'Error: approvals requires an action (request/status/delete)\n\nUsage: /spec-workflow approvals <action> [--title "..."] [--file "..."] [--id "..."]' }
+          return { type: 'text', value: '错误：approvals 需要一个操作 (request/status/delete)\n\n用法：/spec-workflow approvals <action> [--title "..."] [--file "..."] [--id "..."]' }
         }
 
         switch (action) {
@@ -324,7 +324,7 @@ const call: LocalCommandCall = async (args) => {
             const categoryNameMatch = s.match(/--category-name\s+"([^"]+)"/) || s.match(/--category-name\s+'([^']+)'/)
 
             if (!titleMatch || !fileMatch) {
-              return { type: 'text', value: 'Error: approvals request requires --title and --file' }
+              return { type: 'text', value: '错误：approvals request 需要 --title 和 --file' }
             }
 
             const approval: ApprovalRequest = {
@@ -356,7 +356,7 @@ const call: LocalCommandCall = async (args) => {
             }
             const approval = memoryStore.approvals.get(idMatch[1])
             if (!approval) {
-              return { type: 'text', value: `Error: Approval '${idMatch[1]}' not found` }
+              return { type: 'text', value: `错误：审批 '${idMatch[1]}' 未找到` }
             }
             if (jsonOutput) {
               return { type: 'text', value: JSON.stringify(approval, null, 2) }
@@ -367,11 +367,11 @@ const call: LocalCommandCall = async (args) => {
           case 'delete': {
             const deleteIdMatch = s.match(/--id\s+(\S+)/)
             if (!deleteIdMatch) {
-              return { type: 'text', value: 'Error: approvals delete requires --id' }
+              return { type: 'text', value: '错误：approvals delete 需要 --id' }
             }
             const deleted = memoryStore.approvals.delete(deleteIdMatch[1])
             if (!deleted) {
-              return { type: 'text', value: `Error: Approval '${deleteIdMatch[1]}' not found` }
+              return { type: 'text', value: `错误：审批 '${deleteIdMatch[1]}' 未找到` }
             }
             if (jsonOutput) {
               return { type: 'text', value: JSON.stringify({ success: true, deleted: deleteIdMatch[1] }, null, 2) }
@@ -380,7 +380,7 @@ const call: LocalCommandCall = async (args) => {
           }
 
           default:
-            return { type: 'text', value: `Error: Unknown approvals action '${action}'\n\nValid actions: request, status, delete` }
+            return { type: 'text', value: `错误：未知的 approvals 操作 '${action}'\n\n有效操作：request、status、delete` }
         }
       }
 
@@ -396,7 +396,7 @@ const call: LocalCommandCall = async (args) => {
           }
         }
         if (!taskId) {
-          return { type: 'text', value: 'Error: spec-workflow log requires a task ID\n\nUsage: /spec-workflow log <task-id> --task "description" --type feature' }
+          return { type: 'text', value: '错误：spec-workflow log 需要任务 ID\n\n用法：/spec-workflow log <task-id> --task "description" --type feature' }
         }
         const taskMatch = s.match(/--task\s+"([^"]+)"/) || s.match(/--task\s+'([^']+)'/)
         const typeMatch = s.match(/--type\s+(\S+)/)
@@ -420,12 +420,12 @@ const call: LocalCommandCall = async (args) => {
       }
 
       default:
-        return { type: 'text', value: `Error: Unknown subcommand '${subcommand}'\n\n${HELP}` }
+        return { type: 'text', value: `错误：未知子命令 '${subcommand}'\n\n${HELP}` }
     }
   } catch (error) {
     return {
       type: 'text',
-      value: `Error: ${error instanceof Error ? error.message : 'Unknown error'}\n\n${HELP}`,
+      value: `错误：${error instanceof Error ? error.message : '未知错误'}\n\n${HELP}`,
     }
   }
 }

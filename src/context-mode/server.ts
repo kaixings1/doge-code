@@ -1419,7 +1419,7 @@ export function formatBatchQueryResults(
       continue;
     }
 
-    sections.push("No matching sections found.");
+    sections.push("未找到匹配的章节。");
     sections.push("");
   }
 
@@ -2927,7 +2927,7 @@ dns.lookup = function patchedLookup(hostname, options, callback) {
       var verdict = classifyIp(records[i].address);
       if (verdict === 'block' || (STRICT && verdict === 'private')) {
         return callback(new Error(
-          'SSRF blocked at connect-time: ' + hostname +
+          'SSRF 已在连接时拦截：' + hostname +
           ' resolves to ' + records[i].address +
           ' (' + verdict + ')'
         ));
@@ -2952,7 +2952,7 @@ dnsPromises.lookup = async function patchedPromisesLookup(hostname, options) {
     var verdict = classifyIp(list[i].address);
     if (verdict === 'block' || (STRICT && verdict === 'private')) {
       throw new Error(
-        'SSRF blocked at connect-time: ' + hostname +
+        'SSRF 已在连接时拦截：' + hostname +
         ' resolves to ' + list[i].address + ' (' + verdict + ')'
       );
     }
@@ -2977,7 +2977,7 @@ dnsPromises.lookup = async function patchedPromisesLookup(hostname, options) {
         var v = classifyIp(ip);
         if (v === 'block' || (STRICT && v === 'private')) {
           return cb(new Error(
-            'SSRF blocked at connect-time: ' + hostname +
+            'SSRF 已在连接时拦截：' + hostname +
             ' resolves to ' + ip + ' (' + v + ')'
           ));
         }
@@ -3003,7 +3003,7 @@ dns.resolve = function patchedResolveGeneric(hostname, rrtype, cb) {
         var v = classifyIp(ip);
         if (v === 'block' || (STRICT && v === 'private')) {
           return cb(new Error(
-            'SSRF blocked at connect-time: ' + hostname +
+            'SSRF 已在连接时拦截：' + hostname +
             ' resolves to ' + ip + ' (' + v + ')'
           ));
         }
@@ -3034,11 +3034,11 @@ async function fetchWithManualRedirect(initialUrl) {
     const location = resp.headers.get('location') || resp.headers.get('Location');
     if (!location) return resp;
     if (redirectCount === MAX_REDIRECTS) {
-      throw new Error('SSRF blocked: redirect chain exceeded ' + MAX_REDIRECTS + ' hops');
+      throw new Error('SSRF 已拦截：重定向链超过 ' + MAX_REDIRECTS + ' hops');
     }
     let nextParsed;
     try { nextParsed = new URL(location, currentUrl); } catch (e) {
-      throw new Error('SSRF blocked: invalid redirect Location: ' + location);
+      throw new Error('SSRF 已拦截：无效的重定向 Location：' + location);
     }
     if (nextParsed.protocol !== 'http:' && nextParsed.protocol !== 'https:') {
       throw new Error('SSRF blocked: redirect to non-http(s) scheme ' + nextParsed.protocol);
@@ -3050,7 +3050,7 @@ async function fetchWithManualRedirect(initialUrl) {
     if (isIpLiteral) {
       const verdict = classifyIp(hostname);
       if (verdict === 'block' || (STRICT && verdict === 'private')) {
-        throw new Error('SSRF blocked: redirect to ' + hostname + ' (' + verdict + ')');
+        throw new Error('SSRF 已拦截：重定向到 ' + hostname + ' (' + verdict + ')');
       }
     } else {
       // Hostname target: resolve and classify every record. The patched
@@ -3061,7 +3061,7 @@ async function fetchWithManualRedirect(initialUrl) {
         const verdict = classifyIp(rec.address);
         if (verdict === 'block' || (STRICT && verdict === 'private')) {
           throw new Error(
-            'SSRF blocked: redirect target ' + hostname +
+            'SSRF 已拦截：重定向目标 ' + hostname +
             ' resolves to ' + rec.address + ' (' + verdict + ')'
           );
         }
@@ -3069,7 +3069,7 @@ async function fetchWithManualRedirect(initialUrl) {
     }
     currentUrl = nextParsed.toString();
   }
-  throw new Error('SSRF blocked: redirect chain exceeded ' + MAX_REDIRECTS + ' hops');
+  throw new Error('SSRF 已拦截：重定向链超过 ' + MAX_REDIRECTS + ' hops');
 }
 
 // Subprocess response-body size cap. A malicious or unexpectedly large

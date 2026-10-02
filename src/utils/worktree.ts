@@ -732,7 +732,7 @@ export async function createWorktreeForSession(
     if (!gitRoot) {
       throw new Error(
         '无法创建工作树：不在 git 仓库中，且未配置 WorktreeCreate 钩子。' +
-          'Configure WorktreeCreate/WorktreeRemove hooks in settings.json to use worktree isolation with other VCS systems.',
+          '如需在其他 VCS 系统中使用 worktree 隔离，请在 settings.json 中配置 WorktreeCreate/WorktreeRemove hook。',
       )
     }
 
@@ -927,7 +927,7 @@ export async function createAgentWorktree(slug: string): Promise<{
   if (!gitRoot) {
     throw new Error(
       '无法创建代理工作树：不在 git 仓库中，且未配置 WorktreeCreate 钩子。' +
-        'Configure WorktreeCreate/WorktreeRemove hooks in settings.json to use worktree isolation with other VCS systems.',
+        '如需在其他 VCS 系统中使用 worktree 隔离，请在 settings.json 中配置 WorktreeCreate/WorktreeRemove hook。',
     )
   }
 

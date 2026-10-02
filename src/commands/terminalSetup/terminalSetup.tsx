@@ -434,7 +434,7 @@ chars = "\\u001B\\r"`;
       try {
         await copyFile(configPath, backupPath);
       } catch {
-        return `${color('warning', theme)('Error backing up existing Alacritty config. Bailing out.')}${EOL}${chalk.dim(`See ${formatPathLink(configPath)}`)}${EOL}${chalk.dim(`Backup path: ${formatPathLink(backupPath)}`)}${EOL}`;
+        return `${color('warning', theme)('备份现有 Alacritty 配置出错。中止。')}${EOL}${chalk.dim(`See ${formatPathLink(configPath)}`)}${EOL}${chalk.dim(`Backup path: ${formatPathLink(backupPath)}`)}${EOL}`;
       }
     } else {
       // Ensure config directory exists (idempotent with recursive)

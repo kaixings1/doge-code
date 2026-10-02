@@ -413,7 +413,7 @@ export class ToolRegistry {
     // 检测循环依赖
     if (sorted.length !== this.tools.size) {
       const cyclic = Array.from(this.tools.keys()).filter(n => !sorted.includes(n));
-      throw new Error(`Circular dependency detected among: ${cyclic.join(', ')}`);
+      throw new Error(`检测到循环依赖：${cyclic.join(', ')}`);
     }
 
     return sorted;

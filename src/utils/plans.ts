@@ -224,7 +224,7 @@ export async function copyPlanForResume(
       }
     }
     logForDebugging(
-      'Plan file recovery failed: no file snapshot or plan content found in message history',
+      '计划文件恢复失败：消息历史中未找到文件快照或计划内容',
     )
     return false
   }

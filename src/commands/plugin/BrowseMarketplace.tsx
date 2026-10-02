@@ -213,7 +213,7 @@ export function BrowseMarketplace({
             const pluginId_0 = foundPlugin.pluginId;
             const globallyInstalled = isPluginGloballyInstalled(pluginId_0);
             if (globallyInstalled) {
-              setError(`Plugin '${pluginId_0}' is already installed globally. Use '/plugin' to manage existing plugins.`);
+              setError(`插件 '${pluginId_0}' 已全局安装。使用 '/plugin' 管理现有插件。`);
             } else {
               // Navigate to the plugin details view
               setSelectedMarketplace(foundMarketplace);

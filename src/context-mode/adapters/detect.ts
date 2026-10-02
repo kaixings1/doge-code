@@ -626,7 +626,7 @@ export function detectPlatform(clientInfo?: { name: string; version?: string }):
   return {
     platform: "claude-code",
     confidence: "low",
-    reason: "No platform detected, defaulting to Claude Code",
+    reason: "未检测到平台，默认使用 Claude Code",
   };
 }
 

@@ -95,7 +95,7 @@ export class BigQueryMetricsExporter implements PushMetricExporter {
         checkHasTrustDialogAccepted() || getIsNonInteractiveSession()
       if (!hasTrust) {
         logForDebugging(
-          'BigQuery metrics export: trust not established, skipping',
+          'BigQuery 指标导出：信任未建立，跳过',
         )
         resultCallback({ code: ExportResultCode.SUCCESS })
         return

@@ -57,8 +57,8 @@ describe("spec-workflow", () => {
 
   test("status returns error without spec name", async () => {
     const result = await swCall("status");
-    expect(expectText(result)).toContain("Error");
-    expect(expectText(result)).toContain("requires a spec name");
+    expect(expectText(result)).toContain("错误");
+    expect(expectText(result)).toContain("需要一个规格名称");
   });
 
   test("approvals request creates approval", async () => {
@@ -72,8 +72,8 @@ describe("spec-workflow", () => {
 
   test("approvals request without required params fails", async () => {
     const result = await swCall("approvals request --json");
-    expect(expectText(result)).toContain("Error");
-    expect(expectText(result)).toContain("requires --title and --file");
+    expect(expectText(result)).toContain("错误");
+    expect(expectText(result)).toContain("需要 --title 和 --file");
   });
 
   test("approvals status lists all approvals", async () => {
@@ -110,7 +110,7 @@ describe("spec-workflow", () => {
 
     // 确认已删除
     const statusResult = await swCall(`approvals status --id ${approvalId}`);
-    expect(expectText(statusResult)).toContain("not found");
+    expect(expectText(statusResult)).toContain("未找到");
   });
 
   test("log records implementation", async () => {
@@ -125,8 +125,8 @@ describe("spec-workflow", () => {
   test("log without task id fails", async () => {
     // "log" 没有 taskId 参数 — 应该报错
     const result = await swCall("log --json");
-    expect(expectText(result)).toContain("Error");
-    expect(expectText(result)).toContain("requires a task ID");
+    expect(expectText(result)).toContain("错误");
+    expect(expectText(result)).toContain("需要任务 ID");
   });
 
   test("status shows phases progression", async () => {

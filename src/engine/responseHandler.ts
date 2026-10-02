@@ -32,7 +32,7 @@ export interface TruncationConfig {
 
 const DEFAULT_TRUNCATION: TruncationConfig = {
   maxOutputChars: 20000,
-  truncationMarker: '...[truncated, output budget exceeded]',
+  truncationMarker: '...[已截断，超出输出预算]',
 };
 
 export interface APIEvent {

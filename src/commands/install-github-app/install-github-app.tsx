@@ -102,7 +102,7 @@ function InstallGitHubApp(props: {
       warnings.push({
         title: 'GitHub CLI 未认证',
         message: 'GitHub CLI 似乎未认证。',
-        instructions: ['Run: gh auth login', 'Follow the prompts to authenticate with GitHub', 'Or set up authentication using environment variables or other methods']
+        instructions: ['运行：gh auth login', '按提示完成 GitHub 认证', '或使用环境变量等方式配置认证']
       });
     } else {
       // Check if required scopes are present in the Token scopes line
@@ -122,8 +122,8 @@ function InstallGitHubApp(props: {
             ...prev,
             step: 'error',
             error: `GitHub CLI is missing required permissions: ${missingScopes.join(', ')}.`,
-            errorReason: 'Missing required scopes',
-            errorInstructions: [`Your GitHub CLI authentication is missing the "${missingScopes.join('" and "')}" ${plural(missingScopes.length, 'scope')} needed to manage GitHub Actions and secrets.`, '', 'To fix this, run:', '  gh auth refresh -h github.com -s repo,workflow', '', 'This will add the necessary permissions to manage workflows and secrets.']
+            errorReason: '缺少必需的 scope',
+            errorInstructions: [`你的 GitHub CLI 认证缺少管理 GitHub Actions 和 secrets 所需的 "${missingScopes.join('" and "')}" ${plural(missingScopes.length, 'scope')}。`, '', '如需修复，请运行：', '  gh auth refresh -h github.com -s repo,workflow', '', '这将添加管理工作流和 secrets 所需的权限。']
           }));
           return;
         }

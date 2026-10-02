@@ -388,7 +388,7 @@ export class CodexAdapter extends BaseAdapter implements HookAdapter {
           hookEventName: "PreToolUse",
           permissionDecision: "deny",
           permissionDecisionReason:
-            response.reason ?? "Blocked by context-mode hook",
+            response.reason ?? "已被 context-mode hook 拦截",
         },
       };
     }

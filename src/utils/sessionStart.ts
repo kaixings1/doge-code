@@ -114,7 +114,7 @@ export async function processSessionStartHooks(
       }
 
       logForDebugging(
-        `Warning: Failed to load plugin hooks. SessionStart hooks from plugins will not execute. ` +
+        `警告：加载插件 hook 失败。来自插件的 SessionStart hook 将不会执行。 ` +
           `Error: ${errorMessage}. ${userGuidance}`,
         { level: 'warn' },
       )
@@ -192,7 +192,7 @@ export async function processSetupHooks(
       const errorMessage =
         error instanceof Error ? error.message : String(error)
       logForDebugging(
-        `Warning: Failed to load plugin hooks. Setup hooks from plugins will not execute. Error: ${errorMessage}`,
+        `警告：加载插件 hook 失败。来自插件的 Setup hook 将不会执行。错误：${errorMessage}`,
         { level: 'warn' },
       )
     }

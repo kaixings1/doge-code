@@ -125,7 +125,7 @@ export class KiroAdapter extends BaseAdapter implements HookAdapter {
   }
 
   parsePreCompactInput(_raw: unknown): PreCompactEvent {
-    throw new Error("Kiro does not support PreCompact hooks");
+    throw new Error("Kiro 不支持 PreCompact hook");
   }
 
   parseSessionStartInput(raw: unknown): SessionStartEvent {

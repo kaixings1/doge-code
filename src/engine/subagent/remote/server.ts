@@ -199,7 +199,7 @@ async function executeAsync(runId: string, threadId: string, messages: Array<{ r
   run.status = 'running'
   try {
     if (!agentExecutor) {
-      throw new Error('Agent executor not configured')
+      throw new Error('智能体执行器未配置')
     }
     const output = await agentExecutor(messages)
     const thread = threads.get(threadId)

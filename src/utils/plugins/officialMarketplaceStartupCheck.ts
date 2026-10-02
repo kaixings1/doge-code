@@ -197,7 +197,7 @@ export async function checkAndInstallOfficialMarketplace(): Promise<OfficialMark
     // Check enterprise policy restrictions
     if (!isSourceAllowedByPolicy(OFFICIAL_MARKETPLACE_SOURCE)) {
       logForDebugging(
-        'Official marketplace blocked by enterprise policy, skipping',
+        '官方应用市场被企业策略阻止，跳过',
       )
       saveGlobalConfig(current => ({
         ...current,
@@ -288,7 +288,7 @@ export async function checkAndInstallOfficialMarketplace(): Promise<OfficialMark
     const gitAvailable = await checkGitAvailable()
     if (!gitAvailable) {
       logForDebugging(
-        'Git not available, skipping official marketplace auto-install',
+        'Git 不可用，跳过官方应用市场自动安装',
       )
       const retryCount =
         (config.officialMarketplaceAutoInstallRetryCount || 0) + 1

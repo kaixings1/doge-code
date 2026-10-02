@@ -104,7 +104,7 @@ export function registerITermBackend(
 function createTmuxBackend(): PaneBackend {
   if (!TmuxBackendClass) {
     throw new Error(
-      'TmuxBackend not registered. Import TmuxBackend.ts before using the registry.',
+      'TmuxBackend 未注册。使用注册表前请先导入 TmuxBackend.ts。',
     )
   }
   return new TmuxBackendClass()
@@ -117,7 +117,7 @@ function createTmuxBackend(): PaneBackend {
 function createITermBackend(): PaneBackend {
   if (!ITermBackendClass) {
     throw new Error(
-      'ITermBackend not registered. Import ITermBackend.ts before using the registry.',
+      'ITermBackend 未注册。使用注册表前请先导入 ITermBackend.ts。',
     )
   }
   return new ITermBackendClass()

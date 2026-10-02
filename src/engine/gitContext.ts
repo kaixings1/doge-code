@@ -83,7 +83,7 @@ export class GitContextInjector {
         })
         this.config.onEvent?.({ type: 'gitcontext_inject', file, context: parts.join('\n\n') })
       } else {
-        this.config.onEvent?.({ type: 'gitcontext_skip', reason: 'no git history available' })
+        this.config.onEvent?.({ type: 'gitcontext_skip', reason: '无可用 git 历史' })
       }
     }
 

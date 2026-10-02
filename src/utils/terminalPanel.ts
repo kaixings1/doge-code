@@ -66,7 +66,7 @@ class TerminalPanel {
     this.hasTmux = result.status === 0
     if (!this.hasTmux) {
       logForDebugging(
-        'Terminal panel: tmux not found, falling back to non-persistent shell',
+        '终端面板：未找到 tmux，回退到非持久化 shell',
       )
     }
     return this.hasTmux

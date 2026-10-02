@@ -58,7 +58,7 @@ export class PathGuard {
       if (!resolved.startsWith(this.config.rootDir)) {
         return {
           allowed: false,
-          reason: 'Path traversal detected: escapes root directory',
+          reason: '检测到路径遍历：逃逸出根目录',
         };
       }
     }
@@ -82,7 +82,7 @@ export class PathGuard {
       if (!inAllowedDir) {
         return {
           allowed: false,
-          reason: 'Path is not in allowed directories',
+          reason: '路径不在允许的目录中',
           normalizedPath,
         };
       }

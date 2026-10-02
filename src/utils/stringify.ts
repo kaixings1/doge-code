@@ -382,7 +382,7 @@ export function parsePartialJson(s: string): unknown {
     }
   }
 
-  throw new Error('Unable to parse partial JSON')
+  throw new Error('无法解析部分 JSON')
 }
 
 // ==================== 时间工具 ====================

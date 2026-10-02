@@ -65,19 +65,19 @@ export class ZedAdapter extends BaseAdapter implements HookAdapter {
   // interface contract but will throw if called.
 
   parsePreToolUseInput(_raw: unknown): PreToolUseEvent {
-    throw new Error("Zed does not support hooks");
+    throw new Error("Zed 不支持 hook");
   }
 
   parsePostToolUseInput(_raw: unknown): PostToolUseEvent {
-    throw new Error("Zed does not support hooks");
+    throw new Error("Zed 不支持 hook");
   }
 
   parsePreCompactInput(_raw: unknown): PreCompactEvent {
-    throw new Error("Zed does not support hooks");
+    throw new Error("Zed 不支持 hook");
   }
 
   parseSessionStartInput(_raw: unknown): SessionStartEvent {
-    throw new Error("Zed does not support hooks");
+    throw new Error("Zed 不支持 hook");
   }
 
   // ── Response formatting ────────────────────────────────
@@ -137,7 +137,7 @@ export class ZedAdapter extends BaseAdapter implements HookAdapter {
         check: "Hook support",
         status: "warn",
         message:
-          "Zed does not support hooks. Only MCP integration is available.",
+          "Zed 不支持 hook。仅提供 MCP 集成。",
       },
     ];
   }

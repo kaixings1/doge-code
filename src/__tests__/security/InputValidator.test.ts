@@ -8,13 +8,13 @@ describe('InputValidator', () => {
     it('rejects non-string values', () => {
       const result = validator.validateString(123)
       expect(result.valid).toBe(false)
-      expect(result.errors).toContain('Value must be a string')
+      expect(result.errors).toContain('值必须是字符串')
     })
 
     it('rejects empty string by default', () => {
       const result = validator.validateString('')
       expect(result.valid).toBe(false)
-      expect(result.errors).toContain('Value cannot be empty')
+      expect(result.errors).toContain('值不能为空')
     })
 
     it('allows empty string when allowEmpty is true', () => {
@@ -37,7 +37,7 @@ describe('InputValidator', () => {
     it('enforces pattern', () => {
       const result = validator.validateString('abc123', { pattern: /^[a-z]+$/ })
       expect(result.valid).toBe(false)
-      expect(result.errors).toContain('Value does not match required pattern')
+      expect(result.errors).toContain('值不匹配要求的模式')
     })
 
     it('sanitizes control characters and javascript: protocol', () => {
@@ -52,7 +52,7 @@ describe('InputValidator', () => {
     it('rejects empty path', () => {
       const result = validator.validateFilePath('')
       expect(result.valid).toBe(false)
-      expect(result.errors).toContain('Path cannot be empty')
+      expect(result.errors).toContain('路径不能为空')
     })
 
     it('rejects path traversal with ..', () => {
@@ -83,7 +83,7 @@ describe('InputValidator', () => {
     it('rejects empty command', () => {
       const result = validator.validateCommand('')
       expect(result.valid).toBe(false)
-      expect(result.errors).toContain('Command cannot be empty')
+      expect(result.errors).toContain('命令不能为空')
     })
 
     it('rejects rm -rf /', () => {
@@ -126,7 +126,7 @@ describe('InputValidator', () => {
     it('rejects non-object values', () => {
       const result = validator.validateJSON('not an object', {})
       expect(result.valid).toBe(false)
-      expect(result.errors).toContain('Value must be an object')
+      expect(result.errors).toContain('值必须是对象')
     })
 
     it('rejects missing required fields', () => {

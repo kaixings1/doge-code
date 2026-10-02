@@ -575,7 +575,7 @@ export class MCPStdioClient {
       }
       await this.respawnPromise;
     }
-    if (!this.child) throw new Error("MCP client not started");
+    if (!this.child) throw new Error("MCP 客户端未启动");
     const id = ++this.requestId;
     return new Promise<T>((resolve, reject) => {
       // Gate the timer on a finite ms value so callers can pass

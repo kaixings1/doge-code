@@ -121,7 +121,7 @@ export abstract class ClaudeCodeBaseAdapter extends BaseAdapter {
     if (response.decision === "deny") {
       return {
         permissionDecision: "deny",
-        reason: response.reason ?? "Blocked by context-mode hook",
+        reason: response.reason ?? "已被 context-mode hook 拦截",
       };
     }
     if (response.decision === "modify" && response.updatedInput) {

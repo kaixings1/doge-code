@@ -706,8 +706,8 @@ async function doctor(): Promise<number> {
     available = getAvailableLanguages(runtimes);
   } catch {
     s.stop("Diagnostics partial");
-    p.log.warn(color.yellow("Could not detect runtimes") + color.dim(" — module may be missing, restart session after upgrade"));
-    p.outro(color.yellow("Doctor could not fully run — try again after restarting"));
+    p.log.warn(color.yellow("无法检测运行时") + color.dim(" — 模块可能缺失，升级后请重启会话"));
+    p.outro(color.yellow("Doctor 无法完整运行 — 请重启后重试"));
     return 1;
   }
 
@@ -1273,7 +1273,7 @@ async function upgrade(opts?: { platform?: string }) {
         { stdio: "pipe", encoding: "utf-8", timeout: 5000 },
       );
       if (statusOut.trim()) {
-        s.stop(color.yellow("Marketplace clone has local edits — skipping git pull"));
+        s.stop(color.yellow("应用市场克隆有本地修改 — 跳过 git pull"));
         p.log.info(
           color.dim(`  Run manually: git -C "${marketplaceDir}" stash && git pull --ff-only`),
         );
@@ -1700,7 +1700,7 @@ async function upgrade(opts?: { platform?: string }) {
             s.stop(color.green("Native addons OK") + color.dim(" — ABI cache present"));
             changes.push(`better-sqlite3 ABI ${process.versions.modules} cache ready`);
           } else {
-            s.stop(color.yellow("Native addon ABI cache missing"));
+            s.stop(color.yellow("原生插件 ABI 缓存缺失"));
             p.log.warn(
               color.dim(`  Try manually: cd "${pluginRoot}" && npm rebuild better-sqlite3`),
             );
@@ -1861,7 +1861,7 @@ async function upgrade(opts?: { platform?: string }) {
     // upgrade no longer reports success.
     process.exitCode = 1;
     p.log.warn(
-      color.yellow("In-place files were NOT updated") +
+      color.yellow("原地文件未被更新") +
         color.dim(" — old version is still on disk; hooks/settings will still be refreshed."),
     );
     p.log.info(
@@ -1920,7 +1920,7 @@ async function upgrade(opts?: { platform?: string }) {
     changes.push(`Set ${permSet.length} hook scripts as executable`);
   } else {
     p.log.error(
-      color.red("No hook scripts found") +
+      color.red("未找到 hook 脚本") +
         color.dim(" — expected in " + resolve(pluginRoot, "hooks")),
     );
   }
@@ -1932,7 +1932,7 @@ async function upgrade(opts?: { platform?: string }) {
       "Changes Applied",
     );
   } else {
-    p.log.info(color.dim("No changes were needed."));
+    p.log.info(color.dim("无需任何更改。"));
   }
 
   // Restart notice — new MCP tools require MCP server restart

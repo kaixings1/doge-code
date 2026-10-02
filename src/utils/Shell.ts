@@ -389,7 +389,7 @@ async function execWithProvider(
   } catch {
     const fallback = getOriginalCwd()
     logForDebugging(
-      `Shell CWD "${cwd}" no longer exists, recovering to "${fallback}"`,
+      `Shell 工作目录 "${cwd}" 已不存在，恢复为 "${fallback}"`,
     )
     try {
       await realpath(fallback)
