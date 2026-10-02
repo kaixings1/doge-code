@@ -167,7 +167,7 @@ export class StreamingToolExecutor {
             tool_use_id: toolUseId,
           },
         ],
-        toolUseResult: 'User rejected tool use',
+        toolUseResult: '用户拒绝了工具调用',
         sourceToolAssistantUUID: assistantMessage.uuid,
       })
     }

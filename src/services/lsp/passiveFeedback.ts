@@ -239,10 +239,10 @@ export function registerLSPNotificationHandlers(
 
               if (failures.count >= 3) {
                 logForDebugging(
-                  `WARNING: LSP diagnostic handler for ${serverName} has failed ${failures.count} times consecutively. ` +
-                    `Last error: ${failures.lastError}. ` +
-                    `This may indicate a problem with the LSP server or diagnostic processing. ` +
-                    `Check logs for details.`,
+                  `警告：LSP 诊断处理器针对 ${serverName} 已连续失败 ${failures.count} 次。 ` +
+                    `最后的错误：${failures.lastError}。 ` +
+                    `这可能表明 LSP 服务器或诊断处理存在问题。 ` +
+                    `请查看日志了解详情。`,
                 )
               }
             }

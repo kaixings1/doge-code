@@ -156,7 +156,7 @@ export class AuthCodeListener {
   ): void {
     if (!authCode) {
       res.writeHead(400)
-      res.end('Authorization code not found')
+      res.end('未找到授权码')
       this.reject(new Error('No authorization code received'))
       return
     }

@@ -104,7 +104,7 @@ const BASH_SILENT_COMMANDS = new Set(['mv', 'cp', 'rm', 'mkdir', 'rmdir', 'chmod
  * 在 Windows 上运行时，智能检查和纠正模型生成的常见小错误。
  * 只修复那些「非常肯定」的问题，避免误改正确命令。
  */
-function fixModelCommandMistakes(cmd: string, platform: string): string {
+export function fixModelCommandMistakes(cmd: string, platform: string): string {
     if (platform !== 'win32') return cmd;
 
     let fixed = cmd;
@@ -353,7 +353,7 @@ const SHELL_OPERATORS = new Set(['&&', '||', '|', ';', '>', '>>', '2>', '<', '('
  * 转换单个命令段（不含 && ; | 等分隔符）的首 token。
  * 只改段首命令名，保留其余参数原样。
  */
-function normalizeUnixCommandSegment(segment: string): string {
+export function normalizeUnixCommandSegment(segment: string): string {
   // 提取第一个 token（命令名），跳过开头的空白
   const firstTokenMatch = segment.match(/^(\s*)([^\s]+)/);
   if (!firstTokenMatch) return segment;
@@ -393,7 +393,7 @@ function normalizeUnixCommandSegment(segment: string): string {
  * 按 && || ; | 分段，对每一段的首 token 做转换 —— 修复了旧实现只转首 token、
  * 导致 `cd X && pwd && ls` 中 pwd/ls 漏转的问题。
  */
-function normalizeUnixCommandForWindows(cmd: string): string {
+export function normalizeUnixCommandForWindows(cmd: string): string {
   if (process.platform !== 'win32') return cmd;
 
   // 跳过空命令

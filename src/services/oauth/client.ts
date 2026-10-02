@@ -135,7 +135,7 @@ export async function exchangeCodeForTokens(
   if (response.status !== 200) {
     throw new Error(
       response.status === 401
-        ? 'Authentication failed: Invalid authorization code'
+        ? '认证失败：授权码无效'
         : `Token exchange failed (${response.status}): ${response.statusText}`,
     )
   }

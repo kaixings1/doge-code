@@ -461,7 +461,7 @@ export async function startSpeculation(
       canUseTool: async (tool, input) => {
         if (!input || typeof input !== 'object') {
           return denySpeculation(
-            'Speculation: invalid tool input',
+            '推测：工具输入无效',
             'speculation_invalid_input',
           )
         }
@@ -494,7 +494,7 @@ export async function startSpeculation(
             }))
             abortController.abort()
             return denySpeculation(
-              'Speculation paused: file edit requires permission',
+              '推测已暂停：文件编辑需要权限',
               'speculation_edit_boundary',
             )
           }
@@ -517,7 +517,7 @@ export async function startSpeculation(
                   `[Speculation] Denied ${tool.name}: path outside cwd: ${filePath}`,
                 )
                 return denySpeculation(
-                  'Write outside cwd not allowed during speculation',
+                  '推测期间不允许在 cwd 之外写入',
                   'speculation_write_outside_root',
                 )
               }

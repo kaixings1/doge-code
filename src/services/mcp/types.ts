@@ -28,7 +28,7 @@ export type Transport = z.infer<ReturnType<typeof TransportSchema>>
 export const McpStdioServerConfigSchema = lazySchema(() =>
   z.object({
     type: z.literal('stdio').optional(), // Optional for backwards compatibility
-    command: z.string().min(1, 'Command cannot be empty'),
+    command: z.string().min(1, '命令不能为空'),
     args: z.array(z.string()).default([]),
     env: z.record(z.string(), z.string()).optional(),
   }),

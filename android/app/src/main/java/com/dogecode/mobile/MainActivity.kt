@@ -8,6 +8,8 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -103,7 +105,31 @@ class MainActivity : AppCompatActivity() {
         // 明文 http/ws：与 manifest 的 usesCleartextTraffic 双保险
         s.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
 
-        webView.webViewClient = WebViewClient()
+        webView.webViewClient = object : WebViewClient() {
+            /**
+             * 加载失败时显示可读的错误页，而不是 WebView 默认的
+             * 「无法访问此页面 ERR_CONNECTION_REFUSED」。
+             *
+             * 这个失败态是本项目最常见的情形：桥接服务器随 CLI 进程存活，
+             * CLI 一关，5680 就不再监听，手机侧立刻连不上。给出明确原因
+             * 和重试按钮，比系统错误页有用得多。
+             */
+            override fun onReceivedError(
+                view: WebView?,
+                request: WebResourceRequest?,
+                error: WebResourceError?,
+            ) {
+                // 只处理主文档失败；子资源（favicon 等）失败不应覆盖整页
+                if (request?.isForMainFrame != true) return
+                val code = if (android.os.Build.VERSION.SDK_INT >= 23) error?.errorCode else null
+                showErrorPage(code)
+            }
+
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+                progress.visibility = View.GONE
+            }
+        }
         webView.webChromeClient = object : WebChromeClient() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 progress.progress = newProgress
@@ -111,6 +137,42 @@ class MainActivity : AppCompatActivity() {
             }
         }
         // 保留 WebView 的 WebSocket 能力（默认已支持，无需额外开关）
+    }
+
+    /** 用本地 HTML 渲染错误页：说明可能的三个原因 + 重试按钮。 */
+    private fun showErrorPage(code: Int?) {
+        progress.visibility = View.GONE
+        val target = prefs.getString(KEY_URL, DEFAULT_URL) ?: DEFAULT_URL
+        val html = """
+            <!DOCTYPE html><html lang="zh-CN"><head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width,initial-scale=1">
+            <style>
+              body{margin:0;height:100vh;display:flex;flex-direction:column;
+                   justify-content:center;align-items:center;background:#1a1a1a;
+                   color:#e8e8e8;font:15px/1.7 -apple-system,"Microsoft YaHei",sans-serif;
+                   padding:24px;box-sizing:border-box;text-align:left}
+              h2{font-size:17px;margin:0 0 4px;color:#f87171}
+              .code{color:#888;font-size:12px;margin-bottom:18px}
+              ul{padding-left:20px;margin:0 0 20px;color:#bbb}
+              li{margin:6px 0}
+              code{background:#2d2d2d;padding:1px 5px;border-radius:4px;color:#4ade80}
+              button{background:#2563eb;color:#fff;border:0;border-radius:8px;
+                     padding:11px 26px;font-size:15px;cursor:pointer}
+              .url{color:#888;font-size:12px;margin-top:16px;word-break:break-all}
+            </style></head><body>
+            <h2>连不上 doge-code 对话服务</h2>
+            <div class="code">${if (code != null) "错误码 $code" else "连接失败"}</div>
+            <ul>
+              <li>电脑上的 CLI 是否还在运行？<br>（桥接随 CLI 一起退出，关掉窗口就连不上）</li>
+              <li>用的是 <code>5680</code> 端口吗？<br>（<code>5678</code> 是另一个服务，没有对话页面）</li>
+              <li>USB 模式请确认已执行 <code>adb reverse tcp:5680 tcp:5680</code></li>
+            </ul>
+            <button onclick="location.href='$target'">重试</button>
+            <div class="url">当前地址：$target</div>
+            </body></html>
+        """.trimIndent()
+        webView.loadDataWithBaseURL(target, html, "text/html", "UTF-8", null)
     }
 
     /** 归一化用户输入：允许只填 IP / IP:端口 / 完整 URL。 */

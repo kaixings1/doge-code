@@ -595,11 +595,11 @@ export function useManageMCPConnections(
                   // since it already names the mismatch.
                   const text =
                     gate.kind === 'disabled'
-                      ? 'Channels are not currently available'
+                      ? 'Channels 当前不可用'
                       : gate.kind === 'auth'
-                        ? 'Channels require claude.ai authentication · run /login'
+                        ? 'Channels 需要 claude.ai 认证 · 请运行 /login'
                         : gate.kind === 'policy'
-                          ? 'Channels are not enabled for your org · have an administrator set channelsEnabled: true in managed settings'
+                          ? '你的组织未启用 Channels · 请让管理员在托管设置中设置 channelsEnabled: true'
                           : gate.reason
                   addNotification({
                     key: `channels-blocked-${gate.kind}`,
