@@ -604,10 +604,50 @@ export class MobileBridgeServer {
         res.end('Not Found')
       })
 
-      // WebSocket 服务器
+      // 先 listen，成功后才绑定 WebSocketServer。
+      //
+      // 顺序很关键：ws 库的 WebSocketServer({ server }) 会在 http server 上
+      // 注册自己的 error/upgrade 处理。若先建 wss 再 listen，EADDRINUSE 时
+      // ws 会把 http server 的 error 事件转投到 wss 上；此时 wss 的 error 若
+      // 无人监听，Node 就抛 unhandled 'error' 事件直接终止进程
+      // （表现为 "Failed to start server. Is port in use?" 崩掉整个 CLI）。
+      //
+      // 端口冲突（EADDRINUSE）是多实例并发的正常场景（每个 cmd 窗口一个 doge
+      // 实例都抢 5680），必须静默降级，绝不能让 unhandled error 杀掉 CLI。
+      await new Promise<void>((resolve, reject) => {
+        const onError = (e: unknown) => {
+          if ((e as { code?: string })?.code === 'EADDRINUSE') {
+            logForDebugging(
+              `[MobileBridgeServer] 端口 ${this.port} 已被占用，移动桥接在此实例禁用（多实例并发属正常）`,
+            )
+            resolve()
+            return
+          }
+          reject(e)
+        }
+        // listen 可能在同 tick 内同步 emit error，必须先注册监听。
+        this.httpServer.once('error', onError)
+        this.httpServer.listen(this.port, '0.0.0.0', () => {
+          this.httpServer.off('error', onError)
+          resolve()
+        })
+      })
+
+      // 端口冲突时 promise 已 resolve 但服务并未真正监听，直接返回，
+      // 不创建 wss，也不标记 running。
+      if (!this.httpServer.listening) return
+
+      // WebSocket 服务器（仅在 http server 成功监听后创建）
       const wsModule = await import('ws')
       const WebSocketServer = wsModule.WebSocketServer
       this.wss = new WebSocketServer({ server: this.httpServer, path: '/mobile/ws' })
+      // 兜底：wss 自身也必须始终有 error 监听，否则任何转发到它的事件
+      // 都会变成 unhandled error。
+      this.wss.on('error', (e: unknown) => {
+        logForDebugging(
+          `[MobileBridgeServer] wss 错误（已忽略）: ${e instanceof Error ? e.message : String(e)}`,
+        )
+      })
 
       this.wss.on('connection', (ws: WebSocket, req: any) => {
         // 认证检查
@@ -673,13 +713,6 @@ export class MobileBridgeServer {
         this.connectedClients.add(ws)
         this.broadcast('client_connected', { sessionId: session.sessionId, deviceId, deviceType })
         logForDebugging(`[MobileBridgeServer] 客户端连接: ${deviceId}`)
-      })
-
-      await new Promise<void>((resolve, reject) => {
-        // 绑定 0.0.0.0 而非 localhost，否则手机（不同设备）无法连接。
-        // 安全由 MobileBridgeServer 的密钥校验与局域网边界共同保证。
-        this.httpServer.listen(this.port, '0.0.0.0', resolve)
-        this.httpServer.on('error', reject)
       })
 
       this.isRunning = true

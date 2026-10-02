@@ -27,6 +27,13 @@ if "%1"=="" (
     set DOGE_API_JSON=.doge\%1.json
 )
 
+REM 清除从父 shell 继承的 LOCAL_BRIDGE 标记。该变量会让
+REM isMobileBridgeAvailable() 返回 true，导致每个普通实例都自动启动移动
+REM 桥接去抢 5680 端口；多实例并发时除首个外全部崩溃。
+REM 移动桥接请改用 mobile.bat（设的是 CLAUDE_CODE_MOBILE_BRIDGE=1）。
+set CLAUDE_CODE_LOCAL_BRIDGE=
+set CLAUDE_CODE_LOCAL_BRIDGE_URL=
+
 
 REM === Local bridge server: start in background if 5678 is not listening ===
 netstat -ano -p tcp | findstr ":5678" | findstr "LISTENING" >nul 2>&1

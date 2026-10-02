@@ -105,4 +105,21 @@ describe('MobileBridgeServer 真实端到端', () => {
     await server.stop()
     expect(getActiveMobileBridgeServer()).toBeNull()
   })
+
+  it('端口被占用时不抛异常、不标记为 running、不覆盖注册表', async () => {
+    // 先用一个普通 http server 占住端口，模拟"另一个 doge 实例已抢到 5680"
+    const blocker = http.createServer(() => {})
+    await new Promise<void>((r) => blocker.listen(PORT, '0.0.0.0', () => r()))
+
+    try {
+      const server = new MobileBridgeServer({ sessionId: 'blocked', port: PORT, secret: SECRET })
+      // 关键断言：start() 必须 resolve 而非 reject（reject 会变 Bun unhandled error 崩掉 CLI）
+      await expect(server.start()).resolves.toBeUndefined()
+      expect(server.isServerRunning()).toBe(false)
+      // 未启动的实例不得接管全局注册表
+      expect(getActiveMobileBridgeServer()).not.toBe(server)
+    } finally {
+      await new Promise<void>((r) => blocker.close(() => r()))
+    }
+  })
 })

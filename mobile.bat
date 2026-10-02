@@ -25,6 +25,11 @@ REM   then type in the CLI: /mobile-connect
 REM   open the printed URL/QR on your phone (same WiFi), port 5680
 
 set CLAUDE_CODE_MOBILE_BRIDGE=1
+REM 清掉可能从父 shell 继承来的 LOCAL_BRIDGE 标记：它会让每个普通 CLI 实例
+REM 都去抢 5680 端口（isMobileBridgeAvailable() 判定为 true），多实例并发时
+REM 除首个外全部因 EADDRINUSE 崩溃。移动桥接只由本文件的 MOBILE_BRIDGE 触发。
+set CLAUDE_CODE_LOCAL_BRIDGE=
+set CLAUDE_CODE_LOCAL_BRIDGE_URL=
 
 if "%1"=="" (
     set DOGE_API_JSON=.doge\api.json
