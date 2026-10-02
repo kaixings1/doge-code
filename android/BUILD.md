@@ -1,14 +1,23 @@
-# doge-code 移动端外壳（Android）
+# doge-code 手机客户端（Android）
 
-WebView 封装 CLI 内置的对话页面（`http://<host>:5680`）。**不重写任何对话逻辑** ——
-页面、WebSocket、入站注入全部由 CLI 侧提供（见 `docs/mobile-verify.md`）。
+原生客户端：用 OkHttp WebSocket 直接与 CLI 的移动桥接通信。
+**不重写任何对话逻辑** —— 对话、入队、回复推送全部由 CLI 侧提供
+（见 `docs/mobile-verify.md`），本工程只是客户端。
 
-## 为什么是 WebView 壳而不是原生 App
+> 多会话（手机上切换多个 CLI 对话）**尚未实现**，方案见
+> [`MULTI-SESSION-PLAN.md`](./MULTI-SESSION-PLAN.md)。
 
-`docs/mobile-verify.md` 已说明：手机端对话刻意选择浏览器方案，以避免引入
-JDK / Android SDK / Flutter 工具链。本目录是**可选的外壳**，仅在你希望
-「装成 App、有图标、不用每次输地址」时使用。功能上等价于手机浏览器打开
-`http://<host>:5680`。
+## 功能
+
+| 功能 | 说明 |
+|---|---|
+| 原生聊天界面 | 左右气泡、时间戳、发送状态（发送中/已提交/发送失败）|
+| Markdown 轻量渲染 | ```代码块```、**粗体**、`行内代码`（不引入完整 Markdown 库）|
+| 本地历史 | 私有目录 JSON，上限 500 条，冷启动自动加载 |
+| 断线自动重连 | 指数退避 1s→30s，20s 心跳保活 |
+| 消息通知 | 助手回复且 App 不在前台时提醒（Android 13+ 需授权）|
+| 中断 | 可中止当前回合 |
+| 连接设置 | 地址 + 密钥，持久化，冷启动自动重连 |
 
 ## 前置：编译环境
 
