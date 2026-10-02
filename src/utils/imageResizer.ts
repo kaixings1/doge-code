@@ -105,10 +105,14 @@ function classifyImageError(error: unknown): number {
   }
 
   // Memory allocation failures
+  // 注意：早前此处有一条 message.includes('无法分配')，但全仓库没有任何地方
+  // 抛出含该中文串的错误（抛出方是 sharp/vips 与 Node，均为英文），
+  // 属于永不命中的死匹配，已移除。
   if (
     message.includes('out of memory') ||
-    message.includes('无法分配') ||
-    message.includes('memory allocation')
+    message.includes('memory allocation') ||
+    message.includes('allocation failed') ||
+    message.includes('Cannot allocate')
   ) {
     return ERROR_TYPE_MEMORY
   }
