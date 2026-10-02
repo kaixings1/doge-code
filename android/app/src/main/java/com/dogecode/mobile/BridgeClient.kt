@@ -90,9 +90,11 @@ class BridgeClient(
 
     private fun openSocket() {
         val target = url ?: return
+        Log.i(TAG, "连接 $target")
         val req = Request.Builder().url(target).build()
         socket = http.newWebSocket(req, object : WebSocketListener() {
             override fun onOpen(webSocket: WebSocket, response: Response) {
+                Log.i(TAG, "WS 已打开，等待 client_connected")
                 // 真正的"可用"要等 client_connected，这里不置 connected
             }
 
@@ -101,7 +103,13 @@ class BridgeClient(
             }
 
             override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                Log.w(TAG, "WS failure: ${t.message}")
+                // 带上异常类型与 HTTP 响应码：真机排查时只看到 "连接失败"
+                // 完全无法区分是 DNS、拒绝连接、升级被拒还是证书问题。
+                Log.w(
+                    TAG,
+                    "WS 失败 url=$target code=${response?.code} " +
+                        "type=${t.javaClass.simpleName} msg=${t.message}",
+                )
                 connected = false
                 post { onEvent(Event.Disconnected(t.message ?: "连接失败")) }
                 scheduleReconnect()
