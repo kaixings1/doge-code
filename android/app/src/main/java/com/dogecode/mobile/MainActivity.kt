@@ -96,6 +96,18 @@ class MainActivity : AppCompatActivity() {
             thread { store.clear() }
             Toast.makeText(this, "已清空本地记录", Toast.LENGTH_SHORT).show()
         }
+        findViewById<Button>(R.id.btn_scan).setOnClickListener {
+            val host = currentHost()
+            val curPort = currentPort()
+            SessionPickerDialog.show(this, host, curPort) { s ->
+                // 切换会话：更新地址栏并重连
+                val url = "http://$host:${s.port}"
+                urlInput.setText(url)
+                connectWith(url, secretInput.text.toString())
+                append(ChatMessage.system("已切换到会话「${s.label}」（端口 ${s.port}）"))
+                connPanel.visibility = View.GONE
+            }
+        }
         sendBtn.setOnClickListener { sendCurrent() }
         stopBtn.setOnClickListener { client.sendInterrupt() }
 
@@ -163,6 +175,19 @@ class MainActivity : AppCompatActivity() {
             .append("?deviceId=android-app&deviceType=android")
         if (secret.isNotBlank()) sb.append("&secret=").append(java.net.URLEncoder.encode(secret, "UTF-8"))
         return sb.toString()
+    }
+
+    /** 取当前地址栏里的主机名；解析失败时回落到回环地址。 */
+    private fun currentHost(): String {
+        val u = normalize(urlInput.text.toString())
+        return runCatching { java.net.URI(u).host }.getOrNull() ?: "127.0.0.1"
+    }
+
+    /** 取当前地址栏里的端口；解析失败时回落到默认端口。 */
+    private fun currentPort(): Int {
+        val u = normalize(urlInput.text.toString())
+        val p = runCatching { java.net.URI(u).port }.getOrNull() ?: -1
+        return if (p > 0) p else PORT
     }
 
     /** 归一化：允许只填 IP / IP:端口 / 完整 URL。 */

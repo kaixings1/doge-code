@@ -107,6 +107,13 @@
                 android:layout_marginStart="8dp"
                 android:text="@string/clear_history" />
         </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_scan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/scan_sessions" />
     </LinearLayout>
 
     <ProgressBar

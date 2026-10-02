@@ -5,6 +5,7 @@
     <string name="secret_hint">密钥（与 CLAUDE_CODE_MOBILE_SECRET 一致，可留空）</string>
     <string name="msg_hint">输入消息…</string>
     <string name="connect">连接</string>
+    <string name="scan_sessions">扫描会话（多窗口切换）</string>
     <string name="clear_history">清空记录</string>
     <string name="send">发送</string>
     <string name="interrupt">中断</string>
