@@ -60,6 +60,9 @@ clean_json_*.txt
 # 误创建的空文件（无引用、0 字节）
 /d
 
+# 调试用符号链接（历史上被删除两次，无代码引用；stash pop 会把它带回来）
+/latest
+
 # 融资材料草稿（本地内容材料，暂不入库）
 /fundraising/
 AI融资*.html
