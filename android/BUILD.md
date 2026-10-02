@@ -12,23 +12,31 @@ JDK / Android SDK / Flutter 工具链。本目录是**可选的外壳**，仅在
 
 ## 前置：编译环境
 
-编译 APK 需要（本机当前**全部缺失**，需自行安装）：
+只需两样（本机当前**都缺**，需自行安装）：
 
-| 组件 | 版本要求 | 校验命令 |
-|---|---|---|
-| JDK | 17 或以上 | `java -version` |
-| Android SDK | Platform 34 + Build-Tools | `echo %ANDROID_HOME%` |
-| Gradle | 8.5+（或用下面的一键脚本） | `gradle -v` |
+| 组件 | 版本要求 | 安装（管理员） | 校验 |
+|---|---|---|---|
+| JDK | 17 或以上 | `choco install -y temurin17` | `java -version` |
+| Android SDK | Platform 35 | `choco install -y android-sdk` | `echo %ANDROID_HOME%` |
 
-最快的安装方式是装 **Android Studio**（自带 JDK 与 SDK），装完在
-`Settings → SDK Manager` 确认 Platform 34 已安装。
+装完 SDK 后设置环境变量（新开窗口生效）：
+
+```cmd
+set ANDROID_HOME=%LOCALAPPDATA%\Android\Sdk
+```
+
+或装 **Android Studio**（自带 JDK 与 SDK），在 `Settings → SDK Manager`
+确认 Platform 35 已安装。
+
+**Gradle 不需要手动装** —— `build.bat` 会按此顺序解析：
+wrapper（若有）→ PATH 里的 gradle → 自动下载 gradle-8.9 到 `.gradle-dist/`。
 
 ## 编译
 
 在 `android/` 目录下：
 
 ```cmd
-gradle assembleDebug
+build.bat
 ```
 
 产物：`app\build\outputs\apk\debug\app-debug.apk`
