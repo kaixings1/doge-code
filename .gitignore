@@ -22,6 +22,8 @@ src/commands/repo-pack/__tests__/fixtures/data.json
 
 # 编译产物
 doge.exe
+doge-*.exe
+*.bun-build
 src/services/remoteManagedSettings/securityCheck.jsx
 
 # 测试产物
@@ -38,6 +40,17 @@ errors-export.json
 .doge/
 *.worktree-rewrite.bak
 *.bak
+
+# 本地运行时数据与密钥（禁止提交）
+api_keys.json
+accounts.db
+
+# 一次性调试产物（搜索脚本跑完留下的结果快照）
+*_results.txt
+
+# 融资材料草稿（本地内容材料，暂不入库）
+/fundraising/
+AI融资*.html
 
 # u1s1 工作流产物（workflow 脚本与进度存档，本地临时）
 .u1s1/
