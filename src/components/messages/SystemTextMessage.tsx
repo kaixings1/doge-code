@@ -16,9 +16,10 @@ const teamMemSaved = feature('TEAMMEM') ? require('./teamMemSaved.js') as typeof
  
 import { TURN_COMPLETION_VERBS } from '../../constants/turnCompletionVerbs.js';
 import { useTerminalSize } from '../../hooks/useTerminalSize.js';
+import { useCoarseTimeAgo } from '../../hooks/useCoarseTimeAgo.js';
 import type { SystemMessage, SystemStopHookSummaryMessage, SystemBridgeStatusMessage, SystemTurnDurationMessage, SystemThinkingMessage, SystemMemorySavedMessage } from '../../types/message.js';
 import { SystemAPIErrorMessage } from './SystemAPIErrorMessage.js';
-import { formatDuration, formatNumber, formatRelativeTimeAgo, formatSecondsShort } from '../../utils/format.js';
+import { formatDuration, formatNumber, formatSecondsShort } from '../../utils/format.js';
 import { getGlobalConfig } from '../../utils/config.js';
 import Link from '../../ink/components/Link.js';
 import ThemedText from '../design-system/ThemedText.js';
@@ -513,7 +514,8 @@ function TurnDurationMessage(t0) {
   const [backgroundTaskSummary] = useState(t1);
   // DOGE: 系统消息位于终端回放区（scrollback）。按 OffscreenFreeze 的说明，
   // 视口上方内容变化会强制 log-update 全量重置终端、导致滚动跳顶。
-  // 因此挂载时快照一次 "now"，移除每秒 tick，让这段文本保持静止。
+  // 因此绝对时间用挂载时快照，相对时间走 useCoarseTimeAgo 的阶梯调度
+  // （10s/30s/1m/5m/15m/30m，30 分钟后冻结），而非每秒 tick。
   const [mountedNow] = useState(() => new Date());
   let t2;
   if ($[2] === Symbol.for("react.memo_cache_sentinel")) {
@@ -567,7 +569,7 @@ function TurnDurationMessage(t0) {
     t6 = $[8];
   }
   const endTime = message.timestamp ? new Date(message.timestamp).toLocaleString() : mountedNow.toLocaleString()
-  const elapsedAgo = message.timestamp ? formatRelativeTimeAgo(new Date(message.timestamp), { now: mountedNow, style: "narrow" }) : ""
+  const elapsedAgo = useCoarseTimeAgo(message.timestamp)
   const elapsedSuffix = elapsedAgo ? ` · ${elapsedAgo}` : ""
   const t7 = showTurnDuration && `${verb} for ${duration} — ${endTime}${elapsedSuffix}`;
   const t8 = backgroundTaskSummary && ` \u00B7 ${backgroundTaskSummary} still running`;
