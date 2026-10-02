@@ -39,6 +39,16 @@ export function isForkSubagentEnabled(): boolean {
 export const FORK_SUBAGENT_TYPE = 'fork'
 
 /**
+ * 递归 fork 守卫的错误文案。
+ *
+ * 由 AgentTool 在 fork 子代理内再次 fork 时抛出，Commands 的 /fork 命令
+ * catch 后据此给出友好提示。抽成共享常量而非两处各写一遍字面量：
+ * 历史上 /fork 曾匹配 '不能在子代理内部再分支'，而 AgentTool 抛的是本串，
+ * 两者措辞不同导致 includes() 恒为 false，友好提示分支从未生效。
+ */
+export const FORK_NESTED_ERROR = 'Fork 在 Fork 工作器内部不可用。请直接使用你的工具完成任务。'
+
+/**
  * 分支路径的合成代理定义。
  *
  * 未在 builtInAgents 中注册——仅在 `!subagent_type` 且实验激活时使用。

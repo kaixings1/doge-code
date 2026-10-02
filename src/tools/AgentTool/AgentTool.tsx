@@ -48,7 +48,7 @@ import { setAgentColor } from './agentColorManager.js';
 import { agentToolResultSchema, classifyHandoffIfNeeded, emitTaskProgress, extractPartialResult, finalizeAgentTool, getLastToolUseName, runAsyncAgentLifecycle } from './agentToolUtils.js';
 import { GENERAL_PURPOSE_AGENT } from './built-in/generalPurposeAgent.js';
 import { AGENT_TOOL_NAME, LEGACY_AGENT_TOOL_NAME, ONE_SHOT_BUILTIN_AGENT_TYPES } from './constants.js';
-import { buildForkedMessages, buildWorktreeNotice, FORK_AGENT, isForkSubagentEnabled, isInForkChild } from './forkSubagent.js';
+import { buildForkedMessages, buildWorktreeNotice, FORK_AGENT, FORK_NESTED_ERROR, isForkSubagentEnabled, isInForkChild } from './forkSubagent.js';
 import type { AgentDefinition } from './loadAgentsDir.js';
 import { filterAgentsByMcpRequirements, hasRequiredMcpServers, isBuiltInAgent } from './loadAgentsDir.js';
 import { getPrompt } from './prompt.js';
@@ -341,7 +341,7 @@ export const AgentTool = buildTool({
       // context.options 上，能在自动压缩的消息重写中存续）。
       // 消息扫描回退捕获任何未传递 querySource 的路径。
       if (toolUseContext.options.querySource === `agent:builtin:${FORK_AGENT.agentType}` || isInForkChild(toolUseContext.messages)) {
-        throw new Error('Fork 在 Fork 工作器内部不可用。请直接使用你的工具完成任务。');
+        throw new Error(FORK_NESTED_ERROR);
       }
       selectedAgent = FORK_AGENT;
     } else {

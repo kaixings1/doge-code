@@ -1,5 +1,5 @@
 import type { Command, LocalJSXCommandContext, LocalCommandResult } from '../../commands.js'
-import { isForkSubagentEnabled } from '../../tools/AgentTool/forkSubagent.js'
+import { isForkSubagentEnabled, FORK_NESTED_ERROR } from '../../tools/AgentTool/forkSubagent.js'
 
 const HELP = `📖 用法: /fork <任务描述>
 
@@ -65,7 +65,10 @@ const fork = {
           }
         } catch (e) {
           const msg = e instanceof Error ? e.message : String(e)
-          if (msg.includes('不能在子代理内部再分支')) {
+          // 与 AgentTool 的递归 fork 守卫共用同一常量，不再靠字面量匹配。
+          // 原实现匹配 '不能在子代理内部再分支'，而 AgentTool 抛的是另一串措辞，
+          // includes() 恒为 false，友好提示分支从未生效（只落到下面那条通用提示）。
+          if (msg.includes(FORK_NESTED_ERROR)) {
             return {
               type: 'text',
               value: '分支子代理中不能再分支。请直接使用工具完成任务。',
