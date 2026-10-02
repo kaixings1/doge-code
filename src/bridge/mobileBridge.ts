@@ -21,6 +21,7 @@
  */
 
 import { randomUUID } from 'crypto'
+import path from 'path'
 import { getLocalBridgeUrl } from './bridgeConfig.js'
 import { isLocalBridgeMode } from './bridgeConfig.js'
 import { getMobileSessionManager } from './mobileSession.js'
@@ -532,7 +533,7 @@ export class MobileBridgeServer {
     secret?: string
   }) {
     this.sessionId = options.sessionId
-    this.port = options.port ?? 5680
+    this.port = options.port ?? resolveMobilePort()
     this.bridgeHandle = options.bridgeHandle ?? null
     this.secret = options.secret ?? process.env.CLAUDE_CODE_MOBILE_SECRET ?? ''
   }
@@ -579,6 +580,27 @@ export class MobileBridgeServer {
           const secret = this.secret ?? ''
           res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' })
           res.end(renderMobileChatPage(this.sessionId, port, secret))
+          return
+        }
+
+        // 会话元信息 — 供手机端「多会话列表」发现本实例（多会话方案 A）
+        // 手机并发探测端口段后，用本端点拿到每个会话的标签与状态。
+        if (req.method === 'GET' && req.url?.startsWith('/mobile/session-info')) {
+          res.writeHead(200, {
+            'Content-Type': 'application/json',
+            // 手机端跨源探测需要；此端点在可信局域网内使用
+            'Access-Control-Allow-Origin': '*',
+          })
+          res.end(JSON.stringify({
+            sessionId: this.sessionId,
+            port: this.port,
+            cwd: process.cwd(),
+            label: resolveSessionLabel(),
+            // 非交互终端下消息不会被消费，客户端据此提示（与 client_connected 一致）
+            interactive: process.stdin.isTTY === true,
+            clients: this.connectedClients.size,
+            lastActivity: Date.now(),
+          }))
           return
         }
 
@@ -1062,8 +1084,44 @@ export function getLanIp(): string {
  * 否则手机扫码后无法建立连接。
  */
 export function getMobileBridgeUrl(port?: number): string {
-  const p = port ?? 5680
+  const p = port ?? resolveMobilePort()
   return `http://${getLanIp()}:${p}`
+}
+
+/**
+ * 会话标签，供手机端多会话列表展示。
+ *
+ * 优先取 DOGE_SESSION_LABEL（用户明确指定，最可靠）；
+ * 否则回落为当前工作目录的目录名 —— 多终端常在不同目录，
+ * 这个默认值零成本且通常够用（同一目录开多窗口时无法区分，
+ * 但那属于用户应显式设标签的场景）。
+ */
+export function resolveSessionLabel(): string {
+  const explicit = process.env.DOGE_SESSION_LABEL?.trim()
+  if (explicit) return explicit
+  return path.basename(process.cwd()) || process.cwd()
+}
+
+/**
+ * 解析移动端桥接监听端口。
+ *
+ * CLAUDE_CODE_MOBILE_PORT 让多个 CLI 实例各占一个端口，手机端即可同时
+ * 看到多个会话（多会话方案 A，见 android/MULTI-SESSION-PLAN.md）。
+ *
+ * 取不到或非法时回落到 5680 —— 端口配置错误不应导致桥接起不来。
+ */
+export function resolveMobilePort(): number {
+  const raw = process.env.CLAUDE_CODE_MOBILE_PORT
+  if (!raw) return 5680
+  const n = Number(raw)
+  if (!Number.isInteger(n) || n < 1 || n > 65535) {
+    logForDebugging(
+      `[MobileBridge] CLAUDE_CODE_MOBILE_PORT 非法（${raw}），回落 5680`,
+      { level: 'error' },
+    )
+    return 5680
+  }
+  return n
 }
 
 /**
