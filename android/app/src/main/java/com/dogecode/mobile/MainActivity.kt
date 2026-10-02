@@ -40,6 +40,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var progress: ProgressBar
     private lateinit var prefs: SharedPreferences
 
+    /**
+     * 是否正在展示错误页。错误页用 loadDataWithBaseURL 加载，
+     * 若 baseURL 不可达可能再次触发 onReceivedError —— 用此标记防重入，
+     * 否则会陷入「错误 → 加载错误页 → 又出错」的循环。
+     * 用户重试或导航到新地址时重置。
+     */
+    private var showingError = false
+
     companion object {
         private const val PREFS = "doge_mobile"
         private const val KEY_URL = "last_url"
@@ -121,6 +129,8 @@ class MainActivity : AppCompatActivity() {
             ) {
                 // 只处理主文档失败；子资源（favicon 等）失败不应覆盖整页
                 if (request?.isForMainFrame != true) return
+                // 已在错误页上则忽略，避免 loadDataWithBaseURL 再次失败导致循环
+                if (showingError) return
                 val code = if (android.os.Build.VERSION.SDK_INT >= 23) error?.errorCode else null
                 showErrorPage(code)
             }
@@ -128,6 +138,22 @@ class MainActivity : AppCompatActivity() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
                 progress.visibility = View.GONE
+            }
+
+            /**
+             * 错误页里的「重试」按钮是 location.href 跳转，不经过 navigateTo，
+             * 若不在此重置 showingError，重试失败后就再也不会显示错误页了。
+             */
+            override fun shouldOverrideUrlLoading(
+                view: WebView?,
+                request: WebResourceRequest?,
+            ): Boolean {
+                val url = request?.url?.toString() ?: return false
+                if (!url.startsWith("data:")) {
+                    showingError = false
+                    urlInput.setText(url)
+                }
+                return false   // 交给 WebView 正常加载
             }
         }
         webView.webChromeClient = object : WebChromeClient() {
@@ -141,6 +167,7 @@ class MainActivity : AppCompatActivity() {
 
     /** 用本地 HTML 渲染错误页：说明可能的三个原因 + 重试按钮。 */
     private fun showErrorPage(code: Int?) {
+        showingError = true
         progress.visibility = View.GONE
         val target = prefs.getString(KEY_URL, DEFAULT_URL) ?: DEFAULT_URL
         val html = """
@@ -187,6 +214,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateTo(raw: String) {
+        showingError = false   // 重新导航，退出错误页状态
         val url = normalize(raw)
         urlInput.setText(url)
         prefs.edit().putString(KEY_URL, url).apply()
