@@ -49,6 +49,9 @@ class MainActivity : AppCompatActivity() {
     private val pending = mutableMapOf<String, String>()
     private var interactive = true
 
+    /** 当前会话标签，用于通知标题区分来源（多会话并存时必需）。 */
+    private var sessionLabel: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -101,6 +104,7 @@ class MainActivity : AppCompatActivity() {
             val curPort = currentPort()
             SessionPickerDialog.show(this, host, curPort) { s ->
                 // 切换会话：更新地址栏并重连
+                sessionLabel = s.label
                 val url = "http://$host:${s.port}"
                 urlInput.setText(url)
                 connectWith(url, secretInput.text.toString())
@@ -155,6 +159,18 @@ class MainActivity : AppCompatActivity() {
             .putBoolean(KEY_AUTOCONNECT, true)
             .apply()
         urlInput.setText(url)
+
+        // 切到该会话的历史文件并重新加载，避免不同会话的消息混在一条时间线
+        val host = runCatching { java.net.URI(url).host }.getOrNull() ?: "127.0.0.1"
+        val port = runCatching { java.net.URI(url).port }.getOrNull()?.takeIf { it > 0 } ?: PORT
+        store.useSession(MessageStore.keyFor(host, port))
+        thread {
+            val history = store.load()
+            runOnUiThread {
+                adapter.submit(history)
+                if (history.isNotEmpty()) list.scrollToPosition(history.size - 1)
+            }
+        }
 
         client.close()
         setStatus(false, getString(R.string.status_connecting))
@@ -289,7 +305,7 @@ class MainActivity : AppCompatActivity() {
     private fun maybeNotify(msg: ChatMessage) {
         if (msg.role != "assistant") return
         if (hasWindowFocus()) return
-        Notifications.notifyAssistant(this, msg.text)
+        Notifications.notifyAssistant(this, msg.text, sessionLabel)
     }
 
     companion object {

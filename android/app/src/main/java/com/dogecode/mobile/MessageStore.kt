@@ -14,9 +14,21 @@ import java.io.File
  * 保留上限 MAX_MESSAGES 条，超出时丢弃最旧的，避免文件无限增长。
  * 读写都在调用线程进行，调用方负责放到 IO 线程（见 MainActivity）。
  */
-class MessageStore(context: Context) {
+class MessageStore(private val context: Context, sessionKey: String = "default") {
 
-    private val file = File(context.filesDir, "history.json")
+    /**
+     * 历史按会话分文件。
+     *
+     * 多会话切换时若共用一条时间线，用户会把 A 会话的回复误认成 B 的 ——
+     * 这比单纯的「体验不好」更严重。sessionKey 由连接时的主机:端口构成，
+     * 正好区分不同 CLI 实例。
+     */
+    private var file = File(context.filesDir, "history-$sessionKey.json")
+
+    /** 切换会话：改指另一个历史文件。调用方无需重建实例。 */
+    fun useSession(sessionKey: String) {
+        file = File(context.filesDir, "history-$sessionKey.json")
+    }
 
     fun load(): MutableList<ChatMessage> {
         if (!file.exists()) return mutableListOf()
@@ -37,8 +49,9 @@ class MessageStore(context: Context) {
             } else messages
             val arr = JSONArray()
             trimmed.forEach { arr.put(it.toJson()) }
-            // 先写临时文件再改名，避免写入中断留下半个文件
-            val tmp = File(file.parentFile, "history.json.tmp")
+            // 先写临时文件再改名，避免写入中断留下半个文件。
+            // 临时文件名跟随目标文件，避免多会话同时写时互相踩踏。
+            val tmp = File(file.parentFile, file.name + ".tmp")
             tmp.writeText(arr.toString())
             if (!tmp.renameTo(file)) {
                 file.writeText(arr.toString())
@@ -56,5 +69,9 @@ class MessageStore(context: Context) {
     companion object {
         private const val TAG = "MessageStore"
         private const val MAX_MESSAGES = 500
+
+        /** 会话标识：主机_端口，用作历史文件名（过滤掉文件名非法字符）。 */
+        fun keyFor(host: String, port: Int): String =
+            "${host}_$port".replace(Regex("[^A-Za-z0-9_.-]"), "_")
     }
 }

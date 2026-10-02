@@ -34,7 +34,12 @@ object Notifications {
         mgr.createNotificationChannel(ch)
     }
 
-    fun notifyAssistant(context: Context, text: String) {
+    /**
+     * @param label 会话标签（如 DOGE_SESSION_LABEL 或目录名）。多会话并存时
+     *   通知栏里必须能区分来源，否则用户不知道是哪条对话的回复。
+     *   未知时传 null，标题退回为 "doge-code"。
+     */
+    fun notifyAssistant(context: Context, text: String, label: String? = null) {
         // 无权限时 hasPermission 返回 false（API 33+），此时直接跳过
         if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) return
         if (Build.VERSION.SDK_INT >= 33 &&
@@ -55,9 +60,10 @@ object Notifications {
         )
 
         val body = if (text.length > MAX_TEXT) text.take(MAX_TEXT) + "…" else text
+        val title = if (label.isNullOrBlank()) "doge-code" else "doge-code · $label"
         val n = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.stat_notify_chat)
-            .setContentTitle("doge-code")
+            .setContentTitle(title)
             .setContentText(body)
             .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .setAutoCancel(true)
