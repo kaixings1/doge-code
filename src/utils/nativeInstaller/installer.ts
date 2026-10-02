@@ -342,7 +342,7 @@ async function installVersionFromPackage(
         stage_find_package: true,
         error_package_not_found: true,
       })
-      const error = new Error('Could not find platform-specific native package')
+      const error = new Error('未找到平台专属的原生包')
       throw error
     }
 

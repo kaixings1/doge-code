@@ -376,7 +376,7 @@ async function downloadAndVerifyBinary(
   }
 
   // Should not reach here, but just in case
-  throw lastError ?? new Error('Download failed after all retries')
+  throw lastError ?? new Error('所有重试后下载仍失败')
 }
 
 export async function downloadVersionFromBinaryRepo(

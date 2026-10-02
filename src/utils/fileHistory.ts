@@ -373,7 +373,7 @@ export async function fileHistoryRewind(
       trackedFilesCount: captured.trackedFiles.size,
       snapshotFound: false,
     })
-    throw new Error('The selected snapshot was not found')
+    throw new Error('未找到所选快照')
   }
 
   try {

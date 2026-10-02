@@ -19,15 +19,15 @@ export class ImageSizeError extends Error {
     const firstImage = oversizedImages[0]
     if (oversizedImages.length === 1 && firstImage) {
       message =
-        `Image base64 size (${formatFileSize(firstImage.size)}) exceeds API limit (${formatFileSize(maxSize)}). ` +
-        `Please resize the image before sending.`
+        `图片 base64 大小 (${formatFileSize(firstImage.size)}) 超过 API 限制 (${formatFileSize(maxSize)})。 ` +
+        `请在发送前调整图片尺寸。`
     } else {
       message =
-        `${oversizedImages.length} images exceed the API limit (${formatFileSize(maxSize)}): ` +
+        `${oversizedImages.length} 张图片超过 API 限制 (${formatFileSize(maxSize)}): ` +
         oversizedImages
-          .map(img => `Image ${img.index}: ${formatFileSize(img.size)}`)
+          .map(img => `图片 ${img.index}: ${formatFileSize(img.size)}`)
           .join(', ') +
-        `. Please resize these images before sending.`
+        `。请在发送前调整这些图片尺寸。`
     }
     super(message)
     this.name = 'ImageSizeError'

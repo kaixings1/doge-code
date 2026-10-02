@@ -137,7 +137,7 @@ export class WebSocketTransport implements Transport {
    */
   async start(): Promise<void> {
     if (this.started) {
-      throw new Error('Start can only be called once per transport.')
+      throw new Error('每个 transport 只能调用一次 start。')
     }
     await this.opened
     if (this.ws.readyState !== WS_OPEN) {

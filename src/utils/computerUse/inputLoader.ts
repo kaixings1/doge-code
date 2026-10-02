@@ -39,7 +39,7 @@ export function requireComputerUseInput(): ComputerUseInputAPI {
     },
   )
   if (!input.isSupported) {
-    throw new Error('@ant/computer-use-input is not supported on this platform')
+    throw new Error('此平台不支持 @ant/computer-use-input')
   }
   return (cached = input)
 }

@@ -71,6 +71,9 @@ function classifyImageError(error: unknown): number {
   const message = errorMessage(error)
 
   // Module loading errors from our native wrapper
+  // 注意：这里 includes() 匹配的是「抛出方原文」，不可随界面文案一起汉化 ——
+  // 抛出方是 vendor/image-processor-src 与 sharp 库，标识串仍是英文。
+  // 若把匹配串改成中文，includes() 恒为 false，错误分类会静默失效。
   if (message.includes('Native image processor module not available')) {
     return ERROR_TYPE_MODULE_LOAD
   }
@@ -423,11 +426,11 @@ export async function maybeResizeAndDownsampleImageBuffer(
     // Image is too large and we failed to compress it - fail with user-friendly error
     throw new ImageResizeError(
       overDim
-        ? `Unable to resize image — dimensions exceed the ${IMAGE_MAX_WIDTH}x${IMAGE_MAX_HEIGHT}px limit and image processing failed. ` +
-            `Please resize the image to reduce its pixel dimensions.`
-        : `Unable to resize image (${formatFileSize(originalSize)} raw, ${formatFileSize(base64Size)} base64). ` +
-            `The image exceeds the 5MB API limit and compression failed. ` +
-            `Please resize the image manually or use a smaller image.`,
+        ? `无法调整图片尺寸 — 尺寸超过 ${IMAGE_MAX_WIDTH}x${IMAGE_MAX_HEIGHT}px 限制且图片处理失败。 ` +
+            `请调整图片尺寸以减少像素尺寸。`
+        : `无法调整图片尺寸（原始 ${formatFileSize(originalSize)}，base64 ${formatFileSize(base64Size)}）。 ` +
+            `图片超过 5MB API 限制且压缩失败。 ` +
+            `请手动调整图片尺寸或使用更小的图片。`,
     )
   }
 }
@@ -570,8 +573,8 @@ export async function compressImageBuffer(
 
     // Image is too large and compression failed - throw error
     throw new ImageResizeError(
-      `Unable to compress image (${formatFileSize(imageBuffer.length)}) to fit within ${formatFileSize(maxBytes)}. ` +
-        `Please use a smaller image.`,
+      `无法将图片 (${formatFileSize(imageBuffer.length)}) 压缩至 ${formatFileSize(maxBytes)} 以内。 ` +
+        `请使用更小的图片。`,
     )
   }
 }

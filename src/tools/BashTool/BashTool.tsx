@@ -20,6 +20,7 @@ import { extractClaudeCodeHints } from '../../utils/claudeCodeHints.js';
 import { detectCodeIndexingFromCommand } from '../../utils/codeIndexing.js';
 import { isEnvTruthy } from '../../utils/envUtils.js';
 import { isENOENT, ShellError } from '../../utils/errors.js';
+import { resolveWindowsShellKind } from '../../utils/shell/shellToolUtils.js';
 import { detectFileEncoding, detectLineEndings, getFileModificationTime, writeTextContent } from '../../utils/file.js';
 import { ecoCompress, isEcoEnabled } from '../../engine/ecoFilter.js';
 import { fileHistoryEnabled, fileHistoryTrackEdit } from '../../utils/fileHistory.js';
@@ -1314,12 +1315,11 @@ export const BashTool = buildTool({
     let result: ExecResult;
     const isMainThread = !toolUseContext.agentId;
     const preventCwdChanges = !isMainThread;
-    const shellEnv = (process.env.CLAUDE_CODE_SHELL || process.env.SHELL || '').toLowerCase()
-    const wantsNativeWinShell = shellEnv.includes('cmd') || shellEnv.includes('powershell') || shellEnv.includes('pwsh')
+    // 统一判定入口：与 Shell.exec 使用同一事实来源，避免同会话内 shell 方向翻转
+    const resolvedShellKind = resolveWindowsShellKind()
     const isWindows = process.platform === 'win32'
-    const actualShellIsNativeWin = isWindows
-      ? wantsNativeWinShell && !process.env.CLAUDE_CODE_SHELL_WANT_BASH
-      : false
+    const wantsNativeWinShell = resolvedShellKind !== 'bash'
+    const actualShellIsNativeWin = isWindows && wantsNativeWinShell
     // 路由：检测简单 grep/rg 搜索命令，直接调用 ripgrep 引擎（绕过 MSYS2 shell 卡死问题）
     // 仅处理不含管道、重定向、子 shell 的简单搜索命令
     if (isGrepSearchCommand(input.command)) {
@@ -1395,7 +1395,7 @@ export const BashTool = buildTool({
         actualShellIsNativeWin,
         isWindows,
         wantsNativeWinShell,
-        shellEnv
+        resolvedShellKind
       });
 
       // 消费生成器并捕获返回值
@@ -1594,7 +1594,7 @@ async function* runShellCommand({
   actualShellIsNativeWin,
   isWindows,
   wantsNativeWinShell,
-  shellEnv
+  resolvedShellKind
 }: {
   input: BashToolInput;
   abortController: AbortController;
@@ -1607,7 +1607,7 @@ async function* runShellCommand({
   actualShellIsNativeWin: boolean;
   isWindows: boolean;
   wantsNativeWinShell: boolean;
-  shellEnv: string;
+  resolvedShellKind: 'bash' | 'cmd' | 'powershell';
 }): AsyncGenerator<{
   type: 'progress';
   output: string;
@@ -1641,12 +1641,8 @@ async function* runShellCommand({
     }
   }
 
-  // 确定最终传给 exec 的 shellType
-  const resolvedShellType = wantsNativeWinShell
-    ? (shellEnv.includes('powershell') || shellEnv.includes('pwsh')
-        ? 'powershell' as const
-        : 'cmd' as const)
-    : 'bash' as const
+  // 确定最终传给 exec 的 shellType —— 直接复用统一判定结果，保证与归一化层同源
+  const resolvedShellType = resolvedShellKind
 
   const timeoutMs = timeout || getDefaultTimeoutMs();
   let fullOutput = '';

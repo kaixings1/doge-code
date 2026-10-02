@@ -165,14 +165,14 @@ function getZodSchema(schema: PrimitiveSchemaDefinition): z.ZodTypeAny {
         break
       case 'date':
         stringSchema = stringSchema.date(
-          'Must be a valid date, e.g. 2024-03-15, today, next Monday',
+          '必须是有效的日期，例如 2024-03-15、today、next Monday',
         )
         break
       case 'date-time':
         stringSchema = stringSchema.datetime({
           offset: true,
           message:
-            'Must be a valid date-time, e.g. 2024-03-15T14:30:00Z, tomorrow at 3pm',
+            '必须是有效的日期时间，例如 2024-03-15T14:30:00Z、tomorrow at 3pm',
         })
         break
       default:

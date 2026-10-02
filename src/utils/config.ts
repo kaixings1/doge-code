@@ -1449,7 +1449,7 @@ function getConfig<A>(
 ): A {
   // 如果在允许之前访问配置，则记录警告
   if (!configReadingAllowed && process.env.NODE_ENV !== 'test') {
-    throw new Error('Config accessed before allowed.')
+    throw new Error('在允许之前访问了 Config。')
   }
 
   const fs = getFsImplementation()

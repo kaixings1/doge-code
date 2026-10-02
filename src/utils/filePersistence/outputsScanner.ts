@@ -89,7 +89,7 @@ export async function findModifiedFiles(
   }
 
   if (filePaths.length === 0) {
-    logDebug('No files found in outputs directory')
+    logDebug('输出目录中未找到文件')
     return []
   }
 

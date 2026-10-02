@@ -38,6 +38,7 @@ import { createBashShellProvider } from './shell/bashProvider.js'
 import { getCachedPowerShellPath } from './shell/powershellDetection.js'
 import { createPowerShellProvider } from './shell/powershellProvider.js'
 import type { ShellProvider, ShellType } from './shell/shellProvider.js'
+import { resolveWindowsShellKind } from './shell/shellToolUtils.js'
 import { subprocessEnv } from './subprocessEnv.js'
 import { posixPathToWindowsPath } from './windowsPaths.js'
 
@@ -311,25 +312,22 @@ export async function exec(
   options?: ExecOptions,
 ): Promise<ShellCommand> {
   // 🔴 Windows 安全保护：禁止 bashProvider 被调用（MSYS2 破坏内联代码）
-  // 除非用户显式通过 CLAUDE_CODE_SHELL=xxx 或 CLAUDE_CODE_SHELL_WANT_BASH=1 授权
-  // BashTool.tsx 中的命令归一化层会检查此逻辑的镜像版本，以确保方向正确。
+  // 统一使用 resolveWindowsShellKind() 作为唯一事实来源，与 BashTool 归一化层同源，
+  // 避免两处各自推导导致同会话内 shell 方向翻转。
   //
-  // 例外：显式传入 powershell/pwsh 时不得降级 —— PowerShellTool 依赖此路径，
+  // 例外：调用方显式传入 powershell/pwsh 时必须放行 —— PowerShellTool 依赖此路径，
   // 否则 Get-ChildItem / Set-Location 等会被 cmd.exe 当作外部命令而失败。
   if (
     process.platform === 'win32' &&
-    !process.env.CLAUDE_CODE_SHELL_WANT_BASH &&
     shellType !== 'powershell' &&
-    shellType !== 'pwsh'
+    shellType !== 'pwsh' &&
+    resolveWindowsShellKind() !== 'bash'
   ) {
-    const shim = (process.env.CLAUDE_CODE_SHELL || '').toLowerCase()
-    if (!shim.includes('cmd') && !shim.includes('powershell') && !shim.includes('pwsh')) {
-      // 强制降级到 cmd.exe
-      const { createCmdShellProvider } = await import('./shell/cmdProvider.js')
-      const cmdPath = 'C:\\Windows\\System32\\cmd.exe'
-      logForDebugging(`[exec] Windows 安全保护：强制使用 cmd.exe (shellType=${shellType}, CLAUDE_CODE_SHELL=${process.env.CLAUDE_CODE_SHELL || '(未设置)'})`)
-      return execWithProvider(command, abortSignal, createCmdShellProvider(cmdPath), options)
-    }
+    // resolveWindowsShellKind() 非 'bash' 表示用户未授权 bash → 强制降级到 cmd.exe
+    const { createCmdShellProvider } = await import('./shell/cmdProvider.js')
+    const cmdPath = 'C:\\Windows\\System32\\cmd.exe'
+    logForDebugging(`[exec] Windows 安全保护：强制使用 cmd.exe (shellType=${shellType}, CLAUDE_CODE_SHELL=${process.env.CLAUDE_CODE_SHELL || '(未设置)'})`)
+    return execWithProvider(command, abortSignal, createCmdShellProvider(cmdPath), options)
   }
 
   // 如果 shellType 为 'cmd'，直接使用 cmdProvider
