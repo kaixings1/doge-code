@@ -2,6 +2,16 @@
 <resources>
     <string name="app_name">doge-code</string>
     <string name="url_hint">http://127.0.0.1:5680 (USB) 或 http://192.168.0.106:5680 (WiFi)</string>
-    <string name="reload">重新加载</string>
-    <string name="toggle_bar">折叠/展开地址栏</string>
+    <string name="secret_hint">密钥（与 CLAUDE_CODE_MOBILE_SECRET 一致，可留空）</string>
+    <string name="msg_hint">输入消息…</string>
+    <string name="connect">连接</string>
+    <string name="clear_history">清空记录</string>
+    <string name="send">发送</string>
+    <string name="interrupt">中断</string>
+    <string name="settings">连接设置</string>
+    <string name="status_idle">未连接</string>
+    <string name="status_connecting">连接中…</string>
+    <string name="status_connected">已连接</string>
+    <string name="status_noninteractive">已连接（CLI 非交互，消息不会被处理）</string>
+    <string name="status_disconnected">已断开，重连中…</string>
 </resources>

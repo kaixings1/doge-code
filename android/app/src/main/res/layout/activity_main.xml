@@ -2,69 +2,177 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1a1a1a"
+    android:background="#1A1A1A"
     android:orientation="vertical">
 
-    <!-- 地址栏：默认显示，点右上角按钮可折叠以腾出屏幕 -->
+    <!-- 顶栏：状态点 + 状态文字 + 连接设置入口 -->
     <LinearLayout
-        android:id="@+id/url_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#232323"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="8dp"
-        android:paddingEnd="4dp"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp">
+        android:paddingStart="14dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp">
 
-        <EditText
-            android:id="@+id/url_input"
+        <View
+            android:id="@+id/dot"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:background="@drawable/dot_off" />
+
+        <TextView
+            android:id="@+id/status"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="#2d2d2d"
+            android:layout_marginStart="8dp"
+            android:text="@string/status_idle"
+            android:textColor="#CCCCCC"
+            android:textSize="13sp" />
+
+        <ImageButton
+            android:id="@+id/btn_settings"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/settings"
+            android:src="@android:drawable/ic_menu_manage" />
+    </LinearLayout>
+
+    <!-- 连接配置面板：默认隐藏，点右上角齿轮展开 -->
+    <LinearLayout
+        android:id="@+id/conn_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#202020"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/url_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#2D2D2D"
             android:hint="@string/url_hint"
             android:imeOptions="actionGo"
             android:inputType="textUri"
             android:maxLines="1"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:textColor="#e8e8e8"
-            android:textColorHint="#888888"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="9dp"
+            android:paddingBottom="9dp"
+            android:textColor="#E8E8E8"
+            android:textColorHint="#777777"
             android:textSize="13sp" />
 
-        <ImageButton
-            android:id="@+id/btn_reload"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/reload"
-            android:src="@android:drawable/ic_popup_sync" />
+        <EditText
+            android:id="@+id/secret_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:background="#2D2D2D"
+            android:hint="@string/secret_hint"
+            android:inputType="text"
+            android:maxLines="1"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="9dp"
+            android:paddingBottom="9dp"
+            android:textColor="#E8E8E8"
+            android:textColorHint="#777777"
+            android:textSize="13sp" />
 
-        <ImageButton
-            android:id="@+id/btn_toggle"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/toggle_bar"
-            android:src="@android:drawable/arrow_up_float" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_connect"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/connect" />
+
+            <Button
+                android:id="@+id/btn_clear"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="@string/clear_history" />
+        </LinearLayout>
     </LinearLayout>
 
     <ProgressBar
         android:id="@+id/progress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="3dp"
+        android:layout_height="2dp"
         android:max="100"
         android:visibility="gone" />
 
-    <WebView
-        android:id="@+id/webview"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:scrollbars="vertical" />
+
+    <!-- 输入栏 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#232323"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <EditText
+            android:id="@+id/msg_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/input_bg"
+            android:hint="@string/msg_hint"
+            android:inputType="textMultiLine|textCapSentences"
+            android:maxLines="5"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:textColor="#E8E8E8"
+            android:textColorHint="#777777"
+            android:textSize="15sp" />
+
+        <ImageButton
+            android:id="@+id/btn_send"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="6dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/send"
+            android:src="@android:drawable/ic_menu_send" />
+
+        <ImageButton
+            android:id="@+id/btn_stop"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/interrupt"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:visibility="gone" />
+    </LinearLayout>
 
 </LinearLayout>

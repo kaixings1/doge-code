@@ -79,5 +79,10 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.0")
     // OnBackPressedCallback / OnBackPressedDispatcher 来自 activity，不由 appcompat 保证传递引入
     implementation("androidx.activity:activity-ktx:1.9.2")
-    implementation("androidx.webkit:webkit:1.11.0")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    // WebSocket 客户端（原生收发，不再依赖 WebView 里的页面脚本）
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
 }
