@@ -148,7 +148,7 @@ function SedEditPermissionRequestInner(t0) {
       t3 = "文件不存在";
       break bb1;
     }
-    t3 = "Pattern did not match any content";
+    t3 = "模式未匹配到任何内容";
   }
   const noChangesMessage = t3;
   let t4;

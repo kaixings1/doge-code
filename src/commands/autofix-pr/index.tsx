@@ -62,19 +62,19 @@ function analyzeDiff(diff: string): PRFix[] {
   const checkLine = (file: string, line: number, content: string) => {
     const t = content.slice(1).trim() // remove + prefix
     const rules: Array<{ pattern: RegExp; issue: string; suggestion: string; autoFixable: boolean; severity: PRFix['severity']; category: PRFix['category']; rule: string }> = [
-      { pattern: /\bconsole\.(log|debug|warn|info)\s*\(/, issue: 'console statement in new code', suggestion: 'Remove or use a structured logger', autoFixable: true, severity: 'medium', category: 'bug', rule: 'no-console-log' },
-      { pattern: /:\s*\bany\b(?!\s*[=,)\]])/, issue: 'any type usage', suggestion: 'Define a specific interface/type', autoFixable: false, severity: 'medium', category: 'maintainability', rule: 'no-any-type' },
-      { pattern: /\/\/\s*(TODO|FIXME|HACK)\b/i, issue: 'TODO/FIXME marker', suggestion: 'Complete the task or create a tracked issue', autoFixable: false, severity: 'low', category: 'maintainability', rule: 'no-todo' },
-      { pattern: /\beval\s*\(/, issue: 'eval() usage (code injection risk)', suggestion: 'Use JSON.parse() or safe alternatives', autoFixable: false, severity: 'critical', category: 'security', rule: 'no-eval' },
-      { pattern: /\.innerHTML\s*=/, issue: 'innerHTML assignment (XSS risk)', suggestion: 'Use textContent or framework-safe rendering', autoFixable: false, severity: 'high', category: 'security', rule: 'no-innerHTML' },
-      { pattern: /(?:password|secret|token|apikey|api_key)\s*[:=]\s*['"][^'"]{8,}['"]/i, issue: 'Hardcoded secret', suggestion: 'Move to environment variables', autoFixable: false, severity: 'critical', category: 'security', rule: 'no-hardcoded-secrets' },
-      { pattern: /child_process\.exec\s*\(/, issue: 'Potential command injection', suggestion: 'Use execFile() with args array', autoFixable: false, severity: 'critical', category: 'security', rule: 'no-command-injection' },
-      { pattern: /catch\s*\([^)]*\)\s*\{\s*\}/, issue: 'Empty catch block', suggestion: 'Log error or handle gracefully', autoFixable: false, severity: 'high', category: 'bug', rule: 'no-empty-catch' },
-      { pattern: /\bvar\s+\w+/, issue: 'var usage', suggestion: 'Use const or let', autoFixable: true, severity: 'low', category: 'style', rule: 'no-var' },
-      { pattern: /\b(?:async\s+)?function\s+\w+\s*\([^)]*,[^)]*,[^)]*,[^)]*,[^)]*,[^)]*\)/, issue: 'Too many function parameters', suggestion: 'Use an options object', autoFixable: false, severity: 'low', category: 'maintainability', rule: 'max-params' },
-      { pattern: /Math\.random\s*\(\s*\)/, issue: 'Insecure random (Math.random)', suggestion: 'Use crypto.randomBytes()', autoFixable: false, severity: 'medium', category: 'security', rule: 'insecure-random' },
+      { pattern: /\bconsole\.(log|debug|warn|info)\s*\(/, issue: '新代码中存在 console 语句', suggestion: '移除或使用结构化日志器', autoFixable: true, severity: 'medium', category: 'bug', rule: 'no-console-log' },
+      { pattern: /:\s*\bany\b(?!\s*[=,)\]])/, issue: '使用了 any 类型', suggestion: '定义具体的接口/类型', autoFixable: false, severity: 'medium', category: 'maintainability', rule: 'no-any-type' },
+      { pattern: /\/\/\s*(TODO|FIXME|HACK)\b/i, issue: 'TODO/FIXME 标记', suggestion: '完成任务或创建可追踪的 issue', autoFixable: false, severity: 'low', category: 'maintainability', rule: 'no-todo' },
+      { pattern: /\beval\s*\(/, issue: '使用了 eval()（代码注入风险）', suggestion: '使用 JSON.parse() 或安全替代方案', autoFixable: false, severity: 'critical', category: 'security', rule: 'no-eval' },
+      { pattern: /\.innerHTML\s*=/, issue: 'innerHTML 赋值（XSS 风险）', suggestion: '使用 textContent 或框架安全渲染', autoFixable: false, severity: 'high', category: 'security', rule: 'no-innerHTML' },
+      { pattern: /(?:password|secret|token|apikey|api_key)\s*[:=]\s*['"][^'"]{8,}['"]/i, issue: '硬编码密钥', suggestion: '改用环境变量', autoFixable: false, severity: 'critical', category: 'security', rule: 'no-hardcoded-secrets' },
+      { pattern: /child_process\.exec\s*\(/, issue: '潜在命令注入', suggestion: '使用带参数数组的 execFile()', autoFixable: false, severity: 'critical', category: 'security', rule: 'no-command-injection' },
+      { pattern: /catch\s*\([^)]*\)\s*\{\s*\}/, issue: '空的 catch 块', suggestion: '记录错误或优雅处理', autoFixable: false, severity: 'high', category: 'bug', rule: 'no-empty-catch' },
+      { pattern: /\bvar\s+\w+/, issue: '使用了 var', suggestion: '使用 const 或 let', autoFixable: true, severity: 'low', category: 'style', rule: 'no-var' },
+      { pattern: /\b(?:async\s+)?function\s+\w+\s*\([^)]*,[^)]*,[^)]*,[^)]*,[^)]*,[^)]*\)/, issue: '函数参数过多', suggestion: '使用选项对象', autoFixable: false, severity: 'low', category: 'maintainability', rule: 'max-params' },
+      { pattern: /Math\.random\s*\(\s*\)/, issue: '不安全的随机数（Math.random）', suggestion: '使用 crypto.randomBytes()', autoFixable: false, severity: 'medium', category: 'security', rule: 'insecure-random' },
     ]
-    if (t.length > 120) fixes.push({ file, line, issue: `Line too long (${t.length} chars)`, suggestion: 'Break into multiple lines', autoFixable: false, severity: 'low', category: 'style', rule: 'max-line-length' })
+    if (t.length > 120) fixes.push({ file, line, issue: `行过长（${t.length} 字符）`, suggestion: '拆分为多行', autoFixable: false, severity: 'low', category: 'style', rule: 'max-line-length' })
     for (const rule of rules) {
       if (rule.pattern.test(t)) {
         fixes.push({ file, line, issue: rule.issue, suggestion: rule.suggestion, autoFixable: rule.autoFixable, severity: rule.severity, category: rule.category, rule: rule.rule })
@@ -268,7 +268,7 @@ export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
 
 Found ${fixes.length} potential issues in this PR.
 
-${summary || '- No significant issues found'}
+${summary || '- 未发现明显问题'}
 
 ---
 *Generated automatically by the autofix-pr tool*`

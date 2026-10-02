@@ -287,7 +287,7 @@ export function getAnthropicApiKeyWithSource(
       !process.env.CLAUDE_CODE_OAUTH_TOKEN_FILE_DESCRIPTOR
     ) {
       throw new Error(
-        'DOGE_API_KEY or CLAUDE_CODE_OAUTH_TOKEN env var is required',
+        '需要设置 DOGE_API_KEY 或 CLAUDE_CODE_OAUTH_TOKEN 环境变量',
       )
     }
 
@@ -754,7 +754,7 @@ async function getAwsCredsFromCredentialExport(): Promise<{
         reject: false,
       })
       if (result.exitCode !== 0 || !result.stdout) {
-        throw new Error('awsCredentialExport did not return a valid value')
+        throw new Error('awsCredentialExport 未返回有效值')
       }
 
       // Parse the JSON output from aws sts commands
@@ -762,7 +762,7 @@ async function getAwsCredsFromCredentialExport(): Promise<{
 
       if (!isValidAwsStsOutput(awsOutput)) {
         throw new Error(
-          'awsCredentialExport did not return valid AWS STS output structure',
+          'awsCredentialExport 未返回有效的 AWS STS 输出结构',
         )
       }
 
@@ -1109,7 +1109,7 @@ function isValidApiKey(apiKey: string): boolean {
 export async function saveApiKey(apiKey: string): Promise<void> {
   if (!isValidApiKey(apiKey)) {
     throw new Error(
-      'Invalid API key format. API key must contain only alphanumeric characters, dashes, and underscores.',
+      'API 密钥格式无效。API 密钥只能包含字母、数字、短横线和下划线。',
     )
   }
 
@@ -1812,7 +1812,7 @@ export function getOtelHeadersFromHelper(): Record<string, string> {
       ?.toString()
       .trim()
     if (!result) {
-      throw new Error('otelHeadersHelper did not return a valid value')
+      throw new Error('otelHeadersHelper 未返回有效值')
     }
 
     const headers = jsonParse(result)
@@ -1822,7 +1822,7 @@ export function getOtelHeadersFromHelper(): Record<string, string> {
       Array.isArray(headers)
     ) {
       throw new Error(
-        'otelHeadersHelper must return a JSON object with string key-value pairs',
+        'otelHeadersHelper 必须返回键值均为字符串的 JSON 对象',
       )
     }
 
@@ -1830,7 +1830,7 @@ export function getOtelHeadersFromHelper(): Record<string, string> {
     for (const [key, value] of Object.entries(headers)) {
       if (typeof value !== 'string') {
         throw new Error(
-          `otelHeadersHelper returned non-string value for key "${key}": ${typeof value}`,
+          `otelHeadersHelper 为键 "${key}" 返回了非字符串值: ${typeof value}`,
         )
       }
     }

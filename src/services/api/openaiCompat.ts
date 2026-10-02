@@ -365,7 +365,7 @@ export async function createOpenAICompatStream(
       throw new APIError(
         response.status,
         errorBody,
-        'OpenAI compat request failed with status ' +
+        'OpenAI 兼容请求失败，状态码 ' +
           response.status +
           (responseText ? ': ' + responseText : ''),
         respHeaders,
@@ -373,7 +373,7 @@ export async function createOpenAICompatStream(
     }
 
     throw new Error(
-      'OpenAI compat request failed with status ' +
+      'OpenAI 兼容请求失败，状态码 ' +
         response.status +
         (responseText ? ': ' + responseText : ''),
     )

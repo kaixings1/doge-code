@@ -290,11 +290,11 @@ const call: LocalCommandCall = async (args) => {
 
     if (similars.length === 0) {
       const notFound = {
-        error: 'No similar APIs found',
+        error: '未找到相似的 API',
         query: apiName,
-        suggestion: 'Try searching with --tech or --api first, or use a known API name like URLSession, View, or UIViewController',
+        suggestion: '请先尝试用 --tech 或 --api 搜索，或使用已知的 API 名称，如 URLSession、View 或 UIViewController',
       }
-      return { type: 'text', value: jsonOutput ? JSON.stringify(notFound, null, 2) : `# No similar APIs found for "${apiName}"\n\nNo similar APIs found matching "${apiName}".\n\nTry searching with --tech or --api first.` }
+      return { type: 'text', value: jsonOutput ? JSON.stringify(notFound, null, 2) : `# 未找到与 "${apiName}" 相似的 API\n\n未找到匹配 "${apiName}" 的相似 API。\n\n请先尝试用 --tech 或 --api 搜索。` }
     }
 
     if (jsonOutput) {
@@ -358,7 +358,7 @@ const call: LocalCommandCall = async (args) => {
       const notFound = {
         error: 'No APIs found',
         query: apiName,
-        suggestion: 'Try searching for framework symbols or use a known API name',
+        suggestion: '请尝试搜索框架符号或使用已知的 API 名称',
       }
       return { type: 'text', value: jsonOutput ? JSON.stringify(notFound, null, 2) : `# No APIs found for "${apiName}"\n\nNo APIs found matching "${apiName}".\n\nTry searching for a known API like View, URLSession, or UIViewController.` }
     }

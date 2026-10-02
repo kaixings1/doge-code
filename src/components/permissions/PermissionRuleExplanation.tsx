@@ -39,7 +39,7 @@ function stringsForDecisionReason(reason: PermissionDecisionReason | undefined, 
     case 'rule':
       return {
         reasonString: `Permission rule ${chalk.bold(permissionRuleValueToString(reason.rule.ruleValue))} requires confirmation for this ${toolType}.`,
-        configString: reason.rule.source === 'policySettings' ? undefined : '/permissions to update rules'
+        configString: reason.rule.source === 'policySettings' ? undefined : '使用 /permissions 更新规则'
       };
     case 'hook':
       {
@@ -59,7 +59,7 @@ function stringsForDecisionReason(reason: PermissionDecisionReason | undefined, 
     case 'workingDir':
       return {
         reasonString: reason.reason,
-        configString: '/permissions to update rules'
+        configString: '使用 /permissions 更新规则'
       };
     default:
       return null;

@@ -458,7 +458,7 @@ export async function installGlobalPackage(
 ): Promise<InstallStatus> {
   if (!(await acquireLock())) {
     logError(
-      new AutoUpdaterError('Another process is currently installing an update'),
+      new AutoUpdaterError('另一个进程正在安装更新'),
     )
     // Log the lock contention
     logEvent('tengu_auto_updater_lock_contention', {
@@ -473,7 +473,7 @@ export async function installGlobalPackage(
     await removeClaudeAliasesFromShellConfigs()
     // Check if we're using npm from Windows path in WSL
     if (!env.isRunningWithBun() && env.isNpmFromWindowsPath()) {
-      logError(new Error('Windows NPM detected in WSL environment'))
+      logError(new Error('在 WSL 环境中检测到 Windows NPM'))
       logEvent('tengu_auto_updater_windows_npm_in_wsl', {
         currentVersion:
           MACRO.VERSION as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,

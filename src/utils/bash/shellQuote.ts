@@ -296,6 +296,6 @@ export function quote(args: ReadonlyArray<unknown>): string {
     if (error instanceof Error) {
       logError(error)
     }
-    throw new Error('Failed to quote shell arguments safely')
+    throw new Error('无法安全转义 shell 参数')
   }
 }

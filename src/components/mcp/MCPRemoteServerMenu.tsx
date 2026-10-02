@@ -284,7 +284,7 @@ export function MCPRemoteServerMenu({
           onComplete?.('认证成功，但服务器仍需认证。你可能需要手动重启 Claude Code。');
         } else {
           // result.client.type === 'failed'
-          logMCPDebug(server.name, `Reconnection failed after authentication`);
+          logMCPDebug(server.name, `认证后重连失败`);
           onComplete?.('认证成功，但服务器重连失败。您可能需要手动重启 Claude Code 以应用更改。');
         }
       }

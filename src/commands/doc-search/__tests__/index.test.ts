@@ -52,7 +52,7 @@ describe("doc-search", () => {
 
   test("returns not found for unknown --similar", async () => {
     const value = await callText("--similar NonExistentAPI")
-    expect(value).toContain("No similar APIs found")
+    expect(value).toContain("未找到与")
   })
 
   test("returns not found for unknown --tech", async () => {

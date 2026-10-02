@@ -154,7 +154,7 @@ function staticAnalyze(config: DeadCodeConfig): DeadItem[] {
       try { return (readFileSync(def.file, 'utf-8').match(new RegExp(`\\b${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g')) || []).length } catch { return 0 }
     })()
     if (usage.count <= ownFileCount && def.file !== '') {
-      items.push({ file: def.file, line: def.line, name, kind: def.kind, reason: 'Defined but not referenced outside its own file' })
+      items.push({ file: def.file, line: def.line, name, kind: def.kind, reason: '已定义但未在其自身文件之外被引用' })
     }
   })
   return items.slice(0, 100)

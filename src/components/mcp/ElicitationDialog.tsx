@@ -254,7 +254,7 @@ function ElicitationFormDialog({
   // Text fields are always in edit mode when focused — no Enter-to-edit step.
   const isEditingTextField = currentFieldIsText && !focusedButton;
   useRegisterOverlay('elicitation');
-  useNotifyAfterTimeout('Claude Code needs your input', 'elicitation_dialog');
+  useNotifyAfterTimeout('Claude Code 需要你的输入', 'elicitation_dialog');
 
   // Sync textInputValue when the focused field changes
   const syncTextInput = useCallback((fieldIndex: number | undefined) => {
@@ -338,7 +338,7 @@ function ElicitationFormDialog({
       return next;
     });
     // Clear "required" error when a value is provided
-    if (value !== undefined && validationErrors[fieldName_0] === 'This field is required') {
+    if (value !== undefined && validationErrors[fieldName_0] === '此字段为必填项') {
       updateValidationError(fieldName_0);
     }
   }
@@ -612,7 +612,7 @@ function ElicitationFormDialog({
         const requiredFields_0 = requestedSchema.required || [];
         for (const fieldName_7 of requiredFields_0) {
           if (formValues[fieldName_7] === undefined) {
-            updateValidationError(fieldName_7, 'This field is required');
+            updateValidationError(fieldName_7, '此字段为必填项');
           }
         }
         const firstBadIndex = schemaFields.findIndex(f_0 => requiredFields_0.includes(f_0.name) && formValues[f_0.name] === undefined || validationErrors[f_0.name] !== undefined);
@@ -1004,7 +1004,7 @@ function ElicitationURLDialog({
   const phaseRef = useRef<'prompt' | 'waiting'>('prompt');
   const [focusedButton, setFocusedButton] = useState<'accept' | 'decline' | 'open' | 'action' | 'cancel'>('accept');
   const showCancel = waitingState?.showCancel ?? false;
-  useNotifyAfterTimeout('Claude Code needs your input', 'elicitation_url_dialog');
+  useNotifyAfterTimeout('Claude Code 需要你的输入', 'elicitation_url_dialog');
   useRegisterOverlay('elicitation-url');
 
   // Keep refs in sync for use in abort handler (avoids re-registering listener)

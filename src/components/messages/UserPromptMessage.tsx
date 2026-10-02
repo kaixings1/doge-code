@@ -70,7 +70,7 @@ export function UserPromptMessage({
   }, [text]);
   const isSelected = useContext(MessageActionsSelectedContext);
   if (!text) {
-    logError(new Error('No content found in user prompt message'));
+    logError(new Error('用户提示消息中未找到内容'));
     return null;
   }
   return <Box flexDirection="column" marginTop={addMargin ? 1 : 0} backgroundColor={isSelected ? 'messageActionsBackground' : useBriefLayout ? undefined : 'userMessageBackground'} paddingRight={useBriefLayout ? 0 : 1}>

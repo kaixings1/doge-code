@@ -107,7 +107,7 @@ export function GenerateStep(): ReactNode {
       // Don't show error if it was cancelled (already set in escape handler)
       if (err instanceof APIUserAbortError) {
         // User cancelled - no error to show
-      } else if (err instanceof Error && !err.message.includes('No assistant message found')) {
+      } else if (err instanceof Error && !err.message.includes('未找到助手消息')) {
         setError(err.message || "生成智能体失败");
       }
       updateWizardData({

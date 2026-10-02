@@ -76,12 +76,12 @@ function uninstallHook(): string {
   try {
     const fs = require('fs')
     if (!fs.existsSync(hookPath)) {
-      return '⚠️ No pre-commit hook found.'
+      return '⚠️ 未找到 pre-commit 钩子。'
     }
 
     const content = fs.readFileSync(hookPath, 'utf-8')
     if (!content.includes(HOOK_MARKER)) {
-      return '⚠️ Pre-commit hook was not installed by doge. Leaving it unchanged.'
+      return '⚠️ pre-commit 钩子并非由 doge 安装。保持其不变。'
     }
 
     // Restore backup if exists
