@@ -14,3 +14,11 @@ local.properties
 .idea/
 *.iml
 .DS_Store
+
+# 签名密钥（debug.keystore 含私钥，禁止入库）
+*.keystore
+*.jks
+
+# 构建日志
+build-log*.txt
+gradle-*.log

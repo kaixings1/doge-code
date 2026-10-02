@@ -6,6 +6,8 @@ dist/
 build/
 *.tmp
 *.log
+*.apk
+*.aab
 *_err.txt
 *_out.txt
 debug*.txt
