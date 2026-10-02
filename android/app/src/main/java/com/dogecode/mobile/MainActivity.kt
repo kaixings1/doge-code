@@ -174,47 +174,16 @@ class MainActivity : AppCompatActivity() {
 
         client.close()
         setStatus(false, getString(R.string.status_connecting))
-        client.connect(buildWsUrl(url, secret))
-    }
-
-    /**
-     * 把 http(s)://host:port 形式转成 ws(s)://host:port/mobile/ws?...。
-     * 服务端的 WS 端点固定为 /mobile/ws，密钥经 query 传（见 mobileBridge.ts:655）。
-     */
-    private fun buildWsUrl(httpUrl: String, secret: String): String {
-        val ws = when {
-            httpUrl.startsWith("https://") -> "wss://" + httpUrl.removePrefix("https://")
-            httpUrl.startsWith("http://") -> "ws://" + httpUrl.removePrefix("http://")
-            else -> "ws://$httpUrl"
-        }.trimEnd('/')
-        val sb = StringBuilder(ws).append("/mobile/ws")
-            .append("?deviceId=android-app&deviceType=android")
-        if (secret.isNotBlank()) sb.append("&secret=").append(java.net.URLEncoder.encode(secret, "UTF-8"))
-        return sb.toString()
+        client.connect(BridgeUrl.buildWsUrl(url, secret))
     }
 
     /** 取当前地址栏里的主机名；解析失败时回落到回环地址。 */
-    private fun currentHost(): String {
-        val u = normalize(urlInput.text.toString())
-        return runCatching { java.net.URI(u).host }.getOrNull() ?: "127.0.0.1"
-    }
+    private fun currentHost(): String = BridgeUrl.hostOf(urlInput.text.toString())
 
     /** 取当前地址栏里的端口；解析失败时回落到默认端口。 */
-    private fun currentPort(): Int {
-        val u = normalize(urlInput.text.toString())
-        val p = runCatching { java.net.URI(u).port }.getOrNull() ?: -1
-        return if (p > 0) p else PORT
-    }
+    private fun currentPort(): Int = BridgeUrl.portOf(urlInput.text.toString())
 
-    /** 归一化：允许只填 IP / IP:端口 / 完整 URL。 */
-    private fun normalize(raw: String): String {
-        var v = raw.trim()
-        if (v.isEmpty()) return DEFAULT_URL
-        if (!v.startsWith("http://") && !v.startsWith("https://")) v = "http://$v"
-        val afterScheme = v.removePrefix("http://").removePrefix("https://")
-        if (!afterScheme.contains(":")) v = "$v:$PORT"
-        return v
-    }
+    private fun normalize(raw: String): String = BridgeUrl.normalize(raw)
 
     // ── 事件处理（BridgeClient 已切回主线程） ──
 
