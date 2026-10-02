@@ -108,6 +108,13 @@ slash 命令等多处依赖）。没有充分的测试覆盖前不建议动。
 
 **工作量**：核心改造约 300–500 行 + 全量回归，风险等级高。
 
+> **已完成可行性评估，结论：不建议实施。**
+> 详见 [`docs/mobile-multi-session-plan-b-assessment.md`](../docs/mobile-multi-session-plan-b-assessment.md)。
+> 关键数据：`messageQueueManager` 被 **32 个文件**依赖，含 3 处模块级
+> 单例状态（`commandQueue` / `snapshot` / `queueChanged`）；改动会波及
+> 所有交互路径，且 `useQueueProcessor` 的运行环境无法单元测试，
+> 改造后主要靠真机验证。评估中含分四步降险的路线（若将来确需）。
+
 ### 方案 C：不改服务端，客户端并行多连接
 
 **思路**：客户端同时连 5680/5681/5682，用底部 tab 或下拉切换。
