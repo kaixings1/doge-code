@@ -755,7 +755,7 @@ async function doctor(): Promise<number> {
   if (hasBunRuntime()) {
     p.log.success(
       color.green("Performance: FAST") +
-        " — Bun detected for JS/TS execution",
+        " — 检测到 Bun 用于 JS/TS 执行",
     );
   } else {
     p.log.warn(
@@ -771,7 +771,7 @@ async function doctor(): Promise<number> {
     criticalFails++;
     p.log.error(
       color.red(`Language coverage: ${available.length}/${total} (${pct}%)`) +
-        " — too few runtimes detected" +
+        " — 检测到的运行时过少" +
         color.dim(` — ${available.join(", ") || "none"}`),
     );
   } else {
@@ -869,10 +869,10 @@ async function doctor(): Promise<number> {
         const absolutePath = resolve(pluginRoot, scriptPath);
         try {
           accessSync(absolutePath, constants.R_OK);
-          p.log.success(color.green("Hook script exists: PASS") + color.dim(` — ${absolutePath}`));
+          p.log.success(color.green("hook 脚本存在: 通过") + color.dim(` — ${absolutePath}`));
         } catch {
           p.log.error(
-            color.red("Hook script exists: FAIL") +
+            color.red("hook 脚本存在: 失败") +
               color.dim(` — not found at ${absolutePath}`),
           );
         }
@@ -993,7 +993,7 @@ async function doctor(): Promise<number> {
     }
     if (tierCChecked === 0) {
       p.log.info(
-        color.dim("Hook config: SKIP — no team-shared hook configs found in this workspace"),
+        color.dim("hook 配置: 跳过 — 此工作区未找到团队共享的 hook 配置"),
       );
     } else if (tierCFails === 0) {
       // already individual PASS messages above; no need for a summary
@@ -1039,8 +1039,8 @@ async function doctor(): Promise<number> {
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : String(err);
         p.log.warn(
-          color.yellow("Leftover .mcp.json check: WARN") +
-            ` — could not read the plugin cache directory` +
+          color.yellow("残留 .mcp.json 检查: 警告") +
+            ` — 无法读取插件缓存目录` +
             color.dim(
               `\n  Path: ${cacheRoot}` +
               `\n  Reason: ${msg.slice(0, 160)}` +
@@ -1051,13 +1051,13 @@ async function doctor(): Promise<number> {
       }
       if (staleCount === 0) {
         p.log.success(
-          color.green("Leftover .mcp.json check: PASS") +
+          color.green("残留 .mcp.json 检查: 通过") +
             color.dim(" — no old .mcp.json files in the plugin cache"),
         );
       } else {
         // WARN, not FAIL — per architect spec this is recoverable.
         p.log.warn(
-          color.yellow("Leftover .mcp.json check: WARN") +
+          color.yellow("残留 .mcp.json 检查: 警告") +
             ` — found ${staleCount} old .mcp.json file(s) left over from previous context-mode versions` +
             color.dim(
               "\n  These are harmless but should be cleaned up so they cannot confuse Claude Code after an auto-update." +
@@ -1193,7 +1193,7 @@ async function doctor(): Promise<number> {
   } else {
     p.log.info(
       `${adapter.name}: v${installedVersion}` +
-        color.dim(" — could not verify against npm registry"),
+        color.dim(" — 无法对照 npm registry 验证"),
     );
   }
 
@@ -1293,7 +1293,7 @@ async function upgrade(opts?: { platform?: string }) {
       const message = err instanceof Error ? err.message : String(err);
       s.stop(color.yellow("Marketplace sync skipped"));
       p.log.warn(color.yellow("git refresh on marketplace failed") + ` — ${message}`);
-      p.log.info(color.dim("  Continuing — cache dir update will still happen."));
+      p.log.info(color.dim("  继续 — 缓存目录更新仍会进行。"));
     }
   }
 
@@ -1771,7 +1771,7 @@ async function upgrade(opts?: { platform?: string }) {
           changes.push("Updated npm global package");
         } catch {
           s.stop(color.yellow("npm global update skipped"));
-          p.log.info(color.dim("  Could not update global npm — may need sudo or standalone install"));
+          p.log.info(color.dim("  无法更新全局 npm — 可能需要 sudo 或独立安装"));
         }
       }
 
@@ -1865,7 +1865,7 @@ async function upgrade(opts?: { platform?: string }) {
         color.dim(" — old version is still on disk; hooks/settings will still be refreshed."),
     );
     p.log.info(
-      color.dim("  Recovery: re-run /ctx-upgrade once network is stable, or run /context-mode:ctx-doctor for a full health check."),
+      color.dim("  恢复：网络稳定后重新运行 /ctx-upgrade，或运行 /context-mode:ctx-doctor 进行完整健康检查。"),
     );
 
     try { rmSync(tmpDir, { recursive: true, force: true }); } catch { /* ignore */ }
@@ -1882,7 +1882,7 @@ async function upgrade(opts?: { platform?: string }) {
   } else {
     p.log.warn(
       color.yellow("No existing settings to backup") +
-        " — a new one will be created",
+        " — 将创建一个新的",
     );
   }
 
@@ -1921,7 +1921,7 @@ async function upgrade(opts?: { platform?: string }) {
   } else {
     p.log.error(
       color.red("未找到 hook 脚本") +
-        color.dim(" — expected in " + resolve(pluginRoot, "hooks")),
+        color.dim(" — 预期位于 " + resolve(pluginRoot, "hooks")),
     );
   }
 

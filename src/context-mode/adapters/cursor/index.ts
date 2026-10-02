@@ -379,7 +379,7 @@ export class CursorAdapter extends BaseAdapter implements HookAdapter {
           message:
             `context-mode plugin detected at ${pluginInstalls[0]} alongside native hooks in ${loaded.path} — ` +
             `each event will fire twice. Remove one configuration to avoid duplicate routing.`,
-          fix: "Remove the native .cursor/hooks.json entries OR uninstall the plugin",
+          fix: "移除原生的 .cursor/hooks.json 条目，或卸载该插件",
         });
       } else {
         results.push({

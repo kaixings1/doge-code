@@ -757,7 +757,7 @@ export function buildCommand(
     case "csharp":
       if (!runtimes.csharp) {
         throw new Error(
-          "C# not available. Install dotnet-script via `dotnet tool install -g dotnet-script`.",
+          "C# 不可用。请通过 `dotnet tool install -g dotnet-script` 安装 dotnet-script。",
         );
       }
       return [runtimes.csharp, filePath];

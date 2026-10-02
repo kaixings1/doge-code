@@ -302,7 +302,7 @@ export class KiroAdapter extends BaseAdapter implements HookAdapter {
         check: "MCP registration",
         status: "fail",
         message: "mcpServers 中未找到 context-mode",
-        fix: "Add context-mode to mcpServers in ~/.kiro/settings/mcp.json",
+        fix: "在 ~/.kiro/settings/mcp.json 的 mcpServers 中添加 context-mode",
       };
     } catch {
       return {

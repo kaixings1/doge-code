@@ -171,7 +171,7 @@ export class OMPAdapter extends BaseAdapter implements HookAdapter {
         status: "warn",
         message:
           "context-mode delivers via MCP for OMP. " +
-          "Native OMP pre/post tool-call hooks are not yet wired by this adapter.",
+          "此适配器尚未接入原生 OMP 的工具调用前后 hook。",
       },
     ];
   }

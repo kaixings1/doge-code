@@ -245,7 +245,7 @@ export class CopilotCliAdapter extends CopilotBaseAdapter {
     // We pin version:1 explicitly (optional per copilot-cli changelog.md:1109,
     // but self-documenting); treat a missing/mismatched value as drift to repair.
     if (settings.version !== 1) {
-      changes.push("Set hooks schema version to 1");
+      changes.push("将 hooks schema 版本设为 1");
     }
 
     if (changes.length > 0) {

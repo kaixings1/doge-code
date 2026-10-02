@@ -199,7 +199,7 @@ export class QwenCodeAdapter extends ClaudeCodeBaseAdapter implements HookAdapte
           check: "Plugin registration",
           status: "fail",
           message: "mcpServers 存在，但未找到 context-mode",
-          fix: "Add context-mode to mcpServers in ~/.qwen/settings.json",
+          fix: "在 ~/.qwen/settings.json 的 mcpServers 中添加 context-mode",
         };
       }
       return {

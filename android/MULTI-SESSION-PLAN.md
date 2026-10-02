@@ -6,8 +6,8 @@
 > |---|---|---|
 > | 1 | 服务端 `CLAUDE_CODE_MOBILE_PORT` | ✅ 已实现并实测 |
 > | 2 | 服务端 `/mobile/session-info` | ✅ 已实现并实测 |
-> | 3 | 客户端 `SessionScanner` | ✅ 已实现（未真机验证）|
-> | 4 | 客户端会话列表 + 切换 | ✅ 已实现（未真机验证）|
+> | 3 | 客户端 `SessionScanner` | ✅ 已实现（协议级已验证，未真机）|
+> | 4 | 客户端会话列表 + 切换 | ✅ 已实现（未真机运行）|
 > | 5 | 会话标签 | ✅ 已实现（`DOGE_SESSION_LABEL` + cwd 回落）|
 > | 6 | 多连接下的通知归属 | ❌ 未做 |
 >
@@ -172,7 +172,35 @@ REM 手机：连接设置 → 扫描会话 → 点选要连的那个
    `Notifications.notifyAssistant()` 增加 label 参数，标题改为「doge-code · <标签>」。
 3. **端口扫描范围** — ✅ 已决策：`5680..5690`（11 个），单端口超时 300ms，
    10 线程并发（`SessionScanner.scan`）。
-4. **切换时的历史** — ❌ 未解决。`MessageStore` 目前是单文件 `history.json`，
-   切换会话不会分离历史，两个会话的消息会混在同一条时间线里。
-   修复思路：文件名改为 `history-<sessionId>.json`，切换时重新加载。
-   **注意**：这不只是体验问题 —— 混在一起会让用户把 A 会话的回复误认成 B 的。
+4. **切换时的历史** — ✅ 已解决：`MessageStore` 按 `history-<host>_<port>.json`
+   分文件，切换会话时重新加载；临时文件名也跟随目标文件，避免并发写踩踏。
+5. **通知归属** — ✅ 已解决：`notifyAssistant(text, label)` 标题变为
+   「doge-code · <标签>」。
+
+## 验证记录（2026-10-02）
+
+服务端端点与客户端扫描逻辑做了协议级验证（真实起 3 个 doge 实例）：
+
+```
+CLAUDE_CODE_MOBILE_PORT=5680 DOGE_SESSION_LABEL=前端重构 doge.exe
+CLAUDE_CODE_MOBILE_PORT=5682 DOGE_SESSION_LABEL=修CI     doge.exe
+CLAUDE_CODE_MOBILE_PORT=5685 DOGE_SESSION_LABEL=写文档   doge.exe
+
+按客户端 SessionScanner 的逻辑扫描 5680-5690，结果：
+  端口 5680 | 前端重构 | 非交互 | D:\doge-code
+  端口 5682 | 修CI     | 非交互 | D:\doge-code
+  端口 5685 | 写文档   | 非交互 | D:\doge-code
+  发现 3 个会话 ✅
+```
+
+| 检查项 | 结果 |
+|---|---|
+| 端口可配（`CLAUDE_CODE_MOBILE_PORT`）| ✅ 各自监听对应端口 |
+| 非法端口回落 | ✅ `abc` → 5680 |
+| 标签（`DOGE_SESSION_LABEL`）| ✅ 正确返回；未设时回落目录名 |
+| 扫描发现全部会话 | ✅ 3/3 |
+| **非会话服务不被误判** | ✅ 5678 骨架服务未出现在列表中 |
+| **会话隔离** | ✅ 3 个端口返回 3 个不同 sessionId，不串话 |
+
+**仍未验证**：Android 客户端真机运行（无设备连接）。Kotlin 侧逻辑与
+上述协议一致，但未经真机执行。

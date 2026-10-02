@@ -195,7 +195,7 @@ export class VSCodeCopilotAdapter extends CopilotBaseAdapter {
       check: "API stability",
       status: "warn",
       message:
-        "VS Code Copilot hooks are in preview — API may change without notice",
+        "VS Code Copilot hook 处于预览阶段 — API 可能随时变更，恕不另行通知",
     });
 
     // Warn about matcher behavior
@@ -203,7 +203,7 @@ export class VSCodeCopilotAdapter extends CopilotBaseAdapter {
       check: "Matcher support",
       status: "warn",
       message:
-        "Matchers are parsed but IGNORED — all hooks fire on all tools",
+        "matcher 会被解析但被忽略 — 所有 hook 对所有工具都会触发",
     });
 
     return results;

@@ -153,7 +153,7 @@ export class PiAdapter extends BaseAdapter implements HookAdapter {
         check: "Hook support",
         status: "pass",
         message:
-          "Pi hooks are wired via the context-mode Pi extension " +
+          "Pi hook 通过 context-mode Pi 扩展接入 " +
           "(~/.pi/extensions/context-mode/), not via JSON-stdio.",
       },
     ];

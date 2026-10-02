@@ -243,7 +243,7 @@ export class ClaudeCodeAdapter extends ClaudeCodeBaseAdapter implements HookAdap
       status: hasPreToolUse ? "pass" : "fail",
       message: hasPreToolUse
         ? "PreToolUse hook configured"
-        : "No PreToolUse hooks found",
+        : "未找到 PreToolUse hook",
       fix: hasPreToolUse ? undefined : "context-mode upgrade",
     });
 
@@ -254,7 +254,7 @@ export class ClaudeCodeAdapter extends ClaudeCodeBaseAdapter implements HookAdap
       status: hasSessionStart ? "pass" : "fail",
       message: hasSessionStart
         ? "SessionStart hook configured"
-        : "No SessionStart hooks found",
+        : "未找到 SessionStart hook",
       fix: hasSessionStart ? undefined : "context-mode upgrade",
     });
 
@@ -552,7 +552,7 @@ export class ClaudeCodeAdapter extends ClaudeCodeBaseAdapter implements HookAdap
         }
         settings.hooks = hooks;
         this.writeSettings(settings);
-        changes.push("Skipped settings.json registration — plugin hooks.json is sufficient");
+        changes.push("已跳过 settings.json 注册 — 插件 hooks.json 已足够");
         return changes;
       }
     }

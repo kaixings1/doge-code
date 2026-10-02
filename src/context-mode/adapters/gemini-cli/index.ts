@@ -355,7 +355,7 @@ export class GeminiCLIAdapter extends BaseAdapter implements HookAdapter {
         status: hasHook ? "pass" : "fail",
         message: hasHook
           ? "BeforeTool hook configured"
-          : "BeforeTool exists but does not point to context-mode",
+          : "BeforeTool 存在但未指向 context-mode",
         fix: hasHook ? undefined : "context-mode upgrade",
       });
     } else {
@@ -380,7 +380,7 @@ export class GeminiCLIAdapter extends BaseAdapter implements HookAdapter {
         status: hasHook ? "pass" : "fail",
         message: hasHook
           ? "SessionStart hook configured"
-          : "SessionStart exists but does not point to context-mode",
+          : "SessionStart 存在但未指向 context-mode",
         fix: hasHook ? undefined : "context-mode upgrade",
       });
     } else {

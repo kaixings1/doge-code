@@ -164,7 +164,7 @@ export class ZedAdapter extends BaseAdapter implements HookAdapter {
           status: "fail",
           message:
             "context_servers section exists but context-mode not found",
-          fix: 'Add context-mode to context_servers in ~/.config/zed/settings.json',
+          fix: '在 ~/.config/zed/settings.json 的 context_servers 中添加 context-mode',
         };
       }
 
@@ -172,7 +172,7 @@ export class ZedAdapter extends BaseAdapter implements HookAdapter {
         check: "MCP registration",
         status: "fail",
         message: "settings.json 中缺少 context_servers 段",
-        fix: 'Add context_servers.context-mode to ~/.config/zed/settings.json',
+        fix: '将 context_servers.context-mode 添加到 ~/.config/zed/settings.json',
       };
     } catch {
       return {

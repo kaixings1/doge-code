@@ -2203,7 +2203,7 @@ function renderNarrative5Section(args: {
   if (measuredAvoided + measuredReturned === 0) {
     // No measurable redirect activity yet — captures may exist, but
     // nothing has been diverted from the model context window.
-    out.push("  No measurable redirect activity captured yet — bars will appear once context-mode diverts its first payload.");
+    out.push("  尚未捕获到可衡量的重定向活动 — 一旦 context-mode 转移第一个负载，柱状图就会出现。");
     out.push("");
   } else {
     const convBytesWithout  = measuredAvoided + measuredReturned;
@@ -2807,8 +2807,8 @@ function renderMultiAdapter(multiAdapter: MultiAdapterLifetimeStats | undefined)
     if (real.length > 0) out.push("");
     const names = skipped.map((a) => adapterLabel(a.name)).join(", ");
     out.push(`  Skipped (${skipped.length}): ${names}`);
-    out.push("  These adapters have DBs on disk but only test fixtures, dev skeletons,");
-    out.push("  or detection probes — no real chat activity.");
+    out.push("  这些适配器磁盘上有数据库，但只有测试夹具、开发骨架，");
+    out.push("  或探测探针 —— 没有真实的对话活动。");
   }
 
   return out;
@@ -3048,7 +3048,7 @@ export function formatReport(
     if (concurrent.length > 0) {
       lines.push("");
       lines.push(
-        "Parallel I/O  ✓ one call did the work of many — faster runs, lower bill, same answer.",
+        "并行 I/O  ✓ 一次调用完成了多次的工作 — 运行更快、成本更低、结果相同。",
       );
       for (const u of concurrent) {
         const name = u.tool_name.replace(/^mcp__.*?__/, "");

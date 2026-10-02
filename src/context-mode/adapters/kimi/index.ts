@@ -427,7 +427,7 @@ export class KimiAdapter extends BaseAdapter implements HookAdapter {
         check: "Hooks config",
         status: "fail",
         message: `No readable ${this.getSettingsPath()} found`,
-        fix: "Run context-mode upgrade to generate the initial config.toml",
+        fix: "运行 context-mode upgrade 生成初始 config.toml",
       });
       return results;
     }

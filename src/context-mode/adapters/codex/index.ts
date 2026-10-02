@@ -672,7 +672,7 @@ export class CodexAdapter extends BaseAdapter implements HookAdapter {
           check: "Hooks config",
           status: "fail",
           message: `No readable ${this.getHooksPath()} found`,
-          fix: "Copy configs/codex/hooks.json to hooks.json or run context-mode upgrade",
+          fix: "将 configs/codex/hooks.json 复制为 hooks.json，或运行 context-mode upgrade",
         }]);
       }
       if (failed.reason === "invalid_json") {
@@ -688,7 +688,7 @@ export class CodexAdapter extends BaseAdapter implements HookAdapter {
         check: "Hooks config",
         status: "fail",
         message: `Could not read ${this.getHooksPath()}: ${failed.error}`,
-        fix: "Check permissions and file accessibility for hooks.json, then rerun context-mode upgrade if needed",
+        fix: "检查 hooks.json 的权限和文件可访问性，如需要则重新运行 context-mode upgrade",
       }]);
     }
 

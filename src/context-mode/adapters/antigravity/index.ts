@@ -174,7 +174,7 @@ export class AntigravityAdapter extends BaseAdapter implements HookAdapter {
         check: "MCP registration",
         status: "fail",
         message: "mcpServers 中未找到 context-mode",
-        fix: "Add context-mode to mcpServers in ~/.gemini/antigravity/mcp_config.json",
+        fix: "在 ~/.gemini/antigravity/mcp_config.json 的 mcpServers 中添加 context-mode",
       };
     } catch {
       return {

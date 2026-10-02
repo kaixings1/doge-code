@@ -968,7 +968,7 @@ export default {
             text: [
               "## ctx-doctor",
               "",
-              "Run this command to diagnose context-mode:",
+              "运行此命令诊断 context-mode：",
               "",
               "```",
               cmd,
@@ -990,7 +990,7 @@ export default {
             text: [
               "## ctx-upgrade",
               "",
-              "Run this command to upgrade context-mode:",
+              "运行此命令升级 context-mode：",
               "",
               "```",
               cmd,

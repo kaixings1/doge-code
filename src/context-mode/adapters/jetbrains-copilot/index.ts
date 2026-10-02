@@ -143,7 +143,7 @@ export class JetBrainsCopilotAdapter extends CopilotBaseAdapter {
       check: "MCP registration",
       status: "warn",
       message:
-        "JetBrains stores MCP config via Settings UI — not CLI-inspectable",
+        "JetBrains 通过设置界面存储 MCP 配置 — 无法通过 CLI 检查",
       fix: "Verify in IDE: Settings > Tools > GitHub Copilot > MCP > ensure a context-mode server entry exists",
     };
   }
