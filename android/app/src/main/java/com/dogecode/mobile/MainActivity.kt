@@ -203,6 +203,17 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             is BridgeClient.Event.Disconnected -> setStatus(false, getString(R.string.status_disconnected))
+            is BridgeClient.Event.AuthFailed -> {
+                // 密钥不对是配置问题，重连无用：提示并自动展开设置面板，
+                // 否则用户只会看到状态栏「已断开」反复闪，不知道要填密钥。
+                setStatus(false, "认证失败：密钥不匹配")
+                append(ChatMessage.system(
+                    "⚠ 服务端拒绝了连接（密钥不匹配）。\n" +
+                        "请在「连接设置」里把密钥填成与 CLAUDE_CODE_MOBILE_SECRET 相同的值" +
+                        "（若服务端没设密钥则留空）。",
+                ))
+                connPanel.visibility = View.VISIBLE
+            }
             is BridgeClient.Event.Incoming -> append(
                 ChatMessage(ChatMessage.newId(), ev.role, ev.text, System.currentTimeMillis()),
             )

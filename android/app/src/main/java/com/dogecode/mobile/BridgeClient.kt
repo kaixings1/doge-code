@@ -34,6 +34,12 @@ class BridgeClient(
         /** 自己发出的消息被服务端确认入队 */
         data class Queued(val requestId: String) : Event
         data class Error(val message: String) : Event
+
+        /**
+         * 服务端以 4001 拒绝（密钥不符）。
+         * 与普通断开分开：这是配置错误，重连无用，且需要引导用户去改设置。
+         */
+        data class AuthFailed(val reason: String) : Event
     }
 
     private val main = Handler(Looper.getMainLooper())
@@ -117,6 +123,14 @@ class BridgeClient(
 
             override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
                 connected = false
+                // 4001 = 服务端因密钥不符拒绝（mobileBridge.ts:684）。
+                // 这是永久性失败：密钥不对，重连多少次都一样，只会每 30 秒
+                // 无意义地重试一次。转为 AuthFailed 让界面提示去设置里填密钥。
+                if (code == 4001) {
+                    manualClose = true   // 停止重连
+                    post { onEvent(Event.AuthFailed(reason.ifBlank { "认证失败" })) }
+                    return
+                }
                 post { onEvent(Event.Disconnected(reason.ifBlank { "已断开" })) }
                 if (!manualClose) scheduleReconnect()
             }
