@@ -49,6 +49,15 @@ accounts.db
 # 一次性调试产物（搜索脚本跑完留下的结果快照）
 *_results.txt
 
+# 一次性搜索/排查脚本及其输出（无构建引用，确认后不纳入版本控制）
+search_*.py
+clean_json_*.txt
+.claude/_cmd.cjs
+.claude/_curs.cjs
+
+# 误创建的空文件（无引用、0 字节）
+/d
+
 # 融资材料草稿（本地内容材料，暂不入库）
 /fundraising/
 AI融资*.html
