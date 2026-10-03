@@ -304,14 +304,16 @@ export function GlobalKeybindingHandlers({
   });
 
   // DOGE: Ctrl+Y --- 立即重试（中断 API 重试倒计时）
+  // 不返回值即隐式返回 void —— useKeybinding 里 `handler() !== false` 才
+  // stopImmediatePropagation，返回 void 与返回 true 的运行时行为一致，
+  // 都是「阻止事件继续传播」。原实现 `return true` 超出回调类型
+  // `() => void | false | Promise<void>`（TS2345），是历史遗留的写法。
   const handleRetryNow = useCallback(() => {
     try {
       const { triggerRetryNow } = require('../services/api/withRetry.js');
       triggerRetryNow();
-      // 标记一下 Ctrl+Y 已触发，防止事件继续传播
-      return true;
     } catch (_) {
-      return true;
+      // 重试信号发送失败不应影响按键处理
     }
   }, []);
   useKeybinding('app:retryNow', handleRetryNow, {
