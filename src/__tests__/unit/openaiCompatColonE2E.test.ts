@@ -6,18 +6,19 @@ import {
 } from '../../services/api/openaiCompat.js';
 
 /**
- * 端到端实测：真实 HTTP 上游 + 真实 fetch，验证「冒号结尾 + premature [DONE]」
- * 场景下内容不再被重复输出（修复前的表现是重试导致同一段内容出现两份）。
+ * 端到端实测：真实 HTTP 上游 + 真实 fetch，验证「冒号结尾 + [DONE]」
+ * 场景下内容不被重复输出。
  *
- * 注意：本测试真实等待 20 秒确认期（COLON_GRACE_MS 不可注入），
- * 属慢测试，仅在需要端到端验证时运行。
+ * 历史：曾因「冒号等待期」机制在 [DONE] 时抛 APIConnectionError 触发重试，
+ * 导致同一段内容出现两份。该机制已移除，[DONE] 一律正常收尾。
+ * 本测试保护「单轮只请求一次上游、内容只出现一份」这一行为。
  */
 describe('E2E: 冒号 + premature [DONE] 不重复输出', () => {
   let server: Server;
   let baseURL: string;
   let requestCount = 0;
 
-  // 上游行为：返回一段以冒号结尾的文本，随后立即发 [DONE]（模拟 premature）
+  // 上游行为：返回一段以冒号结尾的文本，随后立即发 [DONE]
   function sseChunk(content: string): string {
     return `data: {"id":"e2e","object":"chat.completion.chunk","created":1,"model":"m","choices":[{"index":0,"delta":{"content":${JSON.stringify(content)}},"finish_reason":null}]}\n\n`;
   }
@@ -58,11 +59,11 @@ describe('E2E: 冒号 + premature [DONE] 不重复输出', () => {
       .map(e => e.delta.text)
       .join('');
 
-    // 只调用一次上游（修复前：已产出仍抛错 → withRetry 重发 → count 变 2）
+    // 只调用一次上游（重复渲染的旧缺陷会让 count 变 2）
     expect(requestCount).toBe(1);
     // 内容只出现一份
     expect(textOut).toBe('结果如下：');
     // 出现次数统计：'结果如下：' 在输出中只应出现一次
     expect(textOut.split('结果如下：').length - 1).toBe(1);
-  }, 60000); // 真实等待 20 秒确认期，放宽超时
+  });
 });
