@@ -31,6 +31,8 @@ type Props = {
     jsx: React.ReactNode | null;
     shouldHidePromptInput: boolean;
     isLocalJSXCommand?: boolean;
+    /** 显式清除 localJSX 覆盖层 —— 缺此标志时 REPL 的包装器会忽略更新 */
+    clearLocalJSX?: boolean;
   } | null) => void;
 };
 
@@ -230,6 +232,24 @@ export function GlobalKeybindingHandlers({
   // 随即 exitAlternateScreen，表现为「切换了一下又弹回」。改成用
   // Bun.spawn + 管道直接驱动 shell，输出由 TerminalPanelView 渲染。
   const terminalOpenRef = useRef(false);
+  // 关闭必须显式带 clearLocalJSX：REPL 的 setToolJSX 包装器在
+  // localJSXCommandRef 非空时会忽略所有不含 clearLocalJSX 的更新
+  // （src/screens/REPL.tsx:992-999）。只传 null 会被直接 return 吞掉，
+  // 覆盖层不卸载但 terminalOpenRef 已置 false —— 下次按 Alt+J 会再挂
+  // 一个新 TerminalPanelView 替换整棵树，旧组件不走正常卸载流程，
+  // proc.kill() 不保证执行，cmd.exe 变成孤儿（表现为每按一次多一个
+  // 版本号 banner）。
+  const closePanel = useCallback(() => {
+    terminalOpenRef.current = false;
+    setToolJSX?.({ jsx: null, shouldHidePromptInput: false, clearLocalJSX: true });
+  }, [setToolJSX]);
+  // 必须稳定：TerminalPanelView 的 useEffect 依赖 [shell, onUnmount]
+  // （TerminalPanelView.tsx:132），内联箭头每次渲染都是新引用 → effect
+  // 重跑 → 先 kill 掉正在跑的 shell 再 spawn 一个新的。用户按 Alt+J
+  // 后看到「多出一段版本号 banner」就是这么来的（新 shell 的 banner）。
+  const handlePanelUnmount = useCallback(() => {
+    terminalOpenRef.current = false;
+  }, []);
   const handleToggleTerminal = useCallback(() => {
     if (!feature('TERMINAL_PANEL')) return;
     if (!setToolJSX) {
@@ -240,27 +260,21 @@ export function GlobalKeybindingHandlers({
       return;
     }
     if (terminalOpenRef.current) {
-      terminalOpenRef.current = false;
-      setToolJSX(null);
+      closePanel();
       return;
     }
     terminalOpenRef.current = true;
     setToolJSX({
       jsx: (
         <TerminalPanelView
-          onExit={() => {
-            terminalOpenRef.current = false;
-            setToolJSX(null);
-          }}
-          onUnmount={() => {
-            terminalOpenRef.current = false;
-          }}
+          onExit={closePanel}
+          onUnmount={handlePanelUnmount}
         />
       ),
       shouldHidePromptInput: true,
       isLocalJSXCommand: true,
     });
-  }, [setToolJSX]);
+  }, [setToolJSX, closePanel, handlePanelUnmount]);
   useKeybinding('app:toggleTerminal', handleToggleTerminal, {
     context: 'Global'
   });
