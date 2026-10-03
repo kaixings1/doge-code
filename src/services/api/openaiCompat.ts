@@ -751,14 +751,20 @@ async function* createAnthropicStreamFromOpenAIInner(
               logForDebugging(`[openaiCompat] 收到 [DONE] 但有冒号等待计时器，等待 ${waitMs}ms 确认`, { level: 'debug' })
               await sleep(waitMs)
               colonDeadline = null
-              // 等待期间如果有新数据到达，会被 while(true) 循环继续读取
-              // 如果 20 秒内无新数据，说明服务器确实 premature [DONE]
-              // 此时抛出 APIConnectionError，让外层 withRetry 触发重试
-              logForDebugging(`[openaiCompat] 冒号等待期结束，无新数据到达，抛出通讯中断错误`, { level: 'debug' })
-              throw new APIConnectionError({
-                message: '[openaiCompat] 服务器 premature [DONE]（冒号结尾后 20 秒无新数据），将自动重试继续工作',
-                cause: new Error('premature_done'),
-              })
+              // 等待期间如果有新数据到达，会被 while(true) 循环继续读取。
+              // 若等待期结束时已有内容产出（已开启过内容块），说明上游只是慢
+              // 而非 premature [DONE]。此时抛错重试会让已渲染内容被重新生成、
+              // 表现为「同一段内容执行两遍」——故按正常结束处理，保留已有产出。
+              // 只有从未产出任何内容块时，才是真正的 premature，才需抛错重试。
+              if (nextContentIndex > 0) {
+                logForDebugging(`[openaiCompat] 冒号等待期结束但已有内容产出，按正常结束处理`, { level: 'debug' })
+              } else {
+                logForDebugging(`[openaiCompat] 冒号等待期结束，无新数据到达，抛出通讯中断错误`, { level: 'debug' })
+                throw new APIConnectionError({
+                  message: '[openaiCompat] 服务器 premature [DONE]（冒号结尾后 20 秒无新数据），将自动重试继续工作',
+                  cause: new Error('premature_done'),
+                })
+              }
             }
               if (textBuffer && textBufferIndex !== null) {
                 yield {

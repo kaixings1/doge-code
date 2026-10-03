@@ -4,17 +4,17 @@ import { createAnthropicStreamFromOpenAI } from '../../services/api/openaiCompat
 /**
  * 覆盖 openaiCompat.ts 的「冒号等待期 + [DONE]」分支（:749-762）。
  *
- * 该分支此前零测试覆盖。本文件锁定【当前真实行为】，作为行为文档：
+ * 上游文本以 ':'/'：' 结尾 → 启动 20 秒等待期；期间收到 [DONE] 则等满
+ * 确认期。等待期结束时按「是否已产出过内容」分流：
  *
- *   上游文本以 ':'/'：' 结尾 → 启动 20 秒等待期。
- *   若等待期内收到 [DONE]（即无新数据到达）→ 抛 APIConnectionError，
- *   由外层 withRetry 触发整轮重试。
+ *   - 已产出内容（nextContentIndex > 0）→ 按正常结束处理，不重试。
+ *     依据：此时用户已看到部分内容，抛错重试会让模型重新生成，
+ *     表现为「同一段内容执行两遍」。
+ *   - 从未产出（nextContentIndex === 0）→ 抛 APIConnectionError 触发重试。
  *
- * ⚠️ 已知观察（非断言，供后续决策）：
- *   冒号文本会被 flushBufferedText 按冒号切分并送出（':' 命中
- *   sentenceEndRegex，见 :646），因此真实 premature 场景下用户其实
- *   已看到部分内容，重试后该内容可能被重新渲染。是否要改为「已有产出
- *   则不重试」尚未定论，本次仅记录行为，不改实现。
+ * 注意：冒号文本会被 flushBufferedText 按冒号切分并送出（':' 命中
+ * sentenceEndRegex，见 :646），因此「冒号结尾 + [DONE]」的真实场景下
+ * nextContentIndex 通常已 > 0，走「不重试」分支。
  */
 describe('createAnthropicStreamFromOpenAI — colon grace + [DONE]', () => {
   function createSSEReader(chunks: string[]): ReadableStreamDefaultReader<Uint8Array> {
@@ -34,7 +34,7 @@ describe('createAnthropicStreamFromOpenAI — colon grace + [DONE]', () => {
     return `data: {"id":"t","object":"chat.completion.chunk","created":1,"model":"m","choices":[{"index":0,"delta":{"content":${JSON.stringify(text)}},"finish_reason":null}]}\n\n`;
   }
 
-  it('冒号结尾 + [DONE] → 抛 APIConnectionError（当前行为：触发重试）', async () => {
+  it('冒号结尾 + [DONE]（已有内容产出）→ 不抛错，已渲染内容被保留', async () => {
     vi.useFakeTimers();
     try {
       const chunks = [
@@ -43,22 +43,21 @@ describe('createAnthropicStreamFromOpenAI — colon grace + [DONE]', () => {
       ];
       const gen = createAnthropicStreamFromOpenAI({ reader: createSSEReader(chunks), model: 'm' });
 
-      const collected: any[] = [];
+      const events: any[] = [];
       const consume = (async () => {
-        try {
-          for await (const ev of gen) collected.push(ev);
-          return 'completed';
-        } catch (e) {
-          return e;
-        }
+        for await (const ev of gen) events.push(ev);
       })();
 
-      // 推进时钟越过 20 秒等待期
       await vi.advanceTimersByTimeAsync(25000);
-      const outcome = await consume;
+      await consume; // 不应抛出：已有产出 → 不重试
 
-      expect(outcome).toBeInstanceOf(Error);
-      expect((outcome as Error).constructor.name).toBe('APIConnectionError');
+      const textDeltas = events
+        .filter(e => e.type === 'content_block_delta' && e.delta?.type === 'text_delta')
+        .map(e => e.delta.text)
+        .join('');
+      // 已渲染的文本必须保留（重试会把它重复渲染成两份）
+      expect(textDeltas).toContain('结果如下：');
+      expect(events.map(e => e.type)).toContain('message_stop');
     } finally {
       vi.useRealTimers();
     }
@@ -81,7 +80,7 @@ describe('createAnthropicStreamFromOpenAI — colon grace + [DONE]', () => {
       })();
 
       await vi.advanceTimersByTimeAsync(25000);
-      await consume; // 不应抛出
+      await consume;
 
       const textDeltas = events
         .filter(e => e.type === 'content_block_delta' && e.delta?.type === 'text_delta')
