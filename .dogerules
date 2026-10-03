@@ -101,3 +101,24 @@ Bug 修复 = 根治，不是治标：一个报告说的是症状。Grep 你触�
 - 优先复用**已有语义信号**（如 `nextContentIndex > 0` 表示"已开启过内容块"），而非拼凑状态变量
 - 若判据依赖"某缓冲区非空"，先追清**这个缓冲区在目标路径上是否会被提前清空**
 - 测试必须用**变异测试**确认守卫真的起作用：把判据条件的真值反转，对应用例应失败
+
+# TUI 输出污染：任何写 stdout/stderr 的代码都可能撕裂界面（血的教训）
+场景：Windows 上运行 Ink TUI（alt screen `\x1b[?1049h`），界面间歇性浮现"后台内容"。
+**症状是偶发的、无来源的**：看起来像"有两套程序在跑"，实则是别的代码往共享控制台写了字节。
+- **备用屏幕是整个控制台共享的**：同窗口内任一进程/子进程写 stdout/stderr 都会叠在 TUI 上，且不会自动清除
+- **`console.error` 永不拦截**：`consoleOverride.ts` 故意保留它（用户可见错误）。但它同样会污染 TUI，只有 ink 的 `patchConsole` 在 TUI 安装后才接管 —— 安装前的窗口期是敞口
+- **`--debug-file` 不应打开 console 闸门**：它只是把 `logForDebugging` 写文件。`isDebugMode()` 在 `--debug-file` 存在时恒真，若用它判断闸门会误放行全部 console.*
+- **`ink.tsx` 在 Windows/Bun 上跳过 `patchStderr`**（上游原始设计，引用 Bun issue）→ Windows 上 stderr 无兜底，泄漏尤其明显
+- **子进程继承 console group**：`start /MIN cmd /c "..."` 起的后台服务与前台 TUI 共享控制台，必须 `>nul 2>&1` 静默
+
+定位方法（比静态扫描更可靠）：
+- **从 debug 日志反查实际泄漏源**：找 `console.log:` 前缀的拦截记录（`patchConsole` 会把所有 stdout 类方法记成这个），按内容前缀聚合计数 → 命中频次最高的就是真正的污染源。实测本次 11143 条中 99.8% 来自一个函数
+- 静态扫描 `console.*` 要**排除 `src/cli/`**：子命令的 stdout 输出是合法的（非 TUI 模式）
+- 修复手段优先级：源头删/改 `logForDebugging` > 闸门拦截 > 子进程静默。**改完必须端到端实测**：起干净环境子进程，断言 console 输出未到达 stdout，且 debug 文件仍正常写入
+- 端到端测试**先确认基线环境干净**：`DEBUG`/`CLAUDE_CODE_CONSOLE_DEBUG` 若被注入会让闸门"看起来失效"，导致误判
+
+# 编辑大文件时的行尾保护（血的教训）
+编辑工具可能把文件从 CRLF 转成 LF，使整个文件被标记为改动（本次产生 11118 行假 diff）。
+- 改动后若 `git diff --stat` 显示**增删行数接近且远大于实际改动**，先用 `git diff --ignore-all-space` 判断是否只是行尾/空白差异
+- 仓库 `core.autocrlf=false` 且无 `.gitattributes` → 行尾由文件自身决定，必须还原
+- **提交前必查** `git diff --stat` 的改动行数是否与实际改动相符，异常则先修行尾再提交
