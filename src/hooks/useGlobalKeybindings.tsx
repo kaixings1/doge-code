@@ -243,10 +243,11 @@ export function GlobalKeybindingHandlers({
     terminalOpenRef.current = false;
     setToolJSX?.({ jsx: null, shouldHidePromptInput: false, clearLocalJSX: true });
   }, [setToolJSX]);
-  // 必须稳定：TerminalPanelView 的 useEffect 依赖 [shell, onUnmount]
-  // （TerminalPanelView.tsx:132），内联箭头每次渲染都是新引用 → effect
-  // 重跑 → 先 kill 掉正在跑的 shell 再 spawn 一个新的。用户按 Alt+J
-  // 后看到「多出一段版本号 banner」就是这么来的（新 shell 的 banner）。
+  // 必须稳定：TerminalPanelView 的 useEffect 依赖 [shell, onUnmount, followCmd]，
+  // 其中 shell 与本回调若每次渲染都是新引用 → effect 重跑 → 先 kill 掉正在跑
+  // 的 shell 再 spawn 一个新的。用户按 Alt+J 后看到「多出一段版本号 banner」
+  // 就是这么来的（新 shell 的 banner）。故本回调必须用 useCallback 固定引用。
+  // （followCmd 由 useMemo([]) 产出，引用天然稳定，不会触发重跑。）
   const handlePanelUnmount = useCallback(() => {
     terminalOpenRef.current = false;
   }, []);
