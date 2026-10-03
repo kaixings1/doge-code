@@ -48,6 +48,34 @@ export function sliceVisibleLines(lines: readonly string[], panelHeight: number)
   return outputRows === 0 ? [] : lines.slice(-outputRows)
 }
 
+/**
+ * 单引号最小化转义：`'` -> `''`。
+ *
+ * 必须转义：Windows 文件名允许包含单引号，而 `-LiteralPath` 只防通配符
+ * 展开，不防引号逃逸。若直接拼接，形如 `C:\a'.log` 的路径会提前闭合
+ * PowerShell 字符串，使其后的内容被当作代码执行。 */
+function quotePowerShell(s: string): string {
+  return `'${s.replace(/'/g, "''")}'`
+}
+
+export function buildFollowCommand(
+  logPath: string | null,
+  platform: string = process.platform,
+): string[] | null {
+  const target = (logPath ?? '').trim()
+  if (!target) return null
+  if (platform === 'win32') {
+    return [
+      'powershell',
+      '-NoProfile',
+      '-Command',
+      `Get-Content -LiteralPath ${quotePowerShell(target)} -Wait -Tail 50`,
+    ]
+  }
+  // tail 以 argv 传参、不经 shell 解析，无注入面。
+  return ['tail', '-n', '50', '-f', target]
+}
+
 type Props = {
   /** shell 可执行文件；默认按平台选择 */
   shell?: string
@@ -92,17 +120,22 @@ export function TerminalPanelView({ shell, height, onExit, onUnmount }: Props) {
   const effectiveHeight = computePanelHeight(rows, height)
   const [lines, setLines] = useState<string[]>([])
   const [exited, setExited] = useState(false)
+  // 跟随模式在挂载时确定一次即可：环境变量不会在面板存活期间变化。
+  const [isFollow] = useState(
+    () => buildFollowCommand(process.env.DOGE_TERMINAL_FOLLOW ?? null) !== null,
+  )
   const procRef = useRef<ReturnType<typeof Bun.spawn> | null>(null)
   const stdinRef = useRef<Writable | null>(null)
   const bufRef = useRef('')
 
   useEffect(() => {
-    const bin = shell || defaultShell()
-    logForDebugging(`TerminalPanel: spawning ${bin}`)
+    const followCmd = buildFollowCommand(process.env.DOGE_TERMINAL_FOLLOW ?? null)
+    const argv = followCmd ?? [shell || defaultShell()]
+    logForDebugging(`TerminalPanel: spawning ${argv.join(' ')}`)
 
     let proc: ReturnType<typeof Bun.spawn>
     try {
-      proc = Bun.spawn([bin], {
+      proc = Bun.spawn(argv, {
         cwd: process.cwd(),
         env: { ...process.env, TERM: 'xterm-256color' } as Record<string, string>,
         stdin: 'pipe',
@@ -206,9 +239,15 @@ export function TerminalPanelView({ shell, height, onExit, onUnmount }: Props) {
     <Box flexDirection="column" height={effectiveHeight} flexShrink={0} borderStyle="round" borderColor="cyan">
       <Box>
         <Text color="cyan" bold>
-          Terminal
+          {isFollow ? 'Log' : 'Terminal'}
         </Text>
-        <Text dimColor>{exited ? '  [已退出 · Esc 关闭]' : '  [Esc 返回]'}</Text>
+        <Text dimColor>
+          {isFollow
+            ? `  ${process.env.DOGE_TERMINAL_FOLLOW}  [Esc 返回]`
+            : exited
+              ? '  [已退出 · Esc 关闭]'
+              : '  [Esc 返回]'}
+        </Text>
       </Box>
       <Box flexDirection="column">
         {visible.map((line, i) => (
