@@ -10,14 +10,20 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import { Box, Text, useInput } from '../../ink.js'
+import { useSafeTerminalSize } from '../../hooks/useTerminalSize.js'
 import { logForDebugging } from '../../utils/debug.js'
 
 const MAX_LINES = 500
 
+/** 面板最多占终端高度的比例。留出余量给对话记录，面板不该吃掉整屏。 */
+const MAX_HEIGHT_RATIO = 0.6
+/** 面板高度上限（行）。终端很高时也不该无节制地长，避免挤掉对话记录。 */
+const MAX_HEIGHT = 24
+
 type Props = {
   /** shell 可执行文件；默认按平台选择 */
   shell?: string
-  /** 面板高度（行） */
+  /** 面板高度（行）；缺省按终端尺寸自适应 */
   height?: number
   /** 用户按 Esc 时的回调 */
   onExit?: () => void
@@ -50,7 +56,20 @@ function asWritable(sink: unknown): Writable | null {
   return null
 }
 
-export function TerminalPanelView({ shell, height = 20, onExit, onUnmount }: Props) {
+export function TerminalPanelView({ shell, height, onExit, onUnmount }: Props) {
+  // 高度自适应终端尺寸：原实现硬编码 20 行，在 24 行的终端里几乎占满整屏
+  // （20 行 + 边框），且吃不下更多输出。useSafeTerminalSize 是本仓库既有的
+  // 安全版本（Ink App 树外渲染时回退 24 行），/btw 同款用法。
+  //
+  // 取三者最小值：占比上限、物理高度上限（rows-4 留给对话记录与提示符）、
+  // 绝对上限。全为上界，不设"最小高度" —— 极小终端（rows<=5）下任何最小
+  // 高度都会盖过物理高度而溢出，宁可显示得少也不撑破屏幕。
+  const { rows } = useSafeTerminalSize()
+  // clamp 到 >= 0：rows<=4 时 rows-4 为负，Ink 收到负 height 行为未定义。
+  const effectiveHeight = Math.max(
+    0,
+    height ?? Math.min(Math.floor(rows * MAX_HEIGHT_RATIO), rows - 4, MAX_HEIGHT),
+  )
   const [lines, setLines] = useState<string[]>([])
   const [exited, setExited] = useState(false)
   const procRef = useRef<ReturnType<typeof Bun.spawn> | null>(null)
@@ -161,10 +180,14 @@ export function TerminalPanelView({ shell, height = 20, onExit, onUnmount }: Pro
     }
   })
 
-  const visible = lines.slice(-height)
+  // 减去 1 行标题、2 行边框，剩下的才是可显示的输出行数。
+  // 必须防 0：slice(-0) === slice(0) 会返回全部行（JS 的负数零陷阱），
+  // 极小终端下正好把整屏撑破。
+  const outputRows = Math.max(0, effectiveHeight - 3)
+  const visible = outputRows === 0 ? [] : lines.slice(-outputRows)
 
   return (
-    <Box flexDirection="column" height={height} borderStyle="round" borderColor="cyan">
+    <Box flexDirection="column" height={effectiveHeight} flexShrink={0} borderStyle="round" borderColor="cyan">
       <Box>
         <Text color="cyan" bold>
           Terminal
