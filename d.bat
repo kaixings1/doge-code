@@ -40,7 +40,13 @@ REM === Local bridge server: start in background if 5678 is not listening ===
 netstat -ano -p tcp | findstr ":5678" | findstr "LISTENING" >nul 2>&1
 if errorlevel 1 (
     echo [d.bat] Starting local bridge server on port 5678 ...
-    start "doge-bridge" /MIN bun run "D:\doge-code\scripts\bridge.ts"
+    REM IMPORTANT: redirect ALL stdio to nul. The bridge shares this Windows
+    REM Terminal window/console with the foreground TUI; a single stray write
+    REM from it lands on Ink's alternate screen buffer and stays there until
+    REM the next full redraw (that is the "background output flashes onto the
+    REM UI" symptom). A new window via `start` inherits the same console
+    REM group, so silencing it is the only reliable fix.
+    start "doge-bridge" /MIN cmd /c "bun run D:\doge-code\scripts\bridge.ts >nul 2>&1"
     REM Wait for the server to become ready by polling the port
     for /L %%i in (1,1,25) do (
         timeout /t 1 /nobreak >nul 2>&1
