@@ -1,3 +1,7 @@
+// 硬清除历史残留的环境变量，防止 Windows session 继承的变量污染 CLI
+delete process.env.CLAUDE_CODE_LOCAL_BRIDGE
+delete process.env.CLAUDE_CODE_LOCAL_BRIDGE_URL
+
 // Console output gate - must be first to intercept all console calls
 import './utils/consoleOverride.js'
 
