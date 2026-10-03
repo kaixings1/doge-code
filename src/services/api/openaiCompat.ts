@@ -1,5 +1,4 @@
-import { APIError, APIConnectionError } from '@anthropic-ai/sdk'
-import { sleep } from '../../utils/sleep.js'
+import { APIError } from '@anthropic-ai/sdk'
 // 引入调试日志工具（实际写入文件或控制台，取决于项目配置）
 import { logForDebugging } from "../../utils/debug.js"
 import type {
@@ -507,10 +506,12 @@ async function* createAnthropicStreamFromOpenAIInner(
   let activeBlockIndex: number | null = null
   const toolIdxMap = new Map<number, number>()               // 上游 tool_calls index -> Anthropic index
   const toolState = new Map<number, { id: string; name: string; arguments: string }>()
-
-  // 冒号结尾检测：服务器可能在冒号后 premature [DONE]，等待 20 秒确认
-  let colonDeadline: number | null = null
-  const COLON_GRACE_MS = 20000
+  // 延迟转正缓冲：上游流式下，合法 tool_call 的 name 只出现在首个分片，
+  // 后续分片 name 为空。若某 index 直到流结束都没出现过非空 name，则它不是
+  // 工具调用 —— 部分上游（实测 deepseek-v4.1-flash 经本地网关）会把正文文本
+  // 塞进匿名 tool_calls.arguments、且 delta.content 恒空，导致正文区空白。
+  // 这里先只累积、不发出 tool_use 块；确认有 name 才转正，否则收尾时降级为文本。
+  const deferredToolCalls = new Map<number, { id: string; arguments: string }>()
 
   /**
    * 关闭当前活动的文本块（如有）
@@ -743,29 +744,7 @@ async function* createAnthropicStreamFromOpenAIInner(
 
       for (const data of dataLines) {
         if (!data || data === '[DONE]') {
-          if (data === '[DONE]')
-          {
-            // 如果有冒号等待计时器，先等待确认期
-            if (colonDeadline !== null) {
-              const waitMs = Math.max(0, colonDeadline - Date.now())
-              logForDebugging(`[openaiCompat] 收到 [DONE] 但有冒号等待计时器，等待 ${waitMs}ms 确认`, { level: 'debug' })
-              await sleep(waitMs)
-              colonDeadline = null
-              // 等待期间如果有新数据到达，会被 while(true) 循环继续读取。
-              // 若等待期结束时已有内容产出（已开启过内容块），说明上游只是慢
-              // 而非 premature [DONE]。此时抛错重试会让已渲染内容被重新生成、
-              // 表现为「同一段内容执行两遍」——故按正常结束处理，保留已有产出。
-              // 只有从未产出任何内容块时，才是真正的 premature，才需抛错重试。
-              if (nextContentIndex > 0) {
-                logForDebugging(`[openaiCompat] 冒号等待期结束但已有内容产出，按正常结束处理`, { level: 'debug' })
-              } else {
-                logForDebugging(`[openaiCompat] 冒号等待期结束，无新数据到达，抛出通讯中断错误`, { level: 'debug' })
-                throw new APIConnectionError({
-                  message: '[openaiCompat] 服务器 premature [DONE]（冒号结尾后 20 秒无新数据），将自动重试继续工作',
-                  cause: new Error('premature_done'),
-                })
-              }
-            }
+          if (data === '[DONE]') {
               if (textBuffer && textBufferIndex !== null) {
                 yield {
                   type: 'content_block_delta',
@@ -776,6 +755,25 @@ async function* createAnthropicStreamFromOpenAIInner(
               }
               textBuffer = ''
               textBufferIndex = null
+            // 收尾降级（[DONE] 路径）：未转正的匿名 tool_calls 实为正文，见 finish_reason 分支同款处理
+            if (deferredToolCalls.size > 0) {
+              for (const [, held] of deferredToolCalls) {
+                if (held.arguments) {
+                  await closeActiveBlock()
+                  if (textBuffer && textBufferIndex !== null) {
+                    yield { type: 'content_block_delta', index: textBufferIndex, delta: { type: 'text_delta', text: textBuffer } } as BetaRawMessageStreamEvent
+                    textBuffer = ''
+                    textBufferIndex = null
+                  }
+                  const idx = nextContentIndex++
+                  yield { type: 'content_block_start', index: idx, content_block: { type: 'text', text: '' } } as BetaRawMessageStreamEvent
+                  yield { type: 'content_block_delta', index: idx, delta: { type: 'text_delta', text: held.arguments } } as BetaRawMessageStreamEvent
+                  yield { type: 'content_block_stop', index: idx } as BetaRawMessageStreamEvent
+                  logForDebugging(`[openaiCompat] ([DONE]) 检测到匿名 tool_calls，已降级为文本输出，长度=${held.arguments.length}`, { level: 'debug' })
+                }
+              }
+              deferredToolCalls.clear()
+            }
             await closeActiveBlock()
             for (const ai of toolIdxMap.values()) {
               yield { type: 'content_block_stop', index: ai } as BetaRawMessageStreamEvent
@@ -1103,14 +1101,6 @@ async function* createAnthropicStreamFromOpenAIInner(
               continue
             }
           }
-          // 检测冒号结尾逻辑保持不变（用于 premature [DONE] 判断）
-          if (text.endsWith(':') || text.endsWith('：')) {
-            colonDeadline = Date.now() + COLON_GRACE_MS
-            logForDebugging(`[openaiCompat] 检测到冒号结尾，启动 ${COLON_GRACE_MS}ms 等待期`, { level: 'debug' })
-          } else if (text.endsWith('\n')) {
-            colonDeadline = null
-          }
-
           // 如果当前活动块不是文本块，需要切换到新的文本块
           if (activeBlockType !== 'text') {
             // 如果有残留缓冲（属于上一个文本块），先 flush 它
@@ -1181,28 +1171,28 @@ async function* createAnthropicStreamFromOpenAIInner(
         // 工具调用增量
         const rawToolCalls = (delta as Record<string, unknown>).tool_calls
         if (delta && Array.isArray(rawToolCalls) && rawToolCalls.length > 0) {
-          // 过滤掉空的 tool_call 占位条目，以及新 tool_call 的 arguments 不完整碎片
-          // 兼容非标准流式格式：模型可能把 arguments 拆成多个碎片（如 "\"dir" "\""），
-          // 同一 index 的续传碎片通过 toolStateMap 识别并合并，不新建块
-          const toolCalls = rawToolCalls.filter((tc: any) => {
-            const oi = tc.index ?? 0
-            // 已有该 index 的 tool state → 续传碎片，保留
-            if (toolState.has(oi)) return true
-            // 带 id 或 name → 正式声明，保留
-            if (tc.id || tc.function?.name) return true
-            // 全新 index 且无 id/name：仅当有非空 arguments 时保留
-            // （不按 JSON 完整性过滤，分片传输的 JSON 天然不完整）
-            if (tc.function?.arguments && tc.function.arguments.trim().length > 0) return true
-            return false
-          })
-          if (toolCalls.length > 0) {
-            yield* closeActiveBlock()
-            for (const tc of toolCalls) {
+          // 延迟转正：区分「合法 tool_call」与「上游把正文塞进匿名 tool_calls」。
+          // 合法 tool_call 的非空 name 只在首个分片出现，后续分片 name 恒为空；
+          // 而畸形响应里该 index 直到流结束都不会出现任何 name。故此处不立即发块，
+          // 先累积匿名 arguments，见到 name 才转正为 tool_use，否则收尾时降级为文本。
+          for (const tc of rawToolCalls as any[]) {
+            {
               const oi = tc.index ?? 0
-              // 跳过无任何数据的占位条目
+              const hasName = typeof tc.function?.name === 'string' && tc.function.name.length > 0
+              const argsFragment: string = typeof tc.function?.arguments === 'string' ? tc.function.arguments : ''
+              // 完全空的占位条目：跳过
+              if (!tc.id && !hasName && !argsFragment) continue
+              // 已转正的合法 tool_call：走下方既有续传逻辑
               if (toolState.has(oi)) {
-                if (!tc.id && !tc.function?.name && !tc.function?.arguments) continue
-              } else if (!tc.id && !tc.function?.name) {
+                if (!tc.id && !hasName && !argsFragment) continue
+              } else if (!hasName) {
+                // 尚未转正：先累积匿名分片，不发块，交由收尾或 name 到来决定归属
+                if (argsFragment) {
+                  const buf = deferredToolCalls.get(oi) ?? { id: tc.id ?? ('toolu_' + oi), arguments: '' }
+                  buf.arguments += argsFragment
+                  if (tc.id) buf.id = tc.id
+                  deferredToolCalls.set(oi, buf)
+                }
                 continue
               }
               let ai = toolIdxMap.get(oi)
@@ -1216,11 +1206,22 @@ async function* createAnthropicStreamFromOpenAIInner(
                   index: ai,
                   content_block: { type: 'tool_use', id: state.id, name: state.name },
                 } as BetaRawMessageStreamEvent
+                // 补发「转正之前」已到的匿名分片：它们是本工具调用 arguments 的前缀
+                const held = deferredToolCalls.get(oi)
+                if (held && held.arguments) {
+                  state.arguments = held.arguments
+                  yield {
+                    type: 'content_block_delta',
+                    index: ai,
+                    delta: { type: 'input_json_delta', partial_json: held.arguments },
+                  } as BetaRawMessageStreamEvent
+                }
+                deferredToolCalls.delete(oi)
               }
               const state = toolState.get(oi)
               if (state) {
                 if (tc.id) state.id = tc.id
-                if (tc.function?.name) state.name = tc.function.name
+                if (hasName) state.name = tc.function.name
                 if (tc.function?.arguments) {
                   const newArgs = tc.function.arguments
                   // 区分两种模式：
@@ -1262,6 +1263,27 @@ async function* createAnthropicStreamFromOpenAIInner(
         // finish_reason 出现时，结束消息
         //if (choice && Object.prototype.hasOwnProperty.call(choice, 'finish_reason')) {
         if (choice?.finish_reason) {
+          // 收尾降级：仍有未转正的匿名 tool_calls —— 它们是上游把正文错编进
+          // arguments 的产物（delta.content 恒空、name 恒空）。判据「该 index 从未
+          // 见过非空 name」在流结束时可可靠判定。此时把内容当正文发出，避免正文区空白。
+          if (deferredToolCalls.size > 0) {
+            for (const [, held] of deferredToolCalls) {
+              if (held.arguments) {
+                yield* closeActiveBlock()
+                if (textBuffer && textBufferIndex !== null) {
+                  yield { type: 'content_block_delta', index: textBufferIndex, delta: { type: 'text_delta', text: textBuffer } } as BetaRawMessageStreamEvent
+                  textBuffer = ''
+                  textBufferIndex = null
+                }
+                const idx = nextContentIndex++
+                yield { type: 'content_block_start', index: idx, content_block: { type: 'text', text: '' } } as BetaRawMessageStreamEvent
+                yield { type: 'content_block_delta', index: idx, delta: { type: 'text_delta', text: held.arguments } } as BetaRawMessageStreamEvent
+                yield { type: 'content_block_stop', index: idx } as BetaRawMessageStreamEvent
+                logForDebugging(`[openaiCompat] 检测到匿名 tool_calls（index 无 name），已降级为文本输出，长度=${held.arguments.length}`, { level: 'debug' })
+              }
+            }
+            deferredToolCalls.clear()
+          }
           // 先强制 flush 残留文本缓冲
           if (textBuffer && textBufferIndex !== null) {
             yield {
