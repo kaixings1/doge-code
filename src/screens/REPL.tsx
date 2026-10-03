@@ -1153,7 +1153,14 @@ export function REPL({
   // eslint-disable-next-line react-hooks/exhaustive-deps -- 长度变化覆盖追加；useUnseenDivider 的计数减少守卫在替换/回滚时清除 dividerIndex
   [dividerIndex, messages.length]);
   // 重新固定滚动到底部并清除未读消息基线。在任何用户驱动的返回实时操作（提交、输入空、覆盖层出现/消失）时调用。
-  const repinScroll = useCallback(() => {
+  //
+  // 默认带「用户正在读就不打扰」守卫：3 秒内刚滚过说明用户在翻内容，
+  // 此时把视口拽回底部是纯粹的干扰。force 用于用户**显式要求**回到底部
+  // 的路径（提交消息、点击药丸），那些情况必须立即生效。
+  const repinScroll = useCallback((opts?: { force?: boolean }) => {
+    if (!opts?.force && Date.now() - lastUserScrollTsRef.current < RECENT_SCROLL_REPIN_WINDOW_MS) {
+      return;
+    }
     scrollRef.current?.scrollToBottom();
     onRepin();
     setCursor(null);
@@ -1163,7 +1170,9 @@ export function REPL({
   const lastMsgIsHuman = lastMsg != null && isHumanTurn(lastMsg);
   useEffect(() => {
     if (lastMsgIsHuman) {
-      repinScroll();
+      // force：这是 onSubmit 重新固定的后备。用户刚提交，必须看到自己的
+      // 消息 —— 不能被 3 秒豁免挡住（否则刚回滚过再提交，消息会落在视口外）。
+      repinScroll({ force: true });
     }
   }, [lastMsgIsHuman, lastMsg, repinScroll]);
   // 助手聊天：在向上滚动时懒加载远程历史记录。除非 KAIROS 构建 + config.viewerOnly，否则无操作。feature() 是构建时常量，因此该分支在非 KAIROS 构建中被死代码消除（与上面的 useUnseenDivider 模式相同）。
@@ -1233,10 +1242,8 @@ export function REPL({
     // something while composing a message doesn't yank the view back on
     // every keystroke. Restores the pre-fullscreen muscle memory of
     // typing to snap back to the end of the conversation.
-    // Skipped if the user scrolled within the last 3s — they're actively
-    // reading, not lost. lastUserScrollTsRef starts at 0 so the first-
-    // ever keypress (no scroll yet) always repins.
-    if (inputValueRef.current === '' && value !== '' && Date.now() - lastUserScrollTsRef.current >= RECENT_SCROLL_REPIN_WINDOW_MS) {
+    // 3 秒滚动豁免由 repinScroll 内部统一守卫，这里不再重复判断。
+    if (inputValueRef.current === '' && value !== '') {
       repinScroll();
     }
     // Sync ref immediately (like setMessages) so callers that read
@@ -1984,8 +1991,16 @@ export function REPL({
   useLayoutEffect(() => {
     const was = prevDialogRef.current === 'tool-permission';
     const now = focusedInputDialog === 'tool-permission';
-    if (was !== now) repinScroll();
     prevDialogRef.current = focusedInputDialog;
+    if (was === now) return;
+    // 覆盖层此刻还占着屏幕（localJSX / 权限对话框走 centeredModal，
+    // 见 REPL.tsx:4346-4360），用户看不到底部 —— 视觉上的「跳到底部」
+    // 是纯粹的干扰。不 repin 而不是延迟 repin：REPL 没有可选的
+    // useAfterPaintEffect，而覆盖层渲染期间用户什么都看不见，解锁后
+    // 内容可能已完全换了一批。代价被「提交时 onSubmit 会 repin」兜住。
+    if (localJSXCommandRef.current || toolUseConfirmQueue.length > 0) return;
+    // 「刚滚过就不打扰」的判据统一在 repinScroll 内部，此处不再重复。
+    repinScroll();
   }, [focusedInputDialog, repinScroll]);
   function onCancel() {
     if (focusedInputDialog === 'elicitation') {
@@ -3043,7 +3058,8 @@ export function REPL({
   }) => {
     // Re-pin scroll to bottom on submit so the user always sees the new
     // exchange (matches OpenCode's auto-scroll behavior).
-    repinScroll();
+    // force：提交是用户显式「带我回到最新」的动作，不受 3 秒滚动豁免约束。
+    repinScroll({ force: true });
 
     // Tee: 镜像用户输入到另一个控制台/文件
     const { writeTeeSync } = await import('../utils/tee.js');
