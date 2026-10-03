@@ -5128,8 +5128,6 @@ export function ensureToolResultPairing(
 
   // 跨消息 tool_use ID 跟踪。下方的 per-message seenToolUseIds
   // 仅捕获单个助手内容数组内的重复（即 normalizeMessagesForAPI 合并后的情况）。
-  // 日志：开始处理
-  console.log(`[工具结果：开始配对检查] 触发时机：收到 ${messages.length} 条消息`)
   // 跨消息 tool_use ID 跟踪。下方的 per-message seenToolUseIds
   // 仅捕获单个助手内容数组内的重复（即 normalizeMessagesForAPI 合并后的情况）。
   // 当两个具有不同 message.id 的助手携带相同的 tool_use ID 时——例如孤立处理程序
@@ -5165,7 +5163,7 @@ export function ensureToolResultPairing(
         )
         if (stripped.length !== msg.message.content.length) {
           repaired = true
-          console.log(
+          logForDebugging(
             `[工具结果：剥离孤立tool_result] 触发时机：用户消息索引 ${i}，前面无助手消息，原始 ${msg.message.content.length} 个块，剥离后 ${stripped.length} 个`,
           )
           // 如果剥离导致消息为空且尚未推送任何内容，
@@ -5219,7 +5217,7 @@ export function ensureToolResultPairing(
       if (block.type === 'tool_use') {
         if (allSeenToolUseIds.has(block.id)) {
           repaired = true
-          console.log(
+          logForDebugging(
             `[工具结果：过滤重复tool_use] 触发时机：消息索引 ${i}，tool_use ID ${block.id} 已在前面的消息中出现过`,
           )
           return false
@@ -5232,7 +5230,7 @@ export function ensureToolResultPairing(
         !serverResultIds.has((block as { id: string }).id)
       ) {
         repaired = true
-        console.log(
+        logForDebugging(
           `[工具结果：过滤孤立server/mcp_tool_use] 触发时机：消息索引 ${i}，工具ID ${(block as { id: string }).id} 没有对应的 tool_result`,
         )
         return false
@@ -5252,7 +5250,7 @@ export function ensureToolResultPairing(
         text: '[工具使用已中断]',
         citations: [],
       })
-      console.log(
+      logForDebugging(
         `[工具结果：助手消息内容为空] 触发时机：消息索引 ${i}，插入占位符文本`,
       )
     }
@@ -5291,7 +5289,7 @@ export function ensureToolResultPairing(
             const trId = (block as ToolResultBlockParam).tool_use_id
             if (existingToolResultIds.has(trId)) {
               hasDuplicateToolResults = true
-              console.log(
+              logForDebugging(
                 `[工具结果：发现重复tool_result] 触发时机：用户消息索引 ${i + 1}，tool_result ID ${trId} 重复出现`,
               )
             }
@@ -5310,12 +5308,12 @@ export function ensureToolResultPairing(
       id => !toolUseIdSet.has(id),
     )
     if (missingIds.length > 0) {
-      console.log(
+      logForDebugging(
         `[工具结果：缺失tool_result] 触发时机：助手消息索引 ${i}，缺失的ID列表：[${missingIds.join(', ')}]`,
       )
     }
     if (orphanedIds.length > 0) {
-      console.log(
+      logForDebugging(
         `[工具结果：孤立tool_result] 触发时机：用户消息索引 ${i + 1}，孤立的ID列表：[${orphanedIds.join(', ')}]`,
       )
     }
@@ -5339,7 +5337,7 @@ export function ensureToolResultPairing(
     }))
 
     if (syntheticBlocks.length > 0) {
-      console.log(
+      logForDebugging(
         `[工具结果：创建合成错误tool_result] 触发时机：缺失 ${syntheticBlocks.length} 个结果，ID：[${syntheticBlocks.map(b => b.tool_use_id).join(', ')}]`,
       )
     }
@@ -5369,7 +5367,7 @@ export function ensureToolResultPairing(
           }
           return true
         })
-        console.log(
+        logForDebugging(
           `[工具结果：清理用户消息中的孤立/重复tool_result] 触发时机：消息索引 ${i + 1}，清理前 ${beforeFilterCount} 个块，清理后 ${content.length} 个块`,
         )
       }
@@ -5394,7 +5392,7 @@ export function ensureToolResultPairing(
             ? smooshSystemReminderSiblings([patchedNext])[0]!
             : patchedNext,
         )
-        console.log(
+        logForDebugging(
           `[工具结果：修补用户消息] 触发时机：消息索引 ${i - 1}（修补后索引 ${i}），添加了 ${syntheticBlocks.length} 个合成结果`,
         )
       } else {
@@ -5409,7 +5407,7 @@ export function ensureToolResultPairing(
             isMeta: true,
           }),
         )
-        console.log(
+        logForDebugging(
           `[工具结果：插入占位用户消息] 触发时机：用户消息 ${i - 1} 内容被完全清理，创建占位符`,
         )
       }
@@ -5422,7 +5420,7 @@ export function ensureToolResultPairing(
             isMeta: true,
           }),
         )
-        console.log(
+        logForDebugging(
           `[工具结果：插入合成用户消息] 触发时机：助手消息索引 ${i} 后没有用户消息，自动插入 ${syntheticBlocks.length} 个合成结果`,
         )
       }
@@ -5489,8 +5487,6 @@ export function ensureToolResultPairing(
         `ensureToolResultPairing: 已修复缺失的 tool_result 块（${messages.length} -> ${result.length} 条消息）。消息结构：${messageTypes.join('; ')}`,
       ),
     )
-  } else {
-    console.log(`[工具结果：无需修复] 触发时机：所有消息配对正常`)
   }
 
   return result
