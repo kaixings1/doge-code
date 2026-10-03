@@ -3,6 +3,8 @@ import { c as _c } from "react/compiler-runtime";
 import { feature } from 'bun:bundle';
 import { spawnSync } from 'child_process';
 import { snapshotOutputTokensForTurn, getCurrentTurnTokenBudget, getTurnOutputTokens, getBudgetContinuationCount, getTotalInputTokens } from '../bootstrap/state.js';
+import { resolveToolJSXUpdate } from '../utils/localJSXOverlay.js';
+import { shouldRepinOnOverlayChange, shouldRepinScroll } from '../utils/scrollRepin.js';
 import { parseTokenBudget } from '../utils/tokenBudget.js';
 import { count } from '../utils/array.js';
 import { dirname, join } from 'path';
@@ -299,10 +301,6 @@ const EMPTY_MCP_CLIENTS: MCPServerConnection[] = [];
 const HISTORY_STUB = {
   maybeLoadOlder: (_: ScrollBoxHandle) => {}
 };
-// 用户发起滚动后，在空输入框中键入时，不要重新固定到底部的时间窗口。Josh Rosen 的工作流程：Claude 输出长内容 → 向上滚动阅读开头 → 开始输入 → 在此修复前，会跳到底部。
-// https://anthropic.slack.com/archives/C07VBSHV7EV/p1773545449871739
-const RECENT_SCROLL_REPIN_WINDOW_MS = 3000;
-
 // 使用 LRU 缓存防止无界内存增长
 // 100 个文件应足以满足大多数编码会话，同时防止在大型项目中跨多个文件工作时出现内存问题
 
@@ -974,38 +972,22 @@ export function REPL({
     isLocalJSXCommand?: boolean;
     clearLocalJSX?: boolean;
   } | null) => {
-    // 如果设置本地 JSX 命令，将其存储在 ref 中
-    if (args?.isLocalJSXCommand) {
-      const {
-        clearLocalJSX: _,
-        ...rest
-      } = args;
-      localJSXCommandRef.current = {
-        ...rest,
-        isLocalJSXCommand: true
-      };
-      setToolJSXInternal(rest);
-      return;
-    }
-
-    // 如果 ref 中有活动的本地 JSX 命令
-    if (localJSXCommandRef.current) {
-      // 仅在明确请求时允许清除（来自 onDone 回调）
-      if (args?.clearLocalJSX) {
+    // 决策逻辑抽到 utils/localJSXOverlay.ts，以便单测真覆盖（内联版本
+    // 只能靠复刻逻辑测试，生产代码改变时不会失败）。三条契约见该文件。
+    const decision = resolveToolJSXUpdate(args, localJSXCommandRef.current !== null);
+    switch (decision.kind) {
+      case 'ignore':
+        // 保持本地 JSX 命令可见 —— 忽略工具更新
+        return;
+      case 'clear':
         localJSXCommandRef.current = null;
         setToolJSXInternal(null);
         return;
-      }
-      // 否则，保持本地 JSX 命令可见 — 忽略工具更新
-      return;
+      case 'set':
+        localJSXCommandRef.current = decision.state;
+        setToolJSXInternal(decision.emit);
+        return;
     }
-
-    // 没有活动的本地 JSX 命令，允许任何更新
-    if (args?.clearLocalJSX) {
-      setToolJSXInternal(null);
-      return;
-    }
-    setToolJSXInternal(args);
   }, []);
   const [toolUseConfirmQueue, setToolUseConfirmQueue] = useState<ToolUseConfirm[]>([]);
   // 由权限请求组件注册的粘性底部 JSX（当前仅为 ExitPlanModePermissionRequest）。在 FullscreenLayout 的 `bottom` 槽位中渲染，以便在用户滚动长计划时响应选项保持可见。
@@ -1158,9 +1140,7 @@ export function REPL({
   // 此时把视口拽回底部是纯粹的干扰。force 用于用户**显式要求**回到底部
   // 的路径（提交消息、点击药丸），那些情况必须立即生效。
   const repinScroll = useCallback((opts?: { force?: boolean }) => {
-    if (!opts?.force && Date.now() - lastUserScrollTsRef.current < RECENT_SCROLL_REPIN_WINDOW_MS) {
-      return;
-    }
+    if (!shouldRepinScroll(opts?.force, lastUserScrollTsRef.current, Date.now())) return;
     scrollRef.current?.scrollToBottom();
     onRepin();
     setCursor(null);
@@ -1992,15 +1972,19 @@ export function REPL({
     const was = prevDialogRef.current === 'tool-permission';
     const now = focusedInputDialog === 'tool-permission';
     prevDialogRef.current = focusedInputDialog;
-    if (was === now) return;
-    // 覆盖层此刻还占着屏幕（localJSX / 权限对话框走 centeredModal，
-    // 见 REPL.tsx:4346-4360），用户看不到底部 —— 视觉上的「跳到底部」
-    // 是纯粹的干扰。不 repin 而不是延迟 repin：REPL 没有可选的
-    // useAfterPaintEffect，而覆盖层渲染期间用户什么都看不见，解锁后
-    // 内容可能已完全换了一批。代价被「提交时 onSubmit 会 repin」兜住。
-    if (localJSXCommandRef.current || toolUseConfirmQueue.length > 0) return;
-    // 「刚滚过就不打扰」的判据统一在 repinScroll 内部，此处不再重复。
-    repinScroll();
+    // 判定逻辑见 utils/scrollRepin.ts（覆盖层占屏时跳过、刚滚过则不打扰）。
+    // 覆盖层占屏的两种情况：localJSX 命令、权限对话框，都走 centeredModal。
+    const overlayOnScreen =
+      localJSXCommandRef.current !== null || toolUseConfirmQueue.length > 0;
+    const pan = {
+      dialogChanged: was !== now,
+      overlayOnScreen,
+      lastUserScrollTs: lastUserScrollTsRef.current,
+      now: Date.now(),
+    };
+    if (shouldRepinOnOverlayChange(pan)) {
+      repinScroll();
+    }
   }, [focusedInputDialog, repinScroll]);
   function onCancel() {
     if (focusedInputDialog === 'elicitation') {

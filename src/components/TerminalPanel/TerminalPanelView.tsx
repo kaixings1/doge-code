@@ -20,6 +20,34 @@ const MAX_HEIGHT_RATIO = 0.6
 /** 面板高度上限（行）。终端很高时也不该无节制地长，避免挤掉对话记录。 */
 const MAX_HEIGHT = 24
 
+/**
+ * 按终端高度算出面板应占的行数。全部是上界，取最小值：
+ * - 占比上限（MAX_HEIGHT_RATIO）：留余量给对话记录
+ * - 物理上限（rows-4）：再留 4 行给对话记录与提示符
+ * - 绝对上限（MAX_HEIGHT）：终端很高时也不无节制地长
+ *
+ * 刻意不设"最小高度"：极小终端（rows<=5）下任何最小高度都会盖过物理
+ * 高度而溢出，宁可显示得少也不撑破屏幕。末尾 clamp 到 >=0 —— rows<=4
+ * 时 rows-4 为负，Ink 收到负 height 行为未定义。
+ */
+export function computePanelHeight(rows: number, explicit?: number): number {
+  return Math.max(
+    0,
+    explicit ?? Math.min(Math.floor(rows * MAX_HEIGHT_RATIO), rows - 4, MAX_HEIGHT),
+  )
+}
+
+/**
+ * 面板可显示的输出行数 = 高度 - 1 行标题 - 2 行边框。
+ *
+ * 必须对 0 单独处理：`slice(-0)` 等价于 `slice(0)`，会返回**全部**行，
+ * 正好在极小终端下把整屏撑破（JS 的负数零陷阱）。
+ */
+export function sliceVisibleLines(lines: readonly string[], panelHeight: number): string[] {
+  const outputRows = Math.max(0, panelHeight - 3)
+  return outputRows === 0 ? [] : lines.slice(-outputRows)
+}
+
 type Props = {
   /** shell 可执行文件；默认按平台选择 */
   shell?: string
@@ -57,19 +85,11 @@ function asWritable(sink: unknown): Writable | null {
 }
 
 export function TerminalPanelView({ shell, height, onExit, onUnmount }: Props) {
-  // 高度自适应终端尺寸：原实现硬编码 20 行，在 24 行的终端里几乎占满整屏
-  // （20 行 + 边框），且吃不下更多输出。useSafeTerminalSize 是本仓库既有的
-  // 安全版本（Ink App 树外渲染时回退 24 行），/btw 同款用法。
-  //
-  // 取三者最小值：占比上限、物理高度上限（rows-4 留给对话记录与提示符）、
-  // 绝对上限。全为上界，不设"最小高度" —— 极小终端（rows<=5）下任何最小
-  // 高度都会盖过物理高度而溢出，宁可显示得少也不撑破屏幕。
+  // 高度自适应终端尺寸（原实现硬编码 20 行，24 行终端里几乎占满整屏）。
+  // useSafeTerminalSize 是本仓库既有的安全版本（Ink App 树外渲染时回退
+  // 24 行），/btw 同款用法。判定逻辑见 computePanelHeight。
   const { rows } = useSafeTerminalSize()
-  // clamp 到 >= 0：rows<=4 时 rows-4 为负，Ink 收到负 height 行为未定义。
-  const effectiveHeight = Math.max(
-    0,
-    height ?? Math.min(Math.floor(rows * MAX_HEIGHT_RATIO), rows - 4, MAX_HEIGHT),
-  )
+  const effectiveHeight = computePanelHeight(rows, height)
   const [lines, setLines] = useState<string[]>([])
   const [exited, setExited] = useState(false)
   const procRef = useRef<ReturnType<typeof Bun.spawn> | null>(null)
@@ -180,11 +200,7 @@ export function TerminalPanelView({ shell, height, onExit, onUnmount }: Props) {
     }
   })
 
-  // 减去 1 行标题、2 行边框，剩下的才是可显示的输出行数。
-  // 必须防 0：slice(-0) === slice(0) 会返回全部行（JS 的负数零陷阱），
-  // 极小终端下正好把整屏撑破。
-  const outputRows = Math.max(0, effectiveHeight - 3)
-  const visible = outputRows === 0 ? [] : lines.slice(-outputRows)
+  const visible = sliceVisibleLines(lines, effectiveHeight)
 
   return (
     <Box flexDirection="column" height={effectiveHeight} flexShrink={0} borderStyle="round" borderColor="cyan">
