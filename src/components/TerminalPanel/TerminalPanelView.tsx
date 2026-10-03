@@ -8,7 +8,7 @@
  * 会话在组件存活期间保持；卸载时 kill 子进程。
  */
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Box, Text, useInput } from '../../ink.js'
 import { useSafeTerminalSize } from '../../hooks/useTerminalSize.js'
 import { logForDebugging } from '../../utils/debug.js'
@@ -136,16 +136,29 @@ export function TerminalPanelView({ shell, height, onExit, onUnmount }: Props) {
   const effectiveHeight = computePanelHeight(rows, height)
   const [lines, setLines] = useState<string[]>([])
   const [exited, setExited] = useState(false)
-  // 跟随模式在挂载时确定一次即可：环境变量不会在面板存活期间变化。
-  const [isFollow] = useState(
-    () => buildFollowCommand(process.env.DOGE_TERMINAL_FOLLOW ?? null) !== null,
+  // 跟随命令在首次渲染时确定一次（环境变量不会在面板存活期间变化），
+  // isFollow 与标题的路径都从它派生 —— 单一来源。
+  //
+  // 不直接读 process.env 渲染标题的原因：那会绕过 buildFollowCommand 的
+  // trim/判空，使标题显示的路径与真正执行的命令不一致（实测设置
+  // DOGE_TERMINAL_FOLLOW="  D:\logs\app.log  " 时，标题会多出前后空格）。
+  // 也避免同一事实被求值两次而可能互相矛盾。
+  const followCmd = useMemo(
+    () => buildFollowCommand(process.env.DOGE_TERMINAL_FOLLOW ?? null),
+    [],
+  )
+  const isFollow = followCmd !== null
+  // 标题显示的路径：与 followCmd 使用同一来源（buildFollowCommand 已 trim），
+  // 不能取 followCmd.at(-1) —— Windows 分支末位是整条 PowerShell 脚本。
+  const followPath = useMemo(
+    () => (process.env.DOGE_TERMINAL_FOLLOW ?? '').trim(),
+    [],
   )
   const procRef = useRef<ReturnType<typeof Bun.spawn> | null>(null)
   const stdinRef = useRef<Writable | null>(null)
   const bufRef = useRef('')
 
   useEffect(() => {
-    const followCmd = buildFollowCommand(process.env.DOGE_TERMINAL_FOLLOW ?? null)
     const argv = followCmd ?? [shell || defaultShell()]
     logForDebugging(`TerminalPanel: spawning ${argv.join(' ')}`)
 
@@ -217,7 +230,7 @@ export function TerminalPanelView({ shell, height, onExit, onUnmount }: Props) {
       stdinRef.current = null
       onUnmount?.()
     }
-  }, [shell, onUnmount])
+  }, [shell, onUnmount, followCmd])
 
   // 键盘输入 → 子进程 stdin
   useInput((input, key) => {
@@ -258,7 +271,7 @@ export function TerminalPanelView({ shell, height, onExit, onUnmount }: Props) {
           {isFollow ? 'Log' : 'Terminal'}
         </Text>
         <Text dimColor>
-          {panelStatusText(isFollow, exited, process.env.DOGE_TERMINAL_FOLLOW)}
+          {panelStatusText(isFollow, exited, followPath)}
         </Text>
       </Box>
       <Box flexDirection="column">

@@ -11,6 +11,8 @@
  * 两者都不报错，只在特定终端尺寸下显现。故在此锁住边界。
  */
 
+import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import {
   buildFollowCommand,
@@ -160,5 +162,30 @@ describe('panelStatusText', () => {
 
   it('exited 优先于 isFollow（两种模式共用同一失败提示）', () => {
     expect(panelStatusText(false, true)).toBe('  [已退出 · Esc 关闭]')
+  })
+
+  it('路径原样嵌入标题（trim 由调用方负责，与实测命令同源）', () => {
+    expect(panelStatusText(true, false, 'D:\\a.log')).toBe('  D:\\a.log  [Esc 返回]')
+  })
+
+  /**
+   * 契约测试：单元测试只能验证纯函数本身，无法发现「调用方传错参数」。
+   * 曾出现过的真实缺陷 —— 调用方直接传 process.env 原值（未 trim），
+   * 使标题显示的路径与实际执行的命令不一致。这类缺陷单测永远抓不到，
+   * 故直接扫描调用方源码确认传参。
+   */
+  it('调用方传给 panelStatusText 的必须是已 trim 的 followPath，而非裸 env', () => {
+    const src = readFileSync(
+      fileURLToPath(
+        new URL('../../src/components/TerminalPanel/TerminalPanelView.tsx', import.meta.url),
+      ),
+      'utf8',
+    )
+    // 必须精确匹配 JSX 中的调用 {panelStatusText(...)}，
+    // 否则会命中函数定义本身（其签名含 followPath）→ 断言恒真而失效。
+    const calls = src.match(/\{panelStatusText\([^}]*\)\}/g) ?? []
+    expect(calls.length, '未找到 panelStatusText 的 JSX 调用点').toBe(1)
+    expect(calls[0]).toContain('followPath')
+    expect(calls[0]).not.toContain('process.env.DOGE_TERMINAL_FOLLOW')
   })
 })
