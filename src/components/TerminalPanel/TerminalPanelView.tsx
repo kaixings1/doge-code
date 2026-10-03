@@ -76,6 +76,22 @@ export function buildFollowCommand(
   return ['tail', '-n', '50', '-f', target]
 }
 
+/**
+ * 标题栏右侧的状态文字。
+ *
+ * 顺序必须是 exited 优先于 isFollow：跟随进程（Get-Content -Wait / tail -f）
+ * 在文件不存在或读取出错时会退出，此时若不显示 exited，界面仍是
+ * 「[Esc 返回]」——用户只看到一屏 stderr（PowerShell 中文报错在 GBK 下
+ * 还是乱码），拿不到任何「已退出」信号。实测：文件不存在时 Get-Content
+ * 报错但 $LASTEXITCODE 为空，故子进程退出码为 0，唯一可用的失败信号
+ * 就是 exited 这个布尔。
+ */
+export function panelStatusText(isFollow: boolean, exited: boolean, followPath?: string): string {
+  if (exited) return '  [已退出 · Esc 关闭]'
+  if (isFollow) return `  ${followPath ?? ''}  [Esc 返回]`
+  return '  [Esc 返回]'
+}
+
 type Props = {
   /** shell 可执行文件；默认按平台选择 */
   shell?: string
@@ -242,11 +258,7 @@ export function TerminalPanelView({ shell, height, onExit, onUnmount }: Props) {
           {isFollow ? 'Log' : 'Terminal'}
         </Text>
         <Text dimColor>
-          {isFollow
-            ? `  ${process.env.DOGE_TERMINAL_FOLLOW}  [Esc 返回]`
-            : exited
-              ? '  [已退出 · Esc 关闭]'
-              : '  [Esc 返回]'}
+          {panelStatusText(isFollow, exited, process.env.DOGE_TERMINAL_FOLLOW)}
         </Text>
       </Box>
       <Box flexDirection="column">

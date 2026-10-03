@@ -15,6 +15,7 @@ import { describe, expect, it } from 'vitest'
 import {
   buildFollowCommand,
   computePanelHeight,
+  panelStatusText,
   sliceVisibleLines,
 } from '../../src/components/TerminalPanel/TerminalPanelView.js'
 
@@ -135,5 +136,29 @@ describe('buildFollowCommand', () => {
     // 关键：原本用于闭合字符串的单引号已被转义，无法逃出字符串
     expect(script).not.toContain("log'; Remove-Item")
     expect(script).toContain("log''; Remove-Item")
+  })
+})
+
+describe('panelStatusText', () => {
+  it('交互 shell 未退出时只提示 Esc 返回', () => {
+    expect(panelStatusText(false, false)).toBe('  [Esc 返回]')
+  })
+
+  it('跟随模式未退出时显示被跟随的路径', () => {
+    expect(panelStatusText(true, false, 'D:\\logs\\app.log')).toBe(
+      '  D:\\logs\\app.log  [Esc 返回]',
+    )
+  })
+
+  it('跟随进程退出后必须显示「已退出」，不能仍显示 [Esc 返回]', () => {
+    // 回归守卫：跟随分支若排在 exited 之前，这里会拿到 [Esc 返回]
+    // —— 用户便看不到任何失败信号（实测文件不存在时退出码为 0）
+    expect(panelStatusText(true, true, 'D:\\logs\\app.log')).toBe(
+      '  [已退出 · Esc 关闭]',
+    )
+  })
+
+  it('exited 优先于 isFollow（两种模式共用同一失败提示）', () => {
+    expect(panelStatusText(false, true)).toBe('  [已退出 · Esc 关闭]')
   })
 })
