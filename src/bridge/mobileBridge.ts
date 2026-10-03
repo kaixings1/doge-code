@@ -23,7 +23,6 @@
 import { randomUUID } from 'crypto'
 import path from 'path'
 import { getLocalBridgeUrl } from './bridgeConfig.js'
-import { isLocalBridgeMode } from './bridgeConfig.js'
 import { getMobileSessionManager } from './mobileSession.js'
 import { handleMobileRequest, type MobileRequest, type MobileResponse } from './mobileProtocol.js'
 import type { ReplBridgeHandle } from './replBridge.js'
@@ -505,7 +504,11 @@ export async function initMobileBridge(options: MobileBridgeOptions): Promise<Mo
  * 检查移动端桥接是否可用
  */
 export function isMobileBridgeAvailable(): boolean {
-  return isLocalBridgeMode() || process.env.CLAUDE_CODE_MOBILE_BRIDGE === '1'
+  // 只认 CLAUDE_CODE_MOBILE_BRIDGE。CLAUDE_CODE_LOCAL_BRIDGE（5678 骨架桥接）
+  // 与移动桥接（5680 真桥接）语义不同：前者只回显消息、永不产生 AI 回复。
+  // 曾经用 isLocalBridgeMode() 兜底，导致 d.bat 起的普通 CLI 实例被误判为
+  // 「移动桥接可用」，进而在 5680 上反复尝试启动并静默失败。
+  return process.env.CLAUDE_CODE_MOBILE_BRIDGE === '1'
 }
 
 // ─── 移动端桥接服务器 ───
@@ -984,20 +987,38 @@ export async function initMobileBridgeServer(
  * 自动化脚本、非交互场景无法触发，而手机端又需要在 CLI 启动时就就绪。
  */
 export async function autoStartMobileBridge(port?: number): Promise<MobileBridgeServer | null> {
-  if (!isMobileBridgeAvailable()) return null
+  if (!isMobileBridgeAvailable()) {
+    // 未启用移动桥接（CLAUDE_CODE_MOBILE_BRIDGE 未设为 1）。
+    // 这是 d.bat 起普通 CLI 的常态，安静跳过即可 —— 但要留下可发现的线索，
+    // 否则用户会以为手机连不上是"桥接坏了"，实际是根本没启用。
+    logForDebugging(
+      '[MobileBridge] 未启用（CLAUDE_CODE_MOBILE_BRIDGE≠1）。如需手机访问，用 mobile.bat 启动或在 CLI 执行 /mobile-connect',
+    )
+    return null
+  }
   try {
     const server = await initMobileBridgeServer(`mobile-${Date.now()}`, getReplBridgeHandle(), port)
     if (server) {
       logForDebugging(`[MobileBridge] 自动启动成功: ${getMobileBridgeUrl(port)}`)
+      // 启动成功必须向终端露一行 —— 否则用户完全不知道桥接是否起来，
+      // 只能靠 netstat 自己猜（此前"服务没起但毫无提示"的排查噩梦）。
+      console.error(`[MobileBridge] 移动桥接已启动: ${getMobileBridgeUrl(port)}（监听 0.0.0.0:${resolveMobilePort()}）`)
       // 非交互终端（stdin 被重定向、或跑在脚本里）不会挂载 REPL，
       // 而消息消费由 useQueueProcessor（随 REPL 挂载）负责。此时手机能连、
       // 能收到 queued 回执，但消息永远不会进入对话 —— 极易误判为 bug，
       // 故显式提示。
       if (!process.stdin.isTTY) {
-        logForDebugging(
+        console.error(
           '[MobileBridge] 当前非交互终端：手机消息会入队但不会被消费（需真实终端运行 doge.exe）',
         )
       }
+    } else {
+      // start() 里 EADDRINUSE 静默降级（端口被另一实例占用）时返回 null。
+      // 多实例并发抢同一端口属正常，此提示只用于帮用户区分"是端口被占"还是
+      // "桥接根本起不来"——后者此前完全静默（只写 debug 文件），极难排查。
+      console.error(
+        `[MobileBridge] 移动桥接未启动：端口 ${resolveMobilePort()} 被占用或启动失败。校验: netstat -ano | findstr :${resolveMobilePort()}`,
+      )
     }
     return server
   } catch (e) {
