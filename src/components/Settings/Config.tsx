@@ -118,7 +118,8 @@ export function Config({
   const [isSearchMode, setIsSearchMode] = useState(true);
   const isTerminalFocused = useTerminalFocus();
   const {
-    rows
+    rows,
+    columns
   } = useTerminalSize();
   // contentHeight is set by Settings.tsx (same value passed to Tabs to fix
   // pane height across all tabs — prevents layout jank when switching).
@@ -1943,7 +1944,7 @@ export function Config({
             const isSelected = actualIndex === selectedIndex && !headerFocused && !isSearchMode;
             return <React.Fragment key={setting_2.id}>
                         <Box>
-                          <Box width={44}>
+                          <Box width={Math.min(176, Math.max(44, columns - 40))}>
                             <Text color={isSelected ? 'suggestion' : undefined}>
                               {isSelected ? figures.pointer : ' '}{' '}
                               {setting_2.label}
