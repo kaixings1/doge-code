@@ -912,6 +912,23 @@ function sendError(res: any, code: number, message: string): void {
 
 const PORT = process.env.PORT || 5678;
 
+// 端口冲突必须降级而非崩溃。
+//
+// 无 error 监听时，EADDRINUSE 会以 unhandled 'error' 的形式终止整个 bun
+// 进程，报 "Failed to start server. Is port 5678 in use?"。多实例并发是
+// 正常场景（每个 cmd 窗口一个 doge、或从其他项目目录启动时），不该因此
+// 崩掉调用方。与 mobileBridge.ts:645-667 同一模式：EADDRINUSE 静默退出，
+// 其它错误照常抛出。
+server.on('error', (e: NodeJS.ErrnoException) => {
+  if (e.code === 'EADDRINUSE') {
+    console.error(
+      `[bridge] 端口 ${PORT} 已被占用，本实例的本地桥接不启动（多实例并发属正常）`,
+    )
+    process.exit(0)
+  }
+  throw e
+})
+
 server.listen(PORT, () => {
   console.log(`
 ╔═══════════════════════════════════════════════════════════════╗
