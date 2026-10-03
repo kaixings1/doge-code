@@ -1629,7 +1629,7 @@ async function* runShellCommand({
     const originalCommand = command;
     command = normalizeWindowsCommand(command);
     if (originalCommand !== command) {
-      console.debug(`[BashTool] 命令归一化: "${originalCommand}" → "${command}"`);
+      logForDebugging(`[BashTool] 命令归一化: "${originalCommand}" → "${command}"`);
     }
   } else if (isWindows && !(input as Record<string, unknown>)._skipUnixToWindowsNormalization) {
     // 当实际底层 shell 是 cmd.exe 时，将模型生成的 Unix 命令转换为 Windows 等效命令
@@ -1637,7 +1637,7 @@ async function* runShellCommand({
     const originalCommand = command;
     command = normalizeUnixCommandForWindows(command);
     if (originalCommand !== command) {
-      console.debug(`[BashTool] cmd.exe 兼容转换: "${originalCommand}" → "${command}"`);
+      logForDebugging(`[BashTool] cmd.exe 兼容转换: "${originalCommand}" → "${command}"`);
     }
   }
 
