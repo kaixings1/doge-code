@@ -1189,11 +1189,13 @@ export function REPL({
   const awaitPendingHooks = useDeferredHookMessages(pendingHookMessages, setMessages);
 
   // Messages 组件的延迟消息 — 以过渡优先级渲染，以便协调器每 5ms 让步一次，在昂贵的消息处理管道运行时保持输入响应。
+  //
+  // 此处曾有 `if (deferredBehind > 0) logForDebugging(...)` 的诊断日志，
+  // 已移除：它写在组件函数体里（渲染阶段），属于副作用 —— React 要求渲染
+  // 保持纯函数，且流式响应期间 messages 每 5ms 变化一次即渲染一次，使该
+  // 日志在单次会话中打出十余万条，同时污染 debug 文件与 TUI。deferredBehind
+  // 除该日志外无其他用途，故连同变量一并删除。
   const deferredMessages = useDeferredValue(messages);
-  const deferredBehind = messages.length - deferredMessages.length;
-  if (deferredBehind > 0) {
-    logForDebugging(`[useDeferredValue] Messages deferred by ${deferredBehind} (${deferredMessages.length}→${messages.length})`);
-  }
 
   // Frozen state for transcript mode - stores lengths instead of cloning arrays for memory efficiency
   const [frozenTranscriptState, setFrozenTranscriptState] = useState<{
