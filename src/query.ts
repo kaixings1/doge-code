@@ -1292,7 +1292,7 @@ async function* queryLoop(
           const acKeyword = ac?.continueKeyword ?? true
           if (
             acKeyword
-            && /要不要我继续|需要我继续|并继续下一轮|让我继续|是否继续|是否需要|是否同意|需要我|继续吗|确认一下|要不要|需不需要|可不可以|行不行|能不能|是否可以|是否要|是否需|可以吗|开始吗|同意吗|确认吗|有问题吗|没问题吧|没问题|请问|是不是|对不对|可否|是否可行|是否|继续|需要|确认|同意|好吗|行吗/.test(replyText)
+            && /是否需要继续|是否同意继续|需要我继续吗|继续吗|确认一下要不要继续|需不需要继续|可不可以继续|行不行继续|是否可以继续|要不要继续|需要继续吗|能继续吗|可以继续吗|是否还要继续|是否继续处理/.test(replyText)
           ) {
             logForDebugging('[AUTO_CONTINUE] 检测到关键词，自动继续')
             const continueMsg = createUserMessage({ content: '继续', isMeta: true })
