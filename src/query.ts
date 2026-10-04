@@ -347,10 +347,12 @@ async function* queryLoop(
   );
 
   while (true) {
-    logForDebugging('[DEBUG] START');
-    logForDebugging('========================================');
-    logForDebugging('[FATAL] queryLoop is running, turnCount=' + state.turnCount);
-    logForDebugging('========================================');
+    // 轮次可见性：maxTurns 判断曾出过偏差（见下方 turnCount 递增处的注释），
+    // 故保留 turnCount 的每轮输出。此处原有两行 '====' 分隔线与
+    // '[FATAL] queryLoop is running' 前缀 —— 分隔线无信息量，而 [FATAL]
+    // 是误标：这是正常进度，不是致命错误（全仓库仅此一处使用该标签），
+    // 会让按级别过滤日志的工具把数千条正常轮次误报为故障。已一并清理。
+    logForDebugging(`[DEBUG] queryLoop turn turnCount=${state.turnCount}`);
     let { toolUseContext } = state
     const {
       messages,
