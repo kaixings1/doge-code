@@ -89,10 +89,10 @@ describe('MessageLoop 自动继续', () => {
 
   // ── 关键词触发（需配置 continueKeyword: true） ──
 
-  it('AI 回复含"是否继续"且配置 keyword 时应自动继续', async () => {
+  it('AI 回复含"是否继续处理"且配置 keyword 时应自动继续', async () => {
     const l = makeLoop({ enabled: true, continueKeyword: true })
     const result = await l.recordAssistant({
-      content: '是否继续？',
+      content: '是否继续处理？',
       toolCalls: [],
       stopReason: 'end_turn',
     })
@@ -141,6 +141,48 @@ describe('MessageLoop 自动继续', () => {
       stopReason: 'end_turn',
     })
     expect(result).toBe(true)
+  })
+
+  // ── 新正则边界：不应触发自动继续的模糊表达 ──
+
+  it('AI 单独说"是否"不应自动继续（新正则要求完整句式）', async () => {
+    const l = makeLoop({ enabled: true, continueKeyword: true })
+    const result = await l.recordAssistant({
+      content: '这是否正确',
+      toolCalls: [],
+      stopReason: 'end_turn',
+    })
+    expect(result).toBe(false)
+  })
+
+  it('AI 单独说"继续"不应自动继续（新正则要求完整问句）', async () => {
+    const l = makeLoop({ enabled: true, continueKeyword: true })
+    const result = await l.recordAssistant({
+      content: '让我继续处理',
+      toolCalls: [],
+      stopReason: 'end_turn',
+    })
+    expect(result).toBe(false)
+  })
+
+  it('AI 说"没问题"不应自动继续（新正则已移除）', async () => {
+    const l = makeLoop({ enabled: true, continueKeyword: true })
+    const result = await l.recordAssistant({
+      content: '没问题',
+      toolCalls: [],
+      stopReason: 'end_turn',
+    })
+    expect(result).toBe(false)
+  })
+
+  it('AI 说"确认一下"不应自动继续（新正则已移除）', async () => {
+    const l = makeLoop({ enabled: true, continueKeyword: true })
+    const result = await l.recordAssistant({
+      content: '确认一下信息',
+      toolCalls: [],
+      stopReason: 'end_turn',
+    })
+    expect(result).toBe(false)
   })
 
   // ── 不触发自动继续的情况 ──
