@@ -124,7 +124,7 @@ describe('MessageLoop 自动继续集成测试', () => {
 
   // ── 场景 1：AI 回复含"是否继续"关键词，应自动继续并发送第二次请求 ──
 
-  it('AI 回复含"是否继续"应自动继续并执行第二次 API 调用', async () => {
+  it('AI 回复含"是否继续处理"应自动继续并执行第二次 API 调用', async () => {
     const deps = createDeps([
       { content: '是否继续处理剩余文件？', stopReason: 'end_turn' },
       { content: '已处理完毕，任务完成。', stopReason: 'end_turn' },
@@ -256,7 +256,7 @@ describe('MessageLoop 自动继续集成测试', () => {
 
   it('关键词触发自动继续后，第二次回复正常结束', async () => {
     const deps = createDeps([
-      { content: '确认一下后续操作', stopReason: 'end_turn' },
+      { content: '确认一下要不要继续后续操作', stopReason: 'end_turn' },
       { content: '好的，操作已执行完毕。', stopReason: 'end_turn' },
     ], {
       autoContinue: { enabled: true, continueKeyword: true },
@@ -343,7 +343,7 @@ describe('MessageLoop 自动继续集成测试', () => {
 
   it('关键词自动继续应写入"继续"消息到对话历史', async () => {
     const deps = createDeps([
-      { content: '是否继续执行下一步？', stopReason: 'end_turn' },
+      { content: '是否继续处理下一步？', stopReason: 'end_turn' },
       { content: '下一步已完成。', stopReason: 'end_turn' },
     ], {
       autoContinue: { enabled: true, continueKeyword: true },
