@@ -968,7 +968,15 @@ async function* queryLoop(
       // [REFACTOR] 使用提取的中止清理函数
       await handleAbortCleanup(toolUseContext)
 
-      if (toolUseContext.abortController.signal.reason !== 'interrupt') {
+      // 用户主动中断时不再注入「已中断」消息：UI 侧已渲染 InterruptedByUser
+      // （REPL.tsx onCancel / handlePromptSubmit.interrupt_on_submit），重复注入
+      // 会让同一句「已中断 · Claude 接下来应该做什么？」在界面上叠加多条。
+      // 用户主动中断的两种 reason：'user-cancel'（ESC/Ctrl+C，REPL onCancel）
+      // 与 'interrupt'（提交时打断，handlePromptSubmit）。此前只判 'interrupt'，
+      // 导致 ESC 路径（'user-cancel'）恒为真、每次都插入。
+      // abort() 无参时为 DOMException（程序化中止），不是用户操作，仍需注入。
+      const abortReason = toolUseContext.abortController.signal.reason
+      if (abortReason !== 'interrupt' && abortReason !== 'user-cancel') {
         yield createUserInterruptionMessage({
           toolUse: false,
         })
@@ -1265,11 +1273,23 @@ async function* queryLoop(
         const ac = params.autoContinue
         const acEnabled = ac?.enabled ?? true
         const acLeft = ac?.maxCount ?? 10
+        // 注意：maxCount 只封顶【单次 query() 调用内】的自动继续次数
+        // （state.autoContinueCount 在本函数内累加）。它【不能】防住
+        // "外部反复调用 query()"造成的循环 —— 那种情况下每次调用计数器都
+        // 从 0 开始，10 次封顶形同虚设。曾有一例：本地桥接把消息回灌给自己
+        // （broadcast 未排除发送者），每次回灌都触发一次全新 query，
+        // 日志表现为 queryLoop turnCount 恒为 1 且无限循环。
+        // 排查时若见到 turnCount 不递增的循环，不要在此处找原因 —— 那是
+        // 外部调用方的问题（见 .dogerules「广播/回灌环路」）。
         if (acEnabled && state.autoContinueCount < acLeft && replyText) {
           // read/search/grep 后短回复触发
           const acReadSearch = ac?.readSearch ?? true
+          // 工具名必须用真实注册名（首字母大写）：Read / Grep / Glob。
+          // 此前写成小写 'read'/'search'/'glob'/'grep'，与 lastToolCalls
+          // 里的真实工具名（query.ts 末尾 `toolUseBlocks.map(b => ({name: b.name}))`）
+          // 恒不相等，该分支从未触发过。'search' 无对应工具，已移除。
           const hadReadOrSearch = state.lastToolCalls.some(
-            tc => tc.name === 'read' || tc.name === 'search' || tc.name === 'glob' || tc.name === 'grep'
+            tc => tc.name === 'Read' || tc.name === 'Grep' || tc.name === 'Glob'
           )
           if (
             acReadSearch
@@ -1437,7 +1457,10 @@ async function* queryLoop(
       // [REFACTOR] 使用提取的中止清理函数
       await handleAbortCleanup(toolUseContext)
 
-      if (toolUseContext.abortController.signal.reason !== 'interrupt') {
+      // 同上方 aborted_streaming 分支：用户主动中断（'interrupt' / 'user-cancel'）
+      // 不注入重复的中断消息。
+      const abortReasonOnTools = toolUseContext.abortController.signal.reason
+      if (abortReasonOnTools !== 'interrupt' && abortReasonOnTools !== 'user-cancel') {
         yield createUserInterruptionMessage({
           toolUse: true,
         })

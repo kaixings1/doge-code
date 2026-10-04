@@ -164,11 +164,20 @@ class SessionStore {
     }
   }
 
-  broadcast(sessionId: string, message: any): void {
+  /**
+   * 广播给 session 的所有订阅者。
+   *
+   * excludeWs 用于「转发某连接发来的消息」场景：发送者自身也在订阅集合里
+   * （见 wss.on('connection') 的 subscribe 调用），若不排除，消息会回灌给
+   * 发送者，被其当作入站消息重新投递（本地桥接模式下表现为自我回灌死循环：
+   * 助手回复 → 广播回自己 → enqueue → 再触发 query → 又回复）。
+   */
+  broadcast(sessionId: string, message: any, excludeWs?: WebSocket): void {
     const subs = this.subscribers.get(sessionId);
     if (!subs) return;
     const data = JSON.stringify(message);
     subs.forEach(ws => {
+      if (ws === excludeWs) return;
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(data);
       }
@@ -812,13 +821,16 @@ wss.on('connection', (ws, request) => {
           break;
 
         case 'message':
-          // 转发消息给所有订阅者
+          // 转发消息给其他订阅者（排除发送者自身）。
+          // 发送者也在订阅集合中（连接时 subscribe），若不排除会把消息
+          // 回灌给自己，本地桥接客户端会将其当作入站消息重新 enqueue，
+          // 造成「回复→回灌→再 query→又回复」的自我回灌死循环。
           store.broadcast(sessionId, {
             type: 'message',
             data: message.data,
             source: sessionId,
             uuid: message.uuid,
-          });
+          }, ws);
           break;
 
         default:

@@ -377,8 +377,10 @@ export class MessageLoop {
 
   /** 将助手回复写入 conversation，并决定是否继续（吸收自 CoreCoder agent.py） */
   private async _recordAssistantResponse(processed: ProcessedResponse): Promise<boolean> {
+    // 工具名用真实注册名（首字母大写）：Read / Grep / Glob。
+    // 小写写法与 lastToolCalls 的真实值恒不等，分支永不触发（'search' 无对应工具）。
     const hadReadOrSearch = this.lastToolCalls.some(
-      tc => tc.name === 'read' || tc.name === 'search' || tc.name === 'glob' || tc.name === 'grep'
+      tc => tc.name === 'Read' || tc.name === 'Grep' || tc.name === 'Glob'
     )
     const textContent = this._extractText(processed.content)
     const hasToolCalls = processed.toolCalls.length > 0

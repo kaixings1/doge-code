@@ -122,3 +122,34 @@ Bug 修复 = 根治，不是治标：一个报告说的是症状。Grep 你触�
 - 改动后若 `git diff --stat` 显示**增删行数接近且远大于实际改动**，先用 `git diff --ignore-all-space` 判断是否只是行尾/空白差异
 - 仓库 `core.autocrlf=false` 且无 `.gitattributes` → 行尾由文件自身决定，必须还原
 - **提交前必查** `git diff --stat` 的改动行数是否与实际改动相符，异常则先修行尾再提交
+
+# 广播/回灌环路：发送者也在订阅集合内 → 自我回灌死循环（血的教训）
+场景：本地桥接（5678）下，发一条 "hi" 后界面像死循环，反复出现同一句回复与"已中断"。
+**症状是"AI 在自言自语"**：用户只输入一次，却产生 N 轮 Thinking，且 `queryLoop turnCount` 恒为 1。
+- 根因链：host 连接时 `store.subscribe(sessionId, ws)` **把自己也订阅进 session** →
+  发消息时服务器 `broadcast()` **回发给包括发送者在内的所有订阅者** →
+  客户端 `case 'message'` **不辨来源**，把回声当入站消息 → `enqueue` → 重新触发 query → 助手又回复 → 死循环
+- **判据**：`queryLoop turnCount` 恒为 1（而非递增）→ 说明 query 被**外部反复调用**，不是内部 while 自动继续。
+  这一条能立刻区分"自动继续循环"与"外部回灌循环"两种完全不同的根因，避免在错误方向（收紧关键词正则）上白改三轮
+- **广播类代码的通用守则**：`broadcast(sessionId, msg)` 必须有 `excludeWs`（排除发送者）参数，
+  或客户端按 `direction`/`source` 标记过滤自己发出的消息。**两端都做是双保险**（服务器可能未升级）
+- 修复优先级：服务器端 exclude（根治）> 客户端过滤（兜底）> 环境变量清除（治标）
+- **别信"清变量就修好了"**：`bootstrap-entry.ts` 顶部的 `delete` 与 `d.bat` 的 `set VAR=` 都实测生效，
+  但残留变量仍可能通过非该入口启动而存在。修复要落在**回灌路径本身**，而非依赖上游清除
+
+# 日志取证法：用 debug 日志定位"看起来不像 bug"的循环（方法论）
+- **看时间戳与计数器**：连续的 `queryLoop turn turnCount=1` + 相邻 API 请求之间夹着
+  `[bridge:xxx] 收到入站消息: {...,"direction":"outbound"}` → 回灌铁证
+- **比对同一 uuid 的出现次数**：同一条用户消息的 uuid 在日志中反复出现 = 它被反复入队
+- **`node .tools/search.cjs -i -n <keyword> <logfile>`**：search.cjs 大小写敏感且对含空格
+  的多词模式会失败，用 `-i` + 单关键词逐个查
+- **端到端复现脚本**：起真实服务器 + 两个连接，A 发消息断言"A 收不到自己、B 能收到"，
+  先对旧代码跑（应复现），重启加载修复后再跑（应通过）。这比读代码可靠得多
+
+# Windows cmd 环境探针的坑（本次踩到）
+- `cmd /c "set VAR= && echo [%VAR%]"` **不能用于验证清空**：`%VAR%` 在整行解析时**先于** `set` 展开，
+  永远显示旧值，会得出"清除无效"的错误结论。**跨行**（`set VAR=` 独立一行）才反映真实行为
+- 验证方式：写一个临时 `.bat`，`set VAR=` 一行、`if "%VAR%"=="" (...) else (...)` 下一行，
+  用 `set VAR=1 && call probe.bat` 调用。实测 `FINAL=EMPTY` 证明跨行清空有效
+- logForDebugging 的内容可能被 `JSON.stringify(msg).slice(0, 200)` **截断** —— 看不到字段尾巴时，
+  不要断言"字段不存在"，应从源码确认该字段是否被写入

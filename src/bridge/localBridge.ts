@@ -66,6 +66,18 @@ function createMessage(type: string, data: Record<string, unknown> = {}): Protoc
   return { uuid: randomUUID(), type, data, timestamp: Date.now() }
 }
 
+/**
+ * 判断一条入站 message 是否是本客户端自己发出的回声。
+ *
+ * writeMessages() 给每条外发消息打 direction:'outbound'；服务器转发时原样
+ * 带回（旧版服务器未排除发送者，见 scripts/bridge.ts 的 broadcast excludeWs）。
+ * 若不识别，该回声会被当作入站消息 enqueue，重新触发 query，形成死循环。
+ */
+export function isOutboundEcho(data: unknown): boolean {
+  if (typeof data !== 'object' || data === null) return false
+  return (data as Record<string, unknown>)['direction'] === 'outbound'
+}
+
 // ─── 本地桥接客户端 ───
 
 export class LocalBridgeClient {
@@ -176,6 +188,8 @@ export class LocalBridgeClient {
         break
 
       case 'message':
+        // 兜底：跳过自己发出的消息（与服务器端排除发送者双保险）。
+        if (isOutboundEcho(msg.data)) break
         this.onInboundMessage?.(msg.data)
         break
 
