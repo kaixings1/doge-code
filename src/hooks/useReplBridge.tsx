@@ -129,6 +129,41 @@ export function useReplBridge(messages: Message[], setMessages: (action: React.S
         }
         if (cancelled) return;
 
+        // 把入站消息投递给 REPL 处理（enqueue 到命令队列）。
+        // 本地桥接与云端桥接必须共用此逻辑——曾因本地桥分支只 log 不 enqueue，
+        // 导致本地桥模式下客户端发的消息被静默丢弃、界面无任何回应。
+        async function deliverInboundMessage(msg: SDKMessage): Promise<void> {
+          try {
+            const fields = extractInboundMessageFields(msg);
+            if (!fields) return;
+            const { uuid, toolUseBlocks } = fields;
+            if (toolUseBlocks && toolUseBlocks.length > 0) {
+              logForDebugging(`[bridge:repl] 注入入站用户消息（包含 ${toolUseBlocks.length} 个工具调用）${uuid ? ` uuid=${uuid}` : ''}`);
+              const userMessage = {
+                type: 'user' as const,
+                message: { role: 'user' as const, content: fields.content as unknown as Record<string, unknown>[] },
+                session_id: 'bridge-inbound',
+                parent_tool_use_id: null,
+                uuid: uuid || undefined,
+              };
+              enqueue({ value: userMessage, mode: 'prompt' as const, uuid, skipSlashCommands: true, bridgeOrigin: true });
+            } else {
+              const { resolveAndPrepend } = await import('../bridge/inboundAttachments.js');
+              let sanitized = fields.content;
+              if (feature('KAIROS_GITHUB_WEBHOOKS')) {
+                const { sanitizeWebhookPayload } = require('../bridge/webhookSanitizer.js') as typeof import('../bridge/webhookSanitizer.js');
+                sanitized = sanitizeWebhookPayload(fields.content);
+              }
+              const content = await resolveAndPrepend(msg, sanitized);
+              const preview = typeof content === 'string' ? content.slice(0, 80) : `[${content.length} 个内容块]`;
+              logForDebugging(`[bridge:repl] 注入入站用户消息：${preview}${uuid ? ` uuid=${uuid}` : ''}`);
+              enqueue({ value: content, mode: 'prompt' as const, uuid, skipSlashCommands: true, bridgeOrigin: true });
+            }
+          } catch (e) {
+            logForDebugging(`[bridge:repl] 入站消息投递失败：${e}`, { level: 'error' });
+          }
+        }
+
         // 本地桥接模式：连接本地桥接服务器
         if (isLocalBridgeMode()) {
           const { initLocalBridge } = await import('../bridge/localBridge.js');
@@ -137,9 +172,14 @@ export function useReplBridge(messages: Message[], setMessages: (action: React.S
             role: 'host',
             onInboundMessage: async (msg: Record<string, unknown>) => {
               logForDebugging(`[bridge:local] 收到入站消息: ${JSON.stringify(msg).slice(0, 200)}`);
+              // 曾只 log 不投递，导致本地桥模式下消息被静默丢弃、界面无回应。
+              await deliverInboundMessage(msg as unknown as SDKMessage);
             },
             onPermissionResponse: (msg: Record<string, unknown>) => {
               logForDebugging(`[bridge:local] 权限响应: ${JSON.stringify(msg).slice(0, 200)}`);
+              // 与入站消息同理：曾只 log 不处理，本地桥模式下客户端的权限
+              // 授权响应被丢弃，导致 REPL 侧权限请求永久挂起。
+              handlePermissionResponse(msg as unknown as SDKControlResponse);
             },
             onStateChange: (state: string, detail?: string) => {
               if (cancelled) return;
@@ -211,35 +251,7 @@ export function useReplBridge(messages: Message[], setMessages: (action: React.S
         }
 
         async function handleInboundMessage(msg: SDKMessage): Promise<void> {
-          try {
-            const fields = extractInboundMessageFields(msg);
-            if (!fields) return;
-            const { uuid, toolUseBlocks } = fields;
-            if (toolUseBlocks && toolUseBlocks.length > 0) {
-              logForDebugging(`[bridge:repl] 注入入站用户消息（包含 ${toolUseBlocks.length} 个工具调用）${uuid ? ` uuid=${uuid}` : ''}`);
-              const userMessage = {
-                type: 'user' as const,
-                message: { role: 'user' as const, content: fields.content as unknown as Record<string, unknown>[] },
-                session_id: 'bridge-inbound',
-                parent_tool_use_id: null,
-                uuid: uuid || undefined,
-              };
-              enqueue({ value: userMessage, mode: 'prompt' as const, uuid, skipSlashCommands: true, bridgeOrigin: true });
-            } else {
-              const { resolveAndPrepend } = await import('../bridge/inboundAttachments.js');
-              let sanitized = fields.content;
-              if (feature('KAIROS_GITHUB_WEBHOOKS')) {
-                const { sanitizeWebhookPayload } = require('../bridge/webhookSanitizer.js') as typeof import('../bridge/webhookSanitizer.js');
-                sanitized = sanitizeWebhookPayload(fields.content);
-              }
-              const content = await resolveAndPrepend(msg, sanitized);
-              const preview = typeof content === 'string' ? content.slice(0, 80) : `[${content.length} 个内容块]`;
-              logForDebugging(`[bridge:repl] 注入入站用户消息：${preview}${uuid ? ` uuid=${uuid}` : ''}`);
-              enqueue({ value: content, mode: 'prompt' as const, uuid, skipSlashCommands: true, bridgeOrigin: true });
-            }
-          } catch (e) {
-            logForDebugging(`[bridge:repl] handleInboundMessage 失败：${e}`, { level: 'error' });
-          }
+          return deliverInboundMessage(msg);
         }
 
         function handleStateChange(state: BridgeState, detail_0?: string): void {
