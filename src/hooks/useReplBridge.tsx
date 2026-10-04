@@ -526,12 +526,11 @@ export function useReplBridge(messages: Message[], setMessages: (action: React.S
     const start = Math.min(mobilePushIndexRef.current, messages.length);
     mobilePushIndexRef.current = messages.length;
     const server = getActiveMobileBridgeServer();
-    if (!server) {
-      logForDebugging(
-        `[mobile-push] effect 触发，messages=${messages.length}，无活动服务器，跳过`,
-      );
-      return
-    }
+    // 「无活动服务器」是常态（未启用手机桥接时恒成立），不是事件。
+    // 此处曾每次 messages 变化都打一条日志，实测单会话刷出 3.7 万条。
+    // 游标推进逻辑见上方注释；若需排查推送时序，用下方成功路径的汇总日志
+    // 或 mobileBridge 自身的调试输出，不必在常态分支记录。
+    if (!server) return
     let pushed = 0;
     let skippedEmpty = 0;
     let skippedUnrecognized = 0;
