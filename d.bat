@@ -90,4 +90,4 @@ bun run ^
     --feature=DUMP_SYSTEM_PROMPT --feature=WEB_BROWSER_TOOL --feature=QUICK_SEARCH ^
     --feature=MESSAGE_ACTIONS --feature=FILE_PERSISTENCE ^
     "D:\doge-code\src\bootstrap-entry.ts" ^
-    --dangerously-skip-permissions --verbose %2 %3 --debug-file ./debug2.txt
+    --dangerously-skip-permissions --verbose %2 %3 --debug-file ./%1.txt

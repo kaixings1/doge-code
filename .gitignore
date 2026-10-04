@@ -13,6 +13,8 @@ build/
 debug*.txt
 stderr*.txt
 stdout*.txt
+# d.bat 每次带 %1.txt 生成（如 9router.txt），属运行时调试日志
+[0-9]*.txt
 
 # 3D Robot Viewer 项目（临时，排除在 git 之外）
 Project/
@@ -28,6 +30,10 @@ doge-*.exe
 doge_verify.exe
 *.bun-build
 src/services/remoteManagedSettings/securityCheck.jsx
+
+# embed-status-line.ts 每次运行同时写 .ts 与 .js，.js 是生成物不应提交
+# （.ts 已跟踪；.js 供 cli.tsx 直接 import，由 prebuild/embed 脚本生成）
+src/generated/*.js
 
 # 测试产物
 coverage/
