@@ -45,6 +45,7 @@ import type { CacheSafeParams } from '../../utils/forkedAgent.js'
 import { lazySchema } from '../../utils/lazySchema.js'
 import {
   extractTextContent,
+  getContentText,
   getLastAssistantMessage,
 } from '../../utils/messages.js'
 import type { PermissionMode } from '../../utils/permissions/PermissionMode.js'
@@ -295,6 +296,22 @@ export function finalizeAgentTool(
   const lastAssistantMessage = getLastAssistantMessage(agentMessages)
   if (lastAssistantMessage === undefined) {
     throw new Error('未找到助理消息')
+  }
+  // 末条助手消息是 API 错误（余额不足、限流、认证失败等）时，必须抛出，
+  // 让上层走 failed 分支（本文件的 catch → status: 'failed'）。
+  // 否则错误文本会被当作代理的正常回复，通知里 status 误报为 completed，
+  // 而 UI（UserAgentNotificationMessage）只渲染 <summary>、忽略 <result>，
+  // 用户将看不到任何错误 —— 表现为「发消息后没有回复」。
+  if (lastAssistantMessage.isApiErrorMessage) {
+    // 错误文本会进入 <summary> 单行渲染，需压成单行并截断，避免撑爆界面。
+    const raw =
+      getContentText(lastAssistantMessage.message.content) ||
+      '代理执行时发生 API 错误'
+    const singleLine = raw.replace(/\s+/g, ' ').trim()
+    const MAX = 300
+    throw new Error(
+      singleLine.length > MAX ? singleLine.slice(0, MAX) + '…' : singleLine,
+    )
   }
   // 从代理的响应中提取文本内容。如果最终的助理消息是纯 tool_use 块
   //（循环在中途退出），则回退到最近的有文本内容的助理消息。

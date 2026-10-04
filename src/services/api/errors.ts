@@ -756,7 +756,10 @@ export function getAssistantMessageFromError(
 
   if (
     error instanceof Error &&
-    error.message.includes('Your credit balance is too low')
+    (error.message.includes('Your credit balance is too low') ||
+      // DOGE / OpenAI 兼容网关的余额不足错误码与提示
+      error.message.includes('INSUFFICIENT_BALANCE') ||
+      error.message.includes('余额不足'))
   ) {
     return createAssistantAPIErrorMessage({
       content: CREDIT_BALANCE_TOO_LOW_ERROR_MESSAGE,
