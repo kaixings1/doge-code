@@ -12,6 +12,7 @@ import {
   getActiveMobileBridgeServer,
   getMobileBridgeUrl,
   getLanIp,
+  pushToMobileClients,
 } from '../../src/bridge/mobileBridge.js'
 
 const PORT = 15690
@@ -99,6 +100,15 @@ describe('MobileBridgeServer 真实端到端', () => {
     const result = frames2.find((f) => f.type === 'result')
     expect(result).toBeTruthy()
     expect(result.requestId).toBe('req-1')
+
+    // 6b. 多设备同步：广播 user 消息时 role 必须原样为 "user"，
+    //     客户端据此走 user 分支（否则 B 设备看不到 A 发的消息）。
+    //     协议字段名由两端契约锁定：服务端 pushToMobileClients → sendToAll(type=role)。
+    pushToMobileClients({ role: 'user', text: '来自其它设备' })
+    await new Promise((r) => setTimeout(r, 300))
+    const userFrame = frames2.find((f) => f.type === 'user')
+    expect(userFrame, '服务端应以 type:"user" 广播').toBeTruthy()
+    expect(userFrame.data.text).toBe('来自其它设备')
     ws2.close()
 
     // 7. 停止后注册表清空

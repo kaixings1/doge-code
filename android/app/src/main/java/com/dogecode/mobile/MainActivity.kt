@@ -214,9 +214,19 @@ class MainActivity : AppCompatActivity() {
                 ))
                 connPanel.visibility = View.VISIBLE
             }
-            is BridgeClient.Event.Incoming -> append(
-                ChatMessage(ChatMessage.newId(), ev.role, ev.text, System.currentTimeMillis()),
-            )
+            is BridgeClient.Event.Incoming -> {
+                // 服务端会把消息广播给所有连接的设备（多设备同步）：B 设备
+                // 需要看到 A 发的消息。但自己刚发的那条本地已回显过，服务端
+                // 又把同一文本推回来，直接 append 会出现重复气泡。
+                // 去重判据：本地存在文本相同、且尚未收到 queued 回执的 user
+                // 消息（status=SENDING）→ 说明这就是自己刚发的，跳过。
+                // 只按 SENDING 判断而非 SENDING|QUEUED：queued 回执与消息推送
+                // 到达顺序不确定，若含 QUEUED 会把「别人发的相同文本」也误吞。
+                val isEcho = ev.role == "user" && isOwnEcho(ev.text)
+                if (!isEcho) {
+                    append(ChatMessage(ChatMessage.newId(), ev.role, ev.text, System.currentTimeMillis()))
+                }
+            }
             is BridgeClient.Event.Queued -> {
                 val id = pending.entries.firstOrNull { it.value == ev.requestId }?.key
                 if (id != null) {
@@ -228,6 +238,19 @@ class MainActivity : AppCompatActivity() {
             is BridgeClient.Event.Error -> append(ChatMessage.system("错误：${ev.message}"))
         }
     }
+
+    /**
+     * 判断一条 role="user" 的入站消息是否是「自己刚发出、被服务端回推」的。
+     *
+     * 仅在本地存在文本相同且仍处于 SENDING 的 user 消息时成立 —— 该状态
+     * 从 append 到收到 queued 回执之间保持，正好覆盖「回推先于回执到达」
+     * 这一时序。一旦收到回执转为 QUEUED 就不再匹配，避免后续别人发来
+     * 相同文本时被误吞。
+     */
+    private fun isOwnEcho(text: String): Boolean =
+        adapter.snapshot().any {
+            it.role == "user" && it.status == ChatMessage.Status.SENDING && it.text == text
+        }
 
     private fun setStatus(ok: Boolean, label: String) {
         dot.setBackgroundResource(if (ok) R.drawable.dot_on else R.drawable.dot_off)

@@ -38,13 +38,17 @@ object BridgeProtocol {
                 o.optJSONObject("data")?.optBoolean("interactive", true) ?: true,
             )
 
+            // 服务端会把其它设备（或 CLI 终端）键入的消息以 type:"user" 广播，
+            // 用于多设备同步。不能丢——否则 B 设备看不到 A 发的消息。
+            // 自己发的那条由调用方按本地回显去重（见 MainActivity）。
+            "user" -> {
+                val t = textOf(o) ?: return Msg.Unparsed
+                Msg.Incoming("user", t)
+            }
+
             "assistant", "message" -> {
-                val d = o.optJSONObject("data") ?: return Msg.Unparsed
-                // 服务端不同路径下文本字段名不一致，按优先级依次尝试
-                val t = d.optString("text")
-                    .ifBlank { d.optString("message") }
-                    .ifBlank { d.optString("content") }
-                if (t.isBlank()) Msg.Unparsed else Msg.Incoming("assistant", t)
+                val t = textOf(o) ?: return Msg.Unparsed
+                Msg.Incoming("assistant", t)
             }
 
             "system" -> {
@@ -71,5 +75,17 @@ object BridgeProtocol {
 
             else -> Msg.Ignored
         }
+    }
+
+    /**
+     * 从 data 中按优先级提取文本字段。
+     * 服务端不同路径下字段名不一致，故依次尝试 text / message / content。
+     */
+    private fun textOf(o: JSONObject): String? {
+        val d = o.optJSONObject("data") ?: return null
+        val t = d.optString("text")
+            .ifBlank { d.optString("message") }
+            .ifBlank { d.optString("content") }
+        return t.ifBlank { null }
     }
 }

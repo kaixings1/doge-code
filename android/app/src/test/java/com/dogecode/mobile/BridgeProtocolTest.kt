@@ -57,6 +57,29 @@ class BridgeProtocolTest {
         assertEquals("x", (m as BridgeProtocol.Msg.Incoming).text)
     }
 
+    // ── user（多设备同步）──
+
+    @Test
+    fun `user 消息被识别为 user 角色而非 assistant`() {
+        // 服务端会广播其它设备键入的消息，角色必须原样保留 ——
+        // 早期无此分支时被 Ignored 静默丢弃，导致多设备同步实际不工作。
+        val json = """{"type":"user","data":{"text":"别人发的"}}"""
+        val m = BridgeProtocol.parse(json) as BridgeProtocol.Msg.Incoming
+        assertEquals("user", m.role)
+        assertEquals("别人发的", m.text)
+    }
+
+    @Test
+    fun `user 消息缺 data 时不崩溃`() {
+        assertTrue(BridgeProtocol.parse("""{"type":"user"}""") is BridgeProtocol.Msg.Unparsed)
+    }
+
+    @Test
+    fun `user 消息空文本不产生空气泡`() {
+        val m = BridgeProtocol.parse("""{"type":"user","data":{"text":"  "}}""")
+        assertTrue(m is BridgeProtocol.Msg.Unparsed)
+    }
+
     @Test
     fun `空文本视为未解析而不是产生空消息`() {
         // 产生空气泡会污染界面

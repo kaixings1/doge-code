@@ -1255,6 +1255,13 @@ function connect(){
       var data = msg.data || {};
       var text = data.text || data.message || data.content;
       if (typeof text === 'string' && text) bubble(text, 'a');
+    } else if (msg.type === 'user') {
+      // 多设备同步：服务端会把其它设备（或 CLI 终端）键入的消息广播过来。
+      // 自己刚发的那条本地已 bubble 过（m 类名 u），服务端再推同一文本会
+      // 造成重复气泡 —— 比对最后一条自己发出的消息去重。
+      var d2 = msg.data || {};
+      var t2 = d2.text || d2.message || d2.content;
+      if (typeof t2 === 'string' && t2 && !isOwnEcho(t2)) bubble(t2, 'u');
     } else if (msg.type === 'result') {
       var d = msg.data || {};
       if (d.message) bubble(String(d.message), 'a');
@@ -1266,10 +1273,21 @@ function connect(){
     }
   };
 }
+// 自己已发出、尚未收到 queued 回执的消息文本。用于把服务端回推的
+// 同文本 type:"user" 消息识别为自己发的，避免重复气泡（多设备同步下
+// 服务端会向所有设备广播 user 消息）。收到回执即移除。
+var sentPending = [];
+function isOwnEcho(text){
+  var i = sentPending.indexOf(text);
+  if (i < 0) return false;
+  sentPending.splice(i, 1);
+  return true;
+}
 function send(){
   var text = inp.value.trim();
   if (!text || !ready) return;
   bubble(text, 'u');
+  sentPending.push(text);
   inp.value = ''; inp.style.height = 'auto';
   ws.send(JSON.stringify({
     type: 'control', action: 'sendMessage', params: { message: text },
