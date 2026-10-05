@@ -73,7 +73,10 @@ export function buildFollowCommand(
       'powershell',
       '-NoProfile',
       '-Command',
-      `Get-Content -LiteralPath ${quotePowerShell(target)} -Wait -Tail 50`,
+      // -Encoding utf8 必须显式指定：PowerShell 的 Get-Content 默认按系统 ANSI
+      // 代码页（中文 Windows = GBK/936）解码，读取 UTF-8 日志会让中文变
+      // 「绔偣鏉ユ簮」这类乱码（解码侧 TextDecoder 是 UTF-8，救不回来）。
+      `Get-Content -LiteralPath ${quotePowerShell(target)} -Encoding utf8 -Wait -Tail 50`,
     ]
   }
   // tail 以 argv 传参、不经 shell 解析，无注入面。

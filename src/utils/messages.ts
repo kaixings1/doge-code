@@ -2966,6 +2966,10 @@ export function handleMessageFromStream(
           isStreaming: false,
           streamingEndedAt: Date.now(),
         }))
+      } else if ((msgContent as ContentBlock[]).some(block => (block as any).type === 'text')) {
+        // 最终正文消息（含 text）已落地到消息列表，清掉实时思考副本，
+        // 否则它会以 isTranscriptMode 形态遮挡正式消息约 30 秒。
+        onStreamingThinking?.(() => null)
       }
     }
     // 立即清除流式文本，以便渲染器在同一批次中能将 displayedMessages
@@ -4407,6 +4411,7 @@ export function createStopHookSummaryMessage(
   toolUseID?: string,
   hookLabel?: string,
   totalDurationMs?: number,
+  hookOutputs?: Array<{ hookName: string; output: string }>,
 ): SystemStopHookSummaryMessage {
   return {
     type: 'system',
@@ -4414,6 +4419,7 @@ export function createStopHookSummaryMessage(
     hookCount,
     hookInfos,
     hookErrors,
+    hookOutputs,
     preventedContinuation,
     stopReason,
     hasOutput,

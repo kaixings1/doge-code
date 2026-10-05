@@ -185,6 +185,9 @@ export async function* handleStopHooks(
     let stopReason = ''
     let hasOutput = false
     const hookErrors: string[] = []
+    // 带来源标识的成功输出；Set 用于按内容去重（相同内容只显示一次）
+    const hookOutputs: Array<{ hookName: string; output: string }> = []
+    const seenHookOutput = new Set<string>()
     const hookInfos: StopHookInfo[] = []
 
     for await (const result of generator) {
@@ -227,6 +230,17 @@ export async function* handleStopHooks(
                 (attachment.stderr && attachment.stderr.trim())
               ) {
                 hasOutput = true
+              }
+              // 成功的钩子若向 stdout 写入文本，收集到摘要中显示
+              // （否则该输出只进 debug 日志，界面上完全不可见）
+              // 按内容去重：多个钩子输出相同提醒时只显示一次
+              const successOutput = attachment.stdout?.trim()
+              if (successOutput && !seenHookOutput.has(successOutput)) {
+                seenHookOutput.add(successOutput)
+                hookOutputs.push({
+                  hookName: attachment.hookName,
+                  output: successOutput,
+                })
               }
             }
             // 提取每个钩子的持续时间以便观察耗时。
@@ -294,6 +308,9 @@ export async function* handleStopHooks(
         hasOutput,
         'suggestion',
         stopHookToolUseID,
+        void 0,
+        void 0,
+        hookOutputs,
       )
 
       // 发送关于错误的通知（在详细/转录模式中通过 Ctrl+o 可见）

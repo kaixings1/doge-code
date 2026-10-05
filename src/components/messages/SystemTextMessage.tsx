@@ -262,6 +262,7 @@ function StopHookSummaryMessage(t0) {
     hookCount,
     hookInfos,
     hookErrors,
+    hookOutputs,
     preventedContinuation,
     stopReason
   } = message;
@@ -278,7 +279,7 @@ function StopHookSummaryMessage(t0) {
     t1 = $[2];
   }
   const totalDurationMs = t1;
-  if (hookErrors.length === 0 && !preventedContinuation && !message.hookLabel) {
+  if (hookErrors.length === 0 && (hookOutputs?.length ?? 0) === 0 && !preventedContinuation && !message.hookLabel) {
     if (true || totalDurationMs < HOOK_TIMING_DISPLAY_THRESHOLD_MS) {
       return null;
     }
@@ -390,13 +391,22 @@ function StopHookSummaryMessage(t0) {
   } else {
     t13 = $[36];
   }
+  let t13b;
+  if ($[48] !== hookOutputs) {
+    t13b = (hookOutputs?.length ?? 0) > 0 && hookOutputs.map((item, idx_2) => <Text key={idx_2}><Text dimColor={true}>⎿  </Text><Text dimColor={true}>{item.hookName}: </Text>{item.output}</Text>);
+    $[48] = hookOutputs;
+    $[49] = t13b;
+  } else {
+    t13b = $[49];
+  }
   let t14;
-  if ($[37] !== t10 || $[38] !== t11 || $[39] !== t12 || $[40] !== t13 || $[41] !== t5) {
-    t14 = <Box flexDirection="column" width={t5}>{t10}{t11}{t12}{t13}</Box>;
+  if ($[37] !== t10 || $[38] !== t11 || $[39] !== t12 || $[40] !== t13 || $[50] !== t13b || $[41] !== t5) {
+    t14 = <Box flexDirection="column" width={t5}>{t10}{t11}{t12}{t13}{t13b}</Box>;
     $[37] = t10;
     $[38] = t11;
     $[39] = t12;
     $[40] = t13;
+    $[50] = t13b;
     $[41] = t5;
     $[42] = t14;
   } else {

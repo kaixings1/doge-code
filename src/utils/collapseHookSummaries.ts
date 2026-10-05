@@ -43,6 +43,14 @@ export function collapseHookSummaries(
           hookCount: group.reduce((sum, m) => sum + m.hookCount, 0),
           hookInfos: group.flatMap(m => m.hookInfos),
           hookErrors: group.flatMap(m => m.hookErrors),
+          // 合并多组摘要时再按内容去重（各组内部已去过重，跨组可能重复）
+          hookOutputs: [
+            ...new Map(
+              group
+                .flatMap(m => m.hookOutputs ?? [])
+                .map(o => [o.output, o]),
+            ).values(),
+          ],
           preventedContinuation: group.some(m => m.preventedContinuation),
           hasOutput: group.some(m => m.hasOutput),
           // Parallel tool calls' hooks overlap; max is closest to wall-clock.

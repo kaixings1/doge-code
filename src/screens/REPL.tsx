@@ -1340,10 +1340,12 @@ export function REPL({
   }, [showStreamingText]);
 
   // Hide the in-progress source line so text streams line-by-line, not
-  // char-by-char. lastIndexOf returns -1 when no newline, giving '' → null.
+  // char-by-char. When there is no newline yet (e.g. a single-line Chinese
+  // reply), show the whole buffer instead of collapsing to null — otherwise
+  // the reply stays invisible for the entire stream.
   // Guard on showStreamingText so toggling reducedMotion mid-stream
   // immediately hides the streaming preview.
-  const visibleStreamingText = streamingText && showStreamingText ? streamingText.substring(0, streamingText.lastIndexOf('\n') + 1) || null : null;
+  const visibleStreamingText = streamingText && showStreamingText ? (streamingText.lastIndexOf('\n') >= 0 ? streamingText.substring(0, streamingText.lastIndexOf('\n') + 1) : streamingText) || null : null;
   const [lastQueryCompletionTime, setLastQueryCompletionTime] = useState(0);
   const [spinnerMessage, setSpinnerMessage] = useState<string | null>(null);
   const [spinnerColor, setSpinnerColor] = useState<keyof Theme | null>(null);
@@ -2511,8 +2513,6 @@ export function REPL({
           return [...oldMessages, newMessage];
         });
       } else {
-        // 【临时探针】追踪进入 REPL 的消息
-        console.log('[PROBE:repl-msg] type=' + newMessage.type + ' blocks=' + JSON.stringify((((newMessage).message && (newMessage).message.content) || []).map((x) => x.type)) + ' txt=' + JSON.stringify((((newMessage).message && (newMessage).message.content) || []).filter((x) => x.type === 'text').map((x) => String(x.text).slice(0, 40))));
         setMessages(oldMessages => [...oldMessages, newMessage]);
       }
       // Block ticks on API errors to prevent tick → error → tick

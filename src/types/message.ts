@@ -150,6 +150,8 @@ export type SystemStopHookSummaryMessage = SystemMessage & {
   hookCount?: number
   totalDurationMs?: number
   hookInfos: Array<{ command?: string; durationMs?: number }>
+  /** 成功钩子写入 stdout 的文本，在摘要中按来源逐条显示 */
+  hookOutputs?: Array<{ hookName: string; output: string }>
 }
 /** 系统信息消息 */
 export type SystemInformationalMessage = SystemMessage

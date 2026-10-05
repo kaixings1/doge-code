@@ -780,8 +780,6 @@ async function* queryLoop(
             if (isWithheldMaxOutputTokens(message)) {
               withheld = true
             }
-            // 【临时探针】追踪消息是否被 withheld 吞掉
-            console.log('[PROBE:query-yield] withheld=' + withheld + ' type=' + message.type + ' blocks=' + JSON.stringify(((message.message && message.message.content) || []).map((x) => x.type)) + ' txt=' + JSON.stringify(((message.message && message.message.content) || []).filter((x) => x.type === 'text').map((x) => String(x.text).slice(0, 40))));
             if (!withheld) {
               yield yieldMessage
             }

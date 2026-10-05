@@ -66,8 +66,8 @@ REM bun:bundle feature() is compile-time constant folding; env / --define
 REM cannot change it, only --feature / --feature= works (verified:
 REM no flag = false, with flag = true). bun run accepts both forms.
 bun run ^
-    --feature=TERMINAL_PANEL --feature=PROACTIVE --feature=KAIROS ^
-    --feature=KAIROS_BRIEF --feature=KAIROS_CHANNELS --feature=BRIDGE_MODE ^
+    --feature=TERMINAL_PANEL --feature=PROACTIVE ^
+    --feature=KAIROS_CHANNELS --feature=BRIDGE_MODE ^
     --feature=DAEMON --feature=VOICE_MODE --feature=HISTORY_SNIP ^
     --feature=CCR_REMOTE_SETUP --feature=EXPERIMENTAL_SKILL_SEARCH ^
     --feature=KAIROS_GITHUB_WEBHOOKS --feature=ULTRAPLAN --feature=TORCH ^

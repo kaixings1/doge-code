@@ -19,6 +19,9 @@ stdout*.txt
 # 3D Robot Viewer 项目（临时，排除在 git 之外）
 Project/
 
+# .claude 本地工作目录（本地 agent/prompt/skills 缓存，已删除）
+.claude/
+
 # repo-pack 测试运行时生成的输出产物（只保留输入：README.md、src/）
 src/commands/repo-pack/__tests__/fixtures/repomix-output.*
 src/commands/repo-pack/__tests__/fixtures/custom-output.*

@@ -376,17 +376,6 @@ const MessagesImpl = ({
   } = useTerminalSize();
   const toggleShowAllShortcut = useShortcutDisplay('transcript:toggleShowAll', 'Transcript', 'Ctrl+E');
   const normalizedMessages = useMemo(() => normalizeMessages(messages).filter(isNotEmptyMessage), [messages]);
-  // 【临时探针】追踪消息进入 MessagesImpl 后的形态（排查正文不显示）
-  console.log('[PROBE:Messages] 收到 ' + messages.length + ' 条 | ' + JSON.stringify(messages.map((m) => ({
-    t: m.type,
-    b: Array.isArray(m.message && m.message.content) ? m.message.content.map((x) => x.type) : typeof (m.message && m.message.content),
-    txt: Array.isArray(m.message && m.message.content) ? m.message.content.filter((x) => x.type === 'text').map((x) => String(x.text).slice(0, 30)) : null,
-  }))));
-  console.log('[PROBE:Messages] normalize+filter 后 ' + normalizedMessages.length + ' 条 | ' + JSON.stringify(normalizedMessages.map((m) => ({
-    t: m.type,
-    b: Array.isArray(m.message && m.message.content) ? m.message.content.map((x) => x.type) : typeof (m.message && m.message.content),
-  }))));
-
   // Check if streaming thinking should be visible (streaming or within 30s timeout)
   const isStreamingThinkingVisible = useMemo(() => {
     if (!streamingThinking) return false;
@@ -726,7 +715,7 @@ const MessagesImpl = ({
           <AssistantThinkingMessage param={{
         type: 'thinking',
         thinking: streamingThinking.thinking
-      }} addMargin={false} isTranscriptMode={true} verbose={verbose} hideInTranscript={false} />
+      }} addMargin={false} isTranscriptMode={isTranscriptMode} verbose={verbose} hideInTranscript={false} />
         </Box>}
     </>;
 };
