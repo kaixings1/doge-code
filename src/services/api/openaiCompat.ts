@@ -394,6 +394,55 @@ function parseSSEChunk(buffer: string): { events: string[]; remainder: string } 
 }
 
 /**
+ * 从 SSE chunk 预览文本中剥离 usage 对象，仅供日志打印。
+ *
+ * 背景：stepfun 等中转站的每个 chunk 都带完整 usage（含嵌套的
+ * prompt_tokens_details/completion_tokens_details），实测使日志体积膨胀到
+ * 实际文本的 20~40 倍，淹没真正需要对比的正文。usage 数值在流末的
+ * 「流结束, 最终 token 用量」日志里已有汇总，逐 chunk 打印无诊断价值。
+ *
+ * 用括号配对 + 字符串状态机扫描，而非正则：usage 值含嵌套对象
+ * （`"usage":{...,"prompt_tokens_details":{"cached_tokens":0}}`），
+ * `\{[^{}]*\}` 这类简单正则会因嵌套花括号而失配。
+ */
+export function stripUsageFromPreview(text: string): string {
+  let out = ''
+  let i = 0
+  while (i < text.length) {
+    if (text.startsWith('"usage":', i)) {
+      let j = i + '"usage":'.length
+      while (j < text.length && /\s/.test(text[j]!)) j++
+      if (text[j] === '{') {
+        let depth = 0
+        let inStr = false
+        let escaped = false
+        for (; j < text.length; j++) {
+          const c = text[j]!
+          if (inStr) {
+            if (escaped) escaped = false
+            else if (c === '\\') escaped = true
+            else if (c === '"') inStr = false
+            continue
+          }
+          if (c === '"') inStr = true
+          else if (c === '{') depth++
+          else if (c === '}') {
+            depth--
+            if (depth === 0) { j++; break }
+          }
+        }
+        out += '"usage":<omitted>'
+        i = j
+        continue
+      }
+    }
+    out += text[i]
+    i++
+  }
+  return out
+}
+
+/**
  * 尝试将非流式 JSON 响应解析为 Anthropic 流事件序列
  * 兜底方案：当服务端返回完整 JSON 而非 SSE 流时使用
  */
@@ -727,7 +776,11 @@ async function* createAnthropicStreamFromOpenAIInner(
     if (value?.byteLength) {
       responseBytes += value.byteLength
       const partialText = decoder.decode(value, { stream: true })
-      logForDebugging(`[openaiCompat] 读取到 chunk, 字节长度=${value.byteLength}, 部分文本预览: ${partialText.slice(0, 21000)}${partialText.length > 21000 ? '...' : ''}`, { level: 'debug' })
+      // 日志瘦身：每个 SSE chunk 都带完整 usage 对象（stepfun 等中转站的 include_usage），
+      // 实测使日志体积膨胀到实际文本的 20~40 倍，淹没真正的正文差异。故打印前剥离 usage，
+      // 并把截断上限从 21000 收紧到 800（保留正文片段足以定位问题）。
+      const preview = stripUsageFromPreview(partialText).slice(0, 800)
+      logForDebugging(`[openaiCompat] 读取到 chunk, 字节长度=${value.byteLength}, 部分文本预览: ${preview}${partialText.length > 800 ? '...(已截断)' : ''}`, { level: 'debug' })
     }
     buffer += decoder.decode(value, { stream: true })
     const sse = parseSSEChunk(buffer)

@@ -354,9 +354,9 @@ export function CollapsedReadSearchContent({
       nonMemParts.push(<Text key="comma-s">，</Text>);
     }
     nonMemParts.push(<Text key="search">
-        <Text color="info">{searchVerb}</Text>{' '}
+        <Text color={searchCount > 0 ? 'green' : 'red'}>{searchVerb}</Text>{' '}
         <Text bold>{searchCount}</Text>{' '}
-        <Text color="info">{searchCount === 1 ? '模式' : '模式'}</Text>
+        <Text color={searchCount > 0 ? 'green' : 'red'}>{searchCount === 1 ? '模式' : '模式'}</Text>
       </Text>);
   }
   if (readCount > 0) {
@@ -366,9 +366,9 @@ export function CollapsedReadSearchContent({
       nonMemParts.push(<Text key="comma-r">，</Text>);
     }
     nonMemParts.push(<Text key="read">
-        <Text color="info">{readVerb}</Text>{' '}
+        <Text color={readCount > 0 ? 'green' : 'red'}>{readVerb}</Text>{' '}
         <Text bold>{readCount}</Text>{' '}
-        <Text color="info">{readCount === 1 ? '文件' : '文件'}</Text>
+        <Text color={readCount > 0 ? 'green' : 'red'}>{readCount === 1 ? '文件' : '文件'}</Text>
       </Text>);
   }
   if (listCount > 0) {
@@ -378,9 +378,9 @@ export function CollapsedReadSearchContent({
       nonMemParts.push(<Text key="comma-l">，</Text>);
     }
     nonMemParts.push(<Text key="list">
-        <Text color="info">{listVerb}</Text>{' '}
+        <Text color={listCount > 0 ? 'green' : 'red'}>{listVerb}</Text>{' '}
         <Text bold>{listCount}</Text>{' '}
-        <Text color="info">{listCount === 1 ? '目录' : '目录'}</Text>
+        <Text color={listCount > 0 ? 'green' : 'red'}>{listCount === 1 ? '目录' : '目录'}</Text>
       </Text>);
   }
   if (replCount > 0) {

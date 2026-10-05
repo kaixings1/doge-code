@@ -522,7 +522,6 @@ export class MobileBridgeServer {
   private wss: any = null
   private port: number
   private sessionId: string
-  private bridgeHandle: ReplBridgeHandle | null = null
   private sessionManager = getMobileSessionManager()
   private connectedClients = new Set<WebSocket>()
   private isRunning = false
@@ -532,12 +531,16 @@ export class MobileBridgeServer {
   constructor(options: {
     sessionId: string
     port?: number
+    /**
+     * 保留为对外接口签名。实际不在构造时快照——autoStartMobileBridge 在
+     * CLI 启动最早期调用，此处必然拿不到 handle；中断等操作改用
+     * getReplBridgeHandle() 动态读取（见 forwardToBridge）。
+     */
     bridgeHandle?: ReplBridgeHandle
     secret?: string
   }) {
     this.sessionId = options.sessionId
     this.port = options.port ?? resolveMobilePort()
-    this.bridgeHandle = options.bridgeHandle ?? null
     this.secret = options.secret ?? process.env.CLAUDE_CODE_MOBILE_SECRET ?? ''
   }
 
@@ -840,12 +843,14 @@ export class MobileBridgeServer {
         }
         break
       }
-      case 'interrupt': {
-        this.bridgeHandle?.sendControlCancelRequest(msg.requestId)
-        break
-      }
+      case 'interrupt':
       case 'cancel': {
-        this.bridgeHandle?.sendControlCancelRequest(msg.requestId)
+        // 必须动态取 handle，不能用构造时快照的 this.bridgeHandle。
+        // autoStartMobileBridge 在 CLI 启动最早期（bootstrap-entry.ts）被调用，
+        // 此时 useReplBridge 尚未挂载，构造参数里的 handle 恒为 null——
+        // 手机端「中断」按钮会永久静默失效（?. 把 null 吞掉，无任何报错）。
+        // getReplBridgeHandle() 读的是模块级单例，REPL 挂载后即有值。
+        getReplBridgeHandle()?.sendControlCancelRequest(msg.requestId)
         break
       }
     }

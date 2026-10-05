@@ -102,6 +102,20 @@ export const getDebugFilePath = memoize((): string | null => {
   return null
 })
 
+let forceRequestLogging = false
+
+/**
+ * Force request/response tagged logs to be written to the debug file even when
+ * full debug mode is not active. Used by the terminal panel (Alt+J) so API
+ * traffic becomes visible without requiring --debug. Returns true if already
+ * forced.
+ */
+export function enableRequestLogging(): boolean {
+  const wasForced = forceRequestLogging
+  forceRequestLogging = true
+  return wasForced
+}
+
 function shouldLogDebugMessage(message: string): boolean {
   if (process.env.NODE_ENV === 'test' && !isDebugToStdErr()) {
     return false
@@ -110,6 +124,15 @@ function shouldLogDebugMessage(message: string): boolean {
   // Non-ants only write debug logs when debug mode is active (via --debug at
   // startup or /debug mid-session). Ants always log for /share, bug reports.
   if (process.env.USER_TYPE !== 'ant' && !isDebugMode()) {
+    // Exception: request/response tagged messages always log when request
+    // logging is forced (e.g. Alt+J panel opens), so API traffic is visible
+    // without full --debug. getDebugLogPath() always returns a valid path
+    // (default ~/.claude/debug/<sessionId>.txt), so the log file will be
+    // created on first flush.
+    const isRequestLog = /^\[(openaiCompat|request|bridge|fetch|api|transport)/i.test(message.trim())
+    if (forceRequestLogging && isRequestLog) {
+      return true
+    }
     return false
   }
 

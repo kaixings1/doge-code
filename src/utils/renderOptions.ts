@@ -8,7 +8,7 @@ import { logError } from './log.js'
 let cachedStdinOverride: ReadStream | undefined | null = null
 
 /**
- * Gets a ReadStream for /dev/tty when stdin is piped.
+ * Gets a ReadStream for the controlling terminal when stdin is piped.
  * This allows interactive Ink rendering even when stdin is a pipe.
  * Result is cached for the lifetime of the process.
  */
@@ -36,17 +36,19 @@ function getStdinOverride(): ReadStream | undefined {
     return undefined
   }
 
-  // No /dev/tty on Windows
-  if (process.platform === 'win32') {
-    cachedStdinOverride = undefined
-    return undefined
-  }
+  // Windows 上没有 /dev/tty，但有等价的控制台输入设备 CONIN$。
+  // 必须带设备命名空间前缀 "\\.\"：node 下裸 "CONIN$" 会被当相对路径而 ENOENT；
+  // bun 下两种写法都能打开，统一用带前缀的写法以兼容两种运行时。
+  // 缺少该 override 时，bun run（d.bat 的启动方式）下 stdin.isTTY 为 undefined、
+  // 无 setRawMode 方法，ink 的 isRawModeSupported() 恒为 false —— 表现为
+  // 「输入进得来（earlyInput 已消费）、API 照发、回复照生成，但界面无任何显示」。
+  const ttyPath = process.platform === 'win32' ? '\\\\.\\CONIN$' : '/dev/tty'
 
-  // Try to open /dev/tty as an alternative input source
+  // Try to open the controlling terminal as an alternative input source
   try {
-    const ttyFd = openSync('/dev/tty', 'r')
+    const ttyFd = openSync(ttyPath, 'r')
     const ttyStream = new ReadStream(ttyFd)
-    // Explicitly set isTTY to true since we know /dev/tty is a TTY.
+    // Explicitly set isTTY to true since we know the console device is a TTY.
     // This is needed because some runtimes (like Bun's compiled binaries)
     // may not correctly detect isTTY on ReadStream created from a file descriptor.
     ttyStream.isTTY = true

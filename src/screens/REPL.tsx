@@ -4767,7 +4767,15 @@ export function REPL({
           }} />}
                 {false && <DevBar />}
               </Box>
-              {true && !(companionNarrow && isFullscreenEnvEnabled()) && companionVisible ? <CompanionSprite /> : null}
+              {/* 伙伴精灵是 alt-screen 全屏布局的并排元素。非全屏（main-screen）
+                  下渲染会与对话内容并排抢占横向空间，把回复挤出可视区 —— 因此
+                  这里要求 isFullscreenEnvEnabled()。与上方窄屏分支（4383 行
+                  companionNarrow && isFullscreenEnvEnabled()）互补：这里是宽屏
+                  全屏分支（!companionNarrow && isFullscreenEnvEnabled()）。
+                  原先写成 !(companionNarrow && isFullscreenEnvEnabled())，在非 ant
+                  用户下 isFullscreenEnvEnabled() 恒 false → 表达式恒 true →
+                  精灵在非全屏下无条件显示，压窄对话区。 */}
+              {!companionNarrow && isFullscreenEnvEnabled() && companionVisible ? <CompanionSprite /> : null}
             </Box>} />
       </MCPConnectionManager>
     </KeybindingSetup>; 

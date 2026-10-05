@@ -48,6 +48,56 @@ describe('handleEmptyContentResponse（query.ts 生产自动继续判定）', ()
     expect(Array.isArray(r.warnings)).toBe(true)
     expect(r.warnings.length).toBeGreaterThan(0)
   })
+
+  // ============================================================
+  // 回归：流式响应中每个 content_block_stop 独立成一条消息（claude.ts:2416），
+  // 尾块常是单空格/句末残留。只看「最后一条」会把完整回答误判为空内容而终止会话。
+  // 真实事故日志：最后一段 delta.content=" "，finish_reason=stop → 误判 empty_content。
+  // ============================================================
+  describe('多消息合并判定（尾块为空白的完整回答不得误判）', () => {
+    it('尾块仅一个空格，但前序消息有正文 → isEmptyContent:false（核心回归）', () => {
+      const msgs = [
+        makeAssistant([{ type: 'text', text: 'EISDIR 是目录读取错误。' }]),
+        makeAssistant([{ type: 'thinking', thinking: '思考中' }]),
+        makeAssistant([{ type: 'text', text: ' ' }]), // 复刻日志：最后一个块是单空格
+      ]
+      const last = msgs[msgs.length - 1]!
+      const r = handleEmptyContentResponse(last, 'q', 0, msgs)
+      expect(r.isEmptyContent).toBe(false)
+    })
+
+    it('尾块是空白、且全部消息确实无实质内容 → isEmptyContent:true', () => {
+      const msgs = [
+        makeAssistant([{ type: 'text', text: ' ' }]),
+        makeAssistant([{ type: 'text', text: '\n' }]),
+      ]
+      const r = handleEmptyContentResponse(msgs.at(-1), 'q', 0, msgs)
+      expect(r.isEmptyContent).toBe(true)
+    })
+
+    it('工具调用出现在非末条消息 → isEmptyContent:false', () => {
+      const msgs = [
+        makeAssistant([{ type: 'tool_use', id: 'x', name: 'Bash', input: {} }]),
+        makeAssistant([{ type: 'text', text: '' }]),
+      ]
+      const r = handleEmptyContentResponse(msgs.at(-1), 'q', 0, msgs)
+      expect(r.isEmptyContent).toBe(false)
+    })
+
+    it('未传 allMessages 时退回只看单条（向后兼容）', () => {
+      const r = handleEmptyContentResponse(
+        makeAssistant([{ type: 'text', text: '正文' }]),
+        'q',
+        0,
+      )
+      expect(r.isEmptyContent).toBe(false)
+    })
+
+    it('传入空数组时退回只看单条', () => {
+      const r = handleEmptyContentResponse(makeAssistant([]), 'q', 0, [])
+      expect(r.isEmptyContent).toBe(true)
+    })
+  })
 })
 
 // 模拟 query.ts:965-1003 的分支条件（isAutoContinueOnEmptyEnabled + retry 上限）

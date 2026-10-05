@@ -236,7 +236,18 @@ export default class App extends PureComponent<Props, State> {
         if (!this.stdinKeepAliveActive) {
           stdin.ref();
         }
-        stdin.setRawMode(true);
+        // setRawMode 在部分环境下会抛（实测 tty.ReadStream 构造/raw 切换可能报
+        // uv_tty_init EPERM）。此处若任其冒泡，会经 componentDidCatch → handleExit
+        // 直接终止会话。降级为「无 raw mode 的只读渲染」比崩溃退出更可接受。
+        try {
+          stdin.setRawMode(true);
+        } catch (err) {
+          logForDebugging(
+            `setRawMode(true) 失败，降级为只读渲染: ${err instanceof Error ? err.message : String(err)}`,
+            { level: "warn" },
+          );
+          return;
+        }
         stdin.addListener('readable', this.handleReadable);
         // Enable bracketed paste mode
         this.props.stdout.write(EBP);
@@ -282,7 +293,15 @@ export default class App extends PureComponent<Props, State> {
       this.props.stdout.write(DFE);
       // Disable bracketed paste mode
       this.props.stdout.write(DBP);
-      stdin.setRawMode(false);
+      // 与上方 setRawMode(true) 对称：关闭时的异常同样不应冒泡终止会话
+      try {
+        stdin.setRawMode(false);
+      } catch (err) {
+        logForDebugging(
+          `setRawMode(false) 失败（忽略）: ${err instanceof Error ? err.message : String(err)}`,
+          { level: "warn" },
+        );
+      }
       stdin.removeListener('readable', this.handleReadable);
       if (!this.stdinKeepAliveActive) {
         stdin.unref();
