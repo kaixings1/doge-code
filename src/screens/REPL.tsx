@@ -2511,6 +2511,8 @@ export function REPL({
           return [...oldMessages, newMessage];
         });
       } else {
+        // 【临时探针】追踪进入 REPL 的消息
+        console.log('[PROBE:repl-msg] type=' + newMessage.type + ' blocks=' + JSON.stringify((((newMessage).message && (newMessage).message.content) || []).map((x) => x.type)) + ' txt=' + JSON.stringify((((newMessage).message && (newMessage).message.content) || []).filter((x) => x.type === 'text').map((x) => String(x.text).slice(0, 40))));
         setMessages(oldMessages => [...oldMessages, newMessage]);
       }
       // Block ticks on API errors to prevent tick → error → tick
