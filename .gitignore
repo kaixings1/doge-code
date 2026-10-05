@@ -15,6 +15,11 @@ stderr*.txt
 stdout*.txt
 # d.bat 每次带 %1.txt 生成（如 9router.txt），属运行时调试日志
 [0-9]*.txt
+# d.bat 的参数化调试日志名可以是任意字母串（如 f.txt / ten.txt），
+# 以及指向它们的 latest 符号链接
+f.txt
+ten.txt
+latest
 
 # 3D Robot Viewer 项目（临时，排除在 git 之外）
 Project/

@@ -63,7 +63,9 @@ describe('createOpenAICompatStream 请求侧日志', () => {
     expect(all).toContain('消息数=4')
     expect(all).toContain('工具数=1')
     expect(all).toContain('system:100, user:14, assistant:6, user:6')
-    expect(all).toContain('最后一条 user 消息: 看看这个文件')
+    // 最后一条 user 消息只记长度，不落原文——否则合成注入块会整段刷进日志
+    expect(all).toContain('最后一条 user 消息: 长度=6')
+    expect(all).not.toContain('看看这个文件')
     // 附加工具必须落到日志里：排查"拼接了什么工具"全靠这一行
     expect(all).toContain('本次请求附加工具: [Read]')
     expect(all).toContain('system prompt 长度=100')
@@ -76,6 +78,31 @@ describe('createOpenAICompatStream 请求侧日志', () => {
     const sentBody = JSON.parse((fetchMock.mock.calls[0]![1] as any).body)
     expect(sentBody.stream).toBe(true)
     expect(sentBody.messages).toHaveLength(4)
+  })
+
+  it('最后一条 user 消息含合成注入块时给出标记而非原文', async () => {
+    written.length = 0
+    const fetchMock = vi.fn(async () => sseStream())
+    const injected = [
+      '<system-reminder>',
+      '以下技能可通过 Skill 工具使用：update-config',
+      '</system-reminder>',
+      '<local-command-caveat>提醒：以下消息是用户在运行本地命令时生成的。</local-command-caveat>',
+    ].join('\n')
+    await createOpenAICompatStream(
+      { apiKey: 'k', baseURL: 'https://example.com/v1', fetch: fetchMock as any },
+      {
+        model: 'm',
+        messages: [{ role: 'user', content: injected }],
+      },
+      new AbortController().signal,
+    )
+    const all = written.join('')
+    // 必须指出最后一轮被注入了什么，否则排查时无法区分人话与合成块
+    expect(all).toContain('含注入块=[<system-reminder>, local-command-caveat]')
+    // 注入块正文一律不落盘
+    expect(all).not.toContain('以下技能可通过 Skill 工具使用')
+    expect(all).not.toContain('除非用户明确要求')
   })
 
   it('无 user 消息时不崩溃', async () => {

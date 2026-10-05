@@ -182,6 +182,7 @@ import { copyPlanForFork, copyPlanForResume, getPlanSlug, setPlanSlug } from '..
 import { clearSessionMetadata, resetSessionFilePointer, adoptResumedSessionFile, removeTranscriptMessage, restoreSessionMetadata, getCurrentSessionTitle, isEphemeralToolProgress, isLoggableMessage, saveWorktreeState, getAgentTranscript } from '../utils/sessionStorage.js';
 import { deserializeMessages } from '../utils/conversationRecovery.js';
 import { extractReadFilesFromMessages, extractBashToolsFromMessages } from '../utils/queryHelpers.js';
+import { planRejectedSubmit } from '../utils/rejectedSubmitDisplay.js';
 import { resetMicrocompactState } from '../services/compact/microCompact.js';
 import { runPostCompactCleanup } from '../services/compact/postCompactCleanup.js';
 import { provisionContentReplacementState, reconstructContentReplacementState, type ContentReplacementRecord } from '../utils/toolResultStorage.js';
@@ -2768,10 +2769,21 @@ export function REPL({
     if (thisGeneration === null) {
       logEvent('tengu_concurrent_onquery_detected', {});
 
-      // Extract and enqueue user message text, skipping meta messages
-      // (e.g. expanded skill content, tick prompts) that should not be
-      // replayed as user-visible text.
-      newMessages.filter((m): m is UserMessage => m.type === 'user' && !m.isMeta).map(_ => getContentText(_.message.content)).filter(_ => _ !== null).forEach((msg, i) => {
+      // 用户消息的显示必须与「能否立即开始 query」解耦。
+      // 旧实现：guard 被占用时（上一次 query 尚未收尾）只把文本 enqueue 回队列
+      // 就 return，从不调用 setMessages —— 结果是用户敲的这条消息既不进
+      // messages 数组、也不在界面上留痕（往上滚同样看不到），只剩 AI 的回复
+      // 突兀出现。且若上一次 query 因故永不收尾（guard 永久 running），之后
+      // 每一次提交都会走这条分支，表现为「从第二次起再也没有回显」。
+      // 现在：无论 guard 是否被占用，都先把消息落进可见对话记录，再排队执行。
+      // 排队语义不变（文本仍 enqueue），只是补回可见性。
+      // 判定抽到 utils/rejectedSubmitDisplay.ts，以便单测真覆盖（内联版本只能
+      // 靠复刻逻辑测试，生产代码改变时不会失败）。
+      const rejectedPlan = planRejectedSubmit(newMessages, getContentText);
+      if (rejectedPlan.shouldDisplay) {
+        setMessages(oldMessages => [...oldMessages, ...newMessages]);
+      }
+      rejectedPlan.enqueueTexts.forEach((msg, i) => {
         enqueue({
           value: msg,
           mode: 'prompt'
@@ -4364,7 +4376,7 @@ export function REPL({
         jumpToNew(scrollRef.current);
       }} scrollable={<>
               <TeammateViewHeader />
-              <Messages messages={displayedMessages} tools={tools} commands={commands} verbose={verbose} toolJSX={toolJSX} toolUseConfirmQueue={toolUseConfirmQueue} inProgressToolUseIDs={viewedTeammateTask ? viewedTeammateTask.inProgressToolUseIDs ?? new Set() : inProgressToolUseIDs} isMessageSelectorVisible={isMessageSelectorVisible} conversationId={conversationId} screen={screen} streamingToolUses={streamingToolUses} showAllInTranscript={showAllInTranscript} agentDefinitions={agentDefinitions} onOpenRateLimitOptions={handleOpenRateLimitOptions} isLoading={isLoading} streamingText={isLoading && !viewedAgentTask ? visibleStreamingText : null} isBriefOnly={viewedAgentTask ? false : isBriefOnly} unseenDivider={viewedAgentTask ? undefined : unseenDivider} scrollRef={isFullscreenEnvEnabled() ? scrollRef : undefined} trackStickyPrompt={isFullscreenEnvEnabled() ? true : undefined} cursor={cursor} setCursor={setCursor} cursorNavRef={cursorNavRef} />
+              <Messages messages={displayedMessages} tools={tools} commands={commands} verbose={verbose} toolJSX={toolJSX} toolUseConfirmQueue={toolUseConfirmQueue} inProgressToolUseIDs={viewedTeammateTask ? viewedTeammateTask.inProgressToolUseIDs ?? new Set() : inProgressToolUseIDs} isMessageSelectorVisible={isMessageSelectorVisible} conversationId={conversationId} screen={screen} streamingToolUses={streamingToolUses} showAllInTranscript={showAllInTranscript} agentDefinitions={agentDefinitions} onOpenRateLimitOptions={handleOpenRateLimitOptions} isLoading={isLoading} streamingText={isLoading && !viewedAgentTask ? visibleStreamingText : null} streamingThinking={viewedAgentTask ? null : streamingThinking} isBriefOnly={viewedAgentTask ? false : isBriefOnly} unseenDivider={viewedAgentTask ? undefined : unseenDivider} scrollRef={isFullscreenEnvEnabled() ? scrollRef : undefined} trackStickyPrompt={isFullscreenEnvEnabled() ? true : undefined} cursor={cursor} setCursor={setCursor} cursorNavRef={cursorNavRef} />
               <AwsAuthStatusBox />
               {/* 当模态框显示时隐藏处理中占位符 —
                   它会位于最后可见的对话记录行上方，正好在 ▔ 分隔符上方，显示“❯ /config”作为多余的杂乱（模态框本身就是 /config UI）。在模态框外部它保持存在，以便用户在处理时看到他们的输入回显。 */}

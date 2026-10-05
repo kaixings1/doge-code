@@ -2672,6 +2672,33 @@ function isSkillMessageFilterEnabled(): boolean {
   return !isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_SKILL_MESSAGE_FILTER)
 }
 
+/**
+ * 判定本轮技能注入是否为「初始批次」（首次宣布全量列表）。
+ *
+ * 判据三要素缺一不可：
+ * - sentCount === 0：进程内从未发过（/clear 后 resetSentSkillNames 会清空）
+ * - totalAfterFilter === totalBeforeFilter：本轮未被关键词/发现模式过滤缩水
+ * - totalAfterFilter > 0：确实有内容可发
+ *
+ * 为什么必须用过滤前后的数量比较：newSkills 恒为 allCommands 的子集，
+ * 若拿 newSkills.length 与过滤后的 allCommands.length 比较，等号退化为
+ * 恒等式，无法区分「全量」与「缩水」，判据形同虚设。
+ *
+ * UI 侧 AttachmentMessage 对 isInitial 直接 return null（不渲染），
+ * 因此误判为 initial 会让用户看不到技能列表。
+ */
+export function isInitialSkillListing(
+  sentCount: number,
+  totalBeforeFilter: number,
+  totalAfterFilter: number,
+): boolean {
+  return (
+    sentCount === 0 &&
+    totalAfterFilter > 0 &&
+    totalAfterFilter === totalBeforeFilter
+  )
+}
+
 async function getSkillListingAttachments(
   toolUseContext: ToolUseContext,
   minimalFirstTurn: boolean,
@@ -2707,6 +2734,11 @@ async function getSkillListingAttachments(
     return !dangerousSkillPrefixes.some(prefix => cmd.name.startsWith(prefix))
   })
 
+  // 过滤前的全量数。isInitial 的判据需要它：newSkills 是在过滤之后计算的，
+  // 直接用 allCommands.length 与之比较是恒等式（newSkills 恒 ⊆ allCommands），
+  // 无法反映「本轮是否被关键词过滤缩水」。
+  const totalBeforeFilter = allCommands.length
+
   // 树状渐进过滤，优先级从「最窄」到「最宽」逐级放宽：
   // 1. 首轮问候（minimalFirstTurn）→ 仅 bundled + MCP
   // 2. 技能搜索开启 → 仅 bundled + MCP（发现机制接管长尾）
@@ -2729,6 +2761,11 @@ async function getSkillListingAttachments(
     sentSkillNames.set(agentKey, sent)
   }
 
+  // 按名字去重：本地技能与 MCP 技能同名时 uniqBy 已处理，但 bundled 技能
+  // 可能同时经 localCommands 与其它来源注册。若不去重，重复项都算「新增」，
+  // 每轮都会把它们重新宣布一遍，日志里表现为技能列表反复刷屏。
+  allCommands = uniqBy(allCommands, 'name')
+
   // 恢复路径：先前进程已注入了列表；它已在对话记录中。
   // 将所有当前标记为已发送，这样只有恢复后的增量
   // （稍后通过 /reload-plugins 等加载的技能）才会被宣布。
@@ -2747,17 +2784,30 @@ async function getSkillListingAttachments(
     return []
   }
 
-  // 如果还没有发送过任何技能，这是初始批次
-  const isInitial = sent.size === 0
+  // 只有进程内一次都没发过、且本轮确实是全量（未被过滤缩水）时才算初始批次。
+  // 用 sent.size 判断在 /clear 后是错的：caches.ts 会调 resetSentSkillNames() 清空 sent，
+  // 于是每一轮 /clear 后的注入都被标成 initial。UI 侧 AttachmentMessage 对
+  // isInitial 直接 return null（不渲染），因此把非全量批次误标为 initial 会让
+  // 用户看不到技能列表，而日志里却反复出现「Sending N skills (initial)」。
+  const isInitial = isInitialSkillListing(
+    sent.size,
+    totalBeforeFilter,
+    allCommands.length,
+  )
 
   // 标记为已发送
   for (const cmd of newSkills) {
     sent.add(cmd.name)
   }
 
-  logForDebugging(
-    `Sending ${newSkills.length} skills via attachment (${isInitial ? 'initial' : 'dynamic'}, ${sent.size} total sent)`,
-  )
+  // 常态去噪：非初始批次的增量注入是常规行为，不必每次落盘。
+  // 仅初始批次（真正首次宣布全量）与「本轮有新增」时记录；
+  // 若此处无条件记录，技能列表会随每轮注入反复刷屏（见上方去重注释描述的同一现象）。
+  if (isInitial || newSkills.length > 0) {
+    logForDebugging(
+      `Sending ${newSkills.length} skills via attachment (${isInitial ? 'initial' : 'dynamic'}, ${sent.size} total sent)`,
+    )
+  }
 
   // 使用现有逻辑在预算内格式化
   const contextWindowTokens = getContextWindowForModel(

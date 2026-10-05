@@ -314,12 +314,24 @@ export async function createOpenAICompatStream(
       { level: 'debug' },
     )
   }
-  // 排查"发了什么"通常只需最新用户输入，完整请求体（含 system prompt 与历史）体积过大，不落盘
+  // 排查"发了什么"只需要知道最新用户输入的长度与构成。
+  // 直接落盘原文会让每个被合并进最后一轮的合成注入块（<system-reminder>、
+  // 技能列表、/clear 的 local-command 回显）整段刷进 debug 日志，
+  // 淹没真正的人话输入。默认只记长度与标记，逐字核对请开 DOGE_DEBUG_DUMP_REQUEST=1。
   const lastUserMessage = requestMessages.filter(m => m.role === 'user').at(-1)
   if (lastUserMessage && typeof lastUserMessage.content === 'string') {
-    logForDebugging(`[openaiCompat] 最后一条 user 消息: ${lastUserMessage.content}`, {
-      level: 'debug',
-    })
+    const text = lastUserMessage.content
+    const markers = [
+      '<system-reminder>',
+      'local-command-caveat',
+      '<command-name>',
+      'local-command-stdout',
+    ].filter(m => text.includes(m))
+    const suffix = markers.length > 0 ? `, 含注入块=[${markers.join(', ')}]` : ''
+    logForDebugging(
+      `[openaiCompat] 最后一条 user 消息: 长度=${text.length}${suffix}`,
+      { level: 'debug' },
+    )
   }
   // 完整 JSON 请求体：体积可达数十 KB，默认关闭。
   // 需要逐字核对实际发出的数据包时，用 DOGE_DEBUG_DUMP_REQUEST=1 启动。

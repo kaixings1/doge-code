@@ -3003,6 +3003,17 @@ export function handleMessageFromStream(
   switch ((message.event as any).type) {
     case 'content_block_start':
       onStreamingText?.(() => null)
+      // 任意非思考块开始 = 思考阶段结束：给实时思考块打结束时间戳（保留显示 30s）。
+      if (
+        (message.event as any).content_block.type !== 'thinking' &&
+        (message.event as any).content_block.type !== 'redacted_thinking'
+      ) {
+        onStreamingThinking?.(current =>
+          current?.isStreaming
+            ? { ...current, isStreaming: false, streamingEndedAt: Date.now() }
+            : current,
+        )
+      }
       if (
         feature('CONNECTOR_TEXT') &&
         isConnectorTextBlock((message.event as any).content_block)
@@ -3015,6 +3026,11 @@ export function handleMessageFromStream(
         case 'thinking':
         case 'redacted_thinking':
           onSetStreamMode('thinking')
+          // 开启实时思考块，使主界面能边思考边显示；后续 thinking_delta 累积追加。
+          onStreamingThinking?.(() => ({
+            thinking: '',
+            isStreaming: true,
+          }))
           yieldToReact()
           return
         case 'text':
@@ -3080,9 +3096,16 @@ export function handleMessageFromStream(
           })
           return
         }
-        case 'thinking_delta':
-          onUpdateLength((message.event as any).delta.thinking)
+        case 'thinking_delta': {
+          const thinkingDelta = (message.event as any).delta.thinking as string
+          onUpdateLength(thinkingDelta)
+          // 追加到实时思考块，实现主界面增量显示。
+          onStreamingThinking?.(current => ({
+            thinking: (current?.thinking ?? '') + thinkingDelta,
+            isStreaming: true,
+          }))
           return
+        }
         case 'signature_delta':
           // 签名是加密认证字符串，而非模型输出。
           // 将其排除在 onUpdateLength 之外，避免其膨胀 OTPS 指标和动画令牌计数器。
