@@ -877,9 +877,13 @@ export class MobileBridgeServer {
 
   /**
    * 发送消息到指定会话
+   *
+   * 当前实现即广播。这不是缺陷：单实例下连多台设备属于「同一 CLI 会话被
+   * 多设备观察」，assistant 回复本就应让所有设备看到——隔离它们反而会
+   * 破坏多设备同步。真正需要点对点的消息（result 回执 / error）由
+   * handleMobileMessage 直接用发起者的 ws.send() 发送，不经此处。
    */
-  sendToSession(sessionId: string, type: string, data: Record<string, unknown>): void {
-    // 目前广播到所有客户端，未来可以按 sessionId 过滤
+  sendToSession(_sessionId: string, type: string, data: Record<string, unknown>): void {
     this.broadcast(type, data)
   }
 
