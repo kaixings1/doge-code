@@ -57,8 +57,10 @@ Bug 修复 = 根治，不是治标：一个报告说的是症状。Grep 你触�
 
 # MSYS2 搜索工具使用规则（血的教训）
 `~/.bashrc` 将 `rg`/`findstr`/`find` alias 到 `.tools/` 下的 Node.js 脚本，**不是原生 ripgrep**。
-- `rg` → `.tools/search.cjs`：支持 `-n`/`-i`/`-l`/`-c`/`-C`/`-r`/`--glob`/`--max-depth`，默认递归当前目录
+- `rg` → `.tools/grep.cjs`：直通原生 ripgrep 的薄包装，支持目录递归及 `-n`/`-i`/`-l`/`-c`/`-C`/`--glob`/`--max-depth` 等全部 ripgrep 参数
 - `find` → `.tools/find.cjs`：find 到 ripgrep `--files` 的转换
+- `.tools/search.cjs`：**仅支持单文件**精确读取（`fs.readFileSync`），传目录必报 `EISDIR`——**绝不可**配成 `rg` alias，也不要用它搜目录
+- **cmd.exe 下不要用 `head`/`tail`/`sed`/`awk` 等 MSYS 工具**：`F:\bin` 下这些命令是无扩展名的 Cygwin 符号链接（指向 busybox），cmd 无法执行，会报 `'head' is not recognized as an internal or external command`。需要截断输出请改用 `> file` 后 `type file`，或写进临时文件再查看
 - **禁止**在 MSYS2 bash 中直接调用 `grep`/`rg` 原生二进制绕过 alias——MSYS2 的参数转换层会破坏引号和 glob 模式（单引号 `'!x64/**'` 会被并入路径，双引号 `"*.cpp"` + 反斜杠路径会产生 `\"*.cpp"` 错误）
 - **搜索目录时必须给目录路径，不要给 `.`**：虽然 `.` 已被处理为默认递归根，但显式目录路径更安全
 - **glob 语法**：`--glob "*.cpp"` 正向匹配，`--glob "!*.md"` 反向排除

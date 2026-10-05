@@ -61,25 +61,25 @@ export MSYS_NO_PATHCONV=1
 export MSYS2_ARG_CONV_EXCL=*
 export MSYS2_ENV_CONV_EXCL=/*/
 _TOOLS_DIR=$(cygpath -w /d/doge-code/.tools)
-alias rg="node \"\$_TOOLS_DIR/search.cjs\""
-alias findstr="node \"\$_TOOLS_DIR/search.cjs\""
+# rg/findstr 转发到 grep.cjs（直通原生 ripgrep，支持目录递归/-l/--glob）
+# search.cjs 只支持单文件精确读取，不能用作 rg alias（传目录会 EISDIR）
+alias rg="node \"\$_TOOLS_DIR/grep.cjs\""
+alias findstr="node \"\$_TOOLS_DIR/grep.cjs\""
 alias find="node \"\$_TOOLS_DIR/find.cjs\""
 ```
 
-### search.cjs 能力边界（`.tools/search.cjs`）
+### rg / grep / find 包装器（`.tools/`）
 
-`rg` alias 指向 `search.cjs`（非原生 ripgrep），支持：
-- `-n` 行号、`-i` 忽略大小写、`-l` 只输出文件名、`-c` 计数
-- `-C N` 上下文行、`-r` 递归（默认开启）
-- `--glob "*.cpp"` 正向 glob、`--glob "!*.md"` 反向排除
-- `--max-depth N` 限制递归深度
-- 位置参数：第一个是 pattern，后续是路径（可省略，默认 `.`）
+- `.tools/grep.cjs`：直通原生 ripgrep 的薄包装（`spawn('rg', args)`），**完整支持**目录递归、`-l`、`-c`、`-n`、`-i`、`--glob`、`--max-depth` 等全部 ripgrep 参数
+- `.tools/find.cjs`：将 `find` 常用参数（`-name`/`-type`/`-maxdepth`）转换为 ripgrep `--files` 参数
+- `.tools/search.cjs`：**仅支持单文件**精确读取（`fs.readFileSync`），传目录会报 `EISDIR`；**不要**把它配成 `rg` alias
 
-**常见错误与修复**：
-- `rg -n "pattern" .` → 正确（递归搜索当前目录）
-- `rg -n "pattern" --glob "*.cpp" dir` → 正确（只搜 .cpp 文件）
-- `rg -n "pattern" "*.cpp"` → **错误**（`*.cpp` 会被当作路径，应改用 `--glob`）
-- 如需原生 ripgrep 完整功能：`command rg ...`（绕过 alias，但参数需用 Windows 路径）
+**常见用法**：
+- `rg -n "pattern" src` → 正确（grep.cjs 递归搜索目录）
+- `rg -l "pattern" src` → 正确（只列出匹配文件名）
+- `rg -n "pattern" --glob "*.cpp" src` → 正确（限定文件类型）
+- `find src -name "*.ts"` → 正确（find.cjs）
+- 需要原生 ripgrep 完整功能：`command rg ...`（绕过 alias）
 
 ## 测试配置
 
