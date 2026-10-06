@@ -15,21 +15,14 @@ import { registerGrillingSkill } from './grilling.js'
 import { registerGrillWithDocsSkill } from './grillWithDocs.js'
 import { registerPrototypeSkill } from './prototype.js'
 import { registerImproveCodebaseArchitectureSkill } from './improveCodebaseArchitecture.js'
-import { registerSetupPreCommitSkill } from './setupPreCommit.js'
 import { registerTeachSkill } from './teach.js'
 import { registerToPrdSkill } from './toPrd.js'
 import { registerToIssuesSkill } from './toIssues.js'
 import { registerTriageSkill } from './triage.js'
-import { registerScaffoldExercisesSkill } from './scaffoldExercises.js'
 import { registerWritingGreatSkillsSkill } from './writingGreatSkills.js'
-import { registerWritingBeatsSkill } from './writingBeats.js'
-import { registerWritingFragmentsSkill } from './writingFragments.js'
-import { registerWritingShapeSkill } from './writingShape.js'
 import { registerEditArticleSkill } from './editArticle.js'
-import { registerObsidianVaultSkill } from './obsidianVault.js'
 import { registerAskMattSkill } from './askMatt.js'
 import { registerGrillMeSkill } from './grillMe.js'
-import { registerMigrateToShoehornSkill } from './migrateToShoehorn.js'
 import { registerCuratorReviewSkill } from './curatorReview.js'
 import { registerMemoryManagerSkill } from './memoryManager.js'
 import { registerSkillBundleCommand } from './skillBundle.js'
@@ -38,7 +31,6 @@ import { registerDebugSkill } from './debug.js'
 import { registerKeybindingsSkill } from './keybindings.js'
 import { registerLoremIpsumSkill } from './loremIpsum.js'
 import { registerRememberSkill } from './remember.js'
-import { registerSimplifySkill } from './simplify.js'
 import { registerSkillifySkill } from './skillify.js'
 import { registerStuckSkill } from './stuck.js'
 import { registerUpdateConfigSkill } from './updateConfig.js'
@@ -66,7 +58,6 @@ export function initBundledSkills(): void {
   registerLoremIpsumSkill()
   registerSkillifySkill()
   registerRememberSkill()
-  registerSimplifySkill()
   registerBatchSkill()
   registerHandoffSkill()
   registerDiagnosingBugsSkill()
@@ -80,21 +71,14 @@ export function initBundledSkills(): void {
   registerGrillWithDocsSkill()
   registerPrototypeSkill()
   registerImproveCodebaseArchitectureSkill()
-  registerSetupPreCommitSkill()
   registerTeachSkill()
   registerToPrdSkill()
   registerToIssuesSkill()
   registerTriageSkill()
-  registerScaffoldExercisesSkill()
   registerWritingGreatSkillsSkill()
-  registerWritingBeatsSkill()
-  registerWritingFragmentsSkill()
-  registerWritingShapeSkill()
   registerEditArticleSkill()
-  registerObsidianVaultSkill()
   registerAskMattSkill()
   registerGrillMeSkill()
-  registerMigrateToShoehornSkill()
   registerCuratorReviewSkill()
   registerMemoryManagerSkill()
   registerSkillBundleCommand()
