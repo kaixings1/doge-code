@@ -221,7 +221,7 @@ function execute(maxSteps?: number): void {
 
     queue.currentStepId = next.id
     saveQueue(queue)
-    logProgress(`开始��骤 [${next.id}]: ${next.subject}`)
+    logProgress(`开始步骤 [${next.id}]: ${next.subject}`)
 
     const result = runStep(next)
     saveQueue(queue)

@@ -317,7 +317,7 @@ async function runEventDrivenLoop(eventType: string, handler: string, config: Lo
   let processedCount = 0
 
   // 模拟事件监听
-  // 实际实现��会订阅 event-stream
+  // 实际实现是会订阅 event-stream
   const mockEvents = generateMockEvents(eventType, 5)
 
   for (const event of mockEvents) {

@@ -13,7 +13,7 @@ export const call: LocalCommandCall = async (args) => {
   }
   const p = args.trim().split(/\s+/)
   const c = p[0] || ''
-  if (!c) return { type: 'text', value: '📖 用法:\n/redis get <key> | 获取值\n/redis set <key> <value> | 设置值\n/redis del <key> | 删�键\n/redis keys <pattern> | 搜索键\n/redis ping | 测试连接\n/redis info | 服务器信息\n/redis flush | 清空数据库' }
+  if (!c) return { type: 'text', value: '📖 用法:\n/redis get <key> | 获取值\n/redis set <key> <value> | 设置值\n/redis del <key> | 删除键\n/redis keys <pattern> | 搜索键\n/redis ping | 测试连接\n/redis info | 服务器信息\n/redis flush | 清空数据库' }
 
   let r = ''
   const redisCmd = 'redis-cli'

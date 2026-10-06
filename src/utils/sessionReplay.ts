@@ -73,7 +73,7 @@ export function loadSession(sessionId: string): Message[] {
 }
 
 /**
-� * 重放会话到指定消息 UUID（包含该消息及之前的所有消息）。
+ * 重放会话到指定消息 UUID（包含该消息及之前的所有消息）。
  * 返回从会话开始到目标消息的完整对话链。
  */
 export function replayTo(sessionId: string, messageUuid: UUID, options: ReplayOptions = {}): ReplayResult {
@@ -121,7 +121,7 @@ export function replayTo(sessionId: string, messageUuid: UUID, options: ReplayOp
 }
 
 /**
- * 获取指定消息�完整祖先链（从会话开始到该消息）。
+ * 获取指定消息的完整祖先链（从会话开始到该消息）。
  * 通过 parentUuid 递归追踪。
  */
 export function getMessageChain(sessionId: string, messageUuid: UUID): Message[] {

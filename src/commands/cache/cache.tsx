@@ -90,7 +90,7 @@ export const call: LocalJSXCommandCall = async (onDone, _context, args) => {
   if (operation === 'clear') {
     const cacheName = target
     if (cacheName === 'all') {
-      onDone('⚠️ 确定要清除所有缓存？这将删除所有 .doge 数据。请使用��体缓存名或 "all --force"。')
+      onDone('⚠️ 确定要清除所有缓存？这将删除所有 .doge 数据。请使用具体缓存名或 "all --force"。')
       return null
     }
     const cachePath = join(DOGEDIR_CACHE, cacheName)

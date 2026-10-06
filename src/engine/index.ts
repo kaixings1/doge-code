@@ -388,7 +388,7 @@ export class QueryEngine {
   /**
    * 在循环结束后继续发送消息并重启迭代。
    * 如果状态机处于终止状态（done/crashed/aborted），先 reset 再继续。
-   * 供��部在对话意外终止时主动续命使用。
+   * 供外部在对话意外终止时主动续命使用。
    */
   async sendMessage(userMessage: string): Promise<QueryResult> {
     if (this.stateMachine.isTerminal()) {

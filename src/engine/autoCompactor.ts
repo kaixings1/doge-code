@@ -87,7 +87,7 @@ export class SummaryStrategy implements CompactStrategy {
       ? `\n\n[相关记忆]\n${options.memoryContext.join('\n')}`
       : ''
 
-    // 有 LLM client 时生成真��摘要，否则回退到占位摘要
+    // 有 LLM client 时生成真实摘要，否则回退到占位摘要
     const summary = this._llmClient
       ? await this.generateSummaryWithLLM(old, memoryContext)
       : await this.generateSummaryFallback(old);

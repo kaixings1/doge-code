@@ -56,7 +56,7 @@ export const ROLE_REGISTRY: Record<string, RoleConfig> = {
 2. 定义模块边界和接口契约
 3. 评估技术选型和风险
 4. 输出架构决策记录（ADR）
-5. 与 Engineer� 协作确保方案可落地
+5. 与 Engineer 协作确保方案可落地
 
 工作原则：
 - 方案必须可执行、有明确的模块划分
@@ -89,7 +89,7 @@ export const ROLE_REGISTRY: Record<string, RoleConfig> = {
 
 工作原则：
 - 测试覆盖正常路径、边界条件和错误路径
-- 失败必须附带错误日志和修复建┮�
+- 失败必须附带错误日志和修复建议
 - 覆盖率目标：核心模块 >= 80%
 - 输出格式：测试摘要表 + 失败详情 + 修复建议`,
     allowedTools: ['bash', 'file_read', 'file_write', 'glob', 'grep'],
@@ -202,7 +202,7 @@ function getNextStage(current: WorkflowStage, mode: string): WorkflowStage | nul
   return stages[idx + 1]
 }
 
-// ─── 阶段提示词构建 ───────────────────────�────────────────────
+// ─── 阶段提示词构建 ──────────────────────────────────────────────
 
 function buildStagePrompt(ctx: StageContext): string {
   const role = ROLE_REGISTRY[ctx.stage]
@@ -236,7 +236,7 @@ function buildStagePrompt(ctx: StageContext): string {
       return `## 实现阶段\n\n任务：${ctx.task}\n\n请根据任务计划编写代码：\n1. 按计划逐步实现\n2. 遵循项目代码规范\n3. 每个 commit 有清晰的 message\n4. 完成后运行相关测试\n5. 如果测试失败，自动修复${previous}${roleOutputs}${retryHint}`
 
     case 'verify':
-      return `## 验证阶段\n\n任务：${ctx.task}\n\n请验证实现是否正确：\n1. 运行相关测试（单元测试 + 集成测试）\n2. 检查代码覆盖率\n3. 验证是否符合 PRD 的验收��准\n4. 输出质量报告：\n   - 测试通过率\n   - 覆盖率\n   - 阻塞项和修复建议${previous}${roleOutputs}${retryHint}`
+      return `## 验证阶段\n\n任务：${ctx.task}\n\n请验证实现是否正确：\n1. 运行相关测试（单元测试 + 集成测试）\n2. 检查代码覆盖率\n3. 验证是否符合 PRD 的验收标准\n4. 输出质量报告：\n   - 测试通过率\n   - 覆盖率\n   - 阻塞项和修复建议${previous}${roleOutputs}${retryHint}`
 
     case 'review':
       return `## 最终审查阶段\n\n任务：${ctx.task}\n\n请对所有阶段输出进行最终审查：\n1. 检查所有阶段输出是否完整\n2. 验证实现是否满足需求\n3. 检查代码质量和规范\n4. 给出最终结论：通过 / 不通过（附带原因）\n5. 输出交付物清单${previous}${roleOutputs}${retryHint}`
