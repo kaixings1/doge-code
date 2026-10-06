@@ -19,7 +19,15 @@ stdout*.txt
 # 以及指向它们的 latest 符号链接
 f.txt
 ten.txt
+local.txt
+k.txt
 latest
+
+# 渲染性能采样输出（--debug-file 无参数时回退的文件名就叫 "0"）
+/0
+
+# 源码打包快照（10MB 二进制，首次入库即不可 diff 且持续膨胀）
+src.rar
 
 # 3D Robot Viewer 项目（临时，排除在 git 之外）
 Project/
