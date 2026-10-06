@@ -66,7 +66,7 @@ describe('MessageLoop 自动继续', () => {
     ;(loop as any).lastToolCalls = []
   })
 
-  // ── 默认开启：未配置时自动继续 ��─
+  // ── 默认开启：未配置时自动继续 ─
 
   it('未配置 autoContinue 时，AI 回复含"是否继续"应自动继续', async () => {
     const result = await loop.recordAssistant({
@@ -78,7 +78,7 @@ describe('MessageLoop 自动继续', () => {
   })
 
   it('未配置 autoContinue 时，read 后 AI 返回纯文本应自动继续', async () => {
-    ;(loop as any).lastToolCalls = [{ name: 'read' }]
+    ;(loop as any).lastToolCalls = [{ name: 'Read' }]
     const result = await loop.recordAssistant({
       content: '这是文件内容分析',
       toolCalls: [],
@@ -123,7 +123,7 @@ describe('MessageLoop 自动继续', () => {
 
   it('上一步执行了 read，AI 返回纯文本且配置 enabled 时应自动继续', async () => {
     const l = makeLoop({ enabled: true })
-    ;(l as any).lastToolCalls = [{ name: 'read' }]
+    ;(l as any).lastToolCalls = [{ name: 'Read' }]
     const result = await l.recordAssistant({
       content: '这是文件内容分析',
       toolCalls: [],
@@ -134,7 +134,7 @@ describe('MessageLoop 自动继续', () => {
 
   it('上一步执行了 grep，AI 返回纯文本且配置 enabled 时应自动继续', async () => {
     const l = makeLoop({ enabled: true })
-    ;(l as any).lastToolCalls = [{ name: 'grep' }]
+    ;(l as any).lastToolCalls = [{ name: 'Grep' }]
     const result = await l.recordAssistant({
       content: '匹配到 3 处',
       toolCalls: [],
@@ -199,7 +199,9 @@ describe('MessageLoop 自动继续', () => {
 
   it('上一步是 write 工具，AI 返回纯文本不应自动继续（即使 enabled）', async () => {
     const l = makeLoop({ enabled: true })
-    ;(l as any).lastToolCalls = [{ name: 'write' }]
+    // 用真实注册名 Write：集合只含 read/grep/glob，Write 必须不在其中。
+    // 原先写小写 'write' 时该用例恒通过（集合怎么改都不变），是假通过。
+    ;(l as any).lastToolCalls = [{ name: 'Write' }]
     const result = await l.recordAssistant({
       content: '文件已写入',
       toolCalls: [],
@@ -244,14 +246,14 @@ describe('MessageLoop 自动继续', () => {
 
   it('超过 maxCount 后不应再自动继续（防无限循环）', async () => {
     const l = makeLoop({ enabled: true, readSearch: true, maxCount: 1 })
-    ;(l as any).lastToolCalls = [{ name: 'read' }]
+    ;(l as any).lastToolCalls = [{ name: 'Read' }]
     const r1 = await l.recordAssistant({
       content: '第一次分析',
       toolCalls: [],
       stopReason: 'end_turn',
     })
     expect(r1).toBe(true)
-    ;(l as any).lastToolCalls = [{ name: 'read' }]
+    ;(l as any).lastToolCalls = [{ name: 'Read' }]
     const r2 = await l.recordAssistant({
       content: '第二次分析',
       toolCalls: [],

@@ -108,7 +108,9 @@ describe('buildFollowCommand', () => {
       'powershell',
       '-NoProfile',
       '-Command',
-      "Get-Content -LiteralPath 'D:\\logs\\app.log' -Wait -Tail 50",
+      // 必须显式 -Encoding utf8：Get-Content 默认按系统 ANSI 代码页解码，
+      // 中文 Windows（GBK/936）读 UTF-8 日志会输出乱码。
+      "Get-Content -LiteralPath 'D:\\logs\\app.log' -Encoding utf8 -Wait -Tail 50",
     ])
   })
 

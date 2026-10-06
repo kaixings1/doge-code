@@ -377,10 +377,13 @@ export class MessageLoop {
 
   /** 将助手回复写入 conversation，并决定是否继续（吸收自 CoreCoder agent.py） */
   private async _recordAssistantResponse(processed: ProcessedResponse): Promise<boolean> {
-    // 工具名用真实注册名（首字母大写）：Read / Grep / Glob。
-    // 小写写法与 lastToolCalls 的真实值恒不等，分支永不触发（'search' 无对应工具）。
+    // 大小写不敏感：真实注册名是首字母大写（Read / Grep / Glob），但
+    // 测试桩、第三方桥接或未来的工具重命名都可能给出小写形式。
+    // 精确比较会让分支在命名形式变化时静默失效（曾因此 4 条用例长期红着）。
+    // 注意 'search' 无对应工具，故不在集合内。
+    const readSearchTools = new Set(['read', 'grep', 'glob'])
     const hadReadOrSearch = this.lastToolCalls.some(
-      tc => tc.name === 'Read' || tc.name === 'Grep' || tc.name === 'Glob'
+      tc => readSearchTools.has(tc.name.toLowerCase())
     )
     const textContent = this._extractText(processed.content)
     const hasToolCalls = processed.toolCalls.length > 0

@@ -195,12 +195,15 @@ describe('MessageLoop 自动继续集成测试', () => {
     expect(result.state).toBe('done')
   })
 
-  it('上一步执行了 search，AI 返回纯文本应自动继续', async () => {
+  it('上一步执行了搜索类工具，AI 返回纯文本应自动继续', async () => {
+    // 工具名必须是真实注册名：本项目没有名为 'search' 的工具（只有
+    // Grep / Glob / CodeSearch）。原先写 'search' 使该用例测的是一个
+    // 生产环境不存在的工具，恒不触发，与实现脱节。
     const deps = createDeps([
       {
         content: '开始搜索',
         stopReason: 'end_turn',
-        toolCalls: [{ id: 'tc_1', name: 'search', input: { query: 'test' } }],
+        toolCalls: [{ id: 'tc_1', name: 'grep', input: { pattern: 'test' } }],
       },
       { content: '搜索完成，共 3 条匹配。', stopReason: 'end_turn' },
       { content: '根据搜索结果，共 3 条匹配，已整理完毕。', stopReason: 'end_turn' },
