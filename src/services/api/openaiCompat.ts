@@ -551,6 +551,11 @@ async function* createAnthropicStreamFromOpenAIInner(
   let promptTokens = 0
   let completionTokens = 0
   let responseBytes = 0
+  // 高频流式日志的节流累计器（见下方 chunk/SSE 日志点）
+  let chunkCount = 0
+  let sseEventCount = 0
+  let lastChunkLogAt = 0
+  let lastSseLogAt = 0
 
   // 原生事件路径的索引映射：上游 index -> Anthropic index，以及块类型
   const nativeIdxMap = new Map<number, number>()
@@ -785,19 +790,33 @@ async function* createAnthropicStreamFromOpenAIInner(
       logForDebugging(`[openaiCompat] 流读取完成, 总响应字节数=${responseBytes}`, { level: 'debug' })
       break
     }
+    // 只解码一次并复用：TextDecoder 在 { stream: true } 下是有状态的，
+    // 对同一 chunk 解码两次会让第二次拿到空串/残片，破坏 SSE 解析。
+    const chunkText = value?.byteLength ? decoder.decode(value, { stream: true }) : ''
     if (value?.byteLength) {
       responseBytes += value.byteLength
-      const partialText = decoder.decode(value, { stream: true })
-      // 日志瘦身：每个 SSE chunk 都带完整 usage 对象（stepfun 等中转站的 include_usage），
-      // 实测使日志体积膨胀到实际文本的 20~40 倍，淹没真正的正文差异。故打印前剥离 usage，
-      // 并把截断上限从 21000 收紧到 800（保留正文片段足以定位问题）。
-      const preview = stripUsageFromPreview(partialText).slice(0, 800)
-      logForDebugging(`[openaiCompat] 读取到 chunk, 字节长度=${value.byteLength}, 部分文本预览: ${preview}${partialText.length > 800 ? '...(已截断)' : ''}`, { level: 'debug' })
+      // 日志瘦身（v2）：逐 chunk 打印会淹没日志（实测单次响应数百条）。
+      // 改为累计统计 + 节流：首个 chunk 打印带正文预演的详情，之后每 100 个
+      // chunk 或每 5s 打印一行累计摘要，既不丢总览又避免刷屏。
+      chunkCount++
+      const nowChunk = Date.now()
+      if (chunkCount === 1 || chunkCount % 100 === 0 || nowChunk - lastChunkLogAt >= 5000) {
+        // 每个 SSE chunk 都带完整 usage 对象（stepfun 等中转站的 include_usage），
+        // 实测使日志体积膨胀到实际文本的 20~40 倍，淹没真正的正文差异。故打印前剥离 usage。
+        const preview = chunkCount === 1 ? stripUsageFromPreview(chunkText).slice(0, 800) : ''
+        logForDebugging(`[openaiCompat] chunk 累计=${chunkCount}, 累计字节=${responseBytes}, 本次字节=${value.byteLength}${preview ? `, 首块预览: ${preview}${chunkText.length > 800 ? '...(已截断)' : ''}` : ''}`, { level: 'debug' })
+        lastChunkLogAt = nowChunk
+      }
     }
-    buffer += decoder.decode(value, { stream: true })
+    buffer += chunkText
     const sse = parseSSEChunk(buffer)
     if (sse.events.length) {
-      logForDebugging(`[openaiCompat] 解析出 ${sse.events.length} 个完整 SSE 事件`, { level: 'debug' })
+      sseEventCount += sse.events.length
+      const nowEv = Date.now()
+      if (sseEventCount <= sse.events.length || nowEv - lastSseLogAt >= 5000) {
+        logForDebugging(`[openaiCompat] 累计解析 ${sseEventCount} 个完整 SSE 事件（本次 +${sse.events.length}）`, { level: 'debug' })
+        lastSseLogAt = nowEv
+      }
     }
     buffer = sse.remainder
 

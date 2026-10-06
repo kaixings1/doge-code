@@ -56,6 +56,10 @@ const ERASE_THEN_HOME_PATCH = Object.freeze({
   content: ERASE_SCREEN + CURSOR_HOME
 });
 
+// [REPAINT] 日志去重状态（见 render 中的使用点）：相同行内容 10s 内只记一次。
+let lastRepaintSig: string | null = null;
+let lastRepaintAt = 0;
+
 // 针对每个 Ink 实例缓存，在尺寸变化时失效。替代屏幕下 frame.cursor.y 始终为 terminalRows - 1（参见 renderer.ts）。
 function makeAltScreenParkPatch(terminalRows: number) {
   return Object.freeze({
@@ -464,10 +468,20 @@ export default class Ink {
           reason: patch.reason
         });
         if (isDebugRepaintsEnabled() && patch.debug) {
-          const chain = dom.findOwnerChainAtRow(this.rootNode, patch.debug.triggerY);
-          logForDebugging(`[REPAINT] 全量重置 · ${patch.reason} · 行 ${patch.debug.triggerY}\n` + `  前: "${patch.debug.prevLine}"\n` + `  后: "${patch.debug.nextLine}"\n` + `  元凶: ${chain.length ? chain.join(' < ') : '(未捕获到所有者链)'}`, {
-            level: 'warn'
-          });
+          // 去重：动画帧（如 ToolUseLoader 的 ● 闪烁）会让同一行的全量重置
+          // 每帧重复触发（实测 3s 内十几次），把日志淹没。相同
+          // (reason, triggerY, prevLine, nextLine) 只记首次 + 每 10s 心跳，
+          // 内容一变（真·布局问题）立刻重新记录。
+          const sig = `${patch.reason}|${patch.debug.triggerY}|${patch.debug.prevLine}|${patch.debug.nextLine}`;
+          const now = Date.now();
+          if (sig !== lastRepaintSig || now - lastRepaintAt >= 10_000) {
+            lastRepaintSig = sig;
+            lastRepaintAt = now;
+            const chain = dom.findOwnerChainAtRow(this.rootNode, patch.debug.triggerY);
+            logForDebugging(`[REPAINT] 全量重置 · ${patch.reason} · 行 ${patch.debug.triggerY}\n` + `  前: "${patch.debug.prevLine}"\n` + `  后: "${patch.debug.nextLine}"\n` + `  元凶: ${chain.length ? chain.join(' < ') : '(未捕获到所有者链)'}`, {
+              level: 'warn'
+            });
+          }
         }
       }
     }

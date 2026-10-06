@@ -5,6 +5,10 @@ import { loadConfigFromEnv } from './providerEnv.ts'
 
 import { logForDebugging } from './debug.js'
 
+// readCustomApiStorage 日志去重状态：同内容 10s 内只记一次（见下方 logSource）。
+let lastLoggedLine: string | null = null
+let lastLoggedAt = 0
+
 /** Token 统计数据类型 */
 export type PresetTokenData = {
   sent: number      // 累计发送（输入）token 数（来自 API usage）
@@ -178,11 +182,18 @@ export function readCustomApiStorage(presetName?: string): CustomApiStorageData 
   
   // 端点来源排查的第一现场：请求发错地址/用了旧模型时，先看这里走的哪条分支。
   // 注意只打印 baseURL 与 model，绝不打印 apiKey。
+  //
+  // 去重：本函数在 StatusLine / DogeFooterInfo / useMainLoopModel / client 等
+  // 渲染与请求热路径上被同步调用，流式期间每帧触发（实测同一秒 8~10 次）。
+  // 内容完全相同的日志只记一次；仅在解析结果变化（或每 10s 心跳）时重记，
+  // 保证配置切换仍能第一时间在日志中看到。
   const logSource = (source: string, cfg: CustomApiStorageData): void => {
-    logForDebugging(
-      `[readCustomApiStorage] 端点来源=${source}, activeName=${activeName ?? '无'}, baseURL=${cfg.baseURL ?? '无'}, model=${cfg.model ?? '无'}`,
-      { level: 'debug' },
-    )
+    const line = `[readCustomApiStorage] 端点来源=${source}, activeName=${activeName ?? '无'}, baseURL=${cfg.baseURL ?? '无'}, model=${cfg.model ?? '无'}`
+    const now = Date.now()
+    if (line === lastLoggedLine && now - lastLoggedAt < 10_000) return
+    lastLoggedLine = line
+    lastLoggedAt = now
+    logForDebugging(line, { level: 'debug' })
   }
 
   if (activeName) {
