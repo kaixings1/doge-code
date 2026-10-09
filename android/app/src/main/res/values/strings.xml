@@ -1,18 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">doge-code</string>
-    <string name="url_hint">http://127.0.0.1:5680 (USB) 或 http://192.168.0.106:5680 (WiFi)</string>
+    <string name="url_hint">http://127.0.0.1:6000 (USB) 或 http://192.168.0.106:6000 (WiFi)</string>
     <string name="secret_hint">密钥（与 CLAUDE_CODE_MOBILE_SECRET 一致，可留空）</string>
     <string name="msg_hint">输入消息…</string>
     <string name="connect">连接</string>
     <string name="scan_sessions">扫描会话（多窗口切换）</string>
     <string name="clear_history">清空记录</string>
     <string name="send">发送</string>
+    <string name="voice_input">语音输入</string>
+    <string name="attach_image">附加图片（拍照/相册）</string>
     <string name="interrupt">中断</string>
+    <string name="terminate_agent">终止子代理</string>
+    <string name="export_history">导出对话</string>
+    <string name="rename_session">重命名会话</string>
+    <string name="host_history">地址历史（USB / 局域网切换）</string>
+    <string name="remember_secret">记住密钥（取消则每次连接需重新输入）</string>
+    <string name="remote_config">远程设置（模型/思考强度/权限模式）</string>
     <string name="settings">连接设置</string>
+    <string name="host_history_short">地址历史</string>
+    <string name="session_search_hint">按名称或路径过滤…</string>
+    <string name="session_scan_hint">正在扫描 5680-5690 端口段…</string>
+    <string name="rescan_sessions">重新扫描</string>
+    <string name="session_scanning">扫描中…</string>
+    <string name="session_scan_now">开始扫描</string>
+    <string name="session_current">当前</string>
+    <string name="switch_here">切换</string>
+    <string name="session_no_match">没有匹配的会话，试试清空搜索词</string>
+    <string name="session_found">发现 %1$d 个会话，点选切换</string>
+    <string name="session_empty">未发现会话。\n\n请确认：\n1. 电脑上 CLI 正在运行（关掉窗口桥接就没了）\n2. 启动时设了 CLAUDE_CODE_MOBILE_BRIDGE=1\n3. 局域网模式下已放行防火墙\n4. 各会话用 CLAUDE_CODE_MOBILE_PORT 分配了不同端口</string>
+    <string name="section_mode">工作模式</string>
+    <string name="section_local">本地配置</string>
+    <string name="label_provider">服务商</string>
+    <string name="label_workspace">工作区目录</string>
+    <string name="hint_base_url">API 地址（如 https://api.deepseek.com/v1）</string>
+    <string name="hint_api_key">API 密钥</string>
+    <string name="hint_model">模型名（留空用默认）</string>
+    <string name="action_pick_workspace">选择目录</string>
+    <string name="action_save_local">保存配置</string>
+    <string name="local_saved">已保存</string>
+    <string name="local_need_key">请填写 API 密钥</string>
+    <string name="local_need_url">请填写合法的 API 地址（http/https 开头）</string>
+    <string name="local_no_secure">⚠ 本设备加密存储不可用，密钥不会被保存（每次需重填）</string>
+    <string name="local_workspace_fallback">当前使用应用私有目录（可在上方选择其他目录）</string>
+    <string name="section_connection">连接</string>
+    <string name="scan_port_label">扫描端口段</string>
+    <string name="scan_port_hint">起始-结束，如 5680-5689</string>
+    <string name="scan_port_desc">会话扫描的端口范围。须与服务端起始端口（CLAUDE_CODE_MOBILE_PORT）一致：默认 5680-5689，若服务端改用 6000，这里填 6000-6009</string>
+    <string name="section_remote">远程设置</string>
+    <string name="label_model">模型</string>
+    <string name="label_thinking">思考强度</string>
+    <string name="label_permission">权限模式</string>
+    <string name="value_unknown">—</string>
+    <string name="section_session">会话</string>
+    <string name="section_diagnostics">诊断</string>
+    <string name="show_diagnostics">查看连接诊断</string>
+    <string name="tab_sessions">会话</string>
+    <string name="tab_chat">对话</string>
+    <string name="tab_settings">设置</string>
     <string name="status_idle">未连接</string>
     <string name="status_connecting">连接中…</string>
     <string name="status_connected">已连接</string>
     <string name="status_noninteractive">已连接（CLI 非交互，消息不会被处理）</string>
     <string name="status_disconnected">已断开，重连中…</string>
+    <!-- 诊断页 -->
+    <string name="diag_title">连接诊断</string>
+    <string name="diag_section_status">当前状态</string>
+    <string name="diag_section_last_failure">最近一次失败</string>
+    <string name="diag_section_common_causes">常见原因对照</string>
+    <string name="diag_section_actions">可执行操作</string>
+    <string name="diag_retry">重试连接</string>
+    <string name="diag_use_usb">切换到 USB 地址（127.0.0.1）</string>
+    <string name="diag_copy_report">复制诊断报告</string>
+    <string name="diag_clear_failure">清除失败记录</string>
+    <string name="diag_copied">诊断报告已复制到剪贴板</string>
+    <string name="diag_cleared">失败记录已清除</string>
+
+    <!-- 关于页 -->
+    <string name="about_title">关于</string>
+    <string name="about_section_build">构建信息</string>
+    <string name="about_section_arch">架构说明</string>
+    <string name="about_section_security">安全提示</string>
+    <string name="about_architecture">本 App 只是**客户端**：对话、工具调用、权限判定全部\n由电脑上的 CLI 执行，手机端仅负责收发与展示。\n\n因此功能少于桌面端不是缺陷，而是架构使然 ——\n会话跑在你自己机器的进程里，不在云端。</string>
+    <string name="about_security">桥接使用明文 WebSocket（无 TLS），仅适用于可信局域网。\n建议设置 CLAUDE_CODE_MOBILE_SECRET，否则同网段任何设备\n都可控制本机。\n\n手机端不提供「跳过权限」模式：本地 CLI 常以\n--dangerously-skip-permissions 运行，把它暴露到网络可达的\n界面意味着拿到手机即可关掉全部防护。</string>
+
+    <!-- 远程配置页 -->
+    <string name="config_title">远程设置</string>
+    <string name="desc_model">切换后对新回合生效。选「默认」恢复 CLI 的配置。</string>
+    <string name="desc_thinking">思考强度越高越深入，也更慢更费 token。1024 适合简单问答，32768 适合复杂推理。</string>
+    <string name="desc_permission">每次询问最安全；计划模式只读；自动接受编辑会跳过确认。</string>
+    <string name="cfg_not_connected">未连接，配置需连接后才能修改</string>
+    <string name="cfg_updated">已请求修改，当前值稍后刷新</string>
+
+    <!-- 会话详情页 -->
+    <string name="detail_section_info">会话信息</string>
+    <string name="detail_section_actions">操作</string>
+    <string name="detail_switch">切换到此会话</string>
+    <string name="detail_rename">重命名此会话</string>
+    <string name="detail_copy_addr">复制连接地址</string>
+    <string name="detail_addr_copied">地址已复制</string>
+    <!-- 设置分组（第 3-6 组为动态渲染，标题由代码提供） -->
+    <string name="section_about">关于</string>
+    <string name="section_appearance">外观</string>
+    <string name="section_message">消息</string>
+    <string name="section_notification">通知</string>
+    <string name="section_security">安全</string>
+    <string name="pending_permissions">待发权限决定</string>
+    <string name="pending_permissions_empty">没有待发的权限决定</string>
+    <string name="pending_permissions_cleared">已清空 %1$d 条待发决定</string>
+    <!-- 对话搜索 -->
+    <string name="chat_search_hint">在对话中搜索…</string>
+    <string name="search_prev">上一个</string>
+    <string name="search_next">下一个</string>
+    <string name="search_close">关闭搜索</string>
+    <string name="chat_search_toggle">搜索对话</string>
+    <string name="search_no_match">无匹配</string>
+    <string name="session_local_host">本机</string>
+    <string name="session_sort_title">排序方式</string>
+    <string name="sort_by_port">按端口</string>
+    <string name="sort_by_label">按名称</string>
+    <string name="sort_by_activity">按活跃时间</string>
+    <string name="quick_prompt">快捷指令</string>
+    <string name="more_actions">更多操作</string>
+    <string name="quick_prompt_title">选择指令模板</string>
+    <string name="scroll_to_bottom">滚动到底部</string>
+    <string name="msg_deleted">已删除该条消息（仅本地）</string>
+    <!-- 历史管理（线 C1） -->
+    <string name="history_title">历史管理</string>
+    <string name="history_summary">共 %1$d 个会话历史，占用 %2$s</string>
+    <string name="history_empty">暂无本地历史</string>
+    <string name="history_delete">删除</string>
+    <string name="history_delete_confirm">删除会话「%1$s」的 %2$d 条本地记录？\n\n仅删除本机副本，电脑上的对话不受影响。</string>
+    <string name="history_deleted">已删除</string>
+    <string name="history_delete_failed">删除失败</string>
+    <string name="history_clear_all">清空全部历史</string>
+    <string name="history_clear_all_confirm">将删除全部 %1$d 个会话的本地记录。\n\n此操作不可恢复，但电脑上的对话不受影响。</string>
+    <string name="history_cleared_n">已清空 %1$d 个会话的历史</string>
+    <string name="cancel">取消</string>
+    <string name="diag_section_history">失败历史</string>
+    <string name="diag_clear_history">清除失败历史</string>
+    <string name="detail_section_resume">恢复此会话</string>
+    <string name="detail_copy_resume">复制恢复命令</string>
+    <string name="detail_resume_copied">命令已复制，在电脑上执行即可恢复</string>
+    <string name="attach_file">附加文本文件</string>
+    <string name="attach_unsupported">不支持的文件类型：%1$s\n\n目前只支持文本类（.txt/.md/.json/.log/代码文件等）。\n图片请用左侧的图片按钮。</string>
+    <string name="attach_too_large">文件太大：%1$s（%2$d KB，上限 %3$d KB）</string>
+    <string name="attach_too_many">最多附加 %1$d 个文件</string>
+    <string name="attach_none">还没有附加文件\n\n点文件按钮选择（长按可查看已附）</string>
+    <string name="attach_list_title">已附加的文件（点选移除）</string>
+    <string name="attach_removed">已移除 %1$s</string>
+    <string name="edit_message_title">编辑并重发</string>
+    <string name="edit_message_send">重发</string>
+    <string name="edit_message_empty">内容不能为空</string>
+    <string name="edit_message_unchanged">内容没有变化</string>
+    <!-- 危险操作二次确认（KEY_CONFIRM_DANGEROUS 控制） -->
+    <string name="confirm_delete_title">确认删除</string>
+    <string name="confirm_delete_msg">将删除该条本地记录。\n\n仅删除本机副本，电脑上的对话不受影响。\n可在「设置 → 安全」里关闭此确认。</string>
+    <string name="theme_note">浅色主题目前只改变窗口与状态栏底色；聊天区颜色暂未适配。</string>
 </resources>

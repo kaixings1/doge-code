@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  设置页（9 组）。
+
+  结构说明：
+  · 首尾固定区（连接、远程设置、会话、诊断、关于）用静态布局 ——
+    它们有输入框、按钮等非标准控件，且数量固定
+  · 中间「偏好设置」四组（外观/消息/通知/安全）用**动态渲染**
+    （pref_container）—— 由 LocalPrefs.ALL 的定义驱动，
+    新增设置项只需改 LocalPrefs，不必动布局
+
+  为什么不全动态：连接区有 EditText（地址/密钥），会话区有按钮组，
+  形态与「设置项」不同。强行统一会让布局代码比现在更复杂。
+
+  用 ScrollView 包裹：设置项多，窄屏（横屏）尤其需要。
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1A1A1A"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="24dp">
+
+        <!--
+          ═══ 0. 工作模式 ═══
+
+          放在最前：它决定**下面所有区块是否可用**（远端模式看「连接」，
+          本地模式看「本地配置」）。放在后面会让用户先看到一堆用不上的项。
+        -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp">
+
+            <TextView
+                style="@style/SettingsSection"
+                android:text="@string/section_mode" />
+
+            <TextView
+                android:id="@+id/mode_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="#8AB4F8"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/mode_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="#777777"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:id="@+id/mode_items"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal" />
+        </LinearLayout>
+
+        <!-- ═══ 0.5 本地配置（仅本地模式显示）═══ -->
+        <LinearLayout
+            android:id="@+id/local_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:orientation="vertical"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/SettingsSection"
+                android:text="@string/section_local" />
+
+            <TextView
+                android:id="@+id/local_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="#8AB4F8"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/local_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="#777777"
+                android:textSize="12sp" />
+
+            <!-- Provider 预设（点选即填充地址与默认模型） -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/label_provider"
+                android:textColor="#CCCCCC"
+                android:textSize="13sp" />
+
+            <LinearLayout
+                android:id="@+id/provider_items"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal" />
+
+            <EditText
+                android:id="@+id/base_url_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="#2D2D2D"
+                android:hint="@string/hint_base_url"
+                android:inputType="textUri"
+                android:maxLines="1"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="9dp"
+                android:paddingBottom="9dp"
+                android:textColor="#E8E8E8"
+                android:textColorHint="#777777"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/api_key_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="#2D2D2D"
+                android:hint="@string/hint_api_key"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="9dp"
+                android:paddingBottom="9dp"
+                android:textColor="#E8E8E8"
+                android:textColorHint="#777777"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/model_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="#2D2D2D"
+                android:hint="@string/hint_model"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="9dp"
+                android:paddingBottom="9dp"
+                android:textColor="#E8E8E8"
+                android:textColorHint="#777777"
+                android:textSize="13sp" />
+
+            <!-- 工作区：显示当前值 + 点选候选目录 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/label_workspace"
+                android:textColor="#CCCCCC"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/workspace_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="#2D2D2D"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="9dp"
+                android:paddingBottom="9dp"
+                android:textColor="#B8C7E0"
+                android:textSize="12sp"
+                android:typeface="monospace" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_pick_workspace"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/action_pick_workspace" />
+
+                <Button
+                    android:id="@+id/btn_save_local"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:text="@string/action_save_local" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/local_result"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColor="#6BD66B"
+                android:textSize="12sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- ═══ 1. 连接（仅远端模式显示）═══ -->
+        <LinearLayout
+            android:id="@+id/connection_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:orientation="vertical"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp">
+
+            <TextView
+                style="@style/SettingsSection"
+                android:text="@string/section_connection" />
+
+            <TextView
+                android:id="@+id/scan_port_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/scan_port_label"
+                android:textColor="#AAAAAA"
+                android:textSize="12sp" />
+
+            <EditText
+                android:id="@+id/scan_port_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#2D2D2D"
+                android:hint="@string/scan_port_hint"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="9dp"
+                android:paddingBottom="9dp"
+                android:textColor="#E8E8E8"
+                android:textColorHint="#777777"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/scan_port_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="@string/scan_port_desc"
+                android:textColor="#777777"
+                android:textSize="11sp" />
+
+            <EditText
+                android:id="@+id/url_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#2D2D2D"
+                android:hint="@string/url_hint"
+                android:imeOptions="actionGo"
+                android:inputType="textUri"
+                android:maxLines="1"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="9dp"
+                android:paddingBottom="9dp"
+                android:textColor="#E8E8E8"
+                android:textColorHint="#777777"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/secret_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="#2D2D2D"
+                android:hint="@string/secret_hint"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="9dp"
+                android:paddingBottom="9dp"
+                android:textColor="#E8E8E8"
+                android:textColorHint="#777777"
+                android:textSize="13sp" />
+
+            <CheckBox
+                android:id="@+id/chk_remember_secret"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/remember_secret"
+                android:textColor="#AAAAAA"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_connect"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/connect" />
+
+                <Button
+                    android:id="@+id/btn_hosts"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:text="@string/host_history_short" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ═══ 2. 远程设置 ═══ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp">
+
+            <TextView
+                style="@style/SettingsSection"
+                android:text="@string/section_remote" />
+
+            <LinearLayout
+                android:id="@+id/row_model"
+                style="@style/SettingsRow">
+
+                <TextView
+                    style="@style/SettingsRowLabel"
+                    android:text="@string/label_model" />
+
+                <TextView
+                    android:id="@+id/row_model_value"
+                    style="@style/SettingsRowValue"
+                    android:text="@string/value_unknown" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/row_thinking"
+                style="@style/SettingsRow">
+
+                <TextView
+                    style="@style/SettingsRowLabel"
+                    android:text="@string/label_thinking" />
+
+                <TextView
+                    android:id="@+id/row_thinking_value"
+                    style="@style/SettingsRowValue"
+                    android:text="@string/value_unknown" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/row_permission"
+                style="@style/SettingsRow">
+
+                <TextView
+                    style="@style/SettingsRowLabel"
+                    android:text="@string/label_permission" />
+
+                <TextView
+                    android:id="@+id/row_permission_value"
+                    style="@style/SettingsRowValue"
+                    android:text="@string/value_unknown" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ═══ 3-6. 偏好设置（外观/消息/通知/安全）动态渲染 ═══ -->
+        <LinearLayout
+            android:id="@+id/pref_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <!-- ═══ 7. 会话 ═══ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp">
+
+            <TextView
+                style="@style/SettingsSection"
+                android:text="@string/section_session" />
+
+            <Button
+                android:id="@+id/btn_scan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/scan_sessions" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_rename"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/rename_session" />
+
+                <Button
+                    android:id="@+id/btn_export"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:text="@string/export_history" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_clear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/clear_history" />
+
+            <Button
+                android:id="@+id/btn_pending_perms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/pending_permissions" />
+
+            <Button
+                android:id="@+id/btn_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/history_title" />
+        </LinearLayout>
+
+        <!-- ═══ 8. 诊断 ═══ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp">
+
+            <TextView
+                style="@style/SettingsSection"
+                android:text="@string/section_diagnostics" />
+
+            <Button
+                android:id="@+id/btn_diagnostics"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/show_diagnostics" />
+        </LinearLayout>
+
+        <!-- ═══ 9. 关于 ═══ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp">
+
+            <TextView
+                style="@style/SettingsSection"
+                android:text="@string/section_about" />
+
+            <Button
+                android:id="@+id/btn_about"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/about_title" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
