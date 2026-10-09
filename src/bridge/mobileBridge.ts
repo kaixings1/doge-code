@@ -724,12 +724,16 @@ export class MobileBridgeServer {
       const startPort = this.port
       let bound = false
       const busyPorts: number[] = []
+      // 是否出现过 EACCES（系统保留端口）。用于让最终错误消息区分
+      // 「被别的程序占用」与「被 Windows 保留」—— 后者 netstat 查不到进程。
+      let sawReserved = false
 
       for (const port of candidatePorts(startPort)) {
         const free = await new Promise<boolean>(resolve => {
           const onError = (e: unknown) => {
             const code = (e as { code?: string })?.code
             if (code === 'EADDRINUSE' || code === 'EACCES') {
+              if (code === 'EACCES') sawReserved = true
               logForDebugging(
                 `[MobileBridgeServer] 端口 ${port} 不可用（${code}），尝试下一个`,
               )
@@ -769,7 +773,7 @@ export class MobileBridgeServer {
       }
 
       if (!bound) {
-        this.lastPortError = allPortsBusyMessage(startPort, busyPorts)
+        this.lastPortError = allPortsBusyMessage(startPort, busyPorts, sawReserved)
         logForDebugging(`[MobileBridgeServer] ${this.lastPortError}`, { level: 'error' })
         return
       }
