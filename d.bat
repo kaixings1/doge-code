@@ -32,6 +32,11 @@ REM Such a marker makes every plain CLI instance auto-start the mobile bridge
 REM and fight over port 5680 (isMobileBridgeAvailable() returns true), so with
 REM concurrent instances all but the first crash with EADDRINUSE.
 REM Use mobile.bat for the mobile bridge (it sets CLAUDE_CODE_MOBILE_BRIDGE=1).
+REM NOTE: d.bat must NOT set CLAUDE_CODE_MOBILE_BRIDGE. Setting it here made
+REM every d.bat instance start the mobile bridge and fight over ports
+REM 5680-5689; all but the first failed (error swallowed by bootstrap-entry's
+REM .catch), which is why the mobile bridge appeared "missing" on later
+REM instances. The mobile bridge is mobile.bat's job.
 set CLAUDE_CODE_LOCAL_BRIDGE=
 set CLAUDE_CODE_LOCAL_BRIDGE_URL=
 
@@ -60,7 +65,6 @@ if errorlevel 1 (
 :bridge_ready
 REM echo BEFORE_DOGE_EXE >> trace.log
 REM "D:\doge-code\doge.exe" --dangerously-skip-permissions --verbose %2 %3 %4 %5 --debug-file ./debug1.txt
-
 REM === feature gates ===
 REM bun:bundle feature() is compile-time constant folding; env / --define
 REM cannot change it, only --feature / --feature= works (verified:
