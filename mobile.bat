@@ -25,6 +25,14 @@ REM   then type in the CLI: /mobile-connect
 REM   open the printed URL/QR on your phone (same WiFi), port 5680
 
 set CLAUDE_CODE_MOBILE_BRIDGE=1
+REM Starting port for the mobile bridge. Default (unset) is 5680.
+REM MUST be outside the Windows reserved range: `netsh int ipv4 show
+REM excludedportrange protocol=tcp` shows 5681-5880 reserved on this host
+REM (Hyper-V / WSL grab blocks). Binding a reserved port fails with
+REM WSAEACCES "access permission not allowed", which looks like "port busy"
+REM and made the 5680-5689 scan fail on every port except 5680 itself.
+REM 6000 is verified free. Phone opens http://<WLAN-IP>:6000
+set CLAUDE_CODE_MOBILE_PORT=6000
 REM Clear any LOCAL_BRIDGE marker inherited from the parent shell.
 REM Such a marker makes every plain CLI instance auto-start the mobile bridge
 REM and fight over port 5680 (isMobileBridgeAvailable() returns true), so with
@@ -41,7 +49,7 @@ if "%1"=="" (
 
 echo [mobile.bat] CLAUDE_CODE_MOBILE_BRIDGE=1
 echo [mobile.bat] After the CLI starts, run: /mobile-connect
-echo [mobile.bat] Then open the printed URL on your phone (port 5680).
+echo [mobile.bat] Then open the printed URL on your phone (start port %CLAUDE_CODE_MOBILE_PORT%).
 echo.
 
 bun run ^
