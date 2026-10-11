@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  工具气泡底色：与助手气泡同色系但更暗一档，带左侧竖条边强调「这是过程
+  性活动而非对话内容」。四角圆角不贴边（工具气泡靠左，与助手气泡对齐）。
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#262626" />
+    <corners
+        android:topLeftRadius="10dp"
+        android:topRightRadius="10dp"
+        android:bottomLeftRadius="4dp"
+        android:bottomRightRadius="10dp" />
+    <stroke android:width="2dp" android:color="#3A4A63" />
+</shape>

@@ -82,6 +82,47 @@
                 style="@style/SettingsSection"
                 android:text="@string/section_local" />
 
+            <!-- 服务商档案：下拉切换 + 新建/删除（M5 多服务商） -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/label_provider_profiles"
+                android:textColor="#CCCCCC"
+                android:textSize="13sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
+
+                <Spinner
+                    android:id="@+id/profile_spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="#2D2D2D"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp" />
+
+                <Button
+                    android:id="@+id/btn_new_profile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/action_new_profile"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/btn_delete_profile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/action_delete_profile"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/local_status"
                 android:layout_width="match_parent"
@@ -164,6 +205,156 @@
                 android:textColor="#E8E8E8"
                 android:textColorHint="#777777"
                 android:textSize="13sp" />
+
+            <!-- 思考强度：本地模式下发给 provider（DeepSeek 用 thinking 开关，
+                 OpenAI 兼容网关用 reasoning_effort）。点选切换，不自动保存，
+                 随"保存配置"一起落盘。 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/label_thinking"
+                android:textColor="#CCCCCC"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/thinking_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="#2D2D2D"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="关闭"
+                android:textColor="#E8E8E8"
+                android:textSize="13sp" />
+
+            <!-- 技能开关：逐一开启/关闭某个专家技能（use_skill_<id>）。
+                 技能列表是动态的（预置 res/raw + 用户自定义），无法写死在
+                 XML，故只放一个容器，由 LocalConfigPanel.buildSkillSwitches()
+                 用代码 new 出「名称 + 描述 + Switch」逐行塞进来。 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/label_skills"
+                android:textColor="#CCCCCC"
+                android:textSize="13sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/skills_hint"
+                android:textColor="#777777"
+                android:textSize="11sp" />
+
+            <LinearLayout
+                android:id="@+id/skill_items"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="vertical" />
+
+            <!-- 离线推理引擎（本地 HTTP 服务端，如 Termux 里的 llama.cpp / Ollama）。
+                 开启后，本地模式改用本机运行的 OpenAI 兼容推理服务，真正离线。 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/label_offline_engine"
+                android:textColor="#CCCCCC"
+                android:textSize="13sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/offline_engine_hint"
+                android:textColor="#777777"
+                android:textSize="11sp" />
+
+            <Switch
+                android:id="@+id/sw_offline_engine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/action_offline_engine_on"
+                android:textColor="#E8E8E8"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/engine_url_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="#2D2D2D"
+                android:hint="@string/hint_engine_url"
+                android:inputType="textUri"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="9dp"
+                android:paddingBottom="9dp"
+                android:textColor="#E8E8E8"
+                android:textColorHint="#777777"
+                android:textSize="13sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/engine_model_input"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="#2D2D2D"
+                    android:hint="@string/hint_engine_model"
+                    android:inputType="text"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp"
+                    android:textColor="#E8E8E8"
+                    android:textColorHint="#777777"
+                    android:textSize="13sp" />
+
+                <Button
+                    android:id="@+id/btn_fetch_engine_models"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/action_fetch_models" />
+            </LinearLayout>
+
+            <!-- 取模型 / 测会话：填完地址与 key 后立刻验证，不必先保存 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_fetch_models"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/action_fetch_models" />
+
+                <Button
+                    android:id="@+id/btn_test_local"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:text="@string/action_test_local" />
+            </LinearLayout>
 
             <!-- 工作区：显示当前值 + 点选候选目录 -->
             <TextView
@@ -388,6 +579,14 @@
                     style="@style/SettingsRowValue"
                     android:text="@string/value_unknown" />
             </LinearLayout>
+
+            <!-- 逐条授权规则：列出各类工具，每条可设 总是允许/总是拒绝/每次询问 -->
+            <Button
+                android:id="@+id/btn_permission_rules"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/permission_rules" />
         </LinearLayout>
 
         <!-- ═══ 3-6. 偏好设置（外观/消息/通知/安全）动态渲染 ═══ -->

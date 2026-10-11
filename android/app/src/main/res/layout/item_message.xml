@@ -13,7 +13,7 @@
         android:id="@+id/bubble"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:maxWidth="300dp"
+        android:maxWidth="@dimen/bubble_max_width"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
         android:paddingTop="9dp"
@@ -21,6 +21,21 @@
         android:textSize="15sp"
         android:lineSpacingExtra="3dp"
         android:textIsSelectable="true" />
+
+    <!--
+      图片行：显示用户消息附带的图片缩略图，点击看大图。
+
+      为什么单独一行而非塞进气泡：气泡 maxWidth 300dp，再减去左右
+      padding 只剩不到 280dp，图片会被挤得很小；且与文字混排时长宽
+      很难看。独立一行可占满可用宽度，点开看大图后再细看。
+    -->
+    <LinearLayout
+        android:id="@+id/image_row"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/meta"

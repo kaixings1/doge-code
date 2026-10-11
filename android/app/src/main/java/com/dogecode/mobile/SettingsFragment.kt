@@ -66,11 +66,12 @@ class SettingsFragment : Fragment() {
                     LocalPrefs.KEY_NOTIFY_ACTION,
                     LocalPrefs.KEY_NOTIFY_SUPPRESS,
                     LocalPrefs.KEY_NOTIFY_SOUND,
+                    LocalPrefs.KEY_NOTIFY_WIFI_ONLY,
                 ),
             ),
             Pair(
                 getString(R.string.section_security),
-                listOf(LocalPrefs.KEY_CONFIRM_DANGEROUS),
+                listOf(LocalPrefs.KEY_CONFIRM_DANGEROUS, LocalPrefs.KEY_APP_LOCK),
             ),
         )
 
@@ -220,6 +221,8 @@ class SettingsFragment : Fragment() {
         fun onPrefChoice(key: String, value: String)
         /** 查看待发的权限决定。 */
         fun onShowPendingPermissions()
+        /** 打开「逐条授权规则」管理页。 */
+        fun onShowPermissionRules()
         fun onShowHistory()
         fun onRememberSecretChanged(remember: Boolean)
     }
@@ -279,6 +282,9 @@ class SettingsFragment : Fragment() {
         view.findViewById<Button>(R.id.btn_about).setOnClickListener { actions?.onShowAbout() }
         view.findViewById<Button>(R.id.btn_pending_perms).setOnClickListener {
             actions?.onShowPendingPermissions()
+        }
+        view.findViewById<Button>(R.id.btn_permission_rules).setOnClickListener {
+            actions?.onShowPermissionRules()
         }
         view.findViewById<Button>(R.id.btn_history).setOnClickListener { actions?.onShowHistory() }
 

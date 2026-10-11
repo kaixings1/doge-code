@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 横屏屏幕宽，放宽气泡让代码块横向铺开（不用过早换行换行） -->
+    <dimen name="bubble_max_width">520dp</dimen>
+</resources>

@@ -2,8 +2,26 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 仅 WiFi 推送策略需读取当前网络类型 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- 助手回复通知（Android 13+ 需运行时授权，拒绝不影响主流程） -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- 本地模式推理保活（DUAL-MODE-PLAN 阶段 4）：前台服务 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- API 34+ 起前台服务必须声明具体类型；dataSync 覆盖「网络密集型后台工作」 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+
+    <!--
+      Android 11（API 30）起应用默认看不到其他应用声明的服务，除非显式
+      在 <queries> 里声明。TextToSpeech 恰恰要绑定系统的 TTS 引擎服务 ——
+      不声明这一条，引擎会绑定失败且**只在日志里留痕**，表现为
+      「语音播报开关打开了但没声音」，是本功能最典型的静默失效。
+    -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
 
     <application
         android:allowBackup="false"
@@ -32,6 +50,52 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--
+          通知栏「批准 / 拒绝」按钮的接收器。
+
+          exported="false" 是必需的：该 Receiver 只接受本 App 的
+          PendingIntent 触发。若导出，任何应用都能伪造一个广播
+          替用户「批准」操作 —— 那是提权通道，绝不能开。
+        -->
+        <receiver
+            android:name=".PermissionActionReceiver"
+            android:exported="false" />
+
+        <!--
+          本地模式推理保活前台服务：推理循环在 LocalAgentBackend 的工作线程跑，
+          可达数十秒；无前台服务时切后台进程被杀 → 任务丢失且 API 费用白花。
+          仅在 LOCAL 模式且回合进行中运行（见 ServicePolicy），远端模式不启动。
+          foregroundServiceType=dataSync：API 34+ 强制声明类型，
+          本地推理属「网络密集型数据同步工作」范畴。
+        -->
+        <service
+            android:name=".LocalAgentService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <!--
+          FileProvider：拍照时把临时文件的 content:// URI 交给相机 App。
+
+          exported=false + grantUriPermissions=true 是标准组合：
+          Provider 本身不对外暴露，只有拿到显式授权的 App 才能读那一个 URI。
+          不这么做就要申请存储权限（WRITE_EXTERNAL_STORAGE），
+          而仅仅为了拍一张要发的图去要全盘存储权限是不必要的扩张。
+
+          authorities 用 applicationId + .fileprovider，与 MainActivity 里
+          FileProvider.getUriForFile 的调用一致。
+          注意：不能用 ${applicationId} 占位 —— 该变量在 AGP 中默认可用，
+          但本工程未开启 manifestPlaceholders，写死更稳。
+        -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.dogecode.mobile.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

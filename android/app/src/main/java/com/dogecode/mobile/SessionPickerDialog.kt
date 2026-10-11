@@ -36,11 +36,15 @@ object SessionPickerDialog {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(20), dp(12), dp(20), dp(8))
         }
+        // 从用户配置读扫描范围（默认 5680-5689）：写死会让改了起始端口的
+        // 用户在此处「永远扫不到」，而扫描逻辑本身其实已按 prefs 执行
+        val (scanStart, scanEnd) = ScanPortPrefs(context).range()
+
         val loading = ProgressBar(context).apply {
             visibility = android.view.View.VISIBLE
         }
         val statusText = TextView(context).apply {
-            text = "正在扫描 $host:5680-5690 …"
+            text = "正在扫描 $host:$scanStart-$scanEnd …"
             setTextColor(0xFF888888.toInt())
             textSize = 13f
         }
@@ -56,7 +60,7 @@ object SessionPickerDialog {
         dialog.show()
 
         thread {
-            val sessions = SessionScanner.scan(host)
+            val sessions = SessionScanner.scan(host, scanStart, scanEnd)
             (context as? android.app.Activity)?.runOnUiThread {
                 loading.visibility = android.view.View.GONE
                 if (sessions.isEmpty()) {

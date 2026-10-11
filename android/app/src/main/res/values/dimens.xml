@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 气泡最大宽度：竖屏窄，避免长代码块过早换行挤占 -->
+    <dimen name="bubble_max_width">300dp</dimen>
+</resources>

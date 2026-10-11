@@ -13,6 +13,12 @@ android {
     // 且离线/受限网络下无法自动下载）。
     buildToolsVersion = "35.0.0"
 
+    // 单元测试用真实 android.jar（含 android.util.Log 等），否则网络模块里
+    // 的 Log.w 调用在测试中抛 "Method Log.i not mocked"。
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
+
     defaultConfig {
         applicationId = "com.dogecode.mobile"
         minSdk = 24

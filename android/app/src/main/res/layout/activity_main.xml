@@ -1,12 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  主容器：顶部状态栏 + 内容区（三个 Fragment 切换）+ 底部导航。
+
+  为什么改成容器而不是继续堆内容：
+  此前 MainActivity 是「一个聊天列表 + 一个藏在齿轮里的连接面板」，
+  其余功能（会话列表/诊断/配置/重命名/导出）全是 AlertDialog。
+  1280 行的一个类 + 9 个弹窗 —— 这不是「功能少」，是**架构撑不住**，
+  每个新功能只能退化成一个弹窗。
+
+  底部导航用 LinearLayout 手写而非 BottomNavigationView：
+  · 只有 3 个固定 tab，不需要 Material 库的 badging/动画/标签行为配置
+  · 不引入新依赖（本工程依赖很精简，见 build.gradle.kts 的注释）
+  · 完全可控 —— 深色主题下 Material 的默认配色要额外覆盖一堆属性
+  按 YAGNI 阶梯：原生平台特性优先于引入依赖。
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#1A1A1A"
     android:orientation="vertical">
 
-    <!-- 顶栏：状态点 + 状态文字 + 连接设置入口 -->
+    <!--
+      顶部状态栏：全局共享（三个 tab 都要看连接状态，不能让用户切到聊天页
+      才知道断线了）。点击进设置页的诊断区。
+    -->
     <LinearLayout
+        android:id="@+id/top_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#232323"
@@ -34,86 +53,12 @@
             android:textSize="13sp" />
 
         <ImageButton
-            android:id="@+id/btn_settings"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:id="@+id/btn_chat_search"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/settings"
-            android:src="@android:drawable/ic_menu_manage" />
-    </LinearLayout>
-
-    <!-- 连接配置面板：默认隐藏，点右上角齿轮展开 -->
-    <LinearLayout
-        android:id="@+id/conn_panel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#202020"
-        android:orientation="vertical"
-        android:padding="10dp"
-        android:visibility="gone">
-
-        <EditText
-            android:id="@+id/url_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#2D2D2D"
-            android:hint="@string/url_hint"
-            android:imeOptions="actionGo"
-            android:inputType="textUri"
-            android:maxLines="1"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:paddingTop="9dp"
-            android:paddingBottom="9dp"
-            android:textColor="#E8E8E8"
-            android:textColorHint="#777777"
-            android:textSize="13sp" />
-
-        <EditText
-            android:id="@+id/secret_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:background="#2D2D2D"
-            android:hint="@string/secret_hint"
-            android:inputType="text"
-            android:maxLines="1"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:paddingTop="9dp"
-            android:paddingBottom="9dp"
-            android:textColor="#E8E8E8"
-            android:textColorHint="#777777"
-            android:textSize="13sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btn_connect"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/connect" />
-
-            <Button
-                android:id="@+id/btn_clear"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                android:text="@string/clear_history" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/btn_scan"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="@string/scan_sessions" />
+            android:contentDescription="@string/chat_search_toggle"
+            android:src="@android:drawable/ic_menu_search" />
     </LinearLayout>
 
     <ProgressBar
@@ -121,65 +66,44 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="2dp"
+        android:indeterminate="true"
         android:max="100"
         android:visibility="gone" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list"
+    <!-- 内容区：三个 Fragment 在这里切换（show/hide，不重建） -->
+    <FrameLayout
+        android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp"
-        android:scrollbars="vertical" />
+        android:layout_weight="1" />
 
-    <!-- 输入栏 -->
+    <!--
+      底部导航。用 weight 三等分，选中态用颜色 + 加粗区分。
+
+      图标用系统内置的（android.R.drawable），不为三个 tab 引入矢量图资源 ——
+      本工程此前连 launcher icon 都是复用的系统资源。
+    -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#232323"
-        android:gravity="bottom"
         android:orientation="horizontal"
-        android:paddingStart="10dp"
-        android:paddingEnd="8dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp">
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp">
 
-        <EditText
-            android:id="@+id/msg_input"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/input_bg"
-            android:hint="@string/msg_hint"
-            android:inputType="textMultiLine|textCapSentences"
-            android:maxLines="5"
-            android:paddingStart="14dp"
-            android:paddingEnd="14dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:textColor="#E8E8E8"
-            android:textColorHint="#777777"
-            android:textSize="15sp" />
+        <TextView
+            android:id="@+id/tab_sessions"
+            style="@style/BottomTab"
+            android:text="@string/tab_sessions" />
 
-        <ImageButton
-            android:id="@+id/btn_send"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_marginStart="6dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/send"
-            android:src="@android:drawable/ic_menu_send" />
+        <TextView
+            android:id="@+id/tab_chat"
+            style="@style/BottomTab"
+            android:text="@string/tab_chat" />
 
-        <ImageButton
-            android:id="@+id/btn_stop"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/interrupt"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
-            android:visibility="gone" />
+        <TextView
+            android:id="@+id/tab_settings"
+            style="@style/BottomTab"
+            android:text="@string/tab_settings" />
     </LinearLayout>
-
 </LinearLayout>

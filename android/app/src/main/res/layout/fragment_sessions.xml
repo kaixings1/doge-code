@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  会话页：列出本机/局域网上发现的 CLI 会话，点选切换。
+
+  此前这是 SessionPickerDialog —— 一个 AlertDialog，扫描完动态 addView。
+  问题：不能搜索、不能刷新、关掉就没了、没法标出「当前会话」。
+  改成独立页面后这些都能做（第二步 #23 补全逻辑）。
+
+  本轮先建结构，保证可编译可跑。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1A1A1A"
+    android:orientation="vertical">
+
+    <!-- 搜索：会话多时（多个终端窗口 + 局域网多机）按标签/路径过滤 -->
+    <EditText
+        android:id="@+id/session_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginTop="10dp"
+        android:background="#2D2D2D"
+        android:hint="@string/session_search_hint"
+        android:imeOptions="actionSearch"
+        android:inputType="text"
+        android:maxLines="1"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="9dp"
+        android:paddingBottom="9dp"
+        android:textColor="#E8E8E8"
+        android:textColorHint="#777777"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/session_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="14dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="4dp"
+        android:text="@string/session_scan_hint"
+        android:textColor="#888888"
+        android:textSize="12sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/session_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp"
+        android:scrollbars="vertical" />
+
+    <Button
+        android:id="@+id/btn_rescan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="14dp"
+        android:text="@string/rescan_sessions" />
+</LinearLayout>

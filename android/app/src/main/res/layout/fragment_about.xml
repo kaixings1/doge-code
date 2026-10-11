@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  关于页：版本、构建信息、协议说明。
+
+  为什么值得有：用户报问题时第一句总是「你用的哪个版本」。
+  没有这页，用户只能去应用商店/安装包猜。同时把「手机端只是客户端、
+  对话逻辑全在 CLI 侧」这个关键事实写清楚 —— 它解释了大部分
+  「为什么功能不如桌面端」的疑问，避免误解为 bug。
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1A1A1A"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="24dp"
+            android:paddingBottom="8dp"
+            android:text="@string/app_name"
+            android:textColor="#4ADE80"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/about_version"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingBottom="24dp"
+            android:textColor="#999999"
+            android:textSize="13sp" />
+
+        <TextView
+            style="@style/SettingsSection"
+            android:layout_marginTop="0dp"
+            android:text="@string/about_section_build" />
+
+        <TextView
+            android:id="@+id/about_build"
+            style="@style/DiagBlock" />
+
+        <TextView
+            style="@style/SettingsSection"
+            android:text="@string/about_section_arch" />
+
+        <!-- 这一段的目的是消除误解：手机端功能少于桌面端是架构使然 -->
+        <TextView
+            style="@style/DiagBlock"
+            android:text="@string/about_architecture" />
+
+        <TextView
+            style="@style/SettingsSection"
+            android:text="@string/about_section_security" />
+
+        <TextView
+            style="@style/DiagBlock"
+            android:text="@string/about_security" />
+    </LinearLayout>
+</ScrollView>

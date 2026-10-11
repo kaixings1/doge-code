@@ -28,7 +28,12 @@ import kotlin.concurrent.thread
  *
  * 协议与地址格式见 BridgeClient / src/bridge/mobileBridge.ts。
  */
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),
+    SettingsFragment.Actions,
+    DiagnosticsFragment.Host,
+    ConfigFragment.Host,
+    SessionDetailFragment.Host,
+    SessionFragment.Actions {
 
     private lateinit var prefs: SharedPreferences
     private lateinit var store: MessageStore
@@ -39,26 +44,278 @@ class MainActivity : AppCompatActivity() {
     private lateinit var msgInput: EditText
     private lateinit var urlInput: EditText
     private lateinit var secretInput: EditText
-    private lateinit var connPanel: LinearLayout
     private lateinit var statusText: TextView
     private lateinit var dot: View
     private lateinit var sendBtn: ImageButton
     private lateinit var stopBtn: ImageButton
+    private lateinit var progress: View
+
+    /** 应用锁解锁结果回调（系统锁屏凭据界面返回）。 */
+    private lateinit var appLockLauncher: androidx.activity.result.ActivityResultLauncher<android.content.Intent>
 
     /** 已发送但还没收到 queued 回执的消息 id → requestId */
     private val pending = mutableMapOf<String, String>()
+
+    /** 批量选择模式下的选中 id 集合（唯一事实来源，见 BatchSelection）。 */
+    private var selectedIds: Set<String> = emptySet()
+    /**
+     * 已发出、等待服务端回推去重的 requestId 集合。
+     *
+     * 旧去重依赖「本地存在文本相同且仍 SENDING 的 user 消息」，但 queued
+     * 回执几乎必然先于 user 回推到达（回推要等 enqueue→消息落地→推送 effect），
+     * 届时状态已转 QUEUED，旧判据失效 → 自己发的消息被重复渲染一次。
+     *
+     * 现改为精确匹配：手机发出的消息在 enqueue 时把 requestId 作为 uuid 透传，
+     * 服务端推送回所有手机时带回该 uuid（sourceRequestId）。命中本集合即说明
+     * 是「自己刚发、被回推」的那条，去重并从集合移除。
+     * 不再受 queued 回执到达时序影响。
+     */
+    private val sentReqIds = mutableSetOf<String>()
     private var interactive = true
 
     /** 当前会话标签，用于通知标题区分来源（多会话并存时必需）。 */
     private var sessionLabel: String? = null
 
+    /**
+     * 待处理的权限对话框：requestId → Dialog。
+     *
+     * 需要按 requestId 索引，因为服务端可能撤销某个请求
+     * （本地终端先批准了），此时要精确关掉那一个而不是全部。
+     * 用 Map 而非单个引用：多设备/多次请求可能并存。
+     */
+    private val permissionDialogs = mutableMapOf<String, android.app.AlertDialog>()
+
+    /** 工具活动区控件。 */
+    private lateinit var activityPanel: android.view.View
+    private lateinit var activityText: TextView
+
+    /**
+     * 流式增量累积的预览文本。
+     *
+     * 定稿消息（Incoming assistant）到达时必须清空 —— 定稿是权威版本。
+     * 增量可能因节流/断线丢失，若不清空会永久停留在残缺文本上，
+     * 用户看到的内容比实际少且无从修复。
+     */
+    private val streamingBuffer = StringBuilder()
+
+    /** 上一次收到的增量 seq，用于识别跳号（中间丢了片段）。 */
+    private var lastDeltaSeq = 0
+
+    /** 活动区保留的行数上限；超出的丢弃最旧的，避免长任务刷屏。 */
+    private val activityLines = ArrayDeque<String>()
+
+    /** 子代理终止按钮（活动区里，有子代理在跑时才显示）。 */
+    private lateinit var agentStopBtn: ImageButton
+
+    /**
+     * 输入手段：图片附件（拍照/相册）与语音输入。
+     *
+     * 已从本类抽出（约 120 行）—— 只依赖 Context 与 startActivityForResult，
+     * 不碰对话页控件，是边界清晰的第二块。
+     */
+    private lateinit var inputActions: InputActions
+
+    /** 草稿持久化（独立类，逻辑与边界已单测）。 */
+    private lateinit var draftStore: DraftStore
+
+    /** 本地偏好（纯客户端设置，见 LocalPrefs）。 */
+    private lateinit var localPrefs: LocalPrefs
+
+    /**
+     * 扫描端口范围（自由数值型偏好，与 LocalPrefs 分开存放）。
+     *
+     * 独立一个存储的原因见 ScanPortPrefs 的说明：LocalPrefs 是枚举型，
+     * 它的 set() 会拒绝预定义列表外的值，装不下 1..65535 的端口。
+     */
+    private lateinit var scanPortPrefs: ScanPortPrefs
+
+    /**
+     * 双指缩放的倍率存储（自由数值型，与枚举型的 LocalPrefs 分开）。
+     *
+     * 与「字号」预设的关系：最终字号 = 预设档 × 捏合倍率。
+     * 分开存才不会互相覆盖 —— 用户捏到 1.5 后又去设置里选「大」，
+     * 应当得到 1.2 × 1.5 而不是丢失其中一个。
+     */
+    private lateinit var pinchZoomPrefs: PinchZoomPrefs
+
+    /**
+     * 捏合过程中的**临时**倍率（尚未落盘）。
+     *
+     * 为什么需要：`onScale` 一次手势触发几十次，每次都读 SharedPreferences
+     * 是无谓开销。用内存变量承载过程值，手势结束（onScaleEnd）才写盘。
+     */
+    private var pinchZoomPrefsLive: Float? = null
+
+    /**
+     * 工作模式存储（远端 / 本地）。
+     *
+     * 独立于 LocalPrefs：模式是应用级状态而非「偏好」，且它的变更会
+     * 触发整套 UI 重建（隐藏连接相关入口），与普通偏好「改完重绘」不同。
+     */
+    private lateinit var appModePrefs: AppModePrefs
+
+    /**
+     * 当前工作模式（启动时从 [appModePrefs] 读入）。
+     *
+     * 默认 REMOTE —— 与升级前行为一致。本地后端尚未接入（见
+     * docs/DUAL-MODE-PLAN.md 的阶段 2-3），故当前无论何值都走远端路径；
+     * 提前引入该字段是为了让后续接入只改「后端选择」一处。
+     */
+    private var appMode: AppMode = AppMode.REMOTE
+
+    /** 本地模式的存储（工作区 + Provider 配置）。 */
+    private lateinit var localStore: LocalPrefsStore
+
+    /**
+     * 本地模式后端。
+     *
+     * 与 [client]（远端）并存：两者都实现了 [AgentBackend]，
+     * 但事件都汇到同一个 `onEvent` —— UI 不区分模式。
+     */
+    private lateinit var localBackend: AgentBackend
+
+    /**
+     * 当前模式对应的后端 —— 发送/中断/编辑**只走这里**。
+     *
+     * 为什么要这个单一入口：发送路径在 MainActivity 里有 4 处
+     *（正常发送、带图发送、失败重试、编辑重发）。若各处自己判模式，
+     * 漏改一处就会表现为「本地模式下那个入口点了没反应」——
+     * 而这类 bug 只在特定操作路径上出现，极难发现。
+     */
+    private val activeBackend: AgentBackend
+        get() = if (appMode == AppMode.LOCAL) localBackend else remoteBackend
+
+    /**
+     * 远端后端的适配器（把 [client] 包成 [AgentBackend]）。
+     *
+     * 存在的理由：`client` 是 [BridgeClient]，不实现接口（它的 `onEvent`
+     * 是构造参数、不可变）。改它要动构造签名与全部调用点；而适配器
+     * 零侵入 —— BridgeClient 一行未改。
+     */
+    private lateinit var remoteBackend: RemoteAgentBackend
+
+    /**
+     * 任务完成的语音播报（见 VoiceAnnouncer）。
+     *
+     * 与通知分开：通知只在 App 不在前台时弹（见 maybeNotify 的 hasWindowFocus
+     * 早退），而按用户要求语音**前台后台都播报** —— 正因如此它不能塞进
+     * maybeNotify 里，否则前台时会被一起早退掉。
+     */
+    private lateinit var voiceAnnouncer: VoiceAnnouncer
+
+    /** 连接失败历史（线 C2）。 */
+    private lateinit var diagnosisLog: DiagnosisLog
+
+    /** 当前配置的值来源（线 C3）。 */
+    private var configSourceLabels: ConfigSourceLabels = ConfigSourceLabels.empty()
+
+    /**
+     * 高频读取的两个偏好，缓存在字段里。
+     *
+     * 为什么缓存：`append` 与 `onStreamDelta` 每条消息都调用，
+     * 每次都读 SharedPreferences 是无谓开销（增量可达每秒几十次）。
+     * 在 applyLocalPrefs 里同步更新。
+     */
+    private var autoScrollPrefsCache = true
+    private var streamPrefsCache = true
+
+    /**
+     * 设置类弹窗（远程配置/地址历史/诊断/重命名/导出）。
+     *
+     * 已从本类抽出（约 250 行）—— 这些功能只依赖 Context 与少量状态，
+     * 不碰对话页控件，是边界最清晰、风险最低的一刀。
+     */
+    private lateinit var settingsActions: SettingsActions
+
+    // ── 多页结构（任务 #21）──
+    private var chatFragment: ChatFragment? = null
+    private var sessionFragment: SessionFragment? = null
+    private var settingsFragment: SettingsFragment? = null
+    private lateinit var tabSessions: TextView
+    private lateinit var tabChat: TextView
+    private lateinit var tabSettings: TextView
+
+    /** 当前 tab（返回键行为需要知道在哪个页）。 */
+    private var currentTab = TAB_INDEX_CHAT
+
+    /** 冷启动的初始化是否已完成（保证 onStart 里的自动连接只跑一次）。 */
+    private var coldStartDone = false
+
+    // ── 对话搜索状态 ──
+    /** 当前查询命中的消息下标（升序）。 */
+    private var matchIndices: List<Int> = emptyList()
+
+    /** 当前停留的命中位置。 */
+    private var currentMatch: Int = -1
+
+    /** 搜索栏是否展开。 */
+    private var searchVisible = false
+
+    /**
+     * 未看到的新消息条数（用于右下角悬浮提示）。
+     *
+     * 只在「用户不在底部」时累加 —— 已在底部说明正看着新内容。
+     * 滚到底部或点提示时清零。
+     */
+    private var unseenCount = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // 必须在 setContentView **之前**设主题 —— 这是 Android 的硬要求，
+        // 之后调用不会生效（窗口已按旧主题创建）
+        applyThemePref()
         setContentView(R.layout.activity_main)
 
         prefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         store = MessageStore(this)
+        draftStore = DraftStore(this)
+        localPrefs = LocalPrefs(this)
+        scanPortPrefs = ScanPortPrefs(this)
+        pinchZoomPrefs = PinchZoomPrefs(this)
+        appModePrefs = AppModePrefs(this)
+        localStore = LocalPrefsStore(this)
+        diagnosisLog = DiagnosisLog(this)
+        settingsActions = SettingsActions(this, settingsHost)
+        // 应用锁解锁结果的回调：必须在调用 setupAppLockGate 前注册好
+        // （ActivityResultLauncher 只能在初始化期注册一次）。
+        appLockLauncher = registerForActivityResult(
+            androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult(),
+        ) { result ->
+            // RESULT_OK = 用户成功解锁；否则（取消/失败）不解锁就退出 App
+            if (result.resultCode == android.app.Activity.RESULT_OK) {
+                removeAppLockOverlay()
+            } else {
+                finish()
+            }
+        }
+        // 应用锁门禁（设备锁屏凭据）：必须在任何内容可见前拦截。
+        // 做法是先盖一层全屏遮罩，解锁成功才移除 —— 这样下面的初始化
+        // （setupFragments 等）照常执行，但用户看不到内容直到解锁。
+        // 设备没设锁屏凭据或开关关闭时立即移除遮罩，零感知。
+        setupAppLockGate()
+
+
+        // 提前创建 TTS 引擎（初始化是异步的且较慢）：若等到第一次播报才建，
+        // 那条播报常因引擎未就绪被吞掉。放在 onCreate 让它在用户连接、
+        // 发消息这段时间里就绪。VoiceAnnouncer 内部对未就绪请求排队兜底。
+        voiceAnnouncer = VoiceAnnouncer(this)
+
+        inputActions = InputActions(this, object : InputActions.Host {
+            override fun appendSystem(text: String) = this@MainActivity.append(ChatMessage.system(text))
+
+            override fun appendToInput(text: String) {
+                msgInput.setText(text)
+                msgInput.setSelection(text.length)
+                draftStore.save(text)
+            }
+
+            override fun currentInput(): String = msgInput.text.toString()
+        })
         adapter = ChatAdapter()
+        // 冷启动时立即应用偏好 —— 否则要等用户进设置页改一次才生效
+        adapter.applyOptions(buildDisplayOptions())
+        autoScrollPrefsCache = localPrefs.getBool(LocalPrefs.KEY_AUTO_SCROLL)
+        streamPrefsCache = localPrefs.getBool(LocalPrefs.KEY_STREAMING)
         Notifications.ensureChannel(this)
         // Android 13+ 需运行时申请通知权限；拒绝也不影响主流程
         if (android.os.Build.VERSION.SDK_INT >= 33 &&
@@ -68,97 +325,1362 @@ class MainActivity : AppCompatActivity() {
             requestPermissions(arrayOf("android.permission.POST_NOTIFICATIONS"), 1001)
         }
 
-        list = findViewById(R.id.list)
-        msgInput = findViewById(R.id.msg_input)
-        urlInput = findViewById(R.id.url_input)
-        secretInput = findViewById(R.id.secret_input)
-        connPanel = findViewById(R.id.conn_panel)
+        // 顶栏与底部导航在容器布局里，三个 tab 共享
         statusText = findViewById(R.id.status)
         dot = findViewById(R.id.dot)
-        sendBtn = findViewById(R.id.btn_send)
-        stopBtn = findViewById(R.id.btn_stop)
+        progress = findViewById(R.id.progress)
+        // 状态栏点击的语义按当前状态分流：
+        // · 未连接 → 立即重连。这是用户点它的**唯一动机**。
+        //   此前没有任何手动重连入口：连败后客户端会停止重连（manualClose），
+        //   用户只能杀进程重启 App —— 实测确认过（App 日志里再没有一条
+        //   BridgeClient 输出，点界面也没反应）。
+        // · 已连接 → 进诊断页看详情（原行为）。
+        statusText.setOnClickListener { onStatusTapped() }
+        dot.setOnClickListener { onStatusTapped() }
 
-        list.layoutManager = LinearLayoutManager(this).apply { stackFromEnd = true }
-        list.adapter = adapter
-
-        client = BridgeClient { ev -> onEvent(ev) }
-
-        urlInput.setText(prefs.getString(KEY_URL, DEFAULT_URL))
-        secretInput.setText(prefs.getString(KEY_SECRET, ""))
-
-        findViewById<ImageButton>(R.id.btn_settings).setOnClickListener {
-            connPanel.visibility = if (connPanel.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+        // 顶栏搜索：目标是对话内容，故先切到对话页再展开搜索栏
+        findViewById<android.widget.ImageButton>(R.id.btn_chat_search).setOnClickListener {
+            if (currentTab != TAB_INDEX_CHAT) selectTab(TAB_INDEX_CHAT)
+            toggleChatSearch(!searchVisible)
         }
-        findViewById<Button>(R.id.btn_connect).setOnClickListener {
-            hideKeyboard()
-            connPanel.visibility = View.GONE
+
+        // client 必须在 connectWith 之前创建（connectWith 里会调 client.close）。
+        // 且必须在 Fragment 就绪后创建：BridgeClient 的回调会直接操作
+        // 对话页控件，早于视图就绪创建会有空引用窗口。
+        client = BridgeClient(
+            onEvent = { ev -> onEvent(ev) },
+            // 失败历史交给宿主持久化（BridgeClient 本身无 Context）
+            onDiagnosis = { reason, code, address -> diagnosisLog.append(reason, code, address) },
+        )
+        // 远端适配器：包住 client，使两种后端可互换（见 activeBackend）
+        remoteBackend = RemoteAgentBackend(client)
+
+        // 读取工作模式（默认 REMOTE，与升级前行为一致）。
+        appMode = appModePrefs.get()
+
+        // 本地模式后端：延迟创建（用户可能从不用本地模式，
+        // 提前建会白白占用线程池与 KeyStore 访问）。
+        // 注意 onEvent 走同一个处理方法 —— 两种模式的事件在 UI 处汇合，
+        // 这是双模式架构「共享 UI」的关键
+        localBackend = buildLocalBackend()
+        // 冷启动时按当前模式与工作区切换一次历史文件（本地模式此前从未
+        // 调过 useSession，永远落在 history-default.json —— 见 refreshSessionScope）
+        refreshSessionScope()
+
+        setupFragments()
+        setupBottomNav()
+        setupBackNavigation()
+
+        // 注意：自动连接**不在这里**触发。
+        // 实测证明 onCreate 阶段 Fragment 的 onViewCreated 不会执行
+        //（内容视图尚未 attach 到窗口），此时 urlInput/msgInput 仍是未初始化
+        // 的 lateinit —— 一访问就崩。改为在 onStart 里做（见下）。
+    }
+
+    /**
+     * Activity 进入可见时，保证 Fragment 视图已就绪后再做依赖它们的事。
+     *
+     * 为什么不在 onCreate：
+     * 实测（探针日志）证明 `commitNow()` 在 onCreate 阶段只把 Fragment 加进
+     * FragmentManager，**不触发** onCreateView/onViewCreated ——
+     * 于是 Activity 的 urlInput/msgInput 等字段永远拿不到值，
+     * 第 168 行的自动连接一访问 lateinit 就崩。
+     *
+     * onStart 时 Fragment 视图必然已创建（Fragment 生命周期不会晚于
+     * Activity 的 onStart），这是可靠的时机。
+     *
+     * 用 once 标志保证只执行一次 —— onStart 可能被多次调用（Activity
+     * 从后台返回），而自动连接应当只在冷启动时发生一次。
+     */
+    /**
+     * 应用锁门禁。
+     *
+     * 先盖全屏遮罩挡住下面的内容；再判是否需解锁：
+     * · 不需锁（关 / 设备没设锁屏凭据）→ 立即移除遮罩，App 正常显示。
+     * · 需锁 → 弹出系统解锁界面（指纹/人脸/PIN/图案/密码，由系统决定）：
+     *   成功移除遮罩显示内容（见 appLockLauncher 回调）；
+     *   失败/取消 → finish()，不解锁就不让看（避免「按返回就绕过锁」）。
+     *
+     * 遮罩用 window 最上层 View：盖在所有内容之上，解锁前用户看不到
+     * 对话/历史/配置。
+     */
+    private var appLockOverlay: android.view.View? = null
+
+    private fun setupAppLockGate() {
+        val overlay = android.view.View(this).apply {
+            setBackgroundColor(0xFF000000.toInt())
+            isClickable = true // 拦截一切点击，防止遮罩下内容被误触
+            isFocusable = true
+        }
+        val params = android.view.WindowManager.LayoutParams(
+            android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+            android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+        )
+        window.addContentView(overlay, params)
+        appLockOverlay = overlay
+
+        val prefOn = localPrefs.getBool(LocalPrefs.KEY_APP_LOCK)
+        // isKeyguardSecure 可能在某些设备上抛异常，按「不支持」降级，绝不卡死
+        val hasCredential = runCatching {
+            val km = getSystemService(android.content.Context.KEYGUARD_SERVICE)
+                as android.app.KeyguardManager
+            km.isKeyguardSecure
+        }.getOrDefault(false)
+
+        if (!AppLock.shouldLock(prefOn, hasCredential)) {
+            removeAppLockOverlay()
+            return
+        }
+
+        val km = getSystemService(android.content.Context.KEYGUARD_SERVICE)
+            as android.app.KeyguardManager
+        val intent = km.createConfirmDeviceCredentialIntent(
+            getString(R.string.app_lock_title),
+            null,
+        )
+        if (intent == null) {
+            // 极端情况下 intent 为 null（系统未提供解锁界面）→ 不拦，避免卡死
+            removeAppLockOverlay()
+            return
+        }
+        appLockLauncher.launch(intent)
+    }
+
+    /** 移除应用锁遮罩（解锁成功后）。 */
+    private fun removeAppLockOverlay() {
+        appLockOverlay?.let {
+            runCatching { windowManager.removeView(it) }
+            appLockOverlay = null
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (coldStartDone) return
+        coldStartDone = true
+
+        // 视图就绪后恢复草稿（此前在 bindChatViews 里做过，这里再兜一次：
+        // 若 Fragment 回调因任何原因未触发，至少有默认值不崩）
+        if (::msgInput.isInitialized) {
+            msgInput.setText(draftStore.load())
+        }
+        if (::urlInput.isInitialized && prefs.getBoolean(KEY_AUTOCONNECT, true)) {
             connectWith(urlInput.text.toString(), secretInput.text.toString())
         }
-        findViewById<Button>(R.id.btn_clear).setOnClickListener {
-            adapter.submit(emptyList())
-            thread { store.clear() }
-            Toast.makeText(this, "已清空本地记录", Toast.LENGTH_SHORT).show()
+    }
+
+    /**
+     * SettingsActions 的宿主实现。
+     *
+     * 用接口而非让 SettingsActions 直接持有 MainActivity：
+     * 否则等于没拆，只是把耦合挪了个地方。
+     */
+    private val settingsHost = object : SettingsActions.Host {
+        override fun loadHostHistory(): List<String> = this@MainActivity.loadHostHistory()
+
+        override fun rememberHost(url: String) = this@MainActivity.rememberHost(url)
+
+        override fun clearHostHistory() {
+            this@MainActivity.prefs.edit().remove(KEY_HOSTS).apply()
         }
-        findViewById<Button>(R.id.btn_scan).setOnClickListener {
-            val host = currentHost()
-            val curPort = currentPort()
-            SessionPickerDialog.show(this, host, curPort) { s ->
-                // 切换会话：更新地址栏并重连
-                sessionLabel = s.label
-                val url = "http://$host:${s.port}"
-                urlInput.setText(url)
-                connectWith(url, secretInput.text.toString())
-                append(ChatMessage.system("已切换到会话「${s.label}」（端口 ${s.port}）"))
-                connPanel.visibility = View.GONE
+
+        override fun currentSessionLabel(): String? = sessionLabel
+
+        override fun onSessionLabelChanged(label: String) {
+            sessionLabel = label
+        }
+
+        override fun isConnected(): Boolean = this@MainActivity.client.isConnected
+
+        override fun sendConfig(key: String, value: Any?, label: String) {
+            if (key == "renameSession") {
+                // 重命名走专用 WS 动作，不是 setConfig
+                client.renameSession(value as String, ChatMessage.newId())
+                return
+            }
+            client.setConfig(key, value, ChatMessage.newId())
+            append(ChatMessage.system("已请求：$label"))
+        }
+
+        override fun appendSystem(text: String) = this@MainActivity.append(ChatMessage.system(text))
+
+        override fun localHistory(): List<ChatMessage> = adapter.snapshot()
+
+        override fun currentAddress(): String = urlInput.text.toString()
+
+        override fun currentSecret(): String = secretInput.text.toString()
+
+        override fun connectionStatusText(): String = statusText.text.toString()
+
+        override fun lastFailure(): BridgeClient.Diagnosis? = client.lastDiagnosis
+
+        override fun retryConnect(url: String, secret: String) = this@MainActivity.connectWith(url, secret)
+    }
+
+    // ── 二级页面导航 ──
+
+    /**
+     * 打开一个二级页面。
+     *
+     * 用 add + addToBackStack（而非 replace）：
+     * · 主 tab 的 Fragment 被 hide 而非销毁，返回时状态原样恢复
+     * · 返回键由 FragmentManager 自动处理（弹出栈顶即回退）
+     *
+     * 不用 Navigation 组件：本工程的二级页面是固定的四个，
+     * 引入 nav graph 与 safeargs 的收益不抵依赖成本。
+     */
+    private fun openPage(fragment: androidx.fragment.app.Fragment, tag: String) {
+        val fm = supportFragmentManager
+        if (fm.findFragmentByTag(tag) != null) return
+        val tx = fm.beginTransaction()
+        // 隐藏当前可见的主 tab
+        chatFragment?.let { if (!it.isHidden) tx.hide(it) }
+        sessionFragment?.let { if (!it.isHidden) tx.hide(it) }
+        settingsFragment?.let { if (!it.isHidden) tx.hide(it) }
+        tx.add(R.id.content, fragment, tag)
+        tx.addToBackStack(tag)
+        tx.commit()
+    }
+
+    /** 当前是否在二级页面上（返回键行为需要判断）。 */
+    private fun inSubPage(): Boolean =
+        supportFragmentManager.backStackEntryCount > 0
+
+    // ── DiagnosticsFragment.Host ──
+
+    override fun diagStatusText(): String = buildString {
+        append("地址        ").append(savedAddress()).append('\n')
+        append("状态        ").append(statusText.text).append('\n')
+        append("密钥        ")
+        append(if (secretInput.text.isNullOrBlank()) "未设置（服务端不做认证）" else "已设置")
+        append('\n')
+        append("客户端      ").append(if (client.isConnected) "已连接" else "未连接")
+    }
+
+    /** 失败历史的展示文本（最多显示 [MAX_SHOWN] 条）。 */
+    override fun diagHistoryText(): String {
+        val records = diagnosisLog.load()
+        if (records.isEmpty()) return "暂无失败记录"
+        val shown = records.take(MAX_HISTORY_SHOWN)
+        return shown.joinToString("\n") { r ->
+            val t = java.text.SimpleDateFormat("MM-dd HH:mm:ss", java.util.Locale.getDefault())
+                .format(java.util.Date(r.at))
+            val code = if (r.httpCode != null) " [HTTP ${r.httpCode}]" else ""
+            "$t$code\n  ${r.reason}\n  @ ${r.address}"
+        }
+    }
+
+    override fun diagHistorySummary(): String = diagnosisLog.summaryLabel()
+
+    override fun diagClearHistory() {
+        diagnosisLog.clear()
+    }
+
+    override fun diagFailureText(): String {
+        val d = client.lastDiagnosis
+            ?: return "暂无失败记录。\n若连接不正常，请对照下方的常见原因排查。"
+        return buildString {
+            append("原因        ").append(d.reason).append('\n')
+            if (d.httpCode != null) append("HTTP 码     ").append(d.httpCode).append('\n')
+            append("已重试      ").append(d.attempts).append(" 次")
+        }
+    }
+
+    override fun diagReport(): String = buildString {
+        append("=== doge-code 手机端诊断报告 ===\n")
+        append(diagStatusText()).append("\n\n")
+        append(diagFailureText()).append("\n")
+    }
+
+    override fun diagRetry() {
+        connectWith(savedAddress(), secretInput.text.toString())
+    }
+
+    override fun diagUseUsb() {
+        val usb = "http://127.0.0.1:$PORT"
+        if (::urlInput.isInitialized) urlInput.setText(usb)
+        connectWith(usb, secretInput.text.toString())
+    }
+
+    override fun diagClearFailure() {
+        client.clearDiagnosis()
+        append(ChatMessage.system(getString(R.string.diag_cleared)))
+    }
+
+    // ── ConfigFragment.Host ──
+
+    override fun configConnected(): Boolean = client.isConnected
+
+    override fun configApply(key: String, value: Any?, label: String) {
+        client.setConfig(key, value, ChatMessage.newId())
+        append(ChatMessage.system("已请求：$label"))
+    }
+
+    // ── SessionDetailFragment.Host ──
+
+    override fun detailSwitch(session: SessionScanner.Session) {
+        switchToSession(session)
+    }
+
+    override fun detailRename(session: SessionScanner.Session) {
+        // 重命名作用于**当前连接的**会话（服务端只有一个进程内标签），
+        // 若目标不是当前会话，先切过去再改 —— 否则会改错对象
+        if (session.port != currentPort()) {
+            switchToSession(session)
+        }
+        settingsActions.promptRenameSession()
+    }
+
+    /**
+     * 构造该会话可用的连接地址。
+     *
+     * 用 `currentHost()`（当前连接的主机名）而非会话自己的字段 ——
+     * 会话的 `cwd` 是工作目录**路径**，拿它当主机名会拼出
+     * `http://D:\proj:5680` 这种必然连不上的地址（原实现就是这样）。
+     *
+     * 地址构造**只在这一处**：调用方（详情页）只负责写剪贴板。
+     * 此前详情页自己也拼了一份，两份不一致导致用户复制到错的地址。
+     */
+    override fun detailAddress(session: SessionScanner.Session): String =
+        "http://${currentHost()}:${session.port}"
+
+    // ── SessionFragment.Actions ──
+
+    override fun onSessionOpen(session: SessionScanner.Session) {
+        val f = SessionDetailFragment()
+        f.bind(session, session.port == currentPort())
+        openPage(f, "detail-${session.port}")
+    }
+
+    // ── SettingsFragment 的动作实现 ──
+    //
+    // 这些原本是 onCreate 里散落的匿名 setOnClickListener。收拢到此处的
+    // 好处：设置页的每个按钮行为都能一眼看全，且 Fragment 不必知道
+    // Activity 的内部方法名（只依赖 Actions 接口）。
+
+    override fun onConnect(url: String, secret: String) {
+        hideKeyboard()
+        connectWith(url, secret)
+    }
+
+    override fun onScanSessions() {
+        selectTab(TAB_INDEX_SESSIONS)
+    }
+
+    override fun onPickHost() {
+        settingsActions.showHostHistory()
+    }
+
+    override fun onRemoteConfig() {
+        openPage(ConfigFragment(), "config")
+    }
+
+    /**
+     * 内联选项被选中（设置页）。
+     *
+     * 与弹窗版本的区别：这里不关闭任何东西 —— 内联展开的意义就在于
+     * 保留现场，用户能对着刚改的值确认。反馈通过追加系统消息给出。
+     */
+    override fun onConfigValue(key: String, value: Any?, label: String) {
+        if (!client.isConnected) {
+            Toast.makeText(this, "未连接", Toast.LENGTH_SHORT).show()
+            return
+        }
+        client.setConfig(key, value, ChatMessage.newId())
+        append(ChatMessage.system("已请求：$label"))
+    }
+
+    override fun onRenameSession() {
+        settingsActions.promptRenameSession()
+    }
+
+    override fun onExportHistory() {
+        settingsActions.exportHistory()
+    }
+
+    override fun onClearHistory() {
+        adapter.submit(emptyList())
+        thread { store.clear() }
+        // 本地模式：历史清了，累计用量一并清零（/cost 是「会话级」统计）；
+        // 待办清单也清（新会话新计划）
+        if (appMode == AppMode.LOCAL) {
+            localBackend.resetUsage()
+            LocalTools.clearTodos()
+        }
+        Toast.makeText(this, "已清空本地记录", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onShowDiagnostics() {
+        openPage(DiagnosticsFragment(), "diagnostics")
+    }
+
+    override fun onShowAbout() {
+        openPage(AboutFragment(), "about")
+    }
+
+    override fun onShowHistory() {
+        // 用 tag 复用：openPage 里 findFragmentByTag 非 null 时不重复 add，
+        // 故从二级页返回后再进会拿到旧实例 —— 需要它刷新
+        val existing = supportFragmentManager.findFragmentByTag("history") as? HistoryFragment
+        if (existing != null) {
+            supportFragmentManager.popBackStack("history", 0)
+            existing.refresh()
+            return
+        }
+        openPage(HistoryFragment(), "history")
+    }
+
+    override fun onPrefToggle(key: String, on: Boolean) {
+        // 本地偏好：写入后立即生效（消费方各自读 LocalPrefs）
+        localPrefs.setBool(key, on)
+        applyLocalPrefs()
+    }
+
+    override fun onPrefChoice(key: String, value: String) {
+        val changed = localPrefs.get(key) != value
+        localPrefs.set(key, value)
+        applyLocalPrefs()
+        // 主题只在 onCreate 生效 —— 改了要重建 Activity 才能看到效果。
+        // 不重建的话用户会以为「选了没反应」。
+        if (key == LocalPrefs.KEY_THEME && changed) {
+            recreate()
+        }
+    }
+
+    override fun onShowPendingPermissions() {
+        val pending = PermissionDecisionStore.all(this)
+        if (pending.isEmpty()) {
+            Toast.makeText(this, R.string.pending_permissions_empty, Toast.LENGTH_SHORT).show()
+            return
+        }
+        val lines = pending.joinToString("\n") { p ->
+            "· ${p.behavior} ← ${p.source.ifBlank { "未知来源" }}"
+        }
+        android.app.AlertDialog.Builder(this)
+            .setTitle(getString(R.string.pending_permissions) + "（${pending.size}）")
+            .setMessage(lines + "\n\n这些决定会在下次连接成功后自动补发。")
+            .setPositiveButton("清空") { _, _ ->
+                PermissionDecisionStore.clear(this)
+                Toast.makeText(
+                    this,
+                    getString(R.string.pending_permissions_cleared, pending.size),
+                    Toast.LENGTH_SHORT,
+                ).show()
+            }
+            .setNegativeButton("关闭", null)
+            .show()
+    }
+
+    /**
+     * 打开「逐条授权规则」管理页。
+     *
+     * 列出 [PermissionRules.KNOWN_TOOL_NAMES] 的每类工具，每行三选一：
+     * 总是允许 / 总是拒绝 / 每次询问（默认）。点选即写入 SharedPreferences，
+     * 下次权限请求由 [onPermissionRequested] 的闸门按规则自动裁决。
+     *
+     * 用内联展开而非 AlertDialog.setItems：要展示「工具名 + 当前选中策略」
+     * 的对照，且每行有三个独立选项可点，列表单选无法满足。
+     */
+    /** dip → px（权限规则对话框等动态构建 UI 用）。 */
+    private fun dp(v: Int): Int = (v * resources.displayMetrics.density).toInt()
+
+    override fun onShowPermissionRules() {
+        val list = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(dp(14), dp(8), dp(14), dp(8))
+        }
+        PermissionRules.allRulesWithDefaults(this).forEach { rule ->
+            list.addView(buildRuleRow(rule.toolName))
+        }
+        android.app.AlertDialog.Builder(this)
+            .setTitle(R.string.permission_rules)
+            .setView(android.widget.ScrollView(this).apply { addView(list) })
+            .setNegativeButton("关闭", null)
+            .show()
+    }
+
+    /** 构建一条工具规则行：工具名 + 三个策略 chip。 */
+    private fun buildRuleRow(toolName: String): android.view.View {
+        val ctx = this
+        val row = android.widget.LinearLayout(ctx).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(0, dp(6), 0, dp(6))
+        }
+        val nameView = android.widget.TextView(ctx).apply {
+            text = toolName
+            textSize = 13f
+            setTextColor(0xFFE8E8E8.toInt())
+        }
+        row.addView(nameView)
+
+        val chips = mutableListOf<android.widget.TextView>()
+        val options = listOf(
+            Triple(PermissionRules.POLICY_ALWAYS_ALLOW, "总是允许", 0xFF6BD66B.toInt()),
+            Triple(PermissionRules.POLICY_ALWAYS_DENY, "总是拒绝", 0xFFFF6B6B.toInt()),
+            Triple(PermissionRules.POLICY_ASK, "每次询问", 0xFFCCCCCC.toInt()),
+        )
+        val bar = android.widget.LinearLayout(ctx).apply {
+            orientation = android.widget.LinearLayout.HORIZONTAL
+            setPadding(0, dp(4), 0, 0)
+        }
+        val refresh = {
+            val cur = PermissionRules.getPolicy(ctx, toolName)
+            chips.forEach { chip ->
+                val on = chip.tag == cur
+                chip.setBackgroundResource(if (on) R.drawable.chip_bg_on else R.drawable.chip_bg)
             }
         }
-        sendBtn.setOnClickListener { sendCurrent() }
-        stopBtn.setOnClickListener { client.sendInterrupt() }
+        options.forEach { (value, label, _) ->
+            val chip = android.widget.TextView(ctx).apply {
+                text = label
+                tag = value
+                textSize = 12f
+                setPadding(dp(12), dp(6), dp(12), dp(6))
+                setBackgroundResource(R.drawable.chip_bg)
+                setTextColor(0xFFCCCCCC.toInt())
+                val lp = android.widget.LinearLayout.LayoutParams(
+                    android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                    android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                )
+                lp.setMargins(0, 0, dp(8), 0)
+                layoutParams = lp
+                isClickable = true
+                isFocusable = true
+                setOnClickListener {
+                    PermissionRules.setPolicy(ctx, toolName, value)
+                    refresh()
+                }
+            }
+            chips.add(chip)
+            bar.addView(chip)
+        }
+        row.addView(bar)
+        refresh()
+        return row
+    }
 
-        msgInput.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_SEND) { sendCurrent(); true } else false
+    /**
+     * 按「主题」偏好设置主题。必须在 setContentView 前调用。
+     *
+     * 三种取值：
+     * · light  → 浅色主题
+     * · system → 跟随系统（这里按系统是否为深色决定）
+     * · dark / 其它 → 默认深色主题（也是改造前的观感）
+     */
+    private fun applyThemePref() {
+        val theme = LocalPrefs(this).get(LocalPrefs.KEY_THEME)
+        val useLight = when (theme) {
+            "light" -> true
+            "system" -> (resources.configuration.uiMode and
+                android.content.res.Configuration.UI_MODE_NIGHT_MASK) !=
+                android.content.res.Configuration.UI_MODE_NIGHT_YES
+            else -> false
+        }
+        setTheme(if (useLight) R.style.Theme_DogeMobile_Light else R.style.Theme_DogeMobile)
+    }
+
+    /**
+     * 把本地偏好应用到界面上。
+     *
+     * 本项目多数偏好影响的是「渲染细节」（字号/密度/颜色），
+     * 完整应用需要重建视图；此处先做能立即生效的部分（通知相关），
+     * 其余在下一轮深化时接入（见规划文档线 A）。
+     */
+    private fun applyLocalPrefs() {
+        // 渲染类偏好交给 Adapter（它持有渲染参数，改后重绘）
+        adapter.applyOptions(buildDisplayOptions())
+        autoScrollPrefsCache = localPrefs.getBool(LocalPrefs.KEY_AUTO_SCROLL)
+        streamPrefsCache = localPrefs.getBool(LocalPrefs.KEY_STREAMING)
+        // 通知类偏好无需重建视图：下次 notify 时读取即可，故不在此处理。
+        // 唯一例外是渠道级的声音设置 —— 它建在渠道上，改不了，
+        // 只能影响之后新建的通知（已在 Notifications 里按次读取）。
+    }
+
+    /**
+     * 从本地偏好构造渲染参数。
+     *
+     * 这是**偏好 → 界面**的唯一转换点：所有渲染类偏好在这一处映射，
+     * 而不是散落到 Adapter 各处读 SharedPreferences。
+     */
+    private fun buildDisplayOptions(): ChatAdapter.DisplayOptions =
+        ChatAdapter.DisplayOptions(
+            markdown = localPrefs.getBool(LocalPrefs.KEY_MARKDOWN),
+            codeHighlight = localPrefs.getBool(LocalPrefs.KEY_CODE_HIGHLIGHT),
+            // 最终字号 = 预设档 × 捏合倍率。
+            // 两者分开存（见 PinchZoom）：改预设不影响已捏的倍率，
+            // 捏合也不覆盖用户选的档位。
+            fontScale = PinchZoom.finalScale(
+                presetFactor = PinchZoom.presetFactor(localPrefs.get(LocalPrefs.KEY_FONT_SCALE)),
+                // 捏合过程中用临时值（避免每次都读盘）；结束后落盘并清空
+                pinchFactor = pinchZoomPrefsLive ?: pinchZoomPrefs.factor(),
+            ),
+            compact = localPrefs.get(LocalPrefs.KEY_DENSITY) == "compact",
+            relativeTime = localPrefs.get(LocalPrefs.KEY_TIME_FORMAT) == "relative",
+        )
+
+    override fun onRememberSecretChanged(remember: Boolean) {
+        prefs.edit().putBoolean(KEY_REMEMBER_SECRET, remember).apply()
+        // 取消勾选时立刻抹掉已存的密钥 —— 否则用户以为「不记住」了，
+        // 实际上旧的还躺在磁盘上，下次连接照样能免密
+        if (!remember) prefs.edit().remove(KEY_SECRET).apply()
+    }
+
+    // ── Fragment 与底部导航 ──
+
+    private fun setupFragments() {
+        val fm = supportFragmentManager
+        chatFragment = fm.findFragmentByTag(TAG_CHAT) as? ChatFragment ?: ChatFragment().also {
+            fm.beginTransaction().add(R.id.content, it, TAG_CHAT).commitNow()
+        }
+        // 键盘顶起输入框（Android 15 边到边下 adjustResize 已失效，必须自己避让）
+        chatFragment!!.keyboardPanEnabled = {
+            localPrefs.getBool(LocalPrefs.KEY_KEYBOARD_PAN)
+        }
+        sessionFragment = fm.findFragmentByTag(TAG_SESSIONS) as? SessionFragment
+            ?: SessionFragment().also {
+                fm.beginTransaction().add(R.id.content, it, TAG_SESSIONS).commitNow()
+            }
+        settingsFragment = fm.findFragmentByTag(TAG_SETTINGS) as? SettingsFragment
+            ?: SettingsFragment().also {
+                fm.beginTransaction().add(R.id.content, it, TAG_SETTINGS).commitNow()
+            }
+
+        // 对话页：控件就绪后赋值回 Activity 字段。
+        // 控件仍由 Activity 持有是因为 40 多个业务方法共用它们；
+        // 任务 #22 抽类时再逐步迁到各协调类里。
+        chatFragment!!.onChatViewsReady = { v ->
+            list = v.list
+            msgInput = v.msgInput
+            sendBtn = v.sendBtn
+            stopBtn = v.stopBtn
+            activityPanel = v.activityPanel
+            activityText = v.activityText
+            agentStopBtn = v.agentStopBtn
+            bindChatViews()
+
+            // 双指缩放：注入初值 + 接线回调。
+            // 每次视图重建都要重设（Fragment view 会被销毁重建）。
+            chatFragment!!.pinchFactor = pinchZoomPrefs.factor()
+            // 捏合过程中实时重绘（不写盘）
+            chatFragment!!.onPinchZoomLive = { factor ->
+                pinchZoomPrefsLive = factor
+                adapter.applyOptions(buildDisplayOptions())
+            }
+            // 手势结束才持久化（一次手势只写一次盘）
+            chatFragment!!.onPinchZoom = { factor ->
+                pinchZoomPrefs.setFactor(factor)
+                // 清空临时值：此后以落盘值为准（避免两处状态长期并存）
+                pinchZoomPrefsLive = null
+                adapter.applyOptions(buildDisplayOptions())
+            }
+
+            // 每次视图重建都要重挂 adapter：Fragment view 销毁重建后，
+            // 原来挂在旧 RecyclerView 上的 adapter 不会自动跟过来
+            list.layoutManager = LinearLayoutManager(this).apply { stackFromEnd = true }
+            list.adapter = adapter
+            adapter.submit(store.load())
+            if (adapter.itemCount > 0) list.scrollToPosition(adapter.itemCount - 1)
+
+            // 批量选择模式：点击消息切换选中（由 adapter 在选择模式下转发）
+            adapter.onSelectionClick = { toggleSelection(it) }
+            // 批量操作栏按钮（仅在选择模式时显示，故每次视图重建都重挂）
+            v.batchSelectAll.setOnClickListener { batchToggleAll() }
+            v.batchCopy.setOnClickListener { batchCopySelected() }
+            v.batchDelete.setOnClickListener { batchDeleteSelected() }
+            v.batchCancel.setOnClickListener { exitSelectionMode() }
+            // 视图重建后若仍处于选择模式，恢复操作栏（否则退出后重建会丢 UI 态）
+            if (selectedIds.isNotEmpty()) showBatchBar()
         }
 
+        // 设置页：地址/密钥输入框需要被 Activity 读取（连接、诊断要用）
+        //
+        // 注意这里**不触发自动连接** —— 连接会 append 系统消息，那条路径
+        // 依赖对话页的 list/adapter 已就绪。两个 Fragment 的回调触发顺序
+        // 由 add 顺序决定，靠它保证前置条件太脆弱。
+        // 改为 setupFragments() 返回后由 onCreate 统一发起（那时两个
+        // Fragment 的视图都已完成 onViewCreated）。
+        settingsFragment!!.onSettingsViewsReady = { url, secret ->
+            urlInput = url
+            secretInput = secret
+            url.setText(prefs.getString(KEY_URL, DEFAULT_URL))
+            secret.setText(prefs.getString(KEY_SECRET, ""))
+        }
+
+        // 设置页的「工作模式 + 本地配置」面板。
+        // 模式切换后要重建界面状态（顶栏按钮、状态文案等），故传回调。
+        settingsFragment!!.bindLocalPanel(
+            LocalConfigPanel(
+                fragment = settingsFragment!!,
+                store = localStore,
+                modePrefs = appModePrefs,
+                onModeChanged = { mode ->
+                    appMode = mode
+                    // 切到本地模式时，顶栏不再显示「未连接」（本地无连接概念）
+                    applyModeToUi()
+                    // 进入本地模式时重建 localBackend：离线引擎开关的切换也走
+                    // 这条路径，确保「启用离线引擎」后真正换用 LocalInferenceBackend。
+                    if (mode == AppMode.LOCAL) {
+                        runCatching { localBackend.close() }
+                        localBackend = buildLocalBackend()
+                    }
+                },
+                skillStore = SkillStore(this),
+            ).also { panel ->
+                // 工作区切换（M4 多工作区）：历史按工作区隔离（M1），
+                // 换工作区必须换历史文件并重建本地后端（lazy 缓存会钉住旧历史）
+                panel.onWorkspaceSwitched = {
+                    // 顶栏状态里的工作区名要跟着变
+                    applyModeToUi()
+                }
+            },
+        )
+
+        // 会话页：扫描目标由 Activity 提供（地址栏在设置页，Fragment 间互不可见）
+        // 扫描目标直接读持久化的地址，**不**依赖 urlInput 控件。
+        //
+        // 为什么：本方法（setupFragments）在 onCreate 里执行，而 Fragment 的
+        // onViewCreated 要等到 onStart 才跑 —— 那时 urlInput 可能还没被
+        // 设置页回调赋值。若这里读 urlInput 就会崩（实测过）。
+        //
+        // 地址的权威来源本来就是 SharedPreferences（urlInput 只是它的显示副本），
+        // 直接读它既打破循环依赖，也避免「界面还没就绪就没有扫描目标」的怪状态。
+        sessionFragment!!.scanTargetProvider = { savedAddress() to savedPort() }
+        // 历史里用过的其它主机（换电脑 / 换 WiFi 时留下的）一并探测。
+        // 只取主机名而非完整 URL —— 扫描要的是 host，端口由 SessionScanner
+        // 扫 5680-5690 全段决定。
+        sessionFragment!!.historyHostProvider = {
+            loadHostHistory()
+                .map { BridgeUrl.hostOf(it) }
+                .filter { it.isNotBlank() }
+        }
+        // 局域网自动发现开关（可在设置里关掉，弱信号下省电）
+        sessionFragment!!.lanDiscoveryEnabled = {
+            localPrefs.getBool(LocalPrefs.KEY_LAN_DISCOVERY)
+        }
+        // 扫描端口范围：与「服务端自动顺延端口」成对 —— 写死范围会让
+        // 用户改了起始端口后永久扫不到会话
+        sessionFragment!!.scanPortRange = { scanPortPrefs.range() }
+        // 点列表项 → 进详情页（而非直接切换）
+        sessionFragment!!.onSessionPicked = { s -> onSessionOpen(s) }
+        // 列表项上直接「切换」：一步到位。
+        // 跳转对话页、更新当前端口、提示已切换都由 switchToSession 内部
+        // 完成（既有实现已包含），此处不重复 —— 重复会导致将来改一处漏一处。
+        sessionFragment!!.onSessionSwitch = { s -> switchToSession(s) }
+
+        // 自动连接：广播/扫描发现会话后按策略决定是否自动连。
+        // 策略见 AutoConnect（只有一个候选才连；多个让用户选）。
+        sessionFragment!!.onBeaconDiscovered = label@{ sessions ->
+            // 连接韧性：当前是回环地址且已多次失败 → 它已失效（USB 拔掉/转发丢失），
+            // 不再重试它，而是切到发现的局域网会话（见 ConnectionStrategy）。
+            // 这是用户痛点「拔 USB 后卡死在 127.0.0.1」的核心修复：
+            // 原逻辑发现到局域网会话后不会主动切走失效回环地址。
+            val savedHost = savedHost()
+            if (ConnectionStrategy.isLikelyDeadLoopback(savedHost) &&
+                consecutiveConnectFailures >= 2 && !client.isConnected && !userDisconnected
+            ) {
+                when (val d = ConnectionStrategy.decide(savedHost, savedPort(), sessions, consecutiveConnectFailures)) {
+                    is ConnectionStrategy.Decision.SwitchTo -> {
+                        switchToSession(d.session)
+                        return@label
+                    }
+                    is ConnectionStrategy.Decision.ChooseFrom -> {
+                        Toast.makeText(
+                            this,
+                            AutoConnect.multiSessionHint(d.sessions.size),
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                        return@label
+                    }
+                    is ConnectionStrategy.Decision.RetrySaved -> { /* 落到下方 AutoConnect */ }
+                }
+            }
+
+            val decision = AutoConnect.shouldConnect(
+                enabled = localPrefs.getBool(LocalPrefs.KEY_AUTO_CONNECT),
+                candidates = sessions,
+                alreadyConnected = client.isConnected,
+                userDisconnected = userDisconnected,
+                currentPort = savedPort(),
+            )
+            when (decision) {
+                is AutoConnect.Decision.Connect -> switchToSession(decision.session)
+                is AutoConnect.Decision.Skip -> {
+                    // 多会话时不静默：提示用户去列表里选。
+                    // 只对「多会话」提示 —— 其他跳过原因（已连接、用户断开）
+                    // 是预期行为，弹提示反而烦人
+                    if (sessions.size > 1 && !client.isConnected && !userDisconnected) {
+                        Toast.makeText(
+                            this,
+                            AutoConnect.multiSessionHint(sessions.size),
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 用户是否手动断开过。
+     *
+     * **必须记住**：自动连接的判据之一是「用户没主动断开」——
+     * 否则用户断开后，下次广播又把它连回来，用户会以为断不开。
+     * 在新一轮主动连接（用户点了连接/切换会话）时重置。
+     */
+    private var userDisconnected = false
+
+    /**
+     * 连接失败的统一处理：计数、提示可操作原因、触发会话发现。
+     *
+     * ## 为什么要「触发会话发现」
+     *
+     * 这是修掉的一个真实缺陷：**自动发现只在「会话」页跑**
+     *（`SessionFragment.onResume`）。App 启动后停在「对话」页时，
+     * 广播监听与扫描**根本不会启动** —— 用户拔掉 USB 后重开 App，
+     * 一直连不上，而手机上其实早就该发现局域网里的会话了。
+     *
+     * 现在：连续失败达阈值就主动让会话页跑一次发现（它会连上唯一的
+     * 会话，见 AutoConnect）。
+     */
+    private fun onConnectionFailed() {
+        // 仅统计「非手动断开」的失败：用户主动断开不算故障
+        if (client.isConnected) return
+        consecutiveConnectFailures++
+        if (!ConnectionHint.shouldSuggestDiscovery(consecutiveConnectFailures)) return
+        if (failureHintShown) return
+        failureHintShown = true
+
+        val address = savedAddress()
+        ConnectionHint.hintFor(address, consecutiveConnectFailures)?.let { hint ->
+            append(ChatMessage.system(hint))
+        }
+        // 让会话页跑一次发现（广播 + 扫描）。切过去会让用户看到过程，
+        // 但也打断他当前操作 —— 故只触发发现，不切页
+        sessionFragment?.triggerDiscovery()
+    }
+
+    /** 连续连接失败次数（成功连接后清零）。 */
+    private var consecutiveConnectFailures = 0
+
+    /** 本次失败序列是否已提示过（避免反复刷同一条提示）。 */
+    private var failureHintShown = false
+
+    /**
+     * 按当前模式刷新顶栏状态与发送按钮可用性。
+     *
+     * 本地模式没有「连接」概念，若沿用远端的状态文案（「未连接，重连中…」）
+     * 会让用户以为出了问题 —— 而实际只是选了本地模式。
+     */
+    private fun applyModeToUi() {
+        // 会话隔离：模式变化时切换历史文件并重建本地后端。
+        // **必须在早退之前调** —— 早退（key 未变）正是它的去重手段。
+        refreshSessionScope()
+
+        if (appMode == AppMode.LOCAL) {
+            val cfg = localStore.providerConfig()
+            val ready = cfg.isUsable
+            // 本地模式没有「连接」概念：文案直接说明配置状态，
+            // 而不是沿用远端的「未连接，重连中…」（那会让用户以为出故障）
+            val label = if (ready) {
+                "本地模式（${cfg.model.ifBlank { "默认模型" }}）"
+            } else {
+                "本地模式（未配置 API，去设置里填）"
+            }
+            setStatus(ready, label)
+        }
+        // 远端模式不做额外处理：连接事件（onEvent 里的 Connected/
+        // Disconnected）本来就会调 setStatus 刷新，重复设置反而可能
+        // 覆盖掉更准确的实时状态
+    }
+
+    /**
+     * 当前模式应使用的会话历史标识。
+     *
+     * 远端：`主机_端口`（同 [MessageStore.keyFor]）；本地：按工作区
+     *（同 [MessageStore.keyForLocal]）。两者前缀不同，**永不撞名**。
+     */
+    private fun currentScopeKey(): String =
+        if (appMode == AppMode.LOCAL) {
+            MessageStore.keyForLocal(localStore.resolvedWorkspace().absolutePath)
+        } else {
+            MessageStore.keyFor(savedHost(), savedPort())
+        }
+
+    /** 上次已生效的会话标识（去重，避免每次 applyModeToUi 都重载历史）。 */
+    private var activeScopeKey: String? = null
+
+    /**
+     * 按当前模式 + 当前目标切换历史文件，并重建本地后端。
+     *
+     * ## 为什么必须做
+     *
+     * `MessageStore` 的文件名由 `useSession(key)` 决定，而此前**只有远端
+     * connectTo 路径**会调它。本地模式从不调 → 永远落在构造默认值
+     * `history-default.json`，后果：① 与远端历史串味；② 换工作区不换历史。
+     *
+     * ## 为什么去重
+     *
+     * [applyModeToUi] 是高频入口（状态刷新、模式切换、配置改动都会调）。
+     * 不去重会在每次调用时都「读盘 + 重建后端 + 刷新列表」—— 明显卡顿。
+     * 只在 key 真正变化时执行。
+     *
+     * ## 为什么重建 localBackend
+     *
+     * `LocalAgentBackend.history` 是 `by lazy` 缓存的（见该类注释）——
+     * 换历史文件后必须换实例，否则新会话的历史永远不会被读进来。
+     */
+    private fun refreshSessionScope() {
+        val key = currentScopeKey()
+        if (key == activeScopeKey) return
+        activeScopeKey = key
+
+        store.useSession(key)
+        // 本地后端持有历史缓存，换 scope 后必须重建（否则 lazy 已缓存旧历史）
+        if (appMode == AppMode.LOCAL) {
+            runCatching { localBackend.close() }
+            localBackend = buildLocalBackend()
+        }
+        reloadHistoryIntoAdapter()
+    }
+
+    /** 构造本地后端（含历史持久化 + 本地偏好接线）。 */
+    private fun buildLocalBackend(): AgentBackend {
+        val prefs = LocalPrefs(this)
+        // 离线推理开关：开启且填了本地引擎地址时，走 LocalInferenceBackend
+        //（本地 HTTP 推理服务端，真正的离线，零新依赖）。
+        // 否则走原 LocalAgentBackend（手机调远程 OpenAI 兼容 API，与升级前一致）。
+        if (localStore.offlineEngineEnabled()) {
+            val engineUrl = localStore.engineUrl()
+            if (engineUrl.isNotBlank()) {
+                return LocalInferenceBackend.fromHttp(
+                    workspace = localStore.resolvedWorkspace(),
+                    engineBaseUrl = engineUrl,
+                    modelNameProvider = { localStore.engineModel() },
+                    androidContext = this,
+                    skillStore = SkillStore(this),
+                    historyStore = object : LocalInferenceBackend.HistoryStore {
+                        override fun load(): List<ChatMsg> = store.loadLocalHistory()
+                        override fun save(messages: List<ChatMsg>) = store.saveLocalHistory(messages)
+                    },
+                    localPrefs = object : LocalInferenceBackend.LocalPrefsReader {
+                        override fun maxSteps(): Int =
+                            prefs.get(LocalPrefs.KEY_LOCAL_MAX_STEPS).toIntOrNull()
+                                ?: AgentLoop.DEFAULT_MAX_STEPS
+                        override fun temperature(): Double? {
+                            val v = prefs.get(LocalPrefs.KEY_LOCAL_TEMPERATURE)
+                            return if (v == "default") null else v.toDoubleOrNull()
+                        }
+                    },
+                ).also { it.onEvent = { ev -> onEvent(ev) } }
+            }
+        }
+        return LocalAgentBackend(
+            workspace = localStore.resolvedWorkspace(),
+            configProvider = { localStore.providerConfig() },
+            androidContext = this,
+            skillStore = SkillStore(this),
+            historyStore = object : LocalAgentBackend.HistoryStore {
+                override fun load(): List<ChatMsg> = store.loadLocalHistory()
+                override fun save(messages: List<ChatMsg>) = store.saveLocalHistory(messages)
+            },
+            localPrefs = object : LocalAgentBackend.LocalPrefsReader {
+                override fun maxSteps(): Int =
+                    prefs.get(LocalPrefs.KEY_LOCAL_MAX_STEPS).toIntOrNull()
+                        ?: AgentLoop.DEFAULT_MAX_STEPS
+                override fun temperature(): Double? {
+                    val v = prefs.get(LocalPrefs.KEY_LOCAL_TEMPERATURE)
+                    return if (v == "default") null else v.toDoubleOrNull()
+                }
+            },
+        ).also { it.onEvent = { ev -> onEvent(ev) } }
+    }
+
+    /**
+     * 把当前历史文件的内容读进列表。
+     *
+     * 本地模式的历史是 OpenAI 格式（[ChatMsg]），需经 [LocalHistoryCodec]
+     * 转成 UI 格式；远端历史本就是 [ChatMessage]（服务端推送的形态）。
+     *
+     * **视图未就绪时只切文件、不渲染**：冷启动路径（`onCreate`）里
+     * `list` 尚未由 [setupFragments] 赋值，此处碰它会碰 lateinit 崩溃 ——
+     * 这正是本仓库踩过的坑（见 `onCreate` 里关于 `commitNow` 的注释）。
+     * 视图稍后由 `bindChatViews` 负责首次渲染，无需此处代劳。
+     */
+    private fun reloadHistoryIntoAdapter() {
+        if (!::adapter.isInitialized || !::list.isInitialized) return
+        thread {
+            val messages: List<ChatMessage> =
+                if (appMode == AppMode.LOCAL) {
+                    LocalHistoryCodec.toChatMessages(store.loadLocalHistory())
+                } else {
+                    store.load()
+                }
+            runOnUiThread {
+                adapter.submit(messages)
+                if (messages.isNotEmpty()) list.scrollToPosition(messages.size - 1)
+            }
+        }
+    }
+
+    /**
+     * 返回键行为。
+     *
+     * 多页结构下的自然语义：不在对话页时，先回对话页；已在对话页才退出。
+     * 比原来的「关掉连接面板否则退出」更符合直觉 —— 用户切到设置页后
+     * 按返回，期望是回到上个页面而非退出 App。
+     */
+    private fun setupBackNavigation() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (connPanel.visibility == View.VISIBLE) connPanel.visibility = View.GONE
-                else finish()
+                // 二级页面优先：先弹栈回退到主 tab
+                if (inSubPage()) {
+                    supportFragmentManager.popBackStack()
+                    return
+                }
+                if (currentTab != TAB_INDEX_CHAT) {
+                    selectTab(TAB_INDEX_CHAT)
+                } else {
+                    finish()
+                }
             }
         })
+    }
 
-        // 载入历史（IO 线程读文件，回主线程渲染）
-        thread {
-            val history = store.load()
-            runOnUiThread {
-                adapter.submit(history)
-                if (history.isNotEmpty()) list.scrollToPosition(history.size - 1)
+    private fun setupBottomNav() {
+        tabSessions = findViewById(R.id.tab_sessions)
+        tabChat = findViewById(R.id.tab_chat)
+        tabSettings = findViewById(R.id.tab_settings)
+        tabSessions.setOnClickListener { selectTab(TAB_INDEX_SESSIONS) }
+        tabChat.setOnClickListener { selectTab(TAB_INDEX_CHAT) }
+        tabSettings.setOnClickListener { selectTab(TAB_INDEX_SETTINGS) }
+        selectTab(TAB_INDEX_CHAT)
+    }
+
+    /**
+     * 切 tab。用 show/hide 而非 replace：
+     * · 保活视图，对话页的滚动位置不会丢
+     * · 更重要：client 的 onEvent 回调持有控件引用，视图被销毁后会空引用崩溃
+     */
+    private fun selectTab(index: Int) {
+        val fm = supportFragmentManager
+        val tx = fm.beginTransaction()
+        tx.hide(chatFragment!!)
+        tx.hide(sessionFragment!!)
+        tx.hide(settingsFragment!!)
+        when (index) {
+            TAB_INDEX_SESSIONS -> {
+                tx.show(sessionFragment!!)
+                // 切到会话页时自动重扫一次：用户来这里通常就是想看有哪些会话
+                sessionFragment!!.setCurrentPort(currentPort())
+                sessionFragment!!.rescan()
+            }
+            TAB_INDEX_SETTINGS -> tx.show(settingsFragment!!)
+            else -> tx.show(chatFragment!!)
+        }
+        tx.commit()
+        currentTab = index
+        updateTabStyles(index)
+    }
+
+    private fun updateTabStyles(selected: Int) {
+        val tabs = listOf(tabSessions to TAB_INDEX_SESSIONS, tabChat to TAB_INDEX_CHAT, tabSettings to TAB_INDEX_SETTINGS)
+        tabs.forEach { (tv, idx) ->
+            val on = idx == selected
+            tv.setTextColor(if (on) 0xFF4ADE80.toInt() else 0xFF888888.toInt())
+            tv.setTypeface(null, if (on) android.graphics.Typeface.BOLD else android.graphics.Typeface.NORMAL)
+        }
+    }
+
+    /** 切到指定会话并跳到对话页。 */
+    private fun switchToSession(s: SessionScanner.Session) {
+        sessionLabel = s.label
+        val url = "http://${currentHost()}:${s.port}"
+        urlInput.setText(url)
+        connectWith(url, secretInput.text.toString())
+        append(ChatMessage.system("已切换到会话「${s.label}」（端口 ${s.port}）"))
+        sessionFragment?.setCurrentPort(s.port)
+        selectTab(TAB_INDEX_CHAT)
+    }
+
+    /** 绑定对话页的事件监听。视图重建时会重跑，故必须是幂等的。 */
+    private fun bindChatViews() {
+        // 草稿恢复：Activity 重建（旋屏/被回收）时输入框内容默认会丢，
+        // 用户打了一半的长需求就白打了
+        msgInput.setText(draftStore.load())
+
+        sendBtn.setOnClickListener { sendCurrent() }
+        stopBtn.setOnClickListener { activeBackend.interrupt() }
+        findViewById<ImageButton>(R.id.btn_voice).setOnClickListener { inputActions.startVoiceInput() }
+        // 低频操作收进「更多」溢出菜单 —— 输入栏只留最常用的三个按钮，
+        // 把宽度还给输入框（详见 fragment_chat.xml 里输入栏的说明）
+        findViewById<ImageButton>(R.id.btn_more).setOnClickListener { showMoreActions() }
+        findViewById<ImageButton>(R.id.btn_scroll_bottom).setOnClickListener {
+            if (adapter.itemCount > 0) list.scrollToPosition(adapter.itemCount - 1)
+            clearUnseen()
+        }
+        // 未读提示：点击滚到底部并清除
+        findViewById<TextView>(R.id.btn_unseen).setOnClickListener {
+            if (adapter.itemCount > 0) list.scrollToPosition(adapter.itemCount - 1)
+            clearUnseen()
+        }
+        bindScrollListener()
+
+        // 长按弹操作菜单（原来是直接复制，太粗 —— 用户可能想引用或删）
+        adapter.onLongPress = { m -> showMessageMenu(m) }
+        // 点击失败消息重发（失败状态本身就是可重试的信号）
+        adapter.onRetry = { m -> retry(m) }
+        // 工具气泡标题行点击折叠/展开 —— 折叠态随历史持久化，重建后不丢
+        adapter.onToolToggle = { id ->
+            adapter.toggleTool(id)
+            persist()
+        }
+        // 回合分组组头点击折叠/展开 —— 同样持久化（存在组首成员上）
+        adapter.onGroupToggle = { firstMemberId ->
+            adapter.toggleGroup(firstMemberId)
+            persist()
+        }
+        // 点击缩略图看大图
+        adapter.onImageClick = { base64, _ -> showImageFullscreen(base64) }
+
+        // 草稿随输入实时保存（SharedPreferences apply 是异步落盘，很轻）
+        msgInput.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, st: Int, c: Int, a: Int) {}
+            override fun onTextChanged(s: CharSequence?, st: Int, b: Int, c: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) {
+                saveDraft(s?.toString().orEmpty())
+            }
+        })
+        // 回车键行为：发送 或 换行，由偏好在运行时决定。
+        //
+        // 关键：输入框是 `textMultiLine`，键盘显示的是**换行键**，
+        // 因此 `IME_ACTION_SEND` **永远不会触发** —— 此前依赖它的那段
+        // 监听器是死代码（用户按回车只会换行，必须点发送按钮）。
+        //
+        // 正确的做法是对「换行」这个 action 拦截：想发送就吞掉换行并发出，
+        // 想换行就放行（返回 false 让系统插入换行）。
+        msgInput.setOnKeyListener { _, keyCode, event ->
+            if (keyCode != android.view.KeyEvent.KEYCODE_ENTER) return@setOnKeyListener false
+            if (event.action != android.view.KeyEvent.ACTION_DOWN) return@setOnKeyListener false
+            if (EnterKey.shouldSend(
+                    localPrefs.getBool(LocalPrefs.KEY_ENTER_SENDS),
+                    event.isShiftPressed,
+                )
+            ) {
+                sendCurrent()
+                true
+            } else {
+                false
             }
         }
-
-        // 已授权通知则直接连，否则先让用户点连接（避免无谓弹窗）
-        if (prefs.getBoolean(KEY_AUTOCONNECT, true)) {
-            connectWith(urlInput.text.toString(), secretInput.text.toString())
+        // 软键盘的换行键走 editor action 路径（多数输入法不发 KeyEvent）
+        msgInput.setOnEditorActionListener { _, actionId, event ->
+            if (!EnterKey.isEnterKey(
+                    actionId,
+                    event?.keyCode ?: 0,
+                )
+            ) {
+                return@setOnEditorActionListener false
+            }
+            if (EnterKey.shouldSend(
+                    localPrefs.getBool(LocalPrefs.KEY_ENTER_SENDS),
+                    event?.isShiftPressed == true,
+                )
+            ) {
+                sendCurrent()
+                true
+            } else {
+                false
+            }
         }
+        bindChatSearch()
+        // 应用当前模式到顶栏（本地模式启动后不该显示远端的「未连接」）
+        applyModeToUi()
+    }
+
+    /**
+     * 接线搜索栏。
+     *
+     * 视图重建时会重跑，故必须幂等 —— 监听器都是**替换**而非追加
+     * （setOnClickListener / addTextChangedListener 需先清旧的）。
+     */
+    private fun bindChatSearch() {
+        val v = chatFragment?.currentViews() ?: return
+
+        // 重建时清掉旧监听：Fragment 视图销毁重建后，旧监听器会持有
+        // 已失效的 View 引用，且 addTextChangedListener 会**累积**
+        val old = v.searchInput.tag
+        if (old is android.text.TextWatcher) {
+            v.searchInput.removeTextChangedListener(old)
+        }
+        val watcher = object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, a: Int, b: Int, c: Int) {}
+            override fun onTextChanged(s: CharSequence?, a: Int, b: Int, c: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) {
+                runSearch(s?.toString().orEmpty())
+            }
+        }
+        v.searchInput.tag = watcher
+        v.searchInput.addTextChangedListener(watcher)
+
+        v.searchPrev.setOnClickListener { jumpMatch(-1) }
+        v.searchNext.setOnClickListener { jumpMatch(1) }
+        v.searchClose.setOnClickListener { toggleChatSearch(false) }
+    }
+
+    /** 展开/收起搜索栏。收起时清空状态，避免下次打开还高亮着旧结果。 */
+    private fun toggleChatSearch(show: Boolean) {
+        val v = chatFragment?.currentViews() ?: return
+        searchVisible = show
+        v.searchBar.visibility = if (show) View.VISIBLE else View.GONE
+        if (show) {
+            v.searchInput.requestFocus()
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(v.searchInput, InputMethodManager.SHOW_IMPLICIT)
+        } else {
+            v.searchInput.setText("")
+            matchIndices = emptyList()
+            currentMatch = -1
+            v.searchCount.text = ""
+        }
+    }
+
+    /** 执行搜索。 */
+    private fun runSearch(query: String) {
+        val v = chatFragment?.currentViews() ?: return
+        matchIndices = ChatSearch.findMatches(adapter.snapshot(), query)
+        currentMatch = matchIndices.firstOrNull() ?: -1
+        v.searchCount.text = ChatSearch.countLabel(
+            matchIndices,
+            currentMatch,
+            getString(R.string.search_no_match),
+        )
+        if (currentMatch >= 0) list.scrollToPosition(currentMatch)
+    }
+
+    /** 跳到上一个/下一个命中。 */
+    private fun jumpMatch(direction: Int) {
+        val v = chatFragment?.currentViews() ?: return
+        val next = ChatSearch.nextIndex(matchIndices, currentMatch, direction) ?: return
+        currentMatch = next
+        v.searchCount.text = ChatSearch.countLabel(
+            matchIndices,
+            currentMatch,
+            getString(R.string.search_no_match),
+        )
+        // 用 scrollToPosition 而非 smoothScroll：命中可能相距很远，
+        // 平滑滚动会滚很久，用户以为卡住了
+        list.scrollToPosition(next)
+    }
+
+    /**
+     * 通知点击拉起（或已有实例被重新唤醒）时进入。
+     *
+     * 通知栏的「批准/拒绝」按钮点下后，Receiver 会把 App 拉起来
+     * （后台启动受限时失败，但决定已落盘，下次冷启动会补发）。
+     * 走到这里说明 App 在运行，可以立即冲刷队列。
+     */
+    override fun onNewIntent(intent: android.content.Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        if (intent.action == PermissionActionReceiver.ACTION_FLUSH_PERMISSION) {
+            flushPendingPermissions()
+        }
+    }
+
+    /**
+     * 补发通知栏里做出的权限决定。
+     *
+     * 流程：磁盘队列 → 逐条发送 → 发送成功才移除。
+     * 失败时**保留**在队列里是刻意的：说明连接又断了，
+     * 留下让下次连接继续尝试，不能静默丢弃 ——
+     * 丢弃意味着服务端那个权限请求永远等不到响应，AI 卡死。
+     *
+     * 发送失败即中断本轮循环：后续决定大概率也会失败，
+     * 且顺序敏感（同一请求的批准/拒绝必须按序到达），
+     * 半途乱序发送反而更糟。
+     */
+    private fun flushPendingPermissions() {
+        if (!client.isConnected) return
+        val pending = PermissionDecisionStore.all(this)
+        if (pending.isEmpty()) return
+        android.util.Log.i(TAG, "补发 ${pending.size} 条待决权限响应")
+
+        for (p in pending) {
+            val ok = client.sendPermissionResponse(p.requestId, p.behavior)
+            if (ok) {
+                PermissionDecisionStore.remove(this, p.requestId)
+                // 该请求若还在 App 内有对话框，必须关掉 ——
+                // 用户已在通知栏做了决定，再看到同一个请求在问会造成
+                // 「我刚才不是点过了吗」的困惑，甚至导致重复批准。
+                dismissPermissionDialogSilently(p.requestId)
+            } else {
+                android.util.Log.w(TAG, "补发失败，保留在队列: ${p.requestId}")
+                break
+            }
+        }
+        val left = PermissionDecisionStore.all(this).size
+        if (left == 0) append(ChatMessage.system("已处理通知栏的权限决定"))
     }
 
     override fun onDestroy() {
         super.onDestroy()
         client.close()
-        // 及时落盘，避免进程被杀丢消息
-        val snapshot = adapter.snapshot()
-        thread { store.save(snapshot) }
+        // 释放 TTS 引擎：不释放会泄漏并长期占用音频焦点
+        voiceAnnouncer.release()
+        // 及时落盘，避免进程被杀丢消息。
+        // 走 saveAsync 的串行队列：此前用 thread{store.save()} 在 Activity 销毁时
+        // 新开的线程可能来不及执行就被系统回收，最后一轮回复丢失。
+        // 队列中的任务已在此之前提交（每次 append 都 persist 过），这里是兜底。
+        store.saveAsync(adapter.snapshot())
     }
 
     // ── 连接 ──
 
+    /**
+     * 点顶栏状态区的分流行为。
+     *
+     * 为什么需要它：客户端在连续失败后会停止自动重连（`manualClose`），
+     * 而此前**没有任何手动重连入口** —— 用户看到「已断开」点一下只进了
+     * 诊断页，唯一出路是杀掉进程重开 App。而 App 一旦被系统回收再启动，
+     * 又会走一遍冷启动自动连接；用户自然会以为「要重启才能连上」。
+     *
+     * 现在未连接时点击 = 立即重连：把最关键的动作放在最容易点到的地方。
+     * 已连接时保留原行为（进诊断页看链路详情）。
+     */
+    private fun onStatusTapped() {
+        if (client.isConnected) {
+            openPage(DiagnosticsFragment(), "diagnostics")
+            return
+        }
+        // 未连接：重连。用持久化的地址与密钥，而不是地址栏的当前内容 ——
+        // 地址栏可能正被编辑到一半（半截 IP 连不上，会让人更困惑）。
+        val addr = savedAddress()
+        val secret = prefs.getString(KEY_SECRET, "") ?: ""
+        setStatus(false, getString(R.string.status_connecting))
+        append(ChatMessage.system("正在重连 $addr …"))
+        connectWith(addr, secret)
+    }
+
     private fun connectWith(rawUrl: String, secret: String) {
         val url = normalize(rawUrl)
-        prefs.edit()
-            .putString(KEY_URL, url)
-            .putString(KEY_SECRET, secret)
-            .putBoolean(KEY_AUTOCONNECT, true)
-            .apply()
+        prefs.edit().apply {
+            putString(KEY_URL, url)
+            // 密钥持久化做成开关：共用设备场景下用户可能希望不落盘。
+            // 刻意**不引入加密库** —— androidx.security:security-crypto 已被
+            // Google 标记为 deprecated，而为它引入新依赖换来的保护有限：
+            // 存储位置本就是 App 私有目录（其他 App 读不到），
+            // allowBackup=false 又阻断了备份外泄路径，
+            // 剩下 root/取证场景下 Keystore 方案的提升也很小。
+            // 「不保存」才是真正有效的用户选择，故把它做成开关而非默认加密。
+            if (prefs.getBoolean(KEY_REMEMBER_SECRET, true)) {
+                putString(KEY_SECRET, secret)
+            } else {
+                remove(KEY_SECRET)
+            }
+            putBoolean(KEY_AUTOCONNECT, true)
+        }.apply()
         urlInput.setText(url)
+        rememberHost(url)
 
         // 切到该会话的历史文件并重新加载，避免不同会话的消息混在一条时间线
         val host = runCatching { java.net.URI(url).host }.getOrNull() ?: "127.0.0.1"
@@ -177,6 +1699,20 @@ class MainActivity : AppCompatActivity() {
         client.connect(BridgeUrl.buildWsUrl(url, secret))
     }
 
+    /**
+     * 从持久化配置读地址（不依赖 UI 控件）。
+     *
+     * 用于「界面尚未就绪」的场景 —— 见 setupFragments 里的说明。
+     */
+    private fun savedAddress(): String =
+        prefs.getString(KEY_URL, DEFAULT_URL) ?: DEFAULT_URL
+
+    /** 从持久化地址解析主机名。 */
+    private fun savedHost(): String = BridgeUrl.hostOf(savedAddress())
+
+    /** 从持久化地址解析端口。 */
+    private fun savedPort(): Int = BridgeUrl.portOf(savedAddress())
+
     /** 取当前地址栏里的主机名；解析失败时回落到回环地址。 */
     private fun currentHost(): String = BridgeUrl.hostOf(urlInput.text.toString())
 
@@ -190,6 +1726,10 @@ class MainActivity : AppCompatActivity() {
     private fun onEvent(ev: BridgeClient.Event) {
         when (ev) {
             is BridgeClient.Event.Connected -> {
+                // 连上即清失败计数与提示标志 —— 否则下次断开时
+                // 会因为「已经提示过」而不再给出排查线索
+                consecutiveConnectFailures = 0
+                failureHintShown = false
                 interactive = ev.interactive
                 if (ev.interactive) {
                     setStatus(true, getString(R.string.status_connected))
@@ -201,8 +1741,29 @@ class MainActivity : AppCompatActivity() {
                             "不要用 -p 或重定向 stdin 的方式启动。",
                     ))
                 }
+                // 补取会话标签：冷启动自动重连路径（onCreate 里的 autoConnect）
+                // 拿不到 SessionPickerDialog 回调给的 label，若此处不补，
+                // 通知标题恒为「doge-code」，多会话并存时无法判断是哪条对话的回复。
+                refreshSessionLabel()
+                // 补发通知栏里点过的权限决定。
+                // 用户可能在 App 完全没运行时就在通知栏点了「批准」——
+                // 那一刻没有连接可发，决定落在磁盘队列里等着。
+                // 现在连上了，立刻补发，否则服务端的权限请求会永久悬挂。
+                flushPendingPermissions()
+                // 拉取当前配置填充设置页 —— 用户改完要知道改没改成功
+                refreshRemoteConfig()
+                // 自动重发断线期间发失败的消息。
+                // 此前这些消息标记为 FAILED 后只能靠用户逐条点「重试」——
+                // 而手机断网/切 WiFi 很常见，用户回到 App 时可能积压好几条。
+                resendFailedMessages()
             }
-            is BridgeClient.Event.Disconnected -> setStatus(false, getString(R.string.status_disconnected))
+            is BridgeClient.Event.Disconnected -> {
+                setStatus(false, getString(R.string.status_disconnected))
+                // 断开后中断无意义（服务端已收不到），隐掉按钮避免点了没反应
+                stopBtn.visibility = View.GONE
+                progress.visibility = View.GONE
+                onConnectionFailed()
+            }
             is BridgeClient.Event.AuthFailed -> {
                 // 密钥不对是配置问题，重连无用：提示并自动展开设置面板，
                 // 否则用户只会看到状态栏「已断开」反复闪，不知道要填密钥。
@@ -212,20 +1773,65 @@ class MainActivity : AppCompatActivity() {
                         "请在「连接设置」里把密钥填成与 CLAUDE_CODE_MOBILE_SECRET 相同的值" +
                         "（若服务端没设密钥则留空）。",
                 ))
-                connPanel.visibility = View.VISIBLE
+            }
+            is BridgeClient.Event.SessionLimitReached -> {
+                // 同一 CLI 上的设备数已达上限（服务端 4002）。与认证失败不同，
+                // 这是可恢复的：关掉一台旧设备后会自动重连。故不展开设置面板，
+                // 只给出明确原因，避免用户像从前那样只看到「已断开，重连中…」
+                // 反复闪却不知为何连不上。
+                setStatus(false, "设备数已满")
+                append(ChatMessage.system(
+                    "⚠ 该 CLI 上连接的设备数已达上限（服务端 4002）。\n" +
+                        "请在另一台设备上断开，或稍候自动重连（每 30 秒重试一次）。",
+                ))
             }
             is BridgeClient.Event.Incoming -> {
                 // 服务端会把消息广播给所有连接的设备（多设备同步）：B 设备
                 // 需要看到 A 发的消息。但自己刚发的那条本地已回显过，服务端
-                // 又把同一文本推回来，直接 append 会出现重复气泡。
-                // 去重判据：本地存在文本相同、且尚未收到 queued 回执的 user
-                // 消息（status=SENDING）→ 说明这就是自己刚发的，跳过。
-                // 只按 SENDING 判断而非 SENDING|QUEUED：queued 回执与消息推送
-                // 到达顺序不确定，若含 QUEUED 会把「别人发的相同文本」也误吞。
-                val isEcho = ev.role == "user" && isOwnEcho(ev.text)
+                // 又把同一文本（带当初的 requestId 作为 sourceRequestId）推回来，
+                // 直接 append 会出现重复气泡。
+                //
+                // 去重判据（精确，不依赖时序）：
+                // 回推消息带 sourceRequestId，且命中 sentReqIds 中尚未去重的
+                // 那条 → 说明正是自己刚发的那条，跳过并从集合移除。
+                //
+                // 为何不再用文本+SENDING 的旧判据：queued 回执几乎必然先于
+                // user 回推到达，届时本地状态已转 QUEUED，旧判据失效 → 重复。
+                // 现在用 requestId 精确匹配，彻底摆脱时序依赖。
+                //
+                // 仍保留旧文本+SENDING 判据作为兜底：旧服务端（未带 sourceRequestId）
+                // 或 B 设备（自己没发过、本集合为空）下，旧逻辑仍可挡住最常见
+                // 的同文本回推重复。两者任一命中即去重。
+                val isEcho = TurnState.isOwnEcho(
+                    incomingRole = ev.role,
+                    incomingText = ev.text,
+                    local = adapter.snapshot().map {
+                        TurnState.EchoCandidate(it.role, it.text, it.status.name)
+                    },
+                ) || (ev.sourceRequestId.isNotEmpty() && sentReqIds.remove(ev.sourceRequestId))
+                // 定稿消息到达：清掉流式预览（它是权威版本，可能更长/更完整）。
+                // 必须在 append 之前清，否则预览气泡会短暂与定稿气泡并存。
+                if (ev.role == "assistant") clearStreamingState()
                 if (!isEcho) {
-                    append(ChatMessage(ChatMessage.newId(), ev.role, ev.text, System.currentTimeMillis()))
+                    append(
+                        ChatMessage(ChatMessage.newId(), ev.role, ev.text, System.currentTimeMillis()),
+                        suppressNotify = ev.suppressNotify,
+                    )
                 }
+                // 语音播报「任务已完成」+ 回复首句。
+                //
+                // 三个刻意的取舍：
+                // 1. 放在 maybeNotify 之外 —— 那个函数在 App 前台时早退，
+                //    而用户要求前台也播报（正在看屏幕也想知道结束了）。
+                // 2. `!isEcho` —— 回声是自己刚发的消息被回推，播报它毫无意义。
+                // 3. 只认 assistant 且文本非空 —— 空回复（如只有工具调用）
+                //    播报一句「任务已完成」即可，由 completionSpeech 处理。
+                if (ev.role == "assistant" && !isEcho) {
+                    announceCompletion(ev.text)
+                }
+                // 助手回合结束：收起「中断」与进度条。system/user 入站不代表回合结束
+                // （system 可能是回合中的提示），故只认 assistant。
+                if (TurnState.endOnIncoming(ev.role)) endTurn()
             }
             is BridgeClient.Event.Queued -> {
                 val id = pending.entries.firstOrNull { it.value == ev.requestId }?.key
@@ -236,65 +1842,1330 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             is BridgeClient.Event.Error -> append(ChatMessage.system("错误：${ev.message}"))
+            is BridgeClient.Event.PermissionRequested -> {
+                // 弹窗前的自动裁决闸门：先查「逐条授权规则」
+                // 命中 always_allow/always_deny 时直接回传、不再弹窗；
+                // 只有 "ask"（含无规则）才走原弹窗逻辑。
+                val policy = PermissionRules.getPolicy(this, ev.toolName)
+                val auto = PermissionRules.decide(policy)
+                if (auto != null) {
+                    // 用户已预授权：默默按规则裁决，不弹窗也不播报（无需打断）。
+                    // 仍写系统消息让用户知道这次操作被规则自动放行/拦截了。
+                    submitPermissionDecision(
+                        ev.requestId, auto, "规则自动裁决($policy)", ev.toolName,
+                    )
+                } else {
+                    showPermissionDialog(ev)
+                    // 语音提醒（若开启）：批准是阻塞等待，比完成更该主动叫人
+                    announcePermission(ev.toolName)
+                }
+            }
+            is BridgeClient.Event.PermissionCancelled -> dismissPermissionDialog(ev.requestId)
+            is BridgeClient.Event.Delta -> onStreamDelta(ev)
+            is BridgeClient.Event.TurnEnd -> {
+                // 权威回合结束信号：无论本回合有无 assistant 文本，服务端都会
+                // 在定稿到达时推 turn_end。此前只认 role=assistant 收起回合，
+                // 「只调工具不出文本」的回合会永久卡在「返回中」。见 TurnState。
+                endTurn()
+            }
+            is BridgeClient.Event.ToolActivity -> onToolActivity(ev)
+            is BridgeClient.Event.Usage -> onUsage(ev)
         }
     }
 
     /**
-     * 判断一条 role="user" 的入站消息是否是「自己刚发出、被服务端回推」的。
+     * 收到回合用量快照。
      *
-     * 仅在本地存在文本相同且仍处于 SENDING 的 user 消息时成立 —— 该状态
-     * 从 append 到收到 queued 回执之间保持，正好覆盖「回推先于回执到达」
-     * 这一时序。一旦收到回执转为 QUEUED 就不再匹配，避免后续别人发来
-     * 相同文本时被误吞。
+     * 显示在活动区面板的最后一行（不新增 UI 元素）：
+     * 活动区本就是「本轮过程信息」的容器，用量同属这一类；
+     * 回合结束时会随活动区一起保留到下一轮开始，用户看得见刚跑完的消耗。
+     *
+     * 只保留**最新一条**用量行：它是累计值，多行堆叠毫无意义
+     * （第一行永远是旧的、更小的数），反而让人以为「用量在乱跳」。
      */
-    private fun isOwnEcho(text: String): Boolean =
-        adapter.snapshot().any {
-            it.role == "user" && it.status == ChatMessage.Status.SENDING && it.text == text
+    private fun onUsage(ev: BridgeClient.Event.Usage) {
+        val line = UsageFormat.line(
+            ev.inputTokens, ev.outputTokens, ev.durationMs, ev.costUSD,
+        )
+        if (line.isBlank()) return
+        // 移除上一次的用量行（以「Σ 」开头作标记），避免堆叠
+        activityLines.removeAll { it.startsWith(USAGE_LINE_PREFIX) }
+        activityLines.addLast(USAGE_LINE_PREFIX + line)
+        while (activityLines.size > MAX_ACTIVITY_LINES) activityLines.removeFirst()
+        activityText.text = activityLines.joinToString("\n")
+        activityPanel.visibility = View.VISIBLE
+    }
+
+    /**
+     * 收到一段流式增量。
+     *
+     * 用「累积 + 单个预览气泡」而非逐段追加气泡：后者会让每条 delta
+     * 变成一条消息，列表瞬间被几十个碎片撑爆。
+     *
+     * 跳号检测：seq 不连续说明中间丢了片段。此时不试图修补（拼不回来），
+     * 只记日志 —— 定稿消息到达时会用完整内容替换，用户最终看到的是对的。
+     */
+    private fun onStreamDelta(ev: BridgeClient.Event.Delta) {
+        if (lastDeltaSeq != 0 && ev.seq != lastDeltaSeq + 1) {
+            android.util.Log.w(TAG, "流式增量跳号: 期望 ${lastDeltaSeq + 1} 实得 ${ev.seq}")
         }
+        lastDeltaSeq = ev.seq
+        streamingBuffer.append(ev.text)
+        // 「流式显示」关闭时不渲染增量预览 —— 等定稿消息到达再整体显示。
+        // 好处：省电省流量，且避免长回复时列表频繁重绘。
+        // 注意仍要累积到 buffer（定稿时清空），只是不推给 Adapter。
+        if (streamPrefsCache) {
+            adapter.setStreamingPreview(streamingBuffer.toString())
+        }
+        // 尊重「自动滚动」偏好：此前这里**无条件**滚到底，导致用户关了
+        // 自动滚动、正在往上翻看历史时，被流式增量不断拽回底部 ——
+        // 「自动滚动」这个开关等于对该路径失效。
+        if (autoScrollPrefsCache && adapter.itemCount > 0) {
+            list.scrollToPosition(adapter.itemCount - 1)
+        } else {
+            // 没自动滚（用户关了它，或在翻历史）：有新内容时给个提示，
+            // 否则用户不知道下面还有新消息
+            markUnseen()
+        }
+    }
+
+    /**
+     * 标记「有新消息未看到」——显示右下角的悬浮提示。
+     *
+     * 只在**用户不在底部**时才有意义：已在底部说明他正看着新消息，
+     * 再提示反而是噪音。
+     */
+    private fun markUnseen() {
+        val lm = list.layoutManager as? androidx.recyclerview.widget.LinearLayoutManager
+        // 未布局时 findLastVisibleItemPosition 返回 -1；
+        // 判据交给 UnseenMarker 统一处理（那里把 -1 当作「在看最新」）
+        val last = lm?.findLastVisibleItemPosition() ?: -1
+        if (UnseenMarker.shouldMark(adapter.itemCount, last)) {
+            unseenCount++
+            updateUnseenBadge()
+        }
+    }
+
+    /**
+     * 刷新未读提示的显示（文案带条数，让用户知道积了多少）。
+     *
+     * 同时负责它与「滚动到底」箭头按钮的**互斥显隐**：两者占同一块
+     * 区域，同时出现会重叠。有未读时优先显示未读（信息量更大），
+     * 否则按「是否在底部」决定要不要显示箭头。
+     */
+    private fun updateUnseenBadge() {
+        val badge = findViewById<android.widget.TextView?>(R.id.btn_unseen) ?: return
+        val arrow = findViewById<ImageButton?>(R.id.btn_scroll_bottom) ?: return
+        val text = UnseenMarker.badgeText(unseenCount)
+        if (text.isNotEmpty()) {
+            badge.visibility = View.VISIBLE
+            badge.text = text
+            arrow.visibility = View.GONE
+        } else {
+            badge.visibility = View.GONE
+            // 无未读时，箭头是否显示交由「是否在底部」决定
+            arrow.visibility = if (isNearBottom()) View.GONE else View.VISIBLE
+        }
+    }
+
+    /** 当前是否已接近列表底部。 */
+    private fun isNearBottom(): Boolean {
+        val lm = list.layoutManager as? androidx.recyclerview.widget.LinearLayoutManager
+        return UnseenMarker.isNearBottom(adapter.itemCount, lm?.findLastVisibleItemPosition() ?: -1)
+    }
+
+    /** 滚到底部时清掉未读提示。 */
+    private fun clearUnseen() {
+        if (unseenCount == 0) return
+        unseenCount = 0
+        updateUnseenBadge()
+    }
+
+    /**
+     * 监听滚动：滚到接近底部即视为「已看到最新」，清掉未读提示。
+     *
+     * 阈值取 2 项：最后一项通常只露出一部分，要求「完全到底」才清除
+     * 会让提示挂着不走（用户以为还有更多）。
+     */
+    private fun bindScrollListener() {
+        list.addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+            override fun onScrolled(rv: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
+                // 滚到底部 → 视作已看到最新，清除未读
+                if (isNearBottom()) clearUnseen()
+                // 统一由 updateUnseenBadge 决定两块 UI 的显隐
+                updateUnseenBadge()
+            }
+        })
+    }
+
+    /**
+     * 收到一条工具活动。
+     *
+     * 分两条路径：
+     * - agent（子代理）→ 渲染在独立的紧凑「活动区」（进度类信息，不落历史）
+     * - tool / thinking → 落成**可折叠工具气泡**进消息列表，回合结束后仍在历史。
+     *   running 事件新建气泡；done/error 结果事件按 toolUseId 配对合并进
+     *   同一条气泡，避免「运行中」与「结果」各占一条把列表刷爆。
+     */
+    private fun onToolActivity(ev: BridgeClient.Event.ToolActivity) {
+        if (ev.kind == "agent") {
+            val line = buildString {
+                append("◈ ").append(ev.name)
+                if (ev.target.isNotBlank()) append("  ").append(ev.target)
+            }
+            // 同一工具的连续同名活动只保留最新一条，避免 Bash 每秒一条刷屏
+            if (activityLines.lastOrNull()?.startsWith("◈ " + ev.name) == true) {
+                activityLines.removeLast()
+            }
+            activityLines.addLast(line)
+            while (activityLines.size > MAX_ACTIVITY_LINES) activityLines.removeFirst()
+            activityText.text = activityLines.joinToString("\n")
+            activityPanel.visibility = android.view.View.VISIBLE
+            agentStopBtn.visibility = View.VISIBLE
+            agentStopBtn.setOnClickListener {
+                activeBackend.interrupt()
+                append(ChatMessage.system("已请求终止子代理"))
+            }
+            return
+        }
+
+        // tool / thinking：结果事件按 toolUseId 配对合并，running 新建气泡
+        val isResult = ev.state == "done" || ev.state == "error"
+        if (isResult) {
+            val existingId = ChatMessage.findRunningToolCallId(adapter.snapshot(), ev.toolUseId)
+            if (existingId != null) {
+                adapter.updateToolResult(
+                    existingId, ev.result, ev.state, ev.truncated, ev.fullLength,
+                )
+                if (autoScrollPrefsCache && adapter.itemCount > 0) {
+                    list.scrollToPosition(adapter.itemCount - 1)
+                }
+                persist()
+                return
+            }
+            // 结果先于 running 乱序到达（或列表裁剪挤掉了 running 气泡）：
+            // 新建一条结果气泡兜底，不让命令输出丢失。
+        }
+
+        val title = buildString {
+            if (ev.kind == "thinking") {
+                append("🧠 思考")
+            } else {
+                append("▸ ").append(ev.name.ifBlank { "工具" })
+                if (ev.target.isNotBlank()) append("  ").append(ev.target)
+            }
+        }
+        val state = if (ev.kind == "thinking" && ev.state == "running") "thinking" else ev.state
+        val msg = ChatMessage.tool(
+            title = title,
+            detail = ev.detail,
+            result = ev.result,
+            state = state,
+            toolUseId = ev.toolUseId,
+            truncated = ev.truncated,
+            fullLength = ev.fullLength,
+        )
+        // 若上一条不是工具气泡，则本条形如「组的第一条」：给它写折叠键。
+        // 折叠键必须由**组首成员**携带（TurnGrouping 按首成员算组键），
+        // 写在后续成员上会被忽略，导致折叠态读了不生效。
+        val prev = adapter.snapshot().lastOrNull()
+        val msgWithGroup = if (prev == null || !prev.isTool) {
+            msg.copy(turnGroupKey = TurnGrouping.collapseKeyFor(msg.id))
+        } else {
+            msg
+        }
+        append(msgWithGroup)
+    }
+
+    /** 清空流式预览与活动区（收到定稿消息 / 回合结束时调用）。 */
+    private fun clearStreamingState() {
+        if (streamingBuffer.isNotEmpty()) {
+            streamingBuffer.setLength(0)
+            adapter.setStreamingPreview(null)
+        }
+        lastDeltaSeq = 0
+        if (activityLines.isNotEmpty()) {
+            activityLines.clear()
+            activityText.text = ""
+            activityPanel.visibility = android.view.View.GONE
+        }
+        // 回合结束，子代理要么已完成要么已被终止 —— 收起按钮
+        agentStopBtn.visibility = View.GONE
+    }
+
+    /**
+     * 弹出远程权限确认对话框。
+     *
+     * 为什么必须做：在此之前，AI 要执行需授权的操作（写文件、跑命令）时，
+     * 请求只在**电脑终端**弹出，手机端完全无感 —— 远程使用时用户无法批准
+     * 任何操作，等于「能看不能说」。
+     *
+     * 同时发一条通知：用户可能没盯着屏幕，而这是最需要提醒的时刻。
+     *
+     * 用 AlertDialog 而非塞进消息列表：权限请求是**阻塞当前操作**的模态
+     * 决策，混在聊天气泡里会被后续消息刷走，用户找不到。
+     */
+    private fun showPermissionDialog(ev: BridgeClient.Event.PermissionRequested) {
+        // 同一 requestId 重复到达时不弹第二个（服务端理论上只发一次，
+        // 但重连后可能重放）
+        if (permissionDialogs.containsKey(ev.requestId)) return
+
+        val body = buildString {
+            append("工具：").append(ev.toolName).append('\n')
+            if (ev.description.isNotBlank()) append(ev.description).append('\n')
+            // 有 diff 时不再重复 inputPreview —— diff 已包含改动内容，
+            // 两者并列会让对话框过长且信息重复
+            if (ev.diffLines.isEmpty() && ev.inputPreview.isNotBlank()) {
+                append('\n').append(ev.inputPreview)
+            }
+            if (ev.diffLines.isNotEmpty()) {
+                append('\n').append("改动预览：").append('\n')
+            }
+        }
+
+        val dialog = android.app.AlertDialog.Builder(this)
+            .setTitle("⚠ 需要批准")
+            .apply {
+                if (ev.diffLines.isEmpty()) {
+                    setMessage(body)
+                } else {
+                    // 有 diff 时用等宽 + 着色的 TextView：
+                    // 默认的 setMessage 无法给单行上色，用户分不清哪行是增哪行是删
+                    setView(android.widget.ScrollView(this@MainActivity).apply {
+                        addView(buildDiffView(body, ev.diffLines))
+                    })
+                }
+            }
+            .setPositiveButton("批准") { _, _ ->
+                submitPermissionDecision(ev.requestId, "allow", "App 内批准", ev.toolName)
+            }
+            .setNegativeButton("拒绝") { _, _ ->
+                submitPermissionDecision(ev.requestId, "deny", "App 内拒绝", ev.toolName)
+            }
+            .setCancelable(false)   // 必须明确选择，避免误触返回键留下悬挂的请求
+            .create()
+        permissionDialogs[ev.requestId] = dialog
+        dialog.setOnDismissListener { permissionDialogs.remove(ev.requestId) }
+        runCatching { dialog.show() }
+
+        if (!hasWindowFocus()) {
+            // 「需介入通知」关闭时不弹 —— 权限请求仍会在 App 内的对话框里出现
+            if (localPrefs.getBool(LocalPrefs.KEY_NOTIFY_ACTION)) {
+                Notifications.notifyPermission(
+                    this,
+                    ev.requestId,
+                    ev.toolName,
+                    ev.description,
+                    sessionLabel,
+                    silent = !localPrefs.getBool(LocalPrefs.KEY_NOTIFY_SOUND),
+                )
+            }
+        }
+    }
+
+    /**
+     * 重发所有处于 FAILED 状态的消息。
+     *
+     * 场景：手机断网、切 WiFi、或服务端重启期间发出的消息全部失败。
+     * 此前它们只能靠用户逐条点「重试」，而用户回到 App 时可能积压好几条。
+     *
+     * 只重发 user 消息，且**保持原顺序**（列表本身有序，正序遍历即可）：
+     * 顺序对对话语义有影响，倒序重发会让 AI 看到颠倒的上下文。
+     *
+     * 不做「失败次数上限」：一次连接建立后统一重试一遍是安全的
+     * —— 若这次仍失败，说明连接又断了，会等下一次 Connected 再试。
+     * 加计数反而会在长时间离线后永久放弃重发。
+     */
+    private fun resendFailedMessages() {
+        val failed = adapter.snapshot().filter {
+            it.role == "user" && it.status == ChatMessage.Status.FAILED
+        }
+        if (failed.isEmpty()) return
+
+        var resent = 0
+        for (m in failed) {
+            val reqId = ChatMessage.newId()
+            pending[m.id] = reqId
+            adapter.updateStatus(m.id, ChatMessage.Status.SENDING)
+            if (activeBackend.send(m.text, reqId)) {
+                resent++
+            } else {
+                // 刚连上又断了：恢复失败态，等下次 Connected
+                adapter.updateStatus(m.id, ChatMessage.Status.FAILED)
+                pending.remove(m.id)
+                break
+            }
+        }
+        if (resent > 0) {
+            append(ChatMessage.system("已自动重发 $resent 条未送达的消息"))
+            if (TurnState.startOnSend(true, interactive)) startTurn()
+        }
+        persist()
+    }
+
+    /**
+     * 提交一次权限决定（App 内与通知栏两条路径统一走这里）。
+     *
+     * **先落盘再发送**，与通知栏路径一致。理由：用户点「批准」的瞬间连接
+     * 可能刚好断开（切网/服务端重启），此时 `sendPermissionResponse`
+     * 返回 false —— 若只发送不落盘，这个决定就丢了，而服务端会一直等。
+     * 落盘后由 flushPendingPermissions 在下次连接时补发。
+     *
+     * 发送成功也要清队列：否则下次连接会重复发送同一条决定。
+     */
+    private fun submitPermissionDecision(
+        requestId: String,
+        behavior: String,
+        source: String,
+        toolName: String,
+    ) {
+        PermissionDecisionStore.enqueue(this, requestId, behavior, source)
+        val ok = client.sendPermissionResponse(requestId, behavior)
+        if (ok) {
+            PermissionDecisionStore.remove(this, requestId)
+            val verb = if (behavior == "allow") "已批准" else "已拒绝"
+            append(ChatMessage.system("$verb：$toolName"))
+        } else {
+            // 保留在队列，等重连后补发
+            append(ChatMessage.system("⚠ 连接已断开，决定将在重连后补发：$toolName"))
+        }
+    }
+
+    /** 服务端撤销（本地终端已先决定）→ 关掉对应对话框，避免留下无效卡片。 */
+    private fun dismissPermissionDialog(requestId: String) {
+        val d = permissionDialogs.remove(requestId) ?: return
+        runCatching { d.dismiss() }
+        append(ChatMessage.system("该请求已在电脑终端处理"))
+    }
+
+    /**
+     * 构建带着色的 diff 预览视图。
+     *
+     * 用 Spannable 而非多个 TextView：diff 可能有几十行，逐行建 View
+     * 在对话框里开销大且滚动体验差。用等宽字体保证对齐。
+     *
+     * 着色规则：+ 行绿色、- 行红色、其它灰色。
+     * 只给整行上色（含行首符号），比只染符号更易扫读。
+     */
+    private fun buildDiffView(header: String, diffLines: List<String>): android.widget.TextView {
+        val sb = android.text.SpannableStringBuilder()
+        sb.append(header)
+        val GREEN = 0xFF6BD66B.toInt()
+        val RED = 0xFFF87171.toInt()
+        val GREY = 0xFF999999.toInt()
+        diffLines.forEach { line ->
+            val start = sb.length
+            sb.append(line).append('\n')
+            val color = when {
+                line.startsWith("+") -> GREEN
+                line.startsWith("-") -> RED
+                else -> GREY
+            }
+            sb.setSpan(
+                android.text.style.ForegroundColorSpan(color),
+                start, sb.length,
+                android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+            )
+            // 用字符串构造器而非 Typeface 那个：后者需 API 28，
+            // 而本工程 minSdk=24，在 Android 7/8 上会抛
+            // 「Call requires API level 28」—— lint 会直接拦下来。
+            // 字符串形式自 API 1 起可用，且效果相同。
+            sb.setSpan(
+                android.text.style.TypefaceSpan("monospace"),
+                start, sb.length,
+                android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+            )
+        }
+        return android.widget.TextView(this).apply {
+            text = sb
+            textSize = 12f
+            setPadding(40, 24, 40, 24)
+            setTextIsSelectable(true)   // 允许复制，用户可能想存下改动内容
+        }
+    }
+
+    /**
+     * 静默关闭对话框（用户已在通知栏做了决定）。
+     *
+     * 与 [dismissPermissionDialog] 分开的原因：那条会追加
+     * 「该请求已在电脑终端处理」，而此处的原因是「你刚在通知栏处理了」——
+     * 提示内容不同，复用会让用户困惑自己到底在哪处理的。
+     * 且补发路径已有自己的汇总提示，这里不必再逐条刷消息。
+     */
+    private fun dismissPermissionDialogSilently(requestId: String) {
+        val d = permissionDialogs.remove(requestId) ?: return
+        runCatching { d.dismiss() }
+    }
+
+    /**
+     * 拉取服务端当前生效的配置，填充设置页的「当前值」。
+     *
+     * 失败时保持「—」不变：配置显示不准比不显示更误导，
+     * 用户会据此判断「刚才那次修改生效了吗」。
+     */
+    private fun refreshRemoteConfig() {
+        val host = savedHost()
+        val port = savedPort()
+        thread {
+            val snapshot = SessionScanner.configFrom(SessionScanner.fetchSessionInfo(host, port))
+            if (snapshot == null) return@thread
+            runOnUiThread {
+                settingsFragment?.showConfigValue(
+                    ConfigRows(
+                        model = snapshot.model,
+                        thinking = snapshot.thinkingTokens?.let {
+                            if (it == 0) "关闭" else "$it tokens"
+                        },
+                        permission = snapshot.permissionMode,
+                    ),
+                )
+                // 配置页也刷新（它可能正开着）
+                configSourceLabels = ConfigSourceLabels.from(snapshot.sources)
+                (supportFragmentManager.findFragmentByTag("config") as? ConfigFragment)
+                    ?.showValues(
+                        snapshot.model,
+                        snapshot.thinkingTokens?.let { if (it == 0) "关闭" else "$it tokens" },
+                        snapshot.permissionMode,
+                        configSourceLabels,
+                        snapshot.verbose,
+                    )
+            }
+        }
+    }
+
+    /** 设置页要显示的三项当前值。null 表示未知（显示「—」）。 */
+    data class ConfigRows(val model: String?, val thinking: String?, val permission: String?)
+
+    /**
+     * 配置值的来源标签（线 C3）。
+     *
+     * 把服务端的字符串映射成中文可读文案。**未知来源返回 null** ——
+     * 显示一个「未知来源」的标签比不显示更让人困惑。
+     */
+    data class ConfigSourceLabels(
+        val model: String?,
+        val thinking: String?,
+        val permission: String?,
+    ) {
+        companion object {
+            fun empty() = ConfigSourceLabels(null, null, null)
+
+            fun from(sources: Map<String, String>): ConfigSourceLabels {
+                if (sources.isEmpty()) return empty()
+                return ConfigSourceLabels(
+                    model = label(sources["model"]),
+                    thinking = label(sources["thinkingTokens"]),
+                    permission = label(sources["permissionMode"]),
+                )
+            }
+
+            private fun label(raw: String?): String? = when (raw) {
+                "mobile" -> "手机设置"
+                "env" -> "环境变量"
+                "settings" -> "配置文件"
+                "default" -> "默认"
+                else -> null
+            }
+        }
+    }
+
+    /**
+     * 拉取当前连接会话的标签，用于通知标题区分来源。
+     *
+     * 判据来自服务端的 /mobile/session-info（见 src/bridge/mobileBridge.ts）。
+     * 失败时保持原值不变 —— 标签只是通知标题的锦上添花，探测失败不该
+     * 把已有标签（比如用户刚从会话列表选的那个）清掉。
+     */
+    private fun refreshSessionLabel() {
+        val host = savedHost()
+        val port = savedPort()
+        thread {
+            val label = SessionScanner.labelFrom(SessionScanner.fetchSessionInfo(host, port))
+            if (label != null) {
+                runOnUiThread { sessionLabel = label }
+            }
+        }
+    }
 
     private fun setStatus(ok: Boolean, label: String) {
         dot.setBackgroundResource(if (ok) R.drawable.dot_on else R.drawable.dot_off)
         statusText.text = label
         sendBtn.isEnabled = ok
         sendBtn.alpha = if (ok) 1f else 0.4f
+        // 连接期间给顶部那条 2dp 进度条一个存在理由；连上后由回合状态接管
+        progress.visibility = if (ok) View.GONE else View.VISIBLE
     }
 
-    private fun append(msg: ChatMessage) {
+    /** 回合开始：显示「中断」按钮与进度条（此前按钮恒为 gone，中断形同虚设）。 */
+    private fun startTurn() {
+        stopBtn.visibility = View.VISIBLE
+        progress.visibility = View.VISIBLE
+        updateLocalService()
+    }
+
+    /** 回合结束（收到助手回复 / 断开）：收起中断按钮与进度条。 */
+    private fun endTurn() {
+        stopBtn.visibility = View.GONE
+        progress.visibility = View.GONE
+        // 回合结束，清理尚未被回推命中的 sentReqIds 残留项。
+        // 正常情况回推已在助手回复前命中并移除；若迟迟未到（如服务端异常、
+        // 或该消息未走 mobileBridge 推送路径），不应让其永久留在集合里——
+        // 否则后续别人发来相同 requestId（极小概率）会被误吞。
+        // 集合只保留「待回推去重」语义，回合边界处一次性清空最稳妥。
+        sentReqIds.clear()
+        updateLocalService()
+    }
+
+    /**
+     * 本地模式回合期间启动前台服务保活（推理可达数十秒，切后台进程
+     * 被杀则任务丢失且 API 费用白花）。远端模式推理跑在电脑上，
+     * 手机进程被杀不影响任务，无需保活。判据见 [ServicePolicy]。
+     */
+    private fun updateLocalService() {
+        val inTurn = stopBtn.visibility == View.VISIBLE
+        if (ServicePolicy.shouldRun(appMode, inTurn)) {
+            LocalAgentService.start(this, inTurn)
+        } else {
+            LocalAgentService.stop(this)
+        }
+    }
+
+    /**
+     * 追加一条消息并渲染。
+     *
+     * @param suppressNotify 服务端告知「用户正在电脑终端前」。
+     *   此时仍渲染消息，但不弹系统通知 —— 抑制的是**通知**而非消息，
+     *   用户切回手机时能看到完整历史，只是没被震一下。
+     *   不这么做的后果是通知渠道被整体关闭：AI 每轮震一下，
+     *   人会烦到关掉通知权限，连真正需要介入的权限请求也一并静音。
+     */
+    private fun append(msg: ChatMessage, suppressNotify: Boolean = false) {
         val pos = adapter.append(msg)
-        list.scrollToPosition(pos)
+        // 「自动滚动」关闭时不滚 —— 便于用户回看历史时不被新消息打断
+        if (autoScrollPrefsCache) {
+            list.scrollToPosition(pos)
+        }
         persist()
-        maybeNotify(msg)
+        maybeNotify(msg, suppressNotify)
     }
 
     private fun persist() {
-        val snapshot = adapter.snapshot()
-        thread { store.save(snapshot) }
+        store.saveAsync(adapter.snapshot())
     }
 
     // ── 发送 ──
 
     private fun sendCurrent() {
         val text = msgInput.text.toString().trim()
-        if (text.isEmpty()) return
-        if (!client.isConnected) {
-            Toast.makeText(this, "未连接，请先在设置里连接", Toast.LENGTH_SHORT).show()
+        val image = inputActions.pendingImage
+        // 纯图不带文字是合法输入（拍张报错截图问 AI 很常见），
+        // 因此判据是「两样都空」才不入站
+        // 纯附件（无文字）是合法输入：贴个日志让 AI 看很常见
+        if (text.isEmpty() && image == null && inputActions.pendingTextAttachments().isEmpty()) return
+        // 用 activeBackend.isReady 而非 client.isConnected：
+        // 本地模式**没有「连接」概念**（配好 API key 即可用），
+        // 用 isConnected 做守卫会让本地模式下恒被拦下、提示「未连接」——
+        // 而那正是用户已经正确配置的状态。
+        if (!activeBackend.isReady) {
+            val hint = if (appMode == AppMode.LOCAL) {
+                "未配置 API：请在设置 → 本地模式里填写密钥与地址"
+            } else {
+                "未连接，请先在设置里连接"
+            }
+            Toast.makeText(this, hint, Toast.LENGTH_SHORT).show()
             return
         }
-        val msg = ChatMessage.user(text)
+
+        // 斜杠命令：不在可用清单里时立刻提示，不等服务端往返。
+        //
+        // 服务端对未知命令的处理是「回一句 /xxx 在远程控制中不可用」，
+        // 那要等一轮网络往返；而且**在此之前用户看到的是一条自己发的
+        // 气泡**，会以为命令被执行了。提前提示更准确。
+        //
+        // 只提示、不拦截：服务端才是白名单权威，客户端误判时拦住
+        // 发不出去，比让服务端礼貌拒绝更糟。
+        if (SlashCommands.looksLikeCommand(text) &&
+            !SlashCommands.isKnown(text, currentCommandScope())
+        ) {
+            Toast.makeText(
+                this,
+                "该命令在手机端不可用（可用：${SlashCommands.matching("/", currentCommandScope())
+                    .joinToString(" ") { it.label }}）",
+                Toast.LENGTH_LONG,
+            ).show()
+            return
+        }
+
+        // 本地专属命令：客户端直接处理，不发给模型（模型看不到工作区/配置/工具清单，
+        // 发过去只会编答案）
+        if (handleLocalCommand(text)) return
+
+        // 气泡文本里标出附图，否则回看历史时不知道那句「看看这个」指的是什么
+        val textLabel = TextAttachment.bubbleLabel(inputActions.pendingTextAttachments())
+        val display = buildString {
+            append(text)
+            if (textLabel.isNotEmpty()) {
+                if (isNotEmpty()) append('\n')
+                append(textLabel)
+            }
+            if (image != null) {
+                if (isNotEmpty()) append('\n')
+                append("[图片]")
+            }
+            if (isEmpty()) append("[附件]")
+        }
+        // 带图片时必须走 userWithImages：把 base64 一并存进消息，否则
+        // 对话里只剩一个「[图片]」文本，回看时看不到自己发了什么图
+        //（「拍张报错截图问 AI」是本客户端的主要用法，回看时尤其需要）。
+        val msg = if (image != null) {
+            ChatMessage.userWithImages(display, listOf(image.second), image.first)
+        } else {
+            ChatMessage.user(display)
+        }
         val reqId = ChatMessage.newId()
         pending[msg.id] = reqId
+        sentReqIds.add(reqId)   // 入去重集合，等回推命中后移除
 
         val pos = adapter.append(msg)
         list.scrollToPosition(pos)
         msgInput.setText("")
+        saveDraft("")   // 已发送，草稿使命结束
 
-        val ok = client.sendMessage(text, reqId)
+        // 文本附件拼进正文：走普通 sendMessage 路径，服务端无需改动
+        val texts = inputActions.pendingTextAttachments()
+        val composed = TextAttachment.compose(text, texts)
+        val ok = if (image != null) {
+            // 图片与文本附件同时存在时，文本已拼进 text 参数
+            activeBackend.sendWithImages(composed, listOf(image), reqId)
+        } else {
+            activeBackend.send(composed, reqId)
+        }
+        inputActions.clearPendingImage()
+        inputActions.clearTextAttachments()
+
         if (!ok) {
             adapter.updateStatus(msg.id, ChatMessage.Status.FAILED)
             pending.remove(msg.id)
+        } else if (TurnState.startOnSend(ok, interactive)) {
+            // 发送成功且服务端会真正处理，才进入回合（可中断）
+            startTurn()
         }
         persist()
     }
+
+    /**
+     * 重发一条发送失败的消息。
+     *
+     * 复用原消息 id 与新的 requestId：正文不变，用户不必重新打一遍。
+     * 重发仍可能失败（连接没恢复），此时状态回到 FAILED，可继续点。
+     */
+    private fun retry(m: ChatMessage) {
+        // 用 activeBackend 而非 client：本地模式无「连接」概念
+        if (!activeBackend.isReady) {
+            Toast.makeText(this, "未连接，无法重发", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val reqId = ChatMessage.newId()
+        pending[m.id] = reqId
+        sentReqIds.add(reqId)   // 入去重集合，等回推命中后移除
+        adapter.updateStatus(m.id, ChatMessage.Status.SENDING)
+        if (!activeBackend.send(m.text, reqId)) {
+            adapter.updateStatus(m.id, ChatMessage.Status.FAILED)
+            pending.remove(m.id)
+        } else if (TurnState.startOnSend(true, interactive)) {
+            startTurn()
+        }
+        persist()
+    }
+
+    /**
+     * 查看/移除已附的文本文件。
+     *
+     * 为什么需要移除入口：附错文件后用户没法撤销，只能发出去再解释。
+     * 放在长按菜单里而非气泡上 —— 附件在发送前不占列表空间。
+     */
+    private fun showAttachments() {
+        val list = inputActions.pendingTextAttachments()
+        if (list.isEmpty()) {
+            Toast.makeText(this, R.string.attach_none, Toast.LENGTH_SHORT).show()
+            return
+        }
+        val labels = list.map { "${it.first}（${it.second.length} 字符）" }.toTypedArray()
+        android.app.AlertDialog.Builder(this)
+            .setTitle(R.string.attach_list_title)
+            .setItems(labels) { _, which ->
+                inputActions.removeTextAttachment(list[which].first)
+                Toast.makeText(
+                    this,
+                    getString(R.string.attach_removed, list[which].first),
+                    Toast.LENGTH_SHORT,
+                ).show()
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+    }
+
+    /**
+     * 长按消息的操作菜单。
+     *
+     * 用 AlertDialog 而非 BottomSheet：本工程无 Material 库，
+     * 而引它只为这一个菜单不划算。AlertDialog 的选项列表在视觉上
+     * 已接近底部菜单，且用户熟悉。
+     *
+     * 菜单项**动态生成** —— 不含代码块的消息不显示「复制代码块」，
+     * 避免出现点了没反应的项。
+     */
+    private fun showMessageMenu(m: ChatMessage) {
+        val codes = MessageActions.extractCodeBlocks(m.text)
+        // 是否是最后一条用户消息 —— 决定「编辑并重发」是否出现
+        val snapshot = adapter.snapshot()
+        val lastUserIdx = snapshot.indexOfLast { it.role == "user" }
+        val isLastUser = lastUserIdx >= 0 && snapshot.getOrNull(lastUserIdx)?.id == m.id
+        // 是否是最后一条助手回复 —— 决定「重新生成」是否出现。
+        // 中间的历史回复不给这个入口：实现是「重跑最后一轮」，
+        // 对旧的回复点它会让用户以为重生成那一条，实际却重跑了最新的。
+        val lastAssistantIdx = snapshot.indexOfLast { it.role == "assistant" }
+        val isLastAssistant =
+            lastAssistantIdx >= 0 && snapshot.getOrNull(lastAssistantIdx)?.id == m.id
+        val actions = MessageActions.withRegenerateIfLast(
+            MessageActions.withEditIfLast(
+                MessageActions.availableActions(m),
+                isLastUser,
+            ),
+            isLastAssistant,
+        )
+        val labels = actions.map { MessageActions.labelOf(it, codes.size) }.toTypedArray()
+
+        android.app.AlertDialog.Builder(this)
+            .setItems(labels) { _, which ->
+                when (actions[which]) {
+                    MessageActions.Action.COPY_ALL -> copyText(MessageActions.toolFullText(m), "已复制全文")
+                    MessageActions.Action.COPY_CODE -> copyText(codes.joinToString("\n\n"), "已复制代码块")
+                    MessageActions.Action.COPY_TOOL_DETAIL -> copyText(m.toolDetail, "已复制命令")
+                    MessageActions.Action.COPY_TOOL_RESULT -> copyText(m.toolResult, "已复制结果")
+                    MessageActions.Action.QUOTE -> {
+                        // 填入输入框而非直接发送：用户可能要补充说明
+                        val quoted = MessageActions.quote(m.text)
+                        val current = msgInput.text.toString()
+                        msgInput.setText(quoted + current)
+                        msgInput.setSelection(msgInput.text.length)
+                        msgInput.requestFocus()
+                    }
+                    MessageActions.Action.EDIT_LAST -> promptEditMessage(m)
+                    MessageActions.Action.REGENERATE -> regenerateLastReply()
+                    MessageActions.Action.DELETE -> deleteMessage(m)
+                    MessageActions.Action.SELECT_MULTIPLE -> enterSelectionMode(m)
+                }
+            }
+            .setNegativeButton("取消", null)
+            .show()
+    }
+
+    /**
+     * 弹出编辑框，改完重发。
+     *
+     * 未连接时直接拒绝：编辑会触发一次重发，无连接时必然失败，
+     * 不如提前告知。
+     */
+    private fun promptEditMessage(m: ChatMessage) {
+        if (!activeBackend.isReady) {
+            Toast.makeText(this, "未连接，无法编辑重发", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val input = android.widget.EditText(this).apply {
+            setText(m.text)
+            setSelection(text.length)
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or
+                android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE
+            minLines = 3
+            maxLines = 8
+        }
+        android.app.AlertDialog.Builder(this)
+            .setTitle(R.string.edit_message_title)
+            .setView(input)
+            .setPositiveButton(R.string.edit_message_send) { _, _ ->
+                val newText = input.text.toString().trim()
+                if (newText.isEmpty()) {
+                    Toast.makeText(this, R.string.edit_message_empty, Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+                if (newText == m.text.trim()) {
+                    Toast.makeText(this, R.string.edit_message_unchanged, Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+                activeBackend.editMessage(newText, ChatMessage.newId())
+                // 本地先移除该条（服务端会撤回旧的并重发新的，
+                // 重发的会作为新消息推回来）
+                adapter.submit(adapter.snapshot().filterNot { it.id == m.id })
+                persist()
+                append(ChatMessage.system("已提交编辑，等待服务端处理"))
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+    }
+
+    /**
+     * 全屏查看一张图片。
+     *
+     * 用 AlertDialog 承载 ImageView（而非新开 Activity）：只是为了放大看
+     * 一张图，跳转 Activity 要处理返回栈、主题、旋转，成本远高于收益。
+     *
+     * 解码目标的选取：取屏幕长边 —— 比屏幕更精细的像素显示不出来，
+     * 白白占内存。用 Android 自身坐标系（含状态栏）计算，避免不同
+     * 密度下算出过小的值。
+     */
+    private fun showImageFullscreen(base64: String) {
+        val metrics = android.util.DisplayMetrics()
+        @Suppress("DEPRECATION")
+        windowManager.defaultDisplay.getRealMetrics(metrics)
+        val target = maxOf(metrics.widthPixels, metrics.heightPixels)
+
+        val bmp = ImagePreview.decode(base64, target)
+        if (bmp == null) {
+            Toast.makeText(this, "图片无法显示（可能数据已损坏）", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val iv = android.widget.ImageView(this).apply {
+            setImageBitmap(bmp)
+            adjustViewBounds = true
+            scaleType = android.widget.ImageView.ScaleType.FIT_CENTER
+        }
+        // 深色背景 + 全宽：让图片在暗色主题下不刺眼，且能占满可视区
+        val container = android.widget.FrameLayout(this).apply {
+            setBackgroundColor(0xFF000000.toInt())
+            addView(
+                iv,
+                android.widget.FrameLayout.LayoutParams(
+                    android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
+                    android.widget.FrameLayout.LayoutParams.WRAP_CONTENT,
+                ).apply { gravity = android.view.Gravity.CENTER },
+            )
+        }
+        android.app.AlertDialog.Builder(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+            .setView(container)
+            .setPositiveButton("关闭", null)
+            .show()
+    }
+
+    /**
+     * 重新生成回复：把最后一条用户消息**原样**重发一次。
+     *
+     * 这是同类 App（ChatGPT / Claude 等）的高频操作，用于对回复不满意时
+     * 换个答案。CLI 侧没有独立的「重新生成」通道，但等价操作已存在 ——
+     * `MobileEditHandlers.editLastUserMessage` 会自动查找最后一条 user
+     * 消息并撤回重发（见 useReplBridge.tsx:624）。传相同文本即等价于
+     * 「重新生成」，**无需新增协议**。
+     *
+     * 三点必须处理对：
+     * 1. 传原文本而非空 —— 服务端会撤回旧消息再提交，文本必须一致
+     * 2. 本地删掉最后一条 user 气泡：服务端重发后会作为新消息推回来，
+     *    不删会出现重复气泡（与 promptEditMessage 同理）
+     * 3. 助手回复不删：那是历史，服务端重跑后会追加新的，用户能对比
+     */
+    private fun regenerateLastReply() {
+        if (!activeBackend.isReady) {
+            Toast.makeText(this, "未连接，无法重新生成", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val snapshot = adapter.snapshot()
+        val lastUser = snapshot.lastOrNull { it.role == "user" && it.text.isNotBlank() }
+        if (lastUser == null) {
+            Toast.makeText(this, "还没有可重新生成的消息", Toast.LENGTH_SHORT).show()
+            return
+        }
+        activeBackend.editMessage(lastUser.text, ChatMessage.newId())
+        adapter.submit(snapshot.filterNot { it.id == lastUser.id })
+        persist()
+        append(ChatMessage.system("正在重新生成…"))
+    }
+
+    /**
+     * 删除一条本地消息。
+     *
+     * 只删本地副本 —— 服务端（CLI 对话）的历史不受影响。
+     * 这一点必须让用户知道，否则他会以为「删了就真没了」，
+     * 或者反过来担心影响电脑上的记录。
+     */
+    private fun deleteMessage(m: ChatMessage) {
+        // 「危险操作二次确认」可关 —— 但默认开启（安全相关的默认值应偏保守）
+        if (localPrefs.getBool(LocalPrefs.KEY_CONFIRM_DANGEROUS)) {
+            android.app.AlertDialog.Builder(this)
+                .setTitle(R.string.confirm_delete_title)
+                .setMessage(R.string.confirm_delete_msg)
+                .setPositiveButton(R.string.history_delete) { _, _ -> doDeleteMessage(m) }
+                .setNegativeButton(R.string.cancel, null)
+                .show()
+        } else {
+            doDeleteMessage(m)
+        }
+    }
+
+    private fun doDeleteMessage(m: ChatMessage) {
+        val remaining = adapter.snapshot().filterNot { it.id == m.id }
+        adapter.submit(remaining)
+        persist()
+        Toast.makeText(this, R.string.msg_deleted, Toast.LENGTH_SHORT).show()
+    }
+
+    // ───────────────────────────────────────────────────────────
+    // 批量选择模式
+    // ───────────────────────────────────────────────────────────
+
+    /**
+     * 进入选择模式：选中 [m] 并显示批量操作栏。
+     *
+     * 长按一条消息即进入（与微信等一致）。再点其它消息切换选中，
+     * 操作栏提供「全选 / 复制所选 / 删除所选 / 取消」。
+     */
+    private fun enterSelectionMode(m: ChatMessage) {
+        selectedIds = BatchSelection.toggle(selectedIds, m.id)
+        adapter.applySelection(selectedIds)
+        showBatchBar()
+    }
+
+    /** 选择模式下点击一条消息：切换其选中态；若取消到 0 条则退出模式。 */
+    private fun toggleSelection(m: ChatMessage) {
+        selectedIds = BatchSelection.toggle(selectedIds, m.id)
+        adapter.applySelection(selectedIds)
+        if (BatchSelection.isActive(selectedIds)) showBatchBar() else hideBatchBar()
+    }
+
+    /** 全选 / 取消全选。 */
+    private fun batchToggleAll() {
+        val ids = adapter.snapshot().map { it.id }
+        selectedIds = BatchSelection.toggleAll(ids, selectedIds)
+        adapter.applySelection(selectedIds)
+        showBatchBar()
+    }
+
+    /** 复制所选消息文本（带角色前缀，便于区分 user/assistant/system）。 */
+    private fun batchCopySelected() {
+        if (selectedIds.isEmpty()) return
+        val order = adapter.snapshot()
+        val sb = StringBuilder()
+        for (m in order) {
+            if (m.id !in selectedIds) continue
+            val prefix = when (m.role) {
+                "user" -> "我: "
+                "assistant" -> "AI: "
+                "system", "error" -> "系统: "
+                "tool" -> "工具: "
+                else -> ""
+            }
+            sb.append(prefix).append(m.text).append('\n')
+        }
+        val clip = android.content.ClipData.newPlainText("doge-code 选中消息", sb.toString())
+        val cm = getSystemService(android.content.Context.CLIPBOARD_SERVICE)
+            as android.content.ClipboardManager
+        cm.setPrimaryClip(clip)
+        Toast.makeText(this, getString(R.string.batch_copied, selectedIds.size), Toast.LENGTH_SHORT).show()
+        exitSelectionMode()
+    }
+
+    /** 删除所选（仅本地记录，同单条删除语义）。 */
+    private fun batchDeleteSelected() {
+        if (selectedIds.isEmpty()) return
+        val remaining = adapter.snapshot().filterNot { it.id in selectedIds }
+        adapter.submit(remaining)
+        persist()
+        Toast.makeText(this, getString(R.string.batch_deleted, selectedIds.size), Toast.LENGTH_SHORT).show()
+        exitSelectionMode()
+    }
+
+    /** 退出选择模式：清空选中态并隐藏操作栏。 */
+    private fun exitSelectionMode() {
+        selectedIds = BatchSelection.clear()
+        adapter.applySelection(selectedIds)
+        hideBatchBar()
+    }
+
+    /** 显示批量操作栏并刷新计数与按钮文案。 */
+    private fun showBatchBar() {
+        val v = chatFragment?.currentViews() ?: return
+        v.batchBar.visibility = android.view.View.VISIBLE
+        updateBatchBar()
+    }
+
+    /** 按选中数刷新操作栏文案（「复制所选(N)」等）。 */
+    private fun updateBatchBar() {
+        val v = chatFragment?.currentViews() ?: return
+        val n = selectedIds.size
+        v.batchCount.text = getString(R.string.batch_selected_count, n)
+        v.batchCopy.text = getString(R.string.batch_copy_with_count, n)
+        v.batchDelete.text = getString(R.string.batch_delete_with_count, n)
+        // 已全选时「全选」按钮变为「取消全选」语义提示
+        v.batchSelectAll.text = if (BatchSelection.isAllSelected(
+                adapter.snapshot().map { it.id }, selectedIds
+            )
+        ) {
+            getString(R.string.batch_select_none)
+        } else {
+            getString(R.string.batch_select_all)
+        }
+    }
+
+    /** 隐藏批量操作栏。 */
+    private fun hideBatchBar() {
+        chatFragment?.currentViews()?.batchBar?.visibility = android.view.View.GONE
+    }
+
+    /**
+     * 「更多」溢出菜单：低频但有用的输入操作。
+     *
+     * 为什么不常驻输入栏：每个按钮固定占 44dp，而输入框的宽度是
+     * **被这些按钮挤出来的**。实测 6 个按钮时输入框只剩约 58dp
+     *（不到 3 个汉字），打字这一最核心的操作反被牺牲。
+     *
+     * 菜单项按使用频率排序，且**动态**：已附文件时才显示「查看已附」
+     * 并在标题带数量 —— 没有附件时不必占一个位置。
+     */
+    private fun showMoreActions() {
+        val items = mutableListOf<Pair<String, () -> Unit>>()
+        items.add("附加图片（拍照 / 相册）" to { inputActions.pickImage() })
+        items.add("附加文本文件（日志 / 配置 / 代码）" to { inputActions.pickTextFile() })
+        items.add("快捷指令与命令" to { showQuickPrompts() })
+        val attached = inputActions.pendingTextAttachments()
+        if (attached.isNotEmpty()) {
+            // 附了文件才显示 —— 让用户知道「我贴了几个」并能移除
+            items.add("查看已附文件（${attached.size} 个）" to { showAttachments() })
+        }
+        android.app.AlertDialog.Builder(this)
+            .setTitle(R.string.more_actions)
+            .setItems(items.map { it.first }.toTypedArray()) { _, which ->
+                items[which].second.invoke()
+            }
+            .setNegativeButton("取消", null)
+            .show()
+    }
+
+    /**
+     * 快捷指令面板（分两组：斜杠命令 / prompt 模板）。
+     *
+     * 两组行为不同，故必须分开呈现：
+     * · **斜杠命令**：语义完整，点击**直接发送**（`/compact` 之后无需补充）
+     * · **prompt 模板**：需补充细节（「解释 src/a.ts」要改对路径），
+     *   故只填入输入框等用户编辑
+     *
+     * 若混在一个列表里，用户会遇到「有的点了直接发、有的点了还要按发送」
+     * 的不一致，很容易误发一个不完整的请求。
+     */
+    /** 当前模式对应的斜杠命令域。 */
+    private fun currentCommandScope(): SlashCommands.Entry.Scope =
+        if (appMode == AppMode.LOCAL) {
+            SlashCommands.Entry.Scope.LOCAL
+        } else {
+            SlashCommands.Entry.Scope.REMOTE
+        }
+
+    /**
+     * 本地模式下的「客户端命令」—— 直接由 App 处理，不发给模型。
+     *
+     * ## 为什么必须是客户端行为
+     *
+     * `/workspace` / `/model` / `/tools` 查的是**本机状态**（工作区路径、
+     * 配置里的模型名、可用的 4 个工具）。发到模型那里它既看不到工作区
+     * 也看不到配置，只会编一个答案。故必须在发出之前拦下。
+     *
+     * @return true 表示已处理（调用方应停止后续发送流程）
+     */
+    private fun handleLocalCommand(text: String): Boolean {
+        if (appMode != AppMode.LOCAL) return false
+        val name = text.trim().removePrefix("/").substringBefore(' ').lowercase()
+        val reply = when (name) {
+            "workspace" -> "工作区：${localStore.resolvedWorkspace().absolutePath}"
+            "model" -> {
+                val cfg = localStore.providerConfig()
+                "模型：${cfg.model.ifBlank { "（未设置，用服务端默认）" }}\n" +
+                    "端点：${cfg.baseURL.ifBlank { "（未设置）" }}"
+            }
+            "tools" -> "本地可用工具：\n" +
+                LocalTools.specs().joinToString("\n") { "· ${it.name} —— ${it.description}" } +
+                "\n\n注意：本地模式**不能执行命令**（Android 沙箱不提供 shell）。"
+            "cost" -> {
+                val u = localBackend.sessionUsage()
+                if (u.totalTokens == 0) {
+                    "本次会话尚无用量统计（服务端未返回 usage，或还没发过消息）。"
+                } else {
+                    "本次会话累计用量：\n" +
+                        "· 输入：${u.promptTokens} tokens\n" +
+                        "· 输出：${u.completionTokens} tokens\n" +
+                        "· 合计：${u.totalTokens} tokens"
+                }
+            }
+            else -> return false
+        }
+        append(ChatMessage.user(text))
+        append(ChatMessage.system(reply))
+        msgInput.setText("")
+        saveDraft("")
+        return true
+    }
+
+    private fun showQuickPrompts() {
+        val cmds = SlashCommands.ALL.filter { with(SlashCommands) { it.matches(currentCommandScope()) } }
+        val templates = QUICK_PROMPTS
+        // 统一标题，分组用标题行区分（AlertDialog 的 setItems 不支持分组，
+        // 故用「── 标题 ──」形式的不可选项模拟分隔）。实现上更简单的做法：
+        // 两个入口按钮。这里保持单入口，用标题前缀标识。
+        val labels = buildList {
+            add("── 命令（点击直接执行）──")
+            cmds.forEach { add("${it.label}  ${it.desc}") }
+            add("── 提问模板（填入后可编辑）──")
+            templates.forEach { add(it.second) }
+        }.toTypedArray()
+
+        android.app.AlertDialog.Builder(this)
+            .setTitle(R.string.quick_prompt_title)
+            .setItems(labels) { _, which ->
+                // 第 0 项是分组标题；之后是命令；再之后是分组标题与模板
+                val cmdStart = 1
+                val cmdEnd = cmdStart + cmds.size
+                val tplStart = cmdEnd + 1
+                when {
+                    which == 0 || which == cmdEnd -> Unit  // 分组标题，不可点
+                    which < cmdEnd -> {
+                        val cmd = cmds[which - cmdStart]
+                        // 命令语义完整 —— 直接发送。若只填入输入框，
+                        // 用户会以为「点了没反应」（他期待命令立刻执行）
+                        msgInput.setText("/${cmd.command}")
+                        sendCurrent()
+                    }
+                    else -> {
+                        val body = templates[which - tplStart].first
+                        msgInput.setText(body)
+                        msgInput.setSelection(msgInput.text.length)
+                        msgInput.requestFocus()
+                    }
+                }
+            }
+            .setNegativeButton("取消", null)
+            .show()
+    }
+
+    /** 复制文本到剪贴板，并给出语义化提示（区分复制的是全文/代码块/命令/结果）。 */
+    private fun copyText(text: String, tip: String = "已复制") {
+        val cm = getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+        cm.setPrimaryClip(android.content.ClipData.newPlainText("doge-code", text))
+        Toast.makeText(this, tip, Toast.LENGTH_SHORT).show()
+    }
+
+    /**
+     * 远程配置：模型 / 思考强度 / 权限模式。
+     *
+     * 为什么值得做：手机上发现 AI 用错模型、思考深度不够、或想先看计划
+     * 不改代码时，此前必须回到电脑终端敲 /model、/effort、Shift+Tab。
+     * 远程使用的价值就在「不必回到电脑」。
+     *
+     * **权限模式选项刻意不含 Bypass**：与服务端白名单一致。
+     * 客户端不展示，就不会有用户点了被拒的挫败感；更重要的是
+     * 少一处将来被改坏的风险 —— 把 Bypass 暴露到网络可达的界面
+     * 意味着拿到手机即可关掉本机全部防护。
+     */
+
+
+
+
+
+    /**
+     * 地址历史：列出最近用过的地址，点选即连。
+     *
+     * 为什么需要：本项目的两种推荐连接方式（USB 反向转发走
+     * 127.0.0.1、局域网走 192.168.x.x）地址完全不同，来回切换很常见，
+     * 每次手打既慢又容易打错 —— 而打错地址的表现是「连不上」，
+     * 用户很难意识到是自己少打了一位。
+     */
+
+    /** 读取地址历史（最近使用在前）。逻辑在 [HostHistory]，已单测。 */
+    private fun loadHostHistory(): List<String> =
+        HostHistory.parse(prefs.getString(KEY_HOSTS, null))
+
+    /**
+     * 把地址记入历史（去重后置顶，最多保留 8 条）。
+     *
+     * 上限 8 是刻意的：地址列表太长就失去了「快速切换」的意义，
+     * 而实际用到的地址（USB + 几个常用网段）远少于 8 个。
+     */
+    private fun rememberHost(url: String) {
+        val updated = HostHistory.remember(loadHostHistory(), url)
+        prefs.edit().putString(KEY_HOSTS, HostHistory.serialize(updated)).apply()
+    }
+
+    /**
+     * 连接诊断面板。
+     *
+     * 为什么值得做：用户「连不上」时只看到状态栏一闪而过的「已断开」，
+     * 无从判断该改地址、改密钥还是开防火墙 —— 全部排障手段都藏在
+     * adb logcat 里，而普通用户不会去连电脑看日志。
+     *
+     * 给出的两个快捷出口（重试 / 切 USB）覆盖了绝大多数真实场景：
+     * 地址写错、服务端没起、WiFi 隔离。
+     */
+
+    /**
+     * 弹输入框改会话名。
+     *
+     * 为什么值得做：多终端常在同一目录下开多个窗口，此时默认标签
+     * （目录名）全都一样，手机上根本分不清哪个是哪个。
+     */
+
+    /**
+     * 导出当前会话的本地历史为 Markdown，走系统分享。
+     *
+     * 用 ACTION_SEND 而非写文件到公共目录：用户可以自己选发给谁
+     * （微信/邮件/笔记），也能存进文件管理器 —— 一次实现覆盖所有去向，
+     * 且完全不需要存储权限。
+     *
+     * 只导出**本地已有的**历史（上限 500 条，见 MessageStore），
+     * 不是服务端的完整会话记录 —— 后者本项目拿不到（会话在进程内存里）。
+     */
+
+    /**
+     * 选择图片：拍照或从相册选。
+     *
+     * 用系统能力（ACTION_IMAGE_CAPTURE / ACTION_GET_CONTENT）而非自建相册：
+     * 走 SAF 拿到的一次性 URI 不需要任何存储权限，权限最小化。
+     */
+
+
+
+    /**
+     * 读取图片 URI 并压缩为待发送的 base64。
+     *
+     * 压缩是必须的：手机拍的原图常达 5-10MB，base64 后膨胀约 1/3，
+     * 一次 WebSocket 帧发这么大既慢又可能触发服务端/运行时的帧上限。
+     * 而 AI 看清代码截图只需长边约 1600px。
+     *
+     * 失败时给出明确提示而不是静默：用户选了图却什么都没发生是最糟的体验。
+     */
+
+    /** 清空待发图片（发送后 / 取消时）。 */
+
+    /**
+     * 启动系统语音识别，把结果追加到输入框。
+     *
+     * 为什么用系统能力而不集成第三方 SDK：手机上描述一段需求比打字快得多，
+     * 但为这一项引入几 MB 的语音库不划算 —— 系统自带识别已够用，
+     * 且不增加依赖与隐私面。
+     *
+     * 追加而非覆盖：用户可能已经打了一半文字，覆盖会让他丢掉已输入内容。
+     */
+
+    @Deprecated("startActivityForResult 在 AndroidX 中已被 ActivityResultLauncher 取代，"
+        + "但本工程是纯 AppCompat、未引入 activity-result 依赖，此处保持最小改动")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: android.content.Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        // 图片/语音的结果由 InputActions 消费；它返回 false 说明不是它的请求
+        if (inputActions.handleActivityResult(requestCode, resultCode, data)) return
+    }
+
+    /**
+     * 保存未发送的草稿。
+     *
+     * 空内容时**删除键**而不是存空串：否则用户主动清空输入框后，
+     * Activity 重建会把清空前的内容「复活」，看起来像幽灵文本。
+     */
+    /** 草稿保存。逻辑在 [DraftStore]（空内容必须删键，已单测）。 */
+    private fun saveDraft(text: String) = draftStore.save(text)
 
     private fun hideKeyboard() {
         val im = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -302,22 +3173,124 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
+     * 助手回复到达时语音播报「任务已完成」+ 回复首句。
+     *
+     * 与 [maybeNotify] 的三点不同，都是刻意的：
+     * 1. 前台也播报 —— 用户要求「不必盯着屏幕就知道结束了」，
+     *    而盯着屏幕时通知是打扰、语音却是正好。
+     * 2. 不受「终端活跃时不打扰」影响 —— 那个标志针对的是**通知**；
+     *    用户自己开了语音播报，说明明确要这个提醒。
+     * 3. 不检查通知权限 —— 语音走 TTS 与通知渠道无关。
+     *
+     * 只由「语音播报」开关控制，默认关闭（侵入性较强的提醒，
+     * 不该默认打断用户正在听的音频）。
+     */
+    private fun announceCompletion(replyText: String) {
+        if (!localPrefs.getBool(LocalPrefs.KEY_VOICE_ANNOUNCE)) return
+        applyVoiceRate()
+        voiceAnnouncer.speak(VoiceAnnouncer.completionSpeech(replyText))
+    }
+
+    /**
+     * AI 请求批准时语音提醒。
+     *
+     * 比完成播报更该开：批准是**阻塞等待**，不处理 AI 永久挂着；
+     * 而完成晚点知道没关系。故它由独立开关控制，且不受
+     * 「终端活跃时不打扰」影响 —— 那个标志针对的是通知，
+     * 用户在电脑前时手机不该震，但语音是用户主动开的，不该被它拦。
+     */
+    private fun announcePermission(toolName: String) {
+        if (!localPrefs.getBool(LocalPrefs.KEY_VOICE_PERMISSION)) return
+        applyVoiceRate()
+        voiceAnnouncer.speak(VoiceAnnouncer.permissionSpeech(toolName))
+    }
+
+    /** 把「播报语速」偏好映射到 TTS 倍率。 */
+    private fun applyVoiceRate() {
+        voiceAnnouncer.rate = when (localPrefs.get(LocalPrefs.KEY_VOICE_RATE)) {
+            "slow" -> 0.75f
+            "fast" -> 1.35f
+            else -> 1.0f
+        }
+    }
+
+    /**
      * 助手回复到达时发系统通知。仅当 App 不在前台才提醒 ——
      * 用户正看着界面时再弹通知是打扰。
      */
-    private fun maybeNotify(msg: ChatMessage) {
+    private fun maybeNotify(msg: ChatMessage, suppressNotify: Boolean = false) {
         if (msg.role != "assistant") return
+        // 「回复通知」关闭时完全不弹 —— 用户明确表示不需要这类提醒
+        if (!localPrefs.getBool(LocalPrefs.KEY_NOTIFY_REPLY)) return
+        // 本 App 在前台：用户正看着界面，再弹通知是打扰
         if (hasWindowFocus()) return
-        Notifications.notifyAssistant(this, msg.text, sessionLabel)
+        // 服务端告知用户正在电脑终端前（DECSET 1004 焦点状态）：同理不打扰。
+        // 注意 'unknown' 在服务端已被当作「不抑制」，故这里只需判标志本身。
+        // 另注：用户在设置里关掉「终端活跃时不打扰」时，应忽略服务端这个标志
+        if (suppressNotify && localPrefs.getBool(LocalPrefs.KEY_NOTIFY_SUPPRESS)) return
+        Notifications.notifyAssistant(
+            this,
+            msg.text,
+            sessionLabel,
+            silent = !localPrefs.getBool(LocalPrefs.KEY_NOTIFY_SOUND),
+        )
     }
 
     companion object {
         private const val PREFS = "doge_mobile"
         private const val KEY_URL = "last_url"
         private const val KEY_SECRET = "secret"
+
+        /** 是否把密钥落盘。默认保存（方便自动重连）；关闭后每次需手输。 */
+        private const val KEY_REMEMBER_SECRET = "remember_secret"
         private const val KEY_AUTOCONNECT = "autoconnect"
 
         private const val PORT = 5680
+
+        /** 活动区最多显示几行；超出丢最旧的。 */
+        private const val MAX_ACTIVITY_LINES = 5
+
+        /** 用量行的前缀标记：用于识别并替换旧行，避免堆叠。 */
+        private const val USAGE_LINE_PREFIX = "Σ "
+
+        private const val TAG = "MainActivity"
+
+        /** 诊断页最多展示几条失败历史（存 20 条，展示 5 条足够看出模式）。 */
+        private const val MAX_HISTORY_SHOWN = 5
+
+        /**
+         * 快捷指令模板。
+         *
+         * 选这五条的判据：都是**高频且措辞固定**的请求 ——
+         * 手打它们的时间占输入时间的一大部分，而内容几乎不变。
+         * 需要具体上下文（如「改这个文件」）的没放，因为模板帮不上忙。
+         */
+        val QUICK_PROMPTS: List<Pair<String, String>> = listOf(
+            "解释一下这段代码的作用" to "解释这段代码的作用",
+            "找出这段代码里的 bug" to "找出其中的 bug 与潜在问题",
+            "为这段代码写测试" to "为这段代码写单元测试",
+            "给出重构建议" to "分析这段代码可以如何重构，说明理由",
+            "生成提交信息" to "根据当前改动生成一条符合规范的提交信息",
+        )
+
+        // Fragment tag（用 findFragmentByTag 复用，避免旋转后重复 add）
+        private const val TAG_CHAT = "chat"
+        private const val TAG_SESSIONS = "sessions"
+        private const val TAG_SETTINGS = "settings"
+
+        private const val TAB_INDEX_SESSIONS = 0
+        private const val TAB_INDEX_CHAT = 1
+        private const val TAB_INDEX_SETTINGS = 2
+
+        /** 未发送草稿的存储键。 */
+        private const val KEY_DRAFT = "draft"
+
+        /** 地址历史（换行分隔，最近使用在前）。 */
+        private const val KEY_HOSTS = "host_history"
+
+        /** 地址历史保留条数上限。 */
+        private const val MAX_HOSTS = 8
+
 
         /**
          * 默认地址。USB 反向转发（adb reverse）下手机访问 127.0.0.1:5680 即可，

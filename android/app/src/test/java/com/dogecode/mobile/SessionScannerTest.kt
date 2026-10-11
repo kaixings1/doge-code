@@ -144,4 +144,57 @@ class SessionScannerTest {
         val s = SessionScanner.parseSessionInfo(real, 5681)!!
         assertEquals("http://127.0.0.1:5681", s.httpUrl("127.0.0.1"))
     }
+
+    // ── labelFrom：连接后补取会话标签（通知标题用）──
+
+    @Test
+    fun `labelFrom 取到标签`() {
+        assertEquals("测试会话A", SessionScanner.labelFrom(real))
+    }
+
+    @Test
+    fun `labelFrom 缺 label 字段返回 null 而非编造占位`() {
+        // 关键：不能返回「会话 5680」这类占位。调用方靠 null 区分
+        //「服务端说标签叫什么」与「服务端没给标签」，前者不可被覆盖。
+        assertNull(SessionScanner.labelFrom("""{"sessionId":"x","port":5680}"""))
+    }
+
+    @Test
+    fun `labelFrom 空串与纯空白返回 null`() {
+        assertNull(SessionScanner.labelFrom("""{"label":""}"""))
+        assertNull(SessionScanner.labelFrom("""{"label":"   "}"""))
+    }
+
+    @Test
+    fun `labelFrom 去除首尾空白`() {
+        assertEquals("修CI", SessionScanner.labelFrom("""{"label":"  修CI  "}"""))
+    }
+
+    @Test
+    fun `labelFrom 非法输入返回 null 而非抛异常`() {
+        assertNull(SessionScanner.labelFrom(null))
+        assertNull(SessionScanner.labelFrom(""))
+        assertNull(SessionScanner.labelFrom("not json"))
+        assertNull(SessionScanner.labelFrom("[]"))
+    }
+
+    @Test
+    fun `labelFrom 不要求 port 与 sessionId`() {
+        // 与 parseSessionInfo 的关键差异：这里只关心标签。
+        // 若复用 parseSessionInfo，服务端精简响应体时标签会静默失效。
+        assertEquals("只有标签", SessionScanner.labelFrom("""{"label":"只有标签"}"""))
+    }
+
+    // ── 变异验证：判据必须真的在过滤 ──
+
+    @Test
+    fun `labelFrom 对非字符串 label 不误报`() {
+        // JSONObject.optString 对对象/数组会返回 toString（"{}"/"[]"），
+        // 若只判空白就会把 "{}" 当成合法标签。必须显式判类型。
+        assertNull(SessionScanner.labelFrom("""{"label":null}"""))
+        assertNull(SessionScanner.labelFrom("""{"label":{}}"""))
+        assertNull(SessionScanner.labelFrom("""{"label":[]}"""))
+        assertNull(SessionScanner.labelFrom("""{"label":5680}"""))
+        assertNull(SessionScanner.labelFrom("""{"label":true}"""))
+    }
 }

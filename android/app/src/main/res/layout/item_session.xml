@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  会话列表项。
+
+  字段与原 SessionPickerDialog 的行一致（标签/端口/交互状态/已连设备数/
+  工作目录），但多一个「当前」标记 —— 弹窗时代没法表达这个状态，
+  用户不知道自己现在连的是哪个。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/item_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="#4ADE80"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!-- 当前连接的会话，让用户一眼看出自己在哪个会话里 -->
+        <TextView
+            android:id="@+id/item_current"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="#2D4A2D"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:text="@string/session_current"
+            android:textColor="#6BD66B"
+            android:textSize="10sp"
+            android:visibility="gone" />
+
+        <!--
+          直接切换：此前切会话必须「点进详情页 → 点切换」共 4 步，
+          而在两三个会话间来回看是常见用法（一个跑长任务、一个问问题），
+          每次走详情页很笨重。当前会话时隐藏（点了没意义）。
+
+          用 TextView 做按钮而非 Button：后者带 Material 默认样式与
+          最小宽度，会把这行撑高并与标签抢视觉。
+        -->
+        <TextView
+            android:id="@+id/item_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/chip_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:text="@string/switch_here"
+            android:textColor="#8AB4F8"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/item_meta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="#999999"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/item_cwd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:ellipsize="middle"
+        android:maxLines="1"
+        android:textColor="#666666"
+        android:textSize="11sp" />
+</LinearLayout>

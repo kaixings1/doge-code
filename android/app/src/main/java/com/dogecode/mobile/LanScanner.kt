@@ -21,44 +21,68 @@ object LanScanner {
 
     private const val TAG = "LanScanner"
 
-    /** 单 IP 的探测超时。局域网内 RTT 通常 <5ms，300ms 足够且能容忍弱信号。 */
-    private const val PROBE_TIMEOUT_MS = 300
-
-    /** 扫描端口段。与 CLI 侧的多会话约定一致（每个实例一个端口）。
-     *  internal 而非 private：便于单测断言「覆盖顺延段 5680..5689」。
+    /**
+     * 单 IP 单端口的探测超时。局域网内 RTT 通常 <5ms，250ms 足够且能容忍弱信号。
      *
-     *  ponytail: 此处硬编码 5680 段，**不读 ScanPortPrefs**。上限明确：
-     *  若服务端起始端口改到别处（如本机因 Windows 保留区被迫用 6000），
-     *  局域网自动发现会漏掉该主机 —— 但用户可用设置页填 URL 直连，
-     *  或用「当前主机 + 历史主机」路径（SessionScanner 走 ScanPortPrefs）
-     *  补齐。升级路径：把 PORTS 改为从 ScanPortPrefs 读取即可。 */
-    internal val PORTS = 5680..5690
+     * 比单端口直连探测（300ms）略短：这条路径要跑上千次探测，
+     * 单次超时直接决定总耗时能否落在 [TOTAL_TIMEOUT_MS] 内。
+     */
+    private const val PROBE_TIMEOUT_MS = 250
 
     /**
-     * 局域网发现每台主机只探的端口数。
+     * 默认扫描端口段（起点即 [PortScanRange.DEFAULT_START]，与服务端默认一致）。
      *
-     * 为什么不全探 [PORTS]：候选集已扩展为**整个 /24（254 个 IP）**，
-     * 若每 IP 探 11 个端口则 2794 个请求，远超 [TOTAL_TIMEOUT_SEC] 预算、
-     * 且大量请求会让家用路由丢包。改为每 IP 只探前 [LAN_PORTS_PER_HOST] 个
-     * 端口：真实部署里一个电脑通常一个 CLI 实例（默认 5680），覆盖前 2 个
-     * 端口已能命中「起始端口被占自动顺延一位」的常见情况。
+     * 与 CLI 侧的多会话约定一致（每个实例一个端口）。
+     * internal 而非 private：便于单测断言覆盖顺延段。
      *
-     * 代价：某主机上版本号更高的第 3+ 个实例（如 5682）在局域网发现里会漏。
-     * 那条路径由「当前主机 + 历史主机」（SessionScanner 全端口精确探测）补齐。
+     * 注：实际扫描范围由 [scan] 的 `ports` 参数决定，调用方应传入
+     * `ScanPortPrefs.range()` 展开后的列表（用户可能把起始端口配成 6000）。
+     * 这里的默认值只作为未传参时的兜底，**不要**在调用点依赖它。
      */
-    private const val LAN_PORTS_PER_HOST = 2
+    internal val PORTS = PortScanRange.DEFAULT_START..(PortScanRange.DEFAULT_END + 1)
+
+    /**
+     * 每台主机**第一轮**探几个端口。
+     *
+     * 为什么不是全探 [PORTS]：候选集是整个 /24（254 个 IP），若每 IP 探 10 个
+     * 端口就是 2540 个请求，家用路由在短时间大量连接下会丢包 —— 丢包又会误判
+     * 成「不通」，反而降低发现率（这是实测过的）。
+     *
+     * 取 3 而非 2：第一轮同时承担「筛掉非目标主机」的职责（见 [REJECT_THRESHOLD]），
+     * 端口数必须够到否决阈值，否则死主机永远否不掉。
+     */
+    internal const val FIRST_ROUND_PORTS = 3
+
+    /**
+     * 第一轮落空几路就把该 IP 判成「非 doge 主机」并放弃其剩余端口。
+     *
+     * **必须 ≤ [FIRST_ROUND_PORTS]**：若阈值大于第一轮端口数，本轮无论结果如何
+     * 都达不到阈值 → 死主机全数存活 → 第二轮被迫对每个 IP 探满，退化成旧行为。
+     *
+     * 为何不全探完再放弃（即阈值 = 全部端口数）：那样每台无关主机都要吃满
+     * 10 次请求，正是家庭路由器丢包的主因。
+     */
+    internal const val REJECT_THRESHOLD = 3
+
+    /**
+     * 「某 IP 第一轮有命中」时的第二轮端口预算。
+     *
+     * 两轮合计覆盖 [FIRST_ROUND_PORTS] + 8 ≥ 默认段宽度（10），即存活主机能
+     * 拿到**完整**端口段覆盖；而非目标主机只吃 3 次请求就被否掉。
+     */
+    internal const val SECOND_ROUND_PORTS = 8
 
     /** 并发度上限。太大时低端路由器会丢包，反而漏掉目标。 */
-    private const val MAX_THREADS = 48
+    private const val MAX_THREADS = 64
 
     /**
      * 整个扫描的 deadline，兜底防止个别 IP 卡满超时。
      *
-     * 15 秒：候选含「本机网段 + 2 个内置常用网段」，最多约 762 个 IP ×
-     * [LAN_PORTS_PER_HOST] 端口 = 1524 次探测，48 并发下理论耗时约 9.5 秒；
-     * 留出余量到 15 秒，避免弱网/高延迟下被提前截断（截断会静默漏报）。
+     * 20 秒：最坏情况要跑「首轮 254 IP × 2 端口 + 次轮 254 × 8」= 2540 次
+     * 探测，64 并发约 10 秒；再留一倍余量给弱网，避免被提前截断 ——
+     * 截断的表现是**静默漏报**，用户看到「找不到会话」，与服务端没起无从区分。
      */
-    private const val TOTAL_TIMEOUT_SEC = 15L
+    private const val TOTAL_TIMEOUT_MS = 20_000L
 
     /**
      * 判断一个网卡名是否「可用于局域网发现」。
@@ -138,36 +162,160 @@ object LanScanner {
     }
 
     /**
-     * 扫描一组主机上的 doge 移动桥接。
+     * 扫描一组主机上的 doge 移动桥接（**三层递进**：端口 → IP → 网段）。
      *
-     * 必须在后台线程调用（阻塞 IO）。
+     * ## 为什么是三层
+     *
+     * 用户报的真实痛点：「一个 IP 连不上就换下一个 IP，最后整段都扫不到」。
+     * 根因是搜索只按「IP」一维推进 —— 一个 IP 上的 2 个端口不通，就把整台
+     * 电脑（可能跑在 6002、6008 上）判成没有，然后去探下一个 IP。真实部署里
+     * 多开窗口会顺延端口，顺延到 6002 以后就必然漏。
+     *
+     * 三层顺序：
+     *   1. **端口层**：同一 IP 上先探 [FIRST_ROUND_PORTS] 个主端口；
+     *      落空达 [REJECT_THRESHOLD] 路 → 判非目标主机，放弃其剩余端口；
+     *      有命中 → 补探该 IP 剩余端口（最多 [SECOND_ROUND_PORTS] 个）。
+     *   2. **IP 层**：本网段内所有 IP 的第一轮跑完，才汇总进入第二轮。
+     *   3. **网段层**：本网段两轮都跑完 → 才换下一个网段
+     *      （[SubnetCandidates.groupBySubnet] 分组）。
+     *
+     * 为什么「先跑完本网段第一轮，再跑第二轮」而不是「每 IP 一次跑完 10 个」：
+     * 绝大多数 IP 上根本没有服务，它们应在探 3 个端口后就被否掉。若每 IP 都
+     * 探满 10 个，254 个 IP 就是 2540 次请求，家用路由在短时间大量连接下会
+     * 丢包 —— 丢包又会误判成「不通」，反而降低发现率。
+     *
+     * ## deadline
+     *
+     * [TOTAL_TIMEOUT_MS] 覆盖**整个**三层流程（不是每层）—— 层级越靠后越可能
+     * 被截断，而截断的表现是静默漏报，故宁可先把前两层做快做准。
      *
      * @param hosts 候选 IP 列表；为空时自动用 [candidates]。
+     * @param ports 每台主机要探的端口（**第一轮取前 [FIRST_ROUND_PORTS] 个**）。
+     *              调用方应从 `ScanPortPrefs.range()` 展开后传入 —— 否则用户
+     *              把起始端口配成 6000 时，局域网发现会静默漏掉该主机。
+     *              默认用 [PORTS] 仅作兜底。
+     * @param onProgress 每进入一层回调一次（在主调线程之外，供 UI 显示
+     *                   「正在搜 192.168.1.0/24 · 第 2 轮」）。
      * @return 发现的会话，按 (host, port) 排序；无结果返回空列表。
      */
-    fun scan(hosts: List<String> = emptyList()): List<SessionScanner.Session> {
+    fun scan(
+        hosts: List<String> = emptyList(),
+        ports: List<Int> = PORTS.toList(),
+        onProgress: ((String, Int) -> Unit)? = null,
+    ): List<SessionScanner.Session> {
         val targets = hosts.ifEmpty { candidates() }
         if (targets.isEmpty()) return emptyList()
 
-        val lanPorts = PORTS.take(LAN_PORTS_PER_HOST)
-        val tasks = ArrayList<Pair<String, Int>>(targets.size * lanPorts.size)
-        for (h in targets) for (p in lanPorts) tasks.add(h to p)
+        val (firstRound, secondRound) = splitPorts(ports)
+        if (firstRound.isEmpty()) return emptyList()
 
+        val subnets = SubnetCandidates.groupBySubnet(targets)
+        Log.i(TAG, "候选 ${targets.size} 个 IP，分 ${subnets.size} 个网段")
+
+        val deadline = System.currentTimeMillis() + TOTAL_TIMEOUT_MS
+        val found = LinkedHashMap<Pair<String, Int>, SessionScanner.Session>()
         val pool = java.util.concurrent.Executors.newFixedThreadPool(MAX_THREADS)
-        return try {
-            val futures = tasks.map { (h, p) ->
-                java.util.concurrent.Callable { SessionScanner.probePublic(h, p) }
-            }
-            pool.invokeAll(futures, TOTAL_TIMEOUT_SEC, java.util.concurrent.TimeUnit.SECONDS)
-                .mapNotNull { f ->
-                    runCatching { if (f.isCancelled) null else f.get() }.getOrNull()
+
+        try {
+            for (group in subnets) {
+                if (expired(deadline)) break
+
+                // ── 第一轮：本网段全部 IP × 主端口 ──
+                onProgress?.invoke(group.prefix, 1)
+                val round1 = runRound(pool, group.ips, firstRound, deadline)
+                found.putAll(round1.found)
+
+                // ── 第二轮：只对第一轮「部分命中」的 IP 补探剩余端口 ──
+                //   判据是「命中数 ≥ 1 且未否掉」，而非「全通」——
+                //   主机上第 1 个实例在 6000 上、后续顺延到 6002 时，
+                //   第一轮只命中 6000，仍需补探才能发现 6002 那个。
+                if (secondRound.isNotEmpty() && round1.aliveHosts.isNotEmpty()) {
+                    if (expired(deadline)) break
+                    onProgress?.invoke(group.prefix, 2)
+                    found.putAll(runRound(pool, round1.aliveHosts, secondRound, deadline).found)
                 }
-                .sortedWith(compareBy({ it.host }, { it.port }))
+            }
         } catch (e: Exception) {
             Log.w(TAG, "局域网扫描失败：${e.message}")
-            emptyList()
         } finally {
             pool.shutdownNow()
         }
+
+        return found.values.sortedWith(compareBy({ it.host }, { it.port }))
+    }
+
+    /** deadline 是否已过。 */
+    private fun expired(deadline: Long): Boolean =
+        System.currentTimeMillis() >= deadline
+
+    /**
+     * 把端口表切成「第一轮 / 第二轮」两段（纯逻辑，可单测）。
+     *
+     * 第一轮取前 [FIRST_ROUND_PORTS] 个；其余留给第二轮（最多
+     * [SECOND_ROUND_PORTS] 个）。
+     *
+     * **第一轮端口数必须 ≥ [REJECT_THRESHOLD]** 否则该 IP 在第一轮无论结果
+     * 如何都达不到否决线 —— 死主机会全数存活，第二轮被迫对每个 IP 探满，
+     * 退化成「全量扫描」（正是要避免的）。取 `min` 保证这条不变量成立，
+     * 测试见 `LanScannerLayeringTest`。
+     */
+    internal fun splitPorts(ports: List<Int>): Pair<List<Int>, List<Int>> {
+        val first = ports.take(maxOf(FIRST_ROUND_PORTS, minOf(REJECT_THRESHOLD, ports.size)))
+        val second = (ports - first.toSet()).take(SECOND_ROUND_PORTS)
+        return first to second
+    }
+
+    /** 一轮并发探测的结果。 */
+    private data class RoundResult(
+        /** 命中的会话，key = (host, port)。 */
+        val found: Map<Pair<String, Int>, SessionScanner.Session>,
+        /**
+         * 本轮**未被否掉**的主机（失败数 < [REJECT_THRESHOLD]）。
+         * 下一轮只对它们补探剩余端口。
+         */
+        val aliveHosts: List<String>,
+    )
+
+    /**
+     * 跑一轮：(ip × port) 全组合并发探测。
+     *
+     * 「否掉某 IP」的判据：**该 IP 本轮失败数 ≥ [REJECT_THRESHOLD]**。
+     * 用失败数而非「全不通」—— 端口数少于阈值时（如用户只配了 1 个端口）
+     * 「全不通」会让每个 IP 都被否掉，第二轮永远为空，等于退回旧行为。
+     */
+    private fun runRound(
+        pool: java.util.concurrent.ExecutorService,
+        ips: List<String>,
+        ports: List<Int>,
+        deadline: Long,
+    ): RoundResult {
+        val tasks = ArrayList<Pair<String, Int>>(ips.size * ports.size)
+        for (h in ips) for (p in ports) tasks.add(h to p)
+
+        val remainingMs = (deadline - System.currentTimeMillis()).coerceAtLeast(1L)
+        val futures = pool.invokeAll(
+            tasks.map { (h, p) ->
+                java.util.concurrent.Callable {
+                    h to SessionScanner.probePublic(h, p, PROBE_TIMEOUT_MS)
+                }
+            },
+            remainingMs,
+            java.util.concurrent.TimeUnit.MILLISECONDS,
+        )
+
+        val found = LinkedHashMap<Pair<String, Int>, SessionScanner.Session>()
+        val fails = HashMap<String, Int>()
+        for (f in futures) {
+            val pair = runCatching { if (f.isCancelled) null else f.get() }.getOrNull() ?: continue
+            val (host, session) = pair
+            if (session != null) {
+                found[host to session.port] = session
+            } else {
+                fails[host] = (fails[host] ?: 0) + 1
+            }
+        }
+
+        val alive = ips.filter { (fails[it] ?: 0) < REJECT_THRESHOLD }
+        return RoundResult(found, alive)
     }
 }

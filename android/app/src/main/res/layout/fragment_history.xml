@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  历史管理页。
+
+  现状是「只能整体清空」—— 用户既不知道存了多少、占多大，
+  也不能只删掉某个不再需要的会话历史。手机上存储是稀缺资源。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1A1A1A"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/history_summary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#222222"
+        android:padding="14dp"
+        android:textColor="#8AB4F8"
+        android:textSize="13sp"
+        android:typeface="monospace" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/history_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp"
+        android:scrollbars="vertical" />
+
+    <Button
+        android:id="@+id/btn_clear_all_history"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="14dp"
+        android:text="@string/history_clear_all" />
+</LinearLayout>

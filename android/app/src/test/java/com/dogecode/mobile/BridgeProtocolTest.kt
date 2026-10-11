@@ -69,6 +69,35 @@ class BridgeProtocolTest {
         assertEquals("别人发的", m.text)
     }
 
+    // ── sourceRequestId（回推去重）──
+
+    @Test
+    fun `user 回推带 sourceRequestId 时解析出来`() {
+        // 手机端发出的消息，其 uuid 即当初的 requestId；服务端推送回所有手机时
+        // 带此字段，手机端据此精确去重自己刚发的那条，避免重复气泡。
+        val json = """{"type":"user","data":{"text":"hello","sourceUuid":"req-123"}}"""
+        val m = BridgeProtocol.parse(json) as BridgeProtocol.Msg.Incoming
+        assertEquals("user", m.role)
+        assertEquals("hello", m.text)
+        assertEquals("req-123", m.sourceRequestId)
+    }
+
+    @Test
+    fun `回推缺 sourceUuid 时 sourceRequestId 为空串`() {
+        // 老服务端或终端本地产生的消息不带该字段，不应被错配到任何 pending 集合。
+        val json = """{"type":"assistant","data":{"text":"回复"}}"""
+        val m = BridgeProtocol.parse(json) as BridgeProtocol.Msg.Incoming
+        assertEquals("", m.sourceRequestId)
+    }
+
+    @Test
+    fun `system 回推也透传 sourceRequestId`() {
+        val json = """{"type":"system","data":{"message":"提示","sourceUuid":"req-9"}}"""
+        val m = BridgeProtocol.parse(json) as BridgeProtocol.Msg.Incoming
+        assertEquals("system", m.role)
+        assertEquals("req-9", m.sourceRequestId)
+    }
+
     @Test
     fun `user 消息缺 data 时不崩溃`() {
         assertTrue(BridgeProtocol.parse("""{"type":"user"}""") is BridgeProtocol.Msg.Unparsed)
@@ -176,5 +205,47 @@ class BridgeProtocolTest {
         val json = """{"type":"assistant","data":{"text":"$long"}}"""
         val m = BridgeProtocol.parse(json) as BridgeProtocol.Msg.Incoming
         assertEquals(20000, m.text.length)
+    }
+
+    // ─── turn_end：与内容解耦的权威回合结束信号 ───
+
+    @Test
+    fun `turn_end 被解析为 TurnEnd 且带 reason`() {
+        val json = """{"type":"turn_end","data":{"reason":"complete","at":123}}"""
+        val m = BridgeProtocol.parse(json) as BridgeProtocol.Msg.TurnEnd
+        assertEquals("complete", m.reason)
+    }
+
+    @Test
+    fun `turn_end 的 interrupted 与 error reason 被保留`() {
+        val interrupted = BridgeProtocol.parse(
+            """{"type":"turn_end","data":{"reason":"interrupted"}}""",
+        ) as BridgeProtocol.Msg.TurnEnd
+        assertEquals("interrupted", interrupted.reason)
+        val error = BridgeProtocol.parse(
+            """{"type":"turn_end","data":{"reason":"error"}}""",
+        ) as BridgeProtocol.Msg.TurnEnd
+        assertEquals("error", error.reason)
+    }
+
+    @Test
+    fun `turn_end 缺 reason 时兜底为 complete`() {
+        // 老服务端/异常帧不带 reason，按正常结束处理，避免界面卡在「返回中」
+        val m = BridgeProtocol.parse("""{"type":"turn_end","data":{}}""") as BridgeProtocol.Msg.TurnEnd
+        assertEquals("complete", m.reason)
+    }
+
+    @Test
+    fun `turn_end 缺 data 也不崩溃且兜底 complete`() {
+        val m = BridgeProtocol.parse("""{"type":"turn_end"}""") as BridgeProtocol.Msg.TurnEnd
+        assertEquals("complete", m.reason)
+    }
+
+    @Test
+    fun `turn_end 不被误判为消息气泡`() {
+        // turn_end 是控制信号，不是内容 —— 必须是 TurnEnd 而非 Incoming，
+        // 否则会在聊天里多出一个空气泡。
+        val m = BridgeProtocol.parse("""{"type":"turn_end","data":{"reason":"complete"}}""")
+        assertTrue("turn_end 应解析为 TurnEnd，实际 $m", m is BridgeProtocol.Msg.TurnEnd)
     }
 }

@@ -32,15 +32,33 @@
     <string name="section_mode">工作模式</string>
     <string name="section_local">本地配置</string>
     <string name="label_provider">服务商</string>
+    <string name="label_provider_profiles">服务商档案</string>
+    <string name="action_new_profile">新建档案</string>
+    <string name="action_delete_profile">删除当前档案</string>
+    <string name="profile_new_title">新建服务商档案</string>
+    <string name="profile_new_hint">给这个服务商起个名字（如：自建网关）</string>
+    <string name="profile_name_empty">请填写档案名称</string>
+    <string name="profile_delete_last">至少保留 1 个档案，无法删除</string>
+    <string name="profile_deleted">已删除档案：%1$s</string>
+    <string name="profile_created">已新建档案：%1$s（点「保存配置」填写接入信息）</string>
+    <string name="profile_switched">已切换到档案：%1$s</string>
     <string name="label_workspace">工作区目录</string>
     <string name="hint_base_url">API 地址（如 https://api.deepseek.com/v1）</string>
     <string name="hint_api_key">API 密钥</string>
     <string name="hint_model">模型名（留空用默认）</string>
     <string name="action_pick_workspace">选择目录</string>
     <string name="action_save_local">保存配置</string>
+    <string name="action_fetch_models">获取模型</string>
+    <string name="action_test_local">测试会话</string>
     <string name="local_saved">已保存</string>
     <string name="local_need_key">请填写 API 密钥</string>
     <string name="local_need_url">请填写合法的 API 地址（http/https 开头）</string>
+    <string name="local_models_title">选择模型</string>
+    <string name="local_models_empty">该地址没返回模型列表（可能不支持 /models）。请手动填写模型名。</string>
+    <string name="local_models_picked">已选择模型：%1$s（点「保存配置」生效）</string>
+    <string name="local_test_ok">会话成功。模型回复：%1$s</string>
+    <string name="local_test_ok_empty">会话成功（连通且模型有响应，但未返回文本）。</string>
+    <string name="local_busy">正在请求，请稍候…</string>
     <string name="local_no_secure">⚠ 本设备加密存储不可用，密钥不会被保存（每次需重填）</string>
     <string name="local_workspace_fallback">当前使用应用私有目录（可在上方选择其他目录）</string>
     <string name="section_connection">连接</string>
@@ -51,6 +69,8 @@
     <string name="label_model">模型</string>
     <string name="label_thinking">思考强度</string>
     <string name="label_permission">权限模式</string>
+    <string name="permission_rules">逐条授权规则</string>
+    <string name="permission_rules_desc">按工具预设：总是允许 / 总是拒绝 / 每次询问</string>
     <string name="value_unknown">—</string>
     <string name="section_session">会话</string>
     <string name="section_diagnostics">诊断</string>
@@ -124,6 +144,19 @@
     <string name="more_actions">更多操作</string>
     <string name="quick_prompt_title">选择指令模板</string>
     <string name="scroll_to_bottom">滚动到底部</string>
+    <string name="app_lock_title">解锁以查看</string>
+    <!-- 批量选择 -->
+    <string name="batch_select_all">全选</string>
+    <string name="batch_select_none">取消全选</string>
+    <string name="batch_copy">复制所选</string>
+    <string name="batch_copy_with_count">复制所选(%1$d)</string>
+    <string name="batch_delete">删除所选</string>
+    <string name="batch_delete_with_count">删除所选(%1$d)</string>
+    <string name="batch_cancel">取消</string>
+    <string name="batch_selected_count">已选 %1$d 条</string>
+    <string name="batch_copied">已复制 %1$d 条消息</string>
+    <string name="batch_deleted">已删除 %1$d 条消息</string>
+
     <string name="msg_deleted">已删除该条消息（仅本地）</string>
     <!-- 历史管理（线 C1） -->
     <string name="history_title">历史管理</string>
@@ -157,4 +190,18 @@
     <string name="confirm_delete_title">确认删除</string>
     <string name="confirm_delete_msg">将删除该条本地记录。\n\n仅删除本机副本，电脑上的对话不受影响。\n可在「设置 → 安全」里关闭此确认。</string>
     <string name="theme_note">浅色主题目前只改变窗口与状态栏底色；聊天区颜色暂未适配。</string>
+    <!-- 技能开关（设置页本地配置区） -->
+    <string name="label_skills">技能</string>
+    <string name="skills_hint">开启/关闭某个专家技能（关闭后模型将看不到该技能）。改动即时生效，无需点「保存配置」。</string>
+    <string name="skills_empty">暂无可用技能（预置与自定义均为空）。</string>
+    <string name="skills_no_desc">（无描述）</string>
+    <!-- 离线推理引擎（设置页本地配置区） -->
+    <string name="label_offline_engine">离线推理引擎</string>
+    <string name="offline_engine_hint">开启后用本机运行的 OpenAI 兼容推理服务（如 Termux 里的 llama.cpp / Ollama，暴露 http://127.0.0.1:8080/v1）真正离线推理。留空则提示先填写地址。</string>
+    <string name="action_offline_engine_on">启用离线引擎（替代远程 API）</string>
+    <string name="hint_engine_url">本地引擎地址，如 http://127.0.0.1:8080/v1</string>
+    <string name="hint_engine_model">模型名（可点「获取模型」选；留空取默认）</string>
+    <string name="offline_engine_on_ok">已启用离线引擎：切换会话后将改用本地推理服务（请在「本地模式」下使用）。</string>
+    <string name="offline_engine_off_ok">已关闭离线引擎：本地模式恢复为连接远程 API。</string>
+    <string name="offline_engine_need_url">请先填写本地引擎地址（如 http://127.0.0.1:8080/v1）。</string>
 </resources>

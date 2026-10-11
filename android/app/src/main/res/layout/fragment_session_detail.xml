@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  会话详情页（新增）。
+
+  为什么需要：会话列表只能显示一行摘要，而用户点进一个会话前
+  常需要确认「这个到底是不是我要找的」—— 尤其在多个窗口、多个目录
+  的情况下。详情页给出完整信息 + 可用操作。
+
+  从列表页点进来（而非直接切换），避免误切换 —— 原来点一下就切走了，
+  想切回还得再扫一次。
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1A1A1A"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/detail_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#4ADE80"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/detail_current"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:background="#2D4A2D"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:text="@string/session_current"
+            android:textColor="#6BD66B"
+            android:textSize="11sp"
+            android:visibility="gone" />
+
+        <TextView
+            style="@style/SettingsSection"
+            android:text="@string/detail_section_info" />
+
+        <TextView
+            android:id="@+id/detail_info"
+            style="@style/DiagBlock" />
+
+        <TextView
+            style="@style/SettingsSection"
+            android:text="@string/detail_section_actions" />
+
+        <Button
+            android:id="@+id/detail_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/detail_switch" />
+
+        <Button
+            android:id="@+id/detail_rename"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/detail_rename" />
+
+        <Button
+            android:id="@+id/detail_copy_addr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/detail_copy_addr" />
+
+        <TextView
+            style="@style/SettingsSection"
+            android:text="@string/detail_section_resume" />
+
+        <!--
+          恢复命令：CLI 侧有 resume 能力，但用户完全不知道有它、也不知道怎么用。
+          这里把可用命令显示出来并支持复制。不做「手机端触发恢复」，
+          因为那跨越了「远程控制」到「进程管理」的边界（评估已否决）。
+
+          注：XML 注释里不能出现连续两个短横线，故此处不写参数全名。
+        -->
+        <TextView
+            android:id="@+id/detail_resume_cmd"
+            style="@style/DiagBlock"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/detail_copy_resume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/detail_copy_resume"
+            android:visibility="gone" />
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  FileProvider 的暴露路径配置。
+
+  只暴露 cache 下的 img 子目录（拍照临时文件所在处），不暴露全部缓存。
+  最小授权：即使 URI 被泄漏，也只能读到那一个目录，读不到 App 的
+  私有数据（会话历史、密钥等都在别的目录）。
+
+  Android 7+ 禁止用 file:// URI 跨进程传递（FileUriExposedException），
+  相机 App 要写文件就必须通过 FileProvider 给出 content:// URI。
+-->
+<paths>
+    <cache-path name="img" path="img/" />
+</paths>

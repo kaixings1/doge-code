@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  远程配置页（原为 AlertDialog 内的二级弹窗）。
+
+  每项的结构：标题 + 当前值 + 说明文字 + 选项条。
+  说明文字是弹窗版本完全没有的 —— 用户看到「思考强度 4096」时
+  并不知道这意味着什么，需要一句话解释。
+
+  结构复用 SettingsRow 样式，选项条复用 chip 背景。
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1A1A1A"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/cfg_conn_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:textColor="#F87171"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <!-- ═══ 模型 ═══ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="8dp">
+
+            <TextView
+                style="@style/SettingsRowLabel"
+                android:layout_width="match_parent"
+                android:layout_weight="0"
+                android:text="@string/label_model"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/cfg_model_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="#8AB4F8"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/desc_model"
+                android:textColor="#777777"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:id="@+id/cfg_model_items"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal" />
+        </LinearLayout>
+
+        <!-- ═══ 思考强度 ═══ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/SettingsRowLabel"
+                android:layout_width="match_parent"
+                android:layout_weight="0"
+                android:text="@string/label_thinking"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/cfg_thinking_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="#8AB4F8"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/desc_thinking"
+                android:textColor="#777777"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:id="@+id/cfg_thinking_items"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal" />
+        </LinearLayout>
+
+        <!-- ═══ 权限模式 ═══ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/SettingsRowLabel"
+                android:layout_width="match_parent"
+                android:layout_weight="0"
+                android:text="@string/label_permission"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/cfg_permission_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="#8AB4F8"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/desc_permission"
+                android:textColor="#777777"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:id="@+id/cfg_permission_items"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal" />
+        </LinearLayout>
+
+        <!--
+          布尔类远程配置项（当前只有「详细模式」）。
+
+          用容器而非写死每一项：内容由代码按 ConfigOptions.BOOL_OPTIONS
+          动态生成，新增项只需往那张表加一行，此处不必改。
+          无条目时整块隐藏（不留空标题）。
+        -->
+        <LinearLayout
+            android:id="@+id/cfg_bool_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/cfg_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textColor="#6BD66B"
+            android:textSize="12sp"
+            android:visibility="gone" />
+    </LinearLayout>
+</ScrollView>

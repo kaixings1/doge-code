@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  对话页：消息列表 + 工具活动区 + 输入栏。
+
+  从原 activity_main.xml 的中间部分整体搬来，**逻辑未变** ——
+  这一步只做结构搬迁，不改行为（保证每步都能编译能跑）。
+
+  顶栏与底部导航已上移到 activity_main.xml（全局共享）：
+  连接状态三个 tab 都要看，不该让用户切回对话页才知道断线。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1A1A1A"
+    android:orientation="vertical">
+
+    <!-- 搜索栏：默认隐藏，点顶栏放大镜展开（见 MainActivity.toggleChatSearch） -->
+    <include
+        android:id="@+id/chat_search_bar"
+        layout="@layout/fragment_chat_search" />
+
+    <!-- 消息列表 + 右下角「滚动到底」悬浮按钮 -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:scrollbars="vertical" />
+
+        <!--
+          滚动到底：长对话时手动滚很久。默认隐藏，
+          由代码在「不在底部」时显示（见 ChatFragment 的滚动监听）。
+        -->
+        <ImageButton
+            android:id="@+id/btn_scroll_bottom"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/chip_bg"
+            android:contentDescription="@string/scroll_to_bottom"
+            android:src="@android:drawable/ic_media_ff"
+            android:visibility="gone" />
+
+        <!--
+          未读提示：显示「N 条新消息」，点击滚到底部。
+
+          与「滚动到底」按钮共用同一块区域但互斥（代码里控制显隐）：
+          有未读时用户更需要「有新消息」这个信息，而不是一个去底的箭头。
+        -->
+        <TextView
+            android:id="@+id/btn_unseen"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="14dp"
+            android:background="@drawable/bubble_user"
+            android:gravity="center"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textColor="#EAF2FF"
+            android:textSize="12sp"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <!--
+      工具活动区：显示「正在读文件 / 正在跑命令 / 子代理进度」。
+
+      独立于聊天气泡是刻意的：一次重构可能产生几十条工具调用，
+      塞进气泡会淹没正文。只保留最近几行，历史不堆积。
+
+      默认隐藏，有活动时才出现（无活动时不留空条）。
+    -->
+    <LinearLayout
+        android:id="@+id/activity_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#1E1E1E"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/activity_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:textColor="#8AB4F8"
+                android:textSize="12sp"
+                android:typeface="monospace" />
+
+            <!--
+              终止子代理：服务端的 interrupt 通道已就绪，只差这个入口。
+              只在检测到子代理活动时显示 —— 没有子代理可终止时摆个按钮
+              会让人误以为能中断普通回合（那是 btn_stop 的职责）。
+            -->
+            <ImageButton
+                android:id="@+id/activity_stop"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="8dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/terminate_agent"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!--
+      输入栏。
+
+      底部 padding 由代码按键盘高度动态设置（见 MainActivity.applyImeInsets）——
+      这里刻意**不写死 paddingBottom**，因为：
+      · targetSdk=35（Android 15）起系统强制边到边，`adjustResize` 不再
+        自动把窗口缩小，键盘会直接盖住底部 —— 输入行看不见，用户不知道
+        自己打字有没有进去（这正是「键盘遮住输入框」的根因）。
+      · 所以必须自己消费 ime inset，把输入栏顶到键盘之上。
+      · 有键盘时 padding = 键盘高度；无键盘时 = 8dp（视觉间距）。
+      两条路径都由同一处代码写，避免 XML 与代码各设一半导致「有时多有时少」。
+    -->
+    <!--
+      批量选择操作栏：长按一条消息进入选择模式时显示（默认 gone）。
+      放在输入栏上方，提供「全选 / 复制所选 / 删除所选 / 取消」。
+      不进底部导航也不抢输入栏位置 —— 选择是临时态，用完即退。
+    -->
+    <include
+        android:id="@+id/batch_action_bar"
+        layout="@layout/fragment_batch_action"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/input_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#232323"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <EditText
+            android:id="@+id/msg_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/input_bg"
+            android:hint="@string/msg_hint"
+            android:inputType="textMultiLine|textCapSentences"
+            android:maxLines="5"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:textColor="#E8E8E8"
+            android:textColorHint="#777777"
+            android:textSize="15sp" />
+
+        <!--
+          ⚠ 输入栏按钮数量必须克制。
+
+          此前这里有 6 个 44dp 按钮（附件/快捷指令/图片/语音/发送）+ 间距，
+          固定占用约 302dp。在 360dp 宽的常见手机上，输入框只剩约 58dp
+          —— 连 3 个汉字都打不下，而打字正是最核心的操作。
+
+          现只留 3 个最常用的（发送、语音、更多），其余收进「更多」菜单：
+          · 语音：手机上「说」比「打」快得多，值得常驻
+          · 发送：核心动作
+          · 更多：低频操作（图片/文件/快捷指令/斜杠命令）的入口
+          输入框因此拿到约 190dp —— 能正常打一句话。
+
+          新增按钮前请先回答：它比打字更常用吗？不是就放进「更多」。
+        -->
+
+        <!--
+          语音输入：调系统语音识别填进输入框。
+          手机打字描述一段需求很慢，说话快得多。走系统能力，零依赖。
+        -->
+        <ImageButton
+            android:id="@+id/btn_voice"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="4dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/voice_input"
+            android:src="@android:drawable/ic_btn_speak_now" />
+
+        <!-- 更多：溢出菜单入口（图片 / 文件 / 快捷指令 / 斜杠命令） -->
+        <ImageButton
+            android:id="@+id/btn_more"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="4dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/more_actions"
+            android:src="@android:drawable/ic_menu_add" />
+
+        <ImageButton
+            android:id="@+id/btn_send"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="4dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/send"
+            android:src="@android:drawable/ic_menu_send" />
+
+        <ImageButton
+            android:id="@+id/btn_stop"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/interrupt"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:visibility="gone" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,6 +1,6 @@
 # 多会话支持 — 设计方案
 
-> 状态：**方案 A 步骤 1-4 已实现**（2026-10-02）。剩余步骤 5-6 未做。
+> 状态：**方案 A 全部 6 步已实现**（1-5 于 2026-10-02，6 于 2026-10-07）。
 >
 > | 步骤 | 内容 | 状态 |
 > |---|---|---|
@@ -9,10 +9,10 @@
 > | 3 | 客户端 `SessionScanner` | ✅ 已实现（协议级已验证，未真机）|
 > | 4 | 客户端会话列表 + 切换 | ✅ 已实现（未真机运行）|
 > | 5 | 会话标签 | ✅ 已实现（`DOGE_SESSION_LABEL` + cwd 回落）|
-> | 6 | 多连接下的通知归属 | ❌ 未做 |
+> | 6 | 多连接下的通知归属 | ✅ 已实现（`notifyAssistant(text, label)` + 连接后补取标签）|
 >
 > **限制仍在**：每个会话必须是一个独立的 CLI 进程（各自一个端口）。
-> 「一个 CLI 进程内切换多个对话」属于方案 B，未实施。
+> 「一个 CLI 进程内切换多个对话」属于方案 B，经评估**不建议实施**。
 
 ## 现状：为什么现在做不到多会话
 
@@ -140,7 +140,7 @@ slash 命令等多处依赖）。没有充分的测试覆盖前不建议动。
 | 3 | 客户端 `SessionScanner`：并发探测端口段 | ✅ 5680-5690，单端口 300ms 超时 |
 | 4 | 客户端会话列表 + 切换 | ✅ 用 AlertDialog 而非独立 Activity |
 | 5 | 会话标签（`DOGE_SESSION_LABEL` / cwd 推断） | ✅ 随步骤 2 一并实现 |
-| 6 | 多连接下的通知归属 | ❌ 未做 —— 当前通知不带会话标签，多会话时会混淆 |
+| 6 | 多连接下的通知归属 | ✅ `notifyAssistant(text, label)` 标题为「doge-code · 标签」；连接成功后由 `MainActivity.refreshSessionLabel()` 从 `/mobile/session-info` 补取 |
 
 ## 实际用法（已可用）
 
@@ -170,19 +170,47 @@ REM 手机：连接设置 → 扫描会话 → 点选要连的那个
   （其回调已切主线程，多实例并发安全）。
 - `MessageStore` 已按单文件持久化，多会话时改为按 `sessionId` 分文件即可。
 
+## 服务端能力清单（客户端接线对照）
+
+排查「服务端支持但客户端没用」的缺口时用这张表：
+
+| 服务端能力 | 位置 | 客户端状态 |
+|---|---|---|
+| `GET /mobile/session-info` | `mobileBridge.ts` | ✅ `SessionScanner.scan` + `refreshSessionLabel` |
+| `GET /mobile/status` | `mobileBridge.ts` | ❌ 未使用（`BridgeClient` 已从 `client_connected` 拿到等价信息）|
+| `GET /` 内嵌对话页 | `mobileBridge.ts` | 浏览器方案用，原生客户端不使用 |
+| `POST /mobile/command` | `mobileBridge.ts` | ❌ 未使用（`defaultMobileHandlers` 只剩 `getStatus`/`getHistory`）|
+| `WS /mobile/ws` control:sendMessage | `forwardToBridge` | ✅ `BridgeClient.sendMessage` |
+| `WS /mobile/ws` control:interrupt | `forwardToBridge` | ✅ `BridgeClient.sendInterrupt` |
+| `close(4001)` 认证失败 | `mobileBridge.ts` | ✅ `Event.AuthFailed` + 自动展开设置面板 |
+| `close(4002)` 会话数上限 | `mobileBridge.ts` | ✅ 已区分（`BridgeClient.classifyClose` + `Event.SessionLimitReached`，退避 30s，UI 提示「设备数已满」）|
+| `client_connected.interactive` | `mobileBridge.ts` | ✅ 非交互模式提示 |
+| `client_disconnected` 广播 | `mobileBridge.ts` | ⚪ 仅用于诊断，客户端无需处理 |
+
+`close(4002)`（同一 CLI 上连第 6 台设备）**已修复**（2026-10-09）：客户端
+`BridgeClient.classifyClose` 把关闭码分类为 `AUTH_FAILED`/`SESSION_LIMIT`/`NORMAL`
+三种策略；4002 派发 `Event.SessionLimitReached`，状态栏显示「设备数已满」并附说明，
+重连退避起点抬到 30 秒（不再快速闪）。与 4001 的区别：4002 是**可恢复**的
+（关掉旧设备即可连上），故不停止重连。见 `BridgeClientCloseTest`（含变异验证）。
+
 ## 开放问题
 
 1. **会话标签从哪来** — ✅ 已决策：`DOGE_SESSION_LABEL` 优先，回落 cwd 目录名。
    同一目录开多个窗口时无法区分，需用户显式设标签。
-2. **通知归属** — ❌ 未解决。当前通知标题固定为「doge-code」，多会话时
-   用户无法从通知判断是哪个会话的回复。修复思路：连接时记下当前会话标签，
-   `Notifications.notifyAssistant()` 增加 label 参数，标题改为「doge-code · <标签>」。
+2. **通知归属** — ✅ 已解决（2026-10-07）：`notifyAssistant(text, label)` 标题
+   变为「doge-code · <标签>」。冷启动自动重连路径此前拿不到标签（只有从会话
+   列表点选时才有），现由 `MainActivity.refreshSessionLabel()` 在连接成功后
+   从 `/mobile/session-info` 补取。
+   注意标签只在**连接成功后**才可能为空 —— 首次连接期间收到的回复，其通知
+   标题仍退化为「doge-code」。
 3. **端口扫描范围** — ✅ 已决策：`5680..5690`（11 个），单端口超时 300ms，
    10 线程并发（`SessionScanner.scan`）。
 4. **切换时的历史** — ✅ 已解决：`MessageStore` 按 `history-<host>_<port>.json`
    分文件，切换会话时重新加载；临时文件名也跟随目标文件，避免并发写踩踏。
-5. **通知归属** — ✅ 已解决：`notifyAssistant(text, label)` 标题变为
-   「doge-code · <标签>」。
+   同一会话内的并发写由 `MessageStore` 内部的单线程 writer 排除（2026-10-07）。
+5. **历史保留上限** — ✅ 500 条，超出丢最旧（`MessageStore.trimToLimit`，
+   配 5 条边界单测）。曾用 `subList(0, MAX)` 的写法会把**最新**的丢掉，
+   表现为「历史停在很久以前」且无报错。
 
 ## 验证记录（2026-10-02）
 
@@ -211,3 +239,21 @@ CLAUDE_CODE_MOBILE_PORT=5685 DOGE_SESSION_LABEL=写文档   doge.exe
 
 **仍未验证**：Android 客户端真机运行（无设备连接）。Kotlin 侧逻辑与
 上述协议一致，但未经真机执行。
+
+## 客户端侧补充验证（2026-10-07）
+
+APK 可构建（`assembleDebug` 通过），109 条 JVM 单测全绿（8 个纯逻辑模块）。
+其中与多会话直接相关的：
+
+| 模块 | 用例数 | 覆盖点 |
+|---|---|---|
+| `SessionScannerTest` | 23 | `parseSessionInfo` 判定「什么算会话」+ `labelFrom` 补取标签 |
+| `MessageStoreKeyTest` | 7 | 会话 key 生成（含 IPv6、路径穿越字符）|
+| `MessageStoreTrimTest` | 5 | 历史保留上限边界（恰好 500 / 501 / 5000）|
+| `TurnStateTest` | 16 | 回合判据 + 自身回声去重（含 QUEUED 不该去重的反例）|
+
+每个新判据都做了**变异测试**：故意取反条件后对应用例失败，确认测试真的在
+约束行为，而不是复刻生产逻辑恒真通过。
+
+**仍未验证**：真机运行（无设备）。扫描/切换/通知在真机上的表现（尤其
+多实例并发、休眠后重连、通知标签是否及时更新）需实机确认。
