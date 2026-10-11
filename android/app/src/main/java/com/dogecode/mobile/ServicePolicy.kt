@@ -35,7 +35,7 @@ object ServicePolicy {
      * @param inTurn  是否处于回合中（startTurn 与 endTurn 之间）
      */
     fun shouldRun(mode: AppMode, inTurn: Boolean): Boolean =
-        mode == AppMode.LOCAL && inTurn
+        mode.isCloudAgent && inTurn
 
     /**
      * 通知文案：回合中显示「正在处理」，让用户知道为什么通知常驻。
@@ -43,8 +43,8 @@ object ServicePolicy {
      *  通知栏再放一个「停止」徒增复杂度，且误触代价高——中断不可撤销。）
      */
     fun notifyText(inTurn: Boolean): String =
-        if (inTurn) "正在本地处理任务…（可切后台，处理完成后通知你）"
-        else "本地模式就绪"
+        if (inTurn) "正在云端处理任务…（可切后台，处理完成后通知你）"
+        else "云端模式就绪"
 
     /**
      * 通知渠道 id。独立于回复/权限渠道：保活通知是**常驻**的，

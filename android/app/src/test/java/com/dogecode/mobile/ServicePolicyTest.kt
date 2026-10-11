@@ -1,6 +1,5 @@
 package com.dogecode.mobile
 
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -9,33 +8,44 @@ import org.junit.Test
  * 前台服务启停判据测试。
  *
  * 变异验证（2026-10-10，已执行）：
- * - 把 shouldRun 的 `mode == AppMode.LOCAL` 改成恒 true →
- *   「远端模式不启动」两条失败
+ * - 把 shouldRun 的 `mode.isCloudAgent` 改成恒 true →
+ *   「局域网/隧道模式不启动」两条失败
  * - 把 `inTurn` 分支去掉（恒 true）→ 「回合结束停止」两条失败
  */
 class ServicePolicyTest {
 
-    // ── shouldRun：四种组合穷举 ──
+    // ── shouldRun：六种组合穷举（3 模式 × 2 回合态）──
 
     @Test
-    fun `本地模式回合中应运行`() {
-        assertTrue(ServicePolicy.shouldRun(AppMode.LOCAL, inTurn = true))
+    fun `云端模式回合中应运行`() {
+        assertTrue(ServicePolicy.shouldRun(AppMode.CLOUD, inTurn = true))
     }
 
     @Test
-    fun `本地模式回合结束应停止`() {
-        assertFalse(ServicePolicy.shouldRun(AppMode.LOCAL, inTurn = false))
+    fun `云端模式回合结束应停止`() {
+        assertFalse(ServicePolicy.shouldRun(AppMode.CLOUD, inTurn = false))
     }
 
     @Test
-    fun `远端模式回合中不启动`() {
+    fun `局域网模式回合中不启动`() {
         // 推理在电脑上跑，手机进程被杀不影响任务
-        assertFalse(ServicePolicy.shouldRun(AppMode.REMOTE, inTurn = true))
+        assertFalse(ServicePolicy.shouldRun(AppMode.LAN, inTurn = true))
     }
 
     @Test
-    fun `远端模式回合结束不启动`() {
-        assertFalse(ServicePolicy.shouldRun(AppMode.REMOTE, inTurn = false))
+    fun `局域网模式回合结束不启动`() {
+        assertFalse(ServicePolicy.shouldRun(AppMode.LAN, inTurn = false))
+    }
+
+    @Test
+    fun `隧道模式回合中不启动`() {
+        // 隧道本质也是连电脑 CLI，推理在电脑上，同局域网
+        assertFalse(ServicePolicy.shouldRun(AppMode.TUNNEL, inTurn = true))
+    }
+
+    @Test
+    fun `隧道模式回合结束不启动`() {
+        assertFalse(ServicePolicy.shouldRun(AppMode.TUNNEL, inTurn = false))
     }
 
     // ── 通知文案 ──

@@ -27,7 +27,7 @@ import androidx.fragment.app.Fragment
  * · 渲染模式选项（点选即切换，切换后重建界面可见性）
  * · 渲染本地配置：Provider 预设、地址、key、模型、工作区
  * · 保存前校验（缺 key / 地址非法时明确提示，而非静默失败）
- * · 按模式切换两个区块的可见性（远端看「连接」，本地看「本地配置」）
+ * · 按模式切换两个区块的可见性（局域网/隧道看「连接」，云端看「本地配置」）
  */
 class LocalConfigPanel(
     private val fragment: Fragment,
@@ -44,6 +44,10 @@ class LocalConfigPanel(
     private var modeItems: LinearLayout? = null
     private var localSection: View? = null
     private var connectionSection: View? = null
+    private var urlInput: EditText? = null
+    private var scanPortLabel: TextView? = null
+    private var scanPortInput: EditText? = null
+    private var scanPortDesc: TextView? = null
     private var localStatus: TextView? = null
     private var localHint: TextView? = null
     private var providerItems: LinearLayout? = null
@@ -59,10 +63,6 @@ class LocalConfigPanel(
     private var newProfileBtn: Button? = null
     private var deleteProfileBtn: Button? = null
     private var skillItems: LinearLayout? = null
-    private var offlineSwitch: Switch? = null
-    private var engineUrlInput: EditText? = null
-    private var engineModelInput: EditText? = null
-    private var fetchEngineModelsBtn: Button? = null
 
     /** 当前选中的档案 id（切换后据此读/写配置）。 */
     private var currentProfileId: String? = null
@@ -91,6 +91,10 @@ class LocalConfigPanel(
         modeItems = root.findViewById(R.id.mode_items)
         localSection = root.findViewById(R.id.local_section)
         connectionSection = root.findViewById(R.id.connection_section)
+        urlInput = root.findViewById(R.id.url_input)
+        scanPortLabel = root.findViewById(R.id.scan_port_label)
+        scanPortInput = root.findViewById(R.id.scan_port_input)
+        scanPortDesc = root.findViewById(R.id.scan_port_desc)
         localStatus = root.findViewById(R.id.local_status)
         localHint = root.findViewById(R.id.local_hint)
         providerItems = root.findViewById(R.id.provider_items)
@@ -106,10 +110,6 @@ class LocalConfigPanel(
         newProfileBtn = root.findViewById(R.id.btn_new_profile)
         deleteProfileBtn = root.findViewById(R.id.btn_delete_profile)
         skillItems = root.findViewById(R.id.skill_items)
-        offlineSwitch = root.findViewById(R.id.sw_offline_engine)
-        engineUrlInput = root.findViewById(R.id.engine_url_input)
-        engineModelInput = root.findViewById(R.id.engine_model_input)
-        fetchEngineModelsBtn = root.findViewById(R.id.btn_fetch_engine_models)
 
         buildModeChips()
         buildProviderChips()
@@ -125,25 +125,11 @@ class LocalConfigPanel(
         newProfileBtn?.setOnClickListener { newProfile() }
         deleteProfileBtn?.setOnClickListener { deleteProfile() }
 
-        // 离线推理引擎开关：切换后立即落盘（与技能开关同策略，即时生效），
-        // 但真正「换后端」要在切回会话/重建 localBackend 时才生效。
-        offlineSwitch?.setOnCheckedChangeListener { _, isOn ->
-            store.setOfflineEngineEnabled(isOn)
-            showResult(
-                fragment.getString(
-                    if (isOn) R.string.offline_engine_on_ok else R.string.offline_engine_off_ok,
-                ),
-                ok = true,
-            )
-            onModeChanged(AppMode.LOCAL) // 触发 Activity 重建 localBackend
-        }
-        fetchEngineModelsBtn?.setOnClickListener { fetchEngineModels() }
-
         refreshMode()
     }
 
     /**
-     * 选择思考强度（本地推理）：弹出与远端配置同款的 5 档（关闭/1024/4096/16384/32768）。
+     * 选择思考强度（云端推理）：弹出与局域网配置同款的 5 档（关闭/1024/4096/16384/32768）。
      *
      * 复用 [ConfigOptions.THINKING] 保证与远端选项一致。不自动保存 ——
      * 与模型选择同策略：选完只更新内存值与显示，点「保存配置」才落盘。
@@ -173,7 +159,7 @@ class LocalConfigPanel(
      *
      * ## 为什么「先取列表再点选」而不是让用户手填
      *
-     * 手填模型名是本地模式最容易卡住的一步：多数中转网关的模型名是自定义的
+     * 手填模型名是云端模式最容易卡住的一步：多数中转网关的模型名是自定义的
      *（`gpt-4o` 在某网关叫 `gpt-4o-all`），填错的报错是 404，与「地址填错」
      * 完全无法区分。填完 URL + key 让程序去问服务端要列表，用户只需点一下。
      *
@@ -306,13 +292,28 @@ class LocalConfigPanel(
         val mode = modePrefs.get()
         modeValue?.text = mode.label
         modeDesc?.text = mode.desc
-        // 按模式显示对应区块：远端看「连接」，本地看「本地配置」。
-        // 两个都显示会让用户困惑「我到底该填哪个」
-        localSection?.visibility = if (mode == AppMode.LOCAL) View.VISIBLE else View.GONE
-        connectionSection?.visibility = if (mode == AppMode.REMOTE) View.VISIBLE else View.GONE
-        if (mode == AppMode.LOCAL) {
+        // 按模式显示对应区块：云端看「本地配置」（API/模型/工作区），
+        // 局域网与隧道看「连接」（连电脑）。两个都显示会让用户困惑。
+        // 注：localSection 文案原写「本地配置」，现指云端直连的配置，
+        // 区块含义不变（填 API key/模型/工作区）。
+        localSection?.visibility = if (mode.isCloudAgent) View.VISIBLE else View.GONE
+        connectionSection?.visibility = if (mode.isCloudAgent) View.GONE else View.VISIBLE
+        // 连接区内的「局域网端口扫描」仅 LAN 需要：TUNNEL 是公网 wss 地址，
+        // 没有「同一网段扫描本机会话」的概念，留着只会误导用户去填端口段。
+        val showLanScan = mode == AppMode.LAN
+        val scanVis = if (showLanScan) View.VISIBLE else View.GONE
+        scanPortLabel?.visibility = scanVis
+        scanPortInput?.visibility = scanVis
+        scanPortDesc?.visibility = scanVis
+        // 地址框 hint 随模式切换：LAN 提示局域网/USB 地址，TUNNEL 提示公网 wss。
+        urlInput?.hint = if (mode == AppMode.TUNNEL) {
+            fragment.getString(R.string.url_hint_tunnel)
+        } else {
+            fragment.getString(R.string.url_hint)
+        }
+        if (mode.isCloudAgent) {
             refreshLocalStatus()
-            buildSkillSwitches() // 重新进入本地模式时，按最新持久化状态重建开关
+            buildSkillSwitches() // 重新进入云端模式时，按最新持久化状态重建开关
         }
         highlightModeChips(mode)
     }
@@ -414,49 +415,6 @@ class LocalConfigPanel(
         thinkingBudget = c.thinkingBudget
         refreshThinkingDisplay()
         refreshWorkspaceText()
-        // 离线引擎回显
-        offlineSwitch?.isChecked = store.offlineEngineEnabled()
-        engineUrlInput?.setText(store.engineUrl())
-        engineModelInput?.setText(store.engineModel())
-    }
-
-    /**
-     * 拉取本地推理服务端的模型列表（与远程 fetchModels 同思路，但地址为空
-     * 时引导用户先填；且不需要 apiKey，本地服务一般不鉴权）。
-     */
-    private fun fetchEngineModels() {
-        val url = engineUrlInput?.text?.toString()?.trim().orEmpty()
-        if (url.isEmpty()) {
-            showResult(fragment.getString(R.string.offline_engine_need_url), ok = false)
-            return
-        }
-        if (!beginProbe()) return
-        probeClient.runAsync(
-            onDone = { models ->
-                endProbe()
-                if (models.isEmpty()) {
-                    showResult(fragment.getString(R.string.local_models_empty), ok = false)
-                    return@runAsync
-                }
-                AlertDialog.Builder(fragment.requireContext())
-                    .setTitle(R.string.local_models_title)
-                    .setItems(models.toTypedArray()) { _, which ->
-                        val picked = models[which]
-                        engineModelInput?.setText(picked)
-                        showResult(
-                            fragment.getString(R.string.local_models_picked, picked),
-                            ok = true,
-                        )
-                    }
-                    .setNegativeButton(R.string.cancel, null)
-                    .show()
-            },
-            onError = { msg ->
-                endProbe()
-                showResult(msg, ok = false)
-            },
-            block = { HttpLocalEngine.listModels(url) },
-        )
     }
 
     /**
@@ -721,22 +679,6 @@ class LocalConfigPanel(
         val url = baseUrlInput?.text?.toString()?.trim().orEmpty()
         val key = apiKeyInput?.text?.toString()?.trim().orEmpty()
         val model = modelInput?.text?.toString()?.trim().orEmpty()
-
-        // 离线引擎配置：开启时单独保存地址与模型，不校验远程 key/url。
-        if (offlineSwitch?.isChecked == true) {
-            val engUrl = engineUrlInput?.text?.toString()?.trim().orEmpty()
-            val engModel = engineModelInput?.text?.toString()?.trim().orEmpty()
-            if (!ProviderConfig.isUrlLike(engUrl)) {
-                showResult(fragment.getString(R.string.offline_engine_need_url), ok = false)
-                return
-            }
-            store.setOfflineEngineEnabled(true)
-            store.setEngineUrl(engUrl)
-            store.setEngineModel(engModel)
-            showResult(fragment.getString(R.string.local_saved), ok = true)
-            refreshLocalStatus()
-            return
-        }
 
         if (key.isEmpty()) {
             showResult(fragment.getString(R.string.local_need_key), ok = false)

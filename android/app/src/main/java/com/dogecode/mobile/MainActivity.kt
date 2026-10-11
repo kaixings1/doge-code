@@ -157,11 +157,11 @@ class MainActivity : AppCompatActivity(),
     /**
      * 当前工作模式（启动时从 [appModePrefs] 读入）。
      *
-     * 默认 REMOTE —— 与升级前行为一致。本地后端尚未接入（见
-     * docs/DUAL-MODE-PLAN.md 的阶段 2-3），故当前无论何值都走远端路径；
-     * 提前引入该字段是为了让后续接入只改「后端选择」一处。
+     * 默认 LAN —— 与升级前行为一致（原 REMOTE = 连电脑）。云端自带
+     * 后端（[localBackend]）仅在 CLOUD 模式使用；LAN/TUNNEL 都走
+     * [remoteBackend]（连电脑 CLI），区别只在地址来源。
      */
-    private var appMode: AppMode = AppMode.REMOTE
+    private var appMode: AppMode = AppMode.LAN
 
     /** 本地模式的存储（工作区 + Provider 配置）。 */
     private lateinit var localStore: LocalPrefsStore
@@ -172,7 +172,7 @@ class MainActivity : AppCompatActivity(),
      * 与 [client]（远端）并存：两者都实现了 [AgentBackend]，
      * 但事件都汇到同一个 `onEvent` —— UI 不区分模式。
      */
-    private lateinit var localBackend: AgentBackend
+    private lateinit var localBackend: LocalAgentBackend
 
     /**
      * 当前模式对应的后端 —— 发送/中断/编辑**只走这里**。
@@ -183,7 +183,7 @@ class MainActivity : AppCompatActivity(),
      * 而这类 bug 只在特定操作路径上出现，极难发现。
      */
     private val activeBackend: AgentBackend
-        get() = if (appMode == AppMode.LOCAL) localBackend else remoteBackend
+        get() = if (appMode.isCloudAgent) localBackend else remoteBackend
 
     /**
      * 远端后端的适配器（把 [client] 包成 [AgentBackend]）。
@@ -355,7 +355,7 @@ class MainActivity : AppCompatActivity(),
         // 远端适配器：包住 client，使两种后端可互换（见 activeBackend）
         remoteBackend = RemoteAgentBackend(client)
 
-        // 读取工作模式（默认 REMOTE，与升级前行为一致）。
+        // 读取工作模式（默认 LAN，与升级前行为一致：原 REMOTE = 连电脑）。
         appMode = appModePrefs.get()
 
         // 本地模式后端：延迟创建（用户可能从不用本地模式，
@@ -407,6 +407,21 @@ class MainActivity : AppCompatActivity(),
     private var appLockOverlay: android.view.View? = null
 
     private fun setupAppLockGate() {
+        val prefOn = localPrefs.getBool(LocalPrefs.KEY_APP_LOCK)
+        // isKeyguardSecure 可能在某些设备上抛异常，按「不支持」降级，绝不卡死
+        val hasCredential = runCatching {
+            val km = getSystemService(android.content.Context.KEYGUARD_SERVICE)
+                as android.app.KeyguardManager
+            km.isKeyguardSecure
+        }.getOrDefault(false)
+
+        // 不需要锁（默认关闭 / 设备未设凭据）：完全不创建遮罩，零风险。
+        // 原实现先 addContentView 纯黑遮罩、紧接着立即 removeView —— 但 onCreate
+        // 阶段 window 尚未 attach，`removeView` 会抛异常被吞掉，遮罩**永久残留**
+        // → 整块 App 纯黑（见 2026-10-11 黑屏事故）。不创建即无此竞态。
+        if (!AppLock.shouldLock(prefOn, hasCredential)) return
+
+        // 需要锁：创建纯黑遮罩盖住内容，再弹系统解锁界面。
         val overlay = android.view.View(this).apply {
             setBackgroundColor(0xFF000000.toInt())
             isClickable = true // 拦截一切点击，防止遮罩下内容被误触
@@ -416,21 +431,10 @@ class MainActivity : AppCompatActivity(),
             android.view.ViewGroup.LayoutParams.MATCH_PARENT,
             android.view.ViewGroup.LayoutParams.MATCH_PARENT,
         )
-        window.addContentView(overlay, params)
         appLockOverlay = overlay
-
-        val prefOn = localPrefs.getBool(LocalPrefs.KEY_APP_LOCK)
-        // isKeyguardSecure 可能在某些设备上抛异常，按「不支持」降级，绝不卡死
-        val hasCredential = runCatching {
-            val km = getSystemService(android.content.Context.KEYGUARD_SERVICE)
-                as android.app.KeyguardManager
-            km.isKeyguardSecure
-        }.getOrDefault(false)
-
-        if (!AppLock.shouldLock(prefOn, hasCredential)) {
-            removeAppLockOverlay()
-            return
-        }
+        // 延迟到 window 真正 attach 后再 add：此时 removeView 也才安全
+        // （见 onAttachedToWindow 兜底）。
+        window.decorView.post { runCatching { window.addContentView(overlay, params) } }
 
         val km = getSystemService(android.content.Context.KEYGUARD_SERVICE)
             as android.app.KeyguardManager
@@ -446,12 +450,28 @@ class MainActivity : AppCompatActivity(),
         appLockLauncher.launch(intent)
     }
 
-    /** 移除应用锁遮罩（解锁成功后）。 */
+    /** 移除应用锁遮罩（解锁成功后，或兜底下）。 */
     private fun removeAppLockOverlay() {
         appLockOverlay?.let {
             runCatching { windowManager.removeView(it) }
             appLockOverlay = null
         }
+    }
+
+    /**
+     * 兜底：window attach 完成后，若因任何路径（如解锁取消/finish 前）
+     * 仍有遮罩残留，立即移除 —— 防止黑屏卡死。
+     */
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        // 仅在确实不需要锁、却因时序残留了遮罩时清理；需要锁时遮罩由
+        // 解锁回调控制，此处不动。
+        val prefOn = localPrefs.getBool(LocalPrefs.KEY_APP_LOCK)
+        val hasCredential = runCatching {
+            (getSystemService(android.content.Context.KEYGUARD_SERVICE)
+                as android.app.KeyguardManager).isKeyguardSecure
+        }.getOrDefault(false)
+        if (!AppLock.shouldLock(prefOn, hasCredential)) removeAppLockOverlay()
     }
 
     override fun onStart() {
@@ -703,7 +723,7 @@ class MainActivity : AppCompatActivity(),
         thread { store.clear() }
         // 本地模式：历史清了，累计用量一并清零（/cost 是「会话级」统计）；
         // 待办清单也清（新会话新计划）
-        if (appMode == AppMode.LOCAL) {
+        if (appMode.isCloudAgent) {
             localBackend.resetUsage()
             LocalTools.clearTodos()
         }
@@ -1015,11 +1035,10 @@ class MainActivity : AppCompatActivity(),
                 modePrefs = appModePrefs,
                 onModeChanged = { mode ->
                     appMode = mode
-                    // 切到本地模式时，顶栏不再显示「未连接」（本地无连接概念）
+                    // 切到云端模式时，顶栏不再显示「未连接」（云端无连接概念）
                     applyModeToUi()
-                    // 进入本地模式时重建 localBackend：离线引擎开关的切换也走
-                    // 这条路径，确保「启用离线引擎」后真正换用 LocalInferenceBackend。
-                    if (mode == AppMode.LOCAL) {
+                    // 进入云端模式时重建 localBackend（云端后端独立于远端）。
+                    if (mode.isCloudAgent) {
                         runCatching { localBackend.close() }
                         localBackend = buildLocalBackend()
                     }
@@ -1176,19 +1195,19 @@ class MainActivity : AppCompatActivity(),
         // **必须在早退之前调** —— 早退（key 未变）正是它的去重手段。
         refreshSessionScope()
 
-        if (appMode == AppMode.LOCAL) {
+        if (appMode.isCloudAgent) {
             val cfg = localStore.providerConfig()
             val ready = cfg.isUsable
-            // 本地模式没有「连接」概念：文案直接说明配置状态，
+            // 云端模式没有「连接」概念：文案直接说明配置状态，
             // 而不是沿用远端的「未连接，重连中…」（那会让用户以为出故障）
             val label = if (ready) {
-                "本地模式（${cfg.model.ifBlank { "默认模型" }}）"
+                "云端模式（${cfg.model.ifBlank { "默认模型" }}）"
             } else {
-                "本地模式（未配置 API，去设置里填）"
+                "云端模式（未配置 API，去设置里填）"
             }
             setStatus(ready, label)
         }
-        // 远端模式不做额外处理：连接事件（onEvent 里的 Connected/
+        // 局域网/隧道模式不做额外处理：连接事件（onEvent 里的 Connected/
         // Disconnected）本来就会调 setStatus 刷新，重复设置反而可能
         // 覆盖掉更准确的实时状态
     }
@@ -1200,7 +1219,7 @@ class MainActivity : AppCompatActivity(),
      *（同 [MessageStore.keyForLocal]）。两者前缀不同，**永不撞名**。
      */
     private fun currentScopeKey(): String =
-        if (appMode == AppMode.LOCAL) {
+        if (appMode.isCloudAgent) {
             MessageStore.keyForLocal(localStore.resolvedWorkspace().absolutePath)
         } else {
             MessageStore.keyFor(savedHost(), savedPort())
@@ -1235,8 +1254,8 @@ class MainActivity : AppCompatActivity(),
         activeScopeKey = key
 
         store.useSession(key)
-        // 本地后端持有历史缓存，换 scope 后必须重建（否则 lazy 已缓存旧历史）
-        if (appMode == AppMode.LOCAL) {
+        // 云端后端持有历史缓存，换 scope 后必须重建（否则 lazy 已缓存旧历史）
+        if (appMode.isCloudAgent) {
             runCatching { localBackend.close() }
             localBackend = buildLocalBackend()
         }
@@ -1244,36 +1263,8 @@ class MainActivity : AppCompatActivity(),
     }
 
     /** 构造本地后端（含历史持久化 + 本地偏好接线）。 */
-    private fun buildLocalBackend(): AgentBackend {
+    private fun buildLocalBackend(): LocalAgentBackend {
         val prefs = LocalPrefs(this)
-        // 离线推理开关：开启且填了本地引擎地址时，走 LocalInferenceBackend
-        //（本地 HTTP 推理服务端，真正的离线，零新依赖）。
-        // 否则走原 LocalAgentBackend（手机调远程 OpenAI 兼容 API，与升级前一致）。
-        if (localStore.offlineEngineEnabled()) {
-            val engineUrl = localStore.engineUrl()
-            if (engineUrl.isNotBlank()) {
-                return LocalInferenceBackend.fromHttp(
-                    workspace = localStore.resolvedWorkspace(),
-                    engineBaseUrl = engineUrl,
-                    modelNameProvider = { localStore.engineModel() },
-                    androidContext = this,
-                    skillStore = SkillStore(this),
-                    historyStore = object : LocalInferenceBackend.HistoryStore {
-                        override fun load(): List<ChatMsg> = store.loadLocalHistory()
-                        override fun save(messages: List<ChatMsg>) = store.saveLocalHistory(messages)
-                    },
-                    localPrefs = object : LocalInferenceBackend.LocalPrefsReader {
-                        override fun maxSteps(): Int =
-                            prefs.get(LocalPrefs.KEY_LOCAL_MAX_STEPS).toIntOrNull()
-                                ?: AgentLoop.DEFAULT_MAX_STEPS
-                        override fun temperature(): Double? {
-                            val v = prefs.get(LocalPrefs.KEY_LOCAL_TEMPERATURE)
-                            return if (v == "default") null else v.toDoubleOrNull()
-                        }
-                    },
-                ).also { it.onEvent = { ev -> onEvent(ev) } }
-            }
-        }
         return LocalAgentBackend(
             workspace = localStore.resolvedWorkspace(),
             configProvider = { localStore.providerConfig() },
@@ -1310,7 +1301,7 @@ class MainActivity : AppCompatActivity(),
         if (!::adapter.isInitialized || !::list.isInitialized) return
         thread {
             val messages: List<ChatMessage> =
-                if (appMode == AppMode.LOCAL) {
+                if (appMode.isCloudAgent) {
                     LocalHistoryCodec.toChatMessages(store.loadLocalHistory())
                 } else {
                     store.load()
@@ -2467,8 +2458,8 @@ class MainActivity : AppCompatActivity(),
         // 用 isConnected 做守卫会让本地模式下恒被拦下、提示「未连接」——
         // 而那正是用户已经正确配置的状态。
         if (!activeBackend.isReady) {
-            val hint = if (appMode == AppMode.LOCAL) {
-                "未配置 API：请在设置 → 本地模式里填写密钥与地址"
+            val hint = if (appMode.isCloudAgent) {
+                "未配置 API：请在设置 → 云端模式里填写密钥与地址"
             } else {
                 "未连接，请先在设置里连接"
             }
@@ -2951,7 +2942,7 @@ class MainActivity : AppCompatActivity(),
      */
     /** 当前模式对应的斜杠命令域。 */
     private fun currentCommandScope(): SlashCommands.Entry.Scope =
-        if (appMode == AppMode.LOCAL) {
+        if (appMode.isCloudAgent) {
             SlashCommands.Entry.Scope.LOCAL
         } else {
             SlashCommands.Entry.Scope.REMOTE
@@ -2969,7 +2960,7 @@ class MainActivity : AppCompatActivity(),
      * @return true 表示已处理（调用方应停止后续发送流程）
      */
     private fun handleLocalCommand(text: String): Boolean {
-        if (appMode != AppMode.LOCAL) return false
+        if (!appMode.isCloudAgent) return false
         val name = text.trim().removePrefix("/").substringBefore(' ').lowercase()
         val reply = when (name) {
             "workspace" -> "工作区：${localStore.resolvedWorkspace().absolutePath}"
@@ -2980,7 +2971,7 @@ class MainActivity : AppCompatActivity(),
             }
             "tools" -> "本地可用工具：\n" +
                 LocalTools.specs().joinToString("\n") { "· ${it.name} —— ${it.description}" } +
-                "\n\n注意：本地模式**不能执行命令**（Android 沙箱不提供 shell）。"
+                "\n\n注意：云端模式**不能执行命令**（Android 沙箱不提供 shell，仅经 Termux 跑受限命令）。"
             "cost" -> {
                 val u = localBackend.sessionUsage()
                 if (u.totalTokens == 0) {

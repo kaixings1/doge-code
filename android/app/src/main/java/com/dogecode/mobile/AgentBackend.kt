@@ -5,24 +5,26 @@ package com.dogecode.mobile
  *
  * ## 为什么需要这层抽象
  *
- * 客户端要支持两种工作模式：
- * · **远端**：连电脑上的 CLI 桥接（现有 [BridgeClient]）
- * · **本地**：手机自己调 Provider API 跑推理循环（新增）
+ * 客户端要支持三种工作模式：
+ * · **LAN**：连局域网/USB 上的电脑 CLI 桥接（[BridgeClient]）
+ * · **CLOUD**：手机自己调 Provider API 跑推理循环
+ * · **TUNNEL**：经公网隧道连回电脑 CLI（后端同 LAN，仅地址来源不同）
  *
+ * LAN/TUNNEL 走同一个 [RemoteAgentBackend]；CLOUD 走 [LocalAgentBackend]。
  * 两者的**传输、配置、能力边界完全不同**，但对 UI 而言，它们提供的
  * 是同一件事：把一段用户输入送出去，然后陆续收到事件。
  * 把这层接缝显式化，UI 就不必区分模式 —— 这也是能**共享全部已完成
  * 的 UI 工作**（工具气泡、回合分组、折叠、语音、搜索）的前提。
  *
- * ## 接口只放「两种模式都有」的能力
+ * ## 接口只放「两种后端都有」的能力
  *
  * 刻意**不含**远端专属的 connect / setConfig / renameSession /
- * sendPermissionResponse：本地模式没有「连接」概念（API key 配好即可用）、
- * 没有「远端配置」（配置在本地设置页）、没有「会话重命名」（没有多实例）。
+ * sendPermissionResponse：云端模式没有「连接」概念（API key 配好即可用）、
+ * 没有「远端配置」（配置在云端设置页）、没有「会话重命名」（没有多实例）。
  *
- * 若把它们塞进接口，本地实现只能写一堆空方法或抛异常 —— 那是
+ * 若把它们塞进接口，云端实现只能写一堆空方法或抛异常 —— 那是
  * 「接口比实现大」的典型症状，会让调用方误以为这些能力在所有模式下可用。
- * 远端专属能力由 UI 在 `mode == REMOTE` 分支里直接调 [BridgeClient]。
+ * 远端专属能力由 UI 在 `mode != CLOUD` 分支里直接调 [BridgeClient]。
  *
  * ## 关于事件流
  *

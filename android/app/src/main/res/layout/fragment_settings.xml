@@ -29,8 +29,8 @@
         <!--
           ═══ 0. 工作模式 ═══
 
-          放在最前：它决定**下面所有区块是否可用**（远端模式看「连接」，
-          本地模式看「本地配置」）。放在后面会让用户先看到一堆用不上的项。
+          放在最前：它决定**下面所有区块是否可用**（局域网/隧道模式看「连接」，
+          云端模式看「本地配置」）。放在后面会让用户先看到一堆用不上的项。
         -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -67,7 +67,7 @@
                 android:orientation="horizontal" />
         </LinearLayout>
 
-        <!-- ═══ 0.5 本地配置（仅本地模式显示）═══ -->
+        <!-- ═══ 0.5 本地配置（仅云端模式显示）═══ -->
         <LinearLayout
             android:id="@+id/local_section"
             android:layout_width="match_parent"
@@ -260,79 +260,6 @@
                 android:layout_marginTop="6dp"
                 android:orientation="vertical" />
 
-            <!-- 离线推理引擎（本地 HTTP 服务端，如 Termux 里的 llama.cpp / Ollama）。
-                 开启后，本地模式改用本机运行的 OpenAI 兼容推理服务，真正离线。 -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/label_offline_engine"
-                android:textColor="#CCCCCC"
-                android:textSize="13sp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="@string/offline_engine_hint"
-                android:textColor="#777777"
-                android:textSize="11sp" />
-
-            <Switch
-                android:id="@+id/sw_offline_engine"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="@string/action_offline_engine_on"
-                android:textColor="#E8E8E8"
-                android:textSize="13sp" />
-
-            <EditText
-                android:id="@+id/engine_url_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:background="#2D2D2D"
-                android:hint="@string/hint_engine_url"
-                android:inputType="textUri"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:paddingTop="9dp"
-                android:paddingBottom="9dp"
-                android:textColor="#E8E8E8"
-                android:textColorHint="#777777"
-                android:textSize="13sp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/engine_model_input"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="#2D2D2D"
-                    android:hint="@string/hint_engine_model"
-                    android:inputType="text"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:paddingTop="9dp"
-                    android:paddingBottom="9dp"
-                    android:textColor="#E8E8E8"
-                    android:textColorHint="#777777"
-                    android:textSize="13sp" />
-
-                <Button
-                    android:id="@+id/btn_fetch_engine_models"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="@string/action_fetch_models" />
-            </LinearLayout>
-
             <!-- 取模型 / 测会话：填完地址与 key 后立刻验证，不必先保存 -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -411,7 +338,7 @@
                 android:visibility="gone" />
         </LinearLayout>
 
-        <!-- ═══ 1. 连接（仅远端模式显示）═══ -->
+        <!-- ═══ 1. 连接（局域网/隧道模式显示）═══ -->
         <LinearLayout
             android:id="@+id/connection_section"
             android:layout_width="match_parent"

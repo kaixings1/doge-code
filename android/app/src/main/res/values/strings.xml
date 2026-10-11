@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">doge-code</string>
     <string name="url_hint">http://127.0.0.1:6000 (USB) 或 http://192.168.0.106:6000 (WiFi)</string>
+    <string name="url_hint_tunnel">wss://随机子域.trycloudflare.com/mobile/ws（电脑端 --tunnel 启动时获取）</string>
     <string name="secret_hint">密钥（与 CLAUDE_CODE_MOBILE_SECRET 一致，可留空）</string>
     <string name="msg_hint">输入消息…</string>
     <string name="connect">连接</string>
@@ -195,13 +196,4 @@
     <string name="skills_hint">开启/关闭某个专家技能（关闭后模型将看不到该技能）。改动即时生效，无需点「保存配置」。</string>
     <string name="skills_empty">暂无可用技能（预置与自定义均为空）。</string>
     <string name="skills_no_desc">（无描述）</string>
-    <!-- 离线推理引擎（设置页本地配置区） -->
-    <string name="label_offline_engine">离线推理引擎</string>
-    <string name="offline_engine_hint">开启后用本机运行的 OpenAI 兼容推理服务（如 Termux 里的 llama.cpp / Ollama，暴露 http://127.0.0.1:8080/v1）真正离线推理。留空则提示先填写地址。</string>
-    <string name="action_offline_engine_on">启用离线引擎（替代远程 API）</string>
-    <string name="hint_engine_url">本地引擎地址，如 http://127.0.0.1:8080/v1</string>
-    <string name="hint_engine_model">模型名（可点「获取模型」选；留空取默认）</string>
-    <string name="offline_engine_on_ok">已启用离线引擎：切换会话后将改用本地推理服务（请在「本地模式」下使用）。</string>
-    <string name="offline_engine_off_ok">已关闭离线引擎：本地模式恢复为连接远程 API。</string>
-    <string name="offline_engine_need_url">请先填写本地引擎地址（如 http://127.0.0.1:8080/v1）。</string>
 </resources>

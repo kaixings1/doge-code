@@ -54,7 +54,7 @@ class LocalAgentService : Service() {
         )
         return NotificationCompat.Builder(this, ServicePolicy.CHANNEL_ID)
             .setSmallIcon(android.R.drawable.stat_notify_chat)
-            .setContentTitle("doge-code 本地模式")
+            .setContentTitle("doge-code 云端模式")
             .setContentText(text)
             .setOngoing(true)
             .setContentIntent(pi)
@@ -74,7 +74,7 @@ class LocalAgentService : Service() {
                 ServicePolicy.CHANNEL_ID,
                 "本地任务保活",
                 NotificationManager.IMPORTANCE_MIN,   // 最低级别：不弹横幅不响铃，只占一栏
-            ).apply { description = "本地模式处理任务期间的常驻通知（防止任务被系统中断）" }
+            ).apply { description = "云端模式处理任务期间的常驻通知（防止任务被系统中断）" }
             mgr.createNotificationChannel(ch)
         }
 

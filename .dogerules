@@ -3,6 +3,32 @@
 - 提交前必须运行测试
 - 每次修改代码后必须验证：① 相关测试全部通过 ② 使用说明已更新 ③ 功能实际可运行不卡死
 
+# Android 端调试与构建纪律（血的教训：黑屏排查耗时 1 小时）
+## adb 路径（本机固定，别再每次现找）
+- `C:\Users\Administrator\Android\platform-tools\adb.exe`
+- 设备序列示例：`8defe612`（小米，MIUI）。USB 调试易松动断连，排查前先 `adb devices` 确认 `device`
+
+## 黑屏/无响应的实证排查流程（不靠猜）
+1. `adb logcat -c` 清缓冲 → `adb shell am start -n com.dogecode.mobile/.MainActivity` 启动 → 等 5s → `adb logcat -d > log.txt`
+2. 在 log.txt 里 `Grep "com.dogecode.mobile|AndroidRuntime|FATAL EXCEPTION"`：
+   - **有 AndroidRuntime 堆栈** → 真崩溃，按堆栈修（Kotlin NPE 常见在 Fragment findViewById 返回 null 后 `.xxx`）
+   - **无 dogecode 自身日志、进程很快死** → Application/初始化期崩，看 am_create_activity / app died
+   - **进程活着、Activity VISIBLE、ViewRootImpl performTraversals 在跑、无崩溃** → 内容被全屏 View 盖住或内容区 0 尺寸
+3. 小米特有的 `E dogecode.mobile: FrameInsert open fail: No such file or directory` **不是 App 崩溃**，
+   是 MIUI 截图/录屏子系统打的无害日志（tag 是所有 app 共用的 `dogecode.mobile`），忽略。
+4. 区分黑屏形态：纯黑无任何 UI（顶栏/底栏都没有）= 全屏遮罩盖住（如 AppLock 的 addContentView 黑布）；
+   顶栏底栏在、中间黑 = Fragment 内容区没渲染（commitNow/commit 时序、布局高度）。
+5. `adb exec-out screencap -p > screen.png` 截图确认形态（App 须在前台，否则 35 字节空文件）。
+6. 查偏好：`adb shell run-as com.dogecode.mobile cat shared_prefs/doge_mobile.xml`
+   （应用锁键名无显式默认时为关；autoconnect 默认 true）
+
+## 编译纪律（最高优先）
+- **Android 改动必须在本机 gradle 编译通过（`gradlew assembleDebug` / `testDebugUnitTest`）才能装包验证**。
+  本仓库环境一度无 JDK/Android SDK，导致未编译代码被误装 → 黑屏。任何 App 改动后，
+  要么确认已 build，要么明确告知用户"未编译、暂不可装"。
+- 改 Kotlin 后若无法编译，先 `git stash` 隔离未提交改动定位，不要带未验证改动打 APK。
+- 工作区存在并发会话的未提交改动时，装包前必须 `git status` 确认打的是哪份代码。
+
 # YAGNI 阶梯决策规则（吸收自 ponytail）
 在写任何代码之前，停在第一个能成立的阶梯：
 1. 这根本不需要构建吗？(YAGNI)
