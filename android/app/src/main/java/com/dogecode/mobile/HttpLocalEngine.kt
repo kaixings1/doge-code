@@ -164,8 +164,12 @@ class HttpLocalEngine(
         /**
          * 解析 `/models` 响应体为模型 id 列表（与 [ProviderClient.parseModels] 同逻辑，
          * 但本类不依赖 ProviderClient 实例，故内联一份纯解析）。
+         *
+         * `internal` 而非 private：单测直接断言解析规则（网关响应格式极不统一，
+         * 这是接入本地服务端最易出错的一环）。此前测试误引用
+         * `ProviderClient.parseModels` —— 那是**实例方法**，静态调用编译不过。
          */
-        private fun parseModels(body: String): List<String> {
+        internal fun parseModels(body: String): List<String> {
             val o = runCatching { org.json.JSONObject(body) }.getOrNull() ?: return emptyList()
             val arr = o.optJSONArray("data") ?: o.optJSONArray("models") ?: return emptyList()
             val out = LinkedHashSet<String>()

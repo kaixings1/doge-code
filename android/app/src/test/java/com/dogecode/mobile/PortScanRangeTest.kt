@@ -19,17 +19,18 @@ import org.junit.Test
 class PortScanRangeTest {
 
     @Test
-    fun `默认范围覆盖服务端顺延的 10 个端口`() {
-        // 与服务端 PORT_SCAN_LIMIT(10) 成对：起始端口被占时会用到
-        // start..start+9，客户端必须能扫到这一整段。
+    fun `默认范围覆盖多实例顺延的 21 个端口`() {
+        // 服务端起始端口被占时会顺延；用户可能同时开多个 CLI 实例，
+        // 默认段 6000-6020 共 21 个端口覆盖这一场景。
+        // （旧断言写「10 个 / +9」—— 段宽后来扩到 21，测试没跟上。）
         // 用常量而非字面量：默认起点会随服务端默认值调整（曾由 5680 改为 6000）。
         val (s, e) = PortScanRange.normalize(
             PortScanRange.DEFAULT_START,
             PortScanRange.DEFAULT_END,
         )
         assertEquals(PortScanRange.DEFAULT_START, s)
-        assertEquals(PortScanRange.DEFAULT_START + 9, e)
-        assertEquals(10, PortScanRange.countOf(s, e))
+        assertEquals(PortScanRange.DEFAULT_START + 20, e)
+        assertEquals(21, PortScanRange.countOf(s, e))
     }
 
     @Test
@@ -41,8 +42,9 @@ class PortScanRangeTest {
     }
 
     @Test
-    fun `默认结束端口等于起始加 9`() {
-        assertEquals(PortScanRange.DEFAULT_START + 9, PortScanRange.DEFAULT_END)
+    fun `默认结束端口等于起始加 20`() {
+        // 段宽 21（起止都含），与上方「覆盖 21 个端口」一致
+        assertEquals(PortScanRange.DEFAULT_START + 20, PortScanRange.DEFAULT_END)
     }
 
     @Test

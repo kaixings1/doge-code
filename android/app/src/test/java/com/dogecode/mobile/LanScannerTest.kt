@@ -122,15 +122,18 @@ class LanScannerTest {
     }
 
     @Test
-    fun `常用网段候选含两段整段`() {
+    fun `常用网段候选含各段整段`() {
         val c = SubnetCandidates.commonSubnetCandidates()
-        // 每段 /24 有 254 个可用主机，两段共 508（无重叠）
-        assertEquals(508, c.size)
-        // 两段的关键位置都在
-        assertTrue("192.168.1.1 应在", "192.168.1.1" in c)
-        assertTrue("192.168.1.228 应在", "192.168.1.228" in c)
-        assertTrue("192.168.110.1 应在", "192.168.110.1" in c)
-        assertTrue("192.168.110.228 应在", "192.168.110.228" in c)
+        // 按常量计算期望值，不硬编码 —— 预设网段数量会随需求变化
+        //（曾 2 段 → 3 段，硬编码 508 的断言随即失败，是脆弱的写法）。
+        // 每段 /24 有 254 个可用主机，各段无重叠故总数 = 段数 × 254。
+        val segments = SubnetCandidates.COMMON_SUBNET_PREFIXES.size
+        assertEquals(segments * 254, c.size)
+        // 各段的关键位置都在（首尾各抽查一个）
+        SubnetCandidates.COMMON_SUBNET_PREFIXES.forEach { prefix ->
+            assertTrue("$prefix.1 应在", "$prefix.1" in c)
+            assertTrue("$prefix.228 应在", "$prefix.228" in c)
+        }
         // 无重复（merge 去重）
         assertEquals("不应有重复项", c.size, c.toSet().size)
     }
@@ -140,8 +143,9 @@ class LanScannerTest {
         // 模拟本机在 192.168.1.x：本身网段与预设 192.168.1 重叠
         val own = SubnetCandidates.forHost("192.168.1.106", 24)
         val merged = SubnetCandidates.merge(own, SubnetCandidates.commonSubnetCandidates())
-        // 去重后：192.168.1 整段（254）+ 192.168.110 整段（254）= 508
-        assertEquals(508, merged.size)
+        // 去重后：本机段（192.168.1，与预设重叠不算两份）+ 其余预设段
+        // 总数 = 预设段数 × 254（不硬编码，随常量变化）
+        assertEquals(SubnetCandidates.COMMON_SUBNET_PREFIXES.size * 254, merged.size)
         assertEquals("本机网段应排最前", "192.168.1.1", merged.first())
         assertEquals("不应有重复", merged.size, merged.toSet().size)
     }

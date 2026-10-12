@@ -38,9 +38,11 @@ class LocalInferenceEngineTest {
     val f = LocalInferenceAlgorithms.ThinkingTagFilter()
     val out = StringBuilder()
     // 标签被切成多片：<thi / nk>内容< / thin / k>
+    // 注意：`</thin` 与 `k>` 之间不能有空格 —— 标签是 `</think>`
+    //（原测试误写成 `< / thin`，`<` 后多了空格，标签永不闭合 → 内容泄漏）
     out.append(f.feed("先<thi"))
     out.append(f.feed("nk>思考中"))
-    out.append(f.feed("内容< / thin"))
+    out.append(f.feed("内容</thin"))
     out.append(f.feed("k>答案"))
     out.append(f.flush())
     assertEquals("先答案", out.toString())
@@ -100,9 +102,10 @@ class LocalInferenceEngineTest {
   @Test
   fun `HttpLocalEngine 归一化裸地址补 v1`() {
     // 用反射取私有方法不可取，改为验证 listModels 解析路径对归一化 URL 的依赖：
-    // 这里直接验证 ProviderClient.parseModels 对本地服务端 /models 响应体的解析。
+    // 这里直接验证 HttpLocalEngine.parseModels 对本地服务端 /models 响应体的解析。
+    // （原先误引用 ProviderClient.parseModels —— 那是实例方法，静态调用编译不过）
     val body = """{"data":[{"id":"llama3.2:1b"},{"id":"qwen2.5:0.5b"}],"object":"list"}"""
-    val models = ProviderClient.parseModels(body)
+    val models = HttpLocalEngine.parseModels(body)
     assertEquals(listOf("llama3.2:1b", "qwen2.5:0.5b"), models)
   }
 
@@ -112,12 +115,12 @@ class LocalInferenceEngineTest {
     // 传入 "http://127.0.0.1:8080" 应被内部补成 ".../v1/models"。
     // 无本地服务时仅验证解析层；真实连通性由端到端验证。
     // 退化路径：坏 JSON 返回空列表而非抛。
-    assertEquals(emptyList<String>(), ProviderClient.parseModels("not-json"))
+    assertEquals(emptyList<String>(), HttpLocalEngine.parseModels("not-json"))
   }
 
   @Test
   fun `HttpLocalEngine 兼容数组型 models 响应`() {
     val body = """{"models":["gemma2:2b","phi3:mini"]}"""
-    assertEquals(listOf("gemma2:2b", "phi3:mini"), ProviderClient.parseModels(body))
+    assertEquals(listOf("gemma2:2b", "phi3:mini"), HttpLocalEngine.parseModels(body))
   }
 }

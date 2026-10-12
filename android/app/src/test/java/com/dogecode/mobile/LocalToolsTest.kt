@@ -586,11 +586,20 @@ class LocalToolsTest {
             "find . -name '*.kt'",
             "git status",
             "git diff HEAD",
-            "python3 -c 'print(1)'",
-            "node -e 'console.log(2)'",
         )
         ok.forEach { cmd ->
             assertNull("白名单命令应通过：$cmd", LocalTools.commandSafetyError(cmd))
+        }
+    }
+
+    @Test
+    fun `内联代码执行被拒（-c 与 -e 带括号，属有意的安全策略）`() {
+        // 原「白名单」列表里含 `python3 -c 'print(1)'` / `node -e 'console.log(2)'`，
+        // 但两者都带 `(`，被 SHELL_METACHARS 拦截 —— 这是**有意的安全设计**
+        //（`-c`/`-e` 可执行任意代码，等于绕过白名单，绝不能放行）。
+        // 故把它们从「应通过」列表移除，并在此显式锁定「必须被拒」。
+        listOf("python3 -c 'print(1)'", "node -e 'console.log(2)'").forEach { cmd ->
+            assertNotNull("内联代码执行必须被拒：$cmd", LocalTools.commandSafetyError(cmd))
         }
     }
 
@@ -634,8 +643,17 @@ class LocalToolsTest {
         val workdir = File("/workspace")
         val result = File(workdir, ".termux_run_result.tmp")
         val cmd = LocalTools.buildTermuxCommand("ls -la", workdir, result)
-        assertTrue("应包含 cd 到工作区", cmd.startsWith("cd '/workspace'"))
+        // 用 absolutePath 断言而非硬编码 "/workspace"：Windows 上
+        // File("/workspace").absolutePath 会带盘符/反斜杠（如 D:\workspace），
+        // 直接 startsWith("cd '/workspace'") 必失败 —— 那是平台相关的脆弱断言。
+        assertTrue(
+            "应包含 cd 到工作区",
+            cmd.startsWith("cd '${workdir.absolutePath}'"),
+        )
         assertTrue("应包含原命令", cmd.contains("ls -la"))
-        assertTrue("应重定向到结果文件", cmd.endsWith("> '/workspace/.termux_run_result.tmp' 2>&1"))
+        assertTrue(
+            "应重定向到结果文件",
+            cmd.endsWith("> '${result.absolutePath}' 2>&1"),
+        )
     }
 }

@@ -23,9 +23,10 @@ class SkillLoopTest {
         ChatResult(
           text = "",
           toolCalls = listOf(ToolCall(id = "c1", name = skillName, arguments = """{"args":"看启动崩溃"}""")),
+          finishReason = "tool_calls",
         )
       } else {
-        ChatResult(text = "已按技能指引完成", toolCalls = emptyList())
+        ChatResult(text = "已按技能指引完成", toolCalls = emptyList(), finishReason = "stop")
       }
     }
   }
@@ -42,8 +43,9 @@ class SkillLoopTest {
         ToolSpec("use_skill_dbg", "调试技能", org.json.JSONObject()),
       ),
       skillBridge = bridge,
-      maxSteps = 5,
     )
+    // maxSteps 是构造后可改的属性（不是构造参数）
+    loop.maxSteps = 5
     val result = loop.run(history = emptyList(), userInput = "帮我调试")
     assertTrue(result.isDone)
     assertTrue(result.text.contains("已按技能指引完成"))
@@ -58,8 +60,8 @@ class SkillLoopTest {
       extraSpecs = emptyList(),
       skillBridge = { _, _ -> null },
       toolFn = { name, _ -> LocalTools.ToolResult.of(name, "FILE_TOOL_RAN") },
-      maxSteps = 5,
     )
+    loop.maxSteps = 5
     // read_file 不在 LocalTools.specs() 的假实现里会走 ToolResult，但 toolFn 被我们
     // 覆盖，验证「普通工具名不会误判为技能」：skillBridge 永远返回 null 即可
     val result = loop.run(history = emptyList(), userInput = "读文件")

@@ -94,7 +94,11 @@ object LocalInferenceAlgorithms {
    */
   fun stripThinkingTags(raw: String): String {
     // 匹配完整的 <think> ... </think>（可能跨多行），整体删除。
-    return raw.replace(Regex("(?s)<think>(.*?)</think>"), "")
+    //
+    // IGNORE_CASE：不同模型的标签大小写不一致（`<think>` / `<THINK>` /
+    // `<Think>` 都见过）。此前只匹配小写，大写标签会被**原样留在正文里**
+    // —— 用户看到 `A<THINK>…</THINK>B` 这种脏输出（单测暴露）。
+    return raw.replace(Regex("(?si)<think>(.*?)</think>"), "")
   }
 
   /**
@@ -139,8 +143,12 @@ object LocalInferenceAlgorithms {
           if (start < 0) {
             // 没有起点：只保留「可能成为标签前缀」的尾巴，其余全吐出
             val safe = keepPossibleTagPrefix(buf)
-            out.append(buf.substring(0, buf.length - safe.length))
-            buf.setLength(safe.length)
+            val safeLen = safe.length
+            out.append(buf.substring(0, buf.length - safeLen))
+            // 必须删除**前缀**、保留尾部 —— `setLength(safeLen)` 是保留前 N 个，
+            // 会把「先」留着而把尾巴的 `i` 切掉，下一轮拼出 `<thnk>`（缺 i），
+            // 标签永不闭合、思考内容泄漏（单测暴露的真 bug）。
+            buf.delete(0, buf.length - safeLen)
             break
           } else {
             // 吐出 <think> 之前的所有可见文本
@@ -152,8 +160,17 @@ object LocalInferenceAlgorithms {
           // 在思考区之内：找 </think> 终点
           val end = buf.indexOf("</think>", 0, ignoreCase = true)
           if (end < 0) {
-            // 还没看到结束标签：整段都是思考内容，全吞
-            buf.setLength(0)
+            // 还没看到完整结束标签：整段都是思考内容（全丢），
+            // 但**必须保留尾巴**，因为 `</think>` 可能被切在 chunk 边界
+            //（如本 chunk 结尾是 `</thin`，下一 chunk 是 `k>答案`）。
+            // 原实现 `buf.setLength(0)` 把 `</thin` 也清掉了 → 标签永不闭合、
+            // 后续所有可见文本被永久吞进"思考块"（单测暴露的静默丢内容 bug）。
+            val keepLen = keepPossibleTagPrefix(buf).length
+            if (keepLen > 0) {
+              buf.delete(0, buf.length - keepLen)
+            } else {
+              buf.setLength(0)
+            }
             break
           } else {
             buf.delete(0, end + "</think>".length)
@@ -177,8 +194,14 @@ object LocalInferenceAlgorithms {
         inThink = false
         "" // 未闭合的思考块：丢弃
       } else {
-        // 可能是未闭合标签的前缀残片，仍丢弃以防泄漏标签
-        keepPossibleTagPrefix(StringBuilder(leftover)).takeIf { it.isEmpty() } ?: leftover
+        // 若残留整体像某个标签的前缀（如 `<thi`，模型没吐完），丢弃以防泄漏；
+        // 否则原样吐出（是真正的可见文本）。
+        //
+        // 原写法 `keepPossibleTagPrefix(...).takeIf { it.isEmpty() } ?: leftover`
+        // 有 bug：keepPossibleTagPrefix 返回 "" 时，`"".takeIf { isEmpty }` 得到
+        // **空串**（非 null），`?: leftover` 不触发 → 返回空串，把真正的可见
+        // 文本（如「答案」）全丢了。改为按「整体是否为标签前缀」判断。
+        if (isPrefixOfAnyTag(leftover)) "" else leftover
       }
     }
 

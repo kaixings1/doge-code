@@ -79,7 +79,7 @@ class ProviderProfilesTest {
     }
 
     @Test
-    fun `可空字段（temperature/maxTokens）正确序列化与还原`() {
+    fun `可空字段（temperature 与 maxTokens）正确序列化与还原`() {
         val c = cfg().copy(temperature = 0.7, maxTokens = 4096)
         val list = listOf(ProviderProfile("p", "带约束", c))
         val parsed = ProviderProfiles.parse(ProviderProfiles.serialize(list)).first()
@@ -128,11 +128,16 @@ class ProviderProfilesTest {
 
     @Test
     fun `add 超上限丢最旧`() {
+        // 造满 MAX 项（p1..p8），再加一项 → 新项置顶，最长者（p8）被挤出。
+        // 注意：保留的是前 MAX 项 [new, p1..p7]，故 last 是 p7。
+        // （原断言写的 p1 是错的 —— 那是最旧保留项的头，不是尾。）
         val full = (1..ProviderProfiles.MAX).map { ProviderProfile("p$it", "P$it", cfg()) }
         val r = ProviderProfiles.add(full, ProviderProfile("new", "New", cfg()))
         assertEquals(ProviderProfiles.MAX, r.size)
         assertEquals("new", r.first().id)
-        assertEquals("p1", r.last().id)
+        assertEquals("p7", r.last().id)
+        // 被挤掉的是最旧的 p8
+        assertFalse("最旧的 p8 应被丢弃", r.any { it.id == "p8" })
     }
 
     @Test

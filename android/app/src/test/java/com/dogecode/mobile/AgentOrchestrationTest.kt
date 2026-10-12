@@ -110,14 +110,15 @@ class AgentOrchestrationTest {
     @Test
     fun `委派：主代理调用 delegate_task 触发子代理并把结果回填`() {
         var subAgentRan = false
-        val chatFn: (List<ChatMsg>, List<ToolSpec>) -> ChatResult = { msgs, tools ->
+        val chatFn: (List<ChatMsg>, List<ToolSpec>) -> ChatResult = chatFn@{ msgs, tools ->
             // 子代理上下文里只有「子任务描述」一条 user 消息 → 直接回答
             val isSub = msgs.count { it.role == "user" } == 1 &&
                 msgs.any { it.role == "user" && it.content.orEmpty().contains("子任务描述") }
             if (isSub) {
                 subAgentRan = true
-                // 子代理首轮也看到 delegate_task 工具，但不应再调用它
-                return@AgentLoop reply(text = "子代理干完了")
+                // 子代理首轮也看到 delegate_task 工具，但不应再调用它。
+                // 用显式标签 chatFn@ —— 对 val 赋值的 lambda，隐式标签不可靠。
+                return@chatFn reply(text = "子代理干完了")
             }
             // 主代理：第一轮委派，第二轮收结果并结束
             val delegated = msgs.any { it.role == "tool" }
@@ -230,7 +231,11 @@ class AgentOrchestrationTest {
     fun `防护：子代理自身 maxSteps 独立截断`() {
         // 主代理委派一个会无限调工具的子任务；子代理 subAgentMaxSteps=2 应截断
         val chatFn: (List<ChatMsg>, List<ToolSpec>) -> ChatResult = { msgs, _ ->
-            val isSub = msgs.count { it.role == "user" } == 1
+            // 子代理的判据必须区分「主代理首轮」与「子代理」——两者都只有 1 条
+            // user 消息，故不能数 user 条数（原判据 `count == 1` 把主代理首轮
+            // 也判成子代理 → 主代理从没委派就狂调 list_dir，测试恒失败）。
+            // 用**内容**识别：子代理的输入是本测试传的子任务描述。
+            val isSub = msgs.any { it.role == "user" && it.content.orEmpty().contains("无限子任务") }
             if (isSub) {
                 // 子代理狂调工具
                 reply(tools = listOf(toolCall("list_dir", """{"path":"."}""")))
@@ -251,9 +256,20 @@ class AgentOrchestrationTest {
             enableDelegate = true,
             subAgentMaxSteps = 2,
         )
-        val res = loop.run(emptyList(), "做")
-        // 子代理被截断后，结果文本应带「子代理达轮数上限」提示
-        assertTrue(res.text.contains("子代理达轮数上限") || res.text.contains("子任务结果"))
+        val steps = mutableListOf<String>()
+        val res = loop.run(emptyList(), "做", onStep = { steps.add(it.toString()) })
+        // 委派结果通过 Step.ToolDone(delegate_task).summary 透出，**不**进
+        // res.text（res.text 只有主代理最终回答「主完成」）。
+        // 原断言查 res.text 是查错了对象 —— 改为查 steps 里的工具完成事件。
+        val delegateDone = steps.firstOrNull {
+            it.startsWith("ToolDone") && it.contains("delegate_task")
+        }.orEmpty()
+        assertTrue(
+            "委派结果应含子代理截断提示，实际 steps：$delegateDone",
+            delegateDone.contains("子代理达轮数上限") || delegateDone.contains("子任务结果"),
+        )
+        // 主代理最终仍正常收尾
+        assertTrue("主代理应给出最终回答", res.text.contains("主完成"))
     }
 
     @Test

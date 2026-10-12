@@ -38,7 +38,12 @@ object ProviderProfiles {
      * 不美观也无必要；这里只需「在本次安装内不撞名」即可。
      */
     fun newId(): String {
-        val rand = (0..0xFFFF).random().toString(16).padStart(4, '0')
+        // 随机位取 32 位（原 16 位）。原因：同一毫秒内连续调用时，16 位随机
+        // 空间只有 65536，按生日悖论连续生成 200 个的碰撞概率约 30% —— 单测
+        // 「200 个 id 必须全不同」偶发失败（实测 199/200）。32 位后同毫秒
+        // 200 个的碰撞概率约 0.0009%，实际不再发生。
+        // 保留时间戳前缀：让 id 人工查看时大致有序，便于排查。
+        val rand = (0..0xFFFFFFFFL).random().toString(16).padStart(8, '0')
         return "p_${System.currentTimeMillis().toString(36)}_$rand"
     }
 
