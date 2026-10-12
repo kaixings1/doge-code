@@ -132,4 +132,36 @@ describe('MobileBridgeServer 真实端到端', () => {
       await new Promise<void>((r) => blocker.close(() => r()))
     }
   })
+
+  it('心跳清理死连接：不回消息的连接会被服务端主动关闭并从计数中移除', async () => {
+    // 背景（本机实测过的缺陷）：onClose 只在收到 close 帧时触发，
+    // 手机断网/拔线不发 close 帧 → socket 永久挂在 CLOSE_WAIT，
+    // clients 只增不减 → 最终「连不上/卡死」。
+    // 本用例验证服务端心跳能清理这类死连接。
+    const server = new MobileBridgeServer({
+      sessionId: 'hb',
+      port: PORT,
+      secret: SECRET,
+      heartbeatIntervalMs: 200, // 注入短间隔，否则要等 30s
+    })
+    await server.start()
+
+    // 连接后**刻意不回任何消息**，模拟断网/被杀的手机。
+    // wsConnect 只挂着听 frame，不自动回 ping/pong。
+    const { ws } = await wsConnect(SECRET)
+    // 连接建立后 clients 应为 1
+    await new Promise((r) => setTimeout(r, 50))
+    const before = JSON.parse(await httpGet('/mobile/session-info'))
+    expect(before.clients).toBe(1)
+
+    // 等过 2 轮心跳（200ms × 2 = 400ms）：第 1 轮把 __alive 置 false 并发 ping，
+    // 第 2 轮读到 __alive=false → 判死关闭。留足余量取 800ms。
+    await new Promise((r) => setTimeout(r, 800))
+
+    const after = JSON.parse(await httpGet('/mobile/session-info'))
+    expect(after.clients).toBe(0)
+
+    try { ws.close() } catch { /* 服务端已关：忽略 */ }
+    await server.stop()
+  })
 })

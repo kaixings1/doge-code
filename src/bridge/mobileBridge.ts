@@ -542,6 +542,25 @@ export class MobileBridgeServer {
   private sessionManager = getMobileSessionManager()
   private connectedClients = new Set<WebSocket>()
   private isRunning = false
+  /**
+   * 服务端心跳定时器（探活并清理死连接）。
+   *
+   * ## 为什么服务端必须有（本机实测过泄漏）
+   *
+   * `onClose` 只在收到 WebSocket **close 帧**时才触发。手机侧断网、
+   * 拔线、进程被杀、切 WiFi 时**不会**发 close 帧 —— 服务端永远收不到
+   * 关闭事件，socket 一直挂在 CLOSE_WAIT，`connectedClients` 里的 ws
+   * 也永不释放。实测：netstat 看到同一手机 IP 在 6000 端口堆了多条
+   * CLOSE_WAIT；连接数只增不减，最终表现为「连不上 / 卡死」。
+   *
+   * 修法：每 30s 给所有连接发 ping，并把上一轮的 `__alive` 读出来 ——
+   * 若为 false 说明上轮 ping 后**整轮都没收到任何消息**（含 pong），
+   * 判定死连接，主动 close+清理。`__alive` 由每条入站消息置位
+   * （见连接建立处的 onMessage），故正常活跃连接不会被误杀。
+   */
+  private heartbeatTimer: ReturnType<typeof setInterval> | null = null
+  /** 服务端心跳间隔（ms）。默认 30s，测试可经构造注入更短值。 */
+  private heartbeatIntervalMs = 30000
   /** 共享密钥；空字符串表示未启用认证（仅限可信局域网，会在启动时警告） */
   private secret: string
 
@@ -593,10 +612,20 @@ export class MobileBridgeServer {
      */
     bridgeHandle?: ReplBridgeHandle
     secret?: string
+    /**
+     * 服务端心跳间隔（毫秒）。默认 30000。
+     *
+     * 仅用于测试注入短间隔（验死连接会被清理）——否则用例要等 30s，
+     * 慢到没人愿意跑，最后只会被跳过。生产不传，走默认值。
+     */
+    heartbeatIntervalMs?: number
   }) {
     this.sessionId = options.sessionId
     this.port = options.port ?? resolveMobilePort()
     this.secret = options.secret ?? process.env.CLAUDE_CODE_MOBILE_SECRET ?? ''
+    if (options.heartbeatIntervalMs && options.heartbeatIntervalMs > 0) {
+      this.heartbeatIntervalMs = options.heartbeatIntervalMs
+    }
   }
 
   /**
@@ -853,6 +882,10 @@ export class MobileBridgeServer {
         // 两者都试，取存在的一方，避免 "ws.on is not a function" 导致连接处理整体失效。
         const onMessage = (data: string | Buffer | { data?: unknown }) => {
           try {
+            // 任何入站流量都视为「活着」——服务端心跳据此判死连接（见
+            // startServerHeartbeat）。放在解析**之前**：即便消息格式非法，
+            // 也证明对端网络仍然通畅，不该被误判为死连接而关闭。
+            ;(ws as any).__alive = true
             const raw = typeof data === 'string' || Buffer.isBuffer(data)
               ? data.toString()
               : String((data as { data?: unknown })?.data ?? data)
@@ -879,6 +912,10 @@ export class MobileBridgeServer {
         }
 
         this.connectedClients.add(ws)
+        // 新连接标记为活着（心跳首轮不会误杀刚握手的连接）
+        ;(ws as any).__alive = true
+        // 确保服务端心跳在跑（首个连接到来时启动；重复调用安全）
+        this.startServerHeartbeat()
         // 只发给刚连上的这台设备，不广播：
         // 里面带的是「本会话的可用地址」，对**这台**新客户端才有意义；
         // 广播会让已连接的其他设备重复收到同一份无用的地址信息。
@@ -1217,9 +1254,54 @@ export class MobileBridgeServer {
   }
 
   /**
+   * 启动服务端心跳：探活并清理死连接。
+   *
+   * 重复调用安全（已在跑则直接返回）。逻辑见 [heartbeatTimer] 上的注释。
+   * 间隔 30s：与客户端侧心跳一致，能容忍丢 1-2 个包而不误杀活跃连接。
+   */
+  private startServerHeartbeat(): void {
+    if (this.heartbeatTimer) return
+    this.heartbeatTimer = setInterval(() => {
+      for (const ws of [...this.connectedClients]) {
+        // 上一轮 ping 之后整轮没收到任何消息 → 判定死连接。
+        // 注意必须在发本轮 ping **之前**读 __alive，否则刚置 true 就
+        // 永远判不出死连接（判据恒真 —— 正是要避免的坑）。
+        if ((ws as any).__alive === false) {
+          logForDebugging('[MobileBridgeServer] 心跳超时，关闭死连接')
+          try { ws.close() } catch { /* 已关闭：忽略 */ }
+          this.connectedClients.delete(ws)
+          continue
+        }
+        // 标记为「本轮未确认」，发 ping 等待下一轮举证
+        ;(ws as any).__alive = false
+        try {
+          ws.send(JSON.stringify({ type: 'ping', timestamp: Date.now() }))
+        } catch (e) {
+          logForDebugging(
+            `[MobileBridgeServer] 心跳发送失败，关闭连接：${e instanceof Error ? e.message : String(e)}`,
+          )
+          try { ws.close() } catch { /* 忽略 */ }
+          this.connectedClients.delete(ws)
+        }
+      }
+    }, this.heartbeatIntervalMs)
+    // timer 不阻止进程退出（CLI 可能在服务仍在跑时退出）
+    this.heartbeatTimer.unref?.()
+  }
+
+  /** 停止服务端心跳。重复调用安全。 */
+  private stopServerHeartbeat(): void {
+    if (this.heartbeatTimer) {
+      clearInterval(this.heartbeatTimer)
+      this.heartbeatTimer = null
+    }
+  }
+
+  /**
    * 停止服务器
    */
   async stop(): Promise<void> {
+    this.stopServerHeartbeat()
     // 先停广播：停止后再发出的广播会让手机发现一个已死的会话，
     // 点了连不上。顺序在这里有意义。
     this.beacon.stop()
@@ -1228,8 +1310,16 @@ export class MobileBridgeServer {
       this.wss = null
     }
     if (this.httpServer) {
+      // 先主动断开所有仍挂着的连接。
+      // 为什么必需：httpServer.close() 只是「停止接受新连接」，它会**等
+      // 现有连接全部结束**才回调。手机侧断网时不发 close 帧，连接会一直
+      // 挂着 → stop() 永久不返回（测试里表现为 afterEach hook 超时 10s，
+      // 生产里表现为退出 CLI 卡住）。closeAllConnections 强制断开。
+      // 老的运行时（无此 API）回落到 close()，行为同前。
+      const srv = this.httpServer
+      try { (srv as any).closeAllConnections?.() } catch { /* 忽略 */ }
       await new Promise<void>((resolve) => {
-        this.httpServer.close(() => resolve())
+        srv.close(() => resolve())
       })
       this.httpServer = null
     }
