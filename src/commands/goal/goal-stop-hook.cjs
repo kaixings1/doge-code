@@ -226,10 +226,14 @@ async function callJudge(prompt) {
   const baseURL =
     process.env.ANTHROPIC_BASE_URL ||
     'https://api.longcat.chat/openai/v1/chat/completions'
+  // 模型优先级：显式覆盖 > 环境通用小模型 > 端点通用别名。
+  // 注意：不可硬编码具体厂商模型名（如 claude-haiku-*）——本项目端点
+  // （ANTHROPIC_BASE_URL）未必提供该模型，会导致裁判静默失效（返回 null 放行）。
+  // 'fast-model' 是本端点约定的快速模型别名（实测可用）。
   const model =
     process.env.DOGE_GOAL_JUDGE_MODEL ||
     process.env.DOGE_SMALL_FAST_MODEL ||
-    'claude-haiku-4-5-20251001'
+    'fast-model'
 
   if (!apiKey) return null
 
