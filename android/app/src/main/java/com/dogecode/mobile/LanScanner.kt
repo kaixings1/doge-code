@@ -64,25 +64,22 @@ object LanScanner {
      */
     internal const val REJECT_THRESHOLD = 3
 
-    /**
-     * 「某 IP 第一轮有命中」时的第二轮端口预算。
-     *
-     * 两轮合计覆盖 [FIRST_ROUND_PORTS] + 8 ≥ 默认段宽度（10），即存活主机能
-     * 拿到**完整**端口段覆盖；而非目标主机只吃 3 次请求就被否掉。
-     */
-    internal const val SECOND_ROUND_PORTS = 8
-
     /** 并发度上限。太大时低端路由器会丢包，反而漏掉目标。 */
     private const val MAX_THREADS = 64
 
     /**
      * 整个扫描的 deadline，兜底防止个别 IP 卡满超时。
      *
-     * 20 秒：最坏情况要跑「首轮 254 IP × 2 端口 + 次轮 254 × 8」= 2540 次
-     * 探测，64 并发约 10 秒；再留一倍余量给弱网，避免被提前截断 ——
-     * 截断的表现是**静默漏报**，用户看到「找不到会话」，与服务端没起无从区分。
+     * 100 秒（原 20 秒）：真机实测本机 3 个网卡共 **762 个候选 IP**，
+     * 20 秒内扫不完 → deadline 截断靠后的 IP（含本机所在网段）→ **静默漏报**，
+     * 用户看到「找不到会话」，与服务端没起无从区分。
+     *
+     * 100 秒给足余量：即便候选 762 个、每 IP 首轮 2-3 端口，64 并发下
+     * 也能扫完。用户侧有进度提示 + 「停止」按钮（见 SessionFragment），
+     * 等不了可随时中断，故延长时间不会再造成「卡死」体感。
+     * 配合主机号范围收窄（默认 100-130，见 [candidates]）实际耗时远小于此。
      */
-    private const val TOTAL_TIMEOUT_MS = 20_000L
+    private const val TOTAL_TIMEOUT_MS = 100_000L
 
     /**
      * 判断一个网卡名是否「可用于局域网发现」。
@@ -145,19 +142,65 @@ object LanScanner {
      *
      * 与本身网段重叠的预设地址由 [SubnetCandidates.merge] 去重。
      */
-    fun candidates(): List<String> {
+    /**
+     * 生成候选 IP：本机各网段 + 内置常用网段。
+     *
+     * ## 顺序即优先级（真机实测驱动）
+     *
+     * 1. **[preferredSubnet] 所在的网段**排最前 —— 它是手机实际连着的那个
+     *    网段（调用方传入，如默认路由网段 `192.168.0`）。真机实测：本机有
+     *    3 个网卡（含 VMware `192.168.26.x`、Tailscale `100.99.x`），
+     *    762 个候选在 20s 内扫不完，导致排在后面的**本机网段**反被截断漏扫。
+     *    把真正能连的网段提到最前，是「扫得完」的关键。
+     * 2. 其余本机网段（[localIpv4]）；
+     * 3. 内置常用网段（兜底「电脑与手机不同网段」）。
+     *
+     * ## 主机号范围（[hostFrom]..[hostTo]）
+     *
+     * 只生成该范围内的主机地址（默认 1..254 全段）。真机实测电脑 DHCP 租约
+     * 多落在 100~130 段，收窄到这段可把候选从 254 降到 31 → 扫描时间降到
+     * 约 1/8。范围由用户偏好配置（见 ScanPortPrefs 同级的 IP 段偏好）。
+     *
+     * @param preferredSubnet 优先网段前缀（如 "192.168.0"）；空则跳过该步
+     * @param hostFrom 主机号下界（含），默认 1
+     * @param hostTo   主机号上界（含），默认 254
+     */
+    fun candidates(
+        preferredSubnet: String = "",
+        hostFrom: Int = 1,
+        hostTo: Int = SubnetCandidates.MAX_PER_SUBNET,
+    ): List<String> {
         val groups = ArrayList<List<String>>()
-        localIpv4().forEach { cidr ->
+        val localCidrs = localIpv4()
+
+        // 优先网段排在第一位（若它确实是本机网段之一，避免凭空扫别人的网段）
+        if (preferredSubnet.isNotBlank()) {
+            localCidrs.firstOrNull { SubnetCandidates.ipOf(it).startsWith("$preferredSubnet.") }
+                ?.let { cidr ->
+                    groups.add(
+                        SubnetCandidates.forHost(
+                            SubnetCandidates.ipOf(cidr),
+                            SubnetCandidates.prefixOf(cidr) ?: 24,
+                            hostFrom, hostTo,
+                        ),
+                    )
+                }
+        }
+
+        localCidrs.forEach { cidr ->
             groups.add(
                 SubnetCandidates.forHost(
                     SubnetCandidates.ipOf(cidr),
                     SubnetCandidates.prefixOf(cidr) ?: 24,
+                    hostFrom, hostTo,
                 ),
             )
         }
-        groups.add(SubnetCandidates.commonSubnetCandidates())
+        // 常用网段也传同一范围（否则它的 254×2 会把总候选数顶回去，收窄无效）
+        groups.add(SubnetCandidates.commonSubnetCandidates(hostFrom, hostTo))
+        // merge 去重且**保序**（首个出现的优先），故上面的优先级安排得以保留
         val merged = SubnetCandidates.merge(*groups.toTypedArray())
-        Log.i(TAG, "候选 IP ${merged.size} 个：${merged.take(8).joinToString()}…")
+        Log.i(TAG, "候选 IP ${merged.size} 个（优先网段=$preferredSubnet，主机号 $hostFrom-$hostTo）：${merged.take(8).joinToString()}…")
         return merged
     }
 
@@ -174,7 +217,7 @@ object LanScanner {
      * 三层顺序：
      *   1. **端口层**：同一 IP 上先探 [FIRST_ROUND_PORTS] 个主端口；
      *      落空达 [REJECT_THRESHOLD] 路 → 判非目标主机，放弃其剩余端口；
-     *      有命中 → 补探该 IP 剩余端口（最多 [SECOND_ROUND_PORTS] 个）。
+     *      有命中 → 补探该 IP 的**全部剩余端口**（覆盖整段，不截断）。
      *   2. **IP 层**：本网段内所有 IP 的第一轮跑完，才汇总进入第二轮。
      *   3. **网段层**：本网段两轮都跑完 → 才换下一个网段
      *      （[SubnetCandidates.groupBySubnet] 分组）。
@@ -202,6 +245,17 @@ object LanScanner {
         hosts: List<String> = emptyList(),
         ports: List<Int> = PORTS.toList(),
         onProgress: ((String, Int) -> Unit)? = null,
+        /**
+         * 取消检查：返回 true 则**在下一个网段边界提前结束**。
+         *
+         * 为什么需要：扫描 deadline 提到 100s 后，用户可能等不了那么久
+         * （尤其是已经看到了想要的会话）。UI 的「停止」按钮据此让扫描
+         * 尽快返回——已扫到的结果仍会被返回（不是丢弃），用户可立即使用。
+         *
+         * 粒度是「网段边界」而非「每个 IP」：检查太频繁会拖慢扫描，
+         * 而跨网段本身就是要按秒计的时间，这个粒度对用户感知足够。
+         */
+        shouldStop: (() -> Boolean)? = null,
     ): List<SessionScanner.Session> {
         val targets = hosts.ifEmpty { candidates() }
         if (targets.isEmpty()) return emptyList()
@@ -218,6 +272,11 @@ object LanScanner {
 
         try {
             for (group in subnets) {
+                // 用户取消：立即停（保留已扫到的结果）
+                if (shouldStop?.invoke() == true) {
+                    Log.i(TAG, "扫描被用户取消，返回已发现的 ${found.size} 个会话")
+                    break
+                }
                 if (expired(deadline)) break
 
                 // ── 第一轮：本网段全部 IP × 主端口 ──
@@ -230,6 +289,7 @@ object LanScanner {
                 //   主机上第 1 个实例在 6000 上、后续顺延到 6002 时，
                 //   第一轮只命中 6000，仍需补探才能发现 6002 那个。
                 if (secondRound.isNotEmpty() && round1.aliveHosts.isNotEmpty()) {
+                    if (shouldStop?.invoke() == true) break
                     if (expired(deadline)) break
                     onProgress?.invoke(group.prefix, 2)
                     found.putAll(runRound(pool, round1.aliveHosts, secondRound, deadline).found)
@@ -251,8 +311,9 @@ object LanScanner {
     /**
      * 把端口表切成「第一轮 / 第二轮」两段（纯逻辑，可单测）。
      *
-     * 第一轮取前 [FIRST_ROUND_PORTS] 个；其余留给第二轮（最多
-     * [SECOND_ROUND_PORTS] 个）。
+     * 第一轮取前 [FIRST_ROUND_PORTS] 个；其余**全部**留给第二轮
+     *（第二轮只对第一轮有命中的 IP 执行，故不设上限——否则段宽大于
+     * 3+上限 时尾部端口会被漏掉，真机实测的 6011 漏扫即此类）。
      *
      * **第一轮端口数必须 ≥ [REJECT_THRESHOLD]** 否则该 IP 在第一轮无论结果
      * 如何都达不到否决线 —— 死主机会全数存活，第二轮被迫对每个 IP 探满，
@@ -261,7 +322,18 @@ object LanScanner {
      */
     internal fun splitPorts(ports: List<Int>): Pair<List<Int>, List<Int>> {
         val first = ports.take(maxOf(FIRST_ROUND_PORTS, minOf(REJECT_THRESHOLD, ports.size)))
-        val second = (ports - first.toSet()).take(SECOND_ROUND_PORTS)
+        // 第二轮取**全部剩余端口**（不再受固定预算截断）。
+        //
+        // 真机实测缺陷：原先 `.take(SECOND_ROUND_PORTS)`（=8），配合第一轮 3，
+        // 合计只覆盖前 11 个端口；而默认段 6000-6020 有 21 个 → 第 12 个
+        // （6011）起永远扫不到。用户看到「服务起来了，手机找不到」。
+        //
+        // 代价可控：第二轮**只对第一轮有命中的 IP** 执行（绝大多数无关 IP
+        // 在第一轮就被否掉，不吃这段预算），真实目标主机只有个位数。
+        // 用 rest 而非 rest.take(SECOND_ROUND_PORTS)：段宽由用户配置（可 >21），
+        // 固定预算会随段宽增长再次漏尾部 —— 这正是要根治的模式。
+        val rest = ports - first.toSet()
+        val second = rest.toList()
         return first to second
     }
 

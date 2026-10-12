@@ -54,10 +54,16 @@ object SubnetCandidates {
      *
      * @return 预设网段的候选 IP 列表（各段依次展开，段内顺序同 [forHost]）
      */
-    fun commonSubnetCandidates(): List<String> {
+    fun commonSubnetCandidates(
+        hostFrom: Int = 1,
+        hostTo: Int = MAX_PER_SUBNET,
+    ): List<String> {
         val out = ArrayList<String>(COMMON_SUBNET_PREFIXES.size * MAX_PER_SUBNET)
         for (prefix in COMMON_SUBNET_PREFIXES) {
-            out.addAll(forHost("$prefix.1", 24))
+            // 必须透传 hostFrom/hostTo：真机实测踩过 —— 只把本机网段收窄到
+            // 100-130，常用网段仍生成 2×254=508 个，总候选数不变（762），
+            // 扫描依然扫不完。内置网段同样是可能的目标，范围必须一致。
+            out.addAll(forHost("$prefix.1", 24, hostFrom, hostTo))
         }
         return merge(out)
     }
@@ -99,11 +105,22 @@ object SubnetCandidates {
      * 任何固定步长的抽样都可能恰好跳过真实地址。全段覆盖才能可靠发现。
      * 耗时靠调用方控制（LAN 路径每 IP 只探主端口），不靠砍地址数。
      *
+     * ## 主机地址范围（hostFrom..hostTo）
+     *
+     * 默认 `1..254`（全段）。调用方可传入更窄的范围以**大幅缩短扫描时间**：
+     * 真实部署里 DHCP 租约多落在 100~130 段（本机实测电脑拿到 `.106`），
+     * 只扫这段能把候选从 254 降到 31 —— 在 20s deadline 下这是
+     * 「扫得完」与「扫不完」的分界（真机实测 762 个 IP 因扫不完而漏报）。
+     *
+     * 传 0 或非法值时回落默认全段；hostFrom > hostTo 时也回落（避免空列表）。
+     *
      * @param ip      本机 IPv4，如 "192.168.0.106"
      * @param prefix  掩码前缀长度，如 24。非法（不在 8..30）时退回 24。
+     * @param hostFrom 主机号下界（含），默认 1
+     * @param hostTo   主机号上界（含），默认 254
      * @return 候选 IP 列表；无法解析或网段过大时返回空列表。
      */
-    fun forHost(ip: String, prefix: Int = 24): List<String> {
+    fun forHost(ip: String, prefix: Int = 24, hostFrom: Int = 1, hostTo: Int = MAX_PER_SUBNET): List<String> {
         val bytes = parseIpv4(ip) ?: return emptyList()
         val bits = if (prefix in 8..30) prefix else 24
 
@@ -119,9 +136,12 @@ object SubnetCandidates {
 
         // 可用主机数（不含网络地址与广播地址），受 MAX_PER_SUBNET 截断。
         val hostMax = (1 shl hostBits) - 2
-        val count = minOf(hostMax, MAX_PER_SUBNET)
-        val out = ArrayList<String>(count)
-        for (i in 1..count) {
+        val upper = minOf(hostMax, MAX_PER_SUBNET)
+        // 范围归一化：非法/倒置一律回落全段（宁可多扫也不要扫不到）
+        val lo = if (hostFrom in 1..upper && hostFrom <= hostTo) hostFrom else 1
+        val hi = if (hostTo in lo..upper) hostTo else upper
+        val out = ArrayList<String>(hi - lo + 1)
+        for (i in lo..hi) {
             out.add(formatIpv4(fromInt(network or i)))
         }
         return out

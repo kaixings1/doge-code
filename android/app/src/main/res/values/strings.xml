@@ -21,9 +21,10 @@
     <string name="settings">连接设置</string>
     <string name="host_history_short">地址历史</string>
     <string name="session_search_hint">按名称或路径过滤…</string>
-    <string name="session_scan_hint">正在扫描 5680-5690 端口段…</string>
+    <string name="session_scan_hint">正在扫描（可在设置里调整端口与主机号范围）…</string>
     <string name="rescan_sessions">重新扫描</string>
     <string name="session_scanning">扫描中…</string>
+    <string name="session_stop_scan">停止扫描</string>
     <string name="session_scan_now">开始扫描</string>
     <string name="session_current">当前</string>
     <string name="switch_here">切换</string>
@@ -65,8 +66,11 @@
     <string name="local_workspace_fallback">当前使用应用私有目录（可在上方选择其他目录）</string>
     <string name="section_connection">连接</string>
     <string name="scan_port_label">扫描端口段</string>
-    <string name="scan_port_hint">起始-结束，如 5680-5689</string>
-    <string name="scan_port_desc">会话扫描的端口范围。须与服务端起始端口（CLAUDE_CODE_MOBILE_PORT）一致：默认 5680-5689，若服务端改用 6000，这里填 6000-6009</string>
+    <string name="scan_port_hint">起始-结束，如 6000-6020</string>
+    <string name="scan_port_desc">会话扫描的端口范围。须与服务端起始端口（CLAUDE_CODE_MOBILE_PORT）一致：默认 6000-6020</string>
+    <string name="scan_ip_label">扫描主机号范围</string>
+    <string name="scan_ip_hint">起始-结束，如 100-130</string>
+    <string name="scan_ip_desc">局域网扫描只探这些主机号（IP 末段）。默认 100-130（电脑的 DHCP 租约多在此段），收窄可显著加快扫描。填 1-254 则扫整段</string>
     <string name="tunnel_connect_guide">地址从电脑端获取：运行 node scripts\\start-mobile-bridge.mjs --tunnel，把打印的 wss:// 地址粘贴到下方。手机在户外/数据流量下也能连回本机，能力同局域网。</string>
     <string name="section_remote">远程设置</string>
     <string name="label_model">模型</string>

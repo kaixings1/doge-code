@@ -81,10 +81,21 @@ class LanScannerLayeringTest {
     }
 
     @Test
-    fun `第二轮受预算上限截断（不会无限扩端口）`() {
-        // 给 100 个端口：第二轮最多 SECOND_ROUND_PORTS 个
-        val many = (6000 until 6100).toList()
-        val (_, second) = LanScanner.splitPorts(many)
-        assertEquals(LanScanner.SECOND_ROUND_PORTS, second.size)
+    fun `两轮合计覆盖全部端口（无截断，修 6011 漏扫）`() {
+        // 真机实测缺陷：原先第二轮 `take(8)`，3+8=11 < 段宽 21，
+        // 第 12 个端口（6011）起永远扫不到。此用例锁定「完整覆盖」。
+        val ports = (6000..6020).toList() // 默认段，21 个
+        val (first, second) = LanScanner.splitPorts(ports)
+        val union = (first + second).toSet()
+        assertEquals("两轮合计必须覆盖全部端口", ports.toSet(), union)
+        assertTrue("6011 必须被覆盖（旧实现的漏点）", 6011 in union)
+    }
+
+    @Test
+    fun `段宽超过 21 时第二轮仍全覆盖（预算自适应）`() {
+        // 用户可把段配得更宽；固定预算会随段宽增长再次漏尾部
+        val many = (6000 until 6100).toList() // 100 个
+        val (first, second) = LanScanner.splitPorts(many)
+        assertEquals(many.toSet(), (first + second).toSet())
     }
 }

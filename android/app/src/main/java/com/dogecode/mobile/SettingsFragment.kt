@@ -294,6 +294,7 @@ class SettingsFragment : Fragment() {
         }
 
         bindScanPortInput(view)
+        bindScanIpInput(view)
 
         pendingSettingsViews = urlInput to secretInput
         onSettingsViewsReady?.invoke(urlInput, secretInput)
@@ -342,6 +343,42 @@ class SettingsFragment : Fragment() {
         // 看到被纠正成的值，而不是以为「保存了却没生效」。
         val (s, e) = prefs.setRange(parsed.first, parsed.second)
         input.setText(ScanPortPrefs.formatRange(s, e))
+    }
+
+    /**
+     * 绑定「扫描主机号范围」输入框（与端口范围同一套交互模式）。
+     *
+     * 复用 [ScanPortPrefs.parseRange] 解析 —— 两者格式相同（`起-止`），
+     * 各写一份必然漂移。写入交回 [IpRangePrefs.setRange]（它负责夹取
+     * 越界值与纠正倒置）。
+     */
+    private fun bindScanIpInput(view: View) {
+        val input = view.findViewById<EditText>(R.id.scan_ip_input) ?: return
+        val prefs = IpRangePrefs(requireContext())
+        val (from, to) = prefs.range()
+        input.setText(IpRangePrefs.formatRange(from, to))
+
+        // 失焦时才写：逐键写入会存下「1」「10」「100」等中间态
+        input.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) saveScanIp(input, prefs)
+        }
+        input.setOnEditorActionListener { _, _, _ ->
+            saveScanIp(input, prefs)
+            true
+        }
+    }
+
+    /** 解析 "起-止" 并保存主机号范围；格式非法时回显当前生效值。 */
+    private fun saveScanIp(input: EditText, prefs: IpRangePrefs) {
+        val parsed = ScanPortPrefs.parseRange(input.text.toString())
+        if (parsed == null) {
+            val (f, t) = prefs.range()
+            input.setText(IpRangePrefs.formatRange(f, t))
+            return
+        }
+        // 回显实际生效范围（越界/倒置被纠正后用户立刻看到）
+        val (f, t) = prefs.setRange(parsed.first, parsed.second)
+        input.setText(IpRangePrefs.formatRange(f, t))
     }
 
     /**

@@ -52,6 +52,25 @@ class SessionFragment : Fragment() {
      */
     var scanPortRange: () -> Pair<Int, Int> = { PortScanRange.DEFAULT_START to PortScanRange.DEFAULT_END }
 
+    /**
+     * 局域网扫描的**主机号范围**（IP 末段，如 100..130）。
+     *
+     * 由 Activity 从 [IpRangePrefs] 读取后注入（与 [scanPortRange] 同一模式）。
+     * 默认 100..130：真机实测电脑 DHCP 租约多落此段，收窄后候选从 254
+     * 降到 31，扫描耗时降到约 1/8 —— 这是「762 个候选扫不完导致漏报」
+     * 的直接缓解手段。用户可在设置里调整。
+     */
+    var ipRange: () -> Pair<Int, Int> = { IpRangePrefs.DEFAULT_FROM to IpRangePrefs.DEFAULT_TO }
+
+    /**
+     * 优先扫描的网段前缀（如 `192.168.0`）。
+     *
+     * 由 Activity 从「当前连接地址」推出后注入 —— 那是手机实际能连的网段，
+     * 排到候选最前可避免它被 deadline 截断（真机实测的漏报正是本机网段
+     * 落在了 762 个候选的末尾）。返回空串表示无偏好。
+     */
+    var preferredSubnet: () -> String = { "" }
+
     /** 由 Activity 实现，供列表项点击时回调。 */
     interface Actions {
         fun onSessionOpen(session: SessionScanner.Session)
@@ -129,7 +148,12 @@ class SessionFragment : Fragment() {
         list.adapter = adapter
 
         rescanBtn = view.findViewById(R.id.btn_rescan)
-        rescanBtn.setOnClickListener { rescan() }
+        // 点击分流：扫描中 = 停止，空闲 = 重新扫描。
+        // 同一个按钮承载两个动作，是因为竖向空间宝贵（长按留给排序菜单）；
+        // 且「停止」只在扫描期间出现，不会与「重新扫描」同时可见而混淆。
+        rescanBtn.setOnClickListener {
+            if (scanning) requestStopScan() else rescan()
+        }
         // 长按扫描按钮切换排序：不额外占竖向空间（手机上很宝贵），
         // 且「重新扫描」与「换个方式看列表」语义相近，放一起自然
         rescanBtn.setOnLongClickListener {
@@ -222,6 +246,7 @@ class SessionFragment : Fragment() {
         // 防重复点击：每次扫描会起线程池，连点会起多个
         if (scanning) return
         scanning = true
+        scanCancelled = false
         setScanButtonBusy(true)
         startWaitHint()
         // 硬超时兜底：无论扫描线程死活，到时强制复位 scanning（见字段注释）。
@@ -256,18 +281,32 @@ class SessionFragment : Fragment() {
             // 局域网发现：扫本机网段里的候选 IP。
             // 跳过已在 direct 里的，避免对同一主机重复请求。
             if (useLan) {
-                val lanTargets = LanScanner.candidates().filterNot { direct.contains(it) }
+                // 传入优先网段与主机号范围：优先网段（手机实际能连的那个）
+                // 排最前，避免被 deadline 截断；主机号范围收窄到用户配置的
+                // 段（默认 100-130），把候选从 254 降到 ~31 换取「扫得完」。
+                val (ipFrom, ipTo) = ipRange()
+                val lanTargets = LanScanner.candidates(
+                    preferredSubnet = preferredSubnet(),
+                    hostFrom = ipFrom,
+                    hostTo = ipTo,
+                ).filterNot { direct.contains(it) }
                 if (lanTargets.isNotEmpty()) {
                     // 同样传入可配端口段 —— 否则局域网发现会固定在默认段，
                     // 用户改用 6000 起的主机永远扫不到（Direct 路径能扫到，
                     // LAN 路径扫不到，表现为「手动填能连、自动发现找不到」）
                     found.addAll(
-                        LanScanner.scan(lanTargets, PortScanRange.portsOf(scanStart, scanEnd)) {
-                            prefix, round ->
-                            // 三层搜索的进度：让用户看到「正在搜哪个网段、第几轮」，
-                            // 而不是对着一个不动的「正在搜索…」怀疑程序卡死
-                            reportLanProgress(prefix, round)
-                        }
+                        LanScanner.scan(
+                            lanTargets,
+                            PortScanRange.portsOf(scanStart, scanEnd),
+                            onProgress = { prefix, round ->
+                                // 三层搜索的进度：让用户看到「正在搜哪个网段、第几轮」，
+                                // 而不是对着一个不动的「正在搜索…」怀疑程序卡死
+                                reportLanProgress(prefix, round)
+                            },
+                            // 用户点「停止」置真 → 下一个网段边界提前返回，
+                            // 已扫到的结果仍保留（不是丢弃）
+                            shouldStop = { scanCancelled },
+                        )
                     )
                 }
             }
@@ -442,15 +481,30 @@ class SessionFragment : Fragment() {
      * 点了没反应）。这是最典型的「扫描卡死」。
      *
      * 故加主线程 watchdog：超过此时间无论扫描线程死活，强制复位并给出
-     * 提示。取值远大于正常扫描耗时（几个主机 × 11 端口并发，实测秒级），
-     * 只在真卡住时才触发。
+     * 提示。取值**必须大于 [LanScanner.TOTAL_TIMEOUT_MS]**（扫描自身的
+     * deadline）—— 否则 UI 会在扫描还在跑时先复位，表现为「提示说超时、
+     * 但扫描其实还在后台跑」。扫描 deadline 现为 100s，这里取 110s。
+     *
+     * 为何从 30s 提到 110s：扫描 deadline 提到 100s 后（为覆盖本机多网卡
+     * 的 762 个候选不漏报），30s 的 UI watchdog 会先触发而误报超时。
+     * 两者必须同步。用户在等待中可随时按「停止」提前结束（见 stopScan）。
      */
-    private val SCAN_HARD_TIMEOUT_MS = 30_000L
+    private val SCAN_HARD_TIMEOUT_MS = 110_000L
 
     private var waitHintTask: Runnable? = null
 
     /** 扫描 watchdog（超时强制复位 scanning）。 */
     private var scanWatchdog: Runnable? = null
+
+    /**
+     * 用户是否请求停止当前扫描。
+     *
+     * 由「停止」按钮置真；[LanScanner.scan] 经 shouldStop 回调读取，
+     * 在下一个网段边界提前返回（保留已扫到的结果）。
+     * 每次 rescan() 开始时复位。
+     */
+    @Volatile
+    private var scanCancelled = false
 
     /** 会话页的提示文案控件（懒查找，避免侵入 Views 数据类）。 */
     private val hintText: android.widget.TextView?
@@ -502,14 +556,40 @@ class SessionFragment : Fragment() {
     }
 
     /**
-     * 扫描期间禁用按钮并改文案。
+     * 扫描期间把按钮切换为「停止」。
      *
-     * 不禁用的话用户会连点，每次起一个 11 线程的探测池 ——
-     * 而扫描本身要几秒，连点会让结果错乱（后发的先返回）。
+     * ## 为什么要能点（而不是像从前那样禁用）
+     *
+     * 扫描 deadline 提到 100s 后，用户可能等不了那么久。禁用按钮会让
+     * 用户在等待中**无事可做** —— 只能干等或杀进程。改为「停止」后，
+     * 点击即取消扫描，**已扫到的结果仍会显示**（LanScanner.scan 的
+     * shouldStop 分支保留已发现项，不是丢弃）。
+     *
+     * ## 为什么仍要防连点
+     *
+     * 空闲态点「重新扫描」若不禁用，连点会起多个探测池、结果错乱。
+     * 故：空闲态点击 → 开始扫描并立即转「停止」；扫描态点击 → 取消。
+     * 两种状态都是「一次点击一个动作」，不会并发起池。
      */
     private fun setScanButtonBusy(busy: Boolean) {
-        rescanBtn.isEnabled = !busy
-        rescanBtn.text = getString(if (busy) R.string.session_scanning else R.string.rescan_sessions)
+        // 扫描中按钮**保持可点**（用于取消），空闲时也可点（重新扫描）
+        rescanBtn.isEnabled = true
+        rescanBtn.text = getString(if (busy) R.string.session_stop_scan else R.string.rescan_sessions)
+    }
+
+    /**
+     * 用户点「停止」：请求取消当前扫描。
+     *
+     * 只置标志 —— 真正的收尾由扫描线程在下一个网段边界返回后、
+     * 经 finishScan() 完成（避免在 UI 线程直接改 scanning 与扫描线程竞争）。
+     * 但为让 UI **立即**响应（按钮文案/提示行立刻恢复），这里先做一次
+     * 幂等的 finishScan —— 扫描线程后续再调 finishScan 也无害（幂等）。
+     */
+    private fun requestStopScan() {
+        if (!scanning) return
+        scanCancelled = true
+        finishScan()
+        mergeAndRender()
     }
 
     /**

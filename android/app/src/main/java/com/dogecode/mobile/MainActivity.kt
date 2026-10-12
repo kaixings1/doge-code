@@ -172,6 +172,7 @@ class MainActivity : AppCompatActivity(),
      * 它的 set() 会拒绝预定义列表外的值，装不下 1..65535 的端口。
      */
     private lateinit var scanPortPrefs: ScanPortPrefs
+    private lateinit var ipRangePrefs: IpRangePrefs
 
     /**
      * 双指缩放的倍率存储（自由数值型，与枚举型的 LocalPrefs 分开）。
@@ -385,6 +386,7 @@ class MainActivity : AppCompatActivity(),
         draftStore = DraftStore(this)
         localPrefs = LocalPrefs(this)
         scanPortPrefs = ScanPortPrefs(this)
+        ipRangePrefs = IpRangePrefs(this)
         pinchZoomPrefs = PinchZoomPrefs(this)
         appModePrefs = AppModePrefs(this)
         localStore = LocalPrefsStore(this)
@@ -1266,6 +1268,29 @@ class MainActivity : AppCompatActivity(),
         // 扫描端口范围：与「服务端自动顺延端口」成对 —— 写死范围会让
         // 用户改了起始端口后永久扫不到会话
         sessionFragment!!.scanPortRange = { scanPortPrefs.range() }
+        // 主机号范围（默认 100-130）：收窄候选数以在 deadline 内扫完，
+        // 直接缓解「762 个候选扫不完 → 漏报」
+        sessionFragment!!.ipRange = { ipRangePrefs.range() }
+        // 优先网段：从当前连接地址推出（手机能连的那个），排到候选最前，
+        // 避免它被 deadline 截断（真机实测的漏报正因本机网段落在末尾）
+        sessionFragment!!.preferredSubnet = {
+            // 优先用连接地址的网段（用户上一次连成功/正在连的那个）。
+            // 但 savedHost 在 USB 场景下是 127.0.0.1，回环网段毫无意义
+            //（真机实测踩过：优先网段=127.0 → 排序完全失效）。
+            // 故回环/无效时回落到本机第一个非回环 IPv4 的网段。
+            val host = runCatching { savedHost() }.getOrDefault("")
+            val fromSaved = subnetPrefixOf(host)
+            if (fromSaved != null && !host.startsWith("127.")) {
+                fromSaved
+            } else {
+                val local = runCatching {
+                    LanScanner.localIpv4()
+                        .map { SubnetCandidates.ipOf(it) }
+                        .firstOrNull { it.isNotBlank() && !it.startsWith("127.") && !it.startsWith("169.254.") }
+                }.getOrNull()
+                subnetPrefixOf(local.orEmpty()).orEmpty()
+            }
+        }
         // 点列表项 → 进详情页（而非直接切换）
         sessionFragment!!.onSessionPicked = { s -> onSessionOpen(s) }
         // 列表项上直接「切换」：一步到位。
@@ -2108,6 +2133,20 @@ class MainActivity : AppCompatActivity(),
 
     /** 从持久化地址解析主机名。 */
     private fun savedHost(): String = BridgeUrl.hostOf(savedAddress())
+
+    /**
+     * 从 IPv4 取 /24 网段前缀（前三段）；非法输入返回 null。
+     *
+     * 供 preferredSubnet 使用 —— 抽成纯函数便于单测边界（空串、
+     * 段数不对、非数字）。刻意不做 IPv4 合法性全检：调用方只关心
+     * 「能不能拆出前三段」，拆不出就当无偏好（返回 null）即可。
+     */
+    internal fun subnetPrefixOf(ip: String): String? {
+        val parts = ip.split(".")
+        if (parts.size != 4) return null
+        if (parts.any { it.isBlank() || it.toIntOrNull() == null }) return null
+        return parts.take(3).joinToString(".")
+    }
 
     /** 从持久化地址解析端口。 */
     private fun savedPort(): Int = BridgeUrl.portOf(savedAddress())
