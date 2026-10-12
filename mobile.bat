@@ -3,16 +3,16 @@
 chcp 65001 >nul
 
 REM === Mobile bridge launcher ===
-REM Starts the REAL mobile bridge (mobileBridge.ts, port 5680) instead of
-REM the local bridge skeleton (scripts\bridge.ts, port 5678).
+REM Single entry point: this file ONLY calls scripts\start-mobile-bridge.mjs.
 REM
-REM Why this file exists:
-REM   scripts\bridge.ts is a standalone protocol skeleton. Its `case 'message'`
-REM   only broadcasts back to the sender, so a browser talking to port 5678
-REM   will see its own message echoed and nothing else -- no AI reply ever.
-REM   The real mobile bridge lives in src\bridge\mobileBridge.ts (port 5680),
-REM   started either by /mobile-connect inside the CLI, or automatically by
-REM   bootstrap-entry.ts when CLAUDE_CODE_MOBILE_BRIDGE=1.
+REM Why no bun run here anymore:
+REM   This file used to call the script AND launch a second CLI via `bun run`.
+REM   The script itself spawns a CLI when the port is free, so that produced
+REM   TWO CLI processes fighting over the same port. The second one was forced
+REM   to the next port (6000 -> 6001) while the tunnel/address still pointed at
+REM   6000 -> the phone could never connect, and startup looked "stuck".
+REM   The script now owns the whole launch (it runs bun with all --feature
+REM   flags, see FEATURE_ARGS in scripts\start-mobile-bridge.mjs).
 REM
 REM IMPORTANT: keep this file pure ASCII with CRLF line endings.
 REM cmd.exe decodes batch files using the ANSI code page (GBK on zh-CN);
@@ -20,12 +20,13 @@ REM UTF-8 Chinese bytes can swallow the following newline and merge lines,
 REM causing REM comments to run as commands.
 REM
 REM Usage:
-REM   mobile.bat            -> en starts the CLI with mobile bridge enabled
-REM   then type in the CLI: /mobile-connect
-REM   open the printed URL/QR on your phone (same WiFi), port 5680
+REM   mobile.bat              -> tunnel mode (public, works outdoors)
+REM   mobile.bat --lan        -> LAN only (same WiFi)
+REM   mobile.bat --usb        -> USB reverse forward
+REM   mobile.bat --label fixCI -> set this session's label (multi-session)
 
 set CLAUDE_CODE_MOBILE_BRIDGE=1
-REM Starting port for the mobile bridge. Default (unset) is 5680.
+REM Starting port for the mobile bridge. Default (unset) is 6000.
 REM MUST be outside the Windows reserved range: `netsh int ipv4 show
 REM excludedportrange protocol=tcp` shows 5681-5880 reserved on this host
 REM (Hyper-V / WSL grab blocks). Binding a reserved port fails with
@@ -35,7 +36,7 @@ REM 6000 is verified free. Phone opens http://<WLAN-IP>:6000
 set CLAUDE_CODE_MOBILE_PORT=6000
 REM Clear any LOCAL_BRIDGE marker inherited from the parent shell.
 REM Such a marker makes every plain CLI instance auto-start the mobile bridge
-REM and fight over port 5680 (isMobileBridgeAvailable() returns true), so with
+REM and fight over port 6000 (isMobileBridgeAvailable() returns true), so with
 REM concurrent instances all but the first crash with EADDRINUSE.
 REM The mobile bridge is triggered ONLY by this file's MOBILE_BRIDGE flag.
 set CLAUDE_CODE_LOCAL_BRIDGE=
@@ -48,34 +49,9 @@ if "%1"=="" (
 )
 
 echo [mobile.bat] CLAUDE_CODE_MOBILE_BRIDGE=1
-echo [mobile.bat] After the CLI starts, run: /mobile-connect
-echo [mobile.bat] Then open the printed URL on your phone (start port %CLAUDE_CODE_MOBILE_PORT%).
+echo [mobile.bat] Launching via scripts\start-mobile-bridge.mjs (single entry).
+echo [mobile.bat] Start port %CLAUDE_CODE_MOBILE_PORT%.
 echo.
-cd /d D:\doge-code && node scripts\start-mobile-bridge.mjs --tunnel
 
-bun run ^
-    --feature=TERMINAL_PANEL --feature=PROACTIVE --feature=KAIROS ^
-    --feature=KAIROS_BRIEF --feature=KAIROS_CHANNELS --feature=BRIDGE_MODE ^
-    --feature=DAEMON --feature=VOICE_MODE --feature=HISTORY_SNIP ^
-    --feature=CCR_REMOTE_SETUP --feature=EXPERIMENTAL_SKILL_SEARCH ^
-    --feature=KAIROS_GITHUB_WEBHOOKS --feature=ULTRAPLAN --feature=TORCH ^
-    --feature=FORK_SUBAGENT --feature=WORKFLOW_SCRIPTS --feature=MCP_SKILLS ^
-    --feature=AGENT_TRIGGERS --feature=CCR_AUTO_CONNECT --feature=CCR_MIRROR ^
-    --feature=CACHED_MICROCOMPACT --feature=CONNECTOR_TEXT ^
-    --feature=TRANSCRIPT_CLASSIFIER --feature=BASH_CLASSIFIER ^
-    --feature=COORDINATOR_MODE --feature=EXTRACT_MEMORIES ^
-    --feature=DOWNLOAD_USER_SETTINGS --feature=COMMIT_ATTRIBUTION ^
-    --feature=STREAMLINED_OUTPUT --feature=NATIVE_CLIENT_ATTESTATION ^
-    --feature=TOKEN_BUDGET --feature=TEMPLATES --feature=CHICAGO_MCP ^
-    --feature=BG_SESSIONS --feature=BYOC_ENVIRONMENT_RUNNER ^
-    --feature=SELF_HOSTED_RUNNER --feature=REACTIVE_COMPACT ^
-    --feature=CONTEXT_COLLAPSE --feature=PROMPT_CACHE_BREAK_DETECTION ^
-    --feature=VERIFICATION_AGENT --feature=AGENT_MEMORY_SNAPSHOT ^
-    --feature=BREAK_CACHE_COMMAND --feature=NEW_INIT ^
-    --feature=MEMORY_SHAPE_TELEMETRY --feature=TEAMMEM ^
-    --feature=DIRECT_CONNECT --feature=LODESTONE --feature=SSH_REMOTE ^
-    --feature=UPLOAD_USER_SETTINGS --feature=HARD_FAIL --feature=ABLATION_BASELINE ^
-    --feature=DUMP_SYSTEM_PROMPT --feature=WEB_BROWSER_TOOL --feature=QUICK_SEARCH ^
-    --feature=MESSAGE_ACTIONS --feature=FILE_PERSISTENCE ^
-    "D:\doge-code\src\bootstrap-entry.ts" ^
-    --dangerously-skip-permissions --verbose %2 %3 --debug-file ./debug-mobile.txt
+cd /d D:\doge-code
+node scripts\start-mobile-bridge.mjs %*

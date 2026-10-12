@@ -82,19 +82,68 @@ function clearTunnelUrlFile() {
   }
 }
 
-const EXE = 'D:\\doge-code\\doge.exe'
+// 命令行参数（必须最先定义：下面的 PORT / LABEL 都要用它）。
+const ARGV = process.argv.slice(2)
+// bun 可执行文件：脚本用 bun 跑 TS 源码（而非 doge.exe 二进制），
+// 因为 --feature 是 bun 的编译期参数，二进制不接受（详见下方 spawn 注释）。
+// 优先用 PATH 里的 bun；找不到时回落项目内常见位置。
+const BUN = 'bun'
+// CLI 入口（TS 源码）。bun run 直接执行它。
+const ENTRY = 'D:\\doge-code\\src\\bootstrap-entry.ts'
+// feature 门控：从 mobile.bat 原样搬来（bun:bundle feature() 是编译期
+// 常量折叠，只能靠 --feature 开，env 无效 —— 见 d.bat 的注释）。
+// 搬到脚本里是为了「单一入口」：mobile.bat 只调本脚本，不再自己起第二个 CLI。
+const FEATURE_ARGS = [
+  '--feature=TERMINAL_PANEL', '--feature=PROACTIVE', '--feature=KAIROS',
+  '--feature=KAIROS_BRIEF', '--feature=KAIROS_CHANNELS', '--feature=BRIDGE_MODE',
+  '--feature=DAEMON', '--feature=VOICE_MODE', '--feature=HISTORY_SNIP',
+  '--feature=CCR_REMOTE_SETUP', '--feature=EXPERIMENTAL_SKILL_SEARCH',
+  '--feature=KAIROS_GITHUB_WEBHOOKS', '--feature=ULTRAPLAN', '--feature=TORCH',
+  '--feature=FORK_SUBAGENT', '--feature=WORKFLOW_SCRIPTS', '--feature=MCP_SKILLS',
+  '--feature=AGENT_TRIGGERS', '--feature=CCR_AUTO_CONNECT', '--feature=CCR_MIRROR',
+  '--feature=CACHED_MICROCOMPACT', '--feature=CONNECTOR_TEXT',
+  '--feature=TRANSCRIPT_CLASSIFIER', '--feature=BASH_CLASSIFIER',
+  '--feature=COORDINATOR_MODE', '--feature=EXTRACT_MEMORIES',
+  '--feature=DOWNLOAD_USER_SETTINGS', '--feature=COMMIT_ATTRIBUTION',
+  '--feature=STREAMLINED_OUTPUT', '--feature=NATIVE_CLIENT_ATTESTATION',
+  '--feature=TOKEN_BUDGET', '--feature=TEMPLATES', '--feature=CHICAGO_MCP',
+  '--feature=BG_SESSIONS', '--feature=BYOC_ENVIRONMENT_RUNNER',
+  '--feature=SELF_HOSTED_RUNNER', '--feature=REACTIVE_COMPACT',
+  '--feature=CONTEXT_COLLAPSE', '--feature=PROMPT_CACHE_BREAK_DETECTION',
+  '--feature=VERIFICATION_AGENT', '--feature=AGENT_MEMORY_SNAPSHOT',
+  '--feature=BREAK_CACHE_COMMAND', '--feature=NEW_INIT',
+  '--feature=MEMORY_SHAPE_TELEMETRY', '--feature=TEAMMEM',
+  '--feature=DIRECT_CONNECT', '--feature=LODESTONE', '--feature=SSH_REMOTE',
+  '--feature=UPLOAD_USER_SETTINGS', '--feature=HARD_FAIL', '--feature=ABLATION_BASELINE',
+  '--feature=DUMP_SYSTEM_PROMPT', '--feature=WEB_BROWSER_TOOL', '--feature=QUICK_SEARCH',
+  '--feature=MESSAGE_ACTIONS', '--feature=FILE_PERSISTENCE',
+]
 // 桥接端口：与服务端共用同一环境变量 CLAUDE_CODE_MOBILE_PORT。
 // 默认 6000（与 mobile.bat / 主进程一致，避开 Windows 保留端口段 5680-5880）。
 // 此前硬编码 5680，导致「主进程在 6000、脚本却按 5680 建隧道」的错位，
 // 手机永远连不上。读取同一变量即可对齐；未设时回落 6000。
-const PORT = Number(process.env.CLAUDE_CODE_MOBILE_PORT) || 6000
+// --port <n> 可显式指定端口，优先于环境变量。
+// 为什么需要它（防「多会话隧道错位」）：多个实例共用一个端口时，后起的
+// 服务端会**自动顺延**（6000→6001），但用户/隧道只认一个地址 → 手机连错
+// 端口。显式给不同实例不同端口（mobile.bat --port 6001）能让每个实例的
+// 端口可预测，隧道文件也按端口分（tunnelUrlFileFor(PORT)）各写各的。
+const PORT_ARG_IDX = ARGV.indexOf('--port')
+const PORT = (PORT_ARG_IDX >= 0 && ARGV[PORT_ARG_IDX + 1] ? Number(ARGV[PORT_ARG_IDX + 1]) : 0)
+  || Number(process.env.CLAUDE_CODE_MOBILE_PORT)
+  || 6000
 // 刻意不提供默认密钥：绑 0.0.0.0 时用公开常量"D保护"本机命令执行能力，
 // 局域网内任何人可控制本机。未设密钥即空密钥，服务端不做认证。
 const ADB = process.env.USERPROFILE + '\\Android\\platform-tools\\adb.exe'
-const ARGV = process.argv.slice(2)
 const USE_USB = ARGV.includes('--usb')
 const USE_TUNNEL = ARGV.includes('--tunnel')
 const USE_LAN = !USE_USB && !USE_TUNNEL
+// --label <名>：本会话标签，下发给手机（多会话列表靠它区分）。
+// 未给时回落 DOGE_SESSION_LABEL 环境变量，仍未设则由服务端回落目录名。
+const LABEL_ARG_IDX = ARGV.indexOf('--label')
+const LABEL = LABEL_ARG_IDX >= 0 && ARGV[LABEL_ARG_IDX + 1] ? ARGV[LABEL_ARG_IDX + 1] : (process.env.DOGE_SESSION_LABEL || '')
+// 透传给 CLI 的额外参数（-- 之后的都原样传下去，如 --verbose 等）。
+// 这样「全交给脚本」时用户仍能追加 CLI 自己的开关。
+const CLI_EXTRA_ARGS = LABEL_ARG_IDX >= 0 ? ARGV.slice(LABEL_ARG_IDX + 2) : []
 
 function line() { console.log('='.repeat(60)) }
 
@@ -126,13 +175,13 @@ console.log('  模式: ' + (USE_TUNNEL ? '公网隧道（--tunnel，户外可用
 line()
 console.log('')
 
-// ── 1. doge.exe ──
-if (!existsSync(EXE)) {
-  console.log('[错误] 未找到 ' + EXE)
-  console.log('       请先运行 compile.bat 编译')
+// ── 1. 入口源码 ──
+if (!existsSync(ENTRY)) {
+  console.log('[错误] 未找到 ' + ENTRY)
+  console.log('       这是在源码目录里直接跑 bun 的路径；请确认仓库完整')
   process.exit(1)
 }
-console.log('[1/4] doge.exe 存在')
+console.log('[1/4] 入口存在（bun 跑源码，feature 生效）')
 
 // ── 2. 连接方式 ──
 let phoneUrl = null
@@ -291,7 +340,19 @@ if (serviceReady) {
   console.log('[启动] 端口 ' + PORT + ' 已有桥接服务在跑 —— 复用，不再另起进程')
   console.log('       （这通常是你的 doge-code 主进程自带的 mobile bridge）')
 } else {
-  child = spawn(EXE, [], {
+  // 「全交给脚本」：本脚本负责起 CLI，mobile.bat 只调本脚本。
+  // 为什么：此前 mobile.bat 先调本脚本（本脚本会 spawn 一个 CLI 并
+  // 阻塞监听其 exit），紧接着 mobile.bat 又用 bun run 起第二个 CLI ——
+  // 两个进程抢同一端口，第二个被迫顺延（6000→6001），而隧道/地址仍指向
+  // 6000 → 手机连不上，且前端表现为「启动卡死」。
+  // 现在唯一入口是本脚本，参数一次给全。
+  //
+  // 为什么跑 bun 路径而不是 doge.exe：`--feature=` 是 bun 的**编译期**
+  // 常量折叠参数（bun:bundle feature()），doge.exe 是已编译二进制，
+  // **不接受 --feature** —— 直接 spawn doge.exe 会让下面这 30 个 feature
+  // 静默失效（BRIDGE_MODE / VOICE_MODE / KAIROS 等）。用户实际也在用
+  // bun 路径（doge.exe 进程数为 0，监听端口的是 bun.exe），故对齐。
+  child = spawn(BUN, [...FEATURE_ARGS, ENTRY, '--dangerously-skip-permissions', '--verbose', ...CLI_EXTRA_ARGS], {
     stdio: 'inherit',
     env: {
       ...process.env,
@@ -299,6 +360,8 @@ if (serviceReady) {
       CLAUDE_CODE_MOBILE_SECRET: secret,
       // 显式注入端口：保证子进程监听的端口 == 脚本建隧道/探测用的 PORT。
       CLAUDE_CODE_MOBILE_PORT: String(PORT),
+      // 会话标签：多会话列表与通知标题靠它区分。
+      ...(LABEL ? { DOGE_SESSION_LABEL: LABEL } : {}),
     },
   })
 }

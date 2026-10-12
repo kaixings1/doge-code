@@ -140,6 +140,31 @@ describe('/mobile/session-info', () => {
     expect(typeof o.interactive).toBe('boolean')
     expect(o.clients).toBe(0)
     expect(typeof o.lastActivity).toBe('number')
+    // 扫描端点必须下发可用地址（lan/tunnel）—— 手机「扫描」时拿不到
+    // client_connected，此前只靠连接后下发 → 扫描列表看不到隧道地址，
+    // 用户必须先盲连一次才能记住（隧道冷启动问题）。
+    expect(Array.isArray(o.lan)).toBe(true)
+    // tunnel 无隧道时为 null（服务端显式给 null，不是缺字段）
+    expect(o.tunnel === null || typeof o.tunnel === 'string').toBe(true)
+
+    await server.stop()
+  })
+
+  it('扫描端点下发 lan 地址（含本机端口，供手机直接可点连）', async () => {
+    const server = new MobileBridgeServer({ sessionId: 'mobile-lan', port: PORT })
+    await server.start()
+
+    const o = JSON.parse((await httpGet(PORT, '/mobile/session-info')).body)
+    const lan = o.lan as string[]
+    // 先断言非空 —— 否则下面「对每个元素断言」在空数组时一次都不执行，
+    // 测试恒真通过（变异测试实测踩过：把 lan 置空后用例仍然绿）。
+    // 前提：本机有可用网卡时 listLanIps() 必返回至少一条。
+    expect(lan.length).toBeGreaterThan(0)
+    // 每条形如 http://<ip>:<port>，且 port 必须是本实例端口。
+    for (const addr of lan) {
+      expect(addr.startsWith('http://')).toBe(true)
+      expect(addr.endsWith(`:${PORT}`)).toBe(true)
+    }
 
     await server.stop()
   })

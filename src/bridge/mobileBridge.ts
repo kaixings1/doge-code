@@ -678,6 +678,25 @@ export class MobileBridgeServer {
             interactive: process.stdin.isTTY === true,
             clients: this.connectedClients.size,
             lastActivity: Date.now(),
+            // 可用接入地址（lan/tunnel）—— 与 client_connected 下发的一致。
+            //
+            // 为什么扫描端点也要带：手机端「会话页 → 扫描」只看得到
+            // session-info，**在连上之前拿不到任何地址**。此前只靠
+            // client_connected 下发，导致扫描列表里看不到隧道地址 ——
+            // 用户必须先盲连一次才能记住隧道，而隧道子域每次重启都变，
+            // 「连上过一次」这条路在冷启动时根本走不通（这就是
+            // 「扫描到了会话却连不上」的根因之一）。
+            // 现在扫描即可拿到每个会话的 lan/tunnel，列表直接可点连。
+            ...(() => {
+              try {
+                const ep = sessionEndpoints(this.port, this.sessionId)
+                return { lan: ep.lan, tunnel: ep.tunnel }
+              } catch {
+                // 旁路能力：取地址失败只是不下发这两个字段，
+                // 绝不能让 session-info 本身报错（扫描会整体失败）
+                return { lan: [] as string[], tunnel: null as string | null }
+              }
+            })(),
             // 当前生效的配置，供手机端设置页显示「现在是什么」。
             // 没有它，设置页只能让你「选」，选完就不知道当前值 ——
             // 用户无法判断刚才那次修改是否生效了。
