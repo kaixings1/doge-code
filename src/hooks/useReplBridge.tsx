@@ -566,7 +566,14 @@ export function useReplBridge(messages: Message[], setMessages: (action: React.S
       }
       // 推送是旁路能力：任何异常都不得影响主流程
       try {
-        pushToMobileClients({ role: m.type, text });
+        // 透传消息 uuid 作为 sourceUuid：手机端发送的消息在入站时已被
+        // enqueue 赋了「手机端 requestId」作为 uuid（见 forwardToBridge），
+        // 原样回推后手机端据此精确去重「自己发出、被服务端回推」的那条。
+        // 不传则回推帧缺该字段 → 手机端 sourceRequestId 为空 →
+        // 去重失败 → 同一条消息显示两次（本地回显 + 服务端回推）。
+        // 服务端本地产生的消息（终端键入等）无 uuid，不去重，符合预期。
+        logForDebugging(`[mobile-push][PROBE] push role=${m.type} uuid=${String(m.uuid)} text=${text.slice(0, 20)}`);
+        pushToMobileClients({ role: m.type, text, sourceUuid: m.uuid });
         pushed++;
       } catch (e) {
         logForDebugging(`[bridge:repl] 推送移动端失败（已忽略）：${errorMessage(e)}`);

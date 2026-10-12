@@ -166,6 +166,9 @@ class MainActivity : AppCompatActivity(),
     /** 本地模式的存储（工作区 + Provider 配置）。 */
     private lateinit var localStore: LocalPrefsStore
 
+    /** 已知会话落库（多会话管理）：连接成功时记录，会话页据此列出三模式会话。 */
+    private lateinit var knownSessions: KnownSessionStore
+
     /**
      * 本地模式后端。
      *
@@ -274,6 +277,7 @@ class MainActivity : AppCompatActivity(),
         pinchZoomPrefs = PinchZoomPrefs(this)
         appModePrefs = AppModePrefs(this)
         localStore = LocalPrefsStore(this)
+        knownSessions = KnownSessionStore(this)
         diagnosisLog = DiagnosisLog(this)
         settingsActions = SettingsActions(this, settingsHost)
         // 应用锁解锁结果的回调：必须在调用 setupAppLockGate 前注册好
@@ -1022,7 +1026,8 @@ class MainActivity : AppCompatActivity(),
         settingsFragment!!.onSettingsViewsReady = { url, secret ->
             urlInput = url
             secretInput = secret
-            url.setText(prefs.getString(KEY_URL, DEFAULT_URL))
+            // 地址按当前模式取（每模式各存一份，见 savedAddress）。
+            url.setText(savedAddress())
             secret.setText(prefs.getString(KEY_SECRET, ""))
         }
 
@@ -1035,6 +1040,11 @@ class MainActivity : AppCompatActivity(),
                 modePrefs = appModePrefs,
                 onModeChanged = { mode ->
                     appMode = mode
+                    // 地址按模式分存：切模式时地址框切换成该模式上次用的地址，
+                    // 避免把 LAN 的 IP 带进隧道框（或反之）导致用户每次重填。
+                    if (::urlInput.isInitialized) {
+                        urlInput.setText(savedAddress())
+                    }
                     // 切到云端模式时，顶栏不再显示「未连接」（云端无连接概念）
                     applyModeToUi()
                     // 进入云端模式时重建 localBackend（云端后端独立于远端）。
@@ -1064,6 +1074,11 @@ class MainActivity : AppCompatActivity(),
         // 地址的权威来源本来就是 SharedPreferences（urlInput 只是它的显示副本），
         // 直接读它既打破循环依赖，也避免「界面还没就绪就没有扫描目标」的怪状态。
         sessionFragment!!.scanTargetProvider = { savedAddress() to savedPort() }
+        // 已知会话（三模式，落库而来）——合并进会话列表，补齐扫描/广播
+        // 够不到的 TUNNEL/户外场景。按地址解析出 host/port 供分组与切换。
+        sessionFragment!!.knownSessionsProvider = {
+            knownSessions.list().mapNotNull { it.toSessionOrNull() }
+        }
         // 历史里用过的其它主机（换电脑 / 换 WiFi 时留下的）一并探测。
         // 只取主机名而非完整 URL —— 扫描要的是 host，端口由 SessionScanner
         // 扫 5680-5690 全段决定。
@@ -1089,6 +1104,10 @@ class MainActivity : AppCompatActivity(),
         // 自动连接：广播/扫描发现会话后按策略决定是否自动连。
         // 策略见 AutoConnect（只有一个候选才连；多个让用户选）。
         sessionFragment!!.onBeaconDiscovered = label@{ sessions ->
+            // 自动记住广播里的隧道地址（服务端起 --tunnel 时才有）：
+            // 手机在同一 WiFi 收到即落盘到 TUNNEL 模式地址，出门切流量直接用，
+            // 不必手输那个每次重启都变的随机子域。
+            rememberTunnelUrlFrom(sessions)
             // 连接韧性：当前是回环地址且已多次失败 → 它已失效（USB 拔掉/转发丢失），
             // 不再重试它，而是切到发现的局域网会话（见 ConnectionStrategy）。
             // 这是用户痛点「拔 USB 后卡死在 127.0.0.1」的核心修复：
@@ -1385,10 +1404,16 @@ class MainActivity : AppCompatActivity(),
     /** 切到指定会话并跳到对话页。 */
     private fun switchToSession(s: SessionScanner.Session) {
         sessionLabel = s.label
-        val url = "http://${currentHost()}:${s.port}"
+        // 隧道/云端模式下，会话入口是它自己的 `wss://<子域>/mobile/ws`
+        //（cloudflared 只暴露 wss + 同源 https，`http://子域:端口` 连不通）。
+        // 原先一律用 `host:port` 拼 http，隧道模式下切换必然失败 ——
+        // 这正是「切换模式后切不了会话」的直接原因。
+        val tunnel = if (appMode == AppMode.LAN) null else tunnelUrlFor(s)
+        val url = tunnel ?: "http://${currentHost()}:${s.port}"
         urlInput.setText(url)
+        // 隧道模式下 host 写成 url 里的域名，供 currentHost() 后续一致解析
         connectWith(url, secretInput.text.toString())
-        append(ChatMessage.system("已切换到会话「${s.label}」（端口 ${s.port}）"))
+        append(ChatMessage.system("已切换到会话「${s.label}」（${if (tunnel != null) "隧道" else "端口 ${s.port}"}）"))
         sessionFragment?.setCurrentPort(s.port)
         selectTab(TAB_INDEX_CHAT)
     }
@@ -1655,7 +1680,8 @@ class MainActivity : AppCompatActivity(),
     private fun connectWith(rawUrl: String, secret: String) {
         val url = normalize(rawUrl)
         prefs.edit().apply {
-            putString(KEY_URL, url)
+            // 按当前模式存地址：切模式时各模式恢复自己的地址（见 savedAddress）。
+            putString(urlKeyFor(appMode), url)
             // 密钥持久化做成开关：共用设备场景下用户可能希望不落盘。
             // 刻意**不引入加密库** —— androidx.security:security-crypto 已被
             // Google 标记为 deprecated，而为它引入新依赖换来的保护有限：
@@ -1694,15 +1720,131 @@ class MainActivity : AppCompatActivity(),
      * 从持久化配置读地址（不依赖 UI 控件）。
      *
      * 用于「界面尚未就绪」的场景 —— 见 setupFragments 里的说明。
+     *
+     * **按模式分存**：三种模式的地址形态不同（LAN/USB 是 http://host:port，
+     * TUNNEL 是 wss://域名/mobile/ws），共用一个 last_url 会导致切换模式时
+     * 把上一模式的地址带过去（LAN 的 IP 填进隧道框、隧道的 wss 填进 LAN 框），
+     * 用户每次切模式都要重填。改为每模式各自记，切模式即恢复该模式上次的地址。
      */
-    private fun savedAddress(): String =
-        prefs.getString(KEY_URL, DEFAULT_URL) ?: DEFAULT_URL
+    private fun savedAddress(): String = savedAddressFor(appMode)
+
+    /** 取指定模式的持久化地址（含旧 key 的迁移：旧 last_url 归给 LAN）。 */
+    private fun savedAddressFor(mode: AppMode): String {
+        val key = urlKeyFor(mode)
+        val v = prefs.getString(key, null)
+        if (!v.isNullOrBlank()) return v
+        // 迁移：老版本只有一个 last_url。把它当作 LAN 的地址继承过来，
+        // 避免升级后 LAN 模式地址凭空丢失。
+        if (mode == AppMode.LAN) {
+            val legacy = prefs.getString(KEY_URL, null)
+            if (!legacy.isNullOrBlank()) return legacy
+        }
+        return DEFAULT_URL
+    }
+
+    /** 模式的地址存储 key。 */
+    private fun urlKeyFor(mode: AppMode): String = KEY_URL_PREFIX + mode.name
+
+    /**
+     * 从广播发现里提取隧道地址并存入 TUNNEL 模式的地址。
+     *
+     * 服务端起 `--tunnel` 时会随 beacon 广播当前 `wss://…/mobile/ws`；手机在
+     * 同一 WiFi 收到即自动记住 —— 出门切流量时 TUNNEL 模式已有可用地址，
+     * 不必手输（随机子域每次重启都变，手输体验很差）。
+     *
+     * 只在**地址变化时**写盘，避免每次广播（3 秒一次）都触发一次磁盘写入。
+     */
+    private fun rememberTunnelUrlFrom(sessions: List<SessionScanner.Session>) {
+        // 收集**全部**带隧道地址的实例（多实例 = 多条快隧道各自一条地址）。
+        //
+        // 原先只取第一条（firstNotNullOfOrNull），多实例场景下会把其余实例
+        // 的隧道地址丢掉 —— 隧道模式下手机因此只能连一个会话，切不了别的。
+        val withTunnel = sessions.filter { !it.tunnelUrl.isNullOrBlank() }
+        if (withTunnel.isEmpty()) return
+
+        val map = loadTunnelUrls().toMutableMap()
+        var changed = false
+        for (s in withTunnel) {
+            val url = s.tunnelUrl ?: continue
+            // label 做 key：同一实例的 label 稳定，而子域每次重启都变。
+            // label 为空时退回 "port:<端口>"，避免不同实例塌缩到同一个 key。
+            val key = s.label.ifBlank { "port:${s.port}" }
+            if (map[key] != url) {
+                map[key] = url
+                changed = true
+            }
+        }
+        if (!changed) return
+        // 只在内容真的变化时写盘：广播 3 秒一次，无条件写会频繁触发磁盘 IO。
+        saveTunnelUrls(map)
+
+        // 若用户此刻正停在隧道模式，地址框同步刷新为该模式当前选中项
+        //（原逻辑用最新收到的那条；这里保持相同行为：取映射里的第一条）。
+        val tunnel = map.values.firstOrNull { it.isNotBlank() } ?: return
+        if (::urlInput.isInitialized && appMode == AppMode.TUNNEL) {
+            runOnUiThread { urlInput.setText(tunnel) }
+        }
+    }
+
+    /** 读取多实例隧道地址映射（label → wss url）。解析失败按空表处理。 */
+    private fun loadTunnelUrls(): Map<String, String> {
+        val raw = prefs.getString(KEY_TUNNEL_URLS, null) ?: return emptyMap()
+        return runCatching {
+            val o = org.json.JSONObject(raw)
+            buildMap {
+                for (k in o.keys()) {
+                    val v = o.optString(k, "")
+                    if (v.isNotBlank()) put(k, v)
+                }
+            }
+        }.getOrDefault(emptyMap())
+    }
+
+    /** 写盘多实例隧道地址映射。 */
+    private fun saveTunnelUrls(map: Map<String, String>) {
+        val o = org.json.JSONObject()
+        for ((k, v) in map) o.put(k, v)
+        prefs.edit().putString(KEY_TUNNEL_URLS, o.toString()).apply()
+    }
+
+    /**
+     * 隧道模式下取该会话的 wss 地址。
+     *
+     * 判定顺序：
+     * 1. 会话自带 tunnelUrl（广播直接给的，最新最准）；
+     * 2. 落盘映射里按 label 命中（广播被路由器拦掉时的兜底）；
+     * 3. 都没有 → null（调用方退回 host:port，虽然多半连不通，
+     *    但至少给出可诊断的失败，而不是静默不响应）。
+     */
+    private fun tunnelUrlFor(s: SessionScanner.Session): String? {
+        s.tunnelUrl?.takeIf { it.isNotBlank() }?.let { return it }
+        val key = s.label.ifBlank { "port:${s.port}" }
+        return loadTunnelUrls()[key]?.takeIf { it.isNotBlank() }
+    }
 
     /** 从持久化地址解析主机名。 */
     private fun savedHost(): String = BridgeUrl.hostOf(savedAddress())
 
     /** 从持久化地址解析端口。 */
     private fun savedPort(): Int = BridgeUrl.portOf(savedAddress())
+
+    /**
+     * 取 /mobile/session-info 的完整 URL，按模式选协议。
+     *
+     * - LAN：局域网直连 `http://host:port/mobile/session-info`；
+     * - TUNNEL：地址是 `wss://域名/mobile/ws`，隧道只暴露 wss + 同源 https，
+     *   用 `http://域名:443` 直连不通。改走 `https://域名/mobile/session-info`
+     *   —— cloudflared 会把同源 https 转发到本地 server 的同名 HTTP 端点
+     *   （mobileBridge.ts:641，不校验 secret），故能命中。
+     */
+    private fun sessionInfoUrl(): String {
+        val addr = savedAddress()
+        return if (appMode == AppMode.TUNNEL) {
+            "https://${BridgeUrl.hostOf(addr)}/mobile/session-info"
+        } else {
+            "http://${BridgeUrl.hostOf(addr)}:${BridgeUrl.portOf(addr)}/mobile/session-info"
+        }
+    }
 
     /** 取当前地址栏里的主机名；解析失败时回落到回环地址。 */
     private fun currentHost(): String = BridgeUrl.hostOf(urlInput.text.toString())
@@ -1722,6 +1864,24 @@ class MainActivity : AppCompatActivity(),
                 consecutiveConnectFailures = 0
                 failureHintShown = false
                 interactive = ev.interactive
+                // 记住本会话（多会话管理）：服务端下发了 lan/tunnel 地址与
+                // 标识，落库后会话页无需扫描即可列出它 —— 这是 TUNNEL/户外
+                // 场景下唯一能发现会话的途径（扫网段/收广播都失效）。
+                // 仅当服务端给了地址才记：老服务端不带这些字段，
+                // 记空地址会让列表出现一条点不动的僵尸条目。
+                if (ev.lan.isNotEmpty() || ev.tunnel != null) {
+                    knownSessions.upsert(
+                        knownSessions.fromConnected(
+                            mode = appMode,
+                            lan = ev.lan,
+                            tunnel = ev.tunnel,
+                            label = if (ev.label.isNotBlank()) ev.label else (sessionLabel ?: ""),
+                            cwd = ev.cwd,
+                            port = ev.port,
+                            resumeSessionId = ev.resumeSessionId,
+                        ),
+                    )
+                }
                 if (ev.interactive) {
                     setStatus(true, getString(R.string.status_connected))
                 } else {
@@ -1802,6 +1962,7 @@ class MainActivity : AppCompatActivity(),
                 ) || (ev.sourceRequestId.isNotEmpty() && sentReqIds.remove(ev.sourceRequestId))
                 // 定稿消息到达：清掉流式预览（它是权威版本，可能更长/更完整）。
                 // 必须在 append 之前清，否则预览气泡会短暂与定稿气泡并存。
+                android.util.Log.i("doge-probe", "[PROBE] role=${ev.role} srcRid='${ev.sourceRequestId}' isEcho=$isEcho sentReqIds=${sentReqIds.toList()} text=${ev.text.take(20)}")
                 if (ev.role == "assistant") clearStreamingState()
                 if (!isEcho) {
                     append(
@@ -2295,10 +2456,8 @@ class MainActivity : AppCompatActivity(),
      * 用户会据此判断「刚才那次修改生效了吗」。
      */
     private fun refreshRemoteConfig() {
-        val host = savedHost()
-        val port = savedPort()
         thread {
-            val snapshot = SessionScanner.configFrom(SessionScanner.fetchSessionInfo(host, port))
+            val snapshot = SessionScanner.configFrom(SessionScanner.fetchSessionInfo(sessionInfoUrl()))
             if (snapshot == null) return@thread
             runOnUiThread {
                 settingsFragment?.showConfigValue(
@@ -2368,10 +2527,8 @@ class MainActivity : AppCompatActivity(),
      * 把已有标签（比如用户刚从会话列表选的那个）清掉。
      */
     private fun refreshSessionLabel() {
-        val host = savedHost()
-        val port = savedPort()
         thread {
-            val label = SessionScanner.labelFrom(SessionScanner.fetchSessionInfo(host, port))
+            val label = SessionScanner.labelFrom(SessionScanner.fetchSessionInfo(sessionInfoUrl()))
             if (label != null) {
                 runOnUiThread { sessionLabel = label }
             }
@@ -3229,7 +3386,10 @@ class MainActivity : AppCompatActivity(),
 
     companion object {
         private const val PREFS = "doge_mobile"
+        /** 旧版单一地址 key。仅作 LAN 模式的迁移来源（见 savedAddressFor）。 */
         private const val KEY_URL = "last_url"
+        /** 每模式地址 key 前缀：last_url_<MODE>（LAN / CLOUD / TUNNEL）。 */
+        private const val KEY_URL_PREFIX = "last_url_"
         private const val KEY_SECRET = "secret"
 
         /** 是否把密钥落盘。默认保存（方便自动重连）；关闭后每次需手输。 */
@@ -3278,6 +3438,19 @@ class MainActivity : AppCompatActivity(),
 
         /** 地址历史（换行分隔，最近使用在前）。 */
         private const val KEY_HOSTS = "host_history"
+
+        /**
+         * 多实例隧道地址映射（JSON 对象：`{label: "wss://…/mobile/ws"}`）。
+         *
+         * 为什么需要「多个」而非单值：每个 CLI 实例各自起一条 cloudflared
+         * 快隧道，隧道地址随 beacon 广播带 `tunnelUrl` 字段。原先只取
+         * `firstNotNullOfOrNull` 记最后一个，导致隧道模式下手机只知道一个
+         * 会话的地址 —— 切换会话时找不到别的实例（用户痛点）。
+         *
+         * 用 label 做 key（同一实例的 label 在重连间稳定；子域每次重启都变，
+         * 不能做 key）。读到无法解析的老数据时按空表处理，不抛异常。
+         */
+        private const val KEY_TUNNEL_URLS = "tunnel_urls"
 
         /** 地址历史保留条数上限。 */
         private const val MAX_HOSTS = 8

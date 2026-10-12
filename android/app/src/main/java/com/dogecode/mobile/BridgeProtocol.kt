@@ -15,7 +15,29 @@ object BridgeProtocol {
 
     /** 解析结果。Unparsed 表示不是合法 JSON 或不认识的消息。 */
     sealed interface Msg {
-        data class Connected(val interactive: Boolean) : Msg
+        /**
+         * 连接成功（服务端 client_connected）。
+         *
+         * 除 interactive 外，还带回**本会话的可用地址与标识**（服务端
+         * sessionEndpoints 展开在同一层）——手机据此直接列出本会话，
+         * 不必自己扫端口段或等 UDP 广播（那些在户外/异地/换网段时都失效）。
+         * 字段缺失时回落安全默认：老服务端不带这些字段，不应崩。
+         */
+        data class Connected(
+            val interactive: Boolean,
+            /** 本机候选 http://IP:port 列表（手机同网段时直连）。可能为空。 */
+            val lan: List<String> = emptyList(),
+            /** 隧道 wss:// 地址；无隧道时为 null。 */
+            val tunnel: String? = null,
+            /** 会话标签（列表展示用）。 */
+            val label: String = "",
+            /** 会话工作目录。 */
+            val cwd: String = "",
+            /** 服务端监听端口。0 表示未提供。 */
+            val port: Int = 0,
+            /** 真实 doge 会话 id（供 --resume）；无则 null。 */
+            val resumeSessionId: String? = null,
+        ) : Msg
         data class Incoming(
             val role: String,
             val text: String,
@@ -146,11 +168,24 @@ object BridgeProtocol {
     fun parse(text: String): Msg {
         val o = runCatching { JSONObject(text) }.getOrNull() ?: return Msg.Unparsed
         return when (o.optString("type")) {
-            "client_connected" -> Msg.Connected(
-                // 缺 interactive 字段时按 true 处理：服务端旧版本没有该字段，
-                // 误报「非交互」比漏报更扰人。
-                o.optJSONObject("data")?.optBoolean("interactive", true) ?: true,
-            )
+            "client_connected" -> {
+                val d = o.optJSONObject("data")
+                Msg.Connected(
+                    // 缺 interactive 字段时按 true 处理：服务端旧版本没有该字段，
+                    // 误报「非交互」比漏报更扰人。
+                    interactive = d?.optBoolean("interactive", true) ?: true,
+                    lan = d?.optJSONArray("lan")?.let { arr ->
+                        (0 until arr.length()).mapNotNull { i ->
+                            arr.optString(i).takeIf { it.isNotBlank() }
+                        }
+                    }.orEmpty(),
+                    tunnel = d?.optString("tunnel")?.takeIf { it.isNotBlank() },
+                    label = d?.optString("label").orEmpty(),
+                    cwd = d?.optString("cwd").orEmpty(),
+                    port = d?.optInt("port", 0) ?: 0,
+                    resumeSessionId = d?.optString("resumeSessionId")?.takeIf { it.isNotBlank() },
+                )
+            }
 
             // 服务端会把其它设备（或 CLI 终端）键入的消息以 type:"user" 广播，
             // 用于多设备同步。不能丢——否则 B 设备看不到 A 发的消息。

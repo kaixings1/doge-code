@@ -125,6 +125,15 @@ class SessionAdapter(
                 "⚠ 非交互，消息不会被处理"
             }
             meta.text = buildString {
+                // 来源模式标签：已知会话（落库）带 mode，让三模式会话混在
+                // 一张列表里也分得清；扫描发现的 LAN 会话来时 mode 为空，
+                // 不打标签（它就是默认的局域网发现结果）。
+                // 「隧道」标签：mode=TUNNEL 的已知会话，或带 tunnelUrl 的
+                // 广播会话（出门切流量后用户靠它认出哪些实例公网可达）。
+                when {
+                    s.mode == "CLOUD" -> append("云端   ")
+                    s.mode == "TUNNEL" || !s.tunnelUrl.isNullOrBlank() -> append("隧道   ")
+                }
                 append("端口 ").append(s.port).append("   ").append(interactiveText)
                 if (s.clients > 0) append("   已连 ").append(s.clients).append(" 台")
             }

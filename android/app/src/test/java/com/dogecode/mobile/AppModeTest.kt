@@ -1,6 +1,7 @@
 package com.dogecode.mobile
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -30,13 +31,14 @@ class AppModeTest {
     }
 
     @Test
-    fun `默认模式是局域网（升级体验契约）`() {
+    fun `默认模式是隧道（互联网连本机）`() {
         // 用 AppModePrefs 的实际默认值断言，而非只测常量 ——
-        // 测的是「用户开箱即得什么」
+        // 测的是「用户开箱即得什么」。
+        // 产品要求：默认走 TUNNEL（户外也能连本机的最通用模式）。
         val d = defaultMode()
         assertEquals(
-            "默认必须是 LAN：现有用户升级后不该看到需要重配的界面",
-            AppMode.LAN,
+            "默认必须是 TUNNEL：开箱即得「随时连本机」，无需先懂 WiFi/USB 区别",
+            AppMode.TUNNEL,
             d,
         )
     }
@@ -51,12 +53,12 @@ class AppModeTest {
     }
 
     @Test
-    fun `未知模式值回落 LAN 而非崩溃`() {
+    fun `未知模式值回落默认（隧道）而非崩溃`() {
         // 旧版本存的值、或手工改坏的 prefs，都不该让 App 打不开。
         // 测的是**真实的** parse（AppModePrefs.get 也调它）
-        assertEquals(AppMode.LAN, AppMode.parse("TURBO"))
-        assertEquals(AppMode.LAN, AppMode.parse(""))
-        assertEquals(AppMode.LAN, AppMode.parse("remote")) // 大小写敏感：不认识就回落
+        assertEquals(AppMode.TUNNEL, AppMode.parse("TURBO"))
+        assertEquals(AppMode.TUNNEL, AppMode.parse(""))
+        assertEquals(AppMode.TUNNEL, AppMode.parse("remote")) // 大小写敏感：不认识就回落
     }
 
     @Test

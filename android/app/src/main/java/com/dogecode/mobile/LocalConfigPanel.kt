@@ -304,7 +304,16 @@ class LocalConfigPanel(
         val scanVis = if (showLanScan) View.VISIBLE else View.GONE
         scanPortLabel?.visibility = scanVis
         scanPortInput?.visibility = scanVis
-        scanPortDesc?.visibility = scanVis
+        // scan_port_desc 在两个模式都要用，但内容不同：
+        //   LAN    → 端口段说明
+        //   TUNNEL → 隧道地址怎么来的（就近引导，别让用户对着空框发懵）
+        // 故不随 scanVis 一起藏，而是按模式改文本后始终显示。
+        scanPortDesc?.visibility = View.VISIBLE
+        scanPortDesc?.text = if (mode == AppMode.TUNNEL) {
+            fragment.getString(R.string.tunnel_connect_guide)
+        } else {
+            fragment.getString(R.string.scan_port_desc)
+        }
         // 地址框 hint 随模式切换：LAN 提示局域网/USB 地址，TUNNEL 提示公网 wss。
         urlInput?.hint = if (mode == AppMode.TUNNEL) {
             fragment.getString(R.string.url_hint_tunnel)

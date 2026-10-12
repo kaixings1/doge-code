@@ -165,6 +165,14 @@ export class MobileSessionManager {
 
     session.state = 'disconnected'
     session.lastActivityAt = Date.now()
+    // **必须从 map 移除**，否则 sessions.size 永不下降：
+    // createSession 的「已达上限」判断用的是 size，而 size 只增不减
+    // → 同一手机反复重连（切 WiFi / 隧道重连 / 多次启动 App）会累积
+    //   僵尸会话，打满 5 个上限后**永久拒绝**新连接，现象是手机 WS 刚
+    //   握上手就被服务端 close（客户端看到 EOFException），且 30 分钟内
+    //   无法自愈。真机实测踩过：日志反复「会话数已达上限（5）」。
+    // 保留上面两行状态更新（供统计数据/日志读取该对象），再删除条目。
+    this.sessions.delete(sessionId)
     return true
   }
 

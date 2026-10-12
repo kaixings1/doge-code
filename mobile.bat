@@ -51,6 +51,7 @@ echo [mobile.bat] CLAUDE_CODE_MOBILE_BRIDGE=1
 echo [mobile.bat] After the CLI starts, run: /mobile-connect
 echo [mobile.bat] Then open the printed URL on your phone (start port %CLAUDE_CODE_MOBILE_PORT%).
 echo.
+cd /d D:\doge-code && node scripts\start-mobile-bridge.mjs --tunnel
 
 bun run ^
     --feature=TERMINAL_PANEL --feature=PROACTIVE --feature=KAIROS ^

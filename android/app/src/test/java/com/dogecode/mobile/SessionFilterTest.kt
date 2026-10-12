@@ -99,3 +99,32 @@ class SessionFilterTest {
         assertEquals("不应修改入参", copy, all)
     }
 }
+
+/**
+ * 扫描 watchdog 的复位判据测试（卡死防护）。
+ *
+ * 背景：SessionFragment.scanning 是防重复扫描的守卫，一旦卡 true，
+ * 会话页从此扫不动。watchdog 超时兜底复位它 —— 但只在**仍在扫描**时
+ * 才该复位；扫描已正常完成后迟到的 watchdog 若也复位，会把成功结果
+ * 误报成「超时」。两个方向都错得静默，须锁死。
+ *
+ * 变异验证：把 shouldForceReset 改成恒 false（永不复位）→ 用例 1 失败；
+ * 改成恒 true（迟到也复位）→ 用例 2 失败。
+ */
+class ScanWatchdogTest {
+
+    @Test
+    fun `扫描中收超时回调才复位`() {
+        assertTrue("扫描中应复位", SessionFragment.shouldForceReset(scanning = true))
+    }
+
+    @Test
+    fun `扫描已完成时迟到的回调不复位`() {
+        // 关键：扫描提前正常完成时，watchdog 回调是迟到者，必须被忽略，
+        // 否则会把一次成功扫描误报为超时
+        assertTrue(
+            "已完成的扫描不应被迟到回调复位",
+            !SessionFragment.shouldForceReset(scanning = false),
+        )
+    }
+}

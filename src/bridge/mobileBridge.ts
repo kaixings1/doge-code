@@ -34,6 +34,7 @@ import { getTerminalFocusState } from '../ink/terminal-focus-state.js'
 import { validateMobileConfig } from './mobileConfig.js'
 import { PORT_SCAN_LIMIT, allPortsBusyMessage, candidatePorts } from './mobilePortScan.js'
 import { MobileBeaconSender } from './mobileBeaconSender.js'
+import { readTunnelUrl, toWsUrl } from './tunnelUrlFile.js'
 import { buildDiffPreviewForMobile } from './mobileDiffPreview.js'
 import { getMainLoopModel } from '../utils/model/model.js'
 import { getSessionId } from '../bootstrap/state.js'
@@ -573,6 +574,13 @@ export class MobileBridgeServer {
     label: resolveSessionLabel(),
     interactive: process.stdin.isTTY === true,
     clients: this.connectedClients.size,
+    // 每次广播动态读隧道地址文件（快隧道子域会变，且可能尚未建立）：
+    // 有则带 wss 地址，手机同 WiFi 收到即自动记住；无则省略该字段。
+    // 按 `this.port` 读：多实例各自一条隧道，各读自己那份（见 tunnelUrlFile.ts）。
+    tunnelUrl: (() => {
+      const https = readTunnelUrl(this.port)
+      return https ? toWsUrl(https) : null
+    })(),
   }))
 
   constructor(options: {
@@ -852,7 +860,20 @@ export class MobileBridgeServer {
         }
 
         this.connectedClients.add(ws)
-        this.broadcast('client_connected', {
+        // 只发给刚连上的这台设备，不广播：
+        // 里面带的是「本会话的可用地址」，对**这台**新客户端才有意义；
+        // 广播会让已连接的其他设备重复收到同一份无用的地址信息。
+        // （重连需要刷新地址时，客户端会重新走握手，届时再拿一次。）
+        // 展开顺序：先展开 endpoints（含 sessionId=服务器会话 id），
+        // 再用显式字段覆盖为**每设备会话 id**（session.sessionId）——
+        // 二者不同：前者是 CLI 会话标识，后者是 sessionManager 按设备分配的。
+        // 老的 client_connected 用后者，客户端已依赖它，必须保持。
+        const connectedPayload = {
+          // 本会话可用地址 + 标识：手机据此直接列出本会话，无需自己扫描。
+          // 展开为同一层字段（而非嵌套 endpoints），保持与既有老客户端兼容
+          // —— 老客户端忽略未识别字段，新客户端读 lan/tunnel/label 等。
+          ...sessionEndpoints(this.port, this.sessionId),
+          // 覆盖：每设备会话 id（sessionManager 分配），非服务器会话 id。
           sessionId: session.sessionId,
           deviceId,
           deviceType,
@@ -861,7 +882,17 @@ export class MobileBridgeServer {
           // 把该状态告诉客户端，让手机端给出明确提示，而不是让用户对着
           // 「已提交」苦等回复（这正是之前最难排查的一种静默失败）。
           interactive: process.stdin.isTTY === true,
-        })
+        }
+        try {
+          ws.send(JSON.stringify({ type: 'client_connected', data: connectedPayload, timestamp: Date.now() }))
+        } catch (e) {
+          // 发送失败不影响连接本身；降级为广播，至少让客户端有基本标识
+          logForDebugging(
+            `[MobileBridgeServer] client_connected 定向发送失败，降级广播：${e instanceof Error ? e.message : String(e)}`,
+            { level: 'warn' },
+          )
+          this.broadcast('client_connected', connectedPayload)
+        }
         logForDebugging(`[MobileBridgeServer] 客户端连接: ${deviceId}`)
       })
 
@@ -2162,6 +2193,42 @@ export function getLanIp(): string {
 }
 
 /**
+ * 列出本机所有**可能被手机连上**的局域网 IPv4 地址（不止默认路由那个）。
+ *
+ * 与 [getLanIp] 的区别：后者取「最可能对」的单个地址（默认路由），用于
+ * 二维码/启动日志这类只放一个的地方；本函数返回**全部候选**，用于
+ * 连接时下发给手机 —— 手机可能有多个网段可达（WiFi + USB 反向转发 +
+ * Tailscale 等），只给一个会让它在另一些网络下连不上。
+ *
+ * 过滤规则与 getLanIp 的回退分支一致：排除回环 / APIPA(169.254) /
+ * 常见虚拟网卡名。按「默认路由地址优先、192.168 段优先」排序，
+ * 手机端可按序尝试，命中即用。
+ */
+export function listLanIps(): string[] {
+  const result: string[] = []
+  const preferred = getLanIp()
+  if (preferred && preferred !== 'localhost') result.push(preferred)
+
+  try {
+    const os = require('os') as typeof import('os')
+    const ifaces = os.networkInterfaces()
+    const VIRTUAL = /vmware|virtualbox|vethernet|hyper-v|docker|wsl|loopback|virtual|tap|tun|bluetooth|km-test|host-only/i
+    for (const name of Object.keys(ifaces)) {
+      if (VIRTUAL.test(name)) continue
+      for (const info of ifaces[name] ?? []) {
+        if (info.family !== 'IPv4' || info.internal) continue
+        const addr = info.address
+        if (addr.startsWith('169.254.')) continue
+        if (!result.includes(addr)) result.push(addr)
+      }
+    }
+  } catch {
+    // 忽略：至少返回 preferred（或空）
+  }
+  return result
+}
+
+/**
  * 获取移动端桥接 URL（用于二维码生成）
  *
  * 手机与电脑不在同一台机器上，必须返回局域网地址而非 localhost，
@@ -2170,6 +2237,55 @@ export function getLanIp(): string {
 export function getMobileBridgeUrl(port?: number): string {
   const p = port ?? resolveMobilePort()
   return `http://${getLanIp()}:${p}`
+}
+
+/**
+ * 组装「本会话的可用接入地址」，供连接时下发给手机。
+ *
+ * 为什么要有这个：此前手机连接成功后只收到 sessionId/deviceId 等标识，
+ * **拿不到任何可用 URL** —— 会话列表的多会话发现只能靠手机自己扫端口段
+ * 或被动收 UDP 广播（仅同 WiFi 有效）。户外/异地的隧道会话、或手机换到
+ * 另一网段时，扫不到也收不到，用户无从得知该连哪个地址。
+ *
+ * 下发内容（手机据此即可列出本会话，无需扫描）：
+ * - lan:     本机所有候选 http://IP:port（手机同网段时直连）
+ * - tunnel:  若 CLI 起了 --tunnel，wss://域名（户外可连）；无则 null
+ * - 会话标识：sessionId（移动桥接自造）/ resumeSessionId（真实 doge 会话，
+ *             供 --resume）/ cwd / label —— 多会话列表靠这些区分
+ *
+ * 动态取值（非构造快照）：端口可能顺延、隧道子域会变、标签可被重命名。
+ */
+export function sessionEndpoints(port: number, sessionId: string): {
+  sessionId: string
+  resumeSessionId: string | null
+  port: number
+  cwd: string
+  label: string
+  lan: string[]
+  tunnel: string | null
+} {
+  return {
+    sessionId,
+    resumeSessionId: (() => {
+      try {
+        return getSessionId()
+      } catch {
+        return null
+      }
+    })(),
+    port,
+    cwd: process.cwd(),
+    label: resolveSessionLabel(),
+    lan: listLanIps().map(ip => `http://${ip}:${port}`),
+    tunnel: (() => {
+      try {
+        const https = readTunnelUrl(port)
+        return https ? toWsUrl(https) : null
+      } catch {
+        return null
+      }
+    })(),
+  }
 }
 
 /**

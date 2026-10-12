@@ -74,6 +74,8 @@ object BeaconProtocol {
             clients = if (o.opt("clients") is Number) o.optInt("clients") else 0,
             resumeSessionId = str(o, "resumeSessionId").takeIf { it.isNotBlank() },
             lastActivity = now,
+            // 隧道地址只在服务端起了 --tunnel 时才有；无则 null（不影响其它字段）。
+            tunnelUrl = str(o, "tunnelUrl").takeIf { it.isNotBlank() },
         )
     }
 

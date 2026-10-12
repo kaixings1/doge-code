@@ -28,6 +28,8 @@ import { AutoFixLoop, type AutoFixLoopConfig } from "./autoFixLoop.ts";
 import { cleanupHistoryBase64, applyPhase2Degradation, DEFAULT_IMAGE_BUDGET_CONFIG, type ImageBudgetConfig } from "./imageBudgetGuard.ts";
 import { GitContextInjector, type GitContextConfig } from "./gitContext.ts";
 import { HookManager, type HookEvent } from "./hooks/hookManager.js";
+// 移动端流式增量：把每个 text delta 推给手机（未启用桥接时为 no-op）
+import { pushDeltaToMobileClients, flushPendingDelta } from "../bridge/mobileBridge.js";
 
 export interface QueryResult {
   state: string;
@@ -524,7 +526,22 @@ export class MessageLoop {
     if (ENGINE_DUMP) engineLog('REQ', JSON.stringify(request, null, 2).slice(0, 5000));
 
     const stream = await this.deps.apiClient.sendMessage(request);
-    const processed = await this.deps.responseHandler.handle(stream as AsyncIterable<{ type: string; [k: string]: unknown }>);
+    // 移动端流式预览：把每个 text delta 实时推给手机（启用桥接时才有效果）。
+    // 不推 thinking/tool_use —— 手机端预览区只显示助手正文。
+    this.deps.responseHandler.onChunk = (chunk) => {
+      if (chunk.type === 'text' && chunk.text) {
+        pushDeltaToMobileClients(chunk.text)
+      }
+    }
+    let processed: ProcessedResponse
+    try {
+      processed = await this.deps.responseHandler.handle(stream as AsyncIterable<{ type: string; [k: string]: unknown }>);
+    } finally {
+      // 清除回调，避免下一轮流式把增量推给已结束的回合；
+      // flush 冲掉节流残留，否则最后不足节流窗口的一段会丢（预览停在残缺文本上）。
+      delete this.deps.responseHandler.onChunk
+      flushPendingDelta()
+    }
 
     // 记录真实 API token 使用量用于成本追踪
     if (processed.usage) {

@@ -53,6 +53,24 @@ object SessionScanner {
          * 而不是当成「1970 年最久远」之外的特殊值处理，省一层判断。
          */
         val lastActivity: Long = 0L,
+        /**
+         * 该会话的公网隧道地址（`wss://<子域>.trycloudflare.com/mobile/ws`）。
+         *
+         * 仅由 **UDP 广播**携带（服务端起了 `--tunnel` 时才有）——
+         * 端口扫描拿不到它。手机据此自动记住隧道地址，出门切流量可用。
+         * 无隧道 / 老版本 / 扫描发现时为 null。
+         */
+        val tunnelUrl: String? = null,
+        /**
+         * 来源模式（LAN/CLOUD/TUNNEL 的 AppMode.name）。
+         *
+         * 空串 = 端口扫描/广播发现的 LAN 会话（真实网络探测所得）。
+         * 非空 = 来自 [KnownSessionStore] 的已知会话（连接成功时服务端下发
+         * 并落库）—— 这类会话在 TUNNEL/户外场景下是唯一能列出的，
+         * 因为扫描与广播都够不到。列表据此给条目打模式标签，让用户
+         * 一眼看出「这条是本机隧道、那条是局域网」。
+         */
+        val mode: String = "",
     ) {
         /** 拼出可用的连接地址。 */
         fun httpUrl(host: String = this.host) = "http://$host:$port"
@@ -93,17 +111,22 @@ object SessionScanner {
     }
 
     /**
-     * 拉取指定端口的 /mobile/session-info 原始响应体。
+     * 按完整 URL 拉取 /mobile/session-info 原始响应体。
      *
-     * 供「连接成功后补取会话标签」用 —— 那条路径只连一个端口，不需要扫描
-     * 整个端口段。失败一律返回 null（未启用移动桥接的端口是常态，不该刷日志）。
+     * 与 host/port 重载分工：
+     * - host/port 重载：LAN 局域网直连 `http://host:port`，由本函数拼出 URL 后转调；
+     * - 此重载直接吃 URL：给 TUNNEL 模式用 —— 隧道地址是 `wss://域名/mobile/ws`，
+     *   不能用 `http://域名:443` 直连（隧道只暴露 wss + 同源 https，与 wss 同转发到
+     *   本地 server）。TUNNEL 下调用方传 `https://域名/mobile/session-info`，
+     *   经 cloudflared 命中本地 server 的同名 HTTP 端点（mobileBridge.ts:641，不校验 secret）。
+     *
+     * 失败一律返回 null（未启用移动桥接的端口是常态，不该刷日志）。
      * 必须在后台线程调用。
      */
-    fun fetchSessionInfo(host: String, port: Int): String? {
+    fun fetchSessionInfo(url: String): String? {
         var conn: HttpURLConnection? = null
         return try {
-            val url = URL("http://$host:$port/mobile/session-info")
-            conn = (url.openConnection() as HttpURLConnection).apply {
+            conn = (URL(url).openConnection() as HttpURLConnection).apply {
                 requestMethod = "GET"
                 connectTimeout = FETCH_TIMEOUT_MS
                 readTimeout = FETCH_TIMEOUT_MS
@@ -117,6 +140,10 @@ object SessionScanner {
             conn?.disconnect()
         }
     }
+
+    /** 局域网直连重载：拼出 `http://host:port/mobile/session-info` 后转调 URL 版。 */
+    fun fetchSessionInfo(host: String, port: Int): String? =
+        fetchSessionInfo("http://$host:$port/mobile/session-info")
 
     /**
      * 探测单个 (host, port) 是否为 doge 移动桥接。

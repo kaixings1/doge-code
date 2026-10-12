@@ -34,8 +34,21 @@ class BridgeClient(
     private val onDiagnosis: ((reason: String, httpCode: Int?, address: String) -> Unit)? = null,
 ) {
     sealed interface Event {
-        /** 已连接；interactive=false 表示 CLI 跑在非交互终端，消息不会被处理 */
-        data class Connected(val interactive: Boolean) : Event
+        /**
+         * 已连接；interactive=false 表示 CLI 跑在非交互终端，消息不会被处理。
+         *
+         * 随附服务端下发的本会话可用地址与标识（sessionEndpoints），
+         * 供会话记录落库/展示 —— 老服务端不带这些字段时为空值。
+         */
+        data class Connected(
+            val interactive: Boolean,
+            val lan: List<String> = emptyList(),
+            val tunnel: String? = null,
+            val label: String = "",
+            val cwd: String = "",
+            val port: Int = 0,
+            val resumeSessionId: String? = null,
+        ) : Event
         data class Disconnected(val reason: String) : Event
         data class Incoming(
             val role: String,
@@ -163,6 +176,18 @@ class BridgeClient(
     val isConnected: Boolean get() = connected
 
     fun connect(wsUrl: String) {
+        // 先关掉可能存在的旧连接再开新的。
+        //
+        // 若不关：一次 connectWith 里若 connect() 被调用两次（或重连与手动
+        // 连接叠加），会同时存在**两个** WebSocket —— 服务端 sendToAll 会把
+        // 每条消息广播到两个连接，手机端就**收到两份**（发送回显、助手回复
+        // 全都重复）。真机实测复现过此症状。
+        // 旧 socket 关闭会触发 onClosed/onFailure，但此处 manualClose 先置
+        // true，故不会调度重连，安全。
+        manualClose = true
+        socket?.close(1000, "reconnect")
+        socket = null
+
         manualClose = false
         url = wsUrl
         retryDelayMs = 1000L
@@ -332,17 +357,25 @@ class BridgeClient(
         val target = url ?: return
         Log.i(TAG, "连接 $target")
         val req = Request.Builder().url(target).build()
-        socket = http.newWebSocket(req, object : WebSocketListener() {
+        val ws = http.newWebSocket(req, object : WebSocketListener() {
             override fun onOpen(webSocket: WebSocket, response: Response) {
                 Log.i(TAG, "WS 已打开，等待 client_connected")
                 // 真正的"可用"要等 client_connected，这里不置 connected
             }
 
             override fun onMessage(webSocket: WebSocket, text: String) {
+                // **只处理"当前"连接的消息**：旧的、已被替换的连接在真正关闭前
+                // 仍可能回调 onMessage。若不校验，重连时新旧的 listener 都在跑，
+                // 同一条服务端 push（assistant/回显）会被处理两次 → 界面显示两份。
+                // OkHttp 的 close() 是异步的，这个窗口真实存在，不是理论问题。
+                if (webSocket !== socket) return
                 handleMessage(text)
             }
 
             override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+                // 旧连接的失败不得触发重连：否则会把新连接也顶掉，
+                // 两条 WS 并存 → 消息重复。见上 onMessage 的说明。
+                if (webSocket !== socket) return
                 // 带上异常类型与 HTTP 响应码：真机排查时只看到 "连接失败"
                 // 完全无法区分是 DNS、拒绝连接、升级被拒还是证书问题。
                 Log.w(
@@ -365,6 +398,9 @@ class BridgeClient(
             }
 
             override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+                // 旧连接的关闭同样要忽略：否则一次重连会因旧连接的 onClosed
+                // 再触发一次 scheduleReconnect，开出一条多余的 WS（消息重复）。
+                if (webSocket !== socket) return
                 connected = false
                 when (classifyClose(code)) {
                     // 密钥不对是永久性失败：重连多少次都一样，只会每 30 秒
@@ -405,6 +441,10 @@ class BridgeClient(
                 }
             }
         })
+        // newWebSocket 的回调是**异步**的（onOpen/onMessage 都在建好之后才触发），
+        // 故此处的赋值必然先于任何回调；listener 里的 `webSocket !== socket`
+        // 判断因此能正确区分「当前连接」与「被替换的旧连接」。
+        socket = ws
     }
 
     private fun handleMessage(text: String) {
@@ -415,9 +455,24 @@ class BridgeClient(
                 // 连上了就清掉诊断：它是「当前问题」的指示，不是历史账本
                 reconnectAttempts = 0
                 lastDiagnosis = null
-                post { onEvent(Event.Connected(m.interactive)) }
+                post {
+                    onEvent(
+                        Event.Connected(
+                            interactive = m.interactive,
+                            lan = m.lan,
+                            tunnel = m.tunnel,
+                            label = m.label,
+                            cwd = m.cwd,
+                            port = m.port,
+                            resumeSessionId = m.resumeSessionId,
+                        ),
+                    )
+                }
             }
-            is BridgeProtocol.Msg.Incoming -> post { onEvent(Event.Incoming(m.role, m.text, m.suppressNotify, m.sourceRequestId)) }
+            is BridgeProtocol.Msg.Incoming -> {
+                Log.i(TAG, "[PROBE] Incoming role=${m.role} srcRid='${m.sourceRequestId}' text=${m.text.take(20)}")
+                post { onEvent(Event.Incoming(m.role, m.text, m.suppressNotify, m.sourceRequestId)) }
+            }
             is BridgeProtocol.Msg.Queued -> post { onEvent(Event.Queued(m.requestId)) }
             is BridgeProtocol.Msg.Error -> post { onEvent(Event.Error(m.message)) }
             is BridgeProtocol.Msg.PermissionRequest -> post {

@@ -57,6 +57,15 @@ class SessionFragment : Fragment() {
         fun onSessionOpen(session: SessionScanner.Session)
     }
 
+    /**
+     * 已知会话 provider（由 Activity 注入，通常读 [KnownSessionStore]）。
+     *
+     * 返回的三模式已知会话会被合并进列表 —— 它们是扫描/广播够不到的：
+     * TUNNEL 会话在公网隧道后扫不到、手机换网段后广播也收不到。
+     * 返回空列表表示暂无已知会话（首次安装、从未连过），不影响扫描通路。
+     */
+    var knownSessionsProvider: () -> List<SessionScanner.Session> = { emptyList() }
+
     private lateinit var list: RecyclerView
     private lateinit var hint: TextView
     private lateinit var search: EditText
@@ -215,6 +224,11 @@ class SessionFragment : Fragment() {
         scanning = true
         setScanButtonBusy(true)
         startWaitHint()
+        // 硬超时兜底：无论扫描线程死活，到时强制复位 scanning（见字段注释）。
+        // 用 hint 视图承载（与本文件等待提示同一机制，无需额外 Handler 字段）。
+        val dog = Runnable { onScanHardTimeout() }
+        scanWatchdog = dog
+        hint.postDelayed(dog, SCAN_HARD_TIMEOUT_MS)
 
         val target = scanTargetProvider?.invoke() ?: ("127.0.0.1" to null)
         val currentHost = target.first.ifBlank { "127.0.0.1" }
@@ -224,6 +238,10 @@ class SessionFragment : Fragment() {
         hint.text = getString(R.string.session_scan_hint)
 
         thread {
+          // 整个扫描体 try/finally 包住：任何未预期异常都必须走到 finally
+          // 复位 scanning —— 否则异常让扫描线程静默死掉、标志永久为 true，
+          // 会话页从此再也扫不动（只有 watchdog 能救，但那要等 30 秒）。
+          try {
             // 直接主机（当前 + 历史）：精确探测，每个都扫端口段
             val direct = SubnetCandidates.merge(listOf(currentHost), historyHosts)
             val found = ArrayList<SessionScanner.Session>()
@@ -266,12 +284,43 @@ class SessionFragment : Fragment() {
                 // 结果合并（见 mergeAndRender），直接赋值会让广播发现
                 // 的会话在扫描完成后消失
                 scannedSessions = deduped
-                scanning = false
-                setScanButtonBusy(false)
-                stopWaitHint()
+                finishScan()
                 mergeAndRender()
             }
+          } catch (e: Exception) {
+            // 扫描体异常：不吞，记录并复位（否则 scanning 卡在 true）
+            android.util.Log.w(TAG, "扫描线程异常：${e.message}")
+            activity?.runOnUiThread { if (isAdded) finishScan() }
+          }
         }
+    }
+
+    /**
+     * 收尾一次扫描：复位 scanning、恢复按钮、取消 watchdog 与等待提示。
+     * 幂等 —— 正常完成、异常、watchdog 超时三条路径都会调用，重复调用无害。
+     */
+    private fun finishScan() {
+        scanning = false
+        scanWatchdog?.let { hint.removeCallbacks(it) }
+        scanWatchdog = null
+        stopWaitHint()
+        if (isAdded) setScanButtonBusy(false)
+    }
+
+    /** watchdog 触发：扫描超时未回，强制复位并在提示行说明。 */
+    private fun onScanHardTimeout() {
+        // 判据抽成纯函数（可单测）：仅当仍处于扫描中才需要复位。
+        // 若扫描已在超时前正常完成（scanning 已 false），watchdog 是
+        // 迟到的回调，必须直接返回 —— 否则会把一次已完成的扫描误报成超时。
+        if (!shouldForceReset(scanning)) return
+        scanning = false
+        scanWatchdog = null
+        stopWaitHint()
+        setScanButtonBusy(false)
+        // 给出可执行的下一步，而不是让用户对着「没反应」猜
+        hint.text = getString(R.string.session_scan_timeout)
+        // 超时后也渲染一次已有结果（可能扫到一部分），总比空白好
+        mergeAndRender()
     }
 
     /**
@@ -309,7 +358,15 @@ class SessionFragment : Fragment() {
      * 必然出现「广播刷新后扫描结果丢了」这类问题。
      */
     private fun mergeAndRender() {
-        allSessions = BeaconProtocol.merge(beaconSessions, scannedSessions)
+        val discovered = BeaconProtocol.merge(beaconSessions, scannedSessions)
+        // 合并「已知会话」（三模式，落库而来）：扫描/广播够不到的正是在
+        // TUNNEL/换网段时最需要的那些。去重时**扫描结果优先** —— 它有
+        // 实时的 clients/interactive，是活探测所得；已知会话是快照，
+        // 仅在扫描没探到该 (host,port) 时补位（否则会覆盖掉实时状态）。
+        val known = knownSessionsProvider()
+        val seen = discovered.map { it.host to it.port }.toHashSet()
+        val supplemental = known.filterNot { (it.host to it.port) in seen }
+        allSessions = discovered + supplemental
         render()
     }
 
@@ -375,7 +432,25 @@ class SessionFragment : Fragment() {
     /** 等待提示的刷新间隔（与文案变化节奏匹配，无需更频繁）。 */
     private val WAIT_HINT_REFRESH_MS = 2_000L
 
+    /**
+     * 扫描的**硬超时兜底**。
+     *
+     * [scanning] 标志是「防重复点击」的守卫：一旦置 true，后续 rescan /
+     * triggerDiscovery 全部早退。正常路径靠 UI 线程回调复位它 —— 但若扫描
+     * 线程在某处抛未捕获异常、或某个网络调用卡住，回调永不触发，标志
+     * 永久为 true，**整个会话页从此再也扫不动**（用户看到按钮一直转、
+     * 点了没反应）。这是最典型的「扫描卡死」。
+     *
+     * 故加主线程 watchdog：超过此时间无论扫描线程死活，强制复位并给出
+     * 提示。取值远大于正常扫描耗时（几个主机 × 11 端口并发，实测秒级），
+     * 只在真卡住时才触发。
+     */
+    private val SCAN_HARD_TIMEOUT_MS = 30_000L
+
     private var waitHintTask: Runnable? = null
+
+    /** 扫描 watchdog（超时强制复位 scanning）。 */
+    private var scanWatchdog: Runnable? = null
 
     /** 会话页的提示文案控件（懒查找，避免侵入 Views 数据类）。 */
     private val hintText: android.widget.TextView?
@@ -466,6 +541,19 @@ class SessionFragment : Fragment() {
     }
 
     companion object {
+        private const val TAG = "SessionFragment"
+
+        /**
+         * watchdog 超时时是否应强制复位扫描状态。
+         *
+         * 纯函数以便单测：只依赖「当前是否仍在扫描」这一个输入。
+         * 抽出来的理由 —— 若写成恒 true，扫描已正常完成后迟到的 watchdog
+         * 会把结果误报成「超时」（用户明明看到扫到了会话，却跳出超时提示）；
+         * 若写成恒 false，真卡住时永不复位（卡死原样）。两个方向都错得静默，
+         * 只能靠单测锁定。
+         */
+        fun shouldForceReset(scanning: Boolean): Boolean = scanning
+
         /**
          * 按关键词过滤会话。纯函数，可单测。
          *

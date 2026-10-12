@@ -25,11 +25,14 @@ import android.content.Context
  *   加强版，**户外也可用**。后端与 LAN 同为 [RemoteAgentBackend]，
  *   只是地址来自 CLI 回传的公网域名而非局域网扫描/beacon。
  *
- * ## 默认值必须是 LAN
+ * ## 默认值 = TUNNEL（互联网连本机）
  *
- * 现有用户的 App 就是连电脑（原 REMOTE）。若默认 CLOUD/TUNNEL，
- * 升级后他们会发现「连不上电脑了、还多了一堆要配的 API key」——
- * 这是最糟的升级体验。默认值 = 升级前的行为，是偏好设计的一贯原则。
+ * 产品决定：默认走最通用的模式 —— 户外、数据流量、异地都能连回本机，
+ * 能力与局域网一致。用户开箱即得「随时连本机」，无需先理解
+ * WiFi/USB/隧道 的区别。地址需电脑端 `--tunnel` 获取并填入
+ *（连接区有就近引导，见 LocalConfigPanel 的 tunnel_connect_guide）。
+ *
+ * 注：若某天要改回 LAN，记得同步 AppModeTest 的默认值断言。
  */
 enum class AppMode {
     /** 局域网连电脑（WiFi/USB）。后端同原 REMOTE。 */
@@ -82,8 +85,17 @@ enum class AppMode {
         }
 
     companion object {
-        /** 存储 key 的缺省模式：升级前的行为（原 REMOTE = 连电脑）。 */
-        val DEFAULT = LAN
+        /**
+         * 存储 key 的缺省模式：TUNNEL（互联网连本机，户外可用）。
+         *
+         * 这是三种模式里最通用的一种：手机在任何网络（户外、数据流量、
+         * 异地）都能连回本机会话，能力与局域网完全一致。选它作默认，
+         * 用户开箱即得「随时连本机」，无需先懂 WiFi/USB 的区别。
+         *
+         * 注：仍需电脑端跑 `start-mobile-bridge.mjs --tunnel` 拿到 wss://
+         * 地址填入；地址栏为空时 App 会提示怎么获取（见工作模式说明）。
+         */
+        val DEFAULT = TUNNEL
 
         /**
          * 解析存储中的模式字符串。

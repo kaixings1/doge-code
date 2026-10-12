@@ -17,5 +17,7 @@
         <domain includeSubdomains="false">localhost</domain>
         <!-- 本机当前 WLAN 地址；换网段时按上方说明补充 -->
         <domain includeSubdomains="true">192.168.0.106</domain>
+        <!-- 本机当前 Lan Link 地址（手机所在网段） -->
+        <domain includeSubdomains="true">192.168.110.228</domain>
     </domain-config>
 </network-security-config>

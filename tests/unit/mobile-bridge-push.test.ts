@@ -75,4 +75,60 @@ describe('mobileBridge 推送链路（真实源码）', () => {
 
     await server.stop()
   })
+
+  it('pushDeltaToMobileClients：真实 WS 往返送达 assistant_delta', async () => {
+    const { MobileBridgeServer, pushDeltaToMobileClients, flushPendingDelta } =
+      await import('../../src/bridge/mobileBridge.js')
+    const { WebSocket } = await import('ws')
+
+    const port = 15682
+    const server = new MobileBridgeServer({ sessionId: 'test-delta', port, secret: 'x' })
+    await server.start()
+
+    // 真实客户端连上并等待就绪。**必须带 secret**：服务端配了密钥时
+    // 不带密钥会被 close(4001)，客户端永远进不了 connectedClients，
+    // 广播自然收不到（这正是本用例初版失败的原因，非产品缺陷）。
+    const ws = new WebSocket(`ws://127.0.0.1:${port}/mobile/ws?secret=x&deviceId=probe&deviceType=android`)
+    const received: string[] = []
+    const gotDelta = new Promise<void>((resolve) => {
+      ws.on('message', (raw) => {
+        try {
+          const m = JSON.parse(raw.toString())
+          if (m.type === 'assistant_delta') {
+            received.push(String(m.data?.text ?? ''))
+            resolve()
+          }
+        } catch {
+          /* 忽略非 JSON 帧 */
+        }
+      })
+    })
+    await new Promise<void>((res, rej) => {
+      ws.on('open', () => res())
+      ws.on('error', rej)
+    })
+    // 给服务器登记客户端的时间（client_connected 之前 sendToAll 会漏发）
+    await new Promise((r) => setTimeout(r, 200))
+
+    // 推一段文本；节流窗口内会累积，flush 冲掉残留
+    pushDeltaToMobileClients('呼吸光标')
+    flushPendingDelta()
+
+    await Promise.race([gotDelta, new Promise((_, rej) => setTimeout(() => rej(new Error('未收到 assistant_delta')), 3000))])
+    expect(received.join('')).toContain('呼吸光标')
+
+    ws.close()
+    await server.stop()
+  })
+
+  it('pushDeltaToMobileClients：无活动服务器时静默返回（不抛异常）', async () => {
+    const { MobileBridgeServer, pushDeltaToMobileClients } =
+      await import('../../src/bridge/mobileBridge.js')
+    // 显式起停一个真实服务器，确保进入「无活动服务器」状态
+    // （不依赖上一个用例的清理顺序 —— 用例间不应有隐式依赖）
+    const server = new MobileBridgeServer({ sessionId: 'test-delta-none', port: 15683, secret: 'x' })
+    await server.start()
+    await server.stop()
+    expect(() => pushDeltaToMobileClients('任意文本')).not.toThrow()
+  })
 })

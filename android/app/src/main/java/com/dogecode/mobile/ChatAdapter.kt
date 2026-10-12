@@ -1,6 +1,9 @@
 package com.dogecode.mobile
 
+import android.animation.ValueAnimator
 import android.graphics.Typeface
+import android.os.Handler
+import android.os.Looper
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.BackgroundColorSpan
@@ -493,6 +496,12 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val meta: TextView = v.findViewById(R.id.meta)
         private val imageRow: LinearLayout = v.findViewById(R.id.image_row)
 
+        /** 呼吸光标的 span（每次绑定流式预览时复用同一实例）。 */
+        private var cursorSpan: TypingCursorSpan? = null
+
+        /** 呼吸动画。仅在流式预览期间非 null，见 [stopCursorAnimation]。 */
+        private var cursorAnimator: ValueAnimator? = null
+
         /**
          * 渲染消息附带的图片缩略图。
          *
@@ -549,14 +558,74 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             imageRow.visibility = View.GONE
             row.gravity = Gravity.START
             bubble.setBackgroundResource(R.drawable.bubble_assistant)
-            bubble.setTextColor(0xFFE8E8E8.toInt())
+            bubble.setTextColor(STREAMING_TEXT_COLOR)
             bubble.textSize = 15f * options.fontScale
-            bubble.text = renderIfMarkdown(text)
+            // 正文 + 末尾呼吸光标。光标是 ReplacementSpan，必须设在 Spannable 上，
+            // 故这里不能用 renderIfMarkdown 的 CharSequence 直接赋值 —— 需包一层
+            // SpannableStringBuilder 以便 setSpan。
+            bubble.text = withTypingCursor(renderIfMarkdown(text))
             meta.gravity = Gravity.START
             meta.text = "生成中…"
             bubble.setOnLongClickListener(null)
             bubble.isClickable = false
             bubble.setOnClickListener(null)
+            startCursorAnimation()
+            // 诊断探针：确认光标真的挂上了（span 存在）+ 动画在跑。
+            // 呼吸圆点极小，截图上不易辨认，靠日志确认代码路径确实执行到。
+            android.util.Log.i(
+                "doge-cursor",
+                "bindStreaming len=${text.length} span=${cursorSpan != null} anim=${cursorAnimator?.isRunning == true}",
+            )
+        }
+
+        /**
+         * 在正文末尾追加呼吸光标。
+         *
+         * 先 append 一个空格再 setSpan 其上：ReplacementSpan 会占据该字符的宽度，
+         * 直接设在末尾空位置（length..length）多数 TextView 不会调用 draw。
+         */
+        private fun withTypingCursor(body: CharSequence): CharSequence {
+            val sb = SpannableStringBuilder(body)
+            sb.append(" ")
+            val span = cursorSpan ?: TypingCursorSpan(
+                dotColor = STREAMING_TEXT_COLOR,
+                // 密度从资源取，而非估计 —— 见 TypingCursorSpan 注释
+                density = bubble.resources.displayMetrics.density,
+            ).also { cursorSpan = it }
+            sb.setSpan(span, sb.length - 1, sb.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
+            return sb
+        }
+
+        /**
+         * 启动呼吸动画（幂等：已在跑则直接返回）。
+         *
+         * 用 ValueAnimator.REVERSE + INFINITE 做「胀-缩」循环，
+         * 每帧改 span.scale 并 invalidate —— 比每帧重设 text 便宜得多。
+         */
+        private fun startCursorAnimation() {
+            if (cursorAnimator != null) return
+            cursorAnimator = ValueAnimator.ofFloat(TypingCursorSpan.MIN_SCALE, TypingCursorSpan.MAX_SCALE).apply {
+                duration = CURSOR_BREATH_MS
+                repeatMode = ValueAnimator.REVERSE
+                repeatCount = ValueAnimator.INFINITE
+                addUpdateListener {
+                    cursorSpan?.scale = it.animatedValue as Float
+                    bubble.invalidate()
+                }
+                start()
+            }
+        }
+
+        /**
+         * 停止呼吸动画（预览结束 / ViewHolder 被回收时调用）。
+         *
+         * **必须停**：RecyclerView 回收后 TextView 可能已不可见，
+         * 但 ValueAnimator 仍持有它并每帧 invalidate → 泄漏 + 无谓耗电。
+         */
+        fun stopCursorAnimation() {
+            cursorAnimator?.cancel()
+            cursorAnimator = null
+            cursorSpan = null
         }
 
         fun bind(m: ChatMessage) {
@@ -661,6 +730,18 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
+    /**
+     * ViewHolder 被回收时停掉呼吸动画。
+     *
+     * 必需的清理：动画在跑时 ValueAnimator 持有 TextView 并每帧 invalidate，
+     * 回收后若不停，会同时造成内存泄漏与无谓耗电。此前的实现没有动画，
+     * 故也没有 onViewRecycled —— 这次一并补上。
+     */
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        super.onViewRecycled(holder)
+        (holder as? VH)?.stopCursorAnimation()
+    }
+
     companion object {
         private const val VIEW_TYPE_MESSAGE = 0
         private const val VIEW_TYPE_TOOL = 1
@@ -685,6 +766,17 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val COLOR_OTHER = 0xFFBDBDBD.toInt()
         /** 状态文字：暗灰，不与标题抢视觉。 */
         private val COLOR_DIM = 0xFF888888.toInt()
+
+        /**
+         * 流式预览的正文/光标色。
+         *
+         * 与 `bindStreaming` 里气泡文字色一致 —— 光标跟正文同色最自然。
+         * 单列常量避免两处硬编码漂移（改一处忘一处会让光标突兀地变成别的颜色）。
+         */
+        private val STREAMING_TEXT_COLOR = 0xFFE8E8E8.toInt()
+
+        /** 呼吸动画一次涨/缩的时长（毫秒）。800ms 接近人的呼吸节奏，不抢注意力。 */
+        private const val CURSOR_BREATH_MS = 800L
 
         /** 片段类型，由纯文本解析产生，再由 renderMarkdown 转成 Spannable。 */
         enum class Seg { TEXT, BOLD, CODE_BLOCK, CODE_INLINE }
