@@ -57,6 +57,34 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     /** 当前渲染参数。变更后需调 [applyOptions] 触发重绘。 */
     private var options = DisplayOptions()
 
+    /**
+     * 空态视图（无消息时显示）。由宿主经 [bindEmptyView] 注入。
+     *
+     * 为什么放在 adapter 而非各调用点：空态显隐应与「列表内容」严格同步，
+     * 而 adapter 是内容的唯一权威（items）。若让多个 `adapter.submit()`
+     * 调用点各自维护显隐，漏一处就会出现「有消息却显示空态」这类不一致。
+     * 集中到 [refresh] 后不可能脱节。
+     */
+    private var emptyView: android.view.View? = null
+
+    /** 注入空态视图（宿主在拿到视图后调用一次）。 */
+    fun bindEmptyView(v: android.view.View?) {
+        emptyView = v
+        syncEmptyView()
+    }
+
+    /**
+     * 同步空态可见性：无渲染行时显示，否则隐藏。
+     *
+     * 判据用 `rows.isEmpty()` 而非 `items.isEmpty()` —— 折叠分组等情形下
+     * 两者可能不同，而「屏幕上有没有东西」取决于渲染行。
+     * 注意流式预览也是渲染行（Row.Streaming），故生成中不会误显示空态。
+     */
+    private fun syncEmptyView() {
+        val v = emptyView ?: return
+        v.visibility = if (rows.isEmpty()) android.view.View.VISIBLE else android.view.View.GONE
+    }
+
     /** 由 Activity 在偏好变化时调用。 */
     fun applyOptions(newOptions: DisplayOptions) {
         options = newOptions
@@ -176,6 +204,8 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private fun refresh() {
         rebuildRows()
         notifyDataSetChanged()
+        // 空态与内容同步（所有内容变更都经此处，漏不掉）
+        syncEmptyView()
     }
 
     fun snapshot(): List<ChatMessage> = items.toList()

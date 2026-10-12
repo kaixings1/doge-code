@@ -35,6 +35,26 @@
             android:scrollbars="vertical" />
 
         <!--
+          空态占位：会话无任何消息时显示（默认 gone，由 ChatFragment 控制）。
+
+          与 RecyclerView 叠在同一 FrameLayout：列表为空时它居中提示，
+          有消息时隐藏。吸收自 KleanBot 的 item_ai_chat_placeholder 思路，
+          但**用原生 TextView**（KleanBot 用 Material 组件，本项目无此依赖，
+          按 KLEANBOT-PORT-PLAN §1.5 不引入 Material）。
+        -->
+        <TextView
+            android:id="@+id/chat_empty_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:lineSpacingExtra="6dp"
+            android:text="@string/chat_empty_hint"
+            android:textColor="#666666"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+        <!--
           滚动到底：长对话时手动滚很久。默认隐藏，
           由代码在「不在底部」时显示（见 ChatFragment 的滚动监听）。
         -->
@@ -223,7 +243,7 @@
             android:layout_marginStart="4dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/send"
-            android:src="@android:drawable/ic_menu_send" />
+            android:src="@drawable/ic_send" />
 
         <ImageButton
             android:id="@+id/btn_stop"
@@ -231,7 +251,7 @@
             android:layout_height="44dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/interrupt"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:src="@drawable/ic_stop"
             android:visibility="gone" />
     </LinearLayout>
 </LinearLayout>

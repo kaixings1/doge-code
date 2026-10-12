@@ -151,6 +151,7 @@
     <string name="more_actions">更多操作</string>
     <string name="quick_prompt_title">选择指令模板</string>
     <string name="scroll_to_bottom">滚动到底部</string>
+    <string name="chat_empty_hint">还没有消息\n在下方输入，或先在「会话」页连接电脑端</string>
     <string name="app_lock_title">解锁以查看</string>
     <!-- 批量选择 -->
     <string name="batch_select_all">全选</string>

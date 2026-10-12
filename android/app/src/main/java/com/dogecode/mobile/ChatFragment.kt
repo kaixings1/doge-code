@@ -72,6 +72,16 @@ class ChatFragment : Fragment() {
         val agentStopBtn: ImageButton,
         /** 未读提示（复用「滚动到底」按钮的位置，见布局）。 */
         val unseenBadge: TextView,
+        /**
+         * 空态占位（无消息时显示，由 ChatAdapter 控制显隐）。
+         *
+         * 可空：真机曾出现 `findViewById` 返回 null 导致启动崩溃
+         *（`findViewById(...) must not be null`）。空态是**锦上添花**的
+         * 提示，缺失不应让 App 打不开 —— 故允许为 null，Adapter 侧已判空。
+         * 这是在「资源 id 理论上一定存在」与「宁可少个提示也不能崩」之间
+         * 的选择：后者优先。
+         */
+        val emptyHint: TextView?,
         val scrollBottomBtn: ImageButton,
         /** 批量选择操作栏（长按消息进入选择模式时显示）。 */
         val batchBar: View,
@@ -107,6 +117,8 @@ class ChatFragment : Fragment() {
             activityText = view.findViewById(R.id.activity_text),
             agentStopBtn = view.findViewById(R.id.activity_stop),
             unseenBadge = view.findViewById(R.id.btn_unseen),
+            // 显式可空类型：找不到时返回 null 而非抛异常（见 Views.emptyHint 说明）
+            emptyHint = view.findViewById<TextView?>(R.id.chat_empty_view),
             scrollBottomBtn = view.findViewById(R.id.btn_scroll_bottom),
             batchBar = view.findViewById(R.id.batch_action_bar),
             batchCount = view.findViewById(R.id.batch_count),

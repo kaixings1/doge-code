@@ -1176,6 +1176,8 @@ class MainActivity : AppCompatActivity(),
             // 原来挂在旧 RecyclerView 上的 adapter 不会自动跟过来
             list.layoutManager = LinearLayoutManager(this).apply { stackFromEnd = true }
             list.adapter = adapter
+            // 空态视图须在每次视图重建时重挂（Fragment view 重建后旧引用失效）
+            adapter.bindEmptyView(v.emptyHint)
             adapter.submit(store?.load().orEmpty())
             if (adapter.itemCount > 0) list.scrollToPosition(adapter.itemCount - 1)
 
