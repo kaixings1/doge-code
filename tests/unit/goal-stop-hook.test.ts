@@ -10,7 +10,7 @@
  *  - 裁判 MISSING → {decision:block} + status=active
  *  - 裁判 EVIDENCE → {continue:false} + status=complete
  *  - 裁判 IMPOSSIBLE → {continue:false} + status=impossible
- *  - 裁判不可用 → {} 放行
+ *  - 裁判不可用 → systemMessage 警告 + 记录 error（不阻断会话）
  *  - 停滞熔断 → {continue:false} + status=paused
  */
 
@@ -121,6 +121,24 @@ function startMockJudge(verdict: string): Promise<{ server: Server; port: number
   })
 }
 
+/** 启动返回指定 HTTP 错误的 mock 裁判服务器 */
+function startMockJudgeError(
+  status: number,
+  message: string,
+): Promise<{ server: Server; port: number }> {
+  return new Promise(resolve => {
+    const server = createServer((req, res) => {
+      res.writeHead(status, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify({ error: { message } }))
+    })
+    server.listen(0, '127.0.0.1', () => {
+      const addr = server.address()
+      const port = typeof addr === 'object' && addr ? addr.port : 0
+      resolve({ server, port })
+    })
+  })
+}
+
 let mockMissing: { server: Server; port: number }
 let mockEvidence: { server: Server; port: number }
 let mockImpossible: { server: Server; port: number }
@@ -212,13 +230,43 @@ describe('goal Stop hook', () => {
     expect(a.lastJudge.impossible).toBe(true)
   })
 
-  it('裁判不可用（无 key）→ 放行 {} 并记录 error 事件', async () => {
+  it('裁判不可用（无 key）→ systemMessage 警告 + 记录 error，状态保留 active', async () => {
     await writeActive(makeGoal())
     const { json } = await runHook({}, { DOGE_API_KEY: '', ANTHROPIC_API_KEY: '' })
-    expect(json).toEqual({})
+    // 不阻止会话，但必须显式告知用户（不再静默 {}）
+    expect(json.systemMessage).toBeTypeOf('string')
+    expect(json.systemMessage).toContain('裁判不可用')
+    expect(json.systemMessage).toContain('DOGE_API_KEY')
+    expect(json.continue).toBeUndefined()
     const a = await readActive()
     expect(a.status).toBe('active')
     expect(a.history.some((e: any) => e.type === 'error')).toBe(true)
+  })
+
+  it('裁判不可用且已警告过 → 不重复刷屏（返回 {}）', async () => {
+    await writeActive(
+      makeGoal({
+        history: [{ type: 'error', timestamp: Date.now(), detail: '裁判不可用：未配置 DOGE_API_KEY / ANTHROPIC_API_KEY' }],
+      }),
+    )
+    const { json } = await runHook({}, { DOGE_API_KEY: '', ANTHROPIC_API_KEY: '' })
+    expect(json).toEqual({})
+  })
+
+  it('裁判端点 HTTP 错误 → systemMessage 含状态码与 model', async () => {
+    await writeActive(makeGoal())
+    const { server, port } = await startMockJudgeError(400, '模型不存在: bad-model')
+    const { json } = await runHook(
+      {},
+      {
+        DOGE_API_KEY: 'fake',
+        ANTHROPIC_BASE_URL: `http://127.0.0.1:${port}/v1/chat/completions`,
+        DOGE_GOAL_JUDGE_MODEL: 'bad-model',
+      },
+    )
+    server.close()
+    expect(json.systemMessage).toContain('HTTP 400')
+    expect(json.systemMessage).toContain('bad-model')
   })
 
   it('停滞熔断：连续 3 条相似 judge_not_ok → continue:false 且 status=paused', async () => {

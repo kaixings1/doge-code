@@ -220,6 +220,14 @@ function parseJudgeJson(text) {
   }
 }
 
+/**
+ * 调用裁判模型。
+ *
+ * 返回 { verdict, error }：
+ *   - 成功：{ verdict: {ok,reason}, error: null }
+ *   - 失败：{ verdict: null, error: '<可读原因>' }
+ * 区分失败原因，以便向用户给出精确警告（而非静默放行）。
+ */
 async function callJudge(prompt) {
   const apiKey =
     process.env.DOGE_API_KEY || process.env.ANTHROPIC_API_KEY || ''
@@ -235,7 +243,9 @@ async function callJudge(prompt) {
     process.env.DOGE_SMALL_FAST_MODEL ||
     'fast-model'
 
-  if (!apiKey) return null
+  if (!apiKey) {
+    return { verdict: null, error: '未配置 DOGE_API_KEY / ANTHROPIC_API_KEY' }
+  }
 
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), 30_000)
@@ -254,15 +264,37 @@ async function callJudge(prompt) {
       }),
       signal: controller.signal,
     })
-    if (!res.ok) return null
+    if (!res.ok) {
+      let detail = ''
+      try {
+        const body = await res.json()
+        detail = body?.error?.message || body?.message || ''
+      } catch {
+        /* 响应非 JSON，忽略 */
+      }
+      return {
+        verdict: null,
+        error: `裁判端点返回 HTTP ${res.status}${detail ? `：${detail}` : ''}（model=${model}）`,
+      }
+    }
     const data = await res.json()
     const text =
       (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) ||
       (data.content && data.content[0] && data.content[0].text) ||
       ''
-    return parseJudgeJson(text)
-  } catch {
-    return null
+    const parsed = parseJudgeJson(text)
+    if (!parsed) {
+      return { verdict: null, error: `裁判响应无法解析为 JSON（model=${model}）` }
+    }
+    return { verdict: parsed, error: null }
+  } catch (err) {
+    const aborted = controller.signal.aborted
+    return {
+      verdict: null,
+      error: aborted
+        ? `裁判请求超时（30s，端点 ${baseURL} 可能未启动）`
+        : `裁判请求失败：${err && err.message ? err.message : String(err)}`,
+    }
   } finally {
     clearTimeout(timeout)
   }
@@ -312,13 +344,26 @@ async function handle(input) {
 
   // 4) 裁判判定
   const prompt = buildJudgePrompt(goal, input)
-  const verdict = await callJudge(prompt)
+  const { verdict, error } = await callJudge(prompt)
 
   if (!verdict) {
-    // 裁判不可用（无 key / 超时 / 解析失败）：不干预，记录并放行
-    pushEvent(goal, 'error', '裁判不可用，本轮跳过判定')
+    // 裁判不可用：不阻止会话（避免破坏正常使用），但显式告知用户，
+    // 避免"设了目标却没动静"的静默失效。记录事件 + 输出 systemMessage。
+    const detail = error || '未知原因'
+    // 首次失败才提示，避免每轮刷屏
+    const alreadyWarned = goal.history.some(
+      e => e.type === 'error' && String(e.detail).startsWith('裁判不可用'),
+    )
+    pushEvent(goal, 'error', `裁判不可用：${detail}`)
     writeGoal(cwd, goal)
-    return emit({})
+    if (alreadyWarned) {
+      return emit({})
+    }
+    return emit({
+      systemMessage:
+        `⚠️ [goal] 裁判不可用，目标"${goal.objective}"本轮未评估：${detail}\n` +
+        `目标状态保留，但不会自动推进。请检查裁判端点/模型配置后，运行 /goal resume 重试。`,
+    })
   }
 
   const reason = verdict.reason || ''
