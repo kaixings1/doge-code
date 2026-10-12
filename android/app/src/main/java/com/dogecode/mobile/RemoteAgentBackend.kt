@@ -21,6 +21,17 @@ class RemoteAgentBackend(
     private val client: BridgeClient,
 ) : AgentBackend {
 
+    /**
+     * 底层 [BridgeClient]（远端专属能力出口）。
+     *
+     * 为什么要暴露：setConfig / renameSession / sendPermissionResponse /
+     * lastDiagnosis / clearDiagnosis 是**远端专属**能力，不在 [AgentBackend]
+     * 接口里（见接口注释：塞进去会让云端实现只能写空方法）。
+     * 宿主需要这些能力时，通过本属性拿到「活动会话的那条 client」。
+     */
+    val bridge: BridgeClient
+        get() = client
+
     override val isReady: Boolean
         get() = client.isConnected
 

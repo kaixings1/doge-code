@@ -42,10 +42,16 @@ object Notifications {
         mgr.createNotificationChannel(ch)
     }
 
+    /** 通知携带的会话 key：点击后切到该会话（真·并行多会话导航）。 */
+    const val EXTRA_SESSION_KEY = "doge_session_key"
+
     /**
      * @param label 会话标签（如 DOGE_SESSION_LABEL 或目录名）。多会话并存时
      *   通知栏里必须能区分来源，否则用户不知道是哪条对话的回复。
      *   未知时传 null，标题退回为 "doge-code"。
+     * @param sessionKey 收到该回复的会话 key。点击通知会切到它 ——
+     *   多会话并行下，用户看到「修CI 有新回复」点进去，应直接落到那条
+     *   会话而不是当前停留的那个。
      */
     fun notifyAssistant(
         context: Context,
@@ -53,6 +59,7 @@ object Notifications {
         label: String? = null,
         /** 是否静音（由「通知声音」偏好决定）。 */
         silent: Boolean = false,
+        sessionKey: String? = null,
     ) {
         // 无权限时 hasPermission 返回 false（API 33+），此时直接跳过
         if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) return
@@ -75,9 +82,16 @@ object Notifications {
 
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            // 带上会话 key：点击通知时 MainActivity 据此切到该会话。
+            // 为空（老调用方/本地模式）时不带，行为退回「仅唤起 App」。
+            if (!sessionKey.isNullOrBlank()) putExtra(EXTRA_SESSION_KEY, sessionKey)
         }
+        // requestCode 按 sessionKey 区分：不同会话的通知各自独立，避免
+        // Android 复用 PendingIntent 的 extras 导致点 A 会话的通知却切到 B
+        //（与 notifyPermission 的 decisionIntent 同理）。
+        val reqCode = sessionKey?.hashCode() ?: 0
         val pi = PendingIntent.getActivity(
-            context, 0, intent,
+            context, reqCode, intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
 

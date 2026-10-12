@@ -36,9 +36,53 @@ class MainActivity : AppCompatActivity(),
     SessionFragment.Actions {
 
     private lateinit var prefs: SharedPreferences
-    private lateinit var store: MessageStore
     private lateinit var adapter: ChatAdapter
-    private lateinit var client: BridgeClient
+
+    /**
+     * 真·并行连接：所有会话各自一条连接（key → 连接单元）。
+     *
+     * ## 与旧实现的区别
+     *
+     * 改造前是单个 `client`/`store` 字段，切换会话 = 关旧连新（见
+     * switchToSession 旧实现），同一时刻只能连一个 CLI。现在列表里的
+     * 每个会话各持一条长连接，后台持续收推送，切换只是改 [activeKey]。
+     *
+     * ## 并发安全
+     *
+     * 所有 BridgeClient 的事件回调都切回主线程（见 BridgeClient 类注释），
+     * 故本 map 只在主线程读写，无需加锁。
+     */
+    private val connections = LinkedHashMap<String, SessionConn>()
+
+    /**
+     * 当前活动会话的 key（null = 尚未选定任何远端会话）。
+     *
+     * 「活动」决定两件事：① 哪个会话的 store 内容渲染到对话列表；
+     * ② 发送/中断/编辑走哪个 backend。其余会话照常收消息，但不碰 UI。
+     */
+    private var activeKey: String? = null
+
+    /** 僵死连接回收定时器（防卡死）。见 [startConnectionSweeper]。 */
+    private var sweeperHandler: android.os.Handler? = null
+    private var sweeperRunnable: Runnable? = null
+
+    /**
+     * 活动会话的连接单元（无则 null）。
+     *
+     * 用 getter 而非缓存字段：activeKey 会在切换时变，缓存字段容易忘记同步。
+     */
+    private val activeConn: SessionConn?
+        get() = activeKey?.let { connections[it] }
+
+    /**
+     * 是否有**任意**会话已连上。
+     *
+     * 真·并行下「连上了吗」不能再问单条连接：自动连接/失败统计的语义是
+     *「这台手机上是否已有可用的远端通道」，故任一连接在线即为真。
+     * 旧代码的 `client.isConnected` 全替换为本属性。
+     */
+    private val anyConnected: Boolean
+        get() = connections.values.any { it.connected }
 
     private lateinit var list: RecyclerView
     private lateinit var msgInput: EditText
@@ -172,7 +216,7 @@ class MainActivity : AppCompatActivity(),
     /**
      * 本地模式后端。
      *
-     * 与 [client]（远端）并存：两者都实现了 [AgentBackend]，
+     * 与远端连接单元并存：两者都实现了 [AgentBackend]，
      * 但事件都汇到同一个 `onEvent` —— UI 不区分模式。
      */
     private lateinit var localBackend: LocalAgentBackend
@@ -184,18 +228,84 @@ class MainActivity : AppCompatActivity(),
      *（正常发送、带图发送、失败重试、编辑重发）。若各处自己判模式，
      * 漏改一处就会表现为「本地模式下那个入口点了没反应」——
      * 而这类 bug 只在特定操作路径上出现，极难发现。
+     *
+     * 远端侧指向**活动会话**的 backend（多会话并行下，发消息只发给
+     * 当前正在看的那条连接）。
      */
     private val activeBackend: AgentBackend
-        get() = if (appMode.isCloudAgent) localBackend else remoteBackend
+        get() = if (appMode.isCloudAgent) localBackend
+        else activeConn?.backend ?: NO_BACKEND
 
     /**
-     * 远端后端的适配器（把 [client] 包成 [AgentBackend]）。
+     * 「无活动会话」时的占位后端（**不能抛异常**）。
      *
-     * 存在的理由：`client` 是 [BridgeClient]，不实现接口（它的 `onEvent`
-     * 是构造参数、不可变）。改它要动构造签名与全部调用点；而适配器
-     * 零侵入 —— BridgeClient 一行未改。
+     * ## 为什么必须存在（否则崩溃）
+     *
+     * 真·并行改造前 `client` 是常驻单例，`activeBackend.isReady` 一定有值。
+     * 现在远端模式下若尚未选定/连上任何会话，`activeConn` 为 null ——
+     * 若此处直接 `error(...)`，那么用户只要在没连会话时点一下「发送」
+     * （sendCurrent 里 `if (!activeBackend.isReady)`）就会抛
+     * IllegalStateException 崩溃。这类「未连接时的日常点击」是最常见的
+     * 路径，不能崩。
+     *
+     * 改用占位后端：`isReady=false` 让既有的「未连接，请先在设置里连接」
+     * 守卫自然生效；send/interrupt 等返回 false（no-op），不产生副作用。
      */
-    private lateinit var remoteBackend: RemoteAgentBackend
+    private val NO_BACKEND: AgentBackend = object : AgentBackend {
+        override val isReady: Boolean get() = false
+        override var onEvent: ((BridgeClient.Event) -> Unit)? = null
+        override fun send(text: String, requestId: String): Boolean = false
+        override fun interrupt() {}
+        override fun editMessage(newText: String, requestId: String): Boolean = false
+        override fun close() {}
+    }
+
+    /**
+     * 活动会话的远端后端（供仅远端路径使用的接口，如 setConfig/renameSession）。
+     *
+     * 与 [activeBackend] 的区别：那个返回 [AgentBackend]（两种后端共用），
+     * 这个明确要求远端后端 —— 因为 setConfig/renameSession 是远端专属能力
+     *（本地模式没有「远端配置」概念）。未连接活动会话时为 null。
+     */
+    private val activeRemoteBackend: RemoteAgentBackend?
+        get() = activeConn?.takeIf { it.connected }?.backend
+
+    /**
+     * 活动连接的 [BridgeClient]（旧代码的 `client.xxx` 兼容别名）。
+     *
+     * 语义 = 「当前活动会话那条连接的 client」。无活动会话/未连接时 null。
+     * 用于 isConnected / lastDiagnosis / setConfig 等远端专属查询；
+     * 写操作（setConfig/renameSession）在未连接时本就是 no-op（旧代码
+     * 有 `if (!client.isConnected) return` 守卫），保持同样的判空语义。
+     */
+    private val client: BridgeClient?
+        get() = activeConn?.takeIf { it.connected }?.backend?.bridge
+
+    /**
+     * 活动会话的历史存储（兼容旧代码的 `store.xxx` 引用）。
+     *
+     * ## 为什么是 getter 而非字段
+     *
+     * 改造前 `store` 是单例字段。现在每个会话各持一个 [MessageStore]
+     * （见 [SessionConn] 的注释：共享实例会让后台会话写错历史文件）。
+     * 保留 `store` 这个名字作为「**当前界面所显示的那份历史**」的别名：
+     * · CLOUD 模式 → 本地历史 [localMsgStore]（云端没有远端会话）
+     * · 远端模式 → 活动会话的 store
+     *
+     * 这样绝大多数旧引用（append 落盘、清空、加载）无需改动，语义也正确。
+     * 无活动会话的远端模式返回 null，调用方须判空（用 [storeOrNull]）。
+     */
+    private val store: MessageStore?
+        get() = if (appMode.isCloudAgent) localMsgStore else activeConn?.store
+
+    /**
+     * 本地/云端模式的历史存储。
+     *
+     * 与远端会话的历史分开：本地模式的 sessionKey 由工作区决定
+     *（`local-<dir>-<hash>`），换工作区换历史文件（见 refreshSessionScope）。
+     * 这个实例永远存在（用户可能从不用云端模式，但持有它开销可忽略）。
+     */
+    private lateinit var localMsgStore: MessageStore
 
     /**
      * 任务完成的语音播报（见 VoiceAnnouncer）。
@@ -270,7 +380,8 @@ class MainActivity : AppCompatActivity(),
         setContentView(R.layout.activity_main)
 
         prefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        store = MessageStore(this)
+        // 本地/云端模式的历史（远端会话的历史由各自的 SessionConn 持有）
+        localMsgStore = MessageStore(this)
         draftStore = DraftStore(this)
         localPrefs = LocalPrefs(this)
         scanPortPrefs = ScanPortPrefs(this)
@@ -348,16 +459,10 @@ class MainActivity : AppCompatActivity(),
             toggleChatSearch(!searchVisible)
         }
 
-        // client 必须在 connectWith 之前创建（connectWith 里会调 client.close）。
-        // 且必须在 Fragment 就绪后创建：BridgeClient 的回调会直接操作
-        // 对话页控件，早于视图就绪创建会有空引用窗口。
-        client = BridgeClient(
-            onEvent = { ev -> onEvent(ev) },
-            // 失败历史交给宿主持久化（BridgeClient 本身无 Context）
-            onDiagnosis = { reason, code, address -> diagnosisLog.append(reason, code, address) },
-        )
-        // 远端适配器：包住 client，使两种后端可互换（见 activeBackend）
-        remoteBackend = RemoteAgentBackend(client)
+        // 远端连接**不再**在此预创建：真·并行下每个会话各有一条连接，
+        // 由 connectWith / ensureConnection 按需建立（见 SessionConn）。
+        // 此前预建单个 client 是因为「同一时刻只有一条连接」；现在这个前提
+        // 已不成立，预建反而会留下一条连不上任何地址的空连接。
 
         // 读取工作模式（默认 LAN，与升级前行为一致：原 REMOTE = 连电脑）。
         appMode = appModePrefs.get()
@@ -491,6 +596,68 @@ class MainActivity : AppCompatActivity(),
         if (::urlInput.isInitialized && prefs.getBoolean(KEY_AUTOCONNECT, true)) {
             connectWith(urlInput.text.toString(), secretInput.text.toString())
         }
+        startConnectionSweeper()
+    }
+
+    /**
+     * 定期回收僵死的后台连接（防卡死）。
+     *
+     * ## 为什么需要
+     *
+     * 用户要求「列表里所有会话都保持连接、不设上限」。若一条会话长期
+     * 失效（电脑关机、隧道子域过期），它的 [BridgeClient] 会一直按退避
+     * 重试、占内存、刷日志。连接数随已知会话增长而不清理 → 最终拖慢甚至
+     * 卡死 App。这正是用户说的「不可以卡死」要防的场景。
+     *
+     * ## 判据在 [SessionRouter.shouldRecycle]（已单测覆盖）
+     *
+     * 只回收**非活动 + 未连接 + 超静默阈值**的连接：正在看的、还连着的
+     * 一律不动，避免抽掉用户正在用的会话。
+     *
+     * ## 周期选 60 秒
+     *
+     * 比静默阈值（5 分钟）小一个量级，保证僵死连接在阈值到达后的一分钟内
+     * 被清掉；又不至于频繁扫（map 很小，扫描开销可忽略）。
+     */
+    private fun startConnectionSweeper() {
+        stopConnectionSweeper()
+        val h = android.os.Handler(android.os.Looper.getMainLooper())
+        val runnable = object : Runnable {
+            override fun run() {
+                sweepIdleConnections()
+                h.postDelayed(this, SWEEP_INTERVAL_MS)
+            }
+        }
+        sweeperHandler = h
+        sweeperRunnable = runnable
+        h.postDelayed(runnable, SWEEP_INTERVAL_MS)
+    }
+
+    /** 停止回收定时器（onDestroy 调用），避免泄漏 Handler 与 Activity。 */
+    private fun stopConnectionSweeper() {
+        val runnable = sweeperRunnable ?: return
+        sweeperHandler?.removeCallbacks(runnable)
+        sweeperRunnable = null
+        sweeperHandler = null
+    }
+
+    /** 执行一次回收扫描：关闭所有符合回收判据的连接。 */
+    private fun sweepIdleConnections() {
+        val now = System.currentTimeMillis()
+        val dead = connections.values.filter { c ->
+            SessionRouter.shouldRecycle(
+                isActive = c.key == activeKey,
+                connected = c.connected,
+                userClosed = c.userClosed,
+                lastActivityAt = c.lastActivityAt,
+                now = now,
+                idleRecycleMs = SessionRouter.DEFAULT_IDLE_RECYCLE_MS,
+            )
+        }
+        for (c in dead) {
+            runCatching { c.close() }
+            connections.remove(c.key)
+        }
     }
 
     /**
@@ -514,15 +681,18 @@ class MainActivity : AppCompatActivity(),
             sessionLabel = label
         }
 
-        override fun isConnected(): Boolean = this@MainActivity.client.isConnected
+        override fun isConnected(): Boolean = this@MainActivity.client?.isConnected == true
 
         override fun sendConfig(key: String, value: Any?, label: String) {
+            // 远端配置只作用于**活动会话**的连接：配置随连接走，
+            // 非活动会话的配置不在本界面展示，也无从修改（避免改错对象）。
+            val c = client ?: return
             if (key == "renameSession") {
                 // 重命名走专用 WS 动作，不是 setConfig
-                client.renameSession(value as String, ChatMessage.newId())
+                c.renameSession(value as String, ChatMessage.newId())
                 return
             }
-            client.setConfig(key, value, ChatMessage.newId())
+            c.setConfig(key, value, ChatMessage.newId())
             append(ChatMessage.system("已请求：$label"))
         }
 
@@ -536,7 +706,7 @@ class MainActivity : AppCompatActivity(),
 
         override fun connectionStatusText(): String = statusText.text.toString()
 
-        override fun lastFailure(): BridgeClient.Diagnosis? = client.lastDiagnosis
+        override fun lastFailure(): BridgeClient.Diagnosis? = client?.lastDiagnosis
 
         override fun retryConnect(url: String, secret: String) = this@MainActivity.connectWith(url, secret)
     }
@@ -578,7 +748,7 @@ class MainActivity : AppCompatActivity(),
         append("密钥        ")
         append(if (secretInput.text.isNullOrBlank()) "未设置（服务端不做认证）" else "已设置")
         append('\n')
-        append("客户端      ").append(if (client.isConnected) "已连接" else "未连接")
+        append("客户端      ").append(if (client?.isConnected == true) "已连接" else "未连接")
     }
 
     /** 失败历史的展示文本（最多显示 [MAX_SHOWN] 条）。 */
@@ -601,7 +771,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun diagFailureText(): String {
-        val d = client.lastDiagnosis
+        val d = client?.lastDiagnosis
             ?: return "暂无失败记录。\n若连接不正常，请对照下方的常见原因排查。"
         return buildString {
             append("原因        ").append(d.reason).append('\n')
@@ -627,16 +797,16 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun diagClearFailure() {
-        client.clearDiagnosis()
+        client?.clearDiagnosis()
         append(ChatMessage.system(getString(R.string.diag_cleared)))
     }
 
     // ── ConfigFragment.Host ──
 
-    override fun configConnected(): Boolean = client.isConnected
+    override fun configConnected(): Boolean = client?.isConnected == true
 
     override fun configApply(key: String, value: Any?, label: String) {
-        client.setConfig(key, value, ChatMessage.newId())
+        client?.setConfig(key, value, ChatMessage.newId())
         append(ChatMessage.system("已请求：$label"))
     }
 
@@ -706,11 +876,12 @@ class MainActivity : AppCompatActivity(),
      * 保留现场，用户能对着刚改的值确认。反馈通过追加系统消息给出。
      */
     override fun onConfigValue(key: String, value: Any?, label: String) {
-        if (!client.isConnected) {
+        val c = client
+        if (c == null || !c.isConnected) {
             Toast.makeText(this, "未连接", Toast.LENGTH_SHORT).show()
             return
         }
-        client.setConfig(key, value, ChatMessage.newId())
+        c.setConfig(key, value, ChatMessage.newId())
         append(ChatMessage.system("已请求：$label"))
     }
 
@@ -724,7 +895,8 @@ class MainActivity : AppCompatActivity(),
 
     override fun onClearHistory() {
         adapter.submit(emptyList())
-        thread { store.clear() }
+        val s = store
+        thread { s?.clear() }
         // 本地模式：历史清了，累计用量一并清零（/cost 是「会话级」统计）；
         // 待办清单也清（新会话新计划）
         if (appMode.isCloudAgent) {
@@ -1002,7 +1174,7 @@ class MainActivity : AppCompatActivity(),
             // 原来挂在旧 RecyclerView 上的 adapter 不会自动跟过来
             list.layoutManager = LinearLayoutManager(this).apply { stackFromEnd = true }
             list.adapter = adapter
-            adapter.submit(store.load())
+            adapter.submit(store?.load().orEmpty())
             if (adapter.itemCount > 0) list.scrollToPosition(adapter.itemCount - 1)
 
             // 批量选择模式：点击消息切换选中（由 adapter 在选择模式下转发）
@@ -1114,7 +1286,7 @@ class MainActivity : AppCompatActivity(),
             // 原逻辑发现到局域网会话后不会主动切走失效回环地址。
             val savedHost = savedHost()
             if (ConnectionStrategy.isLikelyDeadLoopback(savedHost) &&
-                consecutiveConnectFailures >= 2 && !client.isConnected && !userDisconnected
+                consecutiveConnectFailures >= 2 && !anyConnected && !userDisconnected
             ) {
                 when (val d = ConnectionStrategy.decide(savedHost, savedPort(), sessions, consecutiveConnectFailures)) {
                     is ConnectionStrategy.Decision.SwitchTo -> {
@@ -1136,7 +1308,7 @@ class MainActivity : AppCompatActivity(),
             val decision = AutoConnect.shouldConnect(
                 enabled = localPrefs.getBool(LocalPrefs.KEY_AUTO_CONNECT),
                 candidates = sessions,
-                alreadyConnected = client.isConnected,
+                alreadyConnected = anyConnected,
                 userDisconnected = userDisconnected,
                 currentPort = savedPort(),
             )
@@ -1146,7 +1318,7 @@ class MainActivity : AppCompatActivity(),
                     // 多会话时不静默：提示用户去列表里选。
                     // 只对「多会话」提示 —— 其他跳过原因（已连接、用户断开）
                     // 是预期行为，弹提示反而烦人
-                    if (sessions.size > 1 && !client.isConnected && !userDisconnected) {
+                    if (sessions.size > 1 && !anyConnected && !userDisconnected) {
                         Toast.makeText(
                             this,
                             AutoConnect.multiSessionHint(sessions.size),
@@ -1182,7 +1354,7 @@ class MainActivity : AppCompatActivity(),
      */
     private fun onConnectionFailed() {
         // 仅统计「非手动断开」的失败：用户主动断开不算故障
-        if (client.isConnected) return
+        if (anyConnected) return
         consecutiveConnectFailures++
         if (!ConnectionHint.shouldSuggestDiscovery(consecutiveConnectFailures)) return
         if (failureHintShown) return
@@ -1272,9 +1444,13 @@ class MainActivity : AppCompatActivity(),
         if (key == activeScopeKey) return
         activeScopeKey = key
 
-        store.useSession(key)
-        // 云端后端持有历史缓存，换 scope 后必须重建（否则 lazy 已缓存旧历史）
+        // 云端模式：本地历史按工作区切文件（[localMsgStore] 独立持有）。
+        // 远端模式**不再**在这里切 store —— 每个会话各持独立的 MessageStore
+        // 实例（见 SessionConn），切活动会话时会整体换 adapter 的内容，
+        // 无需改写共享 store 的文件指针。
         if (appMode.isCloudAgent) {
+            localMsgStore.useSession(key)
+            // 云端后端持有历史缓存，换 scope 后必须重建（否则 lazy 已缓存旧历史）
             runCatching { localBackend.close() }
             localBackend = buildLocalBackend()
         }
@@ -1290,8 +1466,8 @@ class MainActivity : AppCompatActivity(),
             androidContext = this,
             skillStore = SkillStore(this),
             historyStore = object : LocalAgentBackend.HistoryStore {
-                override fun load(): List<ChatMsg> = store.loadLocalHistory()
-                override fun save(messages: List<ChatMsg>) = store.saveLocalHistory(messages)
+                override fun load(): List<ChatMsg> = localMsgStore.loadLocalHistory()
+                override fun save(messages: List<ChatMsg>) = localMsgStore.saveLocalHistory(messages)
             },
             localPrefs = object : LocalAgentBackend.LocalPrefsReader {
                 override fun maxSteps(): Int =
@@ -1302,7 +1478,7 @@ class MainActivity : AppCompatActivity(),
                     return if (v == "default") null else v.toDoubleOrNull()
                 }
             },
-        ).also { it.onEvent = { ev -> onEvent(ev) } }
+        ).also { it.onEvent = { ev -> onEvent(LOCAL_KEY, ev) } }
     }
 
     /**
@@ -1321,9 +1497,9 @@ class MainActivity : AppCompatActivity(),
         thread {
             val messages: List<ChatMessage> =
                 if (appMode.isCloudAgent) {
-                    LocalHistoryCodec.toChatMessages(store.loadLocalHistory())
+                    LocalHistoryCodec.toChatMessages(localMsgStore.loadLocalHistory())
                 } else {
-                    store.load()
+                    store?.load().orEmpty()
                 }
             runOnUiThread {
                 adapter.submit(messages)
@@ -1401,20 +1577,34 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    /** 切到指定会话并跳到对话页。 */
+    /**
+     * 切到指定会话并跳到对话页（真·并行版）。
+     *
+     * 与旧实现的关键区别：**不关闭其它会话的连接**。旧版每次切换都
+     * `client.close()` 再 `connect()`，等于杀一条连一条；现在只把
+     * 目标会话设为活动，其它会话的连接保持不变、继续收推送。
+     */
     private fun switchToSession(s: SessionScanner.Session) {
-        sessionLabel = s.label
         // 隧道/云端模式下，会话入口是它自己的 `wss://<子域>/mobile/ws`
         //（cloudflared 只暴露 wss + 同源 https，`http://子域:端口` 连不通）。
         // 原先一律用 `host:port` 拼 http，隧道模式下切换必然失败 ——
         // 这正是「切换模式后切不了会话」的直接原因。
         val tunnel = if (appMode == AppMode.LAN) null else tunnelUrlFor(s)
-        val url = tunnel ?: "http://${currentHost()}:${s.port}"
-        urlInput.setText(url)
-        // 隧道模式下 host 写成 url 里的域名，供 currentHost() 后续一致解析
-        connectWith(url, secretInput.text.toString())
+        // LAN/USB 模式下用**该会话自己的 host**，而非地址栏里的 currentHost()。
+        // 修掉的真实缺陷：urlInput 里残留的是上一次连过的 host（例如 USB
+        // reverse 场景下的 127.0.0.1），而用户此时想切的是一个局域网会话
+        // （host 为 192.168.x.x）——用 currentHost() 会拼出
+        // `http://127.0.0.1:<会话端口>`，连到手机自己、必然 ConnectException，
+        // 表现为「在会话页点切换没反应」。会话的 host 由扫描/落库填入，
+        // 才是目标主机的权威来源；仅当它为空（老数据）才回落 currentHost()。
+        val host = s.host.ifBlank { currentHost() }
+        val url = tunnel ?: "http://${host}:${s.port}"
+        val secret = secretInput.text.toString()
+        // 确保目标会话有连接（已有则复用，不打断其它会话）
+        val key = ensureConnection(url, secret)
+        connections[key]?.label = s.label
+        activateSession(key, persistAddress = true)
         append(ChatMessage.system("已切换到会话「${s.label}」（${if (tunnel != null) "隧道" else "端口 ${s.port}"}）"))
-        sessionFragment?.setCurrentPort(s.port)
         selectTab(TAB_INDEX_CHAT)
     }
 
@@ -1601,6 +1791,13 @@ class MainActivity : AppCompatActivity(),
         if (intent.action == PermissionActionReceiver.ACTION_FLUSH_PERMISSION) {
             flushPendingPermissions()
         }
+        // 通知点击带来的会话切换（真·并行多会话导航）：
+        // 用户点「修CI 有新回复」的通知，应切到那条会话看内容。
+        val key = intent.getStringExtra(Notifications.EXTRA_SESSION_KEY)
+        if (!key.isNullOrBlank() && connections.containsKey(key)) {
+            activateSession(key, persistAddress = true)
+            selectTab(TAB_INDEX_CHAT)
+        }
     }
 
     /**
@@ -1616,13 +1813,14 @@ class MainActivity : AppCompatActivity(),
      * 半途乱序发送反而更糟。
      */
     private fun flushPendingPermissions() {
-        if (!client.isConnected) return
+        val c = client ?: return
+        if (!c.isConnected) return
         val pending = PermissionDecisionStore.all(this)
         if (pending.isEmpty()) return
         android.util.Log.i(TAG, "补发 ${pending.size} 条待决权限响应")
 
         for (p in pending) {
-            val ok = client.sendPermissionResponse(p.requestId, p.behavior)
+            val ok = c.sendPermissionResponse(p.requestId, p.behavior)
             if (ok) {
                 PermissionDecisionStore.remove(this, p.requestId)
                 // 该请求若还在 App 内有对话框，必须关掉 ——
@@ -1640,14 +1838,21 @@ class MainActivity : AppCompatActivity(),
 
     override fun onDestroy() {
         super.onDestroy()
-        client.close()
+        stopConnectionSweeper()
+        // 关闭**所有**会话的连接（真·并行下有多条，逐一关闭）。
+        // 不关会导致后台连接的 WS 与回调继续存活，Activity 已销毁时
+        // 回调触碰控件 → 空引用崩溃。
+        connections.values.forEach { runCatching { it.close() } }
+        connections.clear()
         // 释放 TTS 引擎：不释放会泄漏并长期占用音频焦点
         voiceAnnouncer.release()
         // 及时落盘，避免进程被杀丢消息。
         // 走 saveAsync 的串行队列：此前用 thread{store.save()} 在 Activity 销毁时
         // 新开的线程可能来不及执行就被系统回收，最后一轮回复丢失。
         // 队列中的任务已在此之前提交（每次 append 都 persist 过），这里是兜底。
-        store.saveAsync(adapter.snapshot())
+        // 活动会话与本地历史都要落（两者可能是不同的文件）。
+        store?.saveAsync(adapter.snapshot())
+        localMsgStore.saveAsync(adapter.snapshot())
     }
 
     // ── 连接 ──
@@ -1664,7 +1869,7 @@ class MainActivity : AppCompatActivity(),
      * 已连接时保留原行为（进诊断页看链路详情）。
      */
     private fun onStatusTapped() {
-        if (client.isConnected) {
+        if (client?.isConnected == true) {
             openPage(DiagnosticsFragment(), "diagnostics")
             return
         }
@@ -1677,6 +1882,19 @@ class MainActivity : AppCompatActivity(),
         connectWith(addr, secret)
     }
 
+    /**
+     * 连接到某个地址（真·并行版）。
+     *
+     * ## 与旧实现的区别
+     *
+     * 旧版把「连接」等同于「切到那个会话」：`client.close()` + `client.connect()`，
+     * 一个地址一条连接，连 A 就断 B。现在**连接与切换解耦**：
+     * · 本方法只负责「确保该地址对应一条连接」，不动其它会话的连接；
+     * · 是否把它设为活动会话由调用方决定（[switchToSession] 会切）。
+     *
+     * 这样用户在会话列表里点「连接」时不会打断正在跑的其他会话 ——
+     * 那正是「多会话不可卡死」的核心诉求。
+     */
     private fun connectWith(rawUrl: String, secret: String) {
         val url = normalize(rawUrl)
         prefs.edit().apply {
@@ -1699,21 +1917,87 @@ class MainActivity : AppCompatActivity(),
         urlInput.setText(url)
         rememberHost(url)
 
-        // 切到该会话的历史文件并重新加载，避免不同会话的消息混在一条时间线
-        val host = runCatching { java.net.URI(url).host }.getOrNull() ?: "127.0.0.1"
-        val port = runCatching { java.net.URI(url).port }.getOrNull()?.takeIf { it > 0 } ?: PORT
-        store.useSession(MessageStore.keyFor(host, port))
+        ensureConnection(url, secret)
+        // 连上之后把它设为活动会话并载入其历史（连接建立是异步的，
+        // 但 store 与 activeKey 是本地状态，可立即切换）。
+        val key = keyForUrl(url)
+        activateSession(key, persistAddress = false)
+    }
+
+    /**
+     * 确保「某地址」有一条连接：已有则复用，没有则新建并 connect。
+     *
+     * @return 该地址对应的会话 key
+     */
+    private fun ensureConnection(url: String, secret: String): String {
+        val key = keyForUrl(url)
+        val existing = connections[key]
+        if (existing != null) {
+            // 已在（重连中/已连）就不再新建 —— 重复 connect 会留下孤儿 WS
+            if (!existing.connected && !existing.userClosed) {
+                existing.backend.bridge.connect(BridgeUrl.buildWsUrl(url, secret))
+            }
+            existing.lastActivityAt = System.currentTimeMillis()
+            return key
+        }
+        val label = url // 先用地址占位，连上后由 Connected 事件的 label 覆盖
+        val conn = SessionConn(this, key, label, url)
+        // 创建 backend 时用闭包捕获 key —— 这是「事件带源」的关键：
+        // BridgeClient 的 onEvent 是构造参数（不可变），不改它，靠闭包传 key。
+        conn.backend = RemoteAgentBackend.create(
+            onDiagnosis = { reason, code, address -> diagnosisLog.append(reason, code, address) },
+        )
+        conn.onEvent = { _, ev -> onEvent(key, ev) }
+        conn.backend.onEvent = { ev -> conn.onEvent?.invoke(conn, ev) }
+        connections[key] = conn
+        setStatus(false, getString(R.string.status_connecting))
+        conn.backend.bridge.connect(BridgeUrl.buildWsUrl(url, secret))
+        return key
+    }
+
+    /**
+     * 由 URL 推出会话 key（与 [MessageStore.keyFor] 一致）。
+     *
+     * 隧道地址（wss://域名/…）没有端口，回落默认端口 —— 与
+     * [connectWith] 旧实现里 `URI(url).port ?: PORT` 的取法一致，
+     * 保证「同一地址无论何时连接，key 恒定」，历史才不会错位。
+     */
+    private fun keyForUrl(url: String): String {
+        val host = runCatching { java.net.URI(url).host }.getOrNull()
+            ?: BridgeUrl.hostOf(url).ifBlank { "127.0.0.1" }
+        val port = runCatching { java.net.URI(url).port }.getOrNull()?.takeIf { it > 0 }
+            ?: BridgeUrl.portOf(url).takeIf { it > 0 }
+            ?: PORT
+        return MessageStore.keyFor(host, port)
+    }
+
+    /**
+     * 把某会话设为活动会话：切 activeKey、载入它的历史、更新相关 UI。
+     *
+     * 与旧的 switchToSession 不同：**不关闭**其它会话的连接，只换「当前看的是谁」。
+     *
+     * @param persistAddress 是否把该会话地址写进地址栏/持久化（切换会话时为
+     *   true；connectWith 里已经写过，故传 false 避免重复）。
+     */
+    private fun activateSession(key: String, persistAddress: Boolean) {
+        val conn = connections[key] ?: return
+        activeKey = key
+        sessionLabel = conn.label
+        if (persistAddress && ::urlInput.isInitialized) {
+            urlInput.setText(conn.address)
+        }
+        // 载入该会话自己的历史（每会话一个 store，见 SessionConn）
         thread {
-            val history = store.load()
+            val history = conn.store.load()
             runOnUiThread {
                 adapter.submit(history)
                 if (history.isNotEmpty()) list.scrollToPosition(history.size - 1)
             }
         }
-
-        client.close()
-        setStatus(false, getString(R.string.status_connecting))
-        client.connect(BridgeUrl.buildWsUrl(url, secret))
+        // 连接中/已连的状态刷新（非活动会话的连接状态不显示在顶栏）
+        setStatus(conn.connected, if (conn.connected) getString(R.string.status_connected)
+            else getString(R.string.status_connecting))
+        sessionFragment?.setCurrentPort(BridgeUrl.portOf(conn.address))
     }
 
     /**
@@ -1856,13 +2140,51 @@ class MainActivity : AppCompatActivity(),
 
     // ── 事件处理（BridgeClient 已切回主线程） ──
 
-    private fun onEvent(ev: BridgeClient.Event) {
+    /**
+     * 会话事件入口（真·并行版）。
+     *
+     * ## 为什么要带 key
+     *
+     * 每条连接各有独立的 [BridgeClient]，其事件回调在创建时用闭包捕获了
+     * 本会话的 key（见 [ensureConnection]）。事件到达时靠这个 key 判断
+     * 「这条消息属于哪个会话」，才能决定是刷当前界面、还是只写进那个
+     * 会话自己的历史（并在后台发通知）。
+     *
+     * ## 分流规则
+     *
+     * - **连接状态类**（Connected/Disconnected/AuthFailed/SessionLimit）：
+     *   无论是否活动，都更新该会话的 `connected` 标志（会话列表要显示
+     *   哪些在线）；但只有**活动会话**才动顶栏状态、弹提示。
+     * - **内容类**（Incoming/Delta/ToolActivity/…）：只有活动会话才
+     *   渲染到 adapter；非活动会话的 [BridgeClient.Event.Incoming] 写入
+     *   它自己的 store 并发系统通知（用户点通知切过去能看到完整历史）。
+     *
+     * @param key 事件来源会话的 key（本地后端为 [LOCAL_KEY]）
+     */
+    private fun onEvent(key: String, ev: BridgeClient.Event) {
+        val conn = connections[key]
+        val isActive = SessionRouter.affectsUi(key, activeKey)
+        // 连接状态类事件即使非活动也要维护标志
+        if (conn != null && SessionRouter.isConnectionStateEvent(ev)) {
+            conn.lastActivityAt = System.currentTimeMillis()
+            when (ev) {
+                is BridgeClient.Event.Connected -> conn.connected = true
+                is BridgeClient.Event.Disconnected,
+                is BridgeClient.Event.AuthFailed,
+                is BridgeClient.Event.SessionLimitReached,
+                -> conn.connected = false
+                else -> {}
+            }
+        }
+
         when (ev) {
             is BridgeClient.Event.Connected -> {
-                // 连上即清失败计数与提示标志 —— 否则下次断开时
-                // 会因为「已经提示过」而不再给出排查线索
-                consecutiveConnectFailures = 0
-                failureHintShown = false
+                if (isActive) {
+                    // 连上即清失败计数与提示标志 —— 否则下次断开时
+                    // 会因为「已经提示过」而不再给出排查线索
+                    consecutiveConnectFailures = 0
+                    failureHintShown = false
+                }
                 interactive = ev.interactive
                 // 记住本会话（多会话管理）：服务端下发了 lan/tunnel 地址与
                 // 标识，落库后会话页无需扫描即可列出它 —— 这是 TUNNEL/户外
@@ -1875,18 +2197,22 @@ class MainActivity : AppCompatActivity(),
                             mode = appMode,
                             lan = ev.lan,
                             tunnel = ev.tunnel,
-                            label = if (ev.label.isNotBlank()) ev.label else (sessionLabel ?: ""),
+                            label = if (ev.label.isNotBlank()) ev.label
+                            else (conn?.label ?: sessionLabel ?: ""),
                             cwd = ev.cwd,
                             port = ev.port,
                             resumeSessionId = ev.resumeSessionId,
                         ),
                     )
                 }
+                // 服务端给的标签回填到连接单元（通知标题区分来源要用）
+                if (ev.label.isNotBlank()) conn?.label = ev.label
+                if (!isActive) return
                 if (ev.interactive) {
                     setStatus(true, getString(R.string.status_connected))
                 } else {
                     setStatus(true, getString(R.string.status_noninteractive))
-                    append(ChatMessage.system(
+                    appendToSession(key, ChatMessage.system(
                         "⚠ 电脑上的 CLI 运行在非交互模式，消息只会入队、不会被处理。\n" +
                             "请在真实终端里运行 doge.exe（或 node scripts/start-mobile-bridge.mjs），" +
                             "不要用 -p 或重定向 stdin 的方式启动。",
@@ -1909,6 +2235,7 @@ class MainActivity : AppCompatActivity(),
                 resendFailedMessages()
             }
             is BridgeClient.Event.Disconnected -> {
+                if (!isActive) return
                 setStatus(false, getString(R.string.status_disconnected))
                 // 断开后中断无意义（服务端已收不到），隐掉按钮避免点了没反应
                 stopBtn.visibility = View.GONE
@@ -1916,27 +2243,36 @@ class MainActivity : AppCompatActivity(),
                 onConnectionFailed()
             }
             is BridgeClient.Event.AuthFailed -> {
+                if (!isActive) return
                 // 密钥不对是配置问题，重连无用：提示并自动展开设置面板，
                 // 否则用户只会看到状态栏「已断开」反复闪，不知道要填密钥。
                 setStatus(false, "认证失败：密钥不匹配")
-                append(ChatMessage.system(
+                appendToSession(key, ChatMessage.system(
                     "⚠ 服务端拒绝了连接（密钥不匹配）。\n" +
                         "请在「连接设置」里把密钥填成与 CLAUDE_CODE_MOBILE_SECRET 相同的值" +
                         "（若服务端没设密钥则留空）。",
                 ))
             }
             is BridgeClient.Event.SessionLimitReached -> {
+                if (!isActive) return
                 // 同一 CLI 上的设备数已达上限（服务端 4002）。与认证失败不同，
                 // 这是可恢复的：关掉一台旧设备后会自动重连。故不展开设置面板，
                 // 只给出明确原因，避免用户像从前那样只看到「已断开，重连中…」
                 // 反复闪却不知为何连不上。
                 setStatus(false, "设备数已满")
-                append(ChatMessage.system(
+                appendToSession(key, ChatMessage.system(
                     "⚠ 该 CLI 上连接的设备数已达上限（服务端 4002）。\n" +
                         "请在另一台设备上断开，或稍候自动重连（每 30 秒重试一次）。",
                 ))
             }
             is BridgeClient.Event.Incoming -> {
+                // 非活动会话：不碰 UI，只落进它自己的历史 + 发通知。
+                // 这正是「真·并行」的价值：后台会话照常收回复，用户切过去
+                // 能看到完整历史，且不必事先盯着它。
+                if (!isActive) {
+                    handleBackgroundIncoming(key, ev)
+                    return
+                }
                 // 服务端会把消息广播给所有连接的设备（多设备同步）：B 设备
                 // 需要看到 A 发的消息。但自己刚发的那条本地已回显过，服务端
                 // 又把同一文本（带当初的 requestId 作为 sourceRequestId）推回来，
@@ -1962,10 +2298,10 @@ class MainActivity : AppCompatActivity(),
                 ) || (ev.sourceRequestId.isNotEmpty() && sentReqIds.remove(ev.sourceRequestId))
                 // 定稿消息到达：清掉流式预览（它是权威版本，可能更长/更完整）。
                 // 必须在 append 之前清，否则预览气泡会短暂与定稿气泡并存。
-                android.util.Log.i("doge-probe", "[PROBE] role=${ev.role} srcRid='${ev.sourceRequestId}' isEcho=$isEcho sentReqIds=${sentReqIds.toList()} text=${ev.text.take(20)}")
                 if (ev.role == "assistant") clearStreamingState()
                 if (!isEcho) {
-                    append(
+                    appendToSession(
+                        key,
                         ChatMessage(ChatMessage.newId(), ev.role, ev.text, System.currentTimeMillis()),
                         suppressNotify = ev.suppressNotify,
                     )
@@ -1986,6 +2322,7 @@ class MainActivity : AppCompatActivity(),
                 if (TurnState.endOnIncoming(ev.role)) endTurn()
             }
             is BridgeClient.Event.Queued -> {
+                if (!isActive) return
                 val id = pending.entries.firstOrNull { it.value == ev.requestId }?.key
                 if (id != null) {
                     adapter.updateStatus(id, ChatMessage.Status.QUEUED)
@@ -1993,7 +2330,10 @@ class MainActivity : AppCompatActivity(),
                     persist()
                 }
             }
-            is BridgeClient.Event.Error -> append(ChatMessage.system("错误：${ev.message}"))
+            is BridgeClient.Event.Error -> {
+                if (!isActive) return
+                appendToSession(key, ChatMessage.system("错误：${ev.message}"))
+            }
             is BridgeClient.Event.PermissionRequested -> {
                 // 弹窗前的自动裁决闸门：先查「逐条授权规则」
                 // 命中 always_allow/always_deny 时直接回传、不再弹窗；
@@ -2007,21 +2347,76 @@ class MainActivity : AppCompatActivity(),
                         ev.requestId, auto, "规则自动裁决($policy)", ev.toolName,
                     )
                 } else {
-                    showPermissionDialog(ev)
+                    // 权限请求是**阻塞等待**：无论来自哪个会话都应提醒（否则
+                    // AI 卡着不动而用户不知道）。弹窗本身只在活动会话时弹出，
+                    // 但通知栏的「批准/拒绝」对后台会话也发 —— 这正是
+                    // Notifications.notifyPermission 支持 label 的意义。
+                    if (isActive) {
+                        showPermissionDialog(ev)
+                    } else if (localPrefs.getBool(LocalPrefs.KEY_NOTIFY_ACTION) && !hasWindowFocus()) {
+                        Notifications.notifyPermission(
+                            this, ev.requestId, ev.toolName, ev.description,
+                            conn?.label ?: sessionLabel,
+                            silent = !localPrefs.getBool(LocalPrefs.KEY_NOTIFY_SOUND),
+                        )
+                    }
                     // 语音提醒（若开启）：批准是阻塞等待，比完成更该主动叫人
                     announcePermission(ev.toolName)
                 }
             }
-            is BridgeClient.Event.PermissionCancelled -> dismissPermissionDialog(ev.requestId)
-            is BridgeClient.Event.Delta -> onStreamDelta(ev)
+            is BridgeClient.Event.PermissionCancelled -> {
+                if (isActive) dismissPermissionDialog(ev.requestId)
+            }
+            is BridgeClient.Event.Delta -> {
+                if (isActive) onStreamDelta(ev)
+            }
             is BridgeClient.Event.TurnEnd -> {
                 // 权威回合结束信号：无论本回合有无 assistant 文本，服务端都会
                 // 在定稿到达时推 turn_end。此前只认 role=assistant 收起回合，
                 // 「只调工具不出文本」的回合会永久卡在「返回中」。见 TurnState。
-                endTurn()
+                if (isActive) endTurn()
             }
-            is BridgeClient.Event.ToolActivity -> onToolActivity(ev)
-            is BridgeClient.Event.Usage -> onUsage(ev)
+            is BridgeClient.Event.ToolActivity -> {
+                if (isActive) onToolActivity(ev)
+            }
+            is BridgeClient.Event.Usage -> {
+                if (isActive) onUsage(ev)
+            }
+        }
+    }
+
+    /**
+     * 后台会话收到入站消息：写进它自己的历史 + 发系统通知，**不碰 UI**。
+     *
+     * ## 为什么要单独一条路径
+     *
+     * 活动会话的消息走 [appendToSession] → 渲染到 adapter。后台会话没有
+     * 可见的 adapter，但**必须持久化**（用户切过去要能看到）且**应发通知**
+     *（否则用户不知道那条会话有回复）。这两件事都不能走 UI 路径。
+     *
+     * ## 只提醒 assistant 回复
+     *
+     * user/system 入站（如多设备同步里别人发的）不打扰 —— 与前台
+     * maybeNotify 的口径一致（见 SessionRouter.shouldNotifyBackground）。
+     */
+    private fun handleBackgroundIncoming(key: String, ev: BridgeClient.Event.Incoming) {
+        val conn = connections[key] ?: return
+        conn.lastActivityAt = System.currentTimeMillis()
+        val msg = ChatMessage(ChatMessage.newId(), ev.role, ev.text, System.currentTimeMillis())
+        // 追加到该会话自己的历史文件（不动 adapter）
+        val history = conn.store.load()
+        history.add(msg)
+        conn.store.saveAsync(history)
+        // 通知（仅 assistant 回复、且用户没在看着这台手机）
+        if (SessionRouter.shouldNotifyBackground(ev.role, ev.text) &&
+            localPrefs.getBool(LocalPrefs.KEY_NOTIFY_REPLY) &&
+            !hasWindowFocus()
+        ) {
+            Notifications.notifyAssistant(
+                this, ev.text, conn.label,
+                silent = !localPrefs.getBool(LocalPrefs.KEY_NOTIFY_SOUND),
+                sessionKey = key,
+            )
         }
     }
 
@@ -2372,7 +2767,7 @@ class MainActivity : AppCompatActivity(),
         toolName: String,
     ) {
         PermissionDecisionStore.enqueue(this, requestId, behavior, source)
-        val ok = client.sendPermissionResponse(requestId, behavior)
+        val ok = client?.sendPermissionResponse(requestId, behavior) == true
         if (ok) {
             PermissionDecisionStore.remove(this, requestId)
             val verb = if (behavior == "allow") "已批准" else "已拒绝"
@@ -2597,8 +2992,27 @@ class MainActivity : AppCompatActivity(),
         maybeNotify(msg, suppressNotify)
     }
 
+    /**
+     * 向**指定会话**追加一条消息。
+     *
+     * - 该会话是活动会话（或本地模式）→ 渲染到 adapter 并落盘（等价旧 append）
+     * - 否则 → 只写入它自己的历史文件，**不碰 UI**（后台会话不打扰当前界面）
+     *
+     * 事件分流都走这里，避免「后台消息误渲到当前界面」这类串味。
+     */
+    private fun appendToSession(key: String, msg: ChatMessage, suppressNotify: Boolean = false) {
+        if (appMode.isCloudAgent || key == LOCAL_KEY || SessionRouter.affectsUi(key, activeKey)) {
+            append(msg, suppressNotify)
+        } else {
+            val conn = connections[key] ?: return
+            val history = conn.store.load()
+            history.add(msg)
+            conn.store.saveAsync(history)
+        }
+    }
+
     private fun persist() {
-        store.saveAsync(adapter.snapshot())
+        store?.saveAsync(adapter.snapshot())
     }
 
     // ── 发送 ──
@@ -3381,11 +3795,26 @@ class MainActivity : AppCompatActivity(),
             msg.text,
             sessionLabel,
             silent = !localPrefs.getBool(LocalPrefs.KEY_NOTIFY_SOUND),
+            sessionKey = activeKey,
         )
     }
 
     companion object {
         private const val PREFS = "doge_mobile"
+
+        /**
+         * 本地/云端后端事件的伪会话 key。
+         *
+         * 本地后端（[LocalAgentBackend]）没有远端连接，但其事件也走
+         * [onEvent] —— 用一个不可能与真实会话 key 冲突的常量标记它，
+         * 使「本地模式的事件当活动会话处理」这一判据显式化。
+         * 真实 key 形如 `192.168.0.106_5680`，不含此标记。
+         */
+        private const val LOCAL_KEY = "__local__"
+
+        /** 僵死连接回收的扫描周期（防卡死）。见 [startConnectionSweeper]。 */
+        private const val SWEEP_INTERVAL_MS = 60_000L
+
         /** 旧版单一地址 key。仅作 LAN 模式的迁移来源（见 savedAddressFor）。 */
         private const val KEY_URL = "last_url"
         /** 每模式地址 key 前缀：last_url_<MODE>（LAN / CLOUD / TUNNEL）。 */
