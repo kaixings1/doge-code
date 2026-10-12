@@ -17,7 +17,6 @@ import {
   createGoal,
   loadGoal,
   appendEvent,
-  recordIteration,
   saveGoal,
   transition,
   writeSessionAnchor,
@@ -26,7 +25,14 @@ import { checkBudget } from '../../services/goal/budget.js'
 import type { GoalState } from '../../services/goal/types.js'
 import { addSessionHook, removeSessionHook } from '../../utils/hooks/sessionHooks.js'
 import type { HookCommand } from '../../utils/settings/types.js'
-import { GOAL_HOOK_MARKER, getGoalStopHookCommand } from './hookPath.js'
+import {
+  getSettingsForSource,
+  updateSettingsForSource,
+} from '../../utils/settings/settings.js'
+import {
+  getGoalSessionStartHookCommand,
+  getGoalStopHookCommand,
+} from './hookPath.js'
 
 /** 构造 goal 的 Stop hook 命令对象（command 型，执行裁判脚本） */
 function buildGoalStopHook(): HookCommand {
@@ -63,8 +69,80 @@ function unregisterGoalStopHook(
   }
 }
 
-const SUBCOMMANDS = ['status', 'pause', 'resume', 'clear', 'history'] as const
+const SUBCOMMANDS = [
+  'status',
+  'pause',
+  'resume',
+  'clear',
+  'history',
+  'install-hook',
+  'uninstall-hook',
+] as const
 type Subcommand = (typeof SUBCOMMANDS)[number]
+
+/**
+ * 将 SessionStart hook 写入项目 .claude/settings.json。
+ *
+ * 用途：/clear 后新会话启动时，若存在活跃目标则给出恢复提示。
+ * 该 hook 必须持久化（会话内注册随 sessionId 变更失效），故写 settings.json，
+ * 且仅在用户显式执行本子命令时写入，不自动改动用户配置。
+ */
+function installSessionStartHook(): string {
+  const command = getGoalSessionStartHookCommand()
+  const settings = getSettingsForSource('projectSettings') ?? {}
+  const hookEntry = {
+    matcher: 'clear',
+    hooks: [{ type: 'command' as const, command, timeout: 10 }],
+  }
+  const existing = (settings.hooks?.SessionStart ?? []) as Array<{
+    hooks?: Array<{ command?: string }>
+  }>
+  const already = existing.some(m =>
+    (m.hooks ?? []).some(h => typeof h.command === 'string' && h.command.includes('goal-sessionstart-hook')),
+  )
+  if (already) {
+    return 'ℹ️ SessionStart hook 已安装（.claude/settings.json）。'
+  }
+
+  const { error } = updateSettingsForSource('projectSettings', {
+    ...settings,
+    hooks: {
+      ...(settings.hooks ?? {}),
+      SessionStart: [...existing, hookEntry],
+    },
+  } as typeof settings)
+  if (error) return `❌ 安装失败：${error.message}`
+  return `✅ 已安装 SessionStart hook 到 .claude/settings.json。\n/clear 后若存在活跃目标会给出恢复提示。`
+}
+
+/** 从项目 settings.json 移除 goal 的 SessionStart hook */
+function uninstallSessionStartHook(): string {
+  const settings = getSettingsForSource('projectSettings') ?? {}
+  const existing = (settings.hooks?.SessionStart ?? []) as Array<{
+    hooks?: Array<{ command?: string }>
+  }>
+  const filtered = existing.filter(
+    m =>
+      !(m.hooks ?? []).some(
+        h => typeof h.command === 'string' && h.command.includes('goal-sessionstart-hook'),
+      ),
+  )
+  if (filtered.length === existing.length) {
+    return 'ℹ️ 未发现 goal 的 SessionStart hook。'
+  }
+  const nextHooks = { ...(settings.hooks ?? {}) }
+  if (filtered.length > 0) {
+    nextHooks.SessionStart = filtered as (typeof nextHooks)['SessionStart']
+  } else {
+    delete nextHooks.SessionStart
+  }
+  const { error } = updateSettingsForSource('projectSettings', {
+    ...settings,
+    hooks: nextHooks,
+  } as typeof settings)
+  if (error) return `❌ 卸载失败：${error.message}`
+  return '✅ 已从 .claude/settings.json 移除 SessionStart hook。'
+}
 
 function renderHelp(): string {
   return `# /goal — 目标自治运行时
@@ -79,6 +157,8 @@ function renderHelp(): string {
   /goal resume                恢复已暂停的目标
   /goal history               查看目标事件时间线
   /goal clear                 清除当前目标
+  /goal install-hook          安装 SessionStart hook（/clear 后恢复提示）
+  /goal uninstall-hook        移除上述 hook
 
 ## 选项（设置目标时）
   --criteria <标准>           成功标准（可多次指定）
@@ -260,6 +340,17 @@ export const call: LocalJSXCommandCall = async (onDone, context, args) => {
   const setAppState = context.setAppState
   const sessionIdForHooks = context.agentId ?? sessionId
 
+  // 自愈：/clear 会 regenerateSessionId()，使本会话内已注册的 Stop hook 失效
+  // （会话 hook 以旧 sessionId 为键，内存态），但项目级 active.json 仍在。
+  // 此处若发现活跃目标，幂等重注册 Stop hook，避免"僵尸目标"（状态在但无裁判驱动）。
+  // set/resume 分支内部也会注册，重复无副作用（registerGoalStopHook 幂等）。
+  if (first !== 'clear' && first !== 'pause') {
+    const current = await loadGoal(cwd)
+    if (current && current.status === 'active') {
+      registerGoalStopHook(setAppState, sessionIdForHooks)
+    }
+  }
+
   if (SUBCOMMANDS.includes(first as Subcommand)) {
     await handleSubcommand(first as Subcommand, cwd, sessionId, setAppState, sessionIdForHooks, onDone)
     return null
@@ -288,6 +379,16 @@ async function handleSubcommand(
     case 'history':
       onDone(renderHistory(state))
       return
+
+    case 'install-hook': {
+      onDone(installSessionStartHook())
+      return
+    }
+
+    case 'uninstall-hook': {
+      onDone(uninstallSessionStartHook())
+      return
+    }
 
     case 'pause': {
       if (!state) return onDone('当前无活跃目标。')

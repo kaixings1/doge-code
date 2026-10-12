@@ -1,5 +1,5 @@
 /**
- * 定位 goal-stop-hook.cjs 脚本路径。
+ * 定位 goal 的 hook 脚本路径。
  *
  * 开发模式：__dirname 指向 src/commands/goal/
  * 编译后（doge.exe）：__dirname 为虚拟路径，回退到 exe 同目录 / cwd/src。
@@ -13,22 +13,23 @@ import { fileURLToPath } from 'node:url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const IS_BUNDLED = __dirname.includes('~BUN') || __dirname.includes('bundle')
 
-const HOOK_BASENAME = 'goal-stop-hook.cjs'
+export const GOAL_STOP_HOOK_BASENAME = 'goal-stop-hook.cjs'
+export const GOAL_SESSIONSTART_HOOK_BASENAME = 'goal-sessionstart-hook.cjs'
 
-/** 返回 hook 脚本的绝对路径（若都找不到则返回源码候选路径作为兜底） */
-export function getGoalStopHookPath(): string {
+/** 定位指定 hook 脚本的绝对路径（都找不到则返回源码候选路径兜底） */
+function resolveHookPath(basename: string): string {
   const candidates: string[] = []
 
   if (!IS_BUNDLED) {
-    candidates.push(path.join(__dirname, HOOK_BASENAME))
+    candidates.push(path.join(__dirname, basename))
   } else {
     const exeDir = path.dirname(process.execPath)
     // 1. exe 同目录下的 commands/goal/
-    candidates.push(path.join(exeDir, 'commands', 'goal', HOOK_BASENAME))
+    candidates.push(path.join(exeDir, 'commands', 'goal', basename))
     // 2. exe 同目录直接放脚本
-    candidates.push(path.join(exeDir, HOOK_BASENAME))
+    candidates.push(path.join(exeDir, basename))
     // 3. cwd/src/commands/goal/（开发版运行）
-    candidates.push(path.join(process.cwd(), 'src', 'commands', 'goal', HOOK_BASENAME))
+    candidates.push(path.join(process.cwd(), 'src', 'commands', 'goal', basename))
   }
 
   for (const c of candidates) {
@@ -37,10 +38,30 @@ export function getGoalStopHookPath(): string {
   return candidates[0]!
 }
 
-/** 构造可在 hook 配置中执行的命令字符串：node "<path>" */
-export function getGoalStopHookCommand(): string {
-  return `node ${JSON.stringify(getGoalStopHookPath())}`
+/** Stop hook（裁判闭环闸门）脚本路径 */
+export function getGoalStopHookPath(): string {
+  return resolveHookPath(GOAL_STOP_HOOK_BASENAME)
 }
 
-/** hook 命令中用于匹配/移除的标识 */
-export const GOAL_HOOK_MARKER = HOOK_BASENAME
+/** SessionStart hook（跨会话恢复提示）脚本路径 */
+export function getGoalSessionStartHookPath(): string {
+  return resolveHookPath(GOAL_SESSIONSTART_HOOK_BASENAME)
+}
+
+/** 构造可在 hook 配置中执行的命令字符串：node "<path>" */
+function hookCommand(scriptPath: string): string {
+  return `node ${JSON.stringify(scriptPath)}`
+}
+
+/** Stop hook 的可执行命令串 */
+export function getGoalStopHookCommand(): string {
+  return hookCommand(getGoalStopHookPath())
+}
+
+/** SessionStart hook 的可执行命令串 */
+export function getGoalSessionStartHookCommand(): string {
+  return hookCommand(getGoalSessionStartHookPath())
+}
+
+/** Stop hook 命令中用于匹配/移除的标识 */
+export const GOAL_HOOK_MARKER = GOAL_STOP_HOOK_BASENAME
