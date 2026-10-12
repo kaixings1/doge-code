@@ -212,6 +212,30 @@ REM 手机：连接设置 → 扫描会话 → 点选要连的那个
    配 5 条边界单测）。曾用 `subList(0, MAX)` 的写法会把**最新**的丢掉，
    表现为「历史停在很久以前」且无报错。
 
+## 后续修复（2026-10-12，本机实测驱动）
+
+用户报告「地址没发给手机 / 启动卡死 / 多会话端口乱」，逐项实证后修复：
+
+| 问题 | 实证 | 修复 |
+|---|---|---|
+| 扫描拿不到地址 | `/mobile/session-info` 此前**不返回** lan/tunnel，只有 `client_connected` 才下发 → 手机必须先盲连一次才能记住隧道地址，而隧道子域每次重启都变，冷启动走不通 | `session-info` 增加 `lan[]`/`tunnel`（复用 `sessionEndpoints`），扫描即可拿到地址直接连 |
+| 启动卡死、端口乱 | `netstat` 实测 6000/6001/6002 **三个端口同时 LISTENING**（`mobile.bat` 调脚本 + 自己 `bun run` 起第二个 CLI，抢端口后自动顺延） | `mobile.bat` 改为单一入口（只调脚本）；30 个 `--feature` 搬进 `start-mobile-bridge.mjs`（`--feature` 是 bun 编译期参数，`doge.exe` 不接受，故脚本跑 bun 源码路径） |
+| 多会话端口错位 | 端口靠自动顺延，隧道/地址对不上 | 脚本新增 `--port <n>`（显式端口，隧道文件按端口分）与 `--label <名>`（多会话标签） |
+| CLOSE_WAIT 泄漏 | `netstat` 见同一手机 IP 在 6000 堆多条 CLOSE_WAIT；`clients` 只增不减 | `MobileBridgeServer` 新增**服务端心跳**（原只有客户端侧有）：30s 一轮发 ping，上轮 `__alive=false` 即判死连接并清理；入站消息（含 pong）置 `__alive=true` |
+
+实测证据（`--port 6010 --label test6010` 起真实实例）：
+
+```json
+{ "label": "test6010", "port": 6010,
+  "lan": ["http://192.168.26.152:6010", "http://100.99.118.124:6010",
+          "http://192.168.0.106:6010"],
+  "tunnel": null }
+```
+
+测试：`mobile-bridge-multisession.test.ts` 19/19、心跳清理新增 1 例（含变异验证）。
+已知既有失败：`mobile-bridge-server.test.ts` 的「端口被占用」用例在**基线**同样失败
+（`git stash` 验证过），与本系列改动无关。
+
 ## 验证记录（2026-10-02）
 
 服务端端点与客户端扫描逻辑做了协议级验证（真实起 3 个 doge 实例）：
