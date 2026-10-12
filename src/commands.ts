@@ -334,6 +334,7 @@ import pair from './commands/pair/index.ts'
 import memorySearch from './commands/memory-search/index.ts'
 import loopCommand from './commands/loop/index.tsx'
 import { loopShortcuts } from './commands/loop/shortcuts.ts'
+import goalCommand from './commands/goal/index.ts'
 import { logError } from './utils/log.js'
 import { toError } from './utils/errors.js'
 import { logForDebugging } from './utils/debug.js'
@@ -729,6 +730,7 @@ export const COMMANDS = memoize((): Command[] => [
   snapshot,
   loopCommand,
   ...loopShortcuts,
+  goalCommand,
   loopV2,
   loopOrchestrate,
   loopStartV2,
