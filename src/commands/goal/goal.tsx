@@ -22,6 +22,7 @@ import {
   writeSessionAnchor,
 } from '../../services/goal/goalState.js'
 import { checkBudget } from '../../services/goal/budget.js'
+import { progressBar } from '../loop/progress-ui.js'
 import type { GoalState } from '../../services/goal/types.js'
 import { addSessionHook, removeSessionHook } from '../../utils/hooks/sessionHooks.js'
 import type { HookCommand } from '../../utils/settings/types.js'
@@ -187,15 +188,38 @@ function fmtBudget(ms: number): string {
   return fmtDuration(ms)
 }
 
-function renderStatus(state: GoalState | null): string {
+/** 状态徽标 */
+export function statusBadge(status: GoalState['status']): string {
+  switch (status) {
+    case 'active':
+      return '🟢 active'
+    case 'paused':
+      return '⏸️ paused'
+    case 'budget_limited':
+      return '💸 budget_limited'
+    case 'complete':
+      return '✅ complete'
+    case 'impossible':
+      return '⛔ impossible'
+    case 'error':
+      return '❌ error'
+    default:
+      return status
+  }
+}
+
+export function renderStatus(state: GoalState | null): string {
   if (!state) return '当前无活跃目标。用 `/goal <目标描述>` 设置一个。'
 
   const now = Date.now()
   const elapsed = fmtDuration(now - state.usage.startedAt)
-  const iterLine = `${state.usage.iterations}/${state.budget.maxIterations}`
+  const iterBar = progressBar(state.usage.iterations, state.budget.maxIterations)
   const tokenLine =
     state.budget.tokenBudget > 0
-      ? `${state.usage.tokenUsed}/${state.budget.tokenBudget}`
+      ? `${state.usage.tokenUsed}/${state.budget.tokenBudget} ${progressBar(
+          state.usage.tokenUsed,
+          state.budget.tokenBudget,
+        )}`
       : `${state.usage.tokenUsed}（不限制）`
 
   const judge = state.lastJudge
@@ -210,31 +234,81 @@ function renderStatus(state: GoalState | null): string {
   const budget = checkBudget(state, now)
   const budgetLine = budget.exceeded ? `⚠️ ${budget.reason}` : '正常'
 
+  const wallMs = state.budget.wallClockMs
+  const wallLine =
+    wallMs > 0
+      ? `${elapsed} / ${fmtBudget(wallMs)} ${progressBar(now - state.usage.startedAt, wallMs)}`
+      : '不限制'
+
+  const judgeCount = state.history.filter(e => e.type.startsWith('judge_')).length
+  const sinceLast = state.usage.lastIterationAt
+    ? `（上次 ${fmtDuration(now - state.usage.lastIterationAt)} 前）`
+    : ''
+
   return `# 🎯 目标状态
 
 **目标**：${state.objective}
-${state.criteria.length > 0 ? `**成功标准**：${state.criteria.join(' / ')}\n` : ''}**状态**：${state.status}
-**迭代**：${iterLine}
+${state.criteria.length > 0 ? `**成功标准**：${state.criteria.join(' / ')}\n` : ''}**状态**：${statusBadge(state.status)}
+
+**迭代**：${iterBar} ${state.usage.iterations}/${state.budget.maxIterations} ${sinceLast}
 **Token**：${tokenLine}
 **运行时长**：${elapsed}
-**墙钟预算**：${fmtBudget(state.budget.wallClockMs)}
+**墙钟预算**：${wallLine}
 **预算检查**：${budgetLine}
+**裁判次数**：${judgeCount}
 **最近裁判**：${judgeLine}
 
 查看事件时间线：\`/goal history\``
 }
 
-function renderHistory(state: GoalState | null): string {
+/** 事件类型 -> 显示图标 */
+export function eventIcon(type: string): string {
+  if (type === 'judge_ok') return '✅'
+  if (type === 'judge_not_ok') return '⏳'
+  if (type === 'judge_impossible') return '⛔'
+  if (type === 'budget_exceeded') return '💸'
+  if (type === 'circuit_break') return '🔌'
+  if (type === 'error') return '❌'
+  if (type === 'set') return '🎯'
+  if (type === 'pause') return '⏸️'
+  if (type === 'resume') return '▶️'
+  if (type === 'clear') return '🗑️'
+  if (type === 'iteration_end') return '🔁'
+  return '•'
+}
+
+export function renderHistory(state: GoalState | null): string {
   if (!state) return '当前无活跃目标。'
   if (state.history.length === 0) return '（无事件记录）'
-  const lines = state.history
-    .slice(-30)
-    .map(e => {
-      const t = new Date(e.timestamp).toLocaleTimeString()
-      const token = e.tokensThisTurn !== undefined ? ` [${e.tokensThisTurn} token]` : ''
-      return `- ${t}  ${e.type}${token}  ${e.detail}`
-    })
-  return `# 📜 目标事件时间线（最近 ${lines.length} 条）\n\n${lines.join('\n')}`
+
+  // 按事件类型汇总统计
+  const counts = new Map<string, number>()
+  let totalTokens = 0
+  for (const e of state.history) {
+    counts.set(e.type, (counts.get(e.type) ?? 0) + 1)
+    if (e.tokensThisTurn) totalTokens += e.tokensThisTurn
+  }
+  const summary = [...counts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([t, n]) => `${eventIcon(t)} ${t}×${n}`)
+    .join('  ')
+
+  const shown = state.history.slice(-30)
+  const lines = shown.map(e => {
+    const t = new Date(e.timestamp).toLocaleTimeString()
+    const token = e.tokensThisTurn != null ? ` [${e.tokensThisTurn} token]` : ''
+    const detail = e.detail.length > 80 ? e.detail.slice(0, 80) + '…' : e.detail
+    return `- ${t}  ${eventIcon(e.type)} ${e.type}${token}  ${detail}`
+  })
+
+  return `# 📜 目标事件审计（共 ${state.history.length} 条，显示最近 ${lines.length} 条）
+
+**汇总**：${summary || '（无）'}
+**本轮累计 token**：${totalTokens}
+**usage.tokenUsed**：${state.usage.tokenUsed}
+
+## 时间线
+${lines.join('\n')}`
 }
 
 /** 解析 --budget 时长：支持 30s / 5m / 2h */
