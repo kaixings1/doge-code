@@ -362,6 +362,14 @@ if (serviceReady) {
       CLAUDE_CODE_MOBILE_PORT: String(PORT),
       // 会话标签：多会话列表与通知标题靠它区分。
       ...(LABEL ? { DOGE_SESSION_LABEL: LABEL } : {}),
+      // 清掉可能从父 shell 继承的 local-bridge 标记。
+      // 为什么必需：父 shell 若设过 CLAUDE_CODE_LOCAL_BRIDGE，CLI 启动时
+      // 会去连 5678 的**骨架桥**（scripts/bridge.ts）—— 而本脚本起的是
+      // **移动桥接**（PORT，如 6012）。骨架桥没跑 → CLI 状态栏显示
+      // 「✗ 远程控制失败 · 无法在桥接服务器注册会话」，看起来像手机连不上，
+      // 实则是两条互不相干的桥。清掉它，避免误导。
+      CLAUDE_CODE_LOCAL_BRIDGE: '',
+      CLAUDE_CODE_LOCAL_BRIDGE_URL: '',
     },
   })
 }
