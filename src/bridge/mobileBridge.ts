@@ -35,6 +35,7 @@ import { validateMobileConfig } from './mobileConfig.js'
 import { PORT_SCAN_LIMIT, allPortsBusyMessage, candidatePorts } from './mobilePortScan.js'
 import { MobileBeaconSender } from './mobileBeaconSender.js'
 import { readTunnelUrl, toWsUrl } from './tunnelUrlFile.js'
+import { discoverPeerSessions, type PeerSession } from './mobilePeerDiscovery.js'
 import { buildDiffPreviewForMobile } from './mobileDiffPreview.js'
 import { getMainLoopModel } from '../utils/model/model.js'
 import { getSessionId } from '../bootstrap/state.js'
@@ -561,6 +562,28 @@ export class MobileBridgeServer {
   private heartbeatTimer: ReturnType<typeof setInterval> | null = null
   /** 服务端心跳间隔（ms）。默认 30s，测试可经构造注入更短值。 */
   private heartbeatIntervalMs = 30000
+
+  /**
+   * 同机其他实例的接入信息（含各自 lan/tunnel），供连接时一并下发给手机。
+   *
+   * 由 [refreshPeers] 定期刷新（见 [peerRefreshTimer]）。为何不每次连接时
+   * 现探：探测是 N 个 HTTP 请求，握手时现探会拖慢连接建立。
+   */
+  private peerSessions: PeerSession[] = []
+
+  /** peer 定期刷新定时器。 */
+  private peerRefreshTimer: ReturnType<typeof setInterval> | null = null
+
+  /**
+   * peer 探测的端口段（起始 + 宽度）。
+   *
+   * 起始：环境变量 `CLAUDE_CODE_MOBILE_PORT` 的值（用户配置的起始端口），
+   * 未设时 6000 —— 与服务端默认一致。用**起始**而非本实例端口：本实例
+   * 可能已顺延到 6002，但其他实例在 6000/6001 上，必须从起始处扫。
+   */
+  private peerRangeStart = Number(process.env.CLAUDE_CODE_MOBILE_PORT) || 6000
+  /** 探测宽度：与服务端顺延上限、手机端扫描段同量级。 */
+  private peerRangeWidth = 21
   /** 共享密钥；空字符串表示未启用认证（仅限可信局域网，会在启动时警告） */
   private secret: string
 
@@ -718,12 +741,15 @@ export class MobileBridgeServer {
             // 现在扫描即可拿到每个会话的 lan/tunnel，列表直接可点连。
             ...(() => {
               try {
-                const ep = sessionEndpoints(this.port, this.sessionId)
-                return { lan: ep.lan, tunnel: ep.tunnel }
+                const ep = sessionEndpoints(this.port, this.sessionId, this.peerSessions)
+                // peers 也一并下发：手机扫到任一实例即可拿到全部会话地址，
+                // 不必等「先连上一个」——这与用户诉求「连上任一即得全部」一致，
+                // 并让扫描路径也受益（此前扫描拿不到其他会话的隧道地址）。
+                return { lan: ep.lan, tunnel: ep.tunnel, peers: ep.peers }
               } catch {
-                // 旁路能力：取地址失败只是不下发这两个字段，
+                // 旁路能力：取地址失败只是不下发这几个字段，
                 // 绝不能让 session-info 本身报错（扫描会整体失败）
-                return { lan: [] as string[], tunnel: null as string | null }
+                return { lan: [] as string[], tunnel: null as string | null, peers: [] }
               }
             })(),
             // 当前生效的配置，供手机端设置页显示「现在是什么」。
@@ -928,7 +954,7 @@ export class MobileBridgeServer {
           // 本会话可用地址 + 标识：手机据此直接列出本会话，无需自己扫描。
           // 展开为同一层字段（而非嵌套 endpoints），保持与既有老客户端兼容
           // —— 老客户端忽略未识别字段，新客户端读 lan/tunnel/label 等。
-          ...sessionEndpoints(this.port, this.sessionId),
+          ...sessionEndpoints(this.port, this.sessionId, this.peerSessions),
           // 覆盖：每设备会话 id（sessionManager 分配），非服务器会话 id。
           sessionId: session.sessionId,
           deviceId,
@@ -961,6 +987,9 @@ export class MobileBridgeServer {
       // 传 this.port 而非起始端口 —— 自动顺延后两者不同，
       // 广播错的端口会让手机连不上。
       this.beacon.start()
+
+      // 启动 peer 发现：让手机连上任一实例即拿到同机所有会话的地址
+      this.startPeerRefresh()
     } catch (e) {
       logForDebugging(`[MobileBridgeServer] 启动失败: ${e instanceof Error ? e.message : String(e)}`)
     }
@@ -1298,10 +1327,39 @@ export class MobileBridgeServer {
   }
 
   /**
+   * 启动 peer 发现：定期探测同机其他实例，结果供连接时下发。
+   *
+   * 立即探测一次（不等首次间隔）——「刚启动就连手机」是最常见的时序，
+   * 若等 15 秒才首探，手机第一次连接拿不到其他会话。
+   *
+   * 不阻塞 start()：探测是旁路能力，失败/慢都不该拖慢服务端就绪。
+   */
+  private startPeerRefresh(): void {
+    if (this.peerRefreshTimer) return
+    const refresh = () => {
+      void discoverPeerSessions(this.port, this.peerRangeStart, this.peerRangeWidth)
+        .then((peers) => { this.peerSessions = peers })
+        .catch(() => { /* 旁路能力：失败保留上次结果 */ })
+    }
+    refresh()
+    this.peerRefreshTimer = setInterval(refresh, 15_000)
+    this.peerRefreshTimer.unref?.()
+  }
+
+  /** 停止 peer 刷新。 */
+  private stopPeerRefresh(): void {
+    if (this.peerRefreshTimer) {
+      clearInterval(this.peerRefreshTimer)
+      this.peerRefreshTimer = null
+    }
+  }
+
+  /**
    * 停止服务器
    */
   async stop(): Promise<void> {
     this.stopServerHeartbeat()
+    this.stopPeerRefresh()
     // 先停广播：停止后再发出的广播会让手机发现一个已死的会话，
     // 点了连不上。顺序在这里有意义。
     this.beacon.stop()
@@ -2364,7 +2422,7 @@ export function getMobileBridgeUrl(port?: number): string {
  *
  * 动态取值（非构造快照）：端口可能顺延、隧道子域会变、标签可被重命名。
  */
-export function sessionEndpoints(port: number, sessionId: string): {
+export function sessionEndpoints(port: number, sessionId: string, peers: PeerSession[] = []): {
   sessionId: string
   resumeSessionId: string | null
   port: number
@@ -2372,6 +2430,17 @@ export function sessionEndpoints(port: number, sessionId: string): {
   label: string
   lan: string[]
   tunnel: string | null
+  /**
+   * 同机**其他** doge 实例的接入信息（含各自的 lan/tunnel）。
+   *
+   * 为什么下发它（用户核心诉求）：「一旦有一个连接上，则相应的其他会话、
+   * 隧道路径 ws 等所有内容都要发送到手机 app」。此前每个实例只知道自己
+   * 的端口，手机连上 A 后拿不到 B/C 的隧道地址 —— 而手机自己扫端口段
+   * 够不到隧道场景（子域各不同）、户外又收不到 UDP 广播。
+   *
+   * 已剔除自己（本实例地址在上面 lan/tunnel 字段里）。老客户端忽略此字段。
+   */
+  peers: PeerSession[]
 } {
   return {
     sessionId,
@@ -2394,6 +2463,8 @@ export function sessionEndpoints(port: number, sessionId: string): {
         return null
       }
     })(),
+    // 已剔除自己：列表里只留「其他会话」，避免手机端把本会话列两遍
+    peers: peers.filter((p) => p.port !== port),
   }
 }
 
