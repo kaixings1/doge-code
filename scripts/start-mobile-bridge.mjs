@@ -141,9 +141,26 @@ const USE_LAN = !USE_USB && !USE_TUNNEL
 // 未给时回落 DOGE_SESSION_LABEL 环境变量，仍未设则由服务端回落目录名。
 const LABEL_ARG_IDX = ARGV.indexOf('--label')
 const LABEL = LABEL_ARG_IDX >= 0 && ARGV[LABEL_ARG_IDX + 1] ? ARGV[LABEL_ARG_IDX + 1] : (process.env.DOGE_SESSION_LABEL || '')
-// 透传给 CLI 的额外参数（-- 之后的都原样传下去，如 --verbose 等）。
-// 这样「全交给脚本」时用户仍能追加 CLI 自己的开关。
-const CLI_EXTRA_ARGS = LABEL_ARG_IDX >= 0 ? ARGV.slice(LABEL_ARG_IDX + 2) : []
+// 透传给 CLI 的额外参数。
+//
+// **必须剔除脚本自己的开关** —— 真机踩过：`--port 6006 --label x --tunnel`
+// 时原实现取 `--label` 之后的全部参数，把 `--tunnel` 透传给了 CLI，
+// CLI 报 `unknown option '--tunnel'` 后**直接退出**（实例启动即崩）。
+// 这里显式过滤掉本脚本认得的开关（及其取值），剩下的才是 CLI 的。
+const SCRIPT_FLAGS = new Set(['--lan', '--usb', '--tunnel', '--port', '--label'])
+const CLI_EXTRA_ARGS = (() => {
+  const out = []
+  for (let i = 0; i < ARGV.length; i++) {
+    const a = ARGV[i]
+    if (SCRIPT_FLAGS.has(a)) {
+      // 带取值的开关（--port/--label）跳过它的值
+      if ((a === '--port' || a === '--label') && i + 1 < ARGV.length) i++
+      continue
+    }
+    out.push(a)
+  }
+  return out
+})()
 
 function line() { console.log('='.repeat(60)) }
 
