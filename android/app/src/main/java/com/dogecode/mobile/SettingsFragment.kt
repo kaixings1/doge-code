@@ -207,6 +207,8 @@ class SettingsFragment : Fragment() {
         fun onConnect(url: String, secret: String)
         fun onScanSessions()
         fun onPickHost()
+        /** 一键把地址框填成 Tailscale 地址（固定名，任意网络可用）。 */
+        fun onFillTailscaleAddress()
         fun onRemoteConfig()
         /** 内联选项被选中：key 为配置项名，value 为值，label 为展示文案。 */
         fun onConfigValue(key: String, value: Any?, label: String)
@@ -263,6 +265,11 @@ class SettingsFragment : Fragment() {
             actions?.onConnect(urlInput.text.toString(), secretInput.text.toString())
         }
         view.findViewById<Button>(R.id.btn_hosts).setOnClickListener { actions?.onPickHost() }
+        // Tailscale 一键填入：把地址框换成 Tailscale 地址（固定不变、任意网络可用）。
+        // 具体填什么由宿主决定（它才有已知会话/主机名），Fragment 只负责转发。
+        view.findViewById<Button>(R.id.btn_tailscale).setOnClickListener {
+            actions?.onFillTailscaleAddress()
+        }
         rowModel = view.findViewById(R.id.row_model_value)
         rowThinking = view.findViewById(R.id.row_thinking_value)
         rowPermission = view.findViewById(R.id.row_permission_value)

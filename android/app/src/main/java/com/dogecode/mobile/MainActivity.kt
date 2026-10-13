@@ -898,6 +898,52 @@ class MainActivity : AppCompatActivity(),
         settingsActions.showHostHistory()
     }
 
+    /**
+     * 一键把地址框填成 **Tailscale 地址**（固定名，任意网络可用）。
+     *
+     * ## 为什么需要
+     *
+     * Tailscale 的主机名（如 `tp-kaixings`）比 IP 好记且**永不变**，
+     * 但手打容易错。这里从**已知会话**里找出 Tailscale 地址（100.x 段），
+     * 直接把它填进地址框 —— 用户点一下即可，不必记忆主机名。
+     *
+     * ## 找不到时
+     *
+     * 尚未连过任何会话、或对端不在 Tailscale 上时，给明确指引
+     * （先扫描一次会话，或确认电脑装了 Tailscale），而不是静默失败。
+     */
+    override fun onFillTailscaleAddress() {
+        // 已知会话里找第一个 Tailscale 地址。
+        // 两种形态都认（服务端两种都会下发，见 listLanIps）：
+        //  - `http://100.x.x.x:port`（Tailscale IP）
+        //  - `http://<主机名>:port`（MagicDNS 短名，更好记 —— 优先用它）
+        val candidates = knownSessions.list().flatMap { it.addresses } +
+            connections.values.map { it.address }
+        // 优先 MagicDNS 短名（如 `tp-kaixings`，最好记），其次 Tailscale IP。
+        val magicDns = candidates.firstOrNull { a ->
+            a.startsWith("http://") && run {
+                val h = BridgeUrl.hostOf(a)
+                h.isNotBlank() && h != "localhost" && h != "127.0.0.1" &&
+                    !h.matches(Regex("""\d+\.\d+\.\d+\.\d+"""))
+            }
+        }
+        val tsIp = candidates.firstOrNull { a ->
+            a.startsWith("http://") && BridgeUrl.hostOf(a).startsWith("100.")
+        }
+        val tailscaleAddr = magicDns ?: tsIp
+
+        if (tailscaleAddr == null) {
+            Toast.makeText(
+                this,
+                "未找到 Tailscale 地址：请先「会话」页扫描一次（或确认电脑与手机都已登录 Tailscale）",
+                Toast.LENGTH_LONG,
+            ).show()
+            return
+        }
+        urlInput.setText(tailscaleAddr)
+        Toast.makeText(this, "已填入 Tailscale 地址，点「连接」即可", Toast.LENGTH_SHORT).show()
+    }
+
     override fun onRemoteConfig() {
         openPage(ConfigFragment(), "config")
     }

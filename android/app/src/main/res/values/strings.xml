@@ -152,7 +152,11 @@
     <string name="quick_prompt_title">选择指令模板</string>
     <string name="scroll_to_bottom">滚动到底部</string>
     <string name="chat_empty_hint">还没有消息\n在下方输入，或先在「会话」页连接电脑端</string>
+    <string name="fill_tailscale">一键填入 Tailscale 地址</string>
+    <string name="fill_tailscale_desc">Tailscale 地址永久不变，任意网络（含手机流量）都能连。需电脑与手机都装 Tailscale 并登录同一账号。填好后回到「局域网」模式连接即可</string>
     <string name="app_lock_title">解锁以查看</string>
+    <!-- 敏感操作事中确认（run_command 执行前的设备凭据确认） -->
+    <string name="approve_title">确认执行该命令</string>
     <!-- 批量选择 -->
     <string name="batch_select_all">全选</string>
     <string name="batch_select_none">取消全选</string>

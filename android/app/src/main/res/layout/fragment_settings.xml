@@ -486,6 +486,25 @@
                     android:layout_weight="1"
                     android:text="@string/host_history_short" />
             </LinearLayout>
+
+            <!-- Tailscale 一键填入：把地址框换成 http://<电脑的主机名>:端口
+                 省得用户手打主机名（如 tp-kaixings）。主机名从已发现/已知会话的
+                 Tailscale 地址里取（100.x 段），取不到则提示先扫描。 -->
+            <Button
+                android:id="@+id/btn_tailscale"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/fill_tailscale" />
+
+            <TextView
+                android:id="@+id/tailscale_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="@string/fill_tailscale_desc"
+                android:textColor="#777777"
+                android:textSize="11sp" />
         </LinearLayout>
 
         <!-- ═══ 2. 远程设置 ═══ -->

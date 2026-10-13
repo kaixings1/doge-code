@@ -11,6 +11,12 @@
 >
 > 限制仍在：每个会话必须是一个**独立的 CLI 进程**（各自一个端口）。
 > 「一个 CLI 进程内切换多个对话」（方案 B）经评估不建议实施。
+>
+> **连接方式更新（2026-10-13）**：新增两种能力 ——
+> ① **Tailscale 固定地址**（见「使用 → 方式 D」）：地址永不变、任意网络可用，
+> 且与局域网并存；设置页有「一键填入 Tailscale 地址」按钮。
+> ② **peer 地址互发**：连上任一实例即拿到同机其他所有会话的地址（含各自隧道），
+> 会话列表自动出现并可一键切换；地址变化时服务端会通过已连接的 WS 主动推给手机。
 
 ## 功能
 
@@ -223,6 +229,81 @@ doge.exe
 交互状态、工作目录），点选即切换。切换时本地历史跟着换成该会话的文件，
 不会串味。
 
+### 方式 D：Tailscale（**任意网络可用，地址永不变**，推荐长期使用）
+
+**适用场景**：既想在家用 WiFi 连，又想在户外用手机流量连 —— 而地址还不想变。
+
+三种连接方式的对比：
+
+| 方式 | 地址是否稳定 | 户外可用 | 速度 | 依赖 |
+|---|---|---|---|---|
+| 局域网（方式 A） | 换网段就变 | ✗ | 最快 | 同 WiFi |
+| USB（方式 B） | 固定但换机器要重配 | ✗ | 快 | 插线 |
+| Cloudflare 隧道 | **重连换随机子域** | ✓ | 中（走公网） | cloudflared |
+| **Tailscale（本方式）** | **永不变** | ✓ | 同 WiFi 时走局域网、出门走 P2P | 双方装 Tailscale |
+
+**Tailscale 会自动选路**：手机与电脑在同一 WiFi 时走局域网直连（速度同方式 A），
+出门后自动切到加密的 P2P/中继 —— **一个地址覆盖所有场景**。
+
+#### 一次性准备（只做一次）
+
+1. 电脑装 Tailscale：官网 <https://tailscale.com/download/windows>
+   （本机已装：`C:\Program Files\Tailscale\`）
+2. 电脑登录账号（安装后托盘图标右键 → Log in）
+3. **手机装 Tailscale**（Play 商店 / App Store 搜 "Tailscale"），
+   用**同一个账号**登录，打开 App 顶部的开关
+4. （可选）登录 <https://login.tailscale.com/admin/dns> 开启 **MagicDNS**，
+   这样就能用「设备名」而不是 IP（设备名在 admin 控制台可改，如改成 `my-pc`）
+
+#### 确认已就绪
+
+```cmd
+REM 查本机 Tailscale 状态（应看到自己的设备与 IP）
+"C:\Program Files\Tailscale\tailscale.exe" status --peers
+```
+
+输出示例（两台设备在同一 tailnet 才算就绪）：
+
+```
+100.99.118.124  tp-kaixings        kaixings1@  windows
+100.85.132.45   redmi-note-13-pro  kaixings1@  android    ← 手机在线
+```
+
+#### 连接
+
+1. 电脑上运行 `node scripts\start-mobile-bridge.mjs --label main`
+   （脚本会**自动打印 Tailscale 地址**，形如）：
+
+   ```
+   ── Tailscale 固定地址（推荐，任意网络可用、永不变）──
+     手机装上 Tailscale 并用同一账号登录后，连接框填:
+       http://TP-KAIXINGS:6000    (MagicDNS 短名)
+       http://100.99.118.124:6000      (Tailscale IP)
+   ```
+
+2. 手机 App → **设置 → 工作模式 → 局域网（连电脑）** → 地址框填
+   `http://<上面打印的主机名>:<端口>`
+   - **省事做法**：点旁边的 **「一键填入 Tailscale 地址」** 按钮 ——
+     它会从已发现的会话里找出 Tailscale 地址（`100.x`）自动填好，不必手打
+3. 点「连接」
+
+> **注意**：手机上的 **Tailscale 开关要保持开着**（它是个 VPN，关了就退回
+> 只能同 WiFi）。App 里认的是「局域网」模式 —— Tailscale 地址走的就是这条路径，
+> 不需要选「互联网连本机」。
+
+#### 为什么偏好 Tailscale
+
+- **地址永不变**：设备名与 `100.x` IP 都固定，不像 Cloudflare 快隧道每次重连换子域
+- **免费、不需要域名**：不用买域名、不用配 Cloudflare DNS、不用端口转发
+- **不暴露公网**：只有登录了你 Tailscale 账号的设备能连（比开公网端口安全）
+- **自动选路**：同 WiFi 走局域网（快），出门走加密 P2P
+
+#### 服务必须监听 0.0.0.0
+
+Tailscale 从虚拟网卡进来，若服务只听 `127.0.0.1` 就连不上。
+doge-code 的移动桥接**默认监听 `0.0.0.0`**（可用 `netstat -ano | findstr :6000`
+确认显示 `0.0.0.0:6000`），故无需额外设置。
+
 ## 排障
 
 | 现象 | 原因 | 处理 |
@@ -236,6 +317,9 @@ doge.exe
 | 发消息无回复 | 非交互模式 | CLI 必须是交互模式（有 REPL），`-p` 模式队列不消费 |
 | 状态栏「认证失败」并自动弹出设置 | 密钥不匹配（服务端 close 4001） | 把密钥填成与 `CLAUDE_CODE_MOBILE_SECRET` 一致；服务端未设密钥则留空 |
 | 扫描会话列表为空 | 端口段内无活实例；或手机不在同一网段 | 确认 CLI 启动时设了 `CLAUDE_CODE_MOBILE_BRIDGE=1`。App 日志里 `LanScanner: 候选 IP 0 个` = 手机没有可用局域网接口（WiFi 未连） |
+| Tailscale 地址连不上 | 手机 Tailscale 开关没开 / 登录了别的账号 | 手机 App 打开 Tailscale 开关；`tailscale status` 里两台设备要同属一个 tailnet（同一账号） |
+| 「一键填入 Tailscale 地址」提示找不到 | 还没扫描过会话，或对端无 Tailscale 地址 | 先到「会话」页扫描一次；确认电脑 `tailscale status` 有 `100.x` 地址（Tailscale 在跑） |
+| 隧道断了之后连不上（旧版） | 旧版隧道进程崩溃后不重启、地址不更新 | **已修**：隧道建立后崩溃会指数退避自动重连（2s→30s），新地址写回约定文件并经服务端推给手机。仍不稳定可改用 Tailscale（本文件「方式 D」） |
 
 ### 排障的第一性原理
 
