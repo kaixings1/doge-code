@@ -29,6 +29,18 @@
 - 改 Kotlin 后若无法编译，先 `git stash` 隔离未提交改动定位，不要带未验证改动打 APK。
 - 工作区存在并发会话的未提交改动时，装包前必须 `git status` 确认打的是哪份代码。
 
+## res/ 资源改动的编译纪律（血的教训：排查 1 小时）
+**改 res/layout、res/values 等资源后，增量编译会复用 Gradle build cache 的旧输出**，
+表现为「源码已改、编译成功、装上却还是旧界面」，甚至崩 `findViewById(...) must not be null`。
+判定与根治（实测有效）：
+- 症状：运行时行为与源码不符（如 `childCount=3` 而源码有 5 个子节点、新加的 view 找不到）
+- 验证 APK 内资源：`aapt2 dump xmltree <apk> --file res/layout/xxx.xml`（注意 id 显示为十六进制，
+  与 `app/build/.../R.txt` 里 `int id xxx 0x7f...` 对照，**别用 grep 名字**）
+- 根治（缺一不可）：`rm -rf app/build` **并且** `gradle --stop`（daemon 缓存要清）**并且**
+  加 `--no-build-cache` 重编。只 `rm -rf app/build` 不够、只 `--no-build-cache` 也不够。
+- 常规 `_check.bat`/`_apk.bat`（`--offline` 增量）对 Kotlin/资源小改够用；**改了 res/ 后的
+  首次验证必须全量重编**，否则可能验收的是旧界面。
+
 # YAGNI 阶梯决策规则（吸收自 ponytail）
 在写任何代码之前，停在第一个能成立的阶梯：
 1. 这根本不需要构建吗？(YAGNI)
