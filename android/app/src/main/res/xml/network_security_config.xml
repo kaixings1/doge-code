@@ -19,5 +19,17 @@
         <domain includeSubdomains="true">192.168.0.106</domain>
         <!-- 本机当前 Lan Link 地址（手机所在网段） -->
         <domain includeSubdomains="true">192.168.110.228</domain>
+        <!--
+          Tailscale：
+            - MagicDNS 短名（形如 <设备名>，如 tp-kaixings）
+            - MagicDNS 全名（<设备名>.<tailnet>.ts.net，用 includeSubdomains 覆盖）
+            - Tailscale IP（本机为 100.99.118.124；100.x 是 CGNAT 段，此处列举常用的）
+          不加这些的话，App 连 Tailscale 地址会报
+          「CLEARTEXT communication to tp-kaixings not permitted by network security policy」
+          —— 实测踩过（App 显示「已断开」而 curl 能通，就是被系统明文策略拦了）。
+        -->
+        <domain includeSubdomains="true">tp-kaixings</domain>
+        <domain includeSubdomains="true">tailb2215a.ts.net</domain>
+        <domain includeSubdomains="true">100.99.118.124</domain>
     </domain-config>
 </network-security-config>

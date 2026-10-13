@@ -304,6 +304,74 @@ Tailscale 从虚拟网卡进来，若服务只听 `127.0.0.1` 就连不上。
 doge-code 的移动桥接**默认监听 `0.0.0.0`**（可用 `netstat -ano | findstr :6000`
 确认显示 `0.0.0.0:6000`），故无需额外设置。
 
+#### ⚠️ 三个必查项（本文件均经实测踩过，缺一不可）
+
+用 Tailscale 时最容易卡在这三处，**每处的现象都是「App 显示已断开」**，
+必须逐个排除：
+
+**① 防火墙要放行 Tailscale 段**（默认只放行了局域网段）
+
+```cmd
+REM 查是否已放行（无输出 = 未放行）
+netsh advfirewall firewall show rule name="doge-code tailscale"
+
+REM 用【管理员】cmd 执行这条放行（一次即可）
+netsh advfirewall firewall add rule name="doge-code tailscale" dir=in action=allow protocol=TCP localport=6000-6020 remoteip=100.64.0.0/10
+```
+
+> 现象：App 报 `Software caused connection abort`，而电脑上 `curl` 能通。
+> 根因：既有的 `doge-code mobile` 规则只放行 `192.168.0.0/24`，**不含 `100.x`**。
+
+**② App 的「工作模式」必须是「局域网（连电脑）」**
+
+Tailscale 地址走的是**局域网**这条路，**不是**「互联网连本机（隧道）」。
+若模式停在隧道，App 会拿隧道模式的地址（`127.0.0.1:5680` 这个默认值）去连 → 必失败。
+
+> 现象：App 报 `ConnectException: Failed to connect to /127.0.0.1:5680`，
+> 而你的地址明明填的是 `tp-kaixings`。
+> 检查：`adb shell run-as com.dogecode.mobile cat shared_prefs/doge_mobile_mode.xml`
+> 应为 `app_mode = LAN`。
+
+**③ `network_security_config.xml` 要把 Tailscale 域名/IP 加入白名单**
+
+Android 默认禁止明文 HTTP。App 连 `http://tp-kaixings:6000` 会被系统拦下：
+
+> 现象：`CLEARTEXT communication to tp-kaixings not permitted by network security policy`
+> 处理：在 `res/xml/network_security_config.xml` 的 `domain-config` 里加
+> `<domain includeSubdomains="true">tp-kaixings</domain>`、你的 tailnet 域名
+> （如 `tailb2215a.ts.net`）与 Tailscale IP。
+
+#### ⚠️ 电脑多网卡会破坏 Tailscale 直连（本机实测）
+
+若电脑装了 VMware / VirtualBox / Hyper-V，或存在 **KM-TEST 环回适配器**，
+这些虚拟网卡的 `InterfaceMetric` 可能**小于**真实 WiFi → Tailscale 选错出口 →
+**打不通直连、只能走 DERP 中继**（延迟从 12ms 飙到 2.8s，甚至手机 ping 不通）。
+
+自查：
+
+```powershell
+# 看 Tailscale 是直连还是中继（direct = 好，DERP = 中继）
+tailscale ping redmi-note-13-pro
+# 看网卡优先级（Metric 越小越优先）—— 虚拟网卡不该比 WLAN 小
+Get-NetIPInterface -AddressFamily IPv4 | Where-Object ConnectionState -eq Connected |
+  Select-Object InterfaceAlias, InterfaceMetric | Sort-Object InterfaceMetric
+# 诊断出口是否被混淆（出现 gateway and self IP changed 即有问题）
+tailscale netcheck
+```
+
+修法（【管理员】PowerShell，二选一）：
+
+```powershell
+# ① 禁用无用的虚拟环回网卡（最干净）
+Disable-NetAdapter -Name "以太网 5" -Confirm:$false
+Disable-NetAdapter -Name "Loop KM-Test #0" -Confirm:$false
+
+# 或 ② 把它们调到最低优先级（不删，只降权）
+Set-NetIPInterface -InterfaceAlias "以太网 5" -InterfaceMetric 9000
+```
+
+改完 `Restart-Service Tailscale`，再 `tailscale ping` 应变回 `direct ... in 十几 ms`。
+
 ## 排障
 
 | 现象 | 原因 | 处理 |

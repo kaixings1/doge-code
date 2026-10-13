@@ -164,6 +164,52 @@ const CLI_EXTRA_ARGS = (() => {
 
 function line() { console.log('='.repeat(60)) }
 
+/**
+ * 检查并提示「Tailscale 段是否已放行防火墙」。
+ *
+ * 为什么单独检查：局域网规则只放行局域网段（如 192.168.0.0/24），
+ * Tailscale 走 100.64.0.0/10 —— **不在其中**。手机经 Tailscale 来的连接
+ * 会被 Windows 防火墙拦掉，表现为 App「已断开」而电脑上 curl 能通
+ *（实测错误为 SocketException: Software caused connection abort）。
+ * 脚本通常没有管理员权限，故只检测 + 打印确切命令，由用户执行一次。
+ */
+function checkTailscaleFirewall() {
+  // 没装 Tailscale（无 100.x 地址）就不提，避免噪音
+  const hasTs = (() => {
+    try {
+      const ifs = networkInterfaces()
+      for (const n of Object.keys(ifs)) {
+        for (const i of ifs[n] || []) {
+          if (i.family === 'IPv4' && i.address.startsWith('100.')) return true
+        }
+      }
+    } catch {}
+    return false
+  })()
+  if (!hasTs) return
+
+  let ok = false
+  try {
+    const out = execSync('netsh advfirewall firewall show rule name="doge-code tailscale"', {
+      encoding: 'utf8', timeout: 10000, windowsHide: true, stdio: ['ignore', 'pipe', 'ignore'],
+    })
+    ok = out.includes('doge-code tailscale')
+  } catch {}
+
+  if (ok) {
+    console.log('      防火墙: Tailscale 段已放行')
+    return
+  }
+  console.log('      防火墙: ⚠ 未放行 Tailscale 段（手机经 Tailscale 将连不上）')
+  console.log('')
+  console.log('      请用【管理员】cmd 执行下面这行（只需一次）:')
+  console.log(
+    `      netsh advfirewall firewall add rule name="doge-code tailscale" ` +
+      `dir=in action=allow protocol=TCP localport=${PORT} remoteip=100.64.0.0/10`,
+  )
+  console.log('')
+}
+
 function getLanIp() {
   // 优先取默认路由对应的本机地址（多网卡环境下只有它手机能连）
   try {
@@ -281,6 +327,9 @@ if (USE_TUNNEL) {
     }
   }
 }
+
+// Tailscale 防火墙检查：所有连接方式都做（用户可能随时切到 Tailscale 地址）
+checkTailscaleFirewall()
 
 // ── 3. 端口 ──
 const portBusy = await new Promise((resolve) => {
