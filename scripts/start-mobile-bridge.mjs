@@ -466,40 +466,48 @@ if (serviceReady) {
   })
 }
 
-// 轮询确认服务端真的就绪，并回显一次访问地址
-if (phoneUrl) {
-  const deadline = Date.now() + 20000
-  const probe = async () => {
-    while (Date.now() < deadline) {
-      const ok = await new Promise((resolve) => {
-        const req = http.get({ host: '127.0.0.1', port: PORT, path: '/', timeout: 1500 }, (res) => {
-          res.resume()
-          resolve(res.statusCode === 200)
-        })
-        req.on('error', () => resolve(false))
-        req.on('timeout', () => { req.destroy(); resolve(false) })
-      })
-      if (ok) {
-        console.log('')
-        console.log('  [就绪] 手机端服务端已启动 -> ' + phoneUrl)
-        console.log('')
-        return
-      }
-      await new Promise((r) => setTimeout(r, 1000))
-    }
-    console.log('')
-    console.log('  [未就绪] 20 秒内服务端未响应，请检查上方提示与 doge.exe 输出')
-    console.log('')
-  }
-  void probe()
-}
-
 // 仅在「本脚本自己 spawn 了 doge.exe」时才监听其退出。
+// 必须在下面的就绪轮询（可能阻塞最多 20 秒）**之前**注册：否则轮询期间
+// doge.exe 若崩溃退出，退出事件会被漏掉，脚本继续傻等满 20 秒才报未就绪。
 child?.on('exit', (code) => {
   console.log('')
   console.log('doge.exe 已退出（code ' + code + '）')
   process.exit(code ?? 0)
 })
+
+// 轮询确认服务端真的就绪，并回显一次访问地址。
+//
+// 必须 await（曾经是 `void probe()` fire-and-forget）：不 await 时脚本会
+// 立刻继续打印隧道/地址等后续日志，而 20 秒超时的「[未就绪]」会在**任意
+// 位置**突然冒出，夹在无关日志中间，读者无法把它与前文的地址信息对上。
+// await 后，就绪/未就绪恒定紧跟在地址块之后、隧道日志之前，位置固定连贯。
+if (phoneUrl) {
+  const deadline = Date.now() + 20000
+  const probeOnce = () =>
+    new Promise((resolve) => {
+      const req = http.get({ host: '127.0.0.1', port: PORT, path: '/', timeout: 1500 }, (res) => {
+        res.resume()
+        resolve(res.statusCode === 200)
+      })
+      req.on('error', () => resolve(false))
+      req.on('timeout', () => { req.destroy(); resolve(false) })
+    })
+
+  let ready = false
+  while (Date.now() < deadline) {
+    if (await probeOnce()) { ready = true; break }
+    await new Promise((r) => setTimeout(r, 1000))
+  }
+
+  console.log('')
+  if (ready) {
+    console.log('  [就绪] 手机端服务端已启动 -> ' + phoneUrl)
+  } else {
+    console.log('  [未就绪] 20 秒内服务端未响应（端口 ' + PORT + '）')
+    console.log('           请检查上方提示与 doge.exe 输出')
+  }
+  console.log('')
+}
 
 // ============================================================================
 // cloudflared 公网隧道（TUNNEL 模式后端）
