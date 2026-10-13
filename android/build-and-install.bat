@@ -15,10 +15,13 @@ SET "ADB=%ANDROID_SDK%\platform-tools\adb.exe"
 SET "GRADLE=D:\doge-code\android\.gradle-dist\gradle-8.9\bin\gradle.bat"
 SET "APK=D:\doge-code\android\app\build\outputs\apk\debug\app-debug.apk"
 
+REM --no-build-cache：改过 res/ 后**必须**加，否则 Gradle 会复用旧的
+REM merged 资源 → APK 内布局与 R 类不一致 → 运行时 findViewById 返回 null
+REM （实测踩过：ChatFragment 闪退）。代价是编译慢几秒，值得。
 echo [1/3] Assembling debug APK ...
-call "%GRADLE%" assembleDebug --offline
+call "%GRADLE%" assembleDebug --offline --no-build-cache
 if errorlevel 1 (
-    echo [ERROR] Build failed.
+    echo [ERROR] Build failed —— 不安装（避免装入旧包导致闪退/界面没变）
     pause
     exit /b 1
 )

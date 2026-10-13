@@ -41,6 +41,20 @@
 - 常规 `_check.bat`/`_apk.bat`（`--offline` 增量）对 Kotlin/资源小改够用；**改了 res/ 后的
   首次验证必须全量重编**，否则可能验收的是旧界面。
 
+## 「编译失败却装了旧包」→ 一打开就闪退（本节踩过）
+**症状**：`adb install` 报 `Success`，App 一打开就闪退（`findViewById(...) must not be null`），
+重编重装多次无改善。**极易误判为代码 bug**。
+- **真根因**：手敲 `gradle assembleDebug` 时**缺 `ANDROID_HOME`** → 编译**失败** →
+  `app/build/outputs/apk/debug/` **为空或不存在** → `adb install` 用的是**上一次的旧 APK**
+  （旧布局 + 新代码 → id 对不上 → 闪退）。而 `install` 对旧包仍返回 Success，**极具误导**。
+- **判据（一眼分辨）**：
+  1. `ls app/build/outputs/apk/debug/app-debug.apk` —— **不存在** = 编译失败过
+  2. 崩溃行号与当前源码**对不上**（如报 `ChatFragment.kt:139` 而那行是注释）= 装的是旧 class
+  3. `adb install` 报 `failed to stat ... No such file` = APK 确实没产出
+- **根治**：用 `android/build-and-install.bat`（**已加 `--no-build-cache`** 且**编译失败即不安装**），
+  或手动确保 `ANDROID_HOME`/`ANDROID_SDK`/`JAVA_HOME` 三个变量都在（`_apk.bat` 里有）。
+- **不要**在编译失败后仍执行 `adb install` —— 那等于把旧包又装一遍。
+
 # YAGNI 阶梯决策规则（吸收自 ponytail）
 在写任何代码之前，停在第一个能成立的阶梯：
 1. 这根本不需要构建吗？(YAGNI)
@@ -193,3 +207,33 @@ Bug 修复 = 根治，不是治标：一个报告说的是症状。Grep 你触�
   用 `set VAR=1 && call probe.bat` 调用。实测 `FINAL=EMPTY` 证明跨行清空有效
 - logForDebugging 的内容可能被 `JSON.stringify(msg).slice(0, 200)` **截断** —— 看不到字段尾巴时，
   不要断言"字段不存在"，应从源码确认该字段是否被写入
+
+# PYTHONHOME/PYTHONPATH 污染：跨版本加载标准库 → 假 SyntaxError（血的教训）
+场景：MCP 里 uv/uvx 拉取的 Python 项目（pywinauto-mcp、mcp-server-git、serena）全部 `✗ 连接失败`，
+报 `D:\Python312\lib\traceback.py:745 SyntaxError: f-string: unmatched '('`。
+**症状极度误导**：报的是"3.12 标准库语法错误"，但 `D:\Python312\python.exe` 自己跑 `import traceback`
+**完全正常** —— 于是会误判为"解释器/文件坏了"，反复重装修 Python。
+- **真根因**：`PYTHONHOME=D:\Python312`（用户级 HKCU\Environment）+
+  `PYTHONPATH=D:\Python312`（系统级 HKLM\...\Session Manager\Environment）。
+  这两个变量**强制任何 Python 解释器**（含 uv 自管的 3.10/3.11）去 `D:\Python312` 找标准库，
+  于是 3.11 解释器加载 3.12 的 `typing.py`/`traceback.py`（含 3.11 不懂的语法）→ 崩溃。
+- **为什么难发现**：3.12 自己加载自己"没错"，只有**跨版本**（uv 的 3.10/3.11）才暴露。
+  `python.exe -c "import typing"` OK ≠ 环境健康，因为那是**同版本**加载。
+- **判据**：`uvx --version`/`doge mcp list` 里所有 uv/uvx 项一起挂，而 npx 项（Node）正常 →
+  根因在 Python 环境层，不在单个服务器。
+- **验证方式**：`env -u PYTHONHOME -u PYTHONPATH uvx <cmd>` —— 若成功即是此因。
+- **修法（根治）**：
+  `Remove-ItemProperty HKCU:\Environment -Name PYTHONHOME`（无需管理员）+
+  `reg delete "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /v PYTHONPATH /f`（需管理员）。
+  删后需新开终端生效。**兜底**：MCP 配置里给每个 Python 服务器加
+  `"env": {"PYTHONHOME": "", "PYTHONPATH": ""}`（实测空串能屏蔽继承，但不如物理删除干净）。
+- **临时绕过**：uv 加 `--python D:/Python312/python.exe` 显式指定解释器（注意 `--python` 是 `uv run` 的子选项，
+  必须放在 `run` 之后，放顶层报 `unexpected argument`）。
+
+# uv 的 git fetch 与 F:\bin\git.exe 不兼容（本次踩到）
+- 现象：`uvx --from git+https://github.com/oraios/serena ...` 报
+  `fatal: fetch-pack: invalid index-pack output`（exit 128）。
+- 但 `git clone <same url>` 和 `git ls-remote` **都成功** → 网络没问题，是 uv 用 `F:\bin\git.exe`
+  做 `fetch-pack` 的交互方式不兼容。
+- 修法：先手动 `git clone` 到 `vendor/<name>`，再 `uvx --from D:/doge-code/vendor/<name> <cmd>` 从本地路径安装，
+  彻底绕开 uv 的 git fetch。
