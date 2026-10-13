@@ -153,9 +153,13 @@ class KnownSessionStore(context: Context) {
         now: Long = System.currentTimeMillis(),
     ): KnownSession {
         // TUNNEL 优先用隧道地址（户外可用）；LAN 优先用 lan 地址。
+        // 两处都**滤掉字符串 "null"**（上游 JSONObject.optString 在字段为
+        // JSON null 时会返回 "null"，见 BridgeProtocol.optStringOrNull）——
+        // 否则会写下 `addresses:["null"]` 这种点不动的僵尸条目（实测踩过）。
+        val clean = { xs: List<String> -> xs.filter { it.isNotBlank() && it != "null" } }
         val addresses = when (mode) {
-            AppMode.TUNNEL -> listOfNotNull(tunnel).ifEmpty { lan }
-            else -> lan
+            AppMode.TUNNEL -> clean(listOfNotNull(tunnel)).ifEmpty { clean(lan) }
+            else -> clean(lan)
         }
         return KnownSession(
             mode = mode.name,
@@ -200,14 +204,18 @@ class KnownSessionStore(context: Context) {
             val mode = o.optString("mode").takeIf { it.isNotBlank() } ?: return null
             val addrArr = o.optJSONArray("addresses") ?: JSONArray()
             val addresses = (0 until addrArr.length())
-                .mapNotNull { addrArr.optString(it).takeIf { s -> s.isNotBlank() } }
+                // 滤掉字符串 "null"：`JSONObject.optString` 对 JSON null 返回 "null"
+                // 而非空串，历史脏数据里存过 `addresses:["null"]`，会让会话列表
+                // 出现点不动的僵尸条目（实测见 doge_known_sessions.xml）。
+                // 在此清洗，旧记录也会自愈。
+                .mapNotNull { addrArr.optString(it).takeIf { s -> s.isNotBlank() && s != "null" } }
             if (addresses.isEmpty()) return null
             return KnownSession(
                 mode = mode,
-                label = o.optString("label"),
-                cwd = o.optString("cwd"),
+                label = o.optString("label").takeIf { it != "null" }.orEmpty(),
+                cwd = o.optString("cwd").takeIf { it != "null" }.orEmpty(),
                 port = o.optInt("port", 0),
-                resumeSessionId = o.optString("resumeSessionId").takeIf { it.isNotBlank() },
+                resumeSessionId = o.optString("resumeSessionId").takeIf { it.isNotBlank() && it != "null" },
                 addresses = addresses,
                 lastSeen = o.optLong("lastSeen", 0L),
             )

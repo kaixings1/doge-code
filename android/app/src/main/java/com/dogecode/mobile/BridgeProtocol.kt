@@ -206,11 +206,11 @@ object BridgeProtocol {
                     // 误报「非交互」比漏报更扰人。
                     interactive = d?.optBoolean("interactive", true) ?: true,
                     lan = parseLan(d),
-                    tunnel = d?.optString("tunnel")?.takeIf { it.isNotBlank() },
+                    tunnel = optStringOrNull(d, "tunnel"),
                     label = d?.optString("label").orEmpty(),
                     cwd = d?.optString("cwd").orEmpty(),
                     port = d?.optInt("port", 0) ?: 0,
-                    resumeSessionId = d?.optString("resumeSessionId")?.takeIf { it.isNotBlank() },
+                    resumeSessionId = optStringOrNull(d, "resumeSessionId"),
                     peers = parsePeers(d),
                 )
             }
@@ -402,11 +402,27 @@ object BridgeProtocol {
         return d.opt("suppressNotify") == true
     }
 
+    /**
+     * 读一个字符串字段；**同时把 JSON null 的字符串形式 "null" 视作缺失**。
+     *
+     * ## 为什么必须处理（真机踩过：会话列表出现点不动的僵尸条目）
+     *
+     * `JSONObject.optString(key)` 在字段值是 JSON `null` 时**返回字符串 "null"**，
+     * 而不是空串 —— 于是 `takeIf { it.isNotBlank() }` 会放行，最终把
+     * `addresses: ["null"]` 写进手机端落库（实测见 `doge_known_sessions.xml`），
+     * 会话列表里多出一条**点不动**的记录（地址是 "null"）。
+     *
+     * @return 有意义的字符串；字段缺失/为 null/为空白时返回 null
+     */
+    private fun optStringOrNull(o: JSONObject?, key: String): String? =
+        o?.optString(key)?.takeIf { it.isNotBlank() && it != "null" }
+
     /** 解析 data.lan 为非空字符串列表（缺字段/类型异常时返回空列表）。 */
     private fun parseLan(d: JSONObject?): List<String> =
         d?.optJSONArray("lan")?.let { arr ->
             (0 until arr.length()).mapNotNull { i ->
-                arr.optString(i).takeIf { it.isNotBlank() }
+                // 同样滤掉字符串 "null"（见 optStringOrNull 的说明）
+                arr.optString(i).takeIf { it.isNotBlank() && it != "null" }
             }
         }.orEmpty()
 
@@ -428,10 +444,12 @@ object BridgeProtocol {
                     label = o.optString("label"),
                     lan = o.optJSONArray("lan")?.let { la ->
                         (0 until la.length()).mapNotNull { j ->
-                            la.optString(j).takeIf { it.isNotBlank() }
+                            // 同 optStringOrNull：JSON null 会变成字符串 "null"，
+                            // 放进地址列表就成了点不动的僵尸条目
+                            la.optString(j).takeIf { it.isNotBlank() && it != "null" }
                         }
                     }.orEmpty(),
-                    tunnel = o.optString("tunnel").takeIf { it.isNotBlank() },
+                    tunnel = optStringOrNull(o, "tunnel"),
                     interactive = o.optBoolean("interactive", true),
                 )
             }
