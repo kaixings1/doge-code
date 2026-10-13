@@ -37,7 +37,26 @@ object BridgeProtocol {
             val port: Int = 0,
             /** 真实 doge 会话 id（供 --resume）；无则 null。 */
             val resumeSessionId: String? = null,
+            /**
+             * 同机**其他**会话的接入信息（服务端 peer 发现的产物）。
+             *
+             * 用户诉求：「一旦有一个连接上，则相应的其他会话、隧道路径 ws 等
+             * 所有内容都要发送到手机 app」。手机连上任一实例即拿到全部会话
+             * 地址，据此可通过任一路径（LAN/隧道）连到每个会话，无须自己扫。
+             * 老服务端不带此字段 → 空列表（不影响既有行为）。
+             */
+            val peers: List<PeerInfo> = emptyList(),
         ) : Msg
+
+        /** 一个 peer 会话的接入信息（服务端 mobilePeerDiscovery 的裁剪版）。 */
+        data class PeerInfo(
+            val port: Int,
+            val label: String,
+            val lan: List<String>,
+            val tunnel: String?,
+            val interactive: Boolean,
+        )
+
         data class Incoming(
             val role: String,
             val text: String,
@@ -184,6 +203,24 @@ object BridgeProtocol {
                     cwd = d?.optString("cwd").orEmpty(),
                     port = d?.optInt("port", 0) ?: 0,
                     resumeSessionId = d?.optString("resumeSessionId")?.takeIf { it.isNotBlank() },
+                    peers = d?.optJSONArray("peers")?.let { arr ->
+                        (0 until arr.length()).mapNotNull { i ->
+                            val o = arr.optJSONObject(i) ?: return@mapNotNull null
+                            val p = o.optInt("port", 0)
+                            if (p <= 0) return@mapNotNull null
+                            Msg.PeerInfo(
+                                port = p,
+                                label = o.optString("label"),
+                                lan = o.optJSONArray("lan")?.let { la ->
+                                    (0 until la.length()).mapNotNull { j ->
+                                        la.optString(j).takeIf { it.isNotBlank() }
+                                    }
+                                }.orEmpty(),
+                                tunnel = o.optString("tunnel").takeIf { it.isNotBlank() },
+                                interactive = o.optBoolean("interactive", true),
+                            )
+                        }
+                    }.orEmpty(),
                 )
             }
 

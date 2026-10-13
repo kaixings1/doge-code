@@ -2246,6 +2246,25 @@ class MainActivity : AppCompatActivity(),
                         ),
                     )
                 }
+                // 同机**其他**会话（服务端 peer 发现的结果）一并落库 ——
+                // 用户诉求：连上任一实例即拿到全部会话的 lan/tunnel，
+                // 据此可通过任一路径连到每个会话，无须自己扫端口段。
+                // 每个 peer 有地址才记（同本会话的判据，避免僵尸条目）。
+                ev.peers.forEach { p ->
+                    if (p.lan.isNotEmpty() || p.tunnel != null) {
+                        knownSessions.upsert(
+                            knownSessions.fromConnected(
+                                mode = appMode,
+                                lan = p.lan,
+                                tunnel = p.tunnel,
+                                label = p.label,
+                                cwd = "",
+                                port = p.port,
+                                resumeSessionId = null,
+                            ),
+                        )
+                    }
+                }
                 // 服务端给的标签回填到连接单元（通知标题区分来源要用）
                 if (ev.label.isNotBlank()) conn?.label = ev.label
                 if (!isActive) return

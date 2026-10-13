@@ -48,6 +48,13 @@ class BridgeClient(
             val cwd: String = "",
             val port: Int = 0,
             val resumeSessionId: String? = null,
+            /**
+             * 同机其他会话的接入信息（服务端 peer 发现）。
+             *
+             * 手机连上任一实例即拿到全部会话的 lan/tunnel，据此可连到每个
+             * 会话（含各自隧道），无须自己扫端口段或等 UDP 广播。
+             */
+            val peers: List<BridgeProtocol.Msg.PeerInfo> = emptyList(),
         ) : Event
         data class Disconnected(val reason: String) : Event
         data class Incoming(
@@ -465,6 +472,7 @@ class BridgeClient(
                             cwd = m.cwd,
                             port = m.port,
                             resumeSessionId = m.resumeSessionId,
+                            peers = m.peers,
                         ),
                     )
                 }
