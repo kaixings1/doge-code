@@ -185,6 +185,33 @@ class KnownSessionStore(context: Context) {
         const val MAX_ENTRIES = 50
 
         /**
+         * 从已知会话里挑一个「适合当默认连接地址」的（纯函数，可单测）。
+         *
+         * ## 为什么需要
+         *
+         * 地址栏在没有历史值时曾回落到 `http://127.0.0.1:5680` —— 对非 USB
+         * 场景毫无意义（5680 已不是默认端口），用户看到只会困惑（用户报的
+         * 「垃圾地址」）。改成回落「最近连过的可用地址」，开 App 就能直接连。
+         *
+         * ## 规则
+         *
+         * 1. 按 [KnownSession.lastSeen] **降序**（最近用过的优先）
+         * 2. 取每条的首选地址（[KnownSession.primaryAddress]）
+         * 3. **排除** `127.0.0.1` / `localhost` —— 它们只在 USB 反向转发时
+         *    有意义且需 adb reverse 才通，当默认值反而误导
+         * 4. 都不符则返回 null（调用方再回落 DEFAULT_URL）
+         */
+        fun pickDefaultAddress(sessions: List<KnownSession>): String? =
+            sessions
+                .sortedByDescending { it.lastSeen }
+                .asSequence()
+                .mapNotNull { it.primaryAddress() }
+                .firstOrNull { addr ->
+                    val h = addr.substringAfter("://").substringBefore('/').substringBefore(':')
+                    h.isNotBlank() && h != "localhost" && h != "127.0.0.1"
+                }
+
+        /**
          * 合并一条新记录进列表（纯函数，可 JVM 单测）。
          *
          * 规则：同 key（模式 + 首地址）替换原条目；否则追加。

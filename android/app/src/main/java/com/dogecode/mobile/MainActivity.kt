@@ -2203,6 +2203,16 @@ class MainActivity : AppCompatActivity(),
             val legacy = prefs.getString(KEY_URL, null)
             if (!legacy.isNullOrBlank()) return legacy
         }
+        // 回落**已知会话里最近用过的地址**（按 lastSeen 降序取第一个）。
+        //
+        // 为什么要这层：DEFAULT_URL 是 `http://127.0.0.1:5680` —— 对非 USB
+        // 场景毫无意义（5680 早不是默认端口了），用户看到它只会困惑。
+        // 而「最近连过的那个地址」大概率仍然有效（尤其 Tailscale 名/固定域名），
+        // 让用户开 App 就能直接点「连接」。
+        // 排除 localhost/127.*：它们只在 USB 反向转发时有意义，且需要
+        // adb reverse 才通，当作默认值反而误导（正是用户报的「垃圾地址」）。
+        KnownSessionStore.pickDefaultAddress(knownSessions.list())?.let { return it }
+
         return DEFAULT_URL
     }
 
