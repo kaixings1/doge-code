@@ -25,6 +25,7 @@ class SessionOrganizerTest {
         label: String = "s$port",
         host: String = "127.0.0.1",
         lastActivity: Long = 0L,
+        alive: Boolean = true,
     ) = SessionScanner.Session(
         port = port,
         sessionId = "mobile-$port",
@@ -34,6 +35,7 @@ class SessionOrganizerTest {
         clients = 0,
         host = host,
         lastActivity = lastActivity,
+        alive = alive,
     )
 
     // ── 分组 ──
@@ -168,5 +170,49 @@ class SessionOrganizerTest {
     fun `本机主机名带标注`() {
         assertEquals("127.0.0.1 · 本机", SessionOrganizer.hostLabel("127.0.0.1", true, "本机"))
         assertEquals("192.168.0.106", SessionOrganizer.hostLabel("192.168.0.106", false, "本机"))
+    }
+
+    // ── 死会话排在最后（用户报过「列表大量内容却连不上」）──
+
+    @Test
+    fun `按端口排序时死会话被排到最后`() {
+        // 端口 6000 是死的，但它端口最小 —— 若不特殊处理会排在最前，
+        // 用户一眼看到并误点，然后得到 ConnectException。
+        val list = listOf(
+            s(6000, alive = false),
+            s(6001),
+            s(6002, alive = false),
+            s(6003),
+        )
+        val sorted = SessionOrganizer.sort(list, SessionOrganizer.Order.PORT)
+        assertEquals("活的在前（组内仍按端口升序）", listOf(6001, 6003), sorted.filter { it.alive }.map { it.port })
+        assertEquals("死的在后", listOf(6000, 6002), sorted.filter { !it.alive }.map { it.port })
+        assertTrue("死会话不应出现在首位", sorted.first().alive)
+    }
+
+    @Test
+    fun `按活跃时间排序时同样把死的压到最后`() {
+        val list = listOf(
+            s(6000, lastActivity = 999L, alive = false), // 最活跃但是死的
+            s(6001, lastActivity = 1L),
+        )
+        val sorted = SessionOrganizer.sort(list, SessionOrganizer.Order.ACTIVITY)
+        assertEquals("死会话即使在最活跃也必须排最后", 6001, sorted.first().port)
+    }
+
+    @Test
+    fun `全部为活时排序结果与不区分死活一致`() {
+        val list = listOf(s(6003), s(6001), s(6002))
+        val sorted = SessionOrganizer.sort(list, SessionOrganizer.Order.PORT)
+        assertEquals(listOf(6001, 6002, 6003), sorted.map { it.port })
+    }
+
+    @Test
+    fun `死的排最后是稳定排序（活的原序不变）`() {
+        val a = s(6001, label = "A")
+        val b = s(6002, label = "B")
+        val dead = s(6003, alive = false)
+        val sorted = SessionOrganizer.sort(listOf(a, b, dead), SessionOrganizer.Order.LABEL)
+        assertEquals(listOf("A", "B", "s6003"), sorted.map { it.label })
     }
 }

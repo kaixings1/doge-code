@@ -60,25 +60,38 @@ object SessionOrganizer {
      *
      * 「活跃时间」用的是**降序**（最近在前），其余升序 ——
      * 因为用户找的是「最近的」，而不是「最早的」。
-     *
      * 相同键时统一用端口升序兜底：保证稳定，避免每次扫描顺序抖动。
+     *
+     * ## 已探测为死的会话**恒定排在组内最后**
+     *
+     * 与 [order] 无关：无论按端口/名称/活跃时间，死的都在最后。
+     * 理由：用户打开列表是为了**连一个活的**，死条目（历史记录、实例早关了）
+     * 排在中间只会增加误点概率 —— 而点死条目的结果是 ConnectException
+     *（用户报过「列表大量内容却连不上」）。放在最后 + 置灰（UI 侧）后，
+     * 活会话永远在触手可及的位置。
+     *
+     * 组内「活在前、死在最后」用 sortedBy 的布尔键实现（false < true）。
      */
     fun sort(
         sessions: List<SessionScanner.Session>,
         order: Order,
-    ): List<SessionScanner.Session> = when (order) {
-        Order.PORT -> sessions.sortedBy { it.port }
-        Order.LABEL -> sessions.sortedWith(
-            // 显式构造 Comparator 再 thenBy：变长参数的 compareBy 配
-            // CASE_INSENSITIVE_ORDER 时推断不出 T（Kotlin 的已知限制）
-            Comparator<SessionScanner.Session> { a, b ->
-                String.CASE_INSENSITIVE_ORDER.compare(a.label, b.label)
-            }.thenBy { it.port },
-        )
-        // 降序：最近活跃在前。lastActivity 为 0（服务端未提供）自然排到最后
-        Order.ACTIVITY -> sessions.sortedWith(
-            compareByDescending<SessionScanner.Session> { it.lastActivity }.thenBy { it.port },
-        )
+    ): List<SessionScanner.Session> {
+        val byOrder = when (order) {
+            Order.PORT -> sessions.sortedBy { it.port }
+            Order.LABEL -> sessions.sortedWith(
+                // 显式构造 Comparator 再 thenBy：变长参数的 compareBy 配
+                // CASE_INSENSITIVE_ORDER 时推断不出 T（Kotlin 的已知限制）
+                Comparator<SessionScanner.Session> { a, b ->
+                    String.CASE_INSENSITIVE_ORDER.compare(a.label, b.label)
+                }.thenBy { it.port },
+            )
+            // 降序：最近活跃在前。lastActivity 为 0（服务端未提供）自然排到最后
+            Order.ACTIVITY -> sessions.sortedWith(
+                compareByDescending<SessionScanner.Session> { it.lastActivity }.thenBy { it.port },
+            )
+        }
+        // **稳定**二次排序：只把死的挪到后面，活的原序不变（sortedBy 是稳定排序）
+        return byOrder.sortedBy { !it.alive }
     }
 
     /** 主机名的展示文案：本机加标注，让用户一眼看出。 */

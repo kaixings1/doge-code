@@ -71,6 +71,16 @@ object SessionScanner {
          * 一眼看出「这条是本机隧道、那条是局域网」。
          */
         val mode: String = "",
+        /**
+         * 该会话当前是否**探测到存活**。
+         *
+         * 默认 true：扫描/广播发现到的会话本来就是活的（是它们回应的）。
+         * 只有来自 [KnownSessionStore] 的**历史记录**才可能是死的 ——
+         * 那种情况下 [SessionFragment] 会并发探测其地址并把这里置 false，
+         * 列表里置灰显示、并提示「可能已关闭」，避免用户点了死条目后
+         * 只看到 ConnectException 却不知原因（用户报过这个坑）。
+         */
+        val alive: Boolean = true,
     ) {
         /** 拼出可用的连接地址。 */
         fun httpUrl(host: String = this.host) = "http://$host:$port"

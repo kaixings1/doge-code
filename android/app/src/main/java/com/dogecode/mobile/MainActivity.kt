@@ -1332,6 +1332,34 @@ class MainActivity : AppCompatActivity(),
         sessionFragment!!.knownSessionsProvider = {
             knownSessions.list().mapNotNull { it.toSessionOrNull() }
         }
+        // 已知会话的「真实可用地址」：用它落库的 addresses（服务端下发过 LAN/
+        // Tailscale/隧道），比 host:port 拼的 http 更准 —— 尤其 Tailseed 名与
+        // 隧道域名的场景。探测存活 / 切换连接都该用它。
+        sessionFragment!!.knownAddressResolver = { s ->
+            knownSessions.list()
+                .firstOrNull { it.port == s.port && it.mode.isNotBlank() }
+                ?.primaryAddress()
+        }
+        // 长按删除会话记录（只删手机端记录，不动电脑上的实例）
+        sessionFragment!!.onSessionDelete = { s ->
+            val rec = knownSessions.list().firstOrNull { r ->
+                r.port == s.port && (
+                    r.addresses.any { BridgeUrl.hostOf(it) == s.host } ||
+                        r.primaryAddress()?.let { BridgeUrl.hostOf(it) == s.host } == true
+                    )
+            }
+            if (rec != null) {
+                knownSessions.remove(rec.key())
+                Toast.makeText(this, "已删除「${rec.label}」", Toast.LENGTH_SHORT).show()
+            } else {
+                // 可能是扫描发现的（不在落库里）：提示它本就会在下次扫描重现
+                Toast.makeText(
+                    this,
+                    "该会话是扫描发现的实际实例，未在已知记录中（关掉电脑上的实例即可让它消失）",
+                    Toast.LENGTH_LONG,
+                ).show()
+            }
+        }
         // 历史里用过的其它主机（换电脑 / 换 WiFi 时留下的）一并探测。
         // 只取主机名而非完整 URL —— 扫描要的是 host，端口由 SessionScanner
         // 扫 5680-5690 全段决定。
@@ -1717,6 +1745,18 @@ class MainActivity : AppCompatActivity(),
      * 目标会话设为活动，其它会话的连接保持不变、继续收推送。
      */
     private fun switchToSession(s: SessionScanner.Session) {
+        // 「已探测为死」的会话直接拒绝切换（用户报过：列表里大量历史记录，
+        // 点了死条目只得到 ConnectException 却不知原因）。
+        // 提示里给可执行的下一步，而不是让用户对着失败猜。
+        if (!s.alive) {
+            Toast.makeText(
+                this,
+                "「${s.label.ifBlank { "端口 ${s.port}" } }」探测无响应，可能已关闭。\n" +
+                    "请在电脑上确认该实例还在跑，或长按此行删除记录。",
+                Toast.LENGTH_LONG,
+            ).show()
+            return
+        }
         // 隧道/云端模式下，会话入口是它自己的 `wss://<子域>/mobile/ws`
         //（cloudflared 只暴露 wss + 同源 https，`http://子域:端口` 连不通）。
         // 原先一律用 `host:port` 拼 http，隧道模式下切换必然失败 ——

@@ -143,6 +143,7 @@ class SessionFragment : Fragment() {
             onPick = { s -> onSessionPicked?.invoke(s) },
             localSuffix = getString(R.string.session_local_host),
             onSwitch = { s -> onSessionSwitch?.invoke(s) },
+            onDelete = { s -> confirmDelete(s) },
         )
         list.layoutManager = LinearLayoutManager(requireContext())
         list.adapter = adapter
@@ -405,9 +406,89 @@ class SessionFragment : Fragment() {
         val known = knownSessionsProvider()
         val seen = discovered.map { it.host to it.port }.toHashSet()
         val supplemental = known.filterNot { (it.host to it.port) in seen }
+        // 扫描已探到的 = 活的（默认 true）；补位的已知会话**可能是死的**
+        //（历史记录，实例已关）—— 用户点它只会得到 ConnectException 却不知原因。
+        // 故对补位项做一次存活探测，把结果写进 alive（见 Session.alive 说明）。
         allSessions = discovered + supplemental
         render()
+        probeAliveAsync(supplemental)
     }
+
+    /** 请求删除某会话时回调宿主（宿主才持有 KnownSessionStore）。 */
+    var onSessionDelete: ((SessionScanner.Session) -> Unit)? = null
+
+    /**
+     * 长按列表项后：二次确认，再请宿主删除该会话记录。
+     *
+     * 为什么必须二次确认：删除是**不可逆**的（记录被移除），
+     * 而长按在滚动/误触时较易触发。确认框里带上标签与端口，
+     * 让用户明确删的是哪一条。
+     */
+    private fun confirmDelete(s: SessionScanner.Session) {
+        val name = if (s.label.isBlank()) "端口 ${s.port}" else s.label
+        android.app.AlertDialog.Builder(requireContext())
+            .setTitle("删除会话")
+            .setMessage("从列表中删除「$name」（${s.host}:${s.port}）？\n\n仅移除此处的记录，不会影响电脑上正在运行的实例。若它还在，下次扫描会重新出现。")
+            .setPositiveButton("删除") { _, _ ->
+                onSessionDelete?.invoke(s)
+                // 本地列表立即移除，避免等宿主回调后才有反馈
+                allSessions = allSessions.filterNot { it.host == s.host && it.port == s.port }
+                scannedSessions = scannedSessions.filterNot { it.host == s.host && it.port == s.port }
+                beaconSessions = beaconSessions.filterNot { it.host == s.host && it.port == s.port }
+                render()
+            }
+            .setNegativeButton("取消", null)
+            .show()
+    }
+
+    /**
+     * 并发探测「补位的已知会话」是否还活着，回来后刷新列表。
+     *
+     * ## 为什么在 UI 上要区分死活
+     *
+     * 用户的会话列表里会积累大量**历史记录**（曾经连过的实例）。那些实例
+     * 关掉后记录仍在，点它必然 `ConnectException` —— 而用户看到的只是
+     * 「连不上」，不知道是「这个会话已经关了」（用户报过此坑）。
+     * 探测后把死的置灰 + 标「可能已关闭」，避免点死条目。
+     *
+     * ## 只探补位项
+     *
+     * 扫描已探到的本来就是活的（它们回应了扫描），重复探测纯属浪费 ——
+     * 列表里可能几十条，全探会明显拖慢。
+     *
+     * ## 探测走 SessionScanner 的既有探测（同一套超时/解析）
+     */
+    private fun probeAliveAsync(sessions: List<SessionScanner.Session>) {
+        if (sessions.isEmpty()) return
+        thread {
+            val aliveMap = HashMap<Pair<String, Int>, Boolean>()
+            sessions.forEach { s ->
+                val url = knownAddressFor(s)
+                val ok = url != null && SessionScanner.fetchSessionInfo(url) != null
+                aliveMap[s.host to s.port] = ok
+            }
+            activity?.runOnUiThread {
+                if (!isAdded) return@runOnUiThread
+                // 只把「探到死」的标记下来；没探到的保持原值
+                allSessions = allSessions.map { s ->
+                    val alive = aliveMap[s.host to s.port]
+                    if (alive != null && !alive) s.copy(alive = false) else s
+                }
+                render()
+            }
+        }
+    }
+
+    /**
+     * 取一个已知会话的可探测地址（优先它落库的地址，回落 host:port 拼 http）。
+     *
+     * 为什么不用 `s.httpUrl()`：已知会话的 host 可能是 Tailscale 名或隧道域名，
+     * 而落库的 addresses 里就有服务端下发的真实可用地址 —— 那些更准。
+     */
+    var knownAddressResolver: (SessionScanner.Session) -> String? = { null }
+
+    private fun knownAddressFor(s: SessionScanner.Session): String? =
+        knownAddressResolver(s)?.takeIf { it.isNotBlank() } ?: s.httpUrl()
 
     override fun onResume() {
         super.onResume()

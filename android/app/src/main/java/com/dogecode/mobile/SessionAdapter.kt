@@ -25,6 +25,13 @@ class SessionAdapter(
      * 恢复命令等），而「切换」是最常用的动作，值得一个独立的一步入口。
      */
     private val onSwitch: (SessionScanner.Session) -> Unit = {},
+    /**
+     * 长按列表项 → 请求删除该会话（宿主弹确认后落库移除）。
+     *
+     * 为什么用长按而不是给每行加个「删除」按钮：竖向空间宝贵，
+     * 且删除是低频危险操作 —— 长按 + 二次确认能有效防误触。
+     */
+    private val onDelete: (SessionScanner.Session) -> Unit = {},
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     /** 列表项：要么是分组头，要么是一条会话。 */
@@ -78,6 +85,11 @@ class SessionAdapter(
                 vh.bind(row.session, row.session.port == currentPort)
                 vh.itemView.setOnClickListener { onPick(row.session) }
                 vh.bindSwitch { onSwitch(row.session) }
+                // 长按 → 请求删除（宿主弹确认；死会话也可删，这正是主要用途）
+                vh.itemView.setOnLongClickListener {
+                    onDelete(row.session)
+                    true
+                }
             }
         }
     }
@@ -134,10 +146,27 @@ class SessionAdapter(
                     s.mode == "CLOUD" -> append("云端   ")
                     s.mode == "TUNNEL" || !s.tunnelUrl.isNullOrBlank() -> append("隧道   ")
                 }
-                append("端口 ").append(s.port).append("   ").append(interactiveText)
+                append("端口 ").append(s.port).append("   ")
+                // 死会话优先提示：它比「交互/非交互」更重要 ——
+                // 用户最需要知道的是「这个还连得上吗」
+                if (!s.alive) append("⚠ 可能已关闭（探测无响应）") else append(interactiveText)
                 if (s.clients > 0) append("   已连 ").append(s.clients).append(" 台")
             }
-            meta.setTextColor(if (s.interactive) 0xFF999999.toInt() else 0xFFF87171.toInt())
+            meta.setTextColor(
+                when {
+                    !s.alive -> 0xFFF59E0B.toInt()      // 橙：可能已关闭
+                    !s.interactive -> 0xFFF87171.toInt() // 红：非交互
+                    else -> 0xFF999999.toInt()
+                },
+            )
+
+            // 死会话：整行置灰 + 禁用「切换」（点了必然 ConnectException，
+            // 与其让用户撞墙，不如明确不可点）。仍可长按删除（见 Fragment）。
+            val dead = !s.alive
+            label.alpha = if (dead) 0.45f else 1f
+            meta.alpha = if (dead) 0.6f else 1f
+            cwd.alpha = if (dead) 0.45f else 1f
+            switchBtn.visibility = if (isCurrent || dead) View.GONE else View.VISIBLE
 
             cwd.text = s.cwd
             cwd.visibility = if (s.cwd.isBlank()) View.GONE else View.VISIBLE
