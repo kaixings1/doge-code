@@ -2457,6 +2457,21 @@ export function listLanIps(): string[] {
   } catch {
     // 忽略：至少返回 preferred（或空）
   }
+
+  // Tailscale MagicDNS 名（`<设备名>` 与 `<设备名>.<tailnet>.ts.net`）——
+  // 比 IP 更好的候选：**永久不变**、且同 WiFi 时 Tailscale 自动走局域网
+  // （快），出门自动走加密 P2P —— 一个地址覆盖所有场景。
+  // 仅当检测到 Tailscale 已运行（存在 100.x 地址）才加，避免无谓提示。
+  try {
+    const hasTailscaleIp = result.some((ip) => ip.startsWith('100.'))
+    if (hasTailscaleIp) {
+      const os = require('os') as typeof import('os')
+      const host = os.hostname()
+      if (host && !result.includes(host)) result.unshift(host)
+    }
+  } catch {
+    // 忽略：拿不到主机名不影响既有 LAN 列表
+  }
   return result
 }
 

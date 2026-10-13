@@ -331,6 +331,32 @@ if (phoneUrl) {
 } else {
   console.log('  手机连接地址:    未就绪（见上方提示）')
 }
+
+// Tailscale 固定地址：装了 Tailscale 就有，**永久不变**且任意网络可用 ——
+// 比「局域网 IP（换网段就变）」和「隧道（子域每次变）」都省心。
+// 同 WiFi 时 Tailscale 自动走局域网（快），出门自动走加密 P2P（不中继时直连）。
+const tsHost = process.env.COMPUTERNAME || ''
+const tsIps = (() => {
+  try {
+    const ifs = networkInterfaces()
+    for (const n of Object.keys(ifs)) {
+      for (const i of ifs[n] || []) {
+        if (i.family === 'IPv4' && i.address.startsWith('100.')) return i.address
+      }
+    }
+  } catch {}
+  return null
+})()
+if (tsIps) {
+  console.log('')
+  console.log('  ── Tailscale 固定地址（推荐，任意网络可用、永不变）──')
+  console.log('    手机装上 Tailscale 并用同一账号登录后，连接框填:')
+  console.log('')
+  console.log('      http://' + tsHost + ':' + PORT + '    (MagicDNS 短名)')
+  console.log('      http://' + tsIps + ':' + PORT + '      (Tailscale IP)')
+  console.log('')
+  console.log('    同一 WiFi 时自动走局域网（快），出门自动走加密 P2P。')
+}
 console.log('  密钥:            ' + (secret || '（空 — 服务端不做认证）'))
 console.log('')
 console.log('  服务端随 CLI 自动启动，无需手动执行 /mobile-connect')
