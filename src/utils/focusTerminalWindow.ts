@@ -39,6 +39,8 @@ function buildWindowsActivateScript(sessionId: string): string {
     '$sig=@"',
     '[DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);',
     '[DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr h, int n);',
+    '[DllImport("user32.dll")] public static extern bool BringWindowToTop(IntPtr h);',
+    '[DllImport("user32.dll")] public static extern bool IsIconic(IntPtr h);',
     '[DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();',
     '[DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr h, out uint pid);',
     '[DllImport("user32.dll")] public static extern bool AttachThreadInput(uint a, uint b, bool f);',
@@ -70,7 +72,12 @@ function buildWindowsActivateScript(sessionId: string): string {
     '$fgThread=[Dg.Win]::GetWindowThreadProcessId($fg,[ref]$fpid)',
     '$curThread=[Dg.Win]::GetCurrentThreadId()',
     'if($fgThread -ne 0){[Dg.Win]::AttachThreadInput($curThread,$fgThread,$true) | Out-Null}',
-    '[Dg.Win]::ShowWindow($h,9) | Out-Null',
+    // 关键：只在窗口**最小化**时用 SW_RESTORE(9) 把它弹回来。
+    // SW_RESTORE 对**最大化**窗口的副作用是将其还原为普通大小——这正是
+    // 「会话结束导致最大化窗口变回正常大小」的根因。最大化/普通窗口直接
+    // BringWindowToTop + SetForegroundWindow 前置，不触碰尺寸。
+    'if([Dg.Win]::IsIconic($h)){[Dg.Win]::ShowWindow($h,9) | Out-Null}',
+    'else{[Dg.Win]::BringWindowToTop($h) | Out-Null}',
     '$ok=[Dg.Win]::SetForegroundWindow($h)',
     'if($fgThread -ne 0){[Dg.Win]::AttachThreadInput($curThread,$fgThread,$false) | Out-Null}',
     // 置顶失败时的降级：Windows 的前台锁会拒绝非前台进程抢焦点（防恶意弹窗）。

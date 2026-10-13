@@ -1,34 +1,76 @@
 {
   "mcpServers": {
     "win-autoui": {
-      "command": "python",
-      "args": ["main.py"],
-      "cwd": "D:/MFC_TESTER"
+      "command": "D:/Python312/python.exe",
+      "args": [
+        "D:/MFC_TESTER/main.py"
+      ]
     },
     "pywinauto-mcp": {
       "command": "uv",
-      "args": ["run", "--directory", "D:/MFC_TESTER/mcp_servers_downloaded/pywinauto-mcp-main", "python", "server.py", "--transport", "stdio"]
+      "args": [
+        "run",
+        "--python",
+        "D:/Python312/python.exe",
+        "--directory",
+        "D:/MFC_TESTER/mcp_servers_downloaded/pywinauto-mcp-main",
+        "python",
+        "server.py",
+        "--transport",
+        "stdio"
+      ]
     },
     "playwright": {
       "command": "npx",
-      "args": ["-y", "@playwright/mcp"]
+      "args": [
+        "-y",
+        "@playwright/mcp"
+      ]
     },
     "filesystem": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "D:/"]
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "D:/"
+      ]
     },
     "memory": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-memory"]
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ]
     },
     "git": {
       "command": "uv",
-      "args": ["--directory", "D:/MFC_TESTER/mcp_servers_downloaded/mcp-everything/src/git", "run", "mcp-server-git", "--repository", "D:/MFC_TESTER"]
+      "args": [
+        "run",
+        "--python",
+        "D:/Python312/python.exe",
+        "--directory",
+        "D:/MFC_TESTER/mcp_servers_downloaded/mcp-everything/src/git",
+        "mcp-server-git"
+      ]
     },
-    "heartflow": {
-      "type": "sse",
-      "url": "http://127.0.0.1:8099/mcp",
-      "headersHelper": "D:/doge-code/vendor/heartflow/scripts/mcp-headers-helper.cmd"
+    "serena": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "D:/doge-code/vendor/serena",
+        "serena",
+        "start-mcp-server",
+        "--context",
+        "ide-assistant"
+      ],
+      "env": {
+        "PYTHONHOME": "",
+        "PYTHONPATH": ""
+      }
+    },
+    "rea": {
+      "command": "npx",
+      "args": ["-y", "rea-agents@6.4.0", "mcp"]
     }
   }
 }

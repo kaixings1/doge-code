@@ -4,6 +4,22 @@ REM  Build and install doge-code Android client.
 REM  Step 1: assemble debug APK (Android only; CLI built by bun).
 REM  Step 2: if a device is connected via adb, push + install.
 REM  Otherwise compile only and report the APK path.
+REM
+REM  Why --no-build-cache:
+REM    After changing res/ (layout, values), Gradle reuses stale merged
+REM    resources. The APK then ships an OLD layout while the Kotlin code
+REM    expects NEW ids -> findViewById returns null at runtime -> crash.
+REM    This was hit in practice (ChatFragment crash). Costs a few seconds.
+REM
+REM  Why "do not install on build failure":
+REM    adb install keeps reporting Success even when it installs the
+REM    PREVIOUS apk (because the new one was never produced). That makes
+REM    a broken build look like a working one. So we abort before install.
+REM
+REM  IMPORTANT: keep this file pure ASCII with CRLF line endings.
+REM  cmd.exe decodes batch files with the ANSI code page; UTF-8 Chinese
+REM  bytes get mangled and can swallow the newline, merging lines so that
+REM  comments run as commands.
 REM ============================================================
 
 SETLOCAL
@@ -15,13 +31,10 @@ SET "ADB=%ANDROID_SDK%\platform-tools\adb.exe"
 SET "GRADLE=D:\doge-code\android\.gradle-dist\gradle-8.9\bin\gradle.bat"
 SET "APK=D:\doge-code\android\app\build\outputs\apk\debug\app-debug.apk"
 
-REM --no-build-cache：改过 res/ 后**必须**加，否则 Gradle 会复用旧的
-REM merged 资源 → APK 内布局与 R 类不一致 → 运行时 findViewById 返回 null
-REM （实测踩过：ChatFragment 闪退）。代价是编译慢几秒，值得。
 echo [1/3] Assembling debug APK ...
 call "%GRADLE%" assembleDebug --offline --no-build-cache
 if errorlevel 1 (
-    echo [ERROR] Build failed —— 不安装（避免装入旧包导致闪退/界面没变）
+    echo [ERROR] Build failed. Not installing ^(would install a stale apk^).
     pause
     exit /b 1
 )

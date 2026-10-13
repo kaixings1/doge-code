@@ -36,8 +36,21 @@ if (!rgArgs.some(a => !a.startsWith('-') && !a.startsWith('--'))) {
   rgArgs.push('.');
 }
 
+// stdin 必须为 'ignore'：上游以 stdio:['pipe', ...] 启动 shell 且从不写、从不关闭 stdin，
+// 若 rg 继承之会阻塞等待 stdin 而永不退出，导致整链死锁（CPU 恒为 0）。rg --files 不读 stdin。
 const child = spawn(rgPath, ['--files', ...rgArgs], {
-  stdio: 'inherit',
+  stdio: ['ignore', 'inherit', 'inherit'],
   windowsHide: true,
 });
-child.on('exit', (code) => process.exit(code ?? 1));
+// 必须监听 'error'：spawn 失败（ENOENT 等）时只挂 'exit' 会永不触发，进程悬挂。
+child.on('error', (err) => {
+  console.error(`find.cjs: failed to spawn ripgrep: ${err.message}`);
+  process.exit(127);
+});
+child.on('exit', (code, signal) => {
+  if (signal) {
+    console.error(`find.cjs: ripgrep killed by signal ${signal}`);
+    process.exit(1);
+  }
+  process.exit(code ?? 1);
+});

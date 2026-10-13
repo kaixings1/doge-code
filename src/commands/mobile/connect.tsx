@@ -19,6 +19,7 @@ import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { Box, Text } from '../../ink.js'
 import { Pane } from '../../components/design-system/Pane.js'
+import { Dialog } from '../../components/design-system/Dialog.js'
 import { useKeybinding } from '../../keybindings/useKeybinding.js'
 import type { LocalJSXCommandOnDone } from '../../types/command.js'
 import { isMobileBridgeAvailable, MobileBridgeServer, getMobileBridgeUrl } from '../../bridge/mobileBridge.js'
@@ -353,13 +354,38 @@ function MobileConnectScreen(t0) {
 
 export async function call(onDone: LocalJSXCommandOnDone): Promise<React.ReactNode> {
   if (!isMobileBridgeAvailable()) {
-    return (
-      <Box flexDirection="column">
-        <Text>移动端桥接不可用。请设置环境变量：</Text>
-        <Text>  Windows: set CLAUDE_CODE_MOBILE_BRIDGE=1 && claude /mobile-connect</Text>
-        <Text>  macOS/Linux: export CLAUDE_CODE_MOBILE_BRIDGE=1 && claude /mobile-connect</Text>
-      </Box>
-    )
+    return <MobileBridgeUnavailableNotice onDone={onDone} />
   }
   return <MobileConnectScreen onDone={onDone} />
+}
+
+/**
+ * 移动桥接不可用时的提示。
+ *
+ * 必须走 Dialog（而非裸 Box/Text）：Dialog 自带 confirm:no(esc/n) → onCancel
+ * 绑定，能真正调用 onDone() 关闭。此前这里返回的是一个无任何按键处理的
+ * 静态 Box —— 调用方只在 jsx 不为空时 setToolJSX({isLocalJSXCommand:true})，
+ * 不调用 onDone 就永远退不出，表现为「输入 /mobile-connect 就卡死」。
+ *
+ * 文案必须解释清楚「本地桥 5678 ≠ 移动桥」：用户在 d.bat 下看到
+ * 「本地桥接已连接 (ws://localhost:5678)」会以为移动桥已就绪，但那条链路
+ * 只回显消息、不产生 AI 回复，手机连上也无法对话。
+ */
+function MobileBridgeUnavailableNotice({ onDone }: { onDone: LocalJSXCommandOnDone }) {
+  return (
+    <Dialog
+      title="📱 移动端连接不可用"
+      onCancel={() => onDone()}
+      color="warning"
+      inputGuide={() => <Text dimColor>按 Esc 或 N 关闭</Text>}
+    >
+      <Text color="yellow">
+        当前是本地桥接（5678，仅回显消息、不产生 AI 回复），不是移动桥接。
+      </Text>
+      <Text>
+        要让手机能对话，请用 mobile.bat 启动（它会设置 CLAUDE_CODE_MOBILE_BRIDGE=1），
+        再在 CLI 内输入 /mobile-connect。
+      </Text>
+    </Dialog>
+  )
 }

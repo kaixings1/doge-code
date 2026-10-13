@@ -61,7 +61,6 @@ const TOOL_CATEGORY_MAP: Record<string, ToolMetadata['category']> = {
   logger: 'system',
   metrics: 'system',
   monitor: 'system',
-  event_stream: 'system',
   websocket: 'communication',
   terminal_panel: 'system',
   python_interpreter: 'shell',

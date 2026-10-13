@@ -66,6 +66,14 @@ class LocalAgentBackend(
      */
     private val androidContext: android.content.Context? = null,
     /**
+     * 敏感操作的**事中确认**闸门（吸收自 termux-mcp approval.py）。
+     *
+     * `run_command` 执行前经此请用户确认。默认 null 表示**不设门** ——
+     * 保证所有既有调用点与 JVM 单测行为不变（单测不传，命令直接执行）。
+     * 生产环境由 [MainActivity] 注入绑定设备凭据确认的实现。
+     */
+    private val approval: ApprovalCoordinator? = null,
+    /**
      * 本地偏好读取（注入而非直接依赖 Android 的 [LocalPrefs]）。
      *
      * ## 为什么抽接口
@@ -311,7 +319,7 @@ class LocalAgentBackend(
         val loop = AgentLoop(
             workspace = workspace,
             chatFn = { msgs, tools -> modelCall(effectiveCfg, msgs, tools) },
-            toolFn = { name, args -> LocalTools.execute(workspace, name, args, androidContext) },
+            toolFn = { name, args -> LocalTools.execute(workspace, name, args, androidContext, approval) },
             systemPrompt = SystemPrompt.build(
                 workspace.name.ifBlank { "工作区" },
                 planMode = planMode,

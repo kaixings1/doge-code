@@ -142,7 +142,7 @@ export const call: LocalCommandCall = async (args, context) => {
 
     // 仅响应式模式：将 /compact 路由至响应式路径。
     // 在会话记忆之后检查（该路径开销小且正交）。
-    if (reactiveCompact?.isReactiveOnlyMode()) {
+    if (reactiveCompact?.isReactiveCompactEnabled()) {
       return await compactViaReactive(
         messages,
         context,

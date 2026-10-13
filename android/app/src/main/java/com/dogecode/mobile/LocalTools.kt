@@ -383,12 +383,17 @@ object LocalTools {
      *   Termux 是否安装、构造并发送 intent）。本地文件类工具不依赖它，
      *   故默认 null —— [LocalAgentBackend] 注入带 context 的版本即可，
      *   [AgentLoop] 的默认 toolFn 传 null（不影响文件类工具）。
+     * @param approval 敏感操作的**事中确认**闸门（[ApprovalCoordinator]）。
+     *   仅在 `run_command` 需要：执行前请用户确认该条命令。
+     *   默认 null 表示**不设门**（与改造前行为一致）—— 既保证既有调用点
+     *   与全部单测零改动，又让生产由 [LocalAgentBackend] 注入真实实现。
      */
     fun execute(
         root: File,
         toolName: String,
         arguments: String,
         context: Context? = null,
+        approval: ApprovalCoordinator? = null,
     ): ToolResult {
         val args = runCatching { JSONObject(arguments.ifBlank { "{}" }) }.getOrNull()
             ?: return ToolResult.error(toolName, "参数不是合法 JSON")
@@ -401,7 +406,7 @@ object LocalTools {
                 "search_in_files" -> searchInFiles(root, args)
                 "glob" -> globFiles(root, args)
                 "todo" -> updateTodos(args)
-                "run_command" -> runCommandViaTermux(root, args, context)
+                "run_command" -> runCommandViaTermux(root, args, context, approval)
                 else -> ToolResult.error(toolName, "未知工具：$toolName")
             }
         } catch (e: Exception) {
@@ -1003,12 +1008,29 @@ object LocalTools {
      * 整个链路里没有我们自己的 shell 解释器：命令由 Termux 执行，
      * 我们只负责「拼一条已校验安全的命令字符串 + 读结果文件」。
      */
-    private fun runCommandViaTermux(root: File, args: JSONObject, context: Context?): ToolResult {
+    private fun runCommandViaTermux(
+        root: File,
+        args: JSONObject,
+        context: Context?,
+        approval: ApprovalCoordinator?,
+    ): ToolResult {
         val command = args.optString("command").trim()
         if (command.isEmpty()) return ToolResult.error("run_command", "缺少 command 参数")
 
         // 1. 安全白名单校验
         commandSafetyError(command)?.let { return ToolResult.error("run_command", it) }
+
+        // 1b. 事中确认门（吸收自 termux-mcp approval.py）：
+        //     白名单只保证「命令不是明显危险的」，但不保证「这条命令是用户
+        //     此刻想要的」。对白名单内的命令再做一次**事中确认**，批准带 TTL，
+        //     同一命令在有效期内不重复打扰。approval 为 null 时不设门。
+        if (approval != null && !approval.request(command)) {
+            return ToolResult.error(
+                "run_command",
+                "用户未批准执行该命令（或确认超时）。不要重复尝试同一命令，" +
+                    "可改用其他方式或询问用户。命令：$command",
+            )
+        }
 
         // 2. 工作目录必须落在工作区内（复用 WorkspacePath 校验，绝不绕过）
         val cwdRaw = args.optString("cwd").ifBlank { "." }

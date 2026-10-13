@@ -1,0 +1,13 @@
+{
+  "name": "workbuddy-local-proxy-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "WorkBuddy 本地代理桌面端 — 会话管理与多账号",
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^38.0.0"
+  }
+}

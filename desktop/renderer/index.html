@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WorkBuddy Proxy · Web 管理台</title>
+  <script src="theme.js"></script>
+  <style>
+    :root {
+      --bg: #f5f6f8;
+      --panel: #fff;
+      --panel-muted: #f0f2f5;
+      --border: #d9dde3;
+      --text: #1c2026;
+      --muted: #6b7280;
+      --accent: #4f8cff;
+      --accent-hover: #3d7bf0;
+      --ok: #1a7f37;
+      --danger: #d73a31;
+      --warn: #9a6700;
+      --shadow: 0 8px 28px rgba(31, 35, 41, .08);
+    }
+    [data-theme="dark"] {
+      --bg: #0d0f13;
+      --panel: #16181d;
+      --panel-muted: #0e1014;
+      --border: #262b33;
+      --text: #e8eaf0;
+      --muted: #8b93a1;
+      --accent: #4f8cff;
+      --accent-hover: #3d7bf0;
+      --ok: #3fb950;
+      --danger: #e5534b;
+      --warn: #e2a33d;
+      --shadow: 0 8px 28px rgba(0, 0, 0, .24);
+    }
+    @media (prefers-color-scheme: dark) {
+      [data-theme="system"] {
+        --bg: #0d0f13;
+        --panel: #16181d;
+        --panel-muted: #0e1014;
+        --border: #262b33;
+        --text: #e8eaf0;
+        --muted: #8b93a1;
+        --accent: #4f8cff;
+        --accent-hover: #3d7bf0;
+        --ok: #3fb950;
+        --danger: #e5534b;
+        --warn: #e2a33d;
+        --shadow: 0 8px 28px rgba(0, 0, 0, .24);
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 720px;
+      height: 100vh;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+    }
+    button, input, textarea { font: inherit; }
+    button {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      color: var(--text);
+      background: transparent;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    button:hover { border-color: var(--accent); }
+    button:disabled { opacity: .55; cursor: not-allowed; }
+    button.primary { color: #fff; background: var(--accent); border-color: var(--accent); }
+    button.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+    button.danger { color: var(--danger); }
+
+    /* ─── 布局：左侧导航 + 右侧内容 ─── */
+    .shell { display: flex; align-items: stretch; height: 100vh; }
+    .sidebar {
+      position: sticky; top: 0; z-index: 5; flex: none;
+      display: flex; flex-direction: column; gap: 4px;
+      width: 184px; height: 100vh; padding: 20px 12px 16px;
+      background: var(--panel); border-right: 1px solid var(--border);
+    }
+    .brand { padding: 0 8px 4px; }
+    .brand h1 { margin: 0; font-size: 15px; line-height: 1.35; }
+    .brand .sub { margin-top: 3px; color: var(--muted); font-size: 11.5px; }
+    .nav { display: flex; flex-direction: column; gap: 3px; margin-top: 16px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 9px;
+      padding: 9px 10px; border: 1px solid transparent; border-radius: 9px;
+      color: var(--muted); background: transparent;
+      font-size: 13.5px; text-align: left; cursor: pointer;
+    }
+    .nav-item:hover { color: var(--text); background: var(--panel-muted); border-color: transparent; }
+    .nav-item.active {
+      color: var(--accent); background: var(--panel-muted);
+      border-color: var(--border); font-weight: 600;
+    }
+    .nav-item .ico { flex: none; width: 18px; text-align: center; font-size: 14px; }
+    .nav-item .label { flex: 1; }
+    .nav-item .count {
+      flex: none; min-width: 20px; padding: 1px 6px; border-radius: 20px;
+      background: var(--danger); color: #fff; font-size: 11px;
+      font-weight: 600; text-align: center;
+    }
+    .nav-item .count.muted { background: var(--border); color: var(--muted); }
+    .sidebar-foot { margin-top: auto; display: flex; flex-direction: column; gap: 8px; }
+    .theme-switch { display: flex; overflow: hidden; border: 1px solid var(--border); border-radius: 8px; }
+    .theme-switch button { flex: 1; border: 0; border-radius: 0; padding: 6px 4px; color: var(--muted); font-size: 11.5px; }
+    .theme-switch button.active { color: #fff; background: var(--accent); }
+
+    .content { flex: 1; min-width: 0; height: 100vh; overflow: hidden; padding: 24px 24px 20px; display: flex; flex-direction: column; }
+    .content-inner { width: min(960px, 100%); margin: 0 auto; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+    .page { display: none; }
+    /* 非账号页：内容超出时在页面内滚动（保持原有整页滚动体验） */
+    .page.active { display: block; flex: 1; min-height: 0; overflow-y: auto; padding-right: 4px; }
+    .page-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .page-head h2 { margin: 0; font-size: 19px; }
+    .page-head .intro { margin: 0; color: var(--muted); font-size: 12.5px; line-height: 1.7; flex: 1 1 320px; }
+
+    .panel {
+      margin-bottom: 18px; padding: 20px;
+      background: var(--panel); border: 1px solid var(--border); border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+    /* 账号页：占满内容区剩余高度，滚动只发生在账号列表内部（页面本身不滚） */
+    .page.active[data-page="accounts"] {
+      flex: 1; min-height: 0; display: flex; flex-direction: column;
+      overflow: hidden; padding-right: 0;
+    }
+    .page[data-page="accounts"] .page-head { flex: none; }
+    .page[data-page="accounts"] .panel { flex: 1; min-height: 0; display: flex; flex-direction: column; margin-bottom: 0; }
+    .page[data-page="accounts"] #account-list { flex: 1; min-height: 140px; overflow-y: auto; padding-right: 4px; }
+    .page[data-page="accounts"] .panel > .hint { flex: none; }
+    .panel-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+    .panel-head h2 { margin: 0; font-size: 16px; }
+    .head-actions { margin-left: auto; display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    .status-line { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .badge {
+      display: inline-flex; align-items: center; min-height: 24px; padding: 2px 10px;
+      border: 1px solid var(--border); border-radius: 20px;
+      color: var(--muted); font-size: 12px;
+    }
+    .badge.ok { color: var(--ok); border-color: var(--ok); }
+    .badge.warn { color: var(--warn); border-color: var(--warn); }
+    .badge.bad { color: var(--danger); border-color: var(--danger); }
+    .badge.cur { color: #fff; background: var(--accent); border-color: var(--accent); }
+    .badge.edition-intl { color: #7c5cff; border-color: #7c5cff; }
+    .detail { color: var(--muted); font-size: 13px; }
+
+    /* ─── 账号筛选：分段选择器 ─── */
+    .account-filters { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+    .seg { display: inline-flex; overflow: hidden; border: 1px solid var(--border); border-radius: 9px; }
+    .seg-item {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 0; border-radius: 0; padding: 7px 13px;
+      color: var(--muted); background: transparent; font-size: 12.5px;
+    }
+    .seg-item + .seg-item { border-left: 1px solid var(--border); }
+    .seg-item:hover { color: var(--text); background: var(--panel-muted); }
+    .seg-item.active { color: #fff; background: var(--accent); font-weight: 600; }
+    .seg-item .seg-count {
+      min-width: 18px; padding: 0 5px; border-radius: 20px;
+      background: var(--border); color: var(--muted);
+      font-size: 11px; font-weight: 600; text-align: center;
+    }
+    .seg-item.active .seg-count { background: rgba(255, 255, 255, .28); color: #fff; }
+    .account-group-title {
+      display: flex; align-items: center; gap: 8px; margin: 16px 0 4px;
+      color: var(--muted); font-size: 12px; font-weight: 600;
+    }
+    .account-group-title:first-child { margin-top: 0; }
+    .account-group-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* ─── 账号行 ─── */
+    .account-item { padding: 16px 0; border-bottom: 1px solid var(--border); }
+    .account-item:last-child { padding-bottom: 2px; border-bottom: 0; }
+    .account-head { display: flex; align-items: flex-start; gap: 12px; }
+    .account-main { min-width: 0; flex: 1; }
+    .account-name { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 15px; font-weight: 600; }
+    .account-meta { margin-top: 6px; color: var(--muted); font-size: 12.5px; line-height: 1.7; }
+    .account-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .account-actions button { padding: 6px 11px; font-size: 12px; }
+
+    /* 账号行内联：积分 / 签到 / 资源明细 */
+    .row-panels { margin-top: 12px; display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .row-panel {
+      padding: 11px 13px; background: var(--panel-muted);
+      border: 1px solid var(--border); border-radius: 9px;
+      color: var(--muted); font-size: 12.5px;
+    }
+    .row-panel .panel-label { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+    .row-panel .big { color: var(--ok); font-size: 18px; font-weight: 700; }
+    .row-panel .row { display: flex; align-items: baseline; gap: 7px; flex-wrap: wrap; }
+    .row-panel .resources {
+      margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 3px;
+    }
+    .row-panel .resource { display: flex; justify-content: space-between; gap: 12px; }
+    .row-panel .resource b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+    .row-panel .resource .meta { color: var(--muted); font-size: 11.5px; }
+    .row-panel .error { color: var(--danger); }
+
+    /* 顶部"会话状态"面板的字段网格 */
+    .field-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+    .field { background: var(--panel-muted); border: 1px solid var(--border); border-radius: 9px; padding: 10px 14px; }
+    .field .label { font-size: 12px; color: var(--muted); }
+    .field .value { font-weight: 600; word-break: break-all; }
+    .field code { font-family: Consolas, "Courier New", monospace; font-size: 12px; }
+
+    /* 网关接口：模型 chip 云（对话模型，可滚动） */
+    .models { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; max-height: 260px; overflow-y: auto; padding-right: 4px; }
+    .model-chip {
+      border: 1px solid var(--border); border-radius: 8px; padding: 4px 10px;
+      font-size: 12px; background: var(--panel-muted); color: var(--text);
+    }
+    .model-chip.default { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+    .model-chip .credits { color: var(--muted); margin-left: 6px; font-weight: 600; }
+
+    /* API Key 配置行 */
+    .apikey-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .apikey-row input[type="text"], .apikey-row input[type="password"] {
+      flex: 1; min-width: 220px; padding: 8px 10px; color: var(--text); background: var(--panel);
+      border: 1px solid var(--border); border-radius: 8px; outline: none;
+    }
+    .apikey-row input:focus { border-color: var(--accent); }
+
+    /* 通用 */
+    .empty { padding: 30px 0; color: var(--muted); text-align: center; font-size: 13px; }
+    .hint { margin-top: 10px; color: var(--muted); font-size: 12px; line-height: 1.7; }
+
+    /* ─── 敏感词脱敏 ─── */
+    .switch { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; cursor: pointer; user-select: none; }
+    .switch input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+    .switch .track {
+      position: relative; width: 38px; height: 22px; flex: none;
+      background: var(--border); border-radius: 20px; transition: background .16s ease;
+    }
+    .switch .track::after {
+      content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px;
+      background: #fff; border-radius: 50%; transition: transform .16s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .25);
+    }
+    .switch input:checked + .track { background: var(--accent); }
+    .switch input:checked + .track::after { transform: translateX(16px); }
+    .switch input:disabled + .track { opacity: .5; }
+    .switch input:focus-visible + .track { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .role-picks { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; }
+    .role-picks label { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12.5px; cursor: pointer; }
+    .role-picks input { accent-color: var(--accent); }
+    .term-add { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 12px 0 4px; }
+    .term-add input {
+      flex: 1; min-width: 220px; padding: 8px 10px; color: var(--text); background: var(--panel);
+      border: 1px solid var(--border); border-radius: 8px; outline: none;
+    }
+    .term-add input:focus { border-color: var(--accent); }
+    .terms {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;
+      max-height: 240px; overflow-y: auto; padding: 2px 4px 2px 2px;
+    }
+    .term-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 3px 6px 3px 10px; background: var(--panel-muted);
+      border: 1px solid var(--border); border-radius: 8px;
+      font-family: Consolas, "Courier New", monospace; font-size: 12px;
+    }
+    .term-chip button {
+      padding: 0 4px; border: 0; border-radius: 5px; color: var(--muted);
+      background: transparent; font-size: 14px; line-height: 1.2;
+    }
+    .term-chip button:hover { color: var(--danger); }
+    .stat-row { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 12px; color: var(--muted); font-size: 12.5px; }
+    .stat-row b { color: var(--text); font-variant-numeric: tabular-nums; }
+    .stat-terms { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .stat-term {
+      padding: 2px 8px; border: 1px solid var(--border); border-radius: 6px;
+      color: var(--muted); font-family: Consolas, "Courier New", monospace; font-size: 11.5px;
+    }
+
+    /* ─── 加工管线 ─── */
+    /* 复用 .terms 的滚动容器，每行是一个 stage */
+    .pipeline-stage {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--panel-muted); font-size: 12.5px;
+    }
+    .pipeline-stage + .pipeline-stage { margin-top: 6px; }
+    /* 已禁用：整行降透明度，一眼区分「关了」与「跑着但没命中」 */
+    .pipeline-stage.off { opacity: 0.55; }
+    .pipeline-index {
+      flex: none; width: 20px; height: 20px; display: grid; place-items: center;
+      border-radius: 50%; background: var(--border); color: var(--muted);
+      font-size: 11px; font-variant-numeric: tabular-nums;
+    }
+    .pipeline-name {
+      flex: 1; min-width: 0; font-family: Consolas, "Courier New", monospace;
+      color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .pipeline-hit {
+      flex: none; padding: 2px 8px; border-radius: 6px;
+      border: 1px solid var(--border); font-size: 11.5px;
+      font-variant-numeric: tabular-nums;
+    }
+    .pipeline-hit.ok { color: var(--ok); border-color: var(--ok); }
+    .pipeline-hit.muted { color: var(--muted); }
+    .pipeline-bytes {
+      flex: none; width: 62px; text-align: right;
+      font-family: Consolas, "Courier New", monospace; font-size: 11.5px;
+      font-variant-numeric: tabular-nums;
+    }
+    /* 变大(注入)用强调色，变小(删除)用常规色，0 用灰色 */
+    .pipeline-bytes.grow { color: var(--accent); }
+    .pipeline-bytes.shrink { color: var(--ok); }
+    .pipeline-bytes.muted { color: var(--muted); }
+    .pipeline-ms { flex: none; width: 58px; text-align: right; font-size: 11.5px; font-variant-numeric: tabular-nums; }
+    .pipeline-err {
+      flex: none; padding: 2px 8px; border-radius: 6px; font-size: 11.5px;
+      color: var(--danger); border: 1px solid var(--danger);
+    }
+    .pipeline-switch { flex: none; margin: 0; }
+
+    /* ─── 运行日志 ─── */
+    .log-filters { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+    .log-filters select {
+      padding: 7px 10px; color: var(--text); background: var(--panel);
+      border: 1px solid var(--border); border-radius: 8px; outline: none;
+    }
+    .log-filters select:focus { border-color: var(--accent); }
+    .log-filters input[type="search"] {
+      flex: 1; min-width: 180px; padding: 7px 10px; color: var(--text); background: var(--panel);
+      border: 1px solid var(--border); border-radius: 8px; outline: none;
+    }
+    .log-filters input[type="search"]:focus { border-color: var(--accent); }
+    .log-filters .switch { margin-left: auto; }
+    .log-list {
+      max-height: 520px; overflow-y: auto;
+      border: 1px solid var(--border); border-radius: 10px; background: var(--panel-muted);
+    }
+    .log-row {
+      display: grid; grid-template-columns: 74px 68px 62px 1fr;
+      gap: 10px; align-items: baseline;
+      padding: 9px 12px; border-bottom: 1px solid var(--border);
+      font-size: 12.5px; line-height: 1.6;
+    }
+    .log-row:last-child { border-bottom: 0; }
+    .log-row .time { color: var(--muted); font-family: Consolas, "Courier New", monospace; font-size: 11.5px; }
+    .log-row .cat { color: var(--muted); font-size: 11.5px; }
+    .log-row .msg { word-break: break-word; }
+    .log-row .msg .extra { color: var(--muted); font-size: 11.5px; }
+    .log-lvl {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 1px 7px; border: 1px solid var(--border); border-radius: 20px;
+      font-size: 11px; font-weight: 600;
+    }
+    .log-lvl.info { color: var(--muted); }
+    .log-lvl.debug { color: var(--muted); opacity: .8; }
+    .log-lvl.warn { color: var(--warn); border-color: var(--warn); }
+    .log-lvl.error { color: var(--danger); border-color: var(--danger); }
+    .log-row.warn { background: rgba(226, 163, 61, .07); }
+    .log-row.error { background: rgba(229, 83, 75, .07); }
+    .log-empty { padding: 28px 0; color: var(--muted); text-align: center; font-size: 13px; }
+    .modal-mask { position: fixed; inset: 0; z-index: 10; display: none; align-items: center; justify-content: center; padding: 18px; background: rgba(0, 0, 0, .55); }
+    .modal-mask.open { display: flex; }
+    .modal { width: min(620px, 100%); padding: 22px; background: var(--panel); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 16px 60px rgba(0, 0, 0, .25); }
+    .modal-head { display: flex; align-items: center; margin-bottom: 16px; gap: 10px; }
+    .modal-head h2 { margin: 0 auto 0 0; font-size: 17px; }
+    .modal-section { padding: 14px; background: var(--panel-muted); border: 1px solid var(--border); border-radius: 10px; }
+    .modal-section + .modal-section { margin-top: 12px; }
+    .modal-section h3 { margin: 0 0 6px; font-size: 14px; }
+    .modal-section p { margin: 0 0 12px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .field-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .field-row label { color: var(--muted); font-size: 13px; }
+    /* 账号版本单选：国内版 / 国际版 */
+    .edition-option {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
+      border: 1px solid var(--border); border-radius: 8px; background: var(--panel);
+      color: var(--text); font-size: 13px; cursor: pointer;
+    }
+    .edition-option:has(input:checked) { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+    .edition-option input { accent-color: var(--accent); }
+    input[type="text"], input[type="password"] {
+      min-width: 220px; flex: 1; padding: 8px 10px; color: var(--text); background: var(--panel);
+      border: 1px solid var(--border); border-radius: 8px; outline: none;
+    }
+    input[type="text"]:focus, input[type="password"]:focus { border-color: var(--accent); }
+    .file-label { display: inline-flex; align-items: center; min-height: 34px; padding: 0 12px; border: 1px dashed var(--border); border-radius: 8px; color: var(--muted); cursor: pointer; font-size: 13px; }
+    .file-label:hover { border-color: var(--accent); color: var(--text); }
+    #file-name { margin-left: 8px; color: var(--text); font-size: 12px; }
+    textarea {
+      width: 100%; min-height: 110px; resize: vertical; padding: 10px 12px;
+      font-family: Consolas, "Courier New", monospace; font-size: 12.5px;
+      color: var(--text); background: var(--panel);
+      border: 1px solid var(--border); border-radius: 8px; outline: none;
+    }
+    textarea:focus { border-color: var(--accent); }
+
+    #toast {
+      position: fixed; top: 18px; left: 50%; z-index: 20;
+      display: none; max-width: 80vw; transform: translateX(-50%);
+      padding: 10px 18px; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--panel); box-shadow: var(--shadow); font-size: 13px;
+    }
+    #toast.ok { color: var(--ok); border-color: var(--ok); }
+    #toast.err { color: var(--danger); border-color: var(--danger); }
+    .spinner {
+      display: inline-block; width: 12px; height: 12px; margin-right: 6px;
+      border: 2px solid currentColor; border-right-color: transparent;
+      border-radius: 50%; vertical-align: -2px; animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+  <link rel="stylesheet" href="web.css">
+</head>
+<body>
+  <div class="shell">
+    <!-- ─── 左侧导航 ─── -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">W<span>.</span></div>
+        <h1>WorkBuddy<span class="brand-proxy">PROXY CONSOLE</span></h1>
+        <div class="sub">本地网关 · Web 管理台</div>
+      </div>
+      <nav class="nav" id="nav">
+        <button class="nav-item active" data-page="overview"><span class="ico">◈</span><span class="label">概览</span></button>
+        <button class="nav-item" data-page="accounts"><span class="ico">☰</span><span class="label">账号</span><span class="count muted" id="nav-count-accounts">0</span></button>
+        <button class="nav-item" data-page="gateway"><span class="ico">⇄</span><span class="label">网关</span></button>
+        <button class="nav-item" data-page="desensitize"><span class="ico">✳</span><span class="label">脱敏</span></button>
+        <button class="nav-item" data-page="pipeline"><span class="ico">⇢</span><span class="label">加工</span></button>
+        <button class="nav-item" data-page="logs"><span class="ico">≡</span><span class="label">日志</span><span class="count" id="nav-count-logs" style="display:none">0</span></button>
+      </nav>
+      <div class="sidebar-foot">
+        <div class="local-note"><span class="status-dot"></span> 本机服务 / LOCAL FIRST</div>
+        <button id="web-connect" class="connect-button">连接凭证</button>
+        <div class="theme-switch" id="theme-switch">
+          <button data-mode="system">跟随系统</button>
+          <button data-mode="light">浅色</button>
+          <button data-mode="dark">深色</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="content">
+      <div class="content-inner">
+        <header class="web-topbar"><span>工作空间 <span class="topbar-slash">/</span> 本地代理</span><span class="web-tag">WEB CONSOLE <span class="status-dot"></span></span></header>
+
+        <!-- ─── 概览 ─── -->
+        <section class="page active" data-page="overview">
+          <div class="page-head">
+            <div><span class="eyebrow">OVERVIEW</span><h2>网关概览</h2></div>
+            <p class="intro">一个页面，管理你的账号、模型与请求。<br>代理持续运行，关闭浏览器不影响服务。</p>
+          </div>
+          <div class="metric-grid">
+            <article class="metric"><span class="metric-label">服务连接</span><strong id="metric-service">连接中</strong><span class="metric-note" id="metric-service-note">正在读取本地网关</span></article>
+            <article class="metric"><span class="metric-label">已保存账号</span><strong id="metric-accounts">—</strong><span class="metric-note">按账号管理登录态</span></article>
+            <article class="metric"><span class="metric-label">可用模型</span><strong id="metric-models">—</strong><span class="metric-note">保留客户端指定模型</span></article>
+            <article class="metric"><span class="metric-label">网关鉴权</span><strong id="metric-auth">—</strong><span class="metric-note">浏览器凭证仅保留在当前标签页</span></article>
+          </div>
+
+          <section class="panel">
+            <div class="panel-head">
+              <h2>会话状态</h2>
+              <span id="session-badge" class="badge">检测中…</span>
+              <div class="head-actions">
+                <button id="btn-refresh-state">刷新状态</button>
+                <button id="btn-refresh-token">刷新 Token</button>
+                <button id="btn-logout" class="danger">退出登录</button>
+                <button id="btn-add-account" class="primary">登录 / 添加账号</button>
+              </div>
+            </div>
+            <div class="field-grid">
+              <div class="field"><div class="label">当前账号昵称</div><div class="value" id="session-nickname">—</div></div>
+              <div class="field"><div class="label">账号 UID</div><div class="value" id="session-uid">—</div></div>
+              <div class="field"><div class="label">上游端点</div><div class="value" id="session-endpoint">—</div></div>
+              <div class="field"><div class="label">Token 过期时间</div><div class="value" id="session-expires">—</div></div>
+            </div>
+            <p class="hint">登录后会自动加入到账号列表；首个账号自动成为当前账号，之后新增账号不会自动切换。退出登录会同时清掉 token 与当前账号选择。</p>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head"><h2>本地代理状态</h2></div>
+            <div id="proxy-status" class="detail">正在检查本地代理…</div>
+            <p class="hint">账号数据保存在程序目录下的 <code>data/accounts.json</code>。关闭此窗口不会删除账号或登录态。</p>
+          </section>
+        </section>
+
+        <!-- ─── 账号 ─── -->
+        <section class="page" data-page="accounts">
+          <div class="page-head">
+            <h2>账号</h2>
+            <p class="intro">「设为当前」切换网关转发使用的账号；多账号批量操作串行执行以避免触发上游风控。</p>
+          </div>
+
+          <section class="panel">
+            <div class="panel-head">
+              <h2>账号列表</h2>
+              <span id="accounts-count" class="badge">0</span>
+              <div class="head-actions">
+                <button id="btn-add-account-2" class="primary">登录 / 添加账号</button>
+                <button id="btn-query-usage">查询全部账号积分</button>
+                <button id="btn-checkin-all">一键全部签到</button>
+              </div>
+            </div>
+            <div class="account-filters">
+              <div class="seg" id="account-edition-filter" role="tablist" aria-label="账号版本">
+                <button class="seg-item active" data-edition="all">全部 <span class="seg-count" data-count="all">0</span></button>
+                <button class="seg-item" data-edition="cn">国内账号 <span class="seg-count" data-count="cn">0</span></button>
+                <button class="seg-item" data-edition="intl">国际账号 <span class="seg-count" data-count="intl">0</span></button>
+              </div>
+              <div class="seg" id="account-status-filter" role="tablist" aria-label="账号状态">
+                <button class="seg-item active" data-status="all">全部 <span class="seg-count" data-count="all">0</span></button>
+                <button class="seg-item" data-status="normal">正常 <span class="seg-count" data-count="normal">0</span></button>
+                <button class="seg-item" data-status="limited">已限流 <span class="seg-count" data-count="limited">0</span></button>
+              </div>
+            </div>
+            <div id="account-list"><div class="empty"><span class="spinner"></span>正在加载…</div></div>
+            <p class="hint">行内的「积分」「签到」按钮只对单个账号生效。「一键全部签到」只对国内版账号生效并按顺序串行执行（避免触发上游 code 11128 风控），单个账号失败不影响其他账号；国际版暂无签到活动，其签到入口不显示。账号因限额（429）被自动切换时，可在「日志」页看到完整记录。</p>
+          </section>
+        </section>
+
+        <!-- ─── 网关 ─── -->
+        <section class="page" data-page="gateway">
+          <div class="page-head">
+            <h2>网关</h2>
+            <p class="intro">OpenAI 客户端把 base URL 指到下面的地址即可；SSE 流式透传。</p>
+          </div>
+
+          <section class="panel">
+            <div class="panel-head">
+              <h2>网关接口</h2>
+              <span id="default-model-badge" class="badge" style="display:none;"></span>
+            </div>
+            <div class="field-grid">
+              <div class="field"><div class="label">对话端点</div><div class="value"><code id="api-chat">—</code></div></div>
+              <div class="field"><div class="label">对话端点（Anthropic 兼容）</div><div class="value"><code id="api-messages">—</code></div></div>
+              <div class="field"><div class="label">模型列表</div><div class="value"><code id="api-models">—</code></div></div>
+              <div class="field"><div class="label">默认模型</div><div class="value" id="default-model">—</div></div>
+            </div>
+            <p class="hint">base URL：<code id="api-base">—</code></p>
+
+            <div class="panel-head" style="margin-top:14px"><h2 style="font-size:13.5px">可用模型</h2></div>
+            <div class="models" id="models"><div class="empty" style="padding:14px 0">暂无模型</div></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head"><h2>网关 API Key（可选）</h2></div>
+            <div class="apikey-row">
+              <input type="password" id="api-key-input" placeholder="留空表示不启用鉴权；至少 8 个字符" autocomplete="off">
+              <button id="btn-save-key" class="primary">保存</button>
+              <button id="btn-clear-key">清除</button>
+            </div>
+            <p class="hint" id="api-key-status">未启用（仅监听 127.0.0.1，建议本机使用）</p>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head"><h2>思考块透传</h2><span id="translate-thinking-badge" class="badge">检测中…</span></div>
+            <div class="panel-head" style="margin-bottom:0">
+              <label class="switch">
+                <input type="checkbox" id="translate-thinking-enabled">
+                <span class="track"></span>
+                <span>将上游 reasoning_content 透传为 Anthropic thinking 块</span>
+              </label>
+              <span class="detail" id="translate-thinking-state">—</span>
+            </div>
+            <p class="hint">开启后，/think 等推理模型返回的内部推理会以 <code>thinking</code> 块呈现给 Claude Code（补空 signature 维持协议结构）。上游不支持时自动忽略。环境变量 <code>WORKBUDDY_TRANSLATE_THINKING=0</code> 或启动参数可强制管理此开关。</p>
+          </section>
+        </section>
+
+        <!-- ─── 脱敏 ─── -->
+        <section class="page" data-page="desensitize">
+          <div class="page-head">
+            <h2>敏感词脱敏</h2>
+            <p class="intro">命中词会在词内插入零宽空格，人眼与模型读到的不变，但上游后端的关键词匹配会失效。</p>
+          </div>
+
+          <section class="panel">
+            <div class="panel-head">
+              <h2>脱敏设置</h2>
+              <span id="desensitize-badge" class="badge">检测中…</span>
+              <div class="head-actions">
+                <button id="btn-reset-terms">恢复默认词表</button>
+              </div>
+            </div>
+            <div class="panel-head" style="margin-bottom:0">
+              <label class="switch">
+                <input type="checkbox" id="desensitize-enabled">
+                <span class="track"></span>
+                <span>启用脱敏</span>
+              </label>
+              <span class="detail" id="desensitize-state">—</span>
+            </div>
+
+            <div class="role-picks" id="desensitize-roles">
+              <span class="detail" style="font-size:12.5px">作用角色：</span>
+              <label><input type="checkbox" value="system"> system（客户端合规模板）</label>
+              <label><input type="checkbox" value="user"> user（用户输入）</label>
+              <label><input type="checkbox" value="assistant"> assistant</label>
+              <label><input type="checkbox" value="tool"> tool</label>
+            </div>
+
+            <div class="term-add">
+              <input type="text" id="term-input" placeholder="输入要添加的词，回车或点「添加」（支持逗号/换行批量粘贴）" autocomplete="off">
+              <button id="btn-add-term" class="primary">添加</button>
+            </div>
+
+            <div class="terms" id="term-list"><div class="empty" style="padding:14px 0">正在加载词表…</div></div>
+
+            <div class="stat-row">
+              <span>已处理请求 <b id="stat-requests">—</b></span>
+              <span>命中请求 <b id="stat-changed">—</b></span>
+              <span>命中次数 <b id="stat-hits">—</b></span>
+              <span style="margin-left:auto"><button id="btn-reset-stats">清空统计</button></span>
+            </div>
+            <div class="stat-terms" id="stat-terms"></div>
+
+            <p class="hint">
+              命中词会在词内插入零宽空格（如 <code>DoS</code> → <code>Do&#8203;S</code>），人眼和模型读到的不变，
+              但上游后端的关键词匹配会失效，从而避免合规模板被内容审核误拦。
+              词表保存在程序目录下的 <code id="desensitize-file">data/desensitize.json</code>。
+            </p>
+          </section>
+        </section>
+
+        <!-- ─── 加工 ─── -->
+        <section class="page" data-page="pipeline">
+          <div class="page-head">
+            <h2>请求加工管线</h2>
+            <p class="intro">客户端请求在转发上游前会依次经过这些加工步骤。这里可以看到每一步实际改了什么，并临时启停某个步骤。</p>
+          </div>
+
+          <section class="panel">
+            <div class="panel-head">
+              <h2>管线状态</h2>
+              <span id="pipeline-badge" class="badge">检测中…</span>
+              <div class="head-actions">
+                <button id="btn-pipeline-refresh">刷新</button>
+              </div>
+            </div>
+
+            <div class="stat-row">
+              <span>总请求 <b id="pipeline-runs">—</b></span>
+              <span>有改动 <b id="pipeline-changed">—</b></span>
+              <span>改动率 <b id="pipeline-rate">—</b></span>
+              <span>图片跳过 <b id="pipeline-binary">—</b></span>
+              <span style="margin-left:auto"><button id="btn-pipeline-reset-stats">重置统计</button></span>
+            </div>
+
+            <div class="terms" id="pipeline-stages"><div class="empty" style="padding:14px 0">正在加载管线状态…</div></div>
+
+            <p class="hint">
+              开关是<strong>运行时</strong>的，重启后会回到启动时的组合。要永久关闭某个步骤，用启动环境变量
+              <code>WORKBUDDY_PIPELINE_DISABLE=strip-meta,sanitize-identity</code>。
+              <br>
+              字节增量显示该步骤让请求体变大或变小了多少：<code>strip-meta</code> 为负（删掉了元数据头），
+              <code>sanitize-identity</code> 为正（改写了身份描述并注入真实模型名）。
+              含图片的请求会整条跳过管线，避免破坏 base64。
+            </p>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <h2>步骤说明</h2>
+            </div>
+            <p class="hint" style="margin-top:0">
+              <code>desensitize</code> 敏感词插零宽空格，规避上游内容审核误拦（词表见「脱敏」页）。<br>
+              <code>ensure-system</code> 首条消息不是 system 时补一条兜底系统提示。<br>
+              <code>strip-meta</code> 删除被误塞进 system 的 <code>x-anthropic-*</code> 内部元数据整行。<br>
+              <code>sanitize-identity</code> 把「我是 Claude Code 官方 CLI」这类自我介绍改写为中性描述。
+              这是规避上游 <code>11128</code>（unapproved channel）的关键一步，只改 system，不碰对话内容。
+            </p>
+          </section>
+        </section>
+
+        <!-- ─── 日志 ─── -->
+        <section class="page" data-page="logs">
+          <div class="page-head">
+            <h2>运行日志</h2>
+            <p class="intro">区分重试过程与最终结果。用请求编号关联同一次对话，真正失败才记录错误。</p>
+          </div>
+
+          <section class="panel">
+            <div class="panel-head">
+              <h2>系统事件</h2>
+              <span id="logs-badge" class="badge">—</span>
+              <div class="head-actions">
+                <button id="btn-logs-refresh">刷新</button>
+                <button id="btn-logs-export">导出</button>
+                <button id="btn-logs-clear" class="danger">清空</button>
+              </div>
+            </div>
+
+            <div class="log-filters">
+              <select id="logs-level" title="按最低级别筛选">
+                <option value="">全部级别</option>
+                <option value="debug">debug 及以上</option>
+                <option value="info">info 及以上</option>
+                <option value="warn">warn 及以上</option>
+                <option value="error">仅 error</option>
+              </select>
+              <select id="logs-category" title="按分类筛选">
+                <option value="">全部分类</option>
+              </select>
+              <input type="search" id="logs-keyword" placeholder="搜索消息、模型或请求编号…" autocomplete="off" aria-label="搜索日志">
+              <select id="logs-outcome" title="按请求结果筛选"><option value="">全部结果</option><option value="success">请求成功</option><option value="retry">正在重试</option><option value="failed">最终失败</option><option value="canceled">客户端取消</option></select>
+              <label class="switch">
+                <input type="checkbox" id="logs-auto" checked>
+                <span class="track"></span>
+                <span>自动刷新</span>
+              </label>
+            </div>
+
+            <div class="log-list" id="log-list"><div class="log-empty">正在加载日志…</div></div>
+            <p class="hint">
+              日志保存在程序目录下的 <code id="logs-file">data/logs.jsonl</code>，保留最近 500 条，重启后仍可查询。
+              同一请求的重试和最终结果共享请求编号；不同编号代表不同 HTTP 请求，客户端重发的成功不会抹除旧请求的真实失败。
+            </p>
+          </section>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ─── 添加账号弹窗：网页登录 / 手动粘贴 auth.json ─── -->
+  <div id="add-modal" class="modal-mask" role="dialog" aria-modal="true" aria-labelledby="add-title">
+    <div class="modal">
+      <div class="modal-head">
+        <h2 id="add-title">登录 / 添加 WorkBuddy 账号</h2>
+        <button id="close-modal">关闭</button>
+      </div>
+
+      <div class="modal-section">
+        <h3>账号版本</h3>
+        <p>国内版走 copilot.tencent.com，国际版走 www.workbuddy.ai，两版账号可同时保存、按账号自动路由。</p>
+        <div class="field-row">
+          <label class="edition-option">
+            <input type="radio" name="account-edition" value="cn" checked>
+            <span>国内版（WorkBuddy）</span>
+          </label>
+          <label class="edition-option">
+            <input type="radio" name="account-edition" value="intl">
+            <span>国际版（WorkBuddy AI）</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <h3>浏览器登录</h3>
+        <p>在新标签页完成官方登录，本页面会自动同步结果。若浏览器拦截弹窗，可点击生成的登录链接。</p>
+        <label class="edition-option"><input type="radio" name="login-mode" value="external" checked><span>在浏览器中打开</span></label>
+      </div>
+
+      <div class="modal-section">
+        <h3>推荐：网页登录</h3>
+        <p>打开官方 WorkBuddy 登录页，完成登录后自动加入账号列表（首个账号自动成为当前账号）。账号昵称取自上游，无需手动填写。</p>
+        <div class="field-row">
+          <button id="web-login-button" class="primary">打开网页登录</button>
+          <button id="web-login-cancel" style="display:none">取消等待</button>
+          <span class="detail" id="web-login-hint">登录完成后自动加入账号列表；关闭此面板即取消等待</span>
+          <a id="web-login-link" class="login-link" target="_blank" rel="noopener noreferrer" hidden>手动打开官方登录页</a>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <h3>备用：粘贴登录态 JSON</h3>
+        <p>如果当前环境无法打开登录窗口，也可以把已有的 accessToken/refreshToken JSON 粘进来直接启用。</p>
+        <div class="field-row">
+          <label for="account-name">备注名</label>
+          <input id="account-name" type="text" maxlength="100" placeholder="可选，例如：工作账号">
+        </div>
+        <div class="field-row" style="margin-top:10px;">
+          <textarea id="auth-json-input" placeholder='{"accessToken":"...","refreshToken":"...","uid":"...","expiresAt":1730000000000}'></textarea>
+        </div>
+        <div class="field-row" style="margin-top:10px;">
+          <button id="upload-button" class="primary" disabled>导入并启用</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="web-auth-modal" class="modal-mask" role="dialog" aria-modal="true" aria-labelledby="web-auth-title">
+    <form id="web-auth-form" class="modal auth-card">
+      <span class="eyebrow">SECURE CONNECTION</span>
+      <h2 id="web-auth-title">连接管理台</h2>
+      <p class="hint">此网关已设置 API Key。请输入现有密钥以管理账号和日志；凭证只保留在当前标签页，不会放进网址。</p>
+      <label for="web-auth-key">网关 API Key</label>
+      <input id="web-auth-key" type="password" autocomplete="off" required placeholder="输入现有 API Key">
+      <p id="web-auth-error" class="auth-error" role="alert"></p>
+      <div class="field-row"><button id="web-auth-connect" type="submit" class="primary">验证并连接</button><button id="web-auth-cancel" type="button">取消</button></div>
+    </form>
+  </div>
+  <noscript>请启用 JavaScript 以使用 Web 管理台。</noscript>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script src="web-api.js"></script>
+  <script src="app.js"></script>
+  <script src="desensitize-panel.js"></script>
+  <script src="pipeline-panel.js"></script>
+  <script src="logs-panel.js"></script>
+</body>
+</html>

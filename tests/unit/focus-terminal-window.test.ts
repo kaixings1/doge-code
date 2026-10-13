@@ -105,4 +105,18 @@ describe('focusTerminalWindow', () => {
     await focusTerminalWindow('abc-123')
     expect(lastScript()).toContain('doge-bridge')
   })
+
+  it('仅在窗口最小化时 SW_RESTORE，最大化窗口直接前置（防被还原）', async () => {
+    setPlatform('win32')
+    await focusTerminalWindow('abc-123')
+    const script = lastScript()
+
+    // SW_RESTORE(9) 会把最大化窗口还原为普通大小 —— 必须被 IsIconic 守卫，
+    // 只对最小化的窗口放开。若这里失守，会话结束就会把最大化窗口变回正常大小。
+    expect(script).toContain('IsIconic')
+    expect(script).toMatch(/IsIconic\(\$h\).*ShowWindow\(\$h,9\)/)
+    // 非最小化分支必须走 BringWindowToTop，而不是 ShowWindow
+    expect(script).toContain('BringWindowToTop')
+    expect(script).toMatch(/else\{\[Dg\.Win\]::BringWindowToTop/)
+  })
 })

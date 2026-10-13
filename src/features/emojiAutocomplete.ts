@@ -94,10 +94,7 @@ export const EMOJI_MAP: Record<string, string> = {
   // 自然
   ':sun:': '☀️',
   ':moon:': '🌙',
-  ':cloud:': '☁️',
-  ':rainbow:': '🌈',
   ':snowflake:': '❄️',
-  ':zap:': '⚡',
   ':ocean:': '🌊',
   ':mountain:': '⛰️',
   ':tree:': '🌳',

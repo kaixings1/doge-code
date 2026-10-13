@@ -41,6 +41,19 @@
                 android:paddingBottom="6dp"
                 android:scrollbars="vertical" />
 
+            <!-- 空态：与竖屏一致（默认 gone，无消息时显示） -->
+            <TextView
+                android:id="@+id/chat_empty_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:lineSpacingExtra="6dp"
+                android:text="@string/chat_empty_hint"
+                android:textColor="#666666"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
             <ImageButton
                 android:id="@+id/btn_scroll_bottom"
                 android:layout_width="40dp"
@@ -111,6 +124,16 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+
+    <!--
+      批量选择操作栏：与竖屏一致（默认 gone，长按消息进入选择模式时显示）。
+      必须与 layout/fragment_chat.xml 保持同构 —— ChatFragment 无条件
+      findViewById(R.id.batch_action_bar)，横屏缺此节点会直接崩。
+    -->
+    <include
+        android:id="@+id/batch_action_bar"
+        layout="@layout/fragment_batch_action"
+        android:visibility="gone" />
 
     <!-- 输入栏：与竖屏一致，底部全宽 -->
     <LinearLayout

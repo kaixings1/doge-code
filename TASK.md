@@ -424,6 +424,35 @@
 
 ---
 
+## KX2API 调研规划落地状态（2026-10 执行）
+
+> 原「KX2API 调研与可吸收特性规划」章节（2.1~2.10）在本文件重构时被移除，此处保留落地结论。
+
+经亲读 KX2API 源码核实，初稿调研 Agent 将多项**已存在**功能误判为缺失（路由/故障转移、Token 数据层、主题系统、MCP 客户端），已修正。真缺口落地情况：
+
+| 编号 | 特性 | 状态 |
+|---|---|---|
+| 2.1 | 多 Key 路由/故障转移 | ✅ 已存在（核实） |
+| 2.2 | Token 用量统计 | ✅ 已存在（核实） |
+| 2.3 | 对话导出/分享（Markdown） | ✅ 已完成 |
+| 2.4 | 主题/外观系统 | ✅ 已存在（核实） |
+| 2.5 | 流式中断 AbortController 对齐 | ✅ 已完成 |
+| 2.6 | 语音输入 / TTS | ✅ 已完成 |
+| 2.7 | 提示词变量插值 | ✅ 已完成（前期） |
+| 2.8 | 消息 Token 实时展示 | ✅ 已完成（前期） |
+| 2.9 | 对话分支 / Fork（分叉重发） | ✅ 已完成（2026-10-12） |
+| 2.10 | MCP 客户端 | ✅ 已存在（核实，2026-10-12 确认） |
+
+**2.9 最小实现**：不引入完整消息树可视化，采用单分支裁剪 + `parentId` 标记。
+- `Message` 加可选 `parentId?: string`（向后兼容，旧数据无此字段仍正常）
+- 每条 user/assistant 消息加「分叉」按钮 → `forkConversationAt(messages, id)` 裁剪到该消息（含）、标记分支起点、内容载入输入框供编辑重发
+- 纯函数 `forkConversationAt`（不可变、可单测）；`conversationExport.ts` 内
+- i18n：`chat.message.fork`
+- 验证：tsc 0 error；fork 测试 3 断言 + 变异测试有效；Chat 目录 27/27 测试通过
+
+**2.10 无需实施**：经亲读 `src/main/mcp/mcpService.ts`、`McpManagementPage.tsx`、`cherryStudioMcp.ts`（`clientAdapters`）、`mcp-tool-search.ts`、`probe.ts` 等 63 个相关文件确认，KX2API 已实现完整 MCP 客户端栈——server 增删改查、stdio/sse/http 三种 transport、连接探测、cherry-studio 协议适配、管理 UI（路由 `/mcp` + 侧边栏 `nav.mcp` 导航）。初稿 TASK 标"高成本架构改造待做"系未读源码的误判。故 2.10 标记已存在，规划全部闭环，无遗留待办。
+
+
 ## 执行规则
 
 1. **YAGNI 阶梯**: 写代码前停在第一个能成立的阶梯

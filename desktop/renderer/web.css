@@ -1,0 +1,153 @@
+/* Web console layout. The browser is the management client, not a desktop shell. */
+:root {
+  --bg: #f6f8fb; --panel: #fff; --panel-muted: #f3f6fa;
+  --border: #e1e7ef; --text: #17283f; --muted: #66768a;
+  --accent: #176fce; --accent-hover: #105caf; --ok: #137b64;
+  --danger: #c23e43; --warn: #946017; --shadow: 0 3px 16px rgba(24, 48, 79, .035);
+}
+body { min-width: 320px; font-family: "Segoe UI", "Microsoft YaHei", sans-serif; font-size: 13px; }
+button, input, select, textarea { font: inherit; }
+button { transition: background .12s, border-color .12s; font-weight: 500; padding: 9px 14px; }
+button:focus-visible, a:focus-visible { outline: 3px solid #82b7ef; outline-offset: 3px; }
+a { color: var(--accent); }
+.sidebar { width: 220px; padding: 28px 16px 18px; }
+.brand { padding: 2px 12px 24px; }
+.brand-mark { width: 42px; height: 42px; border: 1px solid #cddff1; border-radius: 12px; background: #edf5fe; color: #1666b7; display: grid; place-content: center; position: relative; font-size: 25px; font-weight: 750; margin-bottom: 18px; }
+.brand-mark span { position: absolute; font-size: 28px; right: 5px; bottom: 1px; color: #1b9b91; }
+.brand h1 { font-size: 20px; letter-spacing: -.7px; }
+.brand-proxy { display: block; color: var(--muted); font-size: 9px; letter-spacing: 2.1px; font-weight: 600; margin: 8px 0; }
+.brand .sub { font-size: 11px; }
+.nav { margin-top: 8px; gap: 7px; }
+.nav-item { padding: 12px 14px; border-radius: 9px; }
+.nav-item.active { border-color: transparent; background: #edf5fe; color: #1767b8; }
+.nav-item .ico { margin-right: 2px; font-size: 16px; }
+.local-note { font-size: 9px; letter-spacing: .6px; color: var(--muted); padding: 10px 5px; }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: #23967e; display: inline-block; margin: 0 5px 1px 0; }
+.connect-button { font-size: 12px; }
+.content { padding: 0 34px 28px; }
+.content-inner { width: min(1200px, 100%); }
+.web-topbar { flex: none; min-height: 76px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--muted); border-bottom: 1px solid var(--border); margin-bottom: 30px; }
+.topbar-slash { margin: 0 10px; color: #b0bccb; }
+.web-tag { font-size: 9px; letter-spacing: 1.5px; display: flex; align-items: center; gap: 10px; }
+.web-tag .status-dot { margin: 0; }
+.page-head { margin-bottom: 25px; align-items: flex-end; }
+.page-head h2 { font-size: 26px; font-weight: 650; letter-spacing: -.8px; line-height: 1.5; }
+.page-head .intro { text-align: right; margin-left: auto; font-size: 12px; }
+.eyebrow { font-size: 9px; letter-spacing: 2.1px; color: var(--muted); font-weight: 600; display: block; margin-bottom: 7px; }
+.metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 25px; }
+.metric { border: 1px solid var(--border); background: var(--panel); border-radius: 12px; padding: 19px 20px; display: flex; flex-direction: column; gap: 14px; }
+.metric-label { font-size: 11px; color: var(--muted); }
+.metric strong { font-size: 26px; font-weight: 620; letter-spacing: -.5px; min-height: 38px; }
+.metric:first-child strong { color: var(--ok); font-size: 23px; }
+.metric-note { color: var(--muted); font-size: 10px; line-height: 1.5; }
+.panel { padding: 23px; box-shadow: var(--shadow); margin-bottom: 21px; border-radius: 12px; }
+.panel-head { margin-bottom: 18px; }
+.panel-head h2 { font-size: 14px; font-weight: 650; }
+.head-actions { gap: 7px; }
+.head-actions button { font-size: 11px; padding: 8px 12px; }
+.field-grid { gap: 12px; }
+.field { padding: 15px 16px; border-color: transparent; }
+.field .label { font-size: 10px; letter-spacing: .15px; margin-bottom: 9px; }
+.field .value { font-size: 13px; overflow-wrap: anywhere; }
+.badge { font-size: 10px; min-height: 22px; padding: 2px 8px; }
+.hint { font-size: 11px; line-height: 1.9; }
+.detail { font-size: 12px; }
+.account-item { box-shadow: none; }
+.account-name { font-size: 13px; }
+.account-actions { gap: 6px; }
+.account-actions button { font-size: 11px; padding: 7px 10px; }
+.log-filters { gap: 9px; }
+.log-filters input { min-width: 170px; }
+.log-filters select { padding: 8px 10px; border: 1px solid var(--border); border-radius: 7px; background: var(--panel); color: var(--text); }
+.log-row { padding: 14px 9px; line-height: 1.65; font-size: 11px; }
+.log-row .msg { overflow-wrap: anywhere; }
+.log-row .extra { display: block; font-family: Consolas, monospace; font-size: 10px; padding-top: 4px; }
+.outcome-label { display: inline-block; font-size: 10px; font-weight: 500; border-radius: 4px; padding: 0 5px; margin-right: 7px; color: var(--muted); background: var(--panel-muted); }
+.outcome-label.success { color: var(--ok); }
+.outcome-label.failed { color: var(--danger); }
+.outcome-label.retry { color: var(--warn); }
+.modal-mask { overflow: auto; background: rgba(27, 47, 74, .24); backdrop-filter: blur(3px); padding: 24px; }
+.modal { max-height: calc(100dvh - 48px); overflow: auto; box-shadow: 0 24px 80px rgba(20, 46, 82, .16); }
+.modal-section { background: var(--bg); }
+.modal h2 { font-size: 21px; }
+.auth-card { max-width: 445px; }
+.auth-card label { display: block; font-size: 12px; margin-bottom: 9px; }
+.auth-card input { width: 100%; }
+.auth-error { color: var(--danger); min-height: 18px; font-size: 12px; }
+.login-link { font-size: 12px; font-weight: 600; }
+#web-auth-modal { z-index: 30; }
+#toast { z-index: 40; }
+[data-theme="dark"] .nav-item.active { background: #17324d; color: #93c5fd; }
+[data-theme="dark"] .brand-mark { background: #17324d; color: #93c5fd; border-color: #294862; }
+@media (prefers-color-scheme: dark) {
+  [data-theme="system"] .nav-item.active { background: #17324d; color: #93c5fd; }
+  [data-theme="system"] .brand-mark { background: #17324d; color: #93c5fd; border-color: #294862; }
+}
+@media (max-width: 1150px) {
+  .sidebar { width: 192px; padding-inline: 12px; }
+  .content { padding-inline: 22px; }
+  .metric { padding: 16px; }
+  .head-actions { margin-left: 0; }
+  .page-head .intro { text-align: left; }
+}
+@media (max-width: 800px) {
+  .sidebar { width: 156px; padding: 20px 10px; }
+  .brand { padding-inline: 6px; }
+  .brand h1 { font-size: 17px; }
+  .brand-proxy { font-size: 8px; letter-spacing: 1.4px; }
+  .nav-item { padding-inline: 9px; }
+  .content { padding-inline: 16px; }
+  .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .page-head .intro { flex-basis: 100%; }
+  .field-grid { grid-template-columns: 1fr; }
+  .panel { padding: 18px; }
+  .web-topbar { margin-bottom: 22px; min-height: 60px; }
+}
+@media (max-width: 560px) {
+  body, .shell, .content, .sidebar { height: auto; min-height: 100dvh; overflow: visible; }
+  .shell { display: block; }
+  .sidebar { position: static; width: 100%; min-height: 0; padding: 16px; border-right: 0; border-bottom: 1px solid var(--border); }
+  .brand { display: flex; align-items: center; gap: 12px; padding: 0 2px; }
+  .brand-mark { margin: 0; flex: none; width: 36px; height: 36px; font-size: 22px; }
+  .brand h1 { font-size: 16px; }
+  .brand-proxy { margin: 4px 0 0; font-size: 7px; }
+  .brand .sub { margin-left: auto; font-size: 9px; }
+  .nav { flex-direction: row; justify-content: space-between; margin-top: 16px; gap: 4px; }
+  .nav-item { flex: 1; justify-content: center; padding: 9px 4px; font-size: 11px; gap: 3px; }
+  .nav-item .ico, .nav-item .count { display: none; }
+  .nav-item .label { flex: none; }
+  .sidebar-foot { margin-top: 12px; flex-direction: row; align-items: center; justify-content: space-between; }
+  .sidebar-foot .local-note { display: none; }
+  .theme-switch { width: 160px; }
+  .connect-button { padding: 5px 10px; font-size: 10px; }
+  .content { min-height: 0; padding: 0 14px 18px; }
+  .content-inner { display: block; }
+  .web-topbar { min-height: 46px; margin-bottom: 20px; font-size: 10px; }
+  .web-tag { font-size: 7px; gap: 6px; }
+  .page.active, .page.active[data-page="accounts"] { display: block; overflow: visible; padding: 0; }
+  .page[data-page="accounts"] .panel { display: block; }
+  .page[data-page="accounts"] #account-list { max-height: none; overflow: visible; min-height: 0; }
+  .page-head h2 { font-size: 23px; }
+  .page-head { gap: 8px; margin-bottom: 18px; }
+  .metric-grid { gap: 9px; margin-bottom: 16px; }
+  .metric { padding: 14px; gap: 9px; }
+  .metric strong { font-size: 24px; }
+  .metric-note { font-size: 9px; }
+  .panel { padding: 15px; }
+  .head-actions { width: 100%; justify-content: flex-start; }
+  .account-head { display: block; }
+  .account-actions { justify-content: flex-start; margin-top: 10px; }
+  .account-name { flex-wrap: wrap; }
+  .account-filters { gap: 8px; }
+  .seg-item { padding: 7px 9px; font-size: 11px; }
+  .log-row { grid-template-columns: 58px 36px 42px 1fr; column-gap: 5px; padding-inline: 3px; }
+  .log-row .time, .log-row .cat, .log-lvl { font-size: 9px; }
+  .log-row .msg { font-size: 10px; }
+  .log-list { max-height: 65vh; }
+  .apikey-row { flex-wrap: wrap; }
+  input[type="text"], input[type="password"] { min-width: 0; }
+  .field-row input { min-width: 0; }
+  .modal-mask { padding: 12px; }
+  .modal { padding: 18px; max-height: calc(100dvh - 24px); }
+  .role-picks { flex-wrap: wrap; }
+}

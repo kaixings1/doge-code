@@ -61,7 +61,6 @@ import type {
   SystemCompactBoundaryMessage,
   SystemMessage,
   UserMessage,
-  UUID,
 } from '../types/message.js'
 import type { QueueOperationMessage } from '../types/messageQueueTypes.js'
 import { uniq } from './array.js'

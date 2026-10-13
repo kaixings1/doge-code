@@ -148,11 +148,11 @@ export async function mcpListHandler(): Promise<void> {
     servers: configs
   } = await getAllMcpConfigs();
   if (Object.keys(configs).length === 0) {
-    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-    console.log('未配置 MCP 服务器。使用 `claude mcp add` 添加服务器。');
+    // 使用 process.stdout.write 而非 console.log：console.log 被 consoleOverride
+    // 静音（CLI 输出闸门），会导致子命令无任何输出
+    process.stdout.write('未配置 MCP 服务器。使用 `claude mcp add` 添加服务器。\n');
   } else {
-    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-    console.log('正在检查 MCP 服务器状态...\n');
+    process.stdout.write('正在检查 MCP 服务器状态...\n\n');
 
     // 并发检查服务器状态
     const entries = Object.entries(configs);
@@ -170,19 +170,15 @@ export async function mcpListHandler(): Promise<void> {
     } of results) {
       // 此处有意排除 sse-ide 服务器，因其为内部使用
       if (server.type === 'sse') {
-        // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-        console.log(`${name}: ${server.url} (SSE) - ${status}`);
+        process.stdout.write(`${name}: ${server.url} (SSE) - ${status}\n`);
       } else if (server.type === 'http') {
-        // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-        console.log(`${name}: ${server.url} (HTTP) - ${status}`);
+        process.stdout.write(`${name}: ${server.url} (HTTP) - ${status}\n`);
       } else if (server.type === 'claudeai-proxy') {
-        // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-        console.log(`${name}: ${server.url} - ${status}`);
+        process.stdout.write(`${name}: ${server.url} - ${status}\n`);
       } else if (!server.type || server.type === 'stdio') {
         const stdioServer = server as { type?: string; command?: string; args?: unknown[] }
         const args = Array.isArray(stdioServer.args) ? stdioServer.args : [];
-        // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-        console.log(`${name}: ${stdioServer.command} ${args.join(' ')} - ${status}`);
+        process.stdout.write(`${name}: ${stdioServer.command} ${args.join(' ')} - ${status}\n`);
       }
     }
   }
@@ -201,28 +197,21 @@ export async function mcpGetHandler(name: string): Promise<void> {
     cliError(`未找到名称为 ${name} 的 MCP 服务器`);
   }
 
-  // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-  console.log(`${name}:`);
-  // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-  console.log(`  作用域：${getScopeLabel(server.scope)}`);
+  process.stdout.write(`${name}:\n`);
+  process.stdout.write(`  作用域：${getScopeLabel(server.scope)}\n`);
 
   // 检查服务器健康状况
   const status = await checkMcpServerHealth(name, server);
-  // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-  console.log(`  状态：${status}`);
+  process.stdout.write(`  状态：${status}\n`);
 
   // 此处有意排除 sse-ide 服务器，因其为内部使用
   if (server.type === 'sse') {
-    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-    console.log(`  类型：sse`);
-    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-    console.log(`  URL: ${server.url}`);
+    process.stdout.write(`  类型：sse\n`);
+    process.stdout.write(`  URL: ${server.url}\n`);
     if (server.headers) {
-      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-      console.log('  请求头：');
+      process.stdout.write('  请求头：\n');
       for (const [key, value] of Object.entries(server.headers)) {
-        // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-        console.log(`    ${key}: ${value}`);
+        process.stdout.write(`    ${key}: ${value}\n`);
       }
     }
     if (server.oauth?.clientId || server.oauth?.callbackPort) {
@@ -233,20 +222,15 @@ export async function mcpGetHandler(name: string): Promise<void> {
         if (clientConfig?.clientSecret) parts.push('已配置 client_secret');
       }
       if (server.oauth.callbackPort) parts.push(`已配置 callback_port ${server.oauth.callbackPort}`);
-      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-      console.log(`  OAuth: ${parts.join(', ')}`);
+      process.stdout.write(`  OAuth: ${parts.join(', ')}\n`);
     }
   } else if (server.type === 'http') {
-    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-    console.log(`  类型：http`);
-    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-    console.log(`  URL: ${server.url}`);
+    process.stdout.write(`  类型：http\n`);
+    process.stdout.write(`  URL: ${server.url}\n`);
     if (server.headers) {
-      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-      console.log('  请求头：');
+      process.stdout.write('  请求头：\n');
       for (const [key, value] of Object.entries(server.headers)) {
-        // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-        console.log(`    ${key}: ${value}`);
+        process.stdout.write(`    ${key}: ${value}\n`);
       }
     }
     if (server.oauth?.clientId || server.oauth?.callbackPort) {
@@ -257,28 +241,21 @@ export async function mcpGetHandler(name: string): Promise<void> {
         if (clientConfig?.clientSecret) parts.push('已配置 client_secret');
       }
       if (server.oauth.callbackPort) parts.push(`已配置 callback_port ${server.oauth.callbackPort}`);
-      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-      console.log(`  OAuth: ${parts.join(', ')}`);
+      process.stdout.write(`  OAuth: ${parts.join(', ')}\n`);
     }
-  } else if (server.type === 'stdio') {
-    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-    console.log(`  类型：stdio`);
-    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-    console.log(`  命令：${server.command}`);
+  } else if (!server.type || server.type === 'stdio') {
+    process.stdout.write(`  类型：stdio\n`);
+    process.stdout.write(`  命令：${server.command}\n`);
     const args = Array.isArray(server.args) ? server.args : [];
-    // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-    console.log(`  参数：${args.join(' ')}`);
+    process.stdout.write(`  参数：${args.join(' ')}\n`);
     if (server.env) {
-      // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-      console.log('  环境变量：');
+      process.stdout.write('  环境变量：\n');
       for (const [key, value] of Object.entries(server.env)) {
-        // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-        console.log(`    ${key}=${value}`);
+        process.stdout.write(`    ${key}=${value}\n`);
       }
     }
   }
-  // biome-ignore lint/suspicious/noConsole: 有意为之的控制台输出
-  console.log(`\n要移除此服务器，请运行：claude mcp remove "${name}" -s ${server.scope}`);
+  process.stdout.write(`\n要移除此服务器，请运行：claude mcp remove "${name}" -s ${server.scope}\n`);
   // 使用 gracefulShutdown 以正确清理 MCP 服务器连接
   // (process.exit 会绕过清理处理程序，导致子进程成为孤儿进程)
   await gracefulShutdown(0);
