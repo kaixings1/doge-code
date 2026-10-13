@@ -12,7 +12,8 @@
  */
 import { describe, it, expect, beforeEach } from 'vitest'
 import http from 'http'
-import { sessionEndpoints } from '../../src/bridge/mobileBridge.js'
+import WebSocket from 'ws'
+import { MobileBridgeServer, sessionEndpoints } from '../../src/bridge/mobileBridge.js'
 import {
   DEFAULT_PEER_RANGE,
   discoverPeerSessions,
@@ -220,6 +221,101 @@ describe('discoverPeerSessions 端到端', () => {
       await new Promise<void>((r) => sLow.close(() => r()))
       await new Promise<void>((r) => sSelf.close(() => r()))
     }
+  })
+
+  it('peers 变化时向已连接客户端广播 sessions_updated（隧道/地址更新）', async () => {
+    // 用户诉求：隧穿地址要「通过已经连接成功的那条线路」更新到手机，
+    // 而不是只在握手时拿一次。服务端在 peer 刷新发现变化时主动广播。
+    const server = new MobileBridgeServer({ sessionId: 'push-test', port: P1 })
+    await server.start()
+
+    const ws = new WebSocket(`ws://127.0.0.1:${P1}/mobile/ws?deviceId=t&deviceType=android`)
+    const frames: any[] = []
+    await new Promise<void>((resolve, reject) => {
+      ws.on('open', () => resolve())
+      ws.on('message', (d) => frames.push(JSON.parse(d.toString())))
+      ws.on('error', reject)
+    })
+    // 等握手帧到达，并**等 start() 里那一轮「立即探测」的 promise 落定**
+    //（它异步 resolve 后会写 peerSessions；若不等，设置会被它覆盖回空。
+    //  实测踩过：peers 意外为空）。
+    await new Promise((r) => setTimeout(r, 800))
+
+    const anySrv = server as unknown as {
+      peerSessions: unknown[]
+      lastBroadcastEndpointsJson: string
+      broadcastEndpointsIfChanged: () => void
+      stopPeerRefresh: () => void
+    }
+    // 停掉周期刷新（防后续 15s 轮次再覆盖）
+    anySrv.stopPeerRefresh()
+    // **在同步块里设置 + 广播**：中间无 await，不给任何异步回调插队的机会
+    anySrv.lastBroadcastEndpointsJson = '' // 强制视为「有变化」
+    anySrv.peerSessions = [
+      { port: 9999, label: 'sim', lan: ['http://127.0.0.1:9999'], tunnel: 'wss://sim.example/mobile/ws', interactive: false },
+    ]
+    // 直接验证 sessionEndpoints 是否保留这个 peer（隔离广播层）
+    const epDirect = sessionEndpoints(P1, 'x', [
+      { port: 9999, label: 'sim', lan: ['http://127.0.0.1:9999'], tunnel: 'wss://sim/mobile/ws', interactive: false },
+    ])
+    if (epDirect.peers.length !== 1) {
+      throw new Error(`sessionEndpoints 未保留 peer：${JSON.stringify(epDirect.peers)}`)
+    }
+    anySrv.broadcastEndpointsIfChanged()
+
+    await new Promise((r) => setTimeout(r, 300))
+    const all = frames.filter((f) => f.type === 'sessions_updated')
+    expect(all.length, '应收到 sessions_updated 广播').toBeGreaterThan(0)
+    // **取最后一帧**：首帧可能是 start() 立即探测后「peers 为空」的那次广播
+    //（实测如此），末帧才是我设置 peers 后的广播。
+    const upd = all[all.length - 1]
+    expect(upd.data.peers, `末帧 peers 应含模拟实例；全帧=${JSON.stringify(all.map((f) => f.data.peers))}`)
+      .toHaveLength(1)
+    expect(upd.data.peers[0].port).toBe(9999)
+    // 隧道地址随广播到达（手机据此更新 —— 这正是用户要的「已连接线路上的更新」）
+    expect(upd.data.peers[0].tunnel).toBe('wss://sim.example/mobile/ws')
+
+    ws.close()
+    await server.stop()
+  })
+
+  it('peers 无变化时不重复广播（避免每 15s 无脑刷）', async () => {
+    const server = new MobileBridgeServer({ sessionId: 'nochange', port: P1 })
+    await server.start()
+    const ws = new WebSocket(`ws://127.0.0.1:${P1}/mobile/ws?deviceId=t&deviceType=android`)
+    const frames: any[] = []
+    await new Promise<void>((resolve, reject) => {
+      ws.on('open', () => resolve())
+      ws.on('message', (d) => frames.push(JSON.parse(d.toString())))
+      ws.on('error', reject)
+    })
+    await new Promise((r) => setTimeout(r, 200))
+
+    const anySrv = server as unknown as {
+      peerSessions: unknown[]
+      lastBroadcastEndpointsJson: string
+      broadcastEndpointsIfChanged: () => void
+      stopPeerRefresh: () => void
+    }
+    anySrv.stopPeerRefresh() // 同上：避免定时刷新干扰
+    anySrv.lastBroadcastEndpointsJson = ''
+    anySrv.peerSessions = []
+    anySrv.broadcastEndpointsIfChanged() // 第 1 次：内容变化（'' → 空 peers 的 json）→ 推
+    await new Promise((r) => setTimeout(r, 150))
+    const after1 = frames.filter((f) => f.type === 'sessions_updated').length
+
+    anySrv.broadcastEndpointsIfChanged() // 第 2 次：内容同上 → **不应推**
+    anySrv.broadcastEndpointsIfChanged() // 第 3 次：同上
+    await new Promise((r) => setTimeout(r, 150))
+    const after3 = frames.filter((f) => f.type === 'sessions_updated').length
+
+    // 判据：后续两次调用**不应再增加**帧数（幂等）。
+    // 不写死绝对值 —— start() 立即探测后可能已广播过一次，故 after1 可能是
+    // 0 或 1（取决于 start 那轮是否产出了不同的 json）。
+    expect(after3, '内容未变时不应重复广播').toBe(after1)
+
+    ws.close()
+    await server.stop()
   })
 
   it('不存在的端口被跳过（不崩、不误报）', async () => {

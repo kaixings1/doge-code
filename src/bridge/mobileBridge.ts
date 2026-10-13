@@ -1360,12 +1360,55 @@ export class MobileBridgeServer {
     if (this.peerRefreshTimer) return
     const refresh = () => {
       void discoverPeerSessions(this.port, this.peerRangeStart, this.peerRangeWidth)
-        .then((peers) => { this.peerSessions = peers })
+        .then((peers) => {
+          this.peerSessions = peers
+          // **变化时主动推给已连接的手机**（用户诉求：隧穿/地址要在
+          // 「已连接的那条线路上」更新，而不是只在握手时拿一次）。
+          // 场景：① 隧道重连换了子域；② 某实例稍后才起隧道；③ 新开/关掉
+          // 一个实例。这些在握手之后才发生，不推的话手机永远停在旧地址。
+          this.broadcastEndpointsIfChanged()
+        })
         .catch(() => { /* 旁路能力：失败保留上次结果 */ })
     }
     refresh()
     this.peerRefreshTimer = setInterval(refresh, 15_000)
     this.peerRefreshTimer.unref?.()
+  }
+
+  /** 上次广播给手机的地址快照（用于变化检测，避免每 15s 无脑刷）。 */
+  private lastBroadcastEndpointsJson = ''
+
+  /**
+   * 若「本会话地址 + peers」与上次广播的不同，则主动推给所有已连接手机。
+   *
+   * ## 为什么需要（用户反复强调的缺口）
+   *
+   * 隧穿地址只在**连接握手**时下发一次。此后若隧道子域变了（cloudflared
+   * 重连会换随机子域）、或某会话后来才起隧道，手机**永远收不到更新** ——
+   * 表现为「手机里存的隧道地址是旧的、连不上」。
+   *
+   * ## 为什么做变化检测
+   *
+   * 15 秒一轮，若每轮都无脑广播，会给手机造成无谓流量与界面抖动。
+   * 只在**内容真的变化**时推（JSON 比较，地址列表很短，开销可忽略）。
+   *
+   * ## 协议
+   *
+   * 发 `sessions_updated`，data 与 `client_connected` 同样的字段布局
+   * （lan/tunnel/peers/label/port）—— 客户端可复用同一套解析逻辑。
+   * 老客户端忽略未识别类型，不受影响。
+   */
+  private broadcastEndpointsIfChanged(): void {
+    if (this.connectedClients.size === 0) return
+    let json: string
+    try {
+      json = JSON.stringify(sessionEndpoints(this.port, this.sessionId, this.peerSessions))
+    } catch {
+      return // 旁路能力：取地址失败就算了
+    }
+    if (json === this.lastBroadcastEndpointsJson) return
+    this.lastBroadcastEndpointsJson = json
+    this.broadcast('sessions_updated', JSON.parse(json) as Record<string, unknown>)
   }
 
   /** 停止 peer 刷新。 */

@@ -2137,6 +2137,74 @@ class MainActivity : AppCompatActivity(),
     private fun savedHost(): String = BridgeUrl.hostOf(savedAddress())
 
     /**
+     * 记住一组接入地址：本会话 + 同机其他会话（peers）。
+     *
+     * ## 为什么要抽成函数
+     *
+     * 两条路径共用：① 握手时的 `Connected`；② 连接期间地址变化时的
+     * `EndpointsUpdated`。服务端会**主动推**后者（隧道换子域、新实例起来）。
+     * 两份实现必然漂移 —— 抽一处，改一处即可。
+     *
+     * ## 落库判据
+     *
+     * 有地址才记（lan 非空 或 tunnel 非空）：老服务端不带这些字段，
+     * 记空地址会让列表出现点不动的僵尸条目。
+     *
+     * @param key 本会话的连接 key（用于更新其 `connected` 单元 / 后续扩展）
+     * @param isActive 本会话是否为当前活动会话（非活动不必刷 UI）
+     */
+    private fun rememberEndpoints(
+        key: String,
+        lan: List<String>,
+        tunnel: String?,
+        label: String,
+        cwd: String,
+        port: Int,
+        resumeSessionId: String?,
+        peers: List<BridgeProtocol.Msg.PeerInfo>,
+        isActive: Boolean,
+    ) {
+        if (lan.isNotEmpty() || tunnel != null) {
+            knownSessions.upsert(
+                knownSessions.fromConnected(
+                    mode = appMode,
+                    lan = lan,
+                    tunnel = tunnel,
+                    label = label,
+                    cwd = cwd,
+                    port = port,
+                    resumeSessionId = resumeSessionId,
+                ),
+            )
+        }
+        // 同机**其他**会话（服务端 peer 发现）也落库 —— 用户诉求：连上任一
+        // 实例即拿到全部会话的 lan/tunnel，据此可通过任一路径连到每个会话。
+        peers.forEach { p ->
+            if (p.lan.isNotEmpty() || p.tunnel != null) {
+                knownSessions.upsert(
+                    knownSessions.fromConnected(
+                        mode = appMode,
+                        lan = p.lan,
+                        tunnel = p.tunnel,
+                        label = p.label,
+                        cwd = "",
+                        port = p.port,
+                        resumeSessionId = null,
+                    ),
+                )
+            }
+        }
+        // 连接单元上也更新地址（切换会话时用它拼连接 URL）；
+        // 仅当本会话确实有地址时才覆盖（避免把好地址清成空）。
+        if (isActive) {
+            connections[key]?.let { c ->
+                val newAddr = tunnel ?: lan.firstOrNull()
+                if (!newAddr.isNullOrBlank()) c.address = newAddr
+            }
+        }
+    }
+
+    /**
      * 从 IPv4 取 /24 网段前缀（前三段）；非法输入返回 null。
      *
      * 供 preferredSubnet 使用 —— 抽成纯函数便于单测边界（空串、
@@ -2232,39 +2300,17 @@ class MainActivity : AppCompatActivity(),
                 // 场景下唯一能发现会话的途径（扫网段/收广播都失效）。
                 // 仅当服务端给了地址才记：老服务端不带这些字段，
                 // 记空地址会让列表出现一条点不动的僵尸条目。
-                if (ev.lan.isNotEmpty() || ev.tunnel != null) {
-                    knownSessions.upsert(
-                        knownSessions.fromConnected(
-                            mode = appMode,
-                            lan = ev.lan,
-                            tunnel = ev.tunnel,
-                            label = if (ev.label.isNotBlank()) ev.label
-                            else (conn?.label ?: sessionLabel ?: ""),
-                            cwd = ev.cwd,
-                            port = ev.port,
-                            resumeSessionId = ev.resumeSessionId,
-                        ),
-                    )
-                }
-                // 同机**其他**会话（服务端 peer 发现的结果）一并落库 ——
-                // 用户诉求：连上任一实例即拿到全部会话的 lan/tunnel，
-                // 据此可通过任一路径连到每个会话，无须自己扫端口段。
-                // 每个 peer 有地址才记（同本会话的判据，避免僵尸条目）。
-                ev.peers.forEach { p ->
-                    if (p.lan.isNotEmpty() || p.tunnel != null) {
-                        knownSessions.upsert(
-                            knownSessions.fromConnected(
-                                mode = appMode,
-                                lan = p.lan,
-                                tunnel = p.tunnel,
-                                label = p.label,
-                                cwd = "",
-                                port = p.port,
-                                resumeSessionId = null,
-                            ),
-                        )
-                    }
-                }
+                rememberEndpoints(
+                    key = key,
+                    lan = ev.lan,
+                    tunnel = ev.tunnel,
+                    label = if (ev.label.isNotBlank()) ev.label else (conn?.label ?: sessionLabel ?: ""),
+                    cwd = ev.cwd,
+                    port = ev.port,
+                    resumeSessionId = ev.resumeSessionId,
+                    peers = ev.peers,
+                    isActive = isActive,
+                )
                 // 服务端给的标签回填到连接单元（通知标题区分来源要用）
                 if (ev.label.isNotBlank()) conn?.label = ev.label
                 if (!isActive) return
@@ -2324,6 +2370,21 @@ class MainActivity : AppCompatActivity(),
                     "⚠ 该 CLI 上连接的设备数已达上限（服务端 4002）。\n" +
                         "请在另一台设备上断开，或稍候自动重连（每 30 秒重试一次）。",
                 ))
+            }
+            is BridgeClient.Event.EndpointsUpdated -> {
+                // 连接期间服务端推来的地址更新（隧道换子域、新实例起来）。
+                // 落库更新本会话地址与 peer 会话 —— 否则手机一直用旧地址。
+                rememberEndpoints(
+                    key = key,
+                    lan = ev.lan,
+                    tunnel = ev.tunnel,
+                    label = conn?.label ?: (sessionLabel ?: ""),
+                    cwd = "",
+                    port = conn?.let { BridgeUrl.portOf(it.address) } ?: 0,
+                    resumeSessionId = null,
+                    peers = ev.peers,
+                    isActive = isActive,
+                )
             }
             is BridgeClient.Event.Incoming -> {
                 // 非活动会话：不碰 UI，只落进它自己的历史 + 发通知。

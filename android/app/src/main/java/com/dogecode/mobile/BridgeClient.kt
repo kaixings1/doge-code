@@ -56,6 +56,19 @@ class BridgeClient(
              */
             val peers: List<BridgeProtocol.Msg.PeerInfo> = emptyList(),
         ) : Event
+
+        /**
+         * 连接**期间**服务端推来的「地址已更新」。
+         *
+         * 与 [Connected] 的区别：那个是握手一次性给的；本事件是后续变化
+         * （隧道换子域、新实例起来）。宿主据此更新本会话地址与已知会话库。
+         */
+        data class EndpointsUpdated(
+            val lan: List<String> = emptyList(),
+            val tunnel: String? = null,
+            val peers: List<BridgeProtocol.Msg.PeerInfo> = emptyList(),
+        ) : Event
+
         data class Disconnected(val reason: String) : Event
         data class Incoming(
             val role: String,
@@ -476,6 +489,11 @@ class BridgeClient(
                         ),
                     )
                 }
+            }
+            is BridgeProtocol.Msg.SessionsUpdated -> {
+                // 服务端在「地址发生变化」时主动推（隧道换了子域、新实例起来等）。
+                // 不更新的话手机会一直用握手时拿到的旧隧道地址，连不上。
+                post { onEvent(Event.EndpointsUpdated(lan = m.lan, tunnel = m.tunnel, peers = m.peers)) }
             }
             is BridgeProtocol.Msg.Incoming -> {
                 Log.i(TAG, "[PROBE] Incoming role=${m.role} srcRid='${m.sourceRequestId}' text=${m.text.take(20)}")

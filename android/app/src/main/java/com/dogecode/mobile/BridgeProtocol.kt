@@ -48,6 +48,18 @@ object BridgeProtocol {
             val peers: List<PeerInfo> = emptyList(),
         ) : Msg
 
+        /**
+         * 服务端主动推送的「地址已更新」（连接期间，非握手时）。
+         *
+         * 场景：隧道重连换了子域、某实例后来才起隧道、新开/关了一个实例。
+         * 这些在握手之后才发生，只靠 client_connected 手机会永远停在旧地址。
+         */
+        data class SessionsUpdated(
+            val lan: List<String> = emptyList(),
+            val tunnel: String? = null,
+            val peers: List<PeerInfo> = emptyList(),
+        ) : Msg
+
         /** 一个 peer 会话的接入信息（服务端 mobilePeerDiscovery 的裁剪版）。 */
         data class PeerInfo(
             val port: Int,
@@ -193,34 +205,25 @@ object BridgeProtocol {
                     // 缺 interactive 字段时按 true 处理：服务端旧版本没有该字段，
                     // 误报「非交互」比漏报更扰人。
                     interactive = d?.optBoolean("interactive", true) ?: true,
-                    lan = d?.optJSONArray("lan")?.let { arr ->
-                        (0 until arr.length()).mapNotNull { i ->
-                            arr.optString(i).takeIf { it.isNotBlank() }
-                        }
-                    }.orEmpty(),
+                    lan = parseLan(d),
                     tunnel = d?.optString("tunnel")?.takeIf { it.isNotBlank() },
                     label = d?.optString("label").orEmpty(),
                     cwd = d?.optString("cwd").orEmpty(),
                     port = d?.optInt("port", 0) ?: 0,
                     resumeSessionId = d?.optString("resumeSessionId")?.takeIf { it.isNotBlank() },
-                    peers = d?.optJSONArray("peers")?.let { arr ->
-                        (0 until arr.length()).mapNotNull { i ->
-                            val o = arr.optJSONObject(i) ?: return@mapNotNull null
-                            val p = o.optInt("port", 0)
-                            if (p <= 0) return@mapNotNull null
-                            Msg.PeerInfo(
-                                port = p,
-                                label = o.optString("label"),
-                                lan = o.optJSONArray("lan")?.let { la ->
-                                    (0 until la.length()).mapNotNull { j ->
-                                        la.optString(j).takeIf { it.isNotBlank() }
-                                    }
-                                }.orEmpty(),
-                                tunnel = o.optString("tunnel").takeIf { it.isNotBlank() },
-                                interactive = o.optBoolean("interactive", true),
-                            )
-                        }
-                    }.orEmpty(),
+                    peers = parsePeers(d),
+                )
+            }
+
+            // 服务端在「地址发生变化」时主动推（隧道换了子域、新实例起来等）
+            // —— 与 client_connected 同一字段布局，故复用同一套解析。
+            // 不推的话手机永远停在握手时拿到的旧隧道地址（用户报的缺口）。
+            "sessions_updated" -> {
+                val d = o.optJSONObject("data")
+                Msg.SessionsUpdated(
+                    lan = parseLan(d),
+                    tunnel = d?.optString("tunnel")?.takeIf { it.isNotBlank() },
+                    peers = parsePeers(d),
                 )
             }
 
@@ -398,6 +401,41 @@ object BridgeProtocol {
         if (!d.has("suppressNotify")) return false
         return d.opt("suppressNotify") == true
     }
+
+    /** 解析 data.lan 为非空字符串列表（缺字段/类型异常时返回空列表）。 */
+    private fun parseLan(d: JSONObject?): List<String> =
+        d?.optJSONArray("lan")?.let { arr ->
+            (0 until arr.length()).mapNotNull { i ->
+                arr.optString(i).takeIf { it.isNotBlank() }
+            }
+        }.orEmpty()
+
+    /**
+     * 解析 data.peers 为 [Msg.PeerInfo] 列表。
+     *
+     * 抽出共用：`client_connected` 与 `sessions_updated` **同一字段布局**，
+     * 两份实现必然漂移（服务端加字段时只改一处）—— 这正是要避免的。
+     * port<=0 的项丢弃（无端口无法连接）。
+     */
+    private fun parsePeers(d: JSONObject?): List<Msg.PeerInfo> =
+        d?.optJSONArray("peers")?.let { arr ->
+            (0 until arr.length()).mapNotNull { i ->
+                val o = arr.optJSONObject(i) ?: return@mapNotNull null
+                val p = o.optInt("port", 0)
+                if (p <= 0) return@mapNotNull null
+                Msg.PeerInfo(
+                    port = p,
+                    label = o.optString("label"),
+                    lan = o.optJSONArray("lan")?.let { la ->
+                        (0 until la.length()).mapNotNull { j ->
+                            la.optString(j).takeIf { it.isNotBlank() }
+                        }
+                    }.orEmpty(),
+                    tunnel = o.optString("tunnel").takeIf { it.isNotBlank() },
+                    interactive = o.optBoolean("interactive", true),
+                )
+            }
+        }.orEmpty()
 
     /**
      * 从 data 中读来源 uuid（sourceUuid）。
