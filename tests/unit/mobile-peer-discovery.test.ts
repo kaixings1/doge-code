@@ -135,6 +135,9 @@ describe('discoverPeerSessions 端到端', () => {
   const P2 = 15702
   const P3 = 15711
   const P4 = 15712
+  // 中心化探测用例专用端口（与前几组不相交，避免 close 的 TIME_WAIT 冲突）
+  const P5 = 15721
+  const P6 = 15722
 
   beforeEach(() => {
     // 清缓存：否则上一次探测结果会被复用，测试间互相污染
@@ -191,6 +194,31 @@ describe('discoverPeerSessions 端到端', () => {
     } finally {
       await new Promise<void>((r) => s1.close(() => r()))
       await new Promise<void>((r) => s2.close(() => r()))
+    }
+  })
+
+  it('中心化探测段覆盖同段其他实例（修「起点取错导致 peers 恒空」）', async () => {
+    // 真机踩过的缺陷：探测起点若取 `CLAUDE_CODE_MOBILE_PORT`（脚本注入的
+    // **本实例端口**，如 6005），段变成 [6005..6025] → 跳过 6000-6004 上的
+    // 其他实例，peers 恒为空。修法是「以本实例端口为中心」向两侧展开。
+    // 此用例锁定该行为：实例在 P4(=P3+1)，另一个在 P3（低位侧），
+    // 用中心化段 [P4-20 .. P4+5] 必须能探到 P3。
+    // 本实例在 P6，低位侧实例在 P5（相邻）。
+    // 用「以 P6 为中心」的小段覆盖它 —— 只探 [P5..P6] 两个端口，
+    // 因为要验证的是**低位侧被包含**这一语义，不是去探满 26 个端口
+    //（探满会因大量无服务端口超时，拖过测试时限 —— 实测如此）。
+    const sLow = await mockSessionInfo(P5, { port: P5, label: 'low-side' })
+    const sSelf = await mockSessionInfo(P6, { port: P6, label: 'self' })
+    try {
+      // 等价于 peerRangeStart = port - BACK 的起始计算（这里 BACK 取 1）
+      const start = Math.max(1, P6 - 1)
+      const peers = await discoverPeerSessions(P6, start, 2)
+      const ports = peers.map((p) => p.port)
+      expect(ports).toContain(P5) // 低位侧实例被覆盖（这正是修掉的行为）
+      expect(ports).toContain(P6)
+    } finally {
+      await new Promise<void>((r) => sLow.close(() => r()))
+      await new Promise<void>((r) => sSelf.close(() => r()))
     }
   })
 

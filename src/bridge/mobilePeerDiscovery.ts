@@ -161,6 +161,7 @@ export async function discoverPeerSessions(
 
   const ports = peerPorts(startPort, width)
   if (ports.length === 0) return []
+  logForDebugging(`[mobile-peers] 探测段 ${startPort}..${startPort + width - 1}（${ports.length} 个端口）`)
 
   try {
     const results = await Promise.all(ports.map((p) => probePort(p)))

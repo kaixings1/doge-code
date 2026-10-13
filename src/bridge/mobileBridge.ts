@@ -532,6 +532,17 @@ export function isMobileBridgeAvailable(): boolean {
 // ─── 移动端桥接服务器 ───
 
 /**
+ * peer 探测时向**低位端口**回看的个数。
+ *
+ * 20：实例从起始端口起向后顺延（6000→6001→…），故「其他实例」多在
+ * 本实例的**低位侧**。取 20 覆盖一个完整的顺延段（默认段宽 21）。
+ */
+const PEER_RANGE_BACK = 20
+
+/** peer 探测时向**高位端口**前瞻的个数。留少量余量应对端口乱序。 */
+const PEER_RANGE_FORWARD = 5
+
+/**
  * 移动端桥接服务器 — 接受来自移动端 App 的 WebSocket 连接
  * 运行在本地端口上，桥接移动端 App 与本地 CLI 会话
  */
@@ -577,13 +588,24 @@ export class MobileBridgeServer {
   /**
    * peer 探测的端口段（起始 + 宽度）。
    *
-   * 起始：环境变量 `CLAUDE_CODE_MOBILE_PORT` 的值（用户配置的起始端口），
-   * 未设时 6000 —— 与服务端默认一致。用**起始**而非本实例端口：本实例
-   * 可能已顺延到 6002，但其他实例在 6000/6001 上，必须从起始处扫。
+   * ## 为什么以**本实例端口为中心**，而不是从环境变量取起始
+   *
+   * 真机踩过：脚本 spawn 时注入了 `CLAUDE_CODE_MOBILE_PORT=<本实例端口>`
+   *（如 6005），若以它为起点，探测段变成 [6005..6025] —— **跳过了
+   * 6000-6004 上的其他实例**，peers 永远为空。而环境变量在不同启动
+   * 路径下可能是「起始端口」也可能是「本次端口」，语义不稳定。
+   *
+   * 改为以 `this.port` 为中心向两侧展开：无论实例顺延到哪个端口，
+   * 都能覆盖同段内（前后各 halfWidth 个）的其他实例。
    */
-  private peerRangeStart = Number(process.env.CLAUDE_CODE_MOBILE_PORT) || 6000
-  /** 探测宽度：与服务端顺延上限、手机端扫描段同量级。 */
-  private peerRangeWidth = 21
+  private get peerRangeStart(): number {
+    // 向前多留一些（实例通常从较小端口起、向后顺延）
+    return Math.max(1, this.port - PEER_RANGE_BACK)
+  }
+  /** 探测宽度：覆盖前后两侧。 */
+  private get peerRangeWidth(): number {
+    return PEER_RANGE_BACK + PEER_RANGE_FORWARD + 1
+  }
   /** 共享密钥；空字符串表示未启用认证（仅限可信局域网，会在启动时警告） */
   private secret: string
 
