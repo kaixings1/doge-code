@@ -478,6 +478,12 @@ async function startCloudflareTunnel(localPort) {
     let proc = null
     let settled = false
     let timer = null
+    /** 主动停止标志：进程退出时据此区分「我们杀的」与「它自己崩的」。 */
+    let stopping = false
+    /** 重启退避（ms）：隧道崩了自动拉起，避免「一断就永久失联」。 */
+    let restartDelay = 2000
+    const MAX_RESTART_DELAY = 30000
+
     const finish = (v) => {
       if (settled) return
       settled = true
@@ -487,46 +493,84 @@ async function startCloudflareTunnel(localPort) {
       resolve(v)
     }
 
-    try {
-      proc = spawn(cf, ['tunnel', '--url', `http://127.0.0.1:${localPort}`], {
+    // 只 spawn，不做别的：便于崩溃后原样重来（见 startOnce 的 exit 处理）。
+    const spawnOnce = () => {
+      const p = spawn(cf, ['tunnel', '--url', `http://127.0.0.1:${localPort}`], {
         stdio: ['ignore', 'pipe', 'pipe'],
         windowsHide: true,
       })
+
+      const onData = (buf) => {
+        const text = buf.toString()
+        const m = text.match(/https:\/\/[a-z0-9-]+\.trycloudflare\.com/gi)
+        if (m) {
+          p.stdout.off('data', onData)
+          p.stderr.off('data', onData)
+          // 把隧道地址写到约定文件，供服务端广播（beacon.tunnelUrl）——
+          // 手机在同一局域网收到广播即可自动记住此地址，出门直接用。
+          writeTunnelUrlFile(m[0])
+          // 拿到地址后重置退避：说明这次是好的链路
+          restartDelay = 2000
+          finish(m[0])
+        }
+      }
+      p.stdout.on('data', onData)
+      p.stderr.on('data', onData)
+
+      p.on('error', (e) => {
+        console.log('[2/4] cloudflared 进程错误: ' + String(e.message).slice(0, 120))
+        // 首次启动失败且尚未拿到地址 → 直接放弃（调用方回退局域网）；
+        // 已建立过隧道 → 走 exit 的重启路径。
+        if (!settled) finish(null)
+      })
+
+      p.on('exit', (code) => {
+        // 主动停止（超时兜底/脚本退出）：不重启
+        if (stopping) return
+        if (!settled) {
+          // 首次就没起来：不无限重启，交给调用方回退局域网
+          console.log('[2/4] cloudflared 异常退出（code ' + code + '），隧道不可用。')
+          return finish(null)
+        }
+        // ── 隧道**建立后**崩溃/掉线 → 自动重启（用户报的「一断就再也连不上」）──
+        // 为什么必须重启：cloudflared 快隧道会因网络抖动、服务端限流、
+        // 长时间空闲被切断。不重启的话地址文件停留在失效子域，
+        // 手机一直连旧地址 → 表现为「断了就再也连不上」。
+        // 重启后子域**会变**（快隧道特性），新地址写回约定文件，
+        // 服务端下一轮广播即把新地址推给手机（见 mobileBridge 的
+        // sessions_updated 推送与隧道地址下发）。
+        console.log(
+          `[2/4] 隧道断开（code ${code}），${Math.round(restartDelay / 1000)}s 后自动重连…`,
+        )
+        clearTunnelUrlFile() // 立刻清掉失效地址，避免服务端继续广播它
+        const d = restartDelay
+        restartDelay = Math.min(restartDelay * 2, MAX_RESTART_DELAY)
+        const t = setTimeout(() => {
+          if (stopping) return
+          try {
+            proc = spawnOnce()
+          } catch (e) {
+            console.log('[2/4] 重启 cloudflared 失败: ' + String(e.message).slice(0, 120))
+          }
+        }, d)
+        t.unref?.()
+      })
+
+      return p
+    }
+
+    try {
+      proc = spawnOnce()
     } catch (e) {
       console.log('[2/4] 启动 cloudflared 失败: ' + String(e.message).slice(0, 120))
       return finish(null)
     }
 
-    const onData = (buf) => {
-      const text = buf.toString()
-      const m = text.match(/https:\/\/[a-z0-9-]+\.trycloudflare\.com/gi)
-      if (m) {
-        proc.stdout.off('data', onData)
-        proc.stderr.off('data', onData)
-        // 把隧道地址写到约定文件，供服务端广播（beacon.tunnelUrl）——
-        // 手机在同一 WiFi 收到广播即可自动记住此地址，出门直接用。
-        // 写失败不影响隧道本身（只是自动下发失效），故吞掉异常。
-        writeTunnelUrlFile(m[0])
-        finish(m[0])
-      }
-    }
-    proc.stdout.on('data', onData)
-    proc.stderr.on('data', onData)
-
-    proc.on('error', (e) => {
-      console.log('[2/4] cloudflared 进程错误: ' + String(e.message).slice(0, 120))
-      finish(null)
-    })
-    proc.on('exit', (code) => {
-      if (code !== 0 && !settled) {
-        console.log('[2/4] cloudflared 异常退出（code ' + code + '），隧道不可用。')
-        finish(null)
-      }
-    })
-
-    // 超时兜底：25 秒内没拿到域名就放弃。这是**唯一** kill cloudflared 的路径。
+    // 超时兜底：25 秒内没拿到域名就放弃首次尝试。这是**唯一** kill cloudflared
+    // 的路径（主动 kill ⇒ stopping=true ⇒ exit 不回重启）。
     timer = setTimeout(() => {
       if (settled) return
+      stopping = true
       console.log('[2/4] 25 秒内未拿到隧道地址，放弃公网隧道。')
       if (proc && !proc.killed) try { proc.kill() } catch {}
       finish(null)
