@@ -97,6 +97,29 @@ class MainActivity : AppCompatActivity(),
     /** 应用锁解锁结果回调（系统锁屏凭据界面返回）。 */
     private lateinit var appLockLauncher: androidx.activity.result.ActivityResultLauncher<android.content.Intent>
 
+    /**
+     * 敏感操作（run_command）事中确认的结果回调。
+     *
+     * 与 [appLockLauncher] 复用同一系统界面（设备锁屏凭据），但语义不同：
+     * 前者是「打开 App 的门禁」，本者是「执行某条命令的当场确认」。
+     * 用独立 launcher 而非复用，是因为二者回调逻辑不同且可能并发。
+     */
+    private lateinit var approvalLauncher: androidx.activity.result.ActivityResultLauncher<android.content.Intent>
+
+    /** 当前待确认动作的回调（由 [ApprovalCoordinator.Prompt] 设置）。 */
+    private var pendingApproval: ((Boolean) -> Unit)? = null
+
+    /** 事中确认协调器（懒建，绑定本 Activity 的 launcher）。 */
+    private val approvalCoordinator: ApprovalCoordinator by lazy {
+        ApprovalCoordinator(prompt = ApprovalCoordinator.Prompt { action, onResult ->
+            // 必须在 UI 线程弹窗；worker 线程调用时 post 过去。
+            val posted = android.os.Handler(android.os.Looper.getMainLooper()).post {
+                askDeviceCredential(action, onResult)
+            }
+            posted
+        })
+    }
+
     /** 已发送但还没收到 queued 回执的消息 id → requestId */
     private val pending = mutableMapOf<String, String>()
 
@@ -404,6 +427,14 @@ class MainActivity : AppCompatActivity(),
             } else {
                 finish()
             }
+        }
+        // 敏感操作事中确认的结果回调
+        approvalLauncher = registerForActivityResult(
+            androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult(),
+        ) { result ->
+            val cb = pendingApproval
+            pendingApproval = null
+            cb?.invoke(result.resultCode == android.app.Activity.RESULT_OK)
         }
         // 应用锁门禁（设备锁屏凭据）：必须在任何内容可见前拦截。
         // 做法是先盖一层全屏遮罩，解锁成功才移除 —— 这样下面的初始化
@@ -1484,6 +1515,33 @@ class MainActivity : AppCompatActivity(),
         reloadHistoryIntoAdapter()
     }
 
+    /**
+     * 弹出设备锁屏凭据界面，请用户对某条命令做**事中确认**。
+     *
+     * 复用 [android.app.KeyguardManager.createConfirmDeviceCredentialIntent]
+     * （与应用锁同一系统界面，覆盖指纹/PIN/图案/密码，纯 framework API）。
+     *
+     * 无法弹出（设备未设锁屏凭据 / 系统未提供界面）时**回调 false**
+     * ——保守拒绝，绝不放行未经确认的敏感命令。
+     */
+    private fun askDeviceCredential(action: String, onResult: (Boolean) -> Unit) {
+        val km = getSystemService(android.content.Context.KEYGUARD_SERVICE)
+            as android.app.KeyguardManager
+        val intent = runCatching {
+            km.createConfirmDeviceCredentialIntent(getString(R.string.approve_title), action)
+        }.getOrNull()
+        if (intent == null) {
+            // 未设锁屏凭据或系统无此界面 → 无法确认 → 拒绝
+            onResult(false)
+            return
+        }
+        pendingApproval = onResult
+        runCatching { approvalLauncher.launch(intent) }.onFailure {
+            pendingApproval = null
+            onResult(false)
+        }
+    }
+
     /** 构造本地后端（含历史持久化 + 本地偏好接线）。 */
     private fun buildLocalBackend(): LocalAgentBackend {
         val prefs = LocalPrefs(this)
@@ -1491,6 +1549,7 @@ class MainActivity : AppCompatActivity(),
             workspace = localStore.resolvedWorkspace(),
             configProvider = { localStore.providerConfig() },
             androidContext = this,
+            approval = approvalCoordinator,
             skillStore = SkillStore(this),
             historyStore = object : LocalAgentBackend.HistoryStore {
                 override fun load(): List<ChatMsg> = localMsgStore.loadLocalHistory()
@@ -2044,6 +2103,14 @@ class MainActivity : AppCompatActivity(),
         val key = urlKeyFor(mode)
         val v = prefs.getString(key, null)
         if (!v.isNullOrBlank()) return v
+        // 隧道模式没有专属地址时，回落**已记住的隧道地址仓库**
+        //（KEY_TUNNEL_URLS，由广播/连接成功两条路径写入）。
+        // 不这样的话会回落到 DEFAULT_URL（127.0.0.1:5680 这个无意义的值），
+        // 表现为「切到互联网连本机 → 地址栏是垃圾地址，根本连不上」（用户报的）。
+        if (mode == AppMode.TUNNEL) {
+            val picked = loadTunnelUrls().values.firstOrNull { it.isNotBlank() }
+            if (!picked.isNullOrBlank()) return picked
+        }
         // 迁移：老版本只有一个 last_url。把它当作 LAN 的地址继承过来，
         // 避免升级后 LAN 模式地址凭空丢失。
         if (mode == AppMode.LAN) {
@@ -2200,6 +2267,57 @@ class MainActivity : AppCompatActivity(),
             connections[key]?.let { c ->
                 val newAddr = tunnel ?: lan.firstOrNull()
                 if (!newAddr.isNullOrBlank()) c.address = newAddr
+            }
+        }
+
+        // ── 「互联网连本机」地址随连接自动填充（用户反复强调的缺口）──
+        //
+        // 用户的真实使用路径：先用**局域网**连（快、实时），此时服务端已把
+        // 本会话的隧道 wss:// 地址一并下发；把它写进 `last_url_TUNNEL`，
+        // 那么**离开 WiFi 切到手机流量时**，只要把工作模式切到「互联网连本机」
+        // 就能直接用（地址栏已自动填好），无需手抄那串每次重启都变的随机子域。
+        //
+        // 此前只在 connectWith 里写「当前模式」的 key，隧道地址永远不进
+        // TUNNEL 模式的地址栏 —— 表现为用户说的「界面上根本看不到隧道码，
+        // 一关局域网就再也连不上」。
+        //
+        // 实现上**复用既有的隧道地址仓库**（KEY_TUNNEL_URLS 的 label→url 映射，
+        // 原由 UDP 广播路径 rememberTunnelUrlFrom 写入），并同步把「TUNNEL 模式
+        // 的地址栏」更新成它 —— 这样用户切到「互联网连本机」时地址已就绪。
+        // 不另造 last_url_TUNNEL 存储：两套存储必然漂移（既有代码已在用前者）。
+        val withTunnel = buildList {
+            if (!tunnel.isNullOrBlank()) add(label.ifBlank { "port:$port" } to tunnel)
+            peers.forEach { p ->
+                if (!p.tunnel.isNullOrBlank()) {
+                    add(p.label.ifBlank { "port:${p.port}" } to p.tunnel)
+                }
+            }
+        }
+        if (withTunnel.isEmpty()) return
+        val map = loadTunnelUrls().toMutableMap()
+        var changed = false
+        withTunnel.forEach { (k, url) ->
+            if (map[k] != url) {
+                map[k] = url
+                changed = true
+            }
+        }
+        if (changed) saveTunnelUrls(map)
+
+        // 把最近一条隧道地址**写入 TUNNEL 模式的持久化地址**（last_url_TUNNEL）。
+        //
+        // 这是「离开 WiFi 也能连」的关键：先在局域网连上（快、实时），
+        // 服务端把隧道地址一并下发 → 存进 TUNNEL 模式 → 出门切手机流量时，
+        // 工作模式选「互联网连本机」即地址已就绪，无需手抄随机子域。
+        val picked = map.values.firstOrNull { it.isNotBlank() }
+        if (picked != null) {
+            prefs.edit().putString(urlKeyFor(AppMode.TUNNEL), picked).apply()
+            // 仅当**用户此刻就在隧道模式**时才刷新输入框。
+            // 踩过的错：此前无条件 setText，导致在 LAN 模式下把地址框
+            // 改成了 wss://（LAN 框显示隧道地址），而 TUNNEL 模式反而仍是旧值
+            //（实测：LAN 框=wss://…、切到隧道模式却还是 127.0.0.1:5680）。
+            if (appMode == AppMode.TUNNEL && ::urlInput.isInitialized) {
+                runOnUiThread { urlInput.setText(picked) }
             }
         }
     }
