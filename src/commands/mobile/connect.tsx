@@ -203,108 +203,56 @@ function MobileConnectScreen(t0) {
   }
   const handleKeyDown = t4
 
-  // QR 码行
-  let t5
-  if ($[4] !== connectInfo?.qrCode) {
-    t5 = connectInfo?.qrCode ? connectInfo.qrCode.split("\n").filter(l => l.length > 0).map((line, i) => <Text key={i}>{line}</Text>) : []
-    $[4] = connectInfo?.qrCode
-  } else {
-    t5 = $[4]
-  }
-  const qrLines = t5
+  // QR 码行。
+  //
+  // ⚠️ 缓存槽 bug（历史遗留，本轮修复）：
+  // 这些 `let tN; if($[k] !== 依赖){ tN = <Text/>; $[k] = 依赖 } else { tN = $[k] }`
+  // 块把手写 React Compiler 产物的「依赖键槽」当成了「元素值槽」。首次渲染存
+  // 依赖（如 clientCount=0），第二次渲染命中 else 时 tN 被赋成**依赖本身**，
+  // 于是渲染出裸数字/裸字符串 —— Ink 报
+  // `Text string "0" must be rendered inside <Text> component`
+  // 并让整个 REPL 掉进「恢复回退模式」（clientCount 恰为 0 时必崩）。
+  // 修法：直接重建元素（这些元素很轻，重建成本可忽略），不再复用错位的槽位。
+  const qrLines: React.ReactNode[] = connectInfo?.qrCode
+    ? connectInfo.qrCode.split("\n").filter(l => l.length > 0).map((line, i) => <Text key={i}>{line}</Text>)
+    : []
 
   // 状态文本
-  let t6
-  if ($[5] !== connectInfo?.status) {
-    const statusText = connectInfo?.status === 'connected' ? '已连接' :
-      connectInfo?.status === 'ready' ? '等待中' :
-      connectInfo?.status === 'starting' ? '启动中...' :
-      connectInfo?.status === 'failed' ? '失败' : '...'
-    const color = connectInfo?.status === 'connected' ? 'green' :
-      connectInfo?.status === 'failed' ? 'red' :
-      connectInfo?.status === 'starting' ? 'yellow' : 'yellow'
-    t6 = <Text color={color}>{statusText}</Text>
-    $[5] = connectInfo?.status
-  } else {
-    t6 = $[5]
-  }
+  const statusText = connectInfo?.status === 'connected' ? '已连接' :
+    connectInfo?.status === 'ready' ? '等待中' :
+    connectInfo?.status === 'starting' ? '启动中...' :
+    connectInfo?.status === 'failed' ? '失败' : '...'
+  const statusColor = connectInfo?.status === 'connected' ? 'green' :
+    connectInfo?.status === 'failed' ? 'red' :
+    connectInfo?.status === 'starting' ? 'yellow' : 'yellow'
+  const t6 = <Text color={statusColor}>{statusText}</Text>
 
-  let t7
-  if ($[6] !== connectInfo?.clientCount) {
-    t7 = <Text>已连接设备: {connectInfo?.clientCount ?? 0}</Text>
-    $[6] = connectInfo?.clientCount
-  } else {
-    t7 = $[6]
-  }
+  const t7 = <Text>已连接设备: {connectInfo?.clientCount ?? 0}</Text>
+  const t8 = <Text>会话 ID: {connectInfo?.sessionId ?? ''}</Text>
+  const t9 = <Text>WebSocket: {connectInfo?.wsUrl ?? ''}</Text>
+  const t10 = <Text>HTTP: {connectInfo?.httpUrl ?? ''}</Text>
+  const t11 = <Text dimColor={true}>{connectInfo?.connectUrl ?? ''}</Text>
 
-  let t8
-  if ($[7] !== connectInfo?.sessionId) {
-    t8 = <Text>会话 ID: {connectInfo?.sessionId ?? ''}</Text>
-    $[7] = connectInfo?.sessionId
-  } else {
-    t8 = $[7]
-  }
+  // noBridgeHandle：服务器已启动但未取到 REPL 桥接句柄 —— 手机可连上但
+  // 消息进不了 CLI 会话，只会停在"已提交"。必须显式告知，否则是静默失败。
+  const t18 = connectInfo?.noBridgeHandle ? (
+    <Text color="red">⚠ 未连接 REPL 桥接：手机可连上但无法对话（消息只会停留在"已提交"）</Text>
+  ) : (
+    <Text> </Text>
+  )
 
-  let t9
-  if ($[8] !== connectInfo?.wsUrl) {
-    t9 = <Text>WebSocket: {connectInfo?.wsUrl ?? ''}</Text>
-    $[8] = connectInfo?.wsUrl
-  } else {
-    t9 = $[8]
-  }
+  const t14 = error ? <Text color="red">{error}</Text> : <Text> </Text>
 
-  let t10
-  if ($[9] !== connectInfo?.httpUrl) {
-    t10 = <Text>HTTP: {connectInfo?.httpUrl ?? ''}</Text>
-    $[9] = connectInfo?.httpUrl
-  } else {
-    t10 = $[9]
-  }
+  const t15 = qrLines.length > 0 ? (
+    <Box flexDirection="column">
+      {qrLines}
+    </Box>
+  ) : <Text>二维码加载中...</Text>
 
-  let t11
-  if ($[10] !== connectInfo?.connectUrl) {
-    t11 = <Text dimColor={true}>{connectInfo?.connectUrl ?? ''}</Text>
-    $[10] = connectInfo?.connectUrl
-  } else {
-    t11 = $[10]
-  }
-
-  let t18
-  if ($[38] !== connectInfo?.noBridgeHandle) {
-    // noBridgeHandle：服务器已启动但未取到 REPL 桥接句柄 —— 手机可连上但
-    // 消息进不了 CLI 会话，只会停在"已提交"。必须显式告知，否则是静默失败。
-    t18 = connectInfo?.noBridgeHandle ? (
-      <Text color="red">⚠ 未连接 REPL 桥接：手机可连上但无法对话（消息只会停留在"已提交"）</Text>
-    ) : (
-      <Text> </Text>
-    )
-    $[38] = connectInfo?.noBridgeHandle
-  } else {
-    t18 = $[38]
-  }
-
-  let t14
-  if ($[13] !== error) {
-    t14 = error ? <Text color="red">{error}</Text> : <Text> </Text>
-    $[13] = error
-  } else {
-    t14 = $[13]
-  }
-
-  let t15
-  if ($[14] !== qrLines.length) {
-    t15 = qrLines.length > 0 ? (
-      <Box flexDirection="column">
-        {qrLines}
-      </Box>
-    ) : <Text>二维码加载中...</Text>
-    $[14] = qrLines.length
-  } else {
-    t15 = $[14]
-  }
-
+  // 注意：这里比较的是「元素值」（$[15]=t6 …），键值同为元素，语义正确。
+  // 不再把 connectInfo 的原始依赖塞进这些槽（历史 bug 正是那么做才渲染出裸 0）。
   let t16
-  if ($[15] !== t6 || $[16] !== t14 || $[17] !== t7 || $[18] !== t8 || $[19] !== t9 || $[20] !== t10 || $[21] !== t11 || $[24] !== t15 || $[25] !== handleKeyDown || $[38] !== t18) {
+  if ($[15] !== t6 || $[16] !== t14 || $[17] !== t7 || $[18] !== t8 || $[19] !== t9 || $[20] !== t10 || $[21] !== t11 || $[24] !== t15 || $[25] !== handleKeyDown || $[30] !== t18) {
     t16 = (
       <Pane>
         <Box flexDirection="column">
@@ -334,6 +282,7 @@ function MobileConnectScreen(t0) {
     $[21] = t11
     $[24] = t15
     $[25] = handleKeyDown
+    $[30] = t18
     $[26] = t16
     $[27] = t16
   } else {
