@@ -91,3 +91,42 @@ AI融资*.html
 
 # u1s1 工作流产物（workflow 脚本与进度存档，本地临时）
 .u1s1/
+
+# ============================================================
+# 根目录一次性调试产物（2026-10 清理：曾误入库 70 个，勿再提交）
+# ============================================================
+# 临时脚本（.tmp_ / _ 前缀）
+.tmp_*
+_*.py
+_*.mjs
+_*.bat
+# UI dump 快照（adb uiautomator dump 产物）
+ui*.xml
+ui*.txt
+a[0-9].xml
+# 截图（黑屏排查留档）
+screen*.png
+# 日志/输出快照
+crash_log*.txt
+boot.txt
+tenhy.txt
+tsc_all.txt
+--syntax-check-only.txt
+log_after_fix.txt
+visit_lfs_size.txt
+freellm.txt
+zen.txt
+win.txt
+zcode.txt
+node_pids.txt
+pid.txt
+# 一次性排查脚本（无构建引用的独立工具）
+parse_ui*.py
+pa*.py
+chk_*.ps1
+check_status.py
+find_tab.py
+clone_ai_remain.py
+fresh
+# 调试压缩包
+.tmp_t*.zip
