@@ -111,9 +111,10 @@ crash_log*.txt
 boot.txt
 tenhy.txt
 tsc_all.txt
---syntax-check-only.txt
 log_after_fix.txt
 visit_lfs_size.txt
+# `bun run --syntax-check-only` 误把选项当输出文件名产生的产物
+--syntax-check-only.txt
 freellm.txt
 zen.txt
 win.txt
