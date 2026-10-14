@@ -115,6 +115,7 @@ bun run build:desktop
 
 - **提交时间戳**：`.githooks/commit-msg` 自动在提交消息标题末尾追加 ` [yyyy-mm-dd HH:MM:SS]`，无需手动添加
 - **.gitignore**：每次提交必须同步暂存 `.gitignore`
+- **核心文档误删守卫**：`.githooks/pre-commit` 在提交前检查 `README.md` / `CLAUDE.md` / `docs/*.md`，若某文件相对 HEAD 删除行数 ≥50 且删减比例 ≥50%，即判定疑似误删并**拦截提交**（历史教训：README.md 曾被批量清理操作两次误删，613→4 行、614→27 行）。确为有意删减时用 `DOGE_ALLOW_SHRINK=1 git commit ...` 或 `git commit --no-verify` 豁免；阈值可用 `DOGE_SHRINK_LINES` / `DOGE_SHRINK_RATIO` 调整。钩子源文件在 `.githooks/`（版本管理），需同步复制到 `.git/hooks/pre-commit` 才生效。
 
 ## Docker 部署
 

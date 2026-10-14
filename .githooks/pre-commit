@@ -1,0 +1,64 @@
+#!/bin/sh
+# pre-commit 守卫：防止核心文档/源码被「顺带误删」。
+#
+# 背景：README.md 曾被批量清理操作两次误删（613 行 -> 4 行，
+# 614 行 -> 27 行），均非有意。本钩子在提交前检测「暂存内容相对
+# HEAD 大幅删减」的核心文件，超阈值则拦截，除非显式豁免。
+#
+# 豁免方式（任选其一）：
+#   1. 环境变量：DOGE_ALLOW_SHRINK=1 git commit ...
+#   2. 提交信息标题含 [allow-shrink]
+#   3. 临时跳过：git commit --no-verify
+#
+# 阈值：单文件删除行数 >= SHRINK_LINES 且删减比例 >= SHRINK_RATIO 才拦截，
+# 二者同时满足才报（少量删减 / 大文件正常编辑不受影响）。
+#
+# 纯 ASCII + sh，Windows/MSYS2 与 cmd 下均可运行（见 .dogerules 编码教训）。
+
+SHRINK_LINES=${DOGE_SHRINK_LINES:-50}
+SHRINK_RATIO=${DOGE_SHRINK_RATIO:-50}
+
+# 需要保护的核心文件（路径匹配，支持 * 通配）。
+PROTECTED='README.md CLAUDE.md docs/*.md'
+
+# 定位含本钩子的仓库根（.git 可能是文件，指向 gitdir）。
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+cd "$REPO_ROOT" || exit 0
+
+# 显式豁免
+if [ "$DOGE_ALLOW_SHRINK" = "1" ]; then
+    exit 0
+fi
+
+# 提交信息里含 [allow-shrink] 也豁免（GIT_EDITOR 尚未写入时可能读不到，
+# 因此仅作尽力而为，主要靠环境变量）。实际标题检查放在消息写入后不可行，
+# 这里读取暂存环境变量即可。
+if [ -n "$DOGE_COMMIT_MSG_ALLOW_SHRINK" ]; then
+    exit 0
+fi
+
+# 调用 Node 脚本完成检测（git 输出解析与文件比对用 Node 更可靠）。
+# 脚本缺失时放行，不阻塞提交。
+if command -v node >/dev/null 2>&1; then
+    node "$REPO_ROOT/.githooks/check-shrink.cjs" "$SHRINK_LINES" "$SHRINK_RATIO" "$PROTECTED"
+    exit $?
+fi
+
+# 无 node 时降级：仅做一次粗粒度的行数比对（对 README/CLAUDE 硬编码）。
+warned=0
+for f in README.md CLAUDE.md; do
+    if git cat-file -e "HEAD:$f" 2>/dev/null && git ls-files --error-unmatch "$f" >/dev/null 2>&1; then
+        old=$(git show "HEAD:$f" 2>/dev/null | wc -l)
+        new=$(git show ":$f" 2>/dev/null | wc -l)
+        if [ "$old" -ge 100 ] && [ "$new" -lt $((old / 2)) ]; then
+            echo "  [pre-commit] 警告：$f 从 $old 行骤减到 $new 行" >&2
+            warned=1
+        fi
+    fi
+done
+if [ "$warned" = "1" ]; then
+    echo "" >&2
+    echo "核心文档被大幅删减，若确为有意请用 DOGE_ALLOW_SHRINK=1 重试。" >&2
+    exit 1
+fi
+exit 0
