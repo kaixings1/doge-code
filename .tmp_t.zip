@@ -1,0 +1,228 @@
+<!DOCTYPE html><html lang="zh-CN" class="overflow-x-clip"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0"><!-- Basic Meta --><title>404 - 页面未找到 | GH-Proxy</title><meta name="description" content="抱歉，您访问的页面不存在或已被移除。"><meta name="keywords" content="GitHub加速, GitHub代理, GitHub镜像, Git Clone加速, Raw文件加速, Release加速"><link rel="canonical" href="https://gh-proxy.com/404/"><meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"><!-- Conditional i18n Alternate Links --><!-- OpenGraph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://gh-proxy.com/404/"><meta property="og:title" content="404 - 页面未找到 | GH-Proxy"><meta property="og:description" content="抱歉，您访问的页面不存在或已被移除。"><meta property="og:image" content="https://gh-proxy.com/favicon.ico"><meta property="og:site_name" content="GitHub Proxy"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://gh-proxy.com/404/"><meta name="twitter:title" content="404 - 页面未找到 | GH-Proxy"><meta name="twitter:description" content="抱歉，您访问的页面不存在或已被移除。"><meta name="twitter:image" content="https://gh-proxy.com/favicon.ico"><!-- Favicon & Icons --><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><!-- Mobile App Theme --><meta name="theme-color" media="(prefers-color-scheme: light)" content="#f8fafc"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#090a0f"><meta name="theme-color" content="#090a0f"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><!-- JSON-LD Structured Data --><script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"404 - 页面未找到 | GH-Proxy","description":"抱歉，您访问的页面不存在或已被移除。","url":"https://gh-proxy.com/404/","applicationCategory":"DeveloperApplication","operatingSystem":"All"}</script><!-- External Analytics --><script defer src="https://u.gh-proxy.com/script.js" data-website-id="6e921313-57ba-449f-a15d-5fdb2de35cbf" data-performance="true"></script><script async src="https://www.googletagmanager.com/gtag/js?id=G-YTL8XEY42Z"></script><script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-YTL8XEY42Z');
+</script><!-- Google AdSense -->
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8549247415463520" crossorigin="anonymous"></script><!-- Prevent theme flickering & default to system mode --><script>
+      (function() {
+        try {
+          const theme = localStorage.getItem('ghproxy_theme');
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (theme === 'dark' || (!theme && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script><link rel="stylesheet" href="/_astro/about.DSD8XR5Z.css"></head> <body class="bg-slate-50 text-slate-900 dark:bg-[#090a0f] dark:text-zinc-100 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-500/20 selection:text-emerald-600 dark:selection:bg-emerald-500/30 dark:selection:text-emerald-400 relative transition-colors duration-200 pt-[60px] overflow-x-clip"> <!-- Ambient glowing backgrounds --> <div class="fixed inset-0 pointer-events-none -z-10 overflow-hidden"> <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-tr from-emerald-500/10 via-cyan-500/5 to-transparent blur-3xl opacity-60 dark:opacity-40"></div> <div class="absolute top-1/3 -right-40 w-[500px] h-[500px] bg-emerald-500/5 blur-3xl rounded-full"></div> </div> <!-- Sticky Navigation --> <nav class="fixed top-0 left-0 w-full h-[60px] bg-slate-900 dark:bg-[#090d16] border-b border-slate-800 z-50 px-4 flex items-center transition-colors"> <div class="max-w-6xl mx-auto w-full h-full flex justify-between items-center relative">  <a href="/" class="flex items-center gap-2.5 h-full no-underline group flex-shrink-0"> <img src="/favicon.svg" alt="GH-Proxy" class="w-8 h-8 group-hover:scale-105 transition-transform shadow-md shadow-emerald-500/20 flex-shrink-0" width="32" height="32"> <div class="flex items-center gap-1.5"> <span class="text-sm sm:text-base font-bold text-white tracking-tight"> GitHub加速 </span> <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">v2.0</span> </div> </a>  <div class="hidden md:flex items-center gap-1 h-full">  <a href="https://gh-proxy.com/go/yuncping" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:text-cyan-300 font-semibold flex items-center gap-1.5 py-2 px-2.5 rounded-lg hover:bg-cyan-400/10 transition-all text-xs"> <svg class="w-3.5 h-3.5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path> </svg> <span>靠谱机场评测</span> </a>  <a href="https://gh-proxy.com/go/jujiasu" target="_blank" rel="noopener noreferrer" class="relative inline-flex items-center justify-center p-[1px] rounded-lg overflow-hidden group/rainbow transition-transform hover:scale-105 active:scale-95 shadow-sm mr-1 cursor-pointer">  <span class="absolute inset-0 rainbow-stream-bg opacity-75 blur-[3px] group-hover/rainbow:opacity-100 group-hover/rainbow:blur-[5px] transition-all"></span>  <span class="absolute inset-0 rainbow-stream-bg"></span>  <span class="relative flex items-center gap-1.5 py-1.5 px-2.5 rounded-[7px] bg-slate-900/90 dark:bg-[#090d16]/95 backdrop-blur-md transition-colors group-hover/rainbow:bg-slate-900/70"> <svg class="w-3.5 h-3.5 text-amber-400 group-hover/rainbow:text-yellow-300 transition-colors flex-shrink-0 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"> <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"></path> </svg> <span class="text-xs font-bold rainbow-stream-text select-none">
+自用机场推荐
+</span> </span> </a>  <div class="group relative h-full flex items-center"> <button class="text-slate-300 group-hover:text-white font-medium flex items-center gap-1 h-full py-2 px-3 rounded-lg hover:bg-slate-800/60 transition-colors text-xs cursor-pointer"> <span>加速服务</span> <svg class="w-3.5 h-3.5 opacity-60 group-hover:rotate-180 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"></path></svg> </button> <div class="hidden group-hover:flex flex-col absolute top-full left-0 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-2 min-w-[210px] z-50 animate-fadeIn"> <a href="/" class="px-3 py-2 rounded-xl text-xs text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-2.5 transition-colors"> <span class="w-2 h-2 rounded-full bg-emerald-500"></span> <span>GitHub 文件加速</span> </a> <a href="/docker" class="px-3 py-2 rounded-xl text-xs text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-2.5 transition-colors"> <span class="w-2 h-2 rounded-full bg-cyan-500"></span> <span>Docker 镜像加速</span> </a> <a href="/sourceforge" class="px-3 py-2 rounded-xl text-xs text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-2.5 transition-colors"> <span class="w-2 h-2 rounded-full bg-amber-500"></span> <span>SourceForge 加速</span> </a> <a href="/opensheet" class="px-3 py-2 rounded-xl text-xs text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-2.5 transition-colors"> <span class="w-2 h-2 rounded-full bg-teal-500"></span> <span>Google 表格转 JSON</span> </a> <div class="h-px bg-slate-800/80 my-1"></div> <a href="/analytics" class="px-3 py-2 rounded-xl text-xs text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-2.5 transition-colors"> <span class="w-2 h-2 rounded-full bg-purple-500"></span> <span>节点与流量统计</span> </a> </div> </div>  <a href="/docs" class="text-slate-300 hover:text-white font-medium flex items-center gap-1 h-full py-2 px-3 rounded-lg hover:bg-slate-800/60 transition-colors text-xs"> <span>文档教程</span> </a>  <a href="/blog" class="text-slate-300 hover:text-white font-medium flex items-center gap-1 h-full py-2 px-3 rounded-lg hover:bg-slate-800/60 transition-colors text-xs"> <span>官方博客</span> </a>  <div class="group relative h-full flex items-center"> <button class="text-slate-300 group-hover:text-white font-medium flex items-center gap-1 h-full py-2 px-3 rounded-lg hover:bg-slate-800/60 transition-colors text-xs cursor-pointer"> <span>资源中心</span> <svg class="w-3.5 h-3.5 opacity-60 group-hover:rotate-180 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"></path></svg> </button> <div class="hidden group-hover:flex flex-col absolute top-full left-0 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-2 min-w-[190px] z-50 animate-fadeIn"> <a href="/link" class="px-3 py-2 rounded-xl text-xs text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-2 transition-colors"> <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg> <span>友情链接</span> </a> <a href="https://tool.gh-proxy.com/" target="_blank" rel="noreferrer" class="px-3 py-2 rounded-xl text-xs text-slate-300 hover:text-white hover:bg-slate-800 flex items-center justify-between transition-colors"> <span class="flex items-center gap-2"> <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg> <span>开发者工具箱</span> </span> <svg class="w-3 h-3 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg> </a> </div> </div>  <div class="group relative h-full flex items-center"> <button class="text-slate-300 group-hover:text-white font-medium flex items-center gap-1 h-full py-2 px-3 rounded-lg hover:bg-slate-800/60 transition-colors text-xs cursor-pointer"> <span>支持我们</span> <svg class="w-3.5 h-3.5 opacity-60 group-hover:rotate-180 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"></path></svg> </button> <div class="hidden group-hover:flex flex-col absolute top-full left-0 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-2 min-w-[190px] z-50 animate-fadeIn"> <a href="/donate" class="px-3 py-2 rounded-xl text-xs text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-2.5 transition-colors"> <span class="text-rose-400">💖</span> <span>捐赠支持</span> </a> <a href="/donate-list" class="px-3 py-2 rounded-xl text-xs text-slate-300 hover:text-white hover:bg-slate-800 flex items-center gap-2.5 transition-colors"> <span class="text-amber-400">🏆</span> <span>致谢名单</span> </a> </div> </div> </div>  <div class="flex items-center gap-2 sm:gap-3 h-full flex-shrink-0">  <a href="/en" title="切换为英文" class="text-xs px-2.5 py-1.5 rounded-xl border border-slate-700/80 bg-slate-800/50 hover:bg-slate-800 text-slate-300 hover:text-white transition-colors flex items-center gap-1.5"> <svg class="w-3.5 h-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg> <span>EN / 中</span> </a>  <button id="themeToggleBtn" type="button" title="切换暗黑/亮色主题" class="text-slate-300 hover:text-white p-2 rounded-xl hover:bg-slate-800/60 transition-colors focus:outline-none cursor-pointer flex-shrink-0"> <svg id="themeMoonIcon" class="w-4 h-4 hidden dark:block text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg> <svg id="themeSunIcon" class="w-4 h-4 block dark:hidden text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg> </button>  <button id="mobileMenuToggle" type="button" aria-label="Toggle navigation menu" class="md:hidden text-slate-300 hover:text-white p-2 rounded-xl hover:bg-slate-800 focus:outline-none cursor-pointer flex-shrink-0"> <svg id="hamburgerIcon" class="w-5 h-5 block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg> <svg id="closeIcon" class="w-5 h-5 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg> </button> </div> </div>  <div id="mobileDrawer" class="hidden md:hidden fixed top-[60px] inset-x-0 bottom-0 bg-[#0f172a] dark:bg-[#020617] border-b border-slate-800 z-50 overflow-y-auto px-4 py-5 space-y-5 shadow-2xl" style="background-color: #0f172a;">  <div class="grid grid-cols-2 gap-2"> <a href="https://gh-proxy.com/go/yuncping" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3 rounded-2xl bg-[#0e2238] border border-cyan-500/50 text-cyan-400 hover:text-cyan-300 transition-all font-semibold text-xs shadow-md"> <div class="flex items-center gap-2"> <svg class="w-4 h-4 text-cyan-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path> </svg> <span>靠谱机场评测</span> </div> <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-mono">评测</span> </a> <a href="https://gh-proxy.com/go/jujiasu" target="_blank" rel="noopener noreferrer" class="relative flex items-center justify-between p-[1px] rounded-2xl overflow-hidden group/mobile-rainbow shadow-md transition-transform active:scale-98">  <span class="absolute inset-0 rainbow-stream-bg"></span>  <div class="relative w-full flex items-center justify-between p-3 rounded-[15px] bg-[#1a140e]/95 dark:bg-[#090d16]/95 backdrop-blur-md"> <div class="flex items-center gap-2"> <svg class="w-4 h-4 text-amber-400 flex-shrink-0 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"></path> </svg> <span class="text-xs font-bold rainbow-stream-text">
+自用机场推荐
+</span> </div> <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono font-medium">
+高速
+</span> </div> </a> </div>  <div class="space-y-2"> <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500 px-1"> 加速服务 </div> <div class="grid grid-cols-2 gap-2"> <a href="/" class="p-3 rounded-xl bg-slate-800 border border-slate-700/70 text-xs text-slate-200 hover:bg-slate-700/80 flex items-center gap-2 transition-colors"> <span class="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0"></span> <span>GitHub 文件加速</span> </a> <a href="/docker" class="p-3 rounded-xl bg-slate-800 border border-slate-700/70 text-xs text-slate-200 hover:bg-slate-700/80 flex items-center gap-2 transition-colors"> <span class="w-2 h-2 rounded-full bg-cyan-500 flex-shrink-0"></span> <span>Docker 镜像加速</span> </a> <a href="/sourceforge" class="p-3 rounded-xl bg-slate-800 border border-slate-700/70 text-xs text-slate-200 hover:bg-slate-700/80 flex items-center gap-2 transition-colors"> <span class="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0"></span> <span>SourceForge 加速</span> </a> <a href="/opensheet" class="p-3 rounded-xl bg-slate-800 border border-slate-700/70 text-xs text-slate-200 hover:bg-slate-700/80 flex items-center gap-2 transition-colors"> <span class="w-2 h-2 rounded-full bg-teal-500 flex-shrink-0"></span> <span>Google 表格转 JSON</span> </a> </div> <a href="/analytics" class="w-full p-2.5 rounded-xl bg-slate-800 border border-slate-700/70 text-xs text-slate-200 hover:bg-slate-700/80 flex items-center gap-2 transition-colors"> <span class="w-2 h-2 rounded-full bg-purple-500 flex-shrink-0"></span> <span>节点测速与实时流量统计</span> </a> </div>  <div class="space-y-2"> <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500 px-1"> 教程与资讯 </div> <div class="grid grid-cols-2 gap-2"> <a href="/docs" class="p-3 rounded-xl bg-slate-800 border border-slate-700/70 text-xs text-slate-200 hover:bg-slate-700/80 flex items-center gap-2 transition-colors"> <svg class="w-3.5 h-3.5 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path><path d="M6 6h10"></path><path d="M6 10h10"></path></svg> <span>文档教程</span> </a> <a href="/blog" class="p-3 rounded-xl bg-slate-800 border border-slate-700/70 text-xs text-slate-200 hover:bg-slate-700/80 flex items-center gap-2 transition-colors"> <svg class="w-3.5 h-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg> <span>官方博客</span> </a> </div> </div>  <div class="space-y-2"> <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500 px-1"> 社区与支持 </div> <div class="grid grid-cols-2 gap-2"> <a href="/link" class="p-3 rounded-xl bg-slate-800 border border-slate-700/70 text-xs text-slate-200 hover:bg-slate-700/80 flex items-center gap-2 transition-colors"> <svg class="w-3.5 h-3.5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg> <span>友情链接</span> </a> <a href="https://tool.gh-proxy.com/" target="_blank" rel="noreferrer" class="p-3 rounded-xl bg-slate-800 border border-slate-700/70 text-xs text-slate-200 hover:bg-slate-700/80 flex items-center gap-2 transition-colors"> <svg class="w-3.5 h-3.5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg> <span>开发者工具箱</span> </a> <a href="/donate" class="p-3 rounded-xl bg-slate-800 border border-slate-700/70 text-xs text-slate-200 hover:bg-slate-700/80 flex items-center gap-2 transition-colors"> <span class="text-rose-400">💖</span> <span>捐赠支持</span> </a> <a href="/donate-list" class="p-3 rounded-xl bg-slate-800 border border-slate-700/70 text-xs text-slate-200 hover:bg-slate-700/80 flex items-center gap-2 transition-colors"> <span class="text-amber-400">🏆</span> <span>致谢名单</span> </a> </div> </div> </div> </nav> <script>
+  // Theme Toggle with Follow-System Support
+  const themeBtn = document.getElementById('themeToggleBtn');
+  const isEn = document.documentElement.lang === 'en';
+
+  const updateThemeTitle = (themeState) => {
+    if (!themeBtn) return;
+    if (themeState === 'system') {
+      themeBtn.setAttribute('title', isEn ? 'Theme: Follow System (Click to toggle)' : '主题模式：跟随系统（点击切换）');
+    } else if (themeState === 'light') {
+      themeBtn.setAttribute('title', isEn ? 'Theme: Light (Click to toggle)' : '主题模式：浅色模式（点击切换）');
+    } else if (themeState === 'dark') {
+      themeBtn.setAttribute('title', isEn ? 'Theme: Dark (Click to toggle)' : '主题模式：深色模式（点击切换）');
+    }
+  };
+
+  const storedTheme = localStorage.getItem('ghproxy_theme');
+  updateThemeTitle(storedTheme || 'system');
+
+  // Listen for system theme changes when in follow-system mode
+  try {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleSystemChange = (e) => {
+      const stored = localStorage.getItem('ghproxy_theme');
+      if (!stored || stored === 'system') {
+        if (e.matches) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }
+    };
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleSystemChange);
+    } else if (mediaQuery.addListener) {
+      mediaQuery.addListener(handleSystemChange);
+    }
+  } catch (e) {}
+
+  if (themeBtn) {
+    themeBtn.addEventListener('click', () => {
+      const currentStored = localStorage.getItem('ghproxy_theme');
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      let nextTheme;
+      if (!currentStored || currentStored === 'system') {
+        nextTheme = systemDark ? 'light' : 'dark';
+      } else if (currentStored === 'light') {
+        nextTheme = systemDark ? 'system' : 'dark';
+      } else { // 'dark'
+        nextTheme = systemDark ? 'light' : 'system';
+      }
+
+      if (nextTheme === 'system') {
+        localStorage.removeItem('ghproxy_theme');
+        if (systemDark) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+        updateThemeTitle('system');
+        if (window.showToast) {
+          window.showToast(isEn ? 'Theme: Follow System' : '主题已恢复为：跟随系统模式');
+        }
+      } else if (nextTheme === 'light') {
+        localStorage.setItem('ghproxy_theme', 'light');
+        document.documentElement.classList.remove('dark');
+        updateThemeTitle('light');
+        if (window.showToast) {
+          window.showToast(isEn ? 'Theme: Light Mode' : '主题已切换为：浅色模式');
+        }
+      } else { // 'dark'
+        localStorage.setItem('ghproxy_theme', 'dark');
+        document.documentElement.classList.add('dark');
+        updateThemeTitle('dark');
+        if (window.showToast) {
+          window.showToast(isEn ? 'Theme: Dark Mode' : '主题已切换为：深色模式');
+        }
+      }
+    });
+  }
+
+  // Mobile Menu Drawer Handler
+  const mobileToggle = document.getElementById('mobileMenuToggle');
+  const mobileDrawer = document.getElementById('mobileDrawer');
+  const hamburgerIcon = document.getElementById('hamburgerIcon');
+  const closeIcon = document.getElementById('closeIcon');
+
+  function openMobileMenu() {
+    if (!mobileDrawer) return;
+    mobileDrawer.classList.remove('hidden');
+    if (hamburgerIcon) {
+      hamburgerIcon.classList.add('hidden');
+      hamburgerIcon.classList.remove('block');
+    }
+    if (closeIcon) {
+      closeIcon.classList.remove('hidden');
+      closeIcon.classList.add('block');
+    }
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMobileMenu() {
+    if (!mobileDrawer) return;
+    mobileDrawer.classList.add('hidden');
+    if (hamburgerIcon) {
+      hamburgerIcon.classList.remove('hidden');
+      hamburgerIcon.classList.add('block');
+    }
+    if (closeIcon) {
+      closeIcon.classList.add('hidden');
+      closeIcon.classList.remove('block');
+    }
+    document.body.style.overflow = '';
+  }
+
+  function toggleMobileMenu() {
+    if (!mobileDrawer) return;
+    if (mobileDrawer.classList.contains('hidden')) {
+      openMobileMenu();
+    } else {
+      closeMobileMenu();
+    }
+  }
+
+  if (mobileToggle) {
+    mobileToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMobileMenu();
+    });
+  }
+
+  // Close mobile drawer when any link is clicked
+  if (mobileDrawer) {
+    mobileDrawer.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        closeMobileMenu();
+      });
+    });
+  }
+</script>  <!-- Main Content --> <main class="flex-grow">  <script>
+    (function() {
+      try {
+        var path = window.location.pathname;
+        var isEn = path.indexOf('/en') === 0;
+        var cleanPath = isEn ? path.slice(3) : path;
+        var prefix = isEn ? '/en/#' : '/#';
+
+        var match = cleanPath.match(/^\/(?:https?:\/+)?(?:www\.)?github\.com\/(?!(?:features|about|pricing|security|login|join|explore|topics|trending|marketplace|organizations|docs|blog|assets|api|admin|_astro|waline-api)\/)([a-zA-Z0-9_.-]+)\/([a-zA-Z0-9_.-]+?)(?:\.git)?(?:\/releases)?\/?$/i);
+        if (match) {
+          window.location.replace(prefix + 'https://github.com/' + match[1] + '/' + match[2]);
+          return;
+        }
+
+        var shortMatch = cleanPath.match(/^\/([a-zA-Z0-9_.-]+)\/([a-zA-Z0-9_.-]+?)(?:\.git)?\/?$/i);
+        if (shortMatch) {
+          var reserved = ['about', 'privacy', 'terms', 'donate', 'donate-list', 'analytics', 'docker', 'sourceforge', 'opensheet', 'link', 'docs', 'blog', 'admin', 'waline-api', 'api', 'assets', '_astro'];
+          if (reserved.indexOf(shortMatch[1].toLowerCase()) === -1) {
+            window.location.replace(prefix + 'https://github.com/' + shortMatch[1] + '/' + shortMatch[2]);
+            return;
+          }
+        }
+      } catch(e) {}
+    })();
+  </script> <div class="max-w-xl mx-auto px-4 py-24 sm:py-32 text-center space-y-6"> <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 text-3xl font-mono font-bold">
+404
+</div> <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white">页面未找到</h1> <p class="text-sm text-slate-600 dark:text-zinc-400">
+您访问的地址可能已被移动、删除，或输入的链接有误。
+</p> <div class="pt-4 flex items-center justify-center gap-4"> <a href="/" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold shadow-lg shadow-emerald-600/25 transition-all">
+返回首页
+</a> <a href="/docs" class="px-6 py-3 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 text-sm font-semibold transition-all">
+使用文档
+</a> </div> </div>  </main> <!-- Global Toast Container --> <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div> <!-- Site Footer --> <div class="mt-auto"> <footer class="border-t border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-zinc-950/70 backdrop-blur-lg transition-colors"> <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16"> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12"> <!-- Brand column --> <div class="lg:col-span-2 space-y-4"> <a href="/" class="flex items-center gap-2.5 font-bold text-lg text-slate-900 dark:text-white"> <img src="/favicon.svg" alt="GH-Proxy" class="w-8 h-8 shadow-md shadow-emerald-500/20 flex-shrink-0" width="32" height="32"> <span class="tracking-tight">GH-Proxy</span> <span class="text-xs px-2 py-0.5 rounded-full font-mono bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">v2.0</span> </a> <p class="text-sm text-slate-600 dark:text-zinc-400 leading-relaxed max-w-sm"> 全球高速代码分发与开源镜像代理网关。免配置、即开即用、完全开源免费。 </p> <div class="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400 font-medium"> <span class="relative flex h-2 w-2"> <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span> <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span> </span> <span>全部服务节点正常运行中</span> </div> </div> <!-- Services --> <div> <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-900 dark:text-zinc-200 mb-3"> 加速代理 </h3> <ul class="space-y-2 text-sm"> <li> <a href="/" class="text-slate-600 hover:text-emerald-600 dark:text-zinc-400 dark:hover:text-emerald-400 transition-colors"> GitHub 文件加速 </a> </li><li> <a href="/docker" class="text-slate-600 hover:text-emerald-600 dark:text-zinc-400 dark:hover:text-emerald-400 transition-colors"> Docker 镜像加速 </a> </li><li> <a href="/sourceforge" class="text-slate-600 hover:text-emerald-600 dark:text-zinc-400 dark:hover:text-emerald-400 transition-colors"> SourceForge 加速 </a> </li><li> <a href="/opensheet" class="text-slate-600 hover:text-emerald-600 dark:text-zinc-400 dark:hover:text-emerald-400 transition-colors"> Google 表格转 JSON </a> </li> </ul> </div> <!-- Community --> <div> <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-900 dark:text-zinc-200 mb-3"> 社区支持 </h3> <ul class="space-y-2 text-sm"> <li> <a href="/donate" class="text-slate-600 hover:text-emerald-600 dark:text-zinc-400 dark:hover:text-emerald-400 transition-colors"> 捐赠支持 </a> </li><li> <a href="/donate-list" class="text-slate-600 hover:text-emerald-600 dark:text-zinc-400 dark:hover:text-emerald-400 transition-colors"> 捐赠荣誉榜 </a> </li><li> <a href="/link" class="text-slate-600 hover:text-emerald-600 dark:text-zinc-400 dark:hover:text-emerald-400 transition-colors"> 友情链接 </a> </li><li> <a href="/analytics" class="text-slate-600 hover:text-emerald-600 dark:text-zinc-400 dark:hover:text-emerald-400 transition-colors"> 实时流量监控 </a> </li> </ul> </div> <!-- Resources --> <div> <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-900 dark:text-zinc-200 mb-3"> 文档资讯 </h3> <ul class="space-y-2 text-sm"> <li> <a href="/docs" class="text-slate-600 hover:text-emerald-600 dark:text-zinc-400 dark:hover:text-emerald-400 transition-colors"> 使用文档 </a> </li><li> <a href="/blog" class="text-slate-600 hover:text-emerald-600 dark:text-zinc-400 dark:hover:text-emerald-400 transition-colors"> 博客资讯 </a> </li><li> <a href="/about" class="text-slate-600 hover:text-emerald-600 dark:text-zinc-400 dark:hover:text-emerald-400 transition-colors"> 关于服务 </a> </li><li> <a href="/terms" class="text-slate-600 hover:text-emerald-600 dark:text-zinc-400 dark:hover:text-emerald-400 transition-colors"> 服务条款 </a> </li><li> <a href="/privacy" class="text-slate-600 hover:text-emerald-600 dark:text-zinc-400 dark:hover:text-emerald-400 transition-colors"> 隐私政策 </a> </li> </ul> </div> </div> <div class="mt-12 pt-8 border-t border-slate-200/80 dark:border-white/5 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-zinc-500"> <p>© 2026 GH-Proxy. 保留所有权利。由全球开源社区驱动。</p> <p class="text-center md:text-right max-w-xl">本站仅提供中立的开源分发与反向代理网络加速服务，不存储也不拥有任何第三方版权资产。</p> </div> </div> </footer> </div> <!-- Toast helper script --> <script>
+      window.showToast = function(message, type = 'success') {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = `px-4 py-2.5 rounded-xl shadow-lg text-sm font-medium transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto flex items-center gap-2 border ${
+          type === 'success' 
+            ? 'bg-emerald-950/90 text-emerald-200 border-emerald-500/30 shadow-emerald-500/10' 
+            : type === 'error'
+            ? 'bg-red-950/90 text-red-200 border-red-500/30 shadow-red-500/10'
+            : 'bg-zinc-900/90 text-zinc-200 border-zinc-700 shadow-black/20'
+        }`;
+        toast.innerHTML = `
+          <svg class="w-4 h-4 flex-shrink-0 ${type === 'success' ? 'text-emerald-400' : type === 'error' ? 'text-red-400' : 'text-zinc-400'}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            ${type === 'success' 
+              ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />' 
+              : type === 'error'
+              ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />'
+              : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />'}
+          </svg>
+          <span>${message}</span>
+        `;
+        container.appendChild(toast);
+        requestAnimationFrame(() => {
+          toast.classList.remove('translate-y-2', 'opacity-0');
+        });
+        setTimeout(() => {
+          toast.classList.add('translate-y-2', 'opacity-0');
+          setTimeout(() => toast.remove(), 300);
+        }, 2600);
+      };
+    </script> </body> </html>

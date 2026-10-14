@@ -1,0 +1,25 @@
+- generic [active] [ref=f6e1]:
+  - generic [ref=f6e6]:
+    - generic [ref=f6e7]:
+      - button "打开命令面板" [ref=f6e8] [cursor=pointer]:
+        - generic [ref=f6e12]: 搜索
+      - combobox "切换语言" [ref=f6e13] [cursor=pointer]
+      - combobox [aria-hidden] [ref=f6e14]
+      - tablist "版本切换" [ref=f6e15]:
+        - tab "国内版" [selected] [ref=f6e16] [cursor=pointer]
+        - tab "国际版" [ref=f6e22] [cursor=pointer]
+    - generic [ref=f6e27]:
+      - generic [ref=f6e29]:
+        - heading "账号管理" [level=1] [ref=f6e30]
+        - paragraph [ref=f6e31]: 腾讯 CodeBuddy 账号池：Token 有效期、签到与连通性（每 30 秒自动刷新）
+      - navigation "页面内导航" [ref=f6e32]:
+        - link "账号" [ref=f6e33] [cursor=pointer]:
+          - /url: /accounts/
+        - link "任务" [ref=f6e39] [cursor=pointer]:
+          - /url: /tasks/
+      - button "默认分组" [ref=f6e44] [cursor=pointer]
+      - generic [ref=f6e79]:
+        - generic [ref=f6e80]: 签到结果与上游自动任务记录已移至
+        - link "任务" [ref=f6e81] [cursor=pointer]:
+          - /url: /tasks/
+  - region "Notifications alt+T"

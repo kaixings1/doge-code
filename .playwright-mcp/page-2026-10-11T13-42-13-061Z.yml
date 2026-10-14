@@ -1,0 +1,21 @@
+- generic [active] [ref=f1e1]:
+  - generic [ref=f1e2]:
+    - combobox "切换语言" [ref=f1e4] [cursor=pointer]:
+      - generic: 简体中文
+    - generic [ref=f1e5]:
+      - generic [ref=f1e11]:
+        - heading "WorkBuddy Manager" [level=1] [ref=f1e12]
+        - paragraph [ref=f1e13]: 腾讯 CodeBuddy 账号池管理 · OpenAI 兼容反代网关
+      - generic [ref=f1e15]:
+        - generic [ref=f1e16]:
+          - generic [ref=f1e17]: 用户名
+          - textbox "用户名" [ref=f1e18]:
+            - /placeholder: admin
+        - generic [ref=f1e19]:
+          - generic [ref=f1e20]: 密码
+          - textbox "密码" [ref=f1e21]:
+            - /placeholder: 请输入密码
+        - button "登录" [ref=f1e22] [cursor=pointer]
+      - paragraph [ref=f1e23]: 登录即表示您已获得该系统的访问授权，所有操作将被记录。
+  - region "Notifications alt+T"
+  - alert [ref=f1e24]

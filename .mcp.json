@@ -71,6 +71,14 @@
     "rea": {
       "command": "npx",
       "args": ["-y", "rea-agents@6.4.0", "mcp"]
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@4.4.1"]
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking@1.0.0"]
     }
   }
 }

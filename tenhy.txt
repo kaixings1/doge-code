@@ -1,0 +1,361 @@
+2026-10-12 20:41:26 [INFO] [bootstrap] doge 启动完成，log-file=./tenhy.txt
+2026-10-12 20:41:27 [DEBUG] [readCustomApiStorage] 端点来源=项目预设, activeName=custom-1791383046474, baseURL=http://127.0.0.1:3065/v1/chat/completions, model=hy3
+2026-10-12 20:41:27 [DEBUG] MDM settings load completed in 3ms
+2026-10-12 20:41:27 [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+2026-10-12 20:41:27 [DEBUG] Broken symlink or missing file encountered for settings.json at path: D:\doge-code\.claude\settings.json
+2026-10-12 20:41:28 [DEBUG] [sentry] SENTRY_DSN not set, skipping initialization
+2026-10-12 20:41:28 [DEBUG] CA certs: useSystemCA=false, extraCertsPath=D:\cert-final.pem, certStore=undefined
+2026-10-12 20:41:28 [DEBUG] CA certs: Loaded 144 bundled root certificates as base
+2026-10-12 20:41:28 [DEBUG] CA certs: Appended extra certificates from NODE_EXTRA_CA_CERTS (D:\cert-final.pem)
+2026-10-12 20:41:28 [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-10-12 20:41:28 [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2026-10-12 20:41:28 [DEBUG] [TRACE] preAction after init()
+2026-10-12 20:41:28 [DEBUG] Git remote URL: null
+2026-10-12 20:41:28 [DEBUG] No git remote URL found
+2026-10-12 20:41:28 [DEBUG] Error log sink initialized
+2026-10-12 20:41:28 [DEBUG] Applying permission update: Adding 2 allow rule(s) to destination 'localSettings': ["Bash(rg -n \"role: ''''user''''|role:\"\"user\"\"|''''user''''\" src/bridge/mobileBridge.ts)","Bash(command rg:*)"]
+2026-10-12 20:41:28 [DEBUG] [TRACE] AFTER initializeToolPermissionContext
+2026-10-12 20:41:30 [DEBUG] [ToolSearch:optimistic] mode=tst, ENABLE_TOOL_SEARCH=true, result=true
+2026-10-12 20:41:30 [DEBUG] Loading skills from: managed=C:\Program Files\ClaudeCode\.claude\skills, user=C:\Users\Administrator\.doge\skills, project=[D:\doge-code\.claude\skills]
+2026-10-12 20:41:30 [DEBUG] [TeammateModeSnapshot] Captured from config: auto
+2026-10-12 20:41:30 [DEBUG] Error log sink initialized
+2026-10-12 20:41:30 [DEBUG] [Claude in Chrome] Found chrome profiles: Default
+2026-10-12 20:41:30 [DEBUG] Failed to stat directory C:\Users\Administrator\.doge\commands: ENOENT: no such file or directory, stat 'C:\Users\Administrator\.doge\commands'
+2026-10-12 20:41:30 [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\commands) returned 0 files
+2026-10-12 20:41:30 [DEBUG] Loaded 0 installed plugins from C:\Users\Administrator\.doge\plugins\installed_plugins.json
+2026-10-12 20:41:30 [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2026-10-12 20:41:30 [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-10-12 20:41:30 [DEBUG] Registered 0 hooks from 0 plugins
+2026-10-12 20:41:30 [DEBUG] Total plugin skills loaded: 0
+2026-10-12 20:41:30 [DEBUG] Total plugin commands loaded: 0
+2026-10-12 20:41:30 [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\agents: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\agents'
+2026-10-12 20:41:30 [DEBUG] Failed to stat directory C:\Users\Administrator\.doge\agents: ENOENT: no such file or directory, stat 'C:\Users\Administrator\.doge\agents'
+2026-10-12 20:41:30 [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\agents) returned 0 files
+2026-10-12 20:41:30 [DEBUG] Total plugin agents loaded: 0
+2026-10-12 20:41:30 [DEBUG] Loaded 2 unique skills (2 unconditional, 0 conditional, managed: 0, user: 1, project: 1, additional: 0, legacy commands: 0)
+2026-10-12 20:41:30 [DEBUG] getSkills 返回：2 个技能目录命令，0 个插件技能，29 个内置技能，0 个内置插件技能
+2026-10-12 20:41:30 [DEBUG] === [DEBUG] plan 开头的技能:
+2026-10-12 20:41:30 [DEBUG] Preserving file permissions: 100666
+2026-10-12 20:41:30 [DEBUG] Writing to temp file: C:\Users\Administrator\.doge\.claude.json.tmp.75628.1791808890837
+2026-10-12 20:41:30 [DEBUG] Temp file written successfully, size: 49645 bytes
+2026-10-12 20:41:30 [DEBUG] Applied original permissions to temp file
+2026-10-12 20:41:30 [DEBUG] Renaming C:\Users\Administrator\.doge\.claude.json.tmp.75628.1791808890837 to C:\Users\Administrator\.doge\.claude.json
+2026-10-12 20:41:30 [DEBUG] File C:\Users\Administrator\.doge\.claude.json written atomically
+2026-10-12 20:41:30 [DEBUG] [LSP MANAGER] initializeLspServerManager() called
+2026-10-12 20:41:30 [DEBUG] [LSP MANAGER] Created manager instance, state=pending
+2026-10-12 20:41:30 [DEBUG] [LSP MANAGER] Starting async initialization (generation 1)
+2026-10-12 20:41:30 [DEBUG] [Bootstrap] Skipped: Nonessential traffic disabled
+2026-10-12 20:41:30 [DEBUG] [Reconnection] computeInitialTeamContext: No teammate context set (not a teammate)
+2026-10-12 20:41:30 [DEBUG] Preserving file permissions: 100666
+2026-10-12 20:41:30 [DEBUG] Writing to temp file: C:\Users\Administrator\.doge\.claude.json.tmp.75628.1791808890858
+2026-10-12 20:41:30 [DEBUG] Temp file written successfully, size: 49645 bytes
+2026-10-12 20:41:30 [DEBUG] Applied original permissions to temp file
+2026-10-12 20:41:30 [DEBUG] Renaming C:\Users\Administrator\.doge\.claude.json.tmp.75628.1791808890858 to C:\Users\Administrator\.doge\.claude.json
+2026-10-12 20:41:30 [DEBUG] File C:\Users\Administrator\.doge\.claude.json written atomically
+2026-10-12 20:41:30 [DEBUG] Total LSP servers loaded: 0
+2026-10-12 20:41:30 [DEBUG] Initialized versioned plugins system with 0 plugins
+2026-10-12 20:41:30 [DEBUG] [LSP SERVER MANAGER] getAllLspServers returned 0 server(s)
+2026-10-12 20:41:30 [DEBUG] LSP 管理器初始化完成，包含 0 个服务器
+2026-10-12 20:41:30 [DEBUG] LSP 服务器管理器初始化成功
+2026-10-12 20:41:30 [DEBUG] LSP notification handlers registered successfully for all 0 server(s)
+2026-10-12 20:41:30 [DEBUG] [Claude in Chrome] Found edge profiles: Default
+2026-10-12 20:41:30 [DEBUG] registerAttributionHooks: installed hook at D:\doge-code\.git\hooks\prepare-commit-msg
+2026-10-12 20:41:30 [DEBUG] [Claude in Chrome] Found opera profiles: Default
+2026-10-12 20:41:30 [DEBUG] [Claude in Chrome] Extension not found in any browser
+2026-10-12 20:41:30 [DEBUG] Ripgrep first use test: PASSED (mode=builtin, path=D:\doge-code\src\vendor\ripgrep\x64-win32\rg.exe)
+2026-10-12 20:41:30 [DEBUG] rg error (signal=undefined, code=2, stderr: rg: C:\Users\Administrator\.doge\plugins\cache: IO error for operation on C:\Users\Administrator\.doge\plugins\cache: 系统找不到指定的文件。 (os error 2)
+), 0 results
+2026-10-12 20:41:31 [DEBUG] [keybindings] KeybindingSetup initialized with 143 bindings, 0 warnings
+2026-10-12 20:41:31 [DEBUG] [DOGE] Using fallback status-line script: C:\Users\Administrator\.doge\status-line.cjs
+2026-10-12 20:41:31 [DEBUG] [FileIndex] getProjectFiles called, respectGitignore=true
+2026-10-12 20:41:31 [DEBUG] [FileIndex] getFilesUsingGit called
+2026-10-12 20:41:31 [DEBUG] [DEBUG] loading project dir: D:\doge-code\.claude\skills
+2026-10-12 20:41:31 [DEBUG] mcpLocked=false
+2026-10-12 20:41:31 [DEBUG] userServers=0
+2026-10-12 20:41:31 [DEBUG] projectServers=7
+2026-10-12 20:41:31 [DEBUG] localServers=0
+2026-10-12 20:41:31 [DEBUG] [claudeai-mcp] No access token
+2026-10-12 20:41:31 [DEBUG] mcpLocked=false
+2026-10-12 20:41:31 [DEBUG] userServers=0
+2026-10-12 20:41:31 [DEBUG] projectServers=7
+2026-10-12 20:41:31 [DEBUG] localServers=0
+2026-10-12 20:41:31 [DEBUG] [keybindings] Skipping file watcher - user customization disabled
+2026-10-12 20:41:31 [DEBUG] [REPL:挂载] REPL 已挂载, disabled=false
+2026-10-12 20:41:31 [DEBUG] performStartupChecks called
+2026-10-12 20:41:31 [DEBUG] Starting background plugin installations
+2026-10-12 20:41:31 [DEBUG] [ScheduledTasks] scheduler start() — enabled=false, hasTasks=false
+2026-10-12 20:41:31 [DEBUG] AutoUpdaterWrapper: Installation type: development
+2026-10-12 20:41:31 [DEBUG] Official marketplace auto-install skipped: already_attempted
+2026-10-12 20:41:31 [DEBUG] performBackgroundPluginInstallations called
+2026-10-12 20:41:31 [DEBUG] [auto-mode] verifyAutoModeGateAccess: enabledState=disabled disabledBySettings=false model=hy3 modelSupported=false disableFastModeBreakerFires=false carouselAvailable=false canEnterAuto=false
+2026-10-12 20:41:31 [WARN] auto mode disabled: tengu_auto_mode_config.enabled === "disabled" (circuit breaker)
+2026-10-12 20:41:31 [DEBUG] MCP server "win-autoui": 开始连接，超时时间为 30000ms
+2026-10-12 20:41:31 [DEBUG] MCP server "pywinauto-mcp": 开始连接，超时时间为 30000ms
+2026-10-12 20:41:31 [DEBUG] MCP server "playwright": 开始连接，超时时间为 30000ms
+2026-10-12 20:41:31 [DEBUG] [auto-mode] kickOutOfAutoIfNeeded applying: ctx.mode=bypassPermissions ctx.prePlanMode=undefined reason=circuit-breaker
+2026-10-12 20:41:31 [DEBUG] Failed to stat directory C:\Users\Administrator\.doge\commands: ENOENT: no such file or directory, stat 'C:\Users\Administrator\.doge\commands'
+2026-10-12 20:41:31 [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\commands) returned 0 files
+2026-10-12 20:41:31 [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\agents: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\agents'
+2026-10-12 20:41:31 [DEBUG] Failed to stat directory C:\Users\Administrator\.doge\agents: ENOENT: no such file or directory, stat 'C:\Users\Administrator\.doge\agents'
+2026-10-12 20:41:31 [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\agents) returned 0 files
+2026-10-12 20:41:31 [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\output-styles: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\output-styles'
+2026-10-12 20:41:31 [DEBUG] Failed to stat directory C:\Users\Administrator\.doge\output-styles: ENOENT: no such file or directory, stat 'C:\Users\Administrator\.doge\output-styles'
+2026-10-12 20:41:31 [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\output-styles) returned 0 files
+2026-10-12 20:41:31 [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\skills: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\skills'
+2026-10-12 20:41:31 [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\workflows: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\workflows'
+2026-10-12 20:41:31 [DEBUG] Failed to stat directory C:\Users\Administrator\.doge\workflows: ENOENT: no such file or directory, stat 'C:\Users\Administrator\.doge\workflows'
+2026-10-12 20:41:31 [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\workflows) returned 0 files
+2026-10-12 20:41:31 [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\templates: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\templates'
+2026-10-12 20:41:31 [DEBUG] Failed to stat directory C:\Users\Administrator\.doge\templates: ENOENT: no such file or directory, stat 'C:\Users\Administrator\.doge\templates'
+2026-10-12 20:41:31 [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\templates) returned 0 files
+2026-10-12 20:41:31 [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2026-10-12 20:41:31 [DEBUG] MCP server "heartflow": 跳过连接（已缓存需要身份验证）
+2026-10-12 20:41:31 [DEBUG] [LSP MANAGER] reinitializeLspServerManager() called
+2026-10-12 20:41:31 [DEBUG] [LSP MANAGER] initializeLspServerManager() called
+2026-10-12 20:41:31 [DEBUG] [LSP MANAGER] Created manager instance, state=pending
+2026-10-12 20:41:31 [DEBUG] [LSP MANAGER] Starting async initialization (generation 2)
+2026-10-12 20:41:31 [DEBUG] Loaded plugins - Enabled: 0, Disabled: 0, Commands: 0, Agents: 0, Errors: 0
+2026-10-12 20:41:31 [DEBUG] Total LSP servers loaded: 0
+2026-10-12 20:41:31 [DEBUG] [LSP SERVER MANAGER] getAllLspServers returned 0 server(s)
+2026-10-12 20:41:31 [DEBUG] LSP 管理器初始化完成，包含 0 个服务器
+2026-10-12 20:41:31 [DEBUG] LSP 服务器管理器初始化成功
+2026-10-12 20:41:31 [DEBUG] LSP notification handlers registered successfully for all 0 server(s)
+2026-10-12 20:41:31 [DEBUG] Watching for changes in skill/command directories: C:\Users\Administrator\.doge\skills, D:\doge-code\.claude\skills...
+2026-10-12 20:41:31 [DEBUG] [DEBUG] loadMarkdownFiles(D:\doge-code\.claude\skills) returned 1 files
+2026-10-12 20:41:31 [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\skills) returned 1 files
+2026-10-12 20:41:31 [DEBUG] Watching for changes in setting files C:\Users\Administrator\.doge\settings.json, D:\doge-code\.claude\settings.json, D:\doge-code\.claude\settings.local.json...
+2026-10-12 20:41:31 [DEBUG] Loaded 1 CLAUDE.md/rules files:
+  [Project] D:\doge-code\CLAUDE.md (14394 chars)
+2026-10-12 20:41:31 [DEBUG] XTVERSION: no reply (terminal ignored query)
+2026-10-12 20:41:31 [ERROR] MCP server "win-autoui" 服务器 stderr：python: can't open file 'D:\\doge-code\\main.py': [Errno 2] No such file or directory
+2026-10-12 20:41:31 [DEBUG] MCP server "win-autoui": 连接在 346ms 后失败：MCP error -32000: Connection closed
+2026-10-12 20:41:31 [ERROR] MCP server "win-autoui" 连接失败：MCP error -32000: Connection closed
+2026-10-12 20:41:31 [DEBUG] MCP server "filesystem": 开始连接，超时时间为 30000ms
+2026-10-12 20:41:31 [ERROR] MCP server "pywinauto-mcp" 服务器 stderr：Error processing line 1 of D:\Python312\Lib\site-packages\Paste-3.10.1-py3.12-nspkg.pth:
+
+Fatal Python error: init_import_site: Failed to import the site module
+Python runtime state: initialized
+Traceback (most recent call last):
+  File "D:\Python312\lib\site.py", line 206, in addpackage
+    exec(line)
+  File "<string>", line 1, in <module>
+  File "D:\Python312\lib\importlib\machinery.py", line 15, in <module>
+    from ._bootstrap_external import NamespaceLoader
+ImportError: cannot import name 'NamespaceLoader' from 'importlib._bootstrap_external' (D:\Python312\lib\importlib\_bootstrap_external.py)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Python312\lib\site.py", line 636, in <module>
+    main()
+  File "D:\Python312\lib\site.py", line 623, in main
+    known_paths = addsitepackages(known_paths)
+  File "D:\Python312\lib\site.py", line 405, in addsitepackages
+    addsitedir(sitedir, known_paths)
+  File "D:\Python312\lib\site.py", line 247, in addsitedir
+    addpackage(sitedir, name, known_paths)
+  File "D:\Python312\lib\site.py", line 216, in addpackage
+    import traceback
+  File "D:\Python312\lib\traceback.py", line 745
+    f'Ignored error getting __notes__: {_safe_string(e, '__notes__', repr)}']
+                                                         ^^^^^^^^^
+SyntaxError: f-string: unmatched '('
+2026-10-12 20:41:31 [DEBUG] MCP server "pywinauto-mcp": 连接在 327ms 后失败：MCP error -32000: Connection closed
+2026-10-12 20:41:31 [ERROR] MCP server "pywinauto-mcp" 连接失败：MCP error -32000: Connection closed
+2026-10-12 20:41:31 [DEBUG] MCP server "memory": 开始连接，超时时间为 30000ms
+2026-10-12 20:41:31 [DEBUG] [bridge:repl] 本地桥接已连接
+2026-10-12 20:41:32 [DEBUG] [FileIndex] git ls-files (tracked) took 614ms
+2026-10-12 20:41:32 [DEBUG] [FileIndex] git ls-files: 5356 tracked files in 619ms
+2026-10-12 20:41:32 [DEBUG] [FileIndex] 使用 git ls-files 结果（5356 个文件）
+2026-10-12 20:41:32 [DEBUG] [FileIndex] cache refresh completed in 670ms
+2026-10-12 20:41:32 [DEBUG] [FileIndex] background untracked fetch: 133 files
+2026-10-12 20:41:32 [DEBUG] [FileIndex] 重建索引，包含 5356 个已跟踪 + 133 个未跟踪文件
+2026-10-12 20:41:32 [DEBUG] StatusLine [node "C:\Users\Administrator\.doge\status-line.cjs"] 完成，状态 0
+2026-10-12 20:41:34 [DEBUG] npm view failed with code 1
+2026-10-12 20:41:34 [DEBUG] npm stderr: npm error code E404
+npm error 404 Not Found - GET https://registry.npmjs.org/@doge-code%2fcli - Not found
+npm error 404
+npm error 404  The requested resource '@doge-code/cli@latest' could not be found or you do not have permission to access it.
+npm error 404
+npm error 404 Note that you can also install from a
+npm error 404 tarball, folder, http url, or git url.
+npm error A complete log of this run can be found in: C:\Users\Administrator\AppData\Local\npm-cache\_logs\2026-10-12T12_41_32_126Z-debug-0.log
+2026-10-12 20:41:38 [ERROR] MCP server "filesystem" 服务器 stderr：npm notice run @doge-code/cli@999.0.0-DOGE npx
+npm notice run mcp-server-filesystem D:/
+Secure MCP Filesystem Server running on stdio
+2026-10-12 20:41:38 [DEBUG] MCP server "filesystem": 成功连接（传输方式：stdio），耗时 6784ms
+2026-10-12 20:41:38 [DEBUG] MCP server "filesystem": 连接已建立，能力：{"hasTools":true,"hasPrompts":false,"hasResources":false,"hasResourceSubscribe":false,"serverVersion":{"name":"secure-filesystem-server","version":"1.0.0"}}
+2026-10-12 20:41:38 [DEBUG] [MCP] 服务器 "filesystem" 已连接，subscribe=false
+2026-10-12 20:41:38 [DEBUG] MCP server "filesystem": 从服务器接收到 ListRoots 请求
+2026-10-12 20:41:38 [DEBUG] MCP server "filesystem": Channel notifications skipped: 服务器未声明 claude/channel 能力
+2026-10-12 20:41:38 [DEBUG] MCP server "git": 开始连接，超时时间为 30000ms
+2026-10-12 20:41:38 [ERROR] MCP server "playwright" 服务器 stderr：npm notice run @doge-code/cli@999.0.0-DOGE npx
+npm notice run playwright-mcp
+2026-10-12 20:41:38 [DEBUG] MCP server "playwright": 成功连接（传输方式：stdio），耗时 7120ms
+2026-10-12 20:41:38 [DEBUG] MCP server "playwright": 连接已建立，能力：{"hasTools":true,"hasPrompts":false,"hasResources":false,"hasResourceSubscribe":false,"serverVersion":{"name":"Playwright","version":"1.64.0-alpha-1790635538000"}}
+2026-10-12 20:41:38 [DEBUG] [MCP] 服务器 "playwright" 已连接，subscribe=false
+2026-10-12 20:41:38 [DEBUG] MCP server "playwright": Channel notifications skipped: 服务器未声明 claude/channel 能力
+2026-10-12 20:41:38 [ERROR] MCP server "memory" 服务器 stderr：npm notice run @doge-code/cli@999.0.0-DOGE npx
+npm notice run mcp-server-memory
+Knowledge Graph MCP Server running on stdio
+2026-10-12 20:41:38 [DEBUG] MCP server "memory": 成功连接（传输方式：stdio），耗时 6902ms
+2026-10-12 20:41:38 [DEBUG] MCP server "memory": 连接已建立，能力：{"hasTools":true,"hasPrompts":false,"hasResources":true,"hasResourceSubscribe":true,"serverVersion":{"name":"memory-server","version":"1.0.0"}}
+2026-10-12 20:41:38 [DEBUG] [MCP] 服务器 "memory" 已连接，subscribe=true
+2026-10-12 20:41:38 [DEBUG] MCP server "memory": Channel notifications skipped: 服务器未声明 claude/channel 能力
+2026-10-12 20:41:38 [DEBUG] [FileIndex] getProjectFiles called, respectGitignore=true
+2026-10-12 20:41:38 [DEBUG] [FileIndex] getFilesUsingGit called
+2026-10-12 20:41:38 [DEBUG] [DEBUG] loading project dir: D:\doge-code\.claude\skills
+2026-10-12 20:41:38 [DEBUG] Failed to stat directory C:\Users\Administrator\.doge\commands: ENOENT: no such file or directory, stat 'C:\Users\Administrator\.doge\commands'
+2026-10-12 20:41:38 [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\commands) returned 0 files
+2026-10-12 20:41:38 [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\agents: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\agents'
+2026-10-12 20:41:38 [DEBUG] Failed to stat directory C:\Users\Administrator\.doge\agents: ENOENT: no such file or directory, stat 'C:\Users\Administrator\.doge\agents'
+2026-10-12 20:41:38 [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\agents) returned 0 files
+2026-10-12 20:41:38 [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\output-styles: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\output-styles'
+2026-10-12 20:41:38 [DEBUG] Failed to stat directory C:\Users\Administrator\.doge\output-styles: ENOENT: no such file or directory, stat 'C:\Users\Administrator\.doge\output-styles'
+2026-10-12 20:41:38 [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\output-styles) returned 0 files
+2026-10-12 20:41:38 [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\skills: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\skills'
+2026-10-12 20:41:38 [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\workflows: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\workflows'
+2026-10-12 20:41:38 [DEBUG] Failed to stat directory C:\Users\Administrator\.doge\workflows: ENOENT: no such file or directory, stat 'C:\Users\Administrator\.doge\workflows'
+2026-10-12 20:41:38 [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\workflows) returned 0 files
+2026-10-12 20:41:38 [DEBUG] Failed to stat directory C:\Users\Administrator\.doge\templates: ENOENT: no such file or directory, stat 'C:\Users\Administrator\.doge\templates'
+2026-10-12 20:41:38 [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\templates) returned 0 files
+2026-10-12 20:41:38 [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\templates: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\templates'
+2026-10-12 20:41:38 [DEBUG] [DEBUG] loadMarkdownFiles(D:\doge-code\.claude\skills) returned 1 files
+2026-10-12 20:41:38 [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\skills) returned 1 files
+2026-10-12 20:41:38 [DEBUG] [FileIndex] git ls-files (tracked) took 54ms
+2026-10-12 20:41:38 [DEBUG] [FileIndex] git ls-files: 5356 tracked files in 55ms
+2026-10-12 20:41:38 [DEBUG] [FileIndex] 使用 git ls-files 结果（5356 个文件）
+2026-10-12 20:41:38 [DEBUG] [FileIndex] skipped index rebuild — tracked paths unchanged
+2026-10-12 20:41:38 [DEBUG] [FileIndex] cache refresh completed in 68ms
+2026-10-12 20:41:39 [DEBUG] [FileIndex] background untracked fetch: 133 files
+2026-10-12 20:41:39 [DEBUG] [FileIndex] skipped index rebuild — merged paths unchanged
+2026-10-12 20:41:39 [ERROR] MCP server "git" 服务器 stderr：   Building mcp-server-git @ file:///D:/MFC_TESTER/mcp_servers_downloaded/mcp-everything/src/git
+Downloading pyright (5.7MiB)
+  × Failed to build `mcp-server-git @
+  │ file:///D:/MFC_TESTER/mcp_servers_downloaded/mcp-everything/src/git`
+  ├─▶ The build backend returned an error
+  ╰─▶ Call to `hatchling.build.build_editable` failed (exit code: 1)
+
+      [stderr]
+      Traceback (most recent call last):
+        File "<string>", line 8, in <module>
+        File
+      "C:\Users\Administrator\AppData\Local\uv\cache\builds-v0\.tmpZDItUm\Lib\site-packages\hatchling\build.py",
+      line 4, in <module>
+          from typing import Any
+        File "D:\Python312\lib\typing.py", line 2774
+          class SupportsAbs[T](Protocol):
+                           ^
+      SyntaxError: invalid syntax
+
+      hint: This usually indicates a problem with the package or the build
+      environment.
+2026-10-12 20:41:39 [DEBUG] MCP server "git": 连接在 1163ms 后失败：MCP error -32000: Connection closed
+2026-10-12 20:41:39 [ERROR] MCP server "git" 连接失败：MCP error -32000: Connection closed
+2026-10-12 20:42:04 [DEBUG] [readCustomApiStorage] 端点来源=项目预设, activeName=custom-1791383046474, baseURL=http://127.0.0.1:3065/v1/chat/completions, model=hy3
+2026-10-12 20:42:11 [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-10-12 20:42:11 [DEBUG] LSP 诊断: 检查注册表 - 0 条待处理
+2026-10-12 20:42:11 [DEBUG] Hooks: Found 0 total hooks in registry
+2026-10-12 20:42:11 [DEBUG] Sending 8 skills via attachment (dynamic, 8 total sent)
+2026-10-12 20:42:11 [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-10-12 20:42:11 [WARN] [3P telemetry] Event dropped (no event logger initialized): user_prompt
+2026-10-12 20:42:11 [DEBUG] FileHistory: Added snapshot for 323740a3-f6c1-4177-a226-789c8b4d5a60, tracking 0 files
+2026-10-12 20:42:11 [DEBUG] Tool search disabled for model 'claude-haiku-4-5-20251001': model does not support tool_reference blocks. 此功能仅在 Claude Sonnet 4+、Opus 4+ 及更新的模型上可用。
+2026-10-12 20:42:11 [DEBUG] [claude] 工具裁剪: 输入=0, 保留=0, 丢弃=0, 路径=filterToolsForMessage
+2026-10-12 20:42:11 [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\output-styles: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\output-styles'
+2026-10-12 20:42:11 [DEBUG] Failed to stat directory C:\Users\Administrator\.doge\output-styles: ENOENT: no such file or directory, stat 'C:\Users\Administrator\.doge\output-styles'
+2026-10-12 20:42:11 [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\output-styles) returned 0 files
+2026-10-12 20:42:11 [DEBUG] Total plugin output styles loaded: 0
+2026-10-12 20:42:11 [DEBUG] loadMemoryPrompt1
+2026-10-12 20:42:11 [DEBUG] loadMemoryPrompt3
+2026-10-12 20:42:11 [DEBUG] loadMemoryPrompt6
+2026-10-12 20:42:11 [DEBUG] [DEBUG] queryLoop turn turnCount=1
+2026-10-12 20:42:11 [DEBUG] Cached MC gate: enabled=false modelSupported=false model=claude-haiku-4-5-20251001 supportedModels=null
+2026-10-12 20:42:11 [DEBUG] [request] http://127.0.0.1:3065/ (provider=openai)
+2026-10-12 20:42:11 [DEBUG] [request] ANTHROPIC_BASE_URL=http://127.0.0.1:3065/v1/chat/completions
+2026-10-12 20:42:11 [DEBUG] [request] CLAUDE_CODE_COMPATIBLE_API_PROVIDER=openai
+2026-10-12 20:42:11 [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-10-12 20:42:11 [DEBUG] [API:auth] OAuth token check starting
+2026-10-12 20:42:11 [DEBUG] autocompact: tokens=314 threshold=171000 effectiveWindow=190000
+2026-10-12 20:42:11 [DEBUG] [claude] 工具裁剪: 输入=119, 保留=53, 丢弃=66, 路径=filterToolsForMessage, 丢弃列表=[EnterPlanMode, EnterWorktree, ExitWorktree, ListMcpResourcesTool, MultiSearch, NotebookEdit, ReadMcpResourceTool, SendMessage, TaskCreate, TaskGet, TaskList, TaskOutput, TaskStop, TaskUpdate, TeamCreate, TeamDelete, WebSearch, mcp__filesystem__create_directory, mcp__filesystem__directory_tree, mcp__filesystem__edit_file, mcp__filesystem__get_file_info, mcp__filesystem__list_allowed_directories, mcp__filesystem__list_directory, mcp__filesystem__list_directory_with_sizes, mcp__filesystem__move_file, mcp__filesystem__read_file, mcp__filesystem__read_media_file, mcp__filesystem__read_multiple_files, mcp__filesystem__read_text_file, mcp__filesystem__search_files, mcp__filesystem__write_file, mcp__heartflow__authenticate, mcp__memory__add_observations, mcp__memory__create_entities, mcp__memory__create_relations, mcp__memory__delete_entities, mcp__memory__delete_observations, mcp__memory__delete_relations, mcp__memory__open_nodes, mcp__memory__read_graph, mcp__memory__search_nodes, mcp__playwright__browser_click, mcp__playwright__browser_close, mcp__playwright__browser_console_messages, mcp__playwright__browser_drag, mcp__playwright__browser_drop, mcp__playwright__browser_emulate_media, mcp__playwright__browser_evaluate, mcp__playwright__browser_file_upload, mcp__playwright__browser_fill_form, mcp__playwright__browser_find, mcp__playwright__browser_handle_dialog, mcp__playwright__browser_hover, mcp__playwright__browser_navigate, mcp__playwright__browser_navigate_back, mcp__playwright__browser_network_request, mcp__playwright__browser_network_requests, mcp__playwright__browser_press_key, mcp__playwright__browser_resize, mcp__playwright__browser_run_code_unsafe, mcp__playwright__browser_select_option, mcp__playwright__browser_snapshot, mcp__playwright__browser_tabs, mcp__playwright__browser_take_screenshot, mcp__playwright__browser_type, mcp__playwright__browser_wait_for]
+2026-10-12 20:42:11 [DEBUG] Cached MC gate: enabled=false modelSupported=false model=hy3 supportedModels=null
+2026-10-12 20:42:11 [DEBUG] Dynamic tool loading: 0/66 deferred tools included
+2026-10-12 20:42:11 [DEBUG] [request] http://127.0.0.1:3065/ (provider=openai)
+2026-10-12 20:42:11 [DEBUG] [request] ANTHROPIC_BASE_URL=http://127.0.0.1:3065/v1/chat/completions
+2026-10-12 20:42:11 [DEBUG] [request] CLAUDE_CODE_COMPATIBLE_API_PROVIDER=openai
+2026-10-12 20:42:11 [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-10-12 20:42:11 [DEBUG] [API:auth] OAuth token check starting
+2026-10-12 20:42:11 [DEBUG] [API:auth] OAuth token check complete
+2026-10-12 20:42:11 [DEBUG] [DOGE:auth] isSub=true isLocal=true customEndpoint=true hasApiKey=false hasAuthToken=false baseURL=http://127.0.0.1:3065/v1/chat/completions
+2026-10-12 20:42:11 [DEBUG] [API:auth] OAuth token check complete
+2026-10-12 20:42:11 [DEBUG] [DOGE:auth] isSub=true isLocal=true customEndpoint=true hasApiKey=false hasAuthToken=false baseURL=http://127.0.0.1:3065/v1/chat/completions
+2026-10-12 20:42:11 [DEBUG] [openaiCompat] 转换完成: model=hy3, 消息数=2, 工具数=0, 工具列表=[], tool_choice="auto"
+2026-10-12 20:42:11 [DEBUG] [claude] 原始 baseURL: http://127.0.0.1:3065/v1/chat/completions
+2026-10-12 20:42:11 [DEBUG] [openaiCompat] 请求 URL: http://127.0.0.1:3065/v1/chat/completions
+2026-10-12 20:42:11 [DEBUG] [openaiCompat] 请求体摘要: model=hy3, 消息数=2, 工具数=0, 消息(role:长度)=[system:1490, user:29]
+2026-10-12 20:42:11 [DEBUG] [openaiCompat] system prompt 长度=1490
+2026-10-12 20:42:11 [DEBUG] [openaiCompat] 最后一条 user 消息: 长度=29
+2026-10-12 20:42:12 [DEBUG] [openaiCompat] 转换完成: model=hy3, 消息数=3, 工具数=53, 工具列表=[action_sampler, advisor, Agent, agent_development, agent_proxy, AgentIntegration, AskUserQuestion, backup, Bash, branch, cache, compare, context-collapse, cron, database, Edit, effort, event-stream, file-watcher, flow, git, Glob, graphql, Grep, http, less-permission-prompts, llm_router, logger, mcp-tool-search, metrics, monitor, MultiFileEdit, plan-mode, PowerShell, project_scaffolder, python_interpreter, queue, Read, sandbox, schedule, search_replace_edit, shell, Skill, state_machine, terminal-panel, theme, tool_collection, ToolSearch, ultrareview, vim-visual-mode, WebFetch, websocket, Write], tool_choice="auto"
+2026-10-12 20:42:12 [DEBUG] [claude] 原始 baseURL: http://127.0.0.1:3065/v1/chat/completions
+2026-10-12 20:42:12 [DEBUG] [openaiCompat] 请求 URL: http://127.0.0.1:3065/v1/chat/completions
+2026-10-12 20:42:12 [DEBUG] [openaiCompat] 请求体摘要: model=hy3, 消息数=3, 工具数=53, 消息(role:长度)=[system:16191, user:1884, user:1667]
+2026-10-12 20:42:12 [DEBUG] [openaiCompat] 本次请求附加工具: [action_sampler, advisor, Agent, agent_development, agent_proxy, AgentIntegration, AskUserQuestion, backup, Bash, branch, cache, compare, context-collapse, cron, database, Edit, effort, event-stream, file-watcher, flow, git, Glob, graphql, Grep, http, less-permission-prompts, llm_router, logger, mcp-tool-search, metrics, monitor, MultiFileEdit, plan-mode, PowerShell, project_scaffolder, python_interpreter, queue, Read, sandbox, schedule, search_replace_edit, shell, Skill, state_machine, terminal-panel, theme, tool_collection, ToolSearch, ultrareview, vim-visual-mode, WebFetch, websocket, Write]
+2026-10-12 20:42:12 [DEBUG] [openaiCompat] system prompt 长度=16191
+2026-10-12 20:42:12 [DEBUG] [openaiCompat] 最后一条 user 消息: 长度=1667, 含注入块=[<system-reminder>]
+2026-10-12 20:42:12 [DEBUG] Plugin autoupdate: skipped (auto-updater disabled)
+2026-10-12 20:42:12 [DEBUG] [openaiCompat] 请求成功, 状态码=200, 准备读取流
+2026-10-12 20:42:12 [DEBUG] [openaiCompat] chunk 累计=1, 累计字节=324, 本次字节=324, 首块预览: data: {"id":"bc8187b20aa9495c901a506900be5c21","model":"hy3","object":"chat.completion.chunk","created":1791808932,"choices":[{"index":0,"delta":{"role":"assistant","content":"","reasoning_content":"","function_call":null,"refusal":"","tool_calls":[],"extra_fields":null},"logprobs":null,"finish_reason":""}],"usage":null}
+2026-10-12 20:42:12 [DEBUG] [openaiCompat] 累计解析 1 个完整 SSE 事件（本次 +1）
+2026-10-12 20:42:12 [DEBUG] 流已启动 - 收到首个数据块
+2026-10-12 20:42:15 [DEBUG] [openaiCompat] chunk 累计=100, 累计字节=31909, 本次字节=308
+2026-10-12 20:42:15 [DEBUG] [openaiCompat] 请求成功, 状态码=200, 准备读取流
+2026-10-12 20:42:15 [DEBUG] [openaiCompat] chunk 累计=1, 累计字节=324, 本次字节=324, 首块预览: data: {"id":"4aacce647978451ca50ebb2480e8e25e","model":"hy3","object":"chat.completion.chunk","created":1791808933,"choices":[{"index":0,"delta":{"role":"assistant","content":"","reasoning_content":"","function_call":null,"refusal":"","tool_calls":[],"extra_fields":null},"logprobs":null,"finish_reason":""}],"usage":null}
+2026-10-12 20:42:15 [DEBUG] [openaiCompat] 累计解析 1 个完整 SSE 事件（本次 +1）
+2026-10-12 20:42:15 [DEBUG] 流已启动 - 收到首个数据块
+2026-10-12 20:42:17 [DEBUG] [openaiCompat] chunk 累计=200, 累计字节=68047, 本次字节=317
+2026-10-12 20:42:17 [DEBUG] [openaiCompat] 累计解析 225 个完整 SSE 事件（本次 +1）
+2026-10-12 20:42:18 [DEBUG] [openaiCompat] chunk 累计=100, 累计字节=33849, 本次字节=309
+2026-10-12 20:42:18 [DEBUG] [DEBUG] 1 Received assistant message, content length=1
+2026-10-12 20:42:18 [DEBUG] [DEBUG] 1 Content types: ["thinking"]
+2026-10-12 20:42:18 [DEBUG] [DEBUG] 2 Received assistant message, content length=1
+2026-10-12 20:42:18 [DEBUG] [DEBUG]  2 Content types: ["thinking"]
+2026-10-12 20:42:18 [DEBUG] [DEBUG] no tool blocks found in message
+2026-10-12 20:42:18 [DEBUG] [DEBUG] content blocks: ["thinking"]
+2026-10-12 20:42:18 [DEBUG] [DEBUG] tool_calls exists? false
+2026-10-12 20:42:19 [DEBUG] [readCustomApiStorage] 端点来源=项目预设, activeName=custom-1791383046474, baseURL=http://127.0.0.1:3065/v1/chat/completions, model=hy3
+2026-10-12 20:42:19 [DEBUG] [DOGE] Using fallback status-line script: C:\Users\Administrator\.doge\status-line.cjs
+2026-10-12 20:42:20 [DEBUG] [openaiCompat] chunk 累计=300, 累计字节=99908, 本次字节=317
+2026-10-12 20:42:20 [DEBUG] [DEBUG] 1 Received assistant message, content length=1
+2026-10-12 20:42:20 [DEBUG] [DEBUG] 1 Content types: ["text"]
+2026-10-12 20:42:20 [DEBUG] [DEBUG] 2 Received assistant message, content length=1
+2026-10-12 20:42:20 [DEBUG] [DEBUG]  2 Content types: ["text"]
+2026-10-12 20:42:20 [DEBUG] [DEBUG] no tool blocks found in message
+2026-10-12 20:42:20 [DEBUG] [DEBUG] content blocks: ["text"]
+2026-10-12 20:42:20 [DEBUG] [DEBUG] tool_calls exists? false
+2026-10-12 20:42:20 [DEBUG] [DEBUG] before needsFollowUp check, needsFollowUp=false, toolUseBlocks.length=0
+2026-10-12 20:42:20 [DEBUG] [DEBUG] queryLoop turn turnCount=1
+2026-10-12 20:42:20 [DEBUG] autocompact: tokens=604 threshold=171000 effectiveWindow=190000
+2026-10-12 20:42:20 [DEBUG] [claude] 工具裁剪: 输入=119, 保留=53, 丢弃=66, 路径=filterToolsForMessage, 丢弃列表=[EnterPlanMode, EnterWorktree, ExitWorktree, ListMcpResourcesTool, MultiSearch, NotebookEdit, ReadMcpResourceTool, SendMessage, TaskCreate, TaskGet, TaskList, TaskOutput, TaskStop, TaskUpdate, TeamCreate, TeamDelete, WebSearch, mcp__filesystem__create_directory, mcp__filesystem__directory_tree, mcp__filesystem__edit_file, mcp__filesystem__get_file_info, mcp__filesystem__list_allowed_directories, mcp__filesystem__list_directory, mcp__filesystem__list_directory_with_sizes, mcp__filesystem__move_file, mcp__filesystem__read_file, mcp__filesystem__read_media_file, mcp__filesystem__read_multiple_files, mcp__filesystem__read_text_file, mcp__filesystem__search_files, mcp__filesystem__write_file, mcp__heartflow__authenticate, mcp__memory__add_observations, mcp__memory__create_entities, mcp__memory__create_relations, mcp__memory__delete_entities, mcp__memory__delete_observations, mcp__memory__delete_relations, mcp__memory__open_nodes, mcp__memory__read_graph, mcp__memory__search_nodes, mcp__playwright__browser_click, mcp__playwright__browser_close, mcp__playwright__browser_console_messages, mcp__playwright__browser_drag, mcp__playwright__browser_drop, mcp__playwright__browser_emulate_media, mcp__playwright__browser_evaluate, mcp__playwright__browser_file_upload, mcp__playwright__browser_fill_form, mcp__playwright__browser_find, mcp__playwright__browser_handle_dialog, mcp__playwright__browser_hover, mcp__playwright__browser_navigate, mcp__playwright__browser_navigate_back, mcp__playwright__browser_network_request, mcp__playwright__browser_network_requests, mcp__playwright__browser_press_key, mcp__playwright__browser_resize, mcp__playwright__browser_run_code_unsafe, mcp__playwright__browser_select_option, mcp__playwright__browser_snapshot, mcp__playwright__browser_tabs, mcp__playwright__browser_take_screenshot, mcp__playwright__browser_type, mcp__playwright__browser_wait_for]
+2026-10-12 20:42:20 [DEBUG] Cached MC gate: enabled=false modelSupported=false model=hy3 supportedModels=null
+2026-10-12 20:42:20 [DEBUG] Dynamic tool loading: 0/66 deferred tools included
+2026-10-12 20:42:20 [DEBUG] [request] http://127.0.0.1:3065/ (provider=openai)
+2026-10-12 20:42:20 [DEBUG] [request] ANTHROPIC_BASE_URL=http://127.0.0.1:3065/v1/chat/completions
+2026-10-12 20:42:20 [DEBUG] [request] CLAUDE_CODE_COMPATIBLE_API_PROVIDER=openai
+2026-10-12 20:42:20 [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-10-12 20:42:20 [DEBUG] [API:auth] OAuth token check starting
+2026-10-12 20:42:20 [DEBUG] [API:auth] OAuth token check complete
+2026-10-12 20:42:20 [DEBUG] [DOGE:auth] isSub=true isLocal=true customEndpoint=true hasApiKey=false hasAuthToken=false baseURL=http://127.0.0.1:3065/v1/chat/completions
+2026-10-12 20:42:20 [DEBUG] [openaiCompat] 转换完成: model=hy3, 消息数=5, 工具数=53, 工具列表=[action_sampler, advisor, Agent, agent_development, agent_proxy, AgentIntegration, AskUserQuestion, backup, Bash, branch, cache, compare, context-collapse, cron, database, Edit, effort, event-stream, file-watcher, flow, git, Glob, graphql, Grep, http, less-permission-prompts, llm_router, logger, mcp-tool-search, metrics, monitor, MultiFileEdit, plan-mode, PowerShell, project_scaffolder, python_interpreter, queue, Read, sandbox, schedule, search_replace_edit, shell, Skill, state_machine, terminal-panel, theme, tool_collection, ToolSearch, ultrareview, vim-visual-mode, WebFetch, websocket, Write], tool_choice="auto"
+2026-10-12 20:42:20 [DEBUG] [claude] 原始 baseURL: http://127.0.0.1:3065/v1/chat/completions
+2026-10-12 20:42:20 [DEBUG] [openaiCompat] 请求 URL: http://127.0.0.1:3065/v1/chat/completions
+2026-10-12 20:42:20 [DEBUG] [openaiCompat] 请求体摘要: model=hy3, 消息数=5, 工具数=53, 消息(role:长度)=[system:16191, user:1884, user:1667, assistant:250, user:457]
+2026-10-12 20:42:20 [DEBUG] [openaiCompat] 本次请求附加工具: [action_sampler, advisor, Agent, agent_development, agent_proxy, AgentIntegration, AskUserQuestion, backup, Bash, branch, cache, compare, context-collapse, cron, database, Edit, effort, event-stream, file-watcher, flow, git, Glob, graphql, Grep, http, less-permission-prompts, llm_router, logger, mcp-tool-search, metrics, monitor, MultiFileEdit, plan-mode, PowerShell, project_scaffolder, python_interpreter, queue, Read, sandbox, schedule, search_replace_edit, shell, Skill, state_machine, terminal-panel, theme, tool_collection, ToolSearch, ultrareview, vim-visual-mode, WebFetch, websocket, Write]
+2026-10-12 20:42:20 [DEBUG] [openaiCompat] system prompt 长度=16191
+2026-10-12 20:42:20 [DEBUG] [openaiCompat] 最后一条 user 消息: 长度=457
+2026-10-12 20:42:20 [DEBUG] Preserving file permissions: 100666
+2026-10-12 20:42:20 [DEBUG] Writing to temp file: C:\Users\Administrator\.doge\.claude.json.tmp.75628.1791808940684
+2026-10-12 20:42:20 [DEBUG] Temp file written successfully, size: 49645 bytes
+2026-10-12 20:42:20 [DEBUG] Applied original permissions to temp file
+2026-10-12 20:42:20 [DEBUG] Renaming C:\Users\Administrator\.doge\.claude.json.tmp.75628.1791808940684 to C:\Users\Administrator\.doge\.claude.json
+2026-10-12 20:42:20 [DEBUG] File C:\Users\Administrator\.doge\.claude.json written atomically
+2026-10-12 20:42:21 [DEBUG] [DOGE] Using fallback status-line script: C:\Users\Administrator\.doge\status-line.cjs

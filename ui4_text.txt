@@ -1,0 +1,30 @@
+   58  已连接
+  168  当前配置  地址 wss://aid-plane-aware-designer.trycloudflare.com/mobile/ws · 密钥 无
+  303  工作模式
+  379  互联网连本机（隧道）
+  447  通过互联网连回本机会话（局域网的加强版）：手机在户外、用数据流量也能连上自己电脑。能力同局域网模式完整（能跑命令、改文件）。需在电脑端运行 start-mobile-bridge.mjs --tunnel 获取 wss:// 地址填入。
+  616  云端（直连 API）
+  616  互联网连本机（隧道）
+  616  局域网（连电脑）
+  876  连接
+  946  wss://aid-plane-aware-designer.trycloudflare.com/mobile/ws
+ 1070  密钥（与 CLAUDE_CODE_MOBILE_SECRET 一致，可留空）
+ 1194  记住密钥（取消则每次连接需重新输入）
+ 1314  地址历史
+ 1314  连接
+ 1512  远程设置
+ 1624  —
+ 1624  模型
+ 1764  —
+ 1764  思考强度
+ 1904  —
+ 1904  权限模式
+ 2044  wss://aid-plane-aware-designer.trycloudflare.com/mobile/ws
+ 2044  地址
+ 2184  密钥
+ 2184  无
+ 2312  逐条授权规则
+ 2510  外观
+ 2550  会话
+ 2550  对话
+ 2550  设置

@@ -1,0 +1,271 @@
+2026-10-09 20:11:54 [INFO] [bootstrap] doge 启动完成，log-file=./--syntax-check-only.txt
+2026-10-09 20:11:55 [DEBUG] [readCustomApiStorage] 端点来源=环境变量兜底, activeName=无, baseURL=http://0.0.0.0:1, model=claude-dummy
+2026-10-09 20:11:55 [DEBUG] [MobileBridgeServer] 端口 5680 不可用（EADDRINUSE），尝试下一个
+2026-10-09 20:11:55 [DEBUG] MDM settings load completed in 3ms
+2026-10-09 20:11:55 [DEBUG] Broken symlink or missing file encountered for settings.json at path: C:\Program Files\ClaudeCode\managed-settings.json
+2026-10-09 20:11:55 [DEBUG] Broken symlink or missing file encountered for settings.json at path: D:\doge-code\.claude\settings.json
+2026-10-09 20:11:55 [DEBUG] [sentry] SENTRY_DSN not set, skipping initialization
+2026-10-09 20:11:55 [DEBUG] CA certs: useSystemCA=false, extraCertsPath=D:\cert-final.pem, certStore=undefined
+2026-10-09 20:11:55 [DEBUG] CA certs: Loaded 144 bundled root certificates as base
+2026-10-09 20:11:55 [DEBUG] CA certs: Appended extra certificates from NODE_EXTRA_CA_CERTS (D:\cert-final.pem)
+2026-10-09 20:11:55 [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-10-09 20:11:55 [DEBUG] [MobileBridgeServer] 端口 5681 不可用（EADDRINUSE），尝试下一个
+2026-10-09 20:11:55 [DEBUG] Using bash path: "C:\Program Files\Git\bin\bash.exe"
+2026-10-09 20:11:55 [DEBUG] [TRACE] preAction after init()
+2026-10-09 20:11:55 [DEBUG] Git remote URL: null
+2026-10-09 20:11:55 [DEBUG] No git remote URL found
+2026-10-09 20:11:55 [DEBUG] [MobileBridgeServer] 端口 5682 不可用（EADDRINUSE），尝试下一个
+2026-10-09 20:11:55 [DEBUG] Error log sink initialized
+2026-10-09 20:11:55 [DEBUG] Applying permission update: Adding 1 allow rule(s) to destination 'localSettings': ["Bash(rg -n \"role: ''''user''''|role:\"\"user\"\"|''''user''''\" src/bridge/mobileBridge.ts)"]
+2026-10-09 20:11:55 [DEBUG] [TRACE] AFTER initializeToolPermissionContext
+2026-10-09 20:11:58 [DEBUG] [MobileBridgeServer] 端口 5683 不可用（EADDRINUSE），尝试下一个
+2026-10-09 20:11:58 [DEBUG] [MobileBridgeServer] 端口 5684 不可用（EADDRINUSE），尝试下一个
+2026-10-09 20:11:58 [DEBUG] [MobileBridgeServer] 端口 5685 不可用（EADDRINUSE），尝试下一个
+2026-10-09 20:11:58 [DEBUG] [MobileBridgeServer] 端口 5686 不可用（EADDRINUSE），尝试下一个
+2026-10-09 20:11:58 [DEBUG] [MobileBridgeServer] 端口 5687 不可用（EADDRINUSE），尝试下一个
+2026-10-09 20:11:58 [DEBUG] [MobileBridgeServer] 端口 5688 不可用（EADDRINUSE），尝试下一个
+2026-10-09 20:11:58 [DEBUG] [MobileBridgeServer] 端口 5689 不可用（EADDRINUSE），尝试下一个
+2026-10-09 20:11:58 [ERROR] [MobileBridgeServer] 移动桥接启动失败：端口段 5680-5689 共 10 个端口全部被占用。
+常见原因：开了多个 doge 窗口（每个实例占一个端口）。
+可执行：netstat -ano | findstr ":5680" 查看占用进程；或用 CLAUDE_CODE_MOBILE_PORT 指定其他起始端口。
+2026-10-09 20:12:01 [DEBUG] Loading skills from: managed=C:\Program Files\ClaudeCode\.claude\skills, user=C:\Users\Administrator\.doge\skills, project=[]
+2026-10-09 20:12:01 [DEBUG] [bare] Skipping skill dir discovery (no --add-dir)
+2026-10-09 20:12:01 [DEBUG] Error log sink initialized
+2026-10-09 20:12:01 [DEBUG] getSkills 返回：0 个技能目录命令，0 个插件技能，29 个内置技能，0 个内置插件技能
+2026-10-09 20:12:01 [DEBUG] === [DEBUG] plan 开头的技能:
+2026-10-09 20:12:01 [DEBUG] [Claude in Chrome] Found chrome profiles: Default
+2026-10-09 20:12:01 [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\agents: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\agents'
+2026-10-09 20:12:01 [DEBUG] Failed to stat directory C:\Users\Administrator\.doge\agents: ENOENT: no such file or directory, stat 'C:\Users\Administrator\.doge\agents'
+2026-10-09 20:12:01 [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\agents) returned 0 files
+2026-10-09 20:12:01 [DEBUG] Loaded 0 installed plugins from C:\Users\Administrator\.doge\plugins\installed_plugins.json
+2026-10-09 20:12:01 [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2026-10-09 20:12:01 [DEBUG] Total plugin agents loaded: 0
+2026-10-09 20:12:01 [DEBUG] Preserving file permissions: 100666
+2026-10-09 20:12:01 [DEBUG] Writing to temp file: C:\Users\Administrator\.doge\.claude.json.tmp.63148.1791547921635
+2026-10-09 20:12:01 [DEBUG] Temp file written successfully, size: 46692 bytes
+2026-10-09 20:12:01 [DEBUG] Applied original permissions to temp file
+2026-10-09 20:12:01 [DEBUG] Renaming C:\Users\Administrator\.doge\.claude.json.tmp.63148.1791547921635 to C:\Users\Administrator\.doge\.claude.json
+2026-10-09 20:12:01 [DEBUG] File C:\Users\Administrator\.doge\.claude.json written atomically
+2026-10-09 20:12:01 [DEBUG] [Reconnection] computeInitialTeamContext: No teammate context set (not a teammate)
+2026-10-09 20:12:01 [DEBUG] Preserving file permissions: 100666
+2026-10-09 20:12:01 [DEBUG] Writing to temp file: C:\Users\Administrator\.doge\.claude.json.tmp.63148.1791547921645
+2026-10-09 20:12:01 [DEBUG] Temp file written successfully, size: 46692 bytes
+2026-10-09 20:12:01 [DEBUG] Applied original permissions to temp file
+2026-10-09 20:12:01 [DEBUG] Renaming C:\Users\Administrator\.doge\.claude.json.tmp.63148.1791547921645 to C:\Users\Administrator\.doge\.claude.json
+2026-10-09 20:12:01 [DEBUG] File C:\Users\Administrator\.doge\.claude.json written atomically
+2026-10-09 20:12:01 [DEBUG] [Claude in Chrome] Found edge profiles: Default
+2026-10-09 20:12:01 [DEBUG] [Claude in Chrome] Found opera profiles: Default
+2026-10-09 20:12:01 [DEBUG] [Claude in Chrome] Extension not found in any browser
+2026-10-09 20:12:02 [DEBUG] [keybindings] KeybindingSetup initialized with 143 bindings, 0 warnings
+2026-10-09 20:12:02 [DEBUG] [TeammateModeSnapshot] Captured from config: auto
+2026-10-09 20:12:02 [WARN] setRawMode(true) 失败，降级为只读渲染: setRawMode failed because it was called on something that is not a TTY
+2026-10-09 20:12:02 [WARN] setRawMode(true) 失败，降级为只读渲染: setRawMode failed because it was called on something that is not a TTY
+2026-10-09 20:12:02 [WARN] setRawMode(true) 失败，降级为只读渲染: setRawMode failed because it was called on something that is not a TTY
+2026-10-09 20:12:02 [WARN] setRawMode(true) 失败，降级为只读渲染: setRawMode failed because it was called on something that is not a TTY
+2026-10-09 20:12:02 [WARN] setRawMode(true) 失败，降级为只读渲染: setRawMode failed because it was called on something that is not a TTY
+2026-10-09 20:12:02 [WARN] setRawMode(true) 失败，降级为只读渲染: setRawMode failed because it was called on something that is not a TTY
+2026-10-09 20:12:02 [WARN] setRawMode(true) 失败，降级为只读渲染: setRawMode failed because it was called on something that is not a TTY
+2026-10-09 20:12:02 [WARN] setRawMode(true) 失败，降级为只读渲染: setRawMode failed because it was called on something that is not a TTY
+2026-10-09 20:12:02 [WARN] setRawMode(true) 失败，降级为只读渲染: setRawMode failed because it was called on something that is not a TTY
+2026-10-09 20:12:02 [WARN] setRawMode(true) 失败，降级为只读渲染: setRawMode failed because it was called on something that is not a TTY
+2026-10-09 20:12:02 [WARN] setRawMode(true) 失败，降级为只读渲染: setRawMode failed because it was called on something that is not a TTY
+2026-10-09 20:12:02 [WARN] setRawMode(true) 失败，降级为只读渲染: setRawMode failed because it was called on something that is not a TTY
+2026-10-09 20:12:02 [WARN] setRawMode(true) 失败，降级为只读渲染: setRawMode failed because it was called on something that is not a TTY
+2026-10-09 20:12:02 [WARN] setRawMode(true) 失败，降级为只读渲染: setRawMode failed because it was called on something that is not a TTY
+2026-10-09 20:12:02 [WARN] setRawMode(true) 失败，降级为只读渲染: setRawMode failed because it was called on something that is not a TTY
+2026-10-09 20:12:02 [WARN] setRawMode(true) 失败，降级为只读渲染: setRawMode failed because it was called on something that is not a TTY
+2026-10-09 20:12:02 [WARN] setRawMode(true) 失败，降级为只读渲染: setRawMode failed because it was called on something that is not a TTY
+2026-10-09 20:12:02 [WARN] setRawMode(true) 失败，降级为只读渲染: setRawMode failed because it was called on something that is not a TTY
+2026-10-09 20:12:02 [WARN] setRawMode(true) 失败，降级为只读渲染: setRawMode failed because it was called on something that is not a TTY
+2026-10-09 20:12:02 [WARN] setRawMode(true) 失败，降级为只读渲染: setRawMode failed because it was called on something that is not a TTY
+2026-10-09 20:12:02 [DEBUG] [DOGE] Using fallback status-line script: C:\Users\Administrator\.doge\status-line.cjs
+2026-10-09 20:12:02 [DEBUG] [FileIndex] getProjectFiles called, respectGitignore=true
+2026-10-09 20:12:02 [DEBUG] [FileIndex] getFilesUsingGit called
+2026-10-09 20:12:02 [DEBUG] mcpLocked=false
+2026-10-09 20:12:02 [DEBUG] userServers=0
+2026-10-09 20:12:02 [DEBUG] projectServers=7
+2026-10-09 20:12:02 [DEBUG] localServers=0
+2026-10-09 20:12:02 [DEBUG] [claudeai-mcp] No access token
+2026-10-09 20:12:02 [DEBUG] mcpLocked=false
+2026-10-09 20:12:02 [DEBUG] userServers=0
+2026-10-09 20:12:02 [DEBUG] projectServers=7
+2026-10-09 20:12:02 [DEBUG] localServers=0
+2026-10-09 20:12:02 [DEBUG] [keybindings] Skipping file watcher - user customization disabled
+2026-10-09 20:12:02 [DEBUG] [REPL:挂载] REPL 已挂载, disabled=false
+2026-10-09 20:12:02 [DEBUG] Preserving file permissions: 100666
+2026-10-09 20:12:02 [DEBUG] Writing to temp file: C:\Users\Administrator\.doge\.claude.json.tmp.63148.1791547922123
+2026-10-09 20:12:02 [DEBUG] Temp file written successfully, size: 46663 bytes
+2026-10-09 20:12:02 [DEBUG] Applied original permissions to temp file
+2026-10-09 20:12:02 [DEBUG] Renaming C:\Users\Administrator\.doge\.claude.json.tmp.63148.1791547922123 to C:\Users\Administrator\.doge\.claude.json
+2026-10-09 20:12:02 [DEBUG] File C:\Users\Administrator\.doge\.claude.json written atomically
+2026-10-09 20:12:02 [DEBUG] performStartupChecks called
+2026-10-09 20:12:02 [DEBUG] Starting background plugin installations
+2026-10-09 20:12:02 [DEBUG] [ScheduledTasks] scheduler start() — enabled=false, hasTasks=false
+2026-10-09 20:12:02 [DEBUG] AutoUpdaterWrapper: Installation type: development
+2026-10-09 20:12:02 [DEBUG] Official marketplace auto-install skipped: already_attempted
+2026-10-09 20:12:02 [DEBUG] performBackgroundPluginInstallations called
+2026-10-09 20:12:02 [DEBUG] [auto-mode] verifyAutoModeGateAccess: enabledState=disabled disabledBySettings=false model=claude-dummy modelSupported=false disableFastModeBreakerFires=false carouselAvailable=false canEnterAuto=false
+2026-10-09 20:12:02 [WARN] auto mode disabled: tengu_auto_mode_config.enabled === "disabled" (circuit breaker)
+2026-10-09 20:12:02 [DEBUG] MCP server "win-autoui": 开始连接，超时时间为 100ms
+2026-10-09 20:12:02 [DEBUG] MCP server "pywinauto-mcp": 开始连接，超时时间为 100ms
+2026-10-09 20:12:02 [DEBUG] MCP server "playwright": 开始连接，超时时间为 100ms
+2026-10-09 20:12:02 [DEBUG] [auto-mode] kickOutOfAutoIfNeeded applying: ctx.mode=bypassPermissions ctx.prePlanMode=undefined reason=circuit-breaker
+2026-10-09 20:12:02 [DEBUG] Failed to stat directory C:\Users\Administrator\.doge\commands: ENOENT: no such file or directory, stat 'C:\Users\Administrator\.doge\commands'
+2026-10-09 20:12:02 [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\commands) returned 0 files
+2026-10-09 20:12:02 [DEBUG] Failed to stat directory C:\Users\Administrator\.doge\agents: ENOENT: no such file or directory, stat 'C:\Users\Administrator\.doge\agents'
+2026-10-09 20:12:02 [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\agents) returned 0 files
+2026-10-09 20:12:02 [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\agents: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\agents'
+2026-10-09 20:12:02 [DEBUG] Failed to stat directory C:\Users\Administrator\.doge\output-styles: ENOENT: no such file or directory, stat 'C:\Users\Administrator\.doge\output-styles'
+2026-10-09 20:12:02 [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\output-styles) returned 0 files
+2026-10-09 20:12:02 [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\output-styles: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\output-styles'
+2026-10-09 20:12:02 [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\skills: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\skills'
+2026-10-09 20:12:02 [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\workflows: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\workflows'
+2026-10-09 20:12:02 [DEBUG] Failed to stat directory C:\Users\Administrator\.doge\workflows: ENOENT: no such file or directory, stat 'C:\Users\Administrator\.doge\workflows'
+2026-10-09 20:12:02 [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\workflows) returned 0 files
+2026-10-09 20:12:02 [DEBUG] Failed to stat directory C:\Program Files\ClaudeCode\.claude\templates: ENOENT: no such file or directory, stat 'C:\Program Files\ClaudeCode\.claude\templates'
+2026-10-09 20:12:02 [DEBUG] Failed to stat directory C:\Users\Administrator\.doge\templates: ENOENT: no such file or directory, stat 'C:\Users\Administrator\.doge\templates'
+2026-10-09 20:12:02 [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\templates) returned 0 files
+2026-10-09 20:12:02 [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2026-10-09 20:12:02 [DEBUG] MCP server "heartflow": Executing headersHelper to get dynamic headers
+2026-10-09 20:12:02 [DEBUG] Registered 0 hooks from 0 plugins
+2026-10-09 20:12:02 [DEBUG] Loaded plugins - Enabled: 0, Disabled: 0, Commands: 0, Agents: 0, Errors: 0
+2026-10-09 20:12:02 [DEBUG] [DEBUG] loadMarkdownFiles(C:\Users\Administrator\.doge\skills) returned 1 files
+2026-10-09 20:12:02 [ERROR] MCP server "win-autoui" 服务器 stderr：python: can't open file 'D:\\doge-code\\main.py': [Errno 2] No such file or directory
+2026-10-09 20:12:02 [DEBUG] MCP server "win-autoui": 连接在 170ms 后失败：MCP error -32000: Connection closed
+2026-10-09 20:12:02 [ERROR] MCP server "win-autoui" 连接失败：MCP error -32000: Connection closed
+2026-10-09 20:12:02 [DEBUG] MCP server "filesystem": 开始连接，超时时间为 100ms
+2026-10-09 20:12:02 [DEBUG] Loaded 1 CLAUDE.md/rules files:
+  [Project] D:\doge-code\CLAUDE.md (14394 chars)
+2026-10-09 20:12:02 [DEBUG] [bridge:repl] 本地桥接已连接
+2026-10-09 20:12:02 [DEBUG] MCP server "heartflow": Successfully retrieved 1 headers from headersHelper
+2026-10-09 20:12:02 [DEBUG] MCP server "heartflow": SSE 传输已初始化，等待连接
+2026-10-09 20:12:02 [DEBUG] MCP server "heartflow": 开始连接，超时时间为 100ms
+2026-10-09 20:12:02 [DEBUG] MCP server "heartflow": No token data found
+2026-10-09 20:12:02 [DEBUG] MCP server "pywinauto-mcp": 连接超时在 198ms 后触发（限制：100ms）
+2026-10-09 20:12:02 [DEBUG] MCP server "pywinauto-mcp": 连接在 199ms 后失败：MCP 服务器 "pywinauto-mcp" 连接超时，经过 100ms
+2026-10-09 20:12:02 [ERROR] MCP server "pywinauto-mcp" 连接失败：MCP 服务器 "pywinauto-mcp" 连接超时，经过 100ms
+2026-10-09 20:12:02 [DEBUG] MCP server "memory": 开始连接，超时时间为 100ms
+2026-10-09 20:12:02 [DEBUG] MCP server "playwright": 连接超时在 211ms 后触发（限制：100ms）
+2026-10-09 20:12:02 [DEBUG] MCP server "playwright": 连接在 211ms 后失败：MCP 服务器 "playwright" 连接超时，经过 100ms
+2026-10-09 20:12:02 [ERROR] MCP server "playwright" 连接失败：MCP 服务器 "playwright" 连接超时，经过 100ms
+2026-10-09 20:12:02 [DEBUG] MCP server "git": 开始连接，超时时间为 100ms
+2026-10-09 20:12:02 [DEBUG] MCP server "heartflow": No token data found
+2026-10-09 20:12:02 [DEBUG] MCP server "heartflow": SSE 连接在 201ms 后失败：{"url":"http://127.0.0.1:8099/mcp","error":"SSE error: Unable to connect. Is the computer able to access the url?","errorType":"SseError","stack":"Error: SSE error: Unable to connect. Is the computer able to access the url?\n    at <anonymous> (D:\\doge-code\\node_modules\\@modelcontextprotocol\\sdk\\dist\\esm\\client\\sse.js:93:35)\n    at scheduleReconnect_fn (D:\\doge-code\\node_modules\\eventsource\\dist\\index.js:248:53)\n    at <anonymous> (D:\\doge-code\\node_modules\\eventsource\\dist\\index.js:98:174)\n    at processTicksAndRejections (native:7:39)"}
+2026-10-09 20:12:02 [ERROR] MCP server "heartflow" Error: SSE error: Unable to connect. Is the computer able to access the url?
+2026-10-09 20:12:02 [DEBUG] MCP server "heartflow": 连接在 202ms 后失败：SSE error: Unable to connect. Is the computer able to access the url?
+2026-10-09 20:12:02 [ERROR] MCP server "heartflow" 连接失败：SSE error: Unable to connect. Is the computer able to access the url?
+2026-10-09 20:12:02 [DEBUG] [FileIndex] git ls-files (tracked) took 371ms
+2026-10-09 20:12:02 [DEBUG] MCP server "filesystem": 连接超时在 128ms 后触发（限制：100ms）
+2026-10-09 20:12:02 [DEBUG] MCP server "filesystem": 连接在 128ms 后失败：MCP 服务器 "filesystem" 连接超时，经过 100ms
+2026-10-09 20:12:02 [ERROR] MCP server "filesystem" 连接失败：MCP 服务器 "filesystem" 连接超时，经过 100ms
+2026-10-09 20:12:02 [DEBUG] [FileIndex] git ls-files: 5162 tracked files in 378ms
+2026-10-09 20:12:02 [DEBUG] [FileIndex] 使用 git ls-files 结果（5162 个文件）
+2026-10-09 20:12:02 [DEBUG] [FileIndex] cache refresh completed in 429ms
+2026-10-09 20:12:02 [DEBUG] MCP server "memory": 连接超时在 136ms 后触发（限制：100ms）
+2026-10-09 20:12:02 [DEBUG] MCP server "memory": 连接在 137ms 后失败：MCP 服务器 "memory" 连接超时，经过 100ms
+2026-10-09 20:12:02 [ERROR] MCP server "memory" 连接失败：MCP 服务器 "memory" 连接超时，经过 100ms
+2026-10-09 20:12:02 [DEBUG] MCP server "git": 连接超时在 122ms 后触发（限制：100ms）
+2026-10-09 20:12:02 [DEBUG] MCP server "git": 连接在 122ms 后失败：MCP 服务器 "git" 连接超时，经过 100ms
+2026-10-09 20:12:02 [ERROR] MCP server "git" 连接失败：MCP 服务器 "git" 连接超时，经过 100ms
+2026-10-09 20:12:02 [DEBUG] [FileIndex] background untracked fetch: 235 files
+2026-10-09 20:12:02 [DEBUG] [FileIndex] 重建索引，包含 5162 个已跟踪 + 235 个未跟踪文件
+2026-10-09 20:12:02 [DEBUG] StatusLine [node "C:\Users\Administrator\.doge\status-line.cjs"] 完成，状态 0
+2026-10-09 20:12:05 [DEBUG] npm view failed with code 1
+2026-10-09 20:12:05 [DEBUG] npm stderr: npm error code E404
+npm error 404 Not Found - GET https://registry.npmjs.org/@doge-code%2fcli - Not found
+npm error 404
+npm error 404  The requested resource '@doge-code/cli@latest' could not be found or you do not have permission to access it.
+npm error 404
+npm error 404 Note that you can also install from a
+npm error 404 tarball, folder, http url, or git url.
+npm error A complete log of this run can be found in: C:\Users\Administrator\AppData\Local\npm-cache\_logs\2026-10-09T12_12_02_515Z-debug-0.log
+2026-10-09 20:42:05 [DEBUG] npm view failed with code 1
+2026-10-09 20:42:05 [DEBUG] npm stderr: npm error code E404
+npm error 404 Not Found - GET https://registry.npmjs.org/@doge-code%2fcli - Not found
+npm error 404
+npm error 404  The requested resource '@doge-code/cli@latest' could not be found or you do not have permission to access it.
+npm error 404
+npm error 404 Note that you can also install from a
+npm error 404 tarball, folder, http url, or git url.
+npm error A complete log of this run can be found in: C:\Users\Administrator\AppData\Local\npm-cache\_logs\2026-10-09T12_42_02_476Z-debug-0.log
+2026-10-09 21:12:05 [DEBUG] npm view failed with code 1
+2026-10-09 21:12:05 [DEBUG] npm stderr: npm error code E404
+npm error 404 Not Found - GET https://registry.npmjs.org/@doge-code%2fcli - Not found
+npm error 404
+npm error 404  The requested resource '@doge-code/cli@latest' could not be found or you do not have permission to access it.
+npm error 404
+npm error 404 Note that you can also install from a
+npm error 404 tarball, folder, http url, or git url.
+npm error A complete log of this run can be found in: C:\Users\Administrator\AppData\Local\npm-cache\_logs\2026-10-09T13_12_02_455Z-debug-0.log
+2026-10-09 21:42:05 [DEBUG] npm view failed with code 1
+2026-10-09 21:42:05 [DEBUG] npm stderr: npm error code E404
+npm error 404 Not Found - GET https://registry.npmjs.org/@doge-code%2fcli - Not found
+npm error 404
+npm error 404  The requested resource '@doge-code/cli@latest' could not be found or you do not have permission to access it.
+npm error 404
+npm error 404 Note that you can also install from a
+npm error 404 tarball, folder, http url, or git url.
+npm error A complete log of this run can be found in: C:\Users\Administrator\AppData\Local\npm-cache\_logs\2026-10-09T13_42_02_501Z-debug-0.log
+2026-10-09 22:12:06 [DEBUG] npm view failed with code 1
+2026-10-09 22:12:06 [DEBUG] npm stderr: npm error code E404
+npm error 404 Not Found - GET https://registry.npmjs.org/@doge-code%2fcli - Not found
+npm error 404
+npm error 404  The requested resource '@doge-code/cli@latest' could not be found or you do not have permission to access it.
+npm error 404
+npm error 404 Note that you can also install from a
+npm error 404 tarball, folder, http url, or git url.
+npm error A complete log of this run can be found in: C:\Users\Administrator\AppData\Local\npm-cache\_logs\2026-10-09T14_12_02_494Z-debug-0.log
+2026-10-09 22:42:05 [DEBUG] npm view failed with code 1
+2026-10-09 22:42:05 [DEBUG] npm stderr: npm error code E404
+npm error 404 Not Found - GET https://registry.npmjs.org/@doge-code%2fcli - Not found
+npm error 404
+npm error 404  The requested resource '@doge-code/cli@latest' could not be found or you do not have permission to access it.
+npm error 404
+npm error 404 Note that you can also install from a
+npm error 404 tarball, folder, http url, or git url.
+npm error A complete log of this run can be found in: C:\Users\Administrator\AppData\Local\npm-cache\_logs\2026-10-09T14_42_02_496Z-debug-0.log
+2026-10-09 23:12:05 [DEBUG] npm view failed with code 1
+2026-10-09 23:12:05 [DEBUG] npm stderr: npm error code E404
+npm error 404 Not Found - GET https://registry.npmjs.org/@doge-code%2fcli - Not found
+npm error 404
+npm error 404  The requested resource '@doge-code/cli@latest' could not be found or you do not have permission to access it.
+npm error 404
+npm error 404 Note that you can also install from a
+npm error 404 tarball, folder, http url, or git url.
+npm error A complete log of this run can be found in: C:\Users\Administrator\AppData\Local\npm-cache\_logs\2026-10-09T15_12_02_485Z-debug-0.log
+2026-10-09 23:42:07 [DEBUG] npm view failed with code 1
+2026-10-09 23:42:07 [DEBUG] npm stderr: npm error code E404
+npm error 404 Not Found - GET https://registry.npmjs.org/@doge-code%2fcli - Not found
+npm error 404
+npm error 404  The requested resource '@doge-code/cli@latest' could not be found or you do not have permission to access it.
+npm error 404
+npm error 404 Note that you can also install from a
+npm error 404 tarball, folder, http url, or git url.
+npm error A complete log of this run can be found in: C:\Users\Administrator\AppData\Local\npm-cache\_logs\2026-10-09T15_42_02_487Z-debug-0.log
+2026-10-10 00:12:05 [DEBUG] npm view failed with code 1
+2026-10-10 00:12:05 [DEBUG] npm stderr: npm error code E404
+npm error 404 Not Found - GET https://registry.npmjs.org/@doge-code%2fcli - Not found
+npm error 404
+npm error 404  The requested resource '@doge-code/cli@latest' could not be found or you do not have permission to access it.
+npm error 404
+npm error 404 Note that you can also install from a
+npm error 404 tarball, folder, http url, or git url.
+npm error A complete log of this run can be found in: C:\Users\Administrator\AppData\Local\npm-cache\_logs\2026-10-09T16_12_02_499Z-debug-0.log
+2026-10-10 00:42:13 [DEBUG] npm view failed with code 1
+2026-10-10 00:42:13 [DEBUG] npm stderr: npm error code E404
+npm error 404 Not Found - GET https://registry.npmjs.org/@doge-code%2fcli - Not found
+npm error 404
+npm error 404  The requested resource '@doge-code/cli@latest' could not be found or you do not have permission to access it.
+npm error 404
+npm error 404 Note that you can also install from a
+npm error 404 tarball, folder, http url, or git url.
+npm error A complete log of this run can be found in: C:\Users\Administrator\AppData\Local\npm-cache\_logs\2026-10-09T16_42_05_796Z-debug-0.log
+2026-10-10 01:12:08 [DEBUG] npm view failed with code 1
+2026-10-10 01:12:08 [DEBUG] npm stderr: npm error code E404
+npm error 404 Not Found - GET https://registry.npmjs.org/@doge-code%2fcli - Not found
+npm error 404
+npm error 404  The requested resource '@doge-code/cli@latest' could not be found or you do not have permission to access it.
+npm error 404
+npm error 404 Note that you can also install from a
+npm error 404 tarball, folder, http url, or git url.
+npm error A complete log of this run can be found in: C:\Users\Administrator\AppData\Local\npm-cache\_logs\2026-10-09T17_12_03_372Z-debug-0.log
