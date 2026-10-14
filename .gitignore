@@ -78,7 +78,10 @@ search_*.py
 clean_json_*.txt
 .claude/_cmd.cjs
 .claude/_curs.cjs
-
+REVIEW-REPORT.md
+.mcp.json.bak--H
+.tmp_fixjvm.cjs
+.github/
 # 误创建的空文件（无引用、0 字节）
 /d
 
