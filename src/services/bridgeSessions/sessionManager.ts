@@ -23,6 +23,7 @@ export interface SessionEntry {
     sshPort?: number
     sshUser?: string
     tunnelPort?: number
+    tunnelPid?: number
     sshKeyPath?: string
     reconnectCount: number
     lastDisconnect?: number
@@ -54,7 +55,9 @@ export interface PaneEntry {
   createdAt: number
 }
 
-const SESSIONS_DIR = join(homedir(), '.doge-code', 'bridge-sessions')
+const SESSIONS_DIR =
+  process.env.DOGE_BRIDGE_SESSIONS_DIR ||
+  join(homedir(), '.doge-code', 'bridge-sessions')
 
 let sessionCounter = 0
 const sessions = new Map<string, SessionEntry>()
@@ -185,7 +188,12 @@ export function createSession(workingDir: string, name?: string, backend: Termin
 
   sessions.set(id, entry)
   activeSessionId = id
-  saveSession(entry)
+  // 落盘失败不应成为 unhandled rejection（避免进程级告警/退出）
+  saveSession(entry).catch(err => {
+    console.error(
+      `Failed to save session ${id}: ${err instanceof Error ? err.message : String(err)}`,
+    )
+  })
 
   if (backend !== 'local') {
     createBackendSession(entry).catch(err => {
@@ -292,6 +300,36 @@ async function killBackendSession(session: SessionEntry): Promise<void> {
       // Session might not exist
     }
   }
+
+  // 回收该会话的 SSH 隧道进程。deleteSession 会调用本函数，
+  // 若此处不处理，会话被删除后 detached 隧道会泄漏成孤儿进程。
+  const tunnelPid = session.metadata.tunnelPid
+  const tunnelPort = session.metadata.tunnelPort
+  if (tunnelPid) {
+    await killPid(tunnelPid)
+  } else if (tunnelPort) {
+    // PID 缺失时按端口兜底
+    try {
+      if (process.platform === 'win32') {
+        const { stdout } = await execAsync(
+          `netstat -ano | findstr :${tunnelPort} | findstr LISTENING`,
+        ).catch(() => ({ stdout: '' }))
+        for (const line of stdout.split('\n')) {
+          const m = line.trim().match(/(\d+)\s*$/)
+          if (m) await killPid(Number(m[1]))
+        }
+      } else {
+        await execAsync(
+          `lsof -ti:${tunnelPort} | xargs kill -9 2>/dev/null || true`,
+        ).catch(() => {})
+      }
+    } catch {
+      // 忽略：进程可能已退出
+    }
+  }
+
+  delete session.metadata.tunnelPid
+  delete session.metadata.tunnelPort
 }
 
 export async function syncWithTmux(session: SessionEntry): Promise<void> {
@@ -511,6 +549,35 @@ export function getHistory(sessionId: string): string[] {
 // Real SSH tunnel via ssh -N -L / autossh
 // ============================================================================
 
+/**
+ * 跨平台强杀指定 PID（含子进程树）。
+ *
+ * 单独抽出是因为 Windows 无 SIGTERM/SIGKILL 语义，process.kill 对
+ * detached 进程常沉默失败；taskkill /T 才能带走 autossh 派生出的 ssh。
+ */
+async function killPid(pid: number): Promise<void> {
+  if (!pid) return
+  try {
+    // 先确认进程仍在（ESRCH 表示已退出）
+    process.kill(pid, 0)
+  } catch {
+    return
+  }
+  try {
+    if (process.platform === 'win32') {
+      await execAsync(`taskkill /F /T /PID ${pid}`).catch(() => {})
+    } else {
+      try {
+        process.kill(pid, 'SIGKILL')
+      } catch {
+        /* 可能刚退出 */
+      }
+    }
+  } catch {
+    // 忽略：进程可能已退出
+  }
+}
+
 export async function setupRealSSHTunnel(
   sessionId: string,
   sshHost: string,
@@ -546,6 +613,10 @@ export async function setupRealSSHTunnel(
     })
     child.unref()
 
+    // 记录 PID —— teardown 依赖它回收 detached 进程。
+    // 旧实现丢弃了 child.pid，导致 Windows 下隧道进程永不回收。
+    session.metadata.tunnelPid = child.pid
+
     await new Promise(resolve => setTimeout(resolve, 2000))
 
     session.metadata.sshHost = sshHost
@@ -566,20 +637,41 @@ export async function setupRealSSHTunnel(
 
 export async function teardownSSHTunnel(sessionId: string): Promise<void> {
   const session = sessions.get(sessionId)
-  if (!session || !session.metadata.tunnelPort) return
+  if (!session || (!session.metadata.tunnelPort && !session.metadata.tunnelPid)) return
 
   const port = session.metadata.tunnelPort
-  try {
-    if (process.platform === 'win32') {
-      await execAsync(`netstat -ano | findstr :${port} | findstr LISTENING`).catch(() => {})
-    } else {
-      await execAsync(`lsof -ti:${port} | xargs kill -9 2>/dev/null || true`).catch(() => {})
+  const pid = session.metadata.tunnelPid
+
+  // 主路径：按记录的 PID 直接回收（跨平台）。
+  if (pid) {
+    await killPid(pid)
+  }
+
+  // 兜底：PID 缺失或进程被 shell 包装替换时，按端口反查。
+  if (port) {
+    try {
+      if (process.platform === 'win32') {
+        const { stdout } = await execAsync(
+          `netstat -ano | findstr :${port} | findstr LISTENING`,
+        ).catch(() => ({ stdout: '' }))
+        const pids = new Set<number>()
+        for (const line of stdout.split('\n')) {
+          const m = line.trim().match(/(\d+)\s*$/)
+          if (m) pids.add(Number(m[1]))
+        }
+        for (const p of pids) {
+          await killPid(p)
+        }
+      } else {
+        await execAsync(`lsof -ti:${port} | xargs kill -9 2>/dev/null || true`).catch(() => {})
+      }
+    } catch {
+      // Ignore teardown errors
     }
-  } catch {
-    // Ignore teardown errors
   }
 
   session.metadata.tunnelPort = undefined
+  session.metadata.tunnelPid = undefined
   session.metadata.isRemote = false
   session.lastActive = Date.now()
   saveSession(session)
@@ -675,4 +767,54 @@ export async function refreshAllSessions(): Promise<void> {
       await syncWithTmux(session).catch(() => {})
     }
   }
+}
+
+// ============================================================================
+// Idle eviction
+// ============================================================================
+
+/** 空闲驱逐默认阈值：超过该时长未活动的会话会被回收。 */
+export const DEFAULT_IDLE_TTL_MS = 30 * 60 * 1000 // 30 分钟
+
+export interface EvictOptions {
+  /** 空闲多久视为可驱逐（ms） */
+  ttlMs?: number
+  /** 当前激活/正在使用的会话，永不被驱逐 */
+  keepSessionId?: string | null
+}
+
+/**
+ * 回收空闲会话（含其 detached SSH 隧道进程）。
+ *
+ * 目的：长时间运行时 sessions 会持续累积，每个远程会话还挂着一条隧道
+ * 进程，无驱逐则内存与进程数只增不减。
+ *
+ * 安全约束：
+ *  - 当前激活会话（activeSessionId 或 keepSessionId）始终保留
+ *  - 仅按 lastActive 判定，绝不按「名字看起来像临时」之类的启发式
+ *
+ * @returns 被驱逐的会话 id 列表
+ */
+export async function evictIdleSessions(
+  options: EvictOptions = {},
+): Promise<string[]> {
+  const ttlMs = options.ttlMs ?? DEFAULT_IDLE_TTL_MS
+  const keep = options.keepSessionId ?? activeSessionId
+  const now = Date.now()
+  const evicted: string[] = []
+
+  for (const [id, session] of sessions) {
+    if (id === keep) continue
+    if (now - session.lastActive < ttlMs) continue
+
+    // deleteSession 内部会调用 killBackendSession + teardown 隧道
+    try {
+      const ok = await deleteSession(id)
+      if (ok) evicted.push(id)
+    } catch {
+      // 单个会话回收失败不应中断其余驱逐
+    }
+  }
+
+  return evicted
 }

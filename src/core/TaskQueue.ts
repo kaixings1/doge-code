@@ -50,17 +50,56 @@ export class TaskQueue {
     const files = await fs.readdir(this.queueDir);
     if (files.length === 0) return null;
 
-    const file = files[0];
-    const filePath = path.join(this.queueDir, file);
-    const content = await fs.readFile(filePath, 'utf-8');
-    const task: Task = JSON.parse(content);
+    // 竞态保护：多个 worker 并发 readdir 会拿到同一候选文件。
+    // 用 link() 原子抢占——同文件系统上 link 对已存在目标返回 EEXIST，
+    // 从而保证同一任务只有一个调用者拿到（rename 在 Windows 上不能
+    // 提供该保证，实测并发下会产出重复任务）。
+    for (const file of files) {
+      const filePath = path.join(this.queueDir, file);
+      const destPath = path.join(this.processingDir, file);
 
-    task.status = 'processing';
+      try {
+        await fs.link(filePath, destPath);
+      } catch {
+        // EEXIST：已被其他 worker 抢占；其他错误：跳过该候选
+        continue;
+      }
+
+      // 已独占：删除队列中的原始链接
+      await fs.unlink(filePath).catch(() => {});
+
+      try {
+        const content = await fs.readFile(destPath, 'utf-8');
+        const task: Task = JSON.parse(content);
+        task.status = 'processing';
+        task.updatedAt = Date.now();
+        await fs.writeFile(destPath, JSON.stringify(task, null, 2));
+        return task;
+      } catch {
+        // 文件损坏：清理并继续
+        await fs.unlink(destPath).catch(() => {});
+        continue;
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * 把已取出（processing）的任务放回队列，供其他 worker 重新领取。
+   *
+   * 场景：主线程取到任务后无空闲 worker，不能丢任务。
+   */
+  async requeue(task: Task): Promise<void> {
+    const file = `${task.id}.json`;
+    const processingPath = path.join(this.processingDir, file);
+    const queuePath = path.join(this.queueDir, file);
+
+    task.status = 'pending';
     task.updatedAt = Date.now();
-    await fs.writeFile(path.join(this.processingDir, file), JSON.stringify(task, null, 2));
-    await fs.unlink(filePath);
-
-    return task;
+    await fs.writeFile(queuePath, JSON.stringify(task, null, 2));
+    // 移除 processing 副本（可能已不在）
+    await fs.unlink(processingPath).catch(() => {});
   }
 
   async complete(id: string, result: any): Promise<void> {

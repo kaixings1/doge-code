@@ -1,10 +1,31 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync, rmSync } from 'fs'
-import { join } from 'path'
+import { existsSync, mkdirSync, readFileSync, writeFileSync, rmSync, openSync, closeSync } from 'fs'
+import { join, dirname } from 'path'
 import { homedir } from 'os'
 import { spawn } from 'child_process'
 
 function pidFile(): string {
   return join(homedir(), '.doge', 'daemon.pid')
+}
+
+/**
+ * 以 O_EXCL 原子地占位锁文件，防止并发 `daemon start` 同时通过
+ * readPid 检查而各起一个 daemon worker（旧实现的 check→spawn 窗口）。
+ * 返回释放函数；已被占用时返回 null。
+ */
+export function acquireStartLock(): (() => void) | null {
+  const lockPath = pidFile() + '.lock'
+  const dir = dirname(lockPath)
+  try { mkdirSync(dir, { recursive: true }) } catch { /* ignore */ }
+  let fd: number
+  try {
+    fd = openSync(lockPath, 'wx')
+  } catch {
+    return null
+  }
+  return () => {
+    try { closeSync(fd) } catch { /* ignore */ }
+    try { rmSync(lockPath, { force: true }) } catch { /* ignore */ }
+  }
 }
 
 function readPid(): number | null {
@@ -18,10 +39,8 @@ function readPid(): number | null {
 }
 
 function writePid(pid: number): void {
-  const dir = pidFile().substring(0, pidFile().lastIndexOf('\\'))
-  if (dir) {
-    try { mkdirSync(dir, { recursive: true }) } catch { /* ignore */ }
-  }
+  const dir = dirname(pidFile())
+  try { mkdirSync(dir, { recursive: true }) } catch { /* ignore */ }
   writeFileSync(pidFile(), String(pid), 'utf-8')
 }
 
@@ -47,28 +66,38 @@ export async function daemonMain(args: string[]): Promise<void> {
 
   switch (cmd) {
     case 'start': {
-      const existing = readPid()
-      if (existing && isAlive(existing)) {
-        console.log(`守护进程已在运行（pid=${existing}）`)
+      // 原子占位：并发 start 只有一个能进入 spawn 段。
+      const releaseLock = acquireStartLock()
+      if (!releaseLock) {
+        console.log('守护进程正在启动中（另一个 start 已在进行）')
         return
       }
-      // 以 --daemon-worker main 参数 spawn 自身，脱离父进程
-      const child = spawn(process.execPath, [process.argv[1], '--daemon-worker', 'main'], {
-        detached: true,
-        stdio: 'ignore',
-        windowsHide: true,
-      })
-      child.unref()
-      const pid = child.pid
-      if (pid == null) {
-        console.error('守护进程启动失败：无法获取子进程 PID')
-        return
+      try {
+        const existing = readPid()
+        if (existing && isAlive(existing)) {
+          console.log(`守护进程已在运行（pid=${existing}）`)
+          return
+        }
+        // 以 --daemon-worker main 参数 spawn 自身，脱离父进程
+        const child = spawn(process.execPath, [process.argv[1], '--daemon-worker', 'main'], {
+          detached: true,
+          stdio: 'ignore',
+          windowsHide: true,
+        })
+        child.unref()
+        const pid = child.pid
+        if (pid == null) {
+          console.error('守护进程启动失败：无法获取子进程 PID')
+          return
+        }
+        writePid(pid)
+        child.on('exit', () => {
+          try { rmSync(pidFile(), { force: true }) } catch { /* ignore */ }
+        })
+        console.log(`守护进程已启动（pid=${pid}）`)
+      } finally {
+        releaseLock()
       }
-      writePid(pid)
-      child.on('exit', () => {
-        try { rmSync(pidFile(), { force: true }) } catch { /* ignore */ }
-      })
-      console.log(`守护进程已启动（pid=${pid}）`)
       return
     }
 
