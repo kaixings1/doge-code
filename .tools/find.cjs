@@ -42,12 +42,28 @@ const child = spawn(rgPath, ['--files', ...rgArgs], {
   stdio: ['ignore', 'inherit', 'inherit'],
   windowsHide: true,
 });
+// 整体超时兜底：rg --files 在极端情况下会挂起（网络盘 / 超大目录 / 损坏挂载点），
+// 此时 child 的 'exit' 永不触发 → 整链悬挂。
+// 默认 30s；设 DOGE_TOOLS_TIMEOUT_MS=0 可关闭；负数视为无效、回退默认。
+const RAW_TIMEOUT = Number(process.env.DOGE_TOOLS_TIMEOUT_MS);
+const TIMEOUT_MS = Number.isFinite(RAW_TIMEOUT) && RAW_TIMEOUT > 0 ? RAW_TIMEOUT : 30000;
+const killer = TIMEOUT_MS > 0
+  ? setTimeout(() => {
+      try { child.kill('SIGKILL'); } catch { /* noop */ }
+      console.error(`find.cjs: ripgrep timed out after ${TIMEOUT_MS}ms`);
+      process.exit(124); // 与 GNU timeout 约定一致
+    }, TIMEOUT_MS)
+  : null;
+if (killer) killer.unref();
+
 // 必须监听 'error'：spawn 失败（ENOENT 等）时只挂 'exit' 会永不触发，进程悬挂。
 child.on('error', (err) => {
+  if (killer) clearTimeout(killer);
   console.error(`find.cjs: failed to spawn ripgrep: ${err.message}`);
   process.exit(127);
 });
 child.on('exit', (code, signal) => {
+  if (killer) clearTimeout(killer);
   if (signal) {
     console.error(`find.cjs: ripgrep killed by signal ${signal}`);
     process.exit(1);

@@ -1,11 +1,19 @@
 #!/bin/bash
-# Shim: find -> rg.exe --files
-# Replaces MSYS2 find which has path issues on Windows native filesystems
+# Shim: find -> find.cjs (Node 包装的 rg --files)
+#
+# 历史：早期本 shim 直接 exec "$SCRIPT_DIR/rg.exe"，但 .tools/ 下并无 rg.exe，
+# 执行必失败（`rg.exe: No such file or directory`）——且失败后**仍返回 0**，
+# 上层脚本会静默拿到空结果。现改为转发到 find.cjs（含整体超时兜底）。
+# 参数转换（find 常用参数 -> rg 参数）与 cygpath 保留。
+# 必须转成 Windows 路径再交给 node：MSYS2 参数转换会把 `\doge-code` 里的
+# `\d` 当作转义吃掉，变成 `D:\d\doge-code\...` 而 MODULE_NOT_FOUND。
+# 与 bashrc 里 _TOOLS_DIR=$(cygpath -w ...) 是同一原因。
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-RG="$SCRIPT_DIR/rg.exe"
+SCRIPT_DIR_WIN="$(cygpath -w "$SCRIPT_DIR" 2>/dev/null || echo "$SCRIPT_DIR")"
 
-args=("--files" "--no-config")
-target="."
+# Convert find-style args to rg-style args
+args=()
+target=""
 
 while [ $# -gt 0 ]; do
   arg="$1"
@@ -39,11 +47,15 @@ while [ $# -gt 0 ]; do
       args+=("$arg")
       ;;
     *)
-      # Convert POSIX path to Windows path for native rg.exe
+      # Convert POSIX path to Windows path for native rg
       target=$(cygpath -w "$arg" 2>/dev/null || echo "$arg")
       ;;
   esac
   shift
 done
 
-exec "$RG" "${args[@]}" "$target"
+if [ -n "$target" ]; then
+  exec node "$SCRIPT_DIR_WIN/find.cjs" "${args[@]}" "$target"
+else
+  exec node "$SCRIPT_DIR_WIN/find.cjs" "${args[@]}"
+fi

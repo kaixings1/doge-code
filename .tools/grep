@@ -1,8 +1,16 @@
 #!/bin/bash
-# Shim: grep -> rg.exe
-# Replaces MSYS2 grep which has compatibility issues on Windows native filesystems
+# Shim: grep -> grep.cjs (Node 包装的 ripgrep)
+#
+# 历史：早期本 shim 直接 exec "$SCRIPT_DIR/rg.exe"，但 .tools/ 下并无 rg.exe，
+# 执行必失败（`rg.exe: No such file or directory`）——且失败后**仍返回 0**，
+# 上层脚本会静默拿到空结果（与 .cjs 早先"吞管道"同类的隐蔽故障）。
+# 现改为转发到 grep.cjs：它用系统 PATH 的 rg，并已修复 stdin 转发与整体超时。
+# 参数转换（grep 风格 -> rg 风格）与 cygpath 保留，与直连 rg 时行为一致。
+# 必须转成 Windows 路径再交给 node：MSYS2 参数转换会把 `\doge-code` 里的
+# `\d` 当作转义吃掉，变成 `D:\d\doge-code\...` 而 MODULE_NOT_FOUND。
+# 与 bashrc 里 _TOOLS_DIR=$(cygpath -w ...) 是同一原因。
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-RG="$SCRIPT_DIR/rg.exe"
+SCRIPT_DIR_WIN="$(cygpath -w "$SCRIPT_DIR" 2>/dev/null || echo "$SCRIPT_DIR")"
 
 # Convert grep-style args to rg-style args
 args=()
@@ -52,7 +60,7 @@ while [ $# -gt 0 ]; do
       args+=("$arg")
       ;;
     *)
-      # Convert POSIX path to Windows path for native rg.exe
+      # Convert POSIX path to Windows path for native rg
       win_path=$(cygpath -w "$arg" 2>/dev/null || echo "$arg")
       args+=("$win_path")
       ;;
@@ -60,4 +68,4 @@ while [ $# -gt 0 ]; do
   shift
 done
 
-exec "$RG" "${args[@]}" --no-config
+exec node "$SCRIPT_DIR_WIN/grep.cjs" "${args[@]}" --no-config
