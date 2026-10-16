@@ -24,9 +24,17 @@ interface ToolDefinition {
 
 // ============ 增强 unescapeUnicode 健壮性 ============
 /**
- * 将字符串中的 Unicode 转义序列（\uXXXX）还原为原始字符。
- * 用于避免 JSON.stringify 将非 ASCII 字符转义。
- * 【增强】添加防御性判断，防止传入非字符串导致崩溃。
+ * 【重要·勿在 jsonStringify 中使用】此函数会破坏 JSON 的可解析性：
+ * JSON.stringify 对控制字符（ESC、NUL 等）输出的转义序列是 JSON 语法
+ * **必需**的，还原成裸字节后会导致 JSON.parse 报
+ * "Bad control character in string literal" 或 "Invalid \\escape"。
+ *
+ * 曾导致：会话 JSONL 写入坏行 → parseJSONL 丢弃该行 → parentUuid 链断裂
+ * → `--resume <sessionId>` 报"未找到会话"。
+ *
+ * 另注：JSON.stringify 本就不会把中文/emoji 转义（引擎直接输出 UTF-8），
+ * 因此该函数对"提升可读性"毫无贡献，唯一实际生效的场景就是破坏 JSON。
+ * 保留仅为兼容可能的其他用途，jsonStringify 已不再调用它。
  */
 function unescapeUnicode(str: string): string {
   // 防御性检查：若参数不是字符串，则转换为字符串或返回空
@@ -327,7 +335,11 @@ export function jsonStringify(
     // 同时记录错误（可选）
     // 这里不抛出，保持兼容
   }
-  return unescapeUnicode(raw)
+  // 【修复】曾被 unescapeUnicode(raw) 包裹，导致 JSON 中语法必需的控制字符
+  // 转义被还原为裸字节，产出不可解析的 JSON，进而使会话 JSONL 写入坏行、
+  // --resume 时丢弃该行、parentUuid 链断裂、报"未找到会话"。
+  // 该还原对可读性无收益（中文/emoji 本就不被转义），故直接返回原始 JSON。
+  return raw
 }
 
 /**

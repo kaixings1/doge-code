@@ -3740,9 +3740,18 @@ export function REPL({
   // 注册成本摘要跟踪器
   useCostSummary(useFpsMetrics());
 
-  // 在本地记录对话记录，用于调试和对话恢复
-  // 如果我们只有初始消息，则不记录对话；优化了用户恢复会话然后在不做任何其他事情之前退出的情况
-  useLogMessages(messages, messages.length === initialMessages?.length);
+  // 在本地记录对话记录，用于调试和对话恢复。
+  //
+  // 【修复·勿改回 length 比较】原判据为 messages.length === initialMessages?.length，
+  // 意图是"仅当只有初始消息时不记录"，但用长度比较是恒真陷阱：
+  //   /compact 会重建数组（boundary+summary+keep），条数可能恰好等于 resume
+  //   时的初始条数 → 判据误判为"未修改" → compact 后的全部内容不写盘 →
+  //   再 --resume 加载不到（用户报告的场景 A）。
+  // 改为引用身份比较：initialMessages 在整个组件生命周期内不变（见下方 mount-only
+  // 注释），useState 初始引用与之相同，任何 setMessages 都产生新数组（见 setMessages
+  // 包装器的 messagesRef.current = next），因此 === 精确等价于"未动过任何一条"。
+  const initialMessagesRef = useRef(initialMessages);
+  useLogMessages(messages, messages === initialMessagesRef.current);
 
   // REPL 桥接器：将用户/助手消息复制到桥接器会话，以便通过 claude.ai 进行远程访问。在外部构建中或未启用时无操作。
   const {
