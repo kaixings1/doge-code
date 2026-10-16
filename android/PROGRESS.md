@@ -912,3 +912,33 @@ PROGRESS 早先标「仍未做：代码块一键复制（现为长按菜单，�
 - `MessageActionsTest`：更新 3 处精确列表断言（含 SELECT_MULTIPLE）；新增
   「任意消息菜单都含选择多条入口」+ 变异验证（availableActions 不返回 SELECT_MULTIPLE 则失败）。
 - 全量 `:app:testDebugUnitTest` **BUILD SUCCESSFUL**（27 任务，EXITCODE=0）。
+
+## 第九轮：doge 配置页 — 多套配置 + 供应商预设
+
+### 需求（任务 #11 收尾）
+doge 配置页改为「多套配置 + 供应商预设」：预设列表（国内为主，点击自动填 Base URL）、
+保存/另存/切换/激活、连接测试。
+
+### 已交付（代码已全部提交，git status 无未提交改动）
+
+#### 多套配置（ProviderProfiles + LocalPrefsStore）
+- `ProviderProfiles.kt`：`create`/`add`/`switchTo`/`remove`/`update`/`current`，
+  JSON 序列化**剥离 apiKey**（安全底线：key 走 SecureStore 按档案 id 加密，绝不明文落盘）。
+- `LocalPrefsStore.profiles()`：空列表自动保底 1 个空档案；旧单份 baseURL/api_key/model
+  自动迁移成首个档案（升级不丢配置）。apiKey 按档案 id 走 SecureStore，删档案同步清理孤儿 key。
+- `LocalConfigPanel`：档案下拉切换、新建（弹名、空白起步）、删除（至少留 1 个）、
+  `loadConfigIntoFields`/`onProfileSelected` 切档案即重填输入框（不自动保存，保留「先试后存」）。
+
+#### 供应商预设（ProviderConfig.ProviderPresets）
+- 内置 5 个预设（国内为主）：OpenAI/兼容、DeepSeek、通义千问、Kimi、自定义。
+  每个含 baseURL + defaultModel + 去哪拿 key 的 hint。
+- `applyPreset`：只填**地址与默认模型，不动用户已填的 key**（key 与预设无关，清掉逼重粘）。
+- chip 高亮当前预设；`store.presetId()` 持久化上次选择用于回显。
+
+#### 连接测试（既有，本轮回测）
+- `fetchModels`：`GET /models` 拉列表点选（不自动保存）；`testChat`：真打一次
+  `/chat/completions`（`max_tokens=16`），探测中禁用按钮防连点。
+
+### 验证
+- 实现已随 `600d96a2d` 等提交入库；`ProviderProfilesTest` 覆盖 newId/serialize/parse/migrate/add/switchTo/remove/update。
+- `testDebugUnitTest` 全量复跑（离线，`_test.bat`）确认无回归。
