@@ -59,19 +59,35 @@ function isBeepSupported(): boolean {
 /**
  * Windows 上通过 PowerShell 播放 beep 声音
  */
-function playWindowsBeep(frequency: number, duration: number): void {
+function playWindowsBeep(_frequency: number, _duration: number): void {
+  // 优先用 Windows 音频子系统播放系统音效。它走独立音频管线、不依赖 conhost
+  // 控制台，因此在 Windows Terminal 下也能真正发声（Console.Beep 在 WT 中静默写
+  // 成功、不出声，正是“原来响、换终端后不响”的根因）。Console.Beep / bell 字符
+  // 作为降级路径保留给极端环境。
   try {
-    // 使用简短 PowerShell 命令播放系统 beep
     const { execFileSync } = require('child_process')
     execFileSync('powershell', [
       '-NoProfile',
       '-NonInteractive',
       '-Command',
-      `[System.Console]::Beep(${frequency}, ${duration})`,
-    ], { timeout: 1000, windowsHide: true })
+      "(New-Object System.Media.SoundPlayer 'C:\\Windows\\Media\\ding.wav').PlaySync()",
+    ], { timeout: 3000, windowsHide: true })
+    return
   } catch {
-    // 降级：输出 bell 字符
-    try { process.stdout.write('\x07') } catch {}
+    // 降级 1：经典 beep API（在 conhost 下有效）
+    try {
+      const { execFileSync } = require('child_process')
+      execFileSync('powershell', [
+        '-NoProfile',
+        '-NonInteractive',
+        '-Command',
+        '[System.Console]::Beep(800, 150)',
+      ], { timeout: 1000, windowsHide: true })
+      return
+    } catch {
+      // 降级 2：终端 bell 字符
+      try { process.stdout.write('\x07') } catch {}
+    }
   }
 }
 

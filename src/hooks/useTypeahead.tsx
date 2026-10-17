@@ -106,6 +106,9 @@ type Props = {
   suppressSuggestions?: boolean;
   markAccepted: () => void;
   onModeChange?: (mode: PromptInputMode) => void;
+  // Placeholder shown when the input is empty. When it is an example-command
+  // hint (「试试 "..."」), Tab accepts the quoted command as real input.
+  examplePlaceholder?: string;
 };
 
 type UseTypeaheadResult = {
@@ -117,6 +120,21 @@ type UseTypeaheadResult = {
   inlineGhostText?: InlineGhostText;
   handleKeyDown: (e: KeyboardEvent) => void;
 };
+
+/**
+ * 从示例提示 placeholder 中提取可接受的命令文本。
+ *
+ * getExampleCommandFromCache() 产出形如 `试试 "编辑 src/a.ts 以..."` 的提示，
+ * 它是只读占位符；直接填入输入框会把「试试 "…"」外壳一并带入、无法提交。
+ * 本函数提取引号内的命令本体，使 Tab 能把提示变成真实可编辑的输入。
+ *
+ * 不是示例提示（无引号包裹）时返回 null，交由调用方走原有逻辑。
+ */
+export function extractExampleCommand(placeholder?: string): string | null {
+  if (!placeholder) return null;
+  const m = placeholder.match(/^试试\s+"(.+)"$/) ?? placeholder.match(/^Try\s+"(.+)"$/);
+  return m ? m[1] : null;
+}
 
 /**
  * 从补全标记中提取搜索标记，移除 @ 前缀和引号
@@ -374,7 +392,8 @@ export function useTypeahead({
   },
   suppressSuggestions = false,
   markAccepted,
-  onModeChange
+  onModeChange,
+  examplePlaceholder
 }: Props): UseTypeaheadResult {
   const {
     addNotification
@@ -1346,6 +1365,15 @@ export function useTypeahead({
         markAccepted();
         acceptSuggestionText(suggestionText);
         return;
+      }
+      // 输入为空且无 API 建议时，接受示例提示 placeholder（「试试 "…"」）为真实输入
+      if (input === '' && !isViewingTeammate) {
+        const example = extractExampleCommand(examplePlaceholder);
+        if (example) {
+          e.preventDefault();
+          acceptSuggestionText(example);
+          return;
+        }
       }
       // 如果输入为空，提醒用户关于思考切换快捷键
       if (input.trim() === '') {

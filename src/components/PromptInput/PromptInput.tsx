@@ -846,8 +846,7 @@ function PromptInput({
     getBuffer,
     clearBuffer
   } = useInputBuffer({
-    maxBufferSize: 2000,
-    debounceMs: 1000
+    maxBufferSize: 2000
   });
   useMaybeTruncateInput({
     input,
@@ -1137,32 +1136,40 @@ function PromptInput({
     suggestionsState,
     suppressSuggestions: isSearchingHistory || historyIndex > 0,
     markAccepted,
-    onModeChange
+    onModeChange,
+    // 示例提示（「试试 "…"」）可被 Tab 接受为真实输入
+    examplePlaceholder: defaultPlaceholder
   });
 
   // Track if prompt suggestion should be shown (computed later with terminal width).
   // Hidden in teammate view — suggestion is leader-context only.
   const showPromptSuggestion = mode === 'prompt' && suggestions.length === 0 && promptSuggestion && !viewingAgentTaskId;
-  if (showPromptSuggestion) {
-    markShown();
-  }
-
-  // If suggestion was generated but can't be shown due to timing, log suppression.
-  // Exclude teammate view: markShown() is gated above, so shownAt stays 0 there —
-  // but that's not a timing failure, the suggestion is valid when returning to leader.
-  if (promptSuggestionState.text && !promptSuggestion && promptSuggestionState.shownAt === 0 && !viewingAgentTaskId) {
-    logSuggestionSuppressed('timing', promptSuggestionState.text);
-    setAppState(prev => ({
-      ...prev,
-      promptSuggestion: {
-        text: null,
-        promptId: null,
-        shownAt: 0,
-        acceptedAt: 0,
-        generationRequestId: null
-      }
-    }));
-  }
+  // Mark shown in an effect, NOT during render. `markShown` writes to the
+  // app-state store; calling it while rendering a different component makes
+  // React defer/discard the update, leaving shownAt at 0 forever — which makes
+  // the Tab-to-accept path (which requires shownAt > 0) silently no-op.
+  useEffect(() => {
+    if (showPromptSuggestion) {
+      markShown();
+      return;
+    }
+    // If suggestion was generated but can't be shown due to timing, log suppression.
+    // Exclude teammate view: markShown() is gated above, so shownAt stays 0 there —
+    // but that's not a timing failure, the suggestion is valid when returning to leader.
+    if (promptSuggestionState.text && !promptSuggestion && promptSuggestionState.shownAt === 0 && !viewingAgentTaskId) {
+      logSuggestionSuppressed('timing', promptSuggestionState.text);
+      setAppState(prev => ({
+        ...prev,
+        promptSuggestion: {
+          text: null,
+          promptId: null,
+          shownAt: 0,
+          acceptedAt: 0,
+          generationRequestId: null
+        }
+      }));
+    }
+  }, [showPromptSuggestion, promptSuggestionState.text, promptSuggestionState.shownAt, promptSuggestion, viewingAgentTaskId, markShown, setAppState]);
   function onImagePaste(image: string, mediaType?: string, filename?: string, dimensions?: ImageDimensions & { width?: number; height?: number }, sourcePath?: string) {
     logEvent('tengu_paste_image', {});
     onModeChange('prompt');
@@ -1894,10 +1901,42 @@ function PromptInput({
     isActive: !!footerItemSelected && !isModalOverlayActive
   });
   useInput((char, key) => {
+    // Undo-history picker is open: handle Enter (select) and Esc (close)
+    // here, BEFORE the full-screen-dialog guard below. The guard would
+    // otherwise swallow every keystroke (including Enter/Esc), deadlocking
+    // the picker so neither selection nor closing works.
+    if (showUndoHistoryPicker) {
+      if (key.return) {
+        const selectedIndex = getCurrentIndex();
+        const selectedEntry = jumpToIndex(selectedIndex);
+        if (selectedEntry) {
+          trackAndSetInput(selectedEntry.text);
+          setCursorOffset(selectedEntry.cursorOffset);
+          setPastedContents(selectedEntry.pastedContents);
+        }
+        setShowUndoHistoryPicker(false);
+        return;
+      }
+      if (key.upArrow) {
+        jumpToIndex(getCurrentIndex() - 1);
+        return;
+      }
+      if (key.downArrow) {
+        jumpToIndex(getCurrentIndex() + 1);
+        return;
+      }
+      if (key.escape) {
+        setShowUndoHistoryPicker(false);
+        return;
+      }
+      // Ignore other keys while the picker is open.
+      return;
+    }
+
     // Skip all input handling when a full-screen dialog is open. These dialogs
     // render via early return, but hooks run unconditionally — so without this
     // guard, Escape inside a dialog leaks to the double-press message-selector.
-    if (showTeamsDialog || showQuickOpen || showGlobalSearch || showHistoryPicker || showUndoHistoryPicker) {
+    if (showTeamsDialog || showQuickOpen || showGlobalSearch || showHistoryPicker) {
       return;
     }
 
@@ -1983,26 +2022,13 @@ function PromptInput({
         return;
       }
 
-      // If input has content, show undo history picker instead of clearing
+      // If input has content, show undo history picker instead of clearing.
+      // Push the current (final) text first so the newest state appears in the
+      // list — onChange only buffers the *previous* value, so without this the
+      // last edit would be missing from the undo history.
       if (input.trim() && canUndo) {
+        pushToBuffer(input, cursorOffset, pastedContents);
         setShowUndoHistoryPicker(true);
-        return;
-      }
-
-      // When undo history picker is open, Enter selects the current entry
-      if (showUndoHistoryPicker) {
-        if (key.return) {
-          const selectedIndex = getCurrentIndex();
-          const selectedEntry = jumpToIndex(selectedIndex);
-          if (selectedEntry) {
-            trackAndSetInput(selectedEntry.text);
-            setCursorOffset(selectedEntry.cursorOffset);
-            setPastedContents(selectedEntry.pastedContents);
-          }
-          setShowUndoHistoryPicker(false);
-          return;
-        }
-        // Esc is handled by the guard above which returns early
         return;
       }
 
@@ -2246,7 +2272,7 @@ function PromptInput({
             </Box>
           );
         })}
-        <Text dimColor>Enter 选择 | Esc 关闭</Text>
+        <Text dimColor>↑↓ 选择 | Enter 确认 | Esc 关闭</Text>
       </Box>
     );
   }

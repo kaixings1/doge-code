@@ -165,7 +165,12 @@ export function SkillsMenu(t0) {
     $[15] = u12;
   } else { u12 = $[15]; }
   const handleKeyDown = u12;
-  const renderSkill = renderSkillFnFactory(selectedSkill);
+  const termCols =
+    process && process.stdout && process.stdout.columns
+      ? process.stdout.columns
+      : 100;
+  const maxWidth = Math.max(20, termCols - 2);
+  const renderSkill = renderSkillFnFactory(selectedSkill, maxWidth);
   let t3;
   if ($[10] !== skillsBySource) {
     t3 = source_0 => {
@@ -175,7 +180,8 @@ export function SkillsMenu(t0) {
       }
       const title = getSourceTitle(source_0);
       const subtitle = getSourceSubtitle(source_0, groupSkills);
-      return <Box flexDirection="column" key={source_0}><Box><Text bold={true} dimColor={true}>{title}</Text>{subtitle && <Text dimColor={true}> ({subtitle})</Text>}</Box>{groupSkills.map(skill_1 => renderSkill(skill_1))}</Box>;
+      const rows = groupSkills.map((skill, r) => renderSkill(skill));
+      return <Box flexDirection="column" key={source_0}><Box><Text bold={true} dimColor={true}>{title}</Text>{subtitle && <Text dimColor={true}> ({subtitle})</Text>}</Box>{rows}</Box>;
     };
     $[10] = skillsBySource;
     $[11] = t3;
@@ -264,17 +270,35 @@ export function SkillsMenu(t0) {
   }
   return t14;
 }
-function renderSkillFnFactory(selectedSkill) {
+function renderSkillFnFactory(selectedSkill, maxWidth) {
   return function renderSkillFn(skill) {
     const isSelected = selectedSkill === skill;
     const pluginName = skill.source === "plugin" ? skill.pluginInfo?.pluginManifest.name : undefined;
     const desc = (skill.description || "").trim();
-    const shortDesc = desc.length > 80 ? desc.slice(0, 77) + "..." : desc;
+    const name = getCommandName(skill);
+    const spacer = "  ";
+    const prefix = isSelected ? `${figures.pointer} ` : spacer;
+    const pluginPart = pluginName ? ` \xB7 ${pluginName}` : "";
+    const body = `${name}${pluginPart}  ${desc}`;
+    const cjkWidth = (s) => {
+      let w = 0;
+      for (const ch of s) w += ch.codePointAt(0) > 0x2e7f ? 2 : 1;
+      return w;
+    };
+    const avail = Math.max(8, maxWidth - cjkWidth(prefix));
+    const truncSuffix = "…";
+    const shown = cjkWidth(body) > avail ? (() => {
+      let acc = 0, out = "";
+      for (const ch of body) {
+        const cw = ch.codePointAt(0) > 0x2e7f ? 2 : 1;
+        if (acc + cw > avail - 1) break;
+        out += ch; acc += cw;
+      }
+      return out + truncSuffix;
+    })() : body;
     return <Box key={`${skill.name}-${skill.source}`}>
-      <Text color={isSelected ? "suggestion" : undefined}>{isSelected ? `${figures.pointer} ` : "  "}</Text>
-      <Text color={isSelected ? "suggestion" : undefined}>{getCommandName(skill)}</Text>
-      {pluginName ? <Text dimColor={true}> \xB7 {pluginName}</Text> : null}
-      {shortDesc ? <Text dimColor={true}>  {shortDesc}</Text> : null}
+      <Text color={isSelected ? "suggestion" : undefined}>{prefix}</Text>
+      <Text color={isSelected ? "suggestion" : undefined}>{shown}</Text>
     </Box>;
   };
 }

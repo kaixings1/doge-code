@@ -99,7 +99,7 @@ export function getSourceSkills(sourceName: string): SkillItem[] {
  var existingSet = {};
  for (var j=0;j<existingNames.length;j++) existingSet[existingNames[j]] = true;
  var result = [];
- var re = new RegExp(String.fromCharCode(100,101,115,99,114,105,112,116,105,111,110,58,92,115,42,34,40,91,94,34,93,43,41,34));
+ var re = new RegExp(String.fromCharCode(100,101,115,99,114,105,112,116,105,111,110,58,92,115,42,40,34,63,41,40,91,94,34,93,43,41,40,34,63,41));
  for (var k=0;k<files.length;k++) {
  var fname = files[k];
  var skillName = fname.slice(0, -3);

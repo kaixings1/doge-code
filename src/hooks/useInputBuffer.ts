@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import type { PastedContent } from '../utils/config.js'
 
 export type BufferEntry = {
@@ -10,7 +10,6 @@ export type BufferEntry = {
 
 export type UseInputBufferProps = {
   maxBufferSize: number
-  debounceMs: number
 }
 
 export type UseInputBufferResult = {
@@ -31,13 +30,9 @@ export type UseInputBufferResult = {
 
 export function useInputBuffer({
   maxBufferSize,
-  debounceMs,
 }: UseInputBufferProps): UseInputBufferResult {
   const [buffer, setBuffer] = useState<BufferEntry[]>([])
   const [currentIndex, setCurrentIndex] = useState(-1)
-  const lastPushTime = useRef<number>(0)
-  const pendingPush = useRef<ReturnType<typeof setTimeout> | null>(null)
-
   const pushToBuffer = useCallback(
     (
       text: string,
@@ -46,23 +41,9 @@ export function useInputBuffer({
     ) => {
       const now = Date.now()
 
-      if (pendingPush.current) {
-        clearTimeout(pendingPush.current)
-        pendingPush.current = null
-      }
-
-      if (now - lastPushTime.current < debounceMs) {
-        pendingPush.current = setTimeout(
-          pushToBuffer,
-          debounceMs,
-          text,
-          cursorOffset,
-          pastedContents,
-        )
-        return
-      }
-
-      lastPushTime.current = now
+      // ponytail: 不做时间防抖。防抖会把 1 秒内的连续输入合并成一次，
+      // 使中间快照（逐字符）丢失，导致撤销列表条目数与实际输入不符。
+      // 逐字符快照是撤销历史的既有语义，去重由下方 lastEntry.text 判断承担。
 
       setBuffer(prevBuffer => {
         const newBuffer =
@@ -90,7 +71,7 @@ export function useInputBuffer({
         return Math.min(newIndex, maxBufferSize - 1)
       })
     },
-    [debounceMs, maxBufferSize, currentIndex, buffer.length],
+    [maxBufferSize, currentIndex, buffer.length],
   )
 
   const undo = useCallback((): BufferEntry | undefined => {
@@ -140,12 +121,7 @@ export function useInputBuffer({
   const clearBuffer = useCallback(() => {
     setBuffer([])
     setCurrentIndex(-1)
-    lastPushTime.current = 0
-    if (pendingPush.current) {
-      clearTimeout(pendingPush.current)
-      pendingPush.current = null
-    }
-  }, [lastPushTime, pendingPush])
+  }, [])
 
   const canUndo = currentIndex > 0 && buffer.length > 1
   const canRedo = currentIndex >= 0 && currentIndex < buffer.length - 1
