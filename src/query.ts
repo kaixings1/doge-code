@@ -7,6 +7,13 @@ import type {
 import type { CanUseToolFn } from './hooks/useCanUseTool.js'
 import { FallbackTriggeredError } from './services/api/withRetry.js'
 import {
+  computeRateLimitDelayMs,
+  nextRateLimitRound,
+  RATE_LIMIT_RETRY_ROUNDS,
+  shouldResumeRateLimit,
+  sleepInterruptible,
+} from './query/rateLimitResume.js'
+import {
   calculateTokenWarningState,
   isAutoCompactEnabled,
   type AutoCompactTrackingState,
@@ -218,6 +225,8 @@ type State = {
   transition: Continue | undefined
   lastToolCalls: Array<{ name: string }>
   autoContinueCount: number
+  /** 429 续跑轮次（跨轮累计）。达到上限后才真正结束对话，见 query/rateLimitResume.ts */
+  rateLimitRound: number
 }
 
 export async function* query(
@@ -334,6 +343,7 @@ async function* queryLoop(
     transition: undefined,
     lastToolCalls: [],
     autoContinueCount: 0,
+    rateLimitRound: 0,
   }
   const budgetTracker = feature('TOKEN_BUDGET') ? createBudgetTracker() : null
 
@@ -364,6 +374,7 @@ async function* queryLoop(
       stopHookActive,
       turnCount,
       emptyContentRetryCount,
+      rateLimitRound,
     } = state
 
     const pendingSkillPrefetch = skillPrefetch?.startSkillDiscoveryPrefetch(
@@ -1180,6 +1191,36 @@ async function* queryLoop(
         }
 
         yield lastMessage
+      }
+
+      // 429（含 tpm_exceeded 等容量限制）在 withRetry 内部预算耗尽后，
+      // 继续在此处等待并重试，而不是直接结束对话。指数退避 + 尊重 Retry-After。
+      if (
+        lastMessage?.isApiErrorMessage &&
+        lastMessage.apiError === 'rate_limit' &&
+        lastMessage.error === 'rate_limit' &&
+        !toolUseContext.abortController.signal.aborted &&
+        shouldResumeRateLimit(nextRateLimitRound(rateLimitRound))
+      ) {
+        const round = nextRateLimitRound(rateLimitRound)
+        const delayMs = computeRateLimitDelayMs(round)
+        // 轮次上限是明确的简化上限：每轮一次 sleep、共 RATE_LIMIT_RETRY_ROUNDS 轮，
+        // 超限即放弃。若需无限等待请改用 CLAUDE_CODE_RETRY_WATCHDOG。
+        yield createSystemMessage(
+          `⏳ 服务端限流/容量不足（429），${Math.ceil(delayMs / 1000)} 秒后自动重试...` +
+            `（第 ${round}/${RATE_LIMIT_RETRY_ROUNDS} 轮）· Ctrl+C 取消`,
+          'warning',
+        )
+        await sleepInterruptible(
+          delayMs,
+          toolUseContext.abortController.signal,
+        )
+        state = createNextState(state, {
+          messages: messagesForQuery,
+          rateLimitRound: round,
+          transition: { reason: 'rate_limit_retry', attempt: round },
+        })
+        continue
       }
 
       if (lastMessage?.isApiErrorMessage) {

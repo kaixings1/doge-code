@@ -263,6 +263,7 @@ import {
 import {
   CannotRetryError,
   FallbackTriggeredError,
+  getDefaultMaxRetries,
   is529Error,
   type RetryContext,
   withRetry,
@@ -3021,6 +3022,22 @@ async (anthropic, attempt, context) => {
       // 不要为用户中止生成助手错误消息
       // 中断消息在 query.ts 中处理
       if (error instanceof APIUserAbortError) {
+        releaseStreamResources()
+        return
+      }
+
+      // 429 容量/频率错误在重试预算耗尽后不直接结束对话：
+      // 转成交给 query 层继续退避等待（见 query/rateLimitResume.ts），
+      // 与常规 429 的指数退避语义保持一致。
+      if (error instanceof APIError && error.status === 429) {
+        const rateLimitError = Object.assign(error, {
+          __dogeRetryAttempt: attemptNumber,
+          __dogeMaxRetries: getDefaultMaxRetries(),
+        })
+        yield getAssistantMessageFromError(rateLimitError, errorModel, {
+          messages,
+          messagesForAPI,
+        })
         releaseStreamResources()
         return
       }
