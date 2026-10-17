@@ -1527,6 +1527,40 @@ function isInternalHook(matched: MatchedHook): boolean {
 }
 
 /**
+ * 判定 hook 是否在自身失败/超时时阻断对应工具调用。
+ *
+ * 对齐官方 v2.1.295（2026-10-08）的 onFailure:block 语义：
+ * 默认行为是失败放行（non_blocking_error）；只有 hook 显式声明
+ * `onFailure: "block"` 时，失败才升级为阻断（生成 blockingError，
+ * 把对应工具调用 deny 掉）。
+ *
+ * 仅 HookCommand 支持 onFailure（callback/function hook 不持久化、
+ * 不读 schema，故不在判定范围内）。
+ *
+ * 纯函数，便于单测。
+ */
+export function shouldBlockOnFailure(
+  hook: HookCommand | HookCallback | FunctionHook,
+): boolean {
+  if (hook.type === 'callback' || hook.type === 'function') return false
+  return hook.onFailure === 'block'
+}
+
+/**
+ * 构造 onFailure:block 时的 blockingError 文案。
+ * 纯函数，便于单测断言文案。
+ */
+export function buildOnFailureBlockReason(
+  hookName: string,
+  errorMessage: string,
+  exitCode: number | null,
+): string {
+  const hasExit = exitCode !== null
+  const exit = hasExit ? `（exit ${exitCode}）` : ''
+  return `钩子 ${hookName} 失败${exit}并按 onFailure:block 阻断：${errorMessage}`
+}
+
+/**
  * 为匹配的钩子构建去重键，按源上下文命名空间。
  *
  * 设置文件钩子（无 pluginRoot/skillRoot）共享 '' 前缀，使得在 user/project/local 中定义的相同命令
@@ -2764,6 +2798,35 @@ async function* executeHooks({
         exitCode: result.status,
         outcome: 'error',
       })
+      // onFailure:block — hook 本身失败/超时时阻断工具调用（对齐官方 v2.1.295）
+      if (shouldBlockOnFailure(hook)) {
+        const blockReason = buildOnFailureBlockReason(
+          hookName,
+          result.stderr?.trim() || 'No stderr output',
+          result.status ?? null,
+        )
+        yield {
+          message: createAttachmentMessage({
+            type: 'hook_blocking_error',
+            hookName,
+            toolUseID,
+            hookEvent,
+            stderr: blockReason,
+            stdout: result.stdout,
+            exitCode: result.status,
+            command: hookCommand,
+            durationMs,
+          }),
+          blockingError: {
+            blockingError: blockReason,
+            command: hookCommand,
+          },
+          outcome: 'blocking' as const,
+          permissionBehavior: 'deny' as const,
+          hook,
+        }
+        return
+      }
       yield {
         message: createAttachmentMessage({
           type: 'hook_non_blocking_error',
@@ -2796,6 +2859,35 @@ async function* executeHooks({
         exitCode: 1,
         outcome: 'error',
       })
+      // onFailure:block — catch 路径同样支持（hook 抛异常 / 超时 abort）
+      if (shouldBlockOnFailure(hook)) {
+        const blockReason = buildOnFailureBlockReason(
+          hookName,
+          errorMessage,
+          null,
+        )
+        yield {
+          message: createAttachmentMessage({
+            type: 'hook_blocking_error',
+            hookName,
+            toolUseID,
+            hookEvent,
+            stderr: blockReason,
+            stdout: '',
+            exitCode: 1,
+            command: hookCommand,
+            durationMs: Date.now() - hookStartMs,
+          }),
+          blockingError: {
+            blockingError: blockReason,
+            command: hookCommand,
+          },
+          outcome: 'blocking' as const,
+          permissionBehavior: 'deny' as const,
+          hook,
+        }
+        return
+      }
       yield {
         message: createAttachmentMessage({
           type: 'hook_non_blocking_error',

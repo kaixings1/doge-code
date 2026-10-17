@@ -60,6 +60,15 @@ function buildHookSchemas() {
       .describe(
         '如果为 true，钩子在后台运行并在退出码 2（阻塞错误）时唤醒模型。隐含异步执行。',
       ),
+    onFailure: z
+      .enum(['block', 'allow'])
+      .optional()
+      .describe(
+        '钩子本身失败/超时时的处理方式。' +
+          "'block'：把失败视为 hook 显式拒绝，阻断对应工具调用（生成 blockingError）；" +
+          "'allow'（默认）：放行，仅记录为 non_blocking_error。" +
+          '对齐官方 v2.1.295（2026-10-08）的 onFailure:block 语义。',
+      ),
   })
 
   const PromptHookSchema = z.object({
@@ -90,6 +99,14 @@ function buildHookSchemas() {
       .boolean()
       .optional()
       .describe('如果为 true，钩子运行一次后执行后移除'),
+    onFailure: z
+      .enum(['block', 'allow'])
+      .optional()
+      .describe(
+        '钩子本身失败/超时时的处理方式。' +
+          "'block'：把失败视为 hook 显式拒绝，阻断对应工具调用；" +
+          "'allow'（默认）：放行。对齐官方 v2.1.295。",
+      ),
   })
 
   const HttpHookSchema = z.object({
@@ -121,6 +138,14 @@ function buildHookSchemas() {
       .boolean()
       .optional()
       .describe('如果为 true，钩子运行一次后执行后移除'),
+    onFailure: z
+      .enum(['block', 'allow'])
+      .optional()
+      .describe(
+        '钩子本身失败/超时时的处理方式。' +
+          "'block'：把失败视为 hook 显式拒绝，阻断对应工具调用；" +
+          "'allow'（默认）：放行。对齐官方 v2.1.295。",
+      ),
   })
 
   const AgentHookSchema = z.object({
@@ -156,6 +181,14 @@ function buildHookSchemas() {
       .boolean()
       .optional()
       .describe('如果为 true，钩子运行一次后即移除'),
+    onFailure: z
+      .enum(['block', 'allow'])
+      .optional()
+      .describe(
+        '钩子本身失败/超时时的处理方式。' +
+          "'block'：把失败视为 hook 显式拒绝，阻断对应工具调用；" +
+          "'allow'（默认）：放行。对齐官方 v2.1.295。",
+      ),
   })
 
   return {
