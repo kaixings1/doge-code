@@ -302,6 +302,41 @@ export function getAskRuleForTool(
 }
 
 /**
+ * 参数级匹配（`Tool(param:value)` 语法，如 `Agent(model:opus)`）。
+ *
+ * 解析层在 `permissionRuleParser.ts` 中将 `Tool(param:value)` 解析为
+ * `ruleValue.param` / `ruleValue.value`（不含 `=` 的位置式内容仍走
+ * `ruleContent`）。本函数筛选指定行为的参数级规则，并比对工具输入中
+ * 名为 `param` 的参数值：仅当 `String(input[param]) === value` 时才命中。
+ *
+ * 这样 `Agent(model:opus)` 作为 deny 规则时，仅当本次调用 model 为 opus
+ * 才拦截；作为 ask 规则时仅对此类调用弹窗；其他参数值的调用不受该规则影响。
+ */
+export function getParamRuleForTool(
+  context: ToolPermissionContext,
+  toolName: string,
+  behavior: PermissionBehavior,
+  input: { [key: string]: unknown },
+): PermissionRule | null {
+  const rules =
+    behavior === 'allow'
+      ? getAllowRules(context)
+      : behavior === 'deny'
+        ? getDenyRules(context)
+        : getAskRules(context)
+  for (const rule of rules) {
+    const { param, value, toolName: ruleTool } = rule.ruleValue
+    if (param == null || value == null) continue
+    if (ruleTool !== toolName) continue
+    const actual = input[param]
+    // 未提供该参数或值不匹配 → 该参数规则不命中。
+    if (actual == null) continue
+    if (String(actual) === value) return rule
+  }
+  return null
+}
+
+/**
  * Check if a specific agent is denied via Agent(agentType) syntax.
  * For example, Agent(Explore) would deny the Explore agent.
  */
@@ -1104,6 +1139,34 @@ export async function checkRuleBasedPermissions(
     // 继续执行以让 tool.checkPermissions 处理命令特定的规则
   }
 
+  // 1b.5 参数级 deny/ask 规则（Tool(param:value)，如 Agent(model:opus)）
+  const paramDeny = getParamRuleForTool(
+    appState.toolPermissionContext,
+    tool.name,
+    'deny',
+    input,
+  )
+  if (paramDeny) {
+    return {
+      behavior: 'deny',
+      decisionReason: { type: 'rule', rule: paramDeny },
+      message: `Permission to use ${tool.name} with ${paramDeny.ruleValue.param}=${paramDeny.ruleValue.value} has been denied.`,
+    }
+  }
+  const paramAsk = getParamRuleForTool(
+    appState.toolPermissionContext,
+    tool.name,
+    'ask',
+    input,
+  )
+  if (paramAsk) {
+    return {
+      behavior: 'ask',
+      decisionReason: { type: 'rule', rule: paramAsk },
+      message: createPermissionRequestMessage(tool.name),
+    }
+  }
+
   // 1c. 特定于工具的权限检查（例如 bash 子命令规则）
   let toolPermissionResult: PermissionResult = {
     behavior: 'passthrough',
@@ -1197,6 +1260,34 @@ async function hasPermissionsToUseToolInner(
       }
     }
     // 继续执行以让 Bash 的 checkPermissions 处理命令特定的规则
+  }
+
+  // 1b.5 参数级 deny/ask 规则（Tool(param:value)，如 Agent(model:opus)）
+  const paramDeny = getParamRuleForTool(
+    appState.toolPermissionContext,
+    tool.name,
+    'deny',
+    input,
+  )
+  if (paramDeny) {
+    return {
+      behavior: 'deny',
+      decisionReason: { type: 'rule', rule: paramDeny },
+      message: `Permission to use ${tool.name} with ${paramDeny.ruleValue.param}=${paramDeny.ruleValue.value} has been denied.`,
+    }
+  }
+  const paramAsk = getParamRuleForTool(
+    appState.toolPermissionContext,
+    tool.name,
+    'ask',
+    input,
+  )
+  if (paramAsk) {
+    return {
+      behavior: 'ask',
+      decisionReason: { type: 'rule', rule: paramAsk },
+      message: createPermissionRequestMessage(tool.name),
+    }
   }
 
   // 1c. 向工具实现请求权限结果

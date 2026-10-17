@@ -36,7 +36,7 @@ import { applySelectionOverlay, captureScrolledRows, clearSelection, createSelec
 import { SYNC_OUTPUT_SUPPORTED, supportsExtendedKeys, type Terminal, writeDiffToTerminal } from './terminal.js';
 import { CURSOR_HOME, cursorMove, cursorPosition, DISABLE_KITTY_KEYBOARD, DISABLE_MODIFY_OTHER_KEYS, ENABLE_KITTY_KEYBOARD, ENABLE_MODIFY_OTHER_KEYS, ERASE_SCREEN } from './termio/csi.js';
 import { DBP, DFE, DISABLE_MOUSE_TRACKING, ENABLE_MOUSE_TRACKING, ENTER_ALT_SCREEN, EXIT_ALT_SCREEN, SHOW_CURSOR } from './termio/dec.js';
-import { CLEAR_ITERM2_PROGRESS, CLEAR_TAB_STATUS, CLEAR_TERMINAL_TITLE, setClipboard, supportsTabStatus, wrapForMultiplexer } from './termio/osc.js';
+import { CLEAR_ITERM2_PROGRESS, CLEAR_TAB_STATUS, CLEAR_TERMINAL_TITLE, CLEAR_PROGRAM_STATUS, setClipboard, supportsTabStatus, wrapForMultiplexer } from './termio/osc.js';
 import { TerminalWriteProvider } from './useTerminalNotification.js';
 
 // 替代屏幕模式：renderer.ts 中设置 cursor.visible = !isTTY || screen.height===0，
@@ -1175,6 +1175,9 @@ export default class Ink {
       writeSync(1, CLEAR_ITERM2_PROGRESS);
       // 清除标签页状态（OSC 21337），防止过时的小点残留
       if (supportsTabStatus()) writeSync(1, wrapForMultiplexer(CLEAR_TAB_STATUS));
+      // 清除程序状态（OSC 7501），防止过时的忙碌/等待状态残留。
+      // 无条件清理：OSC 7501 是无条件发射的官方稳定协议，无需 supportsXxx 门控。
+      writeSync(1, wrapForMultiplexer(CLEAR_PROGRAM_STATUS));
       // 清除终端标题（OSC 0）——清除 [空闲] 前缀与 sessionId 等残留。
       // 不依赖 React effect cleanup（useTerminalTitle 的清理），因为
       // signal-exit / process.exit 路径下组件卸载时序不可靠；必须同步写出。

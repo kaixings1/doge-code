@@ -26,6 +26,7 @@ import {
   CLEAR_ITERM2_PROGRESS,
   CLEAR_TAB_STATUS,
   CLEAR_TERMINAL_TITLE,
+  CLEAR_PROGRAM_STATUS,
   supportsTabStatus,
   wrapForMultiplexer,
 } from '../ink/termio/osc.js'
@@ -119,6 +120,9 @@ function cleanupTerminalModes(): void {
     writeSync(1, CLEAR_ITERM2_PROGRESS)
     // Clear tab status (OSC 21337) so a stale dot doesn't linger
     if (supportsTabStatus()) writeSync(1, wrapForMultiplexer(CLEAR_TAB_STATUS))
+    // Clear program status (OSC 7501) unconditionally — it's emitted
+    // unconditionally, so it must be cleared unconditionally on exit.
+    writeSync(1, wrapForMultiplexer(CLEAR_PROGRAM_STATUS))
     // Clear terminal title (OSC 0) so the [空闲] prefix / sessionId doesn't
     // linger on the tab after the session ends. The React side keeps writing
     // the title while running; once we exit it must be wiped so the user's

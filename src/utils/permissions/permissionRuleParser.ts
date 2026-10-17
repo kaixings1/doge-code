@@ -127,6 +127,27 @@ export function permissionRuleValueFromString(
     return { toolName: normalizeLegacyToolName(toolName) }
   }
 
+  // Named parameter match: `Tool(param:value)` — e.g. `Agent(model:opus)`.
+  // Disambiguation from positional content rules (`Bash(npm install)`,
+  // `Agent(worker,researcher)`, `Bash(prefix:*)`):
+  //   - exactly one `:` separator, no comma, no space, no wildcard `*`
+  //   - param must be a bare identifier (letters/digits/`-`/`_`)
+  // A single `key:value` pair that is also a tool input param name is parsed
+  // into { param, value }; everything else stays positional `ruleContent`.
+  const paramMatch = rawContent.match(/^([A-Za-z_][\w-]*):(.+)$/)
+  if (
+    paramMatch &&
+    !rawContent.includes(',') &&
+    !rawContent.includes(' ') &&
+    !rawContent.includes('*')
+  ) {
+    return {
+      toolName: normalizeLegacyToolName(toolName),
+      param: paramMatch[1],
+      value: unescapeRuleContent(paramMatch[2] ?? ''),
+    }
+  }
+
   // Unescape the content
   const ruleContent = unescapeRuleContent(rawContent)
   return { toolName: normalizeLegacyToolName(toolName), ruleContent }
@@ -144,6 +165,9 @@ export function permissionRuleValueFromString(
 export function permissionRuleValueToString(
   ruleValue: PermissionRuleValue,
 ): string {
+  if (ruleValue.param != null && ruleValue.value != null) {
+    return `${ruleValue.toolName}(${ruleValue.param}:${ruleValue.value})`
+  }
   if (!ruleValue.ruleContent) {
     return ruleValue.toolName
   }

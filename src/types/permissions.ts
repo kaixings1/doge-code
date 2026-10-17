@@ -83,10 +83,18 @@ export type PermissionRuleSource =
 
 /**
  * 权限规则的值 — 指定哪个工具以及可选的内容
+ *
+ * - `ruleContent`：位置式内容匹配（如 `Bash(npm install)`、`Agent(worker,researcher)`），
+ *   由各工具的 checkPermissions 自定义解释。
+ * - `param` / `value`：命名参数级匹配（如 `Agent(model:opus)`），由匹配层按
+ *   工具输入的具体参数名/值比对。两者互斥：括号内含 `=` 时解析为 param/value，
+ *   否则为 ruleContent。
  */
 export type PermissionRuleValue = {
   toolName: string
   ruleContent?: string
+  param?: string
+  value?: string
 }
 
 /**

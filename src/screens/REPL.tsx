@@ -19,7 +19,7 @@ import type { JumpHandle } from '../components/VirtualMessageList.js';
 import { renderMessagesToPlainText } from '../utils/exportRenderer.js';
 import { openFileInExternalEditor } from '../utils/editor.js';
 import { writeFile } from 'fs/promises';
-import { Box, Text, useStdin, useTheme, useTerminalFocus, useTerminalTitle, useTabStatus } from '../ink.js';
+import { Box, Text, useStdin, useTheme, useTerminalFocus, useTerminalTitle, useTabStatus, useProgramStatus } from '../ink.js';
 import type { TabStatusKind } from '../ink/hooks/use-tab-status.js';
 import { CostThresholdDialog } from '../components/CostThresholdDialog.js';
 import { IdleReturnDialog } from '../components/IdleReturnDialog.js';
@@ -1059,6 +1059,11 @@ export function REPL({
   // useTabStatus 内部通过 supportsTabStatus() 自动检测终端兼容性，
   // 不支持 OSC 21337 的终端会静默忽略，无需额外门控。
   useTabStatus(titleDisabled ? null : sessionStatus, getSessionId());
+
+  // OSC 7501 Program Status Protocol: report working/waiting/idle to terminals
+  // that implement it. Unconditional (official stable protocol, no gate); shares
+  // the titleDisabled opt-out with OSC 0/21337.
+  useProgramStatus(titleDisabled ? null : sessionStatus);
 
   // 多窗口声音提醒 + 窗口激活：状态变化时播放提示音并把终端切到前台
   // - busy -> idle: 对话完成提醒

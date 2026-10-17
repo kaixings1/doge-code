@@ -246,6 +246,7 @@ export const OSC = {
   SEMANTIC_PROMPT: 133,
   GHOSTTY: 777, // Ghostty notification protocol
   TAB_STATUS: 21337, // Tab status extension
+  PROGRAM_STATUS: 7501, // Claude Code Program Status Protocol
 } as const
 
 /**
@@ -559,3 +560,39 @@ export function tabStatus(fields: TabStatusAction): string {
     )
   return osc(OSC.TAB_STATUS, parts.join(';'))
 }
+
+/**
+ * Claude Code Program Status Protocol (OSC 7501).
+ *
+ * Tells the terminal whether this interactive session is working, waiting on
+ * the user, or done — so a terminal that implements the protocol can show a
+ * per-session status badge. Spec: `ESC ] 7501 ; <state> BEL`, with
+ * `state` ∈ { busy, idle, waiting, done }.
+ *
+ * Unlike OSC 21337 (ant-only, unstable), OSC 7501 is an official, stable
+ * protocol documented at terminal-config.md: there is nothing to turn on in
+ * Claude Code, and terminals that don't implement it discard the sequence
+ * silently. We therefore emit unconditionally (no supportsXxx() gate), exactly
+ * as upstream does. Termination uses BEL so the bell-action path works
+ * uniformly across terminal emulators.
+ *
+ * Background sessions MUST NOT report status (agent view shows it instead);
+ * the caller (useProgramStatus) is only mounted in the foreground REPL, so
+ * that constraint holds by construction.
+ */
+export type ProgramStatusKind = 'busy' | 'idle' | 'waiting' | 'done'
+
+/** OSC command number for the Program Status Protocol. */
+export const PROGRAM_STATUS = OSC.PROGRAM_STATUS
+
+/**
+ * Emit an OSC 7501 program-status sequence: `ESC ] 7501 ; <state> BEL`.
+ * Callers must wrap output with wrapForMultiplexer() so tmux/screen
+ * DCS-passthrough carries the sequence to the outer terminal.
+ */
+export function programStatus(state: ProgramStatusKind): string {
+  return `${OSC_PREFIX}${OSC.PROGRAM_STATUS};${state}${BEL}`
+}
+
+/** Clear OSC 7501 status on exit (well-formed empty-state sequence). */
+export const CLEAR_PROGRAM_STATUS = `${OSC_PREFIX}${OSC.PROGRAM_STATUS};${BEL}`
