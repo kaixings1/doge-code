@@ -78,6 +78,7 @@ import pr_comments from './commands/pr_comments/index.ts'
 import releaseNotes from './commands/release-notes/index.ts'
 import rename from './commands/rename/index.ts'
 import resume from './commands/resume/index.ts'
+import undoClear from './commands/undo-clear/index.ts'
 import review, { ultrareview } from './commands/review.ts'
 import session from './commands/session/index.ts'
 import sessions from './commands/sessions/index.tsx'
@@ -544,6 +545,7 @@ export const COMMANDS = memoize((): Command[] => [
   explain,
   collab,
   resume,
+  undoClear,
   session,
   sessions,
   browser,
