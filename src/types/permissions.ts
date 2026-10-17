@@ -30,9 +30,26 @@ export type PermissionMode = InternalPermissionMode
 
 // 运行时验证集：用户可设置的模式（settings.json 的 defaultMode、
 // --permission-mode CLI 标志、对话恢复）。
+//
+// 双层开关：
+// 1. feature('TRANSCRIPT_CLASSIFIER') 是编译期 DCE（bun:bundle）：bun run
+//    模式下原生忽略运行时 env，故 doge.exe 才含 auto。实测确认（探针
+//    _probe_feature.ts）：d.bat 启动时 PERMISSION_MODES 不含 auto。
+// 2. isTranscriptClassifierEnvEnabled() 是运行时兜底：dev 模式（bun run）
+//    下若 CLAUDE_CODE_FEATURE_TRANSCRIPT_CLASSIFIER=truthy，也让 auto 进入
+//    集合，使本 fork 在开发模式下可用 auto。编译版 feature() 已为 true，
+//    逻辑或短路、不再读 env。
+export function isTranscriptClassifierEnabled(): boolean {
+  if (feature('TRANSCRIPT_CLASSIFIER')) return true
+  const raw = process.env.CLAUDE_CODE_FEATURE_TRANSCRIPT_CLASSIFIER
+  if (typeof raw !== 'string' || raw === '') return false
+  const v = raw.toLowerCase().trim()
+  return v !== '0' && v !== 'false' && v !== 'no' && v !== 'off'
+}
+
 export const INTERNAL_PERMISSION_MODES = [
   ...EXTERNAL_PERMISSION_MODES,
-  ...(feature('TRANSCRIPT_CLASSIFIER') ? (['auto'] as const) : ([] as const)),
+  ...(isTranscriptClassifierEnabled() ? (['auto'] as const) : ([] as const)),
 ] as const satisfies readonly PermissionMode[]
 
 export const PERMISSION_MODES = INTERNAL_PERMISSION_MODES
