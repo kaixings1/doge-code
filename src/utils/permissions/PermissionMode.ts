@@ -97,11 +97,28 @@ const PERMISSION_MODE_CONFIG: Partial<
 export function isExternalPermissionMode(
   mode: PermissionMode,
 ): mode is ExternalPermissionMode {
-  // External users can't have auto, so always true for them
-  if (process.env.USER_TYPE !== 'ant') {
+  // ant / ant0 是内部用户（ant0 为本 fork 的内部标识，先例见 osc.ts:475
+  // 的 supportsTabStatus）。auto/bubble 是内部模式，不对外持久化——
+  // 落到 settings.json 时转 external 表示。
+  const isInternalUser = isInternalUserType()
+  // 外部用户不能有 auto，所以对他们恒 true
+  if (!isInternalUser) {
     return true
   }
   return mode !== 'auto' && mode !== 'bubble'
+}
+
+/**
+ * 判定当前用户是否为 Anthropic 内部用户。
+ *
+ * - 'ant'：原始的员工 USER_TYPE（上游 Anthropic 用）
+ * - 'ant0'：本 fork（doge-code）的内部标识，先例见 osc.ts:475 supportsTabStatus
+ *
+ * 仅内部用户可以使用 auto / bubble 等内部权限模式。纯函数，便于单测。
+ */
+export function isInternalUserType(): boolean {
+  const userType = process.env.USER_TYPE
+  return userType === 'ant' || userType === 'ant0'
 }
 
 function getModeConfig(mode: PermissionMode): PermissionModeConfig {
