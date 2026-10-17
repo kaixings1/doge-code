@@ -68,6 +68,23 @@ export class StreamingToolExecutor {
    */
   discard(): void {
     this.discarded = true
+    // 丢弃后 getCompletedResults / getRemainingResults 都会直接 return，
+    // 这些工具的 ID 永远不会被 markToolUseAsComplete 删除 ——
+    // inProgressToolUseIDs 会永久残留，REPL 的 hasActiveTools 恒真，
+    // 导致标题栏永远不显示 [空闲]、绿点永不出现（本会话剩余时间全卡 busy）。
+    // 主动把已登记的工具 ID 全部清掉。删除是幂等的：未 add 过的 ID 无副作用。
+    const ids = this.tools.map(t => t.id)
+    if (ids.length === 0) return
+    this.toolUseContext.setInProgressToolUseIDs(prev => {
+      let next: Set<string> | null = null
+      for (const id of ids) {
+        if (prev.has(id)) {
+          next ??= new Set(prev)
+          next.delete(id)
+        }
+      }
+      return next ?? prev
+    })
   }
 
   /**
@@ -395,7 +412,14 @@ export class StreamingToolExecutor {
       }
     }
 
-    const promise = collectResults()
+    const promise = collectResults().finally(() => {
+      // 无论正常完成、抛异常还是被取消，都要把本工具的 ID 从
+      // inProgressToolUseIDs 中移除。删除是幂等的：正常路径下
+      // getCompletedResults 已删过一次，这里再删无副作用；但若
+      // collectResults 中途抛错，ID 会永久残留 → REPL hasActiveTools
+      // 恒真 → 标题栏永远不显示 [空闲]、绿点永不出现。
+      markToolUseAsComplete(this.toolUseContext, tool.id)
+    })
     tool.promise = promise
 
     // Process more queue when done

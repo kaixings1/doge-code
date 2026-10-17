@@ -127,25 +127,31 @@ async function* runToolsSerially(
     toolUseContext.setInProgressToolUseIDs(prev =>
       new Set(prev).add(toolUse.id),
     )
-    for await (const update of runToolUse(
-      toolUse,
-      assistantMessages.find(_ =>
-        (Array.isArray(_.message.content) ? _.message.content : []).some(
-          _ => _.type === 'tool_use' && _.id === toolUse.id,
-        ),
-      )!,
-      canUseTool,
-      currentContext,
-    )) {
-      if (update.contextModifier) {
-        currentContext = update.contextModifier.modifyContext(currentContext)
+    try {
+      for await (const update of runToolUse(
+        toolUse,
+        assistantMessages.find(_ =>
+          (Array.isArray(_.message.content) ? _.message.content : []).some(
+            _ => _.type === 'tool_use' && _.id === toolUse.id,
+          ),
+        )!,
+        canUseTool,
+        currentContext,
+      )) {
+        if (update.contextModifier) {
+          currentContext = update.contextModifier.modifyContext(currentContext)
+        }
+        yield {
+          message: update.message,
+          newContext: currentContext,
+        }
       }
-      yield {
-        message: update.message,
-        newContext: currentContext,
-      }
+    } finally {
+      // runToolUse 中途抛错时也删除 ID，防止 inProgressToolUseIDs 残留
+      // → REPL hasActiveTools 恒真 → 标题栏不显示 [空闲]/绿点永不出现。
+      // 删除幂等：正常路径已删过，无需分支判断。
+      markToolUseAsComplete(toolUseContext, toolUse.id)
     }
-    markToolUseAsComplete(toolUseContext, toolUse.id)
   }
 }
 
@@ -160,17 +166,23 @@ async function* runToolsConcurrently(
       toolUseContext.setInProgressToolUseIDs(prev =>
         new Set(prev).add(toolUse.id),
       )
-      yield* runToolUse(
-        toolUse,
-        assistantMessages.find(_ =>
-          (Array.isArray(_.message.content) ? _.message.content : []).some(
-            _ => _.type === 'tool_use' && _.id === toolUse.id,
-          ),
-        )!,
-        canUseTool,
-        toolUseContext,
-      )
-      markToolUseAsComplete(toolUseContext, toolUse.id)
+      try {
+        yield* runToolUse(
+          toolUse,
+          assistantMessages.find(_ =>
+            (Array.isArray(_.message.content) ? _.message.content : []).some(
+              _ => _.type === 'tool_use' && _.id === toolUse.id,
+            ),
+          )!,
+          canUseTool,
+          toolUseContext,
+        )
+      } finally {
+        // runToolUse 中途抛错时也删除 ID，防止 inProgressToolUseIDs 残留
+        // → REPL hasActiveTools 恒真 → 标题栏不显示 [空闲]/绿点永不出现。
+        // 删除幂等：正常路径已删过，无需分支判断。
+        markToolUseAsComplete(toolUseContext, toolUse.id)
+      }
     }),
     getMaxToolUseConcurrency(),
   )
