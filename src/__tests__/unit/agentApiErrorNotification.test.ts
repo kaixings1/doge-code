@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+import { APIError } from '@anthropic-ai/sdk'
 import { getAssistantMessageFromError } from '../../services/api/errors.js'
 import { CREDIT_BALANCE_TOO_LOW_ERROR_MESSAGE } from '../../services/api/errors.js'
 import { finalizeAgentTool } from '../../tools/AgentTool/agentToolUtils.js'
@@ -7,6 +8,12 @@ import {
   createAssistantMessage,
   extractTag,
 } from '../../utils/messages.js'
+
+// 让 errors.ts 的 429 分支进入需 shouldProcessRateLimits 真的处理路径
+vi.mock('../../utils/auth.js', async importOriginal => ({
+  ...(await importOriginal()),
+  isClaudeAISubscriber: () => true,
+}))
 
 /**
  * 端到端链路（离线）：402 余额不足 → finalizeAgentTool 抛错 →
@@ -148,3 +155,48 @@ describe('getAssistantMessageFromError — 网关余额不足', () => {
     ])
   })
 })
+
+/**
+ * 回归测试：tpm_exceeded 这类容量 429（无新版限流标头）必须与「其他 429」一致：
+ * 1) 标注 apiError === 'rate_limit'，让 query 层能识别并自动退避重试；
+ * 2) 文案友好（中文容量提示），而非裸露英文 model capacity exceeded: tpm_exceeded。
+ *
+ * 变异测试：把 errors.ts 中 429 分支的 apiError: 'rate_limit' 去掉时，以下第一断言失败；
+ * 把 tpm_exceeded 的友好文案回退成裸 detail 时，第二断言失败。
+ */
+describe('getAssistantMessageFromError — 容量 429 (tpm_exceeded)', () => {
+  const makeCap429 = (detail: string) =>
+    new APIError(
+      429,
+      { error: { type: 'rate_limit_error', message: detail } },
+      detail,
+      new Headers(),
+    )
+
+  it('tpm_exceeded 标注 apiError=rate_limit 并给出友好提示', () => {
+    const msg = getAssistantMessageFromError(
+      makeCap429('model capacity exceeded: tpm_exceeded'),
+      'test-model',
+    )
+    expect(msg.isApiErrorMessage).toBe(true)
+    expect(msg.apiError).toBe('rate_limit')
+    expect(msg.error).toBe('rate_limit')
+    const text = (msg.message.content as { type: 'text'; text: string }[])[0]
+      .text
+    expect(text).toContain('容量不足')
+    expect(text).toContain('tpm/rpm 超限')
+    expect(text).not.toContain('model capacity exceeded: tpm_exceeded')
+  })
+
+  it('其他容量 429 (rpm_exceeded) 同样走统一友好路径', () => {
+    const msg = getAssistantMessageFromError(
+      makeCap429('model capacity exceeded: rpm_exceeded'),
+      'test-model',
+    )
+    expect(msg.apiError).toBe('rate_limit')
+    const text = (msg.message.content as { type: 'text'; text: string }[])[0]
+      .text
+    expect(text).toContain('容量不足')
+  })
+})
+

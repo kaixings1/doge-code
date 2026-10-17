@@ -453,8 +453,14 @@ export const CLEAR_ITERM2_PROGRESS = `${OSC_PREFIX}${OSC.ITERM2};${ITERM2.PROGRE
 /**
  * Clear terminal title sequence (OSC 0 with empty string + BEL).
  * Uses BEL terminator for cleanup — safe on all terminals.
+ *
+ * OSC 0 takes the form `ESC ] 0 ; <title> BEL`. A bare `ESC ] 0 ; BEL` omits
+ * the title field entirely, so strict parsers (and even loose ones) may treat
+ * the sequence as malformed and drop it — leaving a stale "[空闲] …" on the
+ * tab after the session ends. Emit an explicit empty title (`0;<nothing>BEL`)
+ * so every terminal sees a well-formed, terminator-closed sequence.
  */
-export const CLEAR_TERMINAL_TITLE = `${OSC_PREFIX}${OSC.SET_TITLE_AND_ICON};${BEL}`
+export const CLEAR_TERMINAL_TITLE = `${OSC_PREFIX}${OSC.SET_TITLE_AND_ICON};;${BEL}`
 
 /** Clear all three OSC 21337 tab-status fields. Used on exit. */
 export const CLEAR_TAB_STATUS = osc(

@@ -450,6 +450,7 @@ export function getAssistantMessageFromError(
   ) {
     return createAssistantAPIErrorMessage({
       content: CUSTOM_OFF_SWITCH_MESSAGE,
+      apiError: 'rate_limit',
       error: 'rate_limit',
     })
   }
@@ -512,6 +513,7 @@ export function getAssistantMessageFromError(
       if (specificErrorMessage) {
         return createAssistantAPIErrorMessage({
           content: specificErrorMessage,
+          apiError: 'rate_limit',
           error: 'rate_limit',
         })
       }
@@ -521,6 +523,7 @@ export function getAssistantMessageFromError(
       // 返回 NO_RESPONSE_REQUESTED 以不向用户显示错误，但仍将消息记录在对话历史中供 Claude 查看。
       return createAssistantAPIErrorMessage({
         content: NO_RESPONSE_REQUESTED,
+        apiError: 'rate_limit',
         error: 'rate_limit',
       })
     }
@@ -533,6 +536,7 @@ export function getAssistantMessageFromError(
         : '运行 /extra-usage 启用，或 /model 切换到标准上下文'
       return createAssistantAPIErrorMessage({
         content: `${API_ERROR_MESSAGE_PREFIX}：1M 上下文需要额外用量 · ${hint}`,
+        apiError: 'rate_limit',
         error: 'rate_limit',
       })
     }
@@ -541,8 +545,17 @@ export function getAssistantMessageFromError(
     const stripped = error.message.replace(/^429\s+/, '')
     const innerMessage = stripped.match(/"message"\s*:\s*"([^"]*)"/)?.[1]
     const detail = innerMessage || stripped
+    // 容量类 429（model capacity exceeded / tpm_exceeded / rpm_exceeded 等）：
+    // 这类无新版限流标头的 429 也走统一的限流/容量处理路径，文案与其他 429 保持一致，
+    // 不再裸露英文 error.message，并标注会自动重试，提示用户可 Ctrl+C 取消。
+    const isCapacityError =
+      /model capacity exceeded|tpm_exceeded|rpm_exceeded|capacity/i.test(detail)
+    const capacityHint = isCapacityError
+      ? '服务端容量不足，将自动重试 · Ctrl+C 取消'
+      : '可能是临时容量问题，将自动重试 · 请查看 status.anthropic.com · Ctrl+C 取消'
     return createAssistantAPIErrorMessage({
-      content: `${API_ERROR_MESSAGE_PREFIX}：请求被拒绝（429）· ${detail || '可能是临时容量问题 —— 请查看 status.anthropic.com'}`,
+      content: `${API_ERROR_MESSAGE_PREFIX}：请求被拒绝（429）· ${isCapacityError ? '服务端容量不足（tpm/rpm 超限）' : detail || '临时容量问题'}。${capacityHint}`,
+      apiError: 'rate_limit',
       error: 'rate_limit',
     })
   }
