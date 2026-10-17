@@ -186,7 +186,7 @@ import { planRejectedSubmit } from '../utils/rejectedSubmitDisplay.js';
 import { resetMicrocompactState } from '../services/compact/microCompact.js';
 import { runPostCompactCleanup } from '../services/compact/postCompactCleanup.js';
 import { provisionContentReplacementState, reconstructContentReplacementState, type ContentReplacementRecord } from '../utils/toolResultStorage.js';
-import { partialCompactConversation } from '../services/compact/compact.js';
+import { partialCompactConversation, buildPostCompactMessages } from '../services/compact/compact.js';
 import {
   getIdleCompactRemainingMs,
   isIdleCompactionEnabled,
@@ -3943,8 +3943,13 @@ export function REPL({
       );
       if (result.wasCompacted && result.compactionResult) {
         // 压缩成功后替换 messages — auto-compact 走的是 query loop 的
-        // setMessages，这里走同样的入口避免双写
-        setMessages(prev => result.compactionResult!.messages);
+        // setMessages，这里走同样的入口避免双写。
+        // 正确字段：CompactionResult 没有 .messages 字段，
+        // 必须用 buildPostCompactMessages() 拼装 boundary+summary+kept+attachments+hookResults
+        // （query.ts:541 / sessionMemoryCompact.ts:600 / inProcessRunner.ts:1104
+        // 等 6 处全部走此 API）。原实现 result.compactionResult!.messages
+        // 在运行期为未定义，会被 setMessages 视为「重置」并清空对话。
+        setMessages(() => buildPostCompactMessages(result.compactionResult!));
         // 重置 idle 计时源，避免压缩产物立刻再次触发（虽然 token 已降，
         // 但稳妥起见把 lastQueryCompletionTime 当作"压缩完成时间"）
         lastQueryCompletionTimeRef.current = Date.now();
