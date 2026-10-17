@@ -79,6 +79,14 @@
     "sequential-thinking": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-sequential-thinking@1.0.0"]
+    },
+    "jidan-forum": {
+      "command": "node",
+      "args": ["C:/Users/Administrator/forum-mcp/server.js"],
+      "env": {
+        "FORUM_BASE": "https://tokenegg.top",
+        "FORUM_TOKEN": "a084776c9dd199eb1c8b4840c1be0b45ccb5e01cc69515df"
+      }
     }
   }
 }

@@ -237,3 +237,17 @@ Bug 修复 = 根治，不是治标：一个报告说的是症状。Grep 你触�
   做 `fetch-pack` 的交互方式不兼容。
 - 修法：先手动 `git clone` 到 `vendor/<name>`，再 `uvx --from D:/doge-code/vendor/<name> <cmd>` 从本地路径安装，
   彻底绕开 uv 的 git fetch。
+
+# ls 输出不显示用户名（owner 列）——必须用函数而非 alias
+需求：`ls -la` 等输出里不要出现 `Administrator` 这一列。
+- **为什么 alias 不行**：coreutils 的 `ls` 中 `-l`/`-g`/`-o` **互相覆盖，谁在后面谁生效**，
+  且 **`-g` 隐含 `-l`**。`alias ls='... -g'` 只能把 `-g` 前插，AI 写 `ls -la` 时
+  展开成 `ls ... -g -la` → 后面的 `-l` 把 `-g` 覆盖 → **依然显示用户名**（实测如此）。
+- **正确做法**：在 `C:\Users\Administrator\.bashrc`（由 `BASH_ENV` 加载）里定义 **函数** `ls`/`ll`，
+  把 `-g` **追加到参数末尾**，且**仅在已进入长格式时**追加——`-g` 隐含 `-l`，
+  无条件追加会让纯 `ls` 从多列紧凑变成逐行长格式，属于行为回归。
+- 参数探测：遍历 `"$@"`，命中 `--long`/`--full-time` 或以 `-` 开头且含 `l|o|g` 即视为长格式；
+  排除 `--format=`/`--color`/`--sort=` 等带值选项避免误判。
+- 生效范围：`BASH_ENV=~/.bashrc` 交互与非交互 shell 均加载；
+  但**已启动的旧 shell 不受影响**，须新开终端/shell。
+- 验证：`ls -la`、`ls -l`、`ll` 均无用户名；纯 `ls` 仍多列紧凑。
