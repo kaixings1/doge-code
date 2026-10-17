@@ -1,1 +1,8 @@
-{"displayName":"Matt Pocock 技能集","description":"TypeScript专家Matt Pocock的技能集合","url":"https://github.com/mattpocock/skills"}
+{
+  "displayName": "Matt Pocock Skills (full, flattened)",
+  "description": "Matt Pocock's agent skills for real engineering",
+  "url": "https://github.com/mattpocock/skills",
+  "version": "1.1.0",
+  "updated": "2026-10-15",
+  "skillCount": 39
+}
