@@ -3660,6 +3660,18 @@ mcp.command('reset-project-choices').description('重置此项目中所有已批
   } = await import('./cli/handlers/mcp.js');
   await mcpResetChoicesHandler();
 });
+mcp.command('login <name>').description('从命令行触发已配置远程 MCP 服务器（sse/http）的 OAuth 认证，免进 /mcp 交互菜单').action(async (name: string) => {
+  const {
+	mcpLoginHandler
+  } = await import('./cli/handlers/mcp.js');
+  await mcpLoginHandler(name);
+});
+mcp.command('logout <name>').description('清除已配置 MCP 服务器存储的 OAuth 凭证').action(async (name: string) => {
+  const {
+	mcpLogoutHandler
+  } = await import('./cli/handlers/mcp.js');
+  await mcpLogoutHandler(name);
+});
 
 // claude server
 if (process.env['CLAUDE_CODE_FEATURE_DIRECT_CONNECT'] === '1') {

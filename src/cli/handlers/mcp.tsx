@@ -11,7 +11,8 @@ import { MCPServerDesktopImportDialog } from '../../components/MCPServerDesktopI
 import { render } from '../../ink.js';
 import { KeybindingSetup } from '../../keybindings/KeybindingProviderSetup.js';
 import { type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS, logEvent } from '../../services/analytics/index.js';
-import { clearMcpClientConfig, clearServerTokensFromLocalStorage, getMcpClientConfig, readClientSecret, saveMcpClientSecret } from '../../services/mcp/auth.js';
+import { clearMcpClientConfig, clearServerTokensFromLocalStorage, getMcpClientConfig, performMCPOAuthFlow, readClientSecret, revokeServerTokens, saveMcpClientSecret } from '../../services/mcp/auth.js';
+import { openBrowser } from '../../utils/browser.js';
 import { connectToServer, getMcpServerConnectionBatchSize } from '../../services/mcp/client.js';
 import { addMcpConfig, getAllMcpConfigs, getMcpConfigByName, getMcpConfigsByScope, removeMcpConfig } from '../../services/mcp/config.js';
 import type { ConfigScope, ScopedMcpServerConfig } from '../../services/mcp/types.js';
@@ -337,4 +338,52 @@ export async function mcpResetChoicesHandler(): Promise<void> {
     enableAllProjectMcpServers: false
   }));
   cliOk('所有项目作用域（.mcp.json）的服务器批准与拒绝状态均已重置。\n' + '下次启动 Claude Code 时，您将再次收到授权提示。');
+}
+
+// mcp login —— 从 shell 触发已配置远程 MCP 服务器的 OAuth 流程
+// （对齐官方 W26「claude mcp login」：免进 /mcp 交互菜单即可鉴权）。
+// 复用 services/mcp/auth.ts 的 performMCPOAuthFlow，浏览器由 openBrowser 打开，
+// 授权 URL 同时打印到 stdout 供无浏览器环境手动访问。
+export async function mcpLoginHandler(name: string): Promise<void> {
+  logEvent('tengu_mcp_login', {
+    name: name as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
+  });
+  const server = getMcpConfigByName(name);
+  if (!server) {
+    cliError(`未找到名称为 ${name} 的 MCP 服务器`);
+  }
+  // 仅远程类型（sse/http）有 OAuth 流程；stdio 本地服务器无需鉴权。
+  if (server.type !== 'sse' && server.type !== 'http') {
+    cliError(`服务器 ${name} 不是远程（sse/http）类型，无需 OAuth 登录。当前类型：${server.type ?? 'stdio'}`);
+  }
+  try {
+    await performMCPOAuthFlow(name, server, url => {
+      process.stdout.write(`请在浏览器中完成授权：\n${url}\n`);
+      void openBrowser(url);
+    });
+    cliOk(`已成功完成「${name}」的 OAuth 认证。`);
+  } catch (error) {
+    cliError(`「${name}」认证失败：${error instanceof Error ? error.message : String(error)}`);
+  }
+}
+
+// mcp logout —— 清除已配置 MCP 服务器存储的 OAuth 凭证
+// （对齐官方 W26「claude mcp logout」）。
+// 先尝试服务端撤销（best-effort，revokeServerTokens），再清本地存储
+// （clearServerTokensFromLocalStorage），两步语义与交互菜单 handleClearAuth 一致。
+export async function mcpLogoutHandler(name: string): Promise<void> {
+  logEvent('tengu_mcp_logout', {
+    name: name as AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS
+  });
+  const server = getMcpConfigByName(name);
+  if (!server) {
+    cliError(`未找到名称为 ${name} 的 MCP 服务器`);
+  }
+  if (server.type !== 'sse' && server.type !== 'http') {
+    cliError(`服务器 ${name} 不是远程（sse/http）类型，无 OAuth 凭证可清除。当前类型：${server.type ?? 'stdio'}`);
+  }
+  // 服务端撤销失败不应阻断本地清除：撤销是 best-effort。
+  await revokeServerTokens(name, server);
+  clearServerTokensFromLocalStorage(name, server);
+  cliOk(`已清除「${name}」的认证凭证。下次连接需重新登录：claude mcp login ${name}`);
 }
