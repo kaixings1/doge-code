@@ -187,6 +187,12 @@ import { resetMicrocompactState } from '../services/compact/microCompact.js';
 import { runPostCompactCleanup } from '../services/compact/postCompactCleanup.js';
 import { provisionContentReplacementState, reconstructContentReplacementState, type ContentReplacementRecord } from '../utils/toolResultStorage.js';
 import { partialCompactConversation } from '../services/compact/compact.js';
+import {
+  getIdleCompactRemainingMs,
+  isIdleCompactionEnabled,
+  tryIdleCompaction,
+} from '../services/compact/idleCompact.js';
+import { getLastCacheSafeParams } from '../utils/forkedAgent.js';
 import type { LogOption } from '../types/logs.js';
 import type { AgentColorName } from '../tools/AgentTool/agentColorManager.js';
 import { fileHistoryMakeSnapshot, type FileHistoryState, fileHistoryRewind, type FileHistorySnapshot, copyFileHistoryForResume, fileHistoryEnabled, fileHistoryHasAnyChanges } from '../utils/fileHistory.js';
@@ -3907,6 +3913,45 @@ export function REPL({
       idleHintShownRef.current = false;
     };
   }, [lastQueryCompletionTime, isLoading, addNotification, removeNotification]);
+
+  // Idle compaction（对齐官方 v2.1.299，2026-10-14）：
+  // 当对话闲置 ≥54 分钟、token 数 ≥200K 时，自动调 compactConversation
+  // 压缩上下文。避开服务端 prompt cache 的 1h TTL——cache 一旦过期下次
+  // 请求会把整个 prefix 重写，提前主动压缩可让重写的是更小的 prefix。
+  //
+  // 复用本组件已有的 lastQueryCompletionTime 计时源；不新建第二条计时器
+  // （YAGNI）。用户提前活跃 → isLoading 变 true → effect 重跑清旧 timer。
+  useEffect(() => {
+    if (!isIdleCompactionEnabled()) return;
+    if (lastQueryCompletionTime === 0) return;
+    if (isLoading) return;
+    if (skipIdleCheckRef.current) return;
+    const remaining = getIdleCompactRemainingMs(lastQueryCompletionTime);
+    if (remaining < 0) return;
+    const timer = setTimeout(async () => {
+      // 二次校验：到点时若用户已活跃（isLoading 或 skipIdleCheck），不触发
+      if (isLoading || skipIdleCheckRef.current) return;
+      const cacheSafeParams = getLastCacheSafeParams();
+      if (!cacheSafeParams) return;
+      const msgs = messagesRef.current;
+      if (msgs.length === 0) return;
+      // 复用最近一次 query 的 toolUseContext（cacheSafeParams 内含）
+      const result = await tryIdleCompaction(
+        msgs,
+        cacheSafeParams.toolUseContext,
+        cacheSafeParams,
+      );
+      if (result.wasCompacted && result.compactionResult) {
+        // 压缩成功后替换 messages — auto-compact 走的是 query loop 的
+        // setMessages，这里走同样的入口避免双写
+        setMessages(prev => result.compactionResult!.messages);
+        // 重置 idle 计时源，避免压缩产物立刻再次触发（虽然 token 已降，
+        // 但稳妥起见把 lastQueryCompletionTime 当作"压缩完成时间"）
+        lastQueryCompletionTimeRef.current = Date.now();
+      }
+    }, remaining + 1); // +1ms：getIdleCompactRemainingMs 算的是「>=阈值」边界，+1 确保到点时 idleMs >= delayMs
+    return () => clearTimeout(timer);
+  }, [lastQueryCompletionTime, isLoading, setMessages]);
 
   // 提交来自队友消息或任务模式的传入提示，作为新的响应
   // 如果提交成功返回 true，如果查询已在运行返回 false
