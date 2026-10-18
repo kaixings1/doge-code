@@ -1061,6 +1061,32 @@ export async function reconcileSparseCheckout(
 }
 
 /**
+ * 把 git 克隆失败的原始 stderr 转换为中文友好提示，区分网络/认证/仓库不存在，
+ * 让模型或用户能自助定位（对应 .dogerules「错误信息面向模型可自救」）。
+ * 纯函数，便于单测。
+ */
+export function friendlyCloneError(stderr: string): string {
+  const category = classifyFetchError(stderr)
+  const raw = stderr.trim() || '（无错误输出）'
+  switch (category) {
+    case 'dns_or_refused':
+      return `克隆仓库失败：域名无法解析或连接被拒绝。\n请检查网络是否可达、能否访问该 git 托管（如 GitHub）。\n原始错误：${raw}`
+    case 'timeout':
+      return `克隆仓库失败：连接超时。\n可能是网络慢或托管服务不可达，请重试或换用镜像源。\n原始错误：${raw}`
+    case 'conn_reset':
+      return `克隆仓库失败：连接被对端重置。\n请重试，或确认网络/代理稳定。\n原始错误：${raw}`
+    case 'auth':
+      return `克隆仓库失败：认证被拒绝（401/403）。\n私有仓库需配置凭证（如 GitHub PAT 或 SSH key），或改用公开仓库。\n原始错误：${raw}`
+    case 'not_found':
+      return `克隆仓库失败：仓库不存在（404）。\n请检查 owner/repo 或 URL 是否正确、仓库是否已被删除。\n原始错误：${raw}`
+    case 'tls':
+      return `克隆仓库失败：TLS/证书错误。\n可能是代理拦截或系统证书库问题。\n原始错误：${raw}`
+    default:
+      return `克隆 marketplace 仓库失败：${raw}`
+  }
+}
+
+/**
  * Cache a marketplace from a git repository
  *
  * Clones or updates a git repository containing marketplace data.
@@ -1172,7 +1198,7 @@ async function cacheMarketplaceFromGit(
     } catch {
       // ignore
     }
-    throw new Error(`克隆 marketplace 仓库失败：${result.stderr}`)
+    throw new Error(friendlyCloneError(result.stderr))
   }
   safeCallProgress(onProgress, '克隆完成，正在验证市场…')
 }
