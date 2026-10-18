@@ -205,8 +205,12 @@ import monitor from './commands/monitor/index.ts'
 import backup from './commands/backup/index.ts'
 import mcpToolSearch from './commands/mcp-tool-search/index.ts'
 import promptDiff from './commands/prompt-diff/index.ts'
+// A1（2026-10-17）：ant 专属门控统一开放给本 fork 的 ant0 内部标识，
+// 判据单一来源复用 isInternalUserType()（PermissionMode.ts:119）。
+// 解锁 agentsPlatform/INTERNAL_ONLY_COMMANDS 等已实现但不可达的命令。
+import { isInternalUserType } from './utils/permissions/PermissionMode.js'
 const agentsPlatform = loadConditionalCommand(
-  () => process.env.USER_TYPE === 'ant',
+  () => isInternalUserType(),
   () => safeRequire('./commands/agents-platform/index.js')?.default ?? null
 )
 
@@ -625,7 +629,6 @@ export const COMMANDS = memoize((): Command[] => [
   codeHealth,
   errorsCmd,
   prReview,
-  env,
   logs,
   ports,
   symbol,
@@ -740,7 +743,7 @@ export const COMMANDS = memoize((): Command[] => [
   loopDashboard,
   bridgeSessions,
   memoryBank,
-  ...(process.env.USER_TYPE === 'ant' && !process.env.IS_DEMO
+  ...(isInternalUserType() && !process.env.IS_DEMO
     ? INTERNAL_ONLY_COMMANDS
     : []),
   dashboard,
