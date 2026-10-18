@@ -348,6 +348,23 @@
 
 ## P4 — 后续增强
 
+### [x] 20. 重建 LocalWorkflowTask 真实实现（原方案文档已丢失，重新起草并落地）
+- **域**: `D:\doge-code`（CLI，TypeScript）
+- **原问题**: `src/tasks/LocalWorkflowTask/LocalWorkflowTask.ts` 真实实现丢失，仅剩补签名桩（`isLocalWorkflowTask` 恒 false、kill/skip/retry 空函数、缺 `export const LocalWorkflowTask: Task`）；`WORKFLOW_SCRIPTS` 编译期 DCE 关闭 → workflow 后台任务能力是壳
+- **过程**: 原 `.tasks/local-workflow-task-rebuild.md` 方案文档确认不存在（git 历史/分支/`.tasks/` 均无），重新起草并落地。先执行 B2 探查确认 `WorkflowTool.call` 可通过第二参数 `context` 拿到 `setAppStateForTasks ?? setAppState`（与 AgentTool 同模式），硬阻塞点消除
+- **改动**（提交 `5cace4878`）:
+  - `LocalWorkflowTask.ts`：真实 `LocalWorkflowTaskState` 类型 + `export const LocalWorkflowTask: Task` + 真实 `isLocalWorkflowTask` 判别 + 真实 `killWorkflowTask`；新增 `registerWorkflowTask` / `updateWorkflowProgress` / `completeWorkflowTask` / `failWorkflowTask`；`skip/retry` 诚实保留 no-op（workflow steps 为同步顺序循环，无独立子单元）
+  - `WorkflowTool.ts`：run 路径在 `feature('WORKFLOW_SCRIPTS') && context?.setAppState` 时 spawn 后台任务并异步推进 steps，无 context 时退回同步兜底（保持既有行为）
+  - `WorkflowDetailDialog.tsx`：真实渲染步骤/进度/结果（替换 `return null` 空壳）
+  - 新增 `src/__tests__/tasks/LocalWorkflowTask.test.ts`（8 用例）+ `.tasks/local-workflow-task-rebuild.md` 方案文档
+- **完整方案**: `.tasks/local-workflow-task-rebuild.md`（含 B2 探查结论、A/B/C/D 分块、实现记录、验收边界）
+- **验证**: 改动文件 `tsc --noEmit` 零错误；`LocalWorkflowTask.test.ts` 8/8 通过；bun 脚本验证 `registerWorkflowTask` → `updateWorkflowProgress` 逐步推进 → `completeWorkflowTask`（status=completed）→ `killWorkflowTask`（status=killed）全链路正确
+- **验收边界（如实记录，非本次引入的缺陷）**:
+  - `tasks.ts` 用 `bun:bundle`（编译期门控），`WorkflowTool.ts` 用 polyfill（运行时 env），两者在 gate 开启构建下一致；bun run 直跑（d.bat）下 `getAllTasks()` 不注册 `local_workflow`（编译期门控默认 false），完整端到端验收需 gate 开启的编译构建（compile.bat 因 WorkflowTool 拖入 ink top-level await 关闭此 gate，属既有约束）
+  - vitest 下 `WorkflowTool.ts` 既有模块图含 strip-only 不支持的语法，spawn 集成测试无法运行，核心逻辑改由单测 + bun 脚本覆盖
+- **注意**: 与 `D:\doge-code\android`（doge-mobile 线）及 `d:\.github\mobileapp\Cosmic-IDE\`（主战场，用户正在做）无关，本任务只动 `D:\doge-code\src`
+- **完成判据对照**: `getAllTasks()` 含 `local_workflow`（gate 开启构建/vitest 别名下成立）；对话框 kill 接线就绪；详情弹窗非空；`tsc`/`vitest` 无新增失败 — 全部达成（端到端受 gate 编译约束，见上）
+
 ---
 
 ## 挂起后台任务处置（2026-09-17）
@@ -452,6 +469,141 @@
 
 **2.10 无需实施**：经亲读 `src/main/mcp/mcpService.ts`、`McpManagementPage.tsx`、`cherryStudioMcp.ts`（`clientAdapters`）、`mcp-tool-search.ts`、`probe.ts` 等 63 个相关文件确认，KX2API 已实现完整 MCP 客户端栈——server 增删改查、stdio/sse/http 三种 transport、连接探测、cherry-studio 协议适配、管理 UI（路由 `/mcp` + 侧边栏 `nav.mcp` 导航）。初稿 TASK 标"高成本架构改造待做"系未读源码的误判。故 2.10 标记已存在，规划全部闭环，无遗留待办。
 
+
+## P5 — 官方功能缺口补齐（2026-10-18 全库审计产出）
+
+> 审计基线：本仓库是 **source map 还原树 + fork 魔改**，仓内**没有官方源码**可 diff。
+> 因此"比官方少什么"由三处可验证证据判定：
+> ① 代码内显式「不可用」标记 ② 门控变量默认值 ③ 被注释/移除的注册。
+> 实测面：`src/commands/` 315 目录、`src/tools/` 102 目录、`src/skills/bundled/` 52 文件、
+> 内置 agent 18 个、服务 47 个、测试 449 个（tests/ 68 + src/__tests__/ 381）。
+
+---
+
+### P5.0 — 明确排除项（不做，理由）
+
+**判据：依赖 claude.ai / Anthropic 官方云服务，大陆地区不可达 → 实施了也没法用。**
+
+| 排除项 | 位置 | 理由 |
+|---|---|---|
+| Claude for Chrome MCP | `src/stubs/ant/claudeForChromeMcp.ts` | `@ant/claude-for-chrome-mcp` 未发布到公共 npm，`connect()` 恒抛错 |
+| Artifacts 实时分享页 | `/share` 现为本地 HTML 桩 | 官方依赖 claude.ai 托管，本地已够用 |
+| Routines 云端定时 | `/cron` 现为本地 spawn 桩 | 官方依赖云端调度，本地调度已够用 |
+| 远程 agent / 连接器 | `scheduleRemoteAgents.ts` 指向 `claude.ai/settings/connectors` | 云端服务 |
+| TungstenTool | `src/tools/TungstenTool/` | Anthropic 内部终端会话桥，后端已不存在，仅保留注册供旧转录可读 |
+| `INTERNAL_ONLY_COMMANDS` 21 项 | `src/commands.ts:440` | teleport / resetLimits / mockLimits / antTrace / perfIssue 等依赖 Anthropic 内部服务端；`/chrome` 指向 `claude.ai/chrome`、`clau.de/chrome/*` |
+| tmux / screen 会话后端 | `src/services/bridgeSessions/sessionManager.ts:77,83` | Linux 专属，Windows 环境无关 |
+| 技能语义搜索的云端后端 | — | 若要向量检索需外部 embedding 服务；本地改走关键词索引（见 #25） |
+
+---
+
+### P5.1 — 真·功能缺失（代码不存在，非配置问题）
+
+> **与「门控关闭」性质不同**：这批即使把 `CLAUDE_CODE_FEATURE_*` 开关打开，
+> 加载到的仍是空壳 → 命令注册为 `null`。**开开关也没用**。
+
+### [ ] 21. `force-snip` 空壳实现
+- **文件**: `src/commands/force-snip.ts`（**1 行**）
+- **现状**: `export default function forceSnipCommand() { return null }`
+- **门控**: `CLAUDE_CODE_FEATURE_HISTORY_SNIP`（`src/commands.ts:257`）
+- **目标**: 实现历史消息裁剪（官方 `HISTORY_SNIP` 语义），对接既有 `SnipTool`
+- **验证**: 单测覆盖裁剪边界 + 变异验证（去掉裁剪逻辑用例必失败）
+
+### [ ] 22. `subscribe-pr` 空壳实现
+- **文件**: `src/commands/subscribe-pr.ts`（**1 行**）
+- **现状**: `export default function subscribePrCommand() { return null }`
+- **门控**: `CLAUDE_CODE_FEATURE_KAIROS_GITHUB_WEBHOOKS`（`src/commands.ts:276`）
+- **目标**: 用 **GitHub REST API 轮询**替代官方 webhook（webhook 需公网回调，本地不可行）
+- **注意**: github.com 大陆可访问（可能慢），勿引入 claude.ai 依赖
+- **验证**: 复用 `SubscribePRTool`（318 行，已实现）的订阅持久化逻辑
+
+### [ ] 23. `remote-control-server` 空壳评估
+- **文件**: `src/commands/remoteControlServer/index.ts`（**1 行**）
+- **现状**: `export default function remoteControlServerCommand() { return null }`
+- **门控**: `FEATURE_DAEMON=1` **且** `FEATURE_BRIDGE_MODE=1`（`src/commands.ts:248`）
+- **前置**: 本仓库已有本地桥（`scripts/bridge.ts`，端口 5678/5679）+ `src/bridge/` 全套（`bridgeMain.ts`/`replBridge.ts`/`initReplBridge.ts`）
+- **目标**: 先**评估**是否只是缺一个命令入口（接线问题），而非重写
+- **判据**: 若 `src/bridge/` 已具备服务端能力 → 只补命令壳，属接线；否则标为不实施
+- **验证**: 参照 `c66146d5e` 的端到端桥测试写法（真实 spawn 服务器 + 裸 WS 客户端）
+
+### [ ] 24. `discover_skills` 工具实现
+- **文件**: `src/tools/DiscoverSkillsTool/prompt.ts`（**59 字节**，仅 `export const DISCOVER_SKILLS_TOOL_NAME = 'discover_skills'`）
+- **现状**: 目录下**无实现文件**，工具仅有名字常量
+- **目标**: 扫描技能目录（`.doge/skills`、项目技能目录、bundled）返回可用技能清单
+- **复用**: `src/commands/skills/`、`src/services/skillSearch/`
+- **验证**: 单测覆盖「无技能目录 / 有技能 / 去重」三态
+
+---
+
+### P5.2 — 桩实现补齐（有框架，逻辑为空）
+
+### [ ] 25. 技能搜索索引落地
+- **文件**: `src/services/skillSearch/localSearch.ts`
+- **现状**: `localSkillSearch()` 直接 `return []` 并 `console.warn('技能索引未实现，返回空结果')`；`clearSkillIndexCache()` 是 no-op
+- **门控**: `CLAUDE_CODE_FEATURE_EXPERIMENTAL_SKILL_SEARCH`（`src/commands.ts:272`）
+- **目标**: 本地关键词/前缀索引（**不引入 embedding 服务**，见 P5.0）
+- **验证**: 单测覆盖「未建索引返回空 / 命中 / 缓存失效后重查」；变异验证 no-op 化后用例失败
+
+### [ ] 26. Windows 语音录制回退
+- **文件**: `src/services/voice.ts:377`
+- **现状**: `'[voice] Windows native recording unavailable, no fallback'` —— Windows 无录音回退路径
+- **目标**: 评估用 Windows 原生录音（WASAPI / `ffmpeg` / `sox`）补齐
+- **注意**: 已有 `voiceKeyterms.ts`、`voiceStreamSTT.ts`；STT 需**非 claude.ai** 的本地或国产 API
+- **验证**: 探针测试确认「有设备 / 无设备」两分支可区分
+
+---
+
+### P5.3 — 文档失真修复（低风险）
+
+### [ ] 27. 修正 `docs/使用说明.md` 的三处失真
+- **文件**: `docs/使用说明.md`
+- **失真 1**（`:2770-2782` 根目录文件表）：声称存在 `IMPLEMENTATION_PLAN.md`、`UNIMPLEMENTED_FEATURES.md`、根 `ROADMAP.md` —— **三者均不存在**（`docs/ROADMAP.md` 存在，是路径写错）
+- **失真 2**（`:223`）：引用 `UNIMPLEMENTED_FEATURES.md` 作为"未实现特性清单"来源 —— **该文件从未被写出**
+- **失真 3**（`:4112-4116` "48.2 桩/未实现工具"表）：声称 `push_notification` / `send_user_file` / `review_artifact` / `synthetic_output` "返回 Not available in this build" —— **实测均已实现**：
+  - `PushNotificationTool.ts` 196 行、`SendUserFileTool.ts` 179 行、`ReviewArtifactTool.ts` 含完整 zod schema + 20 条规则
+  - `SyntheticOutputTool` 由 `isEnabled()` 按非交互会话启用，非"未实现"
+  - 真实桩只有 `suggest_background_pr`（**目录都不存在**，`src/tools.ts:432` 仅剩注释）
+- **操作**: 改文档描述，**不改代码**；补建 `UNIMPLEMENTED_FEATURES.md` 或删掉该引用
+- **验证**: `dir docs\IMPLEMENTATION_PLAN.md docs\UNIMPLEMENTED_FEATURES.md` 应报不存在（与文档一致）
+
+---
+
+### P5.4 — 门控默认值核查（可选，非缺失）
+
+### [ ] 28. 核查门控工具是否值得默认开启
+- **背景**: 以下工具**代码完整**，仅默认不注册（设 env 即开），**不属功能缺失**：
+
+| 工具 | 开启条件 | 行数参考 |
+|---|---|---|
+| `SendUserFileTool` / `PushNotificationTool` | `FEATURE_KAIROS[_PUSH_NOTIFICATION]` | 179 / 196 |
+| `SubscribePRTool` | `FEATURE_KAIROS_GITHUB_WEBHOOKS` | 318 |
+| `RemoteTriggerTool` / `cronTools` | `FEATURE_AGENT_TRIGGERS[_REMOTE]` | 161 |
+| `WebBrowserTool` | `FEATURE_WEB_BROWSER_TOOL` | 273 |
+| `WorkflowTool` | `FEATURE_WORKFLOW_SCRIPTS` | — |
+| `SnipTool` | `FEATURE_HISTORY_SNIP` | — |
+| `ListPeersTool` | `FEATURE_UDS_INBOX` | 243 |
+| `TerminalCaptureTool` | `FEATURE_TERMINAL_PANEL` | — |
+| `CtxInspectTool` | `FEATURE_CONTEXT_COLLAPSE` | — |
+| `MonitorTool` / `SleepTool` / `OverflowTestTool` | 各自 feature | — |
+| `VerifyPlanExecutionTool` | `CLAUDE_CODE_VERIFY_PLAN=true` | — |
+| `LSPTool` | `ENABLE_LSP_TOOL` | — |
+
+- **操作**: 只做**核查**，判断哪些应改为默认开（改 `OVERRIDABLE_FEATURES` 或默认值）
+- **注意**: `src/utils/featureOverrides.ts:6` 注释明确 —— 被 `feature()` 编译期 DCE 消除的分支**运行时无法恢复**，只能重编译。核查前先确认目标工具是 env 门控而非 DCE
+- **验证**: 无需测试；改动后跑 `/config` 界面确认开关出现
+
+---
+
+### P5 执行顺序建议
+
+`#27`（文档，零风险）→ `#21`/`#22`（纯本地逻辑）→ `#24`/`#25`（技能侧）→ `#23`（先评估后定）→ `#26` → `#28`
+
+**统一纪律**（遵 `.dogerules`）：
+- 每项先写单测 → 变异验证（注入缺陷必须失败，证明测试非复刻）
+- 改动后 `git diff --stat` 核对行数与实际改动相符（防 CRLF 假 diff）
+- **不引入任何 claude.ai / Anthropic 云依赖**
+
+---
 
 ## 执行规则
 
