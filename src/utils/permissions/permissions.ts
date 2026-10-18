@@ -240,7 +240,7 @@ function toolMatchesRule(
   rule: PermissionRule,
 ): boolean {
   // 规则不能有内容以匹配整个工具
-  if (rule.ruleValue.ruleContent !== undefined) {
+  if (rule.ruleValue.ruleContent != null || rule.ruleValue.param != null) {
     return false
   }
 
