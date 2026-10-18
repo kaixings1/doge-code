@@ -67,6 +67,19 @@ const isBackgroundTasksDisabled =
 // eslint-disable-next-line custom-rules/no-process-env-top-level -- 故意在顶层：schema 必须在模块加载时定义
 isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_BACKGROUND_TASKS);
 
+// W27 对齐：子代理默认后台运行（fork mode 默认后台）。
+// 模型未显式传 run_in_background 时默认 true（后台）；显式 false 仍前台；
+// 全局禁用后台任务（CLAUDE_CODE_DISABLE_BACKGROUND_TASKS）时回落 undefined。
+// 抽为纯函数以便单测（变异验证：反转默认即失败）。
+export function resolveBackgroundDefault(
+  input: boolean | undefined,
+  backgroundDisabled: boolean,
+): boolean | undefined {
+  if (input !== undefined) return input
+  return backgroundDisabled ? undefined : true
+}
+
+
 // 在此毫秒数后自动将代理任务转为后台运行（0 = 禁用）
 // 通过环境变量或 GrowthBook 开关启用（惰性检查，因为 GB 在模块加载时可能尚未就绪）
 function getAutoBackgroundMs(): number {
@@ -84,7 +97,7 @@ const baseInputSchema = lazySchema(() => z.object({
   prompt: z.string().describe('要执行的任务'),
   subagent_type: z.string().optional().describe('要使用的专业代理类型'),
   model: z.enum(['sonnet', 'opus', 'haiku']).optional().describe("可选的模型覆盖。优先级高于代理定义中的模型设置。如果省略，则使用代理定义的模型或继承父级模型。"),
-  run_in_background: z.boolean().optional().describe('设为 true 以在后台运行此代理。完成后您将收到通知。')
+  run_in_background: z.boolean().optional().describe('在后台运行此代理（默认 true：完成后您将收到通知，无需 sleep 或轮询）。显式传 false 可前台同步运行。')
 }));
 
 // 完整 schema，组合了基础 + 多代理参数 + 隔离参数
@@ -243,13 +256,16 @@ export const AgentTool = buildTool({
     subagent_type,
     description,
     model: modelParam,
-    run_in_background,
+    run_in_background: rawRunInBackground,
     name,
     team_name,
     mode: spawnMode,
     isolation,
     cwd
   }: AgentToolInput, toolUseContext, canUseTool, assistantMessage, onProgress?) {
+    // W27：子代理默认后台（fork mode 默认后台）。显式 false 仍前台；
+    // 全局禁用后台（CLAUDE_CODE_DISABLE_BACKGROUND_TASKS）时回落 undefined。
+    const run_in_background = resolveBackgroundDefault(rawRunInBackground, isBackgroundTasksDisabled);
     const startTime = Date.now();
     const model = isCoordinatorMode() ? undefined : modelParam;
 
