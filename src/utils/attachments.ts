@@ -1,4 +1,5 @@
 // biome-ignore-all assist/source/organizeImports: ANT-ONLY 导入标记不得重新排序
+import { discoverSessions } from '../bridge/sessionDiscovery.js'
 import {
   logEvent,
   type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
@@ -810,9 +811,15 @@ export async function getAttachments(
             ),
           ),
         ),
-        maybe('session_mentions', () =>
-          Promise.resolve(processSessionMentions(input, [])),
-        ),
+        maybe('session_mentions', async () => {
+          // 短路：无 @session- 提及时不发起会话发现 HTTP 请求。
+          if (extractSessionMentions(input).length === 0) return []
+          const sessions = await discoverSessions(getSessionId())
+          return processSessionMentions(
+            input,
+            [...sessions].map(([name, sessionId]) => ({ name, sessionId })),
+          )
+        }),
         // 技能发现在第 0 回合（用户输入作为信号）。回合间
         // discovery 通过 query.ts 中的 startSkillDiscoveryPrefetch 运行，
         // 受写时拐点检测控制 — 详见 skillSearch/prefetch.ts。
