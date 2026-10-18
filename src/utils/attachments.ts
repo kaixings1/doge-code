@@ -337,6 +337,14 @@ export type AgentMentionAttachment = {
   agentType: string
 }
 
+// 跨会话提及附件（对齐官方 W32 @ 提及）。sessionName 为 @session-<name> 中的名字，
+// targetSessionId 由会话发现层（本地桥会话注册表）解析填充，解析层未匹配时留空。
+export type SessionMentionAttachment = {
+  type: 'session_mention'
+  sessionName: string
+  targetSessionId?: string
+}
+
 // 异步钩子响应附件
 export type AsyncHookResponseAttachment = {
   type: 'async_hook_response'
@@ -615,6 +623,7 @@ export type Attachment =
       model?: string
     }
   | AgentMentionAttachment
+  | SessionMentionAttachment
   | {
       type: 'task_status'
       taskId: string
@@ -800,6 +809,9 @@ export async function getAttachments(
               toolUseContext.options.agentDefinitions.activeAgents,
             ),
           ),
+        ),
+        maybe('session_mentions', () =>
+          Promise.resolve(processSessionMentions(input, [])),
         ),
         // 技能发现在第 0 回合（用户输入作为信号）。回合间
         // discovery 通过 query.ts 中的 startSkillDiscoveryPrefetch 运行，
@@ -2010,6 +2022,28 @@ function processAgentMentions(
   return results.filter(
     (result): result is NonNullable<typeof result> => result !== null,
   )
+}
+
+// 跨会话 @ 提及解析（对齐官方 W32）。语法：@session-<name>。
+export function extractSessionMentions(input: string): string[] {
+  const matches = input.match(/@session-([a-zA-Z0-9_-]+)/g) ?? []
+  return matches.map((m) => m.replace('@session-', ''))
+}
+
+// 把 @session-<name> 解析为 session_mention 附件。sessions 为已知会话注册表
+// （名字到 sessionId）；未匹配到时 targetSessionId 留空，由后续路由层处理。
+export function processSessionMentions(
+  input: string,
+  sessions: { name: string; sessionId: string }[],
+): Attachment[] {
+  const names = extractSessionMentions(input)
+  if (names.length === 0) return []
+  const sessionMap = new Map(sessions.map((s) => [s.name, s.sessionId]))
+  return names.map((name) => ({
+    type: 'session_mention' as const,
+    sessionName: name,
+    targetSessionId: sessionMap.get(name),
+  }))
 }
 
 async function processMcpResourceAttachments(
