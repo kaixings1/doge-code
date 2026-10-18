@@ -1,33 +1,28 @@
 import type { Command } from '../commands.js'
 import type { ContentBlockParam } from '@anthropic-ai/sdk/resources/messages.js'
+import { buildPrompt } from '../skills/bundled/loop.js'
 
+/**
+ * /proactive — 官方 /loop 的别名入口。
+ *
+ * 官方 /loop 与 /proactive 是同一语义（周期性重复运行 prompt，默认 10m，
+ * 可省略 interval/prompt），/proactive 只是别名。此处复用 loop skill 的
+ * buildPrompt，使 /proactive 命令与 /loop skill 行为完全一致，避免 fork
+ * 早期遗留的空泛「自动重复执行任务」prompt 与官方语义脱钩。
+ */
 const command: Command = {
   type: 'prompt',
   name: 'proactive',
-  description: '自动重复执行任务',
+  description: '周期性重复运行 prompt（/loop 的别名，默认 10m）',
   allowedTools: ['Bash(*)'],
   contentLength: 100,
-  progressMessage: '正在执行循环任务',
+  progressMessage: '正在调度周期性任务',
   source: 'builtin',
   async getPromptForCommand(args: string): Promise<ContentBlockParam[]> {
-    const promptText = `## 任务：循环执行
-
-用户想要持续运行一个任务，定期重复执行直到满足条件。
-
-### 参数
-${args || '未指定参数，执行默认循环任务'}
-
-### 规则
-1. 执行用户要求的任务
-2. 完成后等待评估是否需要继续
-3. 如果任务完成或条件满足，停止循环
-4. 如果任务未完成，继续执行
-5. 循环之间的延迟由任务性质决定`
-
     return [
       {
         type: 'text',
-        text: promptText,
+        text: buildPrompt(args),
       },
     ]
   },

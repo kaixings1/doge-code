@@ -22,7 +22,7 @@ Examples:
   /loop check the deploy          (defaults to ${DEFAULT_INTERVAL})
   /loop check the deploy every 20m`
 
-function buildPrompt(args: string): string {
+export function buildPrompt(args: string): string {
   return `# /loop — schedule a recurring prompt
 
 Parse the input below into \`[interval] <prompt…>\` and schedule it with ${CRON_CREATE_TOOL_NAME}.
@@ -74,8 +74,9 @@ ${args}`
 export function registerLoopSkill(): void {
   registerBundledSkill({
     name: 'loop',
+    aliases: ['proactive'],
     description:
-      'Run a prompt or slash command on a recurring interval (e.g. /loop 5m /foo, defaults to 10m)',
+      'Run a prompt or slash command on a recurring interval (e.g. /loop 5m /foo, defaults to 10m). /proactive is an alias.',
     whenToUse:
       'When the user wants to set up a recurring task, poll for status, or run something repeatedly on an interval (e.g. "check the deploy every 5 minutes", "keep running /babysit-prs"). Do NOT invoke for one-off tasks.',
     argumentHint: '[interval] <prompt>',
