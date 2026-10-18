@@ -636,6 +636,47 @@ const server = createServer(async (req, res) => {
       return;
     }
 
+    // POST /v1/code/sessions/{id}/message - 跨会话投递（W32 微提交3）
+    // 接收来自其他 session 的用户消息，broadcast 给目标 session 的订阅者。
+    // 投递方是 HTTP 请求而非 WS，无 ws 可 exclude；回声过滤依赖客户端
+    // isOutboundEcho（按 direction/messageId 标记）与消息携带的 fromSessionId。
+    if (req.method === 'POST' && sessionMatch && url.pathname.endsWith('/message')) {
+      const sessionId = sessionMatch[1];
+      const session = store.getSession(sessionId);
+
+      if (!session) {
+        sendError(res, 404, 'Session not found');
+        return;
+      }
+
+      const body = await parseBody(req);
+      const content = typeof body?.content === 'string' ? body.content : '';
+      const fromSessionId = typeof body?.fromSessionId === 'string' ? body.fromSessionId : '';
+
+      if (!content) {
+        sendError(res, 400, 'content required');
+        return;
+      }
+
+      const messageId = randomUUID();
+      // 以 user 类型广播，复用 CLI 既有入站路径（bridgeMessaging 仅接受
+      // type==='user' 触发 onInboundMessage → enqueue → query）。新 uuid
+      // 使目标 CLI 的 recentInboundUUIDs 去重机制天然生效，投递方因不订阅
+      // 目标 session 而不会收到，构成防回灌基础（客户端 isOutboundEcho
+      // 为双保险）。
+      store.broadcast(sessionId, {
+        type: 'user',
+        uuid: messageId,
+        session_id: sessionId,
+        message: { content, from_session_id: fromSessionId },
+        direction: 'inbound',
+      });
+
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, messageId, targetSessionId: sessionId }));
+      return;
+    }
+
     // DELETE /v1/code/sessions/{id} - 删除会话
     if (req.method === 'DELETE' && sessionMatch) {
       const sessionId = sessionMatch[1];

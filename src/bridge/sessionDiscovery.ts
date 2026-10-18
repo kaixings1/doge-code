@@ -58,3 +58,36 @@ export async function discoverSessions(
     return new Map()
   }
 }
+
+/**
+ * 跨会话投递：把一条用户消息转发到目标 session（W32 微提交3）。
+ *
+ * 经本地桥 REST 端点 POST /v1/code/sessions/{id}/message，服务器收到后
+ * broadcast 给目标 session 的所有订阅者（含目标 CLI 自身）。服务器端用
+ * excludeWs 排除投递方连接，客户端用 isOutboundEcho 双保险过滤回声，
+ * 防止自我回灌死循环（见 .dogerules 广播回灌环路守则）。
+ *
+ * 返回 true 表示投递成功（200）。目标 session 不存在 / 网络失败返回 false
+ * （降级为普通文本，不阻断主流程）。
+ */
+export async function deliverMessageToSession(
+  targetSessionId: string,
+  content: string,
+  fromSessionId: string,
+  fetchImpl: typeof fetch = fetch,
+): Promise<boolean> {
+  try {
+    const res = await fetchImpl(
+      `${getLocalBridgeUrl()}/v1/code/sessions/${encodeURIComponent(targetSessionId)}/message`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content, fromSessionId }),
+      },
+    )
+    return res.ok
+  } catch {
+    return false
+  }
+}
+

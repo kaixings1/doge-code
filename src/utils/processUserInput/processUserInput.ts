@@ -32,12 +32,15 @@ import {
 } from '../../types/textInputTypes.js'
 import {
   type AgentMentionAttachment,
+  type SessionMentionAttachment,
   createAttachmentMessage,
   getAttachmentMessages,
 } from '../attachments.js'
+import { deliverMessageToSession } from '../../bridge/sessionDiscovery.js'
 import type { PastedContent } from '../config.js'
 import type { EffortValue } from '../effort.js'
 import { toArray } from '../generators.js'
+import { getSessionId } from '../../bootstrap/state.js'
 import {
   executeUserPromptSubmitHooks,
   getUserPromptSubmitHookBlockingMessage,
@@ -602,6 +605,23 @@ async function processUserInputBase(
         is_subagent_only: isSubagentOnly,
         is_prefix: isPrefix,
       })
+    }
+
+    // 跨会话 @ 提及投递（W32 微提交3）。把输入转发给每个被 @ 的目标 session。
+    // 原 session 仍正常处理该输入（转交语义）；投递失败静默降级为普通文本，
+    // 不阻断主流程。fire-and-forget：不 await，避免阻塞主 query 循环。
+    const sessionMentions = attachmentMessages.filter(
+      (m): m is AttachmentMessage & { attachment: SessionMentionAttachment } =>
+        m.attachment?.type === 'session_mention',
+    )
+    if (sessionMentions.length > 0 && !bridgeOrigin && !isMeta) {
+      const fromId = getSessionId()
+      for (const mention of sessionMentions) {
+        const target = mention.attachment.targetSessionId
+        if (target) {
+          void deliverMessageToSession(target, inputString, fromId)
+        }
+      }
     }
   }
 
