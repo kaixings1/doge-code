@@ -325,6 +325,13 @@ async function main(): Promise<void> {
     process.env.CLAUDE_CODE_SAFE_MODE = '1';
   }
 
+  // --screen-reader：屏幕阅读器模式（对齐官方 W29）。尽早设 env，让 ink
+  // 渲染层在创建实例时禁用 alt-screen（全屏覆盖）并停止接管 console，
+  // 使输出退化为线性滚动文本，供 VoiceOver / NVDA 读取。
+  if (args.includes('--screen-reader')) {
+    process.env.CLAUDE_CODE_SCREEN_READER = '1';
+  }
+
   // --plugin-url：从 URL 安装插件（更新日志 2.1.129）
   const pluginUrlIdx = args.indexOf('--plugin-url');
   if (pluginUrlIdx !== -1 && args[pluginUrlIdx + 1]) {

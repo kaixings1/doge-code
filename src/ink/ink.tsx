@@ -663,6 +663,12 @@ export default class Ink {
    * 控制渲染器中 cursor.y 的钳位，并决定 SIGCONT/尺寸变化/卸载处理器中的替代屏幕感知行为。状态变化时会重绘，使第一个替代屏幕帧（以及退出后的第一个主屏幕帧）成为全量重绘，无过时 diff 状态。
    */
   setAltScreenActive(active: boolean, mouseTracking = false): void {
+    // 屏幕阅读器模式（对齐官方 W29）：禁用 alt-screen，使输出退化为线性滚动
+    // 文本供 VoiceOver / NVDA 读取。即使 <AlternateScreen> 请求激活也强制拒绝。
+    if (process.env.CLAUDE_CODE_SCREEN_READER === '1') {
+      active = false
+      mouseTracking = false
+    }
     if (this.altScreenActive === active) return;
     this.altScreenActive = active;
     this.altScreenMouseTracking = active && mouseTracking;

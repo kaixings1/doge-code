@@ -1,3 +1,4 @@
+import { spawn } from "node:child_process"
 import type { LocalJSXCommandCall } from "../../types/command.js"
 import React from "react"
 
@@ -156,6 +157,27 @@ class CronScheduler {
       job.interval = setTimeout(() => {
         console.log("[CRON] Executing: " + command)
         job.lastRun = new Date()
+        // Routines 本地桩（对齐官方 W16）：到点真正执行命令。
+        // 本地等价官方 web 端"触发模板化云 agent"——这里派生本地子进程
+        // 运行用户注册的命令/脚本（命令来自用户自己添加的 cron 任务，边界可信）。
+        try {
+          const child = spawn(command, [], {
+            shell: true,
+            windowsHide: true,
+            stdio: ['ignore', 'pipe', 'pipe'],
+          })
+          let out = ''
+          child.stdout?.on('data', (d) => { out += d.toString() })
+          child.stderr?.on('data', (d) => { out += '[err] ' + d.toString() })
+          child.on('close', (code) => {
+            console.log(`[CRON] Done(${command}) exit=${code}${out ? '\n' + out : ''}`)
+          })
+          child.on('error', (err) => {
+            console.error(`[CRON] Failed(${command}): ${err.message}`)
+          })
+        } catch (err) {
+          console.error(`[CRON] Spawn error(${command}): ${err instanceof Error ? err.message : String(err)}`)
+        }
         scheduleNext()
       }, Math.max(0, delay))
 
@@ -191,7 +213,7 @@ class CronScheduler {
   }
 }
 
-const scheduler = new CronScheduler()
+export const scheduler = new CronScheduler()
 
 const mockJobs = [
   { id: "job_001", name: "每日备份", schedule: "0 2 * * *", command: "backup-database", status: "active", lastRun: new Date(Date.now() - 86400000).toISOString() },

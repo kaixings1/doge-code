@@ -15,15 +15,33 @@ function withTheme(node: ReactNode): ReactNode {
   return createElement(ThemeProvider, null, node)
 }
 
+// 屏幕阅读器模式（对齐官方 W29）：停止接管 console，使 VoiceOver / NVDA 能读取
+// 输出。alt-screen 的禁用在 ink.tsx 的 setAltScreenActive 守卫里按同一 env 处理
+// （让 <AlternateScreen> 的激活请求被强制拒绝，输出退化为线性滚动文本）。
+// env 由 cli.tsx 的 --screen-reader 快速路径设置。
+function screenReaderOptions(): Partial<RenderOptions> {
+  if (process.env.CLAUDE_CODE_SCREEN_READER !== '1') return {}
+  return { patchConsole: false }
+}
+
+// 导出供单测：屏幕阅读器模式选项解析（纯函数）。
+export function screenReaderOptionsForTest(): Partial<RenderOptions> {
+  return screenReaderOptions()
+}
+
 export async function render(
   node: ReactNode,
   options?: NodeJS.WriteStream | RenderOptions,
 ): Promise<Instance> {
-  return inkRender(withTheme(node), options)
+  const merged: NodeJS.WriteStream | RenderOptions =
+    options && typeof options === 'object'
+      ? { ...screenReaderOptions(), ...options }
+      : { ...screenReaderOptions(), stdout: options as NodeJS.WriteStream }
+  return inkRender(withTheme(node), merged)
 }
 
 export async function createRoot(options?: RenderOptions): Promise<Root> {
-  const root = await inkCreateRoot(options)
+  const root = await inkCreateRoot({ ...screenReaderOptions(), ...(options ?? {}) })
   return {
     ...root,
     render: node => root.render(withTheme(node)),
