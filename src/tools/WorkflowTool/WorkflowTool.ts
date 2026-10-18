@@ -1,8 +1,17 @@
 import { z } from 'zod/v4'
 import { buildTool, type ToolDef } from '../../Tool.js'
 import { lazySchema } from '../../utils/lazySchema.js'
+import { feature } from '../../utils/bun-bundle-polyfill.js'
 import { readFile, writeFile, mkdir, readdir } from 'fs/promises'
 import { join, basename, extname } from 'path'
+import type { SetAppState } from '../../Task.js'
+import type { ToolUseContext } from '../../types/tool.js'
+import {
+  registerWorkflowTask,
+  updateWorkflowProgress,
+  completeWorkflowTask,
+  failWorkflowTask,
+} from '../../tasks/LocalWorkflowTask/LocalWorkflowTask.js'
 
 const inputSchema = lazySchema(() =>
   z.object({
@@ -97,6 +106,49 @@ async function executeWorkflowStep(step: string, args: Record<string, string>): 
   return `[执行] ${interpolated}`
 }
 
+/**
+ * 异步驱动 workflow steps，每步推进后台任务进度，支持 abort 中断。
+ * 失败则置 failed；完成/失败/中止均更新终态。
+ */
+async function runWorkflowSteps(
+  taskId: string,
+  steps: string[],
+  args: Record<string, string>,
+  setAppState: SetAppState,
+): Promise<void> {
+  const stepResults: string[] = []
+  let failed = false
+  for (let i = 0; i < steps.length; i++) {
+    const aborted = (() => {
+      let isAborted = false
+      setAppState((prev: unknown) => {
+        const task = (prev as { tasks?: Record<string, { abortController?: AbortController }> }).tasks?.[taskId]
+        if (task?.abortController?.signal.aborted) isAborted = true
+        return prev as never
+      })
+      return isAborted
+    })()
+    if (aborted) {
+      updateWorkflowProgress(taskId, setAppState, { currentStep: i, stepResults, failed, status: 'killed' })
+      return
+    }
+
+    const step = steps[i]
+    try {
+      const result = await executeWorkflowStep(step, args)
+      stepResults.push(`[${i + 1}/${steps.length}] ${result}`)
+      updateWorkflowProgress(taskId, setAppState, { currentStep: i + 1, stepResults, failed: false })
+    } catch (err) {
+      stepResults.push(`[${i + 1}/${steps.length}] 失败: ${err instanceof Error ? err.message : String(err)}`)
+      failed = true
+      updateWorkflowProgress(taskId, setAppState, { currentStep: i + 1, stepResults, failed: true })
+      failWorkflowTask(taskId, stepResults.join('\n'), setAppState)
+      return
+    }
+  }
+  completeWorkflowTask(taskId, stepResults.join('\n'), setAppState)
+}
+
 export const WorkflowTool = buildTool({
   name: 'workflow',
   maxResultSizeChars: 100_000,
@@ -124,7 +176,8 @@ export const WorkflowTool = buildTool({
     return { behavior: 'allow', updatedInput: input }
   },
   renderToolUseMessage(input) {
-    const mode = ((input as Record<string, unknown>)?.mode || (input as Record<string, unknown>)?.script?.slice(0, 20)) || '?'
+    const raw = input as Record<string, unknown>
+    const mode = (raw?.mode || String(raw?.script ?? '').slice(0, 20)) || '?'
     return `Workflow: ${mode}`
   },
   mapToolResultToToolResultBlockParam(content, toolUseID) {
@@ -134,7 +187,7 @@ export const WorkflowTool = buildTool({
       content: (content as Record<string, unknown>).output || (content as Record<string, unknown>).message || 'Workflow operation completed',
     }
   },
-  async call({ script, args = {}, mode = 'run' }) {
+  async call({ script, args = {}, mode = 'run' }, context?: ToolUseContext) {
     switch (mode) {
       case 'list': {
         const workflows = await listWorkflows()
@@ -204,6 +257,29 @@ export const WorkflowTool = buildTool({
           return { data: { success: false, output: '', error: '工作流为空或不存在' } as Output }
         }
 
+        // 后台任务模式：仅 WORKFLOW_SCRIPTS 门控开启且能拿到 AppState 时生效。
+        // 否则退回同步原地执行（保持既有行为，兼容单测与非 ant 构建）。
+        if (feature('WORKFLOW_SCRIPTS') && context?.setAppState) {
+          const rootSetAppState = context.setAppStateForTasks ?? context.setAppState
+          const task = registerWorkflowTask({
+            workflowName: namedWorkflow?.name ?? script.slice(0, 40),
+            steps,
+            setAppState: rootSetAppState,
+          })
+
+          // 异步驱动 steps（不 await，立即返回让任务在后台跑）。
+          void runWorkflowSteps(task.id, steps, args, rootSetAppState)
+
+          return {
+            data: {
+              success: true,
+              output: `工作流 "${task.workflowName}" 已在后台启动（${steps.length} 步）`,
+              steps,
+            } as Output,
+          }
+        }
+
+        // 同步兜底（无 context 或门控关闭）。
         const outputs: string[] = []
         let failed = false
 
@@ -225,7 +301,7 @@ export const WorkflowTool = buildTool({
             success: !failed,
             output: `${failed ? '工作流执行失败' : '工作流执行完成'}\n${summary}`,
             steps,
-            error: failed ? '某步骤执行失败' : undefined,
+            error: failed ? '某步骤执行失败' : void 0,
           } as Output,
         }
       }
