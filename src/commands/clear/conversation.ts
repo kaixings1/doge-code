@@ -14,6 +14,7 @@ import {
   type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS,
   logEvent,
 } from '../../services/analytics/index.js'
+import { saveCurrentSessionCosts } from '../../cost-tracker.js'
 import type { AppState } from '../../state/AppState.js'
 import { isInProcessTeammateTask } from '../../tasks/InProcessTeammateTask/types.js'
 import {
@@ -198,6 +199,9 @@ export async function clearConversation({
 
   // 生成新的会话 ID 以提供全新状态
   // 将旧会话设置为父会话，用于分析血缘追踪
+  // 在 regenerateSessionId 之前保存当前会话用量，否则 /clear 后累计
+  // token/费用不落盘，下次 resume 或同进程切换时归零（v2.1.302 同类修复）。
+  saveCurrentSessionCosts()
   regenerateSessionId({ setCurrentAsParent: true })
   // 更新环境变量，使子进程使用新的会话 ID
   if (process.env.USER_TYPE === 'ant' && process.env.CLAUDE_CODE_SESSION_ID) {

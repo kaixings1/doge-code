@@ -2,7 +2,14 @@ import { isAutoMemoryEnabled } from '../../memdir/paths.js'
 import { registerBundledSkill } from '../bundledSkills.js'
 
 export function registerRememberSkill(): void {
-  if (process.env.USER_TYPE !== 'ant') {
+  // 原门控 `process.env.USER_TYPE !== 'ant'` 在 doge 本地（未设置 USER_TYPE
+  // 环境变量，且本 fork 内部标识为 ant0/n）恒为 true，导致记忆审查技能
+  // 永不注册。/remember 是用户主动调用的审查技能，应与 memoryManager 等
+  // 兄弟技能一致——只要自动记忆基础设施可用即注册。
+  // isAutoMemoryEnabled() 仅在记忆系统整体关闭（--bare /
+  // CLAUDE_CODE_DISABLE_AUTO_MEMORY）时为 false；settings 的
+  // autoMemoryEnabled 自动提取开关为 false 不影响此用户主动调用的技能。
+  if (!isAutoMemoryEnabled()) {
     return
   }
 
