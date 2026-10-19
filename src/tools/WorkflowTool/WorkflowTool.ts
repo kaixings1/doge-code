@@ -6,12 +6,13 @@ import { readFile, writeFile, mkdir, readdir } from 'fs/promises'
 import { join, basename, extname } from 'path'
 import type { SetAppState } from '../../Task.js'
 import type { ToolUseContext } from '../../types/tool.js'
-import {
-  registerWorkflowTask,
-  updateWorkflowProgress,
-  completeWorkflowTask,
-  failWorkflowTask,
-} from '../../tasks/LocalWorkflowTask/LocalWorkflowTask.js'
+// 懒加载 local_workflow 任务实现：WorkflowTool.ts → LocalWorkflowTask.ts →
+// framework/diskOutput → … 若在模块顶层静态 import 会形成初始化环
+// （实测 "Cannot access 'WorkflowTool' before initialization"）。
+// 与本仓库既有门控模式一致（tasks.ts / BackgroundTasksDialog.tsx 同样用 require）。
+function getWorkflowTaskModule(): typeof import('../../tasks/LocalWorkflowTask/LocalWorkflowTask.js') {
+  return require('../../tasks/LocalWorkflowTask/LocalWorkflowTask.js')
+}
 
 const inputSchema = lazySchema(() =>
   z.object({
@@ -116,6 +117,7 @@ async function runWorkflowSteps(
   args: Record<string, string>,
   setAppState: SetAppState,
 ): Promise<void> {
+  const wf = getWorkflowTaskModule()
   const stepResults: string[] = []
   let failed = false
   for (let i = 0; i < steps.length; i++) {
@@ -129,7 +131,7 @@ async function runWorkflowSteps(
       return isAborted
     })()
     if (aborted) {
-      updateWorkflowProgress(taskId, setAppState, { currentStep: i, stepResults, failed, status: 'killed' })
+      wf.updateWorkflowProgress(taskId, setAppState, { currentStep: i, stepResults, failed, status: 'killed' })
       return
     }
 
@@ -137,16 +139,16 @@ async function runWorkflowSteps(
     try {
       const result = await executeWorkflowStep(step, args)
       stepResults.push(`[${i + 1}/${steps.length}] ${result}`)
-      updateWorkflowProgress(taskId, setAppState, { currentStep: i + 1, stepResults, failed: false })
+      wf.updateWorkflowProgress(taskId, setAppState, { currentStep: i + 1, stepResults, failed: false })
     } catch (err) {
       stepResults.push(`[${i + 1}/${steps.length}] 失败: ${err instanceof Error ? err.message : String(err)}`)
       failed = true
-      updateWorkflowProgress(taskId, setAppState, { currentStep: i + 1, stepResults, failed: true })
-      failWorkflowTask(taskId, stepResults.join('\n'), setAppState)
+      wf.updateWorkflowProgress(taskId, setAppState, { currentStep: i + 1, stepResults, failed: true })
+      wf.failWorkflowTask(taskId, stepResults.join('\n'), setAppState)
       return
     }
   }
-  completeWorkflowTask(taskId, stepResults.join('\n'), setAppState)
+  wf.completeWorkflowTask(taskId, stepResults.join('\n'), setAppState)
 }
 
 export const WorkflowTool = buildTool({
@@ -261,7 +263,7 @@ export const WorkflowTool = buildTool({
         // 否则退回同步原地执行（保持既有行为，兼容单测与非 ant 构建）。
         if (feature('WORKFLOW_SCRIPTS') && context?.setAppState) {
           const rootSetAppState = context.setAppStateForTasks ?? context.setAppState
-          const task = registerWorkflowTask({
+          const task = getWorkflowTaskModule().registerWorkflowTask({
             workflowName: namedWorkflow?.name ?? script.slice(0, 40),
             steps,
             setAppState: rootSetAppState,
