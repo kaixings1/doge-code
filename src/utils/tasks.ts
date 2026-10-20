@@ -66,10 +66,13 @@ export function notifyTasksUpdated(): void {
   }
 }
 
-export const TASK_STATUSES = ['pending', 'in_progress', 'completed'] as const
+// 'failed' 是终态：调度器/编排失败时必须如实记录，不能伪装成 completed。
+// 注意：读端所有 `status !== 'completed'` 的判断因此天然把 failed 视为「未完成」，
+// 语义正确（失败任务不应解除下游 blockedBy 依赖）。
+export const TASK_STATUSES = ['pending', 'in_progress', 'completed', 'failed'] as const
 
 export const TaskStatusSchema = lazySchema(() =>
-  z.enum(['pending', 'in_progress', 'completed']),
+  z.enum(['pending', 'in_progress', 'completed', 'failed']),
 )
 export type TaskStatus = z.infer<ReturnType<typeof TaskStatusSchema>>
 

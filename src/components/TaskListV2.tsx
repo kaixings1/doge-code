@@ -237,6 +237,11 @@ function getTaskIcon(status: Task['status']): {
         icon: figures.squareSmall,
         color: undefined
       };
+    case 'failed':
+      return {
+        icon: figures.cross,
+        color: 'error'
+      };
   }
 }
 function TaskItem(t0) {

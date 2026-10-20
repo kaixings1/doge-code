@@ -4,7 +4,7 @@
  * 聚合：状态机 + 消息循环 + 消息规范化 + 请求构建 + 响应处理 +
  * 工具调度 + Token 预算 + 自动压缩 + 错误处理/恢复 + 流式 + 子代理。
  */
-import { QueryStateMachine } from "./stateMachine.ts";
+import { AcceptanceGate, QueryStateMachine } from "./stateMachine.ts";
 import { MessageLoop, engineLog, type MessageLoopDeps, type QueryResult, type AutoContinueConfig } from "./messageLoop.ts";
 import { MessageNormalizer, type InternalMessage } from "./messageNormalizer.ts";
 import { RequestBuilder, type ToolDefinition } from "./requestBuilder.ts";
@@ -90,6 +90,49 @@ export interface AgentPermissionRequest {
   description?: string;
 }
 
+/**
+ * 带真实超时的工具执行。
+ *
+ * 历史缺陷：rawExecutor 原先完全忽略 ToolScheduler 传入的 timeout（形参名 _o），
+ * 工具一旦卡住（MCP 无响应、Bash 卡在交互提示）就永久挂起，占满并发配额、
+ * 拖死整个编排。这里用 Promise.race 让超时真正生效。
+ *
+ * 限制：Tool 接口未暴露 AbortSignal，无法强杀下游工具；但至少让调用方拿到
+ * 失败并释放并发名额，而不是无限等待。
+ */
+export async function runWithTimeout(
+  tool: Pick<Tool, 'name' | 'execute'>,
+  input: Record<string, unknown>,
+  opts?: { timeout?: number; onProgress?: (p: unknown) => void },
+): Promise<{ content: unknown }> {
+  const timeoutMs = opts?.timeout;
+  const run = tool.execute(input, opts);
+
+  if (typeof timeoutMs !== 'number' || timeoutMs <= 0 || !Number.isFinite(timeoutMs)) {
+    return run;
+  }
+
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timer = setTimeout(
+      () => reject(new Error(`工具 ${tool.name} 执行超时（${timeoutMs}ms）`)),
+      timeoutMs,
+    );
+    // 不让超时定时器阻止进程退出
+    if (typeof (timer as { unref?: () => void }).unref === 'function') {
+      (timer as { unref: () => void }).unref();
+    }
+  });
+
+  try {
+    return await Promise.race([run, timeoutPromise]);
+  } finally {
+    if (timer) clearTimeout(timer);
+    // 超时后 run 仍可能 reject，避免 unhandledRejection
+    void run.catch(() => {});
+  }
+}
+
 export class QueryEngine {
   readonly stateMachine = new QueryStateMachine();
   readonly tokenBudget = new TokenBudgetManager();
@@ -161,8 +204,9 @@ export class QueryEngine {
       },
     };
     const rawExecutor: ToolExecutor = {
-      async execute(tool, input, _o) {
-        const r = await tool.execute(input);
+      async execute(tool, input, o) {
+        const r = await runWithTimeout(tool, input, o);
+
         if (typeof r.content === "string") return r.content;
         if (Array.isArray(r.content)) {
           return r.content
@@ -238,8 +282,10 @@ export class QueryEngine {
       input_schema: t.parameters,
     }));
 
+    // 注意：constructor 不是 async，这里不能 await import。
+    // 改用已有的静态 import（stateMachine 在本文件顶部已导入）。
     const acceptanceGate = opts.acceptanceCriteria
-      ? new (await import("./stateMachine.ts")).AcceptanceGate()
+      ? new AcceptanceGate()
       : null
     if (acceptanceGate && opts.acceptanceCriteria) {
       acceptanceGate.addMany(opts.acceptanceCriteria)

@@ -290,9 +290,11 @@ export class UnifiedScheduler {
   }
 
   private async failTask(taskId: string, error: string): Promise<void> {
+    // 必须是 'failed' 而不是 'completed'：写成 completed 会让任务统计、
+    // blockedBy 依赖解析、下游 DAG 节点全部误判为成功（级联假成功）。
     await updateTask(this.taskListId, taskId, {
-      status: 'completed',
-      description: `[FAILED] ${error}`,
+      status: 'failed',
+      description: `[FAILED] ${error}`.slice(0, 500),
       metadata: { _internal: { failed: true, error } },
     })
     this.emit({ type: 'task_failed', taskId, error })

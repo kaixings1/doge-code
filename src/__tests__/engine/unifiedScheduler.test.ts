@@ -398,9 +398,17 @@ describe('UnifiedScheduler', () => {
 
       const taskPath = join(TEST_DIR, 'test-list', '1.json')
       const saved = JSON.parse(fs.readFileSync(taskPath, 'utf-8'))
-      expect(saved.status).toBe('completed')
+      // 回归保护：失败必须写成 'failed'，写成 'completed' 会让统计、
+      // blockedBy 依赖解析和下游 DAG 节点全部误判为成功。
+      expect(saved.status).toBe('failed')
       expect(saved.description).toContain('[FAILED]')
       expect(saved.description).toContain('LLM exploded')
+
+      // 关键：'failed' 必须能被 schema 校验通过。若 schema 不认这个值，
+      // getTask 会因校验失败返回 null，任务直接从列表里消失。
+      const parsed = tasks.TaskSchema().safeParse(saved)
+      expect(parsed.success).toBe(true)
+      expect(parsed.success && parsed.data.status).toBe('failed')
     })
   })
 
