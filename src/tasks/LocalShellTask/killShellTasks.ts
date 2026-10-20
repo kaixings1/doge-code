@@ -7,6 +7,7 @@ import type { AgentId } from '../../types/ids.js'
 import { logForDebugging } from '../../utils/debug.js'
 import { logError } from '../../utils/log.js'
 import { dequeueAllMatching } from '../../utils/messageQueueManager.js'
+import { unregisterBgTask } from '../../utils/task/bgTaskRegistry.js'
 import { evictTaskOutput } from '../../utils/task/diskOutput.js'
 import { updateTaskState } from '../../utils/task/framework.js'
 import { isLocalShellTask } from './guards.js'
@@ -43,6 +44,8 @@ export function killTask(taskId: string, setAppState: SetAppStateFn): void {
     }
   })
   void evictTaskOutput(taskId)
+  // [2026-10-20] 同步注销 PID 记录，否则会话重启后会把它误判为孤儿
+  void unregisterBgTask(taskId)
 }
 
 /**

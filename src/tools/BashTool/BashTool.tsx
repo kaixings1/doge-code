@@ -20,6 +20,7 @@ import { extractClaudeCodeHints } from '../../utils/claudeCodeHints.js';
 import { detectCodeIndexingFromCommand } from '../../utils/codeIndexing.js';
 import { isEnvTruthy } from '../../utils/envUtils.js';
 import { isENOENT, ShellError } from '../../utils/errors.js';
+import { getPlatform } from '../../utils/platform.js';
 import { resolveWindowsShellKind } from '../../utils/shell/shellToolUtils.js';
 import { detectFileEncoding, detectLineEndings, getFileModificationTime, writeTextContent } from '../../utils/file.js';
 import { ecoCompress, isEcoEnabled } from '../../engine/ecoFilter.js';
@@ -378,6 +379,29 @@ export function normalizeUnixCommandSegment(segment: string): string {
   // 去掉命令名末尾的任何参数引用（如 ${VAR} 或 $(CMD)）
   const commandName = firstToken.replace(/\(.*\)$/, '').replace(/\$\{.*\}$/, '');
   const cleanCommandName = commandName.replace(/^['"`]/, '').replace(/['"`]$/, '').toLowerCase();
+
+  // MSYS2/Git Bash 会把以 / 开头的参数当 POSIX 路径转换：`cmd //c` 的 `//c`
+  // 被转成 `\\c` 或 UNC 路径，cmd 收不到 /c 开关 → 以交互模式启动并读 stdin
+  // 挂起（前台等到超时后转后台，表现为"命令失败/卡住"）。
+  // 只有 `//X` 这种畸形形态需要处理；正规 `/X` 保持原样。
+  //   - cmd / cmd.exe：/c /d /q /s /a /u /v /e /f
+  //   - powershell / pwsh：顶级开关（-Command、-File、-NoProfile 等）
+  //   - wsl：/e(exec) /d /u /s /直接以 -- 长选项为主，短选项少
+  const MSYS_DOUBLE_SLASH_SWITCHES: Record<string, RegExp> = {
+    'cmd': /(^|\s)\/\/(d|q|s|a|u|v|e|f|c)\b/gi,
+    'cmd.exe': /(^|\s)\/\/(d|q|s|a|u|v|e|f|c)\b/gi,
+    // powershell 的开关是完整参数名（-Command / -NoProfile），单字母缩写仅在
+    // 无歧义时可用，因此按完整名称匹配。
+    'powershell': /(^|\s)\/\/(command|file|noprofile|noninteractive|noexit|nologo|executionpolicy|encodedcommand|inputformat|outputformat|windowstyle|version|help|sta|mta|configurationname|psconsolefile|c)\b/gi,
+    'pwsh': /(^|\s)\/\/(command|file|noprofile|noninteractive|noexit|nologo|executionpolicy|encodedcommand|inputformat|outputformat|windowstyle|version|help|sta|mta|configurationname|psconsolefile|c)\b/gi,
+    'wsl': /(^|\s)\/\/(d|e|u|s)\b/gi,
+  };
+  const doubleSlashSwitch = MSYS_DOUBLE_SLASH_SWITCHES[cleanCommandName];
+  if (doubleSlashSwitch) {
+    // 开关字母大小写不敏感：这些 shell 的开关本身就按大小写不敏感处理
+    const stripped = rest.replace(doubleSlashSwitch, '$1/$2');
+    return leadingWhitespace + commandName + stripped;
+  }
 
   if (cleanCommandName in UNIX_TO_WINDOWS_COMMANDS) {
     return leadingWhitespace + UNIX_TO_WINDOWS_COMMANDS[cleanCommandName] + rest;
@@ -950,7 +974,91 @@ function isAutobackgroundingAllowed(command: string): boolean {
   // 获取第一部分，应为基本命令
   const baseCommand = parts[0]?.trim();
   if (!baseCommand) return true;
+
+  // [2026-10-20 修复-MSYS2 管道截断命令转后台后永久失控]
+  //   `... | head`（或 tail 带正数行数）在 MSYS2 下会因读端先退出触发 SIGPIPE，
+  //   而 MSYS2 的 fork/管道模拟层不能可靠地把 SIGPIPE 变成进程退出 —— 上游命令
+  //   会阻塞在管道写上，永不返回。这类命令一旦被"超时自动转后台"，超时定时器
+  //   就被清掉，于是永久挂在后台（表现为"子代理卡死"）。
+  //   处理：这类命令**禁止自动转后台**，留在前台由前台超时强制杀掉；
+  //   真正需要长时间运行的场景由调用方显式 run_in_background 指定。
+  if (getPlatform() === 'windows' && hasEarlyExitPipeConsumer(command)) {
+    return false;
+  }
+
   return !DISALLOWED_AUTO_BACKGROUND_COMMANDS.includes(baseCommand);
+}
+
+/**
+ * 检测命令的管道链中是否存在"会提前退出、导致上游 SIGPIPE"的消费者。
+ *
+ * 典型：`rg foo | head -30`、`ls | tail -n 5`（正数）、`cat x | head`。
+ * `tail -f` 不提前退出，不算。
+ */
+export function hasEarlyExitPipeConsumer(command: string): boolean {
+  // 只按未转义/未引用的竖线切分，避免把 `rg "a|b"` 的正则当成管道。
+  const segments: string[] = [];
+  let cur = '';
+  let quote: '"' | "'" | null = null;
+  for (let i = 0; i < command.length; i++) {
+    const ch = command[i]!;
+    if (quote) {
+      cur += ch;
+      if (ch === quote) quote = null;
+      continue;
+    }
+    if (ch === '"' || ch === "'") {
+      quote = ch;
+      cur += ch;
+      continue;
+    }
+    if (ch === '|' && command[i + 1] !== '|') {
+      segments.push(cur);
+      cur = '';
+      continue;
+    }
+    cur += ch;
+  }
+  segments.push(cur);
+
+  for (const raw of segments.slice(1)) {
+    const seg = raw.trim();
+    if (!seg) continue;
+    // 取该段的第一个词作为命令名（跳过 env 赋值前缀）
+    const words = seg.split(/\s+/).filter(w => !/^[A-Za-z_][A-Za-z0-9_]*=/.test(w));
+    const name = (words[0] ?? '').replace(/^.*[\\/]/, '');
+    if (name === 'head') return true;
+    if (name === 'tail') {
+      // tail 只有 -f/-F 才持续跟随；其余形式读完后退出
+      const hasFollow = words.some(
+        w => w === '-f' || w === '-F' || /^-[A-Za-z]*[fF]$/.test(w),
+      );
+      if (!hasFollow) return true;
+    }
+    // [2026-10-20] 补全同源危险模式：凡"读够就主动退出"的消费者，
+    // 在 MSYS2 下都会让上游卡在管道写上。
+    //   grep -m N / --max-count=N  达到数量即退出
+    //   sed 'Nq' / sed '/x/q'      q 命令显式退出
+    //   awk '... exit ...'         显式退出
+    //   more / less / most         无 tty 时立即退出
+    if (name === 'grep' || name === 'egrep' || name === 'fgrep') {
+      if (words.some(w => /^-.*m$/.test(w) || /^--max-count=/.test(w))) return true;
+    }
+    if (name === 'sed') {
+      // 先剥掉参数外层引号：`sed "1q"` / `sed '1q'` 与 `sed 1q` 等价。
+      // 不剥会导致引号内的 q 被当作普通字符而漏判。
+      const unquoted = words.map(w => w.replace(/^["']|["']$/g, ''));
+      if (unquoted.some(w => /;\s*q\s*$/.test(w) || /^\d+q$/.test(w) || /\/q;?\s*$/.test(w)))
+        return true;
+    }
+    if (name === 'awk' || name === 'gawk' || name === 'mawk') {
+      // 同上：`awk "{print; exit}"` 的引号需剥离后再判 exit
+      const unquoted = words.map(w => w.replace(/^["']|["']$/g, ''));
+      if (unquoted.some(w => /\bexit\b/.test(w))) return true;
+    }
+    if (name === 'more' || name === 'less' || name === 'most') return true;
+  }
+  return false;
 }
 
 /**

@@ -11,6 +11,7 @@ import { tailFile } from '../../utils/fsOperations.js';
 import { logError } from '../../utils/log.js';
 import { enqueuePendingNotification } from '../../utils/messageQueueManager.js';
 import type { ShellCommand } from '../../utils/ShellCommand.js';
+import { registerBgTask, unregisterBgTask } from '../../utils/task/bgTaskRegistry.js';
 import { evictTaskOutput, getTaskOutputPath } from '../../utils/task/diskOutput.js';
 import { registerTask, updateTaskState } from '../../utils/task/framework.js';
 import { escapeXml } from '../../utils/xml.js';
@@ -252,8 +253,18 @@ export async function spawnShellTask(input: LocalShellSpawnInput & {
   // 只需转换为后台状态，使进程继续运行。
   shellCommand.background(taskId);
   const cancelStallWatchdog = startStallWatchdog(taskId, description, kind, toolUseId, agentId);
+  // [2026-10-20] PID 落盘：会话崩溃/压缩后仍能定位并清理这个后台进程。
+  // 不 await —— 写盘失败不应阻塞任务启动。
+  void registerBgTask({
+    taskId,
+    pid: shellCommand.pid as number,
+    agentId,
+    command: (command ?? description ?? '').slice(0, 500),
+    startedAt: Date.now()
+  });
   void shellCommand.result.then(async result => {
     cancelStallWatchdog();
+    void unregisterBgTask(taskId);
     await flushAndCleanup(shellCommand);
     let wasKilled = false;
     updateTaskState<LocalShellTaskState>(taskId, setAppState, task => {

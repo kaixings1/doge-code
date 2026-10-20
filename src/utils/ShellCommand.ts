@@ -30,6 +30,8 @@ export type ExecResult = {
 }
 
 export type ShellCommand = {
+  /** 子进程 PID（可能尚未 spawn 完成，读作 void）。 */
+  readonly pid?: number | void
   background: (backgroundTaskId: string) => boolean
   result: Promise<ExecResult>
   kill: () => void
@@ -53,8 +55,64 @@ const SIGTERM = 143
 // so a stuck append loop can fill the disk. Poll file size and kill when exceeded.
 const SIZE_WATCHDOG_INTERVAL_MS = 5_000
 
+// [2026-10-20] 转后台后的停滞判定。后台任务允许跑很久，但连续 10 分钟输出文件
+// 一个字节都没长，几乎只能是卡在阻塞调用上（MSYS2 管道写、等 stdin）。超过即杀。
+// 可通过环境变量覆盖，便于长静默但合法的命令（大数据导入等）放宽。
+const BACKGROUND_STALL_MS = (() => {
+  const raw = Number(process.env.CLAUDE_CODE_BACKGROUND_STALL_MS)
+  return Number.isFinite(raw) && raw > 0 ? raw : 600_000
+})()
+const BACKGROUND_STALL_POLL_MS = 10_000
+
 function prependStderr(prefix: string, stderr: string): string {
   return stderr ? `${prefix} ${stderr}` : prefix
+}
+
+type CpuSample = { user: number; system: number }
+
+/**
+ * [2026-10-20] 采样单个 PID 已累计消耗的 CPU 时间（单位：本平台 ticks/毫秒，
+ * 只用于"是否增长"的单调比较，不要求换算成绝对秒）。
+ *
+ * 进程不存在或采样命令不可用时返回 null —— 调用方按"无活动"处理。
+ * 仅在后台上看门狗判定"输出已静默"后才调用，频率极低。
+ */
+async function sampleProcessCpu(pid: number): Promise<CpuSample | null> {
+  const { execFile } = await import('child_process')
+  const run = (cmd: string, args: string[]): Promise<string> =>
+    new Promise(resolve => {
+      execFile(cmd, args, { timeout: 2000, windowsHide: true }, (err, stdout) => {
+        resolve(err ? '' : String(stdout))
+      })
+    })
+
+  try {
+    if (process.platform === 'win32') {
+      // UserModeTime / KernelModeTime 单位 100ns，整数且单调递增
+      const out = await run('wmic', [
+        'process',
+        'where',
+        `ProcessId=${pid}`,
+        'get',
+        'UserModeTime,KernelModeTime',
+        '/value',
+      ])
+      const user = /UserModeTime=(\d+)/.exec(out)?.[1]
+      const kernel = /KernelModeTime=(\d+)/.exec(out)?.[1]
+      if (!user && !kernel) return null
+      return { user: Number(user ?? 0), system: Number(kernel ?? 0) }
+    }
+    // POSIX：ps 的 TIME 列（[[dd-]hh:]mm:ss），转成秒
+    const out = await run('ps', ['-o', 'time=', '-p', String(pid)])
+    const t = out.trim()
+    if (!t) return null
+    const parts = t.split(':').map(Number)
+    if (parts.some(n => !Number.isFinite(n))) return null
+    const secs = parts.reduce((acc, n) => acc * 60 + n, 0)
+    return { user: secs, system: 0 }
+  } catch {
+    return null
+  }
 }
 
 /**
@@ -119,11 +177,13 @@ class ShellCommandImpl implements ShellCommand {
   #childProcess: ChildProcess
   #timeoutId: NodeJS.Timeout | null = null
   #sizeWatchdog: NodeJS.Timeout | null = null
+  #backgroundWatchdog: NodeJS.Timeout | null = null
+  #killedForBackgroundStall = false
   #killedForSize = false
   #maxOutputBytes: number
   #abortSignal: AbortSignal
   #onTimeoutCallback:
-    | ((backgroundFn: (taskId: string) => boolean) => void)
+    | ((backgroundFn: (taskId: string, opts?: { fromTimeout?: boolean }) => boolean) => void)
     | undefined
   #timeout: number
   #shouldAutoBackground: boolean
@@ -134,15 +194,25 @@ class ShellCommandImpl implements ShellCommand {
 
   static #handleTimeout(self: ShellCommandImpl): void {
     if (self.#shouldAutoBackground && self.#onTimeoutCallback) {
-      self.#onTimeoutCallback(self.background.bind(self))
+      // 标记 fromTimeout：自动转后台后由停滞看门狗接管（见 background()）
+      self.#onTimeoutCallback((taskId, opts) =>
+        self.background(taskId, { fromTimeout: true, ...opts }),
+      )
     } else {
       self.#doKill(SIGTERM)
     }
   }
 
+  /** [2026-10-20] 子进程 PID，供后台任务持久化（崩溃后仍能定位孤儿进程）。 */
+  get pid(): number | void {
+    return this.#childProcess?.pid
+  }
+
   readonly result: Promise<ExecResult>
   readonly onTimeout?: (
-    callback: (backgroundFn: (taskId: string) => boolean) => void,
+    callback: (
+      backgroundFn: (taskId: string, opts?: { fromTimeout?: boolean }) => boolean,
+    ) => void,
   ) => void
 
   constructor(
@@ -217,6 +287,7 @@ class ShellCommandImpl implements ShellCommand {
   // the result promise to resolve. They clean up when the child process exits.
   #cleanupListeners(): void {
     this.#clearSizeWatchdog()
+    this.#clearBackgroundWatchdog()
     const timeoutId = this.#timeoutId
     if (timeoutId) {
       clearTimeout(timeoutId)
@@ -234,6 +305,112 @@ class ShellCommandImpl implements ShellCommand {
       clearInterval(this.#sizeWatchdog)
       this.#sizeWatchdog = null
     }
+  }
+
+  /**
+   * [2026-10-20] 转后台后的停滞看门狗。
+   *
+   * 前台超时定时器在 background() 里被清掉，导致卡死的命令永久失控。这里按
+   * "输出停滞"而非"总耗时"判定：后台任务可以合理地跑很久，但**连续
+   * BACKGROUND_STALL_MS 没有任何新输出**就意味着它大概率卡在阻塞调用上
+   * （MSYS2 管道写、等待永不到来的 stdin 等）。此时杀掉整棵进程树，
+   * 让调用方拿到明确的失败结果，而不是无限悬挂。
+   *
+   * 上限：不看 CPU、不区分命令类型，纯按静默时长判定 —— 长时间静默但仍在
+   * 运算的命令（如大模型训练）会被误杀。升级路径：改为同时采样子进程的
+   * CPU 时间（uv_times / GetProcessTimes），CPU 增长则视为活跃。
+   */
+  #startBackgroundWatchdog(): void {
+    this.#clearBackgroundWatchdog()
+    // 初始基准：文件当前大小 + 当前时间。之后每次轮询比较大小是否变化。
+    let lastSize = -1
+    let lastChangeAt = Date.now()
+    // [2026-10-20] CPU 采样：区分"静默但在算"与"静默且僵死"。
+    // 卡在管道写上的进程 CPU 恒为 0；大文件排序/无输出计算 CPU 持续增长。
+    // 只有"输出停滞 **且** CPU 也停滞"才判为僵死，避免误杀合法长跑任务。
+    let lastCpu: { user: number; system: number } | null = null
+    this.#backgroundWatchdog = setInterval(() => {
+      if (this.#status !== 'backgrounded') {
+        this.#clearBackgroundWatchdog()
+        return
+      }
+      // 必须用**文件大小**而非内存写入时间戳：bash 命令是 file 模式，
+      // 子进程直接写 fd，JS 层完全看不到写入（见本文件开头 StreamWrapper 注释）。
+      void stat(this.taskOutput.path).then(
+        s => {
+          if (this.#status !== 'backgrounded' || this.#backgroundWatchdog === null)
+            return
+          if (s.size !== lastSize) {
+            lastSize = s.size
+            lastChangeAt = Date.now()
+            // 有输出即视为活跃，CPU 基准同步刷新
+            lastCpu = null
+            return
+          }
+          if (Date.now() - lastChangeAt < BACKGROUND_STALL_MS) return
+          // 输出已停滞足够久 —— 再看 CPU 是否也停滞
+          this.#cpuGrewSince(lastCpu).then(({ grew, sample }) => {
+            if (this.#status !== 'backgrounded' || this.#backgroundWatchdog === null)
+              return
+            if (grew) {
+              // 仍在消耗 CPU：合法长跑任务，重置静默计时，继续观察
+              lastCpu = sample
+              lastChangeAt = Date.now()
+              return
+            }
+            this.#killedForBackgroundStall = true
+            this.#clearBackgroundWatchdog()
+            this.#doKill(SIGKILL)
+          })
+        },
+        () => {
+          // 文件尚未创建（子进程还没输出）不算活跃，也不报错，交给静默计时。
+          if (Date.now() - lastChangeAt >= BACKGROUND_STALL_MS) {
+            this.#killedForBackgroundStall = true
+            this.#clearBackgroundWatchdog()
+            this.#doKill(SIGKILL)
+          }
+        },
+      )
+    }, BACKGROUND_STALL_POLL_MS)
+    this.#backgroundWatchdog.unref()
+  }
+
+  #clearBackgroundWatchdog(): void {
+    if (this.#backgroundWatchdog) {
+      clearInterval(this.#backgroundWatchdog)
+      this.#backgroundWatchdog = null
+    }
+  }
+
+  /**
+   * [2026-10-20] 采样子进程已经消耗的 CPU 时间，判断距上次采样是否有增长。
+   *
+   * 用 /proc 读不了 Windows，这里走 `wmic`/`tasklist` 都太重；改用 Node 的
+   * `process.cpuUsage()` 会统计**当前进程**（doge-code 自己），不是子进程，
+   * 因此不可用。能跨平台且明确指到单个 PID 的只有：
+   *   · POSIX：`ps -o time= -p <pid>`（精度 1s，够用）
+   *   · Windows：`wmic process where ProcessId=<pid> get UserModeTime,KernelModeTime`
+   * 两者都只在"输出已静默 ≥ 阈值"时才执行，频率极低（10 分钟一次级别）。
+   *
+   * 上限：只看**直接子进程**的 CPU。shell 会拉起孙进程（rg/grep/head），
+   * 若卡住的是孙进程而 shell 自身空闲，会判为"无 CPU 活动"从而被杀 ——
+   * 对卡死场景这正是想要的结果；对"shell 空闲但在等孙进程干活"的合法场景
+   * 存在误判风险。升级路径：Windows 用 GetProcessTimes 遍历子进程树求和。
+   */
+  async #cpuGrewSince(
+    last: { user: number; system: number } | null,
+  ): Promise<{ grew: boolean; sample: CpuSample | null }> {
+    const pid = this.#childProcess?.pid
+    if (!pid) return { grew: false, sample: null }
+    const sample = await sampleProcessCpu(pid)
+    if (!sample) {
+      // 采样失败（进程已退出或工具不可用）：保守判为"无活动"，
+      // 由外层静默计时决定是否终止 —— 与改造前行为一致。
+      return { grew: false, sample: null }
+    }
+    const grew = !!last && (sample.user > last.user || sample.system > last.system)
+    return { grew, sample }
   }
 
   #startSizeWatchdog(): void {
@@ -320,6 +497,14 @@ class ShellCommandImpl implements ShellCommand {
         `Background command killed: output file exceeded ${MAX_TASK_OUTPUT_BYTES_DISPLAY}`,
         result.stderr,
       )
+    } else if (this.#killedForBackgroundStall) {
+      result.stderr = prependStderr(
+        `Background command killed: no output for ${formatDuration(BACKGROUND_STALL_MS)} ` +
+          `(likely blocked on a pipe/stdin; on MSYS2 a \`| head\` consumer exiting can ` +
+          `leave the upstream process spinning forever). Set ` +
+          `CLAUDE_CODE_BACKGROUND_STALL_MS to raise the limit.`,
+        result.stderr,
+      )
     } else if (code === SIGTERM) {
       result.stderr = prependStderr(
         `命令超时（已执行 ${formatDuration(this.#timeout)}）`,
@@ -336,8 +521,33 @@ class ShellCommandImpl implements ShellCommand {
 
   #doKill(code?: number): void {
     this.#status = 'killed'
-    if (this.#childProcess.pid) {
-      treeKill(this.#childProcess.pid, 'SIGKILL')
+    const pid = this.#childProcess.pid
+    if (pid) {
+      const isWindows = process.platform === 'win32'
+      treeKill(pid, 'SIGKILL', err => {
+        // [2026-10-20] Windows 上 tree-kill 走 `taskkill /pid <pid> /T /F`，
+        // 信号名被忽略 —— 它是"尽力而为"：以下情况会失败而**不报错给调用方**：
+        //   · 目标已被回收/复用（ESRCH / "not found"）
+        //   · 子进程已脱离进程树（detached 前的旧进程、MSYS2 辅助进程）
+        // 失败时退回直接对子进程 kill()，至少保证我们自己 spawn 的那个句柄死掉，
+        // 否则 result promise 可能永远不 resolve。
+        if (err && this.#childProcess) {
+          try {
+            this.#childProcess.kill('SIGKILL')
+          } catch {
+            // 进程已不存在 —— 无需处理
+          }
+        }
+      })
+      // 兜底：Windows 上 detached 子进程可能被 taskkill 漏掉，
+      // 直接对根句柄补一刀（POSIX 下 tree-kill 已足够，重复 kill 幂等）。
+      if (isWindows) {
+        try {
+          this.#childProcess.kill('SIGKILL')
+        } catch {
+          // ignore
+        }
+      }
     }
     this.#resolveExitCode(code ?? SIGKILL)
   }
@@ -346,11 +556,22 @@ class ShellCommandImpl implements ShellCommand {
     this.#doKill()
   }
 
-  background(taskId: string): boolean {
+  background(taskId: string, opts?: { fromTimeout?: boolean }): boolean {
     if (this.#status === 'running') {
       this.#backgroundTaskId = taskId
       this.#status = 'backgrounded'
       this.#cleanupListeners()
+      // [2026-10-20 修复-MSYS2 管道卡死后永久失控]
+      //   原实现在转后台时清掉前台超时定时器，此后该进程再没有任何看门狗。
+      //   一旦命令卡死在不可中断的管道写（MSYS2 下 `... | head` 让上游收到
+      //   SIGPIPE 却不退出的典型症状），它会一直挂到会话结束，UI 上表现为
+      //   "子代理卡死"。转后台只表示"不再让前台等待"，不是放弃终止权。
+      //   仅对"前台超时自动转后台"启动停滞看门狗：用户显式后台（Ctrl+B /
+      //   run_in_background）是有意的长跑任务，静默期可能远超 10 分钟，
+      //   不应被误杀。
+      if (opts?.fromTimeout) {
+        this.#startBackgroundWatchdog()
+      }
       if (this.taskOutput.stdoutToFile) {
         // File mode: child writes directly to the fd with no JS involvement.
         // The foreground timeout is gone, so watch file size to prevent

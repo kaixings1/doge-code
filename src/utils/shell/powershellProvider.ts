@@ -30,7 +30,12 @@ export function createPowerShellProvider(shellPath: string): ShellProvider {
   return {
     type: 'powershell' as ShellProvider['type'],
     shellPath,
-    detached: false,
+    // [2026-10-20] 与 bashProvider 对齐：detached 使子进程脱离父进程组，
+    // 父进程（doge-code）崩溃后其子进程仍属可追踪的进程树，
+    // tree-kill(taskkill /T /F) 才能定位。原本为 false 会留下不可回收的孤儿。
+    // stdin 为管道（spawn 默认 stdio[0]='pipe'），不依赖控制台输入，
+    // 因此 detach 不会影响 -NonInteractive 的行为。
+    detached: true,
 
     async buildExecCommand(
       command: string,

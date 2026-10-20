@@ -16,6 +16,7 @@ import {
 import type { TaskState } from '../../tasks/types.js'
 import { enqueuePendingNotification } from '../messageQueueManager.js'
 import { enqueueSdkEvent } from '../sdkEventQueue.js'
+import { ensureOrphanScan } from './bgTaskRegistry.js'
 import { getTaskOutputDelta, getTaskOutputPath } from './diskOutput.js'
 
 // Standard polling interval for all tasks
@@ -257,6 +258,22 @@ export async function pollTasks(
   setAppState: SetAppState,
 ): Promise<void> {
   const state = getAppState()
+
+  // [2026-10-20] 会话内首次轮询时扫描上次会话遗留的后台进程。
+  // 那些进程在我们的内存里没有 ShellCommand 句柄，UI 无法终止，
+  // 只能提示用户（并给出 PID），否则会一直挂到机器重启。
+  ensureOrphanScan(new Set(Object.keys(state.tasks ?? {})), orphans => {
+    const lines = orphans
+      .map(o => `  · PID ${o.pid} — ${o.command || '(无命令记录)'}`)
+      .join('\n')
+    enqueuePendingNotification({
+      value:
+        `检测到上次会话遗留的后台进程 ${orphans.length} 个（当前会话无法管理）：\n${lines}\n\n` +
+        '如需清理请执行：taskkill /PID <pid> /T /F（Windows）或 kill -9 <pid>（POSIX）。',
+      mode: 'task-notification',
+    })
+  })
+
   const { attachments, updatedTaskOffsets, evictedTaskIds } =
     await generateTaskAttachments(state)
 
