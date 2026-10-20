@@ -247,18 +247,16 @@ export class UnifiedScheduler {
             } as SchedulerEvent)
           }
           if (event.type === 'orchestrator_completed') {
-            const success = event.result.success
+            // 只转发事件，不在这里写终态。
+            // 下方 submitAndRun 的返回值已经负责状态回写；此前两处都写，
+            // 会重复发出 task_completed/task_failed，且这里的写入是
+            // fire-and-forget（未 await），可能晚于后面的覆盖。
             this.emit({
               type: 'orchestration_completed',
               taskId: task.id,
-              success,
+              success: event.result.success,
               summary: event.result.summary,
             })
-            if (success) {
-              this.completeTask(task.id, event.result.mergedOutput)
-            } else {
-              this.failTask(task.id, event.result.mergedOutput || 'Orchestration failed')
-            }
           }
         },
       })

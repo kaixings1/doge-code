@@ -312,11 +312,20 @@ export class Orchestrator {
       ? this.discussionHistory[this.discussionHistory.length - 1].content
       : '讨论未产生有效结果'
 
+    // 讨论未达成共识时，区分「全体角色都失败」与「有讨论但未收敛」。
+    // 前者（例如 API 持续 401/429）不应被表述成正常结束：一个发言都没成功
+    // 却返回常规结果，调用方无法判断是模型故障还是讨论无结论。
+    const failedResults = roleResults.filter(r => !r.success)
+    const allFailed = roleResults.length > 0 && failedResults.length === roleResults.length
+    const firstError = failedResults[0]?.error ?? ''
+
     return {
       success: false,
       finalStage: 'review',
       roleResults,
-      mergedOutput: finalOutput,
+      mergedOutput: allFailed
+        ? `讨论中所有角色发言均失败：${firstError || '未知错误'}`
+        : finalOutput,
       qualityScore: computeQualityScore(roleResults),
       totalDuration: Date.now() - startTime,
       totalIterations: maxRounds,

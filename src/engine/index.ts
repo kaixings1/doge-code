@@ -30,7 +30,6 @@ import { getAllBaseTools } from "../tools.js";
 import { type Tools, type ToolInfo } from "../Tool.js";
 // 导入新功能模块
 import { getEndConversationManager } from "../features/endConversation.js";
-import { getSubAgentManager } from "../features/featureFlags.js";
 import { getAutoModeManager } from "../features/additionalFeatures.js";
 import { getForwardSubagentTextManager } from "../features/additionalFeatures.js";
 
@@ -272,7 +271,8 @@ export class QueryEngine {
 
     // 初始化新功能管理器
     const endConvManager = getEndConversationManager();
-    const subAgentMgr = getSubAgentManager();
+    // 子代理并发控制由 AgentTool 直接使用 features/featureFlags 的全局单例，
+    // 这里不需要再取一次（原先是只赋值、从未使用的死代码）。
     const autoModeMgr = getAutoModeManager();
 
     // 将内部工具注册表转换为请求构建器所需的 ToolDefinition 格式
