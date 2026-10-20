@@ -31,6 +31,7 @@ import { Box, Text } from '../../ink.js';
 import { useKeybindings } from '../../keybindings/useKeybinding.js';
 import { useShortcutDisplay } from '../../keybindings/useShortcutDisplay.js';
 import { count } from '../../utils/array.js';
+import { getCachedOrphans, killOrphanBgTask } from '../../utils/task/bgTaskRegistry.js';
 import { Byline } from '../design-system/Byline.js';
 import { Dialog } from '../design-system/Dialog.js';
 import { KeyboardShortcutHint } from '../design-system/KeyboardShortcutHint.js';
@@ -96,6 +97,15 @@ type ListItem = {
   status: string;
   task: DeepImmutable<DreamTaskState>;
 } | {
+  // [2026-10-20] 上次会话遗留的后台进程：本会话没有 ShellCommand 句柄，
+  // 不能用 LocalShellTask.kill，只能凭 PID 调系统命令终止。
+  id: string;
+  type: 'orphan_shell';
+  label: string;
+  status: 'orphan';
+  pid: number;
+  command: string;
+} | {
   id: string;
   type: 'leader';
   label: string;
@@ -139,6 +149,16 @@ export function BackgroundTasksDialog({
   // Track if we skipped list view on mount (for back button behavior)
   const skippedListOnMount = useRef(false);
 
+  // [2026-10-20] 遗留进程快照。放在 state 而非在 useMemo 里直接读全局缓存：
+  // 终止成功后需要立即重渲染让该行消失，而 useMemo 的依赖不包含全局缓存。
+  const [orphanRecs, setOrphanRecs] = useState(() => getCachedOrphans());
+
+  // 扫描是异步的（会话首次轮询时发起），对话框可能在结果到达前就已打开。
+  // 每次打开对话框时刷新一次，确保能显示新增的孤儿。
+  useEffect(() => {
+    setOrphanRecs(getCachedOrphans());
+  }, []);
+
   // Compute initial view state - skip list if caller provided a specific task,
   // or if there's exactly one task
   const [viewState, setViewState] = useState<ViewState>(() => {
@@ -176,6 +196,7 @@ export function BackgroundTasksDialog({
     workflowTasks,
     mcpMonitors,
     dreamTasks: dreamTasks_0,
+    orphanShells,
     allSelectableItems
   } = useMemo(() => {
     // Filter to only show running/pending background tasks, matching the status bar count
@@ -206,6 +227,15 @@ export function BackgroundTasksDialog({
       label: `@${TEAM_LEAD_NAME}`,
       status: 'running'
     }] : [];
+    // [2026-10-20] 上次会话遗留的后台进程（本会话无句柄，只能按 PID 终止）
+    const orphanItems: ListItem[] = orphanRecs.map(o => ({
+      id: `__orphan_${o.pid}`,
+      type: 'orphan_shell' as const,
+      label: o.command || `PID ${o.pid}`,
+      status: 'orphan' as const,
+      pid: o.pid,
+      command: o.command || ''
+    }));
     return {
       bashTasks: bash,
       remoteSessions: remote,
@@ -217,9 +247,11 @@ export function BackgroundTasksDialog({
       // Order MUST match JSX render order (teammates \u2192 bash \u2192 monitorMcp \u2192
       // remote \u2192 agent \u2192 workflows \u2192 dream) so \u2193/\u2191 navigation moves the cursor
       // visually downward.
-      allSelectableItems: [...leaderItem, ...teammates, ...bash, ...monitorMcp, ...remote, ...agent, ...workflows, ...dreamTasks]
+      allSelectableItems: [...leaderItem, ...teammates, ...orphanItems, ...bash, ...monitorMcp, ...remote, ...agent, ...workflows, ...dreamTasks],
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      orphanShells: orphanItems
     };
-  }, [typedTasks, foregroundedTaskId, showSpinnerTree]);
+  }, [typedTasks, foregroundedTaskId, showSpinnerTree, orphanRecs]);
   const currentSelection = allSelectableItems[selectedIndex] ?? null;
 
   // Use configurable keybindings for standard navigation and confirm/cancel.
@@ -267,7 +299,15 @@ export function BackgroundTasksDialog({
 
     if (e.key === 'x') {
       e.preventDefault();
-      if (currentSelection_0.type === 'local_bash' && currentSelection_0.status === 'running') {
+      if (currentSelection_0.type === 'orphan_shell') {
+        // [2026-10-20] 孤儿进程：无 ShellCommand 句柄，按 PID 走系统命令终止。
+        // 以 killOrphanBgTask 的返回值（进程是否确已消失）决定是否从列表移除，
+        // 而不是假定 taskkill 成功 —— 权限不足时它会失败但不抛错。
+        const pid = currentSelection_0.pid;
+        void killOrphanBgTask(pid).then(gone => {
+          if (gone) setOrphanRecs(prev => prev.filter(o => o.pid !== pid));
+        });
+      } else if (currentSelection_0.type === 'local_bash' && currentSelection_0.status === 'running') {
         void killShellTask(currentSelection_0.id);
       } else if (currentSelection_0.type === 'local_agent' && currentSelection_0.status === 'running') {
         void killAgentTask(currentSelection_0.id);
@@ -434,8 +474,17 @@ export function BackgroundTasksDialog({
                 </Box>
               </Box>}
 
-            {bashTasks.length > 0 && <Box flexDirection="column" marginTop={teammateTasks.length > 0 ? 1 : 0}>
-                {(teammateTasks.length > 0 || remoteSessions.length > 0 || agentTasks.length > 0) && <Text dimColor>
+            {orphanShells.length > 0 && <Box flexDirection="column" marginTop={teammateTasks.length > 0 ? 1 : 0}>
+                <Text dimColor>
+                  <Text bold>{'  '}遗留进程</Text> ({orphanShells.length})<Text>  ← 按 x 终止</Text>
+                </Text>
+                <Box flexDirection="column">
+                  {orphanShells.map(item_o => <Item key={item_o.id} item={item_o} isSelected={item_o.id === currentSelection?.id} />)}
+                </Box>
+              </Box>}
+
+            {bashTasks.length > 0 && <Box flexDirection="column" marginTop={teammateTasks.length > 0 || orphanShells.length > 0 ? 1 : 0}>
+                {(teammateTasks.length > 0 || orphanShells.length > 0 || remoteSessions.length > 0 || agentTasks.length > 0) && <Text dimColor>
                     <Text bold>{'  '}Shell</Text> ({bashTasks.length})
                   </Text>}
                 <Box flexDirection="column">
@@ -581,7 +630,7 @@ function Item(t0) {
   const t5 = isSelected && !useGreyPointer ? "suggestion" : undefined;
   let t6;
   if ($[4] !== item.task || $[5] !== item.type || $[6] !== maxActivityWidth) {
-    t6 = item.type === "leader" ? <Text>@{TEAM_LEAD_NAME}</Text> : <BackgroundTaskComponent task={item.task} maxActivityWidth={maxActivityWidth} />;
+    t6 = item.type === "leader" ? <Text>@{TEAM_LEAD_NAME}</Text> : item.type === "orphan_shell" ? <OrphanShellRow pid={item.pid} label={item.label} /> : <BackgroundTaskComponent task={item.task} maxActivityWidth={maxActivityWidth} />;
     $[4] = item.task;
     $[5] = item.type;
     $[6] = maxActivityWidth;
@@ -648,4 +697,19 @@ function _temp2(i_0) {
 }
 function _temp(i) {
   return i.type === "leader";
+}
+
+/**
+ * [2026-10-20] 上次会话遗留后台进程的行渲染。
+ *
+ * 独立成组件而不是塞进 `Item` 的 react-compiler memo 块：那条 memo 的缓存键
+ * 是 `item.task / item.type / maxActivityWidth`，orphan 项没有 `task` 字段，
+ * 手改缓存键容易在下次重新生成时被覆盖。
+ */
+function OrphanShellRow({ pid, label }: { pid: number; label: string }) {
+  return (
+    <Text dimColor>
+      PID {pid}  {label}
+    </Text>
+  );
 }

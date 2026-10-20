@@ -89,11 +89,22 @@ export async function isPidAlive(pid: number): Promise<boolean> {
 let scanStarted = false
 
 /**
+ * 最近一次扫描到的孤儿（供 UI 读取）。UI 没有 ShellCommand 句柄，
+ * 只能凭这里的 PID 用系统命令终止，因此必须缓存下来。
+ */
+let cachedOrphans: BgTaskRecord[] = []
+
+/** 读取当前已发现的孤儿进程（同步，供 UI 渲染）。 */
+export function getCachedOrphans(): BgTaskRecord[] {
+  return cachedOrphans
+}
+
+/**
  * 一次性孤儿扫描（会话内首次调用执行，之后为空操作）。
  *
  * 挂载点：`pollTasks()` —— 任务轮询主循环，天然是"任务系统已就绪"的信号。
  * 扫描结果通过 `onFound` 交给调用方（通常是入队一条通知），
- * 不在这里直接操作 UI，避免工具层依赖 state 层。
+ * 同时缓存到本模块供 UI（后台任务对话框）展示并提供终止入口。
  */
 export function ensureOrphanScan(
   knownTaskIds: Set<string>,
@@ -103,11 +114,42 @@ export function ensureOrphanScan(
   scanStarted = true
   void findOrphanBgTasks(knownTaskIds)
     .then(orphans => {
+      cachedOrphans = orphans
       if (orphans.length > 0) onFound(orphans)
     })
     .catch(error => {
       logForDebugging(`孤儿后台任务扫描失败: ${error}`)
     })
+}
+
+/**
+ * 终止一个孤儿进程（本会话没有 ShellCommand 句柄，只能用系统命令）。
+ *
+ * Windows: `taskkill /PID <pid> /T /F`（/T 连带子进程树）
+ * POSIX:   `kill -9 <pid>`
+ *
+ * 成功后从缓存移除，UI 下次渲染即消失。返回是否已确认进程消失。
+ */
+export async function killOrphanBgTask(pid: number): Promise<boolean> {
+  const { execFile } = await import('child_process')
+  const [cmd, args] = process.platform === 'win32'
+    ? ['taskkill', ['/PID', String(pid), '/T', '/F']]
+    : ['kill', ['-9', String(pid)]]
+  await new Promise<void>(resolve => {
+    execFile(cmd, args, { timeout: 5000, windowsHide: true }, () => resolve())
+  })
+  // 以"进程是否真的消失"为准，而不是命令退出码（taskkill 对已不存在的 PID
+  // 返回码非 0，且杀完立即查询时进程可能仍处终止中状态）。
+  // 轮询确认：Windows 上 taskkill 返回后到进程从任务列表消失有几十~几百毫秒延迟，
+  // 直接查一次会把"正在终止"误判为"仍然存活"，从而谎报失败。
+  for (let i = 0; i < 10; i++) {
+    if (!(await isPidAlive(pid))) {
+      cachedOrphans = cachedOrphans.filter(o => o.pid !== pid)
+      return true
+    }
+    await new Promise(r => setTimeout(r, 200))
+  }
+  return false
 }
 
 export async function findOrphanBgTasks(
