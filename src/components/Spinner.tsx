@@ -17,7 +17,7 @@ import { getSpinnerVerbs } from '../constants/spinnerVerbs.js';
 import { MessageResponse } from './MessageResponse.js';
 import { TaskListV2 } from './TaskListV2.js';
 import { useTasksV2 } from '../hooks/useTasksV2.js';
-import type { Task } from '../utils/tasks.js';
+import { isTerminalStatus, type Task } from '../utils/tasks.js';
 import { useAppState } from '../state/AppState.js';
 import { useTerminalSize } from '../hooks/useTerminalSize.js';
 import { stringWidth } from '../ink/stringWidth.js';
@@ -561,6 +561,7 @@ function findNextPendingTask(tasks: Task[] | undefined): Task | undefined {
   if (pendingTasks.length === 0) {
     return undefined;
   }
-  const unresolvedIds = new Set(tasks.filter(t => t.status !== 'completed').map(t => t.id));
+  // 失败任务已到终态，不再阻塞下游（否则下游永远等不到）。
+  const unresolvedIds = new Set(tasks.filter(t => !isTerminalStatus(t.status)).map(t => t.id));
   return pendingTasks.find(t => !t.blockedBy.some(id => unresolvedIds.has(id))) ?? pendingTasks[0];
 }

@@ -67,9 +67,24 @@ export function notifyTasksUpdated(): void {
 }
 
 // 'failed' 是终态：调度器/编排失败时必须如实记录，不能伪装成 completed。
-// 注意：读端所有 `status !== 'completed'` 的判断因此天然把 failed 视为「未完成」，
-// 语义正确（失败任务不应解除下游 blockedBy 依赖）。
+//
+// 关键区分（修正早期误判）：
+//   - 「是否已结束」→ completed 或 failed 都是终态
+//   - 「是否成功」  → 仅 completed
+// blockedBy 依赖应看「是否已结束」：若上游失败仍算阻塞，下游将永久卡死
+// （没有任何清理路径会把它解除）。因此判定阻塞时必须用 isTerminalStatus，
+// 而不是 `status !== 'completed'`。判定成败时仍用 status === 'completed'。
 export const TASK_STATUSES = ['pending', 'in_progress', 'completed', 'failed'] as const
+
+/** 任务是否已到终态（不会再被执行）。用于 blockedBy 依赖与并发统计。 */
+export function isTerminalStatus(status: TaskStatus): boolean {
+  return status === 'completed' || status === 'failed'
+}
+
+/** 任务是否已成功完成。用于结果判定与统计，不要把 failed 算作成功。 */
+export function isSuccessfulStatus(status: TaskStatus): boolean {
+  return status === 'completed'
+}
 
 export const TaskStatusSchema = lazySchema(() =>
   z.enum(['pending', 'in_progress', 'completed', 'failed']),
@@ -598,9 +613,10 @@ export async function claimTask(
     }
 
     // Check for unresolved blockers (open or in_progress tasks block)
+    // 失败的阻塞者也算「已结束」，不再阻塞下游；否则下游永久卡死。
     const allTasks = await listTasks(taskListId)
     const unresolvedTaskIds = new Set(
-      allTasks.filter(t => t.status !== 'completed').map(t => t.id),
+      allTasks.filter(t => !isTerminalStatus(t.status)).map(t => t.id),
     )
     const blockedByTasks = task.blockedBy.filter(id =>
       unresolvedTaskIds.has(id),
@@ -663,8 +679,9 @@ async function claimTaskWithBusyCheck(
     }
 
     // Check for unresolved blockers (open or in_progress tasks block)
+    // 失败的上游同样视为已结束，避免下游被永久阻塞。
     const unresolvedTaskIds = new Set(
-      allTasks.filter(t => t.status !== 'completed').map(t => t.id),
+      allTasks.filter(t => !isTerminalStatus(t.status)).map(t => t.id),
     )
     const blockedByTasks = task.blockedBy.filter(id =>
       unresolvedTaskIds.has(id),

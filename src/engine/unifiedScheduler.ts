@@ -24,6 +24,7 @@ import {
   getTaskListId,
   onTasksUpdated,
   notifyTasksUpdated,
+  isTerminalStatus,
 } from '../utils/tasks.js'
 import { createTeamRunner, type TeamRunner } from './orchestrator/teamRunner.js'
 import { type OrchestratorConfig } from './orchestrator/messages.js'
@@ -329,8 +330,10 @@ function defaultNeedsOrchestration(task: TodoTask): boolean {
 // ---------------------------------------------------------------------------
 
 function findAvailableTasks(tasks: TodoTask[]): TodoTask[] {
+  // 用「是否终态」而非「是否完成」：失败任务不会再执行，若仍算阻塞，
+  // 其下游将永久无法被选中（调度器没有解除阻塞的路径）。
   const unresolvedTaskIds = new Set(
-    tasks.filter(t => t.status !== 'completed').map(t => t.id),
+    tasks.filter(t => !isTerminalStatus(t.status)).map(t => t.id),
   )
 
   return tasks.filter(task => {

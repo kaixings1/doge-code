@@ -6,6 +6,7 @@ import {
   DEFAULT_TASKS_MODE_TASK_LIST_ID,
   ensureTasksDir,
   getTasksDir,
+  isTerminalStatus,
   listTasks,
   type Task,
   updateTask,
@@ -195,8 +196,9 @@ export function useTaskListWatcher({
  * - Not blocked by any unresolved tasks
  */
 function findAvailableTask(tasks: Task[]): Task | undefined {
+  // 失败任务已到终态、不会再执行。若仍算阻塞，其下游将永远无法开始。
   const unresolvedTaskIds = new Set(
-    tasks.filter(t => t.status !== 'completed').map(t => t.id),
+    tasks.filter(t => !isTerminalStatus(t.status)).map(t => t.id),
   )
 
   return tasks.find(task => {
