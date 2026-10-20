@@ -39,19 +39,25 @@ describe('PipelineExecutor 失败时保留已产出内容', () => {
   })
 
   it('全部成功时返回最后一个阶段的产出', async () => {
+    // 用一个只有最后一个阶段才会产出的固定标记，避免拿测试自己的计数器当期望值。
+    // 注意：'done' 阶段会被 break 跳过，所以实际执行的是 7 个阶段。
+    const EXECUTED_STAGES = 7
+    const LAST_MARKER = 'FINAL_STAGE_OUTPUT'
     let call = 0
     const executor = new PipelineExecutor(
       {
         executeRole: async () => {
           call++
-          return `output-${call}`
+          // 最后一个阶段（review）产出唯一标记，中间阶段返回可识别的编号
+          return call === EXECUTED_STAGES ? LAST_MARKER : `stage-${call}`
         },
       },
-      { ...config, mode: 'pipeline' } as unknown as OrchestratorConfig,
+      config,
     )
 
     const result = await executor.run('test task')
     expect(result.success).toBe(true)
-    expect(result.mergedOutput).toBe(`output-${call}`)
+    expect(call).toBe(EXECUTED_STAGES) // 前置条件：确实跑完了整个流水线
+    expect(result.mergedOutput).toBe(LAST_MARKER)
   })
 })

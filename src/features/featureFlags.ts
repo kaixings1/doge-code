@@ -202,7 +202,11 @@ export class SubAgentManager {
 
   /** 启动子代理 */
   async spawn<T>(fn: () => Promise<T>): Promise<T> {
-    if (this.activeCount >= this.maxConcurrent) {
+    // 必须用循环复查：唤醒者与新的调用者可能在同一个 tick 内竞争名额。
+    // 旧实现里等待者被唤醒后直接 activeCount++，若此刻刚有新任务拿到名额，
+    // 就会瞬时超过 maxConcurrent。循环保证「拿到名额」与「计数递增」原子化
+    // （单线程事件循环下，检查与自增之间没有 await，因此不会被打断）。
+    while (this.activeCount >= this.maxConcurrent) {
       await new Promise<void>(resolve => this.waitingQueue.push(resolve))
     }
     this.activeCount++
@@ -210,8 +214,14 @@ export class SubAgentManager {
       return await fn()
     } finally {
       this.activeCount--
-      const next = this.waitingQueue.shift()
-      next?.()
+      // 只唤醒一个等待者；被唤醒者会重新检查计数。
+      // 用 try 包裹，避免某个 resolve 抛错导致名额永久泄漏。
+      try {
+        const next = this.waitingQueue.shift()
+        next?.()
+      } catch {
+        /* 唤醒失败不影响名额释放 */
+      }
     }
   }
 

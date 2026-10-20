@@ -258,6 +258,9 @@ export const agentToolResultSchema = lazySchema(() =>
 
 export type AgentToolResult = z.input<ReturnType<typeof agentToolResultSchema>>
 
+// 深度计算在独立无依赖的模块中，这里仅再导出以保持既有导入路径可用。
+export { computeNextDepth, resolveAgentDepth } from './agentDepth.js'
+
 export function countToolUses(messages: MessageType[]): number {
   let count = 0
   for (const m of messages) {

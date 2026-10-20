@@ -27,6 +27,7 @@ import type { SystemPrompt } from '../../utils/systemPromptType.js'
 import { getTaskOutputPath } from '../../utils/task/diskOutput.js'
 import { getParentSessionId } from '../../utils/teammate.js'
 import { reconstructForSubagentResume } from '../../utils/toolResultStorage.js'
+import { resolveAgentDepth } from './agentDepth.js'
 import { runAsyncAgentLifecycle } from './agentToolUtils.js'
 import { GENERAL_PURPOSE_AGENT } from './built-in/generalPurposeAgent.js'
 import { FORK_AGENT, isForkSubagentEnabled } from './forkSubagent.js'
@@ -192,13 +193,10 @@ export async function resumeAgentBackground({
     worktreePath: resumedWorktreePath,
     description: meta?.description,
     contentReplacementState: resumedReplacementState,
-    // depth: 继承父 agent 写入其独占 options 的 agentDepth。
+    // depth: 恢复任务沿用原深度（不是派生子代理，因此不做 +1）。
     // 用显式 typeof 判断而非 `x as number ?? 0`：后者运行时等价于 `x ?? 0`，
     // 结果正确，但类型断言绕过了 agentDepth 的类型契约。
-    depth:
-      typeof toolUseContext.options.agentDepth === 'number'
-        ? toolUseContext.options.agentDepth
-        : 0,
+    depth: resolveAgentDepth(toolUseContext.options),
   }
 
   // 跳过名称注册表写入——原始条目从初始生成时已持久化

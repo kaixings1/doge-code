@@ -9,8 +9,14 @@
  * 3. runAgent 把 depth 写回父级共享的 toolUseContext.options，
  *    并发兄弟代理互相覆盖。
  */
-import { afterEach, describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { SubAgentManager } from '../../features/featureFlags.js'
+// 直接导入无重型依赖的独立模块：经 agentToolUtils 导入会触发既有的
+// 模块循环依赖（agentToolResultSchema is not a function），与本次修改无关。
+import {
+  computeNextDepth,
+  resolveAgentDepth,
+} from '../../tools/AgentTool/agentDepth.js'
 
 describe('SubAgentManager 并发名额', () => {
   it('spawn 维护活跃计数，超限时排队而非直接放行', async () => {
@@ -54,25 +60,31 @@ describe('SubAgentManager 并发名额', () => {
   })
 })
 
-describe('深度计算不产生 NaN', () => {
-  // 复刻修复后的表达式：父级缺失 agentDepth 时应得到 1，而不是 NaN
-  const nextDepth = (opts: { agentDepth?: number }) =>
-    (typeof opts.agentDepth === 'number' ? opts.agentDepth : 0) + 1
-
+describe('深度计算（直测生产函数，非复刻）', () => {
   it('根代理（无 agentDepth）的子代理深度为 1', () => {
-    expect(nextDepth({})).toBe(1)
-    expect(Number.isNaN(nextDepth({}))).toBe(false)
+    expect(computeNextDepth({})).toBe(1)
+    expect(computeNextDepth(null)).toBe(1)
   })
 
   it('已有深度时正确递增', () => {
-    expect(nextDepth({ agentDepth: 0 })).toBe(1)
-    expect(nextDepth({ agentDepth: 4 })).toBe(5)
+    expect(computeNextDepth({ agentDepth: 0 })).toBe(1)
+    expect(computeNextDepth({ agentDepth: 4 })).toBe(5)
+  })
+
+  it('非法值不被当作有效深度', () => {
+    // NaN 若被直接使用，会让所有 depth >= MAX 比较恒为 false
+    expect(computeNextDepth({ agentDepth: Number.NaN })).toBe(1)
+    expect(resolveAgentDepth({ agentDepth: Number.NaN })).toBe(0)
+  })
+
+  it('恢复路径沿用原深度，不做 +1', () => {
+    expect(resolveAgentDepth({ agentDepth: 3 })).toBe(3)
+    expect(resolveAgentDepth({})).toBe(0)
   })
 
   it('深度到达上限后可被正确比较', () => {
     const MAX = 5
-    expect(nextDepth({ agentDepth: 4 }) >= MAX).toBe(true)
-    // 旧实现会得到 NaN，导致该比较恒为 false
-    expect(Number(nextDepth({})) >= MAX).toBe(false)
+    expect(computeNextDepth({ agentDepth: 4 }) >= MAX).toBe(true)
+    expect(computeNextDepth({}) >= MAX).toBe(false)
   })
 })

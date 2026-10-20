@@ -68,12 +68,12 @@ describe('TaskGraph 依赖语义', () => {
     expect(g.getReady().map(n => n.id)).toEqual(['b'])
   })
 
-  it('上游 skipped 时下游也必须就绪（否则永久卡死）', () => {
+  it('上游失败时下游被标记为 skipped', () => {
     const g = new TaskGraph()
     g.addNodes([node('a'), node('b', ['a'])])
     g.markFailed('a', 'boom')
 
-    // 依赖失败 → a 的下游被跳过
+    // 依赖失败 → a 的下游被跳过（就绪语义见下一条用例）
     expect(g.skipIfDependencyFailed('b')).toBe(true)
     expect(g.get('b')!.status).toBe('skipped')
   })
@@ -82,10 +82,12 @@ describe('TaskGraph 依赖语义', () => {
     const g = new TaskGraph()
     g.addNodes([node('a'), node('b', ['a']), node('c', ['b'])])
 
-    // b 被跳过（依赖失败），c 依赖 b
-    g.get('b')!.status = 'skipped'
+    // 走真实路径：a 失败 → b 因依赖失败被跳过（而非手工改 status）
+    expect(g.markFailed('a', 'boom')).toBe(true)
+    expect(g.skipIfDependencyFailed('b')).toBe(true)
+    expect(g.get('b')!.status).toBe('skipped')
 
-    // 关键：c 必须进入就绪集合，而不是永久 pending
+    // 关键：c 依赖被跳过的 b，必须进入就绪集合，而不是永久 pending
     expect(g.getReady().map(n => n.id)).toContain('c')
   })
 

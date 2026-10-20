@@ -46,6 +46,7 @@ import { FILE_READ_TOOL_NAME } from '../FileReadTool/prompt.js';
 import { spawnTeammate } from '../shared/spawnMultiAgent.js';
 import { setAgentColor } from './agentColorManager.js';
 import { agentToolResultSchema, classifyHandoffIfNeeded, emitTaskProgress, extractPartialResult, finalizeAgentTool, getLastToolUseName, runAsyncAgentLifecycle } from './agentToolUtils.js';
+import { computeNextDepth } from './agentDepth.js';
 import { GENERAL_PURPOSE_AGENT } from './built-in/generalPurposeAgent.js';
 import { AGENT_TOOL_NAME, LEGACY_AGENT_TOOL_NAME, ONE_SHOT_BUILTIN_AGENT_TYPES } from './constants.js';
 import { buildForkedMessages, buildWorktreeNotice, FORK_AGENT, FORK_NESTED_ERROR, isForkSubagentEnabled, isInForkChild } from './forkSubagent.js';
@@ -670,13 +671,9 @@ export const AgentTool = buildTool({
       worktreePath: worktreeInfo?.worktreePath,
       description,
       // 子 agent depth = 父 agent depth + 1；根代理没有该字段时按 0 处理。
-      // 注意：`x as number ?? 0` 在运行时等价于 `(x ?? 0)`（as 被擦除），
-      // 结果本身是正确的；但类型断言让 `??` 的类型推断失效，且掩盖了
-      // agentDepth 的类型契约。显式 typeof 判断更清晰、可被静态检查。
-      depth:
-        (typeof toolUseContext.options.agentDepth === 'number'
-          ? toolUseContext.options.agentDepth
-          : 0) + 1
+      // 统一走 computeNextDepth，避免各处各自实现导致语义漂移，
+      // 也让测试可以直接调用生产实现（而非复刻算术）。
+      depth: computeNextDepth(toolUseContext.options)
     };
 
     // Helper to wrap execution with a cwd override: explicit cwd arg (KAIROS)

@@ -393,10 +393,22 @@ describe('UnifiedScheduler', () => {
       })
 
       scheduler.start()
-      await new Promise(r => setTimeout(r, 500))
+      // 条件轮询而非固定等待：固定 500ms 在慢机器上会假失败。
+      // 每 20ms 读一次任务文件，直到终态出现或 10s 超时。
+      const taskPath = join(TEST_DIR, 'test-list', '1.json')
+      const readStatus = () => {
+        try {
+          return JSON.parse(fs.readFileSync(taskPath, 'utf-8')).status as string
+        } catch {
+          return 'pending'
+        }
+      }
+      const deadline = Date.now() + 10_000
+      while (Date.now() < deadline && readStatus() !== 'failed') {
+        await new Promise(r => setTimeout(r, 20))
+      }
       scheduler.stop()
 
-      const taskPath = join(TEST_DIR, 'test-list', '1.json')
       const saved = JSON.parse(fs.readFileSync(taskPath, 'utf-8'))
       // 回归保护：失败必须写成 'failed'，写成 'completed' 会让统计、
       // blockedBy 依赖解析和下游 DAG 节点全部误判为成功。
