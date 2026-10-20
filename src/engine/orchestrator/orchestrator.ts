@@ -129,7 +129,9 @@ export class Orchestrator {
       const readyNodes = this.graph.getReady()
 
       for (const node of readyNodes) {
-        this.graph.markRunning(node.id)
+        // 状态机守卫：终态节点不会被重新拉回 running。
+        // 若占位失败（已被终态化），跳过以免重复执行。
+        if (!this.graph.markRunning(node.id)) continue
 
         const roleDef = buildAgentDefinition(node.role)
         const context = this.buildNodeContext(node)
@@ -189,18 +191,31 @@ export class Orchestrator {
     }
 
     const hasFailed = this.graph.hasFailed()
+    // 关键修正：仍有 pending 节点意味着图谱卡死（循环依赖、依赖缺失、
+    // 或上游被跳过而下游未被正确处理）。此前只判断 hasFailed，会把
+    // 「根本没执行完」报告成成功 —— 未执行节点被当成「无失败」。
+    const stuckNodes = this.graph.getAll().filter(n => n.status === 'pending')
+    const unfinished = stuckNodes.length > 0
+    const success = !hasFailed && !unfinished
     const lastCompleted = this.graph.getAll().filter(n => n.status === 'completed').pop()
     const mergedOutput = lastCompleted?.result ?? ''
 
     return {
-      success: !hasFailed,
-      finalStage: hasFailed ? 'failed' : 'done',
+      success,
+      finalStage: success ? 'done' : 'failed',
       roleResults,
       mergedOutput,
       qualityScore: computeQualityScore(roleResults),
       totalDuration: Date.now() - startTime,
       totalIterations,
-      summary: this.buildSummary(!hasFailed, hasFailed ? 'failed' : 'done', roleResults, artifacts, Date.now() - startTime, totalIterations),
+      summary: this.buildSummary(
+        success,
+        success ? 'done' : 'failed',
+        roleResults,
+        artifacts,
+        Date.now() - startTime,
+        totalIterations,
+      ),
       artifacts,
     }
   }

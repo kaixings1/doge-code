@@ -89,8 +89,11 @@ export class PipelineExecutor {
           }
         }
 
-        // 失败且无法修复 → 终止
-        return this.buildResult(false, 'failed', roleResults, '', startTime)
+        // 失败且无法修复 → 终止。
+        // 保留此前已完成阶段的产出（patchData 走 mergedOutput），
+        // 此前直接传 '' 会把 research/analyze/design 等阶段的结果全部丢弃，
+        // 调用方拿到失败时连部分成果都看不到。
+        return this.buildResult(false, stage, roleResults, previousOutput, startTime)
       }
 
       // 进度回调

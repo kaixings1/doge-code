@@ -55,13 +55,17 @@ export class TaskGraph {
     return Array.from(this.nodes.values())
   }
 
-  // 获取就绪节点（所有依赖已完成）
+  // 获取就绪节点（所有依赖已到终态且允许继续）
+  // 注意：'skipped' 必须视为已满足。上游被跳过表示它「不会产出结果」，
+  // 若只认 completed，下游会永久停在 pending，而外层循环会以
+  // `success: !hasFailed` 结束 —— 未执行的节点被当成「无失败」的成功。
   getReady(): TaskNode[] {
     return this.getAll().filter(n => {
       if (n.status !== 'pending') return false
       return n.dependencies.every(depId => {
         const dep = this.nodes.get(depId)
-        return dep?.status === 'completed'
+        if (!dep) return false
+        return dep.status === 'completed' || dep.status === 'skipped'
       })
     })
   }
@@ -71,33 +75,51 @@ export class TaskGraph {
     return this.getAll().filter(n => n.status === 'failed')
   }
 
-  // 标记完成
-  markCompleted(id: string, result: string): void {
+  /**
+   * 终态不可再被改写：completed / failed / skipped 一旦写入即冻结。
+   * 此前无守卫，允许 completed → running → failed 这类回退，
+   * 会让终态统计（hasFailed / isAllCompleted）随执行顺序漂移。
+   */
+  private static readonly TERMINAL = new Set<TaskNode['status']>([
+    'completed',
+    'failed',
+    'skipped',
+  ])
+
+  private canTransition(id: string): TaskNode | null {
     const node = this.nodes.get(id)
-    if (node) {
-      node.status = 'completed'
-      node.result = result
-      node.completedAt = new Date().toISOString()
-    }
+    if (!node) return null
+    if (TaskGraph.TERMINAL.has(node.status)) return null
+    return node
   }
 
-  // 标记失败
-  markFailed(id: string, error: string): void {
-    const node = this.nodes.get(id)
-    if (node) {
-      node.status = 'failed'
-      node.error = error
-      node.completedAt = new Date().toISOString()
-    }
+  // 标记完成（返回是否实际生效）
+  markCompleted(id: string, result: string): boolean {
+    const node = this.canTransition(id)
+    if (!node) return false
+    node.status = 'completed'
+    node.result = result
+    node.completedAt = new Date().toISOString()
+    return true
   }
 
-  // 标记运行中
-  markRunning(id: string): void {
+  // 标记失败（返回是否实际生效）
+  markFailed(id: string, error: string): boolean {
+    const node = this.canTransition(id)
+    if (!node) return false
+    node.status = 'failed'
+    node.error = error
+    node.completedAt = new Date().toISOString()
+    return true
+  }
+
+  // 标记运行中（仅 pending 可进入 running，返回是否实际生效）
+  markRunning(id: string): boolean {
     const node = this.nodes.get(id)
-    if (node) {
-      node.status = 'running'
-      node.startedAt = new Date().toISOString()
-    }
+    if (!node || node.status !== 'pending') return false
+    node.status = 'running'
+    node.startedAt = new Date().toISOString()
+    return true
   }
 
   // 跳过（依赖失败时）
