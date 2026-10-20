@@ -9,7 +9,7 @@ import { MessageLoop, engineLog, type MessageLoopDeps, type QueryResult, type Au
 import { MessageNormalizer, type InternalMessage } from "./messageNormalizer.ts";
 import { RequestBuilder, type ToolDefinition } from "./requestBuilder.ts";
 import { ResponseHandler } from "./responseHandler.ts";
-import { ToolScheduler, type PermissionManager, type ToolExecutor, type Tool } from "./toolScheduler.ts";
+import { createToolTimeoutError, ToolScheduler, type PermissionManager, type ToolExecutor, type Tool } from "./toolScheduler.ts";
 import { TokenBudgetManager } from "./tokenBudgetManager.ts";
 import { AutoCompactor } from "./autoCompactor.ts";
 import { ErrorClassifier } from "./errors/classifier.ts";
@@ -114,7 +114,8 @@ export async function runWithTimeout(
   let timer: ReturnType<typeof setTimeout> | null = null;
   const timeoutPromise = new Promise<never>((_, reject) => {
     timer = setTimeout(
-      () => reject(new Error(`工具 ${tool.name} 执行超时（${timeoutMs}ms）`)),
+      // 用带结构化标记的错误，供熔断计数等场景据此排除超时
+      () => reject(createToolTimeoutError(tool.name, timeoutMs)),
       timeoutMs,
     );
     // 不让超时定时器阻止进程退出

@@ -9,7 +9,7 @@
  * 3. 支持 checkpoint 持久化和断点续跑
  */
 
-import type { Orchestrator, OrchestratorDeps, OrchestrationResult, OrchestratorConfig } from './index.js'
+import { Orchestrator, type OrchestratorDeps, type OrchestrationResult, type OrchestratorConfig } from './index.js'
 import { TaskEngine, type StepExecutor, type StepResult, type Task } from '../background/task-engine.js'
 
 // ---------------------------------------------------------------------------
@@ -29,6 +29,7 @@ export interface TeamRunnerOptions {
 
 export type TeamRunnerEvent =
   | { type: 'task_submitted'; taskId: string; description: string }
+  | { type: 'task_resumed'; taskId: string }
   | { type: 'orchestrator_started'; mode: string }
   | { type: 'stage_started'; stage: string; role: string }
   | { type: 'stage_completed'; stage: string; role: string; duration: number }
@@ -67,8 +68,17 @@ export class TeamRunner {
 
     this.emit({ type: 'task_submitted', taskId: task.id, description })
 
-    // 创建 StepExecutor：将编排器包装为每步执行器，每阶段保存 checkpoint
-    const stepExecutor: StepExecutor = async (currentTask, step) => {
+    // 执行
+    return this.engine.execute(task.id, this.createStepExecutor(description))
+  }
+
+  /**
+   * 创建 StepExecutor：将编排器包装为每步执行器，每阶段保存 checkpoint。
+   * 抽成方法以便 submitAndRun 与 resume 共用同一实现（resume 曾绕过它新建任务，
+   * 导致「恢复」实际是从头重跑，checkpoint 完全没有被使用）。
+   */
+  private createStepExecutor(description: string): StepExecutor {
+    return async (currentTask, step) => {
       // 第 0 步：启动编排器并逐阶段记录 checkpoint
       if (step === 0) {
         this.emit({ type: 'orchestrator_started', mode: this.orchestrator['config'].mode })
@@ -121,9 +131,6 @@ export class TeamRunner {
         result: 'Task completed',
       }
     }
-
-    // 执行
-    return this.engine.execute(task.id, stepExecutor)
   }
 
   /**
@@ -133,8 +140,11 @@ export class TeamRunner {
     const task = this.engine.get(taskId)
     if (!task) throw new Error(`Task not found: ${taskId}`)
 
-    // 恢复时重新运行编排器（实际场景可从 checkpoint 恢复）
-    return this.submitAndRun(task.description, task.workingDir)
+    // 复用原任务 id 与 currentStep，走 TaskEngine 的断点续跑。
+    // 旧实现调用 submitAndRun，会新建一个任务并从头执行 —— 既丢失历史
+    // checkpoint，也让原任务永远停在 paused/failed 状态。
+    this.emit({ type: 'task_resumed', taskId })
+    return this.engine.resume(taskId, this.createStepExecutor(task.description))
   }
 
   /**

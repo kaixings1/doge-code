@@ -22,6 +22,26 @@ export interface Tool {
   execute(params: unknown, context?: { timeout?: number; onProgress?: (p: unknown) => void }): Promise<{ content: unknown }>;
 }
 
+/** 工具执行超时错误的标记属性，用于与普通失败区分（熔断计数等场景）。 */
+const TIMEOUT_MARK = '__toolTimeout' as const
+
+/** 构造带结构化标记的超时错误（文本仅供人读，判定不应依赖它）。 */
+export function createToolTimeoutError(toolName: string, timeoutMs: number): Error {
+  const err = new Error(`工具 ${toolName} 执行超时（${timeoutMs}ms）`)
+  ;(err as unknown as Record<string, unknown>)[TIMEOUT_MARK] = true
+  return err
+}
+
+/** 判断错误是否由工具超时产生。优先看结构化标记，再兜底兼容纯文本超时。 */
+export function isTimeoutError(e: unknown): boolean {
+  if (!e || typeof e !== 'object') return false
+  const marked = (e as Record<string, unknown>)[TIMEOUT_MARK]
+  if (marked === true) return true
+  // 兜底：下游可能包装/重建错误，此时只能看文案
+  const msg = (e as { message?: unknown }).message
+  return typeof msg === 'string' && msg.includes('执行超时')
+}
+
 /** 预处理工具参数：stringified JSON 解包 + null 值剥离（吸收自 n8n-mcp CallTool 管道） */
 export function normalizeToolInput(input: unknown): Record<string, unknown> {
   if (!input || typeof input !== 'object') return {};
@@ -180,8 +200,15 @@ export class ToolScheduler {
       this.errorRecovery?.recordToolSuccess(call.name);
       return { success: true, output, toolUseId: call.id };
     } catch (e) {
-      // 记录失败到熔断器
-      this.errorRecovery?.recordToolFailure(call.name);
+      // 超时不计入熔断器失败：
+      // 1) 超时通常意味着下游卡住（MCP 无响应、Bash 等待交互），不代表工具本身
+      //    在持续返回错误；把它计入会让熔断器按超时次数打开，误伤后续正常调用。
+      // 2) 超时后下游 Promise 仍在运行（接口未暴露 signal，无法强杀），被计入
+      //    失败后可能触发的重试会与残留写操作竞态，造成副作用重复。
+      const isTimeout = isTimeoutError(e);
+      if (!isTimeout) {
+        this.errorRecovery?.recordToolFailure(call.name);
+      }
       return { success: false, error: e instanceof Error ? e.message : String(e), toolUseId: call.id };
     }
   }
