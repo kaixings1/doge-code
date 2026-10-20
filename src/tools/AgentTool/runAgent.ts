@@ -343,8 +343,11 @@ export async function* runAgent({
     return
   }
 
-  // 将当前 depth 注入 toolUseContext.options，供子 agent 调用时继承
-  ;(toolUseContext.options as Record<string, unknown>).agentDepth = currentDepth
+  // 注意：不要把 depth 写回 toolUseContext.options。
+  // toolUseContext 是父代理共享的对象，并发运行的兄弟子代理会互相覆盖这个值，
+  // 导致深处代理被误判为浅层（或反之），嵌套上限形同虚设。
+  // depth 已通过 runAgent 的 `depth` 参数显式向下传递（见下方 agentOptions），
+  // 子代理读取自己的 options.agentDepth 时拿到的是本次调用的快照值。
 
   // 追踪子代理使用情况以进行功能发现
 
@@ -709,7 +712,10 @@ export async function* runAgent({
     // 会读取 undefined，只有消息扫描回退触发——而
     // 自动压缩通过替换 fork 样板消息破坏了这一机制。
     ...(useExactTools && { querySource }),
-  }
+    // 当前代理的嵌套深度。写入本代理独占的 options 对象（而非父级共享的
+    // toolUseContext.options），供其子代理调用 AgentTool 时读取并 +1。
+    agentDepth: currentDepth,
+  } as ToolUseContext['options']
 
   // 使用共享辅助函数创建子代理上下文
   // - 同步代理与父级共享 setAppState、setResponseLength、abortController

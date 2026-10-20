@@ -192,8 +192,13 @@ export async function resumeAgentBackground({
     worktreePath: resumedWorktreePath,
     description: meta?.description,
     contentReplacementState: resumedReplacementState,
-    // depth: 从 toolUseContext.options.agentDepth 继承（父 agent 已在 runAgent 中设置）
-    depth: (toolUseContext.options as Record<string, unknown>).agentDepth as number ?? 0,
+    // depth: 继承父 agent 写入其独占 options 的 agentDepth。
+    // 用显式 typeof 判断而非 `x as number ?? 0`：后者运行时等价于 `x ?? 0`，
+    // 结果正确，但类型断言绕过了 agentDepth 的类型契约。
+    depth:
+      typeof toolUseContext.options.agentDepth === 'number'
+        ? toolUseContext.options.agentDepth
+        : 0,
   }
 
   // 跳过名称注册表写入——原始条目从初始生成时已持久化

@@ -271,10 +271,15 @@ export const AgentTool = buildTool({
 
     // 获取 app state
     // 子代理并发控制 (更新日志 2.1.217)
+    // 说明：这里的 canSpawn 只是廉价预检；真正的名额占用发生在下面用
+    // subAgentSpawner.spawn() 包裹执行体处（activeCount 由 spawn/finally 维护）。
+    // depth 必须显式传入，否则 maxDepth 永远不生效。
+    let subAgentSpawner: { spawn<T>(fn: () => Promise<T>): Promise<T> } | null = null
     try {
       const { getSubAgentManager } = await import('../../features/featureFlags.js')
       const subAgentMgr = getSubAgentManager()
-      if (!subAgentMgr.canSpawn()) {
+      subAgentSpawner = subAgentMgr
+      if (!subAgentMgr.canSpawn(toolUseContext.options.agentDepth ?? 0)) {
         return { status: 'failed' as const, error: '并发子代理已达上限，请等待当前子代理完成后再试。' }
       }
     } catch { /* module not available */ }
@@ -664,8 +669,14 @@ export const AgentTool = buildTool({
       }),
       worktreePath: worktreeInfo?.worktreePath,
       description,
-      // 子 agent depth = 父 agent depth + 1，若没有父 agent 则为 0
-      depth: ((toolUseContext.options as Record<string, unknown>).agentDepth as number ?? 0) + 1
+      // 子 agent depth = 父 agent depth + 1；根代理没有该字段时按 0 处理。
+      // 注意：`x as number ?? 0` 在运行时等价于 `(x ?? 0)`（as 被擦除），
+      // 结果本身是正确的；但类型断言让 `??` 的类型推断失效，且掩盖了
+      // agentDepth 的类型契约。显式 typeof 判断更清晰、可被静态检查。
+      depth:
+        (typeof toolUseContext.options.agentDepth === 'number'
+          ? toolUseContext.options.agentDepth
+          : 0) + 1
     };
 
     // Helper to wrap execution with a cwd override: explicit cwd arg (KAIROS)
@@ -763,7 +774,13 @@ export const AgentTool = buildTool({
       // invocation time — when this `void` fires — and survives every await
       // inside. No capture/restore needed; the detached closure sees the
       // parent turn's workload automatically, isolated from its finally.
-      void runWithAgentContext(asyncAgentContext as any, () => wrapWithCwd(() => runAsyncAgentLifecycle({
+      // 用 spawn() 包裹执行体：此前 canSpawn 只看一个永远为 0 的计数器
+      // （spawn 全仓无调用），并发上限形同虚设。这里让 spawn 真正维护
+      // activeCount —— 超限时排队等待，完成后由 finally 释放名额。
+      // ponytail: 仅异步（后台）子代理占用名额。同步子代理由父级 await 串行
+      // 驱动，天然受父级轮次约束，不计入并发上限即可；若将来同步路径也允许
+      // 并行，需要把 spawn 拆成 acquire/release 两段。
+      const runOnce = () => runWithAgentContext(asyncAgentContext as any, () => wrapWithCwd(() => runAsyncAgentLifecycle({
         taskId: agentBackgroundTask.agentId,
         abortController: agentBackgroundTask.abortController!,
         makeStream: onCacheSafeParams => runAgent({
@@ -783,6 +800,15 @@ export const AgentTool = buildTool({
         enableSummarization: isCoordinator || isForkSubagentEnabled() || getSdkAgentProgressSummariesEnabled(),
         getWorktreeResult: cleanupWorktreeIfNeeded
       })));
+
+      // 无 manager 时（动态导入失败）退回直接执行，保证功能不因并发控制而失效。
+      const launched = subAgentSpawner
+        ? subAgentSpawner.spawn(runOnce)
+        : runOnce();
+      // fire-and-forget；spawn 的 finally 会在生命周期结束时释放名额。
+      // 失败已由 runAsyncAgentLifecycle 内部处理，这里仅兜底防止 unhandledRejection。
+      void launched.catch(() => {});
+
       const canReadOutputFile = toolUseContext.options.tools.some(t => toolMatchesName(t, FILE_READ_TOOL_NAME) || toolMatchesName(t, BASH_TOOL_NAME));
       return {
         data: {

@@ -706,5 +706,21 @@ export async function runAsyncAgentLifecycle({
   } finally {
     clearInvokedSkillsForAgent(agentIdForCleanup)
     clearDumpState(agentIdForCleanup)
+    // 清理 name → agentId 注册项：此前只增不删，长会话里 Map 单调增长，
+    // 且同名复用会残留旧条目，导致 SendMessage 路由到已终止的代理。
+    // 仅当该项此刻仍指向本代理时才删除——否则可能误删新起的同名代理。
+    rootSetAppState(prev => {
+      let staleName = ''
+      for (const [n, id] of prev.agentNameRegistry) {
+        if (id === agentIdForCleanup) {
+          staleName = n
+          break
+        }
+      }
+      if (!staleName) return prev
+      const next = new Map(prev.agentNameRegistry)
+      next.delete(staleName)
+      return { ...prev, agentNameRegistry: next }
+    })
   }
 }

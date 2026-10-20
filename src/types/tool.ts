@@ -197,6 +197,9 @@ export type ToolUseContext = {
     appendSystemPrompt?: string
     querySource?: QuerySource
     refreshTools?: () => Tools
+    /** 当前代理的嵌套深度（根代理不设置，按 0 处理）。由 runAgent 写入各代理
+     * 独占的 options 对象，供其调用 AgentTool 时计算子代理深度。 */
+    agentDepth?: number
   }
   abortController: AbortController
   readFileState: FileStateCache
