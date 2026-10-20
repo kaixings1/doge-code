@@ -62,7 +62,14 @@ const BACKGROUND_STALL_MS = (() => {
   const raw = Number(process.env.CLAUDE_CODE_BACKGROUND_STALL_MS)
   return Number.isFinite(raw) && raw > 0 ? raw : 600_000
 })()
-const BACKGROUND_STALL_POLL_MS = 10_000
+
+// 轮询间隔取 min(10s, 阈值/2)：否则把阈值调到 10 秒以内时，轮询比阈值还慢，
+// 实际触发会被推迟一整拍，"调小阈值"就失去了意义。
+const BACKGROUND_STALL_POLL_MS = (() => {
+  const raw = Number(process.env.CLAUDE_CODE_BACKGROUND_STALL_POLL_MS)
+  const hard = Number.isFinite(raw) && raw > 0 ? raw : 10_000
+  return Math.max(100, Math.min(hard, Math.floor(BACKGROUND_STALL_MS / 2)))
+})()
 
 function prependStderr(prefix: string, stderr: string): string {
   return stderr ? `${prefix} ${stderr}` : prefix
@@ -79,16 +86,41 @@ type CpuSample = { user: number; system: number }
  */
 async function sampleProcessCpu(pid: number): Promise<CpuSample | null> {
   const { execFile } = await import('child_process')
-  const run = (cmd: string, args: string[]): Promise<string> =>
+  // PowerShell 冷启动通常 300~800ms，首次可能更久；给足 8s。
+  // 该函数只在"输出已静默超过阈值"时被调用（每阈值周期一次），开销可接受。
+  const run = (cmd: string, args: string[], timeoutMs = 8000): Promise<string> =>
     new Promise(resolve => {
-      execFile(cmd, args, { timeout: 2000, windowsHide: true }, (err, stdout) => {
+      execFile(cmd, args, { timeout: timeoutMs, windowsHide: true }, (err, stdout) => {
         resolve(err ? '' : String(stdout))
       })
     })
 
   try {
     if (process.platform === 'win32') {
-      // UserModeTime / KernelModeTime 单位 100ns，整数且单调递增
+      // [2026-10-20 修复-CPU 采样在 Win11 上完全失效]
+      //   原实现用 `wmic process ... get UserModeTime`，但 wmic 在新版 Windows
+      //   已被移除 —— 实测 Win11 26300 上直接 ENOENT。于是 sampleProcessCpu
+      //   恒返回 null → CPU 判据恒为"无活动" → 看门狗退化成"只要静默就杀"，
+      //   CPU 采样形同虚设（实测：静默但满载 CPU 的进程仍被误杀）。
+      //   改用内置的 PowerShell CIM 查询（wmic 的官方替代品）。
+      // 仍保留 wmic 兜底：较老系统上 PowerShell+CIM 可能不可用，反之亦然。
+      // 用 -EncodedCommand 而非 -Command：参数经 execFile 传递时不含引号
+      // 转义层，UTF-16LE base64 能完全绕开 cmd/PowerShell 的引号解析差异。
+      const script =
+        `$p = Get-CimInstance Win32_Process -Filter "ProcessId=${pid}"; ` +
+        'if ($p) { "$($p.UserModeTime),$($p.KernelModeTime)" }'
+      const encoded = Buffer.from(script, 'utf16le').toString('base64')
+      const psArgs = ['-NoProfile', '-NonInteractive', '-EncodedCommand', encoded]
+      // PowerShell 冷启动抖动大，偶发返回空输出。失败重试一次：
+      // 该函数仅在"输出静默"时被调用，多花一次启动时间的代价可接受，
+      // 而误判的代价是杀掉正在干活的进程。
+      for (let attempt = 0; attempt < 2; attempt++) {
+        const cim = await run('powershell', psArgs)
+        const m = /^\s*(\d+)\s*,\s*(\d+)\s*$/m.exec(cim)
+        if (m) return { user: Number(m[1]), system: Number(m[2]) }
+      }
+
+      // 兜底：老系统上的 wmic（UserModeTime/KernelModeTime 单位 100ns）
       const out = await run('wmic', [
         'process',
         'where',
@@ -329,37 +361,80 @@ class ShellCommandImpl implements ShellCommand {
     // 卡在管道写上的进程 CPU 恒为 0；大文件排序/无输出计算 CPU 持续增长。
     // 只有"输出停滞 **且** CPU 也停滞"才判为僵死，避免误杀合法长跑任务。
     let lastCpu: { user: number; system: number } | null = null
+    // [2026-10-20 修复-采样并发导致判定错乱]
+    //   轮询间隔可能远小于一次 stat + PowerShell 采样的耗时（PowerShell 冷启动
+    //   1~2s）。原实现每轮都无条件下发异步任务，于是多轮采样并发执行，且各自
+    //   捕获的 lastCpu 都是发起时的旧值 —— 结果互相覆盖：后发起的比较了旧基准、
+    //   先返回的又把基准改掉，"是否增长"的结论完全取决于返回顺序。
+    //   实测表现：CPU 从 27M 持续涨到 91M 的任务仍被判为僵死并杀掉。
+    //   修复：同一时刻只允许一轮在跑，其余轮次直接跳过。
+    let busy = false
     this.#backgroundWatchdog = setInterval(() => {
       if (this.#status !== 'backgrounded') {
         this.#clearBackgroundWatchdog()
         return
       }
+      if (busy) return
+      busy = true
+      const done = () => {
+        busy = false
+      }
       // 必须用**文件大小**而非内存写入时间戳：bash 命令是 file 模式，
       // 子进程直接写 fd，JS 层完全看不到写入（见本文件开头 StreamWrapper 注释）。
       void stat(this.taskOutput.path).then(
         s => {
-          if (this.#status !== 'backgrounded' || this.#backgroundWatchdog === null)
+          if (this.#status !== 'backgrounded' || this.#backgroundWatchdog === null) {
+            done()
             return
+          }
           if (s.size !== lastSize) {
             lastSize = s.size
             lastChangeAt = Date.now()
             // 有输出即视为活跃，CPU 基准同步刷新
             lastCpu = null
+            done()
             return
           }
-          if (Date.now() - lastChangeAt < BACKGROUND_STALL_MS) return
+          if (Date.now() - lastChangeAt < BACKGROUND_STALL_MS) {
+            done()
+            return
+          }
           // 输出已停滞足够久 —— 再看 CPU 是否也停滞
-          this.#cpuGrewSince(lastCpu).then(({ grew, sample }) => {
-            if (this.#status !== 'backgrounded' || this.#backgroundWatchdog === null)
+          this.#cpuGrewSince(lastCpu).then(({ grew, sample, unknown }) => {
+            if (this.#status !== 'backgrounded' || this.#backgroundWatchdog === null) {
+              done()
               return
+            }
+            // 采样不可用 → 判据缺失。**不要重置 lastChangeAt**：
+            // 重置会让"静默时长"永远重新计时，一旦采样持续失败就永远等不到
+            // 下一次有效比较（实测：PowerShell 冷启动 ~1s、偶发返回空 → 死循环）。
+            // 保持计时继续累积，下一轮直接重试采样。
+            if (unknown) {
+              done()
+              return
+            }
+            // [2026-10-20 修复-首次采样被判成"无增长"导致误杀]
+            //   首次进入此处时 lastCpu 为 null，"是否有增长"无从谈起。
+            //   原实现直接把 null 当"没增长"，于是**满载 CPU 的任务也会在
+            //   阈值到期的第一时间被杀**（实测：for 循环空转 CPU 从 23M 涨到
+            //   115M，仍在 5.9s 被杀）。正确做法：首次只建立基准、重置静默计时，
+            //   下一次采样再比较。
+            if (lastCpu === null) {
+              lastCpu = sample
+              lastChangeAt = Date.now()
+              done()
+              return
+            }
             if (grew) {
               // 仍在消耗 CPU：合法长跑任务，重置静默计时，继续观察
               lastCpu = sample
               lastChangeAt = Date.now()
+              done()
               return
             }
             this.#killedForBackgroundStall = true
             this.#clearBackgroundWatchdog()
+            done()
             this.#doKill(SIGKILL)
           })
         },
@@ -368,8 +443,11 @@ class ShellCommandImpl implements ShellCommand {
           if (Date.now() - lastChangeAt >= BACKGROUND_STALL_MS) {
             this.#killedForBackgroundStall = true
             this.#clearBackgroundWatchdog()
+            done()
             this.#doKill(SIGKILL)
+            return
           }
+          done()
         },
       )
     }, BACKGROUND_STALL_POLL_MS)
@@ -400,17 +478,19 @@ class ShellCommandImpl implements ShellCommand {
    */
   async #cpuGrewSince(
     last: { user: number; system: number } | null,
-  ): Promise<{ grew: boolean; sample: CpuSample | null }> {
+  ): Promise<{ grew: boolean; sample: CpuSample | null; unknown: boolean }> {
     const pid = this.#childProcess?.pid
-    if (!pid) return { grew: false, sample: null }
+    if (!pid) return { grew: false, sample: null, unknown: true }
     const sample = await sampleProcessCpu(pid)
     if (!sample) {
-      // 采样失败（进程已退出或工具不可用）：保守判为"无活动"，
-      // 由外层静默计时决定是否终止 —— 与改造前行为一致。
-      return { grew: false, sample: null }
+      // [2026-10-20] 采样失败（进程已退出 / 系统工具不可用）时**不能**当作
+      // "无 CPU 活动" —— 那会直接导致误杀，而这正是本次线上事故的形态：
+      // wmic 在 Win11 被移除 → 采样恒失败 → 满载 CPU 的任务照样被杀。
+      // 改为标记 unknown，由调用方跳过本轮判定（下一轮再试）。
+      return { grew: false, sample: null, unknown: true }
     }
     const grew = !!last && (sample.user > last.user || sample.system > last.system)
-    return { grew, sample }
+    return { grew, sample, unknown: false }
   }
 
   #startSizeWatchdog(): void {
