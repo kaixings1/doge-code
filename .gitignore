@@ -135,9 +135,10 @@ fresh
 # 调试压缩包
 .tmp_t*.zip
 
-# MCP serena 服务器的本机克隆（14M 第三方仓库，仅 .mcp.json 本机绝对路径引用）
-# 由 uvx --from D:/doge-code/vendor/serena 启动，不该入库
-/vendor/serena/
+# 本机第三方克隆/依赖目录：vendor/ 整体忽略（含 serena 14M 仓库及其他 uvx 克隆的包）
+# 这些仅由 .mcp.json 等本机绝对路径引用，不该入库。
+# 同时作为 rg 兜底层：避免全仓库扫描时遍历 vendor/ 导致长时间挂起。
+/vendor/
 
 # Playwright MCP 运行时诊断缓存（page-*.yml 快照，非源码）
 .playwright-mcp/
