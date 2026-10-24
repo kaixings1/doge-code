@@ -1,5 +1,8 @@
 import { describe, expect, test } from 'vitest'
-import { normalizeUnixCommandForWindows } from '../../tools/BashTool/BashTool.js'
+import {
+  normalizeUnixCommandForWindows,
+  fixMsysDoubleSlashSwitches,
+} from '../../tools/BashTool/BashTool.js'
 
 // 只验证 MSYS2 的 `cmd //c` 兼容分支；其余归一化行为由既有逻辑保证。
 // 该函数在非 win32 平台直接 return 原串，若在 Linux CI 上运行，
@@ -116,5 +119,61 @@ describe.skipIf(!isWindows)('normalizeUnixCommandForWindows — MSYS2 cmd 兼容
 
   test('Unix 命令映射仍然生效', () => {
     expect(normalizeUnixCommandForWindows('ls docs')).toBe('dir docs')
+  })
+})
+
+// 共享的 MSYS 双斜杠纠正函数（fixMsysDoubleSlashSwitches）。
+// 此前该纠正只在 Unix→Windows 路径（底层 shell 是 cmd/powershell）做，
+// bash 路径（normalizeWindowsCommand）漏做，导致 `cmd //c` 在 MSYS2/Git Bash 下
+// 触发 UNC 路径陷阱 → cmd 进交互模式挂起（表现为"命令卡死"）。
+// 提取为共享函数后两条路径共用，本块覆盖 bash 路径形态 + 回归守卫。
+describe.skipIf(!isWindows)('fixMsysDoubleSlashSwitches — bash 路径覆盖', () => {
+  // 真实卡死形态：多层嵌套 + 反斜杠路径 + 后续 tail 管道
+  test('嵌套 cmd //c 在 && ; 多段命令中被纠正', () => {
+    expect(
+      fixMsysDoubleSlashSwitches(
+        'cd D:/Agent/MyAgent && cmd //c runtime\\_run_pytest.cmd; tail -6 runtime/_pytest.txt',
+      ),
+    ).toBe(
+      'cd D:/Agent/MyAgent && cmd /c runtime\\_run_pytest.cmd; tail -6 runtime/_pytest.txt',
+    )
+  })
+
+  test('裸 cmd //c 被纠正', () => {
+    expect(fixMsysDoubleSlashSwitches('cmd //c runtime\\_run_pytest.cmd')).toBe(
+      'cmd /c runtime\\_run_pytest.cmd',
+    )
+  })
+
+  test('带引号路径的 cmd //c 被纠正', () => {
+    expect(
+      fixMsysDoubleSlashSwitches('cmd //c "runtime\\_run_pytest.cmd"'),
+    ).toBe('cmd /c "runtime\\_run_pytest.cmd"')
+  })
+
+  // 多开关顺序保留
+  test('cmd //d //c 保留 /d 并纠正 //c', () => {
+    expect(fixMsysDoubleSlashSwitches('cmd //d //c "ver"')).toBe(
+      'cmd /d /c "ver"',
+    )
+  })
+
+  // 反向守卫：不应改动已经正确的写法
+  test('cmd /c 保持原样', () => {
+    expect(fixMsysDoubleSlashSwitches('cmd /c "dir /b"')).toBe('cmd /c "dir /b"')
+  })
+
+  // 反向守卫：非受控命令的 // 参数必须原样保留
+  test('非受控命令的 // 参数不受影响', () => {
+    expect(fixMsysDoubleSlashSwitches('echo //not-a-switch')).toBe(
+      'echo //not-a-switch',
+    )
+  })
+
+  // 反向守卫：应保留后续管道/重定向中的 //（不属于受控 shell 首 token）
+  test('后续段的非受控 // 不受影响', () => {
+    expect(fixMsysDoubleSlashSwitches('cmd /c x && echo //y')).toBe(
+      'cmd /c x && echo //y',
+    )
   })
 })

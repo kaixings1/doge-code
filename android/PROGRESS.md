@@ -83,6 +83,75 @@
 
 ## 待办（按价值排序）
 
+### ✔ 重连/断网后补足会话历史（catch-up，跨端已实现，待真机验证）
+**用户报告**：切后台或断网后，电脑端 AI 产生的思考 / 工具调用 / 工具结果 / 助手
+回复，在 App 重连后不补齐；只收到重连"之后"的新消息，断连期间的全丢。
+**诊断（已确证）**：
+- App 端 `handleBackgroundIncoming`（MainActivity.kt:2787）在**进程存活、仅切到别的
+  App** 时，已把后台会话的 `Incoming` 落盘到 `conn.store`，切回 `activateSession`
+  会 `load()` → 该场景**已能补齐**。
+- 缺口在**断网 / WS 断开**场景：服务端 `mobileBridge.ts` 握手 `client_connected`
+  （约 975-999 行）payload **只含地址/标签/peers，不含会话历史**；CLI 在设备离线
+  期间产生的消息无处缓存，重连后服务端不回放 → App 永久缺失这段。
+- 根因：服务端缺"新连接回放当前会话历史"逻辑（flushGate.ts 是向 server 回放，
+  非向移动端设备回放）。
+**已实现（2026-10-18）**：
+- **服务端** `src/bridge/mobileBridge.ts`：
+  - 新增 `registerMobileHistoryProvider(fn)`：REPL 层注册「返回当前会话全部可推送
+    消息」的 getter（模块级，避免网络层反向依赖 React）。
+  - 新增 `replayHistoryToClient(ws)`：握手 `client_connected` 之后，把历史逐条
+    定向 `ws.send` 给**这台**新设备（不广播，不打扰其他设备），每条带
+    `replay: true` + `suppressNotify: true`。provider 未注册/抛异常/空历史均静默跳过。
+  - `src/hooks/useReplBridge.tsx`：`useEffect` 注册 provider，读 `messagesRef`
+    （最新数组），回放 **正文 + 思考 + 工具调用/结果**：
+    - `thinking` 块 → `tool_activity(kind=thinking, state=done, detail=思考全文)`
+    - `tool_use` 块 → `tool_activity(kind=tool, name, detail=JSON参数)`
+    - `tool_result` 块按 `tool_use_id` 预索引配对进对应 tool 项（不各占一条）
+    - 顺序：活动在前、正文在后（与实时顺序一致）
+- **App 端**：
+  - `BridgeProtocol.Incoming` / `BridgeClient.Event.Incoming` 新增 `replay`
+    字段（缺省 false，老服务端不受影响）。
+  - `MainActivity.onEvent(Incoming)`：replay 消息按 `(role,text)` 与本地去重，
+    已有的跳过；回放的**不播报/不通知**（补历史不是新事件）。
+  - `handleBackgroundIncoming`：replay 去重且直接 return（不发通知）。
+  - `onToolActivity`：replay 的思考/工具按 `(标题, detail)` 与本地去重，
+    缺失才补成 done 态工具气泡（不进活动区、不触发子代理停止按钮）。
+- **测试** `tests/unit/mobile-history-replay.test.ts` 5 条（真实 WS）：
+  全部历史带 replay / **思考与工具回放为 tool_activity** / 未注册不回放 /
+  **定向不广播给已连设备** / provider 异常降级。
+  **变异验证**：去掉 `replay:true` → 2 条关键用例失败，判据有效。
+- **验证**：App `_check.bat` + 全量单测 + `_apk.bat` + `adb install` + logcat 启动
+  实证（`Displayed +1s928ms`，无崩溃）；服务端改动文件 `tsc` 零错误、相关单测 43+4 全通过。
+- **性能加固（本轮自查发现并修复）**：回放可能是几十到几百条连续 WS 帧，
+  原实现每条走 `append` → 每次 `notifyDataSetChanged` 全表重建 + 全量落盘，
+  会卡顿丢帧。新增 `ChatAdapter.appendBatch(list)`（一次 addAll + 一次刷新）；
+  `MainActivity` 用 80ms 去抖缓冲（`bufferReplayMessage`/`flushReplayBuffer`）
+  攒批刷入，并在 flush 时补回合分组键（与实时路径一致）。`onDestroy` 先刷完
+  再清回调，避免丢消息与泄漏。
+- **会话隔离（自查）**：回放缓冲记录来源会话 key；flush 时若用户已切走
+  （`affectsUi(srcKey, activeKey)` 为假），改为只落盘到该会话自己的历史并
+  按内容去重，**绝不刷进当前 adapter** —— 否则 A 会话回放会串到 B 界面。
+  来源 key 变化时先刷掉旧缓冲，避免两个会话的消息混批。
+- **一致性修复（自查）**：回放工具气泡标题与实时分支**同构**（含 target），
+  服务端回放帧补 `target` 字段 —— 否则带目标的工具去重失配 → 重复气泡。
+- **真机实测（2026-10-19，USB 反向转发）**：
+  - 回放实证：App 连上后日志出现大量 `replay=true` 的正文与 `tool_activity`
+    （含 target/detail/result），顺序 user→tool→assistant 与实时一致。
+  - **实测发现并修复真实缺陷**：重连后出现 1 组正文重复。根因是
+    `activateSession` 的历史加载是异步 thread，回放帧可能先到达，此时
+    `adapter.snapshot()` 为空 → `(role,text)` 去重失效。
+    修复：`Connected` 时同步缓存 `localHistorySnapshot`（store.load），
+    回放去重改为「adapter / replayBuffer / 本地历史快照」三处比对
+    （`isReplayDuplicate` / `isReplayToolDuplicate`），flush 时再兜底一次。
+  - **复测**：清空该会话历史 → 首次连接 446 条（正文重复 0）→ 杀进程重连
+    → 448 条（正文重复仍为 0），新增 2 条是真实新消息。**去重修复验证通过**。
+- **使用注意（USB 模式，实测踩到）**：`adb reverse tcp:6000 tcp:6000` 的映射会在
+  **adb daemon 重启 / 设备重插后丢失**，表现为 App 反复 `ConnectException` 却看不出
+  原因。重插线或 adb 报 `daemon not running` 后，需重新执行一次 `adb reverse`。
+  局域网/隧道模式不受影响。
+- ⚠ **服务端改动需重启 CLI 才生效**（`mobileBridge.ts` / `useReplBridge.tsx` 属
+  CLI 进程代码，热更新不覆盖）。App 端已装新包。
+
 ### ✔ 工具气泡增强
 - `ToolVisual`：按工具名判类别（WRITE/READ/NETWORK/AGENT/OTHER），
   **有副作用优先**（名字同时含 read 与 edit 时判 WRITE，避免低估风险）
@@ -477,6 +546,165 @@ MIUI 安装限制的关键）。
 
 测试：`mobile-beacon.test.ts` 21 条、`BeaconProtocolTest.kt` 22 条、
 `AutoConnectTest.kt` 12 条。变异测试全部捕获。
+
+### ✔ 阶段 3：流式逐字打字机动画（KLEANBOT-PORT-PLAN 阶段 3）
+
+**背景**：`KLEANBOT-PORT-PLAN.md:11` 明确「阶段 3（逐字动画）未做」。此前
+阶段 1（呼吸光标 `TypingCursorSpan`）与阶段 2（图标 + 空态）已完成，本客户端
+流式预览只是整段重绘 —— 用户看到的是「一大块文字凭空出现」，而非逐字生长。
+- `ChatAdapter.setStreamingPreview` 拆出**目标全文** `streamingTarget` 与
+  **已显现快照** `streamingPreview` 两个字段：前者对账、后者参与渲染。
+- 新增 `startTypewriter()` 追赶器（`Handler` + `postDelayed`，帧间隔
+  `TYPEWRITER_FRAME_MS=24ms`、每帧 `TYPEWRITER_CHARS_PER_FRAME=3` ≈ 125 字/秒）。
+  每帧调纯函数 `nextRevealLen(shown, targetLen)` 推进已显现长度，**封顶不越过
+  目标**（长停顿后不会一次性吐完）；增量密时欠账靠多帧补，增量稀时停在目标等
+  下一波 —— 不随网络抖动调参。
+- 追赶器只 `notifyItemChanged(rows.lastIndex)` 刷新流式行（不整表重建，分组/折叠
+  不受影响），且 guard「仅当 `Row.Streaming` 在末尾」避免误刷新最后一条真实消息。
+- 生命周期清理：`setStreamingPreview(null)`（定稿）停追赶器；`onDetachedFromRecyclerView`
+  兜底停（防解绑后空转泄漏）；VH 的呼吸动画仍由 `onViewRecycled` 停。
+- 纯函数 `nextRevealLen` 抽为 `companion` 可单测（不依赖 Handler/主线程）。
+- 测试：`TypewriterRevealTest` 7 条，含**变异验证**（把 `coerceAtMost` 改
+  `coerceAtLeast` → 5 条失败，证明落后补偿/封顶/追赶循环判据有效）。
+- **验证状态**：`_check.bat` 编译通过、`testDebugUnitTest` 全量 1194+ 用例 0 失败；
+  **真机/模拟器视觉验收未做**（本环境无设备），逐字节奏需在装包后肉眼确认。
+
+### ✔ 草稿按会话隔离（修复串会话隐性 bug）
+
+**背景**：此前梳理可选增强时标记「草稿多会话隔离需确认」，核查 `DraftStore.kt`
+确认为**真实 bug**：用固定单键 `draft`，切换会话时输入框会出现别的会话的
+半截输入 —— 用户以为自己打的字被串改或误发错会话。
+- `DraftStore` 由依赖 `Context` 改为依赖 `SharedPreferences`（依赖反转，
+  纯 JVM 可测，不引入 Robolectric）；新增 `load/save/clear(sessionKey)`，
+  键 = `draft_<sessionKey>`（前缀隔离旧版单键脏数据，平滑升级）。
+- `MainActivity` 全部 6 处调用点（`bindChatViews`/`onStart`/`appendToInput`/
+  `saveDraft`×2 发送后清空/`activateSession` 切会话刷新）改用 `activeKey`。
+  关键：切会话时 `activateSession` 末尾显式 `msgInput.setText(draftStore.load(key))`
+  —— 视图不重建，若不显式刷新输入框仍停留旧会话草稿。
+- 测试：`DraftStoreTest` 6 条（多会话互不串/空内容删键/无草稿空串/清除只影响
+  本会话/前缀隔离），内存版 `SharedPreferences` 注入。**变异验证**：把
+  `keyFor` 前缀改回固定 `draft` → 3 条会话隔离用例失败，证明判据有效。
+- **验证**：`_check.bat` + `testDebugUnitTest`（1199 用例 0 失败）+ `_apk.bat`
+  打包 + `adb install` + `logcat` 启动实证（`Displayed ... +2s479ms`，无崩溃）。
+
+### ✔ 会话置顶/收藏 + 会话列表未读角标
+
+**1. 会话置顶**（`PinnedSessions.kt` 新增）
+- 键用 `host:port` 而非端口：同端口换主机不会置错对象。
+- 存独立偏好文件 `doge_pinned`，与主偏好隔离（清理主偏好不连带重置）。
+- `PinnedOrder.apply`（纯逻辑）：稳定排序把置顶项移到组内最前，其余保持原序。
+- `SessionOrganizer.group/sort` 新增 `pinned` 参数；`SessionAdapter` 长按弹
+  「置顶/取消置顶 + 删除会话记录」菜单（原先长按直接删，现改为菜单选择）；
+  置顶项标签前缀 📌。
+- 排序细节：置顶且已死的条目仍排最前（用户主动置顶就是要它好找，
+  死活在行内以置灰表达）。
+
+**2. 会话列表未读角标**
+- `SessionConn.unread`：后台会话收到 assistant 入站时 +1（**回放消息不计**，
+  那是补历史不是新内容）；切到该会话时清零。
+- `SessionAdapter` 在 meta 行末尾追加「● N 条未读」（零布局改动）。
+- `SessionFragment.unreadProvider` 由宿主按 `MessageStore.keyFor(host, port)`
+  匹配连接单元注入。
+
+**UI dump 实测（2026-10-19）**：
+- 长按会话 → 菜单正确弹出「置顶「doge-code」/ 删除会话记录 / 取消」。
+- 点击置顶 → 列表出现 `📌 doge-code`，置顶项排到组内最前。✅
+- **实测发现真实缺陷**：置顶一条后**两条会话都显示 📌**。根因：置顶键原为
+  `host:port`，而同一台电脑的 LAN 与 TUNNEL 会话 host/port 完全相同
+  （实测都是 `tp-kaixings:6000`），仅 mode 不同 → 共用一个键。
+  修复：键改为 `mode:host:port`。补测试「同主机同端口的 LAN 与 TUNNEL
+  互不影响」；**变异验证**：去掉 mode 前缀 → 2 条用例失败。
+
+**测试**：`PinnedSessionsTest` 9 条（默认未置顶/切换/不同主机同端口互不影响/
+LAN与TUNNEL互不影响/all/稳定排序/无置顶不变/全置顶保持原序/空列表）。**变异验证**：把
+`PinnedOrder.apply` 改成不排序 → 1 条用例失败，判据有效。
+**验证**：全量单测 1211 通过 + 打包 + 安装 + 启动实证（`+1s771ms`，无崩溃）。
+
+**自查修复（key 口径不一致）**：`keyForUrl` 原本裸用 `URI(url).host/port`，
+而会话列表项 host 来自 `BridgeUrl.hostOf`（内部 `normalize` 会自愈脏地址、
+补默认 scheme）。两者对异常/无 scheme 的地址会算出不同 key → 未读角标与
+置顶**静默失配**。已统一为 `BridgeUrl.hostOf/portOf`（默认端口同为 5680，
+行为不变）。回归验证：实机重连 `clients=1`、历史文件 key 不变、启动无崩溃。
+
+### ✔ USB 提示端口改成动态（修复误导性提示）
+
+**实测发现（真机 dump 界面时看到）**：连接失败提示写着
+`adb reverse tcp:5680 tcp:5680`，但实际桥接在 **6000**。用户照提示执行
+会建出**错端口的映射**，照样连不上 —— 且比不给提示更难排查（会以为自己
+操作对了）。根因：`ConnectionHint` 文案硬编码 5680。
+- 新增 `ConnectionHint.portOf(address)`：从实际地址解析端口，
+  解析失败回落 `DEFAULT_PORT`。`hintFor` 的 USB 分支改用实际端口。
+- `waitingHint` 的硬编码改为 `<端口>` 占位 + 说明「以 App 里填的地址为准」。
+- 测试 `ConnectionHintTest` +3 条（实际端口 6000 / 无端口回落 / portOf 边界）。
+  **变异验证**：把端口写死 5680 → 1 条用例失败，判据有效。
+- **验证**：全量单测 1214 通过 + 打包 + 安装 + 启动。
+
+### ✔ 生成期间屏幕常亮（修复长任务熄屏打断）
+
+**背景**：系统扫描确认所有常见聊天能力（搜索/主题/图片/语音输入/批量删除/
+通知跳转/双指缩放/未读/斜杠命令/重新生成/导出/草稿隔离）均已接通，唯一
+缺的是**生成时长任务时自动熄屏**这一痛点：用户盯看 AI 生成几十秒，屏幕可能
+锁屏打断阅读。
+- `MainActivity` 加 `setScreenWake(active)`：对聊天 `RecyclerView` 设
+  `keepScreenOn`（窗口级标志，**非** WakeLock —— 随窗口可见性自动失效，
+  不会泄漏成永久亮屏，且无需权限声明）。
+- 锚点用**统一生成入口**：`onStreamDelta` 首次触发（`streamingBuffer` 由空变
+  非空）时开屏；`clearStreamingState`（定稿/回合结束）时关屏。该入口三条后端
+  路径（LAN/TUNNEL 桥接、CLOUD 本地推理）最终都汇聚到 `BridgeClient.Event.
+  Delta` → `onStreamDelta`，故一套覆盖全部模式。
+- **验证**：`_check.bat` + `_apk.bat` 打包 + `adb install` + `logcat` 启动实证
+  （`Displayed +2s177ms`，无崩溃）。生成期间不熄屏的**观感需真机肉眼确认**
+  （本环境无法驱动系统自动熄屏计时）。
+
+### ✔ C 类可选增强四件（用户全选）
+
+**背景**：规划功能全部完成后，梳理出 4 个锦上添花项，用户确认全做。逐项核查
+均确为缺口（非文档滞后）。
+
+**1. 链接点击开浏览器**
+- 消息气泡此前纯文本展示 URL，用户只能复制去浏览器。现对 `bind`（非流式预览）
+  的消息设 `autoLinkMask = WEB_URLS` + `LinkMovementMethod`，TextView 自动识别
+  http(s) 并高亮，点按走系统 `ACTION_VIEW`。`bindStreaming` 复用 VH 时反向
+  清掉 `autoLinkMask`/movementMethod，避免预览临时文字被误识别为链接。
+- 纯 framework 能力，零依赖、无需权限。
+
+**2. 应用锁自动超时锁定**
+- 原 `AppLock` 只在冷启动锁一次，离开再回不锁。新增 `lastBackgroundMs` 记录退
+  后台时刻；`onPause` 记时、`onResume` 调 `maybeRelockOnReturn()`：若离开超过
+  `APP_LOCK_TIMEOUT_MS=2min` 且锁已开，则重新弹系统解锁界面（防旁人拿离开时的
+  手机看历史）。
+- 抽出 `hasDeviceCredential()` 与 `setupAppLockGate` 内联块共用，避免两处漂移；
+  重新锁前先 `removeAppLockOverlay()` 防遮罩叠加。异常仍按「无凭据」降级不卡死。
+
+**3. 触觉反馈（震动）**
+- manifest 加 `VIBRATE` 权限；`MainActivity.buzz()` 用 `Vibrator.vibrate`
+  （API26+ 走 `VibrationEffect.createOneShot(30ms)`），设备无振动器/异常时
+  `runCatching` 静默降级。
+- 锚点：发送成功、任务完成（`announceCompletion`，独立于语音开关）、需批准
+  （`announcePermission`，强提示）三处各 `buzz()` 一次。
+
+**4. 分屏多窗口支持**
+- `AndroidManifest` 的 `MainActivity` 加 `resizeableActivity="true"`，
+  `configChanges` 补 `smallestScreenSize|screenLayout`（分屏尺寸变化不重建）。
+
+**验证**：`_check.bat` + 全量 `_apk.bat`（改了 manifest 故停 daemon 全量重编）
++ `adb install` + `logcat` 启动实证（`Displayed +2s730ms`，无崩溃）。
+**观感需真机确认**：链接点击跳转、超时重锁弹窗、震动触感、分屏拖拽，均需在
+设备上操作验证（本环境无法驱动）。
+
+### ✔ 剪贴板粘贴（更多菜单主动触发）
+
+**背景**：此前梳理唯一确认未做的可选项是「剪贴板自动粘贴」，但因「自动粘贴会
+在用户无预期时覆盖正在打的字」判定为 YAGNI。改为**用户主动触发**的版本消除
+该副作用 —— 放进「更多」菜单，不自动。
+- `showMoreActions` 新增「粘贴剪贴板文本」项 → 调 `pasteFromClipboard()`。
+- 语义：**不替换**。输入框为空时直接填，非空时追加到末尾（从别处复制报错/
+  代码补进当前半截请求）。`draftStore.save` 同步骤持久化。
+- 防御：ClipboardManager 取不到 / 剪贴板空 / 非文本（图片）/ 异常时
+  `runCatching` 静默无操作，绝不弹错或崩。
+- **验证**：`_check.bat` + `_apk.bat` + `adb install` + `logcat` 启动实证
+  （`Displayed +4s230ms`，无崩溃）。粘贴的实际效果需真机：复制一段文本、进
+  App、点「更多 → 粘贴剪贴板文本」确认填入（本环境无法驱动剪贴板）。
 
 ### ✔ 双指缩放字号（`PinchZoom`）
 - 用 `ScaleGestureDetector`，**不消费单指事件**（返回 false）——

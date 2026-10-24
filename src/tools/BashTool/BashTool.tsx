@@ -352,6 +352,57 @@ const UNIX_TO_WINDOWS_COMMANDS: { [key: string]: string } = {
 const SHELL_OPERATORS = new Set(['&&', '||', '|', ';', '>', '>>', '2>', '<', '(', ')', '{', '}', 'do', 'then', 'else', 'fi', 'esac', 'done', 'elif', 'rof', 'for', 'while', 'until', 'case', 'if', 'in']);
 
 /**
+ * MSYS2/Git Bash 以及原生 cmd.exe 会把 `cmd //c` 的 `//c` 当 UNC 路径前缀，
+ * cmd 收不到 /c 开关 → 以交互模式启动并读 stdin 挂起（表现为"命令卡死"）。
+ * 只有 `//X` 这种畸形形态需要处理；正规 `/X` 保持原样。
+ *   - cmd / cmd.exe：/c /d /q /s /a /u /v /e /f
+ *   - powershell / pwsh：顶级开关（-Command / -File / -NoProfile 等）
+ *   - wsl：/e(exec) /d /u /s
+ *
+ * 本函数对整条命令做纠正（按 && || ; | 分段，逐段匹配首 token），
+ * 供两条归一化路径（Unix→Windows / Windows→bash）共用，避免逻辑漂移。
+ */
+const MSYS_DOUBLE_SLASH_SWITCHES: Record<string, RegExp> = {
+  'cmd': /(^|\s)\/\/(d|q|s|a|u|v|e|f|c)\b/gi,
+  'cmd.exe': /(^|\s)\/\/(d|q|s|a|u|v|e|f|c)\b/gi,
+  // powershell 的开关是完整参数名（-Command / -NoProfile），单字母缩写仅在
+  // 无歧义时可用，因此按完整名称匹配。
+  'powershell': /(^|\s)\/\/(command|file|noprofile|noninteractive|noexit|nologo|executionpolicy|encodedcommand|inputformat|outputformat|windowstyle|version|help|sta|mta|configurationname|psconsolefile|c)\b/gi,
+  'pwsh': /(^|\s)\/\/(command|file|noprofile|noninteractive|noexit|nologo|executionpolicy|encodedcommand|inputformat|outputformat|windowstyle|version|help|sta|mta|configurationname|psconsolefile|c)\b/gi,
+  'wsl': /(^|\s)\/\/(d|e|u|s)\b/gi,
+};
+
+/** 对单条命令段纠正 MSYS 双斜杠开关（cmd //c → cmd /c 等）。 */
+function fixMsysDoubleSlashSwitchInSegment(segment: string): string {
+  const firstTokenMatch = segment.match(/^(\s*)([^\s]+)/);
+  if (!firstTokenMatch) return segment;
+  const leadingWhitespace = firstTokenMatch[1];
+  const firstToken = firstTokenMatch[2];
+  const rest = segment.slice(firstTokenMatch[0].length);
+  // 跳过以 -/ 开头的标志参数（它们不是命令）
+  if (/^-/.test(firstToken)) return segment;
+  if (SHELL_OPERATORS.has(firstToken.toLowerCase())) return segment;
+  if (firstToken.startsWith('#')) return segment;
+  if (/^[a-zA-Z_][a-zA-Z0-9_]*=/.test(firstToken)) return segment; // env 赋值
+  // 去掉命令名末尾的参数引用（${VAR} / $(CMD)）
+  const commandName = firstToken.replace(/\(.*\)$/, '').replace(/\$\{.*\}$/, '');
+  const cleanCommandName = commandName.replace(/^['"`]/, '').replace(/['"`]$/, '').toLowerCase();
+  const doubleSlashSwitch = MSYS_DOUBLE_SLASH_SWITCHES[cleanCommandName];
+  if (!doubleSlashSwitch) return segment;
+  const stripped = rest.replace(doubleSlashSwitch, '$1/$2');
+  return leadingWhitespace + commandName + stripped;
+}
+
+/** 对整条命令（含 && || ; | 多段）纠正 MSYS 双斜杠开关。 */
+export function fixMsysDoubleSlashSwitches(cmd: string): string {
+  if (process.platform !== 'win32') return cmd;
+  if (!cmd.trim()) return cmd;
+  return cmd.split(/(\s*(?:&&|\|\||[;|])\s*)/).map((part, index) =>
+    index % 2 === 1 ? part : fixMsysDoubleSlashSwitchInSegment(part),
+  ).join('');
+}
+
+/**
  * 转换单个命令段（不含 && ; | 等分隔符）的首 token。
  * 只改段首命令名，保留其余参数原样。
  */
@@ -376,32 +427,15 @@ export function normalizeUnixCommandSegment(segment: string): string {
   // 跳过 env 变量赋值（如 VAR=value command）
   if (/^[a-zA-Z_][a-zA-Z0-9_]*=/.test(firstToken)) return segment;
 
+  // MSYS 双斜杠开关纠正（cmd //c → cmd /c 等），复用共享逻辑。
+  // 仅当首 token 是受控 shell（cmd/powershell/pwsh/wsl）且片段未经 env/注释/操作符跳过时生效。
+  if (SHELL_OPERATORS.has(firstToken.toLowerCase())) return segment;
+  const afterFix = fixMsysDoubleSlashSwitchInSegment(segment);
+  if (afterFix !== segment) return afterFix;
+
   // 去掉命令名末尾的任何参数引用（如 ${VAR} 或 $(CMD)）
   const commandName = firstToken.replace(/\(.*\)$/, '').replace(/\$\{.*\}$/, '');
   const cleanCommandName = commandName.replace(/^['"`]/, '').replace(/['"`]$/, '').toLowerCase();
-
-  // MSYS2/Git Bash 会把以 / 开头的参数当 POSIX 路径转换：`cmd //c` 的 `//c`
-  // 被转成 `\\c` 或 UNC 路径，cmd 收不到 /c 开关 → 以交互模式启动并读 stdin
-  // 挂起（前台等到超时后转后台，表现为"命令失败/卡住"）。
-  // 只有 `//X` 这种畸形形态需要处理；正规 `/X` 保持原样。
-  //   - cmd / cmd.exe：/c /d /q /s /a /u /v /e /f
-  //   - powershell / pwsh：顶级开关（-Command、-File、-NoProfile 等）
-  //   - wsl：/e(exec) /d /u /s /直接以 -- 长选项为主，短选项少
-  const MSYS_DOUBLE_SLASH_SWITCHES: Record<string, RegExp> = {
-    'cmd': /(^|\s)\/\/(d|q|s|a|u|v|e|f|c)\b/gi,
-    'cmd.exe': /(^|\s)\/\/(d|q|s|a|u|v|e|f|c)\b/gi,
-    // powershell 的开关是完整参数名（-Command / -NoProfile），单字母缩写仅在
-    // 无歧义时可用，因此按完整名称匹配。
-    'powershell': /(^|\s)\/\/(command|file|noprofile|noninteractive|noexit|nologo|executionpolicy|encodedcommand|inputformat|outputformat|windowstyle|version|help|sta|mta|configurationname|psconsolefile|c)\b/gi,
-    'pwsh': /(^|\s)\/\/(command|file|noprofile|noninteractive|noexit|nologo|executionpolicy|encodedcommand|inputformat|outputformat|windowstyle|version|help|sta|mta|configurationname|psconsolefile|c)\b/gi,
-    'wsl': /(^|\s)\/\/(d|e|u|s)\b/gi,
-  };
-  const doubleSlashSwitch = MSYS_DOUBLE_SLASH_SWITCHES[cleanCommandName];
-  if (doubleSlashSwitch) {
-    // 开关字母大小写不敏感：这些 shell 的开关本身就按大小写不敏感处理
-    const stripped = rest.replace(doubleSlashSwitch, '$1/$2');
-    return leadingWhitespace + commandName + stripped;
-  }
 
   if (cleanCommandName in UNIX_TO_WINDOWS_COMMANDS) {
     return leadingWhitespace + UNIX_TO_WINDOWS_COMMANDS[cleanCommandName] + rest;
@@ -444,6 +478,13 @@ function normalizeWindowsCommand(cmd: string): string {
     // 仅在 Windows 上执行兼容性转换
     const isWin = process.platform === 'win32';
     if (!isWin) return cmd;
+
+    // ------ 0. 先纠正 MSYS 双斜杠开关（cmd //c → cmd /c 等）------
+    // 这是 shell 包装器，与下面的 dir/cd/findstr 等命令转换正交，须最先处理。
+    // 底层 shell 是 bash（MSYS2/Git Bash）时，`cmd //c` 的 `//c` 被当 UNC 路径前缀，
+    // cmd 收不到 /c 开关 → 进入交互模式挂起（表现为"命令卡死"）。
+    // 此前该纠正只在 Unix→Windows 路径做，bash 路径漏做，导致此类命令卡死。
+    trimmed = fixMsysDoubleSlashSwitches(trimmed);
 
     // ------ A. 首先执行模型命令的智能纠错 ------
     trimmed = fixModelCommandMistakes(trimmed, 'win32');

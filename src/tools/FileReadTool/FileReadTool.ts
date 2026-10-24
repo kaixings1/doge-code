@@ -237,6 +237,12 @@ const inputSchema = lazySchema(() =>
       .describe(
         `PDF 文件的页面范围（例如 "1-5"、"3"、"10-20"）。仅适用于 PDF 文件。每次请求最多 ${PDF_MAX_PAGES_PER_READ} 页。`,
       ),
+    allow_large: z
+      .boolean()
+      .optional()
+      .describe(
+        '设为 true 时忽略常规大小限制，一次读完整个文本文件。仅在确实需要完整文件且上下文有空间时使用；不能与 offset/limit 同时使用。',
+      ),
   }),
 )
 type InputSchema = ReturnType<typeof inputSchema>
@@ -490,7 +496,7 @@ export const FileReadTool = buildTool({
     return { result: true }
   },
   async call(
-    { file_path, offset = 1, limit = undefined, pages },
+    { file_path, offset = 1, limit, pages, allow_large = false },
     context,
     _canUseTool?,
     parentMessage?,
@@ -498,9 +504,20 @@ export const FileReadTool = buildTool({
     const { readFileState, fileReadingLimits } = context
 
     const defaults = getDefaultFileReadingLimits()
-    const maxSizeBytes =
-      fileReadingLimits?.maxSizeBytes ?? defaults.maxSizeBytes
-    const maxTokens = fileReadingLimits?.maxTokens ?? defaults.maxTokens
+    // allow_large（对齐官方 v2.1.296）：忽略常规大小/token 上限，一次读完整个文件。
+    // 与 offset/limit 互斥——显式分段读取时再给全量豁免没有意义，反而会把
+    // 「读一部分」变成「读全部」。这种情况直接报错，而不是静默忽略该参数。
+    if (allow_large && (limit != null || offset > 1)) {
+      throw new Error(
+        'allow_large 不能与 offset 或 limit 同时使用：它用于一次读完整个文件，需要分段时请去掉 allow_large。',
+      )
+    }
+    const maxSizeBytes = allow_large
+      ? Number.POSITIVE_INFINITY
+      : (fileReadingLimits?.maxSizeBytes ?? defaults.maxSizeBytes)
+    const maxTokens = allow_large
+      ? Number.POSITIVE_INFINITY
+      : (fileReadingLimits?.maxTokens ?? defaults.maxTokens)
 
     // 遥测：追踪调用者何时覆盖默认读取限制。
     // 仅在覆盖时触发（低流量）— 事件计数 = 覆盖频率。

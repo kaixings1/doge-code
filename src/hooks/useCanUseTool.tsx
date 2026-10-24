@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useCallback } from 'react';
 import { type AnalyticsMetadata_I_VERIFIED_THIS_IS_NOT_CODE_OR_FILEPATHS, logEvent } from '../services/analytics/index.js';
 import { sanitizeToolNameForAnalytics } from '../services/analytics/metadata.js';
+import { permissionPromptsMode } from '../utils/permissions/permissionPromptsMode.js';
 import type { ToolUseConfirm } from '../components/permissions/PermissionRequest.js';
 import { Text } from '../ink.js';
 import type { ToolPermissionContext, Tool as ToolType, ToolUseContext } from '../Tool.js';
@@ -50,6 +51,19 @@ function useCanUseTool(setToolUseConfirmQueue, setToolPermissionContext) {
           resolve(ctx.buildAllow(result.updatedInput ?? input, {
             decisionReason: result.decisionReason
           }));
+          return;
+        }
+        // --permission-prompts none（对齐官方 v2.1.259）：无头/无人值守环境下
+        // 任何需要弹窗的请求一律拒绝，而不是挂起等待一个永远不会来的回答。
+        if (permissionPromptsMode() === 'none') {
+          ctx.logDecision({
+            decision: "reject",
+            source: "config"
+          });
+          resolve(ctx.buildDeny(
+            "权限提示已被禁用（--permission-prompts none），本次调用自动拒绝",
+            { type: "other", reason: "permission-prompts: none" }
+          ));
           return;
         }
         const appState = toolUseContext.getAppState();

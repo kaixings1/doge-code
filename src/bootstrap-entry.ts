@@ -10,6 +10,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { spawn } from 'child_process'
 import { fileURLToPath } from 'url'
+import { stripBOM } from './utils/jsonRead.js'
 
 //process.env.CLAUDE_CODE_SIMPLE=1
 // 🔴 清除 PATH 中的 MSYS2/Git bash 目录，防止 cmd.exe 子进程调用 MSYS2 的 grep/find 等程序触发 fork 卡死
@@ -35,10 +36,16 @@ const apiJsonPath = (() => {
 })();
 let activeConfig = null;
 if (fs.existsSync(apiJsonPath)) {
-  const data = JSON.parse(fs.readFileSync(apiJsonPath, 'utf-8'));
-  const presetName = data.activePreset;
-  if (presetName && data.presets && data.presets[presetName]) {
-    activeConfig = data.presets[presetName];
+  try {
+    // 去掉 UTF-8 BOM，否则 JSON.parse 会报 "Unrecognized token '\uFEFF'"
+    const raw = stripBOM(fs.readFileSync(apiJsonPath, 'utf-8'));
+    const data = JSON.parse(raw);
+    const presetName = data.activePreset;
+    if (presetName && data.presets && data.presets[presetName]) {
+      activeConfig = data.presets[presetName];
+    }
+  } catch (err) {
+    console.error(`[bootstrap] 无法解析 ${apiJsonPath}，已忽略该配置：${(err as Error).message}`);
   }
 }
 if (activeConfig?.baseURL && !activeConfig.baseURL.startsWith('http://0.0.0.0')) {

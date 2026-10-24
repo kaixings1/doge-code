@@ -79,6 +79,11 @@ class BridgeClient(
              * 服务端推送回所有手机时带此值，用于精确去重「自己刚发、被回推」的那条。
              */
             val sourceRequestId: String = "",
+            /**
+             * 服务端「重连历史回放」消息（断连期间补发）。
+             * true 时调用方跳过本地已有的同内容消息，且不播报/通知。
+             */
+            val replay: Boolean = false,
         ) : Event
         /** 自己发出的消息被服务端确认入队 */
         data class Queued(val requestId: String) : Event
@@ -152,6 +157,8 @@ class BridgeClient(
             val toolUseId: String = "",
             val truncated: Boolean = false,
             val fullLength: Int = 0,
+            /** 是否为重连历史回放（去重 + 不触发活动区/播报）。 */
+            val replay: Boolean = false,
         ) : Event
     }
 
@@ -497,7 +504,7 @@ class BridgeClient(
             }
             is BridgeProtocol.Msg.Incoming -> {
                 Log.i(TAG, "[PROBE] Incoming role=${m.role} srcRid='${m.sourceRequestId}' text=${m.text.take(20)}")
-                post { onEvent(Event.Incoming(m.role, m.text, m.suppressNotify, m.sourceRequestId)) }
+                post { onEvent(Event.Incoming(m.role, m.text, m.suppressNotify, m.sourceRequestId, m.replay)) }
             }
             is BridgeProtocol.Msg.Queued -> post { onEvent(Event.Queued(m.requestId)) }
             is BridgeProtocol.Msg.Error -> post { onEvent(Event.Error(m.message)) }
@@ -517,7 +524,7 @@ class BridgeClient(
                 onEvent(
                     Event.ToolActivity(
                         m.kind, m.name, m.target, m.state,
-                        m.detail, m.result, m.toolUseId, m.truncated, m.fullLength,
+                        m.detail, m.result, m.toolUseId, m.truncated, m.fullLength, m.replay,
                     ),
                 )
             }

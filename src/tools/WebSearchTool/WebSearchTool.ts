@@ -4605,9 +4605,17 @@ export const WebSearchTool = buildTool({
     // 提取必要字段，忽略额外字段（glob, type, pattern, output_mode 等）
     let { query, allowed_domains, blocked_domains } = input
 
-    // WebSearch 限制 (更新日志 2.1.212)
-    const maxSearches = getSubAgentManager().getStats().maxSearches
-    console.log(`[WebSearch] Search limit: ${maxSearches} per session`) // ponytail: 仅日志，未实现会话级计数器
+    // WebSearch 会话级上限（对齐官方 CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION，v2.1.212）。
+    // 计数由 SubAgentManager 维护（跨工具共享的会话级状态），到上限后直接拒绝，
+    // 防止单次会话里模型陷入失控的搜索循环。
+    const searchMgr = getSubAgentManager()
+    if (!searchMgr.canSearch()) {
+      const { searchesUsed, maxSearches } = searchMgr.getStats()
+      throw new Error(
+        `本会话的 WebSearch 调用已达上限（${searchesUsed}/${maxSearches}）。` +
+          `如需继续搜索，请提高 CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION 后新开会话。`,
+      )
+    }
     // 自动注入当前日期（如果用户未指定时间范围）
     const today = getLocalISODate()
     const monthYear = getLocalMonthYear()
@@ -4696,6 +4704,10 @@ export const WebSearchTool = buildTool({
     }
     results.push(`完成，共 ${deduped.length} 条结果（免费接口），耗时 ${durationSeconds}s`)
     emit('search_results_received', { resultCount: deduped.length })
+
+    // 只在真正执行过搜索后计数：缓存命中（上方提前返回）不消耗配额，
+    // 否则重复查询会白白吃掉会话额度。
+    searchMgr.recordSearch()
 
     return { data: { queryModify, results, durationSeconds } }
   },

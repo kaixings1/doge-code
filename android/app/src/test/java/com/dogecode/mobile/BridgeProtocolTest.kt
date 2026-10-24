@@ -1,6 +1,7 @@
 package com.dogecode.mobile
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -247,5 +248,44 @@ class BridgeProtocolTest {
         // 否则会在聊天里多出一个空气泡。
         val m = BridgeProtocol.parse("""{"type":"turn_end","data":{"reason":"complete"}}""")
         assertTrue("turn_end 应解析为 TurnEnd，实际 $m", m is BridgeProtocol.Msg.TurnEnd)
+    }
+
+    // ── 重连历史回放的 replay 标记 ──
+
+    @Test
+    fun `回放消息的 replay 标记被解析（正文）`() {
+        val m = BridgeProtocol.parse(
+            """{"type":"assistant","data":{"text":"历史回复","replay":true,"suppressNotify":true}}""",
+        ) as BridgeProtocol.Msg.Incoming
+        assertTrue("回放标记应被识别", m.replay)
+        assertEquals("历史回复", m.text)
+        assertTrue("回放应抑制通知", m.suppressNotify)
+    }
+
+    @Test
+    fun `普通消息 replay 默认 false`() {
+        // 老服务端不带 replay 字段 → 必须默认 false，否则实时消息会被当回放去重
+        val m = BridgeProtocol.parse(
+            """{"type":"assistant","data":{"text":"实时回复"}}""",
+        ) as BridgeProtocol.Msg.Incoming
+        assertFalse("缺字段应默认非回放", m.replay)
+    }
+
+    @Test
+    fun `工具活动的 replay 标记被解析`() {
+        val m = BridgeProtocol.parse(
+            """{"type":"tool_activity","data":{"kind":"tool","name":"Read","state":"done","detail":"{}","replay":true}}""",
+        ) as BridgeProtocol.Msg.ToolActivity
+        assertTrue("工具回放标记应被识别", m.replay)
+        assertEquals("done", m.state)
+        assertEquals("Read", m.name)
+    }
+
+    @Test
+    fun `tool_activity 缺 replay 时默认 false`() {
+        val m = BridgeProtocol.parse(
+            """{"type":"tool_activity","data":{"kind":"tool","name":"Bash","state":"running"}}""",
+        ) as BridgeProtocol.Msg.ToolActivity
+        assertFalse(m.replay)
     }
 }

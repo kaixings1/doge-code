@@ -10,6 +10,7 @@ import { registerGitGuardrailsSkill } from './gitGuardrails.js'
 import { registerTddSkill } from './tdd.js'
 import { registerImplementSkill } from './implement.js'
 import { registerCodebaseDesignSkill } from './codebaseDesign.js'
+import { registerDatavizSkill } from './dataviz.js'
 import { registerDomainModelingSkill } from './domainModeling.js'
 import { registerGrillingSkill } from './grilling.js'
 import { registerGrillWithDocsSkill } from './grillWithDocs.js'
@@ -33,6 +34,8 @@ import { registerLoremIpsumSkill } from './loremIpsum.js'
 import { registerRememberSkill } from './remember.js'
 import { registerSkillifySkill } from './skillify.js'
 import { registerStuckSkill } from './stuck.js'
+import { registerUltraplanLocalSkill } from './ultraplanLocal.js'
+import { registerOfflineResearchSkill } from './offlineResearch.js'
 import { registerUpdateConfigSkill } from './updateConfig.js'
 import { registerVerifySkill } from './verify.js'
 
@@ -66,6 +69,7 @@ export function initBundledSkills(): void {
   registerTddSkill()
   registerImplementSkill()
   registerCodebaseDesignSkill()
+  registerDatavizSkill()
   registerDomainModelingSkill()
   registerGrillingSkill()
   registerGrillWithDocsSkill()
@@ -84,6 +88,8 @@ export function initBundledSkills(): void {
   registerSkillBundleCommand()
   registerBundledSkillsSummarySkill()
   registerStuckSkill()
+  registerUltraplanLocalSkill()
+  registerOfflineResearchSkill()
   if (feature('KAIROS') || feature('KAIROS_DREAM')) {
      
     const { registerDreamSkill } = require('./dream.js')

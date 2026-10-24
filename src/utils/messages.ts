@@ -3620,6 +3620,14 @@ export function normalizeAttachmentForAPI(
       }
       break
     }
+    case 'mention_path_only': {
+      return wrapMessagesInSystemReminder([
+        createUserMessage({
+          content: `用户提到了文件：${attachment.filename}。此处只提供路径，未包含内容；如需查看，请使用 ${FileReadTool.name} 工具读取。`,
+          isMeta: true,
+        }),
+      ])
+    }
     case 'compact_file_reference': {
       return wrapMessagesInSystemReminder([
         createUserMessage({

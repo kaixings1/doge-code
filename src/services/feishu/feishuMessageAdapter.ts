@@ -22,7 +22,15 @@ export interface FeishuInboundMessage {
     chat_type: 'p2p' | 'group'
     message_type: string
     content: string
-    mentions?: Array<{ id?: string; name?: string }>
+    /**
+     * 飞书 mention 形如 { key: '@_user_1', name: '张三', id: { open_id } }。
+     * 注意 open_id 在 `id.open_id` 下，而不是顶层的 `id`。
+     */
+    mentions?: Array<{
+      key?: string
+      name?: string
+      id?: { open_id?: string; user_id?: string; union_id?: string }
+    }>
   }
   sender?: {
     sender_id: {
@@ -84,8 +92,13 @@ export function isMentioningBot(message: FeishuInboundMessage['message']): boole
   // 群聊中需要 @机器人 才会响应
   if (message.chat_type === 'p2p') return true
   if (!message.mentions || message.mentions.length === 0) return false
-  // 有 @mention 即视为目标消息
-  return true
+
+  // 只认"@机器人"，而不是"群里有任意 @"。
+  // 配置了 FEISHU_BOT_OPEN_ID 时按 open_id 精确匹配（能区分 @群成员）；
+  // 未配置时退化为"存在任意 @"，与历史行为一致，避免把所有群消息静默丢弃。
+  const botOpenId = process.env['FEISHU_BOT_OPEN_ID']
+  if (!botOpenId) return true
+  return message.mentions.some(m => m.id?.open_id === botOpenId)
 }
 
 /**
@@ -97,13 +110,15 @@ export function stripMention(text: string, message: FeishuInboundMessage['messag
   for (const mention of message.mentions) {
     const name = mention.name ?? ''
     // 去掉 @name
-    result = result.replace(`@${name}`, '').trim()
-    // 去掉 HTML 实体 @_user_N
-    if (mention.id && mention.id.startsWith('ou_')) {
-      result = result.replace(/@_user_\d+/, '').trim()
+    if (name) result = result.replace(`@${name}`, '').trim()
+    // 去掉飞书的占位符 @_user_N（正文里实际出现的就是这个形式）
+    const key = mention.key
+    if (key && key.startsWith('@_user_')) {
+      result = result.replace(key, '').trim()
     }
   }
-  return result.trim()
+  // 兜底：清理残留的 @_user_N 占位符
+  return result.replace(/@_user_\d+/g, '').trim()
 }
 
 /**

@@ -1,614 +1,489 @@
-# TASK.md — 代码审查与重构计划
+# TASK.md — doge-code 任务追踪
 
-生成时间: 2026-08-28
-状态: 进行中
-
----
-
-## P0 — 立即执行（低风险）
-
-### [x] 1. 修复 commands.ts 重复导入
-- **文件**: `src/commands.ts`
-- **问题**: `collab` 命令在第 26 行和第 110 行重复导入
-- **操作**: 删除第 110 行重复导入
-- **验证**: `bun run lint` 通过
-
-### [!] 2. commands.ts 动态注册改造 — 经查证为「已回退方向」，建议不再执行
-- **文件**: `src/commands.ts` → `src/commands/`
-- **原始目标**: 100+ 静态导入改为动态扫描 `commands/` 目录自动注册（OCP）
-- **2026-09-17 查证结论**: 该方向已被尝试并回退至少 4 次，非「未开始」
-  - `df71dcead` fallback 改用 COMMAND_MODULES 静态注册表（首次引入）
-  - `03ff8b6eb` commands.ts 直接使用 COMMAND_MODULES 作为默认值
-  - `69f0c35df` multiExportCommands 改用 COMMAND_MODULES，280 → 440 个命令
-  - `045ddbd4e` Expand commands.ts with multi-export + conditional command support
-  - 这 4 次提交全部是 `fix`，全部在修「编译后命令不可用」
-  - **当前 `COMMAND_MODULES` / `COMMAND_REGISTRY` 在 src/ 下零引用（仅自引用），接线已被回退**
-- **回退根因**: `bun build --compile` 后 `import.meta.dir` 指向虚拟路径 `B:/~BUN/root/`，磁盘上不存在 `commands/` 目录，动态扫描不可用；静态注册表又需人工同步
-- **当前生成物质量不足以直接接线**:
-  - `src/generated/command-modules.ts`：220 个模块导入，而 `commands.ts` 仅需 151 个 → **多收 69 个辅助文件**（如 `_shared/strings.ts` → key `_shared-strings`、`add-dir/validation.ts` → key `add-dir-validation`）
-  - key 由**文件路径派生**而非模块 `default.name` → `add-model-add-model` ≠ 真实命令名 `add-model`
-  - 丢失 `COMMANDS()` 数组中人工编排的顺序（影响 /help 与补全排序）
-- **建议**: 不执行接线。若仍需 OCP，正确做法是改造 `scripts/gen-command-registry.ts`——① 只收 `index.ts/index.tsx` 与顶层单文件命令；② key 改为读取模块 `default.name`；③ 顺序由 `sortOrder` 等显式字段声明而非字典序。改造前需先能验证 280 个命令的注册/别名/type 全量对齐
-
-### [x] 9. openaiCompat 配对工具 XML 解析修复
-- **文件**: `src/services/api/openaiCompat.ts`
-- **目标**: 修复采集/流式工具调用未配对闭合标签导致的 pending 误裁决、解析失败吞内容
-- **操作**:
-  - pending 追加逻辑：2KB 超长 + 3 秒超时双保险裁决（`tooLong`/`tooOld`）
-  - pending 进入逻辑：`skipFlush` 替代 `continue`，进入时记 `enteredAt`
-  - `flushBufferedText` 单换行触发刷新（`hasNewline` 替代 `hasDoubleNewline`）
-  - `parsePendingToolXml` 改为 `<parameter=` 行首匹配，新增 `stripToolXmlTags` 剥离闭合标签
-  - `indexRef` 起始 `1000000` → `100`
-- **验证**: openaiCompatStream.test.ts 5/5 通过；7 个 XML 示例单测全部符合预期（taskId 数值化、replace_all 布尔化、`||`/`"` 原样保留、反斜杠路径保留）
-- **注意**: 一次流多 `<function=>`、`reasoning_content` 通道内的 XML 暂未覆盖（已知边界）
-
-### [x] 10. Windows 流式正文不实时刷新修复
-- **文件**: `src/ink/terminal.ts`
-- **根因**: `hasCursorUpViewportYankBug()` 在 `win32` 硬编码恒 `true` → `REPL.tsx` 的 `showStreamingText` 恒 `false` → `onStreamingText` 空执行 → 流式正文实时通道完全失效，正文只能靠 `content_block_stop` 整块一次性 setMessages（"流式不刷新，结束一次性显示几页"）
-- **操作**: `hasCursorUpViewportYankBug()` 移除 `process.platform === 'win32'` 强制禁用，仅保留 `WT_SESSION`（WSL-in-Windows-Terminal，走 conhost 仍防卷屏）
-- **取舍**: 原生 Windows 终端（conhost / Windows Terminal）恢复流式正文实时刷新，代价为可能触发 conhost 光标卷屏回跳（microsoft/terminal#17474）
-- **验证**: biome 通过；全量测试无新增失败（106 fail / 68 errors 为既有 pre-existing）
-- **后续**: 若流式恢复后出现"工具调用后正文回退/流中断"，为 openaiCompat index 连续性 + claude.ts `contentBlocks[index]` 找不到块抛 RangeError 问题（方案 C），需另处理
-
-### [x] 11. /login 命令消失修复
-- **文件**: `src/commands/login/index.ts`
-- **根因**: `login/index.ts` 导出格式偏离其他命令——写成 `export default () => ({...})`（工厂函数），其余命令均为 `export default {...}`（直接命令对象）。`getGlobCommands()` 将 `mod.default` 直接当 Command 读取，login 的工厂函数使其被当作无效数据（name/type 为空），无法作为 `/login` 注册
-- **操作**: 去掉 `() =>` 工厂包装，改为直接导出命令对象，字段（type/name/description/isEnabled/load）原样保留
-- **验证**: `getCommands()` 中 login 出现且 `type=local-jsx`、`isEnabled()=true`、`load` 存在；`builtInCommandNames` 含 `login`；login.test.ts 1/1 通过
-- **注意**: 排查其他命令是否也有"工厂函数"式导出，避免同类问题
-
-### [x] 12. 工具组配置化（对应挂起后台任务 bg-mu2gfg0i）
-- **新增文件**:
-  - `src/utils/toolGroups.ts` — 工具组配置与过滤逻辑（读 ~/.doge/config.json 的 toolGroups 段）
-  - `src/commands/toolgroup/index.ts` + `toolgroup.ts` — `/toolgroup` 命令入口
-  - `src/__tests__/utils/toolGroups.test.ts` — 10 个测试用例
-- **修改文件**:
-  - `src/tools.ts` — `getAllBaseTools(options?: { unfiltered?: boolean })` 末尾接入 `filterToolsByActiveGroup`；新增 `unfiltered` 选项供管理界面展示完整工具清单
-  - `src/commands.ts` — 注册 `toolgroup` 命令（+2 行）
-  - `src/components/Settings/Config.tsx` — Settings 界面新增「当前工具组」枚举项（界面化，见下）
-  - `src/utils/config/dogeConfig.ts` — 修复 `ensureDogeDir()` 缺少 `mkdirSync` 导入的既有 bug（~/.doge 不存在时首次写入抛 ReferenceError）
-- **能力**（对应原需求逐条）:
-  - 组内工具增删 → `/toolgroup add|rm <组名> <工具..>`
-  - 全局组可用 → 内置 `global` 组语义为「全部工具」，不可增删
-  - 全局组另存为命名组 → `/toolgroup new <组名>`（快照当前全部工具）
-  - 运行时可切组、调整后立即生效 → `/toolgroup use <组名>`；`getAllBaseTools()` 每次重新构建且配置每次读盘，无需重启
-  - 不删除已有功能 → 默认处于 `global` 组时过滤为恒等变换
-- **界面化**（`src/components/Settings/Config.tsx`）:
-  - 在 Settings 中新增 `type: 'enum'` 项「当前工具组：\<组名\>」，可直接下拉切换
-  - 复用该文件既有模式：`useState` 回显 + `onChange` 写配置并触发重渲染（避免切换后 UI 显示旧值）
-  - 仅当存在命名组时出现（只有 global 一个选项的枚举无交互意义，避免给不用此功能的用户添噪音）
-  - `toolGroupList` 提到数组外只读一次配置，避免在长列表渲染中重复同步 IO
-  - 边界：**组的创建/增删工具仍走 `/toolgroup` 命令**。Ink 的 Setting 类型仅支持 boolean/enum，复杂组编辑需专门子组件（如 ModelPicker 式的 managedEnum），成本高于收益
-- **与既有机制的关系**: 环境变量 `CLAUDE_CODE_FEATURE_*`（`featureOverrides` 系统 + `loadConditionalCommand`）决定**加载期**工具是否存在；工具组是叠加其上的**运行期可见性**过滤器，两者不冲突
-- **验证**:
-  - `vitest run src/__tests__/utils/toolGroups.test.ts` → 10/10 通过
-  - `vitest run src/__tests__/tools/ src/__tests__/commands/` → 292 文件 / 1015 测试全部通过
-  - `tsc --noEmit --skipLibCheck` → 0 错误（含 Config.tsx 改动）
-  - `biome check` 改动文件 → 通过
-  - `bun run src/bootstrap-entry.ts --version` → EXIT=0（启动路径未破坏）
-  - 端到端脚本（临时，已删）→ 13 项全通过：真实配置落盘/读回、`mkdirSync` 修复生效、切组过滤生效、拒绝不存在的工具与组、删除激活组后回落 global
-- **已知边界**: 组只按工具名过滤，无法用组「开启」一个因环境变量而未 import 的工具（需在 `tools.ts` 的 conditionalImport 层扩展）
-
-### [x] 13. 清理过期运行时任务状态
-- **问题**: 会话 `3be8cea9` 的 `2.json`「创建任务执行器」停留在 `in_progress`，但其目标是 Electron 架构 `src/main/tasks/`，本仓库无 `src/main/`、`src/preload/`（属另一项目）
-- **操作**: 该任务对应实现已于 `src/utils/taskExecutor.ts`（389 行）落地，状态改为 `completed`
-
-### [x] 14. 修复 CLAUDE_CODE_MAX_RETRIES 非法值致所有 API 调用静默失败
-- **文件**: `src/services/api/withRetry.ts`（`getDefaultMaxRetries()`）
-- **根因**: 原实现 `return Math.min(parseInt(env, 10), 15)` 未校验 `parseInt` 结果。环境变量非法时 `parseInt` 返回 `NaN`，`Math.min(NaN, 15)` 仍为 `NaN` → `getMaxRetries()` 返回 `NaN` → 重试循环 `for (let attempt = 1; attempt <= maxRetries + 1; attempt++)` 中 `1 <= NaN` 恒为 `false`，**循环体一次都不执行**：不发任何请求，`lastError` 保持未赋值，紧接着 `withRetry.ts:583` 抛 `CannotRetryError`（携带未赋值的 lastError）
-- **影响**: 一个手误的环境变量（如 `CLAUDE_CODE_MAX_RETRIES=abc`）会让**所有** API 调用立即失败且不发出任何请求，错误信息指向不明确的原因，极难定位
-- **同类隐患**: 负数（如 `-5`）同样使循环不执行（`1 <= -4` 为 false）
-- **操作**: 解析后校验 `Number.isFinite(parsed) && parsed >= 0` 才采用，否则回落到 `DEFAULT_MAX_RETRIES`（15）。保留 `0` 为合法值（不重试，循环仍执行 1 次）、保留上限截断 15、保留 watchdog 无限重试分支
-- **新增测试**: `src/__tests__/api/withRetryMaxRetries.test.ts` — 9 个用例，覆盖未设置 / 合法值 / 0 / 超上限截断 / 非数字 / 负数 / 空串 / watchdog / 「返回值始终能驱动循环至少执行一次」不变量
-- **验证**: 该测试 9/9 通过（修复前 `abc` 与 `-5` 两项必然失败，测试确实能拦住回归）；`tsc` 0 错误；`biome` 通过；全量 `vitest run` → 363 文件 / 1857 测试全部通过
-- **为何不加 UI 项**: 该参数在**每次重试循环建立时**读取，不能做文件 IO（`loadDogeConfig` 是同步读盘），故 env 是正确设计；而 `settings.json` 的 `env` 已提供持久配置通道，再加会话级 UI 项是倒退
-
-### [x] 15. 修复 AskUserQuestion 报「缺少必需参数 `questions`」（提示词与 schema 不一致）
-- **现象**: 调用 `AskUserQuestion` 返回 `InputValidationError: ... 缺少必需参数 \`questions\``
-- **文件**: `src/skills/bundled/scheduleRemoteAgents.ts:166,170`
-- **根因**: 该技能的提示词指示的形状与工具 schema 不符
-  - 提示词原文:「请使用以下精确字符串作为 **`question`** 字段 …… 设置 **`header: "操作"`** 并提供四个操作选项」
-  - 实际 schema（`AskUserQuestionTool.tsx:62`）: `z.strictObject({ questions: z.array(questionSchema()).min(1).max(4), ... })`，且 `header` / `options` 是 `questions[]` 元素**内部**的字段
-  - 即提示词把模型引向扁平结构 `{question, header, options}`，而 schema 要求 `{questions: [{question, header, options}]}`
-  - 正确形状的权威说明见 `src/components/tasks/RemoteSessionDetailDialog.tsx:51` 注释：`// Input shape is {questions: [{question, header, options}]}.`
-  - 且 `inputSchema` 用 `z.strictObject` → 顶层多余键 `question`/`header`/`options` 被拒；配合 commit `df289e601` 在 zod 校验前**过滤未知字段**的逻辑，这些键被剥掉后只剩 `{}`，于是唯一报错正是「缺少必需参数 `questions`」——与现象完全吻合
-- **非回归**: 该错误自 `5070d4a27 Initial commit` 就存在（英文原文同样是 `Use this EXACT string for the \`question\` field` + `Set \`header: "Action"\``），`39a11b9ea 大改提示词后提交` 只是把它译成中文，未引入也未修复
-- **操作**: 改写提示词，明确 `questions` 数组包裹与嵌套字段关系：
-  - 参数形如 `{questions: [{question, header, options}]}`：在 `questions` 数组中放入一个问题，其 `question` 字段使用精确字符串
-  - 该问题的 `header` 设为 `"操作"`，`options` 提供四个操作选项
-- **为何不在工具层加兼容垫片**: 模型生成的工具输入确是信任边界，但此处是**本项目自己的提示词写错了**。修提示词是根因修复；加垫片会保留错误提示词，使所有调用方（含第三方模型）继续产出错误形状，属治标。且 .dogerules 明确「不要为不可能发生的情况添加回退」
-- **同源排查**: 全库搜索「`question` 字段」类表述，另有 `src/commands/init.ts:81` 提到 `question` 字段，但其上下文是在描述问题对象**内部**字段（`question` 纯文本 vs `options[].preview` markdown），未要求顶层扁平结构，且无失败证据 → **不改**
-- **验证**: `tsc` 0 错误；`biome` 通过；全量 `vitest run` → 364 文件 / 1869 测试全部通过
-- **机制实证**: 已确认 `toolExecution.ts:620-635` 的实现——取 `rawSchema.shape` 的已知键（AskUserQuestion 为 `['questions','answers','annotations','metadata']`）过滤输入。扁平形状的 `question`/`header`/`options` 全部不属于已知键，被剥掉后剩 `{}`，故唯一报错是「缺少必需参数 `questions`」，与现象完全吻合
-- **回归防护**: 新增 `src/__tests__/tools/askUserQuestionSchema.test.ts`（12 用例），其中核心用例即复现该路径：`stripUnknown(扁平形状)` 断言等于 `{}`、且错误 `path` 含 `questions`。另覆盖正确形状通过、`min(1)`/`max(4)`/`options min(2)`、问题文本与选项标签去重、`strictObject` 拒绝顶层未知键（过滤后可容忍）
-- **同类排查**: 搜索「`question` 字段」类表述与「EXACT string / 精确字符串」式强制指令，仅 `scheduleRemoteAgents.ts` 一处命中；`AgentTool/prompt.ts:276` 的 `SendMessage` `to` 字段已核对 schema（`to: z.string()`）正确；`skills/bundled/skillify.ts:150` 的「不要使用 body 字段」是否定性提示，无误导
-- **顺带加固**: 原提示词只说「提供四个操作选项」，未提 `options[].label` 与 `options[].description` 均为**必填**（schema 无 default），存在同类失效风险 → 补明二者必填
-- **注意**: 该技能构建函数 `buildPrompt` 未导出，无法直接单测渲染结果；本次测试覆盖的是 schema 契约层，提示词文本正确性靠人工核对。如需更强防护，需先导出构建函数
+> 项目架构见 `PLANNING.md`（若不存在则以 `diff_with_claude.md` 为对照基线）。
+> 本文件只记录**待办与状态**，不重复设计文档。
 
 ---
 
-### [x] 17. 恢复 openaiCompat 请求侧日志（日志中只有 SSE、看不到发送内容）
-- **现象**: debug 日志里能看到 SSE 响应，看不到发给 AI 的请求内容
-- **文件**: `src/services/api/openaiCompat.ts:289-306`（`createOpenAICompatStream`）
-- **根因**: 请求体日志在 `701f413aa`（2026-09-10 "清理调试日志"）被**注释掉**（原 302 行）。同提交还删除了 `convertAnthropicRequestToOpenAI` 中 8 条转换阶段日志（system 消息长度、user/assistant/tool 消息、目标模型、工具数等）
-- **量化佐证**: 扫描 `~/.doge/debug` 165 个日志文件 —— 响应侧 `读取到 chunk` 1,499,152 条、`解析出 N 个 SSE 事件` 1,496,726 条；请求侧 `请求体` 仅 6,090 条（约 245:1）。且 **40 个文件只有 URL 无请求体**，多于有请求体的 25 个，说明被注释的版本已成主流
-- **操作**: 改为「摘要 + 最后一条 user 消息全文」，而非原样恢复完整请求体
-  - 摘要行：model / 消息数 / 工具数 / 各条 `role:长度`
-  - 另记最后一条 user 消息全文（排查"发了什么"通常只看最新输入）
-  - `requestBody` 提为变量，使 `JSON.stringify(requestBody)` 与日志**同源**，不会出现"记的和发的不一致"
-  - 日志移到 `fetch` **之前**，401/429/超时等失败场景也能看到发送内容
-- **为何不恢复完整请求体**: 单次请求体含 system prompt（样本 1403 字符起）与全部历史，可达数十 KB；而响应侧已累计 150 万条、单日志文件最大 1.9MB。摘要行约 120 字节，体积仅零头
-- **回归防护**: 新增 `src/services/api/__tests__/openaiCompatRequestLog.test.ts`（2 用例）。故障成因正是"日志被注释时无测试拦截"，故该测试锁定「发请求前必须记录请求内容」契约。**已用变异测试验证守护有效**：把日志注释掉 → 2 个用例全部失败
-- **验证**: `tsc --noEmit` 零错误；`biome check` EXIT=0；相关测试 15 passed；全量 2075 passed / 0 failed；运行时加载 `bun run` 模块可 import 且转换正确
-- **生效前提**: 需带 `--debug` / `--debug-to-stderr` 启动，否则 `src/utils/debug.ts:112`（`USER_TYPE !== 'ant' && !isDebugMode()`）直接丢弃
-- **后续扩展（同会话补齐上游链路）**: 首版只覆盖 `openaiCompat`，但"拼接了什么附加工具"的决策发生在更上游，故续补两段，形成完整链路
-  - `claude.ts:1251`（`queryModel`）：工具裁剪结果 —— 输入/保留/丢弃数量、路径（`DynamicToolComposer` 或 `filterToolsForMessage`）、**被丢弃的工具名列表**。60+ 工具在此裁到只剩一部分，此前全无日志，故"模型为什么看不到某工具"无从排查
-  - `customApiStorage.ts`（`readCustomApiStorage`）：端点来源 —— 项目预设/全局预设/环境变量兜底/无配置，4 分支统一走 `logSource()`。**只打印 `baseURL` 与 `model`，绝不打印 `apiKey`**
-  - 完整请求体 JSON 改为按需开关 `DOGE_DEBUG_DUMP_REQUEST=1`（原注释版本是完全不记录，现为可开启，兼顾体积）
-  - 全库扫描被注释日志共 **34 处**，其余属 swarm 后端探测 / frontmatter / ink 渲染，与本问题无关，未动；`openaiCompat.ts:1011` 因在流循环内每 chunk 触发，恢复会冲爆日志且无信息量，保持注释
-  - 守护测试补断言：`本次请求附加工具` 与 `system prompt 长度`（首版未覆盖工具清单，正是当年删日志未被拦截的原因）
-- **二次验证**: `tsc` 零新增错误（6 条报错经 stash 对比确认均为既有）；`src/services/api/ + src/__tests__/unit/ + tests/unit` **129 passed / 0 failed**；bun 运行真实函数实测日志落盘、开关生效、`sk-SECRET-KEY-12345` 未出现在日志中
-- **提交**: `bbe19e468`（分支 `feat/unified-task-scheduler`）。`openaiCompat.ts` 按用户确认一并带入了工作区里非本次的缩进修正与 3 处类型断言修复（消掉 TS2355）
-- **文档**: `docs/使用说明.md` 新增 11.3 节「排查"发给 AI 了什么"」（原 11.4 顺延为 11.5）；11.1 环境变量表补 `DOGE_DEBUG_DUMP_REQUEST`
-- **端到端验证（重编译后实测）**: `bun run build`（bundle 7484 模块无错）→ 新 `doge.exe` 带 `--debug-to-stderr` 实跑，6 段日志全部落盘，链路完整：
-  ```
-  [readCustomApiStorage] 端点来源=项目预设, baseURL=http://127.0.0.1:3065/..., model=auto   (34 条)
-  [claude] 工具裁剪: 输入=76, 保留=62, 丢弃=14, 路径=filterToolsForMessage, 丢弃列表=[EnterPlanMode, ...]
-  [openaiCompat] 转换完成: model=auto, 消息数=3, 工具数=62, 工具列表=[action_sampler, ...]
-  [openaiCompat] 本次请求附加工具: [action_sampler, advisor, Agent, ...]  (62 个)
-  [openaiCompat] system prompt 长度=13966
-  [openaiCompat] 请求体摘要: 消息(role:长度)=[system:13966, user:235, user:2229]
-  ```
-  `DOGE_DEBUG_DUMP_REQUEST=1` 实测输出完整 JSON 119,231 字符，`JSON.parse` 通过，顶层字段 `model/messages/temperature/max_tokens/tools/stream` 齐全，与前 4 段日志口径一致（62 工具、3 消息、13966 字符 system）
-- **安全确认**: 完整 JSON 中无 `sk-` 形态密钥；日志中唯一匹配 `authorization` 的是既有日志 `has Authorization header: false`（意为"无此头"），非泄露
-- **踩坑**: `doge.exe` 编译前被 PID 69416 占用（500MB），用户选择不备份直接覆盖，编译成功；MSYS2 下 `timeout` 是 Windows 内置命令（非 GNU coreutils），套在命令前会报"无效语法"；`-p "hi" 2> file` 会把重定向的 `2` 误作第二个位置参数，需改用 `--print` 并把重定向放最前
-- **失败路径验证（补测）**: 首版只验了成功路径，而"日志移到 fetch 之前"的核心价值恰在失败场景。用空 apiKey 请求本地端点触发真实 401，实测请求侧日志**全部落盘**：请求 URL / 请求体摘要 / 本次请求附加工具 / system prompt 长度 / 最后一条 user 消息 / 响应错误 六项均 YES，且 user 消息正文可见。异常为 `OpenAI compat request failed with status 401: Unauthorized: invalid or missing API key`
+## 一、官方功能对齐：#21 2026-04-01 之后官方 Claude Code 功能缺口
+
+**检查日期**：2026-10-22
+**基线**：官方 `@anthropic-ai/claude-code` 2.1.90（2026-04-01）→ 2.1.306（2026-10-21）
+**方法**：官方 CHANGELOG.md（2.1.91→2.1.306，426 个版本节 / 6093 条变更）+ 本地 `src/` 全量标识符扫描（3349 文件）
+**原始数据**：`.tmp/off/changelog_after_90.md`、`missing_env.txt`、`missing_flags.txt`、`missing_slash.txt`
+
+### 0. 适用性前提（决定补什么）
+
+**本 fork 的实际使用场景**：通过 `openaiCompat.ts` / `providerCompat.ts` 接入国内模型（DeepSeek 预设见 `src/constants/presets.ts:27-37`，含 `deepseek-chat` / `deepseek-v4-pro` 等），BaseURL 指向 `api.deepseek.com`。
+
+**判定原则**：
+- 只补**与模型供应商无关**的能力（重试、安全阀门、技能生态、CLI 参数）。
+- 官方专为 Anthropic 云/新模型设计的能力**不补**。
+- 每项补之前先确认：本地是否已有等价实现（避免重复造轮子）。
 
 ---
 
-### [x] 18. 修复 autoContinue 关键词分支三处退化（7 个测试失败）
-- **现象**: 全量测试 7 failed，全部位于 `src/__tests__/engine/autoContinue*.test.ts`
-- **文件**: `src/engine/messageLoop.ts:372-399`（`_recordAssistantResponse` 分支 1）
-- **根因**: 相对原始实现 `ada6a9b96` 出现三处退化，且后两处是**实现与自身文案/测试不一致**：
-  | # | 位置 | 退化后 | 恢复为 |
-  |---|---|---|---|
-  | 1 | `372` 关键词正则 | `/是否需要我继续\|需要我继续吗\|要不要继续处理\|需不需要我继续/`（4 个长短语） | 原始宽正则（30+ 关键词） |
-  | 2 | `395` 延时 | `30000`ms | `3000`ms（日志文案写的是"3秒"） |
-  | 3 | `398` 注入内容 | `'有必要就继续'` | `'继续'`（integration 测试 `:355` 断言 `content === '继续'`） |
-  - 正则退化 → "是否继续？""你现在要继续吗？"均不匹配
-  - 延时 30s → 超过 vitest 默认 5s 超时，即使正则匹配也会超时失败
-- **非本次引入**: 已用 `git stash` 隔离验证 —— 暂存本次 openaiCompat 改动后仍是同样 7 个失败
-- **为何逐项恢复而非改测试**: 三处的"正确值"都有权威来源 —— 延时与注入内容由提交 `ada6a9b96` 的原始实现 + 日志文案 + 测试断言三方一致确认为 3000ms / `'继续'`；正则由同提交的宽正则确认。改测试去适配退化值会掩盖真实行为回退
-- **验证**: autoContinue 专项 24 passed（原 17 passed / 7 failed）；**全量 2075 passed / 0 failed**（原 2068 / 7）；`tsc --noEmit` 零错误；`biome check` 通过；运行时加载确认 `CONTINUE_KEYWORDS` 对两句测试文本均返回 `true`
-- **记忆校正**: `feedback_autocontinue_config.md` 原记 `AutoContinueConfig` "**默认关闭**"，核对代码为 `?? true`（**开启**，仅 `endTurn` 默认 false，`maxCount` 默认 10）→ 已按实际更正。测试 `未配置 autoContinue 时…应自动继续` 正依赖该默认开启语义
-- **教训**: 改动带配套日志文案与测试断言的常量（延时/注入文本/正则）时，实现、文案、断言三者必须同步
+### 1.1 结论摘要（按适用性重新分级）
 
----
-
-### [x] 19. `--add-dir .` 导致技能双份加载与监听重复（同一根因两处调用点）
-
-- **现象**: 启动日志刷 `Skipping duplicate skill 'X' from projectSettings (same file already loaded from projectSettings)`，单次会话数百条；同时每次技能变更会触发两轮重载
-- **根因**: `d.bat` 传入 `--add-dir .`，解析后正是 cwd，而 `getProjectDirsUpToHome` 已沿 cwd 向上收集了同一个项目 skills 目录 → **同一批文件被加载两次**。日志中前后来源字符串完全相同（都是 `projectSettings`）即为铁证 —— 若是跨目录重名冲突，会显示 `from userSettings ... loaded from projectSettings`
-- **判定为「白费 IO」而非功能损坏**: 去重靠 `realpath` 生效，结果正确；但每次启动多扫 165 个目录并多做一遍 `getFileIdentity`
-- **量化佐证**: `D:/skill_debug.log` 1640 条记录中 1516 条 `additionalDirs=.`；其中 1272 条是 `cwd=D:\doge-code` + `.` 的组合，与 `d.bat` 完全吻合。日志本身因遗留探针累计到 **40MB**
-- **调用者普查**（`getAdditionalDirectoriesForClaudeMd()` 共 6 个消费者，逐个判定）:
-  | 调用者 | 受影响 | 依据 |
-  |---|---|---|
-  | `skills/loadSkillsDir.ts:651` | 是 | 已修（`cb240d435`） |
-  | `utils/skills/skillChangeDetector.ts:224` | 是 | 已修（`a75aa1f01`） |
-  | `utils/claudemd.ts:908` | 否 | 已有 `processedPaths` Set，`:603` 提前 return |
-  | `utils/plugins/addDirPluginSettings.ts:38,61` | 否 | `Object.assign` 幂等覆盖，结果不变 |
-  | `utils/sandbox/sandbox-adapter.ts:297` | 否 | 仅权限边界展开，重复项无副作用 |
-  | `context.ts:165` | 否 | 仅判 `length === 0` |
-- **操作一 `cb240d435`**: `additionalDirs` 过滤掉 `resolve(dir) === resolve(cwd)` 项；删除 3 处遗留调试探针 `skillDebugFs.writeFileSync('d:/skill_debug.log', ...)`（硬编码路径、无开关、每次同步写盘）
-  - **过滤位置放在 `--bare` 分支之后而非之前**（首版放错位置已修正）：`envUtils.ts:60` 承诺 `--add-dir` 在 bare 模式下仍生效，若提前过滤会让 `--bare --add-dir .` 因 `additionalDirs.length === 0` 走到 `return []`，把「去重」升级成「技能全丢」
-- **操作二 `a75aa1f01`**: `getWatchablePaths()` 的返回数组过一遍 Set。`chokidar.watch` 按路径计数且无内部去重，同一路径出现两次 → 改任一 SKILL.md 触发两次 `handleChange` → 两次 `scheduleReload`（debounce 兜住重载轮次，但 `pendingChangedPaths` 双份累积）
-- **验证**: 边界用例 5/5；`bun run test:unit` 114/114 通过；`biome check` 无告警；`bun build --compile` 7484 modules 通过；`tsc --noEmit` 零新增错误（812/813 行 `cache` 报错经比对 `git show HEAD` 属既有问题）
-- **实测生效**: 日志 `Loaded 367 unique skills (... project: 165, additional: 0, legacy commands: 201)` —— `additional` 由 165 归零，`Deduplicated` 条目彻底消失；`D:/skill_debug.log` 已不再生成
-
----
-
-### [ ] 3. main.tsx 拆分（仅计划，暂不执行）
-- **文件**: `src/main.tsx`（238KB）
-- **目标结构**:
-  ```
-  src/main/
-    ├── index.tsx
-    ├── providers/
-    │   ├── SettingsProvider.tsx
-    │   ├── StateProvider.tsx
-    │   └── ToolRegistryProvider.tsx
-    ├── screens/
-    │   ├── REPL.tsx
-    │   ├── StatusBar.tsx
-    │   └── Welcome.tsx
-    └── layout/
-        ├── TerminalLayout.tsx
-        └── ComponentTree.tsx
-  ```
-- **注意**: 拆分后功能测试复杂，列入计划但**暂不实际拆分**
-
----
-
-## P2 — 可执行阶段（中低风险）
-
-### [!] 4. tools.ts 条件加载标准化 — 经查证前提有误，不建议执行
-- **文件**: `src/tools.ts`
-- **原始描述**: 11 处 `require()` 动态加载打破循环依赖，模式分散，统一为 `conditionalImport()`
-- **2026-09-17 查证结论**: 原始描述**混淆了两种目的不同的加载模式**，`src/tools.ts` 实为 4 类：
-  - **A 类 · 条件加载 × 8**，已用 `loadConditionalCommand`：REPLTool、SleepTool、cronTools、RemoteTriggerTool、SendUserFileTool、PushNotificationTool、SubscribePRTool
-  - **B 类 · 条件加载 × 9**，内联三元：VerifyPlanExecutionTool、OverflowTestTool、CtxInspectTool、TerminalCaptureTool、WebBrowserTool、coordinatorModeModule、SnipTool、ListPeersTool、WorkflowTool
-  - **C 类 · 懒加载破环 × 3**：`getTeamCreateTool` / `getTeamDeleteTool` / `getSendMessageTool`（`tools.ts:100-108`）；另有 `getPowerShellTool`（`:188`）为条件 + 懒加载混合
-  - **D 类 · 无条件直接 require × 1**：AgentProxyTool
-- **C 类不可统一**: 其源码注释明确「懒加载 require 以打破循环依赖：tools.ts → TeamCreateTool/TeamDeleteTool → ... → tools.ts」。改 `loadConditionalCommand` 会把「每次调用时 require」变成「模块加载时求值一次」，**导致循环依赖回归**
-- **A/B 类统一的收益**: 仅「模式一致」+ `safeRequire` 的 try/catch 兜底。但已实测 48/48 条件引用点全部解析成功、0 死条件（临时脚本，已删），**兜底收益当前为 0**
-- **结论**: 纯重构、零功能收益、需改 9 处顶层模块加载逻辑（影响启动顺序与副作用，如 `WorkflowTool` 的 `initBundledWorkflows()`）。违背「最短能工作的 diff 赢」，**不做**
-
-
-### [x] 5. Tool.ts 类型拆分
-- **文件**: `src/Tool.ts`（803 行 → 40 行 barrel）
-- **目标**（已完成）:
-  ```
-  src/types/
-    ├── tool.ts           # Tool, Tools, ToolInfo, ToolDef, buildTool 等
-    ├── toolContext.ts    # ToolUseContext, ToolPermissionContext, SetToolJSXFn 等
-    ├── toolProgress.ts   # 所有 *Progress 类型 + filterToolProgressMessages
-    └── toolPermission.ts # ToolPermissionRulesBySource（re-export from permissions.ts）
-  ```
-- **操作**:
-  - 所有类型从 `Tool.ts`（803 行）拆分为 `src/types/` 下 4 个文件
-  - `Tool.ts` 保留为 barrel re-export，保持向后兼容
-  - `Tool` 与 `ToolUseContext` 互相引用，合入 `tool.ts` 避免循环依赖
-  - `HookProgress` 从 `types/hooks.ts` re-export（原有定义冲突）
-  - `ToolProgressData` 保留在 `types/tools.ts`（全库引用），`Tool.ts` re-export
-  - `ToolPermissionRulesBySource` 改为 re-export `types/permissions.ts`（消除重复定义）
-- **验证**: `tsc --noEmit --skipLibCheck` 拆分文件零错误；工具测试 146/146 通过
-
----
-
-## P3 — 待评估（中风险）
-
-### [!] 6. core.ts 迁移/移除 — 经查证前提有误（并非无引用），暂不执行
-- **文件**: `src/core.ts`（34KB，GrowthBook SDK 实现）
-- **原始描述**: 「确认无内部引用后迁移到 `vendor/` 或直接移除」
-- **2026-09-17 查证结论**: **`src/core.ts` 是活的，有 3 个引用**：
-  - `src/GrowthBook.ts:58` — `} from "./core";`
-  - `src/GrowthBookClient.ts:43` — `} from "./core";`
-  - `src/sticky-bucket-service.ts:7` — `import { getStickyBucketAttributeKey } from "./core";`
-- **排查教训**: 首次搜索只匹配 `./core.js`（带扩展名），漏掉**无扩展名**的 `from "./core"`；同类失误另一次是只查 `.ts` 漏 `.tsx`（误判 `ultraplan.tsx` 不存在）。**搜索引用必须覆盖全部导入形式（带/不带扩展名、动态 import、require、别名）**
-- **判断**: 「与 AI CLI 无关」属实，但它是被引用的分析 SDK，不是死代码。且 GrowthBook 相关文件是**一整套**（`core.ts` / `GrowthBook.ts` / `GrowthBookClient.ts` / `mongrule.ts` / `types/growthbook.ts` / `types/mongrule.ts` / `sticky-bucket-service.ts` / `auto-wrapper.ts`），`auto-wrapper.ts` → `GrowthBook.ts` → `core.ts` 构成链路
-- **结论**: 若要迁移须**整体迁移整套 + 改 3 处导入**，属目录整洁性质，无功能收益且触及启动路径。**暂不执行**；如确要做，需先确认 `auto-wrapper.ts` 是否在启动路径上
-
-
-### [!] 7. query.ts 与 query/ 合并 — 经评估不建议执行
-- **文件**: `src/query.ts`（1638 行）+ `src/query/` 子目录（730 行，6 模块）
-- **2026-09-27 评估结论**: **当前结构合理，合并无功能收益**
-  - `query.ts` 是主查询引擎（`query()` + `queryLoop()` 生成器），`query/` 含 6 个聚焦模块：config/deps/emptyContentHandler/stopHooks/tokenBudget/transitions
-  - 职责分离清晰，非模糊：config 负责配置快照、deps 负责依赖注入、emptyContentHandler 负责空内容自动继续、stopHooks 负责停止钩子调度、tokenBudget 负责令牌预算决策、transitions 负责类型定义
-  - `query.ts` 是 `query/` 的唯一导入方，零外部引用 → "单入口" 已是事实
-  - 合并回单文件会丢失已有拆分结构；`query/index.ts` barrel 重导出属无意义间接层
-  - 纯重构、零功能收益、违背 YAGNI → **不做**
-
----
-
-### [x] 16. 修复空输入框按 diw/ciw/yiw 崩溃（findTextObject 空文本越界）
-- **文件**: `src/vim/textObjects.ts`（`findWordObject()`）
-- **现象**: 空输入框上按 `diw`/`ciw`/`yiw`/`daw` 等文本对象操作，抛 `TypeError`（读取未定义值的 index 属性）
-- **根因**: `findWordObject` 内
-  ```ts
-  let graphemeIdx = graphemes.length - 1          // 空文本时 = -1
-  const offsetAt = (idx) => idx < graphemes.length ? graphemes[idx]!.index : text.length
-                                                    // 只判上界，-1 < 0 成立
-  ```
-  空文本时 `graphemes` 为空数组 → `graphemeIdx = -1`；三个分支（word/ws/punct）全不成立（`test('')` 均为 false）→ `startIdx`/`endIdx` 保持 `-1` → 末尾 `offsetAt(-1)` 读取数组负索引处的未定义值 → **TypeError**
-- **可达性（已确认，非理论）**: 两个调用点
-  - `transitions.ts:363` `fromOperatorTextObj` —— **正常按键路径**（NORMAL 模式按 `d`→`i`→`w`）
-  - `useVimInput.ts:164` `replayLastChange` —— 按 `.` 重复上次 textobj 操作
-  两处均无 try/catch，异常沿 `TransitionResult.execute` 冒泡。空输入框是 CLI 中最常见的状态（刚启动/刚提交/刚清空）
-- **操作**: 在 `findWordObject` 入口加 `if (text.length === 0) return null`。返回 `null` 与「未找到文本对象」语义一致，且 `executeOperatorTextObj` 已有 `if (!range) return` 守卫，等价于空操作
-- **未采用的方案**: 给 `offsetAt` 加下界判断——能防同类越界但不表达意图，且会掩盖「空文本应为空操作」这一语义
-- **同模块排查（已确证无其他同类问题）**: 新增 `src/__tests__/vim/operators.test.ts`（54 用例）对 `operators.ts` 全部 13 个导出函数做边界冒烟——8 种文本（空/单字符/纯换行/多行/前后空格/括号） × 每个偏移量，逐一调用全部函数。**54/54 通过，说明该模块仅此一处空文本崩溃**。另确认 `findQuoteObject`、`findBracketObject` 在空文本上原本就返回 `null`（安全）
-- **新增测试**: `src/__tests__/vim/textObjects.test.ts`（30 用例）+ `operators.test.ts`（54 用例）
-  - 边界用例：空文本 iw/aw/iW/aW、全空白文本，断言不抛异常
-  - 语义用例：`iw`/`aw`（含吞后随空格、行尾吞前导空格）、标点、空白、`aW`；`i"`/`a"`/`i'`/反引号、引号仅本行配对；`i(`/`a(`/`ib`/`i)`、嵌套取最近层、外层括号、`i{`/`iB`/`i[`/`i]`/`i<`/`i>`、不配对返回 null
-- **模块覆盖率**: `src/vim/**` 由 **0% → 已覆盖**（此前 1012 语句全未覆盖）
-- **验证**: `textObjects.test.ts` 30/30、`operators.test.ts` 54/54（修复前空文本 3 项必然失败，测试确实拦得住回归）；`tsc` 0 错误；`biome` 通过；全量 `vitest run` → 366 文件 / 1954 测试全部通过
-- **过程教训（我在本轮重复犯同类搜索错误）**: 查 `findTextObject` 调用方时，因 `head_limit` 截断而误判为「除测试外零调用」，实际 `operators.ts:15` 有导入。这已是本轮第三次同类失误（前两次：只搜 `.ts` 漏 `.tsx`、只搜 `./core.js` 漏无扩展名 `./core`）。**搜索引用时必须显式确认结果未被截断，并覆盖全部导入形式**
-
-### [!] 8. 测试覆盖率 — 已测量，阈值为配置失真（未改动门禁）
-- **命令**: `bun run test:coverage`（= `vitest run --coverage`）
-- **2026-09-17 实测结果**（解析 `coverage/coverage-final.json`，44MB）：
-
-| 指标 | 实测 | vitest.config.ts 阈值 | 差距 |
+| 组 | 缺口 | 对 DeepSeek 用户 | 处置 |
 |---|---|---|---|
-| 语句 / 行 | **10.88%** | 70% | 需提升 6.4 倍 |
-| 函数 | **13.82%** | 70% | — |
-| 分支 | — | 60% | — |
-
-- **绝对量**: 被统计 2860 文件 / **513,987 语句**，已覆盖 55,931 语句
-- **未覆盖主体**: **1328 个文件完全未覆盖（0%），合计 227,454 语句 = 全部语句的 44%**
-- **未覆盖集中在结构上难测的代码**（按语句数）：
-
-| 文件 | 语句 | 覆盖 |
-|---|---|---|
-| `src/cli/print.ts` | 4077 | 0% |
-| `src/screens/REPL.tsx` | 3397 | 0% |
-| `src/main.tsx` | 3377 | 0% |
-| `src/commands/batch-han/batch-han.ts` | 3103 | 0% |
-| `src/context-mode/**`（95 文件） | 23944 | **0%** |
-| `src/components/**`（419 文件） | 72414 | 1.7% |
-| `src/generated/**`（4 文件） | 2296 | **0%** |
-
-- **判断**: 70% 阈值是**配置失真**而非可达目标。理由：① 主体是 Ink/React UI 组件与 CLI 入口，需完整渲染层才能测，而本项目**未安装 `ink-testing-library`**（无组件测试基础设施）；② 现有 1857 个测试以 `should be defined` / `should be a const` 形状断言为主，不驱动真实执行；③ `src/generated/**` 是机器生成代码，纳入覆盖率统计本身是测量错误
-- **为何不修改阈值**: 覆盖率门禁属质量门禁。把阈值下调到实测值以让红灯变绿，正是「用破坏性捷径让问题消失」的反模式（见 .dogerules）。**改动门禁需团队决策，不由我单方面执行**
-- **建议**（若采纳需团队确认）: 把阈值改为「按当前基线冻结 + 逐步提高」的棘轮模式（如 statements 12% 起步，每次只升不降），并先排除 `src/generated/**` 这类生成代码与 `src/entrypoints/**`
-- **当前副作用**: `bun run test:coverage` **必然非零退出**（三条 ERROR 行），CI 若接入该命令会一直红
+| A | 7 个 Anthropic 新模型（opus/sonnet/haiku/fable 5.x） | **无价值** | ❌ 放弃 |
+| B | 重试看门狗体系 | **有价值**（429 限流同样适用） | ✅ 部分补，已有基础 |
+| C | OpenTelemetry 遥测 | 无价值（企业可观测性） | ❌ 不跟 |
+| D | 技能/命令生态 | **有价值** | ✅ 选择性补 |
+| E | 安全阀门 / 工具能力 | **有价值** | ✅ 全部补 |
 
 ---
 
-## P4 — 后续增强
+### 1.2 ❌ A 组：Anthropic 新模型 —— 放弃
 
-### [x] 20. 重建 LocalWorkflowTask 真实实现（原方案文档已丢失，重新起草并落地）
-- **域**: `D:\doge-code`（CLI，TypeScript）
-- **原问题**: `src/tasks/LocalWorkflowTask/LocalWorkflowTask.ts` 真实实现丢失，仅剩补签名桩（`isLocalWorkflowTask` 恒 false、kill/skip/retry 空函数、缺 `export const LocalWorkflowTask: Task`）；`WORKFLOW_SCRIPTS` 编译期 DCE 关闭 → workflow 后台任务能力是壳
-- **过程**: 原 `.tasks/local-workflow-task-rebuild.md` 方案文档确认不存在（git 历史/分支/`.tasks/` 均无），重新起草并落地。先执行 B2 探查确认 `WorkflowTool.call` 可通过第二参数 `context` 拿到 `setAppStateForTasks ?? setAppState`（与 AgentTool 同模式），硬阻塞点消除
-- **改动**（提交 `5cace4878`）:
-  - `LocalWorkflowTask.ts`：真实 `LocalWorkflowTaskState` 类型 + `export const LocalWorkflowTask: Task` + 真实 `isLocalWorkflowTask` 判别 + 真实 `killWorkflowTask`；新增 `registerWorkflowTask` / `updateWorkflowProgress` / `completeWorkflowTask` / `failWorkflowTask`；`skip/retry` 诚实保留 no-op（workflow steps 为同步顺序循环，无独立子单元）
-  - `WorkflowTool.ts`：run 路径在 `feature('WORKFLOW_SCRIPTS') && context?.setAppState` 时 spawn 后台任务并异步推进 steps，无 context 时退回同步兜底（保持既有行为）
-  - `WorkflowDetailDialog.tsx`：真实渲染步骤/进度/结果（替换 `return null` 空壳）
-  - 新增 `src/__tests__/tasks/LocalWorkflowTask.test.ts`（8 用例）+ `.tasks/local-workflow-task-rebuild.md` 方案文档
-- **完整方案**: `.tasks/local-workflow-task-rebuild.md`（含 B2 探查结论、A/B/C/D 分块、实现记录、验收边界）
-- **验证**: 改动文件 `tsc --noEmit` 零错误；`LocalWorkflowTask.test.ts` 8/8 通过；bun 脚本验证 `registerWorkflowTask` → `updateWorkflowProgress` 逐步推进 → `completeWorkflowTask`（status=completed）→ `killWorkflowTask`（status=killed）全链路正确
-- **验收边界（如实记录，非本次引入的缺陷）**:
-  - `tasks.ts` 用 `bun:bundle`（编译期门控），`WorkflowTool.ts` 用 polyfill（运行时 env），两者在 gate 开启构建下一致；bun run 直跑（d.bat）下 `getAllTasks()` 不注册 `local_workflow`（编译期门控默认 false），完整端到端验收需 gate 开启的编译构建（compile.bat 因 WorkflowTool 拖入 ink top-level await 关闭此 gate，属既有约束）
-  - vitest 下 `WorkflowTool.ts` 既有模块图含 strip-only 不支持的语法，spawn 集成测试无法运行，核心逻辑改由单测 + bun 脚本覆盖
-- **注意**: 与 `D:\doge-code\android`（doge-mobile 线）及 `d:\.github\mobileapp\Cosmic-IDE\`（主战场，用户正在做）无关，本任务只动 `D:\doge-code\src`
-- **完成判据对照**: `getAllTasks()` 含 `local_workflow`（gate 开启构建/vitest 别名下成立）；对话框 kill 接线就绪；详情弹窗非空；`tsc`/`vitest` 无新增失败 — 全部达成（端到端受 gate 编译约束，见上）
+用户使用 DeepSeek（`api.deepseek.com`），官方 2.1.90 后新增的 `claude-opus-5-5` / `claude-sonnet-5-5` / `claude-haiku-5-5` / `claude-fable-5(-1)` / `claude-opus-5` / `claude-sonnet-5` **全部不接入**。
+
+**不做的事**（明确记录，避免后人误当成遗漏）：
+- 不补模型 ID、别名（`fable`/`best`）、1M 上下文能力判定、fast mode 分支
+- 不补这些模型的定价分支
+
+**唯一保留**：若将来接 Anthropic 官方 API，再按本节补。当前作废。
 
 ---
 
-## 挂起后台任务处置（2026-09-17）
+### 1.3 ✅ B 组：重试 / 限流退避（有价值，但本地已有基础）
 
-运行时任务目录 `~/.doge/tasks/` 中两个长期挂起的 background 任务：
+**现状核查**（`src/services/api/withRetry.ts`）：
 
-| 任务 | 创建时间 | 描述 | 处置 |
+| 本地已有 | 说明 |
+|---|---|
+| `CLAUDE_CODE_MAX_RETRIES` | 最大重试次数，默认 15，上限 15（v2.1.186 对齐） |
+| `BASE_DELAY_MS = 20_000` | 基础退避延迟 |
+| `getRetryDelay()` | 2x 指数退避 + 25% jitter，尊重 `retry-after` |
+| `CLAUDE_CODE_UNATTENDED_RETRY` | 无人值守模式（ant-only 门控，重试 429/529） |
+
+**结论**：本地已有完整的 429 退避能力，**不需要**从零实现官方 `CLAUDE_CODE_RETRY_WATCHDOG`。仅补官方新增的两个**独立参数化**能力（对 DeepSeek 429 限流有直接价值）：
+
+- [x] **B1. `CLAUDE_CODE_OVERLOADED_RETRY_BASE_DELAY_MS` —— 已完成（2026-10-22）**
+      - `withRetry.ts`：新增 `getOverloadedRetryBaseDelayMs()`；退避分支改为
+        `is529Error(error) ? getOverloadedRetryBaseDelayMs() : BASE_DELAY_MS`。
+      - 语义：未设置/非法值（NaN、0、负数）回落到 `BASE_DELAY_MS`(20s)，**行为与之前完全一致**。
+      - 价值：DeepSeek 等国内供应商高峰期过载时，可调大初始等待避免连环撞限流，或调小快速恢复。
+
+- [x] **B2. `CLAUDE_CODE_NONSTREAMING_TIMEOUT_RETRIES` —— 已完成（2026-10-22）**
+      - `withRetry.ts`：`RetryOptions` 新增 `isNonStreamingFallback`；新增
+        `getNonStreamingTimeoutRetries()`；超时分支内计数并在超限时 `throw CannotRetryError`。
+      - `claude.ts`：`executeNonStreamingRequest` 调用 `withRetry` 时传入 `isNonStreamingFallback: true`。
+      - 语义：未设置/非法值返回 `null`（不额外限制，仍受全局 `maxRetries` 约束）；
+        **允许 0**（显式表示超时后不再重发）。只有标记为非流式回退时才生效。
+
+- 测试：`tests/unit/retry-config-flags.test.ts`（11 用例）——两参数的取值语义各 3–4 例，
+  外加 4 条**源码契约**断言（529 分支用可配置基数、超时分支检查上限、仅
+  `isNonStreamingFallback` 才启用、调用点确实传了标志）。
+- 变异验证：① B1 忽略环境变量恒返回默认 → 1 例失败；② B2 未设值当成 0 → 2 例失败；
+  ③ B2 上限判定永不触发 → 1 例失败。均已捕获。
+- **测试环境踩坑**：`withRetry.js` 首次 import 在 vitest 下要 10s+（`claude.ts`/analytics 等
+  重依赖），前两个用例超时。改为 `beforeAll` 预热并缓存模块实例，全部用例降到 0–1ms
+  （总时长仍 17s，是模块加载的一次性成本）。
+- 回归：`tsc` 两文件 0 错误；diff +61/−2。
+
+**不补**（Anthropic 云配额专属，DeepSeek 无对应语义）：
+`CLAUDE_CODE_RETRY_WATCHDOG` 及其 4 个子参数
+（`CLAUDE_CODE_RETRY_WATCHDOG_MAX_WAIT_MS` / `..._MAX_USAGE_LIMIT_WAIT_MS` / `..._USAGE_LIMIT_RECHECK_MS` 等，
+它们针对 Anthropic 的 5 小时用量周期与 plan 限额）。
+
+**验收**：模拟 503 + 429 序列，确认 B1/B2 参数生效；`CLAUDE_CODE_MAX_RETRIES` 行为不变。
+
+---
+
+### 1.4 ❌ C 组：OpenTelemetry —— 不跟
+
+9 个 `OTEL_*` 环境变量（`OTEL_LOG_TOOL_DETAILS`、`OTEL_LOG_TOOL_CONTENT`、`OTEL_LOG_ASSISTANT_RESPONSES`、`OTEL_LOG_USER_PROMPTS`、`OTEL_LOG_RAW_API_BODIES`、`OTEL_LOG_MANAGED_SETTINGS`、`OTEL_METRICS_INCLUDE_REPOSITORY`、`OTEL_METRICS_INCLUDE_ENTRYPOINT`、`OTEL_LOGRECORD_ATTRIBUTE_COUNT_LIMIT`）为企业可观测性体系，与本 fork「零依赖、离线可用」目标冲突。
+
+**处置**：不实现，不作为工程债务。
+
+---
+
+### 1.5 ✅ D 组：技能 / 命令生态（选择性补）
+
+| 命令 | 版本 | 价值判断 | 处置 |
 |---|---|---|---|
-| bg-mu2gfg0i | 09-15 | 工具组环境变量配置化 | ✅ 已完成，见 #12 |
-| bg-mu4dnjoo | 09-16 | 复查全部源码，硬编码参数/分支逻辑配置化 + 界面化 | ✅ 三个维度已复查完毕，结论见下（修掉 1 个真实 bug，见 #14） |
+| `/reload-skills` | 2.1.304 | 压缩后找回技能，**与模型无关** | ✅ 补 |
+| `/skill-doctor` | 2.1.261 | 列出未使用技能及其上下文成本，**省 token 直接省钱** | ✅ 补 |
+| `/dataviz` | 2.1.198 | 纯技能内容（图表设计 + 配色验证器），无模型依赖 | ✅ 补 |
+| `/auto-mode-setup` | 2.1.304 | 学习项目环境配置 auto mode，与模型无关 | ⚠️ 可选（P2） |
+| `/checkup`（`/doctor prompt-audit`） | 2.1.283 | CLAUDE.md/技能提示词审计，与模型无关 | ⚠️ 可选（P2） |
+| `/design-sync`、`/design-login` | 2.1.302 | 官方已宣布 2026-12-14 关闭 | ❌ 跳过 |
+| `/setup-bedrock`、`/setup-vertex` | 2.1.281 | AWS/GCP 云平台专属，DeepSeek 用户用不到 | ❌ 跳过 |
+| `/readyz` | 2.1.282 | 企业 gateway 健康检查 | ❌ 跳过 |
 
-### 关于 bg-mu4dnjoo（硬编码配置化）
+**修复计划**：
+- [x] **D1. `/reload-skills` —— 已完成（2026-10-22）**
+      - 新建 `src/commands/reload-skills/index.ts`（`local` 型命令），`commands.ts` 注册。
+      - 语义（官方 v2.1.304）：重新扫描技能目录，并把**完整技能列表**重新告知模型
+        （不是增量重发——压缩后需要全部技能回来）。
+      - 执行序列复用 `skillChangeDetector.ts:277-280` 已验证的做法：
+        `clearSkillCaches()` → `clearCommandsCache()` → `resetSentSkillNames()`。
+      - 输出含重载前后数量对比与新增/移除清单，便于用户核对。
 
-**实测结论（2026-09-17）：既有 `featureOverrides` 系统完整，无缺口，不需要改动。**
+- [x] **D2. `/skill-doctor` —— 已完成（2026-10-22）**
+      - 新建 `src/commands/skill-doctor/index.ts`（`local` 型命令），`commands.ts` 注册。
+      - 语义（官方 v2.1.261）：列出**本会话从未被调用**的技能及其上下文 token 成本。
+      - 实现：从 `context.messages` 扫描 assistant 消息里的 `tool_use` 块，按 `input.skill`
+        收集本会话用过的技能名；与 `getSkillToolCommands()` 做差集；成本用既有
+        `estimateSkillFrontmatterTokens()`（与系统提示注入同口径）。
+      - 输出：已加载/已使用数量、总成本、未使用技能按 token 降序列表。
 
-对全库 `CLAUDE_CODE_FEATURE_*` 检查点做了机器统计（临时脚本，已删）：
+- 测试：`tests/unit/skills-reload-doctor.test.ts`（8 用例）——注册与唯一性 3 例、
+  `/reload-skills` 真实调用三个清理入口 2 例、`/skill-doctor` 区分使用/未使用 3 例。
+- 变异验证：① 去掉 `resetSentSkillNames()` 调用 → 1 例失败；② `unused = skills`（忽略使用记录）
+  → 2 例失败。均已捕获。
+- 回归：命令唯一性 5/5 通过；`tsc` 两命令文件 0 错误。
+- **踩坑记录**：首次变异把**注释里**的 `resetSentSkillNames()` 当成真实调用替换，
+  导致变异未生效、测试仍全绿。改为按行匹配（`l.trim() === 'resetSentSkillNames()'`）
+  并回读确认行号后才真正捕获。这是同类错误第二次出现，务必坚持「变异后回读确认」。
+- **注意**：`src/commands.ts` 工作区存在其它并发会话的未提交改动（`feishu`、`ultraplanLocal`、
+  `router`、`vault` 等），本次只新增自己需要的 2 行 import + 2 行注册，未触碰他人改动。
+- 未做：TUI 实跑验证（需重新构建）。
+- [x] **D3. `/dataviz` —— 已完成（2026-10-22）**
+      - 新建 `src/skills/bundled/dataviz.ts`，在 `bundled/index.ts` 注册。
+      - 提示词覆盖五部分：先选图形（含"饼图 ≤5 片""柱状图绝不截断 Y 轴"等硬规则）、
+        颜色（定性/连续/发散色板用法、不能只靠颜色编码）、可读性底线、仪表盘结构
+        （KPI 必须带对比基准、三态设计）、以及**要求实际运行验证器**。
+      - 通过 `BundledSkillDefinition.files` 释放 `validate_palette.mjs`（纯 Node、零依赖）：
+        · WCAG 对比度：正文 ≥ 4.5:1、图形 ≥ 3:1，**白底/黑底分别判定**
+        · CIE76 ΔE 相邻色差 ≥ 20
+        · 退出码反映结果（0 全通过 / 1 有不合格 / 2 用法错误），可直接接 CI
+      - **实跑验证过**（不是只写不跑）：
+        · 合格色板 `#1f77b4 #d62728 #2ca02c` → 全部通过，退出码 0
+        · 浅色 `#ffffee` → 白底 1.01:1 判不合格，退出码 1
+        · 近似色 `#ffffff #fffffe` → ΔE=0.5 判过近，退出码 1
+        · **发现并修正两处实现缺陷**：
+          (a) 原实现取白底/黑底对比度的**最大值**判级，导致白底上几乎看不见的浅黄
+              被标成"正文级"；改为分别判定并列出各自等级。
+          (b) 修好判定后退出码仍为 0（不合格未计入 failed），会让 CI 误判通过；
+              改为"任一台常用背景不合格即计入失败"。
+        · 顺带验证出一个真实结论：matplotlib 经典橙 `#ff7f0e` 在白底上只有 2.53:1，
+          **达不到图形级 3:1**——这正是该被验证器抓出来的问题。
+      - 测试：`tests/unit/dataviz-skill.test.ts`（9 用例）——技能定义/注册/提示词覆盖/文件声明 4 例，
+        **验证器实际执行** 5 例（合格退出 0、过浅判不合格、近似色判过近、非法颜色不崩溃、无参数提示用法）。
+      - 变异验证：① 对比度阈值归零 → 1 例失败；② 色差阈值归零 → 1 例失败；
+        ③ 不合格不计数（退出码恒 0）→ 1 例失败。均已捕获。
+      - 回归：`tsc` dataviz.ts 与 bundled/index.ts 0 错误。
+      - 未做：TUI 实跑验证（需重新构建）；未验证 `files` 在首次调用时释放到磁盘的完整链路
+        （技能定义层已声明，释放逻辑由 `bundledSkills.ts` 既有实现承担）。
+- [x] **D4. `/auto-mode-setup` + `/checkup` —— 已完成（2026-10-22）**
+      - **`/checkup`**（官方 v2.1.283，别名 `/prompt-audit`）：新建 `src/commands/checkup/index.ts`。
+        · 审查 CLAUDE.md 等记忆文件与已加载技能的描述，找**会让模型行为变差**的写法：
+          空泛指令（"注意代码质量"/"遵循最佳实践"，判为[高]）、不可证伪形容词（"高质量的"，
+          判为[中]，附「删除后行为不变即属噪音」的判据）、CLAUDE.md 超 2000 tokens、
+          重复行（判为[低]）
+        · **只诊断不改文件**——修改是用户的决定
+      - **`/auto-mode-setup`**（官方 v2.1.304）：新建 `src/commands/auto-mode-setup/index.ts`。
+        · 检测 `package.json`/`pyproject.toml`/`Cargo.toml`/`go.mod`/`pom.xml` 判断生态，
+          检测 `.env`/`.env.local` 提示敏感文件
+        · 对 `dangerousRm`/`backgroundAmpersand`/`suspiciousWindowsPaths` 逐项给建议与理由
+          （例：Node/Python 项目常需后台起服务 → 建议关闭 `backgroundAmpersand` 拦截以减少误拦）
+        · **默认只给建议，`--apply` 才写入**——这四个开关都在"拦不拦"的边界上，误配会让
+          正常命令被反复拦下
+      - 测试：`tests/unit/auto-mode-setup-checkup.test.ts`（11 用例）。
+      - 变异验证：① 不检测空泛指令 → 1 例失败；② 不检测重复行 → 1 例失败；
+        ③ 忽略 `--apply` 门控（默认就写入）→ 1 例失败。均已捕获。
+      - **测试踩坑**：对 `src/commands.js` 用 `vi.spyOn` 仍会触发真实模块加载
+        （扫技能目录 20s+），3 个用例超时。改用 `vi.mock` 整体替换该模块、
+        只暴露被测命令用到的导出入，降到 95ms。
+      - 回归：命令唯一性 5/5；`tsc` 两个新命令 0 错误。
+      - 未做：TUI 实跑验证（需重新构建）。
 
-| 指标 | 数量 |
-|---|---|
-| 代码中实际检查的 FEATURE 变量 | 42 |
-| `OVERRIDABLE_FEATURES` 已登记 | 48 |
-| 在用但未登记 | 2（见下） |
-| 已登记但代码中未直接检查 | 9 |
+**验收**：`/reload-skills` 在压缩后能恢复技能；`/skill-doctor` 输出未使用技能清单与 token 估算。
 
-未登记的 2 个经核实**均为有意排除**，不是遗漏：
-- `DUMP_SYSTEM_PROMPT`（`src/entrypoints/cli.tsx:88`）— 注释明确「仅 Ant 内部：通过 feature 标志从外部构建中排除」，需配合 `--dump-system-prompt` 参数
-- `ULTRAPLAN`（`src/commands.ts:263`）— 命令在 `INTERNAL_ONLY_COMMANDS` 中，而该数组仅在 `process.env.USER_TYPE === 'ant'` 时注册（`src/commands.ts:718`）
+---
 
-`OVERRIDABLE_FEATURES` 是**暴露给外部用户的 Settings 开关列表**，把 Ant 内部特性登记进去属设计错误。故**不修改**。
+### 1.6 ✅ E 组：安全阀门 / 工具能力（全部补，与模型无关）
 
-**其他 env 布尔开关维度**（扫描全库 `process.env`，排除 FEATURE_* 与系统/凭据类）：
+| 缺失项 | 版本 | 作用 | 本地现状 |
+|---|---|---|---|
+| `CLAUDE_CODE_DISABLE_WEB_FETCH` | 2.1.285 | 关闭 WebFetch | 无门控（`WebFetchTool/` 无 isEnabled 检查） |
+| `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` | 2.1.212 | 子代理会话级上限（默认 200） | 仅并发上限，无会话累计上限 |
+| `CLAUDE_CODE_DISABLE_FILE_MENTIONS` | 2.1.299 | @提及只给路径不给内容 | 无 |
+| `CLAUDE_CODE_WEBFETCH_CACHE_TTL_MS` | 2.1.233 | WebFetch 缓存 TTL | 硬编码 `CACHE_TTL_MS = 15*60*1000`（`WebFetchTool/utils.ts:63`） |
+| Read 工具 `allow_large` | 2.1.296 | 大文件一次性读取 | 无 |
+| WebSearch 会话级上限 | 2.1.212 | 默认 200 次 | 无 |
+| `CLAUDE_CODE_WORKFLOW_SUBAGENT_MODEL` | 2.1.296 | 工作流 agent 统一模型 | 无（对 DeepSeek 有用：统一走便宜模型） |
+| vim 模式 `%` motion | 2.1.301 | 跳转匹配括号 | 无 |
+| `CLAUDE_CODE_TOOL_MEMORY_LIMIT` | 2.1.233 | Bash 内存限制 | 无（Linux-only，Windows 跳过） |
+| 权限规则 `Tool(param:value)` | 2.1.170 | 参数级匹配 | **已有基础**（`permissionRuleParser.ts`，需确认完整性） |
 
-| 指标 | 数量 |
-|---|---|
-| `process.env` 变量总数 | 657 |
-| 「布尔开关」形式（`=== '1'` / `'true'`）且非 FEATURE_* | 18 |
-| 其中在 Settings UI 已有手写开关项 | 2（`CLAUDE_CODE_QQ`、`CLAUDE_CODE_SESSION_END_SOUND`） |
+**修复计划（按改动成本排序）**：
+- [x] **E1. `CLAUDE_CODE_DISABLE_WEB_FETCH` —— 已完成（2026-10-22）**
+      - 改动：`src/tools/WebFetchTool/WebFetchTool.ts` 新增 `isEnabled()`，返回 `!isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_WEB_FETCH)`；导入 `isEnvTruthy`。共 +5 行。
+      - 生效路径：`src/tools.ts:539-548`（`getTools()`）与 `:220`（`getToolsForDefaultPreset()`）均按 `isEnabled()` 过滤，停用后工具从工具池移除。
+      - 测试：`tests/unit/webfetch-disable-flag.test.ts`（5 用例）——默认启用、`1`/`true`/`yes`/`on` 停用、`0`/`false`/空 仍启用、过滤契约移除。
+      - 变异验证：① 忽略环境变量恒返回 true → 3 例失败；② 反转真值 → 5 例失败。均已捕获。
+      - 回归：`webfetch-disable-flag` + `toolSearchFilter` 共 24/24 通过；`tsc` 该文件 0 错误（`utils.ts` 4 处为存量问题）。
+      - 未做：TUI 实跑验证（需重新构建）。
+- [x] **E2. `CLAUDE_CODE_WEBFETCH_CACHE_TTL_MS` —— 已完成（2026-10-22）**
+      - 新增 `src/tools/WebFetchTool/cacheTtl.ts`：`resolveWebFetchCacheTtlMs()` + `DEFAULT_WEBFETCH_CACHE_TTL_MS`。
+        单独成文件的原因：TTL 在模块加载时求值，测试需反复重置模块缓存；若放在 `utils.ts` 会每次拉起
+        axios/turndown/claude.js 等重依赖，单测由 40s 超时降到 0.5s。
+      - `utils.ts`：`CACHE_TTL_MS = resolveWebFetchCacheTtlMs()`（原硬编码 `15 * 60 * 1000`）。
+      - 语义：`Number()` 解析；NaN/Infinity/负数/0/空串一律回落 15 分钟（0 会让缓存形同虚设，负数会破坏 lru-cache ttl 语义）。
+      - 测试：`tests/unit/webfetch-cache-ttl.test.ts`（6 用例）——默认值、合法值、非法值回落、小数不截断、确实读 process.env。
+      - 变异验证：① 去掉 `> 0` 判断（接受 0/负数）→ 1 例失败；② 恒返回默认值 → 3 例失败。均已捕获。
+      - 回归：两个 WebFetch 测试 11/11 通过；`tsc` 本文件 0 错误。
+      - 未做：TUI 实跑验证（需重新构建）。
+- [x] **E3. `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` —— 已完成（2026-10-22）**
+      - 关键澄清：现有 `canSpawn()` 只看 `activeCount`（**并发**上限，2.1.217），
+        官方 2.1.212 要的是**每会话累计**上限——两个不同维度，不能复用同一个计数。
+      - `src/features/featureFlags.ts`：
+        · 新增 `totalSpawned`（只增不减）+ `maxTotalSpawns` 字段，构造函数加第 4 个参数（默认 200）
+        · `canSpawn()` 增加 `totalSpawned >= maxTotalSpawns` 判断（深度 → 累计 → 并发，三层）
+        · `spawn()` 在**拿到名额之后**才 `totalSpawned++`（预检失败/排队放弃不消耗配额）
+        · `getStats()` 暴露 `totalSpawned` / `maxTotalSpawns`
+        · 新增 `parsePositiveInt()`：NaN/0/负数回落默认（NaN 会让 `total >= max` 恒为 false，上限形同虚设）
+      - 测试：`tests/unit/subagent-session-cap.test.ts`（6 用例）——上限生效、只增不减、与并发独立、
+        预检不计数、深度优先、getStats。
+      - 变异验证：① 移除累计判断 → 4 例失败；② 预检就递增 → 2 例失败。均已捕获。
+      - 回归：E1+E2+E3 共 17/17 通过；`tsc` featureFlags.ts 0 错误。
+      - 未做：TUI 实跑验证（需重新构建）。
+- [x] **E4. `CLAUDE_CODE_DISABLE_FILE_MENTIONS` —— 已完成（2026-10-22）**
+      - 语义（官方 v2.1.299）：@提及只把**路径**交给模型，不预读文件内容；模型需要时自行用 Read 工具读取。
+      - `src/utils/attachments.ts`：
+        · 新增 `MentionPathOnlyAttachment` 类型（`type`/`filename`/`displayPath`，**无 content**）并加入 `Attachment` 联合类型
+        · `processAtMentionedFiles()` 开头分流：`CLAUDE_CODE_DISABLE_FILE_MENTIONS` 为真时直接返回路径附件，
+          跳过 `stat`/目录枚举/`generateFileAttachment` 全部读取路径
+        · 抽出纯函数 `buildMentionPathOnlyAttachment()`：剥离 `#L42` / `#L10-20` / `#heading` 后缀，
+          展开为绝对路径（行号不进入附件，读取范围交给模型）
+      - `src/utils/messages.ts`：新增 `mention_path_only` 渲染分支，提示词为
+        「用户提到了文件：X。此处只提供路径，未包含内容；如需查看，请使用 Read 工具读取。」
+        （**不能**复用 `compact_file_reference`——那条文案说的是「内容过大无法包含」，语义不符）
+      - 测试：`tests/unit/mention-path-only.test.ts`（6 用例）——类型无 content、绝对路径展开、
+        `#L42`/`#L10-20`/`#heading` 剥离、绝对路径保持。
+      - 变异验证：① 不剥离行号后缀 → 3 例失败；② 附件附带 content 字段 → 1 例失败。均已捕获。
+      - 回归：E1-E4 + sessionMention 共 31/31 通过；`tsc` 两文件 7 处错误与基线一致（存量，无新增）。
+      - **[已补] 端到端测试（2026-10-22）**：`tests/unit/mention-path-only-e2e.test.ts`（4 用例）
+        · 设标志后**真实 `getAttachments`** 返回 1 个 `mention_path_only`，且整个返回值
+          **不含文件内容特征串**（`SECRET_MARKER_ALPHA`），也不出现带内容的 `file` 附件
+        · 多个 @提及 → 逐个转路径附件；文件不存在仍返回路径（不校验存在性，符合官方语义）；
+          `#L10-20` 后缀被剥离
+      - 变异验证：① 忽略环境变量（永远读内容）→ 4 例全失败；② 附件类型改成 `file` → 4 例全失败；
+        ③ 不剥离 `#L` 后缀 → 1 例失败。均已捕获。
+      - **测试环境踩坑（已记录）**：`getAttachments` 首次调用在 **vitest 下要 20s+**
+        （重依赖转译 + mock 装载），而 **bun 下同样调用仅 91ms**——是测试环境开销，不是产品行为。
+        处理方式：把首次调用移到 `beforeAll` 预热一次（60s 超时），用例本身降到 6–9ms。
+        另：`vi.spyOn` 对 ESM 导出**无效**（内部调用的是本地绑定而非导出对象属性），
+        因此「未设标志时读取内容」的对照组被跳掉，理由写在测试注释里；
+        其要防的「管线根本没工作导致假通过」风险已由「设标志时确实返回了附件」覆盖。
+      - 未做：TUI 实跑验证（需重新构建）。
+- [x] **E5. Read `allow_large` —— 已完成（2026-10-22）**
+      - 语义（官方 v2.1.296）：忽略常规大小限制，一次读完整个文本文件。
+      - `src/tools/FileReadTool/FileReadTool.ts`：
+        · `inputSchema` 新增 `allow_large: z.boolean().optional()`
+        · `call()` 收到 `allow_large` 为真时，把 `maxSizeBytes` 与 `maxTokens` 都置为 `Infinity`
+          （两个上限都必须越过：只放行字节数仍会被 token 校验拦下）
+        · 与 `offset`/`limit` **互斥**：同时使用直接抛错，而不是静默忽略
+          （否则「读一部分」会被悄悄变成「读全部」）
+      - 生效机制核查：`readFileInRange` 中「`maxBytes` 已定义且文件大小超过它」的判定对 `Infinity`
+        恒为假；`validateContentTokens` 的 `tokenEstimate <= maxTokens / 4` 对 `Infinity` 也恒成立
+        → 两处均正确跳过。
+      - 测试：`tests/unit/read-allow-large.test.ts`（5 用例，**真实文件端到端**）——
+        408KB 文件默认被拒、allow_large 后可读、与 limit 互斥报错、与 offset>1 互斥报错、offset=1 不冲突。
+      - 变异验证：① `maxSizeBytes` 不绕过 → 2 例失败；② 移除互斥校验 → 2 例失败。均已捕获。
+      - **过程中踩到的坑（已记录）**：首次变异用 `node -e` 内联替换，因文件是 CRLF 行尾而未匹配成功，
+        但脚本未校验匹配数就报告「已应用」，导致测试「通过」是假象。改用脚本文件 + 显式 `includes`
+        校验后才真正生效。教训：**变异测试必须确认变异体真的写进了文件**（本次靠回读 `rg` 确认）。
+      - 回归：E1-E5 共 28/28 通过；`tsc` FileReadTool.ts 0 错误（`imageProcessor.ts` 为存量问题）。
+      - 未做：TUI 实跑验证（需重新构建）。
+- [x] **E6a. WebSearch 会话级上限 —— 已完成（2026-10-22）**
+      - **修复前是真实的「配置存在但功能未生效」**：`WebSearchTool.ts` 原代码只读 `getStats().maxSearches`
+        打了一行 `console.log`，注释自己写着「ponytail: 仅日志，未实现会话级计数器」。
+        `canSearch()` / `recordSearch()` 全仓**零调用点**，上限从未生效。
+      - `src/tools/WebSearchTool/WebSearchTool.ts`：
+        · `call()` 开头改为真实校验：`if (!searchMgr.canSearch()) throw`，错误信息含已用/上限
+        · 搜索真正执行后调用 `searchMgr.recordSearch()`
+        · 位置有意放在「缓存处理」提前返回**之后**——缓存命中未发出真实搜索，不应消耗配额
+      - 测试：`tests/unit/websearch-session-cap.test.ts`（8 用例）——
+        计数上限行为 4 例 + 源码契约 4 例（调用点存在、recordSearch 在缓存返回之后、占位注释已移除）
+      - 变异验证：① `if (false)` 跳过上限检查 → 1 例失败；② recordSearch 移到缓存之前 → 1 例失败。均已捕获。
+      - 回归：E1-E6a 共 36/36 通过；`tsc` 该文件 2 处错误与基线一致（存量，函数签名问题，与本次无关）。
 
-余下 16 个多为运行时/内部开关（`CLAUDE_CODE_REMOTE` 23 文件、`IS_SANDBOX`、`DEBUG`、`CTX_FETCH_STRICT` 等），**不适合暴露给终端用户**。仅 2 个手写 UI 项不足以支撑抽象（相似 3 行代码优于过早抽象）。
+- [ ] **E6b. `CLAUDE_CODE_WORKFLOW_SUBAGENT_MODEL` —— 阻塞（架构不支持，2026-10-22 核实）**
+      - **核实结论：本地没有「工作流子代理」这一机制**，无法实现该配置。
+      - 证据：
+        · `WorkflowTool.executeWorkflowStep()`（`WorkflowTool.ts:105-108`）只做 `${var}` 插值，
+          返回字符串 `` `[执行] ${interpolated}` ``——**不调用 LLM、不启动子代理、不执行真实操作**
+        · `WorkflowTool.ts` 全文（312 行）无任何 `runAgent`/`spawnAgent`/`AgentTool` 引用
+        · `LocalWorkflowTask` 只是任务状态容器（记录 steps/进度），不含执行逻辑
+        · `runAgent.ts` 的 `transcriptSubdir`（唯一可能标识工作流子代理的参数）**从未被任何调用方传入**
+      - 官方语义是「工作流 agent 用此模型，其他子代理不受影响」，本地无法区分「工作流子代理」与普通子代理，
+        强行实现只能退化为全局 `CLAUDE_CODE_SUBAGENT_MODEL`，属虚假实现。
+      - **前置依赖**：需先把工作流引擎做成真正的子代理编排（WorkflowTool 通过 runAgent 启动子代理并传
+        transcriptSubdir/querySource），届时再据此实现模型分流。这是新功能开发，非配置对齐。
+      - 现有可用的替代：`CLAUDE_CODE_SUBAGENT_MODEL`（`src/utils/model/agent.ts:43`）已生效，全局控制子代理模型。
+- [x] **E7. vim `%` motion —— 已完成（2026-10-22）**
+      - 对齐官方 v2.1.301：跳到匹配的括号，可与 d/c/y 组合。
+      - `src/vim/types.ts`：`SIMPLE_MOTIONS` 新增 `'%'`（走 `resolveMotion` 通用通路，自动获得 count 支持）
+      - `src/vim/motions.ts`：
+        · `applySingleMotion` 新增 `case '%'`；`import type { Cursor }` 改为值导入（需 `new Cursor(...)`）
+        · 新增 `matchBracket()`：光标在开括号→跳闭括号，在闭括号→跳开括号，
+          不在括号上→本行内向后找第一个括号；支持 `()`/`[]`/`{}`/`<>` 与嵌套深度计数
+        · 新增 `findLogicalLineEnd()`：定位后续搜索的行边界
+        · 找不到匹配时返回 `null`，调用方保持原位（与 vim 一致：不匹配不移动）
+      - 测试：`tests/unit/vim-percent-motion.test.ts`（10 用例）——注册、开↔闭、嵌套、四种括号、
+        向后查找、本行无括号不动、不匹配不动、跨行匹配、多处括号取最近。
+      - 变异验证：① 不区分开闭方向恒向前 → 2 例失败；② 去掉嵌套深度计数 → 1 例失败。均已捕获。
+      - 回归：vim 全部测试（含既有 operators/textObjects）95/95 通过；`tsc` src/vim 0 错误。
+      - **补做：`d%` / `c%` / `y%` 组合（2026-10-22）—— 发现 2 个真实缺陷**（此前标注「未验证」是对的）：
+        · **缺陷 1**：`%` 未列入 `isInclusiveMotion()`，被当作排他式 → `d%` 留下孤立闭括号
+          （`x(abc)y` → `x)y`），`y%` 复制不到闭括号（得到 `(abc`）。
+          修复：`isInclusiveMotion` 改为 `'eE$'.includes(key) || key === '%'`。
+        · **缺陷 2**：包含式的范围扩展带方向限制 `cursor.offset <= target.offset`，
+          反向（从闭括号回到开括号）不扩展 → `d%` 仍留下闭括号。
+          修复：`getOperatorRange` 去掉方向限制，统一 `to = nextOffset(to)`
+          （反向时 `to` 正是光标所在字符，扩一格正好含住它）。
+      - 测试：`tests/unit/vim-percent-operator.test.ts`（8 用例）——d% 正向/反向、y% 寄存器、c% 进插入、
+        嵌套、跨行、不匹配不动、光标不在括号上。
+      - **用真实 vim 8.1 交叉验证全部期望值**（`vim -u NONE -N -e -s`）：
+        · `x(abc)y` 光标在 `(` 或 `)` → `d%` 均为 `xy`
+        · `x(a(b)c)y` 外层 → `xy`
+        · `f(\n  x\n)z` → `fz`（跨行）
+        · `a(b` → `a(b`（不匹配不动）
+        · **`ab(cd)e` 光标在 offset 0 → `e`**（我最初期望 `abe`，vim 实测证明是**我的期望错了**：
+          范围从光标起算而非从括号起算，已修正）
+      - 变异验证：① `%` 不再是包含式 → 7 例失败；② 移除包含式扩展 → 7 例失败。均已捕获。
+      - 回归：vim 全部（含既有 operators/textObjects）103/103 通过；`tsc` src/vim 0 错误。
+      - **测试 fixture 的坑（已记录）**：`Cursor.equals()` 比较 `measuredText` 的**引用相等**，
+        fixture 里 `get cursor()` 每次新建实例会让 `equals` 恒为 false，导致「不匹配括号不移动」
+        用例假失败。必须构造稳定实例（真实运行时 `ctx.cursor` 也是稳定对象）。
+      - 未做：TUI 实跑验证（需重新构建）。
+- [x] **E8. `CLAUDE_CODE_TOOL_MEMORY_LIMIT` —— 已完成（2026-10-22）**
+      - 新增 `src/utils/shell/memoryLimit.ts`：
+        · `parseMemoryLimitBytes()`：支持纯字节与 `512K`/`2G`/`1.5G`/`1T`（大小写、可带 B）；
+          未设置或非法值（NaN/0/负数/未知单位）一律返回 `null`（**不静默套用用户没要求的限制**）
+        · `buildMemoryLimitedSpawn()`：Linux + systemd-run 可用时，构造
+          `systemd-run --scope --quiet --collect --property=MemoryMax=<bytes> -- <原命令>`
+        · `detectSystemdRun()`：探测并缓存；非 Linux 直接返回 false（零子进程开销）
+      - `src/utils/Shell.ts`：在 `execWithProvider` 选启动命令处接入——包装成功则用
+        systemd-run 起，否则**原样启动**（`baseSpawnBinary`/`baseShellArgs` 保持不变）。
+      - 平台策略：Windows/macOS 无 cgroup → 不包装，行为与改动前完全一致。
+        Linux 但无 systemd-run（容器/Alpine）→ 同样不包装，**不阻断命令**（限制是加固手段，
+        不该成为可用性依赖）。
+      - 测试：`tests/unit/tool-memory-limit.test.ts`（10 用例）——解析（未设置/字节/各单位/小数/非法值）、
+        非 Linux 不包装、无 systemd-run 不包装、无计划不包装、Linux 包装后原命令参数原样保留。
+      - 变异验证：① 移除平台门控 → 1 例失败；② 非法值套用默认 2G → 1 例失败；
+        ③ 移除 `--` 分隔符 → 1 例失败。均已捕获。
+      - **未验证（重要）**：本机是 Windows，**真正的 cgroup 限制未经实机验证**。
+        已验证的只是参数解析与启动参数构造；`systemd-run --scope` 在 Linux 上是否按预期
+        限制内存、退出时 scope 是否被 `--collect` 正确回收，需在 Linux 上实测。
+      - 回归：`win-shell-resolve` + 本测试 15/15 通过；`tsc` memoryLimit 0 错误，
+        `Shell.ts` 1 处为存量问题（`'bash'|'cmd'` 与 `'pwsh'` 无重叠）。
+      - 未做：TUI 实跑验证（需重新构建）。
+- [x] **E9. `Tool(param:value)` 完整性 —— 已完成（2026-10-22）**
+      - 核实结论：解析层与匹配层**均已存在**（`permissionRuleParser.ts` + `getParamRuleForTool`），
+        但**缺少官方要求的 `*` 通配符**。实测：`Agent(model:*)` 被解析成
+        `ruleContent: "model:*"` 而非参数规则 → **完全失效**。
+      - 核心难点：`Agent(model:*)`（参数通配）与 `Bash(prefix:*)`（位置式前缀规则）在字符串层面
+        无法区分，而解析层拿不到工具 schema。原实现用「含 `*` 就退化为 ruleContent」规避，
+        代价是参数通配失效。
+      - 方案（经用户确认）：**解析层保持原样**（含 `*` 仍走 ruleContent，既有 `Bash(prefix:*)` 行为不变），
+        在**匹配层**用本次调用的真实 `input` 消歧——若 `ruleContent` 形如 `key:pattern` 且
+        `input[key]` 存在，则按参数通配匹配；否则归位置式路径。
+      - `src/utils/permissions/permissions.ts`：
+        · `getParamRuleForTool` 拆成路径 A（解析层已识别的精确参数规则）与路径 B（ruleContent 通配）
+        · 新增 `matchesParamValue()`：`*` 匹配任意值，`opus*` 前缀通配，其余按字面相等
+      - `src/utils/permissions/permissionRuleParser.ts`：补注释说明「含 `*` 一律保留 ruleContent」的
+        判断依据与消歧责任在匹配层（无逻辑改动，+4 行注释）。
+      - 测试：`tests/unit/param-rule-wildcard.test.ts`（8 用例）——`model:*` 任意匹配、
+        `opus*` 前缀、无该参数不命中、`Bash(prefix:*)` 不被误判、精确值回归、跨工具隔离、ask/allow 同样生效。
+      - 变异验证：① 跳过 ruleContent 通配路径 → 3 例失败；② 通配退化为精确相等 → 3 例失败。均已捕获。
+      - 回归：权限全部测试（含既有 parser/param/check 三套）27/27 通过；`tsc` 4 处错误与基线一致（存量）。
+      - 未做：TUI 实跑验证（需重新构建）。
 
-**→ 结论：在「env / 开关」维度上，本任务已无可做的改进项。**
+---
 
-### 维度三：硬编码数值参数（超时 / 限制 / 阈值 / 重试）
+### 1.7 ❌ 不跟进的官方能力（路线差异，非债务）
 
-机器扫描全库（排除 tests/vendor/generated；临时脚本已删）：
+云会话（`--cloud`/`--environment`/`--teleport`）、Remote Control、Claude Tag/Slack、VSCode/JetBrains 插件、Claude Desktop、企业 gateway、Claude in Chrome、Mantle/Bedrock/Vertex/Foundry、全部 OTEL。
 
-| 指标 | 数量 |
-|---|---|
-| 硬编码数值参数候选（标识符名含 TIMEOUT/MS/DELAY/RETRY/MAX_/LIMIT/THRESHOLD/BATCH 等） | 404 |
-| 不同标识符 | 366 |
-| 同名参数散落在多个文件 | 22 组 |
+本地替代：`server` + 本地桥（5678）+ Android 客户端 + 隧道。
 
-**逐一核查 22 组同名参数后，结论是「不应批量配置化」**：
+---
 
-1. **多数为不同服务的正当独立取值**，不是漂移。例：`FETCH_TIMEOUT_MS` 5000/10000/60_000 分别对应 MCP、policyLimits、WebFetch —— 三者用途不同，强行统一反而错
-2. **少数重复位于有意分叉的安全代码**。最典型是两份 `pathValidation.ts`：
-   - `utils/permissions/pathValidation.ts`（485 行）
-   - `tools/PowerShellTool/pathValidation.ts`（1913 行）
-   - 5 个同名函数**0 个逐字相同**：`validatePath` 113 vs 228 行、`isPathAllowed` 123 vs 111 行、`expandTilde` 有平台守卫差异（`process.platform === 'win32'`）、`formatDirectoryList` 仅消息语言不同（英文 `, and N more` vs 中文 `，以及其余 N 个`）
-   - → 这是 **PowerShell 专用的有意分叉**（需处理 `~\`、盘符、冒号值等），不是粗心复制。为省几十行而合并**安全校验代码**，风险远大于收益，**不动**
-3. **结构性平行 ≠ 应合并**。`settings/changeDetector.ts`（488 行）与 `skills/skillChangeDetector.ts`（311 行）是同一「文件稳定性监听」模式的两份实现，合并可省约 300 行；但会牵动设置热重载与技能热重载两条用户可见链路，属高风险重构，**超出本任务范围，不做**
+### 1.8 CLI 参数（按适用性筛选）
 
-**配置化通道本就存在（关键发现）**：`settings.json` 已支持持久化 `env` 字段（`src/utils/settings/types.ts:35` 的 `EnvironmentVariablesSchema = z.record(z.string(), z.coerce.string())`）。即
-```json
-{ "env": { "CLAUDE_CODE_MAX_RETRIES": "5" } }
+| 参数 | 版本 | 适用性 | 处置 |
+|---|---|---|---|
+| `--exclude-dynamic-system-prompt-sections` | 2.1.98 | 提升 prompt cache 命中 —— DeepSeek 也有上下文缓存计费 | ✅ 补 |
+| `--permission-prompts none` | 2.1.259 | 无头环境自动拒绝弹窗 | ✅ 补 |
+| `--max-findings` | 2.1.288 | `/code-review` 报告数量 | ⚠️ 可选 |
+| `--append-subagent-system-prompt-file` | 2.1.261 | 子代理提示词文件 | ⚠️ 可选 |
+| `--disallow-tools`、`--marketplace`、`--values-stdin`、`--accept-command`、`--enabled`、`--disabled` | 2.1.163–2.1.299 | plugin 体系增强 | ⚠️ 可选 |
+| 自托管 runner 族 10 个（`--shutdown-drain-sec` 等） | 2.1.238–2.1.299 | 企业云部署 | ❌ 跳过 |
+
+- [x] **F1. `--exclude-dynamic-system-prompt-sections` —— 已完成（2026-10-22）**
+      - 官方语义（v2.1.98）：把 cwd/env/git 等动态段落移到首条用户消息，使系统提示词
+        跨会话保持字节一致，提升 prompt cache 命中。
+      - `src/constants/prompts.ts`：
+        · 抽出 `STATIC_SYSTEM_SECTIONS()`（语言 + 静态段落），与 `dynamicSections` 分离
+        · `isDynamicSectionsExcluded()` 读 `CLAUDE_CODE_EXCLUDE_DYNAMIC_SYSTEM_PROMPT_SECTIONS`
+        · 开关开启时把 `dynamicSections` 存入 `deferredDynamicSections` 并**不拼进系统提示词**
+      - `src/context.ts`：`getUserContext()` 追加 `dynamicSystemPromptSections` 字段，
+        把推迟的段落注入首条用户消息——**内容不丢**，只是换了挂载位置。
+      - `src/main.tsx`：新增 `--exclude-dynamic-system-prompt-sections` 参数，翻译为环境变量。
+      - 测试：`tests/unit/fgroup-cli-flags.test.ts` 中 4 例（开关语义 + 推迟段落默认为空）。
+
+- [x] **F2. `--permission-prompts <host|none>` —— 已完成（2026-10-22）**
+      - 官方语义（v2.1.259）：`none` 时无人值守环境里凡需弹窗的调用**自动拒绝**，
+        而不是挂起等待一个永远不会来的回答。
+      - 新增 `src/utils/permissions/permissionPromptsMode.ts`：
+        `parsePermissionPromptsMode()` + `permissionPromptsMode()`
+      - `src/hooks/useCanUseTool.tsx`：在权限决策返回「非 allow」之后、真正弹窗之前插入
+        `none` 拦截，直接 `buildDeny` 并记录 decision 日志。
+      - `src/main.tsx`：新增参数；**非法值回落到 host 并打印警告**——不能让一个拼写错误
+        把整个会话变成「一律拒绝」。
+      - 测试：6 例（默认 host、大小写不敏感、非法值回落且标记无效、环境变量读取）。
+      - 变异验证：① 非法值当成 `none` → 2 例失败；② 恒返回 host 不读环境变量 → 1 例失败。均已捕获。
+
+- 回归：F 组 + 权限全部测试 29/29 通过；`tsc` 新增文件 0 错误
+  （`useCanUseTool.tsx` 1 处为存量问题，与基线一致）。
+- **注意**：`src/main.tsx`、`src/constants/prompts.ts` 工作区存在其它并发会话的未提交改动
+  （`modelReadiness` 相关逻辑、`DiscoverSkillsTool` 导入路径修正），本次只新增自己需要的行。
+- **[已补] 无头路径覆盖（2026-10-22）**：`src/cli/print.ts` 的 `getCanUseToolFn` 有**三条分支**
+  （`stdio` / 无提示工具 / MCP 提示工具），此前只接了交互式 UI，无头模式下 `none` 完全无效。
+  - 做法：抽出 `applyNoneModeToDecision()`（`permissionPromptsMode.ts`），在 `getCanUseToolFn`
+    最外层用 `wrapNoneMode()` 统一包装三条 return——单点保证不遗漏分支。
+  - 语义：仅 `ask` → `deny`；`allow`/`deny` 原样透传（显式规则优先）。
+  - 同时清理了一处内联的重复判断（会形成两处逻辑且引用了已删除的导入）。
+  - 测试：`tests/unit/permission-prompts-headless.test.ts`（7 用例）——none/host 转换、
+    allow 不拦、deny 保留原理由、读环境变量、非法值回落，外加**源码契约**断言
+    「三条分支都套了 wrapNoneMode」（防止将来新增分支时漏接）。
+  - 变异验证：① 模式判断写反 → 4 例失败；② 连 allow/deny 一起改 → 2 例失败；
+    ③ 只给两条分支套包装 → 1 例失败（契约测试捕获）。均已捕获。
+  - **测试环境踩坑**：直接 import `print.ts` 在 vitest 下要 10s+（`tools.js`、
+    `remoteManagedSettings` 等顶层重依赖），5 个用例超时。改为把逻辑抽到轻量模块单测，
+    耗时降到 868ms；`print.ts` 的接入完整性由源码契约测试保证。
+- 未做：TUI 实跑验证（需重新构建）。
+
+---
+
+## 二、执行顺序建议
+
 ```
-已可持久配置任意环境变量。**因此为这类参数另加 UI 项反而更差** —— 现有 Settings 中的 env 项（如 `CLAUDE_CODE_QQ`）只写 `process.env`，属会话级、重启即失效；而 `settings.json` 的 `env` 是持久的。
+第一阶段（低风险、改动小）
+  E1 → E2 → E3 → E4    安全阀门（WebFetch 门控/TTL、子代理上限、文件提及）
 
-**→ 结论：不新增配置项、不做批量配置化。** 本次复查的唯一实质产出是下面修掉的一个真实 bug。
+第二阶段（工程收益）
+  D1 → D2              技能生态（/reload-skills、/skill-doctor）
+  B1 → B2              退避参数化
+  F1 → F2              CLI 参数
 
-- **配置化闭环已存在**: `Settings/Config.tsx:1219` 直接遍历 `OVERRIDABLE_FEATURES` 生成 boolean 开关（写项目配置 + 设 env），即「往数组加一项 → UI 自动出现开关」，无需手工接线
-- **需先界定范围**: 「复查所有源代码」无法一次性完成。建议按「发现一处 → 确认一处 → 改一处」推进，而非先全库普查后批量改
-- **参照模板**: 工具组（#12）即为该方向的一个实例——把硬编码的可见性判断提取为可配置项 + 命令入口 + Settings 界面项，可作为后续同类改造的模板
+第三阶段（按需）
+  E5 → E9、D3 → D4、F3
+```
 
----
+## 三、通用验收要求
 
-## KX2API 调研规划落地状态（2026-10 执行）
+每项完成时必须满足（来自 `.dogerules`）：
 
-> 原「KX2API 调研与可吸收特性规划」章节（2.1~2.10）在本文件重构时被移除，此处保留落地结论。
-
-经亲读 KX2API 源码核实，初稿调研 Agent 将多项**已存在**功能误判为缺失（路由/故障转移、Token 数据层、主题系统、MCP 客户端），已修正。真缺口落地情况：
-
-| 编号 | 特性 | 状态 |
-|---|---|---|
-| 2.1 | 多 Key 路由/故障转移 | ✅ 已存在（核实） |
-| 2.2 | Token 用量统计 | ✅ 已存在（核实） |
-| 2.3 | 对话导出/分享（Markdown） | ✅ 已完成 |
-| 2.4 | 主题/外观系统 | ✅ 已存在（核实） |
-| 2.5 | 流式中断 AbortController 对齐 | ✅ 已完成 |
-| 2.6 | 语音输入 / TTS | ✅ 已完成 |
-| 2.7 | 提示词变量插值 | ✅ 已完成（前期） |
-| 2.8 | 消息 Token 实时展示 | ✅ 已完成（前期） |
-| 2.9 | 对话分支 / Fork（分叉重发） | ✅ 已完成（2026-10-12） |
-| 2.10 | MCP 客户端 | ✅ 已存在（核实，2026-10-12 确认） |
-
-**2.9 最小实现**：不引入完整消息树可视化，采用单分支裁剪 + `parentId` 标记。
-- `Message` 加可选 `parentId?: string`（向后兼容，旧数据无此字段仍正常）
-- 每条 user/assistant 消息加「分叉」按钮 → `forkConversationAt(messages, id)` 裁剪到该消息（含）、标记分支起点、内容载入输入框供编辑重发
-- 纯函数 `forkConversationAt`（不可变、可单测）；`conversationExport.ts` 内
-- i18n：`chat.message.fork`
-- 验证：tsc 0 error；fork 测试 3 断言 + 变异测试有效；Chat 目录 27/27 测试通过
-
-**2.10 无需实施**：经亲读 `src/main/mcp/mcpService.ts`、`McpManagementPage.tsx`、`cherryStudioMcp.ts`（`clientAdapters`）、`mcp-tool-search.ts`、`probe.ts` 等 63 个相关文件确认，KX2API 已实现完整 MCP 客户端栈——server 增删改查、stdio/sse/http 三种 transport、连接探测、cherry-studio 协议适配、管理 UI（路由 `/mcp` + 侧边栏 `nav.mcp` 导航）。初稿 TASK 标"高成本架构改造待做"系未读源码的误判。故 2.10 标记已存在，规划全部闭环，无遗留待办。
-
-
-## P5 — 官方功能缺口补齐（2026-10-18 全库审计产出）
-
-> 审计基线：本仓库是 **source map 还原树 + fork 魔改**，仓内**没有官方源码**可 diff。
-> 因此"比官方少什么"由三处可验证证据判定：
-> ① 代码内显式「不可用」标记 ② 门控变量默认值 ③ 被注释/移除的注册。
-> 实测面：`src/commands/` 315 目录、`src/tools/` 102 目录、`src/skills/bundled/` 52 文件、
-> 内置 agent 18 个、服务 47 个、测试 449 个（tests/ 68 + src/__tests__/ 381）。
-
----
-
-### P5.0 — 明确排除项（不做，理由）
-
-**判据：依赖 claude.ai / Anthropic 官方云服务，大陆地区不可达 → 实施了也没法用。**
-
-| 排除项 | 位置 | 理由 |
-|---|---|---|
-| Claude for Chrome MCP | `src/stubs/ant/claudeForChromeMcp.ts` | `@ant/claude-for-chrome-mcp` 未发布到公共 npm，`connect()` 恒抛错 |
-| Artifacts 实时分享页 | `/share` 现为本地 HTML 桩 | 官方依赖 claude.ai 托管，本地已够用 |
-| Routines 云端定时 | `/cron` 现为本地 spawn 桩 | 官方依赖云端调度，本地调度已够用 |
-| 远程 agent / 连接器 | `scheduleRemoteAgents.ts` 指向 `claude.ai/settings/connectors` | 云端服务 |
-| TungstenTool | `src/tools/TungstenTool/` | Anthropic 内部终端会话桥，后端已不存在，仅保留注册供旧转录可读 |
-| `INTERNAL_ONLY_COMMANDS` 21 项 | `src/commands.ts:440` | teleport / resetLimits / mockLimits / antTrace / perfIssue 等依赖 Anthropic 内部服务端；`/chrome` 指向 `claude.ai/chrome`、`clau.de/chrome/*` |
-| tmux / screen 会话后端 | `src/services/bridgeSessions/sessionManager.ts:77,83` | Linux 专属，Windows 环境无关 |
-| 技能语义搜索的云端后端 | — | 若要向量检索需外部 embedding 服务；本地改走关键词索引（见 #25） |
-
----
-
-### P5.1 — 真·功能缺失（代码不存在，非配置问题）
-
-> **与「门控关闭」性质不同**：这批即使把 `CLAUDE_CODE_FEATURE_*` 开关打开，
-> 加载到的仍是空壳 → 命令注册为 `null`。**开开关也没用**。
-
-### [ ] 21. `force-snip` 空壳实现
-- **文件**: `src/commands/force-snip.ts`（**1 行**）
-- **现状**: `export default function forceSnipCommand() { return null }`
-- **门控**: `CLAUDE_CODE_FEATURE_HISTORY_SNIP`（`src/commands.ts:257`）
-- **目标**: 实现历史消息裁剪（官方 `HISTORY_SNIP` 语义），对接既有 `SnipTool`
-- **验证**: 单测覆盖裁剪边界 + 变异验证（去掉裁剪逻辑用例必失败）
-
-### [ ] 22. `subscribe-pr` 空壳实现
-- **文件**: `src/commands/subscribe-pr.ts`（**1 行**）
-- **现状**: `export default function subscribePrCommand() { return null }`
-- **门控**: `CLAUDE_CODE_FEATURE_KAIROS_GITHUB_WEBHOOKS`（`src/commands.ts:276`）
-- **目标**: 用 **GitHub REST API 轮询**替代官方 webhook（webhook 需公网回调，本地不可行）
-- **注意**: github.com 大陆可访问（可能慢），勿引入 claude.ai 依赖
-- **验证**: 复用 `SubscribePRTool`（318 行，已实现）的订阅持久化逻辑
-
-### [ ] 23. `remote-control-server` 空壳评估
-- **文件**: `src/commands/remoteControlServer/index.ts`（**1 行**）
-- **现状**: `export default function remoteControlServerCommand() { return null }`
-- **门控**: `FEATURE_DAEMON=1` **且** `FEATURE_BRIDGE_MODE=1`（`src/commands.ts:248`）
-- **前置**: 本仓库已有本地桥（`scripts/bridge.ts`，端口 5678/5679）+ `src/bridge/` 全套（`bridgeMain.ts`/`replBridge.ts`/`initReplBridge.ts`）
-- **目标**: 先**评估**是否只是缺一个命令入口（接线问题），而非重写
-- **判据**: 若 `src/bridge/` 已具备服务端能力 → 只补命令壳，属接线；否则标为不实施
-- **验证**: 参照 `c66146d5e` 的端到端桥测试写法（真实 spawn 服务器 + 裸 WS 客户端）
-
-### [ ] 24. `discover_skills` 工具实现
-- **文件**: `src/tools/DiscoverSkillsTool/prompt.ts`（**59 字节**，仅 `export const DISCOVER_SKILLS_TOOL_NAME = 'discover_skills'`）
-- **现状**: 目录下**无实现文件**，工具仅有名字常量
-- **目标**: 扫描技能目录（`.doge/skills`、项目技能目录、bundled）返回可用技能清单
-- **复用**: `src/commands/skills/`、`src/services/skillSearch/`
-- **验证**: 单测覆盖「无技能目录 / 有技能 / 去重」三态
-
----
-
-### P5.2 — 桩实现补齐（有框架，逻辑为空）
-
-### [ ] 25. 技能搜索索引落地
-- **文件**: `src/services/skillSearch/localSearch.ts`
-- **现状**: `localSkillSearch()` 直接 `return []` 并 `console.warn('技能索引未实现，返回空结果')`；`clearSkillIndexCache()` 是 no-op
-- **门控**: `CLAUDE_CODE_FEATURE_EXPERIMENTAL_SKILL_SEARCH`（`src/commands.ts:272`）
-- **目标**: 本地关键词/前缀索引（**不引入 embedding 服务**，见 P5.0）
-- **验证**: 单测覆盖「未建索引返回空 / 命中 / 缓存失效后重查」；变异验证 no-op 化后用例失败
-
-### [ ] 26. Windows 语音录制回退
-- **文件**: `src/services/voice.ts:377`
-- **现状**: `'[voice] Windows native recording unavailable, no fallback'` —— Windows 无录音回退路径
-- **目标**: 评估用 Windows 原生录音（WASAPI / `ffmpeg` / `sox`）补齐
-- **注意**: 已有 `voiceKeyterms.ts`、`voiceStreamSTT.ts`；STT 需**非 claude.ai** 的本地或国产 API
-- **验证**: 探针测试确认「有设备 / 无设备」两分支可区分
-
----
-
-### P5.3 — 文档失真修复（低风险）
-
-### [ ] 27. 修正 `docs/使用说明.md` 的三处失真
-- **文件**: `docs/使用说明.md`
-- **失真 1**（`:2770-2782` 根目录文件表）：声称存在 `IMPLEMENTATION_PLAN.md`、`UNIMPLEMENTED_FEATURES.md`、根 `ROADMAP.md` —— **三者均不存在**（`docs/ROADMAP.md` 存在，是路径写错）
-- **失真 2**（`:223`）：引用 `UNIMPLEMENTED_FEATURES.md` 作为"未实现特性清单"来源 —— **该文件从未被写出**
-- **失真 3**（`:4112-4116` "48.2 桩/未实现工具"表）：声称 `push_notification` / `send_user_file` / `review_artifact` / `synthetic_output` "返回 Not available in this build" —— **实测均已实现**：
-  - `PushNotificationTool.ts` 196 行、`SendUserFileTool.ts` 179 行、`ReviewArtifactTool.ts` 含完整 zod schema + 20 条规则
-  - `SyntheticOutputTool` 由 `isEnabled()` 按非交互会话启用，非"未实现"
-  - 真实桩只有 `suggest_background_pr`（**目录都不存在**，`src/tools.ts:432` 仅剩注释）
-- **操作**: 改文档描述，**不改代码**；补建 `UNIMPLEMENTED_FEATURES.md` 或删掉该引用
-- **验证**: `dir docs\IMPLEMENTATION_PLAN.md docs\UNIMPLEMENTED_FEATURES.md` 应报不存在（与文档一致）
-
----
-
-### P5.4 — 门控默认值核查（可选，非缺失）
-
-### [ ] 28. 核查门控工具是否值得默认开启
-- **背景**: 以下工具**代码完整**，仅默认不注册（设 env 即开），**不属功能缺失**：
-
-| 工具 | 开启条件 | 行数参考 |
-|---|---|---|
-| `SendUserFileTool` / `PushNotificationTool` | `FEATURE_KAIROS[_PUSH_NOTIFICATION]` | 179 / 196 |
-| `SubscribePRTool` | `FEATURE_KAIROS_GITHUB_WEBHOOKS` | 318 |
-| `RemoteTriggerTool` / `cronTools` | `FEATURE_AGENT_TRIGGERS[_REMOTE]` | 161 |
-| `WebBrowserTool` | `FEATURE_WEB_BROWSER_TOOL` | 273 |
-| `WorkflowTool` | `FEATURE_WORKFLOW_SCRIPTS` | — |
-| `SnipTool` | `FEATURE_HISTORY_SNIP` | — |
-| `ListPeersTool` | `FEATURE_UDS_INBOX` | 243 |
-| `TerminalCaptureTool` | `FEATURE_TERMINAL_PANEL` | — |
-| `CtxInspectTool` | `FEATURE_CONTEXT_COLLAPSE` | — |
-| `MonitorTool` / `SleepTool` / `OverflowTestTool` | 各自 feature | — |
-| `VerifyPlanExecutionTool` | `CLAUDE_CODE_VERIFY_PLAN=true` | — |
-| `LSPTool` | `ENABLE_LSP_TOOL` | — |
-
-- **操作**: 只做**核查**，判断哪些应改为默认开（改 `OVERRIDABLE_FEATURES` 或默认值）
-- **注意**: `src/utils/featureOverrides.ts:6` 注释明确 —— 被 `feature()` 编译期 DCE 消除的分支**运行时无法恢复**，只能重编译。核查前先确认目标工具是 env 门控而非 DCE
-- **验证**: 无需测试；改动后跑 `/config` 界面确认开关出现
-
----
-
-### P5 执行顺序建议
-
-`#27`（文档，零风险）→ `#21`/`#22`（纯本地逻辑）→ `#24`/`#25`（技能侧）→ `#23`（先评估后定）→ `#26` → `#28`
-
-**统一纪律**（遵 `.dogerules`）：
-- 每项先写单测 → 变异验证（注入缺陷必须失败，证明测试非复刻）
-- 改动后 `git diff --stat` 核对行数与实际改动相符（防 CRLF 假 diff）
-- **不引入任何 claude.ai / Anthropic 云依赖**
-
----
-
-## 执行规则
-
-1. **YAGNI 阶梯**: 写代码前停在第一个能成立的阶梯
-2. **Diff 级确认**: 每次修改后 `git diff` + grep 关键函数确认功能未丢失
-3. **测试先行**: 修改前确认现有测试通过，修改后运行相关测试
-4. **最小改动**: 每次只改一个文件/模块，保持可回滚
-5. **不凭名字删文件**: 删除前确认无引用
+1. 相关测试全部通过
+2. 使用说明已更新
+3. 功能实际可运行不卡死
+4. 新测试经**变异测试**验证（故意注入缺陷，确认测试会失败）
+5. `git diff --stat` 行数与实际改动相符（防行尾污染）
+6. 环境变量均应有明确的默认值，不改变现有行为

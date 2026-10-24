@@ -70,4 +70,3 @@ const resetLimitsCommand = {
 
 export default resetLimitsCommand
 export const resetLimits = resetLimitsCommand;
-export const resetLimitsNonInteractive = resetLimitsCommand;

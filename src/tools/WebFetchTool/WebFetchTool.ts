@@ -1,6 +1,7 @@
 import { z } from 'zod/v4'
 import { buildTool, type ToolDef } from '../../Tool.js'
 import type { PermissionUpdate } from '../../types/permissions.js'
+import { isEnvTruthy } from '../../utils/envUtils.js'
 import { formatFileSize } from '../../utils/format.js'
 import { lazySchema } from '../../utils/lazySchema.js'
 import type { PermissionDecision } from '../../utils/permissions/PermissionResult.js'
@@ -91,6 +92,10 @@ export const WebFetchTool = buildTool({
   },
   get outputSchema(): OutputSchema {
     return outputSchema()
+  },
+  isEnabled() {
+    // CLAUDE_CODE_DISABLE_WEB_FETCH=1 时整体停用该工具（对齐官方 v2.1.285）
+    return !isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_WEB_FETCH)
   },
   isConcurrencySafe() {
     return true

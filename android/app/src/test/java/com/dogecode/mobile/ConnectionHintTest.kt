@@ -140,4 +140,29 @@ class ConnectionHintTest {
             ConnectionHint.hintFor("http://127.0.0.1:1", ConnectionHint.HINT_THRESHOLD) != null,
         )
     }
+
+    // ── USB 提示中的端口必须取自实际地址 ──
+
+    @Test
+    fun `USB 提示使用地址里的实际端口`() {
+        // 回归：曾硬编码 5680，而桥接实际在 6000 时，用户照提示执行
+        // adb reverse 建错了端口 → 仍然连不上，且更难排查。
+        val hint = ConnectionHint.hintFor("http://127.0.0.1:6000", 3)!!
+        assertTrue("应包含实际端口 6000：$hint", hint.contains("adb reverse tcp:6000 tcp:6000"))
+        assertFalse("不应再出现硬编码的 5680：$hint", hint.contains("tcp:5680"))
+    }
+
+    @Test
+    fun `USB 提示在地址无端口时回落默认端口`() {
+        val hint = ConnectionHint.hintFor("http://127.0.0.1", 3)!!
+        assertTrue(hint.contains("adb reverse tcp:${ConnectionHint.DEFAULT_PORT}"))
+    }
+
+    @Test
+    fun `portOf 解析有效端口并拒绝非法值`() {
+        assertTrue(ConnectionHint.portOf("http://127.0.0.1:6000") == 6000)
+        assertTrue(ConnectionHint.portOf("ws://host:5681/mobile/ws") == 5681)
+        assertNull(ConnectionHint.portOf("http://127.0.0.1"))
+        assertNull(ConnectionHint.portOf("http://127.0.0.1:999999"))
+    }
 }

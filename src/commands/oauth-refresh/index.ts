@@ -2,6 +2,7 @@
 import type { Command } from '../../commands.js'
 import fs from 'fs'
 import path from 'path'
+import { stripBOM } from '../../utils/jsonRead.js'
 
 const call = async () => {
   try {
@@ -17,7 +18,7 @@ const call = async () => {
         ].join('\n'),
       }
     }
-    const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'))
+    const config = JSON.parse(stripBOM(fs.readFileSync(configPath, 'utf-8')))
     const provider = config.provider || 'unknown'
     const now = new Date()
     const expiresAt = new Date(now.getTime() + 3600000) // 1 hour from now

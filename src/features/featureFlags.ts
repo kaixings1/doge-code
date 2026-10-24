@@ -180,23 +180,53 @@ export function getSettingsFromEnv(): Partial<NewFeatureSettings> {
 
 // ─── 子代理管理器 ───
 
+/**
+ * 解析正整数环境变量，非法值（未设置 / NaN / 小于 1）回落到默认值。
+ * 用于计数上限类配置：NaN 会让比较恒为 false 而令上限失效。
+ */
+function parsePositiveInt(raw: string | null, fallback: number): number {
+  const parsed = parseInt(raw ?? '', 10)
+  return Number.isFinite(parsed) && parsed >= 1 ? parsed : fallback
+}
+
 export class SubAgentManager {
   private activeCount = 0
+  /** 本会话累计启动过的子代理数（只增不减，用于会话级上限） */
+  private totalSpawned = 0
   private maxConcurrent: number
   private maxDepth: number
   private searchCount = 0
   private maxSearches: number
+  private maxTotalSpawns: number
   private waitingQueue: Array<() => void> = []
 
-  constructor(maxConcurrent = 20, maxDepth = 3, maxSearches = 200) {
+  constructor(
+    maxConcurrent = 20,
+    maxDepth = 3,
+    maxSearches = 200,
+    maxTotalSpawns = 200,
+  ) {
     this.maxConcurrent = maxConcurrent
     this.maxDepth = maxDepth
     this.maxSearches = maxSearches
+    this.maxTotalSpawns = maxTotalSpawns
   }
 
-  /** 检查是否可以启动新子代理 */
+  /**
+   * 检查是否可以启动新子代理。
+   *
+   * 三个独立维度：
+   * - depth：嵌套深度（超过 maxDepth 拒绝）
+   * - maxConcurrent：同时运行数（更新日志 2.1.217）
+   * - maxTotalSpawns：本会话累计启动数（对齐官方 CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION，2.1.212）
+   *
+   * 累计上限与并发上限是不同维度：并发 20、累计 200 允许 20 个并行跑 10 轮，
+   * 但总量封顶，防止单个会话无限委派。只做预检，不占用名额——
+   * 真正的累计递增发生在 spawn() 拿到名额之后，避免预检失败也被计数。
+   */
   canSpawn(depth = 0): boolean {
     if (depth >= this.maxDepth) return false
+    if (this.totalSpawned >= this.maxTotalSpawns) return false
     return this.activeCount < this.maxConcurrent
   }
 
@@ -210,6 +240,8 @@ export class SubAgentManager {
       await new Promise<void>(resolve => this.waitingQueue.push(resolve))
     }
     this.activeCount++
+    // 拿到名额后才计入会话累计：预检失败或排队中被放弃的调用不应消耗配额。
+    this.totalSpawned++
     try {
       return await fn()
     } finally {
@@ -242,6 +274,8 @@ export class SubAgentManager {
       waitingQueue: this.waitingQueue.length,
       searchesUsed: this.searchCount,
       maxSearches: this.maxSearches,
+      totalSpawned: this.totalSpawned,
+      maxTotalSpawns: this.maxTotalSpawns,
     }
   }
 }
@@ -252,11 +286,18 @@ let globalSubAgentManager: SubAgentManager | null = null
 
 export function getSubAgentManager(): SubAgentManager {
   if (!globalSubAgentManager) {
-    // 读取环境变量配置（更新日志 2.1.217）
+    // 读取环境变量配置（更新日志 2.1.217 / 2.1.212）
     const maxConcurrent = parseInt(process.env.CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS || '20', 10)
     const maxDepth = parseInt(process.env.CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH || '3', 10)
     const maxSearches = parseInt(process.env.CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION || '200', 10)
-    globalSubAgentManager = new SubAgentManager(maxConcurrent, maxDepth, maxSearches)
+    // 会话级累计上限（对齐官方 CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION，默认 200）。
+    // 非法值（NaN / 负数 / 0）回落到默认：NaN 会让 `total >= max` 恒为 false，
+    // 使上限形同虚设；0 会直接禁掉全部子代理，都不应静默接受。
+    const maxTotalSpawns = parsePositiveInt(
+      process.env.CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION,
+      200,
+    )
+    globalSubAgentManager = new SubAgentManager(maxConcurrent, maxDepth, maxSearches, maxTotalSpawns)
   }
   return globalSubAgentManager
 }

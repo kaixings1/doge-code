@@ -32,6 +32,23 @@ class SessionAdapter(
      * 且删除是低频危险操作 —— 长按 + 二次确认能有效防误触。
      */
     private val onDelete: (SessionScanner.Session) -> Unit = {},
+    /**
+     * 长按列表项 → 请求操作菜单（置顶 / 取消置顶 / 删除）。
+     *
+     * 取代原「长按直接删除」：置顶是高频、无害操作，与删除共用长按后
+     * 弹菜单选择，既保住「删除需二次确认」的防误触，又给置顶一个入口。
+     * 传 null 时回退为长按删除（兼容旧调用）。
+     */
+    private val onLongPress: ((SessionScanner.Session) -> Unit)? = null,
+    /** 判断某地址是否已置顶（决定置顶标记与菜单文案）。 */
+    private val isPinned: (SessionScanner.Session) -> Boolean = { false },
+    /**
+     * 未读数（会话列表角标）。
+     *
+     * 显示在 meta 行末尾「● N 条未读」：不加新控件、不改布局，
+     * 用最小改动给出「哪个会话有新回复」的视觉信号。
+     */
+    private val unreadOf: (SessionScanner.Session) -> Int = { 0 },
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     /** 列表项：要么是分组头，要么是一条会话。 */
@@ -82,12 +99,18 @@ class SessionAdapter(
             )
             is Row.Item -> {
                 val vh = holder as VH
-                vh.bind(row.session, row.session.port == currentPort)
+                vh.bind(
+                    row.session,
+                    row.session.port == currentPort,
+                    isPinned(row.session),
+                    unreadOf(row.session),
+                )
                 vh.itemView.setOnClickListener { onPick(row.session) }
                 vh.bindSwitch { onSwitch(row.session) }
-                // 长按 → 请求删除（宿主弹确认；死会话也可删，这正是主要用途）
+                // 长按 → 操作菜单（置顶/删除）；未注入菜单时回退为直接删除
                 vh.itemView.setOnLongClickListener {
-                    onDelete(row.session)
+                    val menu = onLongPress
+                    if (menu != null) menu(row.session) else onDelete(row.session)
                     true
                 }
             }
@@ -122,8 +145,14 @@ class SessionAdapter(
             switchBtn.setOnClickListener { onClick() }
         }
 
-        fun bind(s: SessionScanner.Session, isCurrent: Boolean) {
-            label.text = s.label
+        fun bind(
+            s: SessionScanner.Session,
+            isCurrent: Boolean,
+            pinned: Boolean = false,
+            unread: Int = 0,
+        ) {
+            // 置顶标记前缀：不占额外行高，一眼可辨「为什么它在最前」
+            label.text = if (pinned) "📌 ${s.label}" else s.label
             current.visibility = if (isCurrent) View.VISIBLE else View.GONE
             // 已是当前会话时隐藏「切换」——点了没意义，留着只会让人
             // 误以为点了会「重连」
@@ -151,6 +180,8 @@ class SessionAdapter(
                 // 用户最需要知道的是「这个还连得上吗」
                 if (!s.alive) append("⚠ 可能已关闭（探测无响应）") else append(interactiveText)
                 if (s.clients > 0) append("   已连 ").append(s.clients).append(" 台")
+                // 未读角标：多会话并行时提示「这个会话有新回复」
+                if (unread > 0) append("   ● ").append(unread).append(" 条未读")
             }
             meta.setTextColor(
                 when {

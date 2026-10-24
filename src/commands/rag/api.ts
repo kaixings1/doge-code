@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import { LocalRagIndex } from '../../utils/localRag.js'
 
 const DATA_FILE = path.join(
   process.env.HOME || process.env.USERPROFILE || '.',
@@ -71,32 +72,19 @@ export const ragApi = {
     const entries = loadIndex()
     if (entries.length === 0) return '没有已索引的文件。请先使用 /rag add。'
 
-    const lowerQuery = searchText.toLowerCase()
-    const words = lowerQuery.split(/\s+/).filter(Boolean)
-
-    const scored = entries
-      .map((e) => ({
-        ...e,
-        score: words.filter((w) => e.content.toLowerCase().includes(w)).length,
-      }))
-      .filter((e) => e.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 10)
-
-    if (scored.length === 0) return 'No results for: ' + searchText
+    // 用 TF-IDF 排序替代旧的「子串命中计数」：
+    // 旧实现对中文不切词，`includes(整串)` 命中率极低；新版按字/词切分并做 IDF 加权。
+    const idx = new LocalRagIndex(
+      entries.map(e => ({ path: e.file, text: e.content, length: e.content.length }))
+    )
+    const hits = idx.search(searchText, 10)
+    if (hits.length === 0) return 'No results for: ' + searchText
 
     const lines = ['Results for: ' + searchText, '']
-    for (const item of scored) {
-      const idx = item.content.toLowerCase().indexOf(lowerQuery.slice(0, 20))
-      const start = Math.max(0, idx - 100)
-      const end = Math.min(item.content.length, idx + 200)
-      const snippet =
-        idx >= 0
-          ? '...' + item.content.slice(start, end) + '...'
-          : item.content.slice(0, 200)
-      lines.push('File: ' + item.file)
-      lines.push('Keywords matched: ' + item.score)
-      lines.push(snippet.replace(/\n/g, ' ').slice(0, 300))
+    for (const h of hits) {
+      lines.push('File: ' + h.path)
+      lines.push('Score: ' + h.score.toFixed(3) + (h.line > 0 ? `  (line ${h.line})` : ''))
+      lines.push((h.snippet || '').slice(0, 300))
       lines.push('')
     }
     return lines.join('\n')

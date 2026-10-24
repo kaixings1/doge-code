@@ -14,6 +14,7 @@ import {
 } from '../../utils/mcpOutputStorage.js'
 import { getSettings_DEPRECATED } from '../../utils/settings/settings.js'
 import { asSystemPrompt } from '../../utils/systemPromptType.js'
+import { resolveWebFetchCacheTtlMs } from './cacheTtl.js'
 import { isPreapprovedHost } from './preapproved.js'
 import { makeSecondaryModelPrompt } from './prompt.js'
 
@@ -60,7 +61,9 @@ type CacheEntry = {
 
 // Cache with 15-minute TTL and 50MB size limit
 // LRUCache handles automatic expiration and eviction
-const CACHE_TTL_MS = 15 * 60 * 1000 // 15 minutes
+// TTL 可通过 CLAUDE_CODE_WEBFETCH_CACHE_TTL_MS 覆盖（对齐官方 v2.1.233）。
+// 解析逻辑在 cacheTtl.ts，便于单测反复求值而不触达本模块的重依赖。
+const CACHE_TTL_MS = resolveWebFetchCacheTtlMs()
 const MAX_CACHE_SIZE_BYTES = 50 * 1024 * 1024 // 50MB
 
 const URL_CACHE = new LRUCache<string, CacheEntry>({

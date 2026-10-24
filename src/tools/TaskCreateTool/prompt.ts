@@ -44,6 +44,8 @@ export function getPrompt(): string {
 - **subject**：一个简短、可操作的标题，使用祈使语气（例如："修复登录流程中的认证错误"）
 - **description**：需要完成的具体内容
 - **activeForm**（可选）：当任务处于 in_progress 状态时，在加载动画中显示的现在进行时描述（例如："正在修复认证错误"）。如果省略，加载动画将显示 subject。
+- **owner**（可选）：任务负责人（智能体名称）。创建之后再分配，请用 TaskUpdate 的 \`owner\`。
+- **blocks** / **blockedBy**（可选）：任务 ID 数组。\`blocks\` 表示本任务阻塞了这些任务，\`blockedBy\` 表示这些任务阻塞了本任务；反向边会自动同步。
 
 所有任务创建时的状态均为 \`pending\`。
 

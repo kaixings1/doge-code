@@ -137,6 +137,7 @@ import { extractInboundMessageFields } from '../bridge/inboundMessages.js'
 import { resolveAndPrepend } from '../bridge/inboundAttachments.js'
 import type { CanUseToolFn } from '../hooks/useCanUseTool.js'
 import { hasPermissionsToUseTool } from '../utils/permissions/permissions.js'
+import { applyNoneModeToDecision } from '../utils/permissions/permissionPromptsMode.js'
 import { safeParseJSON } from '../utils/json.js'
 import {
   outputSchema as permissionToolOutputSchema,
@@ -4077,6 +4078,9 @@ export function createCanUseToolWithPermissionPrompt(
       return mainPermissionResult
     }
 
+    // 注意：--permission-prompts none 的统一拦截在 getCanUseToolFn 最外层
+    // 的 wrapNoneMode 里完成（三条分支共用），此处不再重复判断。
+
     // 将权限提示工具与中止信号进行竞争。
     //
     // 为什么需要这样做：权限提示工具可能会无限期阻塞以等待用户输入（例如，通过 stdin 或 UI 对话框）。
@@ -4168,31 +4172,51 @@ export function getCanUseToolFn(
   getMcpTools: () => Tool[],
   onPermissionPrompt?: (details: RequiresActionDetails) => void,
 ): CanUseToolFn {
-  if (permissionPromptToolName === 'stdio') {
-    return structuredIO.createCanUseTool(onPermissionPrompt)
-  }
-  if (!permissionPromptToolName) {
-    return async (
-      tool,
-      input,
-      toolUseContext,
-      assistantMessage,
-      toolUseId,
-      forceDecision,
-    ) =>
-      forceDecision ??
-      (await hasPermissionsToUseTool(
+  // 无论走哪条分支（stdio / 无提示工具 / MCP 提示工具），最终都在这里
+  // 统一兜底 --permission-prompts none：把需要询问的结果强制转成拒绝。
+  // 放在最外层是因为三条分支对 `ask` 的处理方式各不相同——
+  // stdio 分支会等客户端响应，无提示工具分支直接把 ask 透传下去，
+  // 只有统一包一层才能都覆盖到。
+  const wrapNoneMode = (fn: CanUseToolFn): CanUseToolFn =>
+    async (tool, input, toolUseContext, assistantMessage, toolUseId, forceDecision) => {
+      const result = await fn(
         tool,
         input,
         toolUseContext,
         assistantMessage,
         toolUseId,
-      ))
+        forceDecision,
+      )
+      return applyNoneModeToDecision(result)
+    }
+
+  if (permissionPromptToolName === 'stdio') {
+    return wrapNoneMode(structuredIO.createCanUseTool(onPermissionPrompt))
+  }
+  if (!permissionPromptToolName) {
+    return wrapNoneMode(
+      async (
+        tool,
+        input,
+        toolUseContext,
+        assistantMessage,
+        toolUseId,
+        forceDecision,
+      ) =>
+        forceDecision ??
+        (await hasPermissionsToUseTool(
+          tool,
+          input,
+          toolUseContext,
+          assistantMessage,
+          toolUseId,
+        )),
+    )
   }
   // 延迟查找：在打印模式下 MCP 连接是按服务器增量进行的，因此工具在初始化时可能尚未出现在 appState 中。
   // 在第一次调用（第一次权限提示）时解析，此时连接已有足够时间完成。
   let resolved: CanUseToolFn | null = null
-  return async (
+  return wrapNoneMode(async (
     tool,
     input,
     toolUseContext,
@@ -4227,7 +4251,7 @@ export function getCanUseToolFn(
       toolUseId,
       forceDecision,
     )
-  }
+  })
 }
 
 async function handleInitializeRequest(

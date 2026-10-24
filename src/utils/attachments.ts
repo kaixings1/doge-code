@@ -311,6 +311,17 @@ export type CompactFileReferenceAttachment = {
   displayPath: string
 }
 
+/**
+ * @提及的「仅路径」附件（CLAUDE_CODE_DISABLE_FILE_MENTIONS，对齐官方 v2.1.299）。
+ * 只把路径交给模型，由模型自行决定是否用 Read 工具读取，不预先把文件内容塞进上下文。
+ */
+export type MentionPathOnlyAttachment = {
+  type: 'mention_path_only'
+  filename: string
+  /** 创建时相对于 CWD 的路径，用于稳定显示 */
+  displayPath: string
+}
+
 export type PDFReferenceAttachment = {
   type: 'pdf_reference'
   filename: string
@@ -460,6 +471,7 @@ export type Attachment =
    */
   | FileAttachment
   | CompactFileReferenceAttachment
+  | MentionPathOnlyAttachment
   | PDFReferenceAttachment
   | AlreadyReadFileAttachment
   /**
@@ -1930,12 +1942,44 @@ async function getOpenedFileFromIDE(
   ]
 }
 
+/**
+ * 把一条 @提及（可能带 `:行号` / `:起-止` 后缀）转成「仅路径」附件。
+ * 行号信息不进入附件——只保留路径，由模型自行决定读取范围。
+ */
+export function buildMentionPathOnlyAttachment(
+  mention: string,
+): MentionPathOnlyAttachment {
+  const { filename } = parseAtMentionedFileLines(mention)
+  const absoluteFilename = expandPath(filename)
+  return {
+    type: 'mention_path_only',
+    filename: absoluteFilename,
+    displayPath: relative(getCwd(), absoluteFilename),
+  }
+}
+
 async function processAtMentionedFiles(
   input: string,
   toolUseContext: ToolUseContext,
 ): Promise<Attachment[]> {
   const files = extractAtMentionedFiles(input)
   if (files.length === 0) return []
+
+  // CLAUDE_CODE_DISABLE_FILE_MENTIONS（对齐官方 v2.1.299）：
+  // 只把路径交给模型，不读取文件内容。模型需要时自行用 Read 工具读取，
+  // 这样 @提及不会把大文件内容（或敏感内容）无条件塞进上下文。
+  if (isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_FILE_MENTIONS)) {
+    logEvent('tengu_at_mention_path_only', { count: files.length })
+    return files
+      .map(file => {
+        try {
+          return buildMentionPathOnlyAttachment(file)
+        } catch {
+          return null
+        }
+      })
+      .filter(Boolean) as Attachment[]
+  }
 
   const appState = toolUseContext.getAppState()
   const results = await Promise.all(

@@ -4,6 +4,7 @@ import * as os from 'os'
 import { loadConfigFromEnv } from './providerEnv.ts'
 
 import { logForDebugging } from './debug.js'
+import { stripBOM } from './jsonRead.js'
 
 // readCustomApiStorage 日志去重状态：同内容 10s 内只记一次（见下方 logSource）。
 let lastLoggedLine: string | null = null
@@ -93,7 +94,7 @@ function readGlobalStorage(): GlobalStorage {
   try {
     const p = getGlobalConfigPath()
     if (!fs.existsSync(p)) return { presets: {} }
-    const raw = fs.readFileSync(p, 'utf-8')
+    const raw = stripBOM(fs.readFileSync(p, 'utf-8'))
     const data = JSON.parse(raw)
     if (data && typeof data === 'object') {
       return {
@@ -110,7 +111,7 @@ function readProjectStorage(): ProjectStorage {
   try {
     const p = getProjectConfigPath()
     if (!fs.existsSync(p)) return { presets: {} }
-    const raw = fs.readFileSync(p, 'utf-8')
+    const raw = stripBOM(fs.readFileSync(p, 'utf-8'))
     const data = JSON.parse(raw)
     // 更新修改时间，用于跨进程检测
     try {

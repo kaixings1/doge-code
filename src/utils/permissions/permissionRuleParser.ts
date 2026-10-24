@@ -135,6 +135,10 @@ export function permissionRuleValueFromString(
   // A single `key:value` pair that is also a tool input param name is parsed
   // into { param, value }; everything else stays positional `ruleContent`.
   const paramMatch = rawContent.match(/^([A-Za-z_][\w-]*):(.+)$/)
+  // 注意：这里**不**处理 `*`。`Agent(model:*)` 与 `Bash(prefix:*)` 在字符串层面
+  // 无法区分（前者是参数通配、后者是位置式前缀规则），解析层也拿不到工具
+  // schema。因此含 `*` 的内容一律保留为 ruleContent，由匹配层结合本次调用的
+  // 实际 input 判定：input 里有该参数名 → 按参数通配匹配，否则按位置式处理。
   if (
     paramMatch &&
     !rawContent.includes(',') &&

@@ -4,6 +4,7 @@ import { loadConditionalCommand } from './commands/loader.js'
 import { AgentTool } from './tools/AgentTool/AgentTool.js'
 import { AgentIntegrationTool } from './tools/AgentIntegrationTool/AgentIntegrationTool.js'
 import { SkillTool } from './tools/SkillTool/SkillTool.js'
+import { DiscoverSkillsTool } from './tools/DiscoverSkillsTool/DiscoverSkillsTool.js'
 import { BashTool } from './tools/BashTool/BashTool.js'
 import { FileEditTool } from './tools/FileEditTool/FileEditTool.js'
 import { FileReadTool } from './tools/FileReadTool/FileReadTool.js'
@@ -280,6 +281,7 @@ export function getAllBaseTools(options?: { unfiltered?: boolean }): Tools {
     _tools.push(TaskStopTool);
     _tools.push(AskUserQuestionTool);
     _tools.push(SkillTool);
+    _tools.push(DiscoverSkillsTool);
     _tools.push(EnterPlanModeTool);
     if (process.env.USER_TYPE === 'ant') {
       _tools.push(ConfigTool);

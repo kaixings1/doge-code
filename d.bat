@@ -40,7 +40,49 @@ REM instances. The mobile bridge is mobile.bat's job.
 set CLAUDE_CODE_LOCAL_BRIDGE=
 set CLAUDE_CODE_LOCAL_BRIDGE_URL=
 
+REM === Feishu bridge (optional) ===
+REM Credentials live in .claude\settings.local.json (template:
+REM tools\feishu\settings.local.example.json) or ~\.doge\settings.json.
+REM They are applied by init() before the REPL mounts, and keeping secrets
+REM out of this file avoids committing them.
+REM Set DOGE_FEISHU=1 in your shell to turn it on for one run without
+REM editing any config file.
+if defined DOGE_FEISHU (
+    set FEISHU_BRIDGE=1
+    echo [d.bat] Feishu bridge enabled for this run
+)
 
+REM === Tiered model router (optional) ===
+REM /router executor is OFF unless explicitly enabled: unset means "never
+REM downgrade". Enable for one run with:   set DOGE_ROUTER=1
+REM Sanity-check first (logs the decision, keeps the model):
+REM   set DOGE_ROUTER=1   +   set DOGE_ROUTER_DRY=1
+REM Optional per-run overrides:
+REM   set DOGE_ROUTER_CHEAP=<model>     (default: getSmallFastModel / Haiku)
+REM   set DOGE_ROUTER_STANDARD=<model>  (default: getDefaultSonnetModel)
+REM Rules live in src/utils/routerDowngrade.ts: one tier down max, never
+REM upgrade, never in plan mode, never with images, never above 60k context,
+REM never for unrecognized (custom/proxy) model ids.
+REM
+REM Always copy (and always blank when the source is off) so a parent shell
+REM cannot silently leave downgrade enabled. Never use "if defined X set
+REM Y=%X%" on one line: cmd expands %X% at parse time and assigns the OLD
+REM (usually empty) value.
+set CLAUDE_CODE_ROUTER_AUTO=%DOGE_ROUTER%
+set CLAUDE_CODE_ROUTER_DRY_RUN=%DOGE_ROUTER_DRY%
+set CLAUDE_CODE_ROUTER_DEBUG=%DOGE_ROUTER_DEBUG%
+set CLAUDE_CODE_ROUTER_CHEAP_MODEL=%DOGE_ROUTER_CHEAP%
+set CLAUDE_CODE_ROUTER_STANDARD_MODEL=%DOGE_ROUTER_STANDARD%
+if not defined DOGE_ROUTER goto :router_off
+echo [d.bat] Model router auto-downgrade ENABLED
+if defined CLAUDE_CODE_ROUTER_DRY_RUN echo [d.bat]   dry-run: decisions logged, model unchanged
+if defined CLAUDE_CODE_ROUTER_CHEAP_MODEL echo [d.bat]   cheap tier: %DOGE_ROUTER_CHEAP%
+if defined CLAUDE_CODE_ROUTER_STANDARD_MODEL echo [d.bat]   standard tier: %DOGE_ROUTER_STANDARD%
+goto :router_done
+:router_off
+REM Undefined after the copy-above means the source var was empty: blank it.
+if not defined CLAUDE_CODE_ROUTER_AUTO set CLAUDE_CODE_ROUTER_AUTO=
+:router_done
 REM === Local bridge server: start in background if 5678 is not listening ===
 netstat -ano -p tcp | findstr ":5678" | findstr "LISTENING" >nul 2>&1
 if errorlevel 1 (

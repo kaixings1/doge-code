@@ -146,6 +146,7 @@ export const SIMPLE_MOTIONS = new Set([
   '0',
   '^',
   '$', // Line positions
+  '%', // 跳转到匹配的括号（v2.1.301）
 ])
 
 export const FIND_KEYS = new Set(['f', 'F', 't', 'T'])

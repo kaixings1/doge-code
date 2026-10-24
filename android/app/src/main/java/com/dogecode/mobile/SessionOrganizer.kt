@@ -37,7 +37,11 @@ object SessionOrganizer {
      *
      * 组内按 [order] 排序。
      */
-    fun group(sessions: List<SessionScanner.Session>, order: Order): List<Group> {
+    fun group(
+        sessions: List<SessionScanner.Session>,
+        order: Order,
+        pinned: (SessionScanner.Session) -> Boolean = { false },
+    ): List<Group> {
         if (sessions.isEmpty()) return emptyList()
         return sessions
             .groupBy { it.host.ifBlank { "未知主机" } }
@@ -45,7 +49,7 @@ object SessionOrganizer {
                 Group(
                     host = host,
                     isLocal = list.first().isLocal(),
-                    sessions = sort(list, order),
+                    sessions = sort(list, order, pinned),
                 )
             }
             .sortedWith(
@@ -75,6 +79,7 @@ object SessionOrganizer {
     fun sort(
         sessions: List<SessionScanner.Session>,
         order: Order,
+        pinned: (SessionScanner.Session) -> Boolean = { false },
     ): List<SessionScanner.Session> {
         val byOrder = when (order) {
             Order.PORT -> sessions.sortedBy { it.port }
@@ -91,7 +96,11 @@ object SessionOrganizer {
             )
         }
         // **稳定**二次排序：只把死的挪到后面，活的原序不变（sortedBy 是稳定排序）
-        return byOrder.sortedBy { !it.alive }
+        val aliveFirst = byOrder.sortedBy { !it.alive }
+        // 置顶优先：稳定排序，未置顶项保持 aliveFirst 的顺序。
+        // 置顶且已死的条目仍被排到最前 —— 用户主动置顶就是「我要它好找」，
+        // 死不死由列表里的置灰状态表达，不该因此把它藏回队尾。
+        return PinnedOrder.apply(aliveFirst) { pinned(it) }
     }
 
     /** 主机名的展示文案：本机加标注，让用户一眼看出。 */

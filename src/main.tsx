@@ -53,6 +53,10 @@ import { getInitialEffortSetting, parseEffortValue } from './utils/effort.js';
 import { getInitialFastModeSetting, isFastModeEnabled, prefetchFastModeStatus, resolveFastModeStatusFromCache } from './utils/fastMode.js';
 import { applyConfigEnvironmentVariables } from './utils/managedEnv.js';
 import { createSystemMessage, createUserMessage } from './utils/messages.js';
+import { buildModelUnconfiguredNotice, buildModelUnconfiguredNoticeOneLine, readModelReadinessFromEnv } from './utils/modelReadiness.js';
+import { RESTRICTED_BYPASS_ERROR, computeRestrictedDisallowed, restrictedSettingSources, shouldRejectBypassPermissions } from './utils/restrictedMode.js';
+import { applyAutoCompactFlag, parseAutoCompactFlag } from './utils/autocompactFlag.js';
+import { parsePermissionPromptsMode } from './utils/permissions/permissionPromptsMode.js';
 import { getPlatform } from './utils/platform.js';
 import { getBaseRenderOptions } from './utils/renderOptions.js';
 import { getSessionIngressAuthToken } from './utils/sessionIngressAuth.js';
@@ -764,6 +768,12 @@ export async function main() {
   // 除非明确处于无头模式，否则应默认使用交互模式。
   const isNonInteractive = hasPrintFlag || hasInitOnlyFlag || hasSdkUrl || (process.stdout.isTTY === false);
 
+  // 模型配置就绪性：bootstrap-entry 在找不到 api.json 时会写入哨兵端点，
+  // 此时请求必然失败。尽早判定，供 -p 提示与交互首屏提示复用。
+  // 挂到 globalThis：`run()` 返回后主 action 才执行，其闭包看不到本函数的局部变量。
+  const unconfiguredGlobal = globalThis as { __dogeModelUnconfigured?: boolean };
+  unconfiguredGlobal.__dogeModelUnconfigured = readModelReadinessFromEnv();
+
   // 为非交互模式停止捕获早期输入
   if (isNonInteractive) {
     stopCapturingEarlyInput();
@@ -935,7 +945,7 @@ async function run(): Promise<CommanderCommand> {
   }).hideHelp()).option('--replay-user-messages', '将来自 stdin 的用户消息重新回显到 stdout 以进行确认（仅适用于 --input-format=stream-json 和 --output-format=stream-json）', () => true).addOption(new Option('--enable-auth-status', '在 SDK 模式下启用认证状态消息').default(false).hideHelp()).option('--allowedTools, --allowed-tools <tools...>', '逗号或空格分隔的允许工具名称列表（例如 "Bash(git:*) Edit")').option('--tools <tools...>', '从内置工具集中指定可用工具列表。使用 "" 禁用所有工具，"default" 使用所有工具，或指定工具名称（例如 "Bash,Edit,Read"）。').option('--disallowedTools, --disallowed-tools <tools...>', '逗号或空格分隔的禁止工具名称列表（例如 "Bash(git:*) Edit")').option('--mcp-config <configs...>', '从 JSON 文件或字符串加载 MCP 服务器（空格分隔）').addOption(new Option('--permission-prompt-tool <tool>', '用于权限提示的 MCP 工具（仅适用于 --print）').argParser(String).hideHelp()).addOption(new Option('--system-prompt <prompt>', '用于会话的系统提示').argParser(String)).addOption(new Option('--system-prompt-file <file>', '从文件读取系统提示').argParser(String).hideHelp()).addOption(new Option('--append-system-prompt <prompt>', '向默认系统提示追加内容').argParser(String)).addOption(new Option('--append-system-prompt-file <file>', '从文件读取系统提示并追加到默认系统提示').argParser(String).hideHelp()).addOption(new Option('--permission-mode <mode>', '用于会话的权限模式').argParser(String).choices(PERMISSION_MODES)).option('-c, --continue', '继续当前目录中最近的对话', () => true).option('-r, --resume [value]', '通过会话 ID 恢复对话，或通过可选搜索词打开交互式选择器', value => value || true).option('--fork-session', '恢复时创建新的会话 ID，而不是重用原始 ID（与 --resume 或 --continue 一起使用）', () => true).addOption(new Option('--prefill <text>', '用文本预填充提示输入框而不提交').hideHelp()).addOption(new Option('--deep-link-origin', '表示此会话是从深度链接启动的').hideHelp()).addOption(new Option('--deep-link-repo <slug>', '深度链接 ?repo= 参数解析为当前工作目录的仓库标识符').hideHelp()).addOption(new Option('--deep-link-last-fetch <ms>', 'FETCH_HEAD 的修改时间（毫秒级时间戳），由深度链接跳板预计算').argParser(v => {
     const n = Number(v);
     return Number.isFinite(n) ? n : undefined;
-  }).hideHelp()).option('--from-pr [value]', '通过 PR 编号或 URL 恢复链接到 PR 的会话，或通过可选搜索词打开交互式选择器', value => value || true).option('--no-session-persistence', '禁用会话持久化 - 会话将不会保存到磁盘且无法恢复（仅适用于 --print）').addOption(new Option('--resume-session-at <message id>', '恢复时仅包含直到并包括指定 assistant 消息 ID 的消息（与 --resume 一起用于打印模式）').argParser(String).hideHelp()).addOption(new Option('--rewind-files <user-message-id>', '将文件恢复到指定用户消息时的状态并退出（需要 --resume）').hideHelp()).addOption(new Option('--safe-mode', '安全模式：以所有自定义项（CLAUDE.md、插件、技能、钩子、MCP 服务器）禁用状态启动，用于故障排除').hideHelp())
+  }).hideHelp()).option('--from-pr [value]', '通过 PR 编号或 URL 恢复链接到 PR 的会话，或通过可选搜索词打开交互式选择器', value => value || true).option('--no-session-persistence', '禁用会话持久化 - 会话将不会保存到磁盘且无法恢复（仅适用于 --print）').addOption(new Option('--resume-session-at <message id>', '恢复时仅包含直到并包括指定 assistant 消息 ID 的消息（与 --resume 一起用于打印模式）').argParser(String).hideHelp()).addOption(new Option('--rewind-files <user-message-id>', '将文件恢复到指定用户消息时的状态并退出（需要 --resume）').hideHelp()).addOption(new Option('--safe-mode', '安全模式：以所有自定义项（CLAUDE.md、插件、技能、钩子、MCP 服务器）禁用状态启动，用于故障排除').hideHelp()).addOption(new Option('--autocompact <auto|tokens>', '自动压缩窗口：auto（沿用模型默认）或 100k–1M 的 token 数（如 100k、500000）。等价于设置 CLAUDE_CODE_AUTO_COMPACT_WINDOW。').argParser((raw: string) => parseAutoCompactFlag(raw).kind === 'auto' ? 'auto' : raw)).addOption(new Option('--exclude-dynamic-system-prompt-sections', '把 cwd、环境信息、git 状态等随会话变化的内容移出系统提示词，改为附加在首条用户消息上，使系统提示词跨会话保持一致以提升 prompt cache 命中').hideHelp()).addOption(new Option('--permission-prompts <host|none>', '无头模式下由谁回答权限提示：host（默认，交给宿主 UI/SDK）或 none（凡需询问的调用一律自动拒绝）').argParser(String)).option('--restricted', '受限模式：移除执行命令/代码的内置工具（Bash、PowerShell 等）与 WebFetch（除非 --tools 显式点名），忽略 user/project/local 设置（managed 设置与 --settings 仍生效），拒绝 bypassPermissions。')
   // @[MODEL LAUNCH]: 更新 --model 帮助文本中的示例模型 ID。
   .option('--model <model>', `用于当前会话的模型。提供最新模型的别名（例如 'sonnet' 或 'opus'）或模型的完整名称（例如 'claude-sonnet-4-6'）。`).addOption(new Option('--effort <level>', `当前会话的投入级别（low、medium、high、max）`).argParser((rawValue: string) =>{
     const value = rawValue.toLowerCase();
@@ -962,6 +972,53 @@ async function run(): Promise<CommanderCommand> {
     if ((options as { safeMode?: boolean }).safeMode) {
       process.env.CLAUDE_CODE_SIMPLE = '1';
       process.env.CLAUDE_CODE_SAFE_MODE = '1';
+    }
+    // --autocompact：把 CLI 取值翻译成 CLAUDE_CODE_AUTO_COMPACT_WINDOW（auto 则清除覆盖）。
+    if (typeof options.autocompact === 'string') {
+      applyAutoCompactFlag(parseAutoCompactFlag(options.autocompact));
+    }
+    // --exclude-dynamic-system-prompt-sections：把 cwd/env/git 等动态段落
+    // 从系统提示词移到首条用户消息，提升跨会话 prompt cache 命中。
+    if (options.excludeDynamicSystemPromptSections) {
+      process.env.CLAUDE_CODE_EXCLUDE_DYNAMIC_SYSTEM_PROMPT_SECTIONS = '1';
+    }
+    // --permission-prompts <host|none>：none 时所有需要弹窗的调用自动拒绝。
+    if (typeof options.permissionPrompts === 'string') {
+      const parsed = parsePermissionPromptsMode(options.permissionPrompts);
+      if (!parsed.valid) {
+        process.stderr.write(chalk.yellow(
+          `警告：--permission-prompts 的取值 "${options.permissionPrompts}" 无效，已回落到 host（host|none）。\n`
+        ));
+      }
+      process.env.CLAUDE_CODE_PERMISSION_PROMPTS = parsed.mode;
+    }
+    // --restricted：受限模式。必须在 initializeToolPermissionContext 之前生效，
+    // 因为工具白名单/拒绝规则只在初始化时读取一次。
+    if (options.restricted) {
+      if (shouldRejectBypassPermissions(options.permissionMode, options.dangerouslySkipPermissions)) {
+        // 此时 root 尚未创建，直接写 stderr 并退出，避免引用未初始化的变量。
+        process.stderr.write(chalk.red(`${RESTRICTED_BYPASS_ERROR}\n`));
+        return await gracefulShutdown(1);
+      }
+      // 只保留 managed（policy）设置；--settings 的 flag 源会自动保留。
+      setAllowedSettingSources(restrictedSettingSources());
+      resetSettingsCache();
+      // 此处早于下方 `const { tools: baseTools, disallowedTools } = options` 解构，
+      // 直接读 options 避免 TDZ。
+      // 本段执行时 options 已可用，但下方解构语句尚未运行，故把所有结果暂存到
+      // globalThis，等 initializeToolPermissionContext 前再合并。
+      const restricted = computeRestrictedDisallowed(parseToolListFromCLI(options.tools ?? []));
+      (globalThis as { __dogeRestrictedDisallowed?: string[] }).__dogeRestrictedDisallowed = restricted.disallowed;
+      if (restricted.exempted.length > 0) {
+        // biome-ignore lint/suspicious/noConsole:: 明确告知豁免，避免静默放行
+        console.error(`[受限模式] 通过 --tools 显式放行的执行类工具：${restricted.exempted.join(', ')}`);
+      }
+    }
+    // 未配置模型（bootstrap 哨兵端点）：-p 模式下提前在 stderr 说明，避免把失败误读为卡住。
+    // 交互模式在 REPL 启动前注入系统提示（见 launchRepl 调用处的 modelUnconfiguredBanner）。
+    const modelUnconfigured = (globalThis as { __dogeModelUnconfigured?: boolean }).__dogeModelUnconfigured === true;
+    if (modelUnconfigured && (options.print || process.argv.includes('-p') || process.argv.includes('--print'))) {
+      process.stderr.write(`${buildModelUnconfiguredNoticeOneLine()}\n`);
     }
     // 忽略 "code" 作为提示 - 将其视为无提示
     if (prompt === 'code') {
@@ -1633,6 +1690,12 @@ async function run(): Promise<CommanderCommand> {
     }
 
     // 此 await 替换了启动路径中已存在的阻塞 existsSync/statSync 调用。挂钟时间不变；我们只是在 fs I/O 期间将控制权交还给事件循环，而不是阻塞它。参见 #19661。
+    // --restricted 的禁止清单在此合并：前面那段执行过早（options 解构尚未发生），
+    // 必须等到 disallowedTools 可用后再注入。
+    const restrictedDisallowed = (globalThis as { __dogeRestrictedDisallowed?: string[] }).__dogeRestrictedDisallowed;
+    if (restrictedDisallowed && restrictedDisallowed.length > 0) {
+      disallowedTools.push(...restrictedDisallowed);
+    }
     const initResult = await initializeToolPermissionContext({
       allowedToolsCli: allowedTools,
       disallowedToolsCli: disallowedTools,
@@ -3503,7 +3566,10 @@ if (options.continue) {
 	  deepLinkBanner = createSystemMessage('启动时带有预填充提示 — 按回车前请检查。', 'warning');
 	}
   }
-  const initialMessages = deepLinkBanner ? [deepLinkBanner, ...hookMessages] : hookMessages.length > 0 ? hookMessages : undefined;
+  const modelUnconfigured = (globalThis as { __dogeModelUnconfigured?: boolean }).__dogeModelUnconfigured === true;
+  const modelUnconfiguredBanner = modelUnconfigured ? createSystemMessage(buildModelUnconfiguredNotice(), 'warning') : null;
+  const banners = [deepLinkBanner, modelUnconfiguredBanner].filter((m): m is ReturnType<typeof createSystemMessage> => m !== null);
+  const initialMessages = banners.length > 0 ? [...banners, ...hookMessages] : hookMessages.length > 0 ? hookMessages : void 0;
   await launchRepl(root, {
 	getFpsMetrics,
 	stats,

@@ -94,6 +94,20 @@ export interface BeaconPayload {
    * 因版本不符**丢弃整条广播**，反而让它们连局域网发现都失效。
    */
   tunnelUrl?: string
+  /**
+   * 本机在 Tailscale（或同类虚拟网）上的地址，形如 `100.99.118.124`。
+   *
+   * ## 为什么广播要带它
+   *
+   * 组播只在**同一二层网段**内传播：电脑从 WiFi 网卡发出的包，不可能穿过
+   * Tailscale 的三层覆盖网到达户外用流量的手机。所以 Tailscale 路径不能
+   * 靠广播本身打通 —— 但可以**把地址搭车告诉手机**：手机在局域网收到广播时，
+   * 同时拿到「局域网入口」与「Tailscale 入口」，出门切到流量后直接用后者连
+   *（模式 3），不必再手抄 `100.x` 地址。
+   *
+   * 同样可选、同样不升协议版本（理由同 `tunnelUrl`）。
+   */
+  tailscaleHost?: string
 }
 
 /** 当前协议版本。 */
@@ -116,6 +130,8 @@ export function buildBeaconPayload(input: {
   clients: number
   /** 公网隧道地址（可选；无隧道时省略）。 */
   tunnelUrl?: string | null
+  /** Tailscale 虚拟网地址（可选；未装/未登录时省略）。 */
+  tailscaleHost?: string | null
   now?: number
 }): BeaconPayload {
   const payload: BeaconPayload = {
@@ -137,6 +153,10 @@ export function buildBeaconPayload(input: {
   // 同样省略空隧道的字段（没起隧道 ≠ 隧道地址为空串）。
   if (input.tunnelUrl) {
     payload.tunnelUrl = input.tunnelUrl
+  }
+  // Tailscale 地址同理：没装/没登录就省略字段，而不是发空串
+  if (input.tailscaleHost) {
+    payload.tailscaleHost = input.tailscaleHost
   }
   return payload
 }
@@ -193,5 +213,8 @@ export function parseBeacon(raw: string): BeaconPayload | null {
       ? { resumeSessionId: o.resumeSessionId }
       : {}),
     ...(typeof o.tunnelUrl === 'string' && o.tunnelUrl ? { tunnelUrl: o.tunnelUrl } : {}),
+    ...(typeof o.tailscaleHost === 'string' && o.tailscaleHost
+      ? { tailscaleHost: o.tailscaleHost }
+      : {}),
   }
 }

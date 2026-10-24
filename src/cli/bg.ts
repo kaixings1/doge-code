@@ -142,7 +142,7 @@ export async function killHandler(sessionId?: string): Promise<void> {
     ? listRecords().filter(r => r.id === sessionId)
     : []
   if (records.length === 0) {
-    console.log(sessionId ? `未找到会话: ${sessionId}` : '用法: claude bg kill <session-id>')
+    console.log(sessionId ? `未找到会话: ${sessionId}` : '用法: claude kill <session-id>')
     return
   }
   for (const r of records) {
@@ -153,6 +153,60 @@ export async function killHandler(sessionId?: string): Promise<void> {
       console.error(`终止 ${r.id} 失败: ${e.message}`)
     }
     try { rmSync(recordPath(r.id), { force: true }) } catch { /* ignore */ }
+  }
+}
+
+/**
+ * 删除后台会话记录（不杀进程）。对应官方 `claude rm <id>`。
+ * 运行中的会话会拒绝删除，避免"记录没了但进程还在"。
+ */
+export async function removeHandler(sessionId?: string): Promise<void> {
+  if (!sessionId) {
+    console.log('用法: claude rm <session-id>')
+    return
+  }
+  const records = listRecords().filter(r => r.id === sessionId)
+  if (records.length === 0) {
+    console.log(`未找到会话: ${sessionId}`)
+    return
+  }
+  const r = records[0]!
+  if (isAlive(r.pid)) {
+    console.log(`会话 ${r.id} 仍在运行（pid=${r.pid}），请先执行 claude stop ${r.id}`)
+    return
+  }
+  try {
+    rmSync(recordPath(r.id), { force: true })
+    console.log(`已删除会话记录: ${r.id}`)
+  } catch (e: any) {
+    console.error(`删除 ${r.id} 失败: ${e.message}`)
+  }
+}
+
+/**
+ * 重启已退出的后台会话（沿用原命令与工作目录）。对应官方 `claude respawn`。
+ * `--all` 重启全部已退出会话；运行中的跳过。
+ */
+export async function respawnHandler(args: string[]): Promise<void> {
+  const all = args.includes('--all')
+  const target = args.find(a => !a.startsWith('-'))
+  const records = all
+    ? listRecords()
+    : target
+      ? listRecords().filter(r => r.id === target)
+      : listRecords().slice(-1)
+
+  if (records.length === 0) {
+    console.log(target ? `未找到会话: ${target}` : '没有后台进程')
+    return
+  }
+
+  for (const r of records) {
+    if (isAlive(r.pid)) {
+      console.log(`会话 ${r.id} 仍在运行，跳过`)
+      continue
+    }
+    await spawnBackground(r.command, r.args, r.cwd)
   }
 }
 
@@ -168,13 +222,25 @@ export async function handleBgFlag(args: string[]): Promise<void> {
   }
 
   const [cmd, ...cmdArgs] = rest
+  await spawnBackground(cmd!, cmdArgs, process.cwd())
+}
+
+/**
+ * 启动一个后台进程并落盘记录。`--bg` 与 `respawn` 共用。
+ * @returns 新会话 ID
+ */
+export async function spawnBackground(
+  cmd: string,
+  cmdArgs: string[],
+  cwd: string,
+): Promise<string> {
   const id = `bg-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
   ensureDir()
   const logFile = join(bgDir(), `${id}.log`)
   const logFd = openSync(logFile, 'a')
 
   const child = spawn(cmd, cmdArgs, {
-    cwd: process.cwd(),
+    cwd,
     stdio: ['ignore', logFd, logFd],
     detached: true,
     windowsHide: true,
@@ -185,7 +251,7 @@ export async function handleBgFlag(args: string[]): Promise<void> {
     pid: child.pid ?? 0,
     command: cmd,
     args: cmdArgs,
-    cwd: process.cwd(),
+    cwd,
     startedAt: new Date().toISOString(),
     logFile,
   }
@@ -193,6 +259,7 @@ export async function handleBgFlag(args: string[]): Promise<void> {
   child.unref()
 
   console.log(`后台启动: ${id}（pid=${child.pid}）`)
-  console.log(`查看日志: claude bg logs ${id}`)
-  console.log(`终止进程: claude bg kill ${id}`)
+  console.log(`查看日志: claude logs ${id}`)
+  console.log(`停止会话: claude stop ${id}`)
+  return id
 }

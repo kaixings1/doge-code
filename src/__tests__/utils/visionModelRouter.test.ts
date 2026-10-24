@@ -27,8 +27,16 @@ describe('isVisionCapableModel', () => {
     expect(isVisionCapableModel('qwen3.7-max')).toBe(false)
   })
 
-  it('Ollama 本地模型不支持图片', () => {
+  it('Ollama 纯文本本地模型不支持图片', () => {
     expect(isVisionCapableModel('ollama/qwen2')).toBe(false)
+    expect(isVisionCapableModel('qwen2.5-coder:0.5b')).toBe(false)
+  })
+
+  it('本地多模态模型支持图片（不被 /llama/、/qwen2/ 误伤）', () => {
+    expect(isVisionCapableModel('llava:13b')).toBe(true)
+    expect(isVisionCapableModel('qwen2.5-vl:7b')).toBe(true)
+    expect(isVisionCapableModel('minicpm-v:8b')).toBe(true)
+    expect(isVisionCapableModel('gemma3:4b')).toBe(true)
   })
 
   it('未知模型默认视为支持（避免误路由）', () => {

@@ -1,0 +1,17 @@
+{
+  "_comment": [
+    "飞书 webhook 模式配置模板（需要公网地址/端口映射）。",
+    "一般不需要它：默认推荐长连接，见 settings.local.example.json。",
+    "只在不方便用长连接时使用本模板。"
+  ],
+  "env": {
+    "FEISHU_BRIDGE": "1",
+    "FEISHU_APP_ID": "cli_xxxxxxxxxxxxxxxx",
+    "FEISHU_APP_SECRET": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "FEISHU_WEBHOOK_PORT": "9901",
+    "FEISHU_VERIFICATION_TOKEN": "请填开放平台事件订阅里的 Verification Token",
+    "FEISHU_ENCRYPT_KEY": "可选：开放平台 Encrypt Key",
+    "FEISHU_BOT_OPEN_ID": "ou_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "FEISHU_WEBHOOK_URL": "https://your-public-host/feishu/webhook"
+  }
+}

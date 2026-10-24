@@ -24,13 +24,14 @@ describe('reset-limits', () => {
       it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 
-  describe('resetLimitsNonInteractive', () => {
+  describe('resetLimitsCommand', () => {
       it('should be defined', () => { expect(mod.default).toBeDefined() })
       it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
   })
 
-  describe('resetLimitsCommand', () => {
-      it('should be defined', () => { expect(mod.default).toBeDefined() })
-      it('should be a const', () => { expect(typeof mod.default).not.toBe(void 0) })
+  // 回归：曾有 resetLimits 与 resetLimitsNonInteractive 两个导出指向同一对象，
+  // 二者都被注册进命令列表 → `/reset-limits` 出现两次。
+  it('不再导出与 resetLimits 重复注册的同名命令别名', () => {
+    expect('resetLimitsNonInteractive' in mod).toBe(false)
   })
 })

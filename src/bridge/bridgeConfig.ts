@@ -44,6 +44,26 @@ export function getFeishuWebhookUrl(): string | void {
   return process.env.FEISHU_WEBHOOK_URL
 }
 
+/** 开放平台「事件订阅 → Verification Token」：配置后校验 header.token。 */
+export function getFeishuVerificationToken(): string | void {
+  return process.env.FEISHU_VERIFICATION_TOKEN
+}
+
+/** 开放平台「事件订阅 → Encrypt Key」：配置后回调体为密文，需解密。 */
+export function getFeishuEncryptKey(): string | void {
+  return process.env.FEISHU_ENCRYPT_KEY
+}
+
+/** 机器人自身 open_id：配置后群聊只响应 @机器人，而不是任意 @。 */
+export function getFeishuBotOpenId(): string | void {
+  return process.env.FEISHU_BOT_OPEN_ID
+}
+
+/** 长连接模式（无需公网回调）；为 1 时优先于 webhook。 */
+export function isFeishuLongConnectionEnabled(): boolean {
+  return process.env.FEISHU_LONG_CONNECTION === '1'
+}
+
 /** Ant-only dev override: CLAUDE_BRIDGE_OAUTH_TOKEN, else void 0. */
 export function getBridgeTokenOverride(): string | void {
   if (isLocalBridgeMode()) return 'local-bridge-token'

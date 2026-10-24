@@ -5,6 +5,7 @@ import {
   setCachedClaudeMdContent,
 } from './bootstrap/state.js'
 import { getLocalISODate } from './constants/common.js'
+import { getDeferredDynamicSections } from './constants/prompts.js'
 import {
   filterInjectedMemoryFiles,
   getClaudeMds,
@@ -178,7 +179,21 @@ export const getUserContext = memoize(
     return {
       ...(claudeMd && { claudeMd }),
       currentDate: `今天的日期是: ${getLocalISODate()}.`,
+      ...deferredDynamicSectionsContext(),
     }
   },
 )
+
+/**
+ * --exclude-dynamic-system-prompt-sections（对齐官方 v2.1.98）
+ *
+ * 该开关会把 cwd/env/git/记忆等动态段落从系统提示词里摘出、推迟到这里，
+ * 让系统提示词保持跨会话字节一致以提升 prompt cache 命中。内容本身不能丢，
+ * 因此作为首条用户上下文的一部分重新注入。
+ */
+function deferredDynamicSectionsContext(): { [k: string]: string } {
+  const sections = getDeferredDynamicSections()
+  if (sections.length === 0) return {}
+  return { dynamicSystemPromptSections: sections.join('\n\n') }
+}
 

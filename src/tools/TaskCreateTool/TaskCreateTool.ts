@@ -6,6 +6,7 @@ import {
 } from '../../utils/hooks.js'
 import { lazySchema } from '../../utils/lazySchema.js'
 import {
+  blockTask,
   createTask,
   deleteTask,
   getTaskListId,
@@ -28,6 +29,9 @@ const inputSchema = lazySchema(() =>
       .record(z.string(), z.unknown())
       .optional()
       .describe('附加到任务的任意元数据'),
+    owner: z.string().optional().describe('任务负责人（智能体名称）'),
+    blocks: z.array(z.string()).optional().describe('此任务阻塞的任务 ID'),
+    blockedBy: z.array(z.string()).optional().describe('阻塞此任务的任务 ID'),
   })
     .strict()
     .refine(data => data.subject || data.name, {
@@ -85,17 +89,29 @@ export const TaskCreateTool = buildTool({
   renderToolUseMessage() {
     return null
   },
-  async call({ subject, description, activeForm, metadata }, context) {
+  async call(
+    { subject, description, activeForm, metadata, owner, blocks, blockedBy },
+    context,
+  ) {
     const taskId = await createTask(getTaskListId(), {
       subject,
       description,
       activeForm,
       status: 'pending',
-      owner: undefined,
+      owner,
       blocks: [],
       blockedBy: [],
       metadata,
     })
+
+    // 创建时声明的依赖要真正落地：blocks / blockedBy 都走 blockTask，
+    // 由它同步维护反向边，避免出现单向悬空引用。
+    for (const blockedId of blocks ?? []) {
+      await blockTask(getTaskListId(), taskId, blockedId)
+    }
+    for (const blockerId of blockedBy ?? []) {
+      await blockTask(getTaskListId(), blockerId, taskId)
+    }
 
     const blockingErrors: string[] = []
     const generator = executeTaskCreatedHooks(

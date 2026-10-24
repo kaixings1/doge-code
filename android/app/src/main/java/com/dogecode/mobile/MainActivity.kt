@@ -406,7 +406,7 @@ class MainActivity : AppCompatActivity(),
         prefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         // 本地/云端模式的历史（远端会话的历史由各自的 SessionConn 持有）
         localMsgStore = MessageStore(this)
-        draftStore = DraftStore(this)
+        draftStore = DraftStore(getSharedPreferences("doge_mobile", Context.MODE_PRIVATE))
         localPrefs = LocalPrefs(this)
         scanPortPrefs = ScanPortPrefs(this)
         ipRangePrefs = IpRangePrefs(this)
@@ -454,7 +454,7 @@ class MainActivity : AppCompatActivity(),
             override fun appendToInput(text: String) {
                 msgInput.setText(text)
                 msgInput.setSelection(text.length)
-                draftStore.save(text)
+                draftStore.save(activeKey ?: "", text)
             }
 
             override fun currentInput(): String = msgInput.text.toString()
@@ -548,14 +548,46 @@ class MainActivity : AppCompatActivity(),
      */
     private var appLockOverlay: android.view.View? = null
 
+    /**
+     * 应用锁「离开超时」重新锁定：记录上次退到后台的时刻。
+     *
+     * [onPause] 时记下时间，[onResume] 时若离上次离开超过
+     * [APP_LOCK_TIMEOUT_MS] 且锁已开启，则重新弹锁 —— 防旁人拿你离开时的
+     * 手机看对话历史（原实现只在冷启动锁一次，离开再回不锁）。
+     */
+    private var lastBackgroundMs: Long = 0L
+
+    /** 离开超过该时长再回来需重新解锁（2 分钟：足够短防窥屏，又不会频繁弹锁烦人）。 */
+    private val APP_LOCK_TIMEOUT_MS = 2 * 60 * 1000L
+
+    private fun maybeRelockOnReturn() {
+        if (!coldStartDone) return           // 冷启动由 onCreate 的 setupAppLockGate 管
+        if (!AppLock.shouldLock(
+                localPrefs.getBool(LocalPrefs.KEY_APP_LOCK),
+                hasDeviceCredential(),
+            )
+        ) {
+            return
+        }
+        val away = System.currentTimeMillis() - lastBackgroundMs
+        if (away >= APP_LOCK_TIMEOUT_MS) {
+            // 先清旧遮罩（若上一次锁的回调异常残留），再弹新锁
+            removeAppLockOverlay()
+            setupAppLockGate()
+        }
+    }
+
+    /** 设备是否设置了锁屏凭据（异常时按「无」降级，绝不卡死）。 */
+    private fun hasDeviceCredential(): Boolean = runCatching {
+        (getSystemService(android.content.Context.KEYGUARD_SERVICE)
+            as android.app.KeyguardManager).isKeyguardSecure
+    }.getOrDefault(false)
+
     private fun setupAppLockGate() {
         val prefOn = localPrefs.getBool(LocalPrefs.KEY_APP_LOCK)
-        // isKeyguardSecure 可能在某些设备上抛异常，按「不支持」降级，绝不卡死
-        val hasCredential = runCatching {
-            val km = getSystemService(android.content.Context.KEYGUARD_SERVICE)
-                as android.app.KeyguardManager
-            km.isKeyguardSecure
-        }.getOrDefault(false)
+        // 设备是否设锁屏凭据（异常时按「无」降级，绝不卡死）—— 抽成
+        // hasDeviceCredential() 与超时重锁路径共用，避免两处漂移。
+        val hasCredential = hasDeviceCredential()
 
         // 不需要锁（默认关闭 / 设备未设凭据）：完全不创建遮罩，零风险。
         // 原实现先 addContentView 纯黑遮罩、紧接着立即 removeView —— 但 onCreate
@@ -624,12 +656,26 @@ class MainActivity : AppCompatActivity(),
         // 视图就绪后恢复草稿（此前在 bindChatViews 里做过，这里再兜一次：
         // 若 Fragment 回调因任何原因未触发，至少有默认值不崩）
         if (::msgInput.isInitialized) {
-            msgInput.setText(draftStore.load())
+            msgInput.setText(draftStore.load(activeKey ?: ""))
         }
         if (::urlInput.isInitialized && prefs.getBoolean(KEY_AUTOCONNECT, true)) {
             connectWith(urlInput.text.toString(), secretInput.text.toString())
         }
         startConnectionSweeper()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // 离开超时后回来重新锁定（防旁人拿你离开时的手机看历史）。
+        // 必须放 onResume 而非 onStart：onStart 在 onCreate 之后也会跑，
+        // 而冷启动的锁由 setupAppLockGate 负责，这里只管「中途离开再回」。
+        maybeRelockOnReturn()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // 记下离开前台时刻，供 onResume 判断是否超时需重新锁定
+        lastBackgroundMs = System.currentTimeMillis()
     }
 
     /**
@@ -1332,6 +1378,12 @@ class MainActivity : AppCompatActivity(),
         sessionFragment!!.knownSessionsProvider = {
             knownSessions.list().mapNotNull { it.toSessionOrNull() }
         }
+        // 未读数：按 host:port 匹配到对应的连接单元。后台会话收到助手回复时
+        // 累加（见 handleBackgroundIncoming），切过去即清零。
+        sessionFragment!!.unreadProvider = { s ->
+            // 必须用 MessageStore.keyFor（含字符清洗），它是 connections 的实际键
+            connections[MessageStore.keyFor(s.host, s.port)]?.unread ?: 0
+        }
         // 已知会话的「真实可用地址」：用它落库的 addresses（服务端下发过 LAN/
         // Tailscale/隧道），比 host:port 拼的 http 更准 —— 尤其 Tailseed 名与
         // 隧道域名的场景。探测存活 / 切换连接都该用它。
@@ -1783,8 +1835,9 @@ class MainActivity : AppCompatActivity(),
     /** 绑定对话页的事件监听。视图重建时会重跑，故必须是幂等的。 */
     private fun bindChatViews() {
         // 草稿恢复：Activity 重建（旋屏/被回收）时输入框内容默认会丢，
-        // 用户打了一半的长需求就白打了
-        msgInput.setText(draftStore.load())
+        // 用户打了一半的长需求就白打了。按当前会话加载各自的草稿，
+        // 切到别的会话不会把上一会话的半截输入带过来。
+        msgInput.setText(draftStore.load(activeKey ?: ""))
 
         sendBtn.setOnClickListener { sendCurrent() }
         stopBtn.setOnClickListener { activeBackend.interrupt() }
@@ -2010,6 +2063,10 @@ class MainActivity : AppCompatActivity(),
 
     override fun onDestroy() {
         super.onDestroy()
+        // 先刷完缓冲（不丢已收到的回放消息），再清掉待执行回调，
+        // 避免 Activity 销毁后 Handler 仍持有它。
+        mainHandler.removeCallbacks(replayFlush)
+        flushReplayBuffer()
         stopConnectionSweeper()
         // 关闭**所有**会话的连接（真·并行下有多条，逐一关闭）。
         // 不关会导致后台连接的 WS 与回调继续存活，Activity 已销毁时
@@ -2135,12 +2192,12 @@ class MainActivity : AppCompatActivity(),
      * 保证「同一地址无论何时连接，key 恒定」，历史才不会错位。
      */
     private fun keyForUrl(url: String): String {
-        val host = runCatching { java.net.URI(url).host }.getOrNull()
-            ?: BridgeUrl.hostOf(url).ifBlank { "127.0.0.1" }
-        val port = runCatching { java.net.URI(url).port }.getOrNull()?.takeIf { it > 0 }
-            ?: BridgeUrl.portOf(url).takeIf { it > 0 }
-            ?: PORT
-        return MessageStore.keyFor(host, port)
+        // 统一走 BridgeUrl（内部 normalize + URI 解析），与 KnownSessionStore.
+        // toSessionOrNull 的 host 口径一致 —— 否则同一条会话在「连接 key」与
+        // 「会话列表项 host」上算出不同的值（未读角标、置顶都会失配）。
+        // normalize 还会自愈老版本存下的脏地址（http://wss://...），
+        // 裸 URI 解析做不到这一点。
+        return MessageStore.keyFor(BridgeUrl.hostOf(url), BridgeUrl.portOf(url))
     }
 
     /**
@@ -2155,6 +2212,11 @@ class MainActivity : AppCompatActivity(),
         val conn = connections[key] ?: return
         activeKey = key
         sessionLabel = conn.label
+        // 切到该会话即视为「已读」：清零角标并刷新列表
+        if (conn.unread != 0) {
+            conn.unread = 0
+            sessionFragment?.refreshUnreadBadges()
+        }
         if (persistAddress && ::urlInput.isInitialized) {
             urlInput.setText(conn.address)
         }
@@ -2170,6 +2232,9 @@ class MainActivity : AppCompatActivity(),
         setStatus(conn.connected, if (conn.connected) getString(R.string.status_connected)
             else getString(R.string.status_connecting))
         sessionFragment?.setCurrentPort(BridgeUrl.portOf(conn.address))
+        // 切换会话时加载该会话自己的草稿（不重建视图，故此处显式刷新输入框）。
+        // 否则切到会话 B 时输入框还停留会话 A 的半截输入（草稿串会话 bug）。
+        if (::msgInput.isInitialized) msgInput.setText(draftStore.load(key))
     }
 
     /**
@@ -2508,6 +2573,11 @@ class MainActivity : AppCompatActivity(),
                     consecutiveConnectFailures = 0
                     failureHintShown = false
                 }
+                // 缓存本地已落盘的历史快照，供随后到达的重连回放去重。
+                // 为什么不能只比 adapter.snapshot()：activateSession 的历史
+                // 加载是异步 thread，回放帧可能先于它到达，那时 snapshot 为空
+                // → 去重失效 → 同一条历史在列表里出现两次（实测复现）。
+                localHistorySnapshot = conn?.store?.load().orEmpty()
                 interactive = ev.interactive
                 // 记住本会话（多会话管理）：服务端下发了 lan/tunnel 地址与
                 // 标识，落库后会话页无需扫描即可列出它 —— 这是 TUNNEL/户外
@@ -2606,6 +2676,20 @@ class MainActivity : AppCompatActivity(),
                 // 能看到完整历史，且不必事先盯着它。
                 if (!isActive) {
                     handleBackgroundIncoming(key, ev)
+                    return
+                }
+                // 重连历史回放：服务端在新设备连上时把当前会话历史定向补发一遍。
+                // 本地可能已有同内容（进程存活场景已落盘），故按 (role,text) 精确去重；
+                // 且回放不触发语音播报/通知 —— 它是补历史，不是新事件。
+                if (ev.replay) {
+                    // 与 adapter / 本批缓冲 / 本地历史快照三处去重
+                    // （见 isReplayDuplicate：历史异步加载导致前面两处可能为空）
+                    if (!isReplayDuplicate(ev.role, ev.text)) {
+                        bufferReplayMessage(
+                            key,
+                            ChatMessage(ChatMessage.newId(), ev.role, ev.text, System.currentTimeMillis()),
+                        )
+                    }
                     return
                 }
                 // 服务端会把消息广播给所有连接的设备（多设备同步）：B 设备
@@ -2712,7 +2796,7 @@ class MainActivity : AppCompatActivity(),
                 if (isActive) endTurn()
             }
             is BridgeClient.Event.ToolActivity -> {
-                if (isActive) onToolActivity(ev)
+                if (isActive) onToolActivity(ev, key)
             }
             is BridgeClient.Event.Usage -> {
                 if (isActive) onUsage(ev)
@@ -2737,9 +2821,22 @@ class MainActivity : AppCompatActivity(),
     private fun handleBackgroundIncoming(key: String, ev: BridgeClient.Event.Incoming) {
         val conn = connections[key] ?: return
         conn.lastActivityAt = System.currentTimeMillis()
+        // 后台会话的助手回复 → 未读 +1（会话列表角标据此显示）。
+        // 回放消息不计未读：它是补历史，不是「你还没看的新内容」。
+        if (ev.role == "assistant" && !ev.replay) {
+            conn.unread++
+            sessionFragment?.refreshUnreadBadges()
+        }
         val msg = ChatMessage(ChatMessage.newId(), ev.role, ev.text, System.currentTimeMillis())
         // 追加到该会话自己的历史文件（不动 adapter）
         val history = conn.store.load()
+        if (ev.replay) {
+            // 历史回放：本地已有同内容则跳过，且绝不发通知（补历史不是新事件）
+            if (history.any { it.role == ev.role && it.text == ev.text }) return
+            history.add(msg)
+            conn.store.saveAsync(history)
+            return
+        }
         history.add(msg)
         conn.store.saveAsync(history)
         // 通知（仅 assistant 回复、且用户没在看着这台手机）
@@ -2792,6 +2889,9 @@ class MainActivity : AppCompatActivity(),
             android.util.Log.w(TAG, "流式增量跳号: 期望 ${lastDeltaSeq + 1} 实得 ${ev.seq}")
         }
         lastDeltaSeq = ev.seq
+        // 生成刚开始（buffer 由空变非空）时点亮屏幕常亮：用户盯着看 AI
+        // 生成几十秒，系统自动熄屏会打断阅读。定稿时再关（见 setStreamingPreview(null) 处）。
+        if (streamingBuffer.isEmpty()) setScreenWake(true)
         streamingBuffer.append(ev.text)
         // 「流式显示」关闭时不渲染增量预览 —— 等定稿消息到达再整体显示。
         // 好处：省电省流量，且避免长回复时列表频繁重绘。
@@ -2889,7 +2989,33 @@ class MainActivity : AppCompatActivity(),
      *   running 事件新建气泡；done/error 结果事件按 toolUseId 配对合并进
      *   同一条气泡，避免「运行中」与「结果」各占一条把列表刷爆。
      */
-    private fun onToolActivity(ev: BridgeClient.Event.ToolActivity) {
+    private fun onToolActivity(ev: BridgeClient.Event.ToolActivity, key: String = activeKey ?: "") {
+        // 重连历史回放：思考/工具活动按 (kind, 名称, 详情) 与本地去重，
+        // 已有的跳过 —— 否则重连后历史里会冒出一堆重复的工具气泡。
+        // 注：回放的 state 一律是 done，故不走下面的「运行中」分支。
+        if (ev.replay) {
+            // 标题必须与实时分支**完全同构**（含 target），否则带 target 的工具
+            // 在去重时会失配 → 重复气泡。
+            val title = buildString {
+                if (ev.kind == "thinking") {
+                    append("🧠 思考")
+                } else {
+                    append("▸ ").append(ev.name.ifBlank { "工具" })
+                    if (ev.target.isNotBlank()) append("  ").append(ev.target)
+                }
+            }
+            if (!isReplayToolDuplicate(title, ev.detail)) {
+                val msg = ChatMessage.tool(
+                    title = title,
+                    detail = ev.detail,
+                    result = ev.result,
+                    state = "done",
+                    toolUseId = ev.toolUseId,
+                )
+                bufferReplayMessage(key, msg)
+            }
+            return
+        }
         if (ev.kind == "agent") {
             val line = buildString {
                 append("◈ ").append(ev.name)
@@ -2964,6 +3090,8 @@ class MainActivity : AppCompatActivity(),
         if (streamingBuffer.isNotEmpty()) {
             streamingBuffer.setLength(0)
             adapter.setStreamingPreview(null)
+            // 生成结束：解除屏幕常亮，避免无谓耗电（生成期间为防熄屏打断阅读而开）
+            setScreenWake(false)
         }
         lastDeltaSeq = 0
         if (activityLines.isNotEmpty()) {
@@ -3350,6 +3478,109 @@ class MainActivity : AppCompatActivity(),
         store?.saveAsync(adapter.snapshot())
     }
 
+    // ── 重连历史回放：批量刷入（避免逐条全表刷新导致卡顿）──
+
+    /** 主线程 Handler（回放批刷等轻量调度用）。 */
+    private val mainHandler = android.os.Handler(android.os.Looper.getMainLooper())
+
+    /**
+     * 待刷入 adapter 的回放消息缓冲（按到达顺序）。
+     *
+     * 同时记下这些消息属于哪个会话（key）：回放期间用户可能切到别的会话，
+     * 若 flush 时无脑刷进当前 adapter，会把 A 会话的回放串到 B 会话界面上。
+     */
+    private val replayBuffer = mutableListOf<ChatMessage>()
+    private var replayBufferKey: String? = null
+
+    /**
+     * 连接到某会话时缓存的本地历史快照（用于重连回放去重）。
+     *
+     * 见 Connected 事件处的说明：adapter 的历史加载是异步的，回放帧可能
+     * 先到。用这份快照兜底，避免「同一条历史重复出现」。
+     */
+    private var localHistorySnapshot: List<ChatMessage> = emptyList()
+
+    /** 判断一条回放消息是否已存在于本地（adapter / 缓冲 / 历史快照）。 */
+    private fun isReplayDuplicate(role: String, text: String): Boolean {
+        if (adapter.snapshot().any { it.role == role && it.text == text }) return true
+        if (replayBuffer.any { it.role == role && it.text == text }) return true
+        if (localHistorySnapshot.any { it.role == role && it.text == text }) return true
+        return false
+    }
+
+    /** 工具类回放去重（标题 + 详情）。 */
+    private fun isReplayToolDuplicate(title: String, detail: String): Boolean {
+        if (adapter.snapshot().any { it.isTool && it.text == title && it.toolDetail == detail }) return true
+        if (replayBuffer.any { it.isTool && it.text == title && it.toolDetail == detail }) return true
+        if (localHistorySnapshot.any { it.isTool && it.text == title && it.toolDetail == detail }) return true
+        return false
+    }
+
+    private val replayFlush = Runnable { flushReplayBuffer() }
+
+    /**
+     * 追加一条回放消息到缓冲，并安排一次延迟批量刷入。
+     *
+     * 服务端回放是一串连续 WS 帧（几十到几百条）。逐条走 append 会
+     * 每条一次全表 notifyDataSetChanged + 全量落盘 → 明显卡顿。
+     * 这里攒 80ms 后一次性 [ChatAdapter.appendBatch] + 一次落盘。
+     */
+    private fun bufferReplayMessage(key: String, msg: ChatMessage) {
+        // 缓冲只服务一个会话；若来源 key 变了，先把旧的刷掉，避免串会话
+        if (replayBufferKey != null && replayBufferKey != key) flushReplayBuffer()
+        replayBufferKey = key
+        replayBuffer.add(msg)
+        mainHandler.removeCallbacks(replayFlush)
+        mainHandler.postDelayed(replayFlush, 80L)
+    }
+
+    private fun flushReplayBuffer() {
+        if (replayBuffer.isEmpty()) return
+        val batch = replayBuffer.toList()
+        val srcKey = replayBufferKey
+        replayBuffer.clear()
+        replayBufferKey = null
+        if (batch.isEmpty()) return
+        // 回放期间用户可能已切走：不是当前活动会话 → 只落盘到它自己的历史，
+        // 绝不刷进当前 adapter（否则 A 会话的回放串到 B 界面上）。
+        if (srcKey != null && !SessionRouter.affectsUi(srcKey, activeKey)) {
+            val conn = connections[srcKey]
+            if (conn != null) {
+                val history = conn.store.load()
+                // 落盘前按 (role,text)/(工具标题+detail) 去重，防止本地已存在
+                for (m in batch) {
+                    val dup = history.any {
+                        if (m.isTool) it.isTool && it.text == m.text && it.toolDetail == m.toolDetail
+                        else it.role == m.role && it.text == m.text
+                    }
+                    if (!dup) history.add(m)
+                }
+                conn.store.saveAsync(history)
+            }
+            return
+        }
+        // 补回合分组键：与实时 append 路径一致（上一条不是 tool 的工具消息
+        // 作为组首携带折叠键），否则回放的工具气泡无法与后续成员成组。
+        var prevIsTool = adapter.snapshot().lastOrNull()?.isTool == true
+        val prepared = ArrayList<ChatMessage>(batch.size)
+        for (m in batch) {
+            // 最终去重：历史异步加载可能在我们入缓冲之后才完成，
+            // 此时 adapter 里已有同内容 —— 再查一次 historySnapshot 与 adapter。
+            val dup = if (m.isTool) isReplayToolDuplicate(m.text, m.toolDetail)
+            else adapter.snapshot().any { it.role == m.role && it.text == m.text } ||
+                localHistorySnapshot.any { it.role == m.role && it.text == m.text }
+            if (dup) continue
+            prepared.add(
+                if (m.isTool && !prevIsTool) m.copy(turnGroupKey = TurnGrouping.collapseKeyFor(m.id)) else m,
+            )
+            prevIsTool = m.isTool
+        }
+        if (prepared.isEmpty()) return
+        val pos = adapter.appendBatch(prepared)
+        persist()
+        if (autoScrollPrefsCache && pos >= 0) list.scrollToPosition(pos)
+    }
+
     // ── 发送 ──
 
     private fun sendCurrent() {
@@ -3427,6 +3658,7 @@ class MainActivity : AppCompatActivity(),
         list.scrollToPosition(pos)
         msgInput.setText("")
         saveDraft("")   // 已发送，草稿使命结束
+        buzz()          // 触觉确认：发送成功
 
         // 文本附件拼进正文：走普通 sendMessage 路径，服务端无需改动
         val texts = inputActions.pendingTextAttachments()
@@ -3818,6 +4050,8 @@ class MainActivity : AppCompatActivity(),
      */
     private fun showMoreActions() {
         val items = mutableListOf<Pair<String, () -> Unit>>()
+        items.add("粘贴剪贴板文本" to { pasteFromClipboard() })
+        items.add("粘贴剪贴板文本" to { pasteFromClipboard() })
         items.add("附加图片（拍照 / 相册）" to { inputActions.pickImage() })
         items.add("附加文本文件（日志 / 配置 / 代码）" to { inputActions.pickTextFile() })
         items.add("快捷指令与命令" to { showQuickPrompts() })
@@ -3833,6 +4067,31 @@ class MainActivity : AppCompatActivity(),
             }
             .setNegativeButton("取消", null)
             .show()
+    }
+
+    /**
+     * 从系统剪贴板取文本填入输入框。
+     *
+     * 用户主动从「更多」菜单触发 —— 与「自动粘贴」不同，不会在用户毫无预期时
+     * 覆盖正在打的字。语义：**不替换** —— 输入框为空时直接填，非空时追加到末尾
+     * （常见场景：从电脑/别处复制一段报错或代码，回来补进当前半截请求）。
+     *
+     * 防御：剪贴板为空/非文本/异常时静默无操作（不弹错误，避免打扰）；
+     * 复制的不是文本（如图片）时 `charSequence` 为 null，安全跳过。
+     */
+    private fun pasteFromClipboard() {
+        val cm = runCatching {
+            getSystemService(android.content.Context.CLIPBOARD_SERVICE)
+                as? android.content.ClipboardManager
+        }.getOrNull() ?: return
+        val clip = runCatching { cm.primaryClip }.getOrNull()
+        val text = clip?.getItemAt(0)?.text?.toString().orEmpty()
+        if (text.isBlank()) return
+        val current = msgInput.text.toString()
+        val merged = if (current.isBlank()) text else "$current$text"
+        msgInput.setText(merged)
+        msgInput.setSelection(merged.length)
+        draftStore.save(activeKey ?: "", merged)
     }
 
     /**
@@ -4061,8 +4320,46 @@ class MainActivity : AppCompatActivity(),
      * 空内容时**删除键**而不是存空串：否则用户主动清空输入框后，
      * Activity 重建会把清空前的内容「复活」，看起来像幽灵文本。
      */
-    /** 草稿保存。逻辑在 [DraftStore]（空内容必须删键，已单测）。 */
-    private fun saveDraft(text: String) = draftStore.save(text)
+    /** 草稿保存。逻辑在 [DraftStore]（空内容必须删键，已单测）。按当前会话隔离。 */
+    private fun saveDraft(text: String) = draftStore.save(activeKey ?: "", text)
+
+    /**
+     * 屏幕常亮开关。
+     *
+     * AI 生成通常持续几十秒，期间若系统熄屏锁屏会打断用户阅读。生成开始时
+     * 开（[onStreamDelta] 首次触发），定稿时关（[clearStreamingState]）。
+     *
+     * 用窗口级 `keepScreenOn` 而非 WakeLock：前者随窗口可见性自动失效
+     * （Activity 退到后台/熄屏时系统自动夺回），不会像 WakeLock 那样
+     * 泄漏成「永远亮屏」；且无需权限声明。
+     */
+    private fun setScreenWake(active: Boolean) {
+        if (!::list.isInitialized) return
+        list.keepScreenOn = active
+    }
+
+    /**
+     * 触觉反馈：轻震动一下。
+     *
+     * 用于「发送成功 / 任务完成 / 需批准」等关键节点，给用户一个无需看屏的
+     * 确认。用系统 [android.os.Vibrator]（普通震动，无需运行时授权，仅 manifest
+     * 声明 `VIBRATE`），API 26+ 走 [android.os.VibrationEffect.createOneShot]。
+     *
+     * 防御：设备无振动器（电视/模拟器）或调用异常时静默降级，绝不抛错中断主流程。
+     */
+    @Suppress("DEPRECATION")
+    private fun buzz() {
+        runCatching {
+            val vm = getSystemService(android.content.Context.VIBRATOR_SERVICE)
+                as? android.os.Vibrator ?: return
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                vm.vibrate(android.os.VibrationEffect.createOneShot(30, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                @Suppress("DEPRECATION")
+                vm.vibrate(30)
+            }
+        }
+    }
 
     private fun hideKeyboard() {
         val im = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -4083,6 +4380,9 @@ class MainActivity : AppCompatActivity(),
      * 不该默认打断用户正在听的音频）。
      */
     private fun announceCompletion(replyText: String) {
+        // 触觉反馈独立于语音开关：即便用户关了语音播报，任务完成也轻震一下
+        // 作为「不用看屏也知道跑完了」的确认
+        buzz()
         if (!localPrefs.getBool(LocalPrefs.KEY_VOICE_ANNOUNCE)) return
         applyVoiceRate()
         voiceAnnouncer.speak(VoiceAnnouncer.completionSpeech(replyText))
@@ -4097,6 +4397,8 @@ class MainActivity : AppCompatActivity(),
      * 用户在电脑前时手机不该震，但语音是用户主动开的，不该被它拦。
      */
     private fun announcePermission(toolName: String) {
+        // 需批准是阻塞等待，强提示：触觉反馈独立于语音开关，务必震一下
+        buzz()
         if (!localPrefs.getBool(LocalPrefs.KEY_VOICE_PERMISSION)) return
         applyVoiceRate()
         voiceAnnouncer.speak(VoiceAnnouncer.permissionSpeech(toolName))

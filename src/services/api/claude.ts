@@ -887,6 +887,9 @@ export async function* executeNonStreamingRequest(
       signal: retryOptions.signal,
       initialConsecutive529Errors: retryOptions.initialConsecutive529Errors,
       querySource: retryOptions.querySource,
+      // 标记本次重试循环属于非流式回退，使超时重发上限
+      // （CLAUDE_CODE_NONSTREAMING_TIMEOUT_RETRIES）能单独生效。
+      isNonStreamingFallback: true,
     },
   )
 

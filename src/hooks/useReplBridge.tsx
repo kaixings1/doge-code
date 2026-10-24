@@ -7,7 +7,7 @@ import { buildBridgeConnectUrl } from '../bridge/bridgeStatusUtil.js';
 import { extractInboundMessageFields } from '../bridge/inboundMessages.js';
 import type { BridgeState, ReplBridgeHandle } from '../bridge/replBridge.js';
 import { setReplBridgeHandle } from '../bridge/replBridgeHandle.js';
-import { getActiveMobileBridgeServer, pushToMobileClients } from '../bridge/mobileBridge.js';
+import { getActiveMobileBridgeServer, pushToMobileClients, registerMobileHistoryProvider, type MobileReplayItem } from '../bridge/mobileBridge.js';
 import type { Command } from '../commands.js';
 import { getSlashCommandToolSkills, isBridgeSafeCommand } from '../commands.js';
 import { getRemoteSessionUrl } from '../constants/product.js';
@@ -78,7 +78,71 @@ export function useReplBridge(messages: Message[], setMessages: (action: React.S
   mainLoopModelRef.current = mainLoopModel;
   const messagesRef = useRef(messages);
   messagesRef.current = messages;
-  const store = useAppStateStore();
+
+  // 注册「历史消息提供者」供移动端重连回放（catch-up）。
+  // 设备断网/切后台期间产生的消息，实时广播送不到；它重连时由
+  // mobileBridge 调用此 getter 拿当前会话全文，定向回放给该设备。
+  // 读 messagesRef（始终指向最新数组），故只需注册一次、无依赖。
+  useEffect(() => {
+    registerMobileHistoryProvider(() => {
+      const out: MobileReplayItem[] = [];
+      // 工具结果按 tool_use_id 索引，等遇到对应的 tool_use 时配对合并，
+      // 避免「命令」与「结果」在历史里各占一条（与实时推送同样的合并语义）。
+      const resultById = new Map<string, { output: string; error: boolean }>();
+      const blocksOf = (m: Message): any[] => {
+        const c = (m as { message?: { content?: unknown } }).message?.content;
+        return Array.isArray(c) ? (c as any[]) : [];
+      };
+      // 先扫一遍收集 tool_result（它们在后续 user 消息里）
+      for (const m of messagesRef.current) {
+        for (const b of blocksOf(m)) {
+          if (b && b.type === 'tool_result' && typeof b.tool_use_id === 'string') {
+            const outText = typeof b.content === 'string'
+              ? b.content
+              : Array.isArray(b.content)
+                ? b.content.filter((x: any) => x?.type === 'text').map((x: any) => x.text).join('\n')
+                : '';
+            resultById.set(b.tool_use_id, { output: outText, error: b.is_error === true });
+          }
+        }
+      }
+      for (const m of messagesRef.current) {
+        if (!m) continue;
+        if (m.type !== 'user' && m.type !== 'assistant') continue;
+        for (const b of blocksOf(m)) {
+          // 思考块：让手机历史也看得到「AI 在想什么」
+          if (b && b.type === 'thinking' && typeof b.thinking === 'string' && b.thinking.trim()) {
+            out.push({ role: 'thinking', text: b.thinking });
+          }
+          // 工具调用：配对结果
+          if (b && b.type === 'tool_use' && typeof b.name === 'string') {
+            const id = typeof b.id === 'string' ? b.id : '';
+            const res = id ? resultById.get(id) : null;
+            // target 取 input 里最能说明「这次在做什么」的字段 —— 与手机端
+            // 实时气泡标题口径一致（标题含 target），否则去重会失配。
+            const inp = (b.input ?? {}) as Record<string, unknown>
+            const target = String(
+              inp.file_path ?? inp.path ?? inp.command ?? inp.pattern ?? inp.query ?? '',
+            ).slice(0, 200);
+            out.push({
+              role: 'tool',
+              name: b.name,
+              target,
+              detail: typeof b.input === 'object' ? JSON.stringify(b.input) : String(b.input ?? ''),
+              result: res ? res.output : '',
+              toolUseId: id,
+            });
+          }
+        }
+        // 正文放在活动之后：与实时顺序一致（先思考/工具，再最终回复）
+        const text = extractPlainText(m);
+        if (text) out.push({ role: m.type, text });
+      }
+      return out;
+    });
+    return () => registerMobileHistoryProvider(null);
+  }, []);
+
   const { addNotification } = useNotifications();
   // 始终调用 Hook（React Hooks 规则要求），通过 isLocalBridgeMode 在运行时控制
   const replBridgeEnabled = feature('BRIDGE_MODE') ?
@@ -582,6 +646,31 @@ export function useReplBridge(messages: Message[], setMessages: (action: React.S
     logForDebugging(
       `[mobile-push] effect 触发，messages=${messages.length}，range=[${start},${messages.length})，已推送=${pushed}，空消息=${skippedEmpty}，结构未识别=${skippedUnrecognized}，客户端=${server.getClientCount()}`,
     );
+  }, [messages]);
+
+  // 飞书推送：与手机端同理，必须独立于上面的桥接 effect。
+  // 飞书入站走 enqueue（见 services/feishu/index.ts），回复从这里取，
+  // 按入站顺序写回对应卡片。未启用飞书或无等待中的请求时静默跳过。
+  const feishuPushIndexRef = useRef(0);
+  useEffect(() => {
+    // 游标必须先推进再判断，理由同手机端（避免连上后一次性灌入历史）。
+    const start = Math.min(feishuPushIndexRef.current, messages.length);
+    feishuPushIndexRef.current = messages.length;
+    // 动态导入：飞书服务依赖 webhook/卡片模块，不应进入每个会话的首屏路径。
+    void import('../services/feishu/index.js')
+      .then(({ getFeishuBridge, pushAssistantTextToFeishu }) => {
+        // 未启动飞书桥接是常态，直接返回（不产生日志噪音）。
+        if (!getFeishuBridge()) return;
+        for (let i = start; i < messages.length; i++) {
+          const m = messages[i];
+          if (!m || m.type !== 'assistant') continue;
+          const text = extractPlainText(m);
+          if (!text) continue;
+          // 旁路能力：异常不得影响主流程
+          void pushAssistantTextToFeishu(text).catch(() => {});
+        }
+      })
+      .catch(() => {});
   }, [messages]);
 
   const sendBridgeResult = useCallback(() => {

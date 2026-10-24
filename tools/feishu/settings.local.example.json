@@ -1,0 +1,17 @@
+{
+  "_comment": [
+    "飞书桥接配置模板。用法：把本文件复制为 .claude/settings.local.json 的 env 字段，",
+    "或复制到 ~/.doge/settings.json（用户级，优先）。不要直接把真实密钥提交到仓库。",
+    "项目级 .claude/settings.json 的 env 只对 SAFE_ENV_VARS 白名单生效，",
+    "FEISHU_* 不在白名单里，因此请放在 settings.local.json（本地）或用户级 settings.json。",
+    "",
+    "推荐：启用 FEISHU_LONG_CONNECTION=1（长连接）。无需公网地址、无需回调 URL；",
+    "配对流程见同目录 README.md。下面的 webhook 相关项只在长期连接关闭时才需要。"
+  ],
+  "env": {
+    "FEISHU_BRIDGE": "1",
+    "FEISHU_APP_ID": "cli_xxxxxxxxxxxxxxxx",
+    "FEISHU_APP_SECRET": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "FEISHU_LONG_CONNECTION": "1"
+  }
+}

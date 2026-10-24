@@ -90,6 +90,48 @@ const FLOOR_OUTPUT_TOKENS = 3000     // 最小输出 token 数
 const MAX_529_RETRIES = 3            // 最大 529 错误重试次数
 export const BASE_DELAY_MS = 20_000   // 基础延迟 20 秒
 
+/**
+ * 过载（529/503）退避基数，对齐官方 CLAUDE_CODE_OVERLOADED_RETRY_BASE_DELAY_MS（v2.1.292）。
+ *
+ * 未设置或非法值（NaN / <=0）回落到 BASE_DELAY_MS —— 保持既有行为不变。
+ * 国内供应商（DeepSeek 等）高峰期过载时，可据此调大初始等待避免连环撞限流，
+ * 或调小以更快恢复。
+ */
+/** @internal 导出以便单测直接验证取值语义 */
+export function getOverloadedRetryBaseDelayMs(): number {
+  const raw = Number(process.env.CLAUDE_CODE_OVERLOADED_RETRY_BASE_DELAY_MS)
+  return Number.isFinite(raw) && raw > 0 ? raw : BASE_DELAY_MS
+}
+
+/**
+ * 过载（529/503）退避上限，对齐官方 CLAUDE_CODE_OVERLOADED_RETRY_MAX_DELAY_MS（v2.1.296）。
+ *
+ * 未设置或非法值（NaN / <=0）回落到 32000（即此前 529 退避的硬编码上限），
+ * 行为与之前一致。国内供应商高峰期过载时，可据此放宽上限避免指数退避过早封顶，
+ * 或收紧上限以更快失败而非长时间空等。
+ */
+/** @internal 导出以便单测直接验证取值语义 */
+export function getOverloadedRetryMaxDelayMs(): number {
+  const raw = Number(process.env.CLAUDE_CODE_OVERLOADED_RETRY_MAX_DELAY_MS)
+  return Number.isFinite(raw) && raw > 0 ? raw : 32000
+}
+
+/**
+ * 非流式回退的超时重发上限，
+ * 对齐官方 CLAUDE_CODE_NONSTREAMING_TIMEOUT_RETRIES（v2.1.285）。
+ *
+ * 返回 null 表示「不额外限制」——未设置或非法值（NaN / 负数）时保持既有行为，
+ * 仍受全局 maxRetries 约束。允许 0（显式表示超时后不再重发）。
+ */
+/** @internal 导出以便单测直接验证取值语义 */
+export function getNonStreamingTimeoutRetries(): number | null {
+  const rawText = process.env.CLAUDE_CODE_NONSTREAMING_TIMEOUT_RETRIES
+  if (!rawText || rawText.trim() === '') return null
+  const raw = parseInt(rawText, 10)
+  if (!Number.isFinite(raw) || raw < 0) return null
+  return raw
+}
+
 // 用户正在等待结果的前台查询来源 —— 这些会在 529 错误时重试
 // 其他所有（摘要、标题、建议、分类器）会立即退出：在容量级联期间
 // 每次重试会产生 3-10 倍网关放大，用户根本看不到这些失败
@@ -172,6 +214,14 @@ interface RetryOptions {
    * 以确保无论哪种请求模式触发过载，529 错误前的总数都一致。
    */
   initialConsecutive529Errors?: number
+  /**
+   * 本次重试循环是否为「流式失败后的非流式回退请求」。
+   *
+   * 用于 CLAUDE_CODE_NONSTREAMING_TIMEOUT_RETRIES（官方 v2.1.285）：
+   * 非流式回退的超时重发次数可单独设上限，而不与普通错误共用 maxRetries。
+   * 未设置该值时行为不变。
+   */
+  isNonStreamingFallback?: boolean
 }
 
 export class CannotRetryError extends Error {
@@ -210,6 +260,12 @@ export async function* withRetry<T>(
   options: RetryOptions,
 ): AsyncGenerator<SystemAPIErrorMessage, T> {
   const maxRetries = getMaxRetries(options)
+  // 非流式回退的超时重发上限（CLAUDE_CODE_NONSTREAMING_TIMEOUT_RETRIES，官方 v2.1.285）。
+  // 只有显式标记为非流式回退时才生效；未设置环境变量时不做额外限制（行为不变）。
+  const nonStreamingTimeoutCap = options.isNonStreamingFallback
+    ? getNonStreamingTimeoutRetries()
+    : null
+  let nonStreamingTimeoutCount = 0
   // DOGE: 创建立即重试 signal，用于 Ctrl+Y 中断 sleep()
   let retryNow = new AbortController()
   _retryNowController = retryNow
@@ -493,6 +549,14 @@ export async function* withRetry<T>(
         (error instanceof APIConnectionError &&
           error.message.toLowerCase().includes('timeout'))
       if (isTimeoutError && !persistent) {
+        // 非流式回退的超时重发上限（CLAUDE_CODE_NONSTREAMING_TIMEOUT_RETRIES）。
+        // 达到上限即放弃，而不是让慢后端把非流式回退拖到全局 maxRetries。
+        if (nonStreamingTimeoutCap !== null) {
+          if (nonStreamingTimeoutCount >= nonStreamingTimeoutCap) {
+            throw new CannotRetryError(error, retryContext)
+          }
+          nonStreamingTimeoutCount++
+        }
         // 超时退避使用更短的初始延迟（10s），加快尝试频率
         delayMs = getRetryDelay(attempt, null, 32000, 10_000)
       } else if (persistent && error instanceof APIError && error.status === 429) {
@@ -525,8 +589,20 @@ export async function* withRetry<T>(
         )
       } else {
         // limit_burst_rate 与普通 429 一样走 getRetryDelay
-        // 使用 2x 指数退避 + 25% jitter，起步 BASE_DELAY_MS(20s)
-        delayMs = getRetryDelay(attempt, retryAfter, 32000, BASE_DELAY_MS)
+        // 使用 2x 指数退避 + 25% jitter。
+        // 529（过载）单独用可配置基数：官方 v2.1.292 允许按需调节，
+        // 未设置时仍是 BASE_DELAY_MS(20s)，行为与之前一致。
+        const baseDelay = is529Error(error)
+          ? getOverloadedRetryBaseDelayMs()
+          : BASE_DELAY_MS
+        // 529 过载退避上限可配（官方 v2.1.296 CLAUDE_CODE_OVERLOADED_RETRY_MAX_DELAY_MS），
+        // 普通 429 仍用固定 32000 上限以保既有语义。
+        delayMs = getRetryDelay(
+          attempt,
+          retryAfter,
+          is529Error(error) ? getOverloadedRetryMaxDelayMs() : 32000,
+          baseDelay,
+        )
       }
 
       // In persistent mode the for-loop `attempt` is clamped at maxRetries+1;

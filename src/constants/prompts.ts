@@ -86,7 +86,7 @@ const DISCOVER_SKILLS_TOOL_NAME: string | null = feature(
   'EXPERIMENTAL_SKILL_SEARCH',
 )
   ? (
-      require('../tools/DiscoverSkillsTool/prompt.js') as typeof import('../tools/DiscoverSkillsTool/prompt.js')
+      require('../tools/DiscoverSkillsTool/DiscoverSkillsTool.js') as typeof import('../tools/DiscoverSkillsTool/DiscoverSkillsTool.js')
     ).DISCOVER_SKILLS_TOOL_NAME
   : null
 // 捕获模块（而不是 .isSkillSearchEnabled），以便测试中的 spyOn()
@@ -441,6 +441,55 @@ function getSimpleToneAndStyleSection(): string {
   return [`# 语气和风格`, ...prependBullets(items)].join(`\n`)
 }
 
+/**
+ * 系统提示词中「不随会话变化」的部分。
+ *
+ * 抽成独立函数是为了让 --exclude-dynamic-system-prompt-sections 能只保留这段：
+ * 它与 dynamicSections（cwd/env/git/记忆等）分离后，跨会话的字节一致性只取决于
+ * 这段 + 语言设置，从而提升 prompt cache 命中。
+ */
+function STATIC_SYSTEM_SECTIONS(
+  settings: { language?: string },
+  outputStyleConfig: OutputStyleConfig | null,
+  enabledTools: Set<string>,
+): Array<string | null> {
+  return [
+    // --- 语言指令：始终放在第一位 ---
+    getLanguageSection(settings.language),
+    // --- 静态内容（可缓存）---
+    getSimpleIntroSection(outputStyleConfig),
+    getSimpleSystemSection(),
+    outputStyleConfig === null ||
+    outputStyleConfig.keepCodingInstructions === true
+      ? getSimpleDoingTasksSection()
+      : null,
+    getActionsSection(),
+    getUsingYourToolsSection(enabledTools),
+    getSimpleToneAndStyleSection(),
+    getOutputEfficiencySection(),
+  ]
+}
+
+// --exclude-dynamic-system-prompt-sections：被推迟的动态段落。
+// 由 getSystemPrompt 在开关开启时写入，由构造首条用户消息的一方取用。
+let deferredDynamicSections: readonly string[] = []
+
+export function isDynamicSectionsExcluded(): boolean {
+  return isEnvTruthy(process.env.CLAUDE_CODE_EXCLUDE_DYNAMIC_SYSTEM_PROMPT_SECTIONS)
+}
+
+function setDeferredDynamicSections(sections: readonly string[]): void {
+  deferredDynamicSections = sections
+}
+
+/**
+ * 取出被推迟的动态段落（仅供构造首条用户消息时调用）。
+ * 返回空数组表示本次没有推迟内容（开关未开启，或尚未生成过系统提示词）。
+ */
+export function getDeferredDynamicSections(): readonly string[] {
+  return deferredDynamicSections
+}
+
 export async function getSystemPrompt(
   tools: Tools,
   model: string,
@@ -552,20 +601,21 @@ ${CYBER_RISK_INSTRUCTION}`,
   const resolvedDynamicSections =
     await resolveSystemPromptSections(dynamicSections)
 
+  // --exclude-dynamic-system-prompt-sections（对齐官方 v2.1.98）：
+  // 把 cwd/env/git 等随会话变化的内容移出系统提示词，改挂到首条用户消息，
+  // 使系统提示词在跨用户/跨会话时保持字节一致，提升 prompt cache 命中率。
+  // 内容本身不丢——由 getDeferredDynamicSections() 在构造首条消息时取用。
+  if (isDynamicSectionsExcluded()) {
+    setDeferredDynamicSections(resolvedDynamicSections)
+    return STATIC_SYSTEM_SECTIONS(
+      settings,
+      outputStyleConfig,
+      enabledTools,
+    ).filter(s => s !== null)
+  }
+
   return [
-    // --- 语言指令：始终放在第一位 ---
-    getLanguageSection(settings.language),
-    // --- 静态内容（可缓存）---
-    getSimpleIntroSection(outputStyleConfig),
-    getSimpleSystemSection(),
-    outputStyleConfig === null ||
-    outputStyleConfig.keepCodingInstructions === true
-      ? getSimpleDoingTasksSection()
-      : null,
-    getActionsSection(),
-    getUsingYourToolsSection(enabledTools),
-    getSimpleToneAndStyleSection(),
-    getOutputEfficiencySection(),
+    ...STATIC_SYSTEM_SECTIONS(settings, outputStyleConfig, enabledTools),
     // === 边界标记 - 不要移动或移除 ===
     ...(shouldUseGlobalCacheScope() ? [SYSTEM_PROMPT_DYNAMIC_BOUNDARY] : []),
     // --- 动态内容（由注册表管理）---

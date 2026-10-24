@@ -3,6 +3,7 @@ import * as path from 'path'
 import type { LocalCommandCall } from '../../types/command.js'
 import { logForDebugging } from '../../utils/debug.js'
 import { resetCostState } from '../../bootstrap/state.js'
+import { stripBOM } from '../../utils/jsonRead.js'
 
 /**
  * 重置 token 统计数据：
@@ -24,7 +25,7 @@ export const call: LocalCommandCall = async () => {
   // 1. 重置磁盘上的 token 统计
   if (fs.existsSync(projectConfigPath)) {
     try {
-      const raw = fs.readFileSync(projectConfigPath, 'utf-8')
+      const raw = stripBOM(fs.readFileSync(projectConfigPath, 'utf-8'))
       const data = JSON.parse(raw)
       if (data && typeof data === 'object') {
         const project = data as {

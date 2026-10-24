@@ -38,6 +38,11 @@ import { createBashShellProvider } from './shell/bashProvider.js'
 import { getCachedPowerShellPath } from './shell/powershellDetection.js'
 import { createPowerShellProvider } from './shell/powershellProvider.js'
 import type { ShellProvider, ShellType } from './shell/shellProvider.js'
+import {
+  buildMemoryLimitedSpawn,
+  detectSystemdRun,
+  parseMemoryLimitBytes,
+} from './shell/memoryLimit.js'
 import { resolveWindowsShellKind } from './shell/shellToolUtils.js'
 import { subprocessEnv } from './subprocessEnv.js'
 import { posixPathToWindowsPath } from './windowsPaths.js'
@@ -440,10 +445,22 @@ async function execWithProvider(
     }
   }
 
-  const spawnBinary = isSandboxedPowerShell ? '/bin/sh' : binShell
-  const shellArgs = isSandboxedPowerShell
+  const baseSpawnBinary = isSandboxedPowerShell ? '/bin/sh' : binShell
+  const baseShellArgs = isSandboxedPowerShell
     ? ['-c', commandString]
     : provider.getSpawnArgs(commandString)
+
+  // CLAUDE_CODE_TOOL_MEMORY_LIMIT（对齐官方 v2.1.233）：Linux 上用 systemd-run
+  // 把命令包进带 MemoryMax 的 cgroup scope。非 Linux 或没有 systemd-run 时
+  // 返回 null，保持原有启动方式完全不变。
+  const memPlan = parseMemoryLimitBytes(process.env.CLAUDE_CODE_TOOL_MEMORY_LIMIT)
+  const limited =
+    memPlan && (await detectSystemdRun())
+      ? buildMemoryLimitedSpawn(memPlan, baseSpawnBinary, baseShellArgs, process.platform, true)
+      : null
+  const spawnBinary = limited ? limited.bin : baseSpawnBinary
+  const shellArgs = limited ? limited.args : baseShellArgs
+
   const envOverrides = await provider.getEnvironmentOverrides(command)
 
   // When onStdout is provided, use pipe mode: stdout flows through

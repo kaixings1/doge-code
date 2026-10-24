@@ -93,6 +93,16 @@ object BridgeProtocol {
              * 没有对应的手机 pending，不去重。
              */
             val sourceRequestId: String = "",
+            /**
+             * 是否为「重连历史回放」消息。
+             *
+             * 设备断网/切后台期间产生的消息，服务端在新设备连上时定向回放
+             * 一遍并带此标记。手机端据此跳过本地已有的（同 role 同 text）
+             * 做去重，且不播报/不通知 —— 回放是补历史，不是新事件。
+             *
+             * 缺字段默认 false：老服务端不带，行为与之前完全一致。
+             */
+            val replay: Boolean = false,
         ) : Msg
         data class Queued(val requestId: String) : Msg
         data class Error(val message: String) : Msg
@@ -158,6 +168,8 @@ object BridgeProtocol {
             val truncated: Boolean = false,
             /** 截断前的原始长度（0 表示未截断/未知）。 */
             val fullLength: Int = 0,
+            /** 是否为重连历史回放（去重 + 不触发活动区/播报）。 */
+            val replay: Boolean = false,
         ) : Msg
 
         /**
@@ -232,17 +244,18 @@ object BridgeProtocol {
             // 自己发的那条由调用方按 sourceRequestId 精确去重（见 MainActivity）。
             "user" -> {
                 val t = textOf(o) ?: return Msg.Unparsed
-                Msg.Incoming("user", t, suppressFlagOf(o), sourceRequestIdOf(o))
+                Msg.Incoming("user", t, suppressFlagOf(o), sourceRequestIdOf(o), replayFlagOf(o))
             }
 
             "assistant", "message" -> {
                 val t = textOf(o) ?: return Msg.Unparsed
-                Msg.Incoming("assistant", t, suppressFlagOf(o), sourceRequestIdOf(o))
+                Msg.Incoming("assistant", t, suppressFlagOf(o), sourceRequestIdOf(o), replayFlagOf(o))
             }
 
             "system" -> {
                 val t = o.optJSONObject("data")?.optString("message").orEmpty()
-                if (t.isBlank()) Msg.Unparsed else Msg.Incoming("system", t, sourceRequestId = sourceRequestIdOf(o))
+                if (t.isBlank()) Msg.Unparsed
+                else Msg.Incoming("system", t, sourceRequestId = sourceRequestIdOf(o), replay = replayFlagOf(o))
             }
 
             "result" -> {
@@ -313,6 +326,7 @@ object BridgeProtocol {
                     toolUseId = d.optString("toolUseId"),
                     truncated = d.optBoolean("truncated", false),
                     fullLength = d.optInt("fullLength", 0),
+                    replay = d.optBoolean("replay", false),
                 )
             }
 
@@ -468,6 +482,10 @@ object BridgeProtocol {
         val d = o.optJSONObject("data") ?: return ""
         return d.optString("sourceUuid").takeIf { it.isNotBlank() } ?: ""
     }
+
+    /** 是否为重连历史回放消息（服务端 catch-up 定向发送）。缺字段=false。 */
+    private fun replayFlagOf(o: JSONObject): Boolean =
+        o.optJSONObject("data")?.optBoolean("replay", false) ?: false
 
     /**
      * 从 data 中按优先级提取文本字段。

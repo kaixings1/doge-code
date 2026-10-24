@@ -12,6 +12,7 @@ import type {
   BetaUsage,
 } from '@anthropic-ai/sdk/resources/beta/messages/messages.mjs'
 import type { AssistantMessage } from '../../types/message.js'
+import { applyCompatRule, inferCompatRule } from './providerCompat.js'
 
 type AnyBlock = Record<string, unknown>
 
@@ -290,7 +291,12 @@ export async function createOpenAICompatStream(
 ): Promise<ReadableStreamDefaultReader<Uint8Array>> {
   const url = config.baseURL;
   logForDebugging(`[openaiCompat] 请求 URL: ${url}`, { level: 'debug' })
-  const requestBody = { ...request, stream: true }
+  // 按端点能力裁剪字段：严格端点（Cerebras/Groq/OpenAI）会因未知顶层键直接 400，
+  // 宽松端点则保留全部字段。见 services/api/providerCompat.ts。
+  const rule = inferCompatRule(config.baseURL, request?.model)
+  const requestBody = applyCompatRule({ ...request, stream: true }, rule, request?.model) as typeof request & {
+    stream: true
+  }
   const requestMessages: OpenAIChatMessage[] = requestBody.messages ?? []
   const requestTools: Array<{ function?: { name?: string } }> = requestBody.tools ?? []
   logForDebugging(

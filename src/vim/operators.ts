@@ -462,7 +462,10 @@ function getOperatorRange(
     } else {
       to = nextNewline + 1
     }
-  } else if (isInclusiveMotion(motion) && cursor.offset <= target.offset) {
+  } else if (isInclusiveMotion(motion)) {
+    // 包含式要连「目标位置的字符」一起作用。范围是 [from, to)，
+    // 因此把 to 向后扩一格即可——正向时 to 是目标字符，反向时 to 是
+    // 光标所在字符（如 d% 从闭括号出发，须把闭括号本身删掉）。
     to = cursor.measuredText.nextOffset(to)
   }
 

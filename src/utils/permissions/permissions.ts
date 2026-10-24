@@ -325,15 +325,47 @@ export function getParamRuleForTool(
         ? getDenyRules(context)
         : getAskRules(context)
   for (const rule of rules) {
-    const { param, value, toolName: ruleTool } = rule.ruleValue
-    if (param == null || value == null) continue
+    const { param, value, ruleContent, toolName: ruleTool } = rule.ruleValue
     if (ruleTool !== toolName) continue
-    const actual = input[param]
-    // 未提供该参数或值不匹配 → 该参数规则不命中。
+
+    // 路径 A：解析层已识别出的参数规则（不含通配符，如 Agent(model:opus)）。
+    if (param != null && value != null) {
+      const actual = input[param]
+      if (actual == null) continue
+      if (matchesParamValue(String(actual), value)) return rule
+      continue
+    }
+
+    // 路径 B：含 `*` 的通配写法（如 Agent(model:*)）在解析层保留为 ruleContent
+    // ——它无法与位置式规则 `Bash(prefix:*)` 区分。这里用本次调用的实际 input
+    // 做判据：若 `ruleContent` 形如 `key:pattern` 且 input 中确实存在 `key`，
+    // 则按参数通配匹配；否则不属于参数级规则，交给位置式路径。
+    if (ruleContent == null) continue
+    const m = ruleContent.match(/^([A-Za-z_][\w-]*):(.+)$/)
+    if (!m) continue
+    const key = m[1]!
+    const actual = input[key]
     if (actual == null) continue
-    if (String(actual) === value) return rule
+    if (matchesParamValue(String(actual), m[2]!)) return rule
   }
   return null
+}
+
+/**
+ * 参数值匹配：精确相等，或官方 `*` 通配（`model:*` 匹配任意值，
+ * `model:opus*` 前缀通配）。仅 `*` 有特殊含义，其余字符按字面比较。
+ */
+function matchesParamValue(actual: string, pattern: string): boolean {
+  if (pattern === '*') return true
+  const star = pattern.indexOf('*')
+  if (star === -1) return actual === pattern
+  const prefix = pattern.slice(0, star)
+  const suffix = pattern.slice(star + 1)
+  return (
+    actual.length >= prefix.length + suffix.length &&
+    actual.startsWith(prefix) &&
+    actual.endsWith(suffix)
+  )
 }
 
 /**

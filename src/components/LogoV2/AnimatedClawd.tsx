@@ -3,6 +3,7 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { Box } from '../../ink.js';
 import { getInitialSettings } from '../../utils/settings/settings.js';
+import { isFullscreenEnvEnabled } from '../../utils/fullscreen.js';
 import { Clawd, type ClawdPose } from './Clawd.js';
 
 type Frame = {
@@ -45,14 +46,12 @@ const IDLE_LOOP: readonly Frame[] = [
 ];
 
 const FRAME_MS = 60;
-const incrementFrame = (i: number) => i + 1;
 // ponytail: 固定高度已移除——Clawd 实际高度约 19 行（含 sessionId），
 // 固定 7 行会导致底部被裁剪且 bounceOffset 的 marginTop 在容器内无效
 
 export function AnimatedClawd() {
   const $ = _c(8);
   const { pose, bounceOffset, onClick } = useClawdAnimation();
-  console.log('[AnimatedClawd] Rendering with pose=', pose);
 
   let t0;
   if ($[0] !== pose) {
@@ -91,42 +90,50 @@ export function AnimatedClawd() {
 
 function useClawdAnimation() {
   const [reducedMotion] = useState(() => getInitialSettings().prefersReducedMotion ?? false);
-  const [frameIndex, setFrameIndex] = useState(0); // 始终运行帧序列
+  const [frameIndex, setFrameIndex] = useState(0);
   const sequenceRef = useRef<readonly Frame[]>(IDLE_LOOP);
   const clickLockRef = useRef(false);
+  const startRef = useRef(0);
 
   const onClick = () => {
-    console.log('[AnimatedClawd] onClick called, reducedMotion=', reducedMotion, 'clickLock=', clickLockRef.current);
-    if (reducedMotion || clickLockRef.current) {
-      console.log('[AnimatedClawd] onClick blocked');
-      return;
-    }
+    if (reducedMotion || clickLockRef.current) return;
     clickLockRef.current = true;
     const anim = CLICK_ANIMATIONS[Math.floor(Math.random() * CLICK_ANIMATIONS.length)]!;
     sequenceRef.current = anim;
+    startRef.current = performance.now();
     setFrameIndex(0);
-    console.log('[AnimatedClawd] Click animation started');
   };
 
+  // ponytail: 单一节流循环（setInterval），不再用「每帧重挂 setTimeout + effect
+  // 依赖 frameIndex」的链式写法。链式写法每 60ms 重建一次 effect 并触发一次
+  // React 提交，叠加 Logo 在 OffscreenFreeze/scrollback 中的全量重置，导致
+  // LOGO 区域实际刷新被拖到数十秒级。
+  // 非全屏（scrollback）模式下 Logo 一旦滚出视口就不会再被绘制，动画只是纯开销，
+  // 因此直接不启动 —— CondensedLogo 在该模式下渲染的本来也是静态 <Clawd>。
   useEffect(() => {
-    console.log('[AnimatedClawd] useEffect running, frameIndex=', frameIndex, 'reducedMotion=', reducedMotion);
-    if (reducedMotion) {
-      console.log('[AnimatedClawd] reducedMotion enabled, skipping animation');
-      return;
-    }
-    if (frameIndex >= sequenceRef.current.length) {
-      // 动画结束，恢复 idle 循环
-      sequenceRef.current = IDLE_LOOP;
-      setFrameIndex(0);
-      clickLockRef.current = false;
-      return;
-    }
-    const timer = setTimeout(() => setFrameIndex(incrementFrame), FRAME_MS);
-    return () => clearTimeout(timer);
-  }, [frameIndex, reducedMotion]);
+    if (reducedMotion || !isFullscreenEnvEnabled()) return;
+    // 帧号由经过时间推导（定时器漂移自愈），积压的 tick 不会累积成快进。
+    startRef.current = performance.now();
+    const timer = setInterval(() => {
+      const seq = sequenceRef.current;
+      const elapsed = performance.now() - startRef.current;
+      const idx = Math.floor(elapsed / FRAME_MS);
+      if (idx >= seq.length) {
+        const finishedClick = seq !== IDLE_LOOP;
+        sequenceRef.current = IDLE_LOOP;
+        startRef.current = performance.now();
+        if (finishedClick) clickLockRef.current = false;
+        setFrameIndex(0);
+        return;
+      }
+      setFrameIndex(idx);
+    }, FRAME_MS);
+    return () => clearInterval(timer);
+    // 仅在 reducedMotion 变化时重启；帧推进由 interval 内部完成
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reducedMotion]);
 
   const currentFrame = sequenceRef.current[frameIndex] ?? { pose: 'default', offset: 0 };
-  console.log('[useClawdAnimation] Returning pose=', currentFrame.pose, 'frameIndex=', frameIndex, 'sequenceLength=', sequenceRef.current.length);
   return {
     pose: currentFrame.pose,
     bounceOffset: currentFrame.offset,

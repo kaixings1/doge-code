@@ -85,6 +85,17 @@ class SessionFragment : Fragment() {
      */
     var knownSessionsProvider: () -> List<SessionScanner.Session> = { emptyList() }
 
+    /**
+     * 未读数提供者：给定会话，返回其未读角标数（0 = 不显示）。
+     * 由宿主注入（它持有 connections）。默认全 0，不影响独立预览/测试。
+     */
+    var unreadProvider: (SessionScanner.Session) -> Int = { 0 }
+
+    /** 未读数变化时由宿主调用，刷新列表角标（不重扫、不打扰滚动位置）。 */
+    fun refreshUnreadBadges() {
+        if (::adapter.isInitialized) adapter.notifyDataSetChanged()
+    }
+
     private lateinit var list: RecyclerView
     private lateinit var hint: TextView
     private lateinit var search: EditText
@@ -139,11 +150,15 @@ class SessionFragment : Fragment() {
         hint = view.findViewById(R.id.session_hint)
         search = view.findViewById(R.id.session_search)
 
+        pinnedStore = PinnedSessions(requireContext())
         adapter = SessionAdapter(
             onPick = { s -> onSessionPicked?.invoke(s) },
             localSuffix = getString(R.string.session_local_host),
             onSwitch = { s -> onSessionSwitch?.invoke(s) },
             onDelete = { s -> confirmDelete(s) },
+            onLongPress = { s -> showSessionMenu(s) },
+            isPinned = { s -> pinnedStore?.isPinned(s) == true },
+            unreadOf = { s -> unreadProvider(s) },
         )
         list.layoutManager = LinearLayoutManager(requireContext())
         list.adapter = adapter
@@ -417,6 +432,37 @@ class SessionFragment : Fragment() {
     /** 请求删除某会话时回调宿主（宿主才持有 KnownSessionStore）。 */
     var onSessionDelete: ((SessionScanner.Session) -> Unit)? = null
 
+    /** 置顶集合（onViewCreated 时创建；用 requireContext，故可空兜底）。 */
+    private var pinnedStore: PinnedSessions? = null
+
+    /**
+     * 长按列表项的操作菜单：置顶/取消置顶、删除。
+     *
+     * 把置顶与删除放同一个菜单，而不是各占一个手势：长按是低频入口，
+     * 多一个手势（如双击置顶）反而难记；且删除仍需二次确认，误触代价可控。
+     */
+    private fun showSessionMenu(s: SessionScanner.Session) {
+        val store = pinnedStore ?: return
+        val pinned = store.isPinned(s)
+        val name = if (s.label.isBlank()) "端口 ${s.port}" else s.label
+        val items = arrayOf(
+            if (pinned) "取消置顶「$name」" else "置顶「$name」",
+            "删除会话记录",
+        )
+        android.app.AlertDialog.Builder(requireContext())
+            .setTitle("$name（${s.host}:${s.port}）")
+            .setItems(items) { _, which ->
+                if (which == 0) {
+                    store.toggle(s)
+                    render()   // 重排：置顶项移到组内最前
+                } else {
+                    confirmDelete(s)
+                }
+            }
+            .setNegativeButton("取消", null)
+            .show()
+    }
+
     /**
      * 长按列表项后：二次确认，再请宿主删除该会话记录。
      *
@@ -684,7 +730,11 @@ class SessionFragment : Fragment() {
         val filtered = filterSessions(allSessions, search.text?.toString().orEmpty())
         // 分组与排序由 SessionOrganizer 做（纯逻辑已单测），此处只取结果
         adapter.submitGroups(
-            SessionOrganizer.group(filtered, SessionOrganizer.Order.from(sortOrder)),
+            SessionOrganizer.group(
+                filtered,
+                SessionOrganizer.Order.from(sortOrder),
+                pinned = { s -> pinnedStore?.isPinned(s) == true },
+            ),
             currentPort,
         )
         hint.text = when {

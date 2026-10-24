@@ -997,6 +997,10 @@ export class MobileBridgeServer {
           )
           this.broadcast('client_connected', connectedPayload)
         }
+        // 回放当前会话完整历史给**这台**新连接的设备。
+        // 断连/后台期间产生的消息实时广播没送到，只有回放能补上；
+        // 手机端按 replay 标记去重（本地已有的跳过），故重复回放无副作用。
+        replayHistoryToClient(ws)
         logForDebugging(`[MobileBridgeServer] 客户端连接: ${deviceId}`)
       })
 
@@ -2052,6 +2056,99 @@ export function shouldSuppressMobileNotification(): boolean {
  * 把一条已生成的消息推送到所有已连接的手机端。
  * 由 CLI 消息流转发 effect 调用；无活动服务器时静默返回。
  */
+// ─── 重连历史回放（catch-up）───
+
+/**
+ * 历史消息提供者。
+ *
+ * 由 REPL 层（useReplBridge）注册：给它一个函数，返回**当前会话已发生的
+ * 全部可推送消息**（role + 纯文本）。设备重连时用它把断连期间错过的内容
+ * 补回手机 —— 这些消息在断连时已经产生，服务端的实时广播没送到，只有
+ * 回放才能补上。
+ *
+ * 为什么用注册制而非直接读：消息数组在 React 状态里，mobileBridge 属
+ * 网络层，不应反向依赖 React。注册一个 getter 是最小耦合（与
+ * getActiveMobileBridgeServer 同思路）。
+ */
+/** 回放历史的一项：正文消息，或思考/工具活动。 */
+export type MobileReplayItem =
+  | { role: 'user' | 'assistant' | 'system'; text: string }
+  | { role: 'thinking'; text: string }
+  | { role: 'tool'; name: string; target?: string; detail: string; result: string; toolUseId: string }
+
+let mobileHistoryProvider: (() => MobileReplayItem[]) | null = null
+
+/** 注册历史提供者（REPL 挂载时调用；传 null 注销）。 */
+export function registerMobileHistoryProvider(
+  fn: (() => MobileReplayItem[]) | null,
+): void {
+  mobileHistoryProvider = fn
+}
+
+/**
+ * 向**单台**刚连上的设备回放当前会话完整历史。
+ *
+ * 与 pushToMobileClients 的区别：
+ * - 那个是 sendToAll 广播（实时新消息，所有设备都该收到）
+ * - 这个是定向发送（只有刚连上的设备缺这段历史）
+ *
+ * 每条带 `replay: true`：手机端据此做「本地已有则跳过」的去重，
+ * 并抑制语音播报/通知 —— 回放是补历史，不是新事件，不该再提醒一次。
+ *
+ * 防御：provider 未注册（如非 REPL 模式）、空历史、send 异常都静默跳过，
+ * 绝不影响连接本身。
+ */
+function replayHistoryToClient(ws: WebSocket): void {
+  if (!mobileHistoryProvider) return
+  let items: MobileReplayItem[]
+  try {
+    items = mobileHistoryProvider()
+  } catch (e) {
+    logForDebugging(`[mobile-replay] 取历史失败（已忽略）：${e instanceof Error ? e.message : String(e)}`)
+    return
+  }
+  if (!items || items.length === 0) return
+  let sent = 0
+  for (const m of items) {
+    if (!m) continue
+    try {
+      if (m.role === 'thinking' || m.role === 'tool') {
+        // 思考 / 工具活动：复用实时 tool_activity 帧格式，手机端已有成熟解析
+        // （onToolActivity：thinking 直接成气泡，tool 按 toolUseId 配对）。
+        // state=done 表示这是已发生的历史活动，不会显示「运行中」。
+        ws.send(JSON.stringify({
+          type: 'tool_activity',
+          data: m.role === 'thinking'
+            ? { kind: 'thinking', name: '思考', state: 'done', detail: m.text, replay: true }
+            : {
+                kind: 'tool', name: m.name, state: 'done',
+                // target 与实时帧同样由 input 摘要而来 —— 手机端标题含它，
+                // 缺了会导致「回放气泡」与「实时气泡」标题不一致而去重失败。
+                target: m.target ?? '',
+                detail: m.detail, result: m.result, toolUseId: m.toolUseId,
+                replay: true,
+              },
+          timestamp: Date.now(),
+        }))
+      } else {
+        if (!m.text) continue
+        // 正文消息：复用实时帧格式（type=role），手机端无需新增解析分支
+        ws.send(JSON.stringify({
+          type: m.role,
+          data: { text: m.text, suppressNotify: true, replay: true },
+          timestamp: Date.now(),
+        }))
+      }
+      sent++
+    } catch {
+      // 单条失败不中断整段回放
+    }
+  }
+  if (sent > 0) {
+    logForDebugging(`[mobile-replay] 已向新连接设备回放 ${sent} 条历史`)
+  }
+}
+
 export function pushToMobileClients(message: {
   role: 'user' | 'assistant' | 'system'
   text: string

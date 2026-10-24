@@ -8,6 +8,8 @@ import { stringWidth } from '../../ink/stringWidth.js';
 import { getLayoutMode, calculateLayoutDimensions, calculateOptimalLeftWidth, formatWelcomeMessage, truncatePath, getRecentActivitySync, getRecentReleaseNotesSync, getLogoDisplayData } from '../../utils/logoV2Utils.js';
 import { truncate } from '../../utils/format.js';
 import { getDisplayPath } from '../../utils/file.js';
+import { isSafeMode } from '../../utils/envUtils.js';
+import { isRestrictedMode } from '../../utils/restrictedMode.js';
 import { formatPackageUpdateNotice } from '../../utils/packageUpdateNotice.js';
 import { Clawd } from './Clawd.js';
 import { AnimatedClawd } from './AnimatedClawd.js';
@@ -190,6 +192,7 @@ export function LogoV2() {
     let t14;
     let t15;
     let t16;
+    let t16b;
     let t17;
     if ($[15] === Symbol.for("react.memo_cache_sentinel")) {
       t11 = <CondensedLogo />;
@@ -198,6 +201,9 @@ export function LogoV2() {
       t14 = ChannelsNoticeModule && <ChannelsNoticeModule.ChannelsNotice />;
       t15 = isDebugMode() && <Box paddingLeft={2} flexDirection="column"><Text color="warning">调试模式已启用</Text><Text dimColor={true}>日志记录到：{isDebugToStdErr() ? "stderr" : getDebugLogPath()}</Text></Box>;
       t16 = <EmergencyTip />;
+      // 把 --safe-mode / --restricted 的实际生效状态显示出来：
+      // 这两个模式会静默丢弃 CLAUDE.md、技能、插件等，没有提示时用户会以为是加载失败。
+      t16b = (isSafeMode() || isRestrictedMode()) && <Box paddingLeft={2} flexDirection="column">{isSafeMode() && <Text color="warning">安全模式已启用</Text>}{isSafeMode() && <Text dimColor={true}>CLAUDE.md、技能、插件、钩子与 MCP 均未加载（管理策略设置仍生效）。</Text>}{isRestrictedMode() && <Text color="warning">受限模式已启用</Text>}{isRestrictedMode() && <Text dimColor={true}>执行类工具与 WebFetch 已移除；仅加载管理策略与 --settings 设置。</Text>}</Box>;
       t17 = process.env.CLAUDE_CODE_TMUX_SESSION && <Box paddingLeft={2} flexDirection="column"><Text dimColor={true}>tmux 会话：{process.env.CLAUDE_CODE_TMUX_SESSION}</Text><Text dimColor={true}>{process.env.CLAUDE_CODE_TMUX_PREFIX_CONFLICTS ? `分离：${process.env.CLAUDE_CODE_TMUX_PREFIX} ${process.env.CLAUDE_CODE_TMUX_PREFIX} d（连按两次前缀 - Claude 使用 ${process.env.CLAUDE_CODE_TMUX_PREFIX}）` : `分离：${process.env.CLAUDE_CODE_TMUX_PREFIX} d`}</Text></Box>;
       $[15] = t11;
       $[16] = t12;
@@ -205,6 +211,7 @@ export function LogoV2() {
       $[18] = t14;
       $[19] = t15;
       $[20] = t16;
+      $[20.5] = t16b;
       $[21] = t17;
     } else {
       t11 = $[15];
@@ -213,6 +220,7 @@ export function LogoV2() {
       t14 = $[18];
       t15 = $[19];
       t16 = $[20];
+      t16b = $[20.5];
       t17 = $[21];
     }
     let t18;
@@ -245,7 +253,7 @@ export function LogoV2() {
     }
     let t23;
     if ($[29] !== t18) {
-      t23 = <>{t11}{t12}{t13}{t14}{t15}{t16}{t17}{t18}{t19}{t20}{t21}{t22}</>;
+      t23 = <>{t11}{t12}{t13}{t14}{t15}{t16}{t16b}{t17}{t18}{t19}{t20}{t21}{t22}</>;
       $[29] = t18;
       $[30] = t23;
     } else {

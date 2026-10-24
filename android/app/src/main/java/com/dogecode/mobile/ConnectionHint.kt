@@ -8,10 +8,12 @@ package com.dogecode.mobile
  * 之前的失败提示是「已断开，重连中…」——**用户只能干等**，
  * 而真实原因往往是他无法从界面推断的：
  *
- * 1. **USB 转发丢失**：`adb reverse tcp:5680 tcp:5680` 建立的转发是
+ * 1. **USB 转发丢失**：`adb reverse tcp:<port> tcp:<port>` 建立的转发是
  *    **内存态**，拔插 USB / 设备重连 / adb 服务重启都会清掉。
- *    此时 `127.0.0.1:5680` 必然连不上，而 App 会一直重试它 ——
+ *    此时 `127.0.0.1:<port>` 必然连不上，而 App 会一直重试它 ——
  *    用户以为「程序坏了」，实际只需在电脑上重跑一条命令。
+ *    **端口必须取自实际连接地址**（见 [hintFor]）：桥接端口可配置，
+ *    写死默认值会给出错误命令。
  *
  * 2. **USB 与 WiFi 地址混用**：`127.0.0.1` 只在 USB 场景有效，
  *    局域网场景必须用电脑的真实 IP。用户不会知道这个区别。
@@ -37,9 +39,13 @@ object ConnectionHint {
         if (failedAttempts < 2) return null
 
         return if (isLoopback(address)) {
-            // 回环地址 = USB 转发场景。连不上几乎必然是转发没建
+            // 回环地址 = USB 转发场景。连不上几乎必然是转发没建。
+            // **端口必须取自实际连接地址**：桥接端口可被 CLAUDE_CODE_MOBILE_PORT
+            // 改成 6000 等，写死 5680 会让用户照着执行一条错命令，
+            // 建出来的是错端口的映射 —— 照样连不上，且更难排查（实测踩到）。
+            val port = portOf(address) ?: DEFAULT_PORT
             "USB 连接不可用。请在电脑上执行：\n" +
-                "adb reverse tcp:5680 tcp:5680\n\n" +
+                "adb reverse tcp:$port tcp:$port\n\n" +
                 "（拔插数据线、重启 adb 后转发会失效，需重新执行）\n" +
                 "或改用局域网地址：让电脑与手机连同一 WiFi，" +
                 "在「会话」页扫描即可发现。"
@@ -57,6 +63,18 @@ object ConnectionHint {
      *
      * 覆盖 `127.0.0.1` / `localhost` / `::1` / `[::1]`。
      */
+    /**
+     * 从地址里取端口（USB 提示命令用）。
+     *
+     * 解析失败返回 null（调用方回落到 [DEFAULT_PORT]）。不直接用
+     * `BridgeUrl.portOf`（它总会把无端口的地址补成默认端口）——
+     * 这里要区分「地址里确实写了端口」还是「没写」，以便提示准确。
+     */
+    fun portOf(address: String): Int? {
+        val m = Regex(":([0-9]{2,5})(?:/|$)").find(address.trim())
+        return m?.groupValues?.getOrNull(1)?.toIntOrNull()?.takeIf { it in 1..65535 }
+    }
+
     fun isLoopback(address: String): Boolean {
         val a = address.lowercase()
         return a.contains("127.0.0.1") ||
@@ -98,7 +116,8 @@ object ConnectionHint {
             "仍在搜索会话…（已等 ${secs}秒）\n" +
                 "若电脑上的 CLI 已启动，请确认：\n" +
                 "1. 手机与电脑在同一 WiFi\n" +
-                "2. 或已建立 USB 转发：adb reverse tcp:5680 tcp:5680"
+                "2. 或已建立 USB 转发：adb reverse tcp:<端口> tcp:<端口>\n" +
+                "   （端口以 App 里填的地址为准，默认 5680）"
         }
     }
 
@@ -120,4 +139,10 @@ object ConnectionHint {
 
     /** 生成提示的失败次数阈值（`object` 直接用顶层常量，不需要 companion）。 */
     const val HINT_THRESHOLD = 2
+
+    /**
+     * 桥接默认端口（仅在地址里解析不出端口时用于提示文案）。
+     * 与 BridgeUrl.DEFAULT_PORT 保持一致。
+     */
+    const val DEFAULT_PORT = 5680
 }

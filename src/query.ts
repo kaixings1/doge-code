@@ -91,6 +91,11 @@ import {
 } from './utils/model/model.js'
 import { resolveVisionModel, hasImagesInMessages } from './utils/model/visionModelRouter.js'
 import {
+  decideDowngrade,
+  isRouterDebugEnabled,
+} from './utils/routerDowngrade.js'
+import { extractTaskTextFromMessages } from './utils/routerTaskText.js'
+import {
   doesMostRecentAssistantMessageExceed200k,
   finalContextTokensFromLastResponse,
   tokenCountWithEstimation,
@@ -637,6 +642,24 @@ async function* queryLoop(
         `[VISION-ROUTE] ${currentModel} -> ${visionRoutedModel} (消息含图片但模型不支持视觉输入)`,
       )
       currentModel = visionRoutedModel
+    }
+
+    // 分层自动降级（/router 的执行侧）：默认关闭，必须显式设置
+    // CLAUDE_CODE_ROUTER_AUTO=1 才生效；只降一级、只降不升、计划模式与含图片均不降。
+    const downgrade = decideDowngrade({
+      model: currentModel,
+      taskText: extractTaskTextFromMessages(messagesForQuery),
+      contextTokens: tokenCountWithEstimation(messagesForQuery),
+      permissionMode,
+      hasImages: hasImagesInMessages(messagesForQuery),
+    })
+    if (downgrade.downgraded) {
+      logForDebugging(
+        `[ROUTER-DOWNGRADE] ${currentModel} -> ${downgrade.model} (任务档位 ${downgrade.tier})`,
+      )
+      currentModel = downgrade.model
+    } else if (downgrade.reason && isRouterDebugEnabled()) {
+      logForDebugging(`[ROUTER-DOWNGRADE] 未降级: ${downgrade.reason}`)
     }
 
     let attemptWithFallback = true

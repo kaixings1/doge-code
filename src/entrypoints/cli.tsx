@@ -54,6 +54,18 @@ if (process.env['CLAUDE_CODE_FEATURE_ABLATION_BASELINE'] === '1') {
  * 所有导入都是动态的，以最小化快速路径的模块评估。
  * --version 的快速路径在此文件之外没有导入。
  */
+/** 后台会话子命令名（快速路径判定用；新增子命令时同步这里）。 */
+const BG_SUBCOMMANDS = new Set(['ps', 'logs', 'attach', 'kill', 'stop', 'rm', 'respawn']);
+
+/**
+ * 后台会话是否默认可用。
+ * 该能力是纯本地的进程注册表（~/.doge/bg），不依赖云端，因此默认开放；
+ * 可用 CLAUDE_CODE_FEATURE_BG_SESSIONS=0 关闭。
+ */
+function isBgSessionsEnabledByDefault(): boolean {
+  return process.env['CLAUDE_CODE_FEATURE_BG_SESSIONS'] !== '0';
+}
+
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
 
@@ -217,7 +229,12 @@ async function main(): Promise<void> {
   // `claude ps|logs|attach|kill` 和 `--bg`/`--background` 的快速路径。
   // 针对 ~/.claude/sessions/ 注册表的会话管理。标志
   // 字面量已内联，因此 bg.js 仅在实际分发时加载。
-  if (process.env['CLAUDE_CODE_FEATURE_BG_SESSIONS'] === '1' && (args[0] === 'ps' || args[0] === 'logs' || args[0] === 'attach' || args[0] === 'kill' || args.includes('--bg') || args.includes('--background'))) {
+  const bgGateOpen = process.env['CLAUDE_CODE_FEATURE_BG_SESSIONS'] === '1' || isBgSessionsEnabledByDefault();
+  const bgSub = args[0] ?? '';
+  const bgKeywordOnly = (bgSub === 'stop' || bgSub === 'rm' || bgSub === 'respawn') && process.env['CLAUDE_CODE_FEATURE_BG_SESSIONS'] !== '1';
+  // stop/rm/respawn 与常见的 shell 动词重名：仅当用户显式启用该 feature 时才走快速路径，
+  // 默认开放的只有 ps/logs/attach/kill 与 --bg（无歧义）。
+  if (bgGateOpen && !bgKeywordOnly && (BG_SUBCOMMANDS.has(bgSub) || args.includes('--bg') || args.includes('--background'))) {
     profileCheckpoint('cli_bg_path');
     const {
       enableConfigs
@@ -225,6 +242,15 @@ async function main(): Promise<void> {
     enableConfigs();
     const bg = await import('../cli/bg.js');
     switch (args[0]) {
+      case 'stop':
+        await bg.killHandler(args[1]);
+        break;
+      case 'rm':
+        await bg.removeHandler(args[1]);
+        break;
+      case 'respawn':
+        await bg.respawnHandler(args.slice(1));
+        break;
       case 'ps':
         await bg.psHandler(args.slice(1));
         break;

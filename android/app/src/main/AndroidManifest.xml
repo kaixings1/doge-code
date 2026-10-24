@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- 助手回复通知（Android 13+ 需运行时授权，拒绝不影响主流程） -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- 触觉反馈（发送 / 任务完成 / 需批准时轻震动）。普通震动无需运行时授权 -->
+    <uses-permission android:name="android.permission.VIBRATE" />
     <!-- 本地模式推理保活（DUAL-MODE-PLAN 阶段 4）：前台服务 -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!-- API 34+ 起前台服务必须声明具体类型；dataSync 覆盖「网络密集型后台工作」 -->
@@ -42,8 +44,10 @@
 
         <activity
             android:name=".MainActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
             android:exported="true"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="false"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

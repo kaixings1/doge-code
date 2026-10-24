@@ -32,6 +32,24 @@ const VISION_NEGATIVE_PATTERNS: RegExp[] = [
   /codegeex/,
 ]
 
+/**
+ * 本地视觉模型（在 negative 模式里命中，但实际支持图片输入）。
+ *
+ * 背景：negative 里的 /llama/、/qwen2/ 等是为了拦住纯文本本地模型，
+ * 但 llava、qwen2.5-vl、minicpm-v 这类本地多模态模型同样会被误伤。
+ * 这里在 negative 判定之前先行放行。
+ */
+const LOCAL_VISION_PATTERNS: RegExp[] = [
+  /llava/,
+  /bakllava/,
+  /minicpm-v/,
+  /qwen2\.5-vl/,
+  /qwen3-vl/,
+  /qwen2-vl/,
+  /gemma3/,
+  /moondream/,
+]
+
 /** 明确支持图片的模型模式（子串匹配，不区分大小写） */
 const VISION_POSITIVE_PATTERNS: RegExp[] = [
   /^claude-/,
@@ -55,6 +73,7 @@ const VISION_POSITIVE_PATTERNS: RegExp[] = [
  */
 export function isVisionCapableModel(modelId: string): boolean {
   const m = modelId.toLowerCase()
+  if (LOCAL_VISION_PATTERNS.some(p => p.test(m))) return true
   if (VISION_NEGATIVE_PATTERNS.some(p => p.test(m))) return false
   if (VISION_POSITIVE_PATTERNS.some(p => p.test(m))) return true
   return true

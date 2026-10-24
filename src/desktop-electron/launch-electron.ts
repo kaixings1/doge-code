@@ -8,6 +8,7 @@ import { spawn } from 'node:child_process'
 import * as path from 'node:path'
 import * as fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
+import { stripBOM } from '../utils/jsonRead.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -19,7 +20,7 @@ function loadConfig() {
     ? path.resolve(process.env.DOGE_API_JSON)
     : path.join(exeDir, '.doge', 'api.json')
   try {
-    const raw = fs.readFileSync(configPath, 'utf-8')
+    const raw = stripBOM(fs.readFileSync(configPath, 'utf-8'))
     const data = JSON.parse(raw)
     const preset = data.activePreset && data.presets?.[data.activePreset]
       ? data.presets[data.activePreset]

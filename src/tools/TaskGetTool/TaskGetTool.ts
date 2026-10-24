@@ -25,6 +25,7 @@ const outputSchema = lazySchema(() =>
         subject: z.string(),
         description: z.string(),
         status: TaskStatusSchema(),
+        owner: z.string().optional(),
         blocks: z.array(z.string()),
         blockedBy: z.array(z.string()),
       })
@@ -90,6 +91,7 @@ export const TaskGetTool = buildTool({
           subject: task.subject,
           description: task.description,
           status: task.status,
+          owner: task.owner,
           blocks: task.blocks,
           blockedBy: task.blockedBy,
         },
@@ -111,6 +113,9 @@ export const TaskGetTool = buildTool({
       `Status: ${task.status}`,
       `Description: ${task.description}`,
     ]
+    if (task.owner) {
+      lines.push(`Owner: ${task.owner}`)
+    }
 
     if (task.blockedBy.length > 0) {
       lines.push(`Blocked by: ${task.blockedBy.map(id => `#${id}`).join(', ')}`)

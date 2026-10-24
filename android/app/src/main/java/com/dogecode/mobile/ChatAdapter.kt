@@ -159,8 +159,60 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val had = streamingPreview != null
         val will = !text.isNullOrEmpty()
         streamingPreview = text?.takeIf { it.isNotEmpty() }
+        // 流式目标全文（供逐字追赶器对账）。null 表示预览结束（定稿消息到达），
+        // 必须立刻停追赶器并清欠账，否则定稿后仍有一串字在气泡里慢慢蹦出来。
+        streamingTarget = streamingPreview
+        if (will) startTypewriter() else stopTypewriter()
         // 预览是虚拟行，但它会改变 rows 的构成，故统一走重建
         if (had != will || will) refresh()
+    }
+
+    /**
+     * 流式预览的目标全文。
+     *
+     * 与 [streamingPreview] 分离：前者是当前**已显现**的快照（参与渲染行），
+     * 后者是**待显现**的完整文本（追赶器对账用）。定稿时两者都要清。
+     */
+    private var streamingTarget: String? = null
+
+    /**
+     * 逐字追赶器。
+     *
+     * 周期性把「已显现长度」向 [streamingTarget] 的长度推进，每帧最多吐
+     * [TYPEWRITER_CHARS_PER_FRAME] 字。增量密时欠账靠多帧补，增量稀时停在
+     * 目标长度等下一波 —— 故不随网络抖动调参（见该常量注释）。
+     *
+     * 仅在流式预览存在期间非 null；[setStreamingPreview] 传 null 时取消。
+     */
+    private var typewriter: Handler? = null
+
+    private fun startTypewriter() {
+        if (typewriter != null) return
+        typewriter = Handler(Looper.getMainLooper()).apply {
+            val tick = object : Runnable {
+                override fun run() {
+                    val target = streamingTarget ?: return
+                    val shown = streamingPreview?.length ?: 0
+                    if (shown < target.length) {
+                        // 落后则补字（封顶每帧上限，避免长停顿后一次性吐完）
+                        val next = nextRevealLen(shown, target.length)
+                        streamingPreview = target.substring(0, next)
+                        // 只推进正在生长的那一行，不必整表重建（分组/折叠不受影响）。
+                        // guard：仅当流式行确实在末尾时（否则会误刷新最后一条真实消息）
+                        if (rows.lastOrNull() is Row.Streaming) {
+                            notifyItemChanged(rows.lastIndex)
+                        }
+                    }
+                    postDelayed(this, TYPEWRITER_FRAME_MS)
+                }
+            }
+            postDelayed(tick, TYPEWRITER_FRAME_MS)
+        }
+    }
+
+    private fun stopTypewriter() {
+        typewriter?.removeCallbacksAndMessages(null)
+        typewriter = null
     }
 
     fun submit(list: List<ChatMessage>) {
@@ -180,6 +232,24 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         items.add(msg)
         refresh()
         val idx = rows.indexOfLast { it is Row.Msg && (it as Row.Msg).index == items.size - 1 }
+        return if (idx >= 0) idx else rows.lastIndex
+    }
+
+    /**
+     * 批量追加（**一次刷新**），返回最后一条在渲染行中的位置。
+     *
+     * 为「重连历史回放」准备：回放可能一次涌入几十上百条，若逐条走
+     * [append] 就是每条一次 `notifyDataSetChanged` + 全表重建 —— 实测
+     * 会明显卡顿甚至丢帧。这里一次性 `addAll` 再刷新一次。
+     *
+     * 空列表不刷新（调用方可能攒到空批）。
+     */
+    fun appendBatch(messages: List<ChatMessage>): Int {
+        if (messages.isEmpty()) return rows.lastIndex
+        items.addAll(messages)
+        refresh()
+        val lastIndex = items.size - 1
+        val idx = rows.indexOfLast { it is Row.Msg && (it as Row.Msg).index == lastIndex }
         return if (idx >= 0) idx else rows.lastIndex
     }
 
@@ -586,6 +656,10 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             // 上一条消息残留的图片，否则会出现「生成中」下方挂着别人的图
             imageRow.removeAllViews()
             imageRow.visibility = View.GONE
+            // 复用 VH 时关闭链接识别（bind 里开的）：流式预览是临时文字，
+            // 不该把其中的 URL 渲染成可点链接
+            bubble.autoLinkMask = 0
+            bubble.movementMethod = null
             row.gravity = Gravity.START
             bubble.setBackgroundResource(R.drawable.bubble_assistant)
             bubble.setTextColor(STREAMING_TEXT_COLOR)
@@ -665,6 +739,14 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             val vPad = if (options.compact) 2 else 6
             row.setPadding(row.paddingLeft, vPad, row.paddingRight, vPad)
             bindImages(m)
+
+            // 链接可点击：消息里的 http(s) 地址变可点，点按用系统浏览器打开
+            // （同类 App 标配）。**必须在 setText 之前设好** autoLinkMask ——
+            // TextView 在赋值时才自动 linkify，设完 text 再改 mask 不生效。
+            // 只在 bind 设、bindStreaming 不设：流式预览是临时文字，不需链接。
+            bubble.movementMethod = android.text.method.LinkMovementMethod.getInstance()
+            bubble.autoLinkMask = android.text.util.Linkify.WEB_URLS
+            bubble.linksClickable = true
 
             when (m.role) {
                 "user" -> {
@@ -772,6 +854,19 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         (holder as? VH)?.stopCursorAnimation()
     }
 
+    /**
+     * adapter 与 RecyclerView 解绑时停掉追赶器。
+     *
+     * 仅停 VH 的呼吸动画不够：逐字追赶器挂在 adapter 级 [Handler] 上，
+     * 持有 [streamingPreview] 并持续 postDelayed，解绑（如切走再回来、
+     * 或进程回收列表）后若不停会空转泄漏。定稿（[setStreamingPreview] 传
+     * null）已停，这里兜底处理「未定稿就被解绑」的情形。
+     */
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        stopTypewriter()
+    }
+
     companion object {
         private const val VIEW_TYPE_MESSAGE = 0
         private const val VIEW_TYPE_TOOL = 1
@@ -807,6 +902,44 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         /** 呼吸动画一次涨/缩的时长（毫秒）。800ms 接近人的呼吸节奏，不抢注意力。 */
         private const val CURSOR_BREATH_MS = 800L
+
+        /**
+         * 逐字追赶的单步：本帧应揭示到的长度。
+         *
+         * 抽成纯函数是为了在 JVM 单测里直接验证「落后补偿 / 封顶 /
+         * 已追上」三态，而不必驱动 Handler（见 TypewriterRevealTest）。
+         *
+         * 不变量（测试钉死）：
+         * - 已追上（shown >= targetLen）→ 返回 targetLen，不再增长；
+         * - 落后 → 推进 TYPEWRITER_CHARS_PER_FRAME 字，且绝不越过 targetLen
+         *   （否则长停顿后一次性吐完，失去逐字意义）；
+         * - shown 为负（异常态）→ 回落为 0，不产出负数下标。
+         */
+        @JvmStatic
+        fun nextRevealLen(shown: Int, targetLen: Int): Int {
+            if (targetLen <= 0) return 0
+            val base = if (shown < 0) 0 else shown
+            return (base + TYPEWRITER_CHARS_PER_FRAME).coerceAtMost(targetLen)
+        }
+
+        /**
+         * 逐字动画的单帧间隔（毫秒）。
+         *
+         * 流式增量本身已二三十毫秒一批，若每批都整段显示，用户看到的是
+         * 「一大块文字凭空出现」而非逐字生长。这里用定时追赶让预览文字
+         * 以恒定节奏逐字显现，视觉上更像「AI 在打字」。
+         */
+        private const val TYPEWRITER_FRAME_MS = 24L
+
+        /**
+         * 逐字动画每帧揭示的字符数。
+         *
+         * 与 [TYPEWRITER_FRAME_MS] 共同决定显现速度：24ms × 3 ≈ 125 字/秒，
+         * 接近人快读的速度，既不拖沓也不闪。增量来得更密时（每批几十字）
+         * 追赶器落后，此时每帧多吐几个字把欠账补上；增量变稀时（思考停顿）
+         * 追赶器领先，停在目标长度等下一波 —— 故不需随网络抖动调参。
+         */
+        private const val TYPEWRITER_CHARS_PER_FRAME = 3
 
         /** 片段类型，由纯文本解析产生，再由 renderMarkdown 转成 Spannable。 */
         enum class Seg { TEXT, BOLD, CODE_BLOCK, CODE_INLINE }

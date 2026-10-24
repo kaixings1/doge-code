@@ -1,5 +1,6 @@
 // biome-ignore-all assist/source/organizeImports: ANT-ONLY 导入标记不得重新排序
 import { safeRequire, loadConditionalCommand, resolveCommandExport } from './commands/loader.js'
+import { getIsNonInteractiveSession } from './bootstrap/state.js'
 
 import addDir from './commands/add-dir/index.ts'
 import addModel from './commands/add-model/index.ts'
@@ -29,6 +30,7 @@ import evolve from './commands/evolve/index.ts'
 import compact from './commands/compact/index.ts'
 import config from './commands/config/index.ts'
 import { context, contextNonInteractive } from './commands/context/index.ts'
+import feishu from './commands/feishu/index.ts'
 import cost from './commands/cost/index.ts'
 import diff from './commands/diff/index.ts'
 import codeSearch from './commands/code-search/index.tsx'
@@ -256,7 +258,8 @@ const voiceCommand = loadConditionalCommand(
 )
 const forceSnip = loadConditionalCommand(
   () => process.env['CLAUDE_CODE_FEATURE_HISTORY_SNIP'] === '1',
-  () => resolveCommandExport(safeRequire('./commands/force-snip.js')?.default)
+  // 导出已是 Command 对象（非工厂函数）——不再走 resolveCommandExport 调用
+  () => safeRequire('./commands/force-snip.js')?.default ?? null
 )
 let cachedWorkflowsCmd: Command | null | undefined
 function getWorkflowsCmd(): Command | null {
@@ -275,7 +278,8 @@ const clearSkillIndexCache = loadConditionalCommand(
 )
 const subscribePr = loadConditionalCommand(
   () => process.env['CLAUDE_CODE_FEATURE_KAIROS_GITHUB_WEBHOOKS'] === '1',
-  () => resolveCommandExport(safeRequire('./commands/subscribe-pr.js')?.default)
+  // 导出已是 Command 对象（非工厂函数）——不再走 resolveCommandExport 调用
+  () => safeRequire('./commands/subscribe-pr.js')?.default ?? null
 )
 const ultraplan = loadConditionalCommand(
   () => process.env['CLAUDE_CODE_FEATURE_ULTRAPLAN'] === '1',
@@ -299,6 +303,9 @@ import thinkback from './commands/thinkback/index.ts'
 import thinkbackPlay from './commands/thinkback-play/index.ts'
 import permissions from './commands/permissions/index.ts'
 import plan from './commands/plan/index.ts'
+import ultraplanLocal from './commands/ultraplan-local/index.ts'
+import router from './commands/router/index.ts'
+import vault from './commands/vault/index.ts'
 import fast from './commands/fast/index.ts'
 import passes from './commands/passes/index.ts'
 import privacySettings from './commands/privacy-settings/index.ts'
@@ -317,10 +324,7 @@ import version from './commands/version.ts'
 import summary from './commands/summary/index.ts'
 import bridgeSessions from './commands/bridge-sessions/index.ts'
 import memoryBank from './commands/memory-bank/index.ts'
-import {
-  resetLimits,
-  resetLimitsNonInteractive,
-} from './commands/reset-limits/index.tsx'
+import { resetLimits } from './commands/reset-limits/index.tsx'
 import antTrace from './commands/ant-trace/index.tsx'
 import perfIssue from './commands/perf-issue/index.tsx'
 import sandboxToggle from './commands/sandbox-toggle/index.ts'
@@ -388,6 +392,8 @@ import statusline from './commands/statusline.tsx'
 import effort from './commands/effort/index.ts'
 import stats from './commands/stats/index.ts'
 // insights.ts 有 113KB（3200 行，包含 diffLines/HTML 渲染）。懒加载垫片将重型模块推迟到 /insights 实际被调用时。
+// 与 commands/insights/index.ts 的 JSX 版互斥：同一条 /insights 只注册一个实现，
+// 非交互会话用 prompt 版（输出报告），交互会话用 JSX 版（带展示 UI）。
 const usageReport: Command = {
   type: 'prompt',
   name: 'insights',
@@ -395,6 +401,7 @@ const usageReport: Command = {
   contentLength: 0,
   progressMessage: '正在分析你的会话',
   source: 'builtin',
+  isEnabled: () => getIsNonInteractiveSession(),
   async getPromptForCommand(args, context) {
     const real = (await import('./commands/insights.js')).default
     if (real.type !== 'prompt') throw new Error('不可达代码')
@@ -410,6 +417,10 @@ import codeReviewAssistant from './commands/code-review-assistant/index.ts'
 import dependencyAnalyzer from './commands/dependency-analyzer/index.ts'
 import skillsI18n from './commands/skills-i18n/index.ts'
 import updateskills from './commands/updateskills/index.ts'
+import reloadSkills from './commands/reload-skills/index.ts'
+import skillDoctor from './commands/skill-doctor/index.ts'
+import autoModeSetup from './commands/auto-mode-setup/index.ts'
+import checkup from './commands/checkup/index.ts'
 import notebook from './commands/notebook/index.ts'
 import todo from './commands/todo/index.ts'
 import benchmark from './commands/benchmark/index.ts'
@@ -423,6 +434,23 @@ import {
   getCommandName,
   isCommandEnabled,
 } from './types/command.js'
+
+/**
+ * 去除同名命令中被 isEnabled() 判定为禁用的条目。
+ *
+ * 背景：`/context`、`/insights`、`/extra-usage` 各有一对"交互实现 / 非交互实现"，
+ * 二者用互斥的 isEnabled 二选一。若不做这一步，同一会话模式下列表里仍会同时存在
+ * 两条同名项，查找结果取决于顺序。
+ */
+function dropDisabledDuplicates(commands: Command[]): Command[] {
+  const seen = new Set<string>()
+  return commands.filter(cmd => {
+    if (seen.has(cmd.name)) return false
+    if (!isCommandEnabled(cmd)) return false
+    seen.add(cmd.name)
+    return true
+  })
+}
 
 // 从集中位置重新导出类型
 export type {
@@ -449,7 +477,6 @@ export const INTERNAL_ONLY_COMMANDS = [
   ...(ultraplan ? [ultraplan] : []),
   ...(subscribePr ? [subscribePr] : []),
   resetLimits,
-  resetLimitsNonInteractive,
   onboarding,
   teleport,
   antTrace,
@@ -492,6 +519,7 @@ export const COMMANDS = memoize((): Command[] => [
   mcpConfig,
   context,
   contextNonInteractive,
+  feishu,
   ctx_viz,
   cost,
   costHistory,
@@ -715,6 +743,10 @@ export const COMMANDS = memoize((): Command[] => [
   securityAudit,
   agentNew,
   updateskills,
+  reloadSkills,
+  skillDoctor,
+  autoModeSetup,
+  checkup,
   // ── 功能补齐（2026-09-26）：补注册原本已实现但不可达的命令 ──
   brainSync,
   dataQuery,
@@ -891,9 +923,13 @@ export async function getCommands(cwd: string): Promise<Command[]> {
   // 获取在文件操作期间发现的动态技能
   const dynamicSkills = getDynamicSkills()
 
-  // 构建不含动态技能的基础命令列表
-  const baseCommands = allCommands.filter(
-    _ => meetsAvailabilityRequirement(_) && isCommandEnabled(_),
+  // 构建不含动态技能的基础命令列表。
+  // dropDisabledDuplicates 必须在 isCommandEnabled 之后再按名去重：
+  // 同名的交互/非交互实现只有一条会通过 isEnabled，另一条被丢弃。
+  const baseCommands = dropDisabledDuplicates(
+    allCommands.filter(
+      _ => meetsAvailabilityRequirement(_) && isCommandEnabled(_),
+    ),
   )
 
   if (dynamicSkills.length === 0) {
@@ -1055,6 +1091,9 @@ export const getRemoteSafeCommands: () => Set<Command> = memoize((): Set<Command
   btw, // 快速备注
   feedback, // 发送反馈
   plan, // 计划模式切换
+  ultraplanLocal, // 深度规划（本地版，替代依赖 CCR 云端的 /ultraplan）
+  router, // 分层模型路由建议（吸收 ClawRouter 的成本分流思路）
+  vault, // 本地 Markdown 知识库检索（吸收 claude-obsidian 的 BM25 流程）
   keybindings, // 快捷键管理
   statusline,
   summary, // 状态行切换
