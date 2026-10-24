@@ -138,3 +138,6 @@ fresh
 # MCP serena 服务器的本机克隆（14M 第三方仓库，仅 .mcp.json 本机绝对路径引用）
 # 由 uvx --from D:/doge-code/vendor/serena 启动，不该入库
 /vendor/serena/
+
+# Playwright MCP 运行时诊断缓存（page-*.yml 快照，非源码）
+.playwright-mcp/
