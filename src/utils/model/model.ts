@@ -216,6 +216,36 @@ export function firstPartyNameToCanonical(name: ModelName): ModelShortName {
   name = name.toLowerCase()
   // 针对 Claude 4+ 模型的特殊处理，以区分版本
   // 顺序很重要：先检查更具体的版本（4-5 在 4 之前）
+  // 5.x 与 4.7/4.8 需先于 4.x 判断，否则会被 'claude-opus-4' / 'claude-opus'
+  // 这些更宽的条件吃掉（实测：opus-4-7 -> claude-opus-4，opus-5 -> claude-opus）。
+  // 数据来源：官方二进制模型表的 id 字段。
+  if (name.includes('claude-opus-5-5')) {
+    return 'claude-opus-5-5'
+  }
+  if (name.includes('claude-opus-5')) {
+    return 'claude-opus-5'
+  }
+  if (name.includes('claude-opus-4-8')) {
+    return 'claude-opus-4-8'
+  }
+  if (name.includes('claude-opus-4-7')) {
+    return 'claude-opus-4-7'
+  }
+  if (name.includes('claude-sonnet-5-5')) {
+    return 'claude-sonnet-5-5'
+  }
+  if (name.includes('claude-sonnet-5')) {
+    return 'claude-sonnet-5'
+  }
+  if (name.includes('claude-haiku-5-5')) {
+    return 'claude-haiku-5-5'
+  }
+  if (name.includes('claude-fable-5-1')) {
+    return 'claude-fable-5-1'
+  }
+  if (name.includes('claude-fable-5')) {
+    return 'claude-fable-5'
+  }
   if (name.includes('claude-opus-4-6')) {
     return 'claude-opus-4-6'
   }

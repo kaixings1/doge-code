@@ -40,17 +40,43 @@ export function has1mContext(model: string): boolean {
   return /\[1m\]/i.test(model)
 }
 
-// @[MODEL LAUNCH]: Update this pattern if the new model supports 1M context
+/**
+ * 支持 1M 上下文窗口的模型（按官方模型表 context.native_1m / supports_1m_beta）。
+ *
+ * 数据来源：官方二进制中每个模型条目的结构化定义，形如
+ *   context:{window:1e6, native_1m:true, supports_1m_beta:true}
+ * 与本文件既有硬编码值交叉校验一致（opus-4-6 / sonnet-4-6 / opus-4-5）。
+ *
+ * 以前这里用 `canonical.includes('claude-sonnet-4')` 这类子串猜测：
+ * sonnet 匹配整个 4 系（宽），opus 只认 4-6（窄），导致 opus-4-7/4-8、
+ * opus-5、sonnet-5 全部判为「不支持 1M」——与官方表相反。
+ * 改为显式集合后，新模型只需在发布时确认其 window 再增删一行。
+ */
+const MODELS_WITH_1M_CONTEXT: readonly string[] = [
+  'claude-opus-4-6',
+  'claude-opus-4-7',
+  'claude-opus-4-8',
+  'claude-opus-5',
+  'claude-opus-5-5',
+  'claude-sonnet-4-6',
+  'claude-sonnet-5',
+  'claude-sonnet-5-5',
+  'claude-haiku-5-5',
+  'claude-fable-5',
+  'claude-fable-5-1',
+  'claude-mythos-5',
+  'claude-mythos-5-1',
+  // 非官方表项，沿用既有行为（Gemini 经 OpenAI 兼容 API 提供大窗口）
+  'gemini-2-0-flash',
+]
+
+// @[MODEL LAUNCH]: 新模型若在官方表中 context.window 为 1M，加入上面的列表。
 export function modelSupports1M(model: string): boolean {
   if (is1mContextDisabled()) {
     return false
   }
-  const canonical = getCanonicalName(model)
-  return (
-    canonical.includes('claude-sonnet-4') ||
-    canonical.includes('opus-4-6') ||
-    canonical.includes('gemini-2-0-flash')
-  )
+  const canonical = getCanonicalName(model).toLowerCase()
+  return MODELS_WITH_1M_CONTEXT.some(id => canonical.includes(id))
 }
 
 export function getContextWindowForModel(
@@ -178,7 +204,20 @@ export function getModelMaxOutputTokens(model: string): {
 
   const m = getCanonicalName(model)
 
-  if (m.includes('opus-4-6')) {
+  // 新一代模型（数据取自官方模型表 max_output_tokens，非推测）
+  if (m.includes('opus-5-5') || m.includes('sonnet-5-5') || m.includes('haiku-5-5')) {
+    defaultTokens = 128_000
+    upperLimit = 128_000
+  } else if (
+    m.includes('opus-5') ||
+    m.includes('sonnet-5') ||
+    m.includes('fable-5') ||
+    m.includes('opus-4-8') ||
+    m.includes('opus-4-7')
+  ) {
+    defaultTokens = 64_000
+    upperLimit = 128_000
+  } else if (m.includes('opus-4-6')) {
     defaultTokens = 64_000
     upperLimit = 128_000
   } else if (m.includes('sonnet-4-6')) {
