@@ -31,8 +31,15 @@ if "%1"=="" (
 ) else (
     set "DOGE_API_JSON=~\.dogekey\%1.json"
 )
-if not exist "%DOGE_API_JSON%" (
-    echo [d.bat] WARNING: config not found: %DOGE_API_JSON%
+REM cmd.exe does NOT expand "~", so the existence check below needs
+REM the expanded absolute form. DOGE_API_JSON keeps "~" for the CLI.
+if "%1"=="" (
+    set "DOGE_API_JSON_CHK=%USERPROFILE%\.dogekey\api.json"
+) else (
+    set "DOGE_API_JSON_CHK=%USERPROFILE%\.dogekey\%1.json"
+)
+if not exist "%DOGE_API_JSON_CHK%" (
+    echo [d.bat] WARNING: config not found: %DOGE_API_JSON_CHK%
 )
 
 REM Clear any LOCAL_BRIDGE marker inherited from the parent shell.

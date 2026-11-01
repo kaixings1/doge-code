@@ -64,11 +64,13 @@ if defined DOGE_ARG1 call set "DOGE_FIRST=%%DOGE_ARG1:~0,1%%"
 if not "x%DOGE_FIRST%"=="x-" set "DOGE_PROFILE=%DOGE_ARG1%"
 if defined DOGE_PROFILE (
     set "DOGE_API_JSON=~\.dogekey\%DOGE_PROFILE%.json"
+    set "DOGE_API_JSON_CHK=%USERPROFILE%\.dogekey\%DOGE_PROFILE%.json"
 ) else (
     set "DOGE_API_JSON=~\.dogekey\api.json"
+    set "DOGE_API_JSON_CHK=%USERPROFILE%\.dogekey\api.json"
 )
-if not exist "%DOGE_API_JSON%" (
-    echo [mobile.bat] WARNING: config not found: %DOGE_API_JSON%
+if not exist "%DOGE_API_JSON_CHK%" (
+    echo [mobile.bat] WARNING: config not found: %DOGE_API_JSON_CHK%
 )
 set "DOGE_ARG1="
 set "DOGE_FIRST="
