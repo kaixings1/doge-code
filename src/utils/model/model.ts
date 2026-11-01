@@ -243,6 +243,12 @@ export function firstPartyNameToCanonical(name: ModelName): ModelShortName {
   if (name.includes('claude-fable-5-1')) {
     return 'claude-fable-5-1'
   }
+  if (name.includes('claude-mythos-5-1')) {
+    return 'claude-mythos-5-1'
+  }
+  if (name.includes('claude-mythos-5')) {
+    return 'claude-mythos-5'
+  }
   if (name.includes('claude-fable-5')) {
     return 'claude-fable-5'
   }

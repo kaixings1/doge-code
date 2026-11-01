@@ -184,6 +184,55 @@ export const COST_TIER_3_15 = {
 /** 未知/默认模型回退计费（采用 Claude 标准 Sonnet 层级，作为兜底成本估算） */
 const DEFAULT_UNKNOWN_MODEL_COST = COST_TIER_3_15
 
+/**
+ * 以下档位取自官方模型目录的 pricing_tiers 表（与本地既有档位交叉校验一致）。
+ * 本地未使用的 cache_write_1h 字段未引入。
+ */
+
+/** Sonnet 5 计费层级：输入 $2 / 输出 $10 每百万 token */
+export const COST_TIER_2_10 = {
+  inputTokens: 2,
+  outputTokens: 10,
+  promptCacheWriteTokens: 2.5,
+  promptCacheReadTokens: 0.2,
+  webSearchRequests: 0.01,
+} as const satisfies ModelCosts
+
+/** Sonnet 5.5 计费层级：同 $2/$10，缓存读取更低（$0.10） */
+export const COST_TIER_2_10_CACHE_READ_010 = {
+  inputTokens: 2,
+  outputTokens: 10,
+  promptCacheWriteTokens: 2.5,
+  promptCacheReadTokens: 0.1,
+  webSearchRequests: 0.01,
+} as const satisfies ModelCosts
+
+/** Opus 5.5 计费层级：输入 $4 / 输出 $20 每百万 token */
+export const COST_TIER_4_20 = {
+  inputTokens: 4,
+  outputTokens: 20,
+  promptCacheWriteTokens: 5,
+  promptCacheReadTokens: 0.2,
+  webSearchRequests: 0.01,
+} as const satisfies ModelCosts
+
+/** Fable / Mythos 计费层级：输入 $10 / 输出 $50 每百万 token */
+export const COST_TIER_10_50 = {
+  inputTokens: 10,
+  outputTokens: 50,
+  promptCacheWriteTokens: 12.5,
+  promptCacheReadTokens: 1,
+  webSearchRequests: 0.01,
+} as const satisfies ModelCosts
+
+/** Fable 5.1 / Mythos 5.1 计费层级：同 $10/$50，缓存读取 $0.25 */
+export const COST_TIER_10_50_CACHE_READ_025 = {
+  inputTokens: 10,
+  outputTokens: 50,
+  promptCacheWriteTokens: 12.5,
+  promptCacheReadTokens: 0.25,
+  webSearchRequests: 0.01,
+} as const satisfies ModelCosts
 /** Opus 4 / 4.1 计费层级：输入 $15 / 输出 $75 每百万 token */
 export const COST_TIER_15_75 = {
   inputTokens: 15,
@@ -275,6 +324,18 @@ export const MODEL_COSTS: Record<ModelShortName, ModelCosts> = {
     COST_TIER_5_25,
   [firstPartyNameToCanonical(CLAUDE_OPUS_4_6_CONFIG.firstParty)]:
     COST_TIER_5_25,
+  // 以下条目按官方模型目录的 pricing 字段建立（此前缺失，导致回落到
+  // 默认档位 $3/$15，Opus 档被低估 40%）
+  'claude-opus-4-7': COST_TIER_5_25,
+  'claude-opus-4-8': COST_TIER_5_25,
+  'claude-opus-5': COST_TIER_5_25,
+  'claude-opus-5-5': COST_TIER_4_20,
+  'claude-sonnet-5': COST_TIER_2_10,
+  'claude-sonnet-5-5': COST_TIER_2_10_CACHE_READ_010,
+  'claude-fable-5': COST_TIER_10_50,
+  'claude-fable-5-1': COST_TIER_10_50_CACHE_READ_025,
+  'claude-mythos-5': COST_TIER_10_50,
+  'claude-mythos-5-1': COST_TIER_10_50_CACHE_READ_025,
 
   // --- OpenAI 系列 ---
   'gpt-4o': COST_TIER_GPT4O,

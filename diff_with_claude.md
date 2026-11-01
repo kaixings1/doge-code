@@ -323,7 +323,15 @@ USER_TYPE=ant                              -> REPL / Config / Tungsten
       - `getMaxOutputTokensForModel` 补新一代模型分支（64000/128000 与 128000/128000 两档）。
       - 测试 `tests/unit/model-1m-capability.test.ts`（14 用例，覆盖 10 个应支持 + 3 个不应支持 + 环境开关）。变异验证两项均捕获：删 opus-4-8 归一化分支 → 对应用例失败；把 haiku-4-5 误加入 1M 列表 → 对应用例失败。
       - 实测：12 个模型的 `supports1M` 与官方表逐个一致；带 `CONTEXT_1M_BETA_HEADER` 时窗口为 1000000，不带时 200000（后者是既有设计，1M 需显式启用 beta）。
-      - **仍未做**：`modelCost.ts` 的单价。二进制里只有 `pricing:"tier_5_25"` 这类档位代号，没有可直接换算的单价表，需官方价格页，仍不能推测。故本项从「完全不能修」改为「上下文能力已修，定价仍未修」。
+      - **定价也已补齐（同轮完成）**：上一小节的判断再次有误 —— 二进制里**同时存在** `pricing_tiers:{tier_5_25:{input:5,output:25,cache_write_5m:6.25,cache_read:0.5,...},...}` 这张档位→单价表，与每个模型条目的 `pricing:"tier_xx_yy"` 归属可直接对应。已与本地既有档位交叉校验一致（`tier_3_15`=3/15、`tier_5_25`=5/25、`tier_15_75`=15/75 三项全对）。
+        - 修复前实测：`opus-4-7` / `4-8` / `opus-5` 无 `MODEL_COSTS` 条目，`getModelCosts()` 静默回落到默认档 `COST_TIER_3_15`（$3/$15），而实际应为 Opus 档 $5/$25 —— **成本被低估 40%**。
+        - 新增档位：`tier_2_10`（$2/$10）、`tier_2_10_cache_read_0_10`、`tier_4_20`（$4/$20）、`tier_10_50`（$10/$50）、`tier_10_50_cache_read_0_25`。
+        - 新增模型映射：opus-4-7/4-8/opus-5（$5/$25）、opus-5-5（$4/$20）、sonnet-5（$2/$10）、sonnet-5-5、fable-5/5-1、mythos-5/5-1。
+        - 顺带发现 `firstPartyNameToCanonical` 缺 mythos 分支（实测 `claude-mythos-5 -> claude-mythos`），导致映射键永远匹配不到，已补。
+        - 测试 `tests/unit/model-pricing-new.test.ts`（12 用例）。变异验证：删掉 opus-4-8 映射 → 2 个用例失败（含「不再回落 $3/$15」那条）；恢复即全绿。
+        - 实测：13 个模型的 input/output/cacheRead 与官方 `pricing_tiers` 逐个一致。
+      - **仍未做**：`haiku-5-5` 的 `long_prompt` 分段计价（官方表里带 `long_prompt:{above_prompt_tokens:1e5,...}`，即超过 10 万输入 token 后单价变化）。本地 `ModelCosts` 结构没有分段字段，需要扩展类型，属独立改动；当前按固定价 $0.1/$0.5 计，短请求不受影响。长上下文下会低估。
+      - 至此「模型滞后」此项**已从完全不能修 → 上下文能力 + 定价均已对齐**，仅剩上述分段计价的边角。
 2. ~~**重名命令**（§4.1）~~ **已于 2026-10-20 修复**：`reset-limits` 合并为单条；`context`/`insights`/`extra-usage` 改为互斥 `isEnabled` 配对实现。回归测试 `tests/unit/command-name-uniqueness.test.ts`。
 3. ~~**任务系统缺团队语义**~~ **已补**：`TaskCreate` 支持 `owner`/`blocks`/`blockedBy`（走 `blockTask` 同步反向边），`TaskGet` 输出 `Owner`。测试 `tests/unit/task-team-semantics.test.ts`（5 用例）。
 4. ~~**安全参数缺失**~~ **已补**：`--restricted` 落地（执行类工具 + WebFetch 默认禁止、`--tools` 可豁免、忽略 user/project/local 设置、拒绝 bypass）；`--safe-mode` 与 `--restricted` 在首屏显示生效状态。测试 `tests/unit/restricted-mode.test.ts`（6 用例）。
