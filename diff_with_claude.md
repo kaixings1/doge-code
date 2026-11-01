@@ -437,7 +437,7 @@ USER_TYPE=ant                              -> REPL / Config / Tungsten
 |---|---|
 | **已实现** | `MonitorTool`（目录存在）、`Explanatory` 输出风格提示、mod `tool.check` 的 `readOnly` |
 | **本轮已补** | `CLAUDE_CODE_DISABLE_ULTRATHINK`、`permissions.blockWritesOutsideWorkingDirectories` / `blockReadsOutsideWorkingDirectories`（§9.4）、`CLAUDE_CODE_SUBAGENT_EFFORT`（§9.5）、`CLAUDE_CODE_RETRY_WATCHDOG_USAGE_LIMIT_RECHECK_MS`（§9.6）、`claude_code.safety_event`（§9.8） |
-| **未实现（可做）** | `/claude-api api-version`、`/claude-api managed-agents-secure`、`--hold-idle-file`/`--max-hold-min`（self-hosted-runner）、mod `tool.check` 的 `decider: "person"` |
+| **已评估、不做** | `/claude-api api-version`、`/claude-api managed-agents-secure`、`--hold-idle-file`/`--max-hold-min`、mod `tool.check` 的 `decider: "person"`（逐条依据见 §9.10） |
 | **不实现（本地无作用对象）** | `CLAUDE_CODE_DISABLE_LOOPED_CROSS_CERT_DROP`（见 §9.7） |
 | **不适用（本地无对应体系）** | 云会话、Claude apps gateway、Enterprise 自定义角色、VSCode 扩展、Code Review SaaS、Claude Tag |
 
@@ -618,6 +618,49 @@ claude-haiku-4.5  -> canonical 'claude-haiku'
 
 **结论**：345 条 Fixed 里对本地有实质影响的只有 1 条，已修。其余多为
 云端/企业/IDE/沙箱（Linux bwrap）相关，或本地实现方式不同而不适用。
+
+### 9.10 剩余 4 项评估：均不实现（2026-11-01）
+
+对 §9.2 表里剩余的 4 项逐条核实本地是否有作用对象，结论**全部不实现**：
+
+#### `--hold-idle-file` / `--max-hold-min`（2.1.311）—— 不实现
+
+先取官方语义（从 2.1.316 二进制提取的解析代码）：
+
+- `--hold-idle-file <path>`：一个由**宿主持续更新的文件**，表示「该会话仍有进程在跑」，
+  据此决定保持 idle 而不是释放会话。写入 `SELF_HOSTED_RUNNER_HOLD_IDLE_FILE`。
+- `--max-hold-min <n>`：非负分钟数，**0 表示禁用**，写入 `SELF_HOSTED_RUNNER_MAX_HOLD_MS`。
+
+看起来像两个小开关，实际背后是**一整套 self-hosted-runner 会话生命周期子系统**：
+
+| | 官方 | 本地 |
+|---|---|---|
+| 参数面 | 20+（`--capacity` / `--drain-marker-file` / `--health-port` / `--retire-at` / `--release-idle-session-min` / `--startup-timeout-min` / `--checkout-hook-timeout-min` …） | 仅 4 个（`--server-url` / `--token` / `--name` / `--poll-interval`） |
+| 会话模型 | 有 session idle / hold / drain / retire 完整生命周期 | **无会话概念**，只有「拉任务 → execSync → 回传」（`src/self-hosted-runner/main.ts` 共 121 行） |
+
+本地 runner 根本没有 idle 状态，`hold-idle-file` 没有作用对象 —— 与 §9.7 的
+`LOOPED_CROSS_CERT_DROP` 同理。要真做，得先实现整个会话生命周期，属数千行量级，
+且与本地这个 121 行的简易实现差异过大，不属于「对齐一个参数」。
+
+#### `/claude-api api-version` / `managed-agents-secure`（2.1.307 / 2.1.304）—— 不实现
+
+`src/skills/bundled/claudeApi.ts` 是 195 行的**提示词技能**（按项目语言生成 API 示例），
+不是子命令分发器。这两个子命令分别依赖：
+
+- `api-version`：把代码迁移到 API 版本 `2026-10-21` —— 需要官方 API 版本差异清单；
+- `managed-agents-secure`：对照 Anthropic **已发布的安全指南**核对 Managed Agents 配置 —— 需要官方指南内容。
+
+两者都需要官方文档数据，本地没有，硬写只能编造。且本地主用 DeepSeek 自定义 BaseURL，
+这两个子命令对实际使用无收益。
+
+#### mod `tool.check` 的 `decider: "person"`（2.1.304）—— 不实现
+
+本地**没有 mod 体系**（官方 plugin/mod 的 `tool.check` 回调协议）。该字段要宿主读取
+才能生效，本地加入后没有消费者。
+
+#### 小结
+
+至此 §9.2 表中**已无剩余可做项**。后续若上游新增版本，按 §9.1 的方法重新比对即可。
 
 ---
 
