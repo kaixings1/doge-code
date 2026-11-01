@@ -945,7 +945,7 @@ async function run(): Promise<CommanderCommand> {
   }).hideHelp()).option('--replay-user-messages', '将来自 stdin 的用户消息重新回显到 stdout 以进行确认（仅适用于 --input-format=stream-json 和 --output-format=stream-json）', () => true).addOption(new Option('--enable-auth-status', '在 SDK 模式下启用认证状态消息').default(false).hideHelp()).option('--allowedTools, --allowed-tools <tools...>', '逗号或空格分隔的允许工具名称列表（例如 "Bash(git:*) Edit")').option('--tools <tools...>', '从内置工具集中指定可用工具列表。使用 "" 禁用所有工具，"default" 使用所有工具，或指定工具名称（例如 "Bash,Edit,Read"）。').option('--disallowedTools, --disallowed-tools <tools...>', '逗号或空格分隔的禁止工具名称列表（例如 "Bash(git:*) Edit")').option('--mcp-config <configs...>', '从 JSON 文件或字符串加载 MCP 服务器（空格分隔）').addOption(new Option('--permission-prompt-tool <tool>', '用于权限提示的 MCP 工具（仅适用于 --print）').argParser(String).hideHelp()).addOption(new Option('--system-prompt <prompt>', '用于会话的系统提示').argParser(String)).addOption(new Option('--system-prompt-file <file>', '从文件读取系统提示').argParser(String).hideHelp()).addOption(new Option('--append-system-prompt <prompt>', '向默认系统提示追加内容').argParser(String)).addOption(new Option('--append-system-prompt-file <file>', '从文件读取系统提示并追加到默认系统提示').argParser(String).hideHelp()).addOption(new Option('--permission-mode <mode>', '用于会话的权限模式').argParser(String).choices(PERMISSION_MODES)).option('-c, --continue', '继续当前目录中最近的对话', () => true).option('-r, --resume [value]', '通过会话 ID 恢复对话，或通过可选搜索词打开交互式选择器', value => value || true).option('--fork-session', '恢复时创建新的会话 ID，而不是重用原始 ID（与 --resume 或 --continue 一起使用）', () => true).addOption(new Option('--prefill <text>', '用文本预填充提示输入框而不提交').hideHelp()).addOption(new Option('--deep-link-origin', '表示此会话是从深度链接启动的').hideHelp()).addOption(new Option('--deep-link-repo <slug>', '深度链接 ?repo= 参数解析为当前工作目录的仓库标识符').hideHelp()).addOption(new Option('--deep-link-last-fetch <ms>', 'FETCH_HEAD 的修改时间（毫秒级时间戳），由深度链接跳板预计算').argParser(v => {
     const n = Number(v);
     return Number.isFinite(n) ? n : undefined;
-  }).hideHelp()).option('--from-pr [value]', '通过 PR 编号或 URL 恢复链接到 PR 的会话，或通过可选搜索词打开交互式选择器', value => value || true).option('--no-session-persistence', '禁用会话持久化 - 会话将不会保存到磁盘且无法恢复（仅适用于 --print）').addOption(new Option('--resume-session-at <message id>', '恢复时仅包含直到并包括指定 assistant 消息 ID 的消息（与 --resume 一起用于打印模式）').argParser(String).hideHelp()).addOption(new Option('--rewind-files <user-message-id>', '将文件恢复到指定用户消息时的状态并退出（需要 --resume）').hideHelp()).addOption(new Option('--safe-mode', '安全模式：以所有自定义项（CLAUDE.md、插件、技能、钩子、MCP 服务器）禁用状态启动，用于故障排除').hideHelp()).addOption(new Option('--autocompact <auto|tokens>', '自动压缩窗口：auto（沿用模型默认）或 100k–1M 的 token 数（如 100k、500000）。等价于设置 CLAUDE_CODE_AUTO_COMPACT_WINDOW。').argParser((raw: string) => parseAutoCompactFlag(raw).kind === 'auto' ? 'auto' : raw)).addOption(new Option('--exclude-dynamic-system-prompt-sections', '把 cwd、环境信息、git 状态等随会话变化的内容移出系统提示词，改为附加在首条用户消息上，使系统提示词跨会话保持一致以提升 prompt cache 命中').hideHelp()).addOption(new Option('--permission-prompts <host|none>', '无头模式下由谁回答权限提示：host（默认，交给宿主 UI/SDK）或 none（凡需询问的调用一律自动拒绝）').argParser(String)).option('--restricted', '受限模式：移除执行命令/代码的内置工具（Bash、PowerShell 等）与 WebFetch（除非 --tools 显式点名），忽略 user/project/local 设置（managed 设置与 --settings 仍生效），拒绝 bypassPermissions。').option('--ax-screen-reader', '无障碍模式：适配读屏软件（保留原生光标、避免光标隐藏等全屏绘制行为），等价于设置 CLAUDE_CODE_ACCESSIBILITY=1').option('--forward-subagent-text', '把子代理的文本与思考块作为带 parent_tool_use_id 的消息转发（仅配合 --print 与 --output-format=stream-json 生效）').addOption(new Option('--system-prompt-snapshot <on|off>', '系统提示词录制与复用：on（默认）在会话首次请求时渲染并录制，之后每次请求与恢复都原样复用，直到该会话被压缩；off 从不录制，每次重新渲染（便于迭代提示词文本）').argParser(String).choices(['on', 'off']))
+  }).hideHelp()).option('--from-pr [value]', '通过 PR 编号或 URL 恢复链接到 PR 的会话，或通过可选搜索词打开交互式选择器', value => value || true).option('--no-session-persistence', '禁用会话持久化 - 会话将不会保存到磁盘且无法恢复（仅适用于 --print）').addOption(new Option('--resume-session-at <message id>', '恢复时仅包含直到并包括指定 assistant 消息 ID 的消息（与 --resume 一起用于打印模式）').argParser(String).hideHelp()).addOption(new Option('--rewind-files <user-message-id>', '将文件恢复到指定用户消息时的状态并退出（需要 --resume）').hideHelp()).addOption(new Option('--safe-mode', '安全模式：以所有自定义项（CLAUDE.md、插件、技能、钩子、MCP 服务器）禁用状态启动，用于故障排除').hideHelp()).addOption(new Option('--autocompact <auto|tokens>', '自动压缩窗口：auto（沿用模型默认）或 100k–1M 的 token 数（如 100k、500000）。等价于设置 CLAUDE_CODE_AUTO_COMPACT_WINDOW。').argParser((raw: string) => parseAutoCompactFlag(raw).kind === 'auto' ? 'auto' : raw)).addOption(new Option('--exclude-dynamic-system-prompt-sections', '把 cwd、环境信息、git 状态等随会话变化的内容移出系统提示词，改为附加在首条用户消息上，使系统提示词跨会话保持一致以提升 prompt cache 命中').hideHelp()).addOption(new Option('--permission-prompts <host|none>', '无头模式下由谁回答权限提示：host（默认，交给宿主 UI/SDK）或 none（凡需询问的调用一律自动拒绝）').argParser(String)).option('--restricted', '受限模式：移除执行命令/代码的内置工具（Bash、PowerShell 等）与 WebFetch（除非 --tools 显式点名），忽略 user/project/local 设置（managed 设置与 --settings 仍生效），拒绝 bypassPermissions。').option('--ax-screen-reader', '无障碍模式：适配读屏软件（保留原生光标、避免光标隐藏等全屏绘制行为），等价于设置 CLAUDE_CODE_ACCESSIBILITY=1').option('--forward-subagent-text', '把子代理的文本与思考块作为带 parent_tool_use_id 的消息转发（仅配合 --print 与 --output-format=stream-json 生效）').addOption(new Option('--system-prompt-snapshot <on|off>', '系统提示词录制与复用：on（默认）在会话首次请求时渲染并录制，之后每次请求与恢复都原样复用，直到该会话被压缩；off 从不录制，每次重新渲染（便于迭代提示词文本）').argParser(String).choices(['on', 'off'])).option('--prompt-suggestions [value]', '启用提示建议：在 print/SDK 模式下每轮回复后追加一条 prompt_suggestion 消息，给出预测的下一条用户提示（取值 true/false/1/0/yes/no/on/off，不传值等同 true）', value => (value === undefined ? true : value))
   // @[MODEL LAUNCH]: 更新 --model 帮助文本中的示例模型 ID。
   .option('--model <model>', `用于当前会话的模型。提供最新模型的别名（例如 'sonnet' 或 'opus'）或模型的完整名称（例如 'claude-sonnet-4-6'）。`).addOption(new Option('--effort <level>', `当前会话的投入级别（low、medium、high、max）`).argParser((rawValue: string) =>{
     const value = rawValue.toLowerCase();
@@ -1011,6 +1011,25 @@ async function run(): Promise<CommanderCommand> {
     // 与官方「on 为默认」一致。
     if (typeof options.systemPromptSnapshot === 'string') {
       process.env.CLAUDE_CODE_SYSTEM_PROMPT_SNAPSHOT = options.systemPromptSnapshot;
+    }
+    // --prompt-suggestions [value]（对齐官方）：每轮回复后追加一条
+    // prompt_suggestion 消息（预测下一条用户提示）。仅 stream-json 能承载该消息。
+    // 取值：不传 -> true；显式值走 isEnvTruthy（1/true/yes/on 为真），
+    // 其余视为关闭 —— 与官方 choices(true/false/1/0/yes/no/on/off) 等价。
+    if (options.promptSuggestions !== undefined) {
+      const isPrintModeForPs =
+        process.argv.includes('-p') || process.argv.includes('--print');
+      if (!isPrintModeForPs || options.outputFormat !== 'stream-json') {
+        process.stderr.write(
+          'Error: --prompt-suggestions requires --print and --output-format=stream-json (prompt_suggestion messages are only surfaced in stream-json output).\n',
+        );
+        process.exit(1);
+      }
+      // Commander 把 `[value]` 推导为 `string | true`，直接赋 boolean 会
+      // TS2322。与 main.tsx 里 `opts.brief = true` 同样处理：显式写值。
+      const psRaw = options.promptSuggestions;
+      (options as { promptSuggestions?: boolean }).promptSuggestions =
+        psRaw === true || isEnvTruthy(psRaw);
     }
     // --permission-prompts <host|none>：none 时所有需要弹窗的调用自动拒绝。
     if (typeof options.permissionPrompts === 'string') {
@@ -2663,6 +2682,10 @@ if (claudeaiTimedOut) {
         sdkUrl,
         replayUserMessages: effectiveReplayUserMessages,
         includePartialMessages: effectiveIncludePartialMessages,
+        // --prompt-suggestions：不传则 print.ts 侧永远 undefined，建议链路不会执行
+        promptSuggestions: (options as { promptSuggestions?: boolean })
+          .promptSuggestions,
+
         forkSession: options.forkSession || false,
         resumeSessionAt: options.resumeSessionAt || undefined,
         rewindFiles: options.rewindFiles,
