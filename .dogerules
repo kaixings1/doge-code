@@ -101,6 +101,13 @@ Bug 修复 = 根治，不是治标：一个报告说的是症状。Grep 你触�
 - 清理操作应逐个确认，批量删除只适用于确定无用的临时文件（如 *.tmp、*.log、debug*.ts）
 - 如果不确定，宁可不删。用户说"整理"不等于"删东西"
 
+# 临时脚本固化规则（避免反复手写一次性工具）
+- **任何为完成当前任务而手写、且后续还可能复用的脚本（Python/Node/bat），在任务收尾时一律转入 `scripts/` 成为内置工具**，不要留在仓库根目录当 `_xxx.py` 临时文件
+- 判定标准：本次会话为了排查/分析/修复而临时写出的脚本，只要不属于"用完即弃的纯调试探针"，就该固化
+- 固化要求：① 放在 `scripts/` 下，命名清晰（动词-名词，如 `branch-list.mjs`、`fix-bat-encoding.mjs`）② 去掉写死的绝对路径，改为参数/argv 传入 ③ 加文件头注释说明用途与用法 ④ 在 `package.json` 的 `scripts` 段加一条调用入口（如 `"fix:bat": "node scripts/fix-bat-encoding.mjs"`）⑤ 根目录残留的 `_*.py`/`_*.mjs` 临时文件必须删除
+- **Windows/cmd 兼容性硬性约束**：脚本内调用 git 必须用 `execFileSync('git', [args...])` **参数数组**形式，禁止 `execSync('git ...')` 字符串拼接——MSYS2/cmd 会把 `%(committerdate)` 里的 `%` 当 Windows 变量吃掉，导致 `'%' 不是内部或外部命令`
+- 写入 .bat 的注释必须纯 ASCII + CRLF（UTF-8 中文会吞换行符导致 REM 被当命令执行），用 `scripts/fix-bat-encoding.mjs` 规范化
+
 # 代码修改确认规则
 - 所有代码修改后必须做 diff 级确认：对比修改前后，逐项确认功能代码没有丢失
 - 确认方式：git diff + grep 关键函数/接口/类型定义，确保每个功能点仍在

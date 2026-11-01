@@ -26,7 +26,7 @@ try {
   writeFileSync(join(homedir(), ".doge", "status-line-debug.log"), rawInput + "\\n---\\n", { flag: "a" });
 } catch {}
 var input = JSON.parse(rawInput);
-var { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration, doge_api_json, session_id } = input;
+var { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration, doge_api_json, session_id, mobile_bridge } = input;
 var segments = [];
 if (workspace && workspace.current_dir) {
   var dir = workspace.current_dir;
@@ -110,6 +110,17 @@ if (doge_api_json) {
 }
 if (session_id) {
   segments.push("\\u{1F517} " + session_id);
+}
+if (mobile_bridge && mobile_bridge.available) {
+  var mbReady = mobile_bridge.ready;
+  var mbClients = "number" == typeof mobile_bridge.clients ? mobile_bridge.clients : 0;
+  var mbPort = "number" == typeof mobile_bridge.port ? mobile_bridge.port : 6000;
+  if (mbReady) {
+    var phoneTag = mbClients > 0 ? (" \\u{1F4F1}x" + mbClients) : "";
+    segments.push("\\u{1F4A1} 桥接就绪:" + mbPort + phoneTag);
+  } else {
+    segments.push("\\u{26A0} 桥接未就绪:" + mbPort);
+  }
 }
 console.log(segments.join("  "));
 `;

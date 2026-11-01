@@ -12,7 +12,7 @@ try {
 \`, { flag: "a" });
 } catch {}
 var input = JSON.parse(rawInput);
-var { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration, doge_api_json, session_id, epoch, update_notification, is_in_plan_mode, eco_enabled } = input;
+var { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration, doge_api_json, session_id, mobile_bridge, epoch, update_notification, is_in_plan_mode, eco_enabled } = input;
 var segments = [];
 if (workspace?.current_dir) {
   const parts = workspace.current_dir.replace(/\\/g, "/").split("/").filter(Boolean);
@@ -88,6 +88,17 @@ if (doge_api_json) {
 }
 if (session_id) {
   segments.push("\uD83D\uDD17 " + session_id);
+}
+if (mobile_bridge && mobile_bridge.available) {
+  const mbReady = mobile_bridge.ready;
+  const mbClients = typeof mobile_bridge.clients === "number" ? mobile_bridge.clients : 0;
+  const mbPort = typeof mobile_bridge.port === "number" ? mobile_bridge.port : 6000;
+  if (mbReady) {
+    const phoneTag = mbClients > 0 ? \` \uD83D\uDCF1x\${mbClients}\` : "";
+    segments.push(\`\uD83D\uDCA1 桥接就绪:\${mbPort}\${phoneTag}\`);
+  } else {
+    segments.push(\`⚠ 桥接未就绪:\${mbPort}\`);
+  }
 }
 if (typeof epoch === "number" && epoch > 0) {
   segments.push("\uD83D\uDD04 Epoch " + epoch);

@@ -28,6 +28,7 @@ import { getCurrentSessionTitle } from '../utils/sessionStorage.js';
 import { doesMostRecentAssistantMessageExceed200k, getCurrentUsage } from '../utils/tokens.js';
 import { getCurrentWorktreeSession } from '../utils/worktree.js';
 import { readCustomApiStorage } from '../utils/customApiStorage.js';
+import { isMobileBridgeAvailable, getActiveMobileBridgeServer } from '../bridge/mobileBridge.js';
 import { isEcoEnabled } from '../engine/ecoFilter.js';
 import { formatUpdateMessage, getCachedUpdateInfo } from '../utils/updateChecker.js';
 import { isVimModeEnabled } from './PromptInput/utils.js';
@@ -177,6 +178,23 @@ function buildStatusLineCommandInput(permissionMode: PermissionMode, exceeds200k
     epoch: getSessionEpoch(),
     // DOGE: 更新通知
     update_notification: formatUpdateMessage(getCachedUpdateInfo()),
+    // DOGE: 移动端桥接就绪状态。本进程内即可读取（mobile.bat 触发 MOBILE_BRIDGE
+    // 后 autoStartMobileBridge 会注册 activeMobileServer）。状态栏是独立子进程，
+    // 无法直接读主进程 bridge 实例，故在此把「是否可用 + 是否已就绪 + 已连手机数
+    // + 端口」序列化进 statusInput，由 status-line 脚本渲染。
+    // 注意 isRunning 是异步就绪的（HTTP server 启动有延迟），状态栏靠 1s 周期
+    // 刷新（见下方 interval）捕捉「未就绪 → 就绪」的转变。
+    ...(isMobileBridgeAvailable() ? (() => {
+      const srv = getActiveMobileBridgeServer();
+      return {
+        mobile_bridge: {
+          available: true,
+          ready: srv ? srv.isServerRunning() : false,
+          clients: srv ? srv.getClientCount() : 0,
+          port: srv ? srv.getBoundPort() : Number(process.env.CLAUDE_CODE_MOBILE_PORT) || 6000,
+        },
+      };
+    })() : {}),
   };
 }
 type Props = {
@@ -363,6 +381,25 @@ function StatusLineInner({
       const currentTs = (globalThis as Record<string, unknown>).__RSTK_REFRESH_TS__ as number | undefined;
       if (currentTs !== lastRstkTs) {
         lastRstkTs = currentTs;
+        scheduleUpdate();
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [scheduleUpdate]);
+
+  // DOGE: 移动端桥接状态是异步就绪的（HTTP server 启动有延迟），且手机
+  // 连接/断开是动态事件，状态栏本身不订阅这些事件。用 1s 轮询捕捉 ready/clients
+  // 的变化，变化时重算状态栏，避免「未就绪」永远卡住或连接数不刷新。
+  useEffect(() => {
+    let lastMobileState = '';
+    const interval = setInterval(() => {
+      if (!isMobileBridgeAvailable()) return;
+      const srv = getActiveMobileBridgeServer();
+      const ready = srv ? srv.isServerRunning() : false;
+      const clients = srv ? srv.getClientCount() : 0;
+      const stateKey = ready + ':' + clients;
+      if (stateKey !== lastMobileState) {
+        lastMobileState = stateKey;
         scheduleUpdate();
       }
     }, 1000);

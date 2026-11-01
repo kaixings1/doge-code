@@ -15,6 +15,16 @@
 import { isEnvTruthy } from './envUtils.js'
 import { logForDebugging } from './debug.js'
 
+// 同步 require 内置模块：避免 async import 推迟到微任务，否则在退出流程中
+// gracefulShutdown 同步退出进程后，ffplay 永远没机会被 spawn（原 bug：wav
+// 模式整段不响，beep 模式因同步写 \x07 反而能响）。
+function reqChildProcess(): typeof import('node:child_process') {
+  return require('node:child_process')
+}
+function reqFs(): typeof import('node:fs') {
+  return require('node:fs')
+}
+
 type SoundMode = 'beep' | 'mp3' | 'wav' | 'none'
 
 function getSoundConfig(): { mode: SoundMode; path?: string } {
@@ -57,41 +67,65 @@ export function triggerSessionEndSound(): void {
       return
     }
     if ((mode === 'mp3' || mode === 'wav') && path) {
-      // 异步播放，不阻塞退出流程
-      playFileAsync(mode, path).catch(() => {})
+      // 同步播放：必须阻塞到播完，因为调用方紧接着就 gracefulShutdown
+      // 退出进程，异步 spawn 会在播放器启动前被杀死（原 wav 模式不响的根因）。
+      playFileSync(mode, path)
     }
   } catch (e) {
     logForDebugging(`[sessionEndSound] 播放失败: ${e}`, { level: 'debug' })
   }
 }
 
-async function playFileAsync(mode: 'mp3' | 'wav', filePath: string): Promise<void> {
-  const { spawn } = await import('node:child_process')
-  const { existsSync } = await import('node:fs')
+function playFileSync(mode: 'mp3' | 'wav', filePath: string): void {
+  const { existsSync } = reqFs()
   if (!existsSync(filePath)) {
     logForDebugging(`[sessionEndSound] 文件不存在: ${filePath}`, { level: 'debug' })
     return
   }
-  // 优先使用系统播放器，回退到 ffplay / afplay / start
-  const candidates: string[][] = [
-    ['ffplay', '-autoexit', '-nodisp', '-quiet', filePath],
-    ['afplay', filePath],
-    ['start', '/min', filePath],
-  ]
+  const { spawnSync, execFileSync } = reqChildProcess()
+  if (process.platform === 'win32') {
+    // Windows：优先 PowerShell SoundPlayer（走独立音频管线，Windows Terminal
+    // 下也能真出声，本仓库 soundNotification.ts 已验证）。mp3 需 ffplay 解码。
+    if (mode === 'wav') {
+      try {
+        execFileSync('powershell', [
+          '-NoProfile',
+          '-NonInteractive',
+          '-Command',
+          `(New-Object System.Media.SoundPlayer '${filePath.replace(/'/g, "''")}').PlaySync()`,
+        ], { timeout: 5000, windowsHide: true })
+        return
+      } catch (e) {
+        logForDebugging(`[sessionEndSound] SoundPlayer 失败: ${e}`, { level: 'debug' })
+      }
+    }
+    // mp3 或 wav 回退：ffplay 同步播放（阻塞到播完）
+    try {
+      spawnSync('ffplay', ['-autoexit', '-nodisp', '-quiet', filePath], {
+        timeout: 10000,
+        windowsHide: true,
+      })
+      return
+    } catch (e) {
+      logForDebugging(`[sessionEndSound] ffplay 失败: ${e}`, { level: 'debug' })
+    }
+    return
+  }
+  // macOS / Linux
+  const candidates: string[][] =
+    mode === 'mp3'
+      ? [['ffplay', '-autoexit', '-nodisp', '-quiet', filePath]]
+      : [['afplay', filePath], ['ffplay', '-autoexit', '-nodisp', '-quiet', filePath]]
   for (const cmd of candidates) {
     try {
-      const child = spawn(cmd[0], cmd.slice(1), {
-        detached: true,
-        stdio: 'ignore',
-      })
-      child.unref()
+      spawnSync(cmd[0], cmd.slice(1), { timeout: 10000 })
       return
     } catch {
       // 尝试下一个
     }
   }
   logForDebugging(
-    `[sessionEndSound] 未找到可用的音频播放器 (ffplay/afplay/start)`,
+    `[sessionEndSound] 未找到可用的音频播放器 (ffplay/afplay)`,
     { level: 'debug' },
   )
 }

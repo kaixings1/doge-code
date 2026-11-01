@@ -23,6 +23,12 @@ interface InputData {
   duration?: { total_str?: string };
   doge_api_json?: string;
   session_id?: string;
+  mobile_bridge?: {
+    available?: boolean;
+    ready?: boolean;
+    clients?: number;
+    port?: number;
+  };
   epoch?: number;
   update_notification?: string;
   // OpenCode 特性吸收: Plan/Build 模式状态
@@ -37,7 +43,7 @@ try {
 } catch {}
 
 const input: InputData = JSON.parse(rawInput);
-const { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration, doge_api_json, session_id, epoch, update_notification, is_in_plan_mode, eco_enabled }: InputData = input;
+const { model, workspace, context_window, cost, base_url, preset_tokens, api_key, duration, doge_api_json, session_id, mobile_bridge, epoch, update_notification, is_in_plan_mode, eco_enabled }: InputData = input;
 
 const segments: string[] = [];
 
@@ -147,6 +153,19 @@ if (doge_api_json) {
 // 会话 ID
 if (session_id) {
   segments.push('\u{1F517} ' + session_id);
+}
+
+// DOGE: 移动端桥接就绪状态（由 StatusLine.tsx 注入 mobile_bridge 字段）
+if (mobile_bridge && mobile_bridge.available) {
+  const mbReady = mobile_bridge.ready;
+  const mbClients = typeof mobile_bridge.clients === 'number' ? mobile_bridge.clients : 0;
+  const mbPort = typeof mobile_bridge.port === 'number' ? mobile_bridge.port : 6000;
+  if (mbReady) {
+    const phoneTag = mbClients > 0 ? ` 📱x${mbClients}` : '';
+    segments.push(`💡 桥接就绪:${mbPort}${phoneTag}`);
+  } else {
+    segments.push(`⚠ 桥接未就绪:${mbPort}`);
+  }
 }
 
 // Epoch（压缩轮次计数）

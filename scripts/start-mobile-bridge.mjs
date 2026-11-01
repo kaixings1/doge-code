@@ -499,14 +499,20 @@ if (phoneUrl) {
     await new Promise((r) => setTimeout(r, 1000))
   }
 
-  console.log('')
-  if (ready) {
-    console.log('  [就绪] 手机端服务端已启动 -> ' + phoneUrl)
-  } else {
-    console.log('  [未就绪] 20 秒内服务端未响应（端口 ' + PORT + '）')
-    console.log('           请检查上方提示与 doge.exe 输出')
+  // 仅当本脚本未启动 TUI 子进程（复用已有桥接 / 纯脚本探测模式）时才回显
+  // 就绪状态。若本脚本 spawn 了 ink TUI 子进程（stdio: 'inherit'），其屏幕
+  // 由 TUI 独占，此时再往 stdout 打印会污染 alt screen —— 表现为界面混乱
+  // （见 .dogerules「TUI 输出污染」一节）。就绪/未就绪交给 TUI 状态栏呈现。
+  if (!child) {
+    console.log('')
+    if (ready) {
+      console.log('  [就绪] 手机端服务端已启动 -> ' + phoneUrl)
+    } else {
+      console.log('  [未就绪] 20 秒内服务端未响应（端口 ' + PORT + '）')
+      console.log('           请检查上方提示与 doge.exe 输出')
+    }
+    console.log('')
   }
-  console.log('')
 }
 
 // ============================================================================
