@@ -437,7 +437,8 @@ USER_TYPE=ant                              -> REPL / Config / Tungsten
 |---|---|
 | **已实现** | `MonitorTool`（目录存在）、`Explanatory` 输出风格提示、mod `tool.check` 的 `readOnly` |
 | **本轮已补** | `CLAUDE_CODE_DISABLE_ULTRATHINK`、`permissions.blockWritesOutsideWorkingDirectories` / `blockReadsOutsideWorkingDirectories`（§9.4）、`CLAUDE_CODE_SUBAGENT_EFFORT`（§9.5）、`CLAUDE_CODE_RETRY_WATCHDOG_USAGE_LIMIT_RECHECK_MS`（§9.6） |
-| **未实现（可做）** | `CLAUDE_CODE_DISABLE_LOOPED_CROSS_CERT_DROP`、`claude_code.safety_event` OTel 事件、`/claude-api api-version`、`/claude-api managed-agents-secure`、`--hold-idle-file`/`--max-hold-min`（self-hosted-runner）、mod `tool.check` 的 `decider: "person"` |
+| **未实现（可做）** | `claude_code.safety_event` OTel 事件、`/claude-api api-version`、`/claude-api managed-agents-secure`、`--hold-idle-file`/`--max-hold-min`（self-hosted-runner）、mod `tool.check` 的 `decider: "person"` |
+| **不实现（本地无作用对象）** | `CLAUDE_CODE_DISABLE_LOOPED_CROSS_CERT_DROP`（见 §9.7） |
 | **不适用（本地无对应体系）** | 云会话、Claude apps gateway、Enterprise 自定义角色、VSCode 扩展、Code Review SaaS、Claude Tag |
 
 ### 9.3 本轮已补：`CLAUDE_CODE_DISABLE_ULTRATHINK`
@@ -518,6 +519,28 @@ USER_TYPE=ant                              -> REPL / Config / Tungsten
 - null 分支返回 recheckMs → 对应用例失败
 
 回归：withRetryMaxRetries + overloadedRetryMaxDelay + usage-limit-recheck 共 22/22；tsc 零错误。
+
+### 9.7 不实现：`CLAUDE_CODE_DISABLE_LOOPED_CROSS_CERT_DROP`
+
+官方 2.1.316：keeps system cross-certificates that certify each other in a loop, for servers whose private CA needs one.
+
+**决定：不实现。** 依据是对本地现状的核对，不是遗漏：
+
+官方这个开关的作用对象是「丢弃环状交叉证书」这套逻辑，其调试文案为：
+
+> `CA certs: Kept N cross-certificate(s) that certify each other in a loop in the system store`
+> `CA certs: Left cross-certificates that loop in the system store`
+
+而本地 `src/utils/caCerts.ts` 对系统 CA **只做 `certs.push(...systemCAs)`**，
+从不过滤、从不丢弃任何证书（该文件里 grep 不到 filter/slice/drop）。
+
+也就是说：**本地不存在可被该开关关闭的丢弃行为**。要实现这个开关，得先实现
+一整套环检测（解析系统证书库、构建签发关系图、找互签的环、按规则丢弃），
+目的却是支持一个极窄场景（私有 CA 需要环状交叉证书）。而本地因为从不丢弃证书，
+这类服务器本身就是通的。
+
+强行实现等于「先引入一个可能出错的行为，再配个开关把它关掉」——净负收益。
+若将来本地出于安全原因引入交叉证书丢弃，再补该开关才有意义。
 
 ---
 
