@@ -148,7 +148,8 @@ tool_collection  ultrareview  vim-visual-mode  web_browser  websocket  workflow 
 
 - **官方后台会话族**：`attach/logs/stop/rm/respawn`（CLI 层已列，工具层无对应）。
 - **官方内部工具**：`Tungsten`（本地保留注册但仅 ant 可用）、`ListConnectors`/`SuggestConnectors`/`SearchMcpRegistry`（官方二进制可见，本地无）、`DesignSync`、`ProposeSkills`/`ProposeGoal`/`PublishPlugin`、`SelfHostedRunner` 工具集（官方引用 chunk 懒加载）。
-- **官方新增语义**：`TaskCreate` 单次一条任务、有 `owner`/`blocks`/`blockedBy` 团队依赖语义（官方字符串中明确包含"New tasks are created with status 'pending' and no owner - use TaskUpdate with the `owner` parameter"）。本地的 TodoV2 任务系统**没有 owner/依赖图**（见 §5.2）。
+- **官方新增语义**：`TaskCreate` 单次一条任务、有 `owner`/`blocks`/`blockedBy` 团队依赖语义。~~本地的 TodoV2 任务系统没有 owner/依赖图~~ **已实现**（2026-11-01 复核：`TaskCreateTool.ts:32-34` 有 `owner`/`blocks`/`blockedBy` 输入，`blockTask` 同步反向边，`TaskGet` 输出 `Owner`；见 §7 第 3 条与 `tests/unit/task-team-semantics.test.ts`）。
+- **官方内部/云工具**（2026-11-01 复核确认本地确实无，且**不应实现**）：`ListConnectors`/`SearchMcpRegistry`/`SuggestConnectors` 查的是 claude.ai 组织的 MCP 连接器；`PublishPlugin` 发布到组织 claude.ai 库；`DesignSync`/`ProposeSkills`/`ProposeGoal` 属内部设计流程。它们都依赖 claude.ai 账号体系，本地无对应能力，实现出来也无法工作。`Tungsten` 本地**有**注册（`src/tools/TungstenTool/`），报告原描述（"保留注册但仅 ant 可用"）准确。
 
 ---
 
@@ -311,6 +312,8 @@ USER_TYPE=ant                              -> REPL / Config / Tungsten
 按"对用户的实际影响"排序：
 
 1. **模型滞后**（§5.4）：缺 opus 4.7/4.8、sonnet 5、fable 5、haiku 5.5 的能力判定与定价分支。接新模型可能出现 1M 上下文/thinking/成本计算错误。**（未修复：需官方模型清单与定价数据，不能靠推测补齐）**
+    - **2026-11-01 复核补充**：模型 **ID 清单**已可从官方二进制事实性提取（共 36 个，含 `claude-opus-4-7` / `claude-opus-4-8` / `claude-opus-5` / `claude-opus-5-5` / `claude-sonnet-5` / `claude-sonnet-5-5` / `claude-haiku-5-5` / `claude-fable-5` / `claude-fable-5-1`）。**但真正缺的不是 ID，而是每个模型的能力参数**：`src/utils/context.ts:181-196` 的 `defaultTokens` / `upperLimit` 是硬编码的具体数值（如 opus-4-6 → 64k/128k），`modelCost.ts` 的单价同理。这些数字**在二进制里没有可提取的对应项**，只能猜，而猜错会让 1M 上下文判定、thinking 上限、成本核算全部出错 —— 比不补更糟。故本项维持不修，留待官方公布参数。
+    - 另一个原因：`getModelCapability()` 的能力表是从 API 拉取并缓存的（`modelCapabilities.ts`），新模型在真实 API 下可自动获得 `max_input_tokens`，因此硬编码路径只是兜底，影响面小于报告所述。
 2. ~~**重名命令**（§4.1）~~ **已于 2026-10-20 修复**：`reset-limits` 合并为单条；`context`/`insights`/`extra-usage` 改为互斥 `isEnabled` 配对实现。回归测试 `tests/unit/command-name-uniqueness.test.ts`。
 3. ~~**任务系统缺团队语义**~~ **已补**：`TaskCreate` 支持 `owner`/`blocks`/`blockedBy`（走 `blockTask` 同步反向边），`TaskGet` 输出 `Owner`。测试 `tests/unit/task-team-semantics.test.ts`（5 用例）。
 4. ~~**安全参数缺失**~~ **已补**：`--restricted` 落地（执行类工具 + WebFetch 默认禁止、`--tools` 可豁免、忽略 user/project/local 设置、拒绝 bypass）；`--safe-mode` 与 `--restricted` 在首屏显示生效状态。测试 `tests/unit/restricted-mode.test.ts`（6 用例）。
