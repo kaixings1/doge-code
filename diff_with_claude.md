@@ -60,7 +60,7 @@
 | `--exclude-dynamic-system-prompt-sections` | 把 cwd/env/git 等动态段落移到首条用户消息，提升跨用户 prompt cache 命中 | 本地无 |
 | `--system-prompt-snapshot <on\|off>` | 系统提示词按会话录制并逐字复用 | 本地无 |
 | `--prompt-suggestions [value]` | 每轮后预测下一条用户提示 | 本地无 CLI 入口（SDK 层有 `promptSuggestions` 字段） |
-| `--forward-subagent-text` | 把子代理文本/思考作为消息转发（stream-json） | 本地无 |
+| `--forward-subagent-text` | 把子代理文本/思考作为消息转发（stream-json） | ~~本地无~~ **已补（2026-11-01）**：环境变量与 settings 字段本就有，但 `forwardSubagentText` **只赋值无人消费**、`AgentTool` 只放行 tool 块 —— 属「配置存在但功能未生效」。现新增 `src/utils/subagentTextForwarding.ts` 判据并在转发点接入，测试 `tests/unit/forward-subagent-text.test.ts` |
 | `--permission-prompt-tool <tool>` | 指定 MCP 权限提示工具 | 本地仅 `.hideHelp()` 隐藏，参数仍存在（源码 `main.tsx:935`） |
 | `--permission-prompts <host\|none>` | print 模式权限提示由谁回答 | 本地无 |
 | `--plugin-url <url>` | 从 URL 拉取插件 zip | 本地无 |
@@ -333,10 +333,17 @@ USER_TYPE=ant                              -> REPL / Config / Tungsten
 | `--plugin-url` | 本地无 | **已实现**（`entrypoints/cli.tsx` 手工解析） |
 | `--permission-prompt-tool` | 仅隐藏 | 确认存在但 `.hideHelp()` |
 | `--cloud` / `--environment` | 本地无 | 仍缺失（云端能力，本地无对应路线） |
-| `--system-prompt-snapshot` / `--prompt-suggestions` / `--forward-subagent-text` | 本地无 | 仍缺失（前者需会话录制机制；后者 SDK 层已有字段） |
+| `--system-prompt-snapshot` / `--prompt-suggestions` | 本地无 | 仍缺失（前者需会话录制机制；后者 SDK 层已有字段但无预测逻辑） |
 | `gateway` / `import` / `purge` 子命令 | 本地无 | 仍缺失（`purge` 有斜杠命令 `/project-purge` 可替代） |
 
-**结论**：剩余可对齐项仅 `--system-prompt-snapshot`、`--prompt-suggestions`、`--forward-subagent-text` 三项（均需新增子系统而非纯入口），其余要么已是云端路线差异（不修），要么已实现。模型滞后（第 1 条）仍不可修 —— 需官方模型清单与定价数据，不能靠推测。
+**结论**：`--forward-subagent-text` 已于 2026-11-01 补齐（见第 11 条）。剩余可对齐项仅 `--system-prompt-snapshot`、`--prompt-suggestions` 两项（均需新增子系统而非纯入口），其余要么已是云端路线差异（不修），要么已实现。
+
+11. ~~**`--forward-subagent-text` 未生效**~~ **已补（2026-11-01）**：排查发现三件基础设施都在（`CLAUDE_CODE_FORWARD_SUBAGENT_TEXT` → `settings.forwardSubagentText`、`agent_progress` 转发、`normalizeMessage` 会填 `parent_tool_use_id`），**唯独该标志无人读取**，且 `AgentTool.tsx:1166` 只放行 `tool_use`/`tool_result`，text 与 thinking 被直接 `continue` 跳过 —— 典型的「配置存在但功能未生效」。
+    - 新增 `src/utils/subagentTextForwarding.ts`：`shouldForwardSubagentBlock()` 判据 + `isSubagentTextForwardingEnabled()`（同时认环境变量与 settings，环境变量只认 `'1'` 以与 `featureFlags.ts:167` 一致）。
+    - `AgentTool.tsx` 转发点接入判据；`main.tsx` 注册参数并写入环境变量，同时按官方约束在非 `--print + --output-format=stream-json` 时报错退出（不静默忽略）。
+    - 测试 `tests/unit/forward-subagent-text.test.ts`（6 用例）。变异验证：清空可转发类型集 → 用例 2 失败；放宽环境变量判定 → 用例 4 失败，均已捕获。
+    - 实测：`-p --output-format=stream-json` 合法组合正常输出；缺 `--print` 或非 stream-json 时打印官方同款错误并以 1 退出；构造 `agent_progress` 走真实 `normalizeMessage`，确认 `parent_tool_use_id` 被如实保留。
+    - **未做**：真实子代理的端到端（当前模型两次都不愿调用 Agent 工具，得到的是模型行为而非代码行为，故改为直接验证数据流）。模型滞后（第 1 条）仍不可修 —— 需官方模型清单与定价数据，不能靠推测。
 
 ---
 

@@ -17,6 +17,10 @@ import { assembleToolPool } from '../../tools.js';
 import { asAgentId } from '../../types/ids.js';
 import { runWithAgentContext } from '../../utils/agentContext.js';
 import { isAgentSwarmsEnabled } from '../../utils/agentSwarmsEnabled.js';
+import {
+  isSubagentTextForwardingEnabled,
+  shouldForwardSubagentBlock,
+} from '../../utils/subagentTextForwarding.js';
 import { getCwd, runWithCwdOverride } from '../../utils/cwd.js';
 import { logForDebugging } from '../../utils/debug.js';
 import { isEnvTruthy } from '../../utils/envUtils.js';
@@ -1161,9 +1165,18 @@ export const AgentTool = buildTool({
               }
             }
             const normalizedNew = normalizeMessages([message]);
+            // --forward-subagent-text：额外放行子代理的 text/thinking 块。
+            // 默认只转发 tool_use/tool_result（UI 与 SDK 靠它们构建调用树）；
+            // 开启后文本与思考也一并转发，供 stream-json 消费方还原完整过程。
+            const forwardSubagentText = isSubagentTextForwardingEnabled();
             for (const m of normalizedNew) {
               for (const content of m.message.content) {
-                if (content.type !== 'tool_use' && content.type !== 'tool_result') {
+                const isToolBlock =
+                  content.type === 'tool_use' || content.type === 'tool_result';
+                if (
+                  !isToolBlock &&
+                  !shouldForwardSubagentBlock(content.type, forwardSubagentText)
+                ) {
                   continue;
                 }
 
