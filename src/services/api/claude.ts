@@ -166,6 +166,7 @@ import {
   modelSupportsAdvisor,
 } from '../../utils/advisor.js'
 import { getAgentContext } from '../../utils/agentContext.js'
+import { getSubagentEffortOverride } from '../../utils/subagentEffort.js'
 import { isClaudeAISubscriber } from '../../utils/auth.js'
 import {
   getToolSearchBetaHeader,
@@ -1550,6 +1551,17 @@ async function* queryModel(
   }
 
   let effort = resolveAppliedEffort(options.model, options.effortValue)
+
+  // CLAUDE_CODE_SUBAGENT_EFFORT（官方 2.1.316）：子代理在没有别的来源指定
+  // effort 时，用该变量代替「继承会话 effort」。因此：
+  //   - 只在子代理上下文生效（getAgentContext() 非空）
+  //   - options.effortValue 为 undefined 才应用（有显式值说明「别的东西指定了」）
+  if (getAgentContext() && options.effortValue === undefined) {
+    const subagentOverride = getSubagentEffortOverride()
+    if (subagentOverride !== undefined) {
+      effort = subagentOverride
+    }
+  }
 
   // Auto reasoning: when effort is not explicitly set (model default),
   // heuristically pick a level based on the last user message content.

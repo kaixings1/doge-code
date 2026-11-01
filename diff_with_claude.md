@@ -436,8 +436,8 @@ USER_TYPE=ant                              -> REPL / Config / Tungsten
 | 状态 | 项 |
 |---|---|
 | **已实现** | `MonitorTool`（目录存在）、`Explanatory` 输出风格提示、mod `tool.check` 的 `readOnly` |
-| **本轮已补** | `CLAUDE_CODE_DISABLE_ULTRATHINK`、`permissions.blockWritesOutsideWorkingDirectories` / `blockReadsOutsideWorkingDirectories`（见 §9.4） |
-| **未实现（可做）** | `CLAUDE_CODE_SUBAGENT_EFFORT`、`CLAUDE_CODE_DISABLE_LOOPED_CROSS_CERT_DROP`、`CLAUDE_CODE_RETRY_WATCHDOG_USAGE_LIMIT_RECHECK_MS`、`claude_code.safety_event` OTel 事件、`/claude-api api-version`、`/claude-api managed-agents-secure`、`--hold-idle-file`/`--max-hold-min`（self-hosted-runner）、mod `tool.check` 的 `decider: "person"` |
+| **本轮已补** | `CLAUDE_CODE_DISABLE_ULTRATHINK`、`permissions.blockWritesOutsideWorkingDirectories` / `blockReadsOutsideWorkingDirectories`（§9.4）、`CLAUDE_CODE_SUBAGENT_EFFORT`（§9.5） |
+| **未实现（可做）** | `CLAUDE_CODE_DISABLE_LOOPED_CROSS_CERT_DROP`、`CLAUDE_CODE_RETRY_WATCHDOG_USAGE_LIMIT_RECHECK_MS`、`claude_code.safety_event` OTel 事件、`/claude-api api-version`、`/claude-api managed-agents-secure`、`--hold-idle-file`/`--max-hold-min`（self-hosted-runner）、mod `tool.check` 的 `decider: "person"` |
 | **不适用（本地无对应体系）** | 云会话、Claude apps gateway、Enterprise 自定义角色、VSCode 扩展、Code Review SaaS、Claude Tag |
 
 ### 9.3 本轮已补：`CLAUDE_CODE_DISABLE_ULTRATHINK`
@@ -471,6 +471,31 @@ USER_TYPE=ant                              -> REPL / Config / Tungsten
 回归：permission-mode-ant0 + permission-prompts-headless + working-directory-scope 共 28/28。
 
 **未做**：真机端到端（需构造带该配置的 settings 并走完整权限链，环境依赖大、易给误导结论），故用纯判据测试 + 源码顺序断言代替，如实记录。
+
+### 9.5 已补：`CLAUDE_CODE_SUBAGENT_EFFORT`
+
+官方 2.1.316：set the effort level subagents run at **when nothing else names one**, instead of inheriting the session's.
+
+语义有三个容易实现错的地方，逐一守住：
+1. **只在没有别的东西指定时生效**（"when nothing else names one"）——子代理自己显式传了 effort 时，该变量**不得**覆盖。
+2. 它替代的是「继承会话 effort」这一步，不是覆盖整条解析链。
+3. 未设置时行为完全不变。
+
+实现：
+- 新增 `src/utils/subagentEffort.ts`（纯逻辑，复用既有 `parseEffortValue`）。
+- `services/api/claude.ts` 在 `resolveAppliedEffort` 之后接入，条件是
+  `getAgentContext()` 非空（子代理上下文）且 `options.effortValue === undefined`
+  （没有任何显式指定）。主会话完全不受该变量影响。
+
+测试 `tests/unit/subagent-effort.test.ts`（7 用例）。变异验证三项：
+- 去掉「显式指定优先」判断 → 用例 1 失败（会变成环境变量无脑覆盖子代理自己的设置）
+- override 与 sessionEffort 优先级对调 → 用例 2 失败
+- 未设置时返回 undefined 而非 sessionEffort → 用例 3 失败
+
+回归：subagent-effort + autocompact-flag 共 12/12；tsc 零错误。
+
+**未做**：真机端到端（需真实子代理请求并观察实际发送的 effort 参数；
+当前模型不一定愿意调用 Agent 工具，此前已验证过这一点）。
 
 ---
 
