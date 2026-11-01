@@ -436,8 +436,8 @@ USER_TYPE=ant                              -> REPL / Config / Tungsten
 | 状态 | 项 |
 |---|---|
 | **已实现** | `MonitorTool`（目录存在）、`Explanatory` 输出风格提示、mod `tool.check` 的 `readOnly` |
-| **本轮已补** | `CLAUDE_CODE_DISABLE_ULTRATHINK`、`permissions.blockWritesOutsideWorkingDirectories` / `blockReadsOutsideWorkingDirectories`（§9.4）、`CLAUDE_CODE_SUBAGENT_EFFORT`（§9.5）、`CLAUDE_CODE_RETRY_WATCHDOG_USAGE_LIMIT_RECHECK_MS`（§9.6） |
-| **未实现（可做）** | `claude_code.safety_event` OTel 事件、`/claude-api api-version`、`/claude-api managed-agents-secure`、`--hold-idle-file`/`--max-hold-min`（self-hosted-runner）、mod `tool.check` 的 `decider: "person"` |
+| **本轮已补** | `CLAUDE_CODE_DISABLE_ULTRATHINK`、`permissions.blockWritesOutsideWorkingDirectories` / `blockReadsOutsideWorkingDirectories`（§9.4）、`CLAUDE_CODE_SUBAGENT_EFFORT`（§9.5）、`CLAUDE_CODE_RETRY_WATCHDOG_USAGE_LIMIT_RECHECK_MS`（§9.6）、`claude_code.safety_event`（§9.8） |
+| **未实现（可做）** | `/claude-api api-version`、`/claude-api managed-agents-secure`、`--hold-idle-file`/`--max-hold-min`（self-hosted-runner）、mod `tool.check` 的 `decider: "person"` |
 | **不实现（本地无作用对象）** | `CLAUDE_CODE_DISABLE_LOOPED_CROSS_CERT_DROP`（见 §9.7） |
 | **不适用（本地无对应体系）** | 云会话、Claude apps gateway、Enterprise 自定义角色、VSCode 扩展、Code Review SaaS、Claude Tag |
 
@@ -541,6 +541,36 @@ USER_TYPE=ant                              -> REPL / Config / Tungsten
 
 强行实现等于「先引入一个可能出错的行为，再配个开关把它关掉」——净负收益。
 若将来本地出于安全原因引入交叉证书丢弃，再补该开关才有意义。
+
+### 9.8 已补：`claude_code.safety_event` OTel 事件
+
+官方 2.1.307：for each tool call a permission rule, auto mode, a safety check, a hook or the sandbox stopped, prompted or sent back.
+
+字段取自官方打包代码里的**实际调用**（不是猜）：
+`emit("safety_event", { ...base, tool_use_id, sandbox_violation_count, sandbox_enabled })`
+与 `emit("safety_event", { ...base, tool_name, classifier_category })`，base 含 mode / outcome / tool_class。
+
+实现：
+- 新增 `src/utils/telemetry/safetyEvent.ts`（发送）+ `safetyEventMapping.ts`（纯映射，便于单测）。
+- 接入点选 `logPermissionDecision` —— 它是**全部权限决策的唯一出口**（既有 `tool_decision` 就在这发），正好对应官方「每次被拦下/询问/退回的调用」。
+- 复用既有 `logOTelEvent`，它会把名字拼成 `claude_code.safety_event`，与官方一致。
+
+与 `tool_decision` 的分工（避免重复上报）：那条答「放行还是拒绝」，本事件答「**谁拦的、依据什么**」，用于安全审计。
+
+三条不臆造的原则：
+1. 只输出官方枚举值，无法归类给 `unknown` / `other`。
+2. 本地只有 accept/reject 两态 —— 只产出 `allowed`/`denied`，**不产出** `sent_back`（本地没有「退回重写」路径）。
+3. 属性只放枚举值与工具名，命令内容/文件路径一律不进遥测（`safeToken` 只放行 `[A-Za-z0-9_.:-]`）。
+
+测试 `tests/unit/safety-event-mapping.test.ts`（9 用例）。变异验证三项：
+- `mapDecisionToSafetyOutcome` 恒返回 allowed → 「reject → denied」失败
+- 去掉 hook 分支 → hook 用例失败
+- 去掉 execute 分支 → bash 用例失败
+
+回归：permission-mode-ant0 + permission-prompts-headless + safety-event-mapping 共 26/26；tsc 零错误。
+
+**未做**：真机验证事件真的发出（需配置 OTEL 导出端点并跑真实权限拒绝；
+属环境依赖，用映射纯函数测试 + 源码接入点断言代替，如实记录）。
 
 ---
 

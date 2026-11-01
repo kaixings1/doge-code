@@ -12,6 +12,12 @@ import type { Tool as ToolType, ToolUseContext } from '../../Tool.js'
 import { getLanguageName } from '../../utils/cliHighlight.js'
 import { SandboxManager } from '../../utils/sandbox/sandbox-adapter.js'
 import { logOTelEvent } from '../../utils/telemetry/events.js'
+import { logSafetyEvent } from '../../utils/telemetry/safetyEvent.js'
+import {
+  mapDecisionToSafetyOutcome,
+  mapSourceToSafetyGate,
+  toolClassForAnalytics,
+} from '../../utils/telemetry/safetyEventMapping.js'
 import type {
   PermissionApprovalSource,
   PermissionRejectionSource,
@@ -231,6 +237,17 @@ function logPermissionDecision(
     decision,
     source: sourceString,
     tool_name: sanitizeToolNameForAnalytics(tool.name),
+  })
+
+  // claude_code.safety_event（官方 2.1.307）：记录「哪道闸门、什么结局」。
+  // 与上面的 tool_decision 不重复：那条答「放行还是拒绝」，本事件答
+  // 「谁拦的、依据什么」，用于安全审计。
+  logSafetyEvent({
+    gate: mapSourceToSafetyGate(sourceString),
+    outcome: mapDecisionToSafetyOutcome(decision),
+    mode: toolUseContext.getAppState().toolPermissionContext.mode,
+    toolName: sanitizeToolNameForAnalytics(tool.name),
+    toolClass: toolClassForAnalytics(tool.name),
   })
 }
 
