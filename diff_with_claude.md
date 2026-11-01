@@ -55,7 +55,7 @@
 | `--remote-control-session-name-prefix` | 远程控制会话名前缀 | 同上 |
 | `--restricted` | 受限模式：移除执行类工具、忽略用户/项目设置、限制文件工具边界 | **安全能力缺失（非云端）** |
 | `--safe-mode` | 安全模式：禁用 CLAUDE.md/技能/插件/钩子/MCP 等全部自定义 | 本地仅隐藏注册（`.hideHelp()`），语义弱于官方，见 §2.3 |
-| `--ax-screen-reader` | 无障碍：扁平文本输出，无边框/动画 | 本地无 |
+| `--ax-screen-reader` | 无障碍：扁平文本输出，无边框/动画 | ~~本地无~~ **已补（2026-11-01）**：映射到既有的 `CLAUDE_CODE_ACCESSIBILITY=1`（Ink 层据此保留原生光标），测试 `tests/unit/ax-screen-reader-flag.test.ts` |
 | `--autocompact <auto\|tokens>` | 自动压缩窗口（100k–1M） | 本地无 CLI 参数（内部有 autocompact 配置，但无此入口） |
 | `--exclude-dynamic-system-prompt-sections` | 把 cwd/env/git 等动态段落移到首条用户消息，提升跨用户 prompt cache 命中 | 本地无 |
 | `--system-prompt-snapshot <on\|off>` | 系统提示词按会话录制并逐字复用 | 本地无 |
@@ -319,6 +319,24 @@ USER_TYPE=ant                              -> REPL / Config / Tungsten
 7. **提示词已汉化**（§5.3）：与官方行为/缓存基线脱钩。**（设计选择，不修复）**
 8. **无法从官方二进制还原源码**：官方 2.1.303 已不含 `sourcesContent`，任何"逐行对照官方实现"都只能靠行为与字符串推断。**（客观限制）**
 9. **`--autocompact`**（§2.1）**已补**：支持 `auto` 与 100k–1M（`100k`/`200K`/`1000000`），翻译为 `CLAUDE_CODE_AUTO_COMPACT_WINDOW`。测试 `tests/unit/autocompact-flag.test.ts`（5 用例）。
+10. ~~**`--ax-screen-reader` 缺失**~~ **已补（2026-11-01）**：映射到既有的 `CLAUDE_CODE_ACCESSIBILITY=1`（Ink 层据此保留原生光标，`App.tsx` 两处消费），未新增第二套语义。测试 `tests/unit/ax-screen-reader-flag.test.ts`（3 用例，变异验证：删掉映射体 → 用例 2 失败）。
+
+### 7.1 2026-11-01 复核结果（重要）
+
+本报告生成于 2026-10-20，此后代码持续变化。按「重跑核对、不信旧结论」的原则，对 §2.1 表中所有「本地无/缺失」项逐条在 `src/` 中复核，结果**大半已过时**：
+
+| 项 | 报告标注 | 复核结果 |
+|---|---|---|
+| `--teleport` / `--remote-control` | 本地无 | **已注册**（`main.tsx`）；云能力仍不可达，但参数壳存在 |
+| `--exclude-dynamic-system-prompt-sections` | 本地无 | **已实现**（`main.tsx` 注册 + `context.ts` 消费） |
+| `--permission-prompts` | 本地无 | **已实现**（`main.tsx` + `cli/print.ts` 统一兜底） |
+| `--plugin-url` | 本地无 | **已实现**（`entrypoints/cli.tsx` 手工解析） |
+| `--permission-prompt-tool` | 仅隐藏 | 确认存在但 `.hideHelp()` |
+| `--cloud` / `--environment` | 本地无 | 仍缺失（云端能力，本地无对应路线） |
+| `--system-prompt-snapshot` / `--prompt-suggestions` / `--forward-subagent-text` | 本地无 | 仍缺失（前者需会话录制机制；后者 SDK 层已有字段） |
+| `gateway` / `import` / `purge` 子命令 | 本地无 | 仍缺失（`purge` 有斜杠命令 `/project-purge` 可替代） |
+
+**结论**：剩余可对齐项仅 `--system-prompt-snapshot`、`--prompt-suggestions`、`--forward-subagent-text` 三项（均需新增子系统而非纯入口），其余要么已是云端路线差异（不修），要么已实现。模型滞后（第 1 条）仍不可修 —— 需官方模型清单与定价数据，不能靠推测。
 
 ---
 
