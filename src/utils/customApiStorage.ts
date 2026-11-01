@@ -5,6 +5,7 @@ import { loadConfigFromEnv } from './providerEnv.ts'
 
 import { logForDebugging } from './debug.js'
 import { stripBOM } from './jsonRead.js'
+import { resolveApiJsonPath } from './apiJsonPath.js'
 
 // readCustomApiStorage 日志去重状态：同内容 10s 内只记一次（见下方 logSource）。
 let lastLoggedLine: string | null = null
@@ -55,11 +56,11 @@ function getGlobalConfigPath(): string {
 function getProjectConfigPath(): string {
   // 优先使用环境变量 DOGE_API_JSON 指定自定义配置路径
   // 可用于实现进程间配置隔离：每个进程使用不同的 api.json
-  const envPath = process.env.DOGE_API_JSON
-  if (envPath && typeof envPath === 'string' && envPath.trim()) {
-    return path.resolve(envPath.trim())
-  }
-  return path.join(process.cwd(), '.doge', 'api.json')
+  // resolveApiJsonPath 展开 ~ 前缀（裸 path.resolve 会保留 ~ 当目录名）
+  return (
+    resolveApiJsonPath(process.env.DOGE_API_JSON) ||
+    path.join(process.cwd(), '.doge', 'api.json')
+  )
 }
 
 // 记录上次读取的项目配置文件修改时间（用于跨进程变化检测）

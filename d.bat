@@ -21,10 +21,18 @@ REM cmd.exe decodes a batch file using the ANSI code page (GBK on zh-CN);
 REM UTF-8 Chinese bytes can swallow the following newline, merging lines so
 REM that REM comment lines get executed as commands.
 
+REM Config lives in the user profile, NOT in the project tree.
+REM "~" is NOT expanded by cmd.exe -- it is handed to the CLI literally and
+REM expanded there by resolveApiJsonPath() (src/utils/apiJsonPath.ts), which maps
+REM a leading ~ / ~\ / ~/ to the user's home directory. That helper deliberately
+REM leaves ~user / ~+ / ~- untouched (path-injection guard), so use plain "~".
 if "%1"=="" (
-    set DOGE_API_JSON=.doge\api.json
+    set "DOGE_API_JSON=~\.dogekey\api.json"
 ) else (
-    set DOGE_API_JSON=.doge\%1.json
+    set "DOGE_API_JSON=~\.dogekey\%1.json"
+)
+if not exist "%DOGE_API_JSON%" (
+    echo [d.bat] WARNING: config not found: %DOGE_API_JSON%
 )
 
 REM Clear any LOCAL_BRIDGE marker inherited from the parent shell.
@@ -83,30 +91,47 @@ goto :router_done
 REM Undefined after the copy-above means the source var was empty: blank it.
 if not defined CLAUDE_CODE_ROUTER_AUTO set CLAUDE_CODE_ROUTER_AUTO=
 :router_done
-REM === Local bridge server: start in background if 5678 is not listening ===
-netstat -ano -p tcp | findstr ":5678" | findstr "LISTENING" >nul 2>&1
-if errorlevel 1 (
-    echo [d.bat] Starting local bridge server on port 5678 ...
-    REM IMPORTANT: redirect ALL stdio to nul. The bridge shares this Windows
-    REM Terminal window/console with the foreground TUI; a single stray write
-    REM from it lands on Ink's alternate screen buffer and stays there until
-    REM the next full redraw (that is the "background output flashes onto the
-    REM UI" symptom). A new window via `start` inherits the same console
-    REM group, so silencing it is the only reliable fix.
-    start "doge-bridge" /MIN cmd /c "bun run D:\doge-code\scripts\bridge.ts >nul 2>&1"
-    REM Wait for the server to become ready by polling the port
-    for /L %%i in (1,1,25) do (
-        timeout /t 1 /nobreak >nul 2>&1
-        netstat -ano -p tcp | findstr ":5678" | findstr "LISTENING" >nul 2>&1
-        if not errorlevel 1 goto :bridge_ready
-    )
-    echo [d.bat] WARNING: bridge server not ready, local bridge unavailable
-) else (
+
+REM === Session-end sound: distinct wav so it is not confused with the 2-beep task-complete sound ===
+REM default session-end sound is a single terminal beep, easily confused with task-complete (2 beeps).
+REM switch back to beep:  set CLAUDE_CODE_SESSION_END_SOUND=beep
+REM turn off:            set CLAUDE_CODE_SESSION_END_SOUND=none
+REM custom mp3:          set CLAUDE_CODE_SESSION_END_SOUND=mp3:C:\path\to\sound.mp3
+if not defined CLAUDE_CODE_SESSION_END_SOUND set CLAUDE_CODE_SESSION_END_SOUND=wav:C:\Windows\Media\tada.wav
+REM === Local bridge server: start in background if 5678 is not serving ===
+REM Readiness is decided by an actual HTTP /health request, NOT by netstat.
+REM netstat lies in two ways here:
+REM   1. a crashed/half-closed instance leaves the port in FIN_WAIT_1, which
+REM      still matches ":5678" but accepts no connections -> a new
+REM      server.listen() dies with EADDRINUSE while the poll keeps matching;
+REM   2. ":5678" also matches ":56780" and remote endpoints.
+REM curl.exe ships with Windows 10+ and is used below with -f (fail on 4xx/5xx).
+set "BRIDGE_HEALTH=http://127.0.0.1:5678/health"
+
+curl -s -f -m 2 -o nul "%BRIDGE_HEALTH%" >nul 2>&1
+if not errorlevel 1 (
     echo [d.bat] Bridge server already running on port 5678
+    goto :bridge_ready
 )
+
+echo [d.bat] Starting local bridge server on port 5678 ...
+REM IMPORTANT: redirect ALL stdio to nul. The bridge shares this Windows
+REM Terminal window/console with the foreground TUI; a single stray write
+REM from it lands on Ink's alternate screen buffer and stays there until
+REM the next full redraw (that is the "background output flashes onto the
+REM UI" symptom). A new window via `start` inherits the same console
+REM group, so silencing it is the only reliable fix.
+start "doge-bridge" /MIN cmd /c "bun run D:\doge-code\scripts\bridge.ts >nul 2>&1"
+
+REM Poll /health for up to 25s. The bridge retries bind() for a few seconds
+REM after EADDRINUSE-style TIME_WAIT, so a single failed attempt is normal.
+for /L %%i in (1,1,25) do (
+    timeout /t 1 /nobreak >nul 2>&1
+    curl -s -f -m 2 -o nul "%BRIDGE_HEALTH%" >nul 2>&1
+    if not errorlevel 1 goto :bridge_ready
+)
+echo [d.bat] WARNING: bridge server not ready, local bridge unavailable
 :bridge_ready
-REM echo BEFORE_DOGE_EXE >> trace.log
-REM "D:\doge-code\doge.exe" --dangerously-skip-permissions --verbose %2 %3 %4 %5 --debug-file ./debug1.txt
 REM === feature gates ===
 REM bun:bundle feature() is compile-time constant folding; env / --define
 REM cannot change it, only --feature / --feature= works (verified:
@@ -136,4 +161,4 @@ bun run ^
     --feature=DUMP_SYSTEM_PROMPT --feature=WEB_BROWSER_TOOL --feature=QUICK_SEARCH ^
     --feature=MESSAGE_ACTIONS --feature=FILE_PERSISTENCE ^
     "D:\doge-code\src\bootstrap-entry.ts" ^
-    --dangerously-skip-permissions --verbose %2 %3 --debug-file ./%1.txt
+    --dangerously-skip-permissions %2 %3

@@ -32,6 +32,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import { logForDebugging } from '../utils/debug.js';
+import { resolveApiJsonPath } from '../utils/apiJsonPath.js';
 import { type PresetEndpoint, ALL_PRESETS, type CompatibleApiProvider } from '../constants/presets.js';
 
 type Props = {
@@ -965,13 +966,9 @@ function OAuthStatusMessage(t0: OAuthStatusMessageProps) {
     case 'provider_select': {
       const activePresetName2 = (() => {
         try {
-          const configPath = (() => {
-            const envPath = process.env.DOGE_API_JSON;
-            if (envPath && typeof envPath === 'string' && envPath.trim()) {
-              return path.resolve(envPath.trim());
-            }
-            return path.join(process.cwd(), '.doge', 'api.json');
-          })();
+          const configPath =
+            resolveApiJsonPath(process.env.DOGE_API_JSON) ||
+            path.join(process.cwd(), '.doge', 'api.json');
           const p = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
           return p.activePreset;
         } catch {

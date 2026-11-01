@@ -42,11 +42,37 @@ REM The mobile bridge is triggered ONLY by this file's MOBILE_BRIDGE flag.
 set CLAUDE_CODE_LOCAL_BRIDGE=
 set CLAUDE_CODE_LOCAL_BRIDGE_URL=
 
-if "%1"=="" (
-    set DOGE_API_JSON=.doge\api.json
+REM Config lives in the user profile, NOT in the project tree (same as d.bat).
+REM "~" is NOT expanded by cmd.exe -- it is handed to the CLI literally and
+REM expanded there by resolveApiJsonPath() (src/utils/apiJsonPath.ts), which maps
+REM a leading ~ / ~\ / ~/ to the user's home directory. That helper deliberately
+REM leaves ~user / ~+ / ~- untouched (path-injection guard), so use plain "~".
+REM start-mobile-bridge.mjs spawns the CLI with `...process.env`, so the
+REM value set here is inherited as-is.
+REM
+REM %1 is overloaded: a profile name AND forwarded to the launcher via %*
+REM (--lan / --usb / --label <x> / --help). A leading "-" therefore means
+REM "flag", and the default profile api.json is used -- otherwise --lan would
+REM look for "--lan.json", warn, and load no config at all.
+REM
+REM The first-char test is deliberately NOT inside a parenthesised block:
+REM cmd expands %VAR% when a whole block is parsed, so the test would compare
+REM against the OLD (empty) value and always take the wrong branch.
+set "DOGE_PROFILE="
+set "DOGE_ARG1=%~1"
+if defined DOGE_ARG1 call set "DOGE_FIRST=%%DOGE_ARG1:~0,1%%"
+if not "x%DOGE_FIRST%"=="x-" set "DOGE_PROFILE=%DOGE_ARG1%"
+if defined DOGE_PROFILE (
+    set "DOGE_API_JSON=~\.dogekey\%DOGE_PROFILE%.json"
 ) else (
-    set DOGE_API_JSON=.doge\%1.json
+    set "DOGE_API_JSON=~\.dogekey\api.json"
 )
+if not exist "%DOGE_API_JSON%" (
+    echo [mobile.bat] WARNING: config not found: %DOGE_API_JSON%
+)
+set "DOGE_ARG1="
+set "DOGE_FIRST="
+set "DOGE_PROFILE="
 
 echo [mobile.bat] CLAUDE_CODE_MOBILE_BRIDGE=1
 echo [mobile.bat] Launching via scripts\start-mobile-bridge.mjs (single entry).

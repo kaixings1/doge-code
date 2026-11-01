@@ -11,6 +11,7 @@ import * as path from 'path'
 import { spawn } from 'child_process'
 import { fileURLToPath } from 'url'
 import { stripBOM } from './utils/jsonRead.js'
+import { resolveApiJsonPath } from './utils/apiJsonPath.js'
 
 //process.env.CLAUDE_CODE_SIMPLE=1
 // 🔴 清除 PATH 中的 MSYS2/Git bash 目录，防止 cmd.exe 子进程调用 MSYS2 的 grep/find 等程序触发 fork 卡死
@@ -27,13 +28,11 @@ process.env.PATH = toolsDir + ';' + process.env.PATH
 
 ensureBootstrapMacro()
 // 优先使用环境变量 DOGE_API_JSON 指定自定义配置路径（进程隔离用）
-const apiJsonPath = (() => {
-  const envPath = process.env.DOGE_API_JSON;
-  if (envPath && typeof envPath === 'string' && envPath.trim()) {
-    return path.resolve(envPath.trim());
-  }
-  return path.join(process.cwd(), '.doge', 'api.json');
-})();
+// 支持 ~ 前缀：resolveApiJsonPath 会展开，裸 path.resolve 会把它当成
+// 普通目录名（<cwd>\~\.dogekey\api.json），导致配置静默加载不到。
+const apiJsonPath =
+  resolveApiJsonPath(process.env.DOGE_API_JSON) ||
+  path.join(process.cwd(), '.doge', 'api.json');
 let activeConfig = null;
 if (fs.existsSync(apiJsonPath)) {
   try {

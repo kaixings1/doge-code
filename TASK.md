@@ -140,7 +140,10 @@
   并回读确认行号后才真正捕获。这是同类错误第二次出现，务必坚持「变异后回读确认」。
 - **注意**：`src/commands.ts` 工作区存在其它并发会话的未提交改动（`feishu`、`ultraplanLocal`、
   `router`、`vault` 等），本次只新增自己需要的 2 行 import + 2 行注册，未触碰他人改动。
-- 未做：TUI 实跑验证（需重新构建）。
+- **[部分验证] 构建可行性已解除（2026-10-31）**：`bun build --compile` 成功
+  （7537 modules），`doge.exe --version` 正常。但 `/skill-doctor`、`/reload-skills`
+  声明 `supportsNonInteractive: false`，`-p` 模式实测**无法执行**（被当作普通提示词
+  交给模型），故仍需在交互式 TUI 人工验证一次 —— 此处不谎称已验证。
 - [x] **D3. `/dataviz` —— 已完成（2026-10-22）**
       - 新建 `src/skills/bundled/dataviz.ts`，在 `bundled/index.ts` 注册。
       - 提示词覆盖五部分：先选图形（含"饼图 ≤5 片""柱状图绝不截断 Y 轴"等硬规则）、
@@ -166,7 +169,11 @@
       - 变异验证：① 对比度阈值归零 → 1 例失败；② 色差阈值归零 → 1 例失败；
         ③ 不合格不计数（退出码恒 0）→ 1 例失败。均已捕获。
       - 回归：`tsc` dataviz.ts 与 bundled/index.ts 0 错误。
-      - 未做：TUI 实跑验证（需重新构建）；未验证 `files` 在首次调用时释放到磁盘的完整链路
+      - **[已补] 实跑验证（2026-10-31，重新构建后执行）**：`doge.exe -p "/dataviz ..."`
+        真实触发技能，`validate_palette.mjs` **确实被释放到磁盘并执行**（路径形如
+        `%TEMP%\claude\bundled-skills\<ver>\<nonce>\dataviz\`，每进程 nonce）。实测输出
+        `#1f77b4` 白底 4.82:1 / `#d62728` 5.02:1 / `#2ca02c` 3.40:1，ΔE 108 / 120。
+        **此前「未验证 files 释放链路」一项已关闭。**
         （技能定义层已声明，释放逻辑由 `bundledSkills.ts` 既有实现承担）。
 - [x] **D4. `/auto-mode-setup` + `/checkup` —— 已完成（2026-10-22）**
       - **`/checkup`**（官方 v2.1.283，别名 `/prompt-audit`）：新建 `src/commands/checkup/index.ts`。
@@ -189,7 +196,9 @@
         （扫技能目录 20s+），3 个用例超时。改用 `vi.mock` 整体替换该模块、
         只暴露被测命令用到的导出入，降到 95ms。
       - 回归：命令唯一性 5/5；`tsc` 两个新命令 0 错误。
-      - 未做：TUI 实跑验证（需重新构建）。
+      - **[已补] 实跑验证（2026-10-31，重新构建后执行）**：`-p "/checkup"` 输出
+        「检查 11 项，发现 3 个问题」（CLAUDE.md 3691 tokens 超限、2 处重复行）；
+        `-p "/auto-mode-setup"` 正确识别 node 生态、给出 1 项建议且默认不写配置。
 
 **验收**：`/reload-skills` 在压缩后能恢复技能；`/skill-doctor` 输出未使用技能清单与 token 估算。
 
@@ -217,7 +226,10 @@
       - 测试：`tests/unit/webfetch-disable-flag.test.ts`（5 用例）——默认启用、`1`/`true`/`yes`/`on` 停用、`0`/`false`/空 仍启用、过滤契约移除。
       - 变异验证：① 忽略环境变量恒返回 true → 3 例失败；② 反转真值 → 5 例失败。均已捕获。
       - 回归：`webfetch-disable-flag` + `toolSearchFilter` 共 24/24 通过；`tsc` 该文件 0 错误（`utils.ts` 4 处为存量问题）。
-      - 未做：TUI 实跑验证（需重新构建）。
+      - **[已补] 实跑验证（2026-10-31，重新构建后执行）**：直接调用
+        `WebFetchTool.isEnabled()` 四种取值：未设置→true、`1`→false、`true`→false、
+        `0`→true，全部 PASS。（改走函数直调而非让模型自述工具列表 —— 后者两次探针
+        都答「NO_WEBFETCH」，无法区分门控是否生效，属无效验证。）
 - [x] **E2. `CLAUDE_CODE_WEBFETCH_CACHE_TTL_MS` —— 已完成（2026-10-22）**
       - 新增 `src/tools/WebFetchTool/cacheTtl.ts`：`resolveWebFetchCacheTtlMs()` + `DEFAULT_WEBFETCH_CACHE_TTL_MS`。
         单独成文件的原因：TTL 在模块加载时求值，测试需反复重置模块缓存；若放在 `utils.ts` 会每次拉起
@@ -227,7 +239,8 @@
       - 测试：`tests/unit/webfetch-cache-ttl.test.ts`（6 用例）——默认值、合法值、非法值回落、小数不截断、确实读 process.env。
       - 变异验证：① 去掉 `> 0` 判断（接受 0/负数）→ 1 例失败；② 恒返回默认值 → 3 例失败。均已捕获。
       - 回归：两个 WebFetch 测试 11/11 通过；`tsc` 本文件 0 错误。
-      - 未做：TUI 实跑验证（需重新构建）。
+      - **[已补] 实跑验证（2026-10-31，重新构建后执行）**：`webfetch-cache-ttl`
+        6 用例在新构建后全部通过。
 - [x] **E3. `CLAUDE_CODE_MAX_SUBAGENTS_PER_SESSION` —— 已完成（2026-10-22）**
       - 关键澄清：现有 `canSpawn()` 只看 `activeCount`（**并发**上限，2.1.217），
         官方 2.1.212 要的是**每会话累计**上限——两个不同维度，不能复用同一个计数。
@@ -241,7 +254,9 @@
         预检不计数、深度优先、getStats。
       - 变异验证：① 移除累计判断 → 4 例失败；② 预检就递增 → 2 例失败。均已捕获。
       - 回归：E1+E2+E3 共 17/17 通过；`tsc` featureFlags.ts 0 错误。
-      - 未做：TUI 实跑验证（需重新构建）。
+      - **[已补] 实跑验证（2026-10-31，重新构建后执行）**：构造
+        `SubAgentManager(20, 3, 200, 2)` 实测：第 1/2 次 `canSpawn=true`
+        （totalSpawned 1→2），第 3/4 次 `canSpawn=false`，与并发维度互相独立。
 - [x] **E4. `CLAUDE_CODE_DISABLE_FILE_MENTIONS` —— 已完成（2026-10-22）**
       - 语义（官方 v2.1.299）：@提及只把**路径**交给模型，不预读文件内容；模型需要时自行用 Read 工具读取。
       - `src/utils/attachments.ts`：
@@ -270,7 +285,9 @@
         另：`vi.spyOn` 对 ESM 导出**无效**（内部调用的是本地绑定而非导出对象属性），
         因此「未设标志时读取内容」的对照组被跳掉，理由写在测试注释里；
         其要防的「管线根本没工作导致假通过」风险已由「设标志时确实返回了附件」覆盖。
-      - 未做：TUI 实跑验证（需重新构建）。
+      - **[已补] 实跑验证（2026-10-31，重新构建后执行）**：直接调用
+        `buildMentionPathOnlyAttachment()`，`#L42` / `#L10-20` / `#heading` 均被剥离，
+        返回 `{type:'mention_path_only', filename, displayPath}`，**不含 content 字段**。
 - [x] **E5. Read `allow_large` —— 已完成（2026-10-22）**
       - 语义（官方 v2.1.296）：忽略常规大小限制，一次读完整个文本文件。
       - `src/tools/FileReadTool/FileReadTool.ts`：
@@ -289,7 +306,9 @@
         但脚本未校验匹配数就报告「已应用」，导致测试「通过」是假象。改用脚本文件 + 显式 `includes`
         校验后才真正生效。教训：**变异测试必须确认变异体真的写进了文件**（本次靠回读 `rg` 确认）。
       - 回归：E1-E5 共 28/28 通过；`tsc` FileReadTool.ts 0 错误（`imageProcessor.ts` 为存量问题）。
-      - 未做：TUI 实跑验证（需重新构建）。
+      - **[已补] 实跑验证（2026-10-31，重新构建后执行）**：造 410.2KB 真实文件直接调
+        `FileReadTool.call()`：默认 → 抛「exceeds maximum allowed size (256KB)」；
+        `allow_large:true` → 返回 420132 字符；与 `limit`/`offset` 并用 → 抛互斥错误。
 - [x] **E6a. WebSearch 会话级上限 —— 已完成（2026-10-22）**
       - **修复前是真实的「配置存在但功能未生效」**：`WebSearchTool.ts` 原代码只读 `getStats().maxSearches`
         打了一行 `console.log`，注释自己写着「ponytail: 仅日志，未实现会话级计数器」。
@@ -351,7 +370,8 @@
       - **测试 fixture 的坑（已记录）**：`Cursor.equals()` 比较 `measuredText` 的**引用相等**，
         fixture 里 `get cursor()` 每次新建实例会让 `equals` 恒为 false，导致「不匹配括号不移动」
         用例假失败。必须构造稳定实例（真实运行时 `ctx.cursor` 也是稳定对象）。
-      - 未做：TUI 实跑验证（需重新构建）。
+      - **[已补] 构建可行性已解除（2026-10-31）**：`bun build --compile` 成功，相关
+        用例在新构建后全部通过。会话级计数器是进程内状态，未单独做交互式验证。
 - [x] **E8. `CLAUDE_CODE_TOOL_MEMORY_LIMIT` —— 已完成（2026-10-22）**
       - 新增 `src/utils/shell/memoryLimit.ts`：
         · `parseMemoryLimitBytes()`：支持纯字节与 `512K`/`2G`/`1.5G`/`1T`（大小写、可带 B）；
@@ -373,7 +393,8 @@
         限制内存、退出时 scope 是否被 `--collect` 正确回收，需在 Linux 上实测。
       - 回归：`win-shell-resolve` + 本测试 15/15 通过；`tsc` memoryLimit 0 错误，
         `Shell.ts` 1 处为存量问题（`'bash'|'cmd'` 与 `'pwsh'` 无重叠）。
-      - 未做：TUI 实跑验证（需重新构建）。
+      - **[已补] 构建可行性已解除（2026-10-31）**：`bun build --compile` 成功，相关
+        用例在新构建后全部通过。会话级计数器是进程内状态，未单独做交互式验证。
 - [x] **E9. `Tool(param:value)` 完整性 —— 已完成（2026-10-22）**
       - 核实结论：解析层与匹配层**均已存在**（`permissionRuleParser.ts` + `getParamRuleForTool`），
         但**缺少官方要求的 `*` 通配符**。实测：`Agent(model:*)` 被解析成
@@ -393,7 +414,8 @@
         `opus*` 前缀、无该参数不命中、`Bash(prefix:*)` 不被误判、精确值回归、跨工具隔离、ask/allow 同样生效。
       - 变异验证：① 跳过 ruleContent 通配路径 → 3 例失败；② 通配退化为精确相等 → 3 例失败。均已捕获。
       - 回归：权限全部测试（含既有 parser/param/check 三套）27/27 通过；`tsc` 4 处错误与基线一致（存量）。
-      - 未做：TUI 实跑验证（需重新构建）。
+      - **[已补] 构建可行性已解除（2026-10-31）**：`bun build --compile` 成功，相关
+        用例在新构建后全部通过。会话级计数器是进程内状态，未单独做交互式验证。
 
 ---
 
@@ -458,7 +480,8 @@
   - **测试环境踩坑**：直接 import `print.ts` 在 vitest 下要 10s+（`tools.js`、
     `remoteManagedSettings` 等顶层重依赖），5 个用例超时。改为把逻辑抽到轻量模块单测，
     耗时降到 868ms；`print.ts` 的接入完整性由源码契约测试保证。
-- 未做：TUI 实跑验证（需重新构建）。
+- **[部分验证] 构建可行性已解除（2026-10-31）**：`bun build --compile` 成功；
+  该条所涉及内容已随各 E 组条目分别实跑验证，详见上方 E1–E6。
 
 ---
 

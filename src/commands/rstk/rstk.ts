@@ -4,6 +4,7 @@ import type { LocalCommandCall } from '../../types/command.js'
 import { logForDebugging } from '../../utils/debug.js'
 import { resetCostState } from '../../bootstrap/state.js'
 import { stripBOM } from '../../utils/jsonRead.js'
+import { resolveApiJsonPath } from '../../utils/apiJsonPath.js'
 
 /**
  * 重置 token 统计数据：
@@ -12,13 +13,10 @@ import { stripBOM } from '../../utils/jsonRead.js'
  */
 export const call: LocalCommandCall = async () => {
   // 优先使用环境变量 DOGE_API_JSON（进程隔离用），兜底默认路径
-  const projectConfigPath = (() => {
-    const envPath = process.env.DOGE_API_JSON;
-    if (envPath && typeof envPath === 'string' && envPath.trim()) {
-      return path.resolve(envPath.trim());
-    }
-    return path.join(process.cwd(), '.doge', 'api.json');
-  })()
+  // resolveApiJsonPath 展开 ~ 前缀（裸 path.resolve 会保留 ~ 当目录名）
+  const projectConfigPath =
+    resolveApiJsonPath(process.env.DOGE_API_JSON) ||
+    path.join(process.cwd(), '.doge', 'api.json')
   let diskResetDone = false
   let memoryResetDone = false
 
