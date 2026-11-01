@@ -23,6 +23,10 @@ import {
   isEnterpriseSubscriber,
 } from '../../utils/auth.js'
 import { isEnvTruthy } from '../../utils/envUtils.js'
+import {
+  capUsageLimitWait,
+  getUsageLimitRecheckMs,
+} from '../../utils/usageLimitRecheck.js'
 import { errorMessage } from '../../utils/errors.js'
 import {
   type CooldownReason,
@@ -564,8 +568,15 @@ export async function* withRetry<T>(
         // Window-based limits (e.g. 5hr Max/Pro) include a reset timestamp.
         // Wait until reset rather than polling every 5 min uselessly.
         const resetDelay = getRateLimitResetDelayMs(error)
+        // CLAUDE_CODE_RETRY_WATCHDOG_USAGE_LIMIT_RECHECK_MS（官方 2.1.305）：
+        // 配额可能在 reset 时刻**之前**被解除，傻等到 reset 纯属浪费。
+        // 配置后取 min(resetDelay, recheck)，只缩短不延长；未配置时行为不变。
+        const cappedResetDelay = capUsageLimitWait(
+          resetDelay,
+          getUsageLimitRecheckMs(),
+        )
         delayMs =
-          resetDelay ??
+          cappedResetDelay ??
           Math.min(
             getRetryDelay(
               persistentAttempt,

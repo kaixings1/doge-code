@@ -436,8 +436,8 @@ USER_TYPE=ant                              -> REPL / Config / Tungsten
 | 状态 | 项 |
 |---|---|
 | **已实现** | `MonitorTool`（目录存在）、`Explanatory` 输出风格提示、mod `tool.check` 的 `readOnly` |
-| **本轮已补** | `CLAUDE_CODE_DISABLE_ULTRATHINK`、`permissions.blockWritesOutsideWorkingDirectories` / `blockReadsOutsideWorkingDirectories`（§9.4）、`CLAUDE_CODE_SUBAGENT_EFFORT`（§9.5） |
-| **未实现（可做）** | `CLAUDE_CODE_DISABLE_LOOPED_CROSS_CERT_DROP`、`CLAUDE_CODE_RETRY_WATCHDOG_USAGE_LIMIT_RECHECK_MS`、`claude_code.safety_event` OTel 事件、`/claude-api api-version`、`/claude-api managed-agents-secure`、`--hold-idle-file`/`--max-hold-min`（self-hosted-runner）、mod `tool.check` 的 `decider: "person"` |
+| **本轮已补** | `CLAUDE_CODE_DISABLE_ULTRATHINK`、`permissions.blockWritesOutsideWorkingDirectories` / `blockReadsOutsideWorkingDirectories`（§9.4）、`CLAUDE_CODE_SUBAGENT_EFFORT`（§9.5）、`CLAUDE_CODE_RETRY_WATCHDOG_USAGE_LIMIT_RECHECK_MS`（§9.6） |
+| **未实现（可做）** | `CLAUDE_CODE_DISABLE_LOOPED_CROSS_CERT_DROP`、`claude_code.safety_event` OTel 事件、`/claude-api api-version`、`/claude-api managed-agents-secure`、`--hold-idle-file`/`--max-hold-min`（self-hosted-runner）、mod `tool.check` 的 `decider: "person"` |
 | **不适用（本地无对应体系）** | 云会话、Claude apps gateway、Enterprise 自定义角色、VSCode 扩展、Code Review SaaS、Claude Tag |
 
 ### 9.3 本轮已补：`CLAUDE_CODE_DISABLE_ULTRATHINK`
@@ -496,6 +496,28 @@ USER_TYPE=ant                              -> REPL / Config / Tungsten
 
 **未做**：真机端到端（需真实子代理请求并观察实际发送的 effort 参数；
 当前模型不一定愿意调用 Agent 工具，此前已验证过这一点）。
+
+### 9.6 已补：`CLAUDE_CODE_RETRY_WATCHDOG_USAGE_LIMIT_RECHECK_MS`
+
+官方 2.1.305：so unattended retry mode (`CLAUDE_CODE_RETRY_WATCHDOG`) notices a usage limit that was lifted **before its reset**.
+
+问题：429 的 `anthropic-ratelimit-unified-reset` 头给的是**配额重置时刻**（可能是 5 小时窗口边界），现有实现在无人值守模式下会一直等到那一刻（上限 6 小时）。但配额可能提前解除（运营放宽、退款、窗口提前滚动），傻等纯属浪费。
+
+实现：
+- 新增 `src/utils/usageLimitRecheck.ts`（纯逻辑）。
+- `withRetry.ts` 的 429 persistent 路径取 `min(resetDelay, recheck)`。
+
+三条语义边界（都是容易写错的地方）：
+1. **未设置/非法值完全保持原行为** —— 空串、`abc`、`NaN`、`Infinity`、`0`、负数一律回落 0（不启用），不会误伤既有逻辑。
+2. **只缩短不延长** —— 配置值比 resetDelay 还大时仍按 resetDelay 等。
+3. **没有 reset 头时返回 null**，交回调用方原本的指数退避逻辑。
+
+测试 `tests/unit/usage-limit-recheck.test.ts`（7 用例）。变异验证三项：
+- `min` 改成直接返回 recheckMs → 「不延长等待」用例失败
+- 非法值不回落 0 → 对应用例失败
+- null 分支返回 recheckMs → 对应用例失败
+
+回归：withRetryMaxRetries + overloadedRetryMaxDelay + usage-limit-recheck 共 22/22；tsc 零错误。
 
 ---
 
