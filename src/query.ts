@@ -35,6 +35,10 @@ import { ImageSizeError } from './utils/imageValidation.js'
 import { ImageResizeError } from './utils/imageResizer.js'
 import { findToolByName, type ToolUseContext } from './Tool.js'
 import { asSystemPrompt, type SystemPrompt } from './utils/systemPromptType.js'
+import {
+  getSystemPromptSnapshotMode,
+  resolveSystemPromptSnapshot,
+} from './utils/systemPromptSnapshot.js'
 import type {
   AssistantMessage,
   AttachmentMessage,
@@ -350,6 +354,13 @@ async function* queryLoop(
     autoContinueCount: 0,
     rateLimitRound: 0,
   }
+  // --system-prompt-snapshot 的会话级快照。闭包变量即可满足「每会话录制一次」，
+  // 不需要新增持久化：resume 时重新走本函数并重新渲染一次，语义上与官方一致
+  // （官方也是「首次请求时渲染」，resume 属于新的进程/新的首次请求）。
+  const systemPromptSnapshotMode = getSystemPromptSnapshotMode()
+  let systemPromptSnapshot: readonly string[] | null = null
+  let systemPromptSnapshotInvalidated = false
+
   const budgetTracker = feature('TOKEN_BUDGET') ? createBudgetTracker() : null
 
   let taskBudgetRemaining: number | undefined = undefined
@@ -474,9 +485,28 @@ async function* queryLoop(
       messagesForQuery = collapseResult.messages as any
     }
 
-    const fullSystemPrompt = asSystemPrompt(
-      appendSystemContext(systemPrompt, systemContext),
+    // --system-prompt-snapshot：首次请求渲染并录制，之后逐字复用，直到压缩。
+    // 快照存于本函数闭包（一次 query 调用 = 一次会话生命周期）；压缩在上方
+    // autocompact 处发生，那里已把 invalidate 置位，故下一轮会重新录制 ——
+    // 与官方「直到该会话被压缩」的语义一致。
+    const renderedSystemPrompt = appendSystemContext(systemPrompt, systemContext)
+    const snapshotResult = resolveSystemPromptSnapshot({
+      mode: systemPromptSnapshotMode,
+      snapshot: systemPromptSnapshot,
+      invalidated: systemPromptSnapshotInvalidated,
+      rendered: renderedSystemPrompt,
+    })
+    const fullSystemPrompt = asSystemPrompt(snapshotResult.prompt)
+    // 可观测性：复用/录制/关闭三种情形打一行 debug 日志，
+    // 否则该开关的效果在外部完全看不出来（也便于以后排查缓存命中问题）。
+    logForDebugging(
+      `[systemPromptSnapshot] mode=${systemPromptSnapshotMode} ` +
+        `reused=${systemPromptSnapshot !== null && !systemPromptSnapshotInvalidated && systemPromptSnapshotMode === 'on'} ` +
+        `recorded=${snapshotResult.nextSnapshot !== null} ` +
+        `segments=${fullSystemPrompt.length}`,
     )
+    systemPromptSnapshot = snapshotResult.nextSnapshot
+    systemPromptSnapshotInvalidated = false
 
     queryCheckpoint('query_autocompact_start')
     const { compactionResult, consecutiveFailures } = await deps.autocompact(
@@ -496,6 +526,10 @@ async function* queryLoop(
     queryCheckpoint('query_autocompact_end')
 
     if (compactionResult) {
+      // 压缩后系统提示词需要重新渲染并重新录制（官方语义：「直到该会话被压缩」）。
+      // 本轮已用的是压缩前的提示词，故只标记失效，下一轮生效。
+      systemPromptSnapshotInvalidated = true
+
       const {
         preCompactTokenCount,
         postCompactTokenCount,
