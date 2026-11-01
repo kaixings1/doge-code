@@ -214,6 +214,11 @@ export function getDefaultMainLoopModel(): ModelName {
  */
 export function firstPartyNameToCanonical(name: ModelName): ModelShortName {
   name = name.toLowerCase()
+  // 官方 2.1.314 修复：网关后面常用点号写法（claude-opus-4.8 / sonnet-4.6），
+  // 若不规范成连字符，会被 'claude-opus-4' 这类更宽的条件吃掉，导致上下文
+  // 窗口、输出上限、effort、thinking、成本全部按老模型算。
+  // 只把「数字.数字」转成「数字-数字」，不影响已用连字符的名称。
+  name = name.replace(/(\d)\.(\d)/g, '$1-$2') as ModelName
   // 针对 Claude 4+ 模型的特殊处理，以区分版本
   // 顺序很重要：先检查更具体的版本（4-5 在 4 之前）
   // 5.x 与 4.7/4.8 需先于 4.x 判断，否则会被 'claude-opus-4' / 'claude-opus'

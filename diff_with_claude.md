@@ -572,6 +572,53 @@ USER_TYPE=ant                              -> REPL / Config / Tungsten
 **未做**：真机验证事件真的发出（需配置 OTEL 导出端点并跑真实权限拒绝；
 属环境依赖，用映射纯函数测试 + 源码接入点断言代替，如实记录）。
 
+### 9.9 第二轮比对：补做 Fixed 类复核（2026-11-01）
+
+上一轮只看了 Added 类。本轮把 2.1.304~316 **全部 527 条变更**按类型过了一遍：
+
+| 类型 | 条数 |
+|---|---|
+| Fixed | **345** |
+| Improved | 67 |
+| Changed | 64 |
+| Added | 44 |
+| Removed | 0 |
+
+`--help` 全文 diff 复核仍为 56 行、**全部措辞调整**，无参数增删。
+
+345 条 Fixed 里挑出与「安全 / 权限 / 数据 / 成本」相关的逐条核对，确认**有 1 条命中本地**：
+
+#### 已修：点号模型 ID 被当成老模型（官方 2.1.314）
+
+官方原文：model IDs spelled with a dot behind an LLM gateway, such as `claude-opus-4.8`, being treated as an older model with the wrong context window, output limit, effort, thinking mode and cost.
+
+**本地实测确认缺陷存在**（修复前）：
+```
+claude-opus-4.8   -> canonical 'claude-opus-4'
+claude-sonnet-4.6 -> canonical 'claude-sonnet-4'
+claude-haiku-4.5  -> canonical 'claude-haiku'
+```
+后果：上下文窗口、输出上限、effort、thinking、成本**全部按老模型算**。
+本地主用自定义 BaseURL（网关形态），点号写法真实会出现，属会踩的坑。
+
+修法：在 `firstPartyNameToCanonical` 入口把「数字.数字」规范成「数字-数字」
+（一行），一处覆盖所有模型；已确认不误伤 `claude-3.5-sonnet` 这类本就带点的名字。
+
+测试 `tests/unit/model-dot-notation.test.ts`（5 用例）。变异验证：删掉归一化
+那一行 → 4 个用例失败（含「不误伤」那条），恢复即全绿。
+
+#### 核实后确认「本地不受影响」的几条
+
+| 官方修复 | 本地核对结论 |
+|---|---|
+| 2.1.309 Windows: PowerShell 对「cd 当前目录 + 额外参数」误自动批准 | **不适用**。本地 `isReadOnlyCommand` 要求传入 AST，无解析结果一律返回 false，实测四种形态均判 false |
+| 2.1.309 `Edit(path)` deny 规则未拦住子 shell 里的 Bash 重定向 | **不适用**。本地用 AST 提取重定向，实测 `(echo hi > /tmp/out.txt)` 能被正确提取 |
+| 2.1.311 超 200K 时标准上下文会话报 "Usage credits required" | **不适用**。本地无该错误分支（该文案在源码中不存在） |
+| 2.1.316 压缩响应截断导致请求挂起 | 风险在 SDK 内置解压，不在本地代码 |
+
+**结论**：345 条 Fixed 里对本地有实质影响的只有 1 条，已修。其余多为
+云端/企业/IDE/沙箱（Linux bwrap）相关，或本地实现方式不同而不适用。
+
 ---
 
 ## 附录 A：复现命令
