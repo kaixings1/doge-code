@@ -140,10 +140,23 @@
   并回读确认行号后才真正捕获。这是同类错误第二次出现，务必坚持「变异后回读确认」。
 - **注意**：`src/commands.ts` 工作区存在其它并发会话的未提交改动（`feishu`、`ultraplanLocal`、
   `router`、`vault` 等），本次只新增自己需要的 2 行 import + 2 行注册，未触碰他人改动。
-- **[部分验证] 构建可行性已解除（2026-10-31）**：`bun build --compile` 成功
-  （7537 modules），`doge.exe --version` 正常。但 `/skill-doctor`、`/reload-skills`
-  声明 `supportsNonInteractive: false`，`-p` 模式实测**无法执行**（被当作普通提示词
-  交给模型），故仍需在交互式 TUI 人工验证一次 —— 此处不谎称已验证。
+- **[已补] 实跑验证（2026-11-01）**：`bun build --compile` 成功（7537 modules），
+  `doge.exe --version` 正常。
+  - **`/skill-doctor`**：`-p` 模式因 `supportsNonInteractive: false` 被
+    `main.tsx:2438` 过滤掉（实测：被当作普通提示词交给模型）。改为**直接调用
+    命令的 `call()`**（先 `enableConfigs()`，否则内部链抛「在允许之前访问了
+    Config」）。真实输出：已加载 22 个技能、每轮 785 tokens、按成本降序列出
+    22 个未使用技能（`android-build-install` ~101 居首）。
+  - **变异/反向验证**（证明「已使用」判定不是恒 0）：空消息 → 使用过 0；
+    消息里塞真实技能 `grill-with-docs` → 使用过 1，且该技能**从清单消失**、
+    tokens 785→756；塞不存在的技能名 → 仍为 0（不误减）。三项全符合预期。
+    *（过程中第一版探针用 `dataviz` 做模拟，结果仍显示 0 —— 排查后确认
+    `dataviz` 不在该会话加载的 22 个技能内，是探针数据错了，不是被测逻辑的
+    缺陷。教训同「守卫判据必须实测」：探针自身的输入也要先验证。）*
+  - **`/reload-skills`**：同样直接调用 `call()`。输出「技能已重载：共 320 项
+    （重载前 320 项）」「技能集合无变化」；调用前/后 `getSkillToolCommands`
+    均为 22，**证明 `clearSkillCaches` 后能重新扫出**（不是缓存残留）；
+    连跑两次结果一致（幂等）。
 - [x] **D3. `/dataviz` —— 已完成（2026-10-22）**
       - 新建 `src/skills/bundled/dataviz.ts`，在 `bundled/index.ts` 注册。
       - 提示词覆盖五部分：先选图形（含"饼图 ≤5 片""柱状图绝不截断 Y 轴"等硬规则）、
@@ -480,7 +493,7 @@
   - **测试环境踩坑**：直接 import `print.ts` 在 vitest 下要 10s+（`tools.js`、
     `remoteManagedSettings` 等顶层重依赖），5 个用例超时。改为把逻辑抽到轻量模块单测，
     耗时降到 868ms；`print.ts` 的接入完整性由源码契约测试保证。
-- **[部分验证] 构建可行性已解除（2026-10-31）**：`bun build --compile` 成功；
+- **[已补] 构建可行性已解除（2026-10-31）**：`bun build --compile` 成功；
   该条所涉及内容已随各 E 组条目分别实跑验证，详见上方 E1–E6。
 
 ---
