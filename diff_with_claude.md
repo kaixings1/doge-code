@@ -404,6 +404,48 @@ USER_TYPE=ant                              -> REPL / Config / Tungsten
 | `--autocompact 100k` | **已实现**（`auto` 或 100k–1M，内部映射到 `CLAUDE_CODE_AUTO_COMPACT_WINDOW`） |
 | `--prompt-suggestions` | 无 CLI 入口（仅 SDK `promptSuggestions` 字段） |
 
+
+---
+
+## 9. 与官方 2.1.316 的比对（2026-11-01）
+
+上游从 2.1.303 走到 **2.1.316**（本报告基线是 2.1.303）。实测方式：拉取
+`@anthropic-ai/claude-code@2.1.316` 与 win32-x64 二进制，跑 `--help`
+逐行 diff，并从上游 CHANGELOG 提取 2.1.304~316 的 Added 项。
+
+### 9.1 CI 表面：**无变化**
+
+`--help` 全文 diff 仅 75 行，**全部是措辞调整**，没有任何新增/删除的参数或子命令：
+
+| 变化 | 内容 |
+|---|---|
+| `--debug` 示例 | `"api,hooks"` → `--debug=hooks,mcp` |
+| `--disable-slash-commands` | "Disable all skills" → "Disable all skills and commands"（语义扩了） |
+| `--json-schema` | 补注 "(only works with --print)" |
+| `--resume` | 支持按 **name** 恢复 |
+| `--system-prompt-snapshot` | 默认值补充例外："except under --bare outside cloud and background sessions" |
+| `--tools` | "all tools" → "the default set" |
+| `purge` 子命令 | 描述强调 "from this computer only" |
+
+即：**13 个版本没有新增 CLI 参数**，参数面已经稳定。
+
+### 9.2 新增能力：33 项，其中 18 项与本地 CLI 相关
+
+逐项在 `src/` 中核实后的状态：
+
+| 状态 | 项 |
+|---|---|
+| **已实现** | `MonitorTool`（目录存在）、`Explanatory` 输出风格提示、mod `tool.check` 的 `readOnly` |
+| **本轮已补** | `CLAUDE_CODE_DISABLE_ULTRATHINK` |
+| **未实现（可做）** | `CLAUDE_CODE_SUBAGENT_EFFORT`、`permissions.blockWritesOutsideWorkingDirectories`、`CLAUDE_CODE_DISABLE_LOOPED_CROSS_CERT_DROP`、`CLAUDE_CODE_RETRY_WATCHDOG_USAGE_LIMIT_RECHECK_MS`、`claude_code.safety_event` OTel 事件、`/claude-api api-version`、`/claude-api managed-agents-secure`、`--hold-idle-file`/`--max-hold-min`（self-hosted-runner）、mod `tool.check` 的 `decider: "person"` |
+| **不适用（本地无对应体系）** | 云会话、Claude apps gateway、Enterprise 自定义角色、VSCode 扩展、Code Review SaaS、Claude Tag |
+
+### 9.3 本轮已补：`CLAUDE_CODE_DISABLE_ULTRATHINK`
+
+- 本地原只有构建期 `feature('ULTRATHINK')` 与 GrowthBook `tengu_turtle_carbon` 两道门控，**没有用户可用的运行时开关**。
+- 改动：`isUltrathinkEnabled()` 开头加判据，一次覆盖 `PromptInput` / `HighlightedThinkingText` / `attachments` 等全部调用点。
+- **验证方式的限制（如实记录）**：本仓库构建参数里没有 `ULTRATHINK`，`feature()` 是编译期常量恒为 false，所以 `isUltrathinkEnabled()` 无论如何都返回 false —— **无法用「返回 true」来证明开关生效**。改验证判据本身（真值/假值写法）＋源码契约（判据必须排在构建门控之前）。变异测试：删掉判据块 → 契约用例失败。
+
 ---
 
 ## 附录 A：复现命令

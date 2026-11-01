@@ -7,6 +7,7 @@ import { resolveAntModel } from './model/antModels.js'
 import { get3PModelCapabilityOverride } from './model/modelSupportOverrides.js'
 import { getAPIProvider } from './model/providers.js'
 import { getSettingsWithErrors } from './settings/settings.js'
+import { isEnvTruthy } from './envUtils.js'
 
 export type ThinkingConfig =
   | { type: 'adaptive' }
@@ -18,6 +19,11 @@ export type ThinkingConfig =
  * controls code inclusion in external builds; the GB flag controls rollout.
  */
 export function isUltrathinkEnabled(): boolean {
+  // 用户显式关闭（官方 2.1.316）：CLAUDE_CODE_DISABLE_ULTRATHINK=1 时
+  // "ultrathink" 关键字整体失效。放在构建门控之前，保证用户意图优先。
+  if (isEnvTruthy(process.env.CLAUDE_CODE_DISABLE_ULTRATHINK)) {
+    return false
+  }
   if (!feature('ULTRATHINK')) {
     return false
   }
