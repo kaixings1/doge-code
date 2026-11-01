@@ -581,6 +581,8 @@ export function getManagedSettingsKeysForLogging(
       'disableBypassPermissionsMode',
       ...(feature('TRANSCRIPT_CLASSIFIER') ? ['disableAutoMode'] : []),
       'additionalDirectories',
+      'blockWritesOutsideWorkingDirectories',
+      'blockReadsOutsideWorkingDirectories',
     ]),
     sandbox: new Set([
       'enabled',

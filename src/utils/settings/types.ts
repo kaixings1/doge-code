@@ -78,6 +78,16 @@ export const PermissionsSchema = lazySchema(() =>
         .array(z.string())
         .optional()
         .describe('要包含在权限范围内的附加目录'),
+      blockWritesOutsideWorkingDirectories: z
+        .boolean()
+        .optional()
+        .describe(
+          '开启后写操作只能落在工作目录内；同时拦截对 Claude Code 设置文件的写入，否则改设置即可绕过',
+        ),
+      blockReadsOutsideWorkingDirectories: z
+        .boolean()
+        .optional()
+        .describe('开启后读操作只能落在工作目录内'),
     })
     .passthrough(),
 )

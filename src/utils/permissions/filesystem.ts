@@ -13,6 +13,7 @@ import {
 } from '../../tools/FileEditTool/constants.js'
 import type { z } from 'zod/v4'
 import { getOriginalCwd, getSessionId } from '../../bootstrap/state.js'
+import { evaluateWriteScopeBlock } from './workingDirectoryScope.js'
 import { checkStatsigFeatureGate_CACHED_MAY_BE_STALE } from '../../services/analytics/growthbook.js'
 import type { AnyObject, Tool, ToolPermissionContext } from '../../Tool.js'
 import { FILE_READ_TOOL_NAME } from '../../tools/FileReadTool/prompt.js'
@@ -35,6 +36,7 @@ import { SETTING_SOURCES } from '../settings/constants.js'
 import {
   getSettingsFilePathForSource,
   getSettingsRootPathForSource,
+  getSettingsWithErrors,
 } from '../settings/settings.js'
 import { containsVulnerableUncPath } from '../shell/readOnlyCommandValidation.js'
 import { getToolResultsDir } from '../toolResultStorage.js'
@@ -1368,6 +1370,33 @@ export function checkWritePermissionForTool<Input extends AnyObject>(
     toolPermissionContext,
     pathsToCheck,
   )
+
+  // 2.9. permissions.blockWritesOutsideWorkingDirectories（对齐官方 2.1.314）
+  // 必须排在下面所有 allow 分支之前，否则 acceptEdits / allow 规则会先放行。
+  // 设置文件保护即使在工作目录内也拦 —— 改 settings.json 就能关掉本开关。
+  if (
+    getSettingsWithErrors().settings.permissions
+      ?.blockWritesOutsideWorkingDirectories === true
+  ) {
+    const scopeDecision = evaluateWriteScopeBlock({
+      enabled: true,
+      path: absolutePathForEdit,
+      insideWorking: isInWorkingDir,
+      // 未能可靠解析 managed 设置目录时官方按最严格处理（任何 .json 都算设置）
+      strictJson: false,
+    })
+    if (scopeDecision.blocked) {
+      return {
+        behavior: 'deny',
+        message: scopeDecision.message,
+        decisionReason: {
+          type: 'mode',
+          mode: toolPermissionContext.mode,
+        },
+      }
+    }
+  }
+
   if (toolPermissionContext.mode === 'acceptEdits' && isInWorkingDir) {
     return {
       behavior: 'allow',

@@ -436,8 +436,8 @@ USER_TYPE=ant                              -> REPL / Config / Tungsten
 | 状态 | 项 |
 |---|---|
 | **已实现** | `MonitorTool`（目录存在）、`Explanatory` 输出风格提示、mod `tool.check` 的 `readOnly` |
-| **本轮已补** | `CLAUDE_CODE_DISABLE_ULTRATHINK` |
-| **未实现（可做）** | `CLAUDE_CODE_SUBAGENT_EFFORT`、`permissions.blockWritesOutsideWorkingDirectories`、`CLAUDE_CODE_DISABLE_LOOPED_CROSS_CERT_DROP`、`CLAUDE_CODE_RETRY_WATCHDOG_USAGE_LIMIT_RECHECK_MS`、`claude_code.safety_event` OTel 事件、`/claude-api api-version`、`/claude-api managed-agents-secure`、`--hold-idle-file`/`--max-hold-min`（self-hosted-runner）、mod `tool.check` 的 `decider: "person"` |
+| **本轮已补** | `CLAUDE_CODE_DISABLE_ULTRATHINK`、`permissions.blockWritesOutsideWorkingDirectories` / `blockReadsOutsideWorkingDirectories`（见 §9.4） |
+| **未实现（可做）** | `CLAUDE_CODE_SUBAGENT_EFFORT`、`CLAUDE_CODE_DISABLE_LOOPED_CROSS_CERT_DROP`、`CLAUDE_CODE_RETRY_WATCHDOG_USAGE_LIMIT_RECHECK_MS`、`claude_code.safety_event` OTel 事件、`/claude-api api-version`、`/claude-api managed-agents-secure`、`--hold-idle-file`/`--max-hold-min`（self-hosted-runner）、mod `tool.check` 的 `decider: "person"` |
 | **不适用（本地无对应体系）** | 云会话、Claude apps gateway、Enterprise 自定义角色、VSCode 扩展、Code Review SaaS、Claude Tag |
 
 ### 9.3 本轮已补：`CLAUDE_CODE_DISABLE_ULTRATHINK`
@@ -445,6 +445,32 @@ USER_TYPE=ant                              -> REPL / Config / Tungsten
 - 本地原只有构建期 `feature('ULTRATHINK')` 与 GrowthBook `tengu_turtle_carbon` 两道门控，**没有用户可用的运行时开关**。
 - 改动：`isUltrathinkEnabled()` 开头加判据，一次覆盖 `PromptInput` / `HighlightedThinkingText` / `attachments` 等全部调用点。
 - **验证方式的限制（如实记录）**：本仓库构建参数里没有 `ULTRATHINK`，`feature()` 是编译期常量恒为 false，所以 `isUltrathinkEnabled()` 无论如何都返回 false —— **无法用「返回 true」来证明开关生效**。改验证判据本身（真值/假值写法）＋源码契约（判据必须排在构建门控之前）。变异测试：删掉判据块 → 契约用例失败。
+
+### 9.4 已补：`permissions.blockWritesOutsideWorkingDirectories`
+
+官方 2.1.314 新增。语义从 2.1.316 二进制的**错误文案**提取（不是猜）：
+
+> Writes outside the working directories are blocked (`permissions.blockWritesOutsideWorkingDirectories`). Add the directory with `/add-dir`, or remove that setting.
+>
+> Writes to Claude Code settings files are blocked while `permissions.blockWritesOutsideWorkingDirectories` is on, **because a settings file can lift that block.**
+
+同时补了配套的 `blockReadsOutsideWorkingDirectories`（官方同批存在）。
+
+实现要点：
+- 新增 `src/utils/permissions/workingDirectoryScope.ts`（纯判据，零 IO）。
+- **接入位置是关键**：插在 `checkWritePermissionForTool` 里 `isInWorkingDir` 算完之后、**所有 allow 分支之前**。否则 `acceptEdits` 模式或 allow 规则会先返回 `allow`，限制形同虚设（已用源码顺序断言验证：判据下标 48810 < acceptEdits 49577 < allow 规则 49796）。
+- **设置文件保护优先于「在工作目录内」**：项目里的 `.claude/settings.json` 也在工作目录内，但改它就能关掉本开关，所以即使目录内也要拦。这是官方文案明说的理由，也是最容易漏的一条。
+- `strictJson` 模式（无法解析 managed 设置目录）下任何 `.json` 都算设置文件，对齐官方描述。
+- 复用既有 `allWorkingDirectories()` / `pathInAllowedWorkingPath()`，未新增路径解析逻辑。
+
+测试 `tests/unit/working-directory-scope.test.ts`（11 用例）。变异验证三项均捕获：
+- 把设置文件判断挪到 `insideWorking` 之后 → 2 个用例失败（正是「改 settings.json 绕过」的形态）
+- `strictJson` 分支失效 → 对应用例失败
+- 读限制恒放行 → 对应用例失败
+
+回归：permission-mode-ant0 + permission-prompts-headless + working-directory-scope 共 28/28。
+
+**未做**：真机端到端（需构造带该配置的 settings 并走完整权限链，环境依赖大、易给误导结论），故用纯判据测试 + 源码顺序断言代替，如实记录。
 
 ---
 
