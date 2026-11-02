@@ -1,0 +1,14 @@
+version: 2
+# 桌面端（electron）与 workbuddy 本地代理已迁至仓库外 D:/desktopapp，
+# 不再纳入本仓库依赖图。此配置显式限定扫描范围，避免对已迁出路径告警。
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0
+    ignore:
+      # 桌面端与 workbuddy 依赖不在本仓库，忽略其全部依赖更新
+      - dependency-name: electron
+      - dependency-name: electron-builder
+      - dependency-name: extract-zip
