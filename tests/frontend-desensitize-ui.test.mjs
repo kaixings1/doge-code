@@ -1,7 +1,7 @@
 /**
  * 敏感词脱敏面板 — jsdom 端到端 UI 测试。
  *
- * 与 frontend-thinking-ui.test.mjs 同模式：真实加载 desktop/renderer/index.html 的 DOM，
+ * 与 frontend-thinking-ui.test.mjs 同模式：真实加载 ../desktopapp/renderer/index.html 的 DOM，
  * 在 jsdom 窗口上下文中按序执行真实脚本（app.js → desensitize-panel.js），用可控的
  * workbuddyAPI mock 驱动，验证「后端脱敏状态 → 面板渲染」与各类操作的 saveConfig 闭环。
  *

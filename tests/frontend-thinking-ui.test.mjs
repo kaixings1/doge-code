@@ -1,7 +1,7 @@
 /**
  * 思考块透传开关 — jsdom 端到端 UI 测试。
  *
- * 真实加载 desktop/renderer/index.html 的 DOM 结构，并在 jsdom 上下文中执行
+ * 真实加载 ../desktopapp/renderer/index.html 的 DOM 结构，并在 jsdom 上下文中执行
  * 真实的 app.js（渲染层 + 事件绑定代码），用可控的 workbuddyAPI mock 驱动，
  * 验证「后端配置 → 开关渲染」与「点击开关 → saveConfig({ translateThinking })」闭环。
  *
