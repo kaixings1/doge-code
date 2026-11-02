@@ -79,7 +79,7 @@ async function main(): Promise<void> {
 
   // --desktop 快速路径：spawn Electron 桌面应用
   if (args[0] === '--desktop') {
-    const { launchDesktop } = await import('../desktop-electron/launch-electron.ts');
+    const { launchDesktop } = await import('../cli-desktop-launcher/launch-electron.ts');
     launchDesktop();
     return;
   }

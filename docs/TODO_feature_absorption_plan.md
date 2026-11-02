@@ -26,7 +26,7 @@
 - **来源**: GitHub PR、Cursor、现代IDE
 - **当前状态**: 本项目使用文本化unified diff
 - **改进方向**: 实现side-by-side渲染（类似GitHub PR）
-- **参考文件**: `src/desktop-electron/renderer/components/GitDiff.tsx`
+- **参考文件**: `D:/desktopapp/renderer/`（桌面端已迁出仓库，原 desktop-electron/renderer 已不存在）
 - **优先级**: 🔴 P0
 - **状态**: ⏳ 待开始
 - **预估工时**: 4-6小时

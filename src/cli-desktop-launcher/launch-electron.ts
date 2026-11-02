@@ -1,5 +1,5 @@
 /**
- * desktop-electron/launch-electron.ts — 启动 DogeCode Desktop
+ * cli-desktop-launcher/launch-electron.ts — 启动 DogeCode Desktop
  *
  * 由 doge.exe 调用（通过 --desktop 参数），负责 spawn 同目录下的 DogeCode.exe
  */
@@ -40,11 +40,13 @@ function loadConfig() {
 }
 
 export function launchDesktop(): void {
-  // 开发模式：doge.exe 在项目根目录，DogeCode.exe 在 desktop/release/win-unpacked/
+  // 桌面端已迁至仓库外 D:/desktopapp，其打包产物在 desktopapp/release*/
+  // 开发模式：doge.exe 在项目根目录，产物在 ../desktopapp/release/win-unpacked/
   // 编译后：两个 exe 可能在同一目录
   const candidates = [
-    path.resolve(exeDir, 'desktop', 'release', 'win-unpacked', 'DogeCode.exe'),
-    path.resolve(exeDir, 'desktop', 'release-out', 'win-unpacked', 'DogeCode.exe'),
+    path.resolve(exeDir, '..', 'desktopapp', 'release', 'win-unpacked', 'DogeCode.exe'),
+    path.resolve(exeDir, '..', 'desktopapp', 'release-out', 'win-unpacked', 'DogeCode.exe'),
+    path.resolve(exeDir, 'release', 'win-unpacked', 'DogeCode.exe'),
     path.join(exeDir, 'DogeCode.exe'),
   ]
   const dogeCodeExe = candidates.find(p => fs.existsSync(p))

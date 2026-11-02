@@ -115,7 +115,7 @@ if (activeConfig?.baseURL && !activeConfig.baseURL.startsWith('http://0.0.0.0'))
 async function main(): Promise<void> {
   // 桌面模式：DOGE_DESKTOP=1 时通过 launch-electron.ts spawn Electron 进程
   if (process.env.DOGE_DESKTOP === '1') {
-    const { launchDesktop } = await import('./desktop-electron/launch-electron.ts')
+    const { launchDesktop } = await import('./cli-desktop-launcher/launch-electron.ts')
     launchDesktop()
     return
   }

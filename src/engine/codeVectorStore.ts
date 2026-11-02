@@ -75,7 +75,7 @@ export class CodeVectorStore {
     this.excludePatterns = options.excludePatterns ?? [
       '**/node_modules/**', '**/.git/**', '**/dist/**',
       '**/build/**', '**/vendor/**', '**/*.min.js',
-      '**/*.d.ts', '**/desktop-electron/**',
+      '**/*.d.ts', '**/cli-desktop-launcher/**',
     ]
   }
 
