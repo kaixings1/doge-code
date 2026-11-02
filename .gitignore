@@ -1,5 +1,9 @@
 node_modules/
 __pycache__/
+
+# 桌面端已迁至仓库外（D:/desktopapp），此处永久忽略，防止再次纳入版本控制
+/desktop/
+/src/workbuddy-*.mjs
 *.pyc
 .env
 dist/

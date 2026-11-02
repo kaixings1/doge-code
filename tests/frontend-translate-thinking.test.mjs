@@ -25,8 +25,8 @@ import { dirname, join } from 'node:path';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, '..');
-const html = readFileSync(join(ROOT, 'desktop/renderer/index.html'), 'utf8');
-const appjs = readFileSync(join(ROOT, 'desktop/renderer/app.js'), 'utf8');
+const html = readFileSync(join(ROOT, '../desktopapp/renderer/index.html'), 'utf8');
+const appjs = readFileSync(join(ROOT, '../desktopapp/renderer/app.js'), 'utf8');
 
 test('index.html 声明了思考块透传开关与徽标', () => {
   // 开关 checkbox

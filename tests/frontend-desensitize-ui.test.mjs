@@ -18,7 +18,7 @@ import { dirname, join } from 'node:path';
 import { JSDOM, VirtualConsole } from 'jsdom';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const RENDER = join(HERE, '..', 'desktop', 'renderer');
+const RENDER = join(HERE, '..', '..', 'desktopapp', 'renderer');
 const html = readFileSync(join(RENDER, 'index.html'), 'utf8');
 const appJs = readFileSync(join(RENDER, 'app.js'), 'utf8');
 const desensitizeJs = readFileSync(join(RENDER, 'desensitize-panel.js'), 'utf8');
